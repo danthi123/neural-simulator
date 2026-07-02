@@ -1,0 +1,165 @@
+{
+  "probe": "emerge23_grammatical_grounded_production",
+  "verdict": "GO -- the emergent sequence cortex GENERATES full GRAMMATICAL, GROUNDED sentences, GENERALIZES them, and ABSTAINS -- the toward-language chain unified on one spiking brain: a GROUNDED cue -> the correct grounded sentence, POS-grammatical (1.00); a SIMILAR untrained cue -> a grammatical grounded sentence, generalized via the family block (1.00); a NOVEL cue -> ABSTAINS (1.00); dAP-LESION collapses grounded (0.00); FAMILY-DERANGEMENT collapses generalization (0.00, isolating the family block as the generalization carrier); multi-seed. The KEY: grammar is read from the shared POS-class block, content from the distinguishing content+family blocks. => a grounded, grammatical, moat-protected emergent word producer -- the transformer's core language roles, biology-native, NO sim/ edit.",
+  "mechanism": "the capstone: three-block content-bearing codes (POS-class + content + family) + the EMERGE-14 three-term kernel on the spiking bridge; autoregressive generation reads GRAMMAR from the shared class block and CONTENT from the distinguishing content+family blocks (the shared class block primes all verbs equally so it can't pick content; the content/family blocks carry the specific fact + generalize via family + abstain on disjoint novel codes); sim/ unchanged",
+  "task": "generate grammatical grounded sentences from grounded/similar/novel cues; verify grammaticality + grounding + generalization + abstain; dAP-lesion; multi-seed",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "config": {
+    "epochs": 80,
+    "frame": [
+      "NOUN",
+      "VERB",
+      "NOUN"
+    ],
+    "act_th": 2
+  },
+  "elapsed_seconds": 7.4,
+  "per_seed": [
+    {
+      "seed": 42,
+      "htm": {
+        "grounded_gram": 1.0,
+        "generalized_gram": 1.0,
+        "novel_abstain": 1.0
+      },
+      "lesion": {
+        "grounded_gram": 0.0,
+        "generalized_gram": 0.0,
+        "novel_abstain": 1.0
+      },
+      "untrained": {
+        "grounded_gram": 0.0,
+        "generalized_gram": 0.0,
+        "novel_abstain": 1.0
+      },
+      "fam_deranged": {
+        "grounded_gram": 1.0,
+        "generalized_gram": 0.0,
+        "novel_abstain": 1.0
+      }
+    },
+    {
+      "seed": 43,
+      "htm": {
+        "grounded_gram": 1.0,
+        "generalized_gram": 1.0,
+        "novel_abstain": 1.0
+      },
+      "lesion": {
+        "grounded_gram": 0.0,
+        "generalized_gram": 0.0,
+        "novel_abstain": 1.0
+      },
+      "untrained": {
+        "grounded_gram": 0.0,
+        "generalized_gram": 0.0,
+        "novel_abstain": 1.0
+      },
+      "fam_deranged": {
+        "grounded_gram": 1.0,
+        "generalized_gram": 0.0,
+        "novel_abstain": 1.0
+      }
+    },
+    {
+      "seed": 44,
+      "htm": {
+        "grounded_gram": 1.0,
+        "generalized_gram": 1.0,
+        "novel_abstain": 1.0
+      },
+      "lesion": {
+        "grounded_gram": 0.0,
+        "generalized_gram": 0.0,
+        "novel_abstain": 1.0
+      },
+      "untrained": {
+        "grounded_gram": 0.0,
+        "generalized_gram": 0.0,
+        "novel_abstain": 1.0
+      },
+      "fam_deranged": {
+        "grounded_gram": 1.0,
+        "generalized_gram": 0.0,
+        "novel_abstain": 1.0
+      }
+    },
+    {
+      "seed": 100,
+      "htm": {
+        "grounded_gram": 1.0,
+        "generalized_gram": 1.0,
+        "novel_abstain": 1.0
+      },
+      "lesion": {
+        "grounded_gram": 0.0,
+        "generalized_gram": 0.0,
+        "novel_abstain": 1.0
+      },
+      "untrained": {
+        "grounded_gram": 0.0,
+        "generalized_gram": 0.0,
+        "novel_abstain": 1.0
+      },
+      "fam_deranged": {
+        "grounded_gram": 1.0,
+        "generalized_gram": 0.0,
+        "novel_abstain": 1.0
+      }
+    },
+    {
+      "seed": 101,
+      "htm": {
+        "grounded_gram": 1.0,
+        "generalized_gram": 1.0,
+        "novel_abstain": 1.0
+      },
+      "lesion": {
+        "grounded_gram": 0.0,
+        "generalized_gram": 0.0,
+        "novel_abstain": 1.0
+      },
+      "untrained": {
+        "grounded_gram": 0.0,
+        "generalized_gram": 0.0,
+        "novel_abstain": 1.0
+      },
+      "fam_deranged": {
+        "grounded_gram": 1.0,
+        "generalized_gram": 0.0,
+        "novel_abstain": 1.0
+      }
+    },
+    {
+      "seed": 102,
+      "htm": {
+        "grounded_gram": 1.0,
+        "generalized_gram": 1.0,
+        "novel_abstain": 1.0
+      },
+      "lesion": {
+        "grounded_gram": 0.0,
+        "generalized_gram": 0.0,
+        "novel_abstain": 1.0
+      },
+      "untrained": {
+        "grounded_gram": 0.0,
+        "generalized_gram": 0.0,
+        "novel_abstain": 1.0
+      },
+      "fam_deranged": {
+        "grounded_gram": 1.0,
+        "generalized_gram": 0.0,
+        "novel_abstain": 1.0
+      }
+    }
+  ],
+  "HONEST_NOTE": "unifies EMERGE-15..22 into a grammatical, grounded, moat-protected producer (distinct verbs/objects avoid the shared-function-word high-order ambiguity, which is a separate integration step). The genuinely-hard residual (NOT surface form) is open-world SEMANTICS -- the knowledge-acquisition problem (the artificial-life / experience-driven-learning direction)."
+}
