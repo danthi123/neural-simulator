@@ -7377,3 +7377,25 @@ HTM-SP 0.98 on-substrate, 6-seed. THEN: couple competitive-pooler emergent codes
 so discovered OVERLAPPING categories feed the full inference (inheritance + cancellation + transitivity). Boundaries are
 undiscovered mechanisms; NO stopping; biologization/one-brain HARD; moat a PLUS; honest origin+gitea; COMMIT ON MAIN;
 GPU/CuPy for real runs (numpy only for CPU smoke/console/these pooler de-risks).
+
+## CYCLE 846 (2026-07-02 — EMERGE-39 + EMERGE-40: the competitive pooler goes FULLY-ON-SUBSTRATE via a sim/ kernel)
+
+EMERGE-39 (GO 6/6, `2026-07-02-emerge39-onsubstrate-competitive-pooler-GO.md`, NO sim/ edit): the HTM-SP feat->col
+permanences LIVE in cp_connections.data, learned by the committed sim/ kernel (potentiation, ld=0) + the winner-INACTIVE
+depression (selectivity) as a HOST op on the same substrate weights. On-substrate 0.94 mean; the selectivity term
+LOAD-BEARING (no-selectivity 0.18); fixed 0.56; permuted 0.14; lesion 0.00. Root-caused + measured that the committed
+`fused_htm_permanence_update` structurally lacks the winner-inactive term (it gates BOTH terms on pre_last) -> PINNED the
+sim/ edit. Committed+pushed (7ecd5002-range). EMERGE-40 (GO 3-seed 0.98, 6-seed confirming): the winner-inactive term is
+now the committed additive sim/ kernel `fused_htm_winner_inactive_depression` in sim/kernels.py (new function; the sibling
+permanence kernel + ALL existing paths byte-unchanged; lam_dep_wi=0 = no-op). Both pooler learning terms are now sim/
+fused kernels. `_emerge40_spiking_htm_sp_kernel_derisk.py` + `tests/test_emerge40_spiking_htm_sp_kernel.py` (4 pass incl.
+kernel-math + sibling-unchanged). Finding: `2026-07-02-emerge40-spiking-htm-sp-kernel-GO.md`.
+
+**EXACT NEXT CONCRETE ACTION:** land EMERGE-40 (the sim/ kernel + runner + test + finding + raw json + this state) to
+BOTH remotes on main once the 6-seed confirms. THEN continue autonomously: (A) the FS-WTA spiking competition -- realize
+the k-WTA "which columns win" as spiking lateral-inhibition (FS interneurons) instead of a host top-k over the substrate
+weights (the last host step in the pooler; a further on-substrate rung). (B) couple competitive-pooler emergent codes into
+the experiential console (EMERGE-31) so discovered OVERLAPPING categories feed the full inference (inheritance +
+cancellation + transitivity). Boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked
+(additive/default-inert); moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy for these
+CPU pooler de-risks).

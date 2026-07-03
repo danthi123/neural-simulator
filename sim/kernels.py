@@ -429,6 +429,27 @@ def fused_htm_permanence_update(w, pre_last, post_now, hfac_post, lam_pot, lam_d
     return cp.clip(w_new, w_min, w_max)
 
 @fuse()
+def fused_htm_winner_inactive_depression(w, pre_active, post_win, lam_dep_wi, w_min, w_max):
+    """HTM Spatial-Pooler WINNER-SELECTIVITY depression (Cui-Ahmad-Hawkins 2017 boosting SP; Diehl-Cook 2015 STDP +
+    lateral inhibition). A WINNING column (`post_win` == 1) DEPRESSES the synapses from its INACTIVE inputs
+    (`pre_active` == 0), so the column tunes to the features it actually needs and separates OVERLAPPING categories that
+    a fixed projection cannot. This is the one term `fused_htm_permanence_update` structurally lacks: that kernel gates
+    BOTH its terms on `pre_last`, so an inactive-presynapse synapse is a no-op there. This kernel is ADDITIVE + SEPARATE
+    — existing callers of `fused_htm_permanence_update` are byte-unchanged. Per-synapse inputs (gathered from the cached
+    COO exactly like `fused_stdp_weight_update`); a no-op on any synapse where `post_win` == 0 or `pre_active` == 1.
+
+      w          : current permanence in [w_min, w_max] = [0, 1]
+      pre_active : 1.0 if the presynaptic (input) cell is active in THIS input, else 0.0
+      post_win   : 1.0 if the postsynaptic (column) cell is a WINNER this step, else 0.0
+      lam_dep_wi : winner-inactive depression rate (0.0 = disabled = no effect)
+
+    De-risked on-substrate at EMERGE-39 (the host version of this exact term lifted held-out inheritance 0.20 -> 0.96 on
+    6 overlapping categories); this kernel makes the winner-selectivity learning fully-on-substrate. Pure math, no
+    simulator deps; soft-clamped to [w_min, w_max]."""
+    dep = (1.0 - pre_active) * post_win * lam_dep_wi
+    return cp.clip(w - dep, w_min, w_max)
+
+@fuse()
 def fused_eligibility_trace_decay(trace, decay_factor):
     """Fused kernel for eligibility trace exponential decay.
 

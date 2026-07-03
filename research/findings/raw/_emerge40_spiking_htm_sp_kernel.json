@@ -1,0 +1,137 @@
+{
+  "probe": "emerge40_spiking_htm_sp_kernel",
+  "verdict": "GO -- the FULLY-SPIKING HTM Spatial Pooler works: BOTH competitive-pooler learning terms are now committed `sim/` fused kernels -- potentiation (`fused_htm_permanence_update`, ld=0) + the winner-INACTIVE depression (`fused_htm_winner_inactive_depression`, the new additive kernel) -- over the bridge's coincidence synapse permanences. On 6 OVERLAPPING categories (adjacent share 3/6 feats): held-out inheritance 0.96. The winner-inactive kernel is LOAD-BEARING (no-selectivity 0.18); FIXED projection 0.56; PERMUTED 0.10; dAP-LESION 0.00; 6-seed. => the competitive self-organizing pooler is fully-on-substrate via `sim/` kernels. ONE additive `sim/` kernel (new function; `fused_htm_permanence_update` + all existing paths byte-unchanged).",
+  "mechanism": "fully-`sim/`-kernel HTM Spatial Pooler: feature->column permanences in the bridge's coincidence synapse weights, learned by fused_htm_permanence_update (potentiation, ld=0) + the new additive fused_htm_winner_inactive_depression (winner selectivity) + homeostatic boosting; inheritance on the spiking bridge over the learned codons",
+  "task": "6 categories with OVERLAPPING feature pools; learn the pooler via sim/ kernels; held-out inheritance vs no-selectivity + fixed + permuted + dAP-lesion; multi-seed",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "config": {
+    "epochs": 40,
+    "n_col": 200,
+    "k_win": 6,
+    "pool_epochs": 400,
+    "stride": 3,
+    "n_feat": 21,
+    "pool_lp": 0.05,
+    "pool_ld_wi": 0.02
+  },
+  "elapsed_seconds": 93.4,
+  "per_seed": [
+    {
+      "seed": 42,
+      "spiking": {
+        "held_out": 1.0
+      },
+      "no_selectivity": {
+        "held_out": 0.3888888888888889
+      },
+      "nolearn": {
+        "held_out": 0.2777777777777778
+      },
+      "permuted": {
+        "held_out": 0.16666666666666666
+      },
+      "lesion": {
+        "held_out": 0.0
+      }
+    },
+    {
+      "seed": 43,
+      "spiking": {
+        "held_out": 1.0
+      },
+      "no_selectivity": {
+        "held_out": 0.1111111111111111
+      },
+      "nolearn": {
+        "held_out": 0.8333333333333334
+      },
+      "permuted": {
+        "held_out": 0.05555555555555555
+      },
+      "lesion": {
+        "held_out": 0.0
+      }
+    },
+    {
+      "seed": 44,
+      "spiking": {
+        "held_out": 0.9444444444444444
+      },
+      "no_selectivity": {
+        "held_out": 0.1111111111111111
+      },
+      "nolearn": {
+        "held_out": 0.7222222222222222
+      },
+      "permuted": {
+        "held_out": 0.2222222222222222
+      },
+      "lesion": {
+        "held_out": 0.0
+      }
+    },
+    {
+      "seed": 100,
+      "spiking": {
+        "held_out": 0.9444444444444444
+      },
+      "no_selectivity": {
+        "held_out": 0.0
+      },
+      "nolearn": {
+        "held_out": 0.5
+      },
+      "permuted": {
+        "held_out": 0.05555555555555555
+      },
+      "lesion": {
+        "held_out": 0.0
+      }
+    },
+    {
+      "seed": 101,
+      "spiking": {
+        "held_out": 0.9444444444444444
+      },
+      "no_selectivity": {
+        "held_out": 0.16666666666666666
+      },
+      "nolearn": {
+        "held_out": 0.4444444444444444
+      },
+      "permuted": {
+        "held_out": 0.05555555555555555
+      },
+      "lesion": {
+        "held_out": 0.0
+      }
+    },
+    {
+      "seed": 102,
+      "spiking": {
+        "held_out": 0.9444444444444444
+      },
+      "no_selectivity": {
+        "held_out": 0.2777777777777778
+      },
+      "nolearn": {
+        "held_out": 0.5555555555555556
+      },
+      "permuted": {
+        "held_out": 0.05555555555555555
+      },
+      "lesion": {
+        "held_out": 0.0
+      }
+    }
+  ],
+  "sim_edit": "ADDITIVE new fused kernel fused_htm_winner_inactive_depression in sim/kernels.py; existing kernels byte-unchanged; default-inert (lam_dep_wi=0 -> no effect)",
+  "HONEST_NOTE": "both learning terms are now sim/ fused kernels over cp_connections.data (on-substrate). The k-WTA drive read is a top-k over the substrate weights (the spiking FS-WTA lateral-inhibition version is a further rung). De-risked by EMERGE-39 (the host winner-inactive op reached 0.96); EMERGE-40 makes it the committed kernel."
+}
