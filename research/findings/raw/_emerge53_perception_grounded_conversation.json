@@ -1,0 +1,45 @@
+{
+  "probe": "emerge53_perception_grounded_conversation",
+  "verdict": "GO -- the PERCEPTION-GROUNDED conversation closes: the brain SEES an object through the real Gabor/V1 front end, the competitive self-organizing pooler DISCOVERS its category from the VISUAL similarity, and the user talks about it in plain language -- HELD-OUT PERCEIVED-object inheritance 0.92 (a novel object, perceived through Gabor/V1, inherits its category's property via the VISUALLY-discovered codon; never named in a fact), CANCELLATION 1.00 (the exception member answers ITS specific fact), the no-confab MOAT abstains on every never-seen percept (0 false-accepts). PER-IMAGE PIXEL SCRAMBLE (destroys the visual similarity -> no discoverable categories) collapses held-out inheritance to 0.00; RSA pixel-provenance 0.83 intact vs scrambled 0.04. 3-seed. => 'SEE an object -> discover its category -> talk about it', one spiking brain, grounded in the brain's OWN perceptual experience, NO sim/ edit.",
+  "mechanism": "objects rendered to pixels -> the real retina/V1 Gabor front end (sim.visual_cortex, reused via EMERGE-34) -> top-T active V1 cells = each perceived object's feature vector; the EMERGE-38/42 competitive self-organizing pooler discovers overlapping VISUAL-category codons from those V1 features; the committed three-term kernel teaches a CLASS property on an exemplar's discovered codon (inheritance via the shared codon) + a member EXCEPTION on the member-identity ensemble (cancellation); a graded apical read over the discovered codes answers natural-language questions with the no-confab moat; a tiny regex NL front end + a PerceptualWorld (env renders the sensory input). Composes EMERGE-34 perception + EMERGE-42/51 inference/console. NO sim/ edit.",
+  "task": "SEE named objects through Gabor/V1 -> DISCOVER visual categories -> teach class property + member exception -> ASK 'can a X P?' answered by inheritance/cancellation over the visually-discovered codes, with the moat; held-out PERCEIVED-object inheritance + cancellation + moat + per-image-scramble collapse + RSA provenance; 3-seed",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "elapsed_seconds": 6.5,
+  "per_seed": [
+    {
+      "seed": 42,
+      "inherit": 1.0,
+      "cancel": 1.0,
+      "moat_unknown": true,
+      "moat_false_accepts": 0,
+      "scramble_inherit": 0.0,
+      "rsa": 0.8735029002843423,
+      "scramble_rsa": 0.1135152558348452
+    },
+    {
+      "seed": 43,
+      "inherit": 0.75,
+      "cancel": 1.0,
+      "moat_unknown": true,
+      "moat_false_accepts": 0,
+      "scramble_inherit": 0.0,
+      "rsa": 0.7695820060800732,
+      "scramble_rsa": -0.04360108748557999
+    },
+    {
+      "seed": 44,
+      "inherit": 1.0,
+      "cancel": 1.0,
+      "moat_unknown": true,
+      "moat_false_accepts": 0,
+      "scramble_inherit": 0.0,
+      "rsa": 0.8437458538721574,
+      "scramble_rsa": 0.0505742467499769
+    }
+  ],
+  "HONEST_NOTE": "composes validated pieces: EMERGE-34/36 perception-grounded emergence (the real Gabor/V1 front end -- a rate-reference sensory encode -- + the competitive pooler over V1 features) + EMERGE-42/51 on-bridge inheritance/cancellation + NL console. The perception (Gabor/V1 encode + pooler) is the rate-reference for the fully-spiking versions (EMERGE-35/36); the INHERITANCE/CANCELLATION run on the real spiking bridge over the discovered codes. Per the EMERGE-42 inheritance protocol the class property is taught via several perceived exemplars; the 2 HELD-OUT members per category are SEEN but never named in a can/exception sentence and inherit only via the shared visually-discovered codon. The load-bearing perception control is the PER-IMAGE PIXEL SCRAMBLE (destroys the visual similarity -> categories not discoverable -> inheritance collapses), isolating real perception as the cause. 2 visual categories (oriented-bar bird/fish shapes, EMERGE-34 set); richer objects + a spiking V1/pooler + multi-level perceptual taxonomy are follow-ons."
+}
