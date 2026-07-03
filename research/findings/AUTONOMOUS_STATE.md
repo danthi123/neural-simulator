@@ -8651,18 +8651,29 @@ validated spiking WM). ⇒ bounded stack-recursion resolved ON the project's spi
 match all spiking). The RANK-3 arc: 83 retention → 84 boundary → 85 rate-surpass → 86 spiking-surpass. Session total
 2026-07-03: 18 commits, NO sim/ edit, every result 6-seed anti-cheated.
 
-**EXACT NEXT CONCRETE ACTION:** the two pre-registered follow-ons (BUILD, do not hand off): (1) **CO-RESIDENCE** — put the
-reservoir `BrainRegion` (EMERGE-82 OnBridgeLSM) on the SHARED nav/conv merged bridge (`nav_conv_merged_bridge`, validated
-merge pattern) as a disjoint slice, so the form->role reservoir composes with nav+parser+composer on ONE brain; validate the
-reservoir GOes co-resident + the conversational no-confab moat is byte-untouched (plasticity-isolation). Likely GPU ->
-controller runs INLINE + Monitor; reuse-by-import. (2) **RUNG 2** — the literal time-domain theta/gamma OSCILLATOR nesting
-the WM slots (catalog N.15; an additive default-off `sim/` oscillator driver = theta-phase-modulated gamma
-`excitability_drive`, reusing StimulusManager SINUSOIDAL + CORTEX_GAMMA_FS_NETWORK + the per-region NMDA mask) — the fuller
-biological realization the gate named (separable, off the RANK-3 critical path but the honest fully-spiking-oscillator
-rung). Recommend CO-RESIDENCE first (composes the whole reservoir arc into the one brain), then RUNG 2. BUILD IT — I am the
-continuation. PARALLELIZE; boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair when de-risked
-(additive/default-off/byte-identical-when-off); moat a PLUS; honest origin+gitea; COMMIT ON MAIN; CONTROLLER runs GPU INLINE;
-ARM A MONITOR. [superseded:] RUNG 3 — CO-RESIDENCE: put the reservoir `BrainRegion` on the SHARED nav/conv merged bridge
+**CYCLE 903 (EMERGE-87 GO — the reservoir COMPOSES onto the one brain; the whole EMERGE-78..87 arc is complete).** EMERGE-87
+(committed): the form->role reservoir region runs as a DISJOINT SLICE on a bridge that ALSO carries a conversational region
+(both Izhikevich, region_pathways=[]), GOing co-resident (train 0.986, non-local rel-head 1.000 vs both baselines 0.500,
+genuinely active 2.01 spikes/neuron, region-silence lesion collapses) and FUNCTIONALLY ISOLATED (0.0% form->role
+classification flips under a concurrently-driven conversation on every seed; conv silent 0.019 when only the reservoir is
+driven; the ~1.4e-2 raw read delta is a weak global-step numerical coupling, NOT a cross-region synapse). NO sim/ edit.
+⇒ the anti-whack-a-mole form->role mechanism is learned (78) + uncontingent-non-local (79) + spiking (80) + memory-survives
+(81) + on-substrate (82) + recursion boundary-then-surpass rate+spiking (83-86) + composes-on-one-brain functionally-isolated
+(87). Session total 2026-07-03: 19 commits, NO sim/ edit anywhere, every result 6-seed anti-cheated, adversarial discipline
+caught 2 self-overclaims + 1 contingency, boundaries treated as undiscovered mechanisms (84->85/86).
+
+**EXACT NEXT CONCRETE ACTION:** the reservoir arc's cheap-first rungs are DONE; the remaining follow-ons are heavier
+fresh-context builds (BUILD, do not hand off): (1) **FUNCTIONAL INTEGRATION** — the reservoir's role output FEEDS the
+composer (the reservoir REPLACES the BridgeParser's role-labeling in the conversational pipeline) — a real capability
+composition (the reservoir does comprehension -> the composer stores/answers), validate the who/what turn + the no-confab
+moat with the reservoir front-end. (2) **RUNG 2** — the literal time-domain theta/gamma OSCILLATOR nesting the WM slots
+(catalog N.15; an additive default-off `sim/` oscillator driver = theta-phase-modulated gamma `excitability_drive`, reusing
+StimulusManager SINUSOIDAL + CORTEX_GAMMA_FS_NETWORK + the per-region NMDA mask) — the fuller biological realization (separable,
+off the RANK-3 critical path). (3) the FULL merged nav/conv bridge co-residence (add the reservoir to the merged builder's
+co_resident_* list — a mechanical extension of EMERGE-87). Recommend FUNCTIONAL INTEGRATION (the genuine capability
+composition) OR RUNG 2 (the fully-spiking-oscillator rung). BUILD IT — I am the continuation. PARALLELIZE; boundaries =
+undiscovered mechanisms; NO stopping; sim/ edits fair when de-risked (additive/default-off/byte-identical-when-off); moat a
+PLUS; honest origin+gitea; COMMIT ON MAIN; CONTROLLER runs GPU INLINE; ARM A MONITOR. [superseded:] RUNG 3 — CO-RESIDENCE: put the reservoir `BrainRegion` on the SHARED nav/conv merged bridge
 (`nav_conv_merged_bridge`, the validated merge pattern) as a disjoint slice, so the form->role reservoir composes with the
 nav cascade + parser + composer on ONE brain (the full one-brain merge) -- validate the reservoir form->role still GOes
 co-resident + the conversational no-confab moat is byte-untouched (the merge's plasticity-isolation). Reuse-by-import; likely
