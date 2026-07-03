@@ -1,0 +1,49 @@
+{
+  "rows": [
+    {
+      "seed": 42,
+      "parse_dt05": 1.0,
+      "spikes_dt05": 2.461,
+      "parse_dt10": 1.0,
+      "spikes_dt10": 2.461
+    },
+    {
+      "seed": 43,
+      "parse_dt05": 1.0,
+      "spikes_dt05": 2.361,
+      "parse_dt10": 1.0,
+      "spikes_dt10": 2.361
+    },
+    {
+      "seed": 44,
+      "parse_dt05": 1.0,
+      "spikes_dt05": 2.683,
+      "parse_dt10": 1.0,
+      "spikes_dt10": 2.683
+    },
+    {
+      "seed": 100,
+      "parse_dt05": 1.0,
+      "spikes_dt05": 2.267,
+      "parse_dt10": 1.0,
+      "spikes_dt10": 2.267
+    },
+    {
+      "seed": 101,
+      "parse_dt05": 1.0,
+      "spikes_dt05": 2.817,
+      "parse_dt10": 1.0,
+      "spikes_dt10": 2.817
+    },
+    {
+      "seed": 102,
+      "parse_dt05": 1.0,
+      "spikes_dt05": 2.339,
+      "parse_dt10": 1.0,
+      "spikes_dt10": 2.339
+    }
+  ],
+  "parse_dt05": 1.0,
+  "parse_dt10": 1.0,
+  "go_dt10": true
+}

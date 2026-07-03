@@ -80,10 +80,11 @@ _BIAS = 45.0                      # tonic background current (fluctuation-driven
 _N_TRAIN_PER = 90                 # train sentences per construction (reduced -- the bridge step is heavy)
 
 
-def _build_reservoir_bridge(seed, n_pool, in_dim):
+def _build_reservoir_bridge(seed, n_pool, in_dim, dt=0.5):
     """One recurrent Izhikevich BrainRegion = the reservoir (internal_density>0 -> fixed-random recurrent synapses). A
     fixed-random input projection W_in drives the region's external current per token. Returns (bridge, res_idx, W_in,
-    snapshot)."""
+    snapshot). `dt` defaults to 0.5 (BYTE-IDENTICAL to the shipped tuning); a caller may request dt=1.0 to co-reside on
+    a dt=1.0 shared bridge (the producer's dt) -- the RUNG A.3 dt-reconciliation probe."""
     from sim.bridge import SimulationBridge
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.regions import BrainRegion
@@ -94,7 +95,7 @@ def _build_reservoir_bridge(seed, n_pool, in_dim):
                     exc_weight_mean=_EXC_W, inh_weight_mean=_INH_W, weight_jitter=0.3, plastic_internal=False),
     ]
     cfg.region_pathways = []
-    cfg.dt = 0.5
+    cfg.dt = float(dt)
     cfg.seed = cfg.ou_seed = cfg.heterogeneity_seed = seed
     cfg.enable_ou_process = False
     cfg.enable_stdp = False
@@ -116,9 +117,9 @@ class OnBridgeLSM:
     runs the bridge's real step loop (conductance synapses + Izhikevich), and returns the region's per-neuron spike-count
     over the whole sequence (the population read-out feature)."""
 
-    def __init__(self, in_dim, seed, n=_N_POOL):
+    def __init__(self, in_dim, seed, n=_N_POOL, dt=0.5):
         self.n = n
-        self.bridge, self.res_idx, self.W_in, self._snap = _build_reservoir_bridge(seed, n, in_dim)
+        self.bridge, self.res_idx, self.W_in, self._snap = _build_reservoir_bridge(seed, n, in_dim, dt=dt)
         from sim.backend import get_backend
         self._xp, _ = get_backend()
         self._num = int(self.bridge.core_config.num_neurons)
