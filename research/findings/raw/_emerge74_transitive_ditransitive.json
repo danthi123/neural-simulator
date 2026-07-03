@@ -1,0 +1,870 @@
+{
+  "probe": "emerge74_transitive_ditransitive",
+  "verdict": "GO -- the self-organized spiking producer BROADENS to the CORE SVO argument-structure constructions via the signature-keyed ConstructionRegistry, routing the project's already-GO argstructure/_bucketB inventory through the self-organized S1a/S1b/S2 pipeline. TRANSITIVE 'the dog chases the cat' (det subj verb:3sg det obj) is MINED from the corpus + rendered EXACT on spikes every seed (5 slots -> fits N_SLOT_POOLS=6). Total 6 DISTINCT constructions rendered EXACT on spikes (render 1.000): the 5 EMERGE-72 (F_MODAL/F_INTR/F_NEGMOD/C_PPGOAL/C_PPLOC) + C_TRANS. The ONLY additions over EMERGE-72 are the bounded, precedented `label_sentence_svo` (admits a SECOND post-verbal CONTENT/IOBJ slot -- the argstructure ditransitive RECIPIENT; Goldberg ditransitive construction) + the richer corpus stream; the mine/order/spell/moat were ALREADY construction-agnostic (EMERGE-64/63/59). PROVENANCE cross-checked: the mined transitive/ditransitive role inventories MATCH argstructure_composer.FRAME_LEXICON (transitive `_default` agent-action-patient; ditransitive give agent-action-THEME-RECIPIENT) + the _bucketB mined frames (chase->transitive; give->ditransitive) -- provenance_consistent True. Every input-destruction control COLLAPSES: PERMUTED-CORPUS render 0.000 (n_registered 0.0 -- scrambling each exemplar's word order dilutes every construction's dominant ordering below threshold, margin >= 0.3); CROSS-CONSTRUCTION 0.000 (rendering construction A through B's mined structure is WRONG -- transitive through ditransitive's structure is wrong; Dominey-Hinaut form-specificity); NO-CORPUS -> 0 registered. HELD-OUT-CONSTRUCTION GENERALIZES on the SHARED SVO structure: a fully-held-out construction's det+subj+verb backbone is recovered from the OTHERS (1.000). The gate-first no-confab MOAT holds BY CONSTRUCTION: 0 producer invocations on abstains. 6 seeds. ==> the argstructure/_bucketB argument-structure inventory now FLOWS THROUGH the self-organized pipeline; the producer renders the core SVO constructions (arguments AFTER the verb -- the biggest expressivity jump toward richer conversation). The DITRANSITIVE 'the dog gives the cat a bone' IS MINED every seed (its 7-role signature is discovered from the corpus + routed to C_DITRANS -- the S1a/label side WORKS, the ditransitive is genuinely attested + labellable), but its render is CAPACITY-GATED: 7 slots [det subj verb det iobj det obj] > N_SLOT_POOLS=6 (EMERGE-59:118). This is an HONEST SPIKING-SUBSTRATE CAPACITY BOUNDARY (NOT a data/label wall -- the mine found it), named precisely: the fix is a bounded SCALE lever (N_SLOT_POOLS 6 -> 8), after which the ditransitive renders with ZERO further mechanism (the mine already discovered it). Its held-out DISTINCTIVE part (the IOBJ -- a SECOND post-verbal content noun) is attested ONLY by the ditransitive itself (the named residual, EMERGE-63/64-style). HONEST SCOPE: this BROADENS the bounded, corpus-attested, router-selected inventory to core SVO (transitive; ditransitive up to the capacity gate), NOT open prose (R4). The A->W spell stays the token surface; the fully-spiking A->W of the NEW object/indirect-object nouns is the batched EMERGE-75 follow-on. Reuse-by-import; NO sim/ edit; moat untouched.",
+  "go": true,
+  "construction_count_rendered": 6,
+  "mechanism": "BROADEN the self-organized spiking-Broca producer to the CORE SVO argument-structure constructions -- TRANSITIVE 'the dog chases the cat' + DITRANSITIVE 'the dog gives the cat a bone' -- by routing the project's already-GO argument-structure inventory (argstructure_composer.FRAME_LEXICON transitive/ditransitive + the _bucketB corpus verb-frame miner) through the EMERGE-72/73 signature-keyed ConstructionRegistry, corpus-driven. The ONLY additions over EMERGE-72 are ONE bounded, precedented label extension (label_sentence_svo admits a SECOND post-verbal CONTENT/IOBJ slot -- the ditransitive's indirect object; argstructure RECIPIENT; Goldberg ditransitive construction) + the richer corpus stream (transitive + ditransitive SVO). The mine/order/spell/moat were ALREADY construction-agnostic (EMERGE-64/63/59). TRANSITIVE (5 slots) fits N_SLOT_POOLS=6 and renders on spikes; DITRANSITIVE (7 slots) is MINED but exceeds the pool count -> the honest named CAPACITY boundary (more slot pools is the bounded scale lever). Dominey-Hinaut: production = selecting the construction to express predicate + thematic roles; the reservoir generalizes to NEW constructions from closed-class order/position. Goldberg argument-structure constructions (transitive; ditransitive 'X causes Y to receive Z'). PERMUTED-CORPUS / CROSS-CONSTRUCTION / HELD-OUT-CONSTRUCTION / no-corpus input-destruction controls gate the result. Reuse-by-import; NO sim/ edit; gate-first moat untouched.",
+  "task": "broaden the producer to the core SVO constructions -- TRANSITIVE (det subj verb det obj) + DITRANSITIVE (det subj verb det iobj det obj) -- via the signature-keyed registry (routing argstructure/_bucketB), all mined from the corpus; render each fitting construction exact on spikes; permuted-corpus + cross-construction + no-corpus collapse; held-out generalizes on the shared SVO backbone; gate-first moat (0 productions on abstains); >=6 seeds; ditransitive over N_SLOT_POOLS=6 = the honest capacity boundary (more slot pools is the fix)",
+  "provenance": {
+    "argstructure_available": true,
+    "bucketB_available": true,
+    "argstructure_transitive_roles": [
+      "agent",
+      "patient"
+    ],
+    "argstructure_ditransitive_roles": [
+      "agent",
+      "THEME",
+      "RECIPIENT"
+    ],
+    "argstructure_transitive_is_2content": true,
+    "argstructure_ditransitive_is_3content": true,
+    "bucketB_chase_roles": [
+      "agent",
+      "patient"
+    ],
+    "bucketB_give_roles": [
+      "agent",
+      "THEME",
+      "RECIPIENT"
+    ],
+    "bucketB_chase_is_transitive": true,
+    "bucketB_give_is_ditransitive": true,
+    "emerge74_transitive_n_content": 2,
+    "emerge74_ditransitive_n_content": 3,
+    "provenance_consistent": true
+  },
+  "constructions_groundtruth": {
+    "F_MODAL": [
+      [
+        "det",
+        "the",
+        null
+      ],
+      [
+        "subj",
+        null,
+        null
+      ],
+      [
+        "func",
+        "can",
+        null
+      ],
+      [
+        "verb",
+        null,
+        "bare"
+      ]
+    ],
+    "F_INTR": [
+      [
+        "det",
+        "the",
+        null
+      ],
+      [
+        "subj",
+        null,
+        null
+      ],
+      [
+        "verb",
+        null,
+        "3sg"
+      ]
+    ],
+    "F_NEGMOD": [
+      [
+        "det",
+        "the",
+        null
+      ],
+      [
+        "subj",
+        null,
+        null
+      ],
+      [
+        "func",
+        "does",
+        null
+      ],
+      [
+        "func",
+        "not",
+        null
+      ],
+      [
+        "verb",
+        null,
+        "bare"
+      ]
+    ],
+    "C_PPGOAL": [
+      [
+        "det",
+        "the",
+        null
+      ],
+      [
+        "subj",
+        null,
+        null
+      ],
+      [
+        "verb",
+        null,
+        "3sg"
+      ],
+      [
+        "func",
+        "to",
+        null
+      ],
+      [
+        "func",
+        "the",
+        null
+      ],
+      [
+        "obj",
+        null,
+        null
+      ]
+    ],
+    "C_PPLOC": [
+      [
+        "det",
+        "the",
+        null
+      ],
+      [
+        "subj",
+        null,
+        null
+      ],
+      [
+        "verb",
+        null,
+        "3sg"
+      ],
+      [
+        "func",
+        "on",
+        null
+      ],
+      [
+        "func",
+        "the",
+        null
+      ],
+      [
+        "obj",
+        null,
+        null
+      ]
+    ],
+    "C_TRANS": [
+      [
+        "det",
+        "the",
+        null
+      ],
+      [
+        "subj",
+        null,
+        null
+      ],
+      [
+        "verb",
+        null,
+        "3sg"
+      ],
+      [
+        "det",
+        "the",
+        null
+      ],
+      [
+        "obj",
+        null,
+        null
+      ]
+    ],
+    "C_DITRANS": [
+      [
+        "det",
+        "the",
+        null
+      ],
+      [
+        "subj",
+        null,
+        null
+      ],
+      [
+        "verb",
+        null,
+        "3sg"
+      ],
+      [
+        "det",
+        "the",
+        null
+      ],
+      [
+        "iobj",
+        null,
+        null
+      ],
+      [
+        "det",
+        "a",
+        null
+      ],
+      [
+        "obj",
+        null,
+        null
+      ]
+    ]
+  },
+  "svo_constructions": [
+    "C_TRANS",
+    "C_DITRANS"
+  ],
+  "n_slot_pools": 6,
+  "construction_slot_counts": {
+    "F_MODAL": 4,
+    "F_INTR": 3,
+    "F_NEGMOD": 5,
+    "C_PPGOAL": 6,
+    "C_PPLOC": 6,
+    "C_TRANS": 5,
+    "C_DITRANS": 7
+  },
+  "construction_fits_pools": {
+    "F_MODAL": true,
+    "F_INTR": true,
+    "F_NEGMOD": true,
+    "C_PPGOAL": true,
+    "C_PPLOC": true,
+    "C_TRANS": true,
+    "C_DITRANS": false
+  },
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "elapsed_seconds": 27.7,
+  "aggregate": {
+    "n_registered": 7.0,
+    "n_rendered_exact_mean": 6.0,
+    "main_render": 1.0,
+    "perm_render": 0.0,
+    "cross_render": 0.0,
+    "heldout_mean": 1.0,
+    "nocorpus_n_registered_total": 0,
+    "moat_calls_on_abstain_total": 0,
+    "transitive_mined_all_seeds": true,
+    "transitive_rendered_all_seeds": true,
+    "ditransitive_mined_all_seeds": true,
+    "ditransitive_fits_pools": false,
+    "ditransitive_capacity_boundary": true
+  },
+  "sample_transcript": [
+    {
+      "tag": "MODAL    (ability affirm)",
+      "question": "can an owl fly?",
+      "surface": "the owl can fly",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "INTR     (intransitive)",
+      "question": "what does a penguin do?",
+      "surface": "the penguin walks",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "NEGMOD   (negated modal)",
+      "question": "can a penguin fly? [deny]",
+      "surface": "the penguin does not fly",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "PPGOAL   (motion goal)",
+      "question": "where does the owl fly?",
+      "surface": "the owl flies to the pond",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "TRANS    (transitive SVO)",
+      "question": "what does the wolf chase?",
+      "surface": "the wolf chases the ball",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "DITRANS  (ditransitive)",
+      "question": "what does the wolf give the cub?",
+      "surface": "[mined but > N_SLOT_POOLS=6 -- capacity BOUNDARY; more slot pools is the fix]",
+      "invocation": "producer NOT invoked (capacity-gated)"
+    },
+    {
+      "tag": "MOAT     (abstain)",
+      "question": "can a zzz fly?",
+      "surface": "I don't know.",
+      "invocation": "producer NOT invoked"
+    }
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_registered": 7,
+      "registered": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC",
+        "C_TRANS",
+        "C_DITRANS"
+      ],
+      "fits": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC",
+        "C_TRANS"
+      ],
+      "over_capacity": [
+        "C_DITRANS"
+      ],
+      "n_rendered_exact": 6,
+      "main_render": 1.0,
+      "per_construction": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0,
+        "C_TRANS": 1.0,
+        "C_DITRANS": 0.0
+      },
+      "found": {
+        "F_MODAL": true,
+        "F_INTR": true,
+        "F_NEGMOD": true,
+        "C_PPGOAL": true,
+        "C_PPLOC": true,
+        "C_TRANS": true,
+        "C_DITRANS": true
+      },
+      "trans_mined": true,
+      "trans_rendered_exact": true,
+      "ditrans_mined": true,
+      "ditrans_fits_pools": false,
+      "perm_render": 0.0,
+      "perm_n_registered": 0.0,
+      "cross_render": 0.0,
+      "heldout_backbone": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0,
+        "C_TRANS": 1.0,
+        "C_DITRANS": 1.0
+      },
+      "heldout_mean": 1.0,
+      "ditrans_distinctive_recovered": false,
+      "nocorpus_n_registered": 0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true,
+      "discovered_fw": [
+        "a",
+        "and",
+        "big",
+        "can",
+        "carp",
+        "cold",
+        "does",
+        "fast",
+        "grey",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "owl",
+        "pig",
+        "red",
+        "small",
+        "the",
+        "to",
+        "warm",
+        "wet"
+      ]
+    },
+    {
+      "seed": 43,
+      "n_registered": 7,
+      "registered": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC",
+        "C_TRANS",
+        "C_DITRANS"
+      ],
+      "fits": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC",
+        "C_TRANS"
+      ],
+      "over_capacity": [
+        "C_DITRANS"
+      ],
+      "n_rendered_exact": 6,
+      "main_render": 1.0,
+      "per_construction": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0,
+        "C_TRANS": 1.0,
+        "C_DITRANS": 0.0
+      },
+      "found": {
+        "F_MODAL": true,
+        "F_INTR": true,
+        "F_NEGMOD": true,
+        "C_PPGOAL": true,
+        "C_PPLOC": true,
+        "C_TRANS": true,
+        "C_DITRANS": true
+      },
+      "trans_mined": true,
+      "trans_rendered_exact": true,
+      "ditrans_mined": true,
+      "ditrans_fits_pools": false,
+      "perm_render": 0.0,
+      "perm_n_registered": 0.0,
+      "cross_render": 0.0,
+      "heldout_backbone": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0,
+        "C_TRANS": 1.0,
+        "C_DITRANS": 1.0
+      },
+      "heldout_mean": 1.0,
+      "ditrans_distinctive_recovered": false,
+      "nocorpus_n_registered": 0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true,
+      "discovered_fw": [
+        "a",
+        "and",
+        "can",
+        "cold",
+        "deer",
+        "does",
+        "fast",
+        "grey",
+        "hen",
+        "in",
+        "is",
+        "it",
+        "moth",
+        "not",
+        "on",
+        "slow",
+        "tall",
+        "the",
+        "to",
+        "warm",
+        "wet"
+      ]
+    },
+    {
+      "seed": 44,
+      "n_registered": 7,
+      "registered": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC",
+        "C_TRANS",
+        "C_DITRANS"
+      ],
+      "fits": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC",
+        "C_TRANS"
+      ],
+      "over_capacity": [
+        "C_DITRANS"
+      ],
+      "n_rendered_exact": 6,
+      "main_render": 1.0,
+      "per_construction": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0,
+        "C_TRANS": 1.0,
+        "C_DITRANS": 0.0
+      },
+      "found": {
+        "F_MODAL": true,
+        "F_INTR": true,
+        "F_NEGMOD": true,
+        "C_PPGOAL": true,
+        "C_PPLOC": true,
+        "C_TRANS": true,
+        "C_DITRANS": true
+      },
+      "trans_mined": true,
+      "trans_rendered_exact": true,
+      "ditrans_mined": true,
+      "ditrans_fits_pools": false,
+      "perm_render": 0.0,
+      "perm_n_registered": 0.0,
+      "cross_render": 0.0,
+      "heldout_backbone": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0,
+        "C_TRANS": 1.0,
+        "C_DITRANS": 1.0
+      },
+      "heldout_mean": 1.0,
+      "ditrans_distinctive_recovered": false,
+      "nocorpus_n_registered": 0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true,
+      "discovered_fw": [
+        "a",
+        "and",
+        "can",
+        "carp",
+        "cold",
+        "does",
+        "dog",
+        "fast",
+        "grey",
+        "in",
+        "is",
+        "it",
+        "newt",
+        "not",
+        "on",
+        "red",
+        "salmon",
+        "small",
+        "snail",
+        "tall",
+        "the",
+        "to",
+        "warm",
+        "wren"
+      ]
+    },
+    {
+      "seed": 100,
+      "n_registered": 7,
+      "registered": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC",
+        "C_TRANS",
+        "C_DITRANS"
+      ],
+      "fits": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC",
+        "C_TRANS"
+      ],
+      "over_capacity": [
+        "C_DITRANS"
+      ],
+      "n_rendered_exact": 6,
+      "main_render": 1.0,
+      "per_construction": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0,
+        "C_TRANS": 1.0,
+        "C_DITRANS": 0.0
+      },
+      "found": {
+        "F_MODAL": true,
+        "F_INTR": true,
+        "F_NEGMOD": true,
+        "C_PPGOAL": true,
+        "C_PPLOC": true,
+        "C_TRANS": true,
+        "C_DITRANS": true
+      },
+      "trans_mined": true,
+      "trans_rendered_exact": true,
+      "ditrans_mined": true,
+      "ditrans_fits_pools": false,
+      "perm_render": 0.0,
+      "perm_n_registered": 0.0,
+      "cross_render": 0.0,
+      "heldout_backbone": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0,
+        "C_TRANS": 1.0,
+        "C_DITRANS": 1.0
+      },
+      "heldout_mean": 1.0,
+      "ditrans_distinctive_recovered": false,
+      "nocorpus_n_registered": 0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true,
+      "discovered_fw": [
+        "a",
+        "and",
+        "big",
+        "can",
+        "does",
+        "grey",
+        "heron",
+        "in",
+        "is",
+        "it",
+        "lynx",
+        "not",
+        "on",
+        "red",
+        "slow",
+        "small",
+        "tall",
+        "the",
+        "to",
+        "warm",
+        "wet"
+      ]
+    },
+    {
+      "seed": 101,
+      "n_registered": 7,
+      "registered": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC",
+        "C_TRANS",
+        "C_DITRANS"
+      ],
+      "fits": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC",
+        "C_TRANS"
+      ],
+      "over_capacity": [
+        "C_DITRANS"
+      ],
+      "n_rendered_exact": 6,
+      "main_render": 1.0,
+      "per_construction": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0,
+        "C_TRANS": 1.0,
+        "C_DITRANS": 0.0
+      },
+      "found": {
+        "F_MODAL": true,
+        "F_INTR": true,
+        "F_NEGMOD": true,
+        "C_PPGOAL": true,
+        "C_PPLOC": true,
+        "C_TRANS": true,
+        "C_DITRANS": true
+      },
+      "trans_mined": true,
+      "trans_rendered_exact": true,
+      "ditrans_mined": true,
+      "ditrans_fits_pools": false,
+      "perm_render": 0.0,
+      "perm_n_registered": 0.0,
+      "cross_render": 0.0,
+      "heldout_backbone": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0,
+        "C_TRANS": 1.0,
+        "C_DITRANS": 1.0
+      },
+      "heldout_mean": 1.0,
+      "ditrans_distinctive_recovered": false,
+      "nocorpus_n_registered": 0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true,
+      "discovered_fw": [
+        "a",
+        "and",
+        "big",
+        "can",
+        "cold",
+        "does",
+        "duck",
+        "fast",
+        "goat",
+        "grey",
+        "hawk",
+        "heron",
+        "in",
+        "is",
+        "it",
+        "newt",
+        "not",
+        "on",
+        "red",
+        "slow",
+        "small",
+        "tall",
+        "the",
+        "to",
+        "warm",
+        "wet"
+      ]
+    },
+    {
+      "seed": 102,
+      "n_registered": 7,
+      "registered": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC",
+        "C_TRANS",
+        "C_DITRANS"
+      ],
+      "fits": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC",
+        "C_TRANS"
+      ],
+      "over_capacity": [
+        "C_DITRANS"
+      ],
+      "n_rendered_exact": 6,
+      "main_render": 1.0,
+      "per_construction": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0,
+        "C_TRANS": 1.0,
+        "C_DITRANS": 0.0
+      },
+      "found": {
+        "F_MODAL": true,
+        "F_INTR": true,
+        "F_NEGMOD": true,
+        "C_PPGOAL": true,
+        "C_PPLOC": true,
+        "C_TRANS": true,
+        "C_DITRANS": true
+      },
+      "trans_mined": true,
+      "trans_rendered_exact": true,
+      "ditrans_mined": true,
+      "ditrans_fits_pools": false,
+      "perm_render": 0.0,
+      "perm_n_registered": 0.0,
+      "cross_render": 0.0,
+      "heldout_backbone": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0,
+        "C_TRANS": 1.0,
+        "C_DITRANS": 1.0
+      },
+      "heldout_mean": 1.0,
+      "ditrans_distinctive_recovered": false,
+      "nocorpus_n_registered": 0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true,
+      "discovered_fw": [
+        "a",
+        "and",
+        "bat",
+        "big",
+        "can",
+        "does",
+        "fast",
+        "frog",
+        "grey",
+        "hare",
+        "hawk",
+        "hen",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "otter",
+        "red",
+        "slow",
+        "small",
+        "swan",
+        "tall",
+        "the",
+        "to",
+        "warm",
+        "wet"
+      ]
+    }
+  ],
+  "HONEST_NOTE": "BROADENS the self-organized producer to the CORE SVO argument-structure constructions (transitive + ditransitive), routing the project's already-GO argstructure/_bucketB inventory through the self-organized pipeline. TRANSITIVE 'the dog chases the cat' (5 slots) is mined + rendered EXACT on spikes (fits N_SLOT_POOLS=6). DITRANSITIVE 'the dog gives the cat a bone' (7 slots) is MINED from the corpus (the S1a/label side works -- it is genuinely attested + labellable) but its render EXCEEDS the N_SLOT_POOLS=6 spiking-substrate pool count -> the HONEST, precisely-named CAPACITY boundary (NOT a data/label wall; the mine found it). The fix is a bounded SCALE lever: MORE slot pools (N_SLOT_POOLS 6 -> 8), after which the ditransitive renders with ZERO further mechanism. The ditransitive's held-out DISTINCTIVE part (the IOBJ -- a SECOND post-verbal content noun) is attested ONLY by the ditransitive itself (the named residual, EMERGE-63/64-style). This BROADENS the bounded, corpus-attested, router-selected inventory to core SVO (arguments AFTER the verb -- the biggest expressivity jump toward richer conversation), NOT open prose (R4, the deferred wall). The A->W spell stays the token surface for THIS de-risk; the fully-spiking A->W of the NEW object/indirect-object nouns is the batched EMERGE-75 follow-on (its own spiking validation is concept_speak_demo). The corpus mining is offline syllabus prep (BRAIN-BASED-ONLY compliant); the structure is rendered on REAL spikes; the gate-first moat is untouched (0 productions on abstains, by construction)."
+}

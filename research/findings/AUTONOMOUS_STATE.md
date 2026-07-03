@@ -8434,3 +8434,30 @@ use the token spell -- the fully-spiking follow-on); (c) the held-out distinctiv
 EMERGE-60 fluid-RNG isolation; test_regions cupy-path failures (task chip); EMERGE-57 multi-seed. Owner checked in
 mid-cycle (2026-07-03) + confirmed continue autonomously. Boundaries = undiscovered mechanisms; NO stopping; sim/ edits
 fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A MONITOR; CONTROLLER runs GPU steps INLINE.
+
+## CYCLE 885 (2026-07-03 — PARALLELIZED: EMERGE-74 GO [core SVO transitive] + 3 concurrent frontiers [62c GO / 76 / 75 recover])
+
+Owner nudged: "Are we parallelizing as we should?" -- CORRECT, I'd been mostly serial. Fanned out 3 INDEPENDENT frontiers
+concurrently (Workflow wf_804398f3-c05) alongside the in-flight EMERGE-74. Results processed one at a time (strict narrow
+git add per unit).
+
+EMERGE-74 (GO, 6-seed, `2026-07-03-emerge74-transitive-ditransitive-GO.md`, NO sim/ edit): core SVO -- the argstructure/
+_bucketB argument-structure inventory now flows through the EMERGE-72/73 registry. 7 constructions mined/registered, 6
+rendered EXACT on spikes -- the 5 + C_TRANS "the wolf chases the ball" (DET SUBJ VERB:3sg DET OBJ, 5 slots, args AFTER
+the verb = core SVO). VERIFIED controller-direct (sim/ clean; CI test_emerge74 14 pass; raw json): n_registered 7,
+n_rendered_exact 6, main_render 1.0, perm 0.0, cross 0.0, heldout_backbone 1.0, no-corpus 0, moat 0, transitive mined+
+rendered all seeds, ditransitive MINED all seeds (provenance matches FRAME_LEXICON + _bucketB chase->transitive/give->
+ditransitive). HONEST CAPACITY BOUNDARY: DITRANSITIVE "the dog gives the cat a bone" (7 slots) is genuinely mined every
+seed but render is gated by N_SLOT_POOLS=6 -- a spiking-substrate CAPACITY boundary (NOT a data/mechanism wall); fix =
+bounded scale lever N_SLOT_POOLS 6->8 (EMERGE-77). EMERGE-59..73 defaults byte-preserved (83 + 52 CI pass).
+
+**EXACT NEXT CONCRETE ACTION:** (1) DONE: committed EMERGE-74. (2) verify+commit EMERGE-62c (GO -- 4th morphological-
+invariance cue: function words lack -s/-ed/-ing; real narrow-GT precision 0.111->0.121, recall held 1.0, MORPHOLOGY-
+SHUFFLE collapses; NO sim/ edit; closes the inflected-content-verb FP class, det-preceded bare-noun FPs the harder
+residual). (3) check EMERGE-76's full verdict (truncated) + verify+commit. (4) RECOVER EMERGE-75 (A->W vocab scaling): the
+inline BRIDGE-C train (task bo5h1kw91, SIM_BACKEND=cupy --train, bridges/emerge75_aw/aw_overflow.simstate.h5) was still
+in flight when the Workflow structured-output was forced -> go=false HONESTLY (CPU side 9/9 pass, de-risk UNMEASURED);
+recover controller-direct: wait for the cache, run `--derisk --seeds 42 43 44 100 101 102`, fill the GO/BOUNDARY finding.
+(5) THEN EMERGE-77 (N_SLOT_POOLS 6->8 -> ditransitive renders). PARALLELIZE independent frontiers by default now. Boundaries
+= undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON
+MAIN; ARM A MONITOR; CONTROLLER runs GPU steps INLINE (recover orphaned trains).
