@@ -52,6 +52,15 @@ from research.runners._emerge58_unified_fluent_console import UnifiedFluentConso
 from research.runners._emerge59_spiking_broca_frame_slots_derisk import (  # noqa: E402
     FrameSlotCQ, BrocaProducer, decision_from_emerge,
 )
+
+# EMERGE-61 (additive, default-off): the inter-utterance wash-out that closes the render-ORDER tail (the F_MODAL frame's
+# two adjacent slots swap at a late emit because the Izhikevich adaptation `cp_recovery_variable_u` accumulates across
+# productions). `reset_producer=True` swaps FrameSlotCQ -> ResetFrameSlotCQ so each production starts from the exact
+# post-init substrate state (position-independent). Import is guarded so EMERGE-60 still loads if EMERGE-61 is absent.
+try:
+    from research.runners._emerge61_spiking_broca_order_robustness_derisk import ResetFrameSlotCQ  # noqa: E402
+except Exception:  # pragma: no cover -- EMERGE-60 remains usable without EMERGE-61
+    ResetFrameSlotCQ = None
 from research.runners._emerge54_per_dimension_cancellation_derisk import (  # noqa: E402
     _BIRD_HELDOUT as _PD_BIRD_HELDOUT, _FISH_HELDOUT as _PD_FISH_HELDOUT,
     _BIRD_EXC as _PD_BIRD_EXC, _FISH_EXC as _PD_FISH_EXC,
@@ -67,15 +76,21 @@ class SpikingBrocaConsole(UnifiedFluentConsole):
     """`UnifiedFluentConsole` whose EMERGE answers render ON SPIKES (EMERGE-59 `BrocaProducer`) in place of the 21M ANN.
     Everything else (membership-aware routing, the gate-first moat, the fluid paths) is inherited UNCHANGED."""
 
-    def __init__(self, seed=42, spell=None, build_fluid=True, verbose=False):
+    def __init__(self, seed=42, spell=None, build_fluid=True, verbose=False, reset_producer=False):
         # build the base console with the CPU template faculty (cheap, unused here); we override the EMERGE render below
         super().__init__(seed=seed, prefer_gpu_render=False, build_fluid=build_fluid, verbose=False)
         # the SPIKING Broca producer (EMERGE-59): its FrameSlotCQ builds a real SimulationBridge; `.learn()` teaches
         # each frame's slot-order primacy gradient from the frame templates (TEACH_REPEAT accumulation) so the emit
         # order is correct; the order is then produced on spikes. `spell` = the A->W read-out callback (token default).
-        cq = FrameSlotCQ(seed=int(seed))
+        # reset_producer=True (EMERGE-61, additive/default-off) uses ResetFrameSlotCQ -- an inter-utterance wash-out that
+        # restores the exact post-init substrate state before each production, closing the render-ORDER tail so the
+        # console renders EMERGE answers EXACT on ALL seeds (position-independent). Default False == byte-identical to the
+        # committed EMERGE-60 de-risk (its render-exact 0.93 tail is the reported, un-gated producer property).
+        cq_cls = ResetFrameSlotCQ if (reset_producer and ResetFrameSlotCQ is not None) else FrameSlotCQ
+        cq = cq_cls(seed=int(seed))
         cq.learn()
         self.broca = BrocaProducer(cq, spell=spell)
+        self.reset_producer = bool(reset_producer and ResetFrameSlotCQ is not None)
         self.render_kind = "spiking_broca"
         if verbose:
             print(f"[emerge60] ready -- the unified console renders EMERGE answers ON SPIKES (EMERGE-59 frame-slot "
@@ -119,8 +134,8 @@ def _abstain_probes():
     ]
 
 
-def _derisk_one(seed, build_fluid=True):
-    con = SpikingBrocaConsole(seed=seed, build_fluid=build_fluid)
+def _derisk_one(seed, build_fluid=True, reset_producer=False):
+    con = SpikingBrocaConsole(seed=seed, build_fluid=build_fluid, reset_producer=reset_producer)
     broca = con.broca
 
     # (b) NO fluid-path REGRESSION -- run the fluid slice FIRST, on the pristine post-construction RNG state (BEFORE any
@@ -218,8 +233,10 @@ DEMO = [
 ]
 
 
-def _demo(seed=42):
-    con = SpikingBrocaConsole(seed=seed, build_fluid=True, verbose=True)
+def _demo(seed=42, reset_producer=True):
+    # the interactive/demo console opts INTO the EMERGE-61 wash-out by default so the flagship renders EXACT on all seeds
+    # (position-independent word order); pass reset_producer=False to see the un-reset EMERGE-60 tail.
+    con = SpikingBrocaConsole(seed=seed, build_fluid=True, verbose=True, reset_producer=reset_producer)
     print("=== EMERGE-60 -- the unified console renders EMERGE answers ON SPIKES (EMERGE-59 Broca producer), the 21M "
           "ANN retired for the EMERGE frames; gate-first moat + membership routing + fluid paths intact ===\n", flush=True)
     for (line, why) in DEMO:
@@ -231,14 +248,15 @@ def _demo(seed=42):
     return con
 
 
-def _derisk(seeds, build_fluid=True):
+def _derisk(seeds, build_fluid=True, reset_producer=False):
     print(f"EMERGE-60 de-risk: the unified console renders EMERGE answers ON SPIKES (EMERGE-59 Broca producer) in place "
           f"of the 21M ANN; EMERGE render-on-spikes correct + gate-first moat (producer NEVER invoked on abstain) + "
-          f"membership routing + no fluid regression; {len(seeds)}-seed", flush=True)
+          f"membership routing + no fluid regression; {len(seeds)}-seed"
+          + (" [EMERGE-61 reset_producer ON: render-exact -> 1.00 all seeds]" if reset_producer else ""), flush=True)
     t0 = time.time(); err = None; per = []
     try:
         for s in seeds:
-            d = _derisk_one(s, build_fluid=build_fluid)
+            d = _derisk_one(s, build_fluid=build_fluid, reset_producer=reset_producer)
             per.append(d)
             print(f"  [seed {s}] render-words {d['emerge_render_words']:.2f} render-exact {d['emerge_render_exact']:.2f}"
                   f" | moat-ok {int(d['moat_ok'])} (producer-on-abstain {d['moat_producer_calls_on_abstain']}) | "
@@ -261,11 +279,18 @@ def _derisk(seeds, build_fluid=True):
         # the SPIKING PRODUCER's own property (EMERGE-59-validated), REPORTED here -- EMERGE-60 does not re-gate it.
         go = bool(render_words >= 0.99 and moat_all and producer_on_abstain == 0 and membership_all and fluid_all)
         if go:
-            order_note = ("render-order EXACT %.2f on this probe set (the spiking producer's own EMERGE-59-characterized "
-                          "order accuracy; the 4-slot F_MODAL frame occasionally swaps its two lowest-primacy adjacent "
-                          "slots under the read-out noise -- e.g. 'the robin breathe can' on 2/6 seeds -- content always "
-                          "correct; sharpening the primacy separation / more sim steps on the producer is the named "
-                          "robustness follow-on)" % render_exact)
+            if reset_producer:
+                order_note = ("render-order EXACT %.2f on this probe set with the EMERGE-61 inter-utterance WASH-OUT ON "
+                              "(reset_producer=True): the producer restores the substrate's exact post-init state before "
+                              "each production, so the F_MODAL-frame slot order is POSITION-INDEPENDENT and exact on ALL "
+                              "seeds -- the render-ORDER tail is CLOSED (EMERGE-61)" % render_exact)
+            else:
+                order_note = ("render-order EXACT %.2f on this probe set (the spiking producer's own EMERGE-59-"
+                              "characterized order accuracy; the 4-slot F_MODAL frame occasionally swaps its two lowest-"
+                              "primacy adjacent slots under the Izhikevich adaptation that accumulates across productions "
+                              "-- e.g. 'the robin breathe can' on 2/6 seeds -- content always correct; the EMERGE-61 "
+                              "inter-utterance wash-out (--reset / reset_producer=True) CLOSES this tail to 1.00 all "
+                              "seeds)" % render_exact)
             verdict = (f"GO -- the flagship unified console now renders its EMERGE emergent-reasoning answers ON THE "
                        f"SPIKING SUBSTRATE (EMERGE-59 frame-slot competitive queuing on a real SimulationBridge) in place "
                        f"of the 21M ANN -- the ANN is RETIRED for the EMERGE frame inventory. The WIRE is correct: the "
@@ -334,10 +359,14 @@ def main():
     ap.add_argument("--demo", action="store_true")
     ap.add_argument("--derisk", action="store_true")
     ap.add_argument("--no-fluid", action="store_true")
+    ap.add_argument("--reset", action="store_true",
+                    help="EMERGE-61: enable the inter-utterance wash-out (render-exact -> 1.00 all seeds). Default OFF "
+                         "for the de-risk (byte-identical committed output); the interactive --demo enables it by default.")
+    ap.add_argument("--no-reset", action="store_true", help="force the wash-out OFF in --demo (show the EMERGE-60 tail)")
     a = ap.parse_args()
     if a.derisk:
-        return _derisk(a.seeds, build_fluid=(not a.no_fluid))
-    _demo(a.seed)
+        return _derisk(a.seeds, build_fluid=(not a.no_fluid), reset_producer=a.reset)
+    _demo(a.seed, reset_producer=(not a.no_reset))
     return 0
 
 

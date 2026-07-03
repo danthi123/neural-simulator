@@ -7941,3 +7941,33 @@ deferred: RE-RUN the adversarial audit on the EMERGE-58 wire (blocked 3x by tran
 the 6 lenses were controller-direct-verified in the remediation -- retry the independent parallel audit when the rate
 limit clears). Boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS;
 honest origin+gitea; COMMIT ON MAIN; ARM A MONITOR on every long run; GPU/CuPy for real runs (numpy for CPU).
+
+## CYCLE 869 (2026-07-03 — EMERGE-61 GO: the spiking-Broca render-ORDER tail CLOSED via a biologically-grounded inter-utterance wash-out)
+
+EMERGE-61 (GO, 6-seed, `2026-07-03-emerge61-spiking-broca-order-robustness-GO.md`, NO sim/ edit): closes the one honest
+residual of EMERGE-60. Root cause CONFIRMED by instrumentation (H1): the Izhikevich slow spike-frequency-adaptation
+current `cp_recovery_variable_u` ACCUMULATES across productions (u_pre 0.0 at emit#1 -> ~500 mean/~500 std by emit#5;
+conductances stay 0, so the residual is purely v/u state), and on seeds 100/101 that heterogeneous residual flips the
+4-slot F_MODAL frame's two near-equal-primacy adjacent slots at the 5th emit -- deterministic, sequence-position-
+dependent (matching all 3 prior controller diagnostics: fresh-emit correct, noise-invariant, naive-flat-reset-worse).
+FIX = ResetFrameSlotCQ, an inter-utterance WASH-OUT that restores the EXACT byte-for-byte post-init substrate snapshot
+(v/u/4 conductances/firing_states/STP) before each production (biologically: clear the previous motor plan's adaptation;
+the naive flat reset failed because it ignored per-neuron heterogeneity + the u=b*(v-vr) init relation). VERIFIED
+controller-direct (raw json): fix_render_exact 1.0 (all 6 seeds), ctl_render_exact 0.933 (un-reset control = the tail),
+position_independent_all_seeds True (the load-bearing property -- an utterance no longer depends on prior utterances'
+residual state), moat_calls_on_abstain 0, causal_ctl_swaps True. CI 15 pass (test_emerge60 6 + test_emerge61 9).
+EMERGE-59 + EMERGE-60 defaults byte-identical (FrameSlotCQ untouched; EMERGE-60 additive default-off reset_producer flag
++ --reset CLI; the interactive _demo defaults reset_producer=True so the flagship renders exact on all seeds; EMERGE-60
+raw json restored to HEAD). NO sim/ edit (the reset writes existing bridge arrays via public attributes). ⇒ the emergent
+brain SPEAKS its grounded EMERGE answers on spikes with a STABLE, position-independent word order.
+
+**EXACT NEXT CONCRETE ACTION:** (1) DONE: committed EMERGE-61 both remotes. (2) NEXT frontier (pick highest-leverage):
+(a) the A->W NEURAL spell wire-in -- replace the token-surface callback with the validated concept_speak_demo spiking
+read-out so the WORDS (not just the ORDER) are spiking (GPU; the bigger fully-spiking step for the EMERGE frames);
+(b) Rung B = self-organizing function-word pools from experience (R3 neural frame-selection -- the deeper emergent-not-
+host-designed step); (c) EMERGE-60's _derisk fluid-path RNG-stream isolation (pre-existing harness flakiness the
+EMERGE-61 agent flagged -- BOUNDARY on ~1/3 multi-seed runs; orthogonal, cheap); (d) EMERGE-57 multi-fine-tune-seed
+robustness (add seed-specific --ckpt-out). ALSO deferred: RE-RUN the adversarial audit on the EMERGE-58 wire (blocked
+3x by transient server-side subagent rate limits; 6 lenses controller-direct-verified in the remediation; retry the
+independent parallel audit when the throttle clears). Boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair
+game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A MONITOR on every long run; GPU/CuPy real.
