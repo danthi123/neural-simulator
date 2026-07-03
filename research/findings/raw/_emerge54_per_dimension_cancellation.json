@@ -1,0 +1,78 @@
+{
+  "probe": "emerge54_per_dimension_cancellation",
+  "verdict": "GO -- PER-DIMENSION (Collins-Quillian) cancellation over the pooler-DISCOVERED conversational codes: a member-specific EXCEPTION overrides ONLY its own property DIMENSION and no longer blocks inheriting UNRELATED class properties. The overridden member (penguin) answers its exception on the OVERRIDDEN dimension (LOCOMOTION 'walks', not 'flies') AND INHERITS the class default on a DIFFERENT dimension (RESPIRATION 'breathes') -- BOTH hold (1.00: override-locomotion 1.00 + inherit-other-dimension 1.00). This is the FIX for the EMERGE-52 wrinkle, where the exception dominated the whole read across dimensions (wrongly answering 'No, a penguin walks' to 'can a penguin breathe?'). Non-overridden members inherit on ALL dimensions (1.00); the no-confab MOAT abstains on every unknown token (0 false-accepts); sibling-discrimination stays real (0.00). The PRIMARY load-bearing collapse control fires -- dAP-LESION collapses inheritance to 0.00 (the graded-apical substrate the per-dimension read relies on is load-bearing); the SECONDARY seed-variable permute-co-occurrence control raises sibling-confusion (max +0.50 over real). 3-seed. => the conversational reasoning now does correct per-dimension Collins-Quillian cancellation over discovered codes, on one spiking brain, NO sim/ edit.",
+  "mechanism": "reuse EMERGE-52's STACKED competitive pooler (discover sub-category -> genus -> order) + the committed sim/ three-term kernel teaching (class properties on the members' DISCOVERED L2/L3 codons; a member exception on the identity ensemble). The ONLY change is the READ: for an asked property P, (a) find P's DIMENSION from a property->dimension lexicon, (b) let the member's exception cancel ONLY if that exception is in P's dimension, (c) otherwise inherit the class default for P purely from the discovered-codon graded drive. Per-dimension Collins-Quillian cancellation (EMERGE-27's validated pattern) applied to the pooler-discovered conversational codes; NO sim/ edit.",
+  "task": "observe members + speak the taxonomy -> discover levels -> teach class properties by DIMENSION (locomotion 'fly'/'swim'; respiration 'breathes') + LOCOMOTION exceptions ('penguin walks') -> ASK; the overridden member answers its exception on the OVERRIDDEN dimension AND inherits the class default on OTHER dimensions; non-overridden members inherit on all dimensions; moat + sibling-discrimination + dAP-lesion collapse + permute-co-occurrence collapse controls; 3-seed",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "elapsed_seconds": 76.4,
+  "per_seed": [
+    {
+      "seed": 42,
+      "override_locomotion": 1.0,
+      "inherit_other_dim": 1.0,
+      "per_dim_cancellation": 1.0,
+      "nonoverride_inherit": 1.0,
+      "sibling_confusion": 0.0,
+      "moat_unknown": true,
+      "moat_false_accepts": 0,
+      "lesion_nonoverride_inherit": 0.0,
+      "lesion_inherit_other_dim": 0.0,
+      "permcooc_sibling_confusion": 0.5,
+      "replies": {
+        "penguin_fly": "No, a penguin walks.",
+        "penguin_breathe": "Yes, a penguin can breathe.",
+        "owl_fly": "Yes, an owl can fly.",
+        "owl_breathe": "Yes, an owl can breathe.",
+        "owl_swim": "I don't know whether an owl can swim.",
+        "moat_unknown": "I don't know what a zzz is."
+      }
+    },
+    {
+      "seed": 43,
+      "override_locomotion": 1.0,
+      "inherit_other_dim": 1.0,
+      "per_dim_cancellation": 1.0,
+      "nonoverride_inherit": 1.0,
+      "sibling_confusion": 0.0,
+      "moat_unknown": true,
+      "moat_false_accepts": 0,
+      "lesion_nonoverride_inherit": 0.0,
+      "lesion_inherit_other_dim": 0.0,
+      "permcooc_sibling_confusion": 0.0,
+      "replies": {
+        "penguin_fly": "No, a penguin walks.",
+        "penguin_breathe": "Yes, a penguin can breathe.",
+        "owl_fly": "Yes, an owl can fly.",
+        "owl_breathe": "Yes, an owl can breathe.",
+        "owl_swim": "I don't know whether an owl can swim.",
+        "moat_unknown": "I don't know what a zzz is."
+      }
+    },
+    {
+      "seed": 44,
+      "override_locomotion": 1.0,
+      "inherit_other_dim": 1.0,
+      "per_dim_cancellation": 1.0,
+      "nonoverride_inherit": 1.0,
+      "sibling_confusion": 0.0,
+      "moat_unknown": true,
+      "moat_false_accepts": 0,
+      "lesion_nonoverride_inherit": 0.0,
+      "lesion_inherit_other_dim": 0.0,
+      "permcooc_sibling_confusion": 0.5,
+      "replies": {
+        "penguin_fly": "No, a penguin walks.",
+        "penguin_breathe": "Yes, a penguin can breathe.",
+        "owl_fly": "Yes, an owl can fly.",
+        "owl_breathe": "Yes, an owl can breathe.",
+        "owl_swim": "I don't know whether an owl can swim.",
+        "moat_unknown": "I don't know what a zzz is."
+      }
+    }
+  ],
+  "HONEST_NOTE": "composes EMERGE-52 (discover multi-level taxonomy + NL console) + EMERGE-27 (per-dimension cancellation). The property->dimension mapping is a small host-side lexicon (the keyboard/language interface, exactly EMERGE-27's DIMS), not a brain computation -- it lets the reader know which dimension a query/exception lives in. The teaching, discovery, and graded read are unchanged from EMERGE-52 (reuse-by-import). This fixes the EMERGE-52 reasoning-correctness wrinkle (an exception leaking across dimensions). The PRIMARY collapse control is dAP-LESION (deterministically collapses the whole per-dimension inheritance read every seed); PERMUTE-CO-OCCURRENCE (EMERGE-52's control, breaks sibling-discrimination) is a SECONDARY diagnostic that is seed-variable per EMERGE-45's honest scope; the permute-FEATURES control does NOT collapse (co-occurrence is keyed by the spoken taxonomy) so it is not used. DISCOVERING which properties are the same dimension from statistics is a follow-on (here the property->dimension map is a small host-side lexicon, EMERGE-27's DIMS)."
+}

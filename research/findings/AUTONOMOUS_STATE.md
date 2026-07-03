@@ -7723,3 +7723,29 @@ pattern over the discovered codes). Then: spiking V1/pooler in the console; mult
 experiential conversational console toward the fluid-conversation stack (the owner's north star). Boundaries = undiscovered
 mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A
 MONITOR on every long run; GPU/CuPy for real runs (numpy for CPU).
+
+## CYCLE 861 (2026-07-03 — EMERGE-54 GO: PER-DIMENSION cancellation fixes the exception-over-blocks wrinkle)
+
+EMERGE-54 (GO 3/3, `2026-07-02-emerge54-per-dimension-cancellation-GO.md`, NO sim/ edit): fixed the EMERGE-52 wrinkle
+(an exception dominated the read across ALL dimensions). Now per-dimension Collins-Quillian cancellation over the
+pooler-discovered codes: an exception overrides ONLY its own dimension. Demo: "can a penguin fly?" No, walks (locomotion
+overridden) / "can a penguin breathe?" Yes (respiration INHERITED -- the fix) / owl inherits both / "can an owl swim?"
+sibling-discrim / "can a zzz breathe?" moat. Gates: per-dimension cancellation 1.00 (override-loco 1.00 + inherit-other-dim
+1.00 both hold); non-override inherit 1.00; sibling-confusion 0.00; moat 0-FA; PRIMARY dAP-LESION collapses inheritance to
+0.00 (load-bearing). `PerDimensionConsole` subclasses EMERGE-52; pooler/kernels/read UNCHANGED, only the query gates the
+exception by dimension (EMERGE-27 DIMS pattern). Agent honestly corrected the control (permute-features does NOT collapse
+per EMERGE-52's finding -> used dAP-lesion as primary, permute-cooc secondary-seed-variable). `_emerge54_per_dimension_
+cancellation_derisk.py` + test (3 pass). Honest follow-on: DISCOVER which properties share a dimension from statistics
+(the DIMS lexicon is currently host-side).
+
+⇒ the conversational-substrate arc EMERGE-51->54: conversationally-queryable -> multi-level -> perception-grounded ->
+per-dimension-correct, all GO, committed, moat intact, transformer-free. EMERGE-50 6-seed (b2whf1bce) on its LAST arm
+(dap_lesion, collapsing correctly); Monitor bn3gssop5 armed.
+
+**EXACT NEXT CONCRETE ACTION:** commit EMERGE-54. THEN: (a) when the EMERGE-50 6-seed lands (Monitor fires), commit it.
+(b) Continue toward the GOAL: dispatched EMERGE-55 = DISCOVER dimensions from statistics (burn down the host DIMS lexicon
+-- learn which properties share a dimension from their co-occurrence/mutual-exclusivity, so the per-dimension structure is
+EMERGENT not hand-listed). THEN: multi-level perceptual conversation (EMERGE-52 x 53); spiking V1/pooler in the console;
+and the north-star wire of the experiential conversational console toward the fluid-conversation stack. Boundaries =
+undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON
+MAIN; ARM A MONITOR on every long run; GPU/CuPy for real runs (numpy for CPU).
