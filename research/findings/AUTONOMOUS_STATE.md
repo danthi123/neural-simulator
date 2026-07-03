@@ -8057,3 +8057,38 @@ words + order all discovered from experience, rendered on spikes, moat intact). 
 residual. Deferred: EMERGE-60 fluid-RNG harness isolation; EMERGE-57 multi-seed; the audit re-run (rate-limited).
 Boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea;
 COMMIT ON MAIN; ARM A MONITOR on every long run; GPU/CuPy for real runs (numpy for CPU).
+
+## CYCLE 873 (2026-07-03 — EMERGE-64 GO: the slot INVENTORY self-organizes; ALL THREE producer residuals now discovered from experience)
+
+EMERGE-64 (GO, 6-seed, `2026-07-03-emerge64-mine-slot-inventory-GO.md`, NO sim/ edit): closes the LAST residual S1a.
+EMERGE-59's FRAMES dict named WHICH ordered typed slots each construction licenses; EMERGE-64 MINES that inventory from
+the corpus by labelling each token's role from already-discovered signals (NO host FRAMES as input): FUNCTION-word slot
+iff the token is in EMERGE-62's discovered closed class (DET vs FUNC by distributional position -- the determiner opens
+the NP + precedes content); CONTENT slot otherwise (SUBJECT = NP head after det, VERB = clause-final content);
+constructions grouped by role-type signature (usage-based; Dominey-Hinaut roles-from-closed-class-position; G.12). Fed to
+the EMERGE-59/63 producer via an additive MinedInventoryFrameSlotCQ subclass; FRAMES = validation ground-truth only.
+VERIFIED controller-direct (sim/ clean; CI 26 pass across test_emerge62b/63/64; raw json): main_acc 1.0, main_exact 1.0
+(render exact on spikes from the MINED inventory), perm_acc 0.333 (permuted-mining/shuffled-corpus collapses, margin
+0.667 -- load-bearing: the 4/5-slot frames collapse to not-found), nocorpus 0.0, heldout_mean 1.0 (det+subj+verb role
+backbone generalizes to a fully held-out frame), heldout_infl_intr_recovered False (honest inflection residual), moat 0.
+STRONG one-variable rigor: two first-run BOUNDARY conditions diagnosed+fixed (a signature-EXISTENCE metric didn't
+collapse under shuffle -> keyed constructions on their shuffle-invariant BAG + mined the DOMINANT ordering; the held-out
+F_INTR "backbone" 0.67 was the 3sg INFLECTION not the role structure -> split into a gated role-type backbone
+[generalizes 1.0] + an honestly-named inflection residual). Regression: EMERGE-59..63 all still GO/pass. NO sim/ edit
+(MinedInventoryFrameSlotCQ(mined_slots=None) behavior-identical to base). Named honest residual (NOT a wall): a held-out
+frame's DISTINCTIVE slots (F_MODAL can / F_NEGMOD does,not / F_INTR 3sg) aren't recoverable if that frame is held out +
+no other attests them in that position (same class as EMERGE-63's does<not); next signal = one attestation or Yang-Getz
+phrase-boundary. ⇒ ALL THREE producer residuals self-organize (S2 EMERGE-62/62b + S1b EMERGE-63 + S1a EMERGE-64) -- the
+host FRAMES dict is FULLY REMOVED as an input; the spiking-Broca producer's ENTIRE grammatical structure is discovered
+from corpus experience.
+
+**EXACT NEXT CONCRETE ACTION:** (1) DONE: committed EMERGE-64 both remotes. (2) NOW: EMERGE-65 = COMPOSE S2+S1b+S1a
+end-to-end -- ONE runner that, from the corpus alone (no host FRAMES/function-word list/order teacher), discovers the
+function-word inventory (EMERGE-62/62b) + the slot inventory (EMERGE-64) + the slot order (EMERGE-63), assembles the
+per-frame structure, and renders the EMERGE answers ON SPIKES via the EMERGE-59/61 producer, gate-first moat intact; the
+FULLY-self-organized spiking producer. 6-seed, reuse-by-import, NO sim/ edit, anti-cheats (permuted-corpus collapses the
+whole pipeline; held-out generalizes on shared structure). THEN wire EMERGE-65 into the EMERGE-60 console (the flagship
+speaks from a fully-self-organized producer). ORTHOGONAL: the A->W neural-spell wire-in (words spiking). Optional: the
+4th morphological-invariance cue; the held-out distinctive-slot residual. Deferred: EMERGE-60 fluid-RNG isolation;
+EMERGE-57 multi-seed; the audit re-run (rate-limited). Boundaries = undiscovered mechanisms; NO stopping; sim/ edits
+fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A MONITOR on every long run; GPU/CuPy real.

@@ -1,0 +1,2594 @@
+{
+  "probe": "emerge64_mine_slot_inventory",
+  "verdict": "GO -- the spiking-Broca producer's per-construction slot INVENTORY (S1a) SELF-ORGANIZES from the CORPUS. Each token's ROLE is LABELLED from ALREADY-DISCOVERED signals -- a FUNCTION-word slot iff the token is in EMERGE-62's DISCOVERED closed class (DET vs FUNC distributional: the determiner opens the NP and precedes a content word; can/does/not are FUNC), a CONTENT slot otherwise (SUBJECT = the NP head right after the determiner, VERB = the clause-final content word, inflection from its surface) -- and the ordered (role-type[, function-word][, inflection]) list is reconstructed per construction TYPE (grouped by its role-type signature, the usage-based construction; Dominey-Hinaut roles-from-closed-class-position; catalog G.12 Broca). NO host FRAMES dict enters the miner; it becomes the VALIDATION ground-truth only. The MINED inventory MATCHES the ground-truth FRAMES exactly (acc 1.000) and the EMERGE-59/63 spiking producer renders 'the owl can fly' / 'the penguin walks' / 'the penguin does not fly' EXACT on spikes from the MINED slot lists (exact-surface 1.000; EMERGE-61 wash-out for position-independence). Every input-destruction control COLLAPSES: PERMUTED-MINING / SHUFFLED-CORPUS acc 0.333 (scrambling each exemplar's word order before labelling destroys the construction statistics -> mis-typed roles / wrong signatures, margin >= 0.3); NO-CORPUS acc 0.000 (no exemplars -> empty inventory). HELD-OUT-FRAME GENERALIZES on the SHARED role-slots: a fully-held-out frame's det+subj+verb backbone is recovered from the OTHER two frames (1.000) -- det+subj+verb is shared across all three constructions. The gate-first no-confab MOAT is intact (0 producer invocations on abstains). 6 seeds. ==> S1a self-organized: WHICH slots a construction licenses is MINED from corpus experience, the host FRAMES dict removed. With S2 (EMERGE-62, function-word inventory) + S1b (EMERGE-63, slot ORDER), the WHOLE producer structure is now discovered from experience; EMERGE-65 composes them end-to-end. HONEST RESIDUAL (named, NOT a wall): a held-out frame's DISTINCTIVE slots -- F_MODAL's `can` / F_NEGMOD's `does`/`not` function words AND F_INTR's `3sg` verb inflection (heldout-F_INTR-inflection-recovered=False, expected False since only F_INTR attests 3sg) -- are NOT recoverable if that frame is held out AND no other frame attests them in that position (same category as EMERGE-63's does<not residual); the next signal is one attestation of the held-out frame's own function word / inflection (or Yang-Getz's phrase-boundary cue). Reuse-by-import; NO sim/ edit; moat untouched.",
+  "go": true,
+  "mechanism": "self-organized per-construction slot INVENTORY (S1a) mined from the corpus: each token's ROLE is LABELLED from already-discovered signals (a FUNCTION-word slot iff in EMERGE-62's DISCOVERED closed class, DET vs FUNC distributional; a CONTENT slot otherwise, SUBJECT = NP head after the determiner, VERB = clause-final content word, inflection from surface), and the ordered (role-type[, function-word][, inflection]) list reconstructed per construction TYPE (grouped by its role-type signature -- the usage-based construction, Tomasello/Goldberg; roles read from the closed-class position, Dominey-Hinaut; catalog G.12 Broca). NO host FRAMES dict as input (it is the validation ground-truth). The mined inventory feeds the EMERGE-59/63 spiking producer (MinedInventoryFrameSlotCQ over the EMERGE-61 wash-out), which renders the frames ON SPIKES from the fully-mined structure. PERMUTED-MINING / no-corpus input-destruction + held-out-frame generalization gate the result (project control-validity methodology). Reuse-by-import; NO sim/ edit.",
+  "task": "mine each construction's ordered typed-slot inventory from the corpus (discovered function words + position, no host FRAMES dict); the mined inventory matches the ground-truth frames + renders exact on spikes; permuted-mining + no-corpus collapse; held-out-frame generalizes on the shared det+subj+verb backbone; gate-first moat (0 productions on abstains); >=6 seeds",
+  "frames": {
+    "F_MODAL": [
+      [
+        "det",
+        "the"
+      ],
+      [
+        "subj",
+        null
+      ],
+      [
+        "func",
+        "can"
+      ],
+      [
+        "verb",
+        "bare"
+      ]
+    ],
+    "F_INTR": [
+      [
+        "det",
+        "the"
+      ],
+      [
+        "subj",
+        null
+      ],
+      [
+        "verb",
+        "3sg"
+      ]
+    ],
+    "F_NEGMOD": [
+      [
+        "det",
+        "the"
+      ],
+      [
+        "subj",
+        null
+      ],
+      [
+        "func",
+        "does"
+      ],
+      [
+        "func",
+        "not"
+      ],
+      [
+        "verb",
+        "bare"
+      ]
+    ]
+  },
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "elapsed_seconds": 9.4,
+  "aggregate": {
+    "main_acc": 1.0,
+    "main_exact": 1.0,
+    "perm_acc": 0.3333333333333333,
+    "nocorpus_acc": 0.0,
+    "heldout_mean": 1.0,
+    "heldout_infl_intr_recovered": false,
+    "moat_calls_on_abstain_total": 0
+  },
+  "sample_transcript": [
+    {
+      "tag": "INHERIT (affirm-modal)",
+      "question": "can an owl fly?",
+      "surface": "the owl can fly",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "CANCEL  (intransitive)",
+      "question": "can a penguin fly?",
+      "surface": "the penguin walks",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "DENY    (negated-modal)",
+      "question": "can a penguin fly? [deny]",
+      "surface": "the penguin does not fly",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "MOAT    (abstain)",
+      "question": "can a zzz fly?",
+      "surface": "I don't know.",
+      "invocation": "producer NOT invoked"
+    }
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_closed": 14,
+      "closed": [
+        "a",
+        "and",
+        "big",
+        "can",
+        "cat",
+        "does",
+        "fast",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "the",
+        "to"
+      ],
+      "n_signatures": 12,
+      "mined_match": {
+        "F_MODAL": {
+          "found": true,
+          "slots_match": true
+        },
+        "F_INTR": {
+          "found": true,
+          "slots_match": true
+        },
+        "F_NEGMOD": {
+          "found": true,
+          "slots_match": true
+        }
+      },
+      "mined_inventory": {
+        "det:the|subj|func:does|func:not|verb:bare": [
+          [
+            "det",
+            "the",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "does",
+            null
+          ],
+          [
+            "func",
+            "not",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "det:the|subj|verb:3sg": [
+          [
+            "det",
+            "the",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "verb",
+            null,
+            "3sg"
+          ]
+        ],
+        "det:the|subj|func:can|verb:bare": [
+          [
+            "det",
+            "the",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "can",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:it|func:is|det:a|subj|verb:bare": [
+          [
+            "func",
+            "it",
+            null
+          ],
+          [
+            "func",
+            "is",
+            null
+          ],
+          [
+            "det",
+            "a",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:a|det:fast|subj|func:and|func:a|verb:bare": [
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "det",
+            "fast",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "and",
+            null
+          ],
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "det:the|subj|func:is|verb:bare": [
+          [
+            "det",
+            "the",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "is",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "det:the|subj|func:is|func:in|func:the|verb:bare": [
+          [
+            "det",
+            "the",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "is",
+            null
+          ],
+          [
+            "func",
+            "in",
+            null
+          ],
+          [
+            "func",
+            "the",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:the|det:fast|subj|func:can|verb:bare": [
+          [
+            "func",
+            "the",
+            null
+          ],
+          [
+            "det",
+            "fast",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "can",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:a|det:big|subj|func:and|func:a|verb:bare": [
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "det",
+            "big",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "and",
+            null
+          ],
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:the|det:big|subj|func:can|verb:bare": [
+          [
+            "func",
+            "the",
+            null
+          ],
+          [
+            "det",
+            "big",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "can",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "det:the|subj|func:cat|func:can|verb:bare": [
+          [
+            "det",
+            "the",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "cat",
+            null
+          ],
+          [
+            "func",
+            "can",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "det:a|subj|func:cat|func:and|func:a|verb:bare": [
+          [
+            "det",
+            "a",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "cat",
+            null
+          ],
+          [
+            "func",
+            "and",
+            null
+          ],
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ]
+      },
+      "main_acc": 1.0,
+      "main_exact": 1.0,
+      "per_frame_exact": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0
+      },
+      "perm_acc": 0.3333333333333333,
+      "nocorpus_acc": 0.0,
+      "nocorpus_empty": true,
+      "heldout": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0
+      },
+      "heldout_mean": 1.0,
+      "heldout_infl": {
+        "F_MODAL": true,
+        "F_INTR": false,
+        "F_NEGMOD": true
+      },
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    },
+    {
+      "seed": 43,
+      "n_closed": 14,
+      "closed": [
+        "a",
+        "and",
+        "can",
+        "does",
+        "grey",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "tall",
+        "the",
+        "to",
+        "wet"
+      ],
+      "n_signatures": 12,
+      "mined_match": {
+        "F_MODAL": {
+          "found": true,
+          "slots_match": true
+        },
+        "F_INTR": {
+          "found": true,
+          "slots_match": true
+        },
+        "F_NEGMOD": {
+          "found": true,
+          "slots_match": true
+        }
+      },
+      "mined_inventory": {
+        "det:the|subj|verb:3sg": [
+          [
+            "det",
+            "the",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "verb",
+            null,
+            "3sg"
+          ]
+        ],
+        "det:the|subj|func:is|func:in|func:the|verb:bare": [
+          [
+            "det",
+            "the",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "is",
+            null
+          ],
+          [
+            "func",
+            "in",
+            null
+          ],
+          [
+            "func",
+            "the",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "det:the|subj|func:can|verb:bare": [
+          [
+            "det",
+            "the",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "can",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:a|det:wet|subj|func:and|func:a|verb:bare": [
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "det",
+            "wet",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "and",
+            null
+          ],
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "det:the|subj|func:is|verb:bare": [
+          [
+            "det",
+            "the",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "is",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:a|det:tall|subj|func:and|func:a|verb:bare": [
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "det",
+            "tall",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "and",
+            null
+          ],
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:the|det:grey|subj|func:can|verb:bare": [
+          [
+            "func",
+            "the",
+            null
+          ],
+          [
+            "det",
+            "grey",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "can",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "det:the|subj|func:does|func:not|verb:bare": [
+          [
+            "det",
+            "the",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "does",
+            null
+          ],
+          [
+            "func",
+            "not",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:a|det:grey|subj|func:and|func:a|verb:bare": [
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "det",
+            "grey",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "and",
+            null
+          ],
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:it|func:is|det:a|subj|verb:bare": [
+          [
+            "func",
+            "it",
+            null
+          ],
+          [
+            "func",
+            "is",
+            null
+          ],
+          [
+            "det",
+            "a",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:the|det:wet|subj|func:can|verb:bare": [
+          [
+            "func",
+            "the",
+            null
+          ],
+          [
+            "det",
+            "wet",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "can",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:the|det:tall|subj|func:can|verb:bare": [
+          [
+            "func",
+            "the",
+            null
+          ],
+          [
+            "det",
+            "tall",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "can",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ]
+      },
+      "main_acc": 1.0,
+      "main_exact": 1.0,
+      "per_frame_exact": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0
+      },
+      "perm_acc": 0.3333333333333333,
+      "nocorpus_acc": 0.0,
+      "nocorpus_empty": true,
+      "heldout": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0
+      },
+      "heldout_mean": 1.0,
+      "heldout_infl": {
+        "F_MODAL": true,
+        "F_INTR": false,
+        "F_NEGMOD": true
+      },
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    },
+    {
+      "seed": 44,
+      "n_closed": 15,
+      "closed": [
+        "a",
+        "and",
+        "can",
+        "does",
+        "fast",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "red",
+        "small",
+        "tall",
+        "the",
+        "to"
+      ],
+      "n_signatures": 14,
+      "mined_match": {
+        "F_MODAL": {
+          "found": true,
+          "slots_match": true
+        },
+        "F_INTR": {
+          "found": true,
+          "slots_match": true
+        },
+        "F_NEGMOD": {
+          "found": true,
+          "slots_match": true
+        }
+      },
+      "mined_inventory": {
+        "func:it|func:is|det:a|subj|verb:bare": [
+          [
+            "func",
+            "it",
+            null
+          ],
+          [
+            "func",
+            "is",
+            null
+          ],
+          [
+            "det",
+            "a",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "det:the|subj|func:can|verb:bare": [
+          [
+            "det",
+            "the",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "can",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "det:the|subj|verb:3sg": [
+          [
+            "det",
+            "the",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "verb",
+            null,
+            "3sg"
+          ]
+        ],
+        "det:the|subj|func:does|func:not|verb:bare": [
+          [
+            "det",
+            "the",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "does",
+            null
+          ],
+          [
+            "func",
+            "not",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:a|det:small|subj|func:and|func:a|verb:bare": [
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "det",
+            "small",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "and",
+            null
+          ],
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "det:the|subj|func:is|func:in|func:the|verb:bare": [
+          [
+            "det",
+            "the",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "is",
+            null
+          ],
+          [
+            "func",
+            "in",
+            null
+          ],
+          [
+            "func",
+            "the",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:the|det:fast|subj|func:can|verb:bare": [
+          [
+            "func",
+            "the",
+            null
+          ],
+          [
+            "det",
+            "fast",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "can",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "det:the|subj|func:is|verb:bare": [
+          [
+            "det",
+            "the",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "is",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:a|det:red|subj|func:and|func:a|verb:bare": [
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "det",
+            "red",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "and",
+            null
+          ],
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:a|det:fast|subj|func:and|func:a|verb:bare": [
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "det",
+            "fast",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "and",
+            null
+          ],
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:the|det:small|subj|func:can|verb:bare": [
+          [
+            "func",
+            "the",
+            null
+          ],
+          [
+            "det",
+            "small",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "can",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:the|det:tall|subj|func:can|verb:bare": [
+          [
+            "func",
+            "the",
+            null
+          ],
+          [
+            "det",
+            "tall",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "can",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:a|det:tall|subj|func:and|func:a|verb:bare": [
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "det",
+            "tall",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "and",
+            null
+          ],
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:the|det:red|subj|func:can|verb:bare": [
+          [
+            "func",
+            "the",
+            null
+          ],
+          [
+            "det",
+            "red",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "can",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ]
+      },
+      "main_acc": 1.0,
+      "main_exact": 1.0,
+      "per_frame_exact": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0
+      },
+      "perm_acc": 0.3333333333333333,
+      "nocorpus_acc": 0.0,
+      "nocorpus_empty": true,
+      "heldout": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0
+      },
+      "heldout_mean": 1.0,
+      "heldout_infl": {
+        "F_MODAL": true,
+        "F_INTR": false,
+        "F_NEGMOD": true
+      },
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    },
+    {
+      "seed": 100,
+      "n_closed": 14,
+      "closed": [
+        "a",
+        "and",
+        "big",
+        "can",
+        "does",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "tall",
+        "the",
+        "to",
+        "wet"
+      ],
+      "n_signatures": 12,
+      "mined_match": {
+        "F_MODAL": {
+          "found": true,
+          "slots_match": true
+        },
+        "F_INTR": {
+          "found": true,
+          "slots_match": true
+        },
+        "F_NEGMOD": {
+          "found": true,
+          "slots_match": true
+        }
+      },
+      "mined_inventory": {
+        "det:the|subj|func:does|func:not|verb:bare": [
+          [
+            "det",
+            "the",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "does",
+            null
+          ],
+          [
+            "func",
+            "not",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:it|func:is|det:a|subj|verb:bare": [
+          [
+            "func",
+            "it",
+            null
+          ],
+          [
+            "func",
+            "is",
+            null
+          ],
+          [
+            "det",
+            "a",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "det:the|subj|func:is|func:in|func:the|verb:bare": [
+          [
+            "det",
+            "the",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "is",
+            null
+          ],
+          [
+            "func",
+            "in",
+            null
+          ],
+          [
+            "func",
+            "the",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:a|det:big|subj|func:and|func:a|verb:bare": [
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "det",
+            "big",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "and",
+            null
+          ],
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "det:the|subj|verb:3sg": [
+          [
+            "det",
+            "the",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "verb",
+            null,
+            "3sg"
+          ]
+        ],
+        "det:the|subj|func:can|verb:bare": [
+          [
+            "det",
+            "the",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "can",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "det:the|subj|func:is|verb:bare": [
+          [
+            "det",
+            "the",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "is",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:a|det:tall|subj|func:and|func:a|verb:bare": [
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "det",
+            "tall",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "and",
+            null
+          ],
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:the|det:big|subj|func:can|verb:bare": [
+          [
+            "func",
+            "the",
+            null
+          ],
+          [
+            "det",
+            "big",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "can",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:the|det:tall|subj|func:can|verb:bare": [
+          [
+            "func",
+            "the",
+            null
+          ],
+          [
+            "det",
+            "tall",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "can",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:a|det:wet|subj|func:and|func:a|verb:bare": [
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "det",
+            "wet",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "and",
+            null
+          ],
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:the|det:wet|subj|func:can|verb:bare": [
+          [
+            "func",
+            "the",
+            null
+          ],
+          [
+            "det",
+            "wet",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "can",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ]
+      },
+      "main_acc": 1.0,
+      "main_exact": 1.0,
+      "per_frame_exact": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0
+      },
+      "perm_acc": 0.3333333333333333,
+      "nocorpus_acc": 0.0,
+      "nocorpus_empty": true,
+      "heldout": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0
+      },
+      "heldout_mean": 1.0,
+      "heldout_infl": {
+        "F_MODAL": true,
+        "F_INTR": false,
+        "F_NEGMOD": true
+      },
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    },
+    {
+      "seed": 101,
+      "n_closed": 15,
+      "closed": [
+        "a",
+        "and",
+        "can",
+        "cold",
+        "does",
+        "grey",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "red",
+        "the",
+        "to",
+        "warm"
+      ],
+      "n_signatures": 14,
+      "mined_match": {
+        "F_MODAL": {
+          "found": true,
+          "slots_match": true
+        },
+        "F_INTR": {
+          "found": true,
+          "slots_match": true
+        },
+        "F_NEGMOD": {
+          "found": true,
+          "slots_match": true
+        }
+      },
+      "mined_inventory": {
+        "det:the|subj|func:can|verb:bare": [
+          [
+            "det",
+            "the",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "can",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "det:the|subj|verb:3sg": [
+          [
+            "det",
+            "the",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "verb",
+            null,
+            "3sg"
+          ]
+        ],
+        "det:the|subj|func:is|func:in|func:the|verb:bare": [
+          [
+            "det",
+            "the",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "is",
+            null
+          ],
+          [
+            "func",
+            "in",
+            null
+          ],
+          [
+            "func",
+            "the",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "det:the|subj|func:does|func:not|verb:bare": [
+          [
+            "det",
+            "the",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "does",
+            null
+          ],
+          [
+            "func",
+            "not",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:the|det:red|subj|func:can|verb:bare": [
+          [
+            "func",
+            "the",
+            null
+          ],
+          [
+            "det",
+            "red",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "can",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "det:the|subj|func:is|verb:bare": [
+          [
+            "det",
+            "the",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "is",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:a|det:cold|subj|func:and|func:a|verb:bare": [
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "det",
+            "cold",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "and",
+            null
+          ],
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:it|func:is|det:a|subj|verb:bare": [
+          [
+            "func",
+            "it",
+            null
+          ],
+          [
+            "func",
+            "is",
+            null
+          ],
+          [
+            "det",
+            "a",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:the|det:grey|subj|func:can|verb:bare": [
+          [
+            "func",
+            "the",
+            null
+          ],
+          [
+            "det",
+            "grey",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "can",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:the|det:warm|subj|func:can|verb:bare": [
+          [
+            "func",
+            "the",
+            null
+          ],
+          [
+            "det",
+            "warm",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "can",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:a|det:warm|subj|func:and|func:a|verb:bare": [
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "det",
+            "warm",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "and",
+            null
+          ],
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:a|det:red|subj|func:and|func:a|verb:bare": [
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "det",
+            "red",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "and",
+            null
+          ],
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:a|det:grey|subj|func:and|func:a|verb:bare": [
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "det",
+            "grey",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "and",
+            null
+          ],
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:the|det:cold|subj|func:can|verb:bare": [
+          [
+            "func",
+            "the",
+            null
+          ],
+          [
+            "det",
+            "cold",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "can",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ]
+      },
+      "main_acc": 1.0,
+      "main_exact": 1.0,
+      "per_frame_exact": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0
+      },
+      "perm_acc": 0.3333333333333333,
+      "nocorpus_acc": 0.0,
+      "nocorpus_empty": true,
+      "heldout": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0
+      },
+      "heldout_mean": 1.0,
+      "heldout_infl": {
+        "F_MODAL": true,
+        "F_INTR": false,
+        "F_NEGMOD": true
+      },
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    },
+    {
+      "seed": 102,
+      "n_closed": 15,
+      "closed": [
+        "a",
+        "and",
+        "big",
+        "can",
+        "does",
+        "fast",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "slow",
+        "tall",
+        "the",
+        "to"
+      ],
+      "n_signatures": 14,
+      "mined_match": {
+        "F_MODAL": {
+          "found": true,
+          "slots_match": true
+        },
+        "F_INTR": {
+          "found": true,
+          "slots_match": true
+        },
+        "F_NEGMOD": {
+          "found": true,
+          "slots_match": true
+        }
+      },
+      "mined_inventory": {
+        "det:the|subj|verb:3sg": [
+          [
+            "det",
+            "the",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "verb",
+            null,
+            "3sg"
+          ]
+        ],
+        "func:it|func:is|det:a|subj|verb:bare": [
+          [
+            "func",
+            "it",
+            null
+          ],
+          [
+            "func",
+            "is",
+            null
+          ],
+          [
+            "det",
+            "a",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:the|det:tall|subj|func:can|verb:bare": [
+          [
+            "func",
+            "the",
+            null
+          ],
+          [
+            "det",
+            "tall",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "can",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "det:the|subj|func:is|func:in|func:the|verb:bare": [
+          [
+            "det",
+            "the",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "is",
+            null
+          ],
+          [
+            "func",
+            "in",
+            null
+          ],
+          [
+            "func",
+            "the",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "det:the|subj|func:can|verb:bare": [
+          [
+            "det",
+            "the",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "can",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "det:the|subj|func:is|verb:bare": [
+          [
+            "det",
+            "the",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "is",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "det:the|subj|func:does|func:not|verb:bare": [
+          [
+            "det",
+            "the",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "does",
+            null
+          ],
+          [
+            "func",
+            "not",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:a|det:fast|subj|func:and|func:a|verb:bare": [
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "det",
+            "fast",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "and",
+            null
+          ],
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:a|det:big|subj|func:and|func:a|verb:bare": [
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "det",
+            "big",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "and",
+            null
+          ],
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:the|det:slow|subj|func:can|verb:bare": [
+          [
+            "func",
+            "the",
+            null
+          ],
+          [
+            "det",
+            "slow",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "can",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:a|det:tall|subj|func:and|func:a|verb:bare": [
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "det",
+            "tall",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "and",
+            null
+          ],
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:the|det:fast|subj|func:can|verb:bare": [
+          [
+            "func",
+            "the",
+            null
+          ],
+          [
+            "det",
+            "fast",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "can",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:a|det:slow|subj|func:and|func:a|verb:bare": [
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "det",
+            "slow",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "and",
+            null
+          ],
+          [
+            "func",
+            "a",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ],
+        "func:the|det:big|subj|func:can|verb:bare": [
+          [
+            "func",
+            "the",
+            null
+          ],
+          [
+            "det",
+            "big",
+            null
+          ],
+          [
+            "subj",
+            null,
+            null
+          ],
+          [
+            "func",
+            "can",
+            null
+          ],
+          [
+            "verb",
+            null,
+            "bare"
+          ]
+        ]
+      },
+      "main_acc": 1.0,
+      "main_exact": 1.0,
+      "per_frame_exact": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0
+      },
+      "perm_acc": 0.3333333333333333,
+      "nocorpus_acc": 0.0,
+      "nocorpus_empty": true,
+      "heldout": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0
+      },
+      "heldout_mean": 1.0,
+      "heldout_infl": {
+        "F_MODAL": true,
+        "F_INTR": false,
+        "F_NEGMOD": true
+      },
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    }
+  ],
+  "HONEST_NOTE": "Mines the per-construction slot INVENTORY (S1a -- WHICH ordered typed slots a construction licenses) from the corpus for the BOUNDED EMERGE frame domain. The MAIN arm (all frames' exemplars) mines every inventory EXACTLY. HELD-OUT-FRAME generalizes the SHARED det+subj+verb backbone to a fully-held-out frame; the ONE genuine residual is a held-out frame's DISTINCTIVE function-word slots (F_MODAL's can, F_NEGMOD's does/not) -- not recoverable if that frame is held out AND no other frame attests those function words in position (same category as EMERGE-63's does<not residual) -- precisely named, NOT a wall (next signal: one attestation of the held-out frame's own function word or Yang-Getz's phrase-boundary cue). The inventory is rendered on REAL spikes (EMERGE-61 wash-out); the corpus mining is offline syllabus prep (BRAIN-BASED-ONLY compliant). The gate-first moat is untouched (0 productions on abstains). With S2 (EMERGE-62) + S1b (EMERGE-63), the whole producer structure is now discovered from experience; EMERGE-65 composes them end-to-end."
+}
