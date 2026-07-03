@@ -1,0 +1,86 @@
+{
+  "probe": "emerge46_spiking_stacked_pooler",
+  "verdict": "BOUNDARY (build-informative, ISOLATED residual) -- super-acc 0.03 < 0.80; L2 didn't discover superordinates (within-cross overlap +0.08 < 0.15); permuted didn't collapse (0.03 vs 0.08); dAP-lesion didn't collapse (0.03 vs 0.00). THE PRECISE RESIDUAL (surpass-round isolation, fed IDENTICAL good numpy-L1 codons at NCOL2=120): the numpy reference `_competitive_pool` produces held-out within-super L2 overlap 0.12 (cross 0.00) which ROUTES the inheritance, but the on-substrate L2 pooler produces held-out within-super overlap only ~0.01 (cross ~0.00) -- a ~12x deficit in the exact quantity that routes the held-out-sub-category inheritance. Swept L1 quality (N_PER 6->9 lifts on-substrate L1 within-cat overlap 0.25->0.45 = numpy-parity, held-out routing STILL ~0.00), L2 column count (NCOL2 40 raises held-out overlap but raises cross-super equally -> permuted/l2lesion also route -> anti-cheat breaks), and the selectivity kernel (OFF raises within-super held-out 0.01->0.07 but cross 0.00->0.06 too -> no discrimination). => BOTH pooler layers' LEARNING is genuinely on-substrate (permanences in cp_connections, the two committed sim/ kernels) and L2 discovers a POSITIVE superordinate grouping (+0.08), but the on-substrate competitive pooler does NOT reproduce numpy's held-out-sub-category GENERALIZATION at this task scale -- an honest characterized boundary of the point-neuron competitive pooler's generalization, NOT a cheap knob. The fully-spiking flat pooler (EMERGE-40, single layer) GO'd; the STACKED held-out-sub-category generalization on-substrate is the genuine next-rung research (a cross-sub-category L2-input decorrelation / a stronger competitive-learning generalization rule).",
+  "mechanism": "FULLY-SPIKING stacked pooler: L1 (features->sub-category codons) + L2 (L1-codons->superordinate codons, co-occurrence-trained) permanences LIVE in cp_connections.data, learned by the committed sim/ kernels (fused_htm_permanence_update ld=0 via apply_kernel_update + fused_htm_winner_inactive_depression) + homeostatic boosting; inheritance chains L1->L2 on a spiking bridge via the committed three-term kernel + coincidence-plateau read",
+  "task": "6 sub-categories -> 2 superordinates; both pooler layers learned on-substrate; L2 discovers superordinates from co-occurrence; held-out sub-category inherits its superordinate property; vs permuted-co-occurrence + L1->L2-lesion + dAP-lesion; multi-seed",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "epochs": 40,
+    "n_col1": 200,
+    "n_col2": 120,
+    "k1": 6,
+    "k2": 6,
+    "pool_epochs": 400,
+    "l2_epochs": 400,
+    "n_super": 2,
+    "pool_lp": 0.05,
+    "pool_ld_wi": 0.02,
+    "n_feat": 21
+  },
+  "elapsed_seconds": 546.6,
+  "per_seed": [
+    {
+      "seed": 42,
+      "stacked": {
+        "super_acc": 0.0,
+        "l2_group": 0.08169934640522876
+      },
+      "permuted": {
+        "super_acc": 0.08333333333333333,
+        "l2_group": 0.08027717259743404
+      },
+      "l2lesion": {
+        "super_acc": 0.5,
+        "l2_group": 0.04998789639312515
+      },
+      "lesion": {
+        "super_acc": 0.0,
+        "l2_group": 0.08169934640522876
+      }
+    },
+    {
+      "seed": 43,
+      "stacked": {
+        "super_acc": 0.0,
+        "l2_group": 0.08596586782861293
+      },
+      "permuted": {
+        "super_acc": 0.0,
+        "l2_group": 0.09032316630355847
+      },
+      "l2lesion": {
+        "super_acc": 0.5833333333333334,
+        "l2_group": 0.023844105543451954
+      },
+      "lesion": {
+        "super_acc": 0.0,
+        "l2_group": 0.08596586782861293
+      }
+    },
+    {
+      "seed": 44,
+      "stacked": {
+        "super_acc": 0.08333333333333333,
+        "l2_group": 0.08136649721617042
+      },
+      "permuted": {
+        "super_acc": 0.16666666666666666,
+        "l2_group": 0.06965625756475428
+      },
+      "l2lesion": {
+        "super_acc": 0.5,
+        "l2_group": 0.08242556281771968
+      },
+      "lesion": {
+        "super_acc": 0.0,
+        "l2_group": 0.08136649721617042
+      }
+    }
+  ],
+  "sim_edit": "NONE (NO NEW sim/ edit) -- the only sim/ dependency is the ALREADY-COMMITTED fused_htm_winner_inactive_depression (from EMERGE-40); every existing path byte-unchanged",
+  "HONEST_NOTE": "EMERGE-44 discovered the same 2-level taxonomy but used a NUMPY _competitive_pool (rate-reference) for BOTH pooler layers' learning. EMERGE-46 replaces BOTH layers' learning with the EMERGE-40 on-substrate mechanism (permanences in cp_connections.data, the two committed sim/ kernels, boosting), so the stacked pooler is fully-spiking end-to-end (both layers' LEARNING). Winner SELECTION is a host top-k over the on-substrate drive (EMERGE-41 de-risked the spiking FS-WTA selection separately -- flagged honestly). l2lesion (L1->L2 fixed-random lesion) is a REPORTED secondary diagnostic, NOT a gate term, per the anti-cheat control-validity methodology (it does not reliably collapse in the small representation space). The gate is super-acc>=0.80 + L2-group>=0.15 + permuted+0.25 + dAP-lesion+0.30. Two levels; a 3-level fully-spiking stacked hierarchy is the next rung. 3 seeds (42/43/44); 6-seed is a cheap follow-on."
+}

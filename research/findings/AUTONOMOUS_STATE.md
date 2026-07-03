@@ -7527,3 +7527,32 @@ rank-order spiking selection, for each pooler layer; confirm the 2/3-level inher
 now-honest controls (genuine hold-out, sibling-confusion, L3-isolation). Boundaries = undiscovered mechanisms; NO
 stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs
 (numpy for these CPU de-risks).
+
+## CYCLE 853 (2026-07-02 — EMERGE-46: fully-spiking STACKED pooler = honest BOUNDARY; surpass-round done)
+
+EMERGE-46 (BOUNDARY 3/3, `2026-07-02-emerge46-spiking-stacked-pooler-BOUNDARY.md`, NO new sim/ edit — reuses the committed
+EMERGE-40 winner-inactive kernel): replaced EMERGE-44's numpy _competitive_pool with the on-substrate EMERGE-40 mechanism
+(permanences in cp_connections, the two committed sim/ kernels + boosting) for BOTH pooler layers. DELIVERED: both layers'
+LEARNING is genuinely on-substrate (CI-verified: cp_connections.nnz>0, L2 codons non-empty, committed kernel) + L2
+discovers a POSITIVE-but-weak superordinate grouping (+0.08). BOUNDARY: the strict held-out-ENTIRE-sub-category inheritance
+GO does NOT reproduce on-substrate (super-acc 0.03 vs chance 0.50; L2-grouping +0.08 < 0.15 gate). ISOLATED residual
+(surpass-round): fed IDENTICAL numpy-L1 codons, on-substrate L2 held-out within-super overlap 0.010 vs numpy 0.119 -- a
+~12x deficit in the exact routing quantity; the on-substrate pooler tunes to SEEN members' discriminative features without
+extending shared columns to a held-out sub-category. Swept L1-quality/NCOL2/selectivity -- none a cheap fix or
+anti-cheat-preserving. Verdict: surpassable via NEXT-RUNG RESEARCH (a cross-sub-category L2-input decorrelation / a
+competitive rule whose winners tune to SHARED superordinate features at L2 -- the PPMI/local-normalization generalization
+family that unlocked the conversation cortex), NOT a tuning knob. HONEST SCOPE: this is a PURITY rung (fully-on-substrate
+STACKED learning); the CAPABILITY (discover multi-level taxonomy + reason over it) STANDS on EMERGE-44/45 with the pooler
+learning as the standing rate-reference (EMERGE-33/34 framing); the single-layer fully-spiking pooler GO'd (EMERGE-40).
+CI 3/3 (pins the on-substrate mechanism facts, NOT the inheritance GO). The honest negative IS the deliverable.
+
+**EXACT NEXT CONCRETE ACTION:** commit EMERGE-46 (runner + test + BOUNDARY finding + raw json + this state) to BOTH
+remotes on main. THEN, per the SURPASS gate (a boundary LAUNCHES the next-mechanism search), dispatch a deep-research +
+cheap-first de-risk on the L2 held-out-generalization residual: reframe via biology (how does a higher cortical pooling
+layer generalize a superordinate over sparse lower-layer codes it never saw grouped? ATL convergence / cross-sub-category
+shared-feature tuning / PPMI local-normalization), rank cheap-first mechanisms (an L2-input representation preserving
+cross-sub-category overlap, OR a shared-feature-tuning competitive rule), de-risk the cheapest, 3-seed. ALTERNATIVE
+higher-GOAL-value branch (owner may prefer): couple the (validated numpy-pooler) discovered-taxonomy reasoning into the
+interactive experiential console (EMERGE-31) -- toward the conversational north-star. Boundaries = undiscovered
+mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy
+for real runs (numpy for these CPU de-risks).
