@@ -1,0 +1,89 @@
+{
+  "rows": [
+    {
+      "seed": 42,
+      "n_facts": 24,
+      "n_registered_constructions": 7,
+      "parse_acc": 1.0,
+      "recall": 1.0,
+      "render_exact": 1.0,
+      "moat_false_accept": 0.0,
+      "moat_producer_invoked_on_abstain": 0,
+      "lesion_render_exact": 0.0,
+      "nolearn_render_exact": 0.0
+    },
+    {
+      "seed": 43,
+      "n_facts": 24,
+      "n_registered_constructions": 7,
+      "parse_acc": 1.0,
+      "recall": 1.0,
+      "render_exact": 1.0,
+      "moat_false_accept": 0.0,
+      "moat_producer_invoked_on_abstain": 0,
+      "lesion_render_exact": 0.0,
+      "nolearn_render_exact": 0.041666666666666664
+    },
+    {
+      "seed": 44,
+      "n_facts": 24,
+      "n_registered_constructions": 7,
+      "parse_acc": 1.0,
+      "recall": 1.0,
+      "render_exact": 1.0,
+      "moat_false_accept": 0.0,
+      "moat_producer_invoked_on_abstain": 0,
+      "lesion_render_exact": 0.0,
+      "nolearn_render_exact": 0.0
+    },
+    {
+      "seed": 100,
+      "n_facts": 24,
+      "n_registered_constructions": 7,
+      "parse_acc": 1.0,
+      "recall": 1.0,
+      "render_exact": 1.0,
+      "moat_false_accept": 0.0,
+      "moat_producer_invoked_on_abstain": 0,
+      "lesion_render_exact": 0.0,
+      "nolearn_render_exact": 0.0
+    },
+    {
+      "seed": 101,
+      "n_facts": 24,
+      "n_registered_constructions": 7,
+      "parse_acc": 1.0,
+      "recall": 1.0,
+      "render_exact": 1.0,
+      "moat_false_accept": 0.0,
+      "moat_producer_invoked_on_abstain": 0,
+      "lesion_render_exact": 0.0,
+      "nolearn_render_exact": 0.041666666666666664
+    },
+    {
+      "seed": 102,
+      "n_facts": 24,
+      "n_registered_constructions": 7,
+      "parse_acc": 1.0,
+      "recall": 1.0,
+      "render_exact": 1.0,
+      "moat_false_accept": 0.0,
+      "moat_producer_invoked_on_abstain": 0,
+      "lesion_render_exact": 0.0,
+      "nolearn_render_exact": 0.0
+    }
+  ],
+  "agg": {
+    "n_seeds": 6,
+    "parse_acc": 1.0,
+    "recall": 1.0,
+    "render_exact": 1.0,
+    "moat_false_accept": 0.0,
+    "moat_producer_invoked_on_abstain": 0,
+    "lesion_render_exact": 0.0,
+    "nolearn_render_exact": 0.013888888888888888,
+    "go": true,
+    "elapsed_seconds": 125.5,
+    "spiking_reservoir": true
+  }
+}

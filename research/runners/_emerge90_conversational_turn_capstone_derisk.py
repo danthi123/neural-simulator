@@ -81,20 +81,31 @@ def _speak_answer(producer, subj, verb_bare, patient):
     return out["surface"], bool(out["produced"])
 
 
-def _derisk_one(seed):
+def _derisk_one(seed, spiking_reservoir=False):
     # ---- PRODUCTION: the self-organized spiking producer over the corpus-mined registry (C_TRANS registered) --------
     tokens = build_stream_svo(seed)
     reg = SVOConstructionRegistry(seed).build(tokens)
     assert "C_TRANS" in reg.registered, "C_TRANS must mine from the SVO corpus"
     producer = RegistryBrocaProducer(reg.render_cq())          # host-token spell (spiking ORDER on a real bridge)
 
-    # ---- COMPREHENSION: the reservoir form->role map (EMERGE-88; content abstracted, so vocabulary is free) ----------
+    # ---- COMPREHENSION: the reservoir form->role map (content abstracted, so vocabulary is free) --------------------
+    # Default: the EMERGE-88 RATE reservoir. `spiking_reservoir=True` (EMERGE-91): the EMERGE-82/89 on-bridge SPIKING
+    # reservoir (`OnBridgeLSM`, identical `final_state(U)` signature) -> comprehension is spiking too, on a real bridge
+    # (a heavier fit -> the EMERGE-82 reduced train). The rest of the turn is byte-identical either way.
     stream = m62.build_stream(seed, n_sentences=6000)
     words, freq, cover, _c = m62.compute_stats(stream)
     discovered, *_ = m62.discover_closed_class(words, freq, cover)
     subj_m62, verb_m62, obj_m62 = _content_pools(discovered)
-    comp = ReservoirComprehender(seed, discovered)
-    comp.fit(_gen(_TRAIN_KINDS, _N_TRAIN_PER_CONSTRUCTION, np.random.default_rng(seed * 101 + 5),
+    if spiking_reservoir:
+        from research.runners._emerge78_reservoir_form_to_role_derisk import Encoder
+        from research.runners._emerge82_onbridge_lsm_derisk import OnBridgeLSM, _N_POOL, _N_TRAIN_PER
+        enc = Encoder(discovered)
+        comp = ReservoirComprehender(seed, discovered, res=OnBridgeLSM(enc.dim, seed=seed, n=_N_POOL), enc=enc)
+        _n_train = _N_TRAIN_PER
+    else:
+        comp = ReservoirComprehender(seed, discovered)
+        _n_train = _N_TRAIN_PER_CONSTRUCTION
+    comp.fit(_gen(_TRAIN_KINDS, _n_train, np.random.default_rng(seed * 101 + 5),
                   subj_m62, verb_m62, obj_m62))
 
     # ---- shared transitive vocab (the producer speaks any fillers; the reservoir abstracts content) -----------------
@@ -208,12 +219,14 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=[42])
     ap.add_argument("--json", type=str, default=None)
+    ap.add_argument("--spiking-reservoir", action="store_true",
+                    help="EMERGE-91: use the on-bridge SPIKING reservoir (OnBridgeLSM) for comprehension too")
     args = ap.parse_args()
 
     t0 = time.time()
     rows = []
     for s in args.seeds:
-        d = _derisk_one(s)
+        d = _derisk_one(s, spiking_reservoir=args.spiking_reservoir)
         rows.append(d)
         print(f"[seed {s}] parse {d['parse_acc']:.3f} | recall {d['recall']:.3f} | render {d['render_exact']:.3f} | "
               f"moat-FA {d['moat_false_accept']:.3f} invoked-on-abstain {d['moat_producer_invoked_on_abstain']} | "
@@ -222,9 +235,12 @@ def main():
 
     agg = _go(rows)
     agg["elapsed_seconds"] = round(time.time() - t0, 1)
+    agg["spiking_reservoir"] = bool(args.spiking_reservoir)
     verdict = "GO" if agg["go"] else "NO-GO"
-    print(f"\n[emerge90] VERDICT: {verdict} -- the CONVERSATIONAL TURN (3 co-executing components, 1 process; NOT one "
-          f"shared bridge): HEAR->comprehend (RATE reservoir)->store (RF spiking)->ASK->SPEAK the answer with SPIKING "
+    tag = "emerge91 SPIKING-reservoir" if args.spiking_reservoir else "emerge90"
+    res_label = "on-bridge SPIKING reservoir" if args.spiking_reservoir else "RATE reservoir"
+    print(f"\n[{tag}] VERDICT: {verdict} -- the CONVERSATIONAL TURN (3 co-executing components, 1 process; NOT one "
+          f"shared bridge): HEAR->comprehend ({res_label})->store (RF spiking)->ASK->SPEAK the answer with SPIKING "
           f"WORD-ORDER (Izhikevich producer; words=host-token spell). parse {agg['parse_acc']:.3f}; recall "
           f"{agg['recall']:.3f}; render_exact {agg['render_exact']:.3f}; no-confab moat {agg['moat_false_accept']:.3f} "
           f"false-accept + {agg['moat_producer_invoked_on_abstain']} producer-invocations-on-abstain (gate-first); "

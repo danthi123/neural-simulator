@@ -45,3 +45,16 @@ def test_seed42_conversational_turn_capstone():
     assert d["moat_producer_invoked_on_abstain"] == 0    # gate-first: producer NEVER invoked on abstain
     assert d["lesion_render_exact"] <= 0.30    # comprehension is load-bearing
     assert d["nolearn_render_exact"] <= 0.60   # the learned spiking order is load-bearing
+
+
+@pytest.mark.slow
+def test_seed42_spiking_reservoir_capstone():
+    # EMERGE-91: comprehension is the on-bridge SPIKING reservoir (OnBridgeLSM) -> two spiking bridges + spiking producer
+    d = m90._derisk_one(42, spiking_reservoir=True)
+    assert d["parse_acc"] >= 0.90
+    assert d["recall"] >= 0.90
+    assert d["render_exact"] >= 0.90
+    assert d["moat_false_accept"] <= 0.05
+    assert d["moat_producer_invoked_on_abstain"] == 0
+    assert d["lesion_render_exact"] <= 0.30
+    assert d["nolearn_render_exact"] <= 0.60

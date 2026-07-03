@@ -8700,10 +8700,22 @@ reservoir + RF spiking bridge + Izhikevich spiking bridge -- host-dict hand-offs
 EMERGE-70/71 sense) + "three spiking" (comprehension is the RATE reservoir; the words are host-token, only the ORDER is
 spiking). NO `sim/` edit. `2026-07-03-emerge90-conversational-turn-capstone-GO.md`, CI 3.
 
-**EXACT NEXT CONCRETE ACTION:** the capstone exists but is honestly THREE disjoint substrates with host-dict hand-offs;
-the follow-on LADDER (each a mechanical swap of an already-GO piece, per the verdict) toward the genuine "one brain":
-(1) **SPIKING-RESERVOIR CAPSTONE** — swap EMERGE-89's on-bridge `OnBridgeLSM` into EMERGE-90 so comprehension is spiking
-too (cheapest; identical signature). (2) **A→W NEURAL WORD-SPELL** — pass the EMERGE-67/68/69 `UnifiedNeuralSpell` as the
+**CYCLE 907 (EMERGE-91 GO — the capstone's comprehension is now SPIKING; MAJOR-2 removed).** EMERGE-91 (committed): an
+additive default-off `--spiking-reservoir` flag on the EMERGE-90 runner injects EMERGE-82/89's on-bridge `OnBridgeLSM`
+(identical `final_state(U)` signature) into the capstone's comprehender -> comprehension runs on the spiking reservoir,
+so ALL THREE components are spiking bridges. 6-seed UNANIMOUS GO: parse/recall/render 1.000, moat 0.000/0, lesion 0.000,
+no-learn 0.014. Default path (rate reservoir) byte-preserved. Removes the adversarial verdict's MAJOR-2 (comprehension
+was rate). MAJOR-1 STILL STANDS: three SEPARATE spiking bridges, host-dict hand-offs, NOT one brain. NO `sim/` edit.
+`2026-07-03-emerge91-spiking-reservoir-capstone-GO.md`, CI +1 (test_seed42_spiking_reservoir_capstone).
+
+**EXACT NEXT CONCRETE ACTION:** the deepest remaining gap = MAJOR-1 (three disjoint bridges, host-dict hand-offs). A
+read-only one-brain-consolidation SCOPING subagent (ad075027343e7abd5) is IN FLIGHT: how to fold the reservoir + RF
+composer + Izhikevich producer onto ONE `SimulationBridge` as disjoint slices (the EMERGE-87 / step-2b co-residence
+pattern; one_brain_composer already runs the composer masked-co-resident; EMERGE-82 builds the reservoir as a BrainRegion;
+the producer's slot pools need to become a slice) — RUNG A (co-location, hand-offs still host-dict, prove each GOes
+co-resident + functionally isolated) vs RUNG B (synaptic hand-offs = genuine cross-region interaction). ON ITS RETURN:
+build the recommended cheapest rung (likely RUNG A co-location first). Interleave the cheap (2) **A→W NEURAL WORD-SPELL**
+— pass the EMERGE-67/68/69 `UnifiedNeuralSpell` as the
 producer `spell=` so every WORD is spoken on spikes (cupy; forces the whole turn onto one cupy process, EMERGE-70/71). (3)
 **FOLD THE THREE BRIDGES ONTO ONE + make the hand-offs SYNAPTIC** (the EMERGE-87 disjoint-slice co-residence pattern) —
 the honest "one brain": the reservoir/composer/producer as disjoint slices on ONE bridge, the comprehend->store->speak
