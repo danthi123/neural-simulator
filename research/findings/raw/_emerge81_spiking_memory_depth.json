@@ -1,0 +1,167 @@
+{
+  "probe": "emerge81_spiking_memory_depth",
+  "verdict": "CHARACTERIZATION -- the SPIKING Izhikevich liquid-state machine (EMERGE-80) holds a real-discovered 1-bit distal cue to a fading-memory DEPTH of >= 16 fillers (held across the whole reduced sweep) (profile: d0=1.00, d2=1.00, d4=1.00, d6=1.00, d8=1.00, d12=1.00, d16=1.00); the fixed +-2 window is at chance throughout, so WITHIN its depth the spiking pool beats every fixed window (uncontingent necessity in range = True). MARK-LESION collapses the role to 0.47 (genuinely mark-determined). marks discovered = True. Reference: the RATE tanh reservoir (EMERGE-79) held it >= 28 fillers; a spiking pool's fading memory is comparable in this reduced sweep. DEEPER/beyond-depth dependencies on the SPIKING substrate are where the RANK-3 rung (theta-gamma WM buffer / assembly-calculus stack) becomes necessary. Reuse-by-import; NO sim/ edit.",
+  "go": true,
+  "task": "characterize the EMERGE-80 spiking Izhikevich liquid-state machine's fading-memory DEPTH on the EMERGE-79 variable-distance distal-cue task (real discovered marker); report accuracy-vs-distance + the depth (>= 0.75) + whether it beats fixed windows within range; descriptive, not a strict GO",
+  "test_distances": [
+    0,
+    2,
+    4,
+    6,
+    8,
+    12,
+    16
+  ],
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "elapsed_seconds": 46.8,
+  "aggregate": {
+    "by_distance": {
+      "0": {
+        "spiking_lsm": 1.0,
+        "window2": 0.53
+      },
+      "2": {
+        "spiking_lsm": 1.0,
+        "window2": 0.5133333333333333
+      },
+      "4": {
+        "spiking_lsm": 1.0,
+        "window2": 0.5133333333333333
+      },
+      "6": {
+        "spiking_lsm": 1.0,
+        "window2": 0.5133333333333333
+      },
+      "8": {
+        "spiking_lsm": 1.0,
+        "window2": 0.54
+      },
+      "12": {
+        "spiking_lsm": 1.0,
+        "window2": 0.49
+      },
+      "16": {
+        "spiking_lsm": 1.0,
+        "window2": 0.5266666666666667
+      }
+    },
+    "mark_lesion_acc": 0.47333333333333333,
+    "marks_discovered": true,
+    "spiking_memory_depth_ge_075_fillers": 16
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "marks_ok": true,
+      "by_distance": {
+        "0": {
+          "spiking_lsm": 1.0,
+          "window2": 0.54
+        },
+        "2": {
+          "spiking_lsm": 1.0,
+          "window2": 0.49
+        },
+        "4": {
+          "spiking_lsm": 1.0,
+          "window2": 0.48
+        },
+        "6": {
+          "spiking_lsm": 1.0,
+          "window2": 0.48
+        },
+        "8": {
+          "spiking_lsm": 1.0,
+          "window2": 0.54
+        },
+        "12": {
+          "spiking_lsm": 1.0,
+          "window2": 0.52
+        },
+        "16": {
+          "spiking_lsm": 1.0,
+          "window2": 0.54
+        }
+      },
+      "mark_lesion_acc": 0.41,
+      "mean_spikes": 3.176
+    },
+    {
+      "seed": 43,
+      "marks_ok": true,
+      "by_distance": {
+        "0": {
+          "spiking_lsm": 1.0,
+          "window2": 0.49
+        },
+        "2": {
+          "spiking_lsm": 1.0,
+          "window2": 0.53
+        },
+        "4": {
+          "spiking_lsm": 1.0,
+          "window2": 0.55
+        },
+        "6": {
+          "spiking_lsm": 1.0,
+          "window2": 0.48
+        },
+        "8": {
+          "spiking_lsm": 1.0,
+          "window2": 0.5
+        },
+        "12": {
+          "spiking_lsm": 1.0,
+          "window2": 0.49
+        },
+        "16": {
+          "spiking_lsm": 1.0,
+          "window2": 0.51
+        }
+      },
+      "mark_lesion_acc": 0.5,
+      "mean_spikes": 3.28
+    },
+    {
+      "seed": 44,
+      "marks_ok": true,
+      "by_distance": {
+        "0": {
+          "spiking_lsm": 1.0,
+          "window2": 0.56
+        },
+        "2": {
+          "spiking_lsm": 1.0,
+          "window2": 0.52
+        },
+        "4": {
+          "spiking_lsm": 1.0,
+          "window2": 0.51
+        },
+        "6": {
+          "spiking_lsm": 1.0,
+          "window2": 0.58
+        },
+        "8": {
+          "spiking_lsm": 1.0,
+          "window2": 0.58
+        },
+        "12": {
+          "spiking_lsm": 1.0,
+          "window2": 0.46
+        },
+        "16": {
+          "spiking_lsm": 1.0,
+          "window2": 0.53
+        }
+      },
+      "mark_lesion_acc": 0.51,
+      "mean_spikes": 3.208
+    }
+  ],
+  "HONEST_NOTE": "A CHARACTERIZATION of the spiking pool's fading memory (not a new capability). The RATE reservoir (EMERGE-79) held the distal cue >= 28 fillers; this measures the SPIKING pool's depth on a reduced sweep (the spiking sim is ~30x heavier per token). Within its depth the spiking LSM beats every fixed window (uncontingent, real cue); beyond it, the RANK-3 buffer/stack is the named next mechanism for the spiking substrate. Reuse EMERGE-79 task + EMERGE-80 SpikingLSM; NO sim/ edit."
+}
