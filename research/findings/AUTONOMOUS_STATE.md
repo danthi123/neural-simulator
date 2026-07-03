@@ -7883,3 +7883,31 @@ anti-cheats) -- cheap-first CPU, the first genuine spiking-Broca step. (4) ALSO 
 robustness pass (now non-contending; needs a seed-specific --ckpt-out added to the EMERGE-57 runner). Boundaries =
 undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON
 MAIN; ARM A MONITOR on every long run; GPU/CuPy for real runs (numpy for CPU).
+
+## CYCLE 867 (2026-07-03 — EMERGE-59 Rung A GO: SIMULATE BROCA on spikes -- EMERGE's frames render fluently ON THE SPIKING SUBSTRATE, the 21M ANN retired for those frames)
+
+EMERGE-59 Rung A (GO, 6-seed, `2026-07-03-emerge59-spiking-broca-frame-slots-GO.md`, NO sim/ edit): the first genuine
+"simulate Broca, don't bolt on an LLM" step. Each EMERGE reply frame = an ordered set of TYPED slots (closed-class
+FUNCTION-WORD slots the/can/does/not [R1] + morphological INFLECTION-tagged content slots bare|3sg [R2] + content slots);
+the per-frame slot ORDER is LEARNED by frame-conditioned competitive queuing (extending the 6/6-GO FrameCQ) and produced
+ON REAL SPIKES: the learned primacy gradient -> graded external current into the slot pools on a real SimulationBridge ->
+per-pool spiking-RATE ranking (slot_pool_rates: cp_external_input_current -> _run_one_simulation_step x40 -> cp_firing_
+states -> rate) = the emission order (rate-coded CQ; primacy band 1800..300 pA below f-I saturation so adjacent ranks
+separate). Every slot spelled by A->W read-out (callback, substrate-agnostic; its own spiking validation is concept_speak
+_demo). NO host f-string. Gate-first moat: producer NEVER invoked on abstain. VERIFIED controller-direct (CI 7 pass;
+aggregate: main_order 0.993 vs perm 0.269/nolearn 0.262/cross 0.433, main_exact 0.995 vs perm 0.000, grammatical 1.00 vs
+func-ablate 0.00, moat_calls_on_abstain 0). Sample on spikes: "the owl can fly" / "the penguin walks" / "the penguin does
+not fly" / "I don't know."[moat]. HONEST SCOPE: renders the BOUNDED EMERGE frame inventory (affirm-modal/intransitive-
+exception/negated-modal), NOT open prose (R4 deferred = ~4-orders-too-small wall); A->W spell is a callback (wiring the
+trained-bridge read-out is the GPU follow-on); function words are closed-class lemmas here (self-organizing those pools =
+Rung B / neural frame-selection R3). ⇒ the emergent brain SPEAKS its grounded answers on spikes for its frame inventory.
+
+**EXACT NEXT CONCRETE ACTION:** (1) DONE: committed EMERGE-59 both remotes. (2) NOW: RETRY the adversarial audit on the
+FIXED EMERGE-58 wire (was blocked by transient server-side rate limits twice; retry -- may have cleared) to complete the
+6 unverified lenses. (3) THEN EMERGE-60 = WIRE EMERGE-59's spiking BrocaProducer INTO the unified console (EMERGE-58) in
+place of the 21M ANN FOR THE EMERGE FRAMES -- so the flagship console renders EMERGE answers ON SPIKES, gate-first moat,
+retiring the ANN for those frames (the payoff of EMERGE-59; the subagent flagged it as the natural next step). (4) ALSO:
+EMERGE-57 multi-fine-tune-seed robustness (now non-contending; add seed-specific --ckpt-out to the EMERGE-57 runner);
+and the EMERGE-59 follow-ons (A->W neural spell wire-in; Rung B self-organizing function-word pools). Boundaries =
+undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON
+MAIN; ARM A MONITOR on every long run; GPU/CuPy for real runs (numpy for CPU).

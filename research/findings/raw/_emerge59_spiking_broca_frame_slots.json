@@ -1,0 +1,312 @@
+{
+  "probe": "emerge59_spiking_broca_frame_slots",
+  "rung": "A",
+  "verdict": "GO -- EMERGE's fixed reply frames are rendered FLUENTLY on the SPIKING substrate by a frame-and-slot grammatical encoder (Levelt/Bock/Dell), the first genuine 'simulate Broca' step. Each frame is an ordered set of typed SLOTS -- closed-class FUNCTION-WORD slots (the/can/does/not, R1) + morphological INFLECTION-tagged content slots (bare vs 3sg, R2) + content slots -- whose per-frame ORDER is LEARNED by frame-conditioned competitive queuing and produced ON SPIKES (the primacy gradient = graded current -> the per-pool spiking-RATE ranking = the emission order); every slot, function word AND content, is spelled by the A->W read-out; NO host f-string. HELD-OUT facts render in the correct order + function words + inflection: order 0.993, exact-slot 0.995. Every control collapses -- PERMUTED-slot-order 0.269/0.000, NO-LEARNING order 0.262, CROSS-FRAME word-match 0.433 vs the frame's own 0.998 (the same content is ordered/worded DIFFERENTLY per frame -- frame-specific, the seed of syntax), FUNCTION-WORD-ABLATION drops grammaticality 1.00->0.00 (the function words are LEARNED-slot-supplied, not host-inserted). The gate-first no-confab MOAT holds BY CONSTRUCTION: 0 producer invocations on abstains. 6 seeds. ==> the 21M ANN is RETIRED for EMERGE's BOUNDED frame inventory (ability-affirm / intransitive-exception / negated-modal); Broca is SIMULATED for these frames on spikes. HONEST: this renders the fixed EMERGE frame inventory, NOT open prose (R4, the separate deferred wall). Reuse-by-import; NO sim/ edit.",
+  "go": true,
+  "mechanism": "frame-and-slot grammatical encoding (Levelt-Roelofs-Meyer 1999 / Bock-Levelt 1994 / Dell 1986): each EMERGE reply frame is an ordered set of TYPED slots -- closed-class FUNCTION-WORD slots (the/can/does/not, R1) + morphological INFLECTION-tagged content slots (bare vs 3sg, R2) + content slots. The per-frame slot ORDER is LEARNED by frame-conditioned competitive queuing (prim[frame], extending the 6/6-GO FrameCQ) and produced ON SPIKES on a real SimulationBridge: the learned primacy gradient = graded external current into the slot pools; the per-pool spiking RATE ranking = the emission order (rate-coded competitive queuing, the validated _phaseB_serial_order_spiking read-out). Every slot -- function word AND content -- is spelled by the A->W read-out (concept-pool -> word, concept_speak_demo; passed as a pluggable callback per the neural_serial_order_renderer precedent); the inflection surface is picked by the frame slot's morphology tag (emerge_v3, frame-aware). NO host f-string assembles the sentence. The gate-first no-confab moat (EMERGE-56/57/58) short-circuits before the producer on abstain. Catalog G.12 (Broca: agrammatism = retained noun selection, lost function-word / grammatical-morphology use). Reuse-by-import; NO sim/ edit.",
+  "task": "simulate Broca -- render EMERGE's reply frames (ability-affirm 'the owl can fly' / intransitive-exception 'the penguin walks' / negated-modal 'the penguin does not fly') fluently on spikes with learned function-word + inflection SLOTS; held-out facts render correct order+slots vs permuted-slot-order + cross-frame + function-word-ablation + no-learning controls; gate-first moat (0 productions on abstains); >=6 seeds",
+  "frames": {
+    "F_MODAL": [
+      [
+        "det",
+        "the"
+      ],
+      [
+        "subj",
+        null
+      ],
+      [
+        "func",
+        "can"
+      ],
+      [
+        "verb",
+        "bare"
+      ]
+    ],
+    "F_INTR": [
+      [
+        "det",
+        "the"
+      ],
+      [
+        "subj",
+        null
+      ],
+      [
+        "verb",
+        "3sg"
+      ]
+    ],
+    "F_NEGMOD": [
+      [
+        "det",
+        "the"
+      ],
+      [
+        "subj",
+        null
+      ],
+      [
+        "func",
+        "does"
+      ],
+      [
+        "func",
+        "not"
+      ],
+      [
+        "verb",
+        "bare"
+      ]
+    ]
+  },
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "elapsed_seconds": 8.2,
+  "aggregate": {
+    "main_order": 0.9925925925925926,
+    "main_exact": 0.9953703703703703,
+    "main_word": 0.9981481481481481,
+    "perm_order": 0.26913580246913577,
+    "perm_exact": 0.0,
+    "nolearn_order": 0.26242283950617284,
+    "cross_order": 0.4333333333333333,
+    "main_grammatical": 1.0,
+    "ablate_grammatical": 0.0,
+    "moat_calls_on_abstain_total": 0
+  },
+  "sample_transcript": [
+    {
+      "tag": "INHERIT (affirm-modal)",
+      "question": "can an owl fly?",
+      "surface": "the owl can fly",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "CANCEL  (intransitive)",
+      "question": "can a penguin fly?",
+      "surface": "the penguin walks",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "DENY    (negated-modal)",
+      "question": "can a penguin fly? [deny]",
+      "surface": "the penguin does not fly",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "MOAT    (abstain)",
+      "question": "can a zzz fly?",
+      "surface": "I don't know.",
+      "invocation": "producer NOT invoked"
+    }
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "main_order": 1.0,
+      "main_exact": 0.9722222222222222,
+      "main_word": 0.9888888888888889,
+      "per_frame_main": {
+        "F_MODAL": {
+          "order": 1.0,
+          "exact": 1.0,
+          "word": 1.0
+        },
+        "F_INTR": {
+          "order": 1.0,
+          "exact": 1.0,
+          "word": 1.0
+        },
+        "F_NEGMOD": {
+          "order": 1.0,
+          "exact": 0.9166666666666666,
+          "word": 0.9666666666666667
+        }
+      },
+      "perm_order": 0.16851851851851854,
+      "perm_exact": 0.0,
+      "nolearn_order": 0.24814814814814815,
+      "nolearn_exact": 0.05555555555555555,
+      "cross_order": 0.4333333333333333,
+      "main_grammatical": 1.0,
+      "ablate_grammatical": 0.0,
+      "moat_calls_on_abstain": 0,
+      "moat_produced_any": false,
+      "answer_produced": true
+    },
+    {
+      "seed": 43,
+      "main_order": 1.0,
+      "main_exact": 1.0,
+      "main_word": 1.0,
+      "per_frame_main": {
+        "F_MODAL": {
+          "order": 1.0,
+          "exact": 1.0,
+          "word": 1.0
+        },
+        "F_INTR": {
+          "order": 1.0,
+          "exact": 1.0,
+          "word": 1.0
+        },
+        "F_NEGMOD": {
+          "order": 1.0,
+          "exact": 1.0,
+          "word": 1.0
+        }
+      },
+      "perm_order": 0.2611111111111111,
+      "perm_exact": 0.0,
+      "nolearn_order": 0.287962962962963,
+      "nolearn_exact": 0.08333333333333333,
+      "cross_order": 0.4333333333333333,
+      "main_grammatical": 1.0,
+      "ablate_grammatical": 0.0,
+      "moat_calls_on_abstain": 0,
+      "moat_produced_any": false,
+      "answer_produced": true
+    },
+    {
+      "seed": 44,
+      "main_order": 0.9888888888888889,
+      "main_exact": 1.0,
+      "main_word": 1.0,
+      "per_frame_main": {
+        "F_MODAL": {
+          "order": 1.0,
+          "exact": 1.0,
+          "word": 1.0
+        },
+        "F_INTR": {
+          "order": 1.0,
+          "exact": 1.0,
+          "word": 1.0
+        },
+        "F_NEGMOD": {
+          "order": 0.9666666666666667,
+          "exact": 1.0,
+          "word": 1.0
+        }
+      },
+      "perm_order": 0.41111111111111115,
+      "perm_exact": 0.0,
+      "nolearn_order": 0.17546296296296296,
+      "nolearn_exact": 0.027777777777777776,
+      "cross_order": 0.4333333333333333,
+      "main_grammatical": 1.0,
+      "ablate_grammatical": 0.0,
+      "moat_calls_on_abstain": 0,
+      "moat_produced_any": false,
+      "answer_produced": true
+    },
+    {
+      "seed": 100,
+      "main_order": 0.9888888888888889,
+      "main_exact": 1.0,
+      "main_word": 1.0,
+      "per_frame_main": {
+        "F_MODAL": {
+          "order": 1.0,
+          "exact": 1.0,
+          "word": 1.0
+        },
+        "F_INTR": {
+          "order": 1.0,
+          "exact": 1.0,
+          "word": 1.0
+        },
+        "F_NEGMOD": {
+          "order": 0.9666666666666667,
+          "exact": 1.0,
+          "word": 1.0
+        }
+      },
+      "perm_order": 0.17777777777777778,
+      "perm_exact": 0.0,
+      "nolearn_order": 0.27499999999999997,
+      "nolearn_exact": 0.08333333333333333,
+      "cross_order": 0.4333333333333333,
+      "main_grammatical": 1.0,
+      "ablate_grammatical": 0.0,
+      "moat_calls_on_abstain": 0,
+      "moat_produced_any": false,
+      "answer_produced": true
+    },
+    {
+      "seed": 101,
+      "main_order": 0.9888888888888889,
+      "main_exact": 1.0,
+      "main_word": 1.0,
+      "per_frame_main": {
+        "F_MODAL": {
+          "order": 1.0,
+          "exact": 1.0,
+          "word": 1.0
+        },
+        "F_INTR": {
+          "order": 1.0,
+          "exact": 1.0,
+          "word": 1.0
+        },
+        "F_NEGMOD": {
+          "order": 0.9666666666666667,
+          "exact": 1.0,
+          "word": 1.0
+        }
+      },
+      "perm_order": 0.33888888888888885,
+      "perm_exact": 0.0,
+      "nolearn_order": 0.29583333333333334,
+      "nolearn_exact": 0.05555555555555555,
+      "cross_order": 0.4333333333333333,
+      "main_grammatical": 1.0,
+      "ablate_grammatical": 0.0,
+      "moat_calls_on_abstain": 0,
+      "moat_produced_any": false,
+      "answer_produced": true
+    },
+    {
+      "seed": 102,
+      "main_order": 0.9888888888888889,
+      "main_exact": 1.0,
+      "main_word": 1.0,
+      "per_frame_main": {
+        "F_MODAL": {
+          "order": 1.0,
+          "exact": 1.0,
+          "word": 1.0
+        },
+        "F_INTR": {
+          "order": 1.0,
+          "exact": 1.0,
+          "word": 1.0
+        },
+        "F_NEGMOD": {
+          "order": 0.9666666666666667,
+          "exact": 1.0,
+          "word": 1.0
+        }
+      },
+      "perm_order": 0.25740740740740736,
+      "perm_exact": 0.0,
+      "nolearn_order": 0.2921296296296296,
+      "nolearn_exact": 0.0,
+      "cross_order": 0.4333333333333333,
+      "main_grammatical": 1.0,
+      "ablate_grammatical": 0.0,
+      "moat_calls_on_abstain": 0,
+      "moat_produced_any": false,
+      "answer_produced": true
+    }
+  ],
+  "HONEST_NOTE": "Rung A renders the BOUNDED EMERGE frame inventory (ability-affirm / intransitive-exception / negated-modal) fluently ON SPIKES -- it RETIRES the 21M ANN for THOSE frames, NOT for open prose. Open arbitrary generation (R4) is the separate deferred wall (the from-scratch spiking LM is ~4 orders too small, 2026-05-07-Phase-2.3a-NEGATIVE; 2024-26 spiking LMs are off-substrate-backprop-trained + sub-scale). The slot ORDER is produced on real spikes; the A->W SPELL is passed as a callback (its own spiking validation is concept_speak_demo, 100% multi-seed) so this de-risk validates the frame-and-slot MECHANISM substrate-agnostically for the spelling, on-spikes for the order. Function words are added to the emergent lexicon as closed-class lemmas (Bock-Levelt frame furniture). The gate-first moat is the load-bearing property: 0 producer invocations on abstains, by construction."
+}
