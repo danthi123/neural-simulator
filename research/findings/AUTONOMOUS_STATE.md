@@ -8662,7 +8662,33 @@ driven; the ~1.4e-2 raw read delta is a weak global-step numerical coupling, NOT
 (87). Session total 2026-07-03: 19 commits, NO sim/ edit anywhere, every result 6-seed anti-cheated, adversarial discipline
 caught 2 self-overclaims + 1 contingency, boundaries treated as undiscovered mechanisms (84->85/86).
 
-**EXACT NEXT CONCRETE ACTION:** the reservoir arc's cheap-first rungs are DONE; the remaining follow-ons are heavier
+**CYCLE 904 (EMERGE-88 GO — FUNCTIONAL INTEGRATION: comprehension DRIVES composition).** EMERGE-88 (committed): the
+form->role reservoir's role output DRIVES the production `RFPhasorComposer`. `ReservoirComprehender.comprehend(tokens)`
+parses a sentence into an (agent, action, patient) fact (Dominey-Hinaut final-state slot read-out over the OPEN content
+positions, content abstracted -> roles from STRUCTURE not lexemes); the composer stores it; the who/what turn + no-confab
+moat run on the reservoir's OWN comprehension -- replacing the hand-labeler / BridgeParser for role assignment. 6-seed
+UNANIMOUS GO: parse 1.000, who/what recall 1.000, moat 0.000 false-accept, comprehension-lesion collapses recall to 0.000
+(the reservoir is load-bearing for the whole turn). Anti-cheats: held-out content, no-confab moat on reservoir-parsed
+facts, comprehension-lesion. RUNG 1 = rate reservoir (78) comprehends -> spiking composer answers; the spiking-reservoir
+swap (EMERGE-82 `OnBridgeLSM.final_state`, identical signature) is the mechanical follow-on. NO `sim/` edit.
+`_emerge88_reservoir_comprehends_composer_answers_derisk.py`, `2026-07-03-emerge88-reservoir-comprehends-composer-answers-GO.md`,
+CI 3. ⇒ the reservoir is no longer an isolated score -- it is the comprehension front-end of the conversational turn; two
+independently-validated mechanisms now interact (comprehension drives composition).
+
+**EXACT NEXT CONCRETE ACTION:** the reservoir arc is closed into the conversational loop; the remaining follow-ons (BUILD,
+do not hand off): (1) **SPIKING-RESERVOIR INTEGRATION** — swap EMERGE-88's rate comprehender for EMERGE-82's on-bridge
+spiking `OnBridgeLSM.final_state` (identical signature) so comprehension→composition is fully on-substrate; a mechanical
+extension of EMERGE-88, 6-seed. (2) **RICHER CONSTRUCTIONS through the composer** — the reservoir already labels
+ditransitive / PP-argument roles (EMERGE-72/77); map GOAL/LOCATION/recipient onto the composer's extra roles so the
+integration handles more than core SVO. (3) **RUNG 2** — the literal time-domain theta/gamma OSCILLATOR nesting the WM
+slots (catalog N.15; additive default-off `sim/` oscillator driver = theta-phase-modulated gamma `excitability_drive`,
+reusing StimulusManager SINUSOIDAL + CORTEX_GAMMA_FS_NETWORK + per-region NMDA mask) — the fuller biological realization,
+off the RANK-3 critical path. (4) the FULL merged nav/conv bridge co-residence (add the reservoir to the merged builder's
+co_resident_* list). Recommend SPIKING-RESERVOIR INTEGRATION (finishes fully-spiking comprehension→composition) OR RUNG 2.
+BUILD IT — I am the continuation. PARALLELIZE; boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair when
+de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; CONTROLLER runs GPU INLINE; ARM A MONITOR.
+
+[superseded:] **EXACT NEXT CONCRETE ACTION:** the reservoir arc's cheap-first rungs are DONE; the remaining follow-ons are heavier
 fresh-context builds (BUILD, do not hand off): (1) **FUNCTIONAL INTEGRATION** — the reservoir's role output FEEDS the
 composer (the reservoir REPLACES the BridgeParser's role-labeling in the conversational pipeline) — a real capability
 composition (the reservoir does comprehension -> the composer stores/answers), validate the who/what turn + the no-confab
