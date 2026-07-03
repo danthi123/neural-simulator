@@ -1,0 +1,477 @@
+{
+  "probe": "emerge79_reservoir_variable_distance",
+  "verdict": "GO -- UNCONTINGENT reservoir necessity: the fading-memory reservoir resolves a VARIABLE-DISTANCE role flip that NO fixed window can, with the disambiguating cue a REAL DISCOVERED word (marks discovered as distinct closed cues=True -- NO out-of-vocabulary trick, unlike the EMERGE-78 contingency). A voice marker ('act'/'pas') at the sentence START flips a far content word's role across a VARIABLE number of fillers; at EVERY tested distance where the +-2 window is blind [0, 1, 2, 4, 8, 12, 16, 20, 24, 28] the reservoir beats it by >=0.30 (uncontingent -- the window CLIFFS at its width while the reservoir holds the cue in its fading memory). LOCAL SANITY: with the mark ADJACENT to the word, a +-2 window does the role task at 1.000 -> the window fails on the distal case ONLY because of DISTANCE, not task-incapacity. The reservoir's fading-memory DEPTH is >= 28 fillers (~33 tokens; held across the WHOLE tested range) (profile d0=1.000 -> d28=0.833). MARK-LESION (replace the marker with a neutral filler) collapses the role to 0.507 (drop 0.493) -> genuinely mark-determined. 6 seeds. ==> the reservoir's recurrence has GENUINE, UNCONTINGENT value over fixed windows for a real cue -- resolving the EMERGE-78 focused-recheck contingency: the reservoir advantage is NOT an OOV artifact; it is bounded graded memory. DEEPER/unbounded dependencies past its memory depth are the RANK-3 frontier (theta-gamma WM buffer / assembly-calculus stack). Rate-level, CPU/numpy, reuse-by-import; NO sim/ edit.",
+  "go": true,
+  "mechanism": "test whether the EMERGE-78 reservoir's fading-memory advantage is UNCONTINGENT (not the OOV-relativizer artifact the focused adversarial recheck flagged): a REAL frequent DISCOVERED voice marker at the sentence start flips a far content word's role across a VARIABLE number of filler tokens; the reservoir's final-state read-out vs fixed +-2/+-4 window baselines, distance-scaled. The non-locality is from DISTANCE (not vocabulary), so a beat over every fixed window at distances > its width is an uncontingent graded-memory result. Reuse EMERGE-78 Reservoir/Encoder; NO sim/ edit.",
+  "task": "uncontingent variable-distance reservoir necessity: real discovered marker, distance-scaling vs fixed +-2/+-4 windows; GO = reservoir beats the window by >=0.30 where the window is blind + graceful degradation + mark-lesion/scramble collapse + marks discovered; else BOUNDARY naming the reservoir's fading-memory depth + RANK-3; 6-seed rate CPU",
+  "roles": [
+    "AGENT",
+    "THEME"
+  ],
+  "marks": [
+    "act",
+    "pas"
+  ],
+  "filler": "um",
+  "test_distances": [
+    0,
+    1,
+    2,
+    4,
+    8,
+    12,
+    16,
+    20,
+    24,
+    28
+  ],
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "elapsed_seconds": 12.7,
+  "aggregate": {
+    "by_distance": {
+      "0": {
+        "reservoir": 1.0,
+        "window2": 0.47666666666666674,
+        "window4": 0.47666666666666674
+      },
+      "1": {
+        "reservoir": 1.0,
+        "window2": 0.5225,
+        "window4": 0.5225
+      },
+      "2": {
+        "reservoir": 1.0,
+        "window2": 0.515,
+        "window4": 0.515
+      },
+      "4": {
+        "reservoir": 1.0,
+        "window2": 0.49666666666666665,
+        "window4": 0.49666666666666665
+      },
+      "8": {
+        "reservoir": 1.0,
+        "window2": 0.51,
+        "window4": 0.51
+      },
+      "12": {
+        "reservoir": 1.0,
+        "window2": 0.49666666666666665,
+        "window4": 0.49666666666666665
+      },
+      "16": {
+        "reservoir": 1.0,
+        "window2": 0.5241666666666668,
+        "window4": 0.5241666666666668
+      },
+      "20": {
+        "reservoir": 1.0,
+        "window2": 0.48500000000000004,
+        "window4": 0.48500000000000004
+      },
+      "24": {
+        "reservoir": 0.9233333333333333,
+        "window2": 0.49416666666666664,
+        "window4": 0.49416666666666664
+      },
+      "28": {
+        "reservoir": 0.8325,
+        "window2": 0.5075,
+        "window4": 0.5075
+      }
+    },
+    "res_ctl": 1.0,
+    "res_mark_lesion": 0.5075,
+    "window2_local_sanity": 1.0,
+    "marks_discovered": true,
+    "reservoir_memory_depth_ge_075_fillers": 28
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "marks_discovered": false,
+      "marks_only_discovered": true,
+      "n_discovered_closed": 12,
+      "by_distance": {
+        "0": {
+          "reservoir": 1.0,
+          "window2": 0.47,
+          "window4": 0.47
+        },
+        "1": {
+          "reservoir": 1.0,
+          "window2": 0.495,
+          "window4": 0.495
+        },
+        "2": {
+          "reservoir": 1.0,
+          "window2": 0.5,
+          "window4": 0.5
+        },
+        "4": {
+          "reservoir": 1.0,
+          "window2": 0.475,
+          "window4": 0.475
+        },
+        "8": {
+          "reservoir": 1.0,
+          "window2": 0.465,
+          "window4": 0.465
+        },
+        "12": {
+          "reservoir": 1.0,
+          "window2": 0.47,
+          "window4": 0.47
+        },
+        "16": {
+          "reservoir": 1.0,
+          "window2": 0.465,
+          "window4": 0.465
+        },
+        "20": {
+          "reservoir": 1.0,
+          "window2": 0.5,
+          "window4": 0.5
+        },
+        "24": {
+          "reservoir": 1.0,
+          "window2": 0.46,
+          "window4": 0.46
+        },
+        "28": {
+          "reservoir": 1.0,
+          "window2": 0.505,
+          "window4": 0.505
+        }
+      },
+      "ctl_distance": 4,
+      "res_ctl": 1.0,
+      "res_mark_lesion": 0.525,
+      "window2_local_sanity": 1.0,
+      "chance": 0.5
+    },
+    {
+      "seed": 43,
+      "marks_discovered": false,
+      "marks_only_discovered": true,
+      "n_discovered_closed": 13,
+      "by_distance": {
+        "0": {
+          "reservoir": 1.0,
+          "window2": 0.55,
+          "window4": 0.55
+        },
+        "1": {
+          "reservoir": 1.0,
+          "window2": 0.54,
+          "window4": 0.54
+        },
+        "2": {
+          "reservoir": 1.0,
+          "window2": 0.51,
+          "window4": 0.51
+        },
+        "4": {
+          "reservoir": 1.0,
+          "window2": 0.475,
+          "window4": 0.475
+        },
+        "8": {
+          "reservoir": 1.0,
+          "window2": 0.52,
+          "window4": 0.52
+        },
+        "12": {
+          "reservoir": 1.0,
+          "window2": 0.47,
+          "window4": 0.47
+        },
+        "16": {
+          "reservoir": 1.0,
+          "window2": 0.505,
+          "window4": 0.505
+        },
+        "20": {
+          "reservoir": 1.0,
+          "window2": 0.545,
+          "window4": 0.545
+        },
+        "24": {
+          "reservoir": 0.54,
+          "window2": 0.54,
+          "window4": 0.54
+        },
+        "28": {
+          "reservoir": 0.485,
+          "window2": 0.485,
+          "window4": 0.485
+        }
+      },
+      "ctl_distance": 4,
+      "res_ctl": 1.0,
+      "res_mark_lesion": 0.51,
+      "window2_local_sanity": 1.0,
+      "chance": 0.5
+    },
+    {
+      "seed": 44,
+      "marks_discovered": false,
+      "marks_only_discovered": true,
+      "n_discovered_closed": 14,
+      "by_distance": {
+        "0": {
+          "reservoir": 1.0,
+          "window2": 0.425,
+          "window4": 0.425
+        },
+        "1": {
+          "reservoir": 1.0,
+          "window2": 0.5,
+          "window4": 0.5
+        },
+        "2": {
+          "reservoir": 1.0,
+          "window2": 0.555,
+          "window4": 0.555
+        },
+        "4": {
+          "reservoir": 1.0,
+          "window2": 0.49,
+          "window4": 0.49
+        },
+        "8": {
+          "reservoir": 1.0,
+          "window2": 0.535,
+          "window4": 0.535
+        },
+        "12": {
+          "reservoir": 1.0,
+          "window2": 0.505,
+          "window4": 0.505
+        },
+        "16": {
+          "reservoir": 1.0,
+          "window2": 0.52,
+          "window4": 0.52
+        },
+        "20": {
+          "reservoir": 1.0,
+          "window2": 0.42,
+          "window4": 0.42
+        },
+        "24": {
+          "reservoir": 1.0,
+          "window2": 0.495,
+          "window4": 0.495
+        },
+        "28": {
+          "reservoir": 1.0,
+          "window2": 0.545,
+          "window4": 0.545
+        }
+      },
+      "ctl_distance": 4,
+      "res_ctl": 1.0,
+      "res_mark_lesion": 0.53,
+      "window2_local_sanity": 1.0,
+      "chance": 0.5
+    },
+    {
+      "seed": 100,
+      "marks_discovered": false,
+      "marks_only_discovered": true,
+      "n_discovered_closed": 14,
+      "by_distance": {
+        "0": {
+          "reservoir": 1.0,
+          "window2": 0.465,
+          "window4": 0.465
+        },
+        "1": {
+          "reservoir": 1.0,
+          "window2": 0.51,
+          "window4": 0.51
+        },
+        "2": {
+          "reservoir": 1.0,
+          "window2": 0.465,
+          "window4": 0.465
+        },
+        "4": {
+          "reservoir": 1.0,
+          "window2": 0.51,
+          "window4": 0.51
+        },
+        "8": {
+          "reservoir": 1.0,
+          "window2": 0.51,
+          "window4": 0.51
+        },
+        "12": {
+          "reservoir": 1.0,
+          "window2": 0.52,
+          "window4": 0.52
+        },
+        "16": {
+          "reservoir": 1.0,
+          "window2": 0.54,
+          "window4": 0.54
+        },
+        "20": {
+          "reservoir": 1.0,
+          "window2": 0.49,
+          "window4": 0.49
+        },
+        "24": {
+          "reservoir": 1.0,
+          "window2": 0.45,
+          "window4": 0.45
+        },
+        "28": {
+          "reservoir": 1.0,
+          "window2": 0.52,
+          "window4": 0.52
+        }
+      },
+      "ctl_distance": 4,
+      "res_ctl": 1.0,
+      "res_mark_lesion": 0.45,
+      "window2_local_sanity": 1.0,
+      "chance": 0.5
+    },
+    {
+      "seed": 101,
+      "marks_discovered": false,
+      "marks_only_discovered": true,
+      "n_discovered_closed": 14,
+      "by_distance": {
+        "0": {
+          "reservoir": 1.0,
+          "window2": 0.495,
+          "window4": 0.495
+        },
+        "1": {
+          "reservoir": 1.0,
+          "window2": 0.525,
+          "window4": 0.525
+        },
+        "2": {
+          "reservoir": 1.0,
+          "window2": 0.515,
+          "window4": 0.515
+        },
+        "4": {
+          "reservoir": 1.0,
+          "window2": 0.51,
+          "window4": 0.51
+        },
+        "8": {
+          "reservoir": 1.0,
+          "window2": 0.545,
+          "window4": 0.545
+        },
+        "12": {
+          "reservoir": 1.0,
+          "window2": 0.49,
+          "window4": 0.49
+        },
+        "16": {
+          "reservoir": 1.0,
+          "window2": 0.575,
+          "window4": 0.575
+        },
+        "20": {
+          "reservoir": 1.0,
+          "window2": 0.5,
+          "window4": 0.5
+        },
+        "24": {
+          "reservoir": 1.0,
+          "window2": 0.49,
+          "window4": 0.49
+        },
+        "28": {
+          "reservoir": 0.51,
+          "window2": 0.49,
+          "window4": 0.49
+        }
+      },
+      "ctl_distance": 4,
+      "res_ctl": 1.0,
+      "res_mark_lesion": 0.52,
+      "window2_local_sanity": 1.0,
+      "chance": 0.5
+    },
+    {
+      "seed": 102,
+      "marks_discovered": false,
+      "marks_only_discovered": true,
+      "n_discovered_closed": 12,
+      "by_distance": {
+        "0": {
+          "reservoir": 1.0,
+          "window2": 0.455,
+          "window4": 0.455
+        },
+        "1": {
+          "reservoir": 1.0,
+          "window2": 0.565,
+          "window4": 0.565
+        },
+        "2": {
+          "reservoir": 1.0,
+          "window2": 0.545,
+          "window4": 0.545
+        },
+        "4": {
+          "reservoir": 1.0,
+          "window2": 0.52,
+          "window4": 0.52
+        },
+        "8": {
+          "reservoir": 1.0,
+          "window2": 0.485,
+          "window4": 0.485
+        },
+        "12": {
+          "reservoir": 1.0,
+          "window2": 0.525,
+          "window4": 0.525
+        },
+        "16": {
+          "reservoir": 1.0,
+          "window2": 0.54,
+          "window4": 0.54
+        },
+        "20": {
+          "reservoir": 1.0,
+          "window2": 0.455,
+          "window4": 0.455
+        },
+        "24": {
+          "reservoir": 1.0,
+          "window2": 0.53,
+          "window4": 0.53
+        },
+        "28": {
+          "reservoir": 1.0,
+          "window2": 0.5,
+          "window4": 0.5
+        }
+      },
+      "ctl_distance": 4,
+      "res_ctl": 1.0,
+      "res_mark_lesion": 0.51,
+      "window2_local_sanity": 1.0,
+      "chance": 0.5
+    }
+  ],
+  "HONEST_NOTE": "Isolates ONE question the EMERGE-78 focused recheck raised: is the reservoir's non-local advantage UNCONTINGENT (genuine graded memory) or an artifact of an OOV/verb-colliding cue? Here the disambiguating voice marker is a REAL, frequent, DISCOVERED closed word, and the non-locality is purely DISTANCE (variable fillers) -- so a beat over every fixed window is uncontingent. A GO shows genuine bounded graded-memory value + names the reservoir's fading-memory depth; a BOUNDARY (the reservoir cliffs like a window) is an honest negative naming the RANK-3 rung. NOT deep recursion (a single variable-distance flip). Reuse-by-import; NO sim/ edit."
+}

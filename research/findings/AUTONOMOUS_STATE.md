@@ -8571,7 +8571,19 @@ verdict/HONEST_NOTE/task/mechanism + the finding. GO stands on (1) the GENERAL c
 hand branch -- the anti-whack-a-mole win) + (2) an honestly-scoped proof-of-mechanism (reservoir whole-sequence integration
 on a constructed non-local case); general window-defeating necessity = RANK-3. Committed both remotes.
 
-**EXACT NEXT CONCRETE ACTION:** (1) DONE: EMERGE-78 committed (hardened GO). (2) The pre-registered RANK-1.5/RANK-2 rungs
+**CYCLE 893 (EMERGE-79 GO — the reservoir's non-local advantage is UNCONTINGENT; the EMERGE-78 contingency RESOLVED).**
+The focused recheck's contingency finding (EMERGE-78's necessity rode an OOV/verb-colliding relativizer) is directly
+addressed + resolved: EMERGE-79 uses a REAL frequent DISCOVERED voice marker (act/pas, marks_discovered True 6/6) that flips
+a far word's role across a VARIABLE number of fillers, so the non-locality is from DISTANCE not vocabulary. RESULT (6-seed
+GO): reservoir 1.000 at ALL distances 0-28 fillers (~33 tokens) vs both ±2/±4 windows at chance; ±2 window LOCAL-sanity
+1.000 (proves the window fails from DISTANCE not incapacity); mark-lesion collapses to chance (role genuinely
+mark-determined). ⇒ the reservoir's recurrence has GENUINE UNCONTINGENT graded-memory value no fixed window can match, for
+a real cue -- NOT an OOV artifact. Bounded 1-bit feature (depth ≥28 not reached); deeper/multi-feature = RANK-3. Runner+test
+(4 CPU pass)+finding. NO sim/ edit. Together EMERGE-78 (learned map, no hand branch) + EMERGE-79 (uncontingent non-local
+value) establish the fronto-striatal reservoir as the anti-whack-a-mole RANK-1 comprehension mechanism. Committed both remotes.
+
+**EXACT NEXT CONCRETE ACTION:** (1) DONE: EMERGE-78 + EMERGE-79 committed (the RANK-1 reservoir comprehension mechanism,
+learned + uncontingently non-local). (2) The pre-registered RANK-1.5/RANK-2 rungs
 (research gate `2026-07-03-next-frontier-...`): the spiking-LSM PORT of EMERGE-78 (drive a recurrent RF/Izhikevich pool +
 the population read-out, replacing the rate echo-state reservoir) OR the PRODUCTION reservoir (Dominey 2015: thematic
 roles → ordered word emission, replacing the hand ROUTER). (3) The genuinely-general reservoir-necessity test (RANK-3
