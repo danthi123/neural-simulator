@@ -1,0 +1,116 @@
+{
+  "probe": "emerge43_multi_override",
+  "verdict": "GO -- MULTI-OVERRIDE scales: 6 member-specific exceptions coexist with class inheritance over the pooler-discovered overlapping categories -- each overridden member answers ITS OWN exception (override-acc 0.97, no cross-bleed), non-overridden members inherit (0.99). PERMUTED-features 0.33; dAP-LESION 0.00; 6-seed. => the category-code + member-identity-ensemble representation handles MANY coexisting exceptions, the realistic case. NO sim/ edit.",
+  "mechanism": "N overridden members (one per category), each a distinct exception taught on ITS OWN member-identity ensemble; class properties on the pooler-discovered codons; a graded-drive read takes the strongest of the member's exception and the inherited class default",
+  "task": "multi-override cancellation + inheritance over pooler-discovered overlapping categories; vs permuted + dAP-lesion; multi-seed",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "config": {
+    "epochs": 40,
+    "n_overrides": 6,
+    "n_col": 200,
+    "k_win": 6,
+    "pool_epochs": 400,
+    "n_id_per": 3
+  },
+  "elapsed_seconds": 14.0,
+  "per_seed": [
+    {
+      "seed": 42,
+      "multi": {
+        "override": 1.0,
+        "inheritance": 1.0
+      },
+      "permuted": {
+        "override": 0.6666666666666666,
+        "inheritance": 0.3333333333333333
+      },
+      "lesion": {
+        "override": 0.0,
+        "inheritance": 0.0
+      }
+    },
+    {
+      "seed": 43,
+      "multi": {
+        "override": 1.0,
+        "inheritance": 1.0
+      },
+      "permuted": {
+        "override": 0.6666666666666666,
+        "inheritance": 0.4444444444444444
+      },
+      "lesion": {
+        "override": 0.0,
+        "inheritance": 0.0
+      }
+    },
+    {
+      "seed": 44,
+      "multi": {
+        "override": 1.0,
+        "inheritance": 1.0
+      },
+      "permuted": {
+        "override": 0.6666666666666666,
+        "inheritance": 0.2777777777777778
+      },
+      "lesion": {
+        "override": 0.0,
+        "inheritance": 0.0
+      }
+    },
+    {
+      "seed": 100,
+      "multi": {
+        "override": 1.0,
+        "inheritance": 1.0
+      },
+      "permuted": {
+        "override": 0.6666666666666666,
+        "inheritance": 0.3888888888888889
+      },
+      "lesion": {
+        "override": 0.0,
+        "inheritance": 0.0
+      }
+    },
+    {
+      "seed": 101,
+      "multi": {
+        "override": 1.0,
+        "inheritance": 0.9444444444444444
+      },
+      "permuted": {
+        "override": 0.5,
+        "inheritance": 0.16666666666666666
+      },
+      "lesion": {
+        "override": 0.0,
+        "inheritance": 0.0
+      }
+    },
+    {
+      "seed": 102,
+      "multi": {
+        "override": 0.8333333333333334,
+        "inheritance": 1.0
+      },
+      "permuted": {
+        "override": 0.3333333333333333,
+        "inheritance": 0.3888888888888889
+      },
+      "lesion": {
+        "override": 0.0,
+        "inheritance": 0.0
+      }
+    }
+  ],
+  "HONEST_NOTE": "composes EMERGE-38 pooler + EMERGE-42 member-identity cancellation; scales the exception count to one per category. Multi-level-emergent cancellation + transitivity over discovered categories remain follow-ons."
+}

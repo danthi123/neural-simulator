@@ -7441,3 +7441,24 @@ into the interactive experiential console (EMERGE-31) so a user teaches overlapp
 inheritance/override/transitivity live; (C) multi-override / multi-level-emergent cancellation. Boundaries = undiscovered
 mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy
 for real runs (numpy for these CPU semantic de-risks).
+
+## CYCLE 849 (2026-07-02 — EMERGE-43: MULTI-OVERRIDE scales over discovered categories)
+
+EMERGE-43 (GO 6/6, `2026-07-02-emerge43-multi-override-GO.md`, NO sim/ edit): 6 member-specific exceptions (one per
+discovered category) coexist with class inheritance over the pooler-discovered overlapping categories -- each overridden
+member answers ITS OWN exception (override-acc 0.97, no cross-bleed), non-overridden inherit (0.99); permuted 0.33 /
+lesion 0.00. Each exception lives on the member's UNIQUE identity ensemble (EMERGE-42), so N exceptions coexist without
+cross-talk while the shared codon carries the class default. Composes EMERGE-38 pooler + EMERGE-42 cancellation.
+`_emerge43_multi_override_derisk.py` + `tests/test_emerge43_multi_override.py` (3 pass).
+
+**ARC STATUS:** the competitive self-organizing pooler + reasoning arc is EMERGE-38 (surpass fixed codon) -> 39 (on-substrate
++ pin kernel) -> 40 (the sim/ winner-inactive kernel) -> 41 (spiking k-WTA selection) -> 42 (inheritance + cancellation
+over discovered categories) -> 43 (multi-override scales). All 6-seed GO, all committed both remotes.
+
+**EXACT NEXT CONCRETE ACTION:** commit EMERGE-43 to BOTH remotes on main. THEN continue autonomously -- the highest-leverage
+next step is to COUPLE the competitive pooler + full inference into the interactive experiential console (EMERGE-31) so a
+user teaches overlapping categories by co-occurrence + queries inheritance/override live (the CAPABILITY-toward-conversation
+step); OR TRANSITIVITY/multi-level over discovered categories (the third Collins-Quillian operation, needs hierarchical/
+2-level pooling -- research-gate the hierarchical-pooling mechanism first). Boundaries = undiscovered mechanisms; NO
+stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs
+(numpy for these CPU semantic de-risks).
