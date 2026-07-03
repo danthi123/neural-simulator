@@ -1,0 +1,569 @@
+{
+  "probe": "emerge65_self_organized_producer",
+  "capstone": true,
+  "verdict": "GO -- the spiking-Broca producer's ENTIRE grammatical structure is now SELF-ORGANIZED from the CORPUS END-TO-END. ONE pipeline (SelfOrganizedProducer) takes ONLY the corpus token stream and COMPOSES the three GO pieces: (a) S2 -- DISCOVER the closed-class function words from frequency + context-coverage (EMERGE-62); (b) S1a -- MINE each construction's ordered slot INVENTORY using (a)'s discovered function words (EMERGE-64, NO host FRAMES dict); (c) S1b -- LEARN the slot ORDER from pairwise role precedence over (b)'s mined constructions (EMERGE-63); (d) ASSEMBLE the per-frame structure (the discovered FRAMES-equivalent); (e) FEED it to the EMERGE-59/61 spiking producer + gate-first moat. The host FRAMES dict + FUNCTION_WORDS list + template order are NONE of them inputs -- validation ground-truth ONLY. END-TO-END: the assembled-from-corpus structure renders 'the owl can fly' / 'the penguin walks' / 'the penguin does not fly' EXACT on spikes (render 1.000; EMERGE-61 wash-out -> position-independent), and MATCHES the host FRAMES (per-frame slot set + function words + order: struct-match 1.000, inventory-accuracy 1.000, all frame function words discovered). THE COMPOSED ANTI-CHEAT COLLAPSES the WHOLE pipeline: PERMUTED-CORPUS (each exemplar's word order scrambled at BOTH the inventory-mining AND order-learning stages) drops render to 0.333 and structure-match to 0.333 (margin >= 0.3) -- the entire structure is CORPUS-DERIVED, not host-smuggled; NO-CORPUS -> nothing (0.000, empty inventory). HELD-OUT-FRAME GENERALIZES on the SHARED structure: a fully-held-out frame's det+subj+verb backbone + shared type-level order are recovered from the OTHER two frames (backbone 1.000, order 1.000). The gate-first no-confab MOAT holds BY CONSTRUCTION: 0 producer invocations on abstains. 6 seeds. ==> the FULLY-SELF-ORGANIZED SPIKING LANGUAGE PRODUCER: from the corpus alone the brain discovers the function-word inventory, mines the construction slot inventory, learns the slot order, and speaks its grounded answers on spikes -- transformer-free, moat intact, NO host grammatical structure. HONEST CARRIED-FORWARD RESIDUALS (named, NOT hidden, NOT walls): a HELD-OUT frame's DISTINCTIVE function-word slots (F_MODAL's can / F_NEGMOD's does/not) + F_INTR's 3sg inflection + F_NEGMOD's does<not internal order are NOT recoverable from the OTHER two frames alone (only that frame attests them) -- held-out F_NEGMOD backbone 1.000, F_INTR-inflection-recovered False (expected False); the next signal is ONE attestation of the held-out frame's own function word / inflection / bigram (or Yang-Getz's phrase-boundary cue). This renders the BOUNDED EMERGE frame inventory, NOT open prose (R4, the separate deferred wall). Reuse-by-import; NO sim/ edit; moat untouched.",
+  "go": true,
+  "mechanism": "the FULLY-SELF-ORGANIZED spiking-Broca producer: ONE end-to-end pipeline (SelfOrganizedProducer) that takes ONLY the corpus token stream and COMPOSES the three GO self-organized pieces -- (a) S2 DISCOVER the closed-class function words from frequency + context-coverage (EMERGE-62 Goldilocks; Yang-Getz 2026); (b) S1a MINE each construction's ordered slot INVENTORY using (a)'s discovered function words to split closed vs open (EMERGE-64 label_sentence + mine_inventory; Dominey-Hinaut roles-from-closed-class-position; usage-based construction grammar; NO host FRAMES dict); (c) S1b LEARN the slot ORDER from pairwise role precedence over the mined constructions (EMERGE-63; Dominey-Hinaut grammar-as-order-statistics); (d) ASSEMBLE the per-frame structure (the discovered FRAMES-equivalent -- slot types + function-word fillers + order); (e) FEED it to the EMERGE-59/61 spiking producer (MinedInventoryFrameSlotCQ over the EMERGE-61 inter-utterance wash-out) + the gate-first BrocaProducer moat -> render the EMERGE answers ON SPIKES. The host FRAMES dict + FUNCTION_WORDS list + template order are the VALIDATION ground-truth ONLY, never inputs. The COMPOSED permuted-corpus / no-corpus input-destruction controls + the held-out-frame shared-structure generalization gate the result (project control-validity methodology). Reuse-by-import; NO sim/ edit.",
+  "task": "compose S2 (function-word discovery) + S1a (slot-inventory mining) + S1b (slot-order learning) into ONE pipeline that discovers the whole spiking-Broca structure from the corpus alone; the assembled structure renders 'the owl can fly' / 'the penguin walks' / 'the penguin does not fly' EXACT on spikes AND matches the host FRAMES (inventory + function words + order); the COMPOSED permuted-corpus / no-corpus controls collapse the WHOLE pipeline; held-out-frame generalizes on the shared det+subj+verb structure; gate-first moat (0 productions on abstains); >=6 seeds",
+  "frames_groundtruth": {
+    "F_MODAL": [
+      [
+        "det",
+        "the"
+      ],
+      [
+        "subj",
+        null
+      ],
+      [
+        "func",
+        "can"
+      ],
+      [
+        "verb",
+        "bare"
+      ]
+    ],
+    "F_INTR": [
+      [
+        "det",
+        "the"
+      ],
+      [
+        "subj",
+        null
+      ],
+      [
+        "verb",
+        "3sg"
+      ]
+    ],
+    "F_NEGMOD": [
+      [
+        "det",
+        "the"
+      ],
+      [
+        "subj",
+        null
+      ],
+      [
+        "func",
+        "does"
+      ],
+      [
+        "func",
+        "not"
+      ],
+      [
+        "verb",
+        "bare"
+      ]
+    ]
+  },
+  "ground_truth_closed_class": [
+    "a",
+    "and",
+    "can",
+    "does",
+    "in",
+    "is",
+    "it",
+    "not",
+    "on",
+    "the",
+    "to"
+  ],
+  "frame_function_words": [
+    "can",
+    "does",
+    "not",
+    "the"
+  ],
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "elapsed_seconds": 23.2,
+  "aggregate": {
+    "main_render": 1.0,
+    "struct_match": 1.0,
+    "inventory_accuracy": 1.0,
+    "perm_render": 0.3333333333333333,
+    "perm_match": 0.3333333333333333,
+    "nocorpus_render": 0.0,
+    "heldout_shared_backbone": 1.0,
+    "heldout_shared_order": 1.0,
+    "heldout_negmod_backbone": 1.0,
+    "heldout_intr_inflection_recovered": false,
+    "moat_calls_on_abstain_total": 0
+  },
+  "sample_transcript": [
+    {
+      "tag": "INHERIT (affirm-modal)",
+      "question": "can an owl fly?",
+      "surface": "the owl can fly",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "CANCEL  (intransitive)",
+      "question": "can a penguin fly?",
+      "surface": "the penguin walks",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "DENY    (negated-modal)",
+      "question": "can a penguin fly? [deny]",
+      "surface": "the penguin does not fly",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "MOAT    (abstain)",
+      "question": "can a zzz fly?",
+      "surface": "I don't know.",
+      "invocation": "producer NOT invoked"
+    }
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_discovered_fw": 14,
+      "discovered_fw": [
+        "a",
+        "and",
+        "big",
+        "can",
+        "cat",
+        "does",
+        "fast",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "the",
+        "to"
+      ],
+      "frame_fw_covered": true,
+      "n_signatures": 12,
+      "inventory_accuracy": 1.0,
+      "main_render": 1.0,
+      "struct_match": 1.0,
+      "per_frame_render": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0
+      },
+      "per_frame_struct": {
+        "F_MODAL": {
+          "inventory_match": true,
+          "order_match": true,
+          "match": true
+        },
+        "F_INTR": {
+          "inventory_match": true,
+          "order_match": true,
+          "match": true
+        },
+        "F_NEGMOD": {
+          "inventory_match": true,
+          "order_match": true,
+          "match": true
+        }
+      },
+      "perm_render": 0.3333333333333333,
+      "perm_match": 0.3333333333333333,
+      "nocorpus_render": 0.0,
+      "nocorpus_empty": true,
+      "heldout": {
+        "F_MODAL": {
+          "backbone": 1.0,
+          "order": 1.0,
+          "distinctive_inflection_recovered": true
+        },
+        "F_INTR": {
+          "backbone": 1.0,
+          "order": 1.0,
+          "distinctive_inflection_recovered": false
+        },
+        "F_NEGMOD": {
+          "backbone": 1.0,
+          "order": 0.85,
+          "distinctive_inflection_recovered": true
+        }
+      },
+      "heldout_shared_backbone": 1.0,
+      "heldout_shared_order": 1.0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    },
+    {
+      "seed": 43,
+      "n_discovered_fw": 14,
+      "discovered_fw": [
+        "a",
+        "and",
+        "can",
+        "does",
+        "grey",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "tall",
+        "the",
+        "to",
+        "wet"
+      ],
+      "frame_fw_covered": true,
+      "n_signatures": 12,
+      "inventory_accuracy": 1.0,
+      "main_render": 1.0,
+      "struct_match": 1.0,
+      "per_frame_render": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0
+      },
+      "per_frame_struct": {
+        "F_MODAL": {
+          "inventory_match": true,
+          "order_match": true,
+          "match": true
+        },
+        "F_INTR": {
+          "inventory_match": true,
+          "order_match": true,
+          "match": true
+        },
+        "F_NEGMOD": {
+          "inventory_match": true,
+          "order_match": true,
+          "match": true
+        }
+      },
+      "perm_render": 0.3333333333333333,
+      "perm_match": 0.3333333333333333,
+      "nocorpus_render": 0.0,
+      "nocorpus_empty": true,
+      "heldout": {
+        "F_MODAL": {
+          "backbone": 1.0,
+          "order": 1.0,
+          "distinctive_inflection_recovered": true
+        },
+        "F_INTR": {
+          "backbone": 1.0,
+          "order": 1.0,
+          "distinctive_inflection_recovered": false
+        },
+        "F_NEGMOD": {
+          "backbone": 1.0,
+          "order": 0.6499999999999999,
+          "distinctive_inflection_recovered": true
+        }
+      },
+      "heldout_shared_backbone": 1.0,
+      "heldout_shared_order": 1.0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    },
+    {
+      "seed": 44,
+      "n_discovered_fw": 15,
+      "discovered_fw": [
+        "a",
+        "and",
+        "can",
+        "does",
+        "fast",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "red",
+        "small",
+        "tall",
+        "the",
+        "to"
+      ],
+      "frame_fw_covered": true,
+      "n_signatures": 14,
+      "inventory_accuracy": 1.0,
+      "main_render": 1.0,
+      "struct_match": 1.0,
+      "per_frame_render": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0
+      },
+      "per_frame_struct": {
+        "F_MODAL": {
+          "inventory_match": true,
+          "order_match": true,
+          "match": true
+        },
+        "F_INTR": {
+          "inventory_match": true,
+          "order_match": true,
+          "match": true
+        },
+        "F_NEGMOD": {
+          "inventory_match": true,
+          "order_match": true,
+          "match": true
+        }
+      },
+      "perm_render": 0.3333333333333333,
+      "perm_match": 0.3333333333333333,
+      "nocorpus_render": 0.0,
+      "nocorpus_empty": true,
+      "heldout": {
+        "F_MODAL": {
+          "backbone": 1.0,
+          "order": 1.0,
+          "distinctive_inflection_recovered": true
+        },
+        "F_INTR": {
+          "backbone": 1.0,
+          "order": 1.0,
+          "distinctive_inflection_recovered": false
+        },
+        "F_NEGMOD": {
+          "backbone": 1.0,
+          "order": 0.7,
+          "distinctive_inflection_recovered": true
+        }
+      },
+      "heldout_shared_backbone": 1.0,
+      "heldout_shared_order": 1.0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    },
+    {
+      "seed": 100,
+      "n_discovered_fw": 14,
+      "discovered_fw": [
+        "a",
+        "and",
+        "big",
+        "can",
+        "does",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "tall",
+        "the",
+        "to",
+        "wet"
+      ],
+      "frame_fw_covered": true,
+      "n_signatures": 12,
+      "inventory_accuracy": 1.0,
+      "main_render": 1.0,
+      "struct_match": 1.0,
+      "per_frame_render": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0
+      },
+      "per_frame_struct": {
+        "F_MODAL": {
+          "inventory_match": true,
+          "order_match": true,
+          "match": true
+        },
+        "F_INTR": {
+          "inventory_match": true,
+          "order_match": true,
+          "match": true
+        },
+        "F_NEGMOD": {
+          "inventory_match": true,
+          "order_match": true,
+          "match": true
+        }
+      },
+      "perm_render": 0.3333333333333333,
+      "perm_match": 0.3333333333333333,
+      "nocorpus_render": 0.0,
+      "nocorpus_empty": true,
+      "heldout": {
+        "F_MODAL": {
+          "backbone": 1.0,
+          "order": 1.0,
+          "distinctive_inflection_recovered": true
+        },
+        "F_INTR": {
+          "backbone": 1.0,
+          "order": 1.0,
+          "distinctive_inflection_recovered": false
+        },
+        "F_NEGMOD": {
+          "backbone": 1.0,
+          "order": 0.8,
+          "distinctive_inflection_recovered": true
+        }
+      },
+      "heldout_shared_backbone": 1.0,
+      "heldout_shared_order": 1.0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    },
+    {
+      "seed": 101,
+      "n_discovered_fw": 15,
+      "discovered_fw": [
+        "a",
+        "and",
+        "can",
+        "cold",
+        "does",
+        "grey",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "red",
+        "the",
+        "to",
+        "warm"
+      ],
+      "frame_fw_covered": true,
+      "n_signatures": 14,
+      "inventory_accuracy": 1.0,
+      "main_render": 1.0,
+      "struct_match": 1.0,
+      "per_frame_render": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0
+      },
+      "per_frame_struct": {
+        "F_MODAL": {
+          "inventory_match": true,
+          "order_match": true,
+          "match": true
+        },
+        "F_INTR": {
+          "inventory_match": true,
+          "order_match": true,
+          "match": true
+        },
+        "F_NEGMOD": {
+          "inventory_match": true,
+          "order_match": true,
+          "match": true
+        }
+      },
+      "perm_render": 0.3333333333333333,
+      "perm_match": 0.3333333333333333,
+      "nocorpus_render": 0.0,
+      "nocorpus_empty": true,
+      "heldout": {
+        "F_MODAL": {
+          "backbone": 1.0,
+          "order": 1.0,
+          "distinctive_inflection_recovered": true
+        },
+        "F_INTR": {
+          "backbone": 1.0,
+          "order": 1.0,
+          "distinctive_inflection_recovered": false
+        },
+        "F_NEGMOD": {
+          "backbone": 1.0,
+          "order": 0.8500000000000001,
+          "distinctive_inflection_recovered": true
+        }
+      },
+      "heldout_shared_backbone": 1.0,
+      "heldout_shared_order": 1.0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    },
+    {
+      "seed": 102,
+      "n_discovered_fw": 15,
+      "discovered_fw": [
+        "a",
+        "and",
+        "big",
+        "can",
+        "does",
+        "fast",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "slow",
+        "tall",
+        "the",
+        "to"
+      ],
+      "frame_fw_covered": true,
+      "n_signatures": 14,
+      "inventory_accuracy": 1.0,
+      "main_render": 1.0,
+      "struct_match": 1.0,
+      "per_frame_render": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0
+      },
+      "per_frame_struct": {
+        "F_MODAL": {
+          "inventory_match": true,
+          "order_match": true,
+          "match": true
+        },
+        "F_INTR": {
+          "inventory_match": true,
+          "order_match": true,
+          "match": true
+        },
+        "F_NEGMOD": {
+          "inventory_match": true,
+          "order_match": true,
+          "match": true
+        }
+      },
+      "perm_render": 0.3333333333333333,
+      "perm_match": 0.3333333333333333,
+      "nocorpus_render": 0.0,
+      "nocorpus_empty": true,
+      "heldout": {
+        "F_MODAL": {
+          "backbone": 1.0,
+          "order": 1.0,
+          "distinctive_inflection_recovered": true
+        },
+        "F_INTR": {
+          "backbone": 1.0,
+          "order": 1.0,
+          "distinctive_inflection_recovered": false
+        },
+        "F_NEGMOD": {
+          "backbone": 1.0,
+          "order": 0.8,
+          "distinctive_inflection_recovered": true
+        }
+      },
+      "heldout_shared_backbone": 1.0,
+      "heldout_shared_order": 1.0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    }
+  ],
+  "HONEST_NOTE": "THE CAPSTONE: the spiking-Broca producer's ENTIRE grammatical structure is now self-organized from the corpus END-TO-END -- from the corpus alone the brain discovers the function-word inventory (S2), mines each construction's slot inventory (S1a), learns the slot order (S1b), assembles the FRAMES-equivalent, and speaks its grounded answers ON SPIKES. This is a COMPOSITION of GO pieces (not a new mechanism); the load-bearing proof is that the COMPOSED permuted-corpus control collapses the WHOLE pipeline (nothing host-smuggled). CARRIED-FORWARD RESIDUALS (named, NOT hidden, NOT walls): a HELD-OUT frame's DISTINCTIVE function-word slots (F_MODAL's can, F_NEGMOD's does/not) + F_INTR's 3sg inflection + F_NEGMOD's does<not internal order are NOT recoverable from the OTHER two frames alone (only that frame attests them) -- the held-out arm generalizes only the SHARED det+subj+verb backbone + type-level order (the gated claim); the distinctive residual is the same category as EMERGE-63/64's named residuals (next signal: one attestation of the held-out frame's own function word / inflection / bigram, or Yang-Getz's phrase-boundary cue). This renders the BOUNDED EMERGE frame inventory (ability-affirm / intransitive-exception / negated-modal), NOT open prose (R4, the separate deferred wall). The corpus discovery/mining is offline syllabus prep (BRAIN-BASED-ONLY compliant -- like rendering a retinal image the neural retina reads); the structure is rendered on REAL spikes; the gate-first moat is untouched (0 productions on abstains, by construction). Reuse-by-import; NO sim/ edit. EMERGE-66 (optional follow-on): wire SelfOrganizedProducer into EMERGE-60's SpikingBrocaConsole so the flagship console renders from the fully-self-organized producer."
+}

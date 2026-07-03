@@ -8092,3 +8092,34 @@ speaks from a fully-self-organized producer). ORTHOGONAL: the A->W neural-spell 
 4th morphological-invariance cue; the held-out distinctive-slot residual. Deferred: EMERGE-60 fluid-RNG isolation;
 EMERGE-57 multi-seed; the audit re-run (rate-limited). Boundaries = undiscovered mechanisms; NO stopping; sim/ edits
 fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A MONITOR on every long run; GPU/CuPy real.
+
+## CYCLE 874 (2026-07-03 — EMERGE-65 CAPSTONE GO: the END-TO-END self-organized spiking language producer; the host FRAMES dict fully removed)
+
+EMERGE-65 (CAPSTONE, GO, 6-seed, `2026-07-03-emerge65-self-organized-producer-GO.md`, NO sim/ edit): composes the three
+self-organized pieces (S2 EMERGE-62/62b function words + S1a EMERGE-64 slot inventory + S1b EMERGE-63 slot order) into
+ONE end-to-end pipeline `SelfOrganizedProducer`. From the corpus token stream ALONE (no host FRAMES dict, no host
+function-word list, no host order teacher -- all validation ground-truth only): discovers the function-word inventory ->
+mines each construction's slot inventory -> learns the slot order -> assembles the FRAMES-equivalent -> speaks the
+EMERGE answers ON SPIKES via the EMERGE-59/61 producer + gate-first moat. VERIFIED controller-direct (CI 26 pass across
+test_emerge63/64/65; the agent re-run churn on the committed _emerge59/62/63/64 raw jsons was RESTORED to HEAD -- only
+EMERGE-65's own 4 new files committed): main_render 1.0, struct_match 1.0 (vs host FRAMES), inventory_accuracy 1.0,
+PERMUTED-CORPUS perm_render 0.333 / perm_match 0.333 (the composed load-bearing anti-cheat -- scrambles word order at
+BOTH the inventory-mining S1a AND order-learning S1b stages -> collapses to the documented 0.333 floor, the decisive
+proof nothing is host-smuggled through composition seams), nocorpus 0.0, heldout_shared_backbone/order/negmod_backbone
+1.0, heldout_intr_inflection_recovered False (honest inflection residual), moat 0. EMERGE-59..64 all still pass (56/56).
+NO sim/ edit; purely additive. The console wire-in is named EMERGE-66 (a clean ~6-line additive default-off flag, NOT
+built -- touches the committed console + warrants its own de-risk, matching EMERGE-60/61's discipline). Carried-forward
+honest residuals (NOT walls): a held-out frame's DISTINCTIVE function-word/inflection slots (can/does/not/3sg) + F_NEGMOD
+does<not internal order need one attestation (or Yang-Getz phrase-boundary); R4 open prose = the deferred scale wall.
+⇒ the spiking-Broca producer's ENTIRE grammatical structure is now self-organized from corpus experience, end-to-end,
+transformer-free, moat intact -- the master-directive "structure must self-organize" realized for the language producer.
+
+**EXACT NEXT CONCRETE ACTION:** (1) DONE: committed EMERGE-65 both remotes. (2) NEXT (pick highest-leverage): (a)
+EMERGE-66 = wire `SelfOrganizedProducer` into the EMERGE-60 `SpikingBrocaConsole` (additive default-off flag) so the
+FLAGSHIP console speaks from the fully-self-organized producer -- fluid no-regression + moat de-risk, 6-seed; (b) the
+A->W NEURAL-spell wire-in (replace the token callback with the concept_speak_demo spiking read-out so the WORDS are
+spiking too -- the remaining host piece of the render, GPU); (c) the held-out distinctive-slot residual (one-attestation
+/ phrase-boundary cue) or the 4th morphological-invariance cue for EMERGE-62 real-corpus precision. Deferred: EMERGE-60
+fluid-RNG isolation; EMERGE-57 multi-seed; the adversarial-audit re-run (rate-limited). Boundaries = undiscovered
+mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A
+MONITOR on every long run; GPU/CuPy for real runs (numpy for CPU).
