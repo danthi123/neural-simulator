@@ -112,10 +112,15 @@ class MultiOverrideProbe:
                 boost = np.exp(2.0 * (K_WIN / NCOL - duty / ((e + 1) * len(self.mem))))
         self.CLASS = {k: [PROP0 + 2 * k, PROP0 + 2 * k + 1] for k in CATS}
         self.OVR = {ov: [PROP0 + 2 * (NCLASSPROP + j), PROP0 + 2 * (NCLASSPROP + j) + 1] for j, ov in enumerate(OVR_LIST)}
-        # inheritance: class property on member codons
+        # GENUINE HELD-OUT: the last-3 non-override members per category (== inheritance_acc's held selection) are NEVER
+        # taught the class property -- they must inherit via the shared pooler codon, so inheritance measures generalization
+        # (not direct retrieval of a taught fact).
+        self.held = {k: [m for m in self.mem if self.mem[m] == k and m not in OVERRIDES][-3:] for k in CATS}
+        held_all = {m for ms in self.held.values() for m in ms}
+        # inheritance: class property on member codons -- EXCLUDING the held-out members (they must inherit via the shared codon)
         for _ in range(epochs):
             for k in CATS:
-                for m in [mm for mm in self.mem if self.mem[mm] == k]:
+                for m in [mm for mm in self.mem if self.mem[mm] == k and mm not in held_all]:
                     apply_kernel_update(self.b, self.row, self.col, self.ci, self._codon(self.feats[m]),
                                         _sdr(self.CLASS[k]), self.z, 0.14, 0.02, 1.0)
         # cancellation: EACH overridden member's own exception on ITS identity ensemble
@@ -157,8 +162,8 @@ class MultiOverrideProbe:
         return np.mean([self.query(ov) == f"OVR:{ov}" for ov in OVR_LIST])
 
     def inheritance_acc(self):
-        held = {k: [m for m in self.mem if self.mem[m] == k and m not in OVERRIDES][-3:] for k in CATS}
-        return np.mean([self.query(m) == f"C{k}" for k in CATS for m in held[k]])
+        """held-out generalization: members NEVER taught the class property must inherit via the shared pooler codon."""
+        return np.mean([self.query(m) == f"C{k}" for k in CATS for m in self.held[k]])
 
 
 def _run_arm(seed, arm, epochs):

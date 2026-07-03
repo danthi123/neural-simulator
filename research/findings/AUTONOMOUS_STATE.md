@@ -7502,3 +7502,28 @@ with the on-substrate learning (the committed EMERGE-40 fused_htm_winner_inactiv
 weights in cp_connections) + EMERGE-41 FS-WTA rank-order selection, for each pooler layer, and confirm the 2/3-level
 inheritance holds fully-on-substrate. Boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair game when
 de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy for these CPU de-risks).
+
+## CYCLE 852 (2026-07-02 — ADVERSARIAL AUDIT + REMEDIATION of the EMERGE-38..45 arc; ultracode)
+
+Before building EMERGE-46, ran an exhaustive multi-agent adversarial audit (23 agents: 1 skeptic per de-risk + adversarial
+verification of each concern + synthesis) then a remediation workflow (1 agent per de-risk). VERDICT: the SCIENCE is solid
+(every confirmed issue survived a CORRECTED test) but there was a SYSTEMATIC pattern of defects, all now FIXED:
+(1) "held-out that isn't" (EMERGE-42/43 taught the class on ALL members incl. the tested ones) -> genuine hold-out
+(exclude tested members from teaching); held-out inheritance 1.00, permuted 0.15. (2) GO gates on forbidden fixed-random
+controls (EMERGE-38/39/40/44 near-tie on 1-2 seeds, pass only on the mean) -> gates moved to the RELIABLE controls
+(no-selectivity/permuted/lesion), fixed demoted to reported-secondary with per-seed spread disclosed. (3) EMERGE-41
+FS-framing overclaim (FS is causally INERT for selection -- winners byte-identical FS-on vs lesion) -> reframed to spiking
+RANK-ORDER (Thorpe latency) selection + FS=loser-pool-sparsity + a genuine FLAT-drive input-destruction control. (4)
+EMERGE-45 transitivity near-tautological + no L3 isolation -> sibling-confusion metric (0.00) + L2-genus-floor(0.81)/
+permute-L3-only(0.61)/L3-lesion(0.58); honest reframe: L2/genus is the dominant carrier, L3 a seed-variable +0.17
+increment. EMERGE-40 also given a genuine pooler hold-out. ALL 27 arc CI tests pass after remediation; every GO holds.
+Finding: `2026-07-02-emerge38-45-adversarial-audit-and-remediation.md`. NO sim/ edit in the remediation.
+
+**EXACT NEXT CONCRETE ACTION:** commit the corrected arc (8 runners + 6 tests + 8 findings + 8 raw jsons + the
+audit/remediation finding + this state) to BOTH remotes on main. THEN build EMERGE-46 on the HONEST foundation: the
+fully-spiking stacked hierarchy -- replace EMERGE-44/45's numpy _competitive_pool layers with the on-substrate learning
+(committed EMERGE-40 fused_htm_winner_inactive_depression + potentiation kernels, weights in cp_connections) + EMERGE-41
+rank-order spiking selection, for each pooler layer; confirm the 2/3-level inheritance holds fully-on-substrate with the
+now-honest controls (genuine hold-out, sibling-confusion, L3-isolation). Boundaries = undiscovered mechanisms; NO
+stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs
+(numpy for these CPU de-risks).

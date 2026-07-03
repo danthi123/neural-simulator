@@ -23,12 +23,15 @@ def test_cancellation_overrides_inherited(probe):
 
 
 def test_inheritance_over_discovered_categories(probe):
-    """Non-overridden members inherit their category's class property via the pooler-discovered overlapping-category codons."""
+    """GENUINE HOLD-OUT: the tested members are EXCLUDED from CLASS teaching (self.held), so this measures generalization
+    via the pooler-discovered overlapping-category codons -- a never-directly-taught member inherits its category's class
+    property via the shared codon, not by direct retrieval."""
     assert probe.inheritance_acc() >= 0.8
 
 
 def test_permuted_features_collapse_inheritance():
-    """Scrambled features -> the pooler can't discover categories -> inheritance collapses (isolates the discovered structure)."""
+    """Scrambled features -> the pooler can't discover categories -> held-out inheritance collapses (isolates the
+    discovered structure). Permuted mean ~0.15 3-seed; the <=0.55 bound is a comfortable single-seed guard."""
     from research.runners._emerge42_pooler_inference_derisk import PoolerInferenceProbe
     assert PoolerInferenceProbe(seed=42, epochs=40, permute=True).inheritance_acc() <= 0.55
 

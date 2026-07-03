@@ -1,7 +1,12 @@
 """CI guard for EMERGE-39: the FULLY-ON-SUBSTRATE competitive pooler. HTM-Spatial-Pooler feature->column permanences live
 in the bridge's coincidence synapse weights and are learned by the committed sim/ kernel (potentiation) PLUS the added
 winner-INACTIVE depression (selectivity); overlapping categories separate; the selectivity term is load-bearing; permuted
-+ dAP-lesion collapse it. CPU (numpy); skips gracefully if deps unavailable."""
++ dAP-lesion collapse it. CPU (numpy); skips gracefully if deps unavailable.
+
+These assertions cover exactly the VALID (GO-gated) controls: the on-substrate separation, the mechanism-ablation
+(with-vs-without selectivity) margin, and the input-destruction (permuted) collapse. The FIXED (no-learn random-projection)
+arm is intentionally NOT asserted -- it is a fixed-random-code control, unreliable in this small representation space
+(per-seed spread ~0.28-0.83), reported-only, per 2026-07-02-anti-cheat-control-validity-methodology.md."""
 import os
 os.environ.setdefault("SIM_BACKEND", "numpy")
 import pytest

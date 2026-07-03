@@ -1,6 +1,7 @@
 """CI guard for EMERGE-43: multi-override cancellation over discovered categories. Many member-specific exceptions coexist
 with class inheritance over the pooler-discovered overlapping categories -- each overridden member answers its own
-exception (no cross-bleed); non-overridden members inherit; permuted collapses. CPU (numpy); skips if deps unavailable."""
+exception (no cross-bleed); HELD-OUT non-taught members inherit via the shared codon (genuine generalization, not
+direct retrieval); permuted collapses. CPU (numpy); skips if deps unavailable."""
 import os
 os.environ.setdefault("SIM_BACKEND", "numpy")
 import pytest
@@ -21,7 +22,8 @@ def test_each_override_answers_its_own_exception(probe):
 
 
 def test_non_overridden_inherit(probe):
-    """Non-overridden members still inherit their category's class property (overrides don't disrupt inheritance)."""
+    """HELD-OUT members (never taught the class property) inherit via the shared codon -- genuine generalization, and the
+    many overrides don't disrupt it."""
     assert probe.inheritance_acc() >= 0.8
 
 

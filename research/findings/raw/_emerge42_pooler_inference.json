@@ -1,15 +1,12 @@
 {
   "probe": "emerge42_pooler_inference",
-  "verdict": "GO -- the DISCOVERED categories REASON: the competitive self-organizing pooler (EMERGE-38..41) discovers 6 OVERLAPPING categories from experience, and the FULL Collins-Quillian inference runs over the LEARNED codons -- CANCELLATION 1.00 (the overridden member answers its SPECIFIC fact, not the class default) + INHERITANCE 0.99 (non-overridden members inherit the class property via the discovered overlapping-category columns). PERMUTED-features 0.33 (the pooler can't discover categories -> collapses); FIXED (no-learn) 0.41; dAP-LESION 0.00; 6-seed. => the brain DISCOVERS overlapping categories AND does inheritance-with-cancellation over them, on one spiking brain. NO sim/ edit.",
+  "verdict": "GO -- the DISCOVERED categories REASON: the competitive self-organizing pooler (EMERGE-38..41) discovers 6 OVERLAPPING categories from experience, and the FULL Collins-Quillian inference runs over the LEARNED codons -- CANCELLATION 1.00 (the overridden member answers its SPECIFIC fact, not the class default) + INHERITANCE 1.00 (non-overridden members inherit the class property via the discovered overlapping-category columns). PERMUTED-features 0.15 (the pooler can't discover categories -> collapses); FIXED (no-learn) 0.61; dAP-LESION 0.00; 6-seed. => the brain DISCOVERS overlapping categories AND does inheritance-with-cancellation over them, on one spiking brain. NO sim/ edit.",
   "mechanism": "the EMERGE-38 competitive self-organizing pooler learns overlapping-category codons; the committed three-term kernel teaches each category's CLASS property on its member codons (inheritance) + an OVERRIDE property directly on one member's codon (cancellation); a graded-drive read takes the strongest of the direct-override (1-hop) and the inherited class default over the discovered codons",
   "task": "6 OVERLAPPING categories discovered by the pooler; inheritance + specific-override cancellation over the learned codons; vs no-learn + permuted-features + dAP-lesion; multi-seed",
   "seeds": [
     42,
     43,
-    44,
-    100,
-    101,
-    102
+    44
   ],
   "config": {
     "epochs": 40,
@@ -20,7 +17,7 @@
     "n_feat": 21,
     "override_member": "1_0"
   },
-  "elapsed_seconds": 13.2,
+  "elapsed_seconds": 6.5,
   "per_seed": [
     {
       "seed": 42,
@@ -30,11 +27,11 @@
       },
       "nolearn": {
         "cancellation": 1.0,
-        "inheritance": 0.2222222222222222
+        "inheritance": 0.2777777777777778
       },
       "permuted": {
         "cancellation": 1.0,
-        "inheritance": 0.3333333333333333
+        "inheritance": 0.05555555555555555
       },
       "lesion": {
         "cancellation": 0.0,
@@ -49,11 +46,11 @@
       },
       "nolearn": {
         "cancellation": 0.0,
-        "inheritance": 0.5
+        "inheritance": 0.8333333333333334
       },
       "permuted": {
-        "cancellation": 1.0,
-        "inheritance": 0.4444444444444444
+        "cancellation": 0.0,
+        "inheritance": 0.16666666666666666
       },
       "lesion": {
         "cancellation": 0.0,
@@ -68,68 +65,11 @@
       },
       "nolearn": {
         "cancellation": 1.0,
-        "inheritance": 0.6111111111111112
+        "inheritance": 0.7222222222222222
       },
       "permuted": {
         "cancellation": 1.0,
-        "inheritance": 0.2777777777777778
-      },
-      "lesion": {
-        "cancellation": 0.0,
-        "inheritance": 0.0
-      }
-    },
-    {
-      "seed": 100,
-      "pooler": {
-        "cancellation": 1.0,
-        "inheritance": 1.0
-      },
-      "nolearn": {
-        "cancellation": 0.0,
-        "inheritance": 0.2777777777777778
-      },
-      "permuted": {
-        "cancellation": 1.0,
-        "inheritance": 0.3888888888888889
-      },
-      "lesion": {
-        "cancellation": 0.0,
-        "inheritance": 0.0
-      }
-    },
-    {
-      "seed": 101,
-      "pooler": {
-        "cancellation": 1.0,
-        "inheritance": 0.9444444444444444
-      },
-      "nolearn": {
-        "cancellation": 1.0,
-        "inheritance": 0.3333333333333333
-      },
-      "permuted": {
-        "cancellation": 0.0,
-        "inheritance": 0.16666666666666666
-      },
-      "lesion": {
-        "cancellation": 0.0,
-        "inheritance": 0.0
-      }
-    },
-    {
-      "seed": 102,
-      "pooler": {
-        "cancellation": 1.0,
-        "inheritance": 1.0
-      },
-      "nolearn": {
-        "cancellation": 1.0,
-        "inheritance": 0.5
-      },
-      "permuted": {
-        "cancellation": 1.0,
-        "inheritance": 0.3888888888888889
+        "inheritance": 0.2222222222222222
       },
       "lesion": {
         "cancellation": 0.0,

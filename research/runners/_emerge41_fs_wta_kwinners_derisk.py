@@ -1,24 +1,35 @@
-"""EMERGE-41 / toward-semantics — the SPIKING FS k-WINNERS-TAKE-ALL competition: the pooler's "which columns win" is the
-last host step (a top-k argsort over the graded drive). This de-risks realizing it as SPIKING lateral inhibition -- the
-columns receive their graded drive as input current, a shared FS (fast-spiking inhibitory) pool provides global lateral
-inhibition (column->FS excitatory + FS->column inhibitory), and the k highest-drive columns SPIKE first + suppress the
-rest. The winners = which columns fired (`cp_firing_states`), NOT a host argsort. NO `sim/` edit.
+"""EMERGE-41 / toward-semantics — the SPIKING RANK-ORDER (latency) k-winners SELECTION: the pooler's "which columns win" is
+the last host step (a top-k argsort over the graded drive). This de-risks realizing the SELECTION as SPIKING rank-order
+(Thorpe latency) coding -- the columns receive their graded drive as input current at a near-rheobase operating point, so
+the HIGHER-drive columns integrate to threshold and SPIKE EARLIER, and the first-K-to-spike == the host top-K. The winners
+= which columns fired FIRST (read from `cp_firing_states` spike TIMING), NOT a host argsort. A shared FS (fast-spiking
+inhibitory) pool provides post-hoc lateral inhibition that SPARSIFIES the loser pool -- but it does NOT do the selection
+(see the honest note below). NO `sim/` edit.
 
-WHY: EMERGE-38/39/40 made the competitive-pooler LEARNING fully-on-substrate (sim/ kernels), but the k-WTA SELECTION of
-winners is still a host `np.argsort(-drive)[:K]`. A biological pooler selects winners by SPIKING competition (Diehl-Cook
-2015 lateral inhibition; HTM SP local inhibition; Fukai-Tanaka soft-WTA). This is the last host op in the pooler.
+WHY: EMERGE-38/39/40 made the competitive-pooler LEARNING fully-on-substrate (sim/ kernels), but the k-winners SELECTION of
+winners is still a host `np.argsort(-drive)[:K]`. A biological pooler selects winners by SPIKING dynamics (Thorpe
+rank-order / latency coding; Diehl-Cook 2015 lateral inhibition sparsifies). This is the last host op in the pooler.
 
-QUESTION (cheap-first, single variable): does a spiking FS global-inhibition k-WTA select the SAME top-K columns as the
+HONEST FRAMING (from the adversarial audit): on this single-global-FS-pool substrate the SELECTION is driven purely by
+rank-order spike TIMING (higher drive -> earlier spike). The FS lateral inhibition is CAUSALLY INERT for WHICH columns
+win -- the winner set is byte-identical FS-on vs FS-lesioned (an explicit reported control); the FS only reduces the number
+of columns that fire at all (loser-pool SPARSITY), a post-hoc effect. So this is NOT a k-WTA / FS-competition SELECTION;
+it is spiking rank-order coding for the selection, with FS providing sparsity.
+
+QUESTION (cheap-first, single variable): does the spiking rank-order (latency) read select the SAME top-K columns as the
 host top-k, on a graded drive? If yes, it drops into the EMERGE-40 pooler (which already learns correctly given the
 winners) with no learning change.
 
 MECHANISM: NCOL Izhikevich column cells + an FS interneuron pool; column->FS (excitatory) + FS->column (inhibitory).
-Inject a graded per-column drive as external current; run a short window; the columns that SPIKE are the winners. Tune the
-FS strength so ~K win (a soft k-WTA). METRIC: overlap of the spiking winners with the host top-K by drive.
+Inject a graded per-column drive as external current; run a short window; the first-K columns to SPIKE are the winners.
+METRIC: overlap of the first-K-spiking winners with the host top-K by drive.
 
-ANTI-CHEATS: OVERLAP with host top-K (chance = K/NCOL); FS-LESION (no inhibition -> all/most columns fire -> NOT selective,
-sparsity high); PERMUTED-drive (the spiking winners FOLLOW the drive permutation -> the competition reads the drive, not a
-fixed bias); multi-seed. Reuse-by-import (`_emerge11` WTA pattern); NO `sim/` edit. CPU numpy-backend. `--demo`.
+ANTI-CHEATS: OVERLAP with host top-K (chance = K/NCOL); FLAT-DRIVE (input-destruction: a uniform, non-graded drive removes
+the ranking signal -> the overlap collapses toward the tie-break floor -> isolates that the SELECTION reads the GRADED
+drive, not a fixed bias); FS-LESION winner-set-identity (winners are ~identical FS-on vs FS-lesioned -> confirms the FS is
+NOT doing the selection) + FS-LESION sparsity (no inhibition -> more columns fire -> the FS's only effect is loser-pool
+sparsity); randomized tie-break (so ties don't default to a fixed low-index bias); multi-seed. Reuse-by-import
+(`_emerge11` WTA pattern); NO `sim/` edit. CPU numpy-backend. `--demo`.
 """
 import os
 os.environ.setdefault("SIM_BACKEND", "numpy")
@@ -91,16 +102,19 @@ class FSWTAProbe:
         self.b, _ = build_bridge(seed, wta=wta)
         self.ci = np.asarray(self.b.region_manager.indices("col"), int)
         self.wta = wta
+        # tie-break RNG (drive-independent): columns with an IDENTICAL first-spike step are ordered RANDOMLY, so ties
+        # do not default to a fixed low-index bias (stable argsort would). Deterministic per seed for reproducibility.
+        self._tb_rng = np.random.default_rng(int(seed) * 101 + (0 if wta else 1))
 
     def select(self, drive):
-        """Inject the graded drive as external current to the columns; run; return the set of columns that SPIKED."""
+        """Inject the graded drive as external current to the columns; run; return the first-K columns to SPIKE (rank-order)."""
         n = self.b.cp_external_input_current.shape[0]
         cur = np.zeros(n)
         cur[self.ci] = DRIVE_BASE + DRIVE_GAIN * np.asarray(drive, float)
         self.b.cp_external_input_current[:] = self.b.xp.asarray(cur.astype(np.float32)) if hasattr(self.b, "xp") else cur.astype(np.float32)
-        # RANK-ORDER k-WTA (Thorpe rank coding): higher drive integrates to threshold EARLIER, so the first columns to
-        # spike are the highest-drive ones; the FS lateral inhibition then clamps the rest so they stay silent. The
-        # winners = the first columns to fire (read from the spike TIMING, not a host argsort over the drive).
+        # RANK-ORDER SELECTION (Thorpe latency coding): higher drive integrates to threshold EARLIER, so the first columns
+        # to spike are the highest-drive ones. The winners = the first columns to fire (read from the spike TIMING, not a
+        # host argsort over the drive). The FS lateral inhibition only sparsifies the loser pool (it does NOT select).
         first_spike = np.full(NCOL, N_STEPS + 1)
         for t in range(N_STEPS):
             self.b._run_one_simulation_step()
@@ -109,12 +123,13 @@ class FSWTAProbe:
             first_spike[newly] = t
         self.b.cp_external_input_current[:] = 0
         fired = np.where(first_spike <= N_STEPS)[0]
+        self._n_fired = len(fired)
         if len(fired) == 0:
             return set()
-        # winners = the K earliest to fire (ties by spike time broken by drive-independent index order); the FS keeps the
-        # loser count low (measured by n_fired) -- if the FS is lesioned, far more than K fire (sparsity breaks).
-        order = fired[np.argsort(first_spike[fired], kind="stable")]
-        self._n_fired = len(fired)
+        # winners = the K earliest to fire; ties on first-spike step are broken by a RANDOM (drive-independent) key so a
+        # uniform/flat drive (all columns tie) collapses toward a tie-break floor rather than a fixed low-index set.
+        tiebreak = self._tb_rng.random(len(fired))
+        order = fired[np.lexsort((tiebreak, first_spike[fired]))]
         return set(int(c) for c in order[:K_WIN])
 
 
@@ -126,32 +141,37 @@ def _drive(seed):
 def _run_seed(seed):
     d = _drive(seed)
     host_topk = set(int(c) for c in np.argsort(-d)[:K_WIN])
-    # spiking FS-WTA
+    # spiking rank-order selection (FS-on)
     p = FSWTAProbe(seed=seed, wta=True)
     win = p.select(d)
     overlap = len(win & host_topk) / K_WIN if win else 0.0
     sparsity = getattr(p, "_n_fired", len(win)) / NCOL          # how many columns fired at all (the FS keeps this low)
-    # FS-lesion (no inhibition) -> far more columns fire (sparsity breaks)
+    # FS-lesion (no inhibition): (a) the WINNER SET is ~identical (the FS does NOT select) and (b) far more columns fire
+    # (the FS's only effect is loser-pool sparsity).
     pl = FSWTAProbe(seed=seed, wta=False)
     lesion_win = pl.select(d)
     lesion_sparsity = getattr(pl, "_n_fired", len(lesion_win)) / NCOL
-    # permuted-drive: shuffle the drive -> the spiking winners must FOLLOW (overlap with the PERMUTED top-K, not the original)
-    rng = np.random.default_rng(seed * 13 + 5)
-    perm = rng.permutation(NCOL); dperm = d[perm]
-    permuted_topk = set(int(c) for c in np.argsort(-dperm)[:K_WIN])
-    pp = FSWTAProbe(seed=seed, wta=True)
-    pwin = pp.select(dperm)
-    permuted_overlap = len(pwin & permuted_topk) / K_WIN if pwin else 0.0
+    lesion_winner_overlap = len(win & lesion_win) / K_WIN if win and lesion_win else 0.0   # ~1.0 => FS inert for selection
+    # FLAT-drive (input-destruction): a uniform, non-graded drive removes the ranking signal. With no drive gradient every
+    # column integrates identically -> the first-K-to-spike is decided by the random tie-break -> the overlap with the host
+    # top-K (of the ORIGINAL graded drive) collapses toward the tie-break floor (~K/NCOL). Isolates that the SELECTION
+    # reads the GRADED drive, not a fixed structural bias.
+    flat = np.full(NCOL, float(np.mean(d)))                     # uniform drive at the mean magnitude (same total energy scale)
+    pf = FSWTAProbe(seed=seed, wta=True)
+    fwin = pf.select(flat)
+    flat_overlap = len(fwin & host_topk) / K_WIN if fwin else 0.0
     return {"seed": seed, "overlap": overlap, "sparsity": sparsity, "n_win": len(win),
-            "lesion_sparsity": lesion_sparsity, "permuted_overlap": permuted_overlap}
+            "lesion_sparsity": lesion_sparsity, "lesion_winner_overlap": lesion_winner_overlap,
+            "flat_overlap": flat_overlap}
 
 
 def _demo(seed=42):
     d = _drive(seed)
     host_topk = list(np.argsort(-d)[:K_WIN])
     p = FSWTAProbe(seed=seed, wta=True); win = sorted(p.select(d))
-    print("\n=== EMERGE-41 spiking FS k-winners-take-all (no host argsort; no transformer) ===")
-    print(f"  {NCOL} columns compete via a shared FS inhibitory pool; the k={K_WIN} highest-drive columns SPIKE.\n")
+    print("\n=== EMERGE-41 spiking rank-order (latency) k-winners selection (no host argsort; no transformer) ===")
+    print(f"  {NCOL} columns integrate a graded drive; the k={K_WIN} HIGHER-drive columns SPIKE EARLIER (Thorpe rank-order).")
+    print(f"  the winners = first-K to spike (spike TIMING); the FS inhibition only sparsifies the loser pool.\n")
     print(f"  host top-K by drive : {sorted(host_topk)}")
     print(f"  spiking winners     : {win}")
     print(f"  overlap             : {len(set(win) & set(host_topk))}/{K_WIN}\n")
@@ -167,55 +187,65 @@ def main():
         _demo(a.seeds[0]); return 0
     if len(a.seeds) < 3:
         print("NOT-RUNNABLE: need >=3 seeds"); return 2
-    print(f"spiking FS k-WTA: {NCOL} columns, k={K_WIN}, shared FS inhibition; chance overlap {K_WIN/NCOL:.2f}", flush=True)
+    print(f"spiking rank-order (latency) k-winners selection: {NCOL} columns, k={K_WIN}; chance/flat-floor overlap "
+          f"{K_WIN/NCOL:.2f}", flush=True)
     t0 = time.time(); err = None; per = []
     try:
         for s in a.seeds:
             r = _run_seed(s); per.append(r)
             print(f"  [seed {s}] overlap {r['overlap']:.2f} (n_win {r['n_win']}, sparsity {r['sparsity']:.2f}) || "
-                  f"FS-lesion sparsity {r['lesion_sparsity']:.2f} | permuted-drive overlap {r['permuted_overlap']:.2f}", flush=True)
+                  f"FLAT-drive overlap {r['flat_overlap']:.2f} | FS-lesion winner-overlap {r['lesion_winner_overlap']:.2f} "
+                  f"(=FS inert for selection) | FS-lesion sparsity {r['lesion_sparsity']:.2f}", flush=True)
     except Exception as e:
         err = repr(e); traceback.print_exc()
 
     if err is None:
         def m(k):
             return float(np.mean([p[k] for p in per]))
-        ov, sp, les, pov = m("overlap"), m("sparsity"), m("lesion_sparsity"), m("permuted_overlap")
+        ov, sp, les, flat, lwo = m("overlap"), m("sparsity"), m("lesion_sparsity"), m("flat_overlap"), m("lesion_winner_overlap")
         chance = K_WIN / NCOL
-        # PRIMARY: the spiking rank-order (drive->spike-timing) selects the top-K (overlap) + reads the drive (permuted
-        # follows). SECONDARY: the FS lateral inhibition suppresses the loser pool (sparsity; lesion fires more).
-        go = bool(ov >= 0.9 and ov >= chance + 0.4 and pov >= 0.9 and les >= sp + 0.12)
+        # PRIMARY: the spiking rank-order (drive->spike-timing) selects the top-K (overlap), and it READS THE GRADED DRIVE
+        # (flat/uniform drive collapses the overlap to the tie-break floor). SECONDARY (reported controls): the FS lateral
+        # inhibition is INERT for the selection (winner set ~identical FS-on vs FS-lesion) and only sparsifies the loser
+        # pool (lesion fires more).
+        go = bool(ov >= 0.9 and ov >= chance + 0.4 and flat <= chance + 0.15 and les >= sp + 0.12)
         if go:
-            verdict = (f"GO -- the pooler's k-winners SELECTION runs as SPIKING competition, not a host argsort over the drive: "
-                       f"columns integrate their graded drive to threshold and the HIGHER-drive columns SPIKE EARLIER (Thorpe "
-                       f"rank-order coding), so the first-K-to-spike == the host top-K (overlap {ov:.2f}, chance {chance:.2f}); "
-                       f"PERMUTED-drive -> the spiking winners FOLLOW the permuted top-K ({pov:.2f}) => the competition reads the "
-                       f"drive, not a fixed bias. The FS lateral inhibition suppresses the loser pool (fired fraction {sp:.2f} "
-                       f"with FS vs {les:.2f} FS-lesioned). Multi-seed. => the pooler's last host op (which columns win) is a "
-                       f"spiking read (spike-time order), drop-in for the EMERGE-40 pooler (which learns correctly given the "
-                       f"winner set). NO sim/ edit.")
+            verdict = (f"GO -- the pooler's k-winners SELECTION runs as SPIKING RANK-ORDER (latency) coding, not a host argsort "
+                       f"over the drive: columns integrate their graded drive to threshold and the HIGHER-drive columns SPIKE "
+                       f"EARLIER (Thorpe rank-order), so the first-K-to-spike == the host top-K (overlap {ov:.2f}, chance "
+                       f"{chance:.2f}); a FLAT (uniform, non-graded) drive collapses the overlap to the tie-break floor "
+                       f"({flat:.2f} ~= chance {chance:.2f}) => the SELECTION reads the GRADED drive, not a fixed bias. The FS "
+                       f"lateral inhibition is CAUSALLY INERT for the selection (winner set ~identical FS-on vs FS-lesion, "
+                       f"overlap {lwo:.2f}); its ONLY effect is loser-pool SPARSITY (fired fraction {sp:.2f} with FS vs {les:.2f} "
+                       f"FS-lesioned). Multi-seed. => the pooler's last host op (which columns win) is a spiking read (spike-time "
+                       f"order), drop-in for the EMERGE-40 pooler (which learns correctly given the winner set). NO sim/ edit.")
         else:
             miss = []
             if ov < 0.9: miss.append(f"overlap {ov:.2f} < 0.9")
             if ov < chance + 0.4: miss.append(f"overlap not above chance+0.4 ({ov:.2f} vs {chance:.2f})")
-            if pov < 0.9: miss.append(f"permuted-drive overlap {pov:.2f} < 0.9")
+            if flat > chance + 0.15: miss.append(f"flat-drive overlap does not collapse ({flat:.2f} > chance+0.15 {chance + 0.15:.2f})")
             if les < sp + 0.12: miss.append(f"FS not load-bearing for sparsity (lesion {les:.2f} vs wta {sp:.2f})")
-            verdict = ("BOUNDARY (build-informative) -- " + "; ".join(miss) + ". Tune FS strength / drive gain / n_steps for "
-                       "the rank-order operating point; the spiking competition is the next tuning, not a wall.")
+            verdict = ("BOUNDARY (build-informative) -- " + "; ".join(miss) + ". Tune drive gain / n_steps / operating point for "
+                       "the rank-order timing; the spiking rank-order read is the next tuning, not a wall.")
     else:
         verdict = f"ERROR -- {err}"
 
     summary = {"probe": "emerge41_fs_wta_kwinners", "verdict": verdict,
-               "mechanism": "spiking FS global-inhibition k-winners-take-all: NCOL Izhikevich columns + an FS inhibitory pool "
-                            "(column->FS excitatory + FS->column inhibitory); the graded drive is injected as external current; "
-                            "the k highest-drive columns spike first + suppress the rest; winners = cp_firing_states",
-               "task": "select the top-K columns by graded drive via spiking competition; overlap with host top-K vs FS-lesion "
-                       "+ permuted-drive; multi-seed",
+               "mechanism": "spiking rank-order (latency) k-winners SELECTION: NCOL Izhikevich columns + an FS inhibitory pool "
+                            "(column->FS excitatory + FS->column inhibitory); the graded drive is injected as external current at "
+                            "a near-rheobase operating point, so higher-drive columns integrate to threshold + spike EARLIER "
+                            "(Thorpe rank-order coding); winners = first-K columns to fire (cp_firing_states spike timing). The FS "
+                            "lateral inhibition is inert for the selection (winner set identical FS-on vs FS-lesion) and only "
+                            "sparsifies the loser pool.",
+               "task": "select the top-K columns by graded drive via spiking rank-order timing; overlap with host top-K vs "
+                       "FLAT-drive (input-destruction) + FS-lesion winner-set-identity + FS-lesion sparsity; multi-seed",
                "seeds": a.seeds, "config": {"n_col": NCOL, "n_fs": N_FS, "k_win": K_WIN, "n_steps": N_STEPS,
                                             "drive_gain": DRIVE_GAIN, "col_fs_w": COL_FS_W, "fs_col_w": FS_COL_W},
                "elapsed_seconds": round(time.time() - t0, 1), "per_seed": per,
-               "HONEST_NOTE": "cheap-first: this de-risks the spiking k-WTA SELECTION against the host top-k on a graded drive. "
-                              "If GO, wiring it into the EMERGE-40 pooler learning loop (replace np.argsort(-drive)[:K] with "
+               "HONEST_NOTE": "cheap-first: this de-risks the spiking rank-order (latency) SELECTION against the host top-k on a "
+                              "graded drive. The FS lateral inhibition does NOT do the selection (winner set is identical FS-on vs "
+                              "FS-lesion; the pure rank-order integrator reproduces the overlap) -- it only sparsifies the loser "
+                              "pool. If GO, wiring it into the EMERGE-40 pooler learning loop (replace np.argsort(-drive)[:K] with "
                               "select(drive)) is the follow-on -- the learning is unchanged (it only needs the winner set)."}
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
     Path(a.out).write_text(json.dumps(summary, indent=2, default=str))

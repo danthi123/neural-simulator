@@ -1,7 +1,9 @@
 """CI guard for EMERGE-40: the fully-spiking HTM Spatial Pooler. The winner-inactive (selectivity) depression is now the
 committed sim/ kernel fused_htm_winner_inactive_depression (additive; existing kernels byte-unchanged). Both pooler
-learning terms are sim/ fused kernels; overlapping categories separate; the selectivity kernel is load-bearing; permuted +
-dAP-lesion collapse it. Also pins the kernel's math + that the sibling permanence kernel is unchanged. CPU (numpy)."""
+learning terms are sim/ fused kernels; overlapping categories separate under a GENUINE pooler hold-out (the held-out
+members are excluded from the competitive-learning order); the selectivity kernel is load-bearing (no-selectivity is the
+load-bearing control; FIXED/no-learn is a reported-secondary, not a gate control). Also pins the kernel's math + that the
+sibling permanence kernel is unchanged. CPU (numpy)."""
 import os
 os.environ.setdefault("SIM_BACKEND", "numpy")
 import numpy as np

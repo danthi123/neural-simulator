@@ -12,9 +12,15 @@ order O0 infers O0 (not the sibling O1), so it inherits O0's property and NOT O1
 successive pooling stages + ATL convergence (Kandel Ch21; Patterson-Lambon Ralph; Damasio) -- each level pools the one
 below.
 
-ANTI-CHEATS: held-out sub-category ORDER-inheritance through 2 levels (chance 1/2); TRANSITIVITY (the sibling order's
-property is NOT inherited -- inferred order != sibling); PERMUTED-co-occurrence (random cross-order pooling -> collapses);
-dAP-LESION; 6-seed. Reuse-by-import (`_emerge14` + `_emerge12` + EMERGE-44 pooler helper); NO `sim/` edit. CPU numpy. `--demo`.
+ANTI-CHEATS: held-out sub-category ORDER-inheritance through 2 levels (chance 1/2); SIBLING-CONFUSION (fraction of held-out
+members that inferred the WRONG order, separate from abstentions -- should be ~0; at NORDER=2 the older 'transitivity'
+metric was near-tautological with order_acc because not-sibling == correct-or-abstain, so the permuted arm scored it high
+purely from abstentions -- see the L3-ISOLATION note); PERMUTED-co-occurrence (random cross-order+cross-genus pooling ->
+collapses BOTH L2+L3); PERMUTE-L3-ONLY (permute only the L3 co-occurrence, L2/genus intact -> isolates the L3 increment
+above the genus floor); L3-LESION (skip L3 learning); L2-ONLY genus floor (a genus-proximity readout: each held-out sub
+shares its genus with exactly one trained sub, so L2/genus grouping alone carries most of the order signal -- the honest
+floor L3 must clear); dAP-LESION; 6-seed. Reuse-by-import (`_emerge14` + `_emerge12` + EMERGE-44 pooler helper); NO `sim/`
+edit. CPU numpy. `--demo`.
 """
 import os
 os.environ.setdefault("SIM_BACKEND", "numpy")
@@ -58,7 +64,7 @@ def _order_of_sub(k):
 
 
 class ThreeLevelProbe:
-    def __init__(self, seed=42, epochs=40, lesion=False, permute=False):
+    def __init__(self, seed=42, epochs=40, lesion=False, permute=False, permute_l3=False, l3_lesion=False):
         rng = np.random.default_rng(seed)
         self.mem = {f"{k}_{i}": k for k in SUBCATS for i in range(N_PER)}
         self.feats = {}
@@ -69,16 +75,18 @@ class ThreeLevelProbe:
         # L1: features -> sub-category codons
         l1 = _competitive_pool(seed, [self.feats[m] for m in members], NF, NCOL1, K1, POOL_EPOCHS)
         self.l1 = {m: l1(self.feats[m]) for m in members}
-        # L2: L1 codons, co-occurrence of same-GENUS members -> genus codons
+        # L2: L1 codons, co-occurrence of same-GENUS members -> genus codons. `permute` breaks BOTH L2+L3; `permute_l3`
+        # keeps L2/genus intact (isolates the L3 increment above the genus floor).
         cg = self._cooc(members, seed * 3 + 1, lambda m: GENUS[self.mem[m]], NGENUS, permute, self.l1)
         l2 = _competitive_pool(seed, cg, NCOL1, NCOL2, K2, L2_EPOCHS)
         self.l2 = {m: l2(self.l1[m]) for m in members}
-        # L3: L2 codons, co-occurrence of same-ORDER members -> order codons
-        co = self._cooc(members, seed * 5 + 2, lambda m: _order_of_sub(self.mem[m]), NORDER, permute, self.l2)
-        l3 = _competitive_pool(seed, co, NCOL2, NCOL3, K3, L3_EPOCHS)
+        # L3: L2 codons, co-occurrence of same-ORDER members -> order codons. `permute_l3` permutes ONLY this level
+        # (L2 intact); `l3_lesion` skips L3 learning (untuned L3 codons).
+        co = self._cooc(members, seed * 5 + 2, lambda m: _order_of_sub(self.mem[m]), NORDER, permute or permute_l3, self.l2)
+        l3 = _competitive_pool(seed, co, NCOL2, NCOL3, K3, 0 if l3_lesion else L3_EPOCHS)
         self.l3 = {m: l3(self.l2[m]) for m in members}
         # bridge: L3 columns -> order property
-        self._build_bridge(seed, lesion)
+        self.b, self.ci, self.row, self.col, self.z = self._build_bridge(seed, lesion, NCOL3)
         self.OPROP = {o: [NCOL3 + 2 * o, NCOL3 + 2 * o + 1] for o in range(NORDER)}
         self.held = [m for m in members if self.mem[m] in HELD_SUB]
         train = [m for m in members if self.mem[m] not in HELD_SUB]
@@ -87,6 +95,16 @@ class ThreeLevelProbe:
                 o = _order_of_sub(self.mem[m])
                 apply_kernel_update(self.b, self.row, self.col, self.ci, _sdr(self.l3[m]), _sdr(self.OPROP[o]),
                                     self.z, 0.14, 0.02, 1.0)
+        # L2-ONLY genus floor: teach the same order property on the L2/GENUS codons (skip L3 entirely). Each held-out sub
+        # shares its genus with exactly one trained sub, so this genus-proximity readout carries most of the order signal
+        # -- the honest floor that L3 must clear. Same committed-kernel + graded-drive read, over L2 columns.
+        self.b2, self.ci2, self.row2, self.col2, self.z2 = self._build_bridge(seed, lesion, NCOL2)
+        self.OPROP2 = {o: [NCOL2 + 2 * o, NCOL2 + 2 * o + 1] for o in range(NORDER)}
+        for _ in range(epochs):
+            for m in train:
+                o = _order_of_sub(self.mem[m])
+                apply_kernel_update(self.b2, self.row2, self.col2, self.ci2, _sdr(self.l2[m]), _sdr(self.OPROP2[o]),
+                                    self.z2, 0.14, 0.02, 1.0)
 
     def _cooc(self, members, seed, keyfn, ngroup, permute, codons):
         rr = np.random.default_rng(seed); out = []
@@ -100,12 +118,13 @@ class ThreeLevelProbe:
             out.append(codons[a] | codons[b])
         return out
 
-    def _build_bridge(self, seed, lesion):
+    def _build_bridge(self, seed, lesion, n_cols):
         from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
         from sim.bridge import SimulationBridge
         from sim.regions import BrainRegion
         from sim.enums import NeuronModel, NeuronType
-        regions = [BrainRegion(name="cells", n_neurons=M, exc_fraction=1.0, internal_density=0.0, exc_weight_mean=0.0,
+        m_cells = n_cols + NPROPUNITS
+        regions = [BrainRegion(name="cells", n_neurons=m_cells, exc_fraction=1.0, internal_density=0.0, exc_weight_mean=0.0,
                                inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False,
                                izh_neuron_type=NeuronType.IZH2007_RS_CORTICAL_PYRAMIDAL.name)]
         cfg = CoreSimConfig()
@@ -129,55 +148,77 @@ class ThreeLevelProbe:
         ci = np.asarray(b.region_manager.indices("cells"), int)
         pre, post, w = [], [], []
         for pc in range(NPROPUNITS):
-            for c in range(NCOL3):
-                pre.append(int(ci[c])); post.append(int(ci[NCOL3 + pc])); w.append(0.0)
+            for c in range(n_cols):
+                pre.append(int(ci[c])); post.append(int(ci[n_cols + pc])); w.append(0.0)
         b.inject_explicit_wiring({"ff": {"pre_indices": pre, "post_indices": post, "initial_weights": w,
                                          "plastic": False, "coincidence_detector": True, "conn_type": "ff"}})
         coo = b._get_cached_coo()
-        self.b, self.ci, self.row, self.col = b, ci, np.asarray(_host(coo.row)), np.asarray(_host(coo.col))
-        self.z = np.zeros(len(ci))
+        return b, ci, np.asarray(_host(coo.row)), np.asarray(_host(coo.col)), np.zeros(len(ci))
 
-    def infer_order(self, member):
-        codon = self.l3[member]
+    def _read_order(self, codon, b, ci, oprop):
+        """Prime the bridge from a codon and read the graded apical drive -> best order (or -1 = abstain)."""
         if not codon:
             return -1
-        ab = np.zeros(len(self.ci), bool)
+        ab = np.zeros(len(ci), bool)
         for c in codon:
             ab[c] = True
-        _prime_from_winners(self.b, self.ci, ab)
-        vap = getattr(self.b, "cp_v_apical", None)
+        _prime_from_winners(b, ci, ab)
+        vap = getattr(b, "cp_v_apical", None)
         if vap is None or np.asarray(_host(vap)).ndim == 0:
             return -1
-        vap = _host(vap)[self.ci]
-        dr = {o: float(np.mean([vap[x] for x in u])) for o, u in self.OPROP.items()}
+        vap = _host(vap)[ci]
+        dr = {o: float(np.mean([vap[x] for x in u])) for o, u in oprop.items()}
         bo = max(dr, key=dr.get)
         return bo if dr[bo] > FLOOR else -1
+
+    def infer_order(self, member):
+        return self._read_order(self.l3[member], self.b, self.ci, self.OPROP)
+
+    def infer_order_l2only(self, member):
+        """L2/genus-only floor readout: order taught + read over the L2 (genus) codons, skipping L3 entirely."""
+        return self._read_order(self.l2[member], self.b2, self.ci2, self.OPROP2)
 
     def held_out_order_acc(self):
         return np.mean([self.infer_order(m) == _order_of_sub(self.mem[m]) for m in self.held])
 
-    def transitivity_ok(self):
-        """held-out members do NOT inherit the SIBLING order's property (inferred order != the other order)."""
-        return np.mean([self.infer_order(m) != (1 - _order_of_sub(self.mem[m])) for m in self.held])
+    def held_out_order_acc_l2only(self):
+        """The genus-proximity floor: how much order signal L2/genus grouping alone carries (L3 must clear this)."""
+        return np.mean([self.infer_order_l2only(m) == _order_of_sub(self.mem[m]) for m in self.held])
+
+    def sibling_confusion_rate(self):
+        """Fraction of held-out members that inferred the WRONG (sibling) order -- SEPARATE from abstentions. Should be
+        ~0. This replaces the old NORDER=2 'transitivity' metric, which was near-tautological with order_acc (not-sibling
+        == correct-or-abstain), so the permuted arm scored it high purely from abstentions (an inference of -1 is not a
+        sibling-confusion; only an actual wrong-order commit counts here)."""
+        sib = [self.infer_order(m) == (1 - _order_of_sub(self.mem[m])) for m in self.held]
+        return float(np.mean(sib)) if sib else 0.0
 
 
 def _run_arm(seed, arm, epochs):
-    p = ThreeLevelProbe(seed=seed, epochs=epochs, lesion=(arm == "lesion"), permute=(arm == "permuted"))
-    return arm, {"order_acc": float(p.held_out_order_acc()), "transitivity": float(p.transitivity_ok())}
+    p = ThreeLevelProbe(seed=seed, epochs=epochs, lesion=(arm == "lesion"), permute=(arm == "permuted"),
+                        permute_l3=(arm == "permute_l3"), l3_lesion=(arm == "l3lesion"))
+    r = {"order_acc": float(p.held_out_order_acc()),
+         "sibling_confusion": float(p.sibling_confusion_rate()),
+         "order_acc_l2only": float(p.held_out_order_acc_l2only())}
+    return arm, r
 
 
-ARMS = ["stacked", "permuted", "lesion"]
+# stacked = full 3-level; permuted = break BOTH L2+L3; permute_l3 = permute ONLY L3 (L2/genus intact -> isolates the L3
+# increment); l3lesion = skip L3 learning; lesion = dAP off.
+ARMS = ["stacked", "permuted", "permute_l3", "l3lesion", "lesion"]
 
 
 def _demo(seed=42, epochs=40):
     p = ThreeLevelProbe(seed=seed, epochs=epochs)
     print("\n=== EMERGE-45 THREE-LEVEL discovered taxonomy + transitivity (no transformer) ===")
     print(f"  member features -> sub-category (L1) -> genus (L2) -> order (L3), all discovered by stacked pooling.")
-    print(f"  a held-out sub-category inherits its ORDER (2 levels up); the SIBLING order's property stays FALSE.\n")
+    print(f"  a held-out sub-category inherits its ORDER (2 levels up); no held-out member commits the SIBLING order.\n")
     for m in p.held[:8]:
         exp = _order_of_sub(p.mem[m])
-        print(f"  held-out {m} (sub {p.mem[m]}, genus {GENUS[p.mem[m]]}, order {exp}) -> inferred order {p.infer_order(m)}  (expect {exp})")
-    print()
+        print(f"  held-out {m} (sub {p.mem[m]}, genus {GENUS[p.mem[m]]}, order {exp}) -> L3 order {p.infer_order(m)} "
+              f"| L2/genus-floor {p.infer_order_l2only(m)}  (expect {exp})")
+    print(f"\n  order-acc {p.held_out_order_acc():.2f} | L2/genus floor {p.held_out_order_acc_l2only():.2f} "
+          f"| sibling-confusion {p.sibling_confusion_rate():.2f}\n")
 
 
 def main():
@@ -191,8 +232,8 @@ def main():
         _demo(a.seeds[0], a.epochs); return 0
     if len(a.seeds) < 3:
         print("NOT-RUNNABLE: need >=3 seeds"); return 2
-    print(f"3-level stacked pooler: features -> sub-cat -> genus -> order; held-out sub-category inherits its ORDER (2 "
-          f"levels up) + transitivity; chance {1/NORDER:.2f}", flush=True)
+    print(f"3-level stacked pooler: features -> sub-cat -> genus -> order; held-out sub-category infers its ORDER "
+          f"(mostly via the L2/genus floor + an L3 increment); sibling-confusion ~0; chance {1/NORDER:.2f}", flush=True)
     t0 = time.time(); err = None; per = []
     try:
         for s in a.seeds:
@@ -200,46 +241,72 @@ def main():
             for arm in ARMS:
                 _, r = _run_arm(s, arm, a.epochs); d[arm] = r
             per.append(d)
-            print(f"  [seed {s}] order-acc {d['stacked']['order_acc']:.2f} transitivity {d['stacked']['transitivity']:.2f} || "
-                  f"permuted {d['permuted']['order_acc']:.2f} | dAP-lesion {d['lesion']['order_acc']:.2f}", flush=True)
+            print(f"  [seed {s}] order-acc {d['stacked']['order_acc']:.2f} (L2/genus floor "
+                  f"{d['stacked']['order_acc_l2only']:.2f}) sib-confusion {d['stacked']['sibling_confusion']:.2f} || "
+                  f"permuted {d['permuted']['order_acc']:.2f} | permute-L3-only {d['permute_l3']['order_acc']:.2f} "
+                  f"| L3-lesion {d['l3lesion']['order_acc']:.2f} | dAP-lesion {d['lesion']['order_acc']:.2f}", flush=True)
     except Exception as e:
         err = repr(e); traceback.print_exc()
 
     if err is None:
         def m(arm, key="order_acc"):
             return float(np.mean([p[arm][key] for p in per]))
-        acc, trans, perm, les = m("stacked"), m("stacked", "transitivity"), m("permuted"), m("lesion")
-        go = bool(acc >= 0.80 and trans >= 0.80 and acc >= perm + 0.25 and acc >= les + 0.30)
+        acc, sib, l2only = m("stacked"), m("stacked", "sibling_confusion"), m("stacked", "order_acc_l2only")
+        perm, perm_l3, l3les, les = m("permuted"), m("permute_l3"), m("l3lesion"), m("lesion")
+        l3_incr = acc - l2only                                                  # the L3 increment above the genus floor
+        # honest per-seed spread of the L3 increment (audit: disclose it -- it is seed-variable)
+        l3_incr_seeds = [round(p["stacked"]["order_acc"] - p["stacked"]["order_acc_l2only"], 3) for p in per]
+        # GO gate: order_acc + collapse controls stand; the honest 'transitivity' is now sibling-confusion (~0).
+        go = bool(acc >= 0.80 and sib <= 0.05 and acc >= perm + 0.25 and acc >= les + 0.30)
+        # L3-contributes: does the permute-L3-only control (L2/genus intact) show L3 adds clearly beyond the genus floor?
+        l3_contributes = bool(acc >= perm_l3 + 0.10 and l3_incr >= 0.05)
         if go:
-            verdict = (f"GO -- a THREE-LEVEL discovered taxonomy + transitivity: stacking the competitive pooler 3 deep "
-                       f"(features -> sub-category -> genus -> order, all discovered from co-occurrence) chains inheritance "
-                       f"through TWO learned levels -- a held-out sub-category inherits its ORDER property 2 levels up "
-                       f"(order-acc {acc:.2f}, chance {1/NORDER:.2f}), and the SIBLING order's property stays FALSE "
-                       f"(transitivity {trans:.2f}). PERMUTED-co-occurrence {perm:.2f}; dAP-LESION {les:.2f}; 6-seed. => the "
-                       f"stacked pooler generalizes to 3 levels; multi-level inheritance-with-discrimination on one spiking "
-                       f"brain. NO sim/ edit.")
+            l3clause = (f"L3 adds a further, seed-VARIABLE increment above that floor (order-acc {acc:.2f}; L3 increment "
+                        f"{l3_incr:+.2f}, per-seed {l3_incr_seeds}; permute-L3-only {perm_l3:.2f}, L3-lesion {l3les:.2f})"
+                        if l3_contributes else
+                        f"L3 adds little beyond that floor (order-acc {acc:.2f}; L3 increment {l3_incr:+.2f}, per-seed "
+                        f"{l3_incr_seeds}; permute-L3-only {perm_l3:.2f} ~= stacked -- most of the ORDER signal is carried "
+                        f"by L2/genus grouping, not a distinct L3 read)")
+            verdict = (f"GO (order-acc) -- a THREE-LEVEL discovered taxonomy: stacking the competitive pooler 3 deep "
+                       f"(features -> sub-category -> genus -> order, all discovered from co-occurrence). A held-out "
+                       f"sub-category infers its ORDER (order-acc {acc:.2f}, chance {1/NORDER:.2f}) with sibling-confusion "
+                       f"{sib:.2f} (~0 -- no held-out member commits the WRONG order). HONEST FRAMING: each held-out sub "
+                       f"shares its genus with exactly one trained sub, so an L2/GENUS-only readout already scores {l2only:.2f} "
+                       f"(the genus-proximity floor); {l3clause}. Anti-cheats: PERMUTED (breaks L2+L3) {perm:.2f}; dAP-LESION "
+                       f"{les:.2f}; 6-seed. => the stacked pooler generalizes to 3 levels; the inference chains at least "
+                       f"through the discovered L2/genus grouping, with L3 a {'real but seed-variable' if l3_contributes else 'small/marginal'} "
+                       f"increment. NO sim/ edit.")
         else:
             miss = []
             if acc < 0.80: miss.append(f"order-acc {acc:.2f} < 0.80")
-            if trans < 0.80: miss.append(f"transitivity {trans:.2f} < 0.80")
+            if sib > 0.05: miss.append(f"sibling-confusion {sib:.2f} > 0.05 (held-out members commit the WRONG order)")
             if acc < perm + 0.25: miss.append(f"permuted didn't collapse ({acc:.2f} vs {perm:.2f})")
             if acc < les + 0.30: miss.append(f"dAP-lesion didn't collapse ({acc:.2f} vs {les:.2f})")
-            verdict = ("BOUNDARY (build-informative) -- " + "; ".join(miss) + ". The residual is L3 separation of overlapping "
-                       "L2 codons across 2 nested levels; tune L3 boosting/depression/epochs; deeper stacking is the next tuning.")
+            verdict = ("BOUNDARY (build-informative) -- " + "; ".join(miss) + f". L2/genus floor {l2only:.2f}; L3 increment "
+                       f"{l3_incr:+.2f} (per-seed {l3_incr_seeds}); permute-L3-only {perm_l3:.2f}; L3-lesion {l3les:.2f}. The "
+                       "residual is L3 separation of overlapping L2 codons across 2 nested levels; tune L3 "
+                       "boosting/depression/epochs; deeper stacking is the next tuning.")
     else:
         verdict = f"ERROR -- {err}"
 
     summary = {"probe": "emerge45_three_level_hierarchy", "verdict": verdict,
                "mechanism": "3 stacked competitive poolers (features->sub-category L1, L1-codons->genus L2 via same-genus "
-                            "co-occurrence, L2-codons->order L3 via same-order co-occurrence); inheritance chains through 2 "
+                            "co-occurrence, L2-codons->order L3 via same-order co-occurrence); inheritance chains through the "
                             "discovered levels via the committed three-term kernel + coincidence-plateau read",
-               "task": "8 sub-cats -> 4 genera -> 2 orders; held-out sub-category inherits its ORDER 2 levels up + transitivity "
-                       "(sibling order stays false); vs permuted-co-occurrence + dAP-lesion; multi-seed",
+               "task": "8 sub-cats -> 4 genera -> 2 orders; held-out sub-category infers its ORDER; sibling-confusion ~0; vs "
+                       "L2/genus-only floor + permute-L3-only + L3-lesion + permuted-co-occurrence + dAP-lesion; multi-seed",
                "seeds": a.seeds, "config": {"epochs": a.epochs, "n_col": [NCOL1, NCOL2, NCOL3], "k": [K1, K2, K3],
                                             "n_genus": NGENUS, "n_order": NORDER},
                "elapsed_seconds": round(time.time() - t0, 1), "per_seed": per,
-               "HONEST_NOTE": "the pooler LEARNING is a rate-reference (fully-on-substrate at EMERGE-39/40; k-WTA spiking at "
-                              "EMERGE-41); the inheritance chain runs on the spiking bridge over the discovered L3 codons. Extends "
+               "HONEST_NOTE": "(1) the OLD 'transitivity' metric was near-tautological with order_acc at NORDER=2 (not-sibling "
+                              "== correct-or-abstain, so the permuted arm scored it high purely from abstentions); it is REPLACED "
+                              "by sibling-confusion (fraction inferring the WRONG order, separate from abstentions -- ~0). (2) A "
+                              "genus-proximity shortcut exists: each held-out sub shares its genus with exactly one trained sub, so "
+                              "an L2/GENUS-only readout carries most of the order signal (reported as order_acc_l2only, the honest "
+                              "floor); the permute-L3-only + L3-lesion arms isolate what L3 adds beyond genus (a smaller, "
+                              "seed-variable increment). The 'chains through TWO learned levels' claim is softened accordingly. (3) "
+                              "The pooler LEARNING is a rate-reference (fully-on-substrate at EMERGE-39/40; k-WTA spiking at "
+                              "EMERGE-41); the inheritance chain runs on the spiking bridge over the discovered codons. Extends "
                               "EMERGE-44 (2-level) to 3; the fully-spiking stacked version is EMERGE-46."}
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
     Path(a.out).write_text(json.dumps(summary, indent=2, default=str))

@@ -15,10 +15,14 @@ codon->property coincidence pool): (1) a CLASS property is taught on each catego
 -> override, taught) competes with the INHERITED (member-codon -> class-property, shared-column) via a graded-drive read;
 the direct override out-drives the inherited default for the overridden member; non-overridden members inherit.
 
-ANTI-CHEATS: CANCELLATION (the overridden member answers its SPECIFIC fact, not the class default); INHERITANCE (non-
-overridden members inherit the class property via the discovered overlapping-category columns); PERMUTED-features (the
-pooler can't discover categories -> inheritance collapses to chance, isolating the discovered structure); dAP-LESION;
-6-seed. Reuse-by-import (`_emerge14` + `_emerge12`); NO `sim/` edit. CPU numpy-backend. `--demo`.
+GENUINE HOLD-OUT: the members inheritance_acc() tests (the last-3 non-override per category) are EXCLUDED from the CLASS
+teaching loop, so inheritance measures GENERALIZATION (a never-directly-taught member inherits its category's class property
+via the shared pooler codon), NOT direct retrieval of a taught fact.
+
+ANTI-CHEATS: CANCELLATION (the overridden member answers its SPECIFIC fact, not the class default); INHERITANCE (HELD-OUT
+non-overridden members inherit the class property via the discovered overlapping-category columns, never taught it directly);
+PERMUTED-features (the pooler can't discover categories -> held-out inheritance collapses toward chance, isolating the
+discovered structure); dAP-LESION; 6-seed. Reuse-by-import (`_emerge14` + `_emerge12`); NO `sim/` edit. CPU numpy-backend. `--demo`.
 """
 import os
 os.environ.setdefault("SIM_BACKEND", "numpy")
@@ -127,10 +131,17 @@ class PoolerInferenceProbe:
         # property units: CLASS[k] = category k's class property; OVR = the override property
         self.CLASS = {k: [PROP0 + 2 * k, PROP0 + 2 * k + 1] for k in CATS}
         self.OVR = [PROP0 + 2 * NCLASSPROP, PROP0 + 2 * NCLASSPROP + 1]
-        # inheritance: teach each category's CLASS property on its member CODONS (shared category columns -> generalizes)
+        # GENUINE HOLD-OUT: the members inheritance_acc() tests (last-3 non-override per category) are EXCLUDED from CLASS
+        # teaching -> they inherit ONLY via the shared pooler codon (same-category members have near-identical codons), so
+        # the reported inheritance measures genuine generalization, not direct retrieval. Single source of truth so the
+        # teaching exclusion and the test selection can never drift.
+        self.held = {k: [m for m in self.mem if self.mem[m] == k and m != OVERRIDE_MEMBER][-3:] for k in CATS}
+        held_set = {m for ms in self.held.values() for m in ms}
+        # inheritance: teach each category's CLASS property on its NON-HELD member CODONS (shared category columns -> the
+        # held members generalize via the shared codon, having never been taught the CLASS property directly)
         for _ in range(epochs):
             for k in CATS:
-                for m in [mm for mm in self.mem if self.mem[mm] == k]:
+                for m in [mm for mm in self.mem if self.mem[mm] == k and mm not in held_set]:
                     apply_kernel_update(self.b, self.row, self.col, self.ci, self._codon(self.feats[m]),
                                         _sdr(self.CLASS[k]), self.z, 0.14, 0.02, 1.0)
         # cancellation: teach the OVERRIDE property on the overridden member's UNIQUE identity cell (its member-specific
@@ -178,8 +189,9 @@ class PoolerInferenceProbe:
         return self.query(OVERRIDE_MEMBER) == "OVR"
 
     def inheritance_acc(self):
-        held = {k: [m for m in self.mem if self.mem[m] == k and m != OVERRIDE_MEMBER][-3:] for k in CATS}
-        return np.mean([self.query(m) == f"C{k}" for k in CATS for m in held[k]])
+        # GENUINE HOLD-OUT: these members (self.held, computed in __init__) were EXCLUDED from CLASS teaching, so this
+        # measures generalization via the shared pooler codon, not direct retrieval of a directly-taught fact.
+        return np.mean([self.query(m) == f"C{k}" for k in CATS for m in self.held[k]])
 
 
 def _run_arm(seed, arm, epochs):
@@ -197,9 +209,9 @@ def _demo(seed=42, epochs=40):
     print(f"  the competitive pooler discovers 6 OVERLAPPING categories (adjacent share {6-STRIDE}/6 feats) from experience;")
     print(f"  the full Collins-Quillian inference runs over the LEARNED codons.\n")
     print(f"  cancellation: overridden member {OVERRIDE_MEMBER} -> {p.query(OVERRIDE_MEMBER)} (expect OVR, not C1)")
-    held = {k: [m for m in p.mem if p.mem[m] == k and m != OVERRIDE_MEMBER][-2:] for k in CATS}
+    print(f"  (inherit rows below are GENUINE HOLD-OUTS: excluded from CLASS teaching, generalize via the shared codon)")
     for k in CATS:
-        for m in held[k]:
+        for m in p.held[k][-2:]:
             print(f"  inherit: {m} (cat {k}) -> {p.query(m)}  (expect C{k})")
     print()
 
