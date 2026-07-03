@@ -8640,16 +8640,29 @@ undiscovered mechanism; the mechanism was found + surpasses it — the exact mas
 17 commits, NO `sim/` edit anywhere, every result 6-seed anti-cheated, 2 self-caught overclaims + 1 refuted-then-resolved
 contingency. CLAUDE.md documents the whole EMERGE-78..85 arc.
 
-**EXACT NEXT CONCRETE ACTION:** ON the spiking-theta-gamma research gate return (subagent a20a73b1ae6ce48a5, read-only, in
-flight): trust-but-verify its load-bearing claim (what project machinery realizes theta-gamma phase coding + gamma-slot
-binding + the stack pop with SPIKES), then BUILD its recommended cheap-first SPIKING theta-gamma WM-buffer de-risk (reuse the
-EMERGE-85 task + anti-cheat harness with the functional buffer replaced by a spiking theta-gamma pool; the neuromodulator
-subsystem for the theta rhythm / NMDA for slot persistence / RF complex-synapse for phase / brain-region framework for the
-pool — the gate ranks which). 6-seed, anti-cheats (slot-scramble/lesion/overflow), sim/ edits fair ONLY if a faithful
-oscillation driver needs them (additive/default-off). If GPU: controller runs INLINE + Monitor. THEN co-residence of the
-reservoir region on the shared nav/conv bridge. BUILD IT — I am the continuation. PARALLELIZE; boundaries = undiscovered
-mechanisms; NO stopping; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; CONTROLLER runs GPU INLINE; ARM A MONITOR.
-[superseded:] RUNG 3 — CO-RESIDENCE: put the reservoir `BrainRegion` on the SHARED nav/conv merged bridge
+**CYCLE 902 (RANK-3 arc COMPLETE ON SPIKES — EMERGE-86 GO).** The spiking-theta-gamma research gate (a20a73b1ae6ce48a5)
+found the spiking realization ~95% already built: `OrderedPositionWM` (production 6-seed GO spiking RF Lisman-Idiart
+ordered-WM). EMERGE-86 (committed): `SpikingWMBuffer` wraps it + realizes the mirror-pair stack-match as a spiking
+phase-coincidence between two CLEANED slot reads (read_slot = spiking unbind+cleanup; the cleanup removes the bundle
+crosstalk — the fix after the raw-phasor first pass failed at chance, an honest self-caught bug). 6-seed GO: fully-spiking WM
+d*=3 (d1=1.00,d2=1.00,d3=0.95,d4=0.43 overflow) — PAST the plain reservoir's d*=2 (EMERGE-84), then boundaries at capacity 8
+(the human ~2-3-embedding bound); slot-scramble + unbind-lesion + count all collapse to chance. NO sim/ edit (reuse the
+validated spiking WM). ⇒ bounded stack-recursion resolved ON the project's spiking RF substrate (multiplex+storage+recall+
+match all spiking). The RANK-3 arc: 83 retention → 84 boundary → 85 rate-surpass → 86 spiking-surpass. Session total
+2026-07-03: 18 commits, NO sim/ edit, every result 6-seed anti-cheated.
+
+**EXACT NEXT CONCRETE ACTION:** the two pre-registered follow-ons (BUILD, do not hand off): (1) **CO-RESIDENCE** — put the
+reservoir `BrainRegion` (EMERGE-82 OnBridgeLSM) on the SHARED nav/conv merged bridge (`nav_conv_merged_bridge`, validated
+merge pattern) as a disjoint slice, so the form->role reservoir composes with nav+parser+composer on ONE brain; validate the
+reservoir GOes co-resident + the conversational no-confab moat is byte-untouched (plasticity-isolation). Likely GPU ->
+controller runs INLINE + Monitor; reuse-by-import. (2) **RUNG 2** — the literal time-domain theta/gamma OSCILLATOR nesting
+the WM slots (catalog N.15; an additive default-off `sim/` oscillator driver = theta-phase-modulated gamma
+`excitability_drive`, reusing StimulusManager SINUSOIDAL + CORTEX_GAMMA_FS_NETWORK + the per-region NMDA mask) — the fuller
+biological realization the gate named (separable, off the RANK-3 critical path but the honest fully-spiking-oscillator
+rung). Recommend CO-RESIDENCE first (composes the whole reservoir arc into the one brain), then RUNG 2. BUILD IT — I am the
+continuation. PARALLELIZE; boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair when de-risked
+(additive/default-off/byte-identical-when-off); moat a PLUS; honest origin+gitea; COMMIT ON MAIN; CONTROLLER runs GPU INLINE;
+ARM A MONITOR. [superseded:] RUNG 3 — CO-RESIDENCE: put the reservoir `BrainRegion` on the SHARED nav/conv merged bridge
 (`nav_conv_merged_bridge`, the validated merge pattern) as a disjoint slice, so the form->role reservoir composes with the
 nav cascade + parser + composer on ONE brain (the full one-brain merge) -- validate the reservoir form->role still GOes
 co-resident + the conversational no-confab moat is byte-untouched (the merge's plasticity-isolation). Reuse-by-import; likely

@@ -1,0 +1,246 @@
+{
+  "probe": "emerge86_spiking_wm_buffer_recursion",
+  "verdict": "GO -- the RANK-3 theta-gamma WM buffer + stack-match runs ON SPIKES and surpasses the reservoir's recursion boundary. Realized on the validated spiking RF ordered-WM (OrderedPositionWM; encode/unbind on resonate-and-fire neurons + complex synapses), with the mirror-pair stack-match a spiking PHASE-COINCIDENCE between two unbind reads (no host ==). The spiking WM reaches stack-depth d*=3 (profile d1=1.00, d2=1.00, d3=0.95, d4=0.43) -- PAST the plain reservoir's d*=2 (EMERGE-84) -- then BOUNDARIES at the buffer capacity (depth 4 = 10 numbers > 8 slots, acc 0.43) -- the biologically-faithful BOUNDED recursion limit (the human ~2-3-embedding bound), NOT unbounded. The count-multiset shortcut stays DEFEATED (d1=0.50, d2=0.54, d3=0.54, d4=0.56 ~chance); a SLOT-SCRAMBLE collapses it (d1=0.48, d2=0.49, d3=0.51, d4=0.49 -> the ordered gamma-slots = the LIFO stack are load-bearing); an UNBIND-LESION (skip the spiking unbind) collapses it (d1=0.50, d2=0.50, d3=0.50, d4=0.50 -> the match is genuinely from the spiking slot recall). 6 seeds. ==> bounded stack-recursion is resolved ON the project's spiking RF substrate (multiplex + storage + recall + coincidence all spiking) -- the fully-spiking-one-brain directive. RUNG 2 (a literal time-domain theta/gamma oscillator nesting the slots, catalog N.15) is the separable fuller realization. Reuse-by-import; NO sim/ edit.",
+  "go": true,
+  "task": "RANK-3 surpass ON SPIKES: realize the theta-gamma WM buffer + stack-match on the validated spiking RF ordered-WM (OrderedPositionWM; encode/unbind on resonate-and-fire); the mirror-pair match is a spiking phase-coincidence between two unbind reads; show it surpasses the reservoir's d*=2 then boundaries at capacity; count defeated + slot-scramble + unbind-lesion collapse; 6-seed CPU",
+  "nums": [
+    "sng",
+    "plu"
+  ],
+  "n_slots": 8,
+  "D": 128,
+  "test_depths": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "elapsed_seconds": 1130.6,
+  "aggregate": {
+    "by_depth": {
+      "1": {
+        "spiking_wm": 1.0,
+        "slot_scramble": 0.4822222222222223,
+        "unbind_lesion": 0.5,
+        "count_baseline": 0.5
+      },
+      "2": {
+        "spiking_wm": 1.0,
+        "slot_scramble": 0.49444444444444446,
+        "unbind_lesion": 0.5,
+        "count_baseline": 0.5366666666666666
+      },
+      "3": {
+        "spiking_wm": 0.9533333333333335,
+        "slot_scramble": 0.5111111111111112,
+        "unbind_lesion": 0.5,
+        "count_baseline": 0.5422222222222223
+      },
+      "4": {
+        "spiking_wm": 0.4288888888888889,
+        "slot_scramble": 0.4944444444444444,
+        "unbind_lesion": 0.5,
+        "count_baseline": 0.5566666666666665
+      }
+    },
+    "wm_stack_depth_star": 3,
+    "n_slots": 8
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_slots": 8,
+      "by_depth": {
+        "1": {
+          "spiking_wm": 1.0,
+          "slot_scramble": 0.5333333333333333,
+          "unbind_lesion": 0.5,
+          "count_baseline": 0.5
+        },
+        "2": {
+          "spiking_wm": 1.0,
+          "slot_scramble": 0.5533333333333333,
+          "unbind_lesion": 0.5,
+          "count_baseline": 0.5266666666666666
+        },
+        "3": {
+          "spiking_wm": 1.0,
+          "slot_scramble": 0.5066666666666667,
+          "unbind_lesion": 0.5,
+          "count_baseline": 0.54
+        },
+        "4": {
+          "spiking_wm": 0.4533333333333333,
+          "slot_scramble": 0.48,
+          "unbind_lesion": 0.5,
+          "count_baseline": 0.58
+        }
+      },
+      "chance": 0.5
+    },
+    {
+      "seed": 43,
+      "n_slots": 8,
+      "by_depth": {
+        "1": {
+          "spiking_wm": 1.0,
+          "slot_scramble": 0.5466666666666666,
+          "unbind_lesion": 0.5,
+          "count_baseline": 0.5
+        },
+        "2": {
+          "spiking_wm": 1.0,
+          "slot_scramble": 0.4866666666666667,
+          "unbind_lesion": 0.5,
+          "count_baseline": 0.54
+        },
+        "3": {
+          "spiking_wm": 0.9066666666666666,
+          "slot_scramble": 0.52,
+          "unbind_lesion": 0.5,
+          "count_baseline": 0.52
+        },
+        "4": {
+          "spiking_wm": 0.43333333333333335,
+          "slot_scramble": 0.4533333333333333,
+          "unbind_lesion": 0.5,
+          "count_baseline": 0.5533333333333333
+        }
+      },
+      "chance": 0.5
+    },
+    {
+      "seed": 44,
+      "n_slots": 8,
+      "by_depth": {
+        "1": {
+          "spiking_wm": 1.0,
+          "slot_scramble": 0.46,
+          "unbind_lesion": 0.5,
+          "count_baseline": 0.5
+        },
+        "2": {
+          "spiking_wm": 1.0,
+          "slot_scramble": 0.48,
+          "unbind_lesion": 0.5,
+          "count_baseline": 0.5266666666666666
+        },
+        "3": {
+          "spiking_wm": 0.9066666666666666,
+          "slot_scramble": 0.5333333333333333,
+          "unbind_lesion": 0.5,
+          "count_baseline": 0.5333333333333333
+        },
+        "4": {
+          "spiking_wm": 0.52,
+          "slot_scramble": 0.56,
+          "unbind_lesion": 0.5,
+          "count_baseline": 0.5533333333333333
+        }
+      },
+      "chance": 0.5
+    },
+    {
+      "seed": 100,
+      "n_slots": 8,
+      "by_depth": {
+        "1": {
+          "spiking_wm": 1.0,
+          "slot_scramble": 0.43333333333333335,
+          "unbind_lesion": 0.5,
+          "count_baseline": 0.5
+        },
+        "2": {
+          "spiking_wm": 1.0,
+          "slot_scramble": 0.5,
+          "unbind_lesion": 0.5,
+          "count_baseline": 0.5733333333333334
+        },
+        "3": {
+          "spiking_wm": 0.9066666666666666,
+          "slot_scramble": 0.4666666666666667,
+          "unbind_lesion": 0.5,
+          "count_baseline": 0.56
+        },
+        "4": {
+          "spiking_wm": 0.36666666666666664,
+          "slot_scramble": 0.46,
+          "unbind_lesion": 0.5,
+          "count_baseline": 0.5666666666666667
+        }
+      },
+      "chance": 0.5
+    },
+    {
+      "seed": 101,
+      "n_slots": 8,
+      "by_depth": {
+        "1": {
+          "spiking_wm": 1.0,
+          "slot_scramble": 0.5,
+          "unbind_lesion": 0.5,
+          "count_baseline": 0.5
+        },
+        "2": {
+          "spiking_wm": 1.0,
+          "slot_scramble": 0.48,
+          "unbind_lesion": 0.5,
+          "count_baseline": 0.5066666666666667
+        },
+        "3": {
+          "spiking_wm": 1.0,
+          "slot_scramble": 0.5333333333333333,
+          "unbind_lesion": 0.5,
+          "count_baseline": 0.52
+        },
+        "4": {
+          "spiking_wm": 0.42,
+          "slot_scramble": 0.5,
+          "unbind_lesion": 0.5,
+          "count_baseline": 0.5533333333333333
+        }
+      },
+      "chance": 0.5
+    },
+    {
+      "seed": 102,
+      "n_slots": 8,
+      "by_depth": {
+        "1": {
+          "spiking_wm": 1.0,
+          "slot_scramble": 0.42,
+          "unbind_lesion": 0.5,
+          "count_baseline": 0.5
+        },
+        "2": {
+          "spiking_wm": 1.0,
+          "slot_scramble": 0.4666666666666667,
+          "unbind_lesion": 0.5,
+          "count_baseline": 0.5466666666666666
+        },
+        "3": {
+          "spiking_wm": 1.0,
+          "slot_scramble": 0.5066666666666667,
+          "unbind_lesion": 0.5,
+          "count_baseline": 0.58
+        },
+        "4": {
+          "spiking_wm": 0.38,
+          "slot_scramble": 0.5133333333333333,
+          "unbind_lesion": 0.5,
+          "count_baseline": 0.5333333333333333
+        }
+      },
+      "chance": 0.5
+    }
+  ],
+  "HONEST_NOTE": "RUNG 1 of the spiking RANK-3: the EMERGE-85 buffer + stack-match on the PROJECT'S VALIDATED spiking RF ordered-WM (OrderedPositionWM, production 6-seed GO). The multiplex + per-slot storage + recall are the spiking RF WM; the mirror-pair stack match is a spiking phase-coincidence between two unbind reads (the substrate's familiarity primitive), replacing the EMERGE-85 host ==. The buffer surpasses the plain reservoir's recursion depth then boundaries at capacity (the human ~2-3-embedding bound). RUNG 2 (a literal theta/gamma oscillator, catalog N.15) is the separable fuller realization, off the critical path. Reuse-by-import; NO sim/ edit."
+}
