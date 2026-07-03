@@ -8627,7 +8627,29 @@ spikes), scramble ~chance. `OnBridgeLSM` mirrors the EMERGE-78 Reservoir API so 
 non-local) → 80 (spiking Izhikevich pool) → 81 (memory survives on spikes) → 82 (ON the SimulationBridge substrate) is
 complete. 12 commits this session.
 
-**EXACT NEXT CONCRETE ACTION:** RUNG 3 — CO-RESIDENCE: put the reservoir `BrainRegion` on the SHARED nav/conv merged bridge
+**CYCLE 898-901 (the RANK-3 RECURSION arc: boundary FOUND then SURPASSED; back-on-track applied — I built, not handed off).**
+After EMERGE-82 (RUNG 2 on-bridge), the owner ran /back-on-track (I had drifted: milestone → registered RUNG 2 → handed to
+the watchdog). Corrected: I AM the continuation. Built the whole RANK-3 arc inline: **EMERGE-83** (the reservoir RESISTS
+agreement-attraction across center-embedding to depth ≥4 — RETENTION not stack-recursion, honest distinction) → **EMERGE-84
+(BOUNDARY)** the genuine stack-recursion test (nested pair-matching grammaticality, count-shortcut defeated by a
+multiset-preserving swap): reservoir does depth-1 perfectly then DEGRADES (d\*=2, fading memory not a stack) → **EMERGE-85
+(RANK-3 SURPASS, GO)** a bounded theta-gamma multiplexed WM BUFFER + stack-match (catalog N.15 Lisman-Idiart; ordered
+gamma-slots + mirror-pair LIFO coincidence) pushes recursion depth to d\*=3 then boundaries at capacity (the biologically-
+faithful human ~2-3-embedding bound); buffer-slot-scramble collapses (ordered slots load-bearing). The boundary was an
+undiscovered mechanism; the mechanism was found + surpasses it — the exact master-directive pattern. Session total 2026-07-03:
+17 commits, NO `sim/` edit anywhere, every result 6-seed anti-cheated, 2 self-caught overclaims + 1 refuted-then-resolved
+contingency. CLAUDE.md documents the whole EMERGE-78..85 arc.
+
+**EXACT NEXT CONCRETE ACTION:** ON the spiking-theta-gamma research gate return (subagent a20a73b1ae6ce48a5, read-only, in
+flight): trust-but-verify its load-bearing claim (what project machinery realizes theta-gamma phase coding + gamma-slot
+binding + the stack pop with SPIKES), then BUILD its recommended cheap-first SPIKING theta-gamma WM-buffer de-risk (reuse the
+EMERGE-85 task + anti-cheat harness with the functional buffer replaced by a spiking theta-gamma pool; the neuromodulator
+subsystem for the theta rhythm / NMDA for slot persistence / RF complex-synapse for phase / brain-region framework for the
+pool — the gate ranks which). 6-seed, anti-cheats (slot-scramble/lesion/overflow), sim/ edits fair ONLY if a faithful
+oscillation driver needs them (additive/default-off). If GPU: controller runs INLINE + Monitor. THEN co-residence of the
+reservoir region on the shared nav/conv bridge. BUILD IT — I am the continuation. PARALLELIZE; boundaries = undiscovered
+mechanisms; NO stopping; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; CONTROLLER runs GPU INLINE; ARM A MONITOR.
+[superseded:] RUNG 3 — CO-RESIDENCE: put the reservoir `BrainRegion` on the SHARED nav/conv merged bridge
 (`nav_conv_merged_bridge`, the validated merge pattern) as a disjoint slice, so the form->role reservoir composes with the
 nav cascade + parser + composer on ONE brain (the full one-brain merge) -- validate the reservoir form->role still GOes
 co-resident + the conversational no-confab moat is byte-untouched (the merge's plasticity-isolation). Reuse-by-import; likely
