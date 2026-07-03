@@ -8515,10 +8515,33 @@ render regression. A SCALE/DATA residual, NOT a mechanism wall or moat breach. R
 the BOUNDARY finding, CLAUDE.md updated, CI test_emerge75 = 9 pass (GPU smoke skips on numpy), sim/ CLEAN (only new EMERGE-75
 files; concept_pool_demo NOT edited as a file -- the VOCAB swap was runtime/in-memory).
 
-**EXACT NEXT CONCRETE ACTION:** (1) DONE: committed EMERGE-77. (2) DONE: EMERGE-75 recovered + committed as an honest BOUNDARY
-(both remotes). (3) IN FLIGHT -- ITERATE THE BOUNDARY (EMERGE-75b): the named cheap fix is a bounded pool-assignment change --
-put the 3 closed-class prepositions to/on/is on the FUNCTION bridge BRIDGE-F (EMERGE-68, 5+3=8 <= 16-pool cap, where the
-closed class already reads clean) + the 13 content object nouns alone on BRIDGE-C (13 <= 16). Controller runs the GPU train+
-derisk INLINE (recover any orphan). Concurrently (4) the next INDEPENDENT construction-broadening frontier + the A->W of the
-ditransitive's cub/bone. PARALLELIZE by default. Boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair game when
-de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A MONITOR; CONTROLLER runs GPU steps INLINE.
+**CYCLE 889 (root-caused the EMERGE-75 boundary -> EMERGE-75b fix in flight; the NEXT-FRONTIER research gate landed ->
+EMERGE-78 reservoir is the anti-whack-a-mole pivot).** (a) EMERGE-75b: the EMERGE-75 boundary was MIS-DIAGNOSED by its own
+verdict (blamed vocab separation) -- the raw data shows isolated decode 16/16 + 5/6 seeds regress ZERO + only seed 102 (the
+deepest render history) regresses 3. TRUE cause = EMERGE-61 slow-adaptation accumulation (cp_recovery_variable_u) leaking
+into the A->W READ path (a static audit confirms the ORDER path already inherits EMERGE-61's wash-out; the A->W read path was
+the one un-washed spiking sub-system). FIX = generalize EMERGE-61's substrate wash-out to the A->W decode (snapshot+restore
+before every decode -> history-independent). Built `_emerge75b_history_independent_aw_derisk.py` + test (7 CPU pass) + finding
+(pre-drafted w/ placeholders + wash-out-coverage audit note); GPU 6-seed --derisk RUNNING (bg bxpk323jx, Monitor bdvyuked0):
+hi-OFF reproduces the boundary (load-bearing), hi-ON should be 0-regress all seeds. NO sim/ edit; moat untouched. ON GPU
+VERDICT: fill the finding placeholders from the raw json + commit both remotes (GO surpasses the EMERGE-75 boundary).
+(b) NEXT-FRONTIER DEEP-RESEARCH GATE (read-only subagent a285c7123cce8b317, DONE, both load-bearing claims controller-
+verified): the genuine residual past the hand-templated construction inventory is the form->thematic-ROLE LABELER
+(`label_sentence`/`label_sentence_ext` + argstructure FRAME_LEXICON = one hand branch per construction shape = the owner-
+flagged whack-a-mole); EVERYTHING upstream (closed-class discovery EMERGE-62, order EMERGE-63, inventory EMERGE-64, on-spike
+A->W EMERGE-67..71) is already emergent. The fix = a FIXED-random RESERVOIR + trained read-out (Dominey-Hinaut fronto-striatal
+grammar model; echo-state -> spiking LSM) mapping the discovered closed-class configuration -> per-word thematic roles, which
+GENERALIZES to constructions never enumerated (26->462->90,582 in the lit). RIDES the project's OWN pre-registered gate
+(EMERGE-6b generation-stability -> "reservoir + trained feedback read-out / FORCE / Laje-Buonomano", verified). Gate:
+`2026-07-03-next-frontier-beyond-templated-constructions-research-gate.md`.
+
+**EXACT NEXT CONCRETE ACTION:** (1) commit the research gate + this state. (2) BUILD EMERGE-78 (the RANK-1 cheap-first de-risk,
+CPU/numpy, NO sim/ edit -- INDEPENDENT of the GPU 75b, build NOW in parallel): `_emerge78_reservoir_form_to_role_derisk.py` --
+a FIXED-random echo-state reservoir driven by the EMERGE-62 discovered closed-class stream + open-class slot markers; a trained
+ridge read-out -> per-open-word thematic-role labels (Agent/Object/Recipient x verb-idx); NO CONSTRUCTIONS dict / NO
+label_sentence branch. GO bar = correct role labeling on a HELD-OUT construction shape the current label_sentence scores 0 on
+(object-relative / dative-passive). Anti-cheats COLLAPSE: word-order-scramble->chance, closed-class-lesion->collapse,
+held-out>memorization-floor(lookup-table), moat preserved. 6-seed. Ultracode ON -> build exhaustively + ADVERSARIALLY VERIFY
+(Workflow) the held-out-genuineness + control-validity + moat before GO. (3) ON GPU 75b verdict: commit 75b. PARALLELIZE;
+boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON
+MAIN; CONTROLLER runs GPU steps INLINE; ARM A MONITOR.
