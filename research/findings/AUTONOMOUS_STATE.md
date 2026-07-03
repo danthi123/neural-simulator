@@ -7971,3 +7971,32 @@ robustness (add seed-specific --ckpt-out). ALSO deferred: RE-RUN the adversarial
 3x by transient server-side subagent rate limits; 6 lenses controller-direct-verified in the remediation; retry the
 independent parallel audit when the throttle clears). Boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair
 game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A MONITOR on every long run; GPU/CuPy real.
+
+## CYCLE 870 (2026-07-03 — EMERGE-62 GO: the function-word SET SELF-ORGANIZES from distributional statistics, the last host-designed closed-class residual removed for the bounded EMERGE domain)
+
+EMERGE-62 (GO, 6-seed, `2026-07-03-emerge62-discover-function-words-GO.md`, NO sim/ edit): the RANK-1 de-risk of the
+self-organizing-grammar research gate. The closed-class function-word SET + the open/closed distinction are DISCOVERED
+from distributional statistics (the "Goldilocks" signature: high running-FREQUENCY AND high context-coverage/diversity,
+reusing the project's running-frequency + windowed co-occurrence + ppmi_matrix algebra) instead of the hand-written
+FUNCTION_WORDS list. VERIFIED controller-direct (CI 7 pass; raw json): discovery F1 0.863 (P 0.760, R 1.000), frame-
+recall 1.00 (all {the,can,does,not} recovered every seed), frequency-shuffle F1 0.079 (~11x collapse -- input-
+destruction control), no-stream -> empty, held-out generalizes (does->CLOSED, trout->OPEN), render-ok 1.00 (the SELF-
+DISCOVERED set feeds the EMERGE-59 spiking-Broca frames -> "the owl can fly"/"the penguin walks"/"the penguin does not
+fly"), moat 0-on-abstains, a missing function word breaks the render (discovery is load-bearing). The false positives
+are the linguistically-borderline adjectives (big/fast/tall/grey...) -- the genuine open/closed gray zone. NO sim/ edit;
+reuse-by-import. HONEST BOUNDARY (reported, not forced into GO): on the REAL noisy corpus (ra_finetune_corpus.txt,
+TinyStories-interleaved) recall + frame-recall stay 1.00 but precision drops to 0.078 (frequency+coverage over-includes
+high-freq narrative content words); the named next single-variable signal = Yang-Getz's 3rd cue = phrase-boundary /
+syntactic-position alignment (a 3rd distributional statistic). Not a wall. Cited: research gate, catalog G.12,
+Yang-Getz 2026 / Redington / Cartwright-Brent / Dominey-Hinaut.
+
+**EXACT NEXT CONCRETE ACTION:** (1) DONE: committed EMERGE-62 both remotes. (2) NOW: EMERGE-62b = ITERATE the named
+real-corpus precision boundary -- add the 3rd distributional cue (PHRASE-BOUNDARY / syntactic-position alignment: a
+function word reliably occurs at construction edges / before content words) as a 3rd axis to the Goldilocks discovery,
+push real-corpus precision up from 0.078 with recall held at 1.00, frequency-shuffle + position-shuffle controls
+collapse, 6-seed, reuse-by-import, NO sim/ edit. (3) THEN continue the self-organized-producer chain: EMERGE-63
+(order-teacher from corpus n-gram statistics, S1b), EMERGE-64 (mine the FUNC-slot inventory via the GO _bucketB
+frame-miner, S1a), EMERGE-65 (compose -> end-to-end self-organized producer). ORTHOGONAL/parallel: the A->W neural-spell
+wire-in (words spiking). Deferred: EMERGE-60 fluid-RNG harness isolation; EMERGE-57 multi-seed; the adversarial-audit
+re-run (rate-limited). Boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a
+PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A MONITOR on every long run; GPU/CuPy for real runs (numpy for CPU).
