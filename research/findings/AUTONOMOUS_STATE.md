@@ -8461,3 +8461,29 @@ recover controller-direct: wait for the cache, run `--derisk --seeds 42 43 44 10
 (5) THEN EMERGE-77 (N_SLOT_POOLS 6->8 -> ditransitive renders). PARALLELIZE independent frontiers by default now. Boundaries
 = undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON
 MAIN; ARM A MONITOR; CONTROLLER runs GPU steps INLINE (recover orphaned trains).
+
+## CYCLE 886 (2026-07-03 — parallel batch: EMERGE-62c GO [morphological cue] + EMERGE-76 GO [held-out one-attestation])
+
+EMERGE-62c (GO, 6-seed, `2026-07-03-emerge62c-morphological-invariance-GO.md`, NO sim/ edit): the 4th cue on the self-
+organizing function-word discovery -- MORPHOLOGICAL INVARIANCE (function words lack the -s/-ed/-ing paradigm; an inflected
+content verb like gives/hugs/makes is the -s form of a bare stem present in the corpus -> content). Closes the inflected-
+content-verb false-positive class on the REAL corpus: narrow-GT precision 0.111->0.121 (extended-GT 0.354->0.385), recall
+HELD 1.000, frame-recall 1.00, MORPHOLOGY-SHUFFLE control COLLAPSES (a random morph flag breaks recall to 0.879 / F1 0.198
+<= the 3-cue baseline 0.200 -- load-bearing); controlled stream not regressed (F1 3d==4d), render 1.0, moat 0. VERIFIED
+controller-direct (CI test_emerge62c 8 pass). Honest residual: the DET-preceded BARE-NOUN FPs (bird/dog/fox/owl -- singulars
+whose plural rarely appears in TinyStories) are NOT closed (the plural-variant direction is unreliable -- false-stemming
+the->thing would kill function words, verified NOT used). NO sim/ edit; offline label-free lexicon prep.
+
+EMERGE-76 (GO, 6-seed, `2026-07-03-emerge76-heldout-one-attestation-GO.md`, NO sim/ edit): the EMERGE-63/64/65 held-out
+distinctive-slot residual is a SINGLE-EXEMPLAR DATA gap, NOT a mechanism wall. A fully-held-out frame's distinctive slot/
+order (F_MODAL's can, etc.) recovers from ONE attestation: zero_recovered 0.0 / zero_exact 0.0 (the held-out residual, =
+EMERGE-63/64 baseline) -> one_recovered 1.0 / one_exact 1.0 / one_order_acc 1.0 (the single attestation recovers it) ->
+PERMUTED-attestation 0.125 (collapses -- load-bearing, the attestation must be the RIGHT one). One-shot / fast-mapping
+(hippocampal). VERIFIED controller-direct (CI test_emerge76 8 pass). NO sim/ edit.
+
+**EXACT NEXT CONCRETE ACTION:** (1) DONE: committed EMERGE-62c + EMERGE-76 (this batch). (2) RECOVER EMERGE-75 (A->W vocab
+scaling): the BRIDGE-C overflow train FINISHED (cache bridges/emerge75_aw/aw_overflow.simstate.h5 written, 25MB); the
+`--derisk` is in flight (bg bdob9opzp) -> on completion, read the verdict, pick the GO-vs-BOUNDARY finding + fill its
+{{placeholders}} from the raw json, verify+commit. (3) THEN EMERGE-77 (N_SLOT_POOLS 6->8 -> ditransitive renders). PARALLELIZE
+independent frontiers by default. Boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked;
+moat a PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A MONITOR; CONTROLLER runs GPU steps INLINE (recover orphaned trains).

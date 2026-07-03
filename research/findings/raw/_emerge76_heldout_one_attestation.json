@@ -1,0 +1,1694 @@
+{
+  "probe": "emerge76_heldout_one_attestation",
+  "verdict": "GO -- the EMERGE-63/64/65 HELD-OUT DISTINCTIVE-SLOT residual is a SINGLE-EXEMPLAR *DATA* residual, NOT a mechanism wall: ONE attestation of a fully-held-out frame's OWN distinctive element recovers its distinctive slot + order + exact spiking render (one-shot / fast-mapping). For each held-out frame the corpus is the OTHER two frames' exemplars (the EMERGE-63/64 held-out baseline, where the distinctive slot is NOT recoverable) + K attestations of the held frame's OWN canonical sentence; the miner + order-learner recover the held frame's DISTINCTIVE slot (F_MODAL's `can` + position, F_NEGMOD's `does`/`not` + does<not internal order, F_INTR's `3sg` inflection) from its now-attested exemplars, and the EMERGE-59/63/64 spiking producer renders it EXACT on spikes (EMERGE-61 wash-out). At K=1 (a SINGLE attestation) EVERY held-out frame recovers exactly (F_MODAL one-exact 1.000, F_INTR 1.000, F_NEGMOD 1.000; order 1.000 for the does<not internal order). The controls COLLAPSE: ZERO-ATTESTATION (K=0, the held-out residual) does NOT recover (exact F_MODAL 0.000 / F_INTR 0.000 / F_NEGMOD 0.000 -- proving the single attestation is LOAD-BEARING, the recovery is not smuggled from the OTHER frames); PERMUTED-ATTESTATION (K=1 with the attestation's word order shuffled) collapses (exact F_NEGMOD 0.000 -- the distinctive slot's POSITION / the does<not internal order must come from the attestation's WORD ORDER, not merely its token presence). The gate-first no-confab MOAT is intact (0 producer invocations on abstains). 6 seeds. ==> the residual EMERGE-63/64/65 honestly named -- 'ONE attestation of the held-out frame's own function word / inflection / bigram suffices' -- is CONFIRMED: once the SHARED backbone schema exists (from the other frames), a SINGLE well-formed exemplar slots the held frame's distinctive element into that schema in one shot (Carey-Bartlett fast-mapping; McClelland-McNaughton-O'Reilly CLS one-exposure schema-consistent encoding; catalog D.03/D.13 hippocampal one-shot; Dominey-Hinaut grammar-as-order-statistics from few well-formed exemplars). This closes the held-out residual for the BOUNDED EMERGE frame domain as a DATA residual; open prose (R4) is the separate deferred wall. Reuse-by-import; NO sim/ edit; moat untouched.",
+  "go": true,
+  "mechanism": "ONE attestation of a fully-held-out construction frame's OWN distinctive element (function word / inflection / internal bigram order) recovers that frame's distinctive slot + order in ONE shot (one-shot / fast-mapping). For each held-out frame the corpus = the OTHER two frames' exemplars (the EMERGE-63/64 held-out baseline, where the distinctive slot is NOT recoverable) + K attestations of the held frame's OWN canonical sentence; the EMERGE-64 miner + EMERGE-63 order-learner recover the held frame's distinctive slot (F_MODAL can+position / F_NEGMOD does,not + does<not order / F_INTR 3sg) from its now-attested exemplars, and the EMERGE-59/63/64 spiking producer renders it EXACT on spikes (EMERGE-61 wash-out). The mining min_count == the attestation regime K (transparent; the minimum K is the finding). The SHARED backbone schema (det<subj<verb) is already learned from the other frames; the single attestation slots the distinctive element into that schema (Carey-Bartlett fast-mapping; McClelland-McNaughton-O'Reilly CLS one-exposure schema-consistent encoding; catalog D.03/D.13 hippocampal one-shot; Dominey-Hinaut grammar = the statistics of element order, learnable from few well-formed exemplars once a schema exists). The zero-attestation (residual) + permuted-attestation (word-order-destroyed) input-destruction controls gate the result (project control-validity methodology). Reuse-by-import; NO sim/ edit.",
+  "task": "for each fully-held-out frame, add K attestations of its OWN canonical sentence to the OTHER-frames corpus; recover its distinctive slot + order + exact spiking render at K=1 (single attestation) with a margin over the zero-attestation residual (K=0) AND the permuted-attestation collapse; report the minimum K per frame; gate-first moat (0 productions on abstains); >=6 seeds",
+  "frames_groundtruth": {
+    "F_MODAL": [
+      [
+        "det",
+        "the"
+      ],
+      [
+        "subj",
+        null
+      ],
+      [
+        "func",
+        "can"
+      ],
+      [
+        "verb",
+        "bare"
+      ]
+    ],
+    "F_INTR": [
+      [
+        "det",
+        "the"
+      ],
+      [
+        "subj",
+        null
+      ],
+      [
+        "verb",
+        "3sg"
+      ]
+    ],
+    "F_NEGMOD": [
+      [
+        "det",
+        "the"
+      ],
+      [
+        "subj",
+        null
+      ],
+      [
+        "func",
+        "does"
+      ],
+      [
+        "func",
+        "not"
+      ],
+      [
+        "verb",
+        "bare"
+      ]
+    ]
+  },
+  "attest_rungs": [
+    0,
+    1,
+    3,
+    5
+  ],
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "elapsed_seconds": 62.6,
+  "aggregate": {
+    "F_MODAL": {
+      "zero_recovered_frac": 0.0,
+      "zero_exact": 0.0,
+      "one_recovered_frac": 1.0,
+      "one_exact": 1.0,
+      "one_order_acc": 1.0,
+      "perm_one_recovered_frac": 0.125,
+      "perm_one_exact": 0.20833333333333334,
+      "min_k_all": [
+        1
+      ],
+      "min_k_worst": 1
+    },
+    "F_INTR": {
+      "zero_recovered_frac": 0.0,
+      "zero_exact": 0.0,
+      "one_recovered_frac": 1.0,
+      "one_exact": 1.0,
+      "one_order_acc": 1.0,
+      "perm_one_recovered_frac": 0.20833333333333334,
+      "perm_one_exact": 0.20833333333333334,
+      "min_k_all": [
+        1
+      ],
+      "min_k_worst": 1
+    },
+    "F_NEGMOD": {
+      "zero_recovered_frac": 0.0,
+      "zero_exact": 0.0,
+      "one_recovered_frac": 1.0,
+      "one_exact": 1.0,
+      "one_order_acc": 1.0,
+      "perm_one_recovered_frac": 0.0,
+      "perm_one_exact": 0.0,
+      "min_k_all": [
+        1
+      ],
+      "min_k_worst": 1
+    }
+  },
+  "moat_calls_on_abstain_total": 0,
+  "sample_transcript": [
+    {
+      "tag": "INHERIT (affirm-modal)",
+      "question": "can an owl fly?",
+      "surface": "the owl can fly",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "CANCEL  (intransitive)",
+      "question": "can a penguin fly?",
+      "surface": "the penguin walks",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "DENY    (negated-modal, held-out+1-attest)",
+      "question": "can a penguin fly? [deny]",
+      "surface": "the penguin does not fly",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "MOAT    (abstain)",
+      "question": "can a zzz fly?",
+      "surface": "I don't know.",
+      "invocation": "producer NOT invoked"
+    }
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_closed": 14,
+      "closed": [
+        "a",
+        "and",
+        "big",
+        "can",
+        "cat",
+        "does",
+        "fast",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "the",
+        "to"
+      ],
+      "per_frame": {
+        "F_MODAL": {
+          "rungs": {
+            "0": {
+              "held": "F_MODAL",
+              "k": 0,
+              "inventory_recovered": false,
+              "order_acc": 0.3125,
+              "order_recovered": false,
+              "exact": 0.0,
+              "recovered": false,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "1": {
+              "held": "F_MODAL",
+              "k": 1,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "3": {
+              "held": "F_MODAL",
+              "k": 3,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "5": {
+              "held": "F_MODAL",
+              "k": 5,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            }
+          },
+          "perm": {
+            "1": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.3125,
+              "inventory_recovered_frac": 0.0
+            },
+            "3": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.3125,
+              "inventory_recovered_frac": 0.0
+            },
+            "5": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.3125,
+              "inventory_recovered_frac": 0.0
+            }
+          },
+          "min_k_recovers": 1,
+          "zero_recovered": false,
+          "zero_exact": 0.0,
+          "zero_inventory_recovered": false,
+          "one_recovered": true,
+          "one_exact": 1.0,
+          "one_order_acc": 1.0,
+          "perm_one_recovered_frac": 0.0,
+          "perm_one_exact": 0.0
+        },
+        "F_INTR": {
+          "rungs": {
+            "0": {
+              "held": "F_INTR",
+              "k": 0,
+              "inventory_recovered": false,
+              "order_acc": 0.16666666666666666,
+              "order_recovered": false,
+              "exact": 0.0,
+              "recovered": false,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "1": {
+              "held": "F_INTR",
+              "k": 1,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "3": {
+              "held": "F_INTR",
+              "k": 3,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "5": {
+              "held": "F_INTR",
+              "k": 5,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            }
+          },
+          "perm": {
+            "1": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.16666666666666666,
+              "inventory_recovered_frac": 0.0
+            },
+            "3": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.5833333333333334,
+              "inventory_recovered_frac": 0.0
+            },
+            "5": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.5833333333333334,
+              "inventory_recovered_frac": 0.0
+            }
+          },
+          "min_k_recovers": 1,
+          "zero_recovered": false,
+          "zero_exact": 0.0,
+          "zero_inventory_recovered": false,
+          "one_recovered": true,
+          "one_exact": 1.0,
+          "one_order_acc": 1.0,
+          "perm_one_recovered_frac": 0.0,
+          "perm_one_exact": 0.0,
+          "one_unreadable_verb_recovered": false,
+          "one_unreadable_verb_exact": 0.0
+        },
+        "F_NEGMOD": {
+          "rungs": {
+            "0": {
+              "held": "F_NEGMOD",
+              "k": 0,
+              "inventory_recovered": false,
+              "order_acc": 0.175,
+              "order_recovered": false,
+              "exact": 0.0,
+              "recovered": false,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "1": {
+              "held": "F_NEGMOD",
+              "k": 1,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "3": {
+              "held": "F_NEGMOD",
+              "k": 3,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "5": {
+              "held": "F_NEGMOD",
+              "k": 5,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            }
+          },
+          "perm": {
+            "1": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.175,
+              "inventory_recovered_frac": 0.0
+            },
+            "3": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.175,
+              "inventory_recovered_frac": 0.0
+            },
+            "5": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.175,
+              "inventory_recovered_frac": 0.0
+            }
+          },
+          "min_k_recovers": 1,
+          "zero_recovered": false,
+          "zero_exact": 0.0,
+          "zero_inventory_recovered": false,
+          "one_recovered": true,
+          "one_exact": 1.0,
+          "one_order_acc": 1.0,
+          "perm_one_recovered_frac": 0.0,
+          "perm_one_exact": 0.0
+        }
+      },
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    },
+    {
+      "seed": 43,
+      "n_closed": 14,
+      "closed": [
+        "a",
+        "and",
+        "can",
+        "does",
+        "grey",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "tall",
+        "the",
+        "to",
+        "wet"
+      ],
+      "per_frame": {
+        "F_MODAL": {
+          "rungs": {
+            "0": {
+              "held": "F_MODAL",
+              "k": 0,
+              "inventory_recovered": false,
+              "order_acc": 0.21875,
+              "order_recovered": false,
+              "exact": 0.0,
+              "recovered": false,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "1": {
+              "held": "F_MODAL",
+              "k": 1,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "3": {
+              "held": "F_MODAL",
+              "k": 3,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "5": {
+              "held": "F_MODAL",
+              "k": 5,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            }
+          },
+          "perm": {
+            "1": {
+              "recovered_frac": 0.25,
+              "exact": 0.25,
+              "order_acc": 0.4140625,
+              "inventory_recovered_frac": 0.25
+            },
+            "3": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.484375,
+              "inventory_recovered_frac": 0.0
+            },
+            "5": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.2890625,
+              "inventory_recovered_frac": 0.0
+            }
+          },
+          "min_k_recovers": 1,
+          "zero_recovered": false,
+          "zero_exact": 0.0,
+          "zero_inventory_recovered": false,
+          "one_recovered": true,
+          "one_exact": 1.0,
+          "one_order_acc": 1.0,
+          "perm_one_recovered_frac": 0.25,
+          "perm_one_exact": 0.25
+        },
+        "F_INTR": {
+          "rungs": {
+            "0": {
+              "held": "F_INTR",
+              "k": 0,
+              "inventory_recovered": false,
+              "order_acc": 0.375,
+              "order_recovered": false,
+              "exact": 0.0,
+              "recovered": false,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "1": {
+              "held": "F_INTR",
+              "k": 1,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "3": {
+              "held": "F_INTR",
+              "k": 3,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "5": {
+              "held": "F_INTR",
+              "k": 5,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            }
+          },
+          "perm": {
+            "1": {
+              "recovered_frac": 0.25,
+              "exact": 0.25,
+              "order_acc": 0.53125,
+              "inventory_recovered_frac": 0.25
+            },
+            "3": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.84375,
+              "inventory_recovered_frac": 0.0
+            },
+            "5": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 1.0,
+              "inventory_recovered_frac": 0.0
+            }
+          },
+          "min_k_recovers": 1,
+          "zero_recovered": false,
+          "zero_exact": 0.0,
+          "zero_inventory_recovered": false,
+          "one_recovered": true,
+          "one_exact": 1.0,
+          "one_order_acc": 1.0,
+          "perm_one_recovered_frac": 0.25,
+          "perm_one_exact": 0.25,
+          "one_unreadable_verb_recovered": false,
+          "one_unreadable_verb_exact": 0.0
+        },
+        "F_NEGMOD": {
+          "rungs": {
+            "0": {
+              "held": "F_NEGMOD",
+              "k": 0,
+              "inventory_recovered": false,
+              "order_acc": 0.325,
+              "order_recovered": false,
+              "exact": 0.0,
+              "recovered": false,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "1": {
+              "held": "F_NEGMOD",
+              "k": 1,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "3": {
+              "held": "F_NEGMOD",
+              "k": 3,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "5": {
+              "held": "F_NEGMOD",
+              "k": 5,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            }
+          },
+          "perm": {
+            "1": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.325,
+              "inventory_recovered_frac": 0.0
+            },
+            "3": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.325,
+              "inventory_recovered_frac": 0.0
+            },
+            "5": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.325,
+              "inventory_recovered_frac": 0.0
+            }
+          },
+          "min_k_recovers": 1,
+          "zero_recovered": false,
+          "zero_exact": 0.0,
+          "zero_inventory_recovered": false,
+          "one_recovered": true,
+          "one_exact": 1.0,
+          "one_order_acc": 1.0,
+          "perm_one_recovered_frac": 0.0,
+          "perm_one_exact": 0.0
+        }
+      },
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    },
+    {
+      "seed": 44,
+      "n_closed": 15,
+      "closed": [
+        "a",
+        "and",
+        "can",
+        "does",
+        "fast",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "red",
+        "small",
+        "tall",
+        "the",
+        "to"
+      ],
+      "per_frame": {
+        "F_MODAL": {
+          "rungs": {
+            "0": {
+              "held": "F_MODAL",
+              "k": 0,
+              "inventory_recovered": false,
+              "order_acc": 0.15625,
+              "order_recovered": false,
+              "exact": 0.0,
+              "recovered": false,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "1": {
+              "held": "F_MODAL",
+              "k": 1,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "3": {
+              "held": "F_MODAL",
+              "k": 3,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "5": {
+              "held": "F_MODAL",
+              "k": 5,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            }
+          },
+          "perm": {
+            "1": {
+              "recovered_frac": 0.0,
+              "exact": 0.25,
+              "order_acc": 0.2421875,
+              "inventory_recovered_frac": 0.25
+            },
+            "3": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.15625,
+              "inventory_recovered_frac": 0.0
+            },
+            "5": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.3671875,
+              "inventory_recovered_frac": 0.0
+            }
+          },
+          "min_k_recovers": 1,
+          "zero_recovered": false,
+          "zero_exact": 0.0,
+          "zero_inventory_recovered": false,
+          "one_recovered": true,
+          "one_exact": 1.0,
+          "one_order_acc": 1.0,
+          "perm_one_recovered_frac": 0.0,
+          "perm_one_exact": 0.25
+        },
+        "F_INTR": {
+          "rungs": {
+            "0": {
+              "held": "F_INTR",
+              "k": 0,
+              "inventory_recovered": false,
+              "order_acc": 0.08333333333333333,
+              "order_recovered": false,
+              "exact": 0.0,
+              "recovered": false,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "1": {
+              "held": "F_INTR",
+              "k": 1,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "3": {
+              "held": "F_INTR",
+              "k": 3,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "5": {
+              "held": "F_INTR",
+              "k": 5,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            }
+          },
+          "perm": {
+            "1": {
+              "recovered_frac": 0.25,
+              "exact": 0.25,
+              "order_acc": 0.3125,
+              "inventory_recovered_frac": 0.25
+            },
+            "3": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.08333333333333333,
+              "inventory_recovered_frac": 0.0
+            },
+            "5": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.5416666666666666,
+              "inventory_recovered_frac": 0.0
+            }
+          },
+          "min_k_recovers": 1,
+          "zero_recovered": false,
+          "zero_exact": 0.0,
+          "zero_inventory_recovered": false,
+          "one_recovered": true,
+          "one_exact": 1.0,
+          "one_order_acc": 1.0,
+          "perm_one_recovered_frac": 0.25,
+          "perm_one_exact": 0.25,
+          "one_unreadable_verb_recovered": false,
+          "one_unreadable_verb_exact": 0.0
+        },
+        "F_NEGMOD": {
+          "rungs": {
+            "0": {
+              "held": "F_NEGMOD",
+              "k": 0,
+              "inventory_recovered": false,
+              "order_acc": 0.15000000000000002,
+              "order_recovered": false,
+              "exact": 0.0,
+              "recovered": false,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "1": {
+              "held": "F_NEGMOD",
+              "k": 1,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "3": {
+              "held": "F_NEGMOD",
+              "k": 3,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "5": {
+              "held": "F_NEGMOD",
+              "k": 5,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            }
+          },
+          "perm": {
+            "1": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.15000000000000002,
+              "inventory_recovered_frac": 0.0
+            },
+            "3": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.15000000000000002,
+              "inventory_recovered_frac": 0.0
+            },
+            "5": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.15000000000000002,
+              "inventory_recovered_frac": 0.0
+            }
+          },
+          "min_k_recovers": 1,
+          "zero_recovered": false,
+          "zero_exact": 0.0,
+          "zero_inventory_recovered": false,
+          "one_recovered": true,
+          "one_exact": 1.0,
+          "one_order_acc": 1.0,
+          "perm_one_recovered_frac": 0.0,
+          "perm_one_exact": 0.0
+        }
+      },
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    },
+    {
+      "seed": 100,
+      "n_closed": 14,
+      "closed": [
+        "a",
+        "and",
+        "big",
+        "can",
+        "does",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "tall",
+        "the",
+        "to",
+        "wet"
+      ],
+      "per_frame": {
+        "F_MODAL": {
+          "rungs": {
+            "0": {
+              "held": "F_MODAL",
+              "k": 0,
+              "inventory_recovered": false,
+              "order_acc": 0.3125,
+              "order_recovered": false,
+              "exact": 0.0,
+              "recovered": false,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "1": {
+              "held": "F_MODAL",
+              "k": 1,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "3": {
+              "held": "F_MODAL",
+              "k": 3,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "5": {
+              "held": "F_MODAL",
+              "k": 5,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            }
+          },
+          "perm": {
+            "1": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.3125,
+              "inventory_recovered_frac": 0.0
+            },
+            "3": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.53125,
+              "inventory_recovered_frac": 0.0
+            },
+            "5": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.484375,
+              "inventory_recovered_frac": 0.0
+            }
+          },
+          "min_k_recovers": 1,
+          "zero_recovered": false,
+          "zero_exact": 0.0,
+          "zero_inventory_recovered": false,
+          "one_recovered": true,
+          "one_exact": 1.0,
+          "one_order_acc": 1.0,
+          "perm_one_recovered_frac": 0.0,
+          "perm_one_exact": 0.0
+        },
+        "F_INTR": {
+          "rungs": {
+            "0": {
+              "held": "F_INTR",
+              "k": 0,
+              "inventory_recovered": false,
+              "order_acc": 0.375,
+              "order_recovered": false,
+              "exact": 0.0,
+              "recovered": false,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "1": {
+              "held": "F_INTR",
+              "k": 1,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "3": {
+              "held": "F_INTR",
+              "k": 3,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "5": {
+              "held": "F_INTR",
+              "k": 5,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            }
+          },
+          "perm": {
+            "1": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.375,
+              "inventory_recovered_frac": 0.0
+            },
+            "3": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.6875,
+              "inventory_recovered_frac": 0.0
+            },
+            "5": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.84375,
+              "inventory_recovered_frac": 0.0
+            }
+          },
+          "min_k_recovers": 1,
+          "zero_recovered": false,
+          "zero_exact": 0.0,
+          "zero_inventory_recovered": false,
+          "one_recovered": true,
+          "one_exact": 1.0,
+          "one_order_acc": 1.0,
+          "perm_one_recovered_frac": 0.0,
+          "perm_one_exact": 0.0,
+          "one_unreadable_verb_recovered": false,
+          "one_unreadable_verb_exact": 0.0
+        },
+        "F_NEGMOD": {
+          "rungs": {
+            "0": {
+              "held": "F_NEGMOD",
+              "k": 0,
+              "inventory_recovered": false,
+              "order_acc": 0.25,
+              "order_recovered": false,
+              "exact": 0.0,
+              "recovered": false,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "1": {
+              "held": "F_NEGMOD",
+              "k": 1,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "3": {
+              "held": "F_NEGMOD",
+              "k": 3,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "5": {
+              "held": "F_NEGMOD",
+              "k": 5,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            }
+          },
+          "perm": {
+            "1": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.25,
+              "inventory_recovered_frac": 0.0
+            },
+            "3": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.25,
+              "inventory_recovered_frac": 0.0
+            },
+            "5": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.4375,
+              "inventory_recovered_frac": 0.0
+            }
+          },
+          "min_k_recovers": 1,
+          "zero_recovered": false,
+          "zero_exact": 0.0,
+          "zero_inventory_recovered": false,
+          "one_recovered": true,
+          "one_exact": 1.0,
+          "one_order_acc": 1.0,
+          "perm_one_recovered_frac": 0.0,
+          "perm_one_exact": 0.0
+        }
+      },
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    },
+    {
+      "seed": 101,
+      "n_closed": 15,
+      "closed": [
+        "a",
+        "and",
+        "can",
+        "cold",
+        "does",
+        "grey",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "red",
+        "the",
+        "to",
+        "warm"
+      ],
+      "per_frame": {
+        "F_MODAL": {
+          "rungs": {
+            "0": {
+              "held": "F_MODAL",
+              "k": 0,
+              "inventory_recovered": false,
+              "order_acc": 0.1875,
+              "order_recovered": false,
+              "exact": 0.0,
+              "recovered": false,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "1": {
+              "held": "F_MODAL",
+              "k": 1,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "3": {
+              "held": "F_MODAL",
+              "k": 3,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "5": {
+              "held": "F_MODAL",
+              "k": 5,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            }
+          },
+          "perm": {
+            "1": {
+              "recovered_frac": 0.5,
+              "exact": 0.5,
+              "order_acc": 0.59375,
+              "inventory_recovered_frac": 0.5
+            },
+            "3": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.1875,
+              "inventory_recovered_frac": 0.0
+            },
+            "5": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.265625,
+              "inventory_recovered_frac": 0.0
+            }
+          },
+          "min_k_recovers": 1,
+          "zero_recovered": false,
+          "zero_exact": 0.0,
+          "zero_inventory_recovered": false,
+          "one_recovered": true,
+          "one_exact": 1.0,
+          "one_order_acc": 1.0,
+          "perm_one_recovered_frac": 0.5,
+          "perm_one_exact": 0.5
+        },
+        "F_INTR": {
+          "rungs": {
+            "0": {
+              "held": "F_INTR",
+              "k": 0,
+              "inventory_recovered": false,
+              "order_acc": 0.3333333333333333,
+              "order_recovered": false,
+              "exact": 0.0,
+              "recovered": false,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "1": {
+              "held": "F_INTR",
+              "k": 1,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "3": {
+              "held": "F_INTR",
+              "k": 3,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "5": {
+              "held": "F_INTR",
+              "k": 5,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            }
+          },
+          "perm": {
+            "1": {
+              "recovered_frac": 0.75,
+              "exact": 0.75,
+              "order_acc": 0.8333333333333334,
+              "inventory_recovered_frac": 0.75
+            },
+            "3": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.3333333333333333,
+              "inventory_recovered_frac": 0.0
+            },
+            "5": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.49999999999999994,
+              "inventory_recovered_frac": 0.0
+            }
+          },
+          "min_k_recovers": 1,
+          "zero_recovered": false,
+          "zero_exact": 0.0,
+          "zero_inventory_recovered": false,
+          "one_recovered": true,
+          "one_exact": 1.0,
+          "one_order_acc": 1.0,
+          "perm_one_recovered_frac": 0.75,
+          "perm_one_exact": 0.75,
+          "one_unreadable_verb_recovered": false,
+          "one_unreadable_verb_exact": 0.0
+        },
+        "F_NEGMOD": {
+          "rungs": {
+            "0": {
+              "held": "F_NEGMOD",
+              "k": 0,
+              "inventory_recovered": false,
+              "order_acc": 0.2,
+              "order_recovered": false,
+              "exact": 0.0,
+              "recovered": false,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "1": {
+              "held": "F_NEGMOD",
+              "k": 1,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "3": {
+              "held": "F_NEGMOD",
+              "k": 3,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "5": {
+              "held": "F_NEGMOD",
+              "k": 5,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            }
+          },
+          "perm": {
+            "1": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.2,
+              "inventory_recovered_frac": 0.0
+            },
+            "3": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.2,
+              "inventory_recovered_frac": 0.0
+            },
+            "5": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.3,
+              "inventory_recovered_frac": 0.0
+            }
+          },
+          "min_k_recovers": 1,
+          "zero_recovered": false,
+          "zero_exact": 0.0,
+          "zero_inventory_recovered": false,
+          "one_recovered": true,
+          "one_exact": 1.0,
+          "one_order_acc": 1.0,
+          "perm_one_recovered_frac": 0.0,
+          "perm_one_exact": 0.0
+        }
+      },
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    },
+    {
+      "seed": 102,
+      "n_closed": 15,
+      "closed": [
+        "a",
+        "and",
+        "big",
+        "can",
+        "does",
+        "fast",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "slow",
+        "tall",
+        "the",
+        "to"
+      ],
+      "per_frame": {
+        "F_MODAL": {
+          "rungs": {
+            "0": {
+              "held": "F_MODAL",
+              "k": 0,
+              "inventory_recovered": false,
+              "order_acc": 0.125,
+              "order_recovered": false,
+              "exact": 0.0,
+              "recovered": false,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "1": {
+              "held": "F_MODAL",
+              "k": 1,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "3": {
+              "held": "F_MODAL",
+              "k": 3,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "5": {
+              "held": "F_MODAL",
+              "k": 5,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            }
+          },
+          "perm": {
+            "1": {
+              "recovered_frac": 0.0,
+              "exact": 0.25,
+              "order_acc": 0.21875,
+              "inventory_recovered_frac": 0.25
+            },
+            "3": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.3125,
+              "inventory_recovered_frac": 0.0
+            },
+            "5": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.21875,
+              "inventory_recovered_frac": 0.0
+            }
+          },
+          "min_k_recovers": 1,
+          "zero_recovered": false,
+          "zero_exact": 0.0,
+          "zero_inventory_recovered": false,
+          "one_recovered": true,
+          "one_exact": 1.0,
+          "one_order_acc": 1.0,
+          "perm_one_recovered_frac": 0.0,
+          "perm_one_exact": 0.25
+        },
+        "F_INTR": {
+          "rungs": {
+            "0": {
+              "held": "F_INTR",
+              "k": 0,
+              "inventory_recovered": false,
+              "order_acc": 0.20833333333333331,
+              "order_recovered": false,
+              "exact": 0.0,
+              "recovered": false,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "1": {
+              "held": "F_INTR",
+              "k": 1,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "3": {
+              "held": "F_INTR",
+              "k": 3,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "5": {
+              "held": "F_INTR",
+              "k": 5,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            }
+          },
+          "perm": {
+            "1": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.20833333333333331,
+              "inventory_recovered_frac": 0.0
+            },
+            "3": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.20833333333333331,
+              "inventory_recovered_frac": 0.0
+            },
+            "5": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.8020833333333333,
+              "inventory_recovered_frac": 0.0
+            }
+          },
+          "min_k_recovers": 1,
+          "zero_recovered": false,
+          "zero_exact": 0.0,
+          "zero_inventory_recovered": false,
+          "one_recovered": true,
+          "one_exact": 1.0,
+          "one_order_acc": 1.0,
+          "perm_one_recovered_frac": 0.0,
+          "perm_one_exact": 0.0,
+          "one_unreadable_verb_recovered": false,
+          "one_unreadable_verb_exact": 0.0
+        },
+        "F_NEGMOD": {
+          "rungs": {
+            "0": {
+              "held": "F_NEGMOD",
+              "k": 0,
+              "inventory_recovered": false,
+              "order_acc": 0.125,
+              "order_recovered": false,
+              "exact": 0.0,
+              "recovered": false,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "1": {
+              "held": "F_NEGMOD",
+              "k": 1,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "3": {
+              "held": "F_NEGMOD",
+              "k": 3,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            },
+            "5": {
+              "held": "F_NEGMOD",
+              "k": 5,
+              "inventory_recovered": true,
+              "order_acc": 1.0,
+              "order_recovered": true,
+              "exact": 1.0,
+              "recovered": true,
+              "moat_calls_on_abstain": 0,
+              "answer_produced": true
+            }
+          },
+          "perm": {
+            "1": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.125,
+              "inventory_recovered_frac": 0.0
+            },
+            "3": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.125,
+              "inventory_recovered_frac": 0.0
+            },
+            "5": {
+              "recovered_frac": 0.0,
+              "exact": 0.0,
+              "order_acc": 0.24375,
+              "inventory_recovered_frac": 0.0
+            }
+          },
+          "min_k_recovers": 1,
+          "zero_recovered": false,
+          "zero_exact": 0.0,
+          "zero_inventory_recovered": false,
+          "one_recovered": true,
+          "one_exact": 1.0,
+          "one_order_acc": 1.0,
+          "perm_one_recovered_frac": 0.0,
+          "perm_one_exact": 0.0
+        }
+      },
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    }
+  ],
+  "HONEST_NOTE": "Closes the EMERGE-63/64/65 named HELD-OUT DISTINCTIVE-slot residual for the BOUNDED EMERGE frame domain by showing it is a SINGLE-EXEMPLAR DATA residual, NOT a mechanism wall: once the SHARED backbone schema exists (from the other frames), ONE well-formed attestation of the held-out frame fixes its distinctive element (function word + position / inflection / does<not internal order) in one shot. Load-bearing proof: the zero-attestation control (the held-out residual) does NOT recover, and the permuted-attestation control (word order destroyed) collapses -- the recovery genuinely comes from the single attestation's WORD ORDER. If a frame needs a SMALL K>1 that is a FEW-exemplar data residual (reported, still not a wall). This does NOT make the domain open-ended (open prose R4 is the separate deferred wall). The corpus/attestation is offline syllabus prep (BRAIN-BASED-ONLY compliant); the recovered structure is rendered on REAL spikes (EMERGE-61 wash-out); the gate-first moat is untouched (0 productions on abstains). Cites EMERGE-63/64/65; one-shot/fast-mapping biology (Carey-Bartlett, McClelland-McNaughton-O'Reilly CLS, catalog D.03/D.13); Dominey-Hinaut."
+}
