@@ -8727,15 +8727,30 @@ shared slices. 6-seed UNANIMOUS GO: parse/recall/render 1.000, moat 0.000/0 (gat
 shared-bridge slice. NO `sim/` edit. `2026-07-03-emerge93-two-spiking-onebridge-turn-GO.md`, CI 2. ⇒ the capstone's two
 spiking substrates are now ONE bridge (the rate reservoir has no bridge; the spiking OnBridgeLSM is the dt-0.5 third).
 
-**EXACT NEXT CONCRETE ACTION:** **RUNG A.3 — fold ALL THREE spiking components onto one bridge (the spiking reservoir
-too).** The reservoir (OnBridgeLSM, dt=0.5) is the remaining separate bridge; add it as a THIRD slice (`reservoir` +
-`rf` + `slots`) on the EMERGE-93 shared bridge. HONEST INTEGRATION QUESTION (scoping-flagged): the reservoir was tuned
-at dt=0.5, the producer at dt=1.0 -> ONE global dt. CHEAP-FIRST SINGLE-VARIABLE: FIRST probe whether OnBridgeLSM parses
-at dt=1.0 (add a default-0.5 `dt=` param to `_build_reservoir_bridge`/`OnBridgeLSM`, re-fit the slot read-out at dt=1.0,
-measure parse_acc vs the dt=0.5 baseline). If GO -> build the 3-region turn at dt=1.0. If the reservoir needs dt=0.5 ->
-either re-tune it at dt=1.0 (IN_SCALE/BIAS/T_STEP) or run the reservoir's read in a dt=0.5 phase (a per-phase dt switch
-on the shared bridge). Then the full 3-spiking-region turn + the EMERGE-87 functional-isolation gate. Other follow-ons:
-(2) **A→W NEURAL WORD-SPELL** — pass the EMERGE-67/68/69 `UnifiedNeuralSpell` as the
+**CYCLE 910 (EMERGE-95 GO — RUNG A.3: the ONE-BRAIN SUBSTRATE for the conversational turn).** EMERGE-95 (committed): ALL
+THREE spiking components — the recurrent-Izhikevich reservoir (comprehension), the RF-phasor composer (memory), the
+Izhikevich slot producer (production) — co-reside as disjoint `reservoir`+`rf`+`slots` slices on ONE `SimulationBridge`
+(dt=1.0, region_pathways=[]), and the whole turn runs against the three shared slices. 6-seed UNANIMOUS GO:
+parse/recall/render 1.000, moat 0.000/0 (gate-first), lesion 0.000, no-learn 0.000. `SharedBridgeReservoirLSM` rebinds
+OnBridgeLSM to the shared reservoir slice; MergedRFComposer on rf; the EMERGE-92 producer slice on slots; each wash-out
+restores state arrays but NOT the composer's cp_rf_w_re/im, so memory survives. NO `sim/` edit.
+`2026-07-03-emerge95-three-spiking-onebridge-turn-GO.md`, CI 3. ⇒ **the one-brain-substrate ladder is COMPLETE (A.1
+EMERGE-92 → A.2 EMERGE-93 → dt-probe EMERGE-94 → A.3 EMERGE-95): every spiking component of the conversational turn lives
+on ONE bridge (the project's substrate-consolidation bar). The hand-offs are still host-dict (RUNG B = synaptic, the
+FUNCTIONAL bar, is next).**
+
+**EXACT NEXT CONCRETE ACTION:** the one-brain SUBSTRATE is done; the two remaining rungs (per the ladder): **(2) A→W
+NEURAL WORD-SPELL** — every WORD on spikes (not just the order). Retrain the EMERGE-67/68 A→W read-out on the transitive
+vocab (dog/chase/ball...) + pass `UnifiedNeuralSpell` as the producer `spell=` (cupy; the whole turn then co-executes on
+one cupy process, EMERGE-70/71). A bounded GPU retrain (controller runs INLINE + Monitor). **(3) RUNG B — the SYNAPTIC
+comprehension→composition hand-off** (the FUNCTIONAL one-brain): a read-only research gate (a69440bcdb4f168c9) is IN
+FLIGHT — how to make the reservoir's role output DRIVE the composer's bind via SYNAPSES (project the reservoir slice → a
+role-ensemble region via the learned Ws as a fixed RegionPathway → WTA-select → feed the OneBrainComposer parser-firing
+route), replacing the host {role:word} dict; ON ITS RETURN build the recommended cheapest de-risk if cheap-first, else
+its smallest cheap sub-piece. Recommend: (3) RUNG-B research gate first (the functional one-brain is the deepest master-
+directive gap) + (2) A→W words in parallel (independent GPU retrain). BUILD IT — I am the continuation. PARALLELIZE;
+boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair when de-risked; moat a PLUS; honest origin+gitea;
+COMMIT ON MAIN; CONTROLLER runs GPU INLINE; ARM A MONITOR.
 producer `spell=` so every WORD is spoken on spikes (cupy; forces the whole turn onto one cupy process, EMERGE-70/71). (3)
 **FOLD THE THREE BRIDGES ONTO ONE + make the hand-offs SYNAPTIC** (the EMERGE-87 disjoint-slice co-residence pattern) —
 the honest "one brain": the reservoir/composer/producer as disjoint slices on ONE bridge, the comprehend->store->speak
