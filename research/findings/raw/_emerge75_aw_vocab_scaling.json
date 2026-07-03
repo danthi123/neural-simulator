@@ -1,0 +1,702 @@
+{
+  "probe": "emerge75_aw_vocab_scaling",
+  "verdict": "BOUNDARY -- slot REGRESSION vs the token spell (3 mismatches). THE EXACT GAP: the content words spell 100% on BRIDGE-A + the 5 original function words 100% on BRIDGE-F (EMERGE-67/68 GO), but at this training budget/scale the OVERFLOW words on BRIDGE-C (the object nouns + to/on/is) may not all separate cleanly (BRIDGE-C has 16 words in one 16-pool bridge, incl. 3 high-frequency closed-class prepositions co-trained with 13 content nouns -- the closed-class words' orthogonal-band A->W codes are the harder read, as EMERGE-68 named). NEXT STEP: train BRIDGE-C at the fully-validated scale (n_per_pool=500, more events) OR split the function/content overflow across TWO bridges (the G.20 route). This is a SCALE/DATA lever + a bounded pool-assignment change, NOT a new mechanism. If the MOAT was breached this is BLOCKING -- do NOT weaken the moat.",
+  "go": false,
+  "mechanism": "A->W VOCAB SCALING: make the spiking A->W read-out support ARBITRARY content vocabulary via the G.20 MULTI-BRIDGE route. Each A->W concept-pool bridge caps at 16 words (4 kinds x 4 pools); the EMERGE-72/73 broadened constructions add NEW words in neither BRIDGE-A (content) nor BRIDGE-F (function): the OBJECT nouns (the transitive-motion PP argument) + the NEW function words to/on/is. EMERGE-75 adds a THIRD bridge BRIDGE-C for those 16 overflow words (3 new function + 13 object nouns rebound onto its 16 pools; same builder+topographic-bias+orthogonal-codes+train_word_to_pool recipe, cached once), and UnifiedNeuralSpell75.spell DISPATCHES each word to the bridge holding its pool: content->BRIDGE-A, {the,a,can,does,not}->BRIDGE-F, {to,on,is}+objects->BRIDGE-C. A verb rendered 3sg decodes on its LEMMA pool (BRIDGE-A) + re-inflects (still FROM SPIKES). RegistryBrocaProducer's DET/FUNC/SUBJ/VERB/OBJ slots route through this SAME spell, so EVERY slot -- content AND function AND object -- is spike-spelled. The read-out is genuinely spiking (reads cp_firing_states[language_output]; a BRIDGE-C pool->output lesion collapses the overflow-word decode). The gate-first no-confab moat is untouched (abstain -> producer + all three A->W engines NEVER invoked). G.20 multi-bridge (CLAUDE.md: the 320-concept ensemble is 5 sparse bridges); concept_speak_demo A->W read-out; EMERGE-67/68 precedent. Reuse-by-import; NO sim/ edit.",
+  "task": "generalize the spiking A->W spell to arbitrary vocabulary via the G.20 multi-bridge route -- a UnifiedNeuralSpell75 dispatching each word to the bridge holding its pool, adding a 3rd bridge (BRIDGE-C) for the overflow content words -- so the EMERGE-72 broadened constructions render every word on spikes; all-word spike-spell accuracy + genuinely-spiking (overflow lesion collapse) + gate-first moat (0 spell/producer calls on abstains) + no regression vs the token spell; >=6 seeds; GPU",
+  "overflow_words": [
+    "to",
+    "on",
+    "is",
+    "nest",
+    "pond",
+    "tree",
+    "rock",
+    "hill",
+    "cave",
+    "leaf",
+    "seed",
+    "worm",
+    "fish",
+    "branch",
+    "shore",
+    "log"
+  ],
+  "overflow_func": [
+    "to",
+    "on",
+    "is"
+  ],
+  "overflow_obj": [
+    "nest",
+    "pond",
+    "tree",
+    "rock",
+    "hill",
+    "cave",
+    "leaf",
+    "seed",
+    "worm",
+    "fish",
+    "branch",
+    "shore",
+    "log"
+  ],
+  "content_vocab": [
+    "owl",
+    "penguin",
+    "robin",
+    "sparrow",
+    "eagle",
+    "hawk",
+    "wren",
+    "crow",
+    "fly",
+    "swim",
+    "run",
+    "hop",
+    "walks",
+    "lurks",
+    "hides",
+    "rests"
+  ],
+  "func_words": [
+    "the",
+    "a",
+    "can",
+    "does",
+    "not"
+  ],
+  "scope_constructions": [
+    "F_MODAL",
+    "F_INTR",
+    "F_NEGMOD",
+    "C_PPGOAL",
+    "C_PPLOC"
+  ],
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "gpu": true,
+  "elapsed_seconds": 1405.6,
+  "aggregate": {
+    "all_acc": 1.0,
+    "overflow_acc": 1.0,
+    "overflow_wordwise_rate": 1.0,
+    "content_wordwise_rate": 1.0,
+    "func_wordwise_rate": 1.0,
+    "lesion_overflow_acc": 0.14583333333333334,
+    "engine_lesion_overflow_acc": 0.0,
+    "regress_mismatch": 3,
+    "spell_calls_on_abstain_total": 0,
+    "producer_calls_on_abstain_total": 0
+  },
+  "overflow_wordwise": [
+    {
+      "word": "to",
+      "decoded": "to",
+      "ok": true,
+      "self_cos": 0.226,
+      "top_cos": 0.226,
+      "spikes": 81
+    },
+    {
+      "word": "on",
+      "decoded": "on",
+      "ok": true,
+      "self_cos": 0.358,
+      "top_cos": 0.358,
+      "spikes": 596
+    },
+    {
+      "word": "is",
+      "decoded": "is",
+      "ok": true,
+      "self_cos": 0.231,
+      "top_cos": 0.231,
+      "spikes": 304
+    },
+    {
+      "word": "nest",
+      "decoded": "nest",
+      "ok": true,
+      "self_cos": 0.265,
+      "top_cos": 0.265,
+      "spikes": 371
+    },
+    {
+      "word": "pond",
+      "decoded": "pond",
+      "ok": true,
+      "self_cos": 0.194,
+      "top_cos": 0.194,
+      "spikes": 275
+    },
+    {
+      "word": "tree",
+      "decoded": "tree",
+      "ok": true,
+      "self_cos": 0.288,
+      "top_cos": 0.288,
+      "spikes": 283
+    },
+    {
+      "word": "rock",
+      "decoded": "rock",
+      "ok": true,
+      "self_cos": 0.271,
+      "top_cos": 0.271,
+      "spikes": 287
+    },
+    {
+      "word": "hill",
+      "decoded": "hill",
+      "ok": true,
+      "self_cos": 0.314,
+      "top_cos": 0.314,
+      "spikes": 456
+    },
+    {
+      "word": "cave",
+      "decoded": "cave",
+      "ok": true,
+      "self_cos": 0.229,
+      "top_cos": 0.229,
+      "spikes": 268
+    },
+    {
+      "word": "leaf",
+      "decoded": "leaf",
+      "ok": true,
+      "self_cos": 0.239,
+      "top_cos": 0.239,
+      "spikes": 470
+    },
+    {
+      "word": "seed",
+      "decoded": "seed",
+      "ok": true,
+      "self_cos": 0.363,
+      "top_cos": 0.363,
+      "spikes": 332
+    },
+    {
+      "word": "worm",
+      "decoded": "worm",
+      "ok": true,
+      "self_cos": 0.23,
+      "top_cos": 0.23,
+      "spikes": 491
+    },
+    {
+      "word": "fish",
+      "decoded": "fish",
+      "ok": true,
+      "self_cos": 0.211,
+      "top_cos": 0.211,
+      "spikes": 181
+    },
+    {
+      "word": "branch",
+      "decoded": "branch",
+      "ok": true,
+      "self_cos": 0.139,
+      "top_cos": 0.139,
+      "spikes": 110
+    },
+    {
+      "word": "shore",
+      "decoded": "shore",
+      "ok": true,
+      "self_cos": 0.159,
+      "top_cos": 0.159,
+      "spikes": 240
+    },
+    {
+      "word": "log",
+      "decoded": "log",
+      "ok": true,
+      "self_cos": 0.276,
+      "top_cos": 0.276,
+      "spikes": 258
+    }
+  ],
+  "sample_transcript": [
+    {
+      "question": "can an owl fly?",
+      "surface": "the owl can fly",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "question": "what does a penguin do?",
+      "surface": "the penguin walks",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "question": "can a penguin fly? [deny]",
+      "surface": "the penguin does not fly",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "question": "where does the owl fly?",
+      "surface": "the owl flies to the pond",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "question": "where does the owl fly?",
+      "surface": "the owl flies on the rock",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "question": "can a zzz fly?",
+      "surface": "I don't know.",
+      "invocation": "producer NOT invoked"
+    }
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "all_acc": 1.0,
+      "overflow_acc": 1.0,
+      "regress_mismatch": 0,
+      "spell_calls_on_abstain": 0,
+      "producer_calls_on_abstain": 0,
+      "answer_produced": true,
+      "lesion_overflow_acc": 0.09375,
+      "n_registered_in_scope": 5,
+      "examples": [
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "crow",
+            "verb": "hop",
+            "obj": "nest"
+          },
+          "surface": "the crow can hop",
+          "expected": "the crow can hop"
+        },
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "crow",
+            "verb": "swim",
+            "obj": "cave"
+          },
+          "surface": "the crow can swim",
+          "expected": "the crow can swim"
+        },
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "robin",
+            "verb": "fly",
+            "obj": "nest"
+          },
+          "surface": "the robin can fly",
+          "expected": "the robin can fly"
+        },
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "robin",
+            "verb": "swim",
+            "obj": "seed"
+          },
+          "surface": "the robin can swim",
+          "expected": "the robin can swim"
+        },
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "owl",
+            "verb": "run",
+            "obj": "tree"
+          },
+          "surface": "the owl can run",
+          "expected": "the owl can run"
+        },
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "penguin",
+            "verb": "hop",
+            "obj": "cave"
+          },
+          "surface": "the penguin can hop",
+          "expected": "the penguin can hop"
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "all_acc": 1.0,
+      "overflow_acc": 1.0,
+      "regress_mismatch": 0,
+      "spell_calls_on_abstain": 0,
+      "producer_calls_on_abstain": 0,
+      "answer_produced": true,
+      "lesion_overflow_acc": 0.15625,
+      "n_registered_in_scope": 5,
+      "examples": [
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "eagle",
+            "verb": "run",
+            "obj": "log"
+          },
+          "surface": "the eagle can run",
+          "expected": "the eagle can run"
+        },
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "hawk",
+            "verb": "swim",
+            "obj": "cave"
+          },
+          "surface": "the hawk can swim",
+          "expected": "the hawk can swim"
+        },
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "owl",
+            "verb": "swim",
+            "obj": "hill"
+          },
+          "surface": "the owl can swim",
+          "expected": "the owl can swim"
+        },
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "robin",
+            "verb": "fly",
+            "obj": "cave"
+          },
+          "surface": "the robin can fly",
+          "expected": "the robin can fly"
+        },
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "owl",
+            "verb": "fly",
+            "obj": "pond"
+          },
+          "surface": "the owl can fly",
+          "expected": "the owl can fly"
+        },
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "eagle",
+            "verb": "fly",
+            "obj": "pond"
+          },
+          "surface": "the eagle can fly",
+          "expected": "the eagle can fly"
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "all_acc": 1.0,
+      "overflow_acc": 1.0,
+      "regress_mismatch": 0,
+      "spell_calls_on_abstain": 0,
+      "producer_calls_on_abstain": 0,
+      "answer_produced": true,
+      "lesion_overflow_acc": 0.125,
+      "n_registered_in_scope": 5,
+      "examples": [
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "penguin",
+            "verb": "hop",
+            "obj": "leaf"
+          },
+          "surface": "the penguin can hop",
+          "expected": "the penguin can hop"
+        },
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "penguin",
+            "verb": "run",
+            "obj": "seed"
+          },
+          "surface": "the penguin can run",
+          "expected": "the penguin can run"
+        },
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "eagle",
+            "verb": "fly",
+            "obj": "rock"
+          },
+          "surface": "the eagle can fly",
+          "expected": "the eagle can fly"
+        },
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "owl",
+            "verb": "run",
+            "obj": "log"
+          },
+          "surface": "the owl can run",
+          "expected": "the owl can run"
+        },
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "hawk",
+            "verb": "fly",
+            "obj": "branch"
+          },
+          "surface": "the hawk can fly",
+          "expected": "the hawk can fly"
+        },
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "crow",
+            "verb": "run",
+            "obj": "leaf"
+          },
+          "surface": "the crow can run",
+          "expected": "the crow can run"
+        }
+      ]
+    },
+    {
+      "seed": 100,
+      "all_acc": 1.0,
+      "overflow_acc": 1.0,
+      "regress_mismatch": 0,
+      "spell_calls_on_abstain": 0,
+      "producer_calls_on_abstain": 0,
+      "answer_produced": true,
+      "lesion_overflow_acc": 0.21875,
+      "n_registered_in_scope": 5,
+      "examples": [
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "crow",
+            "verb": "run",
+            "obj": "nest"
+          },
+          "surface": "the can crow run",
+          "expected": "the crow can run"
+        },
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "hawk",
+            "verb": "hop",
+            "obj": "log"
+          },
+          "surface": "the can hawk hop",
+          "expected": "the hawk can hop"
+        },
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "eagle",
+            "verb": "run",
+            "obj": "branch"
+          },
+          "surface": "the can eagle run",
+          "expected": "the eagle can run"
+        },
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "wren",
+            "verb": "fly",
+            "obj": "shore"
+          },
+          "surface": "the can wren fly",
+          "expected": "the wren can fly"
+        },
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "wren",
+            "verb": "run",
+            "obj": "cave"
+          },
+          "surface": "the can wren run",
+          "expected": "the wren can run"
+        },
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "wren",
+            "verb": "swim",
+            "obj": "seed"
+          },
+          "surface": "the can wren swim",
+          "expected": "the wren can swim"
+        }
+      ]
+    },
+    {
+      "seed": 101,
+      "all_acc": 1.0,
+      "overflow_acc": 1.0,
+      "regress_mismatch": 0,
+      "spell_calls_on_abstain": 0,
+      "producer_calls_on_abstain": 0,
+      "answer_produced": true,
+      "lesion_overflow_acc": 0.09375,
+      "n_registered_in_scope": 5,
+      "examples": [
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "robin",
+            "verb": "fly",
+            "obj": "leaf"
+          },
+          "surface": "the robin can fly",
+          "expected": "the robin can fly"
+        },
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "crow",
+            "verb": "hop",
+            "obj": "fish"
+          },
+          "surface": "the crow can hop",
+          "expected": "the crow can hop"
+        },
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "crow",
+            "verb": "swim",
+            "obj": "branch"
+          },
+          "surface": "the crow can swim",
+          "expected": "the crow can swim"
+        },
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "hawk",
+            "verb": "run",
+            "obj": "hill"
+          },
+          "surface": "the hawk can run",
+          "expected": "the hawk can run"
+        },
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "owl",
+            "verb": "hop",
+            "obj": "fish"
+          },
+          "surface": "the owl can hop",
+          "expected": "the owl can hop"
+        },
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "hawk",
+            "verb": "swim",
+            "obj": "log"
+          },
+          "surface": "the hawk can swim",
+          "expected": "the hawk can swim"
+        }
+      ]
+    },
+    {
+      "seed": 102,
+      "all_acc": 1.0,
+      "overflow_acc": 1.0,
+      "regress_mismatch": 3,
+      "spell_calls_on_abstain": 0,
+      "producer_calls_on_abstain": 0,
+      "answer_produced": true,
+      "lesion_overflow_acc": 0.1875,
+      "n_registered_in_scope": 5,
+      "examples": [
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "eagle",
+            "verb": "swim",
+            "obj": "pond"
+          },
+          "surface": "eagle the can swim",
+          "expected": "the eagle can swim"
+        },
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "owl",
+            "verb": "run",
+            "obj": "tree"
+          },
+          "surface": "owl the can run",
+          "expected": "the owl can run"
+        },
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "sparrow",
+            "verb": "fly",
+            "obj": "log"
+          },
+          "surface": "sparrow the can fly",
+          "expected": "the sparrow can fly"
+        },
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "robin",
+            "verb": "hop",
+            "obj": "pond"
+          },
+          "surface": "robin the can hop",
+          "expected": "the robin can hop"
+        },
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "robin",
+            "verb": "fly",
+            "obj": "branch"
+          },
+          "surface": "robin the can fly",
+          "expected": "the robin can fly"
+        },
+        {
+          "construction": "F_MODAL",
+          "fact": {
+            "subject": "wren",
+            "verb": "hop",
+            "obj": "worm"
+          },
+          "surface": "wren the can hop",
+          "expected": "the wren can hop"
+        }
+      ]
+    }
+  ],
+  "HONEST_NOTE": "Makes the EMERGE-72 BROADENED constructions FULLY SPIKING end-to-end via the G.20 MULTI-BRIDGE A->W route (the ORDER was already spiking EMERGE-59/63; content words since EMERGE-67; the 5 original function words since EMERGE-68; the NEW overflow words -- object nouns + to/on/is -- now, on a 3rd bridge BRIDGE-C). UnifiedNeuralSpell75 dispatches each word to the bridge holding its pool; every word decodes from cp_firing_states[language_output] (genuinely spiking; the BRIDGE-C pool->language_output lesion collapses the overflow-word decode -- a host lookup would be unaffected). The A->W engines are GPU-trained ONCE at the production scale + cached (a scale/data lever, not a new mechanism): BRIDGE-A = EMERGE-67's 16 content words, BRIDGE-F = EMERGE-68's 5 function words, BRIDGE-C = the 16 overflow words (a research-runner vocab rebind on a third bridge, NO sim/ edit). HONEST SCOPE: the overflow vocab is a BOUNDED 16 words on ONE extra bridge; the full 30-object corpus vocab is 2 BRIDGE-Cs (the G.20 route scales LINEARLY in bridge count -- a data/bridge lever). The EMERGE-73 ADJECTIVE constructions are NOT in scope (their construction mining is EMERGE-73's own boundary; the adjective A->W big/small/... on a 4th bridge is a further follow-on). The gate-first no-confab moat is untouched (0 spell/producer invocations on abstains, by construction). NOT open prose (R4, the separate deferred wall)."
+}

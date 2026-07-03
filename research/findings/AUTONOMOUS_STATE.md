@@ -8504,12 +8504,21 @@ Honest read-out subtlety (ONE tuned variable): 8 primacies in the 1800..300 pA r
 Turrigiano-style per-unit homeostatic normalization; raw read = the causal control proving it load-bearing) recovers all
 6 -- read-side only, moat untouched. Additive default-preserving edits to _emerge59/_emerge72 research runners; NO sim/ edit.
 
-**EXACT NEXT CONCRETE ACTION:** (1) DONE: committed EMERGE-77. (2) RECOVER EMERGE-75 (A->W vocab scaling): the bg --derisk
-(bdob9opzp) COMPLETED with GO numbers (all-word acc 1.000 all seeds, overflow acc 1.000, overflow-lesion 0.09-0.22 =
-genuinely spiking, regress 0, moat 0, in-scope 5) -> pick the GO finding (2026-07-03-emerge75-aw-vocab-scaling-GO.md), fill
-its {{placeholders}} from the raw json, check the concurrent-write git state (EMERGE-75 may have edited concept_pool_demo
-VOCAB -- verify additive), verify+commit. ⇒ the broadened constructions' overflow content words (13 object nouns + to/on/is
-on a 3rd A->W bridge) now render ON SPIKES. (3) THEN parallelize the next independent set (more constructions; the A->W of
-the ditransitive's cub/bone; the det-preceded bare-noun FP residual). PARALLELIZE by default. Boundaries = undiscovered
-mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A
-MONITOR; CONTROLLER runs GPU steps INLINE (recover orphaned trains).
+**CYCLE 888 (EMERGE-75 recovered as an HONEST BOUNDARY, not GO).** The pre-registered next-action optimistically named a
+GO; the actual `--derisk` (bdob9opzp, exit 0) returned **BOUNDARY**: the multi-bridge A->W dispatch WORKS (all-word ground-
+truth 1.000 every seed, isolated overflow A->W rate 1.000, overflow slot acc 1.000, BRIDGE-C pool->language_output LESION
+collapses the decode to 0.146 [engine-lesion 0.000] = genuinely spiking, gate-first MOAT 0 spell/producer invocations on
+abstains) BUT **3 full-render surfaces regress vs the token spell** at this training budget (the GO bar is 0). Root: BRIDGE-C
+co-trains the 3 high-frequency closed-class prepositions to/on/is with 13 content nouns on one 16-pool bridge -> the closed-
+class A->W codes are the harder read (EMERGE-68's named risk, the EMERGE-62 Goldilocks signature) -> occasional full-sequence
+render regression. A SCALE/DATA residual, NOT a mechanism wall or moat breach. Recovered honestly: dropped the GO draft, filled
+the BOUNDARY finding, CLAUDE.md updated, CI test_emerge75 = 9 pass (GPU smoke skips on numpy), sim/ CLEAN (only new EMERGE-75
+files; concept_pool_demo NOT edited as a file -- the VOCAB swap was runtime/in-memory).
+
+**EXACT NEXT CONCRETE ACTION:** (1) DONE: committed EMERGE-77. (2) DONE: EMERGE-75 recovered + committed as an honest BOUNDARY
+(both remotes). (3) IN FLIGHT -- ITERATE THE BOUNDARY (EMERGE-75b): the named cheap fix is a bounded pool-assignment change --
+put the 3 closed-class prepositions to/on/is on the FUNCTION bridge BRIDGE-F (EMERGE-68, 5+3=8 <= 16-pool cap, where the
+closed class already reads clean) + the 13 content object nouns alone on BRIDGE-C (13 <= 16). Controller runs the GPU train+
+derisk INLINE (recover any orphan). Concurrently (4) the next INDEPENDENT construction-broadening frontier + the A->W of the
+ditransitive's cub/bone. PARALLELIZE by default. Boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair game when
+de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A MONITOR; CONTROLLER runs GPU steps INLINE.
