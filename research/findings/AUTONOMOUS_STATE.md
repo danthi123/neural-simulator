@@ -7421,3 +7421,23 @@ interactive console. Cheap-first: reuse EMERGE-37's cancellation-on-emergent-cod
 pooler's learned overlapping-category codons as the concept codes. Boundaries = undiscovered mechanisms; NO stopping;
 sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy for
 these CPU pooler de-risks).
+
+## CYCLE 848 (2026-07-02 — EMERGE-42: the DISCOVERED categories REASON -- pooler + full inheritance-with-cancellation)
+
+EMERGE-42 (GO 6/6, `2026-07-02-emerge42-pooler-discovered-categories-reason-GO.md`, NO sim/ edit): the competitive
+self-organizing pooler (EMERGE-38..41) discovers 6 OVERLAPPING categories from experience, and the FULL Collins-Quillian
+inference runs over the LEARNED codons -- CANCELLATION 1.00 (overridden member answers its SPECIFIC fact) + INHERITANCE
+0.99 (non-overridden inherit via the discovered columns). Permuted 0.33 / no-learn 0.41 / lesion 0.00. KEY INSIGHT: the
+pooler collapses same-category members (great for inheritance, but no member-specific substrate) -> a member = shared
+CATEGORY code (pooler codon, inheritance) + unique member-IDENTITY ensemble (member facts); class taught on codons,
+override on the identity ensemble (>=2 cells to clear the coincidence-plateau threshold; a single cell can't). Composes
+EMERGE-38 pooler + EMERGE-37 cancellation. `_emerge42_pooler_inference_derisk.py` + `tests/test_emerge42_pooler_inference.py`
+(3 pass).
+
+**EXACT NEXT CONCRETE ACTION:** commit EMERGE-42 (runner + test + finding + raw json + this state) to BOTH remotes on
+main. THEN continue autonomously: (A) TRANSITIVITY over discovered categories (extend EMERGE-28 transitive inference to
+the pooler-discovered codes -- the third Collins-Quillian operation); (B) couple the competitive pooler + full inference
+into the interactive experiential console (EMERGE-31) so a user teaches overlapping categories by co-occurrence + queries
+inheritance/override/transitivity live; (C) multi-override / multi-level-emergent cancellation. Boundaries = undiscovered
+mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy
+for real runs (numpy for these CPU semantic de-risks).
