@@ -8582,8 +8582,25 @@ a real cue -- NOT an OOV artifact. Bounded 1-bit feature (depth ≥28 not reache
 (4 CPU pass)+finding. NO sim/ edit. Together EMERGE-78 (learned map, no hand branch) + EMERGE-79 (uncontingent non-local
 value) establish the fronto-striatal reservoir as the anti-whack-a-mole RANK-1 comprehension mechanism. Committed both remotes.
 
-**EXACT NEXT CONCRETE ACTION:** (1) DONE: EMERGE-78 + EMERGE-79 committed (the RANK-1 reservoir comprehension mechanism,
-learned + uncontingently non-local). (2) The pre-registered RANK-1.5/RANK-2 rungs
+**CYCLE 894 (RANK-1 reservoir DONE + validated; RANK-2 residual scoping IN FLIGHT to guard against whack-a-mole).** The
+production-side path is ALREADY largely self-organized (EMERGE-62 function words / EMERGE-63 slot ORDER from corpus
+role-precedence / EMERGE-64 slot INVENTORY mined / EMERGE-72/74 registry mined), so the residual hand piece is apparently
+just `_construction_by_signature` (a deterministic role-signature->construction lookup). A naive RANK-2 "production reservoir"
+risks RE-LEARNING what EMERGE-63/64 already self-organized = whack-a-mole. Per the research-gate discipline, dispatched a
+read-only scoping subagent (ace8059bf36ed2aca) to ISOLATE the genuine RANK-2 residual (is it construction SELECTION under
+information-structure/ambiguity -- a real learning problem a lookup can't do -- or a trivial lookup a reservoir doesn't
+improve?) and VERDICT: {build RANK-2 with de-risk X | SKIP RANK-2 as whack-a-mole -> do the RANK-1.5 spiking-LSM PORT of the
+EMERGE-78/79 rate reservoir onto the recurrent RF/Izhikevich substrate (the fully-spiking one-brain directive) | RANK-3
+bounded recursion}. Gate doc: `2026-07-03-rank2-production-reservoir-residual-scoping.md` (being written).
+
+**EXACT NEXT CONCRETE ACTION:** ON the RANK-2 scoping return (subagent ace8059bf36ed2aca): trust-but-verify its load-bearing
+claim (what is genuinely hand vs self-organized on the production side), then EXECUTE its verdict -- BUILD the recommended
+next de-risk (most likely EITHER a genuine RANK-2 construction-SELECTION-under-information-structure reservoir de-risk, OR --
+if RANK-2 is mostly-already-done -- the RANK-1.5 SPIKING-LSM PORT of the EMERGE-78/79 rate reservoir onto the recurrent
+RF/Izhikevich substrate, the fully-spiking directive). Cheap-first, single-variable, anti-cheats (permuted/lesion/held-out/
+memorization-floor), 6-seed, commit both remotes. If GPU: controller runs it INLINE + arm a Monitor. PARALLELIZE; boundaries
+= undiscovered mechanisms; NO stopping; sim/ edits fair when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN.
+[superseded:] (2) The pre-registered RANK-1.5/RANK-2 rungs
 (research gate `2026-07-03-next-frontier-...`): the spiking-LSM PORT of EMERGE-78 (drive a recurrent RF/Izhikevich pool +
 the population read-out, replacing the rate echo-state reservoir) OR the PRODUCTION reservoir (Dominey 2015: thematic
 roles → ordered word emission, replacing the hand ROUTER). (3) The genuinely-general reservoir-necessity test (RANK-3
