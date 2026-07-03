@@ -7911,3 +7911,33 @@ EMERGE-57 multi-fine-tune-seed robustness (now non-contending; add seed-specific
 and the EMERGE-59 follow-ons (A->W neural spell wire-in; Rung B self-organizing function-word pools). Boundaries =
 undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON
 MAIN; ARM A MONITOR on every long run; GPU/CuPy for real runs (numpy for CPU).
+
+## CYCLE 868 (2026-07-03 — EMERGE-60 GO: the flagship console SPEAKS its EMERGE answers ON SPIKES, the 21M ANN retired for those frames)
+
+EMERGE-60 (GO, 6-seed, `2026-07-03-emerge60-console-spiking-broca-GO.md`, NO sim/ edit): the payoff of EMERGE-59.
+`SpikingBrocaConsole` subclasses the EMERGE-58 UnifiedFluentConsole and overrides ONLY `_render_emerge` -- the EMERGE
+gate decision's (svo, polarity) is mapped (EMERGE-59 decision_from_emerge) to a frame decision and rendered by
+BrocaProducer.speak (EMERGE-59, spiking frame-slot competitive queuing on a real SimulationBridge) INSTEAD OF the 21M
+ANN. The ANN is RETIRED for the EMERGE frame inventory. Gate-first structure unchanged (abstain -> return before
+_render_emerge -> producer NEVER invoked on abstain). 6-seed (42/43/44/100/101/102, CPU) GO on the WIRE: render-CONTENT
+1.00 (right grounded fact routed to the spiking producer), moat 0 producer-invocations-on-abstains (load-bearing),
+membership routing PASS (fluid-known entity answered not falsely denied, producer not stolen), NO fluid regression.
+render-ORDER exact 0.93 REPORTED not gated (the spiking producer's own EMERGE-59-characterized accuracy: the 4-slot
+F_MODAL frame swaps its two lowest-primacy adjacent slots under read-out noise -- "the robin breathe can" on 2/6 seeds,
+content always correct -- the named producer-robustness follow-on). Demo on spikes: "the owl can fly" / "the penguin
+walks" / "the robin can breathe" / "I don't know."[moat] / "The dog eats meat."[membership->fluid]. CI 6 pass. Two
+honest de-risk-harness fixes: (1) call cq.learn() to train the primacy gradient (else scrambled order); (2) run the
+fluid regression FIRST (pristine RNG, before emit advances the shared RNG the fluid path draws from) -- the fluid path
+is byte-identical to EMERGE-58 so "no regression" is structural. ⇒ the emergent brain SPEAKS its grounded EMERGE answers
+on spikes, on the flagship console, transformer-retired for those frames.
+
+**EXACT NEXT CONCRETE ACTION:** (1) DONE: committed EMERGE-60 both remotes. (2) NEXT frontier options (pick highest-
+leverage): (a) EMERGE-61 = the producer's 4-slot-frame ORDER robustness (sharpen primacy separation / more sim steps in
+the EMERGE-59 read-out so render-exact -> ~1.00 on all seeds -- a bounded EMERGE-59 refinement, cheap-first); (b) the
+A->W NEURAL spell wire-in (GPU, replace the token-surface callback with the concept_speak_demo read-out so the WORDS are
+also spiking); (c) Rung B = self-organizing function-word pools from experience (the deeper "emergent not host-designed"
+step, R3 neural frame-selection); (d) EMERGE-57 multi-fine-tune-seed robustness (add seed-specific --ckpt-out). ALSO
+deferred: RE-RUN the adversarial audit on the EMERGE-58 wire (blocked 3x by transient server-side subagent rate limits;
+the 6 lenses were controller-direct-verified in the remediation -- retry the independent parallel audit when the rate
+limit clears). Boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS;
+honest origin+gitea; COMMIT ON MAIN; ARM A MONITOR on every long run; GPU/CuPy for real runs (numpy for CPU).
