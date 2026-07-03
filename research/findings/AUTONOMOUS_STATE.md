@@ -8685,21 +8685,33 @@ who/what recall 1.000, moat 0.000 false-accept, comprehension-lesion collapses r
 `2026-07-03-emerge89-spiking-reservoir-comprehends-composer-answers-GO.md`, CI 2. ⇒ comprehension→composition is now
 fully spiking end-to-end (reservoir on the bridge, composer on RF spikes).
 
-**EXACT NEXT CONCRETE ACTION:** BOTH halves of the conversational turn are now self-taught + spiking on one brain
-(COMPREHENSION: the reservoir EMERGE-78..89; PRODUCTION: the self-organized spiking Broca producer EMERGE-59..77). The
-CAPSTONE = wire them into ONE loop: HEAR a fact (reservoir comprehends -> composer stores, spiking) -> ASK -> SPEAK the
-answer (the `SelfOrganizedProducer.speak(decision)` / A→W neural spell, spiking) -- a full self-taught spiking one-brain
-turn, no hand-written grammar, no bolted-on LLM. The producer speaks the EMERGE reply frames + C_TRANS transitive
-(EMERGE-74) on spikes; the composer's query answer -> a `decision` -> `producer.speak`. SCOPE it FIRST (read-only
-subagent: the cheapest integration rung + the backend co-execution plan — the reservoir/composer are numpy, the A→W
-spell is cupy; EMERGE-71's `bridge.xp` resolved one-backend-per-process, so a full turn CAN co-execute on cupy). THEN
-build the cheapest capstone rung: comprehend a transitive (reservoir) -> store (composer) -> query -> the producer
-renders the answer sentence on spikes, moat-first (abstain -> producer never invoked), 6-seed. Other follow-ons:
-RICHER CONSTRUCTIONS through the composer (needs composer role-set extension — a non-trivial composer edit, deprioritized);
-RUNG 2 theta/gamma oscillator (`sim/` edit, off critical path); FULL merged nav/conv bridge co-residence. Recommend the
-CAPSTONE WIRE (the highest-leverage toward the owner's talk-to-the-brain goal). BUILD IT — I am the continuation.
-PARALLELIZE; boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair when de-risked; moat a PLUS; honest
-origin+gitea; COMMIT ON MAIN; CONTROLLER runs GPU INLINE; ARM A MONITOR.
+**CYCLE 906 (EMERGE-90 GO — THE CONVERSATIONAL-TURN CAPSTONE, adversarially verified + framing-remediated).** EMERGE-90
+(committed): the full turn HEAR->comprehend (reservoir)->store (composer)->ASK->SPEAK the answer (spiking word-order,
+producer). `_emerge90_conversational_turn_capstone_derisk.py` wires the reservoir comprehender (EMERGE-88) + the RF
+composer + the self-organized spiking Broca producer (EMERGE-72/74 RegistryBrocaProducer + C_TRANS) into one turn: hear
+"the dog chases the ball" -> parse roles -> store -> "what does the dog chase?" -> recall -> SPEAK "the dog chases the
+ball" with the spiking frame-slot emission order, gate-first moat. 6-seed UNANIMOUS GO: parse 1.000, recall 1.000,
+render_exact 1.000, moat 0.000 FA + 0 producer-invocations-on-abstain, comprehension-lesion render 0.000,
+producer-no-learn render 0.028 (~chance). A 4-skeptic+adjudicator adversarial-verify Workflow probed it: EVERY empirical
+claim SURVIVED (monkeypatching the spiking rate-ranking flips the surface = render_exact genuinely tests spiking order;
+recall is a genuine phasor decode; both lesion controls collapse causally; moat gate-first clean to 300 draws). Verdict
+COMMIT-WITH-FRAMING-FIXES -> REMEDIATED: struck "one brain" (it is THREE co-executing components in one process -- rate
+reservoir + RF spiking bridge + Izhikevich spiking bridge -- host-dict hand-offs, NO shared bridge/cross-synapse; NOT the
+EMERGE-70/71 sense) + "three spiking" (comprehension is the RATE reservoir; the words are host-token, only the ORDER is
+spiking). NO `sim/` edit. `2026-07-03-emerge90-conversational-turn-capstone-GO.md`, CI 3.
+
+**EXACT NEXT CONCRETE ACTION:** the capstone exists but is honestly THREE disjoint substrates with host-dict hand-offs;
+the follow-on LADDER (each a mechanical swap of an already-GO piece, per the verdict) toward the genuine "one brain":
+(1) **SPIKING-RESERVOIR CAPSTONE** — swap EMERGE-89's on-bridge `OnBridgeLSM` into EMERGE-90 so comprehension is spiking
+too (cheapest; identical signature). (2) **A→W NEURAL WORD-SPELL** — pass the EMERGE-67/68/69 `UnifiedNeuralSpell` as the
+producer `spell=` so every WORD is spoken on spikes (cupy; forces the whole turn onto one cupy process, EMERGE-70/71). (3)
+**FOLD THE THREE BRIDGES ONTO ONE + make the hand-offs SYNAPTIC** (the EMERGE-87 disjoint-slice co-residence pattern) —
+the honest "one brain": the reservoir/composer/producer as disjoint slices on ONE bridge, the comprehend->store->speak
+hand-offs routed through synapses not host dicts. (4) close the render/recall coupling (drive the producer subject/verb
+from the RECALLED agent/action). Recommend (1) then (2) (both cheap mechanical swaps that upgrade the capstone's spiking
+purity) then (3) (the real one-brain consolidation). BUILD IT — I am the continuation. PARALLELIZE; boundaries =
+undiscovered mechanisms; NO stopping; sim/ edits fair when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN;
+CONTROLLER runs GPU INLINE; ARM A MONITOR.
 
 [superseded:] **EXACT NEXT CONCRETE ACTION:** the reservoir arc's cheap-first rungs are DONE; the remaining follow-ons are heavier
 fresh-context builds (BUILD, do not hand off): (1) **FUNCTIONAL INTEGRATION** — the reservoir's role output FEEDS the
