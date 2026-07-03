@@ -155,10 +155,18 @@ def realize_slot(slot, subject, verb, spell):
 # per-pool rate RANKING = the slot emission order (rate-coded competitive queuing on real spikes). Reuses the validated
 # driven-pool bridge pattern from `_phaseB_serial_order_spiking`.
 # ---------------------------------------------------------------------------------------------------------------------
-def build_slot_bridge(seed, n_slot_pools=N_SLOT_POOLS):
+def build_slot_bridge(seed, n_slot_pools=N_SLOT_POOLS, shared_bridge=None, slot_region="slots"):
     """Build the N-slot-pool spiking bridge. `n_slot_pools` defaults to the module N_SLOT_POOLS (=6) so the default
     call is BYTE-IDENTICAL to the shipped path; a caller may request MORE pools (EMERGE-77's ditransitive at 8) -- a
-    bounded, additive scale lever (the region is just wider; the wash-out/read-out/primacy scale with it)."""
+    bounded, additive scale lever (the region is just wider; the wash-out/read-out/primacy scale with it).
+
+    CO-LOCATION (RUNG A, EMERGE-92): when `shared_bridge` is provided, the `slots` region is a disjoint SLICE on that
+    already-built shared bridge (the EMERGE-87 co-residence pattern) rather than a private bridge; `slot_idx` resolves
+    from the shared bridge's region manager (`indices(slot_region)`). Default `shared_bridge=None` = a private bridge,
+    BYTE-IDENTICAL to the shipped path (the co-location builder is responsible for declaring a `slots` region of the
+    right size = `n_slot_pools * N_PER`)."""
+    if shared_bridge is not None:
+        return shared_bridge, np.asarray(shared_bridge.region_manager.indices(slot_region))
     from sim.bridge import SimulationBridge
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.regions import BrainRegion
@@ -211,7 +219,8 @@ class FrameSlotCQ:
     `prim[frame]` is a primacy gradient over the N_SLOT_POOLS pools; teaching a frame's slot ORDER writes a monotone
     gradient (slot 0 highest). Emission on the spiking bridge reads the per-pool rate ranking and realizes each slot."""
 
-    def __init__(self, seed=42, permute_order=False, ablate_func=False, no_learning=False, n_slot_pools=None):
+    def __init__(self, seed=42, permute_order=False, ablate_func=False, no_learning=False, n_slot_pools=None,
+                 shared_bridge=None, slot_region="slots"):
         self.seed = int(seed)
         self.permute_order = bool(permute_order)
         self.ablate_func = bool(ablate_func)
@@ -224,7 +233,8 @@ class FrameSlotCQ:
         self.primacy_pA = (PRIMACY_pA if self.n_slot_pools == N_SLOT_POOLS
                            else tuple(float(x) for x in np.linspace(1800.0, 300.0, self.n_slot_pools)))
         self.rng = np.random.default_rng(self.seed)
-        self.bridge, self.slot_idx = build_slot_bridge(self.seed, n_slot_pools=self.n_slot_pools)
+        self.bridge, self.slot_idx = build_slot_bridge(self.seed, n_slot_pools=self.n_slot_pools,
+                                                       shared_bridge=shared_bridge, slot_region=slot_region)
         # per-frame primacy over pools; tiny random init (the untrained no-learning baseline)
         self.prim = {fr: np.random.default_rng(self.seed * 13 + 5 + i).standard_normal(self.n_slot_pools) * 0.01
                      for i, fr in enumerate(FRAME_NAMES)}
