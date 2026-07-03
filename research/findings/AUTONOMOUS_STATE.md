@@ -8675,18 +8675,31 @@ swap (EMERGE-82 `OnBridgeLSM.final_state`, identical signature) is the mechanica
 CI 3. ⇒ the reservoir is no longer an isolated score -- it is the comprehension front-end of the conversational turn; two
 independently-validated mechanisms now interact (comprehension drives composition).
 
-**EXACT NEXT CONCRETE ACTION:** the reservoir arc is closed into the conversational loop; the remaining follow-ons (BUILD,
-do not hand off): (1) **SPIKING-RESERVOIR INTEGRATION** — swap EMERGE-88's rate comprehender for EMERGE-82's on-bridge
-spiking `OnBridgeLSM.final_state` (identical signature) so comprehension→composition is fully on-substrate; a mechanical
-extension of EMERGE-88, 6-seed. (2) **RICHER CONSTRUCTIONS through the composer** — the reservoir already labels
-ditransitive / PP-argument roles (EMERGE-72/77); map GOAL/LOCATION/recipient onto the composer's extra roles so the
-integration handles more than core SVO. (3) **RUNG 2** — the literal time-domain theta/gamma OSCILLATOR nesting the WM
-slots (catalog N.15; additive default-off `sim/` oscillator driver = theta-phase-modulated gamma `excitability_drive`,
-reusing StimulusManager SINUSOIDAL + CORTEX_GAMMA_FS_NETWORK + per-region NMDA mask) — the fuller biological realization,
-off the RANK-3 critical path. (4) the FULL merged nav/conv bridge co-residence (add the reservoir to the merged builder's
-co_resident_* list). Recommend SPIKING-RESERVOIR INTEGRATION (finishes fully-spiking comprehension→composition) OR RUNG 2.
-BUILD IT — I am the continuation. PARALLELIZE; boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair when
-de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; CONTROLLER runs GPU INLINE; ARM A MONITOR.
+**CYCLE 905 (EMERGE-89 GO — FULLY-SPIKING comprehension→composition end-to-end).** EMERGE-89 (committed): swapped
+EMERGE-88's rate reservoir for EMERGE-82's `OnBridgeLSM` (a recurrent Izhikevich `BrainRegion` on a real
+`SimulationBridge`, identical `final_state(U)` signature) injected into EMERGE-88's `ReservoirComprehender` -> the WHOLE
+comprehension→composition pipeline runs on spikes: the reservoir understands the sentence on a SimulationBridge, the
+composer stores+answers on RF resonate-and-fire. 6-seed UNANIMOUS GO: genuinely spiking 2.44 spikes/neuron, parse 1.000,
+who/what recall 1.000, moat 0.000 false-accept, comprehension-lesion collapses recall to 0.000. Reuse-by-import; NO
+`sim/` edit. `_emerge89_spiking_reservoir_comprehends_composer_answers_derisk.py`,
+`2026-07-03-emerge89-spiking-reservoir-comprehends-composer-answers-GO.md`, CI 2. ⇒ comprehension→composition is now
+fully spiking end-to-end (reservoir on the bridge, composer on RF spikes).
+
+**EXACT NEXT CONCRETE ACTION:** BOTH halves of the conversational turn are now self-taught + spiking on one brain
+(COMPREHENSION: the reservoir EMERGE-78..89; PRODUCTION: the self-organized spiking Broca producer EMERGE-59..77). The
+CAPSTONE = wire them into ONE loop: HEAR a fact (reservoir comprehends -> composer stores, spiking) -> ASK -> SPEAK the
+answer (the `SelfOrganizedProducer.speak(decision)` / A→W neural spell, spiking) -- a full self-taught spiking one-brain
+turn, no hand-written grammar, no bolted-on LLM. The producer speaks the EMERGE reply frames + C_TRANS transitive
+(EMERGE-74) on spikes; the composer's query answer -> a `decision` -> `producer.speak`. SCOPE it FIRST (read-only
+subagent: the cheapest integration rung + the backend co-execution plan — the reservoir/composer are numpy, the A→W
+spell is cupy; EMERGE-71's `bridge.xp` resolved one-backend-per-process, so a full turn CAN co-execute on cupy). THEN
+build the cheapest capstone rung: comprehend a transitive (reservoir) -> store (composer) -> query -> the producer
+renders the answer sentence on spikes, moat-first (abstain -> producer never invoked), 6-seed. Other follow-ons:
+RICHER CONSTRUCTIONS through the composer (needs composer role-set extension — a non-trivial composer edit, deprioritized);
+RUNG 2 theta/gamma oscillator (`sim/` edit, off critical path); FULL merged nav/conv bridge co-residence. Recommend the
+CAPSTONE WIRE (the highest-leverage toward the owner's talk-to-the-brain goal). BUILD IT — I am the continuation.
+PARALLELIZE; boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair when de-risked; moat a PLUS; honest
+origin+gitea; COMMIT ON MAIN; CONTROLLER runs GPU INLINE; ARM A MONITOR.
 
 [superseded:] **EXACT NEXT CONCRETE ACTION:** the reservoir arc's cheap-first rungs are DONE; the remaining follow-ons are heavier
 fresh-context builds (BUILD, do not hand off): (1) **FUNCTIONAL INTEGRATION** — the reservoir's role output FEEDS the

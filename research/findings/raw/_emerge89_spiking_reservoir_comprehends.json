@@ -1,0 +1,80 @@
+{
+  "rows": [
+    {
+      "seed": 42,
+      "n_discovered_closed": 14,
+      "n_test_facts": 24,
+      "n_pool": 300,
+      "mean_spikes_per_neuron": 2.433,
+      "parse_acc": 1.0,
+      "recall": 1.0,
+      "moat_false_accept": 0.0,
+      "lesion_recall": 0.0
+    },
+    {
+      "seed": 43,
+      "n_discovered_closed": 14,
+      "n_test_facts": 24,
+      "n_pool": 300,
+      "mean_spikes_per_neuron": 2.494,
+      "parse_acc": 1.0,
+      "recall": 1.0,
+      "moat_false_accept": 0.0,
+      "lesion_recall": 0.0
+    },
+    {
+      "seed": 44,
+      "n_discovered_closed": 15,
+      "n_test_facts": 24,
+      "n_pool": 300,
+      "mean_spikes_per_neuron": 2.722,
+      "parse_acc": 1.0,
+      "recall": 1.0,
+      "moat_false_accept": 0.0,
+      "lesion_recall": 0.0
+    },
+    {
+      "seed": 100,
+      "n_discovered_closed": 15,
+      "n_test_facts": 24,
+      "n_pool": 300,
+      "mean_spikes_per_neuron": 2.211,
+      "parse_acc": 1.0,
+      "recall": 1.0,
+      "moat_false_accept": 0.0,
+      "lesion_recall": 0.0
+    },
+    {
+      "seed": 101,
+      "n_discovered_closed": 15,
+      "n_test_facts": 24,
+      "n_pool": 300,
+      "mean_spikes_per_neuron": 2.572,
+      "parse_acc": 1.0,
+      "recall": 1.0,
+      "moat_false_accept": 0.0,
+      "lesion_recall": 0.0
+    },
+    {
+      "seed": 102,
+      "n_discovered_closed": 15,
+      "n_test_facts": 24,
+      "n_pool": 300,
+      "mean_spikes_per_neuron": 2.228,
+      "parse_acc": 1.0,
+      "recall": 1.0,
+      "moat_false_accept": 0.0,
+      "lesion_recall": 0.0
+    }
+  ],
+  "agg": {
+    "n_seeds": 6,
+    "mean_spikes_per_neuron": 2.443333333333333,
+    "parse_acc": 1.0,
+    "recall": 1.0,
+    "moat_false_accept": 0.0,
+    "lesion_recall": 0.0,
+    "go": true,
+    "elapsed_seconds": 109.0
+  }
+}
