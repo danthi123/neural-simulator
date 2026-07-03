@@ -133,8 +133,13 @@ class SelfOrganizedProducer:
     EMERGE-59 (slot_type,payload) list in corpus order), and `self.corpus_order` (S1b, frame -> ordered role keys) so
     the de-risk can VALIDATE it against the host ground-truth (which is NOT an input)."""
 
-    def __init__(self, seed):
+    def __init__(self, seed, shuffle_invariant_bag=False):
         self.seed = int(seed)
+        # EMERGE-64b (ADDITIVE, default False == byte-identical): key the S1a mining bags by the SHUFFLE-INVARIANT token
+        # multiset (closed-vs-open from EMERGE-62's discovered SET identity, NOT the position-derived DET/FUNC label) so
+        # the permuted-corpus control collapses the shortest F_INTR too (perm_render 0.333 -> ~0.0), making the composed
+        # anti-cheat's "whole-pipeline collapse" LITERALLY true. Default False keeps EMERGE-65's committed de-risk exact.
+        self.shuffle_invariant_bag = bool(shuffle_invariant_bag)
         self.discovered_function_words = set()
         self.mined_inventory = {}
         self.mined_match = {}
@@ -152,7 +157,8 @@ class SelfOrganizedProducer:
     # -- (b) S1a: mine each construction's ordered slot inventory (USING the discovered function words) ----------------
     def _mine_inventory(self, sents, closed, shuffle_within=False, shuffle_rng=None):
         inventory, _sig_counts = mine_inventory(sents, closed,
-                                                shuffle_within=shuffle_within, shuffle_rng=shuffle_rng)
+                                                shuffle_within=shuffle_within, shuffle_rng=shuffle_rng,
+                                                shuffle_invariant_bag=self.shuffle_invariant_bag)
         return inventory
 
     # -- (c) S1b: learn the slot order over the MINED constructions ---------------------------------------------------
@@ -325,15 +331,17 @@ def heldout_frame_generalization(prod: SelfOrganizedProducer, sents, seed):
 # (each exemplar's word order scrambled at BOTH mining + order stages) and measure end-to-end render-exact -> it must
 # collapse (mis-typed roles / wrong signatures -> the inventory is not mined OR is wrong -> render fails).
 # ---------------------------------------------------------------------------------------------------------------------
-def permuted_corpus_collapse(tokens, seed, n_shuffles=6):
+def permuted_corpus_collapse(tokens, seed, n_shuffles=6, shuffle_invariant_bag=False):
     """Build the producer from the SHUFFLED corpus n_shuffles times; return the mean end-to-end render-exact + mean
-    assembled-structure match under permutation (both must collapse toward 0)."""
+    assembled-structure match under permutation (both must collapse toward 0). `shuffle_invariant_bag` (EMERGE-64b,
+    default False == the committed behaviour): when True, the S1a mining uses the shuffle-invariant bag-keying so the
+    shortest F_INTR construction collapses too (perm render -> ~0.0 instead of the 0.333 F_INTR-alone floor)."""
     facts = build_heldout_facts(seed, n=8)
     renders, matches = [], []
     for k in range(n_shuffles):
         srng = np.random.default_rng(seed * 977 + 13 + k)
         trng = np.random.default_rng(seed * 313 + 29 + k)
-        prod = SelfOrganizedProducer(seed).build_from_corpus(
+        prod = SelfOrganizedProducer(seed, shuffle_invariant_bag=shuffle_invariant_bag).build_from_corpus(
             tokens, tie_rng=trng, shuffle_within=True, shuffle_rng=srng)
         per_frame, _mc, _ap = end_to_end_render(prod, facts)
         renders.append(float(np.mean([per_frame[f]["exact"] for f in FRAME_NAMES])))
@@ -346,13 +354,15 @@ def permuted_corpus_collapse(tokens, seed, n_shuffles=6):
 # THE DE-RISK (>=6 seeds): end-to-end render + assembled-structure match + composed permuted-corpus + no-corpus +
 # held-out-frame + producer-renders + moat.
 # ---------------------------------------------------------------------------------------------------------------------
-def _derisk_one(seed):
+def _derisk_one(seed, shuffle_invariant_bag=False):
     tokens = build_stream(seed)
     sents = split_sentences(tokens)
     facts = build_heldout_facts(seed, n=8)
 
-    # MAIN: build the whole producer structure from the corpus stream ALONE.
-    prod = SelfOrganizedProducer(seed).build_from_corpus(tokens)
+    # MAIN: build the whole producer structure from the corpus stream ALONE. `shuffle_invariant_bag` (EMERGE-64b,
+    # default False == the committed de-risk): opt into the shuffle-invariant S1a bag-keying so the permuted-corpus
+    # control collapses the shortest F_INTR too (perm_render 0.333 -> ~0.0). Default False keeps this de-risk byte-exact.
+    prod = SelfOrganizedProducer(seed, shuffle_invariant_bag=shuffle_invariant_bag).build_from_corpus(tokens)
 
     # (a) END-TO-END render on spikes
     per_frame, moat_calls, answer_produced = end_to_end_render(prod, facts)
@@ -361,8 +371,8 @@ def _derisk_one(seed):
     # (b) ASSEMBLED-STRUCTURE match vs the host FRAMES (inventory + order)
     struct_per_frame, struct_match, inv_acc = assembled_structure_match(prod)
 
-    # (c) COMPOSED anti-cheat: PERMUTED-CORPUS collapses the whole pipeline
-    perm_render, perm_match = permuted_corpus_collapse(tokens, seed)
+    # (c) COMPOSED anti-cheat: PERMUTED-CORPUS collapses the whole pipeline (with EMERGE-64b keying it collapses F_INTR too)
+    perm_render, perm_match = permuted_corpus_collapse(tokens, seed, shuffle_invariant_bag=shuffle_invariant_bag)
 
     # (c) NO-CORPUS: no exemplars -> no structure -> nothing rendered
     prod_empty = SelfOrganizedProducer(seed).build_from_corpus([])
@@ -441,16 +451,18 @@ def _demo(seed=42):
     print(f"\n  producer-invocation count after 4 probes: {pc} (the abstain never invoked the producer -- the moat)\n")
 
 
-def _derisk(seeds):
+def _derisk(seeds, shuffle_invariant_bag=False):
     print(f"EMERGE-65 CAPSTONE de-risk: COMPOSE S2+S1a+S1b -> the WHOLE spiking-Broca structure from the corpus alone; "
           f"end-to-end render + assembled-structure match vs permuted-corpus / no-corpus / held-out-frame + moat; "
-          f"{len(seeds)}-seed", flush=True)
+          f"{len(seeds)}-seed"
+          + (" [EMERGE-64b shuffle-invariant bag-keying: perm collapses F_INTR too]" if shuffle_invariant_bag else ""),
+          flush=True)
     t0 = time.time()
     err = None
     per = []
     try:
         for s in seeds:
-            d = _derisk_one(s)
+            d = _derisk_one(s, shuffle_invariant_bag=shuffle_invariant_bag)
             per.append(d)
             ho = d["heldout"]
             print(f"  [seed {s}] end-to-end render {d['main_render']:.3f} struct-match {d['struct_match']:.3f} "
@@ -496,6 +508,27 @@ def _derisk(seeds):
         moat_ok = (moat_calls == 0) and answer_ok
         controls_collapse = beats_perm and beats_nocorpus
 
+        # EMERGE-64b: the permuted-corpus scope sentence depends on the bag-keying. With the DEFAULT keying the shortest
+        # F_INTR is a deterministically-reconstructed NAMED residual (perm floor = F_INTR alone); with the shuffle-
+        # invariant keying (opt-in) F_INTR collapses too, so the whole-pipeline claim is LITERALLY true.
+        if shuffle_invariant_bag:
+            _perm_scope = (
+                f"ALL THREE constructions GENUINELY collapse under the shuffle -- including the shortest F_INTR 'the "
+                f"penguin walks' (det+subj+verb): with the EMERGE-64b SHUFFLE-INVARIANT bag-keying (closed-vs-open by "
+                f"EMERGE-62's discovered SET identity, NOT the position-derived DET/FUNC label), every ordering of a "
+                f"frame's tokens shares ONE bag, so the F_INTR orderings dilute below the dominance threshold and it fails "
+                f"to mine too. The permuted-corpus render floor is now {perm_render:.3f} (F_INTR no longer escapes), so "
+                f"the 'permuted-corpus collapses the WHOLE pipeline' claim is LITERALLY TRUE -- ALL constructions are "
+                f"proven corpus-ORDER-derived, closing the audit-named F_INTR residual")
+        else:
+            _perm_scope = (
+                f"the two MULTI-SLOT constructions (F_MODAL, F_NEGMOD) GENUINELY collapse to 0 under the shuffle (their "
+                f"orderings scatter below the dominance threshold -> their structure IS proven corpus-ORDER-derived); the "
+                f"shortest construction (F_INTR 'the penguin walks', det+subj+verb) is DETERMINISTICALLY reconstructed at "
+                f"dominance 1.0 even under shuffle (the {perm_render:.3f} floor is F_INTR alone, NOT a chance floor) "
+                f"because its self-identifying determiner + the shuffle-variant bag-keying recover its INVENTORY without "
+                f"needing order -- a NAMED residual (F_INTR's inventory is corpus-derived; its ORDER is not separately "
+                f"proven by THIS control), see the EMERGE-64b control-strengthening follow-on")
         go = bool(high_main and inventory_full and controls_collapse and heldout_generalizes and moat_ok)
         if go:
             verdict = (
@@ -513,14 +546,7 @@ def _derisk(seeds):
                 f"{struct_match:.3f}, inventory-accuracy {inv_acc:.3f}, all frame function words discovered). THE COMPOSED "
                 f"ANTI-CHEAT: PERMUTED-CORPUS (each exemplar's word order scrambled at BOTH the inventory-mining AND "
                 f"order-learning stages) drops render to {perm_render:.3f} and structure-match to {perm_match:.3f} "
-                f"(margin >= {MARGIN}). HONEST SCOPE of this control (EMERGE-62..66 audit): the two MULTI-SLOT "
-                f"constructions (F_MODAL, F_NEGMOD) GENUINELY collapse to 0 under the shuffle (their orderings scatter "
-                f"below the dominance threshold -> their structure IS proven corpus-ORDER-derived); the shortest "
-                f"construction (F_INTR 'the penguin walks', det+subj+verb) is DETERMINISTICALLY reconstructed at dominance "
-                f"1.0 even under shuffle (the {perm_render:.3f} floor is F_INTR alone, NOT a chance floor) because its "
-                f"self-identifying determiner + the shuffle-variant bag-keying recover its INVENTORY without needing "
-                f"order -- a NAMED residual (F_INTR's inventory is corpus-derived; its ORDER is not separately proven by "
-                f"THIS control), see the EMERGE-64b control-strengthening follow-on. NO-CORPUS -> nothing "
+                f"(margin >= {MARGIN}). HONEST SCOPE of this control (EMERGE-62..66 audit): {_perm_scope}. NO-CORPUS -> nothing "
                 f"({nocorpus_render:.3f}, empty inventory). HELD-OUT-FRAME: a fully-held-out frame's SHARED type-level "
                 f"ORDER is recovered from the OTHER two frames (heldout_shared_order {heldout_shared_order:.3f} -- the "
                 f"GENUINE held-out evidence, the FUNC position learned from another frame's does/not; the det+subj+verb "
@@ -652,9 +678,12 @@ def main():
     ap.add_argument("--seeds", type=int, nargs="+", default=[42, 43, 44, 100, 101, 102])
     ap.add_argument("--demo", action="store_true")
     ap.add_argument("--derisk", action="store_true")
+    ap.add_argument("--shuffle-invariant-bag", action="store_true",
+                    help="EMERGE-64b: use the shuffle-invariant S1a bag-keying so the permuted-corpus control collapses "
+                         "the shortest F_INTR too (perm_render 0.333 -> ~0.0). Default off == the committed de-risk.")
     a = ap.parse_args()
     if a.derisk:
-        return _derisk(a.seeds)
+        return _derisk(a.seeds, shuffle_invariant_bag=a.shuffle_invariant_bag)
     _demo(a.seed)
     return 0
 

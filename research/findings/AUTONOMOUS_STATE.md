@@ -8185,3 +8185,33 @@ A->W NEURAL-spell wire-in (words spiking, GPU); the held-out distinctive-slot on
 morphological-invariance cue. Deferred: EMERGE-60 fluid-RNG isolation; EMERGE-57 multi-seed. Boundaries = undiscovered
 mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A
 MONITOR on every long run; GPU/CuPy for real runs (numpy for CPU).
+
+## CYCLE 877 (2026-07-03 — EMERGE-64b GO: shuffle-invariant bag-keying closes the audit's F_INTR residual; the permuted-corpus "whole pipeline collapses" claim now LITERALLY TRUE)
+
+EMERGE-64b (GO, 6-seed, `2026-07-03-emerge64b-shuffle-invariant-bagkey-GO.md`, NO sim/ edit): the control-strengthening
+follow-on the EMERGE-62..66 audit named. The audit found the permuted-corpus 0.333 floor was F_INTR DETERMINISTICALLY
+reconstructed (its inventory recoverable without order) because EMERGE-64 keyed mining bags by a SHUFFLE-VARIANT
+signature embedding the position-derived DET/FUNC label. FIX (additive default-off `shuffle_invariant_bag` flag +
+`_bag_key_invariant`): key bags by a SHUFFLE-INVARIANT token multiset (closed-vs-open from EMERGE-62's discovered
+function-word SET by IDENTITY, not position) -> every ordering of a frame shares ONE bag -> under shuffle F_INTR's
+orderings dilute below min_dominance and it COLLAPSES too. VERIFIED controller-direct (CI 30 pass test_emerge64b/64/66;
+raw json): main_acc/render 1.0 BOTH keyings (unregressed), perm_render 0.333 (default) -> 0.000 (invariant), held-out
+backbone 1.0, moat 0. Additive edits on _emerge64 (flag + _bag_key_invariant) + _emerge65 (opt-in flag + --shuffle-
+invariant-bag CLI + conditional-honest verdict); DEFAULT byte-identical (test_default_off_is_byte_identical +
+test_emerge65_default_producer_byte_identical; EMERGE-64/65/66 defaults GO; the EMERGE-65 default raw json's stale
+pre-audit verdict string beneficially re-aligned to the audit-corrected wording, results unchanged {}). Full CI
+test_emerge59..66 + test_emerge64b: 84 pass, 0 regressions. NO sim/ edit. ⇒ the composed permuted-corpus control now
+GENUINELY collapses ALL THREE constructions (perm -> 0.0 with the opt-in) -- the "whole pipeline collapses / entire
+structure corpus-derived" claim is LITERALLY TRUE, not just honestly-reframed. The EMERGE-62..66 self-organized-producer
+chain is now audit-hardened AND its load-bearing anti-cheat is airtight.
+
+**EXACT NEXT CONCRETE ACTION:** (1) DONE: committed EMERGE-64b both remotes. (2) NEXT FRONTIER (the self-organized-
+producer chain + its audit are COMPLETE): the A->W NEURAL-spell wire-in -- replace the token-surface `spell` callback in
+the EMERGE-59/65 producer with the validated concept_speak_demo spiking A->W read-out so the WORDS (not just the ORDER)
+are spiking -- the remaining host piece of the render, toward the fully-spiking end-state (GPU; the concept_speak_demo
+A->W is 100% multi-seed validated; function-word pools may need the discovered set from EMERGE-62). Cheap-first: wire the
+A->W for the CONTENT slots (subject/verb = emergent concepts) first (direct composition), then the function-word slots.
+ALT frontiers: the held-out distinctive-slot one-attestation cue; the 4th morphological-invariance cue for EMERGE-62
+real-corpus precision. Deferred: EMERGE-60 fluid-RNG isolation; EMERGE-57 multi-seed. Boundaries = undiscovered
+mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A
+MONITOR on every long run; GPU/CuPy for real runs (numpy for CPU).

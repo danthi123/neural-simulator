@@ -1,0 +1,407 @@
+{
+  "probe": "emerge64b_shuffle_invariant_bagkey",
+  "verdict": "GO -- the SHUFFLE-INVARIANT bag-keying (EMERGE-64b) makes the permuted-corpus anti-cheat GENUINELY collapse ALL constructions, closing the residual the EMERGE-62..66 adversarial audit surfaced. The DEFECT was that EMERGE-64 keyed mining bags by a SHUFFLE-VARIANT signature that embeds the DET-vs-FUNC POSITION label (`_slot_signature`: a closed-class token that opens the NP is `det:`, else `func:`); so under the shuffle the ~1/3 of F_INTR orderings that keep `the` at NP-onset re-label it `det:the` -> the EXACT F_INTR bag -> reconstruct F_INTR's inventory at dominance 1.0 (the perm floor 0.333 was F_INTR ALONE, NOT a chance floor), while the 'wrong' orderings (`func:the`) went to a different bag and never diluted it. THE FIX (the audit's named remediation, ADDITIVE default-off flag on EMERGE-64's `mine_inventory`): key bags by a SHUFFLE-INVARIANT token multiset (`_bag_key_invariant`) that decides closed-vs-open by EMERGE-62's DISCOVERED function-word SET (token IDENTITY, position-independent) -- a DET/FUNC slot -> `closed:<lexeme>`, a VERB slot -> `verb:<inflection>` (surface morphology, position-independent), a SUBJ -> `open`. Now EVERY ordering of a frame's tokens shares ONE bag (a non-onset `the` no longer escapes into a separate `func:` bag), so under SHUFFLE the F_INTR orderings DILUTE the dominant fraction below min_dominance -> F_INTR fails to mine confidently -> it COLLAPSES too. RESULTS (6 seeds): MAIN (unshuffled) mining is UNREGRESSED -- the multiset still distinguishes F_MODAL {the,can}+bare / F_INTR {the}+3sg / F_NEGMOD {the,does,not}+bare -> inventory-accuracy 1.000, spiking render-exact 1.000; the PERMUTED-CORPUS render now collapses to 0.000 (BEFORE 0.333 with the default keying -> the whole pipeline GENUINELY collapses, not just the two multi-slot frames); NO-CORPUS -> empty inventory; the HELD-OUT-FRAME shared det+subj+verb backbone still GENERALIZES (1.000); the gate-first no-confab MOAT is intact (0 producer invocations on abstains). ==> the 'permuted-corpus collapses the whole pipeline' claim of EMERGE-64/65 is now LITERALLY true (perm_render -> 0.000), proving ALL constructions -- including the shortest F_INTR -- are corpus-ORDER-derived, not host-smuggled. HONEST RESIDUAL (named, unchanged): a held-out frame's DISTINCTIVE verb inflection (F_INTR's 3sg -- heldout-F_INTR-inflection-recovered=False, expected False since only F_INTR attests 3sg) is not recoverable from the OTHER two frames (same category as EMERGE-63's does<not residual). Reuse-by-import; the ONLY code change is the additive default-off `shuffle_invariant_bag` flag on EMERGE-64's `mine_inventory` (EMERGE-64/65/66 defaults byte-identical); NO sim/ edit; moat untouched.",
+  "go": true,
+  "mechanism": "STRENGTHEN the EMERGE-64 slot-inventory mining's permuted-corpus anti-cheat by keying mining bags on a SHUFFLE-INVARIANT token multiset (`_bag_key_invariant`) instead of the position-derived DET/FUNC signature (`_bag_key(sig)`, the default). Closed-vs-open is decided by EMERGE-62's DISCOVERED function-word SET (token identity, position-independent): a DET/FUNC slot -> `closed:<lexeme>`, a VERB slot -> `verb:<inflection>` (surface morphology), a SUBJ -> `open`. Under SHUFFLE, EVERY ordering of a frame's tokens shares ONE bag (a non-onset `the` no longer escapes to a `func:` bag), so the F_INTR orderings dilute the dominant fraction below min_dominance -> F_INTR collapses too (closing the audit's named residual, perm_render 0.333 -> ~0.0). MAIN mining is unregressed: the multiset still separates F_MODAL {the,can}+bare / F_INTR {the}+3sg / F_NEGMOD {the,does,not}+bare. ADDITIVE default-off flag on EMERGE-64's mine_inventory; NO sim/ edit; reuse-by-import; the gate-first moat is untouched.",
+  "task": "key EMERGE-64's mining bags by a shuffle-invariant token multiset so the permuted-corpus anti-cheat genuinely collapses ALL constructions (including the shortest F_INTR); MAIN mining stays exact (inventory-accuracy 1.0, render 1.0), permuted-corpus render collapses (0.333 -> ~0.0), no-corpus empty, held-out backbone generalizes, gate-first moat 0; >=6 seeds",
+  "defect": "EMERGE-64 keyed bags by `_bag_key(_slot_signature(slots))`, which embeds the POSITION-dependent DET/FUNC label; under shuffle the ~1/3 of F_INTR orderings that keep `the` at NP-onset re-label it `det:the` -> the exact F_INTR bag -> reconstructed at dominance 1.0 (perm floor 0.333 = F_INTR alone, NOT a chance floor). Audit: research/findings/2026-07-03-emerge65-self-organized-producer-GO.md 'Audit remediation'; AUTONOMOUS_STATE CYCLE 876.",
+  "frames": {
+    "F_MODAL": [
+      [
+        "det",
+        "the"
+      ],
+      [
+        "subj",
+        null
+      ],
+      [
+        "func",
+        "can"
+      ],
+      [
+        "verb",
+        "bare"
+      ]
+    ],
+    "F_INTR": [
+      [
+        "det",
+        "the"
+      ],
+      [
+        "subj",
+        null
+      ],
+      [
+        "verb",
+        "3sg"
+      ]
+    ],
+    "F_NEGMOD": [
+      [
+        "det",
+        "the"
+      ],
+      [
+        "subj",
+        null
+      ],
+      [
+        "func",
+        "does"
+      ],
+      [
+        "func",
+        "not"
+      ],
+      [
+        "verb",
+        "bare"
+      ]
+    ]
+  },
+  "bagkey_illustration_seed": 42,
+  "bagkey_illustration": [
+    {
+      "ordering": [
+        "the",
+        "penguin",
+        "walks"
+      ],
+      "default_bag": [
+        "det:the",
+        "subj",
+        "verb:3sg"
+      ],
+      "invariant_bag": [
+        "closed:the",
+        "open",
+        "verb:3sg"
+      ]
+    },
+    {
+      "ordering": [
+        "the",
+        "walks",
+        "penguin"
+      ],
+      "default_bag": null,
+      "invariant_bag": null
+    },
+    {
+      "ordering": [
+        "penguin",
+        "the",
+        "walks"
+      ],
+      "default_bag": [
+        "func:the",
+        "subj",
+        "verb:3sg"
+      ],
+      "invariant_bag": [
+        "closed:the",
+        "open",
+        "verb:3sg"
+      ]
+    },
+    {
+      "ordering": [
+        "penguin",
+        "walks",
+        "the"
+      ],
+      "default_bag": [
+        "func:the",
+        "subj",
+        "verb:3sg"
+      ],
+      "invariant_bag": [
+        "closed:the",
+        "open",
+        "verb:3sg"
+      ]
+    },
+    {
+      "ordering": [
+        "walks",
+        "the",
+        "penguin"
+      ],
+      "default_bag": null,
+      "invariant_bag": null
+    },
+    {
+      "ordering": [
+        "walks",
+        "penguin",
+        "the"
+      ],
+      "default_bag": null,
+      "invariant_bag": null
+    }
+  ],
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "elapsed_seconds": 15.2,
+  "aggregate": {
+    "main_acc_default": 1.0,
+    "main_render_default": 1.0,
+    "main_acc_invariant": 1.0,
+    "main_render_invariant": 1.0,
+    "perm_acc_default": 0.3333333333333333,
+    "perm_acc_invariant": 0.0,
+    "perm_render_default_BEFORE": 0.3333333333333333,
+    "perm_render_invariant_AFTER": 0.0,
+    "heldout_backbone_mean": 1.0,
+    "heldout_intr_inflection_recovered": false,
+    "moat_calls_on_abstain_total": 0
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_closed": 14,
+      "closed": [
+        "a",
+        "and",
+        "big",
+        "can",
+        "cat",
+        "does",
+        "fast",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "the",
+        "to"
+      ],
+      "main_acc_default": 1.0,
+      "main_render_default": 1.0,
+      "main_acc_invariant": 1.0,
+      "main_render_invariant": 1.0,
+      "perm_acc_default": 0.3333333333333333,
+      "perm_render_default": 0.3333333333333333,
+      "perm_acc_invariant": 0.0,
+      "perm_render_invariant": 0.0,
+      "nocorpus_empty": true,
+      "nocorpus_acc": 0.0,
+      "heldout_mean": 1.0,
+      "heldout_per": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0
+      },
+      "heldout_intr_inflection_recovered": false,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    },
+    {
+      "seed": 43,
+      "n_closed": 14,
+      "closed": [
+        "a",
+        "and",
+        "can",
+        "does",
+        "grey",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "tall",
+        "the",
+        "to",
+        "wet"
+      ],
+      "main_acc_default": 1.0,
+      "main_render_default": 1.0,
+      "main_acc_invariant": 1.0,
+      "main_render_invariant": 1.0,
+      "perm_acc_default": 0.3333333333333333,
+      "perm_render_default": 0.3333333333333333,
+      "perm_acc_invariant": 0.0,
+      "perm_render_invariant": 0.0,
+      "nocorpus_empty": true,
+      "nocorpus_acc": 0.0,
+      "heldout_mean": 1.0,
+      "heldout_per": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0
+      },
+      "heldout_intr_inflection_recovered": false,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    },
+    {
+      "seed": 44,
+      "n_closed": 15,
+      "closed": [
+        "a",
+        "and",
+        "can",
+        "does",
+        "fast",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "red",
+        "small",
+        "tall",
+        "the",
+        "to"
+      ],
+      "main_acc_default": 1.0,
+      "main_render_default": 1.0,
+      "main_acc_invariant": 1.0,
+      "main_render_invariant": 1.0,
+      "perm_acc_default": 0.3333333333333333,
+      "perm_render_default": 0.3333333333333333,
+      "perm_acc_invariant": 0.0,
+      "perm_render_invariant": 0.0,
+      "nocorpus_empty": true,
+      "nocorpus_acc": 0.0,
+      "heldout_mean": 1.0,
+      "heldout_per": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0
+      },
+      "heldout_intr_inflection_recovered": false,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    },
+    {
+      "seed": 100,
+      "n_closed": 14,
+      "closed": [
+        "a",
+        "and",
+        "big",
+        "can",
+        "does",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "tall",
+        "the",
+        "to",
+        "wet"
+      ],
+      "main_acc_default": 1.0,
+      "main_render_default": 1.0,
+      "main_acc_invariant": 1.0,
+      "main_render_invariant": 1.0,
+      "perm_acc_default": 0.3333333333333333,
+      "perm_render_default": 0.3333333333333333,
+      "perm_acc_invariant": 0.0,
+      "perm_render_invariant": 0.0,
+      "nocorpus_empty": true,
+      "nocorpus_acc": 0.0,
+      "heldout_mean": 1.0,
+      "heldout_per": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0
+      },
+      "heldout_intr_inflection_recovered": false,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    },
+    {
+      "seed": 101,
+      "n_closed": 15,
+      "closed": [
+        "a",
+        "and",
+        "can",
+        "cold",
+        "does",
+        "grey",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "red",
+        "the",
+        "to",
+        "warm"
+      ],
+      "main_acc_default": 1.0,
+      "main_render_default": 1.0,
+      "main_acc_invariant": 1.0,
+      "main_render_invariant": 1.0,
+      "perm_acc_default": 0.3333333333333333,
+      "perm_render_default": 0.3333333333333333,
+      "perm_acc_invariant": 0.0,
+      "perm_render_invariant": 0.0,
+      "nocorpus_empty": true,
+      "nocorpus_acc": 0.0,
+      "heldout_mean": 1.0,
+      "heldout_per": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0
+      },
+      "heldout_intr_inflection_recovered": false,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    },
+    {
+      "seed": 102,
+      "n_closed": 15,
+      "closed": [
+        "a",
+        "and",
+        "big",
+        "can",
+        "does",
+        "fast",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "slow",
+        "tall",
+        "the",
+        "to"
+      ],
+      "main_acc_default": 1.0,
+      "main_render_default": 1.0,
+      "main_acc_invariant": 1.0,
+      "main_render_invariant": 1.0,
+      "perm_acc_default": 0.3333333333333333,
+      "perm_render_default": 0.3333333333333333,
+      "perm_acc_invariant": 0.0,
+      "perm_render_invariant": 0.0,
+      "nocorpus_empty": true,
+      "nocorpus_acc": 0.0,
+      "heldout_mean": 1.0,
+      "heldout_per": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0
+      },
+      "heldout_intr_inflection_recovered": false,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    }
+  ],
+  "HONEST_NOTE": "Closes the EMERGE-64/65 permuted-corpus F_INTR residual the EMERGE-62..66 adversarial audit surfaced: the SHUFFLE-INVARIANT bag-keying makes the perm control collapse the shortest F_INTR too (perm_render 0.333 -> ~0.0), so the 'permuted-corpus collapses the WHOLE pipeline' claim is now LITERALLY true (all constructions proven corpus-ORDER-derived, not host-smuggled). MAIN mining is unregressed (the closed-token multiset + verb-inflection still distinguish the three frames). The keying is an ADDITIVE default-off flag on EMERGE-64's mine_inventory (shuffle_invariant_bag=False == byte-identical), so the EMERGE-64/65/66 committed defaults are unchanged. The one carried-forward residual is a held-out frame's DISTINCTIVE verb inflection (F_INTR's 3sg) -- not recoverable from the other two frames (same category as EMERGE-63's does<not residual); named, not gated. The corpus mining is offline syllabus prep (BRAIN-BASED-ONLY compliant); the inventory is rendered on REAL spikes; the gate-first moat is untouched. Reuse-by-import; NO sim/ edit."
+}

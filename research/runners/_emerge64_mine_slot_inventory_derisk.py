@@ -221,17 +221,56 @@ def _slot_signature(slots):
 # is EMPTY/degraded under shuffle -- the load-bearing collapse.
 # ---------------------------------------------------------------------------------------------------------------------
 def _bag_key(sig):
-    """The shuffle-invariant construction key: the sorted multiset of the signature's role-slot tokens. Two orderings of
-    the same slots share a bag; the dominant ordering of a bag is the construction's inventory."""
+    """The DEFAULT construction key (EMERGE-64): the sorted multiset of the SIGNATURE's role-slot tokens. The signature
+    embeds the POSITION-dependent DET/FUNC label (`_slot_signature`: a closed-class token that opens the NP is `det:`,
+    else `func:`), so two orderings that flip that label land in DIFFERENT bags. This is the AUDIT-NAMED residual
+    (`2026-07-03-emerge65-self-organized-producer-GO.md`, "Audit remediation"): under the shuffled control the ~1/3 of
+    F_INTR shuffles that keep `the` at NP-onset re-label it `det:the` -> the exact F_INTR bag -> deterministically
+    reconstructed at dominance 1.0 (the perm floor 0.333 is F_INTR alone, NOT a chance floor). The EMERGE-64b
+    `_bag_key_invariant` below closes this. Kept as the DEFAULT so EMERGE-64/65's committed de-risks are byte-identical."""
     return tuple(sorted(sig))
 
 
-def mine_inventory(sents, closed, shuffle_within=False, shuffle_rng=None, min_count=5, min_dominance=0.80):
+def _bag_key_invariant(slots):
+    """EMERGE-64b -- the SHUFFLE-INVARIANT construction key. Key on the raw slots' POSITION-INDEPENDENT labels so that
+    EVERY ordering of the same token multiset shares ONE bag (the audit's named remediation): closed-vs-open is decided
+    by EMERGE-62's DISCOVERED closed-class SET (token IDENTITY, position-independent) -- NOT by the DET-vs-FUNC POSITION
+    label that `_slot_signature` embeds. Concretely:
+      * a DET or FUNC slot (both closed-class by set membership) -> `closed:<payload>` (its lexeme identity, NO det/func
+        position label) -- so a `the` at NP-onset (DET) and a `the` elsewhere (FUNC) map to the SAME `closed:the`.
+      * a VERB slot -> `verb:<inflection>` (the inflection is read from the surface MORPHOLOGY -- a trailing -s over a
+        content-verb lexeme -- which is itself position-independent, so it stays in the key and keeps F_INTR(3sg)
+        distinct from F_MODAL/F_NEGMOD(bare)).
+      * a SUBJ (open-class content NP head) -> `open` (no position label).
+    The three EMERGE frames STILL separate by their CLOSED-token multiset + verb-inflection: F_MODAL {the,can}+bare,
+    F_INTR {the}+3sg, F_NEGMOD {the,does,not}+bare -> distinct bags in the MAIN corpus. But under SHUFFLE, ALL orderings
+    of one frame's tokens now share ONE bag (a non-onset `the` no longer escapes into a separate `func:` bag), so the
+    orderings DILUTE the dominant fraction below `min_dominance` -> the construction is not confidently mined -> it
+    COLLAPSES (including the shortest F_INTR, which the DEFAULT key could not collapse). Closes the audit's F_INTR
+    residual -> the permuted-corpus control genuinely collapses the WHOLE pipeline (perm -> ~0.0)."""
+    parts = []
+    for (stype, payload, infl) in slots:
+        if stype in (DET, FUNC):
+            parts.append(f"closed:{payload}")            # closed-class by discovered-SET identity (position-independent)
+        elif stype == VERB:
+            parts.append(f"verb:{infl}")                 # inflection from surface morphology (position-independent)
+        else:                                            # SUBJ (open-class content)
+            parts.append("open")
+    return tuple(sorted(parts))
+
+
+def mine_inventory(sents, closed, shuffle_within=False, shuffle_rng=None, min_count=5, min_dominance=0.80,
+                   shuffle_invariant_bag=False):
     """Mine {dominant-ordered-signature: canonical ordered slot list} from labelled corpus sentences. Per construction
-    (keyed by its shuffle-invariant slot BAG), select the DOMINANT ordering; keep it only if attested >= `min_count`
-    AND its dominant-order fraction >= `min_dominance` (the order is clearly canonical). `shuffle_within` (the PERMUTED-
-    MINING anti-cheat) scrambles each sentence's word order BEFORE labelling -> the same bag's orderings scatter ->
-    dominant fraction drops below min_dominance -> the construction is not confidently mined (empty/degraded).
+    (keyed by its slot BAG), select the DOMINANT ordering; keep it only if attested >= `min_count` AND its dominant-order
+    fraction >= `min_dominance` (the order is clearly canonical). `shuffle_within` (the PERMUTED-MINING anti-cheat)
+    scrambles each sentence's word order BEFORE labelling -> the same bag's orderings scatter -> dominant fraction drops
+    below min_dominance -> the construction is not confidently mined (empty/degraded).
+
+    `shuffle_invariant_bag` (EMERGE-64b, ADDITIVE, default False == byte-identical to EMERGE-64): when True, key bags by
+    the SHUFFLE-INVARIANT multiset (`_bag_key_invariant`, closed-vs-open from the discovered SET identity, NOT the
+    position-derived DET/FUNC label) so EVERY ordering of a frame's tokens shares ONE bag -> the shortest F_INTR
+    collapses under shuffle too (closing the audit-named residual). Default False keeps `_bag_key(sig)` verbatim.
 
     Returns (inventory {sig: canonical slot list}, sig_counts). Slots keep FUNC/DET payloads + VERB inflection; SUBJ/VERB
     content payloads are None (the words come from the gated decision at render)."""
@@ -245,7 +284,8 @@ def mine_inventory(sents, closed, shuffle_within=False, shuffle_rng=None, min_co
         if slots is None:
             continue
         sig = _slot_signature(slots)
-        bag_order_counts[_bag_key(sig)][sig] += 1
+        bag = _bag_key_invariant(slots) if shuffle_invariant_bag else _bag_key(sig)
+        bag_order_counts[bag][sig] += 1
         sig_slots.setdefault(sig, tuple(slots))         # (stype, payload, infl) per slot
     sig_counts = Counter()
     inventory = {}
