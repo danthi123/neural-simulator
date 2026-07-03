@@ -8152,3 +8152,36 @@ spiking -- the remaining host piece of the render, GPU), OR the held-out distinc
 4th morphological-invariance cue. Deferred: EMERGE-60 fluid-RNG isolation; EMERGE-57 multi-seed. Boundaries = undiscovered
 mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A
 MONITOR on every long run; GPU/CuPy for real runs (numpy for CPU).
+
+## CYCLE 876 (2026-07-03 — ADVERSARIAL AUDIT of the EMERGE-62..66 self-organized-producer chain: 2 defects CAUGHT + REMEDIATED, GO stands)
+
+A 6-dimension SEQUENTIAL adversarial-audit workflow (rate-limit-safe: one agent at a time, dodging the parallel-burst
+throttle that blocked the 3 earlier attempts) scrutinized the EMERGE-62..66 chain's load-bearing claims. It CONFIRMED 2
+non-GO-changing defects (the other 4 dimensions -- host-smuggling, struct-match circularity, real-corpus-precision
+framing, moat+byte-identity -- came back CLEAN, defensible): (1) [MAJOR] a "control that cannot fail" -- EMERGE-65's GO
+gate included heldout_shared_backbone >= 0.999, but all 3 EMERGE frames share the IDENTICAL (DET,SUBJ,VERB) role
+backbone (FUNC+inflection stripped by _role_type_backbone), so the metric is a LANGUAGE-UNIVERSAL CONSTANT structurally
+incapable of returning <1.0 (the audit proved it returns 1.0 even trained on unrelated garbage). (2) [MINOR] the
+permuted-corpus 0.333 is F_INTR DETERMINISTICALLY reconstructed (dominance 1.0, not a chance floor; its self-identifying
+determiner + shuffle-VARIANT bag-keying recover its inventory without needing order), so the "collapses the WHOLE
+pipeline / entire structure corpus-derived" framing overstated it -- only the two MULTI-SLOT frames (F_MODAL, F_NEGMOD)
+genuinely collapse to 0. REMEDIATION (honest propagation, no GO change): (1) dropped heldout_shared_backbone from the
+EMERGE-65 GO gate (now heldout_generalizes = heldout_shared_order >= 0.999, the GENUINE evidence -- FUNC position learned
+from another frame's does/not, tie-break-invariant over 200 draws; backbone REPORTED only); (2) corrected the permuted-
+corpus framing in the EMERGE-65 verdict string + docstring + findings (line 52 "occasionally by chance" -> "determin-
+istically dominance 1.0"; "whole pipeline collapses" -> "the two multi-slot constructions collapse; F_INTR a named
+residual") + CLAUDE.md + an Audit-remediation section in the findings. Re-verified: EMERGE-65 de-risk 6-seed GO stands
+(render 1.0, struct-match 1.0, two-frame permuted-collapse 0.667 margin, heldout_shared_order 1.0 gated, moat 0); CI
+test_emerge65+66 pass; sim/ clean. The audit discipline caught the SAME class of metric/framing defect as EMERGE-58 +
+EMERGE-38..45 -- exactly why it's run.
+
+**EXACT NEXT CONCRETE ACTION:** (1) DONE: committed the audit remediation both remotes. (2) NEXT: EMERGE-64b = the
+control-STRENGTHENING follow-on the audit named -- key the EMERGE-64 mining bags by a shuffle-INVARIANT token multiset
+(NOT the position-dependent DET/FUNC label) so the two "wrong" F_INTR shuffle orderings share the F_INTR bag + dilute
+its dominance below 0.80 -> F_INTR ALSO collapses under permuted-corpus -> perm_render -> 0.0 -> the "whole pipeline
+collapses" claim becomes LITERALLY TRUE; verify the MAIN (unshuffled) result stays GO (the multiset still distinguishes
+the constructions by closed-word count) + EMERGE-64/65/66 still pass; 6-seed, NO sim/ edit. THEN the next frontier: the
+A->W NEURAL-spell wire-in (words spiking, GPU); the held-out distinctive-slot one-attestation cue; the 4th
+morphological-invariance cue. Deferred: EMERGE-60 fluid-RNG isolation; EMERGE-57 multi-seed. Boundaries = undiscovered
+mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A
+MONITOR on every long run; GPU/CuPy for real runs (numpy for CPU).

@@ -6,8 +6,9 @@ This is the integration RANK-4 of the self-organizing-grammatical-structure rese
 (`research/findings/2026-07-03-self-organizing-grammatical-structure-research-gate.md`, MOVE 3 / RANK 4 / EMERGE-65):
 "compose the discovered function-word set (62) + corpus-taught order (63) + mined slot-inventory (64) into a producer
 whose FRAMES dict is BUILT from statistics." It is a COMPOSITION of GO pieces (not a new mechanism), so it should GO --
-but the load-bearing PROOF is that the COMPOSED permuted-corpus control genuinely collapses the WHOLE pipeline (nothing
-host-smuggled), and each component's honestly-named residual is carried forward WITHOUT hiding it.
+but the load-bearing PROOF is that the COMPOSED permuted-corpus control collapses the two MULTI-SLOT constructions
+(F_MODAL, F_NEGMOD -> 0; the shortest F_INTR is a deterministically-reconstructed NAMED residual, see the EMERGE-64b
+control-strengthening follow-on), and each component's honestly-named residual is carried forward WITHOUT hiding it.
 
 WHAT WAS HOST-DESIGNED (now REMOVED as pipeline inputs; VALIDATION ground-truth ONLY):
   * the `FRAMES` dict           (`_emerge59:98-105`) -- which typed slots per frame, in which order.
@@ -41,10 +42,15 @@ DE-RISK (6 seeds 42/43/44/100/101/102, CPU/numpy):
       independent).
   (b) ASSEMBLED-STRUCTURE MATCH: the assembled structure MATCHES the host FRAMES (per-frame slot set + function words +
       order) -- exact inventory + order recovery.
-  (c) THE COMPOSED ANTI-CHEAT -- PERMUTED-CORPUS / SHUFFLED-CORPUS destroys the WHOLE pipeline (function-word discovery
-      + inventory mining + order all degrade -> render collapses), proving the entire structure is corpus-derived not
-      host-smuggled; NO-CORPUS -> nothing; HELD-OUT-FRAME generalizes on the SHARED structure (det+subj+verb backbone)
-      with the distinctive-slot residual honestly named (per EMERGE-63/64).
+  (c) THE COMPOSED ANTI-CHEAT -- PERMUTED-CORPUS / SHUFFLED-CORPUS scrambles word order at BOTH the inventory-mining AND
+      order-learning stages: the two MULTI-SLOT constructions (F_MODAL, F_NEGMOD) GENUINELY collapse to 0 (their
+      structure IS corpus-ORDER-derived); the shortest (F_INTR det+subj+verb, "the penguin walks") is deterministically
+      reconstructed at dominance 1.0 WITHOUT needing order (the perm-render floor is F_INTR alone, NOT a chance floor) --
+      a NAMED residual: its inventory is corpus-derived, its ORDER not separately proven by THIS control (the EMERGE-64b
+      shuffle-invariant bag-key follow-on makes F_INTR collapse too). NO-CORPUS -> nothing. HELD-OUT-FRAME: the shared
+      type-level ORDER is recovered from the OTHER frames (the GENUINE held-out evidence -- the FUNC position learned
+      from another frame's does/not); the det+subj+verb BACKBONE is a LANGUAGE-UNIVERSAL CONSTANT (all 3 frames share
+      it) so it is REPORTED not gated (audit remediation); the distinctive-slot residual honestly named (per EMERGE-63/64).
   (d) the PRODUCER renders + the gate-first no-confab MOAT holds (0 producer invocations on abstains).
 GO bar: end-to-end render-exact high (== the component floors, 1.0) with a clear margin over the collapsed permuted-
 corpus control, held-out generalizes on shared structure, moat intact, 6-seed.
@@ -478,7 +484,15 @@ def _derisk(seeds):
         inventory_full = inv_acc >= 0.999 and frame_fw_covered
         beats_perm = (main_render >= perm_render + MARGIN) and (struct_match >= perm_match + MARGIN)
         beats_nocorpus = (main_render >= nocorpus_render + MARGIN) and nocorpus_empty
-        heldout_generalizes = heldout_shared_backbone >= 0.999 and heldout_shared_order >= 0.999
+        # AUDIT REMEDIATION (EMERGE-62..66 adversarial audit, 2026-07-03): heldout_shared_backbone (the held-out frame's
+        # det+subj+verb ROLE backbone) is a LANGUAGE-UNIVERSAL CONSTANT -- all three EMERGE frames share that backbone
+        # (FUNC slots + inflection are stripped by _role_type_backbone), so the metric is STRUCTURALLY INCAPABLE of
+        # returning < 1.0 (a "control that cannot fail"; proven: it returns 1.0 even trained on an unrelated det-subj-verb
+        # construction with NONE of the held frame's distinctive slots). It is therefore REPORTED, not GATED. The GENUINE
+        # held-out evidence is heldout_shared_order: a held-out frame's FUNC-slot POSITION is learned from ANOTHER frame's
+        # does/not via the generic-FUNC precedence class (verified tie-break-invariant over 200 draws, the held-out
+        # frame's own exemplars excluded).
+        heldout_generalizes = heldout_shared_order >= 0.999
         moat_ok = (moat_calls == 0) and answer_ok
         controls_collapse = beats_perm and beats_nocorpus
 
@@ -497,12 +511,21 @@ def _derisk(seeds):
                 f"penguin does not fly' EXACT on spikes (render {main_render:.3f}; EMERGE-61 wash-out -> position-"
                 f"independent), and MATCHES the host FRAMES (per-frame slot set + function words + order: struct-match "
                 f"{struct_match:.3f}, inventory-accuracy {inv_acc:.3f}, all frame function words discovered). THE COMPOSED "
-                f"ANTI-CHEAT COLLAPSES the WHOLE pipeline: PERMUTED-CORPUS (each exemplar's word order scrambled at BOTH "
-                f"the inventory-mining AND order-learning stages) drops render to {perm_render:.3f} and structure-match to "
-                f"{perm_match:.3f} (margin >= {MARGIN}) -- the entire structure is CORPUS-DERIVED, not host-smuggled; "
-                f"NO-CORPUS -> nothing ({nocorpus_render:.3f}, empty inventory). HELD-OUT-FRAME GENERALIZES on the SHARED "
-                f"structure: a fully-held-out frame's det+subj+verb backbone + shared type-level order are recovered from "
-                f"the OTHER two frames (backbone {heldout_shared_backbone:.3f}, order {heldout_shared_order:.3f}). The "
+                f"ANTI-CHEAT: PERMUTED-CORPUS (each exemplar's word order scrambled at BOTH the inventory-mining AND "
+                f"order-learning stages) drops render to {perm_render:.3f} and structure-match to {perm_match:.3f} "
+                f"(margin >= {MARGIN}). HONEST SCOPE of this control (EMERGE-62..66 audit): the two MULTI-SLOT "
+                f"constructions (F_MODAL, F_NEGMOD) GENUINELY collapse to 0 under the shuffle (their orderings scatter "
+                f"below the dominance threshold -> their structure IS proven corpus-ORDER-derived); the shortest "
+                f"construction (F_INTR 'the penguin walks', det+subj+verb) is DETERMINISTICALLY reconstructed at dominance "
+                f"1.0 even under shuffle (the {perm_render:.3f} floor is F_INTR alone, NOT a chance floor) because its "
+                f"self-identifying determiner + the shuffle-variant bag-keying recover its INVENTORY without needing "
+                f"order -- a NAMED residual (F_INTR's inventory is corpus-derived; its ORDER is not separately proven by "
+                f"THIS control), see the EMERGE-64b control-strengthening follow-on. NO-CORPUS -> nothing "
+                f"({nocorpus_render:.3f}, empty inventory). HELD-OUT-FRAME: a fully-held-out frame's SHARED type-level "
+                f"ORDER is recovered from the OTHER two frames (heldout_shared_order {heldout_shared_order:.3f} -- the "
+                f"GENUINE held-out evidence, the FUNC position learned from another frame's does/not; the det+subj+verb "
+                f"backbone {heldout_shared_backbone:.3f} is a language-universal constant, REPORTED not gated -- see the "
+                f"audit-remediation note at the gate). The "
                 f"gate-first no-confab MOAT holds BY CONSTRUCTION: 0 producer invocations on abstains. {len(seeds)} seeds. "
                 f"==> the FULLY-SELF-ORGANIZED SPIKING LANGUAGE PRODUCER: from the corpus alone the brain discovers the "
                 f"function-word inventory, mines the construction slot inventory, learns the slot order, and speaks its "
