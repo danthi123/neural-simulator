@@ -8000,3 +8000,31 @@ frame-miner, S1a), EMERGE-65 (compose -> end-to-end self-organized producer). OR
 wire-in (words spiking). Deferred: EMERGE-60 fluid-RNG harness isolation; EMERGE-57 multi-seed; the adversarial-audit
 re-run (rate-limited). Boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a
 PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A MONITOR on every long run; GPU/CuPy for real runs (numpy for CPU).
+
+## CYCLE 871 (2026-07-03 — EMERGE-62b GO: the 3rd cue (phrase-boundary/position) lifts the function-word discovery to the REAL corpus)
+
+EMERGE-62b (GO, 6-seed, `2026-07-03-emerge62b-position-cue-GO.md`, NO sim/ edit): iterates EMERGE-62's named real-corpus
+boundary. Adds Yang-Getz's 3rd distributional cue -- PHRASE-BOUNDARY / SYNTACTIC-POSITION alignment (a function word is
+rarely phrase-FINAL + rarely preceded by a phrase-final-capable content noun; needs a sentence-aware front end since the
+tokeniser strips punctuation) -- combined with the 2D Goldilocks by ASYMMETRIC exclusion (exclude only the clearly
+content-positioned; a symmetric "require high posscore" gate breaks recall on dense frames like "to the"/"does not").
+VERIFIED controller-direct (CI 15 pass, 8 EMERGE-62b + 7 EMERGE-62; the tests ASSERT the load-bearing claims): real-corpus
+precision 0.080->0.111 (~1.39x, recall HELD 1.000, F1 0.148->0.200; 0.29->0.35 vs an honest extended closed class),
+position-shuffle F1 0.098 BELOW the 2D 0.148 (recall broken to 0.36 -- the cue is LOAD-BEARING not spurious;
+test_position_shuffle_control_collapses asserts F3 >= shuffle+0.10), frequency-shuffle collapses, no-stream empty,
+held-out generalizes, controlled domain NOT regressed (F1 2D==3D), producer renders (1.00), moat 0. The position cue
+EXCLUDED 34 frequent-content-word FPs (apple/ball/cat/know/say...). NO sim/ edit; reuse-by-import. HONEST RESIDUAL: the
+narrow 11-word ground truth UNDER-states precision (most remaining "FPs" -- he/she/they/of/for/with/that/was -- are
+GENUINE English function words TinyStories contributes); the remaining TRUE content FPs are inflected content verbs
+(gives/hugs/makes) + determiner-preceded nouns -> the named next single-variable signal = a 4th MORPHOLOGICAL-INVARIANCE
+cue (function words lack -s/-ed/-ing paradigms) or Redington context-vector clustering. Not a wall.
+
+**EXACT NEXT CONCRETE ACTION:** (1) DONE: committed EMERGE-62b both remotes. (2) NEXT (continue the self-organized-
+producer chain): EMERGE-63 = the slot-ORDER teacher from corpus n-gram/sequence statistics (S1b -- FrameCQ currently
+learns the order from a HOST template; teach it from the corpus's actual word-order statistics instead), reuse-by-import,
+anti-cheats (shuffled-corpus/held-out-frame), 6-seed, NO sim/ edit. THEN EMERGE-64 (mine the FUNC-slot inventory via the
+GO _bucketB frame-miner, S1a) -> EMERGE-65 (compose -> end-to-end self-organized producer). OPTIONAL within-62 polish:
+the 4th morphological-invariance cue (push real-corpus precision further). ORTHOGONAL/parallel: the A->W neural-spell
+wire-in (words spiking). Deferred: EMERGE-60 fluid-RNG harness isolation; EMERGE-57 multi-seed; the adversarial-audit
+re-run (rate-limited). Boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a
+PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A MONITOR on every long run; GPU/CuPy for real runs (numpy for CPU).
