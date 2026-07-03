@@ -209,6 +209,15 @@ def load_dict_from_hdf5_attrs(h5_group_or_file):
 
 
 class SimulationBridge:
+    @property
+    def xp(self):
+        """The active array backend module (cupy on GPU / numpy on CPU) -- the module the bridge's ``cp_*`` arrays live
+        in. On-bridge helpers use ``xp = bridge.xp if hasattr(bridge, "xp") else np`` to allocate DEVICE-correct arrays;
+        without this, a host (numpy) array assigned into a device ``cp_*`` array raises "non-scalar numpy.ndarray cannot
+        be used for fill" on the cupy backend. Byte-identical on numpy (``cp`` IS numpy there, so ``bridge.xp`` == the
+        prior ``else np`` fallback) -- additive backend-abstraction accessor (EMERGE-70/71 one-brain co-execution fix)."""
+        return cp
+
     def __init__(self, sim_core_ref=None, core_config=None, viz_config=None, runtime_state=None, gpu_config=None, ui_queue=None):
         """Initialize SimulationBridge with optional config objects.
 

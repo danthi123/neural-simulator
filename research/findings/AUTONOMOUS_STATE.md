@@ -8345,3 +8345,33 @@ Controller does it INLINE (trivial + I have the exact 3 lines). (3) THEN next fr
 EMERGE-60 fluid-RNG isolation; EMERGE-57 multi-seed; the per-word A->W selectivity fragility. Boundaries = undiscovered
 mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A
 MONITOR on every long run; CONTROLLER runs GPU steps INLINE.
+
+## CYCLE 882 (2026-07-03 — EMERGE-71 GO: the true ONE BRAIN production-clean -- a single additive SimulationBridge.xp property retires the shim)
+
+EMERGE-71 (GO, `2026-07-03-emerge71-one-brain-bridge-xp-GO.md`): replaces the EMERGE-70 probe shim with the single,
+general, design-intended fix. The reasoner's on-bridge helpers were written `xp = bridge.xp if hasattr(bridge,"xp") else
+np`, expecting a `bridge.xp` backend accessor that SimulationBridge NEVER had (grep 0 hits) -> xp always fell back to
+numpy -> host array into device cp_ array -> ValueError. FIX = ADD an additive `@property xp` on SimulationBridge
+returning the module-global active backend `cp` (cupy on GPU / numpy on CPU). Fixes ALL ~7 such sites in _emerge12/14 at
+once (vs the shim's 3 per-write patches). VERIFIED controller-direct: BYTE-IDENTICAL on numpy (`cp` IS numpy there ->
+bridge.xp == the prior `else np` fallback; EMERGE reasoner/on-bridge/determinism CI 22 pass unchanged; test_regions
+4-failed/38-pass IDENTICAL with+without the edit -> the 4 are PRE-EXISTING cupy-path failures [host arrays into cupy
+kernels, a DIFFERENT class this accessor doesn't touch; sim/ was unedited across EMERGE-56..70 -> they predate this work;
+flagged as a separate task chip]); FIXES cupy co-execution WITHOUT the shim (SIM_BACKEND=cupy: PerDimensionConsole
+builds+teaches+answers byte-identical to the numpy reference -- "No, a penguin walks." / "Yes, an owl can fly."; bridge.xp
+is cupy). THE ONLY sim/ EDIT IN THE ENTIRE EMERGE-56..71 ARC (all others reuse-by-import); moat untouched; CPU portability
+preserved. ⇒ the WHOLE flagship EMERGE conversation runs its turn in ONE SIM_BACKEND=cupy process, NO scaffolding --
+structure discovery + reasoning + fully-spiking render, one brain, one backend, one process. THE MASTER-DIRECTIVE ONE
+BRAIN, PRODUCTION-CLEAN.
+
+**EXACT NEXT CONCRETE ACTION:** (1) DONE: committed EMERGE-71 (the sole sim/ edit) both remotes. (2) THE SIMULATE-BROCA +
+SELF-ORGANIZE + ONE-BRAIN ARC (EMERGE-56..71) IS COMPLETE: the emergent brain discovers categories from experience ->
+reasons -> speaks its grounded answers on ONE spiking brain, in ONE process, fully-spiking (order + every word), with a
+FULLY-SELF-ORGANIZED audit-hardened grammar (function words + inventory + order discovered from corpus), transformer-
+retired, moat-hardened (2 adversarial audits). NEXT FRONTIER (pick highest-leverage): (a) BROADEN the frame inventory
+beyond the 3 EMERGE frames -> richer/open-er production (a research-gated new mechanism class -- run the deep-research
+gate FIRST); (b) the held-out distinctive-slot one-attestation cue (EMERGE-63/64 residual); (c) the 4th
+morphological-invariance cue (EMERGE-62 real-corpus precision); (d) the EMERGE-60 fluid-RNG isolation +
+test_regions cupy-path pre-existing failures (housekeeping). Deferred: EMERGE-57 multi-seed; the per-word A->W
+selectivity fragility. Boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a
+PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A MONITOR; CONTROLLER runs GPU steps INLINE.
