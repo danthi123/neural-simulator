@@ -1,0 +1,25 @@
+# EMERGE-44 / toward-semantics — GO (6/6 seeds): the STACKED pooler DISCOVERS a multi-level taxonomy. A second competitive pooler layer pools the first layer's codons by co-occurrence into superordinates, and inheritance CHAINS L1→L2 so a held-out SUB-CATEGORY inherits its superordinate property via the discovered grouping. Confirms the research-gate claim: multi-level taxonomy is STACKING the validated flat pooler, NOT a new mechanism. NO `sim/` edit.
+
+**2026-07-02 (autonomous).** Runner `research/runners/_emerge44_stacked_pooler_derisk.py`; CI guard `tests/test_emerge44_stacked_pooler.py` (3 tests). Reuse-by-import (`_emerge14` + `_emerge12`), composes EMERGE-38 pooler; NO `sim/` edit; CPU numpy-backend; 6-seed. Research gate: `2026-07-02-multilevel-hierarchy-discovery-research-gate.md`.
+
+## The claim (6/6 seeds)
+6 sub-categories (overlapping features) group into 2 superordinates. **L1** (the EMERGE-38 competitive pooler) discovers a sub-category codon per member; **L2** (the same competitive pooler, over L1 codons, trained on co-occurrence of same-superordinate members) discovers superordinate codons:
+- **L2 discovers superordinates:** within-superordinate minus cross-superordinate L2-codon overlap **+0.20 mean** (>0 every seed) — L2 grouped the sub-categories by superordinate.
+- **Inheritance chains L1→L2:** an ENTIRE held-out sub-category (2 → super 0, 5 → super 1), never taught the super property, inherits its superordinate correctly — **super-acc 0.97 mean** (1.00/0.92/1.00/1.00/1.00/0.92 across seeds 42/43/44/100/101/102, chance 0.50), purely via the L2-discovered grouping.
+- **Anti-cheats collapse:** PERMUTED-co-occurrence 0.43 (L2 trained on random cross-super pairs → can't group), L1→L2 LESION 0.57 (untuned L2, a noisier control — a random L2 code sometimes coincidentally overlaps), dAP-LESION 0.00.
+
+## Mechanism
+L1 = the competitive pooler on member features → sub-category codons (shared within a sub-category). L2 = the same pooler, but its input is the L1 codons: it is trained on CO-OCCURRENCE — the union of two same-superordinate members' L1 codons — so L2 columns tune to what co-occurs → a superordinate codon shared across the sub-categories of a superordinate. Inheritance chains: a superordinate property is taught (committed three-term kernel) on the training sub-categories' L2 codons; a held-out sub-category's members → their L1 codons → their L2 codons (which the co-occurrence learning made overlap the trained sub-categories' L2 codons) → the superordinate property. Biology: the ventral hierarchy V1→V2→V4→IT with growing abstraction (Kandel 6e Ch 21) + ATL convergence zones pooling categories-of-features into amodal superordinates (Patterson–Lambon Ralph; Damasio 1989) — each cortical level reuses the local competitive-pooling motif.
+
+## The key methodological fix (trust-but-verify caught it)
+The first cut held out MEMBERS within each sub-category — but a held-out member inherits via its own (trained) SUB-CATEGORY, so the test passed even under permuted co-occurrence (it didn't require L2 to discover superordinates). The corrected test holds out ENTIRE SUB-CATEGORIES from super-property teaching, so their only route to the superordinate property is the L2-DISCOVERED grouping — and now permuted co-occurrence genuinely collapses. This is the difference between "member generalization via a seen sub-category" and "genuine superordinate discovery."
+
+## Significance
+The multi-level taxonomy the brain reasons over (robin → bird → animal) can be DISCOVERED from experience by STACKING the validated flat pooler — the research-gate's critical claim (the ~15% wall did NOT bite: overlapping L1 codons separate cleanly enough at L2). Combined with EMERGE-42/43 (inheritance + cancellation over discovered categories), the brain now builds a learned category HIERARCHY and inherits through its levels, on one spiking brain, no transformer.
+
+## Honest scope + next
+- The pooler LEARNING is a rate-reference (fully-on-substrate at EMERGE-39/40; k-WTA spiking at EMERGE-41); the inheritance chain runs on the spiking bridge over the discovered L2 codons. Two levels; a 3-level corpus (EMERGE-45) + the fully-spiking stacked version (EMERGE-46, reusing the EMERGE-40 kernel) are the next rungs. Held-out at the SUB-CATEGORY level (its members co-occurred within the superordinate during L2 training); held-out at the WHOLE-superordinate level would need a further shared signal.
+- Next: EMERGE-45 (3-level corpus, transitivity — robin swims stays false) then EMERGE-46 (fully-spiking stacked hierarchy).
+
+## Artifacts
+`research/runners/_emerge44_stacked_pooler_derisk.py`, `tests/test_emerge44_stacked_pooler.py`, `research/findings/raw/_emerge44_stacked_pooler.json`. Prior: `2026-07-02-multilevel-hierarchy-discovery-research-gate.md`, `2026-07-02-emerge42-pooler-discovered-categories-reason-GO.md`.

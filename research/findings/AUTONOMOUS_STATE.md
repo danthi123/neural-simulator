@@ -7462,3 +7462,25 @@ step); OR TRANSITIVITY/multi-level over discovered categories (the third Collins
 2-level pooling -- research-gate the hierarchical-pooling mechanism first). Boundaries = undiscovered mechanisms; NO
 stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs
 (numpy for these CPU semantic de-risks).
+
+## CYCLE 850 (2026-07-02 — research gate + EMERGE-44: the STACKED pooler discovers a MULTI-LEVEL taxonomy)
+
+Research-gated the multi-level-taxonomy mechanism (`2026-07-02-multilevel-hierarchy-discovery-research-gate.md`, read-only
+subagent, controller-reviewed): VERDICT surpassable + cheap -- multi-level taxonomy = STACKING the validated flat pooler
+(L1 codons -> L2 pooler -> superordinates) + chaining inheritance, NOT a new mechanism; one ~15% gate (does L2 separate
+overlapping L1 codons?). Biology: ventral hierarchy V1->V2->V4->IT + ATL convergence zones. EMERGE-44 (GO 6/6,
+`2026-07-02-emerge44-stacked-pooler-multilevel-taxonomy-GO.md`, NO sim/ edit) trust-but-verified it: L1 (EMERGE-38 pooler)
+discovers 6 sub-categories; L2 (same pooler over L1 codons, trained on same-super co-occurrence) discovers 2 superordinates
+(within-cross L2 overlap +0.20); a held-out ENTIRE SUB-CATEGORY inherits its superordinate property via the L2-discovered
+grouping (super-acc 0.97, chance 0.50; permuted-co-occurrence 0.43 collapse; L1->L2-lesion 0.57; dAP-lesion 0.00). The
+~15% wall did NOT bite. METHODOLOGY FIX (trust-but-verify caught it): held out ENTIRE SUB-CATEGORIES (not members) so
+inheritance MUST route via the discovered superordinate, else permuted didn't collapse. `_emerge44_stacked_pooler_derisk.py`
++ `tests/test_emerge44_stacked_pooler.py` (3 pass).
+
+**EXACT NEXT CONCRETE ACTION:** commit EMERGE-44 (runner + test + finding + research-gate doc [already committed] + raw
+json + this state) to BOTH remotes on main. THEN continue autonomously per the research gate's rungs: EMERGE-45 = a
+3-LEVEL corpus (sub-category -> genus -> kingdom) with inheritance at each level + TRANSITIVITY ("robin swims" stays
+false -- no FISH path), 6-seed; THEN EMERGE-46 = the FULLY-SPIKING stacked hierarchy (reuse the EMERGE-40
+fused_htm_winner_inactive_depression kernel + EMERGE-41 FS-WTA for both pooler layers). Boundaries = undiscovered
+mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy
+for real runs (numpy for these CPU semantic de-risks).
