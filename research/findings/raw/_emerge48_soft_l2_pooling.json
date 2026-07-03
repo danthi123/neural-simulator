@@ -1,0 +1,194 @@
+{
+  "probe": "emerge48_soft_l2_pooling",
+  "verdict": "BOUNDARY (on-substrate) -- SOFT/UNION L2 pooling (ld_wi=0.005) does NOT reach the on-substrate GO: super-acc 0.03 < 0.80; L2-group +0.08 < 0.15; permuted didn't collapse (0.03 vs 0.08); dAP-lesion didn't collapse (0.03 vs 0.00); no within>cross discrimination (within 0.007 vs cross 0.002 = collision, not generalization). on-substrate stacked super-acc 0.03 (EMERGE-46 was 0.03), within 0.007 cross 0.002; permuted-cooc 0.08, dAP-lesion 0.00. NEXT RUNG: the Foldiak (1991) trace / temporal-continuity rule (a slow eligibility trace pooling features that co-occur in TIME; needs grouped/curriculum presentation). NO NEW sim/ edit.",
+  "flags": {
+    "acc": 0.027777777777777776,
+    "grp": 0.08134632453804568,
+    "perm": 0.08333333333333333,
+    "dap": 0.0,
+    "disc": false,
+    "within": 0.006944444444444444,
+    "cross": 0.0019290123456790122,
+    "permuted_stats": null
+  },
+  "mechanism": "SOFT/UNION L2 POOLING: the L2 OnSubstratePooler is built with a LOW winner-inactive depression rate ld_wi (the committed fused_htm_winner_inactive_depression's lam_dep_wi argument, 0=off), so multiple L2 columns strengthen on similar inputs (HTM temporal pooler, Hawkins-Ahmad 2016; HMAX soft-max, Serre-Poggio 2005) -> same-superordinate members (incl. a held-out sub-category) SHARE L2 columns -> inheritance routes. L1 stays at the normal discriminative ld_wi. Optionally combined with EMERGE-47 L2-input local normalization (an additive secondary lift).",
+  "task": "EMERGE-44/46 6-sub-cat -> 2-superordinate; hold out ENTIRE sub-categories {2,5}; L2 on-substrate pooler with soft/union ld_wi; measure held-out within/cross overlap + super-acc; anti-cheats permuted-cooc + dAP-lesion (+ permuted-stats if normalize), l2lesion reported-not-gated",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "epochs": 40,
+    "l2_ld": 0.005,
+    "normalize": false,
+    "n_col1": 200,
+    "n_col2": 120,
+    "k1": 6,
+    "k2": 6,
+    "n_super": 2
+  },
+  "numpy_sweep": {
+    "ld=0.15": {
+      "l2_ld": 0.15,
+      "held_within": 0.002700617283950617,
+      "held_cross": 0.0,
+      "super_acc": 0.05555555555555555,
+      "l2_group": 0.09422657952069717,
+      "super_acc_per_seed": [
+        0.08333333333333333,
+        0.0,
+        0.08333333333333333
+      ]
+    },
+    "ld=0.0": {
+      "l2_ld": 0.0,
+      "held_within": 0.7604166666666666,
+      "held_cross": 0.07638888888888888,
+      "super_acc": 1.0,
+      "l2_group": 0.7251270878721859,
+      "super_acc_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "ld=0.005": {
+      "l2_ld": 0.005,
+      "held_within": 0.47376543209876537,
+      "held_cross": 0.0,
+      "super_acc": 1.0,
+      "l2_group": 0.5123456790123456,
+      "super_acc_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "ld=0.01": {
+      "l2_ld": 0.01,
+      "held_within": 0.2588734567901234,
+      "held_cross": 0.0,
+      "super_acc": 1.0,
+      "l2_group": 0.3358750907770516,
+      "super_acc_per_seed": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "ld=0.02": {
+      "l2_ld": 0.02,
+      "held_within": 0.12307098765432097,
+      "held_cross": 0.0,
+      "super_acc": 0.9722222222222222,
+      "l2_group": 0.19026870007262164,
+      "super_acc_per_seed": [
+        1.0,
+        0.9166666666666666,
+        1.0
+      ]
+    },
+    "ld=0.05": {
+      "l2_ld": 0.05,
+      "held_within": 0.03703703703703703,
+      "held_cross": 0.0,
+      "super_acc": 0.3055555555555555,
+      "l2_group": 0.1205519244734931,
+      "super_acc_per_seed": [
+        0.5,
+        0.25,
+        0.16666666666666666
+      ]
+    }
+  },
+  "onsubstrate": {
+    "stacked_soft": {
+      "held_within": 0.006944444444444444,
+      "held_cross": 0.0019290123456790122,
+      "super_acc": 0.027777777777777776,
+      "l2_group": 0.08134632453804568,
+      "super_acc_per_seed": [
+        0.08333333333333333,
+        0.0,
+        0.0
+      ],
+      "held_within_per_seed": [
+        0.01273148148148148,
+        0.0011574074074074073,
+        0.006944444444444444
+      ],
+      "held_cross_per_seed": [
+        0.0,
+        0.003472222222222222,
+        0.0023148148148148147
+      ]
+    },
+    "permuted_cooc": {
+      "held_within": 0.006172839506172839,
+      "held_cross": 0.008101851851851851,
+      "super_acc": 0.08333333333333333,
+      "l2_group": 0.08037803598805777,
+      "super_acc_per_seed": [
+        0.08333333333333333,
+        0.0,
+        0.16666666666666666
+      ],
+      "held_within_per_seed": [
+        0.008101851851851851,
+        0.0,
+        0.010416666666666666
+      ],
+      "held_cross_per_seed": [
+        0.006944444444444444,
+        0.011574074074074073,
+        0.005787037037037037
+      ]
+    },
+    "dap_lesion": {
+      "held_within": 0.006944444444444444,
+      "held_cross": 0.0019290123456790122,
+      "super_acc": 0.0,
+      "l2_group": 0.08134632453804568,
+      "super_acc_per_seed": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "held_within_per_seed": [
+        0.01273148148148148,
+        0.0011574074074074073,
+        0.006944444444444444
+      ],
+      "held_cross_per_seed": [
+        0.0,
+        0.003472222222222222,
+        0.0023148148148148147
+      ]
+    },
+    "l2lesion": {
+      "held_within": 0.0779320987654321,
+      "held_cross": 0.06520061728395062,
+      "super_acc": 0.5277777777777778,
+      "l2_group": 0.052085854918098924,
+      "super_acc_per_seed": [
+        0.5,
+        0.5833333333333334,
+        0.5
+      ],
+      "held_within_per_seed": [
+        0.06597222222222222,
+        0.06712962962962962,
+        0.10069444444444445
+      ],
+      "held_cross_per_seed": [
+        0.06134259259259259,
+        0.09259259259259259,
+        0.041666666666666664
+      ]
+    }
+  },
+  "elapsed_seconds": 604.8,
+  "sim_edit": "NONE (NO NEW sim/ edit) -- the soft L2 depression is a LOWER value of the ALREADY-COMMITTED kernel's lam_dep_wi argument; reuse-by-import of EMERGE-44/46/47 poolers; every existing sim/ path byte-unchanged",
+  "HONEST_NOTE": "EMERGE-47 root-caused the EMERGE-46 boundary as OVER-SELECTIVE winner-inactive depression and proved (numpy sweep) that softening it is the DOMINANT lever (super-acc 0.06 at ld=0.15 -> 0.97 at ld=0.02). This de-risk PORTS the soft/union pooling to the real substrate (a lower L2 ld_wi). The shortcut guard: within-super held-out overlap must EXCEED cross-super (generalization, not indiscriminate collision), and permuted must still collapse. Winner SELECTION is a host top-k over the on-substrate drive (EMERGE-41 has the spiking FS-WTA version). 3 seeds (42/43/44); 6-seed is a cheap confirmation follow-on."
+}
