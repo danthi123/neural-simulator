@@ -1,0 +1,253 @@
+{
+  "probe": "emerge85_wm_buffer_recursion",
+  "verdict": "GO -- the RANK-3 theta-gamma multiplexed WM BUFFER SURPASSES the reservoir's stack-recursion boundary. On the SAME EMERGE-84 nested pair-matching grammaticality task, the plain reservoir's stack-depth is d*=2 (profile d1=1.00, d2=0.91, d3=0.81, d4=0.70) while the WM-buffer-augmented read-out reaches d*=3 (profile d1=1.00, d2=1.00, d3=0.97, d4=0.46) -- STRICTLY DEEPER: the bounded buffer holds the whole nested number sequence in ORDERED slots (no fading) so the read-out matches every pair within capacity 8. The count-multiset shortcut stays DEFEATED (d1=0.50, d2=0.53, d3=0.53, d4=0.54 ~chance); a BUFFER-SLOT-SCRAMBLE collapses it (d1=0.49, d2=0.50, d3=0.51, d4=0.49 -> the ORDERED slots are load-bearing = the STACK structure, not a bag). The buffer BOUNDARIES at its capacity (~depth 3, 8 number-slots) -- the biologically-faithful, BOUNDED recursion limit (the human ~2-3-center-embedding bound), NOT unbounded recursion. 6 seeds. ==> the RANK-3 mechanism (a bounded theta-gamma WM buffer, catalog N.15) surpasses the plain reservoir's recursion depth; the SPIKING theta-gamma realization (theta nesting gamma-locked assembly slots on the substrate) is the pre-registered follow-on rung. Rate-level; reuse-by-import; NO sim/ edit.",
+  "go": true,
+  "task": "RANK-3 surpass: add a bounded theta-gamma multiplexed WM buffer (ordered number-slots) and show it pushes the nested-pair-matching stack-recursion depth PAST the plain reservoir's d*=2 (up to the buffer capacity, then a biologically-faithful bounded limit); count shortcut defeated + buffer-slot-scramble collapses (ordered slots load-bearing); 6-seed rate CPU",
+  "capacity": 8,
+  "nums": [
+    "sng",
+    "plu"
+  ],
+  "test_depths": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "elapsed_seconds": 14.0,
+  "aggregate": {
+    "by_depth": {
+      "1": {
+        "reservoir": 1.0,
+        "wm_buffer": 1.0,
+        "buffer_slot_scramble": 0.4891666666666667,
+        "count_baseline": 0.5
+      },
+      "2": {
+        "reservoir": 0.9091666666666667,
+        "wm_buffer": 1.0,
+        "buffer_slot_scramble": 0.5016666666666667,
+        "count_baseline": 0.5308333333333334
+      },
+      "3": {
+        "reservoir": 0.8099999999999999,
+        "wm_buffer": 0.9716666666666667,
+        "buffer_slot_scramble": 0.5066666666666666,
+        "count_baseline": 0.5308333333333334
+      },
+      "4": {
+        "reservoir": 0.7033333333333333,
+        "wm_buffer": 0.4558333333333333,
+        "buffer_slot_scramble": 0.49166666666666664,
+        "count_baseline": 0.5425000000000001
+      }
+    },
+    "markers_discovered": true,
+    "reservoir_depth_star": 2,
+    "wm_buffer_depth_star": 3,
+    "capacity": 8
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "markers_ok": true,
+      "capacity": 8,
+      "by_depth": {
+        "1": {
+          "reservoir": 1.0,
+          "wm_buffer": 1.0,
+          "buffer_slot_scramble": 0.505,
+          "count_baseline": 0.5
+        },
+        "2": {
+          "reservoir": 0.915,
+          "wm_buffer": 1.0,
+          "buffer_slot_scramble": 0.51,
+          "count_baseline": 0.535
+        },
+        "3": {
+          "reservoir": 0.79,
+          "wm_buffer": 1.0,
+          "buffer_slot_scramble": 0.495,
+          "count_baseline": 0.505
+        },
+        "4": {
+          "reservoir": 0.73,
+          "wm_buffer": 0.455,
+          "buffer_slot_scramble": 0.43,
+          "count_baseline": 0.56
+        }
+      },
+      "chance": 0.5
+    },
+    {
+      "seed": 43,
+      "markers_ok": true,
+      "capacity": 8,
+      "by_depth": {
+        "1": {
+          "reservoir": 1.0,
+          "wm_buffer": 1.0,
+          "buffer_slot_scramble": 0.5,
+          "count_baseline": 0.5
+        },
+        "2": {
+          "reservoir": 0.905,
+          "wm_buffer": 1.0,
+          "buffer_slot_scramble": 0.53,
+          "count_baseline": 0.55
+        },
+        "3": {
+          "reservoir": 0.775,
+          "wm_buffer": 1.0,
+          "buffer_slot_scramble": 0.505,
+          "count_baseline": 0.56
+        },
+        "4": {
+          "reservoir": 0.73,
+          "wm_buffer": 0.44,
+          "buffer_slot_scramble": 0.5,
+          "count_baseline": 0.53
+        }
+      },
+      "chance": 0.5
+    },
+    {
+      "seed": 44,
+      "markers_ok": true,
+      "capacity": 8,
+      "by_depth": {
+        "1": {
+          "reservoir": 1.0,
+          "wm_buffer": 1.0,
+          "buffer_slot_scramble": 0.48,
+          "count_baseline": 0.5
+        },
+        "2": {
+          "reservoir": 0.9,
+          "wm_buffer": 1.0,
+          "buffer_slot_scramble": 0.515,
+          "count_baseline": 0.52
+        },
+        "3": {
+          "reservoir": 0.735,
+          "wm_buffer": 0.915,
+          "buffer_slot_scramble": 0.57,
+          "count_baseline": 0.52
+        },
+        "4": {
+          "reservoir": 0.675,
+          "wm_buffer": 0.475,
+          "buffer_slot_scramble": 0.5,
+          "count_baseline": 0.545
+        }
+      },
+      "chance": 0.5
+    },
+    {
+      "seed": 100,
+      "markers_ok": true,
+      "capacity": 8,
+      "by_depth": {
+        "1": {
+          "reservoir": 1.0,
+          "wm_buffer": 1.0,
+          "buffer_slot_scramble": 0.49,
+          "count_baseline": 0.5
+        },
+        "2": {
+          "reservoir": 0.875,
+          "wm_buffer": 1.0,
+          "buffer_slot_scramble": 0.46,
+          "count_baseline": 0.51
+        },
+        "3": {
+          "reservoir": 0.84,
+          "wm_buffer": 1.0,
+          "buffer_slot_scramble": 0.455,
+          "count_baseline": 0.53
+        },
+        "4": {
+          "reservoir": 0.72,
+          "wm_buffer": 0.425,
+          "buffer_slot_scramble": 0.515,
+          "count_baseline": 0.55
+        }
+      },
+      "chance": 0.5
+    },
+    {
+      "seed": 101,
+      "markers_ok": true,
+      "capacity": 8,
+      "by_depth": {
+        "1": {
+          "reservoir": 1.0,
+          "wm_buffer": 1.0,
+          "buffer_slot_scramble": 0.51,
+          "count_baseline": 0.5
+        },
+        "2": {
+          "reservoir": 0.98,
+          "wm_buffer": 1.0,
+          "buffer_slot_scramble": 0.52,
+          "count_baseline": 0.515
+        },
+        "3": {
+          "reservoir": 0.82,
+          "wm_buffer": 0.915,
+          "buffer_slot_scramble": 0.49,
+          "count_baseline": 0.525
+        },
+        "4": {
+          "reservoir": 0.685,
+          "wm_buffer": 0.435,
+          "buffer_slot_scramble": 0.46,
+          "count_baseline": 0.545
+        }
+      },
+      "chance": 0.5
+    },
+    {
+      "seed": 102,
+      "markers_ok": true,
+      "capacity": 8,
+      "by_depth": {
+        "1": {
+          "reservoir": 1.0,
+          "wm_buffer": 1.0,
+          "buffer_slot_scramble": 0.45,
+          "count_baseline": 0.5
+        },
+        "2": {
+          "reservoir": 0.88,
+          "wm_buffer": 1.0,
+          "buffer_slot_scramble": 0.475,
+          "count_baseline": 0.555
+        },
+        "3": {
+          "reservoir": 0.9,
+          "wm_buffer": 1.0,
+          "buffer_slot_scramble": 0.525,
+          "count_baseline": 0.545
+        },
+        "4": {
+          "reservoir": 0.68,
+          "wm_buffer": 0.505,
+          "buffer_slot_scramble": 0.545,
+          "count_baseline": 0.525
+        }
+      },
+      "chance": 0.5
+    }
+  ],
+  "HONEST_NOTE": "The RANK-3 mechanism the EMERGE-84 boundary named: a bounded theta-gamma multiplexed WM buffer (catalog N.15; Lisman-Idiart -- a theta cycle nesting ~7 gamma-locked slots = a capacity-bounded stack). Rate-level functional realization (a running-ordinal slot multiplex); the SPIKING theta-gamma port is the follow-on rung. The buffer surpasses the plain reservoir's fading-memory recursion limit up to its capacity, then boundaries at the capacity -- the biologically-faithful BOUNDED recursion (the human ~2-3-embedding limit), not unbounded. The ordered slots are the STACK structure (buffer-slot-scramble collapses); the count shortcut is defeated. Reuse-by-import; NO sim/ edit."
+}
