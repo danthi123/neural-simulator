@@ -1,0 +1,374 @@
+{
+  "probe": "emerge58_unified_fluent_console",
+  "rung": 3,
+  "GO": true,
+  "verdict": "GO -- the EMERGENT-REASONING fluent conversation (EMERGE-51..57) is FOLDED into the flagship FLUID console: ONE console answers BOTH the EMERGE emergent-reasoning questions (inherit / per-dimension cancel / sibling-abstain -- adapter fidelity 1.00 vs the reasoner's own ask_can, render-correct 1.00 on the CPU path, EVERY ability frame routed to the reasoner) AND the existing fluid paths (no regression -- what/anaphora/growth/yes-no/discuss/moat all correct), under ONE consistent gate-first no-confab MOAT (0 renders on abstains across BOTH kinds -- the load-bearing property) with NO cross-talk (an EMERGE ability question never leaks into the fluid path and vice-versa). 3-seed, CPU-safe. The fluent GPU render (the re-fine-tuned 21M, EMERGE-57) is the same gate-first loop -- GPU smoke ran: GPU render smoke on the re-fine-tuned 21M (21.3M): the fluent surfaces above; the moat held on the REAL model (0 renders on abstains -- the load-bearing property).. Reuse-by-import; NO sim/ edit; NO _fluidconv_chat_repl edit. Wernicke decides -> Broca articulates, for BOTH the reasoner and the fluid paths.",
+  "mechanism": "a UnifiedFluentConsole COMPOSES the flagship FluidChat (fluid paths, verbatim) + a taught PerDimensionConsole (EMERGE-54 per-dimension emergent reasoner over the pooler-discovered categories). A router keyed on the 'can a X <verb>?' ability frame dispatches EMERGE questions to the reasoner -> a per-dimension gate-decision adapter (emerge_pd_gate_decision, 1-to-1 with ask_can) -> the SAME gate-first render loop as EMERGE-56/57 (abstain -> the generator is NEVER invoked; answer -> the re-fine-tuned 21M / a CPU template renders the gated fact fluently). Everything else -> FluidChat.turn (byte-unchanged). ONE moat across both kinds. Reuse-by-import; NO sim/ edit; NO _fluidconv_chat_repl edit.",
+  "task": "fold EMERGE-51..57 emergent-reasoning fluent conversation into the flagship fluid console; adapter fidelity + EMERGE render correct + no fluid regression + ONE gate-first moat + no cross-talk; mixed demo; multi-seed",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "elapsed_seconds": 67.3,
+  "per_seed": [
+    {
+      "seed": 42,
+      "adapter_fidelity": 1.0,
+      "emerge_render_correct": 1.0,
+      "n_answer": 5,
+      "routed_all_emerge": true,
+      "moat_ok": true,
+      "moat_render_calls_on_abstains": 0,
+      "n_moat": 3,
+      "render_calls_on_abstain_total": 0,
+      "fluid_ok": true,
+      "no_crosstalk": true,
+      "render_kind": "template",
+      "fluid_regression_detail": {
+        "what_chase": "The dog chases cat.",
+        "anaphora": "The cat eats fish.",
+        "what_eat": "The dog eats meat.",
+        "growth": "ok, i learned that the wolf eats rabbit.",
+        "growth_use": "The wolf eats rabbit.",
+        "yesno": "Yes, the dog eats meat.",
+        "discuss": "Here's what I know about the dog: A dog is big. It eats meat, chases cat and likes bone.",
+        "moat": "I don't know."
+      },
+      "per_probe": [
+        {
+          "member": "owl",
+          "prop": "fly",
+          "expect": "inherited",
+          "reply": "Yes, the owl can fly.",
+          "routed_emerge": true,
+          "render_delta": 1,
+          "ok": true
+        },
+        {
+          "member": "minnow",
+          "prop": "swim",
+          "expect": "inherited",
+          "reply": "Yes, the minnow can swim.",
+          "routed_emerge": true,
+          "render_delta": 1,
+          "ok": true
+        },
+        {
+          "member": "penguin",
+          "prop": "fly",
+          "expect": "exception",
+          "reply": "No, the penguin walks.",
+          "routed_emerge": true,
+          "render_delta": 1,
+          "ok": true
+        },
+        {
+          "member": "pike",
+          "prop": "swim",
+          "expect": "exception",
+          "reply": "No, the pike lurks.",
+          "routed_emerge": true,
+          "render_delta": 1,
+          "ok": true
+        },
+        {
+          "member": "robin",
+          "prop": "breathe",
+          "expect": "inherited",
+          "reply": "Yes, the robin can breathe.",
+          "routed_emerge": true,
+          "render_delta": 1,
+          "ok": true
+        },
+        {
+          "member": "owl",
+          "prop": "swim",
+          "expect": "moat_sibling",
+          "reply": "I don't know whether an owl can swim.",
+          "routed_emerge": true,
+          "render_delta": 0,
+          "ok": true
+        },
+        {
+          "member": "zzz",
+          "prop": "fly",
+          "expect": "moat_unknown",
+          "reply": "I don't know what a zzz is.",
+          "routed_emerge": true,
+          "render_delta": 0,
+          "ok": true
+        },
+        {
+          "member": "wobble",
+          "prop": "swim",
+          "expect": "moat_unknown",
+          "reply": "I don't know what a wobble is.",
+          "routed_emerge": true,
+          "render_delta": 0,
+          "ok": true
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "adapter_fidelity": 1.0,
+      "emerge_render_correct": 1.0,
+      "n_answer": 5,
+      "routed_all_emerge": true,
+      "moat_ok": true,
+      "moat_render_calls_on_abstains": 0,
+      "n_moat": 3,
+      "render_calls_on_abstain_total": 0,
+      "fluid_ok": true,
+      "no_crosstalk": true,
+      "render_kind": "template",
+      "fluid_regression_detail": {
+        "what_chase": "The dog chases cat.",
+        "anaphora": "The cat eats fish.",
+        "what_eat": "The dog eats meat.",
+        "growth": "ok, i learned that the wolf eats rabbit.",
+        "growth_use": "The wolf eats rabbit.",
+        "yesno": "Yes, the dog eats meat.",
+        "discuss": "Here's what I know about the dog: A dog is big. It eats meat, chases cat and likes bone.",
+        "moat": "I don't know."
+      },
+      "per_probe": [
+        {
+          "member": "owl",
+          "prop": "fly",
+          "expect": "inherited",
+          "reply": "Yes, the owl can fly.",
+          "routed_emerge": true,
+          "render_delta": 1,
+          "ok": true
+        },
+        {
+          "member": "minnow",
+          "prop": "swim",
+          "expect": "inherited",
+          "reply": "Yes, the minnow can swim.",
+          "routed_emerge": true,
+          "render_delta": 1,
+          "ok": true
+        },
+        {
+          "member": "penguin",
+          "prop": "fly",
+          "expect": "exception",
+          "reply": "No, the penguin walks.",
+          "routed_emerge": true,
+          "render_delta": 1,
+          "ok": true
+        },
+        {
+          "member": "pike",
+          "prop": "swim",
+          "expect": "exception",
+          "reply": "No, the pike lurks.",
+          "routed_emerge": true,
+          "render_delta": 1,
+          "ok": true
+        },
+        {
+          "member": "robin",
+          "prop": "breathe",
+          "expect": "inherited",
+          "reply": "Yes, the robin can breathe.",
+          "routed_emerge": true,
+          "render_delta": 1,
+          "ok": true
+        },
+        {
+          "member": "owl",
+          "prop": "swim",
+          "expect": "moat_sibling",
+          "reply": "I don't know whether an owl can swim.",
+          "routed_emerge": true,
+          "render_delta": 0,
+          "ok": true
+        },
+        {
+          "member": "zzz",
+          "prop": "fly",
+          "expect": "moat_unknown",
+          "reply": "I don't know what a zzz is.",
+          "routed_emerge": true,
+          "render_delta": 0,
+          "ok": true
+        },
+        {
+          "member": "wobble",
+          "prop": "swim",
+          "expect": "moat_unknown",
+          "reply": "I don't know what a wobble is.",
+          "routed_emerge": true,
+          "render_delta": 0,
+          "ok": true
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "adapter_fidelity": 1.0,
+      "emerge_render_correct": 1.0,
+      "n_answer": 5,
+      "routed_all_emerge": true,
+      "moat_ok": true,
+      "moat_render_calls_on_abstains": 0,
+      "n_moat": 3,
+      "render_calls_on_abstain_total": 0,
+      "fluid_ok": true,
+      "no_crosstalk": true,
+      "render_kind": "template",
+      "fluid_regression_detail": {
+        "what_chase": "The dog chases cat.",
+        "anaphora": "The cat eats fish.",
+        "what_eat": "The dog eats meat.",
+        "growth": "ok, i learned that the wolf eats rabbit.",
+        "growth_use": "The wolf eats rabbit.",
+        "yesno": "Yes, the dog eats meat.",
+        "discuss": "Here's what I know about the dog: A dog is big. It eats meat, chases cat and likes bone.",
+        "moat": "I don't know."
+      },
+      "per_probe": [
+        {
+          "member": "owl",
+          "prop": "fly",
+          "expect": "inherited",
+          "reply": "Yes, the owl can fly.",
+          "routed_emerge": true,
+          "render_delta": 1,
+          "ok": true
+        },
+        {
+          "member": "minnow",
+          "prop": "swim",
+          "expect": "inherited",
+          "reply": "Yes, the minnow can swim.",
+          "routed_emerge": true,
+          "render_delta": 1,
+          "ok": true
+        },
+        {
+          "member": "penguin",
+          "prop": "fly",
+          "expect": "exception",
+          "reply": "No, the penguin walks.",
+          "routed_emerge": true,
+          "render_delta": 1,
+          "ok": true
+        },
+        {
+          "member": "pike",
+          "prop": "swim",
+          "expect": "exception",
+          "reply": "No, the pike lurks.",
+          "routed_emerge": true,
+          "render_delta": 1,
+          "ok": true
+        },
+        {
+          "member": "robin",
+          "prop": "breathe",
+          "expect": "inherited",
+          "reply": "Yes, the robin can breathe.",
+          "routed_emerge": true,
+          "render_delta": 1,
+          "ok": true
+        },
+        {
+          "member": "owl",
+          "prop": "swim",
+          "expect": "moat_sibling",
+          "reply": "I don't know whether an owl can swim.",
+          "routed_emerge": true,
+          "render_delta": 0,
+          "ok": true
+        },
+        {
+          "member": "zzz",
+          "prop": "fly",
+          "expect": "moat_unknown",
+          "reply": "I don't know what a zzz is.",
+          "routed_emerge": true,
+          "render_delta": 0,
+          "ok": true
+        },
+        {
+          "member": "wobble",
+          "prop": "swim",
+          "expect": "moat_unknown",
+          "reply": "I don't know what a wobble is.",
+          "routed_emerge": true,
+          "render_delta": 0,
+          "ok": true
+        }
+      ]
+    }
+  ],
+  "gpu_render_smoke": {
+    "ran": true,
+    "note": "GPU render smoke on the re-fine-tuned 21M (21.3M): the fluent surfaces above; the moat held on the REAL model (0 renders on abstains -- the load-bearing property).",
+    "render_on_abstain": 0,
+    "records": [
+      {
+        "member": "owl",
+        "prop": "fly",
+        "expect": "inherited",
+        "reply": "yes .",
+        "model_invoked": true
+      },
+      {
+        "member": "minnow",
+        "prop": "swim",
+        "expect": "inherited",
+        "reply": "yes , the minnow can swim .",
+        "model_invoked": true
+      },
+      {
+        "member": "penguin",
+        "prop": "fly",
+        "expect": "exception",
+        "reply": "no , the penguin walks .",
+        "model_invoked": true
+      },
+      {
+        "member": "pike",
+        "prop": "swim",
+        "expect": "exception",
+        "reply": "no , a pike lurks .",
+        "model_invoked": true
+      },
+      {
+        "member": "robin",
+        "prop": "breathe",
+        "expect": "inherited",
+        "reply": "yes , the robin can breathe .",
+        "model_invoked": true
+      },
+      {
+        "member": "owl",
+        "prop": "swim",
+        "expect": "moat_sibling",
+        "reply": "I don't know whether an owl can swim.",
+        "model_invoked": false
+      },
+      {
+        "member": "zzz",
+        "prop": "fly",
+        "expect": "moat_unknown",
+        "reply": "I don't know what a zzz is.",
+        "model_invoked": false
+      },
+      {
+        "member": "wobble",
+        "prop": "swim",
+        "expect": "moat_unknown",
+        "reply": "I don't know what a wobble is.",
+        "model_invoked": false
+      }
+    ]
+  },
+  "HONEST_NOTE": "RUNG 3 = the MERGE (composition), not a new mechanism. The EMERGE render correctness is gated on the CPU template renderer (content-locked, same surface) so routing/moat/regression run offline + CPU-safe + multi-seed; the FLUENT GPU render is the EMERGE-57 re-fine-tuned 21M behind the IDENTICAL gate-first loop (--render / --demo --render; skip-if-no-ckpt), reported as a smoke -- EMERGE-57 already GO'd its render fidelity 1.00 + moat 0-renders-on-abstain. The generator ANN is a tracked temporary scaffold (spiking-forward conversion deferred, validated at 88.6M). The MOAT is preserved BY CONSTRUCTION on BOTH kinds (the gate short-circuits before the renderer / the fluid gate). The EMERGE reasoner is taught EMERGE-54's scripted bird/fish taxonomy; corpus-scale feature discovery is the standing EMERGE follow-on."
+}

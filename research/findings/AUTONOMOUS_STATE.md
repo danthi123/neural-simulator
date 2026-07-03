@@ -7822,3 +7822,29 @@ console where "can a penguin fly?"/"can a robin breathe?" (EMERGE emergent reaso
 moat -- the emergent-reasoning conversation folded into the flagship fluid console. Multi-fine-tune-seed EMERGE-57 is a
 cheap follow-on. Boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS;
 honest origin+gitea; COMMIT ON MAIN; ARM A MONITOR on every long run; GPU/CuPy for the generator (numpy for CPU).
+
+## CYCLE 865 (2026-07-03 — EMERGE-58 Rung-3 GO: the north-star wire COMPLETE — one flagship console, both paths, one moat)
+
+EMERGE-58 (GO, `2026-07-03-emerge58-unified-fluent-console-GO.md`, NO sim/ edit, NO `_fluidconv_chat_repl.py` edit — a
+PURE COMPOSITION/wrapper): folds the emergent-reasoning fluent conversation (EMERGE-51..57) into the flagship fluid
+console so ONE console answers BOTH kinds under ONE gate-first moat. `UnifiedFluentConsole` routes the `can a X <verb>?`
+ability frame -> a taught PerDimensionConsole (EMERGE-54) -> `emerge_pd_gate_decision` (1-to-1 with ask_can) -> the same
+gate-first render loop as EMERGE-56/57 (abstain -> generator NOT invoked; answer -> the re-fine-tuned 21M renders);
+everything else -> `FluidChat.turn()` verbatim. Gates (3-seed 42/43/44 CPU + GPU render smoke on the real 21.3M):
+adapter fidelity 1.00, EMERGE render correct 1.00, ability frames routed 1/1 every seed, ONE MOAT 0 renders on abstains
+across BOTH kinds (owl-swim sibling / zzz / wobble — model NOT invoked), no fluid regression (what/anaphora/growth/yes-no/
+discuss/moat), no cross-talk. Mixed demo (`--demo --render`): fluid "what does the dog chase? -> The dog chases cat.";
+EMERGE "can a penguin fly? -> no, the penguin walks."; "can an owl swim? -> I don't know whether an owl can swim."
+[model NOT invoked]; render-calls on abstains BOTH kinds = 0. CI 11 pass (+1 GPU skip-if-no-ckpt). ⇒ Wernicke decides ->
+Broca articulates, for BOTH the emergent reasoner AND the fluid paths, on ONE console. The north-star wire is COMPLETE.
+
+**EXACT NEXT CONCRETE ACTION:** (1) DONE: committed EMERGE-58 to both remotes. (2) NOW: ADVERSARIALLY VERIFY the full
+wire (EMERGE-56/57/58) via a Workflow (ultracode on; the capstone deserves the same adversarial pass that caught the
+EMERGE-38..45 defects) — scrutinize: is the gate PROVABLY gate-first (abstain never invokes the model, not just
+counted-0)? is the CPU-template render-correctness metric masking a real-21M failure (GPU smoke is 1 render each — widen)?
+any routing misfire / cross-talk edge case? is "no regression" byte/behaviour-true? is "north-star wire COMPLETE" an
+honest frame given the generator is still an ANN scaffold? Remediate any confirmed defect + re-commit honestly. (3) THEN
+the EMERGE-57 multi-fine-tune-seed robustness validation (now non-contending — EMERGE-58 done); (4) THEN the next frontier:
+the generator's spiking-forward conversion (tracked scaffold, validated 88.6M) toward fully-spiking-one-brain, OR the
+dendritic credit-assignment frontier (the emergence top-lever). Boundaries = undiscovered mechanisms; NO stopping; sim/
+edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A MONITOR on every long run.
