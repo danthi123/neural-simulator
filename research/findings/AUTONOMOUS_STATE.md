@@ -7749,3 +7749,30 @@ EMERGENT not hand-listed). THEN: multi-level perceptual conversation (EMERGE-52 
 and the north-star wire of the experiential conversational console toward the fluid-conversation stack. Boundaries =
 undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON
 MAIN; ARM A MONITOR on every long run; GPU/CuPy for real runs (numpy for CPU).
+
+## CYCLE 862 (2026-07-03 — EMERGE-55 GO: EMERGENT dimensions -- the last conversational host-lexicon shortcut burned down)
+
+EMERGE-55 (GO 3/3, `2026-07-02-emerge55-emergent-dimensions-GO.md`, NO sim/ edit): the per-dimension structure (which
+properties are mutually-exclusive alternates) is now EMERGENT -- learned from the property co-occurrence statistics
+(co-occur for a member -> different dimensions; never co-occur / alternates -> same dimension; connected components of the
+alternates graph = discovered dimensions), NOT a host lexicon. Every seed learned {breathe} + {fly,walk,swim,lurk}
+exactly (discovery 1.00); drives correct per-dim cancellation (penguin flies=No/breathes=Yes) 1.00; moat 0-FA; LOAD-BEARING
+truth-blind deterministic control (give every member the full vocab -> every prop its own singleton -> cancellation fails
+every seed 0.00). Agent honestly rejected 2 dishonest controls (bijection preserves partition; per-member re-draw
+seed-fragile) before the truth-blind one. `_emerge55_emergent_dimensions_derisk.py` + test (3 pass). Disclosed follow-on:
+the deepest-class-default substitution is still a host taxonomy-depth heuristic (not a dimension lexicon) -> corpus-scale
+dimension discovery. Recorded the whole EMERGE-38..55 arc in CLAUDE.md.
+
+⇒ the emergent-substrate -> grounded-conversation arc EMERGE-38..55 is COMPREHENSIVELY COMPLETE: discover overlapping +
+multi-level categories (from features AND real perception) -> reason (inheritance/cancellation/multi-override/transitivity/
+per-dimension, all emergent) -> converse in NL (moat intact) -> fully-on-substrate (the surpass, 6-seed confirmed). One
+additive sim/ kernel in the whole arc (EMERGE-40).
+
+**EXACT NEXT CONCRETE ACTION:** commit EMERGE-55. THEN the NEXT MAJOR DIRECTION = the north star (fluid LLM-like
+conversation): wire the emergent grounded REASONING to the minimized-generator stack for FLUENT (not templated) NL. This
+is a NEW DIRECTION + a cross-subsystem GPU-dependent integration -> the standing "deep-research + catalog review FIRST at
+new directions" gate FIRES: dispatched a READ-ONLY scoping pass (how to connect the emergent-reasoned grounded facts ->
+the P2 RA render + the gate-first moat of the grounded-language faculty; what's reusable; the cheapest de-risk; the GPU/
+ckpt feasibility). Review its ranked options, then build the cheapest de-risk. Boundaries = undiscovered mechanisms; NO
+stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A MONITOR on every
+long run; GPU/CuPy for the generator (numpy for the CPU emergent-substrate).

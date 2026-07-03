@@ -1,0 +1,111 @@
+{
+  "probe": "emerge55_emergent_dimensions",
+  "verdict": "GO -- the per-dimension (Collins-Quillian) cancellation grouping is now EMERGENT: the brain LEARNS which properties are alternatives-on-one-dimension from the STATISTICS OF EXPERIENCE (mutually-exclusive alternates never co-occur -> one dimension; co-occurring properties -> different dimensions), and that LEARNED grouping REPLACES the host `PROP_DIM` lexicon in the read. DIMENSION-DISCOVERY 1.00 (the learned grouping matches the true dimensions: fly/walk/swim/lurk together as locomotion alternates, breathe separate as respiration). PER-DIMENSION CANCELLATION over the LEARNED dimensions 1.00: the overridden member answers its exception on its LEARNED dimension (locomotion 'walks', not 'flies') AND INHERITS the class default on a DIFFERENT LEARNED dimension (respiration 'breathes') -- both hold (override-locomotion 1.00 + inherit-other 1.00). Non-overridden members inherit on all learned dimensions (1.00); the no-confab MOAT abstains (0 false-accepts); sibling-discrimination stays real (0.00). The LOAD-BEARING DESTROYED-EXCLUSIVITY control (give every member the full property vocabulary so the mutual-exclusivity statistics vanish) BREAKS the read (per-dim cancellation collapses to 0.00): the LEARNED grouping is doing the work, NOT a hard-wired fallback (there is no host `PROP_DIM` fallback). dAP-lesion collapses inheritance to 0.00 (secondary substrate control). 3-seed. => the per-dimension structure is now EMERGENT (learned from experience), NOT host-listed; one spiking brain, NO sim/ edit.",
+  "mechanism": "LEARN the property->dimension grouping from the statistics of experience: build the member x property matrix from the taught facts (class defaults inherited by members, each member's exception REPLACING the class default on its slot); two properties that CO-OCCUR for a member are forced into DIFFERENT dimensions, two that are mutually-exclusive ALTERNATES (never co-occur, both present) share a dimension; connected components of the alternates graph = the discovered dimensions (each a 'which one' WTA group of mutually-exclusive alternatives). That LEARNED grouping REPLACES the host PROP_DIM lexicon in EMERGE-54's per-dimension cancellation read (an exception cancels only its LEARNED dimension; other LEARNED dimensions inherit). Same co-occurrence family the project uses (stream-cortex co-occurrence); biology: competitive/lateral-inhibition grouping of mutually-exclusive alternatives. Reuse-by-import (EMERGE-54 console); NO sim/ edit.",
+  "task": "observe members + speak the taxonomy + teach class props by dimension + LOCOMOTION exceptions -> LEARN the dimensions from statistics -> drive EMERGE-54's per-dimension cancellation with the LEARNED grouping; gates: dimension-discovery accuracy + per-dimension cancellation over learned dims + moat + LOAD-BEARING destroyed-exclusivity control (breaks the read) + secondary dAP-lesion collapse; 3-seed",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "elapsed_seconds": 75.4,
+  "per_seed": [
+    {
+      "seed": 42,
+      "discovery": 1.0,
+      "per_dim_cancellation": 1.0,
+      "override_locomotion": 1.0,
+      "inherit_other_dim": 1.0,
+      "nonoverride_inherit": 1.0,
+      "sibling_confusion": 0.0,
+      "moat_unknown": true,
+      "moat_false_accepts": 0,
+      "learned_dims": {
+        "0": [
+          "breathe"
+        ],
+        "1": [
+          "fly",
+          "lurk",
+          "swim",
+          "walk"
+        ]
+      },
+      "shuffled_per_dim_cancellation": 0.0,
+      "shuffled_discovery": 0.4,
+      "lesion_nonoverride_inherit": 0.0,
+      "replies": {
+        "penguin_fly": "No, a penguin walks.",
+        "penguin_breathe": "Yes, a penguin can breathe.",
+        "owl_fly": "Yes, an owl can fly.",
+        "owl_breathe": "Yes, an owl can breathe.",
+        "moat_unknown": "I don't know what a zzz is."
+      }
+    },
+    {
+      "seed": 43,
+      "discovery": 1.0,
+      "per_dim_cancellation": 1.0,
+      "override_locomotion": 1.0,
+      "inherit_other_dim": 1.0,
+      "nonoverride_inherit": 1.0,
+      "sibling_confusion": 0.0,
+      "moat_unknown": true,
+      "moat_false_accepts": 0,
+      "learned_dims": {
+        "0": [
+          "breathe"
+        ],
+        "1": [
+          "fly",
+          "lurk",
+          "swim",
+          "walk"
+        ]
+      },
+      "shuffled_per_dim_cancellation": 0.0,
+      "shuffled_discovery": 0.4,
+      "lesion_nonoverride_inherit": 0.0,
+      "replies": {
+        "penguin_fly": "No, a penguin walks.",
+        "penguin_breathe": "Yes, a penguin can breathe.",
+        "owl_fly": "Yes, an owl can fly.",
+        "owl_breathe": "Yes, an owl can breathe.",
+        "moat_unknown": "I don't know what a zzz is."
+      }
+    },
+    {
+      "seed": 44,
+      "discovery": 1.0,
+      "per_dim_cancellation": 1.0,
+      "override_locomotion": 1.0,
+      "inherit_other_dim": 1.0,
+      "nonoverride_inherit": 1.0,
+      "sibling_confusion": 0.0,
+      "moat_unknown": true,
+      "moat_false_accepts": 0,
+      "learned_dims": {
+        "0": [
+          "breathe"
+        ],
+        "1": [
+          "fly",
+          "lurk",
+          "swim",
+          "walk"
+        ]
+      },
+      "shuffled_per_dim_cancellation": 0.0,
+      "shuffled_discovery": 0.4,
+      "lesion_nonoverride_inherit": 0.0,
+      "replies": {
+        "penguin_fly": "No, a penguin walks.",
+        "penguin_breathe": "Yes, a penguin can breathe.",
+        "owl_fly": "Yes, an owl can fly.",
+        "owl_breathe": "Yes, an owl can breathe.",
+        "moat_unknown": "I don't know what a zzz is."
+      }
+    }
+  ],
+  "HONEST_NOTE": "burns down the EMERGE-54 host `PROP_DIM` lexicon: the property->dimension grouping is now LEARNED from experience statistics (mutually-exclusive alternates), NOT hand-listed. The learner sees ONLY the member x property co-occurrence matrix reconstructed from the taught facts (class defaults + per-member exception substitution). The read, teaching, discovery pooler, and bridge are unchanged from EMERGE-54 (reuse-by-import). There is deliberately NO host PROP_DIM fallback: an unlearned/wrong dimension makes the exception's dimension not match the asked property's, so the DESTROYED-EXCLUSIVITY control (give every member the full property vocab -> every property a singleton dimension) genuinely breaks per-dimension cancellation, proving the learned grouping is load-bearing. A pure label BIJECTION is NOT used as the control: it merely renames properties and preserves the partition (the signal lives in the assignment, not the names), so it never breaks. The one host-side statistics heuristic is the exception-substitutes-the-deepest-class-default step (which class default an exception replaces on its slot) -- a taxonomy-depth rule, not a dimension lexicon; corpus-scale dimension discovery (many dimensions, learned substitution) is a follow-on. TRUE_DIM is used ONLY to SCORE discovery, never in the read."
+}
