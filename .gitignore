@@ -122,3 +122,6 @@ data/mnist.npz
 # torch checkpoints (large, regenerable build artifacts -- kept local, not committed)
 *.ckpt.pt
 *.pt
+
+# bridge state snapshots (large local build artifacts -- regenerable, kept local)
+*.simstate.h5
