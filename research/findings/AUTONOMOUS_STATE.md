@@ -7629,3 +7629,25 @@ a graded-AND-discriminative regime (e.g. BCM/Oja normalization of the permanence
 rule) -- KEEP ITERATING (do NOT declare a wall; do NOT ask; do NOT pivot). Boundaries = undiscovered mechanisms; NO
 stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs
 (numpy for these CPU de-risks).
+
+## CYCLE 857 (2026-07-03 — EMERGE-50 GO: the FÖLDIÁK TRACE RULE SURPASSES the fully-spiking-stacked-pooler boundary)
+
+EMERGE-50 (GO 3/3, `2026-07-02-emerge50-trace-rule-GO.md`, NO new sim/ edit): the boundary is CLOSED. The Foldiak (1991)
+trace/temporal-continuity rule -- present same-superordinate members' L1 codons in TEMPORAL PROXIMITY + a slow eligibility
+trace on the L2 pre-activity fed into the committed kernels -> co-occurring codons bind to SHARED L2 columns. On-substrate
+held-out sub-category super-acc 0.944 (per-seed 1.00/0.92/0.92, vs EMERGE-46's 0.03), discrimination within 0.461 >> cross
+0.022 (+0.439); the SHUFFLED-TEMPORAL control collapses the discrimination to -0.027 (load-bearing: temporal continuity
+proven). onsub_go True; gate passes (permuted margin tight +0.055 -> 6-seed will firm). NO new sim/ edit (the committed
+kernels are byte-unchanged; only the per-synapse pre-vector is built from a slow eligibility trace vs the instantaneous
+set; a fully-on-substrate cp_ trace array is the follow-on). The competitive self-organizing pooler is now realizable
+FULLY on the spiking substrate END-TO-END for a discovered multi-level taxonomy. The 4-boundary surpass arc
+(EMERGE-46->50) closed by the research-gate-ranked mechanism. MONITORING FIX applied this cycle (owner directive): arm a
+coverage-complete Monitor (done/crash/hang) alongside every long run; the orphaned-detached-run stall is fixed by
+controller-run_in_background + Monitor.
+
+**EXACT NEXT CONCRETE ACTION:** commit EMERGE-50 (runner + test + finding + raw json + this state) to BOTH remotes on
+main. THEN launch the 6-seed confirmation (add seeds 100/101/102) to firm the tight permuted margin -- controller-
+run_in_background + a coverage-complete Monitor (per the standing monitoring practice). THEN continue: the 3-level
+(EMERGE-45) fully-spiking version with the trace, and/or the fully-on-substrate cp_ eligibility-trace array (burn down the
+host-computed-trace rate-reference). Boundaries = undiscovered mechanisms (this one SURPASSED); NO stopping; sim/ edits
+fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy for CPU de-risks).
