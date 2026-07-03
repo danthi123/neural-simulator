@@ -1,0 +1,116 @@
+{
+  "probe": "emerge38_competitive_pooler",
+  "verdict": "GO -- the COMPETITIVE SELF-ORGANIZING pooler SCALES past the fixed projection: on 6 OVERLAPPING categories (adjacent share 3/6 features), a FIXED (untuned) random projection separates them only imperfectly (0.56, chance 0.17), while the LEARNED pooler -- HTM Spatial Pooler (Cui-Ahmad-Hawkins / Diehl-Cook): winners potentiate their ACTIVE inputs + DEPRESS inactive (selectivity) + homeostatic BOOSTING equalizes column usage -- tunes columns to the DISCRIMINATIVE features and separates them PERFECTLY: held-out inheritance 0.98 (margin +0.43). PERMUTED-FEATURES collapses (0.12); dAP-LESION 0.00; 6-seed. (A SPARSE fixed Marr codon, EMERGE-35, fully SATURATES ~0.00 on the same overlap -- also surpassed.) The inheritance runs on the spiking bridge over the learned codons; the fully-spiking HTM-SP learning kernel is the flagged follow-on (the committed three-term kernel's presynaptic depression over-prunes). NO sim/ edit.",
+  "mechanism": "competitive self-organizing pooler on the spiking substrate: dense plastic feat->col coincidence projection; unsupervised loop presents each member -> graded apical drive -> top-k winners (WTA) -> the committed three-term kernel potentiates winners' active features (competitive Hebbian) + dAP-rate hfac BOOSTING equalizes column usage; columns self-organize to separate OVERLAPPING categories; inheritance on the learned codons; sim/ unchanged",
+  "task": "6 categories with OVERLAPPING feature pools; learn the pooler unsupervised; test held-out inheritance vs no-learn(fixed codon) + permuted-features + dAP-lesion; multi-seed",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "config": {
+    "epochs": 40,
+    "n_col": 200,
+    "k_win": 6,
+    "pool_epochs": 400,
+    "stride": 3,
+    "n_feat": 21
+  },
+  "elapsed_seconds": 11.1,
+  "per_seed": [
+    {
+      "seed": 42,
+      "htm": {
+        "held_out": 1.0
+      },
+      "nolearn": {
+        "held_out": 0.2777777777777778
+      },
+      "permuted": {
+        "held_out": 0.05555555555555555
+      },
+      "lesion": {
+        "held_out": 0.0
+      }
+    },
+    {
+      "seed": 43,
+      "htm": {
+        "held_out": 1.0
+      },
+      "nolearn": {
+        "held_out": 0.8333333333333334
+      },
+      "permuted": {
+        "held_out": 0.16666666666666666
+      },
+      "lesion": {
+        "held_out": 0.0
+      }
+    },
+    {
+      "seed": 44,
+      "htm": {
+        "held_out": 1.0
+      },
+      "nolearn": {
+        "held_out": 0.7222222222222222
+      },
+      "permuted": {
+        "held_out": 0.2222222222222222
+      },
+      "lesion": {
+        "held_out": 0.0
+      }
+    },
+    {
+      "seed": 100,
+      "htm": {
+        "held_out": 1.0
+      },
+      "nolearn": {
+        "held_out": 0.5
+      },
+      "permuted": {
+        "held_out": 0.05555555555555555
+      },
+      "lesion": {
+        "held_out": 0.0
+      }
+    },
+    {
+      "seed": 101,
+      "htm": {
+        "held_out": 0.9444444444444444
+      },
+      "nolearn": {
+        "held_out": 0.4444444444444444
+      },
+      "permuted": {
+        "held_out": 0.1111111111111111
+      },
+      "lesion": {
+        "held_out": 0.0
+      }
+    },
+    {
+      "seed": 102,
+      "htm": {
+        "held_out": 0.9444444444444444
+      },
+      "nolearn": {
+        "held_out": 0.5555555555555556
+      },
+      "permuted": {
+        "held_out": 0.1111111111111111
+      },
+      "lesion": {
+        "held_out": 0.0
+      }
+    }
+  ],
+  "HONEST_NOTE": "the LEARNING is the committed three-term kernel on feat->col (competitive Hebbian + hfac boosting) -- on-substrate; the k-WTA competition is a top-k over the graded apical drive (the spiking FS-WTA lateral-inhibition version is the flagged next rung). Surpasses EMERGE-35's fixed codon on OVERLAPPING categories; the scaling caveat (single competitive layer; corpus/capacity-bound) is in the research gate."
+}

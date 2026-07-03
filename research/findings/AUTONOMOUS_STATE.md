@@ -7354,3 +7354,26 @@ ConceptNet periodically for action facts (capable-of/desires). Deferred: webapp 
 the spiking-forward speed-wall (KV-cache lever). Honest wall: free open-world inference beyond learned facts.
 biologization/one-brain HARD; moat a PLUS; NO sim/ edit unless justified; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy
 for real runs (numpy only for CPU smoke/console).
+
+## CYCLE 845 (2026-07-02 — EMERGE-38: the COMPETITIVE SELF-ORGANIZING pooler — GO 6/6)
+
+Closed the fixed-codon boundary flagged at EMERGE-35/36. Rung-1 confirmed a FIXED projection can't separate OVERLAPPING
+categories (sparse Marr codon saturates ~0.00; dense untuned random only 0.56). Research gate (spiking-self-organizing-pooler)
+-> the fix = competitive representation learning (Cui-Ahmad-Hawkins HTM Spatial Pooler / Diehl-Cook 2015 / SAILnet):
+winners potentiate ACTIVE inputs + DEPRESS inactive (selectivity) + homeostatic BOOSTING equalizes column usage -> columns
+tune to the DISCRIMINATIVE features. `_emerge38_competitive_pooler_derisk.py` + `tests/test_emerge38_competitive_pooler.py`
+(3 tests pass). **6-seed GO:** learned 0.98 mean (all seeds >=0.94) vs FIXED 0.56 (margin +0.43); PERMUTED-FEATURES 0.12
+(collapse); dAP-LESION 0.00. The inheritance runs on the spiking bridge over the learned codons (EMERGE-35 path). MEASURED
+the exact residual: porting the learning to the committed three-term kernel degrades to ~0.04 (its presynaptic depression
+punishes non-winners' active synapses -> over-prunes; it is NOT the HTM-SP winner-selectivity depression) while the HTM-SP
+rule reaches 0.98. NO sim/ edit. Finding: `2026-07-02-emerge38-competitive-self-organizing-pooler-GO.md`.
+
+**EXACT NEXT CONCRETE ACTION:** commit EMERGE-38 (runner + test + finding + raw json + this state) to BOTH remotes on
+main. THEN continue autonomously: the flagged follow-on is the FULLY-SPIKING HTM-SP winner-selectivity kernel -- a small
+additive `sim/` proximal-dendrite competitive-learning rule (winner potentiates active inputs + DEPRESSES its INACTIVE
+inputs), which the committed three-term kernel does not do (measured: over-prunes to 0.04). Cheap-first: de-risk the
+winner-inactive depression as an additive kernel path (default-off, byte-identical when off), gate it reproduces the host
+HTM-SP 0.98 on-substrate, 6-seed. THEN: couple competitive-pooler emergent codes into the experiential console (EMERGE-31)
+so discovered OVERLAPPING categories feed the full inference (inheritance + cancellation + transitivity). Boundaries are
+undiscovered mechanisms; NO stopping; biologization/one-brain HARD; moat a PLUS; honest origin+gitea; COMMIT ON MAIN;
+GPU/CuPy for real runs (numpy only for CPU smoke/console/these pooler de-risks).
