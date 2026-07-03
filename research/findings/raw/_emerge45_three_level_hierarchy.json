@@ -1,0 +1,123 @@
+{
+  "probe": "emerge45_three_level_hierarchy",
+  "verdict": "GO -- a THREE-LEVEL discovered taxonomy + transitivity: stacking the competitive pooler 3 deep (features -> sub-category -> genus -> order, all discovered from co-occurrence) chains inheritance through TWO learned levels -- a held-out sub-category inherits its ORDER property 2 levels up (order-acc 0.97, chance 0.50), and the SIBLING order's property stays FALSE (transitivity 1.00). PERMUTED-co-occurrence 0.36; dAP-LESION 0.00; 6-seed. => the stacked pooler generalizes to 3 levels; multi-level inheritance-with-discrimination on one spiking brain. NO sim/ edit.",
+  "mechanism": "3 stacked competitive poolers (features->sub-category L1, L1-codons->genus L2 via same-genus co-occurrence, L2-codons->order L3 via same-order co-occurrence); inheritance chains through 2 discovered levels via the committed three-term kernel + coincidence-plateau read",
+  "task": "8 sub-cats -> 4 genera -> 2 orders; held-out sub-category inherits its ORDER 2 levels up + transitivity (sibling order stays false); vs permuted-co-occurrence + dAP-lesion; multi-seed",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "config": {
+    "epochs": 40,
+    "n_col": [
+      240,
+      160,
+      100
+    ],
+    "k": [
+      6,
+      6,
+      6
+    ],
+    "n_genus": 4,
+    "n_order": 2
+  },
+  "elapsed_seconds": 153.1,
+  "per_seed": [
+    {
+      "seed": 42,
+      "stacked": {
+        "order_acc": 0.9166666666666666,
+        "transitivity": 1.0
+      },
+      "permuted": {
+        "order_acc": 0.4166666666666667,
+        "transitivity": 0.75
+      },
+      "lesion": {
+        "order_acc": 0.0,
+        "transitivity": 1.0
+      }
+    },
+    {
+      "seed": 43,
+      "stacked": {
+        "order_acc": 1.0,
+        "transitivity": 1.0
+      },
+      "permuted": {
+        "order_acc": 0.375,
+        "transitivity": 0.875
+      },
+      "lesion": {
+        "order_acc": 0.0,
+        "transitivity": 1.0
+      }
+    },
+    {
+      "seed": 44,
+      "stacked": {
+        "order_acc": 1.0,
+        "transitivity": 1.0
+      },
+      "permuted": {
+        "order_acc": 0.16666666666666666,
+        "transitivity": 0.5416666666666666
+      },
+      "lesion": {
+        "order_acc": 0.0,
+        "transitivity": 1.0
+      }
+    },
+    {
+      "seed": 100,
+      "stacked": {
+        "order_acc": 0.875,
+        "transitivity": 1.0
+      },
+      "permuted": {
+        "order_acc": 0.3333333333333333,
+        "transitivity": 0.875
+      },
+      "lesion": {
+        "order_acc": 0.0,
+        "transitivity": 1.0
+      }
+    },
+    {
+      "seed": 101,
+      "stacked": {
+        "order_acc": 1.0,
+        "transitivity": 1.0
+      },
+      "permuted": {
+        "order_acc": 0.375,
+        "transitivity": 0.7916666666666666
+      },
+      "lesion": {
+        "order_acc": 0.0,
+        "transitivity": 1.0
+      }
+    },
+    {
+      "seed": 102,
+      "stacked": {
+        "order_acc": 1.0,
+        "transitivity": 1.0
+      },
+      "permuted": {
+        "order_acc": 0.5,
+        "transitivity": 0.8333333333333334
+      },
+      "lesion": {
+        "order_acc": 0.0,
+        "transitivity": 1.0
+      }
+    }
+  ],
+  "HONEST_NOTE": "the pooler LEARNING is a rate-reference (fully-on-substrate at EMERGE-39/40; k-WTA spiking at EMERGE-41); the inheritance chain runs on the spiking bridge over the discovered L3 codons. Extends EMERGE-44 (2-level) to 3; the fully-spiking stacked version is EMERGE-46."
+}

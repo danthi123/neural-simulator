@@ -7484,3 +7484,21 @@ false -- no FISH path), 6-seed; THEN EMERGE-46 = the FULLY-SPIKING stacked hiera
 fused_htm_winner_inactive_depression kernel + EMERGE-41 FS-WTA for both pooler layers). Boundaries = undiscovered
 mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy
 for real runs (numpy for these CPU semantic de-risks).
+
+## CYCLE 851 (2026-07-02 — EMERGE-45: THREE-LEVEL discovered taxonomy + transitivity)
+
+EMERGE-45 (GO 6/6, `2026-07-02-emerge45-three-level-hierarchy-transitivity-GO.md`, NO sim/ edit): stacking the competitive
+pooler 3 deep (features -> sub-category L1 -> genus L2 -> order L3, all discovered from co-occurrence) chains inheritance
+through TWO learned levels -- a held-out sub-category inherits its ORDER property 2 levels up (order-acc 0.97, chance 0.50),
+and the SIBLING order's property stays FALSE (transitivity 1.00 every seed); permuted-co-occurrence 0.36; dAP-lesion 0.00.
+Extends EMERGE-44 (2-level) to 3. `_emerge45_three_level_hierarchy_derisk.py` + `tests/test_emerge45_three_level_hierarchy.py`
+(3 pass). ARC EMERGE-38->45 (competitive self-organizing pooler -> fully-on-substrate + sim/ kernel -> spiking k-WTA ->
+inheritance/cancellation/multi-override -> 2-level then 3-level discovered taxonomy + transitivity) all 6-seed GO, all
+committed both remotes.
+
+**EXACT NEXT CONCRETE ACTION:** commit EMERGE-45 (runner + test + finding + raw json + this state) to BOTH remotes on main.
+THEN continue autonomously: EMERGE-46 = the FULLY-SPIKING stacked hierarchy -- replace the numpy _competitive_pool layers
+with the on-substrate learning (the committed EMERGE-40 fused_htm_winner_inactive_depression kernel + potentiation kernel,
+weights in cp_connections) + EMERGE-41 FS-WTA rank-order selection, for each pooler layer, and confirm the 2/3-level
+inheritance holds fully-on-substrate. Boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair game when
+de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy for these CPU de-risks).
