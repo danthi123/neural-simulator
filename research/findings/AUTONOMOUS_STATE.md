@@ -7579,3 +7579,27 @@ depression at the L2 layer (the numpy evidence: soft depression alone -> super-a
 edit (just a lower L2 ld_wi). If soft-pooling+normalization still short of GO -> the Foldiak trace rule (rung 3).
 Boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea;
 COMMIT ON MAIN; GPU/CuPy for real runs (numpy for these CPU de-risks).
+
+## CYCLE 855 (2026-07-02/03 — EMERGE-48: soft L2 pooling = numpy lever, on-substrate BOUNDARY; residual pinned to the hard threshold)
+
+EMERGE-48 (BOUNDARY 3/3, `2026-07-02-emerge48-soft-l2-pooling-BOUNDARY.md`, NO sim/ edit): softening the L2 winner-inactive
+depression is the DOMINANT lever in NUMPY (super-acc 0.06->1.00, clean window ld=0.005-0.02) but does NOT transfer
+on-substrate -- the on-substrate pooler jumps from over-selective (0.03) straight to indiscriminate collision (ld=0: cross
+0.065, super-acc 0.53~=chance; the within>cross shortcut guard correctly refused). Isolation: same numpy L1 codons ->
+numpy L2 recovers 0.483, on-substrate L2 0.012 -> the residual is the on-substrate pooler's HARD perm>0.5 connected-
+threshold (bimodal split, no graded soft-pooling window), NOT L1 quality. TWO surpass de-risks now (EMERGE-47 normalization
+= +8x partial; EMERGE-48 soft-depression = numpy-only) each isolated the residual deeper. Scoped next rungs: (b) GRADED
+on-substrate drive read (soften perm>0.5 to reproduce numpy's graded window -- CHEAP, directly on the isolated residual);
+(a) Foldiak trace/temporal-continuity rule (structural). HONEST: the CAPABILITY (discover taxonomy + reason) STANDS on
+EMERGE-44/45 with the pooler learning as the standing rate-reference (EMERGE-33/34); this is a PURITY rung (fully-on-
+substrate STACKED learning); the single-layer fully-spiking pooler GO'd (EMERGE-40).
+
+**EXACT NEXT CONCRETE ACTION:** dispatched EMERGE-49 = the GRADED on-substrate drive read (rung b, cheapest, directly on
+the isolated hard-threshold residual): make the on-substrate L2 pooler's drive/read graded (raw permanence-weighted, not
+perm>0.5 thresholded) so it has numpy's soft-pooling window; + soft depression + normalization; 3-seed; expect GO if the
+perms are graded-under-the-threshold. If EMERGE-49 GOs -> boundary SURPASSED (commit + 6-seed). If it BOUNDARYs (perms
+genuinely bimodal) -> the Foldiak trace rule (rung a) is next, and if THAT boundaries the residual is a genuine deep
+on-substrate-competitive-learning-rule limit (register as the deep purity rung, like the dendritic rewrite, and pivot the
+loop to the highest-GOAL-value direction = couple the VALIDATED discovered-taxonomy reasoning toward the conversational
+console). Boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest
+origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy for these CPU de-risks).
