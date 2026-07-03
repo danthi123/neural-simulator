@@ -8718,16 +8718,24 @@ existing **kwargs; 49 producer-chain tests byte-preserved). 6-seed UNANIMOUS GO:
 spk/neuron, region_pathways=[]], renders C_TRANS byte-identically to its private bridge), render-exact 1.000. NO `sim/`
 edit. `2026-07-03-emerge92-producer-coresident-GO.md`, CI 3.
 
-**EXACT NEXT CONCRETE ACTION:** **RUNG A.2 — the FULL 3-region turn co-resident on ONE bridge.** Build one
-`SimulationBridge` hosting `reservoir` (comprehension) + `rf` (composer, MergedRFComposer masked ops) + `slots`
-(producer, the EMERGE-92 shared-bridge slice) as disjoint slices, and run the whole EMERGE-90 turn
-(HEAR->comprehend->store->ASK->SPEAK) against the shared slices + the EMERGE-87 functional-isolation gate (each
-component's result unchanged solo vs co-active). HONEST INTEGRATION QUESTION (scoping-flagged): the reservoir was
-validated at dt=0.5, the producer at dt=1.0, but a shared bridge has ONE global dt -> RUNG A.2 must either re-validate
-the reservoir at dt=1.0 (cheap-first: does OnBridgeLSM still parse at dt=1.0?) OR co-locate the RF composer + producer
-(both dt-1.0-tolerant) first + add the reservoir as the dt-reconciled third. Cheap-first: FIRST probe the reservoir at
-dt=1.0 (single-variable: parse_acc at dt=1.0 vs dt=0.5) to resolve the dt question, THEN build the 3-region turn. Other
-follow-ons: (2) **A→W NEURAL WORD-SPELL** — pass the EMERGE-67/68/69 `UnifiedNeuralSpell` as the
+**CYCLE 909 (EMERGE-93 GO — RUNG A.2: the two SPIKING bridges fold into ONE).** EMERGE-93 (committed): the capstone's
+RF composer (memory) + Izhikevich producer (production) co-reside as disjoint `rf` + `slots` slices on ONE
+`SimulationBridge` (dt=1.0; the RF ops are a dt-agnostic separate loop, the producer is dt=1.0; `region_pathways=[]`; the
+composer's facts in `cp_rf_w_re/im` survive the producer's wash-out), and the whole EMERGE-90 turn runs against the
+shared slices. 6-seed UNANIMOUS GO: parse/recall/render 1.000, moat 0.000/0 (gate-first, on the shared bridge), lesion
+0.000, no-learn 0.000. Composer = MergedRFComposer (rf sized `2*(K+3)*D` for the batched scan); producer = the EMERGE-92
+shared-bridge slice. NO `sim/` edit. `2026-07-03-emerge93-two-spiking-onebridge-turn-GO.md`, CI 2. ⇒ the capstone's two
+spiking substrates are now ONE bridge (the rate reservoir has no bridge; the spiking OnBridgeLSM is the dt-0.5 third).
+
+**EXACT NEXT CONCRETE ACTION:** **RUNG A.3 — fold ALL THREE spiking components onto one bridge (the spiking reservoir
+too).** The reservoir (OnBridgeLSM, dt=0.5) is the remaining separate bridge; add it as a THIRD slice (`reservoir` +
+`rf` + `slots`) on the EMERGE-93 shared bridge. HONEST INTEGRATION QUESTION (scoping-flagged): the reservoir was tuned
+at dt=0.5, the producer at dt=1.0 -> ONE global dt. CHEAP-FIRST SINGLE-VARIABLE: FIRST probe whether OnBridgeLSM parses
+at dt=1.0 (add a default-0.5 `dt=` param to `_build_reservoir_bridge`/`OnBridgeLSM`, re-fit the slot read-out at dt=1.0,
+measure parse_acc vs the dt=0.5 baseline). If GO -> build the 3-region turn at dt=1.0. If the reservoir needs dt=0.5 ->
+either re-tune it at dt=1.0 (IN_SCALE/BIAS/T_STEP) or run the reservoir's read in a dt=0.5 phase (a per-phase dt switch
+on the shared bridge). Then the full 3-spiking-region turn + the EMERGE-87 functional-isolation gate. Other follow-ons:
+(2) **A→W NEURAL WORD-SPELL** — pass the EMERGE-67/68/69 `UnifiedNeuralSpell` as the
 producer `spell=` so every WORD is spoken on spikes (cupy; forces the whole turn onto one cupy process, EMERGE-70/71). (3)
 **FOLD THE THREE BRIDGES ONTO ONE + make the hand-offs SYNAPTIC** (the EMERGE-87 disjoint-slice co-residence pattern) —
 the honest "one brain": the reservoir/composer/producer as disjoint slices on ONE bridge, the comprehend->store->speak
