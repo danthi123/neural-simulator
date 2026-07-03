@@ -8316,3 +8316,32 @@ the 3 EMERGE frames (richer production -> toward open-er speech); (c) the held-o
 EMERGE-57 multi-seed; the per-word A->W selectivity fragility. Boundaries = undiscovered mechanisms; NO stopping; sim/
 edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A MONITOR on every long run;
 CONTROLLER runs GPU steps INLINE (never a detach-and-wait subagent).
+
+## CYCLE 881 (2026-07-03 — EMERGE-70 GO: the TRUE ONE BRAIN -- the whole flagship co-executes fully-spiking in ONE process)
+
+EMERGE-70 (GO, 3-seed, `2026-07-03-emerge70-one-brain-single-backend-GO.md`, NO sim/ edit -- probe-scoped shim): the
+master-directive one-brain probe. RESOLVES the EMERGE-69 backend-split constraint; the residual is TINY (3 host->device
+write lines). Root cause: the reasoner's on-bridge helpers use `xp = bridge.xp if hasattr(bridge,"xp") else np`, but
+SimulationBridge has NO `.xp` attribute (grep: 0 hits), so xp is always numpy -> a host array is assigned into a device
+cp_ array -> `ValueError: non-scalar numpy.ndarray cannot be used for fill` (confirmed verbatim). The 3 lines:
+_emerge14.apply_kernel_update:115 (cp_connections.data[:]), _emerge12._prime_from_winners:203,204 (cp_prev_firing_states/
+cp_external_input_current) + reset_soma:155 (cp_membrane_potential_v). FIX = route each through sim.backend.from_host
+(numpy passthrough -> byte-identical; cupy H->D copy -- the SAME one-liner EMERGE-69/_emerge61 used). VERIFIED
+controller-direct (sim/ clean; CI test_emerge70 5 CPU + 1 GPU + regression 69 = 9 pass/2 skip; raw go True): with the
+shim the reasoner runs on cupy answers BYTE-IDENTICAL to the numpy reference, AND co-executes with UnifiedNeuralSpell in
+ONE cupy process for a full flagship turn -- "can a penguin fly?" -> reason "No, walks" -> spike-render "the penguin
+walks"; "can a penguin breathe?" -> "Yes" (RESPIRATION inherited) -> "the penguin can breathe"; abstain (zzz) -> 0 A->W
+spell calls (moat holds by construction). NO regression (EMERGE-68/69 CI green). The agent ran everything INLINE (a
+completion verdict, no orphan). ⇒ the master-directive ONE BRAIN: structure discovery + reasoning + fully-spiking render
+ALL in one process, one backend, fully-spiking.
+
+**EXACT NEXT CONCRETE ACTION:** (1) DONE: committed EMERGE-70 both remotes. (2) NOW: EMERGE-71 (TRIVIAL, controller-direct)
+= fold `sim.backend.from_host` into the 3 write lines of the 2 committed helpers (_emerge14.apply_kernel_update:115,
+_emerge12._prime_from_winners:203,204 + reset_soma:155) directly, retiring the probe shim -> the flagship console runs
+its WHOLE turn under one SIM_BACKEND=cupy process with NO scaffolding. Byte-identical on numpy (from_host passthrough) ->
+ALL EMERGE CI stays green; re-verify EMERGE-70 co-execution works WITHOUT the shim (the helpers now self-fix); 3-seed.
+Controller does it INLINE (trivial + I have the exact 3 lines). (3) THEN next frontier: broaden the frame inventory
+(richer production); the held-out distinctive-slot one-attestation cue; the 4th morphological-invariance cue. Deferred:
+EMERGE-60 fluid-RNG isolation; EMERGE-57 multi-seed; the per-word A->W selectivity fragility. Boundaries = undiscovered
+mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A
+MONITOR on every long run; CONTROLLER runs GPU steps INLINE.

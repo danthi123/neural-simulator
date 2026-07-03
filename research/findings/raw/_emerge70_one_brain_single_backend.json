@@ -1,0 +1,124 @@
+{
+  "probe": "emerge70_one_brain_single_backend",
+  "verdict": "GO -- the WHOLE FLAGSHIP EMERGE CONVERSATION CO-EXECUTES FULLY-SPIKING IN ONE PROCESS (the master-directive ONE BRAIN step). Under SIM_BACKEND=cupy, the SAME process runs BOTH (1) the EMERGE-52/54 REASONER (stacked HTM pooler discovers the taxonomy -> multi-level inheritance + per-dimension cancellation + no-confab moat) AND (2) the EMERGE-67/68 A->W READ-OUT (content on BRIDGE-A, function on BRIDGE-F, decoded from language_output SPIKES). A full turn co-executes: reason [cupy] -> gate decision -> spiking A->W render [cupy]: 'can a penguin fly?' -> reasoner 'No, a penguin walks' -> spike-render 'the penguin walks'; 'can a penguin breathe?' -> reasoner 'Yes' (RESPIRATION inherited) -> spike-render 'the penguin can breathe'. The reasoner's answers on cupy are IDENTICAL to the numpy reference (per-dimension cancellation + inheritance + sibling-discrimination + moat, 3-seed). The gate-first no-confab MOAT holds BY CONSTRUCTION: an ABSTAIN (unknown token) invokes the A->W read-out 0 times (the render is never reached). The constraint EMERGE-69 named is RESOLVED: the residual was the reasoner's 3 host->device write LINES (in 2 committed helpers -- apply_kernel_update / _prime_from_winners) that used `xp = bridge.xp if hasattr else np` (bridge has NO .xp attribute, so xp==numpy, so under cupy a host array is assigned into a device cp_* array -> 'non-scalar numpy.ndarray cannot be used for fill', confirmed unshimmed every seed = 1). The fix is the ONE-LINER `from_host(...)` per site (numpy passthrough => byte-identical; cupy H->D copy) -- EXACTLY the fix EMERGE-69 used in _emerge61._restore_state. Here applied as a probe-scoped shim (committed runners untouched); folding `from_host` into the two committed helpers (byte-identical on numpy, CI stays green) is the trivial follow-on EMERGE-71. Reuse-by-import; NO sim/ edit. => structure discovery + reasoning + spiking render all co-execute fully-spiking in ONE process on cupy.",
+  "go": true,
+  "question": "can the EMERGE reasoner (EMERGE-52/54 PerDimensionConsole) + the cupy A->W read-out (EMERGE-67/68 UnifiedNeuralSpell) CO-EXECUTE fully-spiking in ONE process under SIM_BACKEND=cupy -- the true one-brain milestone -- resolving EMERGE-69's named backend-split constraint?",
+  "named_residual_confirmed_unshimmed": true,
+  "residual_write_sites": [
+    "_emerge14_stageC_onbridge_learning_derisk.apply_kernel_update:115  (cp_connections.data[:] = <numpy>)",
+    "_emerge12_stageB2_bridge_tm_derisk._prime_from_winners:203         (cp_prev_firing_states[:] = <numpy>)",
+    "_emerge12_stageB2_bridge_tm_derisk._prime_from_winners:204         (cp_external_input_current[:] = <numpy>)",
+    "_emerge12_stageB2_bridge_tm_derisk.reset_soma:155                  (cp_membrane_potential_v[:] = <numpy>) [via _prime_from_winners]"
+  ],
+  "fix": "route each residual host->device write through sim.backend.from_host (numpy passthrough => byte-identical; cupy H->D copy) -- the same fix EMERGE-69 used in _emerge61._restore_state. Folding from_host into the 2 committed helpers (apply_kernel_update / reset_soma+_prime_from_winners) is the trivial follow-on = EMERGE-71, byte-identical on numpy so all EMERGE CI stays green.",
+  "mechanism": "build the EMERGE-52/54 reasoner under cupy with a probe-scoped from_host shim (the committed runners are NOT edited) + build the EMERGE-67/68 UnifiedNeuralSpell A->W read-out (cupy, cached) IN THE SAME PROCESS; run a full flagship turn: reason [cupy] -> gate decision -> spiking A->W render [cupy]. The reasoner's EMERGE-54 answers on cupy are compared to the numpy reference; the gate-first no-confab moat is verified (0 A->W spell calls on abstain). Reuse-by-import; NO sim/ edit.",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "gpu": true,
+  "elapsed_seconds": 99.6,
+  "per_seed": [
+    {
+      "seed": 42,
+      "gpu": true,
+      "unshimmed_ran": false,
+      "unshimmed_error": "ValueError('non-scalar numpy.ndarray cannot be used for fill')",
+      "unshimmed_error_is_named_residual": true,
+      "reasoner_answers": {
+        "penguin_fly": "No, a penguin walks.",
+        "penguin_breathe": "Yes, a penguin can breathe.",
+        "owl_fly": "Yes, an owl can fly.",
+        "owl_breathe": "Yes, an owl can breathe.",
+        "owl_swim": "I don't know whether an owl can swim.",
+        "zzz_breathe": "I don't know what a zzz is."
+      },
+      "reasoner_matches_numpy_ref": true,
+      "reasoner_answer_match_detail": {
+        "penguin_fly": true,
+        "penguin_breathe": true,
+        "owl_fly": true,
+        "owl_breathe": true,
+        "owl_swim": true,
+        "zzz_breathe": true
+      },
+      "aw_gpu": true,
+      "abstain_gate": "ABSTAIN",
+      "spell_calls_on_abstain": 0,
+      "penguin_fly_gate": "ANSWER",
+      "penguin_fly_surface": "the penguin walks",
+      "penguin_breathe_gate": "ANSWER",
+      "penguin_breathe_surface": "the penguin can breathe",
+      "coexecute_ok": true,
+      "moat_holds": true
+    },
+    {
+      "seed": 43,
+      "gpu": true,
+      "unshimmed_ran": false,
+      "unshimmed_error": "ValueError('non-scalar numpy.ndarray cannot be used for fill')",
+      "unshimmed_error_is_named_residual": true,
+      "reasoner_answers": {
+        "penguin_fly": "No, a penguin walks.",
+        "penguin_breathe": "Yes, a penguin can breathe.",
+        "owl_fly": "Yes, an owl can fly.",
+        "owl_breathe": "Yes, an owl can breathe.",
+        "owl_swim": "I don't know whether an owl can swim.",
+        "zzz_breathe": "I don't know what a zzz is."
+      },
+      "reasoner_matches_numpy_ref": true,
+      "reasoner_answer_match_detail": {
+        "penguin_fly": true,
+        "penguin_breathe": true,
+        "owl_fly": true,
+        "owl_breathe": true,
+        "owl_swim": true,
+        "zzz_breathe": true
+      },
+      "aw_gpu": true,
+      "abstain_gate": "ABSTAIN",
+      "spell_calls_on_abstain": 0,
+      "penguin_fly_gate": "ANSWER",
+      "penguin_fly_surface": "the penguin walks",
+      "penguin_breathe_gate": "ANSWER",
+      "penguin_breathe_surface": "the penguin can breathe",
+      "coexecute_ok": true,
+      "moat_holds": true
+    },
+    {
+      "seed": 44,
+      "gpu": true,
+      "unshimmed_ran": false,
+      "unshimmed_error": "ValueError('non-scalar numpy.ndarray cannot be used for fill')",
+      "unshimmed_error_is_named_residual": true,
+      "reasoner_answers": {
+        "penguin_fly": "No, a penguin walks.",
+        "penguin_breathe": "Yes, a penguin can breathe.",
+        "owl_fly": "Yes, an owl can fly.",
+        "owl_breathe": "Yes, an owl can breathe.",
+        "owl_swim": "I don't know whether an owl can swim.",
+        "zzz_breathe": "I don't know what a zzz is."
+      },
+      "reasoner_matches_numpy_ref": true,
+      "reasoner_answer_match_detail": {
+        "penguin_fly": true,
+        "penguin_breathe": true,
+        "owl_fly": true,
+        "owl_breathe": true,
+        "owl_swim": true,
+        "zzz_breathe": true
+      },
+      "aw_gpu": true,
+      "abstain_gate": "ABSTAIN",
+      "spell_calls_on_abstain": 0,
+      "penguin_fly_gate": "ANSWER",
+      "penguin_fly_surface": "the penguin walks",
+      "penguin_breathe_gate": "ANSWER",
+      "penguin_breathe_surface": "the penguin can breathe",
+      "coexecute_ok": true,
+      "moat_holds": true
+    }
+  ],
+  "HONEST_NOTE": "This PROBE resolves the honest constraint EMERGE-69 named (sim.bridge binds one backend at import; the numpy reasoner + cupy A->W validated only component-wise). The residual turned out TINY: 3 host->device write LINES in 2 research-runner helpers that bypassed the sim.backend abstraction (used xp=bridge.xp-or-np where bridge has no .xp). Under cupy they crash with the named 'non-scalar numpy.ndarray cannot be used for fill'; each is fixed by the one-liner from_host. With the shim the reasoner runs on cupy with answers IDENTICAL to the numpy reference, and CO-EXECUTES with the A->W read-out in one process for a full flagship turn (reason -> spiking render), the gate-first moat intact. The from_host fix is applied as a probe-scoped monkeypatch so the committed numpy-default runners stay byte-identical; the trivial follow-on (EMERGE-71) folds it into the committed helpers (byte-identical on numpy). The A->W engines are GPU-trained ONCE + cached (a scale/data lever). NOT open prose (R4). NO sim/ edit."
+}
