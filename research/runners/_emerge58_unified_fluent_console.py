@@ -21,9 +21,14 @@ A tiny ROUTER dispatches:
   * "can a X <verb>?" (the EMERGE ability frame)  -> the EMERGE reasoner -> a gate decision -> the SAME gate-first
     render loop as EMERGE-56/57 (abstain -> the generator is NEVER invoked; answer -> the re-fine-tuned 21M renders).
   * everything else                                -> `FluidChat.turn()` (the existing fluid dispatch, byte-unchanged).
-ONE shared moat: an unknown/unobserved subject abstains on BOTH kinds, and on an abstain the generator is NOT invoked
-(render-count 0 -- the load-bearing property). NO cross-talk: an EMERGE ability question never leaks into the fluid
-path and a fluid question never leaks into the reasoner (the router is keyed on the `can a X <verb>?` frame only).
+ONE shared moat: an unknown/unobserved subject abstains on BOTH kinds, and on an abstain the fluent generator is NOT
+invoked (render-count 0 -- the load-bearing property). The `can a X <verb>?` frame is SHARED between an EMERGE ability
+question and a fluid fact question, so DISAMBIGUATION IS BY TAXONOMY MEMBERSHIP, not the frame alone: an observed
+taxonomy member routes to the reasoner; a fluid-known (or unknown) entity in the SAME frame routes to the fluid path,
+which answers it if it knows the entity and else applies its OWN gate-first moat. (EMERGE-58 audit remediation: the
+earlier frame-ONLY router misrouted a fluid-known entity -- "can a dog eat?" was routed to the reasoner and FALSELY
+denied "I don't know what a dog is" in the very session the fluid path answers "The dog eats meat." The membership gate
+fixes that self-contradiction; the moat still holds by construction for GENUINELY-unknown tokens on whichever path.)
 
 THE EMERGE GATE-DECISION ADAPTER (`emerge_pd_gate_decision`): mirrors EMERGE-56's adapter but for the ABILITY-SPECIFIC
 `PerDimensionConsole.ask_can` (which reads ONLY the asked ability's discovered dimension). It returns the same
@@ -230,9 +235,10 @@ class UnifiedFluentConsole:
 
     # ---- the router -------------------------------------------------------------------------------------------------
     def _is_emerge_ability(self, text):
-        """Route to the EMERGE reasoner IFF the line is the ability frame 'can a/an <member> <verb>?'. Returns
-        (member, prop) or None. Keyed on the frame ONLY -> no cross-talk with the fluid paths (which never emit this
-        exact shape as a knowledge query; 'can' + 'a/an' + a 2-word member/verb is the EMERGE ability question)."""
+        """RECOGNISE the ability frame 'can a/an <X> <verb>?' and return (X, verb) or None. This is frame-recognition
+        ONLY -- it does NOT decide the route. The `can a X <verb>?` frame is SHARED with fluid fact questions, so the
+        route is disambiguated in `turn()` by TAXONOMY MEMBERSHIP (X in self.reasoner.member_idx -> the reasoner; else
+        -> the fluid path). A fluid-known entity in this frame is answered by the fluid path, not falsely denied."""
         m = _ABILITY_RE.match(text.strip())
         if not m:
             return None
@@ -265,14 +271,34 @@ class UnifiedFluentConsole:
         return surface
 
     def turn(self, text):
-        """One unified conversation turn. EMERGE ability frame -> the reasoner + fluent render; else -> the flagship
-        FluidChat dispatch (verbatim). ONE gate-first moat across both."""
+        """One unified conversation turn. The 'can a X <verb>?' ability frame is SHARED between the EMERGE reasoner
+        (a taxonomy ability question) and the fluid paths (a general fact question), so disambiguation is by TAXONOMY
+        MEMBERSHIP, not by the frame alone: route to the EMERGE reasoner IFF X is an observed taxonomy member; a
+        fluid-known (or unknown) entity in the same frame goes to the fluid path, which answers it if it knows X and
+        else applies its OWN gate-first moat. Everything else -> the flagship FluidChat dispatch (verbatim). ONE
+        gate-first moat across both.
+
+        (EMERGE-58 audit remediation: the earlier frame-ONLY router misrouted a fluid-known entity -- e.g.
+        'can a dog eat?' -> ('dog','eat') -> the reasoner, where 'dog' is not in the scripted taxonomy, so it FALSELY
+        denied 'I don't know what a dog is' in the very session where the fluid path answers 'The dog eats meat.' The
+        membership gate below fixes that self-contradiction; the moat still holds by construction for GENUINELY-unknown
+        tokens -- they reach a gate-first moat on whichever path, and the fluent generator is never invoked.)"""
         raw = (text or "").strip()
         if not raw:
             return "?"
         ab = self._is_emerge_ability(raw)
         if ab is not None:
-            return self._emerge_turn(*ab)
+            member, prop = ab
+            if member in self.reasoner.member_idx:
+                # an observed taxonomy member -> the EMERGE emergent reasoner (inherit / cancel / sibling-abstain)
+                return self._emerge_turn(member, prop)
+            if self.fluid is not None:
+                # a fluid-known or unknown entity in the ability frame -> the fluid path (it answers if it knows X,
+                # else applies its own gate-first moat). This ends the frame-only false-denial.
+                return self.fluid.turn(raw)
+            # no fluid path built (routing/moat-only de-risk): the reasoner's moat still abstains SAFELY
+            # (moat_unknown -> 'I don't know what a X is', the fluent generator NOT invoked).
+            return self._emerge_turn(member, prop)
         # everything else -> the existing fluid paths, byte-unchanged
         if self.fluid is None:
             return "(fluid paths not built -- construct with build_fluid=True)"
@@ -294,7 +320,9 @@ DEMO = [
     ("can a robin breathe?",     "EMERGE  PER-DIMENSION inherit (respiration; no leak)"),
     ("can an owl swim?",         "EMERGE  SIBLING-abstain (owl is a bird, not a fish)"),
     ("can a zzz fly?",           "EMERGE  MOAT (never observed)"),
-    # (B) back to fluid -- no cross-talk
+    # (B) back to fluid -- MEMBERSHIP routing: a fluid-known entity in the SHARED ability frame is ANSWERED by the
+    # fluid path (NOT falsely denied) -- the 2026-07-03 audit remediation.
+    ("can a dog eat?",           "FLUID   membership routing (dog is fluid-known, not a taxonomy member -> answered)"),
     ("tell me about the dog",    "FLUID   grounded discussion"),
     ("does the dog eat meat?",   "FLUID   yes/no"),
     ("what does the lion eat?",  "FLUID   MOAT (untaught)"),
@@ -322,15 +350,29 @@ def _demo(seed=42, prefer_gpu_render=False):
 # --------------------------------------------------------------------------------------------------------------------
 # the EMERGE probes (member, prop, expected route+outcome). Held-out members come from EMERGE-54's taxonomy.
 def _emerge_probes():
+    """Taxonomy probes (all OBSERVED members -> the EMERGE reasoner): inherit / cancel / sibling-abstain, + one
+    genuinely-unknown moat. Used by the render-correctness gate + the GPU render smoke."""
     return [
         (_PD_BIRD_HELDOUT, "fly", "inherited"),          # owl -> Yes, the owl can fly (INHERIT)
         (_PD_FISH_HELDOUT, "swim", "inherited"),         # minnow -> Yes, the minnow can swim (INHERIT)
         (_PD_BIRD_EXC[0], "fly", "exception"),           # penguin -> No, the penguin walks (CANCEL)
         (_PD_FISH_EXC[0], "swim", "exception"),          # pike -> No, the pike lurks (CANCEL)
         ("robin", "breathe", "inherited"),               # robin -> Yes, the robin can breathe (PER-DIMENSION inherit)
-        (_PD_BIRD_HELDOUT, "swim", "moat_sibling"),      # owl swim -> abstain (SIBLING: bird, not fish)
-        ("zzz", "fly", "moat_unknown"),                  # never observed (MOAT)
-        ("wobble", "swim", "moat_unknown"),              # never observed (MOAT)
+        (_PD_BIRD_HELDOUT, "swim", "moat_sibling"),      # owl swim -> abstain (SIBLING: bird, not fish; 21M NOT invoked)
+        ("zzz", "fly", "moat_unknown"),                  # never observed (MOAT; 21M NOT invoked)
+    ]
+
+
+def _membership_probes():
+    """The AUDIT-REMEDIATION probes: NON-members in the SHARED 'can a X <verb>?' ability frame. The earlier frame-ONLY
+    router misrouted these into the reasoner and FALSELY DENIED a fluid-known entity ('can a dog eat?' -> 'I don't know
+    what a dog is' in the same session the fluid path answers 'The dog eats meat.'). Post-fix, membership-aware routing
+    sends a non-member to the fluid path -- which answers a fluid-known entity and else applies its OWN gate-first moat.
+    This gate probes the EXACT shape the original no-cross-talk gate never tested (so it can no longer pass by
+    construction)."""
+    return [
+        ("dog", "eat", "fluid_known"),                   # fluid-known -> "The dog eats meat." (NOT falsely denied)
+        ("zzz", "fly", "unknown_moat"),                  # unknown to both -> gate-first moat (21M NOT invoked)
     ]
 
 
@@ -339,11 +381,17 @@ def _derisk_one(seed, build_fluid=True):
     faculty = con.faculty
     probes = _emerge_probes()
 
-    # (a-fid) ADAPTER FIDELITY: the per-dimension gate decision == PerDimensionConsole.ask_can's own decision
-    adapter_fid = float(np.mean([_adapter_matches(con.reasoner, m, p) for (m, p, _) in probes]))
+    # membership-aware routing: a probe routes to the reasoner IFF its member is an observed taxonomy member.
+    def _routes_to_reasoner(q):
+        ab = con._is_emerge_ability(q)
+        return ab is not None and ab[0] in con.reasoner.member_idx
 
-    # (a) EMERGE RENDER CORRECT + (c) ONE MOAT (render-not-invoked-on-abstain) + (d) NO CROSS-TALK (EMERGE frame
-    # routes to the reasoner, never the fluid path).
+    # (a-fid) ADAPTER FIDELITY: the per-dimension gate decision == PerDimensionConsole.ask_can's own decision (over
+    # the taxonomy members -- the non-member 'zzz' probe is not a reasoner decision to mirror).
+    adapter_fid = float(np.mean([_adapter_matches(con.reasoner, m, p)
+                                 for (m, p, _) in probes if m in con.reasoner.member_idx]))
+
+    # (a) EMERGE RENDER CORRECT + (c) ONE MOAT (render-not-invoked-on-abstain) + routing of taxonomy members.
     n_render_correct = 0
     n_answer = 0
     moat_render_calls = 0
@@ -351,8 +399,10 @@ def _derisk_one(seed, build_fluid=True):
     n_moat = 0
     per_probe = []
     for (m, prop, exp) in probes:
-        # (d) routing: the EMERGE ability frame must be recognised by the router (never fall through to fluid)
-        routed = con._is_emerge_ability(f"can {_art(m)} {prop}?") is not None
+        is_member = m in con.reasoner.member_idx
+        # membership-aware routing: an observed member -> the reasoner; else -> fluid (or the reasoner's own moat
+        # when no fluid path is built). Members MUST route to the reasoner.
+        routed_reasoner = bool(is_member)
         calls0 = getattr(faculty, "render_call_count", 0)
         reply = con.turn(f"can {_art(m)} {prop}?")
         calls_delta = getattr(faculty, "render_call_count", 0) - calls0
@@ -366,19 +416,42 @@ def _derisk_one(seed, build_fluid=True):
             ovr = (con.reasoner.ovr_prop.get(m) or "")
             ok = reply.lower().startswith("no") and (ovr in reply.lower()) and (m in reply.lower()) and calls_delta == 1
             n_render_correct += int(ok)
-        else:  # moat (unknown or sibling)
+        else:  # moat (unknown or sibling) -- abstain on whichever path, the FLUENT GENERATOR NOT invoked
             n_moat += 1
             ok = reply.lower().startswith("i don't know") and calls_delta == 0
             moat_render_calls += calls_delta                         # MUST stay 0
             moat_says_idk += int(reply.lower().startswith("i don't know"))
-        per_probe.append({"member": m, "prop": prop, "expect": exp, "reply": reply, "routed_emerge": bool(routed),
+        per_probe.append({"member": m, "prop": prop, "expect": exp, "reply": reply,
+                          "routed_reasoner": bool(routed_reasoner), "is_member": bool(is_member),
                           "render_delta": int(calls_delta), "ok": bool(ok)})
     emerge_render_correct = float(n_render_correct / max(1, n_answer))
-    routed_all = all(p["routed_emerge"] for p in per_probe)
+    members_routed = all(p["routed_reasoner"] for p in per_probe if p["is_member"])
     moat_ok = (moat_render_calls == 0 and moat_says_idk == n_moat)
 
+    # (a2) MEMBERSHIP ROUTING -- the AUDIT-REMEDIATION gate (the exact shape the original no-cross-talk gate never
+    # probed, so it could not pass by construction). A fluid-known entity in the ability frame must NOT be falsely
+    # denied (it is answered by the path that knows it, and the EMERGE generator is NOT stolen into it); a genuinely-
+    # unknown entity abstains gate-first (the fluent generator NOT invoked).
+    membership = []
+    membership_ok = None
+    if con.fluid is not None:
+        membership_ok = True
+        for (m, prop, exp) in _membership_probes():
+            calls0 = getattr(faculty, "render_call_count", 0)
+            reply = con.turn(f"can {_art(m)} {prop}?")
+            calls_delta = getattr(faculty, "render_call_count", 0) - calls0
+            false_denial = reply.lower().startswith(f"i don't know what {_art(m)}")   # the pre-fix bug's signature
+            if exp == "fluid_known":
+                # answered by the fluid path (mentions the known fact), NOT falsely denied, EMERGE 21M NOT stolen in
+                ok = ((not false_denial) and calls_delta == 0 and (not reply.lower().startswith("i don't know"))
+                      and ("eat" in reply.lower() or "meat" in reply.lower()))
+            else:  # unknown_moat: gate-first abstain, generator NOT invoked
+                ok = reply.lower().startswith("i don't know") and calls_delta == 0
+            membership_ok = membership_ok and ok
+            membership.append({"member": m, "prop": prop, "expect": exp, "reply": reply,
+                               "false_denial": bool(false_denial), "render_delta": int(calls_delta), "ok": bool(ok)})
+
     # (b) NO REGRESSION on the fluid paths: run a representative fluid slice and check the known-correct outcomes.
-    # These do NOT go through the EMERGE reasoner (the fluid `can`? forms are absent from the fluid demo -> no clash).
     reg = {}
     if con.fluid is not None:
         def _f(line):
@@ -403,22 +476,25 @@ def _derisk_one(seed, build_fluid=True):
             and ("know about" in reg["discuss"].lower() or "here's what i know" in reg["discuss"].lower()
                  or "don't know" not in reg["discuss"].lower())
             and "know" in reg["moat"].lower())
-        # (d) NO CROSS-TALK the other way: a fluid `can`-free question must NOT be routed to EMERGE, and an EMERGE
-        # ability question must NOT be answered by the fluid moat template. Confirm the fluid moat ("lion") is the
-        # fluid path (not the EMERGE "what a X is" template) and the EMERGE moat ("zzz") is the EMERGE path.
+        # (d) NO CROSS-TALK (corrected -- probes the failing shape): a fluid knowledge Q is NOT stolen by the reasoner;
+        # an EMERGE TAXONOMY-member ability Q IS the reasoner; AND a FLUID-KNOWN entity in the SHARED ability frame is
+        # NOT stolen by the reasoner (the audit's fix -- the pre-fix router routed 'can a dog eat?' to the reasoner and
+        # falsely denied it).
         no_crosstalk = bool(
-            con._is_emerge_ability("what does the dog eat?") is None      # fluid Q not routed to EMERGE
-            and con._is_emerge_ability("tell me about the dog") is None
-            and con._is_emerge_ability("can an owl fly?") is not None)     # EMERGE Q routed to EMERGE
+            (not _routes_to_reasoner("what does the dog eat?"))
+            and (not _routes_to_reasoner("tell me about the dog"))
+            and _routes_to_reasoner("can an owl fly?")
+            and (not _routes_to_reasoner("can a dog eat?")))
     else:
         fluid_ok = None
-        no_crosstalk = bool(con._is_emerge_ability("what does the dog eat?") is None
-                            and con._is_emerge_ability("can an owl fly?") is not None)
+        no_crosstalk = bool((not _routes_to_reasoner("what does the dog eat?"))
+                            and _routes_to_reasoner("can an owl fly?"))
 
     return {"seed": seed, "adapter_fidelity": adapter_fid, "emerge_render_correct": emerge_render_correct,
-            "n_answer": n_answer, "routed_all_emerge": bool(routed_all), "moat_ok": bool(moat_ok),
+            "n_answer": n_answer, "members_routed": bool(members_routed), "moat_ok": bool(moat_ok),
             "moat_render_calls_on_abstains": int(moat_render_calls), "n_moat": n_moat,
             "render_calls_on_abstain_total": int(con.render_calls_on_abstain),
+            "membership_ok": membership_ok, "membership_detail": membership,
             "fluid_ok": fluid_ok, "no_crosstalk": bool(no_crosstalk), "render_kind": con.render_kind,
             "fluid_regression_detail": reg, "per_probe": per_probe}
 
@@ -433,9 +509,9 @@ def _derisk(seeds, build_fluid=True, gpu_render_smoke=False):
             d = _derisk_one(s, build_fluid=build_fluid)
             per.append(d)
             print(f"  [seed {s}] adapter-fid {d['adapter_fidelity']:.2f} | emerge-render {d['emerge_render_correct']:.2f}"
-                  f" ({d['render_kind']}) | routed-emerge {int(d['routed_all_emerge'])} | moat-ok {int(d['moat_ok'])}"
-                  f" (render-on-abstain {d['moat_render_calls_on_abstains']}) | fluid-ok {d['fluid_ok']} | "
-                  f"no-crosstalk {int(d['no_crosstalk'])}", flush=True)
+                  f" ({d['render_kind']}) | members-routed {int(d['members_routed'])} | membership-ok {d['membership_ok']}"
+                  f" | moat-ok {int(d['moat_ok'])} (render-on-abstain {d['moat_render_calls_on_abstains']}) | "
+                  f"fluid-ok {d['fluid_ok']} | no-crosstalk {int(d['no_crosstalk'])}", flush=True)
     except Exception as e:
         err = repr(e); traceback.print_exc()
 
@@ -446,34 +522,43 @@ def _derisk(seeds, build_fluid=True, gpu_render_smoke=False):
     if err is None:
         adapter_fid = float(np.mean([d["adapter_fidelity"] for d in per]))
         emerge_render = float(np.mean([d["emerge_render_correct"] for d in per]))
-        routed_all = all(d["routed_all_emerge"] for d in per)
+        members_routed_all = all(d["members_routed"] for d in per)
         moat_all = all(d["moat_ok"] for d in per)
         render_on_abstain = int(sum(d["moat_render_calls_on_abstains"] for d in per))
         no_crosstalk_all = all(d["no_crosstalk"] for d in per)
+        membership_vals = [d["membership_ok"] for d in per if d["membership_ok"] is not None]
+        membership_all = (len(membership_vals) > 0 and all(membership_vals))
         fluid_vals = [d["fluid_ok"] for d in per if d["fluid_ok"] is not None]
         fluid_all = (len(fluid_vals) > 0 and all(fluid_vals))
-        # GO bar: adapter fidelity == 1.0, EMERGE renders correct on the template path, EVERY EMERGE frame routed to
-        # the reasoner, the moat holds on BOTH kinds (0 renders on abstains), no cross-talk, and NO fluid regression.
-        go = bool(adapter_fid >= 0.99 and emerge_render >= 0.99 and routed_all and moat_all
+        # GO bar: adapter fidelity == 1.0, EMERGE renders correct on the template path, every TAXONOMY-MEMBER ability
+        # frame routes to the reasoner, membership routing is correct (a fluid-known entity in the ability frame is
+        # answered -- NOT falsely denied; a genuine unknown abstains gate-first), the moat holds on BOTH kinds
+        # (0 renders on abstains), no cross-talk, and NO fluid regression.
+        go = bool(adapter_fid >= 0.99 and emerge_render >= 0.99 and members_routed_all and membership_all and moat_all
                   and render_on_abstain == 0 and no_crosstalk_all and fluid_all)
         if go:
             verdict = (f"GO -- the EMERGENT-REASONING fluent conversation (EMERGE-51..57) is FOLDED into the flagship "
                        f"FLUID console: ONE console answers BOTH the EMERGE emergent-reasoning questions (inherit / "
                        f"per-dimension cancel / sibling-abstain -- adapter fidelity {adapter_fid:.2f} vs the reasoner's "
-                       f"own ask_can, render-correct {emerge_render:.2f} on the CPU path, EVERY ability frame routed to "
-                       f"the reasoner) AND the existing fluid paths (no regression -- what/anaphora/growth/yes-no/"
-                       f"discuss/moat all correct), under ONE consistent gate-first no-confab MOAT ({render_on_abstain} "
-                       f"renders on abstains across BOTH kinds -- the load-bearing property) with NO cross-talk (an "
-                       f"EMERGE ability question never leaks into the fluid path and vice-versa). {len(seeds)}-seed, "
-                       f"CPU-safe. The fluent GPU render (the re-fine-tuned 21M, EMERGE-57) is the same gate-first loop "
-                       f"-- {('GPU smoke ran: ' + gpu_smoke['note']) if gpu_smoke else 'run --render for the GPU smoke'}."
-                       f" Reuse-by-import; NO sim/ edit; NO _fluidconv_chat_repl edit. Wernicke decides -> Broca "
+                       f"own ask_can, render-correct {emerge_render:.2f} on the CPU path, every taxonomy-member ability "
+                       f"frame routed to the reasoner) AND the existing fluid paths (no regression -- what/anaphora/"
+                       f"growth/yes-no/discuss/moat all correct), under ONE consistent gate-first no-confab MOAT "
+                       f"({render_on_abstain} renders on abstains across BOTH kinds -- the load-bearing property). The "
+                       f"'can a X <verb>?' frame is SHARED, so DISAMBIGUATION IS BY TAXONOMY MEMBERSHIP: a fluid-known "
+                       f"entity in the frame ('can a dog eat?') is answered by the fluid path (NOT falsely denied) and a "
+                       f"genuine unknown abstains gate-first -- membership-routing gate PASS (the EMERGE-58 audit "
+                       f"remediation). {len(seeds)}-seed, CPU-safe. The fluent GPU render (the re-fine-tuned 21M, "
+                       f"EMERGE-57) is the same gate-first loop -- "
+                       f"{('GPU smoke ran: ' + gpu_smoke['note']) if gpu_smoke else 'run --render for the GPU smoke'}. "
+                       f"Reuse-by-import; NO sim/ edit; NO _fluidconv_chat_repl edit. Wernicke decides -> Broca "
                        f"articulates, for BOTH the reasoner and the fluid paths.")
         else:
             miss = []
             if adapter_fid < 0.99: miss.append(f"adapter fidelity {adapter_fid:.2f} < 0.99")
             if emerge_render < 0.99: miss.append(f"EMERGE render-correct {emerge_render:.2f} < 0.99")
-            if not routed_all: miss.append("an EMERGE ability frame did NOT route to the reasoner")
+            if not members_routed_all: miss.append("a TAXONOMY-MEMBER ability frame did NOT route to the reasoner")
+            if not membership_all: miss.append("membership routing FAILED (a fluid-known entity was falsely denied, or "
+                                               "a genuine unknown did not abstain gate-first) -- the audit-remediation gate")
             if not moat_all or render_on_abstain != 0:
                 miss.append(f"MOAT breached ({render_on_abstain} renders on abstains) -- BLOCKING")
             if not no_crosstalk_all: miss.append("cross-talk detected (a route leaked)")
@@ -508,7 +593,12 @@ def _derisk(seeds, build_fluid=True, gpu_render_smoke=False):
                               "(spiking-forward conversion deferred, validated at 88.6M). The MOAT is preserved BY "
                               "CONSTRUCTION on BOTH kinds (the gate short-circuits before the renderer / the fluid gate). "
                               "The EMERGE reasoner is taught EMERGE-54's scripted bird/fish taxonomy; corpus-scale "
-                              "feature discovery is the standing EMERGE follow-on."}
+                              "feature discovery is the standing EMERGE follow-on. AUDIT REMEDIATION (2026-07-03): the "
+                              "initial frame-ONLY router misrouted a fluid-known entity ('can a dog eat?') into the "
+                              "reasoner and FALSELY DENIED it; disambiguation is now by TAXONOMY MEMBERSHIP (member -> "
+                              "reasoner; else -> fluid), with a membership-routing gate that probes the exact failing "
+                              "shape so it cannot pass by construction. The gate-first moat is unchanged for genuine "
+                              "unknowns (abstain on whichever path, the fluent generator NOT invoked)."}
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(summary, indent=2, default=str))
     print("\n" + "=" * 112, flush=True)

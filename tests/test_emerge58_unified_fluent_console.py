@@ -3,14 +3,17 @@ flagship FLUID console under ONE gate-first no-confab MOAT. CPU/numpy, offline.
 
 The load-bearing property is the MOAT across BOTH kinds of question: the renderer must NEVER be invoked on an abstain
 (0 renders on abstains). Tests (CPU-safe, template renderer):
-  1. ROUTING -- an EMERGE ability frame 'can a X <verb>?' routes to the reasoner; a fluid question does NOT.
+  1. ROUTING -- the 'can a X <verb>?' frame is SHARED; disambiguation is by TAXONOMY MEMBERSHIP (member -> reasoner;
+     a fluid-known/unknown entity in the same frame -> the fluid path). A fluid knowledge question is not captured.
   2. EMERGE gate-decision ADAPTER FIDELITY -- the per-dimension gate decision matches PerDimensionConsole.ask_can.
   3. MOAT preserved -- unknown / sibling-abstain emit "I don't know" AND the render-call count on abstains is 0.
   4. EMERGE render correct -- inherit (owl->fly), cancel (penguin->walks), per-dimension (robin->breathe).
-  5. NO CROSS-TALK -- an EMERGE ability question and a fluid question do not leak into each other's path.
+  5. MEMBERSHIP-AWARE ROUTING (the EMERGE-58 audit remediation) -- a fluid-known entity in the SHARED ability frame
+     ('can a dog eat?') is answered by the fluid path (NOT falsely denied), and a genuine unknown abstains gate-first.
 
-The heavier FluidChat build (the no-regression gate) + the GPU fluent render are exercised in `test_derisk_go` /
-`test_gpu_render_smoke` (skip-if-no-ckpt), kept separate so the core routing/moat tests run fast + always.
+The heavier FluidChat build (the no-regression + membership gates) + the GPU fluent render are exercised in
+`test_derisk_go` / `test_membership_*` / `test_gpu_render_smoke` (skip-if-no-ckpt), kept separate so the core
+routing/moat tests run fast + always.
 """
 import os
 
@@ -46,6 +49,17 @@ def test_router_does_not_capture_fluid_questions(reasoner_only):
     assert con._is_emerge_ability("tell me about the dog") is None
     assert con._is_emerge_ability("does the dog eat meat?") is None
     assert con._is_emerge_ability("compare dog and cat") is None
+
+
+def test_membership_gates_the_shared_ability_frame(reasoner_only):
+    """The 'can a X <verb>?' frame is SHARED. Disambiguation is by TAXONOMY MEMBERSHIP: an observed member routes to
+    the reasoner; a fluid-known entity in the SAME frame does NOT (it must go to the fluid path). This is the
+    structural guard for the EMERGE-58 audit fix -- 'dog' matches the frame but is NOT a taxonomy member."""
+    con = reasoner_only
+    # the frame matches for both, but only the taxonomy member is a reasoner route
+    assert con._is_emerge_ability("can a dog eat?") == ("dog", "eat")     # frame matches
+    assert "dog" not in con.reasoner.member_idx                            # ... but 'dog' is NOT a taxonomy member
+    assert "owl" in con.reasoner.member_idx                                # 'owl' IS -> routes to the reasoner
 
 
 # ---- 2. ADAPTER FIDELITY -------------------------------------------------------------------------------------------
@@ -121,15 +135,40 @@ def test_gate_decision_branches(reasoner_only):
 # ---- 6. FULL de-risk (builds FluidChat -> exercises the no-regression + no-cross-talk gates) ------------------------
 @pytest.mark.slow
 def test_derisk_go_single_seed():
-    """The full single-seed de-risk (builds FluidChat): adapter/render/routing/moat/no-regression/no-cross-talk all
-    pass. Slower (builds the flagship fluid console); template renderer keeps it CPU-safe + offline."""
+    """The full single-seed de-risk (builds FluidChat): adapter/render/routing/moat/membership/no-regression/
+    no-cross-talk all pass. Slower (builds the flagship fluid console); template renderer keeps it CPU-safe + offline."""
     d = _derisk_one(42, build_fluid=True)
     assert d["adapter_fidelity"] == 1.0
     assert d["emerge_render_correct"] == 1.0
-    assert d["routed_all_emerge"] is True
+    assert d["members_routed"] is True
+    assert d["membership_ok"] is True                                  # audit-remediation gate (no false denial)
     assert d["moat_ok"] is True and d["moat_render_calls_on_abstains"] == 0
     assert d["no_crosstalk"] is True
     assert d["fluid_ok"] is True                                       # NO fluid-path regression
+
+
+@pytest.mark.slow
+def test_membership_aware_routing_no_false_denial():
+    """REGRESSION GUARD for the EMERGE-58 audit defect (builds FluidChat): a fluid-known entity in the SHARED ability
+    frame must NOT be falsely denied. Pre-fix, the frame-only router routed 'can a dog eat?' to the reasoner, which
+    denied 'I don't know what a dog is' -- in the SAME session the fluid path answers 'The dog eats meat.' Post-fix,
+    membership-aware routing sends 'dog' to the fluid path (answered), while a genuine unknown still abstains
+    gate-first with the fluent generator NOT invoked."""
+    con = UnifiedFluentConsole(seed=42, prefer_gpu_render=False, build_fluid=True)
+    fac = con.faculty
+    # (a) a fluid-known entity in the ability frame is ANSWERED, not falsely denied; the EMERGE 21M is NOT invoked
+    before = fac.render_call_count
+    dog = con.turn("can a dog eat?").lower()
+    assert not dog.startswith("i don't know what a dog"), f"FALSE DENIAL regressed: {dog!r}"
+    assert ("meat" in dog or "eat" in dog), f"fluid-known entity not answered: {dog!r}"
+    assert fac.render_call_count == before                             # the EMERGE generator was NOT stolen into it
+    # (b) consistency: the same fact via the fluid yes/no path agrees (no self-contradiction)
+    assert con.turn("does the dog eat meat?").lower().startswith("yes")
+    # (c) a genuine unknown still abstains gate-first (fluent generator NOT invoked)
+    before = fac.render_call_count
+    zzz = con.turn("can a zzz fly?").lower()
+    assert zzz.startswith("i don't know")
+    assert fac.render_call_count == before                             # the moat holds -- generator NOT invoked
 
 
 # ---- 7. GPU fluent render smoke (skip-if-no-ckpt/torch) -------------------------------------------------------------

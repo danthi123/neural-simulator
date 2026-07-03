@@ -7848,3 +7848,38 @@ the EMERGE-57 multi-fine-tune-seed robustness validation (now non-contending —
 the generator's spiking-forward conversion (tracked scaffold, validated 88.6M) toward fully-spiking-one-brain, OR the
 dendritic credit-assignment frontier (the emergence top-lever). Boundaries = undiscovered mechanisms; NO stopping; sim/
 edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A MONITOR on every long run.
+
+## CYCLE 866 (2026-07-03 — EMERGE-58 adversarial AUDIT caught a real defect -> REMEDIATED + re-verified GO; EMERGE-59 research gate scoped)
+
+The EMERGE-58 GO was adversarially audited (ultracode; the standing discipline that caught EMERGE-38..45's systematic
+defects). The audit CONFIRMED one [major] routing-crosstalk correctness defect (empirically reproduced seed 42): the
+frame-ONLY router routed `can a dog eat?` UNCONDITIONALLY to the EMERGE reasoner -> `dog` not in the scripted taxonomy ->
+moat_unknown -> FALSELY denied "I don't know what a dog is" in the SAME session the fluid path answers "The dog eats
+meat." A factually-wrong self-contradiction, NOT a moat-safe abstain; the original no_crosstalk gate passed only because
+it never probed a fluid-known entity in the ability frame (a gate that passes by construction). REMEDIATION (routine
+root-caused fix, no research gate): membership-aware routing -- the `can a X <verb>?` frame is SHARED, so route to the
+reasoner IFF X in reasoner.member_idx, else fall through to fluid.turn(raw) (fluid answers a fluid-known entity, else its
+own gate-first moat); added a membership-routing gate (a2) + `test_membership_aware_routing_no_false_denial` that probe
+the exact failing shape; corrected the two false statements at source (docstring "frame exclusive / no cross-talk";
+findings). Re-verified 3-seed GO: `can a dog eat?`->"The dog eats meat." (21M NOT invoked), `can a zzz fly?`->"I don't
+know." (21M NOT invoked), membership-ok True all seeds, adapter 1.00/render 1.00/moat 0-renders/no-regression/no-cross-
+talk all GO; CI 13 pass. Softened "north-star wire COMPLETE" -> "demonstrated end-to-end + audit-hardened, tracked
+residuals" (taught reasoner; ANN generator scaffold; single-seed re-fine-tune). Audit scope note: 6/7 lenses hit
+transient server-side rate limits + did not complete -> RE-RUN on the fixed code (below) to finish the adversarial pass.
+
+The EMERGE-59 research gate (read-only, `2026-07-03-simulate-broca-generator-replacement-research-gate.md`) scoped the
+"simulate Broca, don't bolt on an LLM" frontier: residual ~25% (the closed-class furniture -- function words, 3sg
+inflection, neural frame-selection = Broca's catalogued job G.12); running the trained transformer as a spiking forward
+is NOT a legitimate close (backprop-trained-off-substrate + permanent external ML); Rung A (cheapest) = extend the
+already-GO FrameCQ competitive-queuing serial-order generator with LEARNED function-word + inflection SLOTS, spell each
+via A->W over the emergent lexicon, gate with the moat, grade held-out vs permuted-slot/cross-frame/function-word-
+ablation/no-learning, 6-seed -> renders EMERGE's frames fluently ON SPIKES + retires the 21M ANN for those frames.
+
+**EXACT NEXT CONCRETE ACTION:** (1) DONE: committed the remediation + the research gate to both remotes. (2) NOW: RE-RUN
+the adversarial audit on the FIXED EMERGE-58 code (the 6 rate-limited lenses: moat-gate-first, render-metric-validity,
+emergent-vs-taught, regression, adapter-fidelity, honest-framing) to COMPLETE the adversarial pass on the wire. (3) THEN
+build EMERGE-59 Rung A (simulate-Broca: FrameCQ + learned function-word/inflection slots + A->W spell, moat, 6-seed,
+anti-cheats) -- cheap-first CPU, the first genuine spiking-Broca step. (4) ALSO the EMERGE-57 multi-fine-tune-seed
+robustness pass (now non-contending; needs a seed-specific --ckpt-out added to the EMERGE-57 runner). Boundaries =
+undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON
+MAIN; ARM A MONITOR on every long run; GPU/CuPy for real runs (numpy for CPU).
