@@ -1,0 +1,692 @@
+{
+  "probe": "emerge66_console_self_organized",
+  "GO": true,
+  "verdict": "GO -- the flagship unified console now renders its EMERGE emergent-reasoning answers ON THE SPIKING SUBSTRATE from a FULLY-SELF-ORGANIZED producer (EMERGE-65 SelfOrganizedProducer) whose ENTIRE grammatical structure -- the function-word inventory (S2, EMERGE-62), the per-construction slot inventory (S1a, EMERGE-64), and the slot order (S1b, EMERGE-63) -- was DISCOVERED FROM THE CORPUS STREAM, NOT the host FRAMES dict. The WIRE is correct: the grounded fact is rendered by the self-organized producer with the right CONTENT (render-words 1.00), render-order EXACT 1.00 (the self-organized CQ is a MinedInventoryFrameSlotCQ over the EMERGE-61 inter-utterance wash-out -> POSITION-INDEPENDENT by construction), the F_NEGMOD 'the penguin does not fly' frame renders EXACT directly through the producer (negmod-exact all seeds True). The gate-first no-confab MOAT holds by construction (0 self-organized-producer invocations on abstains -- the load-bearing property), the membership-aware routing (a fluid-known entity in the ability frame is answered by the fluid path, not falsely denied -- EMERGE-58 remediation) is unchanged, and there is NO fluid-path regression (tested on a Broca-FREE baseline to isolate the EMERGE-60 known fluid-RNG harness flakiness; the fluid dispatch is inherited byte-identical). SELF-ORGANIZED PROVENANCE asserted: the console's producer structure MATCHES the host FRAMES (struct-match, inv-accuracy, all frame function words discovered) AND the PERMUTED-CORPUS control COLLAPSES it (the wire cannot silently be the host FRAMES -- inherited from EMERGE-65). 6-seed, CPU-safe. NO sim/ edit; the ONLY change is the ADDITIVE default-off `self_organized` flag on EMERGE-60's SpikingBrocaConsole (default False == EMERGE-60 byte-identical). ==> the emergent brain DISCOVERS categories from experience -> REASONS -> and now SPEAKS its grounded EMERGE answers on spikes FROM A SELF-ORGANIZED GRAMMAR, on the flagship console, transformer-free. HONEST SCOPE: this renders the BOUNDED EMERGE frame inventory (ability-affirm / intransitive-exception / negated-modal) on spikes, NOT open prose (R4, the separate deferred wall); EMERGE-65's carried-forward residuals (a held-out frame's distinctive function-word / inflection slots) are inherited, named not hidden.",
+  "mechanism": "SpikingBrocaConsole gains an ADDITIVE default-off `self_organized` flag (mirroring EMERGE-61's reset_producer): when True, the console's EMERGE render (_render_emerge -> self.broca.speak) is served by the EMERGE-65 SelfOrganizedProducer's OWN BrocaProducer -- a MinedInventoryFrameSlotCQ whose per-frame slots + order were MINED from the corpus stream (function words S2 / slot inventory S1a / slot order S1b, NO host FRAMES dict) -- instead of the host-FRAMES FrameSlotCQ. The self-organized CQ is over the EMERGE-61 wash-out (CorpusOrderFrameSlotCQ -> ResetFrameSlotCQ) so it is position-independent by construction. The gate-first structure is UNCHANGED (abstain -> _emerge_turn returns before _render_emerge, producer NEVER invoked). Membership routing + fluid paths inherited verbatim. Default False == EMERGE-60 byte-identical. Reuse-by-import; NO sim/ edit.",
+  "task": "render the flagship console's EMERGE answers on spikes from a fully-self-organized (corpus-mined) producer; render-content 1.00 + moat 0 + membership routing + no fluid regression (Broca-free baseline) + self-organized provenance (matches host FRAMES, permuted-corpus collapses); additive default-off flag keeps the default path byte-identical; multi-seed",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_sentences": 6000,
+  "elapsed_seconds": 234.3,
+  "aggregate": {
+    "render_words": 1.0,
+    "render_exact": 1.0,
+    "negmod_exact_all": true,
+    "moat_ok": true,
+    "producer_calls_on_abstain": 0,
+    "membership_ok": true,
+    "fluid_ok": true,
+    "self_organized_provenance_ok": true
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "render_kind": "self_organized_broca",
+      "emerge_render_words": 1.0,
+      "emerge_render_exact": 1.0,
+      "negmod_exact": true,
+      "n_answer": 5,
+      "moat_ok": true,
+      "moat_producer_calls_on_abstain": 0,
+      "membership_ok": true,
+      "fluid_ok": true,
+      "provenance_ok": true,
+      "struct_match": 1.0,
+      "inv_acc": 1.0,
+      "fw_covered": true,
+      "perm_match": 0.3333333333333333,
+      "perm_render": 0.3333333333333333,
+      "render_detail": [
+        {
+          "member": "owl",
+          "prop": "fly",
+          "kind": "inherited",
+          "reply": "the owl can fly",
+          "produced": 1,
+          "on_spikes": true,
+          "self_organized": true,
+          "words_ok": true,
+          "exact_ok": true
+        },
+        {
+          "member": "minnow",
+          "prop": "swim",
+          "kind": "inherited",
+          "reply": "the minnow can swim",
+          "produced": 1,
+          "on_spikes": true,
+          "self_organized": true,
+          "words_ok": true,
+          "exact_ok": true
+        },
+        {
+          "member": "penguin",
+          "prop": "fly",
+          "kind": "exception",
+          "reply": "the penguin walks",
+          "produced": 1,
+          "on_spikes": true,
+          "self_organized": true,
+          "words_ok": true,
+          "exact_ok": true
+        },
+        {
+          "member": "pike",
+          "prop": "swim",
+          "kind": "exception",
+          "reply": "the pike lurks",
+          "produced": 1,
+          "on_spikes": true,
+          "self_organized": true,
+          "words_ok": true,
+          "exact_ok": true
+        },
+        {
+          "member": "robin",
+          "prop": "breathe",
+          "kind": "inherited",
+          "reply": "the robin can breathe",
+          "produced": 1,
+          "on_spikes": true,
+          "self_organized": true,
+          "words_ok": true,
+          "exact_ok": true
+        },
+        {
+          "member": "owl",
+          "prop": "swim",
+          "kind": "abstain",
+          "reply": "I don't know whether an owl can swim.",
+          "produced": 0,
+          "ok": true
+        },
+        {
+          "member": "zzz",
+          "prop": "fly",
+          "kind": "abstain",
+          "reply": "I don't know.",
+          "produced": 0,
+          "ok": true
+        }
+      ],
+      "membership_detail": {
+        "reply": "The dog eats meat.",
+        "produced": 0
+      },
+      "fluid_regression_detail": {
+        "what_chase": "The dog chases cat.",
+        "anaphora": "The cat eats fish.",
+        "what_eat": "The dog eats meat.",
+        "growth": "ok, i learned that the wolf eats rabbit.",
+        "growth_use": "The wolf eats rabbit.",
+        "yesno": "Yes, the dog eats meat.",
+        "moat": "I don't know."
+      }
+    },
+    {
+      "seed": 43,
+      "render_kind": "self_organized_broca",
+      "emerge_render_words": 1.0,
+      "emerge_render_exact": 1.0,
+      "negmod_exact": true,
+      "n_answer": 5,
+      "moat_ok": true,
+      "moat_producer_calls_on_abstain": 0,
+      "membership_ok": true,
+      "fluid_ok": true,
+      "provenance_ok": true,
+      "struct_match": 1.0,
+      "inv_acc": 1.0,
+      "fw_covered": true,
+      "perm_match": 0.3333333333333333,
+      "perm_render": 0.3333333333333333,
+      "render_detail": [
+        {
+          "member": "owl",
+          "prop": "fly",
+          "kind": "inherited",
+          "reply": "the owl can fly",
+          "produced": 1,
+          "on_spikes": true,
+          "self_organized": true,
+          "words_ok": true,
+          "exact_ok": true
+        },
+        {
+          "member": "minnow",
+          "prop": "swim",
+          "kind": "inherited",
+          "reply": "the minnow can swim",
+          "produced": 1,
+          "on_spikes": true,
+          "self_organized": true,
+          "words_ok": true,
+          "exact_ok": true
+        },
+        {
+          "member": "penguin",
+          "prop": "fly",
+          "kind": "exception",
+          "reply": "the penguin walks",
+          "produced": 1,
+          "on_spikes": true,
+          "self_organized": true,
+          "words_ok": true,
+          "exact_ok": true
+        },
+        {
+          "member": "pike",
+          "prop": "swim",
+          "kind": "exception",
+          "reply": "the pike lurks",
+          "produced": 1,
+          "on_spikes": true,
+          "self_organized": true,
+          "words_ok": true,
+          "exact_ok": true
+        },
+        {
+          "member": "robin",
+          "prop": "breathe",
+          "kind": "inherited",
+          "reply": "the robin can breathe",
+          "produced": 1,
+          "on_spikes": true,
+          "self_organized": true,
+          "words_ok": true,
+          "exact_ok": true
+        },
+        {
+          "member": "owl",
+          "prop": "swim",
+          "kind": "abstain",
+          "reply": "I don't know whether an owl can swim.",
+          "produced": 0,
+          "ok": true
+        },
+        {
+          "member": "zzz",
+          "prop": "fly",
+          "kind": "abstain",
+          "reply": "I don't know.",
+          "produced": 0,
+          "ok": true
+        }
+      ],
+      "membership_detail": {
+        "reply": "The dog eats meat.",
+        "produced": 0
+      },
+      "fluid_regression_detail": {
+        "what_chase": "The dog chases cat.",
+        "anaphora": "The cat eats fish.",
+        "what_eat": "The dog eats meat.",
+        "growth": "ok, i learned that the wolf eats rabbit.",
+        "growth_use": "The wolf eats rabbit.",
+        "yesno": "Yes, the dog eats meat.",
+        "moat": "I don't know."
+      }
+    },
+    {
+      "seed": 44,
+      "render_kind": "self_organized_broca",
+      "emerge_render_words": 1.0,
+      "emerge_render_exact": 1.0,
+      "negmod_exact": true,
+      "n_answer": 5,
+      "moat_ok": true,
+      "moat_producer_calls_on_abstain": 0,
+      "membership_ok": true,
+      "fluid_ok": true,
+      "provenance_ok": true,
+      "struct_match": 1.0,
+      "inv_acc": 1.0,
+      "fw_covered": true,
+      "perm_match": 0.3333333333333333,
+      "perm_render": 0.3333333333333333,
+      "render_detail": [
+        {
+          "member": "owl",
+          "prop": "fly",
+          "kind": "inherited",
+          "reply": "the owl can fly",
+          "produced": 1,
+          "on_spikes": true,
+          "self_organized": true,
+          "words_ok": true,
+          "exact_ok": true
+        },
+        {
+          "member": "minnow",
+          "prop": "swim",
+          "kind": "inherited",
+          "reply": "the minnow can swim",
+          "produced": 1,
+          "on_spikes": true,
+          "self_organized": true,
+          "words_ok": true,
+          "exact_ok": true
+        },
+        {
+          "member": "penguin",
+          "prop": "fly",
+          "kind": "exception",
+          "reply": "the penguin walks",
+          "produced": 1,
+          "on_spikes": true,
+          "self_organized": true,
+          "words_ok": true,
+          "exact_ok": true
+        },
+        {
+          "member": "pike",
+          "prop": "swim",
+          "kind": "exception",
+          "reply": "the pike lurks",
+          "produced": 1,
+          "on_spikes": true,
+          "self_organized": true,
+          "words_ok": true,
+          "exact_ok": true
+        },
+        {
+          "member": "robin",
+          "prop": "breathe",
+          "kind": "inherited",
+          "reply": "the robin can breathe",
+          "produced": 1,
+          "on_spikes": true,
+          "self_organized": true,
+          "words_ok": true,
+          "exact_ok": true
+        },
+        {
+          "member": "owl",
+          "prop": "swim",
+          "kind": "abstain",
+          "reply": "I don't know whether an owl can swim.",
+          "produced": 0,
+          "ok": true
+        },
+        {
+          "member": "zzz",
+          "prop": "fly",
+          "kind": "abstain",
+          "reply": "I don't know.",
+          "produced": 0,
+          "ok": true
+        }
+      ],
+      "membership_detail": {
+        "reply": "The dog eats meat.",
+        "produced": 0
+      },
+      "fluid_regression_detail": {
+        "what_chase": "The dog chases cat.",
+        "anaphora": "The cat eats fish.",
+        "what_eat": "The dog eats meat.",
+        "growth": "ok, i learned that the wolf eats rabbit.",
+        "growth_use": "The wolf eats rabbit.",
+        "yesno": "Yes, the dog eats meat.",
+        "moat": "I don't know."
+      }
+    },
+    {
+      "seed": 100,
+      "render_kind": "self_organized_broca",
+      "emerge_render_words": 1.0,
+      "emerge_render_exact": 1.0,
+      "negmod_exact": true,
+      "n_answer": 5,
+      "moat_ok": true,
+      "moat_producer_calls_on_abstain": 0,
+      "membership_ok": true,
+      "fluid_ok": true,
+      "provenance_ok": true,
+      "struct_match": 1.0,
+      "inv_acc": 1.0,
+      "fw_covered": true,
+      "perm_match": 0.3333333333333333,
+      "perm_render": 0.3333333333333333,
+      "render_detail": [
+        {
+          "member": "owl",
+          "prop": "fly",
+          "kind": "inherited",
+          "reply": "the owl can fly",
+          "produced": 1,
+          "on_spikes": true,
+          "self_organized": true,
+          "words_ok": true,
+          "exact_ok": true
+        },
+        {
+          "member": "minnow",
+          "prop": "swim",
+          "kind": "inherited",
+          "reply": "the minnow can swim",
+          "produced": 1,
+          "on_spikes": true,
+          "self_organized": true,
+          "words_ok": true,
+          "exact_ok": true
+        },
+        {
+          "member": "penguin",
+          "prop": "fly",
+          "kind": "exception",
+          "reply": "the penguin walks",
+          "produced": 1,
+          "on_spikes": true,
+          "self_organized": true,
+          "words_ok": true,
+          "exact_ok": true
+        },
+        {
+          "member": "pike",
+          "prop": "swim",
+          "kind": "exception",
+          "reply": "the pike lurks",
+          "produced": 1,
+          "on_spikes": true,
+          "self_organized": true,
+          "words_ok": true,
+          "exact_ok": true
+        },
+        {
+          "member": "robin",
+          "prop": "breathe",
+          "kind": "inherited",
+          "reply": "the robin can breathe",
+          "produced": 1,
+          "on_spikes": true,
+          "self_organized": true,
+          "words_ok": true,
+          "exact_ok": true
+        },
+        {
+          "member": "owl",
+          "prop": "swim",
+          "kind": "abstain",
+          "reply": "I don't know whether an owl can swim.",
+          "produced": 0,
+          "ok": true
+        },
+        {
+          "member": "zzz",
+          "prop": "fly",
+          "kind": "abstain",
+          "reply": "I don't know.",
+          "produced": 0,
+          "ok": true
+        }
+      ],
+      "membership_detail": {
+        "reply": "The dog eats meat.",
+        "produced": 0
+      },
+      "fluid_regression_detail": {
+        "what_chase": "The dog chases cat.",
+        "anaphora": "The cat eats fish.",
+        "what_eat": "The dog eats meat.",
+        "growth": "ok, i learned that the wolf eats rabbit.",
+        "growth_use": "The wolf eats rabbit.",
+        "yesno": "Yes, the dog eats meat.",
+        "moat": "I don't know."
+      }
+    },
+    {
+      "seed": 101,
+      "render_kind": "self_organized_broca",
+      "emerge_render_words": 1.0,
+      "emerge_render_exact": 1.0,
+      "negmod_exact": true,
+      "n_answer": 5,
+      "moat_ok": true,
+      "moat_producer_calls_on_abstain": 0,
+      "membership_ok": true,
+      "fluid_ok": true,
+      "provenance_ok": true,
+      "struct_match": 1.0,
+      "inv_acc": 1.0,
+      "fw_covered": true,
+      "perm_match": 0.3333333333333333,
+      "perm_render": 0.3333333333333333,
+      "render_detail": [
+        {
+          "member": "owl",
+          "prop": "fly",
+          "kind": "inherited",
+          "reply": "the owl can fly",
+          "produced": 1,
+          "on_spikes": true,
+          "self_organized": true,
+          "words_ok": true,
+          "exact_ok": true
+        },
+        {
+          "member": "minnow",
+          "prop": "swim",
+          "kind": "inherited",
+          "reply": "the minnow can swim",
+          "produced": 1,
+          "on_spikes": true,
+          "self_organized": true,
+          "words_ok": true,
+          "exact_ok": true
+        },
+        {
+          "member": "penguin",
+          "prop": "fly",
+          "kind": "exception",
+          "reply": "the penguin walks",
+          "produced": 1,
+          "on_spikes": true,
+          "self_organized": true,
+          "words_ok": true,
+          "exact_ok": true
+        },
+        {
+          "member": "pike",
+          "prop": "swim",
+          "kind": "exception",
+          "reply": "the pike lurks",
+          "produced": 1,
+          "on_spikes": true,
+          "self_organized": true,
+          "words_ok": true,
+          "exact_ok": true
+        },
+        {
+          "member": "robin",
+          "prop": "breathe",
+          "kind": "inherited",
+          "reply": "the robin can breathe",
+          "produced": 1,
+          "on_spikes": true,
+          "self_organized": true,
+          "words_ok": true,
+          "exact_ok": true
+        },
+        {
+          "member": "owl",
+          "prop": "swim",
+          "kind": "abstain",
+          "reply": "I don't know whether an owl can swim.",
+          "produced": 0,
+          "ok": true
+        },
+        {
+          "member": "zzz",
+          "prop": "fly",
+          "kind": "abstain",
+          "reply": "I don't know.",
+          "produced": 0,
+          "ok": true
+        }
+      ],
+      "membership_detail": {
+        "reply": "The dog eats meat.",
+        "produced": 0
+      },
+      "fluid_regression_detail": {
+        "what_chase": "The dog chases cat.",
+        "anaphora": "The cat eats fish.",
+        "what_eat": "The dog eats meat.",
+        "growth": "ok, i learned that the wolf eats rabbit.",
+        "growth_use": "The wolf eats rabbit.",
+        "yesno": "Yes, the dog eats meat.",
+        "moat": "I don't know."
+      }
+    },
+    {
+      "seed": 102,
+      "render_kind": "self_organized_broca",
+      "emerge_render_words": 1.0,
+      "emerge_render_exact": 1.0,
+      "negmod_exact": true,
+      "n_answer": 5,
+      "moat_ok": true,
+      "moat_producer_calls_on_abstain": 0,
+      "membership_ok": true,
+      "fluid_ok": true,
+      "provenance_ok": true,
+      "struct_match": 1.0,
+      "inv_acc": 1.0,
+      "fw_covered": true,
+      "perm_match": 0.3333333333333333,
+      "perm_render": 0.3333333333333333,
+      "render_detail": [
+        {
+          "member": "owl",
+          "prop": "fly",
+          "kind": "inherited",
+          "reply": "the owl can fly",
+          "produced": 1,
+          "on_spikes": true,
+          "self_organized": true,
+          "words_ok": true,
+          "exact_ok": true
+        },
+        {
+          "member": "minnow",
+          "prop": "swim",
+          "kind": "inherited",
+          "reply": "the minnow can swim",
+          "produced": 1,
+          "on_spikes": true,
+          "self_organized": true,
+          "words_ok": true,
+          "exact_ok": true
+        },
+        {
+          "member": "penguin",
+          "prop": "fly",
+          "kind": "exception",
+          "reply": "the penguin walks",
+          "produced": 1,
+          "on_spikes": true,
+          "self_organized": true,
+          "words_ok": true,
+          "exact_ok": true
+        },
+        {
+          "member": "pike",
+          "prop": "swim",
+          "kind": "exception",
+          "reply": "the pike lurks",
+          "produced": 1,
+          "on_spikes": true,
+          "self_organized": true,
+          "words_ok": true,
+          "exact_ok": true
+        },
+        {
+          "member": "robin",
+          "prop": "breathe",
+          "kind": "inherited",
+          "reply": "the robin can breathe",
+          "produced": 1,
+          "on_spikes": true,
+          "self_organized": true,
+          "words_ok": true,
+          "exact_ok": true
+        },
+        {
+          "member": "owl",
+          "prop": "swim",
+          "kind": "abstain",
+          "reply": "I don't know whether an owl can swim.",
+          "produced": 0,
+          "ok": true
+        },
+        {
+          "member": "zzz",
+          "prop": "fly",
+          "kind": "abstain",
+          "reply": "I don't know.",
+          "produced": 0,
+          "ok": true
+        }
+      ],
+      "membership_detail": {
+        "reply": "The dog eats meat.",
+        "produced": 0
+      },
+      "fluid_regression_detail": {
+        "what_chase": "The dog chases cat.",
+        "anaphora": "The cat eats fish.",
+        "what_eat": "The dog eats meat.",
+        "growth": "ok, i learned that the wolf eats rabbit.",
+        "growth_use": "The wolf eats rabbit.",
+        "yesno": "Yes, the dog eats meat.",
+        "moat": "I don't know."
+      }
+    }
+  ],
+  "sample_transcript": [
+    {
+      "you": "can an owl fly?",
+      "brain": "the owl can fly",
+      "why": "EMERGE INHERIT -> SELF-ORGANIZED Broca",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "you": "can a penguin fly?",
+      "brain": "the penguin walks",
+      "why": "EMERGE CANCEL  -> SELF-ORGANIZED Broca",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "you": "can a robin breathe?",
+      "brain": "the robin can breathe",
+      "why": "EMERGE PER-DIMENSION inherit -> SELF-ORGANIZED Broca",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "you": "can an owl swim?",
+      "brain": "I don't know whether an owl can swim.",
+      "why": "EMERGE SIBLING-abstain (producer NOT invoked)",
+      "invocation": "producer NOT invoked"
+    },
+    {
+      "you": "can a zzz fly?",
+      "brain": "I don't know what a zzz is.",
+      "why": "MOAT (producer NOT invoked)",
+      "invocation": "producer NOT invoked"
+    },
+    {
+      "you": "(F_NEGMOD direct)",
+      "brain": "the penguin does not fly",
+      "why": "DENY negated-modal",
+      "invocation": "producer INVOKED"
+    }
+  ],
+  "HONEST_NOTE": "Renders the BOUNDED EMERGE frame inventory on spikes from a SELF-ORGANIZED grammar (function words + slot inventory + slot order all discovered from the corpus, EMERGE-65), NOT open prose. GO is on the WIRE (right content routed to the self-organized producer + gate-first moat + membership routing + no fluid regression + self-organized provenance). render-EXACT (word order) is the self-organized CQ's own property over the EMERGE-61 inter-utterance wash-out (position-independent). The fluid no-regression slice runs on a Broca-FREE UnifiedFluentConsole baseline to isolate the EMERGE-60 known fluid-RNG harness flakiness (the producer's bridge sim advances the shared RNG the fluid path draws from); the fluid dispatch is inherited byte-identical on both paths, so 'no regression' is STRUCTURAL. The ONLY change to committed code is the additive default-off `self_organized` flag on EMERGE-60's SpikingBrocaConsole (default False == EMERGE-60 byte-identical -- EMERGE-60/61 de-risks + EMERGE-59..65 CI unchanged). EMERGE-65's carried-forward residuals (a held-out frame's distinctive function-word / inflection slots) are inherited, named not hidden. The A->W spell is the pluggable token-surface callback (own spiking validation concept_speak_demo). The gate-first moat is untouched (0 productions on abstains, by construction). NO sim/ edit."
+}

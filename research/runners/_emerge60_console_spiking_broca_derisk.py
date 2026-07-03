@@ -61,6 +61,17 @@ try:
     from research.runners._emerge61_spiking_broca_order_robustness_derisk import ResetFrameSlotCQ  # noqa: E402
 except Exception:  # pragma: no cover -- EMERGE-60 remains usable without EMERGE-61
     ResetFrameSlotCQ = None
+# EMERGE-66 (additive, default-off): the FULLY-SELF-ORGANIZED producer (EMERGE-65) -- its ENTIRE grammatical structure
+# (function-word inventory S2 + slot inventory S1a + slot order S1b) is DISCOVERED from the corpus stream, NOT the host
+# FRAMES dict. `self_organized=True` swaps the host-FRAMES BrocaProducer for the SelfOrganizedProducer's own BrocaProducer
+# (a MinedInventoryFrameSlotCQ over the EMERGE-61 wash-out -- so it is position-independent by construction). Import is
+# guarded so EMERGE-60 still loads if EMERGE-65 / its corpus deps are absent. Default False == EMERGE-60 byte-identical.
+try:
+    from research.runners._emerge65_self_organized_producer_derisk import SelfOrganizedProducer  # noqa: E402
+    from research.runners._emerge62_discover_function_words_derisk import build_stream  # noqa: E402
+except Exception:  # pragma: no cover -- EMERGE-60 remains usable without EMERGE-65
+    SelfOrganizedProducer = None
+    build_stream = None
 from research.runners._emerge54_per_dimension_cancellation_derisk import (  # noqa: E402
     _BIRD_HELDOUT as _PD_BIRD_HELDOUT, _FISH_HELDOUT as _PD_FISH_HELDOUT,
     _BIRD_EXC as _PD_BIRD_EXC, _FISH_EXC as _PD_FISH_EXC,
@@ -76,7 +87,8 @@ class SpikingBrocaConsole(UnifiedFluentConsole):
     """`UnifiedFluentConsole` whose EMERGE answers render ON SPIKES (EMERGE-59 `BrocaProducer`) in place of the 21M ANN.
     Everything else (membership-aware routing, the gate-first moat, the fluid paths) is inherited UNCHANGED."""
 
-    def __init__(self, seed=42, spell=None, build_fluid=True, verbose=False, reset_producer=False):
+    def __init__(self, seed=42, spell=None, build_fluid=True, verbose=False, reset_producer=False,
+                 self_organized=False, self_organized_n_sentences=None):
         # build the base console with the CPU template faculty (cheap, unused here); we override the EMERGE render below
         super().__init__(seed=seed, prefer_gpu_render=False, build_fluid=build_fluid, verbose=False)
         # the SPIKING Broca producer (EMERGE-59): its FrameSlotCQ builds a real SimulationBridge; `.learn()` teaches
@@ -86,16 +98,33 @@ class SpikingBrocaConsole(UnifiedFluentConsole):
         # restores the exact post-init substrate state before each production, closing the render-ORDER tail so the
         # console renders EMERGE answers EXACT on ALL seeds (position-independent). Default False == byte-identical to the
         # committed EMERGE-60 de-risk (its render-exact 0.93 tail is the reported, un-gated producer property).
-        cq_cls = ResetFrameSlotCQ if (reset_producer and ResetFrameSlotCQ is not None) else FrameSlotCQ
-        cq = cq_cls(seed=int(seed))
-        cq.learn()
-        self.broca = BrocaProducer(cq, spell=spell)
-        self.reset_producer = bool(reset_producer and ResetFrameSlotCQ is not None)
-        self.render_kind = "spiking_broca"
+        #
+        # self_organized=True (EMERGE-66, additive/default-off) REPLACES the host-FRAMES producer with the EMERGE-65
+        # SelfOrganizedProducer's own BrocaProducer: the WHOLE grammatical structure (function-word inventory S2 +
+        # slot inventory S1a + slot order S1b) is DISCOVERED from the corpus stream (build_stream) -- NO host FRAMES
+        # dict. Its CQ is a MinedInventoryFrameSlotCQ (over the EMERGE-61 wash-out), so it is position-independent by
+        # construction (reset_producer is subsumed). Default False == EMERGE-60 byte-identical (the host-FRAMES path).
+        self.self_organized = bool(self_organized and SelfOrganizedProducer is not None and build_stream is not None)
+        if self.self_organized:
+            n_kw = {} if self_organized_n_sentences is None else {"n_sentences": int(self_organized_n_sentences)}
+            tokens = build_stream(int(seed), **n_kw)
+            self._sop = SelfOrganizedProducer(int(seed)).build_from_corpus(tokens)
+            self.broca = self._sop.producer(spell=spell)     # BrocaProducer over the corpus-mined MinedInventoryFrameSlotCQ
+            self.reset_producer = True                       # the SelfOrganizedProducer's CQ washes out per emit already
+            self.render_kind = "self_organized_broca"
+        else:
+            cq_cls = ResetFrameSlotCQ if (reset_producer and ResetFrameSlotCQ is not None) else FrameSlotCQ
+            cq = cq_cls(seed=int(seed))
+            cq.learn()
+            self.broca = BrocaProducer(cq, spell=spell)
+            self.reset_producer = bool(reset_producer and ResetFrameSlotCQ is not None)
+            self.render_kind = "spiking_broca"
         if verbose:
-            print(f"[emerge60] ready -- the unified console renders EMERGE answers ON SPIKES (EMERGE-59 frame-slot "
-                  f"competitive queuing on a real SimulationBridge), the 21M ANN retired for the EMERGE frames; "
-                  f"gate-first moat + membership routing + fluid paths unchanged.\n", flush=True)
+            struct = ("its ENTIRE grammatical structure DISCOVERED from the corpus (EMERGE-65 SelfOrganizedProducer)"
+                      if self.self_organized else "host-FRAMES frame-slot competitive queuing")
+            print(f"[emerge60] ready -- the unified console renders EMERGE answers ON SPIKES ({struct} on a real "
+                  f"SimulationBridge), the 21M ANN retired for the EMERGE frames; gate-first moat + membership routing "
+                  f"+ fluid paths unchanged.\n", flush=True)
 
     def _render_emerge(self, svo, polarity):
         """Override: render the EMERGE ANSWER via the SPIKING Broca producer (order on spikes), not the 21M ANN.

@@ -8123,3 +8123,32 @@ spiking too -- the remaining host piece of the render, GPU); (c) the held-out di
 fluid-RNG isolation; EMERGE-57 multi-seed; the adversarial-audit re-run (rate-limited). Boundaries = undiscovered
 mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A
 MONITOR on every long run; GPU/CuPy for real runs (numpy for CPU).
+
+## CYCLE 875 (2026-07-03 — EMERGE-66 GO: the FLAGSHIP console SPEAKS from the fully-self-organized producer; the self-organized-producer arc INTEGRATED)
+
+EMERGE-66 (GO, 6-seed, `2026-07-03-emerge66-console-self-organized-GO.md`, NO sim/ edit): the arc-completing integration.
+An ADDITIVE default-off `self_organized` flag on `SpikingBrocaConsole` (mirroring EMERGE-61's `reset_producer`) makes
+`_render_emerge` route through the EMERGE-65 `SelfOrganizedProducer` (built from the corpus stream:
+`SelfOrganizedProducer(seed).build_from_corpus(build_stream(seed))` -> a BrocaProducer over the corpus-mined
+MinedInventoryFrameSlotCQ) instead of the host-FRAMES producer. VERIFIED controller-direct (sim/ clean; CI 17 pass
+test_emerge65+66 incl. test_default_path_byte_identical_to_emerge60; raw json): render_words 1.0, render_exact 1.0
+(negmod_exact_all True), moat_ok True (0 producer-calls on abstains), membership_ok True (can a dog eat? -> fluid, not
+falsely denied), fluid_ok True (tested on a Broca-FREE UnifiedFluentConsole baseline re-seeded per seed -- isolating the
+known EMERGE-60 fluid-RNG flakiness, no spurious BOUNDARY), self_organized_provenance_ok True (struct-match 1.00 vs
+permuted-corpus 0.33 -- the wire cannot silently be the host FRAMES). DEFAULT PATH BYTE-IDENTICAL: the only committed-code
+change is the additive flag on _emerge60 (host-FRAMES path moved verbatim into the else-branch); EMERGE-59..65 CI 63 pass;
+EMERGE-60/61 de-risks unchanged. NO sim/ edit. ⇒ the flagship console renders its EMERGE answers ON SPIKES from a producer
+whose ENTIRE grammatical structure (function words + slot inventory + slot order) was DISCOVERED FROM CORPUS EXPERIENCE,
+gate-first moat intact. The simulate-Broca + self-organize-its-structure + integrate-into-flagship arc (EMERGE-59..66) is
+COMPLETE.
+
+**EXACT NEXT CONCRETE ACTION:** (1) DONE: committed EMERGE-66 both remotes. (2) NOW (ultracode): ADVERSARIALLY VERIFY the
+self-organized-producer chain (EMERGE-62..66) via a SINGLE audit subagent (the 7-agent parallel-burst workflow is
+rate-limited; a single agent gets through) -- scrutinize: do the discovery/mining/order genuinely self-organize (not
+host-smuggled through a composition seam)? do the permuted-corpus controls REALLY collapse the whole pipeline? is the
+"struct-match vs host FRAMES" an honest generalization metric or a leakage? are the held-out residuals honestly named?
+is the byte-identity real? Remediate any confirmed defect. (3) THEN next frontier: the A->W NEURAL-spell wire-in (words
+spiking -- the remaining host piece of the render, GPU), OR the held-out distinctive-slot one-attestation cue, OR the
+4th morphological-invariance cue. Deferred: EMERGE-60 fluid-RNG isolation; EMERGE-57 multi-seed. Boundaries = undiscovered
+mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A
+MONITOR on every long run; GPU/CuPy for real runs (numpy for CPU).
