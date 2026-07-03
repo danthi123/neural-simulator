@@ -7776,3 +7776,26 @@ the P2 RA render + the gate-first moat of the grounded-language faculty; what's 
 ckpt feasibility). Review its ranked options, then build the cheapest de-risk. Boundaries = undiscovered mechanisms; NO
 stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A MONITOR on every
 long run; GPU/CuPy for the generator (numpy for the CPU emergent-substrate).
+
+## CYCLE 863 (2026-07-03 — EMERGE-56 Rung-1 GO: the emergent reasoning is WIREABLE to fluent NL; the moat carries to the real 21M)
+
+EMERGE-56 (GO 3/3, `2026-07-03-emerge56-reasoning-to-fluent-wire-GO.md`, NO sim/ edit): Rung-1 of the north-star wire. The
+EMERGE-51..55 grounded reasoning (`_best(member)` -> None=abstain | CLASS=inherited | OVR=exception) converts 1-to-1 to the
+fluent faculty's gate-first bool + SVO triple (an ADAPTER, not a new mechanism, as the research gate predicted). Gates:
+adapter fidelity 1.00; MOAT PRESERVED (render-calls-on-abstains = 0, false-renders = 0 -- asserted via a render-call
+counter) at BOTH the CPU stub AND the real GPU 21M; fact-correct 1.00. Demo: owl/wren->"Yes, the owl can fly"[inherit] /
+penguin->"No, the penguin walks"[cancel] / zzz->"I don't know what a zzz is"[moat, renderer NOT invoked]. RUNG-2 GPU SMOKE
+ran (ckpt gen_tinystories_ra_ft.ckpt.pt + CUDA): the MOAT HELD on the real model; HONEST GAP -- the RA fine-tune renders
+its TRAINED transitive-SVO frames faithfully but EMERGE's can-fly/intransitive-exception frames are OUT OF DISTRIBUTION ->
+confabulates content ("owl likes to follow leaf") + double-inflects ("walkses"). That is a DATA/format lever (re-fine-tune
+the RA on EMERGE's frames + frame-aware inflection), NOT an architecture wall. `_emerge56_reasoning_to_fluent_wire_derisk.py`
++ test (4 pass). ⇒ the architecture is CONFIRMED wireable; the moat carries to the real generator.
+
+**EXACT NEXT CONCRETE ACTION:** commit EMERGE-56. THEN Rung-2 (EMERGE-57) = the DATA lever: re-fine-tune the RA 21M
+generator to render EMERGE's grounded frames FLUENTLY (a "can X" / intransitive-exception + frame-aware-inflection render
+fine-tune, INTERLEAVED with the existing frames to avoid forgetting, per the P2 anti-forgetting recipe), behind the same
+gate-first moat; verify the fluent render matches EMERGE's grounded facts (no confab, correct inflection) + the moat holds.
+GPU + the existing ckpt; ARM A MONITOR (standing practice). THEN Rung-3 = merge into _fluidconv_chat_repl.py (mixed
+"can a X..?"[EMERGE] + "what does X..?"[existing] with a consistent moat + fluency). Boundaries = undiscovered mechanisms;
+NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A MONITOR on every
+long run; GPU/CuPy for the generator (numpy for CPU).

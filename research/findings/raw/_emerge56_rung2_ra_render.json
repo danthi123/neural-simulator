@@ -1,0 +1,45 @@
+{
+  "probe": "emerge56_rung2_ra_render",
+  "seed": 42,
+  "n_render_invoked_on_abstain": 0,
+  "note": "MOAT held on the REAL model (0 renders on abstains -- the load-bearing property carries to the GPU generator). HONEST: the RA fine-tune faithfully renders its TRAINED transitive-SVO format ('the dog eats meat .' -> 'the dog eats meat .') but EMERGE's `can-fly` / intransitive-exception verb-forms are OUT of the RA fine-tune's distribution -> it confabulates content. This is a DATA/format lever (re-fine-tune the RA on the can-form + intransitive frames EMERGE emits), NOT an architecture wall -- Rung 1 (the wire + gate-first moat) is GO; fluent RA rendering of EMERGE's specific frames is the Rung-2 follow-on.",
+  "records": [
+    {
+      "member": "owl",
+      "prop": "fly",
+      "gate": "ANSWER",
+      "source": "inherited",
+      "facts_ctx": "the owl can fly .",
+      "question": "can the owl fly ?",
+      "fluent": "no , the owl does not fly f .",
+      "model_invoked": true
+    },
+    {
+      "member": "wren",
+      "prop": "fly",
+      "gate": "ANSWER",
+      "source": "inherited",
+      "facts_ctx": "the wren can fly .",
+      "question": "can the wren fly ?",
+      "fluent": "no , the wren does not fly f .",
+      "model_invoked": true
+    },
+    {
+      "member": "penguin",
+      "prop": "fly",
+      "gate": "ANSWER",
+      "source": "exception",
+      "facts_ctx": "the penguin walkses .",
+      "question": "what does the penguin do ?",
+      "fluent": "the penguin likes to follow leaf .",
+      "model_invoked": true
+    },
+    {
+      "member": "zzz",
+      "prop": "fly",
+      "gate": "ABSTAIN",
+      "fluent": "I don't know what a zzz is.",
+      "model_invoked": false
+    }
+  ]
+}

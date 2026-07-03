@@ -1,0 +1,292 @@
+{
+  "probe": "emerge56_reasoning_to_fluent_wire",
+  "rung": 1,
+  "verdict": "GO -- the EMERGENT grounded REASONING (EMERGE-51..55) is WIREABLE to a fluent-language faculty behind the gate-first no-confab MOAT. The ADAPTER reads EMERGE's structured inference decision (_best: inherited-class-default | member-exception | abstain) and converts it 1-to-1 to a gate-first bool + grounded SVO -- ADAPTER FIDELITY 1.00 (matches EMERGE's own ask_can decision on every scripted question). The gate-first render loop preserves the MOAT BY CONSTRUCTION: every abstain renders 'I don't know' and the renderer is NEVER invoked (0 render-calls on abstains, 0 false renders -- the load-bearing property). The correct grounded facts render fluently (inherit owl->can fly, cancel penguin->walks; fact-correct 1.00). 3-seed. => the architecture is confirmed wireable; GPU RA-render (Rung 2) is SAFE to proceed. Wernicke decides -> Broca articulates. Reuse-by-import; NO sim/ edit.",
+  "mechanism": "an ADAPTER reads EMERGE-51's ExperientialConversationalConsole._best(member) -- the STRUCTURED inference decision (inherited class default via the discovered codon | member-specific exception | abstain below the no-confab floor | cross-bleed abstain) -- and converts it 1-to-1 to the fluent faculty's gate-first input: a bool (answer vs abstain) + a grounded SVO triple. The gate-first render loop (mirroring the validated _grounded_lang_p3 grounded_reply) preserves the moat BY CONSTRUCTION: abstain -> emit 'I don't know' and NEVER invoke the renderer (asserted via a render-call counter on the stub faculty). Reuse-by-import: EMERGE-51 console (ask_can/_best) + grounded-lang P3 TemplateStubFaculty. NO sim/ edit. Wernicke-decides -> Broca-articulates.",
+  "task": "wire EMERGENT grounded reasoning -> fluent render behind the gate-first moat; adapter fidelity (>=0.95 vs EMERGE's own decision) + moat preserved (render-not-invoked-on-abstain, 0 false renders) + correct grounded facts rendered; scripted 10-question demo; 3-seed",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "elapsed_seconds": 1.6,
+  "per_seed": [
+    {
+      "seed": 42,
+      "adapter_fidelity": 1.0,
+      "moat_ok": true,
+      "moat_render_calls_on_abstains": 0,
+      "n_abstain_probes": 2,
+      "fact_correct": 1.0,
+      "n_answer_probes": 6,
+      "moat_false_renders": 0,
+      "per_probe": [
+        {
+          "member": "owl",
+          "prop": "fly",
+          "expect": "inherited",
+          "gate": "ANSWER",
+          "source": "inherited",
+          "surface": "Yes, the owl can fly.",
+          "renderer_invoked": true,
+          "ok": true
+        },
+        {
+          "member": "wren",
+          "prop": "fly",
+          "expect": "inherited",
+          "gate": "ANSWER",
+          "source": "inherited",
+          "surface": "Yes, the wren can fly.",
+          "renderer_invoked": true,
+          "ok": true
+        },
+        {
+          "member": "minnow",
+          "prop": "swim",
+          "expect": "inherited",
+          "gate": "ANSWER",
+          "source": "inherited",
+          "surface": "Yes, the minnow can swim.",
+          "renderer_invoked": true,
+          "ok": true
+        },
+        {
+          "member": "gar",
+          "prop": "swim",
+          "expect": "inherited",
+          "gate": "ANSWER",
+          "source": "inherited",
+          "surface": "Yes, the gar can swim.",
+          "renderer_invoked": true,
+          "ok": true
+        },
+        {
+          "member": "penguin",
+          "prop": "fly",
+          "expect": "exception",
+          "gate": "ANSWER",
+          "source": "exception",
+          "surface": "No, the penguin walks.",
+          "renderer_invoked": true,
+          "ok": true
+        },
+        {
+          "member": "pike",
+          "prop": "swim",
+          "expect": "exception",
+          "gate": "ANSWER",
+          "source": "exception",
+          "surface": "No, the pike lurks.",
+          "renderer_invoked": true,
+          "ok": true
+        },
+        {
+          "member": "zzz",
+          "prop": "fly",
+          "expect": "moat_unknown",
+          "gate": "ABSTAIN",
+          "source": "moat_unknown",
+          "surface": "I don't know what a zzz is.",
+          "renderer_invoked": false,
+          "ok": true
+        },
+        {
+          "member": "wobble",
+          "prop": "swim",
+          "expect": "moat_unknown",
+          "gate": "ABSTAIN",
+          "source": "moat_unknown",
+          "surface": "I don't know what a wobble is.",
+          "renderer_invoked": false,
+          "ok": true
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "adapter_fidelity": 1.0,
+      "moat_ok": true,
+      "moat_render_calls_on_abstains": 0,
+      "n_abstain_probes": 2,
+      "fact_correct": 1.0,
+      "n_answer_probes": 6,
+      "moat_false_renders": 0,
+      "per_probe": [
+        {
+          "member": "owl",
+          "prop": "fly",
+          "expect": "inherited",
+          "gate": "ANSWER",
+          "source": "inherited",
+          "surface": "Yes, the owl can fly.",
+          "renderer_invoked": true,
+          "ok": true
+        },
+        {
+          "member": "wren",
+          "prop": "fly",
+          "expect": "inherited",
+          "gate": "ANSWER",
+          "source": "inherited",
+          "surface": "Yes, the wren can fly.",
+          "renderer_invoked": true,
+          "ok": true
+        },
+        {
+          "member": "minnow",
+          "prop": "swim",
+          "expect": "inherited",
+          "gate": "ANSWER",
+          "source": "inherited",
+          "surface": "Yes, the minnow can swim.",
+          "renderer_invoked": true,
+          "ok": true
+        },
+        {
+          "member": "gar",
+          "prop": "swim",
+          "expect": "inherited",
+          "gate": "ANSWER",
+          "source": "inherited",
+          "surface": "Yes, the gar can swim.",
+          "renderer_invoked": true,
+          "ok": true
+        },
+        {
+          "member": "penguin",
+          "prop": "fly",
+          "expect": "exception",
+          "gate": "ANSWER",
+          "source": "exception",
+          "surface": "No, the penguin walks.",
+          "renderer_invoked": true,
+          "ok": true
+        },
+        {
+          "member": "pike",
+          "prop": "swim",
+          "expect": "exception",
+          "gate": "ANSWER",
+          "source": "exception",
+          "surface": "No, the pike lurks.",
+          "renderer_invoked": true,
+          "ok": true
+        },
+        {
+          "member": "zzz",
+          "prop": "fly",
+          "expect": "moat_unknown",
+          "gate": "ABSTAIN",
+          "source": "moat_unknown",
+          "surface": "I don't know what a zzz is.",
+          "renderer_invoked": false,
+          "ok": true
+        },
+        {
+          "member": "wobble",
+          "prop": "swim",
+          "expect": "moat_unknown",
+          "gate": "ABSTAIN",
+          "source": "moat_unknown",
+          "surface": "I don't know what a wobble is.",
+          "renderer_invoked": false,
+          "ok": true
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "adapter_fidelity": 1.0,
+      "moat_ok": true,
+      "moat_render_calls_on_abstains": 0,
+      "n_abstain_probes": 2,
+      "fact_correct": 1.0,
+      "n_answer_probes": 6,
+      "moat_false_renders": 0,
+      "per_probe": [
+        {
+          "member": "owl",
+          "prop": "fly",
+          "expect": "inherited",
+          "gate": "ANSWER",
+          "source": "inherited",
+          "surface": "Yes, the owl can fly.",
+          "renderer_invoked": true,
+          "ok": true
+        },
+        {
+          "member": "wren",
+          "prop": "fly",
+          "expect": "inherited",
+          "gate": "ANSWER",
+          "source": "inherited",
+          "surface": "Yes, the wren can fly.",
+          "renderer_invoked": true,
+          "ok": true
+        },
+        {
+          "member": "minnow",
+          "prop": "swim",
+          "expect": "inherited",
+          "gate": "ANSWER",
+          "source": "inherited",
+          "surface": "Yes, the minnow can swim.",
+          "renderer_invoked": true,
+          "ok": true
+        },
+        {
+          "member": "gar",
+          "prop": "swim",
+          "expect": "inherited",
+          "gate": "ANSWER",
+          "source": "inherited",
+          "surface": "Yes, the gar can swim.",
+          "renderer_invoked": true,
+          "ok": true
+        },
+        {
+          "member": "penguin",
+          "prop": "fly",
+          "expect": "exception",
+          "gate": "ANSWER",
+          "source": "exception",
+          "surface": "No, the penguin walks.",
+          "renderer_invoked": true,
+          "ok": true
+        },
+        {
+          "member": "pike",
+          "prop": "swim",
+          "expect": "exception",
+          "gate": "ANSWER",
+          "source": "exception",
+          "surface": "No, the pike lurks.",
+          "renderer_invoked": true,
+          "ok": true
+        },
+        {
+          "member": "zzz",
+          "prop": "fly",
+          "expect": "moat_unknown",
+          "gate": "ABSTAIN",
+          "source": "moat_unknown",
+          "surface": "I don't know what a zzz is.",
+          "renderer_invoked": false,
+          "ok": true
+        },
+        {
+          "member": "wobble",
+          "prop": "swim",
+          "expect": "moat_unknown",
+          "gate": "ABSTAIN",
+          "source": "moat_unknown",
+          "surface": "I don't know what a wobble is.",
+          "renderer_invoked": false,
+          "ok": true
+        }
+      ]
+    }
+  ],
+  "HONEST_NOTE": "RUNG 1 is CPU-native + wiring-not-mechanism: two orthogonal subsystems (on-brain spiking EMERGE reasoning + a fluent articulator) handed off via the gated-fact tuple. The renderer here is the grounded-lang P3 STUB (content-locked template); RUNG 2 (--rung2, GPU) swaps in the real RA-fine-tuned 21M FTFaculty behind the SAME gate-first moat. The generator ANN remains a tracked temporary scaffold (its spiking-forward conversion validated at 88.6M). The MOAT is the load-bearing property: 0 renders on abstains, by construction (the gate short-circuits before the renderer). Rung 3 = merge into _fluidconv_chat_repl so EMERGE 'can a penguin fly?' + existing 'what does a dog eat?' both work with one consistent moat + fluency."
+}
