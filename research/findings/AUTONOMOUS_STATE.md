@@ -8028,3 +8028,32 @@ the 4th morphological-invariance cue (push real-corpus precision further). ORTHO
 wire-in (words spiking). Deferred: EMERGE-60 fluid-RNG harness isolation; EMERGE-57 multi-seed; the adversarial-audit
 re-run (rate-limited). Boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a
 PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A MONITOR on every long run; GPU/CuPy for real runs (numpy for CPU).
+
+## CYCLE 872 (2026-07-03 — EMERGE-63 GO: the slot ORDER self-organizes from corpus statistics; TWO of three producer residuals now self-organized)
+
+EMERGE-63 (GO, 6-seed, `2026-07-03-emerge63-corpus-taught-slot-order-GO.md`, NO sim/ edit): closes residual S1b. The
+EMERGE-59 template order-teacher (`_teach_order`, LR*(n-1-pool) over the host template pool index) is replaced by a
+pairwise role-PRECEDENCE (bigram-order) statistic computed over corpus example sentences (reusing EMERGE-62's stream +
+segmentation): prec[A][B] = fraction of examples where role A precedes role B -> primacy -> CorpusOrderFrameSlotCQ (a
+subclass of EMERGE-61's ResetFrameSlotCQ wash-out) -> renders ON SPIKES in the corpus-learned order. VERIFIED
+controller-direct (sim/ clean; CI 33 pass across test_emerge59/61/62b/63; raw json): main_order 1.0, main_exact 1.0
+(exact surface on spikes), shuffle_order 0.282 (collapses, margin >= 0.30 -- load-bearing), nocorpus_order 0.228
+(chance), heldout_shared 1.0 (F_MODAL/F_INTR generalize), heldout_negmod 0.775 (honest residual), moat 0. Methodology
+win: an HONEST RANDOM tie-break for held-out (a template/alpha tie-break would falsely read 1.00 since does<not
+coincides alphabetically) -- the control-validity discipline. NO sim/ edit (one runner-side behavior-neutral config:
+CorpusOrderFrameSlotCQ disables enable_structural_plasticity on its OWN slot bridge -- a config attr, not a sim/ edit;
+verified bit-identical slot rates since slots have internal_density=0.0). Slot TYPES (S1a) stay template-supplied =
+EMERGE-64's residual. ⇒ TWO of three producer residuals self-organized (S2 words EMERGE-62/62b; S1b order EMERGE-63).
+
+**EXACT NEXT CONCRETE ACTION:** (1) DONE: committed EMERGE-63 both remotes. (2) NEXT: EMERGE-64 = mine the FUNC-SLOT
+INVENTORY (S1a -- which slot TYPES a frame has: det/subj/func/verb, currently host-supplied in the FRAMES dict) from
+the corpus via the GO `_bucketB` corpus frame-miner (`research/findings/raw/_bucketB_corpus_mined_frames.json` +
+`_bucketB_corpus_mined_wh_map.json` -- the validated mined verb-frame lexicon; the permuted-mining anti-cheat collapse
+already documented). Discover the slot inventory per frame from corpus construction statistics, feed into the producer,
+anti-cheats (permuted-mining/held-out-frame), 6-seed, reuse-by-import, NO sim/ edit. THEN EMERGE-65 = compose EMERGE-62b
+(words) + EMERGE-63 (order) + EMERGE-64 (inventory) -> the END-TO-END self-organized spiking producer (frames + function
+words + order all discovered from experience, rendered on spikes, moat intact). ORTHOGONAL: the A->W neural-spell wire-in
+(words spiking). Optional: the 4th morphological-invariance cue for EMERGE-62 precision; the F_NEGMOD does<not held-out
+residual. Deferred: EMERGE-60 fluid-RNG harness isolation; EMERGE-57 multi-seed; the audit re-run (rate-limited).
+Boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea;
+COMMIT ON MAIN; ARM A MONITOR on every long run; GPU/CuPy for real runs (numpy for CPU).

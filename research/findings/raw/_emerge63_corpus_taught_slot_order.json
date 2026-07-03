@@ -1,0 +1,441 @@
+{
+  "probe": "emerge63_corpus_taught_slot_order",
+  "verdict": "GO -- the spiking-Broca producer's per-frame slot ORDER SELF-ORGANIZES from the CORPUS's actual WORD-ORDER statistics (pairwise role precedence / bigram order; Dominey-Hinaut: grammar = the statistics of element ORDER, no explicit rules; catalog G.12 Broca; usage-based construction grammar). The host TEMPLATE order-teacher (EMERGE-59 _teach_order's `LR*(n-1-pool)` over the template index) is REMOVED: for each frame the order is read PURELY from where each role's token sits in the corpus example sentences (det<subj<func<verb emerges from the counts), and that corpus-taught order REORDERS the slots fed to the EMERGE-59 spiking producer, which renders them ON SPIKES (the learned primacy gradient = graded current -> the per-pool spiking-RATE ranking = the emission order; EMERGE-61 wash-out for position-independence). The corpus-taught order MATCHES the template ground-truth EXACTLY and renders exact on spikes: order 1.000, exact-surface 1.000 (incl. the negated-modal's does<not, directly attested in F_NEGMOD's own exemplars -> resolved even with an HONEST random tie-break). Every input-destruction control COLLAPSES: SHUFFLED-CORPUS order 0.282 (scrambling each example's word order destroys the precedence -> wrong order, margin >= 0.3); NO-CORPUS order 0.228 (no examples -> no precedence -> chance). HELD-OUT-FRAME GENERALIZES on the SHARED precedences: a FULLY-held-out frame's shared type-level order (det<subj<func<verb, learned from the OTHER two frames) is recovered 1.000 (F_MODAL & F_INTR). The gate-first no-confab MOAT is intact (0 producer invocations on abstains). 6 seeds. ==> S1b self-organized: the slot ORDER is LEARNED from corpus experience, the host template order removed. HONEST RESIDUAL (named, NOT a wall): the does-vs-not INTERNAL order of a HELD-OUT multi-function-word frame is NOT learnable from the OTHER two frames alone (only F_NEGMOD attests two adjacent function words), so held-out F_NEGMOD sits at 0.775 with an honest tie-break -- the next single signal is ONE attestation of the does<not bigram (or Yang-Getz's phrase-boundary cue). S1a (WHICH slots a frame licenses) stays template-supplied here -- that is EMERGE-64's separate residual. Reuse-by-import; NO sim/ edit; moat untouched.",
+  "go": true,
+  "mechanism": "self-organized per-frame slot ORDER learned from the corpus's actual WORD-ORDER statistics (pairwise role PRECEDENCE / bigram order; Dominey-Hinaut fronto-striatal reservoir 'grammar = the statistics of element order/position, no explicit rules'; usage-based construction grammar Tomasello; catalog G.12 Broca). For each frame, collect its corpus example sentences (EMERGE-62's build_stream + sentence segmentation), locate each role's token position (S1a lexical class, NOT order), count prec[A][B]=examples where role A precedes role B; a role that precedes many others gets high primacy (emitted first). That corpus-taught order REORDERS the EMERGE-59 frame slots; the CorpusOrderFrameSlotCQ (subclass of the EMERGE-61 ResetFrameSlotCQ wash-out) teaches a descending primacy over the reordered slots and renders ON SPIKES (the per-pool spiking-RATE ranking = the emission order). The host TEMPLATE order-teacher is REMOVED; the FRAMES dict's order is only the validation ground-truth. S1a (which slots) stays template-supplied (EMERGE-64's residual). Reuse-by-import; NO sim/ edit.",
+  "task": "learn each frame's slot order from corpus word-order precedence (not the template); render the EMERGE frames on spikes in the corpus-taught order == the template ground-truth (order + exact surface); shuffled-corpus + no-corpus collapse; held-out-frame generalizes on the shared type-level precedence; gate-first moat (0 productions on abstains); >=6 seeds",
+  "frames": {
+    "F_MODAL": [
+      [
+        "det",
+        "the"
+      ],
+      [
+        "subj",
+        null
+      ],
+      [
+        "func",
+        "can"
+      ],
+      [
+        "verb",
+        "bare"
+      ]
+    ],
+    "F_INTR": [
+      [
+        "det",
+        "the"
+      ],
+      [
+        "subj",
+        null
+      ],
+      [
+        "verb",
+        "3sg"
+      ]
+    ],
+    "F_NEGMOD": [
+      [
+        "det",
+        "the"
+      ],
+      [
+        "subj",
+        null
+      ],
+      [
+        "func",
+        "does"
+      ],
+      [
+        "func",
+        "not"
+      ],
+      [
+        "verb",
+        "bare"
+      ]
+    ]
+  },
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "elapsed_seconds": 8.6,
+  "aggregate": {
+    "main_order": 1.0,
+    "main_exact": 1.0,
+    "shuffle_order": 0.28229166666666666,
+    "nocorpus_order": 0.22824074074074072,
+    "heldout_mean": 0.9249999999999999,
+    "heldout_shared": 1.0,
+    "heldout_negmod": 0.775,
+    "moat_calls_on_abstain_total": 0
+  },
+  "sample_transcript": [
+    {
+      "tag": "INHERIT (affirm-modal)",
+      "question": "can an owl fly?",
+      "surface": "the owl can fly",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "CANCEL  (intransitive)",
+      "question": "can a penguin fly?",
+      "surface": "the penguin walks",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "DENY    (negated-modal)",
+      "question": "can a penguin fly? [deny]",
+      "surface": "the penguin does not fly",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "MOAT    (abstain)",
+      "question": "can a zzz fly?",
+      "surface": "I don't know.",
+      "invocation": "producer NOT invoked"
+    }
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_used": {
+        "F_MODAL": 3204,
+        "F_INTR": 2390,
+        "F_NEGMOD": 2753
+      },
+      "corpus_order": {
+        "F_MODAL": [
+          "DET",
+          "SUBJ",
+          "FUNC:can",
+          "VERB"
+        ],
+        "F_INTR": [
+          "DET",
+          "SUBJ",
+          "VERB"
+        ],
+        "F_NEGMOD": [
+          "DET",
+          "SUBJ",
+          "FUNC:does",
+          "FUNC:not",
+          "VERB"
+        ]
+      },
+      "per_frame": {
+        "F_MODAL": {
+          "order": 1.0,
+          "exact": 1.0
+        },
+        "F_INTR": {
+          "order": 1.0,
+          "exact": 1.0
+        },
+        "F_NEGMOD": {
+          "order": 1.0,
+          "exact": 1.0
+        }
+      },
+      "main_order": 1.0,
+      "main_exact": 1.0,
+      "shuffle_order": 0.33055555555555555,
+      "nocorpus_order": 0.2097222222222222,
+      "heldout": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 0.85
+      },
+      "heldout_mean": 0.9500000000000001,
+      "heldout_shared": 1.0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    },
+    {
+      "seed": 43,
+      "n_used": {
+        "F_MODAL": 3278,
+        "F_INTR": 2289,
+        "F_NEGMOD": 2724
+      },
+      "corpus_order": {
+        "F_MODAL": [
+          "DET",
+          "SUBJ",
+          "FUNC:can",
+          "VERB"
+        ],
+        "F_INTR": [
+          "DET",
+          "SUBJ",
+          "VERB"
+        ],
+        "F_NEGMOD": [
+          "DET",
+          "SUBJ",
+          "FUNC:does",
+          "FUNC:not",
+          "VERB"
+        ]
+      },
+      "per_frame": {
+        "F_MODAL": {
+          "order": 1.0,
+          "exact": 1.0
+        },
+        "F_INTR": {
+          "order": 1.0,
+          "exact": 1.0
+        },
+        "F_NEGMOD": {
+          "order": 1.0,
+          "exact": 1.0
+        }
+      },
+      "main_order": 1.0,
+      "main_exact": 1.0,
+      "shuffle_order": 0.33472222222222225,
+      "nocorpus_order": 0.23958333333333331,
+      "heldout": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 0.6499999999999999
+      },
+      "heldout_mean": 0.8833333333333333,
+      "heldout_shared": 1.0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    },
+    {
+      "seed": 44,
+      "n_used": {
+        "F_MODAL": 3146,
+        "F_INTR": 2399,
+        "F_NEGMOD": 2795
+      },
+      "corpus_order": {
+        "F_MODAL": [
+          "DET",
+          "SUBJ",
+          "FUNC:can",
+          "VERB"
+        ],
+        "F_INTR": [
+          "DET",
+          "SUBJ",
+          "VERB"
+        ],
+        "F_NEGMOD": [
+          "DET",
+          "SUBJ",
+          "FUNC:does",
+          "FUNC:not",
+          "VERB"
+        ]
+      },
+      "per_frame": {
+        "F_MODAL": {
+          "order": 1.0,
+          "exact": 1.0
+        },
+        "F_INTR": {
+          "order": 1.0,
+          "exact": 1.0
+        },
+        "F_NEGMOD": {
+          "order": 1.0,
+          "exact": 1.0
+        }
+      },
+      "main_order": 1.0,
+      "main_exact": 1.0,
+      "shuffle_order": 0.31180555555555556,
+      "nocorpus_order": 0.21666666666666665,
+      "heldout": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 0.7
+      },
+      "heldout_mean": 0.9,
+      "heldout_shared": 1.0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    },
+    {
+      "seed": 100,
+      "n_used": {
+        "F_MODAL": 3226,
+        "F_INTR": 2435,
+        "F_NEGMOD": 2877
+      },
+      "corpus_order": {
+        "F_MODAL": [
+          "DET",
+          "SUBJ",
+          "FUNC:can",
+          "VERB"
+        ],
+        "F_INTR": [
+          "DET",
+          "SUBJ",
+          "VERB"
+        ],
+        "F_NEGMOD": [
+          "DET",
+          "SUBJ",
+          "FUNC:does",
+          "FUNC:not",
+          "VERB"
+        ]
+      },
+      "per_frame": {
+        "F_MODAL": {
+          "order": 1.0,
+          "exact": 1.0
+        },
+        "F_INTR": {
+          "order": 1.0,
+          "exact": 1.0
+        },
+        "F_NEGMOD": {
+          "order": 1.0,
+          "exact": 1.0
+        }
+      },
+      "main_order": 1.0,
+      "main_exact": 1.0,
+      "shuffle_order": 0.1923611111111111,
+      "nocorpus_order": 0.26666666666666666,
+      "heldout": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 0.8
+      },
+      "heldout_mean": 0.9333333333333332,
+      "heldout_shared": 1.0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    },
+    {
+      "seed": 101,
+      "n_used": {
+        "F_MODAL": 3238,
+        "F_INTR": 2369,
+        "F_NEGMOD": 2826
+      },
+      "corpus_order": {
+        "F_MODAL": [
+          "DET",
+          "SUBJ",
+          "FUNC:can",
+          "VERB"
+        ],
+        "F_INTR": [
+          "DET",
+          "SUBJ",
+          "VERB"
+        ],
+        "F_NEGMOD": [
+          "DET",
+          "SUBJ",
+          "FUNC:does",
+          "FUNC:not",
+          "VERB"
+        ]
+      },
+      "per_frame": {
+        "F_MODAL": {
+          "order": 1.0,
+          "exact": 1.0
+        },
+        "F_INTR": {
+          "order": 1.0,
+          "exact": 1.0
+        },
+        "F_NEGMOD": {
+          "order": 1.0,
+          "exact": 1.0
+        }
+      },
+      "main_order": 1.0,
+      "main_exact": 1.0,
+      "shuffle_order": 0.28680555555555554,
+      "nocorpus_order": 0.25555555555555554,
+      "heldout": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 0.8500000000000001
+      },
+      "heldout_mean": 0.9500000000000001,
+      "heldout_shared": 1.0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    },
+    {
+      "seed": 102,
+      "n_used": {
+        "F_MODAL": 3162,
+        "F_INTR": 2381,
+        "F_NEGMOD": 2847
+      },
+      "corpus_order": {
+        "F_MODAL": [
+          "DET",
+          "SUBJ",
+          "FUNC:can",
+          "VERB"
+        ],
+        "F_INTR": [
+          "DET",
+          "SUBJ",
+          "VERB"
+        ],
+        "F_NEGMOD": [
+          "DET",
+          "SUBJ",
+          "FUNC:does",
+          "FUNC:not",
+          "VERB"
+        ]
+      },
+      "per_frame": {
+        "F_MODAL": {
+          "order": 1.0,
+          "exact": 1.0
+        },
+        "F_INTR": {
+          "order": 1.0,
+          "exact": 1.0
+        },
+        "F_NEGMOD": {
+          "order": 1.0,
+          "exact": 1.0
+        }
+      },
+      "main_order": 1.0,
+      "main_exact": 1.0,
+      "shuffle_order": 0.2375,
+      "nocorpus_order": 0.18124999999999997,
+      "heldout": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 0.8
+      },
+      "heldout_mean": 0.9333333333333332,
+      "heldout_shared": 1.0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    }
+  ],
+  "HONEST_NOTE": "Learns the per-frame slot ORDER (S1b) from corpus WORD-ORDER statistics for the BOUNDED EMERGE frame domain. The MAIN arm (all frames' exemplars) learns every order EXACTLY incl. the negated-modal's does<not (directly attested -> resolved even with an honest random tie-break). HELD-OUT-FRAME generalizes the SHARED type-level order (det<subj<func<verb) perfectly to a fully-held-out frame; the ONE genuine residual is the does-vs-not INTERNAL order of a HELD-OUT multi-function-word frame (only F_NEGMOD attests two adjacent function words, so it cannot be learned from the OTHER two) -- precisely named, NOT a wall (next signal: one does<not bigram attestation or Yang-Getz's phrase-boundary cue). S1a (which slots a frame licenses) stays template-supplied -- EMERGE-64's separate residual. The order is produced on REAL spikes (EMERGE-61 wash-out for position-independence); the corpus stat is offline syllabus prep (BRAIN-BASED-ONLY compliant). The gate-first moat is untouched (0 productions on abstains)."
+}
