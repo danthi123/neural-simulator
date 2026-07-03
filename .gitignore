@@ -118,3 +118,7 @@ webapp/runtime/run_*.log
 # runtime via this cache; regenerable from the public mirror; not
 # source (mirrors the corpus cache discipline).
 data/mnist.npz
+
+# torch checkpoints (large, regenerable build artifacts -- kept local, not committed)
+*.ckpt.pt
+*.pt
