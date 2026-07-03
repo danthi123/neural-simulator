@@ -8375,3 +8375,35 @@ morphological-invariance cue (EMERGE-62 real-corpus precision); (d) the EMERGE-6
 test_regions cupy-path pre-existing failures (housekeeping). Deferred: EMERGE-57 multi-seed; the per-word A->W
 selectivity fragility. Boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a
 PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A MONITOR; CONTROLLER runs GPU steps INLINE.
+
+## CYCLE 883 (2026-07-03 — EMERGE-72 GO: the producer BROADENS from 3 -> 5 corpus-mined constructions, incl. 2 with post-verbal arguments)
+
+EMERGE-72 (GO, 6-seed, `2026-07-03-emerge72-construction-registry-GO.md`, NO sim/ edit): the RANK-1 de-risk of the
+broaden-construction-inventory research gate. The mining was ALREADY construction-agnostic; the "3 frames" were a
+hard-keyed router (match_inventory_to_frames:328 + decision_from_emerge:316) DISCARDING the rest of build_stream's ~10
+templates. A signature-keyed ConstructionRegistry + a general construction-selector (Dominey-Hinaut construction-router)
++ ONE bounded label_sentence_ext (post-verbal OBJECT slot) render 5 DISTINCT constructions from the same corpus stream,
+on spikes: the 3 EMERGE frames + C_PPGOAL "the owl flies to the pond" + C_PPLOC "the owl flies on the rock" (NEW,
+transitive-motion, arguments AFTER the verb = the biggest expressivity jump; 6 slots fit N_SLOT_POOLS=6). VERIFIED
+controller-direct (sim/ clean, no churn; CI test_emerge72 10 + test_emerge70 5 = 15 pass/1 GPU-skip; raw json):
+n_registered 5, n_rendered_exact 5, main_render 1.0, PERMUTED-CORPUS registers 0 / renders 0.0 (decisive corpus-driven
+proof), cross_render 0.0, heldout_backbone 1.0, no-corpus 0, moat 0. Strong honest methodology: caught the first emit
+override BYPASSING EMERGE-61's wash-out (adaptation tail swapped slots -> 0.95-0.975), fixed by REUSING the inherited
+_reset_substrate() (position-independence, not a gate relaxation) -> 1.0. NO sim/ edit; EMERGE-59..71 defaults
+byte-preserved (106 prior EMERGE CI pass). HONEST BOUNDARY (named, not forced): the ADJECTIVE templates (predicative-
+adjective/adj+ability/existential) do NOT cleanly mine -- this corpus's adjectives are statistically ambiguous with the
+closed class (high freq + high context-coverage -> EMERGE-62's Goldilocks labels 2-4 adjectives CLOSED per seed; PPMI-
+content cue doesn't separate them); label_sentence_ext correctly SKIPS "the owl is big" rather than mislabelling. Not a
+wall -- the next signal is the adjective's own ATTRIBUTIVE PRE-NOMINAL position cue (EMERGE-73). ⇒ the self-organized
+spiking producer now renders 5 constructions (richer production), corpus-driven, moat intact.
+
+**EXACT NEXT CONCRETE ACTION:** (1) DONE: committed EMERGE-72 both remotes. (2) NEXT: EMERGE-73 = the ADJECTIVE
+attributive PRE-NOMINAL position cue -- separate the corpus's adjectives from the closed class by their POSITION (an
+adjective reliably sits pre-nominally between DET and the noun: "the BIG owl"), NOT frequency/coverage (which conflates
+them). Reuse EMERGE-62b's phrase-position machinery; admit the adjective constructions (predicative-adjective "the owl
+is big", attributive "the big owl can fly") into the EMERGE-72 registry -> >=7 constructions; anti-cheats (position-
+shuffle collapses), 6-seed, NO sim/ edit. ALT: more constructions via the argstructure/_bucketB transitive/ditransitive
+inventory (EMERGE-74); the fully-spiking A->W of the NEW content words (pond/rock/flies -> extend the EMERGE-67/68
+BRIDGE-A pools). Deferred: EMERGE-60 fluid-RNG isolation; test_regions cupy-path failures (task chip); EMERGE-57
+multi-seed. Boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest
+origin+gitea; COMMIT ON MAIN; ARM A MONITOR; CONTROLLER runs GPU steps INLINE.

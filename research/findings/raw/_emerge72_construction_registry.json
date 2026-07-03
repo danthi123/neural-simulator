@@ -1,0 +1,544 @@
+{
+  "probe": "emerge72_construction_registry",
+  "verdict": "GO -- the self-organized spiking producer BROADENS from 3 to 5 constructions via a SIGNATURE-KEYED CONSTRUCTION REGISTRY, with ~ZERO new mechanism: the mine + order + spell + moat were already construction-AGNOSTIC (EMERGE-64/63/59); the ONLY change is de-hard-coding the 3-frame router (`match_inventory_to_frames` + `decision_from_emerge`) into a general {mined-signature -> construction} registry (Dominey-Hinaut construction-router; usage-based construction grammar, Tomasello/Goldberg). Plus ONE bounded, precedented label extension (`label_sentence_ext` admits a post-verbal CONTENT/OBJECT slot -- the argstructure/`_bucketB` motion argument-structure frame), so the transitive-MOTION constructions the corpus ALREADY attests (PP-goal 'the owl flys to the pond' / PP-location 'the owl flys on the pond') are MINED + RENDERED, not discarded. All 5 constructions (F_MODAL / F_INTR / F_NEGMOD / C_PPGOAL / C_PPLOC) are DISCOVERED from the same corpus stream and rendered EXACT on spikes (render 1.000; the 6-slot PP constructions fit the existing N_SLOT_POOLS=6 substrate exactly -- NO sim/ edit). Every input-destruction control COLLAPSES: PERMUTED-CORPUS render 0.000 (n_registered 0.0 -- scrambling each exemplar's word order dilutes every construction's dominant ordering below threshold, margin >= 0.3); CROSS-CONSTRUCTION 0.000 (rendering construction A through B's mined structure is WRONG -- construction-specific, Dominey-Hinaut form-specificity); NO-CORPUS -> 0 registered. HELD-OUT-CONSTRUCTION GENERALIZES on the SHARED structure: a fully-held-out construction's det+subj+verb backbone is recovered from the OTHERS (1.000). The gate-first no-confab MOAT holds BY CONSTRUCTION: 0 producer invocations on abstains. 6 seeds. ==> the producer renders a BROADER, corpus-driven, router-selected construction inventory -- the broadening is CORPUS-DRIVEN, not host-smuggled (permuted-corpus collapses it). HONEST BOUNDARY carried alongside (named, NOT hidden): the ADJECTIVE-based templates the gate initially named (predicative-adjective 'the owl is big' / adj+ability 'the big owl can fly' / existential 'it is a big owl') do NOT cleanly mine from THIS corpus -- its adjectives are statistically ambiguous with the closed class (high frequency AND high context-coverage -> EMERGE-62's Goldilocks discovery labels 2-4 of them CLOSED per seed; the PPMI-content cue does not separate them). That is the precisely-named residual (EMERGE-73: the adjective's OWN attributive pre-nominal signature as a third distributional cue), NOT a wall. This BROADENS the bounded, corpus-attested, router-selected inventory (transitive-motion is the biggest expressivity jump -- arguments AFTER the verb), NOT open prose (R4). The A->W spell stays the token surface here; the fully-spiking A->W of the NEW object nouns is the EMERGE-67/68-style follow-on. Reuse-by-import; NO sim/ edit; moat untouched.",
+  "go": true,
+  "mechanism": "BROADEN the self-organized spiking-Broca producer beyond the 3 EMERGE frames via a SIGNATURE-KEYED CONSTRUCTION REGISTRY: de-hard-code the 3-frame router (EMERGE-64 match_inventory_to_frames + EMERGE-59 decision_from_emerge) into a general {mined-signature -> construction id + render route} registry, so EVERY dominance-clearing mined construction is rendered, not just 3. The mining/order/spell/moat were ALREADY construction-agnostic (EMERGE-64/63/59); the ONLY additions are the registry (this file) + ONE bounded, precedented label extension (label_sentence_ext admits a post-verbal CONTENT/OBJECT slot -- the argstructure/_bucketB motion argument-structure frame, Goldberg), so the transitive-motion constructions the corpus already attests (PP-goal / PP-location) are mined + rendered on spikes (the 6-slot constructions fit N_SLOT_POOLS=6 exactly). Dominey-Hinaut: production = SELECTING the construction to express predicate + thematic roles; the reservoir generalizes to NEW constructions from closed-class order/position. Usage-based construction grammar (Tomasello/Goldberg): the inventory grows by abstracting more usage-based constructions. PERMUTED-CORPUS / CROSS-CONSTRUCTION / HELD-OUT-CONSTRUCTION / no-corpus input-destruction controls gate the result. Reuse-by-import; NO sim/ edit; gate-first moat untouched.",
+  "task": "broaden the producer to >= 5 constructions via a signature-keyed registry (the 3 EMERGE frames + transitive-motion PP-goal + PP-location, all mined from the corpus); render each exact on spikes; permuted-corpus + cross-construction + no-corpus collapse; held-out-construction generalizes on the shared det+subj+verb backbone; gate-first moat (0 productions on abstains); >=6 seeds",
+  "constructions_groundtruth": {
+    "F_MODAL": [
+      [
+        "det",
+        "the",
+        null
+      ],
+      [
+        "subj",
+        null,
+        null
+      ],
+      [
+        "func",
+        "can",
+        null
+      ],
+      [
+        "verb",
+        null,
+        "bare"
+      ]
+    ],
+    "F_INTR": [
+      [
+        "det",
+        "the",
+        null
+      ],
+      [
+        "subj",
+        null,
+        null
+      ],
+      [
+        "verb",
+        null,
+        "3sg"
+      ]
+    ],
+    "F_NEGMOD": [
+      [
+        "det",
+        "the",
+        null
+      ],
+      [
+        "subj",
+        null,
+        null
+      ],
+      [
+        "func",
+        "does",
+        null
+      ],
+      [
+        "func",
+        "not",
+        null
+      ],
+      [
+        "verb",
+        null,
+        "bare"
+      ]
+    ],
+    "C_PPGOAL": [
+      [
+        "det",
+        "the",
+        null
+      ],
+      [
+        "subj",
+        null,
+        null
+      ],
+      [
+        "verb",
+        null,
+        "3sg"
+      ],
+      [
+        "func",
+        "to",
+        null
+      ],
+      [
+        "func",
+        "the",
+        null
+      ],
+      [
+        "obj",
+        null,
+        null
+      ]
+    ],
+    "C_PPLOC": [
+      [
+        "det",
+        "the",
+        null
+      ],
+      [
+        "subj",
+        null,
+        null
+      ],
+      [
+        "verb",
+        null,
+        "3sg"
+      ],
+      [
+        "func",
+        "on",
+        null
+      ],
+      [
+        "func",
+        "the",
+        null
+      ],
+      [
+        "obj",
+        null,
+        null
+      ]
+    ]
+  },
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "elapsed_seconds": 17.6,
+  "aggregate": {
+    "n_registered": 5.0,
+    "n_rendered_exact_mean": 5.0,
+    "main_render": 1.0,
+    "perm_render": 0.0,
+    "cross_render": 0.0,
+    "heldout_mean": 1.0,
+    "nocorpus_n_registered_total": 0,
+    "moat_calls_on_abstain_total": 0
+  },
+  "sample_transcript": [
+    {
+      "tag": "MODAL   (ability affirm)",
+      "question": "can an owl fly?",
+      "surface": "the owl can fly",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "INTR    (intransitive)",
+      "question": "what does a penguin do?",
+      "surface": "the penguin walks",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "NEGMOD  (negated modal)",
+      "question": "can a penguin fly? [deny]",
+      "surface": "the penguin does not fly",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "PPGOAL  (motion goal)",
+      "question": "where does the owl fly?",
+      "surface": "the owl flies to the pond",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "PPLOC   (motion location)",
+      "question": "where does the owl fly?",
+      "surface": "the owl flies on the rock",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "MOAT    (abstain)",
+      "question": "can a zzz fly?",
+      "surface": "I don't know.",
+      "invocation": "producer NOT invoked"
+    }
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_registered": 5,
+      "registered": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC"
+      ],
+      "n_rendered_exact": 5,
+      "main_render": 1.0,
+      "per_construction": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0
+      },
+      "perm_render": 0.0,
+      "perm_n_registered": 0.0,
+      "cross_render": 0.0,
+      "heldout_backbone": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0
+      },
+      "heldout_mean": 1.0,
+      "heldout_scaffold": {
+        "F_MODAL": true,
+        "F_INTR": true,
+        "F_NEGMOD": true,
+        "C_PPGOAL": true,
+        "C_PPLOC": true
+      },
+      "nocorpus_n_registered": 0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true,
+      "discovered_fw": [
+        "a",
+        "and",
+        "big",
+        "can",
+        "cat",
+        "does",
+        "fast",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "the",
+        "to"
+      ]
+    },
+    {
+      "seed": 43,
+      "n_registered": 5,
+      "registered": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC"
+      ],
+      "n_rendered_exact": 5,
+      "main_render": 1.0,
+      "per_construction": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0
+      },
+      "perm_render": 0.0,
+      "perm_n_registered": 0.0,
+      "cross_render": 0.0,
+      "heldout_backbone": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0
+      },
+      "heldout_mean": 1.0,
+      "heldout_scaffold": {
+        "F_MODAL": true,
+        "F_INTR": true,
+        "F_NEGMOD": true,
+        "C_PPGOAL": true,
+        "C_PPLOC": true
+      },
+      "nocorpus_n_registered": 0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true,
+      "discovered_fw": [
+        "a",
+        "and",
+        "can",
+        "does",
+        "grey",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "tall",
+        "the",
+        "to",
+        "wet"
+      ]
+    },
+    {
+      "seed": 44,
+      "n_registered": 5,
+      "registered": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC"
+      ],
+      "n_rendered_exact": 5,
+      "main_render": 1.0,
+      "per_construction": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0
+      },
+      "perm_render": 0.0,
+      "perm_n_registered": 0.0,
+      "cross_render": 0.0,
+      "heldout_backbone": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0
+      },
+      "heldout_mean": 1.0,
+      "heldout_scaffold": {
+        "F_MODAL": true,
+        "F_INTR": true,
+        "F_NEGMOD": true,
+        "C_PPGOAL": true,
+        "C_PPLOC": true
+      },
+      "nocorpus_n_registered": 0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true,
+      "discovered_fw": [
+        "a",
+        "and",
+        "can",
+        "does",
+        "fast",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "red",
+        "small",
+        "tall",
+        "the",
+        "to"
+      ]
+    },
+    {
+      "seed": 100,
+      "n_registered": 5,
+      "registered": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC"
+      ],
+      "n_rendered_exact": 5,
+      "main_render": 1.0,
+      "per_construction": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0
+      },
+      "perm_render": 0.0,
+      "perm_n_registered": 0.0,
+      "cross_render": 0.0,
+      "heldout_backbone": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0
+      },
+      "heldout_mean": 1.0,
+      "heldout_scaffold": {
+        "F_MODAL": true,
+        "F_INTR": true,
+        "F_NEGMOD": true,
+        "C_PPGOAL": true,
+        "C_PPLOC": true
+      },
+      "nocorpus_n_registered": 0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true,
+      "discovered_fw": [
+        "a",
+        "and",
+        "big",
+        "can",
+        "does",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "tall",
+        "the",
+        "to",
+        "wet"
+      ]
+    },
+    {
+      "seed": 101,
+      "n_registered": 5,
+      "registered": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC"
+      ],
+      "n_rendered_exact": 5,
+      "main_render": 1.0,
+      "per_construction": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0
+      },
+      "perm_render": 0.0,
+      "perm_n_registered": 0.0,
+      "cross_render": 0.0,
+      "heldout_backbone": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0
+      },
+      "heldout_mean": 1.0,
+      "heldout_scaffold": {
+        "F_MODAL": true,
+        "F_INTR": true,
+        "F_NEGMOD": true,
+        "C_PPGOAL": true,
+        "C_PPLOC": true
+      },
+      "nocorpus_n_registered": 0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true,
+      "discovered_fw": [
+        "a",
+        "and",
+        "can",
+        "cold",
+        "does",
+        "grey",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "red",
+        "the",
+        "to",
+        "warm"
+      ]
+    },
+    {
+      "seed": 102,
+      "n_registered": 5,
+      "registered": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC"
+      ],
+      "n_rendered_exact": 5,
+      "main_render": 1.0,
+      "per_construction": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0
+      },
+      "perm_render": 0.0,
+      "perm_n_registered": 0.0,
+      "cross_render": 0.0,
+      "heldout_backbone": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0
+      },
+      "heldout_mean": 1.0,
+      "heldout_scaffold": {
+        "F_MODAL": true,
+        "F_INTR": true,
+        "F_NEGMOD": true,
+        "C_PPGOAL": true,
+        "C_PPLOC": true
+      },
+      "nocorpus_n_registered": 0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true,
+      "discovered_fw": [
+        "a",
+        "and",
+        "big",
+        "can",
+        "does",
+        "fast",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "slow",
+        "tall",
+        "the",
+        "to"
+      ]
+    }
+  ],
+  "HONEST_NOTE": "BROADENS the self-organized producer from 3 to 5 corpus-mined, router-selected constructions (the 3 EMERGE frames + transitive-motion PP-goal + PP-location) with ~zero new mechanism -- the data was already in the stream; the registry stops discarding it. The ONLY additions are the signature-keyed registry + one bounded, precedented post-verbal-content label extension (argstructure/_bucketB motion frame). HONEST BOUNDARY carried alongside (named, NOT hidden): the ADJECTIVE-based templates the research gate initially named (predicative-adjective / adj+ability / existential) do NOT cleanly mine -- the corpus's adjectives are statistically ambiguous with the closed class (high frequency AND high context-coverage -> EMERGE-62's Goldilocks discovery labels 2-4 of them CLOSED per seed; the PPMI-content cue does not separate them), so an adjective's content role is not cleanly labellable from the EMERGE-62 signals here. That is the precisely-named residual (EMERGE-73: add the adjective's OWN attributive pre-nominal position as a third distributional cue -- an adjective sits immediately left of a content noun with selectional affinity, a phrase-internal cue the closed class lacks), NOT a wall. This renders a BOUNDED, corpus-attested, router-selected inventory (transitive-motion is the biggest expressivity jump -- arguments AFTER the verb), NOT open prose (R4, the deferred wall). The A->W spell stays the token surface for THIS de-risk; the fully-spiking A->W of the NEW object nouns is the EMERGE-67/68-style follow-on (its own spiking validation is concept_speak_demo). The corpus mining is offline syllabus prep (BRAIN-BASED-ONLY compliant); the structure is rendered on REAL spikes; the gate-first moat is untouched (0 productions on abstains, by construction)."
+}
