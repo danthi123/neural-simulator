@@ -1,0 +1,75 @@
+{
+  "probe": "emerge41_fs_wta_kwinners",
+  "verdict": "GO -- the pooler's k-winners SELECTION runs as SPIKING competition, not a host argsort over the drive: columns integrate their graded drive to threshold and the HIGHER-drive columns SPIKE EARLIER (Thorpe rank-order coding), so the first-K-to-spike == the host top-K (overlap 0.92, chance 0.10); PERMUTED-drive -> the spiking winners FOLLOW the permuted top-K (0.92) => the competition reads the drive, not a fixed bias. The FS lateral inhibition suppresses the loser pool (fired fraction 0.29 with FS vs 0.57 FS-lesioned). Multi-seed. => the pooler's last host op (which columns win) is a spiking read (spike-time order), drop-in for the EMERGE-40 pooler (which learns correctly given the winner set). NO sim/ edit.",
+  "mechanism": "spiking FS global-inhibition k-winners-take-all: NCOL Izhikevich columns + an FS inhibitory pool (column->FS excitatory + FS->column inhibitory); the graded drive is injected as external current; the k highest-drive columns spike first + suppress the rest; winners = cp_firing_states",
+  "task": "select the top-K columns by graded drive via spiking competition; overlap with host top-K vs FS-lesion + permuted-drive; multi-seed",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "config": {
+    "n_col": 60,
+    "n_fs": 8,
+    "k_win": 6,
+    "n_steps": 40,
+    "drive_gain": 45.0,
+    "col_fs_w": 40.0,
+    "fs_col_w": 90.0
+  },
+  "elapsed_seconds": 1.1,
+  "per_seed": [
+    {
+      "seed": 42,
+      "overlap": 1.0,
+      "sparsity": 0.26666666666666666,
+      "n_win": 6,
+      "lesion_sparsity": 0.48333333333333334,
+      "permuted_overlap": 1.0
+    },
+    {
+      "seed": 43,
+      "overlap": 1.0,
+      "sparsity": 0.2833333333333333,
+      "n_win": 6,
+      "lesion_sparsity": 0.6,
+      "permuted_overlap": 1.0
+    },
+    {
+      "seed": 44,
+      "overlap": 1.0,
+      "sparsity": 0.2833333333333333,
+      "n_win": 6,
+      "lesion_sparsity": 0.6333333333333333,
+      "permuted_overlap": 1.0
+    },
+    {
+      "seed": 100,
+      "overlap": 0.6666666666666666,
+      "sparsity": 0.2833333333333333,
+      "n_win": 6,
+      "lesion_sparsity": 0.6333333333333333,
+      "permuted_overlap": 0.6666666666666666
+    },
+    {
+      "seed": 101,
+      "overlap": 1.0,
+      "sparsity": 0.38333333333333336,
+      "n_win": 6,
+      "lesion_sparsity": 0.6,
+      "permuted_overlap": 1.0
+    },
+    {
+      "seed": 102,
+      "overlap": 0.8333333333333334,
+      "sparsity": 0.25,
+      "n_win": 6,
+      "lesion_sparsity": 0.4666666666666667,
+      "permuted_overlap": 0.8333333333333334
+    }
+  ],
+  "HONEST_NOTE": "cheap-first: this de-risks the spiking k-WTA SELECTION against the host top-k on a graded drive. If GO, wiring it into the EMERGE-40 pooler learning loop (replace np.argsort(-drive)[:K] with select(drive)) is the follow-on -- the learning is unchanged (it only needs the winner set)."
+}

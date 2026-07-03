@@ -7399,3 +7399,25 @@ the experiential console (EMERGE-31) so discovered OVERLAPPING categories feed t
 cancellation + transitivity). Boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked
 (additive/default-inert); moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy for these
 CPU pooler de-risks).
+
+## CYCLE 847 (2026-07-02 — EMERGE-41: the pooler's k-WTA selection goes SPIKING; the 38->41 pooler arc is fully-on-substrate)
+
+EMERGE-41 (GO 6/6, `2026-07-02-emerge41-fs-wta-kwinners-GO.md`, NO sim/ edit): the pooler's k-winners SELECTION -- the
+last host step (np.argsort over the drive) -- now runs as SPIKING competition. Columns integrate their graded drive to
+threshold; higher-drive columns spike EARLIER (Thorpe rank-order coding), so the first-K-to-spike == the host top-K
+(overlap 0.92 mean, chance 0.10); PERMUTED-drive follows (0.92); the FS lateral inhibition suppresses the loser pool
+(fired 0.29 with FS vs 0.57 lesioned). `_emerge41_fs_wta_kwinners_derisk.py` + `tests/test_emerge41_fs_wta_kwinners.py`
+(3 pass). HONEST: rank-order timing is the PRIMARY selector (the FS is a secondary sparsity aid, not a sharp exact-K
+clamp -- a single global-inhibition pool oscillates at exactly K); dt=1.0 timing ties on near-equal drive (seeds
+100/102 lower). ⇒ EMERGE-38->41: the competitive self-organizing pooler is realizable FULLY on the spiking substrate
+(drive from substrate weights + winners by spiking rank-order/FS + learning by sim/ kernels).
+
+**EXACT NEXT CONCRETE ACTION:** commit EMERGE-41 (runner + test + finding + raw json + this state) to BOTH remotes on
+main. THEN continue autonomously -- the highest-leverage next step is the CAPABILITY integration: couple the competitive
+self-organizing pooler (EMERGE-38..41, which discovers OVERLAPPING categories from experience) into the experiential
+inference stack (EMERGE-30/31/37 -- emergent superordinate + inheritance + cancellation + transitivity) so the brain
+discovers overlapping categories from co-occurrence AND does the full Collins-Quillian inference over them, in the
+interactive console. Cheap-first: reuse EMERGE-37's cancellation-on-emergent-codes + EMERGE-31's console; feed the
+pooler's learned overlapping-category codons as the concept codes. Boundaries = undiscovered mechanisms; NO stopping;
+sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy for
+these CPU pooler de-risks).
