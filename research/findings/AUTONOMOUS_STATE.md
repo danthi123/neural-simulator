@@ -7651,3 +7651,25 @@ run_in_background + a coverage-complete Monitor (per the standing monitoring pra
 (EMERGE-45) fully-spiking version with the trace, and/or the fully-on-substrate cp_ eligibility-trace array (burn down the
 host-computed-trace rate-reference). Boundaries = undiscovered mechanisms (this one SURPASSED); NO stopping; sim/ edits
 fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy for CPU de-risks).
+
+## CYCLE 858 (2026-07-03 — EMERGE-51 GO: the emergent semantic substrate is CONVERSATIONALLY QUERYABLE)
+
+EMERGE-51 (GO 3/3, `2026-07-02-emerge51-experiential-conversational-console-GO.md`, NO sim/ edit): connected the complete
+pooler arc to a NATURAL-LANGUAGE console -- the brain OBSERVES experience, the competitive pooler DISCOVERS overlapping
+categories, the user teaches a class property + a member exception, and ASKS in plain language -> inheritance (held-out
+1.00, never-taught member inherits via the discovered codon) / cancellation (1.00, exception member -> its specific fact) /
+no-confab MOAT (all seeds abstain on unknown tokens, 0 false-accepts); permuted-features collapses inheritance to 0.00.
+DEMO loop: "a robin has feathers beak..." (observe->pooler discovers) -> "a robin can fly" (teach) -> "a penguin walks"
+(exception) -> "can an owl fly?" Yes (inherit, never told) -> "can a penguin fly?" No, walks (cancel) -> "can a zzz fly?"
+I don't know (moat). Clean composition of validated pieces (EMERGE-38/42 pooler + 42/43 inheritance/cancellation + 29/31
+NL console); no new mechanism. `_emerge51_experiential_conversational_console.py` + test (3 pass). Honest: class taught via
+several exemplars (robust regime, held-out still genuine); a plateau-tie resolved correctly to the specific fact
+(Collins-Quillian). ⇒ "discover categories from experience -> talk to the brain about them" DEMONSTRATED, transformer-free.
+The EMERGE-50 6-seed confirmation (b2whf1bce) is still running (Monitor bn3gssop5 armed; separate --out _6seed.json).
+
+**EXACT NEXT CONCRETE ACTION:** commit EMERGE-51 (runner + test + finding + raw json + this state) to BOTH remotes on
+main. THEN: when the EMERGE-50 6-seed lands (Monitor will fire), commit the 6-seed confirmation. Continue toward the GOAL:
+corpus-scale feature discovery + multi-level taxonomy expressed conversationally (extend EMERGE-51 with EMERGE-44/45's
+discovered hierarchy -> "is a robin an animal?" 2 levels up); and/or wire the experiential conversational console toward
+the fluid-conversation stack. Boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked; moat
+a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy for CPU); ARM A MONITOR on every long run.

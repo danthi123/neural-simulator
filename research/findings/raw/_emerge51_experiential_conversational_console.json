@@ -1,0 +1,39 @@
+{
+  "probe": "emerge51_experiential_conversational_console",
+  "verdict": "GO -- the emergent semantic substrate is CONVERSATIONALLY QUERYABLE: the brain OBSERVES members with features in plain language, the competitive self-organizing pooler (EMERGE-38/42) DISCOVERS the overlapping categories from that experience, and the user teaches + ASKS in natural language, answered by the on-substrate inheritance/cancellation over the DISCOVERED codes -- HELD-OUT INHERITANCE 1.00 (a never-directly-taught member inherits via the shared discovered codon), CANCELLATION 1.00 (the exception member answers ITS specific fact), the no-confab MOAT abstains on every never-observed token (0 false-accepts). PERMUTED experience (scrambled features -> no discoverable categories) collapses held-out inheritance to 0.00. 3-seed. => 'discover categories from experience -> talk to the brain about them', one spiking brain, NO sim/ edit.",
+  "mechanism": "the EMERGE-38/42 competitive self-organizing pooler discovers overlapping-category codons from observed member feature-vectors (unsupervised, k-WTA + boosting); the committed three-term kernel teaches a CLASS property on an exemplar's discovered codon (inheritance via the shared codon) + a member EXCEPTION on the member-identity ensemble (cancellation); a graded apical read over the discovered codes answers natural-language questions with the no-confab moat; a tiny regex NL front end (world/keyboard interface). Composes EMERGE-42/43 + EMERGE-29/31. NO sim/ edit.",
+  "task": "observe members with features in plain language -> DISCOVER categories -> teach class property + member exception -> ASK 'can a X P?' answered by inheritance/cancellation over the discovered codes, with the moat; held-out inheritance + cancellation + moat + permuted control; 3-seed",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "elapsed_seconds": 2.6,
+  "per_seed": [
+    {
+      "seed": 42,
+      "inherit": 1.0,
+      "cancel": 1.0,
+      "moat_unknown": true,
+      "moat_false_accepts": 0,
+      "permuted_inherit": 0.0
+    },
+    {
+      "seed": 43,
+      "inherit": 1.0,
+      "cancel": 1.0,
+      "moat_unknown": true,
+      "moat_false_accepts": 0,
+      "permuted_inherit": 0.0
+    },
+    {
+      "seed": 44,
+      "inherit": 1.0,
+      "cancel": 1.0,
+      "moat_unknown": true,
+      "moat_false_accepts": 0,
+      "permuted_inherit": 0.0
+    }
+  ],
+  "HONEST_NOTE": "composes validated pieces: EMERGE-38 competitive pooler (the learning is a rate-reference realized fully-on-substrate at EMERGE-39..41) + EMERGE-42/43 inheritance/cancellation on the spiking bridge over the discovered codons + EMERGE-29/31 natural-language console. Per EMERGE-42's validated inheritance protocol, the class property is taught via SEVERAL exemplars (6 of the 8 per-category members named in 'a X can P' sentences) so the shared discovered columns are broadly potentiated; the 2 HELD-OUT members per category are NEVER named in a can/exception sentence and inherit only via the shared codon. Cancellation resolves the specific member exception over the class default (Collins-Quillian: the specific fact wins, incl. a saturated-plateau tie). The demo vocabulary is a small curated feature set (birds share wings/feathers/beak/talons/plume/crest; fish share fins/scales/gills/tail/stripe/barbel, each member a varied 4-of-6 subset); corpus-scale feature discovery + multi-level taxonomy in NL are follow-ons."
+}
