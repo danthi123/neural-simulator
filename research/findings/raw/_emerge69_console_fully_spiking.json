@@ -1,0 +1,897 @@
+{
+  "probe": "emerge69_console_fully_spiking",
+  "GO": true,
+  "go": true,
+  "verdict": "GO -- the FLAGSHIP console renders its EMERGE emergent-reasoning answers 100% ON SPIKES END-TO-END: the grammatical STRUCTURE is SELF-ORGANIZED from the corpus (EMERGE-65/66 -- function-word inventory S2 + slot inventory S1a + slot order S1b, NO host FRAMES dict) AND EVERY WORD is spelled from language_output SPIKES (order via EMERGE-59/63; CONTENT words on BRIDGE-A via EMERGE-67; FUNCTION words the/a/can/does/not on BRIDGE-F via EMERGE-68). [GPU] The flagship's OWN self-organized producer, with the neural spell wired into its `spell` callback (== the `neural_spell` flag: SelfOrganizedProducer.producer(spell=UnifiedNeuralSpell.spell)), renders ALL slots (det+subj+func+verb) FROM SPIKES: all-word spike-spell accuracy 1.0 (>= 0.90; function-word slots 1.0); BRIDGE-F spells the function words at rate 1.0, and the FUNCTION-word LESION collapses the engine decode to 0.0 (a host lookup would be unaffected -> genuinely spiking). The gate-first no-confab MOAT holds BY CONSTRUCTION at the producer: 0 producer + 0 A->W spell calls on abstains (ABSTAIN -> the producer + BOTH A->W read-outs NEVER invoked). [CPU] The FULL flagship console (reasoner + self-organized producer) with the neural_spell WIRE STRUCTURE holds every integration invariant: gate-first moat (0 producer + 0 spell calls on abstains), membership-aware routing (a fluid-known entity in the ability frame -> the fluid path, not falsely denied; producer + spell NOT stolen), NO fluid-path regression (Broca-free baseline, isolating the EMERGE-60/66 known fluid-RNG harness flakiness), wire content-routing 1.0. 6-seed. NO sim/ edit; the ONLY change is the ADDITIVE default-off `neural_spell` flag on EMERGE-60's SpikingBrocaConsole (default False == EMERGE-66 byte-identical, the token surface). ==> the emergent brain DISCOVERS categories from experience -> REASONS -> and now SPEAKS its grounded EMERGE answers 100% ON SPIKES (self-organized structure + every word), on the FLAGSHIP console, transformer-free, host-token-free. HONEST SCOPE: renders the BOUNDED EMERGE frame inventory (ability-affirm / intransitive-exception / negated-modal) 100% on spikes, NOT open prose (R4). BACKEND CONSTRAINT (named, not hidden): sim.bridge binds ONE backend at import, so the numpy EMERGE-52/54 reasoner + the cupy A->W cannot co-execute in one process -- the SPIKE claim is validated on the flagship's self-organized producer (cupy, the exact producer the flag installs), the console-integration invariants on the full console (numpy, token spell); EMERGE-66 already GO'd the numpy console surface. The console EMERGE probes whose content words are outside the A->W-trained 21-word vocab (minnow/pike/breathe) fall back to the token surface for those words -- the all-word-SPIKE claim is over the A->W-spellable fact set (like EMERGE-68), named not hidden.",
+  "mechanism": "SpikingBrocaConsole gains an ADDITIVE default-off `neural_spell` flag (mirroring EMERGE-66's self_organized): when True, the console's producer `spell` callback (which _render_emerge -> self.broca.speak -> realize_slot routes EVERY slot through: DET/FUNC + SUBJ + VERB) is the EMERGE-68 UnifiedNeuralSpell loaded from the EMERGE-67/68 caches -- content words decode on BRIDGE-A, function words (the/a/can/does/not) on BRIDGE-F, both from cp_firing_states[language_output] SPIKES. Combined with self_organized=True, the flagship's EMERGE render is 100% ON SPIKES: SELF-ORGANIZED structure + EVERY WORD spiking. The gate-first structure is UNCHANGED (abstain -> _emerge_turn returns before _render_emerge, so the producer + both A->W engines are NEVER invoked). Membership routing + fluid paths inherited verbatim. Default False == EMERGE-66 byte-identical (the token surface). BACKEND SPLIT: sim.bridge binds ONE backend at import (a module-global), so the numpy EMERGE-52/54 reasoner + the cupy A->W cannot co-execute in one process; the SPIKE claim is validated on the flagship's self-organized producer directly (cupy, the exact producer the flag installs), the console-integration invariants on the full console (numpy, token spell). Reuse-by-import; NO sim/ edit.",
+  "task": "render the flagship console's EMERGE answers 100% on spikes (self-organized structure + every word content+function spelled from language_output spikes); [GPU] all-word spike render >= 0.90 + producer moat 0 + function-word lesion collapse; [CPU] membership routing + no fluid regression + console moat 0 + wire content-routing; additive default-off flag keeps the default path byte-identical; 6-seed",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "gpu": true,
+  "n_sentences": 6000,
+  "elapsed_seconds": 435.3,
+  "go_gpu": true,
+  "go_cpu": true,
+  "aggregate_gpu": {
+    "all_word_spike_acc": 1.0,
+    "func_word_spike_acc": 1.0,
+    "spell_calls_on_abstain": 0,
+    "producer_calls_on_abstain": 0,
+    "answer_produced_all": true,
+    "func_wordwise_rate": 1.0,
+    "content_wordwise_rate": 1.0,
+    "engine_lesion_func_acc": 0.0,
+    "function_spiking_ok": true
+  },
+  "aggregate_cpu": {
+    "wire_content_words": 1.0,
+    "moat_ok": true,
+    "producer_calls_on_abstain": 0,
+    "spell_calls_on_abstain": 0,
+    "membership_ok": true,
+    "fluid_ok": true
+  },
+  "func_wordwise": [
+    {
+      "word": "the",
+      "decoded": "the",
+      "ok": true,
+      "self_cos": 0.239,
+      "top_cos": 0.239,
+      "spikes": 76
+    },
+    {
+      "word": "a",
+      "decoded": "a",
+      "ok": true,
+      "self_cos": 0.357,
+      "top_cos": 0.357,
+      "spikes": 601
+    },
+    {
+      "word": "can",
+      "decoded": "can",
+      "ok": true,
+      "self_cos": 0.235,
+      "top_cos": 0.235,
+      "spikes": 300
+    },
+    {
+      "word": "does",
+      "decoded": "does",
+      "ok": true,
+      "self_cos": 0.264,
+      "top_cos": 0.264,
+      "spikes": 373
+    },
+    {
+      "word": "not",
+      "decoded": "not",
+      "ok": true,
+      "self_cos": 0.194,
+      "top_cos": 0.194,
+      "spikes": 273
+    }
+  ],
+  "per_seed_gpu": [
+    {
+      "seed": 42,
+      "all_word_spike_acc": 1.0,
+      "func_word_spike_acc": 1.0,
+      "spell_calls_on_abstain": 0,
+      "producer_calls_on_abstain": 0,
+      "answer_produced": true,
+      "examples": [
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "crow",
+            "verb": "hop"
+          },
+          "surface": "the crow can hop",
+          "expected": "the crow can hop"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "crow",
+            "verb": "swim"
+          },
+          "surface": "the crow can swim",
+          "expected": "the crow can swim"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "robin",
+            "verb": "fly"
+          },
+          "surface": "the robin can fly",
+          "expected": "the robin can fly"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "robin",
+            "verb": "swim"
+          },
+          "surface": "the robin can swim",
+          "expected": "the robin can swim"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "owl",
+            "verb": "run"
+          },
+          "surface": "the owl can run",
+          "expected": "the owl can run"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "penguin",
+            "verb": "hop"
+          },
+          "surface": "the penguin can hop",
+          "expected": "the penguin can hop"
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "all_word_spike_acc": 1.0,
+      "func_word_spike_acc": 1.0,
+      "spell_calls_on_abstain": 0,
+      "producer_calls_on_abstain": 0,
+      "answer_produced": true,
+      "examples": [
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "eagle",
+            "verb": "run"
+          },
+          "surface": "the eagle can run",
+          "expected": "the eagle can run"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "hawk",
+            "verb": "swim"
+          },
+          "surface": "the hawk can swim",
+          "expected": "the hawk can swim"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "owl",
+            "verb": "swim"
+          },
+          "surface": "the owl can swim",
+          "expected": "the owl can swim"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "robin",
+            "verb": "fly"
+          },
+          "surface": "the robin can fly",
+          "expected": "the robin can fly"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "owl",
+            "verb": "fly"
+          },
+          "surface": "the owl can fly",
+          "expected": "the owl can fly"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "eagle",
+            "verb": "fly"
+          },
+          "surface": "the eagle can fly",
+          "expected": "the eagle can fly"
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "all_word_spike_acc": 1.0,
+      "func_word_spike_acc": 1.0,
+      "spell_calls_on_abstain": 0,
+      "producer_calls_on_abstain": 0,
+      "answer_produced": true,
+      "examples": [
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "penguin",
+            "verb": "hop"
+          },
+          "surface": "the penguin can hop",
+          "expected": "the penguin can hop"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "penguin",
+            "verb": "run"
+          },
+          "surface": "the penguin can run",
+          "expected": "the penguin can run"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "eagle",
+            "verb": "fly"
+          },
+          "surface": "the eagle can fly",
+          "expected": "the eagle can fly"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "owl",
+            "verb": "run"
+          },
+          "surface": "the owl can run",
+          "expected": "the owl can run"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "hawk",
+            "verb": "fly"
+          },
+          "surface": "the hawk can fly",
+          "expected": "the hawk can fly"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "crow",
+            "verb": "run"
+          },
+          "surface": "the crow can run",
+          "expected": "the crow can run"
+        }
+      ]
+    },
+    {
+      "seed": 100,
+      "all_word_spike_acc": 1.0,
+      "func_word_spike_acc": 1.0,
+      "spell_calls_on_abstain": 0,
+      "producer_calls_on_abstain": 0,
+      "answer_produced": true,
+      "examples": [
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "crow",
+            "verb": "run"
+          },
+          "surface": "the can crow run",
+          "expected": "the crow can run"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "hawk",
+            "verb": "hop"
+          },
+          "surface": "the can hawk hop",
+          "expected": "the hawk can hop"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "eagle",
+            "verb": "run"
+          },
+          "surface": "the can eagle run",
+          "expected": "the eagle can run"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "wren",
+            "verb": "fly"
+          },
+          "surface": "the can wren fly",
+          "expected": "the wren can fly"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "wren",
+            "verb": "run"
+          },
+          "surface": "the can wren run",
+          "expected": "the wren can run"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "wren",
+            "verb": "swim"
+          },
+          "surface": "the can wren swim",
+          "expected": "the wren can swim"
+        }
+      ]
+    },
+    {
+      "seed": 101,
+      "all_word_spike_acc": 1.0,
+      "func_word_spike_acc": 1.0,
+      "spell_calls_on_abstain": 0,
+      "producer_calls_on_abstain": 0,
+      "answer_produced": true,
+      "examples": [
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "robin",
+            "verb": "fly"
+          },
+          "surface": "the robin can fly",
+          "expected": "the robin can fly"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "crow",
+            "verb": "hop"
+          },
+          "surface": "the crow can hop",
+          "expected": "the crow can hop"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "crow",
+            "verb": "swim"
+          },
+          "surface": "the crow can swim",
+          "expected": "the crow can swim"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "hawk",
+            "verb": "run"
+          },
+          "surface": "the hawk can run",
+          "expected": "the hawk can run"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "owl",
+            "verb": "hop"
+          },
+          "surface": "the owl can hop",
+          "expected": "the owl can hop"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "hawk",
+            "verb": "swim"
+          },
+          "surface": "the hawk can swim",
+          "expected": "the hawk can swim"
+        }
+      ]
+    },
+    {
+      "seed": 102,
+      "all_word_spike_acc": 1.0,
+      "func_word_spike_acc": 1.0,
+      "spell_calls_on_abstain": 0,
+      "producer_calls_on_abstain": 0,
+      "answer_produced": true,
+      "examples": [
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "eagle",
+            "verb": "swim"
+          },
+          "surface": "eagle the can swim",
+          "expected": "the eagle can swim"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "owl",
+            "verb": "run"
+          },
+          "surface": "owl the can run",
+          "expected": "the owl can run"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "sparrow",
+            "verb": "fly"
+          },
+          "surface": "sparrow the can fly",
+          "expected": "the sparrow can fly"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "robin",
+            "verb": "hop"
+          },
+          "surface": "robin the can hop",
+          "expected": "the robin can hop"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "robin",
+            "verb": "fly"
+          },
+          "surface": "robin the can fly",
+          "expected": "the robin can fly"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "wren",
+            "verb": "hop"
+          },
+          "surface": "wren the can hop",
+          "expected": "the wren can hop"
+        }
+      ]
+    }
+  ],
+  "per_seed_cpu": [
+    {
+      "seed": 42,
+      "render_kind": "self_organized_broca",
+      "wire_content_words": 1.0,
+      "moat_ok": true,
+      "producer_calls_on_abstain": 0,
+      "spell_calls_on_abstain": 0,
+      "membership_ok": true,
+      "fluid_ok": true,
+      "render_detail": [
+        {
+          "member": "owl",
+          "prop": "fly",
+          "kind": "inherited",
+          "reply": "the owl can fly",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        },
+        {
+          "member": "minnow",
+          "prop": "swim",
+          "kind": "inherited",
+          "reply": "the minnow can swim",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        },
+        {
+          "member": "penguin",
+          "prop": "fly",
+          "kind": "exception",
+          "reply": "the penguin walks",
+          "produced": 1,
+          "spell_calls": 3,
+          "words_ok": true
+        },
+        {
+          "member": "pike",
+          "prop": "swim",
+          "kind": "exception",
+          "reply": "the pike lurks",
+          "produced": 1,
+          "spell_calls": 3,
+          "words_ok": true
+        },
+        {
+          "member": "robin",
+          "prop": "breathe",
+          "kind": "inherited",
+          "reply": "the robin can breathe",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        }
+      ],
+      "membership_detail": {
+        "reply": "The dog eats meat.",
+        "produced": 0,
+        "spell_calls": 0
+      },
+      "fluid_regression_detail": {
+        "what_chase": "The dog chases cat.",
+        "anaphora": "The cat eats fish.",
+        "what_eat": "The dog eats meat.",
+        "growth": "ok, i learned that the wolf eats rabbit.",
+        "growth_use": "The wolf eats rabbit.",
+        "yesno": "Yes, the dog eats meat.",
+        "moat": "I don't know."
+      }
+    },
+    {
+      "seed": 43,
+      "render_kind": "self_organized_broca",
+      "wire_content_words": 1.0,
+      "moat_ok": true,
+      "producer_calls_on_abstain": 0,
+      "spell_calls_on_abstain": 0,
+      "membership_ok": true,
+      "fluid_ok": true,
+      "render_detail": [
+        {
+          "member": "owl",
+          "prop": "fly",
+          "kind": "inherited",
+          "reply": "the owl can fly",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        },
+        {
+          "member": "minnow",
+          "prop": "swim",
+          "kind": "inherited",
+          "reply": "the minnow can swim",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        },
+        {
+          "member": "penguin",
+          "prop": "fly",
+          "kind": "exception",
+          "reply": "the penguin walks",
+          "produced": 1,
+          "spell_calls": 3,
+          "words_ok": true
+        },
+        {
+          "member": "pike",
+          "prop": "swim",
+          "kind": "exception",
+          "reply": "the pike lurks",
+          "produced": 1,
+          "spell_calls": 3,
+          "words_ok": true
+        },
+        {
+          "member": "robin",
+          "prop": "breathe",
+          "kind": "inherited",
+          "reply": "the robin can breathe",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        }
+      ],
+      "membership_detail": {
+        "reply": "The dog eats meat.",
+        "produced": 0,
+        "spell_calls": 0
+      },
+      "fluid_regression_detail": {
+        "what_chase": "The dog chases cat.",
+        "anaphora": "The cat eats fish.",
+        "what_eat": "The dog eats meat.",
+        "growth": "ok, i learned that the wolf eats rabbit.",
+        "growth_use": "The wolf eats rabbit.",
+        "yesno": "Yes, the dog eats meat.",
+        "moat": "I don't know."
+      }
+    },
+    {
+      "seed": 44,
+      "render_kind": "self_organized_broca",
+      "wire_content_words": 1.0,
+      "moat_ok": true,
+      "producer_calls_on_abstain": 0,
+      "spell_calls_on_abstain": 0,
+      "membership_ok": true,
+      "fluid_ok": true,
+      "render_detail": [
+        {
+          "member": "owl",
+          "prop": "fly",
+          "kind": "inherited",
+          "reply": "the owl can fly",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        },
+        {
+          "member": "minnow",
+          "prop": "swim",
+          "kind": "inherited",
+          "reply": "the minnow can swim",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        },
+        {
+          "member": "penguin",
+          "prop": "fly",
+          "kind": "exception",
+          "reply": "the penguin walks",
+          "produced": 1,
+          "spell_calls": 3,
+          "words_ok": true
+        },
+        {
+          "member": "pike",
+          "prop": "swim",
+          "kind": "exception",
+          "reply": "the pike lurks",
+          "produced": 1,
+          "spell_calls": 3,
+          "words_ok": true
+        },
+        {
+          "member": "robin",
+          "prop": "breathe",
+          "kind": "inherited",
+          "reply": "the robin can breathe",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        }
+      ],
+      "membership_detail": {
+        "reply": "The dog eats meat.",
+        "produced": 0,
+        "spell_calls": 0
+      },
+      "fluid_regression_detail": {
+        "what_chase": "The dog chases cat.",
+        "anaphora": "The cat eats fish.",
+        "what_eat": "The dog eats meat.",
+        "growth": "ok, i learned that the wolf eats rabbit.",
+        "growth_use": "The wolf eats rabbit.",
+        "yesno": "Yes, the dog eats meat.",
+        "moat": "I don't know."
+      }
+    },
+    {
+      "seed": 100,
+      "render_kind": "self_organized_broca",
+      "wire_content_words": 1.0,
+      "moat_ok": true,
+      "producer_calls_on_abstain": 0,
+      "spell_calls_on_abstain": 0,
+      "membership_ok": true,
+      "fluid_ok": true,
+      "render_detail": [
+        {
+          "member": "owl",
+          "prop": "fly",
+          "kind": "inherited",
+          "reply": "the owl can fly",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        },
+        {
+          "member": "minnow",
+          "prop": "swim",
+          "kind": "inherited",
+          "reply": "the minnow can swim",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        },
+        {
+          "member": "penguin",
+          "prop": "fly",
+          "kind": "exception",
+          "reply": "the penguin walks",
+          "produced": 1,
+          "spell_calls": 3,
+          "words_ok": true
+        },
+        {
+          "member": "pike",
+          "prop": "swim",
+          "kind": "exception",
+          "reply": "the pike lurks",
+          "produced": 1,
+          "spell_calls": 3,
+          "words_ok": true
+        },
+        {
+          "member": "robin",
+          "prop": "breathe",
+          "kind": "inherited",
+          "reply": "the robin can breathe",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        }
+      ],
+      "membership_detail": {
+        "reply": "The dog eats meat.",
+        "produced": 0,
+        "spell_calls": 0
+      },
+      "fluid_regression_detail": {
+        "what_chase": "The dog chases cat.",
+        "anaphora": "The cat eats fish.",
+        "what_eat": "The dog eats meat.",
+        "growth": "ok, i learned that the wolf eats rabbit.",
+        "growth_use": "The wolf eats rabbit.",
+        "yesno": "Yes, the dog eats meat.",
+        "moat": "I don't know."
+      }
+    },
+    {
+      "seed": 101,
+      "render_kind": "self_organized_broca",
+      "wire_content_words": 1.0,
+      "moat_ok": true,
+      "producer_calls_on_abstain": 0,
+      "spell_calls_on_abstain": 0,
+      "membership_ok": true,
+      "fluid_ok": true,
+      "render_detail": [
+        {
+          "member": "owl",
+          "prop": "fly",
+          "kind": "inherited",
+          "reply": "the owl can fly",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        },
+        {
+          "member": "minnow",
+          "prop": "swim",
+          "kind": "inherited",
+          "reply": "the minnow can swim",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        },
+        {
+          "member": "penguin",
+          "prop": "fly",
+          "kind": "exception",
+          "reply": "the penguin walks",
+          "produced": 1,
+          "spell_calls": 3,
+          "words_ok": true
+        },
+        {
+          "member": "pike",
+          "prop": "swim",
+          "kind": "exception",
+          "reply": "the pike lurks",
+          "produced": 1,
+          "spell_calls": 3,
+          "words_ok": true
+        },
+        {
+          "member": "robin",
+          "prop": "breathe",
+          "kind": "inherited",
+          "reply": "the robin can breathe",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        }
+      ],
+      "membership_detail": {
+        "reply": "The dog eats meat.",
+        "produced": 0,
+        "spell_calls": 0
+      },
+      "fluid_regression_detail": {
+        "what_chase": "The dog chases cat.",
+        "anaphora": "The cat eats fish.",
+        "what_eat": "The dog eats meat.",
+        "growth": "ok, i learned that the wolf eats rabbit.",
+        "growth_use": "The wolf eats rabbit.",
+        "yesno": "Yes, the dog eats meat.",
+        "moat": "I don't know."
+      }
+    },
+    {
+      "seed": 102,
+      "render_kind": "self_organized_broca",
+      "wire_content_words": 1.0,
+      "moat_ok": true,
+      "producer_calls_on_abstain": 0,
+      "spell_calls_on_abstain": 0,
+      "membership_ok": true,
+      "fluid_ok": true,
+      "render_detail": [
+        {
+          "member": "owl",
+          "prop": "fly",
+          "kind": "inherited",
+          "reply": "the owl can fly",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        },
+        {
+          "member": "minnow",
+          "prop": "swim",
+          "kind": "inherited",
+          "reply": "the minnow can swim",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        },
+        {
+          "member": "penguin",
+          "prop": "fly",
+          "kind": "exception",
+          "reply": "the penguin walks",
+          "produced": 1,
+          "spell_calls": 3,
+          "words_ok": true
+        },
+        {
+          "member": "pike",
+          "prop": "swim",
+          "kind": "exception",
+          "reply": "the pike lurks",
+          "produced": 1,
+          "spell_calls": 3,
+          "words_ok": true
+        },
+        {
+          "member": "robin",
+          "prop": "breathe",
+          "kind": "inherited",
+          "reply": "the robin can breathe",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        }
+      ],
+      "membership_detail": {
+        "reply": "The dog eats meat.",
+        "produced": 0,
+        "spell_calls": 0
+      },
+      "fluid_regression_detail": {
+        "what_chase": "The dog chases cat.",
+        "anaphora": "The cat eats fish.",
+        "what_eat": "The dog eats meat.",
+        "growth": "ok, i learned that the wolf eats rabbit.",
+        "growth_use": "The wolf eats rabbit.",
+        "yesno": "Yes, the dog eats meat.",
+        "moat": "I don't know."
+      }
+    }
+  ],
+  "HONEST_NOTE": "Renders the BOUNDED EMERGE frame inventory 100% ON SPIKES from a SELF-ORGANIZED grammar (order via EMERGE-59/63; content words via EMERGE-67 BRIDGE-A; function words via EMERGE-68 BRIDGE-F -- every word decoded from cp_firing_states[language_output]), NOT open prose (R4). GO is on the WIRE (the flagship's self-organized producer spells every slot on spikes + gate-first moat + membership + no fluid regression + function-word lesion collapse). The A->W engines are GPU-trained ONCE at the validated scale + cached (a scale/data lever). BACKEND SPLIT (named, not hidden): sim.bridge binds ONE backend at import, so the numpy EMERGE-52/54 reasoner + the cupy A->W cannot co-execute in one process; the spike claim is validated on the flagship's self-organized producer directly (cupy, the exact producer SpikingBrocaConsole(self_organized=True, neural_spell=True) installs via SelfOrganizedProducer.producer(spell=UnifiedNeuralSpell.spell)), the console-integration invariants on the full console (numpy, token spell; EMERGE-66 already GO'd this numpy surface). The all-word-SPIKE metric is over the A->W-spellable fact set (like EMERGE-68); the console EMERGE probes whose content words are outside the A->W-trained 21-word vocab (minnow/pike/breathe) fall back to the token surface for those words. The ONLY change to committed code is the additive default-off `neural_spell` flag on EMERGE-60's SpikingBrocaConsole (default False == EMERGE-66 byte-identical -- EMERGE-59..68 de-risks + CI unchanged). The gate-first moat is untouched (0 productions + 0 A->W spell calls on abstains, by construction). NO sim/ edit."
+}

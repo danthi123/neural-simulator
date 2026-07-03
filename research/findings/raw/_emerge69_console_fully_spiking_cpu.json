@@ -1,0 +1,441 @@
+{
+  "go_cpu": true,
+  "err": null,
+  "aggregate_cpu": {
+    "wire_content_words": 1.0,
+    "moat_ok": true,
+    "producer_calls_on_abstain": 0,
+    "spell_calls_on_abstain": 0,
+    "membership_ok": true,
+    "fluid_ok": true
+  },
+  "per_seed_cpu": [
+    {
+      "seed": 42,
+      "render_kind": "self_organized_broca",
+      "wire_content_words": 1.0,
+      "moat_ok": true,
+      "producer_calls_on_abstain": 0,
+      "spell_calls_on_abstain": 0,
+      "membership_ok": true,
+      "fluid_ok": true,
+      "render_detail": [
+        {
+          "member": "owl",
+          "prop": "fly",
+          "kind": "inherited",
+          "reply": "the owl can fly",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        },
+        {
+          "member": "minnow",
+          "prop": "swim",
+          "kind": "inherited",
+          "reply": "the minnow can swim",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        },
+        {
+          "member": "penguin",
+          "prop": "fly",
+          "kind": "exception",
+          "reply": "the penguin walks",
+          "produced": 1,
+          "spell_calls": 3,
+          "words_ok": true
+        },
+        {
+          "member": "pike",
+          "prop": "swim",
+          "kind": "exception",
+          "reply": "the pike lurks",
+          "produced": 1,
+          "spell_calls": 3,
+          "words_ok": true
+        },
+        {
+          "member": "robin",
+          "prop": "breathe",
+          "kind": "inherited",
+          "reply": "the robin can breathe",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        }
+      ],
+      "membership_detail": {
+        "reply": "The dog eats meat.",
+        "produced": 0,
+        "spell_calls": 0
+      },
+      "fluid_regression_detail": {
+        "what_chase": "The dog chases cat.",
+        "anaphora": "The cat eats fish.",
+        "what_eat": "The dog eats meat.",
+        "growth": "ok, i learned that the wolf eats rabbit.",
+        "growth_use": "The wolf eats rabbit.",
+        "yesno": "Yes, the dog eats meat.",
+        "moat": "I don't know."
+      }
+    },
+    {
+      "seed": 43,
+      "render_kind": "self_organized_broca",
+      "wire_content_words": 1.0,
+      "moat_ok": true,
+      "producer_calls_on_abstain": 0,
+      "spell_calls_on_abstain": 0,
+      "membership_ok": true,
+      "fluid_ok": true,
+      "render_detail": [
+        {
+          "member": "owl",
+          "prop": "fly",
+          "kind": "inherited",
+          "reply": "the owl can fly",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        },
+        {
+          "member": "minnow",
+          "prop": "swim",
+          "kind": "inherited",
+          "reply": "the minnow can swim",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        },
+        {
+          "member": "penguin",
+          "prop": "fly",
+          "kind": "exception",
+          "reply": "the penguin walks",
+          "produced": 1,
+          "spell_calls": 3,
+          "words_ok": true
+        },
+        {
+          "member": "pike",
+          "prop": "swim",
+          "kind": "exception",
+          "reply": "the pike lurks",
+          "produced": 1,
+          "spell_calls": 3,
+          "words_ok": true
+        },
+        {
+          "member": "robin",
+          "prop": "breathe",
+          "kind": "inherited",
+          "reply": "the robin can breathe",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        }
+      ],
+      "membership_detail": {
+        "reply": "The dog eats meat.",
+        "produced": 0,
+        "spell_calls": 0
+      },
+      "fluid_regression_detail": {
+        "what_chase": "The dog chases cat.",
+        "anaphora": "The cat eats fish.",
+        "what_eat": "The dog eats meat.",
+        "growth": "ok, i learned that the wolf eats rabbit.",
+        "growth_use": "The wolf eats rabbit.",
+        "yesno": "Yes, the dog eats meat.",
+        "moat": "I don't know."
+      }
+    },
+    {
+      "seed": 44,
+      "render_kind": "self_organized_broca",
+      "wire_content_words": 1.0,
+      "moat_ok": true,
+      "producer_calls_on_abstain": 0,
+      "spell_calls_on_abstain": 0,
+      "membership_ok": true,
+      "fluid_ok": true,
+      "render_detail": [
+        {
+          "member": "owl",
+          "prop": "fly",
+          "kind": "inherited",
+          "reply": "the owl can fly",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        },
+        {
+          "member": "minnow",
+          "prop": "swim",
+          "kind": "inherited",
+          "reply": "the minnow can swim",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        },
+        {
+          "member": "penguin",
+          "prop": "fly",
+          "kind": "exception",
+          "reply": "the penguin walks",
+          "produced": 1,
+          "spell_calls": 3,
+          "words_ok": true
+        },
+        {
+          "member": "pike",
+          "prop": "swim",
+          "kind": "exception",
+          "reply": "the pike lurks",
+          "produced": 1,
+          "spell_calls": 3,
+          "words_ok": true
+        },
+        {
+          "member": "robin",
+          "prop": "breathe",
+          "kind": "inherited",
+          "reply": "the robin can breathe",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        }
+      ],
+      "membership_detail": {
+        "reply": "The dog eats meat.",
+        "produced": 0,
+        "spell_calls": 0
+      },
+      "fluid_regression_detail": {
+        "what_chase": "The dog chases cat.",
+        "anaphora": "The cat eats fish.",
+        "what_eat": "The dog eats meat.",
+        "growth": "ok, i learned that the wolf eats rabbit.",
+        "growth_use": "The wolf eats rabbit.",
+        "yesno": "Yes, the dog eats meat.",
+        "moat": "I don't know."
+      }
+    },
+    {
+      "seed": 100,
+      "render_kind": "self_organized_broca",
+      "wire_content_words": 1.0,
+      "moat_ok": true,
+      "producer_calls_on_abstain": 0,
+      "spell_calls_on_abstain": 0,
+      "membership_ok": true,
+      "fluid_ok": true,
+      "render_detail": [
+        {
+          "member": "owl",
+          "prop": "fly",
+          "kind": "inherited",
+          "reply": "the owl can fly",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        },
+        {
+          "member": "minnow",
+          "prop": "swim",
+          "kind": "inherited",
+          "reply": "the minnow can swim",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        },
+        {
+          "member": "penguin",
+          "prop": "fly",
+          "kind": "exception",
+          "reply": "the penguin walks",
+          "produced": 1,
+          "spell_calls": 3,
+          "words_ok": true
+        },
+        {
+          "member": "pike",
+          "prop": "swim",
+          "kind": "exception",
+          "reply": "the pike lurks",
+          "produced": 1,
+          "spell_calls": 3,
+          "words_ok": true
+        },
+        {
+          "member": "robin",
+          "prop": "breathe",
+          "kind": "inherited",
+          "reply": "the robin can breathe",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        }
+      ],
+      "membership_detail": {
+        "reply": "The dog eats meat.",
+        "produced": 0,
+        "spell_calls": 0
+      },
+      "fluid_regression_detail": {
+        "what_chase": "The dog chases cat.",
+        "anaphora": "The cat eats fish.",
+        "what_eat": "The dog eats meat.",
+        "growth": "ok, i learned that the wolf eats rabbit.",
+        "growth_use": "The wolf eats rabbit.",
+        "yesno": "Yes, the dog eats meat.",
+        "moat": "I don't know."
+      }
+    },
+    {
+      "seed": 101,
+      "render_kind": "self_organized_broca",
+      "wire_content_words": 1.0,
+      "moat_ok": true,
+      "producer_calls_on_abstain": 0,
+      "spell_calls_on_abstain": 0,
+      "membership_ok": true,
+      "fluid_ok": true,
+      "render_detail": [
+        {
+          "member": "owl",
+          "prop": "fly",
+          "kind": "inherited",
+          "reply": "the owl can fly",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        },
+        {
+          "member": "minnow",
+          "prop": "swim",
+          "kind": "inherited",
+          "reply": "the minnow can swim",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        },
+        {
+          "member": "penguin",
+          "prop": "fly",
+          "kind": "exception",
+          "reply": "the penguin walks",
+          "produced": 1,
+          "spell_calls": 3,
+          "words_ok": true
+        },
+        {
+          "member": "pike",
+          "prop": "swim",
+          "kind": "exception",
+          "reply": "the pike lurks",
+          "produced": 1,
+          "spell_calls": 3,
+          "words_ok": true
+        },
+        {
+          "member": "robin",
+          "prop": "breathe",
+          "kind": "inherited",
+          "reply": "the robin can breathe",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        }
+      ],
+      "membership_detail": {
+        "reply": "The dog eats meat.",
+        "produced": 0,
+        "spell_calls": 0
+      },
+      "fluid_regression_detail": {
+        "what_chase": "The dog chases cat.",
+        "anaphora": "The cat eats fish.",
+        "what_eat": "The dog eats meat.",
+        "growth": "ok, i learned that the wolf eats rabbit.",
+        "growth_use": "The wolf eats rabbit.",
+        "yesno": "Yes, the dog eats meat.",
+        "moat": "I don't know."
+      }
+    },
+    {
+      "seed": 102,
+      "render_kind": "self_organized_broca",
+      "wire_content_words": 1.0,
+      "moat_ok": true,
+      "producer_calls_on_abstain": 0,
+      "spell_calls_on_abstain": 0,
+      "membership_ok": true,
+      "fluid_ok": true,
+      "render_detail": [
+        {
+          "member": "owl",
+          "prop": "fly",
+          "kind": "inherited",
+          "reply": "the owl can fly",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        },
+        {
+          "member": "minnow",
+          "prop": "swim",
+          "kind": "inherited",
+          "reply": "the minnow can swim",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        },
+        {
+          "member": "penguin",
+          "prop": "fly",
+          "kind": "exception",
+          "reply": "the penguin walks",
+          "produced": 1,
+          "spell_calls": 3,
+          "words_ok": true
+        },
+        {
+          "member": "pike",
+          "prop": "swim",
+          "kind": "exception",
+          "reply": "the pike lurks",
+          "produced": 1,
+          "spell_calls": 3,
+          "words_ok": true
+        },
+        {
+          "member": "robin",
+          "prop": "breathe",
+          "kind": "inherited",
+          "reply": "the robin can breathe",
+          "produced": 1,
+          "spell_calls": 4,
+          "words_ok": true
+        }
+      ],
+      "membership_detail": {
+        "reply": "The dog eats meat.",
+        "produced": 0,
+        "spell_calls": 0
+      },
+      "fluid_regression_detail": {
+        "what_chase": "The dog chases cat.",
+        "anaphora": "The cat eats fish.",
+        "what_eat": "The dog eats meat.",
+        "growth": "ok, i learned that the wolf eats rabbit.",
+        "growth_use": "The wolf eats rabbit.",
+        "yesno": "Yes, the dog eats meat.",
+        "moat": "I don't know."
+      }
+    }
+  ],
+  "elapsed_seconds_cpu": 223.4
+}

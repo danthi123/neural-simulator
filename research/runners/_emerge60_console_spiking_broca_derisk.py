@@ -88,9 +88,26 @@ class SpikingBrocaConsole(UnifiedFluentConsole):
     Everything else (membership-aware routing, the gate-first moat, the fluid paths) is inherited UNCHANGED."""
 
     def __init__(self, seed=42, spell=None, build_fluid=True, verbose=False, reset_producer=False,
-                 self_organized=False, self_organized_n_sentences=None):
+                 self_organized=False, self_organized_n_sentences=None, neural_spell=False):
         # build the base console with the CPU template faculty (cheap, unused here); we override the EMERGE render below
         super().__init__(seed=seed, prefer_gpu_render=False, build_fluid=build_fluid, verbose=False)
+        # neural_spell=True (EMERGE-69, additive/default-off) SWAPS the producer's `spell` callback from the token
+        # surface (spell=lambda w: str(w)) to the VALIDATED SPIKING A->W read-out (EMERGE-68 UnifiedNeuralSpell): every
+        # word -- content on BRIDGE-A (EMERGE-67), function on BRIDGE-F (EMERGE-68) -- is DECODED from language_output
+        # SPIKES. `realize_slot`'s DET/FUNC + SUBJ + VERB branches all route through this SAME `spell` (EMERGE-59:138),
+        # so with self_organized=True the flagship's EMERGE render is 100% ON SPIKES (self-organized STRUCTURE +
+        # every WORD spiking). The A->W engines load from the EMERGE-67/68 caches (GPU); default False == token surface,
+        # byte-identical (EMERGE-59..68 unchanged). Import guarded so EMERGE-60 loads without EMERGE-68. The gate-first
+        # moat is UNTOUCHED: on ABSTAIN the producer -- and hence the spell/A->W read-out -- is NEVER invoked.
+        self.neural_spell = bool(neural_spell)
+        self._neural_speller = None
+        if self.neural_spell:
+            try:
+                from research.runners._emerge68_function_word_spell_derisk import UnifiedNeuralSpell
+            except Exception as _e:  # pragma: no cover -- EMERGE-60 remains usable without EMERGE-68
+                raise RuntimeError(f"neural_spell=True requires EMERGE-68 UnifiedNeuralSpell: {_e!r}")
+            self._neural_speller = UnifiedNeuralSpell(load=True)
+            spell = self._neural_speller.spell   # every slot spelled ON SPIKES; overrides the token/None default
         # the SPIKING Broca producer (EMERGE-59): its FrameSlotCQ builds a real SimulationBridge; `.learn()` teaches
         # each frame's slot-order primacy gradient from the frame templates (TEACH_REPEAT accumulation) so the emit
         # order is correct; the order is then produced on spikes. `spell` = the A->W read-out callback (token default).
@@ -119,6 +136,8 @@ class SpikingBrocaConsole(UnifiedFluentConsole):
             self.broca = BrocaProducer(cq, spell=spell)
             self.reset_producer = bool(reset_producer and ResetFrameSlotCQ is not None)
             self.render_kind = "spiking_broca"
+        if self.neural_spell:
+            self.render_kind = self.render_kind + "+neural_spell"   # every word spike-spelled (EMERGE-69)
         if verbose:
             struct = ("its ENTIRE grammatical structure DISCOVERED from the corpus (EMERGE-65 SelfOrganizedProducer)"
                       if self.self_organized else "host-FRAMES frame-slot competitive queuing")

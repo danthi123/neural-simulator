@@ -71,7 +71,7 @@ _REPO = Path(__file__).resolve().parents[2]
 if str(_REPO) not in sys.path:
     sys.path.insert(0, str(_REPO))
 
-from sim.backend import to_host  # noqa: E402
+from sim.backend import to_host, from_host  # noqa: E402
 from research.runners._emerge59_spiking_broca_frame_slots_derisk import (  # noqa: E402
     FrameSlotCQ, BrocaProducer, decision_from_emerge, FRAMES, FRAME_NAMES,
 )
@@ -100,12 +100,14 @@ def _snapshot_state(bridge):
 
 
 def _restore_state(bridge, snap):
-    """Restore the captured post-init state in place (backend-agnostic)."""
-    xp = bridge._cp if hasattr(bridge, "_cp") else None
+    """Restore the captured post-init state in place (backend-agnostic). `from_host` moves the host snapshot to the
+    ACTIVE sim backend's device (a no-op passthrough on numpy -> BYTE-IDENTICAL to the prior numpy path; on cupy it
+    marshals host->device so `arr[:] = ` into a cupy bridge array works instead of raising 'non-scalar ndarray cannot
+    be used for fill')."""
     for name, val in snap.items():
         arr = getattr(bridge, name, None)
         if arr is not None:
-            arr[:] = xp.asarray(val) if xp is not None else val
+            arr[:] = from_host(val)
 
 
 # ---------------------------------------------------------------------------------------------------------------------

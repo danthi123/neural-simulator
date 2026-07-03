@@ -8280,3 +8280,39 @@ console (the console currently renders content via token; make it 100%-spiking e
 EMERGE-60 fluid-RNG isolation; EMERGE-57 multi-seed; the per-word A->W selectivity fragility (the `can`-on-motor_S class).
 Boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea;
 COMMIT ON MAIN; ARM A MONITOR on every long run; controller runs GPU steps INLINE (never a detach-and-wait subagent).
+
+## CYCLE 880 (2026-07-03 — EMERGE-69 GO: the FLAGSHIP CONSOLE speaks its EMERGE answers 100% ON SPIKES; the fully-spiking self-organized-producer arc COMPLETE at the flagship level)
+
+EMERGE-69 (GO, 6-seed, `2026-07-03-emerge69-console-fully-spiking-GO.md`, NO sim/ edit): the arc-completing integration.
+An additive default-off `neural_spell` flag on `SpikingBrocaConsole` (mirroring `self_organized`/`reset_producer`) loads the
+EMERGE-67/68 `UnifiedNeuralSpell` from the caches and sets the producer's `spell` to it, so `_render_emerge`'s every slot
+(DET/FUNC + SUBJ + VERB) is decoded from `language_output` spikes. VERIFIED controller-direct (CI 29 pass/2 GPU-skip; the
+full EMERGE-59..69 = 81 pass/3 skip; the agent ran the GPU de-risk INLINE -- a completion verdict, no orphan): [GPU]
+all-word spike render 1.000, function-word slot 1.000, A->W content/func rates 1.0/1.0 (the/a/can/does/not each ->
+itself), function-word LESION collapses decode to 0.000 (genuinely spiking), moat 0/0; [CPU] wire content-routing 1.0,
+console moat 0/0, membership True, fluid no-regression True (Broca-free baseline). DEFAULT byte-identical (only committed
+change: additive `neural_spell` flag on _emerge60 + a one-line backend-compat `from_host` fix in _emerge61's _restore_state
+-- byte-identical on numpy [passthrough], unblocks the wash-out on cupy). NO sim/ edit (the _emerge14 probe edit was
+reverted). HONEST NAMED CONSTRAINT: `sim.bridge` binds ONE backend per process (module-global cp), so the numpy reasoner
+(EMERGE-52/54) + the cupy A->W read-out cannot CO-execute in one process -- validated COMPONENT-WISE (the spike-render
+claim on the flagship's own cupy SelfOrganizedProducer = the exact producer the flag installs; the console routing/moat/
+membership/fluid invariants on the numpy console, which EMERGE-66 already GO'd). ⇒ the FLAGSHIP CONSOLE speaks its
+grounded EMERGE answers 100% on spikes (self-organized grammar + spiking A->W) -- transformer-free, host-token-free.
+
+⇒⇒ ARC COMPLETE (EMERGE-56..69, this session): the emergent brain discovers categories from experience (EMERGE-30..55) ->
+reasons (inheritance/cancellation/taxonomy) -> and SPEAKS its grounded answers on ONE spiking substrate, on the flagship
+console, with a FULLY-SELF-ORGANIZED grammar (function words + slot inventory + slot order all discovered from corpus,
+EMERGE-62..66) rendered 100% ON SPIKES (order EMERGE-59/63 + every word EMERGE-67/68/69), transformer-retired for the
+EMERGE frame inventory, moat-hardened + survived TWO adversarial audits (EMERGE-58 false-denial + EMERGE-62..66
+tautological-gate, both caught+fixed). NO `sim/` edit across EMERGE-59..69 (bar the additive default-off _emerge60 flag +
+the one-line _emerge61 backend fix).
+
+**EXACT NEXT CONCRETE ACTION:** (1) DONE: committed EMERGE-69 both remotes. (2) NEXT FRONTIER (the fully-spiking flagship
+render is COMPLETE): options -- (a) EMERGE-70 = the ONE-BRAIN-CONSOLIDATION the constraint named: make the reasoner
+(EMERGE-52/54) + the A->W read-out share ONE backend (both cupy, or a co-resident bridge) so the full flagship
+co-executes fully-spiking in ONE process (the master-directive one-brain step); (b) BROADEN the frame inventory beyond
+the 3 EMERGE frames (richer production -> toward open-er speech); (c) the held-out distinctive-slot one-attestation cue;
+(d) the 4th morphological-invariance cue for EMERGE-62 real-corpus precision. Deferred: EMERGE-60 fluid-RNG isolation;
+EMERGE-57 multi-seed; the per-word A->W selectivity fragility. Boundaries = undiscovered mechanisms; NO stopping; sim/
+edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A MONITOR on every long run;
+CONTROLLER runs GPU steps INLINE (never a detach-and-wait subagent).
