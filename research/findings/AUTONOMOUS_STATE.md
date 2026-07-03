@@ -8593,7 +8593,27 @@ improve?) and VERDICT: {build RANK-2 with de-risk X | SKIP RANK-2 as whack-a-mol
 EMERGE-78/79 rate reservoir onto the recurrent RF/Izhikevich substrate (the fully-spiking one-brain directive) | RANK-3
 bounded recursion}. Gate doc: `2026-07-03-rank2-production-reservoir-residual-scoping.md` (being written).
 
-**EXACT NEXT CONCRETE ACTION:** ON the RANK-2 scoping return (subagent ace8059bf36ed2aca): trust-but-verify its load-bearing
+**CYCLE 895 (EMERGE-80 GO — the reservoir form→role mechanism PORTS to the SPIKING substrate).** The RANK-2 scoping
+(committed) verdict = SKIP RANK-2 (whack-a-mole, production already self-organized) → do the RANK-1.5 spiking-LSM port.
+BUILT + 6-seed GO on CPU/numpy: a recurrent IZHIKEVICH RS liquid-state machine (the project's neuron model, fixed-random
+recurrence, tonic-bias fluctuation-driven regime, genuinely active 1.2-1.3 spikes/neuron) mirrors the EMERGE-78 Reservoir
+API so it DROPS INTO the entire EMERGE-78 harness with only the pool swapped (tanh→spiking). RESULT: train role acc 1.000
+(learns the map on spikes), rel-head 1.000 vs BOTH baselines 0.500 (resolves the non-local dependency on spikes), pool-
+SILENCE lesion collapses to 0.500 (read genuinely from spikes not a static bias), scramble ~chance. Honest process: first
+run the pool was SILENT (input < rheobase at dt=1.0/4-substeps) → tuned the operating point (dt=0.5, 30 sub-steps, IN 350pA,
+tonic bias 55pA). Runner+test (5 CPU pass, incl a 30s slow spiking gate)+finding. NO sim/ edit. ⇒ the reservoir form→role
+mechanism is NOT a rate artifact -- it works on the project's spiking Izhikevich neurons (a genuine LSM), toward fully-
+spiking one brain. Committed both remotes.
+
+**EXACT NEXT CONCRETE ACTION:** (1) DONE: EMERGE-78 (learned map) + EMERGE-79 (uncontingent non-local) + EMERGE-80 (spiking
+LSM port) committed. (2) The pre-registered follow-ons: RUNG 2 -- put the spiking LSM pool on a full `SimulationBridge`
+region (the ON-SUBSTRATE realization, so it composes with the rest of the one brain; likely GPU -> controller runs INLINE +
+Monitor) OR the EMERGE-79 distal-cue MEMORY-DEPTH characterization on the spiking pool (how far the Izhikevich pool holds a
+1-bit cue vs the near-critical tanh reservoir -- expected SHORTER; a distance-sweep on SpikingLSM, CPU, cheap) OR RANK-3
+bounded recursion (theta-gamma buffer / assembly-calculus stack, the deeper frontier). Recommend the memory-DEPTH sweep
+(cheap CPU, characterizes the spiking pool's fading memory) then RUNG 2 (on-bridge). PARALLELIZE; boundaries = undiscovered
+mechanisms; NO stopping; sim/ edits fair when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; CONTROLLER runs
+GPU INLINE; ARM A MONITOR. [superseded:] ON the RANK-2 scoping return (subagent ace8059bf36ed2aca): trust-but-verify its load-bearing
 claim (what is genuinely hand vs self-organized on the production side), then EXECUTE its verdict -- BUILD the recommended
 next de-risk (most likely EITHER a genuine RANK-2 construction-SELECTION-under-information-structure reservoir de-risk, OR --
 if RANK-2 is mostly-already-done -- the RANK-1.5 SPIKING-LSM PORT of the EMERGE-78/79 rate reservoir onto the recurrent
