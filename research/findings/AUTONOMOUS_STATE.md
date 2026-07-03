@@ -7556,3 +7556,26 @@ higher-GOAL-value branch (owner may prefer): couple the (validated numpy-pooler)
 interactive experiential console (EMERGE-31) -- toward the conversational north-star. Boundaries = undiscovered
 mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy
 for real runs (numpy for these CPU de-risks).
+
+## CYCLE 854 (2026-07-02 — EMERGE-47: L2-input normalization = real lift, honest BOUNDARY; DECISIVE diagnostic -> the fix is SOFT pooling)
+
+EMERGE-47 (BOUNDARY 3/3, `2026-07-02-emerge47-l2-input-normalization-BOUNDARY.md`, NO new sim/ edit): tested the surpass
+gate's cheapest rung (L2-input local normalization). Real data-driven lift (on-substrate super-acc 0.03 -> 0.25, ~8x;
+permuted-STATS collapses -> data-driven; all controls behave) but does NOT clear the strict GO (0.25 << 0.80). DECISIVE
+DIAGNOSTIC (the real deliverable): the numpy _competitive_pool generalizes at ANY epoch count -- the EMERGE-46 boundary's
+actual cause is OVER-SELECTIVE winner-inactive DEPRESSION at the L2 layer: at ld>=0.1 held-out within-super overlap
+collapses to ~0.001 (reproduces on-substrate 0.01); softening the depression ALONE recovers it (super-acc 0.06 at ld=0.15
+-> 0.97 at ld=0.02). Normalization is a SECONDARY additive lift (best in the mid regime, ld=0.05: 0.31->0.56). ⇒ the
+DOMINANT lever = SOFT/UNION POOLING (relax the winner-inactive depression at L2) -- exactly the surpass gate's rung 2
+(HTM temporal/union pooler; HMAX soft-max). `_emerge47_l2_input_normalization_derisk.py` + `tests/test_emerge47_l2_input_normalization.py`
+(3 pass).
+
+**EXACT NEXT CONCRETE ACTION:** commit EMERGE-47 (runner + test + finding + raw json + this state) to BOTH remotes on main.
+THEN build EMERGE-48 (the surpass): the on-substrate STACKED pooler with SOFT L2 pooling -- lower/relaxed winner-inactive
+depression at the L2 layer (the numpy evidence: soft depression alone -> super-acc 0.97) + keep the L2-input normalization
+(additive lift). Expect GO (super-acc toward 0.80+, held-out generalization recovered). Anti-cheats as EMERGE-44/47
+(held-out ENTIRE sub-categories; permuted-cooc + permuted-stats collapse; gated on permuted+lesion, l2lesion reported).
+3-seed; if GO, 6-seed. The winner-inactive kernel already supports a soft rate (lam_dep_wi param) -- likely NO new sim/
+edit (just a lower L2 ld_wi). If soft-pooling+normalization still short of GO -> the Foldiak trace rule (rung 3).
+Boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea;
+COMMIT ON MAIN; GPU/CuPy for real runs (numpy for these CPU de-risks).

@@ -1,0 +1,179 @@
+{
+  "probe": "emerge47_l2_input_normalization",
+  "verdict": "BOUNDARY (on-substrate) -- L2-input local normalization does NOT lift numpy and does NOT reach the on-substrate GO. numpy: within 0.003->0.009, super-acc 0.06->0.11. on-substrate stacked super-acc 0.25 (EMERGE-46 was 0.03), L2-group +0.07; permuted-cooc 0.08, dAP-lesion 0.00, permuted-stats 0.03. gate misses: super-acc<0.80 or grp<0.15 or not>=permuted+0.25 or not>=lesion+0.30 or not>=permuted-stats+0.20. NEXT RUNG (per the surpass gate): SOFT/UNION pooling (HTM temporal pooler; HMAX soft-max) or the Foldiak trace/temporal-continuity rule. NO NEW sim/ edit.",
+  "flags": {
+    "numpy_promising": false,
+    "lifts": false,
+    "no_cross": true,
+    "disc": false,
+    "data_driven": false,
+    "onsub_go": false
+  },
+  "mechanism": "L2-input LOCAL NORMALIZATION: IDF/PPMI-marginal weights w[j]=log((1+N)/(1+df[j])) over the L1 columns (df = # co-occurrence samples with column j active), applied to the L2 drive before the competitive winner selection -> winners pool the SHARED (superordinate) structure not the discriminative per-member structure. Data-driven (permuted-stats control). Carandini-Heeger divisive normalization; EMERGE-19 PPMI reframe.",
+  "task": "EMERGE-44 6-sub-cat -> 2-superordinate; hold out ENTIRE sub-categories {2,5}; L2 degraded to the on-substrate non-generalizing regime; toggle L2-input normalization ON vs OFF; measure held-out within/cross overlap + super-acc; anti-cheats permuted-cooc + permuted-stats + dAP-lesion",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "epochs": 40,
+    "l2_epochs_degraded": 400,
+    "n_col1": 200,
+    "n_col2": 120,
+    "k1": 6,
+    "k2": 6,
+    "n_super": 2
+  },
+  "numpy_diagnostic": {
+    "OFF": {
+      "held_within": 0.002700617283950617,
+      "held_cross": 0.0,
+      "super_acc": 0.05555555555555555,
+      "l2_group": 0.09422657952069717,
+      "held_within_per_seed": [
+        0.004629629629629629,
+        0.0,
+        0.003472222222222222
+      ],
+      "super_acc_per_seed": [
+        0.08333333333333333,
+        0.0,
+        0.08333333333333333
+      ]
+    },
+    "ON": {
+      "held_within": 0.009259259259259259,
+      "held_cross": 0.0,
+      "super_acc": 0.1111111111111111,
+      "l2_group": 0.08750907770515615,
+      "held_within_per_seed": [
+        0.027777777777777776,
+        0.0,
+        0.0
+      ],
+      "super_acc_per_seed": [
+        0.3333333333333333,
+        0.0,
+        0.0
+      ]
+    },
+    "ON_permuted_cooc": {
+      "held_within": 0.0,
+      "held_cross": 0.0,
+      "super_acc": 0.0,
+      "l2_group": 0.08393851367707576,
+      "held_within_per_seed": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "super_acc_per_seed": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "ON_permuted_stats": {
+      "held_within": 0.00038580246913580245,
+      "held_cross": 0.0,
+      "super_acc": 0.0,
+      "l2_group": 0.0933188090050835,
+      "held_within_per_seed": [
+        0.0011574074074074073,
+        0.0,
+        0.0
+      ],
+      "super_acc_per_seed": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "ON_dap_lesion": {
+      "held_within": 0.009259259259259259,
+      "held_cross": 0.0,
+      "super_acc": 0.0,
+      "l2_group": 0.08750907770515615,
+      "held_within_per_seed": [
+        0.027777777777777776,
+        0.0,
+        0.0
+      ],
+      "super_acc_per_seed": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "onsubstrate": {
+    "stacked_norm": {
+      "held_within": 0.010802469135802469,
+      "held_cross": 0.002700617283950617,
+      "super_acc": 0.24999999999999997,
+      "l2_group": 0.0731763898975228,
+      "super_acc_per_seed": [
+        0.3333333333333333,
+        0.25,
+        0.16666666666666666
+      ],
+      "held_within_per_seed": [
+        0.010416666666666666,
+        0.010416666666666666,
+        0.011574074074074075
+      ]
+    },
+    "permuted_cooc": {
+      "held_within": 0.006172839506172839,
+      "held_cross": 0.004629629629629629,
+      "super_acc": 0.08333333333333333,
+      "l2_group": 0.06569232631324134,
+      "super_acc_per_seed": [
+        0.0,
+        0.08333333333333333,
+        0.16666666666666666
+      ],
+      "held_within_per_seed": [
+        0.005787037037037037,
+        0.0023148148148148147,
+        0.010416666666666666
+      ]
+    },
+    "permuted_stats": {
+      "held_within": 0.005401234567901234,
+      "held_cross": 0.004629629629629629,
+      "super_acc": 0.027777777777777776,
+      "l2_group": 0.08345436940208183,
+      "super_acc_per_seed": [
+        0.0,
+        0.0,
+        0.08333333333333333
+      ],
+      "held_within_per_seed": [
+        0.0023148148148148147,
+        0.004629629629629629,
+        0.009259259259259259
+      ]
+    },
+    "dap_lesion": {
+      "held_within": 0.010802469135802469,
+      "held_cross": 0.002700617283950617,
+      "super_acc": 0.0,
+      "l2_group": 0.0731763898975228,
+      "super_acc_per_seed": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "held_within_per_seed": [
+        0.010416666666666666,
+        0.010416666666666666,
+        0.011574074074074075
+      ]
+    }
+  },
+  "elapsed_seconds": 767.8,
+  "sim_edit": "NONE (NO NEW sim/ edit) -- reuse-by-import of EMERGE-44 numpy pooler + EMERGE-46 on-substrate pooler + the already-committed kernels; the normalization is a host-side per-column drive weight",
+  "HONEST_NOTE": "The numpy diagnostic degrades L2 epochs to reproduce the on-substrate NON-generalizing regime (the full EMERGE-44 numpy pooler at 400 L2 epochs already GO'd). The normalization steers WHICH columns win (the drive is x*w); the Hebbian potentiation target is unchanged binary active mask (so OFF==EMERGE-44 exactly). If the numpy diagnostic lifts held-out generalization the port to the on-substrate pooler is the decisive test; the on-substrate super-acc is compared to EMERGE-46's 0.03."
+}
