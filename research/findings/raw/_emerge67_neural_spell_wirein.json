@@ -1,0 +1,697 @@
+{
+  "probe": "emerge67_neural_spell_wirein",
+  "verdict": "GO -- the CONTENT words of the EMERGE-frame render are now PRODUCED ON SPIKES. The spiking-Broca producer's `spell` callback is the VALIDATED A->W read-out (`concept_speak_demo`): each CONTENT slot (subject/verb = the emergent concepts) is spelled by DRIVING the word's concept pool on a real SimulationBridge and DECODING the spoken word from `language_output` SPIKES. Content-slot spike-spell accuracy 1.000 over the EMERGE frames (>= 0.9); the A->W engine spells 16/16 content words correctly (raw A->W rate 1.000). GENUINELY SPIKING: the read-out reads cp_firing_states[language_output], and the LESION control (zeroing the pool->language_output pathway) COLLAPSES the decode to 0.097 (a host lookup would be unaffected -> the words are decoded FROM SPIKES). NO regression: the neural spell reproduces the token spell on the content slots (0 mismatches; the token-spell default path is byte-identical). The gate-first no-confab MOAT holds BY CONSTRUCTION: 0 spell calls + 0 producer invocations on abstains (the producer -- and hence the A->W read-out -- is NEVER invoked on an abstain). 6 seeds. ==> the EMERGE-frame render is now FULLY SPIKING for the CONTENT slots (the ORDER was already spiking via EMERGE-59/63; the WORDS are now spiking via A->W). HONEST SCOPE: the DET/FUNC (function-word) slots keep the token surface -- the named closed-class-A->W follow-on (their pools are the EMERGE-62 discovered closed class). The A->W engine is GPU-trained ONCE at the validated scale + cached (a scale/data lever, not a new mechanism); the producer content vocab is 16 words rebound onto the 16 validated pools (reuse-by-import; NO sim/ edit). Renders the BOUNDED EMERGE frame inventory, NOT open prose (R4).",
+  "go": true,
+  "mechanism": "wire the VALIDATED spiking A->W read-out (concept_speak_demo: drive a concept pool -> decode the spoken word from language_output SPIKES via cosine to the word patterns; CLAUDE.md chat_speak A->W 100% multi-seed) into the EMERGE-59 spiking-Broca producer's `spell` callback (realize_slot/BrocaProducer, the neural_serial_order_renderer pluggable-callback precedent). The CONTENT slots (subject/verb = emergent concepts) are spelled ON SPIKES; DET/FUNC function-word slots keep the token surface (the named closed-class-A->W follow-on). The producer content vocab (16 words: 8 subjects + 8 verbs from the EMERGE producer's own _SUBJECTS/_ABILITY/_INTR3SG) is rebound onto the 16 validated concept pools (reuse-by-import: concept_pool_demo's vocab dicts are swapped, the SAME builder+topographic-bias+orthogonal-codes+train_word_to_pool recipe trains them at the validated scale, cached once). The read-out is genuinely spiking (reads cp_firing_states[language_output]; a pool->output lesion collapses it). The gate-first no-confab moat is untouched (abstain -> producer + A->W NEVER invoked). Reuse-by-import; NO sim/ edit.",
+  "task": "wire the spiking A->W read-out into the Broca producer's spell for the CONTENT slots so the EMERGE-frame render's WORDS are produced on spikes; content-slot spike-spell accuracy + genuinely-spiking (lesion collapse) + gate-first moat (0 spell/producer calls on abstains) + no regression vs the token spell; >=3 (ideally 6) seeds; GPU for the A->W",
+  "content_vocab": [
+    "owl",
+    "penguin",
+    "robin",
+    "sparrow",
+    "eagle",
+    "hawk",
+    "wren",
+    "crow",
+    "fly",
+    "swim",
+    "run",
+    "hop",
+    "walks",
+    "lurks",
+    "hides",
+    "rests"
+  ],
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "gpu": true,
+  "elapsed_seconds": 367.1,
+  "aggregate": {
+    "content_acc": 1.0,
+    "aw_wordwise_rate": 1.0,
+    "lesion_acc": 0.09722222222222222,
+    "engine_lesion_acc": 0.0,
+    "regress_mismatch": 0,
+    "spell_calls_on_abstain_total": 0,
+    "producer_calls_on_abstain_total": 0
+  },
+  "aw_wordwise": [
+    {
+      "word": "owl",
+      "decoded": "owl",
+      "ok": true,
+      "self_cos": 0.215,
+      "top_cos": 0.215,
+      "spikes": 76
+    },
+    {
+      "word": "penguin",
+      "decoded": "penguin",
+      "ok": true,
+      "self_cos": 0.358,
+      "top_cos": 0.358,
+      "spikes": 598
+    },
+    {
+      "word": "robin",
+      "decoded": "robin",
+      "ok": true,
+      "self_cos": 0.234,
+      "top_cos": 0.234,
+      "spikes": 298
+    },
+    {
+      "word": "sparrow",
+      "decoded": "sparrow",
+      "ok": true,
+      "self_cos": 0.264,
+      "top_cos": 0.264,
+      "spikes": 372
+    },
+    {
+      "word": "eagle",
+      "decoded": "eagle",
+      "ok": true,
+      "self_cos": 0.194,
+      "top_cos": 0.194,
+      "spikes": 273
+    },
+    {
+      "word": "hawk",
+      "decoded": "hawk",
+      "ok": true,
+      "self_cos": 0.289,
+      "top_cos": 0.289,
+      "spikes": 282
+    },
+    {
+      "word": "wren",
+      "decoded": "wren",
+      "ok": true,
+      "self_cos": 0.272,
+      "top_cos": 0.272,
+      "spikes": 284
+    },
+    {
+      "word": "crow",
+      "decoded": "crow",
+      "ok": true,
+      "self_cos": 0.314,
+      "top_cos": 0.314,
+      "spikes": 456
+    },
+    {
+      "word": "fly",
+      "decoded": "fly",
+      "ok": true,
+      "self_cos": 0.228,
+      "top_cos": 0.228,
+      "spikes": 271
+    },
+    {
+      "word": "swim",
+      "decoded": "swim",
+      "ok": true,
+      "self_cos": 0.239,
+      "top_cos": 0.239,
+      "spikes": 470
+    },
+    {
+      "word": "run",
+      "decoded": "run",
+      "ok": true,
+      "self_cos": 0.363,
+      "top_cos": 0.363,
+      "spikes": 332
+    },
+    {
+      "word": "hop",
+      "decoded": "hop",
+      "ok": true,
+      "self_cos": 0.23,
+      "top_cos": 0.23,
+      "spikes": 492
+    },
+    {
+      "word": "walks",
+      "decoded": "walks",
+      "ok": true,
+      "self_cos": 0.211,
+      "top_cos": 0.211,
+      "spikes": 180
+    },
+    {
+      "word": "lurks",
+      "decoded": "lurks",
+      "ok": true,
+      "self_cos": 0.139,
+      "top_cos": 0.139,
+      "spikes": 109
+    },
+    {
+      "word": "hides",
+      "decoded": "hides",
+      "ok": true,
+      "self_cos": 0.159,
+      "top_cos": 0.159,
+      "spikes": 240
+    },
+    {
+      "word": "rests",
+      "decoded": "rests",
+      "ok": true,
+      "self_cos": 0.275,
+      "top_cos": 0.275,
+      "spikes": 259
+    }
+  ],
+  "sample_transcript": [
+    {
+      "question": "can owl fly?",
+      "surface": "the owl can fly",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "question": "can penguin walks?",
+      "surface": "the penguin walks",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "question": "can penguin fly?",
+      "surface": "the penguin does not fly",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "question": "can a zzz fly?",
+      "surface": "I don't know.",
+      "invocation": "producer NOT invoked"
+    }
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "content_acc": 1.0,
+      "regress_mismatch": 0,
+      "spell_calls_on_abstain": 0,
+      "producer_calls_on_abstain": 0,
+      "answer_produced": true,
+      "lesion_acc": 0.1875,
+      "examples": [
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "crow",
+            "verb": "hop"
+          },
+          "surface": "the crow can hop",
+          "expected_content": {
+            "subject": "crow",
+            "verb": "hop"
+          }
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "crow",
+            "verb": "swim"
+          },
+          "surface": "the crow can swim",
+          "expected_content": {
+            "subject": "crow",
+            "verb": "swim"
+          }
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "robin",
+            "verb": "fly"
+          },
+          "surface": "the robin can fly",
+          "expected_content": {
+            "subject": "robin",
+            "verb": "fly"
+          }
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "robin",
+            "verb": "swim"
+          },
+          "surface": "the robin can swim",
+          "expected_content": {
+            "subject": "robin",
+            "verb": "swim"
+          }
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "owl",
+            "verb": "run"
+          },
+          "surface": "the owl can run",
+          "expected_content": {
+            "subject": "owl",
+            "verb": "run"
+          }
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "penguin",
+            "verb": "hop"
+          },
+          "surface": "the penguin can hop",
+          "expected_content": {
+            "subject": "penguin",
+            "verb": "hop"
+          }
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "content_acc": 1.0,
+      "regress_mismatch": 0,
+      "spell_calls_on_abstain": 0,
+      "producer_calls_on_abstain": 0,
+      "answer_produced": true,
+      "lesion_acc": 0.10416666666666667,
+      "examples": [
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "eagle",
+            "verb": "run"
+          },
+          "surface": "the eagle can run",
+          "expected_content": {
+            "subject": "eagle",
+            "verb": "run"
+          }
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "hawk",
+            "verb": "swim"
+          },
+          "surface": "the hawk can swim",
+          "expected_content": {
+            "subject": "hawk",
+            "verb": "swim"
+          }
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "owl",
+            "verb": "swim"
+          },
+          "surface": "the owl can swim",
+          "expected_content": {
+            "subject": "owl",
+            "verb": "swim"
+          }
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "robin",
+            "verb": "fly"
+          },
+          "surface": "the robin can fly",
+          "expected_content": {
+            "subject": "robin",
+            "verb": "fly"
+          }
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "owl",
+            "verb": "fly"
+          },
+          "surface": "the owl can fly",
+          "expected_content": {
+            "subject": "owl",
+            "verb": "fly"
+          }
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "eagle",
+            "verb": "fly"
+          },
+          "surface": "the eagle can fly",
+          "expected_content": {
+            "subject": "eagle",
+            "verb": "fly"
+          }
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "content_acc": 1.0,
+      "regress_mismatch": 0,
+      "spell_calls_on_abstain": 0,
+      "producer_calls_on_abstain": 0,
+      "answer_produced": true,
+      "lesion_acc": 0.041666666666666664,
+      "examples": [
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "penguin",
+            "verb": "hop"
+          },
+          "surface": "the penguin can hop",
+          "expected_content": {
+            "subject": "penguin",
+            "verb": "hop"
+          }
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "penguin",
+            "verb": "run"
+          },
+          "surface": "the penguin can run",
+          "expected_content": {
+            "subject": "penguin",
+            "verb": "run"
+          }
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "eagle",
+            "verb": "fly"
+          },
+          "surface": "the eagle can fly",
+          "expected_content": {
+            "subject": "eagle",
+            "verb": "fly"
+          }
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "owl",
+            "verb": "run"
+          },
+          "surface": "the owl can run",
+          "expected_content": {
+            "subject": "owl",
+            "verb": "run"
+          }
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "hawk",
+            "verb": "fly"
+          },
+          "surface": "the hawk can fly",
+          "expected_content": {
+            "subject": "hawk",
+            "verb": "fly"
+          }
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "crow",
+            "verb": "run"
+          },
+          "surface": "the crow can run",
+          "expected_content": {
+            "subject": "crow",
+            "verb": "run"
+          }
+        }
+      ]
+    },
+    {
+      "seed": 100,
+      "content_acc": 1.0,
+      "regress_mismatch": 0,
+      "spell_calls_on_abstain": 0,
+      "producer_calls_on_abstain": 0,
+      "answer_produced": true,
+      "lesion_acc": 0.041666666666666664,
+      "examples": [
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "crow",
+            "verb": "run"
+          },
+          "surface": "the can crow run",
+          "expected_content": {
+            "subject": "crow",
+            "verb": "run"
+          }
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "hawk",
+            "verb": "hop"
+          },
+          "surface": "the can hawk hop",
+          "expected_content": {
+            "subject": "hawk",
+            "verb": "hop"
+          }
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "eagle",
+            "verb": "run"
+          },
+          "surface": "the eagle can run",
+          "expected_content": {
+            "subject": "eagle",
+            "verb": "run"
+          }
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "wren",
+            "verb": "fly"
+          },
+          "surface": "the wren can fly",
+          "expected_content": {
+            "subject": "wren",
+            "verb": "fly"
+          }
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "wren",
+            "verb": "run"
+          },
+          "surface": "the can wren run",
+          "expected_content": {
+            "subject": "wren",
+            "verb": "run"
+          }
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "wren",
+            "verb": "swim"
+          },
+          "surface": "the can wren swim",
+          "expected_content": {
+            "subject": "wren",
+            "verb": "swim"
+          }
+        }
+      ]
+    },
+    {
+      "seed": 101,
+      "content_acc": 1.0,
+      "regress_mismatch": 0,
+      "spell_calls_on_abstain": 0,
+      "producer_calls_on_abstain": 0,
+      "answer_produced": true,
+      "lesion_acc": 0.125,
+      "examples": [
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "robin",
+            "verb": "fly"
+          },
+          "surface": "the robin can fly",
+          "expected_content": {
+            "subject": "robin",
+            "verb": "fly"
+          }
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "crow",
+            "verb": "hop"
+          },
+          "surface": "the crow can hop",
+          "expected_content": {
+            "subject": "crow",
+            "verb": "hop"
+          }
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "crow",
+            "verb": "swim"
+          },
+          "surface": "the crow can swim",
+          "expected_content": {
+            "subject": "crow",
+            "verb": "swim"
+          }
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "hawk",
+            "verb": "run"
+          },
+          "surface": "the hawk can run",
+          "expected_content": {
+            "subject": "hawk",
+            "verb": "run"
+          }
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "owl",
+            "verb": "hop"
+          },
+          "surface": "the owl can hop",
+          "expected_content": {
+            "subject": "owl",
+            "verb": "hop"
+          }
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "hawk",
+            "verb": "swim"
+          },
+          "surface": "the hawk can swim",
+          "expected_content": {
+            "subject": "hawk",
+            "verb": "swim"
+          }
+        }
+      ]
+    },
+    {
+      "seed": 102,
+      "content_acc": 1.0,
+      "regress_mismatch": 0,
+      "spell_calls_on_abstain": 0,
+      "producer_calls_on_abstain": 0,
+      "answer_produced": true,
+      "lesion_acc": 0.08333333333333333,
+      "examples": [
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "eagle",
+            "verb": "swim"
+          },
+          "surface": "eagle the can swim",
+          "expected_content": {
+            "subject": "eagle",
+            "verb": "swim"
+          }
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "owl",
+            "verb": "run"
+          },
+          "surface": "owl the can run",
+          "expected_content": {
+            "subject": "owl",
+            "verb": "run"
+          }
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "sparrow",
+            "verb": "fly"
+          },
+          "surface": "sparrow the can fly",
+          "expected_content": {
+            "subject": "sparrow",
+            "verb": "fly"
+          }
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "robin",
+            "verb": "hop"
+          },
+          "surface": "robin the can hop",
+          "expected_content": {
+            "subject": "robin",
+            "verb": "hop"
+          }
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "robin",
+            "verb": "fly"
+          },
+          "surface": "robin the can fly",
+          "expected_content": {
+            "subject": "robin",
+            "verb": "fly"
+          }
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "wren",
+            "verb": "hop"
+          },
+          "surface": "wren the can hop",
+          "expected_content": {
+            "subject": "wren",
+            "verb": "hop"
+          }
+        }
+      ]
+    }
+  ],
+  "HONEST_NOTE": "Makes the CONTENT words (subject/verb) of the BOUNDED EMERGE frame inventory PRODUCED ON SPIKES via the validated A->W read-out (the ORDER was already spiking, EMERGE-59/63). The DET/FUNC function-word slots (the/can/does/not) keep the token surface -- the named closed-class-A->W follow-on (their pools are the EMERGE-62 discovered closed class; a small closed-class A->W is the next rung). The A->W engine is the validated concept_speak_demo read-out, GPU-trained ONCE at the production scale + cached (a scale/data lever, not a new mechanism); the producer content vocab is 16 words rebound onto the 16 validated concept pools (reuse-by-import; the vocab-rebind is a research-runner edit, NO sim/ edit). The read-out is genuinely spiking (decodes from cp_firing_states[language_output]; the pool->language_output lesion collapses it -- a host lookup would be unaffected). The gate-first no-confab moat is untouched (0 spell/producer invocations on abstains, by construction). NOT open prose (R4, the separate deferred wall)."
+}

@@ -8215,3 +8215,35 @@ ALT frontiers: the held-out distinctive-slot one-attestation cue; the 4th morpho
 real-corpus precision. Deferred: EMERGE-60 fluid-RNG isolation; EMERGE-57 multi-seed. Boundaries = undiscovered
 mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A
 MONITOR on every long run; GPU/CuPy for real runs (numpy for CPU).
+
+## CYCLE 878 (2026-07-03 — EMERGE-67 GO: the EMERGE-frame render's CONTENT WORDS are now produced ON SPIKES; + orphaned-run recovery)
+
+EMERGE-67 (GO, 6-seed, `2026-07-03-emerge67-neural-spell-wirein-GO.md`, NO sim/ edit): the last host piece of the
+spiking-Broca render was the `spell` callback (a token-surface identity). Replaced by the VALIDATED spiking A->W read-out
+(concept_speak_demo): NeuralSpell.spell(word) drives the word's concept pool on a real SimulationBridge + decodes the
+spoken word from cp_firing_states[language_output]; wired as BrocaProducer(cq, spell=neural_spell) for the CONTENT slots
+(subject/verb). VERIFIED controller-direct (GPU --derisk 6-seed + numpy CI 15 pass / 1 GPU-skip; raw json): content-spike-
+spell acc 1.000 all seeds, aw_wordwise_rate 1.0 (16/16), LESION control (zero pool->language_output) collapses decode to
+0.097 (engine-lesion 0.000 -- genuinely SPIKING, a host lookup would be unaffected), regress_mismatch 0 (== token spell),
+moat 0/0 (spell + producer never invoked on abstains). A->W engine GPU-trained once + cached (bridges/emerge67_aw/
+aw_content.simstate.h5, .h5 gitignored, regenerable via --train); 16 content words on 16 validated pools. ⇒ with
+EMERGE-59/63's spiking ORDER, the EMERGE-frame render is FULLY SPIKING for the CONTENT slots; DET/FUNC (function-word)
+slots keep the token surface = the named EMERGE-68 follow-on (their pools = EMERGE-62's discovered closed class). NO
+sim/ edit; token-spell default byte-identical (EMERGE-59..66 pass).
+
+ORPHANED-RUN RECOVERY (3rd instance this session): the EMERGE-67 subagent GPU-trained the A->W engine then ENDED ITS TURN
+"waiting" for the train (a detached PID + a self-waiter) -- its "result" was a promise to wait, NOT a completion. The
+train had finished (cache on disk, no PID running); the CONTROLLER recovered by running --derisk against the cache +
+writing the finding + fixing the GPU test's process-sticky skip-guard (skip unless the PROCESS is SIM_BACKEND=cupy, since
+the backend is sticky). Memory `feedback_proactively_monitor_long_runs` reinforced: a GPU-training subagent must run
+train+de-risk INLINE, or the CONTROLLER does the GPU step; a future-tense "I'll wait" result == an orphan -> check the
+on-disk artifact + finish controller-direct.
+
+**EXACT NEXT CONCRETE ACTION:** (1) DONE: committed EMERGE-67 both remotes. (2) NEXT: EMERGE-68 = wire the spiking A->W
+spell for the FUNCTION-WORD (DET/FUNC) slots too (the/can/does/not) -- their pools are the EMERGE-62 DISCOVERED closed
+class -> the EMERGE-frame render becomes 100% SPIKING (order + ALL words). CONTROLLER does the GPU train+de-risk INLINE
+(or a subagent runs it inline, NOT detach-and-wait -- per the recovery lesson). Anti-cheats (lesion-collapse), moat, 6-
+seed, NO sim/ edit. ALT: the held-out distinctive-slot one-attestation cue; the 4th morphological-invariance cue.
+Deferred: EMERGE-60 fluid-RNG isolation; EMERGE-57 multi-seed. Boundaries = undiscovered mechanisms; NO stopping; sim/
+edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A MONITOR on every long run;
+GPU/CuPy real. When a GPU step is needed, the controller runs it INLINE (never a detach-and-wait subagent).
