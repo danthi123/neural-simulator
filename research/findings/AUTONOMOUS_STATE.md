@@ -8407,3 +8407,30 @@ inventory (EMERGE-74); the fully-spiking A->W of the NEW content words (pond/roc
 BRIDGE-A pools). Deferred: EMERGE-60 fluid-RNG isolation; test_regions cupy-path failures (task chip); EMERGE-57
 multi-seed. Boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest
 origin+gitea; COMMIT ON MAIN; ARM A MONITOR; CONTROLLER runs GPU steps INLINE.
+
+## CYCLE 884 (2026-07-03 — EMERGE-73 GO: the adjective boundary SURPASSED by the attributive-position cue -> 7 constructions)
+
+EMERGE-73 (GO, 6-seed, `2026-07-03-emerge73-adjective-position-cue-GO.md`, NO sim/ edit): closes the EMERGE-72 adjective
+boundary. An adjective is OPEN-class but positionally constrained to the attributive DET _ NOUN slot; attribscore[w] =
+fraction of w's occurrences preceded by a closed word AND followed by a content noun separates adjectives (0.68-0.74)
+from the true closed class (<=0.36; a peaks 0.355), via a pre-registered TP_ATTRIB=0.50 (frozen seed-42). ASYMMETRIC/SAFE:
+only promotes a Goldilocks-mislabelled adjective to OPEN, never demotes a determiner -- the inverse-position cue to
+EMERGE-62b's function-word cue (Tomasello/Goldberg attributive construction; Yang-Getz 3rd property; G.12). VERIFIED
+controller-direct (sim/ clean, no churn; CI test_emerge73 11 + test_emerge72 10 = 21 pass; EMERGE-59..72 50+39 tests green):
+n_registered 7, render 1.0 (7/7 exact) -- the 5 EMERGE-72 + C_ATTRIB "the big owl can fly" (DET adj SUBJ FUNC VERB) +
+C_PRED "the owl is grey" (DET SUBJ COP adj); adjective-reclassification F1 1.00 (ALL Goldilocks-mislabelled adjectives
+promoted OPEN, ZERO true function words promoted); POSITION-SHUFFLE COLLAPSES (0 adjectives reclassified -> 0 adjective
+constructions -> falls back to 5, the cue is load-bearing not spurious); FREQUENCY-ONLY reproduces the EMERGE-72
+5-construction state (single-variable isolation); NO-CORPUS 0; HELD-OUT backbone 1.0; moat 0. NO sim/ edit; EMERGE-59..72
+defaults byte-preserved. ⇒ the self-organized spiking producer now renders 7 constructions (richer production), corpus-
+driven, moat intact.
+
+**EXACT NEXT CONCRETE ACTION:** (1) DONE: committed EMERGE-73 both remotes. (2) NEXT (broaden further / deepen fully-
+spiking): (a) EMERGE-74 = more constructions via the GO argstructure_composer.FRAME_LEXICON (transitive/ditransitive/
+caused-motion) + the _bucketB corpus verb-frame miner -> route them through the EMERGE-72/73 registry (toward richer SVO
++ ditransitive production); (b) EMERGE-75 = extend the EMERGE-67/68 A->W BRIDGE-A/BRIDGE-F pools with the NEW content
+words (pond/rock/grey/flies/big) so the broadened constructions render 100% ON SPIKES (currently the new content words
+use the token spell -- the fully-spiking follow-on); (c) the held-out distinctive-slot one-attestation cue. Deferred:
+EMERGE-60 fluid-RNG isolation; test_regions cupy-path failures (task chip); EMERGE-57 multi-seed. Owner checked in
+mid-cycle (2026-07-03) + confirmed continue autonomously. Boundaries = undiscovered mechanisms; NO stopping; sim/ edits
+fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A MONITOR; CONTROLLER runs GPU steps INLINE.

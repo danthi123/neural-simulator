@@ -1,0 +1,775 @@
+{
+  "probe": "emerge73_adjective_position_cue",
+  "verdict": "GO -- the ADJECTIVE boundary EMERGE-72 named is SURPASSED by the adjective's OWN ATTRIBUTIVE PRE-NOMINAL POSITION cue. The corpus's adjectives (big/small/fast/tall/grey/...) are high-FREQUENCY AND high-context-COVERAGE, so EMERGE-62's 2-cue Goldilocks discovery MISLABELS 2-4 of them CLOSED per seed; the position statistic attribscore[w] = fraction of w's occurrences where w is PRECEDED by a closed word AND FOLLOWED by a content noun (the DET _ NOUN attributive slot -- Tomasello/Goldberg attributive construction, the pre-nominal modifier slot; the INVERSE-position cue to EMERGE-62b's function-word cue; Yang-Getz 2026 3rd property; catalog G.12) RECLASSIFIES them OPEN (attributive-rate >= 0.5: adjectives sit at 0.68-0.74, the true closed class at <= 0.36). Adjective reclassification F1 1.000 (all mislabelled adjectives promoted OPEN, ZERO true function words promoted). With the adjectives OPEN, the producer ADMITS + MINES + RENDERS the corpus-attested adjective constructions -- attributive 'the big owl can fly' (det ADJ subj can verb) + predicative 'the owl is big' (det subj is ADJ) -- for a total of 7 DISTINCT constructions (>= 7), all rendered EXACT on spikes (render 1.000; the 5-slot C_ATTRIB fits N_SLOT_POOLS=6). Every input-destruction/hold-out control COLLAPSES: POSITION-SHUFFLE (scramble word positions before the attributive stat) -> 0 adjectives reclassified -> 0 adjective constructions mined (the cue is LOAD-BEARING, not spurious); FREQUENCY-ONLY (the EMERGE-62 2-cue baseline, no position cue) -> 0 adjective constructions -> the EMERGE-72 5-construction state (proving the position cue is what ADDS the adjectives, 5.0 rendered); NO-CORPUS -> 0 registered; HELD-OUT-CONSTRUCTION -> the shared det+subj+verb backbone recovered from the OTHERS (1.000). The gate-first no-confab MOAT holds BY CONSTRUCTION: 0 producer invocations on abstains. 6 seeds. ==> the producer renders a BROADER, corpus-driven, router-selected inventory including the adjective constructions -- the broadening is CORPUS-POSITION-DRIVEN (position-shuffle collapses it). HONEST SCOPE: BROADENS the bounded, corpus-attested, router-selected inventory from 5 to >= 7 (adds the adjective's attributive-position cue), NOT open prose (R4). The A->W spell stays the token surface; the fully-spiking A->W of the NEW adjective content words is the EMERGE-67/68-style follow-on. Reuse-by-import; NO sim/ edit; moat untouched.",
+  "go": true,
+  "mechanism": "CLOSE the adjective boundary EMERGE-72 named by adding the ADJECTIVE's OWN ATTRIBUTIVE PRE-NOMINAL POSITION as a distributional cue. The 2-cue Goldilocks discovery (frequency + coverage) mislabels the corpus's high-frequency, high-coverage adjectives CLOSED; the position statistic attribscore = fraction of occurrences in the DET _ NOUN attributive slot (preceded by a closed word, followed by a content noun) reclassifies them OPEN (ASYMMETRIC: only promotes a Goldilocks-CLOSED word; never demotes an open word or a true determiner). With the adjectives OPEN, the extended labeller admits a pre-nominal ADJ slot (attributive) + a predicative post-copular ADJ slot, so the EMERGE-72 signature-keyed registry mines + renders the attributive + predicative adjective constructions -> >= 7 constructions on spikes. INVERSE-position cue to EMERGE-62b's function-word cue; Tomasello usage-based / Goldberg attributive construction (the pre-nominal modifier slot); Yang-Getz 2026 3rd property; Redington/Cartwright-Brent neighbour role; catalog G.12 Broca open/closed. POSITION-SHUFFLE / FREQUENCY-ONLY / NO-CORPUS / HELD-OUT-CONSTRUCTION input-destruction controls gate the result. Reuse-by-import; NO sim/ edit; gate-first moat untouched.",
+  "task": "reclassify the corpus's adjectives OPEN by their attributive pre-nominal position (not frequency) so the producer admits the attributive + predicative adjective constructions -> >= 7 constructions rendered exact on spikes; position-shuffle collapses (adjective constructions un-mined); frequency-only reproduces the EMERGE-72 5; no-corpus empty; held-out-construction generalises; gate-first moat 0; >= 6 seeds",
+  "attributive_threshold": 0.5,
+  "constructions_groundtruth": {
+    "F_MODAL": [
+      [
+        "det",
+        "the",
+        null
+      ],
+      [
+        "subj",
+        null,
+        null
+      ],
+      [
+        "func",
+        "can",
+        null
+      ],
+      [
+        "verb",
+        null,
+        "bare"
+      ]
+    ],
+    "F_INTR": [
+      [
+        "det",
+        "the",
+        null
+      ],
+      [
+        "subj",
+        null,
+        null
+      ],
+      [
+        "verb",
+        null,
+        "3sg"
+      ]
+    ],
+    "F_NEGMOD": [
+      [
+        "det",
+        "the",
+        null
+      ],
+      [
+        "subj",
+        null,
+        null
+      ],
+      [
+        "func",
+        "does",
+        null
+      ],
+      [
+        "func",
+        "not",
+        null
+      ],
+      [
+        "verb",
+        null,
+        "bare"
+      ]
+    ],
+    "C_PPGOAL": [
+      [
+        "det",
+        "the",
+        null
+      ],
+      [
+        "subj",
+        null,
+        null
+      ],
+      [
+        "verb",
+        null,
+        "3sg"
+      ],
+      [
+        "func",
+        "to",
+        null
+      ],
+      [
+        "func",
+        "the",
+        null
+      ],
+      [
+        "obj",
+        null,
+        null
+      ]
+    ],
+    "C_PPLOC": [
+      [
+        "det",
+        "the",
+        null
+      ],
+      [
+        "subj",
+        null,
+        null
+      ],
+      [
+        "verb",
+        null,
+        "3sg"
+      ],
+      [
+        "func",
+        "on",
+        null
+      ],
+      [
+        "func",
+        "the",
+        null
+      ],
+      [
+        "obj",
+        null,
+        null
+      ]
+    ],
+    "C_ATTRIB": [
+      [
+        "det",
+        "the",
+        null
+      ],
+      [
+        "adj",
+        null,
+        null
+      ],
+      [
+        "subj",
+        null,
+        null
+      ],
+      [
+        "func",
+        "can",
+        null
+      ],
+      [
+        "verb",
+        null,
+        "bare"
+      ]
+    ],
+    "C_PRED": [
+      [
+        "det",
+        "the",
+        null
+      ],
+      [
+        "subj",
+        null,
+        null
+      ],
+      [
+        "func",
+        "is",
+        null
+      ],
+      [
+        "adj",
+        null,
+        null
+      ]
+    ]
+  },
+  "adjective_constructions": [
+    "C_ATTRIB",
+    "C_PRED"
+  ],
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "elapsed_seconds": 51.4,
+  "aggregate": {
+    "n_registered": 7.0,
+    "n_rendered_exact_mean": 7.0,
+    "main_render": 1.0,
+    "adjective_reclassification_F1": 1.0,
+    "heldout_mean": 1.0,
+    "nocorpus_n_registered_total": 0,
+    "moat_calls_on_abstain_total": 0
+  },
+  "sample_transcript": [
+    {
+      "tag": "MODAL   (ability affirm)",
+      "question": "can an owl fly?",
+      "surface": "the owl can fly",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "INTR    (intransitive)",
+      "question": "what does a penguin do?",
+      "surface": "the penguin walks",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "NEGMOD  (negated modal)",
+      "question": "can a penguin fly? [deny]",
+      "surface": "the penguin does not fly",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "PPGOAL  (motion goal)",
+      "question": "where does the owl fly?",
+      "surface": "the owl flies to the pond",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "PPLOC   (motion location)",
+      "question": "where does the owl fly?",
+      "surface": "the owl flies on the rock",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "ATTRIB  (attributive adj)",
+      "question": "what can the big owl do?",
+      "surface": "the big owl can fly",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "PRED    (predicative adj)",
+      "question": "what is the owl like?",
+      "surface": "the owl is grey",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "MOAT    (abstain)",
+      "question": "can a zzz fly?",
+      "surface": "I don't know.",
+      "invocation": "producer NOT invoked"
+    }
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_registered": 7,
+      "registered": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC",
+        "C_ATTRIB",
+        "C_PRED"
+      ],
+      "adj_registered": [
+        "C_ATTRIB",
+        "C_PRED"
+      ],
+      "n_rendered_exact": 7,
+      "main_render": 1.0,
+      "per_construction": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0,
+        "C_ATTRIB": 1.0,
+        "C_PRED": 1.0
+      },
+      "reclassification": {
+        "n_adj_mislabelled_closed": 2,
+        "adj_mislabelled_closed": [
+          "big",
+          "fast"
+        ],
+        "reclassified_open": [
+          "big",
+          "fast"
+        ],
+        "n_reclassified": 2,
+        "P": 1.0,
+        "R": 1.0,
+        "F1": 1.0,
+        "promoted_true_function_words": []
+      },
+      "shuffle_n_registered": 5,
+      "shuffle_adj_registered": [],
+      "shuffle_n_rendered_exact": 5,
+      "shuffle_reclassified_n": 0,
+      "freqonly_n_registered": 5,
+      "freqonly_adj_registered": [],
+      "freqonly_n_rendered_exact": 5,
+      "nocorpus_n_registered": 0,
+      "heldout_backbone": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0,
+        "C_ATTRIB": 1.0,
+        "C_PRED": 1.0
+      },
+      "heldout_mean": 1.0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true,
+      "corrected_closed": [
+        "a",
+        "and",
+        "can",
+        "cat",
+        "does",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "the",
+        "to"
+      ],
+      "discovered_adjectives": [
+        "big",
+        "fast"
+      ]
+    },
+    {
+      "seed": 43,
+      "n_registered": 7,
+      "registered": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC",
+        "C_ATTRIB",
+        "C_PRED"
+      ],
+      "adj_registered": [
+        "C_ATTRIB",
+        "C_PRED"
+      ],
+      "n_rendered_exact": 7,
+      "main_render": 1.0,
+      "per_construction": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0,
+        "C_ATTRIB": 1.0,
+        "C_PRED": 1.0
+      },
+      "reclassification": {
+        "n_adj_mislabelled_closed": 3,
+        "adj_mislabelled_closed": [
+          "grey",
+          "tall",
+          "wet"
+        ],
+        "reclassified_open": [
+          "grey",
+          "tall",
+          "wet"
+        ],
+        "n_reclassified": 3,
+        "P": 1.0,
+        "R": 1.0,
+        "F1": 1.0,
+        "promoted_true_function_words": []
+      },
+      "shuffle_n_registered": 5,
+      "shuffle_adj_registered": [],
+      "shuffle_n_rendered_exact": 5,
+      "shuffle_reclassified_n": 0,
+      "freqonly_n_registered": 5,
+      "freqonly_adj_registered": [],
+      "freqonly_n_rendered_exact": 5,
+      "nocorpus_n_registered": 0,
+      "heldout_backbone": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0,
+        "C_ATTRIB": 1.0,
+        "C_PRED": 1.0
+      },
+      "heldout_mean": 1.0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true,
+      "corrected_closed": [
+        "a",
+        "and",
+        "can",
+        "does",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "the",
+        "to"
+      ],
+      "discovered_adjectives": [
+        "grey",
+        "tall",
+        "wet"
+      ]
+    },
+    {
+      "seed": 44,
+      "n_registered": 7,
+      "registered": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC",
+        "C_ATTRIB",
+        "C_PRED"
+      ],
+      "adj_registered": [
+        "C_ATTRIB",
+        "C_PRED"
+      ],
+      "n_rendered_exact": 7,
+      "main_render": 1.0,
+      "per_construction": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0,
+        "C_ATTRIB": 1.0,
+        "C_PRED": 1.0
+      },
+      "reclassification": {
+        "n_adj_mislabelled_closed": 4,
+        "adj_mislabelled_closed": [
+          "fast",
+          "red",
+          "small",
+          "tall"
+        ],
+        "reclassified_open": [
+          "fast",
+          "red",
+          "small",
+          "tall"
+        ],
+        "n_reclassified": 4,
+        "P": 1.0,
+        "R": 1.0,
+        "F1": 1.0,
+        "promoted_true_function_words": []
+      },
+      "shuffle_n_registered": 5,
+      "shuffle_adj_registered": [],
+      "shuffle_n_rendered_exact": 5,
+      "shuffle_reclassified_n": 0,
+      "freqonly_n_registered": 5,
+      "freqonly_adj_registered": [],
+      "freqonly_n_rendered_exact": 5,
+      "nocorpus_n_registered": 0,
+      "heldout_backbone": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0,
+        "C_ATTRIB": 1.0,
+        "C_PRED": 1.0
+      },
+      "heldout_mean": 1.0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true,
+      "corrected_closed": [
+        "a",
+        "and",
+        "can",
+        "does",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "the",
+        "to"
+      ],
+      "discovered_adjectives": [
+        "fast",
+        "red",
+        "small",
+        "tall"
+      ]
+    },
+    {
+      "seed": 100,
+      "n_registered": 7,
+      "registered": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC",
+        "C_ATTRIB",
+        "C_PRED"
+      ],
+      "adj_registered": [
+        "C_ATTRIB",
+        "C_PRED"
+      ],
+      "n_rendered_exact": 7,
+      "main_render": 1.0,
+      "per_construction": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0,
+        "C_ATTRIB": 1.0,
+        "C_PRED": 1.0
+      },
+      "reclassification": {
+        "n_adj_mislabelled_closed": 3,
+        "adj_mislabelled_closed": [
+          "big",
+          "tall",
+          "wet"
+        ],
+        "reclassified_open": [
+          "big",
+          "tall",
+          "wet"
+        ],
+        "n_reclassified": 3,
+        "P": 1.0,
+        "R": 1.0,
+        "F1": 1.0,
+        "promoted_true_function_words": []
+      },
+      "shuffle_n_registered": 5,
+      "shuffle_adj_registered": [],
+      "shuffle_n_rendered_exact": 5,
+      "shuffle_reclassified_n": 0,
+      "freqonly_n_registered": 5,
+      "freqonly_adj_registered": [],
+      "freqonly_n_rendered_exact": 5,
+      "nocorpus_n_registered": 0,
+      "heldout_backbone": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0,
+        "C_ATTRIB": 1.0,
+        "C_PRED": 1.0
+      },
+      "heldout_mean": 1.0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true,
+      "corrected_closed": [
+        "a",
+        "and",
+        "can",
+        "does",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "the",
+        "to"
+      ],
+      "discovered_adjectives": [
+        "big",
+        "tall",
+        "wet"
+      ]
+    },
+    {
+      "seed": 101,
+      "n_registered": 7,
+      "registered": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC",
+        "C_ATTRIB",
+        "C_PRED"
+      ],
+      "adj_registered": [
+        "C_ATTRIB",
+        "C_PRED"
+      ],
+      "n_rendered_exact": 7,
+      "main_render": 1.0,
+      "per_construction": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0,
+        "C_ATTRIB": 1.0,
+        "C_PRED": 1.0
+      },
+      "reclassification": {
+        "n_adj_mislabelled_closed": 4,
+        "adj_mislabelled_closed": [
+          "cold",
+          "grey",
+          "red",
+          "warm"
+        ],
+        "reclassified_open": [
+          "cold",
+          "grey",
+          "red",
+          "warm"
+        ],
+        "n_reclassified": 4,
+        "P": 1.0,
+        "R": 1.0,
+        "F1": 1.0,
+        "promoted_true_function_words": []
+      },
+      "shuffle_n_registered": 5,
+      "shuffle_adj_registered": [],
+      "shuffle_n_rendered_exact": 5,
+      "shuffle_reclassified_n": 0,
+      "freqonly_n_registered": 5,
+      "freqonly_adj_registered": [],
+      "freqonly_n_rendered_exact": 5,
+      "nocorpus_n_registered": 0,
+      "heldout_backbone": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0,
+        "C_ATTRIB": 1.0,
+        "C_PRED": 1.0
+      },
+      "heldout_mean": 1.0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true,
+      "corrected_closed": [
+        "a",
+        "and",
+        "can",
+        "does",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "the",
+        "to"
+      ],
+      "discovered_adjectives": [
+        "cold",
+        "grey",
+        "red",
+        "warm"
+      ]
+    },
+    {
+      "seed": 102,
+      "n_registered": 7,
+      "registered": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC",
+        "C_ATTRIB",
+        "C_PRED"
+      ],
+      "adj_registered": [
+        "C_ATTRIB",
+        "C_PRED"
+      ],
+      "n_rendered_exact": 7,
+      "main_render": 1.0,
+      "per_construction": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0,
+        "C_ATTRIB": 1.0,
+        "C_PRED": 1.0
+      },
+      "reclassification": {
+        "n_adj_mislabelled_closed": 4,
+        "adj_mislabelled_closed": [
+          "big",
+          "fast",
+          "slow",
+          "tall"
+        ],
+        "reclassified_open": [
+          "big",
+          "fast",
+          "slow",
+          "tall"
+        ],
+        "n_reclassified": 4,
+        "P": 1.0,
+        "R": 1.0,
+        "F1": 1.0,
+        "promoted_true_function_words": []
+      },
+      "shuffle_n_registered": 5,
+      "shuffle_adj_registered": [],
+      "shuffle_n_rendered_exact": 5,
+      "shuffle_reclassified_n": 0,
+      "freqonly_n_registered": 5,
+      "freqonly_adj_registered": [],
+      "freqonly_n_rendered_exact": 5,
+      "nocorpus_n_registered": 0,
+      "heldout_backbone": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0,
+        "C_ATTRIB": 1.0,
+        "C_PRED": 1.0
+      },
+      "heldout_mean": 1.0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true,
+      "corrected_closed": [
+        "a",
+        "and",
+        "can",
+        "does",
+        "in",
+        "is",
+        "it",
+        "not",
+        "on",
+        "the",
+        "to"
+      ],
+      "discovered_adjectives": [
+        "big",
+        "fast",
+        "slow",
+        "tall"
+      ]
+    }
+  ],
+  "HONEST_NOTE": "CLOSES the honest adjective boundary EMERGE-72 named: the corpus's adjectives are statistically ambiguous with the closed class by frequency+coverage alone (high on BOTH), so the 2-cue Goldilocks discovery mislabels them CLOSED and the EMERGE-72 producer correctly SKIPS the adjective constructions. The adjective's OWN attributive pre-nominal position (the DET _ NOUN slot) is the discriminating cue that the closed class lacks: it reclassifies the adjectives OPEN (ASYMMETRIC/SAFE -- only promotes a Goldilocks-CLOSED word to OPEN, never demotes a real determiner), so the attributive + predicative adjective constructions are mined + rendered -> >= 7 corpus-attested, router-selected constructions on spikes. The POSITION-SHUFFLE control is LOAD-BEARING (scrambling word positions destroys the cue -> 0 adjectives reclassified -> 0 adjective constructions -> the EMERGE-72 count); FREQUENCY-ONLY reproduces the EMERGE-72 state (proving the position cue is what adds the adjectives). This BROADENS the bounded, corpus-attested inventory from 5 to >= 7, NOT open prose (R4, the deferred wall). The A->W spell stays the token surface; the fully-spiking A->W of the NEW adjective content words is the EMERGE-67/68-style follow-on (its own spiking validation is concept_speak_demo). The corpus mining is offline syllabus prep (BRAIN-BASED-ONLY compliant); the structure is rendered on REAL spikes; the gate-first moat is untouched (0 productions on abstains, by construction)."
+}
