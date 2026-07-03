@@ -8535,7 +8535,56 @@ GENERALIZES to constructions never enumerated (26->462->90,582 in the lit). RIDE
 (EMERGE-6b generation-stability -> "reservoir + trained feedback read-out / FORCE / Laje-Buonomano", verified). Gate:
 `2026-07-03-next-frontier-beyond-templated-constructions-research-gate.md`.
 
-**EXACT NEXT CONCRETE ACTION:** (1) commit the research gate + this state. (2) BUILD EMERGE-78 (the RANK-1 cheap-first de-risk,
+**CYCLE 891 (EMERGE-78 adversarially HARDENED to a genuine-necessity GO; EMERGE-75b committed as an honest BOUNDARY).**
+(a) The 5-skeptic adversarial-verify REFUTED the EMERGE-78 first pass (`go_survives_all_skeptics: false`): the local
+held-out shapes were TRIVIALLY LOCAL (a ±1/±2 rule ties the reservoir 1.000), the memorization-floor was mis-specified, the
+lesion degenerate, the hand-labeler/moat claims over-framed. NOT committed as-is (that would be the drift). REMEDIATED per
+the skeptics' Option (ii) -- raise the bar to a genuine NON-LOCAL dependency: single-embedding RELATIVE CLAUSES whose HEAD
+role (AGENT subj-rel vs THEME obj-rel) is GLOBAL (identical local window; "that" not in the discovered closed class → obj-rel
+& transitive collide locally; only whole-sequence structure disambiguates). Final-state slot-indexed read-out (Dominey-Hinaut;
+fixes a causal-read bug where the head's rightward disambiguator was unseen). RESULT (6-seed GO): reservoir rel-head 1.000
+vs BOTH the strongest LEFT-context governing-cue baseline AND a symmetric ±2 window baseline at 0.500 (chance) → reservoir
+necessity over ANY fixed window; train 1.000 (learns the map, no hand branch); non-degenerate lesion 0.500 + scramble 0.33
+collapse; hand-labeler 0.000; honest no-confab (no abstain class, OOD fabrication reported). Runner+test (6 CPU pass)+finding
+drafted. NO sim/ edit. A FOCUSED adversarial recheck (subagent a4fd8878b0412686c: genuine-necessity-vs-artifact / length-cheat)
+is IN FLIGHT → on return, fold into the finding + commit EMERGE-78 both remotes. (b) EMERGE-75b committed as an honest
+BOUNDARY (the EMERGE-61 wash-out on the A→W read makes the EMERGE-75 regression WORSE, hi-OFF 2 → hi-ON 25; post-build is the
+wrong reset target; the tiny seed-102 render-residual stands, moat safe; next hypotheses deferred below the EMERGE-78
+frontier). [superseded by this note:] CYCLE 890 (EMERGE-78 6-seed GO built; adversarial verify + GPU 75b hi-ON both in flight).** EMERGE-78 (the RANK-1
+reservoir form->role de-risk) is BUILT + 6-seed GO on CPU/numpy: held-out role acc **1.000 all 6 seeds** on the un-enumerated
+recombined shapes (dative / double-PP / order-swap), hand labeler **0.000** (structural None on >=2-post-verbal-args),
+memorization-floor 0.250, scramble 0.24 (~chance 0.20), closed-class-lesion 0.250, moat argument-fabrication 0.000. Runner
+`_emerge78_reservoir_form_to_role_derisk.py` + test (6 CPU pass) + finding (drafting). NO sim/ edit. The 1.000-everywhere
+profile is EXACTLY the too-clean shape the project's own audits keep flagging -> running a 5-skeptic ADVERSARIAL-VERIFY
+Workflow (wf_d9bd2314-8d6): heldout-genuineness / control-validity / leakage-hygiene / handlabeler-overclaim / moat. DO NOT
+commit EMERGE-78 until the adversarial verdict is in + any framing/blocking defects remediated. GPU 75b hi-ON pass still
+running (bg bxpk323jx, Monitor b5d3ap9ai): hi-OFF baseline ALREADY confirmed the diagnosis (total regress 2, per-seed
+[0,0,0,0,0,2] -- ONLY seed 102, the deepest render history, regresses -> the accumulation load-bearing control holds); hi-ON
+expected 0-regress all seeds. ON 75b VERDICT: fill+commit the 75b finding.
+
+**CYCLE 892 (EMERGE-78 committed as an adversarially-hardened, honestly-scoped GO; the focused recheck's contingency folded
+in).** The focused recheck (a4fd8878b0412686c) returned GO_NEEDS_FRAMING_FIX: the computational result is real + controls
+sound (length RULED OUT: subj/obj-rel both 6 tokens), but the necessity is CONTINGENT -- "that" occurs ZERO times in the
+discovery corpus (OOV by construction) + collides with the OPEN marker; counterfactual: a distinct discovered "that" → a
+±1 window ties → the reservoir advantage vanishes. Remediated: the contingency + counterfactual now disclosed in the
+verdict/HONEST_NOTE/task/mechanism + the finding. GO stands on (1) the GENERAL consolidation (learned form→role map, no
+hand branch -- the anti-whack-a-mole win) + (2) an honestly-scoped proof-of-mechanism (reservoir whole-sequence integration
+on a constructed non-local case); general window-defeating necessity = RANK-3. Committed both remotes.
+
+**EXACT NEXT CONCRETE ACTION:** (1) DONE: EMERGE-78 committed (hardened GO). (2) The pre-registered RANK-1.5/RANK-2 rungs
+(research gate `2026-07-03-next-frontier-...`): the spiking-LSM PORT of EMERGE-78 (drive a recurrent RF/Izhikevich pool +
+the population read-out, replacing the rate echo-state reservoir) OR the PRODUCTION reservoir (Dominey 2015: thematic
+roles → ordered word emission, replacing the hand ROUTER). (3) The genuinely-general reservoir-necessity test (RANK-3
+scoped): a VARIABLE-distance / deeper-embedding dependency where no fixed window follows regardless of vocabulary (train
+"that" as a real corpus token so it is NOT OOV, then test deeper embedding) -- the honest next de-risk that would show
+UNCONTINGENT reservoir necessity or name the RANK-3 boundary (theta-gamma buffer / assembly-calculus stack). PARALLELIZE;
+boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair when de-risked; moat a PLUS; honest origin+gitea; COMMIT
+ON MAIN; CONTROLLER runs GPU steps INLINE; ARM A MONITOR. [superseded:] (0) ON adversarial-verify return: remediate real defects (expected: FRAMING -- the
+generalization is compositional recombination of TRAINED local role-markers, value = LEARNED-from-usage no-hand-branch per
+Dominey-Hinaut, NOT "only a reservoir can"; correct any overclaim in the verdict/finding), re-verify, then commit EMERGE-78
+(runner+test+finding+raw) both remotes. (1) ON 75b VERDICT: fill placeholders + commit 75b GO (surpasses the EMERGE-75
+boundary). (2) THEN the RANK-2 follow-on (the PRODUCTION reservoir: roles->ordered emission, Dominey 2015) OR the spiking-LSM
+port of EMERGE-78 -- pre-registered rungs. [Superseded by CYCLE 890:] BUILD EMERGE-78 (the RANK-1 cheap-first de-risk,
 CPU/numpy, NO sim/ edit -- INDEPENDENT of the GPU 75b, build NOW in parallel): `_emerge78_reservoir_form_to_role_derisk.py` --
 a FIXED-random echo-state reservoir driven by the EMERGE-62 discovered closed-class stream + open-class slot markers; a trained
 ridge read-out -> per-open-word thematic-role labels (Agent/Object/Recipient x verb-idx); NO CONSTRUCTIONS dict / NO
