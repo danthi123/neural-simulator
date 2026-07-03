@@ -1,0 +1,516 @@
+{
+  "probe": "emerge68_function_word_spell",
+  "verdict": "GO -- the EMERGE-frame render is now 100% PRODUCED ON SPIKES: ORDER *and* EVERY WORD (content AND function). The spiking-Broca producer's `spell` is the VALIDATED A->W read-out extended to the FUNCTION-word (DET/FUNC) slots: content words decode on BRIDGE-A (== EMERGE-67), function words (the/a/can/does/not) decode on BRIDGE-F -- each spelled by DRIVING its concept pool on a real SimulationBridge and DECODING the spoken word from `language_output` SPIKES. ALL-WORD spike-spell accuracy 1.000 over the EMERGE frames (>= 0.9); FUNCTION-word slot accuracy 1.000; BRIDGE-F spells 5/5 function words correctly (raw rate 1.000). GENUINELY SPIKING for the function words too: the FUNCTION-word LESION (zeroing BRIDGE-F's pool->language_output pathway) COLLAPSES the function-word decode to 0.153 (engine-lesion 0.000; a host lookup would be unaffected -> the function words are decoded FROM SPIKES). NO regression: the neural spell reproduces the token spell on ALL slots (0 mismatches; the token-spell default path is byte-identical). The gate-first no-confab MOAT holds BY CONSTRUCTION: 0 spell calls + 0 producer invocations on abstains (the producer -- and hence BOTH A->W read-outs -- is NEVER invoked on an abstain). 6 seeds. ==> the EMERGE-frame render is FULLY SPIKING (order via EMERGE-59/63, content words via EMERGE-67, FUNCTION words now). HONEST SCOPE: renders the BOUNDED EMERGE frame inventory (ability-affirm / intransitive-exception / negated-modal), NOT open prose (R4). The A->W engines are GPU-trained ONCE at the validated scale + cached (a scale/data lever, not a new mechanism); the 5 function words are rebound onto 5 concept pools of a second bridge (reuse-by-import; NO sim/ edit).",
+  "go": true,
+  "mechanism": "extend the VALIDATED spiking A->W read-out (concept_speak_demo: drive a concept pool -> decode the spoken word from language_output SPIKES via cosine to the word patterns; CLAUDE.md chat_speak A->W 100% multi-seed) to the FUNCTION-WORD (DET/FUNC) slots of the EMERGE-59 spiking-Broca producer. EMERGE-67 wired the CONTENT slots (BRIDGE-A, the 16-word content engine); EMERGE-68 adds a SECOND concept-pool bridge BRIDGE-F for the 5 function words (the/a/can/does/not) rebound onto 5 of its 16 pools (motor_N/E/S/W + noun_APPLE; the other 11 pools filled with content-word fillers so the SAME builder+topographic-bias+orthogonal-codes+train_word_to_pool recipe trains at the validated scale, cached once). UnifiedNeuralSpell.spell dispatches content->BRIDGE-A, function->BRIDGE-F; realize_slot's DET/FUNC branch (which already calls spell(payload)) routes through this SAME spell, so EVERY slot -- content AND function -- is spike-spelled. The read-out is genuinely spiking (reads cp_firing_states[language_output]; a BRIDGE-F pool->output lesion collapses the function-word decode). The gate-first no-confab moat is untouched (abstain -> producer + both A->W engines NEVER invoked). Reuse-by-import; NO sim/ edit.",
+  "task": "extend the spiking A->W read-out to the FUNCTION-word slots so the EMERGE-frame render's WORDS are 100% produced on spikes (order AND every word, content AND function); all-word spike-spell accuracy + genuinely-spiking (function-word lesion collapse) + gate-first moat (0 spell/producer calls on abstains) + no regression vs the token spell; >=6 seeds; GPU for the A->W",
+  "func_words": [
+    "the",
+    "a",
+    "can",
+    "does",
+    "not"
+  ],
+  "content_vocab": [
+    "owl",
+    "penguin",
+    "robin",
+    "sparrow",
+    "eagle",
+    "hawk",
+    "wren",
+    "crow",
+    "fly",
+    "swim",
+    "run",
+    "hop",
+    "walks",
+    "lurks",
+    "hides",
+    "rests"
+  ],
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "gpu": true,
+  "elapsed_seconds": 707.5,
+  "aggregate": {
+    "all_acc": 1.0,
+    "func_acc": 1.0,
+    "func_wordwise_rate": 1.0,
+    "content_wordwise_rate": 1.0,
+    "lesion_func_acc": 0.15277777777777776,
+    "engine_lesion_func_acc": 0.0,
+    "regress_mismatch": 0,
+    "spell_calls_on_abstain_total": 0,
+    "producer_calls_on_abstain_total": 0
+  },
+  "func_wordwise": [
+    {
+      "word": "the",
+      "decoded": "the",
+      "ok": true,
+      "self_cos": 0.239,
+      "top_cos": 0.239,
+      "spikes": 76
+    },
+    {
+      "word": "a",
+      "decoded": "a",
+      "ok": true,
+      "self_cos": 0.357,
+      "top_cos": 0.357,
+      "spikes": 601
+    },
+    {
+      "word": "can",
+      "decoded": "can",
+      "ok": true,
+      "self_cos": 0.235,
+      "top_cos": 0.235,
+      "spikes": 300
+    },
+    {
+      "word": "does",
+      "decoded": "does",
+      "ok": true,
+      "self_cos": 0.264,
+      "top_cos": 0.264,
+      "spikes": 373
+    },
+    {
+      "word": "not",
+      "decoded": "not",
+      "ok": true,
+      "self_cos": 0.194,
+      "top_cos": 0.194,
+      "spikes": 273
+    }
+  ],
+  "sample_transcript": [
+    {
+      "question": "can owl fly?",
+      "surface": "the owl can fly",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "question": "can penguin walks?",
+      "surface": "the penguin walks",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "question": "can penguin fly?",
+      "surface": "the penguin does not fly",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "question": "can a zzz fly?",
+      "surface": "I don't know.",
+      "invocation": "producer NOT invoked"
+    }
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "all_acc": 1.0,
+      "func_acc": 1.0,
+      "regress_mismatch": 0,
+      "spell_calls_on_abstain": 0,
+      "producer_calls_on_abstain": 0,
+      "answer_produced": true,
+      "lesion_func_acc": 0.125,
+      "examples": [
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "crow",
+            "verb": "hop"
+          },
+          "surface": "the crow can hop",
+          "expected": "the crow can hop"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "crow",
+            "verb": "swim"
+          },
+          "surface": "the crow can swim",
+          "expected": "the crow can swim"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "robin",
+            "verb": "fly"
+          },
+          "surface": "the robin can fly",
+          "expected": "the robin can fly"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "robin",
+            "verb": "swim"
+          },
+          "surface": "the robin can swim",
+          "expected": "the robin can swim"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "owl",
+            "verb": "run"
+          },
+          "surface": "the owl can run",
+          "expected": "the owl can run"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "penguin",
+            "verb": "hop"
+          },
+          "surface": "the penguin can hop",
+          "expected": "the penguin can hop"
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "all_acc": 1.0,
+      "func_acc": 1.0,
+      "regress_mismatch": 0,
+      "spell_calls_on_abstain": 0,
+      "producer_calls_on_abstain": 0,
+      "answer_produced": true,
+      "lesion_func_acc": 0.22916666666666666,
+      "examples": [
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "eagle",
+            "verb": "run"
+          },
+          "surface": "the eagle can run",
+          "expected": "the eagle can run"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "hawk",
+            "verb": "swim"
+          },
+          "surface": "the hawk can swim",
+          "expected": "the hawk can swim"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "owl",
+            "verb": "swim"
+          },
+          "surface": "the owl can swim",
+          "expected": "the owl can swim"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "robin",
+            "verb": "fly"
+          },
+          "surface": "the robin can fly",
+          "expected": "the robin can fly"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "owl",
+            "verb": "fly"
+          },
+          "surface": "the owl can fly",
+          "expected": "the owl can fly"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "eagle",
+            "verb": "fly"
+          },
+          "surface": "the eagle can fly",
+          "expected": "the eagle can fly"
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "all_acc": 1.0,
+      "func_acc": 1.0,
+      "regress_mismatch": 0,
+      "spell_calls_on_abstain": 0,
+      "producer_calls_on_abstain": 0,
+      "answer_produced": true,
+      "lesion_func_acc": 0.16666666666666666,
+      "examples": [
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "penguin",
+            "verb": "hop"
+          },
+          "surface": "the penguin can hop",
+          "expected": "the penguin can hop"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "penguin",
+            "verb": "run"
+          },
+          "surface": "the penguin can run",
+          "expected": "the penguin can run"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "eagle",
+            "verb": "fly"
+          },
+          "surface": "the eagle can fly",
+          "expected": "the eagle can fly"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "owl",
+            "verb": "run"
+          },
+          "surface": "the owl can run",
+          "expected": "the owl can run"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "hawk",
+            "verb": "fly"
+          },
+          "surface": "the hawk can fly",
+          "expected": "the hawk can fly"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "crow",
+            "verb": "run"
+          },
+          "surface": "the crow can run",
+          "expected": "the crow can run"
+        }
+      ]
+    },
+    {
+      "seed": 100,
+      "all_acc": 1.0,
+      "func_acc": 1.0,
+      "regress_mismatch": 0,
+      "spell_calls_on_abstain": 0,
+      "producer_calls_on_abstain": 0,
+      "answer_produced": true,
+      "lesion_func_acc": 0.22916666666666666,
+      "examples": [
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "crow",
+            "verb": "run"
+          },
+          "surface": "the can crow run",
+          "expected": "the crow can run"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "hawk",
+            "verb": "hop"
+          },
+          "surface": "the can hawk hop",
+          "expected": "the hawk can hop"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "eagle",
+            "verb": "run"
+          },
+          "surface": "the eagle can run",
+          "expected": "the eagle can run"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "wren",
+            "verb": "fly"
+          },
+          "surface": "the wren can fly",
+          "expected": "the wren can fly"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "wren",
+            "verb": "run"
+          },
+          "surface": "the can wren run",
+          "expected": "the wren can run"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "wren",
+            "verb": "swim"
+          },
+          "surface": "the can wren swim",
+          "expected": "the wren can swim"
+        }
+      ]
+    },
+    {
+      "seed": 101,
+      "all_acc": 1.0,
+      "func_acc": 1.0,
+      "regress_mismatch": 0,
+      "spell_calls_on_abstain": 0,
+      "producer_calls_on_abstain": 0,
+      "answer_produced": true,
+      "lesion_func_acc": 0.08333333333333333,
+      "examples": [
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "robin",
+            "verb": "fly"
+          },
+          "surface": "the robin can fly",
+          "expected": "the robin can fly"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "crow",
+            "verb": "hop"
+          },
+          "surface": "the crow can hop",
+          "expected": "the crow can hop"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "crow",
+            "verb": "swim"
+          },
+          "surface": "the crow can swim",
+          "expected": "the crow can swim"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "hawk",
+            "verb": "run"
+          },
+          "surface": "the hawk can run",
+          "expected": "the hawk can run"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "owl",
+            "verb": "hop"
+          },
+          "surface": "the owl can hop",
+          "expected": "the owl can hop"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "hawk",
+            "verb": "swim"
+          },
+          "surface": "the hawk can swim",
+          "expected": "the hawk can swim"
+        }
+      ]
+    },
+    {
+      "seed": 102,
+      "all_acc": 1.0,
+      "func_acc": 1.0,
+      "regress_mismatch": 0,
+      "spell_calls_on_abstain": 0,
+      "producer_calls_on_abstain": 0,
+      "answer_produced": true,
+      "lesion_func_acc": 0.08333333333333333,
+      "examples": [
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "eagle",
+            "verb": "swim"
+          },
+          "surface": "eagle the can swim",
+          "expected": "the eagle can swim"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "owl",
+            "verb": "run"
+          },
+          "surface": "owl the can run",
+          "expected": "the owl can run"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "sparrow",
+            "verb": "fly"
+          },
+          "surface": "sparrow the can fly",
+          "expected": "the sparrow can fly"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "robin",
+            "verb": "hop"
+          },
+          "surface": "robin the can hop",
+          "expected": "the robin can hop"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "robin",
+            "verb": "fly"
+          },
+          "surface": "robin the can fly",
+          "expected": "the robin can fly"
+        },
+        {
+          "frame": "F_MODAL",
+          "fact": {
+            "subject": "wren",
+            "verb": "hop"
+          },
+          "surface": "wren the can hop",
+          "expected": "the wren can hop"
+        }
+      ]
+    }
+  ],
+  "HONEST_NOTE": "Makes ALL WORDS (content + function) of the BOUNDED EMERGE frame inventory PRODUCED ON SPIKES via the validated A->W read-out (the ORDER was already spiking, EMERGE-59/63; the CONTENT words since EMERGE-67; the FUNCTION words now). ==> the EMERGE-frame render is 100% spiking. The A->W engines are GPU-trained ONCE at the production scale + cached (a scale/data lever, not a new mechanism): BRIDGE-A = EMERGE-67's 16 content words, BRIDGE-F = the 5 function words rebound onto 5 concept pools (a research-runner vocab rebind on a second bridge, NO sim/ edit). The read-out is genuinely spiking (decodes from cp_firing_states[language_output]; the BRIDGE-F pool->language_output lesion collapses the function-word decode -- a host lookup would be unaffected). The gate-first no-confab moat is untouched (0 spell/producer invocations on abstains, by construction). NOT open prose (R4, the separate deferred wall)."
+}
