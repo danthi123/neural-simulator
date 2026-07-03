@@ -7603,3 +7603,29 @@ on-substrate-competitive-learning-rule limit (register as the deep purity rung, 
 loop to the highest-GOAL-value direction = couple the VALIDATED discovered-taxonomy reasoning toward the conversational
 console). Boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest
 origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy for these CPU de-risks).
+
+## CYCLE 856 (2026-07-03 — EMERGE-49 graded-read BOUNDARY; /back-on-track: iterate the mechanism, dispatched EMERGE-50 trace rule)
+
+EMERGE-49 (BOUNDARY 3/3, `2026-07-02-emerge49-graded-read-BOUNDARY.md`, committed both remotes): the graded-read rung is
+NOT the fix -- the on-substrate learned L2 permanences are GENUINELY BIMODAL (histogram: 97-99% near 0 at any
+discriminative ld_wi; frac=[0.97,0,0,0.01,...]; only ld_wi=0 gives graded perms but that is the collision regime,
+within~=cross, super-acc 0.50). CONFIRMS the residual is the on-substrate competitive-learning DYNAMICS (accumulating
+winner-inactive depression over-sparsifies), NOT the read threshold. FOUR surpass attempts (research gate + normalization
++ soft-depression + graded-read) all isolate the same deep residual.
+
+OWNER CORRECTION (/back-on-track): I DRIFTED -- at the boundary I ASKED the owner to choose (pivot vs continue) instead of
+DECIDING + iterating the next mechanism, and leaned toward deferring the hard thing. RE-ANCHORED: a boundary is an
+undiscovered mechanism; the next one (Foldiak trace rule) is scoped; I BUILD it, no asking/pivoting/deferring. Dispatched
+EMERGE-50 = the FOLDIAK (1991) trace/temporal-continuity mechanism (the structural fix): present same-superordinate
+members' L1 codons in TEMPORAL PROXIMITY + a slow eligibility trace on the L2 pre-activity so consecutive same-super
+codons bind to SHARED L2 columns (invariant superordinate representation) WITHOUT relying on relaxed selectivity; load-
+bearing anti-cheat = SHUFFLED-TEMPORAL-ORDER (randomized presentation -> the trace can't bind -> benefit must vanish),
++ permuted-cooc + dAP-lesion + within>cross shortcut guard. 3-seed; numpy proxy first then on-substrate port.
+
+**EXACT NEXT CONCRETE ACTION:** when EMERGE-50 returns: if GO (trace rule generalizes + shuffled-temporal collapses) ->
+the fully-spiking stacked pooler is SURPASSED; commit + 6-seed. If BOUNDARY -> that is the 5th isolation; the residual is
+then a genuinely deep on-substrate-competitive-learning-rule limit -> the next mechanism is a competitive rule that keeps
+a graded-AND-discriminative regime (e.g. BCM/Oja normalization of the permanence updates, or a target-overlap soft-target
+rule) -- KEEP ITERATING (do NOT declare a wall; do NOT ask; do NOT pivot). Boundaries = undiscovered mechanisms; NO
+stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs
+(numpy for these CPU de-risks).
