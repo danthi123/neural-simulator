@@ -8487,3 +8487,29 @@ scaling): the BRIDGE-C overflow train FINISHED (cache bridges/emerge75_aw/aw_ove
 {{placeholders}} from the raw json, verify+commit. (3) THEN EMERGE-77 (N_SLOT_POOLS 6->8 -> ditransitive renders). PARALLELIZE
 independent frontiers by default. Boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked;
 moat a PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A MONITOR; CONTROLLER runs GPU steps INLINE (recover orphaned trains).
+
+## CYCLE 887 (2026-07-03 — EMERGE-77 GO: the ditransitive capacity boundary SURPASSED -> 7 constructions on spikes incl. ditransitive)
+
+EMERGE-77 (GO, 6-seed, `2026-07-03-emerge77-ditransitive-render-GO.md`, NO sim/ edit): surpasses the EMERGE-74 N_SLOT_POOLS=6
+capacity boundary. Made the FrameCQ slot-pool count a PER-INSTANCE default-preserving parameter (n_slot_pools, default 6 =
+byte-identical; 8 for the ditransitive producer) threaded through build_slot_bridge/slot_pool_rates/FrameSlotCQ + a
+per-instance primacy_pA + RegistryProducer -- NOT a module-constant bump (which would cascade across ~5 EMERGE runners).
+At n_slot_pools=8 "the dog gives the cat a bone" (7 slots DET SUBJ VERB:3sg DET IOBJ DET OBJ) renders EXACT on spikes +
+position-independent every seed, zero further mining (EMERGE-74 already discovered its 7-role signature). VERIFIED
+controller-direct (sim/ clean; CI test_emerge77 13 + test_emerge72 10 + test_emerge74 14 = 37 pass; agent reported 124
+EMERGE tests green): n_registered 7, n_rendered_exact 7, main_render 1.0, perm 0.0, cross 0.0, no-corpus 0, moat 0,
+ditransitive mined+rendered_exact all seeds, default-6 BYTE-IDENTICAL (bit-identical prim init + primacy_pA is PRIMACY_pA).
+Honest read-out subtlety (ONE tuned variable): 8 primacies in the 1800..300 pA range push the top ranks into f-I saturation
+-> raw read fails 3/6 seeds (42/43/102) -> the 2-STAGE READ (per-pool bias calibration at a common reference current, a
+Turrigiano-style per-unit homeostatic normalization; raw read = the causal control proving it load-bearing) recovers all
+6 -- read-side only, moat untouched. Additive default-preserving edits to _emerge59/_emerge72 research runners; NO sim/ edit.
+
+**EXACT NEXT CONCRETE ACTION:** (1) DONE: committed EMERGE-77. (2) RECOVER EMERGE-75 (A->W vocab scaling): the bg --derisk
+(bdob9opzp) COMPLETED with GO numbers (all-word acc 1.000 all seeds, overflow acc 1.000, overflow-lesion 0.09-0.22 =
+genuinely spiking, regress 0, moat 0, in-scope 5) -> pick the GO finding (2026-07-03-emerge75-aw-vocab-scaling-GO.md), fill
+its {{placeholders}} from the raw json, check the concurrent-write git state (EMERGE-75 may have edited concept_pool_demo
+VOCAB -- verify additive), verify+commit. ⇒ the broadened constructions' overflow content words (13 object nouns + to/on/is
+on a 3rd A->W bridge) now render ON SPIKES. (3) THEN parallelize the next independent set (more constructions; the A->W of
+the ditransitive's cub/bone; the det-preceded bare-noun FP residual). PARALLELIZE by default. Boundaries = undiscovered
+mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; ARM A
+MONITOR; CONTROLLER runs GPU steps INLINE (recover orphaned trains).

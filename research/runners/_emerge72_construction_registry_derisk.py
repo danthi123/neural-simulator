@@ -362,11 +362,13 @@ class RegistryProducer(CorpusOrderFrameSlotCQ):
         super().__init__(seed=seed, corpus_order=None, **kwargs)
         # replace the slot table with the mined registry (construction id -> EMERGE-59 (slot_type, payload) list)
         self.frame_slots = {name: list(slots) for name, slots in self._registry_slots.items()}
-        # per-construction primacy over the pools (the base only initialized the 3 EMERGE frames)
+        # per-construction primacy over the pools (the base only initialized the 3 EMERGE frames). `self.n_slot_pools`
+        # is the instance pool count (default N_SLOT_POOLS=6 -> BIT-IDENTICAL; EMERGE-77 passes 8 for the 7-slot
+        # ditransitive so the prim vector is wide enough to index every slot position).
         for name in self.frame_slots:
             if name not in self.prim:
                 self.prim[name] = np.random.default_rng(self.seed * 13 + 5 + (hash(name) % 997)).standard_normal(
-                    N_SLOT_POOLS) * 0.01
+                    self.n_slot_pools) * 0.01
 
     def learn(self):
         """Teach a descending primacy over each registered construction's (corpus-ordered) slot list."""

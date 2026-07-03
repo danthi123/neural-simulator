@@ -1,0 +1,768 @@
+{
+  "probe": "emerge77_ditransitive_render",
+  "verdict": "GO -- the EMERGE-74 DITRANSITIVE capacity boundary is SURPASSED. The FrameCQ slot-pool count is now a PER-INSTANCE, DEFAULT-PRESERVING parameter (`n_slot_pools`, threaded additively through EMERGE-59's build_slot_bridge / slot_pool_rates / FrameSlotCQ + EMERGE-72's RegistryProducer prim init; default None -> N_SLOT_POOLS=6 so the shipped path is BYTE-IDENTICAL -- verified True). At n_slot_pools=8 the DITRANSITIVE 'the dog gives the cat a bone' (det subj verb:3sg det iobj det obj -- 7 slots > 6 pools, EMERGE-74's boundary) renders EXACT on real spikes every seed (Goldberg's ditransitive argument-structure construction 'X causes Y to receive Z'), with ZERO further mining mechanism (EMERGE-74 already MINED it). ALL 7 named constructions render EXACT on the 8-pool substrate (render 1.000, 7 rendered-exact). The ONE tuned variable is the read-out limit EMERGE-74 predicted: 8 primacies packed into the 1800..300 pA range push the top three ranks into the ~0.42 f-I saturation band where per-pool heterogeneity (fixed cp_izh_vr/cp_izh_b bias, std ~0.02) FLIPS the top adjacent ranks in the RAW rate read -- so a 2-STAGE READ (the exact lever the boundary named) is used: a per-pool BIAS CALIBRATION (measure each pool's rate at a common reference current -- a Turrigiano-style per-unit homeostatic normalization -- and subtract it), which recovers the correct order on ALL seeds. The 2-stage read is LOAD-BEARING (causal): the RAW (uncalibrated) read FAILS to order the ditransitive on >= 1 seed. POSITION-INDEPENDENCE holds for the 7-slot ditransitive -- the HARDEST frame for the EMERGE-61 adaptation tail -- it renders IDENTICALLY at emit-position 1/3/5 (the wash-out holds at 8 pools). Every input-destruction control COLLAPSES: PERMUTED-CORPUS render 0.000 (n 0.0, margin >= 0.3); CROSS-CONSTRUCTION 0.000 (rendering A through B is wrong -- Dominey-Hinaut form-specificity); NO-CORPUS -> 0 registered. The gate-first no-confab MOAT holds BY CONSTRUCTION: 0 producer invocations on abstains. 6 seeds. AND the DEFAULT-6 path is byte-identical (EMERGE-59..76 CI pass). ==> the producer renders ALL 7 named constructions on spikes INCLUDING the ditransitive (the biggest post-verbal-argument construction -- EMERGE-74 rendered only 6, capacity-gating the ditransitive); the capacity boundary is surpassed by the bounded pool-count scale lever + the 2-stage read. HONEST SCOPE: this SURPASSES the capacity wall for the ditransitive, NOT open prose (R4). The A->W spell stays the token surface (the fully-spiking A->W of the ditransitive's new content nouns is the EMERGE-75 follow-on). Reuse-by-import; the ONLY edits are the additive default-preserving n_slot_pools threading in EMERGE-59/72 (NOT sim/); NO sim/ edit; moat untouched.",
+  "go": true,
+  "construction_count_rendered": 7,
+  "default_6_byte_identical": true,
+  "n_slot_pools_ditransitive": 8,
+  "mechanism": "SURPASS the EMERGE-74 DITRANSITIVE capacity boundary (7 slots > N_SLOT_POOLS=6) by making the FrameCQ slot-pool count a PER-INSTANCE, DEFAULT-PRESERVING parameter (n_slot_pools) threaded additively through EMERGE-59's build_slot_bridge / slot_pool_rates / FrameSlotCQ (+ the per-instance primacy gradient) + EMERGE-72's RegistryProducer prim init -- ALL defaulting to the module N_SLOT_POOLS=6 so the shipped path is BYTE-IDENTICAL. At n_slot_pools=8 the ditransitive 'the dog gives the cat a bone' (Goldberg ditransitive argument-structure construction 'X causes Y to receive Z') renders EXACT on real spikes with ZERO further mining (EMERGE-74 already mined it). The ONE tuned variable is the read-out limit the boundary predicted: 8 primacies packed into 1800..300 pA push the top ranks into f-I saturation where per-pool heterogeneity flips them in the RAW read -> a 2-STAGE READ (per-pool bias calibration, a per-unit homeostatic normalization; Turrigiano) recovers the order on all seeds (the RAW read is the causal control, failing on some seeds). The EMERGE-61 inter-utterance wash-out gives position-independence for the 7-slot frame. PERMUTED-CORPUS / CROSS-CONSTRUCTION / NO-CORPUS / RAW-READ input-destruction controls gate the result. Reuse-by-import; only the additive n_slot_pools threading in EMERGE-59/72 (NOT sim/); NO sim/ edit; gate-first moat untouched.",
+  "task": "render the 7-slot DITRANSITIVE on spikes at n_slot_pools=8 (default 6 byte-identical) -- the boundary EMERGE-74 named; all 7 named constructions render exact on the 8-pool substrate; permuted-corpus + cross-construction + no-corpus collapse; the raw (uncalibrated) read fails (2-stage load-bearing); the ditransitive is position-independent; gate-first moat (0 productions on abstains); >=6 seeds; the default-6 path byte-identical",
+  "provenance": {
+    "argstructure_available": true,
+    "bucketB_available": true,
+    "argstructure_transitive_roles": [
+      "agent",
+      "patient"
+    ],
+    "argstructure_ditransitive_roles": [
+      "agent",
+      "THEME",
+      "RECIPIENT"
+    ],
+    "argstructure_transitive_is_2content": true,
+    "argstructure_ditransitive_is_3content": true,
+    "bucketB_chase_roles": [
+      "agent",
+      "patient"
+    ],
+    "bucketB_give_roles": [
+      "agent",
+      "THEME",
+      "RECIPIENT"
+    ],
+    "bucketB_chase_is_transitive": true,
+    "bucketB_give_is_ditransitive": true,
+    "emerge74_transitive_n_content": 2,
+    "emerge74_ditransitive_n_content": 3,
+    "provenance_consistent": true
+  },
+  "constructions_groundtruth": {
+    "F_MODAL": [
+      [
+        "det",
+        "the",
+        null
+      ],
+      [
+        "subj",
+        null,
+        null
+      ],
+      [
+        "func",
+        "can",
+        null
+      ],
+      [
+        "verb",
+        null,
+        "bare"
+      ]
+    ],
+    "F_INTR": [
+      [
+        "det",
+        "the",
+        null
+      ],
+      [
+        "subj",
+        null,
+        null
+      ],
+      [
+        "verb",
+        null,
+        "3sg"
+      ]
+    ],
+    "F_NEGMOD": [
+      [
+        "det",
+        "the",
+        null
+      ],
+      [
+        "subj",
+        null,
+        null
+      ],
+      [
+        "func",
+        "does",
+        null
+      ],
+      [
+        "func",
+        "not",
+        null
+      ],
+      [
+        "verb",
+        null,
+        "bare"
+      ]
+    ],
+    "C_PPGOAL": [
+      [
+        "det",
+        "the",
+        null
+      ],
+      [
+        "subj",
+        null,
+        null
+      ],
+      [
+        "verb",
+        null,
+        "3sg"
+      ],
+      [
+        "func",
+        "to",
+        null
+      ],
+      [
+        "func",
+        "the",
+        null
+      ],
+      [
+        "obj",
+        null,
+        null
+      ]
+    ],
+    "C_PPLOC": [
+      [
+        "det",
+        "the",
+        null
+      ],
+      [
+        "subj",
+        null,
+        null
+      ],
+      [
+        "verb",
+        null,
+        "3sg"
+      ],
+      [
+        "func",
+        "on",
+        null
+      ],
+      [
+        "func",
+        "the",
+        null
+      ],
+      [
+        "obj",
+        null,
+        null
+      ]
+    ],
+    "C_TRANS": [
+      [
+        "det",
+        "the",
+        null
+      ],
+      [
+        "subj",
+        null,
+        null
+      ],
+      [
+        "verb",
+        null,
+        "3sg"
+      ],
+      [
+        "det",
+        "the",
+        null
+      ],
+      [
+        "obj",
+        null,
+        null
+      ]
+    ],
+    "C_DITRANS": [
+      [
+        "det",
+        "the",
+        null
+      ],
+      [
+        "subj",
+        null,
+        null
+      ],
+      [
+        "verb",
+        null,
+        "3sg"
+      ],
+      [
+        "det",
+        "the",
+        null
+      ],
+      [
+        "iobj",
+        null,
+        null
+      ],
+      [
+        "det",
+        "a",
+        null
+      ],
+      [
+        "obj",
+        null,
+        null
+      ]
+    ]
+  },
+  "construction_slot_counts": {
+    "F_MODAL": 4,
+    "F_INTR": 3,
+    "F_NEGMOD": 5,
+    "C_PPGOAL": 6,
+    "C_PPLOC": 6,
+    "C_TRANS": 5,
+    "C_DITRANS": 7
+  },
+  "svo_constructions": [
+    "C_TRANS",
+    "C_DITRANS"
+  ],
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "elapsed_seconds": 21.7,
+  "aggregate": {
+    "n_registered": 7.0,
+    "n_rendered_exact_mean": 7.0,
+    "main_render": 1.0,
+    "perm_render": 0.0,
+    "cross_render": 0.0,
+    "nocorpus_n_registered_total": 0,
+    "moat_calls_on_abstain_total": 0,
+    "ditransitive_mined_all_seeds": true,
+    "ditransitive_rendered_exact_all_seeds": true,
+    "ditransitive_position_independent_all_seeds": true,
+    "two_stage_read_load_bearing": true,
+    "default_6_byte_identical": true
+  },
+  "sample_transcript": [
+    {
+      "tag": "MODAL    (ability affirm)",
+      "question": "can an owl fly?",
+      "surface": "the owl can fly",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "INTR     (intransitive)",
+      "question": "what does a penguin do?",
+      "surface": "the penguin walks",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "NEGMOD   (negated modal)",
+      "question": "can a penguin fly? [deny]",
+      "surface": "the penguin does not fly",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "PPGOAL   (motion goal)",
+      "question": "where does the owl fly?",
+      "surface": "the owl flies to the pond",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "TRANS    (transitive SVO)",
+      "question": "what does the wolf chase?",
+      "surface": "the wolf chases the ball",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "DITRANS  (ditransitive)",
+      "question": "what does the wolf give the cub?",
+      "surface": "the wolf gives the cub a bone",
+      "invocation": "producer INVOKED"
+    },
+    {
+      "tag": "MOAT     (abstain)",
+      "question": "can a zzz fly?",
+      "surface": "I don't know.",
+      "invocation": "producer NOT invoked"
+    }
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_registered": 7,
+      "registered": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC",
+        "C_TRANS",
+        "C_DITRANS"
+      ],
+      "fits": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC",
+        "C_TRANS",
+        "C_DITRANS"
+      ],
+      "n_rendered_exact": 7,
+      "main_render": 1.0,
+      "per_construction": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0,
+        "C_TRANS": 1.0,
+        "C_DITRANS": 1.0
+      },
+      "ditrans_mined": true,
+      "ditrans_rendered_exact": true,
+      "ditrans_slot_count": 7,
+      "ditrans_fits_8pools": true,
+      "trans_rendered_exact": true,
+      "ditrans_raw_read_exact": false,
+      "ditrans_posindep": true,
+      "ditrans_pos_surfaces": {
+        "1": [
+          "the",
+          "buck",
+          "throws",
+          "the",
+          "marten",
+          "a",
+          "parsnip"
+        ],
+        "3": [
+          "the",
+          "buck",
+          "throws",
+          "the",
+          "marten",
+          "a",
+          "parsnip"
+        ],
+        "5": [
+          "the",
+          "buck",
+          "throws",
+          "the",
+          "marten",
+          "a",
+          "parsnip"
+        ]
+      },
+      "perm_render": 0.0,
+      "perm_n_registered": 0.0,
+      "cross_render": 0.0,
+      "nocorpus_n_registered": 0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    },
+    {
+      "seed": 43,
+      "n_registered": 7,
+      "registered": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC",
+        "C_TRANS",
+        "C_DITRANS"
+      ],
+      "fits": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC",
+        "C_TRANS",
+        "C_DITRANS"
+      ],
+      "n_rendered_exact": 7,
+      "main_render": 1.0,
+      "per_construction": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0,
+        "C_TRANS": 1.0,
+        "C_DITRANS": 1.0
+      },
+      "ditrans_mined": true,
+      "ditrans_rendered_exact": true,
+      "ditrans_slot_count": 7,
+      "ditrans_fits_8pools": true,
+      "trans_rendered_exact": true,
+      "ditrans_raw_read_exact": false,
+      "ditrans_posindep": true,
+      "ditrans_pos_surfaces": {
+        "1": [
+          "the",
+          "cub",
+          "gives",
+          "the",
+          "panther",
+          "a",
+          "almond"
+        ],
+        "3": [
+          "the",
+          "cub",
+          "gives",
+          "the",
+          "panther",
+          "a",
+          "almond"
+        ],
+        "5": [
+          "the",
+          "cub",
+          "gives",
+          "the",
+          "panther",
+          "a",
+          "almond"
+        ]
+      },
+      "perm_render": 0.0,
+      "perm_n_registered": 0.0,
+      "cross_render": 0.0,
+      "nocorpus_n_registered": 0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    },
+    {
+      "seed": 44,
+      "n_registered": 7,
+      "registered": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC",
+        "C_TRANS",
+        "C_DITRANS"
+      ],
+      "fits": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC",
+        "C_TRANS",
+        "C_DITRANS"
+      ],
+      "n_rendered_exact": 7,
+      "main_render": 1.0,
+      "per_construction": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0,
+        "C_TRANS": 1.0,
+        "C_DITRANS": 1.0
+      },
+      "ditrans_mined": true,
+      "ditrans_rendered_exact": true,
+      "ditrans_slot_count": 7,
+      "ditrans_fits_8pools": true,
+      "trans_rendered_exact": true,
+      "ditrans_raw_read_exact": true,
+      "ditrans_posindep": true,
+      "ditrans_pos_surfaces": {
+        "1": [
+          "the",
+          "beaver",
+          "gives",
+          "the",
+          "squirrel",
+          "a",
+          "onion"
+        ],
+        "3": [
+          "the",
+          "beaver",
+          "gives",
+          "the",
+          "squirrel",
+          "a",
+          "onion"
+        ],
+        "5": [
+          "the",
+          "beaver",
+          "gives",
+          "the",
+          "squirrel",
+          "a",
+          "onion"
+        ]
+      },
+      "perm_render": 0.0,
+      "perm_n_registered": 0.0,
+      "cross_render": 0.0,
+      "nocorpus_n_registered": 0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    },
+    {
+      "seed": 100,
+      "n_registered": 7,
+      "registered": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC",
+        "C_TRANS",
+        "C_DITRANS"
+      ],
+      "fits": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC",
+        "C_TRANS",
+        "C_DITRANS"
+      ],
+      "n_rendered_exact": 7,
+      "main_render": 1.0,
+      "per_construction": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0,
+        "C_TRANS": 1.0,
+        "C_DITRANS": 1.0
+      },
+      "ditrans_mined": true,
+      "ditrans_rendered_exact": true,
+      "ditrans_slot_count": 7,
+      "ditrans_fits_8pools": true,
+      "trans_rendered_exact": true,
+      "ditrans_raw_read_exact": true,
+      "ditrans_posindep": true,
+      "ditrans_pos_surfaces": {
+        "1": [
+          "the",
+          "donkey",
+          "sends",
+          "the",
+          "stoat",
+          "a",
+          "chestnut"
+        ],
+        "3": [
+          "the",
+          "donkey",
+          "sends",
+          "the",
+          "stoat",
+          "a",
+          "chestnut"
+        ],
+        "5": [
+          "the",
+          "donkey",
+          "sends",
+          "the",
+          "stoat",
+          "a",
+          "chestnut"
+        ]
+      },
+      "perm_render": 0.0,
+      "perm_n_registered": 0.0,
+      "cross_render": 0.0,
+      "nocorpus_n_registered": 0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    },
+    {
+      "seed": 101,
+      "n_registered": 7,
+      "registered": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC",
+        "C_TRANS",
+        "C_DITRANS"
+      ],
+      "fits": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC",
+        "C_TRANS",
+        "C_DITRANS"
+      ],
+      "n_rendered_exact": 7,
+      "main_render": 1.0,
+      "per_construction": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0,
+        "C_TRANS": 1.0,
+        "C_DITRANS": 1.0
+      },
+      "ditrans_mined": true,
+      "ditrans_rendered_exact": true,
+      "ditrans_slot_count": 7,
+      "ditrans_fits_8pools": true,
+      "trans_rendered_exact": true,
+      "ditrans_raw_read_exact": true,
+      "ditrans_posindep": true,
+      "ditrans_pos_surfaces": {
+        "1": [
+          "the",
+          "doe",
+          "offers",
+          "the",
+          "marten",
+          "a",
+          "biscuit"
+        ],
+        "3": [
+          "the",
+          "doe",
+          "offers",
+          "the",
+          "marten",
+          "a",
+          "biscuit"
+        ],
+        "5": [
+          "the",
+          "doe",
+          "offers",
+          "the",
+          "marten",
+          "a",
+          "biscuit"
+        ]
+      },
+      "perm_render": 0.0,
+      "perm_n_registered": 0.0,
+      "cross_render": 0.0,
+      "nocorpus_n_registered": 0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    },
+    {
+      "seed": 102,
+      "n_registered": 7,
+      "registered": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC",
+        "C_TRANS",
+        "C_DITRANS"
+      ],
+      "fits": [
+        "F_MODAL",
+        "F_INTR",
+        "F_NEGMOD",
+        "C_PPGOAL",
+        "C_PPLOC",
+        "C_TRANS",
+        "C_DITRANS"
+      ],
+      "n_rendered_exact": 7,
+      "main_render": 1.0,
+      "per_construction": {
+        "F_MODAL": 1.0,
+        "F_INTR": 1.0,
+        "F_NEGMOD": 1.0,
+        "C_PPGOAL": 1.0,
+        "C_PPLOC": 1.0,
+        "C_TRANS": 1.0,
+        "C_DITRANS": 1.0
+      },
+      "ditrans_mined": true,
+      "ditrans_rendered_exact": true,
+      "ditrans_slot_count": 7,
+      "ditrans_fits_8pools": true,
+      "trans_rendered_exact": true,
+      "ditrans_raw_read_exact": false,
+      "ditrans_posindep": true,
+      "ditrans_pos_surfaces": {
+        "1": [
+          "the",
+          "mouse",
+          "gives",
+          "the",
+          "jaguar",
+          "a",
+          "bean"
+        ],
+        "3": [
+          "the",
+          "mouse",
+          "gives",
+          "the",
+          "jaguar",
+          "a",
+          "bean"
+        ],
+        "5": [
+          "the",
+          "mouse",
+          "gives",
+          "the",
+          "jaguar",
+          "a",
+          "bean"
+        ]
+      },
+      "perm_render": 0.0,
+      "perm_n_registered": 0.0,
+      "cross_render": 0.0,
+      "nocorpus_n_registered": 0,
+      "moat_calls_on_abstain": 0,
+      "answer_produced": true
+    }
+  ],
+  "HONEST_NOTE": "SURPASSES the EMERGE-74 ditransitive CAPACITY boundary (7 slots > N_SLOT_POOLS=6) via the bounded pool-count scale lever the boundary itself named (make the pool count configurable; 6 -> 8). The slot-pool count is now a PER-INSTANCE parameter, default 6 = BYTE-IDENTICAL (the EMERGE-59..76 CI passes; the default FrameSlotCQ prim init is bit-identical). At 8 pools the ditransitive renders EXACT on real spikes with ZERO further mining mechanism (EMERGE-74 already discovered its 7-role signature). The one honest read-out subtlety (the boundary predicted it): 8 primacies packed into the validated 1800..300 pA range push the top ranks into f-I saturation where the fixed per-pool heterogeneity flips them in the RAW rate read -- a 2-STAGE READ (per-pool bias calibration -- a per-unit homeostatic normalization) removes the heterogeneity and recovers the order on all 6 seeds; the RAW read is the causal control (it fails on the saturating seeds, so the 2-stage read is load-bearing, not decorative). The 7-slot ditransitive is the HARDEST frame for the EMERGE-61 adaptation tail -- verified position-independent (renders identically at emit-position 1/3/5). This surpasses the capacity wall for the ditransitive (arguments AFTER the verb -- the richest core construction), NOT open prose (R4). The A->W spell stays the token surface; the fully-spiking A->W of the new content nouns is the EMERGE-75 follow-on. The corpus mining is offline syllabus prep (BRAIN-BASED-ONLY compliant); the structure is rendered on REAL spikes; the gate-first moat is untouched (0 productions on abstains, by construction). NO sim/ edit; the only edits are the additive default-preserving n_slot_pools threading in the research/runners EMERGE-59/72 helpers."
+}

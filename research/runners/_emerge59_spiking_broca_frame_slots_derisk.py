@@ -155,14 +155,17 @@ def realize_slot(slot, subject, verb, spell):
 # per-pool rate RANKING = the slot emission order (rate-coded competitive queuing on real spikes). Reuses the validated
 # driven-pool bridge pattern from `_phaseB_serial_order_spiking`.
 # ---------------------------------------------------------------------------------------------------------------------
-def build_slot_bridge(seed):
+def build_slot_bridge(seed, n_slot_pools=N_SLOT_POOLS):
+    """Build the N-slot-pool spiking bridge. `n_slot_pools` defaults to the module N_SLOT_POOLS (=6) so the default
+    call is BYTE-IDENTICAL to the shipped path; a caller may request MORE pools (EMERGE-77's ditransitive at 8) -- a
+    bounded, additive scale lever (the region is just wider; the wash-out/read-out/primacy scale with it)."""
     from sim.bridge import SimulationBridge
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.regions import BrainRegion
     cfg = CoreSimConfig()
     cfg.enable_brain_region_framework = True
     cfg.brain_regions = [
-        BrainRegion(name="slots", n_neurons=N_SLOT_POOLS * N_PER, exc_fraction=1.0, internal_density=0.0),
+        BrainRegion(name="slots", n_neurons=n_slot_pools * N_PER, exc_fraction=1.0, internal_density=0.0),
         BrainRegion(name="_anchor", n_neurons=4, exc_fraction=1.0, internal_density=1.0),   # inert (non-empty plan)
     ]
     cfg.region_pathways = []
@@ -178,11 +181,13 @@ def build_slot_bridge(seed):
     return b, np.asarray(b.region_manager.indices("slots"))
 
 
-def slot_pool_rates(bridge, slot_idx, drive_by_pool):
-    """Drive each slot pool's N_PER neurons with its current; read per-pool spike rate over RUN_STEPS."""
+def slot_pool_rates(bridge, slot_idx, drive_by_pool, n_slot_pools=N_SLOT_POOLS):
+    """Drive each slot pool's N_PER neurons with its current; read per-pool spike rate over RUN_STEPS. `n_slot_pools`
+    defaults to the module N_SLOT_POOLS (=6) so the default call is BYTE-IDENTICAL; a caller with a wider slot bridge
+    (EMERGE-77's 8-pool ditransitive) passes its pool count so the reshape matches its region size."""
     from sim.backend import to_host
     xp = bridge._cp if hasattr(bridge, "_cp") else None
-    cur = np.zeros(N_SLOT_POOLS * N_PER, np.float32)
+    cur = np.zeros(n_slot_pools * N_PER, np.float32)
     for p, pA in drive_by_pool.items():
         cur[p * N_PER:(p + 1) * N_PER] = pA
     bridge.cp_external_input_current[:] = 0.0
@@ -192,7 +197,7 @@ def slot_pool_rates(bridge, slot_idx, drive_by_pool):
         bridge._run_one_simulation_step()
         counts += np.asarray(to_host(bridge.cp_firing_states)).astype(np.float64)
     bridge.cp_external_input_current[:] = 0.0
-    rate = counts[slot_idx].reshape(N_SLOT_POOLS, N_PER).mean(1) / RUN_STEPS
+    rate = counts[slot_idx].reshape(n_slot_pools, N_PER).mean(1) / RUN_STEPS
     return rate
 
 
@@ -206,15 +211,22 @@ class FrameSlotCQ:
     `prim[frame]` is a primacy gradient over the N_SLOT_POOLS pools; teaching a frame's slot ORDER writes a monotone
     gradient (slot 0 highest). Emission on the spiking bridge reads the per-pool rate ranking and realizes each slot."""
 
-    def __init__(self, seed=42, permute_order=False, ablate_func=False, no_learning=False):
+    def __init__(self, seed=42, permute_order=False, ablate_func=False, no_learning=False, n_slot_pools=None):
         self.seed = int(seed)
         self.permute_order = bool(permute_order)
         self.ablate_func = bool(ablate_func)
         self.no_learning = bool(no_learning)
+        # n_slot_pools: the number of slot pools on THIS instance's spiking bridge. Default None -> the module
+        # N_SLOT_POOLS (=6) so the shipped path is BYTE-IDENTICAL; a caller may request MORE pools (EMERGE-77's
+        # ditransitive at 8 -- a bounded, additive scale lever). The primacy-current gradient is re-spaced over
+        # n_slot_pools ranks; when n_slot_pools == N_SLOT_POOLS this is BIT-IDENTICAL to the module PRIMACY_pA tuple.
+        self.n_slot_pools = int(N_SLOT_POOLS if n_slot_pools is None else n_slot_pools)
+        self.primacy_pA = (PRIMACY_pA if self.n_slot_pools == N_SLOT_POOLS
+                           else tuple(float(x) for x in np.linspace(1800.0, 300.0, self.n_slot_pools)))
         self.rng = np.random.default_rng(self.seed)
-        self.bridge, self.slot_idx = build_slot_bridge(self.seed)
+        self.bridge, self.slot_idx = build_slot_bridge(self.seed, n_slot_pools=self.n_slot_pools)
         # per-frame primacy over pools; tiny random init (the untrained no-learning baseline)
-        self.prim = {fr: np.random.default_rng(self.seed * 13 + 5 + i).standard_normal(N_SLOT_POOLS) * 0.01
+        self.prim = {fr: np.random.default_rng(self.seed * 13 + 5 + i).standard_normal(self.n_slot_pools) * 0.01
                      for i, fr in enumerate(FRAME_NAMES)}
         # per-frame realized-slot list (ablation drops FUNC slots); the frame the mechanism will speak
         self.frame_slots = {fr: self._materialize(fr) for fr in FRAME_NAMES}
@@ -266,13 +278,15 @@ class FrameSlotCQ:
         slots = self.frame_slots[frame]
         n = len(slots)
         used = list(range(n))                                   # pool i holds slot position i
-        # graded primacy current: rank the used pools by the LEARNED primacy, assign the primacy-current gradient
+        # graded primacy current: rank the used pools by the LEARNED primacy, assign the primacy-current gradient.
+        # `self.primacy_pA` is the module PRIMACY_pA at the default n_slot_pools (byte-identical); a wider instance
+        # re-spaces the gradient over its own pool count.
         prim = self.prim[frame][used] + WTA_NOISE * self.rng.standard_normal(n)
         rank = np.argsort(-prim)                                # pools in descending learned primacy
         drive = {}
         for r, pool in enumerate(rank):
-            drive[int(pool)] = PRIMACY_pA[min(r, len(PRIMACY_pA) - 1)]
-        rate = slot_pool_rates(self.bridge, self.slot_idx, drive)
+            drive[int(pool)] = self.primacy_pA[min(r, len(self.primacy_pA) - 1)]
+        rate = slot_pool_rates(self.bridge, self.slot_idx, drive, n_slot_pools=self.n_slot_pools)
         order = sorted(used, key=lambda p: -rate[p])            # the SPIKING rate ranking = emission order
         return [realize_slot(slots[p], subject, verb, spell) for p in order]
 
@@ -283,8 +297,8 @@ class FrameSlotCQ:
         used = list(range(n))
         prim = self.prim[frame][used] + WTA_NOISE * self.rng.standard_normal(n)
         rank = np.argsort(-prim)
-        drive = {int(pool): PRIMACY_pA[min(r, len(PRIMACY_pA) - 1)] for r, pool in enumerate(rank)}
-        rate = slot_pool_rates(self.bridge, self.slot_idx, drive)
+        drive = {int(pool): self.primacy_pA[min(r, len(self.primacy_pA) - 1)] for r, pool in enumerate(rank)}
+        rate = slot_pool_rates(self.bridge, self.slot_idx, drive, n_slot_pools=self.n_slot_pools)
         return sorted(used, key=lambda p: -rate[p])
 
 
