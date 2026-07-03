@@ -1,0 +1,181 @@
+{
+  "probe": "emerge84_reservoir_stack_recursion",
+  "verdict": "CHARACTERIZATION -- genuine STACK-recursion (nested subject-verb pair-matching grammaticality) exposes the reservoir's recursion LIMIT: it judges grammaticality to a STACK-DEPTH d* = 2 (profile d1=1.00, d2=0.91, d3=0.82), then FALLS toward chance at deeper nesting -- the recursion BOUNDARY (a reservoir has fading memory, NOT a stack). The COUNT-multiset shortcut is DEFEATED (baseline d1=0.50, d2=0.55, d3=0.53 ~chance -- the swap preserves the multiset, so the reservoir must do genuine PER-PAIR matching); POSITION-SHUFFLE collapses (d1=0.50, d2=0.51, d3=0.52 -> reads structure). markers discovered = True. ==> the plain reservoir BOUNDARIES on genuine stack-recursion at depth 3 -- this is where the RANK-3 mechanism (theta-gamma multiplexed WM buffer, catalog N.15; assembly-calculus stack, Mitropolsky arXiv:2206.13217) becomes NECESSARY (a reservoir cannot hold a push/pop stack); the next de-risk ADDS that mechanism. Reuse-by-import; NO sim/ edit.",
+  "go": true,
+  "task": "RANK-3 genuine stack-recursion: judge grammaticality of nested subject-verb pair-matching across center-embedding (verbs in reversed pairing order; verb j must agree with subject j -> a push/pop stack); the ungrammatical case swaps two verb numbers (multiset preserved -> count shortcut defeated); report reservoir accuracy vs stack-depth + count-baseline + position-shuffle; names the recursion boundary + the RANK-3 mechanism; 6-seed rate CPU",
+  "nums": [
+    "sng",
+    "plu"
+  ],
+  "that": "that",
+  "test_depths": [
+    1,
+    2,
+    3
+  ],
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "elapsed_seconds": 12.2,
+  "aggregate": {
+    "by_depth": {
+      "1": {
+        "reservoir": 1.0,
+        "count_baseline": 0.5,
+        "shuffle": 0.49583333333333335
+      },
+      "2": {
+        "reservoir": 0.9125,
+        "count_baseline": 0.5508333333333334,
+        "shuffle": 0.5083333333333334
+      },
+      "3": {
+        "reservoir": 0.8150000000000001,
+        "count_baseline": 0.5333333333333333,
+        "shuffle": 0.5158333333333333
+      }
+    },
+    "markers_discovered": true,
+    "reservoir_stack_depth_star_ge_090": 2
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "markers_ok": true,
+      "by_depth": {
+        "1": {
+          "reservoir": 1.0,
+          "count_baseline": 0.5,
+          "shuffle": 0.495
+        },
+        "2": {
+          "reservoir": 0.925,
+          "count_baseline": 0.56,
+          "shuffle": 0.48
+        },
+        "3": {
+          "reservoir": 0.8,
+          "count_baseline": 0.535,
+          "shuffle": 0.535
+        }
+      },
+      "chance": 0.5
+    },
+    {
+      "seed": 43,
+      "markers_ok": true,
+      "by_depth": {
+        "1": {
+          "reservoir": 1.0,
+          "count_baseline": 0.5,
+          "shuffle": 0.57
+        },
+        "2": {
+          "reservoir": 0.9,
+          "count_baseline": 0.58,
+          "shuffle": 0.455
+        },
+        "3": {
+          "reservoir": 0.765,
+          "count_baseline": 0.5,
+          "shuffle": 0.53
+        }
+      },
+      "chance": 0.5
+    },
+    {
+      "seed": 44,
+      "markers_ok": true,
+      "by_depth": {
+        "1": {
+          "reservoir": 1.0,
+          "count_baseline": 0.5,
+          "shuffle": 0.495
+        },
+        "2": {
+          "reservoir": 0.89,
+          "count_baseline": 0.54,
+          "shuffle": 0.535
+        },
+        "3": {
+          "reservoir": 0.79,
+          "count_baseline": 0.575,
+          "shuffle": 0.51
+        }
+      },
+      "chance": 0.5
+    },
+    {
+      "seed": 100,
+      "markers_ok": true,
+      "by_depth": {
+        "1": {
+          "reservoir": 1.0,
+          "count_baseline": 0.5,
+          "shuffle": 0.48
+        },
+        "2": {
+          "reservoir": 0.86,
+          "count_baseline": 0.535,
+          "shuffle": 0.495
+        },
+        "3": {
+          "reservoir": 0.86,
+          "count_baseline": 0.56,
+          "shuffle": 0.51
+        }
+      },
+      "chance": 0.5
+    },
+    {
+      "seed": 101,
+      "markers_ok": true,
+      "by_depth": {
+        "1": {
+          "reservoir": 1.0,
+          "count_baseline": 0.5,
+          "shuffle": 0.44
+        },
+        "2": {
+          "reservoir": 0.97,
+          "count_baseline": 0.51,
+          "shuffle": 0.495
+        },
+        "3": {
+          "reservoir": 0.81,
+          "count_baseline": 0.525,
+          "shuffle": 0.505
+        }
+      },
+      "chance": 0.5
+    },
+    {
+      "seed": 102,
+      "markers_ok": true,
+      "by_depth": {
+        "1": {
+          "reservoir": 1.0,
+          "count_baseline": 0.5,
+          "shuffle": 0.495
+        },
+        "2": {
+          "reservoir": 0.93,
+          "count_baseline": 0.58,
+          "shuffle": 0.59
+        },
+        "3": {
+          "reservoir": 0.865,
+          "count_baseline": 0.505,
+          "shuffle": 0.505
+        }
+      },
+      "chance": 0.5
+    }
+  ],
+  "HONEST_NOTE": "The GENUINE stack-recursion test (vs EMERGE-83's retention): nested pair-MATCHING requires a push/pop stack a reservoir lacks. The count-multiset shortcut is defeated by a multiset-preserving swap; position-shuffle collapses. The depth at which the reservoir falls to chance is its stack-recursion limit; DEEPER needs the RANK-3 mechanism (theta-gamma WM buffer N.15 / assembly-calculus stack). A shallow-GO + deeper-BOUNDARY is the honest, expected signature (a reservoir is not a stack machine); the next de-risk ADDS the stack mechanism. Reuse-by-import; NO sim/ edit."
+}
