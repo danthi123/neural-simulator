@@ -8616,7 +8616,27 @@ CYCLE 887-896): 10 commits — EMERGE-75 boundary, next-frontier research gate, 
 characterization, RANK-2 whack-a-mole-guard scoping. Deep adversarial rigor throughout (2 self-caught overclaims corrected;
 1 refuted-then-resolved contingency; NO sim/ edit anywhere; moat untouched).
 
-**EXACT NEXT CONCRETE ACTION:** RUNG 2 — realize the EMERGE-80 spiking LSM on a full `SimulationBridge` REGION (a recurrent
+**CYCLE 897 (RUNG 2 GO — the reservoir runs ON THE SUBSTRATE; back-on-track: I built it instead of handing it to the
+watchdog).** EMERGE-82 (committed): the reservoir form→role mechanism realized as a recurrent Izhikevich `BrainRegion` on a
+real `SimulationBridge` (internal_density → ~9k recurrent conductance synapses; driven through the bridge's real
+`_run_one_simulation_step`; EMERGE-61 wash-out between sentences; read from real `cp_firing_states`). 6-seed GO: region
+genuinely active (2.34 spikes/neuron), train 1.000 (learns the map on-bridge), rel-head 1.000 vs BOTH baselines 0.500
+(resolves the non-local dependency on-bridge), region-SILENCE lesion collapses to 0.500 (read genuinely from the region's
+spikes), scramble ~chance. `OnBridgeLSM` mirrors the EMERGE-78 Reservoir API so it drops into the harness; NO `sim/` edit
+(region + input drive + read via public bridge APIs). ⇒ the whole reservoir arc EMERGE-78 (learned) → 79 (uncontingent
+non-local) → 80 (spiking Izhikevich pool) → 81 (memory survives on spikes) → 82 (ON the SimulationBridge substrate) is
+complete. 12 commits this session.
+
+**EXACT NEXT CONCRETE ACTION:** RUNG 3 — CO-RESIDENCE: put the reservoir `BrainRegion` on the SHARED nav/conv merged bridge
+(`nav_conv_merged_bridge`, the validated merge pattern) as a disjoint slice, so the form->role reservoir composes with the
+nav cascade + parser + composer on ONE brain (the full one-brain merge) -- validate the reservoir form->role still GOes
+co-resident + the conversational no-confab moat is byte-untouched (the merge's plasticity-isolation). Reuse-by-import; likely
+GPU -> controller runs INLINE + Monitor. THEN RANK-3 bounded recursion (theta-gamma WM buffer N.15 / assembly-calculus
+stack, Mitropolsky) for dependencies past the pool's memory depth -- the deeper frontier (research-gate-named; a cheap-first
+depth-2 center-embedding de-risk that likely BOUNDARIES on a plain reservoir -> names where the WM-buffer/stack is needed).
+BUILD IT NOW -- I am the continuation. PARALLELIZE; boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair when
+de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; CONTROLLER runs GPU INLINE; ARM A MONITOR. [superseded:] RUNG 2
+— realize the EMERGE-80 spiking LSM on a full `SimulationBridge` REGION (a recurrent
 Izhikevich region via the brain-region framework / `inject_explicit_wiring`), so the spiking reservoir COMPOSES with the
 rest of the one brain (not a standalone numpy pool) — the true on-substrate realization. Cheap-first: build ONE recurrent
 region + drive it with the closed-class stream + read the population rate via the region's firing → the EMERGE-78 form→role
