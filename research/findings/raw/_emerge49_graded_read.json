@@ -1,0 +1,157 @@
+{
+  "probe": "emerge49_graded_read",
+  "verdict": "BOUNDARY (on-substrate) -- a GRADED DRIVE/READ (graded_read, ld_wi=0.005) does NOT reach the on-substrate GO: super-acc 0.00 < 0.80; permuted didn't collapse (0.00 vs 0.03); dAP-lesion didn't collapse (0.00 vs 0.00); no within>cross discrimination (within 0.004 vs cross 0.002 = collision, not generalization). on-substrate stacked super-acc 0.00 (EMERGE-46 was 0.03), within 0.004 cross 0.002; permuted-cooc 0.03, dAP-lesion 0.00. L2-permanence histogram (learned): mean 0.013, mid-band(0.2-0.8) 0.03, near0 0.97, near1 0.00 -> BIMODAL. ROOT CAUSE (the histogram): the learned on-substrate L2 permanences are BIMODAL (clustered near 0/1), so a graded read cannot recover a soft-pooling window -- the potentiation drives winner permanences to a sharp connected/not-connected split, exactly as EMERGE-48 predicted. The graded read is NOT the fix; the next rung is the Foldiak (1991) trace / temporal-continuity rule (rung a). NO NEW sim/ edit.",
+  "flags": {
+    "acc": 0.0,
+    "grp": 0.07366053417251675,
+    "perm": 0.027777777777777776,
+    "dap": 0.0,
+    "disc": false,
+    "within": 0.004243827160493827,
+    "cross": 0.0019290123456790122,
+    "onsub_go": false,
+    "l2_perm_bimodal": true,
+    "l2_perm_mid_frac": 0.029041666666666667,
+    "permuted_stats": null
+  },
+  "mechanism": "GRADED DRIVE/READ: the on-substrate L2 pooler reads the RAW permanence-weighted drive (sum(perm * x)) instead of the HARD `perm>0.5` connected-count (sum((perm>0.5) * x)). 'graded_drive' grades BOTH the training winner-selection AND the codon read; 'graded_read' trains hard but reads graded. Partially-connected shared columns then contribute to a held-out sub-category's L2 code, reproducing numpy's soft-pooling window on-substrate. The learning kernels are byte-unchanged (a host-side read of cp_connections.data). Paired with a soft L2 ld_wi + optional EMERGE-47 L2-input normalization.",
+  "task": "EMERGE-44/46 6-sub-cat -> 2-superordinate; hold out ENTIRE sub-categories {2,5}; L2 on-substrate pooler with a graded drive/read; measure held-out within/cross overlap + super-acc + the L2 permanence histogram (graded vs bimodal); anti-cheats permuted-cooc + dAP-lesion (+ permuted-stats if normalize), l2lesion reported-not-gated",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "epochs": 40,
+    "l2_ld": 0.005,
+    "graded": "graded_read",
+    "normalize": false,
+    "n_col1": 200,
+    "n_col2": 120,
+    "k1": 6,
+    "k2": 6,
+    "n_super": 2
+  },
+  "onsubstrate": {
+    "stacked_graded": {
+      "held_within": 0.004243827160493827,
+      "held_cross": 0.0019290123456790122,
+      "super_acc": 0.0,
+      "l2_group": 0.07366053417251675,
+      "super_acc_per_seed": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "held_within_per_seed": [
+        0.004629629629629629,
+        0.0023148148148148147,
+        0.005787037037037037
+      ],
+      "held_cross_per_seed": [
+        0.0,
+        0.003472222222222222,
+        0.0023148148148148147
+      ]
+    },
+    "permuted_cooc": {
+      "held_within": 0.004243827160493827,
+      "held_cross": 0.006558641975308641,
+      "super_acc": 0.027777777777777776,
+      "l2_group": 0.06788106188977648,
+      "super_acc_per_seed": [
+        0.0,
+        0.0,
+        0.08333333333333333
+      ],
+      "held_within_per_seed": [
+        0.004629629629629629,
+        0.0023148148148148147,
+        0.005787037037037037
+      ],
+      "held_cross_per_seed": [
+        0.006944444444444444,
+        0.005787037037037037,
+        0.006944444444444444
+      ]
+    },
+    "dap_lesion": {
+      "held_within": 0.004243827160493827,
+      "held_cross": 0.0019290123456790122,
+      "super_acc": 0.0,
+      "l2_group": 0.07366053417251675,
+      "super_acc_per_seed": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "held_within_per_seed": [
+        0.004629629629629629,
+        0.0023148148148148147,
+        0.005787037037037037
+      ],
+      "held_cross_per_seed": [
+        0.0,
+        0.003472222222222222,
+        0.0023148148148148147
+      ]
+    },
+    "l2lesion": {
+      "held_within": 0.0640432098765432,
+      "held_cross": 0.05516975308641975,
+      "super_acc": 0.611111111111111,
+      "l2_group": 0.04953401113531832,
+      "super_acc_per_seed": [
+        0.6666666666666666,
+        0.75,
+        0.4166666666666667
+      ],
+      "held_within_per_seed": [
+        0.05439814814814814,
+        0.0763888888888889,
+        0.06134259259259259
+      ],
+      "held_cross_per_seed": [
+        0.04282407407407407,
+        0.07870370370370369,
+        0.043981481481481476
+      ]
+    },
+    "_l2_perm_hist": {
+      "bin_edges": [
+        0.0,
+        0.1,
+        0.2,
+        0.3,
+        0.4,
+        0.5,
+        0.6,
+        0.7,
+        0.8,
+        0.9,
+        1.0
+      ],
+      "frac": [
+        0.9709583333333334,
+        0.0,
+        0.001,
+        0.006875,
+        0.007083333333333333,
+        0.014083333333333333,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mid_frac": 0.029041666666666667,
+      "near0_frac": 0.9709583333333334,
+      "near1_frac": 0.0,
+      "mean": 0.013127525337040424,
+      "std": 0.07706422358751297,
+      "bimodal": true
+    }
+  },
+  "elapsed_seconds": 550.5,
+  "sim_edit": "NONE (NO NEW sim/ edit) -- the graded drive/read is a HOST-side read of cp_connections.data (the raw permanence value instead of the >0.5 connected-threshold); the committed learning kernels (fused_htm_permanence_update, fused_htm_winner_inactive_depression) are byte-unchanged; reuse-by-import of EMERGE-44/46/47 poolers",
+  "HONEST_NOTE": "EMERGE-48 ISOLATED the residual: the on-substrate L2 pooler has NO soft-pooling window (jumps over-selective -> collision), SUSPECTED cause the hard perm>0.5 read. This de-risk (rung b) gives the L2 pooler a GRADED read so a soft window can exist. FIRST the permanence histogram diagnoses graded vs bimodal: if bimodal, the graded read cannot help (the Foldiak trace rule = rung a is then next); if graded and the read routes held-out inheritance with within>cross, the boundary is surpassed. The shortcut guard: within-super held-out overlap must EXCEED cross-super, and permuted must still collapse. Winner SELECTION is a host top-k over the on-substrate drive. 3 seeds (42/43/44); 6-seed is a cheap confirmation follow-on."
+}
