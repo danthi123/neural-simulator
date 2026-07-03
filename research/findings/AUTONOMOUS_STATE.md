@@ -8605,21 +8605,28 @@ tonic bias 55pA). Runner+test (5 CPU pass, incl a 30s slow spiking gate)+finding
 mechanism is NOT a rate artifact -- it works on the project's spiking Izhikevich neurons (a genuine LSM), toward fully-
 spiking one brain. Committed both remotes.
 
-**EXACT NEXT CONCRETE ACTION:** (1) DONE: EMERGE-78 (learned map) + EMERGE-79 (uncontingent non-local) + EMERGE-80 (spiking
-LSM port) committed. (2) The pre-registered follow-ons: RUNG 2 -- put the spiking LSM pool on a full `SimulationBridge`
-region (the ON-SUBSTRATE realization, so it composes with the rest of the one brain; likely GPU -> controller runs INLINE +
-Monitor) OR the EMERGE-79 distal-cue MEMORY-DEPTH characterization on the spiking pool (how far the Izhikevich pool holds a
-1-bit cue vs the near-critical tanh reservoir -- expected SHORTER; a distance-sweep on SpikingLSM, CPU, cheap) OR RANK-3
-bounded recursion (theta-gamma buffer / assembly-calculus stack, the deeper frontier). Recommend the memory-DEPTH sweep
-(cheap CPU, characterizes the spiking pool's fading memory) then RUNG 2 (on-bridge). PARALLELIZE; boundaries = undiscovered
-mechanisms; NO stopping; sim/ edits fair when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; CONTROLLER runs
-GPU INLINE; ARM A MONITOR. [superseded:] ON the RANK-2 scoping return (subagent ace8059bf36ed2aca): trust-but-verify its load-bearing
-claim (what is genuinely hand vs self-organized on the production side), then EXECUTE its verdict -- BUILD the recommended
-next de-risk (most likely EITHER a genuine RANK-2 construction-SELECTION-under-information-structure reservoir de-risk, OR --
-if RANK-2 is mostly-already-done -- the RANK-1.5 SPIKING-LSM PORT of the EMERGE-78/79 rate reservoir onto the recurrent
-RF/Izhikevich substrate, the fully-spiking directive). Cheap-first, single-variable, anti-cheats (permuted/lesion/held-out/
-memorization-floor), 6-seed, commit both remotes. If GPU: controller runs it INLINE + arm a Monitor. PARALLELIZE; boundaries
-= undiscovered mechanisms; NO stopping; sim/ edits fair when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON MAIN.
+**CYCLE 896 (the RESERVOIR ARC is comprehensively COMPLETE + coherent — the anti-whack-a-mole RANK-1 comprehension
+mechanism on the spiking substrate).** EMERGE-81 (committed): the spiking Izhikevich LSM's graded-memory advantage SURVIVES
+the port — it holds a real-discovered distal 1-bit cue at 1.000 across ≥16 fillers (~21 tokens), ±2 window at chance,
+mark-lesion collapses; comparable to the rate reservoir's ≥28 in the reduced sweep. ⇒ the fronto-striatal reservoir is now:
+EMERGE-78 (LEARNED form→role map, no hand branch) → EMERGE-79 (UNCONTINGENT non-local graded memory, rate) → EMERGE-80
+(realized on the project's SPIKING Izhikevich neurons, a genuine LSM) → EMERGE-81 (the graded-memory advantage survives on
+spikes). A complete, coherent, directive-aligned replacement of the hand form→role labeler. Session total (2026-07-03,
+CYCLE 887-896): 10 commits — EMERGE-75 boundary, next-frontier research gate, EMERGE-75b boundary, EMERGE-78/79/80/81 GO +
+characterization, RANK-2 whack-a-mole-guard scoping. Deep adversarial rigor throughout (2 self-caught overclaims corrected;
+1 refuted-then-resolved contingency; NO sim/ edit anywhere; moat untouched).
+
+**EXACT NEXT CONCRETE ACTION:** RUNG 2 — realize the EMERGE-80 spiking LSM on a full `SimulationBridge` REGION (a recurrent
+Izhikevich region via the brain-region framework / `inject_explicit_wiring`), so the spiking reservoir COMPOSES with the
+rest of the one brain (not a standalone numpy pool) — the true on-substrate realization. Cheap-first: build ONE recurrent
+region + drive it with the closed-class stream + read the population rate via the region's firing → the EMERGE-78 form→role
++ EMERGE-80 controls (pool active, silence-lesion collapse, non-local rel-head, both baselines at chance), 6-seed. Likely
+GPU (`SIM_BACKEND=cupy`) → CONTROLLER runs it INLINE + arm a Monitor (per feedback_proactively_monitor_long_runs). GO = the
+on-bridge spiking region matches EMERGE-80 (learns the map + non-local, genuinely spiking). BOUNDARY = names the on-bridge
+residual (region wiring / read-out) as the next single-variable de-risk. Reuse-by-import; sim/ edits fair ONLY if a faithful
+mechanism needs them (additive/default-off/byte-identical-when-off). THEN: RANK-3 bounded recursion (theta-gamma WM buffer /
+assembly-calculus stack) for deeper-than-pool-depth dependencies. PARALLELIZE; boundaries = undiscovered mechanisms; NO
+stopping; moat a PLUS; honest origin+gitea; COMMIT ON MAIN; CONTROLLER runs GPU INLINE; ARM A MONITOR.
 [superseded:] (2) The pre-registered RANK-1.5/RANK-2 rungs
 (research gate `2026-07-03-next-frontier-...`): the spiking-LSM PORT of EMERGE-78 (drive a recurrent RF/Izhikevich pool +
 the population read-out, replacing the rate echo-state reservoir) OR the PRODUCTION reservoir (Dominey 2015: thematic
