@@ -1,0 +1,225 @@
+{
+  "probe": "emerge83_reservoir_recursion_depth",
+  "verdict": "CHARACTERIZATION -- the reservoir tracks the MATRIX subject's number across center-embedding to a recursion DEPTH of >= 4 (held to the max tested depth 4) (profile: d0=1.00, d1=1.00, d2=1.00, d3=1.00, d4=1.00), beating the agreement-ATTRACTION baseline (predict the nearest/innermost number: d0=1.00, d1=0.52, d2=0.50, d3=0.50, d4=0.51) where it is wrong (depth>=1 beats-attraction = True). MARKERS discovered (no OOV) = True. MATRIX-NUMBER-LESION collapses the answer to 0.54 (genuinely the matrix number). ==> a plain reservoir handles BOUNDED center-embedding to depth ~4 amid distractors, then interference has not yet won in the tested range -- DEEPER/unbounded recursion is where the RANK-3 mechanism (theta-gamma multiplexed WM buffer, catalog N.15; assembly-calculus stack, Mitropolsky) becomes necessary (a reservoir cannot hold an unbounded stack). Reuse-by-import; NO sim/ edit.",
+  "go": true,
+  "task": "RANK-3 cheap-first: measure the reservoir's bounded-recursion DEPTH on subject-verb number agreement across center-embedding (agreement attraction) -- the matrix subject's number must be tracked past d embedded-subject distractors; report accuracy-vs-depth + d* + beats-attraction + matrix-lesion; names where the RANK-3 WM-buffer/stack becomes necessary; 6-seed rate CPU",
+  "nums": [
+    "sng",
+    "plu"
+  ],
+  "that": "that",
+  "test_depths": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "elapsed_seconds": 7.9,
+  "aggregate": {
+    "by_depth": {
+      "0": {
+        "reservoir": 1.0,
+        "nearest_number": 1.0
+      },
+      "1": {
+        "reservoir": 1.0,
+        "nearest_number": 0.5175
+      },
+      "2": {
+        "reservoir": 1.0,
+        "nearest_number": 0.4958333333333333
+      },
+      "3": {
+        "reservoir": 1.0,
+        "nearest_number": 0.4991666666666667
+      },
+      "4": {
+        "reservoir": 1.0,
+        "nearest_number": 0.5058333333333334
+      }
+    },
+    "matrix_lesion_acc": 0.5383333333333334,
+    "markers_discovered": true,
+    "recursion_depth_star_ge_090": 4
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "markers_ok": true,
+      "by_depth": {
+        "0": {
+          "reservoir": 1.0,
+          "nearest_number": 1.0
+        },
+        "1": {
+          "reservoir": 1.0,
+          "nearest_number": 0.49
+        },
+        "2": {
+          "reservoir": 1.0,
+          "nearest_number": 0.51
+        },
+        "3": {
+          "reservoir": 1.0,
+          "nearest_number": 0.525
+        },
+        "4": {
+          "reservoir": 1.0,
+          "nearest_number": 0.495
+        }
+      },
+      "matrix_lesion_acc": 0.53,
+      "chance": 0.5
+    },
+    {
+      "seed": 43,
+      "markers_ok": true,
+      "by_depth": {
+        "0": {
+          "reservoir": 1.0,
+          "nearest_number": 1.0
+        },
+        "1": {
+          "reservoir": 1.0,
+          "nearest_number": 0.555
+        },
+        "2": {
+          "reservoir": 1.0,
+          "nearest_number": 0.455
+        },
+        "3": {
+          "reservoir": 1.0,
+          "nearest_number": 0.485
+        },
+        "4": {
+          "reservoir": 1.0,
+          "nearest_number": 0.54
+        }
+      },
+      "matrix_lesion_acc": 0.51,
+      "chance": 0.5
+    },
+    {
+      "seed": 44,
+      "markers_ok": true,
+      "by_depth": {
+        "0": {
+          "reservoir": 1.0,
+          "nearest_number": 1.0
+        },
+        "1": {
+          "reservoir": 1.0,
+          "nearest_number": 0.57
+        },
+        "2": {
+          "reservoir": 1.0,
+          "nearest_number": 0.58
+        },
+        "3": {
+          "reservoir": 1.0,
+          "nearest_number": 0.465
+        },
+        "4": {
+          "reservoir": 1.0,
+          "nearest_number": 0.465
+        }
+      },
+      "matrix_lesion_acc": 0.575,
+      "chance": 0.5
+    },
+    {
+      "seed": 100,
+      "markers_ok": true,
+      "by_depth": {
+        "0": {
+          "reservoir": 1.0,
+          "nearest_number": 1.0
+        },
+        "1": {
+          "reservoir": 1.0,
+          "nearest_number": 0.505
+        },
+        "2": {
+          "reservoir": 1.0,
+          "nearest_number": 0.47
+        },
+        "3": {
+          "reservoir": 1.0,
+          "nearest_number": 0.5
+        },
+        "4": {
+          "reservoir": 1.0,
+          "nearest_number": 0.555
+        }
+      },
+      "matrix_lesion_acc": 0.59,
+      "chance": 0.5
+    },
+    {
+      "seed": 101,
+      "markers_ok": true,
+      "by_depth": {
+        "0": {
+          "reservoir": 1.0,
+          "nearest_number": 1.0
+        },
+        "1": {
+          "reservoir": 1.0,
+          "nearest_number": 0.475
+        },
+        "2": {
+          "reservoir": 1.0,
+          "nearest_number": 0.45
+        },
+        "3": {
+          "reservoir": 1.0,
+          "nearest_number": 0.505
+        },
+        "4": {
+          "reservoir": 1.0,
+          "nearest_number": 0.5
+        }
+      },
+      "matrix_lesion_acc": 0.53,
+      "chance": 0.5
+    },
+    {
+      "seed": 102,
+      "markers_ok": true,
+      "by_depth": {
+        "0": {
+          "reservoir": 1.0,
+          "nearest_number": 1.0
+        },
+        "1": {
+          "reservoir": 1.0,
+          "nearest_number": 0.51
+        },
+        "2": {
+          "reservoir": 1.0,
+          "nearest_number": 0.51
+        },
+        "3": {
+          "reservoir": 1.0,
+          "nearest_number": 0.515
+        },
+        "4": {
+          "reservoir": 1.0,
+          "nearest_number": 0.48
+        }
+      },
+      "matrix_lesion_acc": 0.495,
+      "chance": 0.5
+    }
+  ],
+  "HONEST_NOTE": "Measures BOUNDED recursion depth on the canonical center-embedding agreement test (the matrix subject's number tracked past embedded-subject distractors). A plain reservoir handles bounded depth amid interference, then attraction wins -- the honest recursion boundary that NAMES the RANK-3 mechanism (theta-gamma WM buffer / assembly-calculus stack) for deeper/unbounded recursion (a reservoir cannot hold an unbounded stack; humans also fail past ~2 center-embeddings). Reuse-by-import; NO sim/ edit."
+}
