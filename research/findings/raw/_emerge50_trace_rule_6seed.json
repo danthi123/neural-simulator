@@ -1,0 +1,201 @@
+{
+  "probe": "emerge50_trace_rule",
+  "verdict": "GO -- the F\u00d6LDI\u00c1K (1991) TRACE / TEMPORAL-CONTINUITY rule (trace_decay=0.8, bout_len=12) SURPASSES the EMERGE-46 fully-spiking-stacked-pooler BOUNDARY on-substrate. Presenting same-superordinate members' L1 codons in TEMPORAL PROXIMITY + a slow eligibility trace on the L2 pre-synaptic activity (potentiate winners against the TRACED pre; spare traced-active features from depression -- both via the committed sim/ kernels with the pre_last/pre_active gather built from the trace) binds temporally-grouped members (incl. a HELD-OUT sub-category) to SHARED L2 columns -- so the held-out sub-category SHARES its same-super columns and inherits. On-substrate super-acc 0.96 (vs EMERGE-46's 0.03, chance 0.50), held-out within-super L2 overlap 0.503 > cross-super 0.011 (GENERALIZATION, not collision), L2-group +0.50. L2-permanence histogram (learned): mean 0.183, mid-band(0.2-0.8) 0.08, near0 0.72 -> BIMODAL. THE LOAD-BEARING CONTROL: SHUFFLED-TEMPORAL-ORDER super-acc 0.56 (same members, randomized order -> the trace can't bind same-super -> collapses) => TEMPORAL CONTINUITY is doing the work. GATED CONTROLS: PERMUTED-co-occurrence 0.61 (cross-super bouts collapse); dAP-LESION 0.00 (coincidence read load-bearing). REPORTED-secondary: L1->L2 lesion 0.42. => the EMERGE-46 boundary is SURPASSED: the fully-spiking stacked pooler GENERALIZES to held-out sub-categories via trace / temporal-continuity learning, NOT an irreducible point-neuron limit. NO NEW sim/ edit (the committed potentiation + winner-inactive kernels are byte-unchanged; only the pre_last/pre_active gather is built from a slow trace). 3-seed (42/43/44); 6-seed is a cheap confirmation follow-on.",
+  "flags": {
+    "acc": 0.9583333333333334,
+    "grp": 0.4999092229484386,
+    "perm": 0.6111111111111112,
+    "dap": 0.0,
+    "shuffled": 0.5555555555555556,
+    "disc": true,
+    "within": 0.5034722222222222,
+    "cross": 0.010995370370370369,
+    "onsub_go": true,
+    "l2_perm_bimodal": true,
+    "l2_perm_mid_frac": 0.07779166666666666
+  },
+  "mechanism": "F\u00d6LDI\u00c1K (1991) TRACE / temporal-continuity learning: present same-superordinate members' L1 codons in TEMPORAL PROXIMITY (contiguous same-super bouts) + a slow eligibility trace on the L2 pre-synaptic (L1-column) activity (trace <- trace*decay + active). The L2 potentiation binds a winning column to the RECENTLY-ACTIVE (traced) L1 codons (pre_last = trace, via the committed fused_htm_permanence_update kernel), and the winner-inactive depression spares traced-active features (via the committed fused_htm_winner_inactive_depression). So temporally-grouped same-super members (incl. a held-out sub-category) bind to SHARED L2 columns -> the held-out sub-category inherits its superordinate property. The kernels are byte-unchanged; only the pre_last/pre_active gather is built from a slow trace.",
+  "task": "EMERGE-44/46 6-sub-cat -> 2-superordinate; hold out ENTIRE sub-categories {2,5}; L2 on-substrate pooler trained with the F\u00f6ldi\u00e1k trace rule over TEMPORALLY-GROUPED same-super bouts; measure held-out within/cross overlap + super-acc; anti-cheats permuted-cooc + dAP-lesion + the LOAD-BEARING shuffled-temporal-order control, l2lesion reported-not-gated",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "config": {
+    "epochs": 40,
+    "trace_decay": 0.8,
+    "bout_len": 12,
+    "l2_ld": 0.02,
+    "n_col1": 200,
+    "n_col2": 120,
+    "k1": 6,
+    "k2": 6,
+    "n_super": 2
+  },
+  "onsubstrate": {
+    "stacked_trace": {
+      "held_within": 0.5034722222222222,
+      "held_cross": 0.010995370370370369,
+      "super_acc": 0.9583333333333334,
+      "l2_group": 0.4999092229484386,
+      "super_acc_per_seed": [
+        1.0,
+        0.9166666666666666,
+        0.9166666666666666,
+        1.0,
+        0.9166666666666666,
+        1.0
+      ],
+      "held_within_per_seed": [
+        0.6226851851851852,
+        0.3912037037037037,
+        0.369212962962963,
+        0.6435185185185185,
+        0.4965277777777778,
+        0.49768518518518523
+      ],
+      "held_cross_per_seed": [
+        0.016203703703703703,
+        0.019675925925925923,
+        0.03009259259259259,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "shuffled_temporal": {
+      "held_within": 0.24459876543209877,
+      "held_cross": 0.22858796296296294,
+      "super_acc": 0.5555555555555556,
+      "l2_group": 0.040385701605745165,
+      "super_acc_per_seed": [
+        0.5833333333333334,
+        0.75,
+        0.5,
+        0.75,
+        0.3333333333333333,
+        0.4166666666666667
+      ],
+      "held_within_per_seed": [
+        0.1875,
+        0.1701388888888889,
+        0.15393518518518517,
+        0.46759259259259267,
+        0.24768518518518517,
+        0.24074074074074073
+      ],
+      "held_cross_per_seed": [
+        0.2800925925925926,
+        0.18518518518518517,
+        0.1284722222222222,
+        0.3263888888888889,
+        0.20370370370370366,
+        0.24768518518518523
+      ]
+    },
+    "permuted_cooc": {
+      "held_within": 0.21219135802469133,
+      "held_cross": 0.20756172839506173,
+      "super_acc": 0.6111111111111112,
+      "l2_group": 0.03321935770192851,
+      "super_acc_per_seed": [
+        0.5833333333333334,
+        0.75,
+        0.5833333333333334,
+        0.4166666666666667,
+        0.75,
+        0.5833333333333334
+      ],
+      "held_within_per_seed": [
+        0.20254629629629628,
+        0.13310185185185183,
+        0.14467592592592593,
+        0.18981481481481477,
+        0.324074074074074,
+        0.2789351851851852
+      ],
+      "held_cross_per_seed": [
+        0.1875,
+        0.17824074074074076,
+        0.16666666666666666,
+        0.21296296296296294,
+        0.17708333333333331,
+        0.3229166666666667
+      ]
+    },
+    "dap_lesion": {
+      "held_within": 0.5034722222222222,
+      "held_cross": 0.010995370370370369,
+      "super_acc": 0.0,
+      "l2_group": 0.4999092229484386,
+      "super_acc_per_seed": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "held_within_per_seed": [
+        0.6226851851851852,
+        0.3912037037037037,
+        0.369212962962963,
+        0.6435185185185185,
+        0.4965277777777778,
+        0.49768518518518523
+      ],
+      "held_cross_per_seed": [
+        0.016203703703703703,
+        0.019675925925925923,
+        0.03009259259259259,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "l2lesion": {
+      "held_within": 0.06693672839506172,
+      "held_cross": 0.06751543209876543,
+      "super_acc": 0.4166666666666667,
+      "l2_group": 0.05218671830872267,
+      "super_acc_per_seed": [
+        0.5,
+        0.5833333333333334,
+        0.5,
+        0.16666666666666666,
+        0.25,
+        0.5
+      ],
+      "held_within_per_seed": [
+        0.06597222222222222,
+        0.06712962962962962,
+        0.10069444444444445,
+        0.06018518518518517,
+        0.053240740740740734,
+        0.05439814814814814
+      ],
+      "held_cross_per_seed": [
+        0.06134259259259259,
+        0.09259259259259259,
+        0.041666666666666664,
+        0.09259259259259259,
+        0.07407407407407407,
+        0.04282407407407407
+      ]
+    },
+    "_l2_perm_hist": {
+      "mid_frac": 0.07779166666666666,
+      "near0_frac": 0.7249166666666667,
+      "near1_frac": 0.106625,
+      "mean": 0.18299390375614166,
+      "std": 0.3504301905632019,
+      "bimodal": true
+    }
+  },
+  "elapsed_seconds": 4889.3,
+  "sim_edit": "NONE (NO NEW sim/ edit) -- the trace rule feeds a GRADED (traced) pre_last into the committed fused_htm_permanence_update and a traced pre_active gate into the committed fused_htm_winner_inactive_depression; both kernels are byte-unchanged; the only change is HOW the per-synapse pre vectors are built (a slow trace vs the instantaneous winner/active set); reuse-by-import of EMERGE-44/46 poolers",
+  "HONEST_NOTE": "EMERGE-46/47/48/49 ISOLATED the residual to the on-substrate L2 competitive-learning DYNAMICS (over-sparsify to bimodal; no graded-AND-discriminative regime). The F\u00f6ldi\u00e1k trace rule builds shared-but-discriminative L2 tuning STRUCTURALLY (temporal continuity), not by relaxing selectivity or reading softer. THE LOAD-BEARING CONTROL is shuffled-temporal-order: if the trace benefit disappears when the SAME members are presented in randomized order, temporal continuity is proven to be doing the work. The shortcut guard: within-super held-out overlap must EXCEED cross-super. Winner SELECTION is a host top-k over the on-substrate drive (EMERGE-41 has the spiking FS-WTA version). GROUPED presentation is a training-protocol change (developmental curriculum), not a rate/read knob. 3 seeds (42/43/44); 6-seed is a cheap confirmation follow-on."
+}

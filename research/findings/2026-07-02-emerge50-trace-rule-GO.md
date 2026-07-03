@@ -2,7 +2,10 @@
 
 **2026-07-02/03 (autonomous).** Runner `research/runners/_emerge50_trace_rule_derisk.py` (`--numpy` fast proxy + `--onsubstrate` the decisive port); CI guard `tests/test_emerge50_trace_rule.py` (3 tests pass). Reuse-by-import (EMERGE-44 task + EMERGE-46 `OnSubstratePooler` + the committed `_emerge14` kernels); CPU numpy-backend; 3-seed (42/43/44). Closes the EMERGE-46 boundary characterized across EMERGE-46/47/48/49.
 
-## The surpass (3/3 seeds, on-substrate)
+## 6-SEED CONFIRMATION (2026-07-03) — GO firmed
+The 6-seed re-run (seeds 42/43/44/100/101/102) CONFIRMS the surpass and firms the tight permuted margin: stacked_trace **super-acc 0.958** (per-seed 1.00/0.92/0.92/1.00/0.92/1.00, all ≥ 0.92), discrimination **within 0.503 ≫ cross 0.011 (+0.492)**, `onsub_go=True`; gate margins now comfortable — acc−permuted **+0.347** (gate +0.25), acc−shuffled-temporal **+0.403** (gate +0.20), dAP-lesion 0.00. The tight 3-seed permuted margin (+0.055) is resolved at 6 seeds. Raw: `research/findings/raw/_emerge50_trace_rule_6seed.json`. (Run monitored by a coverage-complete Monitor per the standing crash/hang-monitoring practice — it fired the DONE verdict correctly.)
+
+## The surpass (3-seed, on-substrate; confirmed 6-seed above)
 The EMERGE-46 boundary (isolated across four prior de-risks): the on-substrate competitive-learning *dynamics* over-sparsify the L2 permanences to a bimodal split, so the stacked pooler couldn't extend shared columns to a held-out sub-category (super-acc 0.03). The fix is not to tune selectivity or the read (both ruled out, EMERGE-48/49) but to build the shared tuning STRUCTURALLY — via temporal continuity:
 - **STACKED_TRACE (the Földiák rule): held-out sub-category super-acc 0.944 mean** (per-seed 1.00/0.92/0.92, chance 0.50) — vs EMERGE-46's 0.03. Discrimination **within 0.461 ≫ cross 0.022 (+0.439)**.
 - **SHUFFLED-TEMPORAL (the load-bearing control): discrimination collapses to −0.027** (within 0.171 ≈ cross 0.198) — presenting the SAME members in RANDOMIZED order kills the binding, proving the temporal-continuity mechanism (not a shortcut). super-acc 0.611.
