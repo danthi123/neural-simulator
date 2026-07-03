@@ -1,0 +1,54 @@
+{
+  "probe": "emerge52_multilevel_conversational_console",
+  "verdict": "GO -- a MULTI-LEVEL conversational console: the brain OBSERVES members with features + hears their taxonomy in plain language, the STACKED competitive pooler (EMERGE-44/45) DISCOVERS sub-category -> genus -> order, class properties are taught at DIFFERENT levels (genus 'fly'/'swim'; order 'breathes'), and the user ASKS in natural language -- answered by on-substrate inheritance from the CORRECT discovered level, selected PURELY by the discovered-codon graded drive (no spoken-taxonomy shortcut in the read). 2-LEVEL held-out inheritance 1.00 (a never-taught held-out member inherits the ORDER property 'breathe' TWO discovered levels up; per-seed [1.0, 1.0, 1.0]), with the L2/genus 1-level floor at 1.00. SIBLING-DISCRIMINATION 0.00 (~0): a held-out bird does NOT inherit fish 'swim' -- and this is CODON-driven: the LOAD-BEARING PERMUTE-CO-OCCURRENCE control (scramble the L2/L3 co-occurrence pairs so the pooler can't separate the branches) BREAKS it, raising sibling-confusion to 0.33 (the held-out member then wrongly inherits the sibling branch). CANCELLATION 1.00 (the exception member answers ITS fact). The no-confab MOAT abstains on every never-observed token (0 false-accepts). HONEST SCOPE (per EMERGE-45): the 2-level ORDER inheritance rides the dominant feature/genus grouping (so the secondary permute-FEATURES control alone, leaving the taxonomy-keyed co-occurrence intact, does not collapse the 2-level read: 1.00) -- '2-level via the discovered hierarchy works; L3/order is a seed-variable increment'. 3-seed. => 'discover a multi-level taxonomy from experience -> talk to the brain across levels', one spiking brain, NO sim/ edit.",
+  "mechanism": "the EMERGE-44/45 STACKED competitive pooler discovers sub-category (L1, from features) -> genus (L2, from same-genus co-occurrence) -> order (L3, from same-order co-occurrence); the genus/order grouping is read from the SPOKEN is-a taxonomy (the experienced context). The committed three-term kernel teaches a CLASS property on the members' DISCOVERED codons at the class's level (genus->L2, order->L3) + a member EXCEPTION on the identity ensemble (cancellation). A graded apical read over the discovered L2+L3 codes answers NL questions from the correct level; sibling-discrimination is CODON-DRIVEN (the asked property must drive a taught class-property cell above the floor purely via the discovered codon, NO spoken-taxonomy shortcut) + the no-confab moat. Composes EMERGE-44/45 (multi-level discovery) + EMERGE-51 (NL console) + EMERGE-42 (cancellation). NO sim/ edit.",
+  "task": "observe members + speak sub-cat->genus->order taxonomy -> DISCOVER the levels -> teach genus + order properties -> ASK 'can a X P?' answered by inheritance from the CORRECT discovered level (1 level + 2 levels up) with sibling-discrimination + cancellation + moat; 2-level held-out inheritance + sibling-confusion + moat + LOAD-BEARING permute-CO-OCCURRENCE control (breaks the codon-driven sibling-discrimination) + secondary permute-features diagnostic; 3-seed",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "elapsed_seconds": 78.1,
+  "per_seed": [
+    {
+      "seed": 42,
+      "two_level": 1.0,
+      "one_level_genus_floor": 1.0,
+      "sibling_confusion": 0.0,
+      "cancel": 1.0,
+      "moat_unknown": true,
+      "moat_false_accepts": 0,
+      "permcooc_sibling_confusion": 0.5,
+      "permcooc_two_level": 1.0,
+      "permfeat_sibling_confusion": 0.0,
+      "permfeat_two_level": 1.0
+    },
+    {
+      "seed": 43,
+      "two_level": 1.0,
+      "one_level_genus_floor": 1.0,
+      "sibling_confusion": 0.0,
+      "cancel": 1.0,
+      "moat_unknown": true,
+      "moat_false_accepts": 0,
+      "permcooc_sibling_confusion": 0.0,
+      "permcooc_two_level": 1.0,
+      "permfeat_sibling_confusion": 0.0,
+      "permfeat_two_level": 1.0
+    },
+    {
+      "seed": 44,
+      "two_level": 1.0,
+      "one_level_genus_floor": 1.0,
+      "sibling_confusion": 0.0,
+      "cancel": 1.0,
+      "moat_unknown": true,
+      "moat_false_accepts": 0,
+      "permcooc_sibling_confusion": 0.5,
+      "permcooc_two_level": 1.0,
+      "permfeat_sibling_confusion": 0.0,
+      "permfeat_two_level": 1.0
+    }
+  ],
+  "HONEST_NOTE": "composes validated pieces: EMERGE-44/45 stacked pooler (the pooler LEARNING is a rate-reference, realized fully-on-substrate at EMERGE-39..41) + EMERGE-51 NL console + EMERGE-42 cancellation, on the spiking bridge over the DISCOVERED multi-level codons. Per EMERGE-45's honest scope, L2/GENUS grouping is the DOMINANT carrier of the multi-level signal and L3/ORDER is a seed-variable increment; the reported L2/genus 1-level floor is disclosed alongside the 2-level order read. Each held-out member shares its GENUS with taught members, so 2-level order inheritance chains through the discovered L2/genus grouping (+ an L3 increment) -- '2-level via the discovered hierarchy'. The SIBLING-DISCRIMINATION is read PURELY from the discovered codons (no spoken-taxonomy shortcut), and PERMUTE-CO-OCCURRENCE (scramble the L2/L3 co-occurrence pairs) BREAKS it (raises sibling-confusion) -- that is the LOAD-BEARING collapse control for the discovered-codon structure. The 2-level ORDER read itself rides the feature/genus grouping (kept intact by permute-features since the co-occurrence stream is keyed by the intact spoken taxonomy), so permute-features alone is a SECONDARY diagnostic that does not collapse the 2-level read -- exactly EMERGE-45's finding. The demo vocabulary is a small curated bird/fish taxonomy (birds share wings/feathers/beak/talons/plume/crest; fish share fins/scales/gills/tail/stripe/barbel, each member a varied 4-of-6 subset); corpus-scale feature/taxonomy discovery is a follow-on."
+}

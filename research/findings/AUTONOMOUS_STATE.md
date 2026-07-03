@@ -7673,3 +7673,26 @@ corpus-scale feature discovery + multi-level taxonomy expressed conversationally
 discovered hierarchy -> "is a robin an animal?" 2 levels up); and/or wire the experiential conversational console toward
 the fluid-conversation stack. Boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked; moat
 a PLUS; honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy for CPU); ARM A MONITOR on every long run.
+
+## CYCLE 859 (2026-07-03 — EMERGE-52 GO: MULTI-LEVEL conversational taxonomy over the discovered hierarchy)
+
+EMERGE-52 (GO 3/3, `2026-07-02-emerge52-multilevel-conversational-console-GO.md`, NO sim/ edit): the brain discovers a
+MULTI-LEVEL hierarchy from experience (stacked pooler: sub-category->genus->order) and answers inheritance across LEVELS
+in plain language. Gates: 2-level held-out inheritance ('breathe', 2 discovered levels up) 1.00; L2/genus 1-level floor
+1.00; real sibling-confusion 0.00; cancellation 1.00; moat True/0-FA; load-bearing collapse permute-co-occ raises
+sibling-confusion 0.00->0.33. DEMO: "a bird can fly"/"an animal breathes"/"a penguin walks" -> "can an owl breathe?" Yes
+(2 levels up) / "can an owl swim?" I don't know (sibling-discrim) / "can a penguin fly?" No, walks (cancel) / "can a zzz
+breathe?" I don't know what a zzz is (moat). HONEST CRUX (= EMERGE-45's scope): the 2-level inheritance RIDES the dominant
+feature-driven L2/genus grouping; the genuinely load-bearing control is codon-driven SIBLING-DISCRIMINATION (permuted
+0.00->0.33, seed-variable). Agent removed a host ancestor-chain shortcut so sibling-discrim is codon-driven. Composition of
+validated pieces (EMERGE-44/45 hierarchy + EMERGE-51 console); no new mechanism. `_emerge52_multilevel_conversational_console.py`
++ test (4 pass). Disclosed wrinkle: exception dominates the read ("can a penguin breathe?" -> "No, walks"); PER-PROPERTY
+override is a follow-on. EMERGE-50 6-seed (b2whf1bce) still computing (on the last arm; Monitor bn3gssop5 armed).
+
+**EXACT NEXT CONCRETE ACTION:** commit EMERGE-52 to BOTH remotes on main. THEN: (a) when the EMERGE-50 6-seed lands
+(Monitor fires), commit the 6-seed confirmation. (b) Continue toward the GOAL: PER-PROPERTY override (the penguin-breathe
+wrinkle -- an exception on locomotion should NOT block inheriting respiration; per-dimension cancellation as EMERGE-27);
+and/or perception-grounded conversational categories (EMERGE-34/36 real Gabor/V1 -> pooler -> conversational console = SEE
+an object, discover its category, talk about it); and/or wire the experiential conversational console toward the fluid-
+conversation stack. Boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair game when de-risked; moat a PLUS;
+honest origin+gitea; COMMIT ON MAIN; GPU/CuPy for real runs (numpy for CPU); ARM A MONITOR on every long run.
