@@ -8815,6 +8815,22 @@ SYNAPSES with the reservoir (`OnBridgeLSM`) co-resident on the same bridge, so t
 End state: NOTHING load-bearing in role selection is host-computed; the whole comprehend→select→bind→recall→speak turn
 runs on one `SimulationBridge`. See memory `no-shortcuts-one-substrate`.
 
+**B-1b PROGRESS (2026-07-04, on-bridge WTA→gate VALIDATED):** committed the additive `role_wta_n` allocation on
+`build_unified_bridge`/`UnifiedBrainBridge` (default-off, byte-identical; num_traits=2 + `cp_traits[:]=0` so parser/
+composer stay excitatory; WTA slice base = `role_wta_base`, past role_src). The standalone mutual-inhibition `RoleWTA`
+(scratchpad `b1b_role_wta.py`: 3 ens P=20 + shared inh INH=30; E→I W_EI=24, E→E W_EE=18, I→E W_IE=20; base=4 gain=63;
+`output_inhibitory_indices` / `cp_traits[inh]=1`; genuine biased competition, lesion-collapses, 18/18 vs host argmax)
+was PORTED onto the `UnifiedBrainBridge` runner-side (scratchpad `b1b_onbridge_wta_smoke.py`): `cp_traits[inh]=1` +
+`set_pathway_weights(add_missing=True)` for e2i/e2e/i2e (IN-PLACE add, preserves the trained parser — NO re-injection)
++ `couple_gate_to_indices(role_route_<r>, ens[r], threshold=0.005)`. RESULT: winner 4/4; for clear logits ONLY the
+winner's gate opens (agent 38 / action 43 / patient 38 open-steps, losers 0). The clean single-role BIND needs the
+`_op_synaptic` timing: reset coupling EMAs between words → SETTLE (~40 steps) so the WTA establishes → prewarm-latch the
+FIRST (winner's) gate to open → HOLD it (pause `_gate_couplings`, close the others) → run the composer coincidence
+readout through the held gate. Gate threshold 0.005 sits between the WTA loser EMA (~0/0.0025) and winner (~0.0104).
+NEXT: build `_rungB1b_..._derisk.py` = fork RUNG B-1, replace the host-argmax role select with `_op_wta` (drive the WTA
+ens with `(f@Ws[k])[[0,1,2]]` instead of the parser conj), 9 anti-cheats (B-1's six + provenance[no host argmax; opened
+gate==WTA winner] + WTA-lesion[zero I→E → collapse] + Ws-scramble[→collapse]), multi-seed. THEN B-1c (Ws as synapses).
+
 **EXACT NEXT CONCRETE ACTION:** the one-brain SUBSTRATE is done; the two remaining rungs (per the ladder): **(2) A→W
 NEURAL WORD-SPELL** — every WORD on spikes (not just the order). Retrain the EMERGE-67/68 A→W read-out on the transitive
 vocab (dog/chase/ball...) + pass `UnifiedNeuralSpell` as the producer `spell=` (cupy; the whole turn then co-executes on
