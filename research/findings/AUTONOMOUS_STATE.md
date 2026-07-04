@@ -8995,6 +8995,25 @@ DECISIVE CONVERGENT OUTCOME:
   close-out (2/3, all four shortcuts removed, whole turn on one spiking bridge) is the SOLID committable deliverable
   regardless; the 3/3 is the active surpass.
 
+**CYCLE 918 (the 2/3 BOUNDARY SURPASSED — a CONDUCTANCE-DOMAIN signed read-out resolves the degraded seed 44; each of
+42/43/44 reaches 18/18).** A 5-agent design workflow (`signed-readout-full-closure-design`) ranked Design A #1: do the
+signed subtraction in the LINEAR pre-spike CONDUCTANCE domain (`I_syn = g_e·(0−v) + g_i·(−75−v)` sums linearly), so ONE
+ensemble/role fires monotonically in `(Wp−Wn)@[f;1] = Ws@[f;1]` and `argmax(ens firing)` preserves the argmax — NO spike
+subtraction (the spike-COUNT opponent's `f(a)−f(b)` is what depol-block breaks). Built + de-risked on the substrate:
+reservoir(exc) → ens[r] with Wp; a **1:1 inhibitory-trait FOLLOWER** `res_inh` (a linear spike-relabel, fixing the prior
+B-1c relay's threshold nonlinearity) → ens[r] with Wn; a constant-rate **BIAS-UNIT** population delivering the `+1`
+intercept SYNAPTICALLY (additive/subtractive — a direct tonic SILENCES a host role whose bias is negative, the seed-43
+slot2 failure). Winner = neural argmax over ens firing; NO host `f@Ws`/argmax. **Critical: LOW floor (~30 pA)** keeps `v`
+near rest so `g_i` is near-SUBTRACTIVE not shunting (floor 150–250 → 0/18; floor 30 → 18/18). RESULTS (host-agree/18):
+positive read (committed 2/3) = 42:18 43:18 44:**11**; conductance signed = **42:18 43:18 44:18 (each at its bias-optimal
+config)**; single SHARED config = 42:18 43:18 44:15–17 (the residual = seed-43-wants-weak-bias vs seed-44-wants-strong-bias,
+a sub-1%-margin × bias-noise edge). ⇒ **the degraded-seed-44 boundary is SURPASSED** — the negative-weight info the positive
+read discards, delivered in the linear conductance domain, resolves 44 (11→18). Finding + de-risk scripts committed:
+`2026-07-04-conductance-domain-signed-readout-SURPASS.md`, `research/findings/raw/signed_conductance/`. NO `sim/` edit.
+Named next (confirmation): a durable runner + 6-seed + anti-cheats (syn-lesion/follower/bias load-bearing, source-clean) +
+wire into the UnifiedBrainBridge close-out; the single-shared-config seed-44 residual → a self-calibrated bias delivery
+(bias-unit rate tracking the reservoir's per-seed firing scale). NOTE: this de-risk is on MY clean isolated bridge (Wp/Wn
+decomposition + reservoir_n=RES_N + res_inh follower), distinct from the c2 harness's Ws_shifted positive read.
 **EXACT NEXT CONCRETE ACTION:** the one-brain SUBSTRATE is done; the two remaining rungs (per the ladder): **(2) A→W
 NEURAL WORD-SPELL** — every WORD on spikes (not just the order). Retrain the EMERGE-67/68 A→W read-out on the transitive
 vocab (dog/chase/ball...) + pass `UnifiedNeuralSpell` as the producer `spell=` (cupy; the whole turn then co-executes on
