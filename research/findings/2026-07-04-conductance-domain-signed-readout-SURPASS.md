@@ -63,6 +63,33 @@ is the **graded-magnitude / rate-code-wall family** the project has repeatedly d
 point-neuron substrate structurally lacks). ⇒ dispatched a focused research gate on this precise boundary (isolate residual
 → reframe via biology → rank cheap-first surpass → verdict) before accepting it; see the CYCLE-919 research finding.
 
+### FINAL (CYCLE-919): the research verdict REFRAMED the boundary, its #1 fix ALSO fails to generalize, and the committed read is itself SEED-FRAGILE
+
+The research gate's measurement-grounded verdict REFUTED the "sub-1%-margin / degraded-feature / dendritic-frontier"
+framing: it fit Ws + measured margins and found **DRIVE-WRONG=0/18** (the encoding delivers the correct winner in the
+pre-spike drive on every slot; the isolated ens f-I is monotone to ≥450 pA). The seed-44 residual is a **WTA
+IGNITION-ORDER inversion**, not depol block: the E→E amplification + I→E inhibition make the first-igniting AGENT ensemble
+suppress the higher-drive THEME ensemble. Its #1 fix — a **feedforward per-role read** (per-row Dale shift
+`Ws − Ws.min(axis=1)` [argmax-exact, 3-4× wider margin] + REMOVE the I→E inhibition + fixed operating point) — was built +
+6-seed tested (`step4_feedforward.py`): **42/43 = 18/18 but 100/101/102 = 0/18** — removing I→E BROKE the unseen seeds
+(they NEED the competition; seed 44 needs LESS of it → opposite needs, whack-a-mole around the WTA).
+
+DECISIVE check (`step2g` at the committed floor 150): the **COMMITTED positive read (global shift + WTA) is 18/18 on
+seed 42 but 7 / 9 / 5 out of 18 on the unseen 100/101/102** — near chance (6/18). ⇒ **the read-out is broadly
+SEED-FRAGILE; the committed "GO 2/3" is accurate for the 3 development seeds 42/43/44 but does NOT generalize to a wider
+seed set.** That is why every surpass this session OVERFIT (chasing a 3/3 on the two lucky seeds). The anti-cheats + 6-seed
+tests caught it every time.
+
+**The precisely-mapped boundary (the honest deliverable):** the spiking read-out of a tight-margin `argmax(f·Ws)` is
+UNRELIABLE across reservoir draws — the WTA competition that sharpens the read on some draws (100/101/102) CAUSES an
+ignition-order inversion on others (44); the Dale-offset pedestal (needed for excitatory-only synapses) shrinks the margin
+the competition then mis-amplifies. NOT a sub-1%-margin wall (refuted), NOT the graded/dendritic frontier (refuted). The
+genuine missing mechanism is a **SEED-ADAPTIVE read** (per-draw competition/normalization that neither under- nor
+over-sharpens) — i.e. a learned/adaptive read-out, a deeper frontier than a fixed circuit. Mechanisms exhaustively tried +
+anti-cheated + 6-seed-tested this session: signed count-opponent, conductance-signed (decorative), divisive-norm (plateau),
+gain-cal, latency, low-floor positive (overfit), per-row shift, feedforward (broke unseen), RES_N conditioning, reservoir
+committee. All in `research/findings/raw/signed_conductance/`.
+
 ---
 
 # (original body — mechanism attribution CORRECTED above) RUNG B-1c signed read-out — CONDUCTANCE-DOMAIN attempt

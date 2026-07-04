@@ -9036,6 +9036,26 @@ counts (signed mechanism DECORATIVE per anti-cheat + positive read OVERFIT per 6
 honestly STANDS at GO 2/3; the degraded-seed-44 residual is NOT surpassed.** An honest NEGATIVE — the anti-cheat + 6-seed
 generalization did their job. Per BRAIN-BASED-ONLY, an honest negative mapping a substrate limit IS the deliverable. The
 `...SURPASS.md` headline claims are RETRACTED (content corrected in place).
+
+**CYCLE 919 (the research gate REFRAMED the boundary + its #1 fix ALSO fails to generalize + the committed read is itself
+SEED-FRAGILE — the honest END of the read-out surpass arc).** A focused research gate (5 agents, measurement-grounded)
+REFUTED the "sub-1%-margin / degraded-feature / dendritic-frontier" framing: it fit Ws + measured margins → DRIVE-WRONG=0/18
+(the encoding delivers the right winner on every slot), isolated ens f-I MONOTONE to ≥450 pA. The seed-44 residual is a **WTA
+IGNITION-ORDER inversion** (E→E amplification + I→E inhibition make the first-igniting AGENT ensemble suppress the
+higher-drive THEME ensemble), NOT depol block. Its #1 fix (feedforward read: per-row Dale shift `Ws−Ws.min(axis=1)` +
+REMOVE I→E + fixed op-point, `step4_feedforward.py`) 6-seed tested: **42/43=18/18 but 100/101/102=0/18** — removing I→E broke
+the unseen seeds (they NEED the competition; seed 44 needs LESS → opposite needs, whack-a-mole around the WTA). DECISIVE:
+the **COMMITTED read (global shift + WTA, floor 150) = 18/18 on seed 42 but 7/9/5 out of 18 on the unseen 100/101/102**
+(near chance). ⇒ **the read-out is broadly SEED-FRAGILE; the committed "GO 2/3" is honest for the 3 dev seeds 42/43/44 but
+does NOT generalize to a wider seed set** — which is why every surpass this session OVERFIT (the anti-cheats + 6-seed tests
+caught it every time). **Precisely-mapped boundary (the honest deliverable):** the spiking read-out of a tight-margin
+`argmax(f·Ws)` is unreliable across reservoir draws — the WTA competition that sharpens some draws inverts others; the
+Dale-offset pedestal shrinks the margin the competition mis-amplifies. NOT sub-1%-margin, NOT dendritic (both refuted by
+measurement). Missing mechanism = a SEED-ADAPTIVE (learned/normalized-per-draw) read — a deeper frontier than a fixed
+circuit. ~20 mechanisms tried + anti-cheated + 6-seed-tested; all in `research/findings/raw/signed_conductance/`. This arc is
+an honest, rigorously-established NEGATIVE that MAPS the boundary + revises the committed read-out's robustness. The broader
+one-brain conversational close-out (all 4 host shortcuts removed on 42/43/44) stands; a robustly-generalizing read-out is
+the open frontier.
 **EXACT NEXT CONCRETE ACTION:** the one-brain SUBSTRATE is done; the two remaining rungs (per the ladder): **(2) A→W
 NEURAL WORD-SPELL** — every WORD on spikes (not just the order). Retrain the EMERGE-67/68 A→W read-out on the transitive
 vocab (dog/chase/ball...) + pass `UnifiedNeuralSpell` as the producer `spell=` (cupy; the whole turn then co-executes on
