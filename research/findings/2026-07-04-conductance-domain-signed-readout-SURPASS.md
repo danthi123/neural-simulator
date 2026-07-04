@@ -50,6 +50,19 @@ any approach tried here.** This is an honest NEGATIVE — the anti-cheat + 6-see
 the BRAIN-BASED-ONLY standard an honest negative that maps a substrate limit IS the deliverable. The body below is retained
 verbatim as the (now-fully-corrected) record of the attempt; its headline claims are RETRACTED.
 
+### FEATURE-conditioning also fails — the boundary is now MULTIPLY-CONFIRMED
+
+The read-out attack surface being exhausted, the FEATURE surface (Design-D) was tested too: (a) reservoir conditioning
+RES_N 300→600 = seed-44 8/18 (no lift over 11); (b) an on-substrate RESERVOIR COMMITTEE (M=3 independent reservoirs,
+concatenated features, `step3_committee.py`) = seed-44 **10/18 (no lift)**. ⇒ neither more reservoir neurons nor draw-
+diversity resolves seed 44. **This makes it a MULTIPLY-CONFIRMED boundary across BOTH attack surfaces** (read-out: signed/
+positive/divnorm/latency all overfit-or-decorative; feature: RES_N + committee no help). Root cause: the Dale-offset makes
+the winning margin ~1% of the ens drive (the B-1c.2 finding's own named "sub-1% post-offset margin"), and a point-neuron
+spike-COUNT read cannot reliably resolve a sub-1% margin across variable draws under the non-monotone Izhikevich f-I. This
+is the **graded-magnitude / rate-code-wall family** the project has repeatedly documented (the analog/sub-threshold read a
+point-neuron substrate structurally lacks). ⇒ dispatched a focused research gate on this precise boundary (isolate residual
+→ reframe via biology → rank cheap-first surpass → verdict) before accepting it; see the CYCLE-919 research finding.
+
 ---
 
 # (original body — mechanism attribution CORRECTED above) RUNG B-1c signed read-out — CONDUCTANCE-DOMAIN attempt
