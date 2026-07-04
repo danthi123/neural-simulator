@@ -8756,6 +8756,32 @@ EMERGE-88 (3 CI, 13 s), EMERGE-95 (2 CI, <1 s), and the RUNG B-1 base
 the composer's bind through the I5a `role_route_<R>` synaptic gates (replacing the host {role:word} dict), CPU/numpy,
 no `sim/` edit, the four anti-cheats already in the base harness.
 
+**CYCLE 912 (RUNG B-1 GO — the FIRST synaptic comprehension→composition hand-off; the FUNCTIONAL one-brain,
+cheapest-first).** On the laptop (CPU/numpy), rebuilt + shipped the lost RUNG B-1: the reservoir's LEARNED role output
+(`argmax(f @ Ws[k])`, EMERGE-78/88) drives the composer's bind through the I5a SYNAPTIC `role_route_<R>` gates,
+REPLACING the host {role:word} dict. Mechanism (reuse-by-import, NO `sim/` edit): the reservoir's chosen role maps to
+the conjunction that fires it (`role2k={agent:0,action:2,patient:4}` from `parser.role_of`), so `_op_synaptic(k)`
+opens gate `role_route_<r>` → the composer role bank gets role r's ±1 pattern → the word binds with role r,
+provenance-clean. 6/6 UNANIMOUS GO: parse 1.00, route recall 12/12 (mean 1.000, ≥ the host-dict path's 10–12 OU
+jitter), moat 0.00, gated-by-firing True, provenance-clean True, route-lesion collapses (0<12), reservoir-lesion
+collapses (0<12) — BOTH the synaptic route AND the reservoir load-bearing. ~57 s/seed. Reuse: EMERGE-78/88 reservoir +
+I5a route + `lesion_route`/`provenance_role_bank_current` instruments; one honest self-caught bug (incomplete lesioned
+comprehensions must not be stored, else `query_patient` KeyErrors on `fact["patient"]`). This closes the
+comprehension→composition HALF of the "host-dict hand-off" gap EMERGE-95 named (which had deferred RUNG B as
+"multi-week"; the RUNG-B research gate found the I5a route makes it cheap-first). Files:
+`_rungB1_reservoir_synaptic_handoff_derisk.py`, `test_rungB1_reservoir_synaptic_handoff.py`,
+`2026-07-04-rungB1-reservoir-synaptic-handoff-GO.md`. Committed on main + pushed (GCM credential now cached).
+
+**EXACT NEXT (laptop):** RUNG B-1 done; the remaining functional-one-brain rungs — (1) **RUNG B-1b** — make the role
+SELECTION itself neural: reservoir ON the bridge (EMERGE-82 `OnBridgeLSM`) + Ws as a fixed RegionPathway → a 3-way
+spiking WTA over role ensembles → the `role_route` gates, removing the host `argmax` (the research gate's fuller
+target; CPU/numpy, reuse EMERGE-82 + this rung). (2) **the RECALL→PRODUCTION hand-off** — the composer's recalled
+answer DRIVES the producer's decision synaptically (the OTHER half of RUNG B). (3) **A→W neural word-spell** (GPU now
+usable — 6 GB GTX 1660 Ti — pending cupy py3.14 wheels). Recommend (1) RUNG B-1b next (the deepest purity gap, CPU).
+BUILD IT — I am the continuation. Weak-laptop discipline: few seeds in dev, full multi-seed at the end, no concurrent
+heavy runs, commit locally + push (GCM cached); catalog is offline → web deep-research + paper downloads for NEW
+biology hypotheses.
+
 **EXACT NEXT CONCRETE ACTION:** the one-brain SUBSTRATE is done; the two remaining rungs (per the ladder): **(2) A→W
 NEURAL WORD-SPELL** — every WORD on spikes (not just the order). Retrain the EMERGE-67/68 A→W read-out on the transitive
 vocab (dog/chase/ball...) + pass `UnifiedNeuralSpell` as the producer `spell=` (cupy; the whole turn then co-executes on
