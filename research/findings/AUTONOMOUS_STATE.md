@@ -8782,6 +8782,30 @@ BUILD IT — I am the continuation. Weak-laptop discipline: few seeds in dev, fu
 heavy runs, commit locally + push (GCM cached); catalog is offline → web deep-research + paper downloads for NEW
 biology hypotheses.
 
+**RUNG B-1b RECIPE (scoped via read-only design pass; persisted so it survives a compaction/shutdown — the lost-RUNG-B-1
+lesson).** Cheapest-first = host computes `logits = f @ Ws[k]` (an honest DRIVE, not the decision) → inject as graded
+current to 3 role ensembles on the unified bridge → a NEURAL WTA elects the winner → the winner ensemble's firing opens
+its `role_route_<r>` gate. Mechanism, NO `sim/` edit (reuse-by-import): (1) allocate 3 role-ensemble pools (P_WTA≈40 each)
++ one shared inhibitory pool (INH_N≈60) past the role_src slices on the `UnifiedBrainBridge`; (2) mutual-inhibition WTA
+topology from `_phaseB_biased_competition_wta_derisk` (each ens → inh feedforward E→I; inh → each ens feedback I→E;
+INHIB_WEIGHT≈2.0, optional self-excitation ATTRACTOR≈35) — make the `inh` slice inhibitory RUNNER-SIDE via
+`bridge.cp_traits[inh]=1` BEFORE `merge_population_into_shared_bridge` (the `g2_runner.py:200` idiom; survives
+re-injection because `inject_explicit_wiring` reads existing traits); (3) drive map = `SpikingWTASampler.drive_from_weights`
+(rectify logits: subtract min; `base_pA≈110 + gain_pA≈160·(l/l.max())`); (4) winner = argmax over
+`cp_firing_states[ens[r]].sum()`; (5) PUREST gate hook = `couple_gate_to_indices(bridge, "role_route_<r>", ens[r])` for
+each role, so the WTA winner's firing DIRECTLY opens its gate (removes the host argmax entirely — no conjunction hop).
+ANTI-CHEATS = B-1's six + (a) PROVENANCE the selection reaches the gate ONLY via ensemble firing (source-grep: no host
+`argmax(...@Ws...)` in the op; runtime: opened gate == max-firing ensemble); (b) NEURAL-WTA-genuine (winner/second firing
+ratio >1.5; WTA-lesion = zero I→E feedback → ambiguous winner → recall collapses); (c) Ws-scramble → misroute → collapse.
+CHEAPEST FIRST DE-RISK (1 seed, no gate yet): build the 3-ens+inh WTA, per content word drive with the 3 role logits,
+assert `winner == _ROLES[argmax(logits)]` on every word + ratio >1.5 → then wire the gate + full harness at 3–6 seeds; if
+it fails, it's a WTA operating-point knob sweep (base_pA/gain_pA/INHIB_WEIGHT/read_window), isolated. B-1c (deferred): `Ws`
+as reservoir→ensemble SYNAPSES (needs signed ON/OFF decomposition + dt=0.5↔1.0 reconciliation + whole-sequence integration
+timing). Fork `_rungB1_reservoir_synaptic_handoff_derisk.py`; reuse
+`_followon2_spiking_wta_sampler_derisk.SpikingWTASampler` (`_compete`/`drive_from_weights`),
+`_phaseB_biased_competition_wta_derisk` (mutual-inhibition topology), `unified_brain_bridge`
+(`_wire_synaptic_route` template, `couple_gate_to_indices`, `merge_population_into_shared_bridge`).
+
 **EXACT NEXT CONCRETE ACTION:** the one-brain SUBSTRATE is done; the two remaining rungs (per the ladder): **(2) A→W
 NEURAL WORD-SPELL** — every WORD on spikes (not just the order). Retrain the EMERGE-67/68 A→W read-out on the transitive
 vocab (dog/chase/ball...) + pass `UnifiedNeuralSpell` as the producer `spell=` (cupy; the whole turn then co-executes on
