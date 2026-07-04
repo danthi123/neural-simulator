@@ -8924,6 +8924,22 @@ host-calibrated scale). COMMITTED THIS RUN (all pushed): B-1 (`44aa4a0b`), B-1b 
 B-1c.1+boundary (`a960989c`), B-1c.2 surpass + adversarial scope (`c9360070`), + state/recipe commits. NEXT SESSION:
 the signed-± arc above; then install cupy (cp314 wheels confirmed on PyPI, driver CUDA 12.9) for the A→W GPU rung.
 
+**CYCLE 915 (signed-± read-out = honest BOUNDARY; recovered the orphaned de-risk, promoted to a durable runner).** The
+signed-± de-risk agent orphaned its run; recovered it — fixed the recurrence-lesion bug (it re-enumerated the res→res
+edges with a divergent RNG → 8181/9068 not in CSR; now reads the actual res→res edges from the CSR) and promoted the
+script to `research/runners/_rungB1c_signed_readout_derisk.py`. SEED-44 RESULT = NEGATIVE on both counts: (1) the SIGNED
+inhibitory-relay read-out is 0/18 at EVERY scale (vs positive 11/18) — a MECHANISM failure, not resolution: the
+disynaptic relay is a NONLINEAR intermediary (`RELAY_IE_W·f_I(Ws−@firing)` ≠ linear `Ws−@firing`), so a single relay pool
+can't cleanly negate at one operating point (the hard part the Dale OFFSET avoids); (2) the HOST `f@Ws` read-out reads
+the tested objrel slot-0 as AGENT `[0,1,1]`, NOT THEME — the reservoir doesn't structurally parse THIS objrel, so the
+non-canonical premise fails + the recurrence-lesion is inconclusive. ⇒ the FULL close-out (3/3 + fixed scale + recurrence
+load-bearing) is NOT reached via the signed relay as approached. Finding
+`2026-07-04-rungB1c-signed-readout-BOUNDARY.md`. HONEST CLOSE-OUT STATE: 3 fully-clean rungs (B-1/B-1b/B-1c.1) + B-1c.2
+GO 2/3 (positive read-out, runtime-synaptic, per-seed host-calibrated scale, canonical role≈position). SURPASS PATH
+(next): a PAIRED ON/OFF signed read-out (negation at the SOURCE — two excitatory channels per reservoir neuron, like the
+composer ±1 bank — NOT a downstream nonlinear inhibitory relay) + a reservoir-VALIDATED non-canonical construction (a
+specific EMERGE-78/79 relative clause whose HOST read-out is confirmed structural FIRST). Committed + pushed.
+
 **EXACT NEXT CONCRETE ACTION:** the one-brain SUBSTRATE is done; the two remaining rungs (per the ladder): **(2) A→W
 NEURAL WORD-SPELL** — every WORD on spikes (not just the order). Retrain the EMERGE-67/68 A→W read-out on the transitive
 vocab (dog/chase/ball...) + pass `UnifiedNeuralSpell` as the producer `spell=` (cupy; the whole turn then co-executes on
