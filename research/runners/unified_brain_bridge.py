@@ -187,7 +187,7 @@ def merge_population_into_shared_bridge(bridge, plan, gates_to_zero=()):
         bridge.set_plasticity_gate(g, 0.0)
 
 
-def build_unified_bridge(seed=42, proj_dim=64, enable_synaptic_route=False, dlpfc_n=0):
+def build_unified_bridge(seed=42, proj_dim=64, enable_synaptic_route=False, dlpfc_n=0, role_wta_n=0):
     """Build ONE SimulationBridge sized for both regions: (6 + 3*PARSER_R) parser neurons + 8*proj_dim
     composer neurons. Config matches the parser's (Izhikevich, GENERIC_UNSTRUCTURED, dt=1ms, global Hebbian
     ON, STDP/STP/structural/homeostasis/reward/Watts-Strogatz OFF, OU noise 20 pA) — the composer's FIXED
@@ -210,6 +210,13 @@ def build_unified_bridge(seed=42, proj_dim=64, enable_synaptic_route=False, dlpf
         total += len(SYNAPTIC_ROUTE_ROLES) * int(proj_dim)
     if dlpfc_n:
         total += 2 * int(dlpfc_n)
+    if role_wta_n:
+        # RUNG B-1b: `role_wta_n` extra neurons past everything else for the on-bridge spiking WTA that elects the
+        # word's thematic role (3 excitatory role ensembles + one shared inhibitory pool). Needs num_traits=2 (an
+        # inhibitory trait). We force every trait to 0 (excitatory) after init so the parser/composer stay
+        # excitatory; the WTA's inhibitory pool is flipped to trait 1 by inject_explicit_wiring's
+        # output_inhibitory_indices when the runner wires it. Default (0) keeps num_traits=1 -> byte-identical.
+        total += int(role_wta_n)
     cfg = CoreSimConfig()
     cfg.num_neurons = total
     cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
@@ -217,7 +224,7 @@ def build_unified_bridge(seed=42, proj_dim=64, enable_synaptic_route=False, dlpf
     cfg.seed = int(seed)
     cfg.dt_ms = 1.0
     cfg.connections_per_neuron = 0
-    cfg.num_traits = 1
+    cfg.num_traits = 2 if role_wta_n else 1     # trait 1 = the WTA inhibitory pool (RUNG B-1b); default 1 (all exc)
     cfg.enable_stdp = False
     cfg.enable_hebbian_learning = True            # ON for the parser (the composer's fixed pop is gate-frozen)
     cfg.hebbian_max_weight = 400.0
@@ -234,6 +241,8 @@ def build_unified_bridge(seed=42, proj_dim=64, enable_synaptic_route=False, dlpf
     bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                               runtime_state=RuntimeState(), gpu_config=GPUConfig())
     bridge._initialize_simulation_data(called_from_playback_init=False)
+    if role_wta_n:
+        bridge.cp_traits[:] = 0     # force all excitatory; the WTA inh pool is flipped to trait 1 at wire time
     return bridge
 
 
@@ -302,7 +311,8 @@ class UnifiedBrainBridge:
     otherwise reset the trained `"parse"` weights. The composer's gated bind weights stay frozen throughout
     (plasticity gain 0.0), so the parser's global-Hebbian training cannot drift them (Task 1 isolation)."""
 
-    def __init__(self, seed=42, proj_dim=64, concepts=None, enable_synaptic_route=False, enable_dlpfc=False):
+    def __init__(self, seed=42, proj_dim=64, concepts=None, enable_synaptic_route=False, enable_dlpfc=False,
+                 role_wta_n=0):
         """`concepts` (optional): a {word: code} codebook for the composer. When None, the composer loads its
         default substrate `denoise64` concept codes (requires the cache; raises FileNotFoundError if absent).
         Passing a small synthetic codebook keeps a unit build cache-independent.
@@ -331,6 +341,7 @@ class UnifiedBrainBridge:
         self.proj_dim = int(proj_dim)
         self.synaptic_route_enabled = bool(enable_synaptic_route)
         self.dlpfc_enabled = bool(enable_dlpfc)
+        self.role_wta_n = int(role_wta_n)      # RUNG B-1b: extra neurons for the on-bridge role-WTA (0 = off)
 
         # The dlPFC region size must be known BEFORE the bridge is sized. It mirrors the separate
         # SpikingSpreadingController: n = max(600, 60*len(vocab)) per region, over the composer's full
@@ -343,7 +354,11 @@ class UnifiedBrainBridge:
 
         self.bridge = build_unified_bridge(seed=self.seed, proj_dim=self.proj_dim,
                                            enable_synaptic_route=self.synaptic_route_enabled,
-                                           dlpfc_n=self._dlpfc_n)
+                                           dlpfc_n=self._dlpfc_n, role_wta_n=self.role_wta_n)
+        # RUNG B-1b: base index of the on-bridge role-WTA slice (past the composer, role_src, and dlPFC slices).
+        self.role_wta_base = (PARSER_SLICE_SIZE + 8 * self.proj_dim
+                              + (len(SYNAPTIC_ROUTE_ROLES) * self.proj_dim if self.synaptic_route_enabled else 0)
+                              + 2 * self._dlpfc_n) if self.role_wta_n else None
         self.parser_slice = range(0, PARSER_SLICE_SIZE)     # 0..125
         self.composer_offset = PARSER_SLICE_SIZE            # 126
 
