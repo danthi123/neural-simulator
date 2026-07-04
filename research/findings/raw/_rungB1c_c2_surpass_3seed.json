@@ -1,0 +1,296 @@
+{
+  "rows": [
+    {
+      "seed": 42,
+      "mode": "c2",
+      "route_correct": 12,
+      "dict_correct": 12,
+      "n_queries": 12,
+      "route_recall": 1.0,
+      "route_recall_ge_0.8n": true,
+      "route_not_worse_than_dict": true,
+      "moat_false_accept": 0.0,
+      "moat_clean": true,
+      "provenance_clean": true,
+      "route_lesion_correct": 0,
+      "route_lesion_collapses": true,
+      "res_lesion_correct": 0,
+      "res_lesion_collapses": true,
+      "neural_select_latched_eq_firing": true,
+      "wta_lesion_correct": 10,
+      "wta_lesion_collapses": true,
+      "ws_scramble_correct": 0,
+      "ws_scramble_collapses": true,
+      "synaptic_source_clean": true,
+      "synaptic_readout_correct": 0,
+      "synaptic_readout_collapses": true,
+      "chosen_ws_scale": 2.286690963107312,
+      "scale_sweep": [
+        {
+          "scale": 2.286690963107312,
+          "agree": 18,
+          "ntot": 18
+        },
+        {
+          "scale": 3.430036444660968,
+          "agree": 18,
+          "ntot": 18
+        },
+        {
+          "scale": 5.145054666991451,
+          "agree": 18,
+          "ntot": 18
+        },
+        {
+          "scale": 7.431745630098764,
+          "agree": 18,
+          "ntot": 18
+        },
+        {
+          "scale": 10.290109333982903,
+          "agree": 10,
+          "ntot": 18
+        },
+        {
+          "scale": 13.720145778643872,
+          "agree": 4,
+          "ntot": 18
+        },
+        {
+          "scale": 18.293527704858494,
+          "agree": 2,
+          "ntot": 18
+        }
+      ],
+      "seed_GO": true,
+      "elapsed_s": 281.6,
+      "sample_trace": [
+        {
+          "word": "duck",
+          "latched_role": "agent",
+          "wta_fire_winner": "agent",
+          "gates_at_latch": [
+            "agent"
+          ]
+        },
+        {
+          "word": "rests",
+          "latched_role": "action",
+          "wta_fire_winner": "action",
+          "gates_at_latch": [
+            "action"
+          ]
+        },
+        {
+          "word": "pond",
+          "latched_role": "patient",
+          "wta_fire_winner": "patient",
+          "gates_at_latch": [
+            "patient"
+          ]
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "mode": "c2",
+      "route_correct": 12,
+      "dict_correct": 12,
+      "n_queries": 12,
+      "route_recall": 1.0,
+      "route_recall_ge_0.8n": true,
+      "route_not_worse_than_dict": true,
+      "moat_false_accept": 0.0,
+      "moat_clean": true,
+      "provenance_clean": true,
+      "route_lesion_correct": 0,
+      "route_lesion_collapses": true,
+      "res_lesion_correct": 0,
+      "res_lesion_collapses": true,
+      "neural_select_latched_eq_firing": true,
+      "wta_lesion_correct": 12,
+      "wta_lesion_collapses": false,
+      "ws_scramble_correct": 0,
+      "ws_scramble_collapses": true,
+      "synaptic_source_clean": true,
+      "synaptic_readout_correct": 0,
+      "synaptic_readout_collapses": true,
+      "chosen_ws_scale": 1.967366439985111,
+      "scale_sweep": [
+        {
+          "scale": 1.967366439985111,
+          "agree": 18,
+          "ntot": 18
+        },
+        {
+          "scale": 2.9510496599776666,
+          "agree": 18,
+          "ntot": 18
+        },
+        {
+          "scale": 4.4265744899665,
+          "agree": 18,
+          "ntot": 18
+        },
+        {
+          "scale": 6.393940929951611,
+          "agree": 18,
+          "ntot": 18
+        },
+        {
+          "scale": 8.853148979933,
+          "agree": 13,
+          "ntot": 18
+        },
+        {
+          "scale": 11.804198639910666,
+          "agree": 14,
+          "ntot": 18
+        },
+        {
+          "scale": 15.738931519880888,
+          "agree": 0,
+          "ntot": 18
+        }
+      ],
+      "seed_GO": true,
+      "elapsed_s": 279.0,
+      "sample_trace": [
+        {
+          "word": "duck",
+          "latched_role": "agent",
+          "wta_fire_winner": "agent",
+          "gates_at_latch": [
+            "agent"
+          ]
+        },
+        {
+          "word": "rests",
+          "latched_role": "action",
+          "wta_fire_winner": "action",
+          "gates_at_latch": [
+            "action"
+          ]
+        },
+        {
+          "word": "pond",
+          "latched_role": "patient",
+          "wta_fire_winner": "patient",
+          "gates_at_latch": [
+            "patient"
+          ]
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "mode": "c2",
+      "route_correct": 0,
+      "dict_correct": 12,
+      "n_queries": 12,
+      "route_recall": 0.0,
+      "route_recall_ge_0.8n": false,
+      "route_not_worse_than_dict": false,
+      "moat_false_accept": 0.0,
+      "moat_clean": true,
+      "provenance_clean": true,
+      "route_lesion_correct": 0,
+      "route_lesion_collapses": false,
+      "res_lesion_correct": 0,
+      "res_lesion_collapses": false,
+      "neural_select_latched_eq_firing": true,
+      "wta_lesion_correct": 0,
+      "wta_lesion_collapses": false,
+      "ws_scramble_correct": 0,
+      "ws_scramble_collapses": false,
+      "synaptic_source_clean": true,
+      "synaptic_readout_correct": 0,
+      "synaptic_readout_collapses": false,
+      "chosen_ws_scale": 5.572606528418631,
+      "scale_sweep": [
+        {
+          "scale": 2.4767140126305027,
+          "agree": 1,
+          "ntot": 18
+        },
+        {
+          "scale": 3.715071018945754,
+          "agree": 6,
+          "ntot": 18
+        },
+        {
+          "scale": 5.572606528418631,
+          "agree": 11,
+          "ntot": 18
+        },
+        {
+          "scale": 8.049320541049132,
+          "agree": 11,
+          "ntot": 18
+        },
+        {
+          "scale": 11.145213056837262,
+          "agree": 0,
+          "ntot": 18
+        },
+        {
+          "scale": 14.860284075783015,
+          "agree": 0,
+          "ntot": 18
+        },
+        {
+          "scale": 19.813712101044022,
+          "agree": 1,
+          "ntot": 18
+        }
+      ],
+      "seed_GO": false,
+      "elapsed_s": 193.0,
+      "sample_trace": [
+        {
+          "word": "duck",
+          "latched_role": "agent",
+          "wta_fire_winner": "agent",
+          "gates_at_latch": [
+            "agent"
+          ]
+        },
+        {
+          "word": "rests",
+          "latched_role": "action",
+          "wta_fire_winner": "action",
+          "gates_at_latch": [
+            "action"
+          ]
+        },
+        {
+          "word": "pond",
+          "latched_role": "agent",
+          "wta_fire_winner": "agent",
+          "gates_at_latch": [
+            "agent"
+          ]
+        }
+      ]
+    }
+  ],
+  "agg": {
+    "mode": "c2",
+    "n_seeds": 3,
+    "n_seeds_GO": 2,
+    "verdict": "PARTIAL",
+    "route_recall_ge_0.8n_all": false,
+    "route_not_worse_than_dict_all": false,
+    "moat_clean_all": true,
+    "provenance_clean_all": true,
+    "route_lesion_collapses_all": false,
+    "res_lesion_collapses_all": false,
+    "neural_select_all": true,
+    "wta_lesion_collapses_all": false,
+    "ws_scramble_collapses_all": false,
+    "synaptic_source_clean_all": true,
+    "synaptic_readout_collapses_all": false,
+    "mean_route_recall": 0.6666666666666666,
+    "total_elapsed_s": 754.0
+  }
+}

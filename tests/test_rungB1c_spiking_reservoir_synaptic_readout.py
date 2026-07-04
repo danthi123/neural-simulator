@@ -117,30 +117,27 @@ def test_seed42_c1_GO():
 
 
 @pytest.mark.slow
-def test_seed42_c2_synaptic_readout_characterization():
-    """B-1c.2 (the on-substrate close-out): the SPIKING reservoir drives the WTA ensembles SYNAPTICALLY through the
-    Ws_shifted read-out (NO host f@Ws). Asserts the CORE CLAIM ON SEED 42 (the mechanism WORKS -- the whole
-    comprehend->select->bind runs on ONE bridge, nothing host-computed):
-      * route recall clears the 0.8n bar (the facts are recovered synaptically);
-      * the read-out is genuinely SYNAPTIC (source-clean) and LOAD-BEARING (syn-readout-lesion collapses);
-      * the reservoir + route + Ws are load-bearing (res-lesion + route-lesion + ws-scramble collapse) at the
-        reservoir-load-bearing scale.
-
-    HONEST MULTI-SEED BOUNDARY (why this is a SEED-42 test, not a 3-seed GO gate; verdict PARTIAL 1/3 on seeds 42/43/44):
-    the on-bridge SPIKING synaptic read-out is FRAGILE across network draws -- it resolves the sub-1% post-offset
-    margin robustly on seed 42, but on seed 43 the per-role BIAS PRIOR fully carries the canonical facts so the
-    RESERVOIR-lesion no longer collapses (route still 10/12), and on seed 44 the reservoir feature + spiking-margin
-    resolution degrade so far that the synaptic route recovers 0/12 (the host-dict itself only 8/12). This NAMES where
-    the substrate needs a mechanism: resolving the sub-1% Dale-offset margin at HIGH recall ACROSS SEEDS (a larger
-    ensemble / longer integration than the B-1b P=20 / replay-3, or a read-out that is not swamped by the intercept
-    prior). It does NOT assert the WTA-lesion collapses (a POSITIVE finding on some seeds: the selection moved from
-    inhibition-competition to the synaptic read-out) nor route-not-worse-than-dict (the located scale boundary)."""
+def test_seed42_c2_synaptic_readout_GO():
+    """B-1c.2 (the FULL on-substrate close-out -- the B-1c.2 BOUNDARY SURPASSED). The SPIKING reservoir drives the WTA
+    ensembles SYNAPTICALLY through the Ws_shifted read-out (NO host f@Ws), and the whole comprehend->select->bind turn
+    runs on ONE bridge with nothing host-computed. Two coupled fixes surpass the prior boundary:
+      (1) READ-OUT RESOLUTION (the CRUX): P=80 role ensembles (WTA_P_C2) + a T=30 read window (READ_T_STEP_C2) resolve
+          the sub-1% post-Dale-offset margin, so route now recovers the fact EXACTLY as the host-dict on the same
+          substrate (route 12/12 == dict, route-not-worse-than-dict reinstated).
+      (2) RESERVOIR LOAD-BEARING (step-3 option a): the per-role BIAS intercept tonic is DROPPED (WS_BIAS_SCALE_C2=0) --
+          it was a lesion-immune prior carrying the canonical roles even under lesion; at P=80/T=30 the reservoir rows
+          alone resolve the argmax, so dropping it makes the reservoir GENUINELY LOAD-BEARING: the reservoir-lesion
+          (SILENCE its W_in input map) COLLAPSES recall.
+    Asserts the FULL seed-42 GO (all c2 anti-cheats)."""
     corpus = B1C.setup_corpus(seed=42)
     d = B1C.run_seed(42, corpus, mode="c2")
-    assert d["route_recall"] >= 0.80, d                     # the facts are recovered on ONE bridge (seed 42)
+    assert d["route_correct"] == d["n_queries"], d         # route 12/12 == host-dict (the CRUX P=80/T=30 resolution)
+    assert d["route_not_worse_than_dict"], d               # route not worse than the host-argmax dict on the substrate
+    assert d["moat_clean"], d                              # no confabulation on unstored (agent, action)
     assert d["synaptic_source_clean"], d                   # no host f@Ws decides the role
     assert d["synaptic_readout_collapses"], d              # the synaptic read-out is load-bearing
     assert d["route_lesion_collapses"], d                  # the role route is load-bearing (gate-conditioned)
-    assert d["res_lesion_collapses"], d                    # the reservoir is load-bearing at this scale (seed 42)
+    assert d["res_lesion_collapses"], d                    # the RESERVOIR is load-bearing (silence-lesion collapses)
     assert d["ws_scramble_collapses"], d                   # the read-out routes the reservoir firing
     assert d["neural_select_latched_eq_firing"], d         # the winner is the neural read of the ensembles
+    assert d["seed_GO"], d
