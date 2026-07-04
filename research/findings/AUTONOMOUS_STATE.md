@@ -8910,6 +8910,20 @@ neural read but weaker than B-1b's organic coupling). ⇒ the FULL close-out nee
 FIXED/self-tuned SCALE (remove the per-seed host calibration) + NON-CANONICAL constructions (so the reservoir's
 recurrence is genuinely load-bearing, not position). So c2 is honest scoped PROGRESS, not the finished close-out.
 
+**CHECKPOINT (2026-07-04 ~07:07, end of a very long autonomous run; clean handoff).** The signed-± crux de-risk was
+dispatched but the agent ORPHANED its run (launched a seed-44 smoke + armed a Monitor + ended its turn future-tense —
+the classic orphaned-run mode). Its script `scratchpad/b1c_signed_readout_derisk.py` (`--seeds 42 43 44`,
+`--fixed-scale`) + `scratchpad/smoke44.log` are EPHEMERAL (session scratchpad). The DURABLE recipe is above (signed ±
+= `Ws+` excitatory reservoir→ens + `Ws−` via an INHIBITORY RELAY, replacing the Dale offset). **RESUME = rebuild the
+signed-± de-risk from the recipe** and answer: (a) does it resolve seed 44's canonical margin (positive read-out failed
+0/12)? (b) on a NON-CANONICAL objrel (position≠role), does it read structurally AND does a RECURRENCE-lesion finally
+COLLAPSE it (the adversarial verify's key gap — canonical role == position, so the reservoir's recurrence is NOT yet
+load-bearing)? (c) does a FIXED scale work across 42/43/44 (removing the per-seed host `argmax(f@Ws)` calibration)?
+Only if all three land is the B-1c.2 close-out genuinely finished (3/3, reservoir structurally load-bearing, no
+host-calibrated scale). COMMITTED THIS RUN (all pushed): B-1 (`44aa4a0b`), B-1b (`818a9dc3`), sim-fix (`14cc0db0`),
+B-1c.1+boundary (`a960989c`), B-1c.2 surpass + adversarial scope (`c9360070`), + state/recipe commits. NEXT SESSION:
+the signed-± arc above; then install cupy (cp314 wheels confirmed on PyPI, driver CUDA 12.9) for the A→W GPU rung.
+
 **EXACT NEXT CONCRETE ACTION:** the one-brain SUBSTRATE is done; the two remaining rungs (per the ladder): **(2) A→W
 NEURAL WORD-SPELL** — every WORD on spikes (not just the order). Retrain the EMERGE-67/68 A→W read-out on the transitive
 vocab (dog/chase/ball...) + pass `UnifiedNeuralSpell` as the producer `spell=` (cupy; the whole turn then co-executes on
