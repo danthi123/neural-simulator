@@ -1,0 +1,104 @@
+{
+  "rows": [
+    {
+      "seed": 42,
+      "mode": "c2",
+      "route_correct": 10,
+      "dict_correct": 12,
+      "n_queries": 12,
+      "route_recall": 0.8333333333333334,
+      "route_recall_ge_0.8n": true,
+      "route_not_worse_than_dict": false,
+      "moat_false_accept": 0.0,
+      "moat_clean": true,
+      "provenance_clean": true,
+      "route_lesion_correct": 0,
+      "route_lesion_collapses": true,
+      "res_lesion_correct": 4,
+      "res_lesion_collapses": true,
+      "neural_select_latched_eq_firing": true,
+      "wta_lesion_correct": 12,
+      "wta_lesion_collapses": false,
+      "ws_scramble_correct": 0,
+      "ws_scramble_collapses": true,
+      "synaptic_source_clean": true,
+      "synaptic_readout_correct": 0,
+      "synaptic_readout_collapses": true,
+      "chosen_ws_scale": 2.652013922818651,
+      "scale_sweep": [
+        {
+          "scale": 2.652013922818651,
+          "agree": 18,
+          "ntot": 18
+        },
+        {
+          "scale": 4.420023204697752,
+          "agree": 18,
+          "ntot": 18
+        },
+        {
+          "scale": 6.188032486576852,
+          "agree": 18,
+          "ntot": 18
+        },
+        {
+          "scale": 8.840046409395503,
+          "agree": 12,
+          "ntot": 18
+        },
+        {
+          "scale": 12.376064973153705,
+          "agree": 6,
+          "ntot": 18
+        }
+      ],
+      "seed_GO": true,
+      "elapsed_s": 152.0,
+      "sample_trace": [
+        {
+          "word": "duck",
+          "latched_role": "agent",
+          "wta_fire_winner": "agent",
+          "gates_at_latch": [
+            "agent"
+          ]
+        },
+        {
+          "word": "rests",
+          "latched_role": "action",
+          "wta_fire_winner": "action",
+          "gates_at_latch": [
+            "action"
+          ]
+        },
+        {
+          "word": "pond",
+          "latched_role": "patient",
+          "wta_fire_winner": "patient",
+          "gates_at_latch": [
+            "patient"
+          ]
+        }
+      ]
+    }
+  ],
+  "agg": {
+    "mode": "c2",
+    "n_seeds": 1,
+    "n_seeds_GO": 1,
+    "verdict": "GO",
+    "route_recall_ge_0.8n_all": true,
+    "route_not_worse_than_dict_all": false,
+    "moat_clean_all": true,
+    "provenance_clean_all": true,
+    "route_lesion_collapses_all": true,
+    "res_lesion_collapses_all": true,
+    "neural_select_all": true,
+    "wta_lesion_collapses_all": false,
+    "ws_scramble_collapses_all": true,
+    "synaptic_source_clean_all": true,
+    "synaptic_readout_collapses_all": true,
+    "mean_route_recall": 0.8333333333333334,
+    "total_elapsed_s": 152.4
+  }
+}

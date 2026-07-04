@@ -8853,6 +8853,31 @@ token (whole-sequence integration). Reuse the B-1b harness + anti-cheats. Cheape
 synapses → the ens fire the same winner as the host `f@Ws` on the 6 test words → then the full turn. BUILD IT — the
 one-substrate close-out; boundaries = undiscovered mechanisms; commit each rung; push (GCM cached); no host shortcuts.
 
+**CYCLE 914 (RUNG B-1c.1 GO — spiking reservoir co-resident; c2 full synaptic read-out = an honest BOUNDARY being
+surpassed; a pre-existing `sim/` bug FIXED).** (a) Fixed `sim/bridge.py:2039` — a dead `import cupy as cp_local` that
+aborted EVERY multi-region (brain-region) build on a cupy-less/numpy host (committed `14cc0db0`; unblocks on-bridge
+reservoirs on CPU; `cp_local` never used). (b) B-1c.1 GO 3/3: a spiking Izhikevich LSM (300 neurons) is co-resident on
+the `UnifiedBrainBridge` via the additive `reservoir_n` (default-off, byte-identical — B-1/B-1b regression 8/8), replacing
+the host RATE reservoir; read-out still host `f@Ws` → the B-1b WTA; all 9 anti-cheats hold (seed-42 re-run verified). (c)
+B-1c.2 (full synaptic read-out, `Ws_shifted` = Ws−min as EXCITATORY reservoir→ens synapses, NO host `f@Ws`) = BOUNDARY
+GO 1/3: seed 42 the WHOLE turn runs synaptically on ONE bridge (syn-readout-lesion collapses, source-check clean), but
+seeds 43/44 fail on the SUB-1% post-Dale-offset margin (winner beats runner-up by ~0.3–1.4% of total drive). ROOT: the c2
+integration used B-1b's P=20/T=12 read-out, but the B-1c CRUX de-risk found P=80/T=30 were NEEDED (P=20/T=12 INVERTS the
+top-2) → under-resolution, plus a per-role bias intercept implemented as a lesion-immune tonic that carries canonical
+AGENT/PREDICATE even under reservoir-lesion. Honest sub-findings: Hebbian+OU OFF during the reservoir read (LSM mustn't
+learn; mirrors `elaborate`'s dlPFC toggle); the Ws bias row is PER-ROLE (a crux correction); in c2 the WTA is no longer
+load-bearing (selection moved to the synaptic read-out → syn-readout-lesion supersedes wta-lesion). Committed c1 + the
+boundary + finding `2026-07-04-rungB1c-spiking-reservoir-synaptic-readout.md`.
+
+**EXACT NEXT (SURPASS the B-1c.2 boundary → the full close-out):** apply the CRUX's validated resolution to the co-located
+read-out — **P=80 role ensembles + T=30 (or longer) integration** (NOT B-1b's P=20/T=12) so the sub-1% margin resolves +
+re-tune the WTA at P=80 — AND make the reservoir load-bearing for ALL slots (do NOT implement the Ws per-role bias
+intercept as a lesion-immune tonic; route it so a reservoir-lesion degrades every slot, OR add a non-canonical test
+construction where position can't substitute for the reservoir's structural read). GO bar = c2 route 12/12 all seeds +
+reservoir-lesion collapses + syn-readout-lesion collapses + source-check clean. On GO: adversarially verify (Workflow —
+reasoning, not heavy runs) + commit the full on-substrate close-out; then install cupy for the A→W GPU rung. BUILD IT —
+weak laptop: ONE heavy run at a time (no concurrent spiking sims); no host shortcuts; commit + push each rung.
+
 **EXACT NEXT CONCRETE ACTION:** the one-brain SUBSTRATE is done; the two remaining rungs (per the ladder): **(2) A→W
 NEURAL WORD-SPELL** — every WORD on spikes (not just the order). Retrain the EMERGE-67/68 A→W read-out on the transitive
 vocab (dog/chase/ball...) + pass `UnifiedNeuralSpell` as the producer `spell=` (cupy; the whole turn then co-executes on

@@ -187,7 +187,8 @@ def merge_population_into_shared_bridge(bridge, plan, gates_to_zero=()):
         bridge.set_plasticity_gate(g, 0.0)
 
 
-def build_unified_bridge(seed=42, proj_dim=64, enable_synaptic_route=False, dlpfc_n=0, role_wta_n=0):
+def build_unified_bridge(seed=42, proj_dim=64, enable_synaptic_route=False, dlpfc_n=0, role_wta_n=0,
+                         reservoir_n=0):
     """Build ONE SimulationBridge sized for both regions: (6 + 3*PARSER_R) parser neurons + 8*proj_dim
     composer neurons. Config matches the parser's (Izhikevich, GENERIC_UNSTRUCTURED, dt=1ms, global Hebbian
     ON, STDP/STP/structural/homeostasis/reward/Watts-Strogatz OFF, OU noise 20 pA) — the composer's FIXED
@@ -217,6 +218,14 @@ def build_unified_bridge(seed=42, proj_dim=64, enable_synaptic_route=False, dlpf
         # excitatory; the WTA's inhibitory pool is flipped to trait 1 by inject_explicit_wiring's
         # output_inhibitory_indices when the runner wires it. Default (0) keeps num_traits=1 -> byte-identical.
         total += int(role_wta_n)
+    if reservoir_n:
+        # RUNG B-1c: `reservoir_n` extra neurons past everything else for the on-bridge SPIKING reservoir (a
+        # recurrent Izhikevich liquid-state machine, co-resident with the parser/composer/WTA). Its fixed-random
+        # recurrence + W_in input drive + Ws_shifted read-out synapses (reservoir -> the 3 WTA ensembles) are all
+        # wired RUNNER-SIDE via set_pathway_weights(add_missing=True), mirroring the WTA wiring. The reservoir's
+        # inhibitory subset is flipped to trait 1 (needs num_traits=2, same as the WTA). Default (0) keeps the
+        # bridge byte-identical to the step-1/2/B-1b build.
+        total += int(reservoir_n)
     cfg = CoreSimConfig()
     cfg.num_neurons = total
     cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
@@ -224,7 +233,7 @@ def build_unified_bridge(seed=42, proj_dim=64, enable_synaptic_route=False, dlpf
     cfg.seed = int(seed)
     cfg.dt_ms = 1.0
     cfg.connections_per_neuron = 0
-    cfg.num_traits = 2 if role_wta_n else 1     # trait 1 = the WTA inhibitory pool (RUNG B-1b); default 1 (all exc)
+    cfg.num_traits = 2 if (role_wta_n or reservoir_n) else 1   # trait 1 = WTA inh pool (B-1b) / reservoir inh (B-1c)
     cfg.enable_stdp = False
     cfg.enable_hebbian_learning = True            # ON for the parser (the composer's fixed pop is gate-frozen)
     cfg.hebbian_max_weight = 400.0
@@ -241,8 +250,8 @@ def build_unified_bridge(seed=42, proj_dim=64, enable_synaptic_route=False, dlpf
     bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                               runtime_state=RuntimeState(), gpu_config=GPUConfig())
     bridge._initialize_simulation_data(called_from_playback_init=False)
-    if role_wta_n:
-        bridge.cp_traits[:] = 0     # force all excitatory; the WTA inh pool is flipped to trait 1 at wire time
+    if role_wta_n or reservoir_n:
+        bridge.cp_traits[:] = 0     # force all excitatory; WTA/reservoir inh pools are flipped to trait 1 at wire time
     return bridge
 
 
@@ -312,7 +321,7 @@ class UnifiedBrainBridge:
     (plasticity gain 0.0), so the parser's global-Hebbian training cannot drift them (Task 1 isolation)."""
 
     def __init__(self, seed=42, proj_dim=64, concepts=None, enable_synaptic_route=False, enable_dlpfc=False,
-                 role_wta_n=0):
+                 role_wta_n=0, reservoir_n=0):
         """`concepts` (optional): a {word: code} codebook for the composer. When None, the composer loads its
         default substrate `denoise64` concept codes (requires the cache; raises FileNotFoundError if absent).
         Passing a small synthetic codebook keeps a unit build cache-independent.
@@ -342,6 +351,7 @@ class UnifiedBrainBridge:
         self.synaptic_route_enabled = bool(enable_synaptic_route)
         self.dlpfc_enabled = bool(enable_dlpfc)
         self.role_wta_n = int(role_wta_n)      # RUNG B-1b: extra neurons for the on-bridge role-WTA (0 = off)
+        self.reservoir_n = int(reservoir_n)    # RUNG B-1c: extra neurons for the on-bridge spiking reservoir (0 = off)
 
         # The dlPFC region size must be known BEFORE the bridge is sized. It mirrors the separate
         # SpikingSpreadingController: n = max(600, 60*len(vocab)) per region, over the composer's full
@@ -354,11 +364,15 @@ class UnifiedBrainBridge:
 
         self.bridge = build_unified_bridge(seed=self.seed, proj_dim=self.proj_dim,
                                            enable_synaptic_route=self.synaptic_route_enabled,
-                                           dlpfc_n=self._dlpfc_n, role_wta_n=self.role_wta_n)
+                                           dlpfc_n=self._dlpfc_n, role_wta_n=self.role_wta_n,
+                                           reservoir_n=self.reservoir_n)
         # RUNG B-1b: base index of the on-bridge role-WTA slice (past the composer, role_src, and dlPFC slices).
-        self.role_wta_base = (PARSER_SLICE_SIZE + 8 * self.proj_dim
-                              + (len(SYNAPTIC_ROUTE_ROLES) * self.proj_dim if self.synaptic_route_enabled else 0)
-                              + 2 * self._dlpfc_n) if self.role_wta_n else None
+        _post_composer = (PARSER_SLICE_SIZE + 8 * self.proj_dim
+                          + (len(SYNAPTIC_ROUTE_ROLES) * self.proj_dim if self.synaptic_route_enabled else 0)
+                          + 2 * self._dlpfc_n)
+        self.role_wta_base = _post_composer if self.role_wta_n else None
+        # RUNG B-1c: base index of the on-bridge spiking-reservoir slice (past the WTA slice, if any).
+        self.reservoir_base = (_post_composer + self.role_wta_n) if self.reservoir_n else None
         self.parser_slice = range(0, PARSER_SLICE_SIZE)     # 0..125
         self.composer_offset = PARSER_SLICE_SIZE            # 126
 
