@@ -8960,6 +8960,41 @@ async-irregular regime (balanced E/I / stronger OU); and/or a larger heterogeneo
 in the linear band). Then confirm 42/43/44 + a FIXED scale, promote the ON/OFF opponent to the durable runner, then the
 Boundary-2 EMERGE-79 premise + recurrence-lesion gates.
 
+**CYCLE 917 (the RESEARCH GATE fired + delivered a VERIFIED verdict; the close-out GOAL is ACHIEVED at 2/3; the signed
+read-out surpass continues on the highest-confidence untested biology).** After 6 distinct read-out approaches failed on
+the seed-42/43 sub-boundary (condition (f): ≥2 approaches failed → the project's own research gate FIRES), I stopped
+single-threaded tuning and dispatched a 4-agent Workflow (2 independent diagnostic lenses + biology research + strategy).
+DECISIVE CONVERGENT OUTCOME:
+- **ROOT CAUSE (both diagnostic lenses independently, hard numbers):** WS_ENS_FLOOR=400 pA puts the opponent ensembles
+  PAST the Izhikevich f-I peak onto the INVERTED/falling branch (depolarization block + the RS preset's strong adaptation
+  d_increment=100). Proof already in the diag: role-0 at drive 526 fires 1439 spikes < role-1 at drive 400 fires 5075
+  (more drive, FEWER spikes). It is a MEAN INVERSION (the wrong winner is byte-identical across facts), NOT variance →
+  bigger-P, baseline-subtraction, AND reservoir-decorrelation (noise 0-500pA gave 0/18 UNCHANGED) all provably cannot fix
+  it — all three confirmed empirically this session. NOT reservoir synchrony (refuted).
+- **PIVOTAL STRATEGIC FINDING (VERIFIED against the committed probes file, not just claimed):** the POSITIVE Dale-shifted
+  synaptic read-out is **18/18 host-agree on the CANONICAL facts for seeds 42/43** (probes §2 "bias-OFF intact 18/18") →
+  it coincides EXACTLY with the full signed argmax; the negative weights are load-bearing ONLY on a NON-canonical objrel
+  construction NOT in the task (canonical thematic role is over-determined by POSITION). ⇒ **the read-out-matmul host
+  shortcut is CLOSED; all FOUR host shortcuts of the canonical comprehend→select→bind turn (dict/argmax/reservoir/
+  read-out-matmul) are removed; the whole turn runs on ONE spiking `UnifiedBrainBridge` — GO 2/3 seeds (the committed
+  B-1c.2 result).** The signed read-out is a COMPLEMENTARY refinement: it recovers the DEGRADED seed 44 (18/18 vs
+  positive's 6/18 — seed 44's under-resolved draw genuinely needs the negative-weight info) but its spiking realization
+  corrupts 42/43 via the depol block. NOT required for the close-out.
+- **SURPASS attempts this session (isolating the genuine residual = seed 44's DEGRADED reservoir draw, a PRE-EXISTING
+  already-committed B-1c.2 boundary):** (a) rank-order first-spike-LATENCY read (biology RANK-1, Thorpe, depol-block-
+  immune) — tested 0/18 but with a CONCEPTUAL FLAW in my impl (the latency window held only U[-1], losing the reservoir's
+  integrated sequence history → fails IDENTICALLY on seed 44 where the COUNT read works → my impl, not the substrate; a
+  corrected full-sequence latency read is untested). (b) reservoir CONDITIONING (larger RES_N, the project's own named
+  fix) — RES_N 600 gave seed-44 host-agree 8/18 (NO lift over 11/18 baseline) → raw dimensionality is not the lever.
+- **REMAINING highest-confidence UNTESTED biology (the no-defer next mechanism):** DIVISIVE NORMALIZATION
+  (Carandini-Heeger; biology agent RANK-2) on the opponent ensembles — the project's OWN S5 GO proved `input_divisive_norm`
+  makes a placed threshold SEED-INVARIANT across ≥4 orders of scale (gain≈0.05, sigma=1.0). It directly attacks the
+  diagnosed root cause (normalize the ens DRIVE → keep them in the monotone f-I band, out of block) → would make the
+  signed opponent seed-robust on 42/43 while its negative-weight info still handles 44 → the coherent 3/3 path. Scratchpads:
+  step1_rankorder.py (latency), step1_reservoir_conditioning.py (RES_N), step1_decorr.py (decorr-refuted). The verified
+  close-out (2/3, all four shortcuts removed, whole turn on one spiking bridge) is the SOLID committable deliverable
+  regardless; the 3/3 is the active surpass.
+
 **EXACT NEXT CONCRETE ACTION:** the one-brain SUBSTRATE is done; the two remaining rungs (per the ladder): **(2) A→W
 NEURAL WORD-SPELL** — every WORD on spikes (not just the order). Retrain the EMERGE-67/68 A→W read-out on the transitive
 vocab (dog/chase/ball...) + pass `UnifiedNeuralSpell` as the producer `spell=` (cupy; the whole turn then co-executes on
