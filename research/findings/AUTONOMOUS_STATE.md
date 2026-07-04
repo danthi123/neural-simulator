@@ -8739,6 +8739,23 @@ EMERGE-92 → A.2 EMERGE-93 → dt-probe EMERGE-94 → A.3 EMERGE-95): every spi
 on ONE bridge (the project's substrate-consolidation bar). The hand-offs are still host-dict (RUNG B = synaptic, the
 FUNCTIONAL bar, is next).**
 
+**CYCLE 911 (LAPTOP MIGRATION — env rebuilt + foundation reproduced on CPU; RUNG B-1 resuming).** The desktop went
+offline mid-flight; the RUNG B-1 implementer's build was in a background subagent and was NEVER committed → LOST
+(HEAD is EMERGE-95). Resumed on a WEAKER laptop (much less CPU/GPU/RAM + limited disk). Fresh clone (git
+`core.longpaths=true` for the long findings filenames), Python 3.14.0, `numpy 2.4.3` + `h5py 3.16` + `scipy 1.18`
+installed (cp314 wheels exist). Constraints now in force: (a) GPU is a 6 GB GTX 1660 Ti (desktop had ~25 GB) + cupy
+NOT installed → the GPU rung (A→W neural word-spell, EMERGE-70/71 cupy path) is DEFERRED; (b) weaker CPU/RAM +
+limited disk → run FEW seeds during dev, full multi-seed only at the end, NO concurrent heavy python runs, no large
+caches/logs; (c) `E:/…/sim-catalog` (Kandel refs + roadmap) is OFFLINE → the biology-first Rule 8 catalog grep is
+unavailable for NEW hypotheses (RUNG B-1's biology is already grounded in the committed EMERGE-78..95 arc, so it
+proceeds); (d) push pending — Git Credential Manager has no cached GitHub write credential (a `git push` hangs on the
+GUI prompt) → COMMIT LOCALLY, push once the owner authenticates GCM. FOUNDATION REPRODUCED on laptop CPU (all GO):
+EMERGE-88 (3 CI, 13 s), EMERGE-95 (2 CI, <1 s), and the RUNG B-1 base
+`_burndown_I5a_synaptic_parser_composer` (3/3 seeds, all 4 anti-cheats: route==GT / gated-by-firing / lesion-collapse
+/ provenance-clean, 55 s). Resuming the exact lost next action: RUNG B-1 — the reservoir's learned role output drives
+the composer's bind through the I5a `role_route_<R>` synaptic gates (replacing the host {role:word} dict), CPU/numpy,
+no `sim/` edit, the four anti-cheats already in the base harness.
+
 **EXACT NEXT CONCRETE ACTION:** the one-brain SUBSTRATE is done; the two remaining rungs (per the ladder): **(2) A→W
 NEURAL WORD-SPELL** — every WORD on spikes (not just the order). Retrain the EMERGE-67/68 A→W read-out on the transitive
 vocab (dog/chase/ball...) + pass `UnifiedNeuralSpell` as the producer `spell=` (cupy; the whole turn then co-executes on
