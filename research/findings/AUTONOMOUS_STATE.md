@@ -9005,15 +9005,31 @@ B-1c relay's threshold nonlinearity) → ens[r] with Wn; a constant-rate **BIAS-
 intercept SYNAPTICALLY (additive/subtractive — a direct tonic SILENCES a host role whose bias is negative, the seed-43
 slot2 failure). Winner = neural argmax over ens firing; NO host `f@Ws`/argmax. **Critical: LOW floor (~30 pA)** keeps `v`
 near rest so `g_i` is near-SUBTRACTIVE not shunting (floor 150–250 → 0/18; floor 30 → 18/18). RESULTS (host-agree/18):
-positive read (committed 2/3) = 42:18 43:18 44:**11**; conductance signed = **42:18 43:18 44:18 (each at its bias-optimal
-config)**; single SHARED config = 42:18 43:18 44:15–17 (the residual = seed-43-wants-weak-bias vs seed-44-wants-strong-bias,
-a sub-1%-margin × bias-noise edge). ⇒ **the degraded-seed-44 boundary is SURPASSED** — the negative-weight info the positive
-read discards, delivered in the linear conductance domain, resolves 44 (11→18). Finding + de-risk scripts committed:
+positive read (committed 2/3) = 42:18 43:18 44:**11**; conductance signed, **SINGLE shared config (N_BIAS=6, floor 30, ratio
+1.2–1.7, bgain 4–10, c90) = 42:18 43:18 44:18 — a robust CLEAN 3/3 (27/27 configs 18/18, not a knife-edge)**. The
+single-shared-config residual (seed-43-wants-weak-bias vs seed-44-wants-strong-bias) was CLOSED by the bias-POPULATION noise
+level: N=1 too noisy (43:18/44:15), N=16 too smooth (43:12/44:17), N=6 the sweet spot (all 18); N_BIAS is a pure noise knob
+at fixed total bias (each unit carries 1/N of the intercept) = a population-coding lever, not a magnitude hack. ⇒ **the
+degraded-seed-44 boundary is SURPASSED to a clean 3/3** — the negative-weight info the positive read discards, delivered in
+the linear conductance domain, resolves 44 (11→18). Finding + de-risk scripts committed:
 `2026-07-04-conductance-domain-signed-readout-SURPASS.md`, `research/findings/raw/signed_conductance/`. NO `sim/` edit.
 Named next (confirmation): a durable runner + 6-seed + anti-cheats (syn-lesion/follower/bias load-bearing, source-clean) +
 wire into the UnifiedBrainBridge close-out; the single-shared-config seed-44 residual → a self-calibrated bias delivery
 (bias-unit rate tracking the reservoir's per-seed firing scale). NOTE: this de-risk is on MY clean isolated bridge (Wp/Wn
 decomposition + reservoir_n=RES_N + res_inh follower), distinct from the c2 harness's Ws_shifted positive read.
+
+**⚠️ CYCLE 918 CORRECTION (the anti-cheat REFUTED the "signed" attribution — honest downgrade).** The ANTI-CHEAT
+(`step2e_anticheat.py`, N6 clean-3/3 config) shows the SIGNED machinery is DECORATIVE: FOLLOW-LESION (zero the reservoir→
+res_inh follower = remove the Wn/neg-info) = 18/18, BIAS-LESION = 18/18, and **BARE (Wp exc rows ONLY, follower AND bias
+off) = 18/18** on all of 42/43/44. Only SYN-LESION (zero res→ens) collapses (6/18). ⇒ the 18/18 is carried by the POSITIVE
+`Wp=max(Ws,0)` rows at a low floor; the inhibitory follower + bias units are INERT. So this is NOT a "conductance-domain
+signed" surpass — at most a clipped-positive-read-at-low-floor result. UNRESOLVED (the disambiguation tool step2f was
+CONFOUNDED — fixed scale, gave 0/18 for Ws_shifted on seed 42 where the c2 harness gives 18): (a) clip-vs-floor; (b)
+generalization — the 18/18 is only on the 3 TUNED seeds in the specific step2d build, a minimal Wp-only build didn't
+reproduce seed-42, so it may be build/operating-point-FRAGILE; 100/101/102 UNVERIFIED. **Committed B-1c.2 close-out stays GO
+2/3; this "3/3 surpass" is DOWNGRADED to unverified/possibly-fragile, mechanism-not-as-claimed.** The anti-cheat caught the
+overclaim before it stood (the rigor working). Correction folded into `2026-07-04-conductance-domain-signed-readout-SURPASS.md`.
+Next honest step: a proper PER-SEED scale sweep of the clipped-positive read on 6 seeds — is it real + generalizing?
 **EXACT NEXT CONCRETE ACTION:** the one-brain SUBSTRATE is done; the two remaining rungs (per the ladder): **(2) A→W
 NEURAL WORD-SPELL** — every WORD on spikes (not just the order). Retrain the EMERGE-67/68 A→W read-out on the transitive
 vocab (dog/chase/ball...) + pass `UnifiedNeuralSpell` as the producer `spell=` (cupy; the whole turn then co-executes on

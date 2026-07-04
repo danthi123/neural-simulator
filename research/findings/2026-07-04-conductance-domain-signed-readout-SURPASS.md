@@ -1,12 +1,49 @@
-# RUNG B-1c signed read-out — the 2/3 BOUNDARY SURPASSED via a CONDUCTANCE-DOMAIN signed read-out (2026-07-04)
+# RUNG B-1c signed read-out — CONDUCTANCE-DOMAIN attempt + an ANTI-CHEAT CORRECTION (2026-07-04)
+
+## ⚠️ CORRECTION (anti-cheat, appended after the body below was written) — the "signed" claim does NOT hold
+
+The body below claims a **conductance-domain SIGNED** read-out surpasses the 2/3 boundary to a clean 3/3. **The anti-cheat
+REFUTES the mechanism attribution.** Lesion results at the N_BIAS=6 clean-3/3 config (`step2e_anticheat.py`, seeds 42/43/44):
+
+| lesion | 42 | 43 | 44 | reading |
+|---|---|---|---|---|
+| INTACT | 18/18 | 18/18 | 18/18 | the result |
+| SYN-LESION (zero res→ens synapses) | 6/18 | 6/18 | 6/18 | read-out synapses ARE load-bearing (collapses to chance) ✓ |
+| FOLLOW-LESION (zero the reservoir→res_inh follower) | 18/18 | 18/18 | 18/18 | the inhibitory follower (Wn / neg-info) is **NOT** load-bearing ✗ |
+| BIAS-LESION (zero the bias units) | 18/18 | 18/18 | 18/18 | the bias is **NOT** load-bearing ✗ |
+| **BARE (Wp exc rows only — follower AND bias off)** | **18/18** | **18/18** | **18/18** | **the POSITIVE `Wp=max(Ws,0)` rows alone carry it** |
+
+**⇒ the SIGNED machinery (the inhibitory follower + the bias units) is DECORATIVE.** The 18/18 is carried by the POSITIVE
+`Wp=max(Ws,0)` excitatory rows at a low floor. So this is NOT a "signed" surpass — it is at most a **clipped-positive read
+at a low floor**, and the whole conductance/follower/bias narrative below is not what does the work.
+
+**Two things remain HONESTLY UNRESOLVED** (the disambiguation tool `step2f_bare_investigate.py` was CONFOUNDED — it used a
+fixed scale instead of the per-read scale sweep, so its SHIFT read gave 0/18 on seed 42 where the c2 harness gives 18/18,
+i.e. its numbers are not trustworthy):
+1. **clip vs floor:** whether `Wp=max(Ws,0)` (clipping the negatives) or the low floor (30 vs the c2's 150) is what resolves
+   seed 44 — a prior clean test had the c2 `Ws_shifted` positive read at floor 30 = only 12/18 on seed 44, which hints the
+   CLIPPING matters, but this is not cleanly established.
+2. **generalization / build-dependence:** the 18/18 is only established on the 3 TUNED seeds (42/43/44) in the specific
+   `step2d` build; a minimal Wp-only build (`step2f`, albeit confounded) did NOT reproduce it on seed 42, so the result may
+   be **build/operating-point-fragile** and its generalization to unseen seeds (100/101/102) is UNVERIFIED.
+
+**Status: the committed B-1c.2 close-out remains GO 2/3 (positive Dale-shifted read). This "3/3 surpass" is DOWNGRADED to an
+unverified, possibly-fragile positive-read-at-low-floor result whose mechanism is NOT the claimed signed circuit.** The
+anti-cheat did its job — it caught the overclaim before it stood. Next: a proper per-seed scale sweep of the clipped-positive
+read on 6 seeds (is it real + generalizing?), and if so, the honest mechanism (clip vs floor). The body below is retained
+verbatim as the (now-corrected) record of the attempt.
+
+---
+
+# (original body — mechanism attribution CORRECTED above) RUNG B-1c signed read-out — CONDUCTANCE-DOMAIN attempt
 
 **One-line:** the committed B-1c.2 read-out shortcut close-out was GO **2/3** (the positive Dale-shifted read-out; the
 degraded seed 44 under-resolved at 11/18 and was named an irreducible "degraded draw" boundary). A **conductance-domain
-signed read-out** — the design-workflow's ranked #1 — **surpasses it**: it delivers the full signed read-out `(Wp−Wn)@[f;1]`
-in the LINEAR pre-spike current domain, resolving the negative-weight information seed 44 genuinely needs. **Each of seeds
-42/43/44 now reaches 18/18** (the degraded seed 44 lifted 11→18); a single shared operating point gives 42/43 = 18/18 and
-44 = 15–17/18 (the residual is a characterized sub-1%-margin × bias-delivery-noise resolution edge). Strictly CPU/numpy; the
-mechanism is runner-side wiring, **NO `sim/` edit**.
+signed read-out** — the design-workflow's ranked #1 — **surpasses it to a robust CLEAN 3/3**: it delivers the full signed
+read-out `(Wp−Wn)@[f;1]` in the LINEAR pre-spike current domain, resolving the negative-weight information seed 44 genuinely
+needs. **A SINGLE fixed operating point gives all of seeds 42/43/44 = 18/18** (the degraded seed 44 lifted 11→18), robust
+across the whole tested region (**27/27 configs 18/18**: ratio 1.2–1.7 × bgain 4–10, floor 30, N_BIAS=6, c90 — not a
+knife-edge). Strictly CPU/numpy; the mechanism is runner-side wiring, **NO `sim/` edit**.
 
 ## Why the positive read was 2/3 and the spike-count opponent was 0/18 on 42/43
 
@@ -53,14 +90,19 @@ SUBTRACTIVE → the conductance subtraction is faithful (floor 30 → 18/18).
 |---|---|---|---|
 | POSITIVE (committed B-1c.2, Ws_shifted) | 18/18 | 18/18 | **11/18** (the 2/3 boundary) |
 | signed spike-COUNT opponent | 0/18 | 0/18 | 18/18 (but block-fails 42/43) |
-| **CONDUCTANCE signed, per-seed-optimal bias** | **18/18** | **18/18** | **18/18** |
-| CONDUCTANCE signed, single SHARED config | 18/18 | 18/18 | 15–17/18 |
+| **CONDUCTANCE signed, single SHARED config (N_BIAS=6)** | **18/18** | **18/18** | **18/18** |
 
-⇒ **the degraded-seed-44 boundary is SURPASSED**: the negative-weight info, delivered in the linear conductance domain,
-resolves what the positive read never could (11→18). Each seed reaches 18/18. The residual is a single-shared-config effect:
-seed 43 (host role with a NEGATIVE bias → wants weaker bias) and seed 44 (degraded draw → wants stronger bias) prefer
-different bias magnitudes, so one fixed operating point gives 42/43 = 18/18 and 44 = 15–17/18 (94% host-agree). This is a
-sub-1%-margin × bias-delivery-noise resolution edge, not a mechanism wall.
+⇒ **the degraded-seed-44 boundary is SURPASSED to a robust CLEAN 3/3**: the negative-weight info, delivered in the linear
+conductance domain, resolves what the positive read never could (11→18), and a SINGLE fixed operating point gives all three
+seeds 18/18.
+
+**How the single-shared-config residual was CLOSED — the bias-population noise level.** The bias delivery had a per-seed
+conflict: seed 43's slot2 host role has a NEGATIVE bias (wants weaker/noisier delivery so it isn't over-suppressed), seed 44
+(degraded draw) wants stronger/cleaner delivery. A single bias unit (N=1) is too noisy → 43:18/44:15; a large population
+(N=16) is too smooth → 43:12/44:17. The **intermediate N_BIAS=6** is the sweet spot — enough averaging for seed 44's clean
+bias, enough residual variance to not over-suppress seed 43's negative-bias slot — and it is WIDE: **27/27 configs 18/18**
+across ratio 1.2–1.7 × bgain 4–10. (Since each bias unit carries `1/N_BIAS` of the intercept, N_BIAS is a pure noise/
+smoothness knob at fixed total bias strength — a biologically-natural population-coding lever, not a magnitude hack.)
 
 ## Honest scope / next
 
