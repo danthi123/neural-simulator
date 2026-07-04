@@ -29,9 +29,26 @@ i.e. its numbers are not trustworthy):
 
 **Status: the committed B-1c.2 close-out remains GO 2/3 (positive Dale-shifted read). This "3/3 surpass" is DOWNGRADED to an
 unverified, possibly-fragile positive-read-at-low-floor result whose mechanism is NOT the claimed signed circuit.** The
-anti-cheat did its job — it caught the overclaim before it stood. Next: a proper per-seed scale sweep of the clipped-positive
-read on 6 seeds (is it real + generalizing?), and if so, the honest mechanism (clip vs floor). The body below is retained
-verbatim as the (now-corrected) record of the attempt.
+anti-cheat did its job — it caught the overclaim before it stood.
+
+### FINAL VERDICT (the fair 6-seed generalization test — `step2g_clip_vs_shift_fair.py`, c2 harness + per-seed scale sweep, floor 30)
+
+| seed | CLIP `max(Ws,0)` | SHIFT `Ws−min` |
+|---|---|---|
+| 42 (tuned) | 18/18 | 18/18 |
+| 43 (tuned) | 18/18 | 18/18 |
+| 44 (tuned) | 16/18 | 12/18 |
+| **100 (unseen)** | **0/18** | 7/18 |
+| **101 (unseen)** | **6/18** | 10/18 |
+| **102 (unseen)** | **5/18** | 10/18 |
+
+**⇒ NO generalizing surpass. The clipped-positive read is 0–6/18 on the UNSEEN seeds 100/101/102 (worse than even Ws−shift
+there); the "18/18 on 42/43/44" was OVERFIT to the three tuned seeds.** So the whole arc fails rigorous validation on BOTH
+counts: the signed mechanism was **decorative** (anti-cheat) AND the positive read that carried it was **overfit** (6-seed
+test). **The B-1c.2 read-out shortcut close-out honestly STANDS at GO 2/3; the degraded-seed-44 residual is NOT surpassed by
+any approach tried here.** This is an honest NEGATIVE — the anti-cheat + 6-seed generalization did exactly their job, and per
+the BRAIN-BASED-ONLY standard an honest negative that maps a substrate limit IS the deliverable. The body below is retained
+verbatim as the (now-fully-corrected) record of the attempt; its headline claims are RETRACTED.
 
 ---
 

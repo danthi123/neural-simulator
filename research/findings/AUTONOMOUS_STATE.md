@@ -9029,7 +9029,13 @@ generalization — the 18/18 is only on the 3 TUNED seeds in the specific step2d
 reproduce seed-42, so it may be build/operating-point-FRAGILE; 100/101/102 UNVERIFIED. **Committed B-1c.2 close-out stays GO
 2/3; this "3/3 surpass" is DOWNGRADED to unverified/possibly-fragile, mechanism-not-as-claimed.** The anti-cheat caught the
 overclaim before it stood (the rigor working). Correction folded into `2026-07-04-conductance-domain-signed-readout-SURPASS.md`.
-Next honest step: a proper PER-SEED scale sweep of the clipped-positive read on 6 seeds — is it real + generalizing?
+**FINAL VERDICT (the fair 6-seed test `step2g_clip_vs_shift_fair.py`, c2 harness + per-seed scale sweep, floor 30): NO
+generalizing surpass.** The clipped-positive read is 18/18 on the 3 TUNED seeds (42/43) but **0/18, 6/18, 5/18 on the UNSEEN
+100/101/102** (worse than Ws−shift's 7/10/10 there) — the "18/18 on 42/43/44" was OVERFIT. ⇒ the whole arc fails on BOTH
+counts (signed mechanism DECORATIVE per anti-cheat + positive read OVERFIT per 6-seed test). **The B-1c.2 read-out close-out
+honestly STANDS at GO 2/3; the degraded-seed-44 residual is NOT surpassed.** An honest NEGATIVE — the anti-cheat + 6-seed
+generalization did their job. Per BRAIN-BASED-ONLY, an honest negative mapping a substrate limit IS the deliverable. The
+`...SURPASS.md` headline claims are RETRACTED (content corrected in place).
 **EXACT NEXT CONCRETE ACTION:** the one-brain SUBSTRATE is done; the two remaining rungs (per the ladder): **(2) A→W
 NEURAL WORD-SPELL** — every WORD on spikes (not just the order). Retrain the EMERGE-67/68 A→W read-out on the transitive
 vocab (dog/chase/ball...) + pass `UnifiedNeuralSpell` as the producer `spell=` (cupy; the whole turn then co-executes on
