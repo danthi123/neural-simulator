@@ -2036,7 +2036,8 @@ class SimulationBridge:
         index range from region_manager, and overrides cp_izh_* / cp_hh_*
         arrays for those indices using the region's per-type preset.
         """
-        import cupy as cp_local  # local alias avoids confusion with self attrs
+        # (removed a dead `import cupy as cp_local` — it was never used; the body uses the module-level backend
+        #  alias `cp`, and the unconditional cupy import aborted every multi-region build on a cupy-less/numpy host.)
         for region in cfg.brain_regions:
             indices = self.region_manager.indices(region.name)
             if not indices:
