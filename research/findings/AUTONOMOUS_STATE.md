@@ -8831,6 +8831,28 @@ NEXT: build `_rungB1b_..._derisk.py` = fork RUNG B-1, replace the host-argmax ro
 ens with `(f@Ws[k])[[0,1,2]]` instead of the parser conj), 9 anti-cheats (B-1's six + provenance[no host argmax; opened
 gate==WTA winner] + WTA-lesion[zero I→E → collapse] + Ws-scramble[→collapse]), multi-seed. THEN B-1c (Ws as synapses).
 
+**CYCLE 913 (RUNG B-1b GO — the host `argmax` is REMOVED; role selection is an ON-BRIDGE spiking WTA).** Built
+`_rungB1b_neural_role_wta_derisk.py`: the reservoir logits `(f@Ws[k])[[AGENT,PREDICATE,THEME]]` drive an on-bridge
+mutual-inhibition WTA (3 ens + shared inh on the `role_wta` slice; E→I/E→E/I→E via `set_pathway_weights(add_missing)`
+in-place; `cp_traits[inh]=1`; `couple_gate_to_indices(role_route_<r>, ens[r], threshold=0.005)`); the WINNER's firing
+opens its gate; `_op_wta` mirrors `_op_synaptic` (settle 40 → prewarm-latch the first/winner gate → HOLD, never
+force-set → composer readout). 3/3 UNANIMOUS GO, all NINE anti-cheats (B-1's six + provenance-neural-select
+[`_op_wta` never sees `Ws`; latched==argmax-over-ens-firing] + WTA-lesion collapse [zero I→E; 0<12, seed43 4<12] +
+Ws-scramble collapse); route 12/12 == host-argmax dict on the SAME substrate; ~87 s/seed. Independently VERIFIED
+(seed-42 re-run GO; read the code — genuine gate-selection, real I→E lesion, honest source-check; NO `sim/` edit).
+Honest tuning (self-caught): drive → uniform BASE=150+GAIN=120 (so I→E inhibition is load-bearing, not feedforward);
+latch never force-opens (so route+WTA lesions bite); pd 128→192 (OU codebook-margin, the I5a 64→128 lever; route was
+0/6 role-mismatch vs host argmax). Committed on main + pushed. The host `f@Ws` matmul is the LAST shortcut → B-1c.
+
+**EXACT NEXT (B-1c — the final on-substrate close-out):** make `Ws` real reservoir→ensemble SYNAPSES. Put the reservoir
+ON the unified bridge (EMERGE-82 `OnBridgeLSM` slice, co-resident) and project its firing through `Ws` (300×3 per slot,
+SIGNED → an ON/OFF ± decomposition like the composer's role ±1, or a shifted-positive encoding) as fixed synapses onto
+the 3 role ensembles, so the WTA drive is synaptic and the host `f@Ws[k]` matmul is GONE. Reconcile dt (reservoir 0.5
+vs bridge 1.0 — EMERGE-94 showed the reservoir parses at 1.0). Gate the WTA readout to start after the reservoir's last
+token (whole-sequence integration). Reuse the B-1b harness + anti-cheats. Cheapest-first de-risk: one slot's Ws as
+synapses → the ens fire the same winner as the host `f@Ws` on the 6 test words → then the full turn. BUILD IT — the
+one-substrate close-out; boundaries = undiscovered mechanisms; commit each rung; push (GCM cached); no host shortcuts.
+
 **EXACT NEXT CONCRETE ACTION:** the one-brain SUBSTRATE is done; the two remaining rungs (per the ladder): **(2) A→W
 NEURAL WORD-SPELL** — every WORD on spikes (not just the order). Retrain the EMERGE-67/68 A→W read-out on the transitive
 vocab (dog/chase/ball...) + pass `UnifiedNeuralSpell` as the producer `spell=` (cupy; the whole turn then co-executes on
