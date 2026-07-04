@@ -8940,6 +8940,26 @@ GO 2/3 (positive read-out, runtime-synaptic, per-seed host-calibrated scale, can
 composer ±1 bank — NOT a downstream nonlinear inhibitory relay) + a reservoir-VALIDATED non-canonical construction (a
 specific EMERGE-78/79 relative clause whose HOST read-out is confirmed structural FIRST). Committed + pushed.
 
+**CYCLE 916 (signed read-out SURPASS in progress — mechanism SOLVED, seed-robustness root-caused to reservoir-synchrony
+depolarization block; the biological fix is slow-integration/decorrelation).** Per owner (no defer — surpass every limit
+by researching+implementing a biological mechanism): the signed read-out boundary is being SURPASSED, not banked.
+BOUNDARY-1 (signed read-out) SOLVED at the mechanism level via the composer's ON/OFF OPPONENT code (deep-research gate
+`aa7868`): 3 `ens_pos` (driven by `Ws+`) + 3 `ens_neg` (driven by `Ws-`), ALL EXCITATORY (Dale-legal, NO nonlinear
+relay), winner = `argmax_r(Σens_pos[r] − Σens_neg[r])`, PLUS the SIGNED BIAS INTERCEPT carried as a per-ens tonic
+(bias+ on ens_pos, bias- on ens_neg — WITHOUT it 6/18, WITH it reconstructs the full signed logit `f@Ws`). LINEAR
+ceiling 18/18 all seeds; SPIKING 18/18 on the degraded seed 44 (positive read-out only got 11/18 there). Scratchpad:
+`step1_onoff_opponent.py`. REMAINING SUB-BOUNDARY: seed-robustness — seeds 42/43 = 0/18 at EVERY operating point tried
+(floor 0→400, scale 30→240, OU on/off, baseline-subtracted). ROOT CAUSE (diagnosed via a seed-44-vs-42 firing
+comparison, `step1_diag2.py`): seed-dependent reservoir firing SYNCHRONY. At an identical drive (~126 pA to role-0's
+ens), seed 44's steady reservoir keeps the ens MONOTONIC (fires 4355) but seed 42's SYNCHRONIZED/bursty reservoir slams
+the higher-drive ens into DEPOLARIZATION BLOCK (fires 1439 < the drive-0 role's 5075) → the spiking read INVERTS → 0/18.
+The `Ws` decode is exact (linear 18/18 both); only the spiking read is corrupted by burst-induced block on synchronized
+draws. BIOLOGICAL FIX (implementing next, NOT deferring): SLOW synaptic integration (NMDA-like, ~100 ms) on the res→ens
+synapses to average the bursts so the ens see the MEAN (linear `Ws@f`) input; and/or decorrelate the reservoir into the
+async-irregular regime (balanced E/I / stronger OU); and/or a larger heterogeneous ens population (NEF — some units always
+in the linear band). Then confirm 42/43/44 + a FIXED scale, promote the ON/OFF opponent to the durable runner, then the
+Boundary-2 EMERGE-79 premise + recurrence-lesion gates.
+
 **EXACT NEXT CONCRETE ACTION:** the one-brain SUBSTRATE is done; the two remaining rungs (per the ladder): **(2) A→W
 NEURAL WORD-SPELL** — every WORD on spikes (not just the order). Retrain the EMERGE-67/68 A→W read-out on the transitive
 vocab (dog/chase/ball...) + pass `UnifiedNeuralSpell` as the producer `spell=` (cupy; the whole turn then co-executes on
