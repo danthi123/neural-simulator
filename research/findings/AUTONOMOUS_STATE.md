@@ -8806,6 +8806,15 @@ timing). Fork `_rungB1_reservoir_synaptic_handoff_derisk.py`; reuse
 `_phaseB_biased_competition_wta_derisk` (mutual-inhibition topology), `unified_brain_bridge`
 (`_wire_synaptic_route` template, `couple_gate_to_indices`, `merge_population_into_shared_bridge`).
 
+**CLOSE-OUT DIRECTIVE (owner, 2026-07-04):** do NOT bank the cheapest-first B-1b as the endpoint — close ALL the
+shortcuts out onto the ONE shared substrate, fully biological. Concretely the shipped target is: (i) the 3 role
+ensembles + inhibitory pool live ON the `UnifiedBrainBridge` (NOT a standalone side-bank — a standalone WTA is only a
+dev-time mechanism check); (ii) the WTA winner's firing DIRECTLY opens `role_route_<r>` via `couple_gate_to_indices`
+(no conjunction hop, no host `argmax`); (iii) B-1c is REQUIRED, not deferred — `Ws` becomes real reservoir→ensemble
+SYNAPSES with the reservoir (`OnBridgeLSM`) co-resident on the same bridge, so the host `f @ Ws[k]` matmul is gone too.
+End state: NOTHING load-bearing in role selection is host-computed; the whole comprehend→select→bind→recall→speak turn
+runs on one `SimulationBridge`. See memory `no-shortcuts-one-substrate`.
+
 **EXACT NEXT CONCRETE ACTION:** the one-brain SUBSTRATE is done; the two remaining rungs (per the ladder): **(2) A→W
 NEURAL WORD-SPELL** — every WORD on spikes (not just the order). Retrain the EMERGE-67/68 A→W read-out on the transitive
 vocab (dog/chase/ball...) + pass `UnifiedNeuralSpell` as the producer `spell=` (cupy; the whole turn then co-executes on
