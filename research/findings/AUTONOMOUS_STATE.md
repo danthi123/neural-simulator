@@ -9056,6 +9056,26 @@ circuit. ~20 mechanisms tried + anti-cheated + 6-seed-tested; all in `research/f
 an honest, rigorously-established NEGATIVE that MAPS the boundary + revises the committed read-out's robustness. The broader
 one-brain conversational close-out (all 4 host shortcuts removed on 42/43/44) stands; a robustly-generalizing read-out is
 the open frontier.
+
+**CYCLE 920 (the BIOLOGICAL fix — a LEARNED delta-rule read-out resolves the degraded seed 44 + removes a residual host
+shortcut; 6-seed generalization IN FLIGHT).** Owner directive: pursue the seed-adaptive/learned read-out, everything
+biological, no non-biological shortcuts. A research gate (4-agent, measurement-grounded) reframed it: the read-out matrix Ws
+was a HOST RIDGE FIT (`np.linalg.solve`) — a residual non-biological shortcut, and its train/deploy OBJECTIVE MISMATCH
+(ridge minimizes a linear rate-reconstruction; deploy runs a spiking WTA whose winner is ignition-order) is exactly why it
+was seed-fragile. FIX = a **per-role DELTA RULE learned ON the spiking substrate** (`step5_learned_readout.py`): per sentence
++ slot, drive the FROZEN reservoir → ρ=reservoir firing, a=ACTUAL ens firing; `W_k[r,:] += η·(T_r − a_norm_r)·ρ` (T=known
+role label; per-role-LOCAL error — the credit rule that passed 3/3, NOT the global scalar that failed; rate-Hebbian/delta
+NOT STDP; clip ≥0 Dale-legal). The learned W ARE the read-out — NO host solve, NO f@Ws, NO host argmax. Because `a` is the
+REAL spiking firing (WTA ignition-order IN the error), it learns to WIN THE SPIKING COMPETITION on THIS draw → generalizes
+by construction. DE-RISK (seed 44 = the degraded draw, host-fit 11/18): **18/18** at E12 (scaled: E4→12/18, E12→18/18 =
+under-trained not ceiling), **scrambled-label = 0/18** (learning genuinely role-specific — the anti-cheat holds). Backed by
+the project's own fixed-reservoir + local-delta-rule prototype (scored 1.000). ⇒ the boundary that ~20 fixed-circuit read
+mechanisms + feature-conditioning could NOT crack IS surpassed by LEARNING the read-out biologically — AND it retires the
+host ridge shortcut. **6-SEED BLIND (the headline: does it hold on unseen 100/101/102, host-fit 7/9/5) RUNNING** (same fixed
+E12/η0.05/N35, no per-subset tune, GO=≥17/18 all six). Wallclock unconstrained (owner). Finding:
+`2026-07-04-biological-learned-readout-delta-rule.md`; scratchpad `research/findings/raw/signed_conductance/step5_learned_readout.py`.
+NEXT after 6-seed: promote to `--mode c3` (`_learn_Ws_spiking` replacing `_fit_Ws_spiking`, c1/c2 verbatim) + the remaining
+anti-cheats (syn-lesion collapse, global-scalar-control near chance, source-clean).
 **EXACT NEXT CONCRETE ACTION:** the one-brain SUBSTRATE is done; the two remaining rungs (per the ladder): **(2) A→W
 NEURAL WORD-SPELL** — every WORD on spikes (not just the order). Retrain the EMERGE-67/68 A→W read-out on the transitive
 vocab (dog/chase/ball...) + pass `UnifiedNeuralSpell` as the producer `spell=` (cupy; the whole turn then co-executes on
