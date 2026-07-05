@@ -9200,3 +9200,39 @@ delta rule + signed conductance delivery generalize objrel where fixed-signed ov
 any claim. (3) **RUNG B synaptic comprehension→composition hand-off** (CPU-feasible; the functional one-brain). Recommend (1)+(2)
 in parallel (independent: GPU vs CPU). PARALLELIZE; boundaries = undiscovered mechanisms; multi-seed + anti-cheat EVERY claim
 (2 overclaims caught tonight); moat a PLUS; ARM A MONITOR on long runs.
+
+## CYCLE 922 (2026-07-05, DESKTOP resumed after the laptop handoff — repo RE-SYNCED; two parallel threads launched)
+
+**Repo reconciliation DONE.** The desktop (home, RTX 3090) lost network mid-session; the owner ran a LAPTOP session (CYCLE
+911-921, the RUNG B-1..c + learned-read-out arc, 23 commits) which pushed to ORIGIN only — gitea was 23 behind (still at
+EMERGE-95). On desktop resume: fast-forwarded local main to origin (clean, 0 local commits lost), **re-synced gitea** (pushed
+db05a1d8..1b85800f), verified all three (local == origin == gitea == `1b85800f`), and the laptop RUNG B-1 CI reproduces on
+the desktop (15 fast tests pass). The desktop's orphaned RUNG B-1 attempt (`_emerge96_reservoir_synaptic_composition_derisk.py`,
+superseded by the laptop's `_rungB1*` runners) is preserved in scratch + a git stash. NOTE for future sessions: the laptop
+CYCLE-921 note "NOT a git repo (no commit)" referred to a mid-run checkout state; the c3/handoff commits ARE on origin.
+
+**TWO PARALLEL THREADS IN FLIGHT (GPU + CPU, per PARALLELIZE):**
+- **(A) A→W NEURAL WORD-SPELL (GPU, running).** `_rungB1_aw_neural_words_transitive_derisk.py` retrains the EMERGE-67 A→W
+  read-out (BRIDGE-A) on a 16-word TRANSITIVE content vocab (new cache `bridges/rungB1_aw_trans/`; reuse-by-import, NO sim/
+  edit) so the capstone producer speaks EVERY WORD on spikes (content via the retrained BRIDGE-A, det "the" via the existing
+  BRIDGE-F). GPU train in flight (controller-bg + Monitor); validate all-word-render 1.00 + content-lesion-collapse next.
+- **(B) OBJREL SURPASS de-risk (CPU subagent, running).** The objrel structural-read boundary research gate (a50b7c2465551d75e)
+  returned DECISIVE: it is a RANK-1 ADDITIVE COMMON-MODE problem (the linear argmax is shift-invariant → objrel 100%; the
+  spiking WTA reads TOTAL drive incl. the pedestal → loses the differential), NOT the Mikulasch-Priesemann wall. Fix =
+  SUBTRACTIVE common-mode removal before the WTA (shared FF PV+ inhibition, catalog B.06; divisive norm is the WRONG match —
+  deranked). **IMPORTANT CORRECTION: the laptop's `step11_centered_drive.py` probe (the gate's recommended "just run it") is
+  BROKEN** — I ran it (seed 42): canon 0.00 on BOTH pedestal AND centered, because its `drive_wta` injects the host logit as
+  EXTERNAL current, BYPASSING the real Ws-shifted res→ens SYNAPSES (`C.run_with_ens`/`_drive_and_read`). So a VALID test must
+  use the real synaptic read + reproduce the c2 baseline (canon pass, objrel fail) FIRST. An implementer (ab20b87d832a34b44) is
+  building the correct de-risk: the shared subtractive inhibitory pool on the real c2 read, 6-seed-BLIND (42/43/44 dev +
+  100/101/102 blind), anti-cheats (objrel-recovers-blind, canonical-not-regressed, differential-load-bearing, scramble). If the
+  mean-subtraction alone fails (CYCLE-919 WTA ignition-order may dominate), the fallback = the LEARNED-SIGNED delta read
+  (`step8_learned_signed.py`, inherits the c3 delta rule's canonical 6/6 generalization). HONEST BOUNDARY over gamed pass
+  (laptop caught 2 overclaims on this arc).
+
+**EXACT NEXT CONCRETE ACTION:** (A) on the A→W train's completion — validate the transitive all-word spike render (GO =
+render 1.00 + content-lesion collapse); commit both remotes. (B) on the objrel implementer's return — VERIFY (re-run the
+baseline-reproduces + the 4 anti-cheats, inspect for gaming), then commit the GO or the honest boundary; if boundary, build
+the learned-signed fallback (step8) as the named next mechanism. Then: wire the RUNG B-1 synaptic hand-off + the A→W words
+into the flagship console (production wire-in of the functional one-brain). PARALLELIZE; boundaries = undiscovered mechanisms;
+6-seed-blind + anti-cheat EVERY claim; moat a PLUS; honest origin+gitea EACH cycle; CONTROLLER runs GPU INLINE; ARM A MONITOR.
