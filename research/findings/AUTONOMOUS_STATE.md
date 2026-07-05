@@ -9154,3 +9154,49 @@ held-out>memorization-floor(lookup-table), moat preserved. 6-seed. Ultracode ON 
 (Workflow) the held-out-genuineness + control-validity + moat before GO. (3) ON GPU 75b verdict: commit 75b. PARALLELIZE;
 boundaries = undiscovered mechanisms; NO stopping; sim/ edits fair when de-risked; moat a PLUS; honest origin+gitea; COMMIT ON
 MAIN; CONTROLLER runs GPU steps INLINE; ARM A MONITOR.
+
+## CYCLE 921 (2026-07-05, LAPTOP — c3 PROMOTED + seed 101 CLOSED genuinely; the ADVERSARIAL AUDIT reframed the arc: the read-out reads POSITION not ROLE; objrel structural read = a MULTIPLY-CONFIRMED boundary for FIXED read-outs; cupy GPU stack installed)
+
+**PRIMARY DELIVERABLE DONE + validated.** The biological learned (delta-rule) read-out is promoted to `--mode c3` in
+`_rungB1c_spiking_reservoir_synaptic_readout_derisk.py` (additive; c1/c2 byte-identical): `_learn_Ws_spiking` replaces the host
+ridge, `run_seed`/`new_route_bridge`/4 anti-cheat sites dispatch c3, `--mode` choices + output/agg, source-checks. **Seed 101
+CLOSED genuinely** — NOT under-training (the AUTONOMOUS_STATE hypothesis at 9077 is REFUTED: E20=12/18 worse; every legit lever
+capped ~12-14/18) and NOT the P160/P240 "population lever" (that was a RESERVOIR-POSITION CONFOUND — `WTA_P_C2` is a def-time-
+frozen arg so it only shifted the reservoir onto a luckier heterogeneity draw; caught by a control before baking in). The real
+fix: **`READ_T=30`** (the c2 CRUX window; c3 had step6's speed-compromise T=18) → seed 101 = 18/18 at the DEFAULT position →
+6/6. `C3_READ_T_STEP=30` now default. Two c3 integration bugs fixed (WTA-size routing to c1's P=20; D2 = `_source_learned_
+readout_clean` was defined-but-never-called). Fast CI green (7); **anti-cheats CLEAN 2-seed (42/44): LEARNED 18/18, scramble 0,
+global 6, syn-lesion 6** (chance 6) — genuine, per-role-local, synapse-load-bearing.
+
+**THE ADVERSARIAL AUDIT (ultracode) REFRAMED THE ARC — the read-out reads POSITION, not grammatical ROLE.** Audit caught D1:
+the canonical SVO test is position-trivial-ish (role ≈ left-to-right content position), so "18/18 canonical" does NOT prove
+role-reading. The decisive OBJECT-RELATIVE test (objrel: slot0=THEME not AGENT; role≠position; in `_TRAIN_KINDS`) = **3-seed
+HONEST NEGATIVE** (42/44/100: canonical 36/36, **objrel 0/36**, objrel-slot0 THEME 0/12). ISOLATED precisely: the reservoir
+FEATURE encodes objrel (signed AND positive-shifted LINEAR argmax = 100% every seed) but EVERY spiking deploy fails
+(positive-shift WTA, low-floor 150→15, no-competition, delta, signed conductance). The wall = the spiking f-I/WTA read of the
+subtle structural margin under the positive common-mode pedestal (which the shift-invariant linear argmax cancels).
+
+**SURPASS ROUND run in full; boundary SURVIVED for FIXED read-outs.** Research gate (3 angles) said "surpassable via common-mode
+removal"; its #1 cheap fix (low-floor) was empirically REFUTED. The signed conductance looked like a surpass on seed 42 (objrel
+0.92) but the MULTI-SEED test REFUTED it (slot0 0.75/0.00/0.50 on 42/44/100; harness degraded for canonical every seed) = the
+exact operating-point overfit the earlier signed arc documented+retracted. ⇒ NO generalizing surpass via any FIXED read-out;
+NOT the irreducible Mikulasch-Priesemann wall (info present+separable) — it's the SEED-ADAPTIVE-READ frontier. The precise
+(uncertain, UNCLAIMED) next mechanism: a **LEARNED SIGNED read** (the delta rule — which per-draw-adapts + generalized the
+CANONICAL read 6/6 — extended to signed conductance delivery); warrants its OWN research gate + de-risk (new mechanism class),
+built fresh (NOT rushed — 2 overclaims caught tonight via multi-seed/anti-cheat: the population confound + the signed seed-42).
+
+**Honest scope:** the CANONICAL SVO conversational task (the production use case) is position-solvable, so the c3 read-out WORKS
+for it (host ridge shortcut removed, 6/6, anti-cheats clean); genuine non-local structural role-reading is the characterized
+open frontier. **cupy GPU stack installed + verified** (14.1.1 + full CUDA 12.9 math libs; kernels/bridge/RNG on the GTX 1660
+Ti) → the A→W word-spell next-action is now GPU-unblocked. Known gap: `build_unified_bridge` cupy-path `cp_traits=None` (numpy
+only; tracked). Finding: `2026-07-04-biological-learned-readout-delta-rule.md` (+ raw/signed_conductance/step7_*). Env: LAPTOP,
+NOT a git repo (no commit); deliverables = the file edits.
+
+**EXACT NEXT CONCRETE ACTION (updated):** (0) tie off the runner-integration confirmation (slow CI `test_seed42_c3_learned_
+readout_GO` + runner seed-101 at T=30, in flight — confirm the committed runner reproduces). (1) **A→W NEURAL WORD-SPELL (GPU,
+now unblocked)** — retrain the EMERGE-67/68 A→W read-out + pass `UnifiedNeuralSpell` as producer `spell=` (cupy; controller runs
+INLINE + Monitor). (2) **The LEARNED SIGNED read** (objrel surpass) — its own research gate first (new mechanism class): can the
+delta rule + signed conductance delivery generalize objrel where fixed-signed overfit? de-risk multi-seed + anti-cheat BEFORE
+any claim. (3) **RUNG B synaptic comprehension→composition hand-off** (CPU-feasible; the functional one-brain). Recommend (1)+(2)
+in parallel (independent: GPU vs CPU). PARALLELIZE; boundaries = undiscovered mechanisms; multi-seed + anti-cheat EVERY claim
+(2 overclaims caught tonight); moat a PLUS; ARM A MONITOR on long runs.

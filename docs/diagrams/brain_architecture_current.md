@@ -1,8 +1,34 @@
-# Brain architecture — current state (2026-06-23)
+# Brain architecture — current state (2026-06-23 · currency-noted 2026-07-05)
 
 Maintainable, **as-implemented** Mermaid flowcharts of the whole simulated
 brain, kept in step with `research/findings/AUTONOMOUS_STATE.md` and the
 2026-06-23 findings. These render directly on GitHub.
+
+> **Currency note (2026-07-05).** Diagrams 1–3 below are the 2026-06-23 state.
+> The faculty **firewall** (gate → constrain → verify) and the **develop loop**
+> structure still hold, but the language stack has since moved on — recorded
+> honestly here rather than silently left stale:
+> - **Generation** moved beyond the spiking Qwen2.5-0.5B shown in Diagram 1:
+>   first transformer-**minimized** (a locally-trained ~21M TinyStories
+>   generator for open fluid conversation, 2026-07-01), then, for the bounded
+>   grounded-answer frames, transformer-**FREE** — a self-organized **spiking
+>   Broca** producer whose entire grammatical structure (function words · slot
+>   order · slot inventory) is *discovered from corpus experience* and spoken
+>   **on spikes**, on one brain in one process (EMERGE-59..71, 2026-07-03).
+> - **Comprehension** gained the RUNG B **fronto-striatal reservoir** (form→role,
+>   a spiking liquid-state machine realized as a recurrent `BrainRegion`) that
+>   retires the hand role-labeler; its reservoir→role **read-out is now
+>   biologically LEARNED** — a per-role delta rule, with the host ridge-fit
+>   **removed** (6/6 seed, 2026-07-05). **Diagram 1b** below is current.
+> - **Open frontier** (2026-07-05): the biological read-out reads grammatical
+>   **role from word position** on canonical subject-verb-object facts, but not
+>   yet from **non-local structure** (object-relative clauses, where word order
+>   ≠ roles) — a precisely-characterized boundary being ground, *not* an
+>   irreducible wall (the reservoir feature encodes it; the spiking read-out
+>   loses it). Diagram 1b.
+> The generation-side redraw of Diagrams 1–2 and the exhaustive detail **SVGs**
+> are the larger refresh (they use the `review-diagrams` render + tile-review +
+> git-commit loop — a desktop task).
 
 The whole-brain pipeline, top to bottom:
 
@@ -142,6 +168,57 @@ know", the moat never breached). Navigation is a co-resident, disjoint-slice
 brain on the same bridge, joined to the conversation by three validated
 cross-brain routes (drawn in full on the master SVG). The whole bridge is run
 forward over simulated days by the develop loop.
+
+---
+
+## 1b. Comprehension read-out — form → role (current, 2026-07-05)
+
+How the brain reads **who-did-what** from a sentence, on the shared spiking
+substrate — the comprehension detail behind the PARSER node in Diagram 1. The
+hand role-labeler is retired: a fixed-random **fronto-striatal reservoir** (a
+recurrent spiking liquid-state machine, realized as a `BrainRegion`) turns the
+whole sentence into a state that encodes its grammatical structure; a
+per-content-slot **read-out** drives three role winner-take-all ensembles, and
+the winner is a **neural** read of their spiking. The read-out is **biologically
+LEARNED** — a per-role delta rule on the frozen reservoir — which **removes the
+last host shortcut** here (a ridge least-squares fit that was standing in for
+the brain). It generalizes across reservoir draws (6/6 seed) on canonical facts;
+the object-relative structural read is the open frontier.
+
+```mermaid
+flowchart TB
+    S([💬 sentence · flexible word order]):::io
+    RES["fronto-striatal RESERVOIR<br/>form→role · recurrent spiking LSM (BrainRegion)<br/>state encodes grammatical structure"]:::conv
+    READ["role READ-OUT<br/>reservoir → 3 role WTA ensembles<br/>winner = neural read of spiking"]:::learn
+    ROLES{{"who-did-what<br/>agent · predicate · theme"}}:::conv
+    COMP["COMPOSER · bind roles → a fact<br/>(feeds Diagram 1)"]:::conv
+
+    S --> RES --> READ --> ROLES --> COMP
+
+    CANON["canonical SVO — role == word position<br/>✓ generalizes 6/6 seed<br/>host ridge-fit shortcut REMOVED"]:::ok
+    OBJREL["object-relative — role ≠ position<br/>e.g. 'the ball that the dog chased'<br/>⚠ reads position, not structure — FRONTIER"]:::frontier
+    READ ==>|solves| CANON
+    READ -.->|open · being ground| OBJREL
+
+    NOTE["feature encodes objrel (linear read 100%);<br/>the spiking read-out loses it → surpassable,<br/>not irreducible. ladder being climbed:<br/>balance · ridge-init · homeostatic op-point · phase read"]:::note
+    OBJREL -.-> NOTE
+
+    classDef io fill:#eef1f4,stroke:#7a8794,color:#1d1d1f;
+    classDef conv fill:#d6eaf8,stroke:#2e6da4,color:#1d1d1f;
+    classDef learn fill:#dcefd3,stroke:#2f8f4e,color:#1d1d1f;
+    classDef ok fill:#dcefd3,stroke:#2f8f4e,color:#1d1d1f;
+    classDef frontier fill:#fdebd0,stroke:#c8791a,color:#1d1d1f;
+    classDef note fill:#f4f2ec,stroke:#a99a7a,color:#1d1d1f;
+```
+
+**The honest split.** *Removed:* the host ridge read-out (the delta rule learns
+it on the substrate) and the hand role-labeler (the reservoir replaces it).
+*Frontier:* genuine non-local grammatical structure — the read-out reads
+position, which suffices for canonical subject-verb-object facts but is not
+LLM-equivalent comprehension. Provenance: RUNG B-1c
+(`_rungB1c_spiking_reservoir_synaptic_readout_derisk.py`, `--mode c3`),
+EMERGE-78..85 (the reservoir), findings
+`2026-07-04-biological-learned-readout-delta-rule.md`.
 
 ---
 

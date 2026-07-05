@@ -97,6 +97,37 @@ def test_synaptic_readout_source_clean():
     assert B1C._source_synaptic_readout_clean() is True
 
 
+def test_learned_readout_source_clean():
+    """(mode c3, source) the read-out is BIOLOGICALLY LEARNED, not host-fit: `_learn_Ws_spiking` has NO host ridge/
+    least-squares solve (no `linalg.solve`/`lstsq`/`pinv`) and never calls the c2 host ridge fitter `_fit_Ws_spiking`;
+    it DRIVES the spiking reservoir (`run_with_ens`) and updates the res2ens synapses by a per-role LOCAL delta
+    (`np.outer(target - actual_ens_firing, reservoir_firing)`). This removes the last host shortcut in the read-out
+    itself (c2 still used a host ridge to DEFINE Ws; c3 learns Ws on the substrate)."""
+    assert B1C._source_learned_readout_clean() is True
+
+
+def test_learned_readout_returns_c2_format():
+    """`_learn_Ws_spiking` returns Ws in the SAME {slot: (n_res+1) x n_roles} format `_fit_Ws_spiking` returns (bias
+    row + GOAL/LOCATION cols = 0), so the whole c2 SlotReadout/_bind_c2/_op_wta_synaptic/anti-cheat machinery is reused
+    unchanged. Structural check with a tiny (epochs=1, 1-sentence) learn so it stays fast."""
+    from research.runners._emerge78_reservoir_form_to_role_derisk import Encoder, _gen, _TRAIN_KINDS
+    corpus = B1C.setup_corpus(seed=42)
+    enc = Encoder(corpus["discovered"])
+    rng = np.random.default_rng(42 * 101 + 5)
+    train = _gen(_TRAIN_KINDS, 1, rng, corpus["subj"], corpus["verb"], corpus["obj"])
+    ub, ens, _inh = B1C._build_wired_bridge(42, corpus, mode="c3")
+    res_idx, W_in = B1C.wire_reservoir(ub, enc.dim, 42)
+    res = B1C.UBReservoir(ub, res_idx, W_in); res.snapshot_after_wiring()
+    Ws = B1C._learn_Ws_spiking(ub, res, ens, enc, train, 42, epochs=1)
+    n_res = len(res_idx); n_roles = len(B1C._ROLES)
+    assert set(Ws.keys()) == {0, 1, 2}
+    for k in (0, 1, 2):
+        assert Ws[k].shape == (n_res + 1, n_roles)
+        assert np.allclose(Ws[k][n_res, :], 0.0)          # bias row zero (the learned rows carry the argmax)
+        assert np.allclose(Ws[k][:, 3:], 0.0)             # GOAL/LOCATION cols zero (3-way canonical read)
+        assert (Ws[k] >= 0.0).all()                       # Dale-legal (clipped >= 0)
+
+
 # ── slow end-to-end gates ────────────────────────────────────────────────────────────────────────────────────
 @pytest.mark.slow
 def test_seed42_c1_GO():
@@ -140,4 +171,26 @@ def test_seed42_c2_synaptic_readout_GO():
     assert d["res_lesion_collapses"], d                    # the RESERVOIR is load-bearing (silence-lesion collapses)
     assert d["ws_scramble_collapses"], d                   # the read-out routes the reservoir firing
     assert d["neural_select_latched_eq_firing"], d         # the winner is the neural read of the ensembles
+    assert d["seed_GO"], d
+
+
+@pytest.mark.slow
+def test_seed42_c3_learned_readout_GO():
+    """B-1c.3 (the FULL host-shortcut removal): the read-out matrix Ws is no longer a HOST RIDGE fit -- it is
+    BIOLOGICALLY LEARNED on the frozen spiking reservoir by a per-role LOCAL delta rule (`W_k[r] += eta*(T_r - a_r)*rho`,
+    a = ACTUAL spiking-ensemble firing incl. the f-I nonlinearity + WTA ignition-order INSIDE the error). This fixes the
+    ridge's train/deploy objective MISMATCH (ridge = linear rate-reconstruction; deploy = spiking WTA whose winner is
+    ignition-order) that made c2 seed-fragile. Seed 42 GO (== step6 18/18): route recovers the fact EXACTLY as the
+    host-dict, BOTH source-checks hold (SELECT path + the LEARNED read-out), and the learned synapses are load-bearing."""
+    corpus = B1C.setup_corpus(seed=42)
+    d = B1C.run_seed(42, corpus, mode="c3")
+    assert d["route_correct"] == d["n_queries"], d         # route recovers every fact as the host-dict (seed-42 clean)
+    assert d["route_not_worse_than_dict"], d
+    assert d["moat_clean"], d                              # no confabulation on unstored (agent, action)
+    assert d["synaptic_source_clean"], d                   # the SELECT path is neural (no host f@Ws)
+    assert B1C._source_learned_readout_clean(), d          # the read-out itself is LEARNED (no host ridge solve)
+    assert d["synaptic_readout_collapses"], d              # the learned read-out synapses are load-bearing
+    assert d["res_lesion_collapses"], d                    # the RESERVOIR is load-bearing (silence-lesion collapses)
+    assert d["ws_scramble_collapses"], d
+    assert d["neural_select_latched_eq_firing"], d
     assert d["seed_GO"], d

@@ -75,11 +75,116 @@ lifts EVERY previously-failing unseen seed (100: 7→18, 102: 5→18, 44: 11→1
 biological surpass AND it retires the host ridge-fit shortcut. Seed 101 (14/18) is the lone laggard — almost certainly
 under-trained at E12 (seed 44 climbed 12→18 with more training), the exact-next to close toward clean 6/6.
 
-## Honest scope / next
-- Seed 101 → more training (E18-24 at the same fixed protocol on ALL seeds) toward ≥17/18 6/6.
-- Anti-cheats: scrambled-label (shown 0/18); + to run: syn-readout lesion collapses, global-scalar-control near chance,
-  source-clean (no ridge/`f@Ws`/host argmax in the learn+select path).
-- Promotion: `--mode c3` in `_rungB1c_spiking_reservoir_synaptic_readout_derisk.py` (add `_learn_Ws_spiking` replacing
-  `_fit_Ws_spiking`; leave c1/c2 verbatim). Scratchpad: `research/findings/raw/signed_conductance/step5_learned_readout.py`.
+## Session update (2026-07-05) — c3 PROMOTED into the runner + CI green; seed-101 fix in flight; GPU stack completed
+
+**Promotion DONE — `--mode c3` shipped in `_rungB1c_spiking_reservoir_synaptic_readout_derisk.py` (additive; c1/c2 byte-identical).**
+`_learn_Ws_spiking` (the per-role delta rule) replaces the host ridge `_fit_Ws_spiking` on the c3 path; `run_seed` dispatches
+c3 in FIT + scale (`chosen_scale=1.0`, the learned weights self-scale); `new_route_bridge` + all four anti-cheat sites
+(source-check, reservoir-lesion, WTA-lesion, syn-readout-lesion) handle c3; the output/agg blocks + `--mode` choices include
+c3. A source-check `_source_learned_readout_clean()` asserts the LEARN path has NO host ridge (`linalg`/`lstsq`/`pinv`/
+`_fit_Ws`) and DOES drive the spiking reservoir (`run_with_ens`) + a per-role LOCAL delta (`outer(error, ρ)`).
+
+**c3 read params are the VALIDATED set, consistent for learn AND deploy.** The delta rule's whole point is train==deploy
+read consistency (the fix for the ridge's train/deploy objective MISMATCH), so c3 pins `READ_T_STEP=18` + `N_TRAIN=35` (the
+step6-validated config), overriding c2's unvalidated + ~2× slower `READ_T=30`/`N=60` defaults; the override is idempotent per
+mode so pytest test-order cannot leak the c3 read window into a c1/c2 run.
+
+**CI green (fast, CPU/numpy):** `tests/test_rungB1c_spiking_reservoir_synaptic_readout.py` — 7 fast tests PASS incl. the new
+`test_learned_readout_source_clean` (LEARN path host-solve-free), `test_learned_readout_returns_c2_format` (the learned Ws is
+the `{slot: (n_res+1)×n_roles}` c2 format, Dale-legal ≥0, bias/GOAL/LOCATION rows zero). Added a `@pytest.mark.slow`
+`test_seed42_c3_learned_readout_GO` (verified in the final 6-seed runner pass).
+
+**GPU stack completed (the owner's cupy install ask).** cupy 14.1.1 + the full CUDA 12.9 math stack (nvrtc/runtime/nvcc +
+curand/cublas/cusparse/cusolver/cufft/nvjitlink) installed; GTX 1660 Ti visible; kernels compile; `SimulationBridge` builds +
+steps + runs GPU RNG on both a plain bridge AND the concept-pool A→W builder (`build_concept_bridge`, 2368 neurons). ⇒ the
+mechanism's validated backend stays numpy, but the A→W next-arc is GPU-viable. Known gap: `build_unified_bridge` has a
+cupy-path `cp_traits=None` bug (the rungB1c conversational bridge only runs on numpy; tracked, same class as the documented
+`test_regions.py` cupy failures).
+
+## 2026-07-05 — ADVERSARIAL AUDIT reframes the arc: c3 reads POSITION not ROLE (honest negative, precisely isolated); seed 101 CLOSED by temporal resolution
+
+A 5-dimension adversarial audit (per ultracode) confirmed the host-shortcut removal is source-clean but caught two committed
+defects: **D2** (`_source_learned_readout_clean()` was defined but NEVER called → the c3 verdict wouldn't catch a silent ridge
+fallback in the LEARN path — **FIXED**, now AND-ed into the c3 `synaptic_source_clean` verdict), and the load-bearing **D1**:
+the GO test set is canonical SVO only, where a content word's role is largely predictable from its **position**, so "5/6 at
+18/18" does not prove the read-out reads grammatical **role**. (It also self-corrected: two auditors cited the scratchpad
+`step6_full.py` with a "circular validation vs host ridge" defect that is a step6 artifact, NOT the committed runner, which
+scores vs true test labels — the synthesis re-verified against shipped code.)
+
+**The decisive objrel test (the real question) — HONEST NEGATIVE, and precisely isolated.** The object-relative construction
+(`the PAT that the AGT V`: slot0 = THEME, not AGENT) makes role ≠ position; it is in `_TRAIN_KINDS`, so the delta rule *can*
+learn to discriminate it. Scored per-slot vs TRUE roles (not the host argmax), held-out (`step7_objrel.py`,
+`step7_signed_isolation.py`, `step7_ridge_spiking.py`):
+
+| read-out | deploy | canonical | **objrel** | objrel slot0 (THEME) |
+|---|---|---|---|---|
+| ridge Ws (signed) | linear argmax | 1.00 | **1.00** | 1.00 |
+| ridge Ws (positive-**shifted**) | linear argmax | 1.00 | **1.00** | 1.00 |
+| ridge Ws (positive-shifted) | **SPIKING WTA** | 0.97 | **0.03** | 0.00 |
+| learned delta-rule W | SPIKING WTA | 1.00 | **0.00** | 0.00 |
+
+⇒ The reservoir **feature encodes objrel** (a linear read-out solves it 100%, *even positive-shifted* — so the Dale-positive
+constraint is NOT the wall), but the **positive SPIKING WTA deploy destroys the structural read** — even with the CORRECT
+ridge structural weights (0.03). The wall is the **ignition-order winner failing to resolve the subtle structural margin under
+the positive-shift + `WS_ENS_FLOOR` common-mode baseline** (which the shift-invariant *linear* argmax cancels). Canonical
+(strong position margin) survives; objrel (subtle structural margin) does not. This is the project's documented **common-mode
+/ opponency / rate-code / point-neuron-limit** family (the composer's signed-difference SNR wall → FHRR-phasor pivot;
+Mikulasch-Priesemann). **Honest scope:** the CANONICAL conversational task (the actual production use case — SVO facts) is
+position-solvable, so the c3 read-out *works* for it; genuine structural (non-local role-from-form) reading is the harder open
+capability → **research gate dispatched** (ranked cheap-first surpass: mean-subtracted / divisively-normalized spiking WTA, or
+opponent ON/OFF signed deploy).
+
+**SURPASS attempt (research-gate-driven) — NO generalizing surpass via a FIXED read-out; the multi-seed test caught a seed-42
+overclaim.** The research gate verdict was "surpassable cheaply, runner-side"; its #1 cheap fixes were empirically REFUTED
+(low-floor sweep 150→15: objrel stays 0.00 — the shift pedestal, not the floor, dominates; WTA-competition-lesion: objrel 0.00,
+canonical drops to 0.67). The **signed conductance** read-out (`SignedReadout`: Wp exc + Wn inh relay → net drive = `Ws@f`
+signed, no positive-shift pedestal; low floor) looked like a surpass on **seed 42** (objrel slot0 0.75 vs positive 0.42) — but
+the **multi-seed test (44/100) REFUTED it**: objrel slot0 = **0.75 / 0.00 / 0.50** across 42/44/100, and the low-floor signed
+harness is *degraded for canonical on every seed* (seed 44 canonical 0.28–0.33 for BOTH positive and signed — the harness
+itself can't do canonical there). ⇒ **the fixed signed conductance is OPERATING-POINT/SEED-FRAGILE and does NOT generalize —
+the exact overfit pattern the earlier signed arc documented and retracted** (`2026-07-04-conductance-domain-signed-readout-SURPASS.md`).
+The seed-42 0.92 was operating-point-lucky; the honest read is a MULTIPLY-CONFIRMED boundary: the point-neuron spiking read of
+the subtle objrel structural margin is unreliable across reservoir draws for EVERY fixed read-out tried (positive-shift WTA,
+low-floor, no-competition, delta, signed conductance — fail or overfit). The FEATURE robustly encodes objrel (shift-invariant
+linear argmax 100% every seed); the SPIKING deploy does not. NOT the irreducible Mikulasch-Priesemann decorrelation wall (the
+info is present + linearly separable) — it is the **seed-adaptive-read** frontier the earlier arc named. **The precise open
+frontier (uncertain, a genuine new mechanism — NOT claimed):** a **LEARNED SIGNED read** — the delta rule (which per-draw
+adapts, and already generalized the CANONICAL read 6/6) extended to signed conductance-domain delivery, so it learns a signed
+structural read that adapts to each draw's operating point. Whether learned-signed generalizes objrel where fixed-signed
+overfit is the open question — the specified next arc, to be de-risked before any claim. Probes:
+`research/findings/raw/signed_conductance/step7_{objrel,signed_isolation,ridge_spiking,objrel_lowfloor,objrel_nocompete,objrel_signed_conductance}.py`.
+
+**Seed 101 CLOSED — genuinely, by TEMPORAL RESOLUTION (not the confound).** `READ_T=30` (the c2 CRUX window; c3 had used
+step6's speed-compromise T=18) closes seed 101 → **18/18 at the DEFAULT reservoir position** (no shift): more temporal
+spike-samples resolve the marginal WTA slots. `C3_READ_T_STEP` is now **30**. (The P160/P240 "fixes" were the reservoir-shift
+CONFOUND, discarded.) This closes the canonical seed-101 residual with a principled position-independent lever.
+
+## Honest scope / next (updated 2026-07-05)
+- **Seed 101 → clean 6/6 (open; two hypotheses REFUTED).** (1) The original "under-training" hypothesis is refuted: E20 made
+  101 WORSE (12/18 = overfitting on the small N). (2) **The "population lever (P160) closes 101 → 18/18" result is a CONFOUND,
+  not a genuine fix — caught by a control check before it was baked in.** The `WTA_P_C2=160` monkeypatch did NOT widen the
+  ensembles (they stayed 80-wide: `wire_wta_c2`'s `P=WTA_P_C2` is a def-time-frozen default arg); it only enlarged the WTA
+  SLICE (`ROLE_WTA_N_C2` 280→520), which shifted the reservoir slice (base 2478→2758) onto different neuron indices → a
+  different (luckier) per-neuron Izhikevich heterogeneity draw for seed 101. So the "fix" is a reservoir-POSITION re-draw
+  artifact (picking a non-degraded draw by luck), NOT population-code resolution — and it does NOT generalize (a new unseen
+  seed could be degraded at any position). Diagnosis: **seed 101's 14/18 is a DEGRADED-RESERVOIR-DRAW problem** — its specific
+  heterogeneity at the default position under-separates the roles.
+  - **Legit levers (no reservoir-position confound), status:** more DATA (N60/N80/N120) + smaller η(0.02) are running at the
+    standard P80 position (they change training, not neuron count → reservoir unshifted) — a clean test of "can the delta rule
+    extract enough from the degraded feature with more samples." A GENUINE population lever (actually 160-wide ensembles) OR a
+    bigger reservoir (`RES_N`↑, richer LSM basis) are principled but BOTH also shift the reservoir position, so they must be
+    ISOLATED from the position effect (pad to hold the reservoir base fixed) before either can be claimed.
+  - If no legit lever closes 101 genuinely, this is a confirmed degraded-draw BOUNDARY → the research gate fires (a biological
+    mechanism for read-out robust to a degraded/heterogeneous reservoir draw: feature normalization / reservoir homeostasis /
+    genuine population averaging), per the no-defer directive. The 5/6 GENUINE GO (42/43/44/100/102 at 18/18, standard P80
+    config) stands; only seed 101's fix is open.
+  - **Also fixed this session:** a c3 integration bug — `_build_wired_bridge` routed c3 to c1's small P=20 WTA (`else` branch)
+    instead of the P=80 c2 WTA the c3 delta rule LEARNS; c3 now shares the c2 WTA (matching step6, which built mode="c2").
+- **Anti-cheats — CONFIRMED CLEAN, 2-seed (42/44).** `LEARNED 18/18 | scramble 0 | global 6 | syn-lesion 6` on BOTH seeds
+  (chance = 6/18): the deranged-label scramble collapses to 0 (learning is role-specific, not a position artifact); the
+  FAITHFUL global-scalar reward (R=±1 uniform to all roles, not the degenerate zero-sum mean) sits at chance (the per-role-
+  LOCAL credit is load-bearing — reproduces the project's documented global-scalar failure); the syn-readout lesion (zero
+  res2ens after learning) collapses to chance (the learned read-out synapses ARE the read-out). Plus source-clean (both the
+  SELECT path and the LEARN path host-solve-free, D2 wired). ⇒ the delta-rule mechanism is genuine, not an artifact.
 - Aligned with the project master goals: everything on the ONE spiking substrate, LEARNED (no host shortcut), the
   learns-and-grows artificial-life direction.

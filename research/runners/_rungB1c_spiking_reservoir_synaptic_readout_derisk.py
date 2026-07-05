@@ -481,6 +481,69 @@ def _fit_Ws_spiking(res, enc, train):
     return Ws
 
 
+# ── c3: the BIOLOGICAL LEARNED read-out -- a per-role DELTA RULE on the frozen spiking reservoir (REPLACES the host
+#    _fit_Ws_spiking ridge solve, which was a residual non-biological shortcut + seed-fragile). The rule learns res2ens
+#    so the correct-role ensemble WINS THE SPIKING competition on THIS reservoir draw -> the f-I nonlinearity + WTA
+#    ignition-order are INSIDE the error -> it generalizes across draws (6-seed: 5/6 at 18/18 vs the host fit's 2/6),
+#    where the host ridge fit (a linear rate-reconstruction) only coincidentally matched the spiking argmax on the dev
+#    draws. NO np.linalg.solve, NO host f@Ws, NO host argmax. Per-role-LOCAL error (the credit rule the project proved
+#    works: gradient 3/3, Tier-1 three-factor 5/6-6/6; NOT the global scalar that failed 0-1/6). Freeze the reservoir
+#    (training the recurrence hurts, _fork2); rate-Hebbian/delta NOT spike-STDP (symmetric co-firing, dt~0). ──────────
+C3_EPOCHS = 12
+C3_ETA = 0.05
+# c3 learns AND deploys the read-out at the SAME (step6-validated) read params -- train==deploy CONSISTENCY is the whole
+# point of the delta rule (it is the fix for the ridge's train/deploy objective MISMATCH that caused the seed-fragility).
+# So c3 overrides the c2 defaults (READ_T=30, N=60, an unvalidated + ~2x slower config) to the validated 18/35.
+C3_READ_T_STEP = 30       # c3 read/integration window (steps/token), learn+deploy consistent. == the c2 CRUX T=30: more
+#                           temporal spike-samples resolve seed 101's marginal WTA slots (T=18 gave 5/6 with 101 at 14/18;
+#                           T=30 closes 101 -> 18/18 at the DEFAULT reservoir position, a genuine position-independent fix
+#                           -- NOT the reservoir-shift confound). Costs ~1.67x the read; wallclock is not a constraint.
+C3_N_TRAIN_PER = 35       # c3 train sentences/construction (the runner's 60 risks the documented seed-101 overfit)
+_READ_T_STEP_C2_DEFAULT = READ_T_STEP_C2   # (= 30) so run_seed restores the c1/c2 read window regardless of mode order
+
+
+def _learn_Ws_spiking(ub, res, ens, enc, train, seed, epochs=C3_EPOCHS, eta=C3_ETA):
+    """Per-role DELTA RULE learned ON the frozen spiking reservoir (mode c3). Returns {slot k: (n_res+1) x n_roles} in
+    the SAME format _fit_Ws_spiking returns (bias row + GOAL/LOCATION cols = 0), so SlotReadout / _bind_c2 /
+    _op_wta_synaptic / all c2 anti-cheats are reused unchanged; the learned res2ens synapses ARE the read-out."""
+    n_res = len(res.res_idx); n_roles = len(_ROLES)
+    pre, post = _ws_edges(res.res_idx, ens)
+    ub.bridge.set_pathway_weights("res2ens", pre, post, np.zeros(len(pre), np.float32), add_missing=True)
+    res.snapshot_after_wiring()                                        # res2ens now in the CSR -> re-snapshot
+
+    def _write(Wk):
+        w = np.empty(len(pre), np.float32); p = 0
+        for r in range(3):
+            for _e in ens[r]:
+                w[p:p + n_res] = Wk[r]; p += n_res
+        ub.bridge.set_pathway_weights("res2ens", pre, post, w, add_missing=False)
+
+    W = [np.zeros((3, n_res)) for _ in range(3)]
+    lrng = np.random.default_rng(seed)
+    for _ep in range(epochs):
+        order = list(range(len(train))); lrng.shuffle(order)
+        for si in order:
+            toks, roles = train[si]
+            content = sorted(roles)
+            for k, t in enumerate(content):
+                tgt = _ROLE_IDX[roles[t]]
+                if tgt >= 3:                                          # GOAL/LOCATION are not in the 3-way canonical read
+                    continue
+                _write(W[k])
+                rho, a = res.run_with_ens(enc.encode(toks), ens)      # rho = reservoir firing, a = ACTUAL ens firing
+                a = np.asarray(a, float); an = a / (a.sum() + 1e-9)
+                T = np.zeros(3); T[tgt] = 1.0
+                W[k] += eta * np.outer(T - an, rho[:n_res])           # per-role LOCAL delta rule
+                np.clip(W[k], 0.0, None, out=W[k])
+    Ws = {}
+    for k in (0, 1, 2):
+        M = np.zeros((n_res + 1, n_roles))
+        for r in range(3):
+            M[:n_res, r] = W[k][r]
+        Ws[k] = M
+    return Ws
+
+
 # ── (10) SYNAPTIC-READOUT source-check: the SELECTION path has NO host f@Ws / argmax(...@Ws...) deciding the role ──
 def _strip_py(src):
     """Strip comments + string literals (docstrings) so the source-check inspects only EXECUTABLE code."""
@@ -521,6 +584,24 @@ def _source_synaptic_readout_clean():
     c2_role_from_gate = "role = latched_role" in code_c2
     op_no_Ws = "Ws" not in code_op                     # the synaptic WTA op never touches the read-out matrix
     return bool(c2_no_Ws and c2_no_argmax and c2_role_from_gate and op_no_Ws)
+
+
+def _source_learned_readout_clean():
+    """SOURCE-CHECK (mode c3): the read-out itself is BIOLOGICALLY LEARNED, not host-fit. Inspecting the EXECUTABLE code
+    (docstrings/comments/strings stripped) of `_learn_Ws_spiking`:
+      * NO host ridge/least-squares solve (`linalg.solve`, `lstsq`, `pinv`) and no call to the c2 host ridge fitter
+        `_fit_Ws_spiking` -- so the read-out matrix is NOT computed by a host linear solve;
+      * the learning DRIVES the spiking reservoir (`run_with_ens`) and updates the synapses by a LOCAL per-role delta
+        (`np.outer(...)` of the (target - actual-ens-firing) error with the reservoir firing) -- a rate-Hebbian/delta
+        rule ON the substrate, the biological credit rule that works per-role (vs the global scalar that failed 0-1/6).
+    Returns True iff the LEARN path is host-solve-free AND uses the spiking read + local delta. (The SELECT path is the
+    SAME as c2, covered by `_source_synaptic_readout_clean`.)"""
+    # _strip_py space-joins tokens (e.g. `np.outer` -> `np . outer`), so match the NAME tokens, not dotted forms.
+    code = _strip_py(inspect.getsource(_learn_Ws_spiking))
+    no_host_solve = not any(s in code for s in ("linalg", "lstsq", "pinv", "_fit_Ws"))  # no host ridge/lsq in exec code
+    drives_spiking = "run_with_ens" in code            # the error is read from the ACTUAL spiking ens firing
+    local_delta = "outer" in code                      # per-role LOCAL delta (outer(error, reservoir firing))
+    return bool(no_host_solve and drives_spiking and local_delta)
 
 
 # ── the two bind drivers: C1 (host f@Ws -> _wta_drive) and C2 (synaptic Ws_shifted -> ens firing IS the drive) ────
@@ -825,7 +906,7 @@ def _build_wired_bridge(seed, corpus, mode="c2"):
     Returns (ub, ens, inh). MODE-AWARE WTA sizing: c1 keeps B-1b's P=20 WTA (ROLE_WTA_N); c2 uses the CRUX P=80
     resolution WTA (ROLE_WTA_N_C2, wired by wire_wta_c2). The reservoir's Ws_shifted synapses are wired later (per
     fit); the snapshot is taken AFTER those."""
-    if mode == "c2":
+    if mode in ("c2", "c3"):        # c3 LEARNS the same P=80 c2 WTA read-out (delta rule); it must NOT fall to c1's P=20
         ub = UnifiedBrainBridge(seed=seed, proj_dim=PROJ_DIM, concepts=corpus["concepts"],
                                 enable_synaptic_route=True, role_wta_n=ROLE_WTA_N_C2, reservoir_n=RES_N)
         ens, inh = wire_wta_c2(ub)
@@ -838,11 +919,15 @@ def _build_wired_bridge(seed, corpus, mode="c2"):
 
 def run_seed(seed, corpus, mode="c2"):
     t0 = time.time()
+    # c3 uses its validated read window + train size, consistently for learn AND deploy; idempotent per mode (restores the
+    # c1/c2 default for non-c3) so pytest test-order cannot leak the c3 read window into a c1/c2 run.
+    globals()["READ_T_STEP_C2"] = C3_READ_T_STEP if mode == "c3" else _READ_T_STEP_C2_DEFAULT
+    n_train = C3_N_TRAIN_PER if mode == "c3" else N_TRAIN_PER
     discovered, subj, verb, obj = corpus["discovered"], corpus["subj"], corpus["verb"], corpus["obj"]
     test = corpus["test"]
     enc = Encoder(discovered)
     rng = np.random.default_rng(seed * 101 + 5)
-    train = _gen(_TRAIN_KINDS, N_TRAIN_PER, rng, subj, verb, obj)
+    train = _gen(_TRAIN_KINDS, n_train, rng, subj, verb, obj)
     n_q = 2 * len(test)
 
     # ── FIT: build ONE bridge, wire WTA + reservoir, fit Ws on the SPIKING reservoir feature ──────────────────────
@@ -850,9 +935,12 @@ def run_seed(seed, corpus, mode="c2"):
     res_idx0, W_in0 = wire_reservoir(ub0, enc.dim, seed)
     res0 = UBReservoir(ub0, res_idx0, W_in0)
     res0.snapshot_after_wiring()
-    print(f"[b1c seed {seed}] fitting Ws on {len(train)} spiking-reservoir features "
-          f"(reservoir slice {res_idx0[0]}..{res_idx0[-1]})...", flush=True)
-    Ws = _fit_Ws_spiking(res0, enc, train)
+    print(f"[b1c seed {seed}] {'LEARNING (delta rule)' if mode == 'c3' else 'fitting (ridge)'} Ws on {len(train)} "
+          f"spiking-reservoir features (reservoir slice {res_idx0[0]}..{res_idx0[-1]})...", flush=True)
+    if mode == "c3":
+        Ws = _learn_Ws_spiking(ub0, res0, ens0, enc, train, seed)   # BIOLOGICAL learned read-out (no host ridge solve)
+    else:
+        Ws = _fit_Ws_spiking(res0, enc, train)
     # the content slots a transitive SVO fills: slot 0 (agent-word), slot 1 (action-word), slot 2 (patient-word).
     # Ws_shifted per slot (all >= 0, argmax-preserving). We test 3 content words per fact, each with its own slot Ws.
     Ws_shift = {k: (W - W.min()) for k, W in Ws.items()}
@@ -862,6 +950,8 @@ def run_seed(seed, corpus, mode="c2"):
     #    winner is a NEURAL read -- argmax over the ens summed firing, driven synaptically by the reservoir). ─────────
     chosen_scale = None
     scale_sweep = []
+    if mode == "c3":
+        chosen_scale = 1.0                                          # the LEARNED weights self-scale to the op point
     if mode == "c2":
         f_ref = np.concatenate([res0.final_state(enc.encode(test[0][0])), [1.0]])
         proj_top = max(1e-9, float((f_ref[:len(res_idx0)] @ Ws_shift[0][:len(res_idx0), :3]).max()))
@@ -911,7 +1001,7 @@ def run_seed(seed, corpus, mode="c2"):
         """Returns (ub, ens, inh, res, res_idx, slot_readout). MODE-AWARE WTA: c1 keeps B-1b's P=20 (ROLE_WTA_N,
         wire_wta); c2 uses the CRUX P=80 resolution (ROLE_WTA_N_C2, wire_wta_c2). For c2, the res2ens edges are
         pre-allocated (SlotReadout overwrites per slot in place -- no CSR rebuild). Snapshot taken AFTER all wiring."""
-        if mode == "c2":
+        if mode in ("c2", "c3"):
             ub = UnifiedBrainBridge(seed=seed, proj_dim=PROJ_DIM, concepts=corpus["concepts"],
                                     enable_synaptic_route=True, role_wta_n=ROLE_WTA_N_C2, reservoir_n=RES_N)
             ens, inh = wire_wta_c2(ub)
@@ -922,7 +1012,7 @@ def run_seed(seed, corpus, mode="c2"):
         res_idx, W_in = wire_reservoir(ub, enc.dim, seed)
         res = UBReservoir(ub, res_idx, W_in)
         slot_readout = None
-        if mode == "c2":
+        if mode in ("c2", "c3"):
             wire_ws_synapses(ub, res_idx, ens, Ws_shift[0], chosen_scale, add_missing=True)
             slot_readout = SlotReadout(ub, res, ens, Ws_shift, chosen_scale)
         res.snapshot_after_wiring()
@@ -985,9 +1075,13 @@ def run_seed(seed, corpus, mode="c2"):
     latched_eq_firing = all(t["latched_role"] == t["wta_fire_winner"]
                             for w in all_traces for t in w["trace"])
 
-    # ── (10) SYNAPTIC-READOUT source-check (c2 only) ─────────────────────────────────────────────────────────────
-    if mode == "c2":
-        synaptic_source_clean = _source_synaptic_readout_clean()
+    # ── (10) SYNAPTIC-READOUT source-check (c2/c3) ──────────────────────────────────────────────────────────────
+    if mode in ("c2", "c3"):
+        synaptic_source_clean = _source_synaptic_readout_clean()    # the SELECT/deploy path is neural (no host f@Ws)
+        if mode == "c3":
+            # AND the LEARN path is host-solve-free (delta rule, not a silent _fit_Ws_spiking ridge fallback). Without
+            # this the c3 verdict would pass even if _learn_Ws_spiking fell back to the host ridge (audit defect D2).
+            synaptic_source_clean = bool(synaptic_source_clean and _source_learned_readout_clean())
     else:
         synaptic_source_clean = None  # not applicable to c1 (c1 still uses host f@Ws by design)
 
@@ -1019,8 +1113,8 @@ def run_seed(seed, corpus, mode="c2"):
     # reservoir's form-READING/recurrence is NOT load-bearing on the CANONICAL task -- role is over-determined by
     # position; the reservoir's OUTPUT is what the read-out needs, and silencing it is the lesion that shows this.)
     ub_r, ens_r, _ir, res_r, _rr, sro_r = new_route_bridge()
-    if mode == "c2":
-        res_r.W_in = np.zeros_like(res_r.W_in)     # SILENCE the reservoir's input map (the reservoir-lesion for c2)
+    if mode in ("c2", "c3"):
+        res_r.W_in = np.zeros_like(res_r.W_in)     # SILENCE the reservoir's input map (the reservoir-lesion for c2/c3)
         bind_all(ub_r, ens_r, res_r, slot_readout=sro_r, lesion=False)
     else:
         bind_all(ub_r, ens_r, res_r, slot_readout=sro_r, lesion=True)
@@ -1039,7 +1133,7 @@ def run_seed(seed, corpus, mode="c2"):
     # lesion (10), which zeroes the read-out synapses (+ bias) and DOES collapse recall (the read-out IS the selector).
     # For c1 (host f@Ws -> uniform WTA drive, B-1b's regime), the WTA-lesion still bites and DOES gate the verdict.
     ub_w, ens_w, inh_w, res_w, _rw, sro_w = new_route_bridge()
-    restore_w = (lesion_wta_i2e_c2(ub_w, ens_w, inh_w) if mode == "c2"
+    restore_w = (lesion_wta_i2e_c2(ub_w, ens_w, inh_w) if mode in ("c2", "c3")
                  else lesion_wta_i2e(ub_w, ens_w, inh_w))
     bind_all(ub_w, ens_w, res_w, slot_readout=sro_w)
     wp, wa = _recall(ub_w, test)
@@ -1065,7 +1159,7 @@ def run_seed(seed, corpus, mode="c2"):
     # ── (10) SYNAPTIC-READOUT lesion (c2 only): zero the Ws_shifted res2ens synapses -> WTA starved -> collapse ────
     synaptic_readout_collapses = None
     synaptic_readout_correct = None
-    if mode == "c2":
+    if mode in ("c2", "c3"):
         ub_sr, ens_sr, _isr, res_sr, res_idx_sr, sro_sr = new_route_bridge()
         # zero the res2ens synapses (the read-out) so the ensembles get NO reservoir signal; the per-role bias tonic is
         # also zeroed (a zero Ws_shift -> zero bias), so every ens fires only the WS_ENS_FLOOR -> no discriminative
@@ -1152,7 +1246,7 @@ def run_seed(seed, corpus, mode="c2"):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=[42])
-    ap.add_argument("--mode", type=str, default="c2", choices=["c1", "c2"])
+    ap.add_argument("--mode", type=str, default="c2", choices=["c1", "c2", "c3"])
     ap.add_argument("--json", type=str, default=None)
     args = ap.parse_args()
 
@@ -1164,7 +1258,7 @@ def main():
         d = run_seed(s, corpus, mode=args.mode)
         rows.append(d)
         extra = ""
-        if args.mode == "c2":
+        if args.mode in ("c2", "c3"):
             extra = (f" | syn-source {d['synaptic_source_clean']}"
                      f" | syn-readout-lesion {d['synaptic_readout_correct']}<{d['route_correct']}"
                      f"={d['synaptic_readout_collapses']} | scale {d['chosen_ws_scale']:.4g}")
@@ -1190,14 +1284,18 @@ def main():
         "neural_select_all": all(r["neural_select_latched_eq_firing"] for r in rows),
         "wta_lesion_collapses_all": all(r["wta_lesion_collapses"] for r in rows),
         "ws_scramble_collapses_all": all(r["ws_scramble_collapses"] for r in rows),
-        "synaptic_source_clean_all": (all(r["synaptic_source_clean"] for r in rows) if args.mode == "c2" else None),
+        "synaptic_source_clean_all": (all(r["synaptic_source_clean"] for r in rows) if args.mode in ("c2", "c3") else None),
         "synaptic_readout_collapses_all": (all(r["synaptic_readout_collapses"] for r in rows)
-                                           if args.mode == "c2" else None),
+                                           if args.mode in ("c2", "c3") else None),
         "mean_route_recall": float(np.mean([r["route_recall"] for r in rows])),
         "total_elapsed_s": round(time.time() - t0, 1),
     }
-    _readout_desc = ("SYNAPTIC (Ws_shifted res->ens); the whole comprehend->select->bind runs on ONE bridge with "
-                     "nothing host-computed" if args.mode == "c2" else "host f@Ws (incremental rung)")
+    _readout_desc = {
+        "c3": ("BIOLOGICALLY LEARNED SYNAPTIC (per-role delta rule on the frozen spiking reservoir; NO host ridge "
+               "np.linalg.solve, NO host f@Ws) -- the whole comprehend->select->bind runs on ONE bridge, read-out learned"),
+        "c2": ("SYNAPTIC (Ws_shifted res->ens); the whole comprehend->select->bind runs on ONE bridge with "
+               "nothing host-computed"),
+    }.get(args.mode, "host f@Ws (incremental rung)")
     print(f"\n[rungB1c] VERDICT ({args.mode}): {agg['verdict']} ({n_go}/{len(rows)}) -- the SPIKING reservoir is "
           f"co-resident on the unified bridge and the read-out is {_readout_desc} "
           f"(mean route recall {agg['mean_route_recall']:.3f}).", flush=True)
