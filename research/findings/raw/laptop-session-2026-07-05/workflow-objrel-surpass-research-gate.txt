@@ -1,0 +1,124 @@
+{
+  "summary": "Research gate: how can a positive spiking WTA read-out resolve the subtle objrel STRUCTURAL margin the linear argmax preserves but ignition-order loses",
+  "agentCount": 4,
+  "logs": [],
+  "result": {
+    "research": [
+      {
+        "angle": "project-precedent: common-mode / opponency / rate-code / point-neuron-limit family mechanisms already de-risked or documented as irreducible",
+        "verdict": "**SURPASSABLE AT MODERATE COST; THE CHEAPEST BIOLOGY-GROUNDED PATH IS ALREADY ON-SUBSTRATE.** (1) **Phasor FHRR (phase-coherence winner, NO rate-code baseline effect):** mechanism-for-mechanism proven in the composer (SNR wall surpassed); requires moderate build (oscillator input-modulation or theta-band filtering on read-out); high confidence in surpass given project precedent. (2) **Divisive normalization at LOW FLOOR (separable diagonal half, NOT the Mikulasch-Priesemann off-diagonal wall):** the `2026-07-04-conductance-domain-signed-readout-SURPASS.md` mechanism showed clean 18/18 at floor 30 pA by operating WHERE divisive reduces to subtractive (g_i acts on small driving force); the normalization research gate proved divisive+SFA are ALREADY in `sim/` and validated (96% host match, 6-seed GO, moat preserved). CHEAPEST FIRST: **flag `input_mean_adapt=True` + `input_divisive_norm=True` on the WTA region, test on objrel c3.** If the common-mode baseline is normalized away at low floor, the ignition-order inversion should collapse. (3) **Opponent ON/OFF signed channels:** mechanics clear (signed conductance already worked at 3/3 canonical); moderate build to fork ensembles per role. (4) **SFA + feedforward interneuron pool:** both validated on-substrate; can layer on top of divisive. The genuine deep wall (cross-neuron decorrelation, off-diagonal Mikulasch-Priesemann) is NOT this residual — it is the `graded_lateral` territory, explicitly ruled out in the normalization research gate as the wrong tool for diagonal+DC centering.",
+        "n_mechanisms": 5
+      },
+      {
+        "angle": "biology-mechanism",
+        "verdict": "SURPASSABLE, and cheaply — with NO sim/ edit and NO dendrites. The residual is a spike-generation (ignition-order) common-mode problem, not a code-decorrelation problem, and the residual's own isolation table proves the structural margin survives a shift-invariant LINEAR operation. Biology removes exactly this kind of common mode with SOMATIC, PRE-SPIKE, Dale-legal positive-neuron circuits: (a) opponent paired-interneuron channels that compute the DIFFERENCE of two rectified positive pathways (retinal crossover / cortical push-pull — the canonical Dale-signed computation), (b) subtractive feedforward inhibition that makes ensembles compete on the deviation-from-mean, and (d) Thorpe rank-order shunting desensitization that makes ignition-order itself margin-dominated. All three are LINEAR/shunting somatic conductance operations point neurons can do, applied BEFORE the ignition nonlinearity — precisely the stage the current WTA skips. Ranked cheapest-first de-risk: (1) analytically subtract the per-token cross-role common-mode from the positive-shifted drive and re-run the EXISTING ignition-order WTA (a read-only offline check, no runs disturbed) — the residual's linear-argmax result predicts this restores objrel toward 1.00 with canonical intact; if confirmed, (2) realize it as a shared inhibitory common-mode pool (opponent/FFI) or a ramping global shunt (Thorpe) in the WTA, still no sim/ edit. Divisive normalization (Carandini-Heeger / Chance-Abbott) is the moderate-build fallback if the common mode varies in MAGNITUDE across constructions (needs the noisy high-conductance state to be divisive on point neurons). GENUINELY IRREDUCIBLE only at the dendritic tier (Mikulasch-Priesemann), and that tier is UNNECESSARY here: the point-neuron limit bites on per-input WEIGHT/code decorrelation, whereas this residual needs a single equal-across-roles baseline subtraction — a somatic linear operation. The comfortable 'common-mode/rate-code family → substrate wall' verdict does NOT survive: the wall is only the POST-shift ignition nonlinearity, and moving the (already-sufficient) linear common-mode removal to BEFORE that nonlinearity — as retina/cortex demonstrably do with positive neurons — dissolves it.",
+        "n_mechanisms": 5
+      },
+      {
+        "angle": "cheap-surpass-ranking — cheapest engineering paths to make the ignition-order spiking WTA reproduce the shift-invariant LINEAR argmax on the subtle objrel structural margin (per-slot role-not-position), given the measured isolation that the reservoir feature ENCODES objrel and a positive-shifted LINEAR argmax resolves it, but the SPIKING WTA's first-ignition winner fails under the positive-shift + WS_ENS_FLOOR common-mode baseline.",
+        "verdict": "SURPASSABLE, and cheaply — every ranked candidate is RUNNER-SIDE reuse (NO sim/ edit), because the required operation (remove the per-slot common mode BEFORE the ignition nonlinearity so the ensembles compete on the shift-invariant CENTERED drive) is already available on the substrate three ways: the existing WTA shared-inhibitory `inh` pool (reconfigure operating point → candidate a), the committed additive divisive-norm/input-mean-adapt primitives (enable_input_divisive_norm / enable_input_mean_adapt, 2026-06-15, default-off/byte-identical → b), and the already-built signed ON/OFF relay in `_rungB1c_signed_readout_derisk.py` / `step1_onoff_opponent.py` (→ c). The measured isolation makes the fix a near-certainty in principle: a shift-INVARIANT LINEAR argmax already reads objrel slot0=THEME at 1.00 on the SAME reservoir feature, so any deploy that reproduces that constant-subtraction must inherit the read. RANK by cost×robustness: (a) mean-subtracted spiking WTA — cheapest AND most principled (it IS the shift-invariant subtraction, and existing wiring already computes the shared mean); (c) signed ON/OFF relay — nearly free (code already exists, needs only the objrel run + the linear-regime operating point step1 found for canonical) and is the mechanism the c2 finding itself named; (d) longer-window rate — a composable knob + a diagnostic that isolates 'additive pedestal' as the true wall; (b) divisive-norm — reuse-by-flag but strictly weaker (normalizes scale, not the additive pedestal); (e) pedestal-shrink/per-row-shift — dominated, already shown to overfit unseen seeds. THE SINGLE CHEAPEST DE-RISK (first experiment): deploy the ridge Ws through a MEAN-SUBTRACTED spiking WTA on the ONE `_objrel_test_fact`, per-slot vs TRUE roles, on the isolated bridge in `_rungB1c_signed_readout_derisk.py` — set the shared `inh` pool subtractive at a LOW ens floor (WS_ENS_FLOOR→~30, I→E tuned to remove only the mean), seed 42, ~1 min CPU; PASS = slot0 recovers THEME (≥ the linear argmax's 1.00, vs the current positive-shift WTA's 0.03/0.00). A single PASS confirms the ENTIRE common-mode/opponency/rate-code family is surpassable runner-side on this residual (do it BEFORE any candidate that needs a sim/ edit — none of the ranked ones do). Caveats to gate on, from the prior arc: (1) the operating point is load-bearing (subtraction is faithful only at LOW ens v where g_i is subtractive, NOT the high-floor divisive/shunting regime — step2 conductance finding); (2) run the 6-SEED generalization (42/43/44 + 100/101/102) and per-slot-vs-TRUE-ROLE scoring (not host-argmax agreement) to avoid the documented overfit-to-tuned-seeds trap; (3) the honest ANTI-CHEAT that this reads ROLE not POSITION is objrel slot0=THEME AND a canonical control still 1.00 AND scramble/lesion collapse — the audit that caught c3 must be reproduced.",
+        "n_mechanisms": 5
+      }
+    ],
+    "synthesis": "Loading the deep-research skill would be overkill here — the three angles already did the fanning-out and citation work. My job is synthesis and decision. I have everything I need in the three JSON inputs; no tools or file reads required. Let me produce the tight research-gate decision.\n\n---\n\n## Research-gate decision: objrel structural-read boundary\n\n### (1) DIAGNOSIS\n\nYes, this is the same **common-mode / opponency / rate-code / point-neuron-limit family** — but all three angles converge on a sharper, cheaper localization that refutes the comfortable \"substrate wall\" reading. The residual is **NOT** a feature/encoding wall (the reservoir encodes objrel at 100%), **NOT** the Dale-positive constraint (a positive-*shifted* linear argmax reads objrel slot0=THEME at 1.00), and **NOT** the deep off-diagonal Mikulasch-Priesemann decorrelation wall (that bites on per-input *weight/code* decorrelation, which this residual does not need). It is precisely the **ignition-order-vs-linear-argmax gap under a positive common-mode baseline**: the shift-invariant linear argmax subtracts a per-slot constant `c_k = f·Ws_k.min()` that cancels across the 3 roles, so the winner is decided on the **centered** drive (structural margin only); the spiking WTA never subtracts that constant, so every ensemble ignites off a large `Wp@f + WS_ENS_FLOOR` pedestal and first-spike order is dominated by the common mode, compressing objrel's subtle few-percent margin below ignition-timing jitter (confirmed as a threshold-nonlinear ignition-order inversion / depolarization block: drive 526 fires *fewer* spikes than drive 400). Canonical survives only because its position margin is large. The learned delta-rule (c3) doesn't fix it because it optimizes the *same* post-pedestal ignition-order deploy — the weights are correct, the **WTA read function is the wall**. The genuine missing operation is **common-mode removal BEFORE the ignition nonlinearity** — a somatic, pre-spike, Dale-legal linear/shunting conductance sum that point neurons *can* do (retina/cortex demonstrably do it), not a dendritic computation.\n\n### (2) RANKED cheap-first SURPASS mechanisms\n\n| Rank | Mechanism | Biology | Cost | Single de-risk experiment | sim/ edit |\n|---|---|---|---|---|---|\n| **1** | **Mean-subtracted spiking WTA** — reconfigure the *existing* shared-inhibitory `inh` pool to subtract the per-slot cross-role mean at a **LOW ens floor** (v near rest, `E_inh−v` small → `g_i` subtractive not shunting) | Lateral/FF inhibition = subtractive common-mode removal (Isaacson-Scanziani; retinal horizontal-cell) | cheap-reuse | Reuse `_rungB1c_signed_readout_derisk.py` isolated bridge + `_objrel_test_fact`; set `inh` subtractive, `WS_ENS_FLOOR→~30`, I→E tuned to remove only the mean; seed 42; PASS = slot0 recovers THEME (≥ linear argmax's 1.00 vs current 0.03) | No |\n| **2** | **Signed ON/OFF opponent relay** — Wp=max(Ws,0) exc + Wn=max(−Ws,0) via inhibitory relay so net drive = signed `Ws@f` with **no positive-shift pedestal at the source** | Retinal crossover / cortical push-pull — the canonical Dale-signed computation | cheap-reuse | **Zero new code:** run the objrel block already in `_rungB1c_signed_readout_derisk.py` (wires the signed relay, calls `_objrel_test_fact`, prints signed-vs-positive winners) on seed 42; PASS = signed gives slot0=THEME 3/3 where positive gives 0/3. Must sit in linear f-I band | No |\n| **3** | **Longer-window RATE read (softened WTA)** — read steady-state rate argmax over longer T instead of first-ignition order | Rate vs latency coding (Thorpe / London-Roth); the exact lever that closed canonical seed-101 (READ_T 18→30) | cheap-reuse | On isolated objrel bridge sweep `READ_T_STEP_C2` 30→60→90 + `WS_REPLAY` 3→6 with I→E softened. Diagnostic value: if it does NOT recover even at long T, that **proves** the wall is the additive pedestal → confirms #1/#2 required | No |\n| **4** | **Thorpe rank-order shunting desensitization** — global feedforward shunt whose conductance ramps with summed pool activity, gating ignition to the largest-margin ensemble before the baseline equalizes them | Thorpe rank-order coding + progressive shunting (VanRullen-Thorpe) — most native to a WTA that *already* reads order | cheap-reuse | Add ramping global shunt to the 3 ensembles; re-test objrel held-out. Falsifier: if the shunt that fixes objrel also flips canonical, it's over-normalizing → fall back to fixed subtraction #1 | No |\n| **5** | **Divisive normalization** — enable committed `enable_input_divisive_norm` / `input_mean_adapt` primitives on the WTA region | Carandini-Heeger; Chance-Abbott balanced-E-I gain (needs noisy high-conductance state to be divisive on point neurons) | cheap-reuse (flag) | Same isolated objrel test with divisive inh. **Strictly weaker** — divides scale, does not cancel an *additive* pedestal (matches the documented 9/18 divnorm plateau); keep as composable fallback | No |\n| **6** | **SFA + feedforward interneuron pool** — flag `input_mean_adapt=True` (subtractive EMA, already shipped/validated 96% host) + FFI pool computing cross-role common mode | Kv7/sAHP SFA + PV+ FS feedforward inhibition (B.06) | cheap-reuse | Flag on WTA region, add FFI pool from existing `RegionPathway` + inhibitory routes; run c3 objrel | No |\n| **—** | **Phasor FHRR phase-coherence winner** — replace spike-count WTA with phase-lock argmax (baseline has no effect on phase) | Izhikevich resonate-and-fire + Frady-Sommer FHRR (the *proven* composer SNR escape) | moderate-build | Freeze reservoir+c3 weights, build 3 phasor ensembles, read winner as argmax(phase-lock) on objrel. **Reserve as the named pivot** if #1–#6 all fail | No (read-only) |\n| **—** | Dendritic 2-compartment / NMDA-plateau local common-mode gating | Mikulasch-Priesemann local dendritic balance | deep-substrate-rewrite | **DO NOT BUILD.** Escalate only if all point-neuron somatic options fail — which the linear-argmax result predicts they will not | Yes |\n\n### (3) THE ONE recommended FIRST de-risk\n\n**Deploy the frozen ridge `Ws` through a MEAN-SUBTRACTED spiking WTA on the single `_objrel_test_fact`, per-slot vs TRUE roles, on the isolated bridge in `_rungB1c_signed_readout_derisk.py`.** Set the shared `inh` pool to subtractive at a **LOW ens floor** (`WS_ENS_FLOOR→~30`, I→E tuned to remove only the cross-role mean), seed 42, ~1 min CPU, **no sim/ edit**. **PASS = slot0 recovers THEME (≥1.00, vs the current positive-shift WTA's 0.03/0.00).**\n\nThis is the cheapest experiment that would tell us the **whole family** is surpassable runner-side, because the measured isolation makes it a near-certainty in principle: a shift-invariant *linear* argmax already reads objrel slot0=THEME at 1.00 on the *same* reservoir feature, so any spiking deploy that reproduces that constant-subtraction must inherit the read. A single PASS confirms common-mode removal before the ignition nonlinearity is the fix and unlocks #1/#2 for promotion to full c3.\n\n**If it fails**, the immediate zero-new-code fallback is **#2** (execute the signed-relay objrel path already coded in the same runner) — and the diagnostic **#3** (longer-T rate; failure there *proves* the additive pedestal is the wall).\n\n**Gate the PASS on the prior arc's three anti-cheats** (non-negotiable — this is exactly where c3 got audited): (a) **operating point is load-bearing** — subtraction is faithful ONLY at low ens `v`; verify it isn't secretly the high-floor divisive/shunting regime; (b) **6-seed generalization** (42/43/44 + 100/101/102) with **per-slot-vs-TRUE-ROLE scoring** (not host-argmax agreement) to avoid the step4_feedforward overfit-to-tuned-seeds trap (which gave 42/43=18/18 but unseen 0/18); (c) **reads-ROLE-not-POSITION** proof = objrel slot0=THEME **AND** canonical control still 1.00 **AND** scramble/lesion collapse.\n\n### (4) VERDICT\n\n**SURPASSABLE, and cheaply — with NO sim/ edit and NO dendrites.** The comfortable \"common-mode/rate-code family → point-neuron substrate wall\" verdict does **not** survive scrutiny: all three angles independently localize the wall to the **post-shift ignition nonlinearity** of the WTA read, and prove (via the shift-invariant linear argmax reading objrel at 1.00 on the identical feature) that the structural margin **survives a linear common-mode-removing operation**. Biology removes exactly this common mode with somatic, pre-spike, Dale-legal positive-neuron circuits (opponent paired-interneuron difference-of-rectified-pathways, subtractive feedforward inhibition, Thorpe shunting desensitization) — all linear/shunting somatic conductance operations point neurons can do, applied BEFORE the ignition nonlinearity, which is precisely the stage the current WTA skips. The required machinery is **already on the substrate three ways** (the existing WTA shared-inhibitory pool → operating-point reconfig; the committed `enable_input_divisive_norm` / `input_mean_adapt` primitives → flag; the already-built signed ON/OFF relay in `_rungB1c_signed_readout_derisk.py` → run). The genuine point-neuron limit (Mikulasch-Priesemann off-diagonal weight/code decorrelation) is **NOT** this residual and stays benched. **The named pivot, analogous to the FHRR-phasor escape, is held in reserve and not needed at first cut:** if — against the linear-argmax prediction — every somatic subtraction/opponent/shunt option fails to survive the 6-seed role-not-position audit, escalate to the **phasor phase-coherence WTA** (winner = phase-lock, on which the common-mode baseline has provably zero effect — the exact mechanism that surpassed the composer's signed-difference SNR wall), still runner-side. Recommendation: **proceed to the FIRST de-risk (mean-subtracted spiking WTA on objrel); do NOT scope any sim/ edit or dendritic rewrite.**"
+  },
+  "workflowProgress": [
+    {
+      "type": "workflow_phase",
+      "index": 1,
+      "title": "Research"
+    },
+    {
+      "type": "workflow_phase",
+      "index": 2,
+      "title": "Synthesize"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 1,
+      "label": "research:project-precedent",
+      "phaseIndex": 1,
+      "phaseTitle": "Research",
+      "agentId": "a09479aba3a3b0230",
+      "agentType": "Explore",
+      "model": "claude-haiku-4-5-20251001",
+      "state": "done",
+      "startedAt": 1783240087139,
+      "queuedAt": 1783240087095,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "project-precedent: common-mode / opponency / rate-code / po…",
+      "promptPreview": "THE PRECISELY-ISOLATED RESIDUAL (a confirmed boundary; the research gate fires):\nA frozen echo-state reservoir reads a spiking firing feature of a sentence; a per-content-slot read-out maps it to one of\n3 role WTA ensembles (AGENT / PREDICATE / THEME); the WINNER is a NEURAL argmax over the ensembles' SPIKING (ignition\norder = which ensemble fires first). Weights are POSITIVE (Dale-legal); the rea…",
+      "lastProgressAt": 1783240224041,
+      "tokens": 81926,
+      "toolCalls": 28,
+      "durationMs": 136901,
+      "resultPreview": "{\"angle\":\"project-precedent: common-mode / opponency / rate-code / point-neuron-limit family mechanisms already de-risked or documented as irreducible\",\"diagnosis\":\"The objrel spiking-WTA wall is a **COMMON-MODE BASELINE / IGNITION-ORDER INVERSION** (confirmed CYCLE-919, `2026-07-04-biological-learned-readout-delta-rule.md:118-135`), NOT a sub-1%-margin or degraded-feature problem. The reservoir f…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 2,
+      "label": "research:biology-mechanism",
+      "phaseIndex": 1,
+      "phaseTitle": "Research",
+      "agentId": "a27f495f27d0e2338",
+      "agentType": "general-purpose",
+      "model": "claude-opus-4-8",
+      "state": "done",
+      "startedAt": 1783240087142,
+      "queuedAt": 1783240087095,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "biology-mechanism",
+      "promptPreview": "THE PRECISELY-ISOLATED RESIDUAL (a confirmed boundary; the research gate fires):\nA frozen echo-state reservoir reads a spiking firing feature of a sentence; a per-content-slot read-out maps it to one of\n3 role WTA ensembles (AGENT / PREDICATE / THEME); the WINNER is a NEURAL argmax over the ensembles' SPIKING (ignition\norder = which ensemble fires first). Weights are POSITIVE (Dale-legal); the rea…",
+      "lastProgressAt": 1783240366283,
+      "tokens": 195910,
+      "toolCalls": 15,
+      "durationMs": 279140,
+      "resultPreview": "{\"angle\":\"biology-mechanism\",\"diagnosis\":\"The residual is NOT \\\"point neurons can't read a signed structural role.\\\" It is narrower and cheaper: the shift-invariant LINEAR argmax already resolves objrel with the correct ridge weights (canonical 1.00 / objrel 1.00), so the reservoir feature encodes the role AND the structural margin survives a positive common-mode. The wall is exactly ONE thing — t…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 3,
+      "label": "research:cheap-surpass-ranking",
+      "phaseIndex": 1,
+      "phaseTitle": "Research",
+      "agentId": "ab800dbbb2df5a2a6",
+      "agentType": "general-purpose",
+      "model": "claude-opus-4-8",
+      "state": "done",
+      "startedAt": 1783240087144,
+      "queuedAt": 1783240087095,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "cheap-surpass-ranking — cheapest engineering paths to make …",
+      "promptPreview": "THE PRECISELY-ISOLATED RESIDUAL (a confirmed boundary; the research gate fires):\nA frozen echo-state reservoir reads a spiking firing feature of a sentence; a per-content-slot read-out maps it to one of\n3 role WTA ensembles (AGENT / PREDICATE / THEME); the WINNER is a NEURAL argmax over the ensembles' SPIKING (ignition\norder = which ensemble fires first). Weights are POSITIVE (Dale-legal); the rea…",
+      "lastProgressAt": 1783240305555,
+      "tokens": 232715,
+      "toolCalls": 23,
+      "durationMs": 218411,
+      "resultPreview": "{\"angle\":\"cheap-surpass-ranking — cheapest engineering paths to make the ignition-order spiking WTA reproduce the shift-invariant LINEAR argmax on the subtle objrel structural margin (per-slot role-not-position), given the measured isolation that the reservoir feature ENCODES objrel and a positive-shifted LINEAR argmax resolves it, but the SPIKING WTA's first-ignition winner fails under the positi…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 4,
+      "label": "synthesis",
+      "phaseIndex": 2,
+      "phaseTitle": "Synthesize",
+      "agentId": "a04224bb2d77727e3",
+      "model": "claude-opus-4-8",
+      "state": "done",
+      "startedAt": 1783240366286,
+      "queuedAt": 1783240366284,
+      "attempt": 1,
+      "promptPreview": "Synthesize a research-gate decision for the objrel structural-read boundary. Inputs from 3 research angles (JSON):\n\n[\n  {\n    \"angle\": \"project-precedent: common-mode / opponency / rate-code / point-neuron-limit family mechanisms already de-risked or documented as irreducible\",\n    \"diagnosis\": \"The objrel spiking-WTA wall is a **COMMON-MODE BASELINE / IGNITION-ORDER INVERSION** (confirmed CYCLE-9…",
+      "lastProgressAt": 1783240422496,
+      "tokens": 174548,
+      "toolCalls": 0,
+      "durationMs": 56210,
+      "resultPreview": "Loading the deep-research skill would be overkill here — the three angles already did the fanning-out and citation work. My job is synthesis and decision. I have everything I need in the three JSON inputs; no tools or file reads required. Let me produce the tight research-gate decision.\n\n---\n\n## Research-gate decision: objrel structural-read boundary\n\n### (1) DIAGNOSIS\n\nYes, this is the same **com…"
+    }
+  ],
+  "totalTokens": 685099,
+  "totalToolCalls": 66
+}

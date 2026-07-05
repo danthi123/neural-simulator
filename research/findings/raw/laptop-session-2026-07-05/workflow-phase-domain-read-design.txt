@@ -1,0 +1,121 @@
+{
+  "summary": "Design a common-mode-immune phase-domain read that classifies the reservoir feature into grammatical roles, reusing the on-bridge RF/FHRR machinery — the objrel surpass rung 4",
+  "agentCount": 4,
+  "logs": [],
+  "result": {
+    "perAngle": [
+      {
+        "angle": "Machinery-reuse mapping: compose 3-role phase classifier from on-bridge RF/FHRR substrate",
+        "verdict": "REUSABLE: All 5 core operations (rate→phasor entry, role-phasor installation via sparse complex synapses, kick+resonate, phase readout, phase-coherence argmax) are existing validated primitives in sim/bridge.py and research/runners/rf_phasor_composer.py. NO new sim/ edits required. Runner-side wiring only: orchestrate the existing functions, pass the real rate feature through grounded_phases(), and invoke the phase-coherence argmax on recovered phases. The machinery is proven at production scale (320 concepts, multi-seed) and the shift-invariant property is ENDEMIC to phase algebra — no new derivation needed."
+      },
+      {
+        "angle": "phase-classifier-design",
+        "verdict": "CLEANEST DESIGN, HIGH-CONFIDENCE, REUSE-BY-IMPORT WITH NO NEW MECHANISM. The phase-domain role classifier is the composer's already-validated on-substrate phase-coherence nearest-concept cleanup (rf_phasor_composer.py:385/432/458 + bridge.py rf_kick/rf_set_complex_weights/rf_resonate_steps/rf_read_phases), applied with the 3 role read-out vectors as a 3-entry codebook and the reservoir feature entering via the Step-3 grounded-codes fixed complex projection (rate→unit-phasor). Common-mode immunity is provable and structural, not tuned: the score is a complex-inner-product MAGNITUDE / phase-difference sum with NO additive pedestal, and the phase readout is magnitude-invariant by construction (Im zero-crossing time), so the exact rate pedestal that broke the rate WTA cannot move the argmax; sign is encoded natively in phase, retiring the fragile signed-conductance path. This is the SAME opponency-escape the project already banked (2026-06-05 FHRR pivot), now applied to the objrel structural-role read. GATE the build on the ~20-line numpy complex-linear concept test (the c-sweep common-mode invariance assert on canonical+objrel) BEFORE any RF-spiking build — if the margin survives rate→phase there (expected, since Φ is a bijective re-coordinatization of the already-linearly-separable structure, Deep Phasor Networks arXiv:2106.11908), the on-bridge realization is a drop-in of the proven cleanup wiring with roles as the codebook, NO sim/ edit. Sources: Frady & Sommer 2019 PNAS 'Robust computation with rhythmic spike patterns' (https://www.pnas.org/doi/10.1073/pnas.1902653116); Frady, Kent, Olshausen & Sommer 2020 'Resonator Networks 1' (https://rctn.org/bruno/papers/resonator1.pdf); Orchard & Jarvis 2023 'Hyperdimensional Computing with Spiking-Phasor Neurons' (https://arxiv.org/abs/2303.00066); Frady et al. 2021 'Deep Phasor Networks' (https://arxiv.org/pdf/2106.11908); phase-of-firing magnitude-invariance precedent (https://pmc.ncbi.nlm.nih.gov/articles/PMC7383596/); in-project precedent research/findings/2026-06-05-fhrr-production-switch-DONE.md."
+      },
+      {
+        "angle": "minimal-derisk",
+        "verdict": "RUN THE NUMPY PHASE CONCEPT TEST FIRST — it is the cheapest decisive gate and is strongly precedented (the composer escaped this exact additive common-mode family via FHRR phase), so it merits the minutes it costs. It is a genuine two-outcome de-risk, not a foregone win: PASS multi-seed (objrel slot0 THEME high + canonical high + BOTH pedestal-invariant across seeds 42/44/100) WARRANTS the RF-spiking build, and the phase codebook P_r computed here IS the complex synaptic weight set to install (rf_set_complex_weights) — near-zero translation risk. FAIL characterizes a STRONGER boundary than the current rate/signed exhaustion, because it closes the one escape route (phase) that worked for the composer, meaning the objrel structural read is genuinely irreducible on this substrate. Do NOT build RF spiking before this passes. The residual to watch: this tests that phase READOUT is common-mode immune (which FHRR guarantees); it does NOT yet test that the RF resonate/read floor (sim/bridge.py _rf_mag2>_rf_floor2 magnitude floor, noted rf_phasor_composer.py:86) preserves the margin on real spikes — that is the SECOND, cheaper-than-full-build de-risk to gate only AFTER this numpy PASS (a single-slot RF read-vs-numpy-phase parity check), keeping the build strictly cheapest-first."
+      }
+    ],
+    "synthesis": "Phase-domain structural-read design. The three angles converge — I'll synthesize decisively.\n\n## 1. The RECOMMENDED phase-classifier mechanism (end-to-end, reuse-first)\n\nThe objrel role read is a 3-way classifier (AGENT / THEME / PATIENT) over the reservoir feature `f ∈ ℝ^~300`. The information is already linearly separable (your linear argmax = 1.00); the *only* thing missing is a readout that survives the additive common-mode pedestal that broke every rate/count/signed variant. The composer already banked exactly this escape (2026-06-05 FHRR pivot). Reuse it verbatim with the 3 role vectors as a 3-entry codebook.\n\n| Step | Operation | Concrete existing op / function | sim/ edit? |\n|---|---|---|---|\n| **1. Rate → phasor entry** | `f → P_f = exp(i·angle(Φ f))`, unit-magnitude per component (magnitude discarded) | Step-3 grounded-code projection: `grounded_phases(f, proj)` in `research/runners/_codeswap_12codes_ppmi_ab.py:60`; fixed seeded complex `Φ` (the `M @ rate → unit phasor` pattern documented at `sim/bridge.py:5658` rf_kick) | **None** |\n| **2. Role phasors as matched-filter codebook** | Each role read-out vector `W_r → P_r = exp(i·angle(Φ W_r))`; install `conj(P_r)` as complex synapses (3-entry codebook) | `RFPhasorComposer._bind_conns()` (`rf_phasor_composer.py:188`) → `SimulationBridge.rf_set_complex_weights()` (`sim/bridge.py:5703`); the `_reciprocal_conjugate` local-conj wiring rule (`rf_phasor_composer.py:199`) so **no host `np.conj`** | **None** |\n| **3. Kick + resonate** | `rf_kick(P_f)` then `rf_resonate_steps(T+8)` | `sim/bridge.py:5658` + `:5777` — identical to the composer's `_resonate()` (`rf_phasor_composer.py:169`), the op run on every bind/unbind/bundle | **None** |\n| **4. Phase readout** | Recover per-node phase from the Im zero-crossing first-spike step (magnitude-invariant) | `SimulationBridge.rf_read_phases()` (`sim/bridge.py:5696`) — the same readout used by the spiking cleanup matched filter | **None** |\n| **5. Phase-coherence argmax** | `score_r = |Σ_k exp(i(φ_{f,k} − φ_{r,k}))|`; `role = argmax_r score_r` | `RFPhasorComposer._cleanup()` numpy path (`rf_phasor_composer.py:381–386`), the validated (27/27 multi-seed) nearest-concept classifier, with roles substituted for concepts | **None** |\n\n**Net: zero `sim/` edits.** This is pure runner-side orchestration of the already-validated cleanup wiring, with the 3 role vectors playing the codebook and the reservoir feature entering through the Step-3 fixed complex projection. Sign is encoded natively (a phase φ vs φ+π *is* +1/−1), retiring the fragile signed-conductance relay entirely.\n\n## 2. WHY it is common-mode immune (the property that broke every prior read)\n\nThe pedestal that broke POSITIVE WTA is a **uniform additive** perturbation `f → f + c·1`. In every rate/count/signed scheme the score has an additive term proportional to `c` (`f·W_r` gains `c·Σ_j W_rj`, which differs across roles and swamps the shift-invariant structural margin). The composer hit the *same* family — `onoff(bon−boff)` opponency was a small signed difference riding a large common mode (cos 0.89, subtraction amplifies noise ~4.3×), confirmed a fundamental rate-coded SNR wall unbeatable by any WTA circuit.\n\nThe phase read has **no additive pedestal term, structurally**:\n- **Unit-magnitude entry** (step 1) discards the additive scale — each component is renormalized onto the unit circle, so `c` cannot ride as magnitude.\n- **The score is a complex-inner-product magnitude / sum of phase *differences*** `Σ_k cos(φ_{f,k} − φ_{r,k})`. A term common to `φ_f` and `φ_{r}` cancels in the difference — this is shift-invariance built into the algebra, not tuned.\n- **The readout is the Im zero-crossing *time*** (`sim/bridge.py` `rf_read_phases`), invariant to `|Z|` — a pedestal that only scales magnitude cannot move the spike phase or the winner.\n\nSo the exact `c` that moved the rate argmax provably cannot move the phase argmax, provided `Φ` is frozen (and, as belt-and-suspenders, optionally orthogonalized against `1` so `Φ·c1` maps to a fixed reference phase). This is the identical opponency-escape the project already validated — reapplied to the structural-role read.\n\n## 3. The SINGLE cheapest de-risk to run FIRST (numpy complex-linear concept test)\n\n**Do NOT build RF spiking before this passes.** ~20 lines of numpy, minutes on CPU, on the `f` and `W` arrays that already exist from this session's ridge fit. It tests the one thing phase must buy — common-mode immunity of the readout — with the exact pedestal that broke the rate read.\n\n```\n# frozen from seed 42 ONLY, applied unchanged to 44/100 (frozen-op-point discipline)\nΦ = fixed random complex projection, shape (D_phasor=64, 300), seed 42\nΦ = orthogonalize columns of Φ against all-ones vector 1   # optional; the c-sweep decides if needed\n\nfor each content slot:\n    P_f = exp(i * angle(Φ @ f_slot))                       # unit-magnitude entry\nP_r = exp(i * angle(Φ @ W_r)) for r in {AGENT, THEME, PATIENT}\nscore_r = abs( mean( P_f * conj(P_r) ) )                   # composer cleanup op\npredicted_role = argmax_r score_r\n```\n\n**Score, held-out, multi-seed (42/44/100 — including the seeds that broke the signed/rate reads):**\n- canonical (role==position) accuracy → must stay ≥ 0.9\n- objrel slot0 == TRUE THEME → the read that was 0.00 positive / fragile signed → must be ≥ 0.9\n\n**THE ANTI-CHEAT (decisive gate) — common-mode control:** re-run with `f → f + c·std` for `c ∈ {0.5, 1, 2, 5}` (the exact positive-shift pedestal that collapsed POSITIVE WTA). **PASS requires objrel slot0 and canonical accuracy UNCHANGED across the whole c-sweep, on all 3 seeds.** If any result moves, the map smuggled magnitude and it is not a real phase escape. **Second anti-cheat (shift-invariance parity):** score the same role vectors at slot0 vs slot1 — the phase read must be position-shift-invariant the way the linear argmax is.\n\n**Gate:** PASS multi-seed → the RF-spiking build is warranted, and the phase codebook `P_r` computed here *is literally* the complex synapse set to install via `rf_set_complex_weights` (near-zero translation risk). FAIL → the objrel read is a *stronger* characterized boundary than the current rate/signed exhaustion, because it closes the one escape route (phase) the composer used.\n\n*(One design knob: the entry map. Angle 2's `angle(Φf)` and angle 3's `exp(i·π·tanh(α·f))` are two encodings of the same idea — the c-sweep will tell you which; prefer the plain `angle(Φf)` grounded-code form first since it's the exact in-production op, fall back to the `tanh` signed-phase lift only if the margin needs explicit sign-to-lead/lag.)*\n\n## 4. VERDICT\n\n**Build it — after the numpy gate passes.** The phase read is a **tractable, principled surpass of the objrel boundary, not a re-hit of it.** It is the same additive-common-mode family the composer already escaped, and the escape mechanism (rate→FHRR phase, phase-coherence argmax) is *already on this substrate, validated at production scale (320 concepts, multi-seed), reused with zero `sim/` edits* — roles are just a 3-entry codebook. Common-mode immunity is provable and structural (no additive pedestal in a phase-difference score; magnitude-invariant zero-crossing readout), not a tuning artifact, and sign is native to phase so the fragile signed-conductance path is retired outright.\n\nThe one honest residual: this de-risk proves the phase **readout** is common-mode immune (which FHRR guarantees); it does **not** yet prove the RF **resonate/read-floor** on real spikes (`_rf_mag2 > _rf_floor2`, `rf_phasor_composer.py:86`) preserves the margin. That is a second, cheaper-than-full-build check — a single-slot RF-read-vs-numpy-phase parity — gated **only after** the numpy PASS, keeping the build strictly cheapest-first. No design obstacle remains; the only open question is empirical margin-survival at `D_phasor=64`, which the numpy test settles decisively before any GPU/`sim/` commitment.\n\n**Confidence: HIGH.** Strong in-project precedent (2026-06-05 FHRR pivot), reuse-by-import with no new mechanism, and a two-outcome de-risk that is decisive either way. Recommendation: **run the numpy c-sweep concept test now; build the RF realization iff it passes ≥0.9 on objrel slot0 + canonical, pedestal-invariant, all three seeds.**\n\nKey files: `research/runners/rf_phasor_composer.py` (cleanup op `:381`, bind wiring `:188`, local-conj `:199`), `research/runners/_codeswap_12codes_ppmi_ab.py:60` (rate→phasor), `sim/bridge.py:5658/5696/5703/5777` (rf_kick / rf_read_phases / rf_set_complex_weights / rf_resonate_steps), precedent `research/findings/2026-06-05-fhrr-production-switch-DONE.md`."
+  },
+  "workflowProgress": [
+    {
+      "type": "workflow_phase",
+      "index": 1,
+      "title": "Design"
+    },
+    {
+      "type": "workflow_phase",
+      "index": 2,
+      "title": "Synthesize"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 1,
+      "label": "design:machinery-reuse",
+      "phaseIndex": 1,
+      "phaseTitle": "Design",
+      "agentId": "a1511bfd6853a61e8",
+      "agentType": "Explore",
+      "model": "claude-haiku-4-5-20251001",
+      "state": "done",
+      "startedAt": 1783281445236,
+      "queuedAt": 1783281445217,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "Machinery-reuse mapping: compose 3-role phase classifier fr…",
+      "promptPreview": "THE PROBLEM (objrel structural role read — rung 4, the phase pivot).\nA frozen echo-state RESERVOIR turns a sentence into a real-valued firing-rate feature f (dim ~300) that ENCODES its\ngrammatical structure: a shift-invariant LINEAR argmax over f (argmax_r (f·W)[r], per content slot, W = 3 role read-out\nvectors) reads the object-relative role (slot0 = THEME, not AGENT) at 1.00 on EVERY seed. The i…",
+      "lastProgressAt": 1783281558497,
+      "tokens": 56427,
+      "toolCalls": 28,
+      "durationMs": 113260,
+      "resultPreview": "{\"angle\":\"Machinery-reuse mapping: compose 3-role phase classifier from on-bridge RF/FHRR substrate\",\"findings\":\"## Phase Classifier Composition — Existing Operations Mapped\\n\\nThe RF/FHRR on-bridge machinery can compose a PHASE CLASSIFIER for object-relative role reading by reusing exactly 5 existing functions, with only runner-side wiring required.\\n\\n### Component 1: Rate → Phasor Entry (Step-3…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 2,
+      "label": "design:phase-classifier-design",
+      "phaseIndex": 1,
+      "phaseTitle": "Design",
+      "agentId": "a249302d793de168d",
+      "agentType": "general-purpose",
+      "model": "claude-opus-4-8",
+      "state": "done",
+      "startedAt": 1783281445238,
+      "queuedAt": 1783281445218,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "phase-classifier-design",
+      "promptPreview": "THE PROBLEM (objrel structural role read — rung 4, the phase pivot).\nA frozen echo-state RESERVOIR turns a sentence into a real-valued firing-rate feature f (dim ~300) that ENCODES its\ngrammatical structure: a shift-invariant LINEAR argmax over f (argmax_r (f·W)[r], per content slot, W = 3 role read-out\nvectors) reads the object-relative role (slot0 = THEME, not AGENT) at 1.00 on EVERY seed. The i…",
+      "lastProgressAt": 1783281617989,
+      "tokens": 185660,
+      "toolCalls": 13,
+      "durationMs": 172751,
+      "resultPreview": "{\"angle\":\"phase-classifier-design\",\"findings\":\"THE DESIGN IS A ONE-LINE REUSE OF AN ALREADY-VALIDATED ON-SUBSTRATE PRIMITIVE. The reservoir feature f (~300-dim, real firing rates) carries a linearly-separable structural role margin; the rate WTA fails ONLY because argmax_r(f·W_r) is corrupted by a per-role additive common-mode pedestal (c·Σ_j W_rj differs across roles). The composer hit the SAME c…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 3,
+      "label": "design:minimal-derisk",
+      "phaseIndex": 1,
+      "phaseTitle": "Design",
+      "agentId": "a5598317410326103",
+      "agentType": "general-purpose",
+      "model": "claude-opus-4-8",
+      "state": "done",
+      "startedAt": 1783281445238,
+      "queuedAt": 1783281445218,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "minimal-derisk",
+      "promptPreview": "THE PROBLEM (objrel structural role read — rung 4, the phase pivot).\nA frozen echo-state RESERVOIR turns a sentence into a real-valued firing-rate feature f (dim ~300) that ENCODES its\ngrammatical structure: a shift-invariant LINEAR argmax over f (argmax_r (f·W)[r], per content slot, W = 3 role read-out\nvectors) reads the object-relative role (slot0 = THEME, not AGENT) at 1.00 on EVERY seed. The i…",
+      "lastProgressAt": 1783281546553,
+      "tokens": 177943,
+      "toolCalls": 8,
+      "durationMs": 101315,
+      "resultPreview": "{\"angle\":\"minimal-derisk\",\"findings\":\"The rate/count/signed spiking surface is exhausted for the objrel structural read, and the failure is the EXACT additive common-mode family the composer already hit and escaped. Precedent (load-bearing): the composer's onoff(bon-boff) opponency was confirmed a FUNDAMENTAL rate-coded SNR wall (research/findings/2026-06-05-B-opponency-rate-coded-SNR-wall-CONFIRM…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 4,
+      "label": "synthesis",
+      "phaseIndex": 2,
+      "phaseTitle": "Synthesize",
+      "agentId": "ab5a03cce1d5a217d",
+      "model": "claude-opus-4-8",
+      "state": "done",
+      "startedAt": 1783281617991,
+      "queuedAt": 1783281617990,
+      "attempt": 1,
+      "promptPreview": "Synthesize the phase-domain structural-read design from 3 angles (JSON):\n\n[\n  {\n    \"angle\": \"Machinery-reuse mapping: compose 3-role phase classifier from on-bridge RF/FHRR substrate\",\n    \"findings\": \"## Phase Classifier Composition — Existing Operations Mapped\\n\\nThe RF/FHRR on-bridge machinery can compose a PHASE CLASSIFIER for object-relative role reading by reusing exactly 5 existing functio…",
+      "lastProgressAt": 1783281670776,
+      "tokens": 172703,
+      "toolCalls": 0,
+      "durationMs": 52785,
+      "resultPreview": "Phase-domain structural-read design. The three angles converge — I'll synthesize decisively.\n\n## 1. The RECOMMENDED phase-classifier mechanism (end-to-end, reuse-first)\n\nThe objrel role read is a 3-way classifier (AGENT / THEME / PATIENT) over the reservoir feature `f ∈ ℝ^~300`. The information is already linearly separable (your linear argmax = 1.00); the *only* thing missing is a readout that su…"
+    }
+  ],
+  "totalTokens": 592733,
+  "totalToolCalls": 49
+}

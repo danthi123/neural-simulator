@@ -1,0 +1,124 @@
+{
+  "summary": "Deep research: is the dendritic direction the right + tractable path for the objrel structural read — reusing existing groundwork — or a red herring like the decorrelation-needs-dendrites call that PPMI overturned?",
+  "agentCount": 4,
+  "logs": [],
+  "result": {
+    "perAngle": [
+      {
+        "angle": "Dendritic groundwork inventory: VALIDATED two-compartment dAP neuron + graded plateau read-out are BUILT and GUARDED in sim/ (enable_two_compartment_dap + enable_graded_dendritic_plateau flags, default OFF). The apical compartment runs a coupled ODE (tau/R/g_couple params) and is the REGENERATION site for the Mg²⁺-unblock, solving the positive-feedback runaway that plagued single-compartment injection. For objrel's signed/common-mode-removal linear classifier: the two-compartment dAP's apical voltage (cp_v_apical, line 6447) is AVAILABLE but not currently routed as a read-out. The graded plateau kernel (fused_graded_dendritic_plateau, sim/kernels.py:281-330) is already SMOOTH-TRANSFER validated (Stage 1, 2026-06-20 finding: multi-seed GO, 9× near/far ratio on value continuum). Both are REUSABLE, but the objrel read requires a different input (the reservoir feature f) and a different read-out strategy (signed/common-mode subtraction in apical-to-soma geometry, not the current basal-additive-current model).",
+        "is_dendritic_needed": "maybe",
+        "verdict": "The existing dendritic groundwork (two-compartment dAP + graded plateau) is VALIDATED and READY TO REUSE for dendritic read-outs, but it is designed for ADDITIVE (basal + apical-current) feedback, NOT SUBTRACTION (basal - apical common-mode). For objrel's signed/common-mode-removal linear classifier, the **structural reuse is high (apical voltage is already separate, already on the bridge), but the read-out logic is a NEW kernel** — a dendritic subtraction rule (something like: soma-current = basal-current - gain*apical-mean, feedforward into a signed-logit discriminator). The cheapest de-risk is a numpy experiment first (signed linear regression with common-mode subtraction on the frozen reservoir feature, hours). If that shows promise, porting to the bridge is low-risk (the two-compartment infrastructure exists; it's a routing + kernel swap, not a substrate rewrite). The BOUNDARY finding (EMERGE-1) is orthogonal to objrel but undercuts any assumption that dendritic substrate alone solves depth-scaling; for objrel at the structural read-out scale, substrate is likely sufficient IF the read-out geometry (signed/common-mode) is correct. The owner's skepticism is WARRANTED: dendritic machinery is NOT a magic fix; it is a TOOL whose utility depends on whether the problem (objrel's structural discrimination) actually needs the apical-soma separation that dendrites provide. Test this empirically before months-scale builds."
+      },
+      {
+        "angle": "red-herring-check: pressure-test \"objrel needs dendrites\" with the project's own decorrelation-red-herring / SURPASS discipline (ISOLATE + QUANTIFY the genuine residual; is the common-mode removal dendritic-MANDATED or a somatic feedforward op in the wrong form?)",
+        "is_dendritic_needed": "no-red-herring",
+        "verdict": "Dendrites are a RED HERRING for the objrel read, on the project's own SURPASS standard. The genuine residual, isolated to the byte, is the removal of ONE role-independent (per-example) additive pedestal `c·Σf` that the shift-invariant linear argmax cancels but the positive spiking WTA does not. This is a rank-1 common-mode subtraction = the canonical SOMATIC feedforward-inhibition op (a single summing inhibitory pool), NOT the per-input weight/code DECORRELATION/whitening that Mikulasch-Priesemann actually bounds on point neurons — the finding itself concedes the info is 'present + linearly separable', which is exactly the decorrelation-red-herring situation the project already overturned once with PPMI. The prior surpass attempts all failed because they placed the subtraction in the WRONG spot (downstream floor/competition) or WRONG domain (a nonlinear inhibitory relay, `f_I(Ws−@f)` ≠ linear); the SIMPLER move — subtract a shared feedforward baseline from the FEATURE/drive before the read, PPMI-style — was never tried, and the delta rule confirms it (reads raw firing, clips weights ≥0). Op-point fragility across draws (seed 42/100 recover, seed 44 fails) is the fingerprint of a MISSING per-draw normalization, not of a substrate that structurally can't subtract a baseline. RECOMMENDATION: do NOT open the dendritic build. Run the ~minutes numpy de-risk (feedforward common-mode subtraction on the existing step7 harness, multi-seed 42/44/100); if it generalizes, the somatic fix is found; if it fragments, escalate to a LEARNED-signed / feature-normalized read (the delta rule already generalized the canonical read) before any dendritic claim. A dendritic mechanism is at most the 3rd option, never the default."
+      },
+      {
+        "angle": "dendritic-mechanism",
+        "is_dendritic_needed": "maybe",
+        "verdict": "MAYBE — the dendritic subtraction is the correctly-SHAPED tool and is literature-mandated FOR the somatic-balance-fails regime (Mikulasch-Priesemann 2021 PNAS is precisely 'somatic inhibition fails on correlated input / transmission delays, compartmental dendritic balance works'; Larkum BAC + SST/Martinotti subtractive apical inhibition supply the biophysics), and it is a CHEAP reuse of already-built + already-byte-reviewed sim/ machinery (cp_v_apical, cp_conductance_g_graded_plateau, DendriticLayer) — NOT a months-scale rewrite. BUT it must NOT be assumed necessary yet, per the owner's directive and the project's own repeatedly-overturned dendrite assumptions: the specific objrel common-mode is a FIXED UNIFORM engineering pedestal (WS_ENS_FLOOR=150), and both the signed-readout BOUNDARY and the delta finding explicitly state the objrel info is 'present + linearly separable, NOT the irreducible Mikulasch-Priesemann wall' — so a simpler feedforward/local somatic op (a graded rate read that drops the pedestal, or the boundary's OWN named next frontier, a per-draw LEARNED SIGNED read that already generalizes canonical 6/6) may fix it WITHOUT dendrites. RECOMMENDATION: run the two co-primary numpy READ de-risks HEAD-TO-HEAD (hours, CPU, no sim/ edit, no heavy compute): (1) compartmental soma_r=relu(basal_r − apical_common), (2) learned-signed delta read — on seeds 42/44/100/101 scored per-slot vs TRUE roles. Dendrites are VALIDATED as necessary iff (1) reproduces the linear argmax robustly AND (2) does not; if (2) also works, dendrites are again over-assumed and the cheaper learned-signed read ships. Only after the numpy read validates dendrites should any (cheap, additive, default-off) on-bridge dAP realization be built."
+      }
+    ],
+    "synthesis": "# VERDICT: RED HERRING — not dendritic-mandated\n\nThe objrel common-mode-removal is a **RED HERRING**, and it is the *same* red herring the project has already overturned twice (the off-diagonal decorrelation → PPMI, and the \"structural primitive\" fork). All three research angles converge, and the two that actually dissected the code to the byte (angles 2 and 3) agree on the mechanism. This does **not** clear the dendritic gate.\n\n## The residual, isolated to the byte\n\nThe reservoir feature `f` already encodes objrel: a **shift-invariant linear argmax over `f` reads slot0=THEME at 1.00 on every seed, even positive-shifted** (`step7_signed_isolation.py`). The information is present and linearly separable. That is the exact fingerprint of the decorrelation red herring — \"the feature is already separable\" — not of an irreducible substrate wall.\n\nWhat the spiking WTA loses is **one role-independent additive scalar per example**: the uniform tonic pedestal `WS_ENS_FLOOR_C2 = 150 pA` delivered to all 3 role ensembles (needed to lift them over the WTA inhibitory floor), plus the Dale-shift term `c·Σf` (from `Ws_shifted = Ws − Ws.min()`). Both are **identical across all 3 roles** and **example-dependent** (scale with total reservoir firing). The linear argmax cancels this exactly (shift-invariant); the WTA's ignition-order winner — a threshold nonlinearity sitting *on* the pedestal — cannot resolve the sub-1% structural margin above a large example-varying baseline.\n\nThis is a **rank-1 common-mode subtraction**, not per-input cross-neuron whitening. Mikulasch-Priesemann bounds the latter (matrix-inverse-shaped decorrelation of off-diagonal covariance). Both prior findings **explicitly concede** the objrel info is \"present + linearly separable, NOT the irreducible Mikulasch-Priesemann decorrelation wall.\" Angle 3 cites M-P 2021 for the *somatic-balance-fails-on-correlated-input* regime — but that regime requires a genuine signal-correlation common-mode; here the common-mode is a **fixed uniform engineering pedestal**, trivially subtractable by a single scalar. The citation does not transfer.\n\n## Why the prior surpass attempts failed (all wrong lever)\n\nEvery attempt subtracted the common mode in the wrong spot or wrong domain:\n- low `WS_ENS_FLOOR` sweep 150→15 → 0.00 (the shift pedestal, not the floor, dominates)\n- WTA-competition lesion → 0.00 (canonical drops to 0.67 — whack-a-mole)\n- disynaptic inhibitory relay → 0/18, because the relay is **nonlinear**: `RELAY_IE_W·f_I(Ws−@f) ≠ linear Ws−@f`\n\n**None tried the PPMI move**: subtract a role-independent per-example baseline from the *feature/drive* **before** the read. The delta rule confirms the gap — `_learn_Ws_spiking` reads raw firing `rho` and clips weights ≥0 (positive-only by construction); no per-example feature baseline was ever removed.\n\nThe **step9 op-point fragility** (signed conductance recovers slot0 on seed 42 at 0.75/0.92 and seed 100 at 0.50, but seed 44 at 0.00) is the decisive tell. A *calibrated* op-point recovers it on some draws. Fragility across draws where each draw has a different `Σf`-baseline / `f`-scale is the signature of a **missing per-draw normalization** — exactly the PPMI story (\"peaked at 20% then fell off either side until per-hub/per-concept normalization + population coding fixed it feedforward on point neurons\") — not of a substrate that structurally cannot subtract.\n\n## (2) EXISTING GROUNDWORK — validated, reusable, and NOT months-scale either way\n\nThe dendritic machinery is genuinely built and byte-reviewed (all three angles confirm):\n- `enable_two_compartment_dap` + `cp_v_apical` (real apical membrane voltage, EMERGE-10 GO, byte-identical off, sim/bridge.py:6440-6476) — the positive-feedback failure mode is already diagnosed and fixed.\n- `enable_graded_dendritic_plateau` + `cp_conductance_g_graded_plateau` + `fused_graded_dendritic_plateau` (2026-06-20 GO, smooth-transfer validated) — a shipped first-class on-bridge dendritic compartment current.\n- `sim/dendritic_neuron.py` `DendriticLayer` already does `soma_rate = sig(v_basal − theta_eff)` with `theta_eff` lowered by `|v_apical|` — the exact basal−apical subtraction shape.\n\nSo IF dendrites were needed, the on-bridge realization would be a **drop-in additive default-off reuse**, not a NeuronModel rewrite. But the current terms couple **additively** (apical *lowers* soma threshold); objrel needs **subtraction** (`basal − apical_common`), which is a routing + kernel-logic swap. **The point is moot** — the numpy de-risk below decides whether even that swap is warranted, and the *simpler somatic fix* reuses already-shipped `sim/` primitives (`input_mean_adapt`, `cfg.enable_input_divisive_norm` / `BrainRegion.input_divisive_norm`) that are Carandini-Heeger common-mode-removal circuits, byte-identity-tested default-off.\n\n## (3) THE CHEAPEST DE-RISK — run this FIRST (minutes, numpy, no sim/ edit, safe while objrel experiments are in flight)\n\nRun **two co-primary numpy READ probes head-to-head** on the already-fit ridge `Ws` and frozen reservoir feature `f` from `step7_signed_isolation.py` / `step7_objrel.py` (touches no shared state):\n\n**Probe A — somatic feedforward common-mode subtraction (the red-herring hypothesis):**\nFor each role r: `drive_r = (Ws_shifted[r] @ f) − beta·(Σ_i f_i)`, where `β·Σf` is a single shared subtractive-inhibition pool driven by total reservoir firing (one role-independent scalar). Sweep `beta` toward the shift constant `c`. `argmax` over a soft/spiking WTA.\n\n**Probe B — compartmental subtraction (the dendritic hypothesis):**\n`basal_r = Ws[k][:,r] @ f`; `apical_common = mean_r(basal_r)` (what a local apical-inhibition compartment learns to track); `soma_r = relu(basal_r − apical_common)`; `pred = argmax_r(soma_r)`.\n\n**Gate (both), on seeds 42/44/100/101** — the seeds where fixed-signed was 0.75/0.00/0.50:\n- Score **per-slot vs TRUE roles** (not host argmax — the audit's D1 circularity fix), held-out rng distinct from train.\n- **PASS** = objrel slot0(THEME) recovers toward 1.00 on **all** seeds at **one fixed** `beta`/gain while canonical stays ~1.00.\n- **Common-mode lesion control** (load-bearing proof): set `beta=0` (Probe A) / `apical_gain=0` (Probe B) → must collapse to the positive-pedestal read that fails (0.00). If it doesn't collapse, the subtraction isn't the mechanism.\n\n**Decision rule:**\n- **A generalizes** → red herring **CONFIRMED**, somatic fix found, do **NOT** open the dendritic build.\n- **A fragments but B generalizes** → dendrites validated as *necessary*; only then build the cheap additive default-off on-bridge dAP read.\n- **Both fragment even with feature-baseline removal** → escalate to the **learned-signed delta read** (the boundary finding's own named next frontier — `_learn_Ws_spiking` already generalizes the canonical read 6/6 per-draw; extend it to signed/opponent conductance-domain delivery so the read *learns* the baseline per draw) **before any dendritic claim**.\n\nEvery branch is hours-scale, CPU, no `sim/` edit, no heavy compute.\n\n## (4) THE SIMPLER SOMATIC MECHANISM TO TRY INSTEAD\n\n**A single shared subtractive feedforward-inhibitory pool driven by the sum of reservoir firing** — deliver each role's drive as `Ws_shifted@f − β·(Σf)`, cancelling the role-independent pedestal at the somatic drive before the WTA ignition-order read. This is the canonical point-neuron common-mode-removal op (rank-1 subtractive/shunting inhibition), the same class as PPMI's per-hub/per-concept mean-subtraction that reached host on point neurons. On-bridge it reuses the already-shipped `input_mean_adapt` (per-hub running-mean subtraction) or `enable_input_divisive_norm` (Carandini-Heeger) — no new mechanism.\n\n**Co-primary fallback if the fixed-baseline subtraction still fragments:** the **learned-signed / feature-normalized delta read** — feed `_learn_Ws_spiking` a mean-subtracted feature (or add signed/opponent ON-OFF source-side ± split delivery, which must be **linear**, not a downstream nonlinear relay) so it learns the per-draw baseline. This is cheaper and lower-variance than a new compartment mechanism.\n\n---\n\n**Bottom line for the next build:** Do not open the dendritic path. The objrel wall is one role-independent scalar the positive WTA can't cancel — a somatic feedforward baseline-subtraction that was never tried, sitting in the exact PPMI red-herring pattern the project already overturned. The op-point recovery + the untried feedforward-normalization both point away from dendrites. Dendrites are at most the **third** option (behind fixed feedforward subtraction and the learned-signed read), and are validated **only if** Probe B generalizes where Probe A and the learned-signed read both fail. Run the two numpy READ probes first; they cost minutes and decide it cleanly."
+  },
+  "workflowProgress": [
+    {
+      "type": "workflow_phase",
+      "index": 1,
+      "title": "Research"
+    },
+    {
+      "type": "workflow_phase",
+      "index": 2,
+      "title": "Synthesize"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 1,
+      "label": "research:groundwork-inventory",
+      "phaseIndex": 1,
+      "phaseTitle": "Research",
+      "agentId": "a1cc76e21c0cd01fd",
+      "agentType": "Explore",
+      "model": "claude-haiku-4-5-20251001",
+      "state": "done",
+      "startedAt": 1783283727882,
+      "queuedAt": 1783283727864,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "Dendritic groundwork inventory: VALIDATED two-compartment d…",
+      "promptPreview": "THE PROBLEM (objrel structural role read). A frozen echo-state reservoir turns a sentence into a real-valued firing-rate\nfeature f (~300-dim) that ENCODES its grammatical structure: a shift-invariant LINEAR argmax over f (argmax_r (f·W)[r] per\ncontent slot, W = 3 role read-out vectors) reads the object-relative role (slot0 = THEME not AGENT, where word order ≠ roles)\nat 1.00 on EVERY seed. But NO …",
+      "lastProgressAt": 1783283792441,
+      "tokens": 57925,
+      "toolCalls": 23,
+      "durationMs": 64559,
+      "resultPreview": "{\"angle\":\"Dendritic groundwork inventory: VALIDATED two-compartment dAP neuron + graded plateau read-out are BUILT and GUARDED in sim/ (enable_two_compartment_dap + enable_graded_dendritic_plateau flags, default OFF). The apical compartment runs a coupled ODE (tau/R/g_couple params) and is the REGENERATION site for the Mg²⁺-unblock, solving the positive-feedback runaway that plagued single-compart…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 2,
+      "label": "research:red-herring-check",
+      "phaseIndex": 1,
+      "phaseTitle": "Research",
+      "agentId": "aef4601150f72cfff",
+      "agentType": "general-purpose",
+      "model": "claude-opus-4-8",
+      "state": "done",
+      "startedAt": 1783283727883,
+      "queuedAt": 1783283727864,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "red-herring-check: pressure-test \"objrel needs dendrites\" w…",
+      "promptPreview": "THE PROBLEM (objrel structural role read). A frozen echo-state reservoir turns a sentence into a real-valued firing-rate\nfeature f (~300-dim) that ENCODES its grammatical structure: a shift-invariant LINEAR argmax over f (argmax_r (f·W)[r] per\ncontent slot, W = 3 role read-out vectors) reads the object-relative role (slot0 = THEME not AGENT, where word order ≠ roles)\nat 1.00 on EVERY seed. But NO …",
+      "lastProgressAt": 1783283928251,
+      "tokens": 220783,
+      "toolCalls": 27,
+      "durationMs": 200368,
+      "resultPreview": "{\"angle\":\"red-herring-check: pressure-test \\\"objrel needs dendrites\\\" with the project's own decorrelation-red-herring / SURPASS discipline (ISOLATE + QUANTIFY the genuine residual; is the common-mode removal dendritic-MANDATED or a somatic feedforward op in the wrong form?)\",\"findings\":\"VERDICT: RED-HERRING (dendrites NOT mandated). The genuine residual is a SINGLE role-independent scalar subtrac…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 3,
+      "label": "research:dendritic-mechanism",
+      "phaseIndex": 1,
+      "phaseTitle": "Research",
+      "agentId": "a3f3113aeba7a7ae2",
+      "agentType": "general-purpose",
+      "model": "claude-opus-4-8",
+      "state": "done",
+      "startedAt": 1783283727884,
+      "queuedAt": 1783283727864,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "dendritic-mechanism",
+      "promptPreview": "THE PROBLEM (objrel structural role read). A frozen echo-state reservoir turns a sentence into a real-valued firing-rate\nfeature f (~300-dim) that ENCODES its grammatical structure: a shift-invariant LINEAR argmax over f (argmax_r (f·W)[r] per\ncontent slot, W = 3 role read-out vectors) reads the object-relative role (slot0 = THEME not AGENT, where word order ≠ roles)\nat 1.00 on EVERY seed. But NO …",
+      "lastProgressAt": 1783283988055,
+      "tokens": 233038,
+      "toolCalls": 32,
+      "durationMs": 260171,
+      "resultPreview": "{\"angle\":\"dendritic-mechanism\",\"findings\":\"THE OBJREL WALL, PRECISELY (from 2026-07-04-biological-learned-readout-delta-rule.md:114-160 + 2026-07-04-rungB1c-signed-readout-BOUNDARY.md): the reservoir FEATURE encodes objrel — a shift-invariant LINEAR argmax over f solves it 1.00 every seed, EVEN positive-shifted (so Dale-positivity is NOT the wall). What breaks it is the point-neuron SPIKING WTA de…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 4,
+      "label": "synthesis",
+      "phaseIndex": 2,
+      "phaseTitle": "Synthesize",
+      "agentId": "a0ce78a986e31614d",
+      "model": "claude-opus-4-8",
+      "state": "done",
+      "startedAt": 1783283988057,
+      "queuedAt": 1783283988057,
+      "attempt": 1,
+      "promptPreview": "Synthesize the dendritic-direction research for the objrel structural read. Inputs from 3 angles (JSON):\n\n[\n  {\n    \"angle\": \"Dendritic groundwork inventory: VALIDATED two-compartment dAP neuron + graded plateau read-out are BUILT and GUARDED in sim/ (enable_two_compartment_dap + enable_graded_dendritic_plateau flags, default OFF). The apical compartment runs a coupled ODE (tau/R/g_couple params) …",
+      "lastProgressAt": 1783284039337,
+      "tokens": 171444,
+      "toolCalls": 0,
+      "durationMs": 51279,
+      "resultPreview": "# VERDICT: RED HERRING — not dendritic-mandated\n\nThe objrel common-mode-removal is a **RED HERRING**, and it is the *same* red herring the project has already overturned twice (the off-diagonal decorrelation → PPMI, and the \"structural primitive\" fork). All three research angles converge, and the two that actually dissected the code to the byte (angles 2 and 3) agree on the mechanism. This does **…"
+    }
+  ],
+  "totalTokens": 683190,
+  "totalToolCalls": 82
+}

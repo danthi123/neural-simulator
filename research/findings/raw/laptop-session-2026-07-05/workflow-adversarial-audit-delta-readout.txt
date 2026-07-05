@@ -1,0 +1,180 @@
+{
+  "summary": "Read-only adversarial audit of the biological learned (delta-rule) read-out arc for hidden confounds/defects before commit",
+  "agentCount": 6,
+  "logs": [],
+  "result": {
+    "perDimension": [
+      {
+        "dimension": "GO-confound/leakage",
+        "overall": "CRITICAL LEAKAGE FOUND: The learned read-out's 18/18 score is validated against a host ridge baseline trained on identical data with identical labels (circular validation), and the test set only uses canonical transitive sentences where roles are perfectly predictable by word position alone (position artifact). Both confounds undermine the claim of genuine semantic role learning.",
+        "n": 4
+      },
+      {
+        "dimension": "anti-cheat-validity",
+        "overall": "MIXED: Two controls are valid, one has a conceptual degeneracy, but empirical failure modes appear to work.",
+        "n": 4
+      },
+      {
+        "dimension": "source-shortcut-removal (host ridge/argmax elimination in c3 learn+deploy paths)",
+        "overall": "CLEAN: The c3 learn path (_learn_Ws_spiking) avoids all host ridge/solve operations and trains purely via per-role delta rule on actual spiking ensemble firing. The c3 deploy path (_bind_c2 -> _op_wta_synaptic) performs role selection via a NEURAL argmax over actual spiking ensemble firing, not a host f@Ws computation. No contamination from c2's scale-sweep or host ridge solution found. Source-check functions are adequate for current code but theoretically could miss obfuscated shortcuts. The fundamental claim that c3 eliminates the host ridge shortcut is supported by source inspection.",
+        "n": 1
+      },
+      {
+        "dimension": "c3-runner-faithfulness",
+        "overall": "CRITICAL DIVERGENCE: c3 runner defaults to WS_REPLAY=3 instead of step6-validated WS_REPLAY=1, and c3's anti-cheat doesn't verify the learned (delta-rule) path.",
+        "n": 3
+      },
+      {
+        "dimension": "confound-diagnosis-soundness",
+        "overall": "Two diagnostic conclusions carry defects: claim 1 (P160 confound reasoning) is sound, but claim 2 lacks evidentiary basis and could mask real feature-quality issues.",
+        "n": 3
+      }
+    ],
+    "synthesis": "Confirmed both remaining load-bearing facts:\n\n1. **`_source_learned_readout_clean()` is defined (line 586) but never called anywhere** (grep shows only the definition). The c3 verdict gates solely on `_source_synaptic_readout_clean()`, which only checks the *deploy/select* path — a fallback to `_fit_Ws_spiking` in the *learn* path would pass the gate silently. **Confirmed, load-bearing** — it's a hole in the anti-cheat that *is committed in the runner*.\n\n2. **The GO test set is transitive-only by construction.** `C2_NONCANONICAL_FACT = False` (line 856) means `setup_corpus` never injects the objrel fact; every test fact is canonical `slot0=AGENT / slot1=PRED / slot2=THEME` where role == content-word position. The machinery to break the artifact (`_objrel_test_fact`, the `C2_NONCANONICAL_FACT` branch) **exists and is deliberately disabled**, with the runner's own comments (lines 856-864, 1105-1107) openly stating \"role is over-determined by position; the reservoir's form-READING/recurrence is NOT load-bearing on the CANONICAL task.\" **Confirmed** — the position-artifact is real and self-documented.\n\nI have what I need. The critical correction to the audit: the two most severe findings (both keyed to `step6_full.py`) were partly audited against a **scratchpad file that is not the committed arc**, but their *underlying* defects reproduce in the real runner. Here is the synthesis.\n\n---\n\n## Audit synthesis: biological learned (delta-rule) read-out arc\n\n**Methodological note that reframes the whole audit:** two auditors cited `step6_full.py` with line numbers. That file exists only in this session's scratchpad temp dir — it is an auditor's throwaway validator, **not part of the committed arc**. Every finding whose *evidence* is a `step6_full.py` line is unverified against shipped code. I re-verified each against the real runner (`research/runners/_rungB1c_spiking_reservoir_synaptic_readout_derisk.py`). The good news: the two most important defects **reproduce in the committed runner** and stand on their own. The bad news for those auditors: their specific \"circular validation against a host ridge fit\" and \"WS_REPLAY=3 divergence\" mechanics are **wrong for the shipped code** (c3 pins the read window to the validated 18/35 via `C3_READ_T_STEP`, line 497/921; it does not deploy at replay=3-vs-1 mismatch relative to its own train).\n\n### (1) Confirmed, load-bearing defects — ranked\n\n**D1 — HIGH — Position artifact: the GO test set is transitive-only, so 18/18 can be pure position→role memorization.**\n- *Undermines:* \"5/6 seeds at 18/18 validates a learned **semantic-role** read-out.\"\n- *Confirmed in shipped code:* `C2_NONCANONICAL_FACT = False` (line 856). Every test fact is canonical (slot0=AGENT, slot1=PRED, slot2=THEME); role is perfectly predictable by content-word position. The runner's own comments concede it: *\"role is over-determined by position; the reservoir's form-READING/recurrence is NOT load-bearing on the CANONICAL task\"* (lines 856-864, 1105-1107). The tooling to break it (`_objrel_test_fact`, the `C2_NONCANONICAL_FACT` branch) exists and is deliberately disabled.\n- *Fix:* flip `C2_NONCANONICAL_FACT=True` (or add ≥3 objrel test facts where slot0=THEME) and report c3 accuracy on them. A position learner collapses to ~chance on objrel; a genuine role learner holds. This is the single test that separates the two hypotheses — and the runner already admits c2's positive read-out *misroutes* objrel. **The honest, likely outcome is that the *canonical* 18/18 is a position result** and the reservoir/role-reading claim is not yet supported. Report that rather than the semantic-role framing.\n\n**D2 — MEDIUM/HIGH — c3's anti-cheat never verifies the learn path is the delta rule (loophole).**\n- *Undermines:* \"c3 is a **biologically learned** read-out, not a host ridge fit.\"\n- *Confirmed in shipped code:* `_source_learned_readout_clean()` is defined (line 586) but **never called** (grep: definition only). The verdict gates on `_source_synaptic_readout_clean()` (line 1076), which inspects only `_bind_c2`/`_op_wta_synaptic` — the *deploy/select* path. If `_learn_Ws_spiking` silently fell back to `_fit_Ws_spiking` (host ridge), the verdict would still pass. The check that would catch it exists and is wired to nothing.\n- *Fix:* call `_source_learned_readout_clean()` in the c3 branch and AND it into the verdict (`learned_source_clean_all`). One-line gate addition; the function is already written and correct.\n\n**D3 — MEDIUM — Generalization claim (c3 5/6 vs host-fit 2/6) is not isolated from \"spiking robustness\" without an independent held-out label source.**\n- *Undermines:* \"the delta rule **generalizes** where the ridge fit doesn't.\"\n- *Status:* the cross-seed improvement is real and a legitimate engineering win (train==deploy consistency removes the ridge's objective mismatch — the runner's stated rationale, line 494-496, is sound). But framed as *semantic* generalization it inherits D1: both methods are scored on canonical facts where the label is position-derivable. Resolve D1 (objrel test) and this claim resolves with it — no separate work needed.\n\n*Dropped as non-load-bearing (correctly low/none in the raw findings):* the scramble re-sample infinite-loop risk (astronomically improbable, correct as written); the source-check string-matching obfuscation gap (bounded, current code clean); the `READ_T_STEP_C2` global-mutation fragility (idempotent per mode, restored at seed start — line 921 comment confirms test-order safety); the P160 \"def-arg\" phrasing nitpick; the lesion/config-consistency checks (verified clean — no defect).\n\n*Explicitly rejected (auditor evidence was the scratchpad file, and the shipped mechanic differs):* the \"circular validation — learned weights scored against a host ridge fit on the same training data\" finding. In the committed runner, c3 is scored against the **held-out test facts' true role labels** (`_recall` over `test`), not against a host-ridge argmax. The circularity was an artifact of the auditor's own `step6_full.py` harness, not the arc. (D1 still applies to those true labels because the labels are position-trivial — but that is a *different, real* defect, not circularity.) Likewise the \"WS_REPLAY=3 operating-point divergence from step6\" is not a defect of the shipped c3, which pins its own train/deploy window to the validated config.\n\n### (2) Which claims survive the audit intact\n\n- **The anti-cheat *controls themselves* (deploy path)** — SURVIVE. Reservoir-lesion, route-lesion, provenance-clean, scramble/derangement, and the synaptic-readout source-check are verified run at the GO configuration on fresh identically-seeded bridges (lines 1082-1173). The global-scalar control's accuracy-conditional ±1 is a fair criticism *conceptually*, but as a control it still demonstrates per-role credit is load-bearing empirically; it is not load-bearing to the arc's headline. No change required to ship, worth a cleanup later.\n- **Host-shortcut removal in the c3 *deploy/select* path** — SURVIVES. `_bind_c2`/`_op_wta_synaptic` provably contain no `f@Ws` / host argmax over logits; role selection is a neural read over spiking-ensemble summed firing. Clean.\n- **Host-ridge removal in the c3 *learn* path** — TRUE IN THE CODE, but **NOT GATED** (D2). The learn path genuinely uses the local delta rule (`np.outer(T-an, rho)`, line 533) on actual spiking firing — but nothing in the verdict *enforces* it. Claim is true; its guarantee is missing.\n- **c3 runner faithfulness to the validated operating point** — SURVIVES on the point the auditor got wrong (read window IS pinned to 18/35, lines 497-498, 921), FAILS on the point the auditor got right (D2, the learn-path check is unwired).\n- **Diagnosis 1 (P160/P240 is a reservoir-position confound, not a real population-width fix)** — SURVIVES as the dominant effect; the omitted inhibitory-pool-scaling secondary lever is worth one sentence but doesn't overturn it. Cheap to close: confirm `WTA_INH_C2` (=40) was not also changed in the P160 test.\n- **Diagnosis 2 (seed-101 is a read-out RESOLUTION issue, not feature quality)** — DOES NOT SURVIVE as stated. The auditor is right that the cited evidence (global gini/eff_rank/silent/cond stats) does not exist in the codebase (grep: zero matches). The diagnosis rests on an untested assumption; global reservoir stats can match while *role-specific* discriminability differs. Either produce the role-specific measurement (per-role separation margin / confusability for seed 101 vs 42/43) or downgrade the claim to a hypothesis.\n\n### (3) The single most important thing to do before committing\n\n**Flip `C2_NONCANONICAL_FACT=True` and report c3 accuracy on the object-relative (slot0=THEME) test facts.** This is the one check that decides whether the entire arc's headline (\"a biologically learned read-out that learns semantic roles\") is real or a position artifact — and the runner already contains the machinery *and its own admission* that on canonical facts role == position. Everything else (wiring `_source_learned_readout_clean()` into the verdict — D2; the seed-101 role-specific re-diagnosis) is a fast follow. Do **not** ship the \"semantic role\" framing on canonical-only evidence; if objrel collapses, the honest, committable claim is narrower: *train==deploy delta-rule learning gives a seed-robust read-out on canonical (position-determined) roles, host-ridge-free* — which is still a genuine result, just not the one currently written.\n\nRelevant file: `C:\\Users\\dant123\\Documents\\Projects\\neural-simulator\\research\\runners\\_rungB1c_spiking_reservoir_synaptic_readout_derisk.py` (lines 497, 586-601, 856-895, 1076-1079). The two auditor `step6_full.py` citations refer to a non-committed scratchpad file and should not be trusted as evidence about shipped code."
+  },
+  "workflowProgress": [
+    {
+      "type": "workflow_phase",
+      "index": 1,
+      "title": "Audit"
+    },
+    {
+      "type": "workflow_phase",
+      "index": 2,
+      "title": "Synthesize"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 1,
+      "label": "audit:GO-confound/leakage",
+      "phaseIndex": 1,
+      "phaseTitle": "Audit",
+      "agentId": "aa99bd86467fa5428",
+      "agentType": "Explore",
+      "model": "claude-haiku-4-5-20251001",
+      "state": "done",
+      "startedAt": 1783235689060,
+      "queuedAt": 1783235689005,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "GO-confound/leakage",
+      "promptPreview": "CONTEXT — the arc under audit (biological learned read-out, mode c3):\nThe project reproduces \"which grammatical ROLE each content word plays\" (agent/predicate/theme) on a spiking substrate.\nA frozen echo-state reservoir produces a firing feature; a read-out matrix Ws maps it to the 3 role WTA ensembles;\nthe WINNER is a NEURAL argmax over the ensembles' spiking (ignition-order). The OLD read-out (m…",
+      "lastProgressAt": 1783235821526,
+      "tokens": 89576,
+      "toolCalls": 22,
+      "durationMs": 132466,
+      "resultPreview": "{\"dimension\":\"GO-confound/leakage\",\"overall\":\"CRITICAL LEAKAGE FOUND: The learned read-out's 18/18 score is validated against a host ridge baseline trained on identical data with identical labels (circular validation), and the test set only uses canonical transitive sentences where roles are perfectly predictable by word position alone (position artifact). Both confounds undermine the claim of gen…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 2,
+      "label": "audit:anti-cheat-validity",
+      "phaseIndex": 1,
+      "phaseTitle": "Audit",
+      "agentId": "a1a990377aa19bf75",
+      "agentType": "Explore",
+      "model": "claude-haiku-4-5-20251001",
+      "state": "done",
+      "startedAt": 1783235689062,
+      "queuedAt": 1783235689005,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "anti-cheat-validity",
+      "promptPreview": "CONTEXT — the arc under audit (biological learned read-out, mode c3):\nThe project reproduces \"which grammatical ROLE each content word plays\" (agent/predicate/theme) on a spiking substrate.\nA frozen echo-state reservoir produces a firing feature; a read-out matrix Ws maps it to the 3 role WTA ensembles;\nthe WINNER is a NEURAL argmax over the ensembles' spiking (ignition-order). The OLD read-out (m…",
+      "lastProgressAt": 1783235853148,
+      "tokens": 73037,
+      "toolCalls": 22,
+      "durationMs": 164086,
+      "resultPreview": "{\"dimension\":\"anti-cheat-validity\",\"overall\":\"MIXED: Two controls are valid, one has a conceptual degeneracy, but empirical failure modes appear to work.\",\"findings\":[{\"severity\":\"medium\",\"claim_affected\":\"Global scalar control proves per-role credit is load-bearing\",\"defect\":\"research/runners/_rungB1c_spiking_reservoir_synaptic_readout_derisk.py:70-74 and step6_full.py:70-74 — Global scalar imple…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 3,
+      "label": "audit:source-shortcut-removal",
+      "phaseIndex": 1,
+      "phaseTitle": "Audit",
+      "agentId": "a1d50411774fe9ed7",
+      "agentType": "Explore",
+      "model": "claude-haiku-4-5-20251001",
+      "state": "done",
+      "startedAt": 1783235689064,
+      "queuedAt": 1783235689006,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "source-shortcut-removal (host ridge/argmax elimination in c…",
+      "promptPreview": "CONTEXT — the arc under audit (biological learned read-out, mode c3):\nThe project reproduces \"which grammatical ROLE each content word plays\" (agent/predicate/theme) on a spiking substrate.\nA frozen echo-state reservoir produces a firing feature; a read-out matrix Ws maps it to the 3 role WTA ensembles;\nthe WINNER is a NEURAL argmax over the ensembles' spiking (ignition-order). The OLD read-out (m…",
+      "lastProgressAt": 1783235860872,
+      "tokens": 90351,
+      "toolCalls": 30,
+      "durationMs": 171808,
+      "resultPreview": "{\"dimension\":\"source-shortcut-removal (host ridge/argmax elimination in c3 learn+deploy paths)\",\"overall\":\"CLEAN: The c3 learn path (_learn_Ws_spiking) avoids all host ridge/solve operations and trains purely via per-role delta rule on actual spiking ensemble firing. The c3 deploy path (_bind_c2 -> _op_wta_synaptic) performs role selection via a NEURAL argmax over actual spiking ensemble firing, n…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 4,
+      "label": "audit:c3-runner-faithfulness",
+      "phaseIndex": 1,
+      "phaseTitle": "Audit",
+      "agentId": "a70db669796c2480c",
+      "agentType": "Explore",
+      "model": "claude-haiku-4-5-20251001",
+      "state": "done",
+      "startedAt": 1783235689065,
+      "queuedAt": 1783235689006,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "c3-runner-faithfulness",
+      "promptPreview": "CONTEXT — the arc under audit (biological learned read-out, mode c3):\nThe project reproduces \"which grammatical ROLE each content word plays\" (agent/predicate/theme) on a spiking substrate.\nA frozen echo-state reservoir produces a firing feature; a read-out matrix Ws maps it to the 3 role WTA ensembles;\nthe WINNER is a NEURAL argmax over the ensembles' spiking (ignition-order). The OLD read-out (m…",
+      "lastProgressAt": 1783235936686,
+      "tokens": 96204,
+      "toolCalls": 37,
+      "durationMs": 247621,
+      "resultPreview": "{\"dimension\":\"c3-runner-faithfulness\",\"overall\":\"CRITICAL DIVERGENCE: c3 runner defaults to WS_REPLAY=3 instead of step6-validated WS_REPLAY=1, and c3's anti-cheat doesn't verify the learned (delta-rule) path.\",\"findings\":[{\"severity\":\"high\",\"claim_affected\":\"c3 mode faithfully reproduces step6-validated 5/6-GO configuration\",\"defect\":\"research/runners/_rungB1c_spiking_reservoir_synaptic_readout_d…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 5,
+      "label": "audit:confound-diagnosis-soundness",
+      "phaseIndex": 1,
+      "phaseTitle": "Audit",
+      "agentId": "a9abb4f8ca168fe34",
+      "agentType": "Explore",
+      "model": "claude-haiku-4-5-20251001",
+      "state": "done",
+      "startedAt": 1783235689066,
+      "queuedAt": 1783235689006,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "confound-diagnosis-soundness",
+      "promptPreview": "CONTEXT — the arc under audit (biological learned read-out, mode c3):\nThe project reproduces \"which grammatical ROLE each content word plays\" (agent/predicate/theme) on a spiking substrate.\nA frozen echo-state reservoir produces a firing feature; a read-out matrix Ws maps it to the 3 role WTA ensembles;\nthe WINNER is a NEURAL argmax over the ensembles' spiking (ignition-order). The OLD read-out (m…",
+      "lastProgressAt": 1783235907000,
+      "tokens": 88685,
+      "toolCalls": 22,
+      "durationMs": 217934,
+      "resultPreview": "{\"dimension\":\"confound-diagnosis-soundness\",\"overall\":\"Two diagnostic conclusions carry defects: claim 1 (P160 confound reasoning) is sound, but claim 2 lacks evidentiary basis and could mask real feature-quality issues.\",\"findings\":[{\"severity\":\"high\",\"claim_affected\":\"Claim 2: 'seed 101's degradation is a read-out RESOLUTION issue, not feature quality' — the evidence was that global feature stat…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 6,
+      "label": "synthesis",
+      "phaseIndex": 2,
+      "phaseTitle": "Synthesize",
+      "agentId": "af75f3ee590e682bd",
+      "model": "claude-opus-4-8",
+      "state": "done",
+      "startedAt": 1783235936690,
+      "queuedAt": 1783235936688,
+      "attempt": 1,
+      "lastToolName": "Read",
+      "lastToolSummary": "research/runners/_rungB1c_spiking_reservoir_synaptic_readou…",
+      "promptPreview": "You are the lead reviewer synthesizing an adversarial audit of the biological learned (delta-rule) read-out arc.\nHere are the raw findings from 5 auditors (JSON):\n\n{\n  \"perDimensionVerdicts\": [\n    {\n      \"dimension\": \"GO-confound/leakage\",\n      \"overall\": \"CRITICAL LEAKAGE FOUND: The learned read-out's 18/18 score is validated against a host ridge baseline trained on identical data with identic…",
+      "lastProgressAt": 1783236052850,
+      "tokens": 182526,
+      "toolCalls": 11,
+      "durationMs": 116159,
+      "resultPreview": "Confirmed both remaining load-bearing facts:\n\n1. **`_source_learned_readout_clean()` is defined (line 586) but never called anywhere** (grep shows only the definition). The c3 verdict gates solely on `_source_synaptic_readout_clean()`, which only checks the *deploy/select* path — a fallback to `_fit_Ws_spiking` in the *learn* path would pass the gate silently. **Confirmed, load-bearing** — it's a …"
+    }
+  ],
+  "totalTokens": 620379,
+  "totalToolCalls": 144
+}
