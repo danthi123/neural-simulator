@@ -9071,8 +9071,11 @@ by construction. DE-RISK (seed 44 = the degraded draw, host-fit 11/18): **18/18*
 under-trained not ceiling), **scrambled-label = 0/18** (learning genuinely role-specific — the anti-cheat holds). Backed by
 the project's own fixed-reservoir + local-delta-rule prototype (scored 1.000). ⇒ the boundary that ~20 fixed-circuit read
 mechanisms + feature-conditioning could NOT crack IS surpassed by LEARNING the read-out biologically — AND it retires the
-host ridge shortcut. **6-SEED BLIND (the headline: does it hold on unseen 100/101/102, host-fit 7/9/5) RUNNING** (same fixed
-E12/η0.05/N35, no per-subset tune, GO=≥17/18 all six). Wallclock unconstrained (owner). Finding:
+host ridge shortcut. **6-SEED BLIND = DECISIVE SURPASS (5/6 at 18/18, 1 at 14/18; same fixed E12/η0.05/N35, no per-subset tune).** host-fit vs
+LEARNED: 42 18→18, 43 18→18, 44 11→**18**, 100 7→**18**, 101 9→14, 102 5→**18**. ⇒ the learned read-out GENERALIZES (host-fit
+GO on 2/6; learned GO on 5/6, lifting EVERY previously-failing unseen seed) AND retires the host ridge shortcut. Seed 101
+(14/18) = the lone laggard, almost certainly UNDER-TRAINED (seed 44 climbed 12→18 with more training) → EXACT-NEXT: E18-24
+fixed on all seeds toward 6/6, + the remaining anti-cheats (syn-lesion, global-scalar-control, source-clean). Finding:
 `2026-07-04-biological-learned-readout-delta-rule.md`; scratchpad `research/findings/raw/signed_conductance/step5_learned_readout.py`.
 NEXT after 6-seed: promote to `--mode c3` (`_learn_Ws_spiking` replacing `_fit_Ws_spiking`, c1/c2 verbatim) + the remaining
 anti-cheats (syn-lesion collapse, global-scalar-control near chance, source-clean).

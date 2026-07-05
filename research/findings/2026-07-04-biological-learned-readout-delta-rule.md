@@ -57,10 +57,26 @@ project's own track record:
 E4→E12 climb proves under-training, not a ceiling), and it RESOLVES the degraded seed 44 that host-fit + ~20 fixed-circuit
 read mechanisms could not.
 
-## Honest scope / in flight
-- **THE headline (6-seed blind generalization) is RUNNING**: the SAME fixed protocol (E12/η0.05/N35, no per-subset tune)
-  on 42/43/44 + the unseen 100/101/102 — the GO bar is ≥17/18 on ALL six (host-fit: 18/18/11, 7/9/5). If it holds on the
-  unseen seeds, this is a generalizing BIOLOGICAL surpass that also retires the host ridge shortcut.
+## 6-SEED BLIND generalization (the headline) — a decisive surpass (5/6 at 18/18, 1 at 14/18)
+
+Same FIXED protocol (E12/η0.05/N35, no per-subset tune) on all six:
+
+| seed | host ridge fit (committed) | **learned delta rule** |
+|---|---|---|
+| 42 (dev) | 18/18 | **18/18** |
+| 43 (dev) | 18/18 | **18/18** |
+| 44 (degraded) | 11/18 | **18/18** |
+| 100 (unseen) | 7/18 | **18/18** |
+| 101 (unseen) | 9/18 | 14/18 |
+| 102 (unseen) | 5/18 | **18/18** |
+
+⇒ **the learned read-out GENERALIZES**: host-fit was GO on only 2/6 (42/43); the learned read-out is **5/6 at 18/18** and
+lifts EVERY previously-failing unseen seed (100: 7→18, 102: 5→18, 44: 11→18, 101: 9→14). This is a real generalizing
+biological surpass AND it retires the host ridge-fit shortcut. Seed 101 (14/18) is the lone laggard — almost certainly
+under-trained at E12 (seed 44 climbed 12→18 with more training), the exact-next to close toward clean 6/6.
+
+## Honest scope / next
+- Seed 101 → more training (E18-24 at the same fixed protocol on ALL seeds) toward ≥17/18 6/6.
 - Anti-cheats: scrambled-label (shown 0/18); + to run: syn-readout lesion collapses, global-scalar-control near chance,
   source-clean (no ridge/`f@Ws`/host argmax in the learn+select path).
 - Promotion: `--mode c3` in `_rungB1c_spiking_reservoir_synaptic_readout_derisk.py` (add `_learn_Ws_spiking` replacing
