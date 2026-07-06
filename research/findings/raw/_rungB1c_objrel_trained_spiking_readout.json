@@ -1,0 +1,435 @@
+{
+  "rows": [
+    {
+      "seed": 42,
+      "H": 64,
+      "read_t": 25,
+      "epochs": 60,
+      "lr": 0.0005,
+      "graded_gain": 2.0,
+      "sat_gain": 20.0,
+      "ridge_lambda": 0.1,
+      "baseline_fixed_spiking_wta": {
+        "canonical_acc": 0.972,
+        "canonical_slot0": 1.0,
+        "objrel_acc": 0.0,
+        "objrel_slot0_THEME": 0.0
+      },
+      "trained_spiking_read": {
+        "canonical_acc": 1.0,
+        "canonical_slot0": 1.0,
+        "canonical_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ],
+        "objrel_acc": 1.0,
+        "objrel_slot0_THEME": 1.0,
+        "objrel_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ],
+        "mean_out_spikes_per_window_canon": 29.083,
+        "mean_out_spikes_per_window_objr": 33.222
+      },
+      "no_spike_lesion": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.333,
+        "mean_out_spikes_per_window": 0.0
+      },
+      "saturation_ablation": {
+        "canonical_acc": 0.333,
+        "objrel_acc": 0.667,
+        "objrel_slot0_THEME": 0.0,
+        "mean_out_spikes_per_window_canon": 50.0,
+        "mean_out_spikes_per_window_objr": 50.0
+      },
+      "report_linear_no_hidden": {
+        "canonical_acc": 1.0,
+        "objrel_acc": 1.0,
+        "objrel_slot0_THEME": 1.0
+      },
+      "report_pure_bptt_no_warmstart": {
+        "canonical_acc": 0.639,
+        "objrel_acc": 0.667,
+        "objrel_slot0_THEME": 0.0
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.0
+      },
+      "elapsed_s": 137.6,
+      "genuinely_spiking": true,
+      "no_spike_collapses": true,
+      "objrel_recovers": true,
+      "canonical_not_regressed": true,
+      "graded_regime_load_bearing": true,
+      "scramble_chance": true
+    },
+    {
+      "seed": 43,
+      "H": 64,
+      "read_t": 25,
+      "epochs": 60,
+      "lr": 0.0005,
+      "graded_gain": 2.0,
+      "sat_gain": 20.0,
+      "ridge_lambda": 0.1,
+      "baseline_fixed_spiking_wta": {
+        "canonical_acc": 1.0,
+        "canonical_slot0": 1.0,
+        "objrel_acc": 0.056,
+        "objrel_slot0_THEME": 0.0
+      },
+      "trained_spiking_read": {
+        "canonical_acc": 1.0,
+        "canonical_slot0": 1.0,
+        "canonical_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ],
+        "objrel_acc": 1.0,
+        "objrel_slot0_THEME": 1.0,
+        "objrel_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ],
+        "mean_out_spikes_per_window_canon": 27.75,
+        "mean_out_spikes_per_window_objr": 37.0
+      },
+      "no_spike_lesion": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.333,
+        "mean_out_spikes_per_window": 0.0
+      },
+      "saturation_ablation": {
+        "canonical_acc": 0.333,
+        "objrel_acc": 0.667,
+        "objrel_slot0_THEME": 0.0,
+        "mean_out_spikes_per_window_canon": 50.0,
+        "mean_out_spikes_per_window_objr": 50.0
+      },
+      "report_linear_no_hidden": {
+        "canonical_acc": 1.0,
+        "objrel_acc": 1.0,
+        "objrel_slot0_THEME": 1.0
+      },
+      "report_pure_bptt_no_warmstart": {
+        "canonical_acc": 1.0,
+        "objrel_acc": 0.306,
+        "objrel_slot0_THEME": 0.0
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.333
+      },
+      "elapsed_s": 150.0,
+      "genuinely_spiking": true,
+      "no_spike_collapses": true,
+      "objrel_recovers": true,
+      "canonical_not_regressed": true,
+      "graded_regime_load_bearing": true,
+      "scramble_chance": true
+    },
+    {
+      "seed": 44,
+      "H": 64,
+      "read_t": 25,
+      "epochs": 60,
+      "lr": 0.0005,
+      "graded_gain": 2.0,
+      "sat_gain": 20.0,
+      "ridge_lambda": 0.1,
+      "baseline_fixed_spiking_wta": {
+        "canonical_acc": 0.639,
+        "canonical_slot0": 1.0,
+        "objrel_acc": 0.0,
+        "objrel_slot0_THEME": 0.0
+      },
+      "trained_spiking_read": {
+        "canonical_acc": 1.0,
+        "canonical_slot0": 1.0,
+        "canonical_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ],
+        "objrel_acc": 1.0,
+        "objrel_slot0_THEME": 1.0,
+        "objrel_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ],
+        "mean_out_spikes_per_window_canon": 27.667,
+        "mean_out_spikes_per_window_objr": 33.0
+      },
+      "no_spike_lesion": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.333,
+        "mean_out_spikes_per_window": 0.0
+      },
+      "saturation_ablation": {
+        "canonical_acc": 0.333,
+        "objrel_acc": 0.667,
+        "objrel_slot0_THEME": 0.0,
+        "mean_out_spikes_per_window_canon": 50.0,
+        "mean_out_spikes_per_window_objr": 50.0
+      },
+      "report_linear_no_hidden": {
+        "canonical_acc": 1.0,
+        "objrel_acc": 1.0,
+        "objrel_slot0_THEME": 1.0
+      },
+      "report_pure_bptt_no_warmstart": {
+        "canonical_acc": 0.556,
+        "objrel_acc": 0.083,
+        "objrel_slot0_THEME": 0.0
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.0
+      },
+      "elapsed_s": 150.3,
+      "genuinely_spiking": true,
+      "no_spike_collapses": true,
+      "objrel_recovers": true,
+      "canonical_not_regressed": true,
+      "graded_regime_load_bearing": true,
+      "scramble_chance": true
+    },
+    {
+      "seed": 100,
+      "H": 64,
+      "read_t": 25,
+      "epochs": 60,
+      "lr": 0.0005,
+      "graded_gain": 2.0,
+      "sat_gain": 20.0,
+      "ridge_lambda": 0.1,
+      "baseline_fixed_spiking_wta": {
+        "canonical_acc": 0.028,
+        "canonical_slot0": 0.083,
+        "objrel_acc": 1.0,
+        "objrel_slot0_THEME": 1.0
+      },
+      "trained_spiking_read": {
+        "canonical_acc": 1.0,
+        "canonical_slot0": 1.0,
+        "canonical_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ],
+        "objrel_acc": 1.0,
+        "objrel_slot0_THEME": 1.0,
+        "objrel_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ],
+        "mean_out_spikes_per_window_canon": 27.833,
+        "mean_out_spikes_per_window_objr": 33.0
+      },
+      "no_spike_lesion": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.333,
+        "mean_out_spikes_per_window": 0.0
+      },
+      "saturation_ablation": {
+        "canonical_acc": 0.333,
+        "objrel_acc": 0.667,
+        "objrel_slot0_THEME": 0.0,
+        "mean_out_spikes_per_window_canon": 50.0,
+        "mean_out_spikes_per_window_objr": 50.0
+      },
+      "report_linear_no_hidden": {
+        "canonical_acc": 1.0,
+        "objrel_acc": 1.0,
+        "objrel_slot0_THEME": 1.0
+      },
+      "report_pure_bptt_no_warmstart": {
+        "canonical_acc": 0.333,
+        "objrel_acc": 0.333,
+        "objrel_slot0_THEME": 0.0
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.0
+      },
+      "elapsed_s": 128.9,
+      "genuinely_spiking": true,
+      "no_spike_collapses": true,
+      "objrel_recovers": true,
+      "canonical_not_regressed": true,
+      "graded_regime_load_bearing": true,
+      "scramble_chance": true
+    },
+    {
+      "seed": 101,
+      "H": 64,
+      "read_t": 25,
+      "epochs": 60,
+      "lr": 0.0005,
+      "graded_gain": 2.0,
+      "sat_gain": 20.0,
+      "ridge_lambda": 0.1,
+      "baseline_fixed_spiking_wta": {
+        "canonical_acc": 0.0,
+        "canonical_slot0": 0.0,
+        "objrel_acc": 0.75,
+        "objrel_slot0_THEME": 1.0
+      },
+      "trained_spiking_read": {
+        "canonical_acc": 1.0,
+        "canonical_slot0": 1.0,
+        "canonical_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ],
+        "objrel_acc": 1.0,
+        "objrel_slot0_THEME": 1.0,
+        "objrel_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ],
+        "mean_out_spikes_per_window_canon": 27.417,
+        "mean_out_spikes_per_window_objr": 34.778
+      },
+      "no_spike_lesion": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.333,
+        "mean_out_spikes_per_window": 0.0
+      },
+      "saturation_ablation": {
+        "canonical_acc": 0.333,
+        "objrel_acc": 0.667,
+        "objrel_slot0_THEME": 0.0,
+        "mean_out_spikes_per_window_canon": 50.0,
+        "mean_out_spikes_per_window_objr": 50.0
+      },
+      "report_linear_no_hidden": {
+        "canonical_acc": 1.0,
+        "objrel_acc": 1.0,
+        "objrel_slot0_THEME": 1.0
+      },
+      "report_pure_bptt_no_warmstart": {
+        "canonical_acc": 0.333,
+        "objrel_acc": 0.333,
+        "objrel_slot0_THEME": 0.0
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.333
+      },
+      "elapsed_s": 147.0,
+      "genuinely_spiking": true,
+      "no_spike_collapses": true,
+      "objrel_recovers": true,
+      "canonical_not_regressed": true,
+      "graded_regime_load_bearing": true,
+      "scramble_chance": true
+    },
+    {
+      "seed": 102,
+      "H": 64,
+      "read_t": 25,
+      "epochs": 60,
+      "lr": 0.0005,
+      "graded_gain": 2.0,
+      "sat_gain": 20.0,
+      "ridge_lambda": 0.1,
+      "baseline_fixed_spiking_wta": {
+        "canonical_acc": 0.0,
+        "canonical_slot0": 0.0,
+        "objrel_acc": 0.556,
+        "objrel_slot0_THEME": 1.0
+      },
+      "trained_spiking_read": {
+        "canonical_acc": 1.0,
+        "canonical_slot0": 1.0,
+        "canonical_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ],
+        "objrel_acc": 1.0,
+        "objrel_slot0_THEME": 1.0,
+        "objrel_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ],
+        "mean_out_spikes_per_window_canon": 28.694,
+        "mean_out_spikes_per_window_objr": 34.667
+      },
+      "no_spike_lesion": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.333,
+        "mean_out_spikes_per_window": 0.0
+      },
+      "saturation_ablation": {
+        "canonical_acc": 0.333,
+        "objrel_acc": 0.667,
+        "objrel_slot0_THEME": 0.0,
+        "mean_out_spikes_per_window_canon": 50.0,
+        "mean_out_spikes_per_window_objr": 50.0
+      },
+      "report_linear_no_hidden": {
+        "canonical_acc": 1.0,
+        "objrel_acc": 1.0,
+        "objrel_slot0_THEME": 1.0
+      },
+      "report_pure_bptt_no_warmstart": {
+        "canonical_acc": 0.333,
+        "objrel_acc": 0.111,
+        "objrel_slot0_THEME": 0.0
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.0
+      },
+      "elapsed_s": 156.7,
+      "genuinely_spiking": true,
+      "no_spike_collapses": true,
+      "objrel_recovers": true,
+      "canonical_not_regressed": true,
+      "graded_regime_load_bearing": true,
+      "scramble_chance": true
+    }
+  ],
+  "agg": {
+    "n_seeds": 6,
+    "n_objrel_recovers": 6,
+    "n_objrel_recovers_blind": 3,
+    "n_blind": 3,
+    "objrel_recovers_gate": true,
+    "genuinely_spiking_all": true,
+    "no_spike_collapses_all": true,
+    "canonical_not_regressed_all": true,
+    "canonical_not_regressed_blind": true,
+    "graded_regime_load_bearing_all": true,
+    "scramble_chance_all": true,
+    "verdict": "GO",
+    "H": 64,
+    "read_t": 25,
+    "epochs": 60,
+    "lr": 0.0005,
+    "graded_gain": 2.0,
+    "sat_gain": 20.0,
+    "mean_objrel_slot0_trained_graded_spiking": 1.0,
+    "mean_objrel_slot0_fixed_spiking_wta": 0.5,
+    "mean_objrel_slot0_saturation_ablation": 0.0,
+    "mean_objrel_slot0_linear_report": 1.0,
+    "mean_objrel_slot0_pure_bptt_report": 0.0,
+    "mean_canonical_trained_graded_spiking": 1.0,
+    "mean_canonical_fixed_spiking_wta": 0.44,
+    "total_elapsed_s": 870.7
+  },
+  "verdict_text": "GO -- a GRADED spiking read-out (a per-slot LIF read, warm-started from the closed-form ridge at a low output gain then BPTT-fine-tuned through the spike nonlinearity; the read is argmax over the OUTPUT LIF neurons' SUMMED SPIKE COUNT) RESOLVES the object-relative structural role on the FROZEN spiking reservoir, GENUINELY ON SPIKES + 6-seed-BLIND. LIKE-FOR-LIKE vs the FIXED SPIKING WTA (the confound the last GO was retracted for -- NOT repeated): objrel-slot0(THEME) 0.50->1.00, recovering on 6/6 (all 3/3 BLIND) at the dev-frozen op-point; canonical NOT regressed (>=0.90 all 6). THE OPERATIVE LEVER is the GRADED (non-saturated) spike-count read: the SATURATION ablation (~10x output gain -> every role max-fires, the sub-1% margin is quantized away) collapses objrel 1.00->0.00 -- the same failure mode as the fixed WTA's Dale-shift + mutual inhibition. HONESTLY REPORTED (not the operative lever): the nonlinear LIF hidden is NOT required (the linear H=0 graded read also recovers objrel, 1.00), and pure random-init BPTT FAILS (0.00) -- the ridge warm-start is load-bearing for TRAINING the fragile minority direction, the graded deployment is load-bearing for the READ. Silencing the output drive collapses the read to chance (#0: the decision is in the output spikes); scrambled targets -> chance (role-specific). NO sim/ edit; CPU/numpy. Scope: the ridge weights are the read-out's learned linear parameters, deployed + read as graded spiking neurons (NOT a host f@Ws argmax) -- a genuinely-spiking deployment surpass of the saturated fixed WTA, distinct from a nonlinear-BPTT surpass (which the evidence does NOT support here)."
+}
