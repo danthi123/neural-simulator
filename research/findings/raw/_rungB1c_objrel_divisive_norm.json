@@ -1,0 +1,442 @@
+{
+  "rows": [
+    {
+      "seed": 42,
+      "op_floor": 150.0,
+      "op_gain": 0.01,
+      "op_sigma": 1.0,
+      "baseline_div_off": {
+        "canonical_acc": 0.972,
+        "objrel_slot0_THEME": 0.0
+      },
+      "divisive_on": {
+        "canonical_acc": 0.5,
+        "canonical_slot0": 0.417,
+        "canonical_per_slot": [
+          "5/12",
+          "2/12",
+          "11/12"
+        ],
+        "objrel_acc": 0.444,
+        "objrel_slot0_THEME": 0.5,
+        "objrel_per_slot": [
+          "6/12",
+          "8/12",
+          "2/12"
+        ]
+      },
+      "divisive_off": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.0,
+        "canonical_acc": 1.0
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 0.25,
+        "objrel_acc": 0.417
+      },
+      "dev_sweep": [
+        {
+          "floor": 150.0,
+          "gain": 0.0,
+          "sigma": 1.0,
+          "canon": 1.0,
+          "objrel_slot0": 0.0
+        },
+        {
+          "floor": 150.0,
+          "gain": 0.002,
+          "sigma": 1.0,
+          "canon": 0.417,
+          "objrel_slot0": 0.167
+        },
+        {
+          "floor": 150.0,
+          "gain": 0.005,
+          "sigma": 1.0,
+          "canon": 0.306,
+          "objrel_slot0": 0.5
+        },
+        {
+          "floor": 150.0,
+          "gain": 0.01,
+          "sigma": 1.0,
+          "canon": 0.5,
+          "objrel_slot0": 0.5
+        },
+        {
+          "floor": 150.0,
+          "gain": 0.02,
+          "sigma": 1.0,
+          "canon": 1.0,
+          "objrel_slot0": 0.0
+        },
+        {
+          "floor": 150.0,
+          "gain": 0.05,
+          "sigma": 1.0,
+          "canon": 0.333,
+          "objrel_slot0": 0.0
+        },
+        {
+          "floor": 150.0,
+          "gain": 0.1,
+          "sigma": 1.0,
+          "canon": 0.333,
+          "objrel_slot0": 0.0
+        }
+      ],
+      "elapsed_s": 216.8,
+      "objrel_recovers": false,
+      "canonical_not_regressed": false,
+      "differential_load_bearing": true,
+      "scramble_chance": true
+    },
+    {
+      "seed": 43,
+      "op_floor": 150.0,
+      "op_gain": 0.005,
+      "op_sigma": 1.0,
+      "baseline_div_off": {
+        "canonical_acc": 1.0,
+        "objrel_slot0_THEME": 0.0
+      },
+      "divisive_on": {
+        "canonical_acc": 0.583,
+        "canonical_slot0": 0.5,
+        "canonical_per_slot": [
+          "6/12",
+          "6/12",
+          "9/12"
+        ],
+        "objrel_acc": 0.306,
+        "objrel_slot0_THEME": 0.5,
+        "objrel_per_slot": [
+          "6/12",
+          "1/12",
+          "4/12"
+        ]
+      },
+      "divisive_off": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.056,
+        "canonical_acc": 1.0
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 0.75,
+        "objrel_acc": 0.444
+      },
+      "dev_sweep": [
+        {
+          "floor": 150.0,
+          "gain": 0.0,
+          "sigma": 1.0,
+          "canon": 1.0,
+          "objrel_slot0": 0.0
+        },
+        {
+          "floor": 150.0,
+          "gain": 0.002,
+          "sigma": 1.0,
+          "canon": 0.583,
+          "objrel_slot0": 0.5
+        },
+        {
+          "floor": 150.0,
+          "gain": 0.005,
+          "sigma": 1.0,
+          "canon": 0.611,
+          "objrel_slot0": 0.667
+        },
+        {
+          "floor": 150.0,
+          "gain": 0.01,
+          "sigma": 1.0,
+          "canon": 0.861,
+          "objrel_slot0": 0.25
+        },
+        {
+          "floor": 150.0,
+          "gain": 0.02,
+          "sigma": 1.0,
+          "canon": 1.0,
+          "objrel_slot0": 0.0
+        },
+        {
+          "floor": 150.0,
+          "gain": 0.05,
+          "sigma": 1.0,
+          "canon": 0.333,
+          "objrel_slot0": 0.0
+        },
+        {
+          "floor": 150.0,
+          "gain": 0.1,
+          "sigma": 1.0,
+          "canon": 0.333,
+          "objrel_slot0": 0.0
+        }
+      ],
+      "elapsed_s": 213.6,
+      "objrel_recovers": false,
+      "canonical_not_regressed": false,
+      "differential_load_bearing": true,
+      "scramble_chance": false
+    },
+    {
+      "seed": 44,
+      "op_floor": 150.0,
+      "op_gain": 0.02,
+      "op_sigma": 1.0,
+      "baseline_div_off": {
+        "canonical_acc": 0.639,
+        "objrel_slot0_THEME": 0.0
+      },
+      "divisive_on": {
+        "canonical_acc": 0.333,
+        "canonical_slot0": 0.0,
+        "canonical_per_slot": [
+          "0/12",
+          "0/12",
+          "12/12"
+        ],
+        "objrel_acc": 0.75,
+        "objrel_slot0_THEME": 1.0,
+        "objrel_per_slot": [
+          "12/12",
+          "9/12",
+          "6/12"
+        ]
+      },
+      "divisive_off": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.0,
+        "canonical_acc": 0.611
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.0
+      },
+      "dev_sweep": [
+        {
+          "floor": 150.0,
+          "gain": 0.0,
+          "sigma": 1.0,
+          "canon": 0.611,
+          "objrel_slot0": 0.0
+        },
+        {
+          "floor": 150.0,
+          "gain": 0.002,
+          "sigma": 1.0,
+          "canon": 0.417,
+          "objrel_slot0": 0.25
+        },
+        {
+          "floor": 150.0,
+          "gain": 0.005,
+          "sigma": 1.0,
+          "canon": 0.278,
+          "objrel_slot0": 0.083
+        },
+        {
+          "floor": 150.0,
+          "gain": 0.01,
+          "sigma": 1.0,
+          "canon": 0.306,
+          "objrel_slot0": 0.667
+        },
+        {
+          "floor": 150.0,
+          "gain": 0.02,
+          "sigma": 1.0,
+          "canon": 0.333,
+          "objrel_slot0": 1.0
+        },
+        {
+          "floor": 150.0,
+          "gain": 0.05,
+          "sigma": 1.0,
+          "canon": 0.333,
+          "objrel_slot0": 0.0
+        },
+        {
+          "floor": 150.0,
+          "gain": 0.1,
+          "sigma": 1.0,
+          "canon": 0.333,
+          "objrel_slot0": 0.0
+        }
+      ],
+      "elapsed_s": 216.7,
+      "objrel_recovers": true,
+      "canonical_not_regressed": false,
+      "differential_load_bearing": true,
+      "scramble_chance": true
+    },
+    {
+      "seed": 100,
+      "op_floor": 150.0,
+      "op_gain": 0.01,
+      "op_sigma": 1.0,
+      "baseline_div_off": {
+        "canonical_acc": 0.028,
+        "objrel_slot0_THEME": 0.917
+      },
+      "divisive_on": {
+        "canonical_acc": 0.139,
+        "canonical_slot0": 0.0,
+        "canonical_per_slot": [
+          "0/12",
+          "0/12",
+          "5/12"
+        ],
+        "objrel_acc": 0.944,
+        "objrel_slot0_THEME": 0.917,
+        "objrel_per_slot": [
+          "11/12",
+          "12/12",
+          "11/12"
+        ]
+      },
+      "divisive_off": {
+        "objrel_slot0_THEME": 0.917,
+        "objrel_acc": 0.972,
+        "canonical_acc": 0.0
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.028
+      },
+      "dev_sweep": null,
+      "elapsed_s": 82.7,
+      "objrel_recovers": true,
+      "canonical_not_regressed": false,
+      "differential_load_bearing": false,
+      "scramble_chance": true
+    },
+    {
+      "seed": 101,
+      "op_floor": 150.0,
+      "op_gain": 0.01,
+      "op_sigma": 1.0,
+      "baseline_div_off": {
+        "canonical_acc": 0.0,
+        "objrel_slot0_THEME": 1.0
+      },
+      "divisive_on": {
+        "canonical_acc": 0.194,
+        "canonical_slot0": 0.0,
+        "canonical_per_slot": [
+          "0/12",
+          "3/12",
+          "4/12"
+        ],
+        "objrel_acc": 0.861,
+        "objrel_slot0_THEME": 0.917,
+        "objrel_per_slot": [
+          "11/12",
+          "8/12",
+          "12/12"
+        ]
+      },
+      "divisive_off": {
+        "objrel_slot0_THEME": 1.0,
+        "objrel_acc": 0.833,
+        "canonical_acc": 0.0
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 0.083,
+        "objrel_acc": 0.111
+      },
+      "dev_sweep": null,
+      "elapsed_s": 77.7,
+      "objrel_recovers": true,
+      "canonical_not_regressed": false,
+      "differential_load_bearing": false,
+      "scramble_chance": true
+    },
+    {
+      "seed": 102,
+      "op_floor": 150.0,
+      "op_gain": 0.01,
+      "op_sigma": 1.0,
+      "baseline_div_off": {
+        "canonical_acc": 0.0,
+        "objrel_slot0_THEME": 1.0
+      },
+      "divisive_on": {
+        "canonical_acc": 0.0,
+        "canonical_slot0": 0.0,
+        "canonical_per_slot": [
+          "0/12",
+          "0/12",
+          "0/12"
+        ],
+        "objrel_acc": 0.944,
+        "objrel_slot0_THEME": 1.0,
+        "objrel_per_slot": [
+          "12/12",
+          "12/12",
+          "10/12"
+        ]
+      },
+      "divisive_off": {
+        "objrel_slot0_THEME": 1.0,
+        "objrel_acc": 0.667,
+        "canonical_acc": 0.0
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.333
+      },
+      "dev_sweep": null,
+      "elapsed_s": 82.3,
+      "objrel_recovers": true,
+      "canonical_not_regressed": false,
+      "differential_load_bearing": false,
+      "scramble_chance": true
+    }
+  ],
+  "agg": {
+    "n_seeds": 6,
+    "n_objrel_recovers": 4,
+    "n_objrel_recovers_blind": 3,
+    "n_blind": 3,
+    "objrel_recovers_gate": false,
+    "canonical_not_regressed_all": false,
+    "differential_load_bearing_all": false,
+    "scramble_chance_all": false,
+    "verdict": "BOUNDARY",
+    "frozen_op_point": {
+      "floor": 150.0,
+      "gain": 0.01,
+      "sigma": 1.0
+    },
+    "mean_objrel_slot0_divisive_on": 0.806,
+    "mean_objrel_slot0_divisive_off": 0.486,
+    "mean_canonical_divisive_on": 0.291,
+    "mean_baseline_canon_div_off": 0.44,
+    "operating_point_grid": {
+      "gains": [
+        0.0,
+        0.002,
+        0.005,
+        0.01,
+        0.02,
+        0.05,
+        0.1
+      ],
+      "sigmas": [
+        1.0
+      ],
+      "floors": [
+        150.0
+      ],
+      "read_t_step": 30,
+      "ws_replay": 3,
+      "n_train": 60
+    },
+    "total_elapsed_s": 890.1
+  },
+  "verdict_text": "BOUNDARY -- OBJREL did not recover 6-seed-blind (4/6 overall, 3/3 blind; need >=5/6 AND all blind); CANONICAL regressed with the divisive norm on (the see-saw survived division); the divisive norm is NOT load-bearing (turning it OFF did not collapse objrel -> tuning artifact); the scrambled-label control did NOT collapse (the read is a position/heterogeneity artifact). The reservoir FEATURE robustly encodes objrel (a shift-invariant linear argmax solves it 100% every seed) and recurrent divisive normalization is the biologically-correct common-mode-DIVISION family (Louie-Glimcher LIP), and it CLEANLY reproduces the c2 baseline (canon high / objrel low with the divisive norm OFF, byte-identical reservoir). The info being present + linearly separable means it is NOT the irreducible Mikulasch-Priesemann wall -- it is the seed-adaptive-read frontier. An HONEST characterization; NO anti-cheat was weakened to force a GO. THE INDICATED NEXT MECHANISM (if division under-resolves the sub-1% margin through the spiking f-I) is the LEARNED-SIGNED delta read (step8_learned_signed.py): it fits THROUGH the spiking deploy so the f-I nonlinearity + WTA ignition-order are INSIDE the error."
+}
