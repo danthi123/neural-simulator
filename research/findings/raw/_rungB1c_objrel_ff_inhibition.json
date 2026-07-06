@@ -1,0 +1,439 @@
+{
+  "rows": [
+    {
+      "seed": 42,
+      "op_floor": 150.0,
+      "op_w_i2e": 8.0,
+      "subtract_on": {
+        "canonical_acc": 0.333,
+        "canonical_slot0": 0.0,
+        "canonical_per_slot": [
+          "0/12",
+          "0/12",
+          "12/12"
+        ],
+        "objrel_acc": 0.333,
+        "objrel_slot0_THEME": 1.0,
+        "objrel_per_slot": [
+          "12/12",
+          "0/12",
+          "0/12"
+        ]
+      },
+      "pedestal_off": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.0,
+        "canonical_acc": 0.944
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 1.0,
+        "objrel_acc": 0.444
+      },
+      "dev_sweep": [
+        {
+          "floor": 150.0,
+          "w": 0.0,
+          "canon": 1.0,
+          "objrel_slot0": 0.0
+        },
+        {
+          "floor": 150.0,
+          "w": 4.0,
+          "canon": 0.0,
+          "objrel_slot0": 1.0
+        },
+        {
+          "floor": 150.0,
+          "w": 8.0,
+          "canon": 0.333,
+          "objrel_slot0": 1.0
+        },
+        {
+          "floor": 150.0,
+          "w": 16.0,
+          "canon": 0.306,
+          "objrel_slot0": 0.5
+        },
+        {
+          "floor": 150.0,
+          "w": 30.0,
+          "canon": 0.361,
+          "objrel_slot0": 0.083
+        },
+        {
+          "floor": 100.0,
+          "w": 0.0,
+          "canon": 1.0,
+          "objrel_slot0": 0.0
+        },
+        {
+          "floor": 100.0,
+          "w": 4.0,
+          "canon": 0.0,
+          "objrel_slot0": 1.0
+        },
+        {
+          "floor": 100.0,
+          "w": 8.0,
+          "canon": 0.333,
+          "objrel_slot0": 1.0
+        },
+        {
+          "floor": 100.0,
+          "w": 16.0,
+          "canon": 0.306,
+          "objrel_slot0": 0.5
+        },
+        {
+          "floor": 100.0,
+          "w": 30.0,
+          "canon": 0.194,
+          "objrel_slot0": 0.5
+        }
+      ],
+      "elapsed_s": 449.9,
+      "objrel_recovers": true,
+      "canonical_not_regressed": false,
+      "differential_load_bearing": true,
+      "scramble_chance": false
+    },
+    {
+      "seed": 43,
+      "op_floor": 150.0,
+      "op_w_i2e": 16.0,
+      "subtract_on": {
+        "canonical_acc": 0.306,
+        "canonical_slot0": 0.0,
+        "canonical_per_slot": [
+          "0/12",
+          "0/12",
+          "11/12"
+        ],
+        "objrel_acc": 0.472,
+        "objrel_slot0_THEME": 0.917,
+        "objrel_per_slot": [
+          "11/12",
+          "0/12",
+          "6/12"
+        ]
+      },
+      "pedestal_off": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.056,
+        "canonical_acc": 1.0
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 0.833,
+        "objrel_acc": 0.278
+      },
+      "dev_sweep": [
+        {
+          "floor": 150.0,
+          "w": 0.0,
+          "canon": 1.0,
+          "objrel_slot0": 0.0
+        },
+        {
+          "floor": 150.0,
+          "w": 4.0,
+          "canon": 0.028,
+          "objrel_slot0": 1.0
+        },
+        {
+          "floor": 150.0,
+          "w": 8.0,
+          "canon": 0.111,
+          "objrel_slot0": 0.5
+        },
+        {
+          "floor": 150.0,
+          "w": 16.0,
+          "canon": 0.333,
+          "objrel_slot0": 0.833
+        },
+        {
+          "floor": 150.0,
+          "w": 30.0,
+          "canon": 0.306,
+          "objrel_slot0": 0.167
+        },
+        {
+          "floor": 100.0,
+          "w": 0.0,
+          "canon": 1.0,
+          "objrel_slot0": 0.0
+        },
+        {
+          "floor": 100.0,
+          "w": 4.0,
+          "canon": 0.028,
+          "objrel_slot0": 1.0
+        },
+        {
+          "floor": 100.0,
+          "w": 8.0,
+          "canon": 0.111,
+          "objrel_slot0": 0.583
+        },
+        {
+          "floor": 100.0,
+          "w": 16.0,
+          "canon": 0.333,
+          "objrel_slot0": 1.0
+        },
+        {
+          "floor": 100.0,
+          "w": 30.0,
+          "canon": 0.361,
+          "objrel_slot0": 0.167
+        }
+      ],
+      "elapsed_s": 429.4,
+      "objrel_recovers": true,
+      "canonical_not_regressed": false,
+      "differential_load_bearing": true,
+      "scramble_chance": false
+    },
+    {
+      "seed": 44,
+      "op_floor": 100.0,
+      "op_w_i2e": 16.0,
+      "subtract_on": {
+        "canonical_acc": 0.361,
+        "canonical_slot0": 0.583,
+        "canonical_per_slot": [
+          "7/12",
+          "4/12",
+          "2/12"
+        ],
+        "objrel_acc": 0.306,
+        "objrel_slot0_THEME": 0.417,
+        "objrel_per_slot": [
+          "5/12",
+          "4/12",
+          "2/12"
+        ]
+      },
+      "pedestal_off": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.0,
+        "canonical_acc": 0.611
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 0.417,
+        "objrel_acc": 0.306
+      },
+      "dev_sweep": [
+        {
+          "floor": 150.0,
+          "w": 0.0,
+          "canon": 0.667,
+          "objrel_slot0": 0.0
+        },
+        {
+          "floor": 150.0,
+          "w": 4.0,
+          "canon": 0.111,
+          "objrel_slot0": 1.0
+        },
+        {
+          "floor": 150.0,
+          "w": 8.0,
+          "canon": 0.389,
+          "objrel_slot0": 0.083
+        },
+        {
+          "floor": 150.0,
+          "w": 16.0,
+          "canon": 0.417,
+          "objrel_slot0": 0.167
+        },
+        {
+          "floor": 150.0,
+          "w": 30.0,
+          "canon": 0.278,
+          "objrel_slot0": 0.0
+        },
+        {
+          "floor": 100.0,
+          "w": 0.0,
+          "canon": 0.667,
+          "objrel_slot0": 0.0
+        },
+        {
+          "floor": 100.0,
+          "w": 4.0,
+          "canon": 0.139,
+          "objrel_slot0": 1.0
+        },
+        {
+          "floor": 100.0,
+          "w": 8.0,
+          "canon": 0.361,
+          "objrel_slot0": 0.167
+        },
+        {
+          "floor": 100.0,
+          "w": 16.0,
+          "canon": 0.361,
+          "objrel_slot0": 0.417
+        },
+        {
+          "floor": 100.0,
+          "w": 30.0,
+          "canon": 0.306,
+          "objrel_slot0": 0.0
+        }
+      ],
+      "elapsed_s": 462.5,
+      "objrel_recovers": false,
+      "canonical_not_regressed": false,
+      "differential_load_bearing": true,
+      "scramble_chance": true
+    },
+    {
+      "seed": 100,
+      "op_floor": 150.0,
+      "op_w_i2e": 8.0,
+      "subtract_on": {
+        "canonical_acc": 0.306,
+        "canonical_slot0": 0.0,
+        "canonical_per_slot": [
+          "0/12",
+          "11/12",
+          "0/12"
+        ],
+        "objrel_acc": 0.25,
+        "objrel_slot0_THEME": 0.0,
+        "objrel_per_slot": [
+          "0/12",
+          "0/12",
+          "9/12"
+        ]
+      },
+      "pedestal_off": {
+        "objrel_slot0_THEME": 1.0,
+        "objrel_acc": 1.0,
+        "canonical_acc": 0.0
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 0.333,
+        "objrel_acc": 0.417
+      },
+      "dev_sweep": null,
+      "elapsed_s": 107.9,
+      "objrel_recovers": false,
+      "canonical_not_regressed": false,
+      "differential_load_bearing": false,
+      "scramble_chance": true
+    },
+    {
+      "seed": 101,
+      "op_floor": 150.0,
+      "op_w_i2e": 8.0,
+      "subtract_on": {
+        "canonical_acc": 0.333,
+        "canonical_slot0": 0.0,
+        "canonical_per_slot": [
+          "0/12",
+          "0/12",
+          "12/12"
+        ],
+        "objrel_acc": 0.278,
+        "objrel_slot0_THEME": 0.833,
+        "objrel_per_slot": [
+          "10/12",
+          "0/12",
+          "0/12"
+        ]
+      },
+      "pedestal_off": {
+        "objrel_slot0_THEME": 0.917,
+        "objrel_acc": 0.806,
+        "canonical_acc": 0.0
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 1.0,
+        "objrel_acc": 0.389
+      },
+      "dev_sweep": null,
+      "elapsed_s": 112.8,
+      "objrel_recovers": false,
+      "canonical_not_regressed": false,
+      "differential_load_bearing": false,
+      "scramble_chance": false
+    },
+    {
+      "seed": 102,
+      "op_floor": 150.0,
+      "op_w_i2e": 8.0,
+      "subtract_on": {
+        "canonical_acc": 0.333,
+        "canonical_slot0": 0.0,
+        "canonical_per_slot": [
+          "0/12",
+          "0/12",
+          "12/12"
+        ],
+        "objrel_acc": 0.333,
+        "objrel_slot0_THEME": 1.0,
+        "objrel_per_slot": [
+          "12/12",
+          "0/12",
+          "0/12"
+        ]
+      },
+      "pedestal_off": {
+        "objrel_slot0_THEME": 1.0,
+        "objrel_acc": 0.667,
+        "canonical_acc": 0.0
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 1.0,
+        "objrel_acc": 0.333
+      },
+      "dev_sweep": null,
+      "elapsed_s": 111.9,
+      "objrel_recovers": true,
+      "canonical_not_regressed": false,
+      "differential_load_bearing": false,
+      "scramble_chance": false
+    }
+  ],
+  "agg": {
+    "n_seeds": 6,
+    "n_objrel_recovers": 3,
+    "n_objrel_recovers_blind": 1,
+    "n_blind": 3,
+    "objrel_recovers_gate": false,
+    "canonical_not_regressed_all": false,
+    "differential_load_bearing_all": false,
+    "scramble_chance_all": false,
+    "verdict": "BOUNDARY",
+    "frozen_op_point": {
+      "floor": 150.0,
+      "w_i2e": 8.0
+    },
+    "mean_objrel_slot0_subtract_on": 0.695,
+    "mean_objrel_slot0_pedestal_off": 0.486,
+    "mean_canonical_subtract_on": 0.329,
+    "operating_point_grid": {
+      "floors": [
+        150.0,
+        100.0
+      ],
+      "w_i2e": [
+        0.0,
+        4.0,
+        8.0,
+        16.0,
+        30.0
+      ],
+      "read_t_step": 30,
+      "ws_replay": 3,
+      "n_train": 60
+    },
+    "total_elapsed_s": 1674.7
+  },
+  "verdict_text": "BOUNDARY -- OBJREL did not recover 6-seed-blind (3/6 overall, 1/3 blind; need >=5/6 AND all blind); CANONICAL regressed with the subtraction on (the anti-correlated see-saw: the graded I->E that lifts objrel-slot0 FLIPS the canonical winner too -- the subtraction shifts the operating point rather than cleanly removing the DC to reveal the true differential); the subtraction is NOT load-bearing (revert did not collapse objrel -> the lift is a tuning artifact); the scrambled-label control did NOT collapse (the read is a position/heterogeneity artifact). The reservoir FEATURE robustly encodes objrel (a shift-invariant linear argmax solves it 100% every seed) and subtractive FF inhibition is the biologically-correct common-mode family, and it CLEANLY reproduces the c2 baseline (canon 1.00 / objrel 0.00 at w_i2e=0 on the byte-identical reservoir). BUT a FIXED graded subtraction cannot resolve the sub-1% structural margin through the spiking WTA: increasing the subtraction flips objrel-slot0 0.00->1.00 ONLY by flipping canonical-slot0 1.00->0.00 (an ANTI-CORRELATED see-saw, not a both-high point) -- it shifts the operating point rather than revealing the true differential, which lands on the wrong side of the WTA ignition inversion (the same draw-fragility that inverted seed 100's c2 baseline: canon 0.03/objrel 0.97). This is the project's documented common-mode / rate-code / point-neuron-limit family. The info being present + linearly separable means it is NOT the irreducible Mikulasch-Priesemann wall -- it is the seed-adaptive-read frontier. THE INDICATED NEXT MECHANISM is the LEARNED-SIGNED delta read (research/findings/raw/signed_conductance/step8_learned_signed.py): the delta rule ADAPTS per-draw (it fits THROUGH the spiking deploy, so the f-I nonlinearity + WTA ignition-order are INSIDE the error) and already generalized the CANONICAL read 6/6 where every FIXED read was seed-fragile -- extend it to signed conductance-domain delivery so it LEARNS a signed structural read that adapts to each draw's operating point. An HONEST characterization; NO anti-cheat was weakened to force a GO."
+}

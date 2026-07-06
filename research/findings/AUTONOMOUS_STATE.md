@@ -9262,3 +9262,33 @@ synaptic comprehension→composition hand-off + the A→W spiking words the DEFA
 functional one-brain, production). (D) flip the DitransRegistryProducer 2-stage calibrated read to the registry-producer
 default on cupy (the side-finding fix). PARALLELIZE; boundaries = undiscovered mechanisms; 6-seed(-blind) + anti-cheat EVERY
 claim; moat a PLUS; honest origin+gitea EACH cycle; CONTROLLER runs GPU INLINE; ARM A MONITOR.
+
+## CYCLE 924 (2026-07-05, DESKTOP — objrel FF-inhibition = confirmed BOUNDARY; learned-signed surpass + fully-spiking-words milestone in flight)
+
+**objrel subtractive-FF-inhibition surpass = honest BOUNDARY (6-seed-blind, committed).** I VERIFIED the implementer's
+runner (rigorous, confound-free: repurposes the c2 WTA's EXISTING shared inh pool as a graded common-mode subtractor,
+byte-identical c2 reservoir, real synaptic read, no sim/ edit) — it built the runner but got stuck (polling loop) with NO
+verdict, so I RAN it. Result: BOUNDARY. The fixed subtraction is an ANTI-CORRELATED SEE-SAW — canonical regresses to ~0.33
+on ALL 6 seeds when objrel-slot0 lifts (op-search maximized min(canon,objrel) → best canon ~0.33); the lift is not cleanly
+load-bearing (revert didn't collapse on 3/6); scramble didn't collapse on 4/6 (position artifact). Baseline reproduced
+clean (canon 1.00/objrel 0.00 at w=0). NO anti-cheat weakened. ⇒ info present+separable (NOT the Mikulasch wall) — the
+SEED-ADAPTIVE-READ frontier. `2026-07-05-rungB1c-objrel-ff-inhibition-BOUNDARY.md`, CI 1. step11_centered_drive.py
+CONFIRMED broken (external-drive proxy, never reproduces the baseline).
+
+**LEARNED-SIGNED surpass (step8, the named next mechanism) IN FLIGHT.** `step8_learned_signed.py` seed 42 balanced (signed
+delta rule fits THROUGH the spiking deploy + adapts per-draw — what generalized canonical 6/6 where fixed reads were
+seed-fragile). COMPUTE-HEAVY (~370s/epoch × 12 ≈ 80 min/seed) → if seed-42 both-high, the 6-seed-blind needs optimization
+(fewer epochs / cupy / parallel — compute is a lever). Monitored.
+
+**FULLY-SPIKING-WORDS milestone (idle-GPU, independent) IN FLIGHT.** EMERGE-95's one-brain-substrate transitive turn
+CO-EXECUTES ON CUPY (validated GO seed 42). `_rungB1_fully_spiking_words_capstone_derisk.py` composes it with the thread-A
+A→W spiking words + the EMERGE-77 calibrated order → the transitive turn with comprehension + memory + production (ORDER
+AND WORDS) all spiking, one cupy process. seed-42 TIMED OUT at 700s (heavier than est.: shared bridge + A→W engine +
+lesion variant on cupy) → re-run with a longer timeout.
+
+**EXACT NEXT CONCRETE ACTION:** (1) re-run the fully-spiking-words seed-42 (longer timeout) → validate all-word render +
+content-lesion → 3-seed → commit the milestone. (2) on step8 return — READ THE SUBSTANCE: learned-signed does BOTH canon
+AND objrel (unlike the fixed see-saw)? → SURPASS → optimized 6-seed-blind; else honest boundary + next mechanism. (3)
+PRODUCTION WIRE-IN of the RUNG B-1 synaptic comprehension hand-off (the functional one-brain). (4) the 2-stage-calibration
+registry-producer cupy default. PARALLELIZE; boundaries = undiscovered mechanisms; 6-seed(-blind) + anti-cheat EVERY claim;
+moat a PLUS; honest origin+gitea EACH cycle; CONTROLLER runs GPU INLINE; ARM A MONITOR.
