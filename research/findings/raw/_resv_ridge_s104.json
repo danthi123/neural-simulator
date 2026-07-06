@@ -1,0 +1,58 @@
+{
+  "rows": [
+    {
+      "seed": 104,
+      "in_scale": 320.0,
+      "rec_scale": 1.0,
+      "t_step": 12,
+      "ridge_lambda": 0.1,
+      "feat_dim": 301,
+      "ridge_objrel": {
+        "objrel_acc": 1.0,
+        "objrel_slot0_THEME": 1.0,
+        "objrel_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ]
+      },
+      "ridge_canonical": {
+        "canonical_acc": 1.0,
+        "canonical_slot0_AGENT": 1.0,
+        "canonical_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ]
+      },
+      "elapsed_s": 39.9,
+      "objrel_present": true,
+      "canonical_ok": true
+    }
+  ],
+  "agg": {
+    "config": {
+      "in_scale": 320.0,
+      "rec_scale": 1.0,
+      "t_step": 12
+    },
+    "baseline_config": {
+      "in_scale": 320.0,
+      "rec_scale": 1.0,
+      "t_step": 12
+    },
+    "n_seeds": 1,
+    "n_objrel_present": 1,
+    "objrel_present_seeds": [
+      104
+    ],
+    "objrel_failing_seeds": [],
+    "canonical_all_ok": true,
+    "mean_objrel_slot0_THEME": 1.0,
+    "mean_canonical_acc": 1.0,
+    "ridge_lambda": 0.1,
+    "n_train": 60,
+    "n_test": 12,
+    "total_elapsed_s": 40.3
+  }
+}

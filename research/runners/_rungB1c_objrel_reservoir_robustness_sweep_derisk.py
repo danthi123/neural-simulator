@@ -1,0 +1,271 @@
+"""RUNG B-1c OBJREL RESERVOIR-ROBUSTNESS SWEEP (2026-07-06 diagnostic, per two converging research gates).
+
+THE DIAGNOSIS (NOT a capacity wall; the read-out is a SEPARATE residual). The object-relative (objrel) thematic-role
+signal is LINEARLY present in the on-bridge SPIKING reservoir feature on 8/10 random seeds (the ANALYTIC 3-way RIDGE
+reads objrel-slot0(THEME) held-out = 1.00) but ABSENT on 2/10 (seeds 103, 104: ridge 0.00 / ~0.17). Two research gates
+diagnosed this as a MILD operating-point / finite-instance-variance issue -- NOT the Mikulasch-Priesemann representation
+wall -- and ranked the CHEAPEST fix as LOWERING THE INPUT SCALING. The reservoir's `RES_IN_SCALE = 320 pA` drives the
+Izhikevich neurons deep into a SATURATED / nonlinear regime that spends the fixed reservoir capacity budget on
+NONLINEARITY at the expense of the LINEAR MEMORY the objrel read needs (Dambre-2012 capacity-conservation law: total
+processing capacity is conserved; a saturated reservoir trades linear-memory capacity for higher-order nonlinear
+terms). Lowering the input scaling (+ raising the recurrent weight scale toward the edge-of-chaos spectral radius
+rho->1 + a longer per-token integration window T_step for more temporal memory) should restore the linear objrel read
+on the 2 failing draws WITHOUT regressing the canonical read.
+
+THE METRIC (fast -- NO read-out training, NO plasticity). For a given (reservoir-config, seed): build the byte-identical
+on-bridge SPIKING reservoir with the swept params, DRIVE it on the objrel TRAIN + TEST sentences, cache the
+final-state per-neuron spike-rate feature, fit the ANALYTIC 3-way RIDGE (closed-form; the exact linear read the c2/DANN
+harnesses use as `analytic_dale_reference` / `_ridge_readout` / `_fit_Ws_spiking`), and report the ridge's objrel-slot0
+(THEME) accuracy on the HELD-OUT test set (test sentences from a DISTINCT rng -> no leakage from train -- the existing
+control). ALSO report the canonical-slot ridge accuracy (a sanity guard: canonical must stay high while objrel lifts).
+This is a LINEAR read of the reservoir feature -- it isolates the RESERVOIR ENCODING (is objrel linearly present?), NOT
+the spiking read-out (a separate residual). Each (config, seed) is fast (~15-60s): build reservoir -> drive -> feature
+-> ridge -> objrel accuracy. NO Dale-legal spiking read-out training, NO delta rule, NO competition.
+
+THE SWEEP KNOBS (all CLEAN module-constant OVERRIDES on the imported C module -- NO sim/ edit; reversed on exit):
+  * --in-scale  <pA>   : overrides C.RES_IN_SCALE (the swept input scaling; 320 baseline, 160/80/40 = the lever).
+  * --rec-scale <float>: multiplies C.RES_EXC_W & C.RES_INH_W (rho->1 edge-of-chaos; 1.0 baseline).
+  * --t-step    <int>  : the per-token integration window for the FEATURE read (12 baseline; longer = more memory).
+                          (RES_T_STEP is a def-time default arg of C.UBReservoir._drive_and_read, so it is passed
+                          EXPLICITLY to the read here rather than patched -- see _feature_at.)
+C.RES_IN_SCALE / C.RES_EXC_W / C.RES_INH_W are read as module globals INSIDE C.wire_reservoir at BUILD time (lines
+263/275), so patching them on C before the build cleanly + reversibly overrides the reservoir draw. NO sim/ edit.
+
+HONESTY. The ridge is a LINEAR read of the reservoir feature -- this gate is about the RESERVOIR ENCODING, not the
+spiking read-out (which is the separate B-1c residual with its own runner). Held-out test (distinct rng, no leakage).
+This is a DIAGNOSTIC sweep to see whether lowering input scaling restores the linear objrel read on the failing seeds;
+it is NOT a GO/surpass claim.
+
+Run (ONE config x the 10 seeds; the controller fans out per-seed x per-config across cores):
+  SIM_BACKEND=numpy python -u -m research.runners._rungB1c_objrel_reservoir_robustness_sweep_derisk \
+      --seeds 42 43 44 45 46 100 101 102 103 104 --in-scale 320 --rec-scale 1.0 --t-step 12 \
+      --json research/findings/raw/_rungB1c_objrel_resv_sweep_in320.json
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import time
+from collections import defaultdict
+from contextlib import contextmanager
+
+os.environ.setdefault("SIM_BACKEND", "numpy")
+import numpy as np  # noqa: E402
+
+import research.runners._rungB1c_spiking_reservoir_synaptic_readout_derisk as C  # noqa: E402
+import research.runners._rungB1c_objrel_per_role_readout_derisk as PR  # noqa: E402
+from research.runners._emerge78_reservoir_form_to_role_derisk import (  # noqa: E402
+    Encoder, _gen, _TRAIN_KINDS, _ROLE_IDX,
+)
+
+# ── the data recipe (IDENTICAL to the per-role / DANN harness so the ridge reads the SAME feature) ────────────────
+N_TRAIN = 60             # train sentences/construction for the ridge fit (== the c2/per-role/DANN documented baseline)
+N_TEST = 12              # held-out test facts/construction (DISTINCT rng from train -- the no-leakage control)
+N_ROLES3 = 3             # the 3-way canonical read: AGENT(0), PREDICATE(1), THEME(2)
+RIDGE_LAM = 0.1          # ridge regularization (the `analytic_dale_reference` / _ridge_readout lambda; 1e-1 = separable)
+
+
+# ── clean, reversible reservoir-param override on the imported C module (NO sim/ edit) ────────────────────────────
+@contextmanager
+def _override_reservoir_params(in_scale, rec_scale):
+    """Patch C.RES_IN_SCALE / C.RES_EXC_W / C.RES_INH_W for the duration of a build, then restore. These are read as
+    MODULE GLOBALS inside C.wire_reservoir at BUILD time (the W_in scale + the recurrent exc/inh weights), so patching
+    them on C before wire_reservoir cleanly overrides the reservoir DRAW. rec_scale multiplies BOTH exc & inh so the
+    E/I ratio is preserved while the spectral radius scales toward rho->1 (edge-of-chaos). Fully reversible; no sim/
+    edit, no reservoir-internal edit."""
+    old_in, old_exc, old_inh = C.RES_IN_SCALE, C.RES_EXC_W, C.RES_INH_W
+    C.RES_IN_SCALE = float(in_scale)
+    C.RES_EXC_W = float(old_exc) * float(rec_scale)
+    C.RES_INH_W = float(old_inh) * float(rec_scale)
+    try:
+        yield
+    finally:
+        C.RES_IN_SCALE, C.RES_EXC_W, C.RES_INH_W = old_in, old_exc, old_inh
+
+
+# ── the reservoir feature at a swept t_step (RES_T_STEP is a def-time default arg of _drive_and_read, so pass it) ──
+def _feature_at(res, enc, toks, t_step):
+    """The whole-sequence SPIKING reservoir feature + a +1 bias element -- IDENTICAL to PR._feature except the per-token
+    integration window is `t_step` (PR._feature / res.final_state hardwire the def-time default RES_T_STEP=12). Calls
+    the reservoir's own `_drive_and_read` (the exact read final_state uses) with an explicit t_step so --t-step sweeps
+    the FEATURE read window cleanly (no module patch of the def-time default)."""
+    feat, _ = res._drive_and_read(enc.encode(toks), silence=False, ens=None, t_step=int(t_step))
+    return np.concatenate([feat, [1.0]])
+
+
+def _cache_slot_features(res, enc, sentences, t_step):
+    """Cache {slot k: (X[n_k, feat_dim], y[n_k])} restricted to the 3-way canonical roles (GOAL/LOCATION skipped) --
+    the SAME feature the c2 ridge + per-role reads consume. Driving the spiking reservoir is the expensive part; the
+    ridge fit reuses the cached X/y."""
+    S = defaultdict(list); Y = defaultdict(list)
+    for toks, roles in sentences:
+        f = _feature_at(res, enc, toks, t_step)
+        for k, pos in enumerate(sorted(roles)):
+            if k >= N_ROLES3:
+                break
+            tgt = _ROLE_IDX[roles[pos]]
+            if tgt >= N_ROLES3:                 # GOAL/LOCATION are not in the 3-way canonical read
+                continue
+            S[k].append(f); Y[k].append(tgt)
+    return {k: (np.asarray(S[k], dtype=np.float64), np.asarray(Y[k], dtype=np.int64)) for k in S}
+
+
+def _ridge_readout(X, y, lam=RIDGE_LAM):
+    """The 3-way one-hot closed-form ridge read-out matrix W (feat_dim x N_ROLES3) -- the ANALYTIC linear discriminant
+    (== _rungB1c_objrel_dann_readout._ridge_readout / C._fit_Ws_spiking's ridge solve). Held-out objrel-slot0 = 1.00 at
+    lam=0.1 on the encoding seeds; this is the LINEAR read that isolates 'is objrel present in the reservoir feature?'."""
+    T = np.zeros((len(y), N_ROLES3), dtype=np.float64)
+    T[np.arange(len(y)), y] = 1.0
+    Xd = X.astype(np.float64)
+    return np.linalg.solve(Xd.T @ Xd + lam * np.eye(Xd.shape[1]), Xd.T @ T)
+
+
+def _fit_slot_ridges(slot_train):
+    """Fit one 3-way ridge per content slot on the cached TRAIN features. Returns {slot k: W[feat_dim, 3]}."""
+    return {k: _ridge_readout(X, y) for k, (X, y) in slot_train.items()}
+
+
+def _score_ridge(Wk, res, enc, sentences, t_step):
+    """Deploy the per-slot ridge argmax on the HELD-OUT sentences (the feature is the REAL spiking reservoir read).
+    Returns (overall_acc, slot0_acc, per_slot_hits, per_slot_tot). slot0_acc on the OBJREL set = the objrel-slot0
+    (THEME) metric (role != position; the thing the failing seeds miss); on the CANON set = the AGENT sanity slot."""
+    ok = tot = s0ok = s0t = 0
+    ps_hit = [0] * N_ROLES3; ps_tot = [0] * N_ROLES3
+    for toks, roles in sentences:
+        f = _feature_at(res, enc, toks, t_step)
+        for k, pos in enumerate(sorted(roles)):
+            if k >= N_ROLES3:
+                break
+            tgt = _ROLE_IDX[roles[pos]]
+            if tgt >= N_ROLES3:
+                continue
+            if k not in Wk:
+                continue
+            pred = int(np.argmax((f @ Wk[k])[:N_ROLES3]))
+            hit = int(pred == tgt)
+            ok += hit; tot += 1; ps_hit[k] += hit; ps_tot[k] += 1
+            if k == 0:
+                s0ok += hit; s0t += 1
+    return (ok / max(tot, 1), s0ok / max(s0t, 1), ps_hit, ps_tot)
+
+
+def run_seed(seed, corpus, in_scale, rec_scale, t_step):
+    """Build the byte-identical c2 reservoir WITH the overridden (in_scale, rec_scale) params + the swept t_step
+    feature window, cache the spiking feature, fit the ANALYTIC 3-way ridge on TRAIN, deploy on the HELD-OUT canon +
+    objrel TEST, and report the objrel-slot0(THEME) ridge accuracy (the diagnostic) + the canonical ridge accuracy
+    (the sanity guard). NO read-out training, NO plasticity. Returns the per-seed row dict."""
+    t0 = time.time()
+    # match the per-role/c2 data recipe knobs (idempotent; these are read-out-side, harmless to the feature read).
+    C.WS_BIAS_SCALE_C2 = 0.0
+    subj, verb, obj = corpus["subj"], corpus["verb"], corpus["obj"]
+    enc = Encoder(corpus["discovered"])
+    rng = np.random.default_rng(seed * 101 + 5)
+    train = _gen(_TRAIN_KINDS, N_TRAIN, rng, subj, verb, obj)
+    trng = np.random.default_rng(seed * 977 + 13)          # DISTINCT rng => test facts held out from train (no leakage)
+    canon = _gen(["transitive"], N_TEST, trng, subj, verb, obj)
+    objr = _gen(["objrel"], N_TEST, trng, subj, verb, obj)
+
+    # ── build the reservoir with the SWEPT (in_scale, rec_scale) -- clean module override, restored on exit ──────────
+    with _override_reservoir_params(in_scale, rec_scale):
+        ub, ens, inh, res, res_idx = PR._build(seed, corpus, enc)
+
+    print(f"[resv-sweep seed {seed}] in_scale={in_scale} rec_scale={rec_scale} t_step={t_step} "
+          f"caching spiking features on {len(train)} train sentences (slice {res_idx[0]}..{res_idx[-1]})...", flush=True)
+    slot_train = _cache_slot_features(res, enc, train, t_step)
+    feat_dim = next(iter(slot_train.values()))[0].shape[1]
+
+    Wk = _fit_slot_ridges(slot_train)
+    canon_acc, canon_s0, canon_ps, canon_pt = _score_ridge(Wk, res, enc, canon, t_step)
+    objr_acc, objr_s0, objr_ps, objr_pt = _score_ridge(Wk, res, enc, objr, t_step)
+
+    elapsed = round(time.time() - t0, 1)
+    d = {
+        "seed": int(seed), "in_scale": float(in_scale), "rec_scale": float(rec_scale), "t_step": int(t_step),
+        "ridge_lambda": RIDGE_LAM, "feat_dim": int(feat_dim),
+        "ridge_objrel": {
+            "objrel_acc": round(objr_acc, 3),
+            "objrel_slot0_THEME": round(objr_s0, 3),                 # THE diagnostic metric (role != position)
+            "objrel_per_slot": [f"{h}/{t}" for h, t in zip(objr_ps, objr_pt)],
+        },
+        "ridge_canonical": {
+            "canonical_acc": round(canon_acc, 3),
+            "canonical_slot0_AGENT": round(canon_s0, 3),             # sanity: role == position, must stay high
+            "canonical_per_slot": [f"{h}/{t}" for h, t in zip(canon_ps, canon_pt)],
+        },
+        "elapsed_s": elapsed,
+        "objrel_present": bool(objr_s0 >= 0.90),                     # the seed's objrel is linearly READ at this config
+        "canonical_ok": bool(canon_acc >= 0.90),                     # the canonical read is not regressed
+    }
+    return d
+
+
+def _print_seed(s, d):
+    ro = d["ridge_objrel"]; rc = d["ridge_canonical"]
+    print(f"[seed {s}] in{d['in_scale']:.0f} rec{d['rec_scale']:.2f} T{d['t_step']} "
+          f"RIDGE objrel-slot0(THEME) {ro['objrel_slot0_THEME']:.2f} (objrel-acc {ro['objrel_acc']:.2f} "
+          f"slots {ro['objrel_per_slot']}) | canon-acc {rc['canonical_acc']:.2f} slot0(AGENT) "
+          f"{rc['canonical_slot0_AGENT']:.2f} (slots {rc['canonical_per_slot']}) "
+          f"[objrel-present {d['objrel_present']} canon-ok {d['canonical_ok']}] ({d['elapsed_s']}s)", flush=True)
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--seeds", type=int, nargs="+",
+                    default=[42, 43, 44, 45, 46, 100, 101, 102, 103, 104])
+    ap.add_argument("--in-scale", type=float, default=C.RES_IN_SCALE,
+                    help="W_in input drive scale (pA); C.RES_IN_SCALE baseline=320. The swept lever (160/80/40).")
+    ap.add_argument("--rec-scale", type=float, default=1.0,
+                    help="multiplier on C.RES_EXC_W/RES_INH_W (rho->1 edge-of-chaos; 1.0 baseline).")
+    ap.add_argument("--t-step", type=int, default=C.RES_T_STEP,
+                    help="per-token feature integration window (C.RES_T_STEP baseline=12; longer = more memory).")
+    ap.add_argument("--json", type=str,
+                    default="research/findings/raw/_rungB1c_objrel_resv_sweep.json")
+    args = ap.parse_args()
+
+    t0 = time.time()
+    corpus = C.setup_corpus(seed=42)
+    print(f"[resv-sweep] corpus: {len(corpus['test'])} facts, vocab {len(corpus['vocab'])} | ANALYTIC 3-way RIDGE read "
+          f"of the SPIKING reservoir feature (lam={RIDGE_LAM}), held-out test (distinct rng, no leakage). "
+          f"CONFIG: in_scale={args.in_scale} rec_scale={args.rec_scale} t_step={args.t_step} "
+          f"(baseline in_scale={C.RES_IN_SCALE} rec_scale=1.0 t_step={C.RES_T_STEP}). DIAGNOSTIC (reservoir encoding), "
+          f"NOT a GO/surpass claim. NO read-out training, NO plasticity, NO sim/ edit.", flush=True)
+
+    rows = []
+    for s in args.seeds:
+        d = run_seed(s, corpus, args.in_scale, args.rec_scale, args.t_step)
+        rows.append(d)
+        _print_seed(s, d)
+
+    n_present = sum(r["objrel_present"] for r in rows)
+    canon_all_ok = all(r["canonical_ok"] for r in rows)
+    mean_objr_s0 = round(float(np.mean([r["ridge_objrel"]["objrel_slot0_THEME"] for r in rows])), 3)
+    mean_canon = round(float(np.mean([r["ridge_canonical"]["canonical_acc"] for r in rows])), 3)
+    failing = [r["seed"] for r in rows if not r["objrel_present"]]
+
+    agg = {
+        "config": {"in_scale": float(args.in_scale), "rec_scale": float(args.rec_scale), "t_step": int(args.t_step)},
+        "baseline_config": {"in_scale": float(C.RES_IN_SCALE), "rec_scale": 1.0, "t_step": int(C.RES_T_STEP)},
+        "n_seeds": len(rows), "n_objrel_present": int(n_present),
+        "objrel_present_seeds": [r["seed"] for r in rows if r["objrel_present"]],
+        "objrel_failing_seeds": failing,
+        "canonical_all_ok": bool(canon_all_ok),
+        "mean_objrel_slot0_THEME": mean_objr_s0,
+        "mean_canonical_acc": mean_canon,
+        "ridge_lambda": RIDGE_LAM, "n_train": N_TRAIN, "n_test": N_TEST,
+        "total_elapsed_s": round(time.time() - t0, 1),
+    }
+    print(f"\n[resv-sweep] DIAGNOSTIC SUMMARY (config in{args.in_scale:.0f} rec{args.rec_scale:.2f} T{args.t_step}): "
+          f"objrel linearly PRESENT (ridge slot0 >= 0.90) on {n_present}/{len(rows)} seeds "
+          f"(mean objrel-slot0 {mean_objr_s0:.2f}); canonical mean {mean_canon:.2f} (all-ok {canon_all_ok}). "
+          f"objrel-FAILING seeds: {failing}", flush=True)
+
+    if args.json:
+        os.makedirs(os.path.dirname(args.json), exist_ok=True)
+        with open(args.json, "w") as fh:
+            json.dump({"rows": rows, "agg": agg}, fh, indent=2, default=str)
+        print(f"[resv-sweep] wrote {args.json}", flush=True)
+
+
+if __name__ == "__main__":
+    main()
