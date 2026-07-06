@@ -1,0 +1,523 @@
+{
+  "rows": [
+    {
+      "seed": 42,
+      "op_lambda": 0.001,
+      "committee_K": 5,
+      "committee_frac": 0.6,
+      "baseline_single_wta": {
+        "canonical_acc": 0.972,
+        "canonical_slot0": 1.0,
+        "objrel_acc": 0.0,
+        "objrel_slot0_THEME": 0.0
+      },
+      "per_role_read": {
+        "canonical_acc": 1.0,
+        "canonical_slot0": 1.0,
+        "canonical_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ],
+        "objrel_acc": 1.0,
+        "objrel_slot0_THEME": 1.0,
+        "objrel_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ]
+      },
+      "lesion_agent_readout": {
+        "intact_recall_by_true_role": {
+          "AGENT": 1.0,
+          "PREDICATE": 1.0,
+          "THEME": 1.0
+        },
+        "agent_lesioned_recall_by_true_role": {
+          "AGENT": 0.0,
+          "PREDICATE": 1.0,
+          "THEME": 1.0
+        },
+        "agent_collapses": true,
+        "others_intact": true
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.0
+      },
+      "spiking_per_role": {
+        "canonical_acc": 1.0,
+        "canonical_slot0": 1.0,
+        "objrel_acc": 0.0,
+        "objrel_slot0_THEME": 0.0,
+        "objrel_per_slot": [
+          "0/12",
+          "0/12",
+          "0/12"
+        ],
+        "canonical_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ]
+      },
+      "dev_sweep": [
+        {
+          "lambda": 0.001,
+          "canon": 1.0,
+          "objrel_slot0": 1.0
+        },
+        {
+          "lambda": 0.1,
+          "canon": 1.0,
+          "objrel_slot0": 1.0
+        },
+        {
+          "lambda": 1.0,
+          "canon": 1.0,
+          "objrel_slot0": 0.0
+        },
+        {
+          "lambda": 10.0,
+          "canon": 1.0,
+          "objrel_slot0": 0.0
+        },
+        {
+          "lambda": 100.0,
+          "canon": 1.0,
+          "objrel_slot0": 0.0
+        }
+      ],
+      "elapsed_s": 70.0,
+      "objrel_recovers": true,
+      "canonical_not_regressed": true,
+      "lesion_load_bearing": true,
+      "scramble_chance": true
+    },
+    {
+      "seed": 43,
+      "op_lambda": 0.001,
+      "committee_K": 5,
+      "committee_frac": 0.6,
+      "baseline_single_wta": {
+        "canonical_acc": 1.0,
+        "canonical_slot0": 1.0,
+        "objrel_acc": 0.056,
+        "objrel_slot0_THEME": 0.0
+      },
+      "per_role_read": {
+        "canonical_acc": 1.0,
+        "canonical_slot0": 1.0,
+        "canonical_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ],
+        "objrel_acc": 1.0,
+        "objrel_slot0_THEME": 1.0,
+        "objrel_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ]
+      },
+      "lesion_agent_readout": {
+        "intact_recall_by_true_role": {
+          "AGENT": 1.0,
+          "PREDICATE": 1.0,
+          "THEME": 1.0
+        },
+        "agent_lesioned_recall_by_true_role": {
+          "AGENT": 0.0,
+          "PREDICATE": 1.0,
+          "THEME": 1.0
+        },
+        "agent_collapses": true,
+        "others_intact": true
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.333
+      },
+      "spiking_per_role": {
+        "canonical_acc": 1.0,
+        "canonical_slot0": 1.0,
+        "objrel_acc": 0.056,
+        "objrel_slot0_THEME": 0.0,
+        "objrel_per_slot": [
+          "0/12",
+          "0/12",
+          "2/12"
+        ],
+        "canonical_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ]
+      },
+      "dev_sweep": [
+        {
+          "lambda": 0.001,
+          "canon": 1.0,
+          "objrel_slot0": 1.0
+        },
+        {
+          "lambda": 0.1,
+          "canon": 1.0,
+          "objrel_slot0": 1.0
+        },
+        {
+          "lambda": 1.0,
+          "canon": 1.0,
+          "objrel_slot0": 0.0
+        },
+        {
+          "lambda": 10.0,
+          "canon": 1.0,
+          "objrel_slot0": 0.0
+        },
+        {
+          "lambda": 100.0,
+          "canon": 1.0,
+          "objrel_slot0": 0.0
+        }
+      ],
+      "elapsed_s": 68.0,
+      "objrel_recovers": true,
+      "canonical_not_regressed": true,
+      "lesion_load_bearing": true,
+      "scramble_chance": true
+    },
+    {
+      "seed": 44,
+      "op_lambda": 0.001,
+      "committee_K": 5,
+      "committee_frac": 0.6,
+      "baseline_single_wta": {
+        "canonical_acc": 0.639,
+        "canonical_slot0": 1.0,
+        "objrel_acc": 0.0,
+        "objrel_slot0_THEME": 0.0
+      },
+      "per_role_read": {
+        "canonical_acc": 1.0,
+        "canonical_slot0": 1.0,
+        "canonical_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ],
+        "objrel_acc": 1.0,
+        "objrel_slot0_THEME": 1.0,
+        "objrel_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ]
+      },
+      "lesion_agent_readout": {
+        "intact_recall_by_true_role": {
+          "AGENT": 1.0,
+          "PREDICATE": 1.0,
+          "THEME": 1.0
+        },
+        "agent_lesioned_recall_by_true_role": {
+          "AGENT": 0.0,
+          "PREDICATE": 1.0,
+          "THEME": 1.0
+        },
+        "agent_collapses": true,
+        "others_intact": true
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.0
+      },
+      "spiking_per_role": {
+        "canonical_acc": 1.0,
+        "canonical_slot0": 1.0,
+        "objrel_acc": 0.0,
+        "objrel_slot0_THEME": 0.0,
+        "objrel_per_slot": [
+          "0/12",
+          "0/12",
+          "0/12"
+        ],
+        "canonical_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ]
+      },
+      "dev_sweep": [
+        {
+          "lambda": 0.001,
+          "canon": 1.0,
+          "objrel_slot0": 1.0
+        },
+        {
+          "lambda": 0.1,
+          "canon": 1.0,
+          "objrel_slot0": 1.0
+        },
+        {
+          "lambda": 1.0,
+          "canon": 1.0,
+          "objrel_slot0": 0.0
+        },
+        {
+          "lambda": 10.0,
+          "canon": 1.0,
+          "objrel_slot0": 0.0
+        },
+        {
+          "lambda": 100.0,
+          "canon": 1.0,
+          "objrel_slot0": 0.0
+        }
+      ],
+      "elapsed_s": 69.7,
+      "objrel_recovers": true,
+      "canonical_not_regressed": true,
+      "lesion_load_bearing": true,
+      "scramble_chance": true
+    },
+    {
+      "seed": 100,
+      "op_lambda": 0.001,
+      "committee_K": 5,
+      "committee_frac": 0.6,
+      "baseline_single_wta": {
+        "canonical_acc": 0.028,
+        "canonical_slot0": 0.083,
+        "objrel_acc": 1.0,
+        "objrel_slot0_THEME": 1.0
+      },
+      "per_role_read": {
+        "canonical_acc": 1.0,
+        "canonical_slot0": 1.0,
+        "canonical_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ],
+        "objrel_acc": 1.0,
+        "objrel_slot0_THEME": 1.0,
+        "objrel_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ]
+      },
+      "lesion_agent_readout": {
+        "intact_recall_by_true_role": {
+          "AGENT": 1.0,
+          "PREDICATE": 1.0,
+          "THEME": 1.0
+        },
+        "agent_lesioned_recall_by_true_role": {
+          "AGENT": 0.0,
+          "PREDICATE": 1.0,
+          "THEME": 1.0
+        },
+        "agent_collapses": true,
+        "others_intact": true
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.0
+      },
+      "spiking_per_role": {
+        "canonical_acc": 0.333,
+        "canonical_slot0": 1.0,
+        "objrel_acc": 0.333,
+        "objrel_slot0_THEME": 0.0,
+        "objrel_per_slot": [
+          "0/12",
+          "12/12",
+          "0/12"
+        ],
+        "canonical_per_slot": [
+          "12/12",
+          "0/12",
+          "0/12"
+        ]
+      },
+      "dev_sweep": null,
+      "elapsed_s": 64.9,
+      "objrel_recovers": true,
+      "canonical_not_regressed": true,
+      "lesion_load_bearing": true,
+      "scramble_chance": true
+    },
+    {
+      "seed": 101,
+      "op_lambda": 0.001,
+      "committee_K": 5,
+      "committee_frac": 0.6,
+      "baseline_single_wta": {
+        "canonical_acc": 0.0,
+        "canonical_slot0": 0.0,
+        "objrel_acc": 0.75,
+        "objrel_slot0_THEME": 1.0
+      },
+      "per_role_read": {
+        "canonical_acc": 1.0,
+        "canonical_slot0": 1.0,
+        "canonical_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ],
+        "objrel_acc": 1.0,
+        "objrel_slot0_THEME": 1.0,
+        "objrel_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ]
+      },
+      "lesion_agent_readout": {
+        "intact_recall_by_true_role": {
+          "AGENT": 1.0,
+          "PREDICATE": 1.0,
+          "THEME": 1.0
+        },
+        "agent_lesioned_recall_by_true_role": {
+          "AGENT": 0.0,
+          "PREDICATE": 1.0,
+          "THEME": 1.0
+        },
+        "agent_collapses": true,
+        "others_intact": true
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.333
+      },
+      "spiking_per_role": {
+        "canonical_acc": 0.0,
+        "canonical_slot0": 0.0,
+        "objrel_acc": 1.0,
+        "objrel_slot0_THEME": 1.0,
+        "objrel_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ],
+        "canonical_per_slot": [
+          "0/12",
+          "0/12",
+          "0/12"
+        ]
+      },
+      "dev_sweep": null,
+      "elapsed_s": 64.6,
+      "objrel_recovers": true,
+      "canonical_not_regressed": true,
+      "lesion_load_bearing": true,
+      "scramble_chance": true
+    },
+    {
+      "seed": 102,
+      "op_lambda": 0.001,
+      "committee_K": 5,
+      "committee_frac": 0.6,
+      "baseline_single_wta": {
+        "canonical_acc": 0.0,
+        "canonical_slot0": 0.0,
+        "objrel_acc": 0.556,
+        "objrel_slot0_THEME": 1.0
+      },
+      "per_role_read": {
+        "canonical_acc": 1.0,
+        "canonical_slot0": 1.0,
+        "canonical_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ],
+        "objrel_acc": 1.0,
+        "objrel_slot0_THEME": 1.0,
+        "objrel_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ]
+      },
+      "lesion_agent_readout": {
+        "intact_recall_by_true_role": {
+          "AGENT": 1.0,
+          "PREDICATE": 1.0,
+          "THEME": 1.0
+        },
+        "agent_lesioned_recall_by_true_role": {
+          "AGENT": 0.0,
+          "PREDICATE": 1.0,
+          "THEME": 1.0
+        },
+        "agent_collapses": true,
+        "others_intact": true
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.0
+      },
+      "spiking_per_role": {
+        "canonical_acc": 0.0,
+        "canonical_slot0": 0.0,
+        "objrel_acc": 1.0,
+        "objrel_slot0_THEME": 1.0,
+        "objrel_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ],
+        "canonical_per_slot": [
+          "0/12",
+          "0/12",
+          "0/12"
+        ]
+      },
+      "dev_sweep": null,
+      "elapsed_s": 65.3,
+      "objrel_recovers": true,
+      "canonical_not_regressed": true,
+      "lesion_load_bearing": true,
+      "scramble_chance": true
+    }
+  ],
+  "agg": {
+    "n_seeds": 6,
+    "n_objrel_recovers": 6,
+    "n_objrel_recovers_blind": 3,
+    "n_blind": 3,
+    "objrel_recovers_gate": true,
+    "canonical_not_regressed_all": true,
+    "lesion_load_bearing_all": true,
+    "scramble_chance_all": true,
+    "verdict": "GO",
+    "frozen_lambda": 0.001,
+    "committee_K": 5,
+    "committee_frac": 0.6,
+    "mean_objrel_slot0_per_role": 1.0,
+    "mean_objrel_slot0_single_wta": 0.5,
+    "mean_canonical_per_role": 1.0,
+    "mean_canonical_single_wta": 0.44,
+    "mean_objrel_slot0_spiking_per_role": 0.333,
+    "operating_point_grid": {
+      "lambdas": [
+        0.001,
+        0.1,
+        1.0,
+        10.0,
+        100.0
+      ],
+      "read_t_step": 30,
+      "ws_replay": 3,
+      "n_train": 60
+    },
+    "total_elapsed_s": 402.7
+  },
+  "verdict_text": "GO -- PER-ROLE ridge-regularized, committee-voted read-out (N_roles=3 INDEPENDENT detectors per slot, K=5 random-subspace bags, on the REAL spiking reservoir feature; Frankland-Greene dedicated per-role loci / Hinaut-Dominey separate output units) RESOLVES BOTH the canonical AND the object-relative structural read, 6-seed-BLIND. objrel-slot0(THEME) recovers on 6/6 seeds (all 3/3 BLIND 100/101/102 at the dev-frozen lambda) AND canonical NOT regressed (>=0.90 all 6) -- the per-role INDEPENDENCE removes the shared-WTA representational competition so lifting objrel cannot see-saw canonical (the killer every prior read-trick hit). The read is per-role LOAD-BEARING (lesion the AGENT read-out -> only the AGENT true-role collapses, THEME+PREDICATE intact -- a single shared WTA cannot pass this) and ROLE-SPECIFIC (scrambled targets -> chance). Ridge + committee GENERALIZE across the blind seeds the single-fit c2 read-out failed. NO sim/ edit; CPU/numpy."
+}
