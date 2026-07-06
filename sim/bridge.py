@@ -5901,7 +5901,21 @@ class SimulationBridge:
 
             # Cache cp_prev_firing_states.any() ONCE per step to avoid repeated GPU-CPU sync stalls.
             # This result is used in STP, synaptic propagation, and Hebbian blocks.
-            _prev_any = bool(self.cp_prev_firing_states.any())
+            # read_only_fast_step (opt-in, default off): skip this per-step device->host sync by ASSUMING spikes are
+            # present. On a READ-ONLY step this is byte-identical -- every use of _prev_any gates a skip-fast-path that
+            # produces zero contribution on a genuinely zero-spike step, so forcing True only does redundant zero-work;
+            # it never changes the result. It is GUARDED to activate ONLY when no learning/plasticity/experiment is
+            # active: with plasticity on, a gated block consumes RNG (structural/reward), so forcing the flag True on a
+            # zero-spike step would diverge the RNG stream (caught by tests/test_read_only_fast_step.py). The guard
+            # makes the flag byte-identical UNCONDITIONALLY -- it is inert unless the step is genuinely read-only.
+            # Removes the two per-step syncs that make the resonate/inference loop launch-bound.
+            _read_only_fast_step = (
+                getattr(cfg, "read_only_fast_step", False)
+                and not cfg.enable_hebbian_learning and not cfg.enable_short_term_plasticity
+                and not cfg.enable_homeostasis and not cfg.enable_stdp
+                and not cfg.enable_structural_plasticity and not cfg.enable_reward_modulation
+                and not (self.experiment_engine is not None and self.experiment_engine.is_experiment_running))
+            _prev_any = True if _read_only_fast_step else bool(self.cp_prev_firing_states.any())
 
             # --- 1. Synaptic Plasticity (STP) Update ---
             if _profiling: _backend_synchronize(); _prof['t_init'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()
@@ -6842,7 +6856,10 @@ class SimulationBridge:
             # Combine spike count + any() into a single GPU reduction.
             # cp.sum(bool_array) gives spike count; > 0 gives _fired_any — one kernel, one sync.
             spike_count_gpu = cp.sum(fired_this_step)
-            _fired_any = bool(spike_count_gpu > 0)
+            # read_only_fast_step: skip the SECOND per-step device->host sync (see the _prev_any note above). The
+            # on-device spike_count_gpu is still computed (for accumulation/stats, no sync); only the bool() reduction
+            # is skipped. Byte-identical (int(spike_count_gpu) if forced-True == the else-branch when there are 0 spikes).
+            _fired_any = True if _read_only_fast_step else bool(spike_count_gpu > 0)
 
             # Accumulate spike count on GPU, sync to CPU periodically
             if self._accumulated_spikes_gpu is None:

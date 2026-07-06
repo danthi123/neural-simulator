@@ -177,6 +177,17 @@ class CoreSimConfig:
     # step into 1 -- the launch-bound conversational-latency fix. GPU-only; numpy backend + masked bridges fall back
     # to the loop. See docs/plans/2026-06-17-resonate-cudagraph-refactor-design.md.
     enable_rf_cudagraph: bool = False
+    # Opt-in READ-ONLY fast step (perf, default OFF -> byte-identical to the normal step). Skips the TWO per-step
+    # device->host sync stalls in _run_one_simulation_step (the bool(cp_prev_firing_states.any()) and
+    # bool(spike_count_gpu>0) reductions) by ASSUMING spikes are present. On a READ-ONLY step this is byte-identical:
+    # each cached flag gates a skip-fast-path that produces ZERO contribution on a genuinely zero-spike step, so forcing
+    # it True only does redundant zero-work. It is GUARDED to activate ONLY when NO learning is on (Hebbian / STP /
+    # homeostasis / STDP / structural / reward) and no experiment is running -- because with plasticity a gated block
+    # consumes RNG, so forcing the flag True on a zero-spike step would diverge the stream. The guard makes the flag
+    # byte-identical UNCONDITIONALLY (inert unless the step is genuinely read-only). Purpose: remove the two per-step
+    # syncs that make the resonate/inference loop launch-bound. Best for active inference loops (spikes present most
+    # steps). See tests/test_read_only_fast_step.py (asserts bit-identical state on/off).
+    read_only_fast_step: bool = False
     # Opt-in RF DENSE complex-weight mode (O-2-purity, default OFF -> byte-identical to the sparse complex-CSR path).
     # When True, rf_set_complex_weights ALSO materializes a DENSE complex weight `cp_rf_w_dense` (= W_re + i*W_im) from
     # the SAME weights, and the RF matvec uses a single dense cuBLAS GEMV (W_dense @ z) instead of four sparse SpMVs
