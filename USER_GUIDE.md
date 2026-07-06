@@ -58,7 +58,7 @@ Then press **Apply Changes & Reset Sim** to use the tuned values.
 
 ## 2. Architecture Overview
 
-The simulator is split into focused packages (was once a monolithic `neural-simulator.py`, now refactored — `neural-simulator.py` is now the 2.2K-line GUI host, with the engine living in 13 modules under `sim/` totalling ~11.8K lines):
+The simulator is split into focused packages (it was once a single large `neural-simulator.py`; it has since been refactored so that `neural-simulator.py` is just the GUI host and the engine lives in the modules under `sim/`):
 
 - **Simulation core**: `SimulationBridge` in `sim/bridge.py` manages all GPU
   arrays, connectivity, neuron dynamics, and stepping. Configs are
@@ -76,8 +76,9 @@ The simulator is split into focused packages (was once a monolithic `neural-simu
   concentration dynamics for DA / NE / 5-HT with receptor-effect targets.
 - **Replicas + text I/O + visual cortex** (`sim/replicas.py`,
   `sim/text_embeddings.py`, `sim/visual_cortex.py`): replicated wiring
-  for multi-bridge runs, token-embedding language regions, and Cluster K v2
-  Gabor-RF visual cortex.
+  for multi-network runs, language regions that turn words into neural input,
+  and a model visual cortex built from edge/orientation detectors (Gabor
+  filters, the standard model of early-visual-cortex receptive fields).
 - **Progress events** (`sim/progress.py`): universal `[PROGRESS] {json}`
   event format consumed by the experiment runner and webapp.
 - **Experiment system** (`experiment/` package): `ExperimentEngine`,
@@ -438,9 +439,10 @@ entry points:
 python run_experiment_headless.py --preset rl --seed 42
 ```
 
-Available presets: `stim` (basic stimulus-response), `associative` (CS-US
-Pavlovian pairing), `rl` (R-STDP reinforcement learning), `freq` (frequency
-response sweep). Output goes to `experiment_<preset>_<timestamp>.json`.
+Available presets: `stim` (basic stimulus-response), `associative`
+(Pavlovian conditioning — pairing a neutral cue with a meaningful one),
+`rl` (reward-driven reinforcement learning), `freq` (frequency-response
+sweep). Output goes to `experiment_<preset>_<timestamp>.json`.
 
 ### 9.2 Run a parameter sweep
 
@@ -462,9 +464,11 @@ python run_benchmarks.py --benchmark gamma-oscillations
 python run_benchmarks.py --benchmark homeostasis
 ```
 
-Each benchmark validates a known neuroscience result (Bi & Poo STDP timing
-curve, cortical E/I balance, Tsodyks–Markram PPR, PING gamma, homeostatic
-adaptation). All currently PASS.
+Each benchmark reproduces a known neuroscience result: the measured spike-timing
+learning curve (Bi & Poo 1998), the balance between excitation and inhibition in
+cortex, the way repeated synaptic pulses grow or shrink (paired-pulse ratio),
+gamma-band (~40 Hz) network rhythms, and homeostatic (self-stabilizing)
+adaptation of firing rates. All currently pass.
 
 ### 9.4 Research-gate runners
 
@@ -478,20 +482,22 @@ python -m research.runners.g1_v3_runner --seed 42
 # Sensorimotor signed perceptron (G5)
 python -m research.runners.g5_v3_runner --seed 42
 
-# Moving-goal RL with motor exploration (G9)
+# Moving-goal reinforcement learning with random motor exploration (G9)
 python -m research.runners.g9_runner --seed 42 --motor-exploration-rate-hz 15
 
-# Phase B BG cascade action selection (G11) - moving goal acid test
+# Basal-ganglia action-selection circuit (G11) - moving-goal stress test
 python -m research.runners.g11_bg_runner --moving-goal --seed 42 --n-steps 1800
 
-# Phase B static cascade probe
+# Basal-ganglia circuit - static single-action probe
 python -m research.runners.g11_bg_runner --probe-action W
 
-# Text I/O training + eval (word → action via PFC bypass)
+# Text input/output training + evaluation (learning to map a written
+# word to the matching motor action)
 python -m research.runners.text_train_embodied --seed 42
 python -m research.runners.text_eval_embodied --seed 42
 
-# Diagnostic: is the W→A signal real or random structure?
+# Diagnostic: is the word-to-action signal real learning, or just
+# random structure that happens to look right?
 python -m research.runners.permuted_label_check <eval_file.json>
 
 # Eval methodology validation via hand-built perfect weights
@@ -557,9 +563,9 @@ Each region gets a contiguous slice of the global neuron index space.
 Pathways are CSR sparse and respect the per-pathway `plastic` flag (only
 plastic pathways accept STDP / reward updates; others are frozen).
 
-See `research/runners/g11_bg_runner.py` for a full BG-style cascade build
-(30 regions, 32 pathways) and `docs/plans/2026-04-24-brain-region-framework.md`
-for the design doc.
+See `research/runners/g11_bg_runner.py` for a full basal-ganglia
+action-selection build (30 regions, 32 pathways) and
+`docs/plans/2026-04-24-brain-region-framework.md` for the design doc.
 
 ---
 
@@ -599,47 +605,58 @@ See `docs/plans/2026-04-24-neuromodulator-subsystem.md`.
 
 ---
 
-## 12. Phase B: BG-Style Action Selection
+## 12. Action Selection with a Basal-Ganglia Circuit
 
-The `g11_bg_runner.py` implements a basal-ganglia cascade for action
-selection that resolved the silent-motor trap (Sessions D–I were unable to
-fix it from the runner side).
+The `g11_bg_runner.py` script models the **basal ganglia** — the brain's
+action-selection hub, the circuit that decides which one of several possible
+moves to actually make. This circuit design resolved the "silent-motor trap"
+(where the movement neurons for some actions never fire, so those actions can
+never be learned or chosen).
 
-**Architecture:** per-action populations of cortex → str_D1 / str_D2 → GPi /
-GPe → STN → thalamus → motor. D1 inhibits GPi (direct path); when GPi
-silences, thalamus is released and motor fires. Each action has its own
-disinhibition gate; selection emerges from independent gates rather than a
-shared argmax.
+**Architecture:** each candidate action has its own chain of neuron groups
+running cortex → striatum → output nuclei → thalamus → motor. (The striatum
+is the input stage of the basal ganglia; the thalamus is the relay that
+releases a movement.) The circuit works by *disinhibition*: the output nuclei
+normally suppress the thalamus, and choosing an action means briefly lifting
+that suppression for one action's chain so its movement neurons fire. Each
+action has its own gate, so the winner emerges from independent competing
+gates rather than from an off-brain "pick the highest score" step.
 
 **Two gotchas worth knowing if you build a similar circuit:**
 
-1. **Pool size matters at deployment, not at probe scale.** The cortex →
-   striatum pathway saturates D1 if `n_cortex` is too large relative to
-   striatum size. With `n_cortex=400` (100/action) D1 fires at ~220 Hz
-   (saturated) and GPi can no longer be silenced. With `n_cortex=100`
-   (25/action) D1 fires at ~75 Hz (physiological MSN range) and the
-   cascade works. **Lesson:** any smoke probe must call the same builder
-   with the same args as the deployed run.
+1. **Pool size matters at deployment, not at probe scale.** If the group of
+   cortex neurons feeding the striatum is too large relative to the striatum,
+   it over-drives the input stage into saturation (firing so fast that the
+   downstream suppression can no longer be lifted, so no action is selected).
+   Sizing the cortex group down to roughly a physiological firing rate makes
+   the circuit work. **Lesson:** any quick test must call the same builder
+   with the same arguments as the full deployed run.
 
-2. **STDP w_max must exceed your design weight.** The STDP rule is
-   soft-bound: `Δw_LTP = A_plus * (w_max - w) * exp(-Δt/τ)`. When
-   `w > w_max`, every "LTP" event is strongly negative and weights collapse
-   to w_max within milliseconds. Cortex → D1 uses `weight_mean=25` but the
-   default `cfg.stdp_w_max=2`. Set `cfg.stdp_w_max = 30.0` to fit.
+2. **The spike-timing learning rule has an upper weight bound you must set
+   correctly.** That rule (STDP, defined in Section 6.3) is *soft-bounded*: it
+   pulls weights toward a configured maximum, `stdp_w_max`. If a connection's
+   designed weight is already *above* that maximum, every learning event pushes
+   it sharply down instead of up, and the weight collapses within milliseconds.
+   So set `cfg.stdp_w_max` above the largest design weight in any learning
+   connection (for example, a connection built at weight 25 needs
+   `stdp_w_max = 30`, not the default of 2).
 
-**Result (3-seed acid test, 1800 steps):** phase 1 finalQ = 1.76 avg
-(vs G9 baseline 6.74) — 74% improvement. Agent stays at Manhattan distance
-~1.7 from goal vs random walk's ~5.5.
+**Result (3 random seeds, 1800 steps):** the agent settles about 1.7 grid
+cells from the goal on average (measured as grid-step, or "city-block",
+distance), versus about 5.5 for random wandering — a 74% improvement over the
+earlier baseline circuit.
 
 See `research/findings/2026-04-25-phase-b-acid-test-real-win.md` for the
 full diagnosis.
 
 ### 12.1 Current navigation flagship (2026-05-01)
 
-Phase B was the foundation. The current navigation flagship adds Cluster
-A (closed BG loop), Cluster E (cortical topography), Cluster G v2.5
-(per-region NMDA on cortex/motor/PFC), and Cluster K v2 (Gabor-RF visual
-cortex):
+The action-selection circuit above was the foundation. The current best
+navigation setup adds several biologically motivated extensions: a closed
+feedback loop through the basal ganglia, a topographic (spatially organized)
+map in cortex, a slow synaptic channel (NMDA receptors) in the cortex, motor,
+and prefrontal regions that helps the network hold a decision steady, and a
+model visual cortex built from edge/orientation detectors:
 
 ```bash
 python -m research.runners.g11_bg_runner --moving-goal --goal-schedule multi --deterministic \
@@ -650,11 +667,12 @@ python -m research.runners.g11_bg_runner --moving-goal --goal-schedule multi --d
     --grid-size 16 --seed N --n-steps 1800
 ```
 
-Result at 16×16 perception-only (no heuristic, no direct goal coords):
-**2.97 ± 0.12 (n=3)**. Beats the documented 8×8 perception arc baseline
-(4.08 ± 0.49) on a 4× larger grid; closes 4 of 5 original cheats. See
-[CLAUDE.md](../CLAUDE.md) "Recommended configuration (current best
-2026-05-01)" and `research/findings/2026-05-01-cluster-k-v2-breakthrough.md`.
+Result on a 16×16 grid using simulated vision only (no built-in navigation
+rule, and no direct access to the goal's coordinates): the agent ends about
+3.0 grid cells from the goal on average across 3 random seeds — better than an
+earlier setup managed on a grid one-quarter the size, while removing four of
+the five information shortcuts the agent used to be given. See
+`research/findings/2026-05-01-cluster-k-v2-breakthrough.md` for details.
 
 ---
 
@@ -672,11 +690,14 @@ Common issues:
 - **Out of memory**:
   - Reduce neuron count or connections per neuron.
   - Increase `Viz Update Interval` or reduce `Max Visible Neurons` / `Max Visible Connections`.
-- **Cascade dies after first trial in research runner**:
-  - Check `cfg.stdp_w_max` is set above your design `weight_mean` for any
-    plastic pathway. Soft-bound STDP collapses oversize weights silently.
-  - Check input-to-target population ratios — saturation breaks
-    disinhibition gating (see Phase B notes above).
+- **The action-selection circuit dies after the first trial in a research
+  runner**:
+  - Check `cfg.stdp_w_max` is set above your largest design weight for any
+    learning pathway. The soft-bounded spike-timing rule collapses oversize
+    weights silently (see Section 12).
+  - Check the size ratio between a source neuron group and its target — an
+    over-large source over-drives the target into saturation, which breaks the
+    action-selection gating (see Section 12).
 - **HH presets don't fire at 37°C**:
   - Use the per-gate Q10 values (`hh_q10_m=3.0`, `hh_q10_h=1.5`,
     `hh_q10_n=1.5`). Uniform Q10=3 over-compresses gating dynamics. The

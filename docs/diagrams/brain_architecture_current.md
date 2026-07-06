@@ -1,341 +1,258 @@
-# Brain architecture — current state (2026-06-23 · currency-noted 2026-07-05)
+# Brain architecture — current state (2026-07-05)
 
-Maintainable, **as-implemented** Mermaid flowcharts of the whole simulated
-brain, kept in step with `research/findings/AUTONOMOUS_STATE.md` and the
-2026-06-23 findings. These render directly on GitHub.
+Plain-language, **as-implemented** flowcharts of the whole simulated brain.
+These render directly on GitHub (Mermaid). They are written for a reader who has
+never seen this codebase: every necessary technical term is defined once, in
+plain words, then used.
 
-> **Currency note (2026-07-05).** Diagrams 1–3 below are the 2026-06-23 state.
-> The faculty **firewall** (gate → constrain → verify) and the **develop loop**
-> structure still hold, but the language stack has since moved on — recorded
-> honestly here rather than silently left stale:
-> - **Generation** moved beyond the spiking Qwen2.5-0.5B shown in Diagram 1:
->   first transformer-**minimized** (a locally-trained ~21M TinyStories
->   generator for open fluid conversation, 2026-07-01), then, for the bounded
->   grounded-answer frames, transformer-**FREE** — a self-organized **spiking
->   Broca** producer whose entire grammatical structure (function words · slot
->   order · slot inventory) is *discovered from corpus experience* and spoken
->   **on spikes**, on one brain in one process (EMERGE-59..71, 2026-07-03).
-> - **Comprehension** gained the RUNG B **fronto-striatal reservoir** (form→role,
->   a spiking liquid-state machine realized as a recurrent `BrainRegion`) that
->   retires the hand role-labeler; its reservoir→role **read-out is now
->   biologically LEARNED** — a per-role delta rule, with the host ridge-fit
->   **removed** (6/6 seed, 2026-07-05). **Diagram 1b** below is current.
-> - **Open frontier** (2026-07-05): the biological read-out reads grammatical
->   **role from word position** on canonical subject-verb-object facts, but not
->   yet from **non-local structure** (object-relative clauses, where word order
->   ≠ roles) — a precisely-characterized boundary being ground, *not* an
->   irreducible wall (the reservoir feature encodes it; the spiking read-out
->   loses it). Diagram 1b.
-> The generation-side redraw of Diagrams 1–2 and the exhaustive detail **SVGs**
-> are the larger refresh (they use the `review-diagrams` render + tile-review +
-> git-commit loop — a desktop task).
+**What this software is (one paragraph).** A GPU-accelerated simulator of a
+network of biologically realistic neurons. "Spiking" means the neurons
+communicate with discrete electrical pulses over time, the way real neurons do,
+rather than the continuous numbers used in mainstream machine-learning models.
+A single network runs on one update clock; different jobs (seeing, moving,
+understanding language, remembering facts, planning what to say) occupy
+separate, non-overlapping groups of neurons within that one network. Synapse
+strengths change with experience through several standard learning rules. The
+whole brain state can be saved and resumed, so it can be run forward over
+simulated "days."
 
-The whole-brain pipeline, top to bottom:
+**The one guiding rule.** Everything between *sensing the world* and *acting on
+it* is meant to be done by simulated neurons and synapses. Only the outside
+**world** (what the agent sees, the environment's state) and the **body**
+(turning a motor-neuron output into a movement) may be handled by ordinary
+program code. Anything still computed by a plain formula — a reward, a decision,
+a word choice — is treated as a temporary placeholder to be replaced by a real
+neural mechanism, and where the neural version underperforms the placeholder,
+that gap is reported honestly rather than hidden.
 
-> **spiking substrate** (`SimulationBridge`: Izhikevich + resonate-and-fire
-> complex-synapse neurons) → **conversational pipeline** (parser → composer
-> role-filler binding → the no-confab **moat** → hippocampal **sleep
-> consolidation**) → the **learned cortex** (PPMI stream cortex: learn word
-> meanings from listening) → the **grounded-language faculty** (a
-> spiking-Qwen LLM gated by the brain's knowledge: **gate → constrain →
-> verify** — brain = knowledge, LLM = phrasing only, hallucination-proof by
-> construction) → **bridge co-residence** (the faculty consolidated onto the
-> `SimulationBridge`) → the artificial-life **develop loop** (day → converse
-> → consolidate(sleep) → grow(auto-growth tiers) → persist(lineage) → next
-> day).
+**A quick legend for the four unavoidable terms.**
 
-These three Mermaid diagrams are the **current-state, whole-stack** view.
-The two exhaustive region/pathway detail graphs (every region, every distinct
-synapse, the honesty legend) remain the hand-authored SVGs in this folder —
-they are scoped to a single builder each and are the source of truth for the
-region inventory:
-
-| Detail graph | Scope | Files |
-|---|---|---|
-| **Navigation brain** | every region + pathway of `build_bg_brain_regions()` — BG action-selection cascade, spiking superior-colliculus orienting, spiking actor-critic, thalamus/TRN, the accumulate→commit spiking decision (now the default read-out), cerebellum, hippocampus, dlPFC | [`brain_navigation.svg`](brain_navigation.svg) · [`.png`](brain_navigation.png) |
-| **Conversational brain** | the production `OneBrainComposer` pipeline + the `build_biological_brain_regions()` region inventory (language I/O, Wernicke/semantic/Broca, concept pools, multimodal hub, hippocampal consolidation, dlPFC verb WM) | [`brain_conversational.svg`](brain_conversational.svg) · [`.png`](brain_conversational.png) |
-| **Master map (SVG)** | the earlier hero overview: one brain (nav + conversation as disjoint slices) + the 3 validated cross-brain routes + the co-resident generalization stack + the honesty legend | [`brain_master.svg`](brain_master.svg) · [`.png`](brain_master.png) |
-
-> The SVG master map predates the grounded-language faculty, bridge
-> co-residence, and the develop loop (the 2026-06-23 arc). **Diagram 1 below
-> is the current master map** — it adds those three layers on top of the
-> consolidated one brain. See "Honesty & scope" at the bottom for the
-> brain-based-only standard the markers encode.
+| Term | Plain meaning |
+|---|---|
+| **The one network** | A single simulated brain of spiking neurons on one update loop; each job runs in its own neuron group inside it. |
+| **Spiking neuron** | A model neuron that fires discrete pulses over time (the simulator's stand-in for a real neuron). |
+| **Bind / compose a fact** | Combine several words (who / did-what / to-what) into a single stored fact the brain can later recall. |
+| **No-fabrication safeguard** | The rule that the brain only states facts it actually holds; if nothing matches a question, it says "I don't know" instead of inventing an answer. |
 
 ---
 
-## 1. Master architecture map — the whole brain
+## Diagram A — Whole-brain overview
 
-The full stack: the shared **spiking substrate** carries the **conversational
-pipeline** and the **navigation** brain as disjoint neuron slices on one
-update loop; the **learned cortex** supplies grounded concept codes; the
-**grounded-language faculty** turns retrieved facts into fluent prose under a
-firewall; and the **develop loop** runs the whole thing forward over simulated
-days. Solid arrows = the live signal path; the faculty's firewall edges are
-highlighted.
+Signal flows top to bottom: the world provides input, the one network does all
+the cognition in separate neuron groups, and the body or the reply carries the
+result back out. Solid arrows are the live signal path.
 
 ```mermaid
 flowchart TB
-    %% ---- world / body I/O (host-legitimate boundary) ----
-    World([🌍 World · retina render · sensory input]):::io
-    Body([🦾 Body · act on motor output]):::io
-    UserQ([💬 User question / sentence]):::io
-    Reply([🗣️ Grounded fluent reply · or 'I don't know']):::io
+    World([🌍 Simulated world · renders what the agent sees]):::io
+    UserQ([💬 User question or sentence]):::io
 
-    subgraph BRIDGE["🧠 ONE SimulationBridge — one spiking update loop (Izhikevich + resonate-and-fire complex synapses)"]
+    subgraph NET["🧠 The one network — spiking neurons on a single update loop"]
       direction TB
 
-      subgraph SUB["Spiking substrate"]
-        direction LR
-        IZH["Izhikevich point neurons<br/>(cascades · pools · parser)"]:::sub
-        RF["Resonate-and-fire neurons<br/>+ complex synapses<br/>(phasor binding · the composer)"]:::sub
-      end
+      SENSE["Sensory input<br/>pixels → edge/orientation detectors →<br/>higher visual areas → object recognition"]:::sense
 
-      subgraph CORTEX["Learned cortex — learn word meanings by listening"]
-        direction LR
-        STREAM["PPMI stream cortex<br/>online rate-Hebbian co-occurrence<br/>(hears the corpus word-by-word)"]:::mem
-        CODES["grounded concept codes<br/>(generalize across similar concepts)"]:::mem
-        STREAM -->|corr M,C ≈ 0.89| CODES
-      end
-
-      subgraph CONV["Conversational pipeline"]
+      subgraph GROUPS["Separate neuron groups (each does one job)"]
         direction TB
-        PARSER["PARSER<br/>word-order × voice → who-did-what<br/>(voice-invariant, vocab-agnostic)"]:::conv
-        COMPOSER["COMPOSER (role-filler binding)<br/>bind words → facts · persistent fact store<br/>query · negate · clauses · multi-hop"]:::conv
-        MOAT{{"no-confab MOAT<br/>exact-match recall →<br/>abstain when unknown"}}:::moat
-        SLEEP["hippocampal SLEEP CONSOLIDATION<br/>SWR replay → cortex (no forgetting)"]:::mem
-        PARSER -->|roles| COMPOSER
-        COMPOSER --> MOAT
-        COMPOSER <-.->|encode / retain| SLEEP
+        NAVG["Navigation group<br/>chooses which way to move"]:::nav
+        COMPG["Comprehension group<br/>reads a sentence → who did what to whom"]:::conv
+        MEMG["Fact memory group<br/>binds words into facts · stores · recalls"]:::mem
+        PLANG["Planning group<br/>decides the next thing to say"]:::plan
       end
 
-      subgraph NAV["Navigation brain (disjoint slices, co-resident)"]
-        direction LR
-        V1["V1 / IT perception"]:::nav --> SCOL["superior colliculus<br/>orienting (spiking)"]:::nav --> BG["basal-ganglia cascade<br/>→ accumulate→commit decision"]:::dec --> MOT["motor read-out<br/>(spiking WTA, default)"]:::mot
-        SNC["dopamine SNc<br/>reward / value (spiking)"]:::da -.->|RPE broadcast| BG
-      end
+      LEARN["Word-meaning learning<br/>learns concept representations<br/>just by 'listening' to a stream of text"]:::learn
 
-      subgraph FAC["GROUNDED-LANGUAGE FACULTY — spiking Qwen2.5-0.5B (co-resident, ◇ see Diagram 2)"]
-        direction LR
-        GATE["① GATE<br/>brain has content?"]:::fac
-        CONSTR["② CONSTRAIN<br/>condition on the fact's<br/>words + roles"]:::fac
-        RENDER["spiking LLM render<br/>(phrasing only)"]:::fac
-        VERIFY["③ VERIFY<br/>re-parse output ==<br/>stored fact?"]:::fac
-        GATE --> CONSTR --> RENDER --> VERIFY
-      end
+      SAFE{{"No-fabrication safeguard<br/>is there a stored fact that<br/>matches the question?"}}:::moat
+
+      GEN["Language generation (phrasing only)<br/>turns a retrieved fact into a fluent sentence"]:::gen
+      RECHK{{"Answer re-check<br/>does the sentence still assert<br/>the same stored fact?"}}:::moat
     end
 
-    %% ---- I/O wiring ----
-    World -->|pixels| V1
-    MOT -->|which way to move| Body
-    UserQ -->|a sentence| PARSER
+    Body([🦾 Body · carries out the chosen move]):::io
+    Reply([🗣️ Fluent reply grounded in a stored fact]):::io
+    IDK([🚫 'I don't know' · no fabrication]):::io
 
-    %% ---- the conversational answer path through the faculty firewall ----
-    CODES -.->|grounded codes| COMPOSER
-    MOAT ==>|content| GATE
-    MOAT ==>|abstain · 'I do not know'| Reply
-    VERIFY ==>|verified| Reply
-    VERIFY -.->|drift → reject / regenerate| RENDER
+    %% wiring
+    World -->|pixels| SENSE
+    SENSE --> NAVG
+    NAVG -->|which way to move| Body
 
-    %% ---- cross-brain routes (each 6/6-seed GO; ◇ see master SVG) ----
-    PARSER -.->|A · spoken instruction → command_route gate| BG
-    BG -.->|B/C · perceived object → engram-tag / grounded phasor| COMPOSER
+    UserQ -->|a sentence| COMPG
+    COMPG -->|who did what| MEMG
+    LEARN -.->|concept representations| MEMG
+    LEARN -.->|concept representations| COMPG
+    MEMG --> SAFE
+    PLANG -.->|what to bring up next| MEMG
 
-    %% ---- the develop loop wraps the whole bridge (◇ see Diagram 3) ----
-    LOOP{{"♻️ DEVELOP LOOP — repeat per simulated day:<br/>WAKE·converse → SLEEP·consolidate → GROW·auto-growth tiers → PERSIST·lineage"}}:::loop
-    BRIDGE -.->|one simulated day| LOOP
-    LOOP -.->|next day, resume| BRIDGE
+    SAFE ==>|a matching fact exists| GEN
+    SAFE ==>|no match| IDK
+    GEN --> RECHK
+    RECHK ==>|matches the stored fact| Reply
+    RECHK -.->|does not match → reject & redo| GEN
 
     classDef io fill:#eef1f4,stroke:#7a8794,color:#1d1d1f;
-    classDef sub fill:#eae6f3,stroke:#6c4fb0,color:#1d1d1f;
-    classDef mem fill:#dcefd3,stroke:#2f8f4e,color:#1d1d1f;
-    classDef conv fill:#d6eaf8,stroke:#2e6da4,color:#1d1d1f;
-    classDef moat fill:#fdebd0,stroke:#c8791a,color:#1d1d1f;
+    classDef sense fill:#d6eaf8,stroke:#2e6da4,color:#1d1d1f;
     classDef nav fill:#fdebd0,stroke:#c87f2e,color:#1d1d1f;
-    classDef dec fill:#e9dcf5,stroke:#7d3c98,color:#1d1d1f;
-    classDef mot fill:#f8c9c4,stroke:#b03a2e,color:#1d1d1f;
-    classDef da fill:#fcf3cf,stroke:#d68910,color:#1d1d1f;
-    classDef fac fill:#d1f2eb,stroke:#138d75,color:#1d1d1f;
-    classDef loop fill:#fce8f0,stroke:#c0397b,color:#1d1d1f;
-```
-
-**How to read it.** The brain holds the **knowledge** (learned cortex +
-composer + moat); the faculty supplies **phrasing only**. The conversational
-answer leaves the moat one of two ways: **content** (a stored fact exists → it
-flows into the faculty's gate→constrain→verify firewall and emerges as a
-verified fluent reply) or **abstain** (no fact matches → the reply is "I don't
-know", the moat never breached). Navigation is a co-resident, disjoint-slice
-brain on the same bridge, joined to the conversation by three validated
-cross-brain routes (drawn in full on the master SVG). The whole bridge is run
-forward over simulated days by the develop loop.
-
----
-
-## 1b. Comprehension read-out — form → role (current, 2026-07-05)
-
-How the brain reads **who-did-what** from a sentence, on the shared spiking
-substrate — the comprehension detail behind the PARSER node in Diagram 1. The
-hand role-labeler is retired: a fixed-random **fronto-striatal reservoir** (a
-recurrent spiking liquid-state machine, realized as a `BrainRegion`) turns the
-whole sentence into a state that encodes its grammatical structure; a
-per-content-slot **read-out** drives three role winner-take-all ensembles, and
-the winner is a **neural** read of their spiking. The read-out is **biologically
-LEARNED** — a per-role delta rule on the frozen reservoir — which **removes the
-last host shortcut** here (a ridge least-squares fit that was standing in for
-the brain). It generalizes across reservoir draws (6/6 seed) on canonical facts;
-the object-relative structural read is the open frontier.
-
-```mermaid
-flowchart TB
-    S([💬 sentence · flexible word order]):::io
-    RES["fronto-striatal RESERVOIR<br/>form→role · recurrent spiking LSM (BrainRegion)<br/>state encodes grammatical structure"]:::conv
-    READ["role READ-OUT<br/>reservoir → 3 role WTA ensembles<br/>winner = neural read of spiking"]:::learn
-    ROLES{{"who-did-what<br/>agent · predicate · theme"}}:::conv
-    COMP["COMPOSER · bind roles → a fact<br/>(feeds Diagram 1)"]:::conv
-
-    S --> RES --> READ --> ROLES --> COMP
-
-    CANON["canonical SVO — role == word position<br/>✓ generalizes 6/6 seed<br/>host ridge-fit shortcut REMOVED"]:::ok
-    OBJREL["object-relative — role ≠ position<br/>e.g. 'the ball that the dog chased'<br/>⚠ reads position, not structure — FRONTIER"]:::frontier
-    READ ==>|solves| CANON
-    READ -.->|open · being ground| OBJREL
-
-    NOTE["feature encodes objrel (linear read 100%);<br/>the spiking read-out loses it → surpassable,<br/>not irreducible. ladder being climbed:<br/>balance · ridge-init · homeostatic op-point · phase read"]:::note
-    OBJREL -.-> NOTE
-
-    classDef io fill:#eef1f4,stroke:#7a8794,color:#1d1d1f;
     classDef conv fill:#d6eaf8,stroke:#2e6da4,color:#1d1d1f;
+    classDef mem fill:#dcefd3,stroke:#2f8f4e,color:#1d1d1f;
+    classDef plan fill:#e9dcf5,stroke:#7d3c98,color:#1d1d1f;
     classDef learn fill:#dcefd3,stroke:#2f8f4e,color:#1d1d1f;
-    classDef ok fill:#dcefd3,stroke:#2f8f4e,color:#1d1d1f;
-    classDef frontier fill:#fdebd0,stroke:#c8791a,color:#1d1d1f;
-    classDef note fill:#f4f2ec,stroke:#a99a7a,color:#1d1d1f;
+    classDef moat fill:#fdebd0,stroke:#c8791a,color:#1d1d1f;
+    classDef gen fill:#d1f2eb,stroke:#138d75,color:#1d1d1f;
 ```
 
-**The honest split.** *Removed:* the host ridge read-out (the delta rule learns
-it on the substrate) and the hand role-labeler (the reservoir replaces it).
-*Frontier:* genuine non-local grammatical structure — the read-out reads
-position, which suffices for canonical subject-verb-object facts but is not
-LLM-equivalent comprehension. Provenance: RUNG B-1c
-(`_rungB1c_spiking_reservoir_synaptic_readout_derisk.py`, `--mode c3`),
-EMERGE-78..85 (the reservoir), findings
-`2026-07-04-biological-learned-readout-delta-rule.md`.
+**How to read it.** The brain holds the *knowledge* (word-meaning learning +
+fact memory + the safeguard); the generation step supplies *phrasing only*. A
+conversational answer leaves the safeguard in one of two ways: it flows into the
+generation-and-re-check path and emerges as a verified fluent reply, **or** —
+if no stored fact matches — the reply is simply "I don't know." The navigation
+group is a separate neuron group in the same network that turns vision into
+movement. All groups share one update loop, which is what "one brain" means
+here.
 
 ---
 
-## 2. The grounded-language faculty — gate → constrain → verify
+## Diagram B — How the brain avoids making things up
 
-The owner's decoupling, realized: **the brain supplies and verifies the
-CONTENT; the spiking LLM supplies only the fluent SURFACE FORM.** Three
-enforcement layers (cheapest first) make the faculty hallucination-proof *by
-construction* — a fluent-but-false render is re-parsed and rejected before it
-can reach the user. Validated end-to-end with the **real spiking Qwen2.5-0.5B**
-in the loop: grounded → fluent-correct, untaught → abstain, adversarial drift →
-caught.
+The most distinctive design point. The brain supplies and verifies the
+*content*; the language-generation step supplies only the fluent *wording*.
+Three checks, cheapest first, make fabrication impossible by construction — a
+fluent-but-false sentence is re-read and rejected before it can reach the user.
 
 ```mermaid
 flowchart TB
-    Q([💬 User query]):::io
-    P["PARSER<br/>query → cue {agent, action} (or topic)"]:::conv
+    Q([💬 User question]):::io
 
-    subgraph BRAINSIDE["🧠 BRAIN = KNOWLEDGE (holds + verifies the content)"]
+    subgraph BRAIN["🧠 Brain = knowledge (holds and verifies the content)"]
       direction TB
-      STORE["COMPOSER / fact store<br/>exact-match recall over bound facts"]:::conv
-      G{"① GATE<br/>does a stored fact match the cue?"}:::gate
-      STORE --> G
+      PARSE["Read the question<br/>→ what is being asked, about what"]:::conv
+      STORE["Fact memory<br/>look for a stored fact that matches"]:::mem
+      G{"① Is there a stored fact<br/>that matches the question?"}:::gate
+      PARSE --> STORE --> G
     end
 
-    ABSTAIN([🚫 'I don't know'<br/>moat held — no fabrication]):::abstain
+    IDK([🚫 Say 'I don't know'<br/>safeguard holds — nothing invented]):::abstain
 
-    subgraph FIREWALL["🛡️ THE FIREWALL — content cannot originate in the LLM"]
+    subgraph WALL["🛡️ The safeguard — wording cannot introduce new facts"]
       direction TB
-      C["② CONSTRAIN<br/>condition the faculty on the retrieved<br/>fact's WORDS + ROLES (slot-fill, not free generation)<br/>→ degrees of freedom = grammar + phrasing only"]:::fac
-      subgraph LLMSIDE["🤖 LLM = PHRASING ONLY (spiking Qwen2.5-0.5B, T=16)"]
-        R["spiking render<br/>fact → fluent surface form"]:::llm
-      end
-      V{"③ VERIFY<br/>re-parse the output with the SAME parser;<br/>asserted SVO == the stored fact?"}:::gate
+      C["② Give the generator only that<br/>fact's words and their roles<br/>(fill-in-the-blanks, not free writing)"]:::conv
+      R["③ Generate a fluent sentence<br/>(phrasing only)"]:::gen
+      V{"④ Re-read the sentence —<br/>does it still assert the same fact?"}:::gate
       C --> R --> V
     end
 
     OUT([🗣️ Grounded fluent reply]):::io
 
-    Q --> P --> STORE
+    Q --> PARSE
     G ==>|match → content| C
-    G ==>|no match → abstain| ABSTAIN
-    V ==>|matches stored fact| OUT
-    V -->|DRIFT e.g. role inversion 'Rabbit chased fox' → reject → regenerate| R
+    G ==>|no match → abstain| IDK
+    V ==>|still the same fact| OUT
+    V -->|wording drifted — e.g. roles swapped<br/>→ reject & regenerate| R
 
     classDef io fill:#eef1f4,stroke:#7a8794,color:#1d1d1f;
     classDef conv fill:#d6eaf8,stroke:#2e6da4,color:#1d1d1f;
+    classDef mem fill:#dcefd3,stroke:#2f8f4e,color:#1d1d1f;
     classDef gate fill:#fdebd0,stroke:#c8791a,color:#1d1d1f;
-    classDef fac fill:#d1f2eb,stroke:#138d75,color:#1d1d1f;
-    classDef llm fill:#e8dff5,stroke:#7d3c98,color:#1d1d1f;
+    classDef gen fill:#d1f2eb,stroke:#138d75,color:#1d1d1f;
     classDef abstain fill:#f8d7da,stroke:#b03a2e,color:#1d1d1f;
 ```
 
-**The three layers.**
-- **① Gate** (the moat) — the composer / familiarity gate decides *whether
-  there is content to speak*. No stored fact matches the cue → the faculty is
-  given **nothing to render** → the reply is "I don't know". Recall 1.0 +
-  **0 false-accepts** at ~67 facts / 138-word vocab across 3 seeds.
-- **② Constrain** (the hallucination-reducer) — the faculty is conditioned on
-  the retrieved fact's **words and roles** (slot-filling / constrained
-  decoding), so its only freedom is grammar and phrasing — *not* facts.
-- **③ Verify** (the moat-preserver) — the faculty's output is **re-parsed by
-  the same parser** and its asserted subject-verb-object checked against the
-  stored fact. Any drift is rejected and regenerated. The proof: the real 0.5B
-  LLM *did* try to hallucinate (it inverted a role, "Rabbit chased fox"), and
-  **verify caught it** — the conservative failure direction is over-abstention,
-  never confabulation.
+**The four steps.**
+- **① Check first.** The fact memory decides *whether there is content to
+  speak*. If no stored fact matches the question, the generator is given nothing
+  to say, so the reply is "I don't know."
+- **② Constrain.** The generator is handed only the matching fact's words and
+  their roles, so its only freedom is grammar and phrasing — never the facts
+  themselves.
+- **③ Generate.** A fluent sentence is produced. This is the only step that is
+  about wording rather than knowledge.
+- **④ Re-check.** The generated sentence is read back by the same
+  comprehension machinery and compared to the stored fact. If the wording has
+  drifted (for example, if it swapped who-did-what-to-whom), it is rejected and
+  regenerated. The failure direction is always the safe one — the brain may
+  over-decline, but it will not fabricate.
 
-> Mapping to grounded-generation SOTA: the brain's structured store **is** the
-> knowledge graph; the composer's abstention **is** the calibrated-confidence
-> gate — a *stronger* guarantee than soft retrieval (exact binding-match vs
-> cosine similarity).
-
-**Bridge co-residence.** The faculty is not a bolted-on service: the full
-24-layer spiking Qwen2.5-0.5B (494M) runs **on the live `SimulationBridge` RF
-substrate** — 14 GB resident (fits < 24 GB → local), bit-exact to the
-off-bridge spiking forward, coherent generation. The "one brain" north star for
-language: the fluent faculty is co-resident on the brain's own substrate.
-(Honest scope: a feasibility demonstration — it runs but is slow; the perf
-lever is the usability follow-on, and full functional integration on one bridge
-is the deeper step.)
+**About the language-generation step.** For open, casual conversation the
+simulator uses a **small, locally trained language model** whose only job is
+phrasing. For the brain's own grounded answers, a newer, **transformer-free
+path** produces the reply directly as spiking neural activity: the grammatical
+structure of these answers (which small function words to use, the word order,
+which slots a sentence has) is *learned from example sentences* rather than
+hand-written, and the words are spoken as neural pulses on the shared network.
+Both paths sit behind the same "check first" safeguard, so neither can introduce
+a fact the brain does not hold.
 
 ---
 
-## 3. The artificial-life develop loop — the brain DEVELOPS over simulated days
+## Diagram C — Reading who-did-what from a sentence
 
-The whole brain is run forward over simulated time. Each "day" the brain
-**hears** a developmentally-graded curriculum and **learns** concept codes
-(real stream-cortex Hebbian learning), **converses** on the codes it learned,
-**consolidates** them in sleep so they stick (no catastrophic forgetting),
-**grows** as it masters a tier, and **persists** so the next day resumes the
-same brain. Validated at GPU scale, 1 seed: over 4 days vocab 6→24, facts
-2→11, recall 1.0, retention 1.0, moat 0-false-accept; persists + resumes across
-days; the frozen-brain anti-cheat holds (plasticity-off learns nothing).
+A closer look at the comprehension group from Diagram A: how the brain works out
+the grammatical roles (who is the actor, what the action is, what it is done to)
+from a sentence, on the shared spiking network.
+
+```mermaid
+flowchart TB
+    S([💬 Sentence · flexible word order]):::io
+    RES["Recurrent reading network<br/>runs the whole sentence through a<br/>spiking network whose lingering activity<br/>encodes the sentence's structure"]:::conv
+    READ["Role read-out<br/>drives three competing groups —<br/>actor · action · thing-acted-on —<br/>the winners are read from their spiking"]:::learn
+    ROLES{{"Who did what to whom"}}:::conv
+    COMP["Bind the roles into a fact<br/>(feeds Diagram A)"]:::mem
+
+    S --> RES --> READ --> ROLES --> COMP
+
+    OKC["Simple sentences (actor-action-object)<br/>✓ works, and generalizes across setups"]:::ok
+    FRONT["Sentences where word order does NOT<br/>match the roles (e.g. 'the ball that the<br/>dog chased') — open frontier"]:::frontier
+    READ ==>|solves| OKC
+    READ -.->|not yet — being worked on| FRONT
+
+    classDef io fill:#eef1f4,stroke:#7a8794,color:#1d1d1f;
+    classDef conv fill:#d6eaf8,stroke:#2e6da4,color:#1d1d1f;
+    classDef learn fill:#dcefd3,stroke:#2f8f4e,color:#1d1d1f;
+    classDef mem fill:#dcefd3,stroke:#2f8f4e,color:#1d1d1f;
+    classDef ok fill:#dcefd3,stroke:#2f8f4e,color:#1d1d1f;
+    classDef frontier fill:#fdebd0,stroke:#c8791a,color:#1d1d1f;
+```
+
+**The honest split.** The read-out that turns the reading network's activity
+into role labels is now *learned by the network itself* (an earlier
+formula-based stand-in has been removed). It reliably reads roles from word
+*position*, which is enough for straightforward actor-action-object sentences.
+Sentences whose word order does not line up with the roles — such as relative
+clauses — are a precisely characterized *open frontier*, actively being worked
+on, not treated as a permanent limit.
+
+---
+
+## Diagram D — Learning and development over simulated days
+
+The whole brain can be run forward over simulated time. Each "day" it hears a
+gradually richer stream of words, learns from them, converses using what it
+learned, "sleeps" so the new learning sticks without erasing old facts, grows if
+it has mastered a level, and saves itself so the next day resumes the same brain
+rather than starting blank.
 
 ```mermaid
 flowchart LR
-    PREV([📅 Day N · the developed brain<br/>resumed from the lineage]):::day
+    PREV([📅 Day N · the developed brain<br/>resumed from a saved state]):::day
 
-    subgraph DAY["One simulated day — every stage maps to a validated subsystem"]
+    subgraph DAY["One simulated day"]
       direction LR
-      WAKE["☀️ WAKE / LEARN<br/>stream cortex HEARS the day's curriculum<br/>word-by-word → learns new concept codes<br/>(rate-Hebbian co-occurrence, corr M,C ≈ 0.89)"]:::wake
-      CONV["💬 CONVERSE<br/>MultiTurnAgent on the learned codes<br/>parse · store · recall · abstain · yes-no · chain<br/>(the no-confab moat: 0 false-accepts)"]:::conv
-      SLEEP["🌙 SLEEP / CONSOLIDATE<br/>SWR self-replay → the day's learning STICKS<br/>+ retain OLD facts (no catastrophic forgetting)"]:::sleep
-      GROW["📈 GROW (if a tier mastered)<br/>auto-growth TierPromoter scales the brain<br/>+ logs a growth event"]:::grow
-      PERSIST["💾 PERSIST<br/>BridgeLineage atomic save<br/>(learned codes · facts · vocab · tier · dev-log)"]:::persist
+      WAKE["☀️ Wake / learn<br/>hears the day's words<br/>→ learns new concept representations"]:::wake
+      CONV["💬 Converse<br/>parse · store · recall · answer<br/>· decline when unknown"]:::conv
+      SLEEP["🌙 Sleep / consolidate<br/>replays the day's learning so it sticks<br/>· keeps old facts (no forgetting)"]:::sleep
+      GROW["📈 Grow (if a level is mastered)<br/>enlarges the network"]:::grow
+      PERSIST["💾 Save state<br/>learned representations · facts · vocabulary"]:::persist
       WAKE --> CONV --> SLEEP --> GROW --> PERSIST
     end
 
-    NEXT([📅 Day N+1 · resume + keep developing<br/>not a blank slate]):::day
+    NEXT([📅 Day N+1 · resume and keep developing<br/>not a blank slate]):::day
 
     PREV --> WAKE
     PERSIST --> NEXT
     NEXT -.->|next simulated day| PREV
 
-    FROZEN([🧪 anti-cheat: FROZEN brain<br/>plasticity OFF → hears but learns nothing<br/>→ competence must NOT rise]):::cheat
-    FROZEN -.->|controls| WAKE
+    CHECK([🧪 Control check: freeze the brain<br/>learning turned off → it hears but<br/>learns nothing → skill must NOT rise]):::cheat
+    CHECK -.->|validates that learning is real| WAKE
 
     classDef day fill:#eef1f4,stroke:#7a8794,color:#1d1d1f;
     classDef wake fill:#fcf3cf,stroke:#d4ac0d,color:#1d1d1f;
@@ -346,66 +263,63 @@ flowchart LR
     classDef cheat fill:#f8d7da,stroke:#b03a2e,color:#1d1d1f;
 ```
 
-**Feasibility (the north-star number).** ~2.2 min/day at GPU smoke scale → a
-compressed "week" ≈ 16 min, a "month" ≈ 1 hr, a "year" ≈ ~13.5 hr (an
-overnight **local** run, no VRAM wall). Simulating weeks/months/years of
-development is a tractable, local problem.
-
-**Honest scope.** 1-seed; small smoke vocab (24); consolidation = the validated
-self-replay stand-in (full SWR on the conversational bridge deferred); growth =
-the TierPromoter *decision* + lineage growth-event (the heavy arch rebuild +
-weight-transfer is the GPU follow-on). "Development" here is vocab/facts
-accumulation + retention, not yet open-ended conversational sophistication.
+**Feasibility.** Simulating a "day" takes a couple of minutes at demonstration
+scale, so a simulated "week" runs in minutes and a simulated "year" in an
+overnight local run — no special hardware wall. Over a multi-day run the brain
+has been shown to grow its vocabulary and stored facts while retaining old ones,
+and to resume correctly from a saved state.
 
 ---
 
-## Honesty & scope (the brain-based-only standard)
+## Where a person watches and interacts
+
+The diagrams above are the brain's internal signal flow. In practice a person
+uses the simulator through two surfaces, both outside the neural computation:
+
+- a **real-time 3-D viewer** that shows the network's activity as it runs, and
+- a **web console** for launching runs, visualizing them, and **chatting** with
+  the brain (typing a sentence, asking a question, teaching it a new fact).
+
+These are the human's window into the system; the cognition itself all happens
+inside the one network shown above.
+
+---
+
+## Honest status and scope
 
 These diagrams are accurate **to the degree the biology is implemented in this
 simulator**, not to the degree real brains are organized — an honest map of the
-code, including its reductions.
+code, including its simplifications.
 
-**The brain-based-only standard** (owner directive, `CLAUDE.md`): even where a
-host-side computation is biologically correct, it is a **shortcut** if the
-*brain* isn't doing it. Host code is legitimate only for the **environment**
-(world state + sensory rendering, the 🌍 I/O nodes) and the **body** (acting on
-motor output, the 🦾 node). Everything between sensation and action is meant to
-be neurons and synapses.
+- **Mature and demonstrated:** the simulation engine, the region/pathway
+  framework, the learning rules, the 3-D visualization, and the navigation
+  agent (validated across many random seeds).
+- **A genuine, growing capability — but specialized:** the conversational agent
+  is built entirely from simulated neural circuits (not a bolted-on external
+  chatbot). Its core behaviors — parsing short sentences, storing facts,
+  answering who/what and yes/no questions, handling negation, and declining to
+  answer when it was never told the fact — are demonstrated and validated across
+  random seeds at a few-hundred-concept scale. Richer abilities (for example,
+  objects described by two attributes at once, sentences where word order does
+  not match the roles, and fully open-ended prose) are exploratory or honestly
+  documented as current limits, not finished features.
+- **Active research direction:** pushing the entire conversational pipeline to
+  run as spiking neurons within the single shared network, and mapping the
+  points where a simple neuron model reaches its limits — recording honest
+  negative results as scientific findings rather than hiding them.
 
-Two current load-bearing honest residuals, drawn here:
+For the exhaustive per-region / per-synapse detail (every region, every distinct
+pathway, and the faithful-vs-simplified markers), see the hand-authored detail
+diagrams in this folder: the **navigation brain**
+([`brain_navigation.svg`](brain_navigation.svg) · [`.png`](brain_navigation.png)),
+the **conversational brain**
+([`brain_conversational.svg`](brain_conversational.svg) · [`.png`](brain_conversational.png)),
+and the **master map**
+([`brain_master.svg`](brain_master.svg) · [`.png`](brain_master.png)).
 
-- The **grounded-language faculty's** spiking LLM is **co-resident** on the
-  bridge and bit-exact, but it is a *feasibility* demonstration — slow (the
-  perf lever is pending) and not yet *functionally* interacting with the
-  conversational brain on one bridge (the deeper integration step). Its
-  knowledge does NOT originate in the LLM — the firewall (Diagram 2) enforces
-  that the brain holds and verifies all content.
-- The **develop loop's** consolidation and growth stages run validated
-  *stand-ins* (self-replay retention re-test; TierPromoter decision + lineage
-  event) at 1-seed smoke scale; the full SWR-on-the-conversational-bridge and
-  the arch-rebuild weight-transfer are flagged GPU follow-ons.
-
-For the exhaustive per-region / per-synapse honesty markers (collapsed `×N`
-pools, host I/O boundary `⌂`, documented shortcut `⚠`, negative/boundary
-pathways `✗`, the substrate-wide SH-1…SH-14 list), see the hand-authored detail
-SVGs and the extraction spec
-[`research/findings/2026-06-09-brain-architecture-flowchart-spec.md`](../../research/findings/2026-06-09-brain-architecture-flowchart-spec.md).
-
-## Provenance
-
-These Mermaid diagrams are composed from the 2026-06-23 findings (read directly):
-
-- `research/findings/2026-06-23-grounded-lang-INTEGRATION-GO.md` — the
-  gate→constrain→verify capstone (real spiking Qwen renders gated facts; drift
-  caught).
-- `research/findings/2026-06-23-grounded-lang-SCALED-GO.md` — robust at ~67
-  facts / 138-word vocab; moat 0-false-accept × 3 seeds.
-- `research/findings/2026-06-22-grounded-language-faculty-scoping.md` — the
-  P1 (fluency) / P2 (knowledge) / P3 (grounding) architecture + the firewall
-  sketch.
-- `research/findings/2026-06-23-bridge-coresidence-DEMONSTRATED.md` — the full
-  24-layer spiking Qwen on the SimulationBridge, 14 GB local, bit-exact.
-- `research/findings/2026-06-23-longitudinal-develop-loop-GPU-GO.md` +
-  `research/runners/_longitudinal_develop_loop_gpu.py` /
-  `_longitudinal_develop_loop.py` — the WAKE→SLEEP→GROW→PERSIST day cycle.
-- `research/findings/AUTONOMOUS_STATE.md` — the current top-of-stack ordering.
+> **Currency note.** These detail SVGs predate the most recent
+> language-generation changes shown in Diagram B (the move to a small local
+> language model for open conversation, and the transformer-free spoken-on-spikes
+> path for grounded answers). Their region inventories, the navigation cascade,
+> and the no-fabrication safeguard remain accurate; the generation-side redraw
+> is a separate, larger refresh.
