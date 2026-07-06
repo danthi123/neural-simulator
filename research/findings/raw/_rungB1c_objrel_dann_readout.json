@@ -1,0 +1,510 @@
+{
+  "rows": [
+    {
+      "seed": 42,
+      "h_inh": 48,
+      "read_t": 25,
+      "epochs": 120,
+      "lr": 0.001,
+      "in_scale": 0.5,
+      "baseline_fixed_spiking_wta": {
+        "canonical_acc": 0.972,
+        "canonical_slot0": 1.0,
+        "objrel_acc": 0.0,
+        "objrel_slot0_THEME": 0.0
+      },
+      "dann_spiking_read": {
+        "canonical_acc": 1.0,
+        "canonical_slot0": 1.0,
+        "canonical_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ],
+        "objrel_acc": 0.0,
+        "objrel_slot0_THEME": 0.0,
+        "objrel_per_slot": [
+          "0/12",
+          "0/12",
+          "0/12"
+        ],
+        "mean_out_spikes_per_window_canon": 0.667,
+        "mean_out_spikes_per_window_objr": 0.667,
+        "mean_inh_spikes_per_window_objr": 185.25
+      },
+      "analytic_dale_reference": {
+        "canonical_acc": 1.0,
+        "canonical_slot0": 1.0,
+        "objrel_acc": 1.0,
+        "objrel_slot0_THEME": 1.0,
+        "inh_silence_objrel_slot0": 0.0,
+        "mean_out_spikes_per_window_objr": 6.667,
+        "mean_inh_spikes_per_window_objr": 20.0,
+        "dale_legal": true
+      },
+      "dale_legal": {
+        "W_e_min": 0.0,
+        "W_fi_min": 0.0,
+        "W_io_max": 0.0,
+        "legal": true
+      },
+      "no_spike_lesion": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.333,
+        "mean_out_spikes_per_window": 0.0
+      },
+      "inhibition_silence": {
+        "objrel_slot0_THEME": 1.0,
+        "objrel_acc": 0.333,
+        "canonical_acc": 1.0,
+        "mean_inh_spikes_per_window": 185.333
+      },
+      "zero_epoch_ablation": {
+        "canonical_acc": 0.333,
+        "objrel_acc": 0.667,
+        "objrel_slot0_THEME": 1.0,
+        "canonical_slot0": 1.0
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 1.0,
+        "objrel_acc": 1.0
+      },
+      "elapsed_s": 72.9,
+      "genuinely_spiking": true,
+      "no_spike_collapses": true,
+      "dale_legal_flag": true,
+      "bptt_does_work": false,
+      "inh_pop_load_bearing": false,
+      "objrel_recovers": false,
+      "canonical_not_regressed": true,
+      "scramble_chance": false
+    },
+    {
+      "seed": 43,
+      "h_inh": 48,
+      "read_t": 25,
+      "epochs": 120,
+      "lr": 0.001,
+      "in_scale": 0.5,
+      "baseline_fixed_spiking_wta": {
+        "canonical_acc": 1.0,
+        "canonical_slot0": 1.0,
+        "objrel_acc": 0.056,
+        "objrel_slot0_THEME": 0.0
+      },
+      "dann_spiking_read": {
+        "canonical_acc": 0.667,
+        "canonical_slot0": 1.0,
+        "canonical_per_slot": [
+          "12/12",
+          "0/12",
+          "12/12"
+        ],
+        "objrel_acc": 0.333,
+        "objrel_slot0_THEME": 0.0,
+        "objrel_per_slot": [
+          "0/12",
+          "12/12",
+          "0/12"
+        ],
+        "mean_out_spikes_per_window_canon": 0.333,
+        "mean_out_spikes_per_window_objr": 0.333,
+        "mean_inh_spikes_per_window_objr": 167.667
+      },
+      "analytic_dale_reference": {
+        "canonical_acc": 1.0,
+        "canonical_slot0": 1.0,
+        "objrel_acc": 1.0,
+        "objrel_slot0_THEME": 1.0,
+        "inh_silence_objrel_slot0": 0.0,
+        "mean_out_spikes_per_window_objr": 8.667,
+        "mean_inh_spikes_per_window_objr": 13.0,
+        "dale_legal": true
+      },
+      "dale_legal": {
+        "W_e_min": 0.0,
+        "W_fi_min": 0.0,
+        "W_io_max": -0.0001,
+        "legal": true
+      },
+      "no_spike_lesion": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.333,
+        "mean_out_spikes_per_window": 0.0
+      },
+      "inhibition_silence": {
+        "objrel_slot0_THEME": 1.0,
+        "objrel_acc": 0.667,
+        "canonical_acc": 0.667,
+        "mean_inh_spikes_per_window": 167.667
+      },
+      "zero_epoch_ablation": {
+        "canonical_acc": 0.333,
+        "objrel_acc": 0.333,
+        "objrel_slot0_THEME": 0.0,
+        "canonical_slot0": 1.0
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.333
+      },
+      "elapsed_s": 71.4,
+      "genuinely_spiking": true,
+      "no_spike_collapses": true,
+      "dale_legal_flag": true,
+      "bptt_does_work": false,
+      "inh_pop_load_bearing": false,
+      "objrel_recovers": false,
+      "canonical_not_regressed": false,
+      "scramble_chance": true
+    },
+    {
+      "seed": 44,
+      "h_inh": 48,
+      "read_t": 25,
+      "epochs": 120,
+      "lr": 0.001,
+      "in_scale": 0.5,
+      "baseline_fixed_spiking_wta": {
+        "canonical_acc": 0.639,
+        "canonical_slot0": 1.0,
+        "objrel_acc": 0.0,
+        "objrel_slot0_THEME": 0.0
+      },
+      "dann_spiking_read": {
+        "canonical_acc": 0.667,
+        "canonical_slot0": 1.0,
+        "canonical_per_slot": [
+          "12/12",
+          "0/12",
+          "12/12"
+        ],
+        "objrel_acc": 0.333,
+        "objrel_slot0_THEME": 0.0,
+        "objrel_per_slot": [
+          "0/12",
+          "12/12",
+          "0/12"
+        ],
+        "mean_out_spikes_per_window_canon": 0.667,
+        "mean_out_spikes_per_window_objr": 0.667,
+        "mean_inh_spikes_per_window_objr": 206.417
+      },
+      "analytic_dale_reference": {
+        "canonical_acc": 1.0,
+        "canonical_slot0": 1.0,
+        "objrel_acc": 1.0,
+        "objrel_slot0_THEME": 1.0,
+        "inh_silence_objrel_slot0": 0.0,
+        "mean_out_spikes_per_window_objr": 9.333,
+        "mean_inh_spikes_per_window_objr": 13.667,
+        "dale_legal": true
+      },
+      "dale_legal": {
+        "W_e_min": 0.0,
+        "W_fi_min": 0.0,
+        "W_io_max": -0.0001,
+        "legal": true
+      },
+      "no_spike_lesion": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.333,
+        "mean_out_spikes_per_window": 0.0
+      },
+      "inhibition_silence": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.333,
+        "canonical_acc": 0.694,
+        "mean_inh_spikes_per_window": 206.556
+      },
+      "zero_epoch_ablation": {
+        "canonical_acc": 0.333,
+        "objrel_acc": 0.333,
+        "objrel_slot0_THEME": 0.0,
+        "canonical_slot0": 1.0
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.667
+      },
+      "elapsed_s": 69.2,
+      "genuinely_spiking": true,
+      "no_spike_collapses": true,
+      "dale_legal_flag": true,
+      "bptt_does_work": false,
+      "inh_pop_load_bearing": false,
+      "objrel_recovers": false,
+      "canonical_not_regressed": false,
+      "scramble_chance": true
+    },
+    {
+      "seed": 100,
+      "h_inh": 48,
+      "read_t": 25,
+      "epochs": 120,
+      "lr": 0.001,
+      "in_scale": 0.5,
+      "baseline_fixed_spiking_wta": {
+        "canonical_acc": 0.028,
+        "canonical_slot0": 0.083,
+        "objrel_acc": 1.0,
+        "objrel_slot0_THEME": 1.0
+      },
+      "dann_spiking_read": {
+        "canonical_acc": 1.0,
+        "canonical_slot0": 1.0,
+        "canonical_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ],
+        "objrel_acc": 0.0,
+        "objrel_slot0_THEME": 0.0,
+        "objrel_per_slot": [
+          "0/12",
+          "0/12",
+          "0/12"
+        ],
+        "mean_out_spikes_per_window_canon": 1.0,
+        "mean_out_spikes_per_window_objr": 1.0,
+        "mean_inh_spikes_per_window_objr": 194.639
+      },
+      "analytic_dale_reference": {
+        "canonical_acc": 1.0,
+        "canonical_slot0": 1.0,
+        "objrel_acc": 1.0,
+        "objrel_slot0_THEME": 1.0,
+        "inh_silence_objrel_slot0": 0.0,
+        "mean_out_spikes_per_window_objr": 7.944,
+        "mean_inh_spikes_per_window_objr": 16.667,
+        "dale_legal": true
+      },
+      "dale_legal": {
+        "W_e_min": 0.0,
+        "W_fi_min": 0.0,
+        "W_io_max": -0.0001,
+        "legal": true
+      },
+      "no_spike_lesion": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.333,
+        "mean_out_spikes_per_window": 0.0
+      },
+      "inhibition_silence": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.333,
+        "canonical_acc": 1.0,
+        "mean_inh_spikes_per_window": 194.667
+      },
+      "zero_epoch_ablation": {
+        "canonical_acc": 0.333,
+        "objrel_acc": 0.333,
+        "objrel_slot0_THEME": 0.0,
+        "canonical_slot0": 1.0
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.333
+      },
+      "elapsed_s": 68.0,
+      "genuinely_spiking": true,
+      "no_spike_collapses": true,
+      "dale_legal_flag": true,
+      "bptt_does_work": false,
+      "inh_pop_load_bearing": false,
+      "objrel_recovers": false,
+      "canonical_not_regressed": true,
+      "scramble_chance": true
+    },
+    {
+      "seed": 101,
+      "h_inh": 48,
+      "read_t": 25,
+      "epochs": 120,
+      "lr": 0.001,
+      "in_scale": 0.5,
+      "baseline_fixed_spiking_wta": {
+        "canonical_acc": 0.0,
+        "canonical_slot0": 0.0,
+        "objrel_acc": 0.75,
+        "objrel_slot0_THEME": 1.0
+      },
+      "dann_spiking_read": {
+        "canonical_acc": 1.0,
+        "canonical_slot0": 1.0,
+        "canonical_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ],
+        "objrel_acc": 0.0,
+        "objrel_slot0_THEME": 0.0,
+        "objrel_per_slot": [
+          "0/12",
+          "0/12",
+          "0/12"
+        ],
+        "mean_out_spikes_per_window_canon": 0.667,
+        "mean_out_spikes_per_window_objr": 0.667,
+        "mean_inh_spikes_per_window_objr": 188.778
+      },
+      "analytic_dale_reference": {
+        "canonical_acc": 1.0,
+        "canonical_slot0": 1.0,
+        "objrel_acc": 1.0,
+        "objrel_slot0_THEME": 1.0,
+        "inh_silence_objrel_slot0": 0.0,
+        "mean_out_spikes_per_window_objr": 9.194,
+        "mean_inh_spikes_per_window_objr": 13.889,
+        "dale_legal": true
+      },
+      "dale_legal": {
+        "W_e_min": 0.0,
+        "W_fi_min": 0.0,
+        "W_io_max": -0.0001,
+        "legal": true
+      },
+      "no_spike_lesion": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.333,
+        "mean_out_spikes_per_window": 0.0
+      },
+      "inhibition_silence": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.0,
+        "canonical_acc": 1.0,
+        "mean_inh_spikes_per_window": 189.0
+      },
+      "zero_epoch_ablation": {
+        "canonical_acc": 0.333,
+        "objrel_acc": 0.333,
+        "objrel_slot0_THEME": 0.0,
+        "canonical_slot0": 1.0
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.0
+      },
+      "elapsed_s": 68.6,
+      "genuinely_spiking": true,
+      "no_spike_collapses": true,
+      "dale_legal_flag": true,
+      "bptt_does_work": false,
+      "inh_pop_load_bearing": false,
+      "objrel_recovers": false,
+      "canonical_not_regressed": true,
+      "scramble_chance": true
+    },
+    {
+      "seed": 102,
+      "h_inh": 48,
+      "read_t": 25,
+      "epochs": 120,
+      "lr": 0.001,
+      "in_scale": 0.5,
+      "baseline_fixed_spiking_wta": {
+        "canonical_acc": 0.0,
+        "canonical_slot0": 0.0,
+        "objrel_acc": 0.556,
+        "objrel_slot0_THEME": 1.0
+      },
+      "dann_spiking_read": {
+        "canonical_acc": 0.667,
+        "canonical_slot0": 1.0,
+        "canonical_per_slot": [
+          "12/12",
+          "0/12",
+          "12/12"
+        ],
+        "objrel_acc": 0.333,
+        "objrel_slot0_THEME": 0.0,
+        "objrel_per_slot": [
+          "0/12",
+          "12/12",
+          "0/12"
+        ],
+        "mean_out_spikes_per_window_canon": 0.333,
+        "mean_out_spikes_per_window_objr": 0.333,
+        "mean_inh_spikes_per_window_objr": 195.444
+      },
+      "analytic_dale_reference": {
+        "canonical_acc": 1.0,
+        "canonical_slot0": 1.0,
+        "objrel_acc": 1.0,
+        "objrel_slot0_THEME": 1.0,
+        "inh_silence_objrel_slot0": 0.0,
+        "mean_out_spikes_per_window_objr": 6.472,
+        "mean_inh_spikes_per_window_objr": 20.0,
+        "dale_legal": true
+      },
+      "dale_legal": {
+        "W_e_min": 0.0,
+        "W_fi_min": 0.0,
+        "W_io_max": 0.0,
+        "legal": true
+      },
+      "no_spike_lesion": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.333,
+        "mean_out_spikes_per_window": 0.0
+      },
+      "inhibition_silence": {
+        "objrel_slot0_THEME": 1.0,
+        "objrel_acc": 0.667,
+        "canonical_acc": 1.0,
+        "mean_inh_spikes_per_window": 195.333
+      },
+      "zero_epoch_ablation": {
+        "canonical_acc": 0.333,
+        "objrel_acc": 0.333,
+        "objrel_slot0_THEME": 0.0,
+        "canonical_slot0": 1.0
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.667
+      },
+      "elapsed_s": 68.8,
+      "genuinely_spiking": true,
+      "no_spike_collapses": true,
+      "dale_legal_flag": true,
+      "bptt_does_work": false,
+      "inh_pop_load_bearing": false,
+      "objrel_recovers": false,
+      "canonical_not_regressed": false,
+      "scramble_chance": true
+    }
+  ],
+  "agg": {
+    "n_seeds": 6,
+    "n_objrel_recovers": 0,
+    "n_objrel_recovers_blind": 0,
+    "n_blind": 3,
+    "objrel_recovers_gate": false,
+    "genuinely_spiking_all": true,
+    "no_spike_collapses_all": true,
+    "dale_legal_all": true,
+    "bptt_does_work_all": false,
+    "inh_pop_load_bearing_all": false,
+    "canonical_not_regressed_all": false,
+    "canonical_not_regressed_blind": false,
+    "scramble_chance_all": false,
+    "verdict": "BOUNDARY",
+    "h_inh": 48,
+    "read_t": 25,
+    "epochs": 120,
+    "lr": 0.001,
+    "in_scale": 0.5,
+    "mean_objrel_slot0_dann_spiking": 0.0,
+    "mean_objrel_slot0_fixed_spiking_wta": 0.5,
+    "mean_objrel_slot0_zero_epoch": 0.167,
+    "mean_objrel_slot0_inhibition_silence": 0.5,
+    "mean_objrel_slot0_analytic_dale_reference": 1.0,
+    "mean_canonical_analytic_dale_reference": 1.0,
+    "mean_objrel_slot0_analytic_inh_silence": 0.0,
+    "mean_canonical_dann_spiking": 0.833,
+    "mean_canonical_fixed_spiking_wta": 0.44,
+    "total_elapsed_s": 419.1
+  },
+  "verdict_text": "BOUNDARY -- OBJREL did not recover 6-seed-blind (0/6 overall, 0/3 blind; need >=5/6 AND all blind) -- the Dale-legal inhibitory population does NOT carry the negative rows well enough on this substrate (objrel-slot0 mean 0.00); CANONICAL regressed (<0.90 on some seed; mean 0.83) -- the read see-saws like RANK-2 (lifting objrel via inhibition regressed canonical); BPTT is INERT (0-epoch objrel-slot0 0.17 already ~= trained 0.00; training did no real work -- the retracted inertness, NOT a real result); the inhibitory population is NOT load-bearing (silencing it 0.50 does not drop objrel >=0.15 below the trained read 0.00 -- the recovery, if any, is not flowing through the Dale-legal inhibition); the scrambled-label control did NOT collapse (the read is a position/heterogeneity artifact). THE PRECISE FRONTIER (load-bearing, from the ANALYTIC Dale reference reported per seed): the Dale-LEGAL signed spiking read EXISTS in weight space -- the ridge split into an EXCITATORY E path (positive rows) + a genuinely-INHIBITORY interneuron population (negative rows) reads canonical 1.00 AND objrel-slot0 1.00 GENUINELY ON SPIKES + Dale-legal at the graded op-point (silencing that inhibition collapses objrel to 0.00 -- the negative rows DO flow through Dale-legal inhibition, proving the substrate + Dale constraint are NOT the wall). The wall is BPTT REACHABILITY: from a Dale-legal random init the read defaults to the MAJORITY canonical-AGENT solution on the shared slot0 (a 7:1 THEME:AGENT imbalance) and surrogate-gradient descent walks AWAY from the minority-THEME signed solution (trained objrel-slot0 0.00 vs a random-init that reads canonical but never THEME) -- warm-starting from the ridge would BE the retracted inert-BPTT confound, so it is NOT done. The reservoir FEATURE robustly encodes objrel (a HOST linear argmax generalizes it held-out ~100% with a ~66% margin -- NOT the Mikulasch-Priesemann representation wall). These numbers characterize EXACTLY how far a Dale-legal DANN spiking read-out carries it, GENUINELY ON SPIKES and Dale-LEGAL (neither retracted confound is repeated -- spike-count read, like-for-like vs the fixed spiking WTA, every weight sign-constrained). An HONEST characterization; NO anti-cheat was weakened to force a GO."
+}
