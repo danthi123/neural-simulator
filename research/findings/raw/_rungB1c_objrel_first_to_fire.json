@@ -1,0 +1,393 @@
+{
+  "rows": [
+    {
+      "seed": 42,
+      "op_floor": 150.0,
+      "baseline_summed_floor150": {
+        "canonical_acc": 0.972,
+        "objrel_slot0_THEME": 0.0
+      },
+      "first_to_fire_on": {
+        "canonical_acc": 0.444,
+        "canonical_slot0": 1.0,
+        "canonical_per_slot": [
+          "12/12",
+          "1/12",
+          "3/12"
+        ],
+        "objrel_acc": 0.333,
+        "objrel_slot0_THEME": 0.0,
+        "objrel_per_slot": [
+          "0/12",
+          "11/12",
+          "1/12"
+        ],
+        "dt_resolvable_slot0": "0/12"
+      },
+      "summed_read_same_bridge": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.0,
+        "canonical_acc": 1.0
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.361
+      },
+      "dev_sweep": [
+        {
+          "floor": 150.0,
+          "canon": 0.361,
+          "objrel_slot0": 0.083,
+          "dt_resolvable": "1/12"
+        },
+        {
+          "floor": 100.0,
+          "canon": 0.333,
+          "objrel_slot0": 0.083,
+          "dt_resolvable": "1/12"
+        },
+        {
+          "floor": 60.0,
+          "canon": 0.417,
+          "objrel_slot0": 0.083,
+          "dt_resolvable": "1/12"
+        },
+        {
+          "floor": 40.0,
+          "canon": 0.472,
+          "objrel_slot0": 0.083,
+          "dt_resolvable": "1/12"
+        },
+        {
+          "floor": 25.0,
+          "canon": 0.444,
+          "objrel_slot0": 0.0,
+          "dt_resolvable": "0/12"
+        },
+        {
+          "floor": 15.0,
+          "canon": 0.528,
+          "objrel_slot0": 0.0,
+          "dt_resolvable": "0/12"
+        }
+      ],
+      "elapsed_s": 190.3,
+      "objrel_recovers": false,
+      "canonical_not_regressed": false,
+      "differential_load_bearing": false,
+      "scramble_chance": true,
+      "dt_resolvable": false
+    },
+    {
+      "seed": 43,
+      "op_floor": 150.0,
+      "baseline_summed_floor150": {
+        "canonical_acc": 1.0,
+        "objrel_slot0_THEME": 0.0
+      },
+      "first_to_fire_on": {
+        "canonical_acc": 0.667,
+        "canonical_slot0": 0.0,
+        "canonical_per_slot": [
+          "0/12",
+          "12/12",
+          "12/12"
+        ],
+        "objrel_acc": 0.028,
+        "objrel_slot0_THEME": 0.0,
+        "objrel_per_slot": [
+          "0/12",
+          "0/12",
+          "1/12"
+        ],
+        "dt_resolvable_slot0": "0/12"
+      },
+      "summed_read_same_bridge": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.056,
+        "canonical_acc": 1.0
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 1.0,
+        "objrel_acc": 0.417
+      },
+      "dev_sweep": [
+        {
+          "floor": 150.0,
+          "canon": 0.667,
+          "objrel_slot0": 0.0,
+          "dt_resolvable": "0/12"
+        },
+        {
+          "floor": 100.0,
+          "canon": 0.667,
+          "objrel_slot0": 0.0,
+          "dt_resolvable": "0/12"
+        },
+        {
+          "floor": 60.0,
+          "canon": 0.694,
+          "objrel_slot0": 0.0,
+          "dt_resolvable": "0/12"
+        },
+        {
+          "floor": 40.0,
+          "canon": 0.667,
+          "objrel_slot0": 0.0,
+          "dt_resolvable": "0/12"
+        },
+        {
+          "floor": 25.0,
+          "canon": 0.667,
+          "objrel_slot0": 0.0,
+          "dt_resolvable": "0/12"
+        },
+        {
+          "floor": 15.0,
+          "canon": 0.694,
+          "objrel_slot0": 0.0,
+          "dt_resolvable": "0/12"
+        }
+      ],
+      "elapsed_s": 190.7,
+      "objrel_recovers": false,
+      "canonical_not_regressed": false,
+      "differential_load_bearing": false,
+      "scramble_chance": false,
+      "dt_resolvable": false
+    },
+    {
+      "seed": 44,
+      "op_floor": 25.0,
+      "baseline_summed_floor150": {
+        "canonical_acc": 0.639,
+        "objrel_slot0_THEME": 0.0
+      },
+      "first_to_fire_on": {
+        "canonical_acc": 0.028,
+        "canonical_slot0": 0.083,
+        "canonical_per_slot": [
+          "1/12",
+          "0/12",
+          "0/12"
+        ],
+        "objrel_acc": 0.639,
+        "objrel_slot0_THEME": 0.167,
+        "objrel_per_slot": [
+          "2/12",
+          "12/12",
+          "9/12"
+        ],
+        "dt_resolvable_slot0": "2/12"
+      },
+      "summed_read_same_bridge": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.139,
+        "canonical_acc": 0.528
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.111
+      },
+      "dev_sweep": [
+        {
+          "floor": 150.0,
+          "canon": 0.056,
+          "objrel_slot0": 0.0,
+          "dt_resolvable": "0/12"
+        },
+        {
+          "floor": 100.0,
+          "canon": 0.028,
+          "objrel_slot0": 0.0,
+          "dt_resolvable": "0/12"
+        },
+        {
+          "floor": 60.0,
+          "canon": 0.0,
+          "objrel_slot0": 0.083,
+          "dt_resolvable": "1/12"
+        },
+        {
+          "floor": 40.0,
+          "canon": 0.0,
+          "objrel_slot0": 0.167,
+          "dt_resolvable": "2/12"
+        },
+        {
+          "floor": 25.0,
+          "canon": 0.028,
+          "objrel_slot0": 0.167,
+          "dt_resolvable": "2/12"
+        },
+        {
+          "floor": 15.0,
+          "canon": 0.028,
+          "objrel_slot0": 0.167,
+          "dt_resolvable": "2/12"
+        }
+      ],
+      "elapsed_s": 190.3,
+      "objrel_recovers": false,
+      "canonical_not_regressed": false,
+      "differential_load_bearing": false,
+      "scramble_chance": true,
+      "dt_resolvable": false
+    },
+    {
+      "seed": 100,
+      "op_floor": 150.0,
+      "baseline_summed_floor150": {
+        "canonical_acc": 0.028,
+        "objrel_slot0_THEME": 0.917
+      },
+      "first_to_fire_on": {
+        "canonical_acc": 0.25,
+        "canonical_slot0": 0.75,
+        "canonical_per_slot": [
+          "9/12",
+          "0/12",
+          "0/12"
+        ],
+        "objrel_acc": 0.361,
+        "objrel_slot0_THEME": 0.083,
+        "objrel_per_slot": [
+          "1/12",
+          "12/12",
+          "0/12"
+        ],
+        "dt_resolvable_slot0": "0/12"
+      },
+      "summed_read_same_bridge": {
+        "objrel_slot0_THEME": 0.917,
+        "objrel_acc": 0.972,
+        "canonical_acc": 0.0
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.333
+      },
+      "dev_sweep": null,
+      "elapsed_s": 78.6,
+      "objrel_recovers": false,
+      "canonical_not_regressed": false,
+      "differential_load_bearing": false,
+      "scramble_chance": true,
+      "dt_resolvable": false
+    },
+    {
+      "seed": 101,
+      "op_floor": 150.0,
+      "baseline_summed_floor150": {
+        "canonical_acc": 0.0,
+        "objrel_slot0_THEME": 1.0
+      },
+      "first_to_fire_on": {
+        "canonical_acc": 0.139,
+        "canonical_slot0": 0.0,
+        "canonical_per_slot": [
+          "0/12",
+          "5/12",
+          "0/12"
+        ],
+        "objrel_acc": 0.417,
+        "objrel_slot0_THEME": 0.25,
+        "objrel_per_slot": [
+          "3/12",
+          "0/12",
+          "12/12"
+        ],
+        "dt_resolvable_slot0": "0/12"
+      },
+      "summed_read_same_bridge": {
+        "objrel_slot0_THEME": 1.0,
+        "objrel_acc": 0.833,
+        "canonical_acc": 0.0
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 0.25,
+        "objrel_acc": 0.417
+      },
+      "dev_sweep": null,
+      "elapsed_s": 78.0,
+      "objrel_recovers": false,
+      "canonical_not_regressed": false,
+      "differential_load_bearing": false,
+      "scramble_chance": true,
+      "dt_resolvable": false
+    },
+    {
+      "seed": 102,
+      "op_floor": 150.0,
+      "baseline_summed_floor150": {
+        "canonical_acc": 0.0,
+        "objrel_slot0_THEME": 1.0
+      },
+      "first_to_fire_on": {
+        "canonical_acc": 0.0,
+        "canonical_slot0": 0.0,
+        "canonical_per_slot": [
+          "0/12",
+          "0/12",
+          "0/12"
+        ],
+        "objrel_acc": 0.722,
+        "objrel_slot0_THEME": 1.0,
+        "objrel_per_slot": [
+          "12/12",
+          "6/12",
+          "8/12"
+        ],
+        "dt_resolvable_slot0": "2/12"
+      },
+      "summed_read_same_bridge": {
+        "objrel_slot0_THEME": 1.0,
+        "objrel_acc": 0.667,
+        "canonical_acc": 0.0
+      },
+      "scrambled": {
+        "objrel_slot0_THEME": 0.5,
+        "objrel_acc": 0.5
+      },
+      "dev_sweep": null,
+      "elapsed_s": 77.3,
+      "objrel_recovers": true,
+      "canonical_not_regressed": false,
+      "differential_load_bearing": false,
+      "scramble_chance": true,
+      "dt_resolvable": false
+    }
+  ],
+  "agg": {
+    "n_seeds": 6,
+    "n_objrel_recovers": 1,
+    "n_objrel_recovers_blind": 1,
+    "n_blind": 3,
+    "objrel_recovers_gate": false,
+    "canonical_not_regressed_all": false,
+    "differential_load_bearing_all": false,
+    "scramble_chance_all": false,
+    "dt_resolvable_seeds": 0,
+    "verdict": "BOUNDARY",
+    "frozen_ens_floor": 150.0,
+    "mean_objrel_slot0_first_to_fire": 0.25,
+    "mean_objrel_slot0_summed_same_floor": 0.486,
+    "mean_canonical_first_to_fire": 0.255,
+    "mean_baseline_canon_summed150": 0.44,
+    "operating_point_grid": {
+      "floors": [
+        150.0,
+        100.0,
+        60.0,
+        40.0,
+        25.0,
+        15.0
+      ],
+      "read_t_step": 30,
+      "ws_replay": 3,
+      "n_train": 60
+    },
+    "total_elapsed_s": 805.4
+  },
+  "verdict_text": "BOUNDARY -- OBJREL did not recover 6-seed-blind (1/6 overall, 1/3 blind; need >=5/6 AND all blind); CANONICAL regressed with first-to-fire on (the see-saw survived the latency read); first-to-fire is NOT load-bearing (the summed-argmax read at the same floor did not collapse objrel -> the recovery is the floor-lowering, not the latency code); the scrambled-label control did NOT collapse (the read is a position/heterogeneity artifact). [dt PRE-CHECK: the correct ens's first spike was strictly earliest on 0/6 seeds -- where 0, RANK-1 is dt-BLOCKED (the ens tie on the first step even at the swept floor, so latency carries no differential).] The reservoir FEATURE robustly encodes objrel (a shift-invariant linear argmax solves it 100%), so it is NOT the Mikulasch-Priesemann wall -- it is the seed-adaptive spiking-read frontier. RANK-1 latency is a genuinely different code from the exhausted pedestal-REMOVAL family (subtraction/division), but on this point-neuron f-I at dt=1.0 the ens either saturate (tie) or under-fire. An HONEST characterization; NO anti-cheat was weakened to force a GO. THE INDICATED NEXT MECHANISM: a SIGNED ON/OFF (+/-) read (negative Ws rows via an inhibitory relay), which fits THROUGH the spiking deploy so the f-I nonlinearity + WTA ignition-order are INSIDE the error."
+}
