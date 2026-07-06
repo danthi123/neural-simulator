@@ -90,7 +90,16 @@ Track record: the conversational-whitening wall → Mikulasch-Priesemann analog/
 ## PARALLELIZE + MONITOR (the infra discipline that's been working)
 
 Independent work runs CONCURRENTLY — this is the default, not the exception:
-- **Sweeps / independent de-risks / research passes** → multiple concurrent background subagents (`run_in_background: true`), and **Workflows** for multi-agent orchestration (the adversarial-verify, a fan-out review, a judge panel). Saturate the cores; collapse a serial sweep into one wall-clock window.
+- **⚙️ MECHANICAL PARALLELISM GATE — fire it before launching ANY multi-seed / multi-config / K-sweep run (not a judgment call):** ask *"is this FANNED across cores (N OS processes, one per seed/config), or is it ONE process looping seeds serially?"* A runner's own `--seeds 42 43 44 …` loops them SERIALLY in one process = **single-threaded = 1/N cores on an N-core box** (drift mode #6) — the default trap. If serial → **STOP and fan it out**: launch one process PER seed/config as ONE controller `run_in_background` command —
+  ```bash
+  for s in 42 43 44 45 46 100 101 102 103 104; do
+    OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 SIM_BACKEND=numpy \
+      python -u -m <runner> --seeds $s --json raw/_out_seed$s.json > raw/_log_seed$s.log 2>&1 &
+  done; wait; echo ALL DONE
+  ```
+  The `wait` holds the parent alive so it's ONE task that notifies on completion; the 1-thread-BLAS env vars stop N numpy procs oversubscribing; aggregate the per-seed JSONs after (a small `_aggregate.py`). This is the proven EMERGE-5 pattern (~90× on 20 cores) — it collapses a ~50-min serial sweep into ~5-min wall-clock. **Right-size the lever to the model:** tiny nets (a ~3k-neuron reservoir, linear read-outs) get NOTHING from GPU (cupy launch overhead dominates) → the win is CORE parallelism; GPU is the lever only for the BIG models (the 88.6M spiking-forward, the composer at production D, generator training).
+- **NEVER let a SUBAGENT run a multi-seed sweep** — it runs it single-threaded AND usually ORPHANS it (a detached child dies when the subagent returns → zero output, the exact 2026-07-06 failure). Division of labor: a subagent BUILDS the runner (+ a cheap 1-seed smoke); the **CONTROLLER fans out + runs the sweep** itself and aggregates.
+- **Independent de-risks / research passes / multi-agent orchestration** → concurrent background subagents (`run_in_background: true`) + **Workflows** (adversarial-verify, fan-out review, judge panel).
 - **During any wait** (a long run, a research subagent), the next independent step starts NOW.
 - **Arm a COVERAGE-COMPLETE Monitor on EVERY long background run** — done/crash/hang, silence≠success; the grep must match every terminal state, not just the happy path. **The CONTROLLER runs GPU jobs INLINE** (`run_in_background` from the controller) — never a subagent's detached child (it orphans + never notifies). If a dispatched subagent launches a run and returns early, Monitor that run to completion myself.
 - **Trust-but-verify every subagent-built de-risk** — read the diff (protected `sim/` set should be byte-empty unless a faithful edit was justified), confirm it's not gamed (real read, anti-cheats not weakened), before trusting its verdict.
@@ -117,7 +126,8 @@ Every capability hypothesis passes through: (1) state the capability; (2) test t
 - "Is the next thing I output a status-report ending in a question, or a wrap-up?" → replace it with the next concrete mechanism step, and take it.
 - "Did I get a clean GO that would enter the record as a surpass?" → adversarially verify it FIRST (step 4); do the cheapest load-bearing check myself.
 - "Did my research just grep the catalog + cite abstracts?" → go READ the source in depth + search the external engineering literature.
-- "Is anything running while I think? Are the independent things I'm about to do sequentially actually independent → launch them together. Is util low because I'm single-threaded → fan out."
+- "Is anything running while I think? Are the independent things I'm about to do sequentially actually independent → launch them together."
+- "Am I about to run a MULTI-SEED / multi-config sweep? → fire the mechanical parallelism gate: fanned across cores (N processes) or one serial process? Serial on a multi-core box = STOP, fan it out. Is util low / one python proc while N cores sit idle → I'm single-threaded, fan out. Did a subagent just 'launch a sweep'? → it's single-threaded + probably orphaned — the CONTROLLER fans it out."
 - "Am I arguing why a shortcut / external model / scaffold can STAY?" → **STOP.** Scope how to SIMULATE or DEVELOP the capability; the scaffold is temporary.
 
 ## RESUME NOW
