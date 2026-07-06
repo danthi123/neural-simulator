@@ -9236,3 +9236,29 @@ baseline-reproduces + the 4 anti-cheats, inspect for gaming), then commit the GO
 the learned-signed fallback (step8) as the named next mechanism. Then: wire the RUNG B-1 synaptic hand-off + the A→W words
 into the flagship console (production wire-in of the functional one-brain). PARALLELIZE; boundaries = undiscovered mechanisms;
 6-seed-blind + anti-cheat EVERY claim; moat a PLUS; honest origin+gitea EACH cycle; CONTROLLER runs GPU INLINE; ARM A MONITOR.
+
+## CYCLE 923 (2026-07-05, DESKTOP — THREAD A GO: the transitive producer speaks EVERY WORD ON SPIKES + a real cross-backend order finding)
+
+**A→W transitive word-spell = GO (6-seed, committed).** `_rungB1_aw_neural_words_transitive_derisk.py`: the EMERGE-67 A→W
+read-out retrained on a 16-word TRANSITIVE vocab (new cache `bridges/rungB1_aw_trans/`; content via BRIDGE-A, det "the" via
+the existing BRIDGE-F) + passed as the producer `spell=`. All-word spike render **1.000 all 6 seeds**, content-lesion
+collapses to 0.000 (genuinely spiking, not host lookup), per-word isolated 16/16. ⇒ the transitive capstone answer is now
+ORDER + EVERY WORD on spikes (closes the "words-are-host-token" caveat for the transitive vocab). NO `sim/` edit; reuse-by-
+import; cupy (trained once + cached). Finding `2026-07-05-rungB1-aw-neural-words-transitive-GO.md`, CI 3.
+
+**SIDE-FINDING (isolated + fixed): a cross-backend producer-order near-tie.** The first 6-seed run was 4/6 (100/102 =
+0.000). Diagnosed (systematic): NOT the A→W spell (per-word 16/16; the host-token spell reproduces the SAME 0.000 on cupy
+seed 102 but is 1.000 on NUMPY) -- it is the EMERGE-59..77 C_TRANS emission ORDER, whose per-pool f-I heterogeneity flips
+adjacent slots on 2/6 seeds ON CUPY (validated clean on numpy = EMERGE-93). FIX = the already-built EMERGE-77 2-stage
+per-pool bias CALIBRATION (`DitransRegistryProducer(calibrate=True, n_slot_pools=6)`): subtract each pool's reference-current
+rate → the order follows the primacy not the heterogeneity → cupy order 1.000 (raw = the causal control, fails). The
+2-stage calibrated read should be the registry producer's DEFAULT on cupy (follow-on: flip the default / wire into the
+capstone producers).
+
+**EXACT NEXT CONCRETE ACTION:** (B) VERIFY the objrel subtractive-FF-inhibition de-risk on the implementer's return (re-run
+the baseline-reproduces + the 4 anti-cheats, inspect for gaming; the laptop caught 2 overclaims on this arc) → commit the
+GO or the honest boundary; if boundary, build the learned-signed fallback (step8). (C) PRODUCTION WIRE-IN: make the RUNG B-1
+synaptic comprehension→composition hand-off + the A→W spiking words the DEFAULT in the flagship conversational console (the
+functional one-brain, production). (D) flip the DitransRegistryProducer 2-stage calibrated read to the registry-producer
+default on cupy (the side-finding fix). PARALLELIZE; boundaries = undiscovered mechanisms; 6-seed(-blind) + anti-cheat EVERY
+claim; moat a PLUS; honest origin+gitea EACH cycle; CONTROLLER runs GPU INLINE; ARM A MONITOR.

@@ -1,0 +1,37 @@
+{
+  "rows": [
+    {
+      "seed": 42,
+      "allword_render": 1.0,
+      "content_lesion_render": 0.0
+    },
+    {
+      "seed": 43,
+      "allword_render": 1.0,
+      "content_lesion_render": 0.0
+    },
+    {
+      "seed": 44,
+      "allword_render": 1.0,
+      "content_lesion_render": 0.0
+    },
+    {
+      "seed": 100,
+      "allword_render": 1.0,
+      "content_lesion_render": 0.0
+    },
+    {
+      "seed": 101,
+      "allword_render": 1.0,
+      "content_lesion_render": 0.0
+    },
+    {
+      "seed": 102,
+      "allword_render": 1.0,
+      "content_lesion_render": 0.0
+    }
+  ],
+  "allword_render": 1.0,
+  "content_lesion_render": 0.0,
+  "go": true
+}
