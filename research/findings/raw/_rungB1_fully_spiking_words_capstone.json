@@ -1,0 +1,44 @@
+{
+  "rows": [
+    {
+      "seed": 42,
+      "n_facts": 12,
+      "parse_acc": 1.0,
+      "recall": 1.0,
+      "render_exact_allword": 1.0,
+      "moat_false_accept": 0.0,
+      "moat_producer_invoked_on_abstain": 0,
+      "content_lesion_render": 0.0
+    },
+    {
+      "seed": 43,
+      "n_facts": 12,
+      "parse_acc": 1.0,
+      "recall": 1.0,
+      "render_exact_allword": 1.0,
+      "moat_false_accept": 0.0,
+      "moat_producer_invoked_on_abstain": 0,
+      "content_lesion_render": 0.0
+    },
+    {
+      "seed": 44,
+      "n_facts": 12,
+      "parse_acc": 1.0,
+      "recall": 1.0,
+      "render_exact_allword": 1.0,
+      "moat_false_accept": 0.0,
+      "moat_producer_invoked_on_abstain": 0,
+      "content_lesion_render": 0.0
+    }
+  ],
+  "agg": {
+    "n_seeds": 3,
+    "parse_acc": 1.0,
+    "recall": 1.0,
+    "render_exact_allword": 1.0,
+    "moat_false_accept": 0.0,
+    "moat_producer_invoked_on_abstain": 0,
+    "content_lesion_render": 0.0,
+    "go": true
+  }
+}
