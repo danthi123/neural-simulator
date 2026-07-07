@@ -1,0 +1,70 @@
+{
+  "runner": "_gnw_rung3b_emergent_inheritance_reasoning_derisk",
+  "go": true,
+  "seed": 43,
+  "backend": "numpy",
+  "held_out_member": "sparrow",
+  "decisions": {
+    "robin": {
+      "report": "robin",
+      "reason": "flies"
+    },
+    "salmon": {
+      "report": "salmon",
+      "reason": "swims"
+    },
+    "sparrow": {
+      "report": "sparrow",
+      "reason": "flies"
+    }
+  },
+  "rates": {
+    "robin": {
+      "report": {
+        "robin": 0.15151515151515152,
+        "salmon": 0.0,
+        "sparrow": 0.0
+      },
+      "reason": {
+        "flies": 0.09090909090909091,
+        "swims": 0.0
+      }
+    },
+    "salmon": {
+      "report": {
+        "robin": 0.0,
+        "salmon": 0.15151515151515152,
+        "sparrow": 0.0
+      },
+      "reason": {
+        "flies": 0.0,
+        "swims": 0.09090909090909091
+      }
+    },
+    "sparrow": {
+      "report": {
+        "robin": 0.0,
+        "salmon": 0.0,
+        "sparrow": 0.15151515151515152
+      },
+      "reason": {
+        "flies": 0.09090909090909091,
+        "swims": 0.0
+      }
+    }
+  },
+  "lesion": {
+    "reason": "none"
+  },
+  "lesion_direct": {
+    "report": "robin",
+    "reason": "none"
+  },
+  "gate_detail": {
+    "identity": true,
+    "held_out_inherits": true,
+    "causal_swap": true,
+    "dissociation": true,
+    "report_ne_reason_populations": true
+  }
+}
