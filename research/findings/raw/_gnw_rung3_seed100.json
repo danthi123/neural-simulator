@@ -1,0 +1,51 @@
+{
+  "runner": "_gnw_rung3_report_reasoning_identity_derisk",
+  "go": true,
+  "seed": 100,
+  "backend": "numpy",
+  "ignite_A": {
+    "report": "A",
+    "reason": "A",
+    "rates": {
+      "rep_A": 0.15151515151515152,
+      "rep_B": 0.0,
+      "rea_A": 0.15151515151515152,
+      "rea_B": 0.0
+    }
+  },
+  "ignite_B": {
+    "report": "B",
+    "reason": "B",
+    "rates": {
+      "rep_A": 0.0,
+      "rep_B": 0.15151515151515152,
+      "rea_A": 0.0,
+      "rea_B": 0.15151515151515152
+    }
+  },
+  "lesion": {
+    "reason": "none",
+    "rates": {
+      "rep_A": 0.0,
+      "rep_B": 0.0,
+      "rea_A": 0.0,
+      "rea_B": 0.0
+    }
+  },
+  "lesion_direct": {
+    "report": "A",
+    "reason": "none",
+    "rates": {
+      "rep_A": 0.24242424242424243,
+      "rep_B": 0.0,
+      "rea_A": 0.0,
+      "rea_B": 0.0
+    }
+  },
+  "gate_detail": {
+    "identity": true,
+    "causal_swap": true,
+    "workspace_lesion_collapses_reason": true,
+    "dissociation": true
+  }
+}
