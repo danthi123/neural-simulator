@@ -1,0 +1,52 @@
+{
+  "rows": [
+    {
+      "seed": 100,
+      "n_agent_favouring_ties": 0,
+      "n_theme_favouring_ties": 0,
+      "agent_favouring_tie_gives_favoured": {
+        "raw": 0.0,
+        "gradedtie": 0.0,
+        "gainnorm": 0.0,
+        "calibrated": 0.0
+      },
+      "theme_favouring_tie_gives_favoured": {
+        "raw": 0.0,
+        "gradedtie": 0.0,
+        "gainnorm": 0.0,
+        "calibrated": 0.0
+      },
+      "answer_independent": {
+        "raw": false,
+        "gradedtie": false,
+        "gainnorm": false,
+        "calibrated": false
+      },
+      "example_agent_tie": [],
+      "example_theme_tie": []
+    }
+  ],
+  "agg": {
+    "mode": "distinguishing_anti_cheat",
+    "n_agent_favouring_ties_total": 0,
+    "n_theme_favouring_ties_total": 0,
+    "agent_favouring_gives_AGENT_pooled": {
+      "raw": 0.0,
+      "gradedtie": 0.0,
+      "gainnorm": 0.0,
+      "calibrated": 0.0
+    },
+    "theme_favouring_gives_THEME_pooled": {
+      "raw": 0.0,
+      "gradedtie": 0.0,
+      "gainnorm": 0.0,
+      "calibrated": 0.0
+    },
+    "answer_independent_genuine": {
+      "raw": false,
+      "gradedtie": false,
+      "gainnorm": false,
+      "calibrated": false
+    }
+  }
+}

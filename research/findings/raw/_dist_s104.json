@@ -1,0 +1,92 @@
+{
+  "rows": [
+    {
+      "seed": 104,
+      "n_agent_favouring_ties": 0,
+      "n_theme_favouring_ties": 8,
+      "agent_favouring_tie_gives_favoured": {
+        "raw": 0.0,
+        "gradedtie": 0.0,
+        "gainnorm": 0.0,
+        "calibrated": 0.0
+      },
+      "theme_favouring_tie_gives_favoured": {
+        "raw": 0.0,
+        "gradedtie": 1.0,
+        "gainnorm": 1.0,
+        "calibrated": 1.0
+      },
+      "answer_independent": {
+        "raw": false,
+        "gradedtie": false,
+        "gainnorm": false,
+        "calibrated": false
+      },
+      "example_agent_tie": [],
+      "example_theme_tie": [
+        {
+          "counts": [
+            4,
+            0,
+            4
+          ],
+          "graded_drive": [
+            0.0606,
+            0.0,
+            0.1896
+          ],
+          "true_role": 2
+        },
+        {
+          "counts": [
+            4,
+            0,
+            4
+          ],
+          "graded_drive": [
+            0.0614,
+            0.0,
+            0.1886
+          ],
+          "true_role": 2
+        },
+        {
+          "counts": [
+            4,
+            0,
+            4
+          ],
+          "graded_drive": [
+            0.0606,
+            0.0,
+            0.1896
+          ],
+          "true_role": 2
+        }
+      ]
+    }
+  ],
+  "agg": {
+    "mode": "distinguishing_anti_cheat",
+    "n_agent_favouring_ties_total": 0,
+    "n_theme_favouring_ties_total": 8,
+    "agent_favouring_gives_AGENT_pooled": {
+      "raw": 0.0,
+      "gradedtie": 0.0,
+      "gainnorm": 0.0,
+      "calibrated": 0.0
+    },
+    "theme_favouring_gives_THEME_pooled": {
+      "raw": 0.0,
+      "gradedtie": 1.0,
+      "gainnorm": 1.0,
+      "calibrated": 1.0
+    },
+    "answer_independent_genuine": {
+      "raw": false,
+      "gradedtie": false,
+      "gainnorm": false,
+      "calibrated": false
+    }
+  }
+}
