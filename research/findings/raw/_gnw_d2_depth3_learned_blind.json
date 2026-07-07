@@ -1,0 +1,449 @@
+{
+  "probe": "gnw_d1_spiking_bdsp",
+  "GO": false,
+  "verdict": "INCONCLUSIVE [d3] -- the task is NOT demonstrably depth-3: at the narrow separation width H6 the depth-2 oracle held 0.853 (train 0.901) vs depth-3 0.858 (margin 0.005 < 0.08) -- no clean 2L-underfit/3L-clear. Re-tune the separation width / target before reading the FA-depth-wall arms.",
+  "rule_selected": "microcircuit",
+  "rule": "BDSP / Burstprop (Payeur-Naud 2021 M1.2): dw = eta*Etilde_j*(B_i - Pbar_i*E_i); event rate E = feedforward channel, burst probability P = sigmoid(beta*v_apical) via fixed-random apical feedback (no weight transport), Pbar = slow single-phase EMA baseline (init P0); the P0 moat (rest apical -> P~Pbar -> dw~0). Realized as the additive/default-off sim/ enable_bdsp kernel fused_bdsp_update + burst detector + apical-credit routing in bridge._run_one_simulation_step.",
+  "rule_microcircuit": "MICROCIRCUIT (Sacramento-Senn 2018 + Urbanczik-Senn 2014, --rule microcircuit, the clean-error-credit arm): the descending credit is the CLEAN error e_k = phi'(E_k)*(Y^T @ e_{k+1}) -- a weighted sum over the upper layer via fixed-random Y (a low-noise average, i.e. clean-error FEEDBACK ALIGNMENT), where the interneuron-cancelled apical residual v_api = e_upper @ Y IS that clean error at the self-predicting fixed point W^PI == -Y (closed form, no settling loop). The FF weight update is the Urbanczik-Senn M2.6 SOMATIC-RATE rule dw = eta*acts[k]^T @ (phi'(E)*v_api) -- NOT Payeur's burst-fraction M1.2. HONEST ATTRIBUTION (adversarial-verify wjn6hxyuu + control probe): the depth-2 accuracy is carried by this clean-error-FA FF rule; burst B is NEVER computed in the microcircuit weight update and P/Pbar/beta are INERT to learning (beta=0 leaves accuracy unchanged; a clean-error-FA net with no interneuron reproduces 0.964 byte-identically). The interneuron cancellation is the closed-form realization of the clean CHANNEL and is validated on-bridge for the BURST READOUT only (Stage-A''': P 1.0 -> p0). Realized as the additive/default-off sim/ enable_bdsp_microcircuit delta: the runner supplies cp_bdsp_int_drive and the guarded block integrates (apical_drive - int_drive) into cp_v_apical (the P read); no weight transport.",
+  "task": "depth-3 threshold-of-(XOR-of-XORs) over 10 bits (make_task_d3): label = threshold(L2a+L2b+L1_4 >= 2), L2a=parity(b0..b3), L2b=parity(b4..b7) [4-bit parities = XOR-of-XORs, min depth 2], L1_4=XOR(b8,b9); the threshold adds depth 3. Same 665/359 split discipline as EMERGE-1.",
+  "rule_rung2_surpass": "D2 RUNG-2 SURPASS (--feedback learned [--homeostasis]): (1) KOLEN-POLLACK apical-feedback plasticity -- the feedback matrix Y[k] is updated by dY[k] = -kp_lr*(post^T @ pre) - kp_decay*Y[k], where pre=acts[k+1] (the layer-below activity) and post=the descending error at the layer above. Because the forward W[k+1] gets the SAME pre(x)post outer product and Y[k] gets its transpose with the SAME shared decay, (W[k+1] - Y[k]^T) decays geometrically -> Y[k]^T -> W[k+1] (Akrout 2019 Eqs.16-18). TRANSPORT-FREE: the Y update reads ONLY local pre/post activity + Y itself -- it NEVER reads a forward W/W^T (asserted by _no_weight_transport_learned: the KP code path holds no self.W reference AND no trained Y equals a W/W^T). Fixes credit-DIRECTION decay = LIFTS the deep-layer alignment. (2) PER-LAYER HOMEOSTATIC gain -- each layer's descending credit is divided by a slow running-RMS estimate toward a target norm (Turrigiano synaptic scaling / Carandini-Heeger divisive normalization); a SET-POINT controller (no label/error leaks the gain, so permuted-error still collapses), direction-preserving (does not change the alignment cos, only the magnitude). Fixes MAGNITUDE drift. Both single-phase, additive, default-OFF (byte-identical to rung-1). This is the numpy RATE reference; the on-bridge (Y-plasticity on cp_v_apical + fused_homeostasis_update) is the later rung-3 (Greedy-Costa 2026).",
+  "depth": 3,
+  "d2_depth3_metrics": {
+    "plain_fa_heldout": 0.8105849582172703,
+    "plain_fa_probe": 0.731043020736614,
+    "oracle_d2_underfit_heldout": 0.9730733519034355,
+    "narrow_d2_heldout": 0.8532961931290622,
+    "narrow_d3_heldout": 0.8579387186629526,
+    "narrow_d2_train": 0.9007518796992482,
+    "narrow_sep_margin": 0.004642525533890329,
+    "per_layer_alignment_bdsp": [
+      0.17494160944174228,
+      0.6544692102487079,
+      0.8748217138517337,
+      0.9999999999999174
+    ],
+    "per_layer_alignment_plain_fa": [
+      0.22282592066138665,
+      0.6521935901393822,
+      0.7392478082619612,
+      0.9999999999946221
+    ],
+    "deepest_layer_alignment_bdsp": 0.17494160944174228,
+    "deepest_layer_alignment_plain_fa": 0.22282592066138665,
+    "oracle_d3_vs_d2_margin": 0.002785515320334331,
+    "fa_fixed": {
+      "heldout": 0.8105849582172703,
+      "deepest_layer_alignment": 0.22282592066138665,
+      "per_layer_alignment": [
+        0.22282592066138665,
+        0.6521935901393822,
+        0.7392478082619612,
+        0.9999999999946221
+      ],
+      "probe_latent": 0.731043020736614,
+      "all_transport_free": true
+    },
+    "fa_learned": {
+      "heldout": 0.8170844939647167,
+      "deepest_layer_alignment": 0.17494160944174228,
+      "per_layer_alignment": [
+        0.17494160944174228,
+        0.6544692102487079,
+        0.8748217138517337,
+        0.9999999999999174
+      ],
+      "probe_latent": 0.7034973692355307,
+      "all_transport_free": true
+    },
+    "fa_learned_homeo": {
+      "heldout": 0.8077994428969358,
+      "deepest_layer_alignment": 0.36641302981497986,
+      "per_layer_alignment": [
+        0.36641302981497986,
+        0.782142825792186,
+        0.9633666791769161,
+        0.9999999999999671
+      ],
+      "probe_latent": 0.7072113896626431,
+      "all_transport_free": true
+    },
+    "bp_fixed": null,
+    "bp_learned": null,
+    "bp_learned_homeo": null,
+    "fa_deepest_align_lift_learned": -0.04788431121964437,
+    "fa_deepest_align_lift_learned_homeo": 0.1435871091535932
+  },
+  "seeds": [
+    100,
+    101,
+    102
+  ],
+  "config": {
+    "epochs": 800,
+    "lr": 0.3,
+    "batch": 32,
+    "hidden": 24,
+    "beta": 1.0,
+    "p0": 0.3,
+    "depth": 3,
+    "feedback": "learned",
+    "homeostasis": false,
+    "kp_lr": 0.2,
+    "kp_decay": 0.0001,
+    "backend": "numpy"
+  },
+  "stage_a_multiplexing": {
+    "100": {
+      "corr_E_basal": 0.99993229966679,
+      "E_invariance_to_apical": 0.19809801787022116,
+      "corr_P_apical": 0.976624853763967,
+      "P0_rest": 0.030560341162344174,
+      "separability_R2": 0.9438208825298143,
+      "nobac_corr_P_apical": 0.0,
+      "nobac_P_mean": 0.0,
+      "confound_E_inv": 0.33631539236879926,
+      "GO": true
+    },
+    "101": {
+      "corr_E_basal": 0.9994655495494796,
+      "E_invariance_to_apical": 0.18073842334691773,
+      "corr_P_apical": 0.9836435541466476,
+      "P0_rest": 0.03598701294590946,
+      "separability_R2": 0.9481606476820376,
+      "nobac_corr_P_apical": 0.0,
+      "nobac_P_mean": 0.0,
+      "confound_E_inv": 0.32274597349572276,
+      "GO": true
+    },
+    "102": {
+      "corr_E_basal": 0.9983678976478564,
+      "E_invariance_to_apical": 0.1607049071307979,
+      "corr_P_apical": 0.9877239667878256,
+      "P0_rest": 0.033700559376808485,
+      "separability_R2": 0.9393873609330673,
+      "nobac_corr_P_apical": 0.0,
+      "nobac_P_mean": 0.0,
+      "confound_E_inv": 0.3271976033110378,
+      "GO": true
+    }
+  },
+  "stage_a_bridge_detector": {},
+  "stage_a_bridge_learns": {},
+  "stage_a_bridge_microcircuit": {},
+  "elapsed_seconds": 80.7,
+  "per_seed": [
+    {
+      "seed": 100,
+      "rule": "microcircuit",
+      "depth": 3,
+      "feedback": "learned",
+      "homeostasis": false,
+      "bdsp": {
+        "train": 0.9849624060150376,
+        "heldout": 0.7520891364902507,
+        "probe_latent": 0.6759517177344475,
+        "no_weight_transport": true,
+        "learned_feedback_transport_free": true,
+        "selfpred_cos_mean": 0.999992881770807,
+        "per_layer_alignment": [
+          0.10821411493736514,
+          0.6275636020192916,
+          0.6543957294206509,
+          0.9999999999999978
+        ]
+      },
+      "plain_fa": {
+        "train": 1.0,
+        "heldout": 0.8356545961002786,
+        "probe_latent": 0.7390900649953575,
+        "per_layer_alignment": [
+          0.07600437972168221,
+          0.5450707272577575,
+          0.469059622468248,
+          0.9999999999842799
+        ],
+        "deepest_layer_alignment": 0.07600437972168221,
+        "no_weight_transport": true,
+        "feedback": "fixed",
+        "homeostasis": false
+      },
+      "plain_fa_learned": {
+        "train": 0.9849624060150376,
+        "heldout": 0.7520891364902507,
+        "probe_latent": 0.6759517177344475,
+        "per_layer_alignment": [
+          0.10821411493736514,
+          0.6275636020192916,
+          0.6543957294206509,
+          0.9999999999999978
+        ],
+        "deepest_layer_alignment": 0.10821411493736514,
+        "no_weight_transport": true,
+        "feedback": "learned",
+        "homeostasis": false
+      },
+      "plain_fa_learned_homeo": {
+        "train": 1.0,
+        "heldout": 0.9136490250696379,
+        "probe_latent": 0.754874651810585,
+        "per_layer_alignment": [
+          0.2907378956636944,
+          0.7651126936061109,
+          0.9027410778303514,
+          0.9999999999999363
+        ],
+        "deepest_layer_alignment": 0.2907378956636944,
+        "no_weight_transport": true,
+        "feedback": "learned",
+        "homeostasis": true
+      },
+      "single_layer": {
+        "train": 0.6691729323308271,
+        "heldout": 0.19220055710306408
+      },
+      "apical_lesion": {
+        "train": 0.49473684210526314,
+        "heldout": 0.5097493036211699,
+        "probe_latent": 0.4688950789229341
+      },
+      "wrong_sign": {
+        "train": 0.49473684210526314,
+        "heldout": 0.5097493036211699
+      },
+      "no_teaching_null": {
+        "train": 0.49473684210526314,
+        "heldout": 0.5097493036211699,
+        "weight_drift": 0.27559133634511485,
+        "hidden_weight_drift": 0.0
+      },
+      "permuted": {
+        "train": 0.5383458646616541,
+        "heldout": 0.5236768802228412
+      },
+      "oracle_bp": {
+        "train": 1.0,
+        "heldout": 0.9944289693593314
+      },
+      "oracle_d2_underfit": {
+        "train": 1.0,
+        "heldout": 0.9665738161559888,
+        "narrow_width": 6,
+        "narrow_d2_train": 0.9278195488721804,
+        "narrow_d2_heldout": 0.935933147632312,
+        "narrow_d3_train": 0.8947368421052632,
+        "narrow_d3_heldout": 0.8022284122562674
+      },
+      "same_init_as_oracle": true,
+      "chance": 0.5097493036211699
+    },
+    {
+      "seed": 101,
+      "rule": "microcircuit",
+      "depth": 3,
+      "feedback": "learned",
+      "homeostasis": false,
+      "bdsp": {
+        "train": 0.9954887218045113,
+        "heldout": 0.8690807799442897,
+        "probe_latent": 0.7223769730733519,
+        "no_weight_transport": true,
+        "learned_feedback_transport_free": true,
+        "selfpred_cos_mean": 0.9999919710142225,
+        "per_layer_alignment": [
+          0.20373018260416478,
+          0.7611979548509269,
+          0.9766885575648641,
+          0.9999999999999715
+        ]
+      },
+      "plain_fa": {
+        "train": 0.9939849624060151,
+        "heldout": 0.8272980501392758,
+        "probe_latent": 0.7455896007428041,
+        "per_layer_alignment": [
+          0.20043830263220716,
+          0.574008009395962,
+          0.8105397939101872,
+          0.9999999999999832
+        ],
+        "deepest_layer_alignment": 0.20043830263220716,
+        "no_weight_transport": true,
+        "feedback": "fixed",
+        "homeostasis": false
+      },
+      "plain_fa_learned": {
+        "train": 0.9954887218045113,
+        "heldout": 0.8690807799442897,
+        "probe_latent": 0.7223769730733519,
+        "per_layer_alignment": [
+          0.20373018260416478,
+          0.7611979548509269,
+          0.9766885575648641,
+          0.9999999999999715
+        ],
+        "deepest_layer_alignment": 0.20373018260416478,
+        "no_weight_transport": true,
+        "feedback": "learned",
+        "homeostasis": false
+      },
+      "plain_fa_learned_homeo": {
+        "train": 0.9969924812030075,
+        "heldout": 0.8328690807799443,
+        "probe_latent": 0.7093779015784587,
+        "per_layer_alignment": [
+          0.2298769348745196,
+          0.863980701714701,
+          0.9999186422120445,
+          0.9999999999999649
+        ],
+        "deepest_layer_alignment": 0.2298769348745196,
+        "no_weight_transport": true,
+        "feedback": "learned",
+        "homeostasis": true
+      },
+      "single_layer": {
+        "train": 0.631578947368421,
+        "heldout": 0.22284122562674094
+      },
+      "apical_lesion": {
+        "train": 0.49473684210526314,
+        "heldout": 0.5097493036211699,
+        "probe_latent": 0.4456824512534819
+      },
+      "wrong_sign": {
+        "train": 0.49473684210526314,
+        "heldout": 0.5097493036211699
+      },
+      "no_teaching_null": {
+        "train": 0.49473684210526314,
+        "heldout": 0.5097493036211699,
+        "weight_drift": 0.2200303927806758,
+        "hidden_weight_drift": 0.0
+      },
+      "permuted": {
+        "train": 0.46766917293233085,
+        "heldout": 0.49025069637883006
+      },
+      "oracle_bp": {
+        "train": 1.0,
+        "heldout": 0.9721448467966574
+      },
+      "oracle_d2_underfit": {
+        "train": 1.0,
+        "heldout": 0.9721448467966574,
+        "narrow_width": 6,
+        "narrow_d2_train": 0.9278195488721804,
+        "narrow_d2_heldout": 0.8551532033426184,
+        "narrow_d3_train": 0.8992481203007519,
+        "narrow_d3_heldout": 0.8802228412256268
+      },
+      "same_init_as_oracle": true,
+      "chance": 0.5097493036211699
+    },
+    {
+      "seed": 102,
+      "rule": "microcircuit",
+      "depth": 3,
+      "feedback": "learned",
+      "homeostasis": false,
+      "bdsp": {
+        "train": 1.0,
+        "heldout": 0.83008356545961,
+        "probe_latent": 0.7121634168987929,
+        "no_weight_transport": true,
+        "learned_feedback_transport_free": true,
+        "selfpred_cos_mean": 0.9999860730399738,
+        "per_layer_alignment": [
+          0.21288053078369695,
+          0.5746460738759048,
+          0.9933808545696864,
+          0.9999999999997827
+        ]
+      },
+      "plain_fa": {
+        "train": 1.0,
+        "heldout": 0.7688022284122563,
+        "probe_latent": 0.7084493964716806,
+        "per_layer_alignment": [
+          0.3920350796302706,
+          0.8375020337644269,
+          0.9381440084074486,
+          0.999999999999603
+        ],
+        "deepest_layer_alignment": 0.3920350796302706,
+        "no_weight_transport": true,
+        "feedback": "fixed",
+        "homeostasis": false
+      },
+      "plain_fa_learned": {
+        "train": 1.0,
+        "heldout": 0.83008356545961,
+        "probe_latent": 0.7121634168987929,
+        "per_layer_alignment": [
+          0.21288053078369695,
+          0.5746460738759048,
+          0.9933808545696864,
+          0.9999999999997827
+        ],
+        "deepest_layer_alignment": 0.21288053078369695,
+        "no_weight_transport": true,
+        "feedback": "learned",
+        "homeostasis": false
+      },
+      "plain_fa_learned_homeo": {
+        "train": 0.8300751879699249,
+        "heldout": 0.6768802228412256,
+        "probe_latent": 0.6573816155988857,
+        "per_layer_alignment": [
+          0.5786242589067255,
+          0.717335082055746,
+          0.9874403174883523,
+          1.0
+        ],
+        "deepest_layer_alignment": 0.5786242589067255,
+        "no_weight_transport": true,
+        "feedback": "learned",
+        "homeostasis": true
+      },
+      "single_layer": {
+        "train": 0.6390977443609023,
+        "heldout": 0.22562674094707522
+      },
+      "apical_lesion": {
+        "train": 0.48721804511278194,
+        "heldout": 0.5236768802228412,
+        "probe_latent": 0.48003714020427113
+      },
+      "wrong_sign": {
+        "train": 0.48721804511278194,
+        "heldout": 0.5236768802228412
+      },
+      "no_teaching_null": {
+        "train": 0.48721804511278194,
+        "heldout": 0.5236768802228412,
+        "weight_drift": 0.25632948064088296,
+        "hidden_weight_drift": 0.0
+      },
+      "permuted": {
+        "train": 0.512781954887218,
+        "heldout": 0.4623955431754875
+      },
+      "oracle_bp": {
+        "train": 1.0,
+        "heldout": 0.9610027855153204
+      },
+      "oracle_d2_underfit": {
+        "train": 1.0,
+        "heldout": 0.9805013927576601,
+        "narrow_width": 6,
+        "narrow_d2_train": 0.8466165413533835,
+        "narrow_d2_heldout": 0.7688022284122563,
+        "narrow_d3_train": 0.9308270676691729,
+        "narrow_d3_heldout": 0.8913649025069638
+      },
+      "same_init_as_oracle": true,
+      "chance": 0.5236768802228412
+    }
+  ],
+  "HONEST_NOTE": "The PRIMARY Stage-B arm is a numpy REFERENCE of the exact `sim/` enable_bdsp rule (the fast CPU smoke the builder validates: does the burst rule LEARN above the memorization floor and does apical-lesion collapse it). The `sim/` machinery itself (fused_bdsp_update kernel + burst detector + apical->P routing) is exercised end-to-end by the Stage-A' bridge-detector + Stage-A'' bridge-learns smokes on a REAL SimulationBridge. The fully-on-bridge 384-width spiking net multi-seed is the CONTROLLER's GPU run. The oracle arm is a fenced backprop ceiling (task-sanity), NOT a shipped biologically-local mode. NO settling loop, NO weight transport (fixed-random Y). The sim/ diff is additive/default-off/guarded and byte-identical when enable_bdsp is False."
+}
