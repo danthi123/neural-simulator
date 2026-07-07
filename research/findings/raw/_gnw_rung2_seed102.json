@@ -1,0 +1,101 @@
+{
+  "runner": "_gnw_rung2_competitive_access_derisk",
+  "protocol": "incumbency",
+  "go": true,
+  "seed": 102,
+  "backend": "numpy",
+  "fs_to_ws": 16.0,
+  "drive_incumbent": 2500.0,
+  "drive_challengers": [
+    0.0,
+    363.6363636363636,
+    727.2727272727273,
+    1090.909090909091,
+    1454.5454545454545,
+    1818.181818181818,
+    2181.818181818182,
+    2545.4545454545455,
+    2909.090909090909,
+    3272.7272727272725,
+    3636.363636363636,
+    4000.0
+  ],
+  "a_rates": [
+    0.3333333333333333,
+    0.3333333333333333,
+    0.3333333333333333,
+    0.3333333333333333,
+    0.3333333333333333,
+    0.04242424242424243,
+    0.3333333333333333,
+    0.3333333333333333,
+    0.3333333333333333,
+    0.3333333333333333,
+    0.3333333333333333,
+    0.3333333333333333
+  ],
+  "b_rates": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.04015151515151515,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "winner_per_challenger": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "A",
+    "none",
+    "A",
+    "A",
+    "A",
+    "A",
+    "A",
+    "A"
+  ],
+  "co_ignition_any": false,
+  "a_holds_weak_challenger": true,
+  "b_takes_strong_challenger": false,
+  "crossover": false,
+  "causal_swap": {
+    "B_challenges": {
+      "A": 0.0,
+      "B": 0.3333333333333333
+    },
+    "A_challenges": {
+      "A": 0.0,
+      "B": 0.3333333333333333
+    },
+    "B_wins_when_B_challenges": true,
+    "A_wins_when_A_challenges": false
+  },
+  "lesion_both": {
+    "A": 0.3333333333333333,
+    "B": 0.3333333333333333,
+    "both_ignite": true
+  },
+  "gate_detail": {
+    "mutual_exclusion": true,
+    "inhibition_load_bearing": true,
+    "fs_to_ws": 16.0,
+    "IGNITE_FRAC": 0.5,
+    "SOLO_PLATEAU": 0.3333333333333333
+  },
+  "scoped_pending": {
+    "wta_clean_salience_takeover": false,
+    "causal_swap_membership": false,
+    "a_holds_weak": true,
+    "b_takes_strong": false,
+    "crossover": false,
+    "note": "clean salience-graded takeover + causal-swap need an async rate attractor (heterogeneity) + adaptation-based eviction (Dehaene-Changeux metastability); the synchronous period-3 limit cycle makes pulsed competition phase-erratic"
+  }
+}
