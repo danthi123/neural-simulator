@@ -309,6 +309,27 @@ class DANNReadout:
         inh = float(fwd["s_ih"][:, 0, :].sum())
         return int(np.argmax(out)), out, inh
 
+    def first_spike_times(self, f, silence_inh=False, no_spike_lesion=False):
+        """PURE SPIKE-TIMING read-out of the SAME output-LIF spike train the count read uses (byte-identical `_forward`;
+        this only reads the TIMING of `s_out`, not its count). Returns the (3,) vector of per-role FIRST-spike time-steps:
+        for each output role neuron, the index t of its FIRST spike over the READ_T window (a never-firing role gets the
+        sentinel READ_T = 'latest possible'). Spike time is a PURE communication quantity (unambiguously brain-based),
+        NOT the analog membrane -- yet it carries the SAME graded-drive info the count quantizes away: the higher-drive
+        output neuron integrates v(t)=LEAK*v(t-1)*(1-s(t-1))+drive(t) to THRESH FASTER, so it fires EARLIER. Hence on a
+        slot0 saturation count-TIE, argmin(first_spike_time) FOLLOWS THE DRIVE via spike timing alone (answer-independent
+        -- no labels, no analog read). If both roles fire on the SAME first step, latency ALSO ties (a real substrate
+        finding: pure spike timing cannot disambiguate a same-step saturation tie)."""
+        inp = self._inputs(f[None, :].astype(np.float32))       # (T, 1, feat)
+        fwd = self._forward(inp, silence_inh=silence_inh, no_spike_lesion=no_spike_lesion)
+        s_out = fwd["s_out"][:, 0, :]                            # (T, 3) per-role output spike TRAIN (same as the count read)
+        fired = s_out > 0.5                                      # (T, 3) boolean spike mask
+        # first-spike step per role: argmax over t of the boolean mask gives the FIRST True (t of first spike); a role that
+        # never fires (argmax==0 AND no spike at t=0) is assigned the sentinel READ_T ('never' = latest, never wins argmin).
+        first = np.argmax(fired, axis=0).astype(np.float64)      # (3,) index of first spike (0 if never, disambiguated next)
+        never = ~fired.any(axis=0)                               # (3,) roles with zero spikes over the whole window
+        first[never] = float(READ_T)                             # never-firing -> sentinel READ_T (loses every argmin)
+        return first
+
 
 def _ridge_readout(X, y, lam=0.1):
     """The 3-way one-hot closed-form ridge read-out matrix W (feat_dim x N_ROLES3) -- the LINEAR discriminant the analytic

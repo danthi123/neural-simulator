@@ -329,6 +329,46 @@ def _score_gradedtie(ros, res, enc, sentences, tie_margin=0):
     return (ok / max(tot, 1), s0ok / max(s0t, 1), ps_hit, ps_tot)
 
 
+def _score_latencytie(ros, res, enc, sentences, tie_margin=0):
+    """`--read latencytie` -- the SPIKE-PURE tie-break. Deploy the analytic-Dale spiking read (spike-count argmax); on an
+    EXACT slot0 spike-count TIE (top-2 counts equal within `tie_margin`), break it by FIRST-SPIKE LATENCY: the output
+    role neuron whose FIRST spike occurs EARLIEST wins (argmin of `first_spike_times`). The higher-drive neuron integrates
+    to threshold FASTER, so it fires earlier -- so this reads the SAME graded-drive info gradedtie reads, but via a PURE
+    SPIKE-TIMING quantity (spike time = communication, unambiguously brain-based) rather than the analog membrane. It is
+    answer-independent (the tie-break uses only the output spike TRAIN, no labels). Off a tie the RAW count argmax is
+    deployed unchanged; slots 1/2 are always RAW (canonical never perturbed). Returns (overall, slot0, per_slot_hits,
+    per_slot_tot). CAVEAT: if BOTH tied roles fire on the SAME first step, latency ALSO ties -> argmin picks the
+    lower-index role (AGENT) and latencytie does NOT resolve the case (a real substrate finding, reported honestly)."""
+    ok = tot = s0ok = s0t = 0
+    ps_hit = [0] * N_ROLES3; ps_tot = [0] * N_ROLES3
+    for toks, roles in sentences:
+        f = PR._feature(res, enc, toks)
+        for k, pos in enumerate(sorted(roles)):
+            if k >= N_ROLES3:
+                break
+            tgt = _ROLE_IDX[roles[pos]]
+            if tgt >= N_ROLES3:
+                continue
+            if k not in ros:
+                continue
+            _pred, out, _inh = ros[k].predict_spikes(f)              # RAW per-role output spike count (genuinely spiking)
+            o = out.astype(np.float64)
+            if k == 0:                                               # slot0: the ambiguous THEME/AGENT slot
+                top2 = np.sort(o)[::-1]
+                if (top2[0] - top2[1]) <= tie_margin:               # only intervene on a (near-)count TIE
+                    fst = ros[0].first_spike_times(f)               # break by FIRST-SPIKE LATENCY (pure spike timing)
+                    pred = int(np.argmin(fst))                      # earliest first spike wins (follows the drive)
+                else:
+                    pred = int(np.argmax(o))
+            else:
+                pred = int(np.argmax(o))                            # slots 1/2 always RAW -> canonical untouched
+            hit = int(pred == tgt)
+            ok += hit; tot += 1; ps_hit[k] += hit; ps_tot[k] += 1
+            if k == 0:
+                s0ok += hit; s0t += 1
+    return (ok / max(tot, 1), s0ok / max(s0t, 1), ps_hit, ps_tot)
+
+
 # ── per-pool GAIN normalization (Turrigiano homeostatic scaling): keep each pool in its LINEAR range at a TASK-BLIND ──
 # reference drive so the spike RATE tracks the graded drive (THEME's higher drive => more spikes => no tie). The gain is
 # a per-role POSITIVE scalar on that role's E AND I output weights (Dale-legal: positive scaling never flips a sign),
@@ -396,12 +436,13 @@ def _score_gainnorm(ros, slot_train, res, enc, sentences, target_count=2.0):
 
 def _fix_predict_slot0(ro, ro_gn, f, mechanism, bias0=None, tie_margin=0):
     """What does ONE fix predict for slot0 on feature `f`? Returns the predicted role index (0=AGENT,1=PRED,2=THEME).
-      raw       : spike-count argmax (the RAW causal control).
-      gradedtie : spike-count argmax, but on a spike-count TIE break by argmax of the graded output drive.
-      gainnorm  : spike-count argmax on the per-pool GAIN-normalized read-out `ro_gn`.
-      calibrated: spike-count argmax, but on a TIE subtract the STAGE-1 per-pool bias `bias0` (the REFUTED prior).
-    All are GENUINELY spiking (argmax over an output-LIF spike count / a per-pool bias/gain of it); NONE reads the
-    label. This is the harness for the DISTINGUISHING anti-cheat."""
+      raw        : spike-count argmax (the RAW causal control).
+      gradedtie  : spike-count argmax, but on a spike-count TIE break by argmax of the graded output drive.
+      latencytie : spike-count argmax, but on a spike-count TIE break by argmin of the FIRST-SPIKE LATENCY (SPIKE-PURE).
+      gainnorm   : spike-count argmax on the per-pool GAIN-normalized read-out `ro_gn`.
+      calibrated : spike-count argmax, but on a TIE subtract the STAGE-1 per-pool bias `bias0` (the REFUTED prior).
+    All are GENUINELY spiking (argmax over an output-LIF spike count / a per-pool bias/gain of it, or a spike-TIMING
+    quantity for latencytie); NONE reads the label. This is the harness for the DISTINGUISHING anti-cheat."""
     _p, out, _i = ro.predict_spikes(f)
     o = out.astype(np.float64)
     if mechanism == "gainnorm":
@@ -413,6 +454,8 @@ def _fix_predict_slot0(ro, ro_gn, f, mechanism, bias0=None, tie_margin=0):
         return int(np.argmax(o))
     if mechanism == "gradedtie":
         return int(np.argmax(_graded_output_drive(ro, f)))
+    if mechanism == "latencytie":
+        return int(np.argmin(ro.first_spike_times(f)))          # earliest first spike wins (SPIKE-PURE, answer-independent)
     if mechanism == "calibrated":
         return int(np.argmax(o - bias0)) if bias0 is not None else int(np.argmax(o))
     return int(np.argmax(o))
@@ -515,7 +558,7 @@ def run_distinguishing(seed, corpus):
     def _eval(ties, favoured_role):
         """For each mechanism, the fraction of the ties on which it predicts the DRIVE-FAVOURED role."""
         res_m = {}
-        for mech in ("raw", "gradedtie", "gainnorm", "calibrated"):
+        for mech in ("raw", "gradedtie", "latencytie", "gainnorm", "calibrated"):
             hits = sum(int(_fix_predict_slot0(ro0, ro0_gn, f, mech, bias0=bias0) == favoured_role)
                        for (f, _t, _o, _g) in ties)
             res_m[mech] = round(hits / max(len(ties), 1), 3)
@@ -526,7 +569,7 @@ def run_distinguishing(seed, corpus):
 
     # a genuine answer-independent fix gives the DRIVE-favoured role on BOTH populations; the THEME prior fails AGENT.
     genuine = {m: bool(agent_res.get(m, 0.0) >= 0.99 and theme_res.get(m, 0.0) >= 0.99)
-               for m in ("raw", "gradedtie", "gainnorm", "calibrated")}
+               for m in ("raw", "gradedtie", "latencytie", "gainnorm", "calibrated")}
     return {
         "seed": int(seed),
         "n_agent_favouring_ties": len(synth_agent_ties),   # SYNTHETIC (real data has none -- the load-bearing case)
@@ -568,7 +611,7 @@ def run_seed(seed, corpus, in_scale, rec_scale, t_step, read, read_t, read_in_sc
     slot_train = _cache_slot_features(res, enc, train, t_step)
     feat_dim = next(iter(slot_train.values()))[0].shape[1]
 
-    if read in ("spiking", "calibrated", "gradedtie", "gainnorm"):
+    if read in ("spiking", "calibrated", "gradedtie", "latencytie", "gainnorm"):
         # the analytic-Dale GRADED spiking read at the OVERRIDDEN op-point (the actual residual). NOTE: D._score /
         # D._cache_slot_features drive the reservoir feature via PR._feature (RES_T_STEP=12 default) -- the reservoir
         # feature statistics are UNCHANGED by --t-step for the spiking path (the spiking-read op-point is the target),
@@ -586,6 +629,10 @@ def run_seed(seed, corpus, in_scale, rec_scale, t_step, read, read_t, read_in_sc
                 # ANSWER-INDEPENDENT: on a slot0 count-tie, break by the argmax of the ACTUAL graded output drive.
                 canon_acc, canon_s0, canon_ps, canon_pt = _score_gradedtie(ros, res, enc, canon)
                 objr_acc, objr_s0, objr_ps, objr_pt = _score_gradedtie(ros, res, enc, objr)
+            elif read == "latencytie":
+                # SPIKE-PURE + ANSWER-INDEPENDENT: on a slot0 count-tie, break by argmin of the FIRST-SPIKE LATENCY.
+                canon_acc, canon_s0, canon_ps, canon_pt = _score_latencytie(ros, res, enc, canon)
+                objr_acc, objr_s0, objr_ps, objr_pt = _score_latencytie(ros, res, enc, objr)
             elif read == "gainnorm":
                 # ANSWER-INDEPENDENT: per-pool GAIN norm at a TASK-BLIND reference -> linear range -> spike RATE tracks drive.
                 canon_acc, canon_s0, canon_ps, canon_pt = _score_gainnorm(ros, slot_train, res, enc, canon)
@@ -632,7 +679,7 @@ def _print_seed(s, d):
     key = "ridge" if d["read"] == "ridge" else "spiking"     # all non-ridge reads file under "spiking_*"
     ro = d[f"{key}_objrel"]; rc = d[f"{key}_canonical"]
     tag = {"ridge": "RIDGE", "calibrated": "CALIBRATED", "gradedtie": "GRADEDTIE",
-           "gainnorm": "GAINNORM"}.get(d["read"], "SPIKING")
+           "latencytie": "LATENCYTIE", "gainnorm": "GAINNORM"}.get(d["read"], "SPIKING")
     print(f"[seed {s}] read={d['read']} in{d['in_scale']:.0f} rec{d['rec_scale']:.2f} T{d['t_step']} "
           f"readT{d['read_t']} readIn{d['read_in_scale']:.2f} readThr{d['read_thresh']:.2f} "
           f"{tag} objrel-slot0(THEME) {ro['objrel_slot0_THEME']:.2f} (objrel-acc {ro['objrel_acc']:.2f} "
@@ -653,7 +700,8 @@ def main():
                     help="per-token feature integration window (C.RES_T_STEP baseline=12; longer = more memory). "
                          "Affects the RESERVOIR feature; inert for --read spiking (that path reads the RES_T_STEP=12 "
                          "feature and sweeps the READ-OUT op-point instead).")
-    ap.add_argument("--read", choices=["ridge", "spiking", "calibrated", "gradedtie", "gainnorm"], default="ridge",
+    ap.add_argument("--read", choices=["ridge", "spiking", "calibrated", "gradedtie", "latencytie", "gainnorm"],
+                    default="ridge",
                     help="ridge = the LINEAR 'is objrel present in the feature?' read (1.00 all 10 seeds -> reservoir "
                          "is fine); spiking = the analytic-Dale GRADED spike-count read (the actual residual; 103=0.00 "
                          "104=0.33 at the baseline op-point -- the RAW causal control); calibrated = the REFUTED per-pool "
@@ -661,6 +709,9 @@ def main():
                          "gradedtie = ANSWER-INDEPENDENT: on a slot0 spike-count TIE, break by argmax of the ACTUAL "
                          "graded output DRIVE (the pre-threshold membrane the count quantizes away, from the read-out's "
                          "OWN weights -- gives whichever role the DRIVE favours, AGENT or THEME, NOT a prior); "
+                         "latencytie = SPIKE-PURE + ANSWER-INDEPENDENT: on a slot0 spike-count TIE, break by argmin of "
+                         "the FIRST-SPIKE LATENCY (the higher-drive output neuron integrates to threshold FASTER -> "
+                         "fires EARLIER; reads the SAME graded info via PURE SPIKE TIMING, not the analog membrane); "
                          "gainnorm = ANSWER-INDEPENDENT: per-pool GAIN normalization (Turrigiano) at a TASK-BLIND "
                          "reference so each pool sits in its LINEAR range -> the spike RATE tracks the graded drive -> "
                          "THEME's higher drive fires MORE -> no tie (spike-COUNT argmax kept).")
@@ -676,7 +727,8 @@ def main():
     ap.add_argument("--distinguish", action="store_true",
                     help="Run the DISTINGUISHING ANTI-CHEAT instead of the sweep: construct real slot0 spike-count TIES "
                          "with a KNOWN graded-drive direction (AGENT-favouring from canonical slot0 vs THEME-favouring "
-                         "from objrel slot0) and report what each mechanism (raw/gradedtie/gainnorm/calibrated) predicts. "
+                         "from objrel slot0) and report what each mechanism (raw/gradedtie/latencytie/gainnorm/"
+                         "calibrated) predicts. "
                          "A GENUINE answer-independent fix gives the DRIVE-FAVOURED role on BOTH (AGENT on AGENT-ties, "
                          "THEME on THEME-ties); the refuted THEME PRIOR gives THEME on both -> FAILS the AGENT case.")
     args = ap.parse_args()
@@ -695,17 +747,18 @@ def main():
             af = dd["agent_favouring_tie_gives_favoured"]; tf = dd["theme_favouring_tie_gives_favoured"]
             print(f"[seed {s} DISTINGUISH] agent-ties n={dd['n_agent_favouring_ties']} theme-ties "
                   f"n={dd['n_theme_favouring_ties']} | AGENT-favouring-tie gives-AGENT: "
-                  f"raw {af['raw']:.2f} gradedtie {af['gradedtie']:.2f} gainnorm {af['gainnorm']:.2f} "
-                  f"calibrated {af['calibrated']:.2f} | THEME-favouring-tie gives-THEME: "
-                  f"raw {tf['raw']:.2f} gradedtie {tf['gradedtie']:.2f} gainnorm {tf['gainnorm']:.2f} "
-                  f"calibrated {tf['calibrated']:.2f} | answer-independent {dd['answer_independent']}", flush=True)
+                  f"raw {af['raw']:.2f} gradedtie {af['gradedtie']:.2f} latencytie {af['latencytie']:.2f} "
+                  f"gainnorm {af['gainnorm']:.2f} calibrated {af['calibrated']:.2f} | THEME-favouring-tie gives-THEME: "
+                  f"raw {tf['raw']:.2f} gradedtie {tf['gradedtie']:.2f} latencytie {tf['latencytie']:.2f} "
+                  f"gainnorm {tf['gainnorm']:.2f} calibrated {tf['calibrated']:.2f} | "
+                  f"answer-independent {dd['answer_independent']}", flush=True)
         # aggregate: a mechanism is GENUINELY answer-independent iff it gives the DRIVE-favoured role on BOTH tie
         # populations across all seeds that HAVE an agent-favouring tie (the load-bearing case the prior fails).
         n_agent = sum(d["n_agent_favouring_ties"] for d in drows)
         n_theme = sum(d["n_theme_favouring_ties"] for d in drows)
         def _pooled(pop_key, favoured_key):
             m = {}
-            for mech in ("raw", "gradedtie", "gainnorm", "calibrated"):
+            for mech in ("raw", "gradedtie", "latencytie", "gainnorm", "calibrated"):
                 num = sum(d[pop_key][mech] * d[favoured_key] for d in drows)
                 den = sum(d[favoured_key] for d in drows)
                 m[mech] = round(num / max(den, 1), 3)
@@ -713,7 +766,7 @@ def main():
         agent_pooled = _pooled("agent_favouring_tie_gives_favoured", "n_agent_favouring_ties")
         theme_pooled = _pooled("theme_favouring_tie_gives_favoured", "n_theme_favouring_ties")
         genuine = {m: bool(agent_pooled[m] >= 0.99 and theme_pooled[m] >= 0.99)
-                   for m in ("raw", "gradedtie", "gainnorm", "calibrated")}
+                   for m in ("raw", "gradedtie", "latencytie", "gainnorm", "calibrated")}
         dagg = {
             "mode": "distinguishing_anti_cheat",
             "n_agent_favouring_ties_total": n_agent, "n_theme_favouring_ties_total": n_theme,

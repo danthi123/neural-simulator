@@ -1,0 +1,77 @@
+{
+  "rows": [
+    {
+      "seed": 101,
+      "slot0_class_counts": [
+        420,
+        0,
+        60
+      ],
+      "n_slot0_objrel": 12,
+      "n_slot0_objrel_ties": 12,
+      "emergent_raw": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.667,
+        "canonical_acc": 1.0,
+        "canonical_slot0": 1.0
+      },
+      "emergent_gradedtie": {
+        "objrel_slot0_THEME": 1.0,
+        "objrel_acc": 1.0,
+        "canonical_acc": 1.0,
+        "canonical_slot0": 1.0
+      },
+      "pre_learning_gradedtie": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.667
+      },
+      "no_reward_gradedtie": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.667
+      },
+      "dale_legal": true,
+      "elapsed_s": 40.7,
+      "raw_closes_slot0": false,
+      "gradedtie_closes_slot0": true,
+      "gradedtie_helps": true,
+      "canonical_not_regressed": true,
+      "learning_does_work": true,
+      "reward_load_bearing": true
+    }
+  ],
+  "agg": {
+    "mode": "emergent_gradedtie_smoke",
+    "seeds": [
+      101
+    ],
+    "n_seeds": 1,
+    "n_gradedtie_closes_slot0": 1,
+    "n_raw_closes_slot0": 0,
+    "n_gradedtie_helps": 1,
+    "mean_objrel_slot0_emergent_raw": 0.0,
+    "mean_objrel_slot0_emergent_gradedtie": 1.0,
+    "mean_canonical_emergent_gradedtie": 1.0,
+    "mean_objrel_slot0_pre_learning_gradedtie": 0.0,
+    "mean_objrel_slot0_no_reward_gradedtie": 0.0,
+    "per_seed_gradedtie_closes": {
+      "101": true
+    },
+    "per_seed_raw_closes": {
+      "101": false
+    },
+    "per_seed_slot0_ties": {
+      "101": [
+        12,
+        12
+      ]
+    },
+    "canonical_not_regressed_all": true,
+    "dale_legal_all": true,
+    "learning_does_work_all": true,
+    "reward_load_bearing_all": true,
+    "epochs": 300,
+    "lr": 0.01,
+    "read_t": 25,
+    "total_elapsed_s": 41.0
+  }
+}
