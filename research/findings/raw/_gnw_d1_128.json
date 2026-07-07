@@ -1,0 +1,192 @@
+{
+  "probe": "gnw_d1_spiking_bdsp",
+  "GO": false,
+  "verdict": "PARTIAL/QUALIFIED -- BDSP clearly beats the floors (held 0.664 vs single 0.503 / lesion 0.504, apical load-bearing) so the burst rule DOES add depth-credit, but it doesn't fully clear the generalization+probe bar (held 0.664, probe 0.923) at this CPU-smoke width 128 (oracle 0.854). Payeur's burst estimate improves with width -> the controller's 384-width GPU run is the decisive test. Build-informative, NOT a stop.",
+  "rule": "BDSP / Burstprop (Payeur-Naud 2021 M1.2): dw = eta*Etilde_j*(B_i - Pbar_i*E_i); event rate E = feedforward channel, burst probability P = sigmoid(beta*v_apical) via fixed-random apical feedback (no weight transport), Pbar = slow single-phase EMA baseline (init P0); the P0 moat (rest apical -> P~Pbar -> dw~0). Realized as the additive/default-off sim/ enable_bdsp kernel fused_bdsp_update + burst detector + apical-credit routing in bridge._run_one_simulation_step.",
+  "task": "depth-2 threshold-of-5-pair-XORs over 10 bits (== EMERGE-1/1b, make_task verbatim)",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "epochs": 300,
+    "lr": 0.3,
+    "batch": 128,
+    "hidden": 128,
+    "beta": 1.0,
+    "p0": 0.3,
+    "backend": "cupy"
+  },
+  "stage_a_multiplexing": {
+    "42": {
+      "corr_E_basal": 0.9993686878229077,
+      "E_invariance_to_apical": 0.20011197816718324,
+      "corr_P_apical": 0.9850672195879163,
+      "P0_rest": 0.027106549241083945,
+      "separability_R2": 0.9431807621632243,
+      "nobac_corr_P_apical": 0.0,
+      "nobac_P_mean": 0.0,
+      "confound_E_inv": 0.3195604164013292,
+      "GO": true
+    },
+    "43": {
+      "corr_E_basal": 0.9992889995064003,
+      "E_invariance_to_apical": 0.16167657648366185,
+      "corr_P_apical": 0.9743964668274068,
+      "P0_rest": 0.032945326941222805,
+      "separability_R2": 0.9386443296283209,
+      "nobac_corr_P_apical": 0.0,
+      "nobac_P_mean": 0.0,
+      "confound_E_inv": 0.3300281333420839,
+      "GO": true
+    },
+    "44": {
+      "corr_E_basal": 0.99924552678358,
+      "E_invariance_to_apical": 0.17368082078802152,
+      "corr_P_apical": 0.9721115617531463,
+      "P0_rest": 0.03109487176050644,
+      "separability_R2": 0.9267053541064454,
+      "nobac_corr_P_apical": 0.0,
+      "nobac_P_mean": 0.0,
+      "confound_E_inv": 0.35351465396459253,
+      "GO": true
+    }
+  },
+  "stage_a_bridge_detector": {
+    "ok": true,
+    "E_rest": 0.040278274565935135,
+    "B_rest": 0.15880759060382843,
+    "P_rest": 0.30000004172325134,
+    "E_apical": 0.03959008306264877,
+    "B_apical": 0.12334086000919342,
+    "P_apical": 0.9999994039535522,
+    "E_invariance": 0.01708592271185491,
+    "B_rises": false,
+    "P_rises": true
+  },
+  "stage_a_bridge_learns": {
+    "ok": true,
+    "total_abs_dw_credit": 26.586647033691406,
+    "bdsp_events_credit": 103909,
+    "total_abs_dw_moat": 29.133773803710938,
+    "bdsp_events_moat": 101662,
+    "learns": true,
+    "moat_smaller": false
+  },
+  "elapsed_seconds": 39.6,
+  "per_seed": [
+    {
+      "seed": 42,
+      "bdsp": {
+        "train": 0.7864661654135339,
+        "heldout": 0.7158774373259053,
+        "probe_latent": 0.9403899721448468,
+        "no_weight_transport": true
+      },
+      "single_layer": {
+        "train": 0.5263157894736842,
+        "heldout": 0.44846796657381616
+      },
+      "apical_lesion": {
+        "train": 0.5263157894736842,
+        "heldout": 0.45125348189415043,
+        "probe_latent": 0.5114206128133705
+      },
+      "wrong_sign": {
+        "train": 0.5263157894736842,
+        "heldout": 0.45125348189415043
+      },
+      "no_teaching_null": {
+        "train": 0.5263157894736842,
+        "heldout": 0.45125348189415043,
+        "weight_drift": 0.06883128735517847
+      },
+      "permuted": {
+        "train": 0.47218045112781953,
+        "heldout": 0.520891364902507
+      },
+      "oracle_bp": {
+        "train": 0.6045112781954888,
+        "heldout": 0.6128133704735376
+      },
+      "same_init_as_oracle": true,
+      "chance": 0.5487465181058496
+    },
+    {
+      "seed": 43,
+      "bdsp": {
+        "train": 0.6932330827067669,
+        "heldout": 0.6852367688022284,
+        "probe_latent": 0.9197771587743733,
+        "no_weight_transport": true
+      },
+      "single_layer": {
+        "train": 0.47969924812030074,
+        "heldout": 0.5376044568245125
+      },
+      "apical_lesion": {
+        "train": 0.47969924812030074,
+        "heldout": 0.5376044568245125,
+        "probe_latent": 0.5415041782729805
+      },
+      "wrong_sign": {
+        "train": 0.5203007518796993,
+        "heldout": 0.4623955431754875
+      },
+      "no_teaching_null": {
+        "train": 0.47969924812030074,
+        "heldout": 0.5376044568245125,
+        "weight_drift": 0.11629775126366447
+      },
+      "permuted": {
+        "train": 0.47969924812030074,
+        "heldout": 0.5376044568245125
+      },
+      "oracle_bp": {
+        "train": 1.0,
+        "heldout": 1.0
+      },
+      "same_init_as_oracle": true,
+      "chance": 0.5376044568245125
+    },
+    {
+      "seed": 44,
+      "bdsp": {
+        "train": 0.6646616541353384,
+        "heldout": 0.5905292479108635,
+        "probe_latent": 0.9086350974930362,
+        "no_weight_transport": true
+      },
+      "single_layer": {
+        "train": 0.48721804511278194,
+        "heldout": 0.5236768802228412
+      },
+      "apical_lesion": {
+        "train": 0.48721804511278194,
+        "heldout": 0.5236768802228412,
+        "probe_latent": 0.47520891364902507
+      },
+      "wrong_sign": {
+        "train": 0.512781954887218,
+        "heldout": 0.4763231197771588
+      },
+      "no_teaching_null": {
+        "train": 0.512781954887218,
+        "heldout": 0.4763231197771588,
+        "weight_drift": 0.0990217628958836
+      },
+      "permuted": {
+        "train": 0.5067669172932331,
+        "heldout": 0.479108635097493
+      },
+      "oracle_bp": {
+        "train": 1.0,
+        "heldout": 0.9498607242339833
+      },
+      "same_init_as_oracle": true,
+      "chance": 0.5236768802228412
+    }
+  ],
+  "HONEST_NOTE": "The PRIMARY Stage-B arm is a numpy REFERENCE of the exact `sim/` enable_bdsp rule (the fast CPU smoke the builder validates: does the burst rule LEARN above the memorization floor and does apical-lesion collapse it). The `sim/` machinery itself (fused_bdsp_update kernel + burst detector + apical->P routing) is exercised end-to-end by the Stage-A' bridge-detector + Stage-A'' bridge-learns smokes on a REAL SimulationBridge. The fully-on-bridge 384-width spiking net multi-seed is the CONTROLLER's GPU run. The oracle arm is a fenced backprop ceiling (task-sanity), NOT a shipped biologically-local mode. NO settling loop, NO weight transport (fixed-random Y). The sim/ diff is additive/default-off/guarded and byte-identical when enable_bdsp is False."
+}

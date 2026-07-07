@@ -93,6 +93,7 @@ from sim.kernels import (fused_izhikevich_legacy_dynamics_update,
                          fused_stp_decay_recovery,
                          fused_homeostasis_update,
                          fused_stdp_weight_update,
+                         fused_bdsp_update,
                          fused_eligibility_trace_decay)
 from experiment import ExperimentEngine
 from experiment.engine import experiment_config_from_dict, experiment_config_to_dict
@@ -278,6 +279,19 @@ class SimulationBridge:
         self.cp_conductance_g_coincidence = None          # slow coincidence-plateau conductance (None unless enable_coincidence_detection + a routed pathway)
         self.cp_v_apical = None                            # rung-4 two-compartment dAP apical membrane voltage (None unless enable_two_compartment_dap; lazily allocated at rest)
         self.cp_htm_z = None                               # rung-4 Stage C: per-cell low-pass dAP-rate for HTM permanence homeostasis (None unless enable_htm_learning; lazily allocated at 0)
+        # BDSP / Burstprop burst-state arrays (D1 build, 2026-07-07; Payeur-Naud 2021). All None unless
+        # cfg.enable_bdsp; lazily allocated at first step inside the guarded block. cp_bdsp_last_spike_step tracks the
+        # per-neuron step index of the last somatic spike (to detect a 2nd spike within burst_isi_threshold_ms = a
+        # BURST); cp_bdsp_E / cp_bdsp_B are per-neuron low-pass EVENT / BURST rates; cp_bdsp_P = the per-neuron burst
+        # probability sigmoid(beta * apical); cp_bdsp_Pbar = its slow EMA baseline (init bdsp_p0). cp_bdsp_apical_drive
+        # is the per-neuron top-down credit current the runner injects into the apical each step (None => no top-down).
+        self.cp_bdsp_last_spike_step = None
+        self.cp_bdsp_E = None
+        self.cp_bdsp_B = None
+        self.cp_bdsp_P = None
+        self.cp_bdsp_Pbar = None
+        self.cp_bdsp_apical_drive = None
+        self._bdsp_step_counter = 0                         # monotone step index for burst-ISI detection (BDSP only)
         self.cp_conductance_g_coincidence_rise = None     # dual-exp rise component
         self.cp_coincidence_synapse_mask = None           # bool per-synapse: True for coincidence_detector-routed synapses
         # GRADED dendritic-plateau READ-OUT (Stage 1, 2026-06-20). The SMOOTH/non-saturating sibling of
@@ -7085,6 +7099,105 @@ class SimulationBridge:
                                 self.cp_eligibility_trace[stdp_active_indices] += weight_changes
 
                             self._mock_total_plasticity_events += stdp_active_indices.size
+
+            # --- 4b'. BDSP / Burstprop (Burst-Dependent Synaptic Plasticity, D1 build 2026-07-07) ---
+            # Payeur-Naud 2021 (Nat Neurosci 10.1038/s41593-021-00857-x) + Greedy-Naud 2022 (BurstCCN). The spiking,
+            # LOCAL, three-factor deep-credit rule: the feedforward synapses learn by dw = eta*Etilde_j*(B_i-Pbar_i*E_i),
+            # where the postsynaptic BURST deviation is set by the fixed-random apical/credit feedback (routed by the
+            # runner into cp_bdsp_apical_drive -> cp_v_apical; NO weight transport). Additive + fully guarded: default
+            # cfg.enable_bdsp=False => this whole block is unreached, no cp_bdsp_* array is ever allocated, and
+            # cp_connections.data is byte-identical to today (mirrors the STDP/HTM blocks). The apical sets the LTP/LTD
+            # SIGN without changing E (the multiplexing invariant); at rest the apical is silent => P==Pbar => dw==0
+            # (the P0 no-spurious-learning moat).
+            if getattr(cfg, "enable_bdsp", False) and self.cp_connections.nnz > 0:
+                n_bd = n_neurons
+                # Lazily allocate the per-neuron burst-state arrays (only reached when enable_bdsp is True).
+                if self.cp_bdsp_E is None:
+                    self.cp_bdsp_last_spike_step = cp.full(n_bd, -1000000, dtype=cp.int64)
+                    self.cp_bdsp_E = cp.zeros(n_bd, dtype=cp.float32)
+                    self.cp_bdsp_B = cp.zeros(n_bd, dtype=cp.float32)
+                    self.cp_bdsp_P = cp.full(n_bd, cp.float32(getattr(cfg, "bdsp_p0", 0.30)), dtype=cp.float32)
+                    self.cp_bdsp_Pbar = cp.full(n_bd, cp.float32(getattr(cfg, "bdsp_p0", 0.30)), dtype=cp.float32)
+                self._bdsp_step_counter += 1
+                _bd_step = self._bdsp_step_counter
+                _isi_steps = max(1, int(round(getattr(cfg, "burst_isi_threshold_ms", 6.0) / max(cfg.dt_ms, 1e-6))))
+                _rate_tau = cp.float32(getattr(cfg, "bdsp_rate_tau", 0.90))
+                # (1) top-down credit -> apical -> burst PROBABILITY P = sigmoid(beta * scaled apical). The runner sets
+                #     cp_bdsp_apical_drive (a per-neuron top-down current); we integrate it into cp_v_apical (reusing the
+                #     two-compartment apical rest/scale) so the SAME apical voltage the two-comp DAP uses carries credit.
+                _Er = cp.float32(getattr(cfg, "apical_E_rest", -65.0))
+                if self.cp_v_apical is None:
+                    self.cp_v_apical = cp.full(n_bd, _Er, dtype=cp.float32)
+                if self.cp_bdsp_apical_drive is not None:
+                    # leaky integration of the top-down drive toward (E_rest + drive); tau = apical_tau_ms
+                    _atau = cp.float32(max(getattr(cfg, "apical_tau_ms", 15.0), 1e-6))
+                    _adt = cp.float32(cfg.dt_ms)
+                    self.cp_v_apical = self.cp_v_apical + (_adt / _atau) * (
+                        -(self.cp_v_apical - _Er) + self.cp_bdsp_apical_drive)
+                _beta = cp.float32(getattr(cfg, "bdsp_beta", 1.0))
+                _vscale = cp.float32(getattr(cfg, "bdsp_v_apical_scale", 0.05))
+                # P = sigmoid(beta * scale * (v_apical - E_rest)) -> P == 0.5 at rest-referenced 0, spanning (0,1).
+                # REST-BIAS: a bare sigmoid is 0.5 at v_apical==E_rest regardless of P0, but the P0 moat requires
+                # P(rest) == Pbar_init == bdsp_p0 (so at rest the burst-deviation B - Pbar*E == 0 => dw == 0). Add
+                # bias = logit(p0) so P(v_apical=E_rest) == p0 exactly (folds in EMERGE-4's measured LOW resting burst
+                # rate; matches the numpy BDSPNet reference). Recomputed in-kernel from bdsp_p0 (no extra field).
+                _p0c = float(min(max(getattr(cfg, "bdsp_p0", 0.30), 1e-6), 1.0 - 1e-6))
+                _bias = cp.float32(np.log(_p0c / (1.0 - _p0c)))
+                _z = _beta * _vscale * (self.cp_v_apical - _Er) + _bias
+                self.cp_bdsp_P = 1.0 / (1.0 + cp.exp(-cp.clip(_z, -30.0, 30.0)))
+                # Pbar slow single-phase EMA baseline (init bdsp_p0). NO teach/no-teach phase switch.
+                _alpha = cp.float32(getattr(cfg, "bdsp_pbar_ema_alpha", 0.05))
+                self.cp_bdsp_Pbar = self.cp_bdsp_Pbar + _alpha * (self.cp_bdsp_P - self.cp_bdsp_Pbar)
+                # (2) burst DETECTION + E/B low-pass rates. A neuron firing this step whose previous somatic spike was
+                #     within _isi_steps = a BURST (2nd-of-burst); an isolated / first spike = an EVENT. E and B are
+                #     per-neuron exponential low-pass rates (r *= tau; r[fired-kind] += (1-tau)).
+                self.cp_bdsp_E = self.cp_bdsp_E * _rate_tau
+                self.cp_bdsp_B = self.cp_bdsp_B * _rate_tau
+                if _fired_any:
+                    _dstep = _bd_step - self.cp_bdsp_last_spike_step        # steps since the neuron's previous spike
+                    _is_burst = fired_this_step & (_dstep <= _isi_steps) & (self.cp_bdsp_last_spike_step >= 0)
+                    _is_event = fired_this_step & (~_is_burst)
+                    self.cp_bdsp_E = self.cp_bdsp_E + (1.0 - _rate_tau) * _is_event.astype(cp.float32)
+                    self.cp_bdsp_B = self.cp_bdsp_B + (1.0 - _rate_tau) * _is_burst.astype(cp.float32)
+                    # advance last-spike step for neurons that fired (so the NEXT spike's ISI is measured from here)
+                    self.cp_bdsp_last_spike_step = cp.where(
+                        fired_this_step, cp.int64(_bd_step), self.cp_bdsp_last_spike_step)
+                # (3) the BDSP feedforward weight update dw = eta*Etilde_pre*(B_post - Pbar_post*E_post), gathered per
+                #     synapse from the cached COO (exactly like the STDP block), gated by cp_plasticity_rate_gain +
+                #     the per-synapse plastic mask (a frozen pathway is untouched). The PRESYNAPTIC eligibility factor
+                #     Etilde_j is the presynaptic EVENT rate cp_bdsp_E gathered on coo.row (Payeur M1.2's e_{l-1} =
+                #     the presynaptic feedforward channel = a decaying trace of the presynaptic partner's recent
+                #     events). This is self-contained (does not depend on the STDP block populating cp_eligibility_
+                #     trace) and matches the numpy BDSPNet reference (Etilde_pre = acts[k], the presyn event rate).
+                coo_bd = self._get_cached_coo()
+                etilde_pre = self.cp_bdsp_E[coo_bd.row]                 # presynaptic event rate = the eligibility factor
+                # restrict to synapses with a live presynaptic factor AND a non-negligible burst deviation (no-op
+                # everywhere else -> at rest / self-predicting P==Pbar => dev==0 => the P0 no-spurious-learning moat).
+                dev_post = self.cp_bdsp_B[coo_bd.col] - self.cp_bdsp_Pbar[coo_bd.col] * self.cp_bdsp_E[coo_bd.col]
+                active_bd = cp.where((etilde_pre > 1e-9) & (cp.abs(dev_post) > 1e-9))[0]
+                if active_bd.size > 0:
+                    cur_w = self.cp_connections.data[active_bd]
+                    new_w = fused_bdsp_update(
+                        cur_w,
+                        etilde_pre[active_bd],
+                        self.cp_bdsp_B[coo_bd.col[active_bd]],
+                        self.cp_bdsp_Pbar[coo_bd.col[active_bd]],
+                        self.cp_bdsp_E[coo_bd.col[active_bd]],
+                        cp.float32(getattr(cfg, "bdsp_learning_rate", 0.01)),
+                        cp.float32(getattr(cfg, "bdsp_w_min", -5.0)),
+                        cp.float32(getattr(cfg, "bdsp_w_max", 5.0)))
+                    # per-synapse plastic mask (a frozen pathway keeps its weight verbatim)
+                    if self.cp_synapse_plastic_mask is not None:
+                        plastic_bd = self._ensure_gate_capacity(
+                            "cp_synapse_plastic_mask", self.cp_connections.nnz,
+                            fill=False, dtype=cp.bool_)[active_bd]
+                        new_w = cp.where(plastic_bd, new_w, cur_w)
+                    # per-pathway plasticity gain in [0,1] (gain=0 => frozen; byte-inert when None)
+                    if self.cp_plasticity_rate_gain is not None:
+                        gain_bd = self.cp_plasticity_rate_gain[active_bd]
+                        new_w = cur_w + (new_w - cur_w) * gain_bd
+                    self.cp_connections.data[active_bd] = new_w
+                    self._mock_total_plasticity_events += int(active_bd.size)
 
             # --- 4c0. Neuromodulator subsystem update (Session E.1, opt-in) ---
             # Run NM production+decay BEFORE reward modulation so this step's

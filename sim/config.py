@@ -229,6 +229,33 @@ class CoreSimConfig:
     htm_lam_dep: float = 0.02                     # presynaptic depression rate (permanence decrement when pre fires without post)
     htm_z_tau: float = 0.85                       # per-cell dAP-rate low-pass factor (z *= z_tau each step)
     htm_z_star: float = 1.0                       # target dAP rate; hfac = 0.5 + 0.5*max(0, z_star - z_post)
+    # Burst-Dependent Synaptic Plasticity (BDSP / Burstprop, D1 build, 2026-07-07; Payeur-Naud 2021 Nat Neurosci
+    # 10.1038/s41593-021-00857-x, Greedy-Naud 2022 BurstCCN). The on-substrate spiking realization of the
+    # confirmed EMERGE-1b/EMERGE-3 rate-scale deep-credit result: a two-compartment spiking pyramidal MULTIPLEXES
+    # the feedforward EVENT rate (E, set by the basal drive) and the top-down BURST PROBABILITY (P = sigmoid(beta *
+    # v_apical), set by the fixed-random apical/credit feedback -- NO weight transport), and the feedforward
+    # synapses learn by the LOCAL three-factor burst rule dw = eta * Etilde_j * (B_i - Pbar_i * E_i), where
+    # B_i = burst rate (a 2nd spike within ISI < burst_isi_threshold_ms), Pbar_i = a slow per-neuron EMA of P
+    # (init bdsp_p0), Etilde_j = the PRESYNAPTIC EVENT RATE (cp_bdsp_E[coo.row], Payeur M1.2's e_{l-1} = a decaying
+    # low-pass of the presynaptic partner's recent events; NOT the signed STDP cp_eligibility_trace, whose semantics
+    # differ). At rest v_apical=0 => P ~ Pbar => dw ~ 0 (the P0 no-spurious-learning moat). The apical sets the
+    # LTP/LTD sign WITHOUT changing E (the multiplexing invariant). This is a SEPARATE plasticity rule from STDP/HTM:
+    # it reuses the two-compartment cp_v_apical apical dynamics (enable_two_compartment_dap machinery) as the credit
+    # channel + its own self-contained burst-state arrays. Default False => the burst-state arrays (cp_bdsp_*) are never allocated, the
+    # burst detector + fused_bdsp_update block in _run_one_simulation_step is unreached, and cp_connections.data is
+    # BYTE-IDENTICAL to today (mirrors enable_htm_learning / enable_two_compartment_dap exactly). The fixed-random
+    # apical feedback is a runner-side RegionPathway(plastic=False), NOT a sim/ edit. See D1 build spec
+    # 2026-07-07-D1-spiking-bdsp-build-spec.md + fused_bdsp_update in kernels.py.
+    enable_bdsp: bool = False
+    bdsp_learning_rate: float = 0.01              # eta: BDSP feedforward weight-update rate (per burst-coded step)
+    bdsp_p0: float = 0.30                          # P0: resting burst probability = Pbar init (the no-spurious-learning baseline; ~0.3 at spiking scale)
+    bdsp_beta: float = 1.0                         # beta: apical->burst-probability sigmoid slope P = sigmoid(beta * v_apical_scaled)
+    burst_isi_threshold_ms: float = 6.0            # a 2nd somatic spike within this ISI of the 1st = a BURST (else a fresh event)
+    bdsp_pbar_ema_alpha: float = 0.05              # Pbar EMA update rate: Pbar += alpha*(P - Pbar) each step (slow single-phase baseline)
+    bdsp_rate_tau: float = 0.90                    # per-neuron low-pass factor for E (event) and B (burst) rates: r *= tau; r[fired] += (1-tau)
+    bdsp_v_apical_scale: float = 0.05              # scales cp_v_apical (mV, ~[-65..+20]) into the sigmoid argument so P spans (0,1) around v_apical=E_rest -> P~Pbar
+    bdsp_w_min: float = -5.0                       # BDSP feedforward weight lower clip (signed weights: FA credit can drive LTD)
+    bdsp_w_max: float = 5.0                        # BDSP feedforward weight upper clip
     # Poirazi-Mel 2003 WEIGHTED-subunit refinement (2026-06-09). The count form above switches the plateau
     # on the bare COUNT of coincident routed inputs (c_i = mask^T @ prev_fired), so it is WEIGHT-BLIND: a
     # sparse-distinct ensemble that fires >= K cells everywhere triggers the same plateau regardless of the

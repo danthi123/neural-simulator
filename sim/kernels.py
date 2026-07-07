@@ -450,6 +450,40 @@ def fused_htm_winner_inactive_depression(w, pre_active, post_win, lam_dep_wi, w_
     return cp.clip(w - dep, w_min, w_max)
 
 @fuse()
+def fused_bdsp_update(w, etilde_pre, B_post, Pbar_post, E_post, eta, w_min, w_max):
+    """Burst-Dependent Synaptic Plasticity (BDSP / Burstprop) feedforward weight update (D1 build, 2026-07-07;
+    Payeur-Naud 2021 Nat Neurosci 10.1038/s41593-021-00857-x, eq. M1.2; Greedy-Naud 2022 BurstCCN). The spiking,
+    LOCAL, three-factor deep-credit rule that the EMERGE-1b/EMERGE-3 rate result confirmed:
+
+        dw_ij = eta * Etilde_j * ( B_i - Pbar_i * E_i )   ==   eta * Etilde_j * E_i * ( P_i - Pbar_i )
+
+    where (all PER-SYNAPSE, gathered by the caller from the cached COO exactly like `fused_stdp_weight_update`):
+      w         : current feedforward weight (in [w_min, w_max]; signed -- the apical credit can drive LTD)
+      etilde_pre: the PRESYNAPTIC eligibility trace of source j (cp_eligibility_trace gathered on coo.row) = the
+                  feedforward/event factor of the presynaptic partner (a decaying trace of its recent events).
+      B_post    : the POSTsynaptic burst rate of target i (a low-pass of 2nd-spike-within-ISI events).
+      Pbar_post : the POSTsynaptic slow EMA burst-probability baseline of i (init bdsp_p0) -- the SINGLE-PHASE
+                  constant baseline (no teach/no-teach phase switch). At rest the apical is silent => P_i == Pbar_i
+                  => the burst-deviation (B_i - Pbar_i*E_i) == 0 => dw == 0 (the P0 no-spurious-learning moat).
+      E_post    : the POSTsynaptic event rate of i (a low-pass of its somatic events) -- the multiplexed
+                  feedforward channel, INVARIANT to the apical (the multiplexing invariant).
+
+    The burst-rate DEVIATION (B_i - Pbar_i*E_i) is POSITIVE when the apical drive raises target i's burst
+    probability above its baseline (top-down says "be more active here" -> LTP) and NEGATIVE when the apical
+    suppresses it (LTD) -- so the fixed-random apical feedback sets the LTP/LTD SIGN without changing E. This is a
+    genuine three-factor rule: presynaptic activity (etilde_pre) x postsynaptic burst-deviation x eta. Fully local,
+    no weight transport (the apical feedback that shapes P/B is a SEPARATE fixed-random pathway, a runner-side
+    RegionPathway(plastic=False), never a transpose of a forward weight).
+
+    Signed-clamped to [w_min, w_max]. Pure math, no simulator deps. Called ONLY from the guarded `if cfg.enable_bdsp`
+    block in bridge._run_one_simulation_step (beside the STDP block), gated by cp_plasticity_rate_gain there, so its
+    presence is byte-inert when enable_bdsp is False (the block is unreached and this kernel is never invoked).
+    A near-no-op wherever the burst-deviation is ~0 (rest / self-predicting)."""
+    dev = B_post - Pbar_post * E_post            # burst-rate deviation = E_post * (P_post - Pbar_post)  [M1.2]
+    w_new = w + eta * etilde_pre * dev
+    return cp.clip(w_new, w_min, w_max)
+
+@fuse()
 def fused_eligibility_trace_decay(trace, decay_factor):
     """Fused kernel for eligibility trace exponential decay.
 
