@@ -22,8 +22,10 @@
       "objrel_readout_recall_passive": 0.0,
       "position_read_recall_passive": 0.0,
       "moat_false_accept": 0.0,
-      "lesion_recall_passive": 1.0,
-      "elapsed_s": 79.3
+      "encoder_lesion_recall": 1.0,
+      "reservoir_silence_recall": 0.0,
+      "lesion_recall_passive": 0.0,
+      "elapsed_s": 63.8
     }
   ],
   "agg": {
@@ -38,10 +40,12 @@
     "objrel_readout_recall_passive": 0.0,
     "position_read_recall_passive": 0.0,
     "moat_false_accept": 0.0,
-    "lesion_recall_passive": 1.0,
+    "encoder_lesion_recall": 1.0,
+    "reservoir_silence_recall": 0.0,
+    "lesion_recall_passive": 0.0,
     "dale_legal_all": true,
-    "go": false,
+    "go": true,
     "objrel_readout_generalizes_to_passive": false,
-    "elapsed_seconds": 79.3
+    "elapsed_seconds": 63.8
   }
 }

@@ -104,6 +104,54 @@ from research.runners.rf_phasor_composer import RFPhasorComposer  # noqa: E402
 N_ROLES3 = DP.N_ROLES3
 
 
+# ── the RESERVOIR-SILENCE lesion comprehender (the AIRTIGHT load-bearing control). The existing ENCODER lesion (collapse
+#    the reservoir's closed-class IDENTITY) does NOT collapse passive recall, because passive's function words {"was","by"}
+#    are OOV (not in the discovered closed class), so the closed-class lesion never touches them (the documented EMERGE-78/
+#    c2 encoder-lesion weakness). The genuinely load-bearing lesion is to SILENCE the reservoir FEATURE itself: zero the
+#    `final_state(...)` reservoir vector before the read-out, keeping ONLY the +1 bias element -> f = [0,...,0, 1.0]. Then
+#    the read-out has NO reservoir information -> it reads a constant/chance role -> the stored fact is wrong -> PASSIVE
+#    recall must COLLAPSE. This is the direct test that the reservoir COMPREHENSION is load-bearing for the pipeline turn.
+#    Reuse-by-import: a thin subclass of EMERGE-90's ObjrelReservoirComprehender, overriding ONLY comprehend to add the
+#    `reservoir_silence` mode; the encoder-`lesion` path is UNCHANGED (kept as a SEPARATE mode). NO sim/ edit. ───────────
+class ReservoirSilenceComprehender(ObjrelReservoirComprehender):
+    """ObjrelReservoirComprehender with an extra `reservoir_silence` mode: SILENCE the reservoir feature (keep only the
+    +1 bias) before the emergent read-out, so the read-out has no reservoir signal. Everything else (content-lexeme
+    slotting, the emergent read-out + gradedtie, the role->field map) is EMERGE-90's, byte-for-byte. The encoder-`lesion`
+    path is inherited UNCHANGED (a separate, orthogonal mode)."""
+
+    def comprehend(self, tokens, lesion=False, reservoir_silence=False):
+        f = np.concatenate([self.res.final_state(self.enc.encode(tokens, lesion=lesion)), [1.0]])
+        if reservoir_silence:
+            f = np.zeros_like(f)
+            f[-1] = 1.0                                   # keep ONLY the +1 bias; the reservoir vector is zeroed
+        content = [t for t, w in enumerate(tokens) if w in self.content_lex]
+        fact = {}
+        for k, t in enumerate(content):
+            if k >= N_ROLES3:
+                break
+            ri = self._role_for_slot(k, f)
+            if ri is None:
+                continue
+            field = _ROLE2FIELD.get(_ROLES[ri])
+            if field is not None and field not in fact:
+                fact[field] = tokens[t]
+        return fact
+
+
+def _recall_over_facts_ressilence(composer, comprehender, facts):
+    """Like EMERGE-90's `_recall_over_facts` but comprehends with reservoir_silence=True (the airtight load-bearing
+    lesion): COMPREHEND (reservoir silenced) -> STORE the parsed fact -> query_patient(agent, action) -> fraction
+    recalling the true patient. If the reservoir comprehension is load-bearing, this COLLAPSES."""
+    for toks, ag, ac, pt, _kind in facts:
+        fact = comprehender.comprehend(toks, reservoir_silence=True)
+        if {"agent", "action", "patient"} <= set(fact):
+            composer.store(fact["agent"], fact["action"], fact["patient"])
+    hit = 0
+    for toks, ag, ac, pt, _kind in facts:
+        hit += int(composer.query_patient(ag, ac) == pt)
+    return hit / max(1, len(facts))
+
+
 # ── PASSIVE sentence generation. "the O was Ved by the S". Content-lexeme slots (sorted content positions) = [O, Ved, S]
 #    with roles {O=THEME (slot0), Ved=PREDICATE (slot1), S=AGENT (slot2)}. The function words {"was", "by"} are NEW OOV
 #    closed words (like objrel's "that"): not in the discovered closed class -> the encoder maps them to the OPEN marker
@@ -214,7 +262,9 @@ def _derisk_one(seed):
 
     # ── comprehenders. All reuse EMERGE-90's ObjrelReservoirComprehender (emergent read-out + gradedtie + slotting);
     #    only the READ-OUT differs. gradedtie handles the slot0 THEME/AGENT tie exactly as in objrel (passive slot0=THEME). ─
-    pasv_comp = ObjrelReservoirComprehender(res, enc, ros_pasv, content_lex, gradedtie=True)          # passive-trained
+    pasv_comp = ReservoirSilenceComprehender(res, enc, ros_pasv, content_lex, gradedtie=True)         # passive-trained
+    # ^ ReservoirSilenceComprehender IS-A ObjrelReservoirComprehender: identical behaviour on the normal + encoder-lesion
+    #   paths (comprehend(reservoir_silence=False) is byte-for-byte EMERGE-90); it ONLY adds the reservoir_silence mode.
     pasv_pre_comp = ObjrelReservoirComprehender(res, enc, ros_pasv_pre, content_lex, gradedtie=True)  # PRE-learning
     objrel_comp = ObjrelReservoirComprehender(res, enc, ros_objrel, content_lex, gradedtie=True)      # EMERGE-90 read-out
     pos_comp = PositionReadComprehender(content_lex)                                                  # necessity contrast
@@ -250,9 +300,18 @@ def _derisk_one(seed):
         fa += int(comp_pasv.query_patient(s, v3q) is not None)
     moat_fa = fa / max(1, tot)
 
-    # ── COMPREHENSION-LESION: collapse the reservoir's closed-class identity -> passive role read degrades -> collapse ─
+    # ── COMPREHENSION-LESION #1 (ENCODER lesion -- the existing WEAK one): collapse the reservoir's closed-class identity.
+    #    Passive's {was,by} are OOV, so the closed-class lesion does not touch them -> passive recall does NOT collapse
+    #    (the documented EMERGE-78/c2 encoder-lesion weakness). Reported honestly alongside the airtight lesion below. ────
     comp_les = RFPhasorComposer(seed=seed, D=_D, vocab=vocab)
-    pasv_lesion_recall = _recall_over_facts(comp_les, pasv_comp, pasv_facts, lesion=True)
+    encoder_lesion_recall = _recall_over_facts(comp_les, pasv_comp, pasv_facts, lesion=True)
+
+    # ── COMPREHENSION-LESION #2 (RESERVOIR-SILENCE -- the AIRTIGHT load-bearing control, the ADD): SILENCE the reservoir
+    #    FEATURE itself (zero the final_state vector; keep only the +1 bias) -> the read-out has NO reservoir information ->
+    #    reads a constant/chance role -> the stored fact is wrong -> passive recall MUST collapse (comprehension is
+    #    load-bearing for the turn). This is the direct test the encoder lesion could not deliver on passives. ────────────
+    comp_ressil = RFPhasorComposer(seed=seed, D=_D, vocab=vocab)
+    reservoir_silence_recall = _recall_over_facts_ressilence(comp_ressil, pasv_comp, pasv_facts)
 
     elapsed = round(time.time() - t0, 1)
     return {
@@ -272,7 +331,11 @@ def _derisk_one(seed):
         "objrel_readout_recall_passive": round(objrel_recall_pasv, 3),    # generalization recall
         "position_read_recall_passive": round(position_recall_pasv, 3),   # necessity recall (LOW = passive read needed)
         "moat_false_accept": round(moat_fa, 3),                           # no-confab moat
-        "lesion_recall_passive": round(pasv_lesion_recall, 3),            # comprehension load-bearing
+        # COMPREHENSION-LESION -- report BOTH (per the task):
+        "encoder_lesion_recall": round(encoder_lesion_recall, 3),        # the EXISTING WEAK one (does NOT collapse: {was,by} OOV)
+        "reservoir_silence_recall": round(reservoir_silence_recall, 3),  # the AIRTIGHT one (MUST collapse -> load-bearing)
+        # back-compat alias for the GO gate: the load-bearing lesion is now the reservoir-silence lesion (airtight)
+        "lesion_recall_passive": round(reservoir_silence_recall, 3),
         "elapsed_s": elapsed,
     }
 
@@ -292,12 +355,16 @@ def _go(rows):
         "objrel_readout_recall_passive": mean("objrel_readout_recall_passive"),
         "position_read_recall_passive": mean("position_read_recall_passive"),
         "moat_false_accept": mean("moat_false_accept"),
-        "lesion_recall_passive": mean("lesion_recall_passive"),
+        "encoder_lesion_recall": mean("encoder_lesion_recall"),          # existing WEAK lesion (reported, NOT gating)
+        "reservoir_silence_recall": mean("reservoir_silence_recall"),    # AIRTIGHT load-bearing lesion (gates)
+        "lesion_recall_passive": mean("lesion_recall_passive"),          # alias == reservoir_silence_recall (the GO gate)
         "dale_legal_all": all(r["dale_legal_passive_readout"] for r in rows),
         # GO: the passive-trained emergent read-out drives correct PASSIVE who/what answers (>=0.85) AND does not break
-        # canonical (>=0.90) AND the no-confab moat holds (<=0.05) AND comprehension is load-bearing (lesion collapses
-        # <=0.55) AND the passive read-out is NECESSARY (a POSITION read on passive is materially lower) AND the read is
-        # EMERGENT (PRE-learning passive parse ~chance, so the plasticity did the work).
+        # canonical (>=0.90) AND the no-confab moat holds (<=0.05) AND comprehension is load-bearing (the AIRTIGHT
+        # RESERVOIR-SILENCE lesion collapses recall <=0.55 -- NOT the weak encoder lesion, which cannot bite on passives
+        # since {was,by} are OOV) AND the passive read-out is NECESSARY (a POSITION read on passive is materially lower)
+        # AND the read is EMERGENT (PRE-learning passive parse ~chance, so the plasticity did the work). `lesion_recall_
+        # passive` == reservoir_silence_recall.
         "go": (mean("passive_recall_passive") >= 0.85 and mean("passive_recall_canonical") >= 0.90
                and mean("moat_false_accept") <= 0.05 and mean("lesion_recall_passive") <= 0.55
                and (mean("passive_recall_passive") - mean("position_read_recall_passive")) >= 0.30
@@ -317,7 +384,8 @@ def _print_seed(s, d):
           f"RECALL passive-read: PASSIVE {d['passive_recall_passive']:.2f} / CANON {d['passive_recall_canonical']:.2f} "
           f"|| objrel-read-on-PASSIVE {d['objrel_readout_recall_passive']:.2f} | position-read-on-PASSIVE "
           f"{d['position_read_recall_passive']:.2f} | moat-FA {d['moat_false_accept']:.2f} | "
-          f"lesion-recall(passive) {d['lesion_recall_passive']:.2f} ({d['elapsed_s']}s)", flush=True)
+          f"LESION recall(passive): encoder(weak) {d['encoder_lesion_recall']:.2f} / RESERVOIR-SILENCE(airtight) "
+          f"{d['reservoir_silence_recall']:.2f} ({d['elapsed_s']}s)", flush=True)
 
 
 def main():
@@ -349,7 +417,9 @@ def main():
           f"read misreads the passive (recall {agg['position_read_recall_passive']:.3f}, so the emergent read-out is "
           f"NECESSARY); EMERGENT (PRE-learning parse {agg['pre_learning_parse_passive']:.3f} -> learned "
           f"{agg['passive_readout_parse_passive']:.3f}); no-confab moat {agg['moat_false_accept']:.3f} false-accept; "
-          f"comprehension-lesion collapses passive recall to {agg['lesion_recall_passive']:.3f}. GENERALIZATION: the "
+          f"the AIRTIGHT RESERVOIR-SILENCE lesion collapses passive recall to {agg['reservoir_silence_recall']:.3f} "
+          f"(the weak encoder lesion does NOT: {agg['encoder_lesion_recall']:.3f}, since passive {{was,by}} are OOV). "
+          f"GENERALIZATION: the "
           f"EMERGE-90 canonical+objrel read-out on passive recall = {agg['objrel_readout_recall_passive']:.3f} "
           f"(generalizes={agg['objrel_readout_generalizes_to_passive']}) -- so passive training "
           f"{'was NOT strictly needed' if agg['objrel_readout_generalizes_to_passive'] else 'WAS needed'}.",
