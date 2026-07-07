@@ -285,12 +285,17 @@ class SimulationBridge:
         # BURST); cp_bdsp_E / cp_bdsp_B are per-neuron low-pass EVENT / BURST rates; cp_bdsp_P = the per-neuron burst
         # probability sigmoid(beta * apical); cp_bdsp_Pbar = its slow EMA baseline (init bdsp_p0). cp_bdsp_apical_drive
         # is the per-neuron top-down credit current the runner injects into the apical each step (None => no top-down).
+        # cp_bdsp_int_drive is the SST-like INTERNEURON cancellation current (microcircuit variant only, D1 completion
+        # 2026-07-07): when enable_bdsp_microcircuit, the runner supplies W^PI @ phi(u^I) here and the guarded block
+        # integrates the DIFFERENCE (apical_drive - int_drive) into the apical, so P/B ride on the CLEAN cancelled error
+        # (noise-robust). None => the microcircuit branch is unreached => the block is byte-identical to the Burstprop path.
         self.cp_bdsp_last_spike_step = None
         self.cp_bdsp_E = None
         self.cp_bdsp_B = None
         self.cp_bdsp_P = None
         self.cp_bdsp_Pbar = None
         self.cp_bdsp_apical_drive = None
+        self.cp_bdsp_int_drive = None
         self._bdsp_step_counter = 0                         # monotone step index for burst-ISI detection (BDSP only)
         self.cp_conductance_g_coincidence_rise = None     # dual-exp rise component
         self.cp_coincidence_synapse_mask = None           # bool per-synapse: True for coincidence_detector-routed synapses
@@ -7128,12 +7133,29 @@ class SimulationBridge:
                 _Er = cp.float32(getattr(cfg, "apical_E_rest", -65.0))
                 if self.cp_v_apical is None:
                     self.cp_v_apical = cp.full(n_bd, _Er, dtype=cp.float32)
+                # MICROCIRCUIT variant (enable_bdsp_microcircuit, D1 completion 2026-07-07): the SST-like interneuron
+                # CANCELS the predictable top-down so the burst rides on the CLEAN prediction error, not the raw noisy
+                # teaching burst (noise-robust; Sacramento-Senn M2.11). Realized additively: when the runner supplies the
+                # interneuron cancellation current cp_bdsp_int_drive, the EFFECTIVE apical drive is the DIFFERENCE
+                # (raw top-down - interneuron prediction). We stash the raw drive, temporarily install the cancelled
+                # difference so the UNCHANGED leaky integration below sees it, then restore the raw drive (no in-place
+                # accumulation across steps; the runner re-supplies both currents per phase). At the self-predicting
+                # fixed point W^PI==-W^PP the residual == the backprop delta (closed-form; NO settling loop). Default
+                # path: cp_bdsp_int_drive is None OR the flag is False => this branch is unreached => the Burstprop
+                # integration below is byte-identical (itself byte-identical to today when enable_bdsp is False).
+                _bdsp_raw_apical = None
+                if getattr(cfg, "enable_bdsp_microcircuit", False) and self.cp_bdsp_int_drive is not None \
+                        and self.cp_bdsp_apical_drive is not None:
+                    _bdsp_raw_apical = self.cp_bdsp_apical_drive
+                    self.cp_bdsp_apical_drive = _bdsp_raw_apical - self.cp_bdsp_int_drive
                 if self.cp_bdsp_apical_drive is not None:
                     # leaky integration of the top-down drive toward (E_rest + drive); tau = apical_tau_ms
                     _atau = cp.float32(max(getattr(cfg, "apical_tau_ms", 15.0), 1e-6))
                     _adt = cp.float32(cfg.dt_ms)
                     self.cp_v_apical = self.cp_v_apical + (_adt / _atau) * (
                         -(self.cp_v_apical - _Er) + self.cp_bdsp_apical_drive)
+                if _bdsp_raw_apical is not None:
+                    self.cp_bdsp_apical_drive = _bdsp_raw_apical   # restore the runner-supplied raw drive (no accumulation)
                 _beta = cp.float32(getattr(cfg, "bdsp_beta", 1.0))
                 _vscale = cp.float32(getattr(cfg, "bdsp_v_apical_scale", 0.05))
                 # P = sigmoid(beta * scale * (v_apical - E_rest)) -> P == 0.5 at rest-referenced 0, spanning (0,1).

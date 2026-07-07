@@ -256,6 +256,26 @@ class CoreSimConfig:
     bdsp_v_apical_scale: float = 0.05              # scales cp_v_apical (mV, ~[-65..+20]) into the sigmoid argument so P spans (0,1) around v_apical=E_rest -> P~Pbar
     bdsp_w_min: float = -5.0                       # BDSP feedforward weight lower clip (signed weights: FA credit can drive LTD)
     bdsp_w_max: float = 5.0                        # BDSP feedforward weight upper clip
+    # BDSP MICROCIRCUIT variant (D1 completion, 2026-07-07; Sacramento-Senn 2018 + Urbanczik-Senn 2014). ONLY
+    # meaningful when enable_bdsp is also True. Raw Burstprop must LOCALLY ESTIMATE credit from a noisy per-neuron
+    # burst fraction, so its held-out accuracy is finite-sample-noise-limited (EMERGE-5c; D1 held-out 0.66 < 0.75).
+    # The FIX (EMERGE-5c-decided): an SST-like INTERNEURON population learns to CANCEL the predictable top-down
+    # feedback so the postsynaptic apical carries a CLEAN prediction ERROR (a WEIGHTED SUM over the upper layer =
+    # an average that is far less noisy than a per-unit burst fraction), NOT a raw noisy teaching burst. On the
+    # substrate this is realized with a MINIMAL delta: the runner supplies BOTH the raw top-down apical drive
+    # (cp_bdsp_apical_drive, as in Burstprop) AND the interneuron cancellation current cp_bdsp_int_drive (=
+    # W^PI @ phi(u^I), the interneuron's prediction of that top-down); the guarded block integrates the DIFFERENCE
+    # (drive - int_drive) into cp_v_apical so P/B ride on the cancelled CLEAN error. At the self-predicting fixed
+    # point W^PI == -W^PP the interneuron perfectly predicts the top-down at rest -> the residual apical == the
+    # backprop delta (the closed-form read; NO settling loop). The 3 local Urbanczik-Senn rules (M2.6 pyr-feedforward
+    # = the SOMATIC-rate difference dW = eta*(phi(u^P_soma+apical) - phi(u^P_basal))*r_pre, the microcircuit's own FF
+    # rule -- distinct from Payeur's burst-fraction M1.2 that the Burstprop path uses; M2.7 pyr->interneuron; M2.8
+    # interneuron->pyr-apical) are wired by the runner as its own RegionPathways over the bridge's graded rates (the
+    # interneuron cancellation + the somatic-rate FF read are layer-structured, so they live runner-side per the spec
+    # -- minimize the sim/ surface; the burst detector still runs as the multiplexing readout). Default False => cp_bdsp_int_drive
+    # is None, the microcircuit branch is unreached, and the block is BYTE-IDENTICAL to the Burstprop path (which is
+    # itself byte-identical to today when enable_bdsp is False). See the microcircuit section of the D1 build spec.
+    enable_bdsp_microcircuit: bool = False
     # Poirazi-Mel 2003 WEIGHTED-subunit refinement (2026-06-09). The count form above switches the plateau
     # on the bare COUNT of coincident routed inputs (c_i = mask^T @ prev_fired), so it is WEIGHT-BLIND: a
     # sparse-distinct ensemble that fires >= K cells everywhere triggers the same plateau regardless of the
