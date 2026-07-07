@@ -1,0 +1,115 @@
+{
+  "runner": "_gnw_rung4_real_faculty_wirein_derisk",
+  "seed": 43,
+  "backend": "auto",
+  "gpu": true,
+  "vocab_intersection": {
+    "workspace_members": [
+      "owl",
+      "penguin",
+      "zzz"
+    ],
+    "held_out": "owl",
+    "answer_turns": [
+      {
+        "member": "owl",
+        "property": "fly",
+        "verdict": "ANSWER",
+        "expect_surface": "the owl can fly"
+      },
+      {
+        "member": "penguin",
+        "property": "fly",
+        "verdict": "ANSWER",
+        "expect_surface": "the penguin walks"
+      }
+    ],
+    "moat_turn": {
+      "member": "zzz",
+      "property": "fly"
+    }
+  },
+  "aw_available": true,
+  "aw_note": null,
+  "turns": [
+    {
+      "member": "owl",
+      "ignited": "owl",
+      "gate": "ANSWER",
+      "reasoned": "owl",
+      "surface": "the owl can fly",
+      "spoken_subject": "owl",
+      "spell_calls": 4,
+      "expect_surface": "the owl can fly"
+    },
+    {
+      "member": "penguin",
+      "ignited": "penguin",
+      "gate": "ANSWER",
+      "reasoned": "penguin",
+      "surface": "the penguin walks",
+      "spoken_subject": "penguin",
+      "spell_calls": 3,
+      "expect_surface": "the penguin walks"
+    }
+  ],
+  "moat_turn_result": {
+    "member": "zzz",
+    "ignited": "zzz",
+    "gate": "ABSTAIN",
+    "reasoned": null,
+    "surface": null,
+    "spell_calls": 0
+  },
+  "inherited_check": {
+    "owl_reply": "Yes, an owl can fly.",
+    "owl_reply_dap_lesion": "I don't know whether an owl can fly.",
+    "inherited": true
+  },
+  "moat_ok": true,
+  "roundtrip": [
+    {
+      "member": "owl",
+      "ignited": "owl",
+      "reasoned": "owl",
+      "gate": "ANSWER",
+      "surface": "the owl can fly",
+      "spoken_subject": "owl",
+      "expect_surface": "the owl can fly",
+      "roundtrip_full": true,
+      "surface_ok": true,
+      "subject_ok": true
+    },
+    {
+      "member": "penguin",
+      "ignited": "penguin",
+      "reasoned": "penguin",
+      "gate": "ANSWER",
+      "surface": "the penguin walks",
+      "spoken_subject": "penguin",
+      "expect_surface": "the penguin walks",
+      "roundtrip_full": true,
+      "surface_ok": true,
+      "subject_ok": true
+    }
+  ],
+  "spike_spelled_check": {
+    "lesion_turns": [
+      {
+        "member": "owl",
+        "surface": "fly hawk does lurks",
+        "expect_surface": "the owl can fly"
+      },
+      {
+        "member": "penguin",
+        "surface": "does owl eagle",
+        "expect_surface": "the penguin walks"
+      }
+    ],
+    "spike_spelled": true
+  },
+  "go": true,
+  "structural_only_pass": null,
+  "elapsed_seconds": 54.0,
+  "verdict": "GO -- the GNW workspace SPEAKS its REASONED answer via the project's REAL faculties, in ONE cupy process, gate-first. The three faculties share ONLY the ignited concept's STRING: (1) the GNW workspace ignites a member and reads its identity STRING; (2) the EMERGE-52/54 inheritance REASONER decides answer-vs-abstain (gate-first); (3) on answer, the EMERGE-67/68 A->W read-out SPEAKS the frame surface, every word decoded from language_output SPIKES. THE ROUND-TRIP HOLDS (report==reasoning): the string that IGNITES == the string the reasoner reasons about == the string the A->W speaks -- 'owl' -> reason 'Yes, an owl can fly' (INHERITED; owl never taught fly, dAP-lesion collapses it) -> spike-render 'the owl can fly'; 'penguin' -> reason 'No, a penguin walks' (its own LOCOMOTION exception) -> spike-render 'the penguin walks'. The surface is GENUINELY SPIKE-SPELLED (the A->W pool->language_output lesion COLLAPSES it -- a host lookup would be unaffected). The gate-first no-confab MOAT holds BY CONSTRUCTION: igniting a never-taught concept (zzz) -> the reasoner abstains -> the A->W spell is invoked 0 times. This BREAKS Rung-3's by-construction identity critique (report and reason are completely different substrates/populations, sharing only the STRING). Reuse-by-import; NO sim/ edit. The A->W engines are GPU-trained ONCE + cached (a scale/data lever); full vocab (the RESPIRATION dimension / FISH members) is a cached-A->W rebind, not a mechanism."
+}
