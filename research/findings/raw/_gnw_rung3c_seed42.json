@@ -1,0 +1,70 @@
+{
+  "runner": "_gnw_rung3c_learned_inheritance_derisk",
+  "go": true,
+  "seed": 42,
+  "backend": "numpy",
+  "held_out_member": "canary",
+  "decisions": {
+    "robin": {
+      "report": "robin",
+      "reason": "flies"
+    },
+    "salmon": {
+      "report": "salmon",
+      "reason": "swims"
+    },
+    "canary": {
+      "report": "canary",
+      "reason": "flies"
+    }
+  },
+  "rates": {
+    "robin": {
+      "report": {
+        "robin": 0.15151515151515152,
+        "salmon": 0.0,
+        "canary": 0.0
+      },
+      "reason": {
+        "flies": 0.12121212121212122,
+        "swims": 0.0
+      }
+    },
+    "salmon": {
+      "report": {
+        "robin": 0.0,
+        "salmon": 0.15151515151515152,
+        "canary": 0.0
+      },
+      "reason": {
+        "flies": 0.0,
+        "swims": 0.12121212121212122
+      }
+    },
+    "canary": {
+      "report": {
+        "robin": 0.0,
+        "salmon": 0.0,
+        "canary": 0.15151515151515152
+      },
+      "reason": {
+        "flies": 0.12121212121212122,
+        "swims": 0.0
+      }
+    }
+  },
+  "permuted_context": {
+    "held_out_reason": "swims",
+    "collapses": true
+  },
+  "no_learning": {
+    "held_out_reason": "none",
+    "abstains": true
+  },
+  "gate_detail": {
+    "identity": true,
+    "held_out_inherits": true,
+    "permuted_collapses": true,
+    "no_learning_abstains": true
+  }
+}
