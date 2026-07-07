@@ -1,0 +1,41 @@
+{
+  "rows": [
+    {
+      "seed": 102,
+      "n_canon": 12,
+      "n_objr": 12,
+      "slot0_class_counts": [
+        420,
+        0,
+        60
+      ],
+      "dale_legal": true,
+      "objrel_readout_parse_objrel": 1.0,
+      "objrel_readout_parse_canonical": 1.0,
+      "canonical_readout_parse_objrel": 1.0,
+      "canonical_readout_parse_canonical": 1.0,
+      "pre_learning_parse_objrel": 0.0,
+      "objrel_recall_objrel": 1.0,
+      "objrel_recall_canonical": 1.0,
+      "canonical_readout_recall_objrel": 1.0,
+      "moat_false_accept": 0.0,
+      "lesion_recall_objrel": 0.0,
+      "elapsed_s": 45.3
+    }
+  ],
+  "agg": {
+    "n_seeds": 1,
+    "objrel_readout_parse_objrel": 1.0,
+    "objrel_readout_parse_canonical": 1.0,
+    "canonical_readout_parse_objrel": 1.0,
+    "pre_learning_parse_objrel": 0.0,
+    "objrel_recall_objrel": 1.0,
+    "objrel_recall_canonical": 1.0,
+    "canonical_readout_recall_objrel": 1.0,
+    "moat_false_accept": 0.0,
+    "lesion_recall_objrel": 0.0,
+    "dale_legal_all": true,
+    "go": false,
+    "elapsed_seconds": 45.3
+  }
+}
