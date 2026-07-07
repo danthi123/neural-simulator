@@ -1,0 +1,47 @@
+{
+  "rows": [
+    {
+      "seed": 43,
+      "n_canon": 12,
+      "n_pasv": 12,
+      "slot0_class_counts": [
+        420,
+        0,
+        60
+      ],
+      "dale_legal_passive_readout": true,
+      "dale_legal_objrel_readout": true,
+      "passive_readout_parse_passive": 1.0,
+      "passive_readout_parse_canonical": 1.0,
+      "objrel_readout_parse_passive": 0.0,
+      "position_read_parse_passive": 0.0,
+      "position_read_parse_canonical": 1.0,
+      "pre_learning_parse_passive": 0.0,
+      "passive_recall_passive": 1.0,
+      "passive_recall_canonical": 1.0,
+      "objrel_readout_recall_passive": 0.0,
+      "position_read_recall_passive": 0.0,
+      "moat_false_accept": 0.0,
+      "lesion_recall_passive": 1.0,
+      "elapsed_s": 77.6
+    }
+  ],
+  "agg": {
+    "n_seeds": 1,
+    "passive_readout_parse_passive": 1.0,
+    "passive_readout_parse_canonical": 1.0,
+    "objrel_readout_parse_passive": 0.0,
+    "position_read_parse_passive": 0.0,
+    "pre_learning_parse_passive": 0.0,
+    "passive_recall_passive": 1.0,
+    "passive_recall_canonical": 1.0,
+    "objrel_readout_recall_passive": 0.0,
+    "position_read_recall_passive": 0.0,
+    "moat_false_accept": 0.0,
+    "lesion_recall_passive": 1.0,
+    "dale_legal_all": true,
+    "go": false,
+    "objrel_readout_generalizes_to_passive": false,
+    "elapsed_seconds": 77.6
+  }
+}
