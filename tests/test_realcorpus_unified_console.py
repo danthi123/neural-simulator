@@ -308,6 +308,45 @@ def test_relational_answer_generated_on_spikes(relational_spiking_console):
     assert k == "moat"
 
 
+def test_relational_hedge_adjacent_unknown_vs_disjoint_and_default_off():
+    """Spreading-activation relational hedge (CYCLE 1056): with hedge_unknowns=True, a relational query about an
+    ADJACENT unknown (an animal with a code but no stored fact for the verb) gets a hedged 'probably ... like a ...'
+    best-guess; a DISJOINT token still hard-abstains (moat); default-off is byte-identical (hard-abstain)."""
+    os.environ.setdefault("SIM_BACKEND", "numpy")
+    from research.runners._realcorpus_unified_talkable_console import UnifiedTalkableConsole
+    con = UnifiedTalkableConsole(CORPUS, 256, 10, BRIDGE, seed=42, class_verb="run", exc_verb="sleep",
+                                 rel_verb="eat", hedge_unknowns=True)
+    animals = sorted(con.animals & set(con.row_of))
+    assert len(animals) >= 5
+    # use a verb the console does NOT pre-store (rel_verb='eat' seeds animal pairs at init) so held-out animals
+    # genuinely lack a fact for it -> the hedge path is exercised
+    verb = next((v for v in ("like", "see", "find", "help", "want", "need", "love") if v in con.row_of), None)
+    assert verb is not None
+    known, held = animals[:3], animals[3:]
+    for k in known:
+        con.teach_relational(k, verb, known[0] if k != known[0] else known[1])
+    # a DISJOINT token -> hard-abstain (moat preserved), even with hedging on
+    _, kd = con.ask(f"what does the zzzqqx {verb}?")
+    assert kd == "moat"
+    # ADJACENT held-out animals hedge (or moat if not code-similar) -- never a fabricated definite fact
+    kinds = []
+    for h in held:
+        out, kind = con.ask(f"what does the {h} {verb}?")
+        kinds.append(kind)
+        if kind == "hedge":
+            assert out.startswith("I'm not sure") and "probably" in out and "like a" in out, out
+        else:
+            assert kind == "moat", (h, out, kind)
+    assert "hedge" in kinds, ("no adjacent-unknown hedged", kinds)
+    # DEFAULT-OFF is byte-identical: the same held-out query hard-abstains (never hedges)
+    con_off = UnifiedTalkableConsole(CORPUS, 256, 10, BRIDGE, seed=42, class_verb="run", exc_verb="sleep",
+                                     rel_verb="eat")            # hedge_unknowns defaults False
+    for k in known:
+        con_off.teach_relational(k, verb, known[0] if k != known[0] else known[1])
+    off_kinds = {con_off.ask(f"what does the {h} {verb}?")[1] for h in held}
+    assert off_kinds == {"moat"}, off_kinds
+
+
 _TAX_TREE = "research/findings/raw/_wikidata_3level.json"
 _HAS_TAX = os.path.exists(_TAX_TREE)
 

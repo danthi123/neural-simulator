@@ -34,7 +34,8 @@ class UnifiedTalkableConsole:
 
     def __init__(self, corpus_path, K, n_clusters, bridge_path, seed, class_verb, exc_verb, rel_verb,
                  aw_seed=42, two_bridge=False, learn_corpus_facts=False, spiking_gen=False, multi_bridge=False,
-                 neural_route=False, rich_gen=False, taxonomy_qa=False, taxonomy_source="p279"):
+                 neural_route=False, rich_gen=False, taxonomy_qa=False, taxonomy_source="p279",
+                 hedge_unknowns=False):
         stories = load_token_stream_multi(corpus_path, max_stories=None)
         self.class_verb, self.exc_verb, self.rel_verb = class_verb, exc_verb, rel_verb
         # PROPERTY reasoner (rate, emergent clusters) + its codes
@@ -79,6 +80,10 @@ class UnifiedTalkableConsole:
             if len(hubs) >= N_HUB:
                 break
         codes, _ = learn_stream_codes(seed, stories, vocab, hubs, window=WINDOW)
+        # unit-normalized real codes kept for spreading-activation completion (open-world inference over relational
+        # queries: an ADJACENT unknown's answer is guessed from its nearest learned-code neighbour -- CYCLE 1052/1056)
+        self._sa_codes = codes.astype(float)
+        self._sa_codes = self._sa_codes / (np.linalg.norm(self._sa_codes, axis=1, keepdims=True) + 1e-9)
         rng = np.random.default_rng(seed)
         Z = _phasors(codes, list(range(len(vocab))), seed)
         self.svo = SVOStore(Z, list(range(len(vocab))), (_role(rng), _role(rng), _role(rng)))
@@ -180,6 +185,21 @@ class UnifiedTalkableConsole:
                 self._tax = CancellingTaxonomyQA(seed, _tree, hold_out=False)
             self._tax_leaves = set(self._tax.leaves)
             self._tax_props = set(self._tax.gp_of_property)
+
+        # SPREADING-ACTIVATION relational hedge (opt-in): a relational query about an ADJACENT unknown (a concept with
+        # a code but no stored fact for that verb) gets a HEDGED best-guess from its nearest learned-code neighbour
+        # instead of a hard abstain; a DISJOINT unknown still hard-abstains (moat preserved). Default off -> byte-
+        # identical. theta = a tightness floor from the content concepts' own neighbour cosines. CYCLE 1056.
+        self.hedge_unknowns = hedge_unknowns
+        self._sa_theta = 0.5
+        if hedge_unknowns:
+            ap = sorted(a for a in self.animals if a in self.row_of)
+            if len(ap) >= 3:
+                nn = []
+                for x in ap:
+                    cs = [float(self._sa_codes[self.row_of[x]] @ self._sa_codes[self.row_of[y]]) for y in ap if y != x]
+                    nn.append(max(cs))
+                self._sa_theta = float(np.percentile(nn, 25))     # 25th-pct nearest-neighbour tightness among knowns
 
     @staticmethod
     def _append_persist(persist, entry):
@@ -423,6 +443,27 @@ class UnifiedTalkableConsole:
         frame, _ = self.speaker.speak_frame(subj, verb)
         return frame
 
+    def _hedge_relational(self, subj, verb, vrow):
+        """Spreading-activation completion for a relational query with NO stored fact: find subj's nearest learned-code
+        neighbour that DOES have a patient for this verb; if it clears theta (adjacent unknown), return that neighbour's
+        patient as a HEDGED guess (neighbour, patient); else None (disjoint -> the caller keeps the hard-abstain/moat)."""
+        if not self.hedge_unknowns or subj not in self.row_of:
+            return None
+        best_n, best_cos, best_pat = None, -1.0, None
+        sv = self._sa_codes[self.row_of[subj]]
+        for k in {s for (s, v, o) in self.rel_facts}:            # concepts that ARE known subjects for some verb
+            if k == subj or k not in self.row_of:
+                continue
+            pat = self.svo.answer_patient(self.row_of[k], vrow)  # does k have a patient for THIS verb?
+            if pat is None:
+                continue
+            cs = float(sv @ self._sa_codes[self.row_of[k]])
+            if cs > best_cos:
+                best_cos, best_n, best_pat = cs, k, pat
+        if best_n is not None and best_cos >= self._sa_theta:
+            return best_n, self.vocab[best_pat]
+        return None
+
     def _resolve(self, word):
         """Multi-turn anaphora: a pronoun 'it'/'they' resolves to the last-mentioned subject; a real word
         updates it. Returns the resolved word (or the pronoun unchanged if there is no antecedent yet)."""
@@ -498,7 +539,11 @@ class UnifiedTalkableConsole:
                 return "I don't know", "moat"
             o = self.svo.answer_patient(self.row_of[subj], vrow)
             if o is None:
-                return "I don't know", "moat"
+                hedge = self._hedge_relational(subj, verb, vrow)   # ADJACENT unknown -> spreading-activation best-guess
+                if hedge is not None:
+                    nb, pat = hedge
+                    return f"I'm not sure, but a {subj} probably {verb}s {pat} -- like a {nb}", "hedge"
+                return "I don't know", "moat"                      # DISJOINT unknown -> hard-abstain (moat preserved)
             obj = self.vocab[o]
             return self._speak_svo(subj, verb, obj), "relational"
         if self._is(rt, "who", toks[:1] == ["who"]):              # reverse relational: who <verb>s the <obj>
