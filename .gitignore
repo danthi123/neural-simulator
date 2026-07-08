@@ -119,6 +119,12 @@ webapp/runtime/run_*.log
 # source (mirrors the corpus cache discipline).
 data/mnist.npz
 
+# Regenerable public-corpus cache (TinyStories/WikiText, ~20 MB plain text).
+# Fetched ONCE at runtime from the canonical HuggingFace/GitHub public
+# mirror by research/runners/corpus_fetch.py, then cached locally.
+# Regenerable from the public mirror; not source.
+data/corpus/
+
 # torch checkpoints (large, regenerable build artifacts -- kept local, not committed)
 *.ckpt.pt
 *.pt

@@ -1,0 +1,333 @@
+{
+  "verdict": "DEGRADES",
+  "why": "the learned structure margin is real at K=64 (+0.120, scramble/freq-only collapse) BUT the emergent stream's margin DEGRADES by K=1024 (+0.090; holds=True, scramble_collapses=True, beats_freq_only=False) WHILE the host-PPMI ceiling STILL carries structure there (host margin 0.0926721987207273 >= bar 0.03) -> the DATA has the structure but the emergent mechanism dilutes the semantic neighbourhoods as the vocab grows ==> a MECHANISM gap; dispatch a research gate (hierarchical / sparse-distributed capacity for large emergent vocab).",
+  "seeds": [
+    42
+  ],
+  "vocab_sizes": [
+    64,
+    256,
+    1024
+  ],
+  "mode": "real_corpus",
+  "corpus": "data/corpus/tinystories.txt",
+  "n_stories": 24574,
+  "n_tokens": 3927359,
+  "n_unique": 10368,
+  "config": {
+    "window": 2,
+    "n_hub": 500,
+    "hold_frac": 0.6,
+    "collapse_gap": 0.1,
+    "above_chance": 0.1,
+    "syn_occ_per_word": null
+  },
+  "detail": {
+    "per_K_learned_coherence": {
+      "64": 0.6363636363636364,
+      "256": 0.8148148148148148,
+      "1024": 0.7580645161290323
+    },
+    "per_K_scrambled_coherence": {
+      "64": 0.7272727272727273,
+      "256": 0.5925925925925926,
+      "1024": 0.5483870967741935
+    },
+    "per_K_freq_only_coherence": {
+      "64": 0.09090909090909091,
+      "256": 0.18518518518518517,
+      "1024": 0.0967741935483871
+    },
+    "per_K_host_ppmi_coherence": {
+      "64": 0.7272727272727273,
+      "256": 0.7407407407407407,
+      "1024": 0.7580645161290323
+    },
+    "per_K_learned_margin": {
+      "64": 0.1204007304862346,
+      "256": 0.13353804292706417,
+      "1024": 0.08979610070526463
+    },
+    "per_K_scrambled_margin": {
+      "64": 0.07976835139725837,
+      "256": 0.07286445127087339,
+      "1024": 0.028948599850140692
+    },
+    "per_K_freq_only_margin": {
+      "64": -0.21060238078862487,
+      "256": 0.10093799129245223,
+      "1024": 0.11135317462123442
+    },
+    "per_K_host_margin": {
+      "64": 0.1435331553721977,
+      "256": 0.12023363670761006,
+      "1024": 0.0926721987207273
+    },
+    "per_K_chance": {
+      "64": 0.25,
+      "256": 0.16666666666666666,
+      "1024": 0.125
+    },
+    "evaluable_K": [
+      64,
+      256,
+      1024
+    ],
+    "host_holds_at_largest_K": true,
+    "rarest_probe_count_at_largest_K": 293
+  },
+  "per_seed": {
+    "42": [
+      {
+        "K": 64,
+        "n_vocab": 64,
+        "n_hubs": 500,
+        "n_updates": 1493517,
+        "n_probe_words": 11,
+        "n_probe_categories": 4,
+        "per_cat_probe_counts": {
+          "animals": 3,
+          "family": 4,
+          "places": 2,
+          "toys": 2
+        },
+        "vocab_head": [
+          "hey",
+          "said",
+          "day",
+          "big",
+          "very",
+          "happy",
+          "saw",
+          "ily",
+          "play",
+          "little",
+          "time",
+          "there",
+          "named",
+          "mom",
+          "wanted",
+          "friends",
+          "nce",
+          "went",
+          "bird",
+          "upon"
+        ],
+        "probe_min_count": 8176,
+        "learned": {
+          "coherence": 0.6363636363636364,
+          "chance": 0.25,
+          "within_cos": 0.2414395842483975,
+          "between_cos": 0.1210388537621629,
+          "margin": 0.1204007304862346,
+          "pearson_vs_Strue": 0.37284113701324834,
+          "n_probe": 11,
+          "n_probe_categories": 4,
+          "eff_rank": 8.881878311471787
+        },
+        "scrambled": {
+          "coherence": 0.7272727272727273,
+          "chance": 0.25,
+          "within_cos": 0.12715129413172394,
+          "between_cos": 0.04738294273446557,
+          "margin": 0.07976835139725837,
+          "pearson_vs_Strue": 0.1847521638981609,
+          "n_probe": 11,
+          "n_probe_categories": 4,
+          "eff_rank": 7.965061018219845
+        },
+        "freq_only": {
+          "coherence": 0.09090909090909091,
+          "chance": 0.25,
+          "within_cos": 0.10724979198917094,
+          "between_cos": 0.3178521727777958,
+          "margin": -0.21060238078862487,
+          "pearson_vs_Strue": -0.0969484430015354,
+          "n_probe": 11,
+          "n_probe_categories": 4,
+          "eff_rank": 1.0011201625727437
+        },
+        "host": {
+          "coherence": 0.7272727272727273,
+          "chance": 0.25,
+          "within_cos": 0.3250721046591252,
+          "between_cos": 0.18153894928692751,
+          "margin": 0.1435331553721977,
+          "pearson_vs_Strue": 0.5040606598903514,
+          "n_probe": 11,
+          "n_probe_categories": 4,
+          "eff_rank": 9.022442299564764
+        }
+      },
+      {
+        "K": 256,
+        "n_vocab": 256,
+        "n_hubs": 500,
+        "n_updates": 1105328,
+        "n_probe_words": 27,
+        "n_probe_categories": 6,
+        "per_cat_probe_counts": {
+          "animals": 7,
+          "family": 5,
+          "actions": 5,
+          "colors": 2,
+          "places": 5,
+          "toys": 3
+        },
+        "vocab_head": [
+          "hey",
+          "said",
+          "day",
+          "big",
+          "very",
+          "happy",
+          "saw",
+          "ily",
+          "play",
+          "little",
+          "time",
+          "there",
+          "named",
+          "mom",
+          "wanted",
+          "friends",
+          "nce",
+          "went",
+          "bird",
+          "upon"
+        ],
+        "probe_min_count": 1621,
+        "learned": {
+          "coherence": 0.8148148148148148,
+          "chance": 0.16666666666666666,
+          "within_cos": 0.16181524100145384,
+          "between_cos": 0.028277198074389658,
+          "margin": 0.13353804292706417,
+          "pearson_vs_Strue": 0.47513129972560825,
+          "n_probe": 27,
+          "n_probe_categories": 6,
+          "eff_rank": 21.11499254158935
+        },
+        "scrambled": {
+          "coherence": 0.5925925925925926,
+          "chance": 0.16666666666666666,
+          "within_cos": 0.09110882260387812,
+          "between_cos": 0.01824437133300473,
+          "margin": 0.07286445127087339,
+          "pearson_vs_Strue": 0.24763691434066212,
+          "n_probe": 27,
+          "n_probe_categories": 6,
+          "eff_rank": 17.989998110724528
+        },
+        "freq_only": {
+          "coherence": 0.18518518518518517,
+          "chance": 0.16666666666666666,
+          "within_cos": 0.050395457584328895,
+          "between_cos": -0.05054253370812334,
+          "margin": 0.10093799129245223,
+          "pearson_vs_Strue": 0.03732559276893809,
+          "n_probe": 27,
+          "n_probe_categories": 6,
+          "eff_rank": 1.0014250768503912
+        },
+        "host": {
+          "coherence": 0.7407407407407407,
+          "chance": 0.16666666666666666,
+          "within_cos": 0.27687085580560333,
+          "between_cos": 0.15663721909799327,
+          "margin": 0.12023363670761006,
+          "pearson_vs_Strue": 0.49154508990961676,
+          "n_probe": 27,
+          "n_probe_categories": 6,
+          "eff_rank": 22.514042003732524
+        }
+      },
+      {
+        "K": 1024,
+        "n_vocab": 1024,
+        "n_hubs": 500,
+        "n_updates": 345502,
+        "n_probe_words": 62,
+        "n_probe_categories": 8,
+        "per_cat_probe_counts": {
+          "animals": 8,
+          "food": 8,
+          "body": 6,
+          "family": 8,
+          "actions": 8,
+          "colors": 8,
+          "places": 8,
+          "toys": 8
+        },
+        "vocab_head": [
+          "hey",
+          "said",
+          "day",
+          "big",
+          "very",
+          "happy",
+          "saw",
+          "ily",
+          "play",
+          "little",
+          "time",
+          "there",
+          "named",
+          "mom",
+          "wanted",
+          "friends",
+          "nce",
+          "went",
+          "bird",
+          "upon"
+        ],
+        "probe_min_count": 293,
+        "learned": {
+          "coherence": 0.7580645161290323,
+          "chance": 0.125,
+          "within_cos": 0.09136021276676384,
+          "between_cos": 0.0015641120614992184,
+          "margin": 0.08979610070526463,
+          "pearson_vs_Strue": 0.40935554598232693,
+          "n_probe": 62,
+          "n_probe_categories": 8,
+          "eff_rank": 49.02395993380555
+        },
+        "scrambled": {
+          "coherence": 0.5483870967741935,
+          "chance": 0.125,
+          "within_cos": 0.029471803826776916,
+          "between_cos": 0.0005232039766362215,
+          "margin": 0.028948599850140692,
+          "pearson_vs_Strue": 0.16159039986832063,
+          "n_probe": 62,
+          "n_probe_categories": 8,
+          "eff_rank": 51.47774198596059
+        },
+        "freq_only": {
+          "coherence": 0.0967741935483871,
+          "chance": 0.125,
+          "within_cos": 0.10901878308564475,
+          "between_cos": -0.0023343915355896697,
+          "margin": 0.11135317462123442,
+          "pearson_vs_Strue": 0.03506783957470527,
+          "n_probe": 62,
+          "n_probe_categories": 8,
+          "eff_rank": 1.0000453486227452
+        },
+        "host": {
+          "coherence": 0.7580645161290323,
+          "chance": 0.125,
+          "within_cos": 0.23262715280386298,
+          "between_cos": 0.13995495408313569,
+          "margin": 0.0926721987207273,
+          "pearson_vs_Strue": 0.3976126519235722,
+          "n_probe": 62,
+          "n_probe_categories": 8,
+          "eff_rank": 51.11709222438511
+        }
+      }
+    ]
+  },
+  "note": "Emergent-vocab breadth scale de-risk: the vocab is DISCOVERED from the corpus (top-K content words by frequency), the co-occurrence structure LEARNED via the emergent online stream cortex (Hebbian WM-window co-occurrence + running-freq + log-double-center, NO global PPMI matrix). The probe taxonomy is an EVALUATION YARDSTICK ONLY (it never labels the discovered vocab). Anti-cheats: scrambled-corpus (co-occurrence destroyed, unigram frequency preserved) + frequency-only baseline. NO sim/ edits; reuse-by-import."
+}
