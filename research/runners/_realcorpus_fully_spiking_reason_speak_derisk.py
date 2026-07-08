@@ -22,13 +22,15 @@ from collections import Counter
 ANS2WORD = {"yes": "fly", "no": "swim"}     # proxy A->W surfaces; idk = gate-first abstain (never spoken)
 
 
-def run(corpus_path, K, seed, epochs):
+def run(corpus_path, K, seed, epochs, diverse_readers=True, prop_k=16):
     from research.runners._emerge67_neural_spell_wirein_derisk import NeuralSpell
     _, sdr_by_row, row_to_cat, cat_ids, per = build_inputs(corpus_path, K, seed, sdr_t=50)
     # pick the largest category as the "pos" (property-taught) category
     cnt = Counter(row_to_cat.values())
     pos = max(cat_ids, key=lambda c: cnt[c])
-    probe = RealCorpusPoolerProbe(seed, sdr_by_row, row_to_cat, cat_ids, epochs=epochs)   # cupy bridge #1
+    # the CYCLE-965 diverse-subsampling population readers lift the spiking reasoner's accuracy (+18%)
+    probe = RealCorpusPoolerProbe(seed, sdr_by_row, row_to_cat, cat_ids, epochs=epochs,
+                                  prop_k=prop_k, diverse_readers=diverse_readers)   # cupy bridge #1
     speller = NeuralSpell(load=True)                                                       # cupy bridge #2
 
     # held-out members of pos (expect yes) + held-out members of other cats (expect no) + an OOV (expect idk)
@@ -57,8 +59,11 @@ def run(corpus_path, K, seed, epochs):
                 correct_spoken += 1
         transcript.append({"expect": expect, "answer": ans, "spoken_on_spikes": spoken, "renders": nr})
     spoke_acc = correct_spoken / max(1, n_spoken)
+    dec = [t for t in transcript if t["expect"] in ("yes", "no")]
+    dec_acc = float(np.mean([t["answer"] == t["expect"] for t in dec])) if dec else float("nan")
     return {"pos": pos, "transcript": transcript, "spike_render_count": renders,
-            "spoken_accuracy": spoke_acc, "moat_renders_on_abstain": moat_renders, "n_spoken": n_spoken}
+            "spoken_accuracy": spoke_acc, "moat_renders_on_abstain": moat_renders, "n_spoken": n_spoken,
+            "decision_accuracy": dec_acc}
 
 
 def main():
@@ -80,7 +85,8 @@ def main():
             arrow = (f"-> spoke '{t['spoken_on_spikes']}' ON SPIKES" if t["answer"] != "idk"
                      else "-> \"I don't know\" [MOAT: speaker NOT invoked]")
             print(f"  held-out (expect {t['expect']}) -> spiking-reasoner says {t['answer'].upper()} {arrow}", flush=True)
-        print(f"  spoken-accuracy {r['spoken_accuracy']:.3f} | spike-renders {r['spike_render_count']} | "
+        print(f"  decision-accuracy {r.get('decision_accuracy', float('nan')):.3f} (spiking reasoner vs expected) | "
+              f"spoken-accuracy {r['spoken_accuracy']:.3f} | spike-renders {r['spike_render_count']} | "
               f"moat-renders-on-abstain {r['moat_renders_on_abstain']} (must be 0)", flush=True)
 
     ok_spoke = all(r["spoken_accuracy"] >= 0.99 for r in recs)
