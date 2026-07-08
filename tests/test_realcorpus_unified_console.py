@@ -130,3 +130,33 @@ def test_multi_exception_isolation(console):
     assert console.teach_property_exception(other, "sleep")
     after, kind = console.ask(f"does a {console.exc_word} run?")  # the FIRST exception must still hold
     assert kind == "override" and after.startswith("no")
+
+
+@pytest.fixture(scope="module")
+def spiking_console():
+    """A console whose property answers are GENERATED ON SPIKES (spiking_gen): the slot ORDER is produced by
+    the EMERGE-65 self-organized spiking-Broca producer (not a host template). Built once for the module."""
+    os.environ.setdefault("SIM_BACKEND", "numpy")
+    from research.runners._realcorpus_unified_talkable_console import UnifiedTalkableConsole
+    return UnifiedTalkableConsole(CORPUS, 256, 10, BRIDGE, seed=42,
+                                  class_verb="run", exc_verb="sleep", rel_verb="eat", spiking_gen=True)
+
+
+def test_spiking_gen_property_answer_on_spikes(spiking_console):
+    """The property answer's slot ORDER is produced on spikes (spiking-Broca producer) + the gate-first moat:
+    an inheriting member -> a well-formed 'yes -- the <w> can run' with the producer invoked; an unknown word
+    -> abstain with the producer NEVER invoked (moat by construction)."""
+    con = spiking_console
+    assert con._producer is not None
+    w = next((x for x in con.prop.members[con.pos]
+              if x in con.animals and x != con.exc_word and con.ask(f"does a {x} run?")[1] == "inherit"), None)
+    if w is None:
+        pytest.skip("no inheriting animal in the discovered cluster")
+    p0 = con._producer.production_count
+    out, kind = con.ask(f"does a {w} run?")
+    assert kind == "inherit" and out.startswith("yes -- the ") and " can run" in out   # order ON SPIKES
+    assert con._producer.production_count > p0                                          # the producer generated it
+    # gate-first moat: an unknown word abstains WITHOUT invoking the producer
+    p1 = con._producer.production_count
+    _, k = con.ask("does a zzzqqx run?")
+    assert k == "moat" and con._producer.production_count == p1                          # producer NOT invoked

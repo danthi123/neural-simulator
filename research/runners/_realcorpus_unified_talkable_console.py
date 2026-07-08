@@ -33,7 +33,7 @@ class UnifiedTalkableConsole:
     """One emergent brain: property (inherit/cancel) + relational (SVO) reasoning, spoken on spikes, moat."""
 
     def __init__(self, corpus_path, K, n_clusters, bridge_path, seed, class_verb, exc_verb, rel_verb,
-                 aw_seed=42, two_bridge=False, learn_corpus_facts=False):
+                 aw_seed=42, two_bridge=False, learn_corpus_facts=False, spiking_gen=False):
         stories = load_token_stream_multi(corpus_path, max_stories=None)
         self.class_verb, self.exc_verb, self.rel_verb = class_verb, exc_verb, rel_verb
         # PROPERTY reasoner (rate, emergent clusters) + its codes
@@ -97,6 +97,18 @@ class UnifiedTalkableConsole:
                     self.svo.store(self.row_of[s], vr, self.row_of[o])
                     self.rel_facts.append((s, vb, o)); n_learned += 1
             self.n_corpus_facts = n_learned
+
+        # FULLY-SPIKING GENERATION (opt-in): the property answer's SLOT ORDER produced on spikes by the
+        # EMERGE-65 self-organized spiking-Broca producer (exact-order competitive queuing + wash-out), each
+        # word spelled on spikes by the A->W -- replacing the host f-string order in speak_frame. Gate-first:
+        # only invoked when the reasoner ANSWERS (abstain -> the producer is never called -> moat by construction).
+        self.spiking_gen = spiking_gen
+        self._producer = None
+        if spiking_gen:
+            from research.runners._emerge65_self_organized_producer_derisk import SelfOrganizedProducer
+            from research.runners._emerge62_discover_function_words_derisk import build_stream
+            sop = SelfOrganizedProducer(seed).build_from_corpus(build_stream(seed))
+            self._producer = sop.producer(spell=self.speaker.spell)
 
     @staticmethod
     def _append_persist(persist, entry):
@@ -250,6 +262,17 @@ class UnifiedTalkableConsole:
         frame, _ = self.speaker.speak_frame(subj, verb)        # "the <subj> can <verb>"
         return frame
 
+    def _gen_frame(self, subj, verb):
+        """The 'the <subj> can <verb>' frame with the SLOT ORDER produced ON SPIKES by the spiking-Broca
+        producer (when spiking_gen), each word spelled on spikes -- else the A->W speak_frame (order host-
+        templated). The fully-spiking-generated property answer."""
+        if self._producer is not None:
+            out = self._producer.speak({"gate": "ANSWER", "frame": "F_MODAL", "subject": subj, "verb": verb})
+            if out.get("surface"):
+                return out["surface"]
+        frame, _ = self.speaker.speak_frame(subj, verb)
+        return frame
+
     def _resolve(self, word):
         """Multi-turn anaphora: a pronoun 'it'/'they' resolves to the last-mentioned subject; a real word
         updates it. Returns the resolved word (or the pronoun unchanged if there is no antecedent yet)."""
@@ -316,9 +339,9 @@ class UnifiedTalkableConsole:
         pred = self.prop._predict_all(subj)
         if pred[0] == "exc":                                       # a member exception overrides -> its own verb
             verb = self.exc_verbs.get(pred[1], self.exc_verb)
-            frame, _ = self.speaker.speak_frame(subj, verb); return f"no -- {frame}", "override"
+            return f"no -- {self._gen_frame(subj, verb)}", "override"
         if pred == ("cat", self.pos):
-            frame, _ = self.speaker.speak_frame(subj, self.class_verb); return f"yes -- {frame}", "inherit"
+            return f"yes -- {self._gen_frame(subj, self.class_verb)}", "inherit"
         return "no", "other"
 
 
@@ -336,12 +359,13 @@ def main():
     ap.add_argument("--persist", default=None, help="JSON file: remember taught relational facts across sessions")
     ap.add_argument("--two-bridge", action="store_true", help="broader spoken vocab (2nd A->W bridge, ~23 nouns)")
     ap.add_argument("--learn-corpus-facts", action="store_true", help="LEARN relational facts from the corpus (not just taught)")
+    ap.add_argument("--spiking-gen", action="store_true", help="FULLY-SPIKING generation: the property answer's slot ORDER produced on spikes by the spiking-Broca producer (not a host template)")
     a = ap.parse_args()
     print(f"[UNIFIED talkable console] property (inherit/cancel) + relational (SVO), spoken on spikes, moat | "
-          f"seed={a.seed}", flush=True)
+          f"seed={a.seed}{' | SPIKING-GEN (order on spikes)' if a.spiking_gen else ''}", flush=True)
     con = UnifiedTalkableConsole(a.corpus_path, a.K, a.n_clusters, a.bridge, a.seed,
                                  a.class_verb, a.exc_verb, a.rel_verb, two_bridge=a.two_bridge,
-                                 learn_corpus_facts=a.learn_corpus_facts)
+                                 learn_corpus_facts=a.learn_corpus_facts, spiking_gen=a.spiking_gen)
     if a.learn_corpus_facts:
         print(f"  [experience] learned {getattr(con, 'n_corpus_facts', 0)} relational facts from the corpus", flush=True)
     if a.persist:
