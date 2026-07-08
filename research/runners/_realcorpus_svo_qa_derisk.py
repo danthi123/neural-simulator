@@ -60,6 +60,19 @@ class SVOStore:
                     best_o, best_score = o, mo
         return best_o                                   # None -> abstain (no-confab moat)
 
+    def answer_agent(self, verb, obj):
+        """'who <verb> <obj>?' -> the subject (agent), or None (moat) if no stored fact matches the cue.
+        The reverse query -- unbind the AGENT slot after matching verb + patient."""
+        best_a, best_score = None, -1.0
+        for f in self.facts:
+            vb, mv = self._cleanup(f * np.conj(self.VERB))
+            o, mo = self._cleanup(f * np.conj(self.PATIENT))
+            if vb == verb and o == obj and mv > MATCH_MARGIN and mo > MATCH_MARGIN:
+                a, ma = self._cleanup(f * np.conj(self.AGENT))
+                if ma > best_score:
+                    best_a, best_score = a, ma
+        return best_a                                   # None -> abstain (no-confab moat)
+
 
 def run_seed(seed, stories, K, n_facts=12):
     vocab, gfreq = discover_vocab(stories, K)

@@ -158,6 +158,18 @@ class UnifiedTalkableConsole:
                 return "I don't know", "moat"
             obj = self.vocab[o]
             return self._speak_svo(subj, verb, obj), "relational"
+        if toks[:1] == ["who"]:                                   # reverse relational: who <verb>s the <obj>
+            content = [t for t in toks[1:] if t not in ("the", "a", "an")]
+            verb = content[0] if content else None                # who eats fish -> verb=eats, obj=fish
+            obj = content[-1] if len(content) > 1 else None
+            vrow, _ = self.verb_row(verb) if verb else (None, None)
+            if obj not in self.row_of or vrow is None:
+                return "I don't know", "moat"
+            arow = self.svo.answer_agent(vrow, self.row_of[obj])
+            if arow is None:
+                return "I don't know", "moat"
+            subj = self.vocab[arow]
+            return self._speak_svo(subj, verb, obj), "relational"
         # property: does/can a X <verb>
         subj = toks[2] if len(toks) > 2 else None
         if subj not in self.prop.row_of:
@@ -208,7 +220,7 @@ def main():
                 break
             toks = q.lower().replace("?", "").replace(".", "").split()
             # TEACH (declarative, not a question): 3 content tokens = relational SVO; 2 = property exception
-            if toks and toks[0] not in ("does", "can", "what"):
+            if toks and toks[0] not in ("does", "can", "what", "who"):
                 content = [t for t in toks if t not in ("the", "a", "an")]
                 if len(content) == 3 and con.teach_relational(content[0], content[1], content[2], persist=a.persist):
                     print(f"  brain: ok, I learned that the {content[0]} {content[1]} {content[2]}.", flush=True)
