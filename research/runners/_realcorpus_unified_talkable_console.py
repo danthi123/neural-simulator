@@ -73,6 +73,14 @@ class UnifiedTalkableConsole:
             if rel_verb in self.row_of:
                 self.svo.store(self.row_of[s], self.row_of[rel_verb], self.row_of[o])
 
+    def teach_relational(self, subj, obj):
+        """Grow through conversation: store a NEW relational fact '<subj> <rel_verb> <obj>' live."""
+        if subj not in self.row_of or obj not in self.row_of or self.rel_verb not in self.row_of:
+            return False
+        self.svo.store(self.row_of[subj], self.row_of[self.rel_verb], self.row_of[obj])
+        self.rel_pairs.append((subj, obj))
+        return True
+
     def ask(self, q):
         """Route by question form: 'does a X <verb>?' -> property; 'what does the X <verb>?' -> relational."""
         toks = q.lower().replace("?", "").split()
@@ -119,13 +127,22 @@ def main():
           f"relational facts: " + ", ".join(f"'{s} {a.rel_verb}s {o}'" for s, o in con.rel_pairs), flush=True)
 
     if a.repl:
-        print(f"  [talk to the brain] property: 'does a <animal> {a.class_verb}?'  relational: 'what does the "
-              f"<animal> {a.rel_verb}?'  ('quit' to exit)", flush=True)
+        print(f"  [talk to the brain] ask: 'does a <animal> {a.class_verb}?' / 'what does the <animal> "
+              f"{a.rel_verb}?'  |  teach: 'the <animal> {a.rel_verb}s <animal>'  ('quit' to exit)", flush=True)
         import sys
         for line in sys.stdin:
             q = line.strip()
             if not q or q.lower() in ("quit", "exit"):
                 break
+            toks = q.lower().replace("?", "").replace(".", "").split()
+            # TEACH a relational fact (declarative, contains the rel-verb, not a question)
+            if toks and toks[0] not in ("does", "can", "what") and (a.rel_verb in toks or a.rel_verb + "s" in toks):
+                content = [t for t in toks if t not in ("the", "a", "an", a.rel_verb, a.rel_verb + "s")]
+                if len(content) >= 2 and con.teach_relational(content[0], content[1]):
+                    print(f"  brain: ok, I learned that the {content[0]} {a.rel_verb}s {content[1]}.", flush=True)
+                else:
+                    print(f"  brain: I can't learn that (need two words I know).", flush=True)
+                continue
             out, kind = con.ask(q)
             print(f"  brain: \"{out}\"   [{kind}]", flush=True)
         return
