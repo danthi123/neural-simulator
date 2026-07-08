@@ -103,3 +103,30 @@ def test_describe_multifact_discourse(console):
     assert kind == "describe" and "." in out and "don't know" not in out
     _, k = console.ask("tell me about the zzzqqx")
     assert k == "moat"
+
+
+def test_multiturn_anaphora(console):
+    """A pronoun 'it' resolves to the last-mentioned subject across turns."""
+    subj = console.rel_facts[0][0]
+    console.ask(f"what does the {subj} eat?")                 # establishes last_subject = subj
+    out, kind = console.ask("what does it eat?")              # 'it' -> subj (determiner-robust parse)
+    assert kind == "relational" and "don't know" not in out
+    # 'it' with the same referent gives the same answer as the explicit subject
+    assert console.ask(f"what does the {subj} eat?")[0] == out
+
+
+def test_multi_exception_isolation(console):
+    """Teaching a SECOND property exception does not flip the FIRST (self-correcting re-teach)."""
+    if console.exc_word is None:
+        pytest.skip("no setup exception member")
+    before, _ = console.ask(f"does a {console.exc_word} run?")   # the setup exception -> 'no -- ... can sleep'
+    assert before.startswith("no")
+    # teach a NEW exception on a different inheriting animal
+    other = next((w for w in console.prop.members[console.pos]
+                  if w in console.animals and w != console.exc_word
+                  and console.ask(f"does a {w} run?")[1] == "inherit"), None)
+    if other is None:
+        pytest.skip("no other inheriting animal to make a 2nd exception")
+    assert console.teach_property_exception(other, "sleep")
+    after, kind = console.ask(f"does a {console.exc_word} run?")  # the FIRST exception must still hold
+    assert kind == "override" and after.startswith("no")
