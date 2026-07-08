@@ -68,7 +68,11 @@ _PLURAL = {"mammals": "mammal", "birds": "bird", "fish": "fish", "fishes": "fish
 
 
 def _sing(w):
-    return _PLURAL.get(w, w[:-1] if w.endswith("s") and len(w) > 3 else w)
+    if w in _PLURAL:
+        return _PLURAL[w]
+    if w.endswith("ss") or w.endswith("us") or len(w) <= 3:      # class/glass/bus/lens -- not plurals
+        return w
+    return w[:-1] if w.endswith("s") else w
 
 
 def _first_sentence(text):
