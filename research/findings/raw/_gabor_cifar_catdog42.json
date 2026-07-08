@@ -1,0 +1,198 @@
+{
+  "probe": "gabor_cifar_deep_credit",
+  "seeds": [
+    42
+  ],
+  "rule": "microcircuit",
+  "config": {
+    "classes": [
+      3,
+      5
+    ],
+    "k": 2,
+    "hidden": 128,
+    "epochs": 250,
+    "lr": 0.2,
+    "batch": 64,
+    "n_per_class": 600,
+    "feature_seed": 0,
+    "feedback": "fixed",
+    "homeostasis": false,
+    "kp_lr": 0.2,
+    "kp_decay": 0.0001,
+    "beta": 1.0,
+    "p0": 0.3,
+    "backend": "numpy"
+  },
+  "elapsed_seconds": 236.7,
+  "per_seed": [
+    {
+      "seed": 42,
+      "meta": {
+        "classes": [
+          3,
+          5
+        ],
+        "class_names": [
+          "cat",
+          "dog"
+        ],
+        "n_features": 2048,
+        "n_train": 780,
+        "n_heldout": 420,
+        "per_class_total": {
+          "cat": 600,
+          "dog": 600
+        },
+        "feature_seed": 0
+      },
+      "stage0_depth_genuineness": {
+        "chance": 0.5,
+        "n_features": 2048,
+        "linear_heldout": 0.65,
+        "linear_train": 0.6871794871794872,
+        "l1_heldout": 0.5547619047619048,
+        "l1_train": 1.0,
+        "l2_heldout": 0.5904761904761905,
+        "l2_train": 1.0,
+        "l3_heldout": 0.6285714285714286,
+        "l3_train": 1.0,
+        "deep_best_heldout": 0.6285714285714286,
+        "depth_gap": -0.021428571428571463,
+        "depth_separating": false
+      },
+      "stage1_deep_credit": {
+        "rule": "microcircuit",
+        "chance": 0.5,
+        "oracle": {
+          "heldout": 0.6285714285714286,
+          "train": 1.0
+        },
+        "test_fixed": {
+          "heldout": 0.5357142857142857,
+          "train": 0.7935897435897435,
+          "per_layer_alignment": [
+            0.13087165855900684,
+            0.8488308535390409,
+            0.30891125688218074,
+            1.0
+          ],
+          "deepest_layer_alignment": 0.13087165855900684,
+          "no_weight_transport": true,
+          "probe_latent": 0.7410714285714286,
+          "feedback": "fixed",
+          "homeostasis": false
+        },
+        "test_learned": {
+          "heldout": 0.5571428571428572,
+          "train": 0.764102564102564,
+          "per_layer_alignment": [
+            0.17206387721656202,
+            0.7532213947700739,
+            0.8426819530778292,
+            1.0
+          ],
+          "deepest_layer_alignment": 0.17206387721656202,
+          "no_weight_transport": true,
+          "probe_latent": 0.7264880952380952,
+          "feedback": "learned",
+          "homeostasis": false
+        },
+        "test_learned_homeo": {
+          "heldout": 0.5,
+          "train": 0.5,
+          "per_layer_alignment": [
+            0.18264944746185507,
+            0.3169495023777825,
+            -0.5206051802526577,
+            1.0
+          ],
+          "deepest_layer_alignment": 0.18264944746185507,
+          "no_weight_transport": true,
+          "probe_latent": 0.655952380952381,
+          "feedback": "learned",
+          "homeostasis": true
+        },
+        "plain_fa": {
+          "heldout": 0.5357142857142857,
+          "train": 0.7935897435897435,
+          "per_layer_alignment": [
+            0.13087165855900684,
+            0.8488308535390409,
+            0.30891125688218074,
+            1.0
+          ],
+          "deepest_layer_alignment": 0.13087165855900684,
+          "no_weight_transport": true,
+          "probe_latent": 0.7410714285714286,
+          "feedback": "fixed",
+          "homeostasis": false
+        },
+        "single_layer": {
+          "heldout": 0.5928571428571429,
+          "train": 1.0
+        },
+        "wrong_sign": {
+          "heldout": 0.5,
+          "train": 0.5,
+          "per_layer_alignment": [
+            -0.04030242431419111,
+            -0.4994558641271296,
+            0.5406370850337866,
+            0.9999999999999998
+          ],
+          "deepest_layer_alignment": -0.04030242431419111
+        },
+        "wrong_sign_plain_fa": {
+          "heldout": 0.5,
+          "train": 0.5,
+          "per_layer_alignment": [
+            -0.04030242431419111,
+            -0.4994558641271296,
+            0.5406370850337866,
+            0.9999999999999998
+          ],
+          "deepest_layer_alignment": -0.04030242431419111
+        },
+        "permuted": {
+          "heldout": 0.4738095238095238,
+          "train": 0.8602564102564103
+        },
+        "apical_lesion": {
+          "heldout": 0.5738095238095238,
+          "train": 0.6102564102564103,
+          "per_layer_alignment": [
+            0.017410476631001617,
+            0.045064973188846794,
+            -0.004553839296920272,
+            1.0
+          ],
+          "deepest_layer_alignment": 0.017410476631001617
+        },
+        "same_init_as_oracle": true
+      }
+    }
+  ],
+  "stage0_depth_separating": false,
+  "aggregate": {
+    "deep_best_heldout": 0.6285714285714286,
+    "l1_heldout": 0.5547619047619048,
+    "depth_gap": -0.021428571428571463,
+    "oracle_heldout": 0.6285714285714286,
+    "deepest_align_test_fixed": 0.13087165855900684,
+    "deepest_align_test_learned": 0.17206387721656202,
+    "deepest_align_test_learned_homeo": 0.18264944746185507,
+    "deepest_align_plain_fa": 0.13087165855900684,
+    "best_test_deep_align": 0.18264944746185507,
+    "wrong_sign_deep_align": -0.04030242431419111,
+    "wrong_sign_fails_alignment": true,
+    "lesion_deep_align": 0.017410476631001617,
+    "lesion_collapses": true,
+    "permuted_heldout": 0.4738095238095238,
+    "permuted_chance": true,
+    "no_weight_transport": true,
+    "chance": 0.5
+  },
+  "SIGNAL": false,
+  "verdict": "STAGE-0 BOUNDARY -- V1-CIFAR-k is NOT depth-separating at k=2/H128/features=2048 (deep-best 0.629 vs 1-layer 0.555, gap -0.021). This is the wrong k, NOT a GO -- escalate (more classes / fewer-decorrelated features via --feature-seed / harder confusable subset via --class-ids 3 5 4 7) BEFORE reading the deep-credit arms. This gate is what XOR/MNIST FAILED; it must PASS first."
+}

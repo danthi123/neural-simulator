@@ -1,0 +1,198 @@
+{
+  "probe": "gabor_cifar_deep_credit",
+  "seeds": [
+    42
+  ],
+  "rule": "microcircuit",
+  "config": {
+    "classes": [
+      0,
+      1
+    ],
+    "k": 2,
+    "hidden": 128,
+    "epochs": 250,
+    "lr": 0.2,
+    "batch": 64,
+    "n_per_class": 600,
+    "feature_seed": 0,
+    "feedback": "fixed",
+    "homeostasis": false,
+    "kp_lr": 0.2,
+    "kp_decay": 0.0001,
+    "beta": 1.0,
+    "p0": 0.3,
+    "backend": "numpy"
+  },
+  "elapsed_seconds": 166.0,
+  "per_seed": [
+    {
+      "seed": 42,
+      "meta": {
+        "classes": [
+          0,
+          1
+        ],
+        "class_names": [
+          "airplane",
+          "automobile"
+        ],
+        "n_features": 1024,
+        "n_train": 780,
+        "n_heldout": 420,
+        "per_class_total": {
+          "airplane": 600,
+          "automobile": 600
+        },
+        "feature_seed": 0
+      },
+      "stage0_depth_genuineness": {
+        "chance": 0.5,
+        "n_features": 1024,
+        "linear_heldout": 0.6976190476190476,
+        "linear_train": 1.0,
+        "l1_heldout": 0.7523809523809524,
+        "l1_train": 1.0,
+        "l2_heldout": 0.7476190476190476,
+        "l2_train": 1.0,
+        "l3_heldout": 0.7571428571428571,
+        "l3_train": 1.0,
+        "deep_best_heldout": 0.7571428571428571,
+        "depth_gap": 0.004761904761904745,
+        "depth_separating": false
+      },
+      "stage1_deep_credit": {
+        "rule": "microcircuit",
+        "chance": 0.5,
+        "oracle": {
+          "heldout": 0.7571428571428571,
+          "train": 1.0
+        },
+        "test_fixed": {
+          "heldout": 0.5880952380952381,
+          "train": 0.7217948717948718,
+          "per_layer_alignment": [
+            0.3118920968955565,
+            0.8750803696315148,
+            0.32718924678726674,
+            1.0
+          ],
+          "deepest_layer_alignment": 0.3118920968955565,
+          "no_weight_transport": true,
+          "probe_latent": 0.750297619047619,
+          "feedback": "fixed",
+          "homeostasis": false
+        },
+        "test_learned": {
+          "heldout": 0.7142857142857143,
+          "train": 0.7756410256410257,
+          "per_layer_alignment": [
+            0.3305892010068128,
+            0.6868002132110415,
+            0.4199328076155055,
+            1.0
+          ],
+          "deepest_layer_alignment": 0.3305892010068128,
+          "no_weight_transport": true,
+          "probe_latent": 0.7398809523809524,
+          "feedback": "learned",
+          "homeostasis": false
+        },
+        "test_learned_homeo": {
+          "heldout": 0.6452380952380953,
+          "train": 0.7384615384615385,
+          "per_layer_alignment": [
+            -0.02437287036537826,
+            0.4482422778400866,
+            0.5734870175174975,
+            0.9999999999999998
+          ],
+          "deepest_layer_alignment": -0.02437287036537826,
+          "no_weight_transport": true,
+          "probe_latent": 0.7419642857142857,
+          "feedback": "learned",
+          "homeostasis": true
+        },
+        "plain_fa": {
+          "heldout": 0.5880952380952381,
+          "train": 0.7217948717948718,
+          "per_layer_alignment": [
+            0.3118920968955565,
+            0.8750803696315148,
+            0.32718924678726674,
+            1.0
+          ],
+          "deepest_layer_alignment": 0.3118920968955565,
+          "no_weight_transport": true,
+          "probe_latent": 0.750297619047619,
+          "feedback": "fixed",
+          "homeostasis": false
+        },
+        "single_layer": {
+          "heldout": 0.7428571428571429,
+          "train": 1.0
+        },
+        "wrong_sign": {
+          "heldout": 0.5,
+          "train": 0.5,
+          "per_layer_alignment": [
+            0.20686859819826664,
+            0.5172407644653196,
+            0.545261739997775,
+            1.0000000000000002
+          ],
+          "deepest_layer_alignment": 0.20686859819826664
+        },
+        "wrong_sign_plain_fa": {
+          "heldout": 0.5,
+          "train": 0.5,
+          "per_layer_alignment": [
+            0.20686859819826664,
+            0.5172407644653196,
+            0.545261739997775,
+            1.0000000000000002
+          ],
+          "deepest_layer_alignment": 0.20686859819826664
+        },
+        "permuted": {
+          "heldout": 0.5047619047619047,
+          "train": 0.8833333333333333
+        },
+        "apical_lesion": {
+          "heldout": 0.7285714285714285,
+          "train": 0.7282051282051282,
+          "per_layer_alignment": [
+            -0.18279179676654378,
+            -0.13491921985299926,
+            -0.04938521075713274,
+            1.0000000000000002
+          ],
+          "deepest_layer_alignment": -0.18279179676654378
+        },
+        "same_init_as_oracle": true
+      }
+    }
+  ],
+  "stage0_depth_separating": false,
+  "aggregate": {
+    "deep_best_heldout": 0.7571428571428571,
+    "l1_heldout": 0.7523809523809524,
+    "depth_gap": 0.004761904761904745,
+    "oracle_heldout": 0.7571428571428571,
+    "deepest_align_test_fixed": 0.3118920968955565,
+    "deepest_align_test_learned": 0.3305892010068128,
+    "deepest_align_test_learned_homeo": -0.02437287036537826,
+    "deepest_align_plain_fa": 0.3118920968955565,
+    "best_test_deep_align": 0.3305892010068128,
+    "wrong_sign_deep_align": 0.20686859819826664,
+    "wrong_sign_fails_alignment": true,
+    "lesion_deep_align": -0.18279179676654378,
+    "lesion_collapses": true,
+    "permuted_heldout": 0.5047619047619047,
+    "permuted_chance": true,
+    "no_weight_transport": true,
+    "chance": 0.5
+  },
+  "SIGNAL": false,
+  "verdict": "STAGE-0 BOUNDARY -- V1-CIFAR-k is NOT depth-separating at k=2/H128/features=1024 (deep-best 0.757 vs 1-layer 0.752, gap +0.005). This is the wrong k, NOT a GO -- escalate (more classes / fewer-decorrelated features via --feature-seed / harder confusable subset via --class-ids 3 5 4 7) BEFORE reading the deep-credit arms. This gate is what XOR/MNIST FAILED; it must PASS first."
+}

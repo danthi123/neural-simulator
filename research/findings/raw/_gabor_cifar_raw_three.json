@@ -1,0 +1,202 @@
+{
+  "probe": "gabor_cifar_deep_credit",
+  "seeds": [
+    42
+  ],
+  "rule": "microcircuit",
+  "config": {
+    "classes": [
+      0,
+      1,
+      2
+    ],
+    "k": 3,
+    "hidden": 128,
+    "epochs": 250,
+    "lr": 0.2,
+    "batch": 64,
+    "n_per_class": 600,
+    "feature_seed": 0,
+    "feedback": "fixed",
+    "homeostasis": false,
+    "kp_lr": 0.2,
+    "kp_decay": 0.0001,
+    "beta": 1.0,
+    "p0": 0.3,
+    "backend": "numpy"
+  },
+  "elapsed_seconds": 224.3,
+  "per_seed": [
+    {
+      "seed": 42,
+      "meta": {
+        "classes": [
+          0,
+          1,
+          2
+        ],
+        "class_names": [
+          "airplane",
+          "automobile",
+          "bird"
+        ],
+        "n_features": 1024,
+        "n_train": 1170,
+        "n_heldout": 630,
+        "per_class_total": {
+          "airplane": 600,
+          "automobile": 600,
+          "bird": 600
+        },
+        "feature_seed": 0
+      },
+      "stage0_depth_genuineness": {
+        "chance": 0.3333333333333333,
+        "n_features": 1024,
+        "linear_heldout": 0.45396825396825397,
+        "linear_train": 0.9358974358974359,
+        "l1_heldout": 0.5380952380952381,
+        "l1_train": 1.0,
+        "l2_heldout": 0.5523809523809524,
+        "l2_train": 1.0,
+        "l3_heldout": 0.5492063492063493,
+        "l3_train": 1.0,
+        "deep_best_heldout": 0.5523809523809524,
+        "depth_gap": 0.014285714285714346,
+        "depth_separating": false
+      },
+      "stage1_deep_credit": {
+        "rule": "microcircuit",
+        "chance": 0.3333333333333333,
+        "oracle": {
+          "heldout": 0.5492063492063493,
+          "train": 1.0
+        },
+        "test_fixed": {
+          "heldout": 0.5380952380952381,
+          "train": 0.6692307692307692,
+          "per_layer_alignment": [
+            0.32877054646588844,
+            0.5827435176638324,
+            0.7259864606539227,
+            1.0
+          ],
+          "deepest_layer_alignment": 0.32877054646588844,
+          "no_weight_transport": true,
+          "probe_latent": 0.7488095238095238,
+          "feedback": "fixed",
+          "homeostasis": false
+        },
+        "test_learned": {
+          "heldout": 0.47619047619047616,
+          "train": 0.5341880341880342,
+          "per_layer_alignment": [
+            0.20708178127476443,
+            0.7572740676601866,
+            0.9216269471624622,
+            1.0000000000000002
+          ],
+          "deepest_layer_alignment": 0.20708178127476443,
+          "no_weight_transport": true,
+          "probe_latent": 0.7410714285714286,
+          "feedback": "learned",
+          "homeostasis": false
+        },
+        "test_learned_homeo": {
+          "heldout": 0.4095238095238095,
+          "train": 0.4264957264957265,
+          "per_layer_alignment": [
+            -0.02269496424558578,
+            0.910514706025069,
+            0.9539925188574343,
+            1.0
+          ],
+          "deepest_layer_alignment": -0.02269496424558578,
+          "no_weight_transport": true,
+          "probe_latent": 0.7341269841269841,
+          "feedback": "learned",
+          "homeostasis": true
+        },
+        "plain_fa": {
+          "heldout": 0.5380952380952381,
+          "train": 0.6692307692307692,
+          "per_layer_alignment": [
+            0.32877054646588844,
+            0.5827435176638324,
+            0.7259864606539227,
+            1.0
+          ],
+          "deepest_layer_alignment": 0.32877054646588844,
+          "no_weight_transport": true,
+          "probe_latent": 0.7488095238095238,
+          "feedback": "fixed",
+          "homeostasis": false
+        },
+        "single_layer": {
+          "heldout": 0.5761904761904761,
+          "train": 1.0
+        },
+        "wrong_sign": {
+          "heldout": 0.3333333333333333,
+          "train": 0.3333333333333333,
+          "per_layer_alignment": [
+            0.37088971057032066,
+            0.9471699403318173,
+            0.7350118119492718,
+            1.0
+          ],
+          "deepest_layer_alignment": 0.37088971057032066
+        },
+        "wrong_sign_plain_fa": {
+          "heldout": 0.3333333333333333,
+          "train": 0.3333333333333333,
+          "per_layer_alignment": [
+            0.37088971057032066,
+            0.9471699403318173,
+            0.7350118119492718,
+            1.0
+          ],
+          "deepest_layer_alignment": 0.37088971057032066
+        },
+        "permuted": {
+          "heldout": 0.3333333333333333,
+          "train": 0.3333333333333333
+        },
+        "apical_lesion": {
+          "heldout": 0.4650793650793651,
+          "train": 0.4547008547008547,
+          "per_layer_alignment": [
+            -0.07639444275126016,
+            -0.16125311443988874,
+            -0.01671029763776134,
+            0.9999999999999999
+          ],
+          "deepest_layer_alignment": -0.07639444275126016
+        },
+        "same_init_as_oracle": true
+      }
+    }
+  ],
+  "stage0_depth_separating": false,
+  "aggregate": {
+    "deep_best_heldout": 0.5523809523809524,
+    "l1_heldout": 0.5380952380952381,
+    "depth_gap": 0.014285714285714346,
+    "oracle_heldout": 0.5492063492063493,
+    "deepest_align_test_fixed": 0.32877054646588844,
+    "deepest_align_test_learned": 0.20708178127476443,
+    "deepest_align_test_learned_homeo": -0.02269496424558578,
+    "deepest_align_plain_fa": 0.32877054646588844,
+    "best_test_deep_align": 0.32877054646588844,
+    "wrong_sign_deep_align": 0.37088971057032066,
+    "wrong_sign_fails_alignment": false,
+    "lesion_deep_align": -0.07639444275126016,
+    "lesion_collapses": true,
+    "permuted_heldout": 0.3333333333333333,
+    "permuted_chance": true,
+    "no_weight_transport": true,
+    "chance": 0.3333333333333333
+  },
+  "SIGNAL": false,
+  "verdict": "STAGE-0 BOUNDARY -- V1-CIFAR-k is NOT depth-separating at k=3/H128/features=1024 (deep-best 0.552 vs 1-layer 0.538, gap +0.014). This is the wrong k, NOT a GO -- escalate (more classes / fewer-decorrelated features via --feature-seed / harder confusable subset via --class-ids 3 5 4 7) BEFORE reading the deep-credit arms. This gate is what XOR/MNIST FAILED; it must PASS first."
+}
