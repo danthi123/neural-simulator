@@ -33,7 +33,7 @@ class UnifiedTalkableConsole:
     """One emergent brain: property (inherit/cancel) + relational (SVO) reasoning, spoken on spikes, moat."""
 
     def __init__(self, corpus_path, K, n_clusters, bridge_path, seed, class_verb, exc_verb, rel_verb,
-                 aw_seed=42, two_bridge=False):
+                 aw_seed=42, two_bridge=False, learn_corpus_facts=False):
         stories = load_token_stream_multi(corpus_path, max_stories=None)
         self.class_verb, self.exc_verb, self.rel_verb = class_verb, exc_verb, rel_verb
         # PROPERTY reasoner (rate, emergent clusters) + its codes
@@ -76,11 +76,24 @@ class UnifiedTalkableConsole:
         rng.shuffle(animals_present)
         self.rel_pairs = [(animals_present[i], animals_present[i + 1])
                           for i in range(0, len(animals_present) - 1, 2)]
-        self.rel_facts = []                                  # (subj, verb, obj) -- setup + taught
+        self.rel_facts = []                                  # (subj, verb, obj) -- setup + taught + corpus-mined
         for (s, o) in self.rel_pairs:
             if rel_verb in self.row_of:
                 self.svo.store(self.row_of[s], self.row_of[rel_verb], self.row_of[o])
                 self.rel_facts.append((s, rel_verb, o))
+        if learn_corpus_facts:                               # LEARN relational facts FROM THE CORPUS (not just taught)
+            from research.runners._realcorpus_learn_corpus_facts_derisk import mine_svo, VERBS, NOUNS_EXTRA, VERB_NORM
+            nouns = (_ANIMALS | NOUNS_EXTRA) & set(vocab)
+            verbs = [v for v in VERBS if v in self.row_of]
+            toks = [t for st in stories for t in st]
+            n_learned = 0
+            for (s, v, o), _ in mine_svo(toks, nouns, verbs).most_common(80):
+                vb = VERB_NORM.get(v, v)                      # present-tense base so queries match
+                vr, _b = self.verb_row(vb)
+                if vr is not None and s in self.row_of and o in self.row_of:
+                    self.svo.store(self.row_of[s], vr, self.row_of[o])
+                    self.rel_facts.append((s, vb, o)); n_learned += 1
+            self.n_corpus_facts = n_learned
 
     @staticmethod
     def _append_persist(persist, entry):
@@ -247,11 +260,15 @@ def main():
     ap.add_argument("--repl", action="store_true", help="interactive: type questions, the brain answers (Ctrl-D/'quit' to exit)")
     ap.add_argument("--persist", default=None, help="JSON file: remember taught relational facts across sessions")
     ap.add_argument("--two-bridge", action="store_true", help="broader spoken vocab (2nd A->W bridge, ~23 nouns)")
+    ap.add_argument("--learn-corpus-facts", action="store_true", help="LEARN relational facts from the corpus (not just taught)")
     a = ap.parse_args()
     print(f"[UNIFIED talkable console] property (inherit/cancel) + relational (SVO), spoken on spikes, moat | "
           f"seed={a.seed}", flush=True)
     con = UnifiedTalkableConsole(a.corpus_path, a.K, a.n_clusters, a.bridge, a.seed,
-                                 a.class_verb, a.exc_verb, a.rel_verb, two_bridge=a.two_bridge)
+                                 a.class_verb, a.exc_verb, a.rel_verb, two_bridge=a.two_bridge,
+                                 learn_corpus_facts=a.learn_corpus_facts)
+    if a.learn_corpus_facts:
+        print(f"  [experience] learned {getattr(con, 'n_corpus_facts', 0)} relational facts from the corpus", flush=True)
     if a.persist:
         n = con.load_persisted(a.persist)
         if n:
