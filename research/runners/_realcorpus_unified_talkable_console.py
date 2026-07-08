@@ -52,12 +52,14 @@ class UnifiedTalkableConsole:
         taught, held = _splits(self.prop.members, self.prop.cat_ids, self.prop.rng)
         self.prop.teach(taught)
         self.exc_verbs = {}                                  # exc_id -> spoken verb (per member exception)
+        self.exceptions = []                                 # (member, exc_id) -- for self-correcting re-teach
         self.last_subject = None                             # multi-turn anaphora: the last-mentioned subject
         self.exc_word = next((w for w in self.prop.members[self.pos]
                               if w in self.animals and self.prop.ask_class(self.pos, w) == "yes"), None)
         if self.exc_word:
             self.prop.teach_exception_adaptive(self.exc_word, "own", margin=2.0)
             self.exc_verbs["own"] = exc_verb
+            self.exceptions.append((self.exc_word, "own"))
 
         # RELATIONAL store (FHRR) over the SAME real-corpus codes (seed-deterministic re-learn) + spellable facts
         vocab, gfreq = discover_vocab(stories, K)
@@ -110,6 +112,13 @@ class UnifiedTalkableConsole:
             return False
         self.prop.teach_exception_adaptive(word, word, margin=2.0)   # per-word exception id
         self.exc_verbs[word] = verb
+        if (word, word) not in self.exceptions:
+            self.exceptions.append((word, word))
+        # SELF-CORRECTING re-teach: a new exception's cross-talk can flip a MARGINAL existing exception;
+        # re-teaching all exceptions repairs it (teach_exception_adaptive adds 0 drive for an already-winning
+        # exception, restores a flipped one). Fixes the multi-exception collateral (flagship CYCLE 1013).
+        for (m, eid) in self.exceptions:
+            self.prop.teach_exception_adaptive(m, eid, margin=2.0)
         if persist is not None:
             self._append_persist(persist, ["prop", word, verb])
         return True
