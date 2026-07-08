@@ -72,6 +72,46 @@ def run_seed(seed, n_tags=4, encode_steps=60, replay_steps=100, drive_pA=200.0, 
         for _ in range(steps):
             bridge._run_one_simulation_step()
 
+    def partial_cue_complete(correct_tag, cue_frac=0.5, drive_steps=15, complete_steps=40):
+        """Marr (1971) / Kandel p1361 pattern completion: drive a PARTIAL SUBSET (cue_frac) of the stored CA3 ensemble;
+        the LTP-strengthened recurrents should activate the HELD-OUT rest. Measure held-out activation for the CORRECT
+        ensemble vs OTHER ensembles. (The correct test -- vs the earlier full-cue drive, which completes even without
+        recurrent LTP per the NMDA-KO evidence.)"""
+        settle(40)
+        full = sorted(tag_idx[correct_tag])
+        if len(full) < 4:
+            return None
+        rng2 = np.random.default_rng(hash(correct_tag) % (2**31))
+        rng2.shuffle(full)
+        n_cue = max(2, int(cue_frac * len(full)))
+        cue_ids = np.array(full[:n_cue], dtype=np.int64)          # the PARTIAL cue
+        held_out = set(full[n_cue:])                              # the rest -- must be COMPLETED by recurrence
+        bridge.set_plasticity_gate("ca3_swr_burst", 1.0)
+        counts = np.zeros(len(ca3))
+        for step in range(drive_steps + complete_steps):
+            bridge.cp_external_input_current[:] = 0.0
+            if step < drive_steps:                                # drive ONLY the partial cue
+                bridge.cp_external_input_current[cp.asarray(cue_ids)] = float(drive_pA)
+            bridge._run_one_simulation_step()
+            if step >= drive_steps:                               # capture the COMPLETION window (cue removed)
+                fs = bridge.cp_firing_states
+                fs = np.asarray(fs.get() if hasattr(fs, "get") else fs)
+                counts += fs[ca3]
+        bridge.set_plasticity_gate("ca3_swr_burst", 0.0)
+        bridge.cp_external_input_current[:] = 0.0
+        # held-out completion for CORRECT vs OTHER ensembles (exclude the cued neurons from all overlaps)
+        ca3list = [int(x) for x in ca3]
+        act = {ca3list[j]: counts[j] for j in range(len(ca3list))}
+        def heldout_activation(tg):
+            g = set(tag_idx[tg]) - set(int(x) for x in cue_ids)   # its non-cued neurons
+            if not g:
+                return 0.0
+            tot = sum(act.get(i, 0) for i in g)
+            return tot / (len(g) * complete_steps)                # mean firing rate of the held-out set
+        corr = heldout_activation(correct_tag)
+        others = np.mean([heldout_activation(tg) for tg in tags if tg != correct_tag])
+        return corr - others, corr, others
+
     def swr_capture(correct_tag, with_drive, seed_steps=20):
         """Run one SWR replay event; accumulate CA3 spike counts ONLY in the POST-seed window (steps >= seed_steps)
         so the count reflects recurrence-driven pattern COMPLETION, not the direct drive; return the top-active set.
@@ -104,11 +144,14 @@ def run_seed(seed, n_tags=4, encode_steps=60, replay_steps=100, drive_pA=200.0, 
         others = np.mean([ov(tg) for tg in tags if tg != correct])
         return corr - others
 
-    nod, wd = [], []
+    # CORRECTED R-iii test (Marr 1971 / Kandel p1361): PARTIAL-cue completion on the (LTP-trained if train_ca3) CA3
+    # attractor -- drive HALF the ensemble, measure held-out completion for the correct vs other ensembles.
+    comp = []
     for tg in tags:
-        nod.append(specificity(swr_capture(tg, with_drive=False), tg))
-        wd.append(specificity(swr_capture(tg, with_drive=True), tg))
-    return {"no_drive_spec": float(np.mean(nod)), "with_drive_spec": float(np.mean(wd))}
+        r = partial_cue_complete(tg)
+        if r is not None:
+            comp.append(r[0])
+    return {"partial_completion_spec": float(np.mean(comp)) if comp else 0.0}
 
 
 def main():
@@ -117,19 +160,21 @@ def main():
     ap.add_argument("--train", action="store_true", help="train the CA3 recurrent autoassociator during encoding")
     a = ap.parse_args()
     seeds = [int(x) for x in a.seeds.split(",")]
-    print(f"[R-iii SWR reactivation probe] post-seed COMPLETION specificity, CA3-drive vs not "
-          f"| train_ca3={a.train}", flush=True)
-    ND, WD = [], []
+    print(f"[R-iii PARTIAL-CUE completion probe] Marr/Kandel-p1361: drive HALF the CA3 ensemble -> held-out completion "
+          f"(correct vs others) | LTP-trained attractor={a.train}", flush=True)
+    TR, CT = [], []
     for s in seeds:
         t0 = time.time()
-        r = run_seed(s, train_ca3=a.train)
-        ND.append(r["no_drive_spec"]); WD.append(r["with_drive_spec"])
-        print(f"  [seed {s}] NO-DRIVE spec={r['no_drive_spec']:+.3f}  WITH-DRIVE spec={r['with_drive_spec']:+.3f}  ({time.time()-t0:.0f}s)", flush=True)
-    nd, wd = float(np.mean(ND)), float(np.mean(WD))
-    confirms = wd - nd > 0.20 and wd > 0.20
-    print(f"\n  AGGREGATE: NO-DRIVE spec={nd:+.3f}  WITH-DRIVE spec={wd:+.3f}", flush=True)
-    print(f"  VERDICT: {'DIAGNOSIS-CONFIRMED' if confirms else 'INCONCLUSIVE/OTHER-BOTTLENECK'} -- "
-          f"{'the explicit CA3 DRIVE makes SWR reactivation SPECIFIC while the (c) loop (no drive) is non-specific -> the diagnosed fix (add stimulate_tag to trigger_swr_replay) is the R-iii bottleneck (failure-mode #1)' if confirms else 'the CA3 drive does NOT cleanly restore specificity here -> the bottleneck is elsewhere (consolidation / decoder / substrate), per the 2026-05-24 failure-mode #2/#3'}. NO sim/ edit.", flush=True)
+        r_tr = run_seed(s, train_ca3=True)                        # LTP-trained CA3 attractor (the Marr mechanism)
+        r_ct = run_seed(s, train_ca3=False)                       # NO-LTP control (per NMDA-KO: partial recall fails)
+        TR.append(r_tr["partial_completion_spec"]); CT.append(r_ct["partial_completion_spec"])
+        print(f"  [seed {s}] LTP-trained completion={r_tr['partial_completion_spec']:+.3f}  "
+              f"no-LTP control={r_ct['partial_completion_spec']:+.3f}  ({time.time()-t0:.0f}s)", flush=True)
+    tr, ct = float(np.mean(TR)), float(np.mean(CT))
+    go = tr > 0.05 and tr - ct > 0.03
+    print(f"\n  AGGREGATE: LTP-trained partial-completion spec={tr:+.4f}  no-LTP control={ct:+.4f}", flush=True)
+    print(f"  VERDICT: {'COMPLETION-PRESENT' if go else 'NO-COMPLETION'} -- "
+          f"{'the LTP-trained CA3 recurrents COMPLETE the held-out ensemble from a partial cue (> no-LTP control) -> the Marr autoassociator works on this substrate; the R-iii path is a partial-cue completion (NOT full-drive hold)' if go else 'even the LTP-trained CA3 does not complete the held-out ensemble from a partial cue here -> the minimal substrate needs the fuller D.13/D.05 attractor regime (denser recurrents / more encoding / theta-paced readout) to form a Marr attractor; honest boundary'}. NO sim/ edit.", flush=True)
 
 
 if __name__ == "__main__":
