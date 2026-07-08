@@ -1,0 +1,442 @@
+{
+  "isa": {
+    "cetacea": [
+      "mammal"
+    ],
+    "elephant": [
+      "mammal"
+    ],
+    "primate": [
+      "mammal"
+    ],
+    "artiodactyla": [
+      "mammal"
+    ],
+    "marsupial": [
+      "mammal"
+    ],
+    "ungulate": [
+      "mammal"
+    ],
+    "placentalia": [
+      "mammal"
+    ],
+    "pinnipedia": [
+      "mammal"
+    ],
+    "aardvark": [
+      "mammal"
+    ],
+    "rhinoceros": [
+      "mammal"
+    ],
+    "dinocerata": [
+      "mammal"
+    ],
+    "skunk": [
+      "mammal"
+    ],
+    "micromammal": [
+      "mammal"
+    ],
+    "pumapard": [
+      "mammal"
+    ],
+    "animals": [
+      "mammal"
+    ],
+    "zorse": [
+      "mammal"
+    ],
+    "rat": [
+      "mammal"
+    ],
+    "afghanistan": [
+      "mammal"
+    ],
+    "zealand": [
+      "mammal"
+    ],
+    "spermophilus": [
+      "mammal"
+    ],
+    "ciconiiformes": [
+      "bird"
+    ],
+    "strigiformes": [
+      "bird"
+    ],
+    "robin": [
+      "bird"
+    ],
+    "stork": [
+      "bird"
+    ],
+    "passer": [
+      "bird"
+    ],
+    "swan": [
+      "bird"
+    ],
+    "vulture": [
+      "bird"
+    ],
+    "peafowl": [
+      "bird"
+    ],
+    "chick": [
+      "bird"
+    ],
+    "esocinae": [
+      "fish"
+    ],
+    "shark": [
+      "fish"
+    ],
+    "marcidus": [
+      "fish"
+    ],
+    "menhaden": [
+      "fish"
+    ],
+    "lamniformes": [
+      "fish"
+    ],
+    "clownfish": [
+      "fish"
+    ],
+    "whitefish": [
+      "fish"
+    ],
+    "smelt": [
+      "fish"
+    ],
+    "snakehead": [
+      "fish"
+    ],
+    "bass": [
+      "fish"
+    ],
+    "hake": [
+      "fish"
+    ],
+    "mouthbrooder": [
+      "fish"
+    ],
+    "ichthyofauna": [
+      "fish"
+    ],
+    "ichthyodectiformes": [
+      "fish"
+    ],
+    "fish": [
+      "animal",
+      "life"
+    ],
+    "bee": [
+      "insect"
+    ],
+    "beetle": [
+      "insect"
+    ],
+    "blattodea": [
+      "insect"
+    ],
+    "bombus": [
+      "insect"
+    ],
+    "imago": [
+      "insect"
+    ],
+    "queen": [
+      "insect"
+    ],
+    "tetrigidae": [
+      "insect"
+    ],
+    "bacteriome": [
+      "insect"
+    ],
+    "polyneoptera": [
+      "insect"
+    ],
+    "cynophila": [
+      "insect"
+    ],
+    "fly": [
+      "insect"
+    ],
+    "insects": [
+      "insect"
+    ],
+    "gyne": [
+      "insect"
+    ],
+    "xylophage": [
+      "insect"
+    ],
+    "midge": [
+      "insect"
+    ],
+    "insect": [
+      "arthropod"
+    ],
+    "pyrus": [
+      "tree"
+    ],
+    "pinus": [
+      "tree"
+    ],
+    "alnus": [
+      "tree"
+    ],
+    "betula": [
+      "tree"
+    ],
+    "abies": [
+      "tree"
+    ],
+    "populus": [
+      "tree"
+    ],
+    "fagus": [
+      "tree"
+    ],
+    "larix": [
+      "tree"
+    ],
+    "juniperus": [
+      "tree"
+    ],
+    "picea": [
+      "tree"
+    ],
+    "taxus": [
+      "tree"
+    ],
+    "cercis": [
+      "tree"
+    ],
+    "pistacia": [
+      "tree"
+    ],
+    "salix": [
+      "tree"
+    ],
+    "europaea": [
+      "tree"
+    ],
+    "biloba": [
+      "tree"
+    ],
+    "oblonga": [
+      "tree"
+    ],
+    "morus": [
+      "tree"
+    ],
+    "eucalyptus": [
+      "tree"
+    ],
+    "regia": [
+      "tree"
+    ],
+    "ficus": [
+      "tree"
+    ],
+    "citrus": [
+      "tree"
+    ],
+    "malus": [
+      "tree"
+    ],
+    "pinea": [
+      "tree"
+    ],
+    "ilex": [
+      "tree"
+    ],
+    "tree": [
+      "phanerophyte",
+      "plant"
+    ],
+    "aircraft": [
+      "vehicle"
+    ],
+    "boat": [
+      "vehicle"
+    ],
+    "spacecraft": [
+      "vehicle"
+    ],
+    "rocket": [
+      "vehicle"
+    ],
+    "taxi": [
+      "vehicle"
+    ],
+    "locomotive": [
+      "vehicle"
+    ],
+    "car": [
+      "vehicle"
+    ],
+    "kitchen": [
+      "vehicle"
+    ],
+    "skike": [
+      "vehicle"
+    ],
+    "cradle": [
+      "vehicle"
+    ],
+    "equipment": [
+      "vehicle"
+    ],
+    "streamliner": [
+      "vehicle"
+    ],
+    "craft": [
+      "vehicle"
+    ],
+    "truck": [
+      "vehicle"
+    ],
+    "vehicle": [
+      "assembly",
+      "object",
+      "product",
+      "transport"
+    ],
+    "weapon": [
+      "tool"
+    ],
+    "plough": [
+      "tool"
+    ],
+    "caliper": [
+      "tool"
+    ],
+    "abacus": [
+      "tool"
+    ],
+    "shoehorn": [
+      "tool"
+    ],
+    "spatula": [
+      "tool"
+    ],
+    "jig": [
+      "tool"
+    ],
+    "jackhammer": [
+      "tool"
+    ],
+    "lighter": [
+      "tool"
+    ],
+    "explorer": [
+      "tool"
+    ],
+    "funnel": [
+      "tool"
+    ],
+    "calculator": [
+      "tool"
+    ],
+    "knife": [
+      "tool"
+    ],
+    "instrument": [
+      "tool"
+    ],
+    "winder": [
+      "tool"
+    ],
+    "nail": [
+      "tool"
+    ],
+    "match": [
+      "tool"
+    ],
+    "flamethrower": [
+      "tool"
+    ],
+    "bucket": [
+      "tool"
+    ],
+    "drill": [
+      "tool"
+    ],
+    "sundial": [
+      "tool"
+    ],
+    "anvil": [
+      "tool"
+    ],
+    "pipe": [
+      "tool"
+    ],
+    "soap": [
+      "tool"
+    ],
+    "wedge": [
+      "tool"
+    ],
+    "tool": [
+      "equipment",
+      "object"
+    ],
+    "sapote": [
+      "fruit"
+    ],
+    "date": [
+      "fruit"
+    ],
+    "processing": [
+      "fruit"
+    ],
+    "variety": [
+      "fruit"
+    ],
+    "apple": [
+      "fruit"
+    ],
+    "mango": [
+      "fruit"
+    ],
+    "banana": [
+      "fruit"
+    ],
+    "grape": [
+      "fruit"
+    ],
+    "raspberry": [
+      "fruit"
+    ],
+    "kiwifruit": [
+      "fruit"
+    ],
+    "lime": [
+      "fruit"
+    ],
+    "ribes": [
+      "fruit"
+    ],
+    "persimmon": [
+      "fruit"
+    ],
+    "watermelon": [
+      "fruit"
+    ],
+    "domestica": [
+      "fruit"
+    ],
+    "honeydew": [
+      "fruit"
+    ],
+    "fruit": [
+      "food"
+    ]
+  }
+}
