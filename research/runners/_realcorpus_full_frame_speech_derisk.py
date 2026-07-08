@@ -32,15 +32,17 @@ SPARSITY = 0.05
 class ConceptFrameSpeaker:
     """Speaks a grounded frame with content words produced ON SPIKES via the cached v16 A->W."""
 
-    def __init__(self, bridge_path, seed=42):
+    def __init__(self, bridge_path, seed=42, vocab=None, word_to_pool=None):
         self.bridge = build_concept_bridge(
             seed=seed, n_lang_input=N_LANG, n_per_pool=200, n_fs_per_pool=24,
             weak_dynamics=True, enable_adjective=True,
             enable_direct_verb_to_motor=True, verbose=False,
         )
         self.bridge.load_checkpoint(bridge_path)
-        # the A->W content vocab + their orthogonal reference patterns (match v16 training)
-        self.vocab = _all_words(include_adjective=True)
+        # the A->W content vocab + their orthogonal reference patterns (match the bridge's training).
+        # vocab=None -> the default v16 concept vocab; else a custom (breadth) vocab + pool mapping.
+        self.vocab = vocab if vocab is not None else _all_words(include_adjective=True)
+        self.pool_of = word_to_pool if word_to_pool is not None else {w: _target_pool_for_word(w) for w in self.vocab}
         self.patterns = {w: orthogonal_drive_pattern(cue_idx=self.vocab.index(w), n_cues=len(self.vocab),
                                                       n_neurons=N_LANG, sparsity=SPARSITY)
                          for w in self.vocab}
@@ -49,7 +51,7 @@ class ConceptFrameSpeaker:
         """Drive the word's pool -> decode the spoken word from language_output firing (ON SPIKES)."""
         if word not in self.vocab:
             return None
-        pool = _target_pool_for_word(word)
+        pool = self.pool_of[word]
         spike = drive_pool_and_read_lang_output(self.bridge, pool, n_lang_output=N_LANG)
         best = max(self.vocab, key=lambda w: _cosine(spike, self.patterns[w]))
         return best

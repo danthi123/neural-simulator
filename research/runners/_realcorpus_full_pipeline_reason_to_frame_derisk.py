@@ -19,10 +19,14 @@ from research.runners._realcorpus_full_frame_speech_derisk import ConceptFrameSp
 from research.runners.corpus_stream import load_token_stream_multi
 
 
-def run(corpus_path, K, n_clusters, bridge_path, verb, seed):
+def run(corpus_path, K, n_clusters, bridge_path, verb, seed, breadth=False):
     stories = load_token_stream_multi(corpus_path, max_stories=None)
     con = RealCorpusConsole(seed, stories, K, emergent=True, n_clusters=n_clusters)  # numpy reasoner
-    speaker = ConceptFrameSpeaker(bridge_path, seed=seed)                            # cupy A->W frame speaker
+    if breadth:   # the broad-vocab A->W trained on the reasoner's OWN discovered animals + verbs
+        from research.runners._realcorpus_train_breadth_aw import VOCAB, WORD_TO_POOL
+        speaker = ConceptFrameSpeaker(bridge_path, seed=seed, vocab=VOCAB, word_to_pool=WORD_TO_POOL)
+    else:
+        speaker = ConceptFrameSpeaker(bridge_path, seed=seed)                        # cupy A->W frame speaker
     spellable = set(speaker.vocab)
 
     # find a DISCOVERED cluster that contains >=2 spellable words (so we can teach one, hold out another)
@@ -73,10 +77,12 @@ def main():
     ap.add_argument("--n-clusters", type=int, default=10)
     ap.add_argument("--bridge", default="bridges/v16/seed42.simstate.h5")
     ap.add_argument("--verb", default="go")
+    ap.add_argument("--breadth", action="store_true", help="use the broad-vocab A->W (reasoner's own animals+verbs)")
     ap.add_argument("--seed", type=int, default=42)
     a = ap.parse_args()
-    print(f"[full pipeline: discover -> reason -> fluent frame] corpus={a.corpus_path} K={a.K}", flush=True)
-    r = run(a.corpus_path, a.K, a.n_clusters, a.bridge, a.verb, a.seed)
+    print(f"[full pipeline: discover -> reason -> fluent frame] corpus={a.corpus_path} K={a.K} "
+          f"{'BREADTH-vocab' if a.breadth else 'v16-vocab'}", flush=True)
+    r = run(a.corpus_path, a.K, a.n_clusters, a.bridge, a.verb, a.seed, breadth=a.breadth)
     if r is None:
         print("  VERDICT: NOT-EVALUABLE"); return
     go = r["n_spoke"] >= 1 and r["moat_ok"]
