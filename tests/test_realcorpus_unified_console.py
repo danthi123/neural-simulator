@@ -85,3 +85,21 @@ def test_relational_any_verb(console):
                 assert kind == "relational" and "don't know" not in out
                 return
     pytest.skip("no alternate relational verb present in the discovered vocab")
+
+
+def test_who_question_subject_recovery(console):
+    """A who-question recovers the subject of a stored relational fact; an unknown object abstains."""
+    subj, verb, obj = console.rel_facts[0]
+    out, kind = console.ask(f"who {verb} {obj}?")
+    assert kind == "relational" and subj in out          # the full-sentence answer contains the subject
+    _, k = console.ask("who eats zzzqqx?")
+    assert k == "moat"
+
+
+def test_describe_multifact_discourse(console):
+    """'tell me about X' aggregates X's facts into connected prose; an unknown word abstains."""
+    subj = console.rel_facts[0][0]
+    out, kind = console.ask(f"tell me about the {subj}")
+    assert kind == "describe" and "." in out and "don't know" not in out
+    _, k = console.ask("tell me about the zzzqqx")
+    assert k == "moat"
