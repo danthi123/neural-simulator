@@ -1,0 +1,148 @@
+{
+  "plant": {
+    "tracheophyte": [
+      "fern",
+      "gamblei",
+      "lithophyte"
+    ],
+    "weed": [
+      "acanthoides",
+      "arvensis",
+      "cultivation",
+      "cyanus",
+      "dandelion",
+      "flora",
+      "media",
+      "scoparius",
+      "tumbleweed",
+      "vitalba",
+      "vulgare"
+    ],
+    "communis": [
+      "romana",
+      "sapiazhanka",
+      "vienna"
+    ]
+  },
+  "vehicle": {
+    "aircraft": [
+      "aerodyne",
+      "airship",
+      "fokker",
+      "taifun",
+      "yak",
+      "\u00f6lyv"
+    ],
+    "boat": [
+      "abra",
+      "craft",
+      "gondola",
+      "marinef\u00e4hrprahm",
+      "raft",
+      "strug",
+      "taxi",
+      "whaleboat"
+    ],
+    "spacecraft": [
+      "bird",
+      "echo",
+      "foton",
+      "lander",
+      "parus",
+      "program",
+      "rover",
+      "satellite",
+      "vostok"
+    ],
+    "rocket": [
+      "cora",
+      "emeraude",
+      "missile",
+      "redstone",
+      "stage",
+      "system",
+      "\u00f6lspr\u00fchrakete"
+    ],
+    "taxi": [
+      "autorickshaw",
+      "city",
+      "helitaxi",
+      "kong",
+      "motorcycle",
+      "rickshaw",
+      "taxicab",
+      "treintaxi"
+    ],
+    "locomotive": [
+      "class",
+      "kkstb"
+    ]
+  },
+  "food": {
+    "pizza": [
+      "calzone",
+      "marinara",
+      "metro",
+      "pissaladi\u00e8re",
+      "scarola",
+      "whopper"
+    ],
+    "jam": [
+      "canjica",
+      "confiture",
+      "curau",
+      "jelly",
+      "leche",
+      "queijadinha"
+    ],
+    "milk": [
+      "colostrum",
+      "heumilch",
+      "powder"
+    ],
+    "meat": [
+      "beef",
+      "muscle",
+      "saddle",
+      "sirloin",
+      "tail",
+      "yenhloko"
+    ]
+  },
+  "tool": {
+    "weapon": [
+      "ammunition",
+      "arm",
+      "arrow",
+      "chariot",
+      "destruction",
+      "generator",
+      "harpoon",
+      "wedge",
+      "zaghnal"
+    ],
+    "plough": [
+      "ard",
+      "chaquitaclla",
+      "charrua",
+      "gad",
+      "harrow",
+      "mouldboard",
+      "plow",
+      "\u00e7apa"
+    ],
+    "caliper": [
+      "adipometer",
+      "calipers",
+      "gauge",
+      "nonius"
+    ],
+    "spatula": [
+      "hands",
+      "knife",
+      "leutel",
+      "pharmaceutical",
+      "scraper"
+    ]
+  }
+}
