@@ -42,6 +42,9 @@ POOL_LD = 0.02
 N_ID_PER = 3
 SDR_T = 50          # active hubs per word SDR (top-T of the code); 50 = the swept operating point
                     # (T=12 too sparse -> within-category SDR overlap too low for the pooler; T=150 over-dense)
+PROP_K = 2          # cells per category property (population coding); 2 = the original operating point.
+                    # Larger K averages more independent noisy apical readers of the same codon -> lower
+                    # read variance -> sharper argmax (the on-substrate read-out-variance lever).
 FLOOR = -40.0
 
 
@@ -62,7 +65,7 @@ class RealCorpusPoolerProbe:
     """EMERGE-42's spiking pooler-inference, fed REAL-corpus SDR features + REAL categories."""
 
     def __init__(self, seed, sdr_by_row, row_to_cat, cat_ids, epochs=40, learn=True,
-                 permute_features=False, lesion=False):
+                 permute_features=False, lesion=False, prop_k=PROP_K):
         from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
         from sim.bridge import SimulationBridge
         from sim.regions import BrainRegion
@@ -77,7 +80,7 @@ class RealCorpusPoolerProbe:
         self.cat_ids = list(cat_ids)
         NCAT = len(self.cat_ids)
         NCLASSPROP = NCAT
-        NPROPUNITS = NCLASSPROP * 2
+        NPROPUNITS = NCLASSPROP * prop_k       # prop_k cells per category property (population coding)
         FEAT0 = 0
         ID0 = NF
         COL0 = NF + NMEM_CELLS
@@ -155,7 +158,8 @@ class RealCorpusPoolerProbe:
                     self.Wp[win] = np.clip(self.Wp[win], 0, 1); duty[win] += 1
                 boost = np.exp(2.0 * (K_WIN / NCOL - duty / ((e + 1) * len(rows))))
 
-        self.CLASS = {k: [PROP0 + 2 * i, PROP0 + 2 * i + 1] for i, k in enumerate(self.cat_ids)}
+        self.CLASS = {k: [PROP0 + prop_k * i + j for j in range(prop_k)]
+                      for i, k in enumerate(self.cat_ids)}
         # held-out = last 2 members per category, EXCLUDED from CLASS teaching (genuine generalization)
         by_cat = {k: [r for r in rows if self.row2cat[r] == k] for k in self.cat_ids}
         self.held = {k: v[-2:] for k, v in by_cat.items() if len(v) >= 4}
@@ -228,22 +232,22 @@ def build_inputs(corpus_path, K, seed, sdr_t=SDR_T):
     return stories, sdr_by_row, row_to_cat, cat_ids, per_cat
 
 
-def run_seed(seed, sdr_by_row, row_to_cat, cat_ids, epochs, rng):
+def run_seed(seed, sdr_by_row, row_to_cat, cat_ids, epochs, rng, prop_k=PROP_K):
     chance = 1.0 / len(cat_ids)
-    main = RealCorpusPoolerProbe(seed, sdr_by_row, row_to_cat, cat_ids, epochs=epochs)
+    main = RealCorpusPoolerProbe(seed, sdr_by_row, row_to_cat, cat_ids, epochs=epochs, prop_k=prop_k)
     ho = main.inheritance_acc()
     # DERANGED: shuffle category labels across the same word SDRs
     rows = list(sdr_by_row)
     labs = [row_to_cat[r] for r in rows]
     dl = list(labs); rng.shuffle(dl)
     deranged_map = {r: dl[i] for i, r in enumerate(rows)}
-    der = RealCorpusPoolerProbe(seed, sdr_by_row, deranged_map, cat_ids, epochs=epochs).inheritance_acc()
+    der = RealCorpusPoolerProbe(seed, sdr_by_row, deranged_map, cat_ids, epochs=epochs, prop_k=prop_k).inheritance_acc()
     # PERMUTED-features: random SDRs -> pooler can't discover categories
     perm = RealCorpusPoolerProbe(seed, sdr_by_row, row_to_cat, cat_ids, epochs=epochs,
-                                 permute_features=True).inheritance_acc()
+                                 permute_features=True, prop_k=prop_k).inheritance_acc()
     # LESION: coincidence off
     les = RealCorpusPoolerProbe(seed, sdr_by_row, row_to_cat, cat_ids, epochs=epochs,
-                                lesion=True).inheritance_acc()
+                                lesion=True, prop_k=prop_k).inheritance_acc()
     return {"seed": seed, "n_categories": main.n_categories(), "chance": chance,
             "heldout_inherit_acc": ho, "deranged_acc": der, "permuted_feat_acc": perm,
             "lesion_acc": les}
@@ -255,6 +259,7 @@ def main():
     ap.add_argument("--K", type=int, default=256)
     ap.add_argument("--seeds", default="42")
     ap.add_argument("--epochs", type=int, default=40)
+    ap.add_argument("--prop-k", type=int, default=PROP_K, help="cells per category property (population coding)")
     ap.add_argument("--sdr-t", type=int, default=SDR_T, help="active hubs per word SDR (top-T of the code)")
     ap.add_argument("--margin", type=float, default=0.15)
     ap.add_argument("--out", default=None)
@@ -266,7 +271,7 @@ def main():
     for s in seeds:
         _, sdr_by_row, row_to_cat, cat_ids, per_cat = build_inputs(a.corpus_path, a.K, s, sdr_t=a.sdr_t)
         rng = np.random.default_rng(s)
-        r = run_seed(s, sdr_by_row, row_to_cat, cat_ids, a.epochs, rng)
+        r = run_seed(s, sdr_by_row, row_to_cat, cat_ids, a.epochs, rng, prop_k=a.prop_k)
         recs.append(r)
         print(f"  [seed {s}] SPIKING held-out inherit={r['heldout_inherit_acc']:.3f} | "
               f"deranged={r['deranged_acc']:.3f} | permuted-feat={r['permuted_feat_acc']:.3f} | "
