@@ -107,6 +107,7 @@ def main():
     ap.add_argument("--exc-verb", default="sleep")
     ap.add_argument("--rel-verb", default="eat")
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--repl", action="store_true", help="interactive: type questions, the brain answers (Ctrl-D/'quit' to exit)")
     a = ap.parse_args()
     print(f"[UNIFIED talkable console] property (inherit/cancel) + relational (SVO), spoken on spikes, moat | "
           f"seed={a.seed}", flush=True)
@@ -116,6 +117,18 @@ def main():
     print(f"  discovered animal cluster: {[w for w in con.prop.members[con.pos] if w in con.animals]}; "
           f"class='{a.class_verb}', exception '{con.exc_word}'->'{a.exc_verb}'; "
           f"relational facts: " + ", ".join(f"'{s} {a.rel_verb}s {o}'" for s, o in con.rel_pairs), flush=True)
+
+    if a.repl:
+        print(f"  [talk to the brain] property: 'does a <animal> {a.class_verb}?'  relational: 'what does the "
+              f"<animal> {a.rel_verb}?'  ('quit' to exit)", flush=True)
+        import sys
+        for line in sys.stdin:
+            q = line.strip()
+            if not q or q.lower() in ("quit", "exit"):
+                break
+            out, kind = con.ask(q)
+            print(f"  brain: \"{out}\"   [{kind}]", flush=True)
+        return
 
     # scripted mixed conversation: property (inherit + cancel), relational, moat
     others = [w for w in animals if w != con.exc_word]
