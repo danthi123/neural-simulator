@@ -79,6 +79,12 @@ class UnifiedTalkableConsole:
         rng = np.random.default_rng(seed)
         Z = _phasors(codes, list(range(len(vocab))), seed)
         self.svo = SVOStore(Z, list(range(len(vocab))), (_role(rng), _role(rng), _role(rng)))
+        # DITRANSITIVE (ternary) store: the same phasor codes, a 4-role FHRR (agent/verb/recipient/theme) --
+        # so the console can converse about ternary relations ("the dog gives the cat a bone"). CYCLE 1028.
+        from research.runners._realcorpus_ditransitive_store_derisk import DitransStore
+        self.ditrans = DitransStore(Z, list(range(len(vocab))), (_role(rng), _role(rng), _role(rng), _role(rng)))
+        self.ditrans_facts = []                              # (subj, verb, recipient, theme)
+        self.DITRANS_VERBS = {"give", "show", "bring", "send", "tell", "offer"}
         animals_present = sorted(a for a in self.animals if a in self.row_of)
         rng.shuffle(animals_present)
         self.rel_pairs = [(animals_present[i], animals_present[i + 1])
@@ -176,6 +182,17 @@ class UnifiedTalkableConsole:
             self._append_persist(persist, ["rel", subj, vbase, obj])
         return True
 
+    def teach_ditransitive(self, subj, verb, recip, theme, persist=None):
+        """Grow: store a TERNARY fact '<subj> <verb> <recip> <theme>' ("the dog gives the cat a bone") live."""
+        vrow, vbase = self.verb_row(verb)
+        if vrow is None or any(w not in self.row_of for w in (subj, recip, theme)):
+            return False
+        self.ditrans.store(self.row_of[subj], vrow, self.row_of[recip], self.row_of[theme])
+        self.ditrans_facts.append((subj, vbase, recip, theme))
+        if persist is not None:
+            self._append_persist(persist, ["ditrans", subj, vbase, recip, theme])
+        return True
+
     def load_persisted(self, persist):
         """Re-store taught facts (BOTH relational + property exceptions) from a prior session -- the brain
         REMEMBERS across sessions (codes are seed-deterministic, so the same words rebuild the same phasors)."""
@@ -188,6 +205,8 @@ class UnifiedTalkableConsole:
                 n += int(self.teach_relational(rec[1], rec[2], rec[3]))         # re-store (already persisted)
             elif rec and rec[0] == "prop":
                 n += int(self.teach_property_exception(rec[1], rec[2]))
+            elif rec and rec[0] == "ditrans":                                    # ternary (agent-verb-recipient-theme)
+                n += int(self.teach_ditransitive(rec[1], rec[2], rec[3], rec[4]))
             elif len(rec) == 3:                                                  # back-compat untagged relational
                 n += int(self.teach_relational(rec[0], rec[1], rec[2]))
         return n
@@ -336,6 +355,25 @@ class UnifiedTalkableConsole:
         The routing is host keyword by default, or the NEURAL reservoir read-out when neural_route=True."""
         toks = q.lower().replace("?", "").split()
         rt = self._route_type(toks)
+        # DITRANSITIVE query (before the binary what/who): a ditransitive verb + TWO nouns -> the ternary store.
+        # "what does the X <give> the Y?" -> theme (Y = recipient given); "who does the X <give> a Z?" -> recipient.
+        if toks[:1] in (["what"], ["who"]):
+            cd = [t for t in toks[1:] if t not in ("what", "who", "does", "the", "a", "an")]
+            if len(cd) == 3 and cd[1] in self.DITRANS_VERBS:
+                s2, v2, n2 = self._resolve(cd[0]), cd[1], cd[2]
+                vrow, _ = self.verb_row(v2)
+                if s2 in self.row_of and n2 in self.row_of and vrow is not None:
+                    if toks[:1] == ["what"]:                       # theme query (the given noun is the recipient)
+                        th = self.ditrans.answer_theme(self.row_of[s2], vrow, self.row_of[n2])
+                        if th is not None:
+                            return (f"the {self._word(s2)} {self._word(v2)}s the {self._word(n2)} "
+                                    f"a {self._word(self.vocab[th])}"), "ditransitive"
+                    else:                                          # who -> recipient query (the given noun is the theme)
+                        rc = self.ditrans.answer_recipient(self.row_of[s2], vrow, self.row_of[n2])
+                        if rc is not None:
+                            return (f"the {self._word(s2)} {self._word(v2)}s the {self._word(self.vocab[rc])} "
+                                    f"a {self._word(n2)}"), "ditransitive"
+                    return "I don't know", "moat"                  # ditransitive verb but not stored -> abstain
         if self._is(rt, "compare", toks[:1] == ["compare"]):      # comparison: compare X and Y
             content = [t for t in toks[1:] if t not in ("the", "a", "an", "and", "to", "with")]
             if len(content) >= 2:
@@ -440,10 +478,13 @@ def main():
             if not q or q.lower() in ("quit", "exit"):
                 break
             toks = q.lower().replace("?", "").replace(".", "").split()
-            # TEACH (declarative, not a question): 3 content tokens = relational SVO; 2 = property exception
+            # TEACH (declarative, not a question): 4 content = ditransitive; 3 = relational SVO; 2 = property exception
             if toks and toks[0] not in ("does", "can", "what", "who", "tell", "describe", "compare"):
                 content = [t for t in toks if t not in ("the", "a", "an")]
-                if len(content) == 3 and con.teach_relational(content[0], content[1], content[2], persist=a.persist):
+                if len(content) == 4 and content[1] in con.DITRANS_VERBS and \
+                        con.teach_ditransitive(content[0], content[1], content[2], content[3], persist=a.persist):
+                    print(f"  brain: ok, I learned that the {content[0]} {content[1]}s the {content[2]} a {content[3]}.", flush=True)
+                elif len(content) == 3 and con.teach_relational(content[0], content[1], content[2], persist=a.persist):
                     print(f"  brain: ok, I learned that the {content[0]} {content[1]} {content[2]}.", flush=True)
                 elif len(content) == 2:
                     verb = content[1][:-1] if content[1].endswith("s") else content[1]   # sleeps -> sleep

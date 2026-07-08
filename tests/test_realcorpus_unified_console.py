@@ -135,6 +135,25 @@ def test_multi_exception_isolation(console):
     assert kind == "override" and after.startswith("no")
 
 
+def test_ditransitive_teach_query_moat(console):
+    """The console stores + queries a TERNARY (ditransitive) relation: teach '<s> gives <r> <t>' -> query the
+    theme ('what does the s give the r?') + the recipient ('who does the s give a t?'); the unstored abstains."""
+    dv = next((v for v in console.DITRANS_VERBS if console.verb_row(v)[0] is not None), None)
+    if dv is None:
+        pytest.skip("no ditransitive verb in the discovered vocab")
+    nouns = [w for w in console.row_of if w in console.spellable][:5]
+    if len(nouns) < 4:
+        pytest.skip("need >=4 spellable vocab words for the ternary fact + moat probe")
+    s, r, t = nouns[0], nouns[1], nouns[2]
+    assert console.teach_ditransitive(s, dv, r, t)
+    out, kind = console.ask(f"what does the {s} {dv} the {r}?")
+    assert kind == "ditransitive" and t in out                    # theme recovered
+    out2, kind2 = console.ask(f"who does the {s} {dv} a {t}?")
+    assert kind2 == "ditransitive" and r in out2                  # recipient recovered
+    _, km = console.ask(f"what does the {nouns[3]} {dv} the {r}?")  # unstored subject
+    assert km == "moat"
+
+
 @pytest.fixture(scope="module")
 def spiking_console():
     """A console whose property answers are GENERATED ON SPIKES (spiking_gen): the slot ORDER is produced by
