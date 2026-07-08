@@ -1,0 +1,497 @@
+{
+  "probe": "semantic_inheritance_deep_credit",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "rule": "microcircuit",
+  "config": {
+    "hidden": 96,
+    "epochs": 250,
+    "lr": 0.3,
+    "batch": 128,
+    "feedback": "fixed",
+    "homeostasis": false,
+    "kp_lr": 0.2,
+    "kp_decay": 0.0001,
+    "beta": 1.0,
+    "p0": 0.3,
+    "task": {
+      "n_super": 24,
+      "n_members": 8,
+      "held_per_super": 3,
+      "n_prop": 3,
+      "member_id_dim": 3,
+      "n_obs": 14,
+      "noise": 0.02,
+      "feature_seed": 0
+    },
+    "backend": "numpy"
+  },
+  "elapsed_seconds": 82.2,
+  "per_seed": [
+    {
+      "seed": 42,
+      "meta": {
+        "n_super": 24,
+        "n_members": 8,
+        "held_per_super": 3,
+        "n_prop": 3,
+        "k_classes": 9,
+        "member_id_dim": 3,
+        "n_obs": 14,
+        "noise": 0.02,
+        "feature_seed": 0,
+        "n_features": 9,
+        "n_train": 1260,
+        "n_heldout": 492,
+        "n_inherit_heldout": 54,
+        "n_memctrl_heldout": 18,
+        "n_supers_untaught": 6
+      },
+      "stage0_depth_genuineness": {
+        "chance": 0.16666666666666666,
+        "n_features": 9,
+        "linear_inherit_heldout": 0.2037037037037037,
+        "linear_train": 0.2626984126984127,
+        "l1_inherit_heldout": 0.3888888888888889,
+        "l1_train": 1.0,
+        "l2_inherit_heldout": 1.0,
+        "l2_train": 1.0,
+        "l3_inherit_heldout": 0.24074074074074073,
+        "l3_train": 1.0,
+        "deep_best_inherit_heldout": 1.0,
+        "depth_gap": 0.6111111111111112,
+        "depth_separating": true
+      },
+      "stage1_deep_credit": {
+        "rule": "microcircuit",
+        "chance": 0.16666666666666666,
+        "oracle": {
+          "inherit_heldout": 1.0,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        },
+        "test_fixed": {
+          "inherit_heldout": 0.8703703703703703,
+          "memctrl_heldout": 0.0,
+          "train": 1.0,
+          "per_layer_alignment": [
+            -0.025208235566506955,
+            0.22684198174619224,
+            0.9999999999966217
+          ],
+          "deepest_layer_alignment": -0.025208235566506955,
+          "no_weight_transport": true,
+          "probe_latent": 0.9814814814814815,
+          "feedback": "fixed",
+          "homeostasis": false
+        },
+        "test_learned": {
+          "inherit_heldout": 0.7962962962962963,
+          "memctrl_heldout": 0.0,
+          "train": 1.0,
+          "per_layer_alignment": [
+            0.0040691707255513885,
+            0.22238483015252622,
+            0.9999999999984898
+          ],
+          "deepest_layer_alignment": 0.0040691707255513885,
+          "no_weight_transport": true,
+          "probe_latent": 0.9938271604938271,
+          "feedback": "learned",
+          "homeostasis": false
+        },
+        "test_learned_homeo": {
+          "inherit_heldout": 0.7222222222222222,
+          "memctrl_heldout": 0.0,
+          "train": 1.0,
+          "per_layer_alignment": [
+            0.0432017984851311,
+            0.19951018921086217,
+            0.9999999999985303
+          ],
+          "deepest_layer_alignment": 0.0432017984851311,
+          "no_weight_transport": true,
+          "probe_latent": 0.9938271604938271,
+          "feedback": "learned",
+          "homeostasis": true
+        },
+        "plain_fa": {
+          "inherit_heldout": 0.8703703703703703,
+          "memctrl_heldout": 0.0,
+          "train": 1.0,
+          "per_layer_alignment": [
+            -0.025208235566506955,
+            0.22684198174619224,
+            0.9999999999966217
+          ],
+          "deepest_layer_alignment": -0.025208235566506955,
+          "no_weight_transport": true,
+          "probe_latent": 0.9814814814814815,
+          "feedback": "fixed",
+          "homeostasis": false
+        },
+        "single_layer": {
+          "inherit_heldout": 0.4074074074074074,
+          "memctrl_heldout": 0.0,
+          "train": 0.9992063492063492
+        },
+        "wrong_sign": {
+          "inherit_heldout": 0.1111111111111111,
+          "train": 0.1111111111111111,
+          "per_layer_alignment": [
+            -0.10866328991429357,
+            -0.6364947869479518,
+            1.0
+          ],
+          "deepest_layer_alignment": -0.10866328991429357
+        },
+        "wrong_sign_plain_fa": {
+          "inherit_heldout": 0.1111111111111111,
+          "train": 0.1111111111111111,
+          "per_layer_alignment": [
+            -0.10866328991429357,
+            -0.6364947869479518,
+            1.0
+          ],
+          "deepest_layer_alignment": -0.10866328991429357
+        },
+        "permuted": {
+          "inherit_heldout": 0.14814814814814814,
+          "train": 0.4603174603174603
+        },
+        "apical_lesion": {
+          "inherit_heldout": 0.1111111111111111,
+          "train": 0.19523809523809524,
+          "per_layer_alignment": [
+            -0.028052332381137156,
+            -0.07847362373499295,
+            1.0
+          ],
+          "deepest_layer_alignment": -0.028052332381137156
+        },
+        "same_init_as_oracle": true
+      }
+    },
+    {
+      "seed": 43,
+      "meta": {
+        "n_super": 24,
+        "n_members": 8,
+        "held_per_super": 3,
+        "n_prop": 3,
+        "k_classes": 9,
+        "member_id_dim": 3,
+        "n_obs": 14,
+        "noise": 0.02,
+        "feature_seed": 0,
+        "n_features": 9,
+        "n_train": 1260,
+        "n_heldout": 492,
+        "n_inherit_heldout": 54,
+        "n_memctrl_heldout": 18,
+        "n_supers_untaught": 6
+      },
+      "stage0_depth_genuineness": {
+        "chance": 0.16666666666666666,
+        "n_features": 9,
+        "linear_inherit_heldout": 0.18518518518518517,
+        "linear_train": 0.23015873015873015,
+        "l1_inherit_heldout": 0.24074074074074073,
+        "l1_train": 1.0,
+        "l2_inherit_heldout": 0.9814814814814815,
+        "l2_train": 1.0,
+        "l3_inherit_heldout": 0.2222222222222222,
+        "l3_train": 1.0,
+        "deep_best_inherit_heldout": 0.9814814814814815,
+        "depth_gap": 0.7407407407407408,
+        "depth_separating": true
+      },
+      "stage1_deep_credit": {
+        "rule": "microcircuit",
+        "chance": 0.16666666666666666,
+        "oracle": {
+          "inherit_heldout": 0.9814814814814815,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        },
+        "test_fixed": {
+          "inherit_heldout": 0.8888888888888888,
+          "memctrl_heldout": 0.0,
+          "train": 1.0,
+          "per_layer_alignment": [
+            0.048982616110449,
+            0.15304748079361116,
+            0.9999999999985149
+          ],
+          "deepest_layer_alignment": 0.048982616110449,
+          "no_weight_transport": true,
+          "probe_latent": 0.9876543209876543,
+          "feedback": "fixed",
+          "homeostasis": false
+        },
+        "test_learned": {
+          "inherit_heldout": 0.8888888888888888,
+          "memctrl_heldout": 0.0,
+          "train": 1.0,
+          "per_layer_alignment": [
+            -0.024407365475805617,
+            0.01840759945741095,
+            0.9999999999993586
+          ],
+          "deepest_layer_alignment": -0.024407365475805617,
+          "no_weight_transport": true,
+          "probe_latent": 1.0,
+          "feedback": "learned",
+          "homeostasis": false
+        },
+        "test_learned_homeo": {
+          "inherit_heldout": 0.5555555555555556,
+          "memctrl_heldout": 0.0,
+          "train": 1.0,
+          "per_layer_alignment": [
+            -0.09771295306672997,
+            0.517645182524828,
+            0.9999999999998381
+          ],
+          "deepest_layer_alignment": -0.09771295306672997,
+          "no_weight_transport": true,
+          "probe_latent": 0.9259259259259259,
+          "feedback": "learned",
+          "homeostasis": true
+        },
+        "plain_fa": {
+          "inherit_heldout": 0.8888888888888888,
+          "memctrl_heldout": 0.0,
+          "train": 1.0,
+          "per_layer_alignment": [
+            0.048982616110449,
+            0.15304748079361116,
+            0.9999999999985149
+          ],
+          "deepest_layer_alignment": 0.048982616110449,
+          "no_weight_transport": true,
+          "probe_latent": 0.9876543209876543,
+          "feedback": "fixed",
+          "homeostasis": false
+        },
+        "single_layer": {
+          "inherit_heldout": 0.2962962962962963,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        },
+        "wrong_sign": {
+          "inherit_heldout": 0.16666666666666666,
+          "train": 0.16666666666666666,
+          "per_layer_alignment": [
+            0.2348835800380343,
+            0.35333839493573144,
+            0.9999999999999998
+          ],
+          "deepest_layer_alignment": 0.2348835800380343
+        },
+        "wrong_sign_plain_fa": {
+          "inherit_heldout": 0.16666666666666666,
+          "train": 0.16666666666666666,
+          "per_layer_alignment": [
+            0.2348835800380343,
+            0.35333839493573144,
+            0.9999999999999998
+          ],
+          "deepest_layer_alignment": 0.2348835800380343
+        },
+        "permuted": {
+          "inherit_heldout": 0.2037037037037037,
+          "train": 0.33095238095238094
+        },
+        "apical_lesion": {
+          "inherit_heldout": 0.14814814814814814,
+          "train": 0.2246031746031746,
+          "per_layer_alignment": [
+            -0.09826016433769272,
+            0.031549775459332643,
+            0.9999999999999999
+          ],
+          "deepest_layer_alignment": -0.09826016433769272
+        },
+        "same_init_as_oracle": true
+      }
+    },
+    {
+      "seed": 44,
+      "meta": {
+        "n_super": 24,
+        "n_members": 8,
+        "held_per_super": 3,
+        "n_prop": 3,
+        "k_classes": 9,
+        "member_id_dim": 3,
+        "n_obs": 14,
+        "noise": 0.02,
+        "feature_seed": 0,
+        "n_features": 9,
+        "n_train": 1260,
+        "n_heldout": 492,
+        "n_inherit_heldout": 54,
+        "n_memctrl_heldout": 18,
+        "n_supers_untaught": 6
+      },
+      "stage0_depth_genuineness": {
+        "chance": 0.16666666666666666,
+        "n_features": 9,
+        "linear_inherit_heldout": 0.12962962962962962,
+        "linear_train": 0.24841269841269842,
+        "l1_inherit_heldout": 0.18518518518518517,
+        "l1_train": 0.9857142857142858,
+        "l2_inherit_heldout": 0.9259259259259259,
+        "l2_train": 1.0,
+        "l3_inherit_heldout": 0.5185185185185185,
+        "l3_train": 1.0,
+        "deep_best_inherit_heldout": 0.9259259259259259,
+        "depth_gap": 0.7407407407407407,
+        "depth_separating": true
+      },
+      "stage1_deep_credit": {
+        "rule": "microcircuit",
+        "chance": 0.16666666666666666,
+        "oracle": {
+          "inherit_heldout": 0.9259259259259259,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        },
+        "test_fixed": {
+          "inherit_heldout": 0.7962962962962963,
+          "memctrl_heldout": 0.0,
+          "train": 1.0,
+          "per_layer_alignment": [
+            0.06004113044469968,
+            0.2922348983819792,
+            0.999999999998626
+          ],
+          "deepest_layer_alignment": 0.06004113044469968,
+          "no_weight_transport": true,
+          "probe_latent": 1.0,
+          "feedback": "fixed",
+          "homeostasis": false
+        },
+        "test_learned": {
+          "inherit_heldout": 0.7777777777777778,
+          "memctrl_heldout": 0.0,
+          "train": 1.0,
+          "per_layer_alignment": [
+            0.04814598997908691,
+            0.34376215654302844,
+            0.9999999999997835
+          ],
+          "deepest_layer_alignment": 0.04814598997908691,
+          "no_weight_transport": true,
+          "probe_latent": 0.9938271604938271,
+          "feedback": "learned",
+          "homeostasis": false
+        },
+        "test_learned_homeo": {
+          "inherit_heldout": 0.6851851851851852,
+          "memctrl_heldout": 0.0,
+          "train": 1.0,
+          "per_layer_alignment": [
+            -0.03923941448546723,
+            0.4791801321717914,
+            0.9999999999999892
+          ],
+          "deepest_layer_alignment": -0.03923941448546723,
+          "no_weight_transport": true,
+          "probe_latent": 0.8950617283950617,
+          "feedback": "learned",
+          "homeostasis": true
+        },
+        "plain_fa": {
+          "inherit_heldout": 0.7962962962962963,
+          "memctrl_heldout": 0.0,
+          "train": 1.0,
+          "per_layer_alignment": [
+            0.06004113044469968,
+            0.2922348983819792,
+            0.999999999998626
+          ],
+          "deepest_layer_alignment": 0.06004113044469968,
+          "no_weight_transport": true,
+          "probe_latent": 1.0,
+          "feedback": "fixed",
+          "homeostasis": false
+        },
+        "single_layer": {
+          "inherit_heldout": 0.2777777777777778,
+          "memctrl_heldout": 0.0,
+          "train": 0.9880952380952381
+        },
+        "wrong_sign": {
+          "inherit_heldout": 0.0,
+          "train": 0.0,
+          "per_layer_alignment": [
+            -0.2209734691573918,
+            0.0726672526833435,
+            1.0
+          ],
+          "deepest_layer_alignment": -0.2209734691573918
+        },
+        "wrong_sign_plain_fa": {
+          "inherit_heldout": 0.0,
+          "train": 0.0,
+          "per_layer_alignment": [
+            -0.2209734691573918,
+            0.0726672526833435,
+            1.0
+          ],
+          "deepest_layer_alignment": -0.2209734691573918
+        },
+        "permuted": {
+          "inherit_heldout": 0.18518518518518517,
+          "train": 0.41904761904761906
+        },
+        "apical_lesion": {
+          "inherit_heldout": 0.12962962962962962,
+          "train": 0.22380952380952382,
+          "per_layer_alignment": [
+            0.005806793478478228,
+            -0.002459210820538475,
+            1.0
+          ],
+          "deepest_layer_alignment": 0.005806793478478228
+        },
+        "same_init_as_oracle": true
+      }
+    }
+  ],
+  "stage0_depth_separating": true,
+  "aggregate": {
+    "deep_best_inherit_heldout": 0.9691358024691358,
+    "l1_inherit_heldout": 0.271604938271605,
+    "depth_gap": 0.6975308641975309,
+    "oracle_inherit_heldout": 0.9691358024691358,
+    "oracle_memctrl_heldout": 0.0,
+    "deepest_align_test_fixed": 0.027938503662880573,
+    "deepest_align_test_learned": 0.00926926507627756,
+    "deepest_align_test_learned_homeo": -0.03125018968902204,
+    "deepest_align_plain_fa": 0.027938503662880573,
+    "best_test_deep_align": 0.027938503662880573,
+    "inherit_test_fixed": 0.8518518518518517,
+    "inherit_test_learned": 0.8209876543209876,
+    "inherit_test_learned_homeo": 0.6543209876543209,
+    "best_test_inherit": 0.8518518518518517,
+    "single_layer_inherit": 0.3271604938271605,
+    "learns_composition": true,
+    "wrong_sign_deep_align": -0.031584393011217016,
+    "wrong_sign_fails_alignment": false,
+    "lesion_deep_align": -0.04016856774678388,
+    "lesion_collapses": false,
+    "permuted_inherit": 0.17901234567901234,
+    "permuted_chance": true,
+    "memctrl_holds": true,
+    "no_weight_transport": true,
+    "chance": 0.16666666666666666
+  },
+  "SIGNAL": false,
+  "verdict": "STAGE-0 PASS (depth-separating: deep-best inherit 0.969 vs 1-layer 0.272, gap +0.698, oracle 0.969). STAGE-1 deep credit (microcircuit): held-out INHERITANCE -- single-layer 0.327, best-test 0.852, chance 0.167 (LEARNS the composition); deepest-layer alignment -- plain-FA 0.03, best-test 0.03; lesion inherit 0.130 align -0.04; WRONG-SIGN alignment does NOT fail (deep align -0.03) -- Trap B may re-bite; report honestly; permuted 0.179 (~chance 0.167); memorization-control(oracle) 0.000 (holds); no weight transport True. NO clean deep-credit signal yet (see the arm table) => honest read: escalate / diagnose. Numpy RATE reference; the decisive on-bridge spiking depth-3 multi-seed is the controller's GPU run."
+}
