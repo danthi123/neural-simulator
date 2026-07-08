@@ -1,0 +1,21 @@
+{
+  "verdict": "GO",
+  "K": 256,
+  "n_clusters": 10,
+  "aggregate": {
+    "heldout": 0.6564885496183206,
+    "deranged": 0.10687022900763359,
+    "chance": 0.1
+  },
+  "per_seed": [
+    {
+      "seed": 44,
+      "n_clusters_used": 10,
+      "chance": 0.1,
+      "heldout_inherit_acc": 0.6564885496183206,
+      "deranged_acc": 0.10687022900763359,
+      "n_heldout": 131,
+      "mean_cluster_coherence": 0.1000411115835071
+    }
+  ]
+}

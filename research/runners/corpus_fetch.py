@@ -72,7 +72,12 @@ def clean_text(raw: str) -> str:
             kept.append(" ")
     # Collapse any whitespace run (kept newlines, spaces, and the
     # space-substituted tabs/CRs above) to a single space, then strip.
-    return re.sub(r"\s+", " ", "".join(kept)).strip()
+    # LOWERCASE to honor the downstream tokenizer contract: corpus_stream's
+    # `re.findall(r"[a-z]+", ...)` assumes pre-lowercased text, so a capital
+    # first letter (proper nouns, sentence-initial words) would otherwise be
+    # dropped ("Lily"->"ily", "Once"->"nce"). Case-folding is the correct
+    # normalization for the co-occurrence / small-LM consumers.
+    return re.sub(r"\s+", " ", "".join(kept)).strip().lower()
 
 
 def split_corpus(text: str, heldout_frac: float = 0.1) -> tuple[str, str]:
