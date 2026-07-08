@@ -129,6 +129,16 @@ class UnifiedTalkableConsole:
                 n += int(self.teach_relational(rec[0], rec[1], rec[2]))
         return n
 
+    def _word(self, w):
+        """Spell a word ON SPIKES if the A->W covers it (spellable), else render it as text."""
+        return self.speaker.spell(w) if w in self.spellable else w
+
+    def _speak_svo(self, subj, verb, obj):
+        """A full-sentence relational answer 'the <subj> <verb>s <obj>' -- content words ON SPIKES where
+        spellable; the/-s are host scaffolds (the spiking function-word A->W is the follow-on)."""
+        vbase = verb[:-1] if verb.endswith("s") else verb
+        return f"the {self._word(subj)} {self._word(vbase)}s {self._word(obj)}"
+
     def ask(self, q):
         """Route by question form: 'does a X <verb>?' -> property; 'what does the X <verb>?' -> relational."""
         toks = q.lower().replace("?", "").split()
@@ -142,7 +152,7 @@ class UnifiedTalkableConsole:
             if o is None:
                 return "I don't know", "moat"
             obj = self.vocab[o]
-            return (self.speaker.spell(obj) if obj in self.spellable else obj), "relational"
+            return self._speak_svo(subj, verb, obj), "relational"
         # property: does/can a X <verb>
         subj = toks[2] if len(toks) > 2 else None
         if subj not in self.prop.row_of:
