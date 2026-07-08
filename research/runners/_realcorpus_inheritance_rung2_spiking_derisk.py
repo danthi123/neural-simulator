@@ -66,7 +66,7 @@ class RealCorpusPoolerProbe:
 
     def __init__(self, seed, sdr_by_row, row_to_cat, cat_ids, epochs=40, learn=True,
                  permute_features=False, lesion=False, prop_k=PROP_K, k_win=K_WIN,
-                 diverse_readers=False, reader_frac=0.5):
+                 diverse_readers=False, reader_frac=0.5, pool_seed=None):
         self.k_win = k_win                     # codon width (top-k pooler columns); the codon-side read-variance lever
         from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
         from sim.bridge import SimulationBridge
@@ -154,7 +154,10 @@ class RealCorpusPoolerProbe:
         self.z = np.zeros(len(ci))
 
         # competitive self-organizing pooler (EMERGE-38) over the REAL SDR features
-        self.Wp = rng.uniform(0.30, 0.55, (NCOL, NF))
+        # pool_seed decouples the pooler Wp init from the data seed -> an ENSEMBLE of poolers with the SAME
+        # data + held-out set but DIFFERENT codon encodings (the codon-assignment-variance ENCODING lever).
+        pool_rng = np.random.default_rng(pool_seed) if pool_seed is not None else rng
+        self.Wp = pool_rng.uniform(0.30, 0.55, (NCOL, NF))
         if learn:
             duty = np.zeros(NCOL); boost = np.ones(NCOL); order = list(rows)
             for e in range(POOL_EPOCHS):
