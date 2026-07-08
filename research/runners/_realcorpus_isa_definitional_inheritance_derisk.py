@@ -35,21 +35,36 @@ _STOP = set(("the a an of in on at to and or but with for is was are were be bee
 
 
 def mine_isa(stories, min_subjects=4):
-    """Mine (subject, superordinate) is-a pairs from 'X is a/an [adj]* HEAD-NOUN'. Returns {super: [subjects]}."""
+    """Mine (subject, superordinate) is-a pairs from 'X is a/an [adj]* HEAD-NOUN'. Returns {super: [subjects]}.
+
+    Head-noun heuristic: the LAST content word before a sentence/PP boundary (skips leading adjectives).
+    NOUN filter: a real superordinate NOUN also appears as a SUBJECT of 'is a' somewhere (nouns fill both
+    roles); adjectives/participles (located/american) do not -> filters the noise supers structurally."""
+    _BOUND = set("in of from with by for on at as and or that which who".split())
     pairs = Counter()
+    subjects_seen = set()                       # words that appear as SUBJECT of 'is a' (real nouns)
     for toks in stories:
         for i in range(len(toks) - 4):
             if toks[i + 1] == "is" and toks[i + 2] in ("a", "an"):
                 subj = toks[i]
-                # head noun = the LAST content word in the next 1-3 positions (skips leading adjectives)
-                cand = [w for w in toks[i + 3:i + 6] if w not in _STOP and len(w) > 2]
-                if cand and subj not in _STOP and len(subj) > 2:
-                    pairs[(subj, cand[-1])] += 1
+                if subj not in _STOP and len(subj) > 2:
+                    subjects_seen.add(subj)
+                # head noun = the last content word before a boundary word, in the next up-to-4 positions
+                head = None
+                for w in toks[i + 3:i + 7]:
+                    if w in _BOUND:
+                        break
+                    if w not in _STOP and len(w) > 2:
+                        head = w                # keep advancing to the LAST pre-boundary content word
+                if head and subj not in _STOP and len(subj) > 2:
+                    pairs[(subj, head)] += 1
     by_super = defaultdict(set)
     for (subj, sup), c in pairs.items():
         by_super[sup].add(subj)
-    # keep supers with >= min_subjects distinct subjects (a usable category)
-    return {sup: sorted(subs) for sup, subs in by_super.items() if len(subs) >= min_subjects}
+    # keep supers that (a) have >= min_subjects distinct subjects AND (b) are themselves real nouns
+    # (appear as a subject of 'is a' -> filters adjectives/participles like located/american)
+    return {sup: sorted(subs) for sup, subs in by_super.items()
+            if len(subs) >= min_subjects and sup in subjects_seen}
 
 
 def run_seed(seed, stories, isa_groups, args):
