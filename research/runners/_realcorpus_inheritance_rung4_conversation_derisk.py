@@ -39,7 +39,7 @@ CAT_NAMES = list(TAXONOMY_8x8.keys())
 class RealCorpusConsole:
     """Discover categories from a real corpus; teach class properties explicitly; answer yes/no with a moat."""
 
-    def __init__(self, seed, stories, K):
+    def __init__(self, seed, stories, K, emergent=False, n_clusters=10):
         vocab, gfreq = discover_vocab(stories, K)
         self.vocab = vocab
         self.row_of = {w: i for i, w in enumerate(vocab)}
@@ -53,13 +53,29 @@ class RealCorpusConsole:
                 break
         codes, _ = learn_stream_codes(seed, stories, vocab, hubs, window=WINDOW)
         self.U = _unit_rows(codes)
-        pr, pl, pw, nc, per = build_probe(vocab, TAXONOMY_8x8)
-        self.cat_of_word = {vocab[int(r)]: CAT_NAMES[int(lab)] for r, lab in zip(pr.tolist(), pl.tolist())}
-        # usable categories (>=4 members) + their member words
-        by_cat = {}
-        for w, c in self.cat_of_word.items():
-            by_cat.setdefault(c, []).append(w)
-        self.members = {c: ws for c, ws in by_cat.items() if len(ws) >= 4}
+        if emergent:
+            # PROBE-FREE: DISCOVER categories by clustering the codes (no hand-labeled probe). Each cluster is
+            # named by its most-central member word (legible). Categories are the brain's own groupings.
+            from research.runners._realcorpus_inheritance_emergent_clusters_derisk import _kmeans
+            labels = _kmeans(codes, n_clusters, seed)
+            from collections import Counter
+            cnt = Counter(labels.tolist())
+            by_cat = {}
+            for c in sorted(cnt):
+                if cnt[c] < 4:
+                    continue
+                rows = [i for i in range(len(vocab)) if labels[i] == c]
+                cent = self.U[rows].mean(0)
+                central = vocab[rows[int(np.argmax(self.U[rows] @ cent))]]      # most-central word names the cluster
+                by_cat[f"~{central}"] = [vocab[i] for i in rows]
+            self.members = by_cat
+        else:
+            pr, pl, pw, nc, per = build_probe(vocab, TAXONOMY_8x8)
+            self.cat_of_word = {vocab[int(r)]: CAT_NAMES[int(lab)] for r, lab in zip(pr.tolist(), pl.tolist())}
+            by_cat = {}
+            for w, c in self.cat_of_word.items():
+                by_cat.setdefault(c, []).append(w)
+            self.members = {c: ws for c, ws in by_cat.items() if len(ws) >= 4}
         self.rng = np.random.RandomState(seed)
         self.D = 64
         # multi-category argmax (the proven rung-1 mechanism): every usable category gets a DISTINCT property
@@ -113,8 +129,8 @@ def _coherence(con, c):
     return float(S[iu].mean())
 
 
-def run_seed(seed, stories, K, verbose=False):
-    con = RealCorpusConsole(seed, stories, K)
+def run_seed(seed, stories, K, verbose=False, emergent=False, n_clusters=10):
+    con = RealCorpusConsole(seed, stories, K, emergent=emergent, n_clusters=n_clusters)
     if len(con.cat_ids) < 2:
         return None
     # pick pos = the MOST COHERENT category (the one co-occurrence actually forms); neg = 2nd most coherent.
@@ -130,7 +146,7 @@ def run_seed(seed, stories, K, verbose=False):
     moat = con.ask(pos, "zzzqqx") == "idk"                                       # unknown -> I don't know
 
     # DERANGE anti-cheat: teach with SHUFFLED category labels -> held-out pos members no longer predict pos
-    con_d = RealCorpusConsole(seed, stories, K)
+    con_d = RealCorpusConsole(seed, stories, K, emergent=emergent, n_clusters=n_clusters)
     allw = [w for c in con_d.cat_ids for w in con_d.members[c]]
     con_d.rng.shuffle(allw)
     der_taught = {}; i = 0
@@ -159,15 +175,18 @@ def main():
     ap.add_argument("--K", type=int, default=256)
     ap.add_argument("--seeds", default="42,43,44,100,101,102")
     ap.add_argument("--demo", action="store_true", help="print a scripted conversation transcript (seed 42)")
+    ap.add_argument("--emergent", action="store_true", help="PROBE-FREE: discover categories by clustering (no probe)")
+    ap.add_argument("--n-clusters", type=int, default=10)
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
     seeds = [int(s) for s in a.seeds.split(",")]
     stories = load_token_stream_multi(a.corpus_path, max_stories=None)
-    print(f"[rung4 conversation] corpus={a.corpus_path} stories={len(stories)} K={a.K}", flush=True)
+    print(f"[rung4 conversation] corpus={a.corpus_path} stories={len(stories)} K={a.K} "
+          f"{'EMERGENT-clusters (probe-free)' if a.emergent else 'probe'}", flush=True)
 
     recs = []
     for s in seeds:
-        r = run_seed(s, stories, a.K, verbose=(a.demo and s == seeds[0]))
+        r = run_seed(s, stories, a.K, verbose=(a.demo and s == seeds[0]), emergent=a.emergent, n_clusters=a.n_clusters)
         if r is None:
             continue
         recs.append(r)
