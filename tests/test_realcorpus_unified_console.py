@@ -11,8 +11,11 @@ import pytest
 
 CORPUS = "data/corpus/tinystories.txt"
 BRIDGE = "bridges/breadth_aw/seed42.simstate.h5"
+BRIDGE2 = "bridges/breadth_aw2/seed42.simstate.h5"
+BRIDGE3 = "bridges/breadth_aw3/seed42.simstate.h5"
 pytestmark = pytest.mark.skipif(not (os.path.exists(CORPUS) and os.path.exists(BRIDGE)),
                                 reason="needs the TinyStories corpus + the breadth A->W bridge (regenerable)")
+_HAS_MULTIBRIDGE = os.path.exists(BRIDGE2) and os.path.exists(BRIDGE3)
 
 
 @pytest.fixture(scope="module")
@@ -160,3 +163,29 @@ def test_spiking_gen_property_answer_on_spikes(spiking_console):
     p1 = con._producer.production_count
     _, k = con.ask("does a zzzqqx run?")
     assert k == "moat" and con._producer.production_count == p1                          # producer NOT invoked
+
+
+@pytest.fixture(scope="module")
+def relational_spiking_console():
+    """A console whose RELATIONAL (transitive) answers are GENERATED ON SPIKES: the C_TRANS slot ORDER by the
+    EMERGE-72/74 registry producer, every word (incl. the 3sg verb) by the 3-bridge A->W. Needs BRIDGE-2/3."""
+    os.environ.setdefault("SIM_BACKEND", "numpy")
+    from research.runners._realcorpus_unified_talkable_console import UnifiedTalkableConsole
+    return UnifiedTalkableConsole(CORPUS, 256, 10, BRIDGE, seed=42, class_verb="run", exc_verb="sleep",
+                                  rel_verb="eat", spiking_gen=True, multi_bridge=True)
+
+
+@pytest.mark.skipif(not _HAS_MULTIBRIDGE, reason="needs the BRIDGE-2 + BRIDGE-3 A->W checkpoints (regenerable)")
+def test_relational_answer_generated_on_spikes(relational_spiking_console):
+    """The transitive C_TRANS answer 'the <subj> <verb>s the <obj>' is produced ON SPIKES (registry producer +
+    3-bridge A->W). Teach a fully-spellable animal-verb-animal fact, ask it back -> the 5-slot surface renders."""
+    con = relational_spiking_console
+    assert con._svo_producer is not None                          # C_TRANS mined + producer built
+    # a fact whose subject/3sg-verb/object are all covered by the 3-bridge A->W (dog/eats/cat)
+    assert con.teach_relational("dog", "eat", "cat")
+    out, kind = con.ask("what does the dog eat?")
+    assert kind == "relational"
+    assert out == "the dog eats the cat"                          # slot order + every word ON SPIKES
+    # the moat is unaffected: an unknown relation abstains
+    _, k = con.ask("what does the zzzqqx eat?")
+    assert k == "moat"
