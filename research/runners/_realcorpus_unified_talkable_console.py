@@ -146,19 +146,29 @@ class UnifiedTalkableConsole:
 
     def describe(self, word):
         """'tell me about <word>': aggregate the word's PROPERTY (inherit/cancel) + RELATIONAL facts into
-        connected prose -- a multi-fact discourse answer (toward fluent conversation). Moat: nothing known -> abstain."""
-        sents = []
+        connected prose with a referring pronoun + 'and'-aggregation (NLG discourse; Levelt/Reiter-Dale) --
+        a multi-fact discourse answer toward fluent conversation. Moat: nothing known -> abstain."""
+        prop_verb = None
         if word in self.prop.row_of:                          # property: what it can do (inherit / override)
             pred = self.prop._predict_all(word)
             if pred[0] == "exc":
-                sents.append(self._word_frame(word, self.exc_verbs.get(pred[1], self.exc_verb)))
+                prop_verb = self.exc_verbs.get(pred[1], self.exc_verb)
             elif pred == ("cat", self.pos):
-                sents.append(self._word_frame(word, self.class_verb))
-        for (s, v, o) in self.rel_facts:                       # relational: what it does to whom
-            if s == word:
-                sents.append(self._speak_svo(s, v, o))
-        if not sents:
+                prop_verb = self.class_verb
+        rels = [(v, o) for (s, v, o) in self.rel_facts if s == word]   # relational: what it does to whom
+        if prop_verb is None and not rels:
             return "I don't know", "moat"
+
+        subj = self._word(word)
+        sents = []
+        if prop_verb is not None:
+            sents.append(f"the {subj} can {self._word(prop_verb)}")
+        if rels:
+            # referring expression: pronoun 'it' once the subject is established; aggregate with 'and'
+            ref = "it" if sents else f"the {subj}"
+            vbase = lambda v: v[:-1] if v.endswith("s") else v
+            phrase = " and ".join(f"{self._word(vbase(v))}s {self._word(o)}" for (v, o) in rels)
+            sents.append(f"{ref} {phrase}")
         return " ".join(s[0].upper() + s[1:] + "." for s in sents), "describe"
 
     def _word_frame(self, subj, verb):
