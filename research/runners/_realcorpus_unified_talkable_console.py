@@ -46,10 +46,12 @@ class UnifiedTalkableConsole:
         self.pos = _pick_pos(self.prop, coh)
         taught, held = _splits(self.prop.members, self.prop.cat_ids, self.prop.rng)
         self.prop.teach(taught)
+        self.exc_verbs = {}                                  # exc_id -> spoken verb (per member exception)
         self.exc_word = next((w for w in self.prop.members[self.pos]
                               if w in self.animals and self.prop.ask_class(self.pos, w) == "yes"), None)
         if self.exc_word:
             self.prop.teach_exception_adaptive(self.exc_word, "own", margin=2.0)
+            self.exc_verbs["own"] = exc_verb
 
         # RELATIONAL store (FHRR) over the SAME real-corpus codes (seed-deterministic re-learn) + spellable facts
         vocab, gfreq = discover_vocab(stories, K)
@@ -74,6 +76,15 @@ class UnifiedTalkableConsole:
             if rel_verb in self.row_of:
                 self.svo.store(self.row_of[s], self.row_of[rel_verb], self.row_of[o])
                 self.rel_facts.append((s, rel_verb, o))
+
+    def teach_property_exception(self, word, verb):
+        """Grow: teach '<word> <verb>s' as a property EXCEPTION (its own property overrides the class) live.
+        Then 'does a <word> <class_verb>?' -> 'no -- the <word> can <verb>'. verb must be spellable."""
+        if word not in self.prop.row_of or verb not in self.spellable:
+            return False
+        self.prop.teach_exception_adaptive(word, word, margin=2.0)   # per-word exception id
+        self.exc_verbs[word] = verb
+        return True
 
     def verb_row(self, v):
         """Resolve a relational verb to a discovered-vocab row (try the surface form, then strip a trailing -s)."""
@@ -127,9 +138,10 @@ class UnifiedTalkableConsole:
         subj = toks[2] if len(toks) > 2 else None
         if subj not in self.prop.row_of:
             return "I don't know", "moat"
-        pred = self.prop._predict_all(subj) if hasattr(self.prop, "_predict_all") else ("cat", self.prop._predict_cat(subj))
-        if pred == ("exc", "own"):
-            frame, _ = self.speaker.speak_frame(subj, self.exc_verb); return f"no -- {frame}", "override"
+        pred = self.prop._predict_all(subj)
+        if pred[0] == "exc":                                       # a member exception overrides -> its own verb
+            verb = self.exc_verbs.get(pred[1], self.exc_verb)
+            frame, _ = self.speaker.speak_frame(subj, verb); return f"no -- {frame}", "override"
         if pred == ("cat", self.pos):
             frame, _ = self.speaker.speak_frame(subj, self.class_verb); return f"yes -- {frame}", "inherit"
         return "no", "other"
@@ -170,13 +182,19 @@ def main():
             if not q or q.lower() in ("quit", "exit"):
                 break
             toks = q.lower().replace("?", "").replace(".", "").split()
-            # TEACH a relational fact: a declarative (not a question) with 3 content tokens <subj> <verb> <obj>
+            # TEACH (declarative, not a question): 3 content tokens = relational SVO; 2 = property exception
             if toks and toks[0] not in ("does", "can", "what"):
                 content = [t for t in toks if t not in ("the", "a", "an")]
                 if len(content) == 3 and con.teach_relational(content[0], content[1], content[2], persist=a.persist):
                     print(f"  brain: ok, I learned that the {content[0]} {content[1]} {content[2]}.", flush=True)
+                elif len(content) == 2:
+                    verb = content[1][:-1] if content[1].endswith("s") else content[1]   # sleeps -> sleep
+                    if con.teach_property_exception(content[0], verb):
+                        print(f"  brain: ok, I learned that the {content[0]} {verb}s (an exception).", flush=True)
+                    else:
+                        print(f"  brain: I can't learn that ('{verb}' must be a word I can say).", flush=True)
                 else:
-                    print(f"  brain: I can't learn that (need '<animal> <verb> <animal>' with words I know).", flush=True)
+                    print(f"  brain: I can't learn that (say '<animal> <verb> <animal>' or '<animal> <verb>').", flush=True)
                 continue
             out, kind = con.ask(q)
             print(f"  brain: \"{out}\"   [{kind}]", flush=True)
