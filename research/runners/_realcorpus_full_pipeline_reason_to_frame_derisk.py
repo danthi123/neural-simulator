@@ -29,12 +29,21 @@ def run(corpus_path, K, n_clusters, bridge_path, verb, seed, breadth=False):
         speaker = ConceptFrameSpeaker(bridge_path, seed=seed)                        # cupy A->W frame speaker
     spellable = set(speaker.vocab)
 
-    # find a DISCOVERED cluster that contains >=2 spellable words (so we can teach one, hold out another)
+    # find a DISCOVERED cluster with >=2 spellable SUBJECT words (so we can teach one, hold out another).
+    # PREFER a cluster whose spellable members are NOUN subjects (animals) over a verb cluster -> the frame
+    # "the <subject> can <verb>" reads coherently (avoids "the play can run"). Falls back to any spellable cluster.
+    subjects = set()
+    if breadth:
+        from research.runners._realcorpus_train_breadth_aw import ANIMALS
+        subjects = set(ANIMALS) & spellable
     target_cat = None
-    for c in con.cat_ids:
-        sp = [w for w in con.members[c] if w in spellable]
-        if len(sp) >= 2:
+    for c in con.cat_ids:                                     # pass 1: a cluster with >=2 spellable SUBJECTS
+        if subjects and len([w for w in con.members[c] if w in subjects]) >= 2:
             target_cat = c; break
+    if target_cat is None:                                    # pass 2: any cluster with >=2 spellable words
+        for c in con.cat_ids:
+            if len([w for w in con.members[c] if w in spellable]) >= 2:
+                target_cat = c; break
     if target_cat is None:
         print("  no discovered cluster with >=2 spellable members -- try a different K/n_clusters"); return None
 
