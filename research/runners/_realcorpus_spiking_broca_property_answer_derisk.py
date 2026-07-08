@@ -12,8 +12,8 @@ in ONE process. Reuse-by-import. NO `sim/` edit. Requires SIM_BACKEND=numpy.
 from __future__ import annotations
 import argparse
 
-from research.runners._emerge59_spiking_broca_frame_slots_derisk import FrameSlotCQ, BrocaProducer
-from research.runners._emerge61_spiking_broca_order_robustness_derisk import ResetFrameSlotCQ
+from research.runners._emerge65_self_organized_producer_derisk import SelfOrganizedProducer
+from research.runners._emerge62_discover_function_words_derisk import build_stream
 from research.runners._realcorpus_full_frame_speech_derisk import ConceptFrameSpeaker
 from research.runners._realcorpus_train_breadth_aw import VOCAB, WORD_TO_POOL
 
@@ -21,9 +21,10 @@ from research.runners._realcorpus_train_breadth_aw import VOCAB, WORD_TO_POOL
 def run(seed=42, aw_seed=42):
     aw = ConceptFrameSpeaker("bridges/breadth_aw/seed42.simstate.h5", seed=aw_seed,
                              vocab=VOCAB, word_to_pool=WORD_TO_POOL)   # the A->W spell callback (on spikes)
-    cq = ResetFrameSlotCQ(seed=seed)      # EMERGE-61 wash-out: restore the post-init substrate before each production
-                                          #   (fixes the EMERGE-59 order tail: cp_recovery_variable_u accumulation)
-    producer = BrocaProducer(cq, spell=aw.spell)                      # gate-first; every slot spelled by the A->W
+    # the EMERGE-65 SELF-ORGANIZED producer (exact order via MinedInventoryFrameSlotCQ + the EMERGE-61 wash-out,
+    # position-independent by construction -- fixes the base-CQ order tail); built from the corpus stream.
+    sop = SelfOrganizedProducer(seed).build_from_corpus(build_stream(seed))
+    producer = sop.producer(spell=aw.spell)                          # gate-first; every slot spelled by the A->W
 
     # decisions the real-corpus reasoner would hand over (inherit -> class verb; cancel -> exception verb) + a moat
     decisions = [
