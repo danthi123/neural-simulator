@@ -51,7 +51,7 @@ def main():
     # with the breadth vocab's orthogonal codes -- WITHOUT this the A->W spelling is ~random (root-caused).
     apply_concept_topographic_bias(bridge, n_lang_input=N_LANG, topographic_factor=3.0, off_target_factor=0.3,
                                    sparsity=0.05, orthogonal_codes=True, n_words_for_orthogonal=len(VOCAB),
-                                   word_to_idx=WORD_TO_IDX, verbose=False)
+                                   word_to_idx=WORD_TO_IDX, word_to_pool_override=WORD_TO_POOL, verbose=False)
     t0 = time.time()
     for w in VOCAB:
         tw = time.time()

@@ -306,6 +306,7 @@ def apply_concept_topographic_bias(bridge,
                                      n_words_for_orthogonal: int = 12,
                                      word_to_idx: dict = None,
                                      skip_motor: bool = False,
+                                     word_to_pool_override: dict = None,
                                      verbose: bool = True) -> Dict:
     """Apply Pulvermüller-style topographic bias to lang_input -> {pool}.
 
@@ -380,20 +381,26 @@ def apply_concept_topographic_bias(bridge,
     except Exception:
         pass
 
-    if not skip_motor:
-        for word, action in DIRECTION_VOCAB.items():
-            target = f"motor_{action}"
+    if word_to_pool_override is not None:
+        # DECOUPLED broad-vocab path: bias ONLY the given custom (word -> pool) mapping (any vocab),
+        # instead of the welded concept vocab. Additive/opt-in; default None = the byte-identical path below.
+        for word, target in word_to_pool_override.items():
             bias_tasks.append((word, target, all_output_pools))
-    for word, name in NOUN_VOCAB.items():
-        target = f"noun_pool_{name}"
-        bias_tasks.append((word, target, all_output_pools))
-    for word, name in VERB_VOCAB.items():
-        target = f"verb_pool_{name}"
-        bias_tasks.append((word, target, all_output_pools))
-    if has_adjective:
-        for word, name in ADJECTIVE_VOCAB.items():
-            target = f"adjective_pool_{name}"
+    else:
+        if not skip_motor:
+            for word, action in DIRECTION_VOCAB.items():
+                target = f"motor_{action}"
+                bias_tasks.append((word, target, all_output_pools))
+        for word, name in NOUN_VOCAB.items():
+            target = f"noun_pool_{name}"
             bias_tasks.append((word, target, all_output_pools))
+        for word, name in VERB_VOCAB.items():
+            target = f"verb_pool_{name}"
+            bias_tasks.append((word, target, all_output_pools))
+        if has_adjective:
+            for word, name in ADJECTIVE_VOCAB.items():
+                target = f"adjective_pool_{name}"
+                bias_tasks.append((word, target, all_output_pools))
 
     # 2026-05-13 v7 FIX: priority-based assignment with TARGET-FIRST.
     #
