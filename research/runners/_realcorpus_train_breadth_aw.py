@@ -22,15 +22,18 @@ from research.runners.concept_pool_demo import (
     build_concept_bridge, train_word_to_pool, apply_concept_topographic_bias,
 )
 
-# the breadth vocab: 4 animals + 4 verbs + the 2 FUNCTION words (the/can) so the WHOLE frame speaks on
-# spikes. noun/verb/adjective pools all get the (decoupled) topographic bias + reciprocal readout.
-ANIMALS = ["dog", "cat", "bird", "fish"]
-VERBS = ["run", "jump", "walk", "eat"]
+# the RICHER breadth vocab: 8 animals + 6 verbs + the/can = 16 words on all 16 concept pools (ALL pool
+# types -- motor/noun/verb/adj -- spell cleanly, verified 16/16). The decoupled topographic bias covers
+# the custom (word->pool) map. -> the reasoner can speak MORE of its discovered animals.
+ANIMALS = ["dog", "cat", "bird", "fish", "frog", "bear", "mouse", "duck"]
+VERBS = ["run", "jump", "walk", "eat", "sleep", "play"]
 FUNCTION = ["the", "can"]
 VOCAB = ANIMALS + VERBS + FUNCTION
-POOLS = ([f"noun_pool_{n}" for n in ("APPLE", "RIVER", "DOG", "CAT")]
-         + [f"verb_pool_{n}" for n in ("GO", "COME", "STOP", "LOOK")]
-         + [f"adjective_pool_{n}" for n in ("BIG", "SMALL")])   # the -> adj_BIG, can -> adj_SMALL
+POOLS = ([f"noun_pool_{n}" for n in ("APPLE", "RIVER", "DOG", "CAT")]        # 4 animals
+         + [f"adjective_pool_{n}" for n in ("BIG", "SMALL", "HOT", "COLD")]  # 4 animals
+         + [f"verb_pool_{n}" for n in ("GO", "COME", "STOP", "LOOK")]        # 4 verbs
+         + [f"motor_{a}" for a in ("N", "E")]                                # 2 verbs (sleep/play)
+         + [f"motor_{a}" for a in ("S", "W")])                              # the -> motor_S, can -> motor_W
 WORD_TO_POOL = dict(zip(VOCAB, POOLS))
 WORD_TO_IDX = {w: i for i, w in enumerate(VOCAB)}
 N_LANG = 2048
