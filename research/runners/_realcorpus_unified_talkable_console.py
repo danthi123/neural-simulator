@@ -209,6 +209,18 @@ class UnifiedTalkableConsole:
                 return "I don't know", "moat"
             subj = self.vocab[arow]
             return self._speak_svo(subj, verb, obj), "relational"
+        # relational YES/NO: 'does the <subj> <verb> <obj>?' (an object after the verb) -> verify the fact
+        if toks[:1] in (["does"], ["can"]) and len(toks) >= 5:
+            content = [t for t in toks[1:] if t not in ("the", "a", "an")]
+            if len(content) >= 3:
+                s2, v2, o2 = content[0], content[1], content[2]
+                vrow, _ = self.verb_row(v2)
+                if s2 in self.row_of and o2 in self.row_of and vrow is not None:
+                    got = self.svo.answer_patient(self.row_of[s2], vrow)
+                    if got is None:
+                        return "I don't know", "moat"                       # nothing stored for that (subj, verb)
+                    return (f"yes -- {self._speak_svo(s2, v2, o2)}" if self.vocab[got] == o2
+                            else f"no -- {self._speak_svo(s2, v2, self.vocab[got])}"), "yesno"
         # property: does/can a X <verb>
         subj = toks[2] if len(toks) > 2 else None
         if subj not in self.prop.row_of:
