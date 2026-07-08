@@ -1,0 +1,92 @@
+{
+  "probe": "semantic_inheritance_ppmi_deep_credit",
+  "seeds": [
+    42
+  ],
+  "rule": "microcircuit",
+  "config": {
+    "hidden": 96,
+    "epochs": 250,
+    "lr": 0.3,
+    "batch": 128,
+    "feedback": "fixed",
+    "homeostasis": false,
+    "deep_layers": 2,
+    "task": {
+      "n_super": 8,
+      "n_members": 8,
+      "held_per_super": 3,
+      "n_prop": 3,
+      "n_obs": 14,
+      "noise": 0.02,
+      "host_alpha": 0.75,
+      "svd_dim": 0,
+      "codes_cache": null
+    },
+    "backend": "numpy"
+  },
+  "elapsed_seconds": 4.2,
+  "per_seed": [
+    {
+      "seed": 42,
+      "meta": {
+        "n_super": 8,
+        "n_members": 8,
+        "held_per_super": 3,
+        "n_prop": 3,
+        "k_classes": 9,
+        "n_obs": 14,
+        "noise": 0.02,
+        "n_features": 296,
+        "n_train": 420,
+        "n_heldout": 24,
+        "n_inherit_heldout": 18,
+        "n_memctrl_heldout": 6,
+        "n_supers_untaught": 2,
+        "code_source": "host_ppmi_transform_real_taxonomy",
+        "category_names": [
+          "animals",
+          "food",
+          "body",
+          "family",
+          "actions",
+          "colors",
+          "places",
+          "toys"
+        ],
+        "realism": {
+          "linear_category_decode_acc": 1.0,
+          "linear_category_chance": 0.125,
+          "note": "linear_cat_acc >> chance => categories are LINEARLY present in the PPMI codes => per-super properties are linearly reachable => the inheritance task is SHALLOW"
+        }
+      },
+      "stage0_depth_genuineness": {
+        "chance": 0.16666666666666666,
+        "n_features": 296,
+        "linear_inherit_heldout": 1.0,
+        "linear_train": 1.0,
+        "l1_inherit_heldout": 1.0,
+        "l1_train": 1.0,
+        "l2_inherit_heldout": 1.0,
+        "l2_train": 1.0,
+        "l3_inherit_heldout": 1.0,
+        "l3_train": 1.0,
+        "deep_best_inherit_heldout": 1.0,
+        "depth_gap": 0.0,
+        "depth_separating": false
+      }
+    }
+  ],
+  "stage0_depth_separating": false,
+  "aggregate": {
+    "code_source": "host_ppmi_transform_real_taxonomy",
+    "deep_best_inherit_heldout": 1.0,
+    "l1_inherit_heldout": 1.0,
+    "linear_inherit_heldout": 1.0,
+    "depth_gap": 0.0,
+    "linear_category_decode_acc": 1.0,
+    "linear_category_chance": 0.125
+  },
+  "SIGNAL": false,
+  "verdict": "HONEST STAGE-0 FINDING -- NOT depth-required on REAL-PPMI codes (host_ppmi_transform_real_taxonomy): a LINEAR/1-layer oracle ALREADY clears held-out inheritance (linear 1.000, 1-layer 1.000) so the deep-best 1.000 gives depth-gap +0.000 (< the 0.05 depth-separating bar). This is the prompt's flagged risk CONFIRMED: real word-embedding (PPMI) codes make the superordinate CATEGORY LINEARLY decodable (linear category-decode 1.000 >> chance 0.125), so any per-super property is LINEARLY reachable -> real-word inheritance from PPMI codes is SHALLOW/LINEAR, NOT depth-required. The depth-requirement of the synthetic task came from its XOR-over-shared-pool encoding (individual features marginally 50/50 = linearly uninformative), a property REAL embeddings do NOT have. ==> the deep-credit rule's compositional-depth traction does NOT transfer to real-PPMI EMBEDDING-DECODING inheritance (it is the wrong instrument, like FC-CIFAR); the goal-relevant depth-requirement for real language lives in COMPOSITION/REASONING over these (already-linear) codes -- multi-hop chaining, structured binding, systematic recombination -- NOT in decoding a category from an embedding. Reporting the honest boundary; NOT forcing depth. (Stage-1 arms deliberately not read -- reading them on a shallow task is the wrong-instrument trap the synthetic part-1 identified.)"
+}
