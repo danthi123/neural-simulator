@@ -1,0 +1,164 @@
+{
+  "probe": "semantic_inheritance_onbridge_spiking",
+  "seeds": [
+    101
+  ],
+  "config": {
+    "hidden": 40,
+    "epochs": 30,
+    "batch": 120,
+    "lr": 0.25,
+    "settle_steps": 25,
+    "credit_steps": 15,
+    "n_hidden_layers": 2,
+    "train_subsample": 120,
+    "task": {
+      "n_super": 12,
+      "n_members": 8,
+      "held_per_super": 3,
+      "n_prop": 2,
+      "member_id_dim": 3,
+      "n_obs": 16,
+      "noise": 0.02,
+      "feature_seed": 0
+    },
+    "backend": "numpy"
+  },
+  "elapsed_seconds": 344.8,
+  "per_seed": [
+    {
+      "seed": 101,
+      "meta": {
+        "n_super": 12,
+        "n_members": 8,
+        "held_per_super": 3,
+        "n_prop": 2,
+        "k_classes": 5,
+        "member_id_dim": 3,
+        "n_obs": 16,
+        "noise": 0.02,
+        "feature_seed": 0,
+        "n_features": 7,
+        "n_train": 720,
+        "n_heldout": 276,
+        "n_inherit_heldout": 27,
+        "n_memctrl_heldout": 9,
+        "n_supers_untaught": 3,
+        "n_train_smoke": 120
+      },
+      "chance": 0.3333333333333333,
+      "stage0_depth_genuineness": {
+        "chance": 0.3333333333333333,
+        "n_features": 7,
+        "linear_inherit_heldout": 0.14814814814814814,
+        "linear_train": 0.3277777777777778,
+        "l1_inherit_heldout": 0.3333333333333333,
+        "l1_train": 1.0,
+        "l2_inherit_heldout": 0.37037037037037035,
+        "l2_train": 1.0,
+        "l3_inherit_heldout": 0.3333333333333333,
+        "l3_train": 1.0,
+        "deep_best_inherit_heldout": 0.37037037037037035,
+        "depth_gap": 0.037037037037037035,
+        "depth_separating": false
+      },
+      "arms": {
+        "plain_fa": {
+          "rule": "plain_fa",
+          "mode": "bdsp",
+          "inherit_heldout": 0.1111111111111111,
+          "memctrl_heldout": 0.2222222222222222,
+          "train": 0.25,
+          "ff_weight_norm_before": 1374.98681640625,
+          "ff_weight_norm_after": 8474.091796875,
+          "ff_weight_moved": 7099.10498046875,
+          "no_weight_transport": true
+        },
+        "burstprop": {
+          "rule": "burstprop",
+          "mode": "bdsp",
+          "inherit_heldout": 0.2222222222222222,
+          "memctrl_heldout": 0.0,
+          "train": 0.20833333333333334,
+          "ff_weight_norm_before": 1374.98681640625,
+          "ff_weight_norm_after": 8148.52490234375,
+          "ff_weight_moved": 6773.5380859375,
+          "no_weight_transport": true
+        },
+        "microcircuit": {
+          "rule": "microcircuit",
+          "mode": "bdsp",
+          "inherit_heldout": 0.1111111111111111,
+          "memctrl_heldout": 0.2222222222222222,
+          "train": 0.11666666666666667,
+          "ff_weight_norm_before": 1374.98681640625,
+          "ff_weight_norm_after": 8410.7626953125,
+          "ff_weight_moved": 7035.77587890625,
+          "no_weight_transport": true
+        }
+      },
+      "single_layer": {
+        "rule": "plain_fa",
+        "mode": "bdsp",
+        "inherit_heldout": 0.14814814814814814,
+        "memctrl_heldout": 0.5555555555555556,
+        "train": 0.11666666666666667,
+        "ff_weight_norm_before": 393.82635498046875,
+        "ff_weight_norm_after": 1694.1046142578125,
+        "ff_weight_moved": 1300.2782592773438,
+        "no_weight_transport": true
+      },
+      "permuted": {
+        "rule": "microcircuit",
+        "mode": "bdsp",
+        "inherit_heldout": 0.14814814814814814,
+        "memctrl_heldout": 0.2222222222222222,
+        "train": 0.18333333333333332,
+        "ff_weight_norm_before": 1374.98681640625,
+        "ff_weight_norm_after": 8897.103515625,
+        "ff_weight_moved": 7522.11669921875,
+        "no_weight_transport": true
+      },
+      "apical_lesion": {
+        "rule": "microcircuit",
+        "mode": "apical_lesion",
+        "inherit_heldout": 0.18518518518518517,
+        "memctrl_heldout": 0.1111111111111111,
+        "train": 0.13333333333333333,
+        "ff_weight_norm_before": 1374.98681640625,
+        "ff_weight_norm_after": 7658.16748046875,
+        "ff_weight_moved": 6283.1806640625,
+        "no_weight_transport": true
+      },
+      "oracle": {
+        "inherit_heldout": 0.37037037037037035,
+        "memctrl_heldout": 0.0,
+        "train": 1.0
+      }
+    }
+  ],
+  "aggregate": {
+    "chance": 0.3333333333333333,
+    "plain_fa_inherit": 0.1111111111111111,
+    "burstprop_inherit": 0.2222222222222222,
+    "microcircuit_inherit": 0.1111111111111111,
+    "single_layer_inherit": 0.14814814814814814,
+    "oracle_inherit": 0.37037037037037035,
+    "oracle_memctrl": 0.0,
+    "permuted_inherit": 0.14814814814814814,
+    "apical_lesion_inherit": 0.18518518518518517,
+    "ff_weight_moved_fa": 7099.10498046875,
+    "stage0_depth_separating": false,
+    "trains_at_all": false,
+    "bio_beats_fa": true,
+    "mc_beats_fa": false,
+    "bp_beats_fa": true,
+    "permuted_chance": true,
+    "lesion_collapses": true,
+    "memctrl_holds": true,
+    "ff_weight_moves": true,
+    "oracle_ok": false
+  },
+  "SIGNAL": false,
+  "verdict": "STAGE-0 not depth-separating (rate oracle) at this task config -- fix the task config before reading the on-bridge arms (deep-best 0.370 vs 1-layer 0.333)."
+}
