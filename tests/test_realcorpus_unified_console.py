@@ -245,6 +245,22 @@ def test_rich_gen_ditransitive_answer_on_spikes(rich_console):
     assert out == f"the {s} {dv}s the {r} a {t}"                  # the exact ditransitive surface, generated on spikes
 
 
+@pytest.mark.skipif(not _HAS_RICH, reason="needs BRIDGE-2/3/4 + the affix A->W checkpoints (regenerable)")
+def test_rich_gen_pp_answer_on_spikes(rich_console):
+    """rich_gen: the console's SPATIAL (PP) answer is produced ON SPIKES -- teach '<s> <v> to <d>' (goal) ->
+    'where does the s v to?' -> the exact 'the s vs to the d' surface (C_PPGOAL order + productive 3sg on spikes)."""
+    con = rich_console
+    pv = next((v for v in ("run", "walk", "go", "look", "jump") if con.verb_row(v)[0] is not None and v in con.speaker.vocab), None)
+    dests = [w for w in con.row_of if w in con.speaker.vocab]
+    if pv is None or len(dests) < 2:
+        pytest.skip("no spatial verb + destination in (discovered vocab ∩ speaker vocab)")
+    s, d = dests[0], dests[1]
+    assert con.teach_pp(s, pv, d, "goal")
+    out, kind = con.ask(f"where does the {s} {pv} to?")
+    assert kind == "spatial"
+    assert out == f"the {s} {pv}s to the {d}"                     # C_PPGOAL order + productive 3sg, on spikes
+
+
 @pytest.fixture(scope="module")
 def neural_route_console():
     """A console whose question-TYPE routing is NEURAL (a fronto-striatal reservoir read-out) instead of the

@@ -122,6 +122,7 @@ class UnifiedTalkableConsole:
         # word spelled on spikes by the A->W -- replacing the host f-string order in speak_frame. Gate-first:
         # only invoked when the reasoner ANSWERS (abstain -> the producer is never called -> moat by construction).
         self.spiking_gen = spiking_gen or rich_gen           # rich_gen implies the spiking producers
+        self._rich = rich_gen                                # richer-relation generation (ProductiveMultiSpeaker + producers)
         self._producer = None
         self._svo_producer = None
         self._ditrans_producer = None                        # rich_gen: the 8-pool ditransitive producer + its cq
@@ -276,6 +277,23 @@ class UnifiedTalkableConsole:
                 pass
         return f"the {self._word(subj)} {self._word(vbase)}s the {self._word(recip)} a {self._word(theme)}"
 
+    def _gen_pp(self, subj, verb, dest, kind, prep):
+        """The spatial answer 'the <subj> <verb>s <prep> the <dest>'. When rich_gen (the C_PPGOAL/C_PPLOC producer
+        + the productive A->W) is available + every filler is spellable, the 6-slot ORDER is produced ON SPIKES
+        (EMERGE-72 registry producer) + each word (incl. the 3sg verb via productive inflection) on spikes; else host."""
+        vbase = verb[:-1] if verb.endswith("s") else verb
+        if self._rich and self._svo_producer is not None:
+            from research.runners._emerge74_transitive_ditransitive_derisk import emerge_v3
+            from research.runners._emerge72_construction_registry_derisk import decision
+            construction = "C_PPGOAL" if kind == "goal" else "C_PPLOC"
+            v3 = emerge_v3(vbase, already_3sg=None)
+            if all(w in self.speaker.vocab for w in ("the", subj, v3, dest, prep)):
+                out = self._svo_producer.speak(decision("ANSWER", construction=construction,
+                                                        subject=subj, verb=vbase, obj=dest))
+                if out.get("surface"):
+                    return out["surface"]                                       # order + words ON SPIKES
+        return f"the {self._word(subj)} {self._word(vbase)}s {prep} the {self._word(dest)}"
+
     def describe(self, word):
         """'tell me about <word>': aggregate the word's PROPERTY (inherit/cancel) + RELATIONAL facts into
         connected prose with a referring pronoun + 'and'-aggregation (NLG discourse; Levelt/Reiter-Dale) --
@@ -426,8 +444,7 @@ class UnifiedTalkableConsole:
                 if s2 in self.row_of and vrow is not None:
                     d = self.pp.answer(self.row_of[s2], vrow, kind)
                     if d is not None:
-                        return (f"the {self._word(s2)} {self._word(v2)}s {cp[2]} the "
-                                f"{self._word(self.vocab[d])}"), "spatial"
+                        return self._gen_pp(s2, v2, self.vocab[d], kind, cp[2]), "spatial"
             return "I don't know", "moat"
         if self._is(rt, "compare", toks[:1] == ["compare"]):      # comparison: compare X and Y
             content = [t for t in toks[1:] if t not in ("the", "a", "an", "and", "to", "with")]
