@@ -350,6 +350,27 @@ def test_taxonomy_multilevel_inheritance_qa(taxonomy_console):
     assert k == "moat"
 
 
+_NAT_DEFS = "research/findings/raw/_simplewiki_defs.json"
+_HAS_NAT = os.path.exists(_NAT_DEFS)
+
+
+@pytest.mark.skipif(not _HAS_NAT, reason="needs the cached Simple-Wiki defs (regenerable via the simplewiki derisk)")
+def test_console_natural_text_taxonomy_canonical_chain():
+    """The console with taxonomy_source='natural' answers the canonical 'can a dog breathe?' via the natural-text-
+    discovered tree (dog->mammal->animal->breathe) -- which the curated P279 tree (plant/vehicle/food/tool) can't."""
+    os.environ.setdefault("SIM_BACKEND", "numpy")
+    from research.runners._realcorpus_unified_talkable_console import UnifiedTalkableConsole
+    con = UnifiedTalkableConsole(CORPUS, 256, 10, BRIDGE, seed=42, class_verb="run", exc_verb="sleep",
+                                 rel_verb="eat", taxonomy_qa=True, taxonomy_source="natural")
+    assert con._tax is not None and "animal" in con._tax.gps and "breathe" in con._tax_props
+    # a mammal leaf inherits 'breathe' 2-up through the natural-text tree
+    leaf = next(lf for s in con._tax.tree["animal"] for lf in con._tax.tree["animal"][s])
+    out, kind = con.ask(f"can a {leaf} breathe?")
+    assert kind == "taxonomy" and out.startswith("yes"), (leaf, out, kind)
+    _, k = con.ask("can a zzzqqx breathe?")
+    assert k == "moat"
+
+
 @pytest.mark.skipif(not _HAS_TAX, reason="needs the Wikidata 3-level is-a graph (regenerable via the taxonomy derisk)")
 def test_taxonomy_member_exception_cancels_in_console(taxonomy_console):
     """The console handles member-specific CANCELLATION over the multi-level chain (the penguin case): teach a

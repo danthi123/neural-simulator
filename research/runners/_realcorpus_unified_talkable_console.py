@@ -34,7 +34,7 @@ class UnifiedTalkableConsole:
 
     def __init__(self, corpus_path, K, n_clusters, bridge_path, seed, class_verb, exc_verb, rel_verb,
                  aw_seed=42, two_bridge=False, learn_corpus_facts=False, spiking_gen=False, multi_bridge=False,
-                 neural_route=False, rich_gen=False, taxonomy_qa=False):
+                 neural_route=False, rich_gen=False, taxonomy_qa=False, taxonomy_source="p279"):
         stories = load_token_stream_multi(corpus_path, max_stories=None)
         self.class_verb, self.exc_verb, self.rel_verb = class_verb, exc_verb, rel_verb
         # PROPERTY reasoner (rate, emergent clusters) + its codes
@@ -169,8 +169,15 @@ class UnifiedTalkableConsole:
         if taxonomy_qa:
             import json as _json
             from research.runners._realcorpus_taxonomy_cancellation_derisk import CancellingTaxonomyQA
-            _tree = _json.load(open("research/findings/raw/_wikidata_3level.json"))
-            self._tax = CancellingTaxonomyQA(seed, _tree, hold_out=False)  # deployed; inherit + member-exception cancel
+            if taxonomy_source == "natural":                       # the NATURAL-text tree (Simple-Wiki) -- has the
+                from research.runners._realcorpus_simplewiki_taxonomy_qa_derisk import build_tree, NAT_PROPERTY
+                _defs = _json.load(open("research/findings/raw/_simplewiki_defs.json"))
+                _tree, _, _ = build_tree(_defs)                    # animal->{mammal,bird,fish}->[dog,owl,...] (canonical)
+                self._tax = CancellingTaxonomyQA(seed, _tree, hold_out=False)
+                self._tax.gp_of_property = {NAT_PROPERTY[g]: g for g in self._tax.gps if g in NAT_PROPERTY}
+            else:                                                  # the curated Wikidata P279 tree (plant/vehicle/food/tool)
+                _tree = _json.load(open("research/findings/raw/_wikidata_3level.json"))
+                self._tax = CancellingTaxonomyQA(seed, _tree, hold_out=False)
             self._tax_leaves = set(self._tax.leaves)
             self._tax_props = set(self._tax.gp_of_property)
 
