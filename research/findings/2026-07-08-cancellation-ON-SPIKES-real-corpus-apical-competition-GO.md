@@ -40,5 +40,15 @@ CANCEL all=True | no-collateral all=True | lesion-no-override all=True  -> GO
 ## What this establishes
 The emergent talkable brain's CANCELLATION reasoning — a member's own property overriding its category's inherited one — is now realized ON THE SPIKING SUBSTRATE (EMERGE-54 apical competition on real-corpus-discovered categories), member-specific (zero collateral across all held-out members) and coincidence-dependent (lesion kills it). Combined with rung-2 spiking inheritance, the real-corpus REASONING (inherit + cancel) is now on spikes — advancing the fully-spiking-one-brain directive. Follow-on: multiple simultaneous exceptions; wiring the spiking cancellation decision into the spoken frame; the cupy/GPU scale.
 
+## Addendum — EMERGENT-cluster spiking cancellation (5/6, characterized boundary): the fully-emergent + fully-spiking cell
+The above rides HAND-LABELED taxonomy categories (`build_probe`/`TAXONOMY_8x8`) — the rung-2 substrate's category source. The `--emergent` flag replaces them with categories DISCOVERED by k-means over the codes (NO labels), fed to the same spiking probe → the fully-emergent + fully-spiking cell of the rate/spiking × labeled/emergent cancellation matrix.
+```
+K=1024, 12 emergent clusters, 6-seed:
+seed 42  CANCEL=True (6 passes)  | 43  CANCEL=False (24 passes, saturated) | 44  CANCEL=True (7)
+seed 100 CANCEL=True (6)         | 101 CANCEL=True (6)                     | 102 CANCEL=True (6)
+-> 5/6 CANCEL; inherit_before=True, no-collateral (0/23), lesion-no-override ALL 6.
+```
+**5/6 GO.** Seed 43 is a CHARACTERIZED BOUNDARY, not a tuning miss: its exception member's override does NOT appear even at 24 teaching passes (confirmed) — the HTM permanence saturates at 1.0, so the identity→exc apical drive has a ceiling, and for this one very-tightly-codon-categorized emergent member the codon→class drive exceeds that ceiling. The labeled-taxonomy categories (6/6) have cleaner/more-moderate codon drives, so no member saturates. Every other property (inherit-before, no-collateral, lesion-no-override) holds on all 6 seeds including 43 — only the override itself saturates. Surpass follow-on (per the directive): give the exception more apical capacity (more identity/exc cells) or add lateral suppression of the codon→class drive for the captured member (EMERGE-54's stronger dedicated dendritic branch). `--emergent` on the same runner; per-seed `research/findings/raw/_cancelspk_emg_s*.json`.
+
 ## Files
-`research/runners/_realcorpus_cancellation_spiking_derisk.py`; per-seed `research/findings/raw/_cancelspk_s*.json`. Prior: the rate cancellation `2026-07-08-cancellation-member-exception-overrides-inheritance-real-corpus-GO.md`; the rung-2 spiking inheritance `2026-07-08-knowledge-half-inheritance-ON-SPIKES-real-corpus-rung2-GO.md`; EMERGE-42/54.
+`research/runners/_realcorpus_cancellation_spiking_derisk.py` (`--emergent` for the discovered-cluster variant); per-seed `research/findings/raw/_cancelspk_s*.json` (labeled) + `_cancelspk_emg_s*.json` (emergent). Prior: the rate cancellation `2026-07-08-cancellation-member-exception-overrides-inheritance-real-corpus-GO.md`; the rung-2 spiking inheritance `2026-07-08-knowledge-half-inheritance-ON-SPIKES-real-corpus-rung2-GO.md`; EMERGE-42/54.

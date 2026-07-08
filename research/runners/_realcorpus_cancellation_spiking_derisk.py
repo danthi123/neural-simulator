@@ -31,9 +31,37 @@ import numpy as np
 from research.runners._emerge14_stageC_onbridge_learning_derisk import apply_kernel_update, _host
 from research.runners._emerge12_stageB2_bridge_tm_derisk import _prime_from_winners
 from research.runners._realcorpus_inheritance_rung2_spiking_derisk import (
-    build_inputs, _sdr, NCOL, K_WIN, POOL_EPOCHS, POOL_LP, POOL_LD, N_ID_PER, PROP_K, FLOOR, SDR_T,
+    build_inputs, _codes_to_sdr, _sdr, NCOL, K_WIN, POOL_EPOCHS, POOL_LP, POOL_LD, N_ID_PER, PROP_K, FLOOR, SDR_T,
 )
-from research.runners._emergent_vocab_breadth_scale_derisk import N_HUB
+from research.runners._emergent_vocab_breadth_scale_derisk import (
+    N_HUB, discover_vocab, learn_stream_codes, STOPLIST, MIN_WORD_LEN, WINDOW,
+)
+from research.runners._realcorpus_inheritance_emergent_clusters_derisk import _kmeans
+from research.runners.corpus_stream import load_token_stream_multi
+
+
+def emergent_inputs(corpus_path, K, seed, n_clusters):
+    """Like build_inputs, but DISCOVER the categories by clustering the codes (NO taxonomy labels) ->
+    fully-EMERGENT categories fed to the spiking probe. Removes the last hand-labeled scaffold on spikes."""
+    stories = load_token_stream_multi(corpus_path, max_stories=None)
+    vocab, gfreq = discover_vocab(stories, K)
+    target_set = set(vocab)
+    hubs = []
+    for w, _ in gfreq.most_common():
+        if w in STOPLIST or w in target_set or len(w) < MIN_WORD_LEN:
+            continue
+        hubs.append(w)
+        if len(hubs) >= N_HUB:
+            break
+    codes, _ = learn_stream_codes(seed, stories, vocab, hubs, window=WINDOW)
+    labels = _kmeans(codes, n_clusters, seed)
+    from collections import Counter
+    cnt = Counter(labels.tolist())
+    cat_ids = sorted([c for c in cnt if cnt[c] >= 4])
+    rows = [i for i in range(len(vocab)) if labels[i] in cat_ids]
+    sdr_by_row = _codes_to_sdr(codes, np.asarray(rows))
+    row_to_cat = {int(r): int(labels[r]) for r in rows}
+    return sdr_by_row, row_to_cat, cat_ids
 
 
 class CancellingPoolerProbe:
@@ -186,7 +214,7 @@ def _adaptive_teach(con, exc_row, pos_label, max_passes=12):
     return max_passes
 
 
-def run_seed(seed, sdr_by_row, row_to_cat, cat_ids, epochs, prop_k, k_win):
+def run_seed(seed, sdr_by_row, row_to_cat, cat_ids, epochs, prop_k, k_win, max_passes=12):
     con = CancellingPoolerProbe(seed, sdr_by_row, row_to_cat, cat_ids, epochs=epochs, prop_k=prop_k, k_win=k_win)
     if not con.held:
         return None
@@ -205,7 +233,7 @@ def run_seed(seed, sdr_by_row, row_to_cat, cat_ids, epochs, prop_k, k_win):
     others = [r for k in con.held for r in con.held[k] if r != exc_row]
     before_others = {r: con.query(r) for r in others}
 
-    passes = _adaptive_teach(con, exc_row, pos)               # regulated graded drive on spikes
+    passes = _adaptive_teach(con, exc_row, pos, max_passes=max_passes)               # regulated graded drive on spikes
     cancel = con.query(exc_row) == "EXC"                      # exception overrides -> own property
     not_class = con.query(exc_row) != f"C{pos}"               # and NOT the inherited class
     after_others = {r: con.query(r) for r in others}
@@ -214,7 +242,7 @@ def run_seed(seed, sdr_by_row, row_to_cat, cat_ids, epochs, prop_k, k_win):
     # LESION: coincidence detection off -> the identity->exc binding cannot drive the apical -> no override.
     con_l = CancellingPoolerProbe(seed, sdr_by_row, row_to_cat, cat_ids, epochs=epochs, prop_k=prop_k, k_win=k_win)
     con_l.b.core_config.enable_coincidence_detection = False   # ablate coincidence on the SAME bridge state
-    lesion_passes = _adaptive_teach(con_l, exc_row, pos, max_passes=12)
+    lesion_passes = _adaptive_teach(con_l, exc_row, pos, max_passes=max_passes)
     lesion_override = con_l.query(exc_row) == "EXC"            # expect False (can't bind without coincidence)
 
     return {"seed": seed, "pos": int(pos), "passes": int(passes),
@@ -231,15 +259,22 @@ def main():
     ap.add_argument("--epochs", type=int, default=40)
     ap.add_argument("--prop-k", type=int, default=PROP_K)
     ap.add_argument("--k-win", type=int, default=K_WIN)
+    ap.add_argument("--emergent", action="store_true", help="DISCOVER categories by clustering (no taxonomy labels)")
+    ap.add_argument("--n-clusters", type=int, default=10)
+    ap.add_argument("--max-passes", type=int, default=12, help="regulated-drive ceiling (noisier emergent codes need more)")
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
     seeds = [int(s) for s in a.seeds.split(",")]
-    print(f"[cancellation ON SPIKES] corpus={a.corpus_path} K={a.K} prop_k={a.prop_k}", flush=True)
+    print(f"[cancellation ON SPIKES] corpus={a.corpus_path} K={a.K} prop_k={a.prop_k} "
+          f"{'EMERGENT-clusters' if a.emergent else 'taxonomy-labels'}", flush=True)
 
     recs = []
     for s in seeds:
-        _, sdr_by_row, row_to_cat, cat_ids, per_cat, _ = build_inputs(a.corpus_path, a.K, s)
-        r = run_seed(s, sdr_by_row, row_to_cat, cat_ids, a.epochs, a.prop_k, a.k_win)
+        if a.emergent:
+            sdr_by_row, row_to_cat, cat_ids = emergent_inputs(a.corpus_path, a.K, s, a.n_clusters)
+        else:
+            _, sdr_by_row, row_to_cat, cat_ids, per_cat, _ = build_inputs(a.corpus_path, a.K, s)
+        r = run_seed(s, sdr_by_row, row_to_cat, cat_ids, a.epochs, a.prop_k, a.k_win, max_passes=a.max_passes)
         if r is None:
             print(f"  [seed {s}] not evaluable (no inheriting held-out member)", flush=True); continue
         recs.append(r)
