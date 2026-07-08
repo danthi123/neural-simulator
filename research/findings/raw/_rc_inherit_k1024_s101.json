@@ -1,0 +1,24 @@
+{
+  "verdict": "GO",
+  "K": 1024,
+  "aggregate": {
+    "heldout_acc": 0.6774193548387096,
+    "deranged_acc": 0.0967741935483871,
+    "scrambled_acc": 0.3225806451612903,
+    "chance": 0.125
+  },
+  "beats_chance": true,
+  "beats_deranged": true,
+  "per_seed": [
+    {
+      "seed": 101,
+      "n_categories_used": 8,
+      "heldout_inherit_acc": 0.6774193548387096,
+      "deranged_label_acc": 0.0967741935483871,
+      "scrambled_heldout_acc": 0.3225806451612903,
+      "memorization_ceiling_acc": 1.0,
+      "chance": 0.125,
+      "n_heldout": 31
+    }
+  ]
+}
