@@ -20,3 +20,14 @@ def test_routing_multi_seed_holds():
     for s in (43, 100):
         r = run(seed=s, n_per=40)
         assert r["heldout"] >= 0.9 and r["heldout"] - r["lesion"] > 0.30
+
+
+def test_neural_role_extraction_generalizing():
+    """A reservoir read-out labels each question content word's thematic ROLE (subj=AGENT/verb=PREDICATE/
+    obj=THEME), generalizing to NOVEL fillers; SCRAMBLE collapses it (WORD ORDER carries the role -- unlike
+    question TYPE, which is function-word-carried). Completes fully-neural comprehension (type + roles)."""
+    from research.runners._realcorpus_neural_role_extraction_derisk import run
+    r = run(seed=42, n_per=60)
+    assert r["heldout"] >= 0.9                              # roles extracted for NOVEL-filler questions (generalizes)
+    assert r["heldout"] - r["scramble"] > 0.25             # word order is load-bearing (scramble collapses)
+    assert r["scramble"] <= 0.65                            # scramble well below held-out
