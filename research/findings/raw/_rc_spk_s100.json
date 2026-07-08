@@ -1,0 +1,25 @@
+{
+  "verdict": "GO",
+  "K": 256,
+  "aggregate": {
+    "heldout": 0.5,
+    "deranged": 0.125,
+    "permuted_feat": 0.0,
+    "lesion": 0.0,
+    "chance": 0.25
+  },
+  "beats_chance": true,
+  "beats_deranged": true,
+  "beats_permuted": true,
+  "per_seed": [
+    {
+      "seed": 100,
+      "n_categories": 4,
+      "chance": 0.25,
+      "heldout_inherit_acc": 0.5,
+      "deranged_acc": 0.125,
+      "permuted_feat_acc": 0.0,
+      "lesion_acc": 0.0
+    }
+  ]
+}
