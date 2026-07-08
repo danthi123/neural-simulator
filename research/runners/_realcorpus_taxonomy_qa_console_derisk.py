@@ -34,7 +34,7 @@ def _stream(tree, rng):
 class TaxonomyQA:
     """Answers 'can a <X> <property>?' via chained multi-level inheritance + the no-confab moat."""
 
-    def __init__(self, seed, tree, deranged=False):
+    def __init__(self, seed, tree, deranged=False, hold_out=True):
         self.rng = np.random.default_rng(seed)
         self.gps = [g for g in tree if len(tree[g]) >= 2]
         self.supers = sorted({s for g in self.gps for s in tree[g]})
@@ -45,10 +45,11 @@ class TaxonomyQA:
         self.U = _unit_rows(codes)
         self.row = {w: i for i, w in enumerate(self.allw)}
         self.tree = tree
-        # hold out one whole super per grandparent -> its leaves are the never-taught QA queries
+        # hold out one whole super per grandparent -> its leaves are the never-taught QA queries (the generalization
+        # test). hold_out=False = the DEPLOYED console mode: no super is held out, every leaf is answerable.
         self.held = {}
         for g in self.gps:
-            sl = list(tree[g]); self.rng.shuffle(sl); self.held[g] = sl[-1]
+            sl = list(tree[g]); self.rng.shuffle(sl); self.held[g] = sl[-1] if hold_out else None
         # L2 grandparent prototypes from the TAUGHT supers; DERANGEMENT binds a grandparent's proto to a WRONG
         # grandparent's supers -> the chain routes wrong -> collapse.
         gp_supers = {g: [s for s in tree[g] if s != self.held[g]] for g in self.gps}

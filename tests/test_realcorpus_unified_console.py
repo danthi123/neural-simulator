@@ -306,3 +306,57 @@ def test_relational_answer_generated_on_spikes(relational_spiking_console):
     # the moat is unaffected: an unknown relation abstains
     _, k = con.ask("what does the zzzqqx eat?")
     assert k == "moat"
+
+
+_TAX_TREE = "research/findings/raw/_wikidata_3level.json"
+_HAS_TAX = os.path.exists(_TAX_TREE)
+
+
+@pytest.fixture(scope="module")
+def taxonomy_console():
+    os.environ.setdefault("SIM_BACKEND", "numpy")
+    from research.runners._realcorpus_unified_talkable_console import UnifiedTalkableConsole
+    return UnifiedTalkableConsole(CORPUS, 256, 10, BRIDGE, seed=42, class_verb="run", exc_verb="sleep",
+                                  rel_verb="eat", taxonomy_qa=True)
+
+
+@pytest.mark.skipif(not _HAS_TAX, reason="needs the Wikidata 3-level is-a graph (regenerable via the taxonomy derisk)")
+def test_taxonomy_multilevel_inheritance_qa(taxonomy_console):
+    """'can a <leaf> <superordinate-property>?' answered by multi-level chained inheritance (CYCLE 1043/1044),
+    with level-specificity (a mismatched property -> no) + the no-confab moat (unknown leaf -> abstain)."""
+    con = taxonomy_console
+    assert con._tax is not None
+    # pick one real leaf per grandparent + its inherited property from the built taxonomy
+    from research.runners._realcorpus_taxonomy_qa_console_derisk import GP_PROPERTY
+    tree = con._tax.tree
+    checked = 0
+    for g in con._tax.gps:
+        if g not in GP_PROPERTY:
+            continue
+        prop = GP_PROPERTY[g]
+        leaf = next((lf for s in tree[g] for lf in tree[g][s] if lf in con._tax_leaves), None)
+        if leaf is None:
+            continue
+        out, kind = con.ask(f"can a {leaf} {prop}?")
+        assert kind == "taxonomy" and out.startswith("yes"), (g, leaf, prop, out, kind)
+        # level-specificity: a DIFFERENT grandparent's property -> no
+        other = next(p for gg, p in GP_PROPERTY.items() if p != prop and gg in con._tax.gps)
+        out2, kind2 = con.ask(f"can a {leaf} {other}?")
+        assert kind2 == "taxonomy" and out2.startswith("no"), (leaf, other, out2, kind2)
+        checked += 1
+    assert checked >= 2
+    # no-confab moat: an unknown leaf abstains (never routes into a taxonomy yes/no)
+    _, k = con.ask("can a zzzqqx breathe?")
+    assert k == "moat"
+
+
+@pytest.mark.skipif(not _HAS_TAX, reason="needs the Wikidata 3-level is-a graph (regenerable via the taxonomy derisk)")
+def test_taxonomy_default_off_byte_identical(console, taxonomy_console):
+    """Default path (no taxonomy_qa) is BYTE-PRESERVED: the discovered-cluster reasoner + moat are unchanged,
+    and a taxonomy-only leaf question falls through to the moat when the taxonomy path is off."""
+    assert console._tax is None                                    # default off
+    # a taxonomy leaf that is NOT a discovered-cluster member -> the default console abstains (no taxonomy path)
+    tax_leaf = next(iter(taxonomy_console._tax_leaves))
+    if tax_leaf not in console.prop.row_of:
+        _, k = console.ask(f"can a {tax_leaf} grow?")
+        assert k == "moat"

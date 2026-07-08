@@ -34,7 +34,7 @@ class UnifiedTalkableConsole:
 
     def __init__(self, corpus_path, K, n_clusters, bridge_path, seed, class_verb, exc_verb, rel_verb,
                  aw_seed=42, two_bridge=False, learn_corpus_facts=False, spiking_gen=False, multi_bridge=False,
-                 neural_route=False, rich_gen=False):
+                 neural_route=False, rich_gen=False, taxonomy_qa=False):
         stories = load_token_stream_multi(corpus_path, max_stories=None)
         self.class_verb, self.exc_verb, self.rel_verb = class_verb, exc_verb, rel_verb
         # PROPERTY reasoner (rate, emergent clusters) + its codes
@@ -158,6 +158,21 @@ class UnifiedTalkableConsole:
         if neural_route:
             from research.runners._realcorpus_neural_question_routing_derisk import QuestionRouter
             self._router = QuestionRouter(seed=seed)
+
+        # MULTI-LEVEL TAXONOMIC property reasoning (opt-in): "can a <robin> <breathe>?" answered by the CYCLE-1043
+        # chained read (member->super->grandparent -> inherited grandparent property), over the real Wikidata is-a
+        # graph. Distinct knowledge source from the discovered-cluster property reasoner; gated so it fires ONLY for
+        # a known taxonomy leaf + a taught superordinate property (else falls through to the existing reasoner/moat).
+        # Default off -> byte-identical. CYCLE 1044/1045.
+        self.taxonomy_qa = taxonomy_qa
+        self._tax = None
+        if taxonomy_qa:
+            import json as _json
+            from research.runners._realcorpus_taxonomy_qa_console_derisk import TaxonomyQA
+            _tree = _json.load(open("research/findings/raw/_wikidata_3level.json"))
+            self._tax = TaxonomyQA(seed, _tree, hold_out=False)   # deployed: every leaf answerable
+            self._tax_leaves = set(self._tax.leaves)
+            self._tax_props = set(self._tax.gp_of_property)
 
     @staticmethod
     def _append_persist(persist, entry):
@@ -492,6 +507,20 @@ class UnifiedTalkableConsole:
                     if got is None:
                         return "I don't know", "moat"                       # nothing stored for that (subj, verb)
                     return f"no -- {self._speak_svo(s2, v2, self.vocab[got])}", "yesno"   # not that obj; the real one
+        # MULTI-LEVEL TAXONOMY: 'can a <leaf> <superordinate-property>?' -> the chained inheritance (member->super->
+        # grandparent). Gated to a KNOWN taxonomy leaf + a taught superordinate property, so it never shadows the
+        # discovered-cluster property reasoner (unknown leaf / non-taxonomy property -> falls through below).
+        if self._tax is not None and toks[:1] in (["can"], ["does"]):
+            ct = [t for t in toks[1:] if t not in ("a", "an", "the")]
+            if len(ct) >= 2:
+                leaf, prop = self._resolve(ct[0]), ct[1]
+                if leaf in self._tax_leaves and prop in self._tax_props:
+                    ans = self._tax.ask(leaf, prop)
+                    if ans == "yes":
+                        return f"yes -- the {leaf} can {prop}", "taxonomy"
+                    if ans == "no":
+                        return f"no -- a {leaf} does not {prop}", "taxonomy"
+                    return "I don't know", "moat"                  # taxonomy moat (never-heard leaf)
         # property: does/can (a) X <verb>  (determiner-robust so 'does it run?' resolves the pronoun)
         c = [t for t in toks[1:] if t not in ("a", "an", "the")]
         subj = self._resolve(c[0]) if c else None
