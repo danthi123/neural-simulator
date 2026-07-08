@@ -61,13 +61,28 @@ def _codes_to_sdr(codes, probe_rows, sdr_t=SDR_T):
     return out
 
 
+def _codes_to_graded(codes, probe_rows, sdr_t=SDR_T):
+    """GRADED variant: each word -> {hub: graded-value} over its top-`sdr_t` hubs (min-max normalized to
+    [0,1] within the word). Preserves the continuous-code MAGNITUDE the binary SDR discards (the SDR-loss lever)."""
+    out = {}
+    for r in probe_rows.tolist():
+        v = codes[r]
+        top = np.argsort(-v)[:sdr_t]
+        vals = v[top]
+        lo, hi = vals.min(), vals.max()
+        norm = (vals - lo) / (hi - lo + 1e-9)          # [0,1] within the word's top-T hubs
+        out[r] = {int(h): float(g) for h, g in zip(top, norm)}
+    return out
+
+
 class RealCorpusPoolerProbe:
     """EMERGE-42's spiking pooler-inference, fed REAL-corpus SDR features + REAL categories."""
 
     def __init__(self, seed, sdr_by_row, row_to_cat, cat_ids, epochs=40, learn=True,
                  permute_features=False, lesion=False, prop_k=PROP_K, k_win=K_WIN,
-                 diverse_readers=False, reader_frac=0.5, pool_seed=None):
+                 diverse_readers=False, reader_frac=0.5, pool_seed=None, graded_by_row=None):
         self.k_win = k_win                     # codon width (top-k pooler columns); the codon-side read-variance lever
+        self.graded_vals = graded_by_row       # {row: {hub: [0,1] value}} for GRADED pooler input (SDR-loss lever); None = binary
         from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
         from sim.bridge import SimulationBridge
         from sim.regions import BrainRegion
@@ -163,7 +178,7 @@ class RealCorpusPoolerProbe:
             for e in range(POOL_EPOCHS):
                 rng.shuffle(order)
                 for r in order:
-                    x = np.zeros(NF); x[list(self.feats[r])] = 1.0
+                    x = self._build_x(r)
                     win = np.argsort(-(((self.Wp > 0.5) @ x) * boost))[:self.k_win]
                     self.Wp[win] += POOL_LP * x - POOL_LD * (1 - x)
                     self.Wp[win] = np.clip(self.Wp[win], 0, 1); duty[win] += 1
@@ -178,15 +193,24 @@ class RealCorpusPoolerProbe:
         for _ in range(epochs):
             for k in self.cat_ids:
                 for r in [rr for rr in by_cat[k] if rr not in held_set]:
-                    apply_kernel_update(self.b, self.row, self.col, self.ci, self._codon(self.feats[r]),
+                    apply_kernel_update(self.b, self.row, self.col, self.ci, self._codon(r),
                                         _sdr(self.CLASS[k]), self.z, 0.14, 0.02, 1.0)
 
-    def _codon(self, feats):
-        x = np.zeros(self.NF); x[list(feats)] = 1.0
+    def _build_x(self, row):
+        x = np.zeros(self.NF)
+        if self.graded_vals is not None and row in self.graded_vals:
+            for h, g in self.graded_vals[row].items():
+                x[h] = g                                   # GRADED input (continuous-code magnitude preserved)
+        else:
+            x[list(self.feats[row])] = 1.0                 # binary SDR (default)
+        return x
+
+    def _codon(self, row):
+        x = self._build_x(row)
         return set(self.COL0 + int(c) for c in np.argsort(-((self.Wp > 0.5) @ x))[:self.k_win])
 
     def _drive_to(self, row, targets):
-        resp = self._codon(self.feats[row])
+        resp = self._codon(row)
         if not resp:
             return None
         ab = np.zeros(len(self.ci), bool)
@@ -231,6 +255,7 @@ def build_inputs(corpus_path, K, seed, sdr_t=SDR_T):
     probe_rows, probe_labels, probe_words, n_cat, per_cat = build_probe(vocab, TAXONOMY_8x8)
     codes, _ = learn_stream_codes(seed, stories, vocab, hubs, window=WINDOW)
     sdr_by_row = _codes_to_sdr(codes, probe_rows, sdr_t=sdr_t)
+    graded_by_row = _codes_to_graded(codes, probe_rows, sdr_t=sdr_t)
     row_to_cat = {int(r): int(lab) for r, lab in zip(probe_rows.tolist(), probe_labels.tolist())}
     # usable categories: >=4 members
     from collections import Counter
@@ -239,26 +264,27 @@ def build_inputs(corpus_path, K, seed, sdr_t=SDR_T):
     # restrict to usable-category rows
     keep = [r for r in sdr_by_row if row_to_cat[r] in cat_ids]
     sdr_by_row = {r: sdr_by_row[r] for r in keep}
+    graded_by_row = {r: graded_by_row[r] for r in keep}
     row_to_cat = {r: row_to_cat[r] for r in keep}
-    return stories, sdr_by_row, row_to_cat, cat_ids, per_cat
+    return stories, sdr_by_row, row_to_cat, cat_ids, per_cat, graded_by_row
 
 
-def run_seed(seed, sdr_by_row, row_to_cat, cat_ids, epochs, rng, prop_k=PROP_K, k_win=K_WIN, diverse_readers=False):
+def run_seed(seed, sdr_by_row, row_to_cat, cat_ids, epochs, rng, prop_k=PROP_K, k_win=K_WIN, diverse_readers=False, graded_by_row=None):
     chance = 1.0 / len(cat_ids)
-    main = RealCorpusPoolerProbe(seed, sdr_by_row, row_to_cat, cat_ids, epochs=epochs, prop_k=prop_k, k_win=k_win, diverse_readers=diverse_readers)
+    main = RealCorpusPoolerProbe(seed, sdr_by_row, row_to_cat, cat_ids, epochs=epochs, prop_k=prop_k, k_win=k_win, diverse_readers=diverse_readers, graded_by_row=graded_by_row)
     ho = main.inheritance_acc()
     # DERANGED: shuffle category labels across the same word SDRs
     rows = list(sdr_by_row)
     labs = [row_to_cat[r] for r in rows]
     dl = list(labs); rng.shuffle(dl)
     deranged_map = {r: dl[i] for i, r in enumerate(rows)}
-    der = RealCorpusPoolerProbe(seed, sdr_by_row, deranged_map, cat_ids, epochs=epochs, prop_k=prop_k, k_win=k_win, diverse_readers=diverse_readers).inheritance_acc()
+    der = RealCorpusPoolerProbe(seed, sdr_by_row, deranged_map, cat_ids, epochs=epochs, prop_k=prop_k, k_win=k_win, diverse_readers=diverse_readers, graded_by_row=graded_by_row).inheritance_acc()
     # PERMUTED-features: random SDRs -> pooler can't discover categories
     perm = RealCorpusPoolerProbe(seed, sdr_by_row, row_to_cat, cat_ids, epochs=epochs,
                                  permute_features=True, prop_k=prop_k, k_win=k_win, diverse_readers=diverse_readers).inheritance_acc()
     # LESION: coincidence off
     les = RealCorpusPoolerProbe(seed, sdr_by_row, row_to_cat, cat_ids, epochs=epochs,
-                                lesion=True, prop_k=prop_k, k_win=k_win, diverse_readers=diverse_readers).inheritance_acc()
+                                lesion=True, prop_k=prop_k, k_win=k_win, diverse_readers=diverse_readers, graded_by_row=graded_by_row).inheritance_acc()
     return {"seed": seed, "n_categories": main.n_categories(), "chance": chance,
             "heldout_inherit_acc": ho, "deranged_acc": der, "permuted_feat_acc": perm,
             "lesion_acc": les}
@@ -273,6 +299,7 @@ def main():
     ap.add_argument("--prop-k", type=int, default=PROP_K, help="cells per category property (population coding)")
     ap.add_argument("--k-win", type=int, default=K_WIN, help="codon width (top-k pooler columns) -- the codon-side lever")
     ap.add_argument("--diverse-readers", action="store_true", help="true population coding: each prop cell reads a random column subset")
+    ap.add_argument("--graded", action="store_true", help="GRADED pooler input (continuous-code magnitude) -- the SDR-loss encoding lever")
     ap.add_argument("--sdr-t", type=int, default=SDR_T, help="active hubs per word SDR (top-T of the code)")
     ap.add_argument("--margin", type=float, default=0.15)
     ap.add_argument("--out", default=None)
@@ -282,9 +309,9 @@ def main():
     # inputs are seed-shuffled internally; build per-seed (codes depend on seed only via story order -> ~deterministic)
     recs = []
     for s in seeds:
-        _, sdr_by_row, row_to_cat, cat_ids, per_cat = build_inputs(a.corpus_path, a.K, s, sdr_t=a.sdr_t)
+        _, sdr_by_row, row_to_cat, cat_ids, per_cat, graded_by_row = build_inputs(a.corpus_path, a.K, s, sdr_t=a.sdr_t)
         rng = np.random.default_rng(s)
-        r = run_seed(s, sdr_by_row, row_to_cat, cat_ids, a.epochs, rng, prop_k=a.prop_k, k_win=a.k_win, diverse_readers=a.diverse_readers)
+        r = run_seed(s, sdr_by_row, row_to_cat, cat_ids, a.epochs, rng, prop_k=a.prop_k, k_win=a.k_win, diverse_readers=a.diverse_readers, graded_by_row=(graded_by_row if a.graded else None))
         recs.append(r)
         print(f"  [seed {s}] SPIKING held-out inherit={r['heldout_inherit_acc']:.3f} | "
               f"deranged={r['deranged_acc']:.3f} | permuted-feat={r['permuted_feat_acc']:.3f} | "

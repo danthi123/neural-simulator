@@ -24,7 +24,7 @@ ANS2WORD = {"yes": "fly", "no": "swim"}     # proxy A->W surfaces; idk = gate-fi
 
 def run(corpus_path, K, seed, epochs, diverse_readers=True, prop_k=16):
     from research.runners._emerge67_neural_spell_wirein_derisk import NeuralSpell
-    _, sdr_by_row, row_to_cat, cat_ids, per = build_inputs(corpus_path, K, seed, sdr_t=50)
+    _, sdr_by_row, row_to_cat, cat_ids, per, _graded = build_inputs(corpus_path, K, seed, sdr_t=50)
     # pick the largest category as the "pos" (property-taught) category
     cnt = Counter(row_to_cat.values())
     pos = max(cat_ids, key=lambda c: cnt[c])
