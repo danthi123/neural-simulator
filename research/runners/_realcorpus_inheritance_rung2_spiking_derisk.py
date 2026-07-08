@@ -65,7 +65,8 @@ class RealCorpusPoolerProbe:
     """EMERGE-42's spiking pooler-inference, fed REAL-corpus SDR features + REAL categories."""
 
     def __init__(self, seed, sdr_by_row, row_to_cat, cat_ids, epochs=40, learn=True,
-                 permute_features=False, lesion=False, prop_k=PROP_K, k_win=K_WIN):
+                 permute_features=False, lesion=False, prop_k=PROP_K, k_win=K_WIN,
+                 diverse_readers=False, reader_frac=0.5):
         self.k_win = k_win                     # codon width (top-k pooler columns); the codon-side read-variance lever
         from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
         from sim.bridge import SimulationBridge
@@ -134,9 +135,15 @@ class RealCorpusPoolerProbe:
         ci = np.asarray(b.region_manager.indices("cells"), int)
 
         pre, post, w = [], [], []
+        wrng = np.random.default_rng(seed * 7919 + 13)
+        n_sub = max(1, int(round(NCOL * reader_frac)))
         for pc in range(NPROPUNITS):
-            for c in range(NCOL):                                  # pooler columns -> property (class inheritance)
-                pre.append(int(ci[COL0 + c])); post.append(int(ci[PROP0 + pc])); w.append(0.0)
+            # DIVERSE READERS (true population coding): each property cell wires to a RANDOM SUBSET of columns,
+            # so the prop_k cells per property have INDEPENDENT (not identical) reads of the codon -> averaging
+            # the apical drive genuinely reduces variance (vs the CYCLE-958 no-op where all readers were identical).
+            cols = wrng.choice(NCOL, n_sub, replace=False) if diverse_readers else range(NCOL)
+            for c in cols:                                         # pooler columns -> property (class inheritance)
+                pre.append(int(ci[COL0 + int(c)])); post.append(int(ci[PROP0 + pc])); w.append(0.0)
             for idx in range(NMEM_CELLS):                          # member-identity -> property (member-specific)
                 pre.append(int(ci[ID0 + idx])); post.append(int(ci[PROP0 + pc])); w.append(0.0)
         b.inject_explicit_wiring({"ff": {"pre_indices": pre, "post_indices": post, "initial_weights": w,
@@ -233,22 +240,22 @@ def build_inputs(corpus_path, K, seed, sdr_t=SDR_T):
     return stories, sdr_by_row, row_to_cat, cat_ids, per_cat
 
 
-def run_seed(seed, sdr_by_row, row_to_cat, cat_ids, epochs, rng, prop_k=PROP_K, k_win=K_WIN):
+def run_seed(seed, sdr_by_row, row_to_cat, cat_ids, epochs, rng, prop_k=PROP_K, k_win=K_WIN, diverse_readers=False):
     chance = 1.0 / len(cat_ids)
-    main = RealCorpusPoolerProbe(seed, sdr_by_row, row_to_cat, cat_ids, epochs=epochs, prop_k=prop_k, k_win=k_win)
+    main = RealCorpusPoolerProbe(seed, sdr_by_row, row_to_cat, cat_ids, epochs=epochs, prop_k=prop_k, k_win=k_win, diverse_readers=diverse_readers)
     ho = main.inheritance_acc()
     # DERANGED: shuffle category labels across the same word SDRs
     rows = list(sdr_by_row)
     labs = [row_to_cat[r] for r in rows]
     dl = list(labs); rng.shuffle(dl)
     deranged_map = {r: dl[i] for i, r in enumerate(rows)}
-    der = RealCorpusPoolerProbe(seed, sdr_by_row, deranged_map, cat_ids, epochs=epochs, prop_k=prop_k, k_win=k_win).inheritance_acc()
+    der = RealCorpusPoolerProbe(seed, sdr_by_row, deranged_map, cat_ids, epochs=epochs, prop_k=prop_k, k_win=k_win, diverse_readers=diverse_readers).inheritance_acc()
     # PERMUTED-features: random SDRs -> pooler can't discover categories
     perm = RealCorpusPoolerProbe(seed, sdr_by_row, row_to_cat, cat_ids, epochs=epochs,
-                                 permute_features=True, prop_k=prop_k, k_win=k_win).inheritance_acc()
+                                 permute_features=True, prop_k=prop_k, k_win=k_win, diverse_readers=diverse_readers).inheritance_acc()
     # LESION: coincidence off
     les = RealCorpusPoolerProbe(seed, sdr_by_row, row_to_cat, cat_ids, epochs=epochs,
-                                lesion=True, prop_k=prop_k, k_win=k_win).inheritance_acc()
+                                lesion=True, prop_k=prop_k, k_win=k_win, diverse_readers=diverse_readers).inheritance_acc()
     return {"seed": seed, "n_categories": main.n_categories(), "chance": chance,
             "heldout_inherit_acc": ho, "deranged_acc": der, "permuted_feat_acc": perm,
             "lesion_acc": les}
@@ -262,6 +269,7 @@ def main():
     ap.add_argument("--epochs", type=int, default=40)
     ap.add_argument("--prop-k", type=int, default=PROP_K, help="cells per category property (population coding)")
     ap.add_argument("--k-win", type=int, default=K_WIN, help="codon width (top-k pooler columns) -- the codon-side lever")
+    ap.add_argument("--diverse-readers", action="store_true", help="true population coding: each prop cell reads a random column subset")
     ap.add_argument("--sdr-t", type=int, default=SDR_T, help="active hubs per word SDR (top-T of the code)")
     ap.add_argument("--margin", type=float, default=0.15)
     ap.add_argument("--out", default=None)
@@ -273,7 +281,7 @@ def main():
     for s in seeds:
         _, sdr_by_row, row_to_cat, cat_ids, per_cat = build_inputs(a.corpus_path, a.K, s, sdr_t=a.sdr_t)
         rng = np.random.default_rng(s)
-        r = run_seed(s, sdr_by_row, row_to_cat, cat_ids, a.epochs, rng, prop_k=a.prop_k, k_win=a.k_win)
+        r = run_seed(s, sdr_by_row, row_to_cat, cat_ids, a.epochs, rng, prop_k=a.prop_k, k_win=a.k_win, diverse_readers=a.diverse_readers)
         recs.append(r)
         print(f"  [seed {s}] SPIKING held-out inherit={r['heldout_inherit_acc']:.3f} | "
               f"deranged={r['deranged_acc']:.3f} | permuted-feat={r['permuted_feat_acc']:.3f} | "
