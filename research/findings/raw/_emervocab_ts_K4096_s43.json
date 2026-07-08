@@ -1,0 +1,147 @@
+{
+  "verdict": "DATA_BOUND",
+  "why": "at the smallest evaluable K=4096 the learned within-vs-between MARGIN (+0.023) is not clearly above the structure bar (0.03) with scramble/freq-only collapse -- the corpus co-occurrence is too sparse to establish the structure even at the base vocab (host-PPMI margin 0.022636647803892063). A bigger/broader corpus is the prerequisite before the scaling question can be answered (a DATA lever, not yet demonstrated).",
+  "seeds": [
+    43
+  ],
+  "vocab_sizes": [
+    4096
+  ],
+  "mode": "real_corpus",
+  "corpus": "data/corpus/tinystories.txt",
+  "n_stories": 24574,
+  "n_tokens": 3954725,
+  "n_unique": 9454,
+  "config": {
+    "window": 2,
+    "n_hub": 500,
+    "hold_frac": 0.6,
+    "collapse_gap": 0.1,
+    "above_chance": 0.1,
+    "syn_occ_per_word": null
+  },
+  "detail": {
+    "per_K_learned_coherence": {
+      "4096": 0.453125
+    },
+    "per_K_scrambled_coherence": {
+      "4096": 0.28125
+    },
+    "per_K_freq_only_coherence": {
+      "4096": 0.203125
+    },
+    "per_K_host_ppmi_coherence": {
+      "4096": 0.40625
+    },
+    "per_K_learned_margin": {
+      "4096": 0.022929263518234738
+    },
+    "per_K_scrambled_margin": {
+      "4096": 0.007102698079239485
+    },
+    "per_K_freq_only_margin": {
+      "4096": 0.1584821399368348
+    },
+    "per_K_host_margin": {
+      "4096": 0.022636647803892063
+    },
+    "per_K_chance": {
+      "4096": 0.125
+    },
+    "evaluable_K": [
+      4096
+    ],
+    "host_holds_at_largest_K": false,
+    "rarest_probe_count_at_largest_K": 118
+  },
+  "per_seed": {
+    "43": [
+      {
+        "K": 4096,
+        "n_vocab": 4096,
+        "n_hubs": 500,
+        "n_updates": 19840,
+        "n_probe_words": 64,
+        "n_probe_categories": 8,
+        "per_cat_probe_counts": {
+          "animals": 8,
+          "food": 8,
+          "body": 8,
+          "family": 8,
+          "actions": 8,
+          "colors": 8,
+          "places": 8,
+          "toys": 8
+        },
+        "vocab_head": [
+          "said",
+          "day",
+          "tim",
+          "big",
+          "mom",
+          "happy",
+          "very",
+          "saw",
+          "lily",
+          "play",
+          "little",
+          "tom",
+          "there",
+          "time",
+          "named",
+          "wanted",
+          "friends",
+          "once",
+          "went",
+          "bird"
+        ],
+        "probe_min_count": 118,
+        "learned": {
+          "coherence": 0.453125,
+          "chance": 0.125,
+          "within_cos": 0.020819804359501436,
+          "between_cos": -0.002109459158733302,
+          "margin": 0.022929263518234738,
+          "pearson_vs_Strue": 0.14624396769682566,
+          "n_probe": 64,
+          "n_probe_categories": 8,
+          "eff_rank": 37.42771022872003
+        },
+        "scrambled": {
+          "coherence": 0.28125,
+          "chance": 0.125,
+          "within_cos": 0.005096631574762865,
+          "between_cos": -0.00200606650447662,
+          "margin": 0.007102698079239485,
+          "pearson_vs_Strue": 0.047803184382433944,
+          "n_probe": 64,
+          "n_probe_categories": 8,
+          "eff_rank": 36.13434733406159
+        },
+        "freq_only": {
+          "coherence": 0.203125,
+          "chance": 0.125,
+          "within_cos": 0.4464286393080079,
+          "between_cos": 0.2879464993711731,
+          "margin": 0.1584821399368348,
+          "pearson_vs_Strue": 0.05230780916852671,
+          "n_probe": 64,
+          "n_probe_categories": 8,
+          "eff_rank": 1.0000001787896888
+        },
+        "host": {
+          "coherence": 0.40625,
+          "chance": 0.125,
+          "within_cos": 0.04452920869108407,
+          "between_cos": 0.02189256088719201,
+          "margin": 0.022636647803892063,
+          "pearson_vs_Strue": 0.13759684984884177,
+          "n_probe": 64,
+          "n_probe_categories": 8,
+          "eff_rank": 53.08220459382372
+        }
+      }
+    ]
+  },
+  "note": "Emergent-vocab breadth scale de-risk: the vocab is DISCOVERED from the corpus (top-K content words by frequency), the co-occurrence structure LEARNED via the emergent online stream cortex (Hebbian WM-window co-occurrence + running-freq + log-double-center, NO global PPMI matrix). The probe taxonomy is an EVALUATION YARDSTICK ONLY (it never labels the discovered vocab). Anti-cheats: scrambled-corpus (co-occurrence destroyed, unigram frequency preserved) + frequency-only baseline. NO sim/ edits; reuse-by-import."
+}
