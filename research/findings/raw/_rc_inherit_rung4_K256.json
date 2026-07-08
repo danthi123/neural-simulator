@@ -1,0 +1,78 @@
+{
+  "verdict": "NEGATIVE",
+  "K": 256,
+  "aggregate": {
+    "inherit_yes": 1.0,
+    "reject_no": 0.7000000000000001,
+    "moat": true,
+    "deranged_yes": 0.25
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "pos_cat": "animals",
+      "neg_cat": "family",
+      "n_held": 4,
+      "pos_coherence": 0.215,
+      "inherit_yes_acc": 1.0,
+      "reject_no_acc": 0.8,
+      "moat_ok": true,
+      "deranged_yes_acc": 0.25
+    },
+    {
+      "seed": 43,
+      "pos_cat": "animals",
+      "neg_cat": "family",
+      "n_held": 4,
+      "pos_coherence": 0.215,
+      "inherit_yes_acc": 1.0,
+      "reject_no_acc": 0.6,
+      "moat_ok": true,
+      "deranged_yes_acc": 0.75
+    },
+    {
+      "seed": 44,
+      "pos_cat": "animals",
+      "neg_cat": "family",
+      "n_held": 4,
+      "pos_coherence": 0.215,
+      "inherit_yes_acc": 1.0,
+      "reject_no_acc": 0.4,
+      "moat_ok": true,
+      "deranged_yes_acc": 0.0
+    },
+    {
+      "seed": 100,
+      "pos_cat": "animals",
+      "neg_cat": "family",
+      "n_held": 4,
+      "pos_coherence": 0.215,
+      "inherit_yes_acc": 1.0,
+      "reject_no_acc": 0.6,
+      "moat_ok": true,
+      "deranged_yes_acc": 0.0
+    },
+    {
+      "seed": 101,
+      "pos_cat": "animals",
+      "neg_cat": "family",
+      "n_held": 4,
+      "pos_coherence": 0.215,
+      "inherit_yes_acc": 1.0,
+      "reject_no_acc": 0.8,
+      "moat_ok": true,
+      "deranged_yes_acc": 0.5
+    },
+    {
+      "seed": 102,
+      "pos_cat": "animals",
+      "neg_cat": "family",
+      "n_held": 4,
+      "pos_coherence": 0.215,
+      "inherit_yes_acc": 1.0,
+      "reject_no_acc": 1.0,
+      "moat_ok": true,
+      "deranged_yes_acc": 0.0
+    }
+  ]
+}
