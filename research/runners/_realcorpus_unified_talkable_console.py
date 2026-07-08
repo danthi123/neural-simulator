@@ -32,12 +32,17 @@ from research.runners.corpus_stream import load_token_stream_multi
 class UnifiedTalkableConsole:
     """One emergent brain: property (inherit/cancel) + relational (SVO) reasoning, spoken on spikes, moat."""
 
-    def __init__(self, corpus_path, K, n_clusters, bridge_path, seed, class_verb, exc_verb, rel_verb, aw_seed=42):
+    def __init__(self, corpus_path, K, n_clusters, bridge_path, seed, class_verb, exc_verb, rel_verb,
+                 aw_seed=42, two_bridge=False):
         stories = load_token_stream_multi(corpus_path, max_stories=None)
         self.class_verb, self.exc_verb, self.rel_verb = class_verb, exc_verb, rel_verb
         # PROPERTY reasoner (rate, emergent clusters) + its codes
         self.prop = CancellingConsole(seed, stories, K, emergent=True, n_clusters=n_clusters)
-        self.speaker = ConceptFrameSpeaker(bridge_path, seed=aw_seed, vocab=VOCAB, word_to_pool=WORD_TO_POOL)
+        if two_bridge:                                        # broader spoken vocab via the EMERGE-68 dispatch
+            from research.runners._realcorpus_two_bridge_speaker import TwoBridgeFrameSpeaker
+            self.speaker = TwoBridgeFrameSpeaker(seed=aw_seed)
+        else:
+            self.speaker = ConceptFrameSpeaker(bridge_path, seed=aw_seed, vocab=VOCAB, word_to_pool=WORD_TO_POOL)
         self.spellable = set(self.speaker.vocab)
         self.animals = set(self.speaker.vocab) & _ANIMALS
 
@@ -178,11 +183,12 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--repl", action="store_true", help="interactive: type questions, the brain answers (Ctrl-D/'quit' to exit)")
     ap.add_argument("--persist", default=None, help="JSON file: remember taught relational facts across sessions")
+    ap.add_argument("--two-bridge", action="store_true", help="broader spoken vocab (2nd A->W bridge, ~23 nouns)")
     a = ap.parse_args()
     print(f"[UNIFIED talkable console] property (inherit/cancel) + relational (SVO), spoken on spikes, moat | "
           f"seed={a.seed}", flush=True)
     con = UnifiedTalkableConsole(a.corpus_path, a.K, a.n_clusters, a.bridge, a.seed,
-                                 a.class_verb, a.exc_verb, a.rel_verb)
+                                 a.class_verb, a.exc_verb, a.rel_verb, two_bridge=a.two_bridge)
     if a.persist:
         n = con.load_persisted(a.persist)
         if n:
