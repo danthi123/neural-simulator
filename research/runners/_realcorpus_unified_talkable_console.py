@@ -144,9 +144,34 @@ class UnifiedTalkableConsole:
         vbase = verb[:-1] if verb.endswith("s") else verb
         return f"the {self._word(subj)} {self._word(vbase)}s {self._word(obj)}"
 
+    def describe(self, word):
+        """'tell me about <word>': aggregate the word's PROPERTY (inherit/cancel) + RELATIONAL facts into
+        connected prose -- a multi-fact discourse answer (toward fluent conversation). Moat: nothing known -> abstain."""
+        sents = []
+        if word in self.prop.row_of:                          # property: what it can do (inherit / override)
+            pred = self.prop._predict_all(word)
+            if pred[0] == "exc":
+                sents.append(self._word_frame(word, self.exc_verbs.get(pred[1], self.exc_verb)))
+            elif pred == ("cat", self.pos):
+                sents.append(self._word_frame(word, self.class_verb))
+        for (s, v, o) in self.rel_facts:                       # relational: what it does to whom
+            if s == word:
+                sents.append(self._speak_svo(s, v, o))
+        if not sents:
+            return "I don't know", "moat"
+        return " ".join(s[0].upper() + s[1:] + "." for s in sents), "describe"
+
+    def _word_frame(self, subj, verb):
+        frame, _ = self.speaker.speak_frame(subj, verb)        # "the <subj> can <verb>"
+        return frame
+
     def ask(self, q):
-        """Route by question form: 'does a X <verb>?' -> property; 'what does the X <verb>?' -> relational."""
+        """Route by question form: 'does a X <verb>?' -> property; 'what does the X <verb>?' -> relational;
+        'tell me about X' / 'describe X' -> multi-fact discourse."""
         toks = q.lower().replace("?", "").split()
+        if toks[:3] == ["tell", "me", "about"] or toks[:1] == ["describe"]:  # multi-fact discourse
+            content = [t for t in (toks[3:] if toks[0] == "tell" else toks[1:]) if t not in ("the", "a", "an")]
+            return self.describe(content[-1]) if content else ("I don't know", "moat")
         if toks[:1] == ["what"]:                                  # relational: what does the X <verb>
             subj = toks[3] if len(toks) > 3 else None
             verb = toks[4] if len(toks) > 4 else self.rel_verb    # ANY relational verb (not just 'eat')
@@ -220,7 +245,7 @@ def main():
                 break
             toks = q.lower().replace("?", "").replace(".", "").split()
             # TEACH (declarative, not a question): 3 content tokens = relational SVO; 2 = property exception
-            if toks and toks[0] not in ("does", "can", "what", "who"):
+            if toks and toks[0] not in ("does", "can", "what", "who", "tell", "describe"):
                 content = [t for t in toks if t not in ("the", "a", "an")]
                 if len(content) == 3 and con.teach_relational(content[0], content[1], content[2], persist=a.persist):
                     print(f"  brain: ok, I learned that the {content[0]} {content[1]} {content[2]}.", flush=True)
