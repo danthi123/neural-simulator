@@ -17,23 +17,30 @@ AFFIX = "bridges/affix_aw/seed42.simstate.h5"
 class ProductiveMultiSpeaker:
     """Multi-bridge whole-word spelling (BRIDGE-1/2/3/4) + productive stem+affix inflection (the affix bridge)."""
 
-    def __init__(self, seed=42, aw_seed=42):
+    def __init__(self, seed=42, aw_seed=42, reset_steps=150):
         bridges = list(DEFAULT_BRIDGES) + [(BRIDGE4, V4, P4)]
         self.multi = MultiBridgeFrameSpeaker(bridges=bridges, seed=aw_seed)
         self.affix = ConceptFrameSpeaker(AFFIX, seed=aw_seed, vocab=VA, word_to_pool=PA)
         self.vocab = self.multi.vocab
+        # a LARGER pre-spell settling window fully decays the Izhikevich adaptation carried from the prior spell
+        # (the EMERGE-75b A->W read-path state-carryover surpass; 50 steps was insufficient on deep render history).
+        self.reset_steps = reset_steps
+
+    def _spell_word(self, word):                                 # underlying whole-word spell with extra settling
+        return self.multi._of[word].spell(word, reset_steps=self.reset_steps)
 
     def spell(self, word):
         """Spell a word ON SPIKES: whole-word if stored, else productive stem+affix (3sg), else None (moat)."""
         if word in self.multi._of:
-            return self.multi.spell(word)
+            return self._spell_word(word)
         for affix in ("ies", "es", "s"):                         # productive 3sg: longest affix first
             if word.endswith(affix) and len(word) > len(affix):
                 stem = word[:-len(affix)]
                 if affix == "ies":
                     stem = stem + "y"                            # flies -> fly (the -ies allomorphy inverse)
                 if stem in self.multi._of:
-                    st, af = self.multi.spell(stem), self.affix.spell(affix)
+                    st = self._spell_word(stem)
+                    af = self.affix.spell(affix, reset_steps=self.reset_steps)
                     if st is not None and af is not None:
                         return f"{st}{af}"
         return None

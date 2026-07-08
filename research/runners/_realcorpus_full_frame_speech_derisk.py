@@ -47,12 +47,14 @@ class ConceptFrameSpeaker:
                                                       n_neurons=N_LANG, sparsity=SPARSITY)
                          for w in self.vocab}
 
-    def spell(self, word):
-        """Drive the word's pool -> decode the spoken word from language_output firing (ON SPIKES)."""
+    def spell(self, word, reset_steps=50):
+        """Drive the word's pool -> decode the spoken word from language_output firing (ON SPIKES). `reset_steps`
+        is the pre-drive settling window (default 50 = byte-identical); a LARGER value fully decays the Izhikevich
+        adaptation carried from the prior spell (the EMERGE-75b A->W read-path state-carryover surpass)."""
         if word not in self.vocab:
             return None
         pool = self.pool_of[word]
-        spike = drive_pool_and_read_lang_output(self.bridge, pool, n_lang_output=N_LANG)
+        spike = drive_pool_and_read_lang_output(self.bridge, pool, n_lang_output=N_LANG, reset_steps=reset_steps)
         best = max(self.vocab, key=lambda w: _cosine(spike, self.patterns[w]))
         return best
 
