@@ -40,22 +40,67 @@ def _cooccur_stream(rng):
     return stream, cats
 
 
-def run_seed(seed):
+def _real_animal_stream(seed):
+    """REAL codes: learn from the Simple-Wikipedia definitional stream (CYCLE 1049/1050), using FOUR WELL-SEPARATED
+    categories from DIFFERENT domains (mammal/tree/vehicle/tool) -- each tight (members share one super token) AND
+    mutually dissimilar (no shared super-context, unlike nested mammal/bird/fish under 'animal'). Real co-occurrence
+    codes, no synthetic scaffold."""
+    import json
+    from research.runners._realcorpus_simplewiki_isa_derisk import _first_sentence
+    from research.runners._realcorpus_simplewiki_taxonomy_qa_derisk import mine_multi
+    defs = json.load(open("research/findings/raw/_simplewiki_defs.json"))
+    by_super = {}
+    for t, ex in defs.items():
+        for (c, p) in mine_multi(t, ex):
+            by_super.setdefault(p, []).append(c)
+    want = ["mammal", "tree", "vehicle", "tool"]                  # 4 domains, mutually dissimilar
+    supers = [s for s in want if len(set(by_super.get(s, []))) >= 4]
+    cats = {f"cat{i}": sorted(set(by_super[s])) for i, s in enumerate(supers)}
     rng = np.random.default_rng(seed)
-    stream, cats = _cooccur_stream(rng)
-    members = [m for c in range(N_CAT) for m in cats[f"cat{c}"]]
-    ctxs = sorted({t for st in stream for t in st if t.startswith("ctx")})
-    codes, _ = learn_stream_codes(seed, stream, members, ctxs, window=2)
+    sents = []
+    for i, cc in enumerate(cats):
+        sup = supers[i]
+        for m in cats[cc]:
+            sents += [[m, sup], [sup, m], ["the", m, "is", "a", sup]]
+    stream, order = [], list(range(len(sents)))
+    for _ in range(60):
+        rng.shuffle(order); stream += [list(sents[i]) for i in order]
+    return stream, cats, supers
+
+
+def run_seed(seed, real=False):
+    rng = np.random.default_rng(seed)
+    if real:
+        stream, cats, supers = _real_animal_stream(seed)
+        ncat = len(cats)
+        members = [m for c in cats for m in cats[c]]
+        hubs = supers + ["the", "is", "a"]
+        codes, _ = learn_stream_codes(seed, stream, members, hubs, window=3)
+        cat_keys = list(cats)
+        cat_of = {m: k for k, ms in cats.items() for m in ms}
+        cat_of = {m: cat_keys.index(cat_of[m]) for m in members}
+        prop_of_cat = {i: PROPS[i] for i in range(ncat)}
+        cats = {f"cat{i}": cats[cat_keys[i]] for i in range(ncat)}
+    else:
+        stream, cats = _cooccur_stream(rng)
+        ncat = N_CAT
+        members = [m for c in range(N_CAT) for m in cats[f"cat{c}"]]
+        ctxs = sorted({t for st in stream for t in st if t.startswith("ctx")})
+        codes, _ = learn_stream_codes(seed, stream, members, ctxs, window=2)
+        cat_of = {m: c for c in range(N_CAT) for m in cats[f"cat{c}"]}
+        prop_of_cat = {c: PROPS[c] for c in range(N_CAT)}
     U = _unit_rows(codes); row = {m: i for i, m in enumerate(members)}
-    cat_of = {m: c for c in range(N_CAT) for m in cats[f"cat{c}"]}
-    prop_of_cat = {c: PROPS[c] for c in range(N_CAT)}
-    # TEACH the category property to 5/8 members per category ("known" concepts with stored facts); hold out 3
+    n_cats = ncat
+    _keep = 5 if not real else 0.6                               # real cats vary in size -> hold out ~40%
+    # TEACH the category property to most members ("known" concepts with stored facts); hold out the rest
     known, held = {}, []
-    for c in range(N_CAT):
+    for c in range(n_cats):
         ms = list(cats[f"cat{c}"]); rng.shuffle(ms)
-        for m in ms[:5]:
+        n_known = _keep if isinstance(_keep, int) else max(2, int(round(len(ms) * _keep)))
+        n_known = min(n_known, len(ms) - 1)                     # always hold out >=1
+        for m in ms[:n_known]:
             known[m] = prop_of_cat[c]                            # stored fact: m -> its property
-        held += ms[5:]                                          # 3 held-out per category (no stored fact)
+        held += ms[n_known:]                                    # held-out (no stored fact)
     known_rows = {m: row[m] for m in known}
 
     def complete(vec, theta):
@@ -120,23 +165,26 @@ def run_seed(seed):
     # (C) CONFIDENCE tracks tightness: adjacent-unknown nearest-cosine >> disjoint nearest-cosine
     conf_gap = float(np.mean(held_conf) - np.mean(dis_conf))
     return {"acc": main_acc, "cover": main_cover, "deranged": der_acc, "disjoint_abstain": dis_abstain,
-            "held_conf": float(np.mean(held_conf)), "disj_conf": float(np.mean(dis_conf)), "conf_gap": conf_gap}
+            "held_conf": float(np.mean(held_conf)), "disj_conf": float(np.mean(dis_conf)), "conf_gap": conf_gap,
+            "n_cats": n_cats, "n_held": len(held)}
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", default="42,43,44,100,101,102")
+    ap.add_argument("--real", action="store_true", help="use REAL Simple-Wiki animal-domain codes instead of synthetic")
     a = ap.parse_args()
     seeds = [int(x) for x in a.seeds.split(",")]
+    src = "REAL Simple-Wiki codes (mammal/tree/vehicle/tool domains)" if a.real else f"synthetic ({N_CAT} cats x {MEMBERS_PER_CAT})"
     print(f"[spreading-activation completion] guess the adjacent-unknown's property via nearest learned-code neighbour "
-          f"| {N_CAT} categories x {MEMBERS_PER_CAT} members, props={PROPS}", flush=True)
-    A, C, D, B, G = [], [], [], [], []
+          f"| {src}, props={PROPS}", flush=True)
+    A, C, D, B, G, NC = [], [], [], [], [], []
     for s in seeds:
-        r = run_seed(s)
-        A.append(r["acc"]); C.append(r["cover"]); D.append(r["deranged"]); B.append(r["disjoint_abstain"]); G.append(r["conf_gap"])
+        r = run_seed(s, real=a.real)
+        A.append(r["acc"]); C.append(r["cover"]); D.append(r["deranged"]); B.append(r["disjoint_abstain"]); G.append(r["conf_gap"]); NC.append(r["n_cats"])
         print(f"  [seed {s}] guess-acc={r['acc']:.3f} coverage={r['cover']:.3f} | deranged={r['deranged']:.3f} "
-              f"disjoint-abstain={r['disjoint_abstain']:.3f} conf(held={r['held_conf']:.2f} vs disj={r['disj_conf']:.2f}, gap={r['conf_gap']:.2f})", flush=True)
-    chance = 1.0 / N_CAT
+              f"disjoint-abstain={r['disjoint_abstain']:.3f} conf(held={r['held_conf']:.2f} vs disj={r['disj_conf']:.2f}, gap={r['conf_gap']:.2f}) [{r['n_cats']}cat/{r['n_held']}held]", flush=True)
+    chance = 1.0 / float(np.mean(NC))
     go = (all(x > 0.85 for x in A) and all(c > 0.85 for c in C) and all(d < 0.45 for d in D)
           and all(b > 0.85 for b in B) and all(g > 0.15 for g in G))
     print(f"\n  AGGREGATE: guess-acc={np.mean(A):.3f} coverage={np.mean(C):.3f} deranged={np.mean(D):.3f} "
