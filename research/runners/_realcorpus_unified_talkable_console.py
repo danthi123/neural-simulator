@@ -73,13 +73,30 @@ class UnifiedTalkableConsole:
             if rel_verb in self.row_of:
                 self.svo.store(self.row_of[s], self.row_of[rel_verb], self.row_of[o])
 
-    def teach_relational(self, subj, obj):
-        """Grow through conversation: store a NEW relational fact '<subj> <rel_verb> <obj>' live."""
+    def teach_relational(self, subj, obj, persist=None):
+        """Grow through conversation: store a NEW relational fact '<subj> <rel_verb> <obj>' live (+ persist)."""
         if subj not in self.row_of or obj not in self.row_of or self.rel_verb not in self.row_of:
             return False
         self.svo.store(self.row_of[subj], self.row_of[self.rel_verb], self.row_of[obj])
         self.rel_pairs.append((subj, obj))
+        if persist is not None:
+            import json, os
+            saved = json.load(open(persist)) if os.path.exists(persist) else []
+            saved.append([subj, obj])
+            json.dump(saved, open(persist, "w"))
         return True
+
+    def load_persisted(self, persist):
+        """Re-store taught facts from a prior session (the brain REMEMBERS across sessions -- codes are
+        seed-deterministic, so the same words rebuild to the same phasors)."""
+        import json, os
+        if not os.path.exists(persist):
+            return 0
+        n = 0
+        for s, o in json.load(open(persist)):
+            if self.teach_relational(s, o):     # re-store (do NOT re-persist -- already saved)
+                n += 1
+        return n
 
     def ask(self, q):
         """Route by question form: 'does a X <verb>?' -> property; 'what does the X <verb>?' -> relational."""
@@ -116,11 +133,16 @@ def main():
     ap.add_argument("--rel-verb", default="eat")
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--repl", action="store_true", help="interactive: type questions, the brain answers (Ctrl-D/'quit' to exit)")
+    ap.add_argument("--persist", default=None, help="JSON file: remember taught relational facts across sessions")
     a = ap.parse_args()
     print(f"[UNIFIED talkable console] property (inherit/cancel) + relational (SVO), spoken on spikes, moat | "
           f"seed={a.seed}", flush=True)
     con = UnifiedTalkableConsole(a.corpus_path, a.K, a.n_clusters, a.bridge, a.seed,
                                  a.class_verb, a.exc_verb, a.rel_verb)
+    if a.persist:
+        n = con.load_persisted(a.persist)
+        if n:
+            print(f"  [memory] remembered {n} taught fact(s) from a prior session", flush=True)
     animals = sorted(con.animals & set(con.prop.members[con.pos]))
     print(f"  discovered animal cluster: {[w for w in con.prop.members[con.pos] if w in con.animals]}; "
           f"class='{a.class_verb}', exception '{con.exc_word}'->'{a.exc_verb}'; "
@@ -138,7 +160,7 @@ def main():
             # TEACH a relational fact (declarative, contains the rel-verb, not a question)
             if toks and toks[0] not in ("does", "can", "what") and (a.rel_verb in toks or a.rel_verb + "s" in toks):
                 content = [t for t in toks if t not in ("the", "a", "an", a.rel_verb, a.rel_verb + "s")]
-                if len(content) >= 2 and con.teach_relational(content[0], content[1]):
+                if len(content) >= 2 and con.teach_relational(content[0], content[1], persist=a.persist):
                     print(f"  brain: ok, I learned that the {content[0]} {a.rel_verb}s {content[1]}.", flush=True)
                 else:
                     print(f"  brain: I can't learn that (need two words I know).", flush=True)
