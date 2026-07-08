@@ -35,6 +35,10 @@ _KNOWN_SOURCES = {
         "https://huggingface.co/datasets/roneneldan/TinyStories/"
         "resolve/main/TinyStoriesV2-GPT4-valid.txt"
     ),
+    "tinystories_train": (   # the ~2GB TRAIN split (stream a bounded chunk via max_bytes) -- the data lever
+        "https://huggingface.co/datasets/roneneldan/TinyStories/"
+        "resolve/main/TinyStoriesV2-GPT4-train.txt"
+    ),
     "wikitext": (
         "https://raw.githubusercontent.com/pytorch/examples/main/"
         "word_language_model/data/wikitext-2/train.txt"
