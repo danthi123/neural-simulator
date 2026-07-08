@@ -52,6 +52,7 @@ class UnifiedTalkableConsole:
         taught, held = _splits(self.prop.members, self.prop.cat_ids, self.prop.rng)
         self.prop.teach(taught)
         self.exc_verbs = {}                                  # exc_id -> spoken verb (per member exception)
+        self.last_subject = None                             # multi-turn anaphora: the last-mentioned subject
         self.exc_word = next((w for w in self.prop.members[self.pos]
                               if w in self.animals and self.prop.ask_class(self.pos, w) == "yes"), None)
         if self.exc_word:
@@ -181,27 +182,55 @@ class UnifiedTalkableConsole:
             else:
                 sents.append(f"the {subj} can {self._word(prop_verb)}")
         if rels:
-            # referring expression: pronoun 'it' once the subject is established; aggregate with 'and'
-            ref = "it" if sents else f"the {subj}"
+            # GROUP by verb + CAP objects (concise NLG; else a long run-on when many facts are known):
+            # "It sees cat, ball, and dog (and 9 more). It eats frog."
+            from collections import OrderedDict
             vbase = lambda v: v[:-1] if v.endswith("s") else v
-            phrase = " and ".join(f"{self._word(vbase(v))}s {self._word(o)}" for (v, o) in rels)
-            sents.append(f"{ref} {phrase}")
+            byv = OrderedDict()
+            for (v, o) in rels:
+                byv.setdefault(vbase(v), []).append(o)
+            ref = "it" if sents else f"the {subj}"
+            clauses = []
+            for vb, objs in byv.items():
+                shown, extra = objs[:3], len(objs) - 3
+                ol = self._word_list([self._word(o) for o in shown]) + (f" and {extra} more" if extra > 0 else "")
+                clauses.append(f"{self._word(vb)}s {ol}")
+            sents.append(f"{ref} {' and '.join(clauses)}")
         return " ".join(s[0].upper() + s[1:] + "." for s in sents), "describe"
+
+    @staticmethod
+    def _word_list(words):
+        """'cat', 'ball', 'dog' -> 'cat, ball, and dog' (Oxford list)."""
+        if len(words) <= 1:
+            return words[0] if words else ""
+        if len(words) == 2:
+            return f"{words[0]} and {words[1]}"
+        return ", ".join(words[:-1]) + f", and {words[-1]}"
 
     def _word_frame(self, subj, verb):
         frame, _ = self.speaker.speak_frame(subj, verb)        # "the <subj> can <verb>"
         return frame
 
+    def _resolve(self, word):
+        """Multi-turn anaphora: a pronoun 'it'/'they' resolves to the last-mentioned subject; a real word
+        updates it. Returns the resolved word (or the pronoun unchanged if there is no antecedent yet)."""
+        if word in ("it", "they", "them"):
+            return self.last_subject or word
+        if word in self.row_of or (word in self.prop.row_of):
+            self.last_subject = word
+        return word
+
     def ask(self, q):
         """Route by question form: 'does a X <verb>?' -> property; 'what does the X <verb>?' -> relational;
-        'tell me about X' / 'describe X' -> multi-fact discourse."""
+        'tell me about X' / 'describe X' -> multi-fact discourse. Pronoun 'it' -> the last subject (anaphora)."""
         toks = q.lower().replace("?", "").split()
         if toks[:3] == ["tell", "me", "about"] or toks[:1] == ["describe"]:  # multi-fact discourse
             content = [t for t in (toks[3:] if toks[0] == "tell" else toks[1:]) if t not in ("the", "a", "an")]
-            return self.describe(content[-1]) if content else ("I don't know", "moat")
-        if toks[:1] == ["what"]:                                  # relational: what does the X <verb>
-            subj = toks[3] if len(toks) > 3 else None
-            verb = toks[4] if len(toks) > 4 else self.rel_verb    # ANY relational verb (not just 'eat')
+            return self.describe(self._resolve(content[-1])) if content else ("I don't know", "moat")
+        if toks[:1] == ["what"]:                                  # relational: what (does) (the) X <verb>
+            c = [t for t in toks[1:] if t not in ("the", "a", "an", "does")]   # determiner-robust -> [subj, verb]
+            subj = self._resolve(c[0]) if c else None
+            verb = c[1] if len(c) > 1 else self.rel_verb          # ANY relational verb (not just 'eat')
             vrow, _ = self.verb_row(verb)
             if subj not in self.row_of or vrow is None:
                 return "I don't know", "moat"
@@ -226,7 +255,7 @@ class UnifiedTalkableConsole:
         if toks[:1] in (["does"], ["can"]) and len(toks) >= 5:
             content = [t for t in toks[1:] if t not in ("the", "a", "an")]
             if len(content) >= 3:
-                s2, v2, o2 = content[0], content[1], content[2]
+                s2, v2, o2 = self._resolve(content[0]), content[1], content[2]
                 vrow, _ = self.verb_row(v2)
                 if s2 in self.row_of and o2 in self.row_of and vrow is not None:
                     if self.svo.contains(self.row_of[s2], vrow, self.row_of[o2]):   # verify the SPECIFIC fact
@@ -235,8 +264,9 @@ class UnifiedTalkableConsole:
                     if got is None:
                         return "I don't know", "moat"                       # nothing stored for that (subj, verb)
                     return f"no -- {self._speak_svo(s2, v2, self.vocab[got])}", "yesno"   # not that obj; the real one
-        # property: does/can a X <verb>
-        subj = toks[2] if len(toks) > 2 else None
+        # property: does/can (a) X <verb>  (determiner-robust so 'does it run?' resolves the pronoun)
+        c = [t for t in toks[1:] if t not in ("a", "an", "the")]
+        subj = self._resolve(c[0]) if c else None
         if subj not in self.prop.row_of:
             return "I don't know", "moat"
         pred = self.prop._predict_all(subj)
