@@ -1,0 +1,88 @@
+{
+  "probe": "rolefiller_binding_deep_credit",
+  "seeds": [
+    42
+  ],
+  "rule": "microcircuit",
+  "positive_control": false,
+  "config": {
+    "hidden": 96,
+    "epochs": 300,
+    "lr": 0.3,
+    "batch": 128,
+    "feedback": "fixed",
+    "homeostasis": false,
+    "kp_lr": 0.2,
+    "kp_decay": 0.0001,
+    "beta": 1.0,
+    "p0": 0.3,
+    "task": {
+      "n_roles": 14,
+      "n_fillers": 14,
+      "key_bits": 2,
+      "sub_k": 2,
+      "n_obs": 18,
+      "held_frac": 0.3,
+      "noise": 0.03,
+      "id_dim": 3,
+      "bind_op": "xor",
+      "memctrl_holdouts": 2,
+      "feature_seed": 0
+    },
+    "deep_layers": 2,
+    "backend": "numpy"
+  },
+  "elapsed_seconds": 9.2,
+  "per_seed": [
+    {
+      "seed": 42,
+      "meta": {
+        "n_roles": 14,
+        "n_fillers": 14,
+        "key_bits": 2,
+        "sub_k": 2,
+        "k_classes": 4,
+        "bind_op": "xor",
+        "id_dim": 3,
+        "n_obs": 18,
+        "noise": 0.03,
+        "held_frac": 0.3,
+        "memctrl_holdouts": 2,
+        "feature_seed": 0,
+        "n_features": 14,
+        "n_train": 2124,
+        "n_heldout": 78,
+        "n_novel_combo_heldout": 50,
+        "n_memctrl_heldout": 28
+      },
+      "stage0_depth_genuineness": {
+        "chance": 0.36,
+        "n_features": 14,
+        "linear_probe": 0.18,
+        "lin_near_chance": true,
+        "linear_novel_heldout": 0.2,
+        "linear_train": 0.3069679849340866,
+        "l1_novel_heldout": 0.42,
+        "l1_train": 1.0,
+        "l2_novel_heldout": 0.2,
+        "l2_train": 1.0,
+        "l3_novel_heldout": 0.28,
+        "l3_train": 1.0,
+        "deep_best_novel_heldout": 0.28,
+        "depth_gap": -0.13999999999999996,
+        "depth_separating": false
+      },
+      "stage1_deep_credit": null
+    }
+  ],
+  "stage0_depth_separating": false,
+  "aggregate_stage0": {
+    "deep_best_novel_heldout": 0.28,
+    "l1_novel_heldout": 0.42,
+    "depth_gap": -0.13999999999999996,
+    "linear_probe": 0.18,
+    "chance": 0.36
+  },
+  "SIGNAL": false,
+  "verdict": "STAGE-0 BOUNDARY (honest) -- role-filler binding as a SUPERVISED CLASSIFICATION of a held-out NOVEL (role, filler) combination is NOT depth-separating at n_roles=14/n_fillers=14/bind=xor/key_bits=2/sub_k=2/noise=0.03 (deep-best novel 0.280 vs 1-layer 0.420, gap -0.140; linear-probe 0.180 vs chance 0.360). A SINGLE wide hidden layer forms the role x filler conjunctive feature directly (universal approximation over the disjoint code blocks) and generalizes it to novel combos, so adding depth does not help (often hurts by overfitting the arbitrary id codes). The linear probe IS near/below chance (the bind is a genuine nonlinear conjunction, NOT the concat/score shortcut) -- but that nonlinearity is a 1-hidden-layer nonlinearity. ARC READ: the deep-credit depth-benefit is NARROWER still than 'nonlinear conjunction' -- a SINGLE role-filler bind is depth-1; the depth lives in SEQUENTIAL/RECURSIVE composition (a multi-hop bind: bind then re-bind / role-filler chains), which is the honest next instrument. Run --positive-control to confirm the harness CAN detect depth (the part-2 XOR-over-pool IS depth-separating on this exact harness) => this negative is trustworthy, not a blind harness. The self-correcting Stage-0 gate did its job: it did NOT read the deep-credit arms on a non-depth-separating task."
+}
