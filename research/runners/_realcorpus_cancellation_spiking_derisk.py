@@ -61,7 +61,7 @@ def emergent_inputs(corpus_path, K, seed, n_clusters):
     rows = [i for i in range(len(vocab)) if labels[i] in cat_ids]
     sdr_by_row = _codes_to_sdr(codes, np.asarray(rows))
     row_to_cat = {int(r): int(labels[r]) for r in rows}
-    return sdr_by_row, row_to_cat, cat_ids
+    return sdr_by_row, row_to_cat, cat_ids, vocab
 
 
 class CancellingPoolerProbe:
@@ -271,7 +271,7 @@ def main():
     recs = []
     for s in seeds:
         if a.emergent:
-            sdr_by_row, row_to_cat, cat_ids = emergent_inputs(a.corpus_path, a.K, s, a.n_clusters)
+            sdr_by_row, row_to_cat, cat_ids, _vocab = emergent_inputs(a.corpus_path, a.K, s, a.n_clusters)
         else:
             _, sdr_by_row, row_to_cat, cat_ids, per_cat, _ = build_inputs(a.corpus_path, a.K, s)
         r = run_seed(s, sdr_by_row, row_to_cat, cat_ids, a.epochs, a.prop_k, a.k_win, max_passes=a.max_passes)
