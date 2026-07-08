@@ -148,11 +148,11 @@ class UnifiedTalkableConsole:
         """'tell me about <word>': aggregate the word's PROPERTY (inherit/cancel) + RELATIONAL facts into
         connected prose with a referring pronoun + 'and'-aggregation (NLG discourse; Levelt/Reiter-Dale) --
         a multi-fact discourse answer toward fluent conversation. Moat: nothing known -> abstain."""
-        prop_verb = None
+        prop_verb, is_exc = None, False
         if word in self.prop.row_of:                          # property: what it can do (inherit / override)
             pred = self.prop._predict_all(word)
             if pred[0] == "exc":
-                prop_verb = self.exc_verbs.get(pred[1], self.exc_verb)
+                prop_verb, is_exc = self.exc_verbs.get(pred[1], self.exc_verb), True
             elif pred == ("cat", self.pos):
                 prop_verb = self.class_verb
         rels = [(v, o) for (s, v, o) in self.rel_facts if s == word]   # relational: what it does to whom
@@ -162,7 +162,11 @@ class UnifiedTalkableConsole:
         subj = self._word(word)
         sents = []
         if prop_verb is not None:
-            sents.append(f"the {subj} can {self._word(prop_verb)}")
+            # CONTRAST (Reiter-Dale): an exception surfaces WHAT IT DOES INSTEAD -- "can sleep, not run"
+            if is_exc:
+                sents.append(f"the {subj} can {self._word(prop_verb)}, not {self._word(self.class_verb)}")
+            else:
+                sents.append(f"the {subj} can {self._word(prop_verb)}")
         if rels:
             # referring expression: pronoun 'it' once the subject is established; aggregate with 'and'
             ref = "it" if sents else f"the {subj}"
