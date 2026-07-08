@@ -25,8 +25,8 @@ Anti-cheats all pass:
 - **WRONG-AFFIX**: none of stem + "-ed" matches the 3sg (the affix identity is load-bearing).
 - **AFFIX-ABLATION**: the bare stem ("run") ≠ the 3sg surface ("runs") (the affix slot is load-bearing).
 
-## Multi-seed (the new seed-dependent component)
-The stem spelling uses the already-validated seed-42 BRIDGE-1; the one NEW seed-dependent component is the affix A→W decode. Validated at affix seed 42 (GO above) + a CI guard (`tests/test_productive_inflection.py`, 1 passed 189s). The affix bridges at seeds 43/44 are training (the concept-pool A→W arch is already extensively multi-seed-validated — v14 16-pool 5-seed etc. — so the 5-word affix bridge's seed-robustness is expected); the 3-seed `--affix-seed 42/43/44` confirmation follows.
+## Multi-seed (the new seed-dependent component) — 3/3 GO
+The stem spelling uses the already-validated seed-42 BRIDGE-1; the one NEW seed-dependent component is the affix A→W decode. Validated at affix seeds 42/43/44 (`--affix-seed`): **3/3 GO** — all 5 productive 3sg forms (runs/jumps/walks/sleeps/plays) render exact on spikes at every affix seed, controls collapse. (Expected: the concept-pool A→W arch is extensively multi-seed-validated — v14 16-pool 5-seed etc.) CI guard `tests/test_productive_inflection.py` (1 passed 189s).
 
 ## What this establishes
 Productive regular inflection is composed ON SPIKES (spell(stem) + spell(affix)), so a novel/unstored 3sg is produced neurally — the host `emerge_v3` string op has a biology-grounded spiking replacement (the Pinker-Ullman procedural route). The stored/lexical route (BRIDGE-3 whole-form 3sg) remains valid for frequent forms; this adds the PRODUCTIVE route for novel ones. Honest residual: the AFFIX CHOICE (allomorphy: -s vs -es vs -ies, the morphophonological rule) is still host-selected here (the de-risk uses the default -s); the phonological-conditioning network is the deeper RANK-3 mechanism. Follow-on: wire neural affixation into the relational producer's VERB slot (spell(stem)+spell(affix) instead of the emerge_v3 surface) for novel verbs.
