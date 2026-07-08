@@ -77,13 +77,22 @@ class UnifiedTalkableConsole:
                 self.svo.store(self.row_of[s], self.row_of[rel_verb], self.row_of[o])
                 self.rel_facts.append((s, rel_verb, o))
 
-    def teach_property_exception(self, word, verb):
+    @staticmethod
+    def _append_persist(persist, entry):
+        import json, os
+        saved = json.load(open(persist)) if os.path.exists(persist) else []
+        saved.append(entry)
+        json.dump(saved, open(persist, "w"))
+
+    def teach_property_exception(self, word, verb, persist=None):
         """Grow: teach '<word> <verb>s' as a property EXCEPTION (its own property overrides the class) live.
         Then 'does a <word> <class_verb>?' -> 'no -- the <word> can <verb>'. verb must be spellable."""
         if word not in self.prop.row_of or verb not in self.spellable:
             return False
         self.prop.teach_exception_adaptive(word, word, margin=2.0)   # per-word exception id
         self.exc_verbs[word] = verb
+        if persist is not None:
+            self._append_persist(persist, ["prop", word, verb])
         return True
 
     def verb_row(self, v):
@@ -101,23 +110,23 @@ class UnifiedTalkableConsole:
         self.svo.store(self.row_of[subj], vrow, self.row_of[obj])
         self.rel_facts.append((subj, vbase, obj))
         if persist is not None:
-            import json, os
-            saved = json.load(open(persist)) if os.path.exists(persist) else []
-            saved.append([subj, vbase, obj])
-            json.dump(saved, open(persist, "w"))
+            self._append_persist(persist, ["rel", subj, vbase, obj])
         return True
 
     def load_persisted(self, persist):
-        """Re-store taught facts from a prior session (the brain REMEMBERS across sessions -- codes are
-        seed-deterministic, so the same words rebuild to the same phasors)."""
+        """Re-store taught facts (BOTH relational + property exceptions) from a prior session -- the brain
+        REMEMBERS across sessions (codes are seed-deterministic, so the same words rebuild the same phasors)."""
         import json, os
         if not os.path.exists(persist):
             return 0
         n = 0
         for rec in json.load(open(persist)):
-            s, v, o = (rec if len(rec) == 3 else (rec[0], self.rel_verb, rec[1]))   # back-compat 2-tuple
-            if self.teach_relational(s, v, o):     # re-store (do NOT re-persist -- already saved)
-                n += 1
+            if rec and rec[0] == "rel":
+                n += int(self.teach_relational(rec[1], rec[2], rec[3]))         # re-store (already persisted)
+            elif rec and rec[0] == "prop":
+                n += int(self.teach_property_exception(rec[1], rec[2]))
+            elif len(rec) == 3:                                                  # back-compat untagged relational
+                n += int(self.teach_relational(rec[0], rec[1], rec[2]))
         return n
 
     def ask(self, q):
@@ -189,7 +198,7 @@ def main():
                     print(f"  brain: ok, I learned that the {content[0]} {content[1]} {content[2]}.", flush=True)
                 elif len(content) == 2:
                     verb = content[1][:-1] if content[1].endswith("s") else content[1]   # sleeps -> sleep
-                    if con.teach_property_exception(content[0], verb):
+                    if con.teach_property_exception(content[0], verb, persist=a.persist):
                         print(f"  brain: ok, I learned that the {content[0]} {verb}s (an exception).", flush=True)
                     else:
                         print(f"  brain: I can't learn that ('{verb}' must be a word I can say).", flush=True)
