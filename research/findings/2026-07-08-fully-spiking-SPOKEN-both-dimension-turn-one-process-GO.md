@@ -21,7 +21,7 @@ VERDICT: GO
 - **ALL THREE spiking bridges co-execute in ONE cupy process** (one-backend-per-process satisfied); every content word is decoded from `language_output` spikes.
 
 ## Honest scope (the alignment boundary)
-- A 1-seed demonstration. The property HTM needs K=1024 emergent clusters (where the spiking read is strong); the spellable animals must co-cluster there AND a weakly-inherited spellable exception must exist (the CYCLE-987 alignment tension). Seed 42's cluster 5 aligned (bear/frog); other seeds may be NOT-EVALUABLE (an honest, characterized boundary — the runner searches clusters + picks a low-pass-budget exception to avoid the CYCLE-985 saturation, and reports NOT-EVALUABLE if none aligns).
+- A 1-seed demonstration. The property HTM needs K=1024 emergent clusters (where the spiking read is strong); the spellable animals must co-cluster there AND a weakly-inherited spellable exception must exist (the CYCLE-987 alignment tension). Seed 42's cluster 5 aligned (bear/frog); seed 43 was NOT-EVALUABLE (confirmed -- no cluster with a weakly-inherited spellable-animal exception). So the alignment is ~1/2 seeds; other seeds may be NOT-EVALUABLE (an honest, characterized boundary — the runner searches clusters + picks a low-pass-budget exception to avoid the CYCLE-985 saturation, and reports NOT-EVALUABLE if none aligns).
 - The words are whatever aligns ("the bird likes dog" is semantically odd) — the MECHANISM (both dimensions, one process, fully spiking + spoken) is what's demonstrated. The individual mechanisms are each multi-seed-validated (cancellation 6/6, relational SVO 3-seed substrate, A→W 31/31).
 
 ## What this establishes
