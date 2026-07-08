@@ -1,0 +1,242 @@
+{
+  "probe": "transitive_inference_deep_credit",
+  "seeds": [
+    42
+  ],
+  "rule": "microcircuit",
+  "config": {
+    "hidden": 96,
+    "epochs": 250,
+    "lr": 0.3,
+    "batch": 128,
+    "feedback": "fixed",
+    "homeostasis": false,
+    "kp_lr": 0.2,
+    "kp_decay": 0.0001,
+    "beta": 1.0,
+    "p0": 0.3,
+    "task": {
+      "n_entities": 7,
+      "code_dim": 16,
+      "n_obs": 24,
+      "noise": 0.1,
+      "bridge_gap": null,
+      "feature_seed": 0
+    },
+    "deep_layers": 2,
+    "backend": "numpy"
+  },
+  "elapsed_seconds": 3.4,
+  "per_seed": [
+    {
+      "seed": 42,
+      "meta": {
+        "n_entities": 7,
+        "code_dim": 16,
+        "n_obs": 24,
+        "noise": 0.1,
+        "bridge_gap": 2,
+        "dropped_link": [
+          2,
+          3
+        ],
+        "feature_seed": 0,
+        "n_features": 32,
+        "n_train": 240,
+        "n_heldout": 30,
+        "n_inherit_heldout": 8,
+        "n_memctrl_heldout": 22,
+        "rank_dim": 7
+      },
+      "stage0_depth_genuineness": {
+        "chance": 0.5,
+        "n_features": 32,
+        "linear_probe_heldout": 1.0,
+        "linear_inherit_heldout": 1.0,
+        "linear_train": 1.0,
+        "l1_inherit_heldout": 1.0,
+        "l1_train": 1.0,
+        "l2_inherit_heldout": 1.0,
+        "l2_train": 1.0,
+        "l3_inherit_heldout": 0.5,
+        "l3_train": 0.5,
+        "deep_best_inherit_heldout": 1.0,
+        "depth_gap": 0.0,
+        "depth_separating": false
+      },
+      "stage1_deep_credit": {
+        "rule": "microcircuit",
+        "chance": 0.5,
+        "oracle": {
+          "inherit_heldout": 1.0,
+          "memctrl_heldout": 0.6818181818181818,
+          "train": 1.0,
+          "distance_curve": {
+            "2": 1.0,
+            "3": 1.0
+          },
+          "distance_slope": 4.708994788175823e-16
+        },
+        "test_fixed": {
+          "inherit_heldout": 1.0,
+          "memctrl_heldout": 0.6363636363636364,
+          "train": 1.0,
+          "per_layer_alignment": [
+            0.4329426924299864,
+            0.22884956270049187,
+            0.9999999999981914
+          ],
+          "deepest_layer_alignment": 0.4329426924299864,
+          "no_weight_transport": true,
+          "probe_latent": 0.375,
+          "distance_curve": {
+            "2": 1.0,
+            "3": 1.0
+          },
+          "distance_slope": 4.708994788175823e-16,
+          "feedback": "fixed",
+          "homeostasis": false
+        },
+        "test_learned": {
+          "inherit_heldout": 1.0,
+          "memctrl_heldout": 0.6363636363636364,
+          "train": 1.0,
+          "per_layer_alignment": [
+            0.003257948630863795,
+            0.4687310271594822,
+            0.99999999999361
+          ],
+          "deepest_layer_alignment": 0.003257948630863795,
+          "no_weight_transport": true,
+          "probe_latent": 0.375,
+          "distance_curve": {
+            "2": 1.0,
+            "3": 1.0
+          },
+          "distance_slope": 4.708994788175823e-16,
+          "feedback": "learned",
+          "homeostasis": false
+        },
+        "test_learned_homeo": {
+          "inherit_heldout": 1.0,
+          "memctrl_heldout": 0.6363636363636364,
+          "train": 1.0,
+          "per_layer_alignment": [
+            0.21408973477713708,
+            0.43051030015643194,
+            0.9999999999795214
+          ],
+          "deepest_layer_alignment": 0.21408973477713708,
+          "no_weight_transport": true,
+          "probe_latent": 0.375,
+          "distance_curve": {
+            "2": 1.0,
+            "3": 1.0
+          },
+          "distance_slope": 4.708994788175823e-16,
+          "feedback": "learned",
+          "homeostasis": true
+        },
+        "plain_fa": {
+          "inherit_heldout": 1.0,
+          "memctrl_heldout": 0.6363636363636364,
+          "train": 1.0,
+          "per_layer_alignment": [
+            0.4329426924299864,
+            0.22884956270049187,
+            0.9999999999981914
+          ],
+          "deepest_layer_alignment": 0.4329426924299864,
+          "no_weight_transport": true,
+          "probe_latent": 0.375,
+          "distance_curve": {
+            "2": 1.0,
+            "3": 1.0
+          },
+          "distance_slope": 4.708994788175823e-16,
+          "feedback": "fixed",
+          "homeostasis": false
+        },
+        "single_layer": {
+          "inherit_heldout": 1.0,
+          "memctrl_heldout": 0.6363636363636364,
+          "train": 1.0,
+          "distance_curve": {
+            "2": 1.0,
+            "3": 1.0
+          },
+          "distance_slope": 4.708994788175823e-16
+        },
+        "wrong_sign": {
+          "inherit_heldout": 0.5,
+          "train": 0.5,
+          "per_layer_alignment": [
+            0.005005225749282713,
+            0.004647498750191177,
+            1.0
+          ],
+          "deepest_layer_alignment": 0.005005225749282713
+        },
+        "wrong_sign_plain_fa": {
+          "inherit_heldout": 0.5,
+          "train": 0.5,
+          "per_layer_alignment": [
+            0.005005225749282713,
+            0.004647498750191177,
+            1.0
+          ],
+          "deepest_layer_alignment": 0.005005225749282713
+        },
+        "permuted": {
+          "inherit_heldout": 0.75,
+          "train": 0.9791666666666666
+        },
+        "apical_lesion": {
+          "inherit_heldout": 1.0,
+          "train": 0.9791666666666666,
+          "per_layer_alignment": [
+            -0.05378200459811976,
+            0.17042669633124688,
+            0.9999999999999998
+          ],
+          "deepest_layer_alignment": -0.05378200459811976
+        },
+        "same_init_as_oracle": true
+      }
+    }
+  ],
+  "stage0_depth_separating": false,
+  "aggregate": {
+    "deep_best_inherit_heldout": 1.0,
+    "l1_inherit_heldout": 1.0,
+    "depth_gap": 0.0,
+    "linear_probe_heldout": 1.0,
+    "oracle_inherit_heldout": 1.0,
+    "oracle_memctrl_heldout": 0.6818181818181818,
+    "oracle_distance_slope": 4.708994788175823e-16,
+    "deepest_align_test_fixed": 0.4329426924299864,
+    "deepest_align_test_learned": 0.003257948630863795,
+    "deepest_align_test_learned_homeo": 0.21408973477713708,
+    "deepest_align_plain_fa": 0.4329426924299864,
+    "best_test_deep_align": 0.4329426924299864,
+    "inherit_test_fixed": 1.0,
+    "inherit_test_learned": 1.0,
+    "inherit_test_learned_homeo": 1.0,
+    "best_test_inherit": 1.0,
+    "single_layer_inherit": 1.0,
+    "test_fixed_distance_slope": 4.708994788175823e-16,
+    "symbolic_distance_effect": true,
+    "learns_composition": false,
+    "wrong_sign_deep_align": 0.005005225749282713,
+    "wrong_sign_fails_alignment": true,
+    "lesion_deep_align": -0.05378200459811976,
+    "lesion_collapses": true,
+    "permuted_inherit": 0.75,
+    "permuted_chance": false,
+    "memctrl_holds": false,
+    "no_weight_transport": true,
+    "chance": 0.5
+  },
+  "SIGNAL": false,
+  "verdict": "STAGE-0 BOUNDARY -- the transitive-inference task is NOT depth-separating at n_entities=7/code_dim=16/noise=0.1/n_obs=24 (deep-best non-adjacent 1.000 vs 1-layer 1.000, gap +0.000, linear-probe 1.000). This is the wrong task CONFIG, NOT a GO -- escalate (more entities via --n-entities so more interior non-adjacent pairs / larger --code-dim so the codes are less linearly separable / more --n-obs / lower --noise so the depth-2 oracle reliably clears >=0.80) BEFORE reading the deep-credit arms. This gate is what XOR/MNIST/FC-CIFAR/raw-PPMI FAILED to be goal-relevant on; it must PASS first."
+}
