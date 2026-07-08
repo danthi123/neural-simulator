@@ -69,20 +69,30 @@ class UnifiedTalkableConsole:
         rng.shuffle(animals_present)
         self.rel_pairs = [(animals_present[i], animals_present[i + 1])
                           for i in range(0, len(animals_present) - 1, 2)]
+        self.rel_facts = []                                  # (subj, verb, obj) -- setup + taught
         for (s, o) in self.rel_pairs:
             if rel_verb in self.row_of:
                 self.svo.store(self.row_of[s], self.row_of[rel_verb], self.row_of[o])
+                self.rel_facts.append((s, rel_verb, o))
 
-    def teach_relational(self, subj, obj, persist=None):
-        """Grow through conversation: store a NEW relational fact '<subj> <rel_verb> <obj>' live (+ persist)."""
-        if subj not in self.row_of or obj not in self.row_of or self.rel_verb not in self.row_of:
+    def verb_row(self, v):
+        """Resolve a relational verb to a discovered-vocab row (try the surface form, then strip a trailing -s)."""
+        for cand in (v, v[:-1] if v.endswith("s") else v):
+            if cand in self.row_of:
+                return self.row_of[cand], cand
+        return None, None
+
+    def teach_relational(self, subj, verb, obj, persist=None):
+        """Grow through conversation: store a NEW relational fact '<subj> <verb> <obj>' live (any verb, + persist)."""
+        vrow, vbase = self.verb_row(verb)
+        if subj not in self.row_of or obj not in self.row_of or vrow is None:
             return False
-        self.svo.store(self.row_of[subj], self.row_of[self.rel_verb], self.row_of[obj])
-        self.rel_pairs.append((subj, obj))
+        self.svo.store(self.row_of[subj], vrow, self.row_of[obj])
+        self.rel_facts.append((subj, vbase, obj))
         if persist is not None:
             import json, os
             saved = json.load(open(persist)) if os.path.exists(persist) else []
-            saved.append([subj, obj])
+            saved.append([subj, vbase, obj])
             json.dump(saved, open(persist, "w"))
         return True
 
@@ -93,8 +103,9 @@ class UnifiedTalkableConsole:
         if not os.path.exists(persist):
             return 0
         n = 0
-        for s, o in json.load(open(persist)):
-            if self.teach_relational(s, o):     # re-store (do NOT re-persist -- already saved)
+        for rec in json.load(open(persist)):
+            s, v, o = (rec if len(rec) == 3 else (rec[0], self.rel_verb, rec[1]))   # back-compat 2-tuple
+            if self.teach_relational(s, v, o):     # re-store (do NOT re-persist -- already saved)
                 n += 1
         return n
 
@@ -103,9 +114,11 @@ class UnifiedTalkableConsole:
         toks = q.lower().replace("?", "").split()
         if toks[:1] == ["what"]:                                  # relational: what does the X <verb>
             subj = toks[3] if len(toks) > 3 else None
-            if subj not in self.row_of:
+            verb = toks[4] if len(toks) > 4 else self.rel_verb    # ANY relational verb (not just 'eat')
+            vrow, _ = self.verb_row(verb)
+            if subj not in self.row_of or vrow is None:
                 return "I don't know", "moat"
-            o = self.svo.answer_patient(self.row_of[subj], self.row_of[self.rel_verb])
+            o = self.svo.answer_patient(self.row_of[subj], vrow)
             if o is None:
                 return "I don't know", "moat"
             obj = self.vocab[o]
@@ -149,21 +162,21 @@ def main():
           f"relational facts: " + ", ".join(f"'{s} {a.rel_verb}s {o}'" for s, o in con.rel_pairs), flush=True)
 
     if a.repl:
-        print(f"  [talk to the brain] ask: 'does a <animal> {a.class_verb}?' / 'what does the <animal> "
-              f"{a.rel_verb}?'  |  teach: 'the <animal> {a.rel_verb}s <animal>'  ('quit' to exit)", flush=True)
+        print(f"  [talk to the brain] ask: 'does a <animal> {a.class_verb}?' / 'what does the <animal> <verb>?'  "
+              f"|  teach: 'the <animal> <verb> <animal>'  ('quit' to exit)", flush=True)
         import sys
         for line in sys.stdin:
             q = line.strip()
             if not q or q.lower() in ("quit", "exit"):
                 break
             toks = q.lower().replace("?", "").replace(".", "").split()
-            # TEACH a relational fact (declarative, contains the rel-verb, not a question)
-            if toks and toks[0] not in ("does", "can", "what") and (a.rel_verb in toks or a.rel_verb + "s" in toks):
-                content = [t for t in toks if t not in ("the", "a", "an", a.rel_verb, a.rel_verb + "s")]
-                if len(content) >= 2 and con.teach_relational(content[0], content[1], persist=a.persist):
-                    print(f"  brain: ok, I learned that the {content[0]} {a.rel_verb}s {content[1]}.", flush=True)
+            # TEACH a relational fact: a declarative (not a question) with 3 content tokens <subj> <verb> <obj>
+            if toks and toks[0] not in ("does", "can", "what"):
+                content = [t for t in toks if t not in ("the", "a", "an")]
+                if len(content) == 3 and con.teach_relational(content[0], content[1], content[2], persist=a.persist):
+                    print(f"  brain: ok, I learned that the {content[0]} {content[1]} {content[2]}.", flush=True)
                 else:
-                    print(f"  brain: I can't learn that (need two words I know).", flush=True)
+                    print(f"  brain: I can't learn that (need '<animal> <verb> <animal>' with words I know).", flush=True)
                 continue
             out, kind = con.ask(q)
             print(f"  brain: \"{out}\"   [{kind}]", flush=True)
