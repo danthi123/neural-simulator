@@ -266,6 +266,8 @@ class UnifiedTalkableConsole:
                 n += int(self.teach_ditransitive(rec[1], rec[2], rec[3], rec[4]))
             elif rec and rec[0] == "pp":                                          # spatial (agent-verb-goal/location)
                 n += int(self.teach_pp(rec[1], rec[2], rec[3], rec[4]))
+            elif rec and rec[0] == "tax_exc":                                     # multi-level taxonomy member exception
+                n += int(self.teach_taxonomy_exception(rec[1], rec[2]))
             elif len(rec) == 3:                                                  # back-compat untagged relational
                 n += int(self.teach_relational(rec[0], rec[1], rec[2]))
         return n

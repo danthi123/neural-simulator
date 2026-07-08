@@ -378,6 +378,31 @@ def test_taxonomy_member_exception_cancels_in_console(taxonomy_console):
 
 
 @pytest.mark.skipif(not _HAS_TAX, reason="needs the Wikidata 3-level is-a graph (regenerable via the taxonomy derisk)")
+def test_taxonomy_exception_persists_across_sessions(tmp_path):
+    """A taught taxonomy member-exception REMEMBERS across sessions: persist it, rebuild a fresh console, load, and
+    the cancellation is restored (codes are seed-deterministic so the same words rebuild the same taxonomy)."""
+    os.environ.setdefault("SIM_BACKEND", "numpy")
+    from research.runners._realcorpus_unified_talkable_console import UnifiedTalkableConsole
+    from research.runners._realcorpus_taxonomy_qa_console_derisk import GP_PROPERTY
+    persist = str(tmp_path / "tax_persist.json")
+    c1 = UnifiedTalkableConsole(CORPUS, 256, 10, BRIDGE, seed=42, class_verb="run", exc_verb="sleep",
+                                rel_verb="eat", taxonomy_qa=True)
+    g = next(gg for gg in c1._tax.gps if gg in GP_PROPERTY)
+    true_prop = GP_PROPERTY[g]
+    other = next(p for gg, p in GP_PROPERTY.items() if p != true_prop and gg in c1._tax.gps)
+    tree = c1._tax.tree
+    exc = next(lf for s in tree[g] for lf in tree[g][s] if lf in c1._tax_leaves)
+    assert c1.teach_taxonomy_exception(exc, other, persist=persist)
+    assert c1.ask(f"can a {exc} {true_prop}?")[0].startswith("no")
+    # fresh session -> load -> the exception is restored
+    c2 = UnifiedTalkableConsole(CORPUS, 256, 10, BRIDGE, seed=42, class_verb="run", exc_verb="sleep",
+                                rel_verb="eat", taxonomy_qa=True)
+    assert c2.ask(f"can a {exc} {true_prop}?")[0].startswith("yes")   # cold: inherits (no exception yet)
+    assert c2.load_persisted(persist) >= 1
+    assert c2.ask(f"can a {exc} {true_prop}?")[0].startswith("no")    # warm: cancellation restored
+
+
+@pytest.mark.skipif(not _HAS_TAX, reason="needs the Wikidata 3-level is-a graph (regenerable via the taxonomy derisk)")
 def test_taxonomy_default_off_byte_identical(console, taxonomy_console):
     """Default path (no taxonomy_qa) is BYTE-PRESERVED: the discovered-cluster reasoner + moat are unchanged,
     and a taxonomy-only leaf question falls through to the moat when the taxonomy path is off."""
