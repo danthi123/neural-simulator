@@ -85,6 +85,12 @@ class UnifiedTalkableConsole:
         self.ditrans = DitransStore(Z, list(range(len(vocab))), (_role(rng), _role(rng), _role(rng), _role(rng)))
         self.ditrans_facts = []                              # (subj, verb, recipient, theme)
         self.DITRANS_VERBS = {"give", "show", "bring", "send", "tell", "offer"}
+        # PP (spatial) store: agent-verb-{goal|location}, so the console converses about spatial relations
+        # ("the owl flies to the pond" / "on the rock"). CYCLE 1029. The preposition (to/on) picks the role.
+        from research.runners._realcorpus_pp_relation_store_derisk import PPStore
+        self.pp = PPStore(Z, list(range(len(vocab))), (_role(rng), _role(rng), _role(rng), _role(rng)))
+        self.pp_facts = []                                   # (subj, verb, dest, kind)  kind in {goal,loc}
+        self.PP_PREP = {"to": "goal", "on": "loc"}
         animals_present = sorted(a for a in self.animals if a in self.row_of)
         rng.shuffle(animals_present)
         self.rel_pairs = [(animals_present[i], animals_present[i + 1])
@@ -193,6 +199,17 @@ class UnifiedTalkableConsole:
             self._append_persist(persist, ["ditrans", subj, vbase, recip, theme])
         return True
 
+    def teach_pp(self, subj, verb, dest, kind, persist=None):
+        """Grow: store a SPATIAL fact '<subj> <verb> to/on <dest>' ("the owl flies to the pond"); kind=goal|loc."""
+        vrow, vbase = self.verb_row(verb)
+        if vrow is None or kind not in ("goal", "loc") or any(w not in self.row_of for w in (subj, dest)):
+            return False
+        self.pp.store(self.row_of[subj], vrow, self.row_of[dest], kind)
+        self.pp_facts.append((subj, vbase, dest, kind))
+        if persist is not None:
+            self._append_persist(persist, ["pp", subj, vbase, dest, kind])
+        return True
+
     def load_persisted(self, persist):
         """Re-store taught facts (BOTH relational + property exceptions) from a prior session -- the brain
         REMEMBERS across sessions (codes are seed-deterministic, so the same words rebuild the same phasors)."""
@@ -207,6 +224,8 @@ class UnifiedTalkableConsole:
                 n += int(self.teach_property_exception(rec[1], rec[2]))
             elif rec and rec[0] == "ditrans":                                    # ternary (agent-verb-recipient-theme)
                 n += int(self.teach_ditransitive(rec[1], rec[2], rec[3], rec[4]))
+            elif rec and rec[0] == "pp":                                          # spatial (agent-verb-goal/location)
+                n += int(self.teach_pp(rec[1], rec[2], rec[3], rec[4]))
             elif len(rec) == 3:                                                  # back-compat untagged relational
                 n += int(self.teach_relational(rec[0], rec[1], rec[2]))
         return n
@@ -374,6 +393,18 @@ class UnifiedTalkableConsole:
                             return (f"the {self._word(s2)} {self._word(v2)}s the {self._word(self.vocab[rc])} "
                                     f"a {self._word(n2)}"), "ditransitive"
                     return "I don't know", "moat"                  # ditransitive verb but not stored -> abstain
+        # PP (spatial) query: "where does the X <verb> to/on?" -> the goal/location destination (the ternary store).
+        if toks[:1] == ["where"]:
+            cp = [t for t in toks[1:] if t not in ("does", "the", "a", "an")]
+            if len(cp) == 3 and cp[2] in self.PP_PREP:
+                s2, v2, kind = self._resolve(cp[0]), cp[1], self.PP_PREP[cp[2]]
+                vrow, _ = self.verb_row(v2)
+                if s2 in self.row_of and vrow is not None:
+                    d = self.pp.answer(self.row_of[s2], vrow, kind)
+                    if d is not None:
+                        return (f"the {self._word(s2)} {self._word(v2)}s {cp[2]} the "
+                                f"{self._word(self.vocab[d])}"), "spatial"
+            return "I don't know", "moat"
         if self._is(rt, "compare", toks[:1] == ["compare"]):      # comparison: compare X and Y
             content = [t for t in toks[1:] if t not in ("the", "a", "an", "and", "to", "with")]
             if len(content) >= 2:
@@ -481,7 +512,10 @@ def main():
             # TEACH (declarative, not a question): 4 content = ditransitive; 3 = relational SVO; 2 = property exception
             if toks and toks[0] not in ("does", "can", "what", "who", "tell", "describe", "compare"):
                 content = [t for t in toks if t not in ("the", "a", "an")]
-                if len(content) == 4 and content[1] in con.DITRANS_VERBS and \
+                if len(content) == 4 and content[2] in con.PP_PREP and \
+                        con.teach_pp(content[0], content[1], content[3], con.PP_PREP[content[2]], persist=a.persist):
+                    print(f"  brain: ok, I learned that the {content[0]} {content[1]}s {content[2]} the {content[3]}.", flush=True)
+                elif len(content) == 4 and content[1] in con.DITRANS_VERBS and \
                         con.teach_ditransitive(content[0], content[1], content[2], content[3], persist=a.persist):
                     print(f"  brain: ok, I learned that the {content[0]} {content[1]}s the {content[2]} a {content[3]}.", flush=True)
                 elif len(content) == 3 and con.teach_relational(content[0], content[1], content[2], persist=a.persist):

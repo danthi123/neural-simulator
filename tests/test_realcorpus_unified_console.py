@@ -154,6 +154,26 @@ def test_ditransitive_teach_query_moat(console):
     assert km == "moat"
 
 
+def test_pp_spatial_teach_query_moat(console):
+    """The console stores + queries SPATIAL relations: teach '<s> <v> to <d1>' (goal) + '<s> <v> on <d2>' (loc)
+    -> 'where does the s v to?' -> d1, 'where does the s v on?' -> d2 (goal/location kept distinct); unstored abstains."""
+    verb = next((v for v in ("run", "walk", "go", "fly", "jump", "look") if console.verb_row(v)[0] is not None), None)
+    if verb is None:
+        pytest.skip("no spatial-capable verb in the discovered vocab")
+    nouns = [w for w in console.row_of if w in console.spellable][:5]
+    if len(nouns) < 3:
+        pytest.skip("need >=3 spellable vocab words")
+    s, d1, d2 = nouns[0], nouns[1], nouns[2]
+    assert console.teach_pp(s, verb, d1, "goal")
+    assert console.teach_pp(s, verb, d2, "loc")
+    out, kind = console.ask(f"where does the {s} {verb} to?")
+    assert kind == "spatial" and d1 in out                        # goal destination recovered
+    out2, kind2 = console.ask(f"where does the {s} {verb} on?")
+    assert kind2 == "spatial" and d2 in out2                      # location destination (distinct from goal)
+    _, km = console.ask(f"where does the {nouns[3] if len(nouns) > 3 else 'zzzqqx'} {verb} to?")
+    assert km == "moat"                                           # unstored subject -> abstain
+
+
 @pytest.fixture(scope="module")
 def spiking_console():
     """A console whose property answers are GENERATED ON SPIKES (spiking_gen): the slot ORDER is produced by
