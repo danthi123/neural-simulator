@@ -1,0 +1,121 @@
+{
+  "verdict": "NEGATIVE",
+  "aggregate": {
+    "isa": 0.1201814058956916,
+    "deranged": 0.06031746031746032,
+    "chance": 0.025000000000000005
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_supers": 40,
+      "chance": 0.025,
+      "isa_inherit_acc": 0.14965986394557823,
+      "deranged_acc": 0.07482993197278912,
+      "n_heldout": 147,
+      "example_supers": {
+        "about": [
+          "book",
+          "illinois",
+          "nanyang",
+          "track"
+        ],
+        "album": [
+          "album",
+          "feelings",
+          "illinoise",
+          "itself",
+          "remix"
+        ],
+        "american": [
+          "again",
+          "bassline",
+          "bloom",
+          "blue",
+          "boo"
+        ],
+        "area": [
+          "district",
+          "forest",
+          "fountain",
+          "lane",
+          "paint"
+        ]
+      }
+    },
+    {
+      "seed": 43,
+      "n_supers": 40,
+      "chance": 0.025,
+      "isa_inherit_acc": 0.1292517006802721,
+      "deranged_acc": 0.04897959183673469,
+      "n_heldout": 147,
+      "example_supers": {
+        "about": [
+          "book",
+          "illinois",
+          "nanyang",
+          "track"
+        ],
+        "album": [
+          "album",
+          "feelings",
+          "illinoise",
+          "itself",
+          "remix"
+        ],
+        "american": [
+          "again",
+          "bassline",
+          "bloom",
+          "blue",
+          "boo"
+        ],
+        "area": [
+          "district",
+          "forest",
+          "fountain",
+          "lane",
+          "paint"
+        ]
+      }
+    },
+    {
+      "seed": 44,
+      "n_supers": 40,
+      "chance": 0.025,
+      "isa_inherit_acc": 0.08163265306122448,
+      "deranged_acc": 0.05714285714285714,
+      "n_heldout": 147,
+      "example_supers": {
+        "about": [
+          "book",
+          "illinois",
+          "nanyang",
+          "track"
+        ],
+        "album": [
+          "album",
+          "feelings",
+          "illinoise",
+          "itself",
+          "remix"
+        ],
+        "american": [
+          "again",
+          "bassline",
+          "bloom",
+          "blue",
+          "boo"
+        ],
+        "area": [
+          "district",
+          "forest",
+          "fountain",
+          "lane",
+          "paint"
+        ]
+      }
+    }
+  ]
+}
