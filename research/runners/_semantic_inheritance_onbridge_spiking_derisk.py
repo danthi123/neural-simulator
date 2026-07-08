@@ -43,13 +43,24 @@ question is the microcircuit-vs-FA CONTRAST on spikes, not a tuned SOTA. The mul
 is the CONTROLLER's. NO new `sim/` edit -- the committed `enable_bdsp`(+`_microcircuit`) mechanism is reused by import; the
 TASK + metric + controls are reused by import from `_semantic_inheritance_deep_credit_derisk`.
 
-Run (1-seed CPU smoke):
-    SIM_BACKEND=numpy python -m research.runners._semantic_inheritance_onbridge_spiking_derisk --seeds 42
+POPULATION CODING (research gate 2026-07-07 mechanism #1 -- the fix for the on-bridge-doesn't-train boundary): each
+LOGICAL unit -> a POOL of `--pool-k` bridge neurons; the layer activation is the MEAN event rate over the pool and the
+descending apical credit is BROADCAST to all K neurons (pooling K independent neurons cuts the read/credit CV ~sqrt(K),
+lifting the single-neuron finite-spike-noise wall). `--pool-k 1` is byte-identical to the single-neuron runner (the
+causal control). The load-bearing diagnostic corr(pooled E, soma_rate) is emitted per hidden layer -- it should RISE
+with pool_k (a read-VARIANCE residual population coding fixes) vs stay flat (a credit-STRUCTURE residual it does not).
 
-The CONTROLLER's multi-seed GPU run (one process per seed; aggregate the per-seed JSONs):
-    for s in 42 43 44 100 101 102; do SIM_BACKEND=cupy python -m \
-        research.runners._semantic_inheritance_onbridge_spiking_derisk --seeds $s \
-        --hidden 64 --epochs 40 --out research/findings/raw/_semantic_inherit_onbridge_seed$s.json & done; wait
+Run (1-seed CPU smoke -- the K=1 causal control vs the K=8 population fix):
+    SIM_BACKEND=numpy python -m research.runners._semantic_inheritance_onbridge_spiking_derisk --seeds 42 --pool-k 1
+    SIM_BACKEND=numpy python -m research.runners._semantic_inheritance_onbridge_spiking_derisk --seeds 42 --pool-k 8
+
+The CONTROLLER's multi-seed GPU K-sweep (one process per seed; aggregate the per-seed JSONs):
+    for s in 42 43 44 100 101 102; do for K in 1 8 16; do SIM_BACKEND=cupy python -m \
+        research.runners._semantic_inheritance_onbridge_spiking_derisk --seeds $s --pool-k $K \
+        --hidden 64 --epochs 40 --out research/findings/raw/_semantic_inherit_onbridge_K${K}_seed$s.json & done; wait; done
+    # The decisive anti-cheat (spatial pooling vs equal-total-spike TEMPORAL averaging): a matched control run at
+    # --pool-k 1 with --settle-steps scaled by K (same total spike budget on ONE neuron). If ONLY spatial pooling
+    # recovers training, the residual is genuinely read-VARIANCE (population coding is the fix, not "more samples").
 """
 from __future__ import annotations
 import argparse, json, os, sys, time, traceback
@@ -112,7 +123,7 @@ class OnBridgeBDSPNet:
     def __init__(self, n_in, hidden, k, seed=0, rule="plain_fa", n_hidden_layers=2,
                  settle_steps=40, credit_steps=25, in_current_pA=520.0, in_bias_pA=260.0,
                  ff_w_init=4.0, apical_gain_pA=900.0, beta=1.0, p0=0.30, lr=0.05,
-                 tonic_h_pA=450.0, tonic_o_pA=500.0):
+                 tonic_h_pA=450.0, tonic_o_pA=500.0, pool_k=1):
         from sim.bridge import SimulationBridge
         from sim.config import CoreSimConfig, GPUConfig, VisualizationConfig, RuntimeState
         from sim.backend import get_backend
@@ -123,15 +134,31 @@ class OnBridgeBDSPNet:
         self.settle_steps = int(settle_steps); self.credit_steps = int(credit_steps)
         self.in_current_pA = float(in_current_pA); self.in_bias_pA = float(in_bias_pA)
         self.apical_gain_pA = float(apical_gain_pA); self.lr = float(lr)
+        # POPULATION CODING (research gate 2026-07-07, mechanism #1): each LOGICAL unit is represented by a POOL of
+        # `pool_k` bridge neurons (a contiguous block); the layer activation is the MEAN event rate cp_bdsp_E over the
+        # pool, and the descending apical CREDIT for a logical unit is BROADCAST to all K neurons in its block. Pooling K
+        # independent neurons cuts the read/credit CV by ~sqrt(K) (Poisson variance averaging) -- the fix for the
+        # single-neuron finite-spike-noise wall that made the K=1 net (below) not train. K=1 == the current single-neuron
+        # runner byte-identical (the causal control): sizes_phys == sizes_logical, pooling/broadcast are identity, and
+        # every read/credit path collapses to the pre-population code. This is the DEFINITIONAL form of the Burstprop /
+        # BurstCCN rule family (event-rate + burst-probability are ENSEMBLE quantities; `p=b/e` does not exist at one
+        # neuron). NO `sim/` edit -- pooling is a read/credit-side average; the committed BDSP kernel already moves all
+        # K*K per-edge synapses; the fixed-random feedback Y stays LOGICAL-unit-sized (no transport, no growth).
+        self.pool_k = max(1, int(pool_k))
         # tonic depolarizing background current on the hidden/output slices (a biological resting drive) so the
         # downstream spiking layers FIRE at a usable event rate (~0.05-0.10) instead of near-silent -- otherwise the
         # feedforward signal dies through the point-neuron layers (E~0.003 -> phi'(E)~0 -> no credit flows). This is a
         # drive, not a computational shortcut (the credit + weight moves are all the committed spiking mechanism).
         self.tonic_h_pA = float(tonic_h_pA); self.tonic_o_pA = float(tonic_o_pA)
-        # slice layout: [input | H1 | H2 | out]
+        # LOGICAL slice layout (what the credit math sees): [input | H1 | H2 | out]. `sizes` = logical unit counts.
         sizes = [self.n_in] + [self.hidden] * self.n_hidden_layers + [self.k]
         self.sizes = sizes
-        starts = np.cumsum([0] + sizes)
+        # PHYSICAL slice layout on the bridge: each logical unit -> pool_k contiguous neurons. sizes_phys = sizes * K.
+        K = self.pool_k
+        sizes_phys = [s * K for s in sizes]
+        self.sizes_phys = sizes_phys
+        starts = np.cumsum([0] + sizes_phys)
+        # physical slices (per LAYER) on the bridge -- the neuron index ranges the drive/read/credit address.
         self.slices = [slice(int(starts[i]), int(starts[i + 1])) for i in range(len(sizes))]
         self.n_total = int(starts[-1])
 
@@ -154,14 +181,17 @@ class OnBridgeBDSPNet:
         br._initialize_simulation_data()
         self.br = br
 
-        # ---- feedforward plastic wiring: dense layer L -> L+1, Xavier init (same discipline as the rate net) ----
+        # ---- feedforward plastic wiring: dense PHYSICAL layer L -> L+1, Xavier init (same discipline as the rate net) ----
+        # For pool_k>1 this is the full (sizes[li]*K) x (sizes[li+1]*K) dense block per logical edge -- the committed BDSP
+        # kernel moves ALL K*K per-edge synapses; the pooled read makes the effective per-logical-unit rule lower-variance.
+        # Xavier `lim` uses the PHYSICAL fan-in/fan-out (== logical when K=1 -> byte-identical to the single-neuron runner).
         rng = np.random.default_rng(seed)
         self._ff_edges = []          # list of (pre_idx array, post_idx array) per FF pathway (for credit read-back)
         plan = {}
         for li in range(len(sizes) - 1):
             pre = np.arange(self.slices[li].start, self.slices[li].stop)
             post = np.arange(self.slices[li + 1].start, self.slices[li + 1].stop)
-            lim = np.sqrt(6.0 / (sizes[li] + sizes[li + 1]))
+            lim = np.sqrt(6.0 / (self.sizes_phys[li] + self.sizes_phys[li + 1]))
             Wl = rng.uniform(-lim, lim, (len(pre), len(post))) * ff_w_init
             P, Q, Wv = [], [], []
             for ai, a in enumerate(pre):
@@ -174,6 +204,8 @@ class OnBridgeBDSPNet:
 
         # ---- FIXED-RANDOM apical feedback matrices Y (credit channel; SEPARATE seed stream => no weight transport) ----
         # Y[k] maps the layer-above error (size sizes[k+2]) down to hidden layer k+1 (size sizes[k+1]): v_api = e_up @ Y[k].
+        # Y stays in LOGICAL-unit space (H_units x H_units) regardless of pool_k -- the credit matrix does NOT grow with K
+        # (no weight transport, no per-neuron feedback). The per-logical-unit apical is BROADCAST to the K pool neurons.
         yrng = np.random.default_rng(seed + 9973)
         self.Y = [yrng.normal(0.0, 1.0, (sizes[k + 2], sizes[k + 1])) for k in range(len(sizes) - 2)]
         p0c = min(max(float(p0), 1e-6), 1.0 - 1e-6)
@@ -189,6 +221,41 @@ class OnBridgeBDSPNet:
         drive[self.slices[-1]] = self.tonic_o_pA        # output slice
         return drive
 
+    # ---------- population pooling / broadcast (K=1 => identity => byte-identical to the single-neuron runner) ----------
+    def _pool(self, phys_layer_vec, li):
+        """Block-mean over each logical unit's pool of K physical neurons: (sizes_phys[li],) -> (sizes[li],).
+        This is the POOLED event rate -- the variance-reducing average that lifts the read/credit SNR by ~sqrt(K)."""
+        K = self.pool_k
+        if K == 1:
+            return np.asarray(phys_layer_vec, dtype=np.float64)
+        v = np.asarray(phys_layer_vec, dtype=np.float64)
+        return v.reshape(self.sizes[li], K).mean(axis=1)
+
+    def _broadcast(self, logical_vec, li):
+        """Broadcast a per-logical-unit value to all K neurons of each unit's pool: (sizes[li],) -> (sizes_phys[li],).
+        Used to inject the descending apical CREDIT into every neuron of a logical unit's block."""
+        K = self.pool_k
+        v = np.asarray(logical_vec, dtype=np.float64)
+        if K == 1:
+            return v
+        return np.repeat(v, K)
+
+    def soma_rate_proxy(self, li):
+        """CLEAN (low-variance, graded) per-LOGICAL-unit rate reference for layer li, read from the basal soma membrane
+        potential cp_membrane_potential_v (a real neural variable, CV~0 vs the finite-spike-quantized event rate E).
+        The reference the anti-cheat correlates the pooled E against: corr(pooled E, soma_rate) should RISE with K as
+        the pooled event rate approaches this clean graded signal. Mapped through the same sigmoid the P-channel uses so
+        it lives in (0,1) like E. Pooled over the K-block to the logical-unit space (so it is comparable to pooled E)."""
+        from sim.backend import to_host
+        v = np.asarray(to_host(self.br.cp_membrane_potential_v)).astype(np.float64)
+        sl = self.slices[li]
+        vv = v[sl]
+        # a monotone graded rate proxy: sigmoid of the (standardized) soma potential. The exact scale is immaterial --
+        # the diagnostic is a CORRELATION (rank/linear), invariant to monotone rescaling. Standardize within-layer.
+        m, s = float(vv.mean()), float(vv.std() + 1e-9)
+        r_phys = _sig((vv - m) / s)
+        return self._pool(r_phys, li)
+
     # ---------- spiking forward: features -> graded input current -> per-slice event rates cp_bdsp_E ----------
     def _forward_spiking(self, feat_row, reset_rates=True):
         from sim.backend import to_host
@@ -202,7 +269,10 @@ class OnBridgeBDSPNet:
         drive = self._base_drive()
         f = np.asarray(feat_row, dtype=np.float32)
         # graded: standardized feature (~+-2) -> input current in [bias-in, bias+in]. clip keeps it a valid drive.
-        drive[self.slices[0]] = np.clip(self.in_bias_pA + self.in_current_pA * f, 0.0, 1600.0)
+        # for pool_k>1 each input feature drives its K pool neurons IDENTICALLY (K independent Poisson samples of the
+        # same feature); _broadcast is identity at K=1 -> byte-identical to the single-neuron runner.
+        in_cur = np.clip(self.in_bias_pA + self.in_current_pA * f, 0.0, 1600.0)
+        drive[self.slices[0]] = self._broadcast(in_cur, 0).astype(np.float32)
         self.br.cp_external_input_current = xp.asarray(drive)
         # no apical during the forward settle (credit is injected in the credit pass)
         if self.br.cp_bdsp_apical_drive is not None:
@@ -210,7 +280,9 @@ class OnBridgeBDSPNet:
         for _ in range(self.settle_steps):
             self.br._run_one_simulation_step()
         E = np.asarray(to_host(self.br.cp_bdsp_E)).copy()
-        acts = [E[self.slices[li]] for li in range(len(self.sizes))]   # per-slice event rate (spiking activation)
+        # POOLED per-LOGICAL-unit event rate = mean E over each unit's K-block (the variance-reduced spiking activation).
+        # K=1 => _pool is identity => acts are the per-neuron E exactly as before.
+        acts = [self._pool(E[self.slices[li]], li) for li in range(len(self.sizes))]
         return acts
 
     def _logits(self, acts_out):
@@ -241,6 +313,32 @@ class OnBridgeBDSPNet:
         acts = self._forward_batch(X)
         return acts[-2]           # the last hidden layer's spiking event rate (the emergence-probe rep)
 
+    def read_snr_corr(self, X, max_examples=48):
+        """The load-bearing READ-SNR diagnostic (research gate 2026-07-07 sec 1d/4.2): per HIDDEN layer, correlate the
+        POOLED spiking event rate cp_bdsp_E against the CLEAN graded soma-rate proxy (cp_membrane_potential_v) for the
+        SAME input. As K rises the pooled event rate approaches the clean signal -> corr RISES. This is the direct,
+        quantified fingerprint that population coding lifts the read/credit SNR (vs a credit-STRUCTURE residual, which
+        population would NOT fix and the correlation would NOT rise with K). Returns per-hidden-layer Pearson r
+        (pooled over examples, flattened over units)."""
+        nhid = self.n_hidden_layers
+        m = min(int(max_examples), len(X))
+        Epool = [[] for _ in range(nhid)]     # per hidden layer: list of pooled-E vectors (one per example)
+        Spool = [[] for _ in range(nhid)]     # per hidden layer: list of pooled soma-rate-proxy vectors
+        for i in range(m):
+            acts = self._forward_spiking(X[i])                    # runs the settle; pooled E per layer
+            for k in range(nhid):
+                li = k + 1
+                Epool[k].append(np.asarray(acts[li], dtype=np.float64))
+                Spool[k].append(self.soma_rate_proxy(li))         # read AFTER the same settle (state still THIS input)
+        corrs = []
+        for k in range(nhid):
+            e = np.concatenate(Epool[k]); s = np.concatenate(Spool[k])
+            if e.std() < 1e-12 or s.std() < 1e-12:
+                corrs.append(float("nan"))
+            else:
+                corrs.append(float(np.corrcoef(e, s)[0, 1]))
+        return corrs
+
     # ---------- one BDSP train step on-bridge (PER-EXAMPLE / online -- the faithful spiking way) ----------
     def train_step(self, Xb, yb, mode="bdsp"):
         """Online per-example BDSP. The committed kernel's dw = eta*Etilde_pre*(B_post - Pbar_post*E_post) uses
@@ -270,12 +368,16 @@ class OnBridgeBDSPNet:
         int_drive = np.zeros(n, dtype=np.float64)
         # OUTPUT-LAYER credit: the output has DIRECT target access (faithful biology). Drive the output slice apical
         # from -delta_out * phi'(E_out) so the committed kernel moves the H2->out weights toward the target.
-        E_out = acts[-1][None, :]
-        out_err = (E_out * (1.0 - E_out)) * e_upper               # (1, k)
-        apical[self.slices[-1]] = self.apical_gain_pA * out_err[0]
+        # POPULATION CODING: the per-LOGICAL-unit apical is BROADCAST to all K neurons of the unit's pool (identity at
+        # K=1). The credit math (out_err/v_api/phi/burst-dev) is entirely in LOGICAL-unit space (acts are pooled, Y is
+        # logical); only the bridge INJECTION broadcasts logical->physical, and the burstprop READ pools physical->logical.
+        E_out = acts[-1][None, :]                                 # (1, k) POOLED per-output-unit event rate
+        out_err = (E_out * (1.0 - E_out)) * e_upper               # (1, k) logical
+        apical[self.slices[-1]] = self.apical_gain_pA * self._broadcast(out_err[0], len(self.sizes) - 1)
         nhid = self.n_hidden_layers
         for k in range(nhid - 1, -1, -1):                         # top hidden -> bottom
-            E = acts[k + 1][None, :]                              # (1, size_{k+1}) event rate of hidden layer k+1
+            li = k + 1                                            # layer index of this hidden layer
+            E = acts[li][None, :]                                 # (1, size_{k+1}) POOLED event rate (logical)
             Yk = np.zeros_like(self.Y[k]) if mode == "apical_lesion" else self.Y[k]
             v_api = e_upper @ Yk                                  # (1, size) clean apical error (weighted sum, low-noise)
             phi = E * (1.0 - E)
@@ -285,35 +387,38 @@ class OnBridgeBDSPNet:
                 # not a clean host weighted-sum -> the finite-sample burst-fraction noise D1 exposes. The apical
                 # INJECTED still carries the (clean) top-down v_api (it sets the burst probability); but the credit
                 # that DESCENDS is the measured burst fraction (the multiplexed readout the kernel forms).
+                # POPULATION CODING: the descended burst deviation is POOLED (block-mean B/E/Pbar over each unit's K
+                # neurons) -> the pooled burst FRACTION is the ~sqrt(K)-lower-variance credit (K=1 == the raw noisy read).
                 soma_err = phi * v_api                            # inject the clean top-down to set P/B on this layer
-                apical[self.slices[k + 1]] = self.apical_gain_pA * soma_err[0]
+                apical[self.slices[li]] = self.apical_gain_pA * self._broadcast(soma_err[0], li)
                 # descend the MEASURED per-unit burst deviation (read after the forward settle -> finite-sample noisy)
-                Bm = np.asarray(to_host(self.br.cp_bdsp_B[self.slices[k + 1]]))
-                Em = np.asarray(to_host(self.br.cp_bdsp_E[self.slices[k + 1]]))
-                Pbarm = np.asarray(to_host(self.br.cp_bdsp_Pbar[self.slices[k + 1]]))
-                e_upper = (Bm - Pbarm * Em)[None, :]              # the raw noisy burst-fraction credit (D1 fragility)
+                Bm = self._pool(np.asarray(to_host(self.br.cp_bdsp_B[self.slices[li]])), li)
+                Em = self._pool(np.asarray(to_host(self.br.cp_bdsp_E[self.slices[li]])), li)
+                Pbarm = self._pool(np.asarray(to_host(self.br.cp_bdsp_Pbar[self.slices[li]])), li)
+                e_upper = (Bm - Pbarm * Em)[None, :]              # the (pooled) burst-fraction credit (logical)
             else:
                 # PLAIN-FA + MICROCIRCUIT: the descending credit is the CLEAN low-variance weighted sum e_k =
                 # phi'(E)*(Y^T @ e_{k+1}). MICROCIRCUIT additionally supplies the interneuron cancellation int_drive
                 # that removes the PREDICTABLE (running-mean) top-down baseline so the residual apical is even cleaner
                 # (Sacramento-Senn M2.11); plain-FA injects the raw clean error (no cancellation). On the point-neuron
                 # substrate the clean continuous descent is the IDEALIZATION the interneuron physically realizes.
-                soma_err = phi * v_api
-                apical[self.slices[k + 1]] = self.apical_gain_pA * soma_err[0]
+                soma_err = phi * v_api                            # (1, size) logical
+                apical[self.slices[li]] = self.apical_gain_pA * self._broadcast(soma_err[0], li)
                 if self.rule == "microcircuit":
                     # cancel the running-mean (predictable) component of the top-down -> the interneuron's clean-error
-                    # residual. Tracked as a slow EMA per hidden slice so int_drive is a genuine cancellation current
-                    # (the enable_bdsp_microcircuit path is exercised end-to-end).
+                    # residual. Tracked as a slow EMA per hidden slice (LOGICAL space) so int_drive is a genuine
+                    # cancellation current (the enable_bdsp_microcircuit path is exercised end-to-end). Broadcast to the
+                    # K pool neurons for injection.
                     key = k
                     if not hasattr(self, "_mc_baseline"):
                         self._mc_baseline = {}
                     base = self._mc_baseline.get(key)
-                    cur = self.apical_gain_pA * soma_err[0]
+                    cur = self.apical_gain_pA * soma_err[0]       # logical
                     if base is None:
                         base = np.zeros_like(cur)
                     base = 0.98 * base + 0.02 * cur
                     self._mc_baseline[key] = base
-                    int_drive[self.slices[k + 1]] = base          # cancel the predictable baseline
+                    int_drive[self.slices[li]] = self._broadcast(base, li)   # cancel the predictable baseline (physical)
                 e_upper = soma_err                                # descend the CLEAN error (low finite-sample noise)
         # inject the apical (+ int) and run the credit steps WHILE this example's input still drives.
         ap = np.zeros(n, dtype=np.float32); ap[:] = apical
@@ -322,8 +427,8 @@ class OnBridgeBDSPNet:
             it = np.zeros(n, dtype=np.float32); it[:] = int_drive
             self.br.cp_bdsp_int_drive = xp.asarray(it)
         drive = self._base_drive()
-        drive[self.slices[0]] = np.clip(self.in_bias_pA + self.in_current_pA * np.asarray(feat_row, np.float32),
-                                        0.0, 1600.0)
+        in_cur = np.clip(self.in_bias_pA + self.in_current_pA * np.asarray(feat_row, np.float32), 0.0, 1600.0)
+        drive[self.slices[0]] = self._broadcast(in_cur, 0).astype(np.float32)
         self.br.cp_external_input_current = xp.asarray(drive)
         for _ in range(self.credit_steps):
             self.br._run_one_simulation_step()
@@ -366,28 +471,34 @@ def _train_onbridge(net, Xtr, ytr, mode, epochs, batch, seed):
 
 
 def _run_arm(rule, task, idx, n_in, hidden, k, epochs, batch, seed, n_hidden_layers=2,
-             settle_steps=40, credit_steps=25, lr=0.05, mode="bdsp", hp=None):
+             settle_steps=40, credit_steps=25, lr=0.05, mode="bdsp", hp=None, pool_k=1,
+             want_read_snr=False):
     hp = hp or {}
     (Xtr, ytr, _Ltr), (Xte, yte, _Lte) = task
     inh_idx, mem_idx = idx["inh_idx"], idx["memctrl_idx"]
     net = OnBridgeBDSPNet(n_in, hidden, k, seed=seed, rule=rule, n_hidden_layers=n_hidden_layers,
-                          settle_steps=settle_steps, credit_steps=credit_steps, lr=lr,
+                          settle_steps=settle_steps, credit_steps=credit_steps, lr=lr, pool_k=pool_k,
                           tonic_h_pA=hp.get("tonic_h_pA", 560.0), tonic_o_pA=hp.get("tonic_o_pA", 620.0),
                           apical_gain_pA=hp.get("apical_gain_pA", 2000.0), ff_w_init=hp.get("ff_w_init", 4.5))
     w0 = net.ff_weight_norm()
     _train_onbridge(net, Xtr, ytr, mode, epochs, batch, seed)
     w1 = net.ff_weight_norm()
-    return {"rule": rule, "mode": mode,
-            "inherit_heldout": net.acc_on(Xte, yte, inh_idx),
-            "memctrl_heldout": net.acc_on(Xte, yte, mem_idx),
-            "train": net.accuracy(Xtr, ytr),
-            "ff_weight_norm_before": w0, "ff_weight_norm_after": w1,
-            "ff_weight_moved": float(abs(w1 - w0)),
-            "no_weight_transport": bool(net.no_weight_transport())}
+    out = {"rule": rule, "mode": mode, "pool_k": int(pool_k),
+           "inherit_heldout": net.acc_on(Xte, yte, inh_idx),
+           "memctrl_heldout": net.acc_on(Xte, yte, mem_idx),
+           "train": net.accuracy(Xtr, ytr),
+           "ff_weight_norm_before": w0, "ff_weight_norm_after": w1,
+           "ff_weight_moved": float(abs(w1 - w0)),
+           "no_weight_transport": bool(net.no_weight_transport())}
+    if want_read_snr:
+        # the load-bearing READ-SNR diagnostic on a set of held-out-inheritance examples (or train fallback).
+        Xsnr = Xte[inh_idx] if (inh_idx is not None and len(inh_idx)) else Xtr
+        out["read_snr_corr"] = net.read_snr_corr(Xsnr)
+    return out
 
 
 def run_seed(seed, hidden, epochs, batch, lr, settle_steps, credit_steps, task_kwargs,
-             n_hidden_layers=2, full_train_subsample=None, hp=None):
+             n_hidden_layers=2, full_train_subsample=None, hp=None, pool_k=1):
     hp = hp or {}
     task_full = make_task_semantic_inheritance(seed, **task_kwargs)
     (Xtr, ytr, Ltr), (Xte, yte, Lte), meta, idx = task_full
@@ -417,15 +528,18 @@ def run_seed(seed, hidden, epochs, batch, lr, settle_steps, credit_steps, task_k
     task = ((Xtr_b, ytr_b, Ltr_b), (Xte, yte, Lte))     # the (possibly subsampled) task the ON-BRIDGE arms train on
 
     # STAGE 1 -- the DECISIVE on-bridge spiking contrast: plain-FA vs Burstprop vs microcircuit, same net/task/seed.
+    # want_read_snr on plain_fa: the corr(pooled E, soma_rate) diagnostic (should RISE with pool_k -> the read gets cleaner).
     arms = {}
     for rule in ("plain_fa", "burstprop", "microcircuit"):
         arms[rule] = _run_arm(rule, task, idx, n_in, hidden, k, epochs, batch, seed,
                               n_hidden_layers=n_hidden_layers, settle_steps=settle_steps,
-                              credit_steps=credit_steps, lr=lr, hp=hp)
+                              credit_steps=credit_steps, lr=lr, hp=hp, pool_k=pool_k,
+                              want_read_snr=(rule == "plain_fa"))
 
     # 1-hidden-layer floor (memorization/no-composition) -- must UNDERFIT held-out inheritance. Use plain-FA credit.
     floor = _run_arm("plain_fa", task, idx, n_in, hidden, k, epochs, batch, seed,
-                     n_hidden_layers=1, settle_steps=settle_steps, credit_steps=credit_steps, lr=lr, hp=hp)
+                     n_hidden_layers=1, settle_steps=settle_steps, credit_steps=credit_steps, lr=lr, hp=hp,
+                     pool_k=pool_k)
 
     # --- on-bridge anti-cheats on the microcircuit arm (the one the thesis is about); on the SUBSAMPLED train set ---
     permuted = None; lesion = None
@@ -433,10 +547,11 @@ def run_seed(seed, hidden, epochs, batch, lr, settle_steps, credit_steps, task_k
     yperm = ytr_b[prng.permutation(len(ytr_b))]
     permuted = _run_arm("microcircuit", ((Xtr_b, yperm, Ltr_b), (Xte, yte, Lte)), idx, n_in, hidden, k,
                         epochs, batch, seed, n_hidden_layers=n_hidden_layers,
-                        settle_steps=settle_steps, credit_steps=credit_steps, lr=lr, mode="bdsp", hp=hp)
+                        settle_steps=settle_steps, credit_steps=credit_steps, lr=lr, mode="bdsp", hp=hp,
+                        pool_k=pool_k)
     lesion = _run_arm("microcircuit", task, idx, n_in, hidden, k, epochs, batch, seed,
                       n_hidden_layers=n_hidden_layers, settle_steps=settle_steps,
-                      credit_steps=credit_steps, lr=lr, mode="apical_lesion", hp=hp)
+                      credit_steps=credit_steps, lr=lr, mode="apical_lesion", hp=hp, pool_k=pool_k)
 
     # rate oracle ceiling on the depth-2 net (task sanity; == the stage-0 deep-best). On the FULL train set, with the
     # rate-reference oracle settings (hidden=96, epochs=250) so the ceiling is properly trained.
@@ -451,7 +566,7 @@ def run_seed(seed, hidden, epochs, batch, lr, settle_steps, credit_steps, task_k
         yv = yte[idx["inh_idx"]]; chance = float(max(np.mean(yv == c) for c in np.unique(yv)))
     else:
         chance = float("nan")
-    return {"seed": seed, "meta": meta, "chance": chance,
+    return {"seed": seed, "meta": meta, "chance": chance, "pool_k": int(pool_k),
             "stage0_depth_genuineness": s0,
             "arms": arms, "single_layer": floor,
             "permuted": permuted, "apical_lesion": lesion, "oracle": oracle}
@@ -467,6 +582,10 @@ def main():
     ap.add_argument("--settle-steps", type=int, default=25, help="spiking forward-settle steps per example")
     ap.add_argument("--credit-steps", type=int, default=15, help="credit-injection steps per example")
     ap.add_argument("--n-hidden-layers", type=int, default=2)
+    ap.add_argument("--pool-k", type=int, default=1,
+                    help="POPULATION CODING: K neurons per LOGICAL unit, pooled event rate (research gate 2026-07-07 "
+                         "mechanism #1). K=1 == the single-neuron runner byte-identical (the causal control); K=8/16 "
+                         "cut the read/credit CV ~sqrt(K) -> the fix for the single-neuron finite-spike-noise wall.")
     ap.add_argument("--train-subsample", type=int, default=120,
                     help="CPU-smoke train subsample (held-out NEVER subsampled); set 0 for full (GPU).")
     # drive/credit hyperparameters (the tonic depolarizing background that keeps the spiking layers firing + the
@@ -502,11 +621,12 @@ def main():
     try:
         for s in a.seeds:
             r = run_seed(s, a.hidden, a.epochs, a.batch, a.lr, a.settle_steps, a.credit_steps,
-                         task_kwargs, n_hidden_layers=a.n_hidden_layers, full_train_subsample=subsample, hp=hp)
+                         task_kwargs, n_hidden_layers=a.n_hidden_layers, full_train_subsample=subsample, hp=hp,
+                         pool_k=a.pool_k)
             per.append(r)
             s0 = r["stage0_depth_genuineness"]; ar = r["arms"]; ch = r["chance"]
             print("-" * 112, flush=True)
-            print(f"[seed {s}] chance {ch:.3f} | STAGE0 depth-sep (rate oracle): 1-layer "
+            print(f"[seed {s}] pool_k {a.pool_k} | chance {ch:.3f} | STAGE0 depth-sep (rate oracle): 1-layer "
                   f"{s0['l1_inherit_heldout']:.3f} vs deep-best {s0['deep_best_inherit_heldout']:.3f} "
                   f"(gap {s0['depth_gap']:+.3f}) => DEPTH-SEPARATING {s0['depth_separating']}", flush=True)
             print(f"  ON-BRIDGE SPIKING held-out-INHERITANCE (the decisive contrast, same net/task/seed):", flush=True)
@@ -515,6 +635,10 @@ def main():
                 print(f"    {rule:12s} inherit {d['inherit_heldout']:.3f} | memctrl {d['memctrl_heldout']:.3f} | "
                       f"train {d['train']:.3f} | ff-moved {d['ff_weight_moved']:.2f} | wt-free "
                       f"{d['no_weight_transport']}", flush=True)
+            snr = ar["plain_fa"].get("read_snr_corr")
+            if snr is not None:
+                print(f"    [read-SNR diagnostic] corr(pooled E, soma_rate) per hidden layer: "
+                      f"{['%.3f' % c for c in snr]}  (should RISE with pool_k)", flush=True)
             print(f"    single-layer floor inherit {r['single_layer']['inherit_heldout']:.3f} | oracle "
                   f"{r['oracle']['inherit_heldout']:.3f} | [anti-cheat] permuted "
                   f"{r['permuted']['inherit_heldout']:.3f} | apical-lesion {r['apical_lesion']['inherit_heldout']:.3f} "
@@ -525,7 +649,7 @@ def main():
     summary = {"probe": "semantic_inheritance_onbridge_spiking", "seeds": a.seeds,
                "config": {"hidden": a.hidden, "epochs": a.epochs, "batch": a.batch, "lr": a.lr,
                           "settle_steps": a.settle_steps, "credit_steps": a.credit_steps,
-                          "n_hidden_layers": a.n_hidden_layers, "train_subsample": subsample,
+                          "n_hidden_layers": a.n_hidden_layers, "train_subsample": subsample, "pool_k": a.pool_k,
                           "task": task_kwargs, "backend": os.environ.get("SIM_BACKEND")},
                "elapsed_seconds": round(time.time() - t0, 1), "per_seed": per}
     if err is None and per:
@@ -548,6 +672,10 @@ def main():
         perm = _m(["permuted", "inherit_heldout"])
         les = _m(["apical_lesion", "inherit_heldout"])
         fa_moved = _m(["arms", "plain_fa", "ff_weight_moved"])
+        # read-SNR diagnostic: mean corr(pooled E, soma_rate) over hidden layers (should RISE with pool_k).
+        _snr_vals = [np.nanmean(p["arms"]["plain_fa"]["read_snr_corr"]) for p in per
+                     if p["arms"]["plain_fa"].get("read_snr_corr")]
+        read_snr_corr_mean = float(np.nanmean(_snr_vals)) if _snr_vals else float("nan")
         # the decisive reads
         trains_at_all = bool(max(fa, bp, mc) > sl + 0.03 and max(fa, bp, mc) > ch + 0.03)
         bio_beats_fa = bool(max(bp, mc) > fa + 0.03)          # THE THESIS: burst/microcircuit beats plain-FA on spikes
@@ -559,7 +687,8 @@ def main():
         ff_moves = bool(fa_moved > 1e-3)
         oracle_ok = bool(oracle >= 0.80)
         summary["aggregate"] = {
-            "chance": ch, "plain_fa_inherit": fa, "burstprop_inherit": bp, "microcircuit_inherit": mc,
+            "chance": ch, "pool_k": int(a.pool_k), "plain_fa_inherit": fa, "burstprop_inherit": bp,
+            "microcircuit_inherit": mc, "read_snr_corr_mean": read_snr_corr_mean,
             "single_layer_inherit": sl, "oracle_inherit": oracle, "oracle_memctrl": oracle_mem,
             "permuted_inherit": perm, "apical_lesion_inherit": les, "ff_weight_moved_fa": fa_moved,
             "stage0_depth_separating": s0_sep, "trains_at_all": trains_at_all,
