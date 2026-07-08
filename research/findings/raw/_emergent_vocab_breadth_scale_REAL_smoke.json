@@ -1,0 +1,283 @@
+{
+  "verdict": "DATA_BOUND",
+  "why": "the learned structure margin is real at K=256 (+0.065) but degrades by K=1024 (-0.020) -- HOWEVER the host-PPMI ceiling ALSO fails to carry margin at K=1024 (host margin -0.004495842194360059; rarest-probe-count 3). The newly-included larger-K probe words are ULTRA-RARE in this corpus, so the co-occurrence is genuinely too sparse there -- this is a DATA limit, NOT a mechanism dilution. The scaling question needs a bigger/broader corpus (where the top-K words are all well-attested) to be answered. On THIS corpus the emergent structure is demonstrated only up to the well-attested vocab.",
+  "seeds": [
+    42
+  ],
+  "vocab_sizes": [
+    64,
+    256,
+    1024
+  ],
+  "mode": "real_corpus",
+  "corpus": "E:\\Documents\\Projects\\sim\\research\\datasets\\distill_corpus.txt",
+  "n_stories": 1,
+  "n_tokens": 18679,
+  "n_unique": 3048,
+  "config": {
+    "window": 2,
+    "n_hub": 500,
+    "hold_frac": 0.6,
+    "collapse_gap": 0.1,
+    "above_chance": 0.1,
+    "syn_occ_per_word": null
+  },
+  "detail": {
+    "per_K_learned_coherence": {
+      "64": null,
+      "256": 1.0,
+      "1024": 0.0
+    },
+    "per_K_scrambled_coherence": {
+      "64": null,
+      "256": 0.0,
+      "1024": 0.07692307692307693
+    },
+    "per_K_freq_only_coherence": {
+      "64": null,
+      "256": 0.3333333333333333,
+      "1024": 0.3076923076923077
+    },
+    "per_K_host_ppmi_coherence": {
+      "64": null,
+      "256": 0.8333333333333334,
+      "1024": 0.07692307692307693
+    },
+    "per_K_learned_margin": {
+      "64": null,
+      "256": 0.06506896107356294,
+      "1024": -0.019612262727937764
+    },
+    "per_K_scrambled_margin": {
+      "64": null,
+      "256": -0.037596023468843345,
+      "1024": -0.021775698705595377
+    },
+    "per_K_freq_only_margin": {
+      "64": null,
+      "256": -0.3570219258821467,
+      "1024": 0.1460210141293325
+    },
+    "per_K_host_margin": {
+      "64": null,
+      "256": 0.08157299000851292,
+      "1024": -0.004495842194360059
+    },
+    "per_K_chance": {
+      "64": null,
+      "256": 0.5,
+      "1024": 0.125
+    },
+    "evaluable_K": [
+      256,
+      1024
+    ],
+    "host_holds_at_largest_K": false,
+    "rarest_probe_count_at_largest_K": 3
+  },
+  "per_seed": {
+    "42": [
+      {
+        "K": 64,
+        "n_vocab": 64,
+        "n_hubs": 500,
+        "n_updates": 7125,
+        "n_probe_words": 0,
+        "n_probe_categories": 0,
+        "per_cat_probe_counts": {},
+        "vocab_head": [
+          "can",
+          "like",
+          "our",
+          "from",
+          "about",
+          "more",
+          "simple",
+          "object",
+          "idea",
+          "common",
+          "such",
+          "language",
+          "their",
+          "around",
+          "through",
+          "something",
+          "there",
+          "ure",
+          "time",
+          "your"
+        ],
+        "probe_min_count": 0,
+        "learned": null,
+        "scrambled": null,
+        "freq_only": null,
+        "host": null
+      },
+      {
+        "K": 256,
+        "n_vocab": 256,
+        "n_hubs": 500,
+        "n_updates": 7087,
+        "n_probe_words": 6,
+        "n_probe_categories": 2,
+        "per_cat_probe_counts": {
+          "family": 2,
+          "toys": 4
+        },
+        "vocab_head": [
+          "can",
+          "like",
+          "our",
+          "from",
+          "about",
+          "more",
+          "simple",
+          "object",
+          "idea",
+          "common",
+          "such",
+          "language",
+          "their",
+          "around",
+          "through",
+          "something",
+          "there",
+          "ure",
+          "time",
+          "your"
+        ],
+        "probe_min_count": 11,
+        "learned": {
+          "coherence": 1.0,
+          "chance": 0.5,
+          "within_cos": 0.07036321655701076,
+          "between_cos": 0.005294255483447818,
+          "margin": 0.06506896107356294,
+          "pearson_vs_Strue": 0.4039827820799378,
+          "n_probe": 6,
+          "n_probe_categories": 2,
+          "eff_rank": 4.193183788689194
+        },
+        "scrambled": {
+          "coherence": 0.0,
+          "chance": 0.5,
+          "within_cos": -0.007416688719751907,
+          "between_cos": 0.03017933474909144,
+          "margin": -0.037596023468843345,
+          "pearson_vs_Strue": -0.36782636451926737,
+          "n_probe": 6,
+          "n_probe_categories": 2,
+          "eff_rank": 4.884193859050518
+        },
+        "freq_only": {
+          "coherence": 0.3333333333333333,
+          "chance": 0.5,
+          "within_cos": 0.1431485452106947,
+          "between_cos": 0.5001704710928414,
+          "margin": -0.3570219258821467,
+          "pearson_vs_Strue": -0.18898256865949808,
+          "n_probe": 6,
+          "n_probe_categories": 2,
+          "eff_rank": 1.0000000138570078
+        },
+        "host": {
+          "coherence": 0.8333333333333334,
+          "chance": 0.5,
+          "within_cos": 0.09392551718265148,
+          "between_cos": 0.012352527174138551,
+          "margin": 0.08157299000851292,
+          "pearson_vs_Strue": 0.48810450939543076,
+          "n_probe": 6,
+          "n_probe_categories": 2,
+          "eff_rank": 4.603842020734809
+        }
+      },
+      {
+        "K": 1024,
+        "n_vocab": 1024,
+        "n_hubs": 500,
+        "n_updates": 3404,
+        "n_probe_words": 26,
+        "n_probe_categories": 8,
+        "per_cat_probe_counts": {
+          "animals": 2,
+          "food": 2,
+          "body": 2,
+          "family": 3,
+          "actions": 5,
+          "colors": 2,
+          "places": 5,
+          "toys": 5
+        },
+        "vocab_head": [
+          "can",
+          "like",
+          "our",
+          "from",
+          "about",
+          "more",
+          "simple",
+          "object",
+          "idea",
+          "common",
+          "such",
+          "language",
+          "their",
+          "around",
+          "through",
+          "something",
+          "there",
+          "ure",
+          "time",
+          "your"
+        ],
+        "probe_min_count": 3,
+        "learned": {
+          "coherence": 0.0,
+          "chance": 0.125,
+          "within_cos": -0.007912237743188194,
+          "between_cos": 0.011700024984749572,
+          "margin": -0.019612262727937764,
+          "pearson_vs_Strue": -0.05952616191755382,
+          "n_probe": 26,
+          "n_probe_categories": 8,
+          "eff_rank": 17.61688868479254
+        },
+        "scrambled": {
+          "coherence": 0.07692307692307693,
+          "chance": 0.125,
+          "within_cos": -5.898165372346771e-05,
+          "between_cos": 0.02171671705187191,
+          "margin": -0.021775698705595377,
+          "pearson_vs_Strue": -0.04999272192307619,
+          "n_probe": 26,
+          "n_probe_categories": 8,
+          "eff_rank": 16.712814739175787
+        },
+        "freq_only": {
+          "coherence": 0.3076923076923077,
+          "chance": 0.125,
+          "within_cos": 0.24324322245104035,
+          "between_cos": 0.09722220832170785,
+          "margin": 0.1460210141293325,
+          "pearson_vs_Strue": 0.046683344331063636,
+          "n_probe": 26,
+          "n_probe_categories": 8,
+          "eff_rank": 1.0000000000206
+        },
+        "host": {
+          "coherence": 0.07692307692307693,
+          "chance": 0.125,
+          "within_cos": 0.0,
+          "between_cos": 0.004495842194360059,
+          "margin": -0.004495842194360059,
+          "pearson_vs_Strue": -0.03927998525325657,
+          "n_probe": 26,
+          "n_probe_categories": 8,
+          "eff_rank": 20.20419903353453
+        }
+      }
+    ]
+  },
+  "note": "Emergent-vocab breadth scale de-risk: the vocab is DISCOVERED from the corpus (top-K content words by frequency), the co-occurrence structure LEARNED via the emergent online stream cortex (Hebbian WM-window co-occurrence + running-freq + log-double-center, NO global PPMI matrix). The probe taxonomy is an EVALUATION YARDSTICK ONLY (it never labels the discovered vocab). Anti-cheats: scrambled-corpus (co-occurrence destroyed, unigram frequency preserved) + frequency-only baseline. NO sim/ edits; reuse-by-import."
+}

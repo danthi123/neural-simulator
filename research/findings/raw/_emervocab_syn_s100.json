@@ -1,0 +1,339 @@
+{
+  "verdict": "SCALES",
+  "why": "the emergent structure MARGIN HOLDS from K=64 (+0.297) to K=1024 (+0.557) (>= 60% of the base retained), the scramble control collapses the margin at every K, and it beats frequency-only -> the structure is genuinely learned from real co-occurrence AND does not dilute as the vocab grows ==> open-domain BREADTH is a cheap DATA/SCALE lever (the controller runs a bigger corpus + multi-seed).",
+  "seeds": [
+    100
+  ],
+  "vocab_sizes": [
+    64,
+    256,
+    1024
+  ],
+  "mode": "synthetic_broad",
+  "corpus": null,
+  "n_stories": null,
+  "n_tokens": null,
+  "n_unique": null,
+  "config": {
+    "window": 2,
+    "n_hub": 500,
+    "hold_frac": 0.6,
+    "collapse_gap": 0.1,
+    "above_chance": 0.1,
+    "syn_occ_per_word": 60
+  },
+  "detail": {
+    "per_K_learned_coherence": {
+      "64": 1.0,
+      "256": 1.0,
+      "1024": 1.0
+    },
+    "per_K_scrambled_coherence": {
+      "64": 0.796875,
+      "256": 1.0,
+      "1024": 0.9970703125
+    },
+    "per_K_freq_only_coherence": {
+      "64": 0.09375,
+      "256": 0.06640625,
+      "1024": 0.140625
+    },
+    "per_K_host_ppmi_coherence": {
+      "64": 1.0,
+      "256": 1.0,
+      "1024": 1.0
+    },
+    "per_K_learned_margin": {
+      "64": 0.2967469346560843,
+      "256": 0.6718491946940582,
+      "1024": 0.5565559267439086
+    },
+    "per_K_scrambled_margin": {
+      "64": 0.042412422606827,
+      "256": 0.07928245132792854,
+      "1024": 0.05026766259185063
+    },
+    "per_K_freq_only_margin": {
+      "64": -0.06694919579707441,
+      "256": -0.02763711285124556,
+      "1024": -0.0009910437324327959
+    },
+    "per_K_host_margin": {
+      "64": 0.44987848082262716,
+      "256": 0.8545197473804033,
+      "1024": 0.5362085321131315
+    },
+    "per_K_chance": {
+      "64": 0.125,
+      "256": 0.125,
+      "1024": 0.125
+    },
+    "evaluable_K": [
+      64,
+      256,
+      1024
+    ],
+    "host_holds_at_largest_K": true,
+    "rarest_probe_count_at_largest_K": 146
+  },
+  "per_seed": {
+    "100": [
+      {
+        "K": 64,
+        "n_vocab": 64,
+        "n_hubs": 500,
+        "n_updates": 27839,
+        "n_probe_words": 64,
+        "n_probe_categories": 8,
+        "per_cat_probe_counts": {
+          "cat0": 8,
+          "cat1": 8,
+          "cat2": 8,
+          "cat3": 8,
+          "cat4": 8,
+          "cat5": 8,
+          "cat6": 8,
+          "cat7": 8
+        },
+        "vocab_head": [
+          "c04w003",
+          "c03w004",
+          "c02w000",
+          "c06w006",
+          "c01w004",
+          "c06w003",
+          "c02w006",
+          "c03w006",
+          "c05w006",
+          "c07w003",
+          "c03w003",
+          "c07w002",
+          "c01w000",
+          "c04w006",
+          "c06w007",
+          "c03w000",
+          "c00w000",
+          "c06w001",
+          "c00w007",
+          "c05w003"
+        ],
+        "probe_min_count": 151,
+        "learned": {
+          "coherence": 1.0,
+          "chance": 0.125,
+          "within_cos": 0.24790958074599073,
+          "between_cos": -0.04883735391009357,
+          "margin": 0.2967469346560843,
+          "pearson_vs_Strue": 0.8898356553047382,
+          "n_probe": 64,
+          "n_probe_categories": 8,
+          "eff_rank": 49.060004447294425
+        },
+        "scrambled": {
+          "coherence": 0.796875,
+          "chance": 0.125,
+          "within_cos": 0.02186268252142507,
+          "between_cos": -0.020549740085401922,
+          "margin": 0.042412422606827,
+          "pearson_vs_Strue": 0.2819785051295898,
+          "n_probe": 64,
+          "n_probe_categories": 8,
+          "eff_rank": 58.56482024570526
+        },
+        "freq_only": {
+          "coherence": 0.09375,
+          "chance": 0.125,
+          "within_cos": -0.0713655430637657,
+          "between_cos": -0.00441634726669129,
+          "margin": -0.06694919579707441,
+          "pearson_vs_Strue": -0.02105021703469847,
+          "n_probe": 64,
+          "n_probe_categories": 8,
+          "eff_rank": 1.0000016668448781
+        },
+        "host": {
+          "coherence": 1.0,
+          "chance": 0.125,
+          "within_cos": 0.5350355411915225,
+          "between_cos": 0.08515706036889535,
+          "margin": 0.44987848082262716,
+          "pearson_vs_Strue": 0.9836150791073515,
+          "n_probe": 64,
+          "n_probe_categories": 8,
+          "eff_rank": 36.3993573341208
+        }
+      },
+      {
+        "K": 256,
+        "n_vocab": 256,
+        "n_hubs": 500,
+        "n_updates": 101096,
+        "n_probe_words": 256,
+        "n_probe_categories": 8,
+        "per_cat_probe_counts": {
+          "cat0": 32,
+          "cat1": 32,
+          "cat2": 32,
+          "cat3": 32,
+          "cat4": 32,
+          "cat5": 32,
+          "cat6": 32,
+          "cat7": 32
+        },
+        "vocab_head": [
+          "c02w024",
+          "c03w028",
+          "c06w027",
+          "c07w030",
+          "c03w030",
+          "c00w004",
+          "c06w005",
+          "c07w026",
+          "c02w016",
+          "c07w004",
+          "c04w008",
+          "c07w021",
+          "c02w018",
+          "c06w014",
+          "c04w021",
+          "c06w010",
+          "c03w031",
+          "c00w010",
+          "c04w025",
+          "c06w004"
+        ],
+        "probe_min_count": 152,
+        "learned": {
+          "coherence": 1.0,
+          "chance": 0.125,
+          "within_cos": 0.586253088243874,
+          "between_cos": -0.08559610645018421,
+          "margin": 0.6718491946940582,
+          "pearson_vs_Strue": 0.983478392254544,
+          "n_probe": 256,
+          "n_probe_categories": 8,
+          "eff_rank": 50.451699636714416
+        },
+        "scrambled": {
+          "coherence": 1.0,
+          "chance": 0.125,
+          "within_cos": 0.0657228905918398,
+          "between_cos": -0.013559560736088733,
+          "margin": 0.07928245132792854,
+          "pearson_vs_Strue": 0.49951075429329683,
+          "n_probe": 256,
+          "n_probe_categories": 8,
+          "eff_rank": 188.52792523165274
+        },
+        "freq_only": {
+          "coherence": 0.06640625,
+          "chance": 0.125,
+          "within_cos": -0.027210363676604912,
+          "between_cos": 0.0004267491746406455,
+          "margin": -0.02763711285124556,
+          "pearson_vs_Strue": -0.009032574494990519,
+          "n_probe": 256,
+          "n_probe_categories": 8,
+          "eff_rank": 1.0000001075319005
+        },
+        "host": {
+          "coherence": 1.0,
+          "chance": 0.125,
+          "within_cos": 0.896698616908464,
+          "between_cos": 0.042178869528060665,
+          "margin": 0.8545197473804033,
+          "pearson_vs_Strue": 0.9987327995230351,
+          "n_probe": 256,
+          "n_probe_categories": 8,
+          "eff_rank": 14.745147589208628
+        }
+      },
+      {
+        "K": 1024,
+        "n_vocab": 1024,
+        "n_hubs": 500,
+        "n_updates": 163296,
+        "n_probe_words": 1024,
+        "n_probe_categories": 8,
+        "per_cat_probe_counts": {
+          "cat0": 128,
+          "cat1": 128,
+          "cat2": 128,
+          "cat3": 128,
+          "cat4": 128,
+          "cat5": 128,
+          "cat6": 128,
+          "cat7": 128
+        },
+        "vocab_head": [
+          "c06w058",
+          "c06w095",
+          "c04w026",
+          "c07w063",
+          "c03w038",
+          "c01w022",
+          "c06w048",
+          "c01w087",
+          "c00w054",
+          "c01w084",
+          "c03w024",
+          "c07w085",
+          "c04w071",
+          "c05w119",
+          "c00w069",
+          "c02w017",
+          "c04w069",
+          "c02w021",
+          "c03w123",
+          "c02w030"
+        ],
+        "probe_min_count": 146,
+        "learned": {
+          "coherence": 1.0,
+          "chance": 0.125,
+          "within_cos": 0.4864952299616323,
+          "between_cos": -0.07006069678227629,
+          "margin": 0.5565559267439086,
+          "pearson_vs_Strue": 0.9778748364788445,
+          "n_probe": 1024,
+          "n_probe_categories": 8,
+          "eff_rank": 104.66836842428586
+        },
+        "scrambled": {
+          "coherence": 0.9970703125,
+          "chance": 0.125,
+          "within_cos": 0.04305055687883088,
+          "between_cos": -0.007217105713019748,
+          "margin": 0.05026766259185063,
+          "pearson_vs_Strue": 0.34727530386426475,
+          "n_probe": 1024,
+          "n_probe_categories": 8,
+          "eff_rank": 378.1578111599335
+        },
+        "freq_only": {
+          "coherence": 0.140625,
+          "chance": 0.125,
+          "within_cos": -0.0017828807421108274,
+          "between_cos": -0.0007918370096780316,
+          "margin": -0.0009910437324327959,
+          "pearson_vs_Strue": -0.0003268044844180436,
+          "n_probe": 1024,
+          "n_probe_categories": 8,
+          "eff_rank": 1.0000000039881427
+        },
+        "host": {
+          "coherence": 1.0,
+          "chance": 0.125,
+          "within_cos": 0.6323671992776139,
+          "between_cos": 0.09615866716448244,
+          "margin": 0.5362085321131315,
+          "pearson_vs_Strue": 0.9864350267433275,
+          "n_probe": 1024,
+          "n_probe_categories": 8,
+          "eff_rank": 78.15276339727336
+        }
+      }
+    ]
+  },
+  "note": "Emergent-vocab breadth scale de-risk: the vocab is DISCOVERED from the corpus (top-K content words by frequency), the co-occurrence structure LEARNED via the emergent online stream cortex (Hebbian WM-window co-occurrence + running-freq + log-double-center, NO global PPMI matrix). The probe taxonomy is an EVALUATION YARDSTICK ONLY (it never labels the discovered vocab). Anti-cheats: scrambled-corpus (co-occurrence destroyed, unigram frequency preserved) + frequency-only baseline. NO sim/ edits; reuse-by-import."
+}
