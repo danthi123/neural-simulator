@@ -1,0 +1,21 @@
+{
+  "verdict": "NEGATIVE",
+  "K": 512,
+  "k_fine": 20,
+  "k_coarse": 5,
+  "aggregate": {
+    "multilevel": 0.5923076923076923,
+    "deranged": 0.5138461538461538,
+    "chance": 0.2
+  },
+  "per_seed": [
+    {
+      "seed": 100,
+      "n_supers": 5,
+      "chance": 0.2,
+      "multilevel_inherit_acc": 0.5923076923076923,
+      "deranged_acc": 0.5138461538461538,
+      "n_queries": 130
+    }
+  ]
+}
