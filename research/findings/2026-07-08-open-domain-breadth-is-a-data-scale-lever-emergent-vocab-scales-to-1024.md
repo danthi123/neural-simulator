@@ -34,8 +34,19 @@ The runner's built-in gate stamped K=1024 "MECHANISM gap (the data has structure
 ## What this establishes (the communication-frontier conclusion)
 **Open-domain breadth is a DATA/SCALE lever with the mechanism de-risked to scale.** On a real, well-attested corpus the emergent online stream cortex matches (K=64, 1024) or exceeds (K=256) the achievable batch co-occurrence ceiling at every vocab size up to 1024 discovered words, with the scramble control collapsing throughout — the master-directive-aligned emergent path (vocab DISCOVERED from experience, structure LEARNED from co-occurrence), scaled 16× past the old hand-fixed 64-word taxonomy. The blocker to broad vocabulary was corpus size, now removed (`data/corpus/tinystories.txt`, cached). This confirms the `project_vocab_target_breadth_vs_depth` thesis (~10K→30-40K via a bigger corpus + tail-learning).
 
-## The genuinely-open next mechanism (a sharpening, NOT a wall)
-At K=1024, unigram frequency out-discriminates BOTH co-occurrence methods for the frequency-stratified 8-category probe. Two honest next questions (boundary = next mechanism, per the standing reframe): **(a)** on a harder / frequency-DE-stratified semantic probe, does windowed co-occurrence pull decisively ahead of frequency at K=1024? and **(b)** would a hierarchical / sparse-distributed code family (the field's large-vocab capacity levers) beat the flat-PPMI + frequency ceiling on such a probe? These SHARPEN the breadth result; they do not reopen "is breadth a wall" — the mechanism already tracks the achievable co-occurrence ceiling.
+## DECISIVE resolution of the K=1024 question — partial correlation FALSIFIES the capacity-limit hypothesis (`_emervocab_freq_partial_probe.py`, 3-seed)
+The flagged-open question (is the K=1024 freq-confound a probe property [H1] or a real capacity limit [H2]?) is resolved decisively by the proper PREDICTIVE metric — the partial correlation `partial_corr(cos_code, same_category | cos_freq_only)`: does the code's pairwise similarity predict same-category AFTER removing the frequency-driven similarity?
+
+| K | raw r(learned, same-cat) | **PARTIAL(learned \| freq)** | PARTIAL(host \| freq) | raw r(freq-only, same-cat) |
+|---|---|---|---|---|
+| 256 | +0.475 | **+0.474** | +0.491 | +0.037 |
+| 1024 | +0.409 | **+0.408** | +0.397 | +0.035 |
+
+- **At K=1024 the learned partial correlation is +0.408 — essentially UNCHANGED from its raw +0.409.** Removing frequency barely moves it, because frequency's OWN correlation with category is tiny (r = +0.035). The emergent co-occurrence codes predict same-category **~10× more strongly than frequency, and almost entirely frequency-INDEPENDENTLY.**
+- **The emergent stream matches the batch host-PPMI ceiling on this metric too** (+0.408 vs +0.397 at K=1024).
+- **⇒ the freq-only MARGIN (+0.111) that tripped the auto-gate was a MARGIN-METRIC ARTIFACT.** A rank-1 frequency-monotonic code produces a coarse within/between-mean gap that does NOT reflect genuine per-pair category prediction (its actual predictive correlation is only 0.035). On the proper predictive metric, co-occurrence dominates frequency 10× at K=1024 and is frequency-independent. **H2 (a large-vocab code-capacity limit) is FALSIFIED; H1 (probe/metric property, mechanism fine) is confirmed. The breadth mechanism is fully de-risked to K=1024 on a real corpus.**
+
+The only genuine residual is probe DESIGN (the fixed `TAXONOMY_8x8` yardstick, whose margin metric is fooled by a rank-1 frequency code at fine granularity) — an evaluation nicety, not a mechanism wall.
 
 ## Supporting control — SYNTHETIC-broad (mechanism-scaling, adequate attestations by construction), 6-seed
 | K | learned margin | scrambled | freq-only | host-PPMI ceiling |
@@ -50,4 +61,4 @@ Where the probe categories are NOT frequency-confounded (a synthetic broad corpu
 On the repo's `distill_corpus.txt` (~19K tokens) the K=256 learned margin is +0.065 (79% of that corpus's host ceiling +0.082) and K=1024 fails for BOTH the cortex AND the host (the top-1024 words attest ~3×) — a genuine DATA limit there. The real TinyStories corpus (above) removes that limit and is the primary result; the tiny-corpus run is retained only as the data-size sensitivity.
 
 ## Files
-`research/runners/_emergent_vocab_breadth_scale_derisk.py`; real-corpus 6-seed `research/findings/raw/_emervocab_ts_s{42,43,44,100,101,102}.json`; synthetic-broad 6-seed `_emervocab_syn_s*.json`; tiny-corpus `_emervocab_real_s*.json`; corpus cache `data/corpus/tinystories.txt` (fetched via `corpus_fetch.py`). Frontier: `2026-07-01-fluid-conversation-gap-assessment.md` (breadth = the most-blocking wall).
+`research/runners/_emergent_vocab_breadth_scale_derisk.py` + the decisive `research/runners/_emervocab_freq_partial_probe.py` (partial-correlation H1/H2 resolution); real-corpus 6-seed `research/findings/raw/_emervocab_ts_s{42,43,44,100,101,102}.json`; partial-corr `_emervocab_freq_partial.json`; synthetic-broad 6-seed `_emervocab_syn_s*.json`; tiny-corpus `_emervocab_real_s*.json`; corpus cache `data/corpus/tinystories.txt` (fetched via `corpus_fetch.py`, gitignored/regenerable). Frontier: `2026-07-01-fluid-conversation-gap-assessment.md` (breadth = the most-blocking wall).

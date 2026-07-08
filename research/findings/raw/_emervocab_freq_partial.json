@@ -1,0 +1,87 @@
+{
+  "corpus": "data/corpus/tinystories.txt",
+  "per_K": {
+    "256": {
+      "agg": {
+        "raw_r_learned_vs_samecat": 0.47513129972560825,
+        "raw_r_host_vs_samecat": 0.49154508990961676,
+        "raw_r_freqonly_vs_samecat": 0.03732559276893809,
+        "corr_learned_with_freqonly": 0.09346021487488214,
+        "PARTIAL_learned_given_freq": 0.47404662679463305,
+        "PARTIAL_host_given_freq": 0.4912387753567948,
+        "n_probe_words": 27,
+        "n_categories": 6
+      },
+      "per_seed": [
+        {
+          "seed": 42,
+          "raw_r_learned_vs_samecat": 0.47513129972560825,
+          "raw_r_host_vs_samecat": 0.49154508990961676,
+          "raw_r_freqonly_vs_samecat": 0.03732559276893809,
+          "corr_learned_with_freqonly": 0.09346021487488214,
+          "PARTIAL_learned_given_freq": 0.47404662679463305,
+          "PARTIAL_host_given_freq": 0.4912387753567948
+        },
+        {
+          "seed": 43,
+          "raw_r_learned_vs_samecat": 0.47513129972560825,
+          "raw_r_host_vs_samecat": 0.49154508990961676,
+          "raw_r_freqonly_vs_samecat": 0.03732559276893809,
+          "corr_learned_with_freqonly": 0.09346021487488214,
+          "PARTIAL_learned_given_freq": 0.47404662679463305,
+          "PARTIAL_host_given_freq": 0.4912387753567948
+        },
+        {
+          "seed": 44,
+          "raw_r_learned_vs_samecat": 0.47513129972560825,
+          "raw_r_host_vs_samecat": 0.49154508990961676,
+          "raw_r_freqonly_vs_samecat": 0.03732559276893809,
+          "corr_learned_with_freqonly": 0.09346021487488214,
+          "PARTIAL_learned_given_freq": 0.47404662679463305,
+          "PARTIAL_host_given_freq": 0.4912387753567948
+        }
+      ]
+    },
+    "1024": {
+      "agg": {
+        "raw_r_learned_vs_samecat": 0.4093555459823269,
+        "raw_r_host_vs_samecat": 0.39761265192357226,
+        "raw_r_freqonly_vs_samecat": 0.03506783957470527,
+        "corr_learned_with_freqonly": 0.05884541179698727,
+        "PARTIAL_learned_given_freq": 0.40825008366261883,
+        "PARTIAL_host_given_freq": 0.3974711487294787,
+        "n_probe_words": 62,
+        "n_categories": 8
+      },
+      "per_seed": [
+        {
+          "seed": 42,
+          "raw_r_learned_vs_samecat": 0.40935554598232693,
+          "raw_r_host_vs_samecat": 0.3976126519235722,
+          "raw_r_freqonly_vs_samecat": 0.03506783957470527,
+          "corr_learned_with_freqonly": 0.05884541179698727,
+          "PARTIAL_learned_given_freq": 0.40825008366261883,
+          "PARTIAL_host_given_freq": 0.3974711487294787
+        },
+        {
+          "seed": 43,
+          "raw_r_learned_vs_samecat": 0.40935554598232693,
+          "raw_r_host_vs_samecat": 0.3976126519235722,
+          "raw_r_freqonly_vs_samecat": 0.03506783957470527,
+          "corr_learned_with_freqonly": 0.05884541179698727,
+          "PARTIAL_learned_given_freq": 0.40825008366261883,
+          "PARTIAL_host_given_freq": 0.3974711487294787
+        },
+        {
+          "seed": 44,
+          "raw_r_learned_vs_samecat": 0.40935554598232693,
+          "raw_r_host_vs_samecat": 0.3976126519235722,
+          "raw_r_freqonly_vs_samecat": 0.03506783957470527,
+          "corr_learned_with_freqonly": 0.05884541179698727,
+          "PARTIAL_learned_given_freq": 0.40825008366261883,
+          "PARTIAL_host_given_freq": 0.3974711487294787
+        }
+      ]
+    }
+  }
+}
