@@ -2,7 +2,7 @@
 
 **Date:** 2026-07-08
 **Runner:** `research/runners/_realcorpus_spiking_broca_ditransitive_answer_derisk.py` (reuse-by-import: EMERGE-77 `DitransRegistry`/`DitransRegistryProducer` 8-pool 2-stage read; the `ProductiveMultiSpeaker` reset_steps=150). numpy. NO `sim/` edit.
-**Verdict:** GO (3/3, seed 42) — the ditransitive answer is produced fully on spikes (order + productive morphology + every word).
+**Verdict:** GO (3/3, 3-seed 42/43/44) — the ditransitive answer is produced fully on spikes (order + productive morphology + every word).
 
 ## Why this ran (completing the schema-breadth generation)
 The relational schema breadth was de-risked as STORES (SVO + ditransitive + PP, CYCLE 1028/1029). The generation-on-spikes covered property (F_MODAL), transitive (C_TRANS), and spatial (C_PPGOAL/C_PPLOC, CYCLE 1030/1031). The last construction is the DITRANSITIVE ("the dog gives the cat a bone", 7 slots) — the richest core relation (agent + recipient + theme). EMERGE-77 surpassed the 7-slot capacity boundary (n_slot_pools 6→8 + a 2-stage per-pool bias-calibrated read) but rendered the WORDS as host tokens; this wires it with the A→W (words on spikes) + productive inflection ("gives" = spell("give")+spell("s")).
