@@ -24,8 +24,12 @@ VERDICT: GO
 - **MOAT:** an unstored relation → abstain (no confabulation).
 Both answered in ONE cupy process, over the brain's OWN real-corpus co-occurrence codes (the property SDR-ification and the relational grounded-phase both derive from the same seed-deterministic codes).
 
+## Multi-seed (3-seed: co-execution robust; cancellation-override member-dependent)
+seeds 42/43/44 (K=1024 emergent, cupy): the CO-EXECUTION (both spiking reasoners build + answer in one cupy process) + the RELATIONAL SVO (what/who) + PROPERTY INHERITANCE + the MOAT are robust on ALL 3 seeds. The property CANCELLATION *override* fires on seed 42 but NOT on seeds 43/44 — the smoke picks the FIRST inheriting cluster member as the exception, and on 43/44 that member ('cried', 'happy') is a strongly-codon-categorized member whose override saturates below its inherited drive (the exact CYCLE-985 emergent-cluster boundary: the HTM permanence ceiling can't exceed a very-tightly-inherited member's codon→class drive). So all seeds demonstrate the one-brain co-execution + relational + inheritance + moat; the cancellation override is member-dependent (GO on a weakly-inherited member, saturates on a strongly-inherited one — CYCLE 985).
+
 ## Honest scope
-- A smoke (1 seed, a few questions) demonstrating the co-execution; the individual mechanisms are each multi-seed-validated (property cancellation 6/6; relational SVO 3-seed substrate). The point is that both fully-spiking reasoners co-exist + answer in one process.
+- A smoke demonstrating the co-execution; the individual mechanisms are each multi-seed-validated (property cancellation 6/6 labeled / 5/6 emergent; relational SVO 3-seed substrate). The point is that both fully-spiking reasoners co-exist + answer in one process — robust all 3 seeds.
+- The cancellation override's member-dependence (CYCLE-985 emergent-cluster saturation) is orthogonal to the co-execution: choosing a weakly-inherited exception member (as the console does) fires it; the smoke's arbitrary first-member choice sometimes lands on a saturating member.
 - The emergent-cluster words here are whatever co-clusters ('bad'/'loud' adjectives; the relational facts are over discovered verbs) — the MECHANISM (both dimensions, one process, spiking, moat) is what's demonstrated, not the words' semantics.
 - Two separate `SimulationBridge`s on one cupy backend (one-backend-per-process satisfied); the A→W speaker (a 3rd bridge) folds in the same way (a follow-on for the fully-spiking spoken both-dimension turn).
 
