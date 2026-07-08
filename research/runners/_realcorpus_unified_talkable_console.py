@@ -207,6 +207,36 @@ class UnifiedTalkableConsole:
             sents.append(f"{ref} {' and '.join(clauses)}")
         return " ".join(s[0].upper() + s[1:] + "." for s in sents), "describe"
 
+    def _prop_verb(self, word):
+        """The property verb a word can do (its own exception verb, or the inherited class verb), or None."""
+        if word not in self.prop.row_of:
+            return None
+        pred = self.prop._predict_all(word)
+        if pred[0] == "exc":
+            return self.exc_verbs.get(pred[1], self.exc_verb)
+        if pred == ("cat", self.pos):
+            return self.class_verb
+        return None
+
+    def compare(self, a, b):
+        """'compare X and Y': contrast their property + relational facts ('the X can sleep, but the Y can
+        run; the X eats frog, and the Y eats dog'). A conversational comparison act. Moat if neither known."""
+        pa, pb = self._prop_verb(a), self._prop_verb(b)
+        ra = next(((v, o) for (s, v, o) in self.rel_facts if s == a), None)
+        rb = next(((v, o) for (s, v, o) in self.rel_facts if s == b), None)
+        if pa is None and pb is None and ra is None and rb is None:
+            return "I don't know", "moat"
+        clauses = []
+        if pa is not None or pb is not None:
+            conn = "but" if (pa is not None and pb is not None and pa != pb) else "and"
+            clauses.append(f"the {self._word(a)} can {self._word(pa or 'do nothing')} {conn} "
+                           f"the {self._word(b)} can {self._word(pb or 'do nothing')}")
+        if ra is not None or rb is not None:
+            va = f"{self._word(ra[0][:-1] if ra[0].endswith('s') else ra[0])}s {self._word(ra[1])}" if ra else "does nothing"
+            vb = f"{self._word(rb[0][:-1] if rb[0].endswith('s') else rb[0])}s {self._word(rb[1])}" if rb else "does nothing"
+            clauses.append(f"the {self._word(a)} {va}, and the {self._word(b)} {vb}")
+        return " ".join(c[0].upper() + c[1:] + "." for c in clauses), "compare"
+
     @staticmethod
     def _word_list(words):
         """'cat', 'ball', 'dog' -> 'cat, ball, and dog' (Oxford list)."""
@@ -233,6 +263,11 @@ class UnifiedTalkableConsole:
         """Route by question form: 'does a X <verb>?' -> property; 'what does the X <verb>?' -> relational;
         'tell me about X' / 'describe X' -> multi-fact discourse. Pronoun 'it' -> the last subject (anaphora)."""
         toks = q.lower().replace("?", "").split()
+        if toks[:1] == ["compare"]:                               # comparison: compare X and Y
+            content = [t for t in toks[1:] if t not in ("the", "a", "an", "and", "to", "with")]
+            if len(content) >= 2:
+                return self.compare(self._resolve(content[0]), self._resolve(content[1]))
+            return "I don't know", "moat"
         if toks[:3] == ["tell", "me", "about"] or toks[:1] == ["describe"]:  # multi-fact discourse
             content = [t for t in (toks[3:] if toks[0] == "tell" else toks[1:]) if t not in ("the", "a", "an")]
             return self.describe(self._resolve(content[-1])) if content else ("I don't know", "moat")
@@ -328,7 +363,7 @@ def main():
                 break
             toks = q.lower().replace("?", "").replace(".", "").split()
             # TEACH (declarative, not a question): 3 content tokens = relational SVO; 2 = property exception
-            if toks and toks[0] not in ("does", "can", "what", "who", "tell", "describe"):
+            if toks and toks[0] not in ("does", "can", "what", "who", "tell", "describe", "compare"):
                 content = [t for t in toks if t not in ("the", "a", "an")]
                 if len(content) == 3 and con.teach_relational(content[0], content[1], content[2], persist=a.persist):
                     print(f"  brain: ok, I learned that the {content[0]} {content[1]} {content[2]}.", flush=True)
