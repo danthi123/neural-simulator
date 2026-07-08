@@ -22,13 +22,15 @@ from research.runners.concept_pool_demo import (
     build_concept_bridge, train_word_to_pool, apply_concept_topographic_bias,
 )
 
-# the breadth vocab (TinyStories-frequent animals + verbs the emergent reasoner discovers).
-# ONLY noun+verb pools (topographic bias covers noun_pool_X + verb_pool_X, NOT motor/adj) -> 4 animals + 4 verbs.
+# the breadth vocab: 4 animals + 4 verbs + the 2 FUNCTION words (the/can) so the WHOLE frame speaks on
+# spikes. noun/verb/adjective pools all get the (decoupled) topographic bias + reciprocal readout.
 ANIMALS = ["dog", "cat", "bird", "fish"]
 VERBS = ["run", "jump", "walk", "eat"]
-VOCAB = ANIMALS + VERBS
+FUNCTION = ["the", "can"]
+VOCAB = ANIMALS + VERBS + FUNCTION
 POOLS = ([f"noun_pool_{n}" for n in ("APPLE", "RIVER", "DOG", "CAT")]
-         + [f"verb_pool_{n}" for n in ("GO", "COME", "STOP", "LOOK")])
+         + [f"verb_pool_{n}" for n in ("GO", "COME", "STOP", "LOOK")]
+         + [f"adjective_pool_{n}" for n in ("BIG", "SMALL")])   # the -> adj_BIG, can -> adj_SMALL
 WORD_TO_POOL = dict(zip(VOCAB, POOLS))
 WORD_TO_IDX = {w: i for i, w in enumerate(VOCAB)}
 N_LANG = 2048

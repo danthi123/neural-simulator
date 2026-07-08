@@ -63,8 +63,14 @@ class ConceptFrameSpeaker:
             return "I don't know", None
         subj_spoken = self.spell(subject)      # ON SPIKES
         verb_spoken = self.spell(verb)         # ON SPIKES
-        frame = f"the {subj_spoken} can {verb_spoken}"   # closed-class 'the'/'can' host-rendered (scaffold)
-        correct = (subj_spoken == subject and verb_spoken == verb)
+        # closed-class the/can: SPELL them on spikes too if the A->W vocab covers them (whole frame on
+        # spikes); else host-render (a documented scaffold for the v16 vocab that lacks them).
+        the_spoken = self.spell("the") if "the" in self.vocab else "the"
+        can_spoken = self.spell("can") if "can" in self.vocab else "can"
+        frame = f"{the_spoken} {subj_spoken} {can_spoken} {verb_spoken}"
+        correct = (subj_spoken == subject and verb_spoken == verb
+                   and (the_spoken == "the" if "the" in self.vocab else True)
+                   and (can_spoken == "can" if "can" in self.vocab else True))
         return frame, correct
 
 
