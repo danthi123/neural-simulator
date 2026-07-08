@@ -1,0 +1,161 @@
+{
+  "verdict": "GO",
+  "per_seed": [
+    {
+      "pos": 0,
+      "transcript": [
+        {
+          "expect": "yes",
+          "answer": "no",
+          "spoken_on_spikes": "swim",
+          "renders": 1
+        },
+        {
+          "expect": "yes",
+          "answer": "no",
+          "spoken_on_spikes": "swim",
+          "renders": 1
+        },
+        {
+          "expect": "no",
+          "answer": "no",
+          "spoken_on_spikes": "swim",
+          "renders": 1
+        },
+        {
+          "expect": "no",
+          "answer": "no",
+          "spoken_on_spikes": "swim",
+          "renders": 1
+        },
+        {
+          "expect": "no",
+          "answer": "no",
+          "spoken_on_spikes": "swim",
+          "renders": 1
+        },
+        {
+          "expect": "no",
+          "answer": "no",
+          "spoken_on_spikes": "swim",
+          "renders": 1
+        },
+        {
+          "expect": "idk",
+          "answer": "idk",
+          "spoken_on_spikes": null,
+          "renders": 0
+        }
+      ],
+      "spike_render_count": 6,
+      "spoken_accuracy": 1.0,
+      "moat_renders_on_abstain": 0,
+      "n_spoken": 6,
+      "seed": 42
+    },
+    {
+      "pos": 0,
+      "transcript": [
+        {
+          "expect": "yes",
+          "answer": "no",
+          "spoken_on_spikes": "swim",
+          "renders": 1
+        },
+        {
+          "expect": "yes",
+          "answer": "no",
+          "spoken_on_spikes": "swim",
+          "renders": 1
+        },
+        {
+          "expect": "no",
+          "answer": "no",
+          "spoken_on_spikes": "swim",
+          "renders": 1
+        },
+        {
+          "expect": "no",
+          "answer": "no",
+          "spoken_on_spikes": "swim",
+          "renders": 1
+        },
+        {
+          "expect": "no",
+          "answer": "no",
+          "spoken_on_spikes": "swim",
+          "renders": 1
+        },
+        {
+          "expect": "no",
+          "answer": "no",
+          "spoken_on_spikes": "swim",
+          "renders": 1
+        },
+        {
+          "expect": "idk",
+          "answer": "idk",
+          "spoken_on_spikes": null,
+          "renders": 0
+        }
+      ],
+      "spike_render_count": 6,
+      "spoken_accuracy": 1.0,
+      "moat_renders_on_abstain": 0,
+      "n_spoken": 6,
+      "seed": 43
+    },
+    {
+      "pos": 0,
+      "transcript": [
+        {
+          "expect": "yes",
+          "answer": "no",
+          "spoken_on_spikes": "swim",
+          "renders": 1
+        },
+        {
+          "expect": "yes",
+          "answer": "no",
+          "spoken_on_spikes": "swim",
+          "renders": 1
+        },
+        {
+          "expect": "no",
+          "answer": "no",
+          "spoken_on_spikes": "swim",
+          "renders": 1
+        },
+        {
+          "expect": "no",
+          "answer": "no",
+          "spoken_on_spikes": "swim",
+          "renders": 1
+        },
+        {
+          "expect": "no",
+          "answer": "no",
+          "spoken_on_spikes": "swim",
+          "renders": 1
+        },
+        {
+          "expect": "no",
+          "answer": "no",
+          "spoken_on_spikes": "swim",
+          "renders": 1
+        },
+        {
+          "expect": "idk",
+          "answer": "idk",
+          "spoken_on_spikes": null,
+          "renders": 0
+        }
+      ],
+      "spike_render_count": 6,
+      "spoken_accuracy": 1.0,
+      "moat_renders_on_abstain": 0,
+      "n_spoken": 6,
+      "seed": 44
+    }
+  ]
+}
