@@ -351,6 +351,33 @@ def test_taxonomy_multilevel_inheritance_qa(taxonomy_console):
 
 
 @pytest.mark.skipif(not _HAS_TAX, reason="needs the Wikidata 3-level is-a graph (regenerable via the taxonomy derisk)")
+def test_taxonomy_member_exception_cancels_in_console(taxonomy_console):
+    """The console handles member-specific CANCELLATION over the multi-level chain (the penguin case): teach a
+    member an own property that contradicts its inherited grandparent property -> the console answers 'no' for the
+    inherited property, 'yes' for the own, and a normal sibling still inherits. Load-bearing (pre-teach -> yes)."""
+    con = taxonomy_console
+    from research.runners._realcorpus_taxonomy_qa_console_derisk import GP_PROPERTY
+    tree = con._tax.tree
+    g = next(gg for gg in con._tax.gps if gg in GP_PROPERTY)
+    true_prop = GP_PROPERTY[g]
+    other = next(p for gg, p in GP_PROPERTY.items() if p != true_prop and gg in con._tax.gps)
+    leaves = [lf for s in tree[g] for lf in tree[g][s] if lf in con._tax_leaves]
+    exc, sib = leaves[0], leaves[1]
+    # BEFORE the exception: the member inherits its grandparent property (load-bearing baseline)
+    out_pre, _ = con.ask(f"can a {exc} {true_prop}?")
+    assert out_pre.startswith("yes")
+    # teach the member's own (contradicting) property -> cancellation
+    assert con.teach_taxonomy_exception(exc, other)
+    out_inh, k1 = con.ask(f"can a {exc} {true_prop}?")
+    assert k1 == "taxonomy" and out_inh.startswith("no"), (exc, true_prop, out_inh)
+    out_own, k2 = con.ask(f"can a {exc} {other}?")
+    assert k2 == "taxonomy" and out_own.startswith("yes"), (exc, other, out_own)
+    # a normal sibling still inherits (the exception did not leak)
+    out_sib, k3 = con.ask(f"can a {sib} {true_prop}?")
+    assert k3 == "taxonomy" and out_sib.startswith("yes"), (sib, true_prop, out_sib)
+
+
+@pytest.mark.skipif(not _HAS_TAX, reason="needs the Wikidata 3-level is-a graph (regenerable via the taxonomy derisk)")
 def test_taxonomy_default_off_byte_identical(console, taxonomy_console):
     """Default path (no taxonomy_qa) is BYTE-PRESERVED: the discovered-cluster reasoner + moat are unchanged,
     and a taxonomy-only leaf question falls through to the moat when the taxonomy path is off."""

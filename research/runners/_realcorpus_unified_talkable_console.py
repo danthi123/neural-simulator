@@ -168,9 +168,9 @@ class UnifiedTalkableConsole:
         self._tax = None
         if taxonomy_qa:
             import json as _json
-            from research.runners._realcorpus_taxonomy_qa_console_derisk import TaxonomyQA
+            from research.runners._realcorpus_taxonomy_cancellation_derisk import CancellingTaxonomyQA
             _tree = _json.load(open("research/findings/raw/_wikidata_3level.json"))
-            self._tax = TaxonomyQA(seed, _tree, hold_out=False)   # deployed: every leaf answerable
+            self._tax = CancellingTaxonomyQA(seed, _tree, hold_out=False)  # deployed; inherit + member-exception cancel
             self._tax_leaves = set(self._tax.leaves)
             self._tax_props = set(self._tax.gp_of_property)
 
@@ -197,6 +197,17 @@ class UnifiedTalkableConsole:
             self.prop.teach_exception_adaptive(m, eid, margin=2.0)
         if persist is not None:
             self._append_persist(persist, ["prop", word, verb])
+        return True
+
+    def teach_taxonomy_exception(self, member, own_prop, persist=None):
+        """Grow: teach a taxonomy MEMBER an OWN property that cancels its inherited (grandparent) property -- the
+        penguin case ('a penguin is a bird but does not fly'). Then 'can a <member> <inherited-prop>?' -> no; 'can a
+        <member> <own-prop>?' -> yes. Requires taxonomy_qa; member must be a known leaf + own_prop a taught property."""
+        if self._tax is None or member not in self._tax_leaves or own_prop not in self._tax_props:
+            return False
+        self._tax.teach_exception(member, own_prop)
+        if persist is not None:
+            self._append_persist(persist, ["tax_exc", member, own_prop])
         return True
 
     def verb_row(self, v):
