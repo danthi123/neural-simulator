@@ -1,0 +1,78 @@
+{
+  "verdict": "GO",
+  "K": 1024,
+  "aggregate": {
+    "inherit_yes": 0.8650639519825568,
+    "reject_no": 0.9804027504247314,
+    "moat": true,
+    "deranged_yes": 0.06771373544629358
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "pos_cat": "~bowl",
+      "neg_cat": "~saw",
+      "n_held": 44,
+      "pos_coherence": 0.058,
+      "inherit_yes_acc": 0.8863636363636364,
+      "reject_no_acc": 0.9767441860465116,
+      "moat_ok": true,
+      "deranged_yes_acc": 0.045454545454545456
+    },
+    {
+      "seed": 43,
+      "pos_cat": "~yummy",
+      "neg_cat": "~pulled",
+      "n_held": 39,
+      "pos_coherence": 0.074,
+      "inherit_yes_acc": 0.9230769230769231,
+      "reject_no_acc": 0.9459459459459459,
+      "moat_ok": true,
+      "deranged_yes_acc": 0.1282051282051282
+    },
+    {
+      "seed": 44,
+      "pos_cat": "~yummy",
+      "neg_cat": "~picked",
+      "n_held": 40,
+      "pos_coherence": 0.078,
+      "inherit_yes_acc": 0.875,
+      "reject_no_acc": 1.0,
+      "moat_ok": true,
+      "deranged_yes_acc": 0.075
+    },
+    {
+      "seed": 100,
+      "pos_cat": "~yummy",
+      "neg_cat": "~picked",
+      "n_held": 43,
+      "pos_coherence": 0.072,
+      "inherit_yes_acc": 0.8837209302325582,
+      "reject_no_acc": 0.9906542056074766,
+      "moat_ok": true,
+      "deranged_yes_acc": 0.046511627906976744
+    },
+    {
+      "seed": 101,
+      "pos_cat": "~yummy",
+      "neg_cat": "~jen",
+      "n_held": 45,
+      "pos_coherence": 0.067,
+      "inherit_yes_acc": 0.9555555555555556,
+      "reject_no_acc": 0.9690721649484536,
+      "moat_ok": true,
+      "deranged_yes_acc": 0.1111111111111111
+    },
+    {
+      "seed": 102,
+      "pos_cat": "~yummy",
+      "neg_cat": "~picked",
+      "n_held": 30,
+      "pos_coherence": 0.065,
+      "inherit_yes_acc": 0.6666666666666666,
+      "reject_no_acc": 1.0,
+      "moat_ok": true,
+      "deranged_yes_acc": 0.0
+    }
+  ]
+}
