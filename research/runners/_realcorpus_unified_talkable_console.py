@@ -229,11 +229,12 @@ class UnifiedTalkableConsole:
                 s2, v2, o2 = content[0], content[1], content[2]
                 vrow, _ = self.verb_row(v2)
                 if s2 in self.row_of and o2 in self.row_of and vrow is not None:
+                    if self.svo.contains(self.row_of[s2], vrow, self.row_of[o2]):   # verify the SPECIFIC fact
+                        return f"yes -- {self._speak_svo(s2, v2, o2)}", "yesno"
                     got = self.svo.answer_patient(self.row_of[s2], vrow)
                     if got is None:
                         return "I don't know", "moat"                       # nothing stored for that (subj, verb)
-                    return (f"yes -- {self._speak_svo(s2, v2, o2)}" if self.vocab[got] == o2
-                            else f"no -- {self._speak_svo(s2, v2, self.vocab[got])}"), "yesno"
+                    return f"no -- {self._speak_svo(s2, v2, self.vocab[got])}", "yesno"   # not that obj; the real one
         # property: does/can a X <verb>
         subj = toks[2] if len(toks) > 2 else None
         if subj not in self.prop.row_of:

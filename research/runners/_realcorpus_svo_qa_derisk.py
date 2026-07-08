@@ -60,6 +60,17 @@ class SVOStore:
                     best_o, best_score = o, mo
         return best_o                                   # None -> abstain (no-confab moat)
 
+    def contains(self, subj, verb, obj):
+        """Verify a SPECIFIC fact: is '<subj> <verb> <obj>' stored? (all THREE roles clean up to the cue in
+        ONE stored fact). The correct yes/no over MANY-TO-MANY facts (a subject with several objects)."""
+        for f in self.facts:
+            a, ma = self._cleanup(f * np.conj(self.AGENT))
+            vb, mv = self._cleanup(f * np.conj(self.VERB))
+            o, mo = self._cleanup(f * np.conj(self.PATIENT))
+            if a == subj and vb == verb and o == obj and min(ma, mv, mo) > MATCH_MARGIN:
+                return True
+        return False
+
     def answer_agent(self, verb, obj):
         """'who <verb> <obj>?' -> the subject (agent), or None (moat) if no stored fact matches the cue.
         The reverse query -- unbind the AGENT slot after matching verb + patient."""
