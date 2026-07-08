@@ -22,6 +22,8 @@ class ProductiveMultiSpeaker:
         self.multi = MultiBridgeFrameSpeaker(bridges=bridges, seed=aw_seed)
         self.affix = ConceptFrameSpeaker(AFFIX, seed=aw_seed, vocab=VA, word_to_pool=PA)
         self.vocab = self.multi.vocab
+        self.speakers = self.multi.speakers                  # expose the underlying per-bridge speakers (multi-speaker duck-type)
+        self._of = self.multi._of                            # word -> underlying speaker (for spellability checks)
         # a LARGER pre-spell settling window fully decays the Izhikevich adaptation carried from the prior spell
         # (the EMERGE-75b A->W read-path state-carryover surpass; 50 steps was insufficient on deep render history).
         self.reset_steps = reset_steps
@@ -44,3 +46,14 @@ class ProductiveMultiSpeaker:
                     if st is not None and af is not None:
                         return f"{st}{af}"
         return None
+
+    def speak_frame(self, subject, verb):
+        """'the <subject> can <verb>' (the F_MODAL property frame) with content ON SPIKES -- a drop-in for the
+        console's ConceptFrameSpeaker/MultiBridgeFrameSpeaker `speak_frame` contract (so this speaker slots into
+        the console's spiking_gen path). the/can spelled if covered, else host-rendered."""
+        if subject not in self.multi._of or verb not in self.multi._of:
+            return "I don't know", None
+        subj_spoken, verb_spoken = self.spell(subject), self.spell(verb)
+        the_spoken = self.spell("the") if "the" in self.multi._of else "the"
+        can_spoken = self.spell("can") if "can" in self.multi._of else "can"
+        return f"{the_spoken} {subj_spoken} {can_spoken} {verb_spoken}", (subj_spoken == subject and verb_spoken == verb)

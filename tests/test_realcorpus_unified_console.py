@@ -16,6 +16,9 @@ BRIDGE3 = "bridges/breadth_aw3/seed42.simstate.h5"
 pytestmark = pytest.mark.skipif(not (os.path.exists(CORPUS) and os.path.exists(BRIDGE)),
                                 reason="needs the TinyStories corpus + the breadth A->W bridge (regenerable)")
 _HAS_MULTIBRIDGE = os.path.exists(BRIDGE2) and os.path.exists(BRIDGE3)
+BRIDGE4 = "bridges/breadth_aw4/seed42.simstate.h5"
+AFFIX = "bridges/affix_aw/seed42.simstate.h5"
+_HAS_RICH = _HAS_MULTIBRIDGE and os.path.exists(BRIDGE4) and os.path.exists(AFFIX)
 
 
 @pytest.fixture(scope="module")
@@ -212,6 +215,34 @@ def relational_spiking_console():
     from research.runners._realcorpus_unified_talkable_console import UnifiedTalkableConsole
     return UnifiedTalkableConsole(CORPUS, 256, 10, BRIDGE, seed=42, class_verb="run", exc_verb="sleep",
                                   rel_verb="eat", spiking_gen=True, multi_bridge=True)
+
+
+@pytest.fixture(scope="module")
+def rich_console():
+    """A console whose RICHER-relation (ditransitive) answers are GENERATED ON SPIKES (rich_gen): the 8-pool
+    EMERGE-77 producer for the order + the ProductiveMultiSpeaker (BRIDGE-1/2/3/4 + affix, productive 3sg) for
+    the words. Needs BRIDGE-4 + the affix A->W."""
+    os.environ.setdefault("SIM_BACKEND", "numpy")
+    from research.runners._realcorpus_unified_talkable_console import UnifiedTalkableConsole
+    return UnifiedTalkableConsole(CORPUS, 256, 10, BRIDGE, seed=42, class_verb="run", exc_verb="sleep",
+                                  rel_verb="eat", rich_gen=True)
+
+
+@pytest.mark.skipif(not _HAS_RICH, reason="needs BRIDGE-2/3/4 + the affix A->W checkpoints (regenerable)")
+def test_rich_gen_ditransitive_answer_on_spikes(rich_console):
+    """rich_gen: the console's DITRANSITIVE answer is produced ON SPIKES (8-pool producer + productive A->W) --
+    teach '<s> gives <r> <t>' -> 'what does the s give the r?' -> the exact 'the s gives the r a t' surface."""
+    con = rich_console
+    assert con._ditrans_producer is not None
+    dv = next((v for v in con.DITRANS_VERBS if con.verb_row(v)[0] is not None and v in con.speaker.vocab), None)
+    usable = [w for w in con.row_of if w in con.speaker.vocab]
+    if dv is None or len(usable) < 3:
+        pytest.skip("no ditransitive verb + fillers in (discovered vocab ∩ speaker vocab)")
+    s, r, t = usable[0], usable[1], usable[2]
+    assert con.teach_ditransitive(s, dv, r, t)
+    out, kind = con.ask(f"what does the {s} {dv} the {r}?")
+    assert kind == "ditransitive"
+    assert out == f"the {s} {dv}s the {r} a {t}"                  # the exact ditransitive surface, generated on spikes
 
 
 @pytest.fixture(scope="module")

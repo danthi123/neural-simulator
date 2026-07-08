@@ -34,12 +34,15 @@ class UnifiedTalkableConsole:
 
     def __init__(self, corpus_path, K, n_clusters, bridge_path, seed, class_verb, exc_verb, rel_verb,
                  aw_seed=42, two_bridge=False, learn_corpus_facts=False, spiking_gen=False, multi_bridge=False,
-                 neural_route=False):
+                 neural_route=False, rich_gen=False):
         stories = load_token_stream_multi(corpus_path, max_stories=None)
         self.class_verb, self.exc_verb, self.rel_verb = class_verb, exc_verb, rel_verb
         # PROPERTY reasoner (rate, emergent clusters) + its codes
         self.prop = CancellingConsole(seed, stories, K, emergent=True, n_clusters=n_clusters)
-        if multi_bridge:                                      # 3-bridge dispatch (animals + objects + 3sg verbs)
+        if rich_gen:                                          # richer-relation generation: BRIDGE-1/2/3/4 + affix
+            from research.runners._realcorpus_productive_multi_speaker import ProductiveMultiSpeaker
+            self.speaker = ProductiveMultiSpeaker(seed=aw_seed)   # + reset_steps=150 (EMERGE-75b) + productive 3sg
+        elif multi_bridge:                                    # 3-bridge dispatch (animals + objects + 3sg verbs)
             from research.runners._realcorpus_multi_bridge_speaker import MultiBridgeFrameSpeaker
             self.speaker = MultiBridgeFrameSpeaker(seed=aw_seed)
         elif two_bridge:                                      # broader spoken vocab via the EMERGE-68 dispatch
@@ -118,10 +121,11 @@ class UnifiedTalkableConsole:
         # EMERGE-65 self-organized spiking-Broca producer (exact-order competitive queuing + wash-out), each
         # word spelled on spikes by the A->W -- replacing the host f-string order in speak_frame. Gate-first:
         # only invoked when the reasoner ANSWERS (abstain -> the producer is never called -> moat by construction).
-        self.spiking_gen = spiking_gen
+        self.spiking_gen = spiking_gen or rich_gen           # rich_gen implies the spiking producers
         self._producer = None
         self._svo_producer = None
-        if spiking_gen:
+        self._ditrans_producer = None                        # rich_gen: the 8-pool ditransitive producer + its cq
+        if self.spiking_gen:
             from research.runners._emerge65_self_organized_producer_derisk import SelfOrganizedProducer
             from research.runners._emerge62_discover_function_words_derisk import build_stream
             sop = SelfOrganizedProducer(seed).build_from_corpus(build_stream(seed))
@@ -129,13 +133,22 @@ class UnifiedTalkableConsole:
             # RELATIONAL (transitive) generation on spikes: only when the multi-bridge speaker holds the 3sg verb
             # surfaces (BRIDGE-3). The C_TRANS construction is mined from the corpus stream; the FILLERS are the
             # console's facts. Gate-first RegistryBrocaProducer (abstain -> never invoked -> moat).
-            if getattr(self.speaker, "speakers", None) is not None:            # a MultiBridgeFrameSpeaker
+            if getattr(self.speaker, "speakers", None) is not None:            # a multi-bridge speaker
                 from research.runners._emerge74_transitive_ditransitive_derisk import (
                     SVOConstructionRegistry, build_stream_svo)
                 from research.runners._emerge72_construction_registry_derisk import RegistryBrocaProducer
                 _reg = SVOConstructionRegistry(seed).build(build_stream_svo(seed))
                 if "C_TRANS" in _reg.registered_fits():
                     self._svo_producer = RegistryBrocaProducer(_reg.render_cq(), spell=self.speaker.spell)
+            # RICHER-RELATION generation on spikes (ditransitive): the EMERGE-77 8-pool 2-stage-calibrated producer
+            # renders C_DITRANS ("the dog gives the cat a bone") on spikes; the ProductiveMultiSpeaker spells every
+            # slot incl. the 3sg verb (productive inflection). Requires BRIDGE-4 (the ProductiveMultiSpeaker).
+            if rich_gen:
+                from research.runners._emerge77_ditransitive_render_derisk import DitransRegistry
+                from research.runners._emerge74_transitive_ditransitive_derisk import build_stream_svo as _bss
+                _dreg = DitransRegistry(seed).build(_bss(seed))
+                if "C_DITRANS" in _dreg.registered_fits():
+                    self._ditrans_producer = _dreg.render_cq()
 
         # NEURAL question-comprehension ROUTING (opt-in): a fronto-striatal reservoir read-out classifies the
         # question TYPE, replacing the host keyword if-ladder in ask(). Default off -> keyword (byte-identical).
@@ -249,6 +262,19 @@ class UnifiedTalkableConsole:
                 if out.get("surface"):
                     return out["surface"]                                       # order + words ON SPIKES
         return f"the {self._word(subj)} {self._word(vbase)}s {self._word(obj)}"
+
+    def _gen_ditrans(self, subj, verb, recip, theme):
+        """The ditransitive answer 'the <subj> <verb>s the <recip> a <theme>'. When the 8-pool ditransitive
+        producer is built (rich_gen) + every filler is spellable, the 7-slot ORDER is produced ON SPIKES
+        (EMERGE-77) + each word (incl. the 3sg verb via productive inflection) spelled on spikes; else host order."""
+        vbase = verb[:-1] if verb.endswith("s") else verb
+        if self._ditrans_producer is not None and all(w in self.speaker.vocab for w in ("the", subj, recip, theme)):
+            from research.runners._realcorpus_spiking_broca_ditransitive_answer_derisk import _emit_ditrans_aw
+            try:
+                return _emit_ditrans_aw(self._ditrans_producer, "C_DITRANS", subj, vbase, recip, theme, self.speaker.spell)
+            except Exception:
+                pass
+        return f"the {self._word(subj)} {self._word(vbase)}s the {self._word(recip)} a {self._word(theme)}"
 
     def describe(self, word):
         """'tell me about <word>': aggregate the word's PROPERTY (inherit/cancel) + RELATIONAL facts into
@@ -385,13 +411,11 @@ class UnifiedTalkableConsole:
                     if toks[:1] == ["what"]:                       # theme query (the given noun is the recipient)
                         th = self.ditrans.answer_theme(self.row_of[s2], vrow, self.row_of[n2])
                         if th is not None:
-                            return (f"the {self._word(s2)} {self._word(v2)}s the {self._word(n2)} "
-                                    f"a {self._word(self.vocab[th])}"), "ditransitive"
+                            return self._gen_ditrans(s2, v2, n2, self.vocab[th]), "ditransitive"
                     else:                                          # who -> recipient query (the given noun is the theme)
                         rc = self.ditrans.answer_recipient(self.row_of[s2], vrow, self.row_of[n2])
                         if rc is not None:
-                            return (f"the {self._word(s2)} {self._word(v2)}s the {self._word(self.vocab[rc])} "
-                                    f"a {self._word(n2)}"), "ditransitive"
+                            return self._gen_ditrans(s2, v2, self.vocab[rc], n2), "ditransitive"
                     return "I don't know", "moat"                  # ditransitive verb but not stored -> abstain
         # PP (spatial) query: "where does the X <verb> to/on?" -> the goal/location destination (the ternary store).
         if toks[:1] == ["where"]:
@@ -482,13 +506,14 @@ def main():
     ap.add_argument("--learn-corpus-facts", action="store_true", help="LEARN relational facts from the corpus (not just taught)")
     ap.add_argument("--spiking-gen", action="store_true", help="FULLY-SPIKING generation: the property (+ relational, with --multi-bridge) answer's slot ORDER produced on spikes by the spiking-Broca producer (not a host template)")
     ap.add_argument("--neural-route", action="store_true", help="NEURAL question-comprehension routing: a reservoir read-out classifies the question type (not the host keyword if-ladder)")
+    ap.add_argument("--rich-gen", action="store_true", help="RICHER-relation generation on spikes: the ditransitive answer's order + words produced on spikes (needs BRIDGE-4 + affix A->W)")
     a = ap.parse_args()
     print(f"[UNIFIED talkable console] property (inherit/cancel) + relational (SVO), spoken on spikes, moat | "
           f"seed={a.seed}{' | SPIKING-GEN (order on spikes)' if a.spiking_gen else ''}", flush=True)
     con = UnifiedTalkableConsole(a.corpus_path, a.K, a.n_clusters, a.bridge, a.seed,
                                  a.class_verb, a.exc_verb, a.rel_verb, two_bridge=a.two_bridge,
                                  learn_corpus_facts=a.learn_corpus_facts, spiking_gen=a.spiking_gen,
-                                 multi_bridge=a.multi_bridge, neural_route=a.neural_route)
+                                 multi_bridge=a.multi_bridge, neural_route=a.neural_route, rich_gen=a.rich_gen)
     if a.learn_corpus_facts:
         print(f"  [experience] learned {getattr(con, 'n_corpus_facts', 0)} relational facts from the corpus", flush=True)
     if a.persist:
