@@ -175,6 +175,37 @@ def relational_spiking_console():
                                   rel_verb="eat", spiking_gen=True, multi_bridge=True)
 
 
+@pytest.fixture(scope="module")
+def neural_route_console():
+    """A console whose question-TYPE routing is NEURAL (a fronto-striatal reservoir read-out) instead of the
+    host keyword if-ladder. Built once for the module."""
+    os.environ.setdefault("SIM_BACKEND", "numpy")
+    from research.runners._realcorpus_unified_talkable_console import UnifiedTalkableConsole
+    return UnifiedTalkableConsole(CORPUS, 256, 10, BRIDGE, seed=42, class_verb="run", exc_verb="sleep",
+                                  rel_verb="eat", neural_route=True)
+
+
+def test_neural_route_dispatches_every_question_type(neural_route_console):
+    """The NEURAL router (reservoir read-out) routes every console question type to the correct handler --
+    including the hard property-vs-yes-no split (both 'does'-initial), and the moat."""
+    con = neural_route_console
+    assert con._router is not None
+    storable = [a for a in con.animals if a in con.row_of]
+    assert len(storable) >= 2
+    s, o = storable[0], storable[1]
+    con.teach_relational(s, "eat", o)
+    inher = next((w for w in con.prop.members[con.pos]
+                  if w in con.animals and w != con.exc_word and con.ask(f"does a {w} run?")[1] == "inherit"), None)
+    assert inher is not None
+    assert con.ask(f"does a {inher} run?")[1] == "inherit"          # property (does a X verb)
+    assert con.ask(f"does a {con.exc_word} run?")[1] == "override"  # property exception
+    assert con.ask(f"what does the {s} eat?")[1] == "relational"    # relational what
+    assert con.ask(f"who eats the {o}?")[1] == "relational"         # relational who
+    assert con.ask(f"does the {s} eat {o}?")[1] == "yesno"          # relational yes/no (does the X verb Y)
+    assert con.ask(f"tell me about the {s}")[1] == "describe"       # multi-fact discourse
+    assert con.ask("does a zzzqqx run?")[1] == "moat"               # abstain (moat unaffected)
+
+
 @pytest.mark.skipif(not _HAS_MULTIBRIDGE, reason="needs the BRIDGE-2 + BRIDGE-3 A->W checkpoints (regenerable)")
 def test_relational_answer_generated_on_spikes(relational_spiking_console):
     """The transitive C_TRANS answer 'the <subj> <verb>s the <obj>' is produced ON SPIKES (registry producer +

@@ -33,7 +33,8 @@ class UnifiedTalkableConsole:
     """One emergent brain: property (inherit/cancel) + relational (SVO) reasoning, spoken on spikes, moat."""
 
     def __init__(self, corpus_path, K, n_clusters, bridge_path, seed, class_verb, exc_verb, rel_verb,
-                 aw_seed=42, two_bridge=False, learn_corpus_facts=False, spiking_gen=False, multi_bridge=False):
+                 aw_seed=42, two_bridge=False, learn_corpus_facts=False, spiking_gen=False, multi_bridge=False,
+                 neural_route=False):
         stories = load_token_stream_multi(corpus_path, max_stories=None)
         self.class_verb, self.exc_verb, self.rel_verb = class_verb, exc_verb, rel_verb
         # PROPERTY reasoner (rate, emergent clusters) + its codes
@@ -123,6 +124,14 @@ class UnifiedTalkableConsole:
                 _reg = SVOConstructionRegistry(seed).build(build_stream_svo(seed))
                 if "C_TRANS" in _reg.registered_fits():
                     self._svo_producer = RegistryBrocaProducer(_reg.render_cq(), spell=self.speaker.spell)
+
+        # NEURAL question-comprehension ROUTING (opt-in): a fronto-striatal reservoir read-out classifies the
+        # question TYPE, replacing the host keyword if-ladder in ask(). Default off -> keyword (byte-identical).
+        self.neural_route = neural_route
+        self._router = None
+        if neural_route:
+            from research.runners._realcorpus_neural_question_routing_derisk import QuestionRouter
+            self._router = QuestionRouter(seed=seed)
 
     @staticmethod
     def _append_persist(persist, entry):
@@ -306,19 +315,36 @@ class UnifiedTalkableConsole:
             self.last_subject = word
         return word
 
+    def _route_type(self, toks):
+        """The question TYPE via the NEURAL router (opt-in) -- else None (keyword routing). 'compare' is a fixed
+        multi-word construction kept as a keyword marker; the core does/wh types are routed neurally."""
+        if self._router is None:
+            return None
+        if toks[:1] == ["compare"]:
+            return "compare"
+        return self._router.route(toks)
+
+    @staticmethod
+    def _is(rt, typ, kw):
+        """Dispatch: the NEURAL type when the router is active (rt not None), else the keyword condition. A
+        neural misroute self-corrects -- the per-branch extraction guards fall through to the right handler."""
+        return (rt == typ) if rt is not None else kw
+
     def ask(self, q):
         """Route by question form: 'does a X <verb>?' -> property; 'what does the X <verb>?' -> relational;
-        'tell me about X' / 'describe X' -> multi-fact discourse. Pronoun 'it' -> the last subject (anaphora)."""
+        'tell me about X' / 'describe X' -> multi-fact discourse. Pronoun 'it' -> the last subject (anaphora).
+        The routing is host keyword by default, or the NEURAL reservoir read-out when neural_route=True."""
         toks = q.lower().replace("?", "").split()
-        if toks[:1] == ["compare"]:                               # comparison: compare X and Y
+        rt = self._route_type(toks)
+        if self._is(rt, "compare", toks[:1] == ["compare"]):      # comparison: compare X and Y
             content = [t for t in toks[1:] if t not in ("the", "a", "an", "and", "to", "with")]
             if len(content) >= 2:
                 return self.compare(self._resolve(content[0]), self._resolve(content[1]))
             return "I don't know", "moat"
-        if toks[:3] == ["tell", "me", "about"] or toks[:1] == ["describe"]:  # multi-fact discourse
+        if self._is(rt, "describe", toks[:3] == ["tell", "me", "about"] or toks[:1] == ["describe"]):  # discourse
             content = [t for t in (toks[3:] if toks[0] == "tell" else toks[1:]) if t not in ("the", "a", "an")]
             return self.describe(self._resolve(content[-1])) if content else ("I don't know", "moat")
-        if toks[:1] == ["what"]:                                  # relational: what (does) (the) X <verb>
+        if self._is(rt, "what", toks[:1] == ["what"]):            # relational: what (does) (the) X <verb>
             c = [t for t in toks[1:] if t not in ("the", "a", "an", "does")]   # determiner-robust -> [subj, verb]
             subj = self._resolve(c[0]) if c else None
             verb = c[1] if len(c) > 1 else self.rel_verb          # ANY relational verb (not just 'eat')
@@ -330,7 +356,7 @@ class UnifiedTalkableConsole:
                 return "I don't know", "moat"
             obj = self.vocab[o]
             return self._speak_svo(subj, verb, obj), "relational"
-        if toks[:1] == ["who"]:                                   # reverse relational: who <verb>s the <obj>
+        if self._is(rt, "who", toks[:1] == ["who"]):              # reverse relational: who <verb>s the <obj>
             content = [t for t in toks[1:] if t not in ("the", "a", "an")]
             verb = content[0] if content else None                # who eats fish -> verb=eats, obj=fish
             obj = content[-1] if len(content) > 1 else None
@@ -342,8 +368,9 @@ class UnifiedTalkableConsole:
                 return "I don't know", "moat"
             subj = self.vocab[arow]
             return self._speak_svo(subj, verb, obj), "relational"
-        # relational YES/NO: 'does the <subj> <verb> <obj>?' (an object after the verb) -> verify the fact
-        if toks[:1] in (["does"], ["can"]) and len(toks) >= 5:
+        # relational YES/NO: 'does the <subj> <verb> <obj>?' (an object after the verb) -> verify the fact.
+        # A misroute here self-corrects: the len(content)>=3 guard falls through to the property branch.
+        if self._is(rt, "yesno", toks[:1] in (["does"], ["can"]) and len(toks) >= 5):
             content = [t for t in toks[1:] if t not in ("the", "a", "an")]
             if len(content) >= 3:
                 s2, v2, o2 = self._resolve(content[0]), content[1], content[2]
@@ -385,13 +412,14 @@ def main():
     ap.add_argument("--multi-bridge", action="store_true", help="3-bridge A->W (animals + objects + 3sg verbs): enables the RELATIONAL answer on spikes")
     ap.add_argument("--learn-corpus-facts", action="store_true", help="LEARN relational facts from the corpus (not just taught)")
     ap.add_argument("--spiking-gen", action="store_true", help="FULLY-SPIKING generation: the property (+ relational, with --multi-bridge) answer's slot ORDER produced on spikes by the spiking-Broca producer (not a host template)")
+    ap.add_argument("--neural-route", action="store_true", help="NEURAL question-comprehension routing: a reservoir read-out classifies the question type (not the host keyword if-ladder)")
     a = ap.parse_args()
     print(f"[UNIFIED talkable console] property (inherit/cancel) + relational (SVO), spoken on spikes, moat | "
           f"seed={a.seed}{' | SPIKING-GEN (order on spikes)' if a.spiking_gen else ''}", flush=True)
     con = UnifiedTalkableConsole(a.corpus_path, a.K, a.n_clusters, a.bridge, a.seed,
                                  a.class_verb, a.exc_verb, a.rel_verb, two_bridge=a.two_bridge,
                                  learn_corpus_facts=a.learn_corpus_facts, spiking_gen=a.spiking_gen,
-                                 multi_bridge=a.multi_bridge)
+                                 multi_bridge=a.multi_bridge, neural_route=a.neural_route)
     if a.learn_corpus_facts:
         print(f"  [experience] learned {getattr(con, 'n_corpus_facts', 0)} relational facts from the corpus", flush=True)
     if a.persist:

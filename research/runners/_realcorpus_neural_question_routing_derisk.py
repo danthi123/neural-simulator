@@ -28,6 +28,28 @@ _TYPES = ["property", "what", "who", "yesno", "describe"]
 _TYPE_IDX = {t: i for i, t in enumerate(_TYPES)}
 
 
+class QuestionRouter:
+    """Production wrapper: a trained reservoir read-out that classifies a question token list -> its TYPE
+    (property/what/who/yesno/describe). Trained on ALL fillers (production, not held-out). Drops into the
+    console's `ask()` to replace the host keyword if-ladder. `--spiking` uses the EMERGE-82 OnBridgeLSM."""
+
+    def __init__(self, seed=42, n_per=80, spiking=False):
+        self.enc = Encoder(_CLOSED)
+        if spiking:
+            from research.runners._emerge82_onbridge_lsm_derisk import OnBridgeLSM
+            self.res = OnBridgeLSM(self.enc.dim, seed)
+        else:
+            self.res = Reservoir(self.enc.dim, seed)
+        rng = np.random.default_rng(seed)
+        X, Y = _states(self.res, self.enc, _dataset(rng, n_per, _ANIMALS, _VERBS))
+        self.W = _fit(X, Y)
+
+    def route(self, toks):
+        """Return the neural-classified question TYPE for a token list."""
+        f = np.concatenate([self.res.final_state(self.enc.encode(list(toks))), [1.0]])
+        return _TYPES[int((f @ self.W).argmax())]
+
+
 def _make_question(qtype, rng, animals, verbs):
     a = str(rng.choice(animals)); a2 = str(rng.choice(animals)); v = str(rng.choice(verbs)); v3 = v + "s"
     if qtype == "property":
