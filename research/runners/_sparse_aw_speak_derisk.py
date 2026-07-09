@@ -87,7 +87,7 @@ def _lesion_shared_to_langout(bridge, cp):
 
 def run_seed(seed, n_concepts=64, n_train_events=400, n_lang_input=8192, n_shared_pool=2000,
              n_shared_fs=300, pattern_size=100, sparsity=0.03, lang_output_wta=False, winner_inactive_ld=0.0,
-             verbose=True):
+             synaptic_scaling=False, ro_w_max=10.0, verbose=True):
     from sim.backend import get_backend, to_host, from_host
     cp, _ = get_backend()
     from sim.text_embeddings import orthogonal_drive_pattern
@@ -103,6 +103,8 @@ def run_seed(seed, n_concepts=64, n_train_events=400, n_lang_input=8192, n_share
     bridge = build_sparse_pool_bridge(seed=seed, n_lang_input=n_lang_input, n_shared_pool=n_shared_pool,
                                       n_shared_fs=n_shared_fs, n_lang_output=n_lang_output,
                                       lang_output_wta=lang_output_wta, verbose=False)
+    if synaptic_scaling:                                              # Turrigiano homeostatic weight normalization
+        bridge.core_config.enable_synaptic_scaling = True            # (research Rank-1b stabilizer on the read-out smear)
     sparse_patterns = generate_sparse_patterns(n_concepts, n_shared_pool, pattern_size, seed)
     apply_sparse_topographic_prior(bridge, n_concepts, n_lang_input, sparse_patterns, sparsity=sparsity,
                                    n_words_for_orthogonal=n_concepts, verbose=False)
@@ -151,7 +153,7 @@ def run_seed(seed, n_concepts=64, n_train_events=400, n_lang_input=8192, n_share
             if ro is not None:
                 _kern, _pos, _pm, _wm = ro                              # winner-inactive depress on the read-out synapses
                 bridge.cp_connections.data[_pos] = _kern(bridge.cp_connections.data[_pos], _pm[wi], _wm[wi],
-                                                         winner_inactive_ld, 0.0, 10.0)
+                                                         winner_inactive_ld, 0.0, ro_w_max)
     bridge.set_plasticity_gate("language_input_to_shared", 0.0)
     bridge.set_plasticity_gate("shared_to_language_output", 0.0)
     if verbose:
@@ -198,6 +200,8 @@ def main():
     ap.add_argument("--winner-inactive-ld", type=float, default=0.0,
                     help="winner-inactive read-out DECORRELATION rate (the committed fused_htm_winner_inactive_depression "
                          "kernel on shared->language_output; 0=off, ~0.02-0.05 = the EMERGE-40 regime)")
+    ap.add_argument("--synaptic-scaling", action="store_true", help="Turrigiano homeostatic weight normalization (Rank-1b stabilizer)")
+    ap.add_argument("--ro-w-max", type=float, default=10.0, help="read-out weight cap (lower = tighter, less smear)")
     ap.add_argument("--json", default=None)
     a = ap.parse_args()
     seeds = [int(x) for x in a.seeds.replace(",", " ").split()]
@@ -207,7 +211,8 @@ def main():
     for s in seeds:
         r = run_seed(s, n_concepts=a.n_concepts, n_train_events=a.n_train_events, n_lang_input=a.n_lang_input,
                      n_shared_pool=a.n_shared_pool, pattern_size=a.pattern_size, sparsity=a.sparsity,
-                     lang_output_wta=a.lang_output_wta, winner_inactive_ld=a.winner_inactive_ld)
+                     lang_output_wta=a.lang_output_wta, winner_inactive_ld=a.winner_inactive_ld,
+                     synaptic_scaling=a.synaptic_scaling, ro_w_max=a.ro_w_max)
         rows.append(r)
         print(f"  [seed {s}] speak_acc={r['speak_acc']} TOPK={r['speak_acc_topk']} (margin {r['mean_margin']}, "
               f"langout_spikes {r['mean_langout_spikes']}) | MOAT novel_margin={r['novel_margin']} "
