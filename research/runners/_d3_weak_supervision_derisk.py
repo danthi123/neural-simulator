@@ -126,7 +126,8 @@ def train_endstate(task, seed=42, n_hid=160, epochs=120, lr=0.05, batch=128, dis
         return {"prop": float(prop), "state_track": float((fin_state == true_state).mean())}
 
     return {"same": eval_split("test_same"), "deeper": eval_split("test_deeper", soft=not discrete),
-            "train": eval_split("train")}
+            "train": eval_split("train"),
+            "weights": {"emb": emb, "Wr": Wr, "Wi": Wi, "Ws": Ws, "bs": bs}}   # for the on-spikes execution port
 
 
 def run_seed(group, seed, n_hid, epochs, train_lens, test_lens, n_pool, n_per_len=2500):
