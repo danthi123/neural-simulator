@@ -22,7 +22,20 @@ ca1 firing scales with the NUMBER of converging CA3 inputs, not the Schaffer wei
 
 The completion mechanism is NOT the blocker (it is 6-seed GO and committed); the blocker is that the small network that makes the completion cheap to validate does not give ca1 enough Schaffer convergence.
 
-## NEXT (specified, the continuing lever)
+## UPDATE (same cycle) — the SCALE fix is CONFIRMED for ca1-drive, and the Rung-1 metric is reframed: CA1 is not a pattern-separator, so specificity is a LEARNED (consolidation) job, not a fixed-Schaffer one
+Scaling to n_ca3=1500, n_assembly=40 (~2.7%, ~12 Schaffer inputs/ca1, matching the isolation probe that fired ca1): **ca1 now FIRES strongly — ca1_raw_fire 135 -> 201 -> 266 -> 333** across the k-sweep (vs the ~5 noise floor at n_ca3=500). The scale hypothesis is CONFIRMED — a Kopsick-regime assembly drives ca1. BUT the ca1 pattern is NON-SPECIFIC at every k:
+```
+n_ca3=1500 n_assembly=40, Schaffer x15    partial->ca1 MATCH   cross   LINEAR-match   ca1_fire
+k=60                                       0.763               0.763   0.788          266   (MATCH == cross exactly)
+k=100                                      0.791               0.793   0.788          333   (MATCH < cross)
+k=140                                      0.716               0.758   0.788          201
+```
+Every ca1 pattern is ~0.76-0.79 similar to every other (same-assembly AND cross-assembly), and the LINEAR (no-completion) control is the HIGHEST — i.e. the completion does NOT add assembly-specificity to ca1; the fixed Schaffer gives a BROAD ca1 activation shared across assemblies. **This is biologically CORRECT: CA1 is a relay/comparator, NOT a pattern-separator (that is DG/CA3, catalog D.12).** A fixed feedforward Schaffer cannot produce assembly-specific ca1 codes; the assembly-specific ca3->ca1->cortex mapping is exactly what SWR-replay STDP LEARNS during consolidation. So the Rung-1 "does the fixed Schaffer carry specificity to ca1" test was the WRONG metric (and it is a clean NEGATIVE for the right reason). The prerequisite that DID matter — ca1 must FIRE so STDP has post-synaptic spikes — is now met at scale.
+
+## NEXT (specified, the continuing lever) — Rung 2, with the CORRECT (Phase-1.3) metric
+The real payoff metric is **consolidation-to-cortex**, not ca1-code-specificity: after generative partial-cue REPLAY (partial cue -> completion -> ca3->ca1->cortex with the `ca3_to_ca1` + ca1->cortex STDP gates OPEN), can a DOWNSTREAM region RECALL the pattern WITHOUT the hippocampus (Phase 1.3's hippo-OFF retention test), and does the GENERATIVE (partial-cue-triggered) replay consolidate as well as full-tag replay? Controls: no-replay (no consolidation) + shuffled-assembly. Reuse the Phase-1.3 consolidation infra (`consolidation_trainer.run_concept_replay_phase` + the sleep gates). Build at the scale-confirmed n_ca3=1500 / n_assembly=40 (first re-confirm the CYCLE-1076 COMPLETION itself is specific at that scale via the completion runner + a re-tuned k — the CA3-side metric, separate from the ca1 read). The scale lever for ca1-drive is DONE; Rung 2 is the learned-consolidation build on top.
+
+## (original) NEXT
 Scale toward the Kopsick regime so BOTH the completion AND the ca1 drive work: a larger CA3 (n_ca3 ~1500-3000), a larger assembly (~1% -> 15-40 cells, still sparse, still completable -- re-validate the CYCLE-1076 completion at the new scale), and if needed a denser/stronger Schaffer (ca3->ca1 density). Then Rung 1 (completion -> specific ca1) -> Rung 2 (open the `ca3_to_ca1` STDP gate during replay -> the ca1 projection strengthens -> ca1 reactivates the pattern WITHOUT the ca3-recurrent completion, vs a no-replay control) -> the offline generative-replay consolidation loop. The capstone (the hard part) is solved + committed; this is a scale/wiring lever on top of it.
 
 ## Files

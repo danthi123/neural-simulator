@@ -130,14 +130,16 @@ def main():
     ap.add_argument("--n-ca3", type=int, default=500)
     ap.add_argument("--n-assembly", type=int, default=12)
     ap.add_argument("--presentations", type=int, default=60)
-    ap.add_argument("--schaffer-boost", type=float, default=6.0, help="post-build ca3->ca1 Schaffer potentiation (SWR-ripple engagement) so the 12-cell completed assembly drives ca1 above threshold")
+    ap.add_argument("--schaffer-boost", type=float, default=6.0, help="post-build ca3->ca1 Schaffer potentiation (SWR-ripple engagement) so the completed assembly drives ca1 above threshold")
+    ap.add_argument("--k-thresh", type=float, default=20.0, help="completion plateau threshold; must be re-tuned UP for a bigger assembly (the cross/within drive scales with the cue size)")
     ap.add_argument("--json", default=None)
     a = ap.parse_args()
     seeds = [int(x) for x in a.seeds.split(",")]
     print(f"[R-iii SWR GEN-REPLAY Rung1] n_ca3={a.n_ca3} n_assembly={a.n_assembly} pres={a.presentations} "
           f"| partial-cue completion -> ca1 (Schaffer) pattern: correct + specific?", flush=True)
     import json
-    kw = dict(n_ca3=a.n_ca3, n_assembly=a.n_assembly, presentations=a.presentations, schaffer_boost=a.schaffer_boost)
+    kw = dict(n_ca3=a.n_ca3, n_assembly=a.n_assembly, presentations=a.presentations, schaffer_boost=a.schaffer_boost,
+              k_thresh=a.k_thresh)
     rows = []
     for s in seeds:
         t0 = time.time()
