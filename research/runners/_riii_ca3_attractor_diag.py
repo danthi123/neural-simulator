@@ -20,7 +20,7 @@ from research.runners.validate_trisynaptic_loop import build_drive_pattern
 def run(seed=42, n_mem=2, train_events=100, drive_pA=200.0, n_lang=384, n_ca3=150, n_dg=300,
         ca3_density=0.5, ca3_weight=6.0, hebb_max=30.0, hebb_lr=None, hebb_decay=None, hebb_sym=False,
         hebb_rate=False, coact_decay=None, coact_thresh=None, ca3_fb_inhib=None, ca3_fb_n=None, mossy_weight=None,
-        reset_steps=15, drive_steps=55):
+        sync_on=None, sync_off=None, reset_steps=15, drive_steps=55):
     from sim.backend import get_backend, to_host, get_sparse_module
     cp, _ = get_backend()
     csp = get_sparse_module()
@@ -45,13 +45,27 @@ def run(seed=42, n_mem=2, train_events=100, drive_pA=200.0, n_lang=384, n_ca3=15
             bridge.cp_external_input_current[:] = 0.0
             for _ in range(reset_steps):
                 bridge._run_one_simulation_step()
-            bridge.cp_external_input_current[:] = 0.0
-            bridge.cp_external_input_current[drv] = float(drive_pA)
             rec = ev >= train_events - rec_last
-            for _ in range(drive_steps):
-                bridge._run_one_simulation_step()
-                if rec:
-                    spikes += bridge.cp_firing_states[ca3_arr].astype(cp.float32)
+            if sync_on is not None:
+                # GAMMA-PACED SYNCHRONOUS encoding (Kopsick 2024 / theta-gamma, N.15): drive in tight ON pulses so
+                # the ensemble members fire TOGETHER in each window (synchrony), then OFF so their traces don't
+                # smear -- concentrating co-activity into synchronized volleys the rate-window rule can bind. The
+                # untouched constraint (a co-activity rule cannot bind async-firing cells no matter how sparse).
+                _period = int(sync_on) + int(sync_off)
+                for _st in range(drive_steps):
+                    bridge.cp_external_input_current[:] = 0.0
+                    if (_st % _period) < int(sync_on):
+                        bridge.cp_external_input_current[drv] = float(drive_pA)
+                    bridge._run_one_simulation_step()
+                    if rec:
+                        spikes += bridge.cp_firing_states[ca3_arr].astype(cp.float32)
+            else:
+                bridge.cp_external_input_current[:] = 0.0
+                bridge.cp_external_input_current[drv] = float(drive_pA)
+                for _ in range(drive_steps):
+                    bridge._run_one_simulation_step()
+                    if rec:
+                        spikes += bridge.cp_firing_states[ca3_arr].astype(cp.float32)
         bridge.cp_external_input_current[:] = 0.0
         sp = to_host(spikes); global_act += sp
         n_stored = max(4, int(0.10 * len(ca3_idx)))
@@ -131,12 +145,15 @@ def main():
     ap.add_argument("--ca3-fb-inhib", type=float, default=None, help="ca3_pv_basket->ca3 FEEDBACK inhibition weight (the sparsifier; None=off)")
     ap.add_argument("--ca3-fb-n", type=int, default=None, help="ca3_pv_basket size (default 0.25*n_ca3)")
     ap.add_argument("--mossy-weight", type=float, default=None, help="Rung 2 mossy dg->ca3 DETONATOR weight (default 8.0)")
+    ap.add_argument("--sync-on", type=int, default=None, help="Rung 3 gamma-pulse ON steps (synchronous encoding; e.g. 2)")
+    ap.add_argument("--sync-off", type=int, default=None, help="gamma-pulse OFF steps between volleys (e.g. 4)")
     a = ap.parse_args()
     t0 = time.time()
     run(seed=a.seed, train_events=a.train_events, hebb_max=a.hebb_max, hebb_lr=a.hebb_lr,
         ca3_density=a.ca3_density, drive_pA=a.drive_pA, hebb_decay=a.hebb_decay, hebb_sym=a.hebb_sym,
         hebb_rate=a.hebb_rate, coact_decay=a.coact_decay, coact_thresh=a.coact_thresh,
-        ca3_fb_inhib=a.ca3_fb_inhib, ca3_fb_n=a.ca3_fb_n, mossy_weight=a.mossy_weight)
+        ca3_fb_inhib=a.ca3_fb_inhib, ca3_fb_n=a.ca3_fb_n, mossy_weight=a.mossy_weight,
+        sync_on=a.sync_on, sync_off=a.sync_off)
     print(f"  ({time.time()-t0:.0f}s)", flush=True)
 
 
