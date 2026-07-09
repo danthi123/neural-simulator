@@ -1,0 +1,26 @@
+# R-iii DEFINITIVE (supersedes CYCLE 1062 + 1063): the CA3 recurrents DO transmit, but a PARTIAL CUE does not complete the held-out stored neurons ANYWHERE in the tested parameter space (weight 5-200 × density 0.3-0.9 × cue-drive 200-3000pA; held-out firing = 0 throughout, no seizure). Genuine held-out pattern completion is absent; the "validated D.13 cos 0.748" was the drive artifact (own_cos≈0.5 = the partial-full overlap). Surpassing it needs a supra-threshold-completion mechanism (dendritic NMDA-plateau amplifier / recurrent disinhibition / a sparser-stronger attractor) — a real research frontier, not yet built. NO `sim/` edit.
+
+**Date:** 2026-07-08
+**Runner:** `research/runners/_riii_ca3_completion_specificity_derisk.py` + inline transmission/drive/corner diagnostics. numpy-CPU. NO `sim/` edit.
+**Verdict:** BOUNDARY (rigorously tested across the parameter space) — a partial cue does not complete a stored CA3 memory on this substrate; the surpass mechanism is undecided pending the next research gate.
+
+## The rigorously-established result
+- The ca3→ca3 recurrents TRANSMIT: driving presynaptic CA3 neurons hard (800pA, 111 spikes) depolarizes well-connected postsynaptic targets to **-48 mV** (near the Izhikevich threshold), g_e=0.10. So they are NOT "functionally silent" (CYCLE 1063 overstated this).
+- But a PARTIAL CUE of a trained memory does NOT complete the held-out stored neurons: held-out firing = **0.00** across the ENTIRE tested space — weight ∈ {5,15,40,60,120,200}, density ∈ {0.3,0.6,0.9}, cue-drive ∈ {200,500,900,1500,3000} pA — with non-stored firing ~0 (no seizure either).
+- Mechanism (candidates, why the held-out stay sub-threshold): a random held-out neuron receives recurrent input from only ~(cue_size × effective_density) ≈ a few cue partners; that summed drive is sub-threshold on a point neuron, plausibly balanced by the CA3 recurrent INHIBITION (exc_fraction=0.85 → 15% inhibitory recurrents). Higher weight/density/drive don't fix it (tested).
+
+## Why this supersedes the two earlier (premature) findings
+- **CYCLE 1062** ("point-neuron linear-summation limit → dendritic plateau"): the diagnosis was PREMATURE — I had not yet tested whether the recurrents transmit or whether stronger drive helps. The dendritic-plateau mechanism is now a VALID candidate (properly motivated: weight/density/drive don't complete a partial cue), but it was asserted before the load-bearing tests.
+- **CYCLE 1063** ("functionally silent recurrents"): OVERSTATED — the recurrents transmit (targets reach -48mV under strong presyn firing). The natural 200pA recall under-drove them, which produced the byte-identical-across-weight symptom; but the completion still fails at 3000pA, so the boundary is real, just not "silent."
+- **STANDS (both):** the "validated D.13 cos 0.748 PASS" was the DRIVE ARTIFACT — driving a partial of the stored ensemble overlaps the full set (which contains it) at cos ~0.5, with NO genuine held-out completion; this explains D.13's seed-variability and the 2026-05-24 SWR-loop chance result. CA3 pattern completion has not genuinely worked in this project.
+
+## The process lesson (honest)
+I committed a boundary (1062) and a correction (1063) BEFORE running the load-bearing diagnostics (recurrent transmission Vm/g_e, cue-drive strength, the weight×density×drive corner). Each premature commit had to be superseded. The discipline: for a boundary claim about a mechanism (here, recurrent completion), run the direct mechanism diagnostics (does the current reach the neuron? does stronger drive help? is there a param corner that works?) to convergence FIRST, then commit ONE accurate finding. The adversarial-verify instinct was right (it kept catching the confounds); the error was committing between the catches.
+
+## Surpass candidates (the next research gate — read the sources IN DEPTH)
+1. **Dendritic NMDA-plateau supra-linear amplifier** (Kandel Ch 13, read in depth this session: coincident dendritic inputs expel Mg²⁺ → regenerative NMDA spike → plateau → a burst at the soma; the spine Ca²⁺ is "greater than the linear sum"). Gives the non-linear thresholding a point neuron lacks — a few clustered recurrent inputs → suprathreshold. Available in the project as the EMERGE two-compartment dAP neurons. Cheapest-first candidate.
+2. **Recurrent DISINHIBITION during recall** — if CA3 feedback inhibition (15% inh) balances the recurrent excitation to held-out neurons, suppressing it during the completion window (a biological SWR property) could let completion through. Cheap to test (lesion the inhibitory recurrents / add a disinhibition gate during recall).
+3. **A sparser, more strongly-interconnected attractor** (Treves-Rolls: fewer principal cells, higher per-pair recurrent weight, sparser codes) — a smaller but denser attractor may cross threshold.
+
+## Files
+`research/runners/_riii_ca3_completion_specificity_derisk.py` (density/weight/Vm/g_e/drive/corner diagnostics). Supersedes: `2026-07-08-riii-point-neuron-CA3-completion-boundary-adversarially-verified.md` (1062) + `2026-07-08-riii-CORRECTION-ca3-recurrents-functionally-silent-not-point-neuron-limit.md` (1063). The D.13 drive-artifact point is retained from both.
