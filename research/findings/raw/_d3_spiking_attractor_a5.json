@@ -1,0 +1,38 @@
+[
+ {
+  "seed": 100,
+  "group": "A5",
+  "K": 60,
+  "rate_step_delta": 1.0,
+  "rate_deeper_track": 0.988,
+  "SPK_same_track": 0.783,
+  "SPK_deeper_track": 0.75,
+  "SPK_host_agree_deeper": 0.964,
+  "FSWTA_deeper_track": 0.9,
+  "FSWTA_host_agree": 0.986
+ },
+ {
+  "seed": 101,
+  "group": "A5",
+  "K": 60,
+  "rate_step_delta": 1.0,
+  "rate_deeper_track": 0.985,
+  "SPK_same_track": 0.85,
+  "SPK_deeper_track": 0.617,
+  "SPK_host_agree_deeper": 0.933,
+  "FSWTA_deeper_track": 0.767,
+  "FSWTA_host_agree": 0.959
+ },
+ {
+  "seed": 102,
+  "group": "A5",
+  "K": 60,
+  "rate_step_delta": 1.0,
+  "rate_deeper_track": 0.985,
+  "SPK_same_track": 0.85,
+  "SPK_deeper_track": 0.767,
+  "SPK_host_agree_deeper": 0.957,
+  "FSWTA_deeper_track": 0.817,
+  "FSWTA_host_agree": 0.969
+ }
+]
