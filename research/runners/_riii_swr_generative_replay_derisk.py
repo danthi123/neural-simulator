@@ -156,9 +156,13 @@ def run_seed(seed, n_ca3=500, n_assembly=12, n_mem=3, presentations=60, drive_pA
         # Schaffer should strengthen, the held-out one's should not (a weight-level metric that does NOT need CA1
         # to pattern-separate; the formation within/cross analogue on the ca3->ca1 mapping).
         replayed, heldout = assemblies[:-1], assemblies[-1]
+        rep_pre = float(np.mean([_schaffer_weight(bridge, cp, a, ca1_idx) for a in replayed]))   # baseline AFTER formation, BEFORE replay
+        held_pre = _schaffer_weight(bridge, cp, heldout, ca1_idx)
         _replay_phase(bridge, cp, replayed, n_replay, drive_pA, gamma_on, gamma_off, rng)
         replayed_w = float(np.mean([_schaffer_weight(bridge, cp, a, ca1_idx) for a in replayed]))
         heldout_w = _schaffer_weight(bridge, cp, heldout, ca1_idx)
+        print(f"    [schaffer pre->post] replayed {rep_pre:.2f}->{replayed_w:.2f}  held-out {held_pre:.2f}->{heldout_w:.2f} "
+              f"(formation baseline should be ~4 if the gate-close froze it)", flush=True)
 
     # ca1 (Schaffer target) response to FULL assembly drive vs PARTIAL cue (completion), per assembly
     full_ca1, part_ca1 = [], []
