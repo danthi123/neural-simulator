@@ -45,12 +45,23 @@ def _speak_decode(bridge, cp, sparse_pattern, word_patterns_out, n_lang_output,
         acc += bridge.cp_firing_states[lang_out].astype(cp.float32)
     bridge.cp_external_input_current[:] = 0.0
     v = to_host(acc)
-    vn = v / (np.linalg.norm(v) + 1e-9)
-    coss = np.asarray([float(vn @ (wp / (np.linalg.norm(wp) + 1e-9))) for wp in word_patterns_out])
-    best = int(np.argmax(coss))
-    srt = np.sort(coss)[::-1]
-    margin = float(srt[0] - srt[1]) if len(srt) > 1 else float(srt[0])
-    return best, float(coss[best]), margin, float(v.sum())
+
+    def _decode(vec):
+        vn = vec / (np.linalg.norm(vec) + 1e-9)
+        cs = np.asarray([float(vn @ (wp / (np.linalg.norm(wp) + 1e-9))) for wp in word_patterns_out])
+        b = int(np.argmax(cs)); s = np.sort(cs)[::-1]
+        return b, float(s[0] - s[1]) if len(s) > 1 else float(s[0])
+
+    best, margin = _decode(v)
+    # decode-side top-k WTA diagnostic: keep only the top-k strongest-firing language_output neurons before cosine
+    # (does a competitive sparsifier recover the word band? -> if yes, a SPIKING language_output WTA is the fix).
+    topk = int((word_patterns_out[0] > 0).sum()) if hasattr(word_patterns_out[0], "sum") else 246
+    vt = v.copy()
+    if topk < len(vt):
+        thresh = np.sort(vt)[::-1][topk] if topk > 0 else 0
+        vt[vt <= thresh] = 0.0
+    best_tk, margin_tk = _decode(vt)
+    return best, best_tk, float(margin), float(margin_tk), float(v.sum())
 
 
 def _lesion_shared_to_langout(bridge, cp):
@@ -110,29 +121,30 @@ def run_seed(seed, n_concepts=64, n_train_events=400, n_lang_input=8192, n_share
     word_patterns_out = [orthogonal_drive_pattern(cue_idx=wi, n_cues=n_concepts, n_neurons=n_lang_output,
                                                   drive_max_pA=200.0, sparsity=sparsity) for wi in range(n_concepts)]
 
-    # A->W SPEAK decode: drive each concept's sparse pattern -> decode its word
-    correct = 0; margins = []; totals = []
+    # A->W SPEAK decode: drive each concept's sparse pattern -> decode its word (raw + top-k WTA diagnostic)
+    correct = 0; correct_tk = 0; margins = []; totals = []
     for wi in range(n_concepts):
-        best, cos, margin, total = _speak_decode(bridge, cp, sparse_patterns[wi], word_patterns_out, n_lang_output)
-        correct += int(best == wi); margins.append(margin); totals.append(total)
+        best, best_tk, margin, margin_tk, total = _speak_decode(bridge, cp, sparse_patterns[wi], word_patterns_out, n_lang_output)
+        correct += int(best == wi); correct_tk += int(best_tk == wi); margins.append(margin); totals.append(total)
     speak_acc = correct / n_concepts
+    speak_acc_topk = correct_tk / n_concepts
 
     # anti-cheat 3: MOAT -- a NOVEL untrained sparse pattern -> no confident decode
     novel = sorted(np.random.RandomState(seed + 99991).choice(n_shared_pool, pattern_size, replace=False).tolist())
-    _, novel_cos, novel_margin, _ = _speak_decode(bridge, cp, novel, word_patterns_out, n_lang_output)
+    _, _, novel_margin, _, _ = _speak_decode(bridge, cp, novel, word_patterns_out, n_lang_output)
 
     # anti-cheat 1: LESION shared->language_output -> decode collapses
     restore, n_les = _lesion_shared_to_langout(bridge, cp)
     les_correct = 0
     for wi in range(n_concepts):
-        best, _, _, _ = _speak_decode(bridge, cp, sparse_patterns[wi], word_patterns_out, n_lang_output)
+        best, _, _, _, _ = _speak_decode(bridge, cp, sparse_patterns[wi], word_patterns_out, n_lang_output)
         les_correct += int(best == wi)
     lesion_acc = les_correct / n_concepts
     restore()
 
     return {"seed": seed, "n_concepts": n_concepts, "speak_acc": round(speak_acc, 3),
+            "speak_acc_topk": round(speak_acc_topk, 3),
             "mean_margin": round(float(np.mean(margins)), 4), "mean_langout_spikes": round(float(np.mean(totals)), 1),
-            "novel_cos": round(novel_cos, 4),
             "novel_margin": round(novel_margin, 4), "lesion_acc": round(lesion_acc, 3), "n_lesioned": n_les}
 
 
@@ -155,9 +167,9 @@ def main():
         r = run_seed(s, n_concepts=a.n_concepts, n_train_events=a.n_train_events, n_lang_input=a.n_lang_input,
                      n_shared_pool=a.n_shared_pool, pattern_size=a.pattern_size, sparsity=a.sparsity)
         rows.append(r)
-        print(f"  [seed {s}] speak_acc={r['speak_acc']} (margin {r['mean_margin']}, langout_spikes {r['mean_langout_spikes']}) "
-              f"| MOAT novel_cos={r['novel_cos']} novel_margin={r['novel_margin']} | LESION acc={r['lesion_acc']} "
-              f"({r['n_lesioned']} syn) | n_concepts={r['n_concepts']}", flush=True)
+        print(f"  [seed {s}] speak_acc={r['speak_acc']} TOPK={r['speak_acc_topk']} (margin {r['mean_margin']}, "
+              f"langout_spikes {r['mean_langout_spikes']}) | MOAT novel_margin={r['novel_margin']} "
+              f"| LESION acc={r['lesion_acc']} ({r['n_lesioned']} syn) | n_concepts={r['n_concepts']}", flush=True)
     if a.json and rows:
         import json
         json.dump(rows, open(a.json, "w"), indent=1)
