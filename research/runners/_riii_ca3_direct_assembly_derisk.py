@@ -25,7 +25,8 @@ from research.runners._riii_ca3_coincidence_completion_derisk import _build, _se
 
 
 def run_seed(seed, n_assembly=12, n_mem=3, presentations=60, drive_pA=600.0, hebb_lr=5.0,
-            gamma_on=8, gamma_off=12, n_ca3=150, ca3_density=0.5, do_train=True, permute=False, ca3_fb_inhib=None):
+            gamma_on=8, gamma_off=12, n_ca3=150, ca3_density=0.5, do_train=True, permute=False, ca3_fb_inhib=None,
+            hebb_max=None):
     """Kopsick protocol: K disjoint sparse CA3 assemblies, each driven DIRECTLY in gamma volleys with the recurrent
     rate-window Hebbian on. Optional feedback inhibition (ca3_fb_inhib) suppresses the recurrent SPILLOVER to non-
     assembly cells (the drive selects the members; the inhibition sparsifies the rest -> cross stays low over
@@ -33,7 +34,8 @@ def run_seed(seed, n_assembly=12, n_mem=3, presentations=60, drive_pA=600.0, heb
     from sim.backend import get_backend, to_host
     cp, _ = get_backend()
     bridge = _build(seed, n_ca3=n_ca3, ca3_density=ca3_density, ca3w=6.0, coincidence=False, train=True,
-                    hebb_rate=True, hebb_lr=hebb_lr, hebb_decay=0.0, coact_thresh=0.001, ca3_fb_inhib=ca3_fb_inhib)
+                    hebb_rate=True, hebb_lr=hebb_lr, hebb_decay=0.0, coact_thresh=0.001, ca3_fb_inhib=ca3_fb_inhib,
+                    hebb_max=hebb_max)
     rm = bridge.region_manager
     ca3_idx = list(rm.indices("ca3")); ca3_set = set(int(x) for x in ca3_idx)
     ca3_arr = np.asarray(ca3_idx, dtype=np.int64)
@@ -101,6 +103,7 @@ def main():
     ap.add_argument("--gamma-on", type=int, default=8)
     ap.add_argument("--gamma-off", type=int, default=12)
     ap.add_argument("--ca3-fb-inhib", type=float, default=None, help="feedback inhibition to suppress recurrent spillover to non-members")
+    ap.add_argument("--hebb-max", type=float, default=None, help="hebbian_max_weight (raise -> within-assembly ceiling higher -> ratio past 3x toward 10x)")
     ap.add_argument("--json", default=None)
     a = ap.parse_args()
     seeds = [int(x) for x in a.seeds.split(",")]
@@ -109,7 +112,7 @@ def main():
     import json
     rows = []
     kw = dict(n_assembly=a.n_assembly, n_ca3=a.n_ca3, presentations=a.presentations, drive_pA=a.drive_pA, hebb_lr=a.hebb_lr,
-              gamma_on=a.gamma_on, gamma_off=a.gamma_off, ca3_fb_inhib=a.ca3_fb_inhib)
+              gamma_on=a.gamma_on, gamma_off=a.gamma_off, ca3_fb_inhib=a.ca3_fb_inhib, hebb_max=a.hebb_max)
     for s in seeds:
         t0 = time.time()
         tr = run_seed(s, do_train=True, **kw)
