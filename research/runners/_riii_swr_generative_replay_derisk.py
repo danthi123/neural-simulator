@@ -71,7 +71,8 @@ def _schaffer_weight(bridge, cp, pre_idx, ca1_idx):
     return float(np.mean(data[mask])) if mask.any() else 0.0
 
 
-def _replay_phase(bridge, cp, assemblies, n_replay, drive_pA, gamma_on, gamma_off, rng):
+def _replay_phase(bridge, cp, assemblies, n_replay, drive_pA, gamma_on, gamma_off, rng, replay_drive=None):
+    _rd = float(replay_drive) if replay_drive is not None else float(drive_pA)   # gentler replay cue -> sparser ca1 during potentiation
     """Rung 2 -- generative partial-cue REPLAY with Schaffer STDP: open the ca3_to_ca1 plasticity gate, then for
     n_replay cycles drive a PARTIAL cue of each assembly in gamma volleys -> the dendritic completion reactivates the
     FULL assembly (the CYCLE-1076 capstone) -> the ca3-assembly + its ca1 targets CO-FIRE -> the rate-window Hebbian
@@ -87,7 +88,7 @@ def _replay_phase(bridge, cp, assemblies, n_replay, drive_pA, gamma_on, gamma_of
                 bridge._run_one_simulation_step()
             for _v in range(3):                                  # gamma volleys (SWR ripple)
                 bridge.cp_external_input_current[:] = 0.0
-                bridge.cp_external_input_current[cue] = float(drive_pA)
+                bridge.cp_external_input_current[cue] = _rd
                 for _ in range(gamma_on):
                     bridge._run_one_simulation_step()
                 bridge.cp_external_input_current[:] = 0.0
@@ -126,7 +127,7 @@ def _scale_pathway(bridge, cp, pre_idx, post_idx, factor):
 def run_seed(seed, n_ca3=500, n_assembly=12, n_mem=3, presentations=60, drive_pA=1000.0, cue_drive=1000.0,
              hebb_lr=10.0, gamma_on=8, gamma_off=12, ca3_fb_inhib=120.0, k_thresh=20.0, plateau_strength=300.0,
              apical_R=50.0, hebb_max=120.0, schaffer_boost=6.0, ca3_to_ca1_density=0.30, ca3_density=0.5,
-             ca1_fb_inhib=None, n_replay=0, burst=True, coincidence=True):
+             ca1_fb_inhib=None, n_replay=0, replay_drive=None, burst=True, coincidence=True):
     from sim.backend import get_backend
     cp, _ = get_backend()
     bridge = _build(seed, n_ca3=n_ca3, ca3_density=ca3_density, ca3w=6.0, coincidence=coincidence, two_comp=True,
@@ -158,7 +159,7 @@ def run_seed(seed, n_ca3=500, n_assembly=12, n_mem=3, presentations=60, drive_pA
         replayed, heldout = assemblies[:-1], assemblies[-1]
         rep_pre = float(np.mean([_schaffer_weight(bridge, cp, a, ca1_idx) for a in replayed]))   # baseline AFTER formation, BEFORE replay
         held_pre = _schaffer_weight(bridge, cp, heldout, ca1_idx)
-        _replay_phase(bridge, cp, replayed, n_replay, drive_pA, gamma_on, gamma_off, rng)
+        _replay_phase(bridge, cp, replayed, n_replay, drive_pA, gamma_on, gamma_off, rng, replay_drive=replay_drive)
         replayed_w = float(np.mean([_schaffer_weight(bridge, cp, a, ca1_idx) for a in replayed]))
         heldout_w = _schaffer_weight(bridge, cp, heldout, ca1_idx)
         print(f"    [schaffer pre->post] replayed {rep_pre:.2f}->{replayed_w:.2f}  held-out {held_pre:.2f}->{heldout_w:.2f} "
@@ -192,13 +193,14 @@ def main():
     ap.add_argument("--ca3-density", type=float, default=0.5, help="ca3->ca3 recurrent density; LOWER (~0.1) = sparser recurrent -> less cross-spillover -> a BIGGER assembly (for ca1-drive) can stay SPECIFIC (the Kopsick sparse-large regime)")
     ap.add_argument("--n-replay", type=int, default=0, help="Rung 2: N generative partial-cue REPLAY cycles with ca3_to_ca1 STDP open (consolidation). 0 = Rung-1 (no replay).")
     ap.add_argument("--ca1-fb-inhib", type=float, default=None, help="CA1 feedback-inhibition weight (a ca1_pv_basket E->I->E loop) -> SPARSE ca1 firing -> reliable assembly-specific consolidation (the 6/6 lever)")
+    ap.add_argument("--replay-drive", type=float, default=None, help="replay cue drive (LOWER than the formation drive -> sparser ca1 during potentiation -> more uniform assembly-specific consolidation across seeds)")
     ap.add_argument("--json", default=None)
     a = ap.parse_args()
     seeds = [int(x) for x in a.seeds.split(",")]
     import json
     kw = dict(n_ca3=a.n_ca3, n_assembly=a.n_assembly, presentations=a.presentations, schaffer_boost=a.schaffer_boost,
               k_thresh=a.k_thresh, ca3_to_ca1_density=a.ca3_to_ca1_density, ca3_density=a.ca3_density,
-              ca1_fb_inhib=a.ca1_fb_inhib)
+              ca1_fb_inhib=a.ca1_fb_inhib, replay_drive=a.replay_drive)
     if a.n_replay > 0:
         # RUNG 2: does generative partial-cue REPLAY (ca3_to_ca1 STDP) make the ca1 pattern ASSEMBLY-SPECIFIC (match >
         # cross), where NO-replay leaves it non-specific (CA1 is not a separator; the specificity is LEARNED)?
