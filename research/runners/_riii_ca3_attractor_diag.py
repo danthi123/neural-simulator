@@ -18,13 +18,15 @@ from research.runners.validate_trisynaptic_loop import build_drive_pattern
 
 
 def run(seed=42, n_mem=2, train_events=100, drive_pA=200.0, n_lang=384, n_ca3=150, n_dg=300,
-        ca3_density=0.5, ca3_weight=6.0, hebb_max=30.0, hebb_lr=None, hebb_decay=None, hebb_sym=False, reset_steps=15, drive_steps=55):
+        ca3_density=0.5, ca3_weight=6.0, hebb_max=30.0, hebb_lr=None, hebb_decay=None, hebb_sym=False,
+        hebb_rate=False, coact_decay=None, coact_thresh=None, reset_steps=15, drive_steps=55):
     from sim.backend import get_backend, to_host, get_sparse_module
     cp, _ = get_backend()
     csp = get_sparse_module()
     bridge = _build(seed, n_lang=n_lang, n_ca3=n_ca3, n_dg=n_dg, ca3_density=ca3_density, ca3w=ca3_weight,
                     coincidence=True, weighted=True, train=True, hebb_max=hebb_max, hebb_lr=hebb_lr,
-                    hebb_decay=hebb_decay, hebb_sym=hebb_sym)
+                    hebb_decay=hebb_decay, hebb_sym=hebb_sym, hebb_rate=hebb_rate,
+                    coact_decay=coact_decay, coact_thresh=coact_thresh)
     rm = bridge.region_manager
     lang = np.asarray(list(rm.indices("language_input")), dtype=np.int64)
     ca3_idx = list(rm.indices("ca3")); ca3_arr = cp.asarray(ca3_idx, dtype=cp.int64)
@@ -120,11 +122,15 @@ def main():
     ap.add_argument("--ca3-density", type=float, default=0.5)
     ap.add_argument("--drive-pA", type=float, default=200.0, help="encoding drive: LOWER -> fewer CA3 fire -> sparser ensemble -> more within-ensemble-specific coincidence (D.12 sparsity lever)")
     ap.add_argument("--hebb-decay", type=float, default=None, help="hebbian_weight_decay; set 0 to test offset-vs-decay")
-    ap.add_argument("--hebb-sym", action="store_true", help="SYMMETRIC (offset-free) co-activity Hebbian -- the CA3 attractor-formation fix")
+    ap.add_argument("--hebb-sym", action="store_true", help="SYMMETRIC (offset-free) per-step co-activity Hebbian")
+    ap.add_argument("--hebb-rate", action="store_true", help="RATE-WINDOW co-activity Hebbian (BCM; the robust attractor-formation rule)")
+    ap.add_argument("--coact-decay", type=float, default=None, help="co-activity trace decay (default 0.9)")
+    ap.add_argument("--coact-thresh", type=float, default=None, help="co-activity potentiation threshold (default 0.25)")
     a = ap.parse_args()
     t0 = time.time()
     run(seed=a.seed, train_events=a.train_events, hebb_max=a.hebb_max, hebb_lr=a.hebb_lr,
-        ca3_density=a.ca3_density, drive_pA=a.drive_pA, hebb_decay=a.hebb_decay, hebb_sym=a.hebb_sym)
+        ca3_density=a.ca3_density, drive_pA=a.drive_pA, hebb_decay=a.hebb_decay, hebb_sym=a.hebb_sym,
+        hebb_rate=a.hebb_rate, coact_decay=a.coact_decay, coact_thresh=a.coact_thresh)
     print(f"  ({time.time()-t0:.0f}s)", flush=True)
 
 

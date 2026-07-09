@@ -374,6 +374,18 @@ class CoreSimConfig:
     # (Schaffer/associational) LTP is associative/Hebbian (Kandel 6e Ch 54; Marr 1971 autoassociator). Additive,
     # guarded; default False is byte-identical to the prior behavior.
     hebbian_symmetric: bool = False
+    # RATE-WINDOW co-activity Hebbian (BCM / rate-Hebbian; CLAUDE.md CYCLE 95-96). Default False. The per-step
+    # SYMMETRIC rule (hebbian_symmetric) only potentiates on EXACT same-step co-spikes, which are rare when the
+    # ensemble fires ASYNCHRONOUSLY (sparse, not step-locked) -> it forms only a WEAK attractor (~1.15x, saturating).
+    # This rule instead potentiates a plastic synapse proportional to the product of a per-neuron CO-ACTIVITY TRACE
+    # (a decaying low-pass of firing: trace = trace*decay + fired_this_step) at both endpoints -- so two neurons that
+    # are BOTH ACTIVE over the window (regardless of exact-step alignment) potentiate, reaching a STRONG separation
+    # the async-limited per-step rule cannot. Biology: rate/BCM co-activity LTP (the CA3 associational autoassociator,
+    # Kandel 6e Ch 54; Marr 1971). Additive, guarded; default False is byte-identical (the trace array is None and
+    # the rate-window branch is unreached).
+    hebbian_rate_window: bool = False
+    hebbian_coactivity_decay: float = 0.9      # per-step decay of the co-activity trace (~10-step window)
+    hebbian_coactivity_thresh: float = 0.25    # min trace[pre]*trace[post] to potentiate (sparsity/specificity gate)
     enable_short_term_plasticity: bool = True
     stp_U: float = 0.15          # Global fallback U (used when per-type not available)
     stp_tau_d: float = 200.0     # Global fallback tau_d (ms)

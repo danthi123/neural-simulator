@@ -27,7 +27,8 @@ from research.runners.validate_trisynaptic_loop import measure_region_response, 
 
 def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0, ca3_density=0.5,
            coincidence=True, k_thresh=18.0, plateau_strength=120.0, weighted=True, two_comp=False, train=True,
-           hebb_max=None, mg=None, apical_R=None, apical_gc=None, hebb_lr=None, hebb_decay=None, hebb_sym=False):
+           hebb_max=None, mg=None, apical_R=None, apical_gc=None, hebb_lr=None, hebb_decay=None, hebb_sym=False,
+           hebb_rate=False, coact_decay=None, coact_thresh=None):
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.bridge import SimulationBridge
     from research.runners.text_minimal_isolation import build_biological_brain_regions
@@ -55,6 +56,12 @@ def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0,
         cfg.hebbian_weight_decay = float(hebb_decay)  # decay-off test: distinguishes "offset never satisfied" from "decay eats the potentiation"
     if hebb_sym:
         cfg.hebbian_symmetric = True   # offset-free co-activity: potentiate synchronously-co-firing ensemble members (the CA3 attractor fix)
+    if hebb_rate:
+        cfg.hebbian_rate_window = True  # windowed co-activity (BCM/rate-Hebbian): the robust attractor-formation rule
+        if coact_decay is not None:
+            cfg.hebbian_coactivity_decay = float(coact_decay)
+        if coact_thresh is not None:
+            cfg.hebbian_coactivity_thresh = float(coact_thresh)
     # ROOT-CAUSE FIX (CYCLE 1066): hebbian_max_weight defaults to 1.0, so the active rate-Hebbian rule DRIVES the
     # ca3->ca3 recurrents (init ca3w=6) DOWN toward 1.0 -> it FLATTENS the attractor instead of potentiating within-
     # ensemble co-active pairs. Raise it above the design weight so rate-Hebbian can WRITE the specific attractor.

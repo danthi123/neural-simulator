@@ -410,6 +410,7 @@ class SimulationBridge:
 
         self.cp_neuron_firing_thresholds = None
         self.cp_neuron_activity_ema = None
+        self.cp_hebb_coactivity_trace = None       # per-neuron decaying firing trace for the RATE-WINDOW Hebbian (None unless cfg.hebbian_rate_window)
         self.cp_dendritic_source_activity = None   # per-source firing EMA for the dendritic divisive gain (None unless enable_dendritic_divisive_gain)
 
         # Per-neuron GABA_A reversal potential (mV). Defaults to a uniform
@@ -1460,8 +1461,11 @@ class SimulationBridge:
                 self.cp_conductance_g_graded_plateau_rise = cp.zeros(n, dtype=cp.float32)
 
             self.cp_refractory_timers = cp.zeros(n, dtype=cp.int32)
-            self.cp_neuron_activity_ema = cp.zeros(n, dtype=cp.float32) 
-            self.cp_viz_activity_timers = cp.zeros(n, dtype=cp.int32) 
+            self.cp_neuron_activity_ema = cp.zeros(n, dtype=cp.float32)
+            self.cp_viz_activity_timers = cp.zeros(n, dtype=cp.int32)
+            # RATE-WINDOW Hebbian co-activity trace (guarded: allocated only when enabled; else None -> byte-identical)
+            if getattr(self.core_config, "hebbian_rate_window", False):
+                self.cp_hebb_coactivity_trace = cp.zeros(n, dtype=cp.float32)
 
             # Dendritic per-presynaptic-source divisive gain (D2 Phase 1): a dedicated per-source firing
             # EMA, allocated only when the feature is on. Left None otherwise so the gain block + the
@@ -6937,28 +6941,52 @@ class SimulationBridge:
             # --- 4. Hebbian Learning (Long-Term Potentiation/Depression) ---
             if _plasticity_gated and cfg.enable_hebbian_learning and self.cp_connections.nnz > 0 and \
                self.cp_connections.data is not None and self.cp_connections.data.size > 0:
+                # RATE-WINDOW co-activity trace (BCM/rate-Hebbian; guarded, updated EVERY step). trace = trace*decay
+                # + (1-decay)*fired -> a per-neuron EMA in [0,1]; two neurons BOTH active over the window potentiate
+                # regardless of exact-step spike alignment -- the fix for a recurrent autoassociator (CA3) whose
+                # members fire asynchronously, which the per-step spike-coincidence rule cannot form.
+                _rate_win = getattr(cfg, "hebbian_rate_window", False) and self.cp_hebb_coactivity_trace is not None
+                if _rate_win:
+                    _cd = cp.float32(getattr(cfg, "hebbian_coactivity_decay", 0.9))
+                    self.cp_hebb_coactivity_trace = (self.cp_hebb_coactivity_trace * _cd
+                                                     + (1.0 - _cd) * fired_this_step.astype(cp.float32))
                 if _prev_any and _fired_any:
                     coo_matrix_heb = self._get_cached_coo()  # Use cached COO
-                    # SYMMETRIC (offset-free) co-activity: pre fires in the SAME step as post (fired_this_step for
-                    # both) -- the associative form needed to potentiate a recurrent autoassociator whose members
-                    # fire synchronously (CA3). Default (flag off) = the causal rule: pre fired at t-1 (prev_firing).
-                    if getattr(cfg, "hebbian_symmetric", False):
-                        pre_fired_mask_heb = fired_this_step[coo_matrix_heb.row]
-                    else:
-                        pre_fired_mask_heb = self.cp_prev_firing_states[coo_matrix_heb.row]
-                    post_fired_mask_heb = fired_this_step[coo_matrix_heb.col]
-
-                    active_synapse_indices_heb = cp.where(pre_fired_mask_heb & post_fired_mask_heb)[0]
+                    base_weights_data_array = self.cp_connections.data
                     num_potentiation_events = 0
-                    if active_synapse_indices_heb.size > 0:
-                        base_weights_data_array = self.cp_connections.data
-                        current_weights_active_syn = base_weights_data_array[active_synapse_indices_heb]
-                        delta_weights = cfg.hebbian_learning_rate * (cfg.hebbian_max_weight - current_weights_active_syn)
-                        # Per-pathway plasticity gain (Stage 1, 2026-04-27)
-                        if self.cp_plasticity_rate_gain is not None:
-                            delta_weights = delta_weights * self.cp_plasticity_rate_gain[active_synapse_indices_heb]
-                        base_weights_data_array[active_synapse_indices_heb] += delta_weights
-                        num_potentiation_events = active_synapse_indices_heb.size
+                    if _rate_win:
+                        # RATE-WINDOW: potentiate by the co-activity-trace PRODUCT at the two endpoints, for synapses
+                        # whose product exceeds the specificity threshold; graded delta ∝ coactivity × (max - w).
+                        _tr = self.cp_hebb_coactivity_trace
+                        _coact = _tr[coo_matrix_heb.row] * _tr[coo_matrix_heb.col]
+                        active_synapse_indices_heb = cp.where(
+                            _coact > cp.float32(getattr(cfg, "hebbian_coactivity_thresh", 0.25)))[0]
+                        if active_synapse_indices_heb.size > 0:
+                            current_weights_active_syn = base_weights_data_array[active_synapse_indices_heb]
+                            delta_weights = (cfg.hebbian_learning_rate * _coact[active_synapse_indices_heb]
+                                             * (cfg.hebbian_max_weight - current_weights_active_syn))
+                            if self.cp_plasticity_rate_gain is not None:
+                                delta_weights = delta_weights * self.cp_plasticity_rate_gain[active_synapse_indices_heb]
+                            base_weights_data_array[active_synapse_indices_heb] += delta_weights
+                            num_potentiation_events = active_synapse_indices_heb.size
+                    else:
+                        # SYMMETRIC (offset-free) co-activity: pre fires in the SAME step as post (fired_this_step for
+                        # both) -- the associative form for a synchronously-firing recurrent autoassociator (CA3).
+                        # Default (both flags off) = the causal rule: pre fired at t-1 (prev_firing).
+                        if getattr(cfg, "hebbian_symmetric", False):
+                            pre_fired_mask_heb = fired_this_step[coo_matrix_heb.row]
+                        else:
+                            pre_fired_mask_heb = self.cp_prev_firing_states[coo_matrix_heb.row]
+                        post_fired_mask_heb = fired_this_step[coo_matrix_heb.col]
+                        active_synapse_indices_heb = cp.where(pre_fired_mask_heb & post_fired_mask_heb)[0]
+                        if active_synapse_indices_heb.size > 0:
+                            current_weights_active_syn = base_weights_data_array[active_synapse_indices_heb]
+                            delta_weights = cfg.hebbian_learning_rate * (cfg.hebbian_max_weight - current_weights_active_syn)
+                            # Per-pathway plasticity gain (Stage 1, 2026-04-27)
+                            if self.cp_plasticity_rate_gain is not None:
+                                delta_weights = delta_weights * self.cp_plasticity_rate_gain[active_synapse_indices_heb]
+                            base_weights_data_array[active_synapse_indices_heb] += delta_weights
+                            num_potentiation_events = active_synapse_indices_heb.size
 
                     # Skip global weight decay during experiments: over 50K training steps,
                     # decay (1-1e-5)^50000 ≈ 0.61 destroys 40% of non-STDP-reinforced weights,
