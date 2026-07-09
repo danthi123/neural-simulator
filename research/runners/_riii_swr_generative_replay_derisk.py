@@ -57,6 +57,32 @@ def _recall_burst(bridge, cp, cue_cells, read_cells, drive_pA, n_volley=6, gamma
     return to_host(acc)
 
 
+def _replay_phase(bridge, cp, assemblies, n_replay, drive_pA, gamma_on, gamma_off, rng):
+    """Rung 2 -- generative partial-cue REPLAY with Schaffer STDP: open the ca3_to_ca1 plasticity gate, then for
+    n_replay cycles drive a PARTIAL cue of each assembly in gamma volleys -> the dendritic completion reactivates the
+    FULL assembly (the CYCLE-1076 capstone) -> the ca3-assembly + its ca1 targets CO-FIRE -> the rate-window Hebbian
+    potentiates the assembly-specific ca3->ca1 mapping (systems consolidation, McClelland 1995 / Buzsaki 2015). This
+    is the GENERATIVE aspect: the replay trigger is a DEGRADED (partial) cue, not the full tag."""
+    bridge.set_plasticity_gate("ca3_to_ca1", 1.0)                # open the Schaffer STDP (closed during formation)
+    for _ in range(n_replay):
+        for asm in assemblies:
+            a = asm.copy(); rng.shuffle(a)
+            cue = cp.asarray(a[:len(a) // 2], dtype=cp.int64)    # PARTIAL cue -> completion fills the rest
+            bridge.cp_external_input_current[:] = 0.0
+            for _ in range(6):
+                bridge._run_one_simulation_step()
+            for _v in range(3):                                  # gamma volleys (SWR ripple)
+                bridge.cp_external_input_current[:] = 0.0
+                bridge.cp_external_input_current[cue] = float(drive_pA)
+                for _ in range(gamma_on):
+                    bridge._run_one_simulation_step()
+                bridge.cp_external_input_current[:] = 0.0
+                for _ in range(gamma_off):
+                    bridge._run_one_simulation_step()
+    bridge.set_plasticity_gate("ca3_to_ca1", 0.0)                # close the gate (freeze the consolidated mapping)
+    bridge.cp_external_input_current[:] = 0.0
+
+
 def _cos(a, b):
     a = np.asarray(a, dtype=np.float64); b = np.asarray(b, dtype=np.float64)
     na, nb = np.linalg.norm(a), np.linalg.norm(b)
@@ -86,7 +112,7 @@ def _scale_pathway(bridge, cp, pre_idx, post_idx, factor):
 def run_seed(seed, n_ca3=500, n_assembly=12, n_mem=3, presentations=60, drive_pA=1000.0, cue_drive=1000.0,
              hebb_lr=10.0, gamma_on=8, gamma_off=12, ca3_fb_inhib=120.0, k_thresh=20.0, plateau_strength=300.0,
              apical_R=50.0, hebb_max=120.0, schaffer_boost=6.0, ca3_to_ca1_density=0.30, ca3_density=0.5,
-             burst=True, coincidence=True):
+             n_replay=0, burst=True, coincidence=True):
     from sim.backend import get_backend
     cp, _ = get_backend()
     bridge = _build(seed, n_ca3=n_ca3, ca3_density=ca3_density, ca3w=6.0, coincidence=coincidence, two_comp=True,
@@ -108,6 +134,8 @@ def run_seed(seed, n_ca3=500, n_assembly=12, n_mem=3, presentations=60, drive_pA
     perm = rng.permutation(ca3_idx)
     assemblies = [np.array(perm[m * n_assembly:(m + 1) * n_assembly], dtype=np.int64) for m in range(n_mem)]
     _train_assemblies(bridge, cp, assemblies, presentations, drive_pA, gamma_on, gamma_off)
+    if n_replay > 0:                                              # Rung 2: generative partial-cue replay consolidates ca3->ca1
+        _replay_phase(bridge, cp, assemblies, n_replay, drive_pA, gamma_on, gamma_off, rng)
 
     # ca1 (Schaffer target) response to FULL assembly drive vs PARTIAL cue (completion), per assembly
     full_ca1, part_ca1 = [], []
@@ -135,14 +163,37 @@ def main():
     ap.add_argument("--k-thresh", type=float, default=20.0, help="completion plateau threshold; must be re-tuned UP for a bigger assembly (the cross/within drive scales with the cue size)")
     ap.add_argument("--ca3-to-ca1-density", type=float, default=0.30, help="Schaffer density; raise (~0.9) so the SMALL specific 12-cell completion gives enough convergence to drive ca1 (keeps the validated completion, avoids the big-assembly non-specificity)")
     ap.add_argument("--ca3-density", type=float, default=0.5, help="ca3->ca3 recurrent density; LOWER (~0.1) = sparser recurrent -> less cross-spillover -> a BIGGER assembly (for ca1-drive) can stay SPECIFIC (the Kopsick sparse-large regime)")
+    ap.add_argument("--n-replay", type=int, default=0, help="Rung 2: N generative partial-cue REPLAY cycles with ca3_to_ca1 STDP open (consolidation). 0 = Rung-1 (no replay).")
     ap.add_argument("--json", default=None)
     a = ap.parse_args()
     seeds = [int(x) for x in a.seeds.split(",")]
-    print(f"[R-iii SWR GEN-REPLAY Rung1] n_ca3={a.n_ca3} n_assembly={a.n_assembly} pres={a.presentations} "
-          f"| partial-cue completion -> ca1 (Schaffer) pattern: correct + specific?", flush=True)
     import json
     kw = dict(n_ca3=a.n_ca3, n_assembly=a.n_assembly, presentations=a.presentations, schaffer_boost=a.schaffer_boost,
               k_thresh=a.k_thresh, ca3_to_ca1_density=a.ca3_to_ca1_density, ca3_density=a.ca3_density)
+    if a.n_replay > 0:
+        # RUNG 2: does generative partial-cue REPLAY (ca3_to_ca1 STDP) make the ca1 pattern ASSEMBLY-SPECIFIC (match >
+        # cross), where NO-replay leaves it non-specific (CA1 is not a separator; the specificity is LEARNED)?
+        print(f"[R-iii SWR GEN-REPLAY Rung2] n_ca3={a.n_ca3} n_assembly={a.n_assembly} ca3_density={a.ca3_density} "
+              f"k={a.k_thresh} n_replay={a.n_replay} | does replay CONSOLIDATE an assembly-specific ca1 code?", flush=True)
+        rows = []
+        for s in seeds:
+            t0 = time.time()
+            rep = run_seed(s, coincidence=True, n_replay=a.n_replay, **kw)
+            nore = run_seed(s, coincidence=True, n_replay=0, **kw)
+            rep_gap = rep["match"] - rep["cross"]; nore_gap = nore["match"] - nore["cross"]
+            rows.append({"seed": s, "rep_match": rep["match"], "rep_cross": rep["cross"], "rep_gap": rep_gap,
+                         "nore_gap": nore_gap})
+            print(f"  [seed {s}] REPLAY match={rep['match']:.3f} cross={rep['cross']:.3f} gap={rep_gap:+.3f} | "
+                  f"NO-REPLAY gap={nore_gap:+.3f} | ca1_fire={rep['ca1_fire']:.1f} ({time.time()-t0:.0f}s)", flush=True)
+        if a.json and rows:
+            json.dump(rows, open(a.json, "w"), indent=1)
+        rg = [r["rep_gap"] for r in rows]; ng = [r["nore_gap"] for r in rows]
+        go = all(x > 0.15 for x in rg) and all(rr - nn > 0.10 for rr, nn in zip(rg, ng))
+        print(f"\n  AGGREGATE: REPLAY specificity-gap={np.mean(rg):+.3f} vs NO-REPLAY gap={np.mean(ng):+.3f}", flush=True)
+        print(f"  VERDICT: {'GO' if go else 'PARTIAL/NEGATIVE'} -- {'generative partial-cue REPLAY (ca3_to_ca1 STDP) CONSOLIDATES an assembly-specific ca1 code (replay gap > 0.15 AND > the no-replay gap) = the pattern is learned into the Schaffer mapping from a DEGRADED cue = the SWR generative-replay loop closes' if go else 'replay does not yet build a specific ca1 code above the no-replay control; raise n_replay / assembly size (stronger ca1-drive) / STDP rate'}. NO sim/ edit.", flush=True)
+        return
+    print(f"[R-iii SWR GEN-REPLAY Rung1] n_ca3={a.n_ca3} n_assembly={a.n_assembly} pres={a.presentations} "
+          f"| partial-cue completion -> ca1 (Schaffer) pattern: correct + specific?", flush=True)
     rows = []
     for s in seeds:
         t0 = time.time()
@@ -159,7 +210,7 @@ def main():
         go = (all(x > 0.50 for x in m) and all(mm - cc > 0.20 for mm, cc in zip(m, c))
               and all(mm - ll > 0.20 for mm, ll in zip(m, lm)))
         print(f"\n  AGGREGATE: MATCH={np.mean(m):.3f} cross={np.mean(c):.3f} LINEAR-match={np.mean(lm):.3f}", flush=True)
-        print(f"  VERDICT: {'GO' if go else 'PARTIAL/NEGATIVE'} -- {'the partial-cue CA3 completion drives the CORRECT + assembly-SPECIFIC ca1 (Schaffer) pattern (match > cross, and > the linear no-completion control) = generative replay can carry a full pattern to the consolidation target from a DEGRADED cue -> Rung 2 (open ca3_to_ca1 STDP + show consolidation)' if go else 'the completion does not yet drive a clean specific ca1 pattern; check the Schaffer drive / read window'}. NO sim/ edit.", flush=True)
+        print(f"  VERDICT: {'GO' if go else 'PARTIAL/NEGATIVE'} -- {'the partial-cue CA3 completion drives the CORRECT + assembly-SPECIFIC ca1 pattern' if go else 'ca1 pattern non-specific at Rung-1 (CA1 is not a separator -> specificity is a LEARNED job; run --n-replay for Rung 2)'}. NO sim/ edit.", flush=True)
 
 
 if __name__ == "__main__":
