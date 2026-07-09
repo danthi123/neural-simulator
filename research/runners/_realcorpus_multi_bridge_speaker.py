@@ -14,14 +14,16 @@ from research.runners._realcorpus_train_breadth_aw import VOCAB as V1, WORD_TO_P
 from research.runners._realcorpus_train_breadth_aw2 import VOCAB as V2, WORD_TO_POOL as P2
 from research.runners._realcorpus_train_breadth_aw3 import VOCAB as V3, WORD_TO_POOL as P3
 from research.runners._realcorpus_train_breadth_aw4 import VOCAB as V4, WORD_TO_POOL as P4
+from research.runners._realcorpus_train_breadth_aw5 import VOCAB as V5, WORD_TO_POOL as P5
 
 BRIDGE1 = "bridges/breadth_aw/seed42.simstate.h5"
 BRIDGE2 = "bridges/breadth_aw2/seed42.simstate.h5"
 BRIDGE3 = "bridges/breadth_aw3/seed42.simstate.h5"
 BRIDGE4 = "bridges/breadth_aw4/seed42.simstate.h5"    # ditransitive verbs + theme nouns + PP preps (to/on) + spatial nouns
+BRIDGE5 = "bridges/breadth_aw5/seed42.simstate.h5"    # adjectives + everyday nouns + common verbs (16 new words -> 77 total)
 
 # (path, vocab, word_to_pool) per bridge; earlier bridges WIN on overlap ("rock" is in aw2 AND aw4 -> aw2 wins).
-DEFAULT_BRIDGES = [(BRIDGE1, V1, P1), (BRIDGE2, V2, P2), (BRIDGE3, V3, P3), (BRIDGE4, V4, P4)]
+DEFAULT_BRIDGES = [(BRIDGE1, V1, P1), (BRIDGE2, V2, P2), (BRIDGE3, V3, P3), (BRIDGE4, V4, P4), (BRIDGE5, V5, P5)]
 
 
 class MultiBridgeFrameSpeaker:
