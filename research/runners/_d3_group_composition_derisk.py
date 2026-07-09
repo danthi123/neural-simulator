@@ -96,13 +96,14 @@ def make_group_task(group_name, seed, n_pool=64, code_k=None, noise=0.6,
 
     def gen(lens, n_each):
         Lmax = max(test_lens + train_lens)
-        X, Y, L, SEQ = [], [], [], []
+        X, Y, L, SEQ, STATE = [], [], [], [], []
         for L_ in lens:
             for _ in range(n_each):
                 gidx = rng.randint(0, K, size=L_)               # sequence of element indices
-                s = ident
-                for g in gidx:
+                s = ident; s_seq = np.full(Lmax, -1, dtype=np.int64)
+                for t, g in enumerate(gidx):
                     s = mul[s, g]                               # s <- s * g  (LEFT-to-RIGHT ordered product)
+                    s_seq[t] = s                                # the running state AFTER step t (for intermediate sup)
                 seq_codes = np.full((Lmax, n_pool), 0.0, dtype=np.float32)   # zero-pad past the real length
                 for t, g in enumerate(gidx):
                     c = base[g].copy()
@@ -110,9 +111,9 @@ def make_group_task(group_name, seed, n_pool=64, code_k=None, noise=0.6,
                     c[flip] = -c[flip]
                     seq_codes[t] = c
                 X.append(seq_codes); Y.append(int(color[s])); L.append(L_)
-                SEQ.append(np.pad(gidx, (0, Lmax - L_), constant_values=-1))
+                SEQ.append(np.pad(gidx, (0, Lmax - L_), constant_values=-1)); STATE.append(s_seq)
         return (np.asarray(X, dtype=np.float32), np.asarray(Y, dtype=np.int64),
-                np.asarray(L, dtype=np.int64), np.asarray(SEQ, dtype=np.int64))
+                np.asarray(L, dtype=np.int64), np.asarray(SEQ, dtype=np.int64), np.asarray(STATE, dtype=np.int64))
 
     tr = gen(train_lens, n_per_len)
     te_same = gen(train_lens, n_per_len // 2)                    # LEARNABILITY oracle: NEW seqs at TRAIN lengths
@@ -272,11 +273,70 @@ def bptt_rnn(task, n_hid=128, epochs=60, lr=0.05, batch=128, seed=42, lesion_rec
             if not lesion_recurrent:
                 Wrec -= lr * dWrec
     # eval both splits (same-length learnability + held-out-deeper generalization)
-    Xsm, ysm, Lsm, _ = task["test_same"]
+    Xsm, ysm, Lsm, _, _ = task["test_same"]
     _, hLsm = run_batch(Xsm, Lsm)
     _, hLte = run_batch(Xte, Lte)
     return {"same": float(((hLsm @ Wout.T + bout).argmax(1) == ysm).mean()),
             "deeper": float(((hLte @ Wout.T + bout).argmax(1) == yte).mean())}
+
+
+def bptt_rnn_state_supervised(task, n_hid=128, epochs=80, lr=0.05, batch=128, seed=42, orthogonal_rec=False):
+    """STATE-SUPERVISED BPTT-RNN (the length-generalization lever): a per-step K-way read-out is trained to predict the
+    RUNNING GROUP STATE s_t at EVERY step (not just the final property). This forces the RNN to learn the group-
+    multiplication UPDATE RULE (h_t -> s_t), which then generalizes to ANY length. Biologically apt (per-step feedback);
+    the known algorithmic length-generalization fix. Eval = STATE-TRACKING accuracy of the FINAL state s_L on each split
+    (does it track the running product at held-out-DEEPER lengths?) + the derived PROPERTY acc (color[pred s_L])."""
+    rng = np.random.RandomState(seed + 5)
+    n_pool = task["n_pool"]; K = task["K"]
+    Win = (rng.randn(n_hid, n_pool) * np.sqrt(1.0 / n_pool)).astype(np.float32)
+    Wrec = (np.linalg.qr(rng.randn(n_hid, n_hid))[0].astype(np.float32) if orthogonal_rec
+            else (rng.randn(n_hid, n_hid) * np.sqrt(1.0 / n_hid)).astype(np.float32))
+    Ws = (rng.randn(K, n_hid) * np.sqrt(1.0 / n_hid)).astype(np.float32); bs = np.zeros(K, dtype=np.float32)
+    color = task["color"]
+    Xtr, ytr, Ltr, _, Str = task["train"]
+    N = len(Ltr)
+
+    def forward(Xb, Lb):
+        B = len(Lb); Lmax = int(Lb.max())
+        Hs = np.zeros((Lmax + 1, B, n_hid), dtype=np.float32)
+        for t in range(Lmax):
+            Hs[t + 1] = np.tanh(Hs[t] @ Wrec.T + Xb[:, t] @ Win.T)
+        return Hs
+
+    def eval_split(split):
+        Xe, ye, Le, _, Se = task[split]
+        Hs = forward(Xe, Le); B = len(Le)
+        hL = Hs[Le, np.arange(B)]                                # final state per sample
+        pred_state = (hL @ Ws.T + bs).argmax(1)
+        true_state = Se[np.arange(B), Le - 1]
+        state_acc = float((pred_state == true_state).mean())
+        prop_acc = float((color[pred_state] == ye).mean())
+        return state_acc, prop_acc
+
+    for ep in range(epochs):
+        order = rng.permutation(N)
+        for i in range(0, N, batch):
+            bi = order[i:i + batch]; Xb = Xtr[bi]; Lb = Ltr[bi]; Sb = Str[bi]
+            B = len(bi); Lmax = int(Lb.max())
+            Hs = forward(Xb, Lb)
+            dWin = np.zeros_like(Win); dWrec = np.zeros_like(Wrec); dWs = np.zeros_like(Ws); dbs = np.zeros_like(bs)
+            dH_next = np.zeros((B, n_hid), dtype=np.float32)
+            for t in range(Lmax, 0, -1):                         # backward; state read-out at Hs[t] predicts Sb[:,t-1]
+                valid = (Lb >= t)                                # samples still active at step t
+                logits = Hs[t] @ Ws.T + bs
+                ex = np.exp(logits - logits.max(1, keepdims=True)); sm = ex / ex.sum(1, keepdims=True)
+                tgt = Sb[:, t - 1]
+                d = sm.copy()
+                d[np.arange(B), np.clip(tgt, 0, K - 1)] -= 1.0
+                d *= valid[:, None] / max(valid.sum(), 1)        # mask + normalize by active count
+                dWs += d.T @ Hs[t]; dbs += d.sum(0)
+                dh = dH_next + d @ Ws
+                dpre = dh * (1.0 - Hs[t] ** 2)
+                dWin += dpre.T @ Xb[:, t - 1]; dWrec += dpre.T @ Hs[t - 1]
+                dH_next = dpre @ Wrec
+            Win -= lr * dWin; Wrec -= lr * dWrec; Ws -= lr * dWs; bs -= lr * dbs
+    ss_same, ps_same = eval_split("test_same"); ss_deep, ps_deep = eval_split("test_deeper")
+    return {"same": ps_same, "deeper": ps_deep, "state_same": ss_same, "state_deeper": ss_deep}
 
 
 # ---------------------------------------------------------------- anti-cheats + driver -------------------------
@@ -286,7 +346,7 @@ def order_control(task, seed=42):
     order, it's using a count/multiset shortcut, not the ordered composition. Returns the fraction of test sequences
     whose target CHANGES under a random reshuffle (a task property: high => order genuinely matters)."""
     mul = task["mul"]; color = task["color"]; ident = task["ident"]
-    Xte, yte, Lte, SEQ = task["test_deeper"]
+    Xte, yte, Lte, SEQ, _ = task["test_deeper"]
     rng = np.random.RandomState(seed + 11)
     changed = 0; tot = 0
     for n in range(len(Lte)):
@@ -304,7 +364,7 @@ def order_control(task, seed=42):
 def markov_floor(task):
     """1-hop / last-element floor: predict the target from ONLY the last element's code (a 1st-order shortcut).
     A ridge on the last real element's code -> its held-out-deeper acc = the no-composition floor."""
-    Xtr, ytr, Ltr, _ = task["train"]; Xte, yte, Lte, _ = task["test_deeper"]
+    Xtr, ytr, Ltr, _, _ = task["train"]; Xte, yte, Lte, _, _ = task["test_deeper"]
     last_tr = Xtr[np.arange(len(Ltr)), Ltr - 1]; last_te = Xte[np.arange(len(Lte)), Lte - 1]
     Y = np.eye(2, dtype=np.float32)[ytr]
     A = last_tr.T @ last_tr + 1e-2 * np.eye(last_tr.shape[1], dtype=np.float32)
@@ -320,6 +380,7 @@ def run_seed(group_name, seed, n_pool=64, noise=0.6, n_per_len=1200, epochs=60, 
     res = reservoir_ridge(task, seed=seed)
     rnn = bptt_rnn(task, seed=seed, epochs=epochs, n_hid=n_hid, orthogonal_rec=orthogonal_rec)
     rnn_les = bptt_rnn(task, seed=seed, epochs=epochs, n_hid=n_hid, lesion_recurrent=True)
+    ss = bptt_rnn_state_supervised(task, seed=seed, epochs=epochs, n_hid=n_hid, orthogonal_rec=orthogonal_rec)
     mk = markov_floor(task)
     order_matters = order_control(task, seed=seed)
     return {"seed": seed, "group": group_name, "K": task["K"], "chance": 0.5,
@@ -327,9 +388,9 @@ def run_seed(group_name, seed, n_pool=64, noise=0.6, n_per_len=1200, epochs=60, 
             "reservoir_same": round(res["same"], 3), "reservoir_deeper": round(res["deeper"], 3),
             "rnn_same": round(rnn["same"], 3), "rnn_deeper": round(rnn["deeper"], 3),
             "rnn_lesion_same": round(rnn_les["same"], 3), "rnn_lesion_deeper": round(rnn_les["deeper"], 3),
-            "markov_floor_deeper": round(mk, 3), "order_matters_frac": round(order_matters, 3),
-            "rnn_minus_ff_deeper": round(rnn["deeper"] - ff["deeper"], 3),
-            "rnn_minus_ff_same": round(rnn["same"] - ff["same"], 3)}
+            "state_sup_prop_same": round(ss["same"], 3), "state_sup_prop_deeper": round(ss["deeper"], 3),
+            "state_sup_track_same": round(ss["state_same"], 3), "state_sup_track_deeper": round(ss["state_deeper"], 3),
+            "markov_floor_deeper": round(mk, 3), "order_matters_frac": round(order_matters, 3)}
 
 
 def main():
@@ -357,24 +418,23 @@ def main():
         r = run_seed(a.group, s, n_pool=a.n_pool, noise=a.noise, n_per_len=a.n_per_len, epochs=a.epochs, n_hid=a.n_hid,
                      train_lens=train_lens, test_lens=test_lens, orthogonal_rec=a.orthogonal_rec)
         rows.append(r)
-        print(f"  [seed {s}] SAME(learn): FF={r['ff_same']} res={r['reservoir_same']} RNN={r['rnn_same']} (les={r['rnn_lesion_same']}) "
-              f"|| DEEPER(gen): FF={r['ff_deeper']} res={r['reservoir_deeper']} RNN={r['rnn_deeper']} (les={r['rnn_lesion_deeper']}) "
-              f"| markov={r['markov_floor_deeper']} order-matters={r['order_matters_frac']}", flush=True)
+        print(f"  [seed {s}] end-label RNN: same={r['rnn_same']} deeper={r['rnn_deeper']} (FF same={r['ff_same']} deeper={r['ff_deeper']}) "
+              f"|| STATE-SUP prop: same={r['state_sup_prop_same']} deeper={r['state_sup_prop_deeper']} | "
+              f"state-track: same={r['state_sup_track_same']} deeper={r['state_sup_track_deeper']} "
+              f"| order-matters={r['order_matters_frac']}", flush=True)
     if a.json and rows:
         json.dump(rows, open(a.json, "w"), indent=1)
     if rows:
         def _m(k): return float(np.mean([r[k] for r in rows]))
-        ffd, rnnd, lesd, resd = _m("ff_deeper"), _m("rnn_deeper"), _m("rnn_lesion_deeper"), _m("reservoir_deeper")
-        rnns, ffs = _m("rnn_same"), _m("ff_same")
-        # GO: the RNN LEARNS the composition (same-length high) AND generalizes DEEPER where FF cannot (RNN_deeper >>
-        # FF_deeper), recurrence load-bearing (lesion collapses deeper). Learnability gate: rnn_same must be high first.
-        learnable = rnns > 0.75
-        go = learnable and (rnnd > 0.70) and (rnnd - ffd > 0.15) and (rnnd - lesd > 0.15)
-        print(f"\n  AGGREGATE ({a.group}) SAME: FF={ffs:.3f} RNN={rnns:.3f} || DEEPER: FF={ffd:.3f} res={resd:.3f} RNN={rnnd:.3f} lesion={lesd:.3f}", flush=True)
-        if not learnable:
-            print(f"  VERDICT: NOT-YET-LEARNABLE -- the RNN did not learn same-length composition ({rnns:.3f}<0.75) -> scale n_hid/epochs/data or simplify before reading the deeper separation. NO sim/ edit.", flush=True)
-        else:
-            print(f"  VERDICT: {'GO' if go else 'PARTIAL/NEGATIVE'} -- {'the RNN LEARNS composition (same '+format(rnns,'.2f')+') AND generalizes DEEPER where FF cannot (RNN_deeper>>FF_deeper, lesion collapses) -> D3 recurrent depth CONFIRMED; escalate to A5 + e-prop + spiking' if go else 'RNN learns same-length but does NOT generalize deeper beyond FF (the honest boundary: BPTT learns the map but not the ITERATION -> next: curriculum/length-schedule, or e-prop, or the reservoir is genuinely capped)'}. NO sim/ edit.", flush=True)
+        ffd, rnnd, resd = _m("ff_deeper"), _m("rnn_deeper"), _m("reservoir_deeper")
+        ss_prop_d, ss_track_d, ss_track_s = _m("state_sup_prop_deeper"), _m("state_sup_track_deeper"), _m("state_sup_track_same")
+        # THE KEY: does INTERMEDIATE-STATE SUPERVISION make the RNN LENGTH-GENERALIZE where end-label BPTT + FF cannot?
+        # GO = state-supervised RNN tracks the running state at held-out-DEEPER lengths (>>chance) AND >> the end-label
+        # RNN + FF deeper (a recurrent credit path with per-step teaching LEARNS the iterative composition -> generalizes).
+        go = (ss_track_d > 0.70) and (ss_prop_d - ffd > 0.15) and (ss_prop_d - rnnd > 0.15)
+        print(f"\n  AGGREGATE ({a.group}) end-label DEEPER: FF={ffd:.3f} reservoir={resd:.3f} RNN={rnnd:.3f} || "
+              f"STATE-SUP DEEPER: prop={ss_prop_d:.3f} state-track={ss_track_d:.3f} (same-len track {ss_track_s:.3f})", flush=True)
+        print(f"  VERDICT: {'GO' if go else 'PARTIAL/NEGATIVE'} -- {'INTERMEDIATE-STATE SUPERVISION makes the RNN LENGTH-GENERALIZE (state-track deeper '+format(ss_track_d,'.2f')+' >> end-label RNN/FF) -> a recurrent credit path LEARNS iterative multi-hop composition with per-step teaching; the iterative solution EXISTS + is learnable -> next: reduce the teaching signal (hint-sparsity), e-prop, A5, spiking' if go else 'even per-step state supervision did not give deeper length-generalization (state-track deeper '+format(ss_track_d,'.2f')+') -> the iteration is hard to learn even with intermediate targets; next mechanism (hint-curriculum/gated-RNN/scratchpad)'}. NO sim/ edit.", flush=True)
 
 
 if __name__ == "__main__":
