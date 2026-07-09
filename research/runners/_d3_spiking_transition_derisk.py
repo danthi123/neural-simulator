@@ -96,6 +96,7 @@ def main():
     ap.add_argument("--seeds", default="42")
     ap.add_argument("--n-hid", type=int, default=192)
     ap.add_argument("--epochs", type=int, default=25)
+    ap.add_argument("--lif-T", type=int, default=16, help="LIF hidden integration steps = rate resolution (finer -> more separable classes at large K)")
     ap.add_argument("--n-per-len", type=int, default=None, help="triples-per-length (default A5=8000 / else 1500)")
     ap.add_argument("--n-pool", type=int, default=None, help="pool code width (default A5=256 / else 64)")
     ap.add_argument("--json", default=None)
@@ -108,14 +109,17 @@ def main():
     print(f"  config: n_hid={a.n_hid} epochs={a.epochs} n_pool={np_pool} n_per_len={nperlen}", flush=True)
     for s in seeds:
         task = make_group_task(a.group, s, n_pool=np_pool, n_per_len=nperlen, train_lens=(1, 2, 3), test_lens=(4, 5, 6))
-        spk = spiking_transition(task, seed=s, n_hid=a.n_hid, epochs=a.epochs, spiking=True)
-        lin = spiking_transition(task, seed=s, n_hid=a.n_hid, epochs=a.epochs, spiking=False)
+        spk = spiking_transition(task, seed=s, n_hid=a.n_hid, T=a.lif_T, epochs=a.epochs, spiking=True)
+        lin = spiking_transition(task, seed=s, n_hid=a.n_hid, T=a.lif_T, epochs=a.epochs, spiking=False)
         rows.append({"seed": s, "spk": spk, "lin": lin})
         print(f"  [seed {s}] SPIKING-hidden step-delta: train={spk['step_delta_train']:.3f} same={spk['step_delta_same']:.3f} "
               f"deeper={spk['step_delta_deeper']:.3f} || LINEAR-hidden control: train={lin['step_delta_train']:.3f}", flush=True)
     if a.json and rows:
         import json
-        json.dump(rows, open(a.json, "w"), indent=1)
+        # strip the (numpy) weights dict -> JSON-serializable scalars only
+        ser = [{"seed": r["seed"], "spk": {k: v for k, v in r["spk"].items() if k != "weights"},
+                "lin": {k: v for k, v in r["lin"].items() if k != "weights"}} for r in rows]
+        json.dump(ser, open(a.json, "w"), indent=1)
     if rows:
         sd = float(np.mean([r["spk"]["step_delta_same"] for r in rows]))
         ld = float(np.mean([r["lin"]["step_delta_train"] for r in rows]))

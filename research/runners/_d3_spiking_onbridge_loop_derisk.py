@@ -81,16 +81,16 @@ def fullspiking_rollout(task, W, split, sb, K, seed=42, n_eval=40, input_gain=12
 
 
 def run_seed(group_name, seed, n_pool=None, n_hid=192, epochs=25, fs_inh=9.0, fs_settle=25, n_eval=40,
-             deep_lens=(8, 12, 16)):
+             deep_lens=(8, 12, 16), lif_T=16, nperlen=None):
     is_big = group_name == "A5"
     n_pool = n_pool if n_pool is not None else (256 if is_big else 64)
-    nperlen = 8000 if is_big else 1500
+    nperlen = nperlen if nperlen is not None else (8000 if is_big else 1500)
     # Train the transition on SHALLOW (1,2,3); roll the full-spiking loop out MUCH DEEPER (8/12/16 = up to ~5x training
     # depth) -- there the soft-carry control ACCUMULATES drift and fails while the clean re-discretization holds (the
     # discrete-attractor's whole point: arbitrary depth). The transition is per-step teacher-forced -> depth-agnostic.
     task = make_group_task(group_name, seed, n_pool=n_pool, n_per_len=nperlen, train_lens=(1, 2, 3), test_lens=deep_lens)
     K = task["K"]
-    tr = spiking_transition(task, seed=seed, n_hid=n_hid, epochs=epochs, spiking=True)      # rung-2 SPIKING transition
+    tr = spiking_transition(task, seed=seed, n_hid=n_hid, T=lif_T, epochs=epochs, spiking=True)  # rung-2 SPIKING transition
     W = tr["weights"]
     sb = build_fswta_score_bridge(seed=seed, K=K, fs_to_exc=fs_inh)                          # rung-1 FS-WTA bridge
     full = fullspiking_rollout(task, W, "test_deeper", sb, K, seed=seed, settle=fs_settle, n_eval=n_eval, rediscretize=True)
@@ -111,6 +111,8 @@ def main():
     ap.add_argument("--fs-settle", type=int, default=25)
     ap.add_argument("--n-eval", type=int, default=40)
     ap.add_argument("--deep-lens", default="8,12,16", help="held-out DEEP rollout lengths (>> train 1,2,3)")
+    ap.add_argument("--lif-T", type=int, default=16, help="LIF transition rate resolution (finer -> more separable at large K)")
+    ap.add_argument("--n-per-len", type=int, default=None)
     ap.add_argument("--json", default=None)
     a = ap.parse_args()
     seeds = [int(x) for x in a.seeds.replace(",", " ").split()]
@@ -119,7 +121,7 @@ def main():
     rows = []
     for s in seeds:
         r = run_seed(a.group, s, n_hid=a.n_hid, epochs=a.epochs, fs_inh=a.fs_inh, fs_settle=a.fs_settle,
-                     n_eval=a.n_eval, deep_lens=deep_lens)
+                     n_eval=a.n_eval, deep_lens=deep_lens, lif_T=a.lif_T, nperlen=a.n_per_len)
         rows.append(r)
         print(f"  [seed {s}] spk-step-delta={r['spk_step_delta_same']} || FULL-SPIKING loop DEEPER={r['FULLSPK_deeper_track']} "
               f"(host-agree={r['FULLSPK_host_agree']}) || NO-REDISCRETIZE control DEEPER={r['NO_REDISC_deeper_track']}", flush=True)
