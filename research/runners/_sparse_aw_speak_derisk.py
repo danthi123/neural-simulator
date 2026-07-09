@@ -99,9 +99,51 @@ def _lesion_shared_to_langout(bridge, cp):
     return restore, int(mask.sum())
 
 
+def _competitive_pooler_patterns(n_concepts, n_pool, pattern_size, seed, epochs=300):
+    """LEARNED separated codons via the competitive self-organizing pooler (EMERGE-38, HTM Spatial Pooler /
+    Cui-Ahmad-Hawkins): each word competes for n_pool columns; winners potentiate their active input + DEPRESS
+    inactive (selectivity) + homeostatic BOOSTING equalizes column usage -> words get SEPARATED codons that
+    OVERLAP less than random AND pack past the naive-disjoint limit (n_pool/K). The emergent surpass of the
+    random-overlapping-code read-out ceiling: separated codes -> word-specific read-out, on ONE shared pool
+    (capacity >> the 16-word grandmother cap), LEARNED not hand-assigned. numpy rate-reference (the spiking
+    HTM-SP kernel EMERGE-39/41 is the follow-on if this rung GOes). Input feature per word = its identity
+    (one-hot, NF=n_concepts) -> the pooler learns which columns each word claims, boosting spreading them apart."""
+    rng = np.random.RandomState(seed)
+    NF = n_concepts
+    Wp = rng.uniform(0.30, 0.55, (n_pool, NF)).astype(np.float32)              # column x feature (feature = word id)
+    LP, LD = 0.05, 0.02
+    duty = np.zeros(n_pool, dtype=np.float32); boost = np.ones(n_pool, dtype=np.float32)
+    order = list(range(n_concepts))
+    for e in range(epochs):
+        rng.shuffle(order)
+        for w in order:
+            x = np.zeros(NF, dtype=np.float32); x[w] = 1.0
+            win = np.argsort(-(((Wp > 0.5) @ x) * boost))[:pattern_size]        # the k winning columns = the codon
+            Wp[win] += LP * x - LD * (1.0 - x)                                  # potentiate active, depress inactive
+            Wp[win] = np.clip(Wp[win], 0.0, 1.0); duty[win] += 1.0
+        boost = np.exp(2.0 * (pattern_size / n_pool - duty / ((e + 1) * n_concepts)))
+    patterns = []
+    for w in range(n_concepts):                                                # read the learned codon per word
+        x = np.zeros(NF, dtype=np.float32); x[w] = 1.0
+        patterns.append(sorted(int(c) for c in np.argsort(-((Wp > 0.5) @ x))[:pattern_size]))
+    return patterns
+
+
+def _disjoint_sparse_patterns(n_concepts, n_pool, pattern_size):
+    """FULLY-DISJOINT sparse codes: word i owns columns [i*K:(i+1)*K] -- ZERO pairwise overlap (requires
+    n_concepts*pattern_size <= n_pool). The single-variable isolation of the ceiling's cause: if disjoint codes
+    make the shared read-out word-specific (>0.75) where random-overlapping codes cap at 0.50, code OVERLAP is
+    the cause and the competitive self-organizing pooler (EMERGE-38, which learns disjoint codons at scale) is
+    the emergent surpass. NOT a production code (disjoint doesn't scale past n_pool/K); the DIAGNOSTIC."""
+    if n_concepts * pattern_size > n_pool:
+        raise ValueError(f"disjoint codes need n_concepts*pattern_size ({n_concepts*pattern_size}) <= n_pool ({n_pool})")
+    return [sorted(range(i * pattern_size, (i + 1) * pattern_size)) for i in range(n_concepts)]
+
+
 def run_seed(seed, n_concepts=64, n_train_events=400, n_lang_input=8192, n_shared_pool=2000,
              n_shared_fs=300, pattern_size=100, sparsity=0.03, lang_output_wta=False, winner_inactive_ld=0.0,
-             synaptic_scaling=False, ro_w_max=10.0, clean_pool_decode=False, verbose=True):
+             synaptic_scaling=False, ro_w_max=10.0, clean_pool_decode=False, disjoint_codes=False,
+             competitive_pooler=False, ff_langout_wta=False, readout_teacher_pA=200.0, verbose=True):
     from sim.backend import get_backend, to_host, from_host
     cp, _ = get_backend()
     from sim.text_embeddings import orthogonal_drive_pattern
@@ -116,10 +158,21 @@ def run_seed(seed, n_concepts=64, n_train_events=400, n_lang_input=8192, n_share
     t0 = time.time()
     bridge = build_sparse_pool_bridge(seed=seed, n_lang_input=n_lang_input, n_shared_pool=n_shared_pool,
                                       n_shared_fs=n_shared_fs, n_lang_output=n_lang_output,
-                                      lang_output_wta=lang_output_wta, verbose=False)
+                                      lang_output_wta=lang_output_wta,
+                                      lang_output_wta_feedforward=ff_langout_wta, verbose=False)
     if synaptic_scaling:                                              # Turrigiano homeostatic weight normalization
         bridge.core_config.enable_synaptic_scaling = True            # (research Rank-1b stabilizer on the read-out smear)
-    sparse_patterns = generate_sparse_patterns(n_concepts, n_shared_pool, pattern_size, seed)
+    if competitive_pooler:
+        sparse_patterns = _competitive_pooler_patterns(n_concepts, n_shared_pool, pattern_size, seed)
+    elif disjoint_codes:
+        sparse_patterns = _disjoint_sparse_patterns(n_concepts, n_shared_pool, pattern_size)
+    else:
+        sparse_patterns = generate_sparse_patterns(n_concepts, n_shared_pool, pattern_size, seed)
+    _ov = np.mean([len(set(sparse_patterns[i]) & set(sparse_patterns[j]))
+                   for i in range(min(n_concepts, 12)) for j in range(i + 1, min(n_concepts, 12))]) if n_concepts > 1 else 0.0
+    if verbose:
+        print(f"  [seed {seed}] code overlap (mean pairwise, first 12): {_ov:.2f}/{pattern_size} "
+              f"({'DISJOINT' if disjoint_codes else 'random'})", flush=True)
     apply_sparse_topographic_prior(bridge, n_concepts, n_lang_input, sparse_patterns, sparsity=sparsity,
                                    n_words_for_orthogonal=n_concepts, verbose=False)
 
@@ -163,7 +216,7 @@ def run_seed(seed, n_concepts=64, n_train_events=400, n_lang_input=8192, n_share
         order = list(range(n_concepts)); rng.shuffle(order)
         for wi in order:
             train_concept_sparse(bridge, wi, sparse_patterns[wi], n_lang_input, n_lang_output,
-                                 sparsity, n_concepts)
+                                 sparsity, n_concepts, lang_output_teacher_pA=readout_teacher_pA)
             if ro is not None:
                 _kern, _pos, _pm, _wm = ro                              # winner-inactive depress on the read-out synapses
                 bridge.cp_connections.data[_pos] = _kern(bridge.cp_connections.data[_pos], _pm[wi], _wm[wi],
@@ -230,6 +283,22 @@ def main():
     ap.add_argument("--clean-pool-decode", action="store_true",
                     help="CYCLE-1097 probe: clamp non-pattern shared_concept_pool firing to 0 during decode (host-probe for "
                          "what a stronger pool k-WTA does on-substrate) -> isolates the input-side pool-smear residual")
+    ap.add_argument("--disjoint-codes", action="store_true",
+                    help="CYCLE-1098 single-variable isolation: use FULLY-DISJOINT sparse codes (zero overlap) instead of "
+                         "random -> if this breaks the 0.50 ceiling, code OVERLAP is the cause (=> the competitive pooler "
+                         "EMERGE-38 is the emergent surpass); needs n_concepts*pattern_size <= n_shared_pool")
+    ap.add_argument("--competitive-pooler", action="store_true",
+                    help="CYCLE-1098 EMERGENT surpass: LEARN separated codons via the competitive self-organizing pooler "
+                         "(EMERGE-38 HTM-SP) instead of fixed random -> word-specific read-out at capacity >> naive-disjoint "
+                         "(64 words on a 2000-pool where disjoint is impossible), LEARNED not hand-assigned")
+    ap.add_argument("--ff-langout-wta", action="store_true",
+                    help="CYCLE-1098 THE FIX: E%-max FEEDFORWARD inhibition on language_output (afferent-driven from "
+                         "shared_concept_pool) -> keeps the read-out output sparse DURING training -> STDP stays word-"
+                         "specific, fixing the a0-diagnosed positive-feedback read-out broadening (de Almeida-Idiart-Lisman)")
+    ap.add_argument("--readout-teacher-pA", type=float, default=200.0,
+                    help="CYCLE-1098 anti-broadening rung: language_output teacher strength during read-out training "
+                         "(higher -> the target band DOMINATES the pool-driven broad firing -> STDP grows pattern->band "
+                         "specific even as the read-out broadens; the direct fix for the positive-feedback broadening)")
     ap.add_argument("--json", default=None)
     a = ap.parse_args()
     seeds = [int(x) for x in a.seeds.replace(",", " ").split()]
@@ -240,7 +309,9 @@ def main():
         r = run_seed(s, n_concepts=a.n_concepts, n_train_events=a.n_train_events, n_lang_input=a.n_lang_input,
                      n_shared_pool=a.n_shared_pool, pattern_size=a.pattern_size, sparsity=a.sparsity,
                      lang_output_wta=a.lang_output_wta, winner_inactive_ld=a.winner_inactive_ld,
-                     synaptic_scaling=a.synaptic_scaling, ro_w_max=a.ro_w_max, clean_pool_decode=a.clean_pool_decode)
+                     synaptic_scaling=a.synaptic_scaling, ro_w_max=a.ro_w_max, clean_pool_decode=a.clean_pool_decode,
+                     disjoint_codes=a.disjoint_codes, competitive_pooler=a.competitive_pooler,
+                     ff_langout_wta=a.ff_langout_wta, readout_teacher_pA=a.readout_teacher_pA)
         rows.append(r)
         print(f"  [seed {s}] speak_acc={r['speak_acc']} TOPK={r['speak_acc_topk']} WHITE={r['speak_acc_white']} "
               f"(margin {r['mean_margin']}, langout_spikes {r['mean_langout_spikes']}) | MOAT novel_margin={r['novel_margin']} "

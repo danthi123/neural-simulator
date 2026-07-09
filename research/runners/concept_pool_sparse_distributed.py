@@ -57,6 +57,7 @@ def build_sparse_pool_bridge(
     n_shared_fs: int = 300,
     n_lang_output: int = 8192,
     lang_output_wta: bool = False,
+    lang_output_wta_feedforward: bool = False,
     verbose: bool = True,
 ):
     """Build a single shared-pool bridge (same as G.20 contiguous variant,
@@ -65,7 +66,15 @@ def build_sparse_pool_bridge(
     lang_output_wta (default False = byte-identical): add a `language_output_FS` WTA pool (feedback E->I->E,
     mirroring shared_FS) so the language_output competes -> during A->W read-out TRAINING only the strongly-driven
     word band survives -> the shared_pool->language_output STDP binds each pattern to ITS band cleanly (fixes the
-    non-word-specific read-out smearing, 2026-07-09-sparse-aw-speak-crosstalk-boundary). Additive; off = unchanged."""
+    non-word-specific read-out smearing, 2026-07-09-sparse-aw-speak-crosstalk-boundary). Additive; off = unchanged.
+
+    lang_output_wta_feedforward (CYCLE-1098, default False): the E%-max version -- the language_output_FS is driven
+    by the AFFERENT (shared_concept_pool), NOT by language_output's own output. So the inhibition threshold is set
+    by the pattern VOLLEY before language_output can fire broadly (de Almeida-Idiart-Lisman feedforward divisive
+    normalization) -> keeps the read-out output sparse DURING training -> STDP stays word-specific, fixing the a0-
+    diagnosed positive-feedback read-out BROADENING (read-out grows -> pool drives broad langout -> STDP grows
+    broader -> the 'more training = worse' divergence). The feedback WTA (lang_output_wta) is the saturate-or-dead
+    knife-edge that over-suppressed (2026-07-09 crosstalk finding); this is the calibrated feedforward fix."""
     from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
     from sim.bridge import SimulationBridge
     from sim.regions import BrainRegion, RegionPathway
@@ -109,11 +118,14 @@ def build_sparse_pool_bridge(
                        plastic=False),
     ]
 
-    if lang_output_wta:
+    if lang_output_wta or lang_output_wta_feedforward:
         regions.append(BrainRegion(name="language_output_FS", n_neurons=max(60, n_lang_output // 20),
                                    exc_fraction=0.0, internal_density=0.0, exc_weight_mean=0.0,
                                    inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False))
-        pathways.append(RegionPathway(from_region="language_output", to_region="language_output_FS",
+        # E%-max FEEDFORWARD: the FS is driven by the AFFERENT (shared_concept_pool) so inhibition tracks the pattern
+        # VOLLEY (de Almeida-Idiart-Lisman); FEEDBACK (default): driven by language_output's own output (knife-edge).
+        _fs_src = "shared_concept_pool" if lang_output_wta_feedforward else "language_output"
+        pathways.append(RegionPathway(from_region=_fs_src, to_region="language_output_FS",
                                       density=0.30, weight_mean=1.0, weight_jitter=0.2, plastic=False))
         pathways.append(RegionPathway(from_region="language_output_FS", to_region="language_output",
                                       density=0.30, weight_mean=4.0, weight_jitter=0.2, plastic=False))
