@@ -46,7 +46,46 @@ def run_seed(seed, hippo_n_ca3=500, n_assembly=12, n_mem=3, presentations=60, hi
     assemblies = [np.array(perm[m * n_assembly:(m + 1) * n_assembly], dtype=np.int64) for m in range(n_mem)]
     non_assembly = np.array([g for g in ca3_idx if g not in set(int(x) for a in assemblies for x in a)],
                             dtype=np.int64)[:60]
+    # MID-RUN Hebbian-mode FORMATION, scoped to ca3->ca3 (resolves the plasticity-MODE conflict, CYCLE 1091): the
+    # merged bridge runs STDP-mode (enable_hebbian_learning=False); the ca3->ca3 attractor needs rate-window Hebbian +
+    # max-120. Switch the cfg to Hebbian-mode ONLY for the formation drive, and FREEZE every synapse except ca3->ca3
+    # via cp_plasticity_rate_gain=0 -> nav/conv are protected from BOTH the Hebbian rule AND the max-120 clip (gated by
+    # gain), while the ca3->ca3 forms its specific attractor. Restore STDP-mode + the saved gains after. NO sim/ edit.
+    from sim.backend import to_host, from_host
+    cfg = bridge.core_config
+    _saved = (cfg.enable_hebbian_learning, getattr(cfg, "hebbian_rate_window", False), cfg.hebbian_max_weight,
+              getattr(cfg, "hebbian_coactivity_thresh", 0.25))
+    conn = bridge.cp_connections; nnz = int(conn.nnz)
+    _indptr = to_host(conn.indptr); _indices = to_host(conn.indices)
+    _pre = np.searchsorted(_indptr, np.arange(nnz), side="right") - 1
+    _post = _indices[:nnz]
+    _ca3 = np.asarray(ca3_idx)
+    _ca3ca3 = np.isin(_pre, _ca3) & np.isin(_post, _ca3)                 # the ca3->ca3 recurrent synapses
+    _saved_gain = to_host(bridge.cp_plasticity_rate_gain[:nnz]).copy()
+    _gain = np.zeros(nnz, dtype=np.float32); _gain[_ca3ca3] = 1.0        # freeze all EXCEPT ca3->ca3
+    bridge.cp_plasticity_rate_gain[:nnz] = from_host(_gain)
+    cfg.enable_hebbian_learning = True; cfg.hebbian_rate_window = True
+    cfg.hebbian_max_weight = 120.0; cfg.hebbian_coactivity_thresh = 0.001
     _train_assemblies(bridge, cp, assemblies, presentations, 1000.0, 8, 12)
+    (cfg.enable_hebbian_learning, cfg.hebbian_rate_window, cfg.hebbian_max_weight,
+     cfg.hebbian_coactivity_thresh) = _saved                            # restore STDP-mode for nav/conv
+    bridge.cp_plasticity_rate_gain[:nnz] = from_host(_saved_gain)
+    # DIAGNOSTIC -- did the scoped formation form a SPECIFIC ca3->ca3 attractor (within-assembly >> cross)?
+    _data = to_host(conn.data[:nnz])
+    _asm_of = {}
+    for _m, _a in enumerate(assemblies):
+        for _g in _a:
+            _asm_of[int(_g)] = _m
+    _within, _cross = [], []
+    for _kk in np.nonzero(_ca3ca3)[0]:
+        _pm, _qm = _asm_of.get(int(_pre[_kk])), _asm_of.get(int(_post[_kk]))
+        if _pm is not None and _qm is not None and _pm == _qm:
+            _within.append(_data[_kk])
+        elif _pm is not None:
+            _cross.append(_data[_kk])
+    _wm = float(np.mean(_within)) if _within else 0.0
+    _cm = float(np.mean(_cross)) if _cross else 0.0
+    print(f"    [ca3->ca3 formed] within={_wm:.2f} cross={_cm:.2f} ratio={_wm/(_cm+1e-9):.2f}x (specific attractor wants within>>cross)", flush=True)
     held_c, non_c = [], []
     for asm in assemblies:
         a = asm.copy(); rng.shuffle(a); h = len(a) // 2

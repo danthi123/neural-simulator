@@ -1168,6 +1168,8 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
         cfg.coincidence_plateau_strength = 300.0
         cfg.enable_two_compartment_dap = True
         cfg.apical_R = 50.0                            # apical params exactly as _build does (apical_g_couple stays at its default)
+        cfg.hebbian_rate_window = True                 # ALLOCATE the co-activity trace at BUILD (cp_hebb_coactivity_trace is init-time-gated on this flag); the rate-window Hebbian only RUNS when enable_hebbian_learning is toggled True during the scoped ca3->ca3 formation (the validate runner's mid-run switch), so nav/conv (enable_hebbian_learning=False) are UNAFFECTED. Default-off keeps this False -> byte-identical.
+        cfg.hebbian_coactivity_thresh = 0.001
 
     bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                               runtime_state=RuntimeState(), gpu_config=GPUConfig())
