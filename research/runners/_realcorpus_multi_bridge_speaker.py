@@ -13,13 +13,15 @@ from research.runners._realcorpus_full_frame_speech_derisk import ConceptFrameSp
 from research.runners._realcorpus_train_breadth_aw import VOCAB as V1, WORD_TO_POOL as P1
 from research.runners._realcorpus_train_breadth_aw2 import VOCAB as V2, WORD_TO_POOL as P2
 from research.runners._realcorpus_train_breadth_aw3 import VOCAB as V3, WORD_TO_POOL as P3
+from research.runners._realcorpus_train_breadth_aw4 import VOCAB as V4, WORD_TO_POOL as P4
 
 BRIDGE1 = "bridges/breadth_aw/seed42.simstate.h5"
 BRIDGE2 = "bridges/breadth_aw2/seed42.simstate.h5"
 BRIDGE3 = "bridges/breadth_aw3/seed42.simstate.h5"
+BRIDGE4 = "bridges/breadth_aw4/seed42.simstate.h5"    # ditransitive verbs + theme nouns + PP preps (to/on) + spatial nouns
 
-# (path, vocab, word_to_pool) per bridge; earlier bridges WIN on overlap (there is none by construction).
-DEFAULT_BRIDGES = [(BRIDGE1, V1, P1), (BRIDGE2, V2, P2), (BRIDGE3, V3, P3)]
+# (path, vocab, word_to_pool) per bridge; earlier bridges WIN on overlap ("rock" is in aw2 AND aw4 -> aw2 wins).
+DEFAULT_BRIDGES = [(BRIDGE1, V1, P1), (BRIDGE2, V2, P2), (BRIDGE3, V3, P3), (BRIDGE4, V4, P4)]
 
 
 class MultiBridgeFrameSpeaker:
