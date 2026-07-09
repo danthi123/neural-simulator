@@ -214,6 +214,7 @@ def build_biological_brain_regions(
     n_dg_pv_basket: int = 60,
     n_ca3: int = 100,
     n_ca1: int = 120,
+    ca3_to_ca1_density: float = 0.30,   # Schaffer collateral density; raise (~0.9) so a SMALL sparse CA3 assembly still gives enough convergence to drive ca1 (R-iii SWR replay, CYCLE 1079). Default 0.30 = byte-identical.
     ca1_to_motor_density: float = 0.20,
     ca1_to_motor_weight: float = 2.0,
     ca1_to_lang_out_density: float = 0.20,
@@ -1132,7 +1133,7 @@ def build_biological_brain_regions(
         # ca3 -> ca1 (Schaffer collaterals)
         pathways.append(RegionPathway(
             from_region="ca3", to_region="ca1",
-            density=0.30, weight_mean=4.0, weight_jitter=0.2,
+            density=ca3_to_ca1_density, weight_mean=4.0, weight_jitter=0.2,
             plastic=True, plasticity_gate="ca3_to_ca1",
         ))
         # *** Phase 1.3 KEY ADDITIONS: consolidation pathways ***

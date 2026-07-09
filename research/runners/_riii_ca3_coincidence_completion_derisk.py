@@ -28,7 +28,8 @@ from research.runners.validate_trisynaptic_loop import measure_region_response, 
 def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0, ca3_density=0.5,
            coincidence=True, k_thresh=18.0, plateau_strength=120.0, weighted=True, two_comp=False, train=True,
            hebb_max=None, mg=None, apical_R=None, apical_gc=None, hebb_lr=None, hebb_decay=None, hebb_sym=False,
-           hebb_rate=False, coact_decay=None, coact_thresh=None, ca3_fb_inhib=None, ca3_fb_n=None, mossy_weight=None):
+           hebb_rate=False, coact_decay=None, coact_thresh=None, ca3_fb_inhib=None, ca3_fb_n=None, mossy_weight=None,
+           ca3_to_ca1_density=0.30):
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.bridge import SimulationBridge
     from research.runners.text_minimal_isolation import build_biological_brain_regions
@@ -36,7 +37,7 @@ def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0,
         n_lang_input=n_lang, n_motor_per_action=16, n_motor_fs_per_action=4, enable_motor_fs=True,
         enable_language_output=True, n_lang_output=n_lang, enable_hippocampus_consolidation=True,
         n_ec=n_ec, n_dg=n_dg, n_ca3=n_ca3, n_ca1=n_ca1, ca3_recurrent_density=ca3_density,
-        ca3_recurrent_weight=(ca3w if train else 1.5))
+        ca3_recurrent_weight=(ca3w if train else 1.5), ca3_to_ca1_density=ca3_to_ca1_density)
     if coincidence:
         # Route the ca3->ca3 recurrent pathway through the dendritic-coincidence plateau (runner-side flip of the
         # returned dataclass -- NO sim/ edit). The recurrent synapses now trigger a supralinear NMDA-spike plateau
