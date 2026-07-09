@@ -20,6 +20,8 @@ def _train_ff(bridge, cp, assemblies, basket_idx, ff_drive, presentations, drive
     not the weakly-driven non-assembly (recurrent spread ~36 pA) -> sparse-to-assembly firing -> the rate-Hebbian
     potentiates within-assembly ONLY (specific attractor). Diagnostic: the basket drive is host-computed here (the
     faithful synaptic version drives the basket from a dg afferent, dg->basket, per the CA1 ca1_ff_inhib block)."""
+    import os as _os_d
+    ff_delay = int(_os_d.environ.get("CA3_FF_DELAY", "0"))    # E%-max TIMING: inhibition rises AFTER excitation (steps>=delay)
     from research.runners._riii_ca3_coincidence_completion_derisk import _set_gates
     _set_gates(bridge, 1.0)
     bk = cp.asarray(basket_idx, dtype=cp.int64)
@@ -30,10 +32,11 @@ def _train_ff(bridge, cp, assemblies, basket_idx, ff_drive, presentations, drive
             for _ in range(6):
                 bridge._run_one_simulation_step()
             for _v in range(3):
-                bridge.cp_external_input_current[:] = 0.0
-                bridge.cp_external_input_current[drv] = float(drive_pA)
-                bridge.cp_external_input_current[bk] = float(ff_drive)   # FEEDFORWARD basket drive (sets HOW MANY fire)
-                for _ in range(gamma_on):
+                for _s in range(gamma_on):
+                    bridge.cp_external_input_current[:] = 0.0
+                    bridge.cp_external_input_current[drv] = float(drive_pA)     # excitation every step
+                    if _s >= ff_delay:
+                        bridge.cp_external_input_current[bk] = float(ff_drive)  # inhibition RISES AFTER the assembly fires (E%-max timing)
                     bridge._run_one_simulation_step()
                 bridge.cp_external_input_current[:] = 0.0
                 for _ in range(gamma_off):
