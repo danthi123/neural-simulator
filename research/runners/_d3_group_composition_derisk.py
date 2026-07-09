@@ -434,14 +434,15 @@ def markov_floor(task):
 
 
 def run_seed(group_name, seed, n_pool=64, noise=0.6, n_per_len=1200, epochs=60, n_hid=128,
-             train_lens=(1, 2, 3, 4, 5), test_lens=(6, 7, 8), orthogonal_rec=False):
+             train_lens=(1, 2, 3, 4, 5), test_lens=(6, 7, 8), orthogonal_rec=False, fast=False):
     task = make_group_task(group_name, seed, n_pool=n_pool, noise=noise, n_per_len=n_per_len,
                            train_lens=tuple(train_lens), test_lens=tuple(test_lens))
     ff = ff_oracle(task, seed=seed, epochs=40)
-    res = reservoir_ridge(task, seed=seed)
+    _z = {"same": 0.0, "deeper": 0.0, "state_same": 0.0, "state_deeper": 0.0}   # fast: skip the slow reservoir/state-sup
+    res = _z if fast else reservoir_ridge(task, seed=seed)
     rnn = bptt_rnn(task, seed=seed, epochs=epochs, n_hid=n_hid, orthogonal_rec=orthogonal_rec)
-    rnn_les = bptt_rnn(task, seed=seed, epochs=epochs, n_hid=n_hid, lesion_recurrent=True)
-    ss = bptt_rnn_state_supervised(task, seed=seed, epochs=epochs, n_hid=n_hid, orthogonal_rec=orthogonal_rec)
+    rnn_les = _z if fast else bptt_rnn(task, seed=seed, epochs=epochs, n_hid=n_hid, lesion_recurrent=True)
+    ss = _z if fast else bptt_rnn_state_supervised(task, seed=seed, epochs=epochs, n_hid=n_hid, orthogonal_rec=orthogonal_rec)
     da = discrete_attractor_rnn(task, seed=seed, epochs=max(40, epochs // 2), n_hid=n_hid)
     mk = markov_floor(task)
     order_matters = order_control(task, seed=seed)
@@ -472,6 +473,7 @@ def main():
     ap.add_argument("--orthogonal-rec", action="store_true",
                     help="init the BPTT-RNN's W_rec as a random ORTHOGONAL matrix (norm-preserving; permutations are "
                          "orthogonal -> the theory-motivated inductive bias for length-generalizing composition)")
+    ap.add_argument("--fast", action="store_true", help="skip the slow reservoir + state-sup arms (scale tests: FF/RNN/discrete-attractor only)")
     ap.add_argument("--json", default=None)
     a = ap.parse_args()
     seeds = [int(x) for x in a.seeds.replace(",", " ").split()]
@@ -481,7 +483,7 @@ def main():
     rows = []
     for s in seeds:
         r = run_seed(a.group, s, n_pool=a.n_pool, noise=a.noise, n_per_len=a.n_per_len, epochs=a.epochs, n_hid=a.n_hid,
-                     train_lens=train_lens, test_lens=test_lens, orthogonal_rec=a.orthogonal_rec)
+                     train_lens=train_lens, test_lens=test_lens, orthogonal_rec=a.orthogonal_rec, fast=a.fast)
         rows.append(r)
         print(f"  [seed {s}] end-label RNN deeper={r['rnn_deeper']} (FF={r['ff_deeper']}) | STATE-SUP track deeper={r['state_sup_track_deeper']} "
               f"|| DISCRETE-ATTRACTOR: step-delta={r['discattr_step_acc']} | state-track same={r['discattr_track_same']} DEEPER={r['discattr_track_deeper']} "
