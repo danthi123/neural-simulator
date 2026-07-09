@@ -18,21 +18,21 @@ from research.runners.validate_trisynaptic_loop import (
     measure_region_response, build_drive_pattern, cosine_similarity)
 
 
-def _build(seed, n_lang=512, n_ec=200, n_dg=400, n_ca3=200, n_ca1=120, ca3w=5.0, train=True):
+def _build(seed, n_lang=512, n_ec=200, n_dg=400, n_ca3=200, n_ca1=120, ca3w=5.0, ca3_density=0.30, train=True):
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.bridge import SimulationBridge
     from research.runners.text_minimal_isolation import build_biological_brain_regions
     regions, pathways = build_biological_brain_regions(
         n_lang_input=n_lang, n_motor_per_action=16, n_motor_fs_per_action=4, enable_motor_fs=True,
         enable_language_output=True, n_lang_output=n_lang, enable_hippocampus_consolidation=True,
-        n_ec=n_ec, n_dg=n_dg, n_ca3=n_ca3, n_ca1=n_ca1, ca3_recurrent_density=0.30,
+        n_ec=n_ec, n_dg=n_dg, n_ca3=n_ca3, n_ca1=n_ca1, ca3_recurrent_density=ca3_density,
         ca3_recurrent_weight=(ca3w if train else 1.5))
     cfg = CoreSimConfig()
     cfg.enable_brain_region_framework = True
     cfg.brain_regions = list(regions); cfg.region_pathways = list(pathways)
     cfg.dt_ms = 1.0; cfg.seed = seed; cfg.enable_nmda = True
     cfg.enable_structural_plasticity = False; cfg.enable_per_type_stp = False
-    cfg.enable_hebbian_learning = True; cfg.stdp_w_max = 10.0; cfg.fast_spike_reset = True
+    cfg.enable_hebbian_learning = True; cfg.stdp_w_max = max(10.0, 2.5 * ca3w); cfg.fast_spike_reset = True
     bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                               runtime_state=RuntimeState(), gpu_config=GPUConfig())
     bridge.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
@@ -52,10 +52,10 @@ def _set_gates(bridge, v):
 
 
 def run_seed(seed, n_mem=2, train_events=120, drive_pA=200.0, do_train=True,
-             n_lang=384, n_ca3=150, n_dg=300, reset_steps=15, drive_steps=55, recall_steps=60):
+             n_lang=384, n_ca3=150, n_dg=300, ca3_density=0.30, ca3_weight=5.0, reset_steps=15, drive_steps=55, recall_steps=60):
     from sim.backend import get_backend, to_host
     cp, _ = get_backend()
-    bridge = _build(seed, n_lang=n_lang, n_ca3=n_ca3, n_dg=n_dg, train=do_train)
+    bridge = _build(seed, n_lang=n_lang, n_ca3=n_ca3, n_dg=n_dg, ca3_density=ca3_density, ca3w=ca3_weight, train=do_train)
     rm = bridge.region_manager
     lang = list(rm.indices("language_input"))
     ca3_idx = list(rm.indices("ca3"))
@@ -133,19 +133,23 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", default="42")
     ap.add_argument("--train-events", type=int, default=120)
+    ap.add_argument("--ca3-density", type=float, default=0.30, help="CA3 recurrent connectivity density (the fix sweep)")
+    ap.add_argument("--ca3-weight", type=float, default=5.0, help="CA3 recurrent weight (the current-magnitude fix sweep)")
     ap.add_argument("--json", default=None, help="write per-seed results JSON (for fan-out aggregation)")
     a = ap.parse_args()
     seeds = [int(x) for x in a.seeds.split(",")]
-    print(f"[R-iii CA3 completion specificity] validated D.13 regime, K=3 memories, train_events={a.train_events} "
+    print(f"[R-iii CA3 completion specificity] train_events={a.train_events} ca3_density={a.ca3_density} "
           f"| CLEAN held-out completion (trained vs no-train) isolates recurrence from the drive artifact", flush=True)
     rows = []
     for s in seeds:
         t0 = time.time()
-        rt = run_seed(s, train_events=a.train_events, do_train=True)
-        rc = run_seed(s, train_events=a.train_events, do_train=False)
+        rt = run_seed(s, train_events=a.train_events, ca3_density=a.ca3_density, ca3_weight=a.ca3_weight, do_train=True)
+        rc = run_seed(s, train_events=a.train_events, ca3_density=a.ca3_density, ca3_weight=a.ca3_weight, do_train=False)
         if rt is None or rc is None:
             print(f"  [seed {s}] NOT-EVALUABLE (stored ensemble too small)"); continue
-        row = {"seed": s, "trained_heldout": rt["heldout_completion"], "notrain_heldout": rc["heldout_completion"],
+        row = {"seed": s, "ca3_density": a.ca3_density, "ca3_weight": a.ca3_weight,
+               "trained_heldout": rt["heldout_completion"], "notrain_heldout": rc["heldout_completion"],
+               "heldout_fullcue": rt.get("heldout_fullcue"),
                "recurrence_gain": rt["heldout_completion"] - rc["heldout_completion"],
                "trained_own_cos": rt["completion_own"], "trained_spec": rt["specificity"], "n_stored": rt["n_stored"]}
         rows.append(row)
