@@ -86,7 +86,8 @@ def spiking_transition(task, seed=42, n_hid=192, T=16, leak=0.9, thr=1.0, epochs
         return float(((rate @ W2.T + b2).argmax(1) == N).mean())
 
     return {"step_delta_train": step_acc("train"), "step_delta_same": step_acc("test_same"),
-            "step_delta_deeper": step_acc("test_deeper")}
+            "step_delta_deeper": step_acc("test_deeper"),
+            "weights": {"emb": emb, "W1": W1, "W2": W2, "b2": b2, "T": T, "leak": leak, "thr": thr, "n_hid": n_hid}}
 
 
 def main():
@@ -95,13 +96,16 @@ def main():
     ap.add_argument("--seeds", default="42")
     ap.add_argument("--n-hid", type=int, default=192)
     ap.add_argument("--epochs", type=int, default=25)
+    ap.add_argument("--n-per-len", type=int, default=None, help="triples-per-length (default A5=8000 / else 1500)")
+    ap.add_argument("--n-pool", type=int, default=None, help="pool code width (default A5=256 / else 64)")
     ap.add_argument("--json", default=None)
     a = ap.parse_args()
     seeds = [int(x) for x in a.seeds.replace(",", " ").split()]
-    np_pool = 256 if a.group == "A5" else 64
-    nperlen = 8000 if a.group == "A5" else 1500
+    np_pool = a.n_pool if a.n_pool is not None else (256 if a.group == "A5" else 64)
+    nperlen = a.n_per_len if a.n_per_len is not None else (8000 if a.group == "A5" else 1500)
     print(f"[D3 spiking TRANSITION] {a.group} | the group-mult delta learned THROUGH a spiking LIF hidden pool (surrogate grad)", flush=True)
     rows = []
+    print(f"  config: n_hid={a.n_hid} epochs={a.epochs} n_pool={np_pool} n_per_len={nperlen}", flush=True)
     for s in seeds:
         task = make_group_task(a.group, s, n_pool=np_pool, n_per_len=nperlen, train_lens=(1, 2, 3), test_lens=(4, 5, 6))
         spk = spiking_transition(task, seed=s, n_hid=a.n_hid, epochs=a.epochs, spiking=True)
