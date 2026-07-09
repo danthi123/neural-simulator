@@ -63,9 +63,10 @@ def _recall(bridge, cp, cue_cells, read_cells, drive_pA, steps=60, clamp_cells=N
     return to_host(acc)
 
 
-def run_seed(seed, n_ca3=500, n_assembly=12, n_mem=3, presentations=100, drive_pA=1000.0, cue_drive=1000.0,
-             hebb_lr=10.0, gamma_on=8, gamma_off=12, ca3_fb_inhib=120.0, k_thresh=6.0, plateau_strength=300.0,
-             apical_R=50.0, hebb_max=120.0, do_train=True, coincidence=True, permuted_cue=False, recall_disinhib=False):
+def run_seed(seed, n_ca3=500, n_assembly=12, n_mem=3, presentations=60, drive_pA=1000.0, cue_drive=1000.0,
+             hebb_lr=10.0, gamma_on=8, gamma_off=12, ca3_fb_inhib=120.0, k_thresh=20.0, plateau_strength=300.0,
+             apical_R=50.0, hebb_max=120.0, recall_steps=60, do_train=True, coincidence=True, permuted_cue=False,
+             recall_disinhib=False):
     from sim.backend import get_backend
     cp, _ = get_backend()
     bridge = _build(seed, n_ca3=n_ca3, ca3_density=0.5, ca3w=6.0, coincidence=coincidence, two_comp=True,
@@ -95,9 +96,9 @@ def run_seed(seed, n_ca3=500, n_assembly=12, n_mem=3, presentations=100, drive_p
         cue, held = a[:h], a[h:]
         if permuted_cue:                                   # anti-cheat D: drive a RANDOM half (not the assembly)
             cue = rng.choice(non_assembly, size=h, replace=False)
-        resp_held = _recall(bridge, cp, cue, held, cue_drive, clamp_cells=_basket)
-        resp_cue = _recall(bridge, cp, cue, cue, cue_drive, clamp_cells=_basket)
-        resp_non = _recall(bridge, cp, cue, non_assembly, cue_drive, clamp_cells=_basket)
+        resp_held = _recall(bridge, cp, cue, held, cue_drive, steps=recall_steps, clamp_cells=_basket)
+        resp_cue = _recall(bridge, cp, cue, cue, cue_drive, steps=recall_steps, clamp_cells=_basket)
+        resp_non = _recall(bridge, cp, cue, non_assembly, cue_drive, steps=recall_steps, clamp_cells=_basket)
         ca = float(np.mean(resp_cue)) + 1e-9
         held_c.append(float(np.mean(resp_held)) / ca)
         non_c.append(float(np.mean(resp_non)) / ca)
@@ -108,12 +109,13 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", default="42")
     ap.add_argument("--presentations", type=int, default=60)
-    ap.add_argument("--k-thresh", type=float, default=6.0)
+    ap.add_argument("--k-thresh", type=float, default=20.0, help="plateau threshold: must sit between the cross-drive floor (<20, non stays silent) and the held-out within-drive (>20 all seeds); the 6/6-seed GO config (k=25 was 5/6, seed 102 marginal at 0.282)")
     ap.add_argument("--n-ca3", type=int, default=500)
     ap.add_argument("--n-assembly", type=int, default=12)
     ap.add_argument("--cue-drive", type=float, default=1000.0, help="recall cue drive (raise to ~1000 to fire despite standing inhibition)")
     ap.add_argument("--hebb-max", type=float, default=120.0, help="within-assembly weight ceiling: 30->3.3x, 60->7.5x, 120->12.6x attractor (find the window where dendritic completes but linear fails)")
     ap.add_argument("--hebb-lr", type=float, default=10.0)
+    ap.add_argument("--recall-steps", type=int, default=60, help="recall accumulation window (SHORT -> measure the fast plateau completion before the recurrent cascade ignites the whole net)")
     ap.add_argument("--recall-disinhib", action="store_true", help="reduce feedback inhibition during recall (SWR ripple disinhibition)")
     ap.add_argument("--json", default=None)
     a = ap.parse_args()
@@ -122,7 +124,8 @@ def main():
           f"| direct-synchronous FORMATION -> partial-cue dendritic COMPLETION", flush=True)
     import json
     kw = dict(n_ca3=a.n_ca3, n_assembly=a.n_assembly, presentations=a.presentations, k_thresh=a.k_thresh,
-              cue_drive=a.cue_drive, recall_disinhib=a.recall_disinhib, hebb_max=a.hebb_max, hebb_lr=a.hebb_lr)
+              cue_drive=a.cue_drive, recall_disinhib=a.recall_disinhib, hebb_max=a.hebb_max, hebb_lr=a.hebb_lr,
+              recall_steps=a.recall_steps)
     rows = []
     for s in seeds:
         t0 = time.time()
