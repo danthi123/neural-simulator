@@ -28,7 +28,7 @@ from research.runners.validate_trisynaptic_loop import measure_region_response, 
 def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0, ca3_density=0.5,
            coincidence=True, k_thresh=18.0, plateau_strength=120.0, weighted=True, two_comp=False, train=True,
            hebb_max=None, mg=None, apical_R=None, apical_gc=None, hebb_lr=None, hebb_decay=None, hebb_sym=False,
-           hebb_rate=False, coact_decay=None, coact_thresh=None):
+           hebb_rate=False, coact_decay=None, coact_thresh=None, ca3_fb_inhib=None, ca3_fb_n=None, mossy_weight=None):
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.bridge import SimulationBridge
     from research.runners.text_minimal_isolation import build_biological_brain_regions
@@ -44,6 +44,33 @@ def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0,
         for p in pathways:
             if getattr(p, "from_region", None) == "ca3" and getattr(p, "to_region", None) == "ca3":
                 p.coincidence_detector = True
+    if ca3_fb_inhib is not None:
+        # CYCLE-1072 FIX (research gate 2026-07-09): CA3 has NO feedback inhibition wired (internal_density=0.0
+        # leaves its 15% inhibitory cells unconnected; every X->ca3 pathway is excitatory) -> uncapped recurrent
+        # excitation spreads activity to 35-47% of CA3 (the distributed code that blocks attractor formation). Add a
+        # ca3_pv_basket FS FEEDBACK-inhibition pool (E->I->E loop) -- a copy of the ALREADY-VALIDATED dg_pv_basket
+        # sparsifier wiring (text_minimal_isolation.py:699-706,1100-1109), but FEEDBACK (ca3->basket->ca3) not
+        # feedforward. Caps active-cell count (sparsity) AND paces survivors into synchronous gamma volleys (PING),
+        # fixing BOTH the sparsity + the asynchrony with one mechanism. Runner-side append; NO sim/ edit.
+        from sim.regions import BrainRegion, RegionPathway
+        from sim.enums import NeuronType
+        _nb = int(ca3_fb_n) if ca3_fb_n is not None else max(8, int(0.25 * n_ca3))
+        regions.append(BrainRegion(
+            name="ca3_pv_basket", n_neurons=_nb, exc_fraction=0.0, internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name))
+        pathways.append(RegionPathway(from_region="ca3", to_region="ca3_pv_basket",
+                                      density=0.40, weight_mean=5.0, weight_jitter=0.2, plastic=False))
+        pathways.append(RegionPathway(from_region="ca3_pv_basket", to_region="ca3",
+                                      density=1.0, weight_mean=float(ca3_fb_inhib), weight_jitter=0.2, plastic=False))
+    if mossy_weight is not None:
+        # Rung 2 (mossy DETONATOR, Kandel Ch 54): strengthen the sparse dg->ca3 mossy synapses so a few DG-selected
+        # CA3 cells fire HARD (detonate) from their DG input, while the feedback inhibition suppresses the rest ->
+        # a SPARSE + STRONGLY-FIRING SELECTIVE ensemble the co-activity rule can bind. Runner-side weight bump of the
+        # returned dg->ca3 pathway (like the coincidence flip); NO sim/ edit.
+        for p in pathways:
+            if getattr(p, "from_region", None) == "dg" and getattr(p, "to_region", None) == "ca3":
+                p.weight_mean = float(mossy_weight)
     cfg = CoreSimConfig()
     cfg.enable_brain_region_framework = True
     cfg.brain_regions = list(regions); cfg.region_pathways = list(pathways)
