@@ -27,7 +27,7 @@ from research.runners.validate_trisynaptic_loop import measure_region_response, 
 
 def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0, ca3_density=0.5,
            coincidence=True, k_thresh=18.0, plateau_strength=120.0, weighted=True, two_comp=False, train=True,
-           hebb_max=None, mg=None):
+           hebb_max=None, mg=None, apical_R=None, apical_gc=None):
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.bridge import SimulationBridge
     from research.runners.text_minimal_isolation import build_biological_brain_regions
@@ -61,6 +61,13 @@ def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0,
         cfg.enable_two_compartment_dap = bool(two_comp)
         if mg is not None:
             cfg.nmda_mg_concentration = float(mg)   # lower -> Mg2+ block opens -> plateau flows at rest (bootstrap test)
+        if two_comp:
+            # apical coupling regime (CYCLE 1067 next mechanism): raise apical_R so the clustered plateau current
+            # depolarizes the high-local-resistance apical (large dV for small I) -> Mg-regenerative dAP -> soma.
+            if apical_R is not None:
+                cfg.apical_R = float(apical_R)
+            if apical_gc is not None:
+                cfg.apical_g_couple = float(apical_gc)
     bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                               runtime_state=RuntimeState(), gpu_config=GPUConfig())
     bridge.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)

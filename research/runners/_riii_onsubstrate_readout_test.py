@@ -36,11 +36,13 @@ def _ca3_recurrent_flat(bridge, ca3_set):
 
 
 def run_seed(seed, coincidence, k_thresh=20.0, w_high=15.0, w_low=1.5, plateau_strength=140.0,
-             n_ens=3, ens_size=20, n_ca3=150, ca3_density=0.5, drive_pA=200.0, recall_steps=60, flat=False, mg=None):
+             n_ens=3, ens_size=20, n_ca3=150, ca3_density=0.5, drive_pA=200.0, recall_steps=60, flat=False, mg=None,
+             two_comp=False, apical_R=None, apical_gc=None, scramble=False):
     from sim.backend import get_backend, to_host
     cp, _ = get_backend()
     bridge = _build(seed, n_ca3=n_ca3, ca3_density=ca3_density, ca3w=6.0, coincidence=coincidence,
-                    k_thresh=k_thresh, plateau_strength=plateau_strength, weighted=True, train=False, mg=mg)
+                    k_thresh=k_thresh, plateau_strength=plateau_strength, weighted=True, train=False, mg=mg,
+                    two_comp=two_comp, apical_R=apical_R, apical_gc=apical_gc)
     rm = bridge.region_manager
     ca3_idx = list(rm.indices("ca3")); ca3_set = set(int(x) for x in ca3_idx)
     ca3_pos = {int(g): i for i, g in enumerate(ca3_idx)}
@@ -50,15 +52,40 @@ def run_seed(seed, coincidence, k_thresh=20.0, w_high=15.0, w_low=1.5, plateau_s
     ens_of = {int(g): e for e, ens in enumerate(ensembles) for g in ens}
 
     # INSTALL the attractor: all ca3->ca3 = W_LOW; within-ensemble = W_HIGH (unless flat control -> all W_LOW).
+    # SCRAMBLE control: the SAME NUMBER of W_HIGH synapses, but on RANDOM ca3->ca3 synapses (wrong structure, same
+    # weight budget) -> if completion needs the RIGHT ensemble structure (not just some strong synapses), it collapses.
     flat_idx, pre_of, post_of = _ca3_recurrent_flat(bridge, ca3_set)
     data = to_host(bridge.cp_connections.data)
+    within_idx = [int(k) for k in flat_idx
+                  if (ens_of.get(int(pre_of[k])) is not None and ens_of.get(int(pre_of[k])) == ens_of.get(int(post_of[k])))]
     for k in flat_idx:
-        pre, post = int(pre_of[k]), int(post_of[k])
-        same = (ens_of.get(pre) is not None and ens_of.get(pre) == ens_of.get(post))
-        data[int(k)] = (w_high if (same and not flat) else w_low)
+        data[int(k)] = w_low
+    if not flat:
+        if scramble:
+            hi = rng.choice(np.asarray(flat_idx, dtype=np.int64), size=len(within_idx), replace=False)
+        else:
+            hi = np.asarray(within_idx, dtype=np.int64)
+        for k in hi:
+            data[int(k)] = w_high
     bridge.cp_connections.data[:] = cp.asarray(data, dtype=bridge.cp_connections.data.dtype)
 
+    # Rung-0 CALIBRATION probe: the ACTUAL per-step weighted coincident drive (same masked-weighted transposed matvec
+    # the plateau reads vs prev_firing) on the installed attractor, so k_thresh can be set between held and non.
+    def _cdrive(cue_global):
+        if getattr(bridge, "cp_coincidence_synapse_mask", None) is None:
+            return None
+        from sim.backend import get_sparse_module
+        csp = get_sparse_module()
+        nnz = int(bridge.cp_connections.nnz)
+        mk = bridge.cp_coincidence_synapse_mask[:nnz].astype(cp.float32)
+        d = bridge.cp_connections.data[:nnz] * mk
+        mat = csp.csr_matrix((d, bridge.cp_connections.indices, bridge.cp_connections.indptr), shape=bridge.cp_connections.shape)
+        x = cp.zeros(bridge.cp_connections.shape[0], dtype=cp.float32)
+        x[cp.asarray(cue_global, dtype=cp.int64)] = 1.0
+        return to_host(mat.T @ x)
+
     held_c, non_c = [], []
+    diag_cd = {"h": [], "n": []}
     non_ens = np.array([g for g in ca3_idx if int(g) not in ens_of], dtype=np.int64)
     for e, ens in enumerate(ensembles):
         se = ens.copy(); rng.shuffle(se)
@@ -70,7 +97,14 @@ def run_seed(seed, coincidence, k_thresh=20.0, w_high=15.0, w_low=1.5, plateau_s
         ca = float(np.mean(resp[cp_])) + 1e-9
         held_c.append(float(np.mean(resp[hp])) / ca)
         non_c.append(float(np.mean(resp[npos])) / ca)
-    return {"heldout": float(np.mean(held_c)), "nonens": float(np.mean(non_c))}
+        if coincidence and not flat:
+            cd = _cdrive(cue)
+            if cd is not None:
+                diag_cd["h"].append(float(np.mean([cd[int(g)] for g in held])))
+                diag_cd["n"].append(float(np.mean([cd[int(g)] for g in non_ens[:40]])))
+    return {"heldout": float(np.mean(held_c)), "nonens": float(np.mean(non_c)),
+            "cdrive_held": float(np.mean(diag_cd["h"])) if diag_cd["h"] else None,
+            "cdrive_non": float(np.mean(diag_cd["n"])) if diag_cd["n"] else None}
 
 
 def main():
@@ -82,6 +116,10 @@ def main():
     ap.add_argument("--plateau-strength", type=float, default=140.0)
     ap.add_argument("--drive-pA", type=float, default=200.0, help="recall cue drive (CYCLE-1064 transmission needed ~800)")
     ap.add_argument("--mg", type=float, default=None, help="nmda_mg_concentration (lower opens the Mg2+ block -> plateau at rest)")
+    ap.add_argument("--two-comp", action="store_true", help="regenerate the plateau on the apical dAP compartment")
+    ap.add_argument("--apical-R", type=float, default=None, help="apical input resistance (higher = larger local dV per plateau current)")
+    ap.add_argument("--apical-gc", type=float, default=None, help="apical->soma coupling conductance")
+    ap.add_argument("--scramble", action="store_true", help="add the SCRAMBLE control (same w_high budget, random structure)")
     ap.add_argument("--json", default=None)
     a = ap.parse_args()
     seeds = [int(x) for x in a.seeds.split(",")]
@@ -89,18 +127,24 @@ def main():
           f"| PLATEAU vs LINEAR vs FLAT-control, held-out completion + specificity", flush=True)
     import json
     rows = []
-    kw = dict(k_thresh=a.k_thresh, w_high=a.w_high, w_low=a.w_low, plateau_strength=a.plateau_strength, drive_pA=a.drive_pA, mg=a.mg)
+    kw = dict(k_thresh=a.k_thresh, w_high=a.w_high, w_low=a.w_low, plateau_strength=a.plateau_strength,
+              drive_pA=a.drive_pA, mg=a.mg, two_comp=a.two_comp, apical_R=a.apical_R, apical_gc=a.apical_gc)
     for s in seeds:
         t0 = time.time()
         plat = run_seed(s, coincidence=True, **kw)
         lin = run_seed(s, coincidence=False, **kw)
         flatc = run_seed(s, coincidence=True, flat=True, **kw)
+        scr = run_seed(s, coincidence=True, scramble=True, **kw) if a.scramble else None
         row = {"seed": s, "plateau_held": plat["heldout"], "plateau_non": plat["nonens"],
                "linear_held": lin["heldout"], "linear_non": lin["nonens"],
                "flat_held": flatc["heldout"], "plateau_vs_linear": plat["heldout"] - lin["heldout"]}
+        if scr is not None:
+            row["scramble_held"] = scr["heldout"]
         rows.append(row)
+        _cd = f"c_drive[held={plat.get('cdrive_held'):.1f} non={plat.get('cdrive_non'):.1f}]" if plat.get("cdrive_held") is not None else ""
+        _sc = f"SCRAMBLE held={scr['heldout']:.3f} |" if scr is not None else ""
         print(f"  [seed {s}] PLATEAU held={plat['heldout']:.3f}(non {plat['nonens']:.3f}) | "
-              f"LINEAR held={lin['heldout']:.3f}(non {lin['nonens']:.3f}) | FLAT-ctrl held={flatc['heldout']:.3f} "
+              f"LINEAR held={lin['heldout']:.3f}(non {lin['nonens']:.3f}) | FLAT-ctrl held={flatc['heldout']:.3f} | {_sc} {_cd} "
               f"(plateau-vs-linear={row['plateau_vs_linear']:+.3f}) ({time.time()-t0:.0f}s)", flush=True)
     if a.json and rows:
         json.dump(rows, open(a.json, "w"), indent=1)
