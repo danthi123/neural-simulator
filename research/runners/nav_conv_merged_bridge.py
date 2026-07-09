@@ -989,9 +989,15 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
     hippo_regions, hippo_pathways = [], []
     if co_resident_hippo_memory:
         from sim.enums import NeuronType as _NT
+        import os as _os_bask
         _HIPPO_PYR = _NT.IZH2007_HIPPO_PYRAMIDAL.name
         _FS = _NT.IZH2007_FS_CORTICAL_INTERNEURON.name
         _n_basket = max(8, int(0.25 * int(hippo_n_ca3)))
+        # E%-max feedback-inhibition set-point (CYCLE 1093 mechanism test, de Almeida-Idiart-Lisman 2009): the basket
+        # can set the FRACTION of ca3 that fires robust to the excitatory regime -> a PORTABLE sparsifier that does NOT
+        # depend on cell-type diversity. Default 5.0/120.0 = byte-identical; env knobs to test a stronger E%-max.
+        _bask_drive_w = float(_os_bask.environ.get("CA3_BASKET_DRIVE_W", "5.0"))   # ca3->basket (E->I); higher -> basket fires proportionally
+        _bask_inh_w = float(_os_bask.environ.get("CA3_BASKET_INH_W", "120.0"))     # basket->ca3 (I->E); the sparsity strength
         hippo_regions = [
             # NOTE (CYCLE 1093): the co-resident FORMATION+COMPLETION does NOT transplant here by config-matching. ~17
             # exhaustive single-variable tests (AUTONOMOUS_STATE CYCLE 1093) show the merged bridge's dynamical regime
@@ -1024,10 +1030,10 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
                           plastic=True, plasticity_gate="ca3_swr_burst", coincidence_detector=True),
             RegionPathway(from_region="ca3", to_region="ca1", density=0.30, weight_mean=4.0, weight_jitter=0.2,
                           plastic=True, plasticity_gate="ca3_to_ca1"),                      # Schaffer read-out
-            RegionPathway(from_region="ca3", to_region="ca3_pv_basket", density=0.40, weight_mean=5.0,
+            RegionPathway(from_region="ca3", to_region="ca3_pv_basket", density=0.40, weight_mean=_bask_drive_w,
                           weight_jitter=0.2, plastic=False),                                # E->I (feedback drive)
-            RegionPathway(from_region="ca3_pv_basket", to_region="ca3", density=1.0, weight_mean=120.0,
-                          weight_jitter=0.2, plastic=False),                                # I->E (feedback sparsifier)
+            RegionPathway(from_region="ca3_pv_basket", to_region="ca3", density=1.0, weight_mean=_bask_inh_w,
+                          weight_jitter=0.2, plastic=False),                                # I->E (feedback sparsifier / E%-max set-point)
         ]
 
     union_regions = (list(nav_regions) + list(parser_regions) + list(dlpfc_regions)

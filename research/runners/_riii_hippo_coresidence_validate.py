@@ -13,6 +13,55 @@ import argparse, time
 import numpy as np
 
 
+def _train_ff(bridge, cp, assemblies, basket_idx, ff_drive, presentations, drive_pA, gamma_on, gamma_off):
+    """FEEDFORWARD-E%-max formation (CYCLE 1093 research-gated mechanism, de Almeida-Idiart-Lisman 2009): drive the
+    ca3_pv_basket with a current PROPORTIONAL TO THE INPUT (a feedforward divisive-norm mimic) during each gamma ON
+    volley, so the basket->ca3 inhibition sets a THRESHOLD that only the STRONGLY-driven assembly (1000 pA) clears,
+    not the weakly-driven non-assembly (recurrent spread ~36 pA) -> sparse-to-assembly firing -> the rate-Hebbian
+    potentiates within-assembly ONLY (specific attractor). Diagnostic: the basket drive is host-computed here (the
+    faithful synaptic version drives the basket from a dg afferent, dg->basket, per the CA1 ca1_ff_inhib block)."""
+    from research.runners._riii_ca3_coincidence_completion_derisk import _set_gates
+    _set_gates(bridge, 1.0)
+    bk = cp.asarray(basket_idx, dtype=cp.int64)
+    for _p in range(presentations):
+        for asm in assemblies:
+            drv = cp.asarray(asm, dtype=cp.int64)
+            bridge.cp_external_input_current[:] = 0.0
+            for _ in range(6):
+                bridge._run_one_simulation_step()
+            for _v in range(3):
+                bridge.cp_external_input_current[:] = 0.0
+                bridge.cp_external_input_current[drv] = float(drive_pA)
+                bridge.cp_external_input_current[bk] = float(ff_drive)   # FEEDFORWARD basket drive (sets HOW MANY fire)
+                for _ in range(gamma_on):
+                    bridge._run_one_simulation_step()
+                bridge.cp_external_input_current[:] = 0.0
+                for _ in range(gamma_off):
+                    bridge._run_one_simulation_step()
+    _set_gates(bridge, 0.0)
+
+
+def _recall_ff(bridge, cp, cue_cells, read_cells, drive_pA, basket_idx, ff_drive, steps=60):
+    """Recall with the FEEDFORWARD basket drive active (same divisive-norm threshold as formation) -> the cue completes
+    the assembly against a self-adjusting sparsity set-point, non-assembly stays sub-threshold."""
+    from sim.backend import to_host
+    bk = cp.asarray(basket_idx, dtype=cp.int64)
+    cue = cp.asarray(cue_cells, dtype=cp.int64); read = cp.asarray(read_cells, dtype=cp.int64)
+    bridge.cp_external_input_current[:] = 0.0
+    for _ in range(40):
+        bridge.cp_external_input_current[bk] = float(ff_drive)
+        bridge._run_one_simulation_step()
+    acc = cp.zeros(len(read_cells), dtype=cp.float32)
+    for _ in range(steps):
+        bridge.cp_external_input_current[:] = 0.0
+        bridge.cp_external_input_current[cue] = float(drive_pA)
+        bridge.cp_external_input_current[bk] = float(ff_drive)
+        bridge._run_one_simulation_step()
+        acc += bridge.cp_firing_states[read].astype(cp.float32)
+    bridge.cp_external_input_current[:] = 0.0
+    return to_host(acc)
+
+
 def run_seed(seed, hippo_n_ca3=500, n_assembly=12, n_mem=3, presentations=60, hippo_k_thresh=66.0, cue_drive=1000.0,
              hand_install=False):
     """Build the merged nav/conv bridge WITH the co-resident CA3 memory, run formation + partial-cue completion on the
@@ -77,6 +126,9 @@ def run_seed(seed, hippo_n_ca3=500, n_assembly=12, n_mem=3, presentations=60, hi
         _vt0 = _th(bridge.cp_izh_vt[_ca3dev])
         bridge.cp_izh_vt[_ca3dev] = _fh((_vt0 + _rv.uniform(-_vj, _vj, size=len(ca3_idx))).astype(np.float32))
         print(f"    [ca3 param override] vt jitter +/-{_vj} mV", flush=True)
+    _ff_drive = float(_os.environ.get("CA3_FF_DRIVE", "0"))   # CYCLE 1093 research-gated FEEDFORWARD E%-max (basket driven by input)
+    if _ff_drive > 0:
+        print(f"    [FEEDFORWARD E%-max] basket driven at {_ff_drive} pA during formation+recall (divisive-norm sparsity)", flush=True)
     rng = np.random.default_rng(seed)
     perm = rng.permutation(ca3_idx)
     assemblies = [np.array(perm[m * n_assembly:(m + 1) * n_assembly], dtype=np.int64) for m in range(n_mem)]
@@ -121,7 +173,10 @@ def run_seed(seed, hippo_n_ca3=500, n_assembly=12, n_mem=3, presentations=60, hi
         bridge.cp_plasticity_rate_gain[:nnz] = from_host(_gain)
         cfg.enable_hebbian_learning = True; cfg.hebbian_rate_window = True
         cfg.hebbian_max_weight = 120.0; cfg.hebbian_coactivity_thresh = 0.001
-        _train_assemblies(bridge, cp, assemblies, presentations, 1000.0, 8, 12)
+        if _ff_drive > 0 and basket is not None:
+            _train_ff(bridge, cp, assemblies, basket, _ff_drive, presentations, 1000.0, 8, 12)
+        else:
+            _train_assemblies(bridge, cp, assemblies, presentations, 1000.0, 8, 12)
         (cfg.enable_hebbian_learning, cfg.hebbian_rate_window, cfg.hebbian_max_weight,
          cfg.hebbian_coactivity_thresh) = _saved                        # restore STDP-mode for nav/conv
         bridge.cp_plasticity_rate_gain[:nnz] = from_host(_saved_gain)
@@ -176,9 +231,14 @@ def run_seed(seed, hippo_n_ca3=500, n_assembly=12, n_mem=3, presentations=60, hi
         # recall_disinhib=False (== clamp_cells=None); clamping the basket = SWR-ripple DISINHIBITION, which REMOVES the
         # brake -> the recurrent spreads unchecked -> saturation (the CYCLE-1092/1093 blocker was THIS runner bug, not a
         # merged-bridge dynamics conflict). Match the validated completion: basket active.
-        rh = _recall(bridge, cp, cue, held, cue_drive, clamp_cells=None)
-        rc = _recall(bridge, cp, cue, cue, cue_drive, clamp_cells=None)
-        rn = _recall(bridge, cp, cue, non_assembly, cue_drive, clamp_cells=None)
+        if _ff_drive > 0 and basket is not None:
+            rh = _recall_ff(bridge, cp, cue, held, cue_drive, basket, _ff_drive)
+            rc = _recall_ff(bridge, cp, cue, cue, cue_drive, basket, _ff_drive)
+            rn = _recall_ff(bridge, cp, cue, non_assembly, cue_drive, basket, _ff_drive)
+        else:
+            rh = _recall(bridge, cp, cue, held, cue_drive, clamp_cells=None)
+            rc = _recall(bridge, cp, cue, cue, cue_drive, clamp_cells=None)
+            rn = _recall(bridge, cp, cue, non_assembly, cue_drive, clamp_cells=None)
         ca = float(np.mean(rc)) + 1e-9
         held_c.append(float(np.mean(rh)) / ca); non_c.append(float(np.mean(rn)) / ca)
     return {"heldout": float(np.mean(held_c)), "nonassembly": float(np.mean(non_c)), "disjoint": disjoint,
