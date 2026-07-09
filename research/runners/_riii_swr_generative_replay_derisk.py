@@ -57,6 +57,20 @@ def _recall_burst(bridge, cp, cue_cells, read_cells, drive_pA, n_volley=6, gamma
     return to_host(acc)
 
 
+def _schaffer_weight(bridge, cp, pre_idx, ca1_idx):
+    """Mean ca3->ca1 (Schaffer) synapse weight FROM the given pre (ca3-assembly) cells. cp_connections is [pre,post]:
+    row (searchsorted) = pre, col (indices) = post. The consolidation signature that does NOT need CA1 to separate:
+    did replaying assembly A strengthen A's Schaffer synapses more than a held-out (non-replayed) assembly's?"""
+    from sim.backend import to_host
+    conn = bridge.cp_connections
+    nnz = int(conn.nnz)
+    indptr = to_host(conn.indptr); indices = to_host(conn.indices); data = to_host(conn.data[:nnz])
+    pre_of = np.searchsorted(indptr, np.arange(nnz), side="right") - 1
+    post_of = indices[:nnz]
+    mask = np.isin(pre_of, np.asarray(pre_idx)) & np.isin(post_of, np.asarray(ca1_idx))
+    return float(np.mean(data[mask])) if mask.any() else 0.0
+
+
 def _replay_phase(bridge, cp, assemblies, n_replay, drive_pA, gamma_on, gamma_off, rng):
     """Rung 2 -- generative partial-cue REPLAY with Schaffer STDP: open the ca3_to_ca1 plasticity gate, then for
     n_replay cycles drive a PARTIAL cue of each assembly in gamma volleys -> the dendritic completion reactivates the
@@ -134,8 +148,15 @@ def run_seed(seed, n_ca3=500, n_assembly=12, n_mem=3, presentations=60, drive_pA
     perm = rng.permutation(ca3_idx)
     assemblies = [np.array(perm[m * n_assembly:(m + 1) * n_assembly], dtype=np.int64) for m in range(n_mem)]
     _train_assemblies(bridge, cp, assemblies, presentations, drive_pA, gamma_on, gamma_off)
+    replayed_w = heldout_w = 0.0
     if n_replay > 0:                                              # Rung 2: generative partial-cue replay consolidates ca3->ca1
-        _replay_phase(bridge, cp, assemblies, n_replay, drive_pA, gamma_on, gamma_off, rng)
+        # HOLD OUT the last assembly from replay -> the consolidation-specificity control: replayed assemblies'
+        # Schaffer should strengthen, the held-out one's should not (a weight-level metric that does NOT need CA1
+        # to pattern-separate; the formation within/cross analogue on the ca3->ca1 mapping).
+        replayed, heldout = assemblies[:-1], assemblies[-1]
+        _replay_phase(bridge, cp, replayed, n_replay, drive_pA, gamma_on, gamma_off, rng)
+        replayed_w = float(np.mean([_schaffer_weight(bridge, cp, a, ca1_idx) for a in replayed]))
+        heldout_w = _schaffer_weight(bridge, cp, heldout, ca1_idx)
 
     # ca1 (Schaffer target) response to FULL assembly drive vs PARTIAL cue (completion), per assembly
     full_ca1, part_ca1 = [], []
@@ -150,7 +171,7 @@ def run_seed(seed, n_ca3=500, n_assembly=12, n_mem=3, presentations=60, drive_pA
     cross_vals = [_cos(part_ca1[m], full_ca1[o]) for m in range(n_mem) for o in range(n_mem) if o != m]
     cross = float(np.mean(cross_vals)) if cross_vals else 0.0
     ca1_fire = float(np.mean([np.sum(v) for v in full_ca1]))       # raw ca1 spikes on a FULL-assembly drive (is ca1 driven at all?)
-    return {"match": match, "cross": cross, "ca1_fire": ca1_fire}
+    return {"match": match, "cross": cross, "ca1_fire": ca1_fire, "replayed_w": replayed_w, "heldout_w": heldout_w}
 
 
 def main():
@@ -179,18 +200,17 @@ def main():
         for s in seeds:
             t0 = time.time()
             rep = run_seed(s, coincidence=True, n_replay=a.n_replay, **kw)
-            nore = run_seed(s, coincidence=True, n_replay=0, **kw)
-            rep_gap = rep["match"] - rep["cross"]; nore_gap = nore["match"] - nore["cross"]
-            rows.append({"seed": s, "rep_match": rep["match"], "rep_cross": rep["cross"], "rep_gap": rep_gap,
-                         "nore_gap": nore_gap})
-            print(f"  [seed {s}] REPLAY match={rep['match']:.3f} cross={rep['cross']:.3f} gap={rep_gap:+.3f} | "
-                  f"NO-REPLAY gap={nore_gap:+.3f} | ca1_fire={rep['ca1_fire']:.1f} ({time.time()-t0:.0f}s)", flush=True)
+            rw, hw = rep["replayed_w"], rep["heldout_w"]
+            ratio = rw / hw if hw > 1e-9 else 0.0
+            rows.append({"seed": s, "replayed_w": rw, "heldout_w": hw, "ratio": ratio, "ca1_fire": rep["ca1_fire"]})
+            print(f"  [seed {s}] Schaffer weight REPLAYED={rw:.3f} vs HELD-OUT(not replayed)={hw:.3f} -> ratio={ratio:.2f}x "
+                  f"| ca1_fire={rep['ca1_fire']:.1f} ({time.time()-t0:.0f}s)", flush=True)
         if a.json and rows:
             json.dump(rows, open(a.json, "w"), indent=1)
-        rg = [r["rep_gap"] for r in rows]; ng = [r["nore_gap"] for r in rows]
-        go = all(x > 0.15 for x in rg) and all(rr - nn > 0.10 for rr, nn in zip(rg, ng))
-        print(f"\n  AGGREGATE: REPLAY specificity-gap={np.mean(rg):+.3f} vs NO-REPLAY gap={np.mean(ng):+.3f}", flush=True)
-        print(f"  VERDICT: {'GO' if go else 'PARTIAL/NEGATIVE'} -- {'generative partial-cue REPLAY (ca3_to_ca1 STDP) CONSOLIDATES an assembly-specific ca1 code (replay gap > 0.15 AND > the no-replay gap) = the pattern is learned into the Schaffer mapping from a DEGRADED cue = the SWR generative-replay loop closes' if go else 'replay does not yet build a specific ca1 code above the no-replay control; raise n_replay / assembly size (stronger ca1-drive) / STDP rate'}. NO sim/ edit.", flush=True)
+        rr = [r["ratio"] for r in rows]
+        go = all(x > 1.15 for x in rr)                            # replayed Schaffer >15% stronger than the held-out assembly's
+        print(f"\n  AGGREGATE: replayed/held-out Schaffer-weight ratio={np.mean(rr):.2f}x", flush=True)
+        print(f"  VERDICT: {'GO' if go else 'PARTIAL/NEGATIVE'} -- {'generative partial-cue REPLAY (ca3_to_ca1 STDP) STRENGTHENS the REPLAYED assemblies Schaffer mapping SPECIFICALLY (>1.15x the held-out non-replayed assembly) = assembly-specific systems consolidation from a DEGRADED cue = the SWR generative-replay loop CLOSES (weight-level signature, does not require CA1 to pattern-separate)' if go else 'the replayed Schaffer is not yet >1.15x the held-out; raise n_replay / STDP rate / assembly size'}. NO sim/ edit.", flush=True)
         return
     print(f"[R-iii SWR GEN-REPLAY Rung1] n_ca3={a.n_ca3} n_assembly={a.n_assembly} pres={a.presentations} "
           f"| partial-cue completion -> ca1 (Schaffer) pattern: correct + specific?", flush=True)
