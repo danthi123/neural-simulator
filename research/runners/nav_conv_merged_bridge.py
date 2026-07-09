@@ -993,6 +993,18 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
         _FS = _NT.IZH2007_FS_CORTICAL_INTERNEURON.name
         _n_basket = max(8, int(0.25 * int(hippo_n_ca3)))
         hippo_regions = [
+            # NOTE (CYCLE 1093): the co-resident FORMATION+COMPLETION does NOT transplant here by config-matching. ~17
+            # exhaustive single-variable tests (AUTONOMOUS_STATE CYCLE 1093) show the merged bridge's dynamical regime
+            # has NO sparse-specific window for this ca3 completion: the DEFAULT saturates (all ca3 fire 30/60, within==
+            # cross==118), and EVERY standalone-config match (num_traits=5, enable_nmda-on-ca3, enable_heterogeneity,
+            # vt/adaptation diversity, per_type_stp=False, OU-on) collapses to a DEAD attractor (within~7, held=0). The
+            # standalone completion's working regime rests on a fragile interaction (STP facilitation + the num_traits>1
+            # type-MIX happening to assign FIRING cell-types to the assembly + its 6-region context) that is not
+            # portable. So ca3/ca1 are kept MINIMAL (no NMDA/heterogeneity -- they didn't open a sparse regime). The
+            # STRUCTURE co-resides (disjoint + byte-identical off); the co-resident FUNCTION is a characterized boundary
+            # awaiting a research-gated mechanism (memory-as-co-state with its OWN dynamics phase -- the biological
+            # theta-encoding / SWR-retrieval state-switch, hippocampus runs a distinct regime from neocortex). Byte-
+            # preserved when co_resident_hippo_memory=False (these regions don't exist).
             BrainRegion(name="ca3", n_neurons=int(hippo_n_ca3), exc_fraction=0.85, internal_density=0.0,
                         exc_weight_mean=1.5, inh_weight_mean=2.0, weight_jitter=0.2, plastic_internal=True,
                         izh_neuron_type=_HIPPO_PYR),
@@ -1038,6 +1050,13 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
     cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"
     cfg.connections_per_neuron = 0
     cfg.num_traits = 1
+    import os as _os_nt
+    if _os_nt.environ.get("MERGED_NUM_TRAITS") is not None:   # CYCLE 1093 diagnostic ONLY: confirm the ca3 completion
+        cfg.num_traits = int(_os_nt.environ["MERGED_NUM_TRAITS"])   # needs the calibrated num_traits=5 diversity (unset=1, byte-identical)
+    if _os_nt.environ.get("MERGED_NO_STP") is not None:      # CYCLE 1093 diagnostic: standalone has per_type_stp=False;
+        cfg.enable_per_type_stp = False                       # STP facilitation on ca3->ca3 could amplify the recurrent -> broad firing
+    if _os_nt.environ.get("MERGED_OU_ON") is not None:       # CYCLE 1093 diagnostic: standalone has OU on
+        cfg.enable_ou_process = True
     cfg.seed = int(seed)
     # 5a clip mitigation: raise the rule clip bounds ABOVE the max frozen conversational real-valued weight
     # (~300 parser role-route) so the ungated reward/Hebbian clips (sim/bridge.py:6200,6505) cannot move them.
