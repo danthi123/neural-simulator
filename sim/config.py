@@ -365,6 +365,15 @@ class CoreSimConfig:
     hebbian_weight_decay: float = 0.00001
     hebbian_min_weight: float = 0.05
     hebbian_max_weight: float = 1.0
+    # SYMMETRIC (offset-free) Hebbian co-activity. Default False = the existing CAUSAL rule (pre fired at t-1 AND
+    # post fired at t). When True, potentiate synapses where pre AND post fire in the SAME step (fired_this_step
+    # both) -- the associative "fire together, wire together" form. Needed to form a recurrent AUTOASSOCIATOR
+    # (e.g. CA3): co-ensemble members driven by one pattern fire SYNCHRONOUSLY, so the causal t-1/t offset is
+    # ~never satisfied and the causal rule cannot potentiate the within-ensemble recurrents (measured: the
+    # potentiation is byte-identical across a 100x learning-rate sweep -> ~zero events). Biology: CA3 recurrent
+    # (Schaffer/associational) LTP is associative/Hebbian (Kandel 6e Ch 54; Marr 1971 autoassociator). Additive,
+    # guarded; default False is byte-identical to the prior behavior.
+    hebbian_symmetric: bool = False
     enable_short_term_plasticity: bool = True
     stp_U: float = 0.15          # Global fallback U (used when per-type not available)
     stp_tau_d: float = 200.0     # Global fallback tau_d (ms)

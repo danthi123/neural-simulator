@@ -6939,8 +6939,14 @@ class SimulationBridge:
                self.cp_connections.data is not None and self.cp_connections.data.size > 0:
                 if _prev_any and _fired_any:
                     coo_matrix_heb = self._get_cached_coo()  # Use cached COO
-                    pre_fired_mask_heb = self.cp_prev_firing_states[coo_matrix_heb.row] 
-                    post_fired_mask_heb = fired_this_step[coo_matrix_heb.col] 
+                    # SYMMETRIC (offset-free) co-activity: pre fires in the SAME step as post (fired_this_step for
+                    # both) -- the associative form needed to potentiate a recurrent autoassociator whose members
+                    # fire synchronously (CA3). Default (flag off) = the causal rule: pre fired at t-1 (prev_firing).
+                    if getattr(cfg, "hebbian_symmetric", False):
+                        pre_fired_mask_heb = fired_this_step[coo_matrix_heb.row]
+                    else:
+                        pre_fired_mask_heb = self.cp_prev_firing_states[coo_matrix_heb.row]
+                    post_fired_mask_heb = fired_this_step[coo_matrix_heb.col]
 
                     active_synapse_indices_heb = cp.where(pre_fired_mask_heb & post_fired_mask_heb)[0]
                     num_potentiation_events = 0

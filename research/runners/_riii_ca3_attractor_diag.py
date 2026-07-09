@@ -18,12 +18,13 @@ from research.runners.validate_trisynaptic_loop import build_drive_pattern
 
 
 def run(seed=42, n_mem=2, train_events=100, drive_pA=200.0, n_lang=384, n_ca3=150, n_dg=300,
-        ca3_density=0.5, ca3_weight=6.0, hebb_max=30.0, reset_steps=15, drive_steps=55):
+        ca3_density=0.5, ca3_weight=6.0, hebb_max=30.0, hebb_lr=None, hebb_decay=None, hebb_sym=False, reset_steps=15, drive_steps=55):
     from sim.backend import get_backend, to_host, get_sparse_module
     cp, _ = get_backend()
     csp = get_sparse_module()
     bridge = _build(seed, n_lang=n_lang, n_ca3=n_ca3, n_dg=n_dg, ca3_density=ca3_density, ca3w=ca3_weight,
-                    coincidence=True, weighted=True, train=True, hebb_max=hebb_max)
+                    coincidence=True, weighted=True, train=True, hebb_max=hebb_max, hebb_lr=hebb_lr,
+                    hebb_decay=hebb_decay, hebb_sym=hebb_sym)
     rm = bridge.region_manager
     lang = np.asarray(list(rm.indices("language_input")), dtype=np.int64)
     ca3_idx = list(rm.indices("ca3")); ca3_arr = cp.asarray(ca3_idx, dtype=cp.int64)
@@ -92,7 +93,7 @@ def run(seed=42, n_mem=2, train_events=100, drive_pA=200.0, n_lang=384, n_ca3=15
         elif pe is not None:
             mem_to_other.append(w)                                         # member -> other (fired-somewhat) neuron
     mean = lambda a: float(np.mean(a)) if a else 0.0
-    print(f"[R-iii attractor diag] seed {seed} train_events={train_events} hebb_max={hebb_max}", flush=True)
+    print(f"[R-iii attractor diag] seed {seed} train_events={train_events} hebb_max={hebb_max} hebb_lr={hebb_lr}", flush=True)
     print(f"  SPARSITY: {n_active}/{len(ca3_idx)} CA3 active (>10% peak) = {frac_active:.2f}  (sparse attractor wants << 0.30)", flush=True)
     print(f"  ca3->ca3 recurrent weight (init {ca3_weight}):", flush=True)
     print(f"    within-ensemble (member->member) = {mean(within):.2f}  (n={len(within)})", flush=True)
@@ -115,10 +116,15 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--train-events", type=int, default=100)
     ap.add_argument("--hebb-max", type=float, default=30.0)
+    ap.add_argument("--hebb-lr", type=float, default=None)
     ap.add_argument("--ca3-density", type=float, default=0.5)
+    ap.add_argument("--drive-pA", type=float, default=200.0, help="encoding drive: LOWER -> fewer CA3 fire -> sparser ensemble -> more within-ensemble-specific coincidence (D.12 sparsity lever)")
+    ap.add_argument("--hebb-decay", type=float, default=None, help="hebbian_weight_decay; set 0 to test offset-vs-decay")
+    ap.add_argument("--hebb-sym", action="store_true", help="SYMMETRIC (offset-free) co-activity Hebbian -- the CA3 attractor-formation fix")
     a = ap.parse_args()
     t0 = time.time()
-    run(seed=a.seed, train_events=a.train_events, hebb_max=a.hebb_max, ca3_density=a.ca3_density)
+    run(seed=a.seed, train_events=a.train_events, hebb_max=a.hebb_max, hebb_lr=a.hebb_lr,
+        ca3_density=a.ca3_density, drive_pA=a.drive_pA, hebb_decay=a.hebb_decay, hebb_sym=a.hebb_sym)
     print(f"  ({time.time()-t0:.0f}s)", flush=True)
 
 
