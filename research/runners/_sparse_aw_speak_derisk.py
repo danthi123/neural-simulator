@@ -86,8 +86,9 @@ def _lesion_shared_to_langout(bridge, cp):
 
 
 def run_seed(seed, n_concepts=64, n_train_events=400, n_lang_input=8192, n_shared_pool=2000,
-             n_shared_fs=300, pattern_size=100, sparsity=0.03, lang_output_wta=False, verbose=True):
-    from sim.backend import get_backend
+             n_shared_fs=300, pattern_size=100, sparsity=0.03, lang_output_wta=False, winner_inactive_ld=0.0,
+             verbose=True):
+    from sim.backend import get_backend, to_host, from_host
     cp, _ = get_backend()
     from sim.text_embeddings import orthogonal_drive_pattern
     from research.runners.concept_pool_sparse_distributed import (
@@ -105,6 +106,40 @@ def run_seed(seed, n_concepts=64, n_train_events=400, n_lang_input=8192, n_share
     sparse_patterns = generate_sparse_patterns(n_concepts, n_shared_pool, pattern_size, seed)
     apply_sparse_topographic_prior(bridge, n_concepts, n_lang_input, sparse_patterns, sparsity=sparsity,
                                    n_words_for_orthogonal=n_concepts, verbose=False)
+
+    # the language_output REFERENCE bands (== the per-word teacher orthogonal_drive_pattern) -- needed BEFORE training
+    # for the winner-inactive read-out masks (post_win = the word's language_output band).
+    word_patterns_out = [orthogonal_drive_pattern(cue_idx=wi, n_cues=n_concepts, n_neurons=n_lang_output,
+                                                  drive_max_pA=200.0, sparsity=sparsity) for wi in range(n_concepts)]
+
+    # WINNER-INACTIVE read-out DECORRELATION (CYCLE 1096, research-gated): the committed sim/ kernel
+    # fused_htm_winner_inactive_depression makes each word's language_output BAND (post_win) DEPRESS its synapses from
+    # the shared-pool neurons NOT in the word's pattern (pre_active=0) -> each band reads ONLY its pattern -> word-
+    # specific read-out (fixes the overlapping-pattern smear that STDP alone can't; EMERGE-39/40, 0.20->0.96 on
+    # overlapping categories). Cache the shared_pool->language_output synapse COO + precompute per-word device masks.
+    ro = None
+    if winner_inactive_ld > 0:
+        from sim.kernels import fused_htm_winner_inactive_depression
+        conn = bridge.cp_connections; nnz = int(conn.nnz)
+        _indptr = to_host(conn.indptr); _indices = to_host(conn.indices)
+        _pre = np.searchsorted(_indptr, np.arange(nnz), side="right") - 1
+        _post = _indices[:nnz]
+        rm = bridge.region_manager
+        _sh = np.asarray(list(rm.indices("shared_concept_pool")), dtype=np.int64)
+        _lo = np.asarray(list(rm.indices("language_output")), dtype=np.int64)
+        _mask = np.isin(_pre, _sh) & np.isin(_post, _lo)
+        ro_pos = np.nonzero(_mask)[0]                                   # data-positions of the read-out synapses
+        ro_pre = _pre[ro_pos]; ro_post = _post[ro_pos]
+        ro_pos_dev = cp.asarray(ro_pos, dtype=cp.int64)
+        pre_masks, win_masks = [], []
+        for wi in range(n_concepts):
+            pat_g = set(int(_sh[i]) for i in sparse_patterns[wi])       # global shared idx in this word's pattern
+            band_rel = np.nonzero(np.asarray(word_patterns_out[wi]) > 0)[0]
+            band_g = set(int(_lo[r]) for r in band_rel)                 # global language_output idx in this word's band
+            pre_masks.append(cp.asarray(np.isin(ro_pre, list(pat_g)).astype(np.float32)))
+            win_masks.append(cp.asarray(np.isin(ro_post, list(band_g)).astype(np.float32)))
+        ro = (fused_htm_winner_inactive_depression, ro_pos_dev, pre_masks, win_masks)
+
     bridge.set_plasticity_gate("language_input_to_shared", 1.0)
     bridge.set_plasticity_gate("shared_to_language_output", 1.0)
     rng = np.random.RandomState(seed)
@@ -113,14 +148,14 @@ def run_seed(seed, n_concepts=64, n_train_events=400, n_lang_input=8192, n_share
         for wi in order:
             train_concept_sparse(bridge, wi, sparse_patterns[wi], n_lang_input, n_lang_output,
                                  sparsity, n_concepts)
+            if ro is not None:
+                _kern, _pos, _pm, _wm = ro                              # winner-inactive depress on the read-out synapses
+                bridge.cp_connections.data[_pos] = _kern(bridge.cp_connections.data[_pos], _pm[wi], _wm[wi],
+                                                         winner_inactive_ld, 0.0, 10.0)
     bridge.set_plasticity_gate("language_input_to_shared", 0.0)
     bridge.set_plasticity_gate("shared_to_language_output", 0.0)
     if verbose:
         print(f"  [seed {seed}] built+trained {n_concepts}x{n_train_events} in {time.time()-t0:.0f}s", flush=True)
-
-    # the language_output REFERENCE patterns == the per-word teacher used in train_concept_sparse (orthogonal_drive_pattern)
-    word_patterns_out = [orthogonal_drive_pattern(cue_idx=wi, n_cues=n_concepts, n_neurons=n_lang_output,
-                                                  drive_max_pA=200.0, sparsity=sparsity) for wi in range(n_concepts)]
 
     # A->W SPEAK decode: drive each concept's sparse pattern -> decode its word (raw + top-k WTA diagnostic)
     correct = 0; correct_tk = 0; margins = []; totals = []
@@ -160,6 +195,9 @@ def main():
     ap.add_argument("--sparsity", type=float, default=0.03)
     ap.add_argument("--lang-output-wta", action="store_true",
                     help="add a language_output WTA (E%-max) during training -> word-specific read-out (fixes smearing)")
+    ap.add_argument("--winner-inactive-ld", type=float, default=0.0,
+                    help="winner-inactive read-out DECORRELATION rate (the committed fused_htm_winner_inactive_depression "
+                         "kernel on shared->language_output; 0=off, ~0.02-0.05 = the EMERGE-40 regime)")
     ap.add_argument("--json", default=None)
     a = ap.parse_args()
     seeds = [int(x) for x in a.seeds.replace(",", " ").split()]
@@ -169,7 +207,7 @@ def main():
     for s in seeds:
         r = run_seed(s, n_concepts=a.n_concepts, n_train_events=a.n_train_events, n_lang_input=a.n_lang_input,
                      n_shared_pool=a.n_shared_pool, pattern_size=a.pattern_size, sparsity=a.sparsity,
-                     lang_output_wta=a.lang_output_wta)
+                     lang_output_wta=a.lang_output_wta, winner_inactive_ld=a.winner_inactive_ld)
         rows.append(r)
         print(f"  [seed {s}] speak_acc={r['speak_acc']} TOPK={r['speak_acc_topk']} (margin {r['mean_margin']}, "
               f"langout_spikes {r['mean_langout_spikes']}) | MOAT novel_margin={r['novel_margin']} "
