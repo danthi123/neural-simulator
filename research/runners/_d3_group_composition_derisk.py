@@ -339,6 +339,67 @@ def bptt_rnn_state_supervised(task, n_hid=128, epochs=80, lr=0.05, batch=128, se
     return {"same": ps_same, "deeper": ps_deep, "state_same": ss_same, "state_deeper": ss_deep}
 
 
+def discrete_attractor_rnn(task, n_hid=128, epochs=40, lr=0.1, batch=256, seed=42):
+    """DISCRETE-ATTRACTOR recurrence (the length-generalization mechanism the drift-diagnosis points at, biologically
+    apt = the brain's discrete WM / the project's CA3 attractor + NEF cleanup): the running state is ALWAYS one of K
+    CLEAN attractors emb[s] (fixed distinct prototypes); each step computes the next state from (attractor[s_{t-1}],
+    input x_t) and RE-DISCRETIZES (snaps to emb[predicted s_t]) -> NO continuous drift -> generalizes to any depth.
+    Per-step it LEARNS the group-multiplication TRANSITION (a DFA delta: state x input -> next state). TRAIN is
+    teacher-forced (prev=emb[true s_{t-1}] -> each step an independent K-way classification of s_t); TEST is
+    AUTOREGRESSIVE (prev=emb[predicted s_{t-1}]) -> a learned DFA rolled out to held-out-DEEPER lengths."""
+    rng = np.random.RandomState(seed + 9)
+    n_pool = task["n_pool"]; K = task["K"]; ident = task["ident"]
+    emb = (rng.randn(K, n_hid) * 0.5).astype(np.float32)          # FIXED distinct attractor prototypes
+    Wr = (rng.randn(n_hid, n_hid) * np.sqrt(1.0 / n_hid)).astype(np.float32)   # state-embedding -> hidden
+    Wi = (rng.randn(n_hid, n_pool) * np.sqrt(1.0 / n_pool)).astype(np.float32) # input -> hidden
+    Ws = (rng.randn(K, n_hid) * np.sqrt(1.0 / n_hid)).astype(np.float32); bs = np.zeros(K, dtype=np.float32)
+
+    def collect_triples(split):
+        Xe, ye, Le, _, Se = task[split]
+        PREV, XIN, NXT = [], [], []
+        for n in range(len(Le)):
+            prev = ident
+            for t in range(Le[n]):
+                PREV.append(prev); XIN.append(Xe[n, t]); NXT.append(Se[n, t]); prev = Se[n, t]
+        return np.asarray(PREV), np.asarray(XIN, dtype=np.float32), np.asarray(NXT)
+
+    Ptr, Xtr, Ntr = collect_triples("train")                     # teacher-forced -> independent per-step classification
+    Ntr_ = len(Ntr)
+    for ep in range(epochs):
+        order = rng.permutation(Ntr_)
+        for i in range(0, Ntr_, batch):
+            bi = order[i:i + batch]
+            hpre = emb[Ptr[bi]] @ Wr.T + Xtr[bi] @ Wi.T; h = np.tanh(hpre)
+            logits = h @ Ws.T + bs
+            ex = np.exp(logits - logits.max(1, keepdims=True)); sm = ex / ex.sum(1, keepdims=True)
+            d = sm.copy(); d[np.arange(len(bi)), Ntr[bi]] -= 1.0; d /= len(bi)
+            dWs = d.T @ h; dbs = d.sum(0)
+            dh = (d @ Ws) * (1.0 - h ** 2)
+            dWr = dh.T @ emb[Ptr[bi]]; dWi = dh.T @ Xtr[bi]
+            Ws -= lr * dWs; bs -= lr * dbs; Wr -= lr * dWr; Wi -= lr * dWi
+
+    def eval_split(split):                                       # AUTOREGRESSIVE rollout with PREDICTED states
+        Xe, ye, Le, _, Se = task[split]; B = len(Le)
+        pred = np.full(B, ident, dtype=np.int64)
+        Lmax = int(Le.max())
+        final = np.full(B, ident, dtype=np.int64)
+        cur = np.full(B, ident, dtype=np.int64)
+        for t in range(Lmax):
+            active = (Le > t)
+            h = np.tanh(emb[cur] @ Wr.T + Xe[:, t] @ Wi.T)
+            nxt = (h @ Ws.T + bs).argmax(1)
+            cur = np.where(active, nxt, cur)
+            final = np.where(Le == (t + 1), cur, final)          # capture the state at each sample's final step
+        true_state = Se[np.arange(B), Le - 1]
+        return float((final == true_state).mean()), float((task["color"][final] == ye).mean())
+
+    ts_s, tp_s = eval_split("test_same"); ts_d, tp_d = eval_split("test_deeper")
+    # per-step transition accuracy (teacher-forced) -- the DFA delta learnability
+    hpre = emb[Ptr] @ Wr.T + Xtr @ Wi.T; step_acc = float((np.tanh(hpre) @ Ws.T + bs).argmax(1).mean() == Ntr.mean()) \
+        if False else float(((np.tanh(hpre) @ Ws.T + bs).argmax(1) == Ntr).mean())
+    return {"same": tp_s, "deeper": tp_d, "state_same": ts_s, "state_deeper": ts_d, "step_transition_acc": step_acc}
+
+
 # ---------------------------------------------------------------- anti-cheats + driver -------------------------
 def order_control(task, seed=42):
     """PERMUTED-ORDER control: shuffle each sequence's element order. For a NON-ABELIAN group the product changes ->
@@ -381,6 +442,7 @@ def run_seed(group_name, seed, n_pool=64, noise=0.6, n_per_len=1200, epochs=60, 
     rnn = bptt_rnn(task, seed=seed, epochs=epochs, n_hid=n_hid, orthogonal_rec=orthogonal_rec)
     rnn_les = bptt_rnn(task, seed=seed, epochs=epochs, n_hid=n_hid, lesion_recurrent=True)
     ss = bptt_rnn_state_supervised(task, seed=seed, epochs=epochs, n_hid=n_hid, orthogonal_rec=orthogonal_rec)
+    da = discrete_attractor_rnn(task, seed=seed, epochs=max(40, epochs // 2), n_hid=n_hid)
     mk = markov_floor(task)
     order_matters = order_control(task, seed=seed)
     return {"seed": seed, "group": group_name, "K": task["K"], "chance": 0.5,
@@ -390,6 +452,9 @@ def run_seed(group_name, seed, n_pool=64, noise=0.6, n_per_len=1200, epochs=60, 
             "rnn_lesion_same": round(rnn_les["same"], 3), "rnn_lesion_deeper": round(rnn_les["deeper"], 3),
             "state_sup_prop_same": round(ss["same"], 3), "state_sup_prop_deeper": round(ss["deeper"], 3),
             "state_sup_track_same": round(ss["state_same"], 3), "state_sup_track_deeper": round(ss["state_deeper"], 3),
+            "discattr_prop_same": round(da["same"], 3), "discattr_prop_deeper": round(da["deeper"], 3),
+            "discattr_track_same": round(da["state_same"], 3), "discattr_track_deeper": round(da["state_deeper"], 3),
+            "discattr_step_acc": round(da["step_transition_acc"], 3),
             "markov_floor_deeper": round(mk, 3), "order_matters_frac": round(order_matters, 3)}
 
 
@@ -418,23 +483,23 @@ def main():
         r = run_seed(a.group, s, n_pool=a.n_pool, noise=a.noise, n_per_len=a.n_per_len, epochs=a.epochs, n_hid=a.n_hid,
                      train_lens=train_lens, test_lens=test_lens, orthogonal_rec=a.orthogonal_rec)
         rows.append(r)
-        print(f"  [seed {s}] end-label RNN: same={r['rnn_same']} deeper={r['rnn_deeper']} (FF same={r['ff_same']} deeper={r['ff_deeper']}) "
-              f"|| STATE-SUP prop: same={r['state_sup_prop_same']} deeper={r['state_sup_prop_deeper']} | "
-              f"state-track: same={r['state_sup_track_same']} deeper={r['state_sup_track_deeper']} "
-              f"| order-matters={r['order_matters_frac']}", flush=True)
+        print(f"  [seed {s}] end-label RNN deeper={r['rnn_deeper']} (FF={r['ff_deeper']}) | STATE-SUP track deeper={r['state_sup_track_deeper']} "
+              f"|| DISCRETE-ATTRACTOR: step-delta={r['discattr_step_acc']} | state-track same={r['discattr_track_same']} DEEPER={r['discattr_track_deeper']} "
+              f"| prop deeper={r['discattr_prop_deeper']} | order-matters={r['order_matters_frac']}", flush=True)
     if a.json and rows:
         json.dump(rows, open(a.json, "w"), indent=1)
     if rows:
         def _m(k): return float(np.mean([r[k] for r in rows]))
-        ffd, rnnd, resd = _m("ff_deeper"), _m("rnn_deeper"), _m("reservoir_deeper")
-        ss_prop_d, ss_track_d, ss_track_s = _m("state_sup_prop_deeper"), _m("state_sup_track_deeper"), _m("state_sup_track_same")
-        # THE KEY: does INTERMEDIATE-STATE SUPERVISION make the RNN LENGTH-GENERALIZE where end-label BPTT + FF cannot?
-        # GO = state-supervised RNN tracks the running state at held-out-DEEPER lengths (>>chance) AND >> the end-label
-        # RNN + FF deeper (a recurrent credit path with per-step teaching LEARNS the iterative composition -> generalizes).
-        go = (ss_track_d > 0.70) and (ss_prop_d - ffd > 0.15) and (ss_prop_d - rnnd > 0.15)
-        print(f"\n  AGGREGATE ({a.group}) end-label DEEPER: FF={ffd:.3f} reservoir={resd:.3f} RNN={rnnd:.3f} || "
-              f"STATE-SUP DEEPER: prop={ss_prop_d:.3f} state-track={ss_track_d:.3f} (same-len track {ss_track_s:.3f})", flush=True)
-        print(f"  VERDICT: {'GO' if go else 'PARTIAL/NEGATIVE'} -- {'INTERMEDIATE-STATE SUPERVISION makes the RNN LENGTH-GENERALIZE (state-track deeper '+format(ss_track_d,'.2f')+' >> end-label RNN/FF) -> a recurrent credit path LEARNS iterative multi-hop composition with per-step teaching; the iterative solution EXISTS + is learnable -> next: reduce the teaching signal (hint-sparsity), e-prop, A5, spiking' if go else 'even per-step state supervision did not give deeper length-generalization (state-track deeper '+format(ss_track_d,'.2f')+') -> the iteration is hard to learn even with intermediate targets; next mechanism (hint-curriculum/gated-RNN/scratchpad)'}. NO sim/ edit.", flush=True)
+        ffd, rnnd = _m("ff_deeper"), _m("rnn_deeper")
+        ss_track_d = _m("state_sup_track_deeper")
+        da_track_d, da_track_s, da_step, da_prop_d = _m("discattr_track_deeper"), _m("discattr_track_same"), _m("discattr_step_acc"), _m("discattr_prop_deeper")
+        # THE KEY: does DISCRETE-ATTRACTOR re-discretization (no drift) make the recurrence LENGTH-GENERALIZE where the
+        # continuous RNN (even with state supervision) cannot? GO = discrete-attractor state-track DEEPER >> chance AND
+        # >> the continuous RNN/state-sup deeper (the drift-fixing attractor mechanism learns the DFA that generalizes).
+        go = (da_track_d > 0.70) and (da_track_d - ss_track_d > 0.20) and (da_track_d - rnnd > 0.20)
+        print(f"\n  AGGREGATE ({a.group}) DEEPER state-track: end-label-RNN(prop)={rnnd:.3f} state-sup={ss_track_d:.3f} || "
+              f"DISCRETE-ATTRACTOR: step-delta={da_step:.3f} same={da_track_s:.3f} DEEPER={da_track_d:.3f} (prop {da_prop_d:.3f})", flush=True)
+        print(f"  VERDICT: {'GO' if go else 'PARTIAL/NEGATIVE'} -- {'DISCRETE-ATTRACTOR recurrence LENGTH-GENERALIZES (state-track deeper '+format(da_track_d,'.2f')+' >> continuous RNN/state-sup) -> re-discretizing to clean attractors each step (the CA3/NEF-cleanup mechanism) learns a DFA that composes to ANY depth => D3 recurrent multi-hop composition CONFIRMED via the attractor substrate; next: on-spikes port + reduce teacher-forcing + A5' if go else 'even discrete-attractor re-discretization did not length-generalize (deeper track '+format(da_track_d,'.2f')+', step-delta '+format(da_step,'.2f')+') -> read: if step-delta is high but rollout drifts, error compounds autoregressively (next: stronger attractor/cleanup); if step-delta low, the transition itself is not learned'}. NO sim/ edit.", flush=True)
 
 
 if __name__ == "__main__":
