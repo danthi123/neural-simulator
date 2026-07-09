@@ -26,14 +26,26 @@ import numpy as np
 
 
 def _speak_decode(bridge, cp, sparse_pattern, word_patterns_out, n_lang_output,
-                  drive_pA=1500.0, stim_steps=100, reset_steps=50):
+                  drive_pA=1500.0, stim_steps=100, reset_steps=50, clean_pool=False):
     """Drive a concept's SPARSE PATTERN in shared_concept_pool -> accumulate the language_output firing vector ->
-    cosine-match against each word's language_output reference pattern. Returns (best_idx, best_cos, margin, total_spikes)."""
+    cosine-match against each word's language_output reference pattern. Returns (best_idx, best_cos, margin, total_spikes).
+
+    clean_pool=True (CYCLE 1097 probe): after each step, ZERO the firing of shared_concept_pool neurons NOT in the driven
+    pattern -> non-pattern neurons cannot propagate to language_output the next step. This is a host-clamp PROBE for what a
+    STRONGER pool WTA (the shared_FS the pool already has) would do on-substrate -- it isolates the named residual (the
+    0.05 recurrence + 0.1 lang_input leak fire non-pattern pool neurons -> they drive OTHER bands -> smear). If the decode
+    breaks 0.75 with a clean pool, the residual IS input-side pool smear (fixable by a stronger pool k-WTA, on-substrate);
+    if not, the ceiling is the overlap-neuron dual read-out (a word-specific read-out is needed)."""
     from sim.backend import to_host
     rm = bridge.region_manager
     shared = list(rm.indices("shared_concept_pool"))
     pat_global = cp.asarray([shared[i] for i in sparse_pattern], dtype=cp.int64)
     lang_out = cp.asarray(list(rm.indices("language_output")), dtype=cp.int64)
+    pool_all = cp.asarray(shared, dtype=cp.int64)
+    pool_nonpat = None
+    if clean_pool:
+        pat_set = set(int(x) for x in sparse_pattern)
+        pool_nonpat = cp.asarray([shared[i] for i in range(len(shared)) if i not in pat_set], dtype=cp.int64)
     bridge.cp_external_input_current[:] = 0.0
     for _ in range(reset_steps):
         bridge._run_one_simulation_step()
@@ -42,6 +54,8 @@ def _speak_decode(bridge, cp, sparse_pattern, word_patterns_out, n_lang_output,
     acc = cp.zeros(n_lang_output, dtype=cp.float32)
     for _ in range(stim_steps):
         bridge._run_one_simulation_step()
+        if pool_nonpat is not None:                       # clean-pool clamp: non-pattern pool neurons can't propagate
+            bridge.cp_firing_states[pool_nonpat] = 0
         acc += bridge.cp_firing_states[lang_out].astype(cp.float32)
     bridge.cp_external_input_current[:] = 0.0
     v = to_host(acc)
@@ -87,7 +101,7 @@ def _lesion_shared_to_langout(bridge, cp):
 
 def run_seed(seed, n_concepts=64, n_train_events=400, n_lang_input=8192, n_shared_pool=2000,
              n_shared_fs=300, pattern_size=100, sparsity=0.03, lang_output_wta=False, winner_inactive_ld=0.0,
-             synaptic_scaling=False, ro_w_max=10.0, verbose=True):
+             synaptic_scaling=False, ro_w_max=10.0, clean_pool_decode=False, verbose=True):
     from sim.backend import get_backend, to_host, from_host
     cp, _ = get_backend()
     from sim.text_embeddings import orthogonal_drive_pattern
@@ -162,7 +176,7 @@ def run_seed(seed, n_concepts=64, n_train_events=400, n_lang_input=8192, n_share
     # A->W SPEAK decode: drive each concept's sparse pattern -> decode its word (raw + top-k WTA diagnostic)
     correct = 0; correct_tk = 0; margins = []; totals = []; vecs = []
     for wi in range(n_concepts):
-        best, best_tk, margin, margin_tk, total, v = _speak_decode(bridge, cp, sparse_patterns[wi], word_patterns_out, n_lang_output)
+        best, best_tk, margin, margin_tk, total, v = _speak_decode(bridge, cp, sparse_patterns[wi], word_patterns_out, n_lang_output, clean_pool=clean_pool_decode)
         correct += int(best == wi); correct_tk += int(best_tk == wi); margins.append(margin); totals.append(total); vecs.append(v)
     speak_acc = correct / n_concepts
     speak_acc_topk = correct_tk / n_concepts
@@ -180,13 +194,13 @@ def run_seed(seed, n_concepts=64, n_train_events=400, n_lang_input=8192, n_share
 
     # anti-cheat 3: MOAT -- a NOVEL untrained sparse pattern -> no confident decode
     novel = sorted(np.random.RandomState(seed + 99991).choice(n_shared_pool, pattern_size, replace=False).tolist())
-    _, _, novel_margin, _, _, _ = _speak_decode(bridge, cp, novel, word_patterns_out, n_lang_output)
+    _, _, novel_margin, _, _, _ = _speak_decode(bridge, cp, novel, word_patterns_out, n_lang_output, clean_pool=clean_pool_decode)
 
     # anti-cheat 1: LESION shared->language_output -> decode collapses
     restore, n_les = _lesion_shared_to_langout(bridge, cp)
     les_correct = 0
     for wi in range(n_concepts):
-        best, _, _, _, _, _ = _speak_decode(bridge, cp, sparse_patterns[wi], word_patterns_out, n_lang_output)
+        best, _, _, _, _, _ = _speak_decode(bridge, cp, sparse_patterns[wi], word_patterns_out, n_lang_output, clean_pool=clean_pool_decode)
         les_correct += int(best == wi)
     lesion_acc = les_correct / n_concepts
     restore()
@@ -213,6 +227,9 @@ def main():
                          "kernel on shared->language_output; 0=off, ~0.02-0.05 = the EMERGE-40 regime)")
     ap.add_argument("--synaptic-scaling", action="store_true", help="Turrigiano homeostatic weight normalization (Rank-1b stabilizer)")
     ap.add_argument("--ro-w-max", type=float, default=10.0, help="read-out weight cap (lower = tighter, less smear)")
+    ap.add_argument("--clean-pool-decode", action="store_true",
+                    help="CYCLE-1097 probe: clamp non-pattern shared_concept_pool firing to 0 during decode (host-probe for "
+                         "what a stronger pool k-WTA does on-substrate) -> isolates the input-side pool-smear residual")
     ap.add_argument("--json", default=None)
     a = ap.parse_args()
     seeds = [int(x) for x in a.seeds.replace(",", " ").split()]
@@ -223,7 +240,7 @@ def main():
         r = run_seed(s, n_concepts=a.n_concepts, n_train_events=a.n_train_events, n_lang_input=a.n_lang_input,
                      n_shared_pool=a.n_shared_pool, pattern_size=a.pattern_size, sparsity=a.sparsity,
                      lang_output_wta=a.lang_output_wta, winner_inactive_ld=a.winner_inactive_ld,
-                     synaptic_scaling=a.synaptic_scaling, ro_w_max=a.ro_w_max)
+                     synaptic_scaling=a.synaptic_scaling, ro_w_max=a.ro_w_max, clean_pool_decode=a.clean_pool_decode)
         rows.append(r)
         print(f"  [seed {s}] speak_acc={r['speak_acc']} TOPK={r['speak_acc_topk']} WHITE={r['speak_acc_white']} "
               f"(margin {r['mean_margin']}, langout_spikes {r['mean_langout_spikes']}) | MOAT novel_margin={r['novel_margin']} "

@@ -7,10 +7,8 @@ producer renders richer constructions (C_PPGOAL/C_PPLOC/C_DITRANS) with producti
 from __future__ import annotations
 from research.runners._realcorpus_multi_bridge_speaker import MultiBridgeFrameSpeaker, DEFAULT_BRIDGES
 from research.runners._realcorpus_full_frame_speech_derisk import ConceptFrameSpeaker
-from research.runners._realcorpus_train_breadth_aw4 import VOCAB as V4, WORD_TO_POOL as P4
 from research.runners._realcorpus_train_affix_pool import VOCAB as VA, WORD_TO_POOL as PA
 
-BRIDGE4 = "bridges/breadth_aw4/seed42.simstate.h5"
 AFFIX = "bridges/affix_aw/seed42.simstate.h5"
 
 
@@ -18,7 +16,7 @@ class ProductiveMultiSpeaker:
     """Multi-bridge whole-word spelling (BRIDGE-1/2/3/4) + productive stem+affix inflection (the affix bridge)."""
 
     def __init__(self, seed=42, aw_seed=42, reset_steps=150):
-        bridges = list(DEFAULT_BRIDGES) + [(BRIDGE4, V4, P4)]
+        bridges = list(DEFAULT_BRIDGES)          # BRIDGE-1/2/3/4 (BRIDGE-4 is now in DEFAULT_BRIDGES, no manual append)
         self.multi = MultiBridgeFrameSpeaker(bridges=bridges, seed=aw_seed)
         self.affix = ConceptFrameSpeaker(AFFIX, seed=aw_seed, vocab=VA, word_to_pool=PA)
         self.vocab = self.multi.vocab
