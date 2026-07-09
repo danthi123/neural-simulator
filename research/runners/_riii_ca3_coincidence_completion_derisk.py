@@ -29,7 +29,7 @@ def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0,
            coincidence=True, k_thresh=18.0, plateau_strength=120.0, weighted=True, two_comp=False, train=True,
            hebb_max=None, mg=None, apical_R=None, apical_gc=None, hebb_lr=None, hebb_decay=None, hebb_sym=False,
            hebb_rate=False, coact_decay=None, coact_thresh=None, ca3_fb_inhib=None, ca3_fb_n=None, mossy_weight=None,
-           ca3_to_ca1_density=0.30):
+           ca3_to_ca1_density=0.30, ca1_fb_inhib=None, ca1_fb_n=None):
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.bridge import SimulationBridge
     from research.runners.text_minimal_isolation import build_biological_brain_regions
@@ -64,6 +64,22 @@ def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0,
                                       density=0.40, weight_mean=5.0, weight_jitter=0.2, plastic=False))
         pathways.append(RegionPathway(from_region="ca3_pv_basket", to_region="ca3",
                                       density=1.0, weight_mean=float(ca3_fb_inhib), weight_jitter=0.2, plastic=False))
+    if ca1_fb_inhib is not None:
+        # CYCLE-1086 lever: CA1 feedback inhibition -> SPARSE ca1 firing during SWR replay. The consolidation is
+        # assembly-specific ONLY when ca1 fires sparsely (broad ca1 firing potentiates the Schaffer non-specifically);
+        # biology ensures ca1 sparsity via CA1 basket-cell feedback inhibition. A copy of the ca3_pv_basket wiring
+        # for ca1 (E->I->E feedback loop). Runner-side append; NO sim/ edit.
+        from sim.regions import BrainRegion, RegionPathway
+        from sim.enums import NeuronType
+        _nb1 = int(ca1_fb_n) if ca1_fb_n is not None else max(8, int(0.25 * n_ca1))
+        regions.append(BrainRegion(
+            name="ca1_pv_basket", n_neurons=_nb1, exc_fraction=0.0, internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name))
+        pathways.append(RegionPathway(from_region="ca1", to_region="ca1_pv_basket",
+                                      density=0.40, weight_mean=5.0, weight_jitter=0.2, plastic=False))
+        pathways.append(RegionPathway(from_region="ca1_pv_basket", to_region="ca1",
+                                      density=1.0, weight_mean=float(ca1_fb_inhib), weight_jitter=0.2, plastic=False))
     if mossy_weight is not None:
         # Rung 2 (mossy DETONATOR, Kandel Ch 54): strengthen the sparse dg->ca3 mossy synapses so a few DG-selected
         # CA3 cells fire HARD (detonate) from their DG input, while the feedback inhibition suppresses the rest ->
