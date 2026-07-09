@@ -1,0 +1,35 @@
+[
+ {
+  "seed": 42,
+  "group": "S3",
+  "K": 6,
+  "rate_step_delta": 1.0,
+  "rate_deeper_track": 1.0,
+  "SPK_same_track": 1.0,
+  "SPK_deeper_track": 1.0,
+  "SPK_host_agree_deeper": 1.0,
+  "SPK_deeper_track_DIVNORM_ON": 0.217
+ },
+ {
+  "seed": 43,
+  "group": "S3",
+  "K": 6,
+  "rate_step_delta": 1.0,
+  "rate_deeper_track": 1.0,
+  "SPK_same_track": 1.0,
+  "SPK_deeper_track": 1.0,
+  "SPK_host_agree_deeper": 1.0,
+  "SPK_deeper_track_DIVNORM_ON": 0.217
+ },
+ {
+  "seed": 44,
+  "group": "S3",
+  "K": 6,
+  "rate_step_delta": 1.0,
+  "rate_deeper_track": 1.0,
+  "SPK_same_track": 1.0,
+  "SPK_deeper_track": 1.0,
+  "SPK_host_agree_deeper": 1.0,
+  "SPK_deeper_track_DIVNORM_ON": 0.15
+ }
+]

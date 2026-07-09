@@ -395,9 +395,10 @@ def discrete_attractor_rnn(task, n_hid=128, epochs=40, lr=0.1, batch=256, seed=4
 
     ts_s, tp_s = eval_split("test_same"); ts_d, tp_d = eval_split("test_deeper")
     # per-step transition accuracy (teacher-forced) -- the DFA delta learnability
-    hpre = emb[Ptr] @ Wr.T + Xtr @ Wi.T; step_acc = float((np.tanh(hpre) @ Ws.T + bs).argmax(1).mean() == Ntr.mean()) \
-        if False else float(((np.tanh(hpre) @ Ws.T + bs).argmax(1) == Ntr).mean())
-    return {"same": tp_s, "deeper": tp_d, "state_same": ts_s, "state_deeper": ts_d, "step_transition_acc": step_acc}
+    hpre = emb[Ptr] @ Wr.T + Xtr @ Wi.T
+    step_acc = float(((np.tanh(hpre) @ Ws.T + bs).argmax(1) == Ntr).mean())
+    return {"same": tp_s, "deeper": tp_d, "state_same": ts_s, "state_deeper": ts_d, "step_transition_acc": step_acc,
+            "weights": {"emb": emb, "Wr": Wr, "Wi": Wi, "Ws": Ws, "bs": bs}}   # for the on-spikes re-discretization port
 
 
 # ---------------------------------------------------------------- anti-cheats + driver -------------------------
