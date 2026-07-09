@@ -26,7 +26,8 @@ from research.runners.validate_trisynaptic_loop import measure_region_response, 
 
 
 def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0, ca3_density=0.5,
-           coincidence=True, k_thresh=18.0, plateau_strength=120.0, weighted=True, two_comp=False, train=True):
+           coincidence=True, k_thresh=18.0, plateau_strength=120.0, weighted=True, two_comp=False, train=True,
+           hebb_max=None, mg=None):
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.bridge import SimulationBridge
     from research.runners.text_minimal_isolation import build_biological_brain_regions
@@ -48,12 +49,18 @@ def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0,
     cfg.dt_ms = 1.0; cfg.seed = seed; cfg.enable_nmda = True
     cfg.enable_structural_plasticity = False; cfg.enable_per_type_stp = False
     cfg.enable_hebbian_learning = True; cfg.stdp_w_max = max(10.0, 2.5 * ca3w); cfg.fast_spike_reset = True
+    # ROOT-CAUSE FIX (CYCLE 1066): hebbian_max_weight defaults to 1.0, so the active rate-Hebbian rule DRIVES the
+    # ca3->ca3 recurrents (init ca3w=6) DOWN toward 1.0 -> it FLATTENS the attractor instead of potentiating within-
+    # ensemble co-active pairs. Raise it above the design weight so rate-Hebbian can WRITE the specific attractor.
+    cfg.hebbian_max_weight = float(hebb_max) if hebb_max is not None else max(30.0, 5.0 * ca3w)
     if coincidence:
         cfg.enable_coincidence_detection = True
         cfg.coincidence_weighted_drive = bool(weighted)
         cfg.coincidence_k_threshold = float(k_thresh)
         cfg.coincidence_plateau_strength = float(plateau_strength)
         cfg.enable_two_compartment_dap = bool(two_comp)
+        if mg is not None:
+            cfg.nmda_mg_concentration = float(mg)   # lower -> Mg2+ block opens -> plateau flows at rest (bootstrap test)
     bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                               runtime_state=RuntimeState(), gpu_config=GPUConfig())
     bridge.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
@@ -74,13 +81,13 @@ def _set_gates(bridge, v):
 
 def run_seed(seed, n_mem=2, train_events=100, drive_pA=200.0, do_train=True, coincidence=True,
              n_lang=384, n_ca3=150, n_dg=300, ca3_density=0.5, ca3_weight=6.0, k_thresh=18.0,
-             plateau_strength=120.0, weighted=True, two_comp=False,
+             plateau_strength=120.0, weighted=True, two_comp=False, hebb_max=None,
              reset_steps=15, drive_steps=55, recall_steps=60):
     from sim.backend import get_backend, to_host
     cp, _ = get_backend()
     bridge = _build(seed, n_lang=n_lang, n_ca3=n_ca3, n_dg=n_dg, ca3_density=ca3_density, ca3w=ca3_weight,
                     coincidence=coincidence, k_thresh=k_thresh, plateau_strength=plateau_strength,
-                    weighted=weighted, two_comp=two_comp, train=do_train)
+                    weighted=weighted, two_comp=two_comp, train=do_train, hebb_max=hebb_max)
     rm = bridge.region_manager
     lang = list(rm.indices("language_input"))
     ca3_idx = list(rm.indices("ca3"))
@@ -179,6 +186,7 @@ def main():
     ap.add_argument("--plateau-strength", type=float, default=120.0)
     ap.add_argument("--two-comp", action="store_true", help="regenerate the plateau on the apical dAP compartment (anti-runaway)")
     ap.add_argument("--diag-only", action="store_true", help="run ONLY coincidence-ON + report c_drive (fast mechanism read)")
+    ap.add_argument("--hebb-max", type=float, default=None, help="hebbian_max_weight (default max(30,5*ca3w); the attractor-forming fix)")
     ap.add_argument("--json", default=None)
     a = ap.parse_args()
     seeds = [int(x) for x in a.seeds.split(",")]
@@ -186,7 +194,7 @@ def main():
           f"strength={a.plateau_strength} two_comp={a.two_comp} | coincidence-ON vs OFF (=CYCLE-1064 linear) held-out completion", flush=True)
     rows = []
     kw = dict(train_events=a.train_events, ca3_density=a.ca3_density, ca3_weight=a.ca3_weight,
-              k_thresh=a.k_thresh, plateau_strength=a.plateau_strength, two_comp=a.two_comp)
+              k_thresh=a.k_thresh, plateau_strength=a.plateau_strength, two_comp=a.two_comp, hebb_max=a.hebb_max)
     for s in seeds:
         t0 = time.time()
         if a.diag_only:
