@@ -339,7 +339,7 @@ def bptt_rnn_state_supervised(task, n_hid=128, epochs=80, lr=0.05, batch=128, se
     return {"same": ps_same, "deeper": ps_deep, "state_same": ss_same, "state_deeper": ss_deep}
 
 
-def discrete_attractor_rnn(task, n_hid=128, epochs=40, lr=0.1, batch=256, seed=42):
+def discrete_attractor_rnn(task, n_hid=128, epochs=40, lr=0.1, batch=256, seed=42, linear=False):
     """DISCRETE-ATTRACTOR recurrence (the length-generalization mechanism the drift-diagnosis points at, biologically
     apt = the brain's discrete WM / the project's CA3 attractor + NEF cleanup): the running state is ALWAYS one of K
     CLEAN attractors emb[s] (fixed distinct prototypes); each step computes the next state from (attractor[s_{t-1}],
@@ -353,6 +353,8 @@ def discrete_attractor_rnn(task, n_hid=128, epochs=40, lr=0.1, batch=256, seed=4
     Wr = (rng.randn(n_hid, n_hid) * np.sqrt(1.0 / n_hid)).astype(np.float32)   # state-embedding -> hidden
     Wi = (rng.randn(n_hid, n_pool) * np.sqrt(1.0 / n_pool)).astype(np.float32) # input -> hidden
     Ws = (rng.randn(K, n_hid) * np.sqrt(1.0 / n_hid)).astype(np.float32); bs = np.zeros(K, dtype=np.float32)
+    _act = (lambda z: z) if linear else np.tanh                    # linear=True -> NO hidden nonlinearity (the transition
+    _dact = (lambda h: 1.0) if linear else (lambda h: 1.0 - h ** 2)  # is a single linear map -> a single spiking projection)
 
     def collect_triples(split):
         Xe, ye, Le, _, Se = task[split]
@@ -369,12 +371,12 @@ def discrete_attractor_rnn(task, n_hid=128, epochs=40, lr=0.1, batch=256, seed=4
         order = rng.permutation(Ntr_)
         for i in range(0, Ntr_, batch):
             bi = order[i:i + batch]
-            hpre = emb[Ptr[bi]] @ Wr.T + Xtr[bi] @ Wi.T; h = np.tanh(hpre)
+            hpre = emb[Ptr[bi]] @ Wr.T + Xtr[bi] @ Wi.T; h = _act(hpre)
             logits = h @ Ws.T + bs
             ex = np.exp(logits - logits.max(1, keepdims=True)); sm = ex / ex.sum(1, keepdims=True)
             d = sm.copy(); d[np.arange(len(bi)), Ntr[bi]] -= 1.0; d /= len(bi)
             dWs = d.T @ h; dbs = d.sum(0)
-            dh = (d @ Ws) * (1.0 - h ** 2)
+            dh = (d @ Ws) * _dact(h)
             dWr = dh.T @ emb[Ptr[bi]]; dWi = dh.T @ Xtr[bi]
             Ws -= lr * dWs; bs -= lr * dbs; Wr -= lr * dWr; Wi -= lr * dWi
 
@@ -386,7 +388,7 @@ def discrete_attractor_rnn(task, n_hid=128, epochs=40, lr=0.1, batch=256, seed=4
         cur = np.full(B, ident, dtype=np.int64)
         for t in range(Lmax):
             active = (Le > t)
-            h = np.tanh(emb[cur] @ Wr.T + Xe[:, t] @ Wi.T)
+            h = _act(emb[cur] @ Wr.T + Xe[:, t] @ Wi.T)
             nxt = (h @ Ws.T + bs).argmax(1)
             cur = np.where(active, nxt, cur)
             final = np.where(Le == (t + 1), cur, final)          # capture the state at each sample's final step
@@ -396,7 +398,7 @@ def discrete_attractor_rnn(task, n_hid=128, epochs=40, lr=0.1, batch=256, seed=4
     ts_s, tp_s = eval_split("test_same"); ts_d, tp_d = eval_split("test_deeper")
     # per-step transition accuracy (teacher-forced) -- the DFA delta learnability
     hpre = emb[Ptr] @ Wr.T + Xtr @ Wi.T
-    step_acc = float(((np.tanh(hpre) @ Ws.T + bs).argmax(1) == Ntr).mean())
+    step_acc = float(((_act(hpre) @ Ws.T + bs).argmax(1) == Ntr).mean())
     return {"same": tp_s, "deeper": tp_d, "state_same": ts_s, "state_deeper": ts_d, "step_transition_acc": step_acc,
             "weights": {"emb": emb, "Wr": Wr, "Wi": Wi, "Ws": Ws, "bs": bs}}   # for the on-spikes re-discretization port
 
