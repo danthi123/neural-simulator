@@ -95,8 +95,10 @@ def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0,
             name="ca1_pv_basket", n_neurons=_nbf, exc_fraction=0.0, internal_density=0.0,
             exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False,
             izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name))
-        pathways.append(RegionPathway(from_region="ca3", to_region="ca1_pv_basket",   # FEEDFORWARD: the afferent volley drives the basket
+        pathways.append(RegionPathway(from_region="ca3", to_region="ca1_pv_basket",   # FEEDFORWARD: the afferent volley drives the basket (divisive-norm, sets HOW MANY fire)
                                       density=0.40, weight_mean=5.0, weight_jitter=0.2, plastic=False))
+        pathways.append(RegionPathway(from_region="ca1", to_region="ca1_pv_basket",    # WEAK FEEDBACK arm = E%-max within-cycle competition (selects WHICH fire; de Almeida-Idiart-Lisman 2009)
+                                      density=0.40, weight_mean=2.0, weight_jitter=0.2, plastic=False))
         pathways.append(RegionPathway(from_region="ca1_pv_basket", to_region="ca1",
                                       density=1.0, weight_mean=float(ca1_ff_inhib), weight_jitter=0.2, plastic=False))
     if mossy_weight is not None:
