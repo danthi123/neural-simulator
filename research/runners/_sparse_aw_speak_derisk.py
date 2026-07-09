@@ -86,7 +86,7 @@ def _lesion_shared_to_langout(bridge, cp):
 
 
 def run_seed(seed, n_concepts=64, n_train_events=400, n_lang_input=8192, n_shared_pool=2000,
-             n_shared_fs=300, pattern_size=100, sparsity=0.03, verbose=True):
+             n_shared_fs=300, pattern_size=100, sparsity=0.03, lang_output_wta=False, verbose=True):
     from sim.backend import get_backend
     cp, _ = get_backend()
     from sim.text_embeddings import orthogonal_drive_pattern
@@ -100,7 +100,8 @@ def run_seed(seed, n_concepts=64, n_train_events=400, n_lang_input=8192, n_share
 
     t0 = time.time()
     bridge = build_sparse_pool_bridge(seed=seed, n_lang_input=n_lang_input, n_shared_pool=n_shared_pool,
-                                      n_shared_fs=n_shared_fs, n_lang_output=n_lang_output, verbose=False)
+                                      n_shared_fs=n_shared_fs, n_lang_output=n_lang_output,
+                                      lang_output_wta=lang_output_wta, verbose=False)
     sparse_patterns = generate_sparse_patterns(n_concepts, n_shared_pool, pattern_size, seed)
     apply_sparse_topographic_prior(bridge, n_concepts, n_lang_input, sparse_patterns, sparsity=sparsity,
                                    n_words_for_orthogonal=n_concepts, verbose=False)
@@ -157,6 +158,8 @@ def main():
     ap.add_argument("--n-shared-pool", type=int, default=2000)
     ap.add_argument("--pattern-size", type=int, default=100)
     ap.add_argument("--sparsity", type=float, default=0.03)
+    ap.add_argument("--lang-output-wta", action="store_true",
+                    help="add a language_output WTA (E%-max) during training -> word-specific read-out (fixes smearing)")
     ap.add_argument("--json", default=None)
     a = ap.parse_args()
     seeds = [int(x) for x in a.seeds.replace(",", " ").split()]
@@ -165,7 +168,8 @@ def main():
     rows = []
     for s in seeds:
         r = run_seed(s, n_concepts=a.n_concepts, n_train_events=a.n_train_events, n_lang_input=a.n_lang_input,
-                     n_shared_pool=a.n_shared_pool, pattern_size=a.pattern_size, sparsity=a.sparsity)
+                     n_shared_pool=a.n_shared_pool, pattern_size=a.pattern_size, sparsity=a.sparsity,
+                     lang_output_wta=a.lang_output_wta)
         rows.append(r)
         print(f"  [seed {s}] speak_acc={r['speak_acc']} TOPK={r['speak_acc_topk']} (margin {r['mean_margin']}, "
               f"langout_spikes {r['mean_langout_spikes']}) | MOAT novel_margin={r['novel_margin']} "
