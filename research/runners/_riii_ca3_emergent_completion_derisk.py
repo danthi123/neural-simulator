@@ -38,17 +38,25 @@ def _train_assemblies(bridge, cp, assemblies, presentations, drive_pA, gamma_on,
     _set_gates(bridge, 0.0)
 
 
-def _recall(bridge, cp, cue_cells, read_cells, drive_pA, steps=60):
-    """Drive cue_cells directly, run, return per-read-cell spike-count vector."""
+def _recall(bridge, cp, cue_cells, read_cells, drive_pA, steps=60, clamp_cells=None):
+    """Drive cue_cells directly, run, return per-read-cell spike-count vector. clamp_cells (the ca3_pv_basket, for
+    SWR-ripple DISINHIBITION) are held strongly hyperpolarized each step so they do not fire -> the recall-time
+    feedback inhibition is transiently removed (biologically, ripples reduce PV interneuron output during recall)."""
     from sim.backend import to_host
+    _clamp = cp.asarray(clamp_cells, dtype=cp.int64) if clamp_cells is not None and len(clamp_cells) else None
     bridge.cp_external_input_current[:] = 0.0
     for _ in range(40):
+        if _clamp is not None:
+            bridge.cp_external_input_current[_clamp] = -5000.0
         bridge._run_one_simulation_step()
-    bridge.cp_external_input_current[:] = 0.0
-    bridge.cp_external_input_current[cp.asarray(cue_cells, dtype=cp.int64)] = float(drive_pA)
+    cue = cp.asarray(cue_cells, dtype=cp.int64)
     read = cp.asarray(read_cells, dtype=cp.int64)
     acc = cp.zeros(len(read_cells), dtype=cp.float32)
     for _ in range(steps):
+        bridge.cp_external_input_current[:] = 0.0
+        bridge.cp_external_input_current[cue] = float(drive_pA)
+        if _clamp is not None:
+            bridge.cp_external_input_current[_clamp] = -5000.0
         bridge._run_one_simulation_step()
         acc += bridge.cp_firing_states[read].astype(cp.float32)
     bridge.cp_external_input_current[:] = 0.0
@@ -57,7 +65,7 @@ def _recall(bridge, cp, cue_cells, read_cells, drive_pA, steps=60):
 
 def run_seed(seed, n_ca3=500, n_assembly=12, n_mem=3, presentations=60, drive_pA=1000.0, cue_drive=600.0,
              hebb_lr=5.0, gamma_on=8, gamma_off=12, ca3_fb_inhib=120.0, k_thresh=6.0, plateau_strength=300.0,
-             apical_R=50.0, do_train=True, coincidence=True, permuted_cue=False):
+             apical_R=50.0, do_train=True, coincidence=True, permuted_cue=False, recall_disinhib=False):
     from sim.backend import get_backend
     cp, _ = get_backend()
     bridge = _build(seed, n_ca3=n_ca3, ca3_density=0.5, ca3w=6.0, coincidence=coincidence, two_comp=True,
@@ -65,6 +73,12 @@ def run_seed(seed, n_ca3=500, n_assembly=12, n_mem=3, presentations=60, drive_pA
                     hebb_rate=True, hebb_lr=hebb_lr, hebb_decay=0.0, coact_thresh=0.001, ca3_fb_inhib=ca3_fb_inhib)
     rm = bridge.region_manager
     ca3_idx = np.asarray(list(rm.indices("ca3")), dtype=np.int64)
+    _basket = None
+    if recall_disinhib:
+        try:
+            _basket = np.asarray(list(rm.indices("ca3_pv_basket")), dtype=np.int64)
+        except Exception:
+            _basket = None
     rng = np.random.default_rng(seed)
     perm = rng.permutation(ca3_idx)
     assemblies = [np.array(perm[m * n_assembly:(m + 1) * n_assembly], dtype=np.int64) for m in range(n_mem)]
@@ -80,9 +94,9 @@ def run_seed(seed, n_ca3=500, n_assembly=12, n_mem=3, presentations=60, drive_pA
         cue, held = a[:h], a[h:]
         if permuted_cue:                                   # anti-cheat D: drive a RANDOM half (not the assembly)
             cue = rng.choice(non_assembly, size=h, replace=False)
-        resp_held = _recall(bridge, cp, cue, held, cue_drive)
-        resp_cue = _recall(bridge, cp, cue, cue, cue_drive)
-        resp_non = _recall(bridge, cp, cue, non_assembly, cue_drive)
+        resp_held = _recall(bridge, cp, cue, held, cue_drive, clamp_cells=_basket)
+        resp_cue = _recall(bridge, cp, cue, cue, cue_drive, clamp_cells=_basket)
+        resp_non = _recall(bridge, cp, cue, non_assembly, cue_drive, clamp_cells=_basket)
         ca = float(np.mean(resp_cue)) + 1e-9
         held_c.append(float(np.mean(resp_held)) / ca)
         non_c.append(float(np.mean(resp_non)) / ca)
@@ -96,13 +110,16 @@ def main():
     ap.add_argument("--k-thresh", type=float, default=6.0)
     ap.add_argument("--n-ca3", type=int, default=500)
     ap.add_argument("--n-assembly", type=int, default=12)
+    ap.add_argument("--cue-drive", type=float, default=600.0, help="recall cue drive (raise to ~1000 to fire despite standing inhibition)")
+    ap.add_argument("--recall-disinhib", action="store_true", help="reduce feedback inhibition during recall (SWR ripple disinhibition)")
     ap.add_argument("--json", default=None)
     a = ap.parse_args()
     seeds = [int(x) for x in a.seeds.split(",")]
     print(f"[R-iii EMERGENT CA3 COMPLETION] n_ca3={a.n_ca3} n_assembly={a.n_assembly} pres={a.presentations} k={a.k_thresh} "
           f"| direct-synchronous FORMATION -> partial-cue dendritic COMPLETION", flush=True)
     import json
-    kw = dict(n_ca3=a.n_ca3, n_assembly=a.n_assembly, presentations=a.presentations, k_thresh=a.k_thresh)
+    kw = dict(n_ca3=a.n_ca3, n_assembly=a.n_assembly, presentations=a.presentations, k_thresh=a.k_thresh,
+              cue_drive=a.cue_drive, recall_disinhib=a.recall_disinhib)
     rows = []
     for s in seeds:
         t0 = time.time()
