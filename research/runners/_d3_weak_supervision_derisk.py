@@ -129,8 +129,8 @@ def train_endstate(task, seed=42, n_hid=160, epochs=120, lr=0.05, batch=128, dis
             "train": eval_split("train")}
 
 
-def run_seed(group, seed, n_hid, epochs, train_lens, test_lens, n_pool):
-    task = make_group_task(group, seed, n_pool=n_pool, n_per_len=2500, train_lens=train_lens, test_lens=test_lens)
+def run_seed(group, seed, n_hid, epochs, train_lens, test_lens, n_pool, n_per_len=2500):
+    task = make_group_task(group, seed, n_pool=n_pool, n_per_len=n_per_len, train_lens=train_lens, test_lens=test_lens)
     st = train_endstate(task, seed=seed, n_hid=n_hid, epochs=epochs, discrete=True, supervise="state")
     pr = train_endstate(task, seed=seed, n_hid=n_hid, epochs=epochs, discrete=True, supervise="property")
     cont = train_endstate(task, seed=seed, n_hid=n_hid, epochs=epochs, discrete=False, supervise="state")
@@ -151,6 +151,7 @@ def main():
     ap.add_argument("--epochs", type=int, default=140)
     ap.add_argument("--train-lens", default="1,2,3")
     ap.add_argument("--test-lens", default="6,7,8")
+    ap.add_argument("--n-per-len", type=int, default=2500, help="sequences per length (A5's 60-way state needs more coverage)")
     ap.add_argument("--json", default=None)
     a = ap.parse_args()
     seeds = [int(x) for x in a.seeds.replace(",", " ").split()]
@@ -160,7 +161,7 @@ def main():
     print(f"[D3 WEAK-SUPERVISION RANK 1] {a.group} | K-way END-STATE-only supervision (log2 K bits) vs 2-way property (1 bit); train {train_lens} -> DEEPER {test_lens}", flush=True)
     rows = []
     for s in seeds:
-        r = run_seed(a.group, s, a.n_hid, a.epochs, train_lens, test_lens, n_pool)
+        r = run_seed(a.group, s, a.n_hid, a.epochs, train_lens, test_lens, n_pool, n_per_len=a.n_per_len)
         rows.append(r)
         print(f"  [seed {s}] STATE-endpoint DEEPER prop={r['STATE_deeper_prop']} (track={r['STATE_deeper_track']}) || "
               f"PROPERTY-endpoint(=rung3) DEEPER={r['PROPERTY_deeper_prop']} || CONTINUOUS={r['CONTINUOUS_deeper_prop']} || "
