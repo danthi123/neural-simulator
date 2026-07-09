@@ -61,7 +61,7 @@ def _speak_decode(bridge, cp, sparse_pattern, word_patterns_out, n_lang_output,
         thresh = np.sort(vt)[::-1][topk] if topk > 0 else 0
         vt[vt <= thresh] = 0.0
     best_tk, margin_tk = _decode(vt)
-    return best, best_tk, float(margin), float(margin_tk), float(v.sum())
+    return best, best_tk, float(margin), float(margin_tk), float(v.sum()), v
 
 
 def _lesion_shared_to_langout(bridge, cp):
@@ -160,28 +160,39 @@ def run_seed(seed, n_concepts=64, n_train_events=400, n_lang_input=8192, n_share
         print(f"  [seed {seed}] built+trained {n_concepts}x{n_train_events} in {time.time()-t0:.0f}s", flush=True)
 
     # A->W SPEAK decode: drive each concept's sparse pattern -> decode its word (raw + top-k WTA diagnostic)
-    correct = 0; correct_tk = 0; margins = []; totals = []
+    correct = 0; correct_tk = 0; margins = []; totals = []; vecs = []
     for wi in range(n_concepts):
-        best, best_tk, margin, margin_tk, total = _speak_decode(bridge, cp, sparse_patterns[wi], word_patterns_out, n_lang_output)
-        correct += int(best == wi); correct_tk += int(best_tk == wi); margins.append(margin); totals.append(total)
+        best, best_tk, margin, margin_tk, total, v = _speak_decode(bridge, cp, sparse_patterns[wi], word_patterns_out, n_lang_output)
+        correct += int(best == wi); correct_tk += int(best_tk == wi); margins.append(margin); totals.append(total); vecs.append(v)
     speak_acc = correct / n_concepts
     speak_acc_topk = correct_tk / n_concepts
 
+    # WHITENED decode (Foldiak-lateral EFFECT test): subtract the per-neuron COMMON MODE (mean firing across all word
+    # decodes) -> isolate the word-SPECIFIC component. If this lifts the acc, the band signal IS there (swamped by the
+    # broad common mode) -> a spiking output-decorrelating LATERAL (Foldiak 1990) is the right GO build; if not, capped.
+    V = np.stack(vecs); Vw = V - V.mean(axis=0, keepdims=True)
+    refs = [wp / (np.linalg.norm(wp) + 1e-9) for wp in word_patterns_out]
+    correct_w = 0
+    for wi in range(n_concepts):
+        vn = Vw[wi] / (np.linalg.norm(Vw[wi]) + 1e-9)
+        correct_w += int(int(np.argmax([float(vn @ r) for r in refs])) == wi)
+    speak_acc_white = correct_w / n_concepts
+
     # anti-cheat 3: MOAT -- a NOVEL untrained sparse pattern -> no confident decode
     novel = sorted(np.random.RandomState(seed + 99991).choice(n_shared_pool, pattern_size, replace=False).tolist())
-    _, _, novel_margin, _, _ = _speak_decode(bridge, cp, novel, word_patterns_out, n_lang_output)
+    _, _, novel_margin, _, _, _ = _speak_decode(bridge, cp, novel, word_patterns_out, n_lang_output)
 
     # anti-cheat 1: LESION shared->language_output -> decode collapses
     restore, n_les = _lesion_shared_to_langout(bridge, cp)
     les_correct = 0
     for wi in range(n_concepts):
-        best, _, _, _, _ = _speak_decode(bridge, cp, sparse_patterns[wi], word_patterns_out, n_lang_output)
+        best, _, _, _, _, _ = _speak_decode(bridge, cp, sparse_patterns[wi], word_patterns_out, n_lang_output)
         les_correct += int(best == wi)
     lesion_acc = les_correct / n_concepts
     restore()
 
     return {"seed": seed, "n_concepts": n_concepts, "speak_acc": round(speak_acc, 3),
-            "speak_acc_topk": round(speak_acc_topk, 3),
+            "speak_acc_topk": round(speak_acc_topk, 3), "speak_acc_white": round(speak_acc_white, 3),
             "mean_margin": round(float(np.mean(margins)), 4), "mean_langout_spikes": round(float(np.mean(totals)), 1),
             "novel_margin": round(novel_margin, 4), "lesion_acc": round(lesion_acc, 3), "n_lesioned": n_les}
 
@@ -214,8 +225,8 @@ def main():
                      lang_output_wta=a.lang_output_wta, winner_inactive_ld=a.winner_inactive_ld,
                      synaptic_scaling=a.synaptic_scaling, ro_w_max=a.ro_w_max)
         rows.append(r)
-        print(f"  [seed {s}] speak_acc={r['speak_acc']} TOPK={r['speak_acc_topk']} (margin {r['mean_margin']}, "
-              f"langout_spikes {r['mean_langout_spikes']}) | MOAT novel_margin={r['novel_margin']} "
+        print(f"  [seed {s}] speak_acc={r['speak_acc']} TOPK={r['speak_acc_topk']} WHITE={r['speak_acc_white']} "
+              f"(margin {r['mean_margin']}, langout_spikes {r['mean_langout_spikes']}) | MOAT novel_margin={r['novel_margin']} "
               f"| LESION acc={r['lesion_acc']} ({r['n_lesioned']} syn) | n_concepts={r['n_concepts']}", flush=True)
     if a.json and rows:
         import json
