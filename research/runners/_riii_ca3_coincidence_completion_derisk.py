@@ -29,7 +29,7 @@ def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0,
            coincidence=True, k_thresh=18.0, plateau_strength=120.0, weighted=True, two_comp=False, train=True,
            hebb_max=None, mg=None, apical_R=None, apical_gc=None, hebb_lr=None, hebb_decay=None, hebb_sym=False,
            hebb_rate=False, coact_decay=None, coact_thresh=None, ca3_fb_inhib=None, ca3_fb_n=None, mossy_weight=None,
-           ca3_to_ca1_density=0.30, ca1_fb_inhib=None, ca1_fb_n=None):
+           ca3_to_ca1_density=0.30, ca1_fb_inhib=None, ca1_fb_n=None, ca1_ff_inhib=None):
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.bridge import SimulationBridge
     from research.runners.text_minimal_isolation import build_biological_brain_regions
@@ -80,6 +80,25 @@ def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0,
                                       density=0.40, weight_mean=5.0, weight_jitter=0.2, plastic=False))
         pathways.append(RegionPathway(from_region="ca1_pv_basket", to_region="ca1",
                                       density=1.0, weight_mean=float(ca1_fb_inhib), weight_jitter=0.2, plastic=False))
+    if ca1_ff_inhib is not None:
+        # CYCLE-1089 (deep-research gate, Pouille-Scanziani 2001 / Pouille 2009 / de Almeida-Idiart-Lisman 2009):
+        # the CYCLE-1087 FEEDBACK ca1 inhibition (I ~ ca1 OUTPUT) is a knife-edge because its sparsity is the loop
+        # GAIN (a fixed global weight) -> cannot self-adjust to per-seed drive. The fix = FEEDFORWARD inhibition:
+        # drive the basket from the SCHAFFER AFFERENT VOLLEY (ca3), not ca1 output -> the ca1 firing THRESHOLD rises
+        # in proportion to the total ca3 drive -> a ~CONSTANT FRACTION of ca1 fires across a >10x drive range
+        # (divisive normalization, threshold-set-by-input, no globally-tuned set-point) -> robust sparsity every seed.
+        # The disynaptic ca3->basket->ca1 path gives the ~2.5ms feedforward lead automatically. Runner append; NO sim/ edit.
+        from sim.regions import BrainRegion, RegionPathway
+        from sim.enums import NeuronType
+        _nbf = int(ca1_fb_n) if ca1_fb_n is not None else max(8, int(0.25 * n_ca1))
+        regions.append(BrainRegion(
+            name="ca1_pv_basket", n_neurons=_nbf, exc_fraction=0.0, internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name))
+        pathways.append(RegionPathway(from_region="ca3", to_region="ca1_pv_basket",   # FEEDFORWARD: the afferent volley drives the basket
+                                      density=0.40, weight_mean=5.0, weight_jitter=0.2, plastic=False))
+        pathways.append(RegionPathway(from_region="ca1_pv_basket", to_region="ca1",
+                                      density=1.0, weight_mean=float(ca1_ff_inhib), weight_jitter=0.2, plastic=False))
     if mossy_weight is not None:
         # Rung 2 (mossy DETONATOR, Kandel Ch 54): strengthen the sparse dg->ca3 mossy synapses so a few DG-selected
         # CA3 cells fire HARD (detonate) from their DG input, while the feedback inhibition suppresses the rest ->
