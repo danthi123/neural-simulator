@@ -566,6 +566,8 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
                                  td_gabab_prop: float = 0.105, td_gabab_conductance_max: float = 0.0,
                                  td_stdp_w_max: float = 0.0,
                                  td_derivative_gain: float = 1.0, td_slow_tau_ms: float = 130.0,
+                                 co_resident_hippo_memory: bool = False,
+                                 hippo_n_ca3: int = 500, hippo_n_ca1: int = 120, hippo_k_thresh: float = 66.0,
                                  _global_het_test: bool = False):
     """Build ONE brain-region-framework `SimulationBridge` holding navigation + the conversational parser +
     the dlPFC dialogue-planning loop, per `docs/plans/2026-06-10-nav-conv-merge-implementation-design.md`
@@ -971,13 +973,60 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
                           weight_mean=float(td_strio_to_snc_weight), weight_jitter=0.2, plastic=False,
                           receptor="gaba_b"),
         ]
+    # HIPPOCAMPAL PATTERN-COMPLETION SLICE (co_resident_hippo_memory, additive default-off): the validated CA3 recurrent
+    # autoassociator + dendritic-coincidence dAP-plateau completion (R-iii; _riii_ca3_coincidence_completion_derisk)
+    # lifted as a co-resident slice on the merged one-brain. The DIRECT-drive formation bypasses ec/dg, so only ca3 (the
+    # recurrent ATTRACTOR = the completion mechanism), ca1 (the Schaffer read-out), and ca3_pv_basket (the FS feedback
+    # sparsifier that caps CA3 active-cell count so an attractor can form — the CYCLE-1072 fix) are added — zero name
+    # collision with the nav cascade / parser / dlPFC / rf / perception / command_route / generalization / limbic / td /
+    # drive slices. The ca3->ca3 recurrent pathway is flipped to a dendritic-COINCIDENCE detector (coincidence_detector=
+    # True), so ONLY those synapses are routed through the two-compartment dAP plateau (cp_coincidence_synapse_mask) —
+    # nav/conv synapses are untouched. internal_density on ca3 is 0.0 (the recurrent self-loop is the explicit SWR-gated
+    # pathway, so plasticity can be gated ON during ripple bursts, OFF otherwise). Appended LAST so the nav/parser/dlPFC/
+    # rf/cortex_it/gen/limbic/td/drive index bases are BYTE-UNCHANGED. Default False = byte-preserved (the cfg coincidence
+    # / two-compartment-dAP fields below are ALSO guarded by this flag, so the default path keeps the CoreSimConfig
+    # defaults enable_coincidence_detection=False / enable_two_compartment_dap=False).
+    hippo_regions, hippo_pathways = [], []
+    if co_resident_hippo_memory:
+        from sim.enums import NeuronType as _NT
+        _HIPPO_PYR = _NT.IZH2007_HIPPO_PYRAMIDAL.name
+        _FS = _NT.IZH2007_FS_CORTICAL_INTERNEURON.name
+        _n_basket = max(8, int(0.25 * int(hippo_n_ca3)))
+        hippo_regions = [
+            BrainRegion(name="ca3", n_neurons=int(hippo_n_ca3), exc_fraction=0.85, internal_density=0.0,
+                        exc_weight_mean=1.5, inh_weight_mean=2.0, weight_jitter=0.2, plastic_internal=True,
+                        izh_neuron_type=_HIPPO_PYR),
+            BrainRegion(name="ca1", n_neurons=int(hippo_n_ca1), exc_fraction=0.85, internal_density=0.05,
+                        exc_weight_mean=0.3, inh_weight_mean=0.8, weight_jitter=0.2, plastic_internal=False,
+                        izh_neuron_type=_HIPPO_PYR),
+            BrainRegion(name="ca3_pv_basket", n_neurons=_n_basket, exc_fraction=0.0, internal_density=0.0,
+                        exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False,
+                        izh_neuron_type=_FS),
+        ]
+        hippo_pathways = [
+            # the recurrent ATTRACTOR (the COMPLETION mechanism); coincidence_detector=True routes it through the dAP plateau.
+            # density=0.5 matches the CI-guarded CYCLE-1076 completion GO (test_riii_emergent_ca3_completion: n_ca3=500,
+            # n_assembly=12, k=20, ca3_recurrent_density=0.5); the CYCLE-1081 sparse-recurrent 0.2 was the big-assembly
+            # (n_assembly=40) SWR-consolidation regime, NOT the small-sparse-assembly completion this slice reproduces.
+            RegionPathway(from_region="ca3", to_region="ca3", density=0.5, weight_mean=6.0, weight_jitter=0.2,
+                          plastic=True, plasticity_gate="ca3_swr_burst", coincidence_detector=True),
+            RegionPathway(from_region="ca3", to_region="ca1", density=0.30, weight_mean=4.0, weight_jitter=0.2,
+                          plastic=True, plasticity_gate="ca3_to_ca1"),                      # Schaffer read-out
+            RegionPathway(from_region="ca3", to_region="ca3_pv_basket", density=0.40, weight_mean=5.0,
+                          weight_jitter=0.2, plastic=False),                                # E->I (feedback drive)
+            RegionPathway(from_region="ca3_pv_basket", to_region="ca3", density=1.0, weight_mean=120.0,
+                          weight_jitter=0.2, plastic=False),                                # I->E (feedback sparsifier)
+        ]
+
     union_regions = (list(nav_regions) + list(parser_regions) + list(dlpfc_regions)
                      + list(rf_regions) + list(perception_regions) + list(command_route_regions)
                      + list(generalization_regions)
-                     + list(limbic_regions) + list(td_regions) + list(drive_regions))
+                     + list(limbic_regions) + list(td_regions) + list(drive_regions)
+                     + list(hippo_regions))
     union_pathways = (list(nav_pathways) + list(parser_pathways) + list(command_route_pathways)
                       + list(generalization_pathways) + list(limbic_pathways)
-                      + list(td_pathways) + list(drive_pathways))   # dlPFC loop is hand-built, NOT a pathway
+                      + list(td_pathways) + list(drive_pathways)
+                      + list(hippo_pathways))   # dlPFC loop is hand-built, NOT a pathway
 
     # 2) Merged config.
     cfg = CoreSimConfig()
@@ -1102,6 +1151,23 @@ def build_merged_nav_conv_bridge(seed: int = 42, vocab=None, n_cortex: int = 100
         _da_cfg.production_rules.append(
             _HungerPR(rule_type="from_region_firing", sensitivity=float(drive_da_sensitivity),
                       threshold=0.0, window_ms=200.0, source_regions=["drive_agrp"]))
+
+    # HIPPOCAMPAL COINCIDENCE-PLATEAU config (co_resident_hippo_memory): route the ca3->ca3 recurrent synapses (the ONLY
+    # pathway with coincidence_detector=True) through the two-compartment dendritic-dAP plateau, per _riii_ca3_
+    # coincidence_completion_derisk._build. EVERY field is guarded by the flag -> default-off keeps the CoreSimConfig
+    # defaults (enable_coincidence_detection=False / enable_two_compartment_dap=False / coincidence_weighted_drive=False /
+    # k_thr=6.0 / strength=80.0 / apical_R=0.15) so the merged build is BYTE-IDENTICAL when off. Because only ca3->ca3
+    # carries the coincidence mask (cp_coincidence_synapse_mask), these GLOBAL cfg flags act ONLY on those synapses ->
+    # nav/conv synapses are unaffected. k_thresh=20 / plateau_strength=300 / apical_R=50 are the R-iii operating point
+    # (the controller multi-seed-tunes the formation+completion). The merged cfg already has enable_nmda=True (the plateau
+    # needs NMDA) + stdp_w_max=400 / hebbian_max_weight=400 (>= the ca3 design weights 6/120, so no spurious clipping).
+    if co_resident_hippo_memory:
+        cfg.enable_coincidence_detection = True
+        cfg.coincidence_weighted_drive = True          # WEIGHTED-DRIVE plateau read (c_drive = sum of effective weight over coincident inputs)
+        cfg.coincidence_k_threshold = float(hippo_k_thresh)  # scaled UP vs the CYCLE-1076 k=20: the merged cfg's hebbian_max_weight=400 (the nav/conv clip mitigation) over-potentiates the ca3->ca3 vs the completion's tuned-at-120 ceiling, so the within-drive is ~3.3x -> k must scale ~proportionally (default 66 ~ 20*400/120) or the completion over-fires (non-specific)
+        cfg.coincidence_plateau_strength = 300.0
+        cfg.enable_two_compartment_dap = True
+        cfg.apical_R = 50.0                            # apical params exactly as _build does (apical_g_couple stays at its default)
 
     bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                               runtime_state=RuntimeState(), gpu_config=GPUConfig())
