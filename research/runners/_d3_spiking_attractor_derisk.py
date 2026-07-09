@@ -104,7 +104,7 @@ def spiking_rollout_eval(task, W, split, sb, K, input_gain=1200.0, settle=15, n_
     return {"spk_track": ok_spk / len(idx), "spk_host_agree": agree / max(steps, 1)}
 
 
-def run_seed(group_name, seed, n_pool=None, n_hid=192, epochs=60, n_per_len=None):
+def run_seed(group_name, seed, n_pool=None, n_hid=192, epochs=60, n_per_len=None, fs_inh=9.0, fs_settle=25):
     is_big = group_name == "A5"
     n_pool = n_pool if n_pool is not None else (256 if is_big else 64)
     n_per_len = n_per_len if n_per_len is not None else (8000 if is_big else 1500)
@@ -117,10 +117,10 @@ def run_seed(group_name, seed, n_pool=None, n_hid=192, epochs=60, n_per_len=None
     # decode argmax(firing) = the spiking re-discretization). The divisive-norm E%-max OVER-normalizes single-winner
     # transition scores (a diagnostic, not the right cleanup for a clear one-of-K winner).
     sb = build_divnorm_score_bridge(seed=seed, V=K, n_word=10, enable_divnorm=False)
-    sb_fs = build_fswta_score_bridge(seed=seed, K=K)                                       # FS lateral-inhibition WTA
+    sb_fs = build_fswta_score_bridge(seed=seed, K=K, fs_to_exc=fs_inh)                     # FS lateral-inhibition WTA
     spk_same = spiking_rollout_eval(task, W, "test_same", sb, K, seed=seed)
     spk_deep = spiking_rollout_eval(task, W, "test_deeper", sb, K, seed=seed)
-    fs_deep = spiking_rollout_eval(task, W, "test_deeper", sb_fs, K, seed=seed, settle=25, drive_fn=fswta_drive)
+    fs_deep = spiking_rollout_eval(task, W, "test_deeper", sb_fs, K, seed=seed, settle=fs_settle, drive_fn=fswta_drive)
     return {"seed": seed, "group": group_name, "K": K, "rate_step_delta": round(da["step_transition_acc"], 3),
             "rate_deeper_track": round(da["state_deeper"], 3),
             "SPK_same_track": round(spk_same["spk_track"], 3), "SPK_deeper_track": round(spk_deep["spk_track"], 3),
@@ -134,13 +134,15 @@ def main():
     ap.add_argument("--seeds", default="42")
     ap.add_argument("--n-hid", type=int, default=192)
     ap.add_argument("--epochs", type=int, default=60)
+    ap.add_argument("--fs-inh", type=float, default=9.0, help="FS->exc inhibition weight (stronger -> cleaner one-of-K winner)")
+    ap.add_argument("--fs-settle", type=int, default=25, help="FS-WTA settle steps (longer -> the competition fully resolves)")
     ap.add_argument("--json", default=None)
     a = ap.parse_args()
     seeds = [int(x) for x in a.seeds.replace(",", " ").split()]
-    print(f"[D3 SPIKING attractor] {a.group} | re-discretization ON SPIKES (divnorm WTA = CA3/NEF cleanup) | rate transition + spiking re-discretize", flush=True)
+    print(f"[D3 SPIKING attractor] {a.group} | re-discretization ON SPIKES (Izh attractor-pool WTA + FS lateral inhibition = CA3/NEF cleanup)", flush=True)
     rows = []
     for s in seeds:
-        r = run_seed(a.group, s, n_hid=a.n_hid, epochs=a.epochs)
+        r = run_seed(a.group, s, n_hid=a.n_hid, epochs=a.epochs, fs_inh=a.fs_inh, fs_settle=a.fs_settle)
         rows.append(r)
         print(f"  [seed {s}] rate: step-delta={r['rate_step_delta']} deeper={r['rate_deeper_track']} || "
               f"plain-WTA: DEEPER={r['SPK_deeper_track']} (agree={r['SPK_host_agree_deeper']}) || "
