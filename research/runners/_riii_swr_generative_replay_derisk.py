@@ -147,6 +147,8 @@ def run_seed(seed, n_ca3=500, n_assembly=12, n_mem=3, presentations=60, drive_pA
     rng = np.random.default_rng(seed)
     perm = rng.permutation(ca3_idx)
     assemblies = [np.array(perm[m * n_assembly:(m + 1) * n_assembly], dtype=np.int64) for m in range(n_mem)]
+    if n_replay > 0:                                              # isolate the Schaffer STDP to the REPLAY phase:
+        bridge.set_plasticity_gate("ca3_to_ca1", 0.0)            # CLOSE it during formation (keeps the boosted baseline clean)
     _train_assemblies(bridge, cp, assemblies, presentations, drive_pA, gamma_on, gamma_off)
     replayed_w = heldout_w = 0.0
     if n_replay > 0:                                              # Rung 2: generative partial-cue replay consolidates ca3->ca1
