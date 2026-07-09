@@ -15,6 +15,15 @@ RATE-WINDOW, no-threshold graded (lr 2.0)      7.48     6.28     +1.21        BE
 ```
 Every variant plateaus at a ~1.15-1.19× within-ensemble advantage — far below the ~3-5× needed for a usable c_drive separation (the CYCLE-1068 hand-installed attractor that completed cleanly was **10×**). The saturation across the learning-RATE (rate 2.0→5.0), the EVENT count (symmetric 150→1000: +0.87→+0.90), the DECAY, and the RULE FORM (offset→symmetric→rate-window) is decisive: **the plasticity rule is not the lever.**
 
+## CORRECTION + DEFINITIVE payoff (2026-07-09, same session — adversarially verifying my own conclusion)
+The table's "saturation across lr" for the RATE-WINDOW rule was WRONG (caught by re-testing higher lr). The no-threshold rate-window gap GROWS with lr: `+1.21(lr2) → +1.75(lr5) → +2.34(lr10) → +2.95(lr20) → +3.52(lr50)`. BUT the within/silent RATIO plateaus ~**1.44×** (within 11.53 vs silent 8.02 at lr50) because member→silent RISES proportionally (6.28→8.02) — in the distributed code, "silent" cells co-fire with members enough to be potentiated too. So the mechanism is a RATIO-plateau (from non-member co-firing), NOT lr-saturation — but the CONCLUSION (ensemble dynamics is the blocker) is unchanged and now DEFINITIVELY confirmed by the payoff:
+**Payoff at lr=50 (the strongest learned attractor, 1.44× weight ratio) — CYCLE-1068 dendritic completion on the LEARNED recurrents:**
+```
+COINC-ON held-out = 0.928   LINEAR-OFF = 0.061   NO-TRAIN = 1.062   non-stored = 0.796
+c_drive[held = 75.9   <   non = 84.0]   <-- held-out c_drive is LOWER than non-stored
+```
+Even the best learned attractor gives c_drive[held] < c_drive[non]: the 1.44× within-ensemble weight edge is SWAMPED by connectivity variance (a held-out member happens to connect to fewer active cue cells than an arbitrary non-member). So the dendritic plateau fires indiscriminately (non-stored 0.796; NO-TRAIN 1.062 completes as much as trained) — no specific completion. This is the DECISIVE evidence: no Hebbian rule produces a usable attractor from the distributed CA3 code; the achievable weight ratio (~1.44×) is below the connectivity-variance floor. The blocker is unequivocally the ENSEMBLE DYNAMICS.
+
 ## Root cause (systematic-debugging: 4 failed rule-tweaks → question the architecture)
 The trained CA3 code is DISTRIBUTED: SPARSITY = 35-47% of the 150 CA3 cells fire (>10% of peak), not a sparse (~2-5%) dense-firing ensemble. The "members" (top-15 by rate) fire SPARSELY (<14% of steps) and ASYNCHRONOUSLY (spread across steps, not step-locked). So the co-activity of any specific member PAIR — however measured (same-step spike coincidence OR windowed EMA product) — is small, and non-members fire enough to co-activate too. **No Hebbian rule can bind neurons that do not co-fire strongly.** The blocker is upstream of the plasticity: the ENSEMBLE must be a sparse set that fires densely + synchronously for the recurrent LTP to write a strong attractor.
 

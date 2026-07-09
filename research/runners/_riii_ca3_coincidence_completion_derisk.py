@@ -103,13 +103,15 @@ def run_seed(seed, n_mem=2, train_events=100, drive_pA=200.0, do_train=True, coi
              n_lang=384, n_ca3=150, n_dg=300, ca3_density=0.5, ca3_weight=6.0, k_thresh=18.0,
              plateau_strength=120.0, weighted=True, two_comp=False, hebb_max=None,
              apical_R=None, apical_gc=None, hebb_lr=None, hebb_decay=None, hebb_sym=False,
+             hebb_rate=False, coact_decay=None, coact_thresh=None,
              reset_steps=15, drive_steps=55, recall_steps=60):
     from sim.backend import get_backend, to_host
     cp, _ = get_backend()
     bridge = _build(seed, n_lang=n_lang, n_ca3=n_ca3, n_dg=n_dg, ca3_density=ca3_density, ca3w=ca3_weight,
                     coincidence=coincidence, k_thresh=k_thresh, plateau_strength=plateau_strength,
                     weighted=weighted, two_comp=two_comp, train=do_train, hebb_max=hebb_max,
-                    apical_R=apical_R, apical_gc=apical_gc, hebb_lr=hebb_lr, hebb_decay=hebb_decay, hebb_sym=hebb_sym)
+                    apical_R=apical_R, apical_gc=apical_gc, hebb_lr=hebb_lr, hebb_decay=hebb_decay, hebb_sym=hebb_sym,
+                    hebb_rate=hebb_rate, coact_decay=coact_decay, coact_thresh=coact_thresh)
     rm = bridge.region_manager
     lang = list(rm.indices("language_input"))
     ca3_idx = list(rm.indices("ca3"))
@@ -214,6 +216,9 @@ def main():
     ap.add_argument("--hebb-lr", type=float, default=None, help="hebbian_learning_rate")
     ap.add_argument("--hebb-decay", type=float, default=None, help="hebbian_weight_decay (0 = off)")
     ap.add_argument("--hebb-sym", action="store_true", help="SYMMETRIC (offset-free) co-activity Hebbian -- forms the CA3 attractor from synchronous co-firing")
+    ap.add_argument("--hebb-rate", action="store_true", help="RATE-WINDOW (BCM) co-activity Hebbian")
+    ap.add_argument("--coact-decay", type=float, default=None, help="co-activity trace decay")
+    ap.add_argument("--coact-thresh", type=float, default=None, help="co-activity potentiation threshold")
     ap.add_argument("--json", default=None)
     a = ap.parse_args()
     seeds = [int(x) for x in a.seeds.split(",")]
@@ -222,7 +227,8 @@ def main():
     rows = []
     kw = dict(train_events=a.train_events, ca3_density=a.ca3_density, ca3_weight=a.ca3_weight,
               k_thresh=a.k_thresh, plateau_strength=a.plateau_strength, two_comp=a.two_comp, hebb_max=a.hebb_max,
-              apical_R=a.apical_R, apical_gc=a.apical_gc, hebb_lr=a.hebb_lr, hebb_decay=a.hebb_decay, hebb_sym=a.hebb_sym)
+              apical_R=a.apical_R, apical_gc=a.apical_gc, hebb_lr=a.hebb_lr, hebb_decay=a.hebb_decay, hebb_sym=a.hebb_sym,
+              hebb_rate=a.hebb_rate, coact_decay=a.coact_decay, coact_thresh=a.coact_thresh)
     for s in seeds:
         t0 = time.time()
         if a.diag_only:
