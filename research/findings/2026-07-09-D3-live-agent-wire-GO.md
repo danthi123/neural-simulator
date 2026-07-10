@@ -10,12 +10,12 @@ The D3→conversation integration validated the resolution MECHANISM (D3's focus
 ## The result (6-seed; NO `sim/` edit)
 Focus-shifted discourses (the center CONTINUES as subject while new objects are mentioned → the true Cb ≠ the most-recent object):
 
-| the LIVE agent resolves "it" to… | 6-seed |
-|---|---|
-| **the composed Centering-Cb (D3, brain-based)** | **0.611** (5/6 seeds 0.667) |
-| RECENCY (the most-recently-mentioned) | **0.000** (every seed) |
+| the LIVE agent resolves "it" to… | 6-seed (bias 2500) | 6-seed (bias 4000) |
+|---|---|---|
+| **the composed Centering-Cb (D3, brain-based)** | **0.611** (5/6 @ 0.667) | **0.889** (4/6 @ 1.00) |
+| RECENCY (the most-recently-mentioned) | **0.000** | **0.000** |
 
-**GO (load-bearing):** the deployed agent binds "it" to the composed discourse center and **NEVER to recency** — it resolves the Cb OR abstains (moat-safe), never mis-resolving to the recent referent. Live transcript (seed 42): *"bird chase worm. dog chase cat. dog chase fish. dog chase ball. → 'it' → **dog**"* (the continued center, not the recent "ball").
+**GO (load-bearing):** the deployed agent binds "it" to the composed discourse center and **NEVER to recency** — it resolves the Cb OR abstains (moat-safe), never mis-resolving to the recent referent. **The resolution rate is improvable via the bias strength:** at the fixed 2500 pA bias, 0.611 (buffer per-referent-limited); at **4000 pA, 0.889** (4/6 seeds perfect — a stronger bias overcomes a referent's intrinsic strength; 6000 pA saturates, worse). Still 0.000 recency at both. Live transcript (seed 42): *"bird chase worm. dog chase cat. dog chase fish. dog chase ball. → 'it' → **dog**"* (the continued center, not the recent "ball").
 
 ## What the anti-cheats + a0 established
 - **resolves-to-Cb, NEVER-to-recency** (0.611 vs 0.000): the composed focus, not recency, drives the deployed resolution.

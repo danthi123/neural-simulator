@@ -57,12 +57,12 @@ class D3CenteringFocusSource:
         return c if c in held else None
 
 
-def run_seed(seed, verbose=False):
+def run_seed(seed, verbose=False, bias_pA=2500.0):
     referents = ["dog", "cat", "fish", "bird", "worm", "ball"]   # the composer's validated noun set (test_multi_turn_agent)
     vocab = {w: None for w in (referents + ["chase"])}           # concepts is a DICT (word -> code, None = auto)
     adapter = D3CenteringFocusSource(referents, seed=seed)
     agent = MultiTurnAgent(referents, concepts=vocab, seed=seed, enable_biased_competition=True,
-                           focus_bias_source=adapter, enable_neural_render=False)
+                           biased_competition_bias_pA=bias_pA, focus_bias_source=adapter, enable_neural_render=False)
     WM_CAP = 3  # bounded working memory (Centering maintains the center + recent; the biased competition is decisive over ~2)
     # FOCUS-SHIFTED discourses: the center CONTINUES as subject across facts while NEW objects are mentioned, so the
     # true Cb != the most-recent object. Resolve "it" -> should be the Cb (the continued subject), not recency (last object).
@@ -102,13 +102,14 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", default="42")
     ap.add_argument("--verbose", action="store_true")
+    ap.add_argument("--bias-pA", type=float, default=2500.0)
     ap.add_argument("--json", default=None)
     a = ap.parse_args()
     seeds = [int(x) for x in a.seeds.replace(",", " ").split()]
     print(f"[D3 -> LIVE MultiTurnAgent] the deployed agent resolves a pronoun via D3's composed Centering-Cb over the SVO facts it hears (vs recency)", flush=True)
     rows = []
     for s in seeds:
-        r = run_seed(s, verbose=a.verbose)
+        r = run_seed(s, verbose=a.verbose, bias_pA=a.bias_pA)
         rows.append(r)
         print(f"  [seed {s}] LIVE-agent D3-Cb resolution={r['D3_agent_res']} vs RECENCY={r['RECENCY_res']} | resolves-when-held={r['resolves_when_held']}", flush=True)
     if a.json and rows:
