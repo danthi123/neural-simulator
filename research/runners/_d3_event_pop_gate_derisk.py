@@ -58,7 +58,7 @@ OP_NAMES = {INTRO: "INTRO", COREF: "COREF", PROMOTE: "PROMOTE", BOUND: "BOUND", 
 def train_pushpop(task, seed=42, n_hid=128, epochs=40, lr=0.05, batch=256,
                   pop_mode="learned", scramble_pop_marker=False,
                   lr_gate=5.0, gate_cost=0.01, lr_pop=0.1, pop_cost=0.0,
-                  stage_pop_epochs=0, bp_init=-1.0, freeze_core_in_phase2=True):
+                  stage_pop_epochs=0, bp_init=-1.0, freeze_core_in_phase2=True, truncate=False):
     """Two slots, TWO gates. The push gate is the validated boundary-gated copy (unchanged). The pop gate is new.
 
     pop_mode: "learned" -> r = sigmoid(w_r . code + b_r)   (the mechanism)
@@ -178,8 +178,15 @@ def train_pushpop(task, seed=42, n_hid=128, epochs=40, lr=0.05, batch=256,
                     dh = (d_lc @ Wc) * (1 - h ** 2)
                     dWi += dh.T @ X[bb, tt]; dWr += dh.T @ st_in
                     d_st = dh @ Wr
-                    d_c_next = d_st[:, :n_hid] @ emb.T + d_sc_o
-                    d_p_next = d_st[:, n_hid:2 * n_hid] @ emb.T + d_sp_o
+                    if truncate:
+                        # NO BACKPROP THROUGH TIME. The recurrence is now STRUCTURAL (a gated copy between two
+                        # attractors), so the question is whether credit still needs to flow ACROSS clauses at all.
+                        # A local rule (Burstprop) is a ONE-STEP rule; if delta learns with the cross-step gradient cut,
+                        # structural gating has made the credit assignment local in time and a local rule applies.
+                        d_c_next = np.zeros_like(d_sc_o); d_p_next = np.zeros_like(d_sp_o)
+                    else:
+                        d_c_next = d_st[:, :n_hid] @ emb.T + d_sc_o
+                        d_p_next = d_st[:, n_hid:2 * n_hid] @ emb.T + d_sp_o
                 if upd_core:
                     Wr -= lr * dWr; Wi -= lr * dWi; Wc -= lr * dWc; bc -= lr * dbc
                     We -= lr * dWe; be -= lr * dbe

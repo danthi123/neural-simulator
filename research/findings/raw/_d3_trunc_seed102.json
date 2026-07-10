@@ -1,0 +1,17 @@
+{
+ "seed": 102,
+ "bptt": {
+  "emission": 0.44,
+  "a_curr": 0.621,
+  "RETURN": 0.624,
+  "a_prev": 0.525,
+  "pop_sep": 0.742
+ },
+ "no_bptt": {
+  "emission": 0.55,
+  "a_curr": 0.647,
+  "RETURN": 0.181,
+  "a_prev": 0.138,
+  "pop_sep": 0.033
+ }
+}
