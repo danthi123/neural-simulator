@@ -1,0 +1,19 @@
+[
+ {
+  "seed": 42,
+  "n_pop": 15,
+  "n": 15,
+  "RESUME_spiking": 0.8,
+  "RESUME_poplesion": 0.2,
+  "RESUME_stateless": 0.067,
+  "RESUME_hosttwin": 0.933,
+  "RESUME_stay": 0.0,
+  "RESUME_recency": 0.067,
+  "held_survives_its_own_read": 1.0,
+  "n_read_checks": 19,
+  "BEFORE_spiking": 0.667,
+  "NOW_spiking": 0.933,
+  "r_on_pops": 0.895,
+  "r_on_bounds": 0.024
+ }
+]

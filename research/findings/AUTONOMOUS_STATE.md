@@ -1,3 +1,19 @@
+
+## CYCLE (2026-07-10) — D3 POP GATE: one register, two gates; the spiking pop lands
+
+**Landed (all 6-seed, NO `sim/` edit, all pushed to origin):**
+- **Diagnosis that forced the rung.** The held slot is a PERFECT copy (`P(BEFORE ok | a_curr ok at the copy moment) = 1.000`, 250/250, 6/6). The label-free slot->name read-out is NOT the bottleneck (it matches an oracle perm to <=0.068; the slot-purity ceiling is itself low). Made the read-out bijective (Hungarian) anyway: isolated read-out 0.547->0.572, **zero deployed answers changed**. Per-op breakdown: the emergent transition fails on **exactly one op, every seed** -- RETURN (the discourse pop) 0.205-0.380 vs 0.48-0.96 elsewhere. **Corrected two committed findings** that had blamed seed 102 on gate learnability.
+- **POP GATE (rate, 6-seed GO).** `a_curr <- r*a_prev + (1-r)*delta`, `r` opened by the return marker. RETURN 0.333 -> **0.713**; blind seeds 0.273 -> 0.664; held slot +0.078 (6/6). **Decisive causal control:** a gate opening at the same RATE at the WRONG times scores **0.286 -- below never opening** and collapses the held slot (0.532->0.441). Marker-reading is worth +0.427 over rate-matched random opening. No opening-cost prior needed: a spurious read punishes itself (off-marker r = 0.009).
+- **Adversarial audit (5 skeptics) ruled SURVIVES-WITH-SCOPE-FIXES; corrections applied:** the enabler is the gate at a NON-SATURATING lr (5.0 kills it by sigmoid saturation), NOT the developmental staging (onset-delay is a modest robustness refinement: +0.068, 3/6 seeds). Dropped all oracle-headroom RATIOS (the oracle retrains the core and is beaten on overall). RETURN is 7.9% of clauses, so the pre-registered "overall > +0.05" bar was literally "beat the oracle" -- mis-specified by me, corrected.
+- **DEPLOYED (rate, 6-seed GO).** The brain **resumes a protagonist it had set aside**: 0.778 vs 0.139 (identical model, read gate shut), 0.050 (keep the pre-pop agent), 0.084 (recency). Deployed gate opens 0.845 on pops, 0.031 on boundaries -- load-bearing, since both carry a connective. **Found + fixed a defect in my own metric** (the `tb==tn` informative filter discards every pop-ending discourse by construction; n_pop was 0 on all six seeds).
+- **DEPLOYED ON SPIKES (6-seed GO).** Resumption **0.689** vs pop-lesion 0.111, **stateless slot 0.111** (no attractor to read, no host fallback), keep-agent 0.056, recency 0.067; host twin 0.778 (substrate cost -0.089). **The held slot survives its own read: 0.974** -- the push must DESTROY what it holds (clear > tau_NMDA), the pop must NOT, and because the read drives nothing that is structural rather than tuned.
+
+**Honest residuals:** the read is non-destructive at 0.974, not 1.000 (it advances the attractor 30 steps, so a near-tied assembly flips on ~2.6% of reads; those are exactly the 3 seeds carrying the host-twin gap -- the adaptation wash-out is the obvious lever). Seed 101 weak throughout. `a_curr` is still a host vector.
+
+**EXACT NEXT ACTION:** put `a_curr` on **its own** persistent slow-NMDA attractor, so the whole event pair is spiking and both gates become attractor->attractor transfers (push = clear-then-load from a_curr's pool into a_prev's; pop = the same in reverse, and the pop's read must remain non-destructive on BOTH). Build `_d3_event_pair_spiking_derisk.py` reusing `build_persistent_slot` twice (or one bridge with 2K pools + shared FS). Gate on: resumption + BEFORE + both-slots-survive + a stateless control + a host twin. Then: the adaptation wash-out for the 2.6% read-flip.
+
+**Gitea:** still down per the owner; origin is current, gitea backlog now ~31 commits.
+
 # AUTONOMOUS CONTINUATION STATE
 
 > Durable cross-session pointer. Any re-trigger (scheduled watchdog, new
