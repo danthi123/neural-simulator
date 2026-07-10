@@ -65,7 +65,7 @@ class MultiTurnAgent:
                  biased_competition_window=20, graded_bias=False, graded_bias_gain=1.0,
                  graded_bias_ref=0.20, graded_bias_cap_pA=8000.0, defer_parser=False, defer_planner=False,
                  communicable_mode=False, communicable_draw="spiking", communicable_config=None,
-                 speak_value_Q=None, D=128):
+                 speak_value_Q=None, D=128, focus_bias_source=None):
         self.seed = int(seed)
         # composer_kind passes through to the inner agent: "rf" (default) or "onebrain" (the integrated one-brain
         # composer -- the cleanup arc validates multi-turn anaphora + cued multi-hop on it).
@@ -108,6 +108,11 @@ class MultiTurnAgent:
         # referents were introduced; the biased-competition path needs the held SET to know when >=2 referents
         # are co-present). Appended in _write_referent; mirrors exactly what is written into the WM loop(s).
         self._referent_history = []
+        # PRODUCTION WIRE-IN HOOK (default None = byte-identical): a callable (held_referents, query_verb) -> the favored
+        # referent, used by _resolve_biased in place of the HOST `content_bias_target` shortcut. This is where a D3
+        # discourse-CENTER tracker (Centering Cb over the heard SVO facts, `_d3_centering_focus_derisk`) plugs in so the
+        # pronoun binds to the BRAIN-BASED composed focus rather than a host feature-lookup. None -> content_bias_target.
+        self._focus_bias_source = focus_bias_source
 
         # --- multi-referent biased-competition (opt-in, default OFF) -------------------------------------------
         self.enable_biased_competition = bool(enable_biased_competition)
@@ -200,7 +205,11 @@ class MultiTurnAgent:
         held = self._held_set()
         if len(held) < 2 or self.bcw is None:
             return None  # <2 held -> let the plain single-attractor path decide (no competition needed)
-        fav = content_bias_target(held, query_verb)
+        # the favored referent: the D3 composed-focus source if wired (brain-based Centering Cb), else the HOST
+        # content_bias_target feature-lookup (default). The composed focus binds the pronoun to the discourse center
+        # rather than mere feature-compatibility -- the production wire-in of the D3 anaphora integration.
+        fav = (self._focus_bias_source(held, query_verb) if self._focus_bias_source is not None
+               else content_bias_target(held, query_verb))
         if fav is None:
             return None  # content silent -> abstain (moat)
         if not self._graded_bias:
