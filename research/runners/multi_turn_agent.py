@@ -252,6 +252,13 @@ class MultiTurnAgent:
         'it' = PROMOTE)."""
         if self._event_register is not None:                    # fold into the running event FIRST (from RAW words -- the
             w = sentence.split()                                 # D3 encoding is parser-independent)
+            # A leading DISCOURSE CONNECTIVE ("then"/"but"/"meanwhile") marks an EVENT BOUNDARY: the running event is
+            # SHIFTED into the previous slot instead of being overwritten. Registers that hold only one event simply
+            # lack `mark_boundary` and are unaffected (backward-compatible).
+            if w and w[0].lower() in ("then", "but", "meanwhile") and len(w) >= 4:
+                if hasattr(self._event_register, "mark_boundary"):
+                    self._event_register.mark_boundary()
+                w = w[1:]; sentence = " ".join(w)
             if len(w) >= 3:
                 self._event_register.observe(w[0], w[2])
                 if self._event_register.is_pronoun_subject(w[0]):   # a 'he'/'it' subject the flat-fact composer can't
@@ -270,6 +277,12 @@ class MultiTurnAgent:
 
     def who_patient_now(self):
         return self._event_register.who_patient() if self._event_register is not None else None
+
+    def who_agent_before(self):
+        """Answer 'who was doing it BEFORE?' from the PRIOR event held across the last discourse connective. Returns None
+        unless a PAIR register (two composed events) is wired -- a single-event register structurally cannot answer it."""
+        reg = self._event_register
+        return reg.who_agent_prev() if (reg is not None and hasattr(reg, "who_agent_prev")) else None
 
     def what_does(self, agent_word, action):
         """'what does <agent|it> <action>?' -> patient or None. Resolves a pronoun agent from the held referent;

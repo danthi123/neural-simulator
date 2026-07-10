@@ -1,0 +1,11 @@
+[
+ {
+  "seed": 42,
+  "spiking": true,
+  "BEFORE_pair": 0.9,
+  "BEFORE_single_event": 0.0,
+  "BEFORE_recency": 0.2,
+  "BEFORE_naive_current": 0.267,
+  "NOW_pair": 1.0
+ }
+]

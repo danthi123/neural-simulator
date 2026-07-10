@@ -77,7 +77,8 @@ def make_connective_task(seed, K=6, n_pool=96, noise=0.5, train_lens=(3, 4, 5), 
                 np.asarray(SP, np.int64), np.asarray(PA, np.int64), np.asarray(PP, np.int64))
 
     return {"train": gen(train_lens, n_per_len), "test_deeper": gen(test_lens, max(400, n_per_len // 3)),
-            "K": K, "ident": ident, "n_pool": n_pool}
+            "K": K, "ident": ident, "n_pool": n_pool,
+            "ent": ent, "HE": HE, "IT": IT, "BND": BND, "NOB": NOB}   # codes for the deployed PairEventRegister
 
 
 def _sm(z):
