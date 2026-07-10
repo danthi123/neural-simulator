@@ -85,7 +85,8 @@ def make_event_task(seed, K=6, n_pool=96, noise=0.6, train_lens=(1, 2, 3), test_
 
     return {"train": gen(train_lens, n_per_len), "test_same": gen(train_lens, max(400, n_per_len // 4)),
             "test_deeper": gen(test_lens, max(400, n_per_len // 4)),
-            "K": K, "ident": ident, "n_pool": n_pool, "color": color, "IT": IT, "ent": ent}
+            "K": K, "ident": ident, "n_pool": n_pool, "color": color,
+            "ent": ent, "IT": IT, "HE": HE, "op_intro": op_intro}   # codes for the D3EventRegister to encode heard facts
 
 
 def _softmax(z):
