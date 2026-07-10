@@ -57,7 +57,7 @@ from research.runners._d3_event_pop_gate_derisk import _oracle_perm, OP_NAMES
 def train_cleanerror(task, seed=42, n_hid=128, epochs=40, lr=0.05, batch=256,
                      credit="clean_error", replay_gamma=1.0, replay_target="prev",
                      lr_gate=5.0, gate_cost=0.01, lr_pop=0.1, stage_pop_epochs=15, momentum=0.0,
-                     kp_lr=0.02, kp_decay=1e-4):
+                     kp_lr=0.02, kp_decay=1e-4, read_noise=0):
     """The register trained with ONE-STEP credit (no BPTT) and a biologically-plausible credit channel.
 
     credit: "clean_error" -> the descending error passes through FIXED-RANDOM feedback (no weight transport)
@@ -65,6 +65,13 @@ def train_cleanerror(task, seed=42, n_hid=128, epochs=40, lr=0.05, batch=256,
             "lesion"      -> the descending error is ZEROED (only the emission head learns)
             "wrong_sign"  -> the top error is negated (the teacher lies) -> must anti-learn
             "no_teaching" -> the top error is ZEROED entirely (the moat: hidden weights must not move)
+    read_noise: the agent layer's soft output `raw` is a RATE code; a spiking read of it samples a FINITE number of
+        spikes. read_noise=n draws n spikes ~ Multinomial(n, raw) per clause and uses the empirical rate counts/n, so the
+        credit is computed from a noisy finite-sample read exactly as it would be on the substrate (the memory slots +
+        gates already run on real attractors; this is the one new variable the on-substrate LEARNING introduces). 0 = the
+        exact-rate reference. This is the cheapest-first de-risk of the substrate port before building the full bridge net.
+
+    Other credit modes:
             "kolen_pollack" -> the fixed-random feedback is replaced by KOLEN-POLLACK LEARNED feedback, still
                            TRANSPORT-FREE: dY = -kp_lr * (post^T @ pre) - kp_decay * Y uses ONLY local pre/post
                            activity and Y itself, never a forward weight. Y^T -> W geometrically (Akrout 2019
@@ -90,6 +97,7 @@ def train_cleanerror(task, seed=42, n_hid=128, epochs=40, lr=0.05, batch=256,
     Yc = (_rf.randn(K, n_hid) * np.sqrt(1.0 / K)).astype(np.float32)     # agent -> hidden
     _rq = np.random.RandomState(seed + 991)
     Wq = (_rq.randn(M, n_hid) * np.sqrt(1.0 / n_hid)).astype(np.float32); bq = np.zeros(M, np.float32)
+    _rn = np.random.RandomState(seed + 7777)      # the spiking-read sampler (own stream)
 
     X, OBJ, EMIT, L, AC, AP, PE, PC = task["train"]
     eyeM = np.eye(M, dtype=np.float32)
@@ -126,6 +134,9 @@ def train_cleanerror(task, seed=42, n_hid=128, epochs=40, lr=0.05, batch=256,
                         st_in = np.concatenate([sc @ emb, sp @ emb, pat @ emb], axis=1)
                         h = np.tanh(st_in @ Wr.T + X[b, t] @ Wi.T)
                         raw = _sm(h @ Wc.T + bc)                       # the AGENT layer -- never given a target
+                        if read_noise > 0:                             # a SPIKING read: n spikes ~ Multinomial(n, raw)
+                            cnt = np.array([_rn.multinomial(read_noise, ri) for ri in raw], np.float32)
+                            raw = cnt / float(read_noise)              # the empirical rate the substrate would deliver
                         g = _sig(X[b, t] @ wg + bg)[:, None]
                         r = (_sig(X[b, t] @ wp + bp)[:, None] if pop_on[0] else np.zeros((B, 1), np.float32))
                         npv = g * sc + (1.0 - g) * sp                  # PUSH (structural)

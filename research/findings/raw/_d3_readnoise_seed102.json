@@ -1,0 +1,27 @@
+{
+ "seed": 102,
+ "exact": {
+  "a_prev": 0.437,
+  "RETURN": 0.481,
+  "a_curr": 0.545,
+  "emission": 0.572
+ },
+ "read200": {
+  "a_prev": 0.463,
+  "RETURN": 0.533,
+  "a_curr": 0.587,
+  "emission": 0.575
+ },
+ "read50": {
+  "a_prev": 0.533,
+  "RETURN": 0.632,
+  "a_curr": 0.665,
+  "emission": 0.577
+ },
+ "read20": {
+  "a_prev": 0.597,
+  "RETURN": 0.726,
+  "a_curr": 0.737,
+  "emission": 0.583
+ }
+}

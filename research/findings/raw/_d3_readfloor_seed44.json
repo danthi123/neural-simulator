@@ -1,0 +1,18 @@
+{
+ "seed": 44,
+ "read5": {
+  "a_prev": 0.555,
+  "a_curr": 0.486,
+  "emission": 0.489
+ },
+ "read2": {
+  "a_prev": 0.492,
+  "a_curr": 0.39,
+  "emission": 0.388
+ },
+ "read1": {
+  "a_prev": 0.133,
+  "a_curr": 0.192,
+  "emission": 0.214
+ }
+}
