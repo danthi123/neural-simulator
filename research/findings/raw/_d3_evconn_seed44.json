@@ -1,0 +1,14 @@
+[
+ {
+  "seed": 44,
+  "K": 6,
+  "PAIR_curr_agent": 0.911,
+  "PAIR_prev_agent": 0.889,
+  "PAIR_same_rel": 0.93,
+  "SINGLE_prev_agent": 0.493,
+  "SINGLE_curr_agent": 0.99,
+  "LESION_prev_agent": 0.271,
+  "recency_curr": 0.175,
+  "recency_prev": 0.168
+ }
+]
