@@ -212,7 +212,7 @@ class OnBridgeBDSPNet:
                  fwd_wmean=6.0, fwd_wjit=0.5, fwd_density=1.0,
                  in_hi=750.0, in_lo=40.0, hidden_bias=520.0, output_bias=520.0,
                  apical_out_gain=260.0, apical_hid_gain=190.0,
-                 couple_soma=False, soma_g=0.0):
+                 couple_soma=False, soma_g=0.0, bdsp_w_max=200.0):
         from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
         from sim.bridge import SimulationBridge
         from sim.regions import BrainRegion, RegionPathway
@@ -250,6 +250,11 @@ class OnBridgeBDSPNet:
         # directed credit. Pair with a SPARSE output-bias regime (B<E) so the P0 moat stays clean.
         cfg.bdsp_apical_couples_soma = bool(couple_soma)
         cfg.bdsp_apical_soma_g = float(soma_g)
+        # bdsp_w_max ROOT-CAUSE FIX (2026-07-10): the committed default bdsp_w_max=5.0 clips ANY forward pathway weight
+        # above 5 -> a fwd_wmean of 6-80 collapses to ~5-10 on the first BDSP step -> the hidden layer goes SILENT (no
+        # firing -> no bursts -> no learning). This is CLAUDE.md's documented STDP-w_max gotcha in BDSP form. Set it
+        # above the forward design weight so the forward drive survives.
+        cfg.bdsp_w_max = float(bdsp_w_max)
         self._bdsp_lr = float(bdsp_lr)
 
         regions = [
