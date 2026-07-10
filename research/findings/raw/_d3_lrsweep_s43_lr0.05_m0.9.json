@@ -1,0 +1,9 @@
+{
+ "seed": 43,
+ "lr": 0.05,
+ "momentum": 0.9,
+ "a_prev": 0.453,
+ "RETURN": 0.425,
+ "a_curr": 0.51,
+ "emission": 0.55
+}
