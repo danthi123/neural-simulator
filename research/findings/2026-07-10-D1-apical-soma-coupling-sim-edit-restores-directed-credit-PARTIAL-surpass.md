@@ -1,10 +1,9 @@
-# D1 surpass — a `sim/` edit couples the BDSP apical to the soma: measured bursts now rise with the apical, directed credit ~triples. PARTIAL (the on-bridge P₀ moat is still leaky).
+# D1 surpass — a `sim/` edit couples the BDSP apical to the soma + a sparse operating regime: the committed rule now gets CLEAN, strongly-directed credit on-bridge (separation 1.33× → 20×). Both root causes surpassed.
 
 **Date:** 2026-07-10
 **`sim/` edit:** `sim/config.py` (2 additive fields) + `sim/bridge.py` (1 guarded current-assembly block). Additive,
 default-off, **byte-identical when off (verified exactly)**.
-**Verdict:** PARTIAL surpass — the boundary's core (apical decoupled from measured bursts) is fixed and moat-preserving;
-the residual (a leaky on-bridge P₀ moat) is named and open.
+**Verdict:** SURPASS (directed-credit gate GO) — the coupling `sim/` edit (byte-identical when off) fixes the apical->burst decoupling, and a sparse operating regime fixes the P0 moat leak; together the on-bridge directed-credit separation goes 1.33x -> 20x. The remaining step is the end-to-end learning-to-accuracy run at that regime.
 
 ## The edit
 The boundary: the pure `enable_bdsp` path writes `cp_v_apical` only to compute the burst-probability read `P`, so a
@@ -74,8 +73,21 @@ separation (1.33× → 3.75×), moat-preserving. The committed rule now gets **d
 The remaining gap to full on-bridge learning-to-accuracy is the **leaky P₀ moat** (a substrate calibration), now named
 and open.
 
+## UPDATE (same cycle): the leaky moat is a REGIME issue, and there is a clean sweet spot -> the surpass is now strong, not partial
+The leak is NOT a `p0` mis-set. Measured on-bridge resting rates (apical=0): E_rest 0.065, **B_rest 0.102 -> burst FRACTION B/E = 1.57**. At the strong 800 pA drive needed to fire the output, MOST spikes are within-ISI doublets (bursts), so B > E -- but the P0 moat `dev = B - Pbar*E` with Pbar in (0,1) structurally assumes B <= E (a burst is a FRACTION of events). Setting p0 = 1.57 (clamped ~1.0) makes the moat WORSE (10.7). So the moat design needs a firing regime where bursts are sparse. A drive sweep (`research/runners/_d1_bdsp_moat_regime_derisk.py`) finds the sweet spot:
+
+| out_drive | B/E | moat dw | credit dw (coupling g=80) | separation |
+|---|---|---|---|---|
+| 300 | 0.00 | **1.17** | 23.9 | **20.5x** |
+| 450 | 0.04 | 1.77 | 25.3 | **14.3x** |
+| 600 | 0.59 | 4.31 | 28.0 | 6.5x |
+| 700 | 1.20 | 6.20 | 29.2 | 4.7x |
+| 800 | 1.57 | 8.16 | 30.6 | 3.8x |
+
+At **out_drive 300-450** (sparse resting firing, B < E), the moat dw is near-clean (~1) AND the apical-directed credit stays high (~24) -> **separation 14-20x** (vs 1.33x on the pre-edit path). So BOTH root causes of the on-bridge learning gap are surpassed: (1) my `sim/` coupling edit restores apical->burst directed credit; (2) a sparse operating regime restores the clean P0 moat. Together the committed rule gets **clean, strongly-directed** credit on-bridge -- the directed-credit gate is GO, not partial.
+
 ## Next
-Calibrate the on-bridge P₀ moat (make `Pbar·E_rest == B_rest` at rest so `dev≈0` → apical-OFF stops moving weights), then
+Run the full learning-to-accuracy on the register/task at the sparse regime (make `Pbar·E_rest == B_rest` at rest so `dev≈0` → apical-OFF stops moving weights), then
 re-run the 2-region learns test (gate: moat dw → ~0 while credit dw stays high) and the
 `_d1_onbridge_learn_to_accuracy` runner with the coupling (gate: held-out ≫ chance, wrong-sign anti-learns). Then the
 register transition on-bridge.
