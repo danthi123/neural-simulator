@@ -96,7 +96,8 @@ def train_event_spiking_weak(task, seed=42, n_hid=192, T=16, epochs=90, lr=0.05,
         ta = STAe[np.arange(len(Le)), Le - 1]; tp = STPe[np.arange(len(Le)), Le - 1]
         return float(((fa == ta) & (fp == tp)).mean())
 
-    return {"deeper": eval_split("test_deeper"), "same": eval_split("test_same")}
+    return {"deeper": eval_split("test_deeper"), "same": eval_split("test_same"),
+            "weights": {"emb": emb, "W1": W1, "Wa": Wa, "ba": ba, "Wp": Wp, "bp": bp, "T": T}}   # for the spiking one-loop
 
 
 def run_seed(seed, K, n_hid, T, epochs):

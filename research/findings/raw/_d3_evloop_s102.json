@@ -1,0 +1,10 @@
+[
+ {
+  "seed": 102,
+  "K": 6,
+  "LOOP_event_deeper": 0.917,
+  "agree_agent": 0.995,
+  "agree_patient": 1.0,
+  "last2_objects_floor": 0.371
+ }
+]
