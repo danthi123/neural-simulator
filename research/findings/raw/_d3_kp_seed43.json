@@ -1,0 +1,48 @@
+{
+ "seed": 43,
+ "kp": {
+  "a_curr": 0.557,
+  "RETURN": 0.45,
+  "a_prev": 0.473,
+  "pop_sep": 0.219,
+  "emission": 0.548,
+  "hidden_moved": 0.547,
+  "no_transport": true
+ },
+ "fixed_random": {
+  "a_curr": 0.512,
+  "RETURN": 0.512,
+  "a_prev": 0.447,
+  "pop_sep": 0.616,
+  "emission": 0.624,
+  "hidden_moved": 0.748,
+  "no_transport": true
+ },
+ "backprop": {
+  "a_curr": 0.453,
+  "RETURN": 0.482,
+  "a_prev": 0.375,
+  "pop_sep": 0.883,
+  "emission": 0.695,
+  "hidden_moved": 1.138,
+  "no_transport": true
+ },
+ "kp_shuffled": {
+  "a_curr": 0.522,
+  "RETURN": 0.215,
+  "a_prev": 0.147,
+  "pop_sep": 0.027,
+  "emission": 0.533,
+  "hidden_moved": 0.545,
+  "no_transport": true
+ },
+ "kp_lesion": {
+  "a_curr": 0.18,
+  "RETURN": 0.187,
+  "a_prev": 0.292,
+  "pop_sep": -0.015,
+  "emission": 0.246,
+  "hidden_moved": 0.0,
+  "no_transport": true
+ }
+}

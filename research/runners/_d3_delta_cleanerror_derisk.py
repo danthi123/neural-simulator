@@ -56,7 +56,8 @@ from research.runners._d3_event_pop_gate_derisk import _oracle_perm, OP_NAMES
 
 def train_cleanerror(task, seed=42, n_hid=128, epochs=40, lr=0.05, batch=256,
                      credit="clean_error", replay_gamma=1.0, replay_target="prev",
-                     lr_gate=5.0, gate_cost=0.01, lr_pop=0.1, stage_pop_epochs=15, momentum=0.0):
+                     lr_gate=5.0, gate_cost=0.01, lr_pop=0.1, stage_pop_epochs=15, momentum=0.0,
+                     kp_lr=0.02, kp_decay=1e-4):
     """The register trained with ONE-STEP credit (no BPTT) and a biologically-plausible credit channel.
 
     credit: "clean_error" -> the descending error passes through FIXED-RANDOM feedback (no weight transport)
@@ -64,6 +65,12 @@ def train_cleanerror(task, seed=42, n_hid=128, epochs=40, lr=0.05, batch=256,
             "lesion"      -> the descending error is ZEROED (only the emission head learns)
             "wrong_sign"  -> the top error is negated (the teacher lies) -> must anti-learn
             "no_teaching" -> the top error is ZEROED entirely (the moat: hidden weights must not move)
+            "kolen_pollack" -> the fixed-random feedback is replaced by KOLEN-POLLACK LEARNED feedback, still
+                           TRANSPORT-FREE: dY = -kp_lr * (post^T @ pre) - kp_decay * Y uses ONLY local pre/post
+                           activity and Y itself, never a forward weight. Y^T -> W geometrically (Akrout 2019
+                           weight-mirror / KP eqs. 16-18). This is the cheapest candidate for the a_prev residual:
+                           fixed-random feedback must align with a state that is itself changing (a moving target the
+                           static D1 task does not have); learned feedback tracks it.
     """
     K, M, n_pool, ident = task["K"], task["M"], task["n_pool"], task["ident"]
     rng = np.random.RandomState(seed + 9)
@@ -97,7 +104,7 @@ def train_cleanerror(task, seed=42, n_hid=128, epochs=40, lr=0.05, batch=256,
     vel = {"Wr": np.zeros_like(Wr), "Wi": np.zeros_like(Wi), "Wc": np.zeros_like(Wc), "We": np.zeros_like(We)}
 
     def _phase(n_epochs, upd_pop):
-        nonlocal Wr, Wi, Wc, bc, We, be, wg, bg, wp, bp, Wq, bq
+        nonlocal Wr, Wi, Wc, bc, We, be, wg, bg, wp, bp, Wq, bq, Ye, Yc
         for _ in range(n_epochs):
             for Ln, ids in by_len.items():
                 ids = np.asarray(ids); rng.shuffle(ids)
@@ -140,7 +147,7 @@ def train_cleanerror(task, seed=42, n_hid=128, epochs=40, lr=0.05, batch=256,
                         elif credit == "backprop":
                             e_agent = (d_le @ We) @ emb.T              # WEIGHT TRANSPORT (the reference)
                         else:
-                            e_agent = d_le @ Ye                        # FIXED-RANDOM feedback: no transport
+                            e_agent = d_le @ Ye                        # FIXED-RANDOM (or KP-LEARNED) feedback
 
                         d_raw = (1.0 - r) * e_agent                    # the pop is convex: only (1-r) reaches `raw`
                         if credit == "somatic_nudge":
@@ -154,6 +161,11 @@ def train_cleanerror(task, seed=42, n_hid=128, epochs=40, lr=0.05, batch=256,
                         else:
                             d_lc = raw * (d_raw - (raw * d_raw).sum(1, keepdims=True))
                         dWc += d_lc.T @ h; dbc += d_lc.sum(0)
+                        if credit == "kolen_pollack":
+                            # LOCAL pre/post only; no forward weight is ever read. Y receives the same increment its
+                            # forward partner receives, so (W - Y^T) decays geometrically under the shared decay.
+                            Ye -= kp_lr * (d_le.T @ nsc) + kp_decay * Ye
+                            Yc -= kp_lr * (d_lc.T @ h) + kp_decay * Yc
 
                         if credit == "backprop":
                             dh = (d_lc @ Wc) * (1 - h ** 2)
