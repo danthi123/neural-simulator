@@ -1,10 +1,11 @@
-# D3 — the transition on a biological credit rule: **PARTIAL**, and the residual is that I implemented feedback alignment, not the somatic nudge
+# D3 — the transition on a biological credit rule: **PARTIAL** (corrected) — the residual is batch sensitivity, not the learning rule
 
 **Date:** 2026-07-10
 **Runner:** `research/runners/_d3_delta_cleanerror_derisk.py` (numpy; NO `sim/` edit).
-**Verdict:** PARTIAL. The deep-credit channel works without weight transport and every anti-cheat collapses; the accuracy
-reaches ~55% of the backprop reference. The cause is identified and is a **fidelity gap in my implementation of the rule**,
-not a property of the register.
+**Verdict:** PARTIAL. The deep-credit channel works without weight transport, every anti-cheat collapses, and at batch
+32-64 it **matches the host delta on next-emission (0.62)**. The held slot still trails the backprop reference. The cause is
+**batch sensitivity of alignment-based credit** (predicted by this project's own D1 control probe) -- NOT, as this document
+first claimed, a wrong learning rule; that attribution was refuted by reading the source and is corrected below.
 
 ## What was attempted
 The register's last host learning machinery is the transition δ's **backprop**: `d_lc @ Wc` transports the forward weight
@@ -38,22 +39,51 @@ The network has **no agent label anywhere**: only the emission is observed, so o
   cleanly separable, as the previous rung claimed.
 - **No weight transport, asserted per seed.**
 
-## The residual, named exactly
-Clean-error reaches 0.454 `a_curr` against backprop's 0.823, and beats it on only 1/6 seeds (seed 42, which the earlier
-per-seed data show is the weak seed for the reference).
+## The residual — my first attribution was WRONG, and I refuted it by reading the source
 
-**Cause: I implemented plain feedback alignment on the clean error, which is not the rule D1's result rests on.** That
-finding's adversarial audit attributes its accuracy to the **Urbanczik–Senn M2.6 somatic-rate feedforward rule** —
+**What I first wrote (and committed):** that clean-error underperforms because I implemented plain feedback alignment
+rather than the Urbanczik-Senn M2.6 somatic-rate rule.
 
+**That is false.** Reading `_gnw_d1_spiking_bdsp_derisk.py: MicrocircuitBDSPNet.train_step` — which I should have done
+*before* writing the attribution — the M2.6 rule is implemented there as
+
+```python
+soma_err = (E * (1.0 - E)) * v_api    # phi'(u^P) * apical error = the M2.6 somatic delta
 ```
-dW = eta * ( phi(u_P) - phi(v_basal) ) * r_pre     # the apical error NUDGES THE SOMA;
-                                                    # the FF weights follow the NUDGED RATE
-```
 
-— and *not* to `dW ∝ e · phi' · r_pre`, which is what this runner computes. The two differ in what the weight follows: a
-rate difference between a nudged and an unnudged soma, versus a linearised error times a derivative. I approximated the
-source, and the approximation is what underperforms. This is the same discipline failure as reading a headline verdict
-without its correction block — **an approximation of a cited rule is not the cited rule.**
+i.e. **in the small-signal linearisation the somatic nudge IS a derivative times the fixed-random clean error** — exactly
+what this runner computes. That file states outright that its plain-FA arm "computes the SAME numeric credit the
+MicrocircuitBDSPNet computes at the rate level." I asserted a distinction the source explicitly denies.
+
+**Two hypotheses tested, both refuted (6-seed):**
+
+| | a_prev | RETURN | a_curr | emission |
+|---|---|---|---|---|
+| `somatic_nudge` (elementwise phi', the exact M2.6 form) | 0.350 | 0.319 | 0.438 | 0.495 |
+| `clean_error` (softmax Jacobian at the agent layer) | 0.340 | 0.331 | 0.454 | 0.510 |
+
+Neither the rule's form nor the narrow 6-unit softmax Jacobian is the residual.
+
+## The residual, actually: batch sensitivity (predicted by this project's own control probe)
+
+D1's control probe already reported that alignment-based credit is **batch-sensitive** — Burstprop scores 0.924 at batch
+32 and 0.513 at full batch, *degrading* as per-update averaging increases. This runner trained at **batch 256**.
+
+**3 dev seeds, `clean_error`:**
+
+| | batch 256 | batch 64 | batch 32 |
+|---|---|---|---|
+| a_prev | 0.340 | 0.414 | **0.482** |
+| a_curr | 0.454 | 0.516 | 0.513 |
+| **next-emission** | 0.510 | **0.621** | **0.616** |
+
+At batch 32–64 the biologically-plausible credit channel **reaches the host delta's next-emission accuracy (0.619)** —
+with **no weight transport and no backprop through time**. The held slot improves (0.34 → 0.48) but still trails the
+backprop reference (0.65): a genuine, quantified, *open* residual, not an implementation error.
+
+**The process lesson, for the second time today:** I named a cause from a headline rather than from the code, and the code
+refuted it in ten minutes. `feedback_read_own_substrate_before_theorizing` applies to my own findings' internals, not just
+to `sim/`.
 
 ## Honest reporting
 - The backprop reference in this runner reproduces `train_pushpop(truncate=True, replay_gamma=1)` **to the digit**
@@ -65,13 +95,12 @@ without its correction block — **an approximation of a cited rule is not the c
   not the cause (checked, then fixed anyway).
 
 ## ⇒ Next
-Implement the **actual M2.6 somatic nudge**: run the agent layer's soma twice per step — once with basal drive only, once
-with the apical clean error added — and let the feedforward weights follow the **rate difference**. Gate on `a_prev` /
-RETURN against the backprop reference (a_prev 0.654, RETURN 0.724, a_curr 0.823), keeping the controls that already
-discriminate: feedback lesion, wrong sign, the no-teaching moat (hidden-moved must be exactly 0.0), shuffled replay, and
-the no-weight-transport assertion. Read `_gnw_d1_spiking_bdsp_derisk.MicrocircuitBDSPNet.train_step` first — the exact
-M2.6 form is already implemented there. If it closes, port via the committed `enable_bdsp` ∧ `enable_bdsp_microcircuit`
-`sim/` path (additive, byte-identical-when-off).
+1. **Re-run the full 6-seed matrix at batch 32** (the rule's regime), with all controls, and gate on `a_prev` / RETURN.
+   Next-emission is already at the host reference there; the question is whether the held slot follows.
+2. If `a_prev` still trails, the next candidate is **momentum + the per-layer homeostatic magnitude control**, both of
+   which `MicrocircuitBDSPNet` has and this runner does not (`_MOMENTUM`, `_homeo_scale`) — read them before implementing.
+3. Then port via the committed `enable_bdsp` ∧ `enable_bdsp_microcircuit` `sim/` path (additive, byte-identical-when-off)
+   and re-run the register end-to-end.
 
 ## Files
 `research/runners/_d3_delta_cleanerror_derisk.py`; raw `research/findings/raw/_d3_cleanerr_seed*.json`.

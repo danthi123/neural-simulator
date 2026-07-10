@@ -139,7 +139,16 @@ def train_cleanerror(task, seed=42, n_hid=128, epochs=40, lr=0.05, batch=256,
                             e_agent = d_le @ Ye                        # FIXED-RANDOM feedback: no transport
 
                         d_raw = (1.0 - r) * e_agent                    # the pop is convex: only (1-r) reaches `raw`
-                        d_lc = raw * (d_raw - (raw * d_raw).sum(1, keepdims=True))
+                        if credit == "somatic_nudge":
+                            # The EXACT M2.6 form as implemented in MicrocircuitBDSPNet.train_step:
+                            #     soma_err = phi'(E) * v_api,  with phi'(E) = E*(1-E)  (ELEMENTWISE, a sigmoid unit)
+                            # The apical error nudges each agent unit's soma independently; the feedforward weights
+                            # follow the somatic-rate difference. NOTE this is NOT the softmax Jacobian, which couples
+                            # all K units -- and a 6-unit softmax is exactly the narrow, coupled layer through which
+                            # feedback alignment must align in the `clean_error` arm. This arm isolates that variable.
+                            d_lc = (raw * (1.0 - raw)) * d_raw
+                        else:
+                            d_lc = raw * (d_raw - (raw * d_raw).sum(1, keepdims=True))
                         dWc += d_lc.T @ h; dbc += d_lc.sum(0)
 
                         if credit == "backprop":
@@ -147,7 +156,7 @@ def train_cleanerror(task, seed=42, n_hid=128, epochs=40, lr=0.05, batch=256,
                         elif credit in ("lesion", "no_teaching"):
                             dh = np.zeros_like(h)
                         else:
-                            dh = (d_lc @ Yc) * (1 - h ** 2)            # fixed-random again
+                            dh = (d_lc @ Yc) * (1 - h ** 2)            # fixed-random again (the descending soma_err)
                         dWr += dh.T @ st_in; dWi += dh.T @ X[b, t]
 
                         # ---------- the PUSH gate: taught by REPLAY, a target that exists NOW
@@ -240,7 +249,8 @@ def _score(roll, K):
 def run_seed(seed, K=6, epochs=40):
     task = make_pair_task(seed, K=K)
     arms = {}
-    for name, kw in (("clean_error", {}),
+    for name, kw in (("somatic_nudge", {"credit": "somatic_nudge"}),
+                     ("clean_error", {}),
                      ("backprop_ref", {"credit": "backprop"}),
                      ("feedback_lesion", {"credit": "lesion"}),
                      ("wrong_sign", {"credit": "wrong_sign"}),
