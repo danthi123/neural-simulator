@@ -22,15 +22,24 @@ import numpy as np
 
 from research.runners._d3_reference_tracking_derisk import make_reference_tracking_task
 from research.runners._d3_group_composition_derisk import discrete_attractor_rnn
+from research.runners._d3_spiking_attractor_derisk import build_fswta_score_bridge, fswta_drive
 from research.runners.biased_competition_buffer import BiasedCompetitionContextBuffer, resolve_referent
 
 
-def d3_focus(W, Xseq, L, ident, K):
-    """Roll the discrete-attractor over one discourse's clause codes -> the predicted FINAL focus (holder)."""
+def d3_focus(W, Xseq, L, ident, K, sb_fs=None):
+    """Roll the discrete-attractor over one discourse's clause codes -> the predicted FINAL focus (holder). sb_fs=None ->
+    the rate argmax re-discretization; sb_fs given -> the SPIKING FS-WTA re-discretization (the focus-tracker runs on
+    the spiking substrate -> the WHOLE anaphora [focus-tracking + resolution] is spiking)."""
     emb, Wr, Wi, Ws, bs = W["emb"], W["Wr"], W["Wi"], W["Ws"], W["bs"]
     cur = ident
     for t in range(int(L)):
-        cur = int((np.tanh(emb[cur] @ Wr.T + Xseq[t] @ Wi.T) @ Ws.T + bs).argmax())
+        scores = np.tanh(emb[cur] @ Wr.T + Xseq[t] @ Wi.T) @ Ws.T + bs
+        if sb_fs is None:
+            cur = int(scores.argmax())
+        else:                                                     # SPIKING FS-WTA re-discretization
+            sc = np.maximum(scores, 0.0); mx = sc.max(); sc = sc / (mx + 1e-9) if mx > 0 else sc
+            _, acc = fswta_drive(sb_fs, K, sc, settle=45)
+            cur = int(np.argmax(acc)) if acc.max() > 0 else ident
     return cur
 
 
@@ -51,10 +60,11 @@ def reset_buffer(buf, settle=30):
         b._run_one_simulation_step()
 
 
-def run_seed(seed, K=6, n_hid=192, epochs=60, n_ref=300, n_disc=14, settle=80):
+def run_seed(seed, K=6, n_hid=192, epochs=60, n_ref=300, n_disc=14, settle=80, spiking_focus=False):
     task = make_reference_tracking_task(seed, K=K, n_pool=64, n_per_len=2500, train_lens=(1, 2, 3), test_lens=(6, 7, 8))
     da = discrete_attractor_rnn(task, seed=seed, epochs=epochs, n_hid=n_hid, temperature=0.7)   # D3 focus tracker
     W = da["weights"]; ident = task["ident"]
+    sb_fs = build_fswta_score_bridge(seed=seed, K=K, fs_to_exc=16.0) if spiking_focus else None  # spiking focus source
     names = [f"e{i}" for i in range(K)]
     # bias_pA=2500 is tuned for pattern_size=30 (a larger pool dilutes the fixed bias -> weaker resolution). The buffer's
     # biased competition is inherently ~5/6 seed-variable (its own de-risk); the LOAD-BEARING integration claim is
@@ -68,7 +78,7 @@ def run_seed(seed, K=6, n_hid=192, epochs=60, n_ref=300, n_disc=14, settle=80):
     for n in idx:
         L = int(Le[n]); pairs = SEQe[n][:L]
         true_h = int(Se[n, L - 1])                                # the composed focus (ground truth)
-        F_pred = d3_focus(W, Xe[n], L, ident, K)                  # D3's tracked focus
+        F_pred = d3_focus(W, Xe[n], L, ident, K, sb_fs=sb_fs)     # D3's tracked focus (spiking if sb_fs)
         a_last, b_last = divmod(int(pairs[-1]), K); salient = b_last   # most-recently-NAMED referent (the salience cue)
         mentioned = sorted(set(int(e) for p in pairs for e in divmod(int(p), K)))
         if true_h == salient:                                     # keep only FOCUS-SHIFTED discourses (focus != recent)
@@ -94,13 +104,15 @@ def main():
     ap.add_argument("--n-hid", type=int, default=192)
     ap.add_argument("--epochs", type=int, default=60)
     ap.add_argument("--n-disc", type=int, default=14)
+    ap.add_argument("--spiking-focus", action="store_true", help="track the focus on the spiking FS-WTA substrate (the WHOLE anaphora spiking)")
     ap.add_argument("--json", default=None)
     a = ap.parse_args()
     seeds = [int(x) for x in a.seeds.replace(",", " ").split()]
-    print(f"[D3 -> CONVERSATION anaphora integration] K={a.K} | D3's composed focus drives the biased-competition pronoun resolution (vs the salience baseline)", flush=True)
+    _fs = " [SPIKING focus-tracker + spiking resolution = WHOLE anaphora on spikes]" if a.spiking_focus else ""
+    print(f"[D3 -> CONVERSATION anaphora integration] K={a.K}{_fs} | D3's composed focus drives the biased-competition pronoun resolution (vs the salience baseline)", flush=True)
     rows = []
     for s in seeds:
-        r = run_seed(s, K=a.K, n_hid=a.n_hid, epochs=a.epochs, n_disc=a.n_disc)
+        r = run_seed(s, K=a.K, n_hid=a.n_hid, epochs=a.epochs, n_disc=a.n_disc, spiking_focus=a.spiking_focus)
         rows.append(r)
         print(f"  [seed {s}] focus-shifted discourses={r['n_shifted']} | D3-focus resolution={r['D3_focus_res']} vs "
               f"SALIENCE(most-recent)={r['SALIENCE_res']} | bias-follows={r['bias_follows']} | moat-abstain={r['moat_abstain']}", flush=True)
