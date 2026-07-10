@@ -58,7 +58,8 @@ OP_NAMES = {INTRO: "INTRO", COREF: "COREF", PROMOTE: "PROMOTE", BOUND: "BOUND", 
 def train_pushpop(task, seed=42, n_hid=128, epochs=40, lr=0.05, batch=256,
                   pop_mode="learned", scramble_pop_marker=False,
                   lr_gate=5.0, gate_cost=0.01, lr_pop=0.1, pop_cost=0.0,
-                  stage_pop_epochs=0, bp_init=-1.0, freeze_core_in_phase2=True, truncate=False):
+                  stage_pop_epochs=0, bp_init=-1.0, freeze_core_in_phase2=True, truncate=False,
+                  replay_gamma=0.0, replay_target="prev"):
     """Two slots, TWO gates. The push gate is the validated boundary-gated copy (unchanged). The pop gate is new.
 
     pop_mode: "learned" -> r = sigmoid(w_r . code + b_r)   (the mechanism)
@@ -91,6 +92,18 @@ def train_pushpop(task, seed=42, n_hid=128, epochs=40, lr=0.05, batch=256,
     We = (rng.randn(M, n_hid) * np.sqrt(1.0 / n_hid)).astype(np.float32); be = np.zeros(M, np.float32)
     wg = (rng.randn(n_pool) * 0.05).astype(np.float32); bg = np.float32(-1.0)    # PUSH gate
     wp = (rng.randn(n_pool) * 0.05).astype(np.float32); bp = np.float32(bp_init)  # POP gate
+    # REPLAY / RETRODICTION head. The held slot influences NOTHING at the current step, so with the cross-clause gradient
+    # cut its write gate receives no credit at all and simply closes (MEASURED: a_prev 0.610 -> 0.195, pop-sep +0.751 ->
+    # +0.067). Replay supplies the missing signal LOCALLY: reconstruct the just-ended event's last OBSERVED emission from
+    # what the held slot is holding NOW. That target exists at this step, so the push gate's credit stops living in the
+    # future. This is the hippocampal sharp-wave-ripple signal that BPTT was standing in for.
+    # Drawn from its OWN generator: taking a draw from `rng` would shift every later rng.shuffle(ids) and silently
+    # change the minibatch order of the DEFAULT (replay_gamma=0) path -- additive code must not perturb the stream.
+    # replay_target: "prev"     -> the JUST-ENDED event's last observed emission (the mechanism)
+    #                "shuffled" -> the same targets, permuted across the batch (retrodiction destroyed)
+    #                "current"  -> THIS clause's own emission (a present target: teaches the transition, not the held slot)
+    _rq = np.random.RandomState(seed + 991)
+    Wq = (_rq.randn(M, n_hid) * np.sqrt(1.0 / n_hid)).astype(np.float32); bq = np.zeros(M, np.float32)
 
     X, OBJ, EMIT, L, AC, AP, PE, PC = task["train"]
     OPS_tr = task["ops_train"]
@@ -121,7 +134,7 @@ def train_pushpop(task, seed=42, n_hid=128, epochs=40, lr=0.05, batch=256,
         return _sig(code @ wp + bp)
 
     def _phase(n_epochs, upd_core, upd_pop):
-      nonlocal Wr, Wi, Wc, bc, We, be, wg, bg, wp, bp
+      nonlocal Wr, Wi, Wc, bc, We, be, wg, bg, wp, bp, Wq, bq
       for _ in range(n_epochs):
         for Ln, ids in by_len.items():
             ids = np.asarray(ids); rng.shuffle(ids)
@@ -136,6 +149,7 @@ def train_pushpop(task, seed=42, n_hid=128, epochs=40, lr=0.05, batch=256,
                 dWe = np.zeros_like(We); dbe = np.zeros_like(be)
                 dwg = np.zeros_like(wg); dbg = np.float32(0.0)
                 dwp = np.zeros_like(wp); dbp = np.float32(0.0)
+                dWq = np.zeros_like(Wq); dbq = np.zeros_like(bq)
                 for t in range(Ln):
                     st_in = np.concatenate([sc @ emb, sp @ emb, pat @ emb], axis=1)
                     h = np.tanh(st_in @ Wr.T + X[b, t] @ Wi.T)
@@ -145,16 +159,33 @@ def train_pushpop(task, seed=42, n_hid=128, epochs=40, lr=0.05, batch=256,
                     npv = g * sc + (1.0 - g) * sp                 # gated copy IN  (uses the OLD a_curr)
                     nsc = r * sp + (1.0 - r) * raw                # gated copy OUT (uses the OLD a_prev)
                     ev = nsc @ emb; se = _sm(ev @ We.T + be)
-                    cache.append((st_in, h, raw, nsc, npv, ev, se, sc, sp, g, r, b, t))
+                    qv = npv @ emb                                # REPLAY reads what the held slot holds RIGHT NOW
+                    sq = _sm(qv @ Wq.T + bq) if replay_gamma > 0 else None
+                    cache.append((st_in, h, raw, nsc, npv, ev, se, sc, sp, g, r, b, t, qv, sq))
                     sc, sp = nsc, npv
                     pat = np.zeros((B, K), np.float32); pat[np.arange(B), OBJ[b, t]] = 1.0
                 d_c_next = np.zeros((B, K), np.float32); d_p_next = np.zeros((B, K), np.float32)
                 for t in range(Ln - 1, -1, -1):
-                    st_in, h, raw, nsc, npv, ev, se, sc_o, sp_o, g, r, bb, tt = cache[t]
+                    st_in, h, raw, nsc, npv, ev, se, sc_o, sp_o, g, r, bb, tt, qv, sq = cache[t]
                     d_le = (se - eyeM[EMIT[bb, tt]]) / B
                     dWe += d_le.T @ ev; dbe += d_le.sum(0)
                     d_nsc = (d_le @ We) @ emb.T + d_c_next        # gradient into the NEW a_curr
-                    d_p = d_p_next                                # a_prev only feeds the next step's state input
+                    d_p = d_p_next                                # a_prev only feeds the NEXT step's state input ...
+                    if replay_gamma > 0:                          # ... unless REPLAY hands it a target NOW
+                        if replay_target == "current":
+                            tgt = EMIT[bb, tt]
+                        elif replay_target == "shuffled":
+                            tgt = PE[bb[_rq.permutation(len(bb))], tt]
+                        else:
+                            tgt = PE[bb, tt]
+                        msk = (tgt >= 0)
+                        if msk.any():
+                            d_lq = sq.copy()
+                            d_lq[msk] -= eyeM[tgt[msk]]
+                            d_lq[~msk] = 0.0
+                            d_lq *= (replay_gamma / B)
+                            dWq += d_lq.T @ qv; dbq += d_lq.sum(0)
+                            d_p = d_p + (d_lq @ Wq) @ emb.T       # -> into npv -> into the PUSH gate, at THIS step
 
                     # --- POP backward (a convex combination: no learned head reconstructs the held identity)
                     d_raw = (1.0 - r) * d_nsc
@@ -190,6 +221,8 @@ def train_pushpop(task, seed=42, n_hid=128, epochs=40, lr=0.05, batch=256,
                 if upd_core:
                     Wr -= lr * dWr; Wi -= lr * dWi; Wc -= lr * dWc; bc -= lr * dbc
                     We -= lr * dWe; be -= lr * dbe
+                    if replay_gamma > 0:
+                        Wq -= lr * dWq; bq -= lr * dbq
                     wg -= lr_gate * dwg; bg -= lr_gate * dbg      # separate, faster plasticity channels (PBWM)
                 if upd_pop and pop_mode == "learned" and pop_on[0]:
                     wp -= lr_pop * dwp; bp -= lr_pop * dbp

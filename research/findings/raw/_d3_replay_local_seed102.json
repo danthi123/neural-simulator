@@ -1,0 +1,27 @@
+{
+ "seed": 102,
+ "bptt": {
+  "a_prev": 0.525,
+  "RETURN": 0.624,
+  "a_curr": 0.621,
+  "pop_sep": 0.742
+ },
+ "no_bptt": {
+  "a_prev": 0.138,
+  "RETURN": 0.181,
+  "a_curr": 0.647,
+  "pop_sep": 0.033
+ },
+ "no_bptt_replay1": {
+  "a_prev": 0.578,
+  "RETURN": 0.726,
+  "a_curr": 0.705,
+  "pop_sep": 0.776
+ },
+ "no_bptt_replay3": {
+  "a_prev": 0.573,
+  "RETURN": 0.721,
+  "a_curr": 0.7,
+  "pop_sep": 0.775
+ }
+}

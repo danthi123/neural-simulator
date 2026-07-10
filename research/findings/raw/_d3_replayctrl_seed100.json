@@ -1,0 +1,33 @@
+{
+ "seed": 100,
+ "bptt": {
+  "a_prev": 0.714,
+  "RETURN": 0.869,
+  "a_curr": 0.945,
+  "pop_sep": 0.716
+ },
+ "no_bptt": {
+  "a_prev": 0.133,
+  "RETURN": 0.18,
+  "a_curr": 0.855,
+  "pop_sep": 0.074
+ },
+ "replay": {
+  "a_prev": 0.738,
+  "RETURN": 0.896,
+  "a_curr": 0.927,
+  "pop_sep": 0.688
+ },
+ "replay_shuffled": {
+  "a_prev": 0.133,
+  "RETURN": 0.178,
+  "a_curr": 0.854,
+  "pop_sep": 0.072
+ },
+ "replay_current": {
+  "a_prev": 0.308,
+  "RETURN": 0.327,
+  "a_curr": 0.856,
+  "pop_sep": 0.372
+ }
+}
