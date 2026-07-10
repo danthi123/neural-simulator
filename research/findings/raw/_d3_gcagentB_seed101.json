@@ -1,0 +1,12 @@
+[
+ {
+  "seed": 101,
+  "BEFORE_gatedcopy": 0.833,
+  "BEFORE_gate_lesion": 0.0,
+  "BEFORE_single_event": 0.0,
+  "BEFORE_recency": 0.167,
+  "BEFORE_naive_current": 0.0,
+  "NOW_gatedcopy": 0.9,
+  "n": 30
+ }
+]

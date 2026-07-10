@@ -35,7 +35,7 @@ The first run reported **BEFORE 0.833 and stateless 0.833 — identical.** A sta
 Fixed: `a_prev` now comes **only** from spikes; a silent slot means *nothing is held* (no host fallback, in the read *or* in the transition feedback). The stateless control immediately collapsed to 0.333, as it must. **A control that cannot fail is not a control.**
 
 ## Honest reporting
-- **4/6 seeds GO.** Seed 102 (0.350) is the known **gate-learnability** failure carried from the rate rung (its gate-lesion arm is also its highest); seed 43 misses the stateless margin (0.650 vs 0.650 → gap 0.10 < my pre-registered 0.15).
+- **4/6 seeds GO.** Seed 43 misses the stateless margin (gap 0.10 < my pre-registered 0.15). **CORRECTION (same day, by measurement):** seed 102 (0.350) is NOT a gate-learnability failure as I first wrote — its gate separation is **+0.890** and its rate held-slot decode **0.649**. Nor is it a naming-collision failure: a bijective label-free read-out changes no deployed answer. The residual is **slot-tracking under the deployed discourse distribution**.
 - **The stateless control is not zero (0.492).** With `recur=0` the pool still fires during the LOAD pulse and leaves a decaying trace inside the read window, so it behaves as a leaky short memory rather than no memory. The directional claim is unambiguous (beaten on 6/6; gate-lesion at chance) but the margin is ~0.22, not ~0.5.
 - 20 informative discourses/seed (a real bridge runs per clause).
 - Only the **held** slot is on the substrate; `a_curr` is still re-chosen on the host each clause. That is the next rung.

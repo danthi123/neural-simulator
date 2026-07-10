@@ -38,7 +38,7 @@ The δ is learned from an agent-emission cross-entropy **alone**; the gate reads
 - **NOW is not degraded (0.767)** — holding a prior event costs little in the present.
 
 ## Honest reporting
-- **5/6 seeds GO; seed 102 lands at 0.433** (its gate-lesion arm is also its highest, 0.300 — the gate learned poorly on that seed). This tracks the rate rung's known residual: gate learnability is seed-variable under honest `gate_cost` selection.
+- **5/6 seeds GO; seed 102 lands at 0.433.** **CORRECTION (same day, by measurement):** I first attributed this to gate learnability. That is **wrong** — seed 102's gate is well-separated (BOUND-vs-rest **+0.890**) and its rate held-slot decode is **0.649**. Nor is it naming collisions: making the label-free read-out **bijective** (Hungarian assignment; it was many-to-one, e.g. seed 43 mapped slots {3,4}→entity 0) lifts the isolated read-out 0.547→0.572 but changes **not a single deployed answer** (Δ+0.000 on all 6 seeds), because in deployment `a_prev` occupies only ~4 slots and the colliding ones are hit once each. The deployed gap is therefore **slot-tracking under the deployed discourse distribution**, not the gate and not the naming. Named residual, correctly attributed.
 - The upstream headline is the adversarially-corrected one: the gated copy's held-slot decode is **≈0.63 under held-out selection** (0.693 at the tuned constant), and is **comparable to** — not far past — replay's 0.597. The *deployment* gain (0.367 → 0.711) is nonetheless large, because deployment compounds the decode with two read-outs, and the structural copy removes one of them entirely.
 - 30 informative discourses per seed.
 
