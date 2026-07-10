@@ -23,6 +23,9 @@ Focus-shifted discourses (the center CONTINUES as subject while new objects are 
 - **the resolution RATE (0.611) inherits the buffer's OWN ~5/6 per-referent competition decisiveness** (a referent whose fixed bias doesn't overcome its rival's intrinsic strength → the moat abstains) — the `BiasedCompetitionContextBuffer`'s characterized property, not the wire's.
 - **A0 deployment detail (found + handled):** the agent's WM holds the PATIENT of each fact, but the Centering Cb is SUBJECT-preferred — so the wire also holds the subject (`_write_referent`) and bounds the WM (Centering maintains the center + recent) so the Cb is a held candidate.
 
+## Fully-spiking (the whole DEPLOYED anaphora on spikes)
+`--spiking-cb` tracks the Cb on the spiking FS-WTA substrate (the validated transition-LIF + FS-WTA re-discretization), so the WHOLE deployed anaphora is spiking: a **spiking Cb-source** feeds the **spiking biased-competition** resolution. **6-seed (bias 4000): D3-Cb 0.889 (4/6 seeds perfect), never recency (0.000)** — identical to the numpy Cb-source. ⇒ the deployed conversational agent resolves pronouns via a composed discourse center tracked ENTIRELY ON SPIKES (spiking Cb-source + spiking biased-competition), binding 'it' to who-we're-talking-about, never to recency.
+
 ## ⇒ the production wire-in is end-to-end
 The recurrent sequence/language cortex (D3) — built, learned, spiking — now drives the DEPLOYED conversational agent's anaphora resolution: it binds a pronoun to the composed discourse center it tracks over the facts the agent hears, replacing the host `content_bias_target` shortcut with a brain-based composed focus, never confabulating to recency. This is the mission payoff, deployed.
 

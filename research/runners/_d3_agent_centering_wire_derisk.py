@@ -23,18 +23,21 @@ import numpy as np
 
 from research.runners._d3_centering_focus_derisk import make_centering_task
 from research.runners._d3_group_composition_derisk import discrete_attractor_rnn
+from research.runners._d3_spiking_attractor_derisk import build_fswta_score_bridge, fswta_drive
 from research.runners.multi_turn_agent import MultiTurnAgent
 
 
 class D3CenteringFocusSource:
     """Wraps a Centering-Cb tracker as a `MultiTurnAgent.focus_bias_source`: rolls the composed Cb over the observed
-    SVO facts and returns it as the favored referent (if held)."""
-    def __init__(self, referents, seed=42, n_pool=64, epochs=60):
+    SVO facts and returns it as the favored referent (if held). spiking=True -> the Cb re-discretization runs on the
+    spiking FS-WTA substrate (the WHOLE deployed anaphora spiking: spiking Cb-source + spiking biased-competition)."""
+    def __init__(self, referents, seed=42, n_pool=64, epochs=60, spiking=False):
         self.referents = list(referents); self.ref2idx = {r: i for i, r in enumerate(referents)}
         K = len(referents)
         task = make_centering_task(seed, K=K, n_pool=n_pool, n_per_len=2000, train_lens=(1, 2, 3), test_lens=(4, 5, 6))
         self.W = discrete_attractor_rnn(task, seed=seed, epochs=epochs, n_hid=160, temperature=0.7)["weights"]
-        self.base = task["base"]; self.ident = task["ident"]; self.facts = []
+        self.base = task["base"]; self.ident = task["ident"]; self.facts = []; self.K = K
+        self.sb_fs = build_fswta_score_bridge(seed=seed, K=K, fs_to_exc=16.0) if spiking else None
 
     def observe(self, subj, obj):
         si, oi = self.ref2idx.get(subj), self.ref2idx.get(obj)
@@ -49,7 +52,13 @@ class D3CenteringFocusSource:
         cur = self.ident
         for (s, o) in self.facts:
             code = np.concatenate([self.base[s], self.base[o]]).astype(np.float32)
-            cur = int((np.tanh(emb[cur] @ Wr.T + code @ Wi.T) @ Ws.T + bs).argmax())
+            scores = np.tanh(emb[cur] @ Wr.T + code @ Wi.T) @ Ws.T + bs
+            if self.sb_fs is None:
+                cur = int(scores.argmax())
+            else:                                                 # SPIKING FS-WTA re-discretization of the Cb
+                sc = np.maximum(scores, 0.0); mx = sc.max(); sc = sc / (mx + 1e-9) if mx > 0 else sc
+                _, acc = fswta_drive(self.sb_fs, self.K, sc, settle=45)
+                cur = int(np.argmax(acc)) if acc.max() > 0 else self.ident
         return cur
 
     def __call__(self, held, query_verb=None):
@@ -57,10 +66,10 @@ class D3CenteringFocusSource:
         return c if c in held else None
 
 
-def run_seed(seed, verbose=False, bias_pA=2500.0):
+def run_seed(seed, verbose=False, bias_pA=2500.0, spiking_cb=False):
     referents = ["dog", "cat", "fish", "bird", "worm", "ball"]   # the composer's validated noun set (test_multi_turn_agent)
     vocab = {w: None for w in (referents + ["chase"])}           # concepts is a DICT (word -> code, None = auto)
-    adapter = D3CenteringFocusSource(referents, seed=seed)
+    adapter = D3CenteringFocusSource(referents, seed=seed, spiking=spiking_cb)
     agent = MultiTurnAgent(referents, concepts=vocab, seed=seed, enable_biased_competition=True,
                            biased_competition_bias_pA=bias_pA, focus_bias_source=adapter, enable_neural_render=False)
     WM_CAP = 3  # bounded working memory (Centering maintains the center + recent; the biased competition is decisive over ~2)
@@ -103,13 +112,15 @@ def main():
     ap.add_argument("--seeds", default="42")
     ap.add_argument("--verbose", action="store_true")
     ap.add_argument("--bias-pA", type=float, default=2500.0)
+    ap.add_argument("--spiking-cb", action="store_true", help="track the Cb on the spiking FS-WTA (whole deployed anaphora spiking)")
     ap.add_argument("--json", default=None)
     a = ap.parse_args()
     seeds = [int(x) for x in a.seeds.replace(",", " ").split()]
-    print(f"[D3 -> LIVE MultiTurnAgent] the deployed agent resolves a pronoun via D3's composed Centering-Cb over the SVO facts it hears (vs recency)", flush=True)
+    _sp = " [SPIKING Cb-source + spiking resolution = WHOLE deployed anaphora on spikes]" if a.spiking_cb else ""
+    print(f"[D3 -> LIVE MultiTurnAgent]{_sp} the deployed agent resolves a pronoun via D3's composed Centering-Cb over the SVO facts it hears (vs recency)", flush=True)
     rows = []
     for s in seeds:
-        r = run_seed(s, verbose=a.verbose, bias_pA=a.bias_pA)
+        r = run_seed(s, verbose=a.verbose, bias_pA=a.bias_pA, spiking_cb=a.spiking_cb)
         rows.append(r)
         print(f"  [seed {s}] LIVE-agent D3-Cb resolution={r['D3_agent_res']} vs RECENCY={r['RECENCY_res']} | resolves-when-held={r['resolves_when_held']}", flush=True)
     if a.json and rows:
