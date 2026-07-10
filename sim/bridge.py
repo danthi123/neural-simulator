@@ -6512,6 +6512,24 @@ class SimulationBridge:
                 else:
                     total_input_current_pA = total_input_current_pA + I_coincidence
 
+            # --- 2.3a-bis. BDSP apical -> soma electrotonic coupling (2026-07-10; ADDITIVE, default-off,
+            # byte-identical when off). The pure enable_bdsp path writes cp_v_apical only to compute the burst-
+            # probability P (below, ~7196), so a top-down apical raises P (the read) but never depolarizes the
+            # soma -> the MEASURED burst rate B stays flat -> the committed FF rule dw ~ etilde*(B - Pbar*E) gets
+            # NO apical-directed credit on-bridge (the moat inverts; the D1-onbridge-BDSP-apical-decoupled
+            # BOUNDARY). This routes a SCALED electrotonic fraction of the apical DEPOLARIZATION to the soma so
+            # apical^ -> soma^ -> more measured bursts B^ -> directed credit. MOAT-PRESERVING: at rest
+            # v_apical == E_rest -> zero coupling -> P == Pbar -> dev == 0. cp_v_apical is the PSEUDO-voltage the
+            # P read uses, so we couple bdsp_apical_soma_g * [bdsp_v_apical_scale * (v_apical - E_rest)] pA
+            # (positive-only). Uses the PREVIOUS step's v_apical (this runs in current-assembly, before the update).
+            if getattr(cfg, "enable_bdsp", False) and getattr(cfg, "bdsp_apical_couples_soma", False) \
+                    and self.cp_v_apical is not None:
+                _g_as = cp.float32(getattr(cfg, "bdsp_apical_soma_g", 0.0))
+                _vsc_as = cp.float32(getattr(cfg, "bdsp_v_apical_scale", 0.05))
+                _er_as = cp.float32(getattr(cfg, "apical_E_rest", -65.0))
+                _depol_as = cp.maximum(self.cp_v_apical - _er_as, cp.float32(0.0))
+                total_input_current_pA = total_input_current_pA + _g_as * _vsc_as * _depol_as
+
             # --- 2.3a-ter. GRADED dendritic-plateau READ-OUT (Stage 1, 2026-06-20). The SMOOTH, non-
             # saturating sibling of the all-or-none coincidence block above -- the dendrite's ONE genuine
             # unlock (de-risk A GO): a GRADED ANALOG read-out of a distributed code (Mikulasch-Priesemann)

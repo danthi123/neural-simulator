@@ -18,6 +18,12 @@ It is correctly wired: the task is valid (numpy oracle **0.989** ≥ 0.80; singl
 genuinely needs the hidden layer), and there is **no weight transport** (asserted). But held-out accuracy stays at chance
 and the **moat is inverted, not held**.
 
+## ⚠️ CORRECTION (same day, deterministic re-measurement): the "moat inverted" half was a NOISE ARTIFACT
+The D1 Stage-A smokes are **nondeterministic** (they never set `ou_std_current_pA=0`; measured `B_rest` varies [0.135, 0.112, 0.197] across 3 runs, +-0.09). Re-measured with OU noise OFF (`research/runners/_d1_apical_soma_coupling_derisk.py` / `_learns_derisk.py`), the deterministic truth is narrower than this document first claimed:
+- **REAL + deterministic:** `B` is decoupled from the apical (B_rest 0.11711 -> B_apical 0.11803 with a 300 pA apical; B_rises = **False**). The apical raises the burst-probability read P but not measured bursts B. This is the load-bearing boundary and it holds.
+- **ARTIFACT (retracted):** `stage_a_bridge_learns` returned `moat_smaller = False` (an *inverted* moat). Deterministically the pure path gives credit dw **10.83 > moat dw 8.16** -- the moat is NOT inverted; that flip was OU noise. The real weakness is that the on-bridge P0 moat is **LEAKY** (moat dw 8.16, not ~0 -> substantial undirected learning) and the directed-credit separation is only **1.33x**, because with B decoupled the apical adds little directed signal.
+- **Lesson (again):** measure deterministically before claiming. I verified the boundary on a noisy metric and committed one half that did not survive OU-off re-measurement. The core (apical decoupled from measured bursts) stands; the inverted-moat framing is retracted.
+
 ## The root cause (verified two ways)
 Driving `cp_bdsp_apical_drive` raises the burst-**probability** read `P` (0.30 → 1.00) but **NOT the measured burst rate
 `B`** (0.000 → 0.000). The committed feedforward update is `dw ∝ etilde · (B − Pbar·E)` — it uses the **measured** `B`,

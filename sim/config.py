@@ -276,6 +276,15 @@ class CoreSimConfig:
     # is None, the microcircuit branch is unreached, and the block is BYTE-IDENTICAL to the Burstprop path (which is
     # itself byte-identical to today when enable_bdsp is False). See the microcircuit section of the D1 build spec.
     enable_bdsp_microcircuit: bool = False
+    # BDSP apical->soma electrotonic coupling (2026-07-10). The pure enable_bdsp path writes cp_v_apical only to
+    # compute the burst-probability read P, so a top-down apical raises P but never depolarizes the soma -> the
+    # MEASURED burst rate B stays flat -> the committed FF rule dw ~ etilde*(B - Pbar*E) gets no apical-directed
+    # credit on-bridge (moat inverts). This flag routes a SCALED electrotonic fraction of the apical depolarization
+    # to the soma in the current-assembly phase, so apical^ -> soma^ -> more measured bursts B^ -> directed credit.
+    # MOAT-PRESERVING: at rest v_apical == E_rest -> zero coupling. Default off => byte-identical (the guarded block
+    # in _run_one_simulation_step is unreached). See 2026-07-10-D1-onbridge-BDSP-apical-decoupled-from-soma-BOUNDARY.
+    bdsp_apical_couples_soma: bool = False
+    bdsp_apical_soma_g: float = 0.0              # pA per unit of P-space apical depolarization (v_apical_scale*(v_apical-E_rest)); 0 disables
     # Poirazi-Mel 2003 WEIGHTED-subunit refinement (2026-06-09). The count form above switches the plateau
     # on the bare COUNT of coincident routed inputs (c_i = mask^T @ prev_fired), so it is WEIGHT-BLIND: a
     # sparse-distinct ensemble that fires >= K cells everywhere triggers the same plateau regardless of the
