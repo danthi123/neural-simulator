@@ -1,0 +1,10 @@
+[
+ {
+  "seed": 43,
+  "K": 6,
+  "SPKFWD_event_deeper": 0.963,
+  "SPKFWD_same": 0.973,
+  "SHUFFLE_deeper": 0.041,
+  "last2_objects_floor": 0.39
+ }
+]
