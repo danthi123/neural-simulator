@@ -13,8 +13,10 @@ from research.runners._d1_onbridge_learn_to_accuracy_derisk import (
 
 def _train_eval(couple, g, bias, task_data, n_bits, epochs, lr, settle, teach, mode="bdsp", seed=42):
     (Xtr, ytr), (Xte, yte) = task_data
-    net = OnBridgeBDSPNet(seed=seed, n_bits=n_bits, hidden=12, couple_soma=couple, soma_g=g,
-                          hidden_bias=bias, output_bias=bias, bdsp_lr=lr)
+    # THE FIX REGIME (2026-07-10 root cause): bdsp_w_max=200 (default, so the fw survives the BDSP clip) + hidden=60 +
+    # fwd_wmean=40 (strong enough to fire the hidden). The old hidden=12/fwd_wmean=6 sat in the silent regime.
+    net = OnBridgeBDSPNet(seed=seed, n_bits=n_bits, hidden=60, couple_soma=couple, soma_g=g,
+                          hidden_bias=bias, output_bias=bias, bdsp_lr=lr, fwd_wmean=40.0, bdsp_w_max=200.0)
     diag = net.apical_coupling_diag(steps=250)
     for ep in range(epochs):
         net.train_epoch(Xtr, ytr, mode, settle_steps=settle, teach_steps=teach, shuffle_seed=seed + ep)
