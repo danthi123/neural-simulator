@@ -57,8 +57,11 @@ def make_pair_task(seed, K=6, M=8, n_pool=64, noise=0.5, train_lens=(4, 5, 6), t
     theta = np.exp(logits - logits.max(1, keepdims=True)); theta /= theta.sum(1, keepdims=True)
     ident = 0; Lmax = max(tuple(train_lens) + tuple(test_lens))
 
-    def gen(lens, n_each, p_ret):
+    OPS_all, SID_all = {}, {}
+
+    def gen(lens, n_each, p_ret, tag=None):
         X, OBJ, EMIT, L, AC, AP, PE, PC = [], [], [], [], [], [], [], []
+        OPS, SID = [], []
         for L_ in lens:
             for _ in range(n_each):
                 ac = ap = ident; has_prev = False
@@ -66,6 +69,7 @@ def make_pair_task(seed, K=6, M=8, n_pool=64, noise=0.5, train_lens=(4, 5, 6), t
                 ob = np.zeros(Lmax, np.int64); em = np.zeros(Lmax, np.int64)
                 acs = np.full(Lmax, -1, np.int64); aps = np.full(Lmax, -1, np.int64)
                 pe = np.full(Lmax, -1, np.int64); prev_last_emit = -1
+                ops_ = np.full(Lmax, -1, np.int64); sid_ = np.full(Lmax, -1, np.int64)
                 pc = np.zeros((Lmax, M), np.float32)               # prior event's emission MULTISET (seq-replay target)
                 cur_counts = np.zeros(M, np.float32); prev_counts = np.zeros(M, np.float32)
                 for t in range(L_):
@@ -97,7 +101,7 @@ def make_pair_task(seed, K=6, M=8, n_pool=64, noise=0.5, train_lens=(4, 5, 6), t
                         prev_last_emit = int(em[t - 1])            # the just-ended event's LAST emission (OBSERVED)
                         prev_counts = cur_counts.copy()            # the just-ended event's WHOLE emission sequence
                         cur_counts = np.zeros(M, np.float32)
-                        s = int(rng.randint(0, K)); sub = ent[s]; ac = s; mk = marks["BND"]
+                        s = int(rng.randint(0, K)); sub = ent[s]; ac = s; mk = marks["BND"]; sid_[t] = s
                     elif op == RETURN:                             # DISCOURSE POP: come back to the prior protagonist
                         ac = ap; sub = marks["HE"]; mk = marks["RET"]
                     elif op == COREF:
@@ -105,22 +109,29 @@ def make_pair_task(seed, K=6, M=8, n_pool=64, noise=0.5, train_lens=(4, 5, 6), t
                     elif op == PROMOTE:
                         ac = int(ob[t - 1]) if t > 0 else ac; sub = marks["IT"]; mk = marks["NOB"]
                     else:
-                        s = int(rng.randint(0, K)); sub = ent[s]; ac = s; mk = marks["NOB"]
+                        s = int(rng.randint(0, K)); sub = ent[s]; ac = s; mk = marks["NOB"]; sid_[t] = s
                     c = np.concatenate([mk, sub, ent[o]]).copy()
                     flip = rng.rand(n_pool) < (noise * 0.12); c[flip] = -c[flip]
-                    codes[t] = c; ob[t] = o; acs[t] = ac; aps[t] = ap
+                    codes[t] = c; ob[t] = o; acs[t] = ac; aps[t] = ap; ops_[t] = op
                     em[t] = int(rng.choice(M, p=theta[ac]))        # EMISSION from the CURRENT agent (target only)
                     pe[t] = prev_last_emit                          # REPLAY target: the prior event's last emission
                     cur_counts[em[t]] += 1.0
                     tot = prev_counts.sum()
                     pc[t] = (prev_counts / tot) if tot > 0 else 0.0  # SEQ-REPLAY target: the prior event's emission dist
                 X.append(codes); OBJ.append(ob); EMIT.append(em); L.append(L_); AC.append(acs); AP.append(aps); PE.append(pe); PC.append(pc)
+                OPS.append(ops_); SID.append(sid_)
+        if tag:
+            OPS_all[tag] = np.asarray(OPS, np.int64); SID_all[tag] = np.asarray(SID, np.int64)
         return (np.asarray(X, np.float32), np.asarray(OBJ, np.int64), np.asarray(EMIT, np.int64),
                 np.asarray(L, np.int64), np.asarray(AC, np.int64), np.asarray(AP, np.int64), np.asarray(PE, np.int64),
                 np.asarray(PC, np.float32))
 
-    return {"train": gen(train_lens, n_per_len, p_return), "test_deeper": gen(test_lens, max(400, n_per_len // 3), p_return),
-            "K": K, "M": M, "ident": ident, "n_pool": n_pool, "theta": theta}
+    tr = gen(train_lens, n_per_len, p_return, tag="train")
+    te = gen(test_lens, max(400, n_per_len // 3), p_return, tag="test")
+    return {"train": tr, "test_deeper": te,
+            "K": K, "M": M, "ident": ident, "n_pool": n_pool, "theta": theta,
+            "ent": ent, "marks": marks,                       # codes for the deployed SelfSupPairRegister
+            "ops_train": OPS_all["train"], "sid_train": SID_all["train"]}   # OBSERVABLE ops + spoken subject ids
 
 
 def _sm(z):
@@ -228,6 +239,8 @@ def train_pair_selfsup(task, seed=42, n_hid=128, epochs=40, lr=0.05, batch=256, 
             fc = np.where(last[:, None], sc_, fc); fp = np.where(last[:, None], npv, fp)
         return fc, fp, AC_[np.arange(B), L_ - 1], AP_[np.arange(B), L_ - 1]
 
+    # expose the learned transition (for the deployed SelfSupPairRegister)
+    rollout.W = {"emb": emb, "Wr": Wr, "Wi": Wi, "Wc": Wc, "bc": bc, "Wp": Wp, "bp": bp, "n_slots": n_slots}
     return rollout
 
 

@@ -1,0 +1,11 @@
+[
+ {
+  "seed": 43,
+  "BEFORE_selfsup_replay": 0.167,
+  "BEFORE_replay_ablated": 0.167,
+  "BEFORE_single_event": 0.0,
+  "BEFORE_recency": 0.067,
+  "BEFORE_naive_current": 0.033,
+  "NOW_selfsup": 0.733
+ }
+]
