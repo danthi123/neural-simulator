@@ -27,6 +27,7 @@ Credit assignment collapses from "learn a K x K copy through a softmax across ma
 does not apply to it at all -- a COPY inherits identity rather than inferring it. And `a_prev` is NOT bounded by
 `a_curr` either: under the oracle gate it EXCEEDS `a_curr` on all 6 seeds (0.738 vs 0.695), because `a_prev` is a FROZEN
 SNAPSHOT taken at the boundary while `a_curr` keeps being churned by corefs/promotes across the deeper test.
+HONEST HEADLINE: ~0.63 under held-out gate_cost selection (0.693 at the tuned constant; 0.738 with an oracle gate).
 (The 0.755 number was the ceiling of the REPLAY mechanism, not of the substrate -- do NOT claim the gated copy "exceeds"
 it; it is simply the wrong yardstick.)
 
@@ -39,11 +40,26 @@ measured mean gate was FLAT and mis-ordered (0.630 on BOUND vs 0.671 on COREF: i
 trained by a separate phasic dopamine signal, not by the same slow cortical error (O'Reilly & Frank 2006). This
 decomposes MECHANISM (oracle gate, 0.761) from LEARNABILITY (learned gate, 0.348 -> 0.701).
 
-ANTI-CHEATS (6-seed): (a) gated-copy + prediction-only >> the prediction-only NEGATIVE (0.226) and >> the replay
-mechanism (0.492/0.597), approaching the ORACLE-gate upper bound;
+ADVERSARIALLY VERIFIED (2 skeptics, both SURVIVE-WITH-SCOPE-FIXES). Corrections now baked in here:
+  * HEADLINE IS SELECTION-OPTIMISTIC. gate_cost=0.01 is exactly the test-set argmax. Across FIVE disjoint held-out
+    triples the selection splits 0.01 (x2), 0.006 (x2), 0.003 (x1) -> the honest reported-six mean is ~0.63 (0.52-0.69),
+    NOT 0.693. "Beats replay (0.597) on every seed" holds ONLY at gate_cost=0.01 (at 0.006 the min is 0.480). The
+    mechanism is COMPARABLE to replay, not reliably far past it. (A single held-out triple -- which is all I ran -- is
+    NOT enough to clear a selection confound.)
+  * `marker_scramble` IS A LEAKY CONTROL: it permutes whole sequences but the gate still fits w_g on the permuted codes
+    (plus positional confounds), so it scores 0.49-0.57 on 2 seeds. The CORRECT control is a clean RANDOM-SCHEDULE gate
+    with the learned open-rate: it reaches only 0.316 (vs learned 0.693) -- i.e. "learning WHEN to open" is worth +0.38,
+    ~3.5x the above-chance signal. Holding is load-bearing even against an ORACLE one-step-lag reader (ceiling 0.456).
+  * `lr_gate` is a PLATEAU, not a knife-edge (x1 -> 0.571, x20 -> 0.675, x100 -> 0.693), and the "shared-lr collapses to
+    0.348" claim is only true at gate_cost=0; with the opening cost present shared-lr already reaches 0.571.
+  * The ORACLE arm is NOT a label leak: 1[op==BOUND] is 0.9996 linearly decodable from the OBSERVED clause code, and the
+    oracle sets only a 0/1 TIMING gate -- the identity copied is the model's own a_curr, so it cannot inject the probe target.
+
+ANTI-CHEATS (6-seed): (a) gated-copy + prediction-only >> the prediction-only NEGATIVE (0.226), comparable to the replay
+mechanism (0.597), approaching the ORACLE-gate upper bound (0.738);
 (b) GATE-LESION (force g=0: the gate never opens, nothing is ever shifted) -> collapses;
-(c) GATE-SCRAMBLE (the boundary marker is permuted across clauses, so the gate cannot be predicted from the code)
-    -> collapses -- the gate must be driven by the OBSERVABLE marker, not by a constant;
+(c) GATE-SCRAMBLE (the boundary marker is permuted across clauses) -> WEAK/LEAKY, see above; prefer a clean
+    RANDOM-SCHEDULE gate at the learned open-rate (0.316), which is the decisive control;
 (d) ALWAYS-OPEN (g=1: copy every clause, never hold) -> collapses -- holding is load-bearing, not just copying;
 (e) RECENCY floor. numpy; NO `sim/` edit (the rate de-risk of a route `sim/` already supports).
 
@@ -195,6 +211,7 @@ def train_gated_copy(task, seed=42, n_hid=128, epochs=40, lr=0.05, batch=256,
         return fc, fp, AC_[np.arange(B), L_ - 1], AP_[np.arange(B), L_ - 1]
 
     rollout.gate = (wg, bg)
+    rollout.W = {"emb": emb, "Wr": Wr, "Wi": Wi, "Wc": Wc, "bc": bc, "We": We, "be": be}   # for the spiking port
     return rollout
 
 

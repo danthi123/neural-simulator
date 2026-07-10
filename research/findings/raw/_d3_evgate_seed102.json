@@ -1,0 +1,16 @@
+[
+ {
+  "seed": 102,
+  "K": 6,
+  "n_informative": 541,
+  "GATED_prev": 0.649,
+  "GATED_curr": 0.604,
+  "ORACLE_prev": 0.691,
+  "ORACLE_curr": 0.543,
+  "gate_lesion_prev": 0.22,
+  "always_open_prev": 0.355,
+  "marker_scramble_prev": 0.322,
+  "one_emission_ceiling": 0.703,
+  "recency_prev": 0.142
+ }
+]
