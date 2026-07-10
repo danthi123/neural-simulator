@@ -1,0 +1,13 @@
+[
+ {
+  "seed": 101,
+  "BEFORE_spiking": 0.8,
+  "BEFORE_stateless": 0.6,
+  "BEFORE_gate_lesion": 0.0,
+  "BEFORE_single_event": 0.0,
+  "BEFORE_recency": 0.2,
+  "BEFORE_naive_current": 0.05,
+  "NOW_spiking": 0.85,
+  "n": 20
+ }
+]
