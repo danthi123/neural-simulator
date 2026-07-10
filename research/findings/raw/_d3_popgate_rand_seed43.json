@@ -1,0 +1,25 @@
+{
+ "seed": 43,
+ "RETURN_clause_fraction": 0.0824,
+ "delayed": {
+  "RETURN": 0.73,
+  "overall": 0.732,
+  "COREF": 0.622,
+  "BOUND": 0.816,
+  "prev": 0.601
+ },
+ "random_pop": {
+  "RETURN": 0.193,
+  "overall": 0.574,
+  "COREF": 0.574,
+  "BOUND": 0.629,
+  "prev": 0.272
+ },
+ "push_only": {
+  "RETURN": 0.343,
+  "overall": 0.648,
+  "COREF": 0.562,
+  "BOUND": 0.796,
+  "prev": 0.501
+ }
+}

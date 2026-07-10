@@ -64,6 +64,9 @@ def train_pushpop(task, seed=42, n_hid=128, epochs=40, lr=0.05, batch=256,
     pop_mode: "learned" -> r = sigmoid(w_r . code + b_r)   (the mechanism)
               "lesion"  -> r = 0   (never pops: reproduces the PUSH-ONLY register exactly)
               "oracle"  -> r = 1 exactly on the return marker (an OBSERVABLE cue read perfectly) = the upper bound
+              "random"  -> r = 1 on a RANDOM subset of clauses at the RETURN base rate: opens at the RIGHT RATE at the
+                           WRONG TIMES. This is the control that separates "the gate reads the marker" from "the gate
+                           opens sometimes" -- the only anti-cheat that directly tests the causal claim.
 
     stage_pop_epochs > 0 -> DEVELOPMENTAL STAGING. Phase 1 trains the transition + the push gate with the pop held shut
     (r = 0). Phase 2 FREEZES all of that and thaws ONLY the pop gate. This is not a training trick; it is the fix the
@@ -105,11 +108,16 @@ def train_pushpop(task, seed=42, n_hid=128, epochs=40, lr=0.05, batch=256,
     def push_of(code):
         return _sig(code @ wg + bg)
 
+    ret_rate = float((OPS_tr == RETURN).mean())          # the empirical RETURN base rate the random control matches
+    rnd = np.random.RandomState(seed + 4242)
+
     def pop_of(code, ops):
         if pop_mode == "lesion" or not pop_on[0]:
             return np.zeros(len(code), np.float32)
         if pop_mode == "oracle":
             return (ops == RETURN).astype(np.float32)
+        if pop_mode == "random":                           # right rate, wrong times
+            return (rnd.rand(len(code)) < ret_rate).astype(np.float32)
         return _sig(code @ wp + bp)
 
     def _phase(n_epochs, upd_core, upd_pop):
@@ -259,6 +267,7 @@ def run_seed(seed, K=6, epochs=40):
                      ("frozen_stage", {"stage_pop_epochs": 15}),       # delay + FREEZE the core: the freeze HURTS
                      ("delayed_scramble", {"stage_pop_epochs": 15, "freeze_core_in_phase2": False, "scramble_pop_marker": True}),
                      ("delayed_hi_lr", {"stage_pop_epochs": 15, "freeze_core_in_phase2": False, "lr_pop": 5.0}),
+                     ("random_pop", {"pop_mode": "random"}),   # opens at the RETURN base rate, at the WRONG times
                      ("push_only", {"pop_mode": "lesion"}),
                      ("oracle_pop", {"pop_mode": "oracle"})):
         kw = {"epochs": epochs, **kw}                 # per-arm overrides win (joint_55 sets epochs=55)

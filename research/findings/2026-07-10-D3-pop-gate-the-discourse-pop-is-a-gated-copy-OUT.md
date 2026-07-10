@@ -58,6 +58,14 @@ Input-gating errors are cheap; output-gating errors are destructive — which is
 sits under tight tonic inhibition. Consequence: the pop gate needs **no opening-cost prior** (`pop_cost=0.0`). It learns to
 be normally-closed *by itself* — mean `r` off-marker is **0.009**. The harm of a spurious read is its own tonic prior.
 
+## What is actually the enabler (an adversarial audit corrected my framing)
+
+A five-skeptic adversarial workflow ruled the mechanism **SURVIVES-WITH-SCOPE-FIXES** and was right on the framing. The
+enabler is **the gate itself, at a non-saturating learning rate** — not the developmental staging. Corrections applied
+below: onset-delay is demoted to a robustness refinement; oracle-headroom ratios are removed (the oracle retrains the
+core, and the delayed arm actually *beats* it on overall accuracy, so it is not a valid denominator); all gains are now
+reported in absolute terms. The audit also demanded one control I had not run — the decisive one — reported below.
+
 ## A correction I made to my own claim, before committing it
 
 My first fix was **staging with a frozen core** (phase 1: transition + push gate, pop held shut; phase 2: freeze all of it,
@@ -86,16 +94,35 @@ pathway, which is both the better result and the better biology.
 | delayed + pop-marker scrambled | 0.426 | 0.702 | 0.655 | 0.557 | +0.012 | 0.297 |
 | delayed + saturating lr (gate dead) | 0.446 | 0.707 | 0.662 | 0.573 | +0.000 | 0.324 |
 
-**Headroom recovered against the oracle: RETURN 96%, overall 105%, a_prev 69%.**
+**Absolute gains over push-only: RETURN +0.380, overall +0.055, held slot +0.078 (6/6 seeds).** Headroom *ratios* against
+the oracle are deliberately **not** reported: the oracle arm retrains the core, the delayed arm beats it on overall
+accuracy (0.731 vs 0.728), and it is negative on 2/6 seeds — it is not a valid denominator.
 **Blind seeds 100/101/102** (the learning rate was chosen on 42/43 and never touched them): RETURN 0.273 → **0.664**;
 held slot 0.472 → **0.560**.
 
-### The gain decomposes cleanly, and most of it is the gate
-Two arms have the **identical training budget** but a **non-functional** gate — one dead by saturation, one reading a
-scrambled marker. Both land at 0.43–0.45. Therefore:
+### The decisive control: right rate, wrong times
+The one control that separates *"the gate reads the marker"* from *"the gate opens sometimes"* is a gate forced open on a
+**random** subset of clauses at the RETURN base rate. It does not merely fail to help — **it hurts**:
 
-* **+0.113** of the RETURN gain is more training epochs.
-* **+0.267** is a functioning, marker-reading pop gate.
+| arm | RETURN | overall | COREF | a_prev |
+|---|---|---|---|---|
+| delayed onset (marker-read) | **0.713** | 0.731 | 0.662 | **0.610** |
+| **random pop (same opening rate, wrong times)** | **0.286** | 0.671 | 0.669 | **0.441** |
+| push-only (never opens) | 0.333 | 0.676 | 0.634 | 0.532 |
+
+Opening at the right rate at the wrong times drops RETURN **below** never opening at all, and collapses the held slot
+(0.532 → 0.441) — exactly the destructive-read asymmetry. **Marker-reading is worth +0.427 over rate-matched random
+opening.** The causal claim is closed.
+
+### The gain also decomposes by training budget
+Two further arms have the **identical training budget** but a **non-functional** gate — one dead by saturation, one
+reading a scrambled marker. Both land at 0.43–0.45 (note this is *not* tautological here: with the core still plastic in
+phase 2 they receive 55 epochs, so they sit well above push-only's 0.333). Therefore **+0.113** of the RETURN gain is
+extra training epochs and **+0.267** is a functioning, marker-reading gate.
+
+**RETURN clauses are 7.9% of all clauses.** A *perfect* pop can therefore lift overall accuracy by at most ~0.053 — which
+is what the oracle delivers (+0.052), and which is why the pre-registered "overall > +0.05" bar was, literally, "beat the
+oracle."
 
 ### The gate is RETURN-specific, not connective-triggered
 This is the check that matters for deployment, where *both* returns and boundaries carry a connective. Mean `r` by
@@ -107,6 +134,9 @@ subject from the named one. A spurious pop at a boundary would have destroyed th
   the *oracle* gate lifts overall by only +0.052 — the bar was effectively "beat the oracle." The gate now rides on the
   metric the mechanism targets (RETURN), its controls, the epoch-matched baseline, and the held slot, with overall
   required merely not to regress (it rises +0.055).
+- **The wrong-sign collapse (separation −0.083) belongs to the retired `lr_pop=5.0` regime**, not to the joint arm the
+  mechanism is compared against at `lr_pop=0.1`. Stated precisely: at a saturating rate the gate dies; at a workable rate
+  joint training already recovers most of the lift, and staging only removes its collapse on 2/6 seeds.
 - **Onset-delay versus epoch-matched joint is real but modest**: +0.068 mean, better on **3/6** seeds, worst-seed 0.498 vs
   0.432. The defensible claim is that delaying onset improves **worst-case reliability**, not that it is a decisive
   per-seed win. The decisive contrasts are against push-only and against the equal-budget dead-gate arms.
@@ -114,19 +144,19 @@ subject from the named one. A spurious pop at a boundary would have destroyed th
 - Scored on the task generator with an oracle slot→name permutation, applied identically to every arm. **Nothing here is
   deployed yet** — the live `GatedCopyPairRegister` has no pop gate.
 
-## ⇒ the claim
+## ⇒ the claim (as corrected by the audit)
 The emergent transition failed on **exactly one relational operation** — the discourse pop, the one op that must read the
 held slot back out. Adding a **second, normally-closed gate on the same register**, opened by the observable return
-marker, whose onset is **delayed until the representation it reads is trustworthy**, recovers **96% of the oracle's
-headroom** on that operation and lifts the held slot on 6/6 seeds — with **no opening-cost prior**, because a spurious
-read punishes itself. Push on a boundary, pop on a return: one register, two gates.
+marker and trained at a **non-saturating learning rate**, lifts that operation from **0.333 to 0.713** on 6/6 seeds
+(blind seeds 0.273 → 0.664) and lifts the held slot on 6/6 — with **no opening-cost prior**, because a spurious read
+punishes itself. A gate opening at the same rate at the **wrong** times scores 0.286, *below* never opening.
+**Delaying the gate's onset is a robustness refinement (+0.068, 3/6 seeds, worst-seed 0.498 vs 0.432), not the enabler.**
+Push on a boundary, pop on a return: one register, two gates.
 
 ## Next
-Deploy it. `GatedCopyPairRegister` currently has no pop gate, and the live generator marks a return as *connective +
-pronoun* while a boundary is *connective + named subject* — the deployed clause code must carry the same distinction the
-gate keys on, or the transfer fails (this repo has been bitten by exactly that generator mismatch before). Then the
-spiking port: the pop is a **read** from the persistent slow-NMDA attractor, which — unlike the push — must not disturb
-what it reads.
+Deployed — see `2026-07-10-D3-pop-gate-deployed-the-brain-resumes-a-protagonist.md` (6-seed GO: resumption 0.778 vs
+0.139 push-only; the gate opens 0.845 on deployed pops and 0.031 on deployed boundaries). The spiking port is the open rung: the pop is a **read** from the persistent slow-NMDA attractor
+which — unlike the push — must not disturb what it reads.
 
 ## Files
 `research/runners/_d3_event_pop_gate_derisk.py`; raw `research/findings/raw/_d3_popgate{,2,3,4}_seed*.json`,
