@@ -249,6 +249,9 @@ def train_cleanerror(task, seed=42, n_hid=128, epochs=40, lr=0.05, batch=256,
         return (np.concatenate(rs), np.concatenate(ra), np.concatenate(ro), np.concatenate(rr),
                 fc, fp, AC_[np.arange(B), L_ - 1], AP_[np.arange(B), L_ - 1], ok_e / max(tot_e, 1))
 
+    rollout.W = {"emb": emb, "Wr": Wr, "Wi": Wi, "Wc": Wc, "bc": bc, "We": We, "be": be}
+    rollout.Y = {"Ye": Ye, "Yc": Yc}          # so the alignment probe can measure on THIS model's own weights
+    rollout.gates = (wg, bg, wp, bp)
     rollout.no_transport = (not np.allclose(Ye, We[:, :K] if We.shape[1] >= K else 0) and
                             not np.allclose(Yc, Wc))
     rollout.hidden_moved = float(np.abs(Wr - hidden0[0]).max() + np.abs(Wi - hidden0[1]).max())

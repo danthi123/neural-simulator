@@ -219,6 +219,7 @@ def train_pair_selfsup(task, seed=42, n_hid=128, epochs=40, lr=0.05, batch=256, 
                 Wr -= lr * dWr; Wi -= lr * dWi; Wc -= lr * dWc; bc -= lr * dbc
                 Wp -= lr * dWp; bp -= lr * dbp; We -= lr * dWe; be -= lr * dbe
                 Wq -= lr * dWq; bq -= lr * dbq
+                Wq -= lr * dWq; bq -= lr * dbq
 
     def rollout(split):
         X_, O_, E_, L_, AC_, AP_, PE_, PC_ = task[split]; B = len(L_); Lm = int(L_.max())

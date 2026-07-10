@@ -443,6 +443,37 @@ class UnifiedTalkableConsole:
         frame, _ = self.speaker.speak_frame(subj, verb)
         return frame
 
+    def imagine(self, n=1, max_tries=200):
+        """IMAGINATIVE recombination (open-world inference #5 R-i): propose NOVEL but PLAUSIBLE relational scenes from
+        the brain's own learned co-occurrence codes -- sample a subject, then an object graph-related to it, then a
+        known verb; keep only combinations NOT already stored (novel). Returned FLAGGED as imagined (a hypothesis),
+        never asserted as a stored fact (moat preserved-and-upgraded). Reuses self._sa_codes (the learned codes)."""
+        if not hasattr(self, "_sa_codes"):
+            return []
+        rng = np.random.default_rng(len(self.rel_facts) + 7)
+        subjects = sorted(a for a in self.animals if a in self.row_of)
+        verbs = sorted({v for (_s, v, _o) in self.rel_facts}) or [self.rel_verb]
+        stored = {(s, v, o) for (s, v, o) in self.rel_facts}
+        if len(subjects) < 2:
+            return []
+
+        def relatedness(a, b):
+            return float(self._sa_codes[self.row_of[a]] @ self._sa_codes[self.row_of[b]])
+
+        out, tries = [], 0
+        while len(out) < n and tries < max_tries:
+            tries += 1
+            subj = subjects[rng.integers(len(subjects))]
+            # sample an object graph-RELATED to the subject (plausible co-occurrence), != subj
+            cand = [o for o in subjects if o != subj]
+            w = np.array([max(0.01, relatedness(subj, o)) for o in cand]); w = w / w.sum()
+            obj = cand[rng.choice(len(cand), p=w)]
+            verb = verbs[rng.integers(len(verbs))]
+            if (subj, verb, obj) in stored or (subj, verb, obj) in {t[:3] for t in out}:
+                continue                                         # novelty: not an already-stored/proposed scene
+            out.append((subj, verb, obj, relatedness(subj, obj)))
+        return out
+
     def _hedge_relational(self, subj, verb, vrow):
         """Spreading-activation completion for a relational query with NO stored fact: find subj's nearest learned-code
         neighbour that DOES have a patient for this verb; if it clears theta (adjacent unknown), return that neighbour's

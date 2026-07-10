@@ -1,7 +1,7 @@
 {
   "probe": "emerge1_deep_dendritic_representation",
   "GO": false,
-  "verdict": "BOUNDARY (the honest prior) -- deep_FA didn't clearly beat the floors (held 0.584 vs single 0.184/lesion 0.504) -- FA didn't credit-assign through depth; hidden structure didn't emerge (probe 0.682 vs frozen 0.518; alignment climb=False); wrong-sign not at chance (0.658). The deep dendritic FA rule does NOT cleanly develop depth-2 structure at our scale (oracle CAN: 0.948), matching the field's 'bio-plausible deep learning struggles to credit-assign through depth' evidence. This is a CHARACTERIZED frontier, not a fix -- build-saving: do NOT start the months-scale sim/ rewrite on the emergence premise; the wall is depth-scaling of the local rule, not (only) the point neuron.",
+  "verdict": "BOUNDARY (the honest prior) -- deep_FA didn't clearly beat the floors (held 0.612 vs single 0.253/lesion 0.467) -- FA didn't credit-assign through depth; wrong-sign not at chance (0.591). The deep dendritic FA rule does NOT cleanly develop depth-2 structure at our scale (oracle CAN: 0.937), matching the field's 'bio-plausible deep learning struggles to credit-assign through depth' evidence. This is a CHARACTERIZED frontier, not a fix -- build-saving: do NOT start the months-scale sim/ rewrite on the emergence premise; the wall is depth-scaling of the local rule, not (only) the point neuron.",
   "task": "depth-2 threshold-of-5-pair-XORs over 10 bits (needs 2 nonlinear levels; held-out generalization + hidden-rep probe for the emergent XOR latents)",
   "seeds": [
     42,
@@ -9,40 +9,40 @@
     44
   ],
   "config": {
-    "epochs": 900,
-    "lr": 0.7,
+    "epochs": 300,
+    "lr": 0.5,
     "batch": 128,
     "hidden": 64
   },
-  "elapsed_seconds": 21.9,
+  "elapsed_seconds": 8.0,
   "per_seed": [
     {
       "seed": 42,
       "n_train": 665,
       "n_heldout": 359,
       "deep_FA": {
-        "train": 1.0,
-        "heldout": 0.5598885793871866,
-        "probe_latent": 0.6707520891364902,
-        "align_start": 0.04621128180771698,
-        "align_end": 0.0645189061088083
+        "train": 0.631578947368421,
+        "heldout": 0.4735376044568245,
+        "probe_latent": 0.6501392757660167,
+        "align_start": 0.036107130934534507,
+        "align_end": 0.16377591379520848
       },
       "single_layer": {
-        "train": 0.7037593984962406,
-        "heldout": 0.17548746518105848
+        "train": 0.6300751879699248,
+        "heldout": 0.2924791086350975
       },
       "apical_lesion": {
-        "train": 0.5263157894736842,
-        "heldout": 0.45125348189415043,
+        "train": 0.5473684210526316,
+        "heldout": 0.4623955431754875,
         "probe_latent": 0.5052924791086351
       },
       "wrong_sign": {
-        "train": 0.9939849624060151,
-        "heldout": 0.6183844011142061
+        "train": 0.5939849624060151,
+        "heldout": 0.47075208913649025
       },
       "oracle_bp": {
-        "train": 1.0,
-        "heldout": 0.9860724233983287
+        "train": 0.9729323308270676,
+        "heldout": 0.9080779944289693
       },
       "chance": 0.5487465181058496
     },
@@ -51,28 +51,28 @@
       "n_train": 665,
       "n_heldout": 359,
       "deep_FA": {
-        "train": 1.0,
-        "heldout": 0.649025069637883,
-        "probe_latent": 0.7493036211699164,
-        "align_start": 0.15338658060774651,
-        "align_end": 0.020985656686222525
+        "train": 0.9428571428571428,
+        "heldout": 0.7270194986072424,
+        "probe_latent": 0.7788300835654596,
+        "align_start": 0.06439992558860726,
+        "align_end": -0.014658377563862528
       },
       "single_layer": {
-        "train": 0.7007518796992481,
-        "heldout": 0.17548746518105848
+        "train": 0.5759398496240602,
+        "heldout": 0.24233983286908078
       },
       "apical_lesion": {
-        "train": 0.47969924812030074,
-        "heldout": 0.5376044568245125,
+        "train": 0.5203007518796993,
+        "heldout": 0.4623955431754875,
         "probe_latent": 0.532033426183844
       },
       "wrong_sign": {
-        "train": 1.0,
-        "heldout": 0.6935933147632312
+        "train": 0.7458646616541353,
+        "heldout": 0.6350974930362117
       },
       "oracle_bp": {
         "train": 1.0,
-        "heldout": 0.9749303621169917
+        "heldout": 0.924791086350975
       },
       "chance": 0.5376044568245125
     },
@@ -81,28 +81,28 @@
       "n_train": 665,
       "n_heldout": 359,
       "deep_FA": {
-        "train": 0.9593984962406015,
-        "heldout": 0.5431754874651811,
-        "probe_latent": 0.6256267409470752,
-        "align_start": 0.1296873303321307,
-        "align_end": 0.22078148007930262
+        "train": 0.9699248120300752,
+        "heldout": 0.6350974930362117,
+        "probe_latent": 0.7771587743732591,
+        "align_start": 0.006708640471869565,
+        "align_end": 0.37489572983814584
       },
       "single_layer": {
-        "train": 0.6481203007518797,
-        "heldout": 0.20055710306406685
+        "train": 0.637593984962406,
+        "heldout": 0.22562674094707522
       },
       "apical_lesion": {
-        "train": 0.48721804511278194,
-        "heldout": 0.5236768802228412,
+        "train": 0.512781954887218,
+        "heldout": 0.4763231197771588,
         "probe_latent": 0.516991643454039
       },
       "wrong_sign": {
-        "train": 1.0,
-        "heldout": 0.6629526462395543
+        "train": 0.8661654135338346,
+        "heldout": 0.6657381615598886
       },
       "oracle_bp": {
-        "train": 0.9984962406015038,
-        "heldout": 0.883008356545961
+        "train": 1.0,
+        "heldout": 0.9777158774373259
       },
       "chance": 0.5236768802228412
     }
