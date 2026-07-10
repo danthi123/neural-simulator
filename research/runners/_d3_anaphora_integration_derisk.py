@@ -21,6 +21,7 @@ import argparse
 import numpy as np
 
 from research.runners._d3_reference_tracking_derisk import make_reference_tracking_task
+from research.runners._d3_centering_focus_derisk import make_centering_task
 from research.runners._d3_group_composition_derisk import discrete_attractor_rnn
 from research.runners._d3_spiking_attractor_derisk import build_fswta_score_bridge, fswta_drive
 from research.runners.biased_competition_buffer import BiasedCompetitionContextBuffer, resolve_referent
@@ -60,8 +61,11 @@ def reset_buffer(buf, settle=30):
         b._run_one_simulation_step()
 
 
-def run_seed(seed, K=6, n_hid=192, epochs=60, n_ref=300, n_disc=14, settle=80, spiking_focus=False):
-    task = make_reference_tracking_task(seed, K=K, n_pool=64, n_per_len=2500, train_lens=(1, 2, 3), test_lens=(6, 7, 8))
+def run_seed(seed, K=6, n_hid=192, epochs=60, n_ref=300, n_disc=14, settle=80, spiking_focus=False, centering=False):
+    # possession δ (default) OR Centering-Cb δ (the agent's actual SVO discourse focus): both are D3 focus-trackers whose
+    # composed focus drives the biased-competition resolution, beating recency.
+    _make = make_centering_task if centering else make_reference_tracking_task
+    task = _make(seed, K=K, n_pool=64, n_per_len=2500, train_lens=(1, 2, 3), test_lens=(6, 7, 8))
     da = discrete_attractor_rnn(task, seed=seed, epochs=epochs, n_hid=n_hid, temperature=0.7)   # D3 focus tracker
     W = da["weights"]; ident = task["ident"]
     sb_fs = build_fswta_score_bridge(seed=seed, K=K, fs_to_exc=16.0) if spiking_focus else None  # spiking focus source
@@ -105,14 +109,16 @@ def main():
     ap.add_argument("--epochs", type=int, default=60)
     ap.add_argument("--n-disc", type=int, default=14)
     ap.add_argument("--spiking-focus", action="store_true", help="track the focus on the spiking FS-WTA substrate (the WHOLE anaphora spiking)")
+    ap.add_argument("--centering", action="store_true", help="use the Centering-Cb focus (the agent's actual SVO discourse) instead of possession")
     ap.add_argument("--json", default=None)
     a = ap.parse_args()
     seeds = [int(x) for x in a.seeds.replace(",", " ").split()]
-    _fs = " [SPIKING focus-tracker + spiking resolution = WHOLE anaphora on spikes]" if a.spiking_focus else ""
-    print(f"[D3 -> CONVERSATION anaphora integration] K={a.K}{_fs} | D3's composed focus drives the biased-competition pronoun resolution (vs the salience baseline)", flush=True)
+    _fs = " [SPIKING focus-tracker]" if a.spiking_focus else ""
+    _ce = " [CENTERING-Cb focus over SVO = the agent's actual discourse]" if a.centering else ""
+    print(f"[D3 -> CONVERSATION anaphora integration] K={a.K}{_fs}{_ce} | D3's composed focus drives the biased-competition pronoun resolution (vs the salience baseline)", flush=True)
     rows = []
     for s in seeds:
-        r = run_seed(s, K=a.K, n_hid=a.n_hid, epochs=a.epochs, n_disc=a.n_disc, spiking_focus=a.spiking_focus)
+        r = run_seed(s, K=a.K, n_hid=a.n_hid, epochs=a.epochs, n_disc=a.n_disc, spiking_focus=a.spiking_focus, centering=a.centering)
         rows.append(r)
         print(f"  [seed {s}] focus-shifted discourses={r['n_shifted']} | D3-focus resolution={r['D3_focus_res']} vs "
               f"SALIENCE(most-recent)={r['SALIENCE_res']} | bias-follows={r['bias_follows']} | moat-abstain={r['moat_abstain']}", flush=True)
