@@ -1,0 +1,9 @@
+[
+ {
+  "seed": 101,
+  "spiking": false,
+  "EVENT_QA": 1.0,
+  "FLAT_FACT_QA": 0.0,
+  "RECENCY_QA": 0.0
+ }
+]

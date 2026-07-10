@@ -281,6 +281,19 @@ class MultiTurnAgent:
         p = self._resolve(patient_word, query_verb=action)
         return self.agent.who_does(action, p) if p is not None else None
 
+    def what_does_agent_now(self, action):
+        """RANK-3 QA over the composed running EVENT: resolve the CURRENT agent from the running-event register (the
+        DEEP-tracked coref -- who_agent_now, NOT the WM/recency), THEN query the KB for what that agent <action>s.
+        Unifies the situation model (running event) with the fact store (KB) -- 'what does HE eat?' answered from the
+        composed meaning. None if no register wired / no running agent / no such fact (the moat)."""
+        a = self.who_agent_now()
+        return self.agent.what_does(a, action) if a is not None else None
+
+    def what_does_patient_now(self, action):
+        """As `what_does_agent_now` but for the running PATIENT slot (the 2nd register)."""
+        p = self.who_patient_now()
+        return self.agent.what_does(p, action) if p is not None else None
+
     def is_it_true(self, agent_word, action, patient_word):
         a, p = self._resolve(agent_word, query_verb=action), self._resolve(patient_word, query_verb=action)
         if a is None or p is None:
