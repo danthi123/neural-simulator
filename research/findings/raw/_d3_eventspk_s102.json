@@ -1,0 +1,12 @@
+[
+ {
+  "seed": 102,
+  "K": 6,
+  "rate_event_deeper": 0.995,
+  "SPK_event_deeper": 1.0,
+  "SPK_agent": 1.0,
+  "SPK_patient": 1.0,
+  "agree_agent": 0.983,
+  "agree_patient": 1.0
+ }
+]

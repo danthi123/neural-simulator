@@ -144,7 +144,8 @@ def factored_event_rnn(task, seed=42, n_hid=192, epochs=60, lr=0.1, batch=256, t
 
     both, aa, pp_ = eval_split("test_deeper")
     les, _, _ = eval_split("test_deeper", lesion_rec=True)          # RECURRENCE-LESION: no running state -> collapses to ~recency
-    return {"event_deeper": both, "agent_deeper": aa, "patient_deeper": pp_, "event_lesion": les}
+    return {"event_deeper": both, "agent_deeper": aa, "patient_deeper": pp_, "event_lesion": les,
+            "weights": None if joint else {"emb": emb, "Wr": Wr, "Wi": Wi, "Wa": Wa, "ba": ba, "Wp": Wp, "bp": bp}}   # for the spiking two-slot port
 
 
 def recency_floor(task):
