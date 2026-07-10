@@ -1,0 +1,16 @@
+[
+ {
+  "seed": 42,
+  "spiking": false,
+  "XTURN_QA": 1.0,
+  "XTURN_reset": 0.0,
+  "XTURN_recency": 0.206,
+  "XTURN_flat": 0.0,
+  "n_xturn": 34,
+  "ALL_QA": 1.0,
+  "ALL_reset": 0.717,
+  "ALL_recency": 0.15,
+  "query_invariance": true,
+  "n_queries": 120
+ }
+]
