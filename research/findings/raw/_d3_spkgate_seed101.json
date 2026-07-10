@@ -1,0 +1,13 @@
+[
+ {
+  "seed": 101,
+  "K": 6,
+  "rate_gated_prev": 0.683,
+  "SPK_prev": 0.625,
+  "gate_open_rate": 1.967,
+  "n_informative_eval": 24,
+  "SPK_stateless_prev": 0.417,
+  "SPK_gate_lesion_prev": 0.333,
+  "recency_prev": 0.173
+ }
+]

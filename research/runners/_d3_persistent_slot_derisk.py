@@ -86,6 +86,12 @@ def _pool_idx(sb, K):
 
 
 def _reset(sb):
+    """Full reset BETWEEN independent trials/items.
+
+    Resetting only v/u/firing is NOT enough for a persistent slot: the recurrent NMDA conductance has tau=100 ms and
+    SURVIVES such a reset (measured: g_nmda_rec = 95.1 before and after), so the previous item's held bump re-ignites
+    into the next one -- the same residual-conductance re-ignition that forces a gate's CLEAR to outlast tau_NMDA.
+    Conductances must be cleared too."""
     if getattr(sb, "cp_izh_c_reset", None) is not None:
         sb.cp_membrane_potential_v[:] = sb.cp_izh_c_reset
     else:
@@ -93,6 +99,11 @@ def _reset(sb):
     sb.cp_recovery_variable_u[:] = 0.0
     if getattr(sb, "cp_firing_states", None) is not None:
         sb.cp_firing_states[:] = False
+    for _attr in ("cp_conductance_g_nmda_recurrent", "cp_conductance_g_e", "cp_conductance_g_i",
+                  "cp_conductance_g_nmda", "cp_conductance_g_nmda_rise"):
+        _arr = getattr(sb, _attr, None)
+        if _arr is not None:
+            _arr[:] = 0.0
 
 
 def drive_then_hold(sb, K, drive_pool, drive_steps=30, hold_steps=60, input_gain=400.0, switch_pool=None,
