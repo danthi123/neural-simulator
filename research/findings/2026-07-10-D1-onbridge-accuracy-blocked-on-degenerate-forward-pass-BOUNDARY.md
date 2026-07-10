@@ -60,3 +60,10 @@ hidden neurons into a firing regime that is BOTH active (bursts exist) AND input
 genuine rebuild of the operating point + the forward wiring (using the project's validated spiking-propagation machinery,
 where a driven input pool reliably makes a downstream pool fire), NOT a hyperparameter tweak. The credit mechanism (the
 apical-coupling `sim/` edit) remains validated and independent of this forward-net issue.
+
+## CORRECTION: the propagation is NOT a fundamental wall -- a minimal AMPA net DOES propagate; the runner's near-silence is a CONFIG issue
+The "deep rebuild" framing above is corrected by two more a0 reads:
+- **The input encoding works** (`_d1_onbridge_input_propagation_probe.py`): the runner's input pool fires input-DEPENDENTLY (mean 0.079, **std 0.025**). Different inputs -> different input firing. The bug is downstream (input->hidden).
+- **A minimal 2-region AMPA input->hidden net propagates fine** (`_d1_ampa_vs_nmda_propagation_probe.py`): 20 input -> 60 hidden, AMPA, fw=40, in_hi=1200 -> hidden rate mean 0.039, **std 0.0275** (the hidden differentiates inputs). Counter to my NMDA hypothesis, NMDA is WORSE (mean 0.079 but std 0.0029 -- temporal summation SATURATES, killing discrimination). So AMPA propagation is the right substrate.
+
+⇒ **the spiking-forward propagation is NOT a fundamental wall.** A minimal AMPA net propagates input-dependently; the runner's near-silent hidden (std 0.005) is a **specific mis-configuration** (operating point / the 2nd input->hidden->output hop / pool size), NOT a deep rebuild. The narrowed fix: match the runner's config to the working minimal AMPA recipe (proper drive level so the hidden fires ~4-8% input-dependently, then the same for hidden->output), keep AMPA (not NMDA), + the coupling. This DE-ESCALATES the frontier from "deep spiking-forward-net rebuild" to "fix the runner's operating point." (My 'deep rebuild' claim was too pessimistic -- a careful minimal-net read corrected it.)
