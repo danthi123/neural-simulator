@@ -1,0 +1,13 @@
+[
+ {
+  "seed": 42,
+  "K": 6,
+  "SPK_prev_agent": 0.82,
+  "SPK_curr_agent": 0.863,
+  "SPK_same_rel": 0.877,
+  "host_agree": 0.988,
+  "rate_prev_agent": 0.841,
+  "SINGLE_prev_agent": 0.396,
+  "recency_prev": 0.157
+ }
+]

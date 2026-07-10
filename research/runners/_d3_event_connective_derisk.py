@@ -160,7 +160,10 @@ def multislot_rnn(task, seed=42, n_hid=192, epochs=50, lr=0.1, batch=256, temper
         return {"curr_agent": curr_a, "prev_agent": prev_a, "same_agent_rel": float((same_pred == same_true).mean()),
                 "obj": tg}
 
-    return evaluate("test_deeper")
+    out = evaluate("test_deeper")
+    # expose the trained transition (for the SPIKING port: FS-WTA re-discretization of all four event-pair slots)
+    out["weights"] = {"emb": emb, "Wr": Wr, "Wi": Wi, "Ws": Ws, "bs": bs, "n_slots": n_slots, "rg": rg}
+    return out
 
 
 def recency_floor(task):
