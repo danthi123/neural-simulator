@@ -67,7 +67,7 @@ def make_centering_task(seed, K=6, n_pool=64, noise=0.6, train_lens=(1, 2, 3), t
 
     return {"train": gen(train_lens, n_per_len), "test_same": gen(train_lens, max(400, n_per_len // 4)),
             "test_deeper": gen(test_lens, max(400, n_per_len // 4)),
-            "K": K, "ident": ident, "n_pool": n_pool, "color": color}
+            "K": K, "ident": ident, "n_pool": n_pool, "color": color, "base": base}   # base = the entity codes (for the agent-wire adapter)
 
 
 def recency_floor(task):
