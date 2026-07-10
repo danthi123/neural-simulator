@@ -1,0 +1,16 @@
+[
+ {
+  "seed": 43,
+  "K": 6,
+  "n_eval": 600,
+  "SPK_selfsup": 0.973,
+  "SPK_selfsup_deep": 0.971,
+  "SPK_selfsup_promote": 0.975,
+  "SPK_emission_severed": 0.21,
+  "host_agree": 0.995,
+  "fair_reservoir_deep": 0.168,
+  "last_named_subject_promote": 0.174,
+  "frac_deep": 0.115,
+  "frac_promote": 0.47
+ }
+]

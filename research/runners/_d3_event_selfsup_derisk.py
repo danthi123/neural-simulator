@@ -177,6 +177,8 @@ def train_selfsup(task, seed=42, n_hid=128, epochs=40, lr=0.05, batch=256, rando
             last = (Ls == (t + 1)); fsa = np.where(last[:, None], sa, fsa)
         return fsa, T[np.arange(B), Ls - 1]
 
+    # expose the self-supervised-learned transition (for the SPIKING port: FS-WTA re-discretization of this delta)
+    rollout.W = {"emb": emb, "Wr": Wr, "Wi": Wi, "Wa": Wa, "ba": ba, "We": We, "be": be, "rg": rg}
     return rollout
 
 
