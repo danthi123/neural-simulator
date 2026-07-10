@@ -55,3 +55,30 @@ The replay signal on spikes (the project's SWR machinery is the natural substrat
 
 ## Files
 `research/runners/_d3_event_selfsup_pair_derisk.py`; the labelled pair `2026-07-10-D3-event-discourse-connectives-GO.md`; the single-slot self-sup rung `2026-07-10-D3-event-selfsupervised-delta-GO.md`.
+
+---
+
+## Addendum (same day): SEQUENCE replay does **not** help — and the reason is a theorem, not a tuning failure
+
+The named residual above was that replay recovers only ~65% of its ceiling because it replays a **single** symbol, while biology replays **sequences** (SWR replays compressed trajectories). The obvious next rung was to replay the prior event's whole emission sequence. **It fails, twice over, and the diagnosis is exact.**
+
+### Attempt 1 — bag replay on the task as built
+Replaying the prior event's emission **multiset** (a soft distribution target) scored **0.489** vs single-symbol **0.527**. The ceilings said why: the multiset ceiling (**0.642**) is *below* the one-emission ceiling (**0.794**). Reading my own generator: within an "event" I allowed intro/promote, so **the agent changes mid-event**. The event's emission sequence is a *mixture across several agents*, whereas `a_prev` is only the agent at the moment the event **ended** — and the last emission is the one `a_prev` actually produced. A mixture is strictly less informative about it.
+
+### Attempt 2 — agent-coherent episodes (one protagonist per event)
+Making episodes agent-coherent flips the ceilings exactly as predicted — multiset **0.812** now *exceeds* one-emission **0.794**, so the sequence genuinely carries more information about the prior agent. **Sequence replay is still worse: 0.406 vs 0.455.**
+
+### The reason (exact, not empirical)
+Cross-entropy is **linear in the target**, so replaying a bag of symbols is *identically* the average of replaying each symbol:
+
+```
+CE(p, mean_k onehot(e_k))  ==  mean_k CE(p, onehot(e_k))
+```
+
+A bag-replay target is therefore a **smeared, lower-magnitude** version of a hard single-symbol target — same information, weaker gradient. **A more informative target is not a better teacher.** The hard terminal symbol ("what was I just talking about") commits the held slot; the averaged distribution merely asks it to match an entropy.
+
+⇒ **The only way to extract more from a replayed sequence is to keep its ORDER**, which a bag discards by construction. That means an **autoregressive replay decoder** over the prior event's emission sequence — which is exactly what sharp-wave-ripple replay is (ordered, time-compressed trajectories), not a bag. That is the honest next mechanism; it is *named, not claimed*.
+
+### Honest scope of this addendum
+- Both arms drop under agent-coherent episodes (0.455 / 0.406 vs 0.527 / 0.489): coherent events mean longer coref runs, so the held slot must survive longer. Harder task, reported.
+- Single-seed (42) for the addendum's two comparisons; the headline negative + replay mechanism above remain the 6-seed results.
