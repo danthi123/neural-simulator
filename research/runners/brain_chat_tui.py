@@ -405,6 +405,16 @@ def _load_self_knowledge(codes_path, curriculum_path, seed, use_multiturn, enabl
         # _longitudinal_develop_loop.build_agent.
         pattern_size = 40
         wm_n = max(600, 2 * pattern_size * max(1, len(referents)))
+        # DISCOURSE EVENT REGISTER (2026-07-10): the running FACTORED (agent, patient) event so the real developed
+        # brain can also answer "who was doing it before?" across a connective. Built on up to 6 of the brain's own
+        # referents (the D3 arc's validated K=6 scale; a larger register is best-effort). numpy (spiking=False).
+        ev_reg = None
+        try:
+            from research.runners._d3_event_pair_agent_derisk import PairEventRegister
+            reg_refs = referents[:6] if len(referents) >= 6 else (referents + ["dog", "cat", "fish", "bird", "worm", "ball"])[:6]
+            ev_reg = PairEventRegister(reg_refs, seed=seed, spiking=False)
+        except Exception as _e:
+            print(f"[tui] discourse event register unavailable ({_e!r}); who-was-before disabled.", flush=True)
         # defer_planner=True: the persistent discourse WM loop is built lazily on the first multi-turn referent
         # (the curriculum teach below uses BrainConversationalAgent.hear, which does NOT write WM referents, so a
         # loaded self-knowledge brain never pays the ~681s WM build at load -- only when a console turn actually
@@ -413,7 +423,7 @@ def _load_self_knowledge(codes_path, curriculum_path, seed, use_multiturn, enabl
                                grounded_codes=grounded if grounded else None, seed=seed,
                                wm_n=wm_n, wm_pattern_size=pattern_size,
                                enable_neural_render=enable_neural_render, composer_kind="rf",
-                               enable_biased_competition=False, defer_planner=True)
+                               enable_biased_competition=False, defer_planner=True, event_register=ev_reg)
     else:
         agent = BrainConversationalAgent(seed=seed, concepts=concepts,
                                          grounded_codes=grounded if grounded else None,
