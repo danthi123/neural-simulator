@@ -49,3 +49,14 @@ capability does not depend on closing this.
 `research/runners/_d1_onbridge_accuracy_sweep.py`, `_d1_onbridge_forward_propagation_probe.py`; the mechanism surpass
 `2026-07-10-D1-apical-soma-coupling-sim-edit-restores-directed-credit-PARTIAL-surpass.md`; the boundary
 `2026-07-10-D1-onbridge-BDSP-apical-decoupled-from-soma-BOUNDARY-root-caused.md`.
+
+## Cheap-first confirmation: it's near-SILENCE, not bias-swamping (the rebuild is genuinely deep)
+I had only swept forward weights to fwd_wmean=14. The honest cheap-first extends it: even at **fwd_wmean=250, in_hi=1800,
+bias=0** the hidden firing std stays ~0.005 AND the **hidden MEAN firing rate is ~0.006-0.016 (approx 1%)** — the hidden
+neurons barely fire *at all*, at any drive strength (`_d1_onbridge_strong_forward_probe.py`). So the deeper truth: the
+runner's net sits in a **near-silent regime** — no firing -> no bursts -> no BDSP credit -> a constant readout. It is not
+that the tonic bias swamps the input; it is that neither the bias nor a very strong input->hidden pathway drives the
+hidden neurons into a firing regime that is BOTH active (bursts exist) AND input-dependent. This confirms the surpass is a
+genuine rebuild of the operating point + the forward wiring (using the project's validated spiking-propagation machinery,
+where a driven input pool reliably makes a downstream pool fire), NOT a hyperparameter tweak. The credit mechanism (the
+apical-coupling `sim/` edit) remains validated and independent of this forward-net issue.
