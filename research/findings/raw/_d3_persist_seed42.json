@@ -1,0 +1,19 @@
+[
+ {
+  "seed": 42,
+  "K": 6,
+  "recur": 25.0,
+  "nmda": true,
+  "hold_alive": 0.10333333333333332,
+  "hold_correct": 1,
+  "hold_selectivity": 0.9999999903225807,
+  "n_pools_active_in_hold": 1,
+  "switch_winner": 4,
+  "switch_correct": 0,
+  "switch_old_rate": 0.026666666666666675,
+  "switch_new_rate": 0.08916666666666666,
+  "noclear_switch_correct": 0,
+  "shortclear_switch_correct": 0,
+  "norecur_hold_alive": 0.004166666666666667
+ }
+]
