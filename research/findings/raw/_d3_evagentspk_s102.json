@@ -1,0 +1,11 @@
+[
+ {
+  "seed": 102,
+  "K": 6,
+  "spiking": true,
+  "EVENT_who_agent": 1.0,
+  "EVENT_who_patient": 0.983,
+  "FLAT_FACT_agent": 0.3,
+  "RECENCY_agent": 0.15
+ }
+]
