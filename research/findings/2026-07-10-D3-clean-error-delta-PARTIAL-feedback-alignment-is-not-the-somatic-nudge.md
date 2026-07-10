@@ -94,7 +94,48 @@ to `sim/`.
 - Applying updates inside the clause loop rather than accumulating per minibatch was a step-size artifact worth ≈0.01,
   not the cause (checked, then fixed anyway).
 
-## ⇒ Next
+## The 6-seed matrix at batch 32, and momentum (both hypotheses run to ground)
+
+| arm (6-seed, batch 32) | a_prev | RETURN | a_curr | next-emission |
+|---|---|---|---|---|
+| backprop reference | 0.645 | 0.597 | 0.681 | 0.613 |
+| **clean-error** | **0.438** | 0.406 | **0.502** | **0.586** |
+| clean-error + momentum 0.9 | 0.456 | 0.416 | 0.525 | 0.510 |
+| feedback lesion | 0.156 | 0.191 | 0.191 | 0.222 |
+| shuffled replay | 0.310 | 0.268 | 0.490 | 0.580 |
+| no-teaching null | 0.195 | 0.175 | 0.181 | 0.146 (hidden moved **0.000000**) |
+
+**Momentum is not the missing piece either.** Copying `MicrocircuitBDSPNet`'s exact optimizer (heavy-ball, 0.9) lifts the
+held slot (0.438 to 0.456) but *costs* next-emission (0.586 to 0.510), and degrades the backprop arm identically
+(0.613 to 0.513). It over-steps at this learning rate and trades one metric for the other rather than closing the gap.
+
+## Where this rung actually lands
+
+With a biologically-plausible credit rule -- **no weight transport, no backprop through time**, and the write gate taught
+by replay -- the register reaches:
+
+* **next-emission 0.586 against the host delta's 0.619** (Markov floor 0.390): **95% of the reference**, with the credit
+  demonstrably load-bearing (feedback lesion 0.222).
+* **held slot a_prev 0.438-0.456 against backprop's 0.645**: **~70%**, with shuffled-replay at 0.310 and no-replay at 0.201.
+* every mechanism control intact: the no-teaching null moves hidden weights by **exactly 0.0**; wrong-sign anti-learns
+  coherently (emission 0.038); no weight transport, asserted per seed.
+
+**The transition transfers to a biological rule almost completely; the held slot transfers to ~70%.** That asymmetry is
+the honest, quantified deliverable of this rung, and it is consistent with the whole arc: the held slot is the hard part,
+because nothing in the present rewards holding it.
+
+## Corrected next steps
+1. ~~Re-run the 6-seed matrix at batch 32~~ -- **done, above.**
+2. ~~Momentum~~ -- **done, above: it trades a_prev for emission; it does not close the gap.**
+3. The remaining candidate is an **optimizer-footing mismatch**: `MicrocircuitBDSPNet` normalises `upd/m` at `lr=0.3`,
+   while this runner divides the top error by `B` at `lr=0.05`. Sweep `(lr, momentum)` jointly for the clean-error arm
+   **before** concluding anything intrinsic.
+4. If that does not close `a_prev`, the genuinely interesting question deserves a research gate rather than an assumption:
+   **does alignment-based credit degrade on a recurrent, gated state variable (this register) relative to a static readout
+   (D1's task)?**
+5. Then port via the committed `enable_bdsp` and `enable_bdsp_microcircuit` `sim/` path (additive, byte-identical-when-off).
+
+## OLD next (superseded)
 1. **Re-run the full 6-seed matrix at batch 32** (the rule's regime), with all controls, and gate on `a_prev` / RETURN.
    Next-emission is already at the host reference there; the question is whether the held slot follows.
 2. If `a_prev` still trails, the next candidate is **momentum + the per-layer homeostatic magnitude control**, both of

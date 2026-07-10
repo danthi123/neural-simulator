@@ -1,0 +1,51 @@
+{
+ "seed": 44,
+ "clean_mom": {
+  "a_curr": 0.526,
+  "RETURN": 0.42,
+  "a_prev": 0.598,
+  "pop_sep": 0.14,
+  "emission": 0.527,
+  "hidden_moved": 1.866
+ },
+ "clean_nomom": {
+  "a_curr": 0.572,
+  "RETURN": 0.518,
+  "a_prev": 0.64,
+  "pop_sep": 0.482,
+  "emission": 0.614,
+  "hidden_moved": 0.659
+ },
+ "bp_mom": {
+  "a_curr": 0.931,
+  "RETURN": 0.834,
+  "a_prev": 0.761,
+  "pop_sep": 0.015,
+  "emission": 0.706,
+  "hidden_moved": 3.453
+ },
+ "lesion_mom": {
+  "a_curr": 0.205,
+  "RETURN": 0.192,
+  "a_prev": 0.159,
+  "pop_sep": 0.089,
+  "emission": 0.209,
+  "hidden_moved": 0.0
+ },
+ "shuf_mom": {
+  "a_curr": 0.439,
+  "RETURN": 0.283,
+  "a_prev": 0.432,
+  "pop_sep": 0.119,
+  "emission": 0.522,
+  "hidden_moved": 1.671
+ },
+ "noteach_mom": {
+  "a_curr": 0.195,
+  "RETURN": 0.177,
+  "a_prev": 0.133,
+  "pop_sep": 0.089,
+  "emission": 0.171,
+  "hidden_moved": 0.0
+ }
+}

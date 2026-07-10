@@ -1,0 +1,67 @@
+{
+ "seed": 44,
+ "batch": 32,
+ "clean_error": {
+  "a_curr": 0.572,
+  "RETURN": 0.518,
+  "a_prev": 0.64,
+  "pop_sep": 0.482,
+  "emission": 0.614,
+  "hidden_moved": 0.659,
+  "no_transport": true
+ },
+ "backprop_ref": {
+  "a_curr": 0.698,
+  "RETURN": 0.63,
+  "a_prev": 0.741,
+  "pop_sep": 0.157,
+  "emission": 0.638,
+  "hidden_moved": 1.429,
+  "no_transport": true
+ },
+ "feedback_lesion": {
+  "a_curr": 0.205,
+  "RETURN": 0.192,
+  "a_prev": 0.159,
+  "pop_sep": 0.089,
+  "emission": 0.228,
+  "hidden_moved": 0.0,
+  "no_transport": true
+ },
+ "wrong_sign": {
+  "a_curr": 0.172,
+  "RETURN": 0.177,
+  "a_prev": 0.307,
+  "pop_sep": 0.0,
+  "emission": 0.04,
+  "hidden_moved": 0.104,
+  "no_transport": true
+ },
+ "no_teaching": {
+  "a_curr": 0.195,
+  "RETURN": 0.177,
+  "a_prev": 0.133,
+  "pop_sep": 0.089,
+  "emission": 0.171,
+  "hidden_moved": 0.0,
+  "no_transport": true
+ },
+ "clean_replay_shuffled": {
+  "a_curr": 0.544,
+  "RETURN": 0.405,
+  "a_prev": 0.573,
+  "pop_sep": 0.379,
+  "emission": 0.611,
+  "hidden_moved": 0.734,
+  "no_transport": true
+ },
+ "clean_no_replay": {
+  "a_curr": 0.52,
+  "RETURN": 0.171,
+  "a_prev": 0.323,
+  "pop_sep": 0.021,
+  "emission": 0.581,
+  "hidden_moved": 0.763,
+  "no_transport": true
+ }
+}

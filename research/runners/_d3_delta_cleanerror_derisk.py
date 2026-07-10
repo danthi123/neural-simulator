@@ -56,7 +56,7 @@ from research.runners._d3_event_pop_gate_derisk import _oracle_perm, OP_NAMES
 
 def train_cleanerror(task, seed=42, n_hid=128, epochs=40, lr=0.05, batch=256,
                      credit="clean_error", replay_gamma=1.0, replay_target="prev",
-                     lr_gate=5.0, gate_cost=0.01, lr_pop=0.1, stage_pop_epochs=15):
+                     lr_gate=5.0, gate_cost=0.01, lr_pop=0.1, stage_pop_epochs=15, momentum=0.0):
     """The register trained with ONE-STEP credit (no BPTT) and a biologically-plausible credit channel.
 
     credit: "clean_error" -> the descending error passes through FIXED-RANDOM feedback (no weight transport)
@@ -91,6 +91,10 @@ def train_cleanerror(task, seed=42, n_hid=128, epochs=40, lr=0.05, batch=256,
         by_len.setdefault(int(L[n]), []).append(n)
     pop_on = [False]
     hidden0 = (Wr.copy(), Wi.copy())
+    # MicrocircuitBDSPNet uses heavy-ball momentum (_MOMENTUM = 0.9) on the feedforward weights: vel = 0.9*vel + upd/m;
+    # W += lr*vel. This runner had none. It is the one remaining difference between the two implementations of the same
+    # credit rule (its per-layer homeostatic gain is default-OFF there and is only a safety controller).
+    vel = {"Wr": np.zeros_like(Wr), "Wi": np.zeros_like(Wi), "Wc": np.zeros_like(Wc), "We": np.zeros_like(We)}
 
     def _phase(n_epochs, upd_pop):
         nonlocal Wr, Wi, Wc, bc, We, be, wg, bg, wp, bp, Wq, bq
@@ -189,8 +193,13 @@ def train_cleanerror(task, seed=42, n_hid=128, epochs=40, lr=0.05, batch=256,
                         sc, sp = nsc, npv                              # NO gradient crosses this boundary
                         pat = np.zeros((B, K), np.float32); pat[np.arange(B), OBJ[b, t]] = 1.0
 
-                    Wr -= lr * dWr; Wi -= lr * dWi; Wc -= lr * dWc; bc -= lr * dbc
-                    We -= lr * dWe; be -= lr * dbe
+                    if momentum > 0.0:
+                        vel["Wr"] = momentum * vel["Wr"] + dWr; vel["Wi"] = momentum * vel["Wi"] + dWi
+                        vel["Wc"] = momentum * vel["Wc"] + dWc; vel["We"] = momentum * vel["We"] + dWe
+                        Wr -= lr * vel["Wr"]; Wi -= lr * vel["Wi"]; Wc -= lr * vel["Wc"]; We -= lr * vel["We"]
+                    else:
+                        Wr -= lr * dWr; Wi -= lr * dWi; Wc -= lr * dWc; We -= lr * dWe
+                    bc -= lr * dbc; be -= lr * dbe
                     if replay_gamma > 0 and credit != "no_teaching":
                         Wq -= lr * dWq; bq -= lr * dbq
                     wg -= lr_gate * dwg; bg -= lr_gate * dbg
