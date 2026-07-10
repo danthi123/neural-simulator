@@ -99,7 +99,8 @@ def make_selfsup_event_task(seed, K=6, M=8, n_pool=48, noise=0.5, train_lens=(2,
                 np.asarray(EMIT, np.int64), np.asarray(OPS, np.int64), np.asarray(L, np.int64), np.asarray(TA, np.int64))
 
     return {"train": gen(train_lens, n_per_len), "test_deeper": gen(test_lens, max(400, n_per_len // 3)),
-            "K": K, "M": M, "ident": ident, "n_pool": n_pool, "theta": theta, "emission_purity": round(purity, 3)}
+            "K": K, "M": M, "ident": ident, "n_pool": n_pool, "theta": theta, "emission_purity": round(purity, 3),
+            "ent": ent, "HE": HE, "IT": IT}     # codes, for the deployed SelfSupEventRegister to encode heard clauses
 
 
 def _sm(z):

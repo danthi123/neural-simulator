@@ -1,0 +1,10 @@
+[
+ {
+  "seed": 42,
+  "spiking": true,
+  "CAPSTONE_QA": 1.0,
+  "emission_severed_QA": 0.175,
+  "FLAT_FACT": 0.25,
+  "RECENCY": 0.15
+ }
+]
