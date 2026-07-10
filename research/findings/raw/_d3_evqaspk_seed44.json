@@ -1,0 +1,10 @@
+[
+ {
+  "seed": 44,
+  "K": 6,
+  "SPK_deep_agent_QA": 0.967,
+  "recency_QA": 0.442,
+  "agree_resolve": 0.999,
+  "agree_property": 1.0
+ }
+]
