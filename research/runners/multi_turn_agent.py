@@ -65,7 +65,7 @@ class MultiTurnAgent:
                  biased_competition_window=20, graded_bias=False, graded_bias_gain=1.0,
                  graded_bias_ref=0.20, graded_bias_cap_pA=8000.0, defer_parser=False, defer_planner=False,
                  communicable_mode=False, communicable_draw="spiking", communicable_config=None,
-                 speak_value_Q=None, D=128, focus_bias_source=None):
+                 speak_value_Q=None, D=128, focus_bias_source=None, event_register=None):
         self.seed = int(seed)
         # composer_kind passes through to the inner agent: "rf" (default) or "onebrain" (the integrated one-brain
         # composer -- the cleanup arc validates multi-turn anaphora + cued multi-hop on it).
@@ -113,6 +113,12 @@ class MultiTurnAgent:
         # discourse-CENTER tracker (Centering Cb over the heard SVO facts, `_d3_centering_focus_derisk`) plugs in so the
         # pronoun binds to the BRAIN-BASED composed focus rather than a host feature-lookup. None -> content_bias_target.
         self._focus_bias_source = focus_bias_source
+        # RUNNING-EVENT REGISTER HOOK (default None = byte-identical): an object with observe(subject_word, agent, patient)
+        # + who_agent()/who_patient(), maintaining a running FACTORED (agent, patient) EVENT across the heard discourse via
+        # the D3 discrete-attractor (`_d3_event_agent_derisk.D3EventRegister`). `hear` folds each heard fact into it; the
+        # agent can then ANSWER who/what from the COMPOSED running event (the anti-RAG middle layer) alongside its flat-fact
+        # store. None -> the register is never touched (the flat-fact/biased-competition paths are byte-identical).
+        self._event_register = event_register
 
         # --- multi-referent biased-competition (opt-in, default OFF) -------------------------------------------
         self.enable_biased_competition = bool(enable_biased_competition)
@@ -240,10 +246,30 @@ class MultiTurnAgent:
 
     # --- turns ---------------------------------------------------------------
     def hear(self, sentence, voice="active", polarity=None):
-        """Comprehend + store a statement, and write its salient referent (the object/patient) into the WM."""
+        """Comprehend + store a statement, and write its salient referent (the object/patient) into the WM. When an
+        event_register is wired, also fold this fact into the running FACTORED (agent, patient) EVENT (the anti-RAG
+        running meaning) -- the raw subject word carries the relational op (an entity = INTRODUCE, 'he' = AGENT-COREF,
+        'it' = PROMOTE)."""
+        if self._event_register is not None:                    # fold into the running event FIRST (from RAW words -- the
+            w = sentence.split()                                 # D3 encoding is parser-independent)
+            if len(w) >= 3:
+                self._event_register.observe(w[0], w[2])
+                if self._event_register.is_pronoun_subject(w[0]):   # a 'he'/'it' subject the flat-fact composer can't
+                    pat = w[2] if w[2] in self.referents else None  # store as an entity -> update the running event +
+                    self._write_referent(pat)                       # WM only, SKIP the parser/composer store
+                    return {"agent": None, "action": w[1], "patient": pat}
         roles = self.agent.hear(sentence, voice, polarity)
         self._write_referent(roles.get("patient"))
         return roles
+
+    def who_agent_now(self):
+        """Answer 'who is the agent of the current event?' from the running EVENT register (the COMPOSED meaning), or
+        None if no register is wired. This is the anti-RAG answer: the deep-tracked agent (resolved through corefs),
+        NOT a retrieved fact or the last-mentioned entity."""
+        return self._event_register.who_agent() if self._event_register is not None else None
+
+    def who_patient_now(self):
+        return self._event_register.who_patient() if self._event_register is not None else None
 
     def what_does(self, agent_word, action):
         """'what does <agent|it> <action>?' -> patient or None. Resolves a pronoun agent from the held referent;

@@ -1,0 +1,9 @@
+[
+ {
+  "seed": 42,
+  "spiking": true,
+  "EVENT_who_agent": 1.0,
+  "FLAT_FACT_agent": 0.0,
+  "RECENCY_agent": 0.0
+ }
+]
