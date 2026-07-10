@@ -1,0 +1,16 @@
+[
+ {
+  "seed": 43,
+  "K": 6,
+  "n_informative": 514,
+  "PREDONLY_prev": 0.204,
+  "PREDONLY_curr": 0.708,
+  "REPLAY_prev": 0.366,
+  "REPLAY_curr": 0.662,
+  "REPLAY_severed_prev": 0.228,
+  "REPLAY_singleslot_prev": 0.265,
+  "REPLAY_noreturn_prev": 0.379,
+  "one_emission_ceiling": 0.764,
+  "recency_prev": 0.152
+ }
+]
