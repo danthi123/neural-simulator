@@ -1,0 +1,19 @@
+[
+ {
+  "seed": 42,
+  "K": 6,
+  "emission_purity": 0.722,
+  "SELFSUP": 0.974,
+  "SELFSUP_deep": 0.915,
+  "SELFSUP_promote": 0.982,
+  "fair_reservoir": 0.657,
+  "fair_reservoir_deep": 0.143,
+  "last_named_subject": 0.569,
+  "last_named_subject_promote": 0.151,
+  "emission_severed": 0.246,
+  "no_recurrence": 0.359,
+  "recency_weak_ref": 0.177,
+  "frac_deep": 0.126,
+  "frac_promote": 0.507
+ }
+]
