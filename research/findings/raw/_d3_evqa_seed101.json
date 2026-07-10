@@ -1,0 +1,12 @@
+[
+ {
+  "seed": 101,
+  "K": 6,
+  "AGENT_qa": 0.976,
+  "AGENT_recency_qa": 0.363,
+  "AGENT_lesion_qa": 0.357,
+  "PATIENT_qa": 0.997,
+  "BOTH_qa": 0.987,
+  "AGENT_qa_permstore": 0.976
+ }
+]
