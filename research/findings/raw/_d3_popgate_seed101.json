@@ -1,0 +1,45 @@
+[
+ {
+  "seed": 101,
+  "pushpop": {
+   "overall": 0.739,
+   "RETURN": 0.177,
+   "COREF": 0.75,
+   "BOUND": 0.818,
+   "INTRO": 0.818,
+   "PROMOTE": 0.849,
+   "prev": 0.32,
+   "pop_sep": -0.066
+  },
+  "push_only": {
+   "overall": 0.538,
+   "RETURN": 0.208,
+   "COREF": 0.452,
+   "BOUND": 0.654,
+   "INTRO": 0.658,
+   "PROMOTE": 0.684,
+   "prev": 0.441,
+   "pop_sep": 0.0
+  },
+  "oracle_pop": {
+   "overall": 0.667,
+   "RETURN": 0.67,
+   "COREF": 0.475,
+   "BOUND": 0.82,
+   "INTRO": 0.821,
+   "PROMOTE": 0.817,
+   "prev": 0.682,
+   "pop_sep": 1.0
+  },
+  "scramble_pop": {
+   "overall": 0.582,
+   "RETURN": 0.143,
+   "COREF": 0.575,
+   "BOUND": 0.656,
+   "INTRO": 0.661,
+   "PROMOTE": 0.671,
+   "prev": 0.163,
+   "pop_sep": -0.001
+  }
+ }
+]

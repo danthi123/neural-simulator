@@ -131,7 +131,8 @@ def make_pair_task(seed, K=6, M=8, n_pool=64, noise=0.5, train_lens=(4, 5, 6), t
     return {"train": tr, "test_deeper": te,
             "K": K, "M": M, "ident": ident, "n_pool": n_pool, "theta": theta,
             "ent": ent, "marks": marks,                       # codes for the deployed SelfSupPairRegister
-            "ops_train": OPS_all["train"], "sid_train": SID_all["train"]}   # OBSERVABLE ops + spoken subject ids
+            "ops_train": OPS_all["train"], "sid_train": SID_all["train"],   # OBSERVABLE ops + spoken subject ids
+            "ops_test": OPS_all["test"], "sid_test": SID_all["test"]}
 
 
 def _sm(z):

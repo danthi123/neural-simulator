@@ -1,0 +1,65 @@
+[
+ {
+  "seed": 100,
+  "staged": {
+   "overall": 0.819,
+   "RETURN": 0.684,
+   "COREF": 0.762,
+   "BOUND": 0.922,
+   "INTRO": 0.953,
+   "PROMOTE": 0.748,
+   "prev": 0.562,
+   "pop_sep": 0.598
+  },
+  "pushpop": {
+   "overall": 0.67,
+   "RETURN": 0.158,
+   "COREF": 0.595,
+   "BOUND": 0.813,
+   "INTRO": 0.812,
+   "PROMOTE": 0.825,
+   "prev": 0.133,
+   "pop_sep": 0.065
+  },
+  "staged_scramble": {
+   "overall": 0.793,
+   "RETURN": 0.354,
+   "COREF": 0.758,
+   "BOUND": 0.934,
+   "INTRO": 0.957,
+   "PROMOTE": 0.748,
+   "prev": 0.524,
+   "pop_sep": 0.012
+  },
+  "staged_hi_lr": {
+   "overall": 0.796,
+   "RETURN": 0.319,
+   "COREF": 0.767,
+   "BOUND": 0.943,
+   "INTRO": 0.958,
+   "PROMOTE": 0.751,
+   "prev": 0.522,
+   "pop_sep": -0.0
+  },
+  "push_only": {
+   "overall": 0.796,
+   "RETURN": 0.319,
+   "COREF": 0.767,
+   "BOUND": 0.943,
+   "INTRO": 0.958,
+   "PROMOTE": 0.751,
+   "prev": 0.522,
+   "pop_sep": 0.0
+  },
+  "oracle_pop": {
+   "overall": 0.78,
+   "RETURN": 0.786,
+   "COREF": 0.79,
+   "BOUND": 0.817,
+   "INTRO": 0.822,
+   "PROMOTE": 0.636,
+   "prev": 0.611,
+   "pop_sep": 1.0
+  }
+ }
+]

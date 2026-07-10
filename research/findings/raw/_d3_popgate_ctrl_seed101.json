@@ -1,0 +1,31 @@
+{
+ "seed": 101,
+ "staged": {
+  "RETURN": 0.479,
+  "overall": 0.566,
+  "COREF": 0.464,
+  "prev": 0.472,
+  "sep": 0.668
+ },
+ "joint_55": {
+  "RETURN": 0.656,
+  "overall": 0.718,
+  "COREF": 0.634,
+  "prev": 0.686,
+  "sep": 0.788
+ },
+ "joint_40": {
+  "RETURN": 0.669,
+  "overall": 0.716,
+  "COREF": 0.631,
+  "prev": 0.689,
+  "sep": 0.737
+ },
+ "staged_nofreeze": {
+  "RETURN": 0.498,
+  "overall": 0.532,
+  "COREF": 0.379,
+  "prev": 0.44,
+  "sep": 0.717
+ }
+}

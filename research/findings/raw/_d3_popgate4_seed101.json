@@ -1,0 +1,85 @@
+[
+ {
+  "seed": 101,
+  "delayed": {
+   "overall": 0.532,
+   "RETURN": 0.498,
+   "COREF": 0.379,
+   "BOUND": 0.67,
+   "INTRO": 0.641,
+   "PROMOTE": 0.673,
+   "prev": 0.44,
+   "pop_sep": 0.717
+  },
+  "joint_55": {
+   "overall": 0.718,
+   "RETURN": 0.656,
+   "COREF": 0.634,
+   "BOUND": 0.756,
+   "INTRO": 0.795,
+   "PROMOTE": 0.849,
+   "prev": 0.686,
+   "pop_sep": 0.788
+  },
+  "joint_40": {
+   "overall": 0.716,
+   "RETURN": 0.669,
+   "COREF": 0.631,
+   "BOUND": 0.753,
+   "INTRO": 0.793,
+   "PROMOTE": 0.844,
+   "prev": 0.689,
+   "pop_sep": 0.737
+  },
+  "frozen_stage": {
+   "overall": 0.566,
+   "RETURN": 0.479,
+   "COREF": 0.464,
+   "BOUND": 0.654,
+   "INTRO": 0.657,
+   "PROMOTE": 0.685,
+   "prev": 0.472,
+   "pop_sep": 0.668
+  },
+  "delayed_scramble": {
+   "overall": 0.552,
+   "RETURN": 0.297,
+   "COREF": 0.462,
+   "BOUND": 0.665,
+   "INTRO": 0.662,
+   "PROMOTE": 0.676,
+   "prev": 0.427,
+   "pop_sep": 0.01
+  },
+  "delayed_hi_lr": {
+   "overall": 0.559,
+   "RETURN": 0.324,
+   "COREF": 0.465,
+   "BOUND": 0.687,
+   "INTRO": 0.662,
+   "PROMOTE": 0.676,
+   "prev": 0.477,
+   "pop_sep": -0.0
+  },
+  "push_only": {
+   "overall": 0.538,
+   "RETURN": 0.208,
+   "COREF": 0.452,
+   "BOUND": 0.654,
+   "INTRO": 0.658,
+   "PROMOTE": 0.684,
+   "prev": 0.441,
+   "pop_sep": 0.0
+  },
+  "oracle_pop": {
+   "overall": 0.667,
+   "RETURN": 0.67,
+   "COREF": 0.475,
+   "BOUND": 0.82,
+   "INTRO": 0.821,
+   "PROMOTE": 0.817,
+   "prev": 0.682,
+   "pop_sep": 1.0
+  }
+ }
+]
