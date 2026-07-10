@@ -89,6 +89,14 @@
       "gate_svo": null,
       "brain": "I don't know about that.",
       "abstained": true
+    },
+    {
+      "you": "[discourse] dog chase cat / then bird chase worm / who was before? / now?",
+      "kind": "discourse",
+      "gate_svo": null,
+      "abstained": false,
+      "brain": "before='dog was.' now='bird is.' (fresh-moat abstained=True)",
+      "discourse_ok": true
     }
   ],
   "tui_features": [

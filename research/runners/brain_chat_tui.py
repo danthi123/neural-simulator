@@ -206,6 +206,12 @@ class ChatBrain:
         self.renderer = renderer
         self.verbose_thinking = verbose_thinking
         self.raw_mode = False                                   # /raw toggles the brain's own renderer (no LLM)
+        # DISCOURSE EVENT TRACKING (2026-07-10): if the agent carries an event register, the console can HEAR a
+        # multi-clause discourse and answer "who was doing it before?" across a connective (the D3 event-register arc,
+        # deployed on MultiTurnAgent but previously unreachable in any console). Backward-compatible: no register -> off.
+        self.has_event_register = self.is_multiturn and getattr(agent, "_event_register", None) is not None
+        self._boundary_seen = False          # "who was doing it before?" only has meaning AFTER a discourse boundary
+        self._heard_any_clause = False
         # the brain's stored facts (string-only roles) + content-token sets for the VERIFY re-parse
         self._refresh_facts()
 
@@ -303,10 +309,47 @@ class ChatBrain:
         """The brain's OWN renderer: the raw recalled triple as a plain sentence (no LLM)."""
         return " ".join(str(x) for x in gate_svo)
 
+    # --- discourse event tracking (who is doing it now / who was doing it before) ---
+    def _discourse_turn(self, line):
+        """Route a discourse turn if the agent carries an event register: hear an SVO clause (updating the running
+        event), or answer 'who was doing it before/now?'. Returns (answer, abstained) or None (not a discourse turn)."""
+        if not self.has_event_register:
+            return None
+        reg = self.agent._event_register
+        ql = line.lower().strip().rstrip(".!?").strip()
+        toks = ql.split()
+        if ql in ("who was doing it before", "who was before", "who did it before", "who was doing that before"):
+            if not self._boundary_seen:      # no earlier event yet -> the no-confab moat abstains
+                return ("I don't know who was doing it before -- no earlier event yet.", True)
+            a = self.agent.who_agent_before()
+            return (f"{a} was.", False) if a else ("I don't know who was doing it before.", True)
+        if ql in ("who is doing it now", "who is doing it", "who is now", "who did it now"):
+            if not self._heard_any_clause:
+                return ("I don't know who is doing it now -- nothing said yet.", True)
+            a = self.agent.who_agent_now()
+            return (f"{a} is.", False) if a else ("I don't know who is doing it now.", True)
+        # a discourse SVO clause (optionally with a leading connective): subject action object, where the action is
+        # a known verb OR the subject is a pronoun the register tracks -> HEAR it (fold into the running event).
+        w = list(toks)
+        had_connective = bool(w) and w[0] in ("then", "but", "meanwhile", "and")
+        if had_connective:
+            w = w[1:]
+        if len(w) == 3 and (w[1] in self.actions_set or w[1] == "chase"):
+            self.agent.hear(line.rstrip(".!?"))
+            self._heard_any_clause = True
+            if had_connective:                       # a connective marks a discourse boundary (an earlier event now exists)
+                self._boundary_seen = True
+            now = self.agent.who_agent_now()
+            return (f"ok -- now {now} is doing it." if now else "ok, i heard that.", False)
+        return None
+
     # --- the full turn ---
     def answer(self, question):
-        """One conversational turn: GATE (recall + abstain) -> CONSTRAIN+VERIFY render. Returns
-        (answer_string, abstained_bool)."""
+        """One conversational turn: DISCOURSE (event tracking) -> GATE (recall + abstain) -> CONSTRAIN+VERIFY render.
+        Returns (answer_string, abstained_bool)."""
+        disc = self._discourse_turn(question)
+        if disc is not None:
+            return disc
         gate_svo = self.gate(question)
         if gate_svo is None:
             return "I don't know about that.", True
@@ -399,14 +442,25 @@ def _build_tiny_demo(seed, use_multiturn, enable_neural_render):
         ("cat", "eat", "fish"),
     ]
     actions = {v for _a, v, _p in facts}
-    vocab = sorted({w for f in facts for w in f} | {"river", "bird", "fish"})  # extra encodable, never-stored
+    # include the discourse event register's animal referents (worm/ball/river/bird) so a multi-clause discourse
+    # ("dog chase cat. then bird chase worm.") folds into BOTH the running event AND the composer without a code miss.
+    vocab = sorted({w for f in facts for w in f} | {"river", "bird", "fish", "worm", "ball"})
     concepts = {w: None for w in vocab}
     if use_multiturn:
         from research.runners.multi_turn_agent import MultiTurnAgent
         referents = [w for w in vocab if w not in actions]
+        # DISCOURSE EVENT REGISTER (2026-07-10): a running FACTORED (agent, patient) event so the console can answer
+        # "who was doing it before?" across a connective ("dog chase cat. THEN bird chase worm. who was before?" -> dog).
+        # The labelled PairEventRegister (0.928, its validated animal referents), numpy (spiking=False) for the CPU path.
+        ev_reg = None
+        try:
+            from research.runners._d3_event_pair_agent_derisk import PairEventRegister
+            ev_reg = PairEventRegister(["dog", "cat", "fish", "bird", "worm", "ball"], seed=seed, spiking=False)
+        except Exception as _e:
+            print(f"[tui] discourse event register unavailable ({_e!r}); who-was-before disabled.", flush=True)
         agent = MultiTurnAgent(referent_concepts=referents, concepts=concepts, seed=seed,
                                enable_neural_render=enable_neural_render, composer_kind="rf",
-                               enable_biased_competition=False, defer_planner=True)
+                               enable_biased_competition=False, defer_planner=True, event_register=ev_reg)
     else:
         agent = BrainConversationalAgent(seed=seed, concepts=concepts, composer_kind="rf",
                                          enable_neural_render=enable_neural_render)
@@ -556,6 +610,21 @@ def run_smoke(chat, source, n_facts, out_path):
         transcript.append({"you": utterance, "kind": kind, "gate_svo": gate_svo,
                            "brain": ans, "abstained": abstained})
 
+    # DISCOURSE EVENT TRACKING (2026-07-10): hear a multi-clause discourse across a connective, then answer
+    # "who was doing it before?" -- the deployed D3 event-register capability, now reachable in the console.
+    disc_ok = None
+    if getattr(chat, "has_event_register", False):
+        fresh_before, fresh_abst = chat.answer("who was doing it before?")   # nothing said yet -> the moat abstains
+        chat.answer("dog chase cat")
+        chat.answer("then bird chase worm")                                  # the connective pushes dog's event
+        before, _ = chat.answer("who was doing it before?")                  # -> dog
+        now, _ = chat.answer("who is doing it now?")                         # -> bird
+        disc_ok = bool(fresh_abst and ("dog" in before.lower()) and ("bird" in now.lower()))
+        transcript.append({"you": "[discourse] dog chase cat / then bird chase worm / who was before? / now?",
+                           "kind": "discourse", "gate_svo": None, "abstained": False,
+                           "brain": f"before={before!r} now={now!r} (fresh-moat abstained={fresh_abst})",
+                           "discourse_ok": disc_ok})
+
     # checks
     self_q = transcript[0]
     self_answered = (not self_q["abstained"]) and self_q["gate_svo"] is not None and self_q["gate_svo"][0] == "brain"
@@ -577,7 +646,8 @@ def run_smoke(chat, source, n_facts, out_path):
     answered = [t for t in transcript if t["kind"] == "answer" and not t["abstained"]]
     converses = len(answered) >= 3
 
-    go = bool(self_answered and learn_answered and anaphora_resolved and moat_held and converses)
+    discourse_ok = (disc_ok is None) or bool(disc_ok)   # if a register is present it must track; else neutral
+    go = bool(self_answered and learn_answered and anaphora_resolved and moat_held and converses and discourse_ok)
 
     verdict = (
         f"GO -- the TUI loads a saved/tiny brain + holds a multi-turn conversation: self-reference resolves "
