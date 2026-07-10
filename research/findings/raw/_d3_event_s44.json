@@ -1,0 +1,12 @@
+[
+ {
+  "seed": 44,
+  "K": 6,
+  "FACTORED_event": 0.994,
+  "FACTORED_agent": 0.994,
+  "FACTORED_patient": 0.999,
+  "RECURRENCE_lesion": 0.153,
+  "recency_floor": 0.162,
+  "JOINT_capacity": 0.986
+ }
+]
