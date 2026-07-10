@@ -1,0 +1,22 @@
+[
+ {
+  "seed": 42,
+  "n_pop": 10,
+  "n": 10,
+  "RESUME_pairspiking": 0.8,
+  "RESUME_poplesion": 0.2,
+  "RESUME_stateless": 0.1,
+  "RESUME_hosttwin": 1.0,
+  "RESUME_stay": 0.2,
+  "RESUME_recency": 0.0,
+  "BEFORE_pairspiking": 0.8,
+  "BEFORE_stateless": 0.0,
+  "BEFORE_hosttwin": 0.9,
+  "NOW_pairspiking": 0.7,
+  "pop_leaves_prev_intact": 1.0,
+  "slot_survives_own_read": 1.0,
+  "n_pop_checks": 15,
+  "r_on_pops": 0.895,
+  "r_on_bounds": 0.025
+ }
+]
