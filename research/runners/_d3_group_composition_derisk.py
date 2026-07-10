@@ -339,7 +339,7 @@ def bptt_rnn_state_supervised(task, n_hid=128, epochs=80, lr=0.05, batch=128, se
     return {"same": ps_same, "deeper": ps_deep, "state_same": ss_same, "state_deeper": ss_deep}
 
 
-def discrete_attractor_rnn(task, n_hid=128, epochs=40, lr=0.1, batch=256, seed=42, linear=False):
+def discrete_attractor_rnn(task, n_hid=128, epochs=40, lr=0.1, batch=256, seed=42, linear=False, temperature=1.0):
     """DISCRETE-ATTRACTOR recurrence (the length-generalization mechanism the drift-diagnosis points at, biologically
     apt = the brain's discrete WM / the project's CA3 attractor + NEF cleanup): the running state is ALWAYS one of K
     CLEAN attractors emb[s] (fixed distinct prototypes); each step computes the next state from (attractor[s_{t-1}],
@@ -372,9 +372,9 @@ def discrete_attractor_rnn(task, n_hid=128, epochs=40, lr=0.1, batch=256, seed=4
         for i in range(0, Ntr_, batch):
             bi = order[i:i + batch]
             hpre = emb[Ptr[bi]] @ Wr.T + Xtr[bi] @ Wi.T; h = _act(hpre)
-            logits = h @ Ws.T + bs
+            logits = (h @ Ws.T + bs) / temperature   # softer (T>1) -> the model pushes scores further apart -> larger margins (default 1.0 = byte-identical)
             ex = np.exp(logits - logits.max(1, keepdims=True)); sm = ex / ex.sum(1, keepdims=True)
-            d = sm.copy(); d[np.arange(len(bi)), Ntr[bi]] -= 1.0; d /= len(bi)
+            d = sm.copy(); d[np.arange(len(bi)), Ntr[bi]] -= 1.0; d /= (len(bi) * temperature)
             dWs = d.T @ h; dbs = d.sum(0)
             dh = (d @ Ws) * _dact(h)
             dWr = dh.T @ emb[Ptr[bi]]; dWi = dh.T @ Xtr[bi]
