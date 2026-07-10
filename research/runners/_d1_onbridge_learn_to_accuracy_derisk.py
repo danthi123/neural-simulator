@@ -211,7 +211,8 @@ class OnBridgeBDSPNet:
                  bdsp_lr=0.03, bdsp_p0=0.30, bdsp_beta=1.0, burst_isi_ms=6.0,
                  fwd_wmean=6.0, fwd_wjit=0.5, fwd_density=1.0,
                  in_hi=750.0, in_lo=40.0, hidden_bias=520.0, output_bias=520.0,
-                 apical_out_gain=260.0, apical_hid_gain=190.0):
+                 apical_out_gain=260.0, apical_hid_gain=190.0,
+                 couple_soma=False, soma_g=0.0):
         from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
         from sim.bridge import SimulationBridge
         from sim.regions import BrainRegion, RegionPathway
@@ -244,6 +245,11 @@ class OnBridgeBDSPNet:
         cfg.bdsp_p0 = float(bdsp_p0)
         cfg.bdsp_beta = float(bdsp_beta)
         cfg.burst_isi_threshold_ms = float(burst_isi_ms)
+        # BDSP apical->soma electrotonic coupling (2026-07-10 sim/ edit): default off = the pre-edit boundary
+        # (apical raises P but not measured bursts B -> no directed credit). ON = apical^ -> soma^ -> bursts B^ ->
+        # directed credit. Pair with a SPARSE output-bias regime (B<E) so the P0 moat stays clean.
+        cfg.bdsp_apical_couples_soma = bool(couple_soma)
+        cfg.bdsp_apical_soma_g = float(soma_g)
         self._bdsp_lr = float(bdsp_lr)
 
         regions = [
