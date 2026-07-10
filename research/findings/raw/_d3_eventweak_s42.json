@@ -1,0 +1,12 @@
+[
+ {
+  "seed": 42,
+  "K": 6,
+  "STATE_endpoint_deeper": 0.961,
+  "STATE_same": 0.978,
+  "PROPERTY_endpoint_deeper": 0.65,
+  "SHUFFLE_deeper": 0.03,
+  "recency_floor": 0.39,
+  "last2_objects_floor": 0.365
+ }
+]

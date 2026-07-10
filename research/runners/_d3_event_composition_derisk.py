@@ -30,15 +30,23 @@ import numpy as np
 
 
 def make_event_task(seed, K=6, n_pool=96, noise=0.6, train_lens=(1, 2, 3), test_lens=(6, 7, 8), n_per_len=2500,
-                    p_promote=0.5):
-    """Event-composition discourse. State = (agent, patient). Utterance code = [subj-third ; obj-third ; op-third] where
-    subj is an entity code OR the reserved IT code (promote). Emits per-step (A, P) states + the pair-index sequence."""
+                    p_coref=0.5, p_promote=0.25):
+    """Event-composition discourse. State = (agent, patient). THREE relational ops (utterance code = [subj-third ; obj-third
+    ; op-third]):
+      INTRODUCE  "s V o"  (subj=entity code) -> a<-s, p<-o
+      AGENT-COREF "he V o" (subj=HE marker)  -> a<-a (the AGENT PERSISTS), p<-o    [makes the agent DEEP]
+      PROMOTE    "it V o"  (subj=IT marker)  -> a<-p_prev (the patient promotes to agent), p<-o
+    The COREF op is what forces GENUINE DEPTH (adversarial-verify fix, 2026-07-09): the agent PERSISTS across a
+    variable-length coref run, so the final agent traces back to a RANDOM-depth introduce/promote -> a static
+    "last-2-objects" reader FAILS on the agent (the skeptic's shortcut is defeated); the model must TRACK the running
+    agent across the discourse. Emits per-step (A,P) states + SEQ (encodes the object each turn: o = SEQ%K)."""
     rng = np.random.RandomState(seed)
     third = n_pool // 3; code_k = max(3, third // 4)
     ent = -np.ones((K, third), dtype=np.float32)                  # entity codes (subj + obj thirds)
     for e in range(K):
         ent[e, rng.choice(third, code_k, replace=False)] = 1.0
-    IT = -np.ones(third, dtype=np.float32); IT[rng.choice(third, code_k, replace=False)] = 1.0   # the "it" (promote) marker
+    IT = -np.ones(third, dtype=np.float32); IT[rng.choice(third, code_k, replace=False)] = 1.0   # "it" (patient-promote)
+    HE = -np.ones(third, dtype=np.float32); HE[rng.choice(third, code_k, replace=False)] = 1.0   # "he" (agent-coref, persists)
     op_intro = -np.ones(third, dtype=np.float32); op_intro[rng.choice(third, code_k, replace=False)] = 1.0
     color = rng.randint(0, 2, size=K); ident = 0
     Lmax = max(tuple(train_lens) + tuple(test_lens))
@@ -51,18 +59,25 @@ def make_event_task(seed, K=6, n_pool=96, noise=0.6, train_lens=(1, 2, 3), test_
                 codes = np.zeros((Lmax, n_pool), dtype=np.float32)
                 a_seq = np.full(Lmax, -1, np.int64); p_seq = np.full(Lmax, -1, np.int64); pr_seq = np.full(Lmax, -1, np.int64)
                 for t in range(L_):
-                    # FORCE the last utterance to be a PROMOTE ("it V o") when L>=2: the true agent becomes the PREVIOUS
-                    # patient (a composed state), so a RECENCY resolver (a=last-subj/last-obj) is WRONG on the agent slot
-                    # -> a clean floor. (Interior promotes stay stochastic at p_promote.)
-                    promote = ((t == L_ - 1) and (L_ >= 2)) or ((t >= 1) and (rng.rand() < p_promote))
                     o = int(rng.randint(0, K))
-                    if promote:                                   # "it V o": a<-p (patient promotes), p<-o
-                        subj_code = IT; a, p = p, o; s_idx = -1
+                    r = rng.rand()
+                    if t == 0:                                    # the first op must SET the agent
+                        op = "intro"
+                    elif r < p_coref:
+                        op = "coref"
+                    elif r < p_coref + p_promote:
+                        op = "promote"
+                    else:
+                        op = "intro"
+                    if op == "coref":                             # "he V o": the AGENT PERSISTS, p<-o (agent goes DEEP)
+                        subj_code = HE; a, p = a, o; s_idx = K + 1
+                    elif op == "promote":                         # "it V o": a<-p_prev (patient promotes), p<-o
+                        subj_code = IT; a, p = p, o; s_idx = K
                     else:                                         # "s V o": a<-s, p<-o
                         s = int(rng.randint(0, K)); subj_code = ent[s]; a, p = s, o; s_idx = s
                     c = np.concatenate([subj_code, ent[o], op_intro]).copy()
                     flip = rng.rand(n_pool) < (noise * 0.15); c[flip] = -c[flip]
-                    codes[t] = c; a_seq[t] = a; p_seq[t] = p; pr_seq[t] = (s_idx if s_idx >= 0 else K) * K + o
+                    codes[t] = c; a_seq[t] = a; p_seq[t] = p; pr_seq[t] = s_idx * K + o    # o = pr % K always
                 X.append(codes); Ya.append(int(color[a])); Yp.append(int(color[p])); L.append(L_)
                 SEQ.append(pr_seq); STA.append(a_seq); STP.append(p_seq)
         return (np.asarray(X, np.float32), np.asarray(Ya, np.int64), np.asarray(Yp, np.int64),
@@ -149,14 +164,30 @@ def factored_event_rnn(task, seed=42, n_hid=192, epochs=60, lr=0.1, batch=256, t
 
 
 def recency_floor(task):
-    """RECENCY baseline: a = the last SUBJECT (or the last object on an 'it' turn), p = the last OBJECT. Fails on the
-    'it'-promotes (the true agent = the composed previous patient). Scored as the joint (a,p) match."""
+    """RECENCY baseline: a = the last SUBJECT (or the last object on an 'it'/'he' turn), p = the last OBJECT. Scored as
+    the joint (a,p) match."""
     K = task["K"]; X, Ya, Yp, L, SEQ, STA, STP = task["test_deeper"]
     ok = tot = 0
     for n in range(len(L)):
         Ln = int(L[n]); s_o = int(SEQ[n][Ln - 1]); s_idx, o = s_o // K, s_o % K
-        a_guess = s_idx if s_idx < K else o                        # last subject (or last object if 'it')
+        a_guess = s_idx if s_idx < K else o                        # last subject (or last object if 'it'/'he')
         ok += int(a_guess == int(STA[n, Ln - 1]) and o == int(STP[n, Ln - 1])); tot += 1
+    return ok / max(tot, 1)
+
+
+def last2_objects_floor(task):
+    """THE ADVERSARIAL-VERIFY anti-cheat (2026-07-09 skeptic): the static "last-2-objects" reader — guess a = the
+    2nd-to-last object, p = the last object. In the shallow v1 task this scored 1.0 (the answer was only the last 2
+    objects); with the AGENT-COREF op the agent traces back through a variable-length coref run to a random-depth
+    setting, so this reader FAILS on the agent = the task is now genuinely DEEP (not a 2-token lookup)."""
+    K = task["K"]; X, Ya, Yp, L, SEQ, STA, STP = task["test_deeper"]
+    ok = tot = 0
+    for n in range(len(L)):
+        Ln = int(L[n])
+        if Ln < 2:
+            continue
+        o_last = int(SEQ[n][Ln - 1]) % K; o_prev = int(SEQ[n][Ln - 2]) % K   # o = SEQ % K (both objects)
+        ok += int(o_prev == int(STA[n, Ln - 1]) and o_last == int(STP[n, Ln - 1])); tot += 1
     return ok / max(tot, 1)
 
 
@@ -167,7 +198,7 @@ def run_seed(seed, K, n_hid, epochs):
     return {"seed": seed, "K": K, "FACTORED_event": round(fac["event_deeper"], 3),
             "FACTORED_agent": round(fac["agent_deeper"], 3), "FACTORED_patient": round(fac["patient_deeper"], 3),
             "RECURRENCE_lesion": round(fac["event_lesion"], 3), "recency_floor": round(recency_floor(task), 3),
-            "JOINT_capacity": round(joint["event_deeper"], 3)}
+            "last2_objects_floor": round(last2_objects_floor(task), 3), "JOINT_capacity": round(joint["event_deeper"], 3)}
 
 
 def main():
@@ -184,20 +215,20 @@ def main():
     for s in seeds:
         r = run_seed(s, a.K, a.n_hid, a.epochs); rows.append(r)
         print(f"  [seed {s}] FACTORED event(a,p) DEEPER={r['FACTORED_event']} (a={r['FACTORED_agent']} p={r['FACTORED_patient']}) || "
-              f"RECURRENCE-lesion={r['RECURRENCE_lesion']} || RECENCY floor={r['recency_floor']} || JOINT-K^2 capacity={r['JOINT_capacity']}", flush=True)
+              f"RECURRENCE-lesion={r['RECURRENCE_lesion']} || LAST-2-OBJECTS(shallow-reader)={r['last2_objects_floor']} || RECENCY={r['recency_floor']} || JOINT-K^2 cap={r['JOINT_capacity']}", flush=True)
     if a.json and rows:
         import json
         json.dump(rows, open(a.json, "w"), indent=1)
     if rows:
         def _m(k): return float(np.mean([r[k] for r in rows]))
-        fac, les, rec, jnt = _m("FACTORED_event"), _m("RECURRENCE_lesion"), _m("recency_floor"), _m("JOINT_capacity")
+        fac, les, rec, l2, jnt = _m("FACTORED_event"), _m("RECURRENCE_lesion"), _m("recency_floor"), _m("last2_objects_floor"), _m("JOINT_capacity")
         chance = 1.0 / (a.K * a.K)
-        # LOAD-BEARING controls: (1) the composed event >> RECENCY (composition, not last-mention); (2) the RECURRENCE-LESION
-        # collapses to ~recency (the running state IS the mechanism). The JOINT-K^2 is a CAPACITY note (at small K it memorizes
-        # the 36 pairs; factoring's advantage is held-out combinations / larger K = the scaling follow-on), NOT a gate here.
-        go = (fac > 0.75) and (fac - rec > 0.3) and (fac - les > 0.3)
-        print(f"\n  AGGREGATE (K={a.K}, joint chance {chance:.3f}): FACTORED event(a,p) DEEPER={fac:.3f} | RECURRENCE-lesion={les:.3f} | RECENCY floor={rec:.3f} | JOINT-K^2 capacity={jnt:.3f}", flush=True)
-        print(f"  VERDICT: {'GO' if go else 'PARTIAL/NEGATIVE'} -- {'the discrete-attractor maintains a running FACTORED (agent, patient) EVENT state to held-out-DEEPER lengths ('+format(fac,'.2f')+' both slots), composing the relational it->patient-promotes-to-agent role-shift, where a RECENCY resolver FAILS ('+format(rec,'.2f')+') and a RECURRENCE-LESION (current-token-only) collapses ('+format(les,'.2f')+' = the running state is the mechanism) -> D3 extends from referent-tracking to composing a running WHO-DID-WHAT-TO-WHOM MEANING = the anti-RAG middle layer the conversational loop was missing; next: learn the relational UPDATE from self-supervised observation (TEM), then wrap the composer per-slot bind + spiking port' if go else 'the factored event composition did not clearly GO (read FACTORED vs recency + lesion; tune epochs/n_hid/p_promote)'}. NO sim/ edit.", flush=True)
+        # LOAD-BEARING controls (adversarial-verify-hardened): (1) the composed event >> the LAST-2-OBJECTS shallow reader
+        # (the AGENT-COREF op makes the task genuinely DEEP -> a 2-token reader FAILS = not a shallow lookup); (2) >> RECENCY;
+        # (3) the RECURRENCE-LESION collapses (the running state IS the mechanism). JOINT-K^2 is a CAPACITY note, not gated.
+        go = (fac > 0.7) and (fac - l2 > 0.3) and (fac - les > 0.3)
+        print(f"\n  AGGREGATE (K={a.K}, joint chance {chance:.3f}): FACTORED event(a,p) DEEPER={fac:.3f} | LAST-2-OBJECTS(shallow)={l2:.3f} | RECURRENCE-lesion={les:.3f} | RECENCY={rec:.3f} | JOINT-K^2 cap={jnt:.3f}", flush=True)
+        print(f"  VERDICT: {'GO' if go else 'PARTIAL/NEGATIVE'} -- {'the discrete-attractor maintains a running FACTORED (agent, patient) EVENT state to held-out-DEEPER lengths ('+format(fac,'.2f')+'), composing the relational role-shifts (agent-coref persistence + it-promotes) where a static LAST-2-OBJECTS reader FAILS ('+format(l2,'.2f')+' = the task is genuinely DEEP, NOT a 2-token lookup), RECENCY fails ('+format(rec,'.2f')+'), and a RECURRENCE-LESION collapses ('+format(les,'.2f')+' = the running state is the mechanism) -> D3 composes a running WHO-DID-WHAT-TO-WHOM MEANING across a discourse = the anti-RAG middle layer; next: learn the relational UPDATE from self-supervised observation (TEM), then wrap the composer per-slot bind + spiking port' if go else 'the deep event composition did not clearly GO (read FACTORED vs last-2-objects + lesion; tune p_coref/epochs/n_hid)'}. NO sim/ edit.", flush=True)
 
 
 if __name__ == "__main__":

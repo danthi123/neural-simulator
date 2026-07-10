@@ -2,11 +2,11 @@
  {
   "seed": 101,
   "K": 6,
-  "rate_event_deeper": 0.997,
-  "SPK_event_deeper": 0.983,
-  "SPK_agent": 0.983,
+  "rate_event_deeper": 0.981,
+  "SPK_event_deeper": 1.0,
+  "SPK_agent": 1.0,
   "SPK_patient": 1.0,
-  "agree_agent": 0.988,
+  "agree_agent": 0.995,
   "agree_patient": 1.0
  }
 ]

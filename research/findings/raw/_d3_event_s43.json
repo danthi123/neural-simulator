@@ -2,11 +2,12 @@
  {
   "seed": 43,
   "K": 6,
-  "FACTORED_event": 0.995,
-  "FACTORED_agent": 0.997,
+  "FACTORED_event": 0.981,
+  "FACTORED_agent": 0.983,
   "FACTORED_patient": 0.998,
-  "RECURRENCE_lesion": 0.172,
-  "recency_floor": 0.163,
-  "JOINT_capacity": 0.992
+  "RECURRENCE_lesion": 0.349,
+  "recency_floor": 0.381,
+  "last2_objects_floor": 0.371,
+  "JOINT_capacity": 0.929
  }
 ]
