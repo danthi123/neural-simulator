@@ -82,3 +82,31 @@ A bag-replay target is therefore a **smeared, lower-magnitude** version of a har
 ### Honest scope of this addendum
 - Both arms drop under agent-coherent episodes (0.455 / 0.406 vs 0.527 / 0.489): coherent events mean longer coref runs, so the held slot must survive longer. Harder task, reported.
 - Single-seed (42) for the addendum's two comparisons; the headline negative + replay mechanism above remain the 6-seed results.
+
+---
+
+## Addendum 2 (6-seed): the gap to ceiling was **replay strength**, and over-replay destroys the brain
+
+The addendum above proved a bag-replay target is *identically* the average of its per-symbol targets. The corollary I then followed: **summing** k per-symbol replays (rather than averaging) is the same target scaled by k — i.e. "sequence replay" reduces to a **loss-weight γ**. And under this generative model emissions are **i.i.d. given the agent**, so a replayed sequence's *order* carries **zero** additional information about the held agent. There is nothing for an ordered decoder to extract here. The only real lever is γ.
+
+Testing it (6 seeds, dev + blind):
+
+| | mean | range |
+|---|---|---|
+| prediction-only — held | 0.226 | 0.204 – 0.258 |
+| replay **γ=1** — held | 0.492 | 0.366 – 0.553 |
+| **replay γ=3 — held** | **0.597** | 0.385 – 0.689 |
+| replay γ=10 — held | 0.202 | 0.171 – 0.246 |
+| *one-emission ceiling* | *0.755* | 0.703 – 0.794 |
+| current slot: prediction-only | 0.698 | |
+| current slot: γ=3 | 0.664 | |
+| **current slot: γ=10** | **0.319** | 0.157 – 0.486 |
+
+**γ=3 reaches 79% of the one-emission ceiling** (0.597/0.755), up from 65% at γ=1 — and it costs the current slot only 0.698→0.664. This **corrects the "gap is real and unexplained" note above**: most of the gap was replay strength, exactly as the linearity result predicted (k≈3 is the typical prior-event length, and γ≈3 reproduces the summed-replay signal).
+
+**And over-replay catastrophically destroys both slots.** At γ=10 the held slot falls back to chance (0.202) *and* the current slot collapses (0.319, from 0.698). Replaying the past too strongly does not merely fail to help — it overwrites the ability to track the present. That is the **consolidation/interference trade-off** in its plainest form, and it emerged here from a loss weight rather than being built in.
+
+### Honest reporting
+- **Seed 43 stays the weak seed** (0.385 at γ=3 vs 0.689 on seed 42). The mechanism is real on all six but its strength is seed-variable; the γ=3 mean (0.597) rides seeds that reach 0.64–0.69.
+- γ was swept over {1, 3, 10, 30} on seed 42 and {1, 3, 10} on all six; no finer search was run, so γ=3 is "clearly better than 1 and 10," not a tuned optimum.
+- The remaining ~21% to the ceiling is not attributed.

@@ -1,0 +1,12 @@
+{
+ "seed": 102,
+ "ceiling": 0.703,
+ "predonly_prev": 0.231,
+ "predonly_curr": 0.683,
+ "g1.0_prev": 0.549,
+ "g1.0_curr": 0.707,
+ "g3.0_prev": 0.638,
+ "g3.0_curr": 0.692,
+ "g10.0_prev": 0.181,
+ "g10.0_curr": 0.209
+}
