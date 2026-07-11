@@ -1,0 +1,45 @@
+{
+  "runner": "_recurrent_lm_ceiling",
+  "cell": "lstm",
+  "V": 2000,
+  "block": 128,
+  "n_layer": 2,
+  "params_m": 3.9,
+  "dev": "cuda",
+  "corpus": "data/corpus/tinystories_train.txt",
+  "by_ctx_depth": {
+    "1-1": {
+      "recurrent_ce": 3.435,
+      "bigram_ce": 3.93,
+      "margin": 0.494
+    },
+    "2-2": {
+      "recurrent_ce": 3.132,
+      "bigram_ce": 3.927,
+      "margin": 0.795
+    },
+    "3-3": {
+      "recurrent_ce": 2.963,
+      "bigram_ce": 3.939,
+      "margin": 0.976
+    },
+    "4-8": {
+      "recurrent_ce": 2.669,
+      "bigram_ce": 3.938,
+      "margin": 1.27
+    },
+    "9-16": {
+      "recurrent_ce": 2.392,
+      "bigram_ce": 3.934,
+      "margin": 1.542
+    },
+    "17-128": {
+      "recurrent_ce": 2.12,
+      "bigram_ce": 3.933,
+      "margin": 1.813
+    }
+  },
+  "shallow_margin": 0.494,
+  "deep_margin": 1.813,
+  "elapsed_s": 684.6
+}
