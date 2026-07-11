@@ -108,7 +108,27 @@ def train_and_eval(res, tr, ev, V, beta, N_window, arm, epochs, lr, wd, seed, P_
     return depth, round(agg, 3)
 
 
-def interp_eval(res, tr, ev, V, beta, N_window, epochs, lr, wd, seed, P_bi):
+def build_context_keys(ids, emb, K, source):
+    """NON-FADING register keys (rank-1 de-risk): key_p = the last-K token embeddings ending at p. source='window' =
+       position-TAGGED concat (exact, non-fading, dim K*d_e); source='leaky_window' = fading sum Sum_j alpha^j e(x_{p-j})
+       (SAME content but FADING, the isolation control). Retrieval keys/query become these instead of the fading reservoir
+       state; the base read-out stays on the reservoir state."""
+    ids = np.asarray(ids); L = len(ids); d = emb.shape[1]
+    if source == "leaky_window":
+        C = np.zeros((L, d)); h = np.zeros(d)
+        for p in range(L):
+            h = 0.7 * h + emb[ids[p]]                            # alpha_leak=0.3 -> fading window, same content
+            C[p] = h
+        return C
+    C = np.zeros((L, K * d))                                     # position-tagged concat (non-fading, exact)
+    for p in range(L):
+        for j in range(K):
+            if p - j >= 0:
+                C[p, j * d:(j + 1) * d] = emb[ids[p - j]]
+    return C
+
+
+def interp_eval(res, tr, ev, V, beta, N_window, epochs, lr, wd, seed, P_bi, key_source="reservoir", key_emb=None, key_k=16):
     """kNN-LM-style interpolation read: train the BASE read-out on the reservoir state, then combine its prediction with
        the content-addressable retrieval distribution r_t as p_final = (1-lam)*p_base + lam*r_t (lam swept). Biologically
        a cortex(base) + hippocampal-retrieval(r_t) complementary-systems mix. Reports the BEST-lam CE by depth vs base
@@ -120,9 +140,14 @@ def interp_eval(res, tr, ev, V, beta, N_window, epochs, lr, wd, seed, P_bi):
     lams = [0.0, 0.05, 0.1, 0.2, 0.35, 0.5]
     # per-lam, per-depth CE
     agg = {la: defaultdict(float) for la in lams}; cnt = defaultdict(int)
+    shuf = key_source.endswith("_shuffle")                      # anti-cheat: scramble the key<->position map
     for ids in ev:
-        S = np.array(res.forward_states(ids))
-        R = content_read(S, ids, V, beta, res.n, N_window, "content", rng)
+        S = np.array(res.forward_states(ids))                   # reservoir state -> the BASE read-out (all arms)
+        if key_source in ("reservoir", "reservoir_shuffle"):
+            KEYS = S                                            # committed baseline: fading reservoir-state keys
+        else:
+            KEYS = build_context_keys(ids, key_emb, key_k, "leaky_window" if key_source == "leaky_window" else "window")
+        R = content_read(KEYS, ids, V, beta, KEYS.shape[1], N_window, "shuffle" if shuf else "content", rng)
         for t in range(len(ids) - 1):
             b = _bucket(t + 1); tgt = ids[t + 1]
             x = np.concatenate([(S[t] - mean) / std, [1.0]])
@@ -249,6 +274,10 @@ def main():
     ap.add_argument("--learned-keys", action="store_true")      # e-prop-train the reservoir first -> LEARNED keys (rung-2 test)
     ap.add_argument("--lr-rec", type=float, default=0.006)      # e-prop recurrent lr (when --learned-keys)
     ap.add_argument("--eprop-epochs", type=int, default=8)
+    ap.add_argument("--key-source", type=str, default="reservoir",
+                    choices=["reservoir", "reservoir_shuffle", "window", "leaky_window", "window_shuffle"])  # retrieval KEY representation
+    ap.add_argument("--key-k", type=int, default=16)             # non-fading register window (=full <=16-token sentence)
+    ap.add_argument("--key-dim", type=int, default=32)           # token embedding dim for the register keys
     ap.add_argument("--arms", type=str, nargs="+", default=["base", "content", "shuffle", "uniform", "recent1"])
     ap.add_argument("--json", type=str, default=str(OUT))
     args = ap.parse_args()
@@ -270,8 +299,11 @@ def main():
         rec = {"V": V, "by_arm": {}}
         for arm in args.arms:
             if arm == "interp":                                 # kNN-LM interpolation read (special eval)
+                key_emb = (np.random.default_rng(seed * 101 + 3).standard_normal((V, args.key_dim)) / np.sqrt(args.key_dim)
+                           if args.key_source != "reservoir" else None)
                 depth = interp_eval(res, tr_ids, ev_ids, V, args.beta, args.n_window,
-                                    args.epochs, args.lr, args.weight_decay, seed, P_bi)
+                                    args.epochs, args.lr, args.weight_decay, seed, P_bi,
+                                    key_source=args.key_source, key_emb=key_emb, key_k=args.key_k)
                 rec["by_arm"]["interp"] = {"by_depth": depth}
                 glam = next(iter(depth.values()))["global_lam"]
                 row = " ".join(f"d{k}:{depth[k]['gain']:+.3f}"
