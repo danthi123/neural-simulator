@@ -28,8 +28,19 @@
 ## Ties to the GPU/infra question (owner-asked)
 This is why the reservoir-LM has run on CPU: at the current data scale it is fast (~70–170s), and *growing the reservoir* — the thing GPU would accelerate — HURTS. The real lever (more DATA) makes the **sentence-serial reservoir forward the CPU bottleneck** (linear in sentences), and THAT is when the GPU work pays off — but not by flipping `enable_rf_cudagraph` (that megakernel is RF-resonate-specific; the reservoir uses the general Izhikevich `_run_one_simulation_step`, plus a per-step `to_host` device→host sync). The enabling infra for the data-scale path is: (1) a CUDA-graph capture of the Izhikevich step, (2) on-device firing accumulation (drop the per-step `to_host`), (3) sentence batching — all precedented in the project, none built for this path. See the AUTONOMOUS_STATE infra note.
 
-## OPEN (the decisive confirmation, deferred — heavy CPU run, held while the owner games)
-Run n_pool ∈ {300, 1000} with MUCH more data (e.g. 4000–8000 train sentences) and check: does the n_pool=300 margin GROW with data (the emergent generator improving with scale — the promising direction), and does the n_pool=1000 margin recover/exceed it once data is co-scaled (confirming the data-lever diagnosis)? This is the single most important scale experiment; it is a long CPU run (and its scaled form is what the batched-GPU infra above would accelerate).
+## DATA sweep at n_pool=300 (the crucial one) — the bigram CATCHES UP with more data; the reservoir's edge is REGIME-DEPENDENT
+| train sentences | reservoir CE (acc) | bigram CE (acc) | margin |
+|---|---|---|---|
+| 1400 | 3.264 (0.320) | 3.416 (0.365) | **+0.152** (reservoir beats bigram) |
+| 5000 | 3.072 (0.338) | **3.040** (0.369) | **−0.032** (bigram overtakes) |
+
+**With more data the BIGRAM improves MORE than the reservoir** (bigram CE 3.416→3.040 = −0.376; reservoir 3.264→3.072 = −0.192): the bigram was *data-starved* at 1400 sentences (many unseen bigrams under add-1 smoothing), and with 5000 it fits its ~V² table far better and edges past the 300-neuron reservoir, which is near its capacity ceiling. (Permuted-corpus control still collapses at 5000 → the reservoir does capture real structure; it just no longer *beats* a well-estimated bigram.)
+
+## ⇒ the honest, refined picture (this TEMPERS the real-text GO)
+Neither lever helps in isolation: **more reservoir overfits at fixed data** (+0.152→−0.42 as n_pool 300→1000 at 1400 sents), and **more data helps the bigram more at a fixed small reservoir** (+0.152→−0.032 as data 1400→5000 at n_pool=300). So the emergent generator's edge over the bigram on real text is REAL but **regime-dependent** — it lives in a narrow small-data + moderate-reservoir window, not a robust advantage that grows with either axis alone. A robust edge would require **co-scaling reservoir size WITH data** (a bigger reservoir, which overfits at 1400 sents, may become matched — and beat the bigram again — at 5000+). The committed 3-seed real-text GO (`-emergent-generator-beats-bigram-on-real-text.md`) stands but must be read at its scale (V=200, 1400 sentences, n_pool=300 — the bigram-data-starved regime); it is a foothold, not a robust win.
+
+## OPEN (the single decisive experiment, deferred — heavy CPU run, held while the owner games)
+**Does co-scaling recover a robust edge?** Run n_pool=1000 (which overfit at 1400 sents) at 5000–8000 sentences: if the larger reservoir — now matched to more data — beats the well-estimated bigram, the path scales by co-scaling size+data (promising, and exactly what the batched-GPU infra would accelerate). If it still ties/loses, the reservoir+linear-read-out architecture plateaus near the bigram on real text at this scale, and the honest wall is the field's (much bigger models + much more data). This co-scale run is the most important remaining scale experiment.
 
 ## Files
 `_emerge_reservoir_lm_realcorpus_derisk.py`; raw `research/findings/raw/_rc/ts_s42.json`, `_rc_scale/np{600,1000}_s42.json`, `_rc_reg/np1000_wd{0.01,0.05,0.1}_s42.json`. Follows `2026-07-11-SCALE-emergent-generator-beats-bigram-on-real-text.md`.
