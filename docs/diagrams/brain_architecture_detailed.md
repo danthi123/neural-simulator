@@ -19,6 +19,8 @@ Each box is a group of neurons doing one job, labelled with its **plain function
 
 Arrow styles: a **solid** arrow is an excitatory (driving) signal; a **dotted** arrow is inhibitory or a gating/modulatory signal; a **thick** arrow is the main signal path.
 
+*Working memory appears across several diagrams as one shared faculty — holding the goal (diagram 2), the reading reservoir's lingering activity (diagram 3), and the discourse register (diagram 4) — not one box.*
+
 ---
 
 ## 1. Master map — the whole brain, one engine, two configurations
@@ -28,13 +30,14 @@ The simulator is *one* network of spiking neurons on a single update loop. From 
 ```mermaid
 flowchart TB
     World(["🌍 Simulated world — renders what the agent sees, enacts its movements"]):::io
+    Turn(["💬 A sentence — the user's turn"]):::io
 
     subgraph ENGINE["🧠 One brain — spiking neurons + synapses on a single update loop"]
       direction TB
 
       subgraph SENSE["Sensing"]
         direction LR
-        VIS["Vision — retina to primary visual cortex<br/><small>oriented-edge (Gabor) detectors · what and where streams</small>"]:::sense
+        VIS["Vision — retina to primary visual cortex<br/><small>orientation-selective edge detectors · what and where streams</small>"]:::sense
       end
 
       subgraph SM["The navigating brain — reach goals by moving"]
@@ -64,6 +67,7 @@ flowchart TB
     World ==>|pixels| VIS
     VIS ==> NAV
     NAV ==>|movement| Body
+    Turn ==>|a sentence| COMP
     World -->|a spoken command steers movement| NAV
 
     VIS -.->|what it saw while moving| MEM
@@ -90,7 +94,7 @@ flowchart TB
 
 ## 2. The navigating brain — reach goals by moving, using only what it sees
 
-The project's oldest and most-tested behaviour: an agent explores a world and reaches (or re-reaches, when it moves) a goal, choosing each step by a **spiking evidence-race** through the basal ganglia — the hand-coded winner-take-all shortcut is retired. Per-direction pools (north/east/south/west) are drawn once with a ×4 badge.
+The project's oldest and most-tested behaviour: an agent explores a world and reaches (or re-reaches, when it moves) a goal, choosing each step by a **spiking evidence-race** through the basal ganglia — the earlier hand-coded pick-one-winner shortcut is retired. Per-direction pools (north/east/south/west) are drawn once with a ×4 badge.
 
 ```mermaid
 flowchart TB
@@ -99,17 +103,18 @@ flowchart TB
     subgraph PERC["Seeing — visual cortex (what and where)"]
       direction TB
       RET["Retina 🌍<br/><small>on/off contrast image</small>"]:::sense
-      V1["Primary visual cortex ✅<br/><small>oriented-edge (Gabor) detectors — Hubel-Wiesel</small>"]:::sense
+      V1["Primary visual cortex ⚙<br/><small>orientation-selective edge detectors (Hubel-Wiesel simple cells · modelled as fixed Gabor filters)</small>"]:::sense
       HI["Higher visual areas ◐<br/><small>object 'what' stream toward temporal cortex</small>"]:::sense
-      PLACE["Place and goal signals ⚙<br/><small>where-I-am / where-the-goal-is (hippocampal place cells · some still supplied as code)</small>"]:::sense
+      PLACE["Place and goal signals ⚙<br/><small>where-I-am / where-the-goal-is (hippocampal place cells · still partly hand-supplied rather than computed by the circuit)</small>"]:::sense
       RET ==> V1 ==> HI --> PLACE
     end
 
     subgraph ORIENT["Where to look — superior colliculus (orienting reflex)"]
       direction TB
       SCM["'Look here' map<br/><small>retinotopic sheet · a single bump at the goal's location</small>"]:::orient
-      SCFS["Contrast sharpening<br/><small>Mexican-hat surround — inhibits neighbours to sharpen the bump</small>"]:::orient
-      SCM -.-> SCFS
+      SCFS["Contrast sharpening<br/><small>Mexican-hat surround — sharpens the bump</small>"]:::orient
+      SCM --> SCFS
+      SCFS -.->|inhibits the surround| SCM
     end
 
     subgraph GOALWM["Holding the goal — prefrontal working memory"]
@@ -122,14 +127,17 @@ flowchart TB
       D1["'Go' pathway ×4 · learns<br/><small>direct striatal cells (D1) — release the brake on this action</small>"]:::str
       D2["'No-go' pathway ×4<br/><small>indirect striatal cells (D2) — suppress competing actions</small>"]:::str
       FSI["Feedforward competition ×4<br/><small>fast-spiking interneurons — sharpen the winner</small>"]:::stri
-      GPE["Pallidum GPe ×4<br/><small>pacemaker relay of the no-go pathway</small>"]:::pall
-      STN["Subthalamic nucleus<br/><small>diffuse 'hold everything' excitation (shared)</small>"]:::pall
+      GPE["Pallidum GPe ×4<br/><small>relay of the no-go pathway</small>"]:::pall
+      STN["Subthalamic nucleus<br/><small>diffuse 'hold everything' excitation (shared brake)</small>"]:::pall
       GPI["Output gate GPi/SNr ×4<br/><small>tonically inhibits the thalamus · releasing it selects the action</small>"]:::pall
       CTX ==> D1
       CTX ==> D2
-      CTX -.-> FSI -.-> D1
-      D2 -.-> GPE -.-> GPI
-      CTX --> STN -.-> GPI
+      CTX --> FSI
+      FSI -.->|winner-take-all| D1
+      D2 -.->|inhibits| GPE
+      GPE -.->|inhibits| STN
+      CTX -->|hyperdirect drive| STN
+      STN ==>|excites — raises the brake| GPI
       D1 -.->|removes the brake| GPI
     end
 
@@ -137,16 +145,16 @@ flowchart TB
       direction TB
       THAL["Thalamus ×4<br/><small>disinhibited when its action's gate opens</small>"]:::thal
       ACC["Evidence race<br/><small>each action accumulates evidence (Wang 2002 attractor)</small>"]:::decide
-      COMMIT["Commitment burst<br/><small>the first to cross threshold fires an all-or-none commit (Lo-Wang) — retires the old code shortcut</small>"]:::decide
+      COMMIT["Commitment burst<br/><small>the first to cross threshold fires an all-or-none commit (Lo-Wang) — replaces the earlier hand-designed pick-the-winner step</small>"]:::decide
       THAL ==> ACC ==> COMMIT
     end
 
     subgraph REWARD["Learning the route — dopamine reward signal"]
       direction TB
       SNC["Dopamine neurons<br/><small>fire the reward-prediction-error (actual minus expected) · this same core also drives conversation</small>"]:::reward
-      VCRIT["Value critic ◐<br/><small>how good is this situation (the expected part) — partly code, being built as a circuit</small>"]:::reward
+      VCRIT["Value critic ◐<br/><small>how good is this situation — the 'expected' part (partly code, being built as a circuit)</small>"]:::reward
       SNC -.->|three-factor learning| D1
-      VCRIT --> SNC
+      VCRIT -.->|subtracts the expected value| SNC
     end
 
     subgraph MEMNAV["Spatial memory — hippocampus"]
@@ -164,7 +172,6 @@ flowchart TB
     HIPPO --> PLACE
     COMMIT ==> Body
     Spoken -.->|routes the command to a direction| CTX
-    COMMIT -.-> SNC
 
     classDef io fill:#eef1f4,stroke:#7a8794,color:#1d1d1f;
     classDef sense fill:#d6eaf8,stroke:#2e6da4,color:#10303f;
@@ -191,20 +198,20 @@ flowchart TB
     Words(["💬 A sentence — flexible word order"]):::io
 
     subgraph LEARNCX["Word meaning — learned by listening ✅"]
-      STREAM["Word-meaning cortex ✅<br/><small>anterior-temporal concept hub · meaning learned from a text stream — similar words end up close together (~320 concepts)</small>"]:::conv
+      STREAM["Word-meaning cortex ✅<br/><small>anterior-temporal concept hub · meaning learned from a text stream — similar words end up close together (~320 concepts · one normalization step still done in code)</small>"]:::conv
     end
 
     subgraph UNDERSTAND["Understanding — who did what to whom"]
       direction TB
-      PARSE["Sentence parser ✅<br/><small>Wernicke-style · maps word position to role, regardless of active/passive voice</small>"]:::conv
-      RES["Reading reservoir ✅<br/><small>fronto-striatal recurrent network (Hinaut-Dominey) · its lingering activity carries structure, resolving long-distance dependencies</small>"]:::conv
+      PARSE["Sentence parser ✅<br/><small>language-comprehension cortex (Wernicke's area) — maps word position to role, regardless of active/passive voice</small>"]:::conv
+      RES["Reading network — trained read-out ✅<br/><small>a fixed recurrent network (Hinaut-Dominey) whose lingering activity carries the sentence's structure · a trained read-out pulls out the roles, resolving long-distance dependencies</small>"]:::conv
       ROLES{{"Actor · action · thing-acted-on"}}:::conv
       PARSE ==> RES ==> ROLES
     end
 
     subgraph FACT["Fact memory"]
       direction TB
-      BIND["Bind into a fact ⚙<br/><small>phase-based resonate-and-fire neurons + complex synapses · the binding is a fixed algebra standing in for a learned cortical binder</small>"]:::conv
+      BIND["Tie the roles into one fact ⚙<br/><small>neurons that signal with timing/phase lock the actor, action and thing-acted-on into one reusable pattern · a fixed mathematical rule stands in for a binding step the cortex would normally learn</small>"]:::conv
       STORE["Fact store<br/><small>each fact written as a pattern into synapses · holds many, persistently</small>"]:::mem
       BIND ==> STORE
     end
@@ -260,6 +267,7 @@ flowchart TB
       direction TB
       REG["Who-is-acting register ✅<br/><small>prefrontal working-memory slots (Grosz-Sidner focus stack) · a topic-shift pushes the current actor aside, a return pops it back</small>"]:::plan
       ANAPH["Pronoun resolution<br/><small>'it / they' to the referent held in working memory across turns</small>"]:::plan
+      WM["Nesting / bounded stack ◐<br/><small>a slotted buffer (Lisman-Idiart theta-gamma) matches nested structure up to depth ~3 — the human-faithful limit</small>"]:::plan
       REG --> ANAPH
     end
 
@@ -283,7 +291,7 @@ flowchart TB
 
     subgraph OPEN["Open-ended prose — the two phrasing paths"]
       direction TB
-      EMERG["Home-grown generator ✅ (first rung)<br/><small>a fixed reservoir + a locally-trained next-word read-out (no backpropagation) — beats the standard baselines, so far over a small vocabulary</small>"]:::gen
+      EMERG["Home-grown generator ✅ (first rung)<br/><small>a fixed recurrent network with a small next-word read-out trained locally (not by the usual global training method) — already out-performs simple predictors, so far over a small vocabulary</small>"]:::gen
       CRUTCH["Small conventional model 🧩<br/><small>a temporary crutch for fluent open prose — the one remaining external model, being replaced by the home-grown path</small>"]:::crutch
     end
 
@@ -320,7 +328,7 @@ flowchart LR
       DG["Dentate gyrus<br/><small>keeps memories separate</small>"]:::mem
       CA3["CA3 autoassociator<br/><small>completes a memory from a fragment (Marr)</small>"]:::mem
       CA1["CA1 read-out"]:::mem
-      REPLAY["Sleep replay<br/><small>replays the day's learning so it sticks — and does the job backpropagation-through-time does (no forgetting)</small>"]:::sleep
+      REPLAY["Sleep replay<br/><small>replays the day's experience during 'sleep' so it sticks — learning sequences over time without overwriting older memories</small>"]:::sleep
       TAG["Memory tags<br/><small>tag a trace, reactivate it later (engram cells)</small>"]:::mem
       EC ==> DG ==> CA3 ==> CA1
       CA3 <-.-> REPLAY
@@ -331,7 +339,8 @@ flowchart LR
       direction TB
       DA["Dopamine — reward-prediction-error<br/><small>actual minus expected reward (Schultz)</small>"]:::reward
       DRIVE["Hunger / drive<br/><small>a hungry brain gets more careful about what it claims to know</small>"]:::reward
-      DA -.-> DRIVE
+      NE["Arousal / surprise (noradrenaline)<br/><small>an unexpected outcome speeds up learning</small>"]:::reward
+      DRIVE -.->|hunger raises dopamine| DA
     end
 
     subgraph LEARNRULES["Learning rules (on every plastic synapse)"]
@@ -339,7 +348,7 @@ flowchart LR
       STDP["Spike-timing plasticity"]:::learn
       HEBB["Hebbian co-occurrence ✅<br/><small>the rule the word-cortex learns by</small>"]:::learn
       THREE["Three-factor (dopamine-gated)"]:::learn
-      DEND["Dendritic deep learning ◐<br/><small>the top open lever — a two-compartment burst rule (Payeur-Naud) · works idealized, being brought fully onto spikes</small>"]:::learn
+      DEND["Dendritic credit assignment ◐<br/><small>the top open lever — a two-compartment (top + bottom) burst rule (Payeur-Naud) that lets deep layers learn · idealized now, being brought fully onto spikes</small>"]:::learn
     end
 
     subgraph LIFE["Living over simulated days"]
@@ -353,6 +362,7 @@ flowchart LR
     end
 
     DA -.->|gates| THREE
+    NE -.->|speeds| STDP
     HEBB -.-> MEMORY
     REPLAY -.-> SLEEP2
 
@@ -373,4 +383,6 @@ flowchart LR
 - **Per-direction and per-concept pools are collapsed** (a "×4" or "×N" badge) — the real network has one pool per direction (north/east/south/west) and per concept.
 - **A few regions are drawn once but are shared** by both configurations (the hippocampus, the dopamine core).
 - The brain is **assembled per configuration** from a declarative region/pathway grammar; a given run builds a subset of what's shown (these diagrams show the fuller picture).
-- Anything marked ⚙ (a fixed stand-in), 🧩 (the external crutch), or ◐ (partial) is a tracked item on the way to being replaced or completed — see [`ROADMAP.md`](../../ROADMAP.md) sections 8 and 9 for each one's replacement plan.
+- **Noradrenaline / serotonin / acetylcholine** are framework-supported but only partly used (◐); dopamine is the fully-deployed neuromodulator.
+- **The human interfaces** — the real-time 3-D viewer, the talkable chat console, the develop-over-days launcher, the experiment system, and the biological validation suite — are the windows into the brain, not brain computations, and are described in [`ROADMAP.md`](../../ROADMAP.md) §7 rather than drawn here. The **cerebellum** is intentionally absent (cell presets only, no circuit — an open item, ROADMAP §6).
+- Anything marked ⚙ (a fixed stand-in), 🧩 (the external crutch), or ◐ (partial) is a tracked item on the way to being replaced or completed — see [`ROADMAP.md`](../../ROADMAP.md) §8–9 for each one's replacement plan.
