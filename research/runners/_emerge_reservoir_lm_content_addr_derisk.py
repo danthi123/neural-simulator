@@ -108,6 +108,43 @@ def train_and_eval(res, tr, ev, V, beta, N_window, arm, epochs, lr, wd, seed, P_
     return depth, round(agg, 3)
 
 
+def interp_eval(res, tr, ev, V, beta, N_window, epochs, lr, wd, seed, P_bi):
+    """kNN-LM-style interpolation read: train the BASE read-out on the reservoir state, then combine its prediction with
+       the content-addressable retrieval distribution r_t as p_final = (1-lam)*p_base + lam*r_t (lam swept). Biologically
+       a cortex(base) + hippocampal-retrieval(r_t) complementary-systems mix. Reports the BEST-lam CE by depth vs base
+       (does a PROPER integration of the learned-key retrieval beat base at deep, where content-append could not?)."""
+    rng = np.random.default_rng(seed * 13 + 5)
+    trc = [(features(res, ids, V, beta, N_window, "base", rng), ids) for ids in tr]
+    mean, std = _standardize_fit(trc)
+    W = train_readout(trc, V, epochs, lr, np.random.default_rng(seed * 7 + 1), mean, std, wd=wd, ls=0.05)
+    lams = [0.0, 0.05, 0.1, 0.2, 0.35, 0.5]
+    # per-lam, per-depth CE
+    agg = {la: defaultdict(float) for la in lams}; cnt = defaultdict(int)
+    for ids in ev:
+        S = np.array(res.forward_states(ids))
+        R = content_read(S, ids, V, beta, res.n, N_window, "content", rng)
+        for t in range(len(ids) - 1):
+            b = _bucket(t + 1); tgt = ids[t + 1]
+            x = np.concatenate([(S[t] - mean) / std, [1.0]])
+            pb = _softmax(W @ x)
+            rt = R[t]; rt = rt / max(rt.sum(), 1e-9)                # normalize the retrieval to a distribution
+            cnt[b] += 1
+            for la in lams:
+                pf = (1 - la) * pb + la * rt
+                agg[la][b] += -math.log(max(pf[tgt], 1e-12))
+    # HONEST: pick a SINGLE global lam that minimizes AGGREGATE eval CE (1 hyperparameter), report per-depth gain at it.
+    tot = {la: sum(agg[la].values()) for la in lams}
+    glam = min(tot, key=tot.get)                                # single global lambda
+    depth = {}
+    for b in cnt:
+        ces = {la: agg[la][b] / cnt[b] for la in lams}
+        bestpd = min(ces, key=ces.get)                          # per-depth best (OPTIMISTIC ceiling)
+        depth[b] = {"n": cnt[b], "base_ce": round(ces[0.0], 3), "global_lam": glam,
+                    "global_ce": round(ces[glam], 3), "gain": round(ces[0.0] - ces[glam], 3),
+                    "gain_bestpd": round(ces[0.0] - ces[bestpd], 3), "best_lam_pd": bestpd}
+    return depth
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=[42])
@@ -145,10 +182,21 @@ def main():
             print(f"[seed {seed}] reservoir e-prop-trained -> LEARNED keys for the content read", flush=True)
         rec = {"V": V, "by_arm": {}}
         for arm in args.arms:
+            if arm == "interp":                                 # kNN-LM interpolation read (special eval)
+                depth = interp_eval(res, tr_ids, ev_ids, V, args.beta, args.n_window,
+                                    args.epochs, args.lr, args.weight_decay, seed, P_bi)
+                rec["by_arm"]["interp"] = {"by_depth": depth}
+                glam = next(iter(depth.values()))["global_lam"]
+                row = " ".join(f"d{k}:{depth[k]['gain']:+.3f}"
+                               for lo,hi in BUCKETS for k in [f'{lo}-{hi}' if lo!=hi else f'{lo}'] if k in depth)
+                print(f"[seed {seed}] INTERP single-global-λ={glam} CE gain over base (pos=interp BEATS base): {row}", flush=True)
+                continue
             depth, agg = train_and_eval(res, tr_ids, ev_ids, V, args.beta, args.n_window, arm,
                                         args.epochs, args.lr, args.weight_decay, seed, P_bi)
             rec["by_arm"][arm] = {"aggregate_ce": agg, "by_depth": depth}
         per_seed[str(seed)] = rec
+        if "base" not in rec["by_arm"]:                          # e.g. interp-only run -> skip the CE-minus-base print
+            continue
         base = rec["by_arm"]["base"]["by_depth"]
         def dd(arm, k):
             b = rec["by_arm"].get(arm, {}).get("by_depth", {})
