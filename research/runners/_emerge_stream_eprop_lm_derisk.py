@@ -77,7 +77,7 @@ ALL_ARMS = RESERVOIR_ARMS + ["BPTT_same_net"]          # the 5 pre-registered ar
 # eligibility propagates credit forward over long spans, so e-prop can reach the DEEP within-block context the plain
 # forward-filtered (~1/alpha) eligibility cannot. Ported faithfully from `_emerge_reservoir_lm_eprop_recurrent_derisk`.
 ALIF_ARMS = ["plastic_eprop_alif", "plastic_eprop_alif_readonly"]
-EXTRA_ARMS = ["BPTT_fixed_win", "plastic_eprop_dualtc"] + ALIF_ARMS   # isolation/lever arms (R1b BPTT-fixed-W_in; R2b dual-timescale eligibility; R2 ALIF)
+EXTRA_ARMS = ["BPTT_fixed_win", "plastic_eprop_dualtc", "plastic_eprop_dualtc_shuffle"] + ALIF_ARMS   # isolation/lever/anti-cheat arms (R1b BPTT-fixed-W_in; R2b dual-timescale eligibility + its shuffle control; R2 ALIF)
 KNOWN_ARMS = ALL_ARMS + EXTRA_ARMS
 
 
@@ -184,7 +184,8 @@ def train_eprop(mode, init, tr_lanes, V, n, alpha, B, epochs, lr_out, lr_rec, wd
     nb = (lane - 1) // B
     ar = torch.arange(batch, device=dev)
     plastic = (mode != "fixed_reservoir")
-    dualtc = (mode == "plastic_eprop_dualtc")              # dual-timescale eligibility (slow credit horizon, no forward change)
+    dualtc = mode in ("plastic_eprop_dualtc", "plastic_eprop_dualtc_shuffle")   # dual-timescale eligibility (slow credit horizon, no forward change)
+    dualtc_shuffle = (mode == "plastic_eprop_dualtc_shuffle")   # ANTI-CHEAT: permute the combined eligibility (same magnitude, broken structure -> lift must collapse if it is genuine credit, not capacity/magnitude)
     for ep in range(epochs):
         for j in range(nb):                                # consecutive contiguous blocks (deterministic order = fair)
             s = j * B
@@ -222,6 +223,9 @@ def train_eprop(mode, init, tr_lanes, V, n, alpha, B, epochs, lr_out, lr_rec, wd
                     e_use = e.reshape(batch, n * n)[:, perm].reshape(batch, n, n)
                 elif dualtc:
                     e_use = e + e_slow                     # dual-timescale credit (fast + slow horizon)
+                    if dualtc_shuffle:                     # anti-cheat: permute the combined eligibility (magnitude kept, structure broken)
+                        perm = torch.randperm(n * n, device=dev)
+                        e_use = e_use.reshape(batch, n * n)[:, perm].reshape(batch, n, n)
                 else:
                     e_use = e
                 dW = lr_rec * (L.unsqueeze(2) * e_use).mean(0)      # average the per-lane W_rec updates over the batch
@@ -738,7 +742,7 @@ def main():
             W_rec, W_out, W_in, b = train_eprop_alif(arm, init, alif_extra, tr_lanes, V, n, args.alpha,
                                                      alif_extra["rho"], args.beta, B, args.epochs,
                                                      args.lr_out, args.lr_rec, args.wd_out, dev)
-        elif arm in RESERVOIR_ARMS or arm == "plastic_eprop_dualtc":
+        elif arm in RESERVOIR_ARMS or arm in ("plastic_eprop_dualtc", "plastic_eprop_dualtc_shuffle"):
             W_rec, W_out, W_in, b = train_eprop(arm, init, tr_lanes, V, n, args.alpha, B, args.epochs,
                                                 args.lr_out, args.lr_rec, args.wd_out, dev, a_slow=args.a_slow)
         else:
@@ -860,8 +864,34 @@ def main():
                   f"{alif_shuffle['deep_margin']:+.4f}  ({'COLLAPSES (content, real)' if collapses else 'does NOT collapse (capacity confound?)'})",
                   flush=True)
 
+    # ---- DUAL-TIMESCALE eligibility (R2b): clean fraction + the shuffle anti-cheat (is the deep lift genuine credit or magnitude?) ----
+    dualtc_clean = {}
+    if "plastic_eprop_dualtc" in arms and "fixed_reservoir" in arms and "plastic_eprop" in arms:
+        f_deep = arms["fixed_reservoir"]["deep_margin"]
+        dt = arms["plastic_eprop_dualtc"]; pe = arms["plastic_eprop"]
+        dt_gain = dt["deep_margin"] - f_deep; pe_gain = pe["deep_margin"] - f_deep
+        print("\n[stream-eprop] DUAL-TIMESCALE eligibility (slow credit horizon, NO forward change):", flush=True)
+        for bp in ("BPTT_fixed_win", "BPTT_same_net"):
+            if bp in arms:
+                b_gain = arms[bp]["deep_margin"] - f_deep
+                fd = round(dt_gain / b_gain, 4) if abs(b_gain) > 1e-6 else None
+                tag = " <- CLEANEST (identical frozen W_in)" if bp == "BPTT_fixed_win" else " (BPTT also learns W_in)"
+                dualtc_clean[bp] = {"frac_clean_deep": fd, "dualtc_deep_gain": round(dt_gain, 4)}
+                print(f"    vs {bp:>15}: frac_clean_deep {fd}  (dualtc +{dt_gain:.3f} / bptt +{b_gain:.3f} deep){tag}", flush=True)
+        print(f"    DUALTC deep lift over plain e-prop = {dt['deep_margin']:+.4f} - {pe['deep_margin']:+.4f} = "
+              f"{dt['deep_margin'] - pe['deep_margin']:+.4f}  (shallow: {dt['shallow_margin']:+.4f} vs {pe['shallow_margin']:+.4f})",
+              flush=True)
+        if "plastic_eprop_dualtc_shuffle" in arms:                 # the decisive anti-cheat: same magnitude, broken structure
+            sh = arms["plastic_eprop_dualtc_shuffle"]
+            collapses = sh["deep_margin"] <= pe["deep_margin"] + 0.05
+            dualtc_clean["shuffle"] = {"deep_margin": round(sh["deep_margin"], 4), "collapses_to_plain_or_below": bool(collapses)}
+            print(f"    DUALTC-SHUFFLE anti-cheat (permute the combined eligibility -- magnitude kept, structure broken): "
+                  f"dualtc deep {dt['deep_margin']:+.4f} -> shuffled {sh['deep_margin']:+.4f} "
+                  f"({'COLLAPSES to <= plain (lift is genuine CREDIT, not magnitude)' if collapses else 'does NOT collapse (MAGNITUDE confound -- lift is not credit-structure)'})",
+                  flush=True)
+
     out = {"runner": "_emerge_stream_eprop_lm_derisk", "corpus": args.corpus, "seed": args.seed, "V": V,
-           "n_pool": n, "block": B, "batch": args.batch, "lane": lane, "epochs": args.epochs,
+           "n_pool": n, "block": B, "batch": args.batch, "lane": lane, "epochs": args.epochs, "dualtc_clean_fraction": dualtc_clean,
            "bptt_steps": args.bptt_steps, "dev": dev, "permute_stream": bool(args.permute_stream),
            "args": vars(args), "arms": arms, "byte_identical_zero_eq_fixed": byte_identical, "gate": gate,
            "clean_recurrent_credit_fraction": clean, "alif_clean_fraction": alif_clean,
