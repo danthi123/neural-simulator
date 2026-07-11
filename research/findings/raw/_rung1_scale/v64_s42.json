@@ -1,0 +1,129 @@
+{
+  "probe": "emerge_reservoir_lm",
+  "verdict": "GO -- a FIXED on-bridge spiking reservoir (EMERGE-82 OnBridgeLSM: a recurrent Izhikevich BrainRegion on a real SimulationBridge, genuinely active at 0.0287 spikes/neuron/step) + a SHALLOW linear-softmax read-out trained ONLINE by the ONE-STEP next-token delta rule (NO BPTT, NO weight transport -- the next token IS the clean local target) is an autoregressive TOKEN-level LANGUAGE MODEL that BEATS the bigram on held-out next-token cross-entropy: reservoir CE 1.805 (acc 0.501) < bigram 2.304 (acc 0.443) by 0.499 nats [trigram ceiling 2.513, unigram floor 3.365, chance 4.159] -- the reservoir's fading-memory recurrence carries higher-order context a bigram cannot. Every anti-cheat COLLAPSES: shuffled-state (permute S[t]) CE 4.855 >= bigram (temporal alignment load-bearing); permuted-corpus (scramble train word-order, fresh read-out) CE 3.149 >= bigram (no learnable structure); frozen (untrained) CE 4.159 == chance; silenced (drive OFF) CE 3.297 >= bigram (the read is from the region's driven SPIKES). 1 seeds, state-feature=running_cumulative. ==> emergent, learned-from-experience, on-bridge, no-BPTT language generation with a local output-layer rule -- the ESN/LSM discipline (fixed recurrent cortex + locally-trained read-out) on the project's own spiking substrate. HONEST SCOPE: a TOKEN-level LM over the BOUNDED controlled EMERGE stream (a closed template grammar), NOT open prose (R4). Reuse-by-import (EMERGE-82 OnBridgeLSM + EMERGE-61 wash-out + EMERGE-62 stream); NO sim/ edit; NO edit to any existing runner.",
+  "go": true,
+  "state_feature": "running_cumulative",
+  "state_feature_choice": "DEFAULT running_cumulative -- the OnBridgeLSM's own validated read (its final_state returns the cumulative-normalized pool rate); it integrates the WHOLE prefix (the fading memory lives in the recurrent dynamics; the cumulative read is a stable low-variance summary), which lets the next-token predictor exploit higher-order context a bigram cannot. per_window (spikes in token t's window) is the recency-emphasizing selectable alternative.",
+  "mechanism": "a FIXED on-bridge spiking reservoir (EMERGE-82 OnBridgeLSM: a recurrent Izhikevich BrainRegion on a real SimulationBridge; internal_density recurrent conductance synapses; input one-hot over a closed token vocab drives cp_external_input_current; the read feature = the region's cp_firing_states spike-counts per token; EMERGE-61 wash-out between sentences) + a SHALLOW linear-softmax read-out trained ONLINE by the ONE-STEP next-token delta rule (Widrow-Hoff on the clean, locally-observed next-token error -- NO backprop-through-time, NO weight transport; reservoir + input projection are fixed-random, only the output read-out is learned). Reuse-by-import; NO sim/ edit; NO edit to any existing runner.",
+  "task": "autoregressive TOKEN-level next-token language model over the controlled EMERGE stream: does the fixed reservoir + local-delta read-out BEAT the bigram on held-out next-token cross-entropy, while every anti-cheat (shuffled-state, permuted-corpus, frozen read-out, silenced reservoir) collapses; the region genuinely active; 6-seed; bridge on numpy/cupy",
+  "thresholds": {
+    "margin_nats": 0.05,
+    "eps_nats": 0.03,
+    "frozen_tol": 0.05,
+    "active_min": 0.0001
+  },
+  "params": {
+    "n_pool": 300,
+    "vocab": 64,
+    "epochs": 12,
+    "lr": 0.005,
+    "weight_decay": 0.001,
+    "label_smoothing": 0.05,
+    "n_sentences": 3000,
+    "max_train_sents": 1200,
+    "max_eval_sents": 250,
+    "max_ctrl_sents": 300,
+    "max_ctrl_eval": 120,
+    "rollout_len": 8
+  },
+  "seeds": [
+    42
+  ],
+  "elapsed_seconds": 46.4,
+  "aggregate": {
+    "reservoir_ce": 1.8053601122287932,
+    "reservoir_acc": 0.5005192107995846,
+    "bigram_ce": 2.304152840036607,
+    "bigram_acc": 0.4434060228452752,
+    "trigram_ce": 2.512751554543719,
+    "unigram_ce": 3.3645888238606556,
+    "chance_ce": 4.1588830833596715,
+    "shuffled_state_ce": 4.855206846499385,
+    "permuted_corpus_ce": 3.1486608495263457,
+    "frozen_ce": 4.158883083359709,
+    "silenced_ce": 3.297484824931536,
+    "mean_rate_per_neuron_step": 0.02870168086419753
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "V": 64,
+      "n_pool": 300,
+      "state_feature": "running_cumulative",
+      "n_sentences": 3000,
+      "n_train_used": 1200,
+      "n_eval_used": 250,
+      "heldout_string_overlap_train": 0.432,
+      "mean_rate_per_neuron_step": 0.02870168086419753,
+      "reservoir_ce": 1.8053601122287932,
+      "reservoir_acc": 0.5005192107995846,
+      "bigram_ce": 2.304152840036607,
+      "bigram_acc": 0.4434060228452752,
+      "trigram_ce": 2.512751554543719,
+      "trigram_acc": 0.48286604361370716,
+      "unigram_ce": 3.3645888238606556,
+      "chance_ce": 4.1588830833596715,
+      "shuffled_state_ce": 4.855206846499385,
+      "permuted_corpus_ce": 3.1486608495263457,
+      "frozen_ce": 4.158883083359709,
+      "silenced_ce": 3.297484824931536,
+      "shuffled_state_acc": 0.2118380062305296,
+      "permuted_corpus_acc": 0.3260643821391485,
+      "silenced_acc": 0.2799145299145299,
+      "seed_go": true,
+      "checks": {
+        "beats_bigram": true,
+        "shuffled_collapses": true,
+        "permuted_corpus_collapses": true,
+        "frozen_chance": true,
+        "silenced_collapses": true,
+        "active": true
+      },
+      "rollouts": [
+        {
+          "seed_token": "the",
+          "tokens": [
+            "the",
+            "<unk>",
+            "<unk>",
+            "to",
+            "the",
+            "<unk>",
+            "<unk>",
+            "on",
+            "the"
+          ]
+        },
+        {
+          "seed_token": "a",
+          "tokens": [
+            "a",
+            "<unk>",
+            "to",
+            "the",
+            "<unk>",
+            "<unk>",
+            "moss",
+            "to",
+            "the"
+          ]
+        },
+        {
+          "seed_token": "it",
+          "tokens": [
+            "it",
+            "is",
+            "a",
+            "small",
+            "salmon",
+            "and",
+            "a",
+            "<unk>",
+            "<unk>"
+          ]
+        }
+      ]
+    }
+  ],
+  "HONEST_NOTE": "The PRIMARY emergence experiment: emergent, learned-from-experience, on-bridge, NO-BPTT autoregressive next-token language generation with a LOCAL output-layer delta rule -- the ESN/LSM discipline (a fixed random recurrent spiking cortex + a locally-trained output read-out) on the project's own SimulationBridge. GO = the reservoir read-out beats the bigram on held-out cross-entropy AND every input-destruction anti-cheat collapses (temporal alignment, corpus word-order, trained read-out, and driven spikes all load-bearing). A TOKEN-level LM over the BOUNDED controlled EMERGE template grammar (string overlap between held-out and train is EXPECTED in a template grammar and is reported per seed; both models see the same held-out, so the CE comparison is fair; this is a next-token-prediction test, not a memorization test), NOT open prose (R4). Reuse-by-import; NO sim/ edit; NO edit to any existing runner."
+}
