@@ -20,6 +20,7 @@ def main():
     ap.add_argument("--epochs", type=int, default=80)
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--settle", type=int, default=50)
+    ap.add_argument("--output-bias", type=float, default=20.0)
     a = ap.parse_args()
 
     (Xtr, ytr), (Xte, yte), n_bits = _load_task("emerge1", a.seed, 4)
@@ -33,10 +34,11 @@ def main():
     print(f"[overfit] {tag}  n_train={len(Xs)} chance={chance:.3f} numpy-2layer-overfit-ceiling={oc:.3f}", flush=True)
 
     net = OnBridgeBDSPNet(seed=a.seed, n_bits=n_bits, hidden=60, couple_soma=bool(a.couple), soma_g=a.soma_g,
-                          hidden_bias=20.0, output_bias=20.0, bdsp_lr=0.03, fwd_wmean=40.0, bdsp_w_max=200.0)
+                          hidden_bias=a.output_bias, output_bias=a.output_bias, bdsp_lr=0.03, fwd_wmean=40.0, bdsp_w_max=200.0)
     diag = net.apical_coupling_diag(steps=200)
+    tag = f"{tag} obias={a.output_bias}"
     print(f"[overfit] {tag}  apical B_rises={diag['B_rises']} (directed credit requires True): "
-          f"B_rest={diag['B_rest']:.3f} B_apical={diag['B_apical']:.3f}", flush=True)
+          f"B_rest={diag['B_rest']:.3f} B_apical={diag['B_apical']:.3f} (want B_apical>=~0.3, B_rest~0)", flush=True)
 
     done = 0
     for milestone in (10, 20, 40, a.epochs):
