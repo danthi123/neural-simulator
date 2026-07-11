@@ -1,9 +1,14 @@
-# Brain architecture — current state (2026-07-05)
+# Brain architecture — current state (2026-07-10)
 
 Plain-language, **as-implemented** flowcharts of the whole simulated brain.
 These render directly on GitHub (Mermaid). They are written for a reader who has
 never seen this codebase: every necessary technical term is defined once, in
 plain words, then used.
+
+> **For the full stage-by-stage development path** (what's done, in progress, and
+> left, each mapped to the brain function it reproduces), see
+> [`ROADMAP.md`](../../ROADMAP.md) — the project's source of truth. These
+> flowcharts are the *signal-flow* companion to it.
 
 **What this software is (one paragraph).** A GPU-accelerated simulator of a
 network of biologically realistic neurons. "Spiking" means the neurons
@@ -54,7 +59,7 @@ flowchart TB
 
       subgraph GROUPS["Separate neuron groups (each does one job)"]
         direction TB
-        NAVG["Navigation group<br/>chooses which way to move"]:::nav
+        NAVG["Navigation group<br/>reaches goals by moving through the world<br/>using only what it sees (its oldest, most-tested behavior)"]:::nav
         COMPG["Comprehension group<br/>reads a sentence → who did what to whom"]:::conv
         MEMG["Fact memory group<br/>binds words into facts · stores · recalls"]:::mem
         PLANG["Planning group<br/>decides the next thing to say"]:::plan
@@ -106,9 +111,11 @@ fact memory + the safeguard); the generation step supplies *phrasing only*. A
 conversational answer leaves the safeguard in one of two ways: it flows into the
 generation-and-re-check path and emerges as a verified fluent reply, **or** —
 if no stored fact matches — the reply is simply "I don't know." The navigation
-group is a separate neuron group in the same network that turns vision into
-movement. All groups share one update loop, which is what "one brain" means
-here.
+group is a separate neuron group in the same network that reaches goals by
+turning what it sees into movement — the project's oldest and most thoroughly
+validated behavior, and the place where perception, action selection, reward, and
+spatial memory come together into one living behavior. All groups share one update
+loop, which is what "one brain" means here.
 
 ---
 
@@ -172,15 +179,22 @@ flowchart TB
   regenerated. The failure direction is always the safe one — the brain may
   over-decline, but it will not fabricate.
 
-**About the language-generation step.** For open, casual conversation the
-simulator uses a **small, locally trained language model** whose only job is
-phrasing. For the brain's own grounded answers, a newer, **transformer-free
-path** produces the reply directly as spiking neural activity: the grammatical
-structure of these answers (which small function words to use, the word order,
-which slots a sentence has) is *learned from example sentences* rather than
-hand-written, and the words are spoken as neural pulses on the shared network.
-Both paths sit behind the same "check first" safeguard, so neither can introduce
-a fact the brain does not hold.
+**About the language-generation step.** There are two phrasing paths, both behind
+the same "check first" safeguard, so neither can introduce a fact the brain does
+not hold:
+- For the brain's **own grounded answers**, a **transformer-free path** produces
+  the reply directly as spiking neural activity: the grammatical structure (which
+  small function words to use, the word order, which slots a sentence has) is
+  *learned from example sentences* rather than hand-written, and every word —
+  content *and* function words alike — is spoken as neural pulses on the shared
+  network.
+- For **open, casual prose** the simulator still leans on a **small, locally
+  trained conventional language model** as a temporary crutch (the one remaining
+  "external model" — see the roadmap's scaffold list). Its home-grown replacement
+  has taken its **first real step**: an emergent, on-brain, no-backpropagation
+  next-word predictor that learns from a text stream and already beats the
+  standard simple baselines — so far over a small controlled vocabulary. The plan
+  is to climb that ladder until the crutch is gone.
 
 ---
 
@@ -297,12 +311,16 @@ code, including its simplifications.
 - **A genuine, growing capability — but specialized:** the conversational agent
   is built entirely from simulated neural circuits (not a bolted-on external
   chatbot). Its core behaviors — parsing short sentences, storing facts,
-  answering who/what and yes/no questions, handling negation, and declining to
-  answer when it was never told the fact — are demonstrated and validated across
-  random seeds at a few-hundred-concept scale. Richer abilities (for example,
-  objects described by two attributes at once, sentences where word order does
-  not match the roles, and fully open-ended prose) are exploratory or honestly
-  documented as current limits, not finished features.
+  answering who/what and yes/no questions, handling negation, declining to answer
+  when it was never told the fact, discovering categories and *reasoning* beyond
+  what it was told (a robin inherits that a bird can fly), a grammar it
+  *self-organized* from example text, **tracking who is being talked about across
+  a multi-turn conversation** (including who was acting *before* a topic shift)
+  and resolving pronouns — are demonstrated and validated across random seeds at a
+  few-hundred-concept scale. Richer abilities (objects described by two attributes
+  at once, sentences where word order does not match the roles, and fully
+  open-ended prose) are exploratory or honestly documented as current limits, not
+  finished features.
 - **Active research direction:** pushing the entire conversational pipeline to
   run as spiking neurons within the single shared network, and mapping the
   points where a simple neuron model reaches its limits — recording honest
@@ -317,9 +335,13 @@ the **conversational brain**
 and the **master map**
 ([`brain_master.svg`](brain_master.svg) · [`.png`](brain_master.png)).
 
-> **Currency note.** These detail SVGs predate the most recent
-> language-generation changes shown in Diagram B (the move to a small local
-> language model for open conversation, and the transformer-free spoken-on-spikes
-> path for grounded answers). Their region inventories, the navigation cascade,
-> and the no-fabrication safeguard remain accurate; the generation-side redraw
-> is a separate, larger refresh.
+> **Currency note (important).** These hand-drawn detail SVGs are a **snapshot as
+> of 2026-06-22**. What they still show accurately: the region inventories, the
+> navigation cascade, and the no-fabrication safeguard. What they **do not yet
+> show** (all developed 2026-07): the fully self-organized grammar and
+> spoken-on-spikes production, the reservoir that *learns* word-order→role
+> comprehension, the multi-turn discourse register (who-now vs who-before), and
+> the first rung of the emergent (transformer-free) open-generation path. For the
+> current, complete picture use the Mermaid flowcharts above and
+> [`ROADMAP.md`](../../ROADMAP.md); a full redraw of the exhaustive per-synapse
+> SVGs is a tracked follow-up (a larger design pass).
