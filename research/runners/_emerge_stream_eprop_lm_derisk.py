@@ -71,7 +71,9 @@ OUT = Path("research/findings/raw/_stream_eprop_lm.json")
 
 # ---- The e-prop reservoir arms (W_rec/W_out learn or not); BPTT is the matched full-backprop ceiling. ----
 RESERVOIR_ARMS = ["fixed_reservoir", "plastic_eprop", "shuffle_elig", "zero_signal"]
-ALL_ARMS = RESERVOIR_ARMS + ["BPTT_same_net"]
+ALL_ARMS = RESERVOIR_ARMS + ["BPTT_same_net"]          # the 5 pre-registered arms (the gate is defined over exactly these)
+EXTRA_ARMS = ["BPTT_fixed_win"]                         # optional isolation arm (R1b): BPTT with W_in frozen == e-prop's
+KNOWN_ARMS = ALL_ARMS + EXTRA_ARMS
 
 
 # ======================================================================================================================
@@ -159,16 +161,25 @@ def train_eprop(mode, init, tr_lanes, V, n, alpha, B, epochs, lr_out, lr_rec, wd
     return W_rec.detach(), W_out.detach(), W_in.detach(), b.detach()
 
 
-def train_bptt(init, tr_lanes, V, n, alpha, B, bptt_steps, bptt_lr, dev):
+def train_bptt(init, tr_lanes, V, n, alpha, B, bptt_steps, bptt_lr, dev, fix_win=False):
     """The matched-architecture FULL-BACKPROP ceiling: the SAME leaky-tanh cell as an autograd module, truncated to the
-       128-block (h reset at each block, matching the e-prop reset). AdamW + grad-clip. Trains ALL params. Returns the
-       final (W_rec, W_out, W_in, b) detached."""
+       128-block (h reset at each block, matching the e-prop reset). AdamW + grad-clip. Returns the final
+       (W_rec, W_out, W_in, b) detached.
+       fix_win=False -> trains ALL params (the pre-registered BPTT_same_net ceiling).
+       fix_win=True  -> FREEZES W_in to the same random projection the e-prop arms use, so the ONLY difference from
+                        plastic_eprop is the recurrent-credit RULE (BPTT full off-diagonal vs e-prop diagonal RTRL
+                        truncation) on IDENTICAL input embeddings -- isolates the pure recurrent-credit fraction
+                        (the R1 metric-confound fix: the all-params ceiling over-credits BPTT with embedding learning)."""
     import torch, torch.nn as nn, torch.nn.functional as F
     W_rec = nn.Parameter(torch.tensor(init["W_rec"], dtype=torch.float32, device=dev))
-    W_in = nn.Parameter(torch.tensor(init["W_in"], dtype=torch.float32, device=dev))
     b = nn.Parameter(torch.tensor(init["b"], dtype=torch.float32, device=dev))
     W_out = nn.Parameter(torch.tensor(init["W_out"], dtype=torch.float32, device=dev))
-    params = [W_rec, W_in, b, W_out]
+    if fix_win:
+        W_in = torch.tensor(init["W_in"], dtype=torch.float32, device=dev)   # FROZEN: same fixed random projection as e-prop
+        params = [W_rec, b, W_out]
+    else:
+        W_in = nn.Parameter(torch.tensor(init["W_in"], dtype=torch.float32, device=dev))
+        params = [W_rec, W_in, b, W_out]
     opt = torch.optim.AdamW(params, lr=bptt_lr)
     batch, lane = tr_lanes.shape
     nb = (lane - 1) // B
@@ -458,11 +469,14 @@ def main():
         ta = time.time()
         if arm == "BPTT_same_net":
             W_rec, W_out, W_in, b = train_bptt(init, tr_lanes, V, n, args.alpha, B, args.bptt_steps, args.bptt_lr, dev)
+        elif arm == "BPTT_fixed_win":
+            W_rec, W_out, W_in, b = train_bptt(init, tr_lanes, V, n, args.alpha, B, args.bptt_steps, args.bptt_lr, dev,
+                                               fix_win=True)
         elif arm in RESERVOIR_ARMS:
             W_rec, W_out, W_in, b = train_eprop(arm, init, tr_lanes, V, n, args.alpha, B, args.epochs,
                                                 args.lr_out, args.lr_rec, args.wd_out, dev)
         else:
-            raise SystemExit(f"unknown arm '{arm}' (choose from {ALL_ARMS})")
+            raise SystemExit(f"unknown arm '{arm}' (choose from {KNOWN_ARMS})")
         tce, bce, cnt = eval_arm(W_rec, W_in, b, W_out, args.alpha, ev, B, P_bi, dev)
         arms[arm] = summarize(tce, bce, cnt, B)
         arm_wrec[arm] = W_rec.detach().cpu()
@@ -501,11 +515,35 @@ def main():
               f"(DEEP is the entire test; a strong shallow must NOT mask a weak deep)", flush=True)
     print(f"\n[stream-eprop] GATE: {gate['verdict']}", flush=True)
 
+    # ---- SECONDARY: fixed-floor-relative recurrent-credit fraction (isolates the RULE from embedding learning) ----
+    # frac_clean_deep = (plastic_deep - fixed_deep) / (BPTT_arm_deep - fixed_deep): how much of the recurrent-credit-
+    # achievable deep gain OVER THE SHARED FIXED-EMBEDDING FLOOR e-prop captures. For BPTT_fixed_win (same frozen W_in as
+    # e-prop) this is the CLEANEST isolation of the credit RULE (e-prop diagonal vs BPTT full off-diagonal); for
+    # BPTT_same_net it still credits BPTT with learned embeddings (the R1 confound).
+    clean = {}
+    if "fixed_reservoir" in arms and "plastic_eprop" in arms:
+        f_deep = arms["fixed_reservoir"]["deep_margin"]; f_shal = arms["fixed_reservoir"]["shallow_margin"]
+        p_gain_deep = arms["plastic_eprop"]["deep_margin"] - f_deep
+        p_gain_shal = arms["plastic_eprop"]["shallow_margin"] - f_shal
+        print("\n[stream-eprop] FIXED-FLOOR-RELATIVE recurrent-credit fraction "
+              "(plastic gain over fixed / BPTT gain over fixed; isolates the credit RULE):", flush=True)
+        for bp in ("BPTT_fixed_win", "BPTT_same_net"):
+            if bp in arms:
+                b_gain_deep = arms[bp]["deep_margin"] - f_deep
+                b_gain_shal = arms[bp]["shallow_margin"] - f_shal
+                fd = round(p_gain_deep / b_gain_deep, 4) if abs(b_gain_deep) > 1e-6 else None
+                fs = round(p_gain_shal / b_gain_shal, 4) if abs(b_gain_shal) > 1e-6 else None
+                clean[bp] = {"frac_clean_deep": fd, "frac_clean_shallow": fs,
+                             "plastic_deep_gain": round(p_gain_deep, 4), "bptt_deep_gain": round(b_gain_deep, 4)}
+                tag = " <- CLEANEST (identical frozen W_in)" if bp == "BPTT_fixed_win" else " (BPTT also learns W_in)"
+                print(f"    vs {bp:>15}: frac_clean_deep {fd}  frac_clean_shallow {fs}  "
+                      f"(plastic +{p_gain_deep:.3f} / bptt +{b_gain_deep:.3f} deep){tag}", flush=True)
+
     out = {"runner": "_emerge_stream_eprop_lm_derisk", "corpus": args.corpus, "seed": args.seed, "V": V,
            "n_pool": n, "block": B, "batch": args.batch, "lane": lane, "epochs": args.epochs,
            "bptt_steps": args.bptt_steps, "dev": dev, "permute_stream": bool(args.permute_stream),
            "args": vars(args), "arms": arms, "byte_identical_zero_eq_fixed": byte_identical, "gate": gate,
-           "elapsed_s": round(time.time() - t0, 1)}
+           "clean_recurrent_credit_fraction": clean, "elapsed_s": round(time.time() - t0, 1)}
     Path(args.json).parent.mkdir(parents=True, exist_ok=True); Path(args.json).write_text(json.dumps(out, indent=2))
     print(f"\n-> {args.json} ({out['elapsed_s']}s)\nSTREAM_EPROP_DONE", flush=True)
 
