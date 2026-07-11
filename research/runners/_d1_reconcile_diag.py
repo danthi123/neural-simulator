@@ -21,12 +21,17 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--settle", type=int, default=50)
     ap.add_argument("--output-bias", type=float, default=20.0)
+    ap.add_argument("--lr", type=float, default=0.03)
     a = ap.parse_args()
 
     (Xtr, ytr), (Xte, yte), n_bits = _load_task("emerge1", a.seed, 4)
+    Xtr = np.asarray(Xtr); ytr = np.asarray(ytr)
     rng = np.random.default_rng(a.seed + 7)
-    sel = rng.permutation(len(Xtr))[: a.n_train]
-    Xs, ys = np.asarray(Xtr)[sel], np.asarray(ytr)[sel]
+    # CLASS-BALANCED subset (equal 0s and 1s -> chance ~0.5, so the minimal-learning metric is informative).
+    i0 = rng.permutation(np.where(ytr == 0)[0])[: a.n_train // 2]
+    i1 = rng.permutation(np.where(ytr == 1)[0])[: a.n_train - a.n_train // 2]
+    sel = rng.permutation(np.concatenate([i0, i1]))
+    Xs, ys = Xtr[sel], ytr[sel]
     chance = float(max(np.mean(ys == 0), np.mean(ys == 1)))
     # can a 2-layer numpy net overfit THIS small set? (ceiling that the rule should approach if it learns)
     oc = _numpy_oracle_heldout(n_bits, 32, Xs, ys, Xs, ys, epochs=400, lr=0.3, batch=8, seed=a.seed)
@@ -34,7 +39,7 @@ def main():
     print(f"[overfit] {tag}  n_train={len(Xs)} chance={chance:.3f} numpy-2layer-overfit-ceiling={oc:.3f}", flush=True)
 
     net = OnBridgeBDSPNet(seed=a.seed, n_bits=n_bits, hidden=60, couple_soma=bool(a.couple), soma_g=a.soma_g,
-                          hidden_bias=a.output_bias, output_bias=a.output_bias, bdsp_lr=0.03, fwd_wmean=40.0, bdsp_w_max=200.0)
+                          hidden_bias=a.output_bias, output_bias=a.output_bias, bdsp_lr=a.lr, fwd_wmean=40.0, bdsp_w_max=200.0)
     diag = net.apical_coupling_diag(steps=200)
     tag = f"{tag} obias={a.output_bias}"
     print(f"[overfit] {tag}  apical B_rises={diag['B_rises']} (directed credit requires True): "
