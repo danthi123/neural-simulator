@@ -1,0 +1,110 @@
+{
+  "runner": "_emerge_reservoir_lm_crosssentence_retrieval_derisk",
+  "corpus": "data/corpus/wikitext.txt",
+  "seeds": [
+    42
+  ],
+  "beta": 4.0,
+  "arms": [
+    "base",
+    "content",
+    "shuffle",
+    "uniform"
+  ],
+  "lams": [
+    0.0,
+    0.05,
+    0.1,
+    0.2,
+    0.35,
+    0.5
+  ],
+  "headline": "content_minus_shuffle_cross > 0 (content beats a random cross-sentence bag) = the genuine cross-sentence content-addressing signal; content_minus_base alone is confoundable by a bag",
+  "per_seed": {
+    "42": {
+      "seed": 42,
+      "V": 300,
+      "n_pool": 150,
+      "n_train_pass": 96,
+      "n_eval_pass": 24,
+      "sents_per_passage": 10,
+      "learned_keys": true,
+      "eval": {
+        "n_cross_positions": 4115,
+        "n_first_sentence_positions": 510,
+        "base_cross_ce": 3.5732,
+        "base_by_depth": {
+          "10-99": 3.5698,
+          "3": 0.8432,
+          "4-5": 4.9399,
+          "6-9": 5.1334
+        },
+        "by_arm": {
+          "content": {
+            "best_lam": 0.35,
+            "cross_ce": 3.4448,
+            "by_depth": {
+              "10-99": 3.4402,
+              "3": 0.89,
+              "4-5": 4.7865,
+              "6-9": 5.5188
+            },
+            "cross_ce_by_lam": {
+              "0.0": 3.5732,
+              "0.05": 3.5226,
+              "0.1": 3.4933,
+              "0.2": 3.4595,
+              "0.35": 3.4448,
+              "0.5": 3.4641
+            }
+          },
+          "shuffle": {
+            "best_lam": 0.35,
+            "cross_ce": 3.4474,
+            "by_depth": {
+              "10-99": 3.4428,
+              "3": 0.8846,
+              "4-5": 4.7865,
+              "6-9": 5.517
+            },
+            "cross_ce_by_lam": {
+              "0.0": 3.5732,
+              "0.05": 3.5239,
+              "0.1": 3.4949,
+              "0.2": 3.4614,
+              "0.35": 3.4474,
+              "0.5": 3.4675
+            }
+          },
+          "uniform": {
+            "best_lam": 0.35,
+            "cross_ce": 3.4068,
+            "by_depth": {
+              "10-99": 3.4021,
+              "3": 0.8873,
+              "4-5": 4.783,
+              "6-9": 5.5186
+            },
+            "cross_ce_by_lam": {
+              "0.0": 3.5732,
+              "0.05": 3.5185,
+              "0.1": 3.4834,
+              "0.2": 3.4384,
+              "0.35": 3.4068,
+              "0.5": 3.4075
+            }
+          }
+        }
+      },
+      "content_minus_base_cross": 0.1284,
+      "content_minus_shuffle_cross": 0.0026,
+      "content_minus_shuffle_by_depth": {
+        "10-99": 0.0026,
+        "3": -0.0054,
+        "4-5": 0.0,
+        "6-9": -0.0018
+      }
+    }
+  },
+  "elapsed_s": 35.0
+}

@@ -1,0 +1,100 @@
+{
+  "runner": "_emerge_reservoir_lm_crosssentence_retrieval_derisk",
+  "corpus": "data/corpus/wikitext.txt",
+  "seeds": [
+    44
+  ],
+  "beta": 4.0,
+  "arms": [
+    "base",
+    "content",
+    "shuffle",
+    "uniform"
+  ],
+  "lams": [
+    0.0,
+    0.05,
+    0.1,
+    0.2,
+    0.35,
+    0.5
+  ],
+  "headline": "content_minus_shuffle_cross > 0 (content beats a random cross-sentence bag) = the genuine cross-sentence content-addressing signal; content_minus_base alone is confoundable by a bag",
+  "per_seed": {
+    "44": {
+      "seed": 44,
+      "V": 300,
+      "n_pool": 200,
+      "n_train_pass": 160,
+      "n_eval_pass": 40,
+      "sents_per_passage": 10,
+      "learned_keys": true,
+      "eval": {
+        "n_cross_positions": 7560,
+        "n_first_sentence_positions": 834,
+        "base_cross_ce": 3.9532,
+        "base_by_depth": {
+          "10-99": 3.9432,
+          "6-9": 10.8611
+        },
+        "by_arm": {
+          "content": {
+            "best_lam": 0.35,
+            "cross_ce": 3.4689,
+            "by_depth": {
+              "10-99": 3.4584,
+              "6-9": 10.6524
+            },
+            "cross_ce_by_lam": {
+              "0.0": 3.9532,
+              "0.05": 3.5495,
+              "0.1": 3.5165,
+              "0.2": 3.4824,
+              "0.35": 3.4689,
+              "0.5": 3.4873
+            }
+          },
+          "shuffle": {
+            "best_lam": 0.35,
+            "cross_ce": 3.465,
+            "by_depth": {
+              "10-99": 3.4545,
+              "6-9": 10.6797
+            },
+            "cross_ce_by_lam": {
+              "0.0": 3.9532,
+              "0.05": 3.5492,
+              "0.1": 3.5154,
+              "0.2": 3.4801,
+              "0.35": 3.465,
+              "0.5": 3.4823
+            }
+          },
+          "uniform": {
+            "best_lam": 0.5,
+            "cross_ce": 3.3873,
+            "by_depth": {
+              "10-99": 3.3766,
+              "6-9": 10.7612
+            },
+            "cross_ce_by_lam": {
+              "0.0": 3.9532,
+              "0.05": 3.5043,
+              "0.1": 3.4643,
+              "0.2": 3.4182,
+              "0.35": 3.3875,
+              "0.5": 3.3873
+            }
+          }
+        }
+      },
+      "content_minus_base_cross": 0.4843,
+      "content_minus_shuffle_cross": -0.0039,
+      "content_minus_shuffle_by_depth": {
+        "10-99": -0.0039,
+        "6-9": 0.0273
+      }
+    }
+  },
+  "elapsed_s": 161.3
+}
