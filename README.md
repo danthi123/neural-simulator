@@ -48,26 +48,27 @@ rather than papered over.
 
 ## 🗺️ Roadmap — the full development path
 
-**[`ROADMAP.md`](ROADMAP.md) is the source of truth for progress toward the goal** — artificial life with conversational capability approaching an LLM, built the honest way (emergent, one spiking brain, biology-grounded, no permanent external model). It lays out the whole developmental path as a sequence of stages, each mapped to the brain regions / pathways / functions it reproduces (with catalog + Kandel + primary-paper citations), a status badge, what's done, what's open, and the next step — plus the scaffolds still to be replaced, the honest open walls, and a no-hype end-state assessment. It is updated as a standing part of the workflow.
+**[`ROADMAP.md`](ROADMAP.md) is the source of truth for progress toward the goal** — artificial life whose conversational ability approaches a large language model, built the honest way: one simulated spiking brain, learning from experience, with no permanent external AI model doing the thinking. It's written to be read without knowing the codebase, and lays out the whole developmental path stage by stage — each mapped to the brain region/function it reproduces (with textbook and paper citations), a status, what's done, what's open, and the next step — plus the temporary stand-ins still to be replaced, the honest remaining walls, and a no-hype assessment of the distance left.
 
-At a glance (see [`ROADMAP.md`](ROADMAP.md) for the detail and citations):
+At a glance (see [`ROADMAP.md`](ROADMAP.md) for the plain-language detail and citations):
 
-| Developmental stage | Biology (region / function) | Status |
+| Stage | Brain function it reproduces | Status |
 |---|---|---|
-| Perception | Retina → V1 Gabor; ventral/dorsal streams | 🟨 Partial |
-| Attention / orienting | Superior colliculus; NE arousal | 🟩 Done (orienting) |
-| Action selection | BG disinhibition cascade; Wang-2002 accumulator + commit burst | 🟩 Done |
-| Reward / value | SNc dopamine RPE; three-factor plasticity; shared limbic drive | 🟩 Done · 🟨 critic |
-| Memory | Hippocampal trisynaptic loop; engrams; SWR replay (replaces backprop) | 🟩 Done · 🟧 deep consolidation |
-| Concept formation | ATL hub; categories discovered from experience; HTM sequence cortex | ✅ **Emergent** |
-| Comprehension | Dual-stream; fronto-striatal reservoir form→role (learned, on spikes) | ✅ **Emergent** · 🟧 recursion |
-| Semantic reasoning | Relational memory; inheritance / transitivity emerge from shared codes | ✅ **Emergent** |
-| Production | Broca; self-organized grammar; 100% spiking word read-out | ✅ **Emergent** · 🟧 open prose |
-| Discourse / conversation | dlPFC WM; two-gate event register; no-confab moat | ✅ **Emergent** · 🧩 fluent chat |
-| Working memory / recursion | NMDA attractor WM; theta-gamma buffer; reservoir fading memory | 🟩 Done · 🟧 recursion depth |
-| Artificial life | Develop-over-time; one-brain merge; one drive; persistence | 🟩 Done (pieces) · 🟨 unified |
+| Perception | Retina → visual cortex edge detectors; what/where streams | 🟨 Partial |
+| Attention & orienting | Superior colliculus "look here" map; arousal | 🟩 Done (orienting) |
+| Action selection | Basal-ganglia go/no-go loops; evidence → commitment burst | 🟩 Done |
+| Reward & value | Dopamine "actual minus expected" signal; one shared drive | 🟩 Done · 🟨 value critic |
+| **Navigation & spatial cognition** | Place cells + goal-directed movement from perception alone | 🟩 **Done** (flagship behavior) |
+| Memory | Hippocampal loop; memory tags; sleep replay (replaces backprop) | 🟩 Done · 🟧 deep consolidation |
+| Concept formation | Concept hub; categories discovered from experience | ✅ **Emergent** |
+| Comprehension | Dual-stream language; word-order → roles, learned, in spikes | ✅ **Emergent** · 🟧 deep nesting |
+| Semantic reasoning | Inference (inheritance, transitivity) emerges from shared codes | ✅ **Emergent** |
+| Production | Broca's area; self-taught grammar; every word spoken in spikes | ✅ **Emergent** · 🟧 open prose |
+| Conversation | Working memory of who's-being-discussed; "I don't know" guard | ✅ **Emergent** · 🧩 fluent chat |
+| Working memory & recursion | Persistent-activity slots; graded fading memory | 🟩 Done · 🟧 nesting depth |
+| Artificial life | Develop over time; one merged brain; one drive; persistence | 🟩 Done (pieces) · 🟨 unified |
 
-Legend: ✅ emergent · 🟩 done (some hand-designed component) · 🟨 partial · 🟧 characterized boundary · 🧩 scaffold to replace · ⬜ open. **The two honest gaps to an LLM:** transformer-free open-ended fluent generation (first rung landed — an emergent, on-bridge, no-backprop next-token model), and a deep-credit rule to lift the reservoir/composer ceilings. A real, bounded, multi-month distance — not a demo away, and not blocked.
+Legend: ✅ emergent (learned from experience) · 🟩 done (with one hand-designed part) · 🟨 partial · 🟧 a mapped limit · 🧩 temporary stand-in · ⬜ open. **The two honest gaps to a large language model:** open-ended fluent speech without the small conventional-AI crutch (its first home-grown rung just landed — an emergent, on-brain, no-backpropagation next-word model that beats the standard baselines), and a deeper learning rule to lift the remaining ceilings. A real, bounded, multi-month distance — not a demo away, and not blocked. The roadmap also covers the body, supporting systems (cerebellum, sleep), the 3D viewer and interactive consoles, and future directions.
 
 ---
 
