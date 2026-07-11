@@ -1,0 +1,46 @@
+{
+  "runner": "_recurrent_lm_ceiling",
+  "cell": "lstm",
+  "stateful": false,
+  "V": 8000,
+  "block": 128,
+  "n_layer": 2,
+  "params_m": 8.52,
+  "dev": "cuda",
+  "corpus": "data/corpus/wikitext103.txt",
+  "by_ctx_depth": {
+    "1-1": {
+      "recurrent_ce": 4.924,
+      "bigram_ce": 5.409,
+      "margin": 0.485
+    },
+    "2-2": {
+      "recurrent_ce": 4.737,
+      "bigram_ce": 5.406,
+      "margin": 0.668
+    },
+    "3-3": {
+      "recurrent_ce": 4.638,
+      "bigram_ce": 5.412,
+      "margin": 0.774
+    },
+    "4-8": {
+      "recurrent_ce": 4.489,
+      "bigram_ce": 5.413,
+      "margin": 0.924
+    },
+    "9-16": {
+      "recurrent_ce": 4.347,
+      "bigram_ce": 5.409,
+      "margin": 1.062
+    },
+    "17-128": {
+      "recurrent_ce": 4.209,
+      "bigram_ce": 5.41,
+      "margin": 1.201
+    }
+  },
+  "shallow_margin": 0.485,
+  "deep_margin": 1.201,
+  "elapsed_s": 452.4
+}
