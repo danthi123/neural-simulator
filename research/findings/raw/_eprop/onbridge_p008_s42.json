@@ -1,0 +1,152 @@
+{
+  "probe": "emerge_reservoir_lm_onbridge_bdsp",
+  "seeds": [
+    42
+  ],
+  "elapsed_seconds": 12.5,
+  "params": {
+    "seeds": [
+      42
+    ],
+    "n_sentences": 400,
+    "vocab": 32,
+    "n_pool": 150,
+    "max_train_sents": 100,
+    "max_eval_sents": 40,
+    "epochs": 3,
+    "epochs_readout": 10,
+    "read_steps": 8,
+    "teach_steps": 8,
+    "lr_out": 0.005,
+    "weight_decay": 0.001,
+    "bdsp_lr": 0.005,
+    "bdsp_p0": 0.08,
+    "bdsp_beta": 1.0,
+    "bdsp_w_min": 0.0,
+    "bdsp_w_max": 20.0,
+    "soma_g": 640.0,
+    "soma_g_sweep": [
+      640.0
+    ],
+    "k_apical": 200.0,
+    "arms": [
+      "fixed",
+      "plastic",
+      "apical_lesion"
+    ],
+    "smoke": false,
+    "json": "research/findings/raw/_eprop/onbridge_p008_s42.json"
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "V": 32,
+      "n_pool": 150,
+      "n_train": 100,
+      "n_eval": 40,
+      "chance_ce": 3.4657,
+      "soma_g_sweep": [
+        {
+          "soma_g": 640.0,
+          "dw_directed": 0.001312052997685408,
+          "dw_lesion": 8.630847593025363e-06,
+          "B_apical": 0.06569502087961154,
+          "B_rest": 0.0,
+          "B_rises": true,
+          "directed_moves_more": true
+        }
+      ],
+      "soma_g_used": 640.0,
+      "arms": {
+        "fixed": {
+          "mode": "fixed",
+          "dw_mean": 0.0,
+          "w_before_mean": 6.407133024677542,
+          "w_after_mean": 6.407133024677542,
+          "mean_teach_B": 0.0,
+          "mean_spikes_per_step": 0.010298622685185185,
+          "overall_ce": 1.5229,
+          "overall_acc": 0.6176,
+          "by_depth": {
+            "1": 1.4911,
+            "2": 1.4695,
+            "3": 1.5967,
+            "4-5": 1.5688
+          },
+          "depth_n": {
+            "1": 40,
+            "2": 40,
+            "3": 30,
+            "4-5": 26
+          }
+        },
+        "plastic": {
+          "mode": "plastic",
+          "dw_mean": 0.06776767703840646,
+          "w_before_mean": 6.407133024677542,
+          "w_after_mean": 6.474900678908857,
+          "mean_teach_B": 0.06329530523366973,
+          "mean_spikes_per_step": 0.010293375771604938,
+          "overall_ce": 1.5238,
+          "overall_acc": 0.6324,
+          "by_depth": {
+            "1": 1.4869,
+            "2": 1.4348,
+            "3": 1.6303,
+            "4-5": 1.5945
+          },
+          "depth_n": {
+            "1": 40,
+            "2": 40,
+            "3": 30,
+            "4-5": 26
+          }
+        },
+        "apical_lesion": {
+          "mode": "apical_lesion",
+          "dw_mean": 0.06778477652343212,
+          "w_before_mean": 6.407133024677542,
+          "w_after_mean": 6.4749177564314975,
+          "mean_teach_B": 0.06334749792652539,
+          "mean_spikes_per_step": 0.010293375771604938,
+          "overall_ce": 1.517,
+          "overall_acc": 0.6324,
+          "by_depth": {
+            "1": 1.4917,
+            "2": 1.463,
+            "3": 1.5999,
+            "4-5": 1.5431
+          },
+          "depth_n": {
+            "1": 40,
+            "2": 40,
+            "3": 30,
+            "4-5": 26
+          }
+        }
+      },
+      "bigram_by_depth": {
+        "1": 1.6202,
+        "2": 2.1883,
+        "3": 1.9535,
+        "4-5": 1.8469
+      },
+      "no_weight_transport": true
+    }
+  ],
+  "error": null,
+  "aggregate": {
+    "plastic_dw_mean": 0.06776767703840646,
+    "apical_lesion_dw_mean": 0.06778477652343212,
+    "fixed_dw_mean": 0.0,
+    "plastic_overall_ce": 1.5238,
+    "fixed_overall_ce": 1.5229,
+    "apical_lesion_overall_ce": 1.517,
+    "weights_move_under_apical": true,
+    "directed_moves_more_than_lesion": false,
+    "best_directed_over_lesion_ratio_in_sweep": 152.019,
+    "any_B_rises_in_sweep": true,
+    "plastic_differs_from_fixed": false
+  },
+  "verdict": "SMOKE-BOUNDARY -- the recurrent weights do NOT move meaningfully under apical drive at this scale (plastic mean|dw| 0.06776767703840646). WALL #1 (RS Izhikevich neurons barely burst -> B~0 -> (B-Pbar*E) degenerate) blocks on-bridge directed learning here. Named next levers: bdsp_apical_soma_g / bdsp_beta up, a bursting operating regime, or the regenerative apical-plateau sim/ build. Do NOT force a positive -- this is a valid documented on-bridge NEGATIVE."
+}
