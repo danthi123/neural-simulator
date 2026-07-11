@@ -51,6 +51,8 @@ def main():
     ap.add_argument("--max-eval-sents", type=int, default=300)
     ap.add_argument("--epochs", type=int, default=12)
     ap.add_argument("--lr", type=float, default=0.005)
+    ap.add_argument("--weight-decay", type=float, default=0.001, help="L2 decay on the read-out (regularization)")
+    ap.add_argument("--label-smoothing", type=float, default=0.05)
     ap.add_argument("--n-pool", type=int, default=300)
     ap.add_argument("--json", type=str, default=str(OUT))
     args = ap.parse_args()
@@ -72,7 +74,7 @@ def main():
         ev_cache = _cache(res, vocab, ev)
         mean, std = _standardize_fit(tr_cache)
         W = train_readout(tr_cache, V, args.epochs, args.lr, np.random.default_rng(seed * 13 + 1), mean, std,
-                          wd=0.001, ls=0.05)
+                          wd=args.weight_decay, ls=args.label_smoothing)
         res_ce, res_acc, _n = eval_ce(W, mean, std, ev_cache, V)
 
         P_bi = fit_bigram(tr_ids, V); bi_ce, bi_acc, _ = bigram_ce(P_bi, ev_ids)
@@ -85,7 +87,7 @@ def main():
         perm_cache = _cache(res, vocab, perm)
         pmean, pstd = _standardize_fit(perm_cache)
         Wp = train_readout(perm_cache, V, args.epochs, args.lr, np.random.default_rng(seed * 23 + 1), pmean, pstd,
-                           wd=0.001, ls=0.05)
+                           wd=args.weight_decay, ls=args.label_smoothing)
         perm_ce, _pa, _ = eval_ce(Wp, pmean, pstd, ev_cache, V)
 
         beats_bigram = res_ce < bi_ce
