@@ -33,5 +33,12 @@ Verified NOT an artifact: the reservoir is genuinely ACTIVE on WikiText (res+tok
 ## ⇒ the boundary + the next mechanism (this is not an endpoint)
 The n-gram ceiling of a fixed small reservoir is a BOUNDARY, and per the standing workflow it names the next mechanism to capture long-range structure: (a) a LEARNED recurrent/deep substrate (the dendritic deep-credit frontier — deferred, high-variance, but the honest route to a substrate that captures long-range structure); (b) an attention-like on-substrate mechanism (biological analogues: thalamocortical gating / working-memory-indexed retrieval — the Rung-2 WM buffer is a first step, but a single latch is not attention); (c) co-scaled reservoir size + data at much larger scale (measure before assuming — likely necessary-not-sufficient). The honest headline for the owner: **the emergent-reservoir path is a real, verified toy of LLM mechanisms but is n-gram-level on real text; closing the gap to fluent language is the long-range-structure problem, which the fixed reservoir does not solve.**
 
+## Co-scaled aggregate grid (confirmation, added 2026-07-11 when the grid completed) — the FIXED reservoir's bigram edge is a small-data artifact that VANISHES as either axis scales
+| fixed reservoir vs bigram (aggregate CE margin; + = reservoir beats bigram) | 1400 sents | 5000 sents |
+|---|---|---|
+| n_pool=300 | **+0.152** | −0.032 |
+| n_pool=600 | −0.020 | −0.049 |
+Scaling EITHER axis kills the edge: a bigger reservoir OVERFITS at small data (n600×1400 −0.020), and more data lets the bigram CATCH UP (n300 +0.152→−0.032). The only positive cell is the smallest (n300×1400) — confirming the capstone: the fixed reservoir + linear read-out is n-gram-level on real text, and its apparent win is a small-data/small-reservoir sweet-spot, not a scalable long-range advantage.
+
 ## Files
-`_emerge_reservoir_lm_{realcorpus,context_depth,ngram_hybrid}_derisk.py`; raw `_rc/`, `_rc_scale/`, `_rc_reg/`, `_rc_data/`, `_ctxdepth/`, `_hybrid/`, `_hybrid2/`, `_hybrid_wiki/`. Integrates `2026-07-11-SCALE-*` findings + the SYNTHESIS map.
+`_emerge_reservoir_lm_{realcorpus,context_depth,ngram_hybrid}_derisk.py`; raw `_rc/`, `_rc_scale/`, `_rc_reg/`, `_rc_data/`, `_ctxdepth/`, `_hybrid/`, `_hybrid2/`, `_hybrid_wiki/`. Integrates `2026-07-11-SCALE-*` findings + the SYNTHESIS map. The next-mechanism (make the recurrent weights LEARN) is de-risked in `2026-07-11-eprop-recurrent-learning-recovers-within-horizon-context-REAL-WITH-SCOPE.md`.
