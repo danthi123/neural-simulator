@@ -77,7 +77,7 @@ ALL_ARMS = RESERVOIR_ARMS + ["BPTT_same_net"]          # the 5 pre-registered ar
 # eligibility propagates credit forward over long spans, so e-prop can reach the DEEP within-block context the plain
 # forward-filtered (~1/alpha) eligibility cannot. Ported faithfully from `_emerge_reservoir_lm_eprop_recurrent_derisk`.
 ALIF_ARMS = ["plastic_eprop_alif", "plastic_eprop_alif_readonly"]
-EXTRA_ARMS = ["BPTT_fixed_win"] + ALIF_ARMS            # optional isolation/lever arms (BPTT-fixed-W_in R1b; ALIF horizon lever)
+EXTRA_ARMS = ["BPTT_fixed_win", "plastic_eprop_dualtc"] + ALIF_ARMS   # isolation/lever arms (R1b BPTT-fixed-W_in; R2b dual-timescale eligibility; R2 ALIF)
 KNOWN_ARMS = ALL_ARMS + EXTRA_ARMS
 
 
@@ -170,9 +170,10 @@ def build_alif_extra(V, n, seed, rho_win_lo, rho_win_hi):
 # ======================================================================================================================
 # Training arms
 # ======================================================================================================================
-def train_eprop(mode, init, tr_lanes, V, n, alpha, B, epochs, lr_out, lr_rec, wd_out, dev):
+def train_eprop(mode, init, tr_lanes, V, n, alpha, B, epochs, lr_out, lr_rec, wd_out, dev, a_slow=0.02):
     """Contiguous-stream e-prop for one reservoir arm. tr_lanes: (batch, lane) long tensor on `dev`. h + eligibility are
-       carried across the 128-token block and RESET at each block boundary. Returns (W_rec, W_out) (both detached)."""
+       carried across the 128-token block and RESET at each block boundary. `a_slow` = slow-eligibility leak, used ONLY by
+       the `plastic_eprop_dualtc` arm (horizon ~1/a_slow tokens). Returns (W_rec, W_out) (both detached)."""
     import torch, torch.nn.functional as F
     W_rec = torch.tensor(init["W_rec"], dtype=torch.float32, device=dev)
     W_in = torch.tensor(init["W_in"], dtype=torch.float32, device=dev)      # FIXED input projection (reservoir setup)
@@ -183,12 +184,14 @@ def train_eprop(mode, init, tr_lanes, V, n, alpha, B, epochs, lr_out, lr_rec, wd
     nb = (lane - 1) // B
     ar = torch.arange(batch, device=dev)
     plastic = (mode != "fixed_reservoir")
+    dualtc = (mode == "plastic_eprop_dualtc")              # dual-timescale eligibility (slow credit horizon, no forward change)
     for ep in range(epochs):
         for j in range(nb):                                # consecutive contiguous blocks (deterministic order = fair)
             s = j * B
             x = tr_lanes[:, s:s + B]; y = tr_lanes[:, s + 1:s + B + 1]     # (batch,B)
             h = torch.zeros(batch, n, device=dev)
             e = torch.zeros(batch, n, n, device=dev)       # reset state + eligibility at the block boundary
+            e_slow = torch.zeros(batch, n, n, device=dev) if dualtc else None   # DUAL-TIMESCALE: slow eligibility trace
             for p in range(B):
                 h_prev = h
                 h, act = rnn_forward_step(h_prev, x[:, p], W_rec, W_in, b, alpha)
@@ -200,7 +203,16 @@ def train_eprop(mode, init, tr_lanes, V, n, alpha, B, epochs, lr_out, lr_rec, wd
                 W_out = W_out + lr_out * ((delta.t() @ h) / batch - wd_out * W_out)
                 if not plastic:                            # fixed_reservoir: W_rec frozen; no eligibility, no update
                     continue
-                e = elig_update(e, act, h_prev, alpha)
+                if dualtc:
+                    # SLOW eligibility trace alongside the fast one -- extends the OWN-UNIT credit horizon WITHOUT any
+                    # forward-dynamics change (contrast the ALIF -beta*a imprint which degraded the state). Same increment
+                    # psi*h_prev, decay a_slow << alpha (horizon ~1/a_slow >> ~1/alpha); credit = e_fast + e_slow.
+                    psi = alpha * (1.0 - act * act)
+                    incr = psi.unsqueeze(2) * h_prev.unsqueeze(1)
+                    e = (1.0 - alpha) * e + incr
+                    e_slow = (1.0 - a_slow) * e_slow + incr
+                else:
+                    e = elig_update(e, act, h_prev, alpha)
                 if mode == "zero_signal":
                     L = torch.zeros(batch, n, device=dev)  # L := 0 -> W_rec never moves (byte-identical to fixed)
                 else:
@@ -208,6 +220,8 @@ def train_eprop(mode, init, tr_lanes, V, n, alpha, B, epochs, lr_out, lr_rec, wd
                 if mode == "shuffle_elig":
                     perm = torch.randperm(n * n, device=dev)       # break the credit-assignment structure (anti-cheat)
                     e_use = e.reshape(batch, n * n)[:, perm].reshape(batch, n, n)
+                elif dualtc:
+                    e_use = e + e_slow                     # dual-timescale credit (fast + slow horizon)
                 else:
                     e_use = e
                 dW = lr_rec * (L.unsqueeze(2) * e_use).mean(0)      # average the per-lane W_rec updates over the batch
@@ -643,6 +657,7 @@ def main():
     ap.add_argument("--lr-out", type=float, default=0.02)            # read-out delta-rule lr
     ap.add_argument("--lr-rec", type=float, default=0.001)           # e-prop W_rec lr
     ap.add_argument("--wd-out", type=float, default=1e-3)            # read-out weight decay (identical across e-prop arms)
+    ap.add_argument("--a-slow", type=float, default=0.02)           # dual-timescale slow-eligibility leak (~1/0.02=50-token horizon)
     ap.add_argument("--bptt-steps", type=int, default=8000)          # BPTT ceiling: optimizer steps
     ap.add_argument("--bptt-lr", type=float, default=2e-3)           # BPTT AdamW lr (mirrors the ceiling runner)
     # ---- ALIF adaptation-as-state arms (additive; only used when a plastic_eprop_alif* arm is requested) ----
@@ -723,9 +738,9 @@ def main():
             W_rec, W_out, W_in, b = train_eprop_alif(arm, init, alif_extra, tr_lanes, V, n, args.alpha,
                                                      alif_extra["rho"], args.beta, B, args.epochs,
                                                      args.lr_out, args.lr_rec, args.wd_out, dev)
-        elif arm in RESERVOIR_ARMS:
+        elif arm in RESERVOIR_ARMS or arm == "plastic_eprop_dualtc":
             W_rec, W_out, W_in, b = train_eprop(arm, init, tr_lanes, V, n, args.alpha, B, args.epochs,
-                                                args.lr_out, args.lr_rec, args.wd_out, dev)
+                                                args.lr_out, args.lr_rec, args.wd_out, dev, a_slow=args.a_slow)
         else:
             raise SystemExit(f"unknown arm '{arm}' (choose from {KNOWN_ARMS})")
         if is_alif:                                        # ALIF read-out is over [h;a] (2n) -> the ALIF-aware eval
