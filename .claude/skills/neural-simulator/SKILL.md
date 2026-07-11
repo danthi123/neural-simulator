@@ -34,6 +34,18 @@ Simulate a REAL BRAIN as the core of an ARTIFICIAL LIFEFORM that learns + grows.
 
 **Current lead orientation:** the frontier is EMERGENCE via a truer substrate + a simulated recurrent sequence/language cortex — the honest, self-contained path to language. Every current host stand-in (a minimized transformer/generator, a VSA binding algebra, discourse templates, an intent dispatcher) is a **TEMPORARY scaffold to be replaced by simulated circuitry, NOT a permanent faculty.** The path is a cheap-first, single-variable, gated ladder (rate→spike→recurrent→`sim/` port). The project must STAND ALONE.
 
+## ⭐ THE EMERGENCE BAR — the standing priority (2026-07-10 owner steer; supersedes capability-by-capability building)
+
+**The owner named the drift directly: "Are we playing whack-a-mole with conversational capabilities?"** The honest answer was YES — the discourse event-register arc, the intent-dispatch console routing, the VSA composer's exact-inverse algebra, the discourse templates are all **hand-designed structure for one capability at a time.** That is the exact "feature-by-feature capability-matching = custom-design-not-biology + whack-a-mole" the owner warned against (memory `project_dendritic_cortex_for_emergence`), and I drifted back into it.
+
+**THE BAR, going forward:** the goal is **LLM-like free-flowing conversation about ANYTHING, given enough training.** That target has an UNBOUNDED list of capabilities — you cannot hand-build them all, and *"given enough training"* literally means the capability must come from **LEARNING, not from me writing a mechanism.** So the primary bar for any new conversational capability is: **"does it EMERGE from a learning substrate (developed from experience), or am I hand-installing it?"** Whack-a-mole is NOT the efficient path and CANNOT reach the goal; a substrate that learns conversational structure from a stream (the way an LLM learns from text — but spiking, one brain, biology-grounded) is the only path to generality.
+
+**The two threads, and the balance the owner corrected:**
+- **The EMERGENCE ENGINE = the real path (make this the PRIMARY effort):** (1) a spiking substrate that LEARNS — biological deep credit assignment (burst-multiplexed / dendritic, no weight transport) carried onto the substrate (the BDSP/D1 on-bridge learning is squarely this — the enabler for everything, because without a substrate that learns, every capability must be hand-built); (2) a simulated recurrent sequence/language cortex that DEVELOPS conversational structure from a training stream; (3) the EMERGE structure-from-experience arcs (categories, inheritance, grammar DISCOVERED from co-occurrence, not coded) — extend these toward open conversation.
+- **The HAND-BUILT SCAFFOLDS = useful, but NOT the path:** the event register, the VSA composer, the console intent-dispatch, discourse templates. Their legitimate value is (a) as temporary scaffolds a learned cortex will replace, and (b) as PROBES that MAP what the substrate can't yet do on its own (an honest negative is a first-class deliverable). They are NOT the route to generality.
+
+**The operational rule:** DEMOTE new hand-built conversational capabilities to **scaffolds-only** — do NOT build a fresh dedicated mechanism for a conversational capability *unless* it is either (i) a temporary scaffold explicitly on the ladder toward its learned replacement, or (ii) a probe proving a substrate limit that then LAUNCHES the learning-substrate mechanism search. The test FLIPS from *"did I build this capability?"* to **"did the substrate LEARN this from experience?"** When I catch myself reaching for "build a dedicated mechanism/router/register for capability X," that reach IS the drift — the move is instead to ask *"what learning substrate + training stream makes X emerge?"* and advance THAT.
+
 ## THE NON-NEGOTIABLE CONSTRAINTS
 
 - **NO shortcuts, cheats, or host scaffolding.** The ONLY legitimate host code is the **world/body interface** (a simulated world; rendering the brain's senses; enacting its motor output). EVERYTHING between sensation and action = neurons / synapses / their communication.
@@ -61,6 +73,7 @@ If I'm doing ANY of these, I've drifted — stop and re-anchor:
 7. **Relabeling a shortcut as acceptable biology.** Calling a host stand-in or external model "defensible / permanent / pragmatic" to dodge simulating the circuitry. When I catch myself arguing WHY a scaffold can stay, THAT argument is the drift.
 8. **Believing a "surpass" without adversarial verification** (NEW). Committing a GO because it looked clean, without independent skeptics probing for the confound. See the workflow's step 4.
 9. **Skimming the sources** (NEW). Grepping the catalog index + citing abstracts instead of READING the original chapter/PDF in depth, and searching only biology (not the external engineering literature). See workflow step 1.
+10. **Whack-a-mole — hand-building conversational capabilities one at a time** (2026-07-10 owner steer). Reaching for a fresh dedicated mechanism / router / register / template for a conversational capability instead of asking *"what learning substrate + training stream makes this EMERGE?"*. See "⭐ THE EMERGENCE BAR." A new hand-built capability is allowed ONLY as an explicit temporary scaffold on the ladder to its learned replacement, or as a probe of a substrate limit — never as the capability's permanent home.
 
 ---
 
@@ -131,6 +144,7 @@ Every capability hypothesis passes through: (1) state the capability; (2) test t
 - "Is anything running while I think? Are the independent things I'm about to do sequentially actually independent → launch them together."
 - "Am I about to run a MULTI-SEED / multi-config sweep? → fire the mechanical parallelism gate: fanned across cores (N processes) or one serial process? Serial on a multi-core box = STOP, fan it out. Is util low / one python proc while N cores sit idle → I'm single-threaded, fan out. Did a subagent just 'launch a sweep'? → it's single-threaded + probably orphaned — the CONTROLLER fans it out."
 - "Am I arguing why a shortcut / external model / scaffold can STAY?" → **STOP.** Scope how to SIMULATE or DEVELOP the capability; the scaffold is temporary.
+- "Am I about to hand-build a dedicated mechanism for a conversational capability?" → **STOP (the emergence bar).** Is this a temporary scaffold on the ladder to its LEARNED replacement, or a probe of a substrate limit? If neither → don't build it; ask *"what learning substrate + training stream makes this EMERGE?"* and advance THAT. The bar is "did the substrate LEARN this from experience?", not "did I build it?"
 
 ## RESUME NOW
 
