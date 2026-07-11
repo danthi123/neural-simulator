@@ -1,0 +1,75 @@
+{
+  "runner": "_emerge_reservoir_lm_multicat_scale_derisk",
+  "seeds": [
+    44
+  ],
+  "ncat": 4,
+  "chance_cat": 0.25,
+  "per_seed": {
+    "44": {
+      "main": {
+        "arm": "main",
+        "held_cat_acc": 0.5833333333333334,
+        "held_2way": 0.5833333333333334,
+        "held_isaction": 1.0
+      },
+      "spiking_codon": {
+        "arm": "spiking_codon",
+        "held_cat_acc": 0.5833333333333334,
+        "held_2way": 0.5833333333333334,
+        "held_isaction": 1.0
+      },
+      "scramble": {
+        "arm": "scramble",
+        "held_cat_acc": 0.16666666666666666,
+        "held_2way": 0.16666666666666666,
+        "held_isaction": 1.0
+      },
+      "onehot": {
+        "arm": "onehot",
+        "held_cat_acc": 0.3333333333333333,
+        "held_2way": 0.3333333333333333,
+        "held_isaction": 1.0
+      },
+      "untrained": {
+        "arm": "untrained",
+        "held_cat_acc": 0.0,
+        "held_2way": 0.0,
+        "held_isaction": 0.0
+      }
+    }
+  },
+  "aggregate": {
+    "main": {
+      "held_cat_acc": 0.5833333333333334,
+      "held_2way": 0.5833333333333334,
+      "held_isaction": 1.0
+    },
+    "spiking_codon": {
+      "held_cat_acc": 0.5833333333333334,
+      "held_2way": 0.5833333333333334,
+      "held_isaction": 1.0
+    },
+    "scramble": {
+      "held_cat_acc": 0.16666666666666666,
+      "held_2way": 0.16666666666666666,
+      "held_isaction": 1.0
+    },
+    "onehot": {
+      "held_cat_acc": 0.3333333333333333,
+      "held_2way": 0.3333333333333333,
+      "held_isaction": 1.0
+    },
+    "untrained": {
+      "held_cat_acc": 0.0,
+      "held_2way": 0.0,
+      "held_isaction": 0.0
+    }
+  },
+  "per_seed_go": [
+    true
+  ],
+  "n_go": 1,
+  "n_seeds": 1,
+  "elapsed_s": 9.5
+}
