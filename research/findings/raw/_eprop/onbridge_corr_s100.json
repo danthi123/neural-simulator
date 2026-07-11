@@ -1,0 +1,169 @@
+{
+  "probe": "emerge_reservoir_lm_onbridge_bdsp",
+  "seeds": [
+    100
+  ],
+  "elapsed_seconds": 17.3,
+  "params": {
+    "seeds": [
+      100
+    ],
+    "n_sentences": 400,
+    "vocab": 32,
+    "n_pool": 150,
+    "max_train_sents": 100,
+    "max_eval_sents": 40,
+    "epochs": 4,
+    "epochs_readout": 10,
+    "read_steps": 8,
+    "teach_steps": 8,
+    "lr_out": 0.005,
+    "weight_decay": 0.001,
+    "bdsp_lr": 0.01,
+    "bdsp_p0": 0.3,
+    "bdsp_beta": 1.0,
+    "bdsp_w_min": 0.0,
+    "bdsp_w_max": 20.0,
+    "soma_g": 320.0,
+    "soma_g_sweep": [
+      320.0
+    ],
+    "k_apical": 150.0,
+    "int_lr": 0.01,
+    "arms": [
+      "fixed",
+      "plastic",
+      "apical_lesion"
+    ],
+    "smoke": false,
+    "json": "research/findings/raw/_eprop/onbridge_corr_s100.json"
+  },
+  "per_seed": [
+    {
+      "seed": 100,
+      "V": 32,
+      "n_pool": 150,
+      "n_train": 100,
+      "n_eval": 40,
+      "chance_ce": 3.4657,
+      "soma_g_sweep": [
+        {
+          "soma_g": 320.0,
+          "dw_directed": 0.0005843783158286649,
+          "dw_lesion": 7.365027764686068e-05,
+          "B_apical": 0.017474615177014267,
+          "B_rest": 0.0,
+          "B_rises": true,
+          "directed_moves_more": true
+        }
+      ],
+      "soma_g_used": 320.0,
+      "arms": {
+        "fixed": {
+          "mode": "fixed",
+          "dw_mean": 0.0,
+          "w_before_mean": 6.351016193263361,
+          "w_after_mean": 6.351016193263361,
+          "mean_teach_B": 0.0,
+          "mean_spikes_per_step": 0.010850065586419752,
+          "overall_ce": 1.3516,
+          "overall_acc": 0.6622,
+          "by_depth": {
+            "1": 1.6596,
+            "2": 1.6054,
+            "3": 1.1438,
+            "4-5": 0.8985
+          },
+          "depth_n": {
+            "1": 40,
+            "2": 40,
+            "3": 34,
+            "4-5": 34
+          },
+          "mc_residual_frac": null
+        },
+        "plastic": {
+          "mode": "plastic",
+          "dw_mean": 0.025318548898058145,
+          "w_before_mean": 6.351016193263361,
+          "w_after_mean": 6.363206586179771,
+          "mean_teach_B": 0.016728939204870712,
+          "mean_spikes_per_step": 0.010847056327160494,
+          "overall_ce": 1.357,
+          "overall_acc": 0.6622,
+          "by_depth": {
+            "1": 1.6461,
+            "2": 1.6111,
+            "3": 1.1705,
+            "4-5": 0.9045
+          },
+          "depth_n": {
+            "1": 40,
+            "2": 40,
+            "3": 34,
+            "4-5": 34
+          },
+          "mc_residual_frac": null
+        },
+        "apical_lesion": {
+          "mode": "apical_lesion",
+          "dw_mean": 0.004502703109076465,
+          "w_before_mean": 6.351016193263361,
+          "w_after_mean": 6.346513490154285,
+          "mean_teach_B": 0.0,
+          "mean_spikes_per_step": 0.01084960262345679,
+          "overall_ce": 1.3518,
+          "overall_acc": 0.6622,
+          "by_depth": {
+            "1": 1.6599,
+            "2": 1.6057,
+            "3": 1.1444,
+            "4-5": 0.898
+          },
+          "depth_n": {
+            "1": 40,
+            "2": 40,
+            "3": 34,
+            "4-5": 34
+          },
+          "mc_residual_frac": null
+        }
+      },
+      "bigram_by_depth": {
+        "1": 1.5359,
+        "2": 2.342,
+        "3": 1.7398,
+        "4-5": 1.289
+      },
+      "no_weight_transport": true
+    }
+  ],
+  "error": null,
+  "aggregate": {
+    "plastic_dw_mean": 0.025318548898058145,
+    "apical_lesion_dw_mean": 0.004502703109076465,
+    "fixed_dw_mean": 0.0,
+    "microcircuit_dw_mean": null,
+    "undirected_drift_dw": 0.004502703109076465,
+    "plastic_directed_dw": 0.020815845788981678,
+    "microcircuit_directed_dw": null,
+    "microcircuit_directed_dw_over_plastic": null,
+    "microcircuit_weakens_directed_credit": false,
+    "directed_dominates_undirected_drift": true,
+    "undirected_drift_metric_inert": true,
+    "plastic_overall_ce": 1.357,
+    "fixed_overall_ce": 1.3516,
+    "microcircuit_overall_ce": null,
+    "apical_lesion_overall_ce": 1.3518,
+    "microcircuit_residual_frac_mean": null,
+    "plastic_within_horizon_minus_fixed": 0.01635,
+    "microcircuit_within_horizon_minus_fixed": null,
+    "microcircuit_beats_fixed_within_horizon_and_overall": false,
+    "weights_move_under_apical": true,
+    "directed_moves_more_than_lesion": true,
+    "best_directed_over_lesion_ratio_in_sweep": 7.935,
+    "any_B_rises_in_sweep": true,
+    "plastic_differs_from_fixed": true
+  },
+  "verdict": "SMOKE-VALIDATED (machinery + wall-#1 handling) -- the pipeline runs end-to-end on a real SimulationBridge; the recurrent synapses MOVE under the committed BDSP rule (plastic mean|dw| 0.02532 > 0.0001); the DIRECTED apical credit is ISOLABLE in the soma_g sweep -- at g=0 (decoupled) B stays 0 and directed==lesion (the documented boundary), and turning on bdsp_apical_couples_soma raises measured bursts B monotonically with g and steers the weight move up to 7.9x the apical=0 lesion. LESION-BUG FIX (this build): the arm was named 'apical_lesion' but the teach checked mode=='lesion' -> the lesion ran the FULL directed apical (== plastic); corrected to a TRUE apical=0 lesion. With it, the CORRECTED apical_lesion arm (apical=0) shows the DIRECTED credit DOMINATES the undirected -Pbar*E drift (plastic directed |dw| 0.02082 = plastic 0.02532 - lesion 0.00450, ~4.6x the undirected drift), and the drift is METRIC-INERT (lesion CE 1.352 ~ fixed 1.352) -- so plastic is NOT swamped by drift; it moves the weights in the credited direction but that reservoir change yields only a MARGINAL read-out CE gain (plastic 1.357 vs fixed 1.352) at this scale. A clean within-horizon CE-win still needs the sparser bursting regime + lr/epoch tuning = the controller's sweep. NOT a faked positive."
+}

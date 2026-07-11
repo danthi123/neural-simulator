@@ -1,0 +1,223 @@
+{
+  "probe": "emerge_reservoir_lm_onbridge_bdsp",
+  "seeds": [
+    42
+  ],
+  "elapsed_seconds": 17.6,
+  "params": {
+    "seeds": [
+      42
+    ],
+    "n_sentences": 400,
+    "vocab": 32,
+    "n_pool": 150,
+    "max_train_sents": 100,
+    "max_eval_sents": 40,
+    "epochs": 3,
+    "epochs_readout": 10,
+    "read_steps": 8,
+    "teach_steps": 8,
+    "lr_out": 0.005,
+    "weight_decay": 0.001,
+    "bdsp_lr": 0.01,
+    "bdsp_p0": 0.3,
+    "bdsp_beta": 1.0,
+    "bdsp_w_min": 0.0,
+    "bdsp_w_max": 20.0,
+    "soma_g": 320.0,
+    "soma_g_sweep": [
+      0.0,
+      40.0,
+      80.0,
+      160.0
+    ],
+    "k_apical": 150.0,
+    "int_lr": 0.1,
+    "arms": [
+      "fixed",
+      "plastic",
+      "apical_lesion",
+      "microcircuit"
+    ],
+    "smoke": false,
+    "json": "research/findings/raw/_reslm_onbridge_bdsp_MC_SMOKE.json"
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "V": 32,
+      "n_pool": 150,
+      "n_train": 100,
+      "n_eval": 40,
+      "chance_ce": 3.4657,
+      "soma_g_sweep": [
+        {
+          "soma_g": 0.0,
+          "dw_directed": 8.413868736017057e-05,
+          "dw_lesion": 6.98754120126459e-05,
+          "B_apical": 0.0,
+          "B_rest": 0.0,
+          "B_rises": false,
+          "directed_moves_more": false
+        },
+        {
+          "soma_g": 40.0,
+          "dw_directed": 0.0002000558101782448,
+          "dw_lesion": 7.036317756896107e-05,
+          "B_apical": 7.442146665025354e-05,
+          "B_rest": 0.0,
+          "B_rises": false,
+          "directed_moves_more": true
+        },
+        {
+          "soma_g": 80.0,
+          "dw_directed": 0.00032011450551272075,
+          "dw_lesion": 6.94256582758509e-05,
+          "B_apical": 0.000794009326171785,
+          "B_rest": 0.0,
+          "B_rises": true,
+          "directed_moves_more": true
+        },
+        {
+          "soma_g": 160.0,
+          "dw_directed": 0.0004661002182348098,
+          "dw_lesion": 7.000211807771316e-05,
+          "B_apical": 0.005361326446690123,
+          "B_rest": 0.0,
+          "B_rises": true,
+          "directed_moves_more": true
+        }
+      ],
+      "soma_g_used": 320.0,
+      "arms": {
+        "fixed": {
+          "mode": "fixed",
+          "dw_mean": 0.0,
+          "w_before_mean": 6.407133024677542,
+          "w_after_mean": 6.407133024677542,
+          "mean_teach_B": 0.0,
+          "mean_spikes_per_step": 0.010298622685185185,
+          "overall_ce": 1.5229,
+          "overall_acc": 0.6176,
+          "by_depth": {
+            "1": 1.4911,
+            "2": 1.4695,
+            "3": 1.5967,
+            "4-5": 1.5688
+          },
+          "depth_n": {
+            "1": 40,
+            "2": 40,
+            "3": 30,
+            "4-5": 26
+          },
+          "mc_residual_frac": null
+        },
+        "plastic": {
+          "mode": "plastic",
+          "dw_mean": 0.026818702767864595,
+          "w_before_mean": 6.407133024677542,
+          "w_after_mean": 6.422245000583921,
+          "mean_teach_B": 0.019674421641940634,
+          "mean_spikes_per_step": 0.010297388117283951,
+          "overall_ce": 1.5202,
+          "overall_acc": 0.625,
+          "by_depth": {
+            "1": 1.484,
+            "2": 1.4628,
+            "3": 1.5956,
+            "4-5": 1.5773
+          },
+          "depth_n": {
+            "1": 40,
+            "2": 40,
+            "3": 30,
+            "4-5": 26
+          },
+          "mc_residual_frac": null
+        },
+        "apical_lesion": {
+          "mode": "apical_lesion",
+          "dw_mean": 0.003759057227228467,
+          "w_before_mean": 6.407133024677542,
+          "w_after_mean": 6.403373967450313,
+          "mean_teach_B": 0.0,
+          "mean_spikes_per_step": 0.010299702932098764,
+          "overall_ce": 1.5245,
+          "overall_acc": 0.6176,
+          "by_depth": {
+            "1": 1.4906,
+            "2": 1.473,
+            "3": 1.5987,
+            "4-5": 1.57
+          },
+          "depth_n": {
+            "1": 40,
+            "2": 40,
+            "3": 30,
+            "4-5": 26
+          },
+          "mc_residual_frac": null
+        },
+        "microcircuit": {
+          "mode": "microcircuit",
+          "dw_mean": 0.021749039301838465,
+          "w_before_mean": 6.407133024677542,
+          "w_after_mean": 6.417740818023998,
+          "mean_teach_B": 0.017000104545375618,
+          "mean_spikes_per_step": 0.010290559413580248,
+          "overall_ce": 1.5106,
+          "overall_acc": 0.625,
+          "by_depth": {
+            "1": 1.4903,
+            "2": 1.4688,
+            "3": 1.5428,
+            "4-5": 1.5688
+          },
+          "depth_n": {
+            "1": 40,
+            "2": 40,
+            "3": 30,
+            "4-5": 26
+          },
+          "mc_residual_frac": 0.924
+        }
+      },
+      "bigram_by_depth": {
+        "1": 1.6202,
+        "2": 2.1883,
+        "3": 1.9535,
+        "4-5": 1.8469
+      },
+      "no_weight_transport": true
+    }
+  ],
+  "error": null,
+  "aggregate": {
+    "plastic_dw_mean": 0.026818702767864595,
+    "apical_lesion_dw_mean": 0.003759057227228467,
+    "fixed_dw_mean": 0.0,
+    "microcircuit_dw_mean": 0.021749039301838465,
+    "undirected_drift_dw": 0.003759057227228467,
+    "plastic_directed_dw": 0.023059645540636126,
+    "microcircuit_directed_dw": 0.017989982074609997,
+    "microcircuit_directed_dw_over_plastic": 0.78,
+    "microcircuit_weakens_directed_credit": true,
+    "directed_dominates_undirected_drift": true,
+    "undirected_drift_metric_inert": true,
+    "plastic_overall_ce": 1.5202,
+    "fixed_overall_ce": 1.5229,
+    "microcircuit_overall_ce": 1.5106,
+    "apical_lesion_overall_ce": 1.5245,
+    "microcircuit_residual_frac_mean": 0.924,
+    "plastic_within_horizon_minus_fixed": 0.0037,
+    "microcircuit_within_horizon_minus_fixed": -0.02695,
+    "microcircuit_beats_fixed_within_horizon_and_overall": true,
+    "weights_move_under_apical": true,
+    "directed_moves_more_than_lesion": true,
+    "best_directed_over_lesion_ratio_in_sweep": 6.658,
+    "any_B_rises_in_sweep": true,
+    "plastic_differs_from_fixed": true
+  },
+  "verdict": "SMOKE-VALIDATED (machinery + wall-#1 handling) -- the pipeline runs end-to-end on a real SimulationBridge; the recurrent synapses MOVE under the committed BDSP rule (plastic mean|dw| 0.02682 > 0.0001); the DIRECTED apical credit is ISOLABLE in the soma_g sweep -- at g=0 (decoupled) B stays 0 and directed==lesion (the documented boundary), and turning on bdsp_apical_couples_soma raises measured bursts B monotonically with g and steers the weight move up to 6.7x the apical=0 lesion. LESION-BUG FIX (this build): the arm was named 'apical_lesion' but the teach checked mode=='lesion' -> the lesion ran the FULL directed apical (== plastic); corrected to a TRUE apical=0 lesion. With it, the CORRECTED apical_lesion arm (apical=0) shows the DIRECTED credit DOMINATES the undirected -Pbar*E drift (plastic directed |dw| 0.02306 = plastic 0.02682 - lesion 0.00376, ~6.1x the undirected drift), and the drift is METRIC-INERT (lesion CE 1.524 ~ fixed 1.523) -- so plastic is NOT swamped by drift; it moves the weights in the credited direction but that reservoir change yields only a MARGINAL read-out CE gain (plastic 1.520 vs fixed 1.523) at this scale. A clean within-horizon CE-win still needs the sparser bursting regime + lr/epoch tuning = the controller's sweep. NOT a faked positive. || MICROCIRCUIT (D1 clean-error variant): resid_frac 0.924 (1=no-cancel/0=full-cancel) -- the SST-like interneuron cancels only ~8% of the top-down, because the raw apical is ALREADY the FA error k*(Y@delta) and its target-innovation is NOT linearly predictable from the reservoir rate r_t. Mechanistically the microcircuit branch modifies ONLY the effective apical (raw - int_drive); it does NOT touch the -Pbar*E weight-update baseline, so it CANNOT reduce the undirected drift. Its lower total |dw| (0.02175 vs plastic 0.02682) = a WEAKER directed credit (micro directed |dw| 0.01799 = 0.78x plastic's 0.02306; fewer directed bursts), NOT drift cancellation. On CE: micro overall 1.511 vs fixed 1.523 vs plastic 1.520; within-horizon(d3-6) micro-minus-fixed -0.02695 vs plastic 0.0037. => HONEST READ: micro's overall+within-horizon CE edge over fixed is present but TINY and 1-seed (single-bucket-driven), and it comes at the cost of a weaker directed credit -- NOT a robust CE-win. The interneuron-as-literally-wired barely cancels (the apical is already the clean error), so it is ~plastic-with-a-slightly-weaker-credit. NOT a faked positive; see the finding for the diagnosis."
+}
