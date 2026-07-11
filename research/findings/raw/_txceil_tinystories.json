@@ -1,0 +1,41 @@
+{
+  "runner": "_wikitext_transformer_ceiling",
+  "V": 2000,
+  "block": 96,
+  "dev": "cuda",
+  "by_ctx_depth": {
+    "1-1": {
+      "transformer_ce": 3.423,
+      "bigram_ce": 3.964,
+      "margin": 0.541
+    },
+    "2-2": {
+      "transformer_ce": 3.079,
+      "bigram_ce": 3.922,
+      "margin": 0.843
+    },
+    "3-3": {
+      "transformer_ce": 2.901,
+      "bigram_ce": 3.937,
+      "margin": 1.036
+    },
+    "4-8": {
+      "transformer_ce": 2.606,
+      "bigram_ce": 3.935,
+      "margin": 1.33
+    },
+    "9-16": {
+      "transformer_ce": 2.317,
+      "bigram_ce": 3.934,
+      "margin": 1.617
+    },
+    "17-96": {
+      "transformer_ce": 2.014,
+      "bigram_ce": 3.935,
+      "margin": 1.921
+    }
+  },
+  "shallow_margin": 0.541,
+  "deep_margin": 1.921,
+  "elapsed_s": 763.7
+}
