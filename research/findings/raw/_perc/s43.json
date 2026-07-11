@@ -1,0 +1,42 @@
+{
+  "runner": "_emerge_reservoir_lm_perception_grounded_codes_derisk",
+  "seeds": [
+    43
+  ],
+  "n_ex": 9,
+  "t_active": 20,
+  "n_col": 80,
+  "k": 12,
+  "per_seed": {
+    "43": {
+      "main": {
+        "arm": "main",
+        "heldagent_cat_acc": 1.0
+      },
+      "scramble": {
+        "arm": "scramble",
+        "heldagent_cat_acc": 0.5555555555555556
+      },
+      "onehot": {
+        "arm": "onehot",
+        "heldagent_cat_acc": 0.3333333333333333
+      },
+      "untrained": {
+        "arm": "untrained",
+        "heldagent_cat_acc": 0.0
+      }
+    }
+  },
+  "aggregate": {
+    "main": 1.0,
+    "scramble": 0.5555555555555556,
+    "onehot": 0.3333333333333333,
+    "untrained": 0.0
+  },
+  "per_seed_go": [
+    true
+  ],
+  "n_go": 1,
+  "n_seeds": 1,
+  "elapsed_s": 9.3
+}
