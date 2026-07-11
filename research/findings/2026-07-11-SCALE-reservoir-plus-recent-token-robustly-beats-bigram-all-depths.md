@@ -21,6 +21,18 @@ Reading the input alongside the reservoir state is the STANDARD echo-state read-
 ## ⇒ significance — the scale story, corrected
 The earlier "reservoir hovers AT the bigram / plateaus" concern (`-reservoir-size-vs-data-levers`, `-mid-depth-wins-loses-deep`) was NOT an architecture ceiling — it was the reservoir-only read-out discarding the sharp recent-token signal it washes out. Restoring it (a trivial, principled feature change) gives a **robust +0.47-nat advantage over the bigram at ALL depths**, growing to ~+0.5 at deep context. So on real text the emergent generator (fixed spiking reservoir + a one-step-local-delta read-out over `[state ⊕ recent token]`) is meaningfully, mechanistically better than the bigram, precisely where higher-order/discourse context matters. This is the boundary-surpassing workflow end-to-end: aggregate plateau → context-depth diagnosis → fading-memory limit → the recent-token fix → a robust win.
 
+## ⚠ RIGOR CALIBRATION (same-day — the bigram is a WEAK bar; measured against a LEARNED K-gram)
+The +0.47 "beats bigram" is MOSTLY recovering 2–3-gram context, not deep reservoir memory. Isolating the reservoir's contribution by comparing `[reservoir ⊕ recent-K tokens]` against `[recent-K tokens only]` (a LEARNED K-gram, a much stronger baseline than the add-1 bigram), 2-seed on TinyStories:
+| reservoir's contribution beyond a learned K-gram (nats, +=reservoir adds) | d1 | d2 | d3 | d4–5 | d6–9 | d10+ |
+|---|---|---|---|---|---|---|
+| vs learned 1-gram (K=1) | −0.21 | +0.01 | +0.19 | +0.20 | +0.19 | +0.17 |
+| vs learned 3-gram (K=2) | −0.27 | −0.20 | −0.02 | +0.01 | +0.06 | +0.08 |
+| vs learned 4-gram (K=3) | −0.29 | −0.24 | −0.14 | −0.04 | +0.02 | +0.03 |
+
+- A **learned 3-gram already beats the add-1 bigram by +0.31** — so most of the reservoir+token "win over the bigram" is just better-estimated short-range n-gram context.
+- The reservoir's **genuine contribution BEYOND a learned 3-gram is SMALL** (+0.02–0.08 nats at deep context only) and it **HURTS at short context** (−0.2 to −0.3, over-parameterizing the easy predictions).
+- **Honest conclusion:** on TinyStories (simple, short-range-dominated text) the emergent reservoir generator is ≈ a learned 3-gram + a modest genuine long-range residual. Its higher-order memory is real but mostly redundant with a few recent tokens on this corpus. The residual SHOULD grow on text with real long-range dependencies (WikiText) — the pinned next test. This corrects the headline: the robust win is over the BIGRAM; over a strong learned n-gram the edge is a small deep-context residual.
+
 ## OPEN / next
 - Confirm the K=1 hybrid's robustness as DATA scales (does the +0.47 hold/grow at 8000+ sentences and larger vocab — where the reservoir-only edge had vanished but this hybrid should not, since it strictly dominates the bigram).
 - Compare against the TRIGRAM (a fairer higher-order baseline than the bigram) — does the reservoir still add value beyond a well-estimated trigram at deep context? (The trigram overfits at small data; at more data it is the real bar.)

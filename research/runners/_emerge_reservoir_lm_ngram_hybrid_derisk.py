@@ -25,19 +25,21 @@ from research.runners._emerge_reservoir_lm_context_depth_derisk import BUCKETS, 
 OUT = Path("research/findings/raw/_reslm_ngram_hybrid.json")
 
 
-def augment(cache, V, K):
-    """Append the last-K token one-hots to each position's reservoir feature (position t predicts t+1; recent tokens = ids[t..t-K+1])."""
+def augment(cache, V, K, use_reservoir=True):
+    """Feature per position t (predicts t+1): [reservoir_state (if use_reservoir)] ++ last-K token one-hots (ids[t..t-K+1]).
+       use_reservoir=False -> a LEARNED K-gram (recent tokens only, no reservoir) -- the fair strong baseline to isolate
+       the reservoir's contribution beyond the recent tokens."""
     out = []
     for states, ids in cache:
         aug = []
         for t in range(len(ids)):
-            feat = [states[t]]
+            feat = [states[t]] if use_reservoir else []
             for k in range(K):
                 oh = np.zeros(V)
                 if t - k >= 0:
                     oh[ids[t - k]] = 1.0
                 feat.append(oh)
-            aug.append(np.concatenate(feat))
+            aug.append(np.concatenate(feat) if feat else np.zeros(1))
         out.append((aug, ids))
     return out
 
@@ -86,18 +88,31 @@ def main():
         P_bi = fit_bigram(tr_ids, V)
         per_seed[str(seed)] = {"V": V, "n_train": len(tr), "by_k": {}}
         for K in args.k_recent:
-            trc = augment(tr_cache0, V, K); evc = augment(ev_cache0, V, K)
-            mean, std = _standardize_fit(trc)
-            W = train_readout(trc, V, args.epochs, args.lr, np.random.default_rng(seed * 13 + 1), mean, std,
-                              wd=args.weight_decay, ls=0.05)
-            depth, agg_r, agg_b = per_depth_ce(W, mean, std, evc, P_bi)
-            per_seed[str(seed)]["by_k"][str(K)] = {"aggregate_reservoir_ce": agg_r, "aggregate_bigram_ce": agg_b,
-                                                   "aggregate_margin": round(agg_b - agg_r, 3), "by_depth": depth}
-            deep = [b for b in ("6-9", "10-99") if b in depth]
-            deepm = np.mean([depth[b]["margin"] for b in deep]) if deep else float("nan")
-            print(f"[seed {seed}] K={K} (reservoir{'+recent'+str(K) if K else '-only'}): aggregate margin {agg_b-agg_r:+.3f} "
-                  f"| deep(6+) margin {deepm:+.3f} | "
-                  + " ".join(f"d{b}:{depth[b]['margin']:+.2f}" for lo,hi in BUCKETS for b in [f'{lo}-{hi}' if lo!=hi else f'{lo}'] if b in depth), flush=True)
+            entry = {}
+            for use_res in (True, False):
+                if not use_res and K == 0:
+                    continue                                      # K=0 without reservoir = empty feature (skip)
+                trc = augment(tr_cache0, V, K, use_res); evc = augment(ev_cache0, V, K, use_res)
+                mean, std = _standardize_fit(trc)
+                W = train_readout(trc, V, args.epochs, args.lr, np.random.default_rng(seed * 13 + 1), mean, std,
+                                  wd=args.weight_decay, ls=0.05)
+                depth, agg_m, agg_b = per_depth_ce(W, mean, std, evc, P_bi)
+                tag = "res+tok" if use_res else "tok_only"
+                entry[tag] = {"aggregate_ce": agg_m, "aggregate_margin_vs_bigram": round(agg_b - agg_m, 3), "by_depth": depth}
+            per_seed[str(seed)]["by_k"][str(K)] = entry
+            # print: for K>=1, both res+tok and tok_only margins vs bigram + the RESERVOIR CONTRIBUTION (res+tok CE - tok_only CE)
+            rt = entry.get("res+tok"); to = entry.get("tok_only")
+            if rt and to:
+                contrib = {b: round(to["by_depth"][b]["reservoir_ce"] - rt["by_depth"][b]["reservoir_ce"], 3)
+                           for b in rt["by_depth"] if b in to["by_depth"]}      # reservoir contribution = tok_only_CE - res+tok_CE
+                deep = [b for b in ("6-9", "10-99") if b in contrib]
+                deepc = np.mean([contrib[b] for b in deep]) if deep else float("nan")
+                print(f"[seed {seed}] K={K}: res+tok agg-margin-vs-bigram {rt['aggregate_margin_vs_bigram']:+.3f} | "
+                      f"tok_only(learned {K}-gram) {to['aggregate_margin_vs_bigram']:+.3f} | RESERVOIR CONTRIB (nats, +=reservoir helps beyond tokens): "
+                      + " ".join(f"d{b}:{contrib[b]:+.2f}" for lo,hi in BUCKETS for b in [f'{lo}-{hi}' if lo!=hi else f'{lo}'] if b in contrib)
+                      + f" | deep(6+) {deepc:+.3f}", flush=True)
+            elif rt:
+                print(f"[seed {seed}] K={K}: reservoir-only agg-margin-vs-bigram {rt['aggregate_margin_vs_bigram']:+.3f}", flush=True)
 
     out = {"runner": "_emerge_reservoir_lm_ngram_hybrid_derisk", "corpus": args.corpus, "seeds": args.seeds,
            "n_pool": args.n_pool, "per_seed": per_seed, "elapsed_s": round(time.time() - t0, 1)}
