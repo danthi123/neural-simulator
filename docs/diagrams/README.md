@@ -12,8 +12,11 @@
 > **reading who-did-what** from a sentence, and (D) **learning and development
 > over simulated days** (learn → converse → sleep → grow → save/resume). It also
 > notes where a person watches and interacts (the 3-D viewer and web chat
-> console). The hand-authored SVGs below remain the source of truth for the
-> exhaustive per-region / per-synapse **detail** graphs.
+> console). For the **exhaustive per-region / per-synapse detail** — kept
+> current and GitHub-native — see
+> [`brain_architecture_detailed.md`](brain_architecture_detailed.md) (Mermaid).
+> The hand-authored SVGs below are now an **archived 2026-06 snapshot** (they
+> predate the 2026-07 language arcs), superseded by that detailed doc.
 
 Honest, **as-implemented** flowcharts of the whole simulated brain — every
 region type, every distinct pathway, the direction and *nature* of each

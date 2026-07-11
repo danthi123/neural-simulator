@@ -27,15 +27,12 @@ rather than papered over.
 <p align="center">
   <em>The simulated brain — one engine, two configurations (navigation and conversation)
   that share it and are joined by validated synaptic connections.</em><br>
-  <strong>Current plain-language flowcharts:</strong>
-  <a href="docs/diagrams/brain_architecture_current.md">brain architecture (current state)</a> ·
+  <strong>Current flowcharts (GitHub-rendered, plain-language, kept up to date):</strong><br>
+  <a href="docs/diagrams/brain_architecture_current.md">overview flowcharts</a> ·
+  <a href="docs/diagrams/brain_architecture_detailed.md">detailed diagrams — every region &amp; pathway</a> ·
   <a href="ROADMAP.md">full development roadmap</a><br>
-  <strong>Exhaustive per-region / per-synapse detail</strong>
-  (hand-drawn <em>snapshot as of 2026-06</em> — predates the most recent language arcs; see the roadmap for what's newer):
-  <a href="docs/diagrams/brain_master.svg">master map</a> ·
-  <a href="docs/diagrams/brain_navigation.svg">navigation brain</a> ·
-  <a href="docs/diagrams/brain_conversational.svg">conversational brain</a> ·
-  <a href="docs/diagrams/README.md">how to read</a>
+  <em>(the earlier hand-drawn per-synapse
+  <a href="docs/diagrams/brain_master.svg">SVGs</a> are an archived 2026-06 snapshot, superseded by the detailed diagrams above)</em>
 </p>
 
 **Jump to:** [What it is](#what-it-is) ·
