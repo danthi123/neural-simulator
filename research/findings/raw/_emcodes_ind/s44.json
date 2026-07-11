@@ -1,0 +1,66 @@
+{
+  "runner": "_emerge_reservoir_lm_emergent_category_codes_derisk",
+  "seeds": [
+    44
+  ],
+  "n_col": 80,
+  "k": 12,
+  "pool_epochs": 800,
+  "per_seed": {
+    "44": {
+      "main": {
+        "arm": "main",
+        "heldagent_cat_acc": 1.0,
+        "reversal_acc": 1.0
+      },
+      "scramble": {
+        "arm": "scramble",
+        "heldagent_cat_acc": 0.7777777777777778,
+        "reversal_acc": 0.4444444444444444
+      },
+      "nopooler": {
+        "arm": "nopooler",
+        "heldagent_cat_acc": 0.5,
+        "reversal_acc": 0.1111111111111111
+      },
+      "onehot": {
+        "arm": "onehot",
+        "heldagent_cat_acc": 0.5,
+        "reversal_acc": 0.3333333333333333
+      },
+      "untrained": {
+        "arm": "untrained",
+        "heldagent_cat_acc": 0.0,
+        "reversal_acc": 0.0
+      }
+    }
+  },
+  "aggregate": {
+    "main": {
+      "heldagent_cat_acc": 1.0,
+      "reversal_acc": 1.0
+    },
+    "scramble": {
+      "heldagent_cat_acc": 0.7777777777777778,
+      "reversal_acc": 0.4444444444444444
+    },
+    "nopooler": {
+      "heldagent_cat_acc": 0.5,
+      "reversal_acc": 0.1111111111111111
+    },
+    "onehot": {
+      "heldagent_cat_acc": 0.5,
+      "reversal_acc": 0.3333333333333333
+    },
+    "untrained": {
+      "heldagent_cat_acc": 0.0,
+      "reversal_acc": 0.0
+    }
+  },
+  "per_seed_go": [
+    false
+  ],
+  "n_go": 0,
+  "n_seeds": 1,
+  "elapsed_s": 22.4
+}
