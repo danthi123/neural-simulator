@@ -58,8 +58,7 @@ def main():
     def enc(ws): return np.array([stoi.get(w, 0) for w in ws], dtype=np.int64)
     tr = enc(words[:cut]); ev = enc(words[cut:])
     V = len(stoi)
-    print(f"[ceiling] stream={len(words)} V={V} block={args.block} dev={dev} params~"
-          f"{args.d_model*args.d_model*4*args.n_layer/1e6:.1f}M", flush=True)
+    print(f"[ceiling] stream={len(words)} V={V} block={args.block} dev={dev}", flush=True)
 
     # bigram baseline (add-1) on train
     P = np.ones((V, V));
@@ -77,6 +76,8 @@ def main():
             yield torch.from_numpy(x).to(dev), torch.from_numpy(y).to(dev)
 
     model = TinyGPT(V, d_model=args.d_model, n_layer=args.n_layer, n_head=args.n_head, block_size=B).to(dev)
+    n_params = sum(p.numel() for p in model.parameters())
+    print(f"[ceiling] transformer real params = {n_params/1e6:.2f}M (d{args.d_model}/L{args.n_layer}/H{args.n_head})", flush=True)
     opt = torch.optim.AdamW(model.parameters(), lr=args.lr)
     gen = batches(tr, args.batch)
     t0 = time.time(); model.train()
@@ -117,7 +118,8 @@ def main():
     shallow = rows["1-1"]["margin"]; deep = rows[f"17-{B}"]["margin"]
     print(f"[ceiling] LONG-RANGE SIGNAL = does the transformer's margin GROW with context? shallow(ctx1) {shallow:+.3f} -> "
           f"deep(ctx17+) {deep:+.3f}  (grows => real long-range; flat => thin at this scale)", flush=True)
-    out = {"runner": "_wikitext_transformer_ceiling", "V": V, "block": B, "dev": dev, "by_ctx_depth": rows,
+    out = {"runner": "_wikitext_transformer_ceiling", "V": V, "block": B, "dev": dev, "params_m": round(n_params / 1e6, 2),
+           "corpus": args.corpus, "d_model": args.d_model, "n_layer": args.n_layer, "n_head": args.n_head, "by_ctx_depth": rows,
            "shallow_margin": shallow, "deep_margin": deep, "elapsed_s": round(time.time() - t0, 1)}
     Path(args.json).parent.mkdir(parents=True, exist_ok=True); Path(args.json).write_text(json.dumps(out, indent=2))
     print(f"\n-> {args.json}", flush=True)
