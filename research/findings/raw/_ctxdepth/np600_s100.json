@@ -1,0 +1,53 @@
+{
+  "runner": "_emerge_reservoir_lm_context_depth_derisk",
+  "corpus": "data/corpus/tinystories.txt",
+  "seeds": [
+    100
+  ],
+  "n_pool": 600,
+  "per_seed": {
+    "100": {
+      "V": 200,
+      "n_train": 2500,
+      "by_depth": {
+        "1": {
+          "n": 500,
+          "reservoir_ce": 3.828,
+          "bigram_ce": 3.146,
+          "margin": -0.681
+        },
+        "2": {
+          "n": 500,
+          "reservoir_ce": 3.389,
+          "bigram_ce": 3.512,
+          "margin": 0.123
+        },
+        "3": {
+          "n": 480,
+          "reservoir_ce": 2.752,
+          "bigram_ce": 3.094,
+          "margin": 0.343
+        },
+        "4-5": {
+          "n": 862,
+          "reservoir_ce": 3.114,
+          "bigram_ce": 3.329,
+          "margin": 0.215
+        },
+        "6-9": {
+          "n": 1154,
+          "reservoir_ce": 3.313,
+          "bigram_ce": 3.338,
+          "margin": 0.024
+        },
+        "10-99": {
+          "n": 467,
+          "reservoir_ce": 3.228,
+          "bigram_ce": 3.241,
+          "margin": 0.013
+        }
+      }
+    }
+  },
+  "elapsed_s": 846.3
+}
