@@ -72,7 +72,12 @@ OUT = Path("research/findings/raw/_stream_eprop_lm.json")
 # ---- The e-prop reservoir arms (W_rec/W_out learn or not); BPTT is the matched full-backprop ceiling. ----
 RESERVOIR_ARMS = ["fixed_reservoir", "plastic_eprop", "shuffle_elig", "zero_signal"]
 ALL_ARMS = RESERVOIR_ARMS + ["BPTT_same_net"]          # the 5 pre-registered arms (the gate is defined over exactly these)
-EXTRA_ARMS = ["BPTT_fixed_win"]                         # optional isolation arm (R1b): BPTT with W_in frozen == e-prop's
+# ADDITIVE ALIF arms (NOT in ALL_ARMS -- the pre-registered 5-arm gate stays byte-identical). The single highest-leverage
+# biological lever (Bellec-2020 "highways into the future"): a slow per-unit ADAPTATION-as-state whose 2-component
+# eligibility propagates credit forward over long spans, so e-prop can reach the DEEP within-block context the plain
+# forward-filtered (~1/alpha) eligibility cannot. Ported faithfully from `_emerge_reservoir_lm_eprop_recurrent_derisk`.
+ALIF_ARMS = ["plastic_eprop_alif", "plastic_eprop_alif_readonly"]
+EXTRA_ARMS = ["BPTT_fixed_win"] + ALIF_ARMS            # optional isolation/lever arms (BPTT-fixed-W_in R1b; ALIF horizon lever)
 KNOWN_ARMS = ALL_ARMS + EXTRA_ARMS
 
 
@@ -97,6 +102,42 @@ def elig_update(e, act, h_prev, alpha):
     return (1.0 - alpha) * e + psi.unsqueeze(2) * h_prev.unsqueeze(1)   # (batch,n,n)
 
 
+# ---- ALIF adaptation-as-state forward + FAITHFUL 2-component eligibility (Bellec-2020 e-prop ALIF), batched torch port
+#      of `_train_alif`/`_alif_trace` in the reservoir reference. `a`(=ad) is a per-unit NON-fading slow trace of the
+#      unit's OWN activity (rho_j near 1); it subtracts an "activity-silent negative imprint" (-beta*a) from the pre-
+#      activation and is READ by the read-out (feature = concat([h, a])). Used by BOTH training AND the grad-check so the
+#      finite-difference check validates the exact code path.
+def alif_forward_step(h_prev, ad_prev, x_ids, W_rec, W_in, b, alpha, rho, beta):
+    """One ALIF step (batched). h_prev,ad_prev: (batch,n); rho: (n,); alpha,beta scalar. Returns (h, ad, act) where
+       ad = a_t = rho*a_{t-1} + (1-rho)*h_{t-1} (uses h_prev), and act = tanh(pre) with pre = rec + W_in[:,x] + b - beta*a."""
+    import torch
+    ad = rho * ad_prev + (1.0 - rho) * h_prev            # a_t: non-fading slow trace of own activity (uses h_prev)
+    rec = h_prev @ W_rec.t()                             # rec[b,j] = sum_i W_rec[j,i] h_prev[b,i]
+    pre = rec + W_in[:, x_ids].t() + b - beta * ad       # -beta*a = activity-silent negative imprint
+    act = torch.tanh(pre)
+    h = (1.0 - alpha) * h_prev + alpha * act             # fast leaky-integrated state
+    return h, ad, act
+
+
+def alif_elig_update(eps_h, eps_a, act, h_prev, alpha, rho, beta, readonly):
+    """FAITHFUL Bellec-2020 2-component ALIF eligibility (batched). eps_h,eps_a: (batch,n,n) with eps_h[b,j,i] ~
+       d h_{b,j}/d W_rec[j,i] and eps_a[b,j,i] ~ d a_{b,j}/d W_rec[j,i]. eps_a is COUPLED into eps_h (the read-out observes
+       BOTH compartments, so faithful credit sums the h-path and a-path sensitivities). Ported exactly from _train_alif:
+         eps_a = rho*eps_a + (1-rho)*eps_h                         (d a_j/d w_ji, uses the OLD eps_h)
+         eps_h = (1-alpha)*eps_h + psi*(h_prev - beta*eps_a)       (d h_j/d w_ji, COUPLED via the NEW eps_a)
+       readonly (the adaptation is READ but NOT credited): eps_a untouched (stays 0), eps_h = the FAST-only recursion."""
+    import torch
+    n = eps_h.shape[1]
+    psi = alpha * (1.0 - act * act)                      # (batch,n) leaky-tanh pseudo-derivative
+    if readonly:
+        eps_h = (1.0 - alpha) * eps_h + psi.unsqueeze(2) * h_prev.unsqueeze(1)          # FAST only (eps_a path dropped)
+        return eps_h, eps_a
+    rho_col = rho.view(1, n, 1)                          # index j (dim 1), broadcast over batch + i
+    eps_a = rho_col * eps_a + (1.0 - rho_col) * eps_h    # d a_j/d w_ji  (uses the OLD eps_h)
+    eps_h = (1.0 - alpha) * eps_h + psi.unsqueeze(2) * (h_prev.unsqueeze(1) - beta * eps_a)   # d h_j/d w_ji COUPLED
+    return eps_h, eps_a
+
+
 def build_init(V, n, seed, spectral, in_scale=1.0):
     """Deterministic shared initial parameters (numpy). Draw order mirrors the reservoir reference so runs are
        reproducible: W_rec (spectral-radius-scaled), W_in, b=0, W_out (small), B (fixed random feedback)."""
@@ -109,6 +150,21 @@ def build_init(V, n, seed, spectral, in_scale=1.0):
     W_out = rng.standard_normal((V, n)) * 0.01
     Bfb = rng.standard_normal((n, V)) / np.sqrt(V)        # fixed random feedback (broadcast alignment; no weight transport)
     return {"W_rec": W_rec, "W_in": W_in, "b": b, "W_out": W_out, "Bfb": Bfb}
+
+
+def build_alif_extra(V, n, seed, rho_win_lo, rho_win_hi):
+    """ALIF-specific parameters, drawn from a SEPARATE / disjoint RNG so build_init (the shared reservoir init that the 5
+       pre-registered arms depend on) is byte-UNCHANGED. The ALIF arms reuse build_init's W_rec/W_in/b (single-variable:
+       same reservoir, the ONLY difference is adaptation-as-state + 2-component credit); these extras are the read-out over
+       the [h;a] feature (2n) and the (2n x V) random feedback over BOTH compartments.
+         rho_j = 1 - 1/window_j, window_j log-uniform over [rho_win_lo, rho_win_hi] tokens (heterogeneous adaptation
+         time-constants -- the diverse-timescale forward hold that carries distal history)."""
+    rng = np.random.default_rng(seed * 100003 + 7)        # disjoint stream from build_init(seed)
+    win = np.exp(rng.uniform(np.log(rho_win_lo), np.log(rho_win_hi), size=n))
+    rho = 1.0 - 1.0 / win                                 # e.g. [30,300]-token windows -> rho in ~[0.967, 0.997]
+    W_out = rng.standard_normal((V, 2 * n)) * 0.01         # read-out over concat([h, a])
+    Bfb = rng.standard_normal((2 * n, V)) / np.sqrt(V)     # fixed random feedback over [h; a] (no weight transport)
+    return {"rho": rho, "W_out": W_out, "Bfb": Bfb}
 
 
 # ======================================================================================================================
@@ -155,6 +211,59 @@ def train_eprop(mode, init, tr_lanes, V, n, alpha, B, epochs, lr_out, lr_rec, wd
                 else:
                     e_use = e
                 dW = lr_rec * (L.unsqueeze(2) * e_use).mean(0)      # average the per-lane W_rec updates over the batch
+                W_rec = W_rec + dW
+        print(f"      [{mode}] epoch {ep + 1}/{epochs} last-block-CE "
+              f"{F.cross_entropy(logits, y[:, p]).item():.3f}", flush=True)
+    return W_rec.detach(), W_out.detach(), W_in.detach(), b.detach()
+
+
+def train_eprop_alif(mode, init, alif_extra, tr_lanes, V, n, alpha, rho_np, beta, B, epochs, lr_out, lr_rec, wd_out, dev):
+    """Contiguous-stream ALIF e-prop for one adaptation-as-state arm. Faithful batched port of `_train_alif`: the forward
+       carries a per-unit adaptation a_t (subtracting a beta-scaled negative imprint from the pre-activation); the read-out
+       reads concat([h, a]) (a carries distal history); W_rec is credited by the 2-component eligibility (eps_h COUPLED to
+       eps_a) with BOTH read-out paths (L_h*eps_h + L_a*eps_a) -- the a-path is what extends the credit horizon. State +
+       BOTH eligibilities are carried across the 128-token block and RESET at the block boundary (matching plain e-prop).
+       Batch aggregation (per-lane mean) matches plain e-prop in this file so the ALIF arm is directly comparable.
+         mode == 'plastic_eprop_alif'          -> both paths credited (the lever under test).
+         mode == 'plastic_eprop_alif_readonly' -> a is READ ([h;a]) but the eps_a path is zeroed / credit is h-path only
+                                                   (CONTROL: isolates 'adaptation carried to the read-out' [capacity] from
+                                                   'adaptation extends the credit horizon' [the actual lever]).
+       Returns (W_rec, W_out, W_in, b) detached. W_out is (V, 2n); B feedback is (2n, V)."""
+    import torch, torch.nn.functional as F
+    W_rec = torch.tensor(init["W_rec"], dtype=torch.float32, device=dev)
+    W_in = torch.tensor(init["W_in"], dtype=torch.float32, device=dev)          # FIXED input projection (reservoir setup)
+    b = torch.tensor(init["b"], dtype=torch.float32, device=dev)
+    W_out = torch.tensor(alif_extra["W_out"], dtype=torch.float32, device=dev)   # (V, 2n) read-out over [h; a]
+    Bfb = torch.tensor(alif_extra["Bfb"], dtype=torch.float32, device=dev)       # (2n, V) fixed random feedback over [h; a]
+    rho = torch.tensor(rho_np, dtype=torch.float32, device=dev)                  # (n,) per-unit adaptation leak
+    readonly = (mode == "plastic_eprop_alif_readonly")
+    batch, lane = tr_lanes.shape
+    nb = (lane - 1) // B
+    ar = torch.arange(batch, device=dev)
+    for ep in range(epochs):
+        for jblk in range(nb):                             # consecutive contiguous blocks (deterministic order = fair)
+            s = jblk * B
+            x = tr_lanes[:, s:s + B]; y = tr_lanes[:, s + 1:s + B + 1]           # (batch,B)
+            h = torch.zeros(batch, n, device=dev)
+            ad = torch.zeros(batch, n, device=dev)         # reset state + adaptation + BOTH eligibilities at the boundary
+            eps_h = torch.zeros(batch, n, n, device=dev)
+            eps_a = torch.zeros(batch, n, n, device=dev)
+            for p in range(B):
+                h_prev = h
+                h, ad, act = alif_forward_step(h_prev, ad, x[:, p], W_rec, W_in, b, alpha, rho, beta)
+                feat = torch.cat([h, ad], dim=1)           # read-out feature = [h_t ; a_t]  (batch, 2n)
+                logits = feat @ W_out.t()                  # (batch,V)
+                probs = F.softmax(logits, dim=-1)
+                delta = -probs
+                delta[ar, y[:, p]] += 1.0                  # onehot(target) - softmax(logits): clean read-out error
+                W_out = W_out + lr_out * ((delta.t() @ feat) / batch - wd_out * W_out)     # read-out delta rule over [h;a]
+                eps_h, eps_a = alif_elig_update(eps_h, eps_a, act, h_prev, alpha, rho, beta, readonly)
+                L = delta @ Bfb.t()                        # (batch,2n) broadcast random-feedback learning signal over [h;a]
+                L_h = L[:, :n]; L_a = L[:, n:]
+                if readonly:
+                    dW = lr_rec * (L_h.unsqueeze(2) * eps_h).mean(0)                       # credit the h-path ONLY
+                else:
+                    dW = lr_rec * (L_h.unsqueeze(2) * eps_h + L_a.unsqueeze(2) * eps_a).mean(0)   # credit BOTH read-out paths
                 W_rec = W_rec + dW
         print(f"      [{mode}] epoch {ep + 1}/{epochs} last-block-CE "
               f"{F.cross_entropy(logits, y[:, p]).item():.3f}", flush=True)
@@ -238,6 +347,42 @@ def eval_arm(W_rec, W_in, b, W_out, alpha, ev, B, P_bi, dev):
     return tce, bce, cnt
 
 
+def eval_arm_alif(W_rec, W_in, b, W_out, alpha, rho_np, beta, ev, B, P_bi, dev, shuffle_adapt=False):
+    """Held-out per-within-block-position CE for a trained ALIF arm (W_rec/W_in/b + (V,2n) W_out over [h;a]). State (h,a)
+       reset at each block start, so position p (0-indexed) = context depth p+1. Returns per-position (tce, bce, cnt).
+       shuffle_adapt (ADAPTATION-SHUFFLE anti-cheat): permute a_t across neurons before the read-out at each token -> same
+       extra read-out dims, WRONG content; if the deep gain is CONTENT (real, adaptation carries distal context) not
+       CAPACITY (merely 2n read-out dims), it must collapse toward the no-adaptation (plain) arm."""
+    import torch
+    n = W_rec.shape[0]; V = W_out.shape[0]
+    rho = torch.tensor(rho_np, dtype=torch.float32, device=dev)
+    n_blocks = (len(ev) - 1) // B
+    xs = np.stack([ev[i * B:(i + 1) * B] for i in range(n_blocks)])          # (n_blocks,B)
+    ys = np.stack([ev[i * B + 1:(i + 1) * B + 1] for i in range(n_blocks)])  # (n_blocks,B) = next tokens
+    tce = np.zeros(B); cnt = np.zeros(B)
+    chunk = 128
+    with torch.no_grad():
+        for c0 in range(0, n_blocks, chunk):
+            xb = torch.tensor(xs[c0:c0 + chunk], dtype=torch.long, device=dev)
+            yb = torch.tensor(ys[c0:c0 + chunk], dtype=torch.long, device=dev)
+            cb = xb.shape[0]
+            h = torch.zeros(cb, n, device=dev)
+            ad = torch.zeros(cb, n, device=dev)
+            ar = torch.arange(cb, device=dev)
+            for p in range(B):
+                h, ad, _ = alif_forward_step(h, ad, xb[:, p], W_rec, W_in, b, alpha, rho, beta)
+                ad_read = ad[:, torch.randperm(n, device=dev)] if shuffle_adapt else ad   # WRONG content, same dims
+                feat = torch.cat([h, ad_read], dim=1)
+                logp = torch.log_softmax(feat @ W_out.t(), dim=-1)
+                tce[p] += (-logp[ar, yb[:, p]]).sum().item()
+                cnt[p] += cb
+    # add-1 stream bigram: predict ev[s+p+1] from ev[s+p] (identical baseline to eval_arm)
+    bce = np.zeros(B)
+    for p in range(B):
+        bce[p] = -np.log(np.maximum(P_bi[xs[:, p], ys[:, p]], 1e-12)).sum()
+    return tce, bce, cnt
+
+
 def _pooled_margin(tce, bce, cnt, lo, hi):
     """Margin = bigram CE - model CE, pooled over within-block positions lo..hi (inclusive). +=model better."""
     m = slice(lo, hi + 1)
@@ -281,11 +426,104 @@ def _leaky_trace_np(Wr, W_in, b, alpha, ids, n):
     return hs, recs, eps
 
 
+def _alif_trace_np(Wr, W_in, b, alpha, rho, beta, ids, n):
+    """Pure-numpy ALIF forward accumulating the FAITHFUL 2-component eligibility (ported from the reservoir reference's
+       `_alif_trace`; the eps_a-coupled eps_h recursion is the authoritative reference the torch port must match). alpha is
+       scalar (stream-runner convention), rho is per-unit. Returns per-step h, a, recurrent-drive, eps_h[t], eps_a[t]."""
+    h = np.zeros(n); ad = np.zeros(n)
+    eps_h = np.zeros((n, n)); eps_a = np.zeros((n, n))
+    hs = []; ads = []; recs = []; eh = []; ea = []
+    for t in range(len(ids)):
+        h_prev = h
+        ad = rho * ad + (1.0 - rho) * h_prev
+        rec = Wr @ h_prev
+        pre = rec + W_in[:, ids[t]] + b - beta * ad
+        act = np.tanh(pre)
+        h = (1 - alpha) * h_prev + alpha * act
+        psi = alpha * (1.0 - act * act)
+        eps_a = rho[:, None] * eps_a + (1.0 - rho)[:, None] * eps_h                          # d a_j/d w_ji (uses OLD eps_h)
+        eps_h = (1 - alpha) * eps_h + psi[:, None] * (h_prev[None, :] - beta * eps_a)         # d h_j/d w_ji COUPLED
+        hs.append(h.copy()); ads.append(ad.copy()); recs.append(rec.copy()); eh.append(eps_h.copy()); ea.append(eps_a.copy())
+    return {"hs": hs, "ads": ads, "recs": recs, "eps_h": eh, "eps_a": ea}
+
+
+def _grad_check_alif(n=5, V=6, seq_len=8, seed=1):
+    """CHECK ALIF (mandatory faithfulness of the ported 2-component ALIF eligibility; mirrors the reservoir reference's
+       grad_check_alif CHECK-A + a torch==numpy bit-for-bit check on the exact training code path).
+         (1) FD: eps_h[j,i], eps_a[j,i] vs a LOCAL finite-difference of h_j / a_j w.r.t. W_rec[j,i] (cross drives held at
+             the reference trajectory = the e-prop locality assumption). Target ~1e-5 rel err.
+         (2) torch==numpy (float64): the batched torch training-path eligibility (alif_forward_step + alif_elig_update,
+             batch=1) must match the numpy eps_h/eps_a bit-for-bit on the tiny net.
+       SHORT adaptation windows (3-30 tokens) so eps_a is genuinely active within an 8-token check (validates the a-path)."""
+    import torch
+    rng = np.random.default_rng(seed)
+    ids = rng.integers(0, V, size=seq_len)
+    alpha = 0.3; beta = 1.0
+    init = build_init(V, n, seed + 1, spectral=1.1)
+    Wr = init["W_rec"]; W_in = init["W_in"]; b = init["b"]
+    win = np.exp(np.random.default_rng(seed + 1).uniform(np.log(3.0), np.log(30.0), size=n))   # short windows: eps_a active
+    rho = 1.0 - 1.0 / win
+    ref = _alif_trace_np(Wr, W_in, b, alpha, rho, beta, ids, n)
+    hprev = [np.zeros(n)] + ref["hs"][:-1]                # h_prev at each step (zeros at t=0)
+
+    def local_final(j, i, dw):                            # h_j / a_j at the final step, cross drives held at reference
+        hj = 0.0; adj = 0.0
+        for t in range(seq_len):
+            hj_prev = hj
+            adj = rho[j] * adj + (1.0 - rho[j]) * hj_prev
+            rec_j = ref["recs"][t][j] + dw * hprev[t][i]  # perturb ONLY the w_ji direct term
+            pre_j = rec_j + W_in[j, ids[t]] + b[j] - beta * adj
+            hj = (1 - alpha) * hj_prev + alpha * np.tanh(pre_j)
+        return hj, adj
+
+    dh = 1e-6
+    relh = []; rela = []; abs_h = 0.0; abs_a = 0.0
+    for j in range(n):
+        for i in range(n):
+            hp, ap = local_final(j, i, dh); hm, am = local_final(j, i, -dh)
+            fd_h = (hp - hm) / (2 * dh); fd_a = (ap - am) / (2 * dh)
+            an_h = ref["eps_h"][-1][j, i]; an_a = ref["eps_a"][-1][j, i]
+            abs_h = max(abs_h, abs(fd_h - an_h)); abs_a = max(abs_a, abs(fd_a - an_a))
+            if abs(an_h) > 1e-7:
+                relh.append(abs(fd_h - an_h) / abs(an_h))
+            if abs(an_a) > 1e-7:
+                rela.append(abs(fd_a - an_a) / abs(an_a))
+    maxrel_h = max(relh) if relh else 0.0
+    maxrel_a = max(rela) if rela else 0.0
+    fd_pass = (maxrel_h < 1e-4) and (maxrel_a < 1e-4)
+
+    # torch == numpy (float64, batch=1): the batched training-path eligibility must match the numpy port bit-for-bit.
+    dev = "cpu"
+    W_rec_t = torch.tensor(Wr, dtype=torch.float64, device=dev)
+    W_in_t = torch.tensor(W_in, dtype=torch.float64, device=dev)
+    b_t = torch.tensor(b, dtype=torch.float64, device=dev)
+    rho_t = torch.tensor(rho, dtype=torch.float64, device=dev)
+    h = torch.zeros(1, n, dtype=torch.float64, device=dev)
+    ad = torch.zeros(1, n, dtype=torch.float64, device=dev)
+    eps_h = torch.zeros(1, n, n, dtype=torch.float64, device=dev)
+    eps_a = torch.zeros(1, n, n, dtype=torch.float64, device=dev)
+    for t in ids:
+        h_prev = h
+        h, ad, act = alif_forward_step(h_prev, ad, torch.tensor([t], device=dev), W_rec_t, W_in_t, b_t, alpha, rho_t, beta)
+        eps_h, eps_a = alif_elig_update(eps_h, eps_a, act, h_prev, alpha, rho_t, beta, readonly=False)
+    tn_h = float(np.max(np.abs(eps_h[0].cpu().numpy() - ref["eps_h"][-1])))
+    tn_a = float(np.max(np.abs(eps_a[0].cpu().numpy() - ref["eps_a"][-1])))
+    tn_pass = (tn_h < 1e-8) and (tn_a < 1e-8)
+
+    print(f"  CHECK ALIF (2-component eligibility vs LOCAL finite-diff of h_j/a_j w.r.t. W_rec[j,i]): "
+          f"eps_h max_rel_err {maxrel_h:.2e} (max_abs {abs_h:.2e}) | eps_a max_rel_err {maxrel_a:.2e} "
+          f"(max_abs {abs_a:.2e})  ->  {'PASS' if fd_pass else 'FAIL'}", flush=True)
+    print(f"  CHECK ALIF-T (torch training-path eps_h/eps_a == numpy port, float64): "
+          f"eps_h max_abs {tn_h:.2e} | eps_a max_abs {tn_a:.2e}  ->  {'PASS' if tn_pass else 'FAIL'}", flush=True)
+    return fd_pass and tn_pass
+
+
 def grad_check(n=5, V=6, seq_len=8, seed=1):
     """CHECK A (numpy, EXACT): eps_h[j,i] vs a LOCAL finite difference of h_j w.r.t. W_rec[j,i], perturbing ONLY the direct
        w_ji term (cross drives held at the reference trajectory). Target ~1e-5 rel err.
        CHECK T (torch == numpy): the torch training-path eligibility (run in float64, batch=1) must match the numpy
-       eligibility on the tiny net (validates that the batched torch code path implements the same recursion)."""
+       eligibility on the tiny net (validates that the batched torch code path implements the same recursion).
+       CHECK ALIF / CHECK ALIF-T: the same faithfulness pair for the ported 2-component ALIF eligibility (see _grad_check_alif)."""
     import torch
     rng = np.random.default_rng(seed)
     ids = rng.integers(0, V, size=seq_len)
@@ -336,10 +574,11 @@ def grad_check(n=5, V=6, seq_len=8, seed=1):
           f"max_rel_err {maxrel:.2e} (max_abs {maxabs:.2e})  ->  {'PASS' if checkA_pass else 'FAIL'}", flush=True)
     print(f"  CHECK T (torch training-path eps == numpy eps, float64 tiny net): "
           f"max_abs_diff {torch_np_maxabs:.2e}  ->  {'PASS' if checkT_pass else 'FAIL'}", flush=True)
-    verdict = "PASS" if (checkA_pass and checkT_pass) else "FAIL"
-    print(f"  GRAD-CHECK: {verdict}", flush=True)
+    alif_pass = _grad_check_alif(n=n, V=V, seq_len=seq_len, seed=seed)      # the ADDED ALIF 2-component eligibility check
+    all_pass = checkA_pass and checkT_pass and alif_pass
+    print(f"  GRAD-CHECK (plain e-prop + ALIF): {'PASS' if all_pass else 'FAIL'}", flush=True)
     print("=" * 100, flush=True)
-    return 0 if (checkA_pass and checkT_pass) else 1
+    return 0 if all_pass else 1
 
 
 # ======================================================================================================================
@@ -406,6 +645,10 @@ def main():
     ap.add_argument("--wd-out", type=float, default=1e-3)            # read-out weight decay (identical across e-prop arms)
     ap.add_argument("--bptt-steps", type=int, default=8000)          # BPTT ceiling: optimizer steps
     ap.add_argument("--bptt-lr", type=float, default=2e-3)           # BPTT AdamW lr (mirrors the ceiling runner)
+    # ---- ALIF adaptation-as-state arms (additive; only used when a plastic_eprop_alif* arm is requested) ----
+    ap.add_argument("--rho-win-lo", type=float, default=30.0)        # shortest adaptation window (tokens) for log-uniform rho
+    ap.add_argument("--rho-win-hi", type=float, default=300.0)       # longest adaptation window (tokens); rho = 1 - 1/window
+    ap.add_argument("--beta", type=float, default=1.0)              # adaptation->pre coupling (negative-imprint strength)
     ap.add_argument("--grad-check", action="store_true")            # run the mandatory finite-diff check + exit (CPU)
     ap.add_argument("--smoke", action="store_true")                # tiny end-to-end sanity (<2 min)
     ap.add_argument("--permute-stream", action="store_true")       # shuffle token order + refit bigram (deep must collapse)
@@ -453,6 +696,9 @@ def main():
     tr_lanes = torch.tensor(tr_lanes_np, dtype=torch.long, device=dev)
 
     init = build_init(V, n, args.seed, args.spectral)
+    # ALIF extras from a disjoint RNG -> build_init (and thus the 5 pre-registered arms) is byte-UNCHANGED whether or not
+    # an ALIF arm is requested. The ALIF arms reuse init's W_rec/W_in/b (single-variable).
+    alif_extra = build_alif_extra(V, n, args.seed, args.rho_win_lo, args.rho_win_hi)
 
     print(f"[stream-eprop] corpus={args.corpus} stream={len(words)} V={V} n_pool={n} block={B} batch={args.batch} "
           f"lane={lane} epochs={args.epochs} bptt_steps={args.bptt_steps} dev={dev} "
@@ -464,25 +710,44 @@ def main():
           flush=True)
 
     t0 = time.time()
-    arms = {}; arm_wrec = {}
+    arms = {}; arm_wrec = {}; alif_artifacts = None
     for arm in args.arms:
         ta = time.time()
+        is_alif = arm in ALIF_ARMS
         if arm == "BPTT_same_net":
             W_rec, W_out, W_in, b = train_bptt(init, tr_lanes, V, n, args.alpha, B, args.bptt_steps, args.bptt_lr, dev)
         elif arm == "BPTT_fixed_win":
             W_rec, W_out, W_in, b = train_bptt(init, tr_lanes, V, n, args.alpha, B, args.bptt_steps, args.bptt_lr, dev,
                                                fix_win=True)
+        elif is_alif:
+            W_rec, W_out, W_in, b = train_eprop_alif(arm, init, alif_extra, tr_lanes, V, n, args.alpha,
+                                                     alif_extra["rho"], args.beta, B, args.epochs,
+                                                     args.lr_out, args.lr_rec, args.wd_out, dev)
         elif arm in RESERVOIR_ARMS:
             W_rec, W_out, W_in, b = train_eprop(arm, init, tr_lanes, V, n, args.alpha, B, args.epochs,
                                                 args.lr_out, args.lr_rec, args.wd_out, dev)
         else:
             raise SystemExit(f"unknown arm '{arm}' (choose from {KNOWN_ARMS})")
-        tce, bce, cnt = eval_arm(W_rec, W_in, b, W_out, args.alpha, ev, B, P_bi, dev)
+        if is_alif:                                        # ALIF read-out is over [h;a] (2n) -> the ALIF-aware eval
+            tce, bce, cnt = eval_arm_alif(W_rec, W_in, b, W_out, args.alpha, alif_extra["rho"], args.beta, ev, B, P_bi, dev)
+            if arm == "plastic_eprop_alif":                # keep artifacts for the adaptation-shuffle control
+                alif_artifacts = {"W_rec": W_rec, "W_in": W_in, "b": b, "W_out": W_out}
+        else:
+            tce, bce, cnt = eval_arm(W_rec, W_in, b, W_out, args.alpha, ev, B, P_bi, dev)
         arms[arm] = summarize(tce, bce, cnt, B)
         arm_wrec[arm] = W_rec.detach().cpu()
         print(f"    -> {arm}: shallow_margin {arms[arm]['shallow_margin']:+.4f}  deep_margin "
               f"{arms[arm]['deep_margin']:+.4f}  agg_ce {arms[arm]['aggregate_ce']:.4f}  ({time.time() - ta:.0f}s)",
               flush=True)
+
+    # ALIF ADAPTATION-SHUFFLE control (content-not-capacity anti-cheat): re-eval the trained alif arm with a_t permuted
+    # across neurons before the read-out. If the deep gain is real (adaptation CONTENT) it must collapse toward plain.
+    alif_shuffle = None
+    if alif_artifacts is not None:
+        a = alif_artifacts
+        tce_sh, bce_sh, cnt_sh = eval_arm_alif(a["W_rec"], a["W_in"], a["b"], a["W_out"], args.alpha,
+                                               alif_extra["rho"], args.beta, ev, B, P_bi, dev, shuffle_adapt=True)
+        alif_shuffle = summarize(tce_sh, bce_sh, cnt_sh, B)
 
     # zero_signal must be byte-identical to fixed_reservoir (hard anti-cheat)
     byte_identical = None
@@ -539,11 +804,53 @@ def main():
                 print(f"    vs {bp:>15}: frac_clean_deep {fd}  frac_clean_shallow {fs}  "
                       f"(plastic +{p_gain_deep:.3f} / bptt +{b_gain_deep:.3f} deep){tag}", flush=True)
 
+    # ---- ALIF adaptation-as-state report (ADDITIVE; the pre-registered 5-arm gate above is byte-unchanged). The single
+    # highest-leverage biological lever: does the 2-component ALIF eligibility (Bellec-2020 "highways into the future")
+    # lift the DEEP capture over plain e-prop, and is that lift real CONTENT (adaptation-shuffle collapses) + specifically
+    # from CREDITING adaptation (alif > alif_readonly)? Reported directly comparable to plain e-prop's clean fraction. ----
+    alif_clean = {}
+    if "plastic_eprop_alif" in arms:
+        pa = arms["plastic_eprop_alif"]
+        print("\n[stream-eprop] ALIF ADAPTATION-AS-STATE (Bellec-2020 horizon lever) -- ADDITIVE arms (not in the 5-arm gate):",
+              flush=True)
+        if "plastic_eprop" in arms:
+            pe = arms["plastic_eprop"]
+            print(f"    ALIF deep lift over plain e-prop = {pa['deep_margin']:+.4f} - {pe['deep_margin']:+.4f} = "
+                  f"{pa['deep_margin'] - pe['deep_margin']:+.4f}   (shallow: {pa['shallow_margin']:+.4f} vs "
+                  f"{pe['shallow_margin']:+.4f})", flush=True)
+        if "fixed_reservoir" in arms:
+            fa_deep = arms["fixed_reservoir"]["deep_margin"]; fa_shal = arms["fixed_reservoir"]["shallow_margin"]
+            a_gain_deep = pa["deep_margin"] - fa_deep; a_gain_shal = pa["shallow_margin"] - fa_shal
+            print("    fixed-floor-relative clean fraction for plastic_eprop_alif "
+                  "(alif gain over fixed / BPTT gain over fixed -- directly comparable to plain e-prop's above):",
+                  flush=True)
+            for bp in ("BPTT_fixed_win", "BPTT_same_net"):
+                if bp in arms:
+                    bgd = arms[bp]["deep_margin"] - fa_deep; bgs = arms[bp]["shallow_margin"] - fa_shal
+                    fd = round(a_gain_deep / bgd, 4) if abs(bgd) > 1e-6 else None
+                    fs = round(a_gain_shal / bgs, 4) if abs(bgs) > 1e-6 else None
+                    alif_clean[bp] = {"frac_clean_deep": fd, "frac_clean_shallow": fs,
+                                      "alif_deep_gain": round(a_gain_deep, 4), "bptt_deep_gain": round(bgd, 4)}
+                    tag = " <- CLEANEST (identical frozen W_in)" if bp == "BPTT_fixed_win" else " (BPTT also learns W_in)"
+                    print(f"        vs {bp:>15}: frac_clean_deep {fd}  frac_clean_shallow {fs}  "
+                          f"(alif +{a_gain_deep:.3f} / bptt +{bgd:.3f} deep){tag}", flush=True)
+        if "plastic_eprop_alif_readonly" in arms:
+            ro = arms["plastic_eprop_alif_readonly"]
+            print(f"    CREDIT-vs-CAPACITY: alif deep {pa['deep_margin']:+.4f} vs alif_readonly deep "
+                  f"{ro['deep_margin']:+.4f} (adaptation READ but eps_a NOT credited); lift from CREDITING adaptation = "
+                  f"{pa['deep_margin'] - ro['deep_margin']:+.4f}", flush=True)
+        if alif_shuffle is not None:
+            collapses = alif_shuffle["deep_margin"] < pa["deep_margin"] - 1e-6
+            print(f"    ADAPTATION-SHUFFLE control: alif deep {pa['deep_margin']:+.4f} -> a_t-shuffled deep "
+                  f"{alif_shuffle['deep_margin']:+.4f}  ({'COLLAPSES (content, real)' if collapses else 'does NOT collapse (capacity confound?)'})",
+                  flush=True)
+
     out = {"runner": "_emerge_stream_eprop_lm_derisk", "corpus": args.corpus, "seed": args.seed, "V": V,
            "n_pool": n, "block": B, "batch": args.batch, "lane": lane, "epochs": args.epochs,
            "bptt_steps": args.bptt_steps, "dev": dev, "permute_stream": bool(args.permute_stream),
            "args": vars(args), "arms": arms, "byte_identical_zero_eq_fixed": byte_identical, "gate": gate,
-           "clean_recurrent_credit_fraction": clean, "elapsed_s": round(time.time() - t0, 1)}
+           "clean_recurrent_credit_fraction": clean, "alif_clean_fraction": alif_clean,
+           "alif_adapt_shuffle": alif_shuffle, "elapsed_s": round(time.time() - t0, 1)}
     Path(args.json).parent.mkdir(parents=True, exist_ok=True); Path(args.json).write_text(json.dumps(out, indent=2))
     print(f"\n-> {args.json} ({out['elapsed_s']}s)\nSTREAM_EPROP_DONE", flush=True)
 
