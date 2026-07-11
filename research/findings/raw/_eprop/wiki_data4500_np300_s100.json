@@ -1,0 +1,125 @@
+{
+  "runner": "_emerge_reservoir_lm_eprop_recurrent_derisk",
+  "corpus": "data/corpus/wikitext.txt",
+  "seeds": [
+    100
+  ],
+  "n_pool": 300,
+  "args": {
+    "seeds": [
+      100
+    ],
+    "corpus": "data/corpus/wikitext.txt",
+    "vocab": 300,
+    "n_sentences": 12000,
+    "max_train_sents": 4500,
+    "max_eval_sents": 400,
+    "epochs": 8,
+    "n_pool": 300,
+    "alpha": 0.3,
+    "spectral": 1.1,
+    "lr_out": 0.02,
+    "lr_rec": 0.006,
+    "wd_rec": 0.0,
+    "adaptive_frac": 0.5,
+    "alpha_slow": 0.05,
+    "modes": [
+      "fixed",
+      "plastic"
+    ],
+    "json": "research/findings/raw/_eprop/wiki_data4500_np300_s100.json"
+  },
+  "per_seed": {
+    "100": {
+      "V": 300,
+      "n_train": 4500,
+      "by_mode": {
+        "fixed": {
+          "aggregate_ce": 3.795,
+          "bigram_ce": 3.137,
+          "by_depth": {
+            "1": {
+              "n": 400,
+              "ce": 4.971,
+              "bigram_ce": 3.144,
+              "margin_vs_bigram": -1.827
+            },
+            "2": {
+              "n": 400,
+              "ce": 4.483,
+              "bigram_ce": 3.278,
+              "margin_vs_bigram": -1.205
+            },
+            "3": {
+              "n": 386,
+              "ce": 4.046,
+              "bigram_ce": 3.128,
+              "margin_vs_bigram": -0.918
+            },
+            "4-5": {
+              "n": 739,
+              "ce": 3.82,
+              "bigram_ce": 3.298,
+              "margin_vs_bigram": -0.521
+            },
+            "6-9": {
+              "n": 1239,
+              "ce": 3.479,
+              "bigram_ce": 3.115,
+              "margin_vs_bigram": -0.365
+            },
+            "10-99": {
+              "n": 785,
+              "ce": 3.197,
+              "bigram_ce": 2.948,
+              "margin_vs_bigram": -0.249
+            }
+          }
+        },
+        "plastic": {
+          "aggregate_ce": 3.868,
+          "bigram_ce": 3.137,
+          "by_depth": {
+            "1": {
+              "n": 400,
+              "ce": 5.238,
+              "bigram_ce": 3.144,
+              "margin_vs_bigram": -2.094
+            },
+            "2": {
+              "n": 400,
+              "ce": 4.538,
+              "bigram_ce": 3.278,
+              "margin_vs_bigram": -1.26
+            },
+            "3": {
+              "n": 386,
+              "ce": 3.803,
+              "bigram_ce": 3.128,
+              "margin_vs_bigram": -0.675
+            },
+            "4-5": {
+              "n": 739,
+              "ce": 3.534,
+              "bigram_ce": 3.298,
+              "margin_vs_bigram": -0.235
+            },
+            "6-9": {
+              "n": 1239,
+              "ce": 3.379,
+              "bigram_ce": 3.115,
+              "margin_vs_bigram": -0.265
+            },
+            "10-99": {
+              "n": 785,
+              "ce": 3.946,
+              "bigram_ce": 2.948,
+              "margin_vs_bigram": -0.998
+            }
+          }
+        }
+      }
+    }
+  },
+  "elapsed_s": 3284.1
+}

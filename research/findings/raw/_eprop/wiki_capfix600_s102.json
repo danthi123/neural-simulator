@@ -1,0 +1,82 @@
+{
+  "runner": "_emerge_reservoir_lm_eprop_recurrent_derisk",
+  "corpus": "data/corpus/wikitext.txt",
+  "seeds": [
+    102
+  ],
+  "n_pool": 600,
+  "args": {
+    "seeds": [
+      102
+    ],
+    "corpus": "data/corpus/wikitext.txt",
+    "vocab": 300,
+    "n_sentences": 6000,
+    "max_train_sents": 1500,
+    "max_eval_sents": 400,
+    "epochs": 8,
+    "n_pool": 600,
+    "alpha": 0.3,
+    "spectral": 1.1,
+    "lr_out": 0.02,
+    "lr_rec": 0.006,
+    "wd_rec": 0.0,
+    "adaptive_frac": 0.5,
+    "alpha_slow": 0.05,
+    "modes": [
+      "fixed"
+    ],
+    "json": "research/findings/raw/_eprop/wiki_capfix600_s102.json"
+  },
+  "per_seed": {
+    "102": {
+      "V": 300,
+      "n_train": 1500,
+      "by_mode": {
+        "fixed": {
+          "aggregate_ce": 3.587,
+          "bigram_ce": 3.308,
+          "by_depth": {
+            "1": {
+              "n": 400,
+              "ce": 4.847,
+              "bigram_ce": 3.434,
+              "margin_vs_bigram": -1.412
+            },
+            "2": {
+              "n": 400,
+              "ce": 4.42,
+              "bigram_ce": 3.563,
+              "margin_vs_bigram": -0.857
+            },
+            "3": {
+              "n": 396,
+              "ce": 3.831,
+              "bigram_ce": 3.329,
+              "margin_vs_bigram": -0.502
+            },
+            "4-5": {
+              "n": 750,
+              "ce": 3.513,
+              "bigram_ce": 3.324,
+              "margin_vs_bigram": -0.189
+            },
+            "6-9": {
+              "n": 1233,
+              "ce": 3.314,
+              "bigram_ce": 3.322,
+              "margin_vs_bigram": 0.008
+            },
+            "10-99": {
+              "n": 855,
+              "ce": 2.955,
+              "bigram_ce": 3.084,
+              "margin_vs_bigram": 0.13
+            }
+          }
+        }
+      }
+    }
+  },
+  "elapsed_s": 1251.4
+}
