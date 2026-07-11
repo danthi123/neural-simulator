@@ -145,6 +145,40 @@ def interp_eval(res, tr, ev, V, beta, N_window, epochs, lr, wd, seed, P_bi):
     return depth
 
 
+def gated_interp_eval(res, tr, ev, V, beta, N_window, epochs, lr, wd, seed, P_bi, lam_max=0.5):
+    """CLS-GATED interpolation on the RETRIEVAL's own CONFIDENCE (not base uncertainty -- that conflates short-context
+       ambiguity with deep-context fading). lam_t = lam_max * clip((conf_t - c_lo)/(c_hi - c_lo)), conf_t = max(r_t) (the
+       content-addressable read's peak = it found a strongly-matching past context). Trust the hippocampal retrieval when
+       IT is confident. c_lo/c_hi = 20th/80th percentiles of conf fit on TRAIN (no eval tuning). Gated CE by depth vs base."""
+    rng = np.random.default_rng(seed * 13 + 5)
+    trc = [(features(res, ids, V, beta, N_window, "base", rng), ids) for ids in tr]
+    mean, std = _standardize_fit(trc)
+    W = train_readout(trc, V, epochs, lr, np.random.default_rng(seed * 7 + 1), mean, std, wd=wd, ls=0.05)
+
+    def confs(seqs):
+        out = []
+        for ids in seqs:
+            S = np.array(res.forward_states(ids)); R = content_read(S, ids, V, beta, res.n, N_window, "content", rng)
+            for t in range(len(ids) - 1):
+                rt = R[t]; s = rt.sum(); out.append(float(rt.max() / s) if s > 1e-9 else 0.0)
+        return np.array(out)
+    c = confs([ids for ids in tr]); c_lo, c_hi = np.percentile(c, 20), np.percentile(c, 80)  # gate calibrated on TRAIN
+
+    gag = defaultdict(float); bag = defaultdict(float); cnt = defaultdict(int)
+    for ids in ev:
+        S = np.array(res.forward_states(ids)); R = content_read(S, ids, V, beta, res.n, N_window, "content", rng)
+        for t in range(len(ids) - 1):
+            b = _bucket(t + 1); tgt = ids[t + 1]
+            x = np.concatenate([(S[t] - mean) / std, [1.0]]); pb = _softmax(W @ x)
+            rt = R[t]; s = rt.sum(); rt = rt / max(s, 1e-9)
+            conf = float(rt.max())
+            lam = lam_max * float(np.clip((conf - c_lo) / max(c_hi - c_lo, 1e-9), 0.0, 1.0))
+            pf = (1 - lam) * pb + lam * rt
+            gag[b] += -math.log(max(pf[tgt], 1e-12)); bag[b] += -math.log(max(pb[tgt], 1e-12)); cnt[b] += 1
+    return {b: {"n": cnt[b], "base_ce": round(bag[b] / cnt[b], 3), "gated_ce": round(gag[b] / cnt[b], 3),
+                "gain": round((bag[b] - gag[b]) / cnt[b], 3)} for b in cnt}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=[42])
@@ -190,6 +224,14 @@ def main():
                 row = " ".join(f"d{k}:{depth[k]['gain']:+.3f}"
                                for lo,hi in BUCKETS for k in [f'{lo}-{hi}' if lo!=hi else f'{lo}'] if k in depth)
                 print(f"[seed {seed}] INTERP single-global-λ={glam} CE gain over base (pos=interp BEATS base): {row}", flush=True)
+                continue
+            if arm == "gated":                                  # CLS entropy-gated interpolation (special eval)
+                depth = gated_interp_eval(res, tr_ids, ev_ids, V, args.beta, args.n_window,
+                                          args.epochs, args.lr, args.weight_decay, seed, P_bi)
+                rec["by_arm"]["gated"] = {"by_depth": depth}
+                row = " ".join(f"d{k}:{depth[k]['gain']:+.3f}"
+                               for lo,hi in BUCKETS for k in [f'{lo}-{hi}' if lo!=hi else f'{lo}'] if k in depth)
+                print(f"[seed {seed}] GATED (entropy-gated) CE gain over base (pos=gated BEATS base, NET): {row}", flush=True)
                 continue
             depth, agg = train_and_eval(res, tr_ids, ev_ids, V, args.beta, args.n_window, arm,
                                         args.epochs, args.lr, args.weight_decay, seed, P_bi)
