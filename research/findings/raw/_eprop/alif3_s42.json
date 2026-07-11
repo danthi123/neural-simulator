@@ -1,0 +1,304 @@
+{
+  "runner": "_emerge_reservoir_lm_eprop_recurrent_derisk",
+  "corpus": "data/corpus/wikitext.txt",
+  "seeds": [
+    42
+  ],
+  "n_pool": 200,
+  "args": {
+    "seeds": [
+      42
+    ],
+    "corpus": "data/corpus/wikitext.txt",
+    "vocab": 200,
+    "n_sentences": 4000,
+    "max_train_sents": 800,
+    "max_eval_sents": 300,
+    "epochs": 6,
+    "n_pool": 200,
+    "alpha": 0.3,
+    "spectral": 1.1,
+    "lr_out": 0.02,
+    "lr_rec": 0.002,
+    "wd_rec": 0.001,
+    "adaptive_frac": 0.5,
+    "alpha_slow": 0.05,
+    "leak_spectrum": "homogeneous",
+    "alpha_lo": 0.03,
+    "alpha_hi": 0.6,
+    "lesion_slow": false,
+    "alif_beta": 1.0,
+    "adapt_win_lo": 30.0,
+    "adapt_win_hi": 300.0,
+    "alif_controls": true,
+    "grad_check": false,
+    "modes": [
+      "fixed",
+      "plastic",
+      "alif",
+      "alif_readonly"
+    ],
+    "json": "research/findings/raw/_eprop/alif3_s42.json"
+  },
+  "per_seed": {
+    "42": {
+      "V": 200,
+      "n_train": 800,
+      "by_mode": {
+        "fixed": {
+          "aggregate_ce": 3.372,
+          "bigram_ce": 2.983,
+          "by_depth": {
+            "1": {
+              "n": 300,
+              "ce": 4.602,
+              "bigram_ce": 3.022,
+              "margin_vs_bigram": -1.58
+            },
+            "2": {
+              "n": 300,
+              "ce": 4.095,
+              "bigram_ce": 3.021,
+              "margin_vs_bigram": -1.074
+            },
+            "3": {
+              "n": 292,
+              "ce": 3.729,
+              "bigram_ce": 3.127,
+              "margin_vs_bigram": -0.602
+            },
+            "4-5": {
+              "n": 544,
+              "ce": 3.335,
+              "bigram_ce": 2.946,
+              "margin_vs_bigram": -0.389
+            },
+            "6-9": {
+              "n": 917,
+              "ce": 3.016,
+              "bigram_ce": 2.971,
+              "margin_vs_bigram": -0.045
+            },
+            "10-99": {
+              "n": 615,
+              "ce": 2.812,
+              "bigram_ce": 2.925,
+              "margin_vs_bigram": 0.113
+            }
+          }
+        },
+        "plastic": {
+          "aggregate_ce": 3.352,
+          "bigram_ce": 2.983,
+          "by_depth": {
+            "1": {
+              "n": 300,
+              "ce": 4.627,
+              "bigram_ce": 3.022,
+              "margin_vs_bigram": -1.605
+            },
+            "2": {
+              "n": 300,
+              "ce": 4.116,
+              "bigram_ce": 3.021,
+              "margin_vs_bigram": -1.094
+            },
+            "3": {
+              "n": 292,
+              "ce": 3.714,
+              "bigram_ce": 3.127,
+              "margin_vs_bigram": -0.587
+            },
+            "4-5": {
+              "n": 544,
+              "ce": 3.294,
+              "bigram_ce": 2.946,
+              "margin_vs_bigram": -0.349
+            },
+            "6-9": {
+              "n": 917,
+              "ce": 2.981,
+              "bigram_ce": 2.971,
+              "margin_vs_bigram": -0.009
+            },
+            "10-99": {
+              "n": 615,
+              "ce": 2.792,
+              "bigram_ce": 2.925,
+              "margin_vs_bigram": 0.133
+            }
+          }
+        },
+        "alif": {
+          "aggregate_ce": 3.353,
+          "bigram_ce": 2.983,
+          "by_depth": {
+            "1": {
+              "n": 300,
+              "ce": 4.626,
+              "bigram_ce": 3.022,
+              "margin_vs_bigram": -1.603
+            },
+            "2": {
+              "n": 300,
+              "ce": 4.099,
+              "bigram_ce": 3.021,
+              "margin_vs_bigram": -1.078
+            },
+            "3": {
+              "n": 292,
+              "ce": 3.702,
+              "bigram_ce": 3.127,
+              "margin_vs_bigram": -0.575
+            },
+            "4-5": {
+              "n": 544,
+              "ce": 3.287,
+              "bigram_ce": 2.946,
+              "margin_vs_bigram": -0.342
+            },
+            "6-9": {
+              "n": 917,
+              "ce": 2.99,
+              "bigram_ce": 2.971,
+              "margin_vs_bigram": -0.019
+            },
+            "10-99": {
+              "n": 615,
+              "ce": 2.8,
+              "bigram_ce": 2.925,
+              "margin_vs_bigram": 0.125
+            }
+          }
+        },
+        "alif_readonly": {
+          "aggregate_ce": 3.353,
+          "bigram_ce": 2.983,
+          "by_depth": {
+            "1": {
+              "n": 300,
+              "ce": 4.626,
+              "bigram_ce": 3.022,
+              "margin_vs_bigram": -1.604
+            },
+            "2": {
+              "n": 300,
+              "ce": 4.1,
+              "bigram_ce": 3.021,
+              "margin_vs_bigram": -1.079
+            },
+            "3": {
+              "n": 292,
+              "ce": 3.702,
+              "bigram_ce": 3.127,
+              "margin_vs_bigram": -0.575
+            },
+            "4-5": {
+              "n": 544,
+              "ce": 3.287,
+              "bigram_ce": 2.946,
+              "margin_vs_bigram": -0.342
+            },
+            "6-9": {
+              "n": 917,
+              "ce": 2.99,
+              "bigram_ce": 2.971,
+              "margin_vs_bigram": -0.018
+            },
+            "10-99": {
+              "n": 615,
+              "ce": 2.799,
+              "bigram_ce": 2.925,
+              "margin_vs_bigram": 0.126
+            }
+          }
+        }
+      },
+      "controls": {
+        "alif_adapt_shuffle": {
+          "aggregate_ce": 3.353,
+          "by_depth": {
+            "1": {
+              "n": 300,
+              "ce": 4.626,
+              "bigram_ce": 3.022,
+              "margin_vs_bigram": -1.603
+            },
+            "2": {
+              "n": 300,
+              "ce": 4.1,
+              "bigram_ce": 3.021,
+              "margin_vs_bigram": -1.078
+            },
+            "3": {
+              "n": 292,
+              "ce": 3.702,
+              "bigram_ce": 3.127,
+              "margin_vs_bigram": -0.575
+            },
+            "4-5": {
+              "n": 544,
+              "ce": 3.288,
+              "bigram_ce": 2.946,
+              "margin_vs_bigram": -0.342
+            },
+            "6-9": {
+              "n": 917,
+              "ce": 2.991,
+              "bigram_ce": 2.971,
+              "margin_vs_bigram": -0.019
+            },
+            "10-99": {
+              "n": 615,
+              "ce": 2.8,
+              "bigram_ce": 2.925,
+              "margin_vs_bigram": 0.125
+            }
+          }
+        },
+        "alif_beta0": {
+          "aggregate_ce": 3.352,
+          "by_depth": {
+            "1": {
+              "n": 300,
+              "ce": 4.623,
+              "bigram_ce": 3.022,
+              "margin_vs_bigram": -1.6
+            },
+            "2": {
+              "n": 300,
+              "ce": 4.097,
+              "bigram_ce": 3.021,
+              "margin_vs_bigram": -1.075
+            },
+            "3": {
+              "n": 292,
+              "ce": 3.702,
+              "bigram_ce": 3.127,
+              "margin_vs_bigram": -0.575
+            },
+            "4-5": {
+              "n": 544,
+              "ce": 3.29,
+              "bigram_ce": 2.946,
+              "margin_vs_bigram": -0.344
+            },
+            "6-9": {
+              "n": 917,
+              "ce": 2.989,
+              "bigram_ce": 2.971,
+              "margin_vs_bigram": -0.018
+            },
+            "10-99": {
+              "n": 615,
+              "ce": 2.797,
+              "bigram_ce": 2.925,
+              "margin_vs_bigram": 0.128
+            }
+          }
+        }
+      }
+    }
+  },
+  "elapsed_s": 179.1
+}
