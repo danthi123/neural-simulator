@@ -24,49 +24,40 @@ rather than papered over.
 
 ```mermaid
 flowchart TB
-    World(["🌍 Simulated world — renders what the agent sees, enacts its movements"]):::io
-    Turn(["💬 A sentence — the user's turn"]):::io
+    World(["🌍 Simulated world"]):::io
+    Turn(["💬 A sentence"]):::io
 
-    subgraph ENGINE["🧠 One brain — spiking neurons + synapses on a single update loop"]
+    subgraph ENGINE["🧠 One brain — spiking neurons on a single update loop"]
       direction TB
-      subgraph SENSE["Sensing"]
-        direction LR
-        VIS["Vision — retina to primary visual cortex<br/><small>orientation-selective edge detectors · what and where streams</small>"]:::sense
+      VIS["Vision — visual cortex"]:::sense
+      subgraph SM["Navigating brain"]
+        NAV["Action selection + navigation"]:::nav
       end
-      subgraph SM["The navigating brain — reach goals by moving"]
+      subgraph LANG["Conversing brain"]
         direction LR
-        NAV["Action selection and navigation<br/><small>basal-ganglia go/no-go loops · superior-colliculus orienting · place cells · goal working-memory</small>"]:::nav
+        COMP["Understanding"]:::conv
+        CONCEPT["Concepts + meaning ✅"]:::conv
+        SPEAK["Speaking ✅"]:::gen
+        DISC["Conversation"]:::plan
       end
-      subgraph LANG["The conversing brain — understand, think, speak"]
+      subgraph SHARED["Shared core (both brains)"]
         direction LR
-        COMP["Understanding<br/><small>parser + reservoir: word order to who-did-what</small>"]:::conv
-        CONCEPT["Concepts and meaning ✅<br/><small>categories learned from experience · reasoning</small>"]:::conv
-        SPEAK["Speaking ✅<br/><small>self-organized grammar · every word on spikes</small>"]:::gen
-        DISC["Conversation<br/><small>tracks who/what across turns · the 'I don't know' guard</small>"]:::plan
-      end
-      subgraph SHARED["Shared core (used by both brains)"]
-        direction LR
-        MEM["Memory — hippocampus<br/><small>separate and complete patterns · tag · replay in 'sleep'</small>"]:::mem
-        REW["Reward and drive — dopamine<br/><small>one shared limbic core for both brains</small>"]:::reward
-        LRN["Learning rules<br/><small>spike-timing · Hebbian · three-factor · dendritic</small>"]:::learn
+        MEM["Memory — hippocampus"]:::mem
+        REW["Reward + drive — dopamine"]:::reward
+        LRN["Learning rules"]:::learn
       end
     end
 
-    Body(["🌍 Body — carries out the chosen movement"]):::io
-    Reply(["🗣️ Spoken reply — grounded, checked, or 'I don't know'"]):::io
+    Body(["🌍 Body"]):::io
+    Reply(["🗣️ Spoken reply"]):::io
 
-    World ==>|pixels| VIS
-    VIS ==> NAV
-    NAV ==>|movement| Body
-    Turn ==>|a sentence| COMP
-    World -->|a spoken command steers movement| NAV
-    VIS -.->|what it saw while moving| MEM
-    COMP ==> CONCEPT ==> DISC
-    CONCEPT --> MEM
-    DISC ==> SPEAK ==> Reply
-    MEM -.-> DISC
-    REW -.->|modulates learning and confidence| SM
-    REW -.->|modulates learning and confidence| LANG
+    World ==>|pixels| VIS ==> NAV ==>|movement| Body
+    Turn ==>|words| COMP ==> CONCEPT ==> DISC ==> SPEAK ==> Reply
+    World -->|spoken command steers movement| NAV
+    VIS -.->|seen while moving| MEM
+    CONCEPT --> MEM -.-> DISC
+    REW -.->|modulates learning + confidence| SM
+    REW -.->|modulates learning + confidence| LANG
     LRN -.-> SHARED
 
     classDef io fill:#eef1f4,stroke:#7a8794,color:#1d1d1f;
