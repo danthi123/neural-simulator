@@ -3,10 +3,15 @@ credit dev = B - Pbar*E starts NEGATIVE (spurious LTD on every synapse) and only
 teach (apical ON for the target class) and print E / B / Pbar / dev at the target output pool across the teach window.
 Run: SIM_BACKEND=numpy python -m research.runners._d1_transient_trace
 """
+import argparse
 import numpy as np
 from sim.backend import to_host, from_host
 from research.runners._d1_onbridge_learn_to_accuracy_derisk import _load_task, OnBridgeBDSPNet
 
+_ap = argparse.ArgumentParser()
+_ap.add_argument("--output-bias", type=float, default=20.0)
+_ap.add_argument("--soma-g", type=float, default=500.0)
+_A = _ap.parse_args()
 SEED = 42
 (Xtr, ytr), _, n_bits = _load_task("emerge1", SEED, 4)
 Xtr = np.asarray(Xtr); ytr = np.asarray(ytr)
@@ -14,8 +19,9 @@ Xtr = np.asarray(Xtr); ytr = np.asarray(ytr)
 i1 = np.where(ytr == 1)[0][0]
 x = Xtr[i1]
 
-net = OnBridgeBDSPNet(seed=SEED, n_bits=n_bits, hidden=60, couple_soma=True, soma_g=500.0,
-                      hidden_bias=20.0, output_bias=20.0, bdsp_lr=0.0, fwd_wmean=40.0, bdsp_w_max=200.0)  # lr 0: trace only
+net = OnBridgeBDSPNet(seed=SEED, n_bits=n_bits, hidden=60, couple_soma=True, soma_g=_A.soma_g,
+                      hidden_bias=_A.output_bias, output_bias=_A.output_bias, bdsp_lr=0.0, fwd_wmean=40.0, bdsp_w_max=200.0)  # lr 0: trace only
+print(f"[trace] output_bias={_A.output_bias} soma_g={_A.soma_g}  (does the NON-TARGET fire E>0 and get LTD dev<0?)")
 tgt = net.class_idx[1]          # target output pool (class 1)
 oth = net.class_idx[0]          # non-target output pool (class 0)
 
