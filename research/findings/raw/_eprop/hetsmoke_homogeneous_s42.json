@@ -1,0 +1,129 @@
+{
+  "runner": "_emerge_reservoir_lm_eprop_recurrent_derisk",
+  "corpus": "data/corpus/wikitext.txt",
+  "seeds": [
+    42
+  ],
+  "n_pool": 200,
+  "args": {
+    "seeds": [
+      42
+    ],
+    "corpus": "data/corpus/wikitext.txt",
+    "vocab": 150,
+    "n_sentences": 3000,
+    "max_train_sents": 500,
+    "max_eval_sents": 200,
+    "epochs": 4,
+    "n_pool": 200,
+    "alpha": 0.3,
+    "spectral": 1.1,
+    "lr_out": 0.02,
+    "lr_rec": 0.004,
+    "wd_rec": 0.0,
+    "adaptive_frac": 0.5,
+    "alpha_slow": 0.05,
+    "leak_spectrum": "homogeneous",
+    "alpha_lo": 0.03,
+    "alpha_hi": 0.6,
+    "lesion_slow": false,
+    "modes": [
+      "fixed",
+      "plastic"
+    ],
+    "json": "research/findings/raw/_eprop/hetsmoke_homogeneous_s42.json"
+  },
+  "per_seed": {
+    "42": {
+      "V": 150,
+      "n_train": 500,
+      "by_mode": {
+        "fixed": {
+          "aggregate_ce": 3.131,
+          "bigram_ce": 2.758,
+          "by_depth": {
+            "1": {
+              "n": 200,
+              "ce": 4.369,
+              "bigram_ce": 2.821,
+              "margin_vs_bigram": -1.548
+            },
+            "2": {
+              "n": 200,
+              "ce": 3.84,
+              "bigram_ce": 2.928,
+              "margin_vs_bigram": -0.912
+            },
+            "3": {
+              "n": 195,
+              "ce": 3.53,
+              "bigram_ce": 2.947,
+              "margin_vs_bigram": -0.583
+            },
+            "4-5": {
+              "n": 367,
+              "ce": 3.01,
+              "bigram_ce": 2.655,
+              "margin_vs_bigram": -0.356
+            },
+            "6-9": {
+              "n": 609,
+              "ce": 2.829,
+              "bigram_ce": 2.78,
+              "margin_vs_bigram": -0.049
+            },
+            "10-99": {
+              "n": 367,
+              "ce": 2.482,
+              "bigram_ce": 2.596,
+              "margin_vs_bigram": 0.114
+            }
+          }
+        },
+        "plastic": {
+          "aggregate_ce": 3.101,
+          "bigram_ce": 2.758,
+          "by_depth": {
+            "1": {
+              "n": 200,
+              "ce": 4.415,
+              "bigram_ce": 2.821,
+              "margin_vs_bigram": -1.593
+            },
+            "2": {
+              "n": 200,
+              "ce": 3.883,
+              "bigram_ce": 2.928,
+              "margin_vs_bigram": -0.954
+            },
+            "3": {
+              "n": 195,
+              "ce": 3.535,
+              "bigram_ce": 2.947,
+              "margin_vs_bigram": -0.588
+            },
+            "4-5": {
+              "n": 367,
+              "ce": 2.968,
+              "bigram_ce": 2.655,
+              "margin_vs_bigram": -0.314
+            },
+            "6-9": {
+              "n": 609,
+              "ce": 2.765,
+              "bigram_ce": 2.78,
+              "margin_vs_bigram": 0.014
+            },
+            "10-99": {
+              "n": 367,
+              "ce": 2.419,
+              "bigram_ce": 2.596,
+              "margin_vs_bigram": 0.176
+            }
+          }
+        }
+      }
+    }
+  },
+  "elapsed_s": 15.5
+}

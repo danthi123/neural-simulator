@@ -1,0 +1,168 @@
+{
+  "runner": "_emerge_reservoir_lm_eprop_recurrent_derisk",
+  "corpus": "data/corpus/wikitext.txt",
+  "seeds": [
+    43
+  ],
+  "n_pool": 300,
+  "args": {
+    "seeds": [
+      43
+    ],
+    "corpus": "data/corpus/wikitext.txt",
+    "vocab": 300,
+    "n_sentences": 6000,
+    "max_train_sents": 1500,
+    "max_eval_sents": 400,
+    "epochs": 8,
+    "n_pool": 300,
+    "alpha": 0.3,
+    "spectral": 1.1,
+    "lr_out": 0.02,
+    "lr_rec": 0.002,
+    "wd_rec": 0.0,
+    "adaptive_frac": 0.5,
+    "alpha_slow": 0.03,
+    "modes": [
+      "fixed",
+      "plastic",
+      "adaptive"
+    ],
+    "json": "research/findings/raw/_eprop/horizon_lr002_s43.json"
+  },
+  "per_seed": {
+    "43": {
+      "V": 300,
+      "n_train": 1500,
+      "by_mode": {
+        "fixed": {
+          "aggregate_ce": 3.665,
+          "bigram_ce": 3.248,
+          "by_depth": {
+            "1": {
+              "n": 400,
+              "ce": 4.894,
+              "bigram_ce": 3.206,
+              "margin_vs_bigram": -1.687
+            },
+            "2": {
+              "n": 400,
+              "ce": 4.43,
+              "bigram_ce": 3.397,
+              "margin_vs_bigram": -1.033
+            },
+            "3": {
+              "n": 386,
+              "ce": 4.014,
+              "bigram_ce": 3.371,
+              "margin_vs_bigram": -0.643
+            },
+            "4-5": {
+              "n": 716,
+              "ce": 3.69,
+              "bigram_ce": 3.335,
+              "margin_vs_bigram": -0.355
+            },
+            "6-9": {
+              "n": 1205,
+              "ce": 3.419,
+              "bigram_ce": 3.327,
+              "margin_vs_bigram": -0.092
+            },
+            "10-99": {
+              "n": 896,
+              "ce": 2.936,
+              "bigram_ce": 2.972,
+              "margin_vs_bigram": 0.036
+            }
+          }
+        },
+        "plastic": {
+          "aggregate_ce": 3.619,
+          "bigram_ce": 3.248,
+          "by_depth": {
+            "1": {
+              "n": 400,
+              "ce": 4.987,
+              "bigram_ce": 3.206,
+              "margin_vs_bigram": -1.781
+            },
+            "2": {
+              "n": 400,
+              "ce": 4.513,
+              "bigram_ce": 3.397,
+              "margin_vs_bigram": -1.116
+            },
+            "3": {
+              "n": 386,
+              "ce": 4.024,
+              "bigram_ce": 3.371,
+              "margin_vs_bigram": -0.653
+            },
+            "4-5": {
+              "n": 716,
+              "ce": 3.614,
+              "bigram_ce": 3.335,
+              "margin_vs_bigram": -0.279
+            },
+            "6-9": {
+              "n": 1205,
+              "ce": 3.319,
+              "bigram_ce": 3.327,
+              "margin_vs_bigram": 0.008
+            },
+            "10-99": {
+              "n": 896,
+              "ce": 2.84,
+              "bigram_ce": 2.972,
+              "margin_vs_bigram": 0.132
+            }
+          }
+        },
+        "adaptive": {
+          "aggregate_ce": 3.582,
+          "bigram_ce": 3.248,
+          "by_depth": {
+            "1": {
+              "n": 400,
+              "ce": 5.072,
+              "bigram_ce": 3.206,
+              "margin_vs_bigram": -1.866
+            },
+            "2": {
+              "n": 400,
+              "ce": 4.58,
+              "bigram_ce": 3.397,
+              "margin_vs_bigram": -1.183
+            },
+            "3": {
+              "n": 386,
+              "ce": 4.017,
+              "bigram_ce": 3.371,
+              "margin_vs_bigram": -0.646
+            },
+            "4-5": {
+              "n": 716,
+              "ce": 3.524,
+              "bigram_ce": 3.335,
+              "margin_vs_bigram": -0.189
+            },
+            "6-9": {
+              "n": 1205,
+              "ce": 3.241,
+              "bigram_ce": 3.327,
+              "margin_vs_bigram": 0.086
+            },
+            "10-99": {
+              "n": 896,
+              "ce": 2.787,
+              "bigram_ce": 2.972,
+              "margin_vs_bigram": 0.186
+            }
+          }
+        }
+      }
+    }
+  },
+  "elapsed_s": 879.7
+}

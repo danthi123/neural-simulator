@@ -53,7 +53,8 @@ class RateReservoir:
        SLOW leak `alpha_slow` (heterogeneous time constants = the rate analogue of ALIF/spike-frequency-adaptation): the
        e-prop eligibility of a slow unit decays over ~1/alpha_slow tokens, so credit reaches the DEEP context the fast
        (~1/alpha) eligibility cannot (Bellec-2020 ALIF is what gives e-prop its long memory; the horizon lever)."""
-    def __init__(self, V, n, seed, alpha=0.3, spectral=1.1, in_scale=1.0, adaptive_frac=0.0, alpha_slow=0.05):
+    def __init__(self, V, n, seed, alpha=0.3, spectral=1.1, in_scale=1.0, adaptive_frac=0.0, alpha_slow=0.05,
+                 leak_spectrum="homogeneous", alpha_lo=0.03, alpha_hi=0.6):
         rng = np.random.default_rng(seed)
         W = rng.standard_normal((n, n))
         sr = np.max(np.abs(np.linalg.eigvals(W)))                # circular-law radius ~ sqrt(n)
@@ -61,11 +62,24 @@ class RateReservoir:
         self.W_in = rng.standard_normal((n, V)) * (in_scale / np.sqrt(V))
         self.b = np.zeros(n)
         self.n = n; self.V = V
-        self.alpha = np.full(n, float(alpha))                     # per-unit leak (heterogeneous when adaptive)
+        # per-unit leak (state-memory horizon lever). DEFAULT homogeneous = byte-identical to the committed e-prop runs.
+        self.alpha = np.full(n, float(alpha))
+        self.slow_idx = np.array([], dtype=int)                   # units whose STATE holds long context (for the lesion)
+        if leak_spectrum == "hetero":
+            # log-uniform leak spectrum: effective windows ~1/alpha span [1/alpha_hi .. 1/alpha_lo] tokens (diverse
+            # cortical membrane/adaptation time constants, catalog I.16). Slow units = long state memory, READ by the read-out.
+            log_a = rng.uniform(np.log(alpha_lo), np.log(alpha_hi), size=n)
+            self.alpha = np.exp(log_a)
+            self.slow_idx = np.where(self.alpha < np.median(self.alpha))[0]   # the slower half
+        elif leak_spectrum == "homomean":
+            # CONTROL: all units at the MEAN leak of the hetero spectrum (same mean, ZERO diversity) -> isolates whether
+            # the slow-tail DIVERSITY (not merely a slower mean) is what carries deep context.
+            log_a = rng.uniform(np.log(alpha_lo), np.log(alpha_hi), size=n)
+            self.alpha = np.full(n, float(np.mean(np.exp(log_a))))
         if adaptive_frac > 0.0:
             k = int(round(adaptive_frac * n))
-            slow_idx = rng.choice(n, size=k, replace=False)
-            self.alpha[slow_idx] = float(alpha_slow)             # slow units => long eligibility horizon
+            slow = rng.choice(n, size=k, replace=False)
+            self.alpha[slow] = float(alpha_slow)                 # (legacy binary slow-leak; unused by default modes)
 
     def forward_states(self, ids):
         """Run the (possibly-trained) reservoir over a sequence; return states[t] = h_t (the recurrent state at token t)."""
@@ -128,8 +142,12 @@ def train(res, tr_ids, V, epochs, lr_out, lr_rec, seed, mode="plastic", wd=1e-3,
     return W_out
 
 
-def per_depth_ce(res, W_out, ev_ids, P_bi):
-    """Per-context-depth held-out CE for the (trained) reservoir+read-out and the bigram baseline."""
+def per_depth_ce(res, W_out, ev_ids, P_bi, lesion_slow=False):
+    """Per-context-depth held-out CE for the (trained) reservoir+read-out and the bigram baseline.
+       lesion_slow: zero the read-out weights on the SLOW units -> if the deep gain collapses, the slow units' STATE
+       was carrying the distal context the read-out uses (the state-memory lesion control)."""
+    if lesion_slow and res.slow_idx.size:
+        W_out = W_out.copy(); W_out[:, res.slow_idx] = 0.0
     rce = defaultdict(float); bce = defaultdict(float); cnt = defaultdict(int)
     for ids in ev_ids:
         states = res.forward_states(ids)
@@ -161,6 +179,10 @@ def main():
     ap.add_argument("--wd-rec", type=float, default=0.0)          # W_rec weight decay (capacity/overfit guard)
     ap.add_argument("--adaptive-frac", type=float, default=0.5)   # fraction of slow units in the `adaptive` arm
     ap.add_argument("--alpha-slow", type=float, default=0.05)     # slow-unit leak (~1/alpha_slow token eligibility horizon)
+    ap.add_argument("--leak-spectrum", type=str, default="homogeneous", choices=["homogeneous", "hetero", "homomean"])
+    ap.add_argument("--alpha-lo", type=float, default=0.03)       # hetero spectrum slowest leak (~33-token state memory)
+    ap.add_argument("--alpha-hi", type=float, default=0.6)        # hetero spectrum fastest leak (~1.7-token, short context)
+    ap.add_argument("--lesion-slow", action="store_true")         # eval-time: zero the read-out on slow units (lesion control)
     ap.add_argument("--modes", type=str, nargs="+", default=["fixed", "plastic", "shuffle_elig", "zero_signal"])
     ap.add_argument("--json", type=str, default=str(OUT))
     args = ap.parse_args()
@@ -177,10 +199,11 @@ def main():
         P_bi = fit_bigram(tr_ids, V)
         rec = {"V": V, "n_train": len(tr), "by_mode": {}}
         for mode in args.modes:
-            res = RateReservoir(V, args.n_pool, seed, alpha=args.alpha, spectral=args.spectral)  # IDENTICAL init per arm
+            res = RateReservoir(V, args.n_pool, seed, alpha=args.alpha, spectral=args.spectral,
+                                leak_spectrum=args.leak_spectrum, alpha_lo=args.alpha_lo, alpha_hi=args.alpha_hi)
             W_out = train(res, tr_ids, V, args.epochs, args.lr_out, args.lr_rec, seed, mode=mode,
                           wd_rec=args.wd_rec, a_slow_leak=args.alpha_slow)
-            depth, agg, aggb = per_depth_ce(res, W_out, ev_ids, P_bi)
+            depth, agg, aggb = per_depth_ce(res, W_out, ev_ids, P_bi, lesion_slow=args.lesion_slow)
             rec["by_mode"][mode] = {"aggregate_ce": agg, "bigram_ce": aggb, "by_depth": depth}
         per_seed[str(seed)] = rec
         # print: plastic-minus-fixed CE per depth (negative = plastic BETTER); the load-bearing deep(6+) delta
