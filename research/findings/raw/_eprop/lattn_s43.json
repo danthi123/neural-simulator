@@ -1,0 +1,237 @@
+{
+  "runner": "_emerge_reservoir_lm_learned_attention_derisk",
+  "corpus": "data/corpus/wikitext.txt",
+  "seeds": [
+    43
+  ],
+  "beta": 1.0,
+  "lams": [
+    0.0,
+    0.05,
+    0.1,
+    0.2,
+    0.35,
+    0.5
+  ],
+  "margin_nats": 0.03,
+  "rules": [
+    "ceiling",
+    "local"
+  ],
+  "headline": "content_minus_shuffle / content_minus_uniform at cross-sentence positions for the CEILING (full-gradient) learned attention = does a learned attention find long-range signal the reservoir keys could not; content_minus_base alone is confoundable by a bag",
+  "verdict": {
+    "ceiling_content_minus_shuffle": 0.0424,
+    "ceiling_content_minus_uniform": 0.03,
+    "ceiling_beats_bag": false,
+    "local_content_minus_shuffle": 0.0206,
+    "local_content_minus_uniform": 0.0093,
+    "local_beats_bag": false,
+    "verdict": "THIN -- even the FULL-GRADIENT learned-attention CEILING does NOT beat the cross-sentence BAG (content ~<= shuffle/uniform) at this scale: open-text cross-sentence long-range is thin here. The reservoir substrate is not the only limit -- there is little content-selective distal signal for a learned attention to capture at this scale (a clean SCALE/DATA bound on the whole frontier). HONEST NEGATIVE -- do NOT fake a positive."
+  },
+  "per_seed": {
+    "43": {
+      "seed": 43,
+      "V": 300,
+      "d": 32,
+      "d_head": 32,
+      "win": 2,
+      "n_train_pass": 240,
+      "n_eval_pass": 60,
+      "n_cross_train": 46016,
+      "sents_per_passage": 10,
+      "rules": [
+        "ceiling",
+        "local"
+      ],
+      "by_rule": {
+        "ceiling": {
+          "train_ce_history": [
+            3.8519,
+            3.8193,
+            3.8073,
+            3.7994,
+            3.7932,
+            3.7884,
+            3.784,
+            3.7809
+          ],
+          "eval": {
+            "n_cross_positions": 11153,
+            "base_cross_ce": 3.136,
+            "base_by_depth": {
+              "10-99": 3.135,
+              "6-9": 3.7433,
+              "4-5": 4.4368
+            },
+            "by_arm": {
+              "content": {
+                "best_lam": 0.35,
+                "cross_ce": 2.9921,
+                "by_depth": {
+                  "10-99": 2.9905,
+                  "6-9": 3.9464,
+                  "4-5": 4.8675
+                },
+                "cross_ce_by_lam": {
+                  "0.0": 3.136,
+                  "0.05": 3.0828,
+                  "0.1": 3.051,
+                  "0.2": 3.0132,
+                  "0.35": 2.9921,
+                  "0.5": 3.002
+                }
+              },
+              "shuffle": {
+                "best_lam": 0.35,
+                "cross_ce": 3.0345,
+                "by_depth": {
+                  "10-99": 3.033,
+                  "6-9": 3.946,
+                  "4-5": 4.8675
+                },
+                "cross_ce_by_lam": {
+                  "0.0": 3.136,
+                  "0.05": 3.0928,
+                  "0.1": 3.0679,
+                  "0.2": 3.0413,
+                  "0.35": 3.0345,
+                  "0.5": 3.0581
+                }
+              },
+              "uniform": {
+                "best_lam": 0.35,
+                "cross_ce": 3.0221,
+                "by_depth": {
+                  "10-99": 3.0205,
+                  "6-9": 3.9271,
+                  "4-5": 4.8675
+                },
+                "cross_ce_by_lam": {
+                  "0.0": 3.136,
+                  "0.05": 3.0911,
+                  "0.1": 3.0644,
+                  "0.2": 3.0342,
+                  "0.35": 3.0221,
+                  "0.5": 3.04
+                }
+              }
+            }
+          },
+          "headline": {
+            "content_minus_shuffle": 0.0424,
+            "content_minus_uniform": 0.03,
+            "content_minus_base": 0.1439,
+            "by_depth": {
+              "10-99": {
+                "content_minus_shuffle": 0.0425,
+                "content_minus_uniform": 0.03
+              },
+              "6-9": {
+                "content_minus_shuffle": -0.0004,
+                "content_minus_uniform": -0.0193
+              },
+              "4-5": {
+                "content_minus_shuffle": 0.0,
+                "content_minus_uniform": 0.0
+              }
+            }
+          }
+        },
+        "local": {
+          "train_ce_history": [
+            3.9113,
+            3.8842,
+            3.8699,
+            3.8598,
+            3.8533,
+            3.8485,
+            3.8447,
+            3.8415
+          ],
+          "eval": {
+            "n_cross_positions": 11153,
+            "base_cross_ce": 3.136,
+            "base_by_depth": {
+              "10-99": 3.135,
+              "6-9": 3.7433,
+              "4-5": 4.4368
+            },
+            "by_arm": {
+              "content": {
+                "best_lam": 0.35,
+                "cross_ce": 3.0128,
+                "by_depth": {
+                  "10-99": 3.0112,
+                  "6-9": 3.9382,
+                  "4-5": 4.8675
+                },
+                "cross_ce_by_lam": {
+                  "0.0": 3.136,
+                  "0.05": 3.0882,
+                  "0.1": 3.0598,
+                  "0.2": 3.0273,
+                  "0.35": 3.0128,
+                  "0.5": 3.0287
+                }
+              },
+              "shuffle": {
+                "best_lam": 0.35,
+                "cross_ce": 3.0334,
+                "by_depth": {
+                  "10-99": 3.032,
+                  "6-9": 3.8854,
+                  "4-5": 4.8675
+                },
+                "cross_ce_by_lam": {
+                  "0.0": 3.136,
+                  "0.05": 3.0932,
+                  "0.1": 3.0683,
+                  "0.2": 3.0412,
+                  "0.35": 3.0334,
+                  "0.5": 3.0558
+                }
+              },
+              "uniform": {
+                "best_lam": 0.35,
+                "cross_ce": 3.0221,
+                "by_depth": {
+                  "10-99": 3.0205,
+                  "6-9": 3.9271,
+                  "4-5": 4.8675
+                },
+                "cross_ce_by_lam": {
+                  "0.0": 3.136,
+                  "0.05": 3.0911,
+                  "0.1": 3.0644,
+                  "0.2": 3.0342,
+                  "0.35": 3.0221,
+                  "0.5": 3.04
+                }
+              }
+            }
+          },
+          "headline": {
+            "content_minus_shuffle": 0.0206,
+            "content_minus_uniform": 0.0093,
+            "content_minus_base": 0.1232,
+            "by_depth": {
+              "10-99": {
+                "content_minus_shuffle": 0.0208,
+                "content_minus_uniform": 0.0093
+              },
+              "6-9": {
+                "content_minus_shuffle": -0.0528,
+                "content_minus_uniform": -0.0111
+              },
+              "4-5": {
+                "content_minus_shuffle": 0.0,
+                "content_minus_uniform": 0.0
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "elapsed_s": 30.0
+}
