@@ -79,6 +79,35 @@ def _sm(z):
     z = z - z.max(); e = np.exp(z); return e / e.sum()
 
 
+def role_extract(seed, mode="win2", permute=False, n_pool=300, epochs=200, lr=0.05):
+    """Does the reservoir CARRY the agent ROLE to the given state? Train a read-out CLAUSE-state -> agent CATEGORY (the
+       role, a 2-way target -- NOT the action), then test agent-category accuracy on the held-out twins (both orders). If
+       the clause-final state (win2) exposes the agent to a role-TARGETED read-out, the recurrence DOES carry the role and
+       the Rung-4 boundary closes on-substrate. permute = word-shuffled training (order control)."""
+    res = r3.ReservoirStates(r3.D_CODE, seed=seed, n=n_pool)
+    CAT2 = {"PRED": 0, "PREY": 1}
+    rng_p = np.random.default_rng(seed * 7 + 3)
+    feats, tgts = [], []
+    for s in r3.TRAIN_SENTS:
+        agent_cat = CAT2[r3.ANIMAL_CAT[s[0]]]                     # the TRUE agent (original sentence-first noun)
+        prefix = list(rng_p.permutation(s[:3])) if permute else s[:3]   # feature from the (maybe shuffled) prefix
+        feats.append(feat_of(res, prefix, "class", seed, mode)); tgts.append(agent_cat)
+    X = np.array(feats); mean = X.mean(0); std = X.std(0) + 1e-6
+    Xn = np.concatenate([(X - mean) / std, np.ones((len(X), 1))], 1)
+    W = np.zeros((2, Xn.shape[1])); rng = np.random.default_rng(seed * 13 + 1); idx = list(range(len(Xn)))
+    for _ in range(epochs):
+        rng.shuffle(idx)
+        for i in idx:
+            p = _sm(W @ Xn[i]); t = np.zeros(2); t[tgts[i]] = 1.0; W += lr * np.outer(t - p, Xn[i])
+    ok = tot = 0
+    for a, b in r4.TWINS:
+        for (n1, n2) in [(a, b), (b, a)]:
+            f = feat_of(res, [n1, r3.MEETS, n2], "class", seed, mode)
+            x = np.concatenate([(f - mean) / std, [1.0]])
+            ok += int(int(np.argmax(W @ x)) == CAT2[r3.ANIMAL_CAT[n1]]); tot += 1
+    return ok / tot
+
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--seeds", type=int, nargs="+", default=[42]); ap.add_argument("--n-pool", type=int, default=300)
     args = ap.parse_args()
@@ -91,6 +120,11 @@ def main():
         rev_o, po_o = train_and_score(seed, "traj", code_type="onehot", n_pool=args.n_pool)
         print(f"  traj+permuted  reversal={rev_p:.3f} per_order={po_p:.3f}   (order control)")
         print(f"  traj+onehot    reversal={rev_o:.3f} per_order={po_o:.3f}   (shared-code control)")
+        # ROLE-EXTRACTION: does the reservoir CARRY the agent role to the clause-final state (win2) / trajectory (traj)?
+        for m in ["win2", "traj"]:
+            re_acc = role_extract(seed, mode=m, n_pool=args.n_pool)
+            re_perm = role_extract(seed, mode=m, permute=True, n_pool=args.n_pool)
+            print(f"  ROLE-EXTRACT[{m:4s}] agent-cat acc={re_acc:.3f}  (permuted {re_perm:.3f})   [chance 0.5]")
 
 
 if __name__ == "__main__":
