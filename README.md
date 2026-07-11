@@ -20,20 +20,71 @@ rather than papered over.
 ![Backend](https://img.shields.io/badge/backend-CuPy%20(CUDA)%20%2F%20NumPy%20(CPU)-orange.svg)
 ![Status](https://img.shields.io/badge/status-active%20research-yellow.svg)
 
-<p align="center">
-  <img src="docs/diagrams/brain_master.png" alt="Simulated-brain architecture — master map" width="900">
-</p>
+*The simulated brain — one engine, two configurations (a **navigating** and a **conversing** brain) that share it, plus one memory and one dopamine core, joined by validated synaptic links:*
 
-<p align="center">
-  <em>The simulated brain — one engine, two configurations (navigation and conversation)
-  that share it and are joined by validated synaptic connections.</em><br>
-  <strong>Current flowcharts (GitHub-rendered, plain-language, kept up to date):</strong><br>
-  <a href="docs/diagrams/brain_architecture_current.md">overview flowcharts</a> ·
-  <a href="docs/diagrams/brain_architecture_detailed.md">detailed diagrams — every region &amp; pathway</a> ·
-  <a href="ROADMAP.md">full development roadmap</a><br>
-  <em>(the earlier hand-drawn per-synapse
-  <a href="docs/diagrams/brain_master.svg">SVGs</a> are an archived 2026-06 snapshot, superseded by the detailed diagrams above)</em>
-</p>
+```mermaid
+flowchart TB
+    World(["🌍 Simulated world — renders what the agent sees, enacts its movements"]):::io
+    Turn(["💬 A sentence — the user's turn"]):::io
+
+    subgraph ENGINE["🧠 One brain — spiking neurons + synapses on a single update loop"]
+      direction TB
+      subgraph SENSE["Sensing"]
+        direction LR
+        VIS["Vision — retina to primary visual cortex<br/><small>orientation-selective edge detectors · what and where streams</small>"]:::sense
+      end
+      subgraph SM["The navigating brain — reach goals by moving"]
+        direction LR
+        NAV["Action selection and navigation<br/><small>basal-ganglia go/no-go loops · superior-colliculus orienting · place cells · goal working-memory</small>"]:::nav
+      end
+      subgraph LANG["The conversing brain — understand, think, speak"]
+        direction LR
+        COMP["Understanding<br/><small>parser + reservoir: word order to who-did-what</small>"]:::conv
+        CONCEPT["Concepts and meaning ✅<br/><small>categories learned from experience · reasoning</small>"]:::conv
+        SPEAK["Speaking ✅<br/><small>self-organized grammar · every word on spikes</small>"]:::gen
+        DISC["Conversation<br/><small>tracks who/what across turns · the 'I don't know' guard</small>"]:::plan
+      end
+      subgraph SHARED["Shared core (used by both brains)"]
+        direction LR
+        MEM["Memory — hippocampus<br/><small>separate and complete patterns · tag · replay in 'sleep'</small>"]:::mem
+        REW["Reward and drive — dopamine<br/><small>one shared limbic core for both brains</small>"]:::reward
+        LRN["Learning rules<br/><small>spike-timing · Hebbian · three-factor · dendritic</small>"]:::learn
+      end
+    end
+
+    Body(["🌍 Body — carries out the chosen movement"]):::io
+    Reply(["🗣️ Spoken reply — grounded, checked, or 'I don't know'"]):::io
+
+    World ==>|pixels| VIS
+    VIS ==> NAV
+    NAV ==>|movement| Body
+    Turn ==>|a sentence| COMP
+    World -->|a spoken command steers movement| NAV
+    VIS -.->|what it saw while moving| MEM
+    COMP ==> CONCEPT ==> DISC
+    CONCEPT --> MEM
+    DISC ==> SPEAK ==> Reply
+    MEM -.-> DISC
+    REW -.->|modulates learning and confidence| SM
+    REW -.->|modulates learning and confidence| LANG
+    LRN -.-> SHARED
+
+    classDef io fill:#eef1f4,stroke:#7a8794,color:#1d1d1f;
+    classDef sense fill:#d6eaf8,stroke:#2e6da4,color:#10303f;
+    classDef nav fill:#fdebd0,stroke:#c87f2e,color:#5b3a10;
+    classDef conv fill:#d6eaf8,stroke:#2471a3,color:#10303f;
+    classDef gen fill:#d1f2eb,stroke:#138d75,color:#0c3d33;
+    classDef plan fill:#e9dcf5,stroke:#7d3c98,color:#3b1d4e;
+    classDef mem fill:#d4efdf,stroke:#1d8049,color:#0f3d23;
+    classDef reward fill:#fcf3cf,stroke:#b9770e,color:#5b3a10;
+    classDef learn fill:#eae3f3,stroke:#5b4a8a,color:#2c2247;
+```
+
+**Full flowcharts (GitHub-rendered, plain-language, kept current):**
+[overview](docs/diagrams/brain_architecture_current.md) ·
+[detailed diagrams — every region &amp; pathway](docs/diagrams/brain_architecture_detailed.md) ·
+[development roadmap](ROADMAP.md)
+&nbsp;·&nbsp; *(the earlier hand-drawn per-synapse [SVGs](docs/diagrams/brain_master.svg) are an archived 2026-06 snapshot, superseded by the detailed diagrams)*
 
 **Jump to:** [What it is](#what-it-is) ·
 [Roadmap](#️-roadmap--the-full-development-path) ·
