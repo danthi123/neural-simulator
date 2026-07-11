@@ -40,7 +40,7 @@ from research.runners._emerge_reservoir_lm_derisk import (
     Vocab, _softmax, fit_bigram, train_readout, _standardize_fit)
 from research.runners._emerge_reservoir_lm_realcorpus_derisk import load_sentences
 from research.runners._emerge_reservoir_lm_context_depth_derisk import BUCKETS, _bucket
-from research.runners._emerge_reservoir_lm_eprop_recurrent_derisk import RateReservoir
+from research.runners._emerge_reservoir_lm_eprop_recurrent_derisk import RateReservoir, train as eprop_train
 
 OUT = Path("research/findings/raw/_reslm_content_addr.json")
 
@@ -122,6 +122,9 @@ def main():
     ap.add_argument("--n-pool", type=int, default=300)
     ap.add_argument("--beta", type=float, default=4.0)
     ap.add_argument("--n-window", type=int, default=64)         # how far back the content read can reach
+    ap.add_argument("--learned-keys", action="store_true")      # e-prop-train the reservoir first -> LEARNED keys (rung-2 test)
+    ap.add_argument("--lr-rec", type=float, default=0.006)      # e-prop recurrent lr (when --learned-keys)
+    ap.add_argument("--eprop-epochs", type=int, default=8)
     ap.add_argument("--arms", type=str, nargs="+", default=["base", "content", "shuffle", "uniform", "recent1"])
     ap.add_argument("--json", type=str, default=str(OUT))
     args = ap.parse_args()
@@ -137,6 +140,9 @@ def main():
         tr_ids = [vocab.ids(s) for s in tr]; ev_ids = [vocab.ids(s) for s in ev]
         P_bi = fit_bigram(tr_ids, V)
         res = RateReservoir(V, args.n_pool, seed, alpha=0.3, spectral=1.1)   # FIXED homogeneous (the fading baseline)
+        if args.learned_keys:                                   # RUNG-2 test: e-prop-LEARN the recurrent weights first
+            eprop_train(res, tr_ids, V, args.eprop_epochs, 0.02, args.lr_rec, seed, mode="plastic")
+            print(f"[seed {seed}] reservoir e-prop-trained -> LEARNED keys for the content read", flush=True)
         rec = {"V": V, "by_arm": {}}
         for arm in args.arms:
             depth, agg = train_and_eval(res, tr_ids, ev_ids, V, args.beta, args.n_window, arm,

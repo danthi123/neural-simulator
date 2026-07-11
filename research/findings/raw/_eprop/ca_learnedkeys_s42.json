@@ -1,0 +1,122 @@
+{
+  "runner": "_emerge_reservoir_lm_content_addr_derisk",
+  "corpus": "data/corpus/wikitext.txt",
+  "seeds": [
+    42
+  ],
+  "beta": 4.0,
+  "n_window": 64,
+  "per_seed": {
+    "42": {
+      "V": 150,
+      "by_arm": {
+        "base": {
+          "aggregate_ce": 2.577,
+          "by_depth": {
+            "1": {
+              "n": 150,
+              "ce": 2.345,
+              "bigram_ce": 2.942
+            },
+            "2": {
+              "n": 150,
+              "ce": 2.725,
+              "bigram_ce": 3.031
+            },
+            "3": {
+              "n": 146,
+              "ce": 2.556,
+              "bigram_ce": 2.934
+            },
+            "4-5": {
+              "n": 276,
+              "ce": 2.379,
+              "bigram_ce": 2.65
+            },
+            "6-9": {
+              "n": 461,
+              "ce": 2.581,
+              "bigram_ce": 2.881
+            },
+            "10-99": {
+              "n": 280,
+              "ce": 2.82,
+              "bigram_ce": 2.717
+            }
+          }
+        },
+        "content": {
+          "aggregate_ce": 2.731,
+          "by_depth": {
+            "1": {
+              "n": 150,
+              "ce": 2.343,
+              "bigram_ce": 2.942
+            },
+            "2": {
+              "n": 150,
+              "ce": 2.922,
+              "bigram_ce": 3.031
+            },
+            "3": {
+              "n": 146,
+              "ce": 2.768,
+              "bigram_ce": 2.934
+            },
+            "4-5": {
+              "n": 276,
+              "ce": 2.64,
+              "bigram_ce": 2.65
+            },
+            "6-9": {
+              "n": 461,
+              "ce": 2.729,
+              "bigram_ce": 2.881
+            },
+            "10-99": {
+              "n": 280,
+              "ce": 2.91,
+              "bigram_ce": 2.717
+            }
+          }
+        },
+        "shuffle": {
+          "aggregate_ce": 2.876,
+          "by_depth": {
+            "1": {
+              "n": 150,
+              "ce": 2.364,
+              "bigram_ce": 2.942
+            },
+            "2": {
+              "n": 150,
+              "ce": 2.915,
+              "bigram_ce": 3.031
+            },
+            "3": {
+              "n": 146,
+              "ce": 2.921,
+              "bigram_ce": 2.934
+            },
+            "4-5": {
+              "n": 276,
+              "ce": 2.884,
+              "bigram_ce": 2.65
+            },
+            "6-9": {
+              "n": 461,
+              "ce": 2.935,
+              "bigram_ce": 2.881
+            },
+            "10-99": {
+              "n": 280,
+              "ce": 3.0,
+              "bigram_ce": 2.717
+            }
+          }
+        }
+      }
+    }
+  },
+  "elapsed_s": 9.0
+}
