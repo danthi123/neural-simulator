@@ -1,0 +1,96 @@
+{
+  "runner": "_emerge_reservoir_lm_rung4_order_decisive_recombination_derisk",
+  "seeds": [
+    101
+  ],
+  "epochs": 200,
+  "n_pool": 300,
+  "n_twins": 9,
+  "per_seed": {
+    "101": {
+      "main": {
+        "arm": "main",
+        "reversal_acc": 0.7777777777777778,
+        "per_order_acc": 0.8888888888888888
+      },
+      "permuted": {
+        "arm": "permuted",
+        "reversal_acc": 0.0,
+        "per_order_acc": 0.3333333333333333
+      },
+      "onehot": {
+        "arm": "onehot",
+        "reversal_acc": 0.3333333333333333,
+        "per_order_acc": 0.5555555555555556
+      },
+      "untrained": {
+        "arm": "untrained",
+        "reversal_acc": 0.0,
+        "per_order_acc": 0.0
+      },
+      "memoryless": {
+        "arm": "memoryless",
+        "reversal_acc": 1.0,
+        "per_order_acc": 1.0
+      },
+      "win2": {
+        "arm": "win2",
+        "reversal_acc": 0.5555555555555556,
+        "per_order_acc": 0.7222222222222222
+      },
+      "cum": {
+        "arm": "cum",
+        "reversal_acc": 0.4444444444444444,
+        "per_order_acc": 0.7222222222222222
+      },
+      "pos_blind": {
+        "arm": "pos_blind",
+        "reversal_acc": 0.6666666666666666,
+        "per_order_acc": 0.8333333333333334
+      }
+    }
+  },
+  "aggregate": {
+    "main": {
+      "reversal_acc": 0.7777777777777778,
+      "per_order_acc": 0.8888888888888888
+    },
+    "permuted": {
+      "reversal_acc": 0.0,
+      "per_order_acc": 0.3333333333333333
+    },
+    "onehot": {
+      "reversal_acc": 0.3333333333333333,
+      "per_order_acc": 0.5555555555555556
+    },
+    "untrained": {
+      "reversal_acc": 0.0,
+      "per_order_acc": 0.0
+    },
+    "memoryless": {
+      "reversal_acc": 1.0,
+      "per_order_acc": 1.0
+    },
+    "win2": {
+      "reversal_acc": 0.5555555555555556,
+      "per_order_acc": 0.7222222222222222
+    },
+    "cum": {
+      "reversal_acc": 0.4444444444444444,
+      "per_order_acc": 0.7222222222222222
+    },
+    "pos_blind": {
+      "reversal_acc": 0.6666666666666666,
+      "per_order_acc": 0.8333333333333334
+    }
+  },
+  "main_reversal_acc": 0.7777777777777778,
+  "worst_order_control_reversal": 0.0,
+  "margin": 0.7777777777777778,
+  "per_seed_go": [
+    true
+  ],
+  "n_go": 1,
+  "n_seeds": 1,
+  "elapsed_s": 18.5
+}
