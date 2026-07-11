@@ -131,13 +131,19 @@ ARMS = ["main", "scramble", "onehot", "untrained"]
 
 
 def main():
+    global T_ACTIVE, N_COL, K, D_CODE
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=[42])
     ap.add_argument("--epochs", type=int, default=200)
     ap.add_argument("--lr", type=float, default=0.05)
     ap.add_argument("--n-pool", type=int, default=300)
+    ap.add_argument("--t-active", type=int, default=T_ACTIVE)                 # more active V1 cells -> more perceptual detail
+    ap.add_argument("--n-col", type=int, default=N_COL)
+    ap.add_argument("--k", type=int, default=K)
     ap.add_argument("--json", type=str, default=str(OUT))
     args = ap.parse_args()
+    T_ACTIVE, N_COL, K = args.t_active, args.n_col, args.k
+    D_CODE = N_COL + V                                                         # recompute (D_CODE depends on N_COL)
     train_tokens = {w for s in r3.TRAIN_SENTS for w in s}
     for prefix, _ in r3.HELD_PREFIXES:
         assert prefix[0] not in train_tokens, f"held agent {prefix[0]} leaked"
