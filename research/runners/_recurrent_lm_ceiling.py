@@ -52,6 +52,11 @@ def main():
     ap.add_argument("--batch", type=int, default=64)
     ap.add_argument("--steps", type=int, default=8000)
     ap.add_argument("--lr", type=float, default=2e-3)
+    ap.add_argument("--stateful", action="store_true",
+                    help="carry the recurrent hidden state ACROSS blocks (detached TBPTT in train; carried across the "
+                         "held-out stream in eval) — the recurrent architecture's TRUE long-range ceiling (unbounded "
+                         "context a transformer's block cannot see). Disambiguates 'recurrence can't hold long-range' "
+                         "(block-matched plateaus) from 'recurrence needs cross-block state' (stateful grows).")
     ap.add_argument("--json", type=str, default=str(OUT))
     args = ap.parse_args()
 
@@ -90,7 +95,12 @@ def main():
     P /= P.sum(1, keepdims=True)
 
     B = args.block
-    def batches(ids, bs):
+
+    def _detach(h):
+        if h is None: return None
+        return tuple(t.detach() for t in h) if isinstance(h, tuple) else h.detach()
+
+    def batches(ids, bs):                        # block-matched: random blocks, fresh state each block
         n = (len(ids) - 1) // B
         starts = np.arange(n) * B
         while True:
@@ -99,18 +109,41 @@ def main():
             x = np.stack([ids[i:i + B] for i in s]); y = np.stack([ids[i + 1:i + B + 1] for i in s])
             yield torch.from_numpy(x).to(dev), torch.from_numpy(y).to(dev)
 
+    def stateful_batches(ids, bs):               # TBPTT: bs contiguous lanes, consecutive blocks, detached carried state
+        lane = len(ids) // bs
+        base = np.stack([ids[k * lane:(k + 1) * lane] for k in range(bs)])   # (bs, lane)
+        nb = (lane - 1) // B
+        while True:
+            for j in range(nb):
+                s = j * B
+                x = base[:, s:s + B]; y = base[:, s + 1:s + B + 1]
+                yield (torch.from_numpy(x).to(dev), torch.from_numpy(y).to(dev), j == 0)
+
     opt = torch.optim.AdamW(model.parameters(), lr=args.lr)
-    gen = batches(tr, args.batch)
     t0 = time.time(); model.train()
-    for step in range(args.steps):
-        x, y = next(gen)
-        logits, _ = model(x)                     # h=None each block: truncated BPTT to the block window (fair vs transformer block)
-        loss = F.cross_entropy(logits.reshape(-1, V), y.reshape(-1))
-        opt.zero_grad(); loss.backward()
-        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-        opt.step()
-        if step % 1000 == 0:
-            print(f"  step {step} train-CE {loss.item():.3f} ({time.time()-t0:.0f}s)", flush=True)
+    if args.stateful:
+        gen = stateful_batches(tr, args.batch); h = None
+        for step in range(args.steps):
+            x, y, is_start = next(gen)
+            if is_start: h = None                # new epoch pass over the lanes -> fresh state
+            logits, h = model(x, _detach(h))     # carry detached state across blocks = TBPTT (unbounded effective context)
+            loss = F.cross_entropy(logits.reshape(-1, V), y.reshape(-1))
+            opt.zero_grad(); loss.backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+            opt.step()
+            if step % 1000 == 0:
+                print(f"  step {step} train-CE {loss.item():.3f} ({time.time()-t0:.0f}s) [stateful]", flush=True)
+    else:
+        gen = batches(tr, args.batch)
+        for step in range(args.steps):
+            x, y = next(gen)
+            logits, _ = model(x)                 # h=None each block: truncated BPTT to the block window (fair vs transformer)
+            loss = F.cross_entropy(logits.reshape(-1, V), y.reshape(-1))
+            opt.zero_grad(); loss.backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+            opt.step()
+            if step % 1000 == 0:
+                print(f"  step {step} train-CE {loss.item():.3f} ({time.time()-t0:.0f}s)", flush=True)
 
     # EVAL: CE by context depth (within-block position), STATEFUL across the held-out stream — the recurrent state carries
     # running history, so position p within a block still means "p+carried tokens of context"; to match the transformer's
@@ -118,12 +151,16 @@ def main():
     model.eval()
     n_ev = (len(ev) - 1) // B
     tce = np.zeros(B); bce = np.zeros(B); cnt = np.zeros(B)
+    heval = None                                  # carried across blocks only when --stateful
     with torch.no_grad():
         for i in range(0, n_ev):
             s = i * B
             x = torch.from_numpy(ev[s:s + B][None, :]).to(dev)
             y = ev[s + 1:s + B + 1]
-            logits, _ = model(x)                 # h=None: fresh state at block start, matches transformer's causal within-block context
+            if args.stateful:
+                logits, heval = model(x, heval)   # carry state across the held-out stream: within-block position also carries prior-block history
+            else:
+                logits, _ = model(x)              # h=None: fresh state at block start, matches transformer's causal within-block context
             lp = torch.log_softmax(logits[0], -1).cpu().numpy()
             for p in range(B):
                 tgt = y[p]
@@ -144,8 +181,8 @@ def main():
     print(f"[recceil] LONG-RANGE = does the {args.cell} margin GROW with context? shallow(ctx1) {shallow:+.3f} -> "
           f"deep(ctx17+) {deep:+.3f}  (grows toward the transformer's +1.5 => recurrence holds long-range; "
           f"plateaus short => attention beats recurrence, frontier is a content-addressable store)", flush=True)
-    out = {"runner": "_recurrent_lm_ceiling", "cell": args.cell, "V": V, "block": B, "n_layer": args.n_layer,
-           "params_m": round(n_params / 1e6, 2), "dev": dev, "corpus": args.corpus, "by_ctx_depth": rows,
+    out = {"runner": "_recurrent_lm_ceiling", "cell": args.cell, "stateful": bool(args.stateful), "V": V, "block": B,
+           "n_layer": args.n_layer, "params_m": round(n_params / 1e6, 2), "dev": dev, "corpus": args.corpus, "by_ctx_depth": rows,
            "shallow_margin": shallow, "deep_margin": deep, "elapsed_s": round(time.time() - t0, 1)}
     Path(args.json).parent.mkdir(parents=True, exist_ok=True); Path(args.json).write_text(json.dumps(out, indent=2))
     print(f"\n-> {args.json}\nRECCEIL_DONE", flush=True)
