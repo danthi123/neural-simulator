@@ -36,12 +36,38 @@ rather than papered over.
 </p>
 
 **Jump to:** [What it is](#what-it-is) ·
+[Roadmap](#️-roadmap--the-full-development-path) ·
 [Key features](#key-features) ·
 [Quick start](#quick-start) ·
 [Architecture](#architecture) ·
 [Project status](#project-status--research-direction) ·
 [Glossary](#glossary) ·
 [Docs](#documentation--further-reading)
+
+---
+
+## 🗺️ Roadmap — the full development path
+
+**[`ROADMAP.md`](ROADMAP.md) is the source of truth for progress toward the goal** — artificial life with conversational capability approaching an LLM, built the honest way (emergent, one spiking brain, biology-grounded, no permanent external model). It lays out the whole developmental path as a sequence of stages, each mapped to the brain regions / pathways / functions it reproduces (with catalog + Kandel + primary-paper citations), a status badge, what's done, what's open, and the next step — plus the scaffolds still to be replaced, the honest open walls, and a no-hype end-state assessment. It is updated as a standing part of the workflow.
+
+At a glance (see [`ROADMAP.md`](ROADMAP.md) for the detail and citations):
+
+| Developmental stage | Biology (region / function) | Status |
+|---|---|---|
+| Perception | Retina → V1 Gabor; ventral/dorsal streams | 🟨 Partial |
+| Attention / orienting | Superior colliculus; NE arousal | 🟩 Done (orienting) |
+| Action selection | BG disinhibition cascade; Wang-2002 accumulator + commit burst | 🟩 Done |
+| Reward / value | SNc dopamine RPE; three-factor plasticity; shared limbic drive | 🟩 Done · 🟨 critic |
+| Memory | Hippocampal trisynaptic loop; engrams; SWR replay (replaces backprop) | 🟩 Done · 🟧 deep consolidation |
+| Concept formation | ATL hub; categories discovered from experience; HTM sequence cortex | ✅ **Emergent** |
+| Comprehension | Dual-stream; fronto-striatal reservoir form→role (learned, on spikes) | ✅ **Emergent** · 🟧 recursion |
+| Semantic reasoning | Relational memory; inheritance / transitivity emerge from shared codes | ✅ **Emergent** |
+| Production | Broca; self-organized grammar; 100% spiking word read-out | ✅ **Emergent** · 🟧 open prose |
+| Discourse / conversation | dlPFC WM; two-gate event register; no-confab moat | ✅ **Emergent** · 🧩 fluent chat |
+| Working memory / recursion | NMDA attractor WM; theta-gamma buffer; reservoir fading memory | 🟩 Done · 🟧 recursion depth |
+| Artificial life | Develop-over-time; one-brain merge; one drive; persistence | 🟩 Done (pieces) · 🟨 unified |
+
+Legend: ✅ emergent · 🟩 done (some hand-designed component) · 🟨 partial · 🟧 characterized boundary · 🧩 scaffold to replace · ⬜ open. **The two honest gaps to an LLM:** transformer-free open-ended fluent generation (first rung landed — an emergent, on-bridge, no-backprop next-token model), and a deep-credit rule to lift the reservoir/composer ceilings. A real, bounded, multi-month distance — not a demo away, and not blocked.
 
 ---
 
