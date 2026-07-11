@@ -100,6 +100,8 @@ Track record: the conversational-whitening wall → Mikulasch-Priesemann analog/
 
 **Then:** commit BOTH remotes each cycle; keep `AUTONOMOUS_STATE.md` current with the **EXACT next concrete action**. Findings docs (`research/findings/`) describe what landed AND what's open — never imply the chapter is closed. Honest negatives are first-class deliverables (they map what the substrate can/can't do).
 
+**KEEP `ROADMAP.md` CURRENT — the owner-facing source of truth (2026-07-10 owner directive).** `ROADMAP.md` (repo root, linked from the README) is the at-a-glance record of *what's accomplished, what's in progress, what's left* on the path to artificial-life-with-LLM-matching-conversation — organized as a developmental path, each stage mapped to the biology reproduced (region/pathway/function + catalog/Kandel/paper citation) with a status badge (✅ EMERGENT / 🟩 DONE / 🟨 PARTIAL / 🟧 BOUNDARY / 🧩 SCAFFOLD / ⬜ OPEN). **When an arc lands a GO / surpasses a boundary / replaces a scaffold / opens a new frontier, UPDATE the relevant `ROADMAP.md` stage (status badge + the done/open bullets + the next-step + the citation) in the SAME cycle** — it is the owner's monitoring surface, so it must not drift. If a `ROADMAP.md` claim conflicts with a finding, the finding wins and the roadmap is corrected. Periodically (or on request) do a deeper roadmap sync: a deep-research pass (read the sources in depth — the catalog + Kandel + the findings) to re-verify the biology map + the honest frontier + the end-state assessment.
+
 ---
 
 ## PARALLELIZE + MONITOR (the infra discipline that's been working)
