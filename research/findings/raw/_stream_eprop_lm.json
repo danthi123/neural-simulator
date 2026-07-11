@@ -1,0 +1,121 @@
+{
+  "runner": "_emerge_stream_eprop_lm_derisk",
+  "corpus": "data/corpus/tinystories_train.txt",
+  "seed": 42,
+  "V": 2000,
+  "n_pool": 300,
+  "block": 128,
+  "batch": 64,
+  "lane": 28125,
+  "epochs": 4,
+  "bptt_steps": 4000,
+  "dev": "cuda",
+  "permute_stream": false,
+  "args": {
+    "corpus": "data/corpus/tinystories_train.txt",
+    "max_tokens": 2000000,
+    "vocab": 2000,
+    "n_pool": 300,
+    "block": 128,
+    "epochs": 4,
+    "batch": 64,
+    "seed": 42,
+    "arms": [
+      "fixed_reservoir",
+      "plastic_eprop",
+      "shuffle_elig",
+      "zero_signal",
+      "BPTT_same_net"
+    ],
+    "alpha": 0.3,
+    "spectral": 1.1,
+    "lr_out": 0.02,
+    "lr_rec": 0.001,
+    "wd_out": 0.001,
+    "bptt_steps": 4000,
+    "bptt_lr": 0.002,
+    "grad_check": false,
+    "smoke": false,
+    "permute_stream": false,
+    "json": "research/findings/raw/_stream_eprop_lm.json"
+  },
+  "arms": {
+    "fixed_reservoir": {
+      "by_bucket": {
+        "1": -3.3008,
+        "2": -3.3114,
+        "3": -3.289,
+        "4-8": -3.266,
+        "9-16": -3.1693,
+        "17-127": -2.7599
+      },
+      "shallow_margin": -3.2789,
+      "deep_margin": -2.7599,
+      "aggregate_ce": 7.1046
+    },
+    "plastic_eprop": {
+      "by_bucket": {
+        "1": -3.3026,
+        "2": -3.314,
+        "3": -3.2912,
+        "4-8": -3.2681,
+        "9-16": -3.1668,
+        "17-127": -2.1581
+      },
+      "shallow_margin": -3.281,
+      "deep_margin": -2.1581,
+      "aggregate_ce": 6.5786
+    },
+    "shuffle_elig": {
+      "by_bucket": {
+        "1": -3.3008,
+        "2": -3.3115,
+        "3": -3.2891,
+        "4-8": -3.2663,
+        "9-16": -3.17,
+        "17-127": -2.7622
+      },
+      "shallow_margin": -3.2791,
+      "deep_margin": -2.7622,
+      "aggregate_ce": 7.1067
+    },
+    "zero_signal": {
+      "by_bucket": {
+        "1": -3.3008,
+        "2": -3.3114,
+        "3": -3.289,
+        "4-8": -3.266,
+        "9-16": -3.1693,
+        "17-127": -2.7599
+      },
+      "shallow_margin": -3.2789,
+      "deep_margin": -2.7599,
+      "aggregate_ce": 7.1046
+    },
+    "BPTT_same_net": {
+      "by_bucket": {
+        "1": 0.4573,
+        "2": 0.6771,
+        "3": 0.7425,
+        "4-8": 0.8043,
+        "9-16": 0.8476,
+        "17-127": 0.9016
+      },
+      "shallow_margin": 0.7373,
+      "deep_margin": 0.9016,
+      "aggregate_ce": 3.3984
+    }
+  },
+  "byte_identical_zero_eq_fixed": true,
+  "gate": {
+    "verdict": "BOUNDARY (frac_deep < 0.25 while the BPTT ceiling deep margin is clearly positive -- honest: forward-eligibility credit can't reach within-block deep dependencies)",
+    "byte_identical_zero_eq_fixed": true,
+    "shuffle_deep_le_fixed": true,
+    "frac_deep": -2.3936,
+    "frac_shallow": -4.45,
+    "plastic_beats_fixed_deep": true,
+    "monotone_deep_gt_shallow": true,
+    "bptt_deep_positive": true
+  },
+  "elapsed_s": 575.7
+}
