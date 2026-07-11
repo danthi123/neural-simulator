@@ -1,0 +1,37 @@
+# SCALE CAPSTONE (honest negative) — the fixed-reservoir emergent generator is N-GRAM-COMPETITIVE at best on real text, NOT transformer-competitive: it captures NO usable long-range structure beyond a few recent tokens (a small win on simple text, a LOSS on harder text). Its "advantage over the bigram" was almost entirely recovering short-range n-gram context
+
+**Date:** 2026-07-11
+**Runners:** `_emerge_reservoir_lm_realcorpus_derisk.py`, `_emerge_reservoir_lm_context_depth_derisk.py`, `_emerge_reservoir_lm_ngram_hybrid_derisk.py` (all reuse-by-import of the Rung-1 reservoir + read-out; TinyStories + WikiText; NO `sim/` edit, NO BPTT). This capstone integrates the day's scale probes (owner-prompted by the GPU/scaling questions).
+**Verdict:** **The emergent-reservoir generation path (a FIXED 300-neuron random reservoir + a shallow one-step-delta read-out) has an ~N-GRAM ceiling on real text.** It beats a bigram, but a LEARNED 3-gram beats the bigram by about as much, and the reservoir's genuine contribution BEYOND a learned n-gram is small-and-positive only on simple text (TinyStories) and **negative/zero on harder text (WikiText) at every context depth**. So the reservoir does not capture the long-range structure that separates real language from n-grams — which is exactly the capability a transformer's attention supplies and the honest reason the project keeps a transformer scaffold for fluency.
+
+## The evidence chain (all today, 2-seed)
+1. **Beats the bigram on real text** (TinyStories, `-emergent-generator-beats-bigram-on-real-text`): reservoir CE < bigram CE, 3/3 seeds (+0.18 nats) — BUT only at 1400 sentences (bigram data-starved).
+2. **Regime-dependent, not scale-monotone** (`-reservoir-size-vs-data-levers`): the edge PEAKS at a moderate reservoir + small data and vanishes as either axis scales (bigger reservoir overfits; more data lets the bigram catch up, +0.152→−0.032 at n_pool=300 as data 1400→5000).
+3. **Context-depth diagnosis** (`-reservoir-wins-mid-depth-loses-deep`): the reservoir-only read-out beats the bigram at mid-depth (2–5) but LOSES at deep context (6+) — the running-cumulative fading-memory washout.
+4. **Recent-token fix beats the bigram at all depths** (`-reservoir-plus-recent-token-...`): adding the recent token (standard echo-state read-out) → +0.47 vs bigram, deep-context flips positive.
+5. **BUT vs a LEARNED n-gram the reservoir's contribution is small→negative (THIS capstone):**
+
+| reservoir's contribution BEYOND a learned K-gram (nats; + = reservoir helps; deep = context ≥6 tokens) | TinyStories deep | WikiText deep | WikiText all-depth |
+|---|---|---|---|
+| vs learned 1-gram (K=1) | +0.17 … +0.19 | −0.04 … −0.01 | −0.66 (d1) → −0.01 (d10+) |
+| vs learned 3-gram (K=2) | +0.06 … +0.08 | −0.11 … −0.07 | all negative |
+| vs learned 4-gram (K=3) | +0.02 … +0.03 | −0.14 … −0.11 | all negative (−0.11 … −0.79) |
+
+- On **simple** text (TinyStories), the reservoir adds a small positive residual beyond a learned n-gram at deep context (+0.02–0.08), and HURTS at short context (over-parameterization).
+- On **harder** text (WikiText: larger vocab, diverse topics, longer sentences), the reservoir's contribution is **negative or zero at every depth** — its diffuse fixed-random state actively DEGRADES the clean recent-token prediction. The hoped-for "the long-range residual grows on harder text" is **falsified**: the tiny fixed reservoir captures LESS usable structure on complex text, not more.
+
+## The honest interpretation (holding BOTH candidate causes — no overclaim)
+A **fixed 300-neuron random reservoir** provides a rich but UNTRAINED, fading nonlinear memory. On repetitive simple text it latches onto a little extra short-range structure; on complex text its state adds no usable long-range advantage over clean recent tokens and net-HURTS. Two causes are consistent with the data and I do NOT claim to have separated them — both lead to the same operational conclusion:
+- **(i) capacity ceiling** — a fixed random projection of the recent history exposes ~n-gram-level structure and no more; the read-out learns, the reservoir does not, so on complex text there is simply no long-range signal in the state for the linear read-out to use.
+- **(ii) overfitting at this data budget** — 300 reservoir dims × V=300 outputs ≈ 90k extra read-out weights at only 3000 WikiText sentences (same weight-decay as TinyStories); the extra dims may carry a little signal but the read-out over-parameterizes on the harder, more diverse corpus.
+Verified NOT an artifact: the reservoir is genuinely ACTIVE on WikiText (res+tok CE 3.093 ≠ tok_only 2.967; res+tok still beats the add-1 bigram by +0.044) — it changes the prediction, its contribution is simply net-negative. **Operational conclusion either way:** at this scale (300 neurons, 3000 sentences, linear read-out) the fixed reservoir is n-gram-competitive-at-best on real text and does not add usable long-range structure on harder text. Capturing genuine long-range/discourse structure needs either a much larger reservoir WITH co-scaled data (the pinned test — bare single-axis scaling already showed overfitting/diminishing returns, so this is necessary-not-obviously-sufficient), a LEARNED recurrent substrate (the deep-credit / dendritic frontier the ladder deliberately avoided — and the owner's STANDING priority), or attention (the transformer's mechanism).
+
+## What this does and does NOT overturn
+- **Does NOT overturn** the ladder's Rungs 1–4 results: those validated LLM-like PROPERTIES (dynamics-earned next-token, distal-context WM, novel-content generalization, order-decisive recombination) on CONTROLLED grammars, where the structure is by-construction within the reservoir's reach — and the emergence-bar work (category from perception) stands. Those are real, on-substrate, no-BPTT capability demonstrations.
+- **Does bound** the SCALE prospects honestly: the same substrate does NOT extend to a transformer-competitive long-range language model on real text. The ladder is a validated toy of LLM-like mechanisms, not a drop-in transformer replacement at scale — which is precisely why the project's honest interim keeps a (minimized) transformer scaffold for open-domain fluency while the brain does grounding/reasoning/the no-confab moat.
+
+## ⇒ the boundary + the next mechanism (this is not an endpoint)
+The n-gram ceiling of a fixed small reservoir is a BOUNDARY, and per the standing workflow it names the next mechanism to capture long-range structure: (a) a LEARNED recurrent/deep substrate (the dendritic deep-credit frontier — deferred, high-variance, but the honest route to a substrate that captures long-range structure); (b) an attention-like on-substrate mechanism (biological analogues: thalamocortical gating / working-memory-indexed retrieval — the Rung-2 WM buffer is a first step, but a single latch is not attention); (c) co-scaled reservoir size + data at much larger scale (measure before assuming — likely necessary-not-sufficient). The honest headline for the owner: **the emergent-reservoir path is a real, verified toy of LLM mechanisms but is n-gram-level on real text; closing the gap to fluent language is the long-range-structure problem, which the fixed reservoir does not solve.**
+
+## Files
+`_emerge_reservoir_lm_{realcorpus,context_depth,ngram_hybrid}_derisk.py`; raw `_rc/`, `_rc_scale/`, `_rc_reg/`, `_rc_data/`, `_ctxdepth/`, `_hybrid/`, `_hybrid2/`, `_hybrid_wiki/`. Integrates `2026-07-11-SCALE-*` findings + the SYNTHESIS map.
