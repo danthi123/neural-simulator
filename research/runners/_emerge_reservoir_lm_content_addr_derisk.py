@@ -179,6 +179,59 @@ def gated_interp_eval(res, tr, ev, V, beta, N_window, epochs, lr, wd, seed, P_bi
                 "gain": round((bag[b] - gag[b]) / cnt[b], 3)} for b in cnt}
 
 
+def _gate_feats(pb, rt, t, maxpos=40.0):
+    """Features for the learned CLS gate (per token): base uncertainty, retrieval confidence/entropy, depth proxy,
+       base-retrieval agreement, base top-prob."""
+    Hb = -np.sum(pb * np.log(pb + 1e-12)); Hr = -np.sum(rt * np.log(rt + 1e-12))
+    agree = 1.0 if int(np.argmax(pb)) == int(np.argmax(rt)) else 0.0
+    return np.array([Hb, rt.max(), Hr, min(t, maxpos) / maxpos, pb.max(), agree, 1.0])
+
+
+def learned_gate_eval(res, tr, ev, V, beta, N_window, epochs, lr, wd, seed, P_bi, gate_epochs=4, gate_lr=0.2):
+    """LEARNED CLS gate: lam_t = sigmoid(w . feats_t), w trained by gradient on the interpolated CE over TRAIN. Opens the
+       hippocampal retrieval only where it helps (deep-where-retrieval-is-right), combining the confounded hand-signals.
+       Reports gated CE by depth vs base on EVAL (w trained on train only)."""
+    rng = np.random.default_rng(seed * 13 + 5)
+    trc = [(features(res, ids, V, beta, N_window, "base", rng), ids) for ids in tr]
+    mean, std = _standardize_fit(trc)
+    W = train_readout(trc, V, epochs, lr, np.random.default_rng(seed * 7 + 1), mean, std, wd=wd, ls=0.05)
+
+    def make_cache(seqs):
+        out = []
+        for ids in seqs:
+            S = np.array(res.forward_states(ids)); R = content_read(S, ids, V, beta, res.n, N_window, "content", rng)
+            rows = []
+            for t in range(len(ids) - 1):
+                x = np.concatenate([(S[t] - mean) / std, [1.0]]); pb = _softmax(W @ x)
+                rt = R[t]; s = rt.sum(); rt = rt / max(s, 1e-9)
+                rows.append((pb, rt, _gate_feats(pb, rt, t), ids[t + 1], t + 1))
+            out.append(rows)
+        return out
+    trg = make_cache(tr); evg = make_cache(ev)
+    # standardize gate features on train
+    allf = np.array([r[2] for rows in trg for r in rows]); fmu = allf.mean(0); fsd = allf.std(0) + 1e-6
+    w = np.zeros(len(fmu))
+    for ep in range(gate_epochs):
+        order = rng.permutation(len(trg))
+        for si in order:
+            for pb, rt, f, tgt, d in trg[si]:
+                fs = (f - fmu) / fsd; lam = 1.0 / (1.0 + math.exp(-float(w @ fs))); lam *= 0.6  # cap lam<=0.6
+                pf = (1 - lam) * pb + lam * rt; pft = max(pf[tgt], 1e-12)
+                dL_dlam = -(rt[tgt] - pb[tgt]) / pft                    # d(-log pf[tgt])/dlam
+                dlam_dz = (lam / 0.6) * (1 - lam / 0.6) * 0.6           # d lam / d z  (z = w.fs)
+                w -= gate_lr * dL_dlam * dlam_dz * fs
+    gag = defaultdict(float); bag = defaultdict(float); cnt = defaultdict(int); lam_by = defaultdict(list)
+    for rows in evg:
+        for pb, rt, f, tgt, d in rows:
+            b = _bucket(d); fs = (f - fmu) / fsd
+            lam = 0.6 / (1.0 + math.exp(-float(w @ fs)))
+            pf = (1 - lam) * pb + lam * rt
+            gag[b] += -math.log(max(pf[tgt], 1e-12)); bag[b] += -math.log(max(pb[tgt], 1e-12)); cnt[b] += 1
+            lam_by[b].append(lam)
+    return {b: {"n": cnt[b], "base_ce": round(bag[b] / cnt[b], 3), "gated_ce": round(gag[b] / cnt[b], 3),
+                "gain": round((bag[b] - gag[b]) / cnt[b], 3), "mean_lam": round(float(np.mean(lam_by[b])), 3)} for b in cnt}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=[42])
@@ -232,6 +285,14 @@ def main():
                 row = " ".join(f"d{k}:{depth[k]['gain']:+.3f}"
                                for lo,hi in BUCKETS for k in [f'{lo}-{hi}' if lo!=hi else f'{lo}'] if k in depth)
                 print(f"[seed {seed}] GATED (entropy-gated) CE gain over base (pos=gated BEATS base, NET): {row}", flush=True)
+                continue
+            if arm == "learned_gate":                           # LEARNED CLS gate (special eval)
+                depth = learned_gate_eval(res, tr_ids, ev_ids, V, args.beta, args.n_window,
+                                          args.epochs, args.lr, args.weight_decay, seed, P_bi)
+                rec["by_arm"]["learned_gate"] = {"by_depth": depth}
+                row = " ".join(f"d{k}:{depth[k]['gain']:+.3f}(λ{depth[k]['mean_lam']})"
+                               for lo,hi in BUCKETS for k in [f'{lo}-{hi}' if lo!=hi else f'{lo}'] if k in depth)
+                print(f"[seed {seed}] LEARNED-GATE CE gain over base (pos=BEATS base, NET; λ=mean gate): {row}", flush=True)
                 continue
             depth, agg = train_and_eval(res, tr_ids, ev_ids, V, args.beta, args.n_window, arm,
                                         args.epochs, args.lr, args.weight_decay, seed, P_bi)
