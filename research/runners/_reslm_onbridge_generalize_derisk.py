@@ -47,13 +47,19 @@ class GenReservoir(WinLearnReservoir):
     the point-neuron confound-suppression boundary. dend_gain=None => byte-identical to the plain multi-hot drive."""
     dend_gain = None
     dend_sigma = 0.05
+    dend_scale = 1.0        # mean(sigma+g) -> keeps the MEAN drive == in_hi so the re-weighting is scale-consistent
+                           # across seeds (fixes the operating-point fragility of the bare in_hi/(sigma+g) form)
 
     def _drive_for_token(self, active, silence):
         cur = np.zeros(self._num, np.float32)
         if not silence:
             for d in np.atleast_1d(active):
                 d = int(d)
-                _hi = self.in_hi if self.dend_gain is None else self.in_hi / (self.dend_sigma + float(self.dend_gain[d]))
+                if self.dend_gain is None:
+                    _hi = self.in_hi
+                else:
+                    # mean-normalized per-compartment divisive gain: common dims (high g) -> <1x, rare -> >1x, mean ~1x
+                    _hi = self.in_hi * self.dend_scale / (self.dend_sigma + float(self.dend_gain[d]))
                 cur[self.tok_idx[d]] = _hi
         cur[self.res_idx] += self.res_bias
         return cur
@@ -95,6 +101,8 @@ def _derisk_one(seed, args):
             np.random.default_rng(seed * 613 + 5).shuffle(g)
         res.dend_gain = g
         res.dend_sigma = float(args.dend_sigma)
+        active = g > 0                                                    # dims that appear in some code (the driven ones)
+        res.dend_scale = float(np.mean(args.dend_sigma + g[active])) if active.any() else 1.0
     res._seed_for_Y = seed + 9973
     res.set_n_classes(n_classes)
     res._w_init = res._weights().copy()
