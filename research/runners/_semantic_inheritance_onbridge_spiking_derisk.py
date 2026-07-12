@@ -123,7 +123,7 @@ class OnBridgeBDSPNet:
     def __init__(self, n_in, hidden, k, seed=0, rule="plain_fa", n_hidden_layers=2,
                  settle_steps=40, credit_steps=25, in_current_pA=520.0, in_bias_pA=260.0,
                  ff_w_init=4.0, apical_gain_pA=900.0, beta=1.0, p0=0.30, lr=0.05,
-                 tonic_h_pA=450.0, tonic_o_pA=500.0, pool_k=1):
+                 tonic_h_pA=450.0, tonic_o_pA=500.0, pool_k=1, pbar_alpha=0.05):
         from sim.bridge import SimulationBridge
         from sim.config import CoreSimConfig, GPUConfig, VisualizationConfig, RuntimeState
         from sim.backend import get_backend
@@ -170,6 +170,8 @@ class OnBridgeBDSPNet:
         cfg.bdsp_learning_rate = float(lr)
         cfg.bdsp_p0 = float(p0)
         cfg.bdsp_beta = float(beta)
+        cfg.bdsp_pbar_ema_alpha = float(pbar_alpha)   # 0.05 = the EMA baseline (default); 0.0 = FROZEN Pbar at p0
+                                                      # (the BurstCCN preset-baseline test — an unbiased single-phase baseline)
         cfg.burst_isi_threshold_ms = 6.0
         cfg.bdsp_w_min = -6.0; cfg.bdsp_w_max = 6.0
         cfg.enable_stdp = False
@@ -479,7 +481,8 @@ def _run_arm(rule, task, idx, n_in, hidden, k, epochs, batch, seed, n_hidden_lay
     net = OnBridgeBDSPNet(n_in, hidden, k, seed=seed, rule=rule, n_hidden_layers=n_hidden_layers,
                           settle_steps=settle_steps, credit_steps=credit_steps, lr=lr, pool_k=pool_k,
                           tonic_h_pA=hp.get("tonic_h_pA", 560.0), tonic_o_pA=hp.get("tonic_o_pA", 620.0),
-                          apical_gain_pA=hp.get("apical_gain_pA", 2000.0), ff_w_init=hp.get("ff_w_init", 4.5))
+                          apical_gain_pA=hp.get("apical_gain_pA", 2000.0), ff_w_init=hp.get("ff_w_init", 4.5),
+                          pbar_alpha=hp.get("pbar_alpha", 0.05))
     w0 = net.ff_weight_norm()
     _train_onbridge(net, Xtr, ytr, mode, epochs, batch, seed)
     w1 = net.ff_weight_norm()
@@ -593,6 +596,8 @@ def main():
     ap.add_argument("--tonic-h-pA", type=float, default=560.0)
     ap.add_argument("--tonic-o-pA", type=float, default=620.0)
     ap.add_argument("--apical-gain-pA", type=float, default=2000.0)
+    ap.add_argument("--pbar-alpha", type=float, default=0.05, help="Pbar EMA rate; 0.0 = FROZEN baseline at p0 "
+                    "(the BurstCCN preset-baseline test — unbiased single-phase baseline for B - Pbar*E)")
     ap.add_argument("--ff-w-init", type=float, default=4.5)
     # task knobs. CPU-smoke DEFAULT = the 5-class (n_prop=2) depth-separating config: it is genuinely depth-required
     # (Stage-0: 1-layer 0.44, 2-layer 1.0, gap +0.56) AND small enough that the point-neuron SPIKING net can train it
@@ -615,7 +620,7 @@ def main():
                        feature_seed=a.feature_seed)
     subsample = None if a.train_subsample == 0 else a.train_subsample
     hp = dict(tonic_h_pA=a.tonic_h_pA, tonic_o_pA=a.tonic_o_pA, apical_gain_pA=a.apical_gain_pA,
-              ff_w_init=a.ff_w_init)
+              ff_w_init=a.ff_w_init, pbar_alpha=a.pbar_alpha)
 
     t0 = time.time(); err = None; per = []
     try:
