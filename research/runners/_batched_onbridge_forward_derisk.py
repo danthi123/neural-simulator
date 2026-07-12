@@ -44,9 +44,10 @@ def build_net(n_in, hidden, k, W, seed, settle_steps, n_copies=1):
     cfg.enable_homeostasis = False  # rule out threshold-homeostasis (firing-rate EMA) as the cross-copy coupler
     cfg.enable_structural_plasticity = False
     cfg.enable_parameter_heterogeneity = False
-    cfg.enable_inhibitory_neurons = False   # <-- ISOLATION: the random E/I split is drawn over ALL n_total, so copy 0's
-                                            # E/I assignment (-> vr -> v_init) differs between 1-copy and M-copy. Off =>
-                                            # deterministic identical init => proves the block-diagonal STEP mechanism.
+    cfg.enable_inhibitory_neurons = False
+    cfg.num_traits = 1   # <-- THE ROOT: cp_traits = cp.random.randint(0,num_traits) (bridge-internal RNG, NOT seeded by
+                         # actual_seed_used) assigns neuron TYPE -> vr -> v_init. num_traits=1 => all trait 0 => identical
+                         # deterministic vr => reproducible init => the block-diagonal batched forward is EXACT.
     cfg.actual_seed_used = int(seed)
     br = SimulationBridge(core_config=cfg, gpu_config=GPUConfig(),
                           viz_config=VisualizationConfig(), runtime_state=RuntimeState())
