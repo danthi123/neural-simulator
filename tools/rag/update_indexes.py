@@ -2,12 +2,15 @@
 runs only when the evolving prose actually changed since the last successful update, and never two at once (bursts of
 commits collapse to one update). Wired to fire automatically via the git post-commit hook (tools/git-hooks/post-commit).
 
-- LlamaIndex (rag_compare/llamaindex_full): INCREMENTAL via refresh_ref_docs -> only new/changed docs are re-embedded
-  (the static 8.7MB Kandel is skipped when unchanged), so a typical update is seconds. Needs the index built with
-  path-based ids (build_llamaindex_full.py, id_=path) -- if the persisted index predates that, pass --rebuild once.
-- SOMA (soma_bundles/sim_kb): full rebuild (soma _ingest is fresh-MemoryLayer only) over the EVOLVING corpus mirrored
-  into soma_bundles/kb_md/ (findings/plans/docs/catalog; Kandel excluded -- static biology lives in LlamaIndex --corpus
-  kandel and needs no re-chunking each commit).
+- LlamaIndex (rag_compare/llamaindex_full): INCREMENTAL via refresh_ref_docs (new/changed re-embedded) + explicit
+  delete_ref_doc for vanished docs; the static 8.7MB Kandel is skipped when unchanged, so a typical update is seconds.
+  Needs the index built with path-based ids (build_llamaindex_full.py, id_=path) -- if the persisted index predates
+  that, pass --rebuild once.
+- SOMA (soma_bundles/sim_kb): INCREMENTAL for new/edited/deleted files -- an edited/deleted file's old chunks are
+  forgotten by their manifest-recorded node_ids and (for an edit) the new chunks stored, so a single edit no longer
+  re-embeds the whole corpus. Covers the EVOLVING prose (findings/plans/docs/catalog; Kandel excluded -- static biology
+  lives in LlamaIndex --corpus kandel). A FULL rebuild happens only on --rebuild, a missing bundle, or a one-time
+  migration of a pre-node-id manifest.
 
 Run with the rag_compare_env python (has BOTH llama-index and soma):
   E:/Documents/Projects/rag_compare_env/Scripts/python.exe tools/rag/update_indexes.py [--rebuild] [--force]
@@ -77,59 +80,88 @@ def refresh_llamaindex(rebuild=False):
         idx.storage_context.persist(persist_dir=PERSIST)
         return f"llamaindex REBUILT ({len(idx.docstore.docs)} nodes)"
     idx = load_index_from_storage(StorageContext.from_defaults(persist_dir=PERSIST))
+    # refresh_ref_docs inserts NEW + updates CHANGED (by content hash) but does NOT remove docs that vanished, so a
+    # deleted findings/doc would linger as stale hits -> explicitly delete the ref docs no longer in the corpus.
+    cur_ids = {d.id_ for d in docs}
+    ndel = 0
+    for rid in list(idx.ref_doc_info.keys()):
+        if rid not in cur_ids:
+            try:
+                idx.delete_ref_doc(rid, delete_from_docstore=True); ndel += 1
+            except Exception:
+                pass
     res = idx.refresh_ref_docs(docs)                         # insert new + update changed (by hash); skip unchanged
     idx.storage_context.persist(persist_dir=PERSIST)
-    return f"llamaindex refreshed ({sum(bool(x) for x in res)}/{len(res)} docs new-or-changed)"
-
-
-def _soma_evolving():
-    """{path: int(mtime)} for the SOMA-covered evolving prose (source read directly; no mirror)."""
-    return {f: int(os.stat(f).st_mtime) for stype, f in evolving_files() if stype in SOMA_TYPES and os.path.exists(f)}
+    return f"llamaindex refreshed ({sum(bool(x) for x in res)}/{len(res)} new-or-changed, {ndel} deleted)"
 
 
 def _store_file(mem, chunk_markdown, load_text, f):
+    """Store all chunks of file f into the memory layer; return the list of node_ids (empty if unreadable/empty).
+    The ids are recorded in the manifest so a later EDIT/DELETE can forget exactly this file's chunks."""
     from pathlib import Path
     text = load_text(Path(f))                                # _load_doc_text expects a Path (uses .suffix)
     if text is None:
-        return 0
-    n = 0
+        return []
+    ids = []
     for ch in chunk_markdown(text, path=os.path.basename(f)):
-        mem.store(ch.text, metadata={"path": ch.path, "heading": getattr(ch, "heading", ""), "src": f})
-        n += 1
-    return n
+        ids.append(mem.store(ch.text, metadata={"path": ch.path, "heading": getattr(ch, "heading", ""), "src": f}))
+    return ids
 
 
-def rebuild_soma(rebuild=False):
-    """INCREMENTAL when only NEW files were added (load bundle -> store the new files -> save = fast, no re-embed of the
-    existing corpus). FULL rebuild (fresh MemoryLayer) when a file was EDITED or DELETED, or the bundle is missing, or
-    --rebuild (correctness: SOMA has no per-doc delete-by-path, so an edit needs a clean rebuild)."""
+def _load_soma_manifest():
+    if not os.path.exists(SOMA_MANIFEST):
+        return {}
+    try:
+        return json.load(open(SOMA_MANIFEST))
+    except Exception:
+        return {}
+
+
+def refresh_soma(rebuild=False):
+    """Keep the SOMA bundle in sync with the evolving corpus, FULLY INCREMENTAL for new/edited/deleted files: a
+    changed/deleted file's old chunks are forgotten by their recorded node_ids and (for an edit) the new chunks are
+    stored -- so a single edit no longer forces a full re-embed of the whole corpus. Manifest schema is
+    {path: {"mtime": int, "ids": [node_id, ...]}}. FULL rebuild (fresh MemoryLayer) only when: --rebuild, the bundle
+    is missing, or the manifest predates the node-id schema (a one-time migration to record ids)."""
     from soma.memory.api import MemoryLayer
     from soma._cli_commands.wiki_chat import chunk_markdown, _load_doc_text
-    cur = _soma_evolving()
-    prev = {}
-    if os.path.exists(SOMA_MANIFEST):
-        try:
-            prev = json.load(open(SOMA_MANIFEST))
-        except Exception:
-            prev = {}
-    changed = [f for f in cur if f in prev and cur[f] != prev[f]]
-    deleted = [f for f in prev if f not in cur]
-    new = [f for f in cur if f not in prev]
-    full = rebuild or (not os.path.isdir(SOMA_BUNDLE)) or bool(changed) or bool(deleted)
+    cur = {f: int(os.stat(f).st_mtime) for stype, f in evolving_files() if stype in SOMA_TYPES and os.path.exists(f)}
+    prev = _load_soma_manifest()
+    old_schema = any(not isinstance(v, dict) for v in prev.values())   # pre-node-id manifest -> one-time migrate
+    full = rebuild or (not os.path.isdir(SOMA_BUNDLE)) or old_schema or (not prev)
 
     if full:
         mem = MemoryLayer.with_sbert()
-        cc = sum(_store_file(mem, chunk_markdown, _load_doc_text, f) for f in cur)
+        man, cc = {}, 0
+        for f in cur:
+            ids = _store_file(mem, chunk_markdown, _load_doc_text, f)
+            man[f] = {"mtime": cur[f], "ids": ids}; cc += len(ids)
         mem.save(SOMA_BUNDLE)
-        json.dump(cur, open(SOMA_MANIFEST, "w"))
-        return f"soma FULL rebuild ({len(cur)} files / {cc} chunks; {len(changed)} changed, {len(deleted)} deleted)"
-    if not new:
-        return "soma up to date (no new files)"
+        json.dump(man, open(SOMA_MANIFEST, "w"))
+        return f"soma FULL rebuild ({len(cur)} files / {cc} chunks)"
+
+    new     = [f for f in cur if f not in prev]
+    changed = [f for f in cur if f in prev and cur[f] != prev[f]["mtime"]]
+    deleted = [f for f in prev if f not in cur]
+    if not (new or changed or deleted):
+        return "soma up to date (no changes)"
+
     mem = MemoryLayer.load_with_sbert(SOMA_BUNDLE)
-    cc = sum(_store_file(mem, chunk_markdown, _load_doc_text, f) for f in new)
+    man = {f: dict(v) for f, v in prev.items()}
+    n_forgot = 0
+    for f in changed + deleted:                              # drop the file's old chunks by their recorded node_ids
+        for nid in prev[f].get("ids", []):
+            if mem.forget(nid):
+                n_forgot += 1
+        man.pop(f, None)
+    cc = 0
+    for f in new + changed:                                  # (re)store new/edited files, recording fresh node_ids
+        ids = _store_file(mem, chunk_markdown, _load_doc_text, f)
+        man[f] = {"mtime": cur[f], "ids": ids}; cc += len(ids)
     mem.save(SOMA_BUNDLE)
-    json.dump(cur, open(SOMA_MANIFEST, "w"))
-    return f"soma incremental (+{len(new)} new files / {cc} chunks appended)"
+    json.dump(man, open(SOMA_MANIFEST, "w"))
+    return (f"soma incremental (+{len(new)} new, ~{len(changed)} changed, -{len(deleted)} deleted; "
+            f"{cc} chunks stored, {n_forgot} forgotten)")
 
 
 def main():
@@ -155,7 +187,7 @@ def main():
         t0 = time.time()
         print(refresh_llamaindex(rebuild=args.rebuild), flush=True)
         try:
-            print(rebuild_soma(), flush=True)
+            print(refresh_soma(rebuild=args.rebuild), flush=True)
         except Exception as e:
             print(f"[update-indexes] SOMA rebuild failed (LlamaIndex still updated): {e}", flush=True)
         json.dump({"hash": manifest_hash(), "at": int(time.time())}, open(MANIFEST, "w"))
