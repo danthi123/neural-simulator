@@ -77,7 +77,7 @@ ALL_ARMS = RESERVOIR_ARMS + ["BPTT_same_net"]          # the 5 pre-registered ar
 # eligibility propagates credit forward over long spans, so e-prop can reach the DEEP within-block context the plain
 # forward-filtered (~1/alpha) eligibility cannot. Ported faithfully from `_emerge_reservoir_lm_eprop_recurrent_derisk`.
 ALIF_ARMS = ["plastic_eprop_alif", "plastic_eprop_alif_readonly"]
-EXTRA_ARMS = (["BPTT_fixed_win", "BPTT_matched_readout", "BPTT_frozen_wrec", "eprop_learn_win", "plastic_eprop_dualtc",
+EXTRA_ARMS = (["BPTT_fixed_win", "BPTT_matched_readout", "BPTT_frozen_wrec", "eprop_learn_win", "eprop_learn_win_kp", "plastic_eprop_dualtc",
                "plastic_eprop_dualtc_shuffle", "plastic_eprop_multitc"] + ALIF_ARMS)   # isolation/lever/anti-cheat arms (R1b BPTT-fixed-W_in; R1c
 # BPTT-matched-readout = the FAIR denominator [same delta-rule read-out + frozen b=0 as e-prop, so the ONLY diff from
 # plastic_eprop is the W_rec CREDIT RULE]; eprop_learn_win = the BIOLOGICAL version of the winning BPTT_frozen_wrec arm
@@ -299,7 +299,7 @@ def train_eprop(mode, init, tr_lanes, V, n, alpha, B, epochs, lr_out, lr_rec, wd
     return W_rec.detach(), W_out.detach(), W_in.detach(), b.detach()
 
 
-def train_eprop_learn_win(init, tr_lanes, V, n, alpha, B, epochs, lr_out, lr_rec, lr_in, wd_out, dev):
+def train_eprop_learn_win(init, tr_lanes, V, n, alpha, B, epochs, lr_out, lr_rec, lr_in, wd_out, dev, kp=False):
     """Contiguous-stream e-prop that learns the INPUT projection W_in with W_rec FIXED (the random reservoir) -- the
        BIOLOGICAL (one-step-local, no BPTT) version of the winning BPTT_frozen_wrec arm. That arm found the deep long-range
        margin is INPUT-EMBEDDING bound, not recurrent-credit bound (BPTT_frozen_wrec deep +1.258 BEATS BPTT_same_net's
@@ -343,8 +343,10 @@ def train_eprop_learn_win(init, tr_lanes, V, n, alpha, B, epochs, lr_out, lr_rec
                 delta = -probs
                 delta[ar, y[:, p]] += 1.0                  # onehot(target) - softmax(logits): clean read-out error
                 W_out = W_out + lr_out * ((delta.t() @ h) / batch - wd_out * W_out)   # read-out delta rule (IDENTICAL to e-prop)
+                if kp:                                     # KOLEN-POLLACK: co-evolve Bfb with W_out by the TRANSPOSE increment
+                    Bfb = Bfb + lr_out * ((h.t() @ delta) / batch - wd_out * Bfb)     #   -> Bfb -> W_out^T (local h,delta; NO weight transport)
                 e_in = elig_in_update(e_in, act, x[:, p], alpha, V)        # input eligibility (increment column v=x_t only)
-                L = delta @ Bfb.t()                        # (batch,n) broadcast random-feedback learning signal (SAME as recurrent arms)
+                L = delta @ Bfb.t()                        # (batch,n) learning signal (fixed-random Bfb, or KP-learned toward W_out^T)
                 dW_in = lr_in * (L.unsqueeze(2) * e_in).mean(0)            # (n,V): average the per-lane W_in updates over the batch
                 W_in = W_in + dW_in                        # W_rec stays FIXED; only W_in learns
         print(f"      [eprop_learn_win] epoch {ep + 1}/{epochs} last-block-CE "
@@ -1078,6 +1080,9 @@ def main():
         elif arm == "eprop_learn_win":                      # BIOLOGICAL version of BPTT_frozen_wrec: W_rec FIXED, learn W_in by one-step-local input-synapse e-prop
             W_rec, W_out, W_in, b = train_eprop_learn_win(init, tr_lanes, V, n, args.alpha, B, args.epochs,
                                                           args.lr_out, args.lr_rec, args.lr_in, args.wd_out, dev)
+        elif arm == "eprop_learn_win_kp":                   # + KOLEN-POLLACK learned feedback (Bfb -> W_out^T, local, no transport) to close the FA gap
+            W_rec, W_out, W_in, b = train_eprop_learn_win(init, tr_lanes, V, n, args.alpha, B, args.epochs,
+                                                          args.lr_out, args.lr_rec, args.lr_in, args.wd_out, dev, kp=True)
         elif is_alif:
             W_rec, W_out, W_in, b = train_eprop_alif(arm, init, alif_extra, tr_lanes, V, n, args.alpha,
                                                      alif_extra["rho"], args.beta, B, args.epochs,
