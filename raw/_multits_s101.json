@@ -1,0 +1,32 @@
+{
+  "args": {
+    "seeds": [
+      101
+    ],
+    "corpus": "data/corpus/tinystories.txt",
+    "vocab": 200,
+    "n_sentences": 5000,
+    "max_train_sents": 700,
+    "max_eval_sents": 220,
+    "epochs": 12,
+    "lr": 0.005,
+    "weight_decay": 0.001,
+    "label_smoothing": 0.05,
+    "n_pool": 300,
+    "json": "raw/_multits_s101.json"
+  },
+  "per_seed": {
+    "101": {
+      "single_ce": 3.466,
+      "multi_ce": 3.302,
+      "flat2x_ce": 3.664,
+      "bigram_ce": 3.663,
+      "multi_minus_single": -0.164,
+      "multi_minus_flat2x": -0.362,
+      "multi_beats_single": true,
+      "multi_beats_flat2x": true,
+      "multi_beats_bigram": true
+    }
+  },
+  "elapsed_s": 574.2
+}
