@@ -1,0 +1,32 @@
+{
+ "n": 4,
+ "lr_in": 20.0,
+ "plain_mean": 0.176,
+ "kp_mean": 0.351,
+ "per_seed": [
+  {
+   "seed": 42,
+   "fixed": -2.76,
+   "plain_win": 0.177,
+   "kp_win": 0.356
+  },
+  {
+   "seed": 43,
+   "fixed": -2.886,
+   "plain_win": 0.177,
+   "kp_win": 0.348
+  },
+  {
+   "seed": 44,
+   "fixed": -2.7,
+   "plain_win": 0.178,
+   "kp_win": 0.348
+  },
+  {
+   "seed": 100,
+   "fixed": -2.65,
+   "plain_win": 0.174,
+   "kp_win": 0.352
+  }
+ ]
+}

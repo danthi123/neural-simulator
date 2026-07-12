@@ -1,0 +1,118 @@
+{
+  "runner": "_emerge_stream_eprop_lm_derisk",
+  "corpus": "data/corpus/tinystories_train.txt",
+  "seed": 100,
+  "V": 2000,
+  "n_pool": 300,
+  "block": 128,
+  "batch": 64,
+  "lane": 28125,
+  "epochs": 4,
+  "dualtc_clean_fraction": {},
+  "bptt_steps": 10,
+  "dev": "cuda",
+  "permute_stream": false,
+  "args": {
+    "corpus": "data/corpus/tinystories_train.txt",
+    "max_tokens": 2000000,
+    "vocab": 2000,
+    "n_pool": 300,
+    "block": 128,
+    "epochs": 4,
+    "batch": 64,
+    "seed": 100,
+    "arms": [
+      "fixed_reservoir",
+      "eprop_learn_win",
+      "eprop_learn_win_kp"
+    ],
+    "alpha": 0.3,
+    "spectral": 1.1,
+    "lr_out": 0.02,
+    "lr_rec": 0.005,
+    "lr_in": 20.0,
+    "wd_out": 0.001,
+    "a_slow": 0.02,
+    "elig_ema": false,
+    "multitc_aslows": "0.05 0.02 0.01 0.005",
+    "bptt_steps": 10,
+    "bptt_lr": 0.002,
+    "rho_win_lo": 30.0,
+    "rho_win_hi": 300.0,
+    "beta": 1.0,
+    "grad_check": false,
+    "smoke": false,
+    "permute_stream": false,
+    "json": "research/findings/raw/_r3_bio_seeds/_seed100.json"
+  },
+  "arms": {
+    "fixed_reservoir": {
+      "by_bucket": {
+        "1": -3.2972,
+        "2": -3.3047,
+        "3": -3.2783,
+        "4-8": -3.242,
+        "9-16": -3.1277,
+        "17-127": -2.6496
+      },
+      "shallow_margin": -3.2612,
+      "deep_margin": -2.6496,
+      "deep_subbuckets": {
+        "17-32": -3.0323,
+        "33-64": -2.8795,
+        "65-96": -2.5267,
+        "97-127": -2.3416
+      },
+      "ctx1_readout_margin": -3.244,
+      "aggregate_ce": 7.0044
+    },
+    "eprop_learn_win": {
+      "by_bucket": {
+        "1": -0.558,
+        "2": -0.3057,
+        "3": -0.1001,
+        "4-8": 0.0886,
+        "9-16": 0.1673,
+        "17-127": 0.1744
+      },
+      "shallow_margin": -0.0651,
+      "deep_margin": 0.1744,
+      "deep_subbuckets": {
+        "17-32": 0.1708,
+        "33-64": 0.1778,
+        "65-96": 0.1773,
+        "97-127": 0.1696
+      },
+      "ctx1_readout_margin": -1.108,
+      "aggregate_ce": 4.1274
+    },
+    "eprop_learn_win_kp": {
+      "by_bucket": {
+        "1": -0.2682,
+        "2": -0.0254,
+        "3": 0.1507,
+        "4-8": 0.2963,
+        "9-16": 0.3408,
+        "17-127": 0.3521
+      },
+      "shallow_margin": 0.1673,
+      "deep_margin": 0.3521,
+      "deep_subbuckets": {
+        "17-32": 0.3517,
+        "33-64": 0.3551,
+        "65-96": 0.3535,
+        "97-127": 0.3477
+      },
+      "ctx1_readout_margin": -0.803,
+      "aggregate_ce": 3.9465
+    }
+  },
+  "byte_identical_zero_eq_fixed": null,
+  "gate": {
+    "verdict": "INCOMPLETE (need all 5 arms; have ['eprop_learn_win', 'eprop_learn_win_kp', 'fixed_reservoir'])"
+  },
+  "clean_recurrent_credit_fraction": {},
+  "alif_clean_fraction": {},
+  "alif_adapt_shuffle": null,
+  "elapsed_s": 647.7
+}
