@@ -1,0 +1,74 @@
+{
+  "args": {
+    "seeds": [
+      44
+    ],
+    "G": 6,
+    "syn": 5,
+    "sf": 3,
+    "idn": 30,
+    "id_pool": 60,
+    "n_seq": 20,
+    "n_pool": 60,
+    "in_pop": 2,
+    "epochs": 6,
+    "lr_out": 0.01,
+    "ridge_lam": 1.0,
+    "bdsp_lr": 0.02,
+    "bdsp_p0": 0.3,
+    "bdsp_beta": 1.0,
+    "bdsp_w_min": 0.0,
+    "bdsp_w_max": 160.0,
+    "soma_g": 120.0,
+    "k_apical": 150.0,
+    "in_hi": 2500.0,
+    "res_bias": 120.0,
+    "fwd_wmean": 90.0,
+    "fwd_wjit": 0.5,
+    "fwd_density": 1.0,
+    "t_step": 16,
+    "exc_w": 0.0,
+    "inh_w": -1.0,
+    "bdsp_graded": false,
+    "dend_gain": true,
+    "dend_sigma": 0.05,
+    "dend_k": 4.0,
+    "dend_permute": false,
+    "arms": [
+      "fixed_win"
+    ],
+    "smoke": false,
+    "json": "raw/_dendk4_s44.json",
+    "seed_base": 44
+  },
+  "per_seed": [
+    {
+      "seed": 44,
+      "G": 6,
+      "syn": 5,
+      "sf": 3,
+      "idn": 30,
+      "id_pool": 60,
+      "m": 78,
+      "V": 78,
+      "n_pool": 60,
+      "chance": 0.1667,
+      "res_spikes_per_step": 0.1542,
+      "coupling": {
+        "B_rest": 0.32105568101008736,
+        "B_apical": 0.3214723080396652,
+        "B_rises": true
+      },
+      "no_weight_transport": true,
+      "fixed_heldout": 0.4333,
+      "learn_heldout": null,
+      "learn_dw_win": null,
+      "learn_dw_rec": null,
+      "learn_input_lesion": null,
+      "learn_scramble": null,
+      "apical_lesion_heldout": null,
+      "wrong_sign_heldout": null
+    }
+  ],
+  "summary": {}
+}

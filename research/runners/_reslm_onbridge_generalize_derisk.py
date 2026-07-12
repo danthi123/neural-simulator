@@ -47,8 +47,11 @@ class GenReservoir(WinLearnReservoir):
     the point-neuron confound-suppression boundary. dend_gain=None => byte-identical to the plain multi-hot drive."""
     dend_gain = None
     dend_sigma = 0.05
-    dend_scale = 1.0        # mean(sigma+g) -> keeps the MEAN drive == in_hi so the re-weighting is scale-consistent
-                           # across seeds (fixes the operating-point fragility of the bare in_hi/(sigma+g) form)
+    dend_scale = 1.0        # mean((sigma+g)^k) -> keeps the MEAN drive == in_hi (scale-consistent across seeds)
+    dend_k = 1.0           # STEEPNESS exponent: 1/(sigma+g)^k. On BINARY codes the frequency spread is small
+                           # (g_common~0.4 vs g_class~0.15) but the identity dims OUTNUMBER class dims ~10:1, so a k=1
+                           # gain can't overcome the count ratio; k>1 maps the frequency spread to a large-enough drive
+                           # spread to suppress the dominant confound (the binary-code fix over D1's count-code toy).
 
     def _drive_for_token(self, active, silence):
         cur = np.zeros(self._num, np.float32)
@@ -58,8 +61,7 @@ class GenReservoir(WinLearnReservoir):
                 if self.dend_gain is None:
                     _hi = self.in_hi
                 else:
-                    # mean-normalized per-compartment divisive gain: common dims (high g) -> <1x, rare -> >1x, mean ~1x
-                    _hi = self.in_hi * self.dend_scale / (self.dend_sigma + float(self.dend_gain[d]))
+                    _hi = self.in_hi * self.dend_scale / (self.dend_sigma + float(self.dend_gain[d])) ** self.dend_k
                 cur[self.tok_idx[d]] = _hi
         cur[self.res_idx] += self.res_bias
         return cur
@@ -101,8 +103,9 @@ def _derisk_one(seed, args):
             np.random.default_rng(seed * 613 + 5).shuffle(g)
         res.dend_gain = g
         res.dend_sigma = float(args.dend_sigma)
+        res.dend_k = float(args.dend_k)
         active = g > 0                                                    # dims that appear in some code (the driven ones)
-        res.dend_scale = float(np.mean(args.dend_sigma + g[active])) if active.any() else 1.0
+        res.dend_scale = float(np.mean((args.dend_sigma + g[active]) ** args.dend_k)) if active.any() else 1.0
     res._seed_for_Y = seed + 9973
     res.set_n_classes(n_classes)
     res._w_init = res._weights().copy()
@@ -196,6 +199,8 @@ def main():
                          "(identity-confound) dims, emphasize category-specific class dims -- the point-neuron-can't "
                          "per-input normalization that is the mapped escape for the confound-suppression boundary")
     ap.add_argument("--dend-sigma", type=float, default=0.05)
+    ap.add_argument("--dend-k", type=float, default=1.0,
+                    help="steepness exponent of the divisive gain 1/(sigma+g)^k; k>1 overcomes the 10:1 count ratio on binary codes")
     ap.add_argument("--dend-permute", action="store_true",
                     help="anti-cheat: shuffle the per-dim dendritic gains (break frequency<->dim) -> the lift must collapse")
     ap.add_argument("--arms", type=str, nargs="+", default=["fixed_win", "learn_win"])
