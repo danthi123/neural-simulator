@@ -1,0 +1,135 @@
+{
+  "probe": "reslm_onbridge_learn_win",
+  "seeds": [
+    42
+  ],
+  "elapsed_seconds": 183.6,
+  "params": {
+    "seeds": [
+      42
+    ],
+    "n_cues": 72,
+    "n_per_cue": 3,
+    "dist": 6,
+    "dist_jitter": 0,
+    "n_pool": 90,
+    "in_pop": 2,
+    "epochs": 2,
+    "lr_out": 0.01,
+    "ridge_lam": 1.0,
+    "bdsp_lr": 0.02,
+    "bdsp_p0": 0.3,
+    "bdsp_beta": 1.0,
+    "bdsp_w_min": 0.0,
+    "bdsp_w_max": 160.0,
+    "soma_g": 120.0,
+    "k_apical": 150.0,
+    "in_hi": 650.0,
+    "res_bias": 55.0,
+    "fwd_wmean": 32.0,
+    "fwd_wjit": 0.5,
+    "fwd_density": 1.0,
+    "rate_n": 120,
+    "rate_epochs": 8,
+    "rate_lr_out": 0.02,
+    "rate_lr_in": 0.02,
+    "arms": [
+      "fixed_win",
+      "learn_win",
+      "apical_lesion",
+      "wrong_sign"
+    ],
+    "gate_eps": 0.06,
+    "smoke": false,
+    "json": "research/findings/raw/_reslm_collision/_K72_np90_d6.json",
+    "seed_base": 42
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "V": 74,
+      "n_cues": 72,
+      "n_pool": 90,
+      "dist": 6,
+      "n_train": 144,
+      "n_eval": 72,
+      "chance": 0.0139,
+      "mean_res_spikes": 0.0236,
+      "apical_coupling": {
+        "B_rest": 0.0,
+        "B_apical": 0.0064033526431861295,
+        "B_rises": true
+      },
+      "arms": {
+        "fixed_win": {
+          "mode": "fixed_win",
+          "decode_acc": 0.9444,
+          "dw_win": 0.0,
+          "dw_rec": 0.0,
+          "teach_B": 0.0,
+          "win_before_mean": 32.136,
+          "win_after_mean": 32.136
+        },
+        "learn_win": {
+          "mode": "learn_win",
+          "decode_acc": 0.9444,
+          "dw_win": 0.005618561693804909,
+          "dw_rec": 0.0,
+          "teach_B": 0.0203,
+          "win_before_mean": 32.136,
+          "win_after_mean": 32.1327,
+          "input_lesion_acc": 0.0139,
+          "scramble_acc": 0.0
+        },
+        "apical_lesion": {
+          "mode": "apical_lesion",
+          "decode_acc": 0.9167,
+          "dw_win": 0.0028958730068541615,
+          "dw_rec": 0.0,
+          "teach_B": 0.0,
+          "win_before_mean": 32.136,
+          "win_after_mean": 32.1331
+        },
+        "wrong_sign": {
+          "mode": "wrong_sign",
+          "decode_acc": 0.9583,
+          "dw_win": 0.005921285748696642,
+          "dw_rec": 0.0,
+          "teach_B": 0.0208,
+          "win_before_mean": 32.136,
+          "win_after_mean": 32.1331
+        }
+      },
+      "no_weight_transport": true,
+      "rate_reference": {
+        "learn_win": 1.0,
+        "fixed_win": 1.0
+      }
+    }
+  ],
+  "error": null,
+  "aggregate": {
+    "chance": 0.0139,
+    "fixed_win_acc": 0.9444,
+    "learn_win_acc": 0.9444,
+    "learn_minus_fixed": 0.0,
+    "apical_lesion_acc": 0.9167,
+    "wrong_sign_acc": 0.9583,
+    "input_lesion_acc": 0.0139,
+    "scramble_acc": 0.0,
+    "learn_win_dw_win": 0.005618561693804909,
+    "learn_win_dw_rec": 0.0,
+    "win_moved": true,
+    "rec_frozen": true,
+    "B_rises": true,
+    "no_weight_transport": true,
+    "rate_reference_learn": 1.0,
+    "rate_reference_fixed": 1.0,
+    "lesion_at_fixed": true,
+    "wrong_antilearns": false,
+    "scramble_at_chance": true,
+    "input_lesion_at_chance": true
+  },
+  "verdict": "BOUNDARY -- learn-minus-fixed margin 0.0 < 0.10; wrong_sign 0.9583 did not anti-learn (vs fixed 0.9444). Machinery ran; margin/controls not cleared at these seeds/scale. Name the residual (operating point / lr / epochs / dist vs depth) as the next single-variable de-risk; the rate ceiling (learn 1.000 vs fixed 1.000) bounds the headroom. Do NOT force a positive.",
+  "go": false
+}
