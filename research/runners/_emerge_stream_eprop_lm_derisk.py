@@ -77,11 +77,14 @@ ALL_ARMS = RESERVOIR_ARMS + ["BPTT_same_net"]          # the 5 pre-registered ar
 # eligibility propagates credit forward over long spans, so e-prop can reach the DEEP within-block context the plain
 # forward-filtered (~1/alpha) eligibility cannot. Ported faithfully from `_emerge_reservoir_lm_eprop_recurrent_derisk`.
 ALIF_ARMS = ["plastic_eprop_alif", "plastic_eprop_alif_readonly"]
-EXTRA_ARMS = (["BPTT_fixed_win", "BPTT_matched_readout", "BPTT_frozen_wrec", "plastic_eprop_dualtc",
+EXTRA_ARMS = (["BPTT_fixed_win", "BPTT_matched_readout", "BPTT_frozen_wrec", "eprop_learn_win", "plastic_eprop_dualtc",
                "plastic_eprop_dualtc_shuffle", "plastic_eprop_multitc"] + ALIF_ARMS)   # isolation/lever/anti-cheat arms (R1b BPTT-fixed-W_in; R1c
 # BPTT-matched-readout = the FAIR denominator [same delta-rule read-out + frozen b=0 as e-prop, so the ONLY diff from
-# plastic_eprop is the W_rec CREDIT RULE]; R2b dual-timescale eligibility + its shuffle control; R2c multi-timescale
-# eligibility [horizon-vs-off-diagonal decider]; R2 ALIF)
+# plastic_eprop is the W_rec CREDIT RULE]; eprop_learn_win = the BIOLOGICAL version of the winning BPTT_frozen_wrec arm
+# [W_rec FIXED random reservoir, learn W_in by ONE-STEP-LOCAL input-synapse e-prop + local read-out -- can biological
+# credit on the INPUT projection reach the +1.258 backprop-frozen-W_rec deep ceiling, or is W_in's deep credit also
+# diagonal-truncation-limited?]; R2b dual-timescale eligibility + its shuffle control; R2c multi-timescale eligibility
+# [horizon-vs-off-diagonal decider]; R2 ALIF)
 KNOWN_ARMS = ALL_ARMS + EXTRA_ARMS
 
 
@@ -104,6 +107,23 @@ def elig_update(e, act, h_prev, alpha):
        psi_j = alpha*(1-act_j^2) is the leaky-tanh pseudo-derivative; the increment is the outer product psi (x) h_prev."""
     psi = alpha * (1.0 - act * act)              # (batch,n)
     return (1.0 - alpha) * e + psi.unsqueeze(2) * h_prev.unsqueeze(1)   # (batch,n,n)
+
+
+def elig_in_update(e_in, act, x_ids, alpha, V):
+    """Forward-filtered INPUT-synapse e-prop eligibility (batched), for the `eprop_learn_win` arm (learn W_in, W_rec
+       FIXED). e_in: (batch,n,V) with e_in[b,j,v] ~ d h_{b,j} / d W_in[j,v]. This MIRRORS elig_update (decay + the SAME
+       psi-increment) with ONE change: the input 'presynaptic activity' is the ONE-HOT of the current token, so the psi
+       increment lands ONLY in column v=x_t and every other column just decays by (1-alpha):
+         psi_j  = alpha*(1-act_j^2)                                 (identical leaky-tanh pseudo-derivative)
+         e_in[j,v] = (1-alpha)*e_in[j,v] + psi_j * 1[x_t == v]
+       Faithful: d pre_j/d W_in[j,v] = 1[x_t==v] (the direct input term, cross/recurrent drives held at the reference
+       trajectory = the e-prop locality assumption) -> d act_j/d W_in[j,v] = (1-act_j^2)*1[x_t==v] -> the leaky recursion
+       above. Used by BOTH training (train_eprop_learn_win) AND the grad-check (_grad_check_win) so the finite-diff check
+       validates the exact code path the training runs."""
+    import torch, torch.nn.functional as F
+    psi = alpha * (1.0 - act * act)                              # (batch,n)
+    onehot = F.one_hot(x_ids, V).to(e_in.dtype)                 # (batch,V): 1[x_t == v]
+    return (1.0 - alpha) * e_in + psi.unsqueeze(2) * onehot.unsqueeze(1)   # (batch,n,V)
 
 
 def elig_slow_update(e_slow, incr, a_slow, ema):
@@ -275,6 +295,59 @@ def train_eprop(mode, init, tr_lanes, V, n, alpha, B, epochs, lr_out, lr_rec, wd
                 dW = lr_rec * (L.unsqueeze(2) * e_use).mean(0)      # average the per-lane W_rec updates over the batch
                 W_rec = W_rec + dW
         print(f"      [{mode}] epoch {ep + 1}/{epochs} last-block-CE "
+              f"{F.cross_entropy(logits, y[:, p]).item():.3f}", flush=True)
+    return W_rec.detach(), W_out.detach(), W_in.detach(), b.detach()
+
+
+def train_eprop_learn_win(init, tr_lanes, V, n, alpha, B, epochs, lr_out, lr_rec, lr_in, wd_out, dev):
+    """Contiguous-stream e-prop that learns the INPUT projection W_in with W_rec FIXED (the random reservoir) -- the
+       BIOLOGICAL (one-step-local, no BPTT) version of the winning BPTT_frozen_wrec arm. That arm found the deep long-range
+       margin is INPUT-EMBEDDING bound, not recurrent-credit bound (BPTT_frozen_wrec deep +1.258 BEATS BPTT_same_net's
+       +0.902). This arm asks: can BIOLOGICAL local credit that learns W_in reach that ceiling, or is W_in's deep credit
+       also diagonal-truncation-limited?
+         W_rec  FIXED (init["W_rec"], the random reservoir, NEVER updated).
+         b      FIXED (init["b"]).
+         W_out  trained by the SAME one-step delta rule as every other e-prop arm.
+         W_in   the ONLY learned recurrent-path weight, updated per token by input-synapse e-prop.
+       INPUT-SYNAPSE e-prop (via elig_in_update -- mirrors the recurrent elig_update, but the psi-increment goes ONLY to
+       the active token's column v=x_t; all other columns decay by (1-alpha)):
+         e_in[j,v](t) = (1-alpha)*e_in[j,v](t-1) + psi_j(t)*1[x_t==v],   psi_j = alpha*(1-act_j^2).
+       Credit update (SAME broadcast random-feedback learning signal L = delta @ Bfb.t() as the recurrent arms -- no
+       weight transport):
+         W_in[j,v] += lr_in * L_j * e_in[j,v]   (averaged over the batch lanes).
+       h + the input eligibility e_in (batch,n,V) are RESET at each 128-block boundary (matching the other arms); W_in is
+       updated per token (like W_rec in the recurrent arms). NO slow eligibility here (single fast trace); the deep margin
+       is reported AND lr_in is a clean CLI arg so the controller can sweep it to rule out an effective-LR artifact.
+       (Note: e_in is (batch,n,V) = 64*300*2000 float32 ~= 154MB -- fits a 24GB GPU.) Returns (W_rec, W_out, W_in, b)
+       detached (W_rec is the untouched random reservoir; W_in is learned)."""
+    import torch, torch.nn.functional as F
+    W_rec = torch.tensor(init["W_rec"], dtype=torch.float32, device=dev)    # FIXED random reservoir (never updated)
+    W_in = torch.tensor(init["W_in"], dtype=torch.float32, device=dev)      # LEARNED input projection (the ONLY learned recurrent-path weight)
+    b = torch.tensor(init["b"], dtype=torch.float32, device=dev)            # FIXED bias
+    W_out = torch.tensor(init["W_out"], dtype=torch.float32, device=dev)
+    Bfb = torch.tensor(init["Bfb"], dtype=torch.float32, device=dev)        # SAME fixed random feedback as the recurrent arms
+    batch, lane = tr_lanes.shape
+    nb = (lane - 1) // B
+    ar = torch.arange(batch, device=dev)
+    for ep in range(epochs):
+        for jblk in range(nb):                             # consecutive contiguous blocks (deterministic order = fair)
+            s = jblk * B
+            x = tr_lanes[:, s:s + B]; y = tr_lanes[:, s + 1:s + B + 1]     # (batch,B)
+            h = torch.zeros(batch, n, device=dev)
+            e_in = torch.zeros(batch, n, V, device=dev)    # reset state + input eligibility at the block boundary
+            for p in range(B):
+                h_prev = h
+                h, act = rnn_forward_step(h_prev, x[:, p], W_rec, W_in, b, alpha)
+                logits = h @ W_out.t()                     # (batch,V)
+                probs = F.softmax(logits, dim=-1)
+                delta = -probs
+                delta[ar, y[:, p]] += 1.0                  # onehot(target) - softmax(logits): clean read-out error
+                W_out = W_out + lr_out * ((delta.t() @ h) / batch - wd_out * W_out)   # read-out delta rule (IDENTICAL to e-prop)
+                e_in = elig_in_update(e_in, act, x[:, p], alpha, V)        # input eligibility (increment column v=x_t only)
+                L = delta @ Bfb.t()                        # (batch,n) broadcast random-feedback learning signal (SAME as recurrent arms)
+                dW_in = lr_in * (L.unsqueeze(2) * e_in).mean(0)            # (n,V): average the per-lane W_in updates over the batch
+                W_in = W_in + dW_in                        # W_rec stays FIXED; only W_in learns
+        print(f"      [eprop_learn_win] epoch {ep + 1}/{epochs} last-block-CE "
               f"{F.cross_entropy(logits, y[:, p]).item():.3f}", flush=True)
     return W_rec.detach(), W_out.detach(), W_in.detach(), b.detach()
 
@@ -721,6 +794,72 @@ def _grad_check_slow(n=5, V=6, seq_len=8, seed=1):
     return ok
 
 
+def _grad_check_win(n=5, V=6, seq_len=8, seed=1):
+    """CHECK W_IN (mandatory faithfulness of the ported INPUT-synapse eligibility used by the `eprop_learn_win` arm;
+       mirrors the plain CHECK A + torch==numpy pair, but for W_in[j,v] instead of W_rec[j,i]):
+         (1) FD: e_in[j,v] vs a LOCAL finite-difference of h_j w.r.t. W_in[j,v], perturbing ONLY the direct input term
+             at the steps where the current token == v (recurrent/cross drives held at the reference trajectory = the
+             e-prop locality assumption). Target ~1e-5 rel err.
+         (2) torch==numpy (float64, batch=1): the batched torch training-path input eligibility (rnn_forward_step +
+             elig_in_update, batch=1 -- the EXACT code path train_eprop_learn_win runs) must match the numpy port
+             bit-for-bit (<1e-8) on the tiny net."""
+    import torch
+    rng = np.random.default_rng(seed)
+    ids = rng.integers(0, V, size=seq_len)
+    alpha = 0.3
+    init = build_init(V, n, seed + 1, spectral=1.1)
+    Wr = init["W_rec"]; W_in = init["W_in"]; b = init["b"]
+    hs, recs, _ = _leaky_trace_np(Wr, W_in, b, alpha, ids, n)                 # same reference forward as CHECK A
+    acts = [np.tanh(recs[t] + W_in[:, ids[t]] + b) for t in range(seq_len)]   # reference activation per step
+
+    def numpy_ein():                                     # analytic input eligibility (matches elig_in_update)
+        e_in = np.zeros((n, V))
+        for t in range(seq_len):
+            psi = alpha * (1.0 - acts[t] * acts[t])
+            e_in = (1.0 - alpha) * e_in
+            e_in[:, ids[t]] += psi                       # increment ONLY the active token's column v=x_t
+        return e_in
+    an = numpy_ein()
+
+    def local_final_win(j, v, dw):                       # h_j at the final step; perturb the direct input term ONLY when token==v
+        hj = 0.0
+        for t in range(seq_len):
+            hj_prev = hj
+            rec_j = recs[t][j]                            # recurrent drive held at the reference (locality assumption)
+            pre_j = rec_j + W_in[j, ids[t]] + (dw if ids[t] == v else 0.0) + b[j]
+            hj = (1 - alpha) * hj_prev + alpha * np.tanh(pre_j)
+        return hj
+
+    dh = 1e-6
+    maxrel = 0.0; maxabs = 0.0
+    for j in range(n):
+        for v in range(V):
+            fd = (local_final_win(j, v, dh) - local_final_win(j, v, -dh)) / (2 * dh)
+            maxabs = max(maxabs, abs(fd - an[j, v]))
+            if abs(an[j, v]) > 1e-7:
+                maxrel = max(maxrel, abs(fd - an[j, v]) / abs(an[j, v]))
+    fd_pass = maxrel < 1e-4
+
+    # torch == numpy (float64, batch=1): the batched training-path input eligibility must match the numpy port bit-for-bit.
+    dev = "cpu"
+    W_rec_t = torch.tensor(Wr, dtype=torch.float64, device=dev)
+    W_in_t = torch.tensor(W_in, dtype=torch.float64, device=dev)
+    b_t = torch.tensor(b, dtype=torch.float64, device=dev)
+    h = torch.zeros(1, n, dtype=torch.float64, device=dev)
+    e_in = torch.zeros(1, n, V, dtype=torch.float64, device=dev)
+    for t in ids:
+        h_prev = h
+        h, act = rnn_forward_step(h_prev, torch.tensor([t], device=dev), W_rec_t, W_in_t, b_t, alpha)
+        e_in = elig_in_update(e_in, act, torch.tensor([t], device=dev), alpha, V)
+    tn = float(np.max(np.abs(e_in[0].cpu().numpy() - an)))
+    tn_pass = tn < 1e-8
+
+    print(f"  CHECK W_IN (input eligibility e_in vs LOCAL finite-diff of h_j w.r.t. W_in[j,v]): "
+          f"max_rel_err {maxrel:.2e} (max_abs {maxabs:.2e}) | torch==numpy max_abs {tn:.2e}  ->  "
+          f"{'PASS' if fd_pass and tn_pass else 'FAIL'}", flush=True)
+    return fd_pass and tn_pass
+
+
 def grad_check(n=5, V=6, seq_len=8, seed=1):
     """CHECK A (numpy, EXACT): eps_h[j,i] vs a LOCAL finite difference of h_j w.r.t. W_rec[j,i], perturbing ONLY the direct
        w_ji term (cross drives held at the reference trajectory). Target ~1e-5 rel err.
@@ -779,8 +918,9 @@ def grad_check(n=5, V=6, seq_len=8, seed=1):
           f"max_abs_diff {torch_np_maxabs:.2e}  ->  {'PASS' if checkT_pass else 'FAIL'}", flush=True)
     alif_pass = _grad_check_alif(n=n, V=V, seq_len=seq_len, seed=seed)      # the ADDED ALIF 2-component eligibility check
     slow_pass = _grad_check_slow(n=n, V=V, seq_len=seq_len, seed=seed)      # the ADDED dual/multi-timescale slow-eligibility check
-    all_pass = checkA_pass and checkT_pass and alif_pass and slow_pass
-    print(f"  GRAD-CHECK (plain e-prop + ALIF + slow-eligibility): {'PASS' if all_pass else 'FAIL'}", flush=True)
+    win_pass = _grad_check_win(n=n, V=V, seq_len=seq_len, seed=seed)        # the ADDED input-synapse eligibility check (eprop_learn_win)
+    all_pass = checkA_pass and checkT_pass and alif_pass and slow_pass and win_pass
+    print(f"  GRAD-CHECK (plain e-prop + ALIF + slow-eligibility + input-synapse W_in): {'PASS' if all_pass else 'FAIL'}", flush=True)
     print("=" * 100, flush=True)
     return 0 if all_pass else 1
 
@@ -846,6 +986,7 @@ def main():
     ap.add_argument("--spectral", type=float, default=1.1)           # W_rec spectral radius (echo-state init)
     ap.add_argument("--lr-out", type=float, default=0.02)            # read-out delta-rule lr
     ap.add_argument("--lr-rec", type=float, default=0.001)           # e-prop W_rec lr
+    ap.add_argument("--lr-in", type=float, default=0.02)             # eprop_learn_win INPUT-synapse e-prop lr (input active ~1/V of the time -> may need larger; a clean CLI knob for the controller to sweep, no EMA/magnitude-decoupling needed since it is a single fast eligibility)
     ap.add_argument("--wd-out", type=float, default=1e-3)            # read-out weight decay (identical across e-prop arms)
     ap.add_argument("--a-slow", type=float, default=0.02)           # dual-timescale slow-eligibility leak (~1/0.02=50-token horizon)
     ap.add_argument("--elig-ema", action="store_true")              # dualtc e_slow uses TRUE-EMA (gain a_slow -> magnitude a_slow-INVARIANT); default off = byte-identical gain-1
@@ -934,6 +1075,9 @@ def main():
         elif arm == "BPTT_frozen_wrec":                     # Run-A reframe test: W_rec frozen, backprop {W_in,W_out,b}
             W_rec, W_out, W_in, b = train_bptt(init, tr_lanes, V, n, args.alpha, B, args.bptt_steps, args.bptt_lr, dev,
                                                freeze_wrec=True)
+        elif arm == "eprop_learn_win":                      # BIOLOGICAL version of BPTT_frozen_wrec: W_rec FIXED, learn W_in by one-step-local input-synapse e-prop
+            W_rec, W_out, W_in, b = train_eprop_learn_win(init, tr_lanes, V, n, args.alpha, B, args.epochs,
+                                                          args.lr_out, args.lr_rec, args.lr_in, args.wd_out, dev)
         elif is_alif:
             W_rec, W_out, W_in, b = train_eprop_alif(arm, init, alif_extra, tr_lanes, V, n, args.alpha,
                                                      alif_extra["rho"], args.beta, B, args.epochs,
