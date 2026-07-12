@@ -28,12 +28,15 @@ SOMA_TYPES = {"finding", "plan", "doc", "catalog"}
 
 
 def evolving_files():
-    """(source_type, path) for the EVOLVING prose (everything B.SOURCES lists EXCEPT the static kandel textbook)."""
+    """(source_type, path) for the EVOLVING prose (everything B.SOURCES lists EXCEPT the static kandel textbook and the
+    excluded running scratchpads — AUTONOMOUS_STATE etc., which would else force a rebuild on nearly every commit)."""
     for stype, patterns in B.SOURCES:
         if stype == "kandel":
             continue
         for p in patterns:
             for f in sorted(glob.glob(p)):
+                if os.path.basename(f) in B.EXCLUDE_BASENAMES:
+                    continue
                 yield stype, f
 
 

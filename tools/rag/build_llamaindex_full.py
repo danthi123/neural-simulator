@@ -35,12 +35,18 @@ SOURCES = [
 ]
 
 
+# Excluded from the corpus: huge, constantly-edited running scratchpads whose content is duplicated in the individual
+# findings (indexing them causes big-doc dominance + a rebuild on nearly every commit; grep them directly for the latest).
+EXCLUDE_BASENAMES = {"AUTONOMOUS_STATE.md", "AUTONOMOUS_STATE_ARCHIVE.md"}
+
+
 def load_docs():
     docs = []
     for stype, patterns in SOURCES:
         files = []
         for p in patterns:
             files.extend(sorted(glob.glob(p)))
+        files = [f for f in files if os.path.basename(f) not in EXCLUDE_BASENAMES]
         n = 0
         for f in files:
             try:
