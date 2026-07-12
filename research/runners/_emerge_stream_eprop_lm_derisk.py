@@ -447,7 +447,8 @@ def train_bptt(init, tr_lanes, V, n, alpha, B, bptt_steps, bptt_lr, dev, fix_win
             opt.step()
             step += 1
             if step % 1000 == 0 or step == bptt_steps:
-                print(f"      [BPTT_same_net] step {step}/{bptt_steps} train-CE {loss.item():.3f}", flush=True)
+                _lbl = "BPTT_frozen_wrec" if freeze_wrec else ("BPTT_fixed_win" if fix_win else "BPTT_same_net")
+                print(f"      [{_lbl}] step {step}/{bptt_steps} train-CE {loss.item():.3f}", flush=True)
     return W_rec.detach(), W_out.detach(), W_in.detach(), b.detach()
 
 
