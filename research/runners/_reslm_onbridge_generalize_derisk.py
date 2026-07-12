@@ -146,6 +146,13 @@ def main():
     ap.add_argument("--t-step", type=int, default=0,
                     help="override bridge steps per token (read window); 0 = base default (8). Longer window = more "
                          "spikes averaged into the read = higher read fidelity (a free read-window lever, no sim/ edit).")
+    ap.add_argument("--exc-w", type=float, default=0.0,
+                    help="override reservoir recurrent EXC weight (0 = EMERGE-82 default 6.0). Raise the E/I ratio so a "
+                         "broad multi-hot code drives the reservoir to spike during the CLEAN read (the E/I-balanced "
+                         "default suppresses broad inputs -> silent read -> chance).")
+    ap.add_argument("--inh-w", type=float, default=-1.0,
+                    help="override reservoir recurrent INH weight (<0 = EMERGE-82 default 8.0). Lower it to reduce the "
+                         "recurrent inhibition that clamps the read.")
     ap.add_argument("--arms", type=str, nargs="+", default=["fixed_win", "learn_win"])
     ap.add_argument("--smoke", action="store_true")
     ap.add_argument("--json", "--out", dest="json", type=str, default="raw/_reslm_gen_spk.json")
@@ -154,6 +161,12 @@ def main():
     if args.t_step and args.t_step > 0:
         _base._T_STEP = int(args.t_step)                        # widen the read window (module global forward() reads)
         print(f"[reslm-gen] read window _T_STEP = {_base._T_STEP} (overridden)", flush=True)
+    if args.exc_w and args.exc_w > 0:
+        _base._EXC_W = float(args.exc_w)                        # reservoir region reads these module globals at build
+        print(f"[reslm-gen] reservoir _EXC_W = {_base._EXC_W} (overridden)", flush=True)
+    if args.inh_w >= 0:
+        _base._INH_W = float(args.inh_w)
+        print(f"[reslm-gen] reservoir _INH_W = {_base._INH_W} (overridden)", flush=True)
 
     print(f"RES-LM ON-BRIDGE GENERALIZE: spiking learn-W_in (committed enable_bdsp) on a class-structured next-token "
           f"PREDICTION task; HELD-OUT synonym generalization, fixed vs learned W_in; seeds={args.seeds} arms={args.arms}",

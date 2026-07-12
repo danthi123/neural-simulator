@@ -1,0 +1,77 @@
+{
+  "args": {
+    "seeds": [
+      42
+    ],
+    "G": 6,
+    "syn": 5,
+    "sf": 3,
+    "idn": 30,
+    "id_pool": 60,
+    "n_seq": 20,
+    "n_pool": 60,
+    "in_pop": 2,
+    "epochs": 10,
+    "lr_out": 0.01,
+    "ridge_lam": 1.0,
+    "bdsp_lr": 0.02,
+    "bdsp_p0": 0.3,
+    "bdsp_beta": 1.0,
+    "bdsp_w_min": 0.0,
+    "bdsp_w_max": 160.0,
+    "soma_g": 120.0,
+    "k_apical": 150.0,
+    "in_hi": 3000.0,
+    "res_bias": 120.0,
+    "fwd_wmean": 90.0,
+    "fwd_wjit": 0.5,
+    "fwd_density": 1.0,
+    "t_step": 16,
+    "exc_w": 0.0,
+    "inh_w": -1.0,
+    "arms": [
+      "fixed_win",
+      "learn_win"
+    ],
+    "smoke": false,
+    "json": "raw/_genR_n60.json",
+    "seed_base": 42
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "G": 6,
+      "syn": 5,
+      "sf": 3,
+      "idn": 30,
+      "id_pool": 60,
+      "m": 78,
+      "V": 78,
+      "n_pool": 60,
+      "chance": 0.1667,
+      "res_spikes_per_step": 0.2146,
+      "coupling": {
+        "B_rest": 0.3426979417602221,
+        "B_apical": 0.33872982611258823,
+        "B_rises": false
+      },
+      "no_weight_transport": true,
+      "fixed_heldout": 0.3,
+      "learn_heldout": 0.3,
+      "learn_dw_win": 1.2827171521344916,
+      "learn_dw_rec": 0.0,
+      "learn_input_lesion": 0.1667,
+      "learn_scramble": 0.0667,
+      "apical_lesion_heldout": null,
+      "wrong_sign_heldout": null
+    }
+  ],
+  "summary": {
+    "fixed_heldout_mean": 0.3,
+    "learn_heldout_mean": 0.3,
+    "margin_mean": 0.0,
+    "anti_cheats_ok": true,
+    "chance": 0.1667,
+    "verdict": "BOUNDARY"
+  }
+}
