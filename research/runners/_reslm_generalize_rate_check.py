@@ -40,11 +40,24 @@ def _decode_acc(R, Y, W):
     return float((R @ W).argmax(1).astype(int).__eq__(np.asarray(Y)).mean())
 
 
-def build_codes(seed, G, syn, sf, idn):
-    """m = G*sf (per-class shared blocks) + G*syn*idn (per-token identity). Each token code = its class's shared block
-    (all-ones over that class's sf dims) + its own identity dims (ones over idn dims). Class-mates share the class block."""
+def build_codes(seed, G, syn, sf, idn, id_pool=0):
+    """Each token code = its class's shared block (sf dims, same for class-mates) + `idn` identity dims (class-irrelevant
+    confound). id_pool=0 => per-token UNIQUE identity dims (m = G*sf + V*idn; small-V numpy only). id_pool=M>0 =>
+    identity dims are `idn` random picks from a SHARED pool of M dims (m = G*sf + M, small => tractable on the spiking
+    bridge; identity codes OVERLAP, a stronger/realistic confound). Class-mates share the class block either way."""
     rng = np.random.default_rng(seed * 131 + 7)
     V = G * syn
+    if id_pool and id_pool > 0:
+        m = G * sf + id_pool
+        codes = np.zeros((V, m))
+        for c in range(G):
+            cls_dims = np.arange(c * sf, (c + 1) * sf)
+            for j in range(syn):
+                v = c * syn + j
+                codes[v, cls_dims] = 1.0
+                pick = rng.choice(id_pool, size=min(idn, id_pool), replace=False)
+                codes[v, G * sf + pick] = 1.0                         # identity = idn random dims from a shared pool
+        return codes, V, m
     m = G * sf + V * idn
     codes = np.zeros((V, m))
     for c in range(G):
@@ -132,6 +145,9 @@ def main():
     ap.add_argument("--lr-in", type=float, default=0.05)
     ap.add_argument("--n-seq", type=int, default=40)
     ap.add_argument("--noise", type=float, default=0.0)
+    ap.add_argument("--id-pool", type=int, default=0,
+                    help="0 = per-token unique identity dims (numpy only); M>0 = idn random picks from a shared M-dim pool "
+                         "(small m => tractable on the spiking bridge)")
     ap.add_argument("--json", type=str, default="raw/_reslm_generalize.json")
     args = ap.parse_args()
 
@@ -148,7 +164,7 @@ def main():
     for (G, syn, sf, idn, n) in CONFIGS:
         lrn_tr, lrn_ho, fix_tr, fix_ho = [], [], [], []
         for seed in args.seeds:
-            codes, V, m = build_codes(seed, G, syn, sf, idn)
+            codes, V, m = build_codes(seed, G, syn, sf, idn, id_pool=args.id_pool)
             train, evl = build_stream(seed, G, syn, args.n_seq)
             ltr, lho = rate_ref_generalize(train, evl, codes, m, n, G, seed, args.epochs,
                                            args.lr_out, args.lr_in, noise=args.noise, learn=True)
@@ -156,7 +172,7 @@ def main():
                                            args.lr_out, args.lr_in, noise=args.noise, learn=False)
             lrn_tr.append(ltr); lrn_ho.append(lho); fix_tr.append(ftr); fix_ho.append(fho)
         L_ho, F_ho = float(np.mean(lrn_ho)), float(np.mean(fix_ho))
-        rows.append({"G": G, "syn": syn, "sf": sf, "idn": idn, "n": n, "m": G * sf + V * idn,
+        rows.append({"G": G, "syn": syn, "sf": sf, "idn": idn, "n": n, "m": int(m), "id_pool": args.id_pool,
                      "chance": round(1.0 / G, 3),
                      "learn_train": round(float(np.mean(lrn_tr)), 3), "learn_heldout": round(L_ho, 4),
                      "fixed_train": round(float(np.mean(fix_tr)), 3), "fixed_heldout": round(F_ho, 4),
