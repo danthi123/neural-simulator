@@ -276,7 +276,15 @@ class CoreSimConfig:
     # is None, the microcircuit branch is unreached, and the block is BYTE-IDENTICAL to the Burstprop path (which is
     # itself byte-identical to today when enable_bdsp is False). See the microcircuit section of the D1 build spec.
     enable_bdsp_microcircuit: bool = False
-    # BDSP apical->soma electrotonic coupling (2026-07-10). The pure enable_bdsp path writes cp_v_apical only to
+    # BDSP GRADED (clean-error) credit (2026-07-12, additive/default-off/byte-identical-when-off). The committed FF rule
+    # credits with the MEASURED burst deviation (B - Pbar*E) -- a noisy, sparse, quantized realized-burst count. Payeur/
+    # Sacramento-Senn: the graded burst PROBABILITY P (already computed as sigmoid(beta*scale*apical)) IS the clean,
+    # low-variance dendritic-error signal; the realized burst B is its stochastic SAMPLE. When True, the credit vehicle
+    # becomes the graded (P - Pbar) instead of (B - Pbar*E) -- the on-bridge realization of the M2.6 clean-error credit
+    # (our own 2026-07-07 finding: clean-error credit is batch/noise-robust 0.964 where the burst-fraction is fragile
+    # 0.788). Closes the rate->spike credit-coarseness boundary (2026-07-12 spiking-learn-Win finding). Default False =>
+    # the (B - Pbar*E) path below is byte-identical.
+    enable_bdsp_graded_credit: bool = False
     # compute the burst-probability read P, so a top-down apical raises P but never depolarizes the soma -> the
     # MEASURED burst rate B stays flat -> the committed FF rule dw ~ etilde*(B - Pbar*E) gets no apical-directed
     # credit on-bridge (moat inverts). This flag routes a SCALED electrotonic fraction of the apical depolarization

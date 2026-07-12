@@ -68,6 +68,9 @@ def _derisk_one(seed, args):
     res = GenReservoir(V, args.n_pool, args.in_pop, seed, args.soma_g, args.bdsp_lr, args.bdsp_p0,
                        args.bdsp_beta, args.bdsp_w_min, args.bdsp_w_max, args.in_hi, args.res_bias,
                        args.k_apical, args.fwd_wmean, args.fwd_wjit, args.fwd_density)
+    # graded clean-error credit (the M2.6 lever): read the apical credit as the graded E*P expectation instead of the
+    # noisy measured burst B (additive sim/ flag, default-off byte-identical). The kernel reads cfg at runtime.
+    res.cfg.enable_bdsp_graded_credit = bool(args.bdsp_graded)
     res._seed_for_Y = seed + 9973
     res.set_n_classes(n_classes)
     res._w_init = res._weights().copy()
@@ -153,6 +156,9 @@ def main():
     ap.add_argument("--inh-w", type=float, default=-1.0,
                     help="override reservoir recurrent INH weight (<0 = EMERGE-82 default 8.0). Lower it to reduce the "
                          "recurrent inhibition that clamps the read.")
+    ap.add_argument("--bdsp-graded", action="store_true",
+                    help="use the GRADED clean-error credit (E*P) instead of the noisy measured burst B "
+                         "(enable_bdsp_graded_credit; the M2.6 lever for the credit-coarseness boundary)")
     ap.add_argument("--arms", type=str, nargs="+", default=["fixed_win", "learn_win"])
     ap.add_argument("--smoke", action="store_true")
     ap.add_argument("--json", "--out", dest="json", type=str, default="raw/_reslm_gen_spk.json")

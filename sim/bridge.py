@@ -7245,16 +7245,23 @@ class SimulationBridge:
                 #     trace) and matches the numpy BDSPNet reference (Etilde_pre = acts[k], the presyn event rate).
                 coo_bd = self._get_cached_coo()
                 etilde_pre = self.cp_bdsp_E[coo_bd.row]                 # presynaptic event rate = the eligibility factor
+                # GRADED clean-error credit (enable_bdsp_graded_credit, 2026-07-12; additive/default-off). The kernel
+                # identity is (B - Pbar*E) == E*(P - Pbar): the MEASURED burst rate B is the noisy stochastic SAMPLE of
+                # the graded expectation E*P (event rate x burst probability). Swapping B -> E*P gives the low-variance
+                # clean-error credit (the on-bridge M2.6 realization) that can carry the fine per-synapse sign the sampled
+                # B cannot. Default False => _B_post IS cp_bdsp_B => everything below is byte-identical.
+                _B_post = ((self.cp_bdsp_E * self.cp_bdsp_P) if getattr(cfg, "enable_bdsp_graded_credit", False)
+                           else self.cp_bdsp_B)
                 # restrict to synapses with a live presynaptic factor AND a non-negligible burst deviation (no-op
                 # everywhere else -> at rest / self-predicting P==Pbar => dev==0 => the P0 no-spurious-learning moat).
-                dev_post = self.cp_bdsp_B[coo_bd.col] - self.cp_bdsp_Pbar[coo_bd.col] * self.cp_bdsp_E[coo_bd.col]
+                dev_post = _B_post[coo_bd.col] - self.cp_bdsp_Pbar[coo_bd.col] * self.cp_bdsp_E[coo_bd.col]
                 active_bd = cp.where((etilde_pre > 1e-9) & (cp.abs(dev_post) > 1e-9))[0]
                 if active_bd.size > 0:
                     cur_w = self.cp_connections.data[active_bd]
                     new_w = fused_bdsp_update(
                         cur_w,
                         etilde_pre[active_bd],
-                        self.cp_bdsp_B[coo_bd.col[active_bd]],
+                        _B_post[coo_bd.col[active_bd]],
                         self.cp_bdsp_Pbar[coo_bd.col[active_bd]],
                         self.cp_bdsp_E[coo_bd.col[active_bd]],
                         cp.float32(getattr(cfg, "bdsp_learning_rate", 0.01)),
