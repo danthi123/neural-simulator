@@ -1,0 +1,58 @@
+{
+ "runner": "_r2_6seed_aggregate",
+ "n": 6,
+ "dualtc_frac_mean": 0.8058,
+ "dualtc_frac_std": 0.0469,
+ "dualtc_frac_range": [
+  0.743,
+  0.896
+ ],
+ "plain_frac_mean": 0.3951,
+ "lift_mean": 0.5197,
+ "lift_all_positive": true,
+ "shuffle_collapse_all": true,
+ "per_seed": [
+  {
+   "seed": 42,
+   "plain_frac": 0.44272787464135943,
+   "dualtc_frac": 0.8082101081438976,
+   "lift": 0.49680000000000013,
+   "shuffle_collapse": true
+  },
+  {
+   "seed": 43,
+   "plain_frac": 0.3610120449498689,
+   "dualtc_frac": 0.7862189623847654,
+   "lift": 0.6318999999999999,
+   "shuffle_collapse": true
+  },
+  {
+   "seed": 44,
+   "plain_frac": 0.44174608054103914,
+   "dualtc_frac": 0.7824316015985245,
+   "lift": 0.4433,
+   "shuffle_collapse": true
+  },
+  {
+   "seed": 100,
+   "plain_frac": 0.4367944920342646,
+   "dualtc_frac": 0.8962452966135618,
+   "lift": 0.5739000000000001,
+   "shuffle_collapse": true
+  },
+  {
+   "seed": 101,
+   "plain_frac": 0.38975544001540546,
+   "dualtc_frac": 0.8182168303485462,
+   "lift": 0.6675,
+   "shuffle_collapse": true
+  },
+  {
+   "seed": 102,
+   "plain_frac": 0.29870129870129886,
+   "dualtc_frac": 0.7433240916386985,
+   "lift": 0.30469999999999997,
+   "shuffle_collapse": true
+  }
+ ]
+}

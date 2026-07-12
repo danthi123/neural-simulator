@@ -17,6 +17,13 @@
 - **DEEP-SPECIFIC (the credit-horizon-extension signature):** dualtc improves ctx17-127 by +0.497 over plain e-prop while SHALLOW is ~unchanged (−3.282 vs −3.281). Per-depth: dualtc pulls ahead only from ctx9-16 (−3.055 vs plain −3.167) and dominates at ctx17-127 (−1.661 vs −2.158) — the slow trace reaches the deep dependencies the ~1/alpha≈3-token fast eligibility cannot.
 - **DUALTC-SHUFFLE anti-cheat (decisive):** permuting the combined (e_fast + e_slow) eligibility before each W_rec update — which KEEPS the update MAGNITUDE identical but BREAKS the credit STRUCTURE — collapses the deep margin −1.661 → **−2.790** (below plain e-prop −2.158 AND below the fixed floor −2.760). ⇒ **the 81% is genuine credit-structure, NOT a magnitude/capacity artifact** (a magnitude effect would survive the shuffle; it does not). This rules out the load-bearing confound (the slow trace ~doubles the update magnitude).
 
+## ✅ 6-SEED (init-robustness): the qualitative lift + the anti-cheat hold across all 6 seeds
+Seeds 42/43/44/100/101/102 (gain-1 e_slow, a_slow=0.01, vs BPTT_fixed_win):
+- **dualtc clean deep fraction = 0.806 ± 0.047** (range 0.743-0.896) vs **plain 0.395** — the ~44%→~81% lift is init-robust.
+- **dualtc lift over plain = +0.520 ± 0.13 nats, positive on ALL 6 seeds** (range +0.305 to +0.667).
+- **dualtc-shuffle anti-cheat COLLAPSES on ALL 6 seeds** (deep drops below plain every time) — the credit-structure requirement is init-robust, not a seed artifact.
+⇒ the QUALITATIVE GO is 6-seed-confirmed: a slow eligibility trace substantially + genuinely lifts deep recurrent credit over plain e-prop, on every seed. **HONEST caveat (from the adversarial-verify workflow):** the 6-seed varies init RNG ONLY (the stream/split/bigram are frozen), so it validates significance vs INITIALIZATION but NOT the denominator (read-out) or a_slow (magnitude) confounds — those are the separate control sweep (matched-read-out + magnitude-decoupled EMA a_slow, running).
+
 ## Why this succeeds where the ALIF forward-state FAILED (the honest mechanism story)
 - **ALIF (R2, NEGATIVE):** the slow adaptation was a FORWARD STATE (`pre −= β·a`) — the `−β·a` subtractive imprint DEGRADED the tanh representation (credit-vs-capacity control: crediting added ~0; the damage was the forward imprint). Deep went to −3.27 (worse than plain).
 - **Dual-timescale eligibility (R2b, GO):** the slow trace lives ONLY in the ELIGIBILITY (the credit horizon), with the forward state UNCHANGED. So it extends how far back the correct diagonal sensitivity `ψ·h_prev` is credited WITHOUT corrupting the representation. Same "slow-timescale" idea, opposite outcome — the lesson: for a rate net the long-range lever is a slow CREDIT trace, not a slow FORWARD state.
