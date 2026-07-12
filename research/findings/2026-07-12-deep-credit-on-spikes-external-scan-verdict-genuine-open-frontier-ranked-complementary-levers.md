@@ -26,5 +26,24 @@ modern-Hopfield / key-value read = our VSA composer / fact-store; reservoir-DFA 
 2. **Read Ueda et al. 2025 (arXiv:2503.01724) MYSELF** — the decision-critical scale fact (maps whether the reservoir/scale path is viable at all, and the 16-65k-units/100M-words regime; it independently confirms the same-day data-scale finding).
 3. **The long-range half:** the ranked complementary levers (DeepESN stack #1 = cheapest + reuse-by-import) — de-risk at genuine (TinyStories/WikiText-103) scale, expecting scale-gating; and/or the SPIKING realization of our own R3 positive (learn-W_in + KP) at scale.
 
+## ⭐ CONTROLLER READ THE DECISION-CRITICAL SOURCE MYSELF (Ueda et al. 2025, arXiv:2503.01724) — and it CORRECTED the summary
+Per the discipline (the Workflow LOCATES; the controller READS the load-bearing source), I read Ueda et al. myself. Exact numbers (BLiMP syntax, ~100M words BabyLM, single epoch; chance = 50%):
+| model | BLiMP | note |
+|---|---|---|
+| ESN reservoir 1,024 units | 56.2% | |
+| ESN 4,096 | 57.9% | beats GPT2-Scratch on val NLL from here |
+| ESN 16,384 | 59.2% | **beats GPT2-Scratch Transformer (58.7%) on BLiMP** |
+| ESN 65,536 | 60.5% | the reservoir's bounded ceiling |
+| **LSTM 512 (gated)** | **67.8%** | best from-scratch; the ESN NEVER matches it |
+
+Architecture: `Wrec`/`Win`/leaks FIXED, only `Wout` trained (low-rank + bias), NO BPTT — our exact setup. **The summary said "loses to a 512-unit LSTM" (TRUE) but MISSED the paper's headline positive: the fixed reservoir DOES beat a from-scratch Transformer on syntax at scale (≥16k units / 100M words)** — reading the source caught the over-negative framing.
+
+**⇒ The precisely-corrected frontier map (load-bearing):**
+1. Our reservoir generator being n-gram-bounded at n_pool=300 / ~1.7M words is **EXPECTED, not a mechanism failure** — we are 50-200× below Ueda's syntactic-capability scale (16k-65k units / 100M words). This THIRD-PARTY confirms the same-day data-scale finding + the R3 scale-confound.
+2. The fixed reservoir reaches a **genuine but BOUNDED** syntactic ceiling (~60% BLiMP, barely above the from-scratch Transformer) at large scale — so SCALE is a real lever for the reservoir, up to that bounded ceiling, but reaching it needs a ~16k-neuron spiking reservoir + ~100M words (the Izhikevich CUDA-graph infra + a big corpus).
+3. The genuine path PAST the reservoir's bounded ceiling toward real fluency (the LSTM's 67.8%) is **LEARNED RECURRENCE / gates = deep credit on spikes** — exactly our standing dendritic frontier (and exactly the LSTM-beats-ESN gap Ueda quantifies). The reservoir's fixed recurrence is the ceiling; learning it (the coarse-credit boundary) is the way up.
+
+⇒ both paths are genuine + now precisely quantified: (a) scale the reservoir toward its bounded ~60%-BLiMP ceiling (infra-gated); (b) learned recurrence / deep credit to exceed it (the coarse-credit frontier). The DeepESN multi-timescale stack (#1 lever) is the CHEAP test of whether multi-timescale FORWARD state reaches the reservoir's ceiling with fewer units than raw scale.
+
 ## Files
-Workflow `wf_dd83a73e-74d` (transcript + journal). Builds on the R3↔generation convergence (AUTONOMOUS_STATE 2026-07-12), the D1 pool-k finding (`2026-07-10-D1-onbridge-deep-credit-poolk-...`), the SCALE/SYNTHESIS generation findings.
+Workflow `wf_dd83a73e-74d` (transcript + journal). Ueda et al. 2025 arXiv:2503.01724 (controller-read). Builds on the R3↔generation convergence (AUTONOMOUS_STATE 2026-07-12), the D1 pool-k finding (`2026-07-10-D1-onbridge-deep-credit-poolk-...`), the SCALE/SYNTHESIS generation findings.
