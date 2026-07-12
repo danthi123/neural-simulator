@@ -21,9 +21,9 @@ RAG = r"E:\Documents\Projects\rag_compare"
 PERSIST = B.PERSIST
 LOCK = os.path.join(RAG, ".update.lock")
 MANIFEST = os.path.join(RAG, ".rag_manifest.json")
-KB_MD = r"E:\Documents\Projects\soma_bundles\kb_md"          # evolving-corpus mirror for SOMA
 SOMA_BUNDLE = r"E:\Documents\Projects\soma_bundles\sim_kb"
-# evolving source types SOMA mirrors (Kandel excluded — static)
+SOMA_MANIFEST = r"E:\Documents\Projects\soma_bundles\.soma_kb_manifest.json"
+# evolving source types SOMA covers (Kandel excluded — static)
 SOMA_TYPES = {"finding", "plan", "doc", "catalog"}
 
 
@@ -79,25 +79,54 @@ def refresh_llamaindex(rebuild=False):
     return f"llamaindex refreshed ({sum(bool(x) for x in res)}/{len(res)} docs new-or-changed)"
 
 
-def sync_kb_mirror():
-    """Copy-if-newer the evolving prose into KB_MD/<source_type>/ (a flat mirror SOMA _ingest walks)."""
+def _soma_evolving():
+    """{path: int(mtime)} for the SOMA-covered evolving prose (source read directly; no mirror)."""
+    return {f: int(os.stat(f).st_mtime) for stype, f in evolving_files() if stype in SOMA_TYPES and os.path.exists(f)}
+
+
+def _store_file(mem, chunk_markdown, load_text, f):
+    from pathlib import Path
+    text = load_text(Path(f))                                # _load_doc_text expects a Path (uses .suffix)
+    if text is None:
+        return 0
     n = 0
-    for stype, f in evolving_files():
-        if stype not in SOMA_TYPES:
-            continue
-        dst_dir = os.path.join(KB_MD, stype); os.makedirs(dst_dir, exist_ok=True)
-        dst = os.path.join(dst_dir, os.path.basename(f))
-        if (not os.path.exists(dst)) or os.path.getmtime(f) > os.path.getmtime(dst):
-            shutil.copy2(f, dst); n += 1
+    for ch in chunk_markdown(text, path=os.path.basename(f)):
+        mem.store(ch.text, metadata={"path": ch.path, "heading": getattr(ch, "heading", ""), "src": f})
+        n += 1
     return n
 
 
-def rebuild_soma():
-    from pathlib import Path
-    from soma._cli_commands.wiki_chat import _ingest
-    synced = sync_kb_mirror()
-    fc, cc = _ingest(Path(KB_MD), Path(SOMA_BUNDLE), include_pdf=False, verbose=False)
-    return f"soma rebuilt ({fc} files / {cc} chunks; {synced} synced)"
+def rebuild_soma(rebuild=False):
+    """INCREMENTAL when only NEW files were added (load bundle -> store the new files -> save = fast, no re-embed of the
+    existing corpus). FULL rebuild (fresh MemoryLayer) when a file was EDITED or DELETED, or the bundle is missing, or
+    --rebuild (correctness: SOMA has no per-doc delete-by-path, so an edit needs a clean rebuild)."""
+    from soma.memory.api import MemoryLayer
+    from soma._cli_commands.wiki_chat import chunk_markdown, _load_doc_text
+    cur = _soma_evolving()
+    prev = {}
+    if os.path.exists(SOMA_MANIFEST):
+        try:
+            prev = json.load(open(SOMA_MANIFEST))
+        except Exception:
+            prev = {}
+    changed = [f for f in cur if f in prev and cur[f] != prev[f]]
+    deleted = [f for f in prev if f not in cur]
+    new = [f for f in cur if f not in prev]
+    full = rebuild or (not os.path.isdir(SOMA_BUNDLE)) or bool(changed) or bool(deleted)
+
+    if full:
+        mem = MemoryLayer.with_sbert()
+        cc = sum(_store_file(mem, chunk_markdown, _load_doc_text, f) for f in cur)
+        mem.save(SOMA_BUNDLE)
+        json.dump(cur, open(SOMA_MANIFEST, "w"))
+        return f"soma FULL rebuild ({len(cur)} files / {cc} chunks; {len(changed)} changed, {len(deleted)} deleted)"
+    if not new:
+        return "soma up to date (no new files)"
+    mem = MemoryLayer.load_with_sbert(SOMA_BUNDLE)
+    cc = sum(_store_file(mem, chunk_markdown, _load_doc_text, f) for f in new)
+    mem.save(SOMA_BUNDLE)
+    json.dump(cur, open(SOMA_MANIFEST, "w"))
+    return f"soma incremental (+{len(new)} new files / {cc} chunks appended)"
 
 
 def main():
