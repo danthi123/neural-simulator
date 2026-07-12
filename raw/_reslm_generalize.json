@@ -1,0 +1,123 @@
+{
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "noise": 0.0,
+  "n_seq": 40,
+  "rows": [
+    {
+      "G": 6,
+      "syn": 5,
+      "sf": 3,
+      "idn": 10,
+      "n": 60,
+      "m": 318,
+      "chance": 0.167,
+      "learn_train": 0.885,
+      "learn_heldout": 0.8833,
+      "fixed_train": 0.885,
+      "fixed_heldout": 0.6944,
+      "margin_heldout": 0.1889
+    },
+    {
+      "G": 6,
+      "syn": 5,
+      "sf": 6,
+      "idn": 10,
+      "n": 60,
+      "m": 336,
+      "chance": 0.167,
+      "learn_train": 0.885,
+      "learn_heldout": 0.8833,
+      "fixed_train": 0.885,
+      "fixed_heldout": 0.8389,
+      "margin_heldout": 0.0444
+    },
+    {
+      "G": 6,
+      "syn": 5,
+      "sf": 3,
+      "idn": 3,
+      "n": 60,
+      "m": 108,
+      "chance": 0.167,
+      "learn_train": 0.885,
+      "learn_heldout": 0.8833,
+      "fixed_train": 0.885,
+      "fixed_heldout": 0.8833,
+      "margin_heldout": 0.0
+    },
+    {
+      "G": 6,
+      "syn": 5,
+      "sf": 3,
+      "idn": 3,
+      "n": 100,
+      "m": 108,
+      "chance": 0.167,
+      "learn_train": 0.885,
+      "learn_heldout": 0.8833,
+      "fixed_train": 0.885,
+      "fixed_heldout": 0.8833,
+      "margin_heldout": 0.0
+    },
+    {
+      "G": 6,
+      "syn": 5,
+      "sf": 3,
+      "idn": 10,
+      "n": 100,
+      "m": 318,
+      "chance": 0.167,
+      "learn_train": 0.885,
+      "learn_heldout": 0.8833,
+      "fixed_train": 0.885,
+      "fixed_heldout": 0.8833,
+      "margin_heldout": 0.0
+    },
+    {
+      "G": 6,
+      "syn": 5,
+      "sf": 6,
+      "idn": 3,
+      "n": 60,
+      "m": 126,
+      "chance": 0.167,
+      "learn_train": 0.885,
+      "learn_heldout": 0.8833,
+      "fixed_train": 0.885,
+      "fixed_heldout": 0.8833,
+      "margin_heldout": 0.0
+    },
+    {
+      "G": 6,
+      "syn": 5,
+      "sf": 6,
+      "idn": 3,
+      "n": 100,
+      "m": 126,
+      "chance": 0.167,
+      "learn_train": 0.885,
+      "learn_heldout": 0.8833,
+      "fixed_train": 0.885,
+      "fixed_heldout": 0.8833,
+      "margin_heldout": 0.0
+    },
+    {
+      "G": 6,
+      "syn": 5,
+      "sf": 6,
+      "idn": 10,
+      "n": 100,
+      "m": 336,
+      "chance": 0.167,
+      "learn_train": 0.885,
+      "learn_heldout": 0.8833,
+      "fixed_train": 0.885,
+      "fixed_heldout": 0.8833,
+      "margin_heldout": 0.0
+    }
+  ]
+}

@@ -1,0 +1,203 @@
+{
+  "seeds": [
+    42,
+    43
+  ],
+  "dist": 3,
+  "noise": 0.0,
+  "lr_in": 0.05,
+  "rows": [
+    {
+      "n": 40,
+      "m": 120,
+      "s": 8,
+      "K": 30,
+      "overlap_ratio": 2.0,
+      "bottleneck": 3.0,
+      "chance": 0.033,
+      "learn": 1.0,
+      "fixed": 1.0,
+      "margin": 0.0
+    },
+    {
+      "n": 40,
+      "m": 120,
+      "s": 8,
+      "K": 60,
+      "overlap_ratio": 4.0,
+      "bottleneck": 3.0,
+      "chance": 0.017,
+      "learn": 1.0,
+      "fixed": 1.0,
+      "margin": 0.0
+    },
+    {
+      "n": 40,
+      "m": 120,
+      "s": 20,
+      "K": 30,
+      "overlap_ratio": 5.0,
+      "bottleneck": 3.0,
+      "chance": 0.033,
+      "learn": 1.0,
+      "fixed": 1.0,
+      "margin": 0.0
+    },
+    {
+      "n": 40,
+      "m": 120,
+      "s": 20,
+      "K": 60,
+      "overlap_ratio": 10.0,
+      "bottleneck": 3.0,
+      "chance": 0.017,
+      "learn": 1.0,
+      "fixed": 1.0,
+      "margin": 0.0
+    },
+    {
+      "n": 40,
+      "m": 200,
+      "s": 8,
+      "K": 30,
+      "overlap_ratio": 1.2,
+      "bottleneck": 5.0,
+      "chance": 0.033,
+      "learn": 1.0,
+      "fixed": 1.0,
+      "margin": 0.0
+    },
+    {
+      "n": 40,
+      "m": 200,
+      "s": 8,
+      "K": 60,
+      "overlap_ratio": 2.4,
+      "bottleneck": 5.0,
+      "chance": 0.017,
+      "learn": 1.0,
+      "fixed": 1.0,
+      "margin": 0.0
+    },
+    {
+      "n": 40,
+      "m": 200,
+      "s": 20,
+      "K": 30,
+      "overlap_ratio": 3.0,
+      "bottleneck": 5.0,
+      "chance": 0.033,
+      "learn": 1.0,
+      "fixed": 1.0,
+      "margin": 0.0
+    },
+    {
+      "n": 40,
+      "m": 200,
+      "s": 20,
+      "K": 60,
+      "overlap_ratio": 6.0,
+      "bottleneck": 5.0,
+      "chance": 0.017,
+      "learn": 1.0,
+      "fixed": 1.0,
+      "margin": 0.0
+    },
+    {
+      "n": 60,
+      "m": 120,
+      "s": 8,
+      "K": 30,
+      "overlap_ratio": 2.0,
+      "bottleneck": 2.0,
+      "chance": 0.033,
+      "learn": 1.0,
+      "fixed": 1.0,
+      "margin": 0.0
+    },
+    {
+      "n": 60,
+      "m": 120,
+      "s": 8,
+      "K": 60,
+      "overlap_ratio": 4.0,
+      "bottleneck": 2.0,
+      "chance": 0.017,
+      "learn": 1.0,
+      "fixed": 1.0,
+      "margin": 0.0
+    },
+    {
+      "n": 60,
+      "m": 120,
+      "s": 20,
+      "K": 30,
+      "overlap_ratio": 5.0,
+      "bottleneck": 2.0,
+      "chance": 0.033,
+      "learn": 1.0,
+      "fixed": 1.0,
+      "margin": 0.0
+    },
+    {
+      "n": 60,
+      "m": 120,
+      "s": 20,
+      "K": 60,
+      "overlap_ratio": 10.0,
+      "bottleneck": 2.0,
+      "chance": 0.017,
+      "learn": 1.0,
+      "fixed": 1.0,
+      "margin": 0.0
+    },
+    {
+      "n": 60,
+      "m": 200,
+      "s": 8,
+      "K": 30,
+      "overlap_ratio": 1.2,
+      "bottleneck": 3.33,
+      "chance": 0.033,
+      "learn": 1.0,
+      "fixed": 1.0,
+      "margin": 0.0
+    },
+    {
+      "n": 60,
+      "m": 200,
+      "s": 8,
+      "K": 60,
+      "overlap_ratio": 2.4,
+      "bottleneck": 3.33,
+      "chance": 0.017,
+      "learn": 1.0,
+      "fixed": 1.0,
+      "margin": 0.0
+    },
+    {
+      "n": 60,
+      "m": 200,
+      "s": 20,
+      "K": 30,
+      "overlap_ratio": 3.0,
+      "bottleneck": 3.33,
+      "chance": 0.033,
+      "learn": 1.0,
+      "fixed": 1.0,
+      "margin": 0.0
+    },
+    {
+      "n": 60,
+      "m": 200,
+      "s": 20,
+      "K": 60,
+      "overlap_ratio": 6.0,
+      "bottleneck": 3.33,
+      "chance": 0.017,
+      "learn": 1.0,
+      "fixed": 1.0,
+      "margin": 0.0
+    }
+  ]
+}
