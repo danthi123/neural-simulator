@@ -1,0 +1,50 @@
+{
+ "n": 6,
+ "frozen_wrec_beats_same_net": 6,
+ "frozen_wrec_mean": 1.257,
+ "same_net_mean": 0.859,
+ "per_seed": [
+  {
+   "seed": 42,
+   "fixed": -2.76,
+   "plain": -1.657,
+   "frozen_wrec": 1.258,
+   "same_net": 0.902
+  },
+  {
+   "seed": 43,
+   "fixed": -2.886,
+   "plain": -1.825,
+   "frozen_wrec": 1.26,
+   "same_net": 0.822
+  },
+  {
+   "seed": 44,
+   "fixed": -2.7,
+   "plain": -1.694,
+   "frozen_wrec": 1.254,
+   "same_net": 0.865
+  },
+  {
+   "seed": 100,
+   "fixed": -2.65,
+   "plain": -1.597,
+   "frozen_wrec": 1.254,
+   "same_net": 0.935
+  },
+  {
+   "seed": 101,
+   "fixed": -2.959,
+   "plain": -2.03,
+   "frozen_wrec": 1.257,
+   "same_net": 0.63
+  },
+  {
+   "seed": 102,
+   "fixed": -2.086,
+   "plain": -1.847,
+   "frozen_wrec": 1.257,
+   "same_net": 1.0
+  }
+ ]
+}

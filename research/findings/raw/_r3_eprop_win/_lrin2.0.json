@@ -1,0 +1,97 @@
+{
+  "runner": "_emerge_stream_eprop_lm_derisk",
+  "corpus": "data/corpus/tinystories_train.txt",
+  "seed": 42,
+  "V": 2000,
+  "n_pool": 300,
+  "block": 128,
+  "batch": 64,
+  "lane": 28125,
+  "epochs": 4,
+  "dualtc_clean_fraction": {},
+  "bptt_steps": 10,
+  "dev": "cuda",
+  "permute_stream": false,
+  "args": {
+    "corpus": "data/corpus/tinystories_train.txt",
+    "max_tokens": 2000000,
+    "vocab": 2000,
+    "n_pool": 300,
+    "block": 128,
+    "epochs": 4,
+    "batch": 64,
+    "seed": 42,
+    "arms": [
+      "fixed_reservoir",
+      "eprop_learn_win"
+    ],
+    "alpha": 0.3,
+    "spectral": 1.1,
+    "lr_out": 0.02,
+    "lr_rec": 0.005,
+    "lr_in": 2.0,
+    "wd_out": 0.001,
+    "a_slow": 0.02,
+    "elig_ema": false,
+    "multitc_aslows": "0.05 0.02 0.01 0.005",
+    "bptt_steps": 10,
+    "bptt_lr": 0.002,
+    "rho_win_lo": 30.0,
+    "rho_win_hi": 300.0,
+    "beta": 1.0,
+    "grad_check": false,
+    "smoke": false,
+    "permute_stream": false,
+    "json": "research/findings/raw/_r3_eprop_win/_lrin2.0.json"
+  },
+  "arms": {
+    "fixed_reservoir": {
+      "by_bucket": {
+        "1": -3.3008,
+        "2": -3.3114,
+        "3": -3.289,
+        "4-8": -3.266,
+        "9-16": -3.1693,
+        "17-127": -2.7599
+      },
+      "shallow_margin": -3.2789,
+      "deep_margin": -2.7599,
+      "deep_subbuckets": {
+        "17-32": -3.0845,
+        "33-64": -2.9718,
+        "65-96": -2.6324,
+        "97-127": -2.5051
+      },
+      "ctx1_readout_margin": -3.2448,
+      "aggregate_ce": 7.1046
+    },
+    "eprop_learn_win": {
+      "by_bucket": {
+        "1": -1.302,
+        "2": -1.0665,
+        "3": -0.7781,
+        "4-8": -0.4195,
+        "9-16": -0.1556,
+        "17-127": -0.1097
+      },
+      "shallow_margin": -0.6555,
+      "deep_margin": -0.1097,
+      "deep_subbuckets": {
+        "17-32": -0.1185,
+        "33-64": -0.1067,
+        "65-96": -0.1058,
+        "97-127": -0.1122
+      },
+      "ctx1_readout_margin": -1.7287,
+      "aggregate_ce": 4.4331
+    }
+  },
+  "byte_identical_zero_eq_fixed": null,
+  "gate": {
+    "verdict": "INCOMPLETE (need all 5 arms; have ['eprop_learn_win', 'fixed_reservoir'])"
+  },
+  "clean_recurrent_credit_fraction": {},
+  "alif_clean_fraction": {},
+  "alif_adapt_shuffle": null,
+  "elapsed_s": 1917.5
+}
