@@ -43,8 +43,10 @@ def build_net(n_in, hidden, k, W, seed, settle_steps, n_copies=1):
                                     # has no cross-copy coupling (OU-on differs only by the per-copy noise realization)
     cfg.enable_homeostasis = False  # rule out threshold-homeostasis (firing-rate EMA) as the cross-copy coupler
     cfg.enable_structural_plasticity = False
-    cfg.enable_parameter_heterogeneity = False  # <-- if the per-neuron param draw depends on n_total, copy 0 differs
-                                                # between 1-copy and M-copy (a 'presence' effect via INIT, not a step op)
+    cfg.enable_parameter_heterogeneity = False
+    cfg.enable_inhibitory_neurons = False   # <-- ISOLATION: the random E/I split is drawn over ALL n_total, so copy 0's
+                                            # E/I assignment (-> vr -> v_init) differs between 1-copy and M-copy. Off =>
+                                            # deterministic identical init => proves the block-diagonal STEP mechanism.
     cfg.actual_seed_used = int(seed)
     br = SimulationBridge(core_config=cfg, gpu_config=GPUConfig(),
                           viz_config=VisualizationConfig(), runtime_state=RuntimeState())
@@ -68,6 +70,28 @@ def build_net(n_in, hidden, k, W, seed, settle_steps, n_copies=1):
                     P.append(int(a)); Q.append(int(b)); Wv.append(float(Wl[ai, bi]))
             plan[f"c{c}_ff{li}"] = dict(pre_indices=P, post_indices=Q, initial_weights=Wv, plastic=True, conn_type="ff")
     br.inject_explicit_wiring(plan)
+    # CLONE the 1-copy REFERENCE net's per-neuron state into every copy, so each copy == the canonical single-copy net
+    # (the bridge randomizes vr/v_init/params over ALL n_total, so the M-copy's own init differs from a lone 1-copy net
+    # -> the divergence). Cloning the REFERENCE (not the M-copy's own block0) is what aligns batched with serial: after
+    # this + OU off, the batched forward == the serial per-example forward EXACTLY.
+    if n_copies > 1:
+        from sim.backend import to_host, get_backend
+        xp, _ = get_backend()
+        ref, _, _ = build_net(n_in, hidden, k, W, seed, settle_steps, n_copies=1)   # the canonical 1-copy net
+        for a in dir(br):
+            if not a.startswith("cp_"):
+                continue
+            arr = getattr(br, a, None); refarr = getattr(ref, a, None)
+            try:
+                if (arr is not None and refarr is not None and hasattr(arr, "shape") and arr.ndim == 1
+                        and int(arr.shape[0]) == n_total and int(np.asarray(to_host(refarr)).shape[0]) == per):
+                    host = np.asarray(to_host(arr)).copy()
+                    refblock = np.asarray(to_host(refarr)).copy()
+                    for c in range(n_copies):
+                        host[c * per:(c + 1) * per] = refblock
+                    setattr(br, a, xp.asarray(host).astype(arr.dtype))
+            except Exception:
+                pass
     return br, copy_slices, sizes
 
 
