@@ -194,7 +194,13 @@ not hold:
   has taken its **first real step**: an emergent, on-brain, no-backpropagation
   next-word predictor that learns from a text stream and already beats the
   standard simple baselines — so far over a small controlled vocabulary. The plan
-  is to climb that ladder until the crutch is gone.
+  is to climb that ladder until the crutch is gone. The scariest-looking rung of
+  that climb — learning *long-range* structure (what the transformer is uniquely
+  good at) with only biological rules — was just de-risked: it turns out **not** to
+  need the hard deep-recurrent-credit rewrite, but only learning the *input
+  representation* on a *fixed* recurrent scaffold (which beats full backprop-through-
+  time), reaching ~78% of that reference with fully-local rules and now being put on
+  spikes with no engine edit (see [`ROADMAP.md`](../../ROADMAP.md) §9.1).
 
 ---
 

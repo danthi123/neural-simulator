@@ -401,7 +401,7 @@ flowchart LR
 | Dopamine — reward error | Actual − expected reward (Schultz) — gates three-factor learning | ● |
 | Hunger / drive | A hungry brain raises dopamine, making it more careful about what it claims to know | ● |
 | Arousal / surprise (noradrenaline) | An unexpected outcome speeds up learning | ● |
-| Learning rules | Spike-timing plasticity; Hebbian co-occurrence (✅ how the word-cortex learns); three-factor (dopamine-gated); **dendritic credit assignment** (◐ the top open lever — a two-compartment burst rule, Payeur-Naud, idealized now, being brought fully onto spikes) | mixed |
+| Learning rules | Spike-timing plasticity; Hebbian co-occurrence (✅ how the word-cortex learns); three-factor (dopamine-gated); **dendritic credit assignment** (◐ the open lever for the *deep-composition* ceilings — a two-compartment burst rule, Payeur-Naud, idealized now, being brought fully onto spikes); **local input-representation learning on a fixed reservoir** (the *long-range-language* lever — a fixed random recurrent scaffold that learns only its input, beating full backprop; ~78% biology-legal, going onto spikes now with no engine edit — see [`ROADMAP.md`](../../ROADMAP.md) §9.1) | mixed |
 | Living over days | Wake + learn → converse → sleep + consolidate → grow → save + resume (not a blank slate next day) | 🟩 |
 
 ---

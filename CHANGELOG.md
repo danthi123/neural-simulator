@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 This is a research codebase; entries are organised chronologically rather than by release tag. The freshest dated section is the working tip.
 
+## [Unreleased] — 2026-07-12 — The long-range-language frontier, reframed: the brain can learn it with biological rules — and *not* the way we expected
+
+### Added / Changed (research — all rate-level + on-substrate probes, no `sim/` edit)
+- **The decisive reframe (`research/findings/2026-07-11-R3-REFRAME-*.md`, 6-seed).** The long-range-language question — can the brain learn structure that depends on distant words using only biologically-legal learning (local, no backprop-through-time, no weight transport)? — was run to ground. Finding: long-range capture is **input-representation bound, not recurrent-credit bound.** A network with **fixed, random recurrent wiring** (a reservoir) that learns *only its input representation* **beats full backprop-through-time** that trains everything (training the recurrent wiring is counterproductive). So the hard-looking "deep recurrent credit" rewrite is *not needed* for long-range language.
+- **The biology-legal version works, multi-seed (~78%).** Local input-learning (an eligibility-trace rule) + **learned local feedback** (Kolen-Pollack weight-mirror, replacing the impossible weight-transport) + a local read-out reaches **~78%** of the full-backprop reference (plain +0.176±0.001, +learned-feedback +0.351±0.003 across seeds). One-step-local, no BPTT, no weight transport, no `sim/` edit. The residual to full backprop is a characterized feedback-alignment cost with a known next lever.
+- **An honest self-correction (the discipline working).** A promising "dual-timescale" breakthrough was caught by an adversarial-verify workflow to be a hidden learning-rate artifact (plain e-prop at 5× learning-rate reproduced it exactly) and **retracted before it was recorded** — a would-be shortcut prevented.
+- **On-substrate realization scoped + verified (`2026-07-12-spiking-realization-scoping-*.md`).** The mechanism realizes on a real `SimulationBridge` with the **already-committed `enable_bdsp` dendritic burst-learning rule** on a plastic input→reservoir pathway — verified against `sim/bridge.py` to need **no engine edit**. Cheapest-first spiking de-risk in build.
+- **Process (`feedback_run_ceiling_early_and_keep_gpu_busy`):** the whole arc was recontextualized by running a reference transformer *ceiling* early — the earlier small-scale long-range negatives were partly scale-confounded (at genuine scale, TinyStories/WikiText-103, long-range signal is real; a transformer's advantage grows with context). Lesson saved: run the ceiling first, keep idle GPU busy.
+- **Docs:** `ROADMAP.md` §9.1 + the two-gaps summary and the `docs/diagrams/` flowcharts updated to reflect the reframe.
+
+> Note: this CHANGELOG's previous tip was 2026-06-30; the intervening July work (the EMERGE-56..85 spiking-Broca/self-organized-grammar/reservoir-comprehension arcs and the D3 discourse-event register) is recorded in `CLAUDE.md` + `research/findings/` but is a pending CHANGELOG backfill.
+
 ## [Unreleased] — 2026-06-30 — The largest spiking generative model yet, and "one brain" delivered end-to-end: the whole conversational turn runs in neurons, driven by a shared emotional core
 
 ### Added
