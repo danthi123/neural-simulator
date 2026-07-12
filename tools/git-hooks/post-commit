@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# RAG auto-update post-commit hook (installed by tools/rag/install_git_hook.sh).
+# When a commit touches the prose knowledge base, fire a BACKGROUND, DEBOUNCED update of BOTH RAG indexes
+# (LlamaIndex + SOMA) via tools/rag/update_indexes.py. Non-blocking: the commit returns immediately.
+# update_indexes.py is lock-guarded + manifest-gated, so a burst of commits collapses to one update and an
+# unchanged corpus is a no-op. Idempotent + safe to fire on every commit.
+
+changed=$(git diff-tree --no-commit-id --name-only -r HEAD 2>/dev/null)
+if echo "$changed" | grep -qE '^(research/findings/|docs/|CLAUDE\.md|ROADMAP\.md|README\.md)'; then
+  PY="E:/Documents/Projects/rag_compare_env/Scripts/python.exe"
+  UPD="E:/Documents/Projects/sim/tools/rag/update_indexes.py"
+  LOG="E:/Documents/Projects/rag_compare/_autoupdate.log"
+  # sleep briefly so a burst of commits collapses into one update (the lock+manifest gate does the rest), then update.
+  ( sleep 45; "$PY" "$UPD" >> "$LOG" 2>&1 ) >/dev/null 2>&1 &
+  disown 2>/dev/null || true
+fi
+exit 0

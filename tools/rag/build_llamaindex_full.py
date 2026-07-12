@@ -49,7 +49,7 @@ def load_docs():
                 print(f"  [skip] {f}: {e}", flush=True); continue
             if not text.strip():
                 continue
-            docs.append(Document(text=text,
+            docs.append(Document(text=text, id_=f,   # id_=path so refresh_ref_docs (incremental update) is hash-based
                                  metadata={"source_type": stype, "source": os.path.basename(f), "path": f},
                                  excluded_embed_metadata_keys=["path"], excluded_llm_metadata_keys=["path"]))
             n += 1
