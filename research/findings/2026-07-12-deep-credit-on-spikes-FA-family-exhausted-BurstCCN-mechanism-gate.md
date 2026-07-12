@@ -1,0 +1,25 @@
+# Deep-credit-on-spikes: the feedback-alignment family is exhausted-negative; the fresh gate points to BurstCCN's two spiking mechanisms our port lacks (2026-07-12)
+
+**Research-gate finding (a1 our own record + b external BurstCCN), triggered by this session's "on-bridge BDSP doesn't train depth-2" + the pool-k negative.** The deep-credit-on-spikes boundary is now precisely located, the exhausted family is mapped, and the concrete next-mechanism candidates are named + grounded.
+
+## The boundary, precisely: the rate mechanism is PROVEN; the SPIKING PORT fails at the multiplexing SNR
+Our own `2026-07-07-deep-lever-research-gate-spiking-deep-credit.md` already established: the feedforward deep-credit RATE mechanism is proven — Burstprop (EMERGE-1b held-out 0.796) and the Sacramento-Senn **microcircuit** (EMERGE-3 held-out 0.961, tracks oracle). The D1 task is the SPIKING PORT of that rate result. **This session's finding IS D1 coming back NEGATIVE** (on-bridge BDSP/microcircuit doesn't train the depth-2 net, 6-seed, all arms below chance) — and the gate PREDICTED this failure mode: *"a NEGATIVE localizes to the multiplexing SNR."* The pool-k test (population read to lift the SNR) also came back negative. So the boundary is **the burst-multiplexing SNR on point-neuron spikes**, not the rate mechanism.
+
+## The feedback-alignment family is EXHAUSTED-negative for hidden credit assignment (a1)
+Every local no-weight-transport rule we've tried does NOT do hidden-layer credit assignment on the spiking/point substrate:
+- **BDSP / burstprop / microcircuit (this session):** doesn't train the depth-2 net (6-seed).
+- **Population read (pool-k, this session):** doesn't lift the credit SNR (flat multi-seed).
+- **Urbanczik-Senn two-compartment dendrite + fixed-random feedback (`2026-05-17-dendritic-credit-assignment-NEGATIVE.md`):** an honest NEGATIVE — did NOT do hidden credit assignment in the W2-frozen isolation test. So "can the existing two-compartment dendrite do hidden credit assignment" is already answered NO.
+- **D3 clean-error delta (`2026-07-10-...feedback-alignment-is-not-the-somatic-nudge.md`):** FA is only PARTIAL.
+⇒ per the workflow (exhausted ladder → fresh gate for a genuinely-NEW class, don't re-tread). **µPC / equilibrium propagation were already ruled out** by the 2026-07-07 gate (non-spiking + require settling phases — "borrow depth-stability ideas, don't adopt"). No prior finding tries them on the substrate (a1 confirms), but the ruling stands (they violate the spiking + single-phase constraints).
+
+## The fresh direction (b, external): BurstCCN's spiking port trains — ours differs in TWO mechanisms
+BurstCCN / Greedy-Naud (arXiv:2206.11769) + Stuck-Naud "Burstprop for Learning in Spiking Neuromorphic Hardware" achieve **spiking Burstprop at BPTT-comparable error on MNIST/CIFAR** — so spiking deep credit CAN train; our port must differ. The two mechanisms their spiking single-phase version uses that OUR on-bridge BDSP lacks (a0-confirmed against `sim/kernels.py:fused_bdsp_update`):
+1. **Baseline burst-probability PRESET via a SECOND feedback pathway** (spike-communicated), so `B − P̄·E` is unbiased without a two-phase settle. **Ours uses a slow EMA `Pbar` (running mean, init `bdsp_p0`)** — a lagging/noisy baseline that biases the burst-deviation credit. This is the prime SNR suspect.
+2. **Burst multiplexing via connection-type-specific STP** to cleanly demux the event-rate vs burst-probability streams. **Ours reads `B` and `E` directly** (no STP demux) — a noisier separation.
+
+## Verdict + next (gated on the lr sweep, running)
+- The **lr × epochs × stability sweep** (fanned-out, 6 configs, H96 seed 42, running) is the final within-family arbiter: does ANY lr train the current BDSP port above the floor? If a config trains → the boundary was stability, multi-seed it. **If none train (expected, given the SNR localization) → the next build is to add BurstCCN's two mechanisms** to our spiking port: (a) a preset baseline burst-probability via a second fixed feedback pathway (replace the EMA `Pbar`), and (b) STP-based demux of the B/E streams — then re-run D1. Both are additive/guarded `sim/` edits on the existing `fused_bdsp` + `cp_v_apical` machinery.
+- **Standing scale-wall flag (from the 2026-07-07 gate):** even a depth-3-on-a-toy GO is 3–4 orders below language-scale; data/experience-stream richness is the binding wall behind ANY deep-credit GO. So D1 is necessary-not-sufficient; the emergent-generation SCALE is the real frontier this unblocks a piece of.
+
+**Rigor:** a1 (own record: 2026-07-07 gate, 2026-05-17 negative, pool-k, trained-K1) + b (external BurstCCN, read the mechanism) + a0 (our `fused_bdsp` uses EMA Pbar, no STP demux). NO build yet — this is the research gate that scopes the next build, gated on the running lr sweep. The FA-family exhaustion is a first-class negative; the BurstCCN preset-baseline/STP-demux is the theorized surpass.
