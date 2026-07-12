@@ -54,5 +54,18 @@ Legend: ✅ surfaced the exact/right finding · 🟡 relevant-adjacent · ❌ mi
 - **Neither replaces reading the source** — both SURFACE the passage; the discipline is still to open the cited finding and read it. That is the correct role (a locate-accelerator), not a paraphrase layer.
 - **Workflow wiring (next):** a one-line helper (`rag_search "<question>"`) at the top of every research gate — "check our own memory before deep-researching externally." Default to LlamaIndex; keep SOMA as the CLI fallback.
 
+## Corpus BROADENED beyond findings (2026-07-12) — a whole-knowledge-base + biology locator
+The a-1 gate has two needs: "have we CONCLUDED/DESIGNED X?" AND "how does the BIOLOGY do X?". The findings-only index served only the first. The index now covers the whole PROSE knowledge base with `source_type` metadata (`tools/rag/build_llamaindex_full.py` → `rag_compare/llamaindex_full`, **10,125 nodes**, ~150 s embed):
+
+| source_type | corpus | serves |
+|---|---|---|
+| `finding` | `research/findings/*.md` (1502) | "have we CONCLUDED / tried X?" |
+| `plan` | `docs/plans/*.md` (281) | "did we already DESIGN X?" |
+| `doc` | CLAUDE / ROADMAP / README / docs (15) | project state / architecture |
+| `catalog` | `sim-catalog/references/*.md` (feature-catalog etc.) | **"is there a CATALOG ENTRY for X?"** |
+| `kandel` | Kandel 6e full text (8.7 MB) | **"how does the BIOLOGY do X?"** |
+
+`rag_search.py` gains `--corpus finding|plan|doc|catalog|kandel|all` (default `all`) and shows `(source_type)` per hit. **Filtering is applied DURING retrieval** (a `source_type` metadata filter on the vector retriever, not a post-filter) so a small corpus (catalog/plan) is not crowded out of the rerank window by the big corpora (Kandel/findings) — the bug the first version hit. **Verified:** `--corpus kandel "dentate gyrus CA3 pattern separation/completion"` → the exact Kandel DG/CA3 section (score 4.19); `--corpus catalog "dendritic plateau NMDA apical"` → the feature-catalog dendritic-computation entry (Larkum two-layer). Code/tests are deliberately EXCLUDED (Grep is better for code). Rebuild with `build_llamaindex_full.py` when the corpus drifts. Cold-start note: each `rag_search` invocation reloads the index + reranker (~a few s); batch queries sparingly.
+
 ### Honest scope of this comparison
 One corpus (our findings), one 7-query set, hand-graded exact-vs-adjacent — indicative, not a benchmark. The two use the SAME embedder + reranker, so the delta is chunking + fusion strategy, not the embedding model. A fairer future pass: match chunk sizes, add the catalog/Kandel/PDF corpus, and grade blind. Updated as we actually use them in the loop.

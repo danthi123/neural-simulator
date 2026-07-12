@@ -1,30 +1,40 @@
-"""rag_search — "check our own findings FIRST" locate-accelerator for the research gate.
+"""rag_search — "check our own memory FIRST" locate-accelerator for the research gate.
 
-One-liner over the LlamaIndex index of research/findings/ (hybrid vector+BM25 RRF fusion ->
-cross-encoder rerank, same embedder+reranker as SOMA). Surfaces the finding docs that already
-answer a "have we already concluded X?" question, so a research gate does not re-derive what the
-record holds. It LOCATES the passage; the discipline is still to open the cited finding and read it.
+One-liner over the LlamaIndex index of the project's PROSE knowledge base (hybrid vector+BM25 RRF fusion ->
+cross-encoder rerank). Surfaces the docs that already answer a research-gate question, so a gate does not re-derive
+what the record holds. It LOCATES the passage; the discipline is still to open the cited doc and read it.
+
+Broadened corpus (source_type shown per hit; build via tools/rag/build_llamaindex_full.py):
+  finding : research/findings/*.md          -> "have we already CONCLUDED / tried X?"
+  plan    : docs/plans/*.md                 -> "did we already DESIGN X?"
+  doc     : docs/*.md + CLAUDE/ROADMAP/README
+  catalog : sim-catalog/references/*.md      -> "is there a CATALOG ENTRY for X?"
+  kandel  : Kandel 6e full text              -> "how does the BIOLOGY do X?"
 
 Run with the isolated RAG venv (has llama-index; base sim env untouched):
-    E:/Documents/Projects/rag_compare_env/Scripts/python.exe tools/rag/rag_search.py "<question>" [top_k]
+    E:/Documents/Projects/rag_compare_env/Scripts/python.exe tools/rag/rag_search.py "<question>" [top_k] [--corpus TYPE]
+  --corpus one of {all(default), finding, plan, doc, catalog, kandel} -- target one corpus (e.g. --corpus kandel for biology).
 
-SOMA CLI fallback (owner's project, sbert-load bug fixed on branch fix/cli-load-sbert-bundle):
-    soma search "<question>" --bundle E:/Documents/Projects/soma_bundles/sim_findings
-
-See docs/RAG_COMPARISON.md for the head-to-head (LlamaIndex 7/7 exact, primary; SOMA 5/7, fallback)."""
+Falls back to the findings-only index if the broadened one isn't built. See docs/RAG_COMPARISON.md."""
 import os, io, sys, time
 os.environ["TRANSFORMERS_VERBOSITY"] = "error"
 os.environ["HF_HUB_DISABLE_PROGRESS_BARS"] = "1"
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 from contextlib import redirect_stderr
 
-PERSIST = r"E:\Documents\Projects\rag_compare\llamaindex_findings"
+FULL = r"E:\Documents\Projects\rag_compare\llamaindex_full"
+FINDINGS = r"E:\Documents\Projects\rag_compare\llamaindex_findings"
 
-if len(sys.argv) < 2 or not sys.argv[1].strip():
-    sys.stdout.write('usage: rag_search.py "<question>" [top_k]\n')
+argv = sys.argv[1:]
+corpus = "all"
+if "--corpus" in argv:
+    i = argv.index("--corpus"); corpus = argv[i + 1]; del argv[i:i + 2]
+if not argv or not argv[0].strip():
+    sys.stdout.write('usage: rag_search.py "<question>" [top_k] [--corpus finding|plan|doc|catalog|kandel|all]\n')
     raise SystemExit(2)
-query = sys.argv[1]
-top_k = int(sys.argv[2]) if len(sys.argv) > 2 else 5
+query = argv[0]
+top_k = int(argv[1]) if len(argv) > 1 else 5
+persist = FULL if os.path.isdir(FULL) else FINDINGS
 
 with redirect_stderr(io.StringIO()):
     from llama_index.core import StorageContext, load_index_from_storage, Settings
@@ -32,26 +42,37 @@ with redirect_stderr(io.StringIO()):
     from llama_index.retrievers.bm25 import BM25Retriever
     from llama_index.core.retrievers import QueryFusionRetriever
     from llama_index.core.postprocessor import SentenceTransformerRerank
+    from llama_index.core.vector_stores import MetadataFilters, MetadataFilter, FilterOperator
 
     Settings.embed_model = HuggingFaceEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
     Settings.llm = None
-    index = load_index_from_storage(StorageContext.from_defaults(persist_dir=PERSIST))
-    vec = index.as_retriever(similarity_top_k=10)
-    bm25 = BM25Retriever.from_defaults(docstore=index.docstore, similarity_top_k=10)
-    fusion = QueryFusionRetriever([vec, bm25], num_queries=1, mode="reciprocal_rerank",
-                                  similarity_top_k=10, use_async=False)
+    index = load_index_from_storage(StorageContext.from_defaults(persist_dir=persist))
     reranker = SentenceTransformerRerank(model="cross-encoder/ms-marco-MiniLM-L-6-v2", top_n=top_k)
     t0 = time.time()
-    nodes = reranker.postprocess_nodes(fusion.retrieve(query), query_str=query)
+    if corpus != "all":
+        # filter DURING retrieval (vector + a source_type metadata filter) so a small corpus (catalog/plan) is not
+        # crowded out of the rerank window by the big corpora (Kandel/findings). BM25 can't filter, so vector-only here.
+        flt = MetadataFilters(filters=[MetadataFilter(key="source_type", value=corpus, operator=FilterOperator.EQ)])
+        retr = index.as_retriever(similarity_top_k=max(top_k * 4, 20), filters=flt)
+        cand = retr.retrieve(query)
+    else:
+        vec = index.as_retriever(similarity_top_k=12)
+        bm25 = BM25Retriever.from_defaults(docstore=index.docstore, similarity_top_k=12)
+        fusion = QueryFusionRetriever([vec, bm25], num_queries=1, mode="reciprocal_rerank",
+                                      similarity_top_k=12, use_async=False)
+        cand = fusion.retrieve(query)
+    nodes = reranker.postprocess_nodes(cand, query_str=query)[:top_k]
 
-# utf-8 to stdout (findings contain emoji/unicode; avoid cp1252 crash on Windows console)
 buf = io.StringIO()
-buf.write(f'Q: {query}   ({time.time()-t0:.2f}s, top {top_k})\n')
-for i, n in enumerate(nodes[:top_k]):
-    src = n.node.metadata.get("file_name") or n.node.metadata.get("file_path") or n.node.ref_doc_id or ""
-    src = os.path.basename(str(src))
+buf.write(f'Q: {query}   ({time.time()-t0:.2f}s, top {top_k}, corpus={corpus}, index={os.path.basename(persist)})\n')
+for i, n in enumerate(nodes):
+    md = n.node.metadata or {}
+    stype = md.get("source_type", "?")
+    src = md.get("source") or os.path.basename(str(n.node.ref_doc_id or ""))
     txt = " ".join((n.node.get_content() or "")[:220].split())
     score = round(n.score, 3) if n.score is not None else ""
-    buf.write(f"  [{i+1}] {score}  {src}\n      {txt}\n")
+    buf.write(f"  [{i+1}] {score}  ({stype}) {src}\n      {txt}\n")
+if not nodes:
+    buf.write("  (no hits" + (f" in corpus '{corpus}'" if corpus != "all" else "") + ")\n")
 sys.stdout.buffer.write(buf.getvalue().encode("utf-8", "replace"))
 sys.stdout.buffer.write(b"\n")
