@@ -77,7 +77,11 @@ ALL_ARMS = RESERVOIR_ARMS + ["BPTT_same_net"]          # the 5 pre-registered ar
 # eligibility propagates credit forward over long spans, so e-prop can reach the DEEP within-block context the plain
 # forward-filtered (~1/alpha) eligibility cannot. Ported faithfully from `_emerge_reservoir_lm_eprop_recurrent_derisk`.
 ALIF_ARMS = ["plastic_eprop_alif", "plastic_eprop_alif_readonly"]
-EXTRA_ARMS = ["BPTT_fixed_win", "plastic_eprop_dualtc", "plastic_eprop_dualtc_shuffle"] + ALIF_ARMS   # isolation/lever/anti-cheat arms (R1b BPTT-fixed-W_in; R2b dual-timescale eligibility + its shuffle control; R2 ALIF)
+EXTRA_ARMS = (["BPTT_fixed_win", "BPTT_matched_readout", "plastic_eprop_dualtc", "plastic_eprop_dualtc_shuffle",
+               "plastic_eprop_multitc"] + ALIF_ARMS)   # isolation/lever/anti-cheat arms (R1b BPTT-fixed-W_in; R1c
+# BPTT-matched-readout = the FAIR denominator [same delta-rule read-out + frozen b=0 as e-prop, so the ONLY diff from
+# plastic_eprop is the W_rec CREDIT RULE]; R2b dual-timescale eligibility + its shuffle control; R2c multi-timescale
+# eligibility [horizon-vs-off-diagonal decider]; R2 ALIF)
 KNOWN_ARMS = ALL_ARMS + EXTRA_ARMS
 
 
@@ -100,6 +104,21 @@ def elig_update(e, act, h_prev, alpha):
        psi_j = alpha*(1-act_j^2) is the leaky-tanh pseudo-derivative; the increment is the outer product psi (x) h_prev."""
     psi = alpha * (1.0 - act * act)              # (batch,n)
     return (1.0 - alpha) * e + psi.unsqueeze(2) * h_prev.unsqueeze(1)   # (batch,n,n)
+
+
+def elig_slow_update(e_slow, incr, a_slow, ema):
+    """SLOW-timescale eligibility trace (dual/multi-timescale credit horizon). `incr` = the SAME fast LOCAL increment
+       psi*h_prev (= d(alpha*act_j)/dW_rec[j,i], own-unit / DIAGONAL, no off-diagonal cross-unit term); the ONLY difference
+       from the fast trace is the SLOWER leak (1-a_slow) (horizon ~1/a_slow >> ~1/alpha) and NO forward-dynamics change.
+         ema=False -> GAIN-1 form  e_slow = (1-a_slow)*e_slow + incr        (steady-state magnitude ~1/a_slow: the a_slow
+                      axis is simultaneously a HORIZON axis AND an update-MAGNITUDE axis -- the R2 confound).
+         ema=True  -> TRUE-EMA form e_slow = (1-a_slow)*e_slow + a_slow*incr (steady-state magnitude is a_slow-INVARIANT, so
+                      an a_slow sweep isolates HORIZON from update-magnitude).
+       Used by BOTH training AND the grad-check so the finite-diff check validates the exact code path. (Note: the DEFAULT
+       gain-1 dualtc path in train_eprop stays an inline `(1-a_slow)*e_slow + incr` for byte-identity; this helper is used
+       only on the EMA + multitc paths, and is what the grad-check exercises.)"""
+    g = a_slow if ema else 1.0
+    return (1.0 - a_slow) * e_slow + g * incr
 
 
 # ---- ALIF adaptation-as-state forward + FAITHFUL 2-component eligibility (Bellec-2020 e-prop ALIF), batched torch port
@@ -170,10 +189,15 @@ def build_alif_extra(V, n, seed, rho_win_lo, rho_win_hi):
 # ======================================================================================================================
 # Training arms
 # ======================================================================================================================
-def train_eprop(mode, init, tr_lanes, V, n, alpha, B, epochs, lr_out, lr_rec, wd_out, dev, a_slow=0.02):
+def train_eprop(mode, init, tr_lanes, V, n, alpha, B, epochs, lr_out, lr_rec, wd_out, dev, a_slow=0.02,
+                elig_ema=False, multitc_aslows=None):
     """Contiguous-stream e-prop for one reservoir arm. tr_lanes: (batch, lane) long tensor on `dev`. h + eligibility are
-       carried across the 128-token block and RESET at each block boundary. `a_slow` = slow-eligibility leak, used ONLY by
-       the `plastic_eprop_dualtc` arm (horizon ~1/a_slow tokens). Returns (W_rec, W_out) (both detached)."""
+       carried across the 128-token block and RESET at each block boundary. `a_slow` = slow-eligibility leak, used by the
+       `plastic_eprop_dualtc` arm (horizon ~1/a_slow tokens). `elig_ema` (default off = byte-identical): the dualtc e_slow
+       uses the TRUE-EMA form (magnitude a_slow-invariant) instead of the gain-1 form -> separates horizon from update
+       magnitude. `plastic_eprop_multitc` adds K slow traces at `multitc_aslows` (default {0.05,0.02,0.01,0.005}), all
+       DIAGONAL, EMA form; credit = e_fast + sum(e_slow_k) -- a lift ABOVE single-timescale dualtc means the residual is
+       HORIZON (cheap), not an off-diagonal wall. Returns (W_rec, W_out, W_in, b) (all detached)."""
     import torch, torch.nn.functional as F
     W_rec = torch.tensor(init["W_rec"], dtype=torch.float32, device=dev)
     W_in = torch.tensor(init["W_in"], dtype=torch.float32, device=dev)      # FIXED input projection (reservoir setup)
@@ -186,6 +210,8 @@ def train_eprop(mode, init, tr_lanes, V, n, alpha, B, epochs, lr_out, lr_rec, wd
     plastic = (mode != "fixed_reservoir")
     dualtc = mode in ("plastic_eprop_dualtc", "plastic_eprop_dualtc_shuffle")   # dual-timescale eligibility (slow credit horizon, no forward change)
     dualtc_shuffle = (mode == "plastic_eprop_dualtc_shuffle")   # ANTI-CHEAT: permute the combined eligibility (same magnitude, broken structure -> lift must collapse if it is genuine credit, not capacity/magnitude)
+    multitc = (mode == "plastic_eprop_multitc")                 # MULTI-timescale: fast + a SUM of K slow traces (all DIAGONAL, EMA form) -- horizon-vs-off-diagonal decider
+    multitc_aslows = list(multitc_aslows) if multitc_aslows else [0.05, 0.02, 0.01, 0.005]
     for ep in range(epochs):
         for j in range(nb):                                # consecutive contiguous blocks (deterministic order = fair)
             s = j * B
@@ -193,6 +219,7 @@ def train_eprop(mode, init, tr_lanes, V, n, alpha, B, epochs, lr_out, lr_rec, wd
             h = torch.zeros(batch, n, device=dev)
             e = torch.zeros(batch, n, n, device=dev)       # reset state + eligibility at the block boundary
             e_slow = torch.zeros(batch, n, n, device=dev) if dualtc else None   # DUAL-TIMESCALE: slow eligibility trace
+            e_slows = [torch.zeros(batch, n, n, device=dev) for _ in multitc_aslows] if multitc else None   # MULTI-TIMESCALE: K slow traces
             for p in range(B):
                 h_prev = h
                 h, act = rnn_forward_step(h_prev, x[:, p], W_rec, W_in, b, alpha)
@@ -211,7 +238,20 @@ def train_eprop(mode, init, tr_lanes, V, n, alpha, B, epochs, lr_out, lr_rec, wd
                     psi = alpha * (1.0 - act * act)
                     incr = psi.unsqueeze(2) * h_prev.unsqueeze(1)
                     e = (1.0 - alpha) * e + incr
-                    e_slow = (1.0 - a_slow) * e_slow + incr
+                    if elig_ema:
+                        e_slow = elig_slow_update(e_slow, incr, a_slow, ema=True)   # TRUE-EMA (magnitude a_slow-INVARIANT): separates horizon from magnitude
+                    else:
+                        e_slow = (1.0 - a_slow) * e_slow + incr                     # gain-1 form (DEFAULT; BYTE-IDENTICAL to the pre-existing dualtc)
+                elif multitc:
+                    # MULTI-timescale: the fast trace + a SUM of K slow traces at different a_slow, all DIAGONAL (own-unit
+                    # increment psi*h_prev, NO off-diagonal cross-unit term). EMA form so magnitude is a_slow-controlled --
+                    # a lift ABOVE single-timescale dualtc means the residual is HORIZON (cheaply surpassable), not an
+                    # off-diagonal wall. credit = e_fast + sum_k e_slow_k.
+                    psi = alpha * (1.0 - act * act)
+                    incr = psi.unsqueeze(2) * h_prev.unsqueeze(1)
+                    e = (1.0 - alpha) * e + incr
+                    for k in range(len(e_slows)):
+                        e_slows[k] = elig_slow_update(e_slows[k], incr, multitc_aslows[k], ema=True)
                 else:
                     e = elig_update(e, act, h_prev, alpha)
                 if mode == "zero_signal":
@@ -226,6 +266,10 @@ def train_eprop(mode, init, tr_lanes, V, n, alpha, B, epochs, lr_out, lr_rec, wd
                     if dualtc_shuffle:                     # anti-cheat: permute the combined eligibility (magnitude kept, structure broken)
                         perm = torch.randperm(n * n, device=dev)
                         e_use = e_use.reshape(batch, n * n)[:, perm].reshape(batch, n, n)
+                elif multitc:
+                    e_use = e                              # multi-timescale credit = fast + sum of the K slow-horizon traces
+                    for es in e_slows:
+                        e_use = e_use + es
                 else:
                     e_use = e
                 dW = lr_rec * (L.unsqueeze(2) * e_use).mean(0)      # average the per-lane W_rec updates over the batch
@@ -333,6 +377,63 @@ def train_bptt(init, tr_lanes, V, n, alpha, B, bptt_steps, bptt_lr, dev, fix_win
     return W_rec.detach(), W_out.detach(), W_in.detach(), b.detach()
 
 
+def train_bptt_matched_readout(init, tr_lanes, V, n, alpha, B, bptt_steps, bptt_lr, dev, lr_out, wd_out):
+    """The FAIR denominator (R1c). W_rec is trained by FULL BACKPROP truncated to the 128-block (identical recurrent-credit
+       machinery to BPTT_fixed_win: AdamW + grad-clip), but the read-out is MATCHED to the e-prop arms instead of AdamW-
+       trained: bias b FROZEN at 0, and W_out updated by the SAME one-step online DELTA rule the e-prop arms use
+       (W_out += lr_out*((delta.t()@h)/batch - wd_out*W_out)). W_in FROZEN to the same fixed random projection as e-prop.
+       ⇒ the ONLY difference from plastic_eprop / plastic_eprop_dualtc / plastic_eprop_multitc is the W_rec CREDIT RULE
+       (full BPTT off-diagonal vs e-prop diagonal RTRL vs dual/multi-timescale) on IDENTICAL read-out + frozen b=0 +
+       frozen W_in. This disentangles the pure recurrent-credit fraction from the read-out differences the all-params
+       ceilings smuggle in: BPTT_same_net trains W_in+b+W_out by AdamW; BPTT_fixed_win still trains b+W_out by AdamW
+       (its ctx1 read-out-only margin differs from the e-prop arms' by ~+1.79 -- exactly the confound this arm removes).
+
+       FAITHFUL CONSTRUCTION (documented per the task). W_rec is the SOLE autograd nn.Parameter; W_in/b/W_out are plain
+       non-grad tensors. Within a block, at each token the logits are h_t @ W_out.t() -- h_t carries grad through W_rec,
+       W_out is a detached (constant-to-the-graph) tensor, so the per-token logits' gradient flows through W_rec ONLY. The
+       read-out delta rule updates the EVOLVING W_out inside torch.no_grad() (a separate learning channel: no graph on
+       W_out, no BPTT through the read-out -- exactly as the read-out is treated in e-prop). After the block, the mean-CE
+       loss (over all tokens, from the delta-rule-evolving detached W_out) backprops ONLY through the recurrent trajectory
+       to W_rec (grad-clip 1.0, AdamW step); h is reset at each block boundary (truncated BPTT window, matching the e-prop
+       reset). Returns (W_rec, W_out, W_in, b) detached (W_out is (V,n), same shape as the e-prop arms)."""
+    import torch, torch.nn as nn, torch.nn.functional as F
+    W_rec = nn.Parameter(torch.tensor(init["W_rec"], dtype=torch.float32, device=dev))
+    W_in = torch.tensor(init["W_in"], dtype=torch.float32, device=dev)      # FROZEN: same fixed random projection as e-prop
+    b = torch.tensor(init["b"], dtype=torch.float32, device=dev)            # FROZEN at 0 (matched to the e-prop arms' b=0)
+    W_out = torch.tensor(init["W_out"], dtype=torch.float32, device=dev)    # NOT a Parameter; online delta-rule read-out
+    opt = torch.optim.AdamW([W_rec], lr=bptt_lr)
+    batch, lane = tr_lanes.shape
+    nb = (lane - 1) // B
+    ar = torch.arange(batch, device=dev)
+    step = 0
+    while step < bptt_steps:
+        for j in range(nb):
+            if step >= bptt_steps:
+                break
+            s = j * B
+            x = tr_lanes[:, s:s + B]; y = tr_lanes[:, s + 1:s + B + 1]
+            h = torch.zeros(batch, n, device=dev)          # fresh state at the block boundary (truncated BPTT window)
+            logits_all = []
+            for p in range(B):
+                h, _ = rnn_forward_step(h, x[:, p], W_rec, W_in, b, alpha)
+                logits = h @ W_out.t()                      # grad flows through h -> W_rec ONLY (W_out detached)
+                logits_all.append(logits)
+                with torch.no_grad():                       # read-out delta rule (IDENTICAL to e-prop; separate channel)
+                    probs = F.softmax(logits, dim=-1)
+                    delta = -probs
+                    delta[ar, y[:, p]] += 1.0               # onehot(target) - softmax(logits)
+                    W_out = W_out + lr_out * ((delta.t() @ h) / batch - wd_out * W_out)
+            logits = torch.stack(logits_all, dim=1)         # (batch,B,V)
+            loss = F.cross_entropy(logits.reshape(-1, V), y.reshape(-1))
+            opt.zero_grad(); loss.backward()
+            torch.nn.utils.clip_grad_norm_([W_rec], 1.0)    # clip W_rec only (the sole backprop-trained parameter)
+            opt.step()
+            step += 1
+            if step % 1000 == 0 or step == bptt_steps:
+                print(f"      [BPTT_matched_readout] step {step}/{bptt_steps} train-CE {loss.item():.3f}", flush=True)
+    return W_rec.detach(), W_out.detach(), W_in.detach(), b.detach()
+
+
 # ======================================================================================================================
 # Eval: CE by within-block context depth (position), bucketed; margin vs the add-1 stream bigram.
 # ======================================================================================================================
@@ -409,7 +510,15 @@ def _pooled_margin(tce, bce, cnt, lo, hi):
 
 
 def summarize(tce, bce, cnt, B):
-    """Per-bucket margins (BK) + pooled SHALLOW (pos 1-8) / DEEP (pos 17-127) margins + aggregate CE."""
+    """Per-bucket margins (BK) + pooled SHALLOW (pos 1-8) / DEEP (pos 17-127) margins + aggregate CE.
+       ALSO (additive; the pre-registered gate reads only shallow_margin/deep_margin/by_bucket, which are byte-UNCHANGED):
+         deep_subbuckets     -- finer DEEP sub-buckets 17-32 / 33-64 / 65-96 / 97-(B-1), so 'long-range/100+-token' is
+                                verified at the FAR end (97-127) and a ctx32-saturated 17-32 can't carry the pooled 17-B.
+         ctx1_readout_margin -- position 0 (the first within-block token): h_0=0 at the block boundary -> rec = h_0@W_rec=0
+                                so W_rec has ZERO effect; this is a READ-OUT-ONLY diagnostic (must be ~equal across arms
+                                under a fair matched read-out; an unequal ctx1 flags a read-out-training confound, not a
+                                recurrent-credit difference). NOTE: position 0 is excluded from the BK buckets + agg_ce
+                                (bucket '1' is position INDEX 1); this is the distinct index-0 read-out-only slot."""
     BK = [(1, 1), (2, 2), (3, 3), (4, 8), (9, 16), (17, B - 1)]
     by_bucket = {}
     for lo, hi in BK:
@@ -418,9 +527,17 @@ def summarize(tce, bce, cnt, B):
         by_bucket[key] = round(_pooled_margin(tce, bce, cnt, lo, hi), 4)
     shallow = _pooled_margin(tce, bce, cnt, 1, 8)         # union of buckets 1-1..4-8
     deep = _pooled_margin(tce, bce, cnt, 17, B - 1)       # bucket 17-B
+    deep_sub = {}
+    for lo, hi in [(17, 32), (33, 64), (65, 96), (97, B - 1)]:
+        hi = min(hi, B - 1)
+        if lo > hi:
+            continue
+        deep_sub[f"{lo}-{hi}"] = round(_pooled_margin(tce, bce, cnt, lo, hi), 4)
+    ctx1 = _pooled_margin(tce, bce, cnt, 0, 0)            # position 0: read-out-only (h_0=0 -> W_rec has zero effect)
     agg_ce = float(tce[1:].sum() / max(cnt[1:].sum(), 1.0))
     return {"by_bucket": by_bucket, "shallow_margin": round(shallow, 4),
-            "deep_margin": round(deep, 4), "aggregate_ce": round(agg_ce, 4)}
+            "deep_margin": round(deep, 4), "deep_subbuckets": deep_sub,
+            "ctx1_readout_margin": round(ctx1, 4), "aggregate_ce": round(agg_ce, 4)}
 
 
 # ======================================================================================================================
@@ -536,6 +653,75 @@ def _grad_check_alif(n=5, V=6, seq_len=8, seed=1):
     return fd_pass and tn_pass
 
 
+def _grad_check_slow(n=5, V=6, seq_len=8, seed=1):
+    """CHECK SLOW (faithfulness of the dual/multi-timescale slow eligibility `elig_slow_update`, BOTH gain-1 and TRUE-EMA):
+         (1) FD: e_slow[j,i] vs a LOCAL finite-difference of an auxiliary SLOW state s_j w.r.t. W_rec[j,i], where
+             s_j = (1-a_slow)*s_{j,prev} + g*alpha*act_j (g=1 gain-1 / g=a_slow EMA). Since the slow increment
+             g*psi*h_prev = d(g*alpha*act_j)/dW_rec[j,i], e_slow IS d s_j/dW_rec[j,i] under the SAME e-prop locality
+             (cross drives held at the reference trajectory). Target ~1e-5 rel err.
+         (2) torch==numpy (float64): the torch training-path slow trace (rnn_forward_step + elig_slow_update, batch=1)
+             matches the numpy port bit-for-bit. Run for BOTH ema modes with a_slow=0.1 (active within the 8-step check)."""
+    import torch
+    rng = np.random.default_rng(seed)
+    ids = rng.integers(0, V, size=seq_len)
+    alpha = 0.3; a_slow = 0.1
+    init = build_init(V, n, seed + 1, spectral=1.1)
+    Wr = init["W_rec"]; W_in = init["W_in"]; b = init["b"]
+    hs, recs, _ = _leaky_trace_np(Wr, W_in, b, alpha, ids, n)     # same forward as the fast check
+    hprev_list = [np.zeros(n)] + hs[:-1]                          # h_prev at each step (zeros at t=0)
+    acts = [np.tanh(recs[t] + W_in[:, ids[t]] + b) for t in range(seq_len)]   # reference activation per step
+
+    def numpy_eslow(g):                                          # analytic slow eligibility (matches elig_slow_update)
+        e_slow = np.zeros((n, n))
+        for t in range(seq_len):
+            psi = alpha * (1.0 - acts[t] * acts[t])
+            incr = psi[:, None] * hprev_list[t][None, :]
+            e_slow = (1.0 - a_slow) * e_slow + g * incr
+        return e_slow
+
+    def local_slow_final(j, i, dw, g):                          # aux slow state s_j at the final step, cross drives at ref
+        sj = 0.0
+        for t in range(seq_len):
+            act_j = np.tanh(recs[t][j] + dw * hprev_list[t][i] + W_in[j, ids[t]] + b[j])   # perturb ONLY the direct w_ji term
+            sj = (1.0 - a_slow) * sj + g * alpha * act_j
+        return sj
+
+    dh = 1e-6
+    ok = True; report = []
+    for ema in (False, True):
+        g = a_slow if ema else 1.0
+        an = numpy_eslow(g)
+        maxrel = 0.0; maxabs = 0.0
+        for j in range(n):
+            for i in range(n):
+                fd = (local_slow_final(j, i, dh, g) - local_slow_final(j, i, -dh, g)) / (2 * dh)
+                maxabs = max(maxabs, abs(fd - an[j, i]))
+                if abs(an[j, i]) > 1e-7:
+                    maxrel = max(maxrel, abs(fd - an[j, i]) / abs(an[j, i]))
+        fd_pass = maxrel < 1e-4
+        dev = "cpu"                                             # torch training-path == numpy (float64, batch=1)
+        W_rec_t = torch.tensor(Wr, dtype=torch.float64, device=dev)
+        W_in_t = torch.tensor(W_in, dtype=torch.float64, device=dev)
+        b_t = torch.tensor(b, dtype=torch.float64, device=dev)
+        h = torch.zeros(1, n, dtype=torch.float64, device=dev)
+        e_slow_t = torch.zeros(1, n, n, dtype=torch.float64, device=dev)
+        for t in ids:
+            h_prev = h
+            h, act = rnn_forward_step(h_prev, torch.tensor([t], device=dev), W_rec_t, W_in_t, b_t, alpha)
+            psi = alpha * (1.0 - act * act)
+            incr = psi.unsqueeze(2) * h_prev.unsqueeze(1)
+            e_slow_t = elig_slow_update(e_slow_t, incr, a_slow, ema=ema)
+        tn = float(np.max(np.abs(e_slow_t[0].cpu().numpy() - an)))
+        tn_pass = tn < 1e-8
+        ok = ok and fd_pass and tn_pass
+        report.append(("EMA  " if ema else "gain1", maxrel, maxabs, tn, fd_pass and tn_pass))
+    for tag, maxrel, maxabs, tn, p in report:
+        print(f"  CHECK SLOW [{tag}] (e_slow vs LOCAL finite-diff of aux slow-state s_j w.r.t. W_rec[j,i]): "
+              f"max_rel_err {maxrel:.2e} (max_abs {maxabs:.2e}) | torch==numpy max_abs {tn:.2e}  ->  "
+              f"{'PASS' if p else 'FAIL'}", flush=True)
+    return ok
+
+
 def grad_check(n=5, V=6, seq_len=8, seed=1):
     """CHECK A (numpy, EXACT): eps_h[j,i] vs a LOCAL finite difference of h_j w.r.t. W_rec[j,i], perturbing ONLY the direct
        w_ji term (cross drives held at the reference trajectory). Target ~1e-5 rel err.
@@ -593,8 +779,9 @@ def grad_check(n=5, V=6, seq_len=8, seed=1):
     print(f"  CHECK T (torch training-path eps == numpy eps, float64 tiny net): "
           f"max_abs_diff {torch_np_maxabs:.2e}  ->  {'PASS' if checkT_pass else 'FAIL'}", flush=True)
     alif_pass = _grad_check_alif(n=n, V=V, seq_len=seq_len, seed=seed)      # the ADDED ALIF 2-component eligibility check
-    all_pass = checkA_pass and checkT_pass and alif_pass
-    print(f"  GRAD-CHECK (plain e-prop + ALIF): {'PASS' if all_pass else 'FAIL'}", flush=True)
+    slow_pass = _grad_check_slow(n=n, V=V, seq_len=seq_len, seed=seed)      # the ADDED dual/multi-timescale slow-eligibility check
+    all_pass = checkA_pass and checkT_pass and alif_pass and slow_pass
+    print(f"  GRAD-CHECK (plain e-prop + ALIF + slow-eligibility): {'PASS' if all_pass else 'FAIL'}", flush=True)
     print("=" * 100, flush=True)
     return 0 if all_pass else 1
 
@@ -662,6 +849,8 @@ def main():
     ap.add_argument("--lr-rec", type=float, default=0.001)           # e-prop W_rec lr
     ap.add_argument("--wd-out", type=float, default=1e-3)            # read-out weight decay (identical across e-prop arms)
     ap.add_argument("--a-slow", type=float, default=0.02)           # dual-timescale slow-eligibility leak (~1/0.02=50-token horizon)
+    ap.add_argument("--elig-ema", action="store_true")              # dualtc e_slow uses TRUE-EMA (gain a_slow -> magnitude a_slow-INVARIANT); default off = byte-identical gain-1
+    ap.add_argument("--multitc-aslows", type=str, default="0.05 0.02 0.01 0.005")   # plastic_eprop_multitc slow leaks (space-separated)
     ap.add_argument("--bptt-steps", type=int, default=8000)          # BPTT ceiling: optimizer steps
     ap.add_argument("--bptt-lr", type=float, default=2e-3)           # BPTT AdamW lr (mirrors the ceiling runner)
     # ---- ALIF adaptation-as-state arms (additive; only used when a plastic_eprop_alif* arm is requested) ----
@@ -728,6 +917,8 @@ def main():
           "the DEEP margin. A shallow-only capture is an HONEST NEGATIVE on long-range -- a first-class deliverable.",
           flush=True)
 
+    multitc_aslows = [float(x) for x in args.multitc_aslows.split()]     # slow leaks for plastic_eprop_multitc
+
     t0 = time.time()
     arms = {}; arm_wrec = {}; alif_artifacts = None
     for arm in args.arms:
@@ -738,13 +929,18 @@ def main():
         elif arm == "BPTT_fixed_win":
             W_rec, W_out, W_in, b = train_bptt(init, tr_lanes, V, n, args.alpha, B, args.bptt_steps, args.bptt_lr, dev,
                                                fix_win=True)
+        elif arm == "BPTT_matched_readout":
+            W_rec, W_out, W_in, b = train_bptt_matched_readout(init, tr_lanes, V, n, args.alpha, B, args.bptt_steps,
+                                                               args.bptt_lr, dev, args.lr_out, args.wd_out)
         elif is_alif:
             W_rec, W_out, W_in, b = train_eprop_alif(arm, init, alif_extra, tr_lanes, V, n, args.alpha,
                                                      alif_extra["rho"], args.beta, B, args.epochs,
                                                      args.lr_out, args.lr_rec, args.wd_out, dev)
-        elif arm in RESERVOIR_ARMS or arm in ("plastic_eprop_dualtc", "plastic_eprop_dualtc_shuffle"):
+        elif arm in RESERVOIR_ARMS or arm in ("plastic_eprop_dualtc", "plastic_eprop_dualtc_shuffle",
+                                              "plastic_eprop_multitc"):
             W_rec, W_out, W_in, b = train_eprop(arm, init, tr_lanes, V, n, args.alpha, B, args.epochs,
-                                                args.lr_out, args.lr_rec, args.wd_out, dev, a_slow=args.a_slow)
+                                                args.lr_out, args.lr_rec, args.wd_out, dev, a_slow=args.a_slow,
+                                                elig_ema=args.elig_ema, multitc_aslows=multitc_aslows)
         else:
             raise SystemExit(f"unknown arm '{arm}' (choose from {KNOWN_ARMS})")
         if is_alif:                                        # ALIF read-out is over [h;a] (2n) -> the ALIF-aware eval
@@ -785,6 +981,24 @@ def main():
         row = "    " + f"{arm:>16}" + "".join(f"{s['by_bucket'].get(k, float('nan')):>+10.4f}" for k in BK_keys)
         row += f"{s['shallow_margin']:>+10.4f}{s['deep_margin']:>+10.4f}"
         print(row, flush=True)
+
+    # DEEP SUB-BUCKETS (additive): verify long-range at the FAR end (97-127), not a ctx32-saturated 17-32 carrying 17-B.
+    ds_keys = list(arms[args.arms[0]]["deep_subbuckets"].keys())
+    if ds_keys:
+        print("\n[stream-eprop] DEEP SUB-BUCKETS (finer within-block depth; the FAR end 97-127 = the true 100+-token test):",
+              flush=True)
+        print("    " + f"{'arm':>18}" + "".join(f"{k:>12}" for k in ds_keys), flush=True)
+        for arm in args.arms:
+            ds = arms[arm]["deep_subbuckets"]
+            print("    " + f"{arm:>18}" + "".join(f"{ds.get(k, float('nan')):>+12.4f}" for k in ds_keys), flush=True)
+
+    # ctx1 READ-OUT-ONLY diagnostic (additive): position 0 (h_0=0 -> W_rec has ZERO effect). Under a FAIR matched read-out
+    # these must be ~EQUAL across arms; an unequal ctx1 flags a read-out-training confound (e.g. BPTT_fixed_win trains b +
+    # W_out by AdamW), NOT a recurrent-credit difference -- exactly why BPTT_matched_readout freezes b=0 + delta-rule W_out.
+    print("\n[stream-eprop] ctx1 READ-OUT-ONLY diagnostic (pos 0, h_0=0 -> W_rec has ZERO effect; ~equal iff read-out matched):",
+          flush=True)
+    for arm in args.arms:
+        print(f"        {arm:>18}: ctx1 margin {arms[arm]['ctx1_readout_margin']:+.4f}", flush=True)
 
     gate = compute_gate(arms, byte_identical if byte_identical is not None else False)
     print("\n[stream-eprop] ANTI-CHEATS:", flush=True)
