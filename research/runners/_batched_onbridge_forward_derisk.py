@@ -42,6 +42,9 @@ def build_net(n_in, hidden, k, W, seed, settle_steps, n_copies=1):
     cfg.enable_ou_process = False   # deterministic forward: batched==serial EXACTLY iff the block-diagonal mechanism
                                     # has no cross-copy coupling (OU-on differs only by the per-copy noise realization)
     cfg.enable_homeostasis = False  # rule out threshold-homeostasis (firing-rate EMA) as the cross-copy coupler
+    cfg.enable_structural_plasticity = False
+    cfg.enable_parameter_heterogeneity = False  # <-- if the per-neuron param draw depends on n_total, copy 0 differs
+                                                # between 1-copy and M-copy (a 'presence' effect via INIT, not a step op)
     cfg.actual_seed_used = int(seed)
     br = SimulationBridge(core_config=cfg, gpu_config=GPUConfig(),
                           viz_config=VisualizationConfig(), runtime_state=RuntimeState())
@@ -69,8 +72,9 @@ def build_net(n_in, hidden, k, W, seed, settle_steps, n_copies=1):
 
 
 def _drive_and_settle(br, copy_slices, sizes, feats, settle_steps, tonic_h=450.0, tonic_o=500.0,
-                      in_cur=520.0, in_bias=260.0):
-    """Drive each copy c with feats[c] on its input slice (+ tonic on hidden/out), settle, return per-copy layer E."""
+                      in_cur=520.0, in_bias=260.0, solo=False):
+    """Drive each copy c with feats[c] on its input slice (+ tonic on hidden/out), settle, return per-copy layer E.
+    solo=True: drive ONLY copy 0 (all other copies get ZERO drive -> silent) -> presence-vs-activity coupling test."""
     from sim.backend import get_backend, to_host
     xp, _ = get_backend()
     n_total = int(br.cp_membrane_potential_v.shape[0])
@@ -80,6 +84,8 @@ def _drive_and_settle(br, copy_slices, sizes, feats, settle_steps, tonic_h=450.0
         br.cp_bdsp_E[...] = 0.0; br.cp_bdsp_B[...] = 0.0
         br.cp_bdsp_last_spike_step = xp.full(n_total, -1000000, dtype=xp.int64)
     for c, slices in enumerate(copy_slices):
+        if solo and c != 0:
+            continue                                    # leave this copy fully silent (zero drive)
         for li in range(1, len(sizes) - 1):
             drive[slices[li]] = tonic_h
         drive[slices[-1]] = tonic_o
@@ -149,6 +155,15 @@ def main():
     print(f"  batched (1 M-copy forward)       : {t_batched:.2f}s  ({t_batched/args.M*1000:.0f} ms/example)")
     sp = t_serial / max(t_batched, 1e-9)
     print(f"  end-to-end speedup: {sp:.1f}x")
+
+    # --- PRESENCE vs ACTIVITY diagnostic: copy 0 in an M-copy bridge with ALL OTHERS SILENT vs a lone 1-copy bridge ---
+    br1, cs1, sz1 = build_net(args.n_in, args.hidden, args.k, W, args.seed, args.settle_steps, n_copies=1)
+    solo_ref = _drive_and_settle(br1, cs1, sz1, [feats[0]], args.settle_steps)[0]
+    brS, csS, szS = build_net(args.n_in, args.hidden, args.k, W, args.seed, args.settle_steps, n_copies=args.M)
+    solo_read = _drive_and_settle(brS, csS, szS, feats, args.settle_steps, solo=True)[0]
+    solo_d = max(float(np.max(np.abs(np.asarray(solo_read[li]) - np.asarray(solo_ref[li])))) for li in range(len(sizes)))
+    print(f"  PRESENCE test: copy0 (others SILENT) vs lone-1copy max|Δ| = {solo_d:.4f}  "
+          f"-> {'PRESENCE-coupled (a count/global op over all neurons)' if solo_d > 1e-6 else 'ACTIVITY-coupled (silent others do not perturb)'}")
     print(f"  VERDICT: {'GO — block-diagonal batched forward is correct AND faster' if (ok and sp > 1.5) else ('CORRECT but not faster at this M/size' if ok else 'NO-GO (mismatch)')}")
 
 
