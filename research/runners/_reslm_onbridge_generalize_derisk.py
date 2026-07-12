@@ -37,12 +37,24 @@ from research.runners._reslm_generalize_rate_check import build_codes, build_str
 class GenReservoir(WinLearnReservoir):
     """Same on-bridge fixed reservoir + BDSP-learned W_in, but each presentation step drives a MULTI-HOT code (a list of
     active input dims) instead of a single token sub-pop -- so tokens can share code structure (the class feature) and
-    carry a class-irrelevant identity confound. Everything else (forward/train_arm/read/BDSP credit) is inherited."""
+    carry a class-irrelevant identity confound. Everything else (forward/train_arm/read/BDSP credit) is inherited.
+
+    DENDRITIC per-compartment gain (dend_gain, the D1/D1.5 mechanism): each input dim = its own compartment with a LOCAL
+    divisive gain g_d adapted to that dim's own activation FREQUENCY; the drive is normalized in_hi/(sigma + g_d). Common
+    dims (the identity confound, shared across classes -> high frequency) get a large g_d -> down-weighted; category-
+    specific class dims (lower frequency) keep a small g_d -> emphasized. This is the per-input normalization a single-
+    soma point neuron provably cannot deliver (2026-06-14 D1 GO; survives the spike read D1.5) -- the mapped escape for
+    the point-neuron confound-suppression boundary. dend_gain=None => byte-identical to the plain multi-hot drive."""
+    dend_gain = None
+    dend_sigma = 0.05
+
     def _drive_for_token(self, active, silence):
         cur = np.zeros(self._num, np.float32)
         if not silence:
             for d in np.atleast_1d(active):
-                cur[self.tok_idx[int(d)]] = self.in_hi
+                d = int(d)
+                _hi = self.in_hi if self.dend_gain is None else self.in_hi / (self.dend_sigma + float(self.dend_gain[d]))
+                cur[self.tok_idx[d]] = _hi
         cur[self.res_idx] += self.res_bias
         return cur
 
@@ -71,6 +83,18 @@ def _derisk_one(seed, args):
     # graded clean-error credit (the M2.6 lever): read the apical credit as the graded E*P expectation instead of the
     # noisy measured burst B (additive sim/ flag, default-off byte-identical). The kernel reads cfg at runtime.
     res.cfg.enable_bdsp_graded_credit = bool(args.bdsp_graded)
+    # DENDRITIC per-compartment gain (D1/D1.5): per-input-dim divisive gain = the dim's activation FREQUENCY over the
+    # training stream (common identity dims -> high freq -> down-weighted; class dims -> lower -> emphasized). The
+    # per-input normalization a single-soma point neuron cannot deliver -- the mapped escape for this boundary.
+    if args.dend_gain:
+        toks_seen = np.array([t for (t, _) in train_raw], dtype=int)
+        g = codes[toks_seen].mean(axis=0).astype(np.float64)              # per-dim activation frequency
+        if args.dend_permute:
+            # ANTI-CHEAT: shuffle which dim gets which gain -> breaks the frequency<->dim correspondence. If the lift
+            # survives this, it's a drive-scale artifact, not the per-compartment (frequency-matched) normalization.
+            np.random.default_rng(seed * 613 + 5).shuffle(g)
+        res.dend_gain = g
+        res.dend_sigma = float(args.dend_sigma)
     res._seed_for_Y = seed + 9973
     res.set_n_classes(n_classes)
     res._w_init = res._weights().copy()
@@ -159,6 +183,13 @@ def main():
     ap.add_argument("--bdsp-graded", action="store_true",
                     help="use the GRADED clean-error credit (E*P) instead of the noisy measured burst B "
                          "(enable_bdsp_graded_credit; the M2.6 lever for the credit-coarseness boundary)")
+    ap.add_argument("--dend-gain", action="store_true",
+                    help="DENDRITIC per-compartment divisive gain on the input drive (D1/D1.5): down-weight common "
+                         "(identity-confound) dims, emphasize category-specific class dims -- the point-neuron-can't "
+                         "per-input normalization that is the mapped escape for the confound-suppression boundary")
+    ap.add_argument("--dend-sigma", type=float, default=0.05)
+    ap.add_argument("--dend-permute", action="store_true",
+                    help="anti-cheat: shuffle the per-dim dendritic gains (break frequency<->dim) -> the lift must collapse")
     ap.add_argument("--arms", type=str, nargs="+", default=["fixed_win", "learn_win"])
     ap.add_argument("--smoke", action="store_true")
     ap.add_argument("--json", "--out", dest="json", type=str, default="raw/_reslm_gen_spk.json")
