@@ -1,0 +1,172 @@
+{
+  "runner": "_emerge_stream_eprop_lm_derisk",
+  "corpus": "data/corpus/tinystories_train.txt",
+  "seed": 42,
+  "V": 2000,
+  "n_pool": 300,
+  "block": 128,
+  "batch": 64,
+  "lane": 28125,
+  "epochs": 4,
+  "dualtc_clean_fraction": {},
+  "bptt_steps": 4000,
+  "dev": "cuda",
+  "permute_stream": false,
+  "args": {
+    "corpus": "data/corpus/tinystories_train.txt",
+    "max_tokens": 2000000,
+    "vocab": 2000,
+    "n_pool": 300,
+    "block": 128,
+    "epochs": 4,
+    "batch": 64,
+    "seed": 42,
+    "arms": [
+      "fixed_reservoir",
+      "plastic_eprop",
+      "BPTT_frozen_wrec",
+      "BPTT_fixed_win",
+      "BPTT_same_net"
+    ],
+    "alpha": 0.3,
+    "spectral": 1.1,
+    "lr_out": 0.02,
+    "lr_rec": 0.005,
+    "wd_out": 0.001,
+    "a_slow": 0.02,
+    "elig_ema": false,
+    "multitc_aslows": "0.05 0.02 0.01 0.005",
+    "bptt_steps": 4000,
+    "bptt_lr": 0.002,
+    "rho_win_lo": 30.0,
+    "rho_win_hi": 300.0,
+    "beta": 1.0,
+    "grad_check": false,
+    "smoke": false,
+    "permute_stream": false,
+    "json": "research/findings/raw/_r2_ctrl/_reframe_frozenwrec.json"
+  },
+  "arms": {
+    "fixed_reservoir": {
+      "by_bucket": {
+        "1": -3.3008,
+        "2": -3.3114,
+        "3": -3.289,
+        "4-8": -3.266,
+        "9-16": -3.1693,
+        "17-127": -2.7599
+      },
+      "shallow_margin": -3.2789,
+      "deep_margin": -2.7599,
+      "deep_subbuckets": {
+        "17-32": -3.0845,
+        "33-64": -2.9718,
+        "65-96": -2.6324,
+        "97-127": -2.5051
+      },
+      "ctx1_readout_margin": -3.2448,
+      "aggregate_ce": 7.1046
+    },
+    "plastic_eprop": {
+      "by_bucket": {
+        "1": -3.3072,
+        "2": -3.3192,
+        "3": -3.2962,
+        "4-8": -3.2625,
+        "9-16": -3.0511,
+        "17-127": -1.6573
+      },
+      "shallow_margin": -3.2794,
+      "deep_margin": -1.6573,
+      "deep_subbuckets": {
+        "17-32": -2.1689,
+        "33-64": -1.6538,
+        "65-96": -1.5454,
+        "97-127": -1.5125
+      },
+      "ctx1_readout_margin": -3.2487,
+      "aggregate_ce": 6.1335
+    },
+    "BPTT_frozen_wrec": {
+      "by_bucket": {
+        "1": 0.5444,
+        "2": 0.8203,
+        "3": 0.9328,
+        "4-8": 1.0472,
+        "9-16": 1.1684,
+        "17-127": 1.2575
+      },
+      "shallow_margin": 0.9417,
+      "deep_margin": 1.2575,
+      "deep_subbuckets": {
+        "17-32": 1.2387,
+        "33-64": 1.2664,
+        "65-96": 1.2596,
+        "97-127": 1.2558
+      },
+      "ctx1_readout_margin": -0.1226,
+      "aggregate_ce": 3.0542
+    },
+    "BPTT_fixed_win": {
+      "by_bucket": {
+        "1": -1.5103,
+        "2": -1.3437,
+        "3": -1.3755,
+        "4-8": -1.3862,
+        "9-16": -1.3668,
+        "17-127": -1.4006
+      },
+      "shallow_margin": -1.3951,
+      "deep_margin": -1.4006,
+      "deep_subbuckets": {
+        "17-32": -1.3927,
+        "33-64": -1.4236,
+        "65-96": -1.3879,
+        "97-127": -1.3941
+      },
+      "ctx1_readout_margin": -2.078,
+      "aggregate_ce": 5.6843
+    },
+    "BPTT_same_net": {
+      "by_bucket": {
+        "1": 0.4573,
+        "2": 0.6771,
+        "3": 0.7425,
+        "4-8": 0.8043,
+        "9-16": 0.8476,
+        "17-127": 0.9016
+      },
+      "shallow_margin": 0.7373,
+      "deep_margin": 0.9016,
+      "deep_subbuckets": {
+        "17-32": 0.888,
+        "33-64": 0.9083,
+        "65-96": 0.9087,
+        "97-127": 0.8943
+      },
+      "ctx1_readout_margin": -0.1612,
+      "aggregate_ce": 3.3984
+    }
+  },
+  "byte_identical_zero_eq_fixed": null,
+  "gate": {
+    "verdict": "INCOMPLETE (need all 5 arms; have ['BPTT_fixed_win', 'BPTT_frozen_wrec', 'BPTT_same_net', 'fixed_reservoir', 'plastic_eprop'])"
+  },
+  "clean_recurrent_credit_fraction": {
+    "BPTT_fixed_win": {
+      "frac_clean_deep": 0.8112,
+      "frac_clean_shallow": -0.0003,
+      "plastic_deep_gain": 1.1026,
+      "bptt_deep_gain": 1.3593
+    },
+    "BPTT_same_net": {
+      "frac_clean_deep": 0.3011,
+      "frac_clean_shallow": -0.0001,
+      "plastic_deep_gain": 1.1026,
+      "bptt_deep_gain": 3.6615
+    }
+  },
+  "alif_clean_fraction": {},
+  "alif_adapt_shuffle": null,
+  "elapsed_s": 917.1
+}
