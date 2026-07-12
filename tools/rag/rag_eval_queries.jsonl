@@ -1,0 +1,7 @@
+{"q": "was the dendrite tested for multi-attribute binding?", "relevant": ["dendritic-binding-toy-derisk"], "note": "the NEGATIVE result"}
+{"q": "is off-diagonal decorrelation a red herring for generalization?", "relevant": ["off-diagonal-red-herring"], "note": "PPMI local normalization reaches host"}
+{"q": "is long-range deep context input-representation bound on a fixed reservoir, not recurrent-credit bound?", "relevant": ["R3-REFRAME", "frozen-reservoir-beats-full-BPTT"], "note": "the R3 reframe"}
+{"q": "does CA3 have feedback inhibition or is its code non-sparse and saturated?", "relevant": ["riii-ca3-feedback-inhibition"], "note": "CA3 saturated, non-selective"}
+{"q": "no-confab moat false accepts under noise", "relevant": ["moat", "familiarity-gate", "no-confab"], "note": "multi-answer: any moat/familiarity-gate finding (the familiarity gate IS the moat mechanism)"}
+{"q": "is dual-timescale eligibility just a learning-rate artifact?", "relevant": ["R2b-dual-timescale"], "note": "the retraction/GO"}
+{"q": "does a reservoir beat full backprop by learning the input representation?", "relevant": ["R3-REFRAME", "frozen-reservoir-beats-full-BPTT"], "note": "same R3 doc"}

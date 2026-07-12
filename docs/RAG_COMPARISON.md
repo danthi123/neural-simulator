@@ -69,3 +69,15 @@ The a-1 gate has two needs: "have we CONCLUDED/DESIGNED X?" AND "how does the BI
 
 ### Honest scope of this comparison
 One corpus (our findings), one 7-query set, hand-graded exact-vs-adjacent — indicative, not a benchmark. The two use the SAME embedder + reranker, so the delta is chunking + fusion strategy, not the embedding model. A fairer future pass: match chunk sizes, add the catalog/Kandel/PDF corpus, and grade blind. Updated as we actually use them in the loop.
+
+## Automated + ACCUMULATING scored eval (2026-07-12) — track performance over time
+
+The table above is a static hand-grade. `tools/rag/rag_eval.py` makes it a **living, scored, over-time** record so we can draw real conclusions as the corpus grows and configs change: it runs a **labelled query set** (`tools/rag/rag_eval_queries.jsonl` — each query tagged with the basename(s) of the finding that correctly answers it) through **both engines' production retrieval paths**, scores hit@1 / hit@3 / MRR + latency against that ground truth, and **appends one timestamped record per run** to `tools/rag/rag_eval_history.jsonl` (structured) + a row to `docs/RAG_EVAL_HISTORY.md` (human table).
+
+```bash
+E:/Documents/Projects/rag_compare_env/Scripts/python.exe tools/rag/rag_eval.py --note "what changed this run"
+```
+
+**Grow it as we use it:** every time a real research gate asks a "have we already…?" question, add the query + the correct finding's basename to `rag_eval_queries.jsonl`. The query set becomes more representative of our actual use case over time, and the history JSONL lets us plot each engine's precision/latency trend.
+
+**Seed baseline (2026-07-12, 7 queries, 1508 findings, top-k 5):** LlamaIndex **hit@1 0.857 / hit@3 1.00 / MRR 0.905** @ ~356 ms/query; SOMA **hit@1 0.429 / hit@3 0.714 / MRR 0.560** @ ~78 ms/query. Confirms the hand-grade quantitatively — **LlamaIndex is more precise** (nails the exact finding in the top-3 on all 7), **SOMA is ~4.6× faster per query**. Run it again after a corpus jump / rebuild / retrieval-config change and compare the rows.
