@@ -1,0 +1,135 @@
+{
+  "probe": "reslm_onbridge_learn_win",
+  "seeds": [
+    42
+  ],
+  "elapsed_seconds": 9.5,
+  "params": {
+    "seeds": [
+      42
+    ],
+    "n_cues": 12,
+    "n_per_cue": 4,
+    "dist": 3,
+    "dist_jitter": 0,
+    "n_pool": 120,
+    "in_pop": 2,
+    "epochs": 2,
+    "lr_out": 0.01,
+    "ridge_lam": 1.0,
+    "bdsp_lr": 0.02,
+    "bdsp_p0": 0.3,
+    "bdsp_beta": 1.0,
+    "bdsp_w_min": 0.0,
+    "bdsp_w_max": 160.0,
+    "soma_g": 120.0,
+    "k_apical": 150.0,
+    "in_hi": 650.0,
+    "res_bias": 55.0,
+    "fwd_wmean": 32.0,
+    "fwd_wjit": 0.5,
+    "fwd_density": 1.0,
+    "rate_n": 120,
+    "rate_epochs": 8,
+    "rate_lr_out": 0.02,
+    "rate_lr_in": 0.02,
+    "arms": [
+      "fixed_win",
+      "learn_win",
+      "apical_lesion",
+      "wrong_sign"
+    ],
+    "gate_eps": 0.06,
+    "smoke": true,
+    "json": "research/findings/raw/_reslm_onbridge_learn_win_smoke.json",
+    "seed_base": 42
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "V": 14,
+      "n_cues": 12,
+      "n_pool": 120,
+      "dist": 3,
+      "n_train": 36,
+      "n_eval": 12,
+      "chance": 0.0833,
+      "mean_res_spikes": 0.0156,
+      "apical_coupling": {
+        "B_rest": 0.0,
+        "B_apical": 0.015334527786496377,
+        "B_rises": true
+      },
+      "arms": {
+        "fixed_win": {
+          "mode": "fixed_win",
+          "decode_acc": 1.0,
+          "dw_win": 0.0,
+          "dw_rec": 0.0,
+          "teach_B": 0.0,
+          "win_before_mean": 32.218,
+          "win_after_mean": 32.218
+        },
+        "learn_win": {
+          "mode": "learn_win",
+          "decode_acc": 1.0,
+          "dw_win": 0.002923544451256194,
+          "dw_rec": 0.0,
+          "teach_B": 0.0196,
+          "win_before_mean": 32.218,
+          "win_after_mean": 32.2164,
+          "input_lesion_acc": 0.0833,
+          "scramble_acc": 0.0833
+        },
+        "apical_lesion": {
+          "mode": "apical_lesion",
+          "decode_acc": 1.0,
+          "dw_win": 0.00072693565051027,
+          "dw_rec": 0.0,
+          "teach_B": 0.0,
+          "win_before_mean": 32.218,
+          "win_after_mean": 32.2173
+        },
+        "wrong_sign": {
+          "mode": "wrong_sign",
+          "decode_acc": 1.0,
+          "dw_win": 0.0027421875021814016,
+          "dw_rec": 0.0,
+          "teach_B": 0.0198,
+          "win_before_mean": 32.218,
+          "win_after_mean": 32.2165
+        }
+      },
+      "no_weight_transport": true,
+      "rate_reference": {
+        "learn_win": 1.0,
+        "fixed_win": 1.0
+      }
+    }
+  ],
+  "error": null,
+  "aggregate": {
+    "chance": 0.0833,
+    "fixed_win_acc": 1.0,
+    "learn_win_acc": 1.0,
+    "learn_minus_fixed": 0.0,
+    "apical_lesion_acc": 1.0,
+    "wrong_sign_acc": 1.0,
+    "input_lesion_acc": 0.0833,
+    "scramble_acc": 0.0833,
+    "learn_win_dw_win": 0.002923544451256194,
+    "learn_win_dw_rec": 0.0,
+    "win_moved": true,
+    "rec_frozen": true,
+    "B_rises": true,
+    "no_weight_transport": true,
+    "rate_reference_learn": 1.0,
+    "rate_reference_fixed": 1.0,
+    "lesion_at_fixed": true,
+    "wrong_antilearns": true,
+    "scramble_at_chance": true,
+    "input_lesion_at_chance": true
+  },
+  "verdict": "SMOKE (WIRING) -- end-to-end on a real SimulationBridge; the input->reservoir W_in MOVED under the committed BDSP rule (dw_win 0.003) while the reservoir recurrence stayed FROZEN (dw_rec 0.000) -> BDSP moves W_in, not W_rec. B_rises True; no-weight-transport True. Decode (NOISY at smoke scale): learn_win 1.000 vs fixed_win 1.000 (margin 0.000), apical_lesion 1.000, wrong_sign 1.000, chance 0.083. Collapse controls: input-lesion 0.083, scramble 0.083 (both -> ~chance if wiring is honest). RATE ref learn 1.000 vs fixed 1.000. The GO gate + margin are the CONTROLLER's 6-seed sweep (this smoke checks the WIRING + anti-cheats, not the GO).",
+  "go": null
+}
