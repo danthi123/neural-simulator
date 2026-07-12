@@ -77,8 +77,8 @@ ALL_ARMS = RESERVOIR_ARMS + ["BPTT_same_net"]          # the 5 pre-registered ar
 # eligibility propagates credit forward over long spans, so e-prop can reach the DEEP within-block context the plain
 # forward-filtered (~1/alpha) eligibility cannot. Ported faithfully from `_emerge_reservoir_lm_eprop_recurrent_derisk`.
 ALIF_ARMS = ["plastic_eprop_alif", "plastic_eprop_alif_readonly"]
-EXTRA_ARMS = (["BPTT_fixed_win", "BPTT_matched_readout", "plastic_eprop_dualtc", "plastic_eprop_dualtc_shuffle",
-               "plastic_eprop_multitc"] + ALIF_ARMS)   # isolation/lever/anti-cheat arms (R1b BPTT-fixed-W_in; R1c
+EXTRA_ARMS = (["BPTT_fixed_win", "BPTT_matched_readout", "BPTT_frozen_wrec", "plastic_eprop_dualtc",
+               "plastic_eprop_dualtc_shuffle", "plastic_eprop_multitc"] + ALIF_ARMS)   # isolation/lever/anti-cheat arms (R1b BPTT-fixed-W_in; R1c
 # BPTT-matched-readout = the FAIR denominator [same delta-rule read-out + frozen b=0 as e-prop, so the ONLY diff from
 # plastic_eprop is the W_rec CREDIT RULE]; R2b dual-timescale eligibility + its shuffle control; R2c multi-timescale
 # eligibility [horizon-vs-off-diagonal decider]; R2 ALIF)
@@ -332,25 +332,24 @@ def train_eprop_alif(mode, init, alif_extra, tr_lanes, V, n, alpha, rho_np, beta
     return W_rec.detach(), W_out.detach(), W_in.detach(), b.detach()
 
 
-def train_bptt(init, tr_lanes, V, n, alpha, B, bptt_steps, bptt_lr, dev, fix_win=False):
+def train_bptt(init, tr_lanes, V, n, alpha, B, bptt_steps, bptt_lr, dev, fix_win=False, freeze_wrec=False):
     """The matched-architecture FULL-BACKPROP ceiling: the SAME leaky-tanh cell as an autograd module, truncated to the
        128-block (h reset at each block, matching the e-prop reset). AdamW + grad-clip. Returns the final
        (W_rec, W_out, W_in, b) detached.
        fix_win=False -> trains ALL params (the pre-registered BPTT_same_net ceiling).
        fix_win=True  -> FREEZES W_in to the same random projection the e-prop arms use, so the ONLY difference from
                         plastic_eprop is the recurrent-credit RULE (BPTT full off-diagonal vs e-prop diagonal RTRL
-                        truncation) on IDENTICAL input embeddings -- isolates the pure recurrent-credit fraction
-                        (the R1 metric-confound fix: the all-params ceiling over-credits BPTT with embedding learning)."""
+                        truncation) on IDENTICAL input embeddings -- isolates the pure recurrent-credit fraction.
+       freeze_wrec=True -> FREEZES W_rec (the random reservoir); trains {W_in, W_out, b} by backprop. If its deep margin
+                        ~= BPTT_same_net's, the recurrent-credit RULE barely matters and the deep-context capture is
+                        dominated by READ-OUT + INPUT-EMBEDDING learning, NOT recurrent credit (the Run-A reframe test)."""
     import torch, torch.nn as nn, torch.nn.functional as F
-    W_rec = nn.Parameter(torch.tensor(init["W_rec"], dtype=torch.float32, device=dev))
-    b = nn.Parameter(torch.tensor(init["b"], dtype=torch.float32, device=dev))
-    W_out = nn.Parameter(torch.tensor(init["W_out"], dtype=torch.float32, device=dev))
-    if fix_win:
-        W_in = torch.tensor(init["W_in"], dtype=torch.float32, device=dev)   # FROZEN: same fixed random projection as e-prop
-        params = [W_rec, b, W_out]
-    else:
-        W_in = nn.Parameter(torch.tensor(init["W_in"], dtype=torch.float32, device=dev))
-        params = [W_rec, W_in, b, W_out]
+    def P(x): return nn.Parameter(torch.tensor(x, dtype=torch.float32, device=dev))
+    def C(x): return torch.tensor(x, dtype=torch.float32, device=dev)          # frozen (no grad)
+    b = P(init["b"]); W_out = P(init["W_out"])
+    W_rec = C(init["W_rec"]) if freeze_wrec else P(init["W_rec"])
+    W_in = C(init["W_in"]) if (fix_win and not freeze_wrec) else P(init["W_in"])  # freeze_wrec trains W_in (the reframe needs it)
+    params = [p for p in [W_rec, W_in, b, W_out] if isinstance(p, nn.Parameter)]
     opt = torch.optim.AdamW(params, lr=bptt_lr)
     batch, lane = tr_lanes.shape
     nb = (lane - 1) // B
@@ -932,6 +931,9 @@ def main():
         elif arm == "BPTT_matched_readout":
             W_rec, W_out, W_in, b = train_bptt_matched_readout(init, tr_lanes, V, n, args.alpha, B, args.bptt_steps,
                                                                args.bptt_lr, dev, args.lr_out, args.wd_out)
+        elif arm == "BPTT_frozen_wrec":                     # Run-A reframe test: W_rec frozen, backprop {W_in,W_out,b}
+            W_rec, W_out, W_in, b = train_bptt(init, tr_lanes, V, n, args.alpha, B, args.bptt_steps, args.bptt_lr, dev,
+                                               freeze_wrec=True)
         elif is_alif:
             W_rec, W_out, W_in, b = train_eprop_alif(arm, init, alif_extra, tr_lanes, V, n, args.alpha,
                                                      alif_extra["rho"], args.beta, B, args.epochs,
