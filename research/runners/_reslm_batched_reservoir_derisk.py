@@ -123,6 +123,45 @@ def batched_states(b, copy_res, W_in, snap, U_list):
     return [counts[copy_res[c]] / max(1, lens[c] * _T_STEP) for c in range(M)]
 
 
+def per_token_states_batch(b, copy_res, W_in, snap, U_list):
+    """The LM collection, batched: M sentences in lockstep -> per-copy list of per-token running-cumulative states
+    (== the shipped `per_token_states(feature='running_cumulative')` for each sentence). A copy that has ended keeps
+    stepping (block-diagonal => no cross-copy effect) but records no further states."""
+    from sim.backend import get_backend, to_host
+    from research.runners._emerge82_onbridge_lsm_derisk import _T_STEP, _BIAS
+    xp, _ = get_backend()
+    M = len(copy_res); n = len(copy_res[0]); num = n * M
+    _restore(b, snap)
+    Lmax = max(len(U) for U in U_list)
+    counts = np.zeros((M, n), np.float64)                    # per-copy cumulative pool spike-counts
+    S = [[] for _ in range(M)]
+    steps = 0
+    for t in range(Lmax):
+        drive = np.zeros(num, np.float32)
+        for c in range(M):
+            if t < len(U_list[c]):
+                drive[copy_res[c]] = (W_in @ U_list[c][t] + _BIAS).astype(np.float32)
+        b.cp_external_input_current[:] = 0.0
+        b.cp_external_input_current[:] = xp.asarray(drive) if xp is not None else drive
+        for _ in range(_T_STEP):
+            b._run_one_simulation_step()
+            fs = np.asarray(to_host(b.cp_firing_states)).astype(np.float64)
+            for c in range(M):
+                counts[c] += fs[copy_res[c]]
+            steps += 1
+        for c in range(M):
+            if t < len(U_list[c]):
+                S[c].append((counts[c] / max(1, steps)).copy())
+    b.cp_external_input_current[:] = 0.0
+    return S
+
+
+def _serial_per_token(seed, n, in_dim, U_list):
+    from research.runners._emerge_reservoir_lm_derisk import ReservoirStates
+    res = ReservoirStates(in_dim, seed=seed, n=n)            # has per_token_states (the LM collection)
+    return [res.per_token_states(U) for U in U_list]
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--M", type=int, default=8); ap.add_argument("--n", type=int, default=60)
