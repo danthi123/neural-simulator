@@ -64,9 +64,15 @@ def _mint_codes(rng, M, merge=False):
 
 
 class HebbianBinder:
-    """Content-agnostic fast-weight binder: assign a fresh slot on first mention, retrieve on re-mention. Per-narrative."""
-    def __init__(self, theta=0.55):
-        self.W = np.zeros((_K, _DIM), np.float32); self.free = 0; self.theta = theta
+    """Content-agnostic fast-weight binder: assign a fresh slot on first mention, retrieve on re-mention. Per-narrative.
+    `decay` (<1.0) models STP FACILITATION FADE per clause (Mongillo synaptic-WM tau_f): the bind decays between mentions;
+    `step()` is called once per clause. decay=1.0 = a permanent fast weight (byte-identical to the default)."""
+    def __init__(self, theta=0.55, decay=1.0):
+        self.W = np.zeros((_K, _DIM), np.float32); self.free = 0; self.theta = theta; self.decay = float(decay)
+
+    def step(self):
+        if self.decay < 1.0:
+            self.W *= self.decay
 
     def slot(self, c, no_bind_rng=None):
         cn = c / (np.linalg.norm(c) + 1e-9)
@@ -102,7 +108,7 @@ def _narratives(rng, entities, lens, n_each, p_transfer=0.6):
     return items
 
 
-def _to_slot_task(items, codes, K, ident_slot=0, no_bind_rng=None):
+def _to_slot_task(items, codes, K, ident_slot=0, no_bind_rng=None, decay=1.0):
     """Re-express each narrative in SLOT space via a per-narrative Hebbian binder. X[n,t]=[onehot(a_slot);onehot(b_slot)],
     STATE=holder slot. Returns the discrete_attractor task dict (+ the per-narrative entity->slot maps for dereference)."""
     N = len(items); Lmax = max(L for _, _, L in items)
@@ -110,13 +116,14 @@ def _to_slot_task(items, codes, K, ident_slot=0, no_bind_rng=None):
     SEQ = np.full((N, Lmax), -1, np.int64); L = np.zeros(N, np.int64); Y = np.zeros(N, np.int64)
     maps = []
     for n, (pairs, hseq, L_) in enumerate(items):
-        binder = HebbianBinder(); e2s = {}
+        binder = HebbianBinder(decay=decay); e2s = {}
         for t, (a, b) in enumerate(pairs):
             sa = binder.slot(codes[a], no_bind_rng); sb = binder.slot(codes[b], no_bind_rng)
             e2s[a] = sa; e2s[b] = sb
             X[n, t, sa] = 1.0; X[n, t, K + sb] = 1.0
             hs = e2s.get(hseq[t], 0)
             STATE[n, t] = hs; SEQ[n, t] = sa * K + sb
+            binder.step()                                     # STP facilitation fade between clauses
         L[n] = L_; Y[n] = 0
         maps.append(e2s)
     return {"train": (X, Y, L, SEQ, STATE), "test_same": (X, Y, L, SEQ, STATE),

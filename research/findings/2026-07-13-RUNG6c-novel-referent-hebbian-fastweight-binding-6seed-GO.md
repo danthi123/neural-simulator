@@ -32,4 +32,14 @@ Referents are sparse developmental-random barcodes (the `entity_instance_layer` 
 The RUNG6b open frontier (bounded → open referents) is CLOSED at the mechanism level by the emergent Hebbian binder (6-seed GO, generalizes to held-out novel). Combined with RUNG6/6b, the reslm generator's discourse arc: short-range emergent tracking (6) → unbounded for known referents (6b) → **open/novel referents (6c, this)** — all emergent, no composer scaffold.
 **NEXT CONCRETE ACTION:** the FULLY-SPIKING realization of the fast-weight binder — STP/Mongillo synaptic WM (a `sim/` STP path already exists) for the one-shot bind + a spiking FS-WTA cleanup for the slot read-out — so the binder is on-substrate (the caveat-3 close). Then wire the barcode referent register into the D3 event-agent / `MultiTurnAgent` path (opt-in, byte-identical off). The attractor's autoregressive-rollout ceiling is a parallel, separate improvement axis.
 
-Reuse-by-import; NO `sim/` edit. Runner: `_novel_referent_hebbian_fastweight_derisk.py`.
+## STP-facilitation cheap-first (de-risks the spiking rung + maps its window)
+Before the on-substrate build, added a per-clause facilitation DECAY to the binder (`--decay`; Mongillo synaptic-WM `tau_f` fade; decay=1.0 byte-identical) and swept it (seed 42, deeper lens 6-8):
+| facilitation decay/clause | novel-track@deeper |
+|---|---|
+| 1.00 (permanent fast weight) | 0.520 |
+| 0.90 | 0.405 |
+| 0.80 | 0.098 |
+| 0.60 | 0.010 |
+⇒ the STP realization needs **slow facilitation** (decay ≥ ~0.9/clause) to hold the referent bind across a deep narrative. Biological `tau_f`~1.5s with ~150ms clauses gives decay ≈ exp(-0.15/1.5) ≈ **0.90** → the "holds moderate gaps" regime — i.e. exactly Mongillo's synaptic-WM window (referents held ~seconds, fading beyond). This maps what the spiking STP build achieves AND its capacity boundary (a biologically-faithful ~2-3-referent / few-seconds limit, NOT a wall). **NEXT: the on-substrate STP-facilitated barcode→slot + FS-WTA read (read Mongillo 2008 in depth first, source-read discipline); the numpy decay-sweep confirms the window before committing the `sim/`-touching build.**
+
+Reuse-by-import; NO `sim/` edit. Runner: `_novel_referent_hebbian_fastweight_derisk.py` (`--decay` for the STP window sweep).
