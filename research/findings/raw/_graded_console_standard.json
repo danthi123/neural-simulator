@@ -1,0 +1,262 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "htm": {
+        "arm": "htm",
+        "robin": "CONFIDENT",
+        "bat": "HEDGED",
+        "trout": "ABSTAIN",
+        "wolp": "MOAT",
+        "phrases": {
+          "robin": "Yes, a robin can fly.",
+          "bat": "A bat can probably fly.",
+          "trout": "I don't know whether a trout can fly.",
+          "wolp": "I don't know what a wolpertinger is."
+        }
+      },
+      "permuted": {
+        "arm": "permuted",
+        "robin": "HEDGED",
+        "bat": "HEDGED",
+        "trout": "HEDGED",
+        "wolp": "MOAT",
+        "phrases": {
+          "robin": "A robin can probably fly.",
+          "bat": "A bat can probably fly.",
+          "trout": "A trout can probably fly.",
+          "wolp": "I don't know what a wolpertinger is."
+        }
+      },
+      "lesion": {
+        "arm": "lesion",
+        "robin": "ABSTAIN",
+        "bat": "ABSTAIN",
+        "trout": "ABSTAIN",
+        "wolp": "MOAT",
+        "phrases": {
+          "robin": "I don't know whether a robin can fly.",
+          "bat": "I don't know whether a bat can fly.",
+          "trout": "I don't know whether a trout can fly.",
+          "wolp": "I don't know what a wolpertinger is."
+        }
+      },
+      "GO": true
+    },
+    {
+      "seed": 43,
+      "htm": {
+        "arm": "htm",
+        "robin": "CONFIDENT",
+        "bat": "HEDGED",
+        "trout": "ABSTAIN",
+        "wolp": "MOAT",
+        "phrases": {
+          "robin": "Yes, a robin can fly.",
+          "bat": "A bat can probably fly.",
+          "trout": "I don't know whether a trout can fly.",
+          "wolp": "I don't know what a wolpertinger is."
+        }
+      },
+      "permuted": {
+        "arm": "permuted",
+        "robin": "HEDGED",
+        "bat": "HEDGED",
+        "trout": "HEDGED",
+        "wolp": "MOAT",
+        "phrases": {
+          "robin": "A robin can probably fly.",
+          "bat": "A bat can probably fly.",
+          "trout": "A trout can probably fly.",
+          "wolp": "I don't know what a wolpertinger is."
+        }
+      },
+      "lesion": {
+        "arm": "lesion",
+        "robin": "ABSTAIN",
+        "bat": "ABSTAIN",
+        "trout": "ABSTAIN",
+        "wolp": "MOAT",
+        "phrases": {
+          "robin": "I don't know whether a robin can fly.",
+          "bat": "I don't know whether a bat can fly.",
+          "trout": "I don't know whether a trout can fly.",
+          "wolp": "I don't know what a wolpertinger is."
+        }
+      },
+      "GO": true
+    },
+    {
+      "seed": 44,
+      "htm": {
+        "arm": "htm",
+        "robin": "CONFIDENT",
+        "bat": "HEDGED",
+        "trout": "ABSTAIN",
+        "wolp": "MOAT",
+        "phrases": {
+          "robin": "Yes, a robin can fly.",
+          "bat": "A bat can probably fly.",
+          "trout": "I don't know whether a trout can fly.",
+          "wolp": "I don't know what a wolpertinger is."
+        }
+      },
+      "permuted": {
+        "arm": "permuted",
+        "robin": "HEDGED",
+        "bat": "HEDGED",
+        "trout": "HEDGED",
+        "wolp": "MOAT",
+        "phrases": {
+          "robin": "A robin can probably fly.",
+          "bat": "A bat can probably fly.",
+          "trout": "A trout can probably fly.",
+          "wolp": "I don't know what a wolpertinger is."
+        }
+      },
+      "lesion": {
+        "arm": "lesion",
+        "robin": "ABSTAIN",
+        "bat": "ABSTAIN",
+        "trout": "ABSTAIN",
+        "wolp": "MOAT",
+        "phrases": {
+          "robin": "I don't know whether a robin can fly.",
+          "bat": "I don't know whether a bat can fly.",
+          "trout": "I don't know whether a trout can fly.",
+          "wolp": "I don't know what a wolpertinger is."
+        }
+      },
+      "GO": true
+    },
+    {
+      "seed": 100,
+      "htm": {
+        "arm": "htm",
+        "robin": "CONFIDENT",
+        "bat": "HEDGED",
+        "trout": "ABSTAIN",
+        "wolp": "MOAT",
+        "phrases": {
+          "robin": "Yes, a robin can fly.",
+          "bat": "A bat can probably fly.",
+          "trout": "I don't know whether a trout can fly.",
+          "wolp": "I don't know what a wolpertinger is."
+        }
+      },
+      "permuted": {
+        "arm": "permuted",
+        "robin": "HEDGED",
+        "bat": "HEDGED",
+        "trout": "HEDGED",
+        "wolp": "MOAT",
+        "phrases": {
+          "robin": "A robin can probably fly.",
+          "bat": "A bat can probably fly.",
+          "trout": "A trout can probably fly.",
+          "wolp": "I don't know what a wolpertinger is."
+        }
+      },
+      "lesion": {
+        "arm": "lesion",
+        "robin": "ABSTAIN",
+        "bat": "ABSTAIN",
+        "trout": "ABSTAIN",
+        "wolp": "MOAT",
+        "phrases": {
+          "robin": "I don't know whether a robin can fly.",
+          "bat": "I don't know whether a bat can fly.",
+          "trout": "I don't know whether a trout can fly.",
+          "wolp": "I don't know what a wolpertinger is."
+        }
+      },
+      "GO": true
+    },
+    {
+      "seed": 101,
+      "htm": {
+        "arm": "htm",
+        "robin": "CONFIDENT",
+        "bat": "HEDGED",
+        "trout": "ABSTAIN",
+        "wolp": "MOAT",
+        "phrases": {
+          "robin": "Yes, a robin can fly.",
+          "bat": "A bat can probably fly.",
+          "trout": "I don't know whether a trout can fly.",
+          "wolp": "I don't know what a wolpertinger is."
+        }
+      },
+      "permuted": {
+        "arm": "permuted",
+        "robin": "HEDGED",
+        "bat": "HEDGED",
+        "trout": "HEDGED",
+        "wolp": "MOAT",
+        "phrases": {
+          "robin": "A robin can probably fly.",
+          "bat": "A bat can probably fly.",
+          "trout": "A trout can probably fly.",
+          "wolp": "I don't know what a wolpertinger is."
+        }
+      },
+      "lesion": {
+        "arm": "lesion",
+        "robin": "ABSTAIN",
+        "bat": "ABSTAIN",
+        "trout": "ABSTAIN",
+        "wolp": "MOAT",
+        "phrases": {
+          "robin": "I don't know whether a robin can fly.",
+          "bat": "I don't know whether a bat can fly.",
+          "trout": "I don't know whether a trout can fly.",
+          "wolp": "I don't know what a wolpertinger is."
+        }
+      },
+      "GO": true
+    },
+    {
+      "seed": 102,
+      "htm": {
+        "arm": "htm",
+        "robin": "CONFIDENT",
+        "bat": "HEDGED",
+        "trout": "ABSTAIN",
+        "wolp": "MOAT",
+        "phrases": {
+          "robin": "Yes, a robin can fly.",
+          "bat": "A bat can probably fly.",
+          "trout": "I don't know whether a trout can fly.",
+          "wolp": "I don't know what a wolpertinger is."
+        }
+      },
+      "permuted": {
+        "arm": "permuted",
+        "robin": "HEDGED",
+        "bat": "HEDGED",
+        "trout": "HEDGED",
+        "wolp": "MOAT",
+        "phrases": {
+          "robin": "A robin can probably fly.",
+          "bat": "A bat can probably fly.",
+          "trout": "A trout can probably fly.",
+          "wolp": "I don't know what a wolpertinger is."
+        }
+      },
+      "lesion": {
+        "arm": "lesion",
+        "robin": "ABSTAIN",
+        "bat": "ABSTAIN",
+        "trout": "ABSTAIN",
+        "wolp": "MOAT",
+        "phrases": {
+          "robin": "I don't know whether a robin can fly.",
+          "bat": "I don't know whether a bat can fly.",
+          "trout": "I don't know whether a trout can fly.",
+          "wolp": "I don't know what a wolpertinger is."
+        }
+      },
+      "GO": true
+    }
+  ]
+}
