@@ -62,7 +62,7 @@ def build_binder_bridge(seed, plastic=True, hebb_lr=0.1):
     cfg.hebbian_rate_window = True
     cfg.hebbian_coactivity_decay = 0.9
     cfg.hebbian_learning_rate = hebb_lr
-    cfg.hebbian_max_weight = 8.0
+    cfg.hebbian_max_weight = 90.0    # ABOVE the 40 init (else the soft-bound clips barcode->slot to 8 -> collapse, CLAUDE.md gotcha)
     rt = RuntimeState(); rt.actual_seed_used = seed
     b = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(), runtime_state=rt, gpu_config=GPUConfig())
     b._initialize_simulation_data()
@@ -72,7 +72,7 @@ def build_binder_bridge(seed, plastic=True, hebb_lr=0.1):
     return b, idx
 
 
-def present(b, idx, code, drive_pA=1400.0, learn=True):
+def present(b, idx, code, drive_pA=1400.0, learn=True, suppress_slots=()):
     """Drive the barcode neurons for the code's active bits for _T_PRESENT steps; return per-slot mean firing rate."""
     from sim.backend import to_host
     xp = b.xp
@@ -84,6 +84,8 @@ def present(b, idx, code, drive_pA=1400.0, learn=True):
         b.cp_external_input_current[:] = 0.0
         b.cp_external_input_current[active] = drive_pA
         b.cp_external_input_current[allslot] = 400.0
+        for _ss in suppress_slots:
+            b.cp_external_input_current[idx[f"slot{_ss}"]] = -800.0   # occupied-slot suppression -> novel routes to a FREE slot
         b._run_one_simulation_step()
         fs = np.asarray(to_host(b.cp_firing_states)).astype(np.float64)
         for s in range(_K):
@@ -114,10 +116,13 @@ def run_derisk(seed=42):
     b, idx = build_binder_bridge(seed, plastic=True)
     rng = np.random.default_rng(seed); codes = _mint(rng, 4)          # 2 bind + 2 held-out novel
     # BIND phase: present A, B once each (Hebbian potentiates barcode->winner)
-    bind = {}
+    bind = {}; occupied = []
     for e in (0, 1):
-        r = present(b, idx, codes[e], learn=True); bind[e] = int(np.argmax(r))
-    # RETRIEVE phase (learn off): re-present A, B -> should return their bound slot
+        w = None
+        for _rep in range(3):                                  # 3 bind presentations -> stronger Hebbian potentiation
+            r = present(b, idx, codes[e], learn=True, suppress_slots=tuple(occupied)); w = int(np.argmax(r))
+        bind[e] = w; occupied.append(w)                       # occupancy routing: the next novel barcode avoids this slot
+    # RETRIEVE phase (learn off, NO suppression): re-present A, B -> the potentiated barcode->slot should win its bound slot
     ok = 0
     for e in (0, 1):
         r = present(b, idx, codes[e], learn=False)
