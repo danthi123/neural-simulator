@@ -1,0 +1,21 @@
+# NP-toward-recurrent-language RUNG-0 (ceiling-first): the dist=0 order-gated instrument is VALIDATED (huge learn-W_in headroom, all controls behave); the DELAY axis (dist>0) hits the fixed-reservoir FADING-MEMORY ceiling → the multi-timescale reservoir is the named lever
+
+**Date:** 2026-07-13
+**Runner:** `research/runners/_reslm_np_learn_win_gated_derisk.py` (numpy off-bridge; reuse-by-import `build_codes`; NO `sim/` edit). Spec: `docs/plans/2026-07-13-np-recurrent-language-derisk-spec.md` (the confound-checked design from the adversarial-verify Workflow wf_f69e1f86-fb5).
+**Status:** the ceiling-first RUNG-0 gate did its job — it VALIDATED an interpretable instrument (dist=0) and CAUGHT that the longer-delay axis is not learnable-with-generalization on a fixed random reservoir (fading memory), BEFORE any NP was spent. The NP arm is now running on the validated dist=0 instrument.
+
+## Why this rung exists (the workflow's caught confound)
+The naive "does NP learn W_in on a reservoir" is a **static 2-layer problem in a recurrent costume**: with zero-input fillers, W_in enters at exactly ONE timestep, so a GO certifies only feedforward input-credit (already validated by emerge1). The redesign (**order-gated delayed next-class**: gate cue P@pos0 → input-bearing fillers → content cue Q@pos d+1 → blank read; `target = class(Q)` if `class(P)%2==0` else `(class(Q)+1)%G`) forces BOTH axes — a learned input representation AND recurrent nonlinear binding — and the RUNG-0 controls (frozen / linear-reservoir / bag / recurrence-lesion) **arbitrate** rather than assume the credit.
+
+## RUNG-0 result (G=4, chance 0.25, oracle=BPTT-W_in, frozen=fixed-W_in; seed 42, n_ex 800, n=120)
+| dist | oracle_tanh (train) | frozen | oracle_linear | recurrence-lesion | bag | reads |
+|---|---|---|---|---|---|---|
+| **0** | **0.965 (1.00)** | 0.210 | 0.370 | 0.375 | 0.230 | **✅ ALL gates pass** |
+| 3 | 0.255 (0.94) | 0.440 | 0.510 | 0.270 | 0.300 | oracle MEMORIZES, doesn't generalize |
+| 8 | 0.345 (0.66) | 0.155 | 0.435 | 0.295 | 0.320 | oracle can't even fit train |
+- **dist=0 is a rock-solid, non-confounded recurrent-binding instrument:** learn-W_in **headroom +0.755** (oracle 0.965 vs frozen 0.210), **nonlinear load-bearing** (oracle_tanh − oracle_linear = +0.595 → a linear reservoir's linear readout can't represent the conditional shift), **recurrence load-bearing** (the W_rec→0 lesion collapses 0.965→0.375, with the z-scored readout so it collapses for the RIGHT reason), **NOT bag-fakeable** (bag 0.230 ≈ chance, +0.735; order-probe bag at chance). It is NOT the static confound: W_in enters at TWO different inputs (P then Q) and the lesion proves the 1-step recurrent binding is load-bearing.
+- **dist>0 fails — the fixed random reservoir's FADING MEMORY.** At dist=3 the oracle MEMORIZES the training sequences (train 0.94) but does NOT generalize (held-out 0.255 < frozen 0.440); at dist=8 it cannot even fit (train 0.66). The single-timescale (spectral-radius-0.95) random reservoir cannot retain the gate `gP` across input-bearing fillers in a generalizable way. This is EXACTLY the fading-memory ceiling our SSM arc characterized (`2026-07-13-SSM-fixed-structured-multitimescale-reservoir-SURPASSES-fading-memory-ceiling-6seed-GO.md`): **the named lever for the delay axis is a MULTI-TIMESCALE reservoir** (a range of neuronal/synaptic time constants) — a follow-on that composes the two arcs.
+- A BPTT-oracle instability (W_in overflow → NaN softmax at long T) was found + fixed (gradient norm-clipping + softmax cl-clip); no NaN after.
+
+## ⇒ Next
+NP arm running on the VALIDATED dist=0 instrument (does node/weight perturbation learn W_in for genuine recurrent nonlinear binding, matching the oracle where frozen fails, shuffle-dL collapsing?). Honest scope guard for NP here: W_in is high-dimensional (`N×m`), and NP's variance scales with the perturbed dimension — so the `id_pool` (shared-identity) option is used to shrink `m` (the emerge1 NP that worked had a ~240-dim layer; the full-vocab W_in is ~200× that). If NP is variance-limited even at reduced `m`, the lower-dimension NODE-perturbation form (perturb the `n` hidden pre-activations, `n×T` dims at small `dist`) is the next single-variable lever. The delay axis is deferred to the multi-timescale-reservoir follow-on. NO `sim/` edit.

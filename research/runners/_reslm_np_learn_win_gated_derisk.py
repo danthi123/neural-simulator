@@ -179,10 +179,12 @@ def train_win_bptt(train, dist, W_rec, W_in0, b, n, m, G, alpha, recur, codes, d
     return W_in
 
 
-def train_win_np(train, dist, W_rec, W_in0, b, n, m, G, alpha, recur, codes, dcodes, epochs, lr, sigma, k, seed):
+def train_win_np(train, dist, W_rec, W_in0, b, n, m, G, alpha, recur, codes, dcodes, epochs, lr, sigma, k, seed, mode="np"):
     """NODE PERTURBATION on W_in (weight-perturbation, T-independent dim N*m; antithetic-k; common-random-numbers via a
     deterministic forward noise=0; running-mean baseline). A throwaway softmax Wout supplies the scalar loss the global
-    dL rides; the eval readout is re-fit by ridge afterwards (fair across arms)."""
+    dL rides; the eval readout is re-fit by ridge afterwards (fair across arms).
+    mode: 'np' | 'shuffle' (anti-cheat: the loss-difference dL is measured on a DIFFERENT example -> credit rides noise,
+    must collapse to the frozen floor) | 'wrong_sign' (must anti-learn)."""
     rng = np.random.RandomState(seed * 11 + 5)
     W_in = W_in0.copy(); Wout = np.zeros((G, n))
     Xs = [_seq_x(ex, dist, codes, dcodes, m) for ex in train]
@@ -192,16 +194,21 @@ def train_win_np(train, dist, W_rec, W_in0, b, n, m, G, alpha, recur, codes, dco
         z = np.clip(Wout @ read, -30, 30); z = z - z.max(); e = np.exp(z); p = e / e.sum()
         return float(-np.log(max(p[y], 1e-12))), read, p
     for _ep in range(epochs):
-        order = rng.permutation(len(train))
-        for si in order:
+        order = rng.permutation(len(train)); perm = rng.permutation(len(train))
+        for t, si in enumerate(order):
             xs = Xs[si]; y = Ys[si]
             L0, read, p = _loss(W_in, xs, y)
             grad = np.zeros_like(W_in)
             for _r in range(k):
                 xi = sigma * rng.standard_normal(W_in.shape)      # perturb the N*m WEIGHTS (T-independent)
-                Lp = _loss(W_in + xi, xs, y)[0]
-                Lm = _loss(W_in - xi, xs, y)[0]                   # antithetic
-                grad += (0.5 * (Lp - Lm) / (sigma * sigma)) * xi
+                if mode == "shuffle":                             # dL from a DIFFERENT example -> must collapse
+                    sk = perm[t]; xk, yk = Xs[sk], Ys[sk]
+                    dL = 0.5 * (_loss(W_in + xi, xk, yk)[0] - _loss(W_in - xi, xk, yk)[0])
+                else:
+                    dL = 0.5 * (_loss(W_in + xi, xs, y)[0] - _loss(W_in - xi, xs, y)[0])
+                if mode == "wrong_sign":
+                    dL = -dL
+                grad += (dL / (sigma * sigma)) * xi
             W_in -= lr * grad / k
             # throwaway Wout: clean delta on the clean read (keeps the loss signal meaningful as W_in moves)
             g = p.copy(); g[y] -= 1.0
@@ -222,14 +229,14 @@ def _bag_oracle_acc(train, evl, G, codes, dcodes, m, dist, seed, epochs, lr):
 
 # --------- arms + rung-0 ------------------------------------------------------------------------------------
 def _arm_acc(train, evl, dist, recur, learner, G, n, m, alpha, codes, dcodes, seed, epochs, lr, lesion=False,
-             sigma=0.0, k=1, want_train=False):
+             sigma=0.0, k=1, want_train=False, np_mode="np"):
     W_rec, W_in0, b = _init(seed, n, m)
     if learner == "frozen":
         W_in = W_in0
     elif learner == "oracle":
         W_in = train_win_bptt(train, dist, W_rec, W_in0, b, n, m, G, alpha, recur, codes, dcodes, epochs, lr, seed)
     elif learner == "np":
-        W_in = train_win_np(train, dist, W_rec, W_in0, b, n, m, G, alpha, recur, codes, dcodes, epochs, lr, sigma, k, seed)
+        W_in = train_win_np(train, dist, W_rec, W_in0, b, n, m, G, alpha, recur, codes, dcodes, epochs, lr, sigma, k, seed, mode=np_mode)
     else:
         raise ValueError(learner)
     Rtr, Ytr = _reads(train, dist, W_in, W_rec, b, n, alpha, recur, codes, dcodes, m, lesion)
@@ -265,8 +272,32 @@ def main():
     ap.add_argument("--epochs", type=int, default=25); ap.add_argument("--lr", type=float, default=0.05)
     ap.add_argument("--n-ex", type=int, default=400); ap.add_argument("--n-distract", type=int, default=12)
     ap.add_argument("--rung0", action="store_true")
+    ap.add_argument("--np", action="store_true", help="run the NP arm (+ shuffle/wrong_sign anti-cheats) at --dists (rung-0 must pass there first)")
+    ap.add_argument("--sigma", type=float, default=0.05); ap.add_argument("--k", type=int, default=8)
     ap.add_argument("--out", type=str, default=None)
     a = ap.parse_args()
+    if a.np:
+        print(f"=== NP learns W_in on the VALIDATED order-gated instrument (seeds {a.seeds}, chance {1.0/a.G:.3f}, k={a.k}) ===", flush=True)
+        for dist in a.dists:
+            arms = {kk: [] for kk in ("oracle", "np", "shuffle", "wrong_sign", "frozen")}
+            for s in a.seeds:
+                codes, V, m = build_codes(s, a.G, a.syn, a.sf, a.idn, id_pool=a.id_pool)
+                dcodes = _distractor_codes(s, m, a.n_distract)
+                train, evl = build_gated(s, a.G, a.syn, dist, a.n_ex, a.n_distract)
+                arms["oracle"].append(_arm_acc(train, evl, dist, "tanh", "oracle", a.G, a.n, m, 0.3, codes, dcodes, s, a.epochs, a.lr))
+                arms["frozen"].append(_arm_acc(train, evl, dist, "tanh", "frozen", a.G, a.n, m, 0.3, codes, dcodes, s, a.epochs, a.lr))
+                for mode in ("np", "shuffle", "wrong_sign"):
+                    arms[mode].append(_arm_acc(train, evl, dist, "tanh", "np", a.G, a.n, m, 0.3, codes, dcodes, s, a.epochs, a.lr, sigma=a.sigma, k=a.k, np_mode=mode))
+            agg = {kk: float(np.mean(vv)) for kk, vv in arms.items()}
+            chance = 1.0 / a.G
+            beats = agg["np"] > agg["frozen"] + 0.05
+            shuf = agg["shuffle"] <= agg["frozen"] + 0.05
+            wrong = agg["wrong_sign"] <= agg["frozen"] + 0.05
+            go = beats and shuf
+            print(f"dist={dist}: NP={agg['np']:.3f} oracle={agg['oracle']:.3f} frozen={agg['frozen']:.3f} "
+                  f"shuffle={agg['shuffle']:.3f} wrong_sign={agg['wrong_sign']:.3f} "
+                  f"-> {'GO' if go else 'no'} (beats_frozen={beats} shuffle_collapses={shuf} wrong_anti={wrong})", flush=True)
+        return
     res = [rung0(s, a.G, a.syn, a.sf, a.idn, a.id_pool, a.n, a.dists, a.epochs, a.lr, a.n_ex, a.n_distract) for s in a.seeds]
     # aggregate by dist
     print(f"=== RUNG-0 ceiling-first (order-gated delayed next-class; seeds {a.seeds}, chance {1.0/a.G:.3f}) ===", flush=True)
