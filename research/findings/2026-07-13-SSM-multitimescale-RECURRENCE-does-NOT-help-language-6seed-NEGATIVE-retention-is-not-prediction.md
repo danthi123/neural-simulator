@@ -20,12 +20,14 @@ Reservoir-minus-bigram CE margin at DEEP context (6+), mean over the two deep bu
 - The plain random ESN has the BEST mean deep margin. Every reservoir beats the bag at deep (the reservoir's recurrent dynamics carry deep signal beyond a memoryless bag — the already-documented result), but the multi-timescale STRUCTURE adds nothing robust over plain mixing.
 
 ## Result 2 — LONG-CONTEXT (concat=5, ~45-token discourse sequences), depth 16–999 where long time constants SHOULD help most
-`--concat 5` groups 5 CONSECUTIVE (same-story) sentences into one sequence so context depth extends to ~45 tokens — the regime where long τ (up to 400) finally have TIME to integrate (the memory GO used 150 steps; ≤16 is too short). Seed 42 (6-seed confirmation running → `raw/_ssm_ctxdepth_concat5_6seed.json`; the per-sentence result above is the PRIMARY blind-seed-clean 6-seed negative — the concat run is confirmatory of the same effect in the long-context regime):
-| depth bucket | plain random ESN | multitimescale | hetero_esn | bag |
-|---|---|---|---|---|
-| 16–31 | **+0.157** | −0.124 | −0.105 | −0.641 |
-| 32–999 | **+0.162** | −0.139 | −0.129 | −0.661 |
-- At GENUINE long context, the plain ESN robustly BEATS the bigram (+0.16), while **every multi-timescale reservoir is NEGATIVE** (worse than the bigram). The result is DECISIVE and in the OPPOSITE direction to the "long timescales should help long context" hypothesis.
+`--concat 5` groups 5 CONSECUTIVE (same-story) sentences into one sequence so context depth extends to ~45 tokens — the regime where long τ (up to 400) finally have TIME to integrate (the memory GO used 150 steps; ≤16 is too short). **6-seed (42/43/44/100/101/102), deep = depth 16+, n-weighted margin over the bigram:**
+| arm | mean deep margin (6 seeds) | beats plain ESN at deep? |
+|---|---|---|
+| **plain random ESN** | **+0.199** (robustly + every seed, +0.16→+0.24) | — |
+| multitimescale diagonal | **−0.055** | **0/6** |
+| hetero-leaky-ESN | **−0.035** | **0/6** |
+| bag-of-prefix | −0.61 (hugely negative — a diffuse ~45-token count is uninformative) | — |
+- At GENUINE long context, the plain ESN robustly BEATS the bigram (+0.199 mean, positive every seed), while **every multi-timescale reservoir is near-zero-or-NEGATIVE — 0/6 beats the plain ESN.** The result is DECISIVE, 6-seed, and in the OPPOSITE direction to the "long timescales should help long context" hypothesis. Raw: `raw/_ssm_ctxdepth_concat5_6seed.json`.
 
 ## The mechanism (why retention ≠ prediction — the load-bearing insight)
 - The multi-timescale diagonal is **LINEAR**: its state is a per-unit time-weighted SUM of past inputs. Over ~45 tokens the slow units integrate a large diffuse sum → **blurred, low-discriminability** (its long-context behaviour degenerates toward the bag, which is hugely negative here). It can PERFECTLY PRESERVE a single held cue (the memory task — pure retention, disjoint distractors, no prediction) but cannot COMPUTE the nonlinear higher-order features (n-gram conjunctions, "token A AND token B present") that language next-token PREDICTION rewards.
