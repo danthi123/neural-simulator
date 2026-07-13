@@ -101,8 +101,12 @@ class FixedPoolNP(OnBridgeBDSPNet):
                     gW += coef * np.outer(in_rate, xi_h)           # input->hidden credit (node xi_h x presynaptic in_rate)
                     gH += coef * np.outer(hid_rate, xi_o)          # hidden->output credit (node xi_o x presynaptic hid_rate)
                 if mode != "frozen":
-                    self._write_delta(self.mask_in2hid, self.idx_in, self.idx_hid, -lr * gW / k)
-                    self._write_delta(self.mask_hid2out, self.idx_hid, self.idx_out, -lr * gH / k)
+                    # NORM-CLIP each per-example update (the on-bridge dL/sigma^2 scale is large + variable -> raw steps
+                    # are huge/chaotic; the diagnostic showed NP moves the classification correctly but oscillates).
+                    def _clip(g, cap=2.0):
+                        gn = np.linalg.norm(g); return g / gn * min(gn, cap) if gn > 1e-9 else g
+                    self._write_delta(self.mask_in2hid, self.idx_in, self.idx_hid, -lr * _clip(gW / k))
+                    self._write_delta(self.mask_hid2out, self.idx_hid, self.idx_out, -lr * _clip(gH / k))
 
     def accuracy(self, X, y, settle):
         return float(np.mean([int(np.argmax(self._pooled_logits(X[i], settle)) == int(y[i])) for i in range(len(X))]))
