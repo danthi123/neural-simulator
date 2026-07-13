@@ -32,5 +32,23 @@ Testing the R3 W_in-learning claim on spikes needs a task with **input-represent
 2. **The LANGUAGE task on spikes** (the real R3 regime): learn W_in on the spiking reservoir, by-depth next-token CE, vs fixed W_in — expensive (the fork base's on-bridge W_rec LM run boundaried at 2/6), but the faithful regime.
 The RATE reference is the load-bearing GATE for task validity: only run the expensive spiking arm at an operating point where the rate reference SHOWS the R3 property (rate-learn > rate-fixed). NO `sim/` edit.
 
+## UPDATE — the cheap RATE PROBE confirms the diagnosis + measures the (modest) structured headroom
+`research/runners/_r3_structured_input_rate_probe.py` (numpy, self-contained): a FIXED ESN reservoir, distal-decode, cue codes ORTHOGONAL (one-hot) vs STRUCTURED (overlapping — each cue = a sum of a small shared random-atom pool), fixed W_in (read-out only) vs learn W_in (BPTT-frozen-W_rec = the R3 ceiling). Seed 42:
+| regime | fixed_win | learn_win | margin |
+|---|---|---|---|
+| K=16, d=6 (easy) — orthogonal | 1.000 | 1.000 | +0.000 |
+| K=16, d=6 (easy) — structured | 1.000 | 1.000 | +0.000 |
+| **K=48, d=12, n_pool=64 (collision) — orthogonal** | **1.000** | **1.000** | **+0.000** |
+| **K=48, d=12, n_pool=64 (collision) — structured** (8 atoms) | 0.688 | 0.750 | **+0.062** |
+| structured, 6 atoms (heavier overlap) | 0.333 | 0.396 | +0.062 |
+| structured, 5 atoms | 0.208 | 0.250 | +0.042 |
+| structured, 4 atoms (near-degenerate) | 0.042 | 0.083 | +0.042 |
+- **ORTHOGONAL codes: learn NEVER beats fixed (margin 0.000 at every difficulty)** — a random W_in separates orthogonal cues to the reservoir's capacity, so there is nothing to learn (the confirmed root cause).
+- **STRUCTURED (overlapping) codes: fixed COLLIDES (0.69→0.04 as overlap grows) and learn RECOVERS a REAL but MODEST +0.04–0.06** — structure-specific, so input structure IS the R3 headroom, but the magnitude on distal-decode is small (a bounded code-de-mixing gain), NOT the language task's +4 nats. The margin plateaus ~+0.06 across overlap levels — a genuine ceiling of this task class, not under-training.
+- ⇒ **the distal-decode task is a WEAK R3 regime**: learning W_in helps only modestly (de-mix overlapping codes), because the task's learnable input structure is thin. A +0.06 RATE ceiling means the noisier SPIKING version would very likely NOT clear a robust +0.10 gate → a predictable BOUNDARY on the cheap proxy.
+
+## ⇒ Verdict + the faithful next test
+The R3 spiking-W_in-learning **mechanism is validated GO**; the **cheap distal-decode proxy cannot demonstrate a strong functional win** (orthogonal = no headroom; structured = only +0.06, below a robust spiking gate). The **faithful strong test is the LANGUAGE task on spikes** — learn W_in on the fixed spiking reservoir on real text, by-depth next-token CE, vs fixed W_in (the regime where the R3 rate result is +4 nats). It is expensive (the fork base's on-bridge W_rec LM run boundaried at 2/6; the W_in version is the R3-STABLE lever, better-odds but untested on spikes) — the next major de-risk, pivoting `_emerge_reservoir_lm_onbridge_bdsp_derisk.py` to a plastic input→reservoir pathway (frozen recurrence) on the by-depth LM metric.
+
 ## Files
-`_reslm_onbridge_learn_win_derisk.py`; `raw/_r3_distsweep.log`. Corrects the task assumption in `2026-07-12-spiking-realization-scoping-learn-Win-on-fixed-reservoir-via-committed-BDSP-no-sim-edit.md`. Ties to `2026-07-11-R3-REFRAME-*` (the language regime where W_in-learning DOES win).
+`_reslm_onbridge_learn_win_derisk.py`; `_r3_structured_input_rate_probe.py`; `raw/_r3_distsweep.log`. Corrects the task assumption in `2026-07-12-spiking-realization-scoping-learn-Win-on-fixed-reservoir-via-committed-BDSP-no-sim-edit.md`. Ties to `2026-07-11-R3-REFRAME-*` (the language regime where W_in-learning DOES win, +4 nats).
