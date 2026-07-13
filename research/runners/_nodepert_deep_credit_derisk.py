@@ -107,13 +107,13 @@ def train_nodepert(Xtr, ytr, sizes, epochs, lr_hid, lr_out, sigma, seed, mode="n
     return Ws
 
 
-def run(seed, task, parity_bits, epochs, lr_hid, lr_out, sigma, hidden, k=1):
+def run(seed, task, parity_bits, epochs, lr_hid, lr_out, sigma, hidden, k=1, depth=2):
     (Xtr, ytr), (Xte, yte), n_bits = _load_task(task, seed, parity_bits)
     Xtr = np.asarray(Xtr, np.float64); Xte = np.asarray(Xte, np.float64)
     n_cls = int(max(ytr.max(), yte.max())) + 1
-    sizes = [n_bits, hidden, hidden, n_cls]                      # 2 hidden layers (the depth the FA family failed on)
+    sizes = [n_bits] + [hidden] * depth + [n_cls]               # `depth` hidden layers (does NP's credit hold as depth GROWS?)
     chance = float(np.bincount(yte, minlength=n_cls).max() / len(yte))
-    out = {"seed": seed, "task": task, "chance": round(chance, 3)}
+    out = {"seed": seed, "task": task, "depth": depth, "chance": round(chance, 3)}
     for mode in ("np", "shuffle_dl", "wrong_sign", "hidden_frozen"):
         Ws = train_nodepert(Xtr, ytr, sizes, epochs, lr_hid, lr_out, sigma, seed, mode=mode, k=k)
         out[mode] = round(_acc(Ws, Xte, yte), 3)
@@ -138,11 +138,12 @@ def main():
     ap.add_argument("--lr-hid", type=float, default=0.02); ap.add_argument("--lr-out", type=float, default=0.05)
     ap.add_argument("--sigma", type=float, default=0.5); ap.add_argument("--hidden", type=int, default=24)
     ap.add_argument("--k", type=int, default=1, help="antithetic node-perturbation resamples per example (variance reduction)")
+    ap.add_argument("--depth", type=int, default=2, help="number of hidden layers (does NP's credit hold as depth grows?)")
     ap.add_argument("--smoke", action="store_true"); ap.add_argument("--out", type=str, default=None)
     a = ap.parse_args()
     if a.smoke:
         a.epochs = 30
-    res = [run(s, a.task, a.parity_bits, a.epochs, a.lr_hid, a.lr_out, a.sigma, a.hidden, k=a.k) for s in a.seeds]
+    res = [run(s, a.task, a.parity_bits, a.epochs, a.lr_hid, a.lr_out, a.sigma, a.hidden, k=a.k, depth=a.depth) for s in a.seeds]
     if len(res) > 1:
         ng = sum(1 for r in res if r["GO"])
         print(f"[nodepert] {ng}/{len(res)} seeds GO | mean NP margin over chance "

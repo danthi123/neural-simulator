@@ -156,14 +156,20 @@ class OnBridgeNPNet(OnBridgeBDSPNet):
         self.sb.cp_connections.data[:] = from_host(data)
 
 
-def run(seed, task, parity_bits, epochs, lr_hid, lr_out, sigma, hidden, settle_steps, k):
+def run(seed, task, parity_bits, epochs, lr_hid, lr_out, sigma, hidden, settle_steps, k,
+        pool_out=24, hidden_bias=0.0, output_bias=0.0, fwd_wmean=90.0, max_train=0, max_test=0):
     (Xtr, ytr), (Xte, yte), n_bits = _load_task(task, seed, parity_bits)
     Xtr = np.asarray(Xtr, float); Xte = np.asarray(Xte, float)
+    if max_train and len(Xtr) > max_train:      # subsample for a tractable on-bridge GO/no-go (many settles per example)
+        s = np.random.RandomState(seed).permutation(len(Xtr))[:max_train]; Xtr, ytr = Xtr[s], ytr[s]
+    if max_test and len(Xte) > max_test:
+        s = np.random.RandomState(seed + 1).permutation(len(Xte))[:max_test]; Xte, yte = Xte[s], yte[s]
     n_cls = int(max(ytr.max(), yte.max())) + 1
     chance = float(np.bincount(yte, minlength=n_cls).max() / len(yte))
     out = {"seed": seed, "task": task, "chance": round(chance, 3), "n_bits": int(n_bits)}
     for mode in ("np", "shuffle_dl", "hidden_frozen"):
-        net = OnBridgeNPNet(seed, n_bits, hidden=hidden, pool_out=6)
+        net = OnBridgeNPNet(seed, n_bits, hidden=hidden, pool_out=pool_out, hidden_bias=hidden_bias,
+                            output_bias=output_bias, fwd_wmean=fwd_wmean, fwd_wjit=2.0)
         net.train_np(Xtr, ytr, epochs, lr_hid, lr_out, sigma, settle_steps, seed, mode=mode, k=k)
         out[mode] = round(net.accuracy(Xte, yte, settle_steps), 3)
         del net
@@ -188,11 +194,17 @@ def main():
     ap.add_argument("--hidden", type=int, default=12)
     ap.add_argument("--settle-steps", type=int, default=30)
     ap.add_argument("--k", type=int, default=2)
+    ap.add_argument("--pool-out", type=int, default=24)      # POPULATION averaging (a-1 record: ~>=10/class for spike-noise averaging)
+    ap.add_argument("--hidden-bias", type=float, default=0.0); ap.add_argument("--output-bias", type=float, default=0.0)
+    ap.add_argument("--fwd-wmean", type=float, default=90.0)  # strong forward => input reaches output (fwdsweep)
+    ap.add_argument("--max-train", type=int, default=0); ap.add_argument("--max-test", type=int, default=0)
     ap.add_argument("--smoke", action="store_true"); ap.add_argument("--out", type=str, default=None)
     a = ap.parse_args()
     if a.smoke:
         a.epochs = 4; a.settle_steps = 20
-    res = [run(s, a.task, a.parity_bits, a.epochs, a.lr_hid, a.lr_out, a.sigma, a.hidden, a.settle_steps, a.k)
+    res = [run(s, a.task, a.parity_bits, a.epochs, a.lr_hid, a.lr_out, a.sigma, a.hidden, a.settle_steps, a.k,
+               pool_out=a.pool_out, hidden_bias=a.hidden_bias, output_bias=a.output_bias, fwd_wmean=a.fwd_wmean,
+               max_train=a.max_train, max_test=a.max_test)
            for s in a.seeds]
     if len(res) > 1:
         ng = sum(1 for r in res if r["GO"])
