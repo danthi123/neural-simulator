@@ -128,6 +128,25 @@ def _load_task(task, seed, parity_bits):
         idx = rng.permutation(n); cut = int(0.65 * n)
         tr, te = idx[:cut], idx[cut:]
         Xtr, ytr, Xte, yte = bits[tr], label[tr], bits[te], label[te]
+    elif task == "dense":
+        # BurstCCN's DENSE-REDUNDANT regime (the trainable spiking-deep-credit regime our parity/emerge1 toys are NOT):
+        # 2 latent features, each a MAJORITY VOTE over a random REDUNDANT subset of the dense input bits (so each latent
+        # is robustly encoded by MANY bits -- like MNIST's redundant pixels); label = XOR of the 2 latents (nonlinear ->
+        # needs a hidden layer, depth-1 ~ chance). The REDUNDANCY is the single variable vs parity (where every bit is
+        # exact) -- the hypothesis: the coarse spiking burst-credit can learn a REDUNDANTLY-encoded hidden feature where
+        # it cannot learn an exact one. Many examples (dense-redundant learning wants data).
+        n_bits = max(24, int(parity_bits))
+        rng = np.random.default_rng(seed)
+        n = 1200
+        X = (rng.random((n, n_bits)) < 0.5).astype(np.float64)  # dense random bits (~50% active)
+        subA = rng.choice(n_bits, size=n_bits // 2, replace=False)
+        subB = rng.choice(n_bits, size=n_bits // 2, replace=False)
+        latA = (X[:, subA].sum(1) > len(subA) / 2.0).astype(np.int64)   # redundant majority-vote latent
+        latB = (X[:, subB].sum(1) > len(subB) / 2.0).astype(np.int64)
+        label = (latA ^ latB).astype(np.int64)                  # XOR of latents -> needs the hidden layer
+        idx = rng.permutation(n); cut = int(0.7 * n)
+        tr, te = idx[:cut], idx[cut:]
+        Xtr, ytr, Xte, yte = X[tr], label[tr], X[te], label[te]
     else:
         raise ValueError(f"unknown task {task!r}")
     ytr = np.asarray(ytr).astype(np.int64); yte = np.asarray(yte).astype(np.int64)
@@ -498,7 +517,8 @@ def _run_bridge_arm(mode, seed, n_bits, Xtr, ytr, Xte, yte, args):
                           fwd_wmean=args.fwd_wmean, fwd_wjit=args.fwd_wjit,
                           in_hi=args.in_hi, in_lo=args.in_lo, hidden_bias=args.hidden_bias,
                           output_bias=args.output_bias, apical_out_gain=args.apical_out_gain,
-                          apical_hid_gain=args.apical_hid_gain)
+                          apical_hid_gain=args.apical_hid_gain,
+                          couple_soma=(args.soma_g > 0.0), soma_g=args.soma_g)   # apical->soma coupling (2026-07-10 edit): soma_g>0 -> bursts B rise -> DIRECTED credit
     rates = net.region_rates(Xtr[0], args.settle_steps) if mode == "bdsp" else None
     coupling = net.apical_coupling_diag() if mode == "bdsp" else None
     w_ih0, w_ho0 = net.pathway_weight_sums()
@@ -553,7 +573,7 @@ def _mean(per, *keys):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=[42])
-    ap.add_argument("--task", choices=["emerge1", "parity"], default="emerge1")
+    ap.add_argument("--task", choices=["emerge1", "parity", "dense"], default="emerge1")
     ap.add_argument("--parity-bits", type=int, default=4)
     ap.add_argument("--microcircuit", action="store_true",
                     help="enable_bdsp_microcircuit (interneuron-cancelled clean apical error); default = Burstprop")
@@ -573,6 +593,8 @@ def main():
     # forward pathway init + drive / apical (the smoke levers; controller tunes for accuracy)
     ap.add_argument("--fwd-wmean", type=float, default=6.0)
     ap.add_argument("--fwd-wjit", type=float, default=0.5)
+    ap.add_argument("--soma-g", type=float, default=0.0,
+                    help="bdsp_apical_soma_g: >0 couples apical->soma so bursts B rise (DIRECTED credit); 0=decoupled (byte-identical to before).")
     ap.add_argument("--in-hi", type=float, default=750.0)
     ap.add_argument("--in-lo", type=float, default=40.0)
     ap.add_argument("--hidden-bias", type=float, default=520.0)

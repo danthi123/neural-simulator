@@ -1,0 +1,44 @@
+{
+ "task": "dense",
+ "soma_g": 120,
+ "coupled": true,
+ "by_seed": {
+  "42": {
+   "oracle": 0.8,
+   "chance": 0.731,
+   "bdsp": 0.731,
+   "lesion": 0.269
+  },
+  "43": {
+   "oracle": 0.781,
+   "chance": 0.661,
+   "bdsp": 0.661,
+   "lesion": 0.661
+  },
+  "44": {
+   "oracle": 0.806,
+   "chance": 0.7,
+   "bdsp": 0.3,
+   "lesion": 0.3
+  },
+  "100": {
+   "oracle": 0.806,
+   "chance": 0.681,
+   "bdsp": 0.681,
+   "lesion": 0.681
+  },
+  "101": {
+   "oracle": 0.783,
+   "chance": 0.706,
+   "bdsp": 0.314,
+   "lesion": 0.294
+  },
+  "102": {
+   "oracle": 0.806,
+   "chance": 0.667,
+   "bdsp": 0.336,
+   "lesion": 0.333
+  }
+ },
+ "bdsp_above_chance": 0
+}
