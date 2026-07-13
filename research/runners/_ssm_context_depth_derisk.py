@@ -64,12 +64,14 @@ class NumpyReservoir:
     heterogeneous per-unit time constants). feature 'running_cumulative' (mean state over prefix, the validated ESN
     read) or 'raw' (current state -- the natural read for a multi-timescale reservoir whose state already integrates)."""
 
-    def __init__(self, V, seed, n=300, kind="random"):
+    def __init__(self, V, seed, n=300, kind="random", beta=3.0, leak=0.95):
         self.n = n; self.kind = kind
+        self.beta = float(beta); self.leak = float(leak)      # shunt: input-dependent divisive gate on the recurrent memory
+        self._grng = np.random.default_rng(seed * 13 + 99)    # shunt_shuffled: permute which token gates (anti-cheat)
         rng = np.random.default_rng(seed * 7919 + 3)
         self.W_in = (rng.random((n, V)) * 2 - 1) * (1.0 / np.sqrt(V))
         arng = np.random.default_rng(seed * 31 + 5)
-        if kind in ("random", "hetero_esn"):
+        if kind in ("random", "hetero_esn", "shunt", "shunt_shuffled"):
             W = arng.standard_normal((n, n)); ev = np.max(np.abs(np.linalg.eigvals(W)))
             self.W = (0.95 / ev) * W
             self.alpha = 1.0 / np.exp(np.linspace(np.log(1.5), np.log(400.0), n)) if kind == "hetero_esn" else None
@@ -78,11 +80,24 @@ class NumpyReservoir:
             self.A = np.exp(-1.0 / tau)
 
     def per_token_states(self, U, silence=False, feature="running_cumulative"):
+        drives = [np.zeros(self.n) if silence else self.W_in @ U[t] for t in range(len(U))]
+        # shunt_shuffled anti-cheat: the input-dependent GATE is driven by a PERMUTED token's drive -> breaks the
+        # content<->gate correspondence. If shunt still helps here, the selectivity is not content-driven (a confound).
+        gate_drives = drives
+        if self.kind == "shunt_shuffled" and len(drives) > 1:
+            perm = self._grng.permutation(len(drives))
+            gate_drives = [drives[perm[t]] for t in range(len(drives))]
         x = np.zeros(self.n); cum = np.zeros(self.n); S = []
         for t in range(len(U)):
-            drive = np.zeros(self.n) if silence else self.W_in @ U[t]
+            drive = drives[t]
             if self.kind == "random":
                 x = np.tanh(self.W @ x + drive)
+            elif self.kind in ("shunt", "shunt_shuffled"):
+                # INPUT-DEPENDENT divisive shunt (Mamba-Delta / ORGaNICs): a strong input drive gates DOWN the recurrent
+                # memory (write the new content, forget old); a weak drive (filler) keeps the gate ~leak (RETAIN the
+                # held content across fillers) -> the state holds the last INFORMATIVE token across intervening fillers.
+                g = self.leak / (1.0 + self.beta * np.abs(gate_drives[t]))
+                x = np.tanh(g * (self.W @ x) + drive)
             elif self.kind == "hetero_esn":
                 x = (1.0 - self.alpha) * x + self.alpha * np.tanh(self.W @ x + drive)
             elif self.kind == "mtbounded":
@@ -113,7 +128,7 @@ def _by_depth_margin(W, mean, std, ev_cache, P_bi, V):
                 "margin": round((bce[b] - rce[b]) / cnt[b], 3)} for b in cnt}
 
 
-def run(seed, sents, vocab_size, n_pool, epochs, lr, wd, feature, concat=1, max_train=2000, max_eval=400):
+def run(seed, sents, vocab_size, n_pool, epochs, lr, wd, feature, concat=1, beta=3.0, max_train=2000, max_eval=400):
     docs = _concat(sents, concat)                                 # concat CONSECUTIVE sentences BEFORE the split (keeps discourse)
     rng = np.random.default_rng(seed)
     idx = rng.permutation(len(docs)); cut = int(0.8 * len(docs))
@@ -122,9 +137,9 @@ def run(seed, sents, vocab_size, n_pool, epochs, lr, wd, feature, concat=1, max_
     tr_ids = [vocab.ids(s) for s in tr]
     P_bi = fit_bigram(tr_ids, V)
     res_out = {}
-    # BAG control (confound): same read-out over the bag-of-prefix feature, once (reservoir-independent given ids)
-    for kind in ("random", "multitimescale", "mtbounded", "hetero_esn"):
-        res = NumpyReservoir(V, seed=seed, n=n_pool, kind=kind)
+    ARMS = ("random", "multitimescale", "hetero_esn", "shunt", "shunt_shuffled")
+    for kind in ARMS:
+        res = NumpyReservoir(V, seed=seed, n=n_pool, kind=kind, beta=beta)
         tr_cache = _cache(res, vocab, tr, feature); ev_cache = _cache(res, vocab, ev, feature)
         mean, std = _standardize_fit(tr_cache)
         W = train_readout(tr_cache, V, epochs, lr, np.random.default_rng(seed * 13 + 1), mean, std, wd=wd, ls=0.05)
@@ -137,14 +152,14 @@ def run(seed, sents, vocab_size, n_pool, epochs, lr, wd, feature, concat=1, max_
     Wb = train_readout(bag_tr, V, epochs, lr, np.random.default_rng(seed * 13 + 2), bmean, bstd, wd=wd, ls=0.05)
     res_out["bag"] = _by_depth_margin(Wb, bmean, bstd, bag_ev, P_bi, V)
 
-    print(f"[ssm-ctxdepth seed={seed} V={V} n_pool={n_pool} feature={feature}] reservoir-minus-bigram CE margin by context depth (+ = beats bigram):", flush=True)
-    hdr = "    depth   " + "".join(f"{k:>14s}" for k in ("random", "multitimescale", "mtbounded", "hetero_esn", "bag"))
-    print(hdr, flush=True)
+    cols = ("random", "multitimescale", "hetero_esn", "shunt", "shunt_shuffled", "bag")
+    print(f"[ssm-ctxdepth seed={seed} V={V} n_pool={n_pool} feature={feature} beta={beta}] reservoir-minus-bigram CE margin by context depth (+ = beats bigram):", flush=True)
+    print("    depth   " + "".join(f"{k:>14s}" for k in cols), flush=True)
     for lo, hi in BUCKETS:
         b = f"{lo}-{hi}" if lo != hi else f"{lo}"
         if b in res_out["random"]:
             row = f"    {b:>7s} "
-            for k in ("random", "multitimescale", "mtbounded", "hetero_esn", "bag"):
+            for k in cols:
                 row += f"{res_out[k][b]['margin']:>+14.3f}"
             print(row + f"   (n={res_out['random'][b]['n']})", flush=True)
     # GATE: does multi-timescale EXTEND the win to DEEP where random fades? DEEP = the deepest available buckets
@@ -158,13 +173,16 @@ def run(seed, sents, vocab_size, n_pool, epochs, lr, wd, feature, concat=1, max_
                 num += res_out[kind][b]["margin"] * res_out[kind][b]["n"]; den += res_out[kind][b]["n"]
         return num / den if den else float("nan")
     r_deep = deep_margin("random"); m_deep = deep_margin("multitimescale")
-    h_deep = deep_margin("hetero_esn"); bag_deep = deep_margin("bag")
-    best_res = max(m_deep, h_deep)
-    go = (best_res > r_deep + 0.02) and (best_res > bag_deep + 0.02)
-    print(f"    DEEP margin (depth>={deep_lo}): multitimescale={m_deep:+.3f} hetero_esn={h_deep:+.3f} vs random={r_deep:+.3f} vs bag={bag_deep:+.3f} "
-          f"-> {'GO (multi-timescale extends the deep-context win)' if go else 'no'}", flush=True)
-    return dict(seed=seed, feature=feature, by_kind=res_out, deep_lo=deep_lo, m_deep=round(m_deep, 3),
-                h_deep=round(h_deep, 3), r_deep=round(r_deep, 3), bag_deep=round(bag_deep, 3), go=bool(go))
+    s_deep = deep_margin("shunt"); ss_deep = deep_margin("shunt_shuffled"); bag_deep = deep_margin("bag")
+    # SHUNT GATE: does INPUT-DEPENDENT gating beat the plain ESN at DEEP context AND its shuffled-input control (content-
+    # driven) AND the input-INDEPENDENT multitimescale control (distinguishes from the mapped fixed-structure NEGATIVE)?
+    go = (s_deep > r_deep + 0.02) and (s_deep > ss_deep + 0.02) and (s_deep > m_deep + 0.02) and (s_deep > bag_deep + 0.02)
+    print(f"    DEEP margin (depth>={deep_lo}): shunt={s_deep:+.3f} vs random={r_deep:+.3f} vs shunt_shuffled={ss_deep:+.3f} "
+          f"vs multitimescale={m_deep:+.3f} vs bag={bag_deep:+.3f} "
+          f"-> {'GO (input-dependent gating beats plain ESN + shuffled + fixed-timescale controls)' if go else 'no'}", flush=True)
+    return dict(seed=seed, feature=feature, beta=beta, by_kind=res_out, deep_lo=deep_lo,
+                s_deep=round(s_deep, 3), ss_deep=round(ss_deep, 3), r_deep=round(r_deep, 3),
+                m_deep=round(m_deep, 3), bag_deep=round(bag_deep, 3), go=bool(go))
 
 
 def main():
@@ -176,11 +194,12 @@ def main():
     ap.add_argument("--lr", type=float, default=0.005); ap.add_argument("--weight-decay", type=float, default=0.001)
     ap.add_argument("--feature", type=str, default="running_cumulative", choices=["running_cumulative", "raw"])
     ap.add_argument("--concat", type=int, default=1, help="group N consecutive sentences into one long sequence (long-context regime)")
+    ap.add_argument("--beta", type=float, default=3.0, help="input-dependent shunt strength (beta=0 == plain ESN)")
     ap.add_argument("--out", type=str, default=None)
     a = ap.parse_args()
     sents = load_sentences(a.corpus, a.n_sentences)
     t0 = time.time()
-    res = [run(s, sents, a.vocab, a.n_pool, a.epochs, a.lr, a.weight_decay, a.feature, concat=a.concat) for s in a.seeds]
+    res = [run(s, sents, a.vocab, a.n_pool, a.epochs, a.lr, a.weight_decay, a.feature, concat=a.concat, beta=a.beta) for s in a.seeds]
     if len(res) > 1:
         print(f"[ssm-ctxdepth] {sum(1 for r in res if r['go'])}/{len(res)} seeds GO", flush=True)
     if a.out:
