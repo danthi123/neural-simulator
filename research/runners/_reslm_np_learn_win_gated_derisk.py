@@ -216,6 +216,55 @@ def train_win_np(train, dist, W_rec, W_in0, b, n, m, G, alpha, recur, codes, dco
     return W_in
 
 
+def _fwd_read_pert(xs, W_in, W_rec, b, n, alpha, recur, xis):
+    """forward with a per-step pre-activation perturbation xis[t] (n-vector) added to pre_t (= NODE perturbation)."""
+    h = np.zeros(n)
+    for t, x in enumerate(xs):
+        pre = W_rec @ h + W_in @ x + b + (xis[t] if xis is not None else 0.0)
+        act = pre if recur == "linear" else np.tanh(pre)
+        h = (1 - alpha) * h + alpha * act
+    return h
+
+
+def train_win_np_node(train, dist, W_rec, W_in0, b, n, m, G, alpha, recur, codes, dcodes, epochs, lr, sigma, k, seed, mode="np"):
+    """NODE perturbation (the biological form + lower variance): perturb the n hidden PRE-activations at each step (xi_t,
+    dim n*T total -- far smaller than the N*m weight space), read the global dL, and project the credit back onto W_in
+    via the three-factor outer product dW_in += (dL/sigma^2) * sum_t outer(xi_t, x_t). antithetic-k, CRN, ridge-eval."""
+    rng = np.random.RandomState(seed * 11 + 5)
+    W_in = W_in0.copy(); Wout = np.zeros((G, n))
+    Xs = [_seq_x(ex, dist, codes, dcodes, m) for ex in train]
+    Ys = [ex[3] for ex in train]
+    def _loss_read(read, y):
+        z = np.clip(Wout @ read, -30, 30); z = z - z.max(); e = np.exp(z); p = e / e.sum()
+        return float(-np.log(max(p[y], 1e-12))), p
+    for _ep in range(epochs):
+        order = rng.permutation(len(train)); perm = rng.permutation(len(train))
+        for t, si in enumerate(order):
+            xs = Xs[si]; y = Ys[si]; T = len(xs)
+            read0 = _fwd_read_pert(xs, W_in, W_rec, b, n, alpha, recur, None)
+            _, p = _loss_read(read0, y)
+            dW = np.zeros_like(W_in)
+            for _r in range(k):
+                xis = [sigma * rng.standard_normal(n) for _ in range(T)]
+                if mode == "shuffle":
+                    sk = perm[t]; xk, yk = Xs[sk], Ys[sk]
+                    Lp = _loss_read(_fwd_read_pert(xk, W_in, W_rec, b, n, alpha, recur, xis), yk)[0]
+                    Lm = _loss_read(_fwd_read_pert(xk, W_in, W_rec, b, n, alpha, recur, [-x for x in xis]), yk)[0]
+                else:
+                    Lp = _loss_read(_fwd_read_pert(xs, W_in, W_rec, b, n, alpha, recur, xis), y)[0]
+                    Lm = _loss_read(_fwd_read_pert(xs, W_in, W_rec, b, n, alpha, recur, [-x for x in xis]), y)[0]
+                dL = 0.5 * (Lp - Lm)
+                if mode == "wrong_sign":
+                    dL = -dL
+                coef = dL / (sigma * sigma)
+                for tt in range(T):
+                    dW += coef * np.outer(xis[tt], xs[tt])       # node credit -> W_in via the presynaptic input
+            W_in -= lr * dW / k
+            g = p.copy(); g[y] -= 1.0
+            Wout -= 0.05 * np.outer(g, read0)
+    return W_in
+
+
 def _bag_oracle_acc(train, evl, G, codes, dcodes, m, dist, seed, epochs, lr):
     """BAG control: order-INVARIANT. The 'read' = a learned linear map of the SUM of the sequence's input codes (oracle
     W_in-equivalent: fit the readout directly on the summed codes = the best any order-invariant reader can do). If this
@@ -237,6 +286,8 @@ def _arm_acc(train, evl, dist, recur, learner, G, n, m, alpha, codes, dcodes, se
         W_in = train_win_bptt(train, dist, W_rec, W_in0, b, n, m, G, alpha, recur, codes, dcodes, epochs, lr, seed)
     elif learner == "np":
         W_in = train_win_np(train, dist, W_rec, W_in0, b, n, m, G, alpha, recur, codes, dcodes, epochs, lr, sigma, k, seed, mode=np_mode)
+    elif learner == "np_node":
+        W_in = train_win_np_node(train, dist, W_rec, W_in0, b, n, m, G, alpha, recur, codes, dcodes, epochs, lr, sigma, k, seed, mode=np_mode)
     else:
         raise ValueError(learner)
     Rtr, Ytr = _reads(train, dist, W_in, W_rec, b, n, alpha, recur, codes, dcodes, m, lesion)
@@ -273,6 +324,7 @@ def main():
     ap.add_argument("--n-ex", type=int, default=400); ap.add_argument("--n-distract", type=int, default=12)
     ap.add_argument("--rung0", action="store_true")
     ap.add_argument("--np", action="store_true", help="run the NP arm (+ shuffle/wrong_sign anti-cheats) at --dists (rung-0 must pass there first)")
+    ap.add_argument("--perturb", choices=["weight", "node"], default="weight", help="NP form: perturb W_in weights (N*m) or hidden nodes (n*T, lower variance)")
     ap.add_argument("--sigma", type=float, default=0.05); ap.add_argument("--k", type=int, default=8)
     ap.add_argument("--out", type=str, default=None)
     a = ap.parse_args()
@@ -284,10 +336,11 @@ def main():
                 codes, V, m = build_codes(s, a.G, a.syn, a.sf, a.idn, id_pool=a.id_pool)
                 dcodes = _distractor_codes(s, m, a.n_distract)
                 train, evl = build_gated(s, a.G, a.syn, dist, a.n_ex, a.n_distract)
+                nplearner = "np_node" if a.perturb == "node" else "np"
                 arms["oracle"].append(_arm_acc(train, evl, dist, "tanh", "oracle", a.G, a.n, m, 0.3, codes, dcodes, s, a.epochs, a.lr))
                 arms["frozen"].append(_arm_acc(train, evl, dist, "tanh", "frozen", a.G, a.n, m, 0.3, codes, dcodes, s, a.epochs, a.lr))
                 for mode in ("np", "shuffle", "wrong_sign"):
-                    arms[mode].append(_arm_acc(train, evl, dist, "tanh", "np", a.G, a.n, m, 0.3, codes, dcodes, s, a.epochs, a.lr, sigma=a.sigma, k=a.k, np_mode=mode))
+                    arms[mode].append(_arm_acc(train, evl, dist, "tanh", nplearner, a.G, a.n, m, 0.3, codes, dcodes, s, a.epochs, a.lr, sigma=a.sigma, k=a.k, np_mode=mode))
             agg = {kk: float(np.mean(vv)) for kk, vv in arms.items()}
             chance = 1.0 / a.G
             beats = agg["np"] > agg["frozen"] + 0.05
