@@ -48,21 +48,22 @@ def build_binder_bridge(seed, plastic=True, hebb_lr=0.1):
     for s in range(_K):
         # barcode -> slot: PLASTIC (rate-window Hebbian). Small init so the fast weight GROWS from ~0 on binding.
         paths.append(RegionPathway(from_region="barcode", to_region=f"slot{s}", density=1.0,
-                                   weight_mean=40.0, weight_jitter=0.3, plastic=plastic))
-        paths.append(RegionPathway(from_region=f"slot{s}", to_region="slot_fs", density=1.0,
-                                   weight_mean=4.0, weight_jitter=0.2, plastic=False))          # slots drive shared FS
-        paths.append(RegionPathway(from_region="slot_fs", to_region=f"slot{s}", density=1.0,
-                                   weight_mean=3.0, weight_jitter=0.2, plastic=False))          # FS inhibits all slots (WTA)
+                                   weight_mean=3000.0, weight_jitter=0.15, plastic=plastic))
+        paths.append(RegionPathway(from_region=f"slot{s}", to_region="slot_fs",
+                                   density=0.6, weight_mean=2.0, weight_jitter=0.1, plastic=False))  # slots drive shared FS (D3)
+        paths.append(RegionPathway(from_region="slot_fs", to_region=f"slot{s}",
+                                   density=0.6, weight_mean=3.0, weight_jitter=0.1, plastic=False))  # FS inhibition (balanced for the synaptic drive)
     cfg.region_pathways = paths
-    cfg.dt = 0.5
+    cfg.dt = 1.0
     cfg.seed = cfg.ou_seed = cfg.heterogeneity_seed = seed
-    cfg.enable_ou_process = True; cfg.ou_noise_amplitude_pA = 30.0    # symmetry-breaking for the first-mention WTA
+    cfg.enable_ou_process = False    # symmetry-breaking for the first-mention WTA
     cfg.enable_stdp = False
     cfg.enable_hebbian_learning = plastic
     cfg.hebbian_rate_window = True
     cfg.hebbian_coactivity_decay = 0.9
     cfg.hebbian_learning_rate = hebb_lr
-    cfg.hebbian_max_weight = 90.0    # ABOVE the 40 init (else the soft-bound clips barcode->slot to 8 -> collapse, CLAUDE.md gotcha)
+    cfg.hebbian_max_weight = 6000.0
+    cfg.hebbian_coactivity_thresh = 0.04    # ABOVE the 40 init (else the soft-bound clips barcode->slot to 8 -> collapse, CLAUDE.md gotcha)
     rt = RuntimeState(); rt.actual_seed_used = seed
     b = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(), runtime_state=rt, gpu_config=GPUConfig())
     b._initialize_simulation_data()
@@ -83,7 +84,6 @@ def present(b, idx, code, drive_pA=1400.0, learn=True, suppress_slots=()):
     for _ in range(_T_PRESENT):
         b.cp_external_input_current[:] = 0.0
         b.cp_external_input_current[active] = drive_pA
-        b.cp_external_input_current[allslot] = 400.0
         for _ss in suppress_slots:
             b.cp_external_input_current[idx[f"slot{_ss}"]] = -800.0   # occupied-slot suppression -> novel routes to a FREE slot
         b._run_one_simulation_step()
