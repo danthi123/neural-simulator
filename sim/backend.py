@@ -231,14 +231,16 @@ def to_host(arr):
     Used at lineage save/load boundaries and any time we need to hand
     data off to non-CuPy code (e.g. h5py, msgpack, plotting libraries).
     """
-    xp, name = get_backend()
-    if name == "cupy":
-        # Guard against numpy arrays sneaking through (e.g. result of a
-        # cpu-side computation in cupy mode)
-        if hasattr(arr, "get"):
-            return arr.get()
-        return arr  # already a numpy array
-    return arr  # numpy backend: already on host
+    # Convert by ARRAY TYPE, not the active backend. A CuPy (device) array must be brought to host even if the active
+    # backend was later switched to numpy mid-process (e.g. a cupy-built bridge whose arrays outlive a
+    # get_backend("numpy") when a CPU sub-brain is created) -- otherwise the device array reaches np.asarray() and
+    # raises "Implicit conversion to a NumPy array is not allowed". A numpy array has NO `.get()`, so this is
+    # byte-identical to the prior logic in BOTH consistent-backend cases (cupy backend -> arr.get(); numpy backend ->
+    # numpy array returned unchanged); only the backend-mismatch case changes (from a broken cupy array to a correct
+    # host copy). Matches the module's own defensive fallback (`arr.get() if hasattr(arr, "get") else arr`).
+    if hasattr(arr, "get"):
+        return arr.get()
+    return arr
 
 
 def from_host(arr, dtype=None):
