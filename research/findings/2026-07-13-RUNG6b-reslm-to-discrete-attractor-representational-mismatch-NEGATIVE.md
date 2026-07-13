@@ -2,7 +2,13 @@
 
 **Date:** 2026-07-13
 **Runner:** `research/runners/_rung6b_reslm_plus_d3_attractor_derisk.py` (reuse-by-import: reslm `ReservoirStates` + `make_reference_tracking_task` + `discrete_attractor_rnn`; numpy-CPU; NO `sim/` edit).
-**Verdict:** NEGATIVE, precisely diagnosed → launches the next-mechanism gate (a negative is an undiscovered mechanism, not a wall).
+**Verdict:** NEGATIVE with the fixed random read → **SURPASSED same-cycle by candidate #2 (a LEARNED decorrelating read): 6-seed GO, attractor 1.000 at held-out-deeper lengths.** The workflow in action — the negative was an undiscovered mechanism, and the ranked next-gate's #2 candidate closed it.
+
+## ⭐ RESOLVED — candidate #2 (learned decorrelating read) is 6-seed GO
+The root cause (below) was that the reslm's per-clause codes are correlated (cosine ~0.4), so the attractor's *random* input map cannot separate the referent slots. Fix (`--learned`): fit a ridge read that maps each reslm subject code → a clean one-hot referent slot (the 6 codes are distinct, so a trained read separates them), then feed `[decode(reslm(a)) ; decode(reslm(b))]` as the attractor's per-clause input. **Result (6-seed 42/43/44/100/101/102): learned-read attractor@deeper = 1.000 every seed** (even exceeding the D3 clean-code control 0.75, since the learned read yields near-perfect one-hot slots), while the **reservoir-alone read fades to 0.203 (chance)** — the attractor's persistence + the learned decorrelating read are BOTH load-bearing. Anti-cheats hold: markov/retention floors at chance (the deeper-length tracking needs the composed history), reservoir-alone fades. ⇒ **unbounded discourse-referent tracking WORKS on the reslm substrate** (the reslm reads each clause → a learned decorrelating read → clean slots → the discrete attractor holds the referent to held-out-DEEPER lengths where the reservoir alone fades). **Honest scope:** the learned read is SUPERVISED on the KNOWN referent set (a bounded-referent scaffold; a read that GENERALIZES to novel/open referents is the frontier — same bounded-vs-open pattern as the rest of the arc). This is the same decorrelation lever (PPMI/learned-read) that recurs across the project. The finding title reflects the INITIAL fixed-read negative; the mechanism is RESOLVED for bounded referents.
+
+---
+
 
 ## The idea (Rung 6 → 6b)
 Rung 6 (`2026-07-13-RUNG6-...`) showed the reslm's own reservoir tracks the discourse referent at SHORT range and FADES with distance. The plan for unbounded tracking: use the reslm as the emergent per-clause ENCODER and the validated D3 discrete-attractor (`2026-07-09-D3-language-reference-tracking-GO.md`) as the GLOBAL tracker — feed the reslm's per-clause reservoir state as the attractor's per-clause input `X_t` on a token-encoded possession-TRANSFER task ("subj_a gives subj_b" per clause; holder=b iff holder==a).

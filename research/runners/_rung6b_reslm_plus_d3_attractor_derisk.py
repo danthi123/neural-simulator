@@ -94,10 +94,48 @@ def _reservoir_alone(train, test_deeper, n_cls, l2=1.0):
     return float(np.mean(np.argmax(Xte @ W, 1) == yte))
 
 
-def run(seed, n_hid=160, epochs=80, n_per_len=800, structured=False):
+def _fit_subject_decoder(res, vocab, l2=1e-2):
+    """CANDIDATE #2 -- a LEARNED decorrelating read: map each reslm subject code -> a clean one-hot referent slot.
+    The 6 subject codes are distinct (6/6) but correlated (cosine ~0.4); a trained ridge classifier separates them
+    into clean near-orthogonal slots for the relational attractor. Returns W (n+1 x K)."""
+    C = np.asarray([res.per_token_states(vocab.encode_seq([s]))[-1] for s in _SUBJ])   # (K, n)
+    Xa = np.concatenate([C, np.ones((_K, 1))], 1)
+    return np.linalg.solve(Xa.T @ Xa + l2 * np.eye(Xa.shape[1]), Xa.T @ np.eye(_K))
+
+
+def _learned_slots_for_task(res, vocab, split, W_dec):
+    """X[n,t] = [decode(reslm(a)) ; decode(reslm(b))] (2K clean referent-slot dims)."""
+    X, Y, L, SEQ, STATE = split
+    N, Lmax = SEQ.shape
+    Xr = np.zeros((N, Lmax, 2 * _K), np.float32)
+    def dec(w):
+        c = np.asarray(res.per_token_states(vocab.encode_seq([w]))[-1])
+        return np.concatenate([c, [1.0]]) @ W_dec
+    cache = {s: dec(s) for s in _SUBJ}
+    for n in range(N):
+        for t in range(int(L[n])):
+            a = _SUBJ[int(SEQ[n, t]) // _K]; b = _SUBJ[int(SEQ[n, t]) % _K]
+            Xr[n, t] = np.concatenate([cache[a], cache[b]])
+    return (Xr, Y, L, SEQ, STATE)
+
+
+def run(seed, n_hid=160, epochs=80, n_per_len=800, structured=False, learned=False):
     rng = np.random.RandomState(seed)
     vocab = Vocab(list(_VOCAB))
     res = ReservoirStates(in_dim=vocab.size, seed=seed, n=160)
+    if learned:
+        W_dec = _fit_subject_decoder(res, vocab)
+        abs_task0 = make_reference_tracking_task(seed, K=_K, n_per_len=n_per_len)
+        trL = _learned_slots_for_task(res, vocab, abs_task0["train"], W_dec)
+        tdL = _learned_slots_for_task(res, vocab, abs_task0["test_deeper"], W_dec)
+        taskL = {"train": trL, "test_same": trL, "test_deeper": tdL, "K": _K, "ident": abs_task0["ident"],
+                 "n_pool": 2 * _K, "color": abs_task0["color"], "p_transfer": abs_task0["p_transfer"]}
+        attrL = discrete_attractor_rnn(taskL, seed=seed, n_hid=n_hid, epochs=epochs)["state_deeper"]
+        resA = _reservoir_alone(trL, tdL, _K)
+        print(f"[rung6b LEARNED seed={seed}] learned-read attractor_deeper={attrL:.3f}  reservoir_alone={resA:.3f}  "
+              f"chance=0.167 (clean-code ctrl 0.75) -> {'GO' if attrL > 0.6 and attrL > resA + 0.15 else 'no'}")
+        return dict(seed=seed, mode="learned", attractor_deeper=round(attrL, 3), reservoir_alone=round(resA, 3),
+                    go=bool(attrL > 0.6 and attrL > resA + 0.15))
     n_pool = 2 * res.n if structured else res.n                # structured 2-slot read doubles the feature dim
     abs_task = make_reference_tracking_task(seed, K=_K, n_per_len=n_per_len)
     # rebuild the task with reslm-state X (train + test_deeper), keep K/ident/color
@@ -134,11 +172,12 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--seeds", type=int, nargs="*", default=None)
     ap.add_argument("--structured", action="store_true", help="2-slot read reslm(a)++reslm(b) (diagnostic: separable a/b)")
+    ap.add_argument("--learned", action="store_true", help="candidate #2: learned decorrelating reslm->slot read")
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
     seeds = a.seeds if a.seeds else [a.seed]
     t0 = time.time()
-    results = [run(s, structured=a.structured) for s in seeds]
+    results = [run(s, structured=a.structured, learned=a.learned) for s in seeds]
     if len(results) > 1:
         gos = sum(1 for r in results if r["go"]); print(f"[rung6b] {gos}/{len(results)} seeds GO")
     if a.out:
