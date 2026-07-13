@@ -37,6 +37,10 @@ Full 6-seed (dev 42/43/44 + blind 100/101/102), emerge1, k=8:
 | 2 | 0.944 | 0.978 | 0.992 | 0.958 | 0.967 | 0.894 | **6/6 GO** (mean 0.955) |
 | **3** | 0.964 | 0.889 | 0.911 | 0.994 | 0.930 | 0.928 | **6/6 GO** (mean 0.936) |
 | **4** | 0.875 | 1.000 | 0.897 | 0.872 | 0.989 | 0.922 | **6/6 GO** (mean 0.926) |
+| **5** (dev seeds) | 0.961 | 1.000 | 0.994 | — | — | — | **3/3 GO** (near-oracle) |
+| **6** (dev seeds) | 0.749 | 0.986 | 0.880 | — | — | — | **3/3 GO** (variance grows but ≫ ~0.6 floor) |
+
+The property EXTENDS to **depth 6** (3 dev seeds): NP trains a 6-hidden-layer net above the frozen floor on every seed — the credit still does not fade, where the FA family fails at depth 2. (Variance grows modestly with depth, as expected for a zeroth-order rule; depth-2/3/4 are the full-6-seed claims, depth-5/6 the indicative extension.)
 - NP trains a **4-hidden-layer** network to near-oracle (one seed **1.000**) at FULL 6-seed rigor (blind seeds included), shuffle-dL collapses to chance every seed, depth_helps every seed (NP ≫ the ~0.6 frozen floor). **The credit signal does NOT fade with depth** — this is precisely the property Forward-Forward LACKS (its greedy layer-local objectives depth-SATURATE — the wrong shape for a growing-with-depth lever) and the property vanilla feedback alignment lacks on emerge1 (fails to GENERALIZE even at depth-2; the burst family additionally fails ON-BRIDGE, dense-redundant). ⇒ NP is a spiking-compatible deep-credit rule that scales in depth, the direct enabler for the deep multi-layer learned representations rich conversation needs.
 
 ## PARITY — an honest boundary-map: NP's variance bites on SHARP exact-computation tasks, but the mission's regime is SMOOTH/graded (emerge1), where it's clean
