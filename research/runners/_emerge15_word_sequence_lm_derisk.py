@@ -41,8 +41,13 @@ def make_word_corpus(n_subj=4, middle=("chased", "the", "ball"), seed=42):
     (last word) depends on the SUBJECT (word 0), separated by the shared middle -> any fixed-order n-gram up to
     len(middle)+1 sees an identical context before the branch and is at 1/n_subj there. Returns (sentences[list of word
     lists], vocab[list of words], word2col[dict], branch_pos)."""
-    subjects = ["dog", "cat", "bird", "fox", "wolf", "owl", "bear", "hare"][:n_subj]
-    branches = ["home", "away", "up", "down", "left", "right", "back", "on"][:n_subj]
+    # real words for readability at small vocab; extended with synthetic tokens so the corpus SCALES to any n_subj
+    # (byte-identical for n_subj<=8). The words are just distinct tokens -> distinct SDR columns; the high-order
+    # structure (branch depends on the earlier subject through the shared middle) is preserved at any scale.
+    _S = ["dog", "cat", "bird", "fox", "wolf", "owl", "bear", "hare"]
+    _B = ["home", "away", "up", "down", "left", "right", "back", "on"]
+    subjects = (_S + [f"subj{i}" for i in range(max(0, n_subj - len(_S)))])[:n_subj]
+    branches = (_B + [f"brnch{i}" for i in range(max(0, n_subj - len(_B)))])[:n_subj]
     sentences = [[subjects[i]] + list(middle) + [branches[i]] for i in range(n_subj)]
     # deterministic vocab ordering (subjects, then middle words, then branches) for stable column indexing
     vocab = list(subjects) + [w for w in middle] + list(branches)
