@@ -123,7 +123,8 @@ class OnBridgeBDSPNet:
     def __init__(self, n_in, hidden, k, seed=0, rule="plain_fa", n_hidden_layers=2,
                  settle_steps=40, credit_steps=25, in_current_pA=520.0, in_bias_pA=260.0,
                  ff_w_init=4.0, apical_gain_pA=900.0, beta=1.0, p0=0.30, lr=0.05,
-                 tonic_h_pA=450.0, tonic_o_pA=500.0, pool_k=1, pbar_alpha=0.05):
+                 tonic_h_pA=450.0, tonic_o_pA=500.0, pool_k=1, pbar_alpha=0.05,
+                 graded_credit=False):
         from sim.bridge import SimulationBridge
         from sim.config import CoreSimConfig, GPUConfig, VisualizationConfig, RuntimeState
         from sim.backend import get_backend
@@ -167,6 +168,12 @@ class OnBridgeBDSPNet:
         cfg.dt_ms = 1.0
         cfg.enable_bdsp = True
         cfg.enable_bdsp_microcircuit = (rule == "microcircuit")
+        # GRADED clean-error credit (the committed additive/default-off sim/ flag, bridge.py:7275): swap the postsynaptic
+        # credit factor from the MEASURED burst rate cp_bdsp_B (the noisy CV~1.0 finite-spike sample) to the graded
+        # EXPECTATION cp_bdsp_E*cp_bdsp_P (event-rate x burst-probability, the low-variance clean-error credit; kernel
+        # identity B-Pbar*E == E*(P-Pbar)). The research-gate #1 surpass of the single-neuron readout-variance wall.
+        # Default False => byte-identical (credit factor stays the sampled B).
+        cfg.enable_bdsp_graded_credit = bool(graded_credit)
         cfg.bdsp_learning_rate = float(lr)
         cfg.bdsp_p0 = float(p0)
         cfg.bdsp_beta = float(beta)
@@ -474,7 +481,7 @@ def _train_onbridge(net, Xtr, ytr, mode, epochs, batch, seed):
 
 def _run_arm(rule, task, idx, n_in, hidden, k, epochs, batch, seed, n_hidden_layers=2,
              settle_steps=40, credit_steps=25, lr=0.05, mode="bdsp", hp=None, pool_k=1,
-             want_read_snr=False):
+             want_read_snr=False, graded_credit=False):
     hp = hp or {}
     (Xtr, ytr, _Ltr), (Xte, yte, _Lte) = task
     inh_idx, mem_idx = idx["inh_idx"], idx["memctrl_idx"]
@@ -482,7 +489,7 @@ def _run_arm(rule, task, idx, n_in, hidden, k, epochs, batch, seed, n_hidden_lay
                           settle_steps=settle_steps, credit_steps=credit_steps, lr=lr, pool_k=pool_k,
                           tonic_h_pA=hp.get("tonic_h_pA", 560.0), tonic_o_pA=hp.get("tonic_o_pA", 620.0),
                           apical_gain_pA=hp.get("apical_gain_pA", 2000.0), ff_w_init=hp.get("ff_w_init", 4.5),
-                          pbar_alpha=hp.get("pbar_alpha", 0.05))
+                          pbar_alpha=hp.get("pbar_alpha", 0.05), graded_credit=graded_credit)
     w0 = net.ff_weight_norm()
     _train_onbridge(net, Xtr, ytr, mode, epochs, batch, seed)
     w1 = net.ff_weight_norm()
