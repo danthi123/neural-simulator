@@ -21,6 +21,21 @@ Single variable = `graded_credit`. At the EXACT config where binary K=1 fails (t
 - **NEGATIVE gate:** graded also fails ⇒ the wall is credit-STRUCTURE (the FA direction itself), not read-variance → next: oracle-aligned credit / node-perturbation-done-right / GPU scale.
 - Either way the graded A/B **disambiguates read-variance vs credit-structure** — the still-open sub-question the whole deep-credit arc has been circling.
 
+## ▶ RESULT (6-seed, DECISIVE) — the read-variance hypothesis is REFUTED; the wall is CREDIT-STRUCTURE
+
+| arm | trains_at_all | mean inherit_heldout | mean deep_train |
+|---|---|---|---|
+| BINARY (`cp_bdsp_B`, sampled burst) | **0/6** | 0.228 | ~chance |
+| GRADED (`cp_bdsp_E*cp_bdsp_P`, low-variance) | **0/6** (the lone 1/6 is a degenerate seed-101 instance, oracle only 0.370) | 0.204 | ~chance |
+
+- **Graded does NOT rescue** — mean graded_inh 0.204 is if anything *below* binary 0.228, both below chance 0.333, on the config where the binary read fails at every cheap capacity (ep→200, H→48). Anti-cheats clean: graded permuted 0.228 (~chance, no leakage), lesion 0.222 (apical credit not spuriously carrying the answer), oracle 1.0 (task learnable).
+- **⇒ the residual is NOT single-neuron read variance.** Lowering the credit-factor variance (the graded expectation `E·P` replacing the sampled `B`, same expected credit via `B−Pbar·E ≡ E·(P−Pbar)`) leaves training at chance. Combined with the capacity sweep (not under-training) and the earlier Node-Perturbation-frozen-on-the-small-net result, the wall is the **CREDIT DIRECTION / STRUCTURE of feedback-alignment at depth on the point-neuron substrate**, biting every credit rule — NOT the readout noise the prior verdict emphasized. This is NEW information that sharpens the 2026-07-13 "readout-noise/SNR wall" verdict: reducing the read noise (graded) does not help ⇒ it is not (only) read noise.
+- **Honest scope:** the graded A/B was at K=1 (single neuron), which is off-spec for burstprop's ensemble `p=b/e` (BurstCCN used ~500 neurons/unit) — so the ENSEMBLE-SCALE form (population K=128–256 on GPU) is a distinct, still-untested lever, as is DECOLLE (per-layer LOCAL credit that DELETES the fragile multi-hop FA chain entirely). Both are the research-gate-ranked next mechanisms for a credit-STRUCTURE wall, now launched.
+
+## NEXT (running, the credit-STRUCTURE mechanisms — research-gate #3 DECOLLE + #6 ensemble-scale)
+1. **DECOLLE-ize the depth (CPU, the sharpened single-variable form):** per-layer fixed-random LOCAL readout + local target, IDENTICAL binary read — change ONLY the credit STRUCTURE (delete the multi-hop cross-layer FA chain). If per-layer local credit trains where the deep FA chain fails ⇒ the wall IS the depth of the FA credit chain.
+2. **Ensemble-scale burstprop (GPU, the definitional form):** K=128–256 neurons/logical unit so `p=b/e` is a genuine ensemble statistic (as burstprop was validated). Does the definitional ensemble form train where the off-spec K=1/8 fails.
+
 ## Files
 - Research gate workflow: `spiking-deep-credit-training-wall-research-gate` (journal in the run's transcript dir).
 - Capacity sweep: `research/findings/raw/_dccap/cap_*_s*.json`.
