@@ -1,0 +1,26 @@
+{
+  "probe": "emerge15_online_grow",
+  "n_subj": 16,
+  "vocab": 35,
+  "chance": 0.0625,
+  "best_ngram": 0.0625,
+  "lesion": false,
+  "permute": false,
+  "htm": 1.0,
+  "grown_syn": 1744,
+  "dense_syn": 6168960,
+  "grown_ratio": 0.0002827056748625376,
+  "GO": true,
+  "elapsed_seconds": 55.6,
+  "per_seed": [
+    {
+      "seed": 43,
+      "htm": 1.0,
+      "grown_syn": 1744,
+      "dense_syn": 6168960,
+      "vocab_n": 35,
+      "nE": 72
+    }
+  ],
+  "verdict": "ONLINE-GROWN HTM 1.0 vs n-gram 0.062; grown 1744 synapses (vs dense 6168960) discovered from winner dynamics. GO: emergent grow-to-active-context matches the offline corpus pool at a cell-level sub-quadratic grown-synapse count."
+}

@@ -29,7 +29,16 @@ The existing `enable_structural_plasticity` (`sim/bridge.py:7567-7660`) is Cline
 ## ⇒ the emergence bar is met for the vocab-scale mechanism
 The HTM word-LM's pool-sparsity scale axis now EMERGES from experience: the coincidence pool grows from the network's own winner co-firing during learning, cell-level, HTM 1.0 at 0.155% of the dense synapses, both anti-cheats collapsing, 6-seed. The offline corpus pool (the hand-structured pre-scan) is retired as a de-risk scaffold — the online grow is the real mechanism.
 
+## Result 2 — vocab-scaling: HTM stays 1.0 + the grown-synapse count is LINEAR in corpus (6-seed)
+| n_subj | vocab | HTM (6-seed) | grown synapses (mean) | analytic dense | ratio |
+|---|---|---|---|---|---|
+| 8 | 19 | 1.000 | 848 | 547,200 | 0.00155 |
+| 16 | 35 | 1.000 | 1,744 | 6,168,960 | 0.00028 |
+| 32 | 67 | 1.000 | 3,536 | 81,789,312 | 0.00004 |
+
+**The grown-synapse count is LINEAR in the corpus** (848→1,744→3,536 = ~2.05× per vocab-doubling) — because cell-level winner→winner grow is FIXED k_win²/context (k_win does not scale with vocab), unlike the offline column-level pool's cubic growth (which grew nE² per pair with nE ∝ n_subj). So the online cell-level grow achieves the truly-sub-quadratic goal on the SYNAPSE axis: HTM stays 1.000 across n=8/16/32 (6-seed each) while the fraction vs dense drops ~1/vocab². (The NEURON count N=vocab·nE still grows because nE=k_win·n_subj+8 scales — the cells-per-column axis; the multi-segment axis (Option B) would fix nE too.)
+
 ## NEXT
-- Vocab-scaling of the online grow (n=16/32/64): does HTM stay 1.0 + the grown count stay sub-quadratic (cell-level ~ contexts·k_win², not vocab²)? [in flight]
+- [DONE above] Vocab-scaling confirmed LINEAR-in-corpus grown synapses, HTM 1.0 at n=8/16/32.
 - Compose with the multi-segment cell-efficiency axis (Option B of `2026-07-02-onbridge-htm-tm-scaling-multisegment-research-gate.md`) — fixed nE + cell reuse — for truly sub-cubic scaling.
 - Port the per-sentence re-inject to a genuine on-substrate structural-plasticity grow step (a guarded, default-off `sim/` grow-coincidence-synapse path) once the runner-side mechanism is fully validated.
