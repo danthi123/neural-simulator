@@ -217,6 +217,12 @@ class OnBridgeBDSPNet:
         # (no weight transport, no per-neuron feedback). The per-logical-unit apical is BROADCAST to the K pool neurons.
         yrng = np.random.default_rng(seed + 9973)
         self.Y = [yrng.normal(0.0, 1.0, (sizes[k + 2], sizes[k + 1])) for k in range(len(sizes) - 2)]
+        # DECOLLE per-layer LOCAL readouts (the credit-STRUCTURE test): each hidden layer gets its OWN fixed-random
+        # readout (hidden_size x k) -> a LOCAL target error, DELETING the multi-hop cross-layer FA descent
+        # (Kaiser-Mostafa-Neftci 2020, Deep Continuous Local Learning). SEPARATE seed stream => no transport; logical-unit
+        # space (does not grow with K). Only used when rule == "decolle" (additive; the other rules are untouched).
+        rrng = np.random.default_rng(seed + 7717)
+        self.Rloc = [rrng.normal(0.0, 1.0, (sizes[k + 1], self.k)) for k in range(len(sizes) - 2)]
         p0c = min(max(float(p0), 1e-6), 1.0 - 1e-6)
         self._bias = float(np.log(p0c / (1.0 - p0c)))
         self.beta = float(beta); self.p0 = float(p0)
@@ -387,6 +393,21 @@ class OnBridgeBDSPNet:
         for k in range(nhid - 1, -1, -1):                         # top hidden -> bottom
             li = k + 1                                            # layer index of this hidden layer
             E = acts[li][None, :]                                 # (1, size_{k+1}) POOLED event rate (logical)
+            if self.rule == "decolle":
+                # DECOLLE: per-layer LOCAL credit from THIS layer's own fixed-random readout -> NO cross-layer descent
+                # (the multi-hop FA chain is DELETED; each hidden layer trains from its own local target). Same clean
+                # continuous read as plain-FA; the ONLY change vs plain-FA is the credit STRUCTURE (local vs descending).
+                Rk = self.Rloc[k]                                 # (size, k)
+                ldelta = _softmax(E @ Rk)                          # (1, k) local softmax
+                ldelta[0, y] -= 1.0                               # (1, k) local +gradient
+                if mode == "apical_lesion":
+                    ldelta = np.zeros_like(ldelta)
+                elif mode == "wrong_sign":
+                    ldelta = -ldelta
+                phi = E * (1.0 - E)
+                soma_err = phi * ((-ldelta) @ Rk.T)               # (1, size) local clean error
+                apical[self.slices[li]] = self.apical_gain_pA * self._broadcast(soma_err[0], li)
+                continue                                          # each layer independent -- no e_upper descent
             Yk = np.zeros_like(self.Y[k]) if mode == "apical_lesion" else self.Y[k]
             v_api = e_upper @ Yk                                  # (1, size) clean apical error (weighted sum, low-noise)
             phi = E * (1.0 - E)
