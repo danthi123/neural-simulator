@@ -30,11 +30,13 @@ import argparse
 import json
 import numpy as np
 
+_PUSH_K = PUSH_K = 8         # module-level; --push-k overrides the depth (how distal A is before the pop)
+
 N_ENT = 6                    # named entities (the "subjects" vocabulary)
 PRONOUN = N_ENT              # a generic PRONOUN surface token (drives the reservoir but does NOT name the referent)
 N_POOL = 200                 # reservoir size
 N_TRIALS = 240               # discourses per seed
-PUSH_K = 8                   # clauses the interloper B holds before the pop -> A is DISTAL (reservoir fades it)
+                             # (PUSH_K / _PUSH_K defined above the imports; --push-k overrides the distal depth)
 
 
 def _ent_code(rng):
@@ -77,7 +79,7 @@ def _build_trial(rng):
     A, B = rng.choice(N_ENT, 2, replace=False)
     seq = [(int(A), "introduce", int(A))]                    # A introduced
     seq.append((int(B), "push", int(B)))                     # push: a new named subject B enters
-    for _ in range(PUSH_K):
+    for _ in range(_PUSH_K):
         seq.append((int(B), "continue", int(B)))             # B holds the floor (A goes DISTAL)
     seq.append((PRONOUN, "pop", -1))                         # pop: PRONOUN surface -> resume A (unnamed at the surface)
     post = len(seq) - 1                                      # predict the referent of the pronoun = the resumed A
@@ -137,8 +139,12 @@ def run(seed):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=[42, 43, 44])
+    ap.add_argument("--push-k", type=int, default=None, help="distal depth (clauses the interloper holds before the pop)")
     ap.add_argument("--out", type=str, default=None)
     a = ap.parse_args()
+    if a.push_k is not None:
+        global _PUSH_K
+        _PUSH_K = a.push_k
     res = [run(s) for s in a.seeds]
     print(f"[rung6] {sum(1 for r in res if r['GO'])}/{len(res)} GO", flush=True)
     if a.out:

@@ -23,6 +23,23 @@ INTRODUCE A → PUSH (a new named subject B enters) → B holds the floor for PU
 
 GO gate: register > latch + 0.15 AND > reservoir + 0.15 AND > shuffle + 0.15. **12/12 GO.**
 
+## Depth-robustness (the register carries the referent UNBOUNDED)
+
+Sweeping the distal depth (`--push-k`, how many clauses the interloper holds before the pop) confirms
+the register's advantage is not a shallow-depth artifact — it holds as A goes arbitrarily distal while
+the reservoir fades completely:
+
+| PUSH_K (A is k+1 clauses distal) | register | latch | reservoir |
+|---|---|---|---|
+| 4 (A 5 back) | 1.00 | 0.28 | 0.20 |
+| 8 (A 9 back) | 1.00 | 0.20 | 0.15 |
+| 16 (A 17 back) | 1.00 | 0.19 | 0.16 |
+| 32 (A 33 back) | 1.00 | 0.19 | 0.14 |
+
+The register (non-fading two-gate slot) stays at 1.00 to 33 clauses back; the reservoir fades to chance
+by ~5 clauses. This is the fading-memory ceiling (the reservoir's bound) surpassed by the structural
+register — exactly the Rung-6 discourse-structure role.
+
 ## Why this is the right controls
 
 - **LATCH-ONLY being WRONG post-pop is the point** — it is exactly the Rung-2 single-latch ceiling (it holds B, the most-recent named subject). The two-gate register surpasses it by restoring A.
