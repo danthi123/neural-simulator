@@ -31,6 +31,17 @@ The fixed-gate scale probe was a negative (an untrained selective channel HURTS 
 
 **`sel_gain` mean across the 3 points: +0.634 (nt2800) → +0.676 (nt5600) → +0.795 (nt11200)** — MONOTONIC growth across 4× data, both seeds increasing at every step. AND at nt=11200 **`sel−bigram` is negative on BOTH seeds** (−0.079/−0.022 → sel now beats the bigram at the deep aggregate on both seeds, where at nt=5600 s43 was +0.023). So with more data the trained selective's advantage over BOTH the co-trained reservoir AND the fast-improving bigram widens.
 
+## DEEP-TAIL–specific growth — the selective's value becomes MORE deep-concentrated with data (answers the adversarial-verify's shallow concern in the joint+scale setting)
+
+Per-depth `sel<eprop` (the trained selective's advantage over the co-trained reservoir) at the deep tail, mean over 2 seeds:
+
+| depth | nt=2800 | nt=5600 | nt=11200 |
+|---|---|---|---|
+| 6-9 | +0.525 | +0.640 | +0.757 |
+| 10-99 | +0.528 | +0.653 | **+1.065** |
+
+At the DEEPEST tail (d≥10) the selective's advantage over the reservoir GROWS from +0.53 → +1.07 across 4× data — the FASTEST growth of any depth. Mechanistically: as data scales the reservoir alone gets WORSE at the deep tail (fading membrane memory), while the selective channel HOLDS the distal context — so the selective's marginal value becomes MORE deep-concentrated with data, exactly where long-range/fluency lives. This directly answers the frozen coupling's adversarial-verify shallow-concern (the frozen benefit was shallow-largest): in the JOINT + SCALED setting, the selective's benefit is deep-largest and deep-GROWING. (`sel−bigram` at d≥10: −0.020/+0.038/−0.079 across nt — noisy at 2 seeds but sel edges the bigram at the deep tail at the largest scale.)
+
 ## ⇒ honest read
 
 The decisive scale question ("does the LEARNED selective mechanism help MORE with data, or does the reservoir absorb it?") is answered POSITIVELY and MONOTONICALLY: **the trained selective's advantage over the co-trained reservoir grows with data** across 3 scale points / 4× data (sel_gain +0.634→+0.676→+0.795, both seeds at every step), the exact opposite of the fixed gate (hurts) and the fixed reservoir (Ueda-bounded / margin shrinks), and by nt=11200 sel beats the bigram at the deep aggregate on both seeds. This is the fluency-direction signal for the coupling — the same direction the Rung-3 isolated-selective vocab trajectory showed, now confirmed for the CO-TRAINED generator as DATA scales, monotonically. Honest scope: 3 scale points × 2 seeds at tractable scale; the absolute deep-TAIL-vs-bigram win still needs the validated-signal regime (23.7M/V=2000, the null-discriminator finding), but the DIRECTION — more data → the learned selective helps more — is now established across 4× data with monotonic growth.
