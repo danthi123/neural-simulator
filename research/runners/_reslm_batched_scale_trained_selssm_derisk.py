@@ -19,8 +19,10 @@ import numpy as np
 
 from research.runners._emerge_reservoir_lm_derisk import Vocab, fit_bigram, bigram_ce, _bag_cache
 from research.runners._emerge_reservoir_lm_realcorpus_derisk import load_sentences
+from research.runners._emerge_reservoir_lm_context_depth_derisk import _bucket
 import research.runners._reslm_batched_reservoir_derisk as BR
 from research.runners._reslm_batched_scale_run import _cache_batched
+from collections import defaultdict
 
 N_SSM = 200
 D_SEL = 32
@@ -62,7 +64,7 @@ def _joint_train_eval(tr_cache, ev_cache, V, augment, seed, E, Win, w0, b0, Bc):
                 if augment:
                     delta_c = Bc @ err
                     w -= LR_GATE * (delta_c[:, None] * ew); b -= LR_GATE * (delta_c * ec)
-    ce = 0.0; cnt = 0
+    ce = 0.0; cnt = 0; dce = defaultdict(float); dcnt = defaultdict(int)
     for states, ids in ev_cache:
         T = min(len(states), len(ids)); c = np.zeros(N_SSM)
         for t in range(T - 1):
@@ -72,7 +74,11 @@ def _joint_train_eval(tr_cache, ev_cache, V, augment, seed, E, Win, w0, b0, Bc):
                 feat = np.concatenate([h, c])
             else:
                 feat = h
-            p = _softmax(Wro @ feat); ce += -math.log(max(p[ids[t + 1]], 1e-12)); cnt += 1
+            p = _softmax(Wro @ feat); nll = -math.log(max(p[ids[t + 1]], 1e-12))
+            ce += nll; cnt += 1
+            bd = _bucket(t + 1); dce[bd] += nll; dcnt[bd] += 1
+    _joint_train_eval.last_by_depth = {k: dce[k] / dcnt[k] for k in dcnt}     # side-channel per-depth CE (last call)
+    _joint_train_eval.last_depth_cnt = dict(dcnt)
     return ce / cnt
 
 
@@ -117,19 +123,30 @@ def main():
     Bc = np.random.default_rng(a.seed * 191 + 11).standard_normal((N_SSM, V)) / np.sqrt(V)
 
     res_ce = _joint_train_eval(tr_cache, ev_cache, V, False, a.seed, E, Win, w0, b0, Bc)
+    res_bd = dict(_joint_train_eval.last_by_depth)
     sel_ce = _joint_train_eval(tr_cache, ev_cache, V, True, a.seed, E, Win, w0, b0, Bc)
+    sel_bd = dict(_joint_train_eval.last_by_depth)
     bag_ce = _bag_ce(tr_cache, ev_cache, V, a.seed)
+    bag_bd = dict(_joint_train_eval.last_by_depth)
     P_bi = fit_bigram(tr_ids, V); bi_ce, _, _ = bigram_ce(P_bi, ev_ids)
+    # deep-tail (d>=4) margin-over-bag: does the trained-sel lift concentrate at the deep tail (genuine long-range)?
+    deep = ["4-5", "6-9", "10-99"]
+    dtail = {b: {"res": res_bd.get(b), "sel": sel_bd.get(b), "bag": bag_bd.get(b),
+                 "sel_lift": (bag_bd.get(b, 0) - sel_bd.get(b, 0)) - (bag_bd.get(b, 0) - res_bd.get(b, 0))}
+             for b in deep if b in sel_bd}
 
     m_res = bag_ce - res_ce; m_sel = bag_ce - sel_ce
     res = dict(n_pool=a.n_pool, n_train=len(tr), V=V, res_ce=round(res_ce, 4), sel_ce=round(sel_ce, 4),
                bag_ce=round(bag_ce, 4), bi_ce=round(bi_ce, 4), margin_res_over_bag=round(m_res, 4),
                margin_sel_over_bag=round(m_sel, 4), sel_lift=round(m_sel - m_res, 4),
-               sel_over_bigram=round(bi_ce - sel_ce, 4), collect_s=round(collect_s, 1), total_s=round(time.time() - t0, 1))
+               sel_over_bigram=round(bi_ce - sel_ce, 4), deep_tail=dtail,
+               collect_s=round(collect_s, 1), total_s=round(time.time() - t0, 1))
     json.dump(res, open(a.out, "w"))
+    dt = " ".join(f"d{b}={dtail[b]['sel_lift']:+.3f}" for b in ("4-5", "6-9", "10-99") if b in dtail)
     print(f"[trained-selssm-scale] np={a.n_pool} nt={len(tr)} V={V}: margin_over_BAG res={m_res:+.4f} sel={m_sel:+.4f} "
-          f"(sel_lift={m_sel - m_res:+.4f}) | sel_over_bigram={bi_ce - sel_ce:+.4f} | res_ce={res_ce:.3f} sel_ce={sel_ce:.3f} "
-          f"bag={bag_ce:.3f} bigram={bi_ce:.3f} -> {'TRAINED SEL LIFTS' if m_sel > m_res + 0.005 else 'no lift'}", flush=True)
+          f"(sel_lift={m_sel - m_res:+.4f}) | sel_over_bigram={bi_ce - sel_ce:+.4f} | deep-tail sel_lift: {dt} | "
+          f"res_ce={res_ce:.3f} sel_ce={sel_ce:.3f} bag={bag_ce:.3f} bigram={bi_ce:.3f} "
+          f"-> {'TRAINED SEL LIFTS' if m_sel > m_res + 0.005 else 'no lift'}", flush=True)
 
 
 if __name__ == "__main__":
