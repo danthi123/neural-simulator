@@ -74,6 +74,19 @@ DECOLLE (per-layer LOCAL fixed-random credit, the multi-hop FA chain DELETED) al
 
 **The named, well-motivated next mechanism (cheap-first):** BPTT's local credit factor is the GRADED MEMBRANE-POTENTIAL SURROGATE `σ'(v−θ)` (`atan_surrogate(v−threshold)` — "how close to threshold," a smooth low-variance subthreshold sensitivity). The BDSP arms all use `phi = E·(1−E)` — a RATE-based derivative proxy on the event rate `E`, NOT the membrane surrogate. This is the research gate's #1 reframe, now correctly relocated: not the burst FACTOR (the `enable_bdsp_graded_credit` A/B, which was refuted), but the LOCAL DERIVATIVE. **Next de-risk: use the membrane-potential surrogate `σ'(v_soma−θ)` as the BDSP local credit derivative (single variable vs the rate `phi`), on the exact does-not-train config — does the surrogate derivative close the gap to BPTT?** Biology-faithful (the surrogate = the neuron's own subthreshold sensitivity; catalog dendritic-plateau / graded apical). If it partially closes → the gap is the derivative read; if not → the gap is BPTT's temporal credit-through-time (which a purely-local rule lacks) → the lever is scale or an eligibility-trace local rule (e-prop-style, no BPTT).
 
+## ▶▶▶ SPATIAL-vs-THROUGH-TIME ABLATION (6-seed) — the biological local rule needs ELIGIBILITY TRACES (e-prop), named precisely
+
+Within the working LIF+surrogate framework, ablating BPTT's through-time credit (spatial-only: the per-timestep membrane surrogate, recurrent terms zeroed):
+
+| credit | train | inherit | trains |
+|---|---|---|---|
+| BPTT (surrogate + through-time) | 0.972 | 0.673 | 5/6 |
+| SPATIAL-only (surrogate, NO through-time) | 0.638 | 0.420 | 2/6 |
+
+The surrogate derivative ALONE gets partway (train 0.638 ≫ chance, inherit 0.420 > chance — not dead), but **temporal credit-through-time closes the gap** (→ 0.972 / 0.673). ⇒ the biological LOCAL on-spike rule needs BOTH ingredients: the **membrane-surrogate derivative** AND **temporal eligibility**. The one-step BDSP rule (rate `phi`, no eligibility) has neither. **The named mechanism that provides both, LOCAL + forward-mode + transport-free (no BPTT, no weight transport): e-prop** (Bellec 2020; forward eligibility traces `ε_ji(t)=α·ε_ji(t-1)+z_i(t)`, learning factor `ψ_j(t)`=surrogate, transport-free FA learning signal). For a feedforward net e-prop's eligibility is EXACT for the diagonal leak-recurrence (Zucchet forward-mode RTRL), so it should approach BPTT (the FA learning signal is the one approximation).
+
+**⇒ THE COMPLETE, PRECISE MAP of the deep-credit-on-spikes learning boundary (this overnight):** the spiking SUBSTRATE is viable (BPTT trains it); the biological LOCAL rule's gap to BPTT = (surrogate derivative [partial] + temporal eligibility [closes it]); the named frontier = an **e-prop local rule** (surrogate + forward eligibility + FA feedback). This is a precise, tractable target for the emergence engine — NOT a wall. NEXT de-risk: implement `credit_mode="eprop"` (forward eligibility + FA learning signal, transport-free) on the LIF net — does it close the gap to BPTT (train ~0.97) where one-step BDSP fails (0/6)? Then port to the Izhikevich BDSP substrate.
+
 ## Files
 - Research gate workflow: `spiking-deep-credit-training-wall-research-gate` (journal in the run's transcript dir).
 - Capacity sweep: `research/findings/raw/_dccap/cap_*_s*.json`.
