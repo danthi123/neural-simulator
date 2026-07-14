@@ -1,0 +1,323 @@
+{
+  "probe": "onbridge_deep_credit_decorrelation_forward_only",
+  "seed": 44,
+  "k_list": [
+    1,
+    8,
+    16
+  ],
+  "noise_pA_list": [
+    0.0,
+    50.0,
+    100.0
+  ],
+  "config": {
+    "hidden": 24,
+    "n_hidden_layers": 2,
+    "settle_steps": 25,
+    "n_inputs": 40,
+    "n_fixed": 6,
+    "n_repeats": 10,
+    "ou_seed": 12345,
+    "hp": {
+      "tonic_h_pA": 560.0,
+      "tonic_o_pA": 620.0,
+      "apical_gain_pA": 2000.0,
+      "ff_w_init": 4.5,
+      "pbar_alpha": 0.05
+    },
+    "task": {
+      "n_super": 12,
+      "n_members": 8,
+      "held_per_super": 3,
+      "n_prop": 2,
+      "member_id_dim": 3,
+      "n_obs": 16,
+      "noise": 0.02,
+      "feature_seed": 0
+    },
+    "backend": "numpy"
+  },
+  "elapsed_seconds": 412.0,
+  "result": {
+    "seed": 44,
+    "meta": {
+      "n_super": 12,
+      "n_members": 8,
+      "held_per_super": 3,
+      "n_prop": 2,
+      "k_classes": 5,
+      "member_id_dim": 3,
+      "n_obs": 16,
+      "noise": 0.02,
+      "feature_seed": 0,
+      "n_features": 7,
+      "n_train": 720,
+      "n_heldout": 276,
+      "n_inherit_heldout": 27,
+      "n_memctrl_heldout": 9,
+      "n_supers_untaught": 3
+    },
+    "n_in": 7,
+    "k_classes": 5,
+    "n_inputs": 40,
+    "n_fixed": 6,
+    "n_repeats": 10,
+    "k_list": [
+      1,
+      8,
+      16
+    ],
+    "noise_list": [
+      0.0,
+      50.0,
+      100.0
+    ],
+    "grid": {
+      "K1_noise0": {
+        "pool_k": 1,
+        "across_input_pairwise_corr": NaN,
+        "across_input_pairwise_corr_by_layer": [
+          NaN,
+          NaN
+        ],
+        "read_snr_corr": 0.3582067151269964,
+        "read_snr_corr_by_layer": [
+          0.3787311136419685,
+          0.3376823166120243
+        ],
+        "noise_pairwise_corr": NaN,
+        "noise_pairwise_corr_by_layer": [
+          NaN,
+          NaN
+        ],
+        "single_neuron_noise_cv": 0.28421077985646737,
+        "pooled_noise_cv": 0.28421077985646737,
+        "pooling_gain": 1.0,
+        "pooling_gain_by_layer": [
+          1.0,
+          1.0
+        ],
+        "sqrt_k": 1.0,
+        "mean_event_rate": 0.06463071082980605
+      },
+      "K1_noise50": {
+        "pool_k": 1,
+        "across_input_pairwise_corr": NaN,
+        "across_input_pairwise_corr_by_layer": [
+          NaN,
+          NaN
+        ],
+        "read_snr_corr": 0.3139432337483482,
+        "read_snr_corr_by_layer": [
+          0.3946776289922136,
+          0.2332088385044828
+        ],
+        "noise_pairwise_corr": NaN,
+        "noise_pairwise_corr_by_layer": [
+          NaN,
+          NaN
+        ],
+        "single_neuron_noise_cv": 0.47082433026989773,
+        "pooled_noise_cv": 0.47082433026989773,
+        "pooling_gain": 1.0,
+        "pooling_gain_by_layer": [
+          1.0,
+          1.0
+        ],
+        "sqrt_k": 1.0,
+        "mean_event_rate": 0.05834740774056021
+      },
+      "K1_noise100": {
+        "pool_k": 1,
+        "across_input_pairwise_corr": NaN,
+        "across_input_pairwise_corr_by_layer": [
+          NaN,
+          NaN
+        ],
+        "read_snr_corr": 0.30396984497129714,
+        "read_snr_corr_by_layer": [
+          0.311525556646523,
+          0.2964141332960713
+        ],
+        "noise_pairwise_corr": NaN,
+        "noise_pairwise_corr_by_layer": [
+          NaN,
+          NaN
+        ],
+        "single_neuron_noise_cv": 0.5841676056693565,
+        "pooled_noise_cv": 0.5841676056693565,
+        "pooling_gain": 1.0,
+        "pooling_gain_by_layer": [
+          1.0,
+          1.0
+        ],
+        "sqrt_k": 1.0,
+        "mean_event_rate": 0.05915021303905329
+      },
+      "K8_noise0": {
+        "pool_k": 8,
+        "across_input_pairwise_corr": 0.03248864065502744,
+        "across_input_pairwise_corr_by_layer": [
+          0.044050581665008075,
+          0.02092669964504681
+        ],
+        "read_snr_corr": 0.2837205239209535,
+        "read_snr_corr_by_layer": [
+          0.2005404564983374,
+          0.3669005913435695
+        ],
+        "noise_pairwise_corr": -0.0023560762358034535,
+        "noise_pairwise_corr_by_layer": [
+          -0.0018789616094644643,
+          -0.002833190862142443
+        ],
+        "single_neuron_noise_cv": 0.32373014288869517,
+        "pooled_noise_cv": 0.14075067733109148,
+        "pooling_gain": 2.3018615928887414,
+        "pooling_gain_by_layer": [
+          2.297963673705973,
+          2.30575951207151
+        ],
+        "sqrt_k": 2.8284271247461903,
+        "mean_event_rate": 0.05776778091300609
+      },
+      "K8_noise50": {
+        "pool_k": 8,
+        "across_input_pairwise_corr": 0.011116057944333894,
+        "across_input_pairwise_corr_by_layer": [
+          0.014085273924370062,
+          0.008146841964297727
+        ],
+        "read_snr_corr": 0.41174772648858626,
+        "read_snr_corr_by_layer": [
+          0.5037013903572609,
+          0.31979406261991156
+        ],
+        "noise_pairwise_corr": -3.548350924520503e-05,
+        "noise_pairwise_corr_by_layer": [
+          0.0029089723099461813,
+          -0.0029799393284365913
+        ],
+        "single_neuron_noise_cv": 0.48584778482253677,
+        "pooled_noise_cv": 0.1797285322652818,
+        "pooling_gain": 2.709479892484112,
+        "pooling_gain_by_layer": [
+          2.5792635902437486,
+          2.839696194724475
+        ],
+        "sqrt_k": 2.8284271247461903,
+        "mean_event_rate": 0.05399288114046309
+      },
+      "K8_noise100": {
+        "pool_k": 8,
+        "across_input_pairwise_corr": 0.020470191266467264,
+        "across_input_pairwise_corr_by_layer": [
+          0.011377718729136108,
+          0.029562663803798423
+        ],
+        "read_snr_corr": 0.2933672799683441,
+        "read_snr_corr_by_layer": [
+          0.4115915435595913,
+          0.17514301637709684
+        ],
+        "noise_pairwise_corr": 0.0005289647147288321,
+        "noise_pairwise_corr_by_layer": [
+          0.001014725044430775,
+          4.320438502688923e-05
+        ],
+        "single_neuron_noise_cv": 0.564540151651197,
+        "pooled_noise_cv": 0.1976701450739219,
+        "pooling_gain": 2.863274101875515,
+        "pooling_gain_by_layer": [
+          2.7802050547770905,
+          2.946343148973939
+        ],
+        "sqrt_k": 2.8284271247461903,
+        "mean_event_rate": 0.055702621055813015
+      },
+      "K16_noise0": {
+        "pool_k": 16,
+        "across_input_pairwise_corr": 0.0351771021226051,
+        "across_input_pairwise_corr_by_layer": [
+          0.029466518918349904,
+          0.040887685326860296
+        ],
+        "read_snr_corr": 0.22100893232918714,
+        "read_snr_corr_by_layer": [
+          0.06627204336553515,
+          0.3757458212928391
+        ],
+        "noise_pairwise_corr": 0.00118158998706936,
+        "noise_pairwise_corr_by_layer": [
+          0.003096603746098455,
+          -0.0007334237719597347
+        ],
+        "single_neuron_noise_cv": 0.3411109134097156,
+        "pooled_noise_cv": 0.09771164936593978,
+        "pooling_gain": 3.4972184386940226,
+        "pooling_gain_by_layer": [
+          3.39078960692367,
+          3.6036472704643754
+        ],
+        "sqrt_k": 4.0,
+        "mean_event_rate": 0.06027811195602529
+      },
+      "K16_noise50": {
+        "pool_k": 16,
+        "across_input_pairwise_corr": 0.02461834186119155,
+        "across_input_pairwise_corr_by_layer": [
+          0.020318865090298784,
+          0.028917818632084313
+        ],
+        "read_snr_corr": 0.3114772430678395,
+        "read_snr_corr_by_layer": [
+          0.2578276859835512,
+          0.36512680015212784
+        ],
+        "noise_pairwise_corr": 0.0021560649111400333,
+        "noise_pairwise_corr_by_layer": [
+          0.007802495195028104,
+          -0.003490365372748038
+        ],
+        "single_neuron_noise_cv": 0.46874448461797213,
+        "pooled_noise_cv": 0.12000012988966319,
+        "pooling_gain": 3.917863422469413,
+        "pooling_gain_by_layer": [
+          3.8779524298738295,
+          3.9577744150649967
+        ],
+        "sqrt_k": 4.0,
+        "mean_event_rate": 0.05917158436889925
+      },
+      "K16_noise100": {
+        "pool_k": 16,
+        "across_input_pairwise_corr": 0.015804500003757035,
+        "across_input_pairwise_corr_by_layer": [
+          0.013105016561581665,
+          0.018503983445932407
+        ],
+        "read_snr_corr": 0.26459882969890874,
+        "read_snr_corr_by_layer": [
+          0.36908895000934516,
+          0.16010870938847233
+        ],
+        "noise_pairwise_corr": 0.003748249372671045,
+        "noise_pairwise_corr_by_layer": [
+          0.005071244794537094,
+          0.002425253950804996
+        ],
+        "single_neuron_noise_cv": 0.5831774064129607,
+        "pooled_noise_cv": 0.14771909945407502,
+        "pooling_gain": 3.955089969731941,
+        "pooling_gain_by_layer": [
+          3.9197790897966303,
+          3.990400849667252
+        ],
+        "sqrt_k": 4.0,
+        "mean_event_rate": 0.050929422679958716
+      }
+    }
+  },
+  "verdict": "A0-PREMISE REFUTED / HONEST NEGATIVE (1-seed forward-only) -- DIRECT MEASUREMENT overturns the a0 correlated-pool root cause: at noise=0 the pool is ALREADY DECORRELATED (within-unit corr 0.035, not lockstep) and the ~sqrt(K) pooling gain is ALREADY present (gain@K16 3.50 vs sqrt(K) 4.00) -- pooling ALREADY averages independent variance (each hidden neuron has its own random FF weights + membrane-state carryover between passes decorrelate the K-block). YET the across-input read-SNR corr(pooled E, soma) does NOT rise with K (0.358->0.221) and independent OU noise does NOT help (it HURTS) it (0.221->0.265 at K16; OU also contaminates the soma reference). => the flat-read-SNR-across-K residual is NOT read-variance / not a correlated pool; independent noise is NOT the fix. REFRAME DEEPER: the residual is representational / credit-STRUCTURE (pooling cuts trial noise but not across-input signal fidelity). CONTROLLER: do NOT pursue independent-noise; the lever is the microcircuit clean-error channel / representation, not population read-variance. [baseline noise=0: within-unit corr 0.035, read-SNR K1->16 0.358->0.221, gain@K16 3.50/sqrt 4.00] [noise=100: within-unit corr 0.016 (noise-corr 0.004), read-SNR K1->16 0.304->0.265, gain@K16 3.96]"
+}

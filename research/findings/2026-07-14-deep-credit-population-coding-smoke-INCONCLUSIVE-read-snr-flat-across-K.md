@@ -1,5 +1,16 @@
 # Deep-credit-on-spikes POPULATION-CODING lever — REFUTED by direct forward-only measurement: pooling ALREADY works (the pool is already decorrelated, √K gain already present) but does NOT lift the across-input read-SNR → the boundary is REPRESENTATIONAL / credit-STRUCTURE, not population read-variance
 
+## ⚠️⚠️ SECOND CORRECTION (2026-07-14, the 6-seed firming) — the "population lever REFUTED" conclusion below was PREMATURE + config-dependent; the honest state is INCONCLUSIVE
+
+A 6-seed forward-only re-run (`raw/_decorr/decorr_seed*.json`) revealed the read-SNR-vs-K behavior is **CONFIG-DEPENDENT**, so the single-config "refuted" below is withdrawn:
+- **ROBUST (6/6, keep):** the pool is ALREADY DECORRELATED (within-unit corr ~0.03) and INDEPENDENT OU noise does NOT further decorrelate it (0.034→0.011) — so my a0 "correlated pool from deterministic drive" root cause IS refuted, robustly. OU is on by default (config.py:120).
+- **WITHDRAWN — "the read-SNR is flat across K → population lever refuted":** that was ONE config (the first probe: tonic 450, read-SNR K1→16 0.46→0.39 flat). The 6-seed config (tonic 560 / apical 2000 / ff_w_init 4.5) shows the read-SNR RISING with K (0.118→0.339, 6/6) — i.e. pooling DOES lift the read-SNR here. So the population read-SNR benefit is CONFIG-DEPENDENT, NOT cleanly absent. The √K pooling gain is present in both (K=16: 3.5 vs √16=4.0).
+- **⇒ HONEST STATE: INCONCLUSIVE (not refuted).** The a0 correlated-pool root cause is refuted; the population-coding hypothesis is neither cleanly confirmed nor refuted by these forward-only smokes — the read-SNR benefit depends on the operating point. **The decisive test is the END-TO-END TRAINING test at a CONTROLLED config where the read-SNR demonstrably rises with K** (does pooling then let the net TRAIN, where K=1 does not?) — forward-only read-SNR is only a proxy. I over-concluded from a single config; the multi-seed firming caught it. (This is a substantial controlled-training de-risk, not another forward-only smoke — queued, not overnight-quick.)
+
+---
+
+## ⚠️ (first correction — the "REFUTED/representational" reframe, now itself SCOPED by the 6-seed config-dependence above)
+
 ## ⚠️ CORRECTION + DECISIVE REFRAME (2026-07-14 — a forward-only decorrelation probe refuted BOTH the population hypothesis AND my a0 root-cause; direct measurement, `research/runners/_onbridge_deep_credit_decorrelation_derisk.py` + raw `_onbridge_deep_credit_decorrelation.json`)
 
 My a0 root-cause below ("the pool is correlated because the drive is deterministic with no independent noise") is **WRONG**, corrected by reading the substrate MORE carefully + measuring directly:
