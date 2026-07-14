@@ -432,7 +432,7 @@ def positive_control(seed, task_kwargs, n_pos=40, hidden=32, settle=40, eprop_lr
 # Full seed: stage-0 depth gate + rate oracle + e-prop train + inherit held-out + permuted + shuffle-DFA controls.
 # ============================================================================================================
 def run_seed(seed, hidden, settle, epochs, batch, eprop_lr, eps_leak, surrogate, alpha_surr, beta_surr,
-             logit_source, w_clip, train_subsample, task_kwargs, hp=None, n_hidden_layers=2):
+             logit_source, w_clip, train_subsample, task_kwargs, hp=None, n_hidden_layers=2, pool_k=1):
     (Xtr, ytr, Ltr), (Xte, yte, Lte), meta, idx = make_task_semantic_inheritance(seed, **task_kwargs)
     k = meta["k_classes"]; n_in = Xtr.shape[1]
     inh_idx = idx["inh_idx"]
@@ -459,7 +459,7 @@ def run_seed(seed, hidden, settle, epochs, batch, eprop_lr, eps_leak, surrogate,
     def _mk():
         return OnBridgeEpropNet(n_in, hidden, k, seed=seed, n_hidden_layers=n_hidden_layers, settle_steps=settle,
                                 eprop_lr=eprop_lr, eps_leak=eps_leak, surrogate=surrogate, alpha_surr=alpha_surr,
-                                beta_surr=beta_surr, logit_source=logit_source, w_clip=w_clip, hp=hp)
+                                beta_surr=beta_surr, logit_source=logit_source, w_clip=w_clip, hp=hp, pool_k=pool_k)
 
     # --- main e-prop arm ---
     net = _mk(); w0 = net.ff_weight_norm()
@@ -505,6 +505,7 @@ def main():
                     default="leaky_readout")
     ap.add_argument("--w-clip", type=float, default=4000.0)
     ap.add_argument("--train-subsample", type=int, default=240)
+    ap.add_argument("--pool-k", type=int, default=1)
     # positive control knobs
     ap.add_argument("--poscontrol-only", action="store_true")
     ap.add_argument("--pos-n", type=int, default=40)
@@ -571,7 +572,7 @@ def main():
         for s in a.seeds:
             r = run_seed(s, a.hidden, a.settle_steps, a.epochs, a.batch, a.eprop_lr, a.eps_leak, a.surrogate,
                          a.alpha_surr, a.beta_surr, a.logit_source, a.w_clip, a.train_subsample, task_kwargs, hp=hp,
-                         n_hidden_layers=a.n_hidden_layers)
+                         n_hidden_layers=a.n_hidden_layers, pool_k=a.pool_k)
             per.append(r)
             print("-" * 100, flush=True)
             print(f"[seed {s}] k={r['k_classes']} chance {r['chance']:.3f} | STAGE0 depth-sep {r['stage0_depth_separating']} "
