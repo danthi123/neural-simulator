@@ -229,6 +229,19 @@ class CoreSimConfig:
     htm_lam_dep: float = 0.02                     # presynaptic depression rate (permanence decrement when pre fires without post)
     htm_z_tau: float = 0.85                       # per-cell dAP-rate low-pass factor (z *= z_tau each step)
     htm_z_star: float = 1.0                       # target dAP rate; hfac = 0.5 + 0.5*max(0, z_star - z_post)
+    # SELECTIVE (input-modulated-leak) slow SSM STATE (past-reservoir Rung 4b, 2026-07-13). A per-neuron SLOW graded
+    # leaky-integrator state s whose retention is set by an INPUT-DRIVEN SHUNT: s = lam_eff*s + (1-lam_eff)*inject,
+    # lam_eff = clip(1 - ssm_k_leak*(1 + shunt), 0, 1). This is the biological "graded integrator with shunting-modulated
+    # membrane time constant" (a dendritic-plateau / calcium graded state whose leak is set by an input-driven shunt
+    # conductance) -- the selective-diagonal-SSM lambda realized on-bridge. It is the substrate for the transport-free
+    # long-range learner (Rung 1-4a: a per-neuron selective gate, trained by a forward-mode eligibility trace, beats the
+    # fixed reservoir on real text). The runner sets the per-neuron inject + shunt each step (cp_ssm_inject, cp_ssm_shunt)
+    # and reads cp_ssm_state; the eligibility learning of the gate is layered on top. Default OFF -> cp_ssm_state /
+    # cp_ssm_inject / cp_ssm_shunt are never allocated, the per-step update block is unreached, everything is
+    # byte-identical (mirrors enable_two_compartment_dap / enable_htm_learning). See research/findings/
+    # 2026-07-13-PAST-RESERVOIR-RUNG4b-i-onbridge-shunt-primitive-membrane-too-fast-slow-state-needed.md.
+    enable_selective_ssm_state: bool = False
+    ssm_k_leak: float = 0.06                       # base leak rate k (dt/tau); small -> lam_eff ~0.94 at zero shunt (HOLDS)
     # Burst-Dependent Synaptic Plasticity (BDSP / Burstprop, D1 build, 2026-07-07; Payeur-Naud 2021 Nat Neurosci
     # 10.1038/s41593-021-00857-x, Greedy-Naud 2022 BurstCCN). The on-substrate spiking realization of the
     # confirmed EMERGE-1b/EMERGE-3 rate-scale deep-credit result: a two-compartment spiking pyramidal MULTIPLEXES

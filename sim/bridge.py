@@ -334,6 +334,12 @@ class SimulationBridge:
         # (Option A) + 2026-06-15-analog-substrate-learned-cortex-build-plan.md (Phase 2).
         self.cp_input_mean_ema = None                     # per-neuron slow EMA m of own input drive (None unless flagged region)
         self.cp_input_mean_adapt_mask = None              # bool per-neuron: True for input-mean-adapting neurons
+        # SELECTIVE (input-modulated-leak) slow SSM state (Rung 4b, 2026-07-13). None unless cfg.enable_selective_ssm_state
+        # -> the per-step update is unreached + everything byte-identical. The runner sets cp_ssm_inject + cp_ssm_shunt
+        # each step and reads cp_ssm_state (the slow leaky integrator whose leak is set by the input-driven shunt).
+        self.cp_ssm_state = None                          # per-neuron slow graded SSM state s (the held value)
+        self.cp_ssm_inject = None                         # per-neuron injection drive (the "new input" written when released)
+        self.cp_ssm_shunt = None                          # per-neuron input-driven shunt g (higher -> more leak -> release)
         self.cp_input_divisive_mask = None                # bool per-neuron: True for per-concept divisive-norm neurons (None unless flagged region)
         self.cp_input_divisive_mask_2 = None              # bool per-neuron: SECOND independent divisive-norm pool (FIX A, sel_X; None unless flagged region)
         # Cluster G v2 (2026-05-01): per-neuron NMDA mask (1.0 for neurons
@@ -1357,6 +1363,13 @@ class SimulationBridge:
                             f"Input-mean-adapt per-region mask: {len(ima_regions)} regions enabled "
                             f"({sum(int(r.n_neurons) for r in ima_regions)} neurons)",
                         )
+                # SELECTIVE slow SSM state (Rung 4b): allocate ONLY when flagged (else None -> byte-identical). Per-neuron
+                # graded state s + its per-step inject/shunt drive arrays (the runner writes inject/shunt each step).
+                if getattr(cfg, "enable_selective_ssm_state", False):
+                    self.cp_ssm_state = cp.zeros(n, dtype=cp.float32)
+                    self.cp_ssm_inject = cp.zeros(n, dtype=cp.float32)
+                    self.cp_ssm_shunt = cp.zeros(n, dtype=cp.float32)
+                    self._log_console(f"Selective SSM slow-state enabled ({n} neurons, k_leak={getattr(cfg, 'ssm_k_leak', 0.06)})")
 
                 # Per-concept DIVISIVE normalization mask (2026-06-15): mirrors the input-mean
                 # mask above. Built ONLY if cfg.enable_input_divisive_norm AND >=1 region sets
@@ -5913,6 +5926,15 @@ class SimulationBridge:
         if not self.is_initialized or self.core_config.num_neurons == 0: return
         try:
             n_neurons = self.core_config.num_neurons; cfg = self.core_config; dt = cfg.dt_ms
+
+            # SELECTIVE (input-modulated-leak) slow SSM state (Rung 4b, 2026-07-13): a per-neuron slow graded leaky
+            # integrator whose retention is set by the INPUT-DRIVEN SHUNT -- s = lam_eff*s + (1-lam_eff)*inject,
+            # lam_eff = clip(1 - ssm_k_leak*(1 + shunt), 0, 1). Additive + self-contained (reads cp_ssm_inject/shunt,
+            # writes cp_ssm_state; touches no other state), so when the flag is OFF (cp_ssm_state is None) the block is
+            # skipped and the step is byte-identical. The runner sets inject/shunt each step and reads cp_ssm_state.
+            if self.cp_ssm_state is not None:
+                _ssm_lam = cp.clip(1.0 - float(getattr(cfg, "ssm_k_leak", 0.06)) * (1.0 + self.cp_ssm_shunt), 0.0, 1.0)
+                self.cp_ssm_state = _ssm_lam * self.cp_ssm_state + (1.0 - _ssm_lam) * self.cp_ssm_inject
 
             # Step profiler: optional per-section wall-clock timing for bottleneck analysis.
             # Enable via GPUConfig.enable_step_profiler. Logs summary every 500 steps.
