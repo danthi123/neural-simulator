@@ -1,5 +1,18 @@
 
-## ⭐⭐⭐ NEWEST — DEEP-CREDIT-ON-SPIKES BOUNDARY SURPASSED (2026-07-14): a TRANSPORT-FREE BIOLOGICAL LOCAL RULE (e-prop: forward eligibility + membrane surrogate + direct-feedback-alignment) TRAINS deep credit on spikes (6-seed GO, train 1.0 / inherit 0.895 ≥ BPTT) where the one-step BDSP fails 0/6 → the parked "spikes/SNR can't do deep credit" verdict is REFUTED; NEXT = port e-prop onto the production Izhikevich substrate
+## ⭐⭐⭐ NEWEST — GROW-TO-CONTEXT surpasses the naive-sparse NEGATIVE (2026-07-14, 6-seed GO, committed e1c88105 both remotes): the emergent HTM word-LM's vocab-scale POOL-SPARSITY axis
+
+**THE ARC (this session, boundary-surpassing workflow, NO `sim/` edit):**
+- The naive-RANDOM-sparse coincidence pool was a decisive NEGATIVE (HTM 0.000 at every K). The canonical fix = grow-to-active-context (Hawkins-Ahmad 2016): wire only the co-occurring column-pairs. The OFFLINE equivalent (`build_corpus_sparse_pool` in `_emerge15_sparse_pool_scale_derisk.py --variant corpus`) MATCHES the dense pool (HTM **1.000**) at a fraction of the synapses.
+- **CONFOUND caught + resolved (adversarial-verify inline):** window=8 wires a direct subject→branch shortcut; **window=1 (adjacent pairs ONLY, no shortcut) gives identical HTM 1.0 at 5.26% of dense** (28,800 syn) — the win rides the genuine HTM winner-chain, not a low-order edge. window=8's longer-range synapses are dead weight (3× syn, same acc).
+- **Vocab-scaling (6-seed):** HTM stays 1.000 as vocab grows; the synapse fraction DROPS (w1: 0.0526@n8 → 0.0286@n16; n-gram floor drops 1/n_subj so the HTM advantage GROWS). n=32/64/measured-parity in flight (heavy).
+- **Both anti-cheats collapse (6-seed):** dAP-LESION → HTM **0.000**, PERMUTED corpus → **0.083** (≈ chance). The dendritic coincidence mechanism AND the true word-order structure are both load-bearing.
+- **a-1 reframe (prior gate `2026-07-02-onbridge-htm-tm-scaling-multisegment-research-gate.md`):** HTM-TM scales on THREE multiplicative axes — cells-per-column (Bouhadjar, my `nE=k_win·n_subj+8` already uses it), segments-per-cell (Hawkins-Ahmad, Option B, a future guarded `sim/` edit), and grow-to-context = the **pool-sparsity** axis (this finding). They COMPOSE; truly sub-cubic needs grow-to-context + fixed-nE multi-segment.
+
+**NEXT (IN FLIGHT — the EMERGENT single-pass online grow):** `_emerge15_online_grow_derisk.py` is BUILT + bug-fixed + verified (inject_explicit_wiring replaces, so per-sentence re-inject rebuilds the coincidence-tagged pool; smoke running). `OnlineGrowLearner` grows the pool CELL-level (winner→winner, ~k_win²/context) DURING learning from the network's own winner co-firing — no corpus pre-scan — bootstrapping subject-specificity incrementally. a0: the existing `enable_structural_plasticity` is Cline-Haas STOCHASTIC (wrong rule), so this is a genuine dedicated build. This makes the offline (hand-structured pre-scan) result truly EMERGENT — the emergence-bar close. Then: compose with the multi-segment cell-efficiency axis. Finding: `2026-07-14-grow-to-context-corpus-structured-sparse-pool-GO.md`.
+
+---
+
+## ⭐⭐⭐ DEEP-CREDIT-ON-SPIKES BOUNDARY SURPASSED (2026-07-14): a TRANSPORT-FREE BIOLOGICAL LOCAL RULE (e-prop: forward eligibility + membrane surrogate + direct-feedback-alignment) TRAINS deep credit on spikes (6-seed GO, train 1.0 / inherit 0.895 ≥ BPTT) where the one-step BDSP fails 0/6 → the parked "spikes/SNR can't do deep credit" verdict is REFUTED; NEXT = port e-prop onto the production Izhikevich substrate
 
 **THE ARC (this overnight, full boundary-surpassing workflow, all committed both remotes, NO `sim/` edit):**
 1. Re-opened the parked "SNR wall biting every rule" → deep-research gate (9-agent + adversarial verify: the graded-credit catch, an already-implemented flag).
