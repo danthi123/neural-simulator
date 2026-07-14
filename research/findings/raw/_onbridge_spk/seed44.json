@@ -1,0 +1,12 @@
+{
+  "results": [
+    {
+      "seed": 44,
+      "numpy_acc": 0.34,
+      "spiking_acc": 0.34,
+      "parity": 1.0,
+      "chance": 0.16666666666666666,
+      "GO": true
+    }
+  ]
+}
