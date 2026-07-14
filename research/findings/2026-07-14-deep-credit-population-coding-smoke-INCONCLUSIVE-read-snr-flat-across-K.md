@@ -1,4 +1,19 @@
-# Deep-credit-on-spikes POPULATION-CODING de-risk — runner built (no `sim/` edit), smoke INCONCLUSIVE (under-trained) with a RED FLAG: the read-SNR fidelity does NOT rise with pool size K (flat ~0.28 at K=1/8/16), contra the population-coding hypothesis's core prediction
+# Deep-credit-on-spikes POPULATION-CODING lever — REFUTED by direct forward-only measurement: pooling ALREADY works (the pool is already decorrelated, √K gain already present) but does NOT lift the across-input read-SNR → the boundary is REPRESENTATIONAL / credit-STRUCTURE, not population read-variance
+
+## ⚠️ CORRECTION + DECISIVE REFRAME (2026-07-14 — a forward-only decorrelation probe refuted BOTH the population hypothesis AND my a0 root-cause; direct measurement, `research/runners/_onbridge_deep_credit_decorrelation_derisk.py` + raw `_onbridge_deep_credit_decorrelation.json`)
+
+My a0 root-cause below ("the pool is correlated because the drive is deterministic with no independent noise") is **WRONG**, corrected by reading the substrate MORE carefully + measuring directly:
+- **`CoreSimConfig()` defaults `enable_ou_process=True, ou_std_current_pA=100.0`** (config.py:120-122, "enabled by default for biological realism") — and `OnBridgeBDSPNet` inherits it (does not disable it). So each neuron ALREADY has INDEPENDENT OU background noise (the per-step `randn(n_neurons)` draw). My earlier a0 grepped the RUNNER for `cfg.enable_ou_process` (not set there) and wrongly concluded OU was off — it is on by the CONFIG DEFAULT. (Lesson: read the config default, not just the runner — a too-shallow a0.)
+- **Direct measurement (forward-only, K×noise):** at the committed default the within-unit pairwise correlation of the K pool neurons is **~0.03 (already decorrelated, NOT lockstep)** — each hidden neuron has its own random feedforward weights + no membrane reset between passes; and the pooling gain `single_CV/pooled_CV` is **already ~√K** (K=16: 3.56 vs √16=4.0). ⇒ pooling ALREADY averages independent variance; population read-variance is NOT the bottleneck.
+- **Yet the across-input read-SNR does NOT rise with K** (corr(pooled E, clean-rate) K=1→16: 0.46→0.39, flat/falling), and **adding MORE OU noise HURTS it** (K=16: 0.39→0.035 at σ=100). ⇒ the flat-read-SNR residual is NOT trial-to-trial read variance (which pooling already cuts) — it is **across-input SIGNAL fidelity = a REPRESENTATIONAL / credit-STRUCTURE limit.**
+
+**⇒ DECISIVE REFRAME: the population-coding lever (the `2026-07-07-onbridge-spiking-deep-credit-training-research-gate.md` fix) is REFUTED as the fix.** Pooling already works and doesn't help; independent noise doesn't help (hurts). The deep-credit-on-spikes boundary is NOT population read-SNR — the indicated lever is the **microcircuit clean-error CREDIT CHANNEL / the hidden REPRESENTATION itself**, not population coding. **Do NOT pursue the population/independent-noise lever end-to-end.** Honest caveats (cheap follow-ups): the read-SNR reference (membrane-derived soma proxy) is itself OU-contaminated → a noise-independent reference would sharpen it; 1-seed forward-only → a quick multi-seed forward confirm firms the refutation. This is the read-the-substrate-and-MEASURE discipline correcting a too-hasty a0 hypothesis — an honest negative that re-maps the boundary correctly.
+
+---
+
+### (Original write-up below — the RED-FLAG framing is superseded by the CORRECTION above; the runner + the flat-read-SNR data remain accurate, but the "correlated pool" root cause is refuted.)
+
+# Deep-credit-on-spikes POPULATION-CODING de-risk — runner built, smoke INCONCLUSIVE with a RED FLAG [ROOT CAUSE RETRACTED — see CORRECTION: the pool is already decorrelated; the residual is representational, not read-variance]
 
 **Date:** 2026-07-14 (overnight parallel arc)
 **Runner:** `research/runners/_onbridge_deep_credit_population_derisk.py` (subagent-built, controller-verified: no `sim/` edit, real `_pool`/`_broadcast` block-mean read, K=1==single-neuron baseline). Reuse-by-import of `OnBridgeBDSPNet`.
