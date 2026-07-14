@@ -58,6 +58,18 @@ Skeptic B noted my np=200 reservoir was WEAK (worse than a bigram at V=120). Re-
 
 The selective mechanism provides **genuine deep-tail long-range holding** — validated by the airtight controls (`sel<random-gate`, `sel<no-hold`), robust across vocab (grows +0.32→+0.44) AND data (grows +0.32→+0.39), and it still edges the *ordered* bigram at the deepest positions. This is a real, clean, adversarially-survived MECHANISM result. **BUT the overall model is bigram-level at tractable scale (V≤1000)** — the aggregate does NOT beat a well-sampled bigram, and more DATA at fixed small vocab does not change that, because the deep-context tokens are too small a fraction of the corpus at small vocab. **Moving the aggregate (overall fluency) requires the deep-context signal to dominate more tokens — i.e. larger vocab / richer language (the documented ~23.7M-word / V=2000 validated regime), not just more data at small vocab.** That regime is a genuine scale lever (a multi-day run; the small launch-bound reservoir makes GPU no faster than CPU here — the honest compute constraint). ⇒ the deep-tail long-range MECHANISM is the honest overnight deliverable; the aggregate-FLUENCY-at-validated-scale is the named, bounded, scale-gated open frontier.
 
+## CONFIRMATION — proper np500 reservoir at MORE data (nt=10000, 6-seed) — the deep-tail holding is robust
+
+Re-ran the airtight controls over the PROPER np=500 reservoir at nt=10000 (2× the nt=5000 airtight base), 6-seed:
+
+| control | d≥6 | d≥10 |
+|---|---|---|
+| **sel < random-gate** (selective-specific, load-bearing) | **+0.300 (min +0.277, 6/6)** | **+0.328 (min +0.255, 6/6)** |
+| sel < no-hold | +0.359 (6/6) | +0.408 (6/6) |
+| sel < ordered bigram | +0.098 (6/6) | +0.190 (6/6) |
+
+The deep-tail selective-specific holding (`sel<random-gate`) is +0.30/+0.33, 6/6, over a PROPER np=500 reservoir at 2× the data — fully consistent with the np=200/nt=5000 airtight base (+0.29/+0.32) and the np=500/nt=5000 proper-reservoir run (+0.269). ⇒ the mechanism result is confirmed robust across reservoir size AND data at V=300. (A separate `datascale_nt10000` lane at 3 seeds agrees: +0.31/+0.33.) **This CLOSES the selective-SSM confirmation lane:** the deep-tail long-range mechanism is a clean, adversarially-survived, reservoir-and-data-robust result; the aggregate remains bigram-level at V≤1000 (the named, scale-gated open frontier = the ~23.7M-word / V=2000 validated regime).
+
 ## Next (running)
 - **GPU validated-scale** run (np=500 PROPER reservoir per Skeptic B, V=2000, nt=40000): does the deep-tail selective-specific holding survive a properly-sized reservoir at the non-null-discriminator scale, and does the AGGREGATE beat the bigram there?
 - **CPU:** the airtight controls at np=500 (proper reservoir, tractable) + a V=600/V=1000 vocab grid — does the deep-tail selective-specific hold over a strong reservoir + grow with vocab.
