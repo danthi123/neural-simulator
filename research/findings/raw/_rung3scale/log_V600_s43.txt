@@ -1,0 +1,2 @@
+[rung3 seed=43] DEEP(d>=4) CE: selective=4.084 fixed_res=4.909 detached=4.570 randgate=4.802 bigram=4.877 | sel<fix +0.824 sel<det +0.486 sel<rand +0.718 sel<big +0.792 -> GO
+[rung3] 1/1 GO
