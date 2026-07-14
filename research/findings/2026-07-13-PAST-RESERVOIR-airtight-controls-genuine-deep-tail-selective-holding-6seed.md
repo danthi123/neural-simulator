@@ -45,6 +45,9 @@ Over a fixed reservoir, the trained selective channel provides **genuine input-d
 | 5000 | +0.322 (6/6) | +0.170 (6/6) | −0.054 |
 | 10000 | +0.332 (3/3) | +0.085 | **−0.069 (0/3)** |
 | 20000 | +0.387 (3/3) | +0.096 | **−0.084 (0/3)** |
+| 40000 (clean-large) | **+0.442 (3/3)** | +0.118 | **−0.074 (0/3)** |
+
+**nt=40000 definitive confirmation:** at 8× the airtight base data, the deep-tail selective-specific holding is at its STRONGEST (+0.442, 3/3) and still beats the ordered bigram at the deepest tail (+0.118), while the AGGREGATE remains bigram-level (−0.074, 0/3) — more data at V=300 never moves the aggregate off the bigram (bigram-starvation, definitively). ⇒ the whole np500 × {nt5K/10K/20K/40K} confirmation lane is consistent: the deep-tail MECHANISM is robust + data-scaling; the aggregate-fluency lever is larger VOCAB (the ~23.7M-word / V=2000 validated regime), not more data at small vocab.
 
 - **The deep-tail selective-specific holding (`sel<random-gate`) HOLDS/GROWS with data** (+0.32→+0.33→+0.39) — robust, clean.
 - **`sel` still beats the ordered bigram at the deepest tail** (+0.09-0.10 at nt=10K/20K), positive but SHRINKING as the bigram gets better-sampled (expected — the honest bigram is a stronger baseline at more data).
