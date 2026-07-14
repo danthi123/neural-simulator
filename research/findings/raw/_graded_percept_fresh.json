@@ -1,0 +1,76 @@
+{
+  "results": [
+    {
+      "seed": 7,
+      "held": {
+        "owl": "CONFIDENT",
+        "wren": "CONFIDENT",
+        "minnow": "CONFIDENT",
+        "gar": "CONFIDENT"
+      },
+      "amb_diag": "CONFIDENT",
+      "moat": "MOAT",
+      "GO": true
+    },
+    {
+      "seed": 8,
+      "held": {
+        "owl": "CONFIDENT",
+        "wren": "CONFIDENT",
+        "minnow": "CONFIDENT",
+        "gar": "CONFIDENT"
+      },
+      "amb_diag": "CONFIDENT",
+      "moat": "MOAT",
+      "GO": true
+    },
+    {
+      "seed": 9,
+      "held": {
+        "owl": "CONFIDENT",
+        "wren": "ABSTAIN",
+        "minnow": "CONFIDENT",
+        "gar": "ABSTAIN"
+      },
+      "amb_diag": "CONFIDENT",
+      "moat": "MOAT",
+      "GO": false
+    },
+    {
+      "seed": 10,
+      "held": {
+        "owl": "CONFIDENT",
+        "wren": "CONFIDENT",
+        "minnow": "CONFIDENT",
+        "gar": "CONFIDENT"
+      },
+      "amb_diag": "CONFIDENT",
+      "moat": "MOAT",
+      "GO": true
+    },
+    {
+      "seed": 11,
+      "held": {
+        "owl": "CONFIDENT",
+        "wren": "CONFIDENT",
+        "minnow": "ABSTAIN",
+        "gar": "CONFIDENT"
+      },
+      "amb_diag": "CONFIDENT",
+      "moat": "MOAT",
+      "GO": true
+    },
+    {
+      "seed": 12,
+      "held": {
+        "owl": "CONFIDENT",
+        "wren": "CONFIDENT",
+        "minnow": "CONFIDENT",
+        "gar": "CONFIDENT"
+      },
+      "amb_diag": "CONFIDENT",
+      "moat": "MOAT",
+      "GO": true
+    }
+  ]
+}
