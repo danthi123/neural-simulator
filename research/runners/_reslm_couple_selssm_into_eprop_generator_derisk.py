@@ -139,11 +139,11 @@ def _train_eval(seed, tr_hids, tr_ids, ev_hids, ev_ids, V, arm):
     return {k: ce[k] / cnt[k] for k in cnt}, dict(cnt)
 
 
-def run(seed, corpus, n_sent, vocab_sz):
+def run(seed, corpus, n_sent, vocab_sz, tr_cap=1200, ev_cap=300):
     sents = load_sentences(corpus, n_sent)
     rng = np.random.default_rng(seed)
     idx = rng.permutation(len(sents)); cut = int(0.8 * len(sents))
-    tr = [sents[i] for i in idx[:cut]][:1200]; ev = [sents[i] for i in idx[cut:]][:300]
+    tr = [sents[i] for i in idx[:cut]][:tr_cap]; ev = [sents[i] for i in idx[cut:]][:ev_cap]
     vocab = Vocab.build(tr, V=vocab_sz); V = vocab.size
     tr_ids = [vocab.ids(s) for s in tr]; ev_ids = [vocab.ids(s) for s in ev]
     tr_ids = [s for s in tr_ids if len(s) >= 2]; ev_ids = [s for s in ev_ids if len(s) >= 2]
@@ -193,9 +193,11 @@ def main():
     ap.add_argument("--corpus", type=str, default="data/corpus/tinystories.txt")
     ap.add_argument("--n-sent", type=int, default=4000)
     ap.add_argument("--vocab", type=int, default=200)
+    ap.add_argument("--tr-cap", type=int, default=1200)          # max training sentences (scale lever; default = committed)
+    ap.add_argument("--ev-cap", type=int, default=300)
     ap.add_argument("--out", type=str, default=None)
     a = ap.parse_args()
-    res = [run(s, a.corpus, a.n_sent, a.vocab) for s in a.seeds]
+    res = [run(s, a.corpus, a.n_sent, a.vocab, a.tr_cap, a.ev_cap) for s in a.seeds]
     print(f"[couple] {sum(1 for r in res if r['GO'])}/{len(res)} GO", flush=True)
     if a.out:
         json.dump(dict(results=res), open(a.out, "w"), indent=2)
