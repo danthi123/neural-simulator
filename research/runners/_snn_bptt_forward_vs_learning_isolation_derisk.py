@@ -41,7 +41,7 @@ import numpy as np  # noqa: E402
 from research.runners._semantic_inheritance_deep_credit_derisk import (  # noqa: E402
     make_task_semantic_inheritance, stage0_depth_genuineness, _train_oracle, _acc_on)
 from sim.dendritic_mlp import DendriticMLP  # noqa: E402
-from sim.bptt_snn_gpu import LIFLayerXP, forward_unroll_xp, backward_unroll_xp  # noqa: E402
+from sim.bptt_snn_gpu import LIFLayerXP, forward_unroll_xp, backward_unroll_xp, atan_surrogate  # noqa: E402
 
 OUT = _REPO / "research" / "findings" / "raw" / "_snn_bptt_isolation.json"
 
@@ -82,7 +82,34 @@ def _accuracy(X, y, layers, T, in_gain, sub=None):
     return float(np.mean(np.argmax(logits, axis=1) == y))
 
 
-def _train_snn(Xtr, ytr, sizes, T, epochs, lr, in_gain, seed, batch=32):
+def _spatial_backward(inputs, layers, fs, output_grad, alpha=2.0):
+    """SPATIAL-ONLY surrogate gradient: the per-timestep membrane surrogate derivative BUT NO through-time recurrence
+    (BPTT's recurrent_dv/recurrent_ds zeroed). Isolates whether a LOCAL one-step surrogate rule suffices vs needing
+    BPTT's temporal credit-through-time. Runner-side (NO sim/ edit)."""
+    T, B, V_in = inputs.shape
+    L = len(layers)
+    spikes = fs["spikes"]; v_per = fs["v"]
+    weight_grads = [np.zeros_like(l.W_in) for l in layers]
+    dv_grads = [np.zeros((T, B, l.n_post), dtype=l.W_in.dtype) for l in layers]
+    for li in range(L - 1, -1, -1):
+        layer = layers[li]; v_layer = v_per[li]
+        if li == L - 1:
+            ds_grad = output_grad
+        else:
+            nxt = layers[li + 1]
+            ds_grad = np.zeros((T, B, layer.n_post), dtype=layer.W_in.dtype)
+            for t in range(T):
+                ds_grad[t] = dv_grads[li + 1][t] @ nxt.W_in.T
+        for t in range(T):
+            surrogate_t = atan_surrogate(v_layer[t] - layer.threshold, alpha=alpha, xp=np)
+            dv_grads[li][t] = ds_grad[t] * surrogate_t          # spatial only: NO recurrent_dv / recurrent_ds
+        x_pre = inputs if li == 0 else spikes[li - 1]
+        for t in range(T):
+            weight_grads[li] += x_pre[t].T @ dv_grads[li][t]
+    return weight_grads
+
+
+def _train_snn(Xtr, ytr, sizes, T, epochs, lr, in_gain, seed, batch=32, credit_mode="bptt"):
     rng = np.random.default_rng(seed + 1)
     w_scales = [2.5] + [1.0] * (len(sizes) - 2)          # strong first layer, moderate deeper
     layers = _build_layers(sizes, T, rng, w_scales)
@@ -98,13 +125,17 @@ def _train_snn(Xtr, ytr, sizes, T, epochs, lr, in_gain, seed, batch=32):
             delta = p.copy(); delta[np.arange(len(yb)), yb] -= 1.0          # (B, k) dL/d(sum spikes)
             # distribute the summed-spike gradient equally over the T timesteps
             og = np.repeat((delta / T)[None, :, :], T, axis=0).astype(np.float64)  # (T, B, k)
-            wg, _ = backward_unroll_xp(inp, layers, fs, og, alpha=2.0, xp=np)
+            if credit_mode == "spatial":
+                wg = _spatial_backward(inp, layers, fs, og, alpha=2.0)
+            else:
+                wg, _ = backward_unroll_xp(inp, layers, fs, og, alpha=2.0, xp=np)
             for li in range(len(layers)):
                 layers[li].W_in -= lr * (wg[li] / len(bi))
     return layers
 
 
-def run_seed(seed, hidden, T, epochs, lr, in_gain, subsample, task_kwargs, n_hidden_layers=2):
+def run_seed(seed, hidden, T, epochs, lr, in_gain, subsample, task_kwargs, n_hidden_layers=2,
+             credit_mode="bptt"):
     task_full = make_task_semantic_inheritance(seed, **task_kwargs)
     (Xtr, ytr, Ltr), (Xte, yte, Lte), meta, idx = task_full
     k = meta["k_classes"]; n_in = Xtr.shape[1]
@@ -125,19 +156,19 @@ def run_seed(seed, hidden, T, epochs, lr, in_gain, subsample, task_kwargs, n_hid
         Xtr, ytr = Xtr[keep], ytr[keep]
 
     sizes = [n_in] + [hidden] * n_hidden_layers + [k]
-    layers = _train_snn(Xtr, ytr, sizes, T, epochs, lr, in_gain, seed)
+    layers = _train_snn(Xtr, ytr, sizes, T, epochs, lr, in_gain, seed, credit_mode=credit_mode)
     train_acc = _accuracy(Xtr, ytr, layers, T, in_gain)
     inh_acc = _accuracy(Xte, yte, layers, T, in_gain, sub=inh_idx)
 
     # anti-cheat 1: 1-hidden-layer floor (task needs depth -> should be ~chance)
     fl_sizes = [n_in] + [hidden] + [k]
-    fl_layers = _train_snn(Xtr, ytr, fl_sizes, T, epochs, lr, in_gain, seed)
+    fl_layers = _train_snn(Xtr, ytr, fl_sizes, T, epochs, lr, in_gain, seed, credit_mode=credit_mode)
     floor_inh = _accuracy(Xte, yte, fl_layers, T, in_gain, sub=inh_idx)
 
     # anti-cheat 2: permuted-label (no leakage -> ~chance)
     prng = np.random.default_rng(seed + 555)
     yperm = ytr[prng.permutation(len(ytr))]
-    pm_layers = _train_snn(Xtr, yperm, sizes, T, epochs, lr, in_gain, seed)
+    pm_layers = _train_snn(Xtr, yperm, sizes, T, epochs, lr, in_gain, seed, credit_mode=credit_mode)
     perm_inh = _accuracy(Xte, yte, pm_layers, T, in_gain, sub=inh_idx)
 
     trains = bool((not np.isnan(inh_acc)) and inh_acc > floor_inh + 0.03 and inh_acc > chance + 0.03)
@@ -155,6 +186,7 @@ def main():
     ap.add_argument("--epochs", type=int, default=60)
     ap.add_argument("--lr", type=float, default=0.05)
     ap.add_argument("--in-gain", type=float, default=1.0)
+    ap.add_argument("--credit-mode", type=str, default="bptt", choices=["bptt", "spatial"])
     ap.add_argument("--train-subsample", type=int, default=400)
     ap.add_argument("--n-super", type=int, default=12)
     ap.add_argument("--n-members", type=int, default=8)
@@ -174,14 +206,15 @@ def main():
     t0 = time.time()
     try:
         r = run_seed(args.seed, args.hidden, args.timesteps, args.epochs, args.lr, args.in_gain,
-                     args.train_subsample, task_kwargs, n_hidden_layers=args.n_hidden_layers)
+                     args.train_subsample, task_kwargs, n_hidden_layers=args.n_hidden_layers,
+                     credit_mode=args.credit_mode)
     except Exception as e:
         r = {"seed": args.seed, "error": repr(e), "traceback": traceback.format_exc()}
 
     out = {"probe": "snn_bptt_forward_vs_learning_isolation", "seed": args.seed,
            "config": {"hidden": args.hidden, "n_hidden_layers": args.n_hidden_layers, "T": args.timesteps,
                       "epochs": args.epochs, "lr": args.lr, "in_gain": args.in_gain,
-                      "train_subsample": args.train_subsample, "task": task_kwargs},
+                      "train_subsample": args.train_subsample, "credit_mode": args.credit_mode, "task": task_kwargs},
            "elapsed_seconds": round(time.time() - t0, 1), "result": r}
     if "snn_inherit_heldout" in r:
         ch = r["chance"]
