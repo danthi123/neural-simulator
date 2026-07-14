@@ -1,4 +1,23 @@
-# The TRAINED selective channel over a FIXED reservoir robustly lifts margin-over-bag (~+0.62, 5/5) where the FIXED gate HURT — and the lift is DATA-ROBUST: it holds as the fixed reservoir's own margin decays toward its Ueda-bound (the selective supplies the durable memory the reservoir loses)
+# The TRAINED selective channel over a FIXED reservoir robustly beats the memoryless BAG (+0.62→+1.13, 6-seed) and the LEARNED gate is the ingredient — but the "past-the-Ueda-bound / genuine-long-range / fluency-scaling" framings were OVERCLAIMED (adversarial-verify, 2 material refutations) and are RETRACTED below
+
+## ⚠️ CORRECTION (2026-07-13, post-adversarial-verify — 3-skeptic Workflow, 2 material refutations)
+
+A mandatory adversarial-verify (3 independent skeptics) found this finding's grander framings overclaimed. **SURVIVES / RETRACTED:**
+
+- **SURVIVES (the robust core):** over a small FIXED echo-state reservoir, a TRAINED selective channel robustly adds ~+0.62 nats (V=120) up to **+1.13 (6-seed, V=600/nt=5000)** over the **memoryless BAG**, and the **LEARNED gate is the ingredient, NOT read-out capacity** — Skeptic A verified in code that the fixed-gate control has IDENTICAL read-out dimensionality yet HURT (−0.076) while training the same gate lifts +0.62 ("more params fit better" directly falsified). This is a real, 6-seed-robust result.
+- **RETRACTED — "past the reservoir's Ueda-bound" (Skeptic B, material):** `m_res→+0.006` is **V=120-ONLY, where my fixed 300-neuron echo-state reservoir is WORSE than a bigram** (res_ce 3.14 vs bigram 2.64) — an under-capacity WEAK reservoir converging to the unordered bag, NOT the info-theoretic n-gram bound (at V=300 `m_res` stays +0.22 at nt=3200). The reservoir-scale Ueda-bound is a real documented result, but THIS runner's weak fixed reservoir does not demonstrate carrying "past" it.
+- **RETRACTED — "deep-distributed / genuine long-range" (Skeptic C, material — a metric bug I made):** the per-depth `sel_lift = (bag−sel)−(bag−res) = res−sel` — **the bag CANCELS**, so it measures sel-vs-RESERVOIR CE, NOT a margin over the bag (my "bag-not-weakens-deep" self-check missed this cancellation). It is dominated by a shallow current-token readout fix (the clean `(1−λ)·Win·E[tok]` injection the degraded reservoir lacks at ALL depths), and the selective-SPECIFIC deep component is ~0 at d≥10 — exactly what the SIBLING frozen-coupling arc's fix/rand/noheld controls already walked back (sel<fix decays to +0.19, sel−rand −0.017 at d≥10). This runner omits those controls; its deep claim is not valid.
+- **SCOPED — "grows with vocab = fluency direction" (Skeptic B):** the margin over the memoryless BAG grows with vocab, but that is confounded by **fixed-nt bigram starvation** (the ordered bigram is data-starved at higher V at fixed nt); against the ordered bigram in the DATA direction the advantage SHRINKS (V120 +0.31→+0.10, V300 +0.48→+0.38). So it is a robust order/gated-recency win over a WEAK fixed-reservoir+bag baseline, NOT a demonstrated fluency-scaling vs the proper ordered baseline.
+
+**The valid long-range result is elsewhere and UNAFFECTED:** Rung 3 (`-RUNG3-selective-SSM-beats-reservoir-on-REAL-TEXT-deep-context.md`) shows the selective SSM beating the fixed reservoir AND the ordered BIGRAM at deep context on real text, 6/6, WITH the fix/detached/randgate controls — that is the load-bearing long-range demonstration, and the frozen+joint+on-bridge coupling (separately adversarially verified) stands. The overclaims are specific to THIS margin-over-bag scale probe.
+
+**Airtight follow-on (per the skeptics):** re-run this runner's OWN no-hold (λ=0) + random-gate controls per-depth at d≥10, multi-seed, and compare against the ordered bigram (not just the order-blind bag), to establish (or bound) any genuine distal-holding component.
+
+---
+
+### (Original write-up below, superseded by the CORRECTION above for the retracted framings; the raw margin-over-bag numbers + the learned-gate-is-the-ingredient result remain accurate.)
+
+# The TRAINED selective channel over a FIXED reservoir robustly lifts margin-over-bag (~+0.62, 5/5) where the FIXED gate HURT [FRAMING RETRACTED: see CORRECTION — the reservoir is weak, not at its Ueda-bound]
 
 **Date:** 2026-07-13
 **Runner:** `research/runners/_reslm_batched_scale_trained_selssm_derisk.py` · raw `research/findings/raw/_trainedsel_scale/`. numpy (GPU-capable batched reservoir); NO `sim/` edit.
