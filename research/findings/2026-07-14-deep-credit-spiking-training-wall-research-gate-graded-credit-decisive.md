@@ -103,6 +103,10 @@ The surrogate derivative ALONE gets partway (train 0.638 ≫ chance, inherit 0.4
 
 **⇒ THE DEEP-CREDIT-ON-SPIKES BOUNDARY IS SURPASSED (in the LIF framework):** a transport-free biological local rule (e-prop) trains deep credit on spikes. The "parked SNR wall / spikes-can't" verdict is fully refuted. **NEXT (the emergence-engine core, on the production substrate): port the e-prop forward eligibility + DFA learning signal onto the Izhikevich `OnBridgeBDSPNet` (replace the one-step rate-`phi` BDSP credit with the eligibility+surrogate e-prop credit) — does it train the compositional task on the real spiking bridge?** Cheaper follow-ons: a cleaner depth-required task (defeat the temporal-depth floor), and a shuffled-B_direct anti-cheat (verify the DFA feedback is load-bearing).
 
+## e-prop ANTI-CHEATS confirm (the credit channel is load-bearing, not a bug)
+- **shuffle-DFA control (`eprop_shuffle`, 3-seed): COLLAPSES to chance** — scrambling the per-example learning signal (eligibility intact) gives train 0.326 / inherit 0.321 (≈ chance 0.333). ⇒ the transport-free DFA credit channel is genuinely LOAD-BEARING; e-prop's training is driven by the (correct, transport-free) credit, not by the eligibility spuriously alone or a leakage bug. Combined with permuted-label ~chance, the e-prop GO is anti-cheat-clean.
+- **larger-capacity BPTT (hidden128/ep150, 3-seed):** train 1.0, inherit 0.765 (> the hidden64 0.673), 3/3 — the substrate-viable isolation holds + improves with capacity (as expected). The spiking substrate is viable and scales.
+
 ## Files
 - Research gate workflow: `spiking-deep-credit-training-wall-research-gate` (journal in the run's transcript dir).
 - Capacity sweep: `research/findings/raw/_dccap/cap_*_s*.json`.
