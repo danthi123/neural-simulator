@@ -1,0 +1,2 @@
+[rung4 seed=102] selective=0.437 fixed_res=0.411 detached=0.411 randgate=0.404 (chance=0.167) -> no
+[rung4] 0/1 GO
