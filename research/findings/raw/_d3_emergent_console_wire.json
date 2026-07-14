@@ -1,0 +1,288 @@
+{
+ "byte_identity": {
+  "identical": true,
+  "n_probes": 10,
+  "diffs": []
+ },
+ "seeds": [
+  {
+   "seed": 42,
+   "focus_shifted": {
+    "d3": 0.667,
+    "host_last_subject": 0.0,
+    "last_object": 1.0,
+    "n": 3
+   },
+   "non_shifted": {
+    "d3": 1.0,
+    "host_last_subject": 1.0,
+    "last_object": 0.0,
+    "n": 3
+   },
+   "lesion_focus_shifted": {
+    "d3": 0.0,
+    "host_last_subject": 0.0,
+    "last_object": 1.0,
+    "n": 3
+   },
+   "moat": {
+    "abstains": true,
+    "answer": "I don't know",
+    "kind": "moat"
+   },
+   "demo": {
+    "discourse": [
+     "cat see box",
+     "cat see ball",
+     "cat see box",
+     "dog see cat"
+    ],
+    "center": "cat",
+    "d3_resolves_it_to": "cat",
+    "d3_answer": [
+     "the cat sees box",
+     "relational"
+    ],
+    "host_resolves_it_to": "dog",
+    "host_answer": [
+     "the dog sees cat",
+     "relational"
+    ]
+   }
+  },
+  {
+   "seed": 43,
+   "focus_shifted": {
+    "d3": 1.0,
+    "host_last_subject": 0.0,
+    "last_object": 1.0,
+    "n": 3
+   },
+   "non_shifted": {
+    "d3": 1.0,
+    "host_last_subject": 1.0,
+    "last_object": 0.0,
+    "n": 3
+   },
+   "lesion_focus_shifted": {
+    "d3": 0.0,
+    "host_last_subject": 0.0,
+    "last_object": 1.0,
+    "n": 3
+   },
+   "moat": {
+    "abstains": true,
+    "answer": "I don't know",
+    "kind": "moat"
+   },
+   "demo": {
+    "discourse": [
+     "cat see box",
+     "cat see ball",
+     "cat see box",
+     "dog see cat"
+    ],
+    "center": "cat",
+    "d3_resolves_it_to": "cat",
+    "d3_answer": [
+     "the cat sees box",
+     "relational"
+    ],
+    "host_resolves_it_to": "dog",
+    "host_answer": [
+     "the dog sees cat",
+     "relational"
+    ]
+   }
+  },
+  {
+   "seed": 44,
+   "focus_shifted": {
+    "d3": 1.0,
+    "host_last_subject": 0.0,
+    "last_object": 1.0,
+    "n": 3
+   },
+   "non_shifted": {
+    "d3": 1.0,
+    "host_last_subject": 1.0,
+    "last_object": 0.0,
+    "n": 3
+   },
+   "lesion_focus_shifted": {
+    "d3": 0.0,
+    "host_last_subject": 0.0,
+    "last_object": 1.0,
+    "n": 3
+   },
+   "moat": {
+    "abstains": true,
+    "answer": "I don't know",
+    "kind": "moat"
+   },
+   "demo": {
+    "discourse": [
+     "cat see box",
+     "cat see ball",
+     "cat see box",
+     "dog see cat"
+    ],
+    "center": "cat",
+    "d3_resolves_it_to": "cat",
+    "d3_answer": [
+     "the cat sees box",
+     "relational"
+    ],
+    "host_resolves_it_to": "dog",
+    "host_answer": [
+     "the dog sees cat",
+     "relational"
+    ]
+   }
+  },
+  {
+   "seed": 100,
+   "focus_shifted": {
+    "d3": 1.0,
+    "host_last_subject": 0.0,
+    "last_object": 1.0,
+    "n": 3
+   },
+   "non_shifted": {
+    "d3": 1.0,
+    "host_last_subject": 1.0,
+    "last_object": 0.0,
+    "n": 3
+   },
+   "lesion_focus_shifted": {
+    "d3": 0.0,
+    "host_last_subject": 0.0,
+    "last_object": 1.0,
+    "n": 3
+   },
+   "moat": {
+    "abstains": true,
+    "answer": "I don't know",
+    "kind": "moat"
+   },
+   "demo": {
+    "discourse": [
+     "cat see box",
+     "cat see ball",
+     "cat see box",
+     "dog see cat"
+    ],
+    "center": "cat",
+    "d3_resolves_it_to": "cat",
+    "d3_answer": [
+     "the cat sees ball",
+     "relational"
+    ],
+    "host_resolves_it_to": "dog",
+    "host_answer": [
+     "the dog sees cat",
+     "relational"
+    ]
+   }
+  },
+  {
+   "seed": 101,
+   "focus_shifted": {
+    "d3": 1.0,
+    "host_last_subject": 0.0,
+    "last_object": 1.0,
+    "n": 3
+   },
+   "non_shifted": {
+    "d3": 1.0,
+    "host_last_subject": 1.0,
+    "last_object": 0.0,
+    "n": 3
+   },
+   "lesion_focus_shifted": {
+    "d3": 0.0,
+    "host_last_subject": 0.0,
+    "last_object": 1.0,
+    "n": 3
+   },
+   "moat": {
+    "abstains": true,
+    "answer": "I don't know",
+    "kind": "moat"
+   },
+   "demo": {
+    "discourse": [
+     "cat see box",
+     "cat see ball",
+     "cat see box",
+     "dog see cat"
+    ],
+    "center": "cat",
+    "d3_resolves_it_to": "cat",
+    "d3_answer": [
+     "the cat sees ball",
+     "relational"
+    ],
+    "host_resolves_it_to": "dog",
+    "host_answer": [
+     "the dog sees bird",
+     "relational"
+    ]
+   }
+  },
+  {
+   "seed": 102,
+   "focus_shifted": {
+    "d3": 1.0,
+    "host_last_subject": 0.0,
+    "last_object": 1.0,
+    "n": 3
+   },
+   "non_shifted": {
+    "d3": 1.0,
+    "host_last_subject": 1.0,
+    "last_object": 0.0,
+    "n": 3
+   },
+   "lesion_focus_shifted": {
+    "d3": 0.0,
+    "host_last_subject": 0.0,
+    "last_object": 1.0,
+    "n": 3
+   },
+   "moat": {
+    "abstains": true,
+    "answer": "I don't know",
+    "kind": "moat"
+   },
+   "demo": {
+    "discourse": [
+     "cat see box",
+     "cat see ball",
+     "cat see box",
+     "dog see cat"
+    ],
+    "center": "cat",
+    "d3_resolves_it_to": "cat",
+    "d3_answer": [
+     "the cat sees ball",
+     "relational"
+    ],
+    "host_resolves_it_to": "dog",
+    "host_answer": [
+     "the dog sees cat",
+     "relational"
+    ]
+   }
+  }
+ ],
+ "REFS": [
+  "tree",
+  "dog",
+  "cat",
+  "bird",
+  "ball",
+  "box"
+ ],
+ "VERB": "see"
+}
