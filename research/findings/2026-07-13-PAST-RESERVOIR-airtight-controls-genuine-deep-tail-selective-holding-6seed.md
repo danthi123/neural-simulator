@@ -38,6 +38,22 @@ Over a fixed reservoir, the trained selective channel provides **genuine input-d
 
 **The selective-specific deep-tail holding (sel<random-gate) GROWS MONOTONICALLY with vocab** (+0.32→+0.36→+0.44) — and this control is NOT bigram-dependent (it compares sel to its own random-gate control), so it is NOT confounded by the bigram-starvation Skeptic B flagged. As the language gets richer (bigger vocab, more deep structure), the genuine input-dependent distal holding the selective gate provides grows. (The aggregate `sel−bigram` also grows with vocab at fixed nt — but that IS partly bigram-starvation; the clean data-axis test is the running data-scaling batch at fixed V=300.)
 
+## CLEAN data-axis test (fixed V=300, bigram WELL-SAMPLED — defeats the bigram-starvation confound Skeptic B flagged)
+
+| nt (V=300) | d≥10 sel<random-gate | d≥10 sel<ordered-bigram | AGG sel−bigram |
+|---|---|---|---|
+| 5000 | +0.322 (6/6) | +0.170 (6/6) | −0.054 |
+| 10000 | +0.332 (3/3) | +0.085 | **−0.069 (0/3)** |
+| 20000 | +0.387 (3/3) | +0.096 | **−0.084 (0/3)** |
+
+- **The deep-tail selective-specific holding (`sel<random-gate`) HOLDS/GROWS with data** (+0.32→+0.33→+0.39) — robust, clean.
+- **`sel` still beats the ordered bigram at the deepest tail** (+0.09-0.10 at nt=10K/20K), positive but SHRINKING as the bigram gets better-sampled (expected — the honest bigram is a stronger baseline at more data).
+- **The AGGREGATE stays bigram-level-to-slightly-worse and does NOT improve with data** (−0.05→−0.07→−0.08, 0/3 at nt=10K/20K). ⇒ the "aggregate beats the bigram" seen at higher V/fixed-nt was BIGRAM STARVATION (exactly Skeptic B's warning); with a well-sampled bigram, the overall model is bigram-level at V=300 regardless of data.
+
+## ⇒ THE HONEST, PROPERLY-CONTROLLED CONCLUSION (the first-class deliverable)
+
+The selective mechanism provides **genuine deep-tail long-range holding** — validated by the airtight controls (`sel<random-gate`, `sel<no-hold`), robust across vocab (grows +0.32→+0.44) AND data (grows +0.32→+0.39), and it still edges the *ordered* bigram at the deepest positions. This is a real, clean, adversarially-survived MECHANISM result. **BUT the overall model is bigram-level at tractable scale (V≤1000)** — the aggregate does NOT beat a well-sampled bigram, and more DATA at fixed small vocab does not change that, because the deep-context tokens are too small a fraction of the corpus at small vocab. **Moving the aggregate (overall fluency) requires the deep-context signal to dominate more tokens — i.e. larger vocab / richer language (the documented ~23.7M-word / V=2000 validated regime), not just more data at small vocab.** That regime is a genuine scale lever (a multi-day run; the small launch-bound reservoir makes GPU no faster than CPU here — the honest compute constraint). ⇒ the deep-tail long-range MECHANISM is the honest overnight deliverable; the aggregate-FLUENCY-at-validated-scale is the named, bounded, scale-gated open frontier.
+
 ## Next (running)
 - **GPU validated-scale** run (np=500 PROPER reservoir per Skeptic B, V=2000, nt=40000): does the deep-tail selective-specific holding survive a properly-sized reservoir at the non-null-discriminator scale, and does the AGGREGATE beat the bigram there?
 - **CPU:** the airtight controls at np=500 (proper reservoir, tractable) + a V=600/V=1000 vocab grid — does the deep-tail selective-specific hold over a strong reservoir + grow with vocab.
