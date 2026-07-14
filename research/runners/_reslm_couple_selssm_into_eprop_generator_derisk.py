@@ -84,16 +84,22 @@ def _forward_h(res, ids):
     return res.forward_states(ids)   # non-ALIF -> list of h_t (N_HID,)
 
 
-def _train_eval(seed, tr_hids, tr_ids, ev_hids, ev_ids, V, arm):
-    """arm in {eprop, eprop_sel, eprop_sel_rand, eprop_sel_fix}. tr_hids/ev_hids = precomputed frozen-reservoir h_t seqs
-    (aligned to tr_ids/ev_ids). Trains a read-out over the arm's feature; for the selective arms co-trains the gate by the
-    one-step-local eligibility rule. Reservoir W_rec is FROZEN (already e-prop-trained = the emergent generator)."""
+def _train_eval(seed, tr_hids, tr_ids, ev_hids, ev_ids, V, arm, feedback="random"):
+    """arm in {eprop, eprop_sel, eprop_sel_rand, eprop_sel_fix, eprop_sel_noheld}. tr_hids/ev_hids = precomputed
+    frozen-reservoir h_t seqs. Trains a read-out over the arm's feature; for the selective arms co-trains the gate by the
+    one-step-local eligibility rule. Reservoir W_rec FROZEN. Controls: eprop_sel_rand (gate on a RANDOM token = broken
+    current-token selectivity); eprop_sel_fix (lam FIXED constant = an input-INDEPENDENT slow LINEAR integrator, ~ALIF);
+    eprop_sel_noheld (lam FORCED to 0 -> c=inj each step = a PURE current-token projection with NO accumulation/hold) --
+    the decisive control isolating the current-token-readout FIX from GENUINE held deep context (adversarial-verify
+    Skeptic A). `feedback` = the gate's spatial learning-signal path: 'random' (fixed random feedback B = broadcast
+    alignment, TRANSPORT-FREE, the honest default) or 'transport' (Wro^T = the weight-transport ceiling, Skeptic B)."""
     use_sel = arm != "eprop"
     train_gate = arm in ("eprop_sel", "eprop_sel_rand")
     E, Win, w, b, fixed_lam = _sel_params(seed, V)
     feat_dim = N_HID + (N_HID if use_sel else 0)
     Wro = np.zeros((V, feat_dim))
     rgate = np.random.default_rng(seed * 131 + 3)                 # random-token stream for the rand control
+    Bc = np.random.default_rng(seed * 191 + 11).standard_normal((N_HID, V)) / np.sqrt(V)  # fixed random feedback (gate)
     for _ep in range(ARM_EPOCHS):
         for hids, ids in zip(tr_hids, tr_ids):
             c = np.zeros(N_HID); ew = np.zeros((N_HID, D_IN)); ec = np.zeros(N_HID)
@@ -102,7 +108,12 @@ def _train_eval(seed, tr_hids, tr_ids, ev_hids, ev_ids, V, arm):
                 if use_sel:
                     u = E[ids[t]]; inj = Win @ u
                     ug = E[int(rgate.integers(V))] if arm == "eprop_sel_rand" else u
-                    lam = fixed_lam if arm == "eprop_sel_fix" else _sig(w @ ug + b)
+                    if arm == "eprop_sel_fix":
+                        lam = fixed_lam
+                    elif arm == "eprop_sel_noheld":
+                        lam = np.zeros(N_HID)                     # NO hold: c = inj (pure current-token projection)
+                    else:
+                        lam = _sig(w @ ug + b)
                     c_prev = c; c = lam * c_prev + (1.0 - lam) * inj
                     if train_gate:
                         dl = lam * (1.0 - lam); base = (c_prev - inj)
@@ -115,7 +126,8 @@ def _train_eval(seed, tr_hids, tr_ids, ev_hids, ev_ids, V, arm):
                 err = p.copy(); err[ids[t + 1]] -= 1.0
                 Wro -= LR_RO * np.outer(err, feat)
                 if train_gate:
-                    delta_c = Wro[:, N_HID:].T @ err              # spatial bp through the read-out to the c-channel
+                    # gate spatial learning signal: random feedback (transport-free) or the read-out transpose (ceiling)
+                    delta_c = (Bc @ err) if feedback == "random" else (Wro[:, N_HID:].T @ err)
                     w -= LR_GATE * (delta_c[:, None] * ew)
                     b -= LR_GATE * (delta_c * ec)
     # eval per-depth CE
@@ -139,7 +151,7 @@ def _train_eval(seed, tr_hids, tr_ids, ev_hids, ev_ids, V, arm):
     return {k: ce[k] / cnt[k] for k in cnt}, dict(cnt)
 
 
-def run(seed, corpus, n_sent, vocab_sz, tr_cap=1200, ev_cap=300):
+def run(seed, corpus, n_sent, vocab_sz, tr_cap=1200, ev_cap=300, feedback="random"):
     sents = load_sentences(corpus, n_sent)
     rng = np.random.default_rng(seed)
     idx = rng.permutation(len(sents)); cut = int(0.8 * len(sents))
@@ -159,8 +171,8 @@ def run(seed, corpus, n_sent, vocab_sz, tr_cap=1200, ev_cap=300):
 
     arms = {}
     cnt = None
-    for arm in ("eprop", "eprop_sel", "eprop_sel_rand", "eprop_sel_fix"):
-        arms[arm], c2 = _train_eval(seed, tr_hids, tr_ids, ev_hids, ev_ids, V, arm)
+    for arm in ("eprop", "eprop_sel", "eprop_sel_rand", "eprop_sel_fix", "eprop_sel_noheld"):
+        arms[arm], c2 = _train_eval(seed, tr_hids, tr_ids, ev_hids, ev_ids, V, arm, feedback=feedback)
         cnt = c2 if cnt is None else cnt
     # bigram per depth (floor)
     bce = defaultdict(float); bcnt = defaultdict(int)
@@ -178,13 +190,25 @@ def run(seed, corpus, n_sent, vocab_sz, tr_cap=1200, ev_cap=300):
     sel_gain = dp["eprop"] - dp["eprop_sel"]         # >0 = selective LOWERS deep CE vs the generator baseline
     rand_gain = dp["eprop"] - dp["eprop_sel_rand"]
     fix_gain = dp["eprop"] - dp["eprop_sel_fix"]
+    # GENUINE-DEEP-CONTEXT test (adversarial-verify Skeptic A): the HELD selective state vs a PURE current-token projection
+    # (noheld, lam=0). sel < noheld at deep => the accumulated/held context genuinely helps beyond the current-token fix.
+    held_gain_deep = dp["eprop_sel_noheld"] - dp["eprop_sel"]      # >0 = holding beats not-holding at deep context
+    # per-depth held contribution (sel vs noheld): does it RISE or DECAY with depth?
+    held_by_depth = {b: arms["eprop_sel_noheld"].get(b, float("nan")) - arms["eprop_sel"].get(b, float("nan"))
+                     for b in ("1", "2", "3", "4-5", "6-9", "10-99")}
     go = bool(sel_gain > 0.02 and rand_gain < sel_gain - 0.02 and fix_gain < sel_gain - 0.01)
-    print(f"[couple seed={seed}] DEEP(d>=4) CE: eprop={dp['eprop']:.3f} sel={dp['eprop_sel']:.3f} "
-          f"rand={dp['eprop_sel_rand']:.3f} fix={dp['eprop_sel_fix']:.3f} bigram={dp['bigram']:.3f} "
-          f"| sel_gain={sel_gain:+.3f} rand_gain={rand_gain:+.3f} fix_gain={fix_gain:+.3f} -> {'GO' if go else 'no'}",
+    genuine_deep = bool(held_gain_deep > 0.02)                     # the held state adds beyond the current-token projection
+    print(f"[couple seed={seed} fb={feedback}] DEEP(d>=4) CE: eprop={dp['eprop']:.3f} sel={dp['eprop_sel']:.3f} "
+          f"rand={dp['eprop_sel_rand']:.3f} fix={dp['eprop_sel_fix']:.3f} noheld={dp['eprop_sel_noheld']:.3f} "
+          f"bigram={dp['bigram']:.3f} | sel_gain={sel_gain:+.3f} rand_gain={rand_gain:+.3f} fix_gain={fix_gain:+.3f} "
+          f"held_gain_deep={held_gain_deep:+.3f} -> {'GO' if go else 'no'} {'HELD+' if genuine_deep else 'held~0'}",
           flush=True)
-    return {"seed": seed, "deep": dp, "by_depth": arms,
-            "sel_gain": sel_gain, "rand_gain": rand_gain, "fix_gain": fix_gain, "GO": go}
+    print(f"          held(sel<noheld) by depth: " +
+          " ".join(f"d{b}={held_by_depth[b]:+.3f}" for b in ("1", "2", "3", "4-5", "6-9", "10-99")), flush=True)
+    return {"seed": seed, "deep": dp, "by_depth": arms, "feedback": feedback,
+            "sel_gain": sel_gain, "rand_gain": rand_gain, "fix_gain": fix_gain,
+            "held_gain_deep": held_gain_deep, "held_by_depth": held_by_depth,
+            "GO": go, "genuine_deep": genuine_deep}
 
 
 def main():
@@ -195,9 +219,10 @@ def main():
     ap.add_argument("--vocab", type=int, default=200)
     ap.add_argument("--tr-cap", type=int, default=1200)          # max training sentences (scale lever; default = committed)
     ap.add_argument("--ev-cap", type=int, default=300)
+    ap.add_argument("--gate-feedback", type=str, default="random", choices=["random", "transport"])  # transport-free default
     ap.add_argument("--out", type=str, default=None)
     a = ap.parse_args()
-    res = [run(s, a.corpus, a.n_sent, a.vocab, a.tr_cap, a.ev_cap) for s in a.seeds]
+    res = [run(s, a.corpus, a.n_sent, a.vocab, a.tr_cap, a.ev_cap, a.gate_feedback) for s in a.seeds]
     print(f"[couple] {sum(1 for r in res if r['GO'])}/{len(res)} GO", flush=True)
     if a.out:
         json.dump(dict(results=res), open(a.out, "w"), indent=2)

@@ -1,8 +1,22 @@
-# MISSION-CENTRAL COUPLING (GO, 6-seed): adding the learned selective-SSM context channel to the EMERGENT e-prop generator carries the DEEP context the (e-prop-trained) reservoir alone loses — and pulls its deep CE BELOW the bigram floor
+# MISSION-CENTRAL COUPLING (GO, 6-seed, transport-free): the learned input-dependent selective-SSM channel robustly improves the EMERGENT e-prop generator's deep-context prediction — a large shallow readout fix + a genuine (decaying) deep-selective contribution; it does NOT clear the n-gram floor at the deep tail
 
 **Date:** 2026-07-13
-**Runner:** `research/runners/_reslm_couple_selssm_into_eprop_generator_derisk.py` · CI `tests/test_reslm_couple_selssm_into_eprop_generator.py` · raw `research/findings/raw/_couplessm/`. numpy; NO `sim/` edit.
-**Status:** ✅ GO 5/6 (the robust sub-claims 6/6). The isolated selective-SSM ladder now COUPLES into the actual emergent conversational cortex.
+**Runner:** `research/runners/_reslm_couple_selssm_into_eprop_generator_derisk.py` · CI `tests/test_reslm_couple_selssm_into_eprop_generator.py` · raw `research/findings/raw/_couplessm/` (original transport-feedback run) + `raw/_couplessm_v2/` (corrected transport-free + noheld run). numpy; NO `sim/` edit.
+**Status:** ✅ GO 6/6 (transport-free random feedback). Adversarially verified (3-skeptic workflow, SURVIVES-WITH-CORRECTIONS); the corrections are applied below.
+
+## ⚠️ CORRECTION (2026-07-13, post-adversarial-verify — the honest, corrected result)
+
+A 3-skeptic adversarial-verify workflow returned **SURVIVES-WITH-CORRECTIONS**: the narrow GO stands, but two headline interpretations were overclaimed and one mechanism claim was false. All three are fixed below (rerun `raw/_couplessm_v2/`, transport-free random feedback + a new `noheld` control), and the corrected result is **stronger** (6/6 on every criterion).
+
+1. **"NO transport" was FALSE → FIXED.** The gate's spatial learning signal used `delta_c = Wro[:,N_HID:].T @ err` — the exact read-out **transpose** = weight transport (the sibling reservoir e-prop uses fixed random feedback `B` and labels `Wᵀ` its "weight-transport ceiling"). The temporal eligibility was always transport-free/no-BPTT (the load-bearing O(n) claim), but the spatial feedback used transport. **Fixed:** a fixed random feedback matrix `Bc` (broadcast alignment) for the gate → the GO SURVIVES and STRENGTHENS (sel>rand 5/6 → **6/6**). "Transport-free" is now genuinely true. (The earlier Rungs 2–4b used the same `Wro.T` spatial feedback; a random-feedback re-verification of those is a cheap follow-on — the coupling is strong evidence it holds.)
+2. **"Carries DEEP context" → walked back to a modest genuine contribution.** Skeptic A: the sel-gain is LARGEST at shallow depth and DECAYS with depth. The decisive new control **`noheld` (λ≡0, pure current-token projection, no accumulation)** + the clean **`sel<fix`** test (both λ-accumulators, differing only in input-dependence) settle it: `sel<fix` is POSITIVE at every depth (selectivity genuinely helps) but decays (+0.59 shallow → **+0.19 at d≥10**). ⇒ the channel's benefit is **mostly a shallow readout fix** for the frozen reservoir's weak current-token readout (eprop d=1 CE 5.10 ≫ bigram 3.50), **plus a genuine-but-modest deep-selective contribution that persists into the deep tail.** NOT "carries deep context" as the dominant effect. (Caveat: `held_gain_deep`=noheld−sel overstates the hold benefit because full-magnitude `noheld` is itself a poor feature — the clean test is `sel<fix`.)
+3. **"Clears the bigram floor at deep context" → RETRACTED.** Per-depth `sel−bigram` (6-seed): +0.42 (d1), +0.03 (d2), −0.07 (d3), −0.17 (d4-5), −0.00 (d6-9), **+0.04 (d10-99, sel WORSE)**. sel edges the bigram only mid-range (d3–d6-9); at the deepest tail it ties/loses. The favorable d≥4 aggregate was carried by d=4-5. Honest: the coupling carries deep context BETTER than the fading reservoir, but does NOT beat the memoryless n-gram floor at the deep tail (the CEILING/reservoir-scale regime; confirmed unchanged by the V=300 scale probe).
+
+**Corrected 6-seed (transport-free, `raw/_couplessm_v2/`), deep d≥4:** sel_gain mean **+0.597** (6/6 >0); **sel>fix 6/6** (input-driven selectivity, ~2× a fixed integrator); **sel>rand 6/6** (current-token selectivity, now unanimous with random feedback); strict GO **6/6**. Per-depth `sel<fix`: +0.59/+0.62/+0.57/+0.40/+0.26/+0.19 (d1→d10-99) — positive throughout, decaying. **The load-bearing, corrected claim: the learned input-dependent selective channel, trained fully transport-free (no BPTT, random feedback), robustly improves the emergent e-prop generator at every depth (a large shallow readout fix + a genuine decaying deep-selective contribution).**
+
+---
+
+### (Original result below, superseded by the CORRECTION above for the two retracted headline claims; the raw 6-seed table + arms description remain accurate for the transport-feedback run.)
 
 ## The question (the mission-central next step)
 
