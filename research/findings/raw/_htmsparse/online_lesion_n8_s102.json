@@ -1,0 +1,26 @@
+{
+  "probe": "emerge15_online_grow",
+  "n_subj": 8,
+  "vocab": 19,
+  "chance": 0.125,
+  "best_ngram": 0.125,
+  "lesion": true,
+  "permute": false,
+  "htm": 0.0,
+  "grown_syn": 512,
+  "dense_syn": 547200,
+  "grown_ratio": 0.0009356725146198831,
+  "GO": false,
+  "elapsed_seconds": 7.4,
+  "per_seed": [
+    {
+      "seed": 102,
+      "htm": 0.0,
+      "grown_syn": 512,
+      "dense_syn": 547200,
+      "vocab_n": 19,
+      "nE": 40
+    }
+  ],
+  "verdict": "ONLINE-GROWN HTM 0.0 vs n-gram 0.125; grown 512 synapses (vs dense 547200) discovered from winner dynamics. read substance."
+}
