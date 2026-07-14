@@ -169,12 +169,83 @@ def run(seed):
     return {"seed": seed, **acc, "GO": go}
 
 
+def run_spiking_readout(seed):
+    """EMERGENCE-BAR COMPLETION: the res_plus_sel arm with the READ-OUT ARGMAX also on spikes -- the linear read-out's
+    per-token scores drive a one-of-K FS-WTA Izhikevich bridge (the validated `build_fswta_score_bridge`/`fswta_drive`,
+    the same spiking WTA the D3 register uses); the spiking winner is the prediction. Read-out WEIGHTS stay learned by the
+    committed local delta rule (no BPTT); only the argmax SELECTION moves onto spikes -> reservoir + selective channel +
+    read-out ALL spiking. Reports numpy-argmax acc, spiking-WTA acc, and parity (agreement)."""
+    from research.runners._d3_spiking_attractor_derisk import build_fswta_score_bridge, fswta_drive
+    b, res_idx, ssm_idx, snap = _build_bridge(seed)
+    xp, _ = get_backend()
+    rng = np.random.default_rng(seed * 7 + 2)
+    E = np.eye(D_IN)
+    W_in = (np.random.default_rng(seed * 7919 + 3).random((N_RES, D_IN)) * 2 - 1) * IN_SCALE
+    Win_s = np.random.default_rng(seed * 31 + 9).standard_normal((N_SSM, D_IN)) / np.sqrt(D_IN)
+    w = rng.standard_normal((N_SSM, D_IN)) / np.sqrt(D_IN); c = np.full(N_SSM, C_INIT)
+    Wro = np.zeros((K, N_RES + N_SSM))
+    Bc = np.random.default_rng(seed * 191 + 11).standard_normal((N_SSM, K)) / np.sqrt(K)
+    seqs = _seqs(seed); ntr = int(0.7 * len(seqs))
+
+    def _step_token(tok):
+        u = E[tok]
+        drive = np.zeros(int(b.core_config.num_neurons), np.float32)
+        drive[res_idx] = (W_in @ u + BIAS).astype(np.float32)
+        b.cp_external_input_current[:] = 0.0
+        b.cp_external_input_current[res_idx] = xp.asarray(drive[res_idx]) if xp is not None else drive[res_idx]
+        inj = Win_s @ u; gsh = _softplus(w @ u + c)
+        full_inj = np.zeros(int(b.core_config.num_neurons), np.float32); full_sh = np.zeros_like(full_inj)
+        full_inj[ssm_idx] = inj.astype(np.float32); full_sh[ssm_idx] = gsh.astype(np.float32)
+        b.cp_ssm_inject[:] = xp.asarray(full_inj) if xp is not None else full_inj
+        b.cp_ssm_shunt[:] = xp.asarray(full_sh) if xp is not None else full_sh
+        counts = np.zeros(N_RES, np.float64)
+        for _ in range(T_STEP):
+            b._run_one_simulation_step()
+            counts += np.asarray(_host(b.cp_firing_states)).astype(np.float64)[res_idx]
+        return counts / T_STEP, np.asarray(_host(b.cp_ssm_state)).astype(np.float64)[ssm_idx], u, inj, gsh
+
+    for _ep in range(EPOCHS):                                    # train the read-out + gate (same as res_plus_sel)
+        for (toks, y) in seqs[:ntr]:
+            _wash(b, snap); ew = np.zeros((N_SSM, D_IN)); ec = np.zeros(N_SSM); s_prev = np.zeros(N_SSM)
+            for t, tok in enumerate(toks):
+                h, c_state, u, inj, gsh = _step_token(tok)
+                lam = np.clip(1.0 - K_LEAK * (1.0 + gsh), 0.0, 1.0)
+                dl = -K_LEAK * _sig(w @ u + c); base = (s_prev - inj) * dl
+                ew = lam[:, None] * ew + base[:, None] * u[None, :]; ec = lam * ec + base; s_prev = c_state
+                if t == len(toks) - 1:
+                    feat = np.concatenate([h, c_state]); z = Wro @ feat; z -= z.max(); p = np.exp(z); p /= p.sum()
+                    err = p.copy(); err[y] -= 1.0; Wro -= LR_RO * np.outer(err, feat)
+                    delta_c = Bc @ err; w -= LR_GATE * (delta_c[:, None] * ew); c -= LR_GATE * (delta_c * ec)
+    sb = build_fswta_score_bridge(seed=seed, K=K)
+    np_cor = spk_cor = agree = tot = 0
+    for (toks, y) in seqs[ntr:]:
+        _wash(b, snap)
+        for t, tok in enumerate(toks):
+            h, c_state, u, inj, gsh = _step_token(tok)
+        scores = Wro @ np.concatenate([h, c_state])
+        np_pred = int(np.argmax(scores))
+        _, wta = fswta_drive(sb, K, scores, settle=25)          # spiking one-of-K WTA read
+        spk_pred = int(np.argmax(wta)) if wta.max() > 0 else -1
+        np_cor += int(np_pred == y); spk_cor += int(spk_pred == y); agree += int(spk_pred == np_pred); tot += 1
+    r = {"seed": seed, "numpy_acc": np_cor / tot, "spiking_acc": spk_cor / tot, "parity": agree / tot, "chance": 1.0 / K}
+    # meaningful criterion: the SPIKING read-out reads a winner above chance AND without catastrophic loss vs the exact
+    # argmax (spiking_acc >= 0.75x numpy_acc). Parity is a diagnostic (a finite-spike-WTA / settle lever on close scores,
+    # NOT the load-bearing gate for "the argmax is now on spikes").
+    go = bool(r["spiking_acc"] > r["chance"] + 0.08 and r["spiking_acc"] >= 0.75 * r["numpy_acc"])
+    r["GO"] = go
+    print(f"[onbridge-spk-readout seed={seed}] numpy_acc={r['numpy_acc']:.3f} spiking_acc={r['spiking_acc']:.3f} "
+          f"parity={r['parity']:.3f} (chance={r['chance']:.3f}) -> {'GO' if go else 'no'}", flush=True)
+    return r
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=[42])
+    ap.add_argument("--spiking-readout", action="store_true",
+                    help="emergence-bar completion: read the winner via the spiking FS-WTA (argmax on spikes too)")
     ap.add_argument("--out", type=str, default=None)
     a = ap.parse_args()
-    res = [run(s) for s in a.seeds]
+    res = [(run_spiking_readout(s) if a.spiking_readout else run(s)) for s in a.seeds]
     print(f"[onbridge-couple] {sum(1 for r in res if r['GO'])}/{len(res)} GO", flush=True)
     if a.out:
         json.dump(dict(results=res), open(a.out, "w"), indent=2)
