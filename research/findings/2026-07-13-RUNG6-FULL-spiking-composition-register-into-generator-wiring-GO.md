@@ -1,8 +1,8 @@
-# RUNG 6 — the FULL SPIKING composition: the deployed two-gate SPIKING D3 register feeds its resumed-protagonist who-state into a reservoir GENERATOR's read-out (wiring validated, seed-42 GO)
+# RUNG 6 — the FULL SPIKING composition: the deployed two-gate SPIKING D3 register feeds its resumed-protagonist who-state into a reservoir GENERATOR's read-out (6-seed GO)
 
 **Date:** 2026-07-13
 **Runner:** `research/runners/_reslm_rung6_spiking_composition_derisk.py` (reuse-by-import: `SpikingPopGateRegister` + `make_discourse`/`_truth` + a fixed ESN reservoir; numpy; NO `sim/` edit).
-**Status:** ✅ WIRING VALIDATED (seed-42 smoke GO); 6-seed validation in flight.
+**Status:** ✅ 6-seed GO (dev 42/43/44 + blind 100/101/102, all 6 GO).
 
 ## What this composes (the upgrade over the cheap-first Rung 6)
 
@@ -16,23 +16,25 @@ The cheap-first Rung 6 (`_reslm_rung6_pushpop_register_derisk`, 12-seed GO) used
 
 The D3 arc already validated that the spiking register RESUMES the earlier protagonist across a pop (RESUME_spiking vs pop-lesion). **Rung 6 tests the GENERATION value:** does that spiking resumed who-state, fed to a reservoir read-out, let the GENERATOR predict the resumed referent — the register carrying what the reservoir fades?
 
-## Result (seed-42 smoke, chance = 1/6 = 0.167)
+## Result — 6-seed GO (n_disc=120; chance = 1/6 = 0.167)
 
-| arm | pop-clause resumed-referent accuracy |
-|---|---|
-| **REGISTER** (reservoir state ⊕ the spiking register's `who_agent()` after the pop) | **0.50** |
-| RESERVOIR-ONLY (fading) | 0.12 (≈ chance — the resumed protagonist is distal) |
-| SHUFFLE (who-state permuted across trials) | 0.25 (collapses) |
-| POP-LESION (`pop_lesion=True` → the held slot is not restored) | 0.33 (the register's who-state is wrong → the read-out gains less) |
+| seed | register | reservoir | shuffle | pop-lesion | GO |
+|---|---|---|---|---|---|
+| 42 | 0.78 | 0.25 | 0.22 | 0.42 | ✓ |
+| 43 | 0.67 | 0.17 | 0.14 | 0.33 | ✓ |
+| 44 | 0.69 | 0.14 | 0.11 | 0.42 | ✓ |
+| 100 | 0.94 | 0.14 | 0.11 | 0.08 | ✓ |
+| 101 | 0.58 | 0.08 | 0.14 | 0.08 | ✓ |
+| 102 | 0.64 | 0.25 | 0.22 | 0.08 | ✓ |
+| **mean** | **0.72** | **0.17** | **0.16** | **0.24** | **6/6** |
 
-GO: register > reservoir + 0.15 AND > shuffle + 0.15 AND > pop-lesion + 0.10. **Seed-42 smoke GO.**
+GO gate per seed: register > reservoir + 0.15 AND > shuffle + 0.15 AND > pop-lesion + 0.10. **6/6 GO** (dev 3/3 + blind 3/3).
 
-The register-augmented read-out (0.50) beats the faded reservoir (0.12), a shuffled who-state (0.25), and — the load-bearing D3 control — the register's own **pop-lesion** (0.33, held slot not restored). So the generator's cross-pop prediction rides the SPIKING two-gate register's resumed who-state, produced on a real `SimulationBridge`.
+The register-augmented read-out (mean 0.72) beats the faded reservoir (0.17 ≈ chance), a shuffled who-state (0.16), and — the load-bearing D3 control — the register's own **pop-lesion** (0.24, held slot not restored). So the generator's cross-pop prediction rides the SPIKING two-gate register's resumed who-state, produced on a real `SimulationBridge`, on real discourse statistics.
 
 ## Honest scope
 
-- **Seed-42 smoke** validates the full wiring end-to-end (the deployed spiking register → the reservoir generator's read-out); the 6-seed run (n_disc=120) is the multi-seed validation (in flight, `_rung6spk_{dev,blind}.json`).
-- register=0.50 (not the cheap-first's 1.00) reflects the deployed register's ~0.9 spiking resume accuracy × the finite-sample read-out on a modest discourse set — the honest price of the real spiking substrate + real discourse statistics vs the idealized cheap-first. Still decisive over every control.
+- register mean 0.72 (not the cheap-first's 1.00) reflects the deployed register's ~0.9 spiking resume accuracy × the finite-sample read-out on real discourse statistics — the honest price of the real spiking substrate + real discourse vs the idealized cheap-first. Still decisive over every control on all 6 seeds (min margin over the strongest control ≥ 0.16).
 - The register's per-clause spiking (SimulationBridge + slow-NMDA attractor reads) is the compute cost — the 6-seed is a real background job, not a wall.
 - NO `sim/` edit. The reservoir-scale ceiling does not block this — Rung 6 is a DISCOURSE-structure rung (the register carries what the reservoir fades), not a scale rung.
 
