@@ -1,0 +1,178 @@
+{
+  "probe": "semantic_inheritance_onbridge_spiking",
+  "seeds": [
+    43
+  ],
+  "config": {
+    "hidden": 40,
+    "epochs": 30,
+    "batch": 120,
+    "lr": 0.25,
+    "settle_steps": 25,
+    "credit_steps": 15,
+    "n_hidden_layers": 2,
+    "train_subsample": 120,
+    "pool_k": 1,
+    "task": {
+      "n_super": 12,
+      "n_members": 8,
+      "held_per_super": 3,
+      "n_prop": 2,
+      "member_id_dim": 3,
+      "n_obs": 16,
+      "noise": 0.02,
+      "feature_seed": 0
+    },
+    "backend": "numpy"
+  },
+  "elapsed_seconds": 398.6,
+  "per_seed": [
+    {
+      "seed": 43,
+      "meta": {
+        "n_super": 12,
+        "n_members": 8,
+        "held_per_super": 3,
+        "n_prop": 2,
+        "k_classes": 5,
+        "member_id_dim": 3,
+        "n_obs": 16,
+        "noise": 0.02,
+        "feature_seed": 0,
+        "n_features": 7,
+        "n_train": 720,
+        "n_heldout": 276,
+        "n_inherit_heldout": 27,
+        "n_memctrl_heldout": 9,
+        "n_supers_untaught": 3,
+        "n_train_smoke": 120
+      },
+      "chance": 0.3333333333333333,
+      "pool_k": 1,
+      "stage0_depth_genuineness": {
+        "chance": 0.3333333333333333,
+        "n_features": 7,
+        "linear_inherit_heldout": 0.25925925925925924,
+        "linear_train": 0.3861111111111111,
+        "l1_inherit_heldout": 0.37037037037037035,
+        "l1_train": 1.0,
+        "l2_inherit_heldout": 1.0,
+        "l2_train": 1.0,
+        "l3_inherit_heldout": 1.0,
+        "l3_train": 1.0,
+        "deep_best_inherit_heldout": 1.0,
+        "depth_gap": 0.6296296296296297,
+        "depth_separating": true
+      },
+      "arms": {
+        "plain_fa": {
+          "rule": "plain_fa",
+          "mode": "bdsp",
+          "pool_k": 1,
+          "inherit_heldout": 0.37037037037037035,
+          "memctrl_heldout": 0.2222222222222222,
+          "train": 0.175,
+          "ff_weight_norm_before": 1385.37646484375,
+          "ff_weight_norm_after": 8795.9892578125,
+          "ff_weight_moved": 7410.61279296875,
+          "no_weight_transport": true,
+          "read_snr_corr": [
+            0.2636167871128452,
+            0.03021877978056354
+          ]
+        },
+        "burstprop": {
+          "rule": "burstprop",
+          "mode": "bdsp",
+          "pool_k": 1,
+          "inherit_heldout": 0.1111111111111111,
+          "memctrl_heldout": 0.0,
+          "train": 0.18333333333333332,
+          "ff_weight_norm_before": 1385.37646484375,
+          "ff_weight_norm_after": 9583.216796875,
+          "ff_weight_moved": 8197.84033203125,
+          "no_weight_transport": true
+        },
+        "microcircuit": {
+          "rule": "microcircuit",
+          "mode": "bdsp",
+          "pool_k": 1,
+          "inherit_heldout": 0.2962962962962963,
+          "memctrl_heldout": 0.0,
+          "train": 0.26666666666666666,
+          "ff_weight_norm_before": 1385.37646484375,
+          "ff_weight_norm_after": 7169.0849609375,
+          "ff_weight_moved": 5783.70849609375,
+          "no_weight_transport": true
+        }
+      },
+      "single_layer": {
+        "rule": "plain_fa",
+        "mode": "bdsp",
+        "pool_k": 1,
+        "inherit_heldout": 0.25925925925925924,
+        "memctrl_heldout": 0.6666666666666666,
+        "train": 0.11666666666666667,
+        "ff_weight_norm_before": 382.6635437011719,
+        "ff_weight_norm_after": 1893.871826171875,
+        "ff_weight_moved": 1511.2082824707031,
+        "no_weight_transport": true
+      },
+      "permuted": {
+        "rule": "microcircuit",
+        "mode": "bdsp",
+        "pool_k": 1,
+        "inherit_heldout": 0.18518518518518517,
+        "memctrl_heldout": 0.1111111111111111,
+        "train": 0.15,
+        "ff_weight_norm_before": 1385.37646484375,
+        "ff_weight_norm_after": 8368.2294921875,
+        "ff_weight_moved": 6982.85302734375,
+        "no_weight_transport": true
+      },
+      "apical_lesion": {
+        "rule": "microcircuit",
+        "mode": "apical_lesion",
+        "pool_k": 1,
+        "inherit_heldout": 0.25925925925925924,
+        "memctrl_heldout": 0.1111111111111111,
+        "train": 0.24166666666666667,
+        "ff_weight_norm_before": 1385.37646484375,
+        "ff_weight_norm_after": 10288.986328125,
+        "ff_weight_moved": 8903.60986328125,
+        "no_weight_transport": true
+      },
+      "oracle": {
+        "inherit_heldout": 1.0,
+        "memctrl_heldout": 0.0,
+        "train": 1.0
+      }
+    }
+  ],
+  "aggregate": {
+    "chance": 0.3333333333333333,
+    "pool_k": 1,
+    "plain_fa_inherit": 0.37037037037037035,
+    "burstprop_inherit": 0.1111111111111111,
+    "microcircuit_inherit": 0.2962962962962963,
+    "read_snr_corr_mean": 0.14691778344670436,
+    "single_layer_inherit": 0.25925925925925924,
+    "oracle_inherit": 1.0,
+    "oracle_memctrl": 0.0,
+    "permuted_inherit": 0.18518518518518517,
+    "apical_lesion_inherit": 0.25925925925925924,
+    "ff_weight_moved_fa": 7410.61279296875,
+    "stage0_depth_separating": true,
+    "trains_at_all": true,
+    "bio_beats_fa": false,
+    "mc_beats_fa": false,
+    "bp_beats_fa": false,
+    "permuted_chance": true,
+    "lesion_collapses": true,
+    "memctrl_holds": true,
+    "ff_weight_moves": true,
+    "oracle_ok": true
+  },
+  "SIGNAL": false,
+  "verdict": "HONEST NULL (1-seed smoke) -- the depth-2 SPIKING net TRAINS (best 0.370 > 1-layer 0.259 > chance 0.333, oracle 1.000, anti-cheats hold: permuted 0.185, lesion 0.259, memctrl 0.000) BUT the biological mechanism is ~EQUIVALENT to plain-FA on spikes too: plain-FA 0.370 vs burstprop 0.111 / microcircuit 0.296 (neither beats FA+0.03). So on THIS smoke the biological mechanism's value is STILL unshown -- the thesis is NOT yet demonstrated on spikes. CONTROLLER: 6-seed GPU (population coding + finite-sample-noise regime is where D1 predicted the microcircuit advantage appears -- the smoke may be too small/clean to expose the noise-robustness gap)."
+}
