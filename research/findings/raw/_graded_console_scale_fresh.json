@@ -1,0 +1,124 @@
+{
+  "results": [
+    {
+      "seed": 7,
+      "held": {
+        "eagle": "CONFIDENT",
+        "wren": "CONFIDENT",
+        "bass": "CONFIDENT",
+        "wolf": "CONFIDENT",
+        "ant": "CONFIDENT"
+      },
+      "amb": {
+        "bat": "HEDGED",
+        "penguin": "HEDGED"
+      },
+      "cross": {
+        "trout_fly": "ABSTAIN",
+        "eagle_sting": "ABSTAIN"
+      },
+      "moat": "MOAT",
+      "GO": true
+    },
+    {
+      "seed": 8,
+      "held": {
+        "eagle": "CONFIDENT",
+        "wren": "CONFIDENT",
+        "bass": "CONFIDENT",
+        "wolf": "CONFIDENT",
+        "ant": "CONFIDENT"
+      },
+      "amb": {
+        "bat": "HEDGED",
+        "penguin": "HEDGED"
+      },
+      "cross": {
+        "trout_fly": "ABSTAIN",
+        "eagle_sting": "ABSTAIN"
+      },
+      "moat": "MOAT",
+      "GO": true
+    },
+    {
+      "seed": 9,
+      "held": {
+        "eagle": "CONFIDENT",
+        "wren": "CONFIDENT",
+        "bass": "CONFIDENT",
+        "wolf": "CONFIDENT",
+        "ant": "CONFIDENT"
+      },
+      "amb": {
+        "bat": "HEDGED",
+        "penguin": "HEDGED"
+      },
+      "cross": {
+        "trout_fly": "ABSTAIN",
+        "eagle_sting": "ABSTAIN"
+      },
+      "moat": "MOAT",
+      "GO": true
+    },
+    {
+      "seed": 10,
+      "held": {
+        "eagle": "CONFIDENT",
+        "wren": "CONFIDENT",
+        "bass": "CONFIDENT",
+        "wolf": "CONFIDENT",
+        "ant": "CONFIDENT"
+      },
+      "amb": {
+        "bat": "HEDGED",
+        "penguin": "HEDGED"
+      },
+      "cross": {
+        "trout_fly": "ABSTAIN",
+        "eagle_sting": "ABSTAIN"
+      },
+      "moat": "MOAT",
+      "GO": true
+    },
+    {
+      "seed": 11,
+      "held": {
+        "eagle": "CONFIDENT",
+        "wren": "CONFIDENT",
+        "bass": "CONFIDENT",
+        "wolf": "CONFIDENT",
+        "ant": "CONFIDENT"
+      },
+      "amb": {
+        "bat": "HEDGED",
+        "penguin": "HEDGED"
+      },
+      "cross": {
+        "trout_fly": "ABSTAIN",
+        "eagle_sting": "ABSTAIN"
+      },
+      "moat": "MOAT",
+      "GO": true
+    },
+    {
+      "seed": 12,
+      "held": {
+        "eagle": "CONFIDENT",
+        "wren": "CONFIDENT",
+        "bass": "CONFIDENT",
+        "wolf": "CONFIDENT",
+        "ant": "CONFIDENT"
+      },
+      "amb": {
+        "bat": "HEDGED",
+        "penguin": "HEDGED"
+      },
+      "cross": {
+        "trout_fly": "ABSTAIN",
+        "eagle_sting": "ABSTAIN"
+      },
+      "moat": "MOAT",
+      "GO": true
+    }
+  ]
+}
