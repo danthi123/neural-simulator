@@ -63,14 +63,18 @@ def _params(seed, V):
     return E, Win, w, c, fixed_lam
 
 
-def _train_eval(seed, tr_ids, ev_ids, V, arm):
+def _train_eval(seed, tr_ids, ev_ids, V, arm, feedback="transport"):
     """Arms differ ONLY in the gate. selective: lam=sig(w.E[tok]+c), gate trained. fixed_res: fixed lam. detached:
     input-dependent lam but gate UNTRAINED (tests LEARNING matters). randgate: gate reads a RANDOM token's embedding per
     step (VALID wrong-input control -- destroys CURRENT-token conditioning; unlike a dim-permutation which is invertible),
-    gate trained on the random signal (tests the gate must read the CURRENT token)."""
+    gate trained on the random signal (tests the gate must read the CURRENT token). `feedback` = the gate's spatial
+    learning-signal path: 'transport' (Wro^T = the committed run, biologically the weight-transport ceiling) or 'random'
+    (fixed random feedback Bc = broadcast alignment = TRANSPORT-FREE; the honesty-closure the coupling's adversarial-verify
+    established -- the temporal eligibility is always no-BPTT, only the SPATIAL feedback differs)."""
     E, Win, w, c, fixed_lam = _params(seed, V)
     train_gate = (arm in ("selective", "randgate"))
     rgate = np.random.default_rng(seed * 101 + 7)                 # random-token stream for the randgate control
+    Bc = np.random.default_rng(seed * 191 + 11).standard_normal((N_HID, V)) / np.sqrt(V)  # fixed random feedback (gate)
     Wro = np.zeros((V, N_HID))
     for _ep in range(EPOCHS):
         for ids in tr_ids:
@@ -86,7 +90,7 @@ def _train_eval(seed, tr_ids, ev_ids, V, arm):
                     ec = lam * ec + dl * base
                 z = Wro @ h; p = _softmax(z)
                 err = p.copy(); err[ids[t + 1]] -= 1.0
-                delta = Wro.T @ err
+                delta = (Bc @ err) if feedback == "random" else (Wro.T @ err)   # transport-free vs the ceiling
                 Wro -= LR_RO * np.outer(err, h)
                 if train_gate:
                     w -= LR_GATE * (delta[:, None] * ew)
@@ -105,7 +109,7 @@ def _train_eval(seed, tr_ids, ev_ids, V, arm):
     return {b: ce[b] / cnt[b] for b in cnt}, dict(cnt)
 
 
-def run(seed, corpus, n_sent, vocab_sz):
+def run(seed, corpus, n_sent, vocab_sz, feedback="transport"):
     sents = load_sentences(corpus, n_sent)
     rng = np.random.default_rng(seed)
     idx = rng.permutation(len(sents)); cut = int(0.8 * len(sents))
@@ -116,7 +120,7 @@ def run(seed, corpus, n_sent, vocab_sz):
     arms = {}
     cnt = None
     for arm in ("selective", "fixed_res", "detached", "randgate"):
-        arms[arm], c2 = _train_eval(seed, tr_ids, ev_ids, V, arm)
+        arms[arm], c2 = _train_eval(seed, tr_ids, ev_ids, V, arm, feedback=feedback)
         cnt = c2 if cnt is None else cnt
     # bigram by depth
     bce = defaultdict(float); bcnt = defaultdict(int)
@@ -146,9 +150,10 @@ def main():
     ap.add_argument("--corpus", type=str, default="data/corpus/tinystories.txt")
     ap.add_argument("--n-sent", type=int, default=6000)
     ap.add_argument("--vocab", type=int, default=200)
+    ap.add_argument("--gate-feedback", type=str, default="transport", choices=["transport", "random"])  # committed default
     ap.add_argument("--out", type=str, default=None)
     a = ap.parse_args()
-    res = [run(s, a.corpus, a.n_sent, a.vocab) for s in a.seeds]
+    res = [run(s, a.corpus, a.n_sent, a.vocab, a.gate_feedback) for s in a.seeds]
     print(f"[rung3] {sum(1 for r in res if r['GO'])}/{len(res)} GO", flush=True)
     if a.out:
         json.dump(dict(results=res), open(a.out, "w"), indent=2)
