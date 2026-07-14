@@ -1,4 +1,4 @@
-# SYNTHESIS — [⚠️ HEADLINE WALKED BACK by adversarial verification: GO_needs_more_controls] an e-prop-TRAINED recurrent language cortex improves late-POSITION CE over the fixed reservoir, but "deep-context structure" is NOT established — the effect is consistent with a memory-timescale REDISTRIBUTION + a weak baseline, pending the must-run controls
+# SYNTHESIS — [❌ REFUTED by the must-run controls — see 2026-07-14-eprop-recurrent-synthesis-CONTROLS-REFUTED.md; the effect is a credit-direction-independent memory-timescale artifact, LOCAL not deep, and loses to a proper trigram] an e-prop-TRAINED recurrent language cortex improves late-POSITION CE over the fixed reservoir, but "deep-context structure" is NOT established — the effect is consistent with a memory-timescale REDISTRIBUTION + a weak baseline, pending the must-run controls
 
 ## ⚠️⚠️ CORRECTION (2026-07-14, a 5-skeptic adversarial-verify workflow) — the headline GO is SIGNIFICANTLY WEAKENED; do NOT cite it as "captures deep-context structure" until the controls run
 
