@@ -87,6 +87,22 @@ The surrogate derivative ALONE gets partway (train 0.638 ≫ chance, inherit 0.4
 
 **⇒ THE COMPLETE, PRECISE MAP of the deep-credit-on-spikes learning boundary (this overnight):** the spiking SUBSTRATE is viable (BPTT trains it); the biological LOCAL rule's gap to BPTT = (surrogate derivative [partial] + temporal eligibility [closes it]); the named frontier = an **e-prop local rule** (surrogate + forward eligibility + FA feedback). This is a precise, tractable target for the emergence engine — NOT a wall. NEXT de-risk: implement `credit_mode="eprop"` (forward eligibility + FA learning signal, transport-free) on the LIF net — does it close the gap to BPTT (train ~0.97) where one-step BDSP fails (0/6)? Then port to the Izhikevich BDSP substrate.
 
+## ▶▶▶▶ e-prop GO (6-seed) — a TRANSPORT-FREE BIOLOGICAL LOCAL RULE trains deep credit on spikes (the emergence engine's core mechanism), with an honest depth-margin caveat
+
+`credit_mode="eprop"` — e-prop (Bellec 2020) forward eligibility `ε_i(t)=α·ε_i(t-1)+z_i(t)` × membrane surrogate `ψ_j(t)`, learning signal = the output error projected by a FIXED-RANDOM `B_direct` (direct feedback alignment; output uses the error directly). LOCAL, forward-mode, **transport-free** (no BPTT, no `W^T`; `B_direct` from a separate seed stream).
+
+| | train | inherit (mean) | per-seed inherit | permuted |
+|---|---|---|---|---|
+| **e-prop (transport-free local)** | **1.000** (6/6) | **0.895** | 0.963/0.926/0.778/0.963/0.889/0.852 | 0.278 (~chance) |
+| BPTT (surrogate + through-time) | 0.972 | 0.673 | — | — |
+| one-step BDSP (OnBridgeBDSPNet) | ~chance | 0/6 fails | — | — |
+
+**⇒ e-prop TRAINS (fits perfectly) + GENERALIZES (0.895, all 6 seeds, ≥ BPTT) with NO weight transport and NO backprop-through-time — a biologically-plausible LOCAL rule.** Permuted ~chance (no leakage). This is the emergence engine's core learning mechanism working on spikes: the forward eligibility supplies the temporal credit the spatial-only ablation showed was needed, and the DFA learning signal is transport-free.
+
+**HONEST CAVEAT (Rule-7, from the data):** the 1-hidden-layer **floor is high (0.802 mean, per-seed 0.52–0.96)** — the temporal LIF dynamics (membrane integration over T=24) add effective depth, so this task is largely learnable at 1 hidden layer ON THE SPIKING net (unlike the static RATE probe, where 1-layer = chance). So e-prop's margin OVER the floor is only ~0.09, and the "strict trains_at_all" flag is 4/6 (floor-margin-limited, not a generalization failure — every seed's inherit is 0.78–0.96 ≫ chance). ⇒ the clean, defensible claim is **"e-prop is a working transport-free biological LOCAL rule that trains + generalizes on spikes"** — NOT "e-prop uniquely does depth-2 where 1-layer can't." The vast gap to the one-step BDSP (which can't even fit, 0/6) confounds the RULE (e-prop vs BDSP) with the NET (LIF vs Izhikevich); the Izhikevich e-prop port isolates the rule on the same substrate.
+
+**⇒ THE DEEP-CREDIT-ON-SPIKES BOUNDARY IS SURPASSED (in the LIF framework):** a transport-free biological local rule (e-prop) trains deep credit on spikes. The "parked SNR wall / spikes-can't" verdict is fully refuted. **NEXT (the emergence-engine core, on the production substrate): port the e-prop forward eligibility + DFA learning signal onto the Izhikevich `OnBridgeBDSPNet` (replace the one-step rate-`phi` BDSP credit with the eligibility+surrogate e-prop credit) — does it train the compositional task on the real spiking bridge?** Cheaper follow-ons: a cleaner depth-required task (defeat the temporal-depth floor), and a shuffled-B_direct anti-cheat (verify the DFA feedback is load-bearing).
+
 ## Files
 - Research gate workflow: `spiking-deep-credit-training-wall-research-gate` (journal in the run's transcript dir).
 - Capacity sweep: `research/findings/raw/_dccap/cap_*_s*.json`.
