@@ -25,7 +25,7 @@ import numpy as np
 
 from research.runners._d3_spiking_attractor_derisk import build_fswta_score_bridge, fswta_drive
 
-V = 12                       # toy vocabulary (a K=V FS-WTA bridge; V small keeps the cheap-first bridge tractable)
+V = 12                       # toy vocabulary (a K=V FS-WTA bridge); --vocab overrides (e.g. 200 = real-scale WTA check)
 N_POOL = 150                 # reservoir size
 N_SEQ = 400                  # training sequences
 SEQ_LEN = 6
@@ -39,11 +39,13 @@ def _reservoir(seed):
     return Win, W
 
 
-def _states_and_targets(seed, Win, W):
-    """A toy high-order next-token task: the next token is a deterministic function of the last TWO tokens (a bigram-
-    beating structure the reservoir carries). Returns per-step reservoir states + the next-token targets."""
+def _states_and_targets(seed, Win, W, easy=False):
+    """A toy next-token task: next = f(last two tokens) (2nd-order; --easy = 1st-order = f(prev1), learnable to high
+    accuracy at large V -> discriminable read-out scores that isolate the FS-WTA's discrimination from near-uniform
+    scores). Returns per-step reservoir states + the next-token targets."""
     rng = np.random.default_rng(seed * 11 + 3)
     rule = rng.integers(0, V, (V, V))                            # next = rule[prev2, prev1]
+    rule1 = rng.integers(0, V, V)                               # next = rule1[prev1] (1st-order, easy)
     X, Y = [], []
     for _ in range(N_SEQ):
         toks = list(rng.integers(0, V, 2))
@@ -52,7 +54,7 @@ def _states_and_targets(seed, Win, W):
             e = np.zeros(V); e[toks[t]] = 1.0
             x = np.tanh(W @ x + Win @ e)
         for _ in range(SEQ_LEN):
-            nxt = int(rule[toks[-2], toks[-1]])
+            nxt = int(rule1[toks[-1]]) if easy else int(rule[toks[-2], toks[-1]])
             X.append(x.copy()); Y.append(nxt)
             e = np.zeros(V); e[nxt] = 1.0
             x = np.tanh(W @ x + Win @ e)
@@ -102,8 +104,12 @@ def run(seed):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=[42, 43, 44])
+    ap.add_argument("--vocab", type=int, default=None, help="override V (e.g. 200 = real-scale FS-WTA discrimination)")
     ap.add_argument("--out", type=str, default=None)
     a = ap.parse_args()
+    if a.vocab is not None:
+        global V
+        V = a.vocab
     res = [run(s) for s in a.seeds]
     print(f"[spk-readout] {sum(1 for r in res if r['GO'])}/{len(res)} GO", flush=True)
     if a.out:
