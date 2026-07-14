@@ -1,0 +1,52 @@
+{
+  "results": [
+    {
+      "seed": 42,
+      "register": 1.0,
+      "latch": 0.16666666666666666,
+      "reservoir": 0.16666666666666666,
+      "shuffle": 0.2638888888888889,
+      "GO": true
+    },
+    {
+      "seed": 43,
+      "register": 1.0,
+      "latch": 0.16666666666666666,
+      "reservoir": 0.18055555555555555,
+      "shuffle": 0.1388888888888889,
+      "GO": true
+    },
+    {
+      "seed": 44,
+      "register": 1.0,
+      "latch": 0.2638888888888889,
+      "reservoir": 0.125,
+      "shuffle": 0.2361111111111111,
+      "GO": true
+    },
+    {
+      "seed": 100,
+      "register": 1.0,
+      "latch": 0.3611111111111111,
+      "reservoir": 0.3055555555555556,
+      "shuffle": 0.18055555555555555,
+      "GO": true
+    },
+    {
+      "seed": 101,
+      "register": 1.0,
+      "latch": 0.25,
+      "reservoir": 0.1527777777777778,
+      "shuffle": 0.25,
+      "GO": true
+    },
+    {
+      "seed": 102,
+      "register": 1.0,
+      "latch": 0.18055555555555555,
+      "reservoir": 0.19444444444444445,
+      "shuffle": 0.19444444444444445,
+      "GO": true
+    }
+  ]
+}
