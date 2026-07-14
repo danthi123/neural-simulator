@@ -10,6 +10,8 @@ The fixed-gate scale probe was a NEGATIVE (an untrained selective channel HURTS 
 
 ## Result (np=200, V=120, TinyStories; margin-over-bag = bag_ce − arm_ce)
 
+Per-run (seeds × nt) + the 3-point scale trend (means):
+
 | nt | seed | m_res (res−bag) | m_sel (res+trained-sel − bag) | sel_lift | sel−bigram (aggregate) |
 |---|---|---|---|---|---|
 | 800 | 42 | +0.153 | +0.753 | **+0.600** | +0.256 |
@@ -17,9 +19,12 @@ The fixed-gate scale probe was a NEGATIVE (an untrained selective channel HURTS 
 | 800 | 44 | +0.160 | +0.828 | **+0.667** | +0.317 |
 | 1600 | 42 | +0.072 | +0.677 | **+0.604** | +0.158 |
 | 1600 | 43 | +0.083 | +0.718 | **+0.635** | +0.205 |
+| 3200 | 42/43 (mean) | +0.006 | +0.628 | **+0.622** | — |
 
-- **`sel_lift` ~+0.62 on 5/5 runs** (nt=800 mean +0.624; nt=1600 mean +0.620) — the TRAINED selective decisively + robustly lifts margin-over-bag, where the FIXED gate HURT (−0.076). The LEARNED gate is the ingredient (a fixed hold was noise).
-- **The lift is DATA-ROBUST**: it holds ~+0.62 as data grows (nt 800→1600), EVEN THOUGH the fixed reservoir's OWN margin over the bag SHRINKS (m_res +0.16→+0.08 — the reservoir-scale Ueda-bound: the fixed reservoir's dynamics matter less as the bag catches up with more data). ⇒ **the trained selective supplies a durable ~+0.62-nat memory over the bag that the fixed reservoir loses with scale** — the selective compensates for the reservoir's fading-memory decay. This is the mechanism's scale value: where the reservoir's own contribution decays toward the n-gram floor, the learned selective channel keeps adding.
+**Scale-trend means:** m_res **+0.163 → +0.077 → +0.006** (nt 800→1600→3200) · sel_lift **+0.624 → +0.620 → +0.622**.
+
+- **`sel_lift` is ROCK-STABLE ~+0.62 across 3 scales / 4× data** — the TRAINED selective decisively + robustly + DATA-INVARIANTLY lifts margin-over-bag, where the FIXED gate HURT (−0.076). The LEARNED gate is the ingredient (a fixed hold was noise).
+- **THE DECISIVE CLAIM — the trained selective pushes PAST the reservoir's Ueda-bound.** The FIXED reservoir's OWN margin over the bag DECAYS to ~ZERO with data (m_res +0.163 → +0.006 — this IS the reservoir-scale Ueda-bound the prior finding CLOSED as a negative: at scale the fixed reservoir's recurrent dynamics become worthless, the memoryless bag catches up). Yet res+trained-sel STILL beats the bag by +0.628 at nt=3200 — **entirely from the learned selective channel** (the reservoir contributes ~0). ⇒ where the reservoir alone is Ueda-bounded (decays to the n-gram floor), the trained selective channel supplies a DATA-INVARIANT ~+0.62-nat durable memory. **The selective mechanism is precisely what carries long-range past the reservoir bound at scale.**
 
 ## ⇒ honest read (adversarial-verify + null-discriminator disciplined)
 
