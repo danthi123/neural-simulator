@@ -56,6 +56,24 @@ DECOLLE (per-layer LOCAL fixed-random credit, the multi-hop FA chain DELETED) al
 
 **Honest status:** the deep-credit-on-spikes learning is a robust, multiply-confirmed, PRECISELY-BOUNDED boundary at cheap scale — re-opened from the prior "parked" state and advanced with real new information (it is NOT credit-side). It remains a genuine open boundary with two specified levers (the forward-vs-learning isolation + genuine scale), not a declared wall. Per the frontier re-map it is the NON-critical emergence thread (thread 1); the tractable emergence progress is the generation ladder (thread 2). Both are the emergence engine.
 
+## ▶▶▶ FORWARD-vs-LEARNING ISOLATION — DECISIVE (6-seed): the spiking SUBSTRATE is VIABLE; the wall is the LOCAL rule, not the forward
+
+`_snn_bptt_forward_vs_learning_isolation_derisk.py` — a 2-hidden-layer LIF SNN trained by surrogate-gradient BPTT (the best-possible on-spike credit; reuse-by-import `sim/bptt_snn_gpu`) on the SAME compositional-inheritance task. Positive control passed (fires + memorizes 0.82 vs chance 0.20 → valid trainer).
+
+| | mean | per-seed |
+|---|---|---|
+| **snn_train** | **0.972** | fits the task (0.95–0.99) |
+| **snn_inherit_heldout** | **0.673** | 0.556–0.852 — ≈ the numpy RATE reference (0.69) |
+| trains_at_all | **5/6** | (the 1 "False" is a strict floor-margin artifact: inherit 0.667 ≫ chance) |
+| permuted | 0.272 | ~chance → no leakage |
+| chance / oracle | 0.333 / ~1.0 | task learnable |
+
+**⇒ THE DECISIVE ISOLATION: a SPIKING net CAN represent + learn the depth-2 compositional-credit task — to the rate-reference level — GIVEN a good credit signal (BPTT).** So the spiking FORWARD is NOT the wall, and the substrate is NOT representationally limited at this net size. **The OnBridgeBDSPNet's 0/6 failure is specifically the LOCAL burst-dependent-plasticity (BDSP) credit rule's weight-finding at cheap scale — it cannot find the weights BPTT finds.**
+
+**This RE-FRAMES the whole deep-credit-on-spikes boundary:** from the parked "spikes/SNR can't do deep credit" (FALSE — BPTT trains it on spikes) to the precise, tractable **"the biological LOCAL on-spike credit rule (BDSP) must close its gap to BPTT."** The emergence engine's learning SUBSTRATE is viable; the open problem is the local credit rule.
+
+**The named, well-motivated next mechanism (cheap-first):** BPTT's local credit factor is the GRADED MEMBRANE-POTENTIAL SURROGATE `σ'(v−θ)` (`atan_surrogate(v−threshold)` — "how close to threshold," a smooth low-variance subthreshold sensitivity). The BDSP arms all use `phi = E·(1−E)` — a RATE-based derivative proxy on the event rate `E`, NOT the membrane surrogate. This is the research gate's #1 reframe, now correctly relocated: not the burst FACTOR (the `enable_bdsp_graded_credit` A/B, which was refuted), but the LOCAL DERIVATIVE. **Next de-risk: use the membrane-potential surrogate `σ'(v_soma−θ)` as the BDSP local credit derivative (single variable vs the rate `phi`), on the exact does-not-train config — does the surrogate derivative close the gap to BPTT?** Biology-faithful (the surrogate = the neuron's own subthreshold sensitivity; catalog dendritic-plateau / graded apical). If it partially closes → the gap is the derivative read; if not → the gap is BPTT's temporal credit-through-time (which a purely-local rule lacks) → the lever is scale or an eligibility-trace local rule (e-prop-style, no BPTT).
+
 ## Files
 - Research gate workflow: `spiking-deep-credit-training-wall-research-gate` (journal in the run's transcript dir).
 - Capacity sweep: `research/findings/raw/_dccap/cap_*_s*.json`.
