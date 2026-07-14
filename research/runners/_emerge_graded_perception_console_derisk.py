@@ -41,11 +41,14 @@ _REPO = Path(__file__).resolve().parents[2]
 if str(_REPO) not in sys.path:
     sys.path.insert(0, str(_REPO))
 from research.runners._emerge53_perception_grounded_conversation import (
-    PerceptionGroundedConsole, _art, FLOOR, _gabor, T_ACTIVE,
+    PerceptionGroundedConsole, _art, FLOOR, _gabor, T_ACTIVE, _sdr, NF, COL0, K_WIN,
     _BIRD_SEEN, _FISH_SEEN, _BIRD_EXEMPLARS, _FISH_EXEMPLARS, _BIRD_HELDOUT, _FISH_HELDOUT)
+from research.runners._emerge53_perception_grounded_conversation import _prime_from_winners, _host
 from research.runners._genfrontier_optionB_visual_similarity_derisk import encode_v1
 
 CONF_MARGIN = 30.0        # same apical-drive scale as the validated graded-completion probe (CONF_TH-FLOOR)
+CONSISTENCY_TH = 0.75     # PRE-REGISTERED (frozen before the multi-seed run): the Bogacz-Brown decision-stage
+                          # dominant-category fraction above which repeated noisy perception is judged CONFIDENT
 
 # REUSE EMERGE-53's VALIDATED perception recipe (9 seen + 9, teach the class via 6 exemplars each, held-out owl/wren/
 # minnow/gar) so the perception-grounded held-out inheritance works as validated; add the graded read + ambiguous percept.
@@ -55,9 +58,61 @@ MOAT_NAME = "griffin"                                              # never rende
 
 
 class GradedPerceptionConsole(PerceptionGroundedConsole):
-    def __init__(self, *a, hedge_band=5.0, **k):
+    def __init__(self, *a, hedge_band=5.0, consistency_th=CONSISTENCY_TH, **k):
+        self._seed = k.get("seed", a[0] if a else 42)
         super().__init__(*a, **k)
         self.hedge_band = hedge_band          # a competitor above FLOOR+band = a genuinely co-activated (ambiguous) category
+        self.consistency_th = consistency_th
+
+    # ---- Bogacz-Brown decision-stage read: categorization consistency across repeated NOISY perceptions -------------
+    def _categorize_feats(self, feats):
+        """Perceive a (perturbed) V1 feature set through the EXISTING trained pooler -> which category codon it drives
+        (bird / fish / none). No pooler retrain (uses the trained Wp) -> cheap enough for repeated sampling."""
+        if self._pooler_dirty:
+            self._train_pooler()
+        x = np.zeros(NF); x[list(feats)] = 1.0
+        codon = _sdr(COL0 + int(c) for c in np.argsort(-((self.Wp > 0.5) @ x))[:K_WIN])
+        if not codon:
+            return "none"
+        ab = np.zeros(len(self.ci), bool)
+        for c in codon:
+            ab[c] = True
+        _prime_from_winners(self.b, self.ci, ab)
+        vap = getattr(self.b, "cp_v_apical", None)
+        if vap is None or np.asarray(_host(vap)).ndim == 0:
+            return "none"
+        vap = _host(vap)[self.ci]
+        drives = {cn: float(np.mean([vap[c] for c in self._class_cells(cn)])) for cn in self.class_slot}
+        if not drives:
+            return "none"
+        best = max(drives, key=drives.get)
+        return best if drives[best] > FLOOR else "none"
+
+    def graded_answer_repeated(self, member, prop, n_trials=25, drop=0.12, tseed=0):
+        """DOCUMENTED-NEGATIVE probe (the Bogacz-Brown decision-stage mechanism, tested + refuted): perceive the object
+        n_trials times with mild perceptual noise (drop a fraction of V1 features), categorize each -> CONFIDENT if the
+        dominant category is CONSISTENT (fraction >= consistency_th), HEDGED if SPLIT, ABSTAIN if rarely categorized.
+        RESULT: feature-drop noise categorizes CONSISTENTLY even for a genuinely-ambiguous image blend (categorical
+        perception is robust to input noise) -> this does NOT produce a robust perceptual HEDGED. Kept as the probe that
+        demonstrates the categorical-perception boundary (see the finding)."""
+        if member not in self.member_feats:
+            return "MOAT", f"I don't know what {_art(member)} is."
+        base = list(self.member_feats[member])
+        rng = np.random.default_rng(1000 * int(self._seed) + int(tseed))
+        counts = {}
+        for _ in range(n_trials):
+            keep = set(x for x in base if rng.random() > drop)
+            cat = self._categorize_feats(keep)
+            counts[cat] = counts.get(cat, 0) + 1
+        n_cat = n_trials - counts.get("none", 0)
+        if n_cat < 0.4 * n_trials:                                 # rarely categorized -> not a clear percept
+            return "ABSTAIN", f"I don't know whether {_art(member)} can {prop}."
+        cats = {k: v for k, v in counts.items() if k != "none"}
+        dom = max(cats, key=cats.get); frac = cats[dom] / n_cat
+        p = self.class_prop.get(dom, prop)
+        if frac >= self.consistency_th:
+            return "CONFIDENT", f"Yes, {_art(member)} can {p}."
+        return "HEDGED", f"{_art(member).capitalize()} looks like more than one kind of thing -- it can probably {p}."
 
     def see_blended(self, name, ex_a, ex_b, w=0.5):
         """A visually-AMBIGUOUS object = a real IMAGE BLEND (w*ex_a + (1-w)*ex_b pixels) perceived through the SAME

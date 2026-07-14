@@ -1,4 +1,4 @@
-# EMERGE graded-confidence grounded in REAL PERCEPTION — the perceptual MOAT is robust; graded HEDGING at the category read is suppressed by CATEGORICAL PERCEPTION (an honest boundary + the named mechanism) (2026-07-13)
+# EMERGE graded-confidence grounded in REAL PERCEPTION — the perceptual MOAT is robust; graded HEDGING at the category read is ABSENT across FOUR tested mechanisms because of CATEGORICAL PERCEPTION (a well-characterized, biologically-faithful boundary) (2026-07-13)
 
 **Headline.** The graded read (CONFIDENT / ABSTAIN + no-confab moat) now rides on categories
 DISCOVERED from VISUAL similarity, not hand-scripted co-occurrence — the emergence-faithful grounding
@@ -59,16 +59,28 @@ category read. Diagnosed by a0 across three constructions:
    overlaps the class columns → driven ~+5, or does not → rest ~−60); there is no intermediate
    "weak match" level, so degradation gives CONFIDENT or ABSTAIN, never a middle.
 
+4. **Decision-stage categorization consistency under perceptual noise** (Bogacz-Brown drift-diffusion
+   — the named "next mechanism," now BUILT + TESTED): perceive the object N times with mild
+   perceptual noise (drop a fraction of V1 features), categorize each, judge CONFIDENT if the
+   dominant category is consistent (≥0.75) else HEDGED. **Also a NEGATIVE:** with feature-drop noise
+   the categorization is CONSISTENT (dominant-fraction 1.00) for the ambiguous IMAGE-BLEND too, on
+   every seed/drop — dropping features does NOT flip the category. **Categorical perception is ROBUST
+   to input noise (that is biologically its purpose — it denoises a continuum into a decisive
+   category).** (An earlier probe appeared to show a ~5/4 split, but that was an artifact of *adding
+   random noise features*, not genuine perceptual ambiguity — corrected here by the honesty
+   discipline.)
+
 ⇒ **graded hedging lives at the CONCEPTUAL/co-occurrence level (EMERGE-31's category-ambiguous "bat"
-robustly HEDGES, because a concept genuinely co-occurs with two contexts) but is SUPPRESSED at the
-PERCEPTUAL-category read, because categorical perception + the bimodal coincidence drive force a
-discrete category.** The faithful locus of graded PERCEPTUAL confidence is the DECISION stage
-(Bogacz-Brown drift-diffusion): consistency of categorization across repeated NOISY perceptions. A
-repeated-noisy-perception probe shows the signal — an ambiguous blend splits between categories
-(~5 bird / 4 fish across noisy trials) while a clean member is consistent (~5 / 0) — but at toy scale
-the signal is weak/threshold-sensitive (the noise that reveals the split also drives many trials to
-"none"). **Robust perceptual hedging = the named next mechanism: decision-stage categorization
-consistency under a calibrated perceptual-noise model, not the single-read category codon.**
+robustly HEDGES, because a concept genuinely co-occurs with two contexts) but is genuinely ABSENT at
+the PERCEPTUAL-category read across ALL FOUR tested mechanisms — because CATEGORICAL PERCEPTION
+decisively categorizes even genuinely-intermediate stimuli (a real image morph → one category; input
+noise → same category; the coincidence drive is bimodal).** This is a well-characterized, biologically
+faithful boundary (categorical perception is a known phenomenon — sharp phoneme/color boundaries), not
+a tuning failure. Graded perceptual confidence, if it exists on this substrate, would require a
+fundamentally different (graded/pre-categorical or explicit metacognitive-confidence) read-out — NOT
+the category codon. The named next mechanism is therefore NOT "more decision-stage sampling" (tested,
+negative) but a **pre-categorical graded evidence representation** (a genuinely open substrate
+question). `graded_answer_repeated` is retained as the documented-negative probe.
 
 ## Scope / significance
 
