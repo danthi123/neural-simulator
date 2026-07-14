@@ -36,6 +36,26 @@ Single variable = `graded_credit`. At the EXACT config where binary K=1 fails (t
 1. **DECOLLE-ize the depth (CPU, the sharpened single-variable form):** per-layer fixed-random LOCAL readout + local target, IDENTICAL binary read — change ONLY the credit STRUCTURE (delete the multi-hop cross-layer FA chain). If per-layer local credit trains where the deep FA chain fails ⇒ the wall IS the depth of the FA credit chain.
 2. **Ensemble-scale burstprop (GPU, the definitional form):** K=128–256 neurons/logical unit so `p=b/e` is a genuine ensemble statistic (as burstprop was validated). Does the definitional ensemble form train where the off-spec K=1/8 fails.
 
+## ▶ DECOLLE RESULT (6-seed) + the COMPREHENSIVE re-map — the wall is NOT credit-side
+
+DECOLLE (per-layer LOCAL fixed-random credit, the multi-hop FA chain DELETED) also fails: **0/6, decolle_train 0.202 < chance 0.333** — it cannot fit the training set even with per-layer local supervision (each hidden layer has a direct fixed-random readout to the classes; there is NO deep credit chain to misdirect). Anti-cheats clean (permuted 0.241 ~chance, lesion 0.191). ⇒ deleting the deep credit chain does NOT rescue.
+
+**Four converging negatives this overnight — the wall is precisely bounded:**
+| lever tested | result | rules out |
+|---|---|---|
+| capacity (ep 50→200, H 24→48) | deep_train ~chance, 0/N | under-training |
+| graded credit (`E·P` low-variance factor) | 0/6, inh 0.204 | credit-factor read variance |
+| DECOLLE (per-layer local, no deep chain) | 0/6, train 0.202 | the multi-hop FA credit-chain depth |
+| population K=1→8 (forward+credit cleaning) | 0.210→0.235 (barely) | population read-cleaning (at cheap K) |
+
+**⇒ the precise residual (SURPASS-isolated):** the on-spike deep-credit LEARNING of THIS compositional-inheritance task at cheap CPU net scale fails via EVERY cheap credit-side lever. It is NOT the credit rule, NOT the credit variance, NOT the chain depth, NOT under-optimization. What DOES work bounds it tightly: the task trains at the numpy RATE reference (0.69), the backprop ORACLE reaches 1.0, AND the SAME rule trains on SPIKES at a depth-2 XOR toy (D1, 0.96). So the residual is specific to **(harder compositional task) × (cheap spiking net scale)** — either the spiking FORWARD representation is too noisy to carry the depth-2 computation at this scale (read_snr_corr ~0.3–0.46 = the forward tracks the ideal rate only 30–46%), or the on-spike LOCAL weight-finding needs genuine scale. This SHARPENS the prior parked verdict ("a readout-noise/SNR wall biting every rule"): reducing the credit READ noise (graded) does NOT help, so it is NOT the credit read — it is upstream (the forward representation) and/or scale.
+
+**The two specified next isolations (NOT a wall — levers, per "scale is a lever"):**
+1. **FORWARD-vs-LEARNING isolation (the decisive residual-isolation):** does a SPIKING surrogate-gradient BPTT oracle (the project's `sim/bptt_snn_gpu.py`, the best-possible weight-finder for the spiking forward) train this net on this task? If YES ⇒ the spiking forward CAN represent it; the on-spike LOCAL credit's weight-finding is the wall (→ scale/richer credit). If NO ⇒ the spiking forward itself cannot represent the depth-2 function at this scale (→ a representational/scale wall). (A rate-weight transplant is NOT a clean isolation — the rate sigmoid ≠ the spiking f-I transfer function.)
+2. **Genuine GPU SCALE** (K=256–512 ensemble + wider H + more epochs + more data): the research gate's biology-faithful #6; needs the K=128+ cupy path (a runner-compat leak surfaced at K=128, eval-path-specific; K≤8 cupy runs clean). Redundant-with-graded ONLY for the credit factor; population ALSO cleans the FORWARD (√K), so it is a distinct forward-scale lever.
+
+**Honest status:** the deep-credit-on-spikes learning is a robust, multiply-confirmed, PRECISELY-BOUNDED boundary at cheap scale — re-opened from the prior "parked" state and advanced with real new information (it is NOT credit-side). It remains a genuine open boundary with two specified levers (the forward-vs-learning isolation + genuine scale), not a declared wall. Per the frontier re-map it is the NON-critical emergence thread (thread 1); the tractable emergence progress is the generation ladder (thread 2). Both are the emergence engine.
+
 ## Files
 - Research gate workflow: `spiking-deep-credit-training-wall-research-gate` (journal in the run's transcript dir).
 - Capacity sweep: `research/findings/raw/_dccap/cap_*_s*.json`.
