@@ -28,6 +28,16 @@ Over a fixed reservoir, the trained selective channel provides **genuine input-d
 
 **Reconciles the sibling walk-back:** the frozen coupling found sel−rand ~0 at d≥10 over an e-prop-TRAINED (strong) reservoir; here over a FIXED (weak) reservoir the selective does the deep lifting, so its selective-specific contribution is large. Both are honest — the selective mechanism's marginal deep value scales inversely with how much the reservoir already holds.
 
+## Vocab-scaling of the CLEAN selective-specific controls (V=300→600→1000, the airtight controls, NOT bigram-confounded)
+
+| V | d≥10 sel<random-gate | d≥10 sel<ordered-bigram | d≥6 sel<no-hold |
+|---|---|---|---|
+| 300 | +0.322 (6/6) | +0.170 (6/6) | +0.333 (6/6) |
+| 600 | +0.359 (6/6) | +0.279 (6/6) | +0.390 (6/6) |
+| 1000 | **+0.436 (3/3)** | +0.426 (3/3) | +0.461 (3/3) |
+
+**The selective-specific deep-tail holding (sel<random-gate) GROWS MONOTONICALLY with vocab** (+0.32→+0.36→+0.44) — and this control is NOT bigram-dependent (it compares sel to its own random-gate control), so it is NOT confounded by the bigram-starvation Skeptic B flagged. As the language gets richer (bigger vocab, more deep structure), the genuine input-dependent distal holding the selective gate provides grows. (The aggregate `sel−bigram` also grows with vocab at fixed nt — but that IS partly bigram-starvation; the clean data-axis test is the running data-scaling batch at fixed V=300.)
+
 ## Next (running)
 - **GPU validated-scale** run (np=500 PROPER reservoir per Skeptic B, V=2000, nt=40000): does the deep-tail selective-specific holding survive a properly-sized reservoir at the non-null-discriminator scale, and does the AGGREGATE beat the bigram there?
 - **CPU:** the airtight controls at np=500 (proper reservoir, tractable) + a V=600/V=1000 vocab grid — does the deep-tail selective-specific hold over a strong reservoir + grow with vocab.
