@@ -1,0 +1,1 @@
+{"n_pool": 200, "n_train": 1600, "V": 600, "res_ce": 4.9857, "sel_ce": 4.1483, "bag_ce": 5.6359, "bi_ce": 4.9017, "margin_res_over_bag": 0.6503, "margin_sel_over_bag": 1.4876, "sel_lift": 0.8373, "sel_over_bigram": 0.7533, "collect_s": 51.4, "total_s": 911.5}
