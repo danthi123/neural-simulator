@@ -109,12 +109,44 @@ def _spatial_backward(inputs, layers, fs, output_grad, alpha=2.0):
     return weight_grads
 
 
+def _eprop_grads(inputs, layers, fs, output_grad, B_direct, alpha_leak, alpha_surr=2.0):
+    """e-prop (Bellec 2020) with DIRECT feedback alignment (Nokland) -- a LOCAL, FORWARD-mode, TRANSPORT-FREE rule (no
+    BPTT, no W^T). Per weight: dw_ji = sum_t L_j(t) * psi_j(t) * eps_i(t), where eps_i(t)=alpha*eps_i(t-1)+z_pre_i(t) is
+    the FORWARD eligibility (captures the leak-recurrence exactly for a diagonal/feedforward net), psi_j(t) is the
+    membrane surrogate, and L_j(t) is the learning signal = the OUTPUT error projected to layer j by a FIXED-RANDOM
+    B_direct (DFA; output layer uses the error directly). NO sim/ edit; NO weight transport (B_direct is a separate
+    fixed-random stream)."""
+    T, Bn, _ = inputs.shape
+    L = len(layers)
+    spikes = fs["spikes"]; v_per = fs["v"]
+    weight_grads = [np.zeros_like(l.W_in) for l in layers]
+    eps = [np.zeros((Bn, l.W_in.shape[0]), dtype=l.W_in.dtype) for l in layers]   # (B, n_pre) running eligibility
+    for t in range(T):
+        for li in range(L):
+            pre = inputs[t] if li == 0 else spikes[li - 1][t]                     # (B, n_pre)
+            eps[li] = alpha_leak * eps[li] + pre                                  # forward eligibility trace
+            psi = atan_surrogate(v_per[li][t] - layers[li].threshold, alpha=alpha_surr, xp=np)  # (B, n_post)
+            if li == L - 1:
+                Lsig = output_grad[t]                                             # output error directly (B, k)
+            else:
+                Lsig = output_grad[t] @ B_direct[li]                             # DFA: fixed-random projection (B, n_post)
+            g = Lsig * psi                                                        # (B, n_post)
+            weight_grads[li] += eps[li].T @ g                                     # (n_pre, n_post)
+    return weight_grads
+
+
 def _train_snn(Xtr, ytr, sizes, T, epochs, lr, in_gain, seed, batch=32, credit_mode="bptt"):
     rng = np.random.default_rng(seed + 1)
     w_scales = [2.5] + [1.0] * (len(sizes) - 2)          # strong first layer, moderate deeper
     layers = _build_layers(sizes, T, rng, w_scales)
     k = sizes[-1]
     n = len(Xtr)
+    # e-prop DFA feedback: fixed-random (k, n_post_li) per HIDDEN layer, SEPARATE seed stream => no weight transport
+    B_direct = None
+    if credit_mode == "eprop":
+        frng = np.random.default_rng(seed + 8888)
+        B_direct = [frng.normal(0.0, 1.0 / np.sqrt(k), (k, sizes[li + 1])).astype(np.float64)
+                    for li in range(len(layers) - 1)]     # only hidden layers use DFA; output uses the error directly
     for ep in range(epochs):
         perm = rng.permutation(n)
         for b0 in range(0, n, batch):
@@ -127,6 +159,8 @@ def _train_snn(Xtr, ytr, sizes, T, epochs, lr, in_gain, seed, batch=32, credit_m
             og = np.repeat((delta / T)[None, :, :], T, axis=0).astype(np.float64)  # (T, B, k)
             if credit_mode == "spatial":
                 wg = _spatial_backward(inp, layers, fs, og, alpha=2.0)
+            elif credit_mode == "eprop":
+                wg = _eprop_grads(inp, layers, fs, og, B_direct, alpha_leak=layers[0].leak, alpha_surr=2.0)
             else:
                 wg, _ = backward_unroll_xp(inp, layers, fs, og, alpha=2.0, xp=np)
             for li in range(len(layers)):
@@ -186,7 +220,7 @@ def main():
     ap.add_argument("--epochs", type=int, default=60)
     ap.add_argument("--lr", type=float, default=0.05)
     ap.add_argument("--in-gain", type=float, default=1.0)
-    ap.add_argument("--credit-mode", type=str, default="bptt", choices=["bptt", "spatial"])
+    ap.add_argument("--credit-mode", type=str, default="bptt", choices=["bptt", "spatial", "eprop"])
     ap.add_argument("--train-subsample", type=int, default=400)
     ap.add_argument("--n-super", type=int, default=12)
     ap.add_argument("--n-members", type=int, default=8)
