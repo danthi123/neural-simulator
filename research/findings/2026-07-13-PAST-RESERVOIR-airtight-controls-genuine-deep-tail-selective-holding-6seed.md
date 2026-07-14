@@ -1,0 +1,34 @@
+# AIRTIGHT controls (6-seed, the adversarial-verify's named test): over a fixed reservoir, the trained selective channel provides GENUINE selective-specific distal holding at the deep tail — sel beats the ORDERED bigram + a random-gate control + a no-hold control, all 6/6, the selective-specific component GROWING toward the deepest tail
+
+**Date:** 2026-07-13
+**Runner:** `research/runners/_reslm_scale_trained_selssm_vectorized_derisk.py` (now with per-depth `sel` vs ORDERED-bigram + no-hold(λ=0) + random-gate controls) · raw `research/findings/raw/_trainedsel_scale/airtight_V300_nt5000_seed*.json`. numpy (GPU-capable); NO `sim/` edit.
+**Status:** ✅ the properly-controlled re-test PASSES — reinstates a genuinely-earned deep-tail long-range result after the adversarial-verify walked back the loosely-controlled framings.
+
+## Why (the adversarial-verify's named follow-on)
+
+The 3-skeptic adversarial-verify of the margin-over-bag scale probe retracted its "deep-distributed" framing (a metric bug: the per-depth `sel_lift=(bag−sel)−(bag−res)` has the BAG cancel → it measured sel-vs-reservoir, not a margin over the bag) and demanded the AIRTIGHT controls: per-depth sel vs the **ORDERED bigram** (not the order-blind bag) + a **no-hold (λ=0, current-token-only)** control (isolates the shallow readout fix) + a **random-gate** control (isolates the input-dependent SELECTIVE holding). Built + run 6-seed at V=300/nt=5000 (vectorized trainer, transport-free; per-depth CE per arm).
+
+## Result — 6-seed (V=300, nt=5000, np=200 fixed echo-state reservoir)
+
+| control (deep-tail CE reduction, LOWER-is-better so >0 = sel wins) | d≥6 | d≥10 |
+|---|---|---|
+| **sel < random-gate** (selective-SPECIFIC — the load-bearing control) | **+0.294 (min +0.250, 6/6)** | **+0.322 (min +0.262, 6/6)** |
+| sel < no-hold (held context helps) | +0.333 (min +0.273, 6/6) | — |
+| sel < ORDERED bigram | +0.089 (min +0.035, 6/6) | +0.170 (min +0.099, 6/6) |
+| aggregate sel − bigram (all depths) | — | −0.054 (0/6, shallow-dominated) |
+
+- **The selective-SPECIFIC control (sel<random-gate) is POSITIVE 6/6 at the deep tail and GROWS toward the deepest tail** (+0.294 at d≥6 → +0.322 at d≥10). `sel` and `rand` share the identical selective channel + current-token injection; the ONLY difference is the gate reads the CURRENT token (sel) vs a RANDOM token (rand). So this isolates the value of INPUT-DEPENDENT selective holding — and it is genuine, growing with depth (the opposite of a shallow spillover, which would shrink with depth).
+- **sel beats the ORDERED bigram at the deepest tail** (+0.170 at d≥10, 6/6) — the proper long-range baseline, not the order-blind bag.
+- **sel beats the no-hold control** (+0.333 at d≥6, 6/6) — accumulation/holding (vs pure current-token) helps at depth.
+- **HONEST aggregate caveat:** the ALL-depths `sel−bigram` is −0.054 (0/6) — the overall model at this scale is bigram-level (the shallow depths dominate the aggregate, the null-discriminator regime). So the model is not yet a bigram-beater overall; the genuine result is the DEEP-TAIL STRUCTURE: the selective mechanism provides real selective-specific distal holding where long-range lives.
+
+## ⇒ honest read (properly controlled this time)
+
+Over a fixed reservoir, the trained selective channel provides **genuine input-dependent selective distal holding at the deep tail** — it beats the ordered bigram AND the random-gate AND the no-hold controls, all 6/6, with the selective-specific component growing toward the deepest tail. This is the airtight test the adversarial-verify demanded, and it passes: the deep-tail benefit is NOT a shallow readout fix (sel≫noheld) and NOT generic capacity (sel≫rand, identical channel/capacity, only the gate's input differs). The overall model at this tractable scale is still bigram-level (aggregate), so this is a DEEP-TAIL-STRUCTURE result, not an overall-fluency result.
+
+**Reconciles the sibling walk-back:** the frozen coupling found sel−rand ~0 at d≥10 over an e-prop-TRAINED (strong) reservoir; here over a FIXED (weak) reservoir the selective does the deep lifting, so its selective-specific contribution is large. Both are honest — the selective mechanism's marginal deep value scales inversely with how much the reservoir already holds.
+
+## Next (running)
+- **GPU validated-scale** run (np=500 PROPER reservoir per Skeptic B, V=2000, nt=40000): does the deep-tail selective-specific holding survive a properly-sized reservoir at the non-null-discriminator scale, and does the AGGREGATE beat the bigram there?
+- **CPU:** the airtight controls at np=500 (proper reservoir, tractable) + a V=600/V=1000 vocab grid — does the deep-tail selective-specific hold over a strong reservoir + grow with vocab.
+- raw `research/findings/raw/_trainedsel_scale/airtight_V300_nt5000_seed*.json`.
