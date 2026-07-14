@@ -31,3 +31,15 @@ def test_byte_identical_when_flag_off():
     assert b.cp_ssm_state is None and b.cp_ssm_inject is None and b.cp_ssm_shunt is None
     b._run_one_simulation_step()                                 # steps fine; the SSM block is skipped
     assert b.cp_ssm_state is None
+
+
+def test_onbridge_state_equivalent_to_numpy():
+    """The on-bridge cp_ssm_state update IS the numpy selective-SSM update to float32 precision (Rung 4b-iii-a) ->
+    the validated numpy ladder (Rung 2/3/4a) transfers to the bridge exactly."""
+    try:
+        from research.runners._reslm_rung4b_iii_onbridge_ssm_equivalence_derisk import run
+    except Exception as e:                                        # pragma: no cover
+        pytest.skip(f"rung4b-iii-eq deps unavailable: {e}")
+    r = run(42)
+    assert r["max_abs_diff"] < 1e-5
+    assert r["GO"]
