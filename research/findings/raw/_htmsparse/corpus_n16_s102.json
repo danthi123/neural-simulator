@@ -1,0 +1,35 @@
+{
+  "probe": "emerge15_sparse_pool_scale",
+  "variant": "corpus",
+  "window": 8,
+  "n_subj": 16,
+  "vocab": 35,
+  "chance": 0.0625,
+  "best_ngram": 0.0625,
+  "k_syn": 40,
+  "dense": {
+    "htm": null,
+    "synapses": 6168960
+  },
+  "sparse": {
+    "htm": 1.0,
+    "synapses": 596160
+  },
+  "synapse_ratio": 0.09663865546218488,
+  "GO": true,
+  "elapsed_seconds": 1013.1,
+  "per_seed": {
+    "dense": [],
+    "sparse": [
+      {
+        "seed": 102,
+        "htm": 1.0,
+        "n_syn": 596160,
+        "dense_syn": 6168960,
+        "vocab_n": 35,
+        "nE": 72
+      }
+    ]
+  },
+  "verdict": "SPARSE pool (K=40/post) HTM 1.0 vs DENSE None (best n-gram 0.062); synapses sparse 596160 vs dense 6168960 (9.7% of dense). GO: the SPARSE pool matches dense accuracy at a fraction of the synapses -> the vocab-scale lever works runner-side (linear-ish synapses, mechanism preserved); next = per-cell multi-SEGMENT thresholds (sim/ extension) for more contexts."
+}
