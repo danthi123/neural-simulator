@@ -143,7 +143,7 @@ def _train_snn(Xtr, ytr, sizes, T, epochs, lr, in_gain, seed, batch=32, credit_m
     n = len(Xtr)
     # e-prop DFA feedback: fixed-random (k, n_post_li) per HIDDEN layer, SEPARATE seed stream => no weight transport
     B_direct = None
-    if credit_mode == "eprop":
+    if credit_mode in ("eprop", "eprop_shuffle"):
         frng = np.random.default_rng(seed + 8888)
         B_direct = [frng.normal(0.0, 1.0 / np.sqrt(k), (k, sizes[li + 1])).astype(np.float64)
                     for li in range(len(layers) - 1)]     # only hidden layers use DFA; output uses the error directly
@@ -161,6 +161,11 @@ def _train_snn(Xtr, ytr, sizes, T, epochs, lr, in_gain, seed, batch=32, credit_m
                 wg = _spatial_backward(inp, layers, fs, og, alpha=2.0)
             elif credit_mode == "eprop":
                 wg = _eprop_grads(inp, layers, fs, og, B_direct, alpha_leak=layers[0].leak, alpha_surr=2.0)
+            elif credit_mode == "eprop_shuffle":
+                # ANTI-CHEAT: scramble the learning signal across the batch (eligibility intact, credit MISMATCHED to
+                # the example) -> must collapse to chance if the DFA credit channel is genuinely load-bearing.
+                ogs = og[:, rng.permutation(len(bi)), :]
+                wg = _eprop_grads(inp, layers, fs, ogs, B_direct, alpha_leak=layers[0].leak, alpha_surr=2.0)
             else:
                 wg, _ = backward_unroll_xp(inp, layers, fs, og, alpha=2.0, xp=np)
             for li in range(len(layers)):
@@ -220,7 +225,7 @@ def main():
     ap.add_argument("--epochs", type=int, default=60)
     ap.add_argument("--lr", type=float, default=0.05)
     ap.add_argument("--in-gain", type=float, default=1.0)
-    ap.add_argument("--credit-mode", type=str, default="bptt", choices=["bptt", "spatial", "eprop"])
+    ap.add_argument("--credit-mode", type=str, default="bptt", choices=["bptt", "spatial", "eprop", "eprop_shuffle"])
     ap.add_argument("--train-subsample", type=int, default=400)
     ap.add_argument("--n-super", type=int, default=12)
     ap.add_argument("--n-members", type=int, default=8)
