@@ -1,5 +1,16 @@
 # Deep-credit-on-spikes POPULATION-CODING lever — REFUTED by direct forward-only measurement: pooling ALREADY works (the pool is already decorrelated, √K gain already present) but does NOT lift the across-input read-SNR → the boundary is REPRESENTATIONAL / credit-STRUCTURE, not population read-variance
 
+## ▶ DECISIVE TEST — RUNNING (2026-07-14 overnight): controlled end-to-end training at the favorable config, K-trend 1/8/16 — with a CLEAN precondition
+
+The decisive test the SECOND CORRECTION named ("does pooling let the net TRAIN, where K=1 does not, at a config where read-SNR rises with K?") is now running: `_onbridge_deep_credit_population_derisk` at the favorable config (`tonic_h 560 / tonic_o 620 / apical 2000 / ff_w_init 4.5`, H=24, ep=50), K∈{1,8,16}, 3 seeds each, one OS process per seed×K (raw `raw/_dctrain/train_K*_s*.json`).
+
+**The precondition is CLEAN + decision-useful (K=1 done, 3/3):**
+- **K=1 does NOT train** at this favorable config — `trains_at_all=false` all 3 seeds; `deep_train` ≈ 0.24-0.26 at chance 0.333, i.e. it cannot even FIT the training set → a pure OPTIMIZATION failure (the does-not-train boundary reproduces cleanly here, the precondition for the test to be meaningful).
+- **The task is provably learnable** — `oracle_inherit=1.0`, and a depth-2 linear probe on the same features reaches `l2_inherit_heldout=1.0` (`stage0_depth_separating=true`). So the failure is the on-bridge spiking optimization, not an unlearnable task.
+- ⇒ the setup is exactly right: K=1 fails to train a solvable task; the open question is whether K=8 / K=16 pooling rescues it. **Verdict logic:** K=1 fails + K≥8 trains ≥2/3 → population coding RESCUES training → lever CONFIRMED (at a favorable config); K=1 fails + K≥8 also fails → the boundary is CREDIT-STRUCTURE, not read-SNR (pooling insufficient even where read-SNR rises). Either way resolves the INCONCLUSIVE below.
+
+---
+
 ## ⚠️⚠️ SECOND CORRECTION (2026-07-14, the 6-seed firming) — the "population lever REFUTED" conclusion below was PREMATURE + config-dependent; the honest state is INCONCLUSIVE
 
 A 6-seed forward-only re-run (`raw/_decorr/decorr_seed*.json`) revealed the read-SNR-vs-K behavior is **CONFIG-DEPENDENT**, so the single-config "refuted" below is withdrawn:
