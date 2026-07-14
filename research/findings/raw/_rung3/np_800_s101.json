@@ -1,0 +1,125 @@
+{
+  "runner": "_emerge_reservoir_lm_rung3_agent_role_generation_derisk",
+  "seeds": [
+    101
+  ],
+  "epochs": 120,
+  "lr": 0.05,
+  "chance": 0.12,
+  "n_train_sents": 72,
+  "n_held": 18,
+  "per_seed": {
+    "101": {
+      "main": {
+        "arm": "main",
+        "heldagent_cat_acc": 0.8888888888888888,
+        "heldagent_2way": 1.0,
+        "heldagent_isaction": 0.8888888888888888,
+        "train_cat_acc": 1.0
+      },
+      "onehot": {
+        "arm": "onehot",
+        "heldagent_cat_acc": 0.5555555555555556,
+        "heldagent_2way": 0.7142857142857143,
+        "heldagent_isaction": 0.7777777777777778,
+        "train_cat_acc": 0.875
+      },
+      "nonrecurrent": {
+        "arm": "nonrecurrent",
+        "heldagent_cat_acc": 0.0,
+        "heldagent_2way": 0.0,
+        "heldagent_isaction": 0.0,
+        "train_cat_acc": 0.0
+      },
+      "permuted": {
+        "arm": "permuted",
+        "heldagent_cat_acc": 0.7777777777777778,
+        "heldagent_2way": 0.875,
+        "heldagent_isaction": 0.8888888888888888,
+        "train_cat_acc": 0.75
+      },
+      "buf_scramble": {
+        "arm": "buf_scramble",
+        "heldagent_cat_acc": 0.8888888888888888,
+        "heldagent_2way": 1.0,
+        "heldagent_isaction": 0.8888888888888888,
+        "train_cat_acc": 1.0
+      },
+      "deranged": {
+        "arm": "deranged",
+        "heldagent_cat_acc": 0.6666666666666666,
+        "heldagent_2way": 0.9230769230769231,
+        "heldagent_isaction": 0.7222222222222222,
+        "train_cat_acc": 0.875
+      },
+      "untrained": {
+        "arm": "untrained",
+        "heldagent_cat_acc": 0.0,
+        "heldagent_2way": 0.0,
+        "heldagent_isaction": 0.0,
+        "train_cat_acc": 0.0
+      }
+    }
+  },
+  "aggregate": {
+    "main": {
+      "heldagent_cat_acc": 0.8888888888888888,
+      "heldagent_2way": 1.0,
+      "heldagent_isaction": 0.8888888888888888,
+      "train_cat_acc": 1.0
+    },
+    "onehot": {
+      "heldagent_cat_acc": 0.5555555555555556,
+      "heldagent_2way": 0.7142857142857143,
+      "heldagent_isaction": 0.7777777777777778,
+      "train_cat_acc": 0.875
+    },
+    "nonrecurrent": {
+      "heldagent_cat_acc": 0.0,
+      "heldagent_2way": 0.0,
+      "heldagent_isaction": 0.0,
+      "train_cat_acc": 0.0
+    },
+    "permuted": {
+      "heldagent_cat_acc": 0.7777777777777778,
+      "heldagent_2way": 0.875,
+      "heldagent_isaction": 0.8888888888888888,
+      "train_cat_acc": 0.75
+    },
+    "buf_scramble": {
+      "heldagent_cat_acc": 0.8888888888888888,
+      "heldagent_2way": 1.0,
+      "heldagent_isaction": 0.8888888888888888,
+      "train_cat_acc": 1.0
+    },
+    "deranged": {
+      "heldagent_cat_acc": 0.6666666666666666,
+      "heldagent_2way": 0.9230769230769231,
+      "heldagent_isaction": 0.7222222222222222,
+      "train_cat_acc": 0.875
+    },
+    "untrained": {
+      "heldagent_cat_acc": 0.0,
+      "heldagent_2way": 0.0,
+      "heldagent_isaction": 0.0,
+      "train_cat_acc": 0.0
+    }
+  },
+  "feature_mode": "cum",
+  "primary_controls": [
+    "onehot",
+    "nonrecurrent",
+    "untrained"
+  ],
+  "main_heldagent_cat_acc": 0.8888888888888888,
+  "main_heldagent_2way": 1.0,
+  "worst_control_cat_acc": 0.5555555555555556,
+  "worst_control_2way": 0.7142857142857143,
+  "margin": 0.33333333333333326,
+  "per_seed_go": [
+    false
+  ],
+  "n_go": 0,
+  "n_seeds": 1,
+  "elapsed_s": 79.9
+}
