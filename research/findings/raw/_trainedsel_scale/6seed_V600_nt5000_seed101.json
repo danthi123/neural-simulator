@@ -1,0 +1,1 @@
+{"backend": "numpy", "n_pool": 200, "n_train": 5000, "V": 600, "res_ce": 5.3479, "sel_ce": 4.1806, "bag_ce": 6.1336, "bi_ce": 4.2661, "margin_res_over_bag": 0.7857, "margin_sel_over_bag": 1.953, "sel_lift": 1.1672, "sel_over_bigram": 0.0855, "total_s": 465.5}

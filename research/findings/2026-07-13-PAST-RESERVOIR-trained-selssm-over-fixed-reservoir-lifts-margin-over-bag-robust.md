@@ -47,6 +47,10 @@ Per-depth `margin_over_bag` lift (bag−sel minus bag−res) at V=300/nt=1600: *
 
 **Bag-not-weakens-deep check (pre-empts the "the bag just gets noisier deep, so anything beats it" confound):** the bag control's CE is FLAT-to-BETTER at deep depth — bag_ce 4.603 (d4-5) → 4.542 (d6-9) → **4.468 (d≥10)** — NOT exploding. So the deep sel_lift is genuine, not a bag-weakens-deep artifact. What DOES change with depth: sel_ce RISES slightly (3.476→3.581→3.773 — holding distal context gets harder), while res_ce stays flat (~4.25); that is why the sel_lift SHRINKS with depth (+0.78→+0.62→+0.48) yet stays substantial at d≥10. The one remaining cleaner isolation (a no-hold current-token-only "noheld" control at the deep tail, as built for the FROZEN coupling — where holding beat no-holding at deep) is a follow-on for this fixed-reservoir runner; the frozen coupling's noheld result already established the held-context contribution at depth for the same mechanism.
 
+## 6-SEED robustness at the decisive scaled config (V=600, nt=5000, vectorized trainer, full dev+blind seed set)
+
+Fanned across the full 6-seed set (42/43/44/100/101/102, core-saturated, 1-thread BLAS): **`sel_lift` mean +1.127 (min +1.084, max +1.167, 6/6 > 0, tight)**; `sel−bigram` +0.024..+0.100 (sel beats the bigram on all 6 seeds). The lift GREW from +0.86 (V=600/nt=1600) to +1.13 (V=600/nt=5000) — the data-scaling holds at 6-seed. ⇒ the decisive "the trained selective lifts margin-over-bag, scaling with data AND vocab" is a proper 6-seed generalization claim, not a single-seed indicator. (Realized via the validated vectorized GPU-scalable trainer, `_reslm_scale_trained_selssm_vectorized_derisk.py`.)
+
 ## ⇒ honest read (adversarial-verify + null-discriminator disciplined)
 
 - **Robust decisive claim:** over a fixed reservoir, a TRAINED selective channel adds ~+0.62 nats over the memoryless bag, robustly across seeds AND data-robustly (holding as the reservoir's own margin decays). The LEARNED gate is the scale-critical ingredient. This settles the fixed-gate negative and is realized at the batched-scale-infra level (GPU-scalable).
