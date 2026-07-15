@@ -1,0 +1,23 @@
+# Fluency crossover RESOLVED — NEGATIVE: the standing-rule interpolated-TRIGRAM check kills it. sel loses to the trigram at nt=96000; the "+0.025 crossover" was vs a STARVED bigram (the n-gram-starvation confound, 5th catch this session). The reservoir-LM is TRIGRAM-BOUND at scale — confirming the emergence-engine convergence (the wall is representation quality)
+
+**Date:** 2026-07-15 (compute unlocked) · **Status:** the decisive fluency question RESOLVED via the OWED trigram check (identified in `2026-07-15-crossover-adversarial-preverify-...`) — cheaply, without waiting on the ~1-2 hr reservoir-caching confirmation runs. Honest NEGATIVE.
+
+## The check (`_ngram_fair_baseline_probe`, nt=96000, n_sentences=250000, V=120, seed 42 — the crossover scale)
+```
+tuned_bigram = 2.350   interp_trigram = 2.094 (lam=0.05/0.10/0.85)   |   reservoir-LM sel ~= 2.674
+```
+- The interpolated TRIGRAM (2.094) is **~0.58 nats better than the reservoir-LM sel (~2.674)** and ~0.26 better than the tuned bigram (2.350).
+
+## Why this resolves the crossover (and is the confound a 5th time)
+The pre-existing surface reported `sel_over_TUNED = +0.025` at nt=96000 (sel 2.674 vs its tuned_bigram **2.699**). But on a PROPERLY-SAMPLED split (n_sentences=250000) the tuned bigram is **2.350**, not 2.699 — the surface's 2.699 was a STARVED bigram (smaller-data eval/vocab). So the "+0.025 crossover" was sel beating a starved bigram — the SAME ordered-n-gram-starvation confound caught 4× earlier this session (input-repr gate, vec-scale trajectory, data-lever, and ROADMAP §9's standing flag), now caught a 5th time IN the crossover surface itself.
+- **The trigram is decisive same-split, not just cross-split:** the interpolated trigram beats the tuned bigram by ~0.26 on the 250000 split (2.350→2.094); applied to the pre-existing split's bigram (2.699), the trigram ≈ **2.44 ≪ sel 2.674** → sel loses to the trigram by ~0.23 ON the pre-existing split too. The trigram-over-bigram gain is a data property, robust across splits.
+- ⇒ the standing rule ("beat a TUNED add-k bigram AND an interpolated deleted-interpolation TRIGRAM on the same split") is NOT met: sel loses to the trigram. The crossover was necessary-but-not-sufficient (vs the bigram only); the trigram — the standing rule's other required baseline — beats sel decisively.
+
+## Verdict
+**NO genuine fluency crossover.** The selective-SSM reservoir-LM generator is TRIGRAM-BOUND at nt=96000 (loses to a fair interpolated trigram), confirming ROADMAP §12 + the owner's ceiling finding: no model — reservoir or transformer — beats a well-tuned n-gram at these tractable scales; the reservoir-LM overall fluency is n-gram-bound. The genuine deep-tail MECHANISM (sel_over_bag ~+1.0, the selective SSM's dynamics beating a memoryless bag) STANDS as a real, committed result independent of the n-gram comparison — the reservoir HOLDS higher-order structure; the OVERALL fluency at tractable scale is n-gram-bound because the exploitable higher-order signal is thin (data/representation-bound).
+
+## ⇒ Confirms the emergence-engine convergence
+This closes the reservoir-LM-fluency-at-tractable-scale question as an all-models data/scale wall, exactly as the emergence-engine arc this session re-localized it: the store confirms the STRUCTURE (a content-addressable store dissolves recurrent credit), the on-bridge realization is banked (RUNG6e/6f), and the residual is REPRESENTATION QUALITY — learned keys/features encoding distal linguistic structure — which is the deep-credit/input-representation frontier at scale (the input-repr gate today: directionally real, scale-bound). The reservoir-LM (fixed random features) cannot cross a fair n-gram at tractable scale; the frontier is a LEARNING substrate that produces better representations from a stream. The full ~23.7M-word reservoir-LM scale run is NOT warranted (it would race a trigram it's structurally behind); the lever is representation-learning, not more reservoir-LM data.
+
+## Process note
+The slow (~1-2 hr each) reservoir-caching confirmation runs (v2, np200/nt96000 s42/s43/s44 + np500 + nt192000) were rendered MOOT by this cheap trigram check — the crossover fails the trigram regardless of seed-robustness or trend. Killed the moot runs; kept np200/nt96000 s42 v2 for the airtight same-split sel_ce vs the probe's baselines (2.350/2.094) as a belt-and-suspenders confirmation. The trigram check (n-gram counting, seconds) resolved in one shot what the reservoir runs would take hours to circle — the adversarial pre-verify's "owed trigram check" was the decisive lever.
