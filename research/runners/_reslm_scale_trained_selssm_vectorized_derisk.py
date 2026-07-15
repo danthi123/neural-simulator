@@ -196,6 +196,18 @@ def main():
     bag_ce, bd["bag"] = _eval_ce(xp, Wb, None, None, _bag_pack(ev_cache, V), V, "res", E, Win, a.seed)
     # per-depth ORDERED bigram (the proper long-range baseline, not the order-blind bag)
     P_bi = fit_bigram(tr_ids, V); bi_ce, _, _ = bigram_ce(P_bi, ev_ids)
+    # TUNED add-k bigram = the FAIR baseline. The add-1 P_bi above STARVES at large V / small data (a documented confound
+    # caught TWICE on 2026-07-15) -> any "beats the bigram" claim MUST use this tuned baseline, never add-1. Count once, sweep k.
+    _c0 = np.zeros((V, V))
+    for _a2 in tr_ids:
+        for _x, _y in zip(_a2[:-1], _a2[1:]): _c0[_x, _y] += 1.0
+    _tuned = None
+    for _kk in (0.3, 0.1, 0.03, 0.01, 0.003):
+        _ck = _c0 + _kk; _Pk = _ck / _ck.sum(1, keepdims=True); _e = 0.0; _n = 0
+        for _a2 in ev_ids:
+            for _x, _y in zip(_a2[:-1], _a2[1:]): _e += -math.log(max(float(_Pk[_x, _y]), 1e-12)); _n += 1
+        _ce = _e / max(_n, 1); _tuned = _ce if _tuned is None else min(_tuned, _ce)
+    tuned_bi_ce = _tuned
     bdce = defaultdict(float); bdcnt = defaultdict(int)
     for ids in ev_ids:
         for t in range(len(ids) - 1):
@@ -219,10 +231,12 @@ def main():
     res = dict(backend=backend, n_pool=a.n_pool, n_train=len(tr), V=V, res_ce=round(res_ce, 4), sel_ce=round(sel_ce, 4),
                noheld_ce=round(noh_ce, 4), rand_ce=round(rnd_ce, 4), bag_ce=round(bag_ce, 4), bi_ce=round(bi_ce, 4),
                margin_sel_over_bag=round(m_sel, 4), sel_lift=round(m_sel - m_res, 4), sel_over_bigram=round(bi_ce - sel_ce, 4),
+               tuned_bi_ce=round(tuned_bi_ce, 4), sel_over_tuned=round(tuned_bi_ce - sel_ce, 4),
                by_depth=bd, deep_tail_d6=dtail6, deep_tail_d10=dtail10, total_s=round(time.time() - t0, 1))
     json.dump(res, open(a.out, "w"))
     print(f"[vec-airtight] [{backend}] np={a.n_pool} nt={len(tr)} V={V} in {res['total_s']}s: "
-          f"sel_lift(vs bag)={m_sel - m_res:+.4f} sel_over_bigram(agg)={bi_ce - sel_ce:+.4f} | "
+          f"sel_lift(vs bag)={m_sel - m_res:+.4f} sel_over_bigram(add1)={bi_ce - sel_ce:+.4f} "
+          f"sel_over_TUNED={tuned_bi_ce - sel_ce:+.4f} (FAIR; <0 = below the tuned bigram) | "
           f"DEEP d>=6: sel<bigram {dtail6['sel_beats_bigram']} sel<noheld {dtail6['sel_beats_noheld']} "
           f"sel<rand {dtail6['sel_beats_rand']} | DEEP d>=10: sel<bigram {dtail10['sel_beats_bigram']} "
           f"sel<rand {dtail10['sel_beats_rand']}", flush=True)
