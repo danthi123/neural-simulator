@@ -170,7 +170,8 @@ def ngram_recall_acc(K, F, T, tr_trials, tr_targets, ev_trials, ev_recall, ev_ta
     return correct / max(1, len(ev_trials))
 
 
-def language_2stage_test(seed, corpus=None, n_sentences=6000, V=300, n_pool=200, n_hidden=128, epochs=8, lr=0.02):
+def language_2stage_test(seed, corpus=None, n_sentences=6000, V=300, n_pool=200, n_hidden=128, epochs=8, lr=0.02,
+                         adapt_win_hi=300.0, beta=1.0):
     """MISSION-CONNECTED: does the identified fix (a 2-STAGE cortical read-out) beat a LINEAR read-out on a REAL
     language stream, or does the bigram-dominated scale wall dominate? corpus=None -> the templated EMERGE SVO stream;
     corpus=<path> -> a NATURAL corpus (WikiText) -- the honest generalization test past the templated stream. Fixed
@@ -188,7 +189,8 @@ def language_2stage_test(seed, corpus=None, n_sentences=6000, V=300, n_pool=200,
     ids_sents = [s for s in ids_sents if len(s) >= 2]
     ntr = int(0.8 * len(ids_sents)); tr, ev = ids_sents[:ntr], ids_sents[ntr:]
     Veff = vocab.size
-    res = RateReservoir(Veff, n_pool, seed=seed, alpha=0.3, spectral=1.1, alif=True, beta=1.0)
+    res = RateReservoir(Veff, n_pool, seed=seed, alpha=0.3, spectral=1.1, alif=True, beta=beta,
+                        adapt_win_hi=adapt_win_hi)
 
     def pairs(sset):
         X, Y = [], []
@@ -246,7 +248,8 @@ def language_2stage_test(seed, corpus=None, n_sentences=6000, V=300, n_pool=200,
             bi_ce += -np.log(P_bi[int(ids[t]), int(ids[t + 1])] + 1e-12)
     bi_ce /= max(1, sum(len(s) - 1 for s in ev))
     return {"V": Veff, "linear_ce": lin_ce, "twostage_ce": two_ce, "bigram_ce": bi_ce, "perm_ce": perm_ce,
-            "shuf_ce": shuf_ce, "linear_acc": lin_acc, "twostage_acc": two_acc, "n_eval": len(Xev)}
+            "shuf_ce": shuf_ce, "linear_acc": lin_acc, "twostage_acc": two_acc, "n_eval": len(Xev),
+            "adapt_win_hi": adapt_win_hi, "beta": beta}
 
 
 def train_recall_nl(res, trials, V, epochs, lr_out, lr_rec, seed, arm, n_hidden=64, wd=1e-3):
@@ -388,6 +391,8 @@ def main():
     ap.add_argument("--corpus", default=None, help="natural-corpus path (e.g. data/corpus/wikitext.txt) for the language test; None=templated EMERGE SVO stream")
     ap.add_argument("--n-sentences", type=int, default=6000)
     ap.add_argument("--language-vocab", type=int, default=300, help="vocab cap for the language test (scale lever)")
+    ap.add_argument("--adapt-win-hi", type=float, default=300.0, help="ALIF longest adaptation-window (the recurrent MEMORY-HORIZON lever); default 300")
+    ap.add_argument("--beta", type=float, default=1.0, help="ALIF adaptation strength (how strongly the distal-history state feeds the dynamics); default 1.0")
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
     t0 = time.time()
@@ -395,7 +400,7 @@ def main():
         gc = grad_check_alif()
         print(f"[grad_check_alif] {gc}", flush=True)
     if a.language_test:
-        rs = [language_2stage_test(s, corpus=a.corpus, n_sentences=a.n_sentences, V=a.language_vocab, n_pool=a.n_pool, epochs=a.epochs) for s in a.seeds]
+        rs = [language_2stage_test(s, corpus=a.corpus, n_sentences=a.n_sentences, V=a.language_vocab, n_pool=a.n_pool, epochs=a.epochs, adapt_win_hi=a.adapt_win_hi, beta=a.beta) for s in a.seeds]
         agg = {k: float(np.mean([r[k] for r in rs])) for k in rs[0]}
         beats_bigram = agg["twostage_ce"] < agg["bigram_ce"] - 0.05
         perm_collapses = agg["perm_ce"] >= agg["bigram_ce"] - 0.05    # permuted-corpus must NOT beat the bigram
@@ -404,7 +409,7 @@ def main():
                    if (beats_bigram and perm_collapses and shuf_collapses)
                    else ("ARTIFACT: beats bigram but an anti-cheat also does (not structure)"
                          if beats_bigram else "2-stage does NOT beat the bigram"))
-        print(f"[language-test] V={agg['V']:.0f} n_eval={agg['n_eval']:.0f} | linear_ce={agg['linear_ce']:.3f} "
+        print(f"[language-test] V={agg['V']:.0f} n_eval={agg['n_eval']:.0f} win_hi={agg['adapt_win_hi']:.0f} beta={agg['beta']:.2f} | linear_ce={agg['linear_ce']:.3f} "
               f"twostage_ce={agg['twostage_ce']:.3f} bigram_ce={agg['bigram_ce']:.3f} perm_ce={agg['perm_ce']:.3f} "
               f"shuf_ce={agg['shuf_ce']:.3f} | twostage_acc={agg['twostage_acc']:.3f} -> {verdict}", flush=True)
         return
