@@ -513,6 +513,98 @@ def stage0_recalibration_test(seed, K=4, F=6, T=30, n_train=600, n_eval=300, n_p
     return results
 
 
+def train_recall_bptt(res, trials, V, epochs, lr_out, lr_rec, seed, n_hidden=64, wd=1e-3, opt="adam", ret_grad=False):
+    """FULL BPTT ceiling (the positive control the stage0 lacked): backprop the per-position next-token loss through the
+    ALIF recurrence to W_rec. Adam for W_rec. If ret_grad: return the analytic W_rec gradient on the FIRST trial (for a
+    finite-difference grad-check) instead of training."""
+    rng = np.random.default_rng(seed * 13 + 7)
+    n = res.n; a = res.alpha; rho = res.rho; beta = res.beta
+    W1 = rng.standard_normal((n_hidden, 2 * n)) * 0.1
+    W2 = rng.standard_normal((V, n_hidden)) * 0.1
+    m_rec = np.zeros_like(res.W_rec); v_rec = np.zeros_like(res.W_rec); at = 0
+    b1, b2, aeps = 0.9, 0.999, 1e-8
+    order = np.arange(len(trials))
+
+    def fwd_bwd(ids, W1, W2, want_grad_rec):
+        Tn = len(ids) - 1
+        hs = [np.zeros(n)]; ads = [np.zeros(n)]; acts = []; feats = []; hhs = []; deltas = []
+        h = np.zeros(n); ad = np.zeros(n); loss = 0.0
+        gW1 = np.zeros_like(W1); gW2 = np.zeros_like(W2)
+        for t in range(Tn):
+            h_prev = hs[-1]
+            ad = rho * ad + (1.0 - rho) * h_prev
+            x = res.W_in[:, ids[t]]
+            pre = res.W_rec @ h_prev + x + res.b - beta * ad
+            act = np.tanh(pre); h = (1 - a) * h_prev + a * act
+            hs.append(h.copy()); ads.append(ad.copy()); acts.append(act)
+            feat = np.concatenate([h, ad]); hh = np.tanh(W1 @ feat)
+            z = W2 @ hh; z -= z.max(); e = np.exp(z); p = e / e.sum()
+            loss += -np.log(p[ids[t + 1]] + 1e-12)
+            delta = -p; delta[ids[t + 1]] += 1.0
+            feats.append(feat); hhs.append(hh); deltas.append(delta)
+            gW2 += np.outer(delta, hh)
+        gWrec = np.zeros_like(res.W_rec); cdh = np.zeros(n); cdad = np.zeros(n)
+        for t in reversed(range(Tn)):
+            dhh = (W2.T @ deltas[t]) * (1.0 - hhs[t] * hhs[t]); gW1 += np.outer(dhh, feats[t])
+            dfeat = W1.T @ dhh
+            dh = dfeat[:n] + cdh                                  # dL/dh_t
+            dpre = a * (1.0 - acts[t] * acts[t]) * dh
+            dad = dfeat[n:] + cdad - beta * dpre                  # dL/dad_t (readout + carried + within-step ad->pre)
+            gWrec += np.outer(dpre, hs[t])                        # pre_t = W_rec @ h_{t-1}=hs[t]
+            cdh = (1 - a) * dh + res.W_rec.T @ dpre + (1.0 - rho) * dad
+            cdad = rho * dad
+        return loss, gW1, gW2, gWrec
+
+    if ret_grad:
+        return fwd_bwd(trials[0], W1, W2, True)[3]               # analytic gWrec on trial 0
+    for ep in range(epochs):
+        rng.shuffle(order)
+        for si in order:
+            ids = trials[si]
+            if len(ids) < 2:
+                continue
+            _, gW1, gW2, gWrec = fwd_bwd(ids, W1, W2, True)
+            at += 1
+            if opt == "adam":
+                m_rec = b1 * m_rec + (1 - b1) * gWrec; v_rec = b2 * v_rec + (1 - b2) * (gWrec * gWrec)
+                res.W_rec += lr_rec * (m_rec / (1 - b1 ** at)) / (np.sqrt(v_rec / (1 - b2 ** at)) + aeps)
+            else:
+                res.W_rec += lr_rec * gWrec
+            W2 += lr_out * (gW2 - wd * W2); W1 += lr_out * (gW1 - wd * W1)
+    return W1, W2
+
+
+def grad_check_bptt(seed=0, K=4, F=6, T=6, n_pool=12):
+    """finite-difference check of the BPTT W_rec gradient (a buggy ceiling would mislead the stage0 verdict)."""
+    V = K + 2 + F
+    tr, _, _ = make_xor_task(K, F, T, 3, seed)
+    res = RateReservoir(V, n_pool, seed=seed, alpha=0.3, spectral=1.1, alif=True, beta=1.0)
+    W_rec0 = res.W_rec.copy()
+
+    def loss_of(Wrec):
+        res.W_rec = Wrec.copy()
+        rng = np.random.default_rng(seed * 13 + 7)
+        n = res.n; W1 = rng.standard_normal((64, 2 * n)) * 0.1; W2 = rng.standard_normal((V, 64)) * 0.1
+        a = res.alpha; rho = res.rho; beta = res.beta; h = np.zeros(n); ad = np.zeros(n); loss = 0.0
+        ids = tr[0]
+        for t in range(len(ids) - 1):
+            ad = rho * ad + (1 - rho) * h; x = res.W_in[:, ids[t]]
+            pre = res.W_rec @ h + x + res.b - beta * ad; act = np.tanh(pre); h = (1 - a) * h + a * act
+            feat = np.concatenate([h, ad]); hh = np.tanh(W1 @ feat); z = W2 @ hh; z -= z.max(); e = np.exp(z); p = e / e.sum()
+            loss += -np.log(p[ids[t + 1]] + 1e-12)
+        return loss
+    res.W_rec = W_rec0.copy()
+    g_analytic = train_recall_bptt(res, tr, V, 0, 0, 0, seed, n_hidden=64, ret_grad=True)
+    eps = 1e-5; errs = []
+    for (i, j) in [(0, 0), (1, 3), (5, 7), (3, 9)]:
+        Wp = W_rec0.copy(); Wp[i, j] += eps; Wm = W_rec0.copy(); Wm[i, j] -= eps
+        g_num = (loss_of(Wp) - loss_of(Wm)) / (2 * eps)
+        # g_analytic is the ASCENT gradient (delta = onehot - p), i.e. -dL/dW; the finite diff is +dL/dW -> compare to -g_num
+        errs.append(abs(g_num + g_analytic[i, j]) / (abs(g_num) + abs(g_analytic[i, j]) + 1e-9))
+    res.W_rec = W_rec0
+    return {"max_rel_err": float(max(errs)), "errs": [round(e, 4) for e in errs]}
+
+
 def run_one(seed, K=6, F=6, T=10, n_train=400, n_eval=200, n_pool=220, epochs=25,
             lr_out=0.02, lr_rec=0.01, beta=1.0, awin_lo=30.0, awin_hi=300.0, task="copy",
             arms=("fixed", "plastic", "symmetric", "sign_flip", "zero_signal", "shuffle_elig")):
