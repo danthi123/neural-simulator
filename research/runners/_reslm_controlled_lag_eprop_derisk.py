@@ -47,6 +47,27 @@ def make_recall_task(K, F, T, n_trials, seed, cue_scramble=False):
     return trials, recall_pos, targets
 
 
+def make_xor_task(K, F, T, n_trials, seed, cue_scramble=False):
+    """DELAYED MODULAR-SUM (recurrent-computation discriminator): [STORE, x1, f_1..f_T, x2, RECALL, y] with
+    y=(x1+x2) mod K. x1 is DISTAL (T+2 back), x2 is RECENT (2 back). y is a NONLINEAR function of TWO temporally-
+    separated cues -> a LINEAR read-out over [held-x1-code, recent-x2-code] provably CANNOT compute it (XOR-like), so
+    the learned RECURRENCE must combine them; a memory-timescale nudge (holding x1 OR reading x2 alone) CANNOT fake it.
+    cue_scramble: the training target is a RANDOM y (breaks cue->target) -> collapse."""
+    rng = np.random.default_rng(seed)
+    STORE, RECALL, FILL0 = K, K + 1, K + 2
+    trials, recall_pos, targets = [], [], []
+    for _ in range(n_trials):
+        x1 = int(rng.integers(K)); x2 = int(rng.integers(K))
+        y = (x1 + x2) % K
+        fillers = [FILL0 + int(rng.integers(F)) for _ in range(T)]
+        tgt = int(rng.integers(K)) if cue_scramble else y
+        seq = [STORE, x1] + fillers + [x2, RECALL, tgt]
+        trials.append(np.asarray(seq, dtype=np.int64))
+        recall_pos.append(len(seq) - 2)               # the RECALL token; its read-out predicts y
+        targets.append(y)
+    return trials, recall_pos, targets
+
+
 def train_recall(res, trials, V, epochs, lr_out, lr_rec, seed, arm, wd=1e-3):
     """ALIF e-prop trainer carrying the FAITHFUL Bellec-2020 2-component eligibility (identical to the validated
     `_train_alif`), parameterized by the credit ARM. arm in {fixed, plastic, symmetric, sign_flip, zero_signal,
@@ -125,11 +146,12 @@ def ngram_recall_acc(K, F, T, tr_trials, tr_targets, ev_trials, ev_recall, ev_ta
 
 
 def run_one(seed, K=6, F=6, T=10, n_train=400, n_eval=200, n_pool=220, epochs=25,
-            lr_out=0.02, lr_rec=0.01, beta=1.0, awin_lo=30.0, awin_hi=300.0,
+            lr_out=0.02, lr_rec=0.01, beta=1.0, awin_lo=30.0, awin_hi=300.0, task="copy",
             arms=("fixed", "plastic", "symmetric", "sign_flip", "zero_signal", "shuffle_elig")):
     V = K + 2 + F
-    tr, tr_rp, tr_tg = make_recall_task(K, F, T, n_train, seed * 100 + 1)
-    ev, ev_rp, ev_tg = make_recall_task(K, F, T, n_eval, seed * 100 + 2)   # FRESH fillers = the filler-scramble-survives eval
+    gen = make_xor_task if task == "xor" else make_recall_task
+    tr, tr_rp, tr_tg = gen(K, F, T, n_train, seed * 100 + 1)
+    ev, ev_rp, ev_tg = gen(K, F, T, n_eval, seed * 100 + 2)   # FRESH fillers = the filler-scramble-survives eval
     out = {}
     for arm in arms:
         res = RateReservoir(V, n_pool, seed=seed, alpha=0.3, spectral=1.1, alif=True, beta=beta,
@@ -137,7 +159,7 @@ def run_one(seed, K=6, F=6, T=10, n_train=400, n_eval=200, n_pool=220, epochs=25
         W_out = train_recall(res, tr, V, epochs, lr_out, lr_rec, seed, arm)
         out[arm] = eval_recall(res, W_out, ev, ev_rp, ev_tg)
     # cue_scramble: train PLASTIC on a cue-scrambled task (random target), eval on the normal held-out -> collapse
-    trc, _, _ = make_recall_task(K, F, T, n_train, seed * 100 + 1, cue_scramble=True)
+    trc, _, _ = gen(K, F, T, n_train, seed * 100 + 1, cue_scramble=True)
     res_c = RateReservoir(V, n_pool, seed=seed, alpha=0.3, spectral=1.1, alif=True, beta=beta,
                           adapt_win_lo=awin_lo, adapt_win_hi=awin_hi)
     W_c = train_recall(res_c, trc, V, epochs, lr_out, lr_rec, seed, "plastic")
@@ -155,6 +177,7 @@ def main():
     ap.add_argument("--n-pool", type=int, default=220)
     ap.add_argument("--epochs", type=int, default=25)
     ap.add_argument("--lr-rec", type=float, default=0.01, help="e-prop W_rec learning rate (destabilization test: lower it)")
+    ap.add_argument("--task", default="copy", choices=["copy", "xor"], help="copy=single-cue hold (ALIF solves it); xor=delayed modular-sum of TWO cues (requires recurrent computation)")
     ap.add_argument("--grad-check", action="store_true", help="assert the ALIF 2-component eligibility matches finite differences")
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
@@ -164,7 +187,7 @@ def main():
         print(f"[grad_check_alif] {gc}", flush=True)
     results = {}
     for T in a.T:
-        per_seed = [run_one(s, K=a.K, T=T, n_pool=a.n_pool, epochs=a.epochs, lr_rec=a.lr_rec) for s in a.seeds]
+        per_seed = [run_one(s, K=a.K, T=T, n_pool=a.n_pool, epochs=a.epochs, lr_rec=a.lr_rec, task=a.task) for s in a.seeds]
         agg = {}
         for k in per_seed[0]:
             agg[k] = float(np.mean([r[k] for r in per_seed]))

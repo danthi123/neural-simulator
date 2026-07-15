@@ -24,6 +24,40 @@ The single-cue COPY task is solved by the ALIF **adaptation state directly** (th
 
 The task must REQUIRE recurrent computation a memory-timescale nudge cannot fake: the answer must be a **nonlinear function of temporally-separated cues** that the learned recurrence MUST compute — e.g. **delayed-XOR** (STORE x1 … x2 … RECALL → x1⊕x2) or **evidence-accumulation** (multiple weak cues → majority). On such a task the fixed reservoir cannot solve it by holding (no single value to hold), so genuine plastic learning (if it works) yields the true signature: **plastic > fixed AND symmetric ≥ plastic AND sign_flip collapses AND cue_scramble collapses**. This is Bellec's actual store-recall/evidence-accumulation regime (which e-prop+ALIF solves) — vs the copy task, which the ALIF alone solves. Build the XOR/accumulation task mode into the runner + re-run the arms.
 
-## Bottom line
+## The recurrent-computation (XOR / modular-sum) task — TESTED: a genuine e-prop limitation, NOT under-training
 
-The controlled-lag de-risk is built + its eligibility is grad-check-validated + its anti-cheats are proven (they caught the memory-timescale artifact on a controlled copy task, confirming the WikiText refutation's lesson). The honest finding: **plastic e-prop's apparent horizon-extension on a single-cue copy task is a memory-timescale artifact, not genuine credit-driven learning** — the discriminator must require recurrent computation (delayed-XOR / evidence-accumulation), the pinned next step on this genuinely-hard frontier (the field: long-range from a local rule is partially-solved at seconds-scale, open at LRA scale).
+Added the `xor` task mode: `[STORE, x1, f_1..f_T, x2, RECALL, y]` with y=(x1+x2) mod K — the answer is a NONLINEAR
+function of TWO temporally-separated cues (a linear read-out over [held-x1, recent-x2] provably cannot compute it), so
+the learned RECURRENCE must combine them and a memory-nudge cannot fake it. Result (seed 42, K=4, chance 0.25):
+
+- **T=2/T=5, n=100:** fixed ≈ plastic ≈ symmetric ≈ sign_flip ≈ 0.33 — ALL arms flat, barely above chance. No learning
+  signal; W_rec learning does nothing useful; the true-gradient (symmetric) does NOT beat fixed.
+- **Under-training RULED OUT (n=200, epochs=50):** fixed=0.270 ≈ plastic=0.260 ≈ symmetric=0.265 ≈ chance — MORE
+  scale/epochs does NOT learn it, and the TRUE-GRADIENT direction is still at chance.
+
+⇒ **the modular-sum recurrent computation is NOT learnable here, and it is NOT under-training** — even the true
+spatial-gradient direction (symmetric e-prop) is at chance. This is the genuine limitation the deep-research gate
+flagged from Bellec-2020 + Marschall-Savin: **e-prop is a pure DIAGONAL approximation of RTRL that zeroes the
+off-diagonal cross-neuron influence — exactly the credit needed to COMBINE two temporally-separated cues.** The ALIF
+long-memory is validated for HOLDING a cue (the copy task) but does not supply the cross-neuron credit for COMBINING
+cues. (Consistent with the field: long-range/compositional recurrent learning from a local/transport-free rule is
+genuinely open at LRA scale; SnAp keeps a rank-reduced non-diagonal approximation, FPTT+LTC reaches ~784 steps but is
+not transport-free — the gate's ranked ceilings.)
+
+## Bottom line (comprehensive)
+
+The controlled-lag de-risk is BUILT + grad-check-validated, and it COMPREHENSIVELY characterizes the emergence-engine
+recurrent-language-cortex frontier's core difficulty on this substrate: the biological local rule (transport-free
+e-prop + ALIF) learns **NEITHER** (a) a genuine single-cue HOLD — the copy task is solved by the ALIF adaptation and
+plastic e-prop is only a memory-timescale ARTIFACT (the anti-cheats caught it: symmetric hurts, sign_flip doesn't
+collapse), **NOR** (b) a genuine cross-cue RECURRENT COMPUTATION — the XOR/modular-sum is a flat null even with the
+true-gradient direction and more scale (e-prop's diagonal-RTRL truncation drops the cross-neuron credit). The
+anti-cheats + the under-training tiebreaker make this a clean, honest characterization, not a tuning miss.
+
+**Pinned next mechanisms (research-gated, cheapest-first):** (1) a LESS-TRUNCATED credit rule that keeps some
+off-diagonal cross-neuron eligibility (SnAp-1 / rank-reduced RTRL, Marschall-Savin taxonomy) — the minimal step past
+the diagonal limitation; (2) evidence-ACCUMULATION (Bellec's own validated e-prop+ALIF task — integration, not
+cross-cue combination) as a positive-control ceiling to confirm the substrate learns SOME recurrent function; (3)
+FPTT+LTC as the field's best BPTT-free long-range reference (not transport-free — a ceiling, not a biological rule).
+The honest field state stands: long-range/compositional recurrent learning from a purely biological local rule is a
+genuine open frontier.
