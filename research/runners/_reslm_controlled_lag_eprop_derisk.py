@@ -252,6 +252,89 @@ def language_2stage_test(seed, corpus=None, n_sentences=6000, V=300, n_pool=200,
             "adapt_win_hi": adapt_win_hi, "beta": beta}
 
 
+def language_input_repr_gate(seed, corpus=None, n_sentences=1500, V=200, m_embed=48, n_pool=200,
+                             n_hidden=128, epochs=8, lr=0.02):
+    """THE CHEAP-FIRST RATE GATE for the pinned spiking W_in build (a-1 2026-07-15): the reservoir-LM long-range
+    bottleneck CONVERGED on the INPUT REPRESENTATION (R3-REFRAME: a learned input embedding beats full BPTT). The
+    SUPERVISED fix (learn W_in via deep credit) is the R3/BDSP path; the MISSION prefers the EMERGENT/unsupervised one.
+    This gate asks the single-variable question at a spiking-tractable operating point: does an UNSUPERVISED
+    co-occurrence-STRUCTURED W_in (each token's input column = a distributional embedding developed from the corpus,
+    on the emergence bar) beat the RANDOM/one-hot W_in on real-language next-token CE? Everything else (reservoir W_rec,
+    read-out, task, seeds) IDENTICAL -> the ONLY variable is the input representation. If struct beats random ->
+    an emergent input representation gives the reservoir-LM headroom (the cheaper path, may sidestep supervised BDSP);
+    if it does not -> the supervised R3 W_in learning is warranted. numpy CPU."""
+    from research.runners._emerge_reservoir_lm_derisk import Vocab, _split_sentences, fit_bigram
+    if corpus:
+        from research.runners._emerge_reservoir_lm_realcorpus_derisk import load_sentences
+        sents = load_sentences(corpus, n_sentences)
+    else:
+        import research.runners._emerge62_discover_function_words_derisk as m62
+        sents = _split_sentences(m62.build_stream(seed, n_sentences=n_sentences))
+    vocab = Vocab.build(sents, V)
+    ids_sents = [np.asarray([vocab.id(w) for w in s], dtype=np.int64) for s in sents]
+    ids_sents = [s for s in ids_sents if len(s) >= 2]
+    ntr = int(0.8 * len(ids_sents)); tr, ev = ids_sents[:ntr], ids_sents[ntr:]
+    Veff = vocab.size
+
+    # --- EMERGENT input embedding: adjacent-co-occurrence PPMI -> SVD (developed from the TRAIN corpus only) ---
+    C = np.zeros((Veff, Veff), np.float64)
+    for ids in tr:
+        for t in range(len(ids) - 1):
+            a, b = int(ids[t]), int(ids[t + 1]); C[a, b] += 1.0; C[b, a] += 1.0
+    tot = C.sum() + 1e-9; pa = C.sum(1) / tot
+    with np.errstate(divide="ignore", invalid="ignore"):
+        ppmi = np.log((C / tot) / (np.outer(pa, pa) + 1e-12) + 1e-12)
+    ppmi = np.maximum(0.0, ppmi)
+    U, S, _ = np.linalg.svd(ppmi, full_matrices=False)
+    E = U[:, :m_embed] * np.sqrt(S[:m_embed] + 1e-9)          # (V x m) distributional embedding
+
+    def build_res(win_override=None):
+        r = RateReservoir(Veff, n_pool, seed=seed, alpha=0.3, spectral=1.1, alif=True, beta=1.0)
+        if win_override is not None:
+            r.W_in = win_override
+        return r
+
+    rng = np.random.default_rng(seed)
+    # structured W_in (n x V): a FIXED random projection of the emergent embedding -> similar tokens get similar input
+    # columns. Scaled to the SAME std as the reservoir's random W_in so the ONLY difference is the STRUCTURE.
+    res_rand = build_res()
+    R = rng.standard_normal((n_pool, m_embed))
+    win_struct = R @ E.T                                       # (n x V)
+    win_struct *= (np.std(res_rand.W_in) / (np.std(win_struct) + 1e-12))
+    res_struct = build_res(win_struct)
+
+    def pairs(res, sset):
+        X, Y = [], []
+        for ids in sset:
+            Sf = res.forward_states(ids)
+            for t in range(len(ids) - 1):
+                X.append(Sf[t]); Y.append(int(ids[t + 1]))
+        return np.array(X), np.array(Y)
+
+    def two_stage_ce(res):
+        Xtr, Ytr = pairs(res, tr); Xev, Yev = pairs(res, ev)
+        d = Xtr.shape[1]; r2 = np.random.default_rng(seed + 1)
+        W1 = r2.standard_normal((n_hidden, d)) * 0.1; W2 = r2.standard_normal((Veff, n_hidden)) * 0.1
+        for ep in range(epochs):
+            for i in r2.permutation(len(Xtr)):
+                hh = np.tanh(W1 @ Xtr[i]); p = _softmax(W2 @ hh); g = -p; g[Ytr[i]] += 1.0
+                W2 += lr * np.outer(g, hh); W1 += lr * np.outer((W2.T @ g) * (1 - hh * hh), Xtr[i])
+        ce = 0.0
+        for x, y in zip(Xev, Yev):
+            p = _softmax(W2 @ np.tanh(W1 @ x)); ce += -np.log(p[y] + 1e-12)
+        return ce / len(Xev)
+
+    rand_ce = two_stage_ce(res_rand)
+    struct_ce = two_stage_ce(res_struct)
+    P_bi = fit_bigram(tr, Veff); bi_ce = 0.0
+    for ids in ev:
+        for t in range(len(ids) - 1):
+            bi_ce += -np.log(P_bi[int(ids[t]), int(ids[t + 1])] + 1e-12)
+    bi_ce /= max(1, sum(len(s) - 1 for s in ev))
+    return {"V": Veff, "m_embed": m_embed, "rand_win_ce": rand_ce, "struct_win_ce": struct_ce,
+            "bigram_ce": bi_ce, "struct_minus_rand": struct_ce - rand_ce}
+
+
 def train_recall_nl(res, trials, V, epochs, lr_out, lr_rec, seed, arm, n_hidden=64, wd=1e-3):
     """e-prop W_rec + a 2-layer NONLINEAR read-out (feat->hidden tanh->softmax), read-out by backprop. Removes the
     linear-readout confound so the HORIZON-EXTENSION question is clean: does training W_rec (plastic) EXTEND the
@@ -388,6 +471,8 @@ def main():
     ap.add_argument("--nonlinear-readout", action="store_true", help="DECISIVE: does a 2-layer read-out on the FIXED reservoir solve the task? (reframes XOR null as readout-vs-recurrent-credit)")
     ap.add_argument("--horizon-test", action="store_true", help="does PLASTIC recurrent e-prop EXTEND the fixed reservoir's horizon (with a nonlinear read-out removing the linear confound)?")
     ap.add_argument("--language-test", action="store_true", help="MISSION: does a 2-STAGE read-out beat a LINEAR one on the real EMERGE SVO language stream?")
+    ap.add_argument("--input-repr-gate", action="store_true", help="CHEAP-FIRST RATE GATE: does an EMERGENT co-occurrence-structured W_in beat the random/one-hot W_in on real-language next-token CE (the input-representation lever)?")
+    ap.add_argument("--m-embed", type=int, default=48, help="emergent-embedding SVD dim for the input-repr gate")
     ap.add_argument("--corpus", default=None, help="natural-corpus path (e.g. data/corpus/wikitext.txt) for the language test; None=templated EMERGE SVO stream")
     ap.add_argument("--n-sentences", type=int, default=6000)
     ap.add_argument("--language-vocab", type=int, default=300, help="vocab cap for the language test (scale lever)")
@@ -399,6 +484,19 @@ def main():
     if a.grad_check:
         gc = grad_check_alif()
         print(f"[grad_check_alif] {gc}", flush=True)
+    if a.input_repr_gate:
+        rs = [language_input_repr_gate(s, corpus=a.corpus, n_sentences=a.n_sentences, V=a.language_vocab,
+                                       m_embed=a.m_embed, n_pool=a.n_pool, epochs=a.epochs) for s in a.seeds]
+        agg = {k: float(np.mean([r[k] for r in rs])) for k in rs[0]}
+        beats = agg["struct_win_ce"] < agg["rand_win_ce"] - 0.03
+        vs_bi = agg["struct_win_ce"] < agg["bigram_ce"] - 0.03
+        verdict = ("EMERGENT input-representation HEADROOM: struct W_in beats random"
+                   + (" AND the bigram" if vs_bi else " (but not the bigram)") if beats
+                   else "NO emergent input-representation headroom (struct ~ random) -> supervised R3 W_in warranted")
+        print(f"[input-repr-gate] V={agg['V']:.0f} m={agg['m_embed']:.0f} | rand_win_ce={agg['rand_win_ce']:.3f} "
+              f"struct_win_ce={agg['struct_win_ce']:.3f} bigram_ce={agg['bigram_ce']:.3f} "
+              f"struct-rand={agg['struct_minus_rand']:+.3f} -> {verdict}", flush=True)
+        return
     if a.language_test:
         rs = [language_2stage_test(s, corpus=a.corpus, n_sentences=a.n_sentences, V=a.language_vocab, n_pool=a.n_pool, epochs=a.epochs, adapt_win_hi=a.adapt_win_hi, beta=a.beta) for s in a.seeds]
         agg = {k: float(np.mean([r[k] for r in rs])) for k in rs[0]}
