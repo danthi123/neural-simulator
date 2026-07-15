@@ -209,3 +209,9 @@ These decide what counts as real progress. Anything that breaks them is a tempor
 ## Appendix — how this roadmap is maintained
 
 Kept current as a standing part of the workflow: whenever an experiment lands a result, surpasses a boundary, or removes a stand-in, the relevant stage above is updated in the same work cycle (status badge, the done/open notes, the next step, the citation). Periodically a deeper re-sync reads the source material in depth — the biological-mechanism catalog, the *Principles of Neural Science* textbook, and the experiment write-ups in `research/findings/` — to re-verify the biology map and the honest frontier. This file, not any single experiment write-up, is the intended at-a-glance source of truth for tracking progress toward the goal.
+
+---
+
+## 10. The months-scale plan (the forward-looking sequence)
+
+This roadmap is the STATUS surface. The forward-looking **plan** — the two-gap framing (unification + scale/data), the ordered shortcut burn-down with "unblocks", the unification critical path (★ next edge = unite the content-store + RUNG6d STP binder), the three decision gates (invest-day+-wallclock / convert-generator / spend-cloud, with the 2026-07-15 broadened compute policy), and the honest distance (one-brain-all-spiking ~2-4 months; bounded grounded-conversation milestone ~3-5 months; open-ended fluency = a field-wide wall) — lives in **`docs/plans/2026-07-15-months-scale-plan-to-one-brain-and-small-llm-conversation.md`**. Synthesized 2026-07-15 from a 4-lens strategic audit; supersedes the stale `2026-06-08-brain-fidelity-roadmap.md` + `2026-06-23-inventory-burndown-roadmap.md`.
