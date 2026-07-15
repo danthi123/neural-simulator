@@ -367,17 +367,22 @@ def language_input_repr_gate(seed, corpus=None, n_sentences=1500, V=200, m_embed
             "struct_minus_perm": struct_ce - perm_ce, "struct_minus_embed": struct_ce - embed_ce}
 
 
-def train_recall_nl(res, trials, V, epochs, lr_out, lr_rec, seed, arm, n_hidden=64, wd=1e-3):
+def train_recall_nl(res, trials, V, epochs, lr_out, lr_rec, seed, arm, n_hidden=64, wd=1e-3, opt="sgd"):
     """e-prop W_rec + a 2-layer NONLINEAR read-out (feat->hidden tanh->softmax), read-out by backprop. Removes the
     linear-readout confound so the HORIZON-EXTENSION question is clean: does training W_rec (plastic) EXTEND the
     fixed reservoir's distal-cue preservation horizon vs a fixed reservoir (both with the nonlinear read-out)?
-    arm in {fixed, plastic, symmetric, sign_flip}. Returns (W1, W2)."""
+    arm in {fixed, plastic, symmetric, sign_flip}. opt in {sgd, adam} -- Adam = the "Temporal Credit Is Free"
+    RECALIBRATION lever (per-parameter gradient normalization; the claim: recurrent-e-prop failures are gradient-scale
+    calibration, not missing info). Returns (W1, W2)."""
     rng = np.random.default_rng(seed * 13 + 7)
     n = res.n; a = res.alpha; rho = res.rho; beta = res.beta
     W1 = rng.standard_normal((n_hidden, 2 * n)) * 0.1
     W2 = rng.standard_normal((V, n_hidden)) * 0.1
     B = rng.standard_normal((2 * n, V)) / np.sqrt(V)   # random feedback to feat (e-prop W_rec signal)
     frozen = (arm == "fixed")
+    # Adam state for W_rec (the recalibration): per-parameter 1st/2nd moment
+    m_rec = np.zeros_like(res.W_rec); v_rec = np.zeros_like(res.W_rec); adam_t = 0
+    b1, b2, adam_eps = 0.9, 0.999, 1e-8
     order = np.arange(len(trials))
     for ep in range(epochs):
         rng.shuffle(order)
@@ -409,7 +414,15 @@ def train_recall_nl(res, trials, V, epochs, lr_out, lr_rec, seed, arm, n_hidden=
                 L = (W1.T @ dhh) if arm == "symmetric" else (B @ delta)  # true-grad-to-feat vs random FA
                 if arm == "sign_flip":
                     L = -L
-                res.W_rec += lr_rec * (L[:n][:, None] * eps_h + L[n:][:, None] * eps_a)
+                g_rec = L[:n][:, None] * eps_h + L[n:][:, None] * eps_a   # the e-prop W_rec gradient estimate
+                if opt == "adam":                                         # RECALIBRATION: per-parameter normalization
+                    adam_t += 1
+                    m_rec = b1 * m_rec + (1 - b1) * g_rec
+                    v_rec = b2 * v_rec + (1 - b2) * (g_rec * g_rec)
+                    mhat = m_rec / (1 - b1 ** adam_t); vhat = v_rec / (1 - b2 ** adam_t)
+                    res.W_rec += lr_rec * mhat / (np.sqrt(vhat) + adam_eps)
+                else:
+                    res.W_rec += lr_rec * g_rec
     return W1, W2
 
 
@@ -466,6 +479,40 @@ def nonlinear_readout_test(seed, task="xor", K=4, F=6, T=5, n_train=400, n_eval=
     return acc, 1.0 / K
 
 
+def stage0_recalibration_test(seed, K=4, F=6, T=30, n_train=600, n_eval=300, n_pool=120, epochs=60,
+                              lr_out=0.02, lr_rec_sgd=0.0005, lr_rec_adam=0.001, awin_hi_list=(300.0, 1000.0, 3000.0)):
+    """STAGE 0 of the 2026-07-15 deep-credit gate: does ADAM RECALIBRATION (per-parameter gradient normalization) of the
+    EXISTING recurrent e-prop close the HORIZON-EXTENSION gap on the delayed-cue XOR at lag T (where the FIXED reservoir
+    + a nonlinear read-out is at chance)? Per "Temporal Credit Is Free" the recurrent-e-prop failure may be gradient-SCALE
+    calibration (decay too slow + gradients too small for plain SGD), NOT missing info -> if recalibration closes it, the
+    open recurrent-credit residual dissolves for free (no new mechanism class / MDGL needed). Sweeps trace-decay
+    (ALIF adapt_win_hi). Arms: fixed (baseline ~chance), plastic_sgd (the REFUTED arm), plastic_adam (THE recalibration),
+    symmetric_adam (e-prop true-readout-feedback reference), sign_flip_adam (ANTI-CHEAT: flipping the credit sign must HURT)."""
+    V = K + 2 + F
+    tr, tr_rp, tr_tg = make_xor_task(K, F, T, n_train, seed * 100 + 1)
+    ev, ev_rp, ev_tg = make_xor_task(K, F, T, n_eval, seed * 100 + 2)
+
+    def build(awin):
+        return RateReservoir(V, n_pool, seed=seed, alpha=0.3, spectral=1.1, alif=True, beta=1.0, adapt_win_hi=awin)
+
+    def run(awin, arm, lr_rec, opt):
+        r = build(awin)
+        W1, W2 = train_recall_nl(r, tr, V, epochs, lr_out, lr_rec, seed, arm, n_hidden=64, opt=opt)
+        return eval_recall_nl(r, W1, W2, ev, ev_rp, ev_tg)
+
+    results = {}
+    for awin in awin_hi_list:
+        results[f"awin{int(awin)}"] = {
+            "fixed": run(awin, "fixed", 0.0, "sgd"),
+            "plastic_sgd": run(awin, "plastic", lr_rec_sgd, "sgd"),
+            "plastic_adam": run(awin, "plastic", lr_rec_adam, "adam"),
+            "symmetric_adam": run(awin, "symmetric", lr_rec_adam, "adam"),
+            "sign_flip_adam": run(awin, "sign_flip", lr_rec_adam, "adam"),
+            "chance": 1.0 / K,
+        }
+    return results
+
+
 def run_one(seed, K=6, F=6, T=10, n_train=400, n_eval=200, n_pool=220, epochs=25,
             lr_out=0.02, lr_rec=0.01, beta=1.0, awin_lo=30.0, awin_hi=300.0, task="copy",
             arms=("fixed", "plastic", "symmetric", "sign_flip", "zero_signal", "shuffle_elig")):
@@ -503,6 +550,8 @@ def main():
     ap.add_argument("--nonlinear-readout", action="store_true", help="DECISIVE: does a 2-layer read-out on the FIXED reservoir solve the task? (reframes XOR null as readout-vs-recurrent-credit)")
     ap.add_argument("--horizon-test", action="store_true", help="does PLASTIC recurrent e-prop EXTEND the fixed reservoir's horizon (with a nonlinear read-out removing the linear confound)?")
     ap.add_argument("--language-test", action="store_true", help="MISSION: does a 2-STAGE read-out beat a LINEAR one on the real EMERGE SVO language stream?")
+    ap.add_argument("--stage0", action="store_true", help="DEEP-CREDIT GATE Stage 0: does ADAM recalibration of the recurrent e-prop close the horizon-extension gap on the delayed-cue XOR (Temporal-Credit-Is-Free calibration hypothesis)?")
+    ap.add_argument("--lag", type=int, default=30, help="delayed-cue lag T for --stage0 (beyond the fixed-reservoir horizon)")
     ap.add_argument("--input-repr-gate", action="store_true", help="CHEAP-FIRST RATE GATE: does an EMERGENT co-occurrence-structured W_in beat the random/one-hot W_in on real-language next-token CE (the input-representation lever)?")
     ap.add_argument("--m-embed", type=int, default=48, help="emergent-embedding SVD dim for the input-repr gate")
     ap.add_argument("--corpus", default=None, help="natural-corpus path (e.g. data/corpus/wikitext.txt) for the language test; None=templated EMERGE SVO stream")
@@ -516,6 +565,23 @@ def main():
     if a.grad_check:
         gc = grad_check_alif()
         print(f"[grad_check_alif] {gc}", flush=True)
+    if a.stage0:
+        import statistics as _st
+        allr = [stage0_recalibration_test(s, T=a.lag) for s in a.seeds]
+        for aw in allr[0]:
+            def m(arm): return _st.mean([r[aw][arm] for r in allr])
+            print(f"[stage0 T={a.lag} {aw}] fixed={m('fixed'):.3f} plastic_sgd={m('plastic_sgd'):.3f} "
+                  f"plastic_ADAM={m('plastic_adam'):.3f} symmetric_adam={m('symmetric_adam'):.3f} "
+                  f"sign_flip_adam={m('sign_flip_adam'):.3f} chance={allr[0][aw]['chance']:.3f}", flush=True)
+        # verdict on the best trace-decay
+        best_aw = max(allr[0], key=lambda aw: _st.mean([r[aw]['plastic_adam'] for r in allr]))
+        pa = _st.mean([r[best_aw]['plastic_adam'] for r in allr]); fx = _st.mean([r[best_aw]['fixed'] for r in allr])
+        ps = _st.mean([r[best_aw]['plastic_sgd'] for r in allr]); sf = _st.mean([r[best_aw]['sign_flip_adam'] for r in allr])
+        recal_helps = pa > fx + 0.05 and pa > ps + 0.05
+        anti = sf < pa - 0.05
+        verdict = ("RECALIBRATION HELPS: Adam lifts recurrent e-prop above fixed+sgd" + (" AND sign-flip HURTS (credit load-bearing) -> the recurrent-credit residual may dissolve via calibration, no new class needed" if anti else " BUT sign-flip does not collapse -> memory-timescale artifact (not credit)")) if recal_helps else "recalibration does NOT lift above the fixed baseline -> the gap is NOT gradient-scale calibration; Stage 1 (MDGL off-diagonal) is warranted"
+        print(f"[stage0 VERDICT best={best_aw}] plastic_adam={pa:.3f} vs fixed={fx:.3f} sgd={ps:.3f} sign_flip={sf:.3f} -> {verdict}", flush=True)
+        return
     if a.input_repr_gate:
         rs = [language_input_repr_gate(s, corpus=a.corpus, n_sentences=a.n_sentences, V=a.language_vocab,
                                        m_embed=a.m_embed, n_pool=a.n_pool, epochs=a.epochs) for s in a.seeds]
