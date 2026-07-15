@@ -650,13 +650,16 @@ def main():
     ap.add_argument("--script", default=None, help="'|'-separated turns to run then exit")
     ap.add_argument("--persist", default=None, help="path to a state file: LOAD grown facts on start, SAVE on exit "
                                                     "(the brain REMEMBERS what it learned across sessions, Phase-17)")
+    ap.add_argument("--open-vocab-dispatch", action="store_true",
+                    help="LEARNED PPMI-semantic discourse routing (a novel synonym 'versus'/'alike'/'lineage' routes by "
+                         "meaning; default off = the verbatim keyword-set routing)")
     ap.add_argument("--out", default=str(OUT))
     a = ap.parse_args()
     if not os.path.exists(FT_CKPT):
         print(f"NOT-RUNNABLE: fine-tuned ckpt absent ({FT_CKPT})"); return 2
     t0 = time.time()
     try:
-        chat = FluidChat(seed=a.seed)
+        chat = FluidChat(seed=a.seed, open_vocab_dispatch=a.open_vocab_dispatch)
         if a.persist:
             n = chat.load_state(a.persist)
             if n:
