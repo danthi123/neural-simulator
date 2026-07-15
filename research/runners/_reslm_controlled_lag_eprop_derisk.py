@@ -170,6 +170,77 @@ def ngram_recall_acc(K, F, T, tr_trials, tr_targets, ev_trials, ev_recall, ev_ta
     return correct / max(1, len(ev_trials))
 
 
+def train_recall_nl(res, trials, V, epochs, lr_out, lr_rec, seed, arm, n_hidden=64, wd=1e-3):
+    """e-prop W_rec + a 2-layer NONLINEAR read-out (feat->hidden tanh->softmax), read-out by backprop. Removes the
+    linear-readout confound so the HORIZON-EXTENSION question is clean: does training W_rec (plastic) EXTEND the
+    fixed reservoir's distal-cue preservation horizon vs a fixed reservoir (both with the nonlinear read-out)?
+    arm in {fixed, plastic, symmetric, sign_flip}. Returns (W1, W2)."""
+    rng = np.random.default_rng(seed * 13 + 7)
+    n = res.n; a = res.alpha; rho = res.rho; beta = res.beta
+    W1 = rng.standard_normal((n_hidden, 2 * n)) * 0.1
+    W2 = rng.standard_normal((V, n_hidden)) * 0.1
+    B = rng.standard_normal((2 * n, V)) / np.sqrt(V)   # random feedback to feat (e-prop W_rec signal)
+    frozen = (arm == "fixed")
+    order = np.arange(len(trials))
+    for ep in range(epochs):
+        rng.shuffle(order)
+        for si in order:
+            ids = trials[si]
+            if len(ids) < 2:
+                continue
+            h = np.zeros(n); ad = np.zeros(n)
+            eps_h = np.zeros((n, n)); eps_a = np.zeros((n, n))
+            for t in range(len(ids) - 1):
+                h_prev = h
+                ad = rho * ad + (1.0 - rho) * h_prev
+                x = res.W_in[:, ids[t]]
+                pre = res.W_rec @ h_prev + x + res.b - beta * ad
+                act = np.tanh(pre)
+                h = (1 - a) * h_prev + a * act
+                feat = np.concatenate([h, ad])
+                hh = np.tanh(W1 @ feat)
+                z = W2 @ hh; z -= z.max(); e = np.exp(z); p = e / e.sum()
+                delta = -p; delta[ids[t + 1]] += 1.0
+                W2 += lr_out * (np.outer(delta, hh) - wd * W2)          # read-out backprop
+                dhh = (W2.T @ delta) * (1.0 - hh * hh)
+                W1 += lr_out * (np.outer(dhh, feat) - wd * W1)
+                if frozen:
+                    continue
+                psi = a * (1.0 - act * act)
+                eps_a = rho[:, None] * eps_a + (1.0 - rho)[:, None] * eps_h
+                eps_h = (1 - a)[:, None] * eps_h + psi[:, None] * (h_prev[None, :] - beta * eps_a)
+                L = (W1.T @ dhh) if arm == "symmetric" else (B @ delta)  # true-grad-to-feat vs random FA
+                if arm == "sign_flip":
+                    L = -L
+                res.W_rec += lr_rec * (L[:n][:, None] * eps_h + L[n:][:, None] * eps_a)
+    return W1, W2
+
+
+def eval_recall_nl(res, W1, W2, trials, recall_pos, targets):
+    correct = 0
+    for si, ids in enumerate(trials):
+        feat = res.forward_states(ids)[recall_pos[si]]
+        correct += int(np.argmax(W2 @ np.tanh(W1 @ feat)) == targets[si])
+    return correct / max(1, len(trials))
+
+
+def horizon_ext_test(seed, task="xor", K=4, F=6, T=20, n_train=400, n_eval=200, n_pool=100, epochs=25,
+                     lr_out=0.02, lr_rec=0.0005, n_hidden=64):
+    """Does PLASTIC recurrent e-prop EXTEND the fixed reservoir's horizon (with the nonlinear read-out removing the
+    linear confound)? Returns {fixed, plastic, symmetric, sign_flip} recall accuracy at lag T."""
+    V = K + 2 + F
+    gen = {"xor": make_xor_task, "accum": make_accum_task}.get(task, make_recall_task)
+    tr, tr_rp, tr_tg = gen(K, F, T, n_train, seed * 100 + 1)
+    ev, ev_rp, ev_tg = gen(K, F, T, n_eval, seed * 100 + 2)
+    out = {}
+    for arm in ("fixed", "plastic", "symmetric", "sign_flip"):
+        res = RateReservoir(V, n_pool, seed=seed, alpha=0.3, spectral=1.1, alif=True, beta=1.0)
+        W1, W2 = train_recall_nl(res, tr, V, epochs, lr_out, lr_rec, seed, arm, n_hidden=n_hidden)
+        out[arm] = eval_recall_nl(res, W1, W2, ev, ev_rp, ev_tg)
+    out["chance"] = 1.0 / K
+    return out
+
+
 def nonlinear_readout_test(seed, task="xor", K=4, F=6, T=5, n_train=400, n_eval=200, n_pool=100,
                            epochs=150, n_hidden=64, lr=0.05):
     """DECISIVE reframe test: does a NONLINEAR (2-layer MLP) read-out on the FIXED reservoir already solve the task? If
@@ -233,6 +304,7 @@ def main():
     ap.add_argument("--task", default="copy", choices=["copy", "xor", "accum"], help="copy=single-cue hold (ALIF solves it); xor=delayed modular-sum of TWO cues; accum=evidence-accumulation majority (Bellec's validated e-prop+ALIF positive control)")
     ap.add_argument("--grad-check", action="store_true", help="assert the ALIF 2-component eligibility matches finite differences")
     ap.add_argument("--nonlinear-readout", action="store_true", help="DECISIVE: does a 2-layer read-out on the FIXED reservoir solve the task? (reframes XOR null as readout-vs-recurrent-credit)")
+    ap.add_argument("--horizon-test", action="store_true", help="does PLASTIC recurrent e-prop EXTEND the fixed reservoir's horizon (with a nonlinear read-out removing the linear confound)?")
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
     t0 = time.time()
@@ -249,6 +321,19 @@ def main():
                        "features/recurrent-computation are genuinely missing)")
             print(f"[nonlinear-readout] task={a.task} T={T} fixed-reservoir + 2-layer MLP acc={acc:.3f} "
                   f"(chance={chance:.3f}) -> {verdict}", flush=True)
+        return
+    if a.horizon_test:
+        for T in a.T:
+            rs = [horizon_ext_test(s, task=a.task, K=a.K, T=T, n_pool=a.n_pool, epochs=a.epochs, lr_rec=a.lr_rec) for s in a.seeds]
+            agg = {k: float(np.mean([r[k] for r in rs])) for k in rs[0]}
+            ext = agg["plastic"] - agg["fixed"]
+            verdict = ("EXTENDS (plastic>fixed AND symmetric>=plastic AND sign_flip collapses)"
+                       if (ext > 0.08 and agg["symmetric"] >= agg["plastic"] - 0.05
+                           and agg["sign_flip"] <= agg["fixed"] + 0.05)
+                       else "does NOT genuinely extend (or fails an anti-cheat)")
+            print(f"[horizon-test] task={a.task} T={T} chance={agg['chance']:.3f} | fixed={agg['fixed']:.3f} "
+                  f"plastic={agg['plastic']:.3f} symmetric={agg['symmetric']:.3f} sign_flip={agg['sign_flip']:.3f} "
+                  f"-> {verdict}", flush=True)
         return
     results = {}
     for T in a.T:

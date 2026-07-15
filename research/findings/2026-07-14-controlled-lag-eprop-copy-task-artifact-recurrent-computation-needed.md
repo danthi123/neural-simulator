@@ -110,6 +110,38 @@ only the XOR *interpretation* is corrected.
 **Pinned next (corrected):** (1) the horizon-extension test — plastic recurrent e-prop + a NONLINEAR read-out at
 T=15-30 (does learning extend the fixed ALIF's ~15-token preservation horizon?); (2) a harder task where the fixed
 reservoir does NOT already supply the features (learned OUTPUT-GATING); (3) accept the ALIF-horizon as the substrate's
-memory limit and scale the adaptation windows. The honest field state stands: long-range recurrent MEMORY from a
-biological local rule is the genuine open frontier — now precisely characterized (readout vs recurrent-memory
-disentangled) on a positive-control-validated harness.
+memory limit and scale the adaptation windows.
+
+## GATE CONFIRMATION + the horizon test (2026-07-14, closing the loop)
+
+A second deep-research gate (Menick et al. 2021 SnAp, primary source read in full) CONFIRMS the correction and closes
+the mechanism question:
+- **SnAp-1 is "effectively diagonal"** (Menick §3.1, Eq. 3) — it adds NO off-diagonal cross-neuron credit (the pinned
+  "SnAp-1 = less-truncated" premise was FALSE; SnAp-1 = e-prop + one autapse diagonal term, still O(n²), still can't
+  learn a cross-cue combination). The genuine off-diagonal mechanism is SnAp-2, but **dense SnAp-2 = full RTRL** (O(n⁴)
+  compute / O(n³) memory — ~hours-to-a-day at n=220 on numpy; feasible only at n≤64 or ≥90% sparse).
+- **Option (c) confirmed as THE fix (independently):** the gate predicts — and the nonlinear-readout test already
+  showed — the XOR null is a LINEAR-READOUT limitation (both cues are linearly present in [h,a]; a linear softmax
+  can't form the product x1⊗x2; a 2-layer read-out supplies exactly that missing multiplication). `symmetric≈fixed` is
+  the decisive tell that recurrent-credit QUALITY is not the limit. **The biologically-innocuous fix is a 2-STAGE
+  cortical READ-OUT (which real cortex has)** — NOT SnAp/RTRL, which is a dead-end for this task.
+- **The horizon-extension test** (`--horizon-test`, plastic e-prop + a jointly-trained 2-layer read-out) came back
+  all-chance — but that is a READ-OUT UNDER-TRAINING confound (25 joint epochs vs the 150 the standalone MLP needed to
+  reach 0.68 at T=15), so it is uninterpretable, NOT a genuine null. The gate + the `symmetric≈fixed` evidence + the
+  copy-task degradation together indicate recurrent-credit learning is not load-bearing; the horizon is set by the
+  ALIF MEMORY WINDOW (a substrate parameter), extendable via the adaptation timescale, not via the recurrent rule.
+
+## Comprehensive, gate-confirmed conclusion
+
+On this leaky-tanh + ALIF reservoir substrate, the FIXED reservoir + a **2-stage (nonlinear) read-out** handles HOLD
+(copy), INTEGRATE (accum), and nonlinear COMBINE (XOR) up to the ALIF **preservation horizon** (~5-15 tokens); beyond
+it the distal cue is lost (a memory-window limit). **Transport-free recurrent W_rec learning (e-prop / SnAp-1) is NOT
+demonstrably load-bearing** for any of these — the linear tasks are native to the reservoir, the nonlinear one is a
+read-out (not recurrent-credit) limitation, and the diagonal local family can't add cross-neuron combination credit
+regardless. The genuine open frontier reduces to: (a) a 2-stage cortical read-out for nonlinear combination (cheap,
+biologically innocuous — the identified fix); (b) extending the memory HORIZON via the ALIF/adaptation timescale or a
+richer substrate; (c) SnAp-2/RTRL only if a task genuinely needs a recurrence-built product AND the read-out can't
+supply it (O(n⁴), expensive, unproven for this task). The whole arc — build → grad-check → copy-artifact → accum
+positive-control → XOR → self-caught readout reframe → two gates — is a clean, honest, positive-control-validated
+characterization of exactly where a biological local rule can and cannot learn recurrent structure. NO `sim/` edit
+anywhere; numpy CPU.
