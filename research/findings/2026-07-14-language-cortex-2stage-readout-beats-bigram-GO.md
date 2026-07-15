@@ -1,6 +1,6 @@
 # The recurrent language cortex's "bigram-level" ceiling was a LINEAR-READOUT limitation — a 2-STAGE cortical read-out BEATS the bigram (anti-cheat-verified), the cheap biological fix the controlled-lag de-risk identified
 
-**Date:** 2026-07-14 · **Status:** GENUINE (permuted-corpus anti-cheat collapses), 2-seed verified + 6-seed confirming. numpy CPU; NO `sim/` edit.
+**Date:** 2026-07-14 · **Status:** GENUINE (permuted-corpus anti-cheat collapses), **6-seed confirmed** (42/43/44/100/101/102: 2-stage CE 2.174 vs bigram 2.962 vs linear 3.192, perm 3.175 — consistent with the 2-seed). numpy CPU; NO `sim/` edit.
 
 ## The chain that led here
 
