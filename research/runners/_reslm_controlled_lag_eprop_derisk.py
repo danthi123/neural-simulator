@@ -170,6 +170,72 @@ def ngram_recall_acc(K, F, T, tr_trials, tr_targets, ev_trials, ev_recall, ev_ta
     return correct / max(1, len(ev_trials))
 
 
+def language_2stage_test(seed, n_sentences=6000, V=300, n_pool=200, n_hidden=128, epochs=8, lr=0.02):
+    """MISSION-CONNECTED: does the identified fix (a 2-STAGE cortical read-out) beat a LINEAR read-out on a REAL
+    language stream (the EMERGE SVO+function-word stream), or does the bigram-dominated scale wall dominate? Fixed ALIF
+    reservoir + cached per-token states; train a linear vs a 2-layer read-out for next-token prediction; compare CE +
+    accuracy to a bigram. Tests whether the language cortex has the same linear-readout limitation the XOR task had."""
+    import research.runners._emerge62_discover_function_words_derisk as m62
+    from research.runners._emerge_reservoir_lm_derisk import Vocab, _split_sentences, fit_bigram
+    stream = m62.build_stream(seed, n_sentences=n_sentences)
+    sents = _split_sentences(stream)
+    vocab = Vocab.build(sents, V)
+    ids_sents = [np.asarray([vocab.id(w) for w in s], dtype=np.int64) for s in sents]
+    ids_sents = [s for s in ids_sents if len(s) >= 2]
+    ntr = int(0.8 * len(ids_sents)); tr, ev = ids_sents[:ntr], ids_sents[ntr:]
+    Veff = vocab.size
+    res = RateReservoir(Veff, n_pool, seed=seed, alpha=0.3, spectral=1.1, alif=True, beta=1.0)
+
+    def pairs(sset):
+        X, Y = [], []
+        for ids in sset:
+            S = res.forward_states(ids)
+            for t in range(len(ids) - 1):
+                X.append(S[t]); Y.append(int(ids[t + 1]))
+        return np.array(X), np.array(Y)
+    Xtr, Ytr = pairs(tr); Xev, Yev = pairs(ev)
+    d = Xtr.shape[1]; rng = np.random.default_rng(seed)
+
+    def ce_acc(fn):
+        ce = 0.0; acc = 0
+        for x, y in zip(Xev, Yev):
+            p = fn(x); ce += -np.log(p[y] + 1e-12); acc += int(np.argmax(p) == y)
+        return ce / len(Xev), acc / len(Xev)
+    # LINEAR read-out (delta rule)
+    W = np.zeros((Veff, d))
+    for ep in range(epochs):
+        for i in rng.permutation(len(Xtr)):
+            p = _softmax(W @ Xtr[i]); g = -p; g[Ytr[i]] += 1.0; W += lr * np.outer(g, Xtr[i])
+    lin_ce, lin_acc = ce_acc(lambda x: _softmax(W @ x))
+    # 2-STAGE read-out (backprop through one hidden layer)
+    W1 = rng.standard_normal((n_hidden, d)) * 0.1; W2 = rng.standard_normal((Veff, n_hidden)) * 0.1
+    for ep in range(epochs):
+        for i in rng.permutation(len(Xtr)):
+            hh = np.tanh(W1 @ Xtr[i]); p = _softmax(W2 @ hh); g = -p; g[Ytr[i]] += 1.0
+            W2 += lr * np.outer(g, hh); W1 += lr * np.outer((W2.T @ g) * (1 - hh * hh), Xtr[i])
+    two_ce, two_acc = ce_acc(lambda x: _softmax(W2 @ np.tanh(W1 @ x)))
+    # ANTI-CHEAT (permuted-corpus): shuffle each TRAIN sentence's token order, recompute states, retrain a FRESH
+    # 2-stage read-out, eval on the REAL held-out. If the 2-stage bigram-beating is genuine word-ORDER structure it
+    # COLLAPSES (>= bigram); if it survives, the advantage is a unigram/artifact, not real structure.
+    tr_perm = [s[rng.permutation(len(s))] for s in tr]
+    Xtp, Ytp = pairs(tr_perm)
+    W1p = rng.standard_normal((n_hidden, d)) * 0.1; W2p = rng.standard_normal((Veff, n_hidden)) * 0.1
+    for ep in range(epochs):
+        for i in rng.permutation(len(Xtp)):
+            hh = np.tanh(W1p @ Xtp[i]); p = _softmax(W2p @ hh); g = -p; g[Ytp[i]] += 1.0
+            W2p += lr * np.outer(g, hh); W1p += lr * np.outer((W2p.T @ g) * (1 - hh * hh), Xtp[i])
+    perm_ce, _ = ce_acc(lambda x: _softmax(W2p @ np.tanh(W1p @ x)))
+    # bigram baseline CE
+    P_bi = fit_bigram(tr, Veff)
+    bi_ce = 0.0
+    for ids in ev:
+        for t in range(len(ids) - 1):
+            bi_ce += -np.log(P_bi[int(ids[t]), int(ids[t + 1])] + 1e-12)
+    bi_ce /= max(1, sum(len(s) - 1 for s in ev))
+    return {"V": Veff, "linear_ce": lin_ce, "twostage_ce": two_ce, "bigram_ce": bi_ce, "perm_ce": perm_ce,
+            "linear_acc": lin_acc, "twostage_acc": two_acc, "n_eval": len(Xev)}
+
+
 def train_recall_nl(res, trials, V, epochs, lr_out, lr_rec, seed, arm, n_hidden=64, wd=1e-3):
     """e-prop W_rec + a 2-layer NONLINEAR read-out (feat->hidden tanh->softmax), read-out by backprop. Removes the
     linear-readout confound so the HORIZON-EXTENSION question is clean: does training W_rec (plastic) EXTEND the
@@ -305,12 +371,26 @@ def main():
     ap.add_argument("--grad-check", action="store_true", help="assert the ALIF 2-component eligibility matches finite differences")
     ap.add_argument("--nonlinear-readout", action="store_true", help="DECISIVE: does a 2-layer read-out on the FIXED reservoir solve the task? (reframes XOR null as readout-vs-recurrent-credit)")
     ap.add_argument("--horizon-test", action="store_true", help="does PLASTIC recurrent e-prop EXTEND the fixed reservoir's horizon (with a nonlinear read-out removing the linear confound)?")
+    ap.add_argument("--language-test", action="store_true", help="MISSION: does a 2-STAGE read-out beat a LINEAR one on the real EMERGE SVO language stream?")
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
     t0 = time.time()
     if a.grad_check:
         gc = grad_check_alif()
         print(f"[grad_check_alif] {gc}", flush=True)
+    if a.language_test:
+        rs = [language_2stage_test(s, n_pool=a.n_pool, epochs=a.epochs) for s in a.seeds]
+        agg = {k: float(np.mean([r[k] for r in rs])) for k in rs[0]}
+        beats_bigram = agg["twostage_ce"] < agg["bigram_ce"] - 0.05
+        perm_collapses = agg["perm_ce"] >= agg["bigram_ce"] - 0.05    # permuted-corpus must NOT beat the bigram
+        verdict = ("GENUINE: 2-STAGE read-out beats the bigram via real word-order structure (permuted-corpus COLLAPSES)"
+                   if (beats_bigram and perm_collapses)
+                   else ("ARTIFACT: 2-stage beats bigram BUT permuted-corpus ALSO does (unigram/overfit, not structure)"
+                         if beats_bigram else "2-stage does NOT beat the bigram"))
+        print(f"[language-test] V={agg['V']:.0f} n_eval={agg['n_eval']:.0f} | linear_ce={agg['linear_ce']:.3f} "
+              f"twostage_ce={agg['twostage_ce']:.3f} bigram_ce={agg['bigram_ce']:.3f} perm_ce={agg['perm_ce']:.3f} | "
+              f"twostage_acc={agg['twostage_acc']:.3f} -> {verdict}", flush=True)
+        return
     if a.nonlinear_readout:
         for T in a.T:
             accs = [nonlinear_readout_test(s, task=a.task, K=a.K, T=T, n_pool=a.n_pool) for s in a.seeds]
