@@ -81,9 +81,37 @@ drive high). Feedback-inhibition alone gave frac_active 0.35 (not sparse enough)
 (competition + stronger `ca3_fb_inhib` + lower drive) is the active next rung. Payoff runner:
 `research/runners/_riii_ca3_competitive_completion_payoff_derisk.py`.
 
+## ⚠️ HONEST CORRECTION / EXTENSION (2026-07-14, same session — anti-cheat investigation of the completion payoff)
+
+The formation section above STANDS (competition surpasses the 2026-07-09 **weight-ratio** saturation, 6-seed). But a
+rigorous lesion/operating-point investigation of the downstream FUNCTIONAL completion reversed the optimistic framing
+of "the completion just needs the sparsification companion." The findings:
+
+- **The competition's weight-ratio surpass does NOT translate to functional pattern completion.** With FS-WTA
+  sparsification (fb_inhib=20 + low training drive), the LESION control (lam=0, NO competition) COMPLETES IDENTICALLY
+  to lam=0.5 on seed 42 (held-out 0.875 / non-stored 0.087) — and competition HURTS on other seeds (held-out → 0.000
+  on seed 43). So whatever completion occurs is driven by the SPARSIFICATION, not the competition. The weight-ratio
+  (8.9×) is real but functionally inert-to-harmful for completion — i.e. the 2026-07-09 within/silent **ratio** was
+  the wrong proxy for the functional goal.
+- **The functional completion itself is SEED-FRAGILE at this scale** (n_ca3=150, 2 memories, ~15-cell ensembles). The
+  best operating point (sparsification, fb20 + low drive) completes cleanly on only 2/6 seeds (42, 44 → held-out
+  0.875) and gives held-out **0.000** on 3/6 (43, 100, 101). Neither the mossy-detonator (2026-07-09 Rung 2; held-out
+  0.125/0.000/0.109) nor a decoupled strong recall cue (held-out 0.062/0.000/0.058) helped; a strong recall drive was
+  WORSE (the sparse low-drive recall is better).
+
+**⇒ Honest state:** the FORMATION weight-ratio saturation is surpassed (competition, 6-seed GO — a real advance on the
+specific documented metric), but ROBUST functional pattern-completion on the emergent learned attractor is an OPEN
+residual — seed-fragile, and most likely SCALE-limited (tiny ensembles + a tiny cue/held split make the bottom-firing
+held members hard to complete). This is a boundary = an undiscovered mechanism, not a wall: the ranked next levers are
+(1) SCALE (larger CA3 → larger, more redundant ensembles → robust completion) and (2) theta-gamma SYNCHRONIZATION
+(2026-07-09 Rung 3 — synchronous member co-firing for a dense, strongly-coupled recurrent loop). The weight-ratio was
+a misleading proxy; the functional-completion metric (does the held-out member reactivate from a partial cue?) is the
+one to gate on.
+
 ## Bottom line
 
-The competitive-Hebbian mechanism (heterosynaptic winner-inactive depression on the ca3→ca3 recurrents, keyed to the
-stable assembly) is the first mechanism to form a **SELECTIVE** (not uniform) CA3 attractor from experience — 6-seed
-GO, surpassing the 2026-07-09 saturation boundary. The clean end-to-end pattern-completion on the learned attractor
-needs the FS-WTA sparsification companion to widen the completion margin — a characterized next mechanism, not a wall.
+The competitive-Hebbian mechanism forms a **SELECTIVE weight structure** (within/truly-silent 8.9× vs the pure-LTP
+1.01×, 6-seed GO) — surpassing the 2026-07-09 within/silent-**ratio** saturation. But that weight-ratio surpass does
+NOT deliver robust functional pattern completion (the lesion control shows sparsification, not competition, drives
+what completion there is; and it is seed-fragile, 2/6). The robust functional completion on the emergent attractor is
+the honest open residual, most likely scale-limited — the next lever is SCALE, then theta-gamma synchronization.

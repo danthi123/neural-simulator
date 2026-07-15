@@ -25,7 +25,7 @@ from research.runners._riii_ca3_competitive_formation_derisk import _extract_ca3
 def run_payoff(seed, n_mem=2, train_events=150, drive_pA=200.0, coincidence=True, n_lang=384, n_ca3=150, n_dg=300,
                ca3_density=0.5, ca3_weight=6.0, k_thresh=18.0, plateau_strength=120.0, hebb_max=30.0,
                hebb_rate=True, lam_dep_wi=0.0, comp_both_dir=True, ens_thresh=2,
-               ca3_fb_inhib=None, ca3_fb_n=None, mossy_weight=None,
+               ca3_fb_inhib=None, ca3_fb_n=None, mossy_weight=None, recall_drive_pA=None,
                reset_steps=15, drive_steps=55, recall_steps=60):
     from sim.backend import get_backend, to_host, get_sparse_module
     from sim.kernels import fused_htm_winner_inactive_depression
@@ -113,7 +113,8 @@ def run_payoff(seed, n_mem=2, train_events=150, drive_pA=200.0, coincidence=True
         np.random.default_rng(seed + m).shuffle(se)
         n_part = max(2, int(0.5 * len(se)))
         cue, held = se[:n_part], se[n_part:]
-        part_resp = measure_region_response(bridge, "ca3", cue, drive_pA=drive_pA, drive_region="ca3", n_steps=recall_steps)
+        _rdrv = recall_drive_pA if recall_drive_pA is not None else drive_pA   # recall cue drive: decoupled from the (low) training drive
+        part_resp = measure_region_response(bridge, "ca3", cue, drive_pA=_rdrv, drive_region="ca3", n_steps=recall_steps)
         held_pos = [ca3_pos[int(g)] for g in held if int(g) in ca3_pos]
         cue_pos = [ca3_pos[int(g)] for g in cue if int(g) in ca3_pos]
         ns_pos = [ca3_pos[int(g)] for g in non_stored[:40] if int(g) in ca3_pos]
@@ -126,13 +127,16 @@ def run_payoff(seed, n_mem=2, train_events=150, drive_pA=200.0, coincidence=True
 
     h_cd, n_cd = float(np.mean(held_cd)), float(np.mean(non_cd))
     h_comp, n_comp = float(np.mean(held_list)), float(np.mean(nonstored_list))
-    go = h_cd > n_cd
+    # FUNCTIONAL completion (the definition of pattern completion): does the HELD-OUT (non-cued) stored member
+    # REACTIVATE from the partial cue (h_comp high), SPECIFICALLY (>> non-stored n_comp)? This is the read-out
+    # AFTER the plateau + FS-WTA dynamics -- the true completion, vs the raw weighted c_drive diagnostic.
+    go = h_comp >= 0.30 and h_comp >= 2.0 * (n_comp + 1e-9)
     print(f"[R-iii competitive completion PAYOFF] seed {seed} lam_dep_wi={lam_dep_wi} train_events={train_events}", flush=True)
-    print(f"  c_drive (the plateau read): held-out={h_cd:.2f}  non-stored={n_cd:.2f}  (GO BAR 2: held > non)", flush=True)
-    print(f"  completion activity: held-out={h_comp:.3f}  non-stored={n_comp:.3f}  (ratio to cue)", flush=True)
-    verdict = (f"GO: held-out c_drive {h_cd:.1f} > non-stored {n_cd:.1f} -> the LEARNED competitive attractor drives "
-               f"the plateau SPECIFICALLY (reverses the documented 75.9<84.0)") if go else \
-              (f"NO: held-out c_drive {h_cd:.1f} <= non-stored {n_cd:.1f} -> not selective at this lam")
+    print(f"  c_drive (raw weighted diagnostic): held-out={h_cd:.2f}  non-stored={n_cd:.2f}", flush=True)
+    print(f"  FUNCTIONAL completion activity (ratio to cue): held-out={h_comp:.3f}  non-stored={n_comp:.3f}", flush=True)
+    verdict = (f"GO: held-out completes {h_comp:.3f} >> non-stored {n_comp:.3f} -> the LEARNED attractor COMPLETES "
+               f"the held-out members from a partial cue, SPECIFICALLY") if go else \
+              (f"NO: held-out completion {h_comp:.3f} not >> non-stored {n_comp:.3f} (bar: held>=0.30 AND held>=2x non)")
     print(f"  VERDICT -> {verdict}", flush=True)
     return {"seed": seed, "lam_dep_wi": lam_dep_wi, "held_cdrive": h_cd, "nonstored_cdrive": n_cd,
             "held_completion": h_comp, "nonstored_completion": n_comp, "go": go}
@@ -151,15 +155,19 @@ def main():
     ap.add_argument("--ca3-fb-inhib", type=float, default=None, help="ca3_pv_basket->ca3 FEEDBACK inhibition weight (FS-WTA sparsifier; None=off)")
     ap.add_argument("--ca3-fb-n", type=int, default=None)
     ap.add_argument("--mossy-weight", type=float, default=None)
+    ap.add_argument("--recall-drive-pA", type=float, default=None, help="recall cue drive (decoupled from the low training drive; default = training drive)")
+    ap.add_argument("--n-ca3", type=int, default=150, help="CA3 size (scale lever: larger -> larger, more redundant ensembles -> robust completion)")
+    ap.add_argument("--n-mem", type=int, default=2)
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
     seeds = [int(s) for s in a.seeds.split(",")]
     t0 = time.time()
     results = []
     for s in seeds:
-        r = run_payoff(seed=s, train_events=a.train_events, lam_dep_wi=a.lam_dep_wi, k_thresh=a.k_thresh,
-                       comp_both_dir=not a.one_dir, ens_thresh=a.ens_thresh, drive_pA=a.drive_pA,
-                       ca3_fb_inhib=a.ca3_fb_inhib, ca3_fb_n=a.ca3_fb_n, mossy_weight=a.mossy_weight)
+        r = run_payoff(seed=s, n_mem=a.n_mem, n_ca3=a.n_ca3, train_events=a.train_events, lam_dep_wi=a.lam_dep_wi,
+                       k_thresh=a.k_thresh, comp_both_dir=not a.one_dir, ens_thresh=a.ens_thresh, drive_pA=a.drive_pA,
+                       ca3_fb_inhib=a.ca3_fb_inhib, ca3_fb_n=a.ca3_fb_n, mossy_weight=a.mossy_weight,
+                       recall_drive_pA=a.recall_drive_pA)
         if r is not None:
             results.append(r)
     n_go = sum(1 for r in results if r["go"])
