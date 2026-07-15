@@ -32,13 +32,17 @@ def _softmax(z):
     z = z - z.max(axis=1, keepdims=True); e = np.exp(z); return e / e.sum(axis=1, keepdims=True)
 
 
-def train_bilinear(CAT, Q, y, tr, D, K, d_bind=16, epochs=400, lr=0.05, seed=0, lam=1e-3):
-    """bound = (W_a @ cat) (.) (W_b @ q); logits = W_out @ bound. Learn W_a,W_b,W_out by SGD on the attested combos.
-    The multiplicative (.) is the FIXED binding inductive bias; the projections are LEARNED."""
+def train_bilinear(CAT, Q, y, tr, D, K, d_bind=16, epochs=400, lr=0.05, seed=0, lam=1e-3, credit="gradient"):
+    """bound = (W_a @ cat) (.) (W_b @ q); logits = W_out @ bound. Learn W_a,W_b,W_out on the attested combos.
+    The multiplicative (.) is the FIXED binding inductive bias; the projections are LEARNED.
+    credit='gradient' -> true backprop (uses Wo.T = weight transport); credit='transport_free' -> the credit to the
+    projections is `g @ B` with B a FIXED RANDOM feedback matrix (feedback alignment: NO weight transport = the biologically
+    -legal rule). The read-out W_out is still local-delta-trained either way."""
     rng = np.random.default_rng(seed * 17 + 3)
     Wa = rng.standard_normal((d_bind, D)) / np.sqrt(D)
     Wb = rng.standard_normal((d_bind, D)) / np.sqrt(D)
     Wo = rng.standard_normal((K, d_bind)) / np.sqrt(d_bind)
+    B = rng.standard_normal((K, d_bind)) / np.sqrt(d_bind)    # fixed random feedback (transport-free credit path)
     Xc, Xq, yt = CAT[tr], Q[tr], y[tr]
     n = len(yt)
     for ep in range(epochs):
@@ -49,7 +53,7 @@ def train_bilinear(CAT, Q, y, tr, D, K, d_bind=16, epochs=400, lr=0.05, seed=0, 
         Y = np.zeros((n, K)); Y[np.arange(n), yt] = 1.0
         g = (p - Y) / n                                       # (n, K)
         gWo = g.T @ bound + lam * Wo
-        gb = g @ Wo                                           # (n, d_bind) grad wrt bound
+        gb = (g @ Wo) if credit == "gradient" else (g @ B)   # grad wrt bound: weight-transport vs fixed-random-feedback
         gWa = (gb * pb).T @ Xc + lam * Wa                     # chain through pa
         gWb = (gb * pa).T @ Xq + lam * Wb
         Wo -= lr * gWo; Wa -= lr * gWa; Wb -= lr * gWb
@@ -67,11 +71,16 @@ def run_one(seed, epochs_mlp=120):
     tr = ~is_held
     CAT = np.array([cat_code[c] for (c, q) in cells]); Q = np.array([q_code[q] for (c, q) in cells])
     out = {"seed": seed, "chance": round(1.0 / N_INTENT, 4), "n_held": int(is_held.sum())}
-    # ARM: LEARNED BILINEAR binder (the emergence candidate)
-    Wa, Wb, Wo = train_bilinear(CAT, Q, y, tr, D, N_INTENT, seed=seed)
+    # ARM: LEARNED BILINEAR binder, GRADIENT (the structure-is-learnable reference)
+    Wa, Wb, Wo = train_bilinear(CAT, Q, y, tr, D, N_INTENT, seed=seed, credit="gradient")
     pbi = _bilinear_pred(Wa, Wb, Wo, CAT, Q)
     out["bilinear_train"] = round(float(np.mean(pbi[tr] == y[tr])), 4)
     out["bilinear_held"] = round(float(np.mean(pbi[is_held] == y[is_held])), 4)
+    # ARM: LEARNED BILINEAR binder, TRANSPORT-FREE (the biologically-legal rule: fixed random feedback, NO weight transport)
+    WaT, WbT, WoT = train_bilinear(CAT, Q, y, tr, D, N_INTENT, seed=seed, credit="transport_free")
+    ptf = _bilinear_pred(WaT, WbT, WoT, CAT, Q)
+    out["bilinear_tf_train"] = round(float(np.mean(ptf[tr] == y[tr])), 4)
+    out["bilinear_tf_held"] = round(float(np.mean(ptf[is_held] == y[is_held])), 4)
     # REFERENCE: fixed +-1 bind + ridge (TEST A's ceiling)
     B = np.array([_bind(cat_code[c], q_code[q]) for (c, q) in cells])
     Btr, Bev = standardize(B[tr], B)
@@ -105,9 +114,10 @@ def main():
     a = ap.parse_args()
     rows = [run_one(s) for s in a.seeds]
     for r in rows:
-        print(f"[bilinear s{r['seed']}] chance={r['chance']} || LEARNED-BILINEAR held={r['bilinear_held']:.3f} "
-              f"(train {r['bilinear_train']:.3f}) | fixed-bind={r['fixedbind_held']:.3f} | MLP={r['mlp_held']:.3f} "
-              f"| memfloor={r['memfloor_held']:.3f} | permuted={r['bilinear_permuted_held']:.3f} || {'GO' if r['GO'] else 'no'}", flush=True)
+        print(f"[bilinear s{r['seed']}] chance={r['chance']} || GRAD-BILINEAR held={r['bilinear_held']:.3f} "
+              f"| TRANSPORT-FREE held={r['bilinear_tf_held']:.3f} (train {r['bilinear_tf_train']:.3f}) "
+              f"| fixed-bind={r['fixedbind_held']:.3f} | MLP={r['mlp_held']:.3f} | memfloor={r['memfloor_held']:.3f} "
+              f"| permuted={r['bilinear_permuted_held']:.3f} || {'GO' if r['GO'] else 'no'}", flush=True)
     ngo = sum(x["GO"] for x in rows)
     print(f"[bilinear] {ngo}/{len(rows)} GO (learned bilinear STRUCTURE extrapolates >> MLP + memfloor, ~ fixed bind; permuted collapses)", flush=True)
     json.dump(rows, open(a.out, "w"))

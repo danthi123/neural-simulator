@@ -21,3 +21,15 @@ Confirms the emergence-bar path from TEST A: **the composing-machinery need not 
 - **NEXT (the full emergence step):** train the same bilinear by the GO transport-free **deep-credit e-prop rule** (not gradient) — does a BIOLOGICAL rule learn the binding structure? (`2026-07-14` feedforward deep-credit GO makes this plausible; the bilinear-with-deep-credit trainer is the build.) Then the on-substrate realization (learned projections + the spiking coincidence bind).
 - Harden the memfloor split (hold out memfloor-hard combos) for a clean 6/6 gate on both this + TEST A.
 Reuse-by-import; NO `sim/` edit.
+
+## UPDATE — the full emergence step: a TRANSPORT-FREE (biologically-legal) rule ALSO learns the binding structure (6-seed)
+Added a `credit='transport_free'` arm: the credit to the projections is `g @ B` with B a FIXED RANDOM feedback matrix (feedback alignment — NO weight transport, the biologically-legal rule) instead of `g @ Wo` (backprop's weight transport). 6-seed:
+| binder | held-out extrapolation (mean) | note |
+|---|---|---|
+| fixed ±1 bind (TEST A) | 0.87 | hand-provided structure (ceiling) |
+| gradient bilinear | 0.75 | learned projections, backprop |
+| **transport-free bilinear (fixed random feedback)** | **0.63** | learned projections, NO weight transport — the BIOLOGICAL rule |
+| unstructured MLP | 0.39 | from-scratch classifier (memorizes+fails) |
+- **The transport-free rule extrapolates above chance on all 6 seeds and generally above the unstructured MLP** — noisier than gradient (the characterized feedback-alignment cost), but it LEARNS the systematicity-enabling binding structure without weight transport. ⇒ the full emergence claim holds directionally: **a biologically-legal learning rule can learn the binding structure to systematic extrapolation, given the multiplicative-binding INDUCTIVE BIAS** — which the point-neuron substrate provides natively (coincidence detection / dendritic conjunction), and which the composer already realizes on spikes.
+- **The ladder, unified:** provide the multiplicative-binding structure (fixed, or an inductive bias the biological rule fills in) → systematicity generalizes; leave it to a from-scratch classifier → it memorizes and fails. The binding STRUCTURE is the load-bearing ingredient; the codes/projections can be learned (gradient OR transport-free).
+- **NEXT:** the on-substrate realization — the coincidence-bind (which IS the multiplicative `⊙`) with learned input projections trained by the committed on-bridge deep-credit/BDSP rule; harden the memfloor split for a clean gate. Honest scope: transport-free is a rate-level feedback-alignment result here; the on-spike deep-credit realization is the follow-on (the FA family was on-spike-exhausted for DEEP hidden credit, but this is a SHALLOW bilinear+readout where the forward structure carries the signal — the regime where feedforward deep-credit already went GO).
