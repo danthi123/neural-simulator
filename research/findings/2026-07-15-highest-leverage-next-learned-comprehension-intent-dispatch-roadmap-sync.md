@@ -1,0 +1,28 @@
+# ROADMAP-sync (5-agent Workflow): the highest-leverage TRACTABLE mission-central next = LEARN the comprehension→intent DISPATCH from the dialogue stream on the GO feedforward deep-credit substrate (replace the hand router). Corrects the ROADMAP's flagged #1 (the learned binder is a SPENT boundary).
+
+**Date:** 2026-07-15 · **Status:** deep-research ROADMAP sync DONE (read-only; ROADMAP + recent findings + mission directives). Picks the next build after this session characterized the boundaries (fluency trigram-bound, CA3 architectural, feedforward-deep-credit GO, recurrent off-path). NO build yet — this scopes it.
+
+## The correction the sync surfaced (don't re-tread)
+The ROADMAP's own flagged #1 — the **learned word-binder** ("feedforward deep credit just went GO → now being tested directly") — **was tested + closed 2026-07-14**: `2026-07-14-deep-eprop-binder-multiattribute-CONFIRMED-BOUNDARY.md` — a deep e-prop binder MEMORIZES multi-attribute bundling (train 0.903) but does NOT generalize (held-out 0.002 ≈ chance), AND the BPTT ceiling + the hand-derived TRUE-gradient oracle also fail (0.007) → the wall is **systematicity, STRUCTURAL/task-representation, not the learning rule/depth/substrate**. Keep the fixed ±1/FHRR coincidence primitive. **The binder frontier is spent.** Also parked (do not pick): open-perplexity (trigram-bound scale wall), CA3 completion (architectural), recurrent W_rec (off-path + instrument-confounded).
+
+## THE PICK — learned comprehension→intent dispatch (feedforward, GO regime, emergence-bar-maximal)
+The flagship console decides HOW to answer (fact-lookup vs inheritance-reason vs describe vs abstain vs EMERGE-frame) by **hand membership-aware routing** — a NAMED whack-a-mole item that already needed a crosstalk patch (EMERGE-58). **Replace that hand dispatch with a deep-credit-LEARNED spiking classifier:** utterance/parse features → grounded response-frame, learned from a stream of dialogue turns.
+- **Emergence bar: maximal** — converts a hand-built router into structure the substrate LEARNS from a stream (the owner's #1 priority: the learning engine), and it's the comprehension→intent front half of fluent conversation.
+- **Not a scale wall / not off-path:** dispatch is a BOUNDED FEEDFORWARD classification (not open generation → not the perplexity wall; not the recurrent off-path rule).
+- **In the KNOWN-GO regime:** feedforward spiking deep credit (e-prop + population coding) trained a depth-2 compositional-inheritance classification to the LIF ceiling THIS cycle. Dispatch is a feedforward label-map (not an invertible superposition), so the binder's systematicity wall does NOT apply.
+
+## Cheap-first de-risk (rate-first, reuse-by-import)
+1. **Reuse:** the GO e-prop + population-coding classification harness (`_deep_eprop_binder_bundling_derisk.py` e-prop/fit-gate/BPTT-ceiling scaffold + the depth-2 compositional-classification runner); the EMERGE self-organized dialogue stream (EMERGE-62..66 producer + `UnifiedFluentConsole`/`SpikingBrocaConsole` intent ground-truth labels); the `BridgeParser` feature front-end (`brain_conversational_agent.py`).
+2. **Rate-first:** train a rate deep (2-hidden) net with the e-prop-analogue LOCAL credit mapping parsed-utterance features → intent/response-frame label over a stream of turns; **HOLD OUT COMPOSITIONS** (novel subject×frame combos never trained).
+3. **On GO → port to spiking** on the production Izhikevich bridge via the same GO e-prop + population-coding path; read dispatch from population spike rates.
+- **The ONE variable:** replace the hand membership-aware router with the learned deep-credit classifier; everything downstream (reasoner/composer/moat/renderer) unchanged.
+- **Anti-cheats (all):** permuted labels → chance; **held-out compositions vs a memorization floor** (the load-bearing test — the exact axis the binder failed; here it must pass because dispatch is a feedforward label-map in the GO regime); lesion → collapse; fair baselines — MATCH the hand-router (parity ceiling), BEAT a shallow/linear classifier (depth+credit load-bearing), BEAT the majority-class prior; **adversarial-verify the no-confab MOAT still holds** (OOD utterance → abstain, 0 false-accepts) BEFORE any GO.
+- **6-seed** (42/43/44/100/101/102); GO gate: held-out compositional dispatch ≥ hand-router parity AND permuted+lesion collapse AND moat 0-FA on ≥5/6.
+
+## The parallel cheap #2 (run on CPU while #1's GPU port runs)
+**Schema/script default-filling** (`_schema_script_default_filling_derisk.py`) — base mechanism GO (=EMERGE-15 stream-learned prediction); the WIP has a pos-ctrl context-SDR construction bug (NOT a mechanism negative). Fix: train ending-free (EMERGE-15-exact) so pos-ctrl ~1.0, then re-add rollout / held-out-partial / omitted-middle. Answers things never explicitly told (Schank-Abelson scripts) = grounded free-flowing inference; numpy/CPU.
+
+## Also-ranked (deploy-to-capacity, lower de-risk content)
+#3 wire the GO novel-referent Hebbian fast-weight (RUNG6c/6d, 6-seed GO) into `MultiTurnAgent` (the "growing" pillar, made deployable); #4 on-substrate structural-plasticity grow-step for grow-to-context (a guarded default-off `sim/` edit, after #1).
+
+**Honest framing:** the deliverable is "does the comprehension→response structure genuinely EMERGE from the stream via biological credit, matching the hand router + generalizing to held-out compositions — and if not, where's the next wall?" — one hand-built element converted to learned; the two deep walls (open perplexity, CA3 completion) remain characterized, not brute-forced. Full sync: the `wf_bbbd5a9f-07c` journal.
