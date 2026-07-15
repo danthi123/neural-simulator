@@ -334,14 +334,37 @@ def language_input_repr_gate(seed, corpus=None, n_sentences=1500, V=200, m_embed
     rand_ce = two_stage_ce(res_rand)
     struct_ce = two_stage_ce(res_struct)
     perm_ce = two_stage_ce(res_perm)
+    # BIGRAM-LEAK PROBE: a 2-stage read-out on the CURRENT token's embedding E[t] ALONE (NO reservoir, NO context) ->
+    # isolates the embedding's current-token->next smoothing (a smoothed bigram) from the reservoir's multi-token CONTEXT.
+    # If struct_ce << embed_only_ce, the reservoir adds genuine higher-order context (not just bigram-smoothing).
+    def embed_only_ce():
+        def epairs(sset):
+            X, Y = [], []
+            for ids in sset:
+                for t in range(len(ids) - 1):
+                    X.append(E[int(ids[t])]); Y.append(int(ids[t + 1]))
+            return np.array(X), np.array(Y)
+        Xtr, Ytr = epairs(tr); Xev, Yev = epairs(ev)
+        d = Xtr.shape[1]; r2 = np.random.default_rng(seed + 2)
+        W1 = r2.standard_normal((n_hidden, d)) * 0.1; W2 = r2.standard_normal((Veff, n_hidden)) * 0.1
+        for ep in range(epochs):
+            for i in r2.permutation(len(Xtr)):
+                hh = np.tanh(W1 @ Xtr[i]); p = _softmax(W2 @ hh); g = -p; g[Ytr[i]] += 1.0
+                W2 += lr * np.outer(g, hh); W1 += lr * np.outer((W2.T @ g) * (1 - hh * hh), Xtr[i])
+        ce = 0.0
+        for x, y in zip(Xev, Yev):
+            p = _softmax(W2 @ np.tanh(W1 @ x)); ce += -np.log(p[y] + 1e-12)
+        return ce / len(Xev)
+    embed_ce = embed_only_ce()
     P_bi = fit_bigram(tr, Veff); bi_ce = 0.0
     for ids in ev:
         for t in range(len(ids) - 1):
             bi_ce += -np.log(P_bi[int(ids[t]), int(ids[t + 1])] + 1e-12)
     bi_ce /= max(1, sum(len(s) - 1 for s in ev))
     return {"V": Veff, "m_embed": m_embed, "rand_win_ce": rand_ce, "struct_win_ce": struct_ce,
-            "perm_embed_ce": perm_ce, "bigram_ce": bi_ce, "struct_minus_rand": struct_ce - rand_ce,
-            "perm_minus_rand": perm_ce - rand_ce}
+            "perm_embed_ce": perm_ce, "embed_only_ce": embed_ce, "bigram_ce": bi_ce,
+            "struct_minus_rand": struct_ce - rand_ce, "perm_minus_rand": perm_ce - rand_ce,
+            "struct_minus_perm": struct_ce - perm_ce, "struct_minus_embed": struct_ce - embed_ce}
 
 
 def train_recall_nl(res, trials, V, epochs, lr_out, lr_rec, seed, arm, n_hidden=64, wd=1e-3):
@@ -497,17 +520,19 @@ def main():
         rs = [language_input_repr_gate(s, corpus=a.corpus, n_sentences=a.n_sentences, V=a.language_vocab,
                                        m_embed=a.m_embed, n_pool=a.n_pool, epochs=a.epochs) for s in a.seeds]
         agg = {k: float(np.mean([r[k] for r in rs])) for k in rs[0]}
-        beats = agg["struct_win_ce"] < agg["rand_win_ce"] - 0.03
-        vs_bi = agg["struct_win_ce"] < agg["bigram_ce"] - 0.03
-        perm_collapses = agg["perm_embed_ce"] >= agg["rand_win_ce"] - 0.03    # the anti-cheat: perm-embed must NOT beat random
-        verdict = (("GENUINE EMERGENT input-representation HEADROOM: struct beats random"
-                    + (" AND the bigram" if vs_bi else " (not the bigram)")
-                    + " AND perm-embed COLLAPSES") if (beats and perm_collapses)
-                   else ("ARTIFACT: struct beats random but perm-embed ALSO does (spectral/scale, not meaning)"
-                         if beats else "NO emergent input-representation headroom (struct ~ random) -> supervised R3 W_in warranted"))
+        vs_bi = agg["struct_win_ce"] < agg["bigram_ce"] - 0.03            # beats the (well-sampled) bigram
+        align = agg["struct_minus_perm"] < -0.03                          # THE anti-cheat: alignment load-bearing (struct << perm)
+        context = agg["struct_minus_embed"] < -0.03                       # BIGRAM-LEAK probe: reservoir CONTEXT beats embedding-alone
+        verdict = (("GENUINE: emergent input-repr beats the bigram; alignment load-bearing (struct<<perm)"
+                    + ("; reservoir CONTEXT adds higher-order (struct<<embed-only)" if context
+                       else "; but ~= embedding-only -> the win is EMERGENT-EMBEDDING SMOOTHING, not reservoir context"))
+                   if (vs_bi and align)
+                   else ("does NOT robustly beat the bigram" if not vs_bi
+                         else "alignment NOT load-bearing (struct~perm) -> spectral artifact"))
         print(f"[input-repr-gate] V={agg['V']:.0f} m={agg['m_embed']:.0f} | rand={agg['rand_win_ce']:.3f} "
-              f"struct={agg['struct_win_ce']:.3f} perm_embed={agg['perm_embed_ce']:.3f} bigram={agg['bigram_ce']:.3f} "
-              f"| struct-rand={agg['struct_minus_rand']:+.3f} perm-rand={agg['perm_minus_rand']:+.3f} -> {verdict}", flush=True)
+              f"struct={agg['struct_win_ce']:.3f} perm={agg['perm_embed_ce']:.3f} embed_only={agg['embed_only_ce']:.3f} "
+              f"bigram={agg['bigram_ce']:.3f} | struct-bigram={(agg['struct_win_ce']-agg['bigram_ce']):+.3f} "
+              f"struct-perm={agg['struct_minus_perm']:+.3f} struct-embed={agg['struct_minus_embed']:+.3f} -> {verdict}", flush=True)
         return
     if a.language_test:
         rs = [language_2stage_test(s, corpus=a.corpus, n_sentences=a.n_sentences, V=a.language_vocab, n_pool=a.n_pool, epochs=a.epochs, adapt_win_hi=a.adapt_win_hi, beta=a.beta) for s in a.seeds]
