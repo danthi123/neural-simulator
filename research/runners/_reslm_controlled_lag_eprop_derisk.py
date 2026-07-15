@@ -68,6 +68,31 @@ def make_xor_task(K, F, T, n_trials, seed, cue_scramble=False):
     return trials, recall_pos, targets
 
 
+def make_accum_task(K, F, T, n_trials, seed, cue_scramble=False):
+    """EVIDENCE ACCUMULATION (Bellec's OWN validated e-prop+ALIF task) = the POSITIVE-CONTROL ceiling. A stream of T
+    LEFT/RIGHT cues (content 0/1), interspersed with fillers, then RECALL -> y = the MAJORITY side. The recurrence must
+    INTEGRATE (count) the cues -> a memory-nudge that holds one cue can't fake it. If plastic/symmetric LEARN this
+    (>> chance) but XOR does NOT, the XOR null is specifically the cross-cue-COMBINATION limitation (not a bad
+    implementation). K is forced to 2 (LEFT/RIGHT). cue_scramble: random target -> collapse."""
+    rng = np.random.default_rng(seed)
+    RECALL, FILL0 = 2, 3
+    trials, recall_pos, targets = [], [], []
+    for _ in range(n_trials):
+        cues = rng.integers(2, size=T)                 # T LEFT(0)/RIGHT(1) cues
+        y = int(cues.sum() * 2 > T)                     # majority (ties -> 0)
+        seq = []
+        for c in cues:
+            seq.append(int(c))
+            if F > 0:
+                seq.append(FILL0 + int(rng.integers(F)))   # a filler between cues (spacing)
+        tgt = int(rng.integers(2)) if cue_scramble else y
+        seq = seq + [RECALL, tgt]
+        trials.append(np.asarray(seq, dtype=np.int64))
+        recall_pos.append(len(seq) - 2)
+        targets.append(y)
+    return trials, recall_pos, targets
+
+
 def train_recall(res, trials, V, epochs, lr_out, lr_rec, seed, arm, wd=1e-3):
     """ALIF e-prop trainer carrying the FAITHFUL Bellec-2020 2-component eligibility (identical to the validated
     `_train_alif`), parameterized by the credit ARM. arm in {fixed, plastic, symmetric, sign_flip, zero_signal,
@@ -149,7 +174,7 @@ def run_one(seed, K=6, F=6, T=10, n_train=400, n_eval=200, n_pool=220, epochs=25
             lr_out=0.02, lr_rec=0.01, beta=1.0, awin_lo=30.0, awin_hi=300.0, task="copy",
             arms=("fixed", "plastic", "symmetric", "sign_flip", "zero_signal", "shuffle_elig")):
     V = K + 2 + F
-    gen = make_xor_task if task == "xor" else make_recall_task
+    gen = {"xor": make_xor_task, "accum": make_accum_task}.get(task, make_recall_task)
     tr, tr_rp, tr_tg = gen(K, F, T, n_train, seed * 100 + 1)
     ev, ev_rp, ev_tg = gen(K, F, T, n_eval, seed * 100 + 2)   # FRESH fillers = the filler-scramble-survives eval
     out = {}
@@ -177,7 +202,7 @@ def main():
     ap.add_argument("--n-pool", type=int, default=220)
     ap.add_argument("--epochs", type=int, default=25)
     ap.add_argument("--lr-rec", type=float, default=0.01, help="e-prop W_rec learning rate (destabilization test: lower it)")
-    ap.add_argument("--task", default="copy", choices=["copy", "xor"], help="copy=single-cue hold (ALIF solves it); xor=delayed modular-sum of TWO cues (requires recurrent computation)")
+    ap.add_argument("--task", default="copy", choices=["copy", "xor", "accum"], help="copy=single-cue hold (ALIF solves it); xor=delayed modular-sum of TWO cues; accum=evidence-accumulation majority (Bellec's validated e-prop+ALIF positive control)")
     ap.add_argument("--grad-check", action="store_true", help="assert the ALIF 2-component eligibility matches finite differences")
     ap.add_argument("--out", default=None)
     a = ap.parse_args()

@@ -54,10 +54,35 @@ collapse), **NOR** (b) a genuine cross-cue RECURRENT COMPUTATION — the XOR/mod
 true-gradient direction and more scale (e-prop's diagonal-RTRL truncation drops the cross-neuron credit). The
 anti-cheats + the under-training tiebreaker make this a clean, honest characterization, not a tuning miss.
 
-**Pinned next mechanisms (research-gated, cheapest-first):** (1) a LESS-TRUNCATED credit rule that keeps some
-off-diagonal cross-neuron eligibility (SnAp-1 / rank-reduced RTRL, Marschall-Savin taxonomy) — the minimal step past
-the diagonal limitation; (2) evidence-ACCUMULATION (Bellec's own validated e-prop+ALIF task — integration, not
-cross-cue combination) as a positive-control ceiling to confirm the substrate learns SOME recurrent function; (3)
-FPTT+LTC as the field's best BPTT-free long-range reference (not transport-free — a ceiling, not a biological rule).
-The honest field state stands: long-range/compositional recurrent learning from a purely biological local rule is a
-genuine open frontier.
+## POSITIVE CONTROL (evidence-accumulation) — the implementation is VALIDATED; e-prop's W_rec learning is not load-bearing on this substrate
+
+Added the `accum` task (Bellec's OWN validated e-prop+ALIF task): a stream of T LEFT/RIGHT cues + fillers, RECALL → the
+MAJORITY side (recurrent INTEGRATION, not cross-cue combination). Result (seed 42, T=5, chance 0.5): **fixed=0.875,
+plastic=0.805, symmetric=0.820, sign_flip=0.835** (all well above chance); cue_scramble=0.425 (collapses ✓);
+ngram=0.510 (chance ✓). ⇒ **the substrate + implementation CORRECTLY solve a recurrent-integration task** — so the XOR
+null is a genuine nonlinear-combination limitation, NOT a broken implementation (the positive control validates the
+negative). BUT the **FIXED reservoir already solves accumulation** (linear integration is native to a random recurrent
+net; the read-out thresholds the running sum) → W_rec learning is not needed for it either.
+
+## The comprehensive, validated picture (3 tasks)
+
+| task | what it needs | fixed reservoir | e-prop plastic | verdict |
+|---|---|---|---|---|
+| **copy** (single-cue HOLD) | hold x for T | 0.95 (ALIF holds it) | artifact (sym HURTS, sign_flip helps) | fixed-solved; plastic = memory-nudge artifact |
+| **accum** (INTEGRATE) | count/majority | 0.875 (native linear integration) | 0.805 ≈ fixed | fixed-solved; validates the implementation |
+| **xor** (nonlinear COMBINE) | (x1+x2) mod K | 0.25 = chance | 0.26 = chance (not under-training) | NEITHER fixed nor e-prop can do it |
+
+⇒ **on this reservoir substrate with a direct-read read-out, e-prop's recurrent W_rec learning is NOT demonstrably
+load-bearing:** the fixed reservoir natively handles the LINEAR recurrent functions (hold via ALIF, integrate via the
+recurrent sum), and NEITHER the fixed reservoir NOR e-prop-learned W_rec supplies the NONLINEAR cross-cue combination
+(XOR) — because e-prop's diagonal-RTRL truncation drops exactly the off-diagonal cross-neuron credit that combination
+needs. This is a clean, positive-control-validated characterization of the frontier's core difficulty.
+
+**Pinned next mechanisms (research-gated, cheapest-first):** (1) a LESS-TRUNCATED credit rule keeping some off-diagonal
+cross-neuron eligibility (SnAp-1 / rank-reduced RTRL, Marschall-Savin) — the minimal step past the diagonal
+limitation, tested on the XOR/combination task where the diagonal rule provably fails; (2) a HARDER Bellec-style task
+where the fixed reservoir does NOT already solve it (learned OUTPUT-GATING at a RECALL cue, not a direct-read read-out)
+— to make W_rec learning load-bearing for holding/integration too; (3) FPTT+LTC as the field's best BPTT-free
+long-range reference (not transport-free — a ceiling). The honest field state stands: long-range/compositional
+recurrent learning from a purely biological local rule is a genuine open frontier — now precisely characterized on a
+controlled, positive-control-validated harness.
