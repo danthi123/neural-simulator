@@ -26,13 +26,17 @@ def run_payoff(seed, n_mem=2, train_events=150, drive_pA=200.0, coincidence=True
                ca3_density=0.5, ca3_weight=6.0, k_thresh=18.0, plateau_strength=120.0, hebb_max=30.0,
                hebb_rate=True, lam_dep_wi=0.0, comp_both_dir=True, ens_thresh=2,
                ca3_fb_inhib=None, ca3_fb_n=None, mossy_weight=None, recall_drive_pA=None,
+               two_comp=True, apical_R=50.0, apical_gc=None, recall_inhib_scale=1.0,
                reset_steps=15, drive_steps=55, recall_steps=60):
+    # DEFAULT to the CYCLE-1068 VALIDATED dendritic-dAP read-out (two_comp + thin-high-R apical + calibrated k_thresh),
+    # NOT the point-neuron read-out (two_comp=False) that CYCLE-1067 proved fails even on a good hand-installed attractor.
     from sim.backend import get_backend, to_host, get_sparse_module
     from sim.kernels import fused_htm_winner_inactive_depression
     cp, _ = get_backend()
     bridge = _build(seed, n_lang=n_lang, n_ca3=n_ca3, n_dg=n_dg, ca3_density=ca3_density, ca3w=ca3_weight,
                     coincidence=coincidence, k_thresh=k_thresh, plateau_strength=plateau_strength,
-                    weighted=True, two_comp=False, train=True, hebb_max=hebb_max, hebb_rate=hebb_rate,
+                    weighted=True, two_comp=two_comp, apical_R=apical_R, apical_gc=apical_gc, train=True,
+                    hebb_max=hebb_max, hebb_rate=hebb_rate,
                     ca3_fb_inhib=ca3_fb_inhib, ca3_fb_n=ca3_fb_n, mossy_weight=mossy_weight)
     rm = bridge.region_manager
     lang = list(rm.indices("language_input")); lang_arr = np.asarray(lang, dtype=np.int64)
@@ -89,6 +93,25 @@ def run_payoff(seed, n_mem=2, train_events=150, drive_pA=200.0, coincidence=True
         top = np.argsort(-sp)[:n_stored]; top = top[sp[top] > 0]
         stored[m] = np.array([ca3_idx[i] for i in top], dtype=np.int64)
     _set_gates(bridge, 0.0)
+
+    # ---- RECALL-TIME inhibition-knob DIAGNOSTIC (research gate 2026-07-14, highest info-per-minute): scale the
+    # ca3_pv_basket->ca3 feedback-inhibition weight by g at RECALL only (encoding unchanged). If completion
+    # robustifies in some g<1 window -> "members are crushed by global inhibition" is the true bottleneck ->
+    # assembly-selective iSTDP/E->I-STDP is worth building; if no g robustifies -> the recurrent-weight structure
+    # is the bottleneck (iSTDP won't help). NO sim/ edit -- scales the masked cp_connections.data slice. ----
+    if recall_inhib_scale != 1.0 and ca3_fb_inhib is not None:
+        try:
+            basket = set(int(x) for x in rm.indices("ca3_pv_basket"))
+            ca3set = set(int(x) for x in ca3_idx)
+            nnz0 = int(conn.nnz)
+            indptr0 = to_host(conn.indptr); indices0 = to_host(conn.indices)
+            pre0 = np.searchsorted(indptr0, np.arange(nnz0), side="right") - 1
+            flat_ie = [k for k in range(nnz0) if int(pre0[k]) in basket and int(indices0[k]) in ca3set]
+            if flat_ie:
+                fpos = cp.asarray(np.asarray(flat_ie, dtype=np.int64), dtype=cp.int64)
+                conn.data[fpos] = conn.data[fpos] * float(recall_inhib_scale)
+        except Exception as _e:
+            print(f"  [recall_inhib_scale] skipped: {_e}", flush=True)
 
     # ---- completion read-out (identical to run_seed) ----
     ca3_pos = {int(g): i for i, g in enumerate(ca3_idx)}
@@ -158,6 +181,8 @@ def main():
     ap.add_argument("--recall-drive-pA", type=float, default=None, help="recall cue drive (decoupled from the low training drive; default = training drive)")
     ap.add_argument("--n-ca3", type=int, default=150, help="CA3 size (scale lever: larger -> larger, more redundant ensembles -> robust completion)")
     ap.add_argument("--n-mem", type=int, default=2)
+    ap.add_argument("--recall-inhib-scale", type=float, default=1.0, help="scale the ca3_pv_basket->ca3 feedback inhibition at RECALL only (diagnostic: does relaxing member-crushing inhibition robustify completion?)")
+    ap.add_argument("--no-two-comp", action="store_true", help="use the point-neuron read-out (two_comp=False) instead of the dendritic-dAP default")
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
     seeds = [int(s) for s in a.seeds.split(",")]
@@ -167,7 +192,8 @@ def main():
         r = run_payoff(seed=s, n_mem=a.n_mem, n_ca3=a.n_ca3, train_events=a.train_events, lam_dep_wi=a.lam_dep_wi,
                        k_thresh=a.k_thresh, comp_both_dir=not a.one_dir, ens_thresh=a.ens_thresh, drive_pA=a.drive_pA,
                        ca3_fb_inhib=a.ca3_fb_inhib, ca3_fb_n=a.ca3_fb_n, mossy_weight=a.mossy_weight,
-                       recall_drive_pA=a.recall_drive_pA)
+                       recall_drive_pA=a.recall_drive_pA, recall_inhib_scale=a.recall_inhib_scale,
+                       two_comp=not a.no_two_comp)
         if r is not None:
             results.append(r)
     n_go = sum(1 for r in results if r["go"])

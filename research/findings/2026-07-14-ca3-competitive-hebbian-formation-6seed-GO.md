@@ -108,10 +108,54 @@ held members hard to complete). This is a boundary = an undiscovered mechanism, 
 a misleading proxy; the functional-completion metric (does the held-out member reactivate from a partial cue?) is the
 one to gate on.
 
+## Deep a0 mechanism reading (the root cause + the ranked next mechanisms)
+
+Reading our own decisive substrate/findings IN DEPTH (a0) pinned WHY the functional completion is fragile and what
+the robust recipe is:
+
+- **The CYCLE-1068 completion GO read-out is the two-compartment DENDRITIC dAP** (`two_comp=True`, `apical_R=50`,
+  `k_thresh` CALIBRATED to the per-step coincident drive ~6-7 of a CLEAN 10× hand-installed attractor). My payoff
+  runner had been using the POINT-NEURON read-out (`two_comp=False`, `k_thresh=18`) that CYCLE-1067 PROVED fails even
+  on a good attractor — an a0 catch. But installing the validated dendritic read-out (two_comp + k_thresh=6) on the
+  LEARNED attractor ALSO failed (held-out 0.000/0.000/0.175): the k_thresh=6 was calibrated to the hand-installed
+  attractor's WEIGHT SCALE, which the learned attractor does not match, and k_thresh is entangled with training.
+  ⇒ the read-out is validated but does NOT transfer to the learned weight scale without co-calibration.
+- **The ROOT cause:** the CYCLE-1068 read-out was validated on a CLEAN attractor (within-ensemble W_HIGH ~10-30,
+  member→silent W_LOW — a ~10× ABSOLUTE separation). Neither competition (high ratio, LOW absolute ~0.46) nor
+  sparsification (higher absolute but seed-inconsistent) reliably produces that clean structure. The robust recipe
+  (Kopsick-Ascoli 2024, the direct spiking-CA3 model; PMC10996657) is a SPARSE (<1%) + STRONGLY-firing +
+  SYNCHRONOUS assembly: the selected assembly PCs are DRIVEN together in a 20 ms gamma window (4 spikes) so symmetric
+  STDP binds a strong within-assembly attractor, with assembly-SELECTIVE inhibition (PMC12244581) keeping
+  non-members silent WITHOUT suppressing members. My tests drove the UPSTREAM input (not the assembly cells directly)
+  and tested the pieces separately — never the full Kopsick recipe.
+
+**⇒ Ranked next mechanisms (research-gated) — then the DECISIVE DIAGNOSTIC that bounded the arc.** A focused
+deep-research gate (adversarially, primary sources) returned the exact Vogels-Sprekeler iSTDP rule + a crucial
+correction (the CA3 selective-inhibition paper Kim-Kim 2025 PMC12244581 actually uses plastic **E→I** symmetric STDP,
+NOT Vogels I→E), and — most valuably — the single highest info-per-minute move BEFORE building any plastic inhibition:
+a **recall-time inhibition-knob DIAGNOSTIC**. Scale `ca3_pv_basket→ca3` down by g at RECALL only (encoding unchanged);
+if completion robustifies in some g<1 → "members crushed by inhibition" is the bottleneck → build iSTDP; if no g
+helps → the recurrent-weight structure is the bottleneck → iSTDP won't help.
+
+**RESULT (fragile seed 43, baseline held-out 0.000): g ∈ {0.7, 0.5, 0.3, 0.0} ALL give held-out 0.000** (non-stored
+rises 0.029→0.057 as inhibition relaxes). ⇒ **even ZERO recall inhibition does not rescue the held-out members — the
+bottleneck is NOT inhibition level; it is the RECURRENT-WEIGHT STRUCTURE (the learned within-ensemble cue→held weights
+are too weak to fire the held members).** iSTDP / assembly-selective inhibition is RULED OUT as the fix (the ~30-min
+diagnostic saved that build). The genuine residual = FORM A HIGH-ABSOLUTE within-ensemble attractor: the members must
+fire STRONGLY + SYNCHRONOUSLY at encoding (Kopsick-Ascoli 2024: mossy-detonator-driven assembly + a 20 ms gamma
+window → dense co-firing → strong within-ensemble LTP → W_HIGH like the hand-installed attractor) — with the sparse
+code keeping non-members silent. The remaining ranked next mechanisms: (1) **Kopsick strong-synchronous encoding**
+(the direct fix — high-absolute within-ensemble via dense synchronous co-firing); (2) engram intrinsic-excitability
+boost of stored members (Josselyn-Silva; cheap, but a partial model); (3) theta-gamma sequential recall
+(Lisman-Idiart E%-max — the runner already has `ca1_pv_basket` E%-max wiring to port to CA3).
+
 ## Bottom line
 
 The competitive-Hebbian mechanism forms a **SELECTIVE weight structure** (within/truly-silent 8.9× vs the pure-LTP
 1.01×, 6-seed GO) — surpassing the 2026-07-09 within/silent-**ratio** saturation. But that weight-ratio surpass does
-NOT deliver robust functional pattern completion (the lesion control shows sparsification, not competition, drives
-what completion there is; and it is seed-fragile, 2/6). The robust functional completion on the emergent attractor is
-the honest open residual, most likely scale-limited — the next lever is SCALE, then theta-gamma synchronization.
+NOT deliver robust functional pattern completion: rigorous investigation across competition / sparsification /
+mossy-detonator / scale / point-neuron-vs-dendritic read-out shows the functional completion is deeply seed-fragile,
+because the LEARNED attractor is not as CLEAN (high-absolute + selective) as the hand-installed attractor the
+CYCLE-1068 read-out was validated on. The robust functional completion is the honest open residual — a genuine
+boundary = an undiscovered mechanism, with the specific ranked next mechanisms above (assembly-selective iSTDP; the
+full Kopsick sparse-synchronous recipe; a co-calibrated read-out), research-gated.
