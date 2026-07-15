@@ -27,7 +27,7 @@ def run_payoff(seed, n_mem=2, train_events=150, drive_pA=200.0, coincidence=True
                hebb_rate=True, lam_dep_wi=0.0, comp_both_dir=True, ens_thresh=2,
                ca3_fb_inhib=None, ca3_fb_n=None, mossy_weight=None, recall_drive_pA=None,
                two_comp=True, apical_R=50.0, apical_gc=None, recall_inhib_scale=1.0,
-               reset_steps=15, drive_steps=55, recall_steps=60):
+               sync_on=None, sync_off=None, reset_steps=15, drive_steps=55, recall_steps=60):
     # DEFAULT to the CYCLE-1068 VALIDATED dendritic-dAP read-out (two_comp + thin-high-R apical + calibrated k_thresh),
     # NOT the point-neuron read-out (two_comp=False) that CYCLE-1067 proved fails even on a good hand-installed attractor.
     from sim.backend import get_backend, to_host, get_sparse_module
@@ -74,16 +74,31 @@ def run_payoff(seed, n_mem=2, train_events=150, drive_pA=200.0, coincidence=True
             bridge.cp_external_input_current[:] = 0.0
             for _ in range(reset_steps):
                 bridge._run_one_simulation_step()
-            bridge.cp_external_input_current[:] = 0.0
-            bridge.cp_external_input_current[drv] = float(drive_pA)
             recording = ev >= train_events - rec_last
             win_fire = cp.zeros(len(ca3_idx), dtype=cp.float32)
-            for _ in range(drive_steps):
-                bridge._run_one_simulation_step()
-                f = bridge.cp_firing_states[ca3_arr].astype(cp.float32)
-                win_fire += f
-                if recording:
-                    spikes += f
+            if sync_on is not None:
+                # KOPSICK gamma-paced SYNCHRONOUS encoding: drive in tight ON pulses so the assembly members fire
+                # TOGETHER in each gamma window -> dense within-window co-firing -> STRONG within-ensemble LTP ->
+                # a high-absolute attractor (the diagnostic-pinned residual), while OFF windows keep it sparse.
+                _period = int(sync_on) + int(sync_off)
+                for _st in range(drive_steps):
+                    bridge.cp_external_input_current[:] = 0.0
+                    if (_st % _period) < int(sync_on):
+                        bridge.cp_external_input_current[drv] = float(drive_pA)
+                    bridge._run_one_simulation_step()
+                    f = bridge.cp_firing_states[ca3_arr].astype(cp.float32)
+                    win_fire += f
+                    if recording:
+                        spikes += f
+            else:
+                bridge.cp_external_input_current[:] = 0.0
+                bridge.cp_external_input_current[drv] = float(drive_pA)
+                for _ in range(drive_steps):
+                    bridge._run_one_simulation_step()
+                    f = bridge.cp_firing_states[ca3_arr].astype(cp.float32)
+                    win_fire += f
+                    if recording:
+                        spikes += f
             ens_acc += win_fire
             if do_comp:
                 _apply_competition((ens_acc >= float(ens_thresh)).astype(cp.float32))
@@ -183,6 +198,8 @@ def main():
     ap.add_argument("--n-mem", type=int, default=2)
     ap.add_argument("--recall-inhib-scale", type=float, default=1.0, help="scale the ca3_pv_basket->ca3 feedback inhibition at RECALL only (diagnostic: does relaxing member-crushing inhibition robustify completion?)")
     ap.add_argument("--no-two-comp", action="store_true", help="use the point-neuron read-out (two_comp=False) instead of the dendritic-dAP default")
+    ap.add_argument("--sync-on", type=int, default=None, help="Kopsick gamma-pulse ON steps (synchronous encoding -> strong within-ensemble LTP)")
+    ap.add_argument("--sync-off", type=int, default=None, help="gamma-pulse OFF steps between volleys")
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
     seeds = [int(s) for s in a.seeds.split(",")]
@@ -193,7 +210,7 @@ def main():
                        k_thresh=a.k_thresh, comp_both_dir=not a.one_dir, ens_thresh=a.ens_thresh, drive_pA=a.drive_pA,
                        ca3_fb_inhib=a.ca3_fb_inhib, ca3_fb_n=a.ca3_fb_n, mossy_weight=a.mossy_weight,
                        recall_drive_pA=a.recall_drive_pA, recall_inhib_scale=a.recall_inhib_scale,
-                       two_comp=not a.no_two_comp)
+                       two_comp=not a.no_two_comp, sync_on=a.sync_on, sync_off=a.sync_off)
         if r is not None:
             results.append(r)
     n_go = sum(1 for r in results if r["go"])
