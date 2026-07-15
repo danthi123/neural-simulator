@@ -302,6 +302,13 @@ def language_input_repr_gate(seed, corpus=None, n_sentences=1500, V=200, m_embed
     win_struct = R @ E.T                                       # (n x V)
     win_struct *= (np.std(res_rand.W_in) / (np.std(win_struct) + 1e-12))
     res_struct = build_res(win_struct)
+    # ANTI-CHEAT (permuted-embedding): each token gets ANOTHER token's embedding row -> IDENTICAL spectral/rank/scale,
+    # but the token<->embedding ALIGNMENT is broken. If the win is genuine token-specific distributional structure it
+    # COLLAPSES to ~random; if it survives, the "win" is a spectral/scale artifact of the structured matrix, not meaning.
+    E_perm = E[rng.permutation(Veff)]
+    win_perm = R @ E_perm.T
+    win_perm *= (np.std(res_rand.W_in) / (np.std(win_perm) + 1e-12))
+    res_perm = build_res(win_perm)
 
     def pairs(res, sset):
         X, Y = [], []
@@ -326,13 +333,15 @@ def language_input_repr_gate(seed, corpus=None, n_sentences=1500, V=200, m_embed
 
     rand_ce = two_stage_ce(res_rand)
     struct_ce = two_stage_ce(res_struct)
+    perm_ce = two_stage_ce(res_perm)
     P_bi = fit_bigram(tr, Veff); bi_ce = 0.0
     for ids in ev:
         for t in range(len(ids) - 1):
             bi_ce += -np.log(P_bi[int(ids[t]), int(ids[t + 1])] + 1e-12)
     bi_ce /= max(1, sum(len(s) - 1 for s in ev))
     return {"V": Veff, "m_embed": m_embed, "rand_win_ce": rand_ce, "struct_win_ce": struct_ce,
-            "bigram_ce": bi_ce, "struct_minus_rand": struct_ce - rand_ce}
+            "perm_embed_ce": perm_ce, "bigram_ce": bi_ce, "struct_minus_rand": struct_ce - rand_ce,
+            "perm_minus_rand": perm_ce - rand_ce}
 
 
 def train_recall_nl(res, trials, V, epochs, lr_out, lr_rec, seed, arm, n_hidden=64, wd=1e-3):
@@ -490,12 +499,15 @@ def main():
         agg = {k: float(np.mean([r[k] for r in rs])) for k in rs[0]}
         beats = agg["struct_win_ce"] < agg["rand_win_ce"] - 0.03
         vs_bi = agg["struct_win_ce"] < agg["bigram_ce"] - 0.03
-        verdict = ("EMERGENT input-representation HEADROOM: struct W_in beats random"
-                   + (" AND the bigram" if vs_bi else " (but not the bigram)") if beats
-                   else "NO emergent input-representation headroom (struct ~ random) -> supervised R3 W_in warranted")
-        print(f"[input-repr-gate] V={agg['V']:.0f} m={agg['m_embed']:.0f} | rand_win_ce={agg['rand_win_ce']:.3f} "
-              f"struct_win_ce={agg['struct_win_ce']:.3f} bigram_ce={agg['bigram_ce']:.3f} "
-              f"struct-rand={agg['struct_minus_rand']:+.3f} -> {verdict}", flush=True)
+        perm_collapses = agg["perm_embed_ce"] >= agg["rand_win_ce"] - 0.03    # the anti-cheat: perm-embed must NOT beat random
+        verdict = (("GENUINE EMERGENT input-representation HEADROOM: struct beats random"
+                    + (" AND the bigram" if vs_bi else " (not the bigram)")
+                    + " AND perm-embed COLLAPSES") if (beats and perm_collapses)
+                   else ("ARTIFACT: struct beats random but perm-embed ALSO does (spectral/scale, not meaning)"
+                         if beats else "NO emergent input-representation headroom (struct ~ random) -> supervised R3 W_in warranted"))
+        print(f"[input-repr-gate] V={agg['V']:.0f} m={agg['m_embed']:.0f} | rand={agg['rand_win_ce']:.3f} "
+              f"struct={agg['struct_win_ce']:.3f} perm_embed={agg['perm_embed_ce']:.3f} bigram={agg['bigram_ce']:.3f} "
+              f"| struct-rand={agg['struct_minus_rand']:+.3f} perm-rand={agg['perm_minus_rand']:+.3f} -> {verdict}", flush=True)
         return
     if a.language_test:
         rs = [language_2stage_test(s, corpus=a.corpus, n_sentences=a.n_sentences, V=a.language_vocab, n_pool=a.n_pool, epochs=a.epochs, adapt_win_hi=a.adapt_win_hi, beta=a.beta) for s in a.seeds]
