@@ -44,3 +44,21 @@ def test_first_recognised_marker_wins_in_a_phrase(seed):
     assert r.route(["how", "are", "dogs", "and", "cats", "different"]) == "COMPARE"
     assert r.route(["what", "do", "dogs", "and", "cats", "share"]) == "SHARE"
     assert r.route(["trace", "the", "dog", "ancestry"]) == "TAXONOMY"
+
+
+@pytest.mark.parametrize("seed", SEEDS)
+def test_neutral_quantifier_both_does_not_hijack_compare(seed):
+    """Adversarial-audit regression: 'both' is a neutral quantifier, NOT a discourse marker -> a COMPARE query
+    containing 'both' must still route to COMPARE (not be hijacked to SHARE by first-in-token-order)."""
+    r = DiscourseMarkerRouter(seed=seed)
+    assert r.route(["both"]) is None
+    assert r.route(["how", "are", "both", "the", "dog", "and", "cat", "different"]) == "COMPARE"
+
+
+@pytest.mark.parametrize("seed", SEEDS)
+def test_classify_inflections_route_taxonomy(seed):
+    """Adversarial-audit regression: the router's exact-token dict must cover the inflections the keyword substring
+    'classif' matched ('how is the elephant classified?')."""
+    r = DiscourseMarkerRouter(seed=seed)
+    assert r.route(["how", "is", "the", "elephant", "classified"]) == "TAXONOMY"
+    assert r.route(["the", "dog", "classification"]) == "TAXONOMY"

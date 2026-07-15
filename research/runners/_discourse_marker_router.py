@@ -20,10 +20,15 @@ from research.runners._emerge_reservoir_lm_corpus_cooccurrence_codes_derisk impo
 # the fluid console's discourse intents + their ATTESTED markers (from `FluidChat.turn` lines 455/464/486) and each
 # intent's distributional CONTEXT words (contrastive / commonality / taxonomy). The router LEARNS which words are which
 # intent from co-occurrence with these contexts; a novel synonym near a cluster routes there, else -> None (fallthrough).
+# NB (2026-07-15 adversarial audit): "both" was REMOVED from SHARE -- it is a neutral quantifier that also appears in
+# COMPARE / yes-no queries ("how are BOTH dogs and cats different?"), and route() returns the first-in-token-order
+# intent, so "both" preceding "different" hijacked a COMPARE query into SHARE. It is not a discourse marker. Also added
+# the inflected "classified"/"classification" to TAXONOMY to match the keyword path's SUBSTRING "classif" coverage
+# ("how is the elephant classified?") -- the router's code dict is EXACT-token, so inflections must be listed.
 INTENT_MARKERS = {
-    "SHARE":    ["share", "common", "both"],
+    "SHARE":    ["share", "common"],
     "COMPARE":  ["compare", "different", "difference"],
-    "TAXONOMY": ["classify", "trace", "ancestry", "ultimately"],
+    "TAXONOMY": ["classify", "classified", "classification", "trace", "ancestry", "ultimately"],
 }
 INTENT_CTX = {
     "SHARE":    ["together", "mutual", "same", "jointly", "similarly", "also", "likewise", "overlap"],
