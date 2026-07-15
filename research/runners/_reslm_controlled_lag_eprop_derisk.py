@@ -387,6 +387,7 @@ def main():
     ap.add_argument("--language-test", action="store_true", help="MISSION: does a 2-STAGE read-out beat a LINEAR one on the real EMERGE SVO language stream?")
     ap.add_argument("--corpus", default=None, help="natural-corpus path (e.g. data/corpus/wikitext.txt) for the language test; None=templated EMERGE SVO stream")
     ap.add_argument("--n-sentences", type=int, default=6000)
+    ap.add_argument("--language-vocab", type=int, default=300, help="vocab cap for the language test (scale lever)")
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
     t0 = time.time()
@@ -394,7 +395,7 @@ def main():
         gc = grad_check_alif()
         print(f"[grad_check_alif] {gc}", flush=True)
     if a.language_test:
-        rs = [language_2stage_test(s, corpus=a.corpus, n_sentences=a.n_sentences, n_pool=a.n_pool, epochs=a.epochs) for s in a.seeds]
+        rs = [language_2stage_test(s, corpus=a.corpus, n_sentences=a.n_sentences, V=a.language_vocab, n_pool=a.n_pool, epochs=a.epochs) for s in a.seeds]
         agg = {k: float(np.mean([r[k] for r in rs])) for k in rs[0]}
         beats_bigram = agg["twostage_ce"] < agg["bigram_ce"] - 0.05
         perm_collapses = agg["perm_ce"] >= agg["bigram_ce"] - 0.05    # permuted-corpus must NOT beat the bigram
