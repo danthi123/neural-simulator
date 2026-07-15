@@ -48,8 +48,10 @@ def make_kv_task(K, F, T, n_trials, seed, n_pairs=2):
     return trials, probe_pos, targets, kpos, (STORE, PROBE, FILL0)
 
 
-def _store_features(states, kpos, probe_pos, arm, eta, rng):
-    """Build [q ; v_hat] for one trial. states[t] = reservoir state at t. arm selects the store variant."""
+def _store_features(states, kpos, probe_pos, arm, eta, rng, decay=1.0):
+    """Build [q ; v_hat] for one trial. states[t] = reservoir state at t. arm selects the store variant.
+    decay < 1.0 = STP tau_f fade applied per write step (only used by the *_stp arms, which write CONTINUOUSLY over all
+    timesteps binding prev_state->curr_state = the realistic activity-silent-WM regime with filler interference)."""
     n2 = states.shape[1]
     q = states[probe_pos]
     if arm == "none":
@@ -58,6 +60,20 @@ def _store_features(states, kpos, probe_pos, arm, eta, rng):
         vbag = np.mean([states[vp] for (_, vp) in kpos], axis=0)   # position-agnostic mean value (no content match)
         return np.concatenate([q, vbag])
     M = np.zeros((n2, n2))
+    if arm in ("delta_stp", "additive_stp"):
+        # CONTINUOUS STP write: at every step bind prev_state -> curr_state with a per-step tau_f decay. The fillers ALSO
+        # write (their transitions = interference), so the k->v binding must survive T filler-writes + decay -> the real
+        # activity-silent-WM test AND the regime where the error-correcting delta write beats saturating additive.
+        for t in range(1, probe_pos + 1):
+            M *= decay
+            k = states[t - 1]; v = states[t]
+            if arm == "additive_stp":
+                M += np.outer(v, k)
+            else:
+                M += eta * np.outer(v - M @ k, k)
+        v_hat = M @ q
+        return np.concatenate([q, v_hat])
+    # explicit-pairs write (the #1 GO regime: only the key->value pairs)
     pairs = list(kpos)
     if arm == "keyshuffle":
         keys = [kp for (kp, _) in pairs]; rng.shuffle(keys)
@@ -81,7 +97,7 @@ def _ridge_readout(Phi_tr, y_tr, Phi_ev, y_ev, K, lam=1.0):
     return float(np.mean(pred == y_ev))
 
 
-def _eval_arms(res, K, F, T, n_pairs, n_train, n_eval, eta, seed, arms):
+def _eval_arms(res, K, F, T, n_pairs, n_train, n_eval, eta, seed, arms, decay=1.0):
     tr, tp, ty, kpos, _ = make_kv_task(K, F, T, n_train, seed, n_pairs=n_pairs)
     ev, ep, ey, kpe, _ = make_kv_task(K, F, T, n_eval, seed + 5000, n_pairs=n_pairs)
     St = [np.asarray(res.forward_states(ids)) for ids in tr]
@@ -89,14 +105,14 @@ def _eval_arms(res, K, F, T, n_pairs, n_train, n_eval, eta, seed, arms):
     row = {}
     for arm in arms:
         rng = np.random.default_rng(seed * 71 + hash(arm) % 997)
-        Phi_tr = np.array([_store_features(St[i], kpos, tp[i], arm, eta, rng) for i in range(len(tr))])
-        Phi_ev = np.array([_store_features(Se[i], kpe, ep[i], arm, eta, rng) for i in range(len(ev))])
+        Phi_tr = np.array([_store_features(St[i], kpos, tp[i], arm, eta, rng, decay) for i in range(len(tr))])
+        Phi_ev = np.array([_store_features(Se[i], kpe, ep[i], arm, eta, rng, decay) for i in range(len(ev))])
         row[arm] = round(_ridge_readout(Phi_tr, np.array(ty), Phi_ev, np.array(ey), K), 4)
     return row
 
 
 def run_one(seed, K=16, F=6, n_pool=120, n_train=800, n_eval=300, eta=0.5,
-            adapt_win_hi=300.0, beta=1.0, Ts=(5, 15, 30), interfere_pairs=6):
+            adapt_win_hi=300.0, beta=1.0, Ts=(5, 15, 30), interfere_pairs=6, stp_decays=(1.0, 0.98, 0.9)):
     Veff = K + 2 + F
     res = RateReservoir(Veff, n_pool, seed=seed, alpha=0.3, spectral=1.1, alif=True, beta=beta, adapt_win_hi=adapt_win_hi)
     ARMS = ["none", "delta", "additive", "cachebag", "keyshuffle"]
@@ -108,10 +124,22 @@ def run_one(seed, K=16, F=6, n_pool=120, n_train=800, n_eval=300, eta=0.5,
     # (B) INTERFERENCE: past-window T, n_pairs high -> does DELTA beat ADDITIVE (error-correcting write vs saturation)?
     Tg = max(Ts)
     out["interfere"] = _eval_arms(res, K, F, Tg, interfere_pairs, n_train, n_eval, eta, seed, ["none", "delta", "additive"])
+    # (C) STP REALIZATION: CONTINUOUS write over all steps (fillers interfere) + per-step tau_f decay -> does the
+    #     activity-silent-WM store hold past the window, and does delta_stp beat additive_stp (interference now REAL)?
+    out["stp"] = {}
+    for decay in stp_decays:
+        out["stp"][decay] = _eval_arms(res, K, F, Tg, 2, n_train, n_eval, eta, seed,
+                                       ["none", "delta_stp", "additive_stp"], decay=decay)
     g = out["byT"][Tg]; gi = out["interfere"]
     out["horizon_GO"] = bool(g["delta"] >= 0.6 and g["delta"] > g["none"] + 0.15
                              and g["delta"] > g["cachebag"] + 0.15 and g["keyshuffle"] < g["delta"] - 0.15)
     out["delta_beats_additive_under_interference"] = bool(gi["delta"] > gi["additive"] + 0.05)
+    # STP GO: at the best decay, delta_stp extends the horizon (>> none) AND (the refinement) beats additive_stp
+    best = max(stp_decays, key=lambda d: out["stp"][d]["delta_stp"])
+    sd = out["stp"][best]
+    out["stp_best_decay"] = best
+    out["stp_horizon_GO"] = bool(sd["delta_stp"] > sd["none"] + 0.15)
+    out["stp_delta_beats_additive"] = bool(sd["delta_stp"] > sd["additive_stp"] + 0.05)
     out["GO"] = out["horizon_GO"]          # the headline: content-addressable store extends the horizon
     return out
 
@@ -130,13 +158,16 @@ def main():
     for r in rows:
         segs = " | ".join(f"T{T}: none {r['byT'][T]['none']:.2f} DELTA {r['byT'][T]['delta']:.2f} "
                           f"bag {r['byT'][T]['cachebag']:.2f} shuf {r['byT'][T]['keyshuffle']:.2f}" for T in a.Ts)
-        gi = r["interfere"]
+        gi = r["interfere"]; bd = r["stp_best_decay"]; sd = r["stp"][bd]
         print(f"[deltastore s{r['seed']}] chance={r['chance']} || {segs} || interfere(P={r['interfere_pairs']}): "
-              f"DELTA {gi['delta']:.2f} add {gi['additive']:.2f} none {gi['none']:.2f} "
-              f"[delta>add:{r['delta_beats_additive_under_interference']}] || {'GO' if r['GO'] else 'no'}", flush=True)
+              f"DELTA {gi['delta']:.2f} add {gi['additive']:.2f} [d>a:{r['delta_beats_additive_under_interference']}] || "
+              f"STP(decay {bd}): delta_stp {sd['delta_stp']:.2f} add_stp {sd['additive_stp']:.2f} none {sd['none']:.2f} "
+              f"[horiz:{r['stp_horizon_GO']} d>a:{r['stp_delta_beats_additive']}] || {'GO' if r['GO'] else 'no'}", flush=True)
     ngo = sum(x["GO"] for x in rows); nda = sum(x["delta_beats_additive_under_interference"] for x in rows)
-    print(f"[deltastore] {ngo}/{len(rows)} horizon-GO (delta extends past ALIF window, cachebag+keyshuffle collapse); "
-          f"{nda}/{len(rows)} delta>additive under interference (P={rows[0]['interfere_pairs']})", flush=True)
+    nsh = sum(x["stp_horizon_GO"] for x in rows); nsa = sum(x["stp_delta_beats_additive"] for x in rows)
+    print(f"[deltastore] {ngo}/{len(rows)} horizon-GO (explicit-pairs store extends past ALIF window); "
+          f"{nda}/{len(rows)} delta>additive (explicit, P={rows[0]['interfere_pairs']}); "
+          f"STP-realization: {nsh}/{len(rows)} stp-horizon-GO, {nsa}/{len(rows)} delta_stp>additive_stp (continuous-write+decay)", flush=True)
     json.dump(rows, open(a.out, "w"))
 
 
