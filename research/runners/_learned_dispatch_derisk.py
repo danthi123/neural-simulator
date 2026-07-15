@@ -39,38 +39,61 @@ def _sparse_code(rng, D):
     v = np.zeros(D); k = max(1, int(SPARS * D)); v[rng.choice(D, k, replace=False)] = 1.0; return v
 
 
-def build_task(seed, n_holdout_per_cat=3):
+def build_task(seed, n_holdout_per_cat=3, hard=False):
     rng = np.random.default_rng(seed * 911 + 7)
     cat_code = np.stack([_sparse_code(rng, D_CAT) for _ in range(N_CAT)])          # shared per category
     subj_cat = np.repeat(np.arange(N_CAT), N_SUBJ_PER_CAT)                          # category of each subject
     subj_id = np.stack([_sparse_code(rng, D_ID) for _ in range(N_CAT * N_SUBJ_PER_CAT)])
     q_code = np.stack([_sparse_code(rng, D_Q) for _ in range(N_QTYPE)])
-    # the COMPOSITIONAL dispatch rule: intent = INTENT_MAP[category, qtype]  (deterministic per seed, uses all intents)
-    intent_map = rng.integers(0, N_INTENT, size=(N_CAT, N_QTYPE))
-    # ensure every intent is reachable (not degenerate)
-    while len(np.unique(intent_map)) < N_INTENT:
+    if hard:
+        # HARD (clean deep-credit systematicity): a STRUCTURED-NONLINEAR rule intent = (a[cat] XOR b[qt] bits) -> class,
+        # inferable ONLY by composing the two SEPARATELY-attested factors; hold out whole (cat,qtype) COMBINATIONS
+        # (never attested) so 1-NN has NO same-(cat,qtype) neighbor AND linear can't do the XOR -> only deep+compose wins.
+        nb = 3                                                                      # bits -> 2^3=8 >= N_INTENT
+        a = rng.integers(0, 2, size=(N_CAT, nb)); b = rng.integers(0, 2, size=(N_QTYPE, nb))
+        intent_map = np.array([[int("".join(map(str, (a[c] ^ b[q])[:nb])), 2) % N_INTENT
+                                for q in range(N_QTYPE)] for c in range(N_CAT)])
+        # hold out ~30% of (cat,qtype) CELLS entirely (each cat + each qtype still attested in OTHER cells)
+        cells = [(c, q) for c in range(N_CAT) for q in range(N_QTYPE)]
+        rng.shuffle(cells)
+        held_cells = set()
+        catcount = {c: 0 for c in range(N_CAT)}; qcount = {q: 0 for q in range(N_QTYPE)}
+        for (c, q) in cells:
+            if len(held_cells) >= int(0.3 * len(cells)):
+                break
+            # keep each cat + each qtype attested in >=2 train cells
+            train_c = sum(1 for (c2, q2) in cells if c2 == c and (c2, q2) not in held_cells) - 1
+            train_q = sum(1 for (c2, q2) in cells if q2 == q and (c2, q2) not in held_cells) - 1
+            if train_c >= 2 and train_q >= 2:
+                held_cells.add((c, q))
+        while len(np.unique(intent_map)) < N_INTENT:
+            a = rng.integers(0, 2, size=(N_CAT, nb)); b = rng.integers(0, 2, size=(N_QTYPE, nb))
+            intent_map = np.array([[int("".join(map(str, (a[c] ^ b[q])[:nb])), 2) % N_INTENT
+                                    for q in range(N_QTYPE)] for c in range(N_CAT)])
+        held_pred = lambda s, q: (subj_cat[s], q) in held_cells
+    else:
         intent_map = rng.integers(0, N_INTENT, size=(N_CAT, N_QTYPE))
+        while len(np.unique(intent_map)) < N_INTENT:
+            intent_map = rng.integers(0, N_INTENT, size=(N_CAT, N_QTYPE))
+        held_set = set()
+        for c in range(N_CAT):
+            subs = np.where(subj_cat == c)[0]
+            for _ in range(n_holdout_per_cat):
+                s = int(rng.choice(subs)); q = int(rng.integers(0, N_QTYPE))
+                if sum(1 for s2 in subs if s2 != s and (s2, q) not in held_set) >= 2:
+                    held_set.add((s, q))
+        held_pred = lambda s, q: (s, q) in held_set
     n_subj = N_CAT * N_SUBJ_PER_CAT
-    # held-out COMPOSITIONS: for each category, hold out n_holdout (subject, qtype) combos whose (category, qtype) IS
-    # attested for OTHER subjects in train -> generalization iff the net reads category. Never hold out a whole (cat,qtype).
-    held_set = set()
-    for c in range(N_CAT):
-        subs = np.where(subj_cat == c)[0]
-        for _ in range(n_holdout_per_cat):
-            s = int(rng.choice(subs)); q = int(rng.integers(0, N_QTYPE))
-            # keep at least 2 other subjects of this cat with this qtype in train
-            if sum(1 for s2 in subs if s2 != s and (s2, q) not in held_set) >= 2:
-                held_set.add((s, q))
     X, y, is_held = [], [], []
     for s in range(n_subj):
         for q in range(N_QTYPE):
             x = np.concatenate([cat_code[subj_cat[s]], subj_id[s], q_code[q]])
-            X.append(x); y.append(int(intent_map[subj_cat[s], q])); is_held.append((s, q) in held_set)
+            X.append(x); y.append(int(intent_map[subj_cat[s], q])); is_held.append(bool(held_pred(s, q)))
     return np.array(X), np.array(y), np.array(is_held), N_INTENT
 
 
-def run_one(seed, hidden=48, epochs=120, lr=0.05, in_gain=1.0, do_bptt=True):
-    X, y, is_held, F = build_task(seed)
+def run_one(seed, hidden=48, epochs=120, lr=0.05, in_gain=1.0, do_bptt=True, hard=False):
+    X, y, is_held, F = build_task(seed, hard=hard)
     tr = ~is_held
     Xtr, ytr = X[tr], y[tr]
     Xev, yev, held = X, y, is_held                       # eval on ALL, tag held-out compositions
@@ -107,9 +130,10 @@ def main():
     ap.add_argument("--hidden", type=int, default=48)
     ap.add_argument("--epochs", type=int, default=120)
     ap.add_argument("--no-bptt", action="store_true")
+    ap.add_argument("--hard", action="store_true", help="clean deep-credit systematicity: nonlinear XOR rule + held-out (cat,qtype) COMBINATIONS (1-NN + linear both fail)")
     ap.add_argument("--out", default="research/findings/raw/_learned_dispatch.json")
     a = ap.parse_args()
-    rows = [run_one(s, hidden=a.hidden, epochs=a.epochs, do_bptt=not a.no_bptt) for s in a.seeds]
+    rows = [run_one(s, hidden=a.hidden, epochs=a.epochs, do_bptt=not a.no_bptt, hard=a.hard) for s in a.seeds]
     for r in rows:
         print(f"[dispatch s{r['seed']}] chance={r['chance']} memfloor={r['memfloor_held']} | "
               f"armA_lin_held={r['armA_lin_held']:.3f} armB_EPROP_held={r['armB_eprop_held']:.3f} "
