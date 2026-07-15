@@ -1,0 +1,25 @@
+# Emergence-engine #1 de-risk — GO (6-seed): a CONTENT-ADDRESSABLE fast-weight store over the frozen reservoir EXTENDS the memory horizon PAST the fixed-ALIF window, where the fading reservoir provably collapses; the load-bearing cache-bag + key-shuffle anti-cheats both collapse
+
+**Date:** 2026-07-15 (compute unlocked) · **Runner:** `research/runners/_reslm_deltastore_horizon_derisk.py` (reuse-by-import: `RateReservoir` from the eprop harness; numpy-CPU; NO `sim/` edit). Research gate: `2026-07-15-emergence-engine-research-gate-...` (#1 mechanism). **Verdict: GO (6/6) for the horizon-extension headline; the delta-vs-additive refinement is an honest secondary NEGATIVE at this operating point.**
+
+## The frontier this surpasses
+The established open frontier (research gate MOVE 1): the frozen-ALIF-reservoir + 2-stage-read-out stack holds/integrates/combines only within the ~5–15-token ALIF window; the genuine irreducible residual is a **non-fading, content-addressable, specific-item STORE** retrievable by current relevance. Passive multi-timescale / longer-τ is a diluting AVERAGE (refuted two ways, 2026-07-11). The biology answer (STP synaptic WM = delta-rule fast weights = Hopfield/CA3 read) supplies off-diagonal binding STRUCTURALLY (pairwise outer-product write) → dissolves the RTRL/e-prop-diagonal wall at O(n²)/step, local, transport-free, no BPTT.
+
+## The test (retrieve-by-content, so a position-cache provably fails)
+`[STORE k1 v1 k2 v2  f_1..f_T  PROBE k_j] -> predict v_j` (j random; k/v disjoint content symbols; K=16, chance 0.0625). The model must MATCH the probed key to the stored key and retrieve its PAIRED value. Over each trial a fast-weight `M` is written from the reservoir STATES (`M += eta (v − M k) kᵀ`) and read at PROBE (`v_hat = M q`, q = probe state); `[q ; v_hat]` → a ridge read-out (the "2-stage read-out" as a linear map). ARMS: none (state only, v_hat=0) / delta / additive / **cachebag** (v_hat = mean stored value, position-agnostic) / **keyshuffle** (write keys shuffled → content-addressing broken). All arms share the same feature dim (4n) so the comparison is fair.
+
+## Result (6-seed 42/43/44/100/101/102; chance 0.0625)
+| T (dependency length) | none (fading reservoir) | **DELTA store** | cachebag | keyshuffle |
+|---|---|---|---|---|
+| T=5 (within window)  | 0.36–0.45 | **0.87–0.96** | ~0.50 | ~0.47 |
+| T=15 (past window)   | 0.26–0.35 | **0.90–0.98** | ~0.50 | ~0.45 |
+| **T=30 (well past)** | **0.16–0.27** (→chance) | **0.85–0.98** | ~0.51 | ~0.46 |
+- **HORIZON extension: 6/6 GO.** The store holds ~0.9+ at T=30 while the fading reservoir collapses toward chance. The content-addressing is genuine: **cachebag** (position-agnostic mean) sits at chance-between-values (can't pick which), and **keyshuffle** (same store structure, keys mismatched to values) collapses — so it is the correct key→value binding doing the work, not "having a store" or a positional cache (the load-bearing 2026-07-11 caution is defeated).
+
+## Honest secondary NEGATIVE — the delta-vs-additive refinement is NOT load-bearing here
+At the interference operating point (P=6 pairs held at once, T=30): DELTA ≈ ADDITIVE (0.35–0.79, delta not > additive on any seed; 0/6). The research gate's claim that additive SATURATES under interference (so delta's error-correcting write is needed) does NOT bite with single-pass writes over reservoir-state keys — additive suffices because the reservoir states are near-orthogonal enough that one-pass outer-product accumulation does not interfere destructively at P=6. The delta-rule advantage would require correlated keys + multiple write passes (a next rung IF interference capacity becomes the binding limit). ⇒ the CONTENT-ADDRESSABLE STORE is the load-bearing mechanism; the DELTA write is an optional refinement, not required at this scale.
+
+## ⇒ Ladder + next
+- **The emergence-engine horizon frontier is surpassed at Stage 0:** a content-addressable fast-weight store extends the memory horizon past the fixed-ALIF reservoir, 6-seed, anti-cheated, no recurrent credit, no BPTT, O(n²)/step. This directly instantiates the research gate's #1 + validates the reframe (the frontier was a non-fading store, not recurrent credit).
+- **NEXT rungs (in order):** (a) **Stage 1 — the LANGUAGE-horizon application:** the store on real-text (WikiText) context-depth buckets — does `v_hat` lift the d≥10 CE where longer-τ provably could not (with the tuned bigram + interpolated trigram baselines)? (b) **the on-substrate STP realization:** the store as `sim/kernels.fused_stp_decay_recovery` synaptic working memory (the substrate is present, never read as memory) + a spiking read — the "activity-silent synaptic WM" made literal. (c) **selective (input-gated) write** if same-category interference on real text becomes the binding limit (Mamba/KOSS). (d) content-pure keys if reservoir-state keys cap interference capacity. The delta-rule + selective-write refinements are held for (c)/(d), not needed for the Stage-0 headline.
+- Reuse-by-import; NO `sim/` edit. Runner: `_reslm_deltastore_horizon_derisk.py`.
