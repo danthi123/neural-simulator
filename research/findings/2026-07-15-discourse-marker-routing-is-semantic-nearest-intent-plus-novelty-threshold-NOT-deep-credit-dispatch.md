@@ -32,6 +32,14 @@ The composed mechanism (per-intent centroid over the SEMANTIC block = PPMI corte
 ```
 So the open-vocabulary discourse routing works decisively: a novel synonym routes to the correct intent by semantic proximity (1.000), and an OOD marker routes to the neural-parse fallthrough by the novelty threshold (1.000) — the moat. This is the de-risked wire-in mechanism; it uses ONLY already-GO pieces (PPMI semantic codes + the Bogacz-Brown novelty gate) and needs NO deep credit.
 
+## REAL-PPMI prerequisite CONFIRMED (not just faithful-geometry) — 6-seed GO
+The deployment needs the markers to carry SEMANTIC codes (the fluid console currently uses RANDOM codes, `_fluidconv_chat_repl.py:171`). Confirmed the canonical `ppmi()` machinery (EMERGE-30/62) over a distributional discourse corpus (each intent group's markers co-occur with that intent's CONTEXT words — contrastive `vs/unlike/whereas/contrast` · commonality `together/mutual/jointly` · taxonomy `kind/descends/genus` · interrogative `is/the/eat`, overlapping not a hard partition) produces marker codes that cluster by intent:
+```
+[realPPMI s42..102] heldout-synonym-nearest-intent=1.000 (all 6)   within-cos=0.81  between-cos=0.05  (16x separation)
+[realPPMI] mean heldout-synonym=1.000  GO=True
+```
+So a novel synonym (versus/alike/lineage) routes to the correct intent by REAL distributional-semantic proximity. The wire-in is de-risked END-TO-END with real machinery: discourse corpus → `ppmi()` → marker codes → nearest-intent + novelty threshold → open-vocab routing + OOD-fallthrough moat. The remaining work is the FluidChat integration (source marker codes from PPMI instead of random; replace the keyword checks; additive default-off; 6-seed parity + open-vocab + moat).
+
 ## Honest arc status
 - Deep-credit compositional dispatch: **GO** (interpolative), reserved for a future compositional intent grammar.
 - Fluid discourse-marker routing: mechanism = **semantic-nearest-intent + novelty threshold** (composes PPMI + familiarity gate, both GO) → open-vocabulary routing. This is the deployable wire-in; it does NOT need deep credit.
