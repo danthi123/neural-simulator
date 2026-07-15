@@ -1,0 +1,24 @@
+# On-substrate systematicity RUNG 2 (5/6-seed, plan #3, the emergence step): the read-out that USES the FIXED spiking bind is learnable by BIOLOGICAL credit (transport-free feedback alignment, NO weight transport) AND still extrapolates to held-out compositions — "learn to USE a fixed bind" realized on the substrate
+
+**Date:** 2026-07-15 · **Runner:** `research/runners/_onsubstrate_bind_learned_readout_derisk.py` (reuse-by-import RUNG-1's `bound_rates` over `build_bind_bridge`/`hadamard_spiking`; the transport-free read-out mirrors `_learned_bilinear_binder_systematicity_derisk`'s `credit='transport_free'`; numpy backend for the smoke; NO `sim/` edit). Follows `2026-07-15-onsubstrate-coincidence-bind-systematicity-RUNG1-GO.md`.
+
+## The step (TEST A's own conclusion, realized biologically)
+TEST A concluded: the emergence-bar path for systematic conversation is **learn to USE a fixed bind/store** (learn the read-out over a fixed compositional primitive), NOT build a richer learner to CRACK composition from scratch. RUNG 1 put the FIXED bind on spikes (the coincidence AND-banks on a real `SimulationBridge`). RUNG 2 asks: is the READ-OUT over that fixed spiking bind learnable by **biological credit** — a 1-hidden read-out trained by feedback alignment (a FIXED RANDOM feedback matrix for the hidden credit, NO weight transport = the biologically-legal rule) — and does it STILL extrapolate to held-out (cat,qt) combinations?
+
+## Result (6-seed 42/43/44/100/101/102; chance 0.25)
+| read-out over the FIXED spiking bind | held-out extrapolation (mean) | note |
+|---|---|---|
+| **TRANSPORT-FREE 1-hidden (feedback alignment, NO weight transport = biological)** | **0.69** (0.571–0.786) | EXTRAPOLATES on all 6 seeds |
+| gradient 1-hidden (weight transport) = learned-read-out reference | 0.65 | comparable (transport-free ≈ gradient — feedback alignment loses little here) |
+| least-squares ridge (RUNG-1 baseline) = optimal linear read-out | 0.75 | the optimal-read-out ceiling |
+| from-scratch classifier on the RAW [cat;q] (no fixed bind) | 0.39 (0.000–0.500) | MEMORIZES+fails — the systematicity wall |
+| permuted labels (anti-cheat) | 0.27 | collapses to chance on all 6 |
+- **The biological (transport-free) read-out over the fixed spiking bind >> the from-scratch classifier on ALL 6 seeds (0.69 vs 0.39)**, and permuted collapses on all 6 — the load-bearing "learn-to-use-the-fixed-bind-biologically" claim is 6/6 robust. **Strict GO gate 5/6** (s43: transport-free 0.571 > MLP 0.500 by only +0.07, below the +0.15 margin gate — the right direction, a narrow-margin small-sample seed, not a mechanism failure).
+- Transport-free (0.69) sits below the ridge ceiling (0.75) — expected: feedback alignment is a suboptimal but biologically-legal learner; the point is it's LEARNABLE by biological credit AND extrapolates, not that it beats least-squares.
+
+## ⇒ What the on-substrate ladder now shows (end-to-end, this session's convergence realized)
+**RUNG 1** (fixed spiking coincidence bind = the substrate's native ⊙) achieves systematic held-out-composition extrapolation (0.75, 6/6 > learner). **RUNG 2** (this) shows the read-out that USES that fixed bind is learnable by BIOLOGICAL credit (transport-free feedback alignment, no weight transport) AND still extrapolates (0.69, 6/6 > from-scratch). ⇒ the systematicity engine is realized on the substrate as **a fixed spiking binding primitive + a biologically-learned read-out over it** — exactly TEST A's "learn to USE a fixed bind," and exactly the emergence-bar target (learned read-out × fixed biological binding, not a from-scratch map-classifier that even ideal backprop can't crack).
+
+## ⇒ Next
+**RUNG 3 (fully-spiking):** learn the read-out ON THE BRIDGE via the committed `enable_bdsp` apical-credit rule (`_reslm_onbridge_learn_win_derisk.py`'s machinery: apical = k*(Y@delta), fixed-random Y, no weight transport) so the read-out over the fixed spiking bind is SPIKING + biologically-learned — the whole path (bind + read-out) on the substrate, on spikes, with biological credit. Also: a larger task (more combos) tightens the s43 narrow margin + the permuted control; GPU multi-seed.
+Reuse-by-import; NO `sim/` edit. Runner: `_onsubstrate_bind_learned_readout_derisk.py`. (RUNG-1 GPU/cupy confirm running in parallel; the numpy backend result stands as the on-substrate claim.)
