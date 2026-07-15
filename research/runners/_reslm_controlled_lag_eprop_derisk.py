@@ -225,6 +225,15 @@ def language_2stage_test(seed, n_sentences=6000, V=300, n_pool=200, n_hidden=128
             hh = np.tanh(W1p @ Xtp[i]); p = _softmax(W2p @ hh); g = -p; g[Ytp[i]] += 1.0
             W2p += lr * np.outer(g, hh); W1p += lr * np.outer((W2p.T @ g) * (1 - hh * hh), Xtp[i])
     perm_ce, _ = ce_acc(lambda x: _softmax(W2p @ np.tanh(W1p @ x)))
+    # ANTI-CHEAT (shuffled-state): break the state->target alignment (train 2-stage on misaligned pairs) -> if the
+    # advantage rides the reservoir's genuine per-position features it COLLAPSES (>= bigram), not a positional prior.
+    Ysh = Ytr[rng.permutation(len(Ytr))]
+    W1s = rng.standard_normal((n_hidden, d)) * 0.1; W2s = rng.standard_normal((Veff, n_hidden)) * 0.1
+    for ep in range(epochs):
+        for i in rng.permutation(len(Xtr)):
+            hh = np.tanh(W1s @ Xtr[i]); p = _softmax(W2s @ hh); g = -p; g[Ysh[i]] += 1.0
+            W2s += lr * np.outer(g, hh); W1s += lr * np.outer((W2s.T @ g) * (1 - hh * hh), Xtr[i])
+    shuf_ce, _ = ce_acc(lambda x: _softmax(W2s @ np.tanh(W1s @ x)))
     # bigram baseline CE
     P_bi = fit_bigram(tr, Veff)
     bi_ce = 0.0
@@ -233,7 +242,7 @@ def language_2stage_test(seed, n_sentences=6000, V=300, n_pool=200, n_hidden=128
             bi_ce += -np.log(P_bi[int(ids[t]), int(ids[t + 1])] + 1e-12)
     bi_ce /= max(1, sum(len(s) - 1 for s in ev))
     return {"V": Veff, "linear_ce": lin_ce, "twostage_ce": two_ce, "bigram_ce": bi_ce, "perm_ce": perm_ce,
-            "linear_acc": lin_acc, "twostage_acc": two_acc, "n_eval": len(Xev)}
+            "shuf_ce": shuf_ce, "linear_acc": lin_acc, "twostage_acc": two_acc, "n_eval": len(Xev)}
 
 
 def train_recall_nl(res, trials, V, epochs, lr_out, lr_rec, seed, arm, n_hidden=64, wd=1e-3):
@@ -383,13 +392,14 @@ def main():
         agg = {k: float(np.mean([r[k] for r in rs])) for k in rs[0]}
         beats_bigram = agg["twostage_ce"] < agg["bigram_ce"] - 0.05
         perm_collapses = agg["perm_ce"] >= agg["bigram_ce"] - 0.05    # permuted-corpus must NOT beat the bigram
-        verdict = ("GENUINE: 2-STAGE read-out beats the bigram via real word-order structure (permuted-corpus COLLAPSES)"
-                   if (beats_bigram and perm_collapses)
-                   else ("ARTIFACT: 2-stage beats bigram BUT permuted-corpus ALSO does (unigram/overfit, not structure)"
+        shuf_collapses = agg["shuf_ce"] >= agg["bigram_ce"] - 0.05    # shuffled-state must NOT beat the bigram
+        verdict = ("GENUINE: 2-STAGE beats the bigram via real word-order structure (BOTH anti-cheats COLLAPSE)"
+                   if (beats_bigram and perm_collapses and shuf_collapses)
+                   else ("ARTIFACT: beats bigram but an anti-cheat also does (not structure)"
                          if beats_bigram else "2-stage does NOT beat the bigram"))
         print(f"[language-test] V={agg['V']:.0f} n_eval={agg['n_eval']:.0f} | linear_ce={agg['linear_ce']:.3f} "
-              f"twostage_ce={agg['twostage_ce']:.3f} bigram_ce={agg['bigram_ce']:.3f} perm_ce={agg['perm_ce']:.3f} | "
-              f"twostage_acc={agg['twostage_acc']:.3f} -> {verdict}", flush=True)
+              f"twostage_ce={agg['twostage_ce']:.3f} bigram_ce={agg['bigram_ce']:.3f} perm_ce={agg['perm_ce']:.3f} "
+              f"shuf_ce={agg['shuf_ce']:.3f} | twostage_acc={agg['twostage_acc']:.3f} -> {verdict}", flush=True)
         return
     if a.nonlinear_readout:
         for T in a.T:

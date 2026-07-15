@@ -1,6 +1,6 @@
 # The recurrent language cortex's "bigram-level" ceiling was a LINEAR-READOUT limitation — a 2-STAGE cortical read-out BEATS the bigram (anti-cheat-verified), the cheap biological fix the controlled-lag de-risk identified
 
-**Date:** 2026-07-14 · **Status:** GENUINE (permuted-corpus anti-cheat collapses), **6-seed confirmed** (42/43/44/100/101/102: 2-stage CE 2.174 vs bigram 2.962 vs linear 3.192, perm 3.175 — consistent with the 2-seed). numpy CPU; NO `sim/` edit.
+**Date:** 2026-07-14 · **Status:** GENUINE, **6-seed, DOUBLE-anti-cheat-verified** (42/43/44/100/101/102): 2-stage CE **2.174** vs bigram 2.962 vs linear 3.192; **BOTH anti-cheats collapse — permuted-corpus 3.175 (>bigram) AND shuffled-state 4.856 (≈ chance log(147)=4.99).** numpy CPU; NO `sim/` edit.
 
 ## The chain that led here
 
@@ -24,7 +24,8 @@ reservoir limit — or a LINEAR-READOUT limit, exactly like XOR?
 | **bigram baseline** | **2.965** | — |
 | LINEAR (delta rule, well-trained, epochs=20) | 3.166 | WORSE (can't beat it) |
 | **2-STAGE (one hidden layer, backprop)** | **2.166** | **BEATS by 0.80 nats** |
-| permuted-corpus 2-stage (ANTI-CHEAT) | 3.178 | COLLAPSES (≥ bigram) |
+| permuted-corpus 2-stage (ANTI-CHEAT) | 3.175 | COLLAPSES (> bigram) |
+| shuffled-state 2-stage (ANTI-CHEAT) | 4.856 | COLLAPSES HARD (≈ chance) |
 
 **⇒ GENUINE (2-seed 42/43; 6-seed confirming):** the 2-stage read-out BEATS the bigram by ~0.8 nats where the linear
 read-out cannot, and the **permuted-corpus anti-cheat COLLAPSES** it back above the bigram (shuffling the train token
