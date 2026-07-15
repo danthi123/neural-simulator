@@ -54,7 +54,7 @@ def run(seed=42, n_mem=2, train_events=150, drive_pA=200.0, n_lang=384, n_ca3=15
         ca3_density=0.5, ca3_weight=6.0, hebb_max=30.0, hebb_lr=None, hebb_rate=True,
         coact_decay=None, coact_thresh=None, ca3_fb_inhib=None, ca3_fb_n=None, mossy_weight=None,
         sync_on=None, sync_off=None, reset_steps=15, drive_steps=55,
-        lam_dep_wi=0.0, comp_both_dir=True, fire_thresh=1):
+        lam_dep_wi=0.0, comp_both_dir=True, ens_thresh=2):
     from sim.backend import get_backend, to_host, get_sparse_module
     from sim.kernels import fused_htm_winner_inactive_depression
     cp, _ = get_backend()
@@ -77,10 +77,11 @@ def run(seed=42, n_mem=2, train_events=150, drive_pA=200.0, n_lang=384, n_ca3=15
         pre_local = cp.asarray(pre_l_h, dtype=cp.int64)
         post_local = cp.asarray(post_l_h, dtype=cp.int64)
 
-    def _apply_competition(win_fire):
-        """Heterosynaptic winner-inactive depression on the ca3->ca3 recurrents for THIS window.
-        win_fire: per-ca3-cell spike count this window. fired = (>= fire_thresh)."""
-        fired = (win_fire >= fire_thresh).astype(cp.float32)           # per ca3 cell: co-fired this window
+    def _apply_competition(fired):
+        """Heterosynaptic winner-inactive depression on the ca3->ca3 recurrents. `fired` = the CUMULATIVE ensemble
+        mask (0/1 per ca3 cell): a cell that fired >= ens_thresh times across this pattern's events is a stable
+        assembly member -> protected from depression even on events where it is momentarily silent (robust to the
+        distributed/async firing that erodes the per-event within-ensemble)."""
         fpre = fired[pre_local]; fpost = fired[post_local]              # per synapse
         w = conn.data[flat_pos]
         # Direction 1 (kernel as-is): depress SILENT-pre -> WINNER-post  (dep = (1-fpre)*fpost*lam)
@@ -97,6 +98,7 @@ def run(seed=42, n_mem=2, train_events=150, drive_pA=200.0, n_lang=384, n_ca3=15
     for m, pat in enumerate(patterns):
         drv = cp.asarray(lang[pat], dtype=cp.int64)
         spikes = cp.zeros(len(ca3_idx), dtype=cp.float32)
+        ens_acc = cp.zeros(len(ca3_idx), dtype=cp.float32)             # cumulative per-cell firing = the stable assembly
         for ev in range(train_events):
             bridge.cp_external_input_current[:] = 0.0
             for _ in range(reset_steps):
@@ -123,8 +125,9 @@ def run(seed=42, n_mem=2, train_events=150, drive_pA=200.0, n_lang=384, n_ca3=15
                     win_fire += f
                     if rec:
                         spikes += f
+            ens_acc += win_fire
             if do_comp:
-                _apply_competition(win_fire)                            # heterosynaptic competition, once per event
+                _apply_competition((ens_acc >= float(ens_thresh)).astype(cp.float32))   # heterosynaptic competition, keyed to the stable assembly
         bridge.cp_external_input_current[:] = 0.0
         sp = to_host(spikes); global_act += sp
         n_stored = max(4, int(0.10 * len(ca3_idx)))
@@ -210,14 +213,14 @@ def main():
     ap.add_argument("--sync-off", type=int, default=None)
     ap.add_argument("--lam-dep-wi", type=float, default=0.0, help="heterosynaptic winner-inactive depression rate (0=OFF=anti-cheat control)")
     ap.add_argument("--one-dir", action="store_true", help="apply competition in one direction only (default both)")
-    ap.add_argument("--fire-thresh", type=int, default=1, help="per-window spike count for a ca3 cell to count as 'co-fired'")
+    ap.add_argument("--ens-thresh", type=int, default=2, help="cumulative-firing threshold for a ca3 cell to count as a stable assembly member (protected from depression)")
     a = ap.parse_args()
     t0 = time.time()
     run(seed=a.seed, train_events=a.train_events, hebb_max=a.hebb_max, hebb_lr=a.hebb_lr,
         ca3_density=a.ca3_density, drive_pA=a.drive_pA, hebb_rate=not a.no_hebb_rate,
         coact_decay=a.coact_decay, coact_thresh=a.coact_thresh, ca3_fb_inhib=a.ca3_fb_inhib,
         ca3_fb_n=a.ca3_fb_n, mossy_weight=a.mossy_weight, sync_on=a.sync_on, sync_off=a.sync_off,
-        lam_dep_wi=a.lam_dep_wi, comp_both_dir=not a.one_dir, fire_thresh=a.fire_thresh)
+        lam_dep_wi=a.lam_dep_wi, comp_both_dir=not a.one_dir, ens_thresh=a.ens_thresh)
     print(f"  ({time.time()-t0:.0f}s)", flush=True)
 
 

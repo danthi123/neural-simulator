@@ -24,14 +24,16 @@ from research.runners._riii_ca3_competitive_formation_derisk import _extract_ca3
 
 def run_payoff(seed, n_mem=2, train_events=150, drive_pA=200.0, coincidence=True, n_lang=384, n_ca3=150, n_dg=300,
                ca3_density=0.5, ca3_weight=6.0, k_thresh=18.0, plateau_strength=120.0, hebb_max=30.0,
-               hebb_rate=True, lam_dep_wi=0.0, comp_both_dir=True, fire_thresh=1,
+               hebb_rate=True, lam_dep_wi=0.0, comp_both_dir=True, ens_thresh=2,
+               ca3_fb_inhib=None, ca3_fb_n=None, mossy_weight=None,
                reset_steps=15, drive_steps=55, recall_steps=60):
     from sim.backend import get_backend, to_host, get_sparse_module
     from sim.kernels import fused_htm_winner_inactive_depression
     cp, _ = get_backend()
     bridge = _build(seed, n_lang=n_lang, n_ca3=n_ca3, n_dg=n_dg, ca3_density=ca3_density, ca3w=ca3_weight,
                     coincidence=coincidence, k_thresh=k_thresh, plateau_strength=plateau_strength,
-                    weighted=True, two_comp=False, train=True, hebb_max=hebb_max, hebb_rate=hebb_rate)
+                    weighted=True, two_comp=False, train=True, hebb_max=hebb_max, hebb_rate=hebb_rate,
+                    ca3_fb_inhib=ca3_fb_inhib, ca3_fb_n=ca3_fb_n, mossy_weight=mossy_weight)
     rm = bridge.region_manager
     lang = list(rm.indices("language_input")); lang_arr = np.asarray(lang, dtype=np.int64)
     ca3_idx = list(rm.indices("ca3")); ca3_arr = cp.asarray(ca3_idx, dtype=cp.int64)
@@ -46,8 +48,10 @@ def run_payoff(seed, n_mem=2, train_events=150, drive_pA=200.0, coincidence=True
         pre_local = cp.asarray(pre_l_h, dtype=cp.int64)
         post_local = cp.asarray(post_l_h, dtype=cp.int64)
 
-    def _apply_competition(win_fire):
-        fired = (win_fire >= fire_thresh).astype(cp.float32)
+    def _apply_competition(fired):
+        # `fired` is the CUMULATIVE ensemble mask (0/1 per ca3 cell): a cell that fired >= ens_thresh times across
+        # THIS pattern's events so far is a stable assembly member -> protected from depression even on events where
+        # it happens to be silent (robust to the distributed/async firing that eroded the per-event within-ensemble).
         fpre = fired[pre_local]; fpost = fired[post_local]
         w = conn.data[flat_pos]
         w = fused_htm_winner_inactive_depression(w, fpre, fpost, float(lam_dep_wi), 0.0, float(hebb_max))
@@ -61,6 +65,7 @@ def run_payoff(seed, n_mem=2, train_events=150, drive_pA=200.0, coincidence=True
     for m, pat in enumerate(patterns):
         drv = cp.asarray(lang_arr[pat], dtype=cp.int64)
         spikes = cp.zeros(len(ca3_idx), dtype=cp.float32)
+        ens_acc = cp.zeros(len(ca3_idx), dtype=cp.float32)      # cumulative per-cell firing = the stable assembly
         for ev in range(train_events):
             bridge.cp_external_input_current[:] = 0.0
             for _ in range(reset_steps):
@@ -75,8 +80,9 @@ def run_payoff(seed, n_mem=2, train_events=150, drive_pA=200.0, coincidence=True
                 win_fire += f
                 if recording:
                     spikes += f
+            ens_acc += win_fire
             if do_comp:
-                _apply_competition(win_fire)
+                _apply_competition((ens_acc >= float(ens_thresh)).astype(cp.float32))
         bridge.cp_external_input_current[:] = 0.0
         sp = to_host(spikes)
         n_stored = max(4, int(0.10 * len(ca3_idx)))
@@ -140,7 +146,11 @@ def main():
     ap.add_argument("--lam-dep-wi", type=float, default=0.0, help="heterosynaptic winner-inactive depression (0=OFF control)")
     ap.add_argument("--k-thresh", type=float, default=18.0)
     ap.add_argument("--one-dir", action="store_true")
-    ap.add_argument("--fire-thresh", type=int, default=1)
+    ap.add_argument("--ens-thresh", type=int, default=2, help="cumulative-firing threshold for a ca3 cell to count as a stable assembly member (protected from depression)")
+    ap.add_argument("--drive-pA", type=float, default=200.0, help="encoding drive: LOWER -> fewer CA3 fire -> sparser ensemble")
+    ap.add_argument("--ca3-fb-inhib", type=float, default=None, help="ca3_pv_basket->ca3 FEEDBACK inhibition weight (FS-WTA sparsifier; None=off)")
+    ap.add_argument("--ca3-fb-n", type=int, default=None)
+    ap.add_argument("--mossy-weight", type=float, default=None)
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
     seeds = [int(s) for s in a.seeds.split(",")]
@@ -148,7 +158,8 @@ def main():
     results = []
     for s in seeds:
         r = run_payoff(seed=s, train_events=a.train_events, lam_dep_wi=a.lam_dep_wi, k_thresh=a.k_thresh,
-                       comp_both_dir=not a.one_dir, fire_thresh=a.fire_thresh)
+                       comp_both_dir=not a.one_dir, ens_thresh=a.ens_thresh, drive_pA=a.drive_pA,
+                       ca3_fb_inhib=a.ca3_fb_inhib, ca3_fb_n=a.ca3_fb_n, mossy_weight=a.mossy_weight)
         if r is not None:
             results.append(r)
     n_go = sum(1 for r in results if r["go"])
