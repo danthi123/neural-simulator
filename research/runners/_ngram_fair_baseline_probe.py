@@ -82,14 +82,22 @@ def interp_trigram_ce(tr_ids, ev_ids, V):
             ce = e / max(n, 1)
             if best is None or ce < best: best = ce; best_l = (l1, l2, l3)
     l1, l2, l3 = best_l
+
+    def _bucket(depth):   # depth = 1-indexed position of the predicted token (matches the reslm runner's buckets)
+        return "1" if depth == 1 else "2" if depth == 2 else "3" if depth == 3 else \
+               "4-5" if depth <= 5 else "6-9" if depth <= 9 else "10-99"
     e = 0.0; n = 0
+    bde = defaultdict(float); bdn = defaultdict(int)
     for a in ev_ids:
-        for i in range(2, len(a)):
-            p = mixed(a[i - 2], a[i - 1], l1, l2, l3); e += -math.log(max(float(p[a[i]]), 1e-12)); n += 1
-        # positions 0->1 scored by bigram (no trigram context) for a fair per-token total
         if len(a) >= 2:
-            e += -math.log(max(float(bi_p(a[0])[a[1]]), 1e-12)); n += 1
-    return e / max(n, 1), best_l
+            c = -math.log(max(float(bi_p(a[0])[a[1]]), 1e-12)); e += c; n += 1
+            bde["1"] += c; bdn["1"] += 1     # position 0->1 (predict token at depth 1) scored by bigram
+        for i in range(2, len(a)):
+            p = mixed(a[i - 2], a[i - 1], l1, l2, l3); c = -math.log(max(float(p[a[i]]), 1e-12)); e += c; n += 1
+            k = _bucket(i)                    # predicting token at index i = depth i (1-indexed within the sentence)
+            bde[k] += c; bdn[k] += 1
+    by_depth = {k: round(bde[k] / bdn[k], 4) for k in bdn if bdn[k]}
+    return e / max(n, 1), best_l, by_depth
 
 
 def main():
@@ -103,16 +111,26 @@ def main():
     a = ap.parse_args()
     tr_ids, ev_ids, V = _split(a.corpus, a.n_sentences, a.n_eval, a.n_train, a.vocab, a.seed)
     tb = tuned_bigram_ce(tr_ids, ev_ids, V)
-    tri, lam = interp_trigram_ce(tr_ids, ev_ids, V)
-    # find the matching selective result
-    sel = None
-    for f in glob.glob(f"raw/_fluency_np*_nt{a.n_train}_s{a.seed}.json"):
-        try: sel = json.load(open(f)).get("sel_ce"); self = f
+    tri, lam, tri_bd = interp_trigram_ce(tr_ids, ev_ids, V)
+    # find the matching selective result (+ its by-depth CE)
+    sel = None; sel_bd = None
+    for f in glob.glob(f"raw/_fluency_np*_nt{a.n_train}_s{a.seed}*.json"):
+        try:
+            d = json.load(open(f)); sel = d.get("sel_ce"); sel_bd = (d.get("by_depth") or {}).get("sel")
         except Exception: pass
     print(f"[fair-ngram] V={V} nt={a.n_train} s={a.seed} | tuned_bigram={tb:.3f} interp_trigram={tri:.3f} (lam={tuple(round(x,2) for x in lam)})"
           + (f" | sel_ce={sel:.3f} sel_over_tuned_bi={tb - sel:+.3f} sel_over_trigram={tri - sel:+.3f} -> "
              + ("CROSSES BOTH (genuine)" if (sel < tb - 0.02 and sel < tri - 0.02) else
                 "beats bigram NOT trigram (not higher-order)" if sel < tb - 0.02 else "below both") if sel is not None else " | (no selective json yet)"), flush=True)
+    # THE by-depth deep-position question: does the reservoir-LM beat the FAIR TRIGRAM at d>=10, where the order-2
+    # trigram has no long-range info? (trigram by-depth reveals if it degrades at depth or is ~position-independent)
+    print(f"[fair-ngram BY-DEPTH] trigram: {tri_bd}", flush=True)
+    if sel_bd:
+        deep = [k for k in ("6-9", "10-99") if k in tri_bd and k in sel_bd]
+        for k in deep:
+            marg = round(tri_bd[k] - sel_bd[k], 4)
+            print(f"  d={k}: sel={sel_bd[k]:.3f} trigram={tri_bd[k]:.3f} sel_over_trigram={marg:+.4f} "
+                  f"-> {'SEL BEATS trigram at depth (real long-range!)' if marg > 0.02 else 'trigram wins/ties (n-gram-bound even at depth)'}", flush=True)
 
 
 if __name__ == "__main__":
