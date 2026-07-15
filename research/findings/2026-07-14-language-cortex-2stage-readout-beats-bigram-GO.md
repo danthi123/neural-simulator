@@ -56,9 +56,36 @@ cortex, exactly as the controlled-lag de-risk predicted.
   read-out loses the reservoir's context → CE ≥ bigram) + a frozen/chance control; and confirm the 2-stage does not
   merely memorize by holding the template families out.
 
+## GENERALIZATION TEST — WikiText (natural corpus): the win is SCOPED to exploitable higher-order structure (2026-07-15)
+
+The honest generalization check (per "run the ceiling early"): does the 2-stage read-out advantage hold on a NATURAL
+corpus (WikiText), or is it specific to the templated EMERGE stream's strong word-order structure? 6-seed
+(42/43/44/100/101/102), WikiText, V=300, ~5,092 held-out positions, well-sampled bigram (CE 3.484):
+
+| | 2-stage CE | vs bigram 3.484 |
+|---|---|---|
+| seed 42 / 44 / 100 | 3.424 / 3.443 / 3.436 | beats by ~0.05 (anti-cheats collapse) |
+| seed 43 / 101 / 102 | 3.550 / 3.524 / 3.573 | does NOT beat |
+| **mean** | **~3.49** | **≈ bigram (not a robust beat)** |
+
+**⇒ SCOPED.** On natural WikiText at tractable scale the 2-stage read-out is essentially BIGRAM-LEVEL (mean ≈ bigram,
+±0.05, mixed across seeds), vs the robust 0.79-nat win on the TEMPLATED EMERGE stream. This CONFIRMS the owner's
+ceiling finding (`feedback_run_ceiling_early_and_keep_gpu_busy`): natural language at tractable scale (few-M tokens /
+V=300) is bigram-dominated — the higher-order signal is too thin for even a good model to beat a well-sampled bigram.
+**The read-out DEPTH was the bottleneck for exploiting EXISTING (templated) structure; the SCALE/DATA (the thin
+natural-language higher-order signal) is the bottleneck for natural language — the read-out depth does NOT overcome the
+scale wall.** Not a wall to declare-and-stop: it re-localizes the natural-language frontier to (a) the scale/data lever
+(more tokens → richer signal, but it races the bigram) and (b) the recurrent-cortex LEARNING frontier (a spiking
+recurrent cortex that learns long-range structure — the genuinely-hard, field-open problem the controlled-lag de-risk
+mapped, where e-prop's diagonal-RTRL is limited).
+
 ## Bottom line
 
-A single, cheap, biologically-innocuous change — a **2-stage cortical read-out** in place of the linear softmax —
-lifts the emergence-engine's fixed-reservoir language cortex from BELOW the bigram to **0.8 nats BELOW (better than)
-the bigram**, anti-cheat-verified as real word-order structure. The controlled-lag de-risk's identified fix transfers
-to the real language task. The recurrent-credit rule was never the bottleneck; the read-out depth was.
+A cheap, biologically-innocuous change — a **2-stage cortical read-out** in place of the linear softmax — robustly
+lifts the fixed-reservoir language cortex to **0.8 nats better than the bigram on the templated EMERGE stream**
+(6-seed, double-anti-cheat-verified: it exploits that stream's strong higher-order structure the linear read-out
+couldn't). But on **natural WikiText at tractable scale it is bigram-level** — the read-out depth exploits existing
+structure and does not overcome the documented scale/data wall. HONEST SCOPE: the fix is a genuine improvement where
+exploitable higher-order structure exists; natural-language emergence at scale remains gated by the scale/data +
+recurrent-learning frontier. The controlled-lag de-risk's fix transfers to structured language; the recurrent-credit
+rule was never the bottleneck for that — the read-out depth was — and the natural-language ceiling is the scale wall.

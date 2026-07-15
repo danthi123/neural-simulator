@@ -170,15 +170,19 @@ def ngram_recall_acc(K, F, T, tr_trials, tr_targets, ev_trials, ev_recall, ev_ta
     return correct / max(1, len(ev_trials))
 
 
-def language_2stage_test(seed, n_sentences=6000, V=300, n_pool=200, n_hidden=128, epochs=8, lr=0.02):
+def language_2stage_test(seed, corpus=None, n_sentences=6000, V=300, n_pool=200, n_hidden=128, epochs=8, lr=0.02):
     """MISSION-CONNECTED: does the identified fix (a 2-STAGE cortical read-out) beat a LINEAR read-out on a REAL
-    language stream (the EMERGE SVO+function-word stream), or does the bigram-dominated scale wall dominate? Fixed ALIF
-    reservoir + cached per-token states; train a linear vs a 2-layer read-out for next-token prediction; compare CE +
-    accuracy to a bigram. Tests whether the language cortex has the same linear-readout limitation the XOR task had."""
-    import research.runners._emerge62_discover_function_words_derisk as m62
+    language stream, or does the bigram-dominated scale wall dominate? corpus=None -> the templated EMERGE SVO stream;
+    corpus=<path> -> a NATURAL corpus (WikiText) -- the honest generalization test past the templated stream. Fixed
+    ALIF reservoir + cached per-token states; train a linear vs a 2-layer read-out for next-token prediction; compare
+    CE + accuracy to a bigram. Tests whether the language cortex has the same linear-readout limitation the XOR had."""
     from research.runners._emerge_reservoir_lm_derisk import Vocab, _split_sentences, fit_bigram
-    stream = m62.build_stream(seed, n_sentences=n_sentences)
-    sents = _split_sentences(stream)
+    if corpus:
+        from research.runners._emerge_reservoir_lm_realcorpus_derisk import load_sentences
+        sents = load_sentences(corpus, n_sentences)          # NATURAL corpus (WikiText): word-lists
+    else:
+        import research.runners._emerge62_discover_function_words_derisk as m62
+        sents = _split_sentences(m62.build_stream(seed, n_sentences=n_sentences))   # templated EMERGE SVO stream
     vocab = Vocab.build(sents, V)
     ids_sents = [np.asarray([vocab.id(w) for w in s], dtype=np.int64) for s in sents]
     ids_sents = [s for s in ids_sents if len(s) >= 2]
@@ -381,6 +385,8 @@ def main():
     ap.add_argument("--nonlinear-readout", action="store_true", help="DECISIVE: does a 2-layer read-out on the FIXED reservoir solve the task? (reframes XOR null as readout-vs-recurrent-credit)")
     ap.add_argument("--horizon-test", action="store_true", help="does PLASTIC recurrent e-prop EXTEND the fixed reservoir's horizon (with a nonlinear read-out removing the linear confound)?")
     ap.add_argument("--language-test", action="store_true", help="MISSION: does a 2-STAGE read-out beat a LINEAR one on the real EMERGE SVO language stream?")
+    ap.add_argument("--corpus", default=None, help="natural-corpus path (e.g. data/corpus/wikitext.txt) for the language test; None=templated EMERGE SVO stream")
+    ap.add_argument("--n-sentences", type=int, default=6000)
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
     t0 = time.time()
@@ -388,7 +394,7 @@ def main():
         gc = grad_check_alif()
         print(f"[grad_check_alif] {gc}", flush=True)
     if a.language_test:
-        rs = [language_2stage_test(s, n_pool=a.n_pool, epochs=a.epochs) for s in a.seeds]
+        rs = [language_2stage_test(s, corpus=a.corpus, n_sentences=a.n_sentences, n_pool=a.n_pool, epochs=a.epochs) for s in a.seeds]
         agg = {k: float(np.mean([r[k] for r in rs])) for k in rs[0]}
         beats_bigram = agg["twostage_ce"] < agg["bigram_ce"] - 0.05
         perm_collapses = agg["perm_ce"] >= agg["bigram_ce"] - 0.05    # permuted-corpus must NOT beat the bigram
