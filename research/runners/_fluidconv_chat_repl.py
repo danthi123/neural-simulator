@@ -93,7 +93,7 @@ def _join_and(items):
 class FluidChat:
     """One coherent fluid-conversation agent (Phases 2-5 assembled)."""
 
-    def __init__(self, seed=42, extra_vocab=None):
+    def __init__(self, seed=42, extra_vocab=None, open_vocab_dispatch=False):
         with open(os.path.abspath(CURRICULUM), "r", encoding="utf-8") as fh:
             self.cur = json.load(fh)
         facts = self.cur.get("facts", [])
@@ -129,6 +129,13 @@ class FluidChat:
         self.store_keys = {tuple(f) for f in facts}
         self.faculty = FTFaculty()
         self.npar = self.faculty.npar
+        # OPEN-VOCAB discourse routing (default off = byte-identical keyword routing): a learned PPMI-semantic
+        # nearest-intent + novelty router replaces the CLOSED keyword sets, so a novel synonym ("versus"/"alike"/
+        # "lineage") routes by semantic proximity, and an OOD marker -> None (fallthrough to the neural wh-parse = moat).
+        self._marker_router = None
+        if open_vocab_dispatch:
+            from research.runners._discourse_marker_router import DiscourseMarkerRouter
+            self._marker_router = DiscourseMarkerRouter(seed=seed)
         self._mentioned = {}          # subject -> set of verbs already said (so "tell me more" surfaces a NEW fact)
         self._last_inst = {}          # kind -> the LAST minted instance token (per-kind discourse referent, Phase-14)
         self._inst_used = {k: 0 for k in self.kinds}   # how many instance slots consumed per kind
@@ -450,9 +457,11 @@ class FluidChat:
                     return t[:-1]
                 return None
             concepts_in = [c for c in (_norm(t) for t in toks) if c is not None]
+            # open-vocab discourse intent (None when the router is off -> the ELSE keyword branches fire byte-identically)
+            _mi = self._marker_router.route(toks) if self._marker_router else None
             # SHARED / GIST ("what do dogs and cats have in common?" / "what do X and Y share?") -> checkable
             # intersection (Phase-16 `shared_discourse`: shared isa + shared verb+patient, entailment-only).
-            if ("share" in tset or "common" in tset) and len(concepts_in) >= 2:
+            if (_mi == "SHARE" if self._marker_router else ("share" in tset or "common" in tset)) and len(concepts_in) >= 2:
                 x, y = concepts_in[0], concepts_in[1]
                 fx = [f for f in self._neighbourhood(x) if f[0] == x]
                 fy = [f for f in self._neighbourhood(y) if f[0] == y]
@@ -461,7 +470,7 @@ class FluidChat:
             # COMPARE ("how are dogs and cats different?" / "compare X and Y") -> checkable-connective contrast
             # (Phase-16 `compare_discourse`: "the dog eats meat, but the cat eats fish" IFF a shared verb's patients
             # differ; "and so does" IFF shared verb+patient), else fall back to the two grounded discussions.
-            if ("different" in tset or "compare" in tset or "difference" in tset) and len(concepts_in) >= 2:
+            if (_mi == "COMPARE" if self._marker_router else ("different" in tset or "compare" in tset or "difference" in tset)) and len(concepts_in) >= 2:
                 x, y = concepts_in[0], concepts_in[1]
                 fx = [f for f in self._neighbourhood(x) if f[0] == x]
                 fy = [f for f in self._neighbourhood(y) if f[0] == y]
@@ -483,7 +492,7 @@ class FluidChat:
             # CLASSIFY / TAXONOMY CHAIN ("how is the dog classified?" / "trace the dog's ancestry" / "what is a dog
             # ultimately?") -> the real Wikidata subclass chain (Collins-Quillian), rendered as connected prose.
             _joined = " ".join(toks)
-            if (("classif" in _joined) or "trace" in tset or "ancestry" in tset or "ultimately" in tset) \
+            if (_mi == "TAXONOMY" if self._marker_router else (("classif" in _joined) or "trace" in tset or "ancestry" in tset or "ultimately" in tset)) \
                     and (subj is not None or concepts_in):
                 topic = subj or concepts_in[0]
                 chain = self._taxonomy_chain(topic)
