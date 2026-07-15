@@ -56,17 +56,27 @@ def run_one(seed, D=None, hidden=48, epochs=120):
     pb = _ridge(Btr, y[tr], Bev, N_INTENT, lam=8.0)
     out["spikebind_train"] = round(float(np.mean(pb[tr] == y[tr])), 4)
     out["spikebind_held"] = round(float(np.mean(pb[is_held] == y[is_held])), 4)
-    # control: from-scratch MLP learner on [cat;q] concat (TEST A: memorizes+fails)
+    # controls: from-scratch MLP learner on [cat;q] concat (TEST A: memorizes+fails) + the PARENT's STRONGER controls
+    # (1-NN memfloor + linear ridge on raw concat) -- RESTORED after the 2026-07-15 adversarial verify caught that dropping
+    # them (+ gating only on the weak e-prop MLP) overstated the on-spikes robustness. Held to memfloor, GO is honest, not 6/6.
     CAT = np.array([cat_code[c] for (c, q) in cells]); Q = np.array([q_code[q] for (c, q) in cells])
     C = np.concatenate([CAT, Q], axis=1); Ctr, Cev = standardize(C[tr], C)
     lay = _train_snn(Ctr, y[tr], [C.shape[1], hidden, hidden, N_INTENT], T, epochs, 0.05, 1.0, seed, credit_mode="eprop")
     _, out["mlp_held"], _ = score_snn(lay, Cev, y, is_held, 1.0); out["mlp_held"] = round(out["mlp_held"], 4)
+    d = np.linalg.norm(C[tr][None, :, :] - C[:, None, :], axis=2)                         # 1-NN memfloor on the raw code
+    pmf = y[tr][d.argmin(1)]
+    out["memfloor_held"] = round(float(np.mean(pmf[is_held] == y[is_held])), 4)
+    pl = _ridge(Ctr, y[tr], Cev, N_INTENT, lam=8.0)                                        # linear ridge on raw concat
+    out["linear_held"] = round(float(np.mean(pl[is_held] == y[is_held])), 4)
     # anti-cheat permuted
     rp = np.random.default_rng(seed + 3); yp = y.copy(); yp[tr] = y[tr][rp.permutation(int(tr.sum()))]
     pbp = _ridge(Btr, yp[tr], Bev, N_INTENT, lam=8.0)
     out["spikebind_permuted_held"] = round(float(np.mean(pbp[is_held] == y[is_held])), 4)
-    out["GO"] = bool(out["spikebind_held"] > 0.6 and out["spikebind_held"] > out["mlp_held"] + 0.15
-                     and out["spikebind_permuted_held"] < out["chance"] + 0.2)
+    out["GO_vs_mlp"] = bool(out["spikebind_held"] > 0.6 and out["spikebind_held"] > out["mlp_held"] + 0.15
+                            and out["spikebind_permuted_held"] < out["chance"] + 0.2)
+    # HONEST GO (the parent's full controls): also beat the 1-NN memfloor AND the linear-raw ridge by +0.15
+    out["GO"] = bool(out["GO_vs_mlp"] and out["spikebind_held"] > out["memfloor_held"] + 0.15
+                     and out["spikebind_held"] > out["linear_held"] + 0.15)
     return out
 
 
@@ -78,10 +88,12 @@ def main():
     rows = [run_one(s) for s in a.seeds]
     for r in rows:
         print(f"[spikebind s{r['seed']}] chance={r['chance']} D={r['D']} || SPIKING-COINCIDENCE-BIND held={r['spikebind_held']:.3f} "
-              f"(train {r['spikebind_train']:.3f}) | MLP={r['mlp_held']:.3f} | permuted={r['spikebind_permuted_held']:.3f} "
-              f"|| {'GO' if r['GO'] else 'no'}", flush=True)
-    ngo = sum(x["GO"] for x in rows)
-    print(f"[spikebind] {ngo}/{len(rows)} GO (spiking coincidence bind extrapolates held-out compositions >> MLP; permuted collapses)", flush=True)
+              f"(train {r['spikebind_train']:.3f}) | MLP={r['mlp_held']:.3f} | memfloor={r['memfloor_held']:.3f} | linear-raw={r['linear_held']:.3f} "
+              f"| permuted={r['spikebind_permuted_held']:.3f} || GO_vs_mlp={r['GO_vs_mlp']} GO_full_controls={'GO' if r['GO'] else 'no'}", flush=True)
+    ngo = sum(x["GO"] for x in rows); ngm = sum(x["GO_vs_mlp"] for x in rows)
+    print(f"[spikebind] HONEST: {ngo}/{len(rows)} GO vs the PARENT's full controls (memfloor 1-NN + linear-raw, +0.15); "
+          f"{ngm}/{len(rows)} vs the weak e-prop MLP alone. The bind computes the product + wins on CLEAN seeds; spiking noise "
+          f"erodes the margin on the leaky/near-degenerate seeds.", flush=True)
     json.dump(rows, open(a.out, "w"))
 
 

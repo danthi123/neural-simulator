@@ -89,17 +89,25 @@ def run_one(seed):
     # gradient read-out (weight transport) = reference ceiling for the learned read-out
     W1g, W2g = train_readout(Btr, y[tr], N_INTENT, seed=seed, credit="gradient")
     out["gradient_held"] = round(float(np.mean(_readout_pred(W1g, W2g, Bev)[is_held] == y[is_held])), 4)
-    # control: from-scratch classifier on the RAW [cat;q] (no fixed bind) -> memorizes+fails (the systematicity wall)
+    # controls: from-scratch classifier on RAW [cat;q] + the PARENT's STRONGER controls (1-NN memfloor + linear-raw ridge),
+    # RESTORED after the 2026-07-15 adversarial verify caught that dropping them overstated robustness (held to memfloor: 3/6).
     CAT = np.array([cat_code[c] for (c, q) in cells]); Q = np.array([q_code[q] for (c, q) in cells])
     C = np.concatenate([CAT, Q], axis=1); Ctr, Cev = standardize(C[tr], C)
     lay = _train_snn(Ctr, y[tr], [C.shape[1], 48, 48, N_INTENT], T, 120, 0.05, 1.0, seed, credit_mode="eprop")
     _, mlp_h, _ = score_snn(lay, Cev, y, is_held, 1.0); out["mlp_held"] = round(mlp_h, 4)
+    d = np.linalg.norm(C[tr][None, :, :] - C[:, None, :], axis=2); pmf = y[tr][d.argmin(1)]     # 1-NN memfloor on raw code
+    out["memfloor_held"] = round(float(np.mean(pmf[is_held] == y[is_held])), 4)
+    pl = _ridge(Ctr, y[tr], Cev, N_INTENT, lam=8.0)                                             # linear ridge on raw concat
+    out["linear_held"] = round(float(np.mean(pl[is_held] == y[is_held])), 4)
     # anti-cheats: permuted labels (must collapse) + no-hidden-credit lesion (zero the read-out learning -> chance)
     rp = np.random.default_rng(seed + 7); yp = y.copy(); yp[tr] = y[tr][rp.permutation(int(tr.sum()))]
     W1p, W2p = train_readout(Btr, yp[tr], N_INTENT, seed=seed, credit="transport_free")
     out["permuted_held"] = round(float(np.mean(_readout_pred(W1p, W2p, Bev)[is_held] == y[is_held])), 4)
-    out["GO"] = bool(out["transportfree_held"] > 0.55 and out["transportfree_held"] > out["mlp_held"] + 0.15
-                     and out["permuted_held"] < out["chance"] + 0.2)
+    out["GO_vs_mlp"] = bool(out["transportfree_held"] > 0.55 and out["transportfree_held"] > out["mlp_held"] + 0.15
+                            and out["permuted_held"] < out["chance"] + 0.2)
+    # HONEST GO (the parent's full controls): also beat the 1-NN memfloor AND the linear-raw ridge by +0.15
+    out["GO"] = bool(out["GO_vs_mlp"] and out["transportfree_held"] > out["memfloor_held"] + 0.15
+                     and out["transportfree_held"] > out["linear_held"] + 0.15)
     return out
 
 
@@ -111,12 +119,13 @@ def main():
     rows = [run_one(s) for s in a.seeds]
     for r in rows:
         print(f"[bind+bioread s{r['seed']}] chance={r['chance']} || TRANSPORT-FREE read-out over the FIXED spiking bind "
-              f"held={r['transportfree_held']:.3f} (train {r['transportfree_train']:.3f}) | gradient-ref={r['gradient_held']:.3f} "
-              f"| ridge(RUNG1)={r['ridge_held']:.3f} | MLP-on-raw={r['mlp_held']:.3f} | permuted={r['permuted_held']:.3f} "
-              f"|| {'GO' if r['GO'] else 'no'}", flush=True)
-    ngo = sum(x["GO"] for x in rows)
-    print(f"[bind+bioread] {ngo}/{len(rows)} GO (the read-out over the fixed spiking bind is biologically learnable "
-          f"[transport-free] AND still extrapolates held-out >> a from-scratch classifier; permuted collapses)", flush=True)
+              f"held={r['transportfree_held']:.3f} | gradient-ref={r['gradient_held']:.3f} | MLP-raw={r['mlp_held']:.3f} "
+              f"| memfloor={r['memfloor_held']:.3f} | linear-raw={r['linear_held']:.3f} | permuted={r['permuted_held']:.3f} "
+              f"|| GO_vs_mlp={r['GO_vs_mlp']} GO_full_controls={'GO' if r['GO'] else 'no'}", flush=True)
+    ngo = sum(x["GO"] for x in rows); ngm = sum(x["GO_vs_mlp"] for x in rows)
+    print(f"[bind+bioread] HONEST: {ngo}/{len(rows)} GO vs the PARENT's full controls (memfloor+linear, +0.15); {ngm}/{len(rows)} "
+          f"vs the weak e-prop MLP alone. The transport-free-learnable sub-claim (transport-free ≈ gradient) survives; "
+          f"the >>from-scratch robustness was overstated by the reduced control set.", flush=True)
     json.dump(rows, open(a.out, "w"))
 
 
