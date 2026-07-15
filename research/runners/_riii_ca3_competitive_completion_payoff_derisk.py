@@ -25,8 +25,8 @@ from research.runners._riii_ca3_competitive_formation_derisk import _extract_ca3
 def run_payoff(seed, n_mem=2, train_events=150, drive_pA=200.0, coincidence=True, n_lang=384, n_ca3=150, n_dg=300,
                ca3_density=0.5, ca3_weight=6.0, k_thresh=18.0, plateau_strength=120.0, hebb_max=30.0,
                hebb_rate=True, lam_dep_wi=0.0, comp_both_dir=True, ens_thresh=2,
-               ca3_fb_inhib=None, ca3_fb_n=None, mossy_weight=None, recall_drive_pA=None,
-               two_comp=True, apical_R=50.0, apical_gc=None, recall_inhib_scale=1.0,
+               ca3_fb_inhib=None, ca3_fb_n=None, mossy_weight=None, mossy_density=None, dg_ffi_weight=None,
+               recall_drive_pA=None, two_comp=True, apical_R=50.0, apical_gc=None, recall_inhib_scale=1.0,
                sync_on=None, sync_off=None, reset_steps=15, drive_steps=55, recall_steps=60):
     # DEFAULT to the CYCLE-1068 VALIDATED dendritic-dAP read-out (two_comp + thin-high-R apical + calibrated k_thresh),
     # NOT the point-neuron read-out (two_comp=False) that CYCLE-1067 proved fails even on a good hand-installed attractor.
@@ -37,7 +37,8 @@ def run_payoff(seed, n_mem=2, train_events=150, drive_pA=200.0, coincidence=True
                     coincidence=coincidence, k_thresh=k_thresh, plateau_strength=plateau_strength,
                     weighted=True, two_comp=two_comp, apical_R=apical_R, apical_gc=apical_gc, train=True,
                     hebb_max=hebb_max, hebb_rate=hebb_rate,
-                    ca3_fb_inhib=ca3_fb_inhib, ca3_fb_n=ca3_fb_n, mossy_weight=mossy_weight)
+                    ca3_fb_inhib=ca3_fb_inhib, ca3_fb_n=ca3_fb_n, mossy_weight=mossy_weight,
+                    mossy_density=mossy_density, dg_ffi_weight=dg_ffi_weight)
     rm = bridge.region_manager
     lang = list(rm.indices("language_input")); lang_arr = np.asarray(lang, dtype=np.int64)
     ca3_idx = list(rm.indices("ca3")); ca3_arr = cp.asarray(ca3_idx, dtype=cp.int64)
@@ -193,6 +194,8 @@ def main():
     ap.add_argument("--ca3-fb-inhib", type=float, default=None, help="ca3_pv_basket->ca3 FEEDBACK inhibition weight (FS-WTA sparsifier; None=off)")
     ap.add_argument("--ca3-fb-n", type=int, default=None)
     ap.add_argument("--mossy-weight", type=float, default=None)
+    ap.add_argument("--mossy-density", type=float, default=None, help="Kopsick sparse mossy: dg->ca3 density (0.10->~0.05 = fewer, decorrelated detonators)")
+    ap.add_argument("--dg-ffi-weight", type=float, default=None, help="Kopsick sparse DG code: dg_pv_basket->dg FF-inhibition weight (stronger -> sparser DG assembly)")
     ap.add_argument("--recall-drive-pA", type=float, default=None, help="recall cue drive (decoupled from the low training drive; default = training drive)")
     ap.add_argument("--n-ca3", type=int, default=150, help="CA3 size (scale lever: larger -> larger, more redundant ensembles -> robust completion)")
     ap.add_argument("--n-mem", type=int, default=2)
@@ -209,6 +212,7 @@ def main():
         r = run_payoff(seed=s, n_mem=a.n_mem, n_ca3=a.n_ca3, train_events=a.train_events, lam_dep_wi=a.lam_dep_wi,
                        k_thresh=a.k_thresh, comp_both_dir=not a.one_dir, ens_thresh=a.ens_thresh, drive_pA=a.drive_pA,
                        ca3_fb_inhib=a.ca3_fb_inhib, ca3_fb_n=a.ca3_fb_n, mossy_weight=a.mossy_weight,
+                       mossy_density=a.mossy_density, dg_ffi_weight=a.dg_ffi_weight,
                        recall_drive_pA=a.recall_drive_pA, recall_inhib_scale=a.recall_inhib_scale,
                        two_comp=not a.no_two_comp, sync_on=a.sync_on, sync_off=a.sync_off)
         if r is not None:

@@ -149,13 +149,30 @@ code keeping non-members silent. The remaining ranked next mechanisms: (1) **Kop
 boost of stored members (Josselyn-Silva; cheap, but a partial model); (3) theta-gamma sequential recall
 (Lisman-Idiart E%-max — the runner already has `ca1_pv_basket` E%-max wiring to port to CA3).
 
+## The Kopsick reproduction — INFRASTRUCTURE BUILT + the coordinated recipe is SCALE-bounded at 150 neurons
+
+I built the full Kopsick-reproduction knobs (additive, default-preserving, NO `sim/` edit; all in the R-iii research
+runners): `mossy_density` (dg→ca3 density 0.10→0.05, sparse decorrelated detonators), `dg_ffi_weight`
+(`dg_pv_basket→dg` FF-inhibition strength, for a sparse ~2-5% DG code), and gamma-sync (`sync_on`/`sync_off`) — the
+sparse + strongly-firing + synchronous assembly recipe (Kopsick-Ascoli 2024). The COORDINATED recipe (sparse DG
+`dg_ffi_weight=12` + sparse-strong mossy `density=0.05,weight=20` + `ca3_fb_inhib=20` + gamma-sync 2/4) gives held-out
+**0.000 on seeds 42/43/100** — even seed 42 (which completed at the milder sparsification) now fails: at 150 CA3
+neurons these knobs OVER-SUPPRESS (the assembly barely fires → no within-ensemble LTP). The delicate
+sparse-but-strongly-firing balance the full-scale Kopsick model achieves needs ~thousands of CA3 for a robust <1%
+assembly with redundancy; at 150 neurons (∼15-cell assemblies, ∼7/7 cue/held split) it is a knife-edge. ⇒ the
+functional completion is **SCALE-bounded** — the pinned next attempt is the Kopsick recipe at proper CA3 scale
+(n_ca3 ∼1000-2000 + a joint tuning of the now-exposed knobs), NOT another config at 150.
+
 ## Bottom line
 
 The competitive-Hebbian mechanism forms a **SELECTIVE weight structure** (within/truly-silent 8.9× vs the pure-LTP
-1.01×, 6-seed GO) — surpassing the 2026-07-09 within/silent-**ratio** saturation. But that weight-ratio surpass does
-NOT deliver robust functional pattern completion: rigorous investigation across competition / sparsification /
-mossy-detonator / scale / point-neuron-vs-dendritic read-out shows the functional completion is deeply seed-fragile,
-because the LEARNED attractor is not as CLEAN (high-absolute + selective) as the hand-installed attractor the
-CYCLE-1068 read-out was validated on. The robust functional completion is the honest open residual — a genuine
-boundary = an undiscovered mechanism, with the specific ranked next mechanisms above (assembly-selective iSTDP; the
-full Kopsick sparse-synchronous recipe; a co-calibrated read-out), research-gated.
+1.01×, 6-seed GO) — surpassing the 2026-07-09 within/silent-**ratio** saturation (the committed advance on the
+documented metric). But robust FUNCTIONAL pattern completion on the emergent learned attractor is a deep,
+precisely-root-caused residual: rigorous investigation across ~16 configs (competition / sparsification /
+mossy-detonator / scale / point-neuron-vs-dendritic read-out / recall-inhibition diagnostic / gamma-sync / the
+coordinated Kopsick recipe) shows it is **architecturally + SCALE-bounded** — the learned attractor's within-ensemble
+recurrent weights are too weak (the recall-inhibition diagnostic RULED OUT inhibition as the cause; iSTDP would not
+help), and the sparse-strongly-firing-synchronous assembly the full-scale Kopsick model produces is a knife-edge at
+150 neurons. The Kopsick reproduction infrastructure is BUILT (the exposed knobs); the pinned next attempt is the
+recipe at proper CA3 scale with joint tuning. A genuine boundary = an undiscovered-at-this-scale mechanism, precisely
+characterized, with the next attempt scoped.

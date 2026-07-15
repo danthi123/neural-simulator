@@ -29,6 +29,7 @@ def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0,
            coincidence=True, k_thresh=18.0, plateau_strength=120.0, weighted=True, two_comp=False, train=True,
            hebb_max=None, mg=None, apical_R=None, apical_gc=None, hebb_lr=None, hebb_decay=None, hebb_sym=False,
            hebb_rate=False, coact_decay=None, coact_thresh=None, ca3_fb_inhib=None, ca3_fb_n=None, mossy_weight=None,
+           mossy_density=None, dg_ffi_weight=None,
            ca3_to_ca1_density=0.30, ca1_fb_inhib=None, ca1_fb_n=None, ca1_ff_inhib=None):
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.bridge import SimulationBridge
@@ -109,6 +110,18 @@ def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0,
         for p in pathways:
             if getattr(p, "from_region", None) == "dg" and getattr(p, "to_region", None) == "ca3":
                 p.weight_mean = float(mossy_weight)
+    if mossy_density is not None:
+        # Kopsick sparse mossy: FEWER, decorrelated detonator synapses (dg->ca3 density 0.10 -> ~0.05) so a few DG
+        # cells detonate a few CA3 cells (a sparse selective assembly), not a diffuse projection. Runner-side; NO sim/ edit.
+        for p in pathways:
+            if getattr(p, "from_region", None) == "dg" and getattr(p, "to_region", None) == "ca3":
+                p.density = float(mossy_density)
+    if dg_ffi_weight is not None:
+        # Kopsick sparse DG code: strengthen the dg_pv_basket->dg feedforward inhibition so the DG code is ~2-5% sparse
+        # (expansion recoding + strong FF inhibition, Kandel Ch 54 pp 1357-1360) -> a sparse, decorrelated CA3 assembly.
+        for p in pathways:
+            if getattr(p, "from_region", None) == "dg_pv_basket" and getattr(p, "to_region", None) == "dg":
+                p.weight_mean = float(dg_ffi_weight)
     cfg = CoreSimConfig()
     cfg.enable_brain_region_framework = True
     cfg.brain_regions = list(regions); cfg.region_pathways = list(pathways)
