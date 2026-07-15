@@ -78,11 +78,38 @@ recurrent sum), and NEITHER the fixed reservoir NOR e-prop-learned W_rec supplie
 (XOR) — because e-prop's diagonal-RTRL truncation drops exactly the off-diagonal cross-neuron credit that combination
 needs. This is a clean, positive-control-validated characterization of the frontier's core difficulty.
 
-**Pinned next mechanisms (research-gated, cheapest-first):** (1) a LESS-TRUNCATED credit rule keeping some off-diagonal
-cross-neuron eligibility (SnAp-1 / rank-reduced RTRL, Marschall-Savin) — the minimal step past the diagonal
-limitation, tested on the XOR/combination task where the diagonal rule provably fails; (2) a HARDER Bellec-style task
-where the fixed reservoir does NOT already solve it (learned OUTPUT-GATING at a RECALL cue, not a direct-read read-out)
-— to make W_rec learning load-bearing for holding/integration too; (3) FPTT+LTC as the field's best BPTT-free
-long-range reference (not transport-free — a ceiling). The honest field state stands: long-range/compositional
-recurrent learning from a purely biological local rule is a genuine open frontier — now precisely characterized on a
-controlled, positive-control-validated harness.
+## ⚠️ SELF-CAUGHT CORRECTION (2026-07-14, same session — the discipline caught a wrong conclusion BEFORE building the wrong mechanism)
+
+Before building SnAp-1 (the "less-truncated credit rule" I had pinned as the fix for the XOR null), I tested the
+research gate's alternative hypothesis MYSELF (a0): **is the XOR null a LINEAR-READOUT limitation, not a
+recurrent-credit limitation?** The one-line test — a 2-layer MLP read-out on the FIXED (untrained-W_rec) reservoir:
+
+- **T=2, T=5: MLP acc = 1.000** (chance 0.25) on BOTH seeds → the fixed reservoir's features ALREADY CONTAIN both cues;
+  a LINEAR softmax simply cannot COMBINE them (XOR isn't linearly separable), but a nonlinear read-out solves it
+  perfectly. ⇒ **the XOR "e-prop limitation" at short lag was a LINEAR-READOUT limitation — the recurrent W_rec credit
+  was NEVER the bottleneck, and SnAp-1 is the WRONG mechanism.**
+- **T=15: 0.680; T=30: 0.295; T=60: 0.265 ≈ chance** → beyond the ALIF preservation horizon (~5-15 tokens) even a
+  nonlinear read-out fails because the distal cue x1 is genuinely LOST from the fixed reservoir's features.
+
+**⇒ CORRECTED conclusion.** The earlier "e-prop can't learn the cross-cue recurrent computation" framing was WRONG
+(it conflated the read-out limitation with a recurrent-credit limitation). The accurate picture: the fixed ALIF
+reservoir SUPPLIES the features for both HOLD (copy) and COMBINE (XOR) up to its intrinsic preservation horizon
+(~5-15 tokens); a nonlinear read-out extracts them; and e-prop's recurrent W_rec learning is genuinely NOT
+load-bearing for any of this. **The one genuine frontier is HORIZON EXTENSION** — can LEARNING (recurrent W_rec)
+extend the distal-cue preservation BEYOND the fixed ALIF horizon (so XOR at T=30+ becomes solvable)? My copy-task
+result (plastic degrades/nudges rather than extends) suggested no, but that used a LINEAR read-out — the properly-
+framed open test is **plastic recurrent learning + a nonlinear read-out at T=15-30 (does learning push the horizon
+out?)**. This is the corrected, precise open question. SnAp-1 is NOT indicated (the short-T bottleneck was the
+read-out); the horizon-extension question is about the ALIF/recurrent MEMORY, not the cross-neuron combination credit.
+
+**Methodology win:** testing the alternative hypothesis (the nonlinear-readout reframe) BEFORE building the pinned
+mechanism caught a wrong conclusion + saved the SnAp-1 build — the same adversarial-self-check discipline that caught
+the WikiText over-claim. The finding above (the copy artifact, the accum positive control, the grad-check) all STAND;
+only the XOR *interpretation* is corrected.
+
+**Pinned next (corrected):** (1) the horizon-extension test — plastic recurrent e-prop + a NONLINEAR read-out at
+T=15-30 (does learning extend the fixed ALIF's ~15-token preservation horizon?); (2) a harder task where the fixed
+reservoir does NOT already supply the features (learned OUTPUT-GATING); (3) accept the ALIF-horizon as the substrate's
+memory limit and scale the adaptation windows. The honest field state stands: long-range recurrent MEMORY from a
+biological local rule is the genuine open frontier — now precisely characterized (readout vs recurrent-memory
+disentangled) on a positive-control-validated harness.

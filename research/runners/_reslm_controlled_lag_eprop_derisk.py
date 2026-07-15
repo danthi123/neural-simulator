@@ -170,6 +170,34 @@ def ngram_recall_acc(K, F, T, tr_trials, tr_targets, ev_trials, ev_recall, ev_ta
     return correct / max(1, len(ev_trials))
 
 
+def nonlinear_readout_test(seed, task="xor", K=4, F=6, T=5, n_train=400, n_eval=200, n_pool=100,
+                           epochs=150, n_hidden=64, lr=0.05):
+    """DECISIVE reframe test: does a NONLINEAR (2-layer MLP) read-out on the FIXED reservoir already solve the task? If
+    yes for XOR, the XOR null was a LINEAR-READOUT limitation (the fixed reservoir's features already contain the two
+    cues; a linear softmax just can't COMBINE them), NOT a recurrent-credit limitation -> the recurrent W_rec learning
+    was never the bottleneck, and SnAp-1 is unnecessary. Returns (mlp_acc, chance)."""
+    V = K + 2 + F
+    gen = {"xor": make_xor_task, "accum": make_accum_task}.get(task, make_recall_task)
+    tr, tr_rp, tr_tg = gen(K, F, T, n_train, seed * 100 + 1)
+    ev, ev_rp, ev_tg = gen(K, F, T, n_eval, seed * 100 + 2)
+    res = RateReservoir(V, n_pool, seed=seed, alpha=0.3, spectral=1.1, alif=True, beta=1.0)
+    Xtr = np.array([res.forward_states(ids)[rp] for ids, rp in zip(tr, tr_rp)])   # FIXED reservoir RECALL features
+    Xev = np.array([res.forward_states(ids)[rp] for ids, rp in zip(ev, ev_rp)])
+    ytr = np.array(tr_tg); yev = np.array(ev_tg)
+    rng = np.random.default_rng(seed); d = Xtr.shape[1]
+    W1 = rng.standard_normal((n_hidden, d)) * 0.1; W2 = rng.standard_normal((V, n_hidden)) * 0.1
+    for ep in range(epochs):
+        for i in rng.permutation(len(Xtr)):
+            x = Xtr[i]
+            hh = np.tanh(W1 @ x)
+            z = W2 @ hh; z -= z.max(); e = np.exp(z); p = e / e.sum()
+            g = -p; g[ytr[i]] += 1.0
+            W2 += lr * np.outer(g, hh)
+            W1 += lr * np.outer((W2.T @ g) * (1 - hh * hh), x)
+    acc = float(np.mean([np.argmax(W2 @ np.tanh(W1 @ x)) == y for x, y in zip(Xev, yev)]))
+    return acc, 1.0 / K
+
+
 def run_one(seed, K=6, F=6, T=10, n_train=400, n_eval=200, n_pool=220, epochs=25,
             lr_out=0.02, lr_rec=0.01, beta=1.0, awin_lo=30.0, awin_hi=300.0, task="copy",
             arms=("fixed", "plastic", "symmetric", "sign_flip", "zero_signal", "shuffle_elig")):
@@ -204,12 +232,24 @@ def main():
     ap.add_argument("--lr-rec", type=float, default=0.01, help="e-prop W_rec learning rate (destabilization test: lower it)")
     ap.add_argument("--task", default="copy", choices=["copy", "xor", "accum"], help="copy=single-cue hold (ALIF solves it); xor=delayed modular-sum of TWO cues; accum=evidence-accumulation majority (Bellec's validated e-prop+ALIF positive control)")
     ap.add_argument("--grad-check", action="store_true", help="assert the ALIF 2-component eligibility matches finite differences")
+    ap.add_argument("--nonlinear-readout", action="store_true", help="DECISIVE: does a 2-layer read-out on the FIXED reservoir solve the task? (reframes XOR null as readout-vs-recurrent-credit)")
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
     t0 = time.time()
     if a.grad_check:
         gc = grad_check_alif()
         print(f"[grad_check_alif] {gc}", flush=True)
+    if a.nonlinear_readout:
+        for T in a.T:
+            accs = [nonlinear_readout_test(s, task=a.task, K=a.K, T=T, n_pool=a.n_pool) for s in a.seeds]
+            acc = float(np.mean([x[0] for x in accs])); chance = accs[0][1]
+            verdict = ("READOUT-LIMITED (fixed reservoir already has the features; a nonlinear read-out solves it -> "
+                       "recurrent credit was NOT the bottleneck)" if acc >= max(0.8, 3 * chance)
+                       else "NOT readout-limited (even a nonlinear read-out on the fixed reservoir fails -> the "
+                       "features/recurrent-computation are genuinely missing)")
+            print(f"[nonlinear-readout] task={a.task} T={T} fixed-reservoir + 2-layer MLP acc={acc:.3f} "
+                  f"(chance={chance:.3f}) -> {verdict}", flush=True)
+        return
     results = {}
     for T in a.T:
         per_seed = [run_one(s, K=a.K, T=T, n_pool=a.n_pool, epochs=a.epochs, lr_rec=a.lr_rec, task=a.task) for s in a.seeds]
