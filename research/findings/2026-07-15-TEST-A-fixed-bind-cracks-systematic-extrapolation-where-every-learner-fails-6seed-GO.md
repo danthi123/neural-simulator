@@ -33,3 +33,6 @@
 - **On-substrate follow-on (the fixed-dendritic-conjunction realization):** the ±1 bind → the project's on-bridge FHRR/coincidence composer (already validated) or the fixed two-compartment dendritic-conjunction (`enable_two_compartment_dap`) — the "fixed structure the substrate hosts" made literal, with LEARNED codes flowing through it. This is the honest emergence-bar unification (learned representations × a fixed biological binding primitive), consistent with `2026-06-16-onsubstrate-learned-binder-single-attr-GO-bundling-NEGATIVE` (learned codes + a fixed coincidence bind).
 - **Harden s102:** hold out memfloor-HARD combos (ensure held-out cells are far from train in code space) so the 1-NN control can't get lucky — a bounded gate-tightening, not a mechanism question.
 Reuse-by-import; NO `sim/` edit. Runner: `_fixedbind_systematicity_derisk.py`.
+
+## Blind-seed confirmation (12-seed total)
+Extended to blind seeds 103/104/105/200/201/202 (`raw/_fixedbind_systematicity_blind.json`): FIXEDBIND held-out mean **0.96** (even stronger than the dev seeds' 0.87; oracle posctrl 1.000 all), learner 0.50, linear 0.46 — **the fixed-bind-beats-the-learner result is 12/12 robust**; strict GO gate 10/12 (memfloor split-luck on ~2 seeds, the bounded caveat). The systematicity-from-fixed-binding-structure conclusion is blind-seed confirmed.
