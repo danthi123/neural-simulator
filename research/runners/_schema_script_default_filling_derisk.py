@@ -75,7 +75,7 @@ END_A = ["pay", "leave"]
 END_B = ["pay", "exit"]                            # a second instance-variant ending ("minor variation")
 
 
-def build_corpus(n_scripts=4):
+def build_corpus(n_scripts=4, ending_free=False):
     """Ordered event-script corpus. Returns (train_seqs[col lists], vocab, word2col, meta).
     meta carries markers/typs (as cols), branch position, and the never-seen NOVEL script (moat)."""
     scr = (_SCRIPT + [f"scr{i}" for i in range(max(0, n_scripts - len(_SCRIPT)))])[:n_scripts]
@@ -93,8 +93,16 @@ def build_corpus(n_scripts=4):
     train_words = []
     for i in range(n_scripts):
         base = [markers[i]] + SHARED_MID + [typs[i]]
-        train_words.append(base + END_A)
-        train_words.append(base + END_B)
+        if ending_free:
+            # EMERGE-15-exact: the shared ENDING (pay/leave/exit) after the typical creates SHARED post-typical
+            # high-order contexts on the typical columns that compete with the marker->typical prediction and starve
+            # the shared-mid segment budget -> pos-ctrl collapses to chance. Training the schema WITHOUT the ending
+            # (the typical is the sequence terminus) isolates the marker->typical high-order chain (EMERGE-15-exact).
+            train_words.append(base)
+            train_words.append(base)               # 2 identical instances (minor-variation slot, ending removed)
+        else:
+            train_words.append(base + END_A)
+            train_words.append(base + END_B)
     train_seqs = [[w2c[w] for w in s] for s in train_words]
     branch_pos = 1 + len(SHARED_MID)                  # index of the typical continuation in the full script
     meta = {"n_scripts": n_scripts, "markers": [w2c[m] for m in markers], "typs": [w2c[t] for t in typs],
@@ -218,8 +226,8 @@ def _moat_abstain(lr, meta):
     return float(len(gen) == 0 or not (known_typ & set(gen)))
 
 
-def run_seed(seed, n_scripts, epochs):
-    seqs, vocab, w2c, meta = build_corpus(n_scripts)
+def run_seed(seed, n_scripts, epochs, ending_free=False):
+    seqs, vocab, w2c, meta = build_corpus(n_scripts, ending_free=ending_free)
     nE = 4 * n_scripts + 8                             # each shared column holds n_scripts disjoint high-order SDRs + slack
     vocab_n = len(vocab)
     # held-out-disjoint assertion: the tested partial (bare marker) is NOT any verbatim training sequence
@@ -264,6 +272,7 @@ def main():
     ap.add_argument("--seeds", type=int, nargs="+", default=[42, 43, 44, 100, 101, 102])
     ap.add_argument("--n-scripts", type=int, default=4)
     ap.add_argument("--epochs", type=int, default=80)
+    ap.add_argument("--ending-free", action="store_true", help="EMERGE-15-exact: train scripts without the shared ending (isolates the marker->typical high-order chain; fixes the pos-ctrl)")
     ap.add_argument("--out", type=str, default=str(OUT))
     a = ap.parse_args()
     if len(a.seeds) < 3:
@@ -275,7 +284,7 @@ def main():
     seed_errors = {}
     for s in a.seeds:
         try:
-            res.append(run_seed(s, a.n_scripts, a.epochs))
+            res.append(run_seed(s, a.n_scripts, a.epochs, ending_free=a.ending_free))
         except Exception as e:
             seed_errors[s] = repr(e)
             traceback.print_exc()
