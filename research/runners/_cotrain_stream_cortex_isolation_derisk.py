@@ -31,7 +31,7 @@ from research.runners._phaseB_onbridge_stream_cortex_derisk import (
 from sim.backend import to_host
 
 
-def build_cotrain_bridge(NtA, NtB, n_hub, n_per, seed, shared_target=False, decay=0.00001):
+def build_cotrain_bridge(NtA, NtB, n_hub, n_per, seed, shared_target=False, decay=0.00001, homeostasis=True):
     """ONE bridge with hub_A/target_A + hub_B/target_B (or a SHARED target if shared_target). Two plastic pathways."""
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.bridge import SimulationBridge
@@ -62,7 +62,7 @@ def build_cotrain_bridge(NtA, NtB, n_hub, n_per, seed, shared_target=False, deca
         ]
     cfg.dt = 1.0
     cfg.seed = cfg.ou_seed = cfg.heterogeneity_seed = seed
-    cfg.enable_ou_process = False; cfg.enable_stdp = False
+    cfg.enable_ou_process = False; cfg.enable_stdp = False; cfg.enable_homeostasis = homeostasis
     cfg.enable_hebbian_learning = True
     cfg.hebbian_learning_rate = 0.03; cfg.hebbian_max_weight = 5.0; cfg.hebbian_min_weight = 0.0
     cfg.hebbian_weight_decay = decay
@@ -99,7 +99,7 @@ def run_seed(seed, stories, vocab, cat_ids, a, mode="cotrain"):
     hubidx = {w: i for i, w in enumerate(hubs)}; keep = setA | setB | set(hubs)
 
     shared = (mode == "shared")
-    bridge, idx = build_cotrain_bridge(NtA, NtB, n_hub, n_per, seed, shared_target=shared, decay=a.hebbian_decay)
+    bridge, idx = build_cotrain_bridge(NtA, NtB, n_hub, n_per, seed, shared_target=shared, decay=a.hebbian_decay, homeostasis=a.homeostasis)
     xp = bridge._cp if hasattr(bridge, "_cp") else None
     tgtA_name = "target" if shared else "targetA"; tgtB_name = "target" if shared else "targetB"
     hubA_r, tgtA_r = idx["hubA"], idx[tgtA_name]; hubB_r, tgtB_r = idx["hubB"], idx[tgtB_name]
@@ -171,6 +171,7 @@ def main():
     p.add_argument("--hub-scale", type=float, default=250.0); p.add_argument("--tgt-scale", type=float, default=1200.0)
     p.add_argument("--max-windows", type=int, default=24000); p.add_argument("--max-vocab", type=int, default=64)
     p.add_argument("--hebbian-decay", type=float, default=0.00001)
+    p.add_argument("--homeostasis", type=int, default=1)
     p.add_argument("--corpus", default=None); p.add_argument("--out", default="research/findings/raw/_cotrain_stream_isolation.json")
     a = p.parse_args()
     vocab, cat_ids, _ = taxonomy_to_vocab_categories(TAXONOMY_8x8)
