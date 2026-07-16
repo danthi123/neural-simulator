@@ -7038,7 +7038,16 @@ class SimulationBridge:
                         # gain=0 → no decay (frozen pathway preserves weights);
                         # gain=1 → full decay (current behavior).
                         if self.cp_plasticity_rate_gain is not None:
-                            gated_decay = cfg.hebbian_weight_decay * self.cp_plasticity_rate_gain
+                            # 2026-07-16: route through _ensure_gate_capacity (the 2026-06-08 catch-all) -- the
+                            # Hebbian block was the one place still using the RAW array. Structural plasticity grows
+                            # cp_connections.nnz without growing the gate arrays, so this line raised "operands could
+                            # not be broadcast" EVERY step (observed 4915837 vs 4915200 = +637 formed synapses) and was
+                            # silently caught -> the Hebbian decay stopped applying, exactly the failure mode the
+                            # _ensure_gate_capacity docstring documents for the reward path. Byte-identical when the
+                            # array is already nnz-sized (the helper returns it unchanged); new entries default to 1.0.
+                            _nnz_heb = self.cp_connections.nnz
+                            gated_decay = cfg.hebbian_weight_decay * self._ensure_gate_capacity(
+                                "cp_plasticity_rate_gain", _nnz_heb)[:_nnz_heb]
                             self.cp_connections.data *= (1.0 - gated_decay)
                         else:
                             self.cp_connections.data *= (1.0 - cfg.hebbian_weight_decay)
