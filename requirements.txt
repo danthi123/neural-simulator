@@ -2,7 +2,7 @@
 # pip install -r requirements.txt
 
 # Core simulator dependencies
-cupy-cuda11x # Or cupy-cuda12x, or another version matching your CUDA installation
+cupy-cuda12x # Or cupy-cuda12x, or another version matching your CUDA installation
 numpy
 h5py
 dearpygui
