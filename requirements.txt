@@ -4,6 +4,9 @@
 # Core simulator dependencies
 cupy-cuda12x # Or cupy-cuda12x, or another version matching your CUDA installation
 numpy
+scipy  # REQUIRED for the SIM_BACKEND=numpy CPU path (get_sparse_module -> scipy.sparse). Without it
+       # sim/bridge.py:45 catches the ImportError and SILENTLY falls back to `import cupy as cp`, so
+       # SIM_BACKEND=numpy runs on the GPU anyway and the documented CPU-portability path is dead.
 h5py
 dearpygui
 PyOpenGL
