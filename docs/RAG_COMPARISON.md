@@ -81,3 +81,67 @@ E:/Documents/Projects/rag_compare_env/Scripts/python.exe tools/rag/rag_eval.py -
 **Grow it as we use it:** every time a real research gate asks a "have we already…?" question, add the query + the correct finding's basename to `rag_eval_queries.jsonl`. The query set becomes more representative of our actual use case over time, and the history JSONL lets us plot each engine's precision/latency trend.
 
 **Seed baseline (2026-07-12, 7 queries, 1508 findings, top-k 5):** LlamaIndex **hit@1 0.857 / hit@3 1.00 / MRR 0.905** @ ~356 ms/query; SOMA **hit@1 0.429 / hit@3 0.714 / MRR 0.560** @ ~78 ms/query. Confirms the hand-grade quantitatively — **LlamaIndex is more precise** (nails the exact finding in the top-3 on all 7), **SOMA is ~4.6× faster per query**. Run it again after a corpus jump / rebuild / retrieval-config change and compare the rows.
+
+---
+
+## 2026-07-16 — LINUX REDEPLOY: the index is rebuilt local + portable, and the specialty PAPERS/BOOKS are now in it
+
+The Linux migration broke a-1 outright, and the fix turned up a corruption the old box had been carrying silently.
+
+**What was broken.** `rag_search.py` / `build_llamaindex_full.py` / `update_indexes.py` all hardcoded
+`E:\Documents\Projects\...`; `llama_index` was absent; `soma` was absent; `sim-catalog` had never been migrated.
+So gate step a-1 ("check our own record FIRST") and step (a) ("read the source") could not run at all on this box.
+
+**The carried-over index was CORRUPT — at the source, not from the copy.** `llamaindex_full/docstore.json` threw
+`JSONDecodeError: Extra data` at char 51,629,090 with ~12 KB of trailing bytes. Source and copy are byte-identical
+(51,641,153 both), and there are no NULs — the signature of a **non-atomic overwrite**: a shorter new docstore written
+over a longer old one without truncating, almost certainly the auto-update hook caught mid-write during the migration
+(`_autoupdate.log` is stamped Jul 16 04:57). A salvage (truncate to the valid prefix) was rejected in favour of a local
+rebuild, which fixes three things at once: the corruption, the stale doc ids, and the frozen corpus.
+
+**Paths are now portable** (no rebuild against `/mnt/projects` — that read-only backup is not a runtime dependency):
+`$SIM_RAG_ROOT` → `<parent-of-repo>/rag_index` → the legacy Windows path as a last-resort fallback; likewise
+`$SIM_CATALOG` / `$SIM_REPO`. The index + `sim-catalog` were copied off the backup to `~/Projects/rag_index` and
+`~/Projects/sim-catalog`.
+
+**llama-index lives in an isolated `.venv-rag`, NOT the sim `.venv`** — preserving the original "base sim env
+untouched" design for a concrete reason: the sim venv pins `torch 2.11.0+cu128` alongside cupy, and llama-index's
+dependency resolution would churn that CUDA stack. Always run the RAG tools with `.venv-rag/bin/python`, and
+`CUDA_VISIBLE_DEVICES=""` when a GPU experiment is live (embedding is CPU-fine and must not contend for VRAM).
+
+**NEW corpus `paper` — the specialty texts/papers/books are searchable for the first time.** Previously only Kandel's
+`full-book.txt` was indexed, so every OTHER source the gate cites by name was un-locatable.
+`tools/rag/extract_reference_pdfs.py` (idempotent; never overwrites the hand-made `.txt` siblings that already shipped
+for Schultz + the Tepper/Bolam BG reviews) extracted 7 more with real text layers:
+
+| newly searchable | chars | pages |
+|---|---|---|
+| Buzsaki, *Rhythms of the Brain* (2006) | 1,377,463 | 465 |
+| O'Keefe & Nadel, *The Hippocampus as a Cognitive Map* (1978) | 1,648,490 | 297 |
+| Moore (ed.), *Neuroscientist's Guide to Classical Conditioning* (2002) | 981,513 | 338 |
+| Sutton & Barto, *RL* 2nd ed. | 737,728 | 352 |
+| Albus 1971 / Marr 1969 / Hesslow 2013 | ~203,000 | 80 |
+
+`--corpus paper` joins `finding|plan|doc|catalog|kandel|all`. `load_docs()` now **dedupes by path across source types**
+(a `Document`'s `id_` IS its path, so a file matched by two globs would emit duplicate ids); `paper` is ordered AFTER
+`kandel` so `full-book.txt` stays `source_type=kandel`.
+
+**Index: 11,325 nodes** (9,232 before the papers), ~271 s CPU rebuild. **Verified live:**
+`--corpus paper "cerebellar cortex granule cell codon expansion recoding"` → **Albus-1971** at score 2.72, returning
+the actual recoding/pattern-recognition passage — i.e. the Marr-Albus codon source the EMERGE-35 arc is built on,
+locatable at last. `--corpus all "homeostatic threshold adaptation degrading learning when neurons are idle"` → the
+current co-training finding at 3.3 s.
+
+**Auto-update is armed, behind a MIGRATION GATE — a real trap that would have fired on the first commit.**
+`update_indexes.refresh_llamaindex` matches ref-docs by PATH-BASED id. A carried-over index holds FOREIGN path ids,
+so `cur_ids` (Linux paths) would match nothing → **every ref_doc deleted (lines 88-93) and the whole corpus re-embedded
+(line 94)**, silently, possibly contending for VRAM with a live run. The `post-commit` hook now (a) resolves paths via
+`git rev-parse --show-toplevel`, (b) uses `.venv-rag`, (c) no-ops when that venv is absent, and (d) **requires
+`$RAG_ROOT/.rag_paths_migrated`**, a sentinel only a deliberate `update_indexes.py --rebuild` drops. Post-rebuild the
+sentinel is in place, so a commit touching `research/findings/|docs/|CLAUDE|ROADMAP|README` refreshes incrementally
+(~45 s debounce, lock + manifest gated) as designed.
+
+**SOMA is NOT restored** (neither the module nor the bundles migrated). Its call site in `update_indexes.py` is already
+`try/except`-wrapped, so it degrades cleanly — the log line `SOMA rebuild failed (LlamaIndex still updated): No module
+named 'soma'` is EXPECTED on this box, not a fault. Consequence: `tools/rag/rag_eval.py`'s two-engine comparison is
+LlamaIndex-only here until SOMA is redeployed; the head-to-head table above is historical (old box).
