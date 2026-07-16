@@ -7,6 +7,7 @@
 # claim made there was vacuous until it was noticed. An undocumented test dependency is a silent one.
 
 pytest>=8.0
+pytest-cov     # CONTRIBUTING.md:35 already tells contributors to install this
 
 # tests/test_figure_export.py renders figures.
 matplotlib

@@ -84,7 +84,9 @@ def collect():
 
 def declared():
     names = set()
-    for rf in ("requirements.txt", "requirements-dev.txt"):
+    # EVERY manifest in the repo -- webapp/requirements.txt existed and was invisible to the first version
+    # of this audit, which is exactly the failure mode the audit is meant to prevent.
+    for rf in ("requirements.txt", "requirements-dev.txt", "webapp/requirements.txt"):
         if not os.path.exists(rf):
             continue
         for line in open(rf, encoding="utf-8"):

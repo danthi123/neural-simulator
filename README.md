@@ -227,7 +227,8 @@ reply templates in the loop.
 ```bash
 git clone https://github.com/danthi123/neural-simulator
 cd neural-simulator
-pip install -r requirements.txt   # CuPy + DearPyGUI + PyOpenGL + h5py + ...
+pip install -r requirements.txt   # CuPy + DearPyGUI + PyOpenGL + h5py + scipy + ...
+pip install -r requirements-dev.txt   # OPTIONAL: pytest etc, only if you want to run the test suite
 python neural-simulator.py        # GUI with live 3D visualization
 ```
 

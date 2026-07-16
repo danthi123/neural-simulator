@@ -153,6 +153,7 @@ For the biology view, see [docs/biology.md](docs/biology.md).
 
 ```bash
 # Run all tests
+pip install -r requirements-dev.txt   # pytest -- NOT in requirements.txt (the sim runs without it)
 pytest tests/ -v
 
 # Run a smoke test of any runner
