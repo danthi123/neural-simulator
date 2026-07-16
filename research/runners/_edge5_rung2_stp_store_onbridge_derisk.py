@@ -140,12 +140,48 @@ def run_one(seed, n_trials=40, T=8):
     return res
 
 
+def run_multipair(seed, Ps=(1, 2, 3, 4), n_trials=20, T=8):
+    """Write P (barcode,value) binds into ONE store's facilitation, then retrieve each -> does the Mongillo store hold
+    MULTIPLE binds (the numpy delta-store's interference regime), or does the facilitation interfere past ~few items
+    (the biological Mongillo WM-capacity boundary)? Distinct values (P<=KV)."""
+    rng = np.random.default_rng(seed)
+    codes = _mint_codes(rng, 16)
+    res = {"seed": seed, "chance": round(1.0 / KV, 4), "byP": {}}
+    for P in Ps:
+        hits = []
+        for t in range(n_trials):
+            store = STPStore(seed * 100 + t, stp_on=True)
+            ents = rng.choice(16, size=P, replace=False)
+            vals = list(rng.permutation(KV)[:P])
+            for i in range(P):
+                store.write(codes[ents[i]], vals[i])       # each write facilitates its own barcode->value synapses
+            store.fillers(T)
+            for i in range(P):
+                pred, _ = store.retrieve(codes[ents[i]])
+                hits.append(pred == vals[i])
+        res["byP"][P] = round(float(np.mean(hits)), 4)
+    res["holds_ge3"] = bool(res["byP"].get(3, 0) > 0.6)
+    return res
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=[42])
     ap.add_argument("--n-trials", type=int, default=40)
+    ap.add_argument("--multipair", action="store_true", help="run the multi-pair interference/capacity sweep instead")
     ap.add_argument("--out", default="research/findings/raw/_edge5_rung2_stp_store_onbridge.json")
     a = ap.parse_args()
+    if a.multipair:
+        rows = [run_multipair(s, n_trials=a.n_trials) for s in a.seeds]
+        for r in rows:
+            bp = r["byP"]
+            print(f"[stp-store-multi s{r['seed']}] chance={r['chance']} || retrieve-acc by #pairs: "
+                  f"P1={bp.get(1):.2f} P2={bp.get(2):.2f} P3={bp.get(3):.2f} P4={bp.get(4):.2f} || holds>=3={r['holds_ge3']}", flush=True)
+        nh = sum(x["holds_ge3"] for x in rows)
+        print(f"[stp-store-multi] holds>=3-pairs {nh}/{len(rows)} (the Mongillo facilitation store's on-bridge WM capacity; "
+              f"a graceful fall past ~few items = the biological Mongillo/Lisman-Idiart capacity boundary, not a bug)", flush=True)
+        json.dump(rows, open(a.out.replace(".json", "_multipair.json"), "w"))
+        return
     rows = [run_one(s, n_trials=a.n_trials) for s in a.seeds]
     for r in rows:
         print(f"[stp-store s{r['seed']}] chance={r['chance']} tau_f={r['tau_f']} || RETRIEVE-via-facilitation={r['retrieve_acc']:.3f} "
