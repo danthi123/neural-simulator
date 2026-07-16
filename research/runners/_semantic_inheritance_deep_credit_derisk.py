@@ -90,7 +90,8 @@ _REPO = Path(__file__).resolve().parents[2]
 if str(_REPO) not in sys.path:
     sys.path.insert(0, str(_REPO))
 
-import numpy as np  # noqa: E402
+import numpy as np
+from sim.backend import to_host  # noqa: E402
 
 # --- reuse-by-import: the fenced backprop oracle (ceiling + per-layer alignment reference) + the 1-hidden floor ---
 from sim.dendritic_mlp import DendriticMLP  # noqa: E402
@@ -273,7 +274,12 @@ def _acc_on(net, X, y, idx):
     if idx is None or len(idx) == 0:
         return float("nan")
     _, lg = net._forward(np.asarray(X[idx], float))
-    return float(np.mean(np.argmax(np.asarray(lg), 1) == np.asarray(y[idx])))
+    # to_host: the logits come back on the ACTIVE backend. np.asarray() on a cupy array raises
+    # "TypeError: Implicit conversion to a NumPy array is not allowed" -- this host-side ORACLE assumed numpy,
+    # so the whole runner died under SIM_BACKEND=cupy (and its numpy default silently no-ops on this box:
+    # the legacy 3D/WS generator raises, _initialize_simulation_data swallows it, is_initialized stays False,
+    # and bridge.py:5926 early-returns every step). to_host is a numpy PASSTHROUGH => byte-identical on numpy.
+    return float(np.mean(np.argmax(to_host(lg), 1) == to_host(y[idx])))
 
 
 # ============================================================================================================
