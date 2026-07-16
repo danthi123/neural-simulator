@@ -36,3 +36,52 @@ The biology lens converges: cortex likely does NOT compute the off-diagonal Jaco
 Spiking cheap-scale deep credit is NOT a scale-only boundary: feedforward is GO; the recurrent off-diagonal frontier is worth ONE cheap-first de-risk with the even-cheaper recalibration gate in front. **Priority conditional (load-bearing):** even a full delayed-cue GO is 3-4 orders below language scale, and it does NOT touch the natural-language perplexity ceiling (a data/scale wall — all models lose to a tuned n-gram at tractable scale, per my `2026-07-15` findings). Per ROADMAP §12 the deep-credit rule is OFF the open-generation-ladder critical path — but it IS the emergence-engine ENABLER per the emergence bar (a substrate that learns recurrent structure from a stream). ⇒ **BUILD Stage 0 now** (cheapest-first; it may dissolve the frontier for free), gated behind the anti-cheats.
 
 Full workflow transcript: the `wf_419ab83d-70a` journal. Sources cited inline (verify "Temporal Credit Is Free" + MDGL PNAS 2021 in depth before Stage 1).
+
+---
+
+# ⛔ CORRECTION (2026-07-16) — THIS FINDING'S CENTRAL CLAIM IS NOT SUPPORTED BY THE RUNS IT CITES. The "K=8 0.877, anti-cheat-clean" GO was lifted out of three runs that each reported `SIGNAL=False` / `HONEST NEGATIVE`.
+
+**Read this before relying on anything above.** The claim *"feedforward spiking deep credit is ALREADY GO (e-prop + population coding)"* — and the downstream conclusions built on it (*"feedforward is SOLVED / NOT a blocker"*, *"the genuine open frontier is RECURRENT off-diagonal"*, *"the parked 'spikes can't do deep credit / SNR wall' verdict is COMPREHENSIVELY REFUTED"*) — do not survive an audit of their own source data.
+
+## The evidence (`research/findings/raw/_epropport/k8_s4{2,3,4}.json` — the runs this finding cites)
+
+| file | SIGNAL | inherit | shuffle-DFA | `shuf_ok` (gate needs ≤ chance+0.10 = 0.433) |
+|---|---|---|---|---|
+| `k8_s42.json` | **False** | 0.889 | 0.556 | **False** |
+| `k8_s43.json` | **False** | 0.926 | 0.593 | **False** |
+| `k8_s44.json` | **False** | 0.815 | 0.630 | **False** |
+
+`0.889 / 0.926 / 0.815` averages to **exactly the 0.877** quoted above (and this finding itself lists those per-seed values), so the provenance is unambiguous. Each run's OWN verdict string reads:
+
+> `HONEST NEGATIVE -- the ported e-prop does NOT cleanly train the task on the bridge`
+
+**The headline was produced by averaging the `inherit` field out of three runs the instrument had already REJECTED.** The gate's `shuffle_dfa_chance` check FAILED on every seed — i.e. a large fraction of the performance SURVIVES shuffling the credit signal — which is the precise opposite of "anti-cheat-clean".
+
+## What is actually true (measured 2026-07-16, same config, reproduces exactly)
+
+`--freeze-hidden` (the reservoir control the per-seed gate never had; the `train_layers` hook existed in-file, documented for exactly this, and was never once invoked):
+
+| seed | FULL | FROZEN (fixed random reservoir + linear readout) | deep-credit contribution |
+|---|---|---|---|
+| 42 | 0.852 | 0.667 | +0.185 |
+| 43 | 0.926 | 0.889 | +0.037 |
+| **mean** | **0.889** | **0.778** | **+0.111** |
+
+Above chance (0.333): **reservoir +0.444, deep credit +0.111 ⇒ the reservoir is ~80% of the margin.** Deep credit is REAL and positive but MINOR and seed-variable. Reproduction is exact (seed 43 = **0.926**, matching `k8_s43` to 3dp, with `SIGNAL=False` and shuffle-DFA 0.537) ⇒ **not** a migration artifact, **not** a stack difference. The numbers were always right; the READING was wrong.
+
+## Corrected conclusions
+
+- **"Feedforward spiking deep credit is ALREADY GO / not a blocker"** → **UNSUPPORTED as stated.** The on-bridge e-prop port reaches ~0.89 held-out inheritance, but ~80% of that margin is a fixed random spiking reservoir + a trained linear readout, and the runner's own aggregate gate does not pass.
+- **"The genuine open frontier is RECURRENT off-diagonal (feedforward is solved)"** → **wrong at its root.** The feedforward side never passed its own aggregate gate. The off-diagonal arc was deprioritized partly BECAUSE feedforward was believed solved.
+- **"COMPREHENSIVELY REFUTED" (the spikes-can't-do-deep-credit / SNR-wall verdict)** → **withdrawn.** That verdict is not refuted by these runs.
+- **The `K=1 0.47 → K=4 0.62 → K=8 0.877 → LIF 0.89` "clean √K trend"** → the trend may be real, but every point on it needs a frozen-hidden control before it can be read as a *deep-credit* trend rather than a reservoir-quality trend (a bigger population = a better random reservoir, independent of any credit).
+
+## Consequences
+
+`ROADMAP.md` and `docs/plans/2026-07-15-months-scale-plan-...` §4 open the unification critical path with *"The learning rule (feedforward deep-credit / BDSP, GO)"* — corrected once on 2026-07-16 (BDSP → e-prop + population coding) and now corrected again: **the GO itself is unsupported**. Segment (b) of the longest pole (co-train the stream cortex WITH the deep-credit learner) is **gated**: that learner is ~80% reservoir, so (b) would mostly test co-residence of a reservoir rather than of a second learning RULE — which was its entire purpose.
+
+## The standing rule this produced
+
+**Never average a metric out of a run whose own `SIGNAL` is False.** A runner that prints `HONEST NEGATIVE` has already done the analysis; lifting its numbers past its verdict is how a negative becomes a headline. The instrument was not broken here — **it was overridden.**
+
+Full audit + the corrected table: `research/findings/2026-07-16-deep-credit-GO-is-80pct-RESERVOIR-the-frozen-hidden-control-was-never-run.md`.
