@@ -59,3 +59,42 @@ This is the session's recurring shape: **the machinery to check the claim alread
 ## Artifacts
 
 `research/findings/raw/_eprop_banked_{FULL,FROZEN}.{json,log}` · `--freeze-hidden` in `_onbridge_eprop_port_derisk.py` (default off = byte-identical) · verify workflow `wf_5473ce0f-8d5`.
+
+---
+
+## ⛔ ADDENDUM (same day, decisive) — the banked GO **contradicts its own raw data**. The runner said HONEST NEGATIVE on every seed; the finding recorded "anti-cheat-clean".
+
+Tracing the 0.877 to its source (`research/findings/raw/_epropport/k8_s4{2,3,4}.json` — the runs the claim cites):
+
+| file | SIGNAL | inherit | shuffle-DFA | `shuf_ok` (needs ≤ chance+0.10 = 0.433) |
+|---|---|---|---|---|
+| `k8_s42.json` | **False** | 0.889 | 0.556 | **False** |
+| `k8_s43.json` | **False** | 0.926 | 0.593 | **False** |
+| `k8_s44.json` | **False** | 0.815 | 0.630 | **False** |
+
+Those per-seed values are **verbatim** the banked claim's *"inherit 0.877 (per-seed 0.889/0.926/0.815)"* — so this is unambiguously the source. And each run's OWN verdict string reads:
+
+> `HONEST NEGATIVE -- the ported e-prop does NOT cleanly train the task on the bridge`
+
+While `2026-07-15-deep-credit-fresh-class-gate-feedforward-SOLVED-...md` records:
+
+> *"ports to the production Izhikevich bridge with population coding to the LIF ceiling (K=1 0.47 → K=8 0.877 ≈ LIF 0.89), **anti-cheat-clean**, NO `sim/` edit. "The parked 'spikes can't do deep credit / SNR wall' verdict is **COMPREHENSIVELY REFUTED**.""*
+
+**⇒ The 0.877 headline was produced by averaging the `inherit` field out of three runs that each reported `SIGNAL=False` with the anti-cheat control FAILING on every seed. The claim "anti-cheat-clean" is contradicted by the very files it cites.**
+
+### This REFRAMES today's reservoir result
+
+My frozen-hidden control (~80% reservoir) is **not a new discovery** — it is the MECHANISM behind a failure **the runner had already flagged and nobody read**. `shuffle_dfa_chance=False` was saying, on all three seeds: *most of this performance survives destroying the credit signal*. That IS the reservoir, visible in the original JSON, in the original verdict string, from the start.
+
+**My runs reproduce it exactly** — seed 43 = **0.926**, matching `k8_s43` to three decimals, with `SIGNAL=False` and shuffle-DFA 0.537 (vs their 0.556–0.630). So this is not a migration artifact, not a stack difference, not my `to_host` fix. **The numbers were always right; the READING was wrong.**
+
+### Corrected scope of "the gate was missing a control"
+
+The **per-seed** gate (`trains_the_task`) genuinely lacked a reservoir control — fixed today (default-on + CI-guarded). But the **aggregate** gate (`SIGNAL`) already required `shuffle_dfa <= chance + 0.10` and **correctly returned False**. So the tooling was *less* broken than I first said: **it caught this and was overridden by the write-up.** The failure was not primarily instrumentation — it was **reporting a number the instrument had already rejected.**
+
+### What must change
+
+1. **`2026-07-15-deep-credit-fresh-class-gate-feedforward-SOLVED-...md` must be corrected** — "anti-cheat-clean" and "COMPREHENSIVELY REFUTED" are not supported by `k8_s4{2,3,4}.json`.
+2. **ROADMAP + `docs/plans/2026-07-15-months-scale-plan-...` §4** open the unification critical path with *"The learning rule (feedforward deep-credit / BDSP, GO)"*. Corrected once today (BDSP→e-prop+population-coding); the **GO itself is now unsupported as stated**.
+3. **The 2026-07-15 gate's "feedforward spiking deep credit is SOLVED / not a blocker; the genuine frontier is RECURRENT off-diagonal"** is wrong at its root: the **feedforward** side never passed its own aggregate gate. The frontier is wider than the record says, and the off-diagonal arc was deprioritized partly *because* feedforward was believed solved.
+4. **Never average a metric out of a run whose own SIGNAL is False.** A runner that prints `HONEST NEGATIVE` has already done the analysis; lifting its numbers past its verdict is the failure mode this addendum documents.
