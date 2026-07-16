@@ -134,11 +134,28 @@ class OnBridgeEpropNet(OnBridgeBDSPNet):
         # |w|<=6. The step loop reads cfg.enable_bdsp per-step, so flipping it post-init makes the block UNREACHED
         # = the kernel's documented byte-inert condition. Default False => byte-identical to the banked runs.
         if bool(hp.get("no_bdsp", False)):
+            # NOTE: too blunt for the clamp A/B -- it also nulls cp_bdsp_E, which fit_readout_norm depends on
+            # (IndexError: 0-dimensional). Kept only as the hard "kernel unreached" lever. Prefer --bdsp-wmax.
             self.br.core_config.enable_bdsp = False
+        _bw = hp.get("bdsp_wmax", None)
+        if _bw is not None:
+            # THE SINGLE-VARIABLE CLAMP LEVER. The parent sets bdsp_w_min/max = -6/+6 (:183) while ff_w_init=2000
+            # and --w-clip=4000, so fused_bdsp_update's UNCONDITIONAL `return cp.clip(w_new, w_min, w_max)`
+            # (kernels.py:485) crushes every FF synapse whose presyn fired -- despite the docstring's claim that
+            # lr=0 makes the kernel "byte-INERT" (it makes only the ADD term vanish). Widening the clip past the
+            # weight scale makes the CLIP a no-op while the block still RUNS, so cp_bdsp_E stays available.
+            # Isolates the clamp alone. Default None => byte-identical to the banked runs.
+            self.br.core_config.bdsp_w_max = float(_bw)
+            self.br.core_config.bdsp_w_min = -float(_bw)
         self.eprop_lr = float(eprop_lr); self.eps_leak = float(eps_leak)
         self.surrogate = str(surrogate); self.alpha_surr = float(alpha_surr); self.beta_surr = float(beta_surr)
         self.logit_source = str(logit_source); self.w_clip = float(w_clip); self.reset_state = bool(reset_state)
-        self.train_layers = None            # None => update all FF pathways; a set => update only those (isolation)
+        self.train_layers = None
+        if bool(hp.get('freeze_hidden', False)):
+            # THE RESERVOIR CONTROL the GO metric never had (2026-07-16): train ONLY the last FF pathway and
+            # freeze the hidden ones at init. If this MATCHES the full arm, the 'deep credit' does nothing and
+            # the result is a linear readout on a fixed random spiking reservoir.
+            self.train_layers = {self.n_hidden_layers}            # None => update all FF pathways; a set => update only those (isolation)
         self.output_psi_one = True          # OUTPUT = leaky readout (psi=1); hidden spiking units keep the surrogate
         self.logit_temp = 15.0 if logit_source == "membrane" else 1.0   # softmax temperature (membrane spans ~tens of mV)
         self._r_mu = None; self._r_sigma = None   # per-neuron readout-feature normalization (fit_readout_norm)
@@ -515,6 +532,17 @@ def main():
     ap.add_argument("--w-clip", type=float, default=4000.0)
     ap.add_argument("--train-subsample", type=int, default=240)
     ap.add_argument("--pool-k", type=int, default=1)
+    ap.add_argument("--freeze-hidden", action="store_true",
+                    help="THE MISSING RESERVOIR CONTROL: train ONLY the last FF pathway (the host-side linear "
+                         "softmax readout, which _accum_grad already SKIPS from the e-prop/DFA rule) and FREEZE "
+                         "the hidden FF pathways at init, via the runner's own train_layers hook (:153). The GO "
+                         "metric trains_the_task gates on chance/permuted/shuffle-DFA -- NONE is a frozen-hidden "
+                         "baseline -- so a pure reservoir+readout result passes it UNCHANGED. If readout-only ~= "
+                         "full, the hidden deep credit contributes NOTHING and the GO is a reservoir result.")
+    ap.add_argument("--bdsp-wmax", type=float, default=None,
+                    help="Widen the inherited bdsp_w_min/max = -6/+6 (parent :183) so fused_bdsp_update's "
+                         "unconditional cp.clip becomes a NO-OP while the block still runs (cp_bdsp_E stays "
+                         "available). The single-variable clamp lever; try 1e9. Default None = byte-identical.")
     ap.add_argument("--no-bdsp", action="store_true",
                     help="Set cfg.enable_bdsp=False AFTER init -- the kernel's OWN documented inertness lever "
                          "(\"byte-inert when enable_bdsp is False: the block is unreached\", kernels.py:480). "
@@ -554,7 +582,7 @@ def main():
                        n_prop=a.n_prop, member_id_dim=a.member_id_dim, n_obs=a.n_obs, noise=a.noise,
                        feature_seed=a.feature_seed)
     hp = dict(tonic_h_pA=a.tonic_h_pA, tonic_o_pA=a.tonic_o_pA, ff_w_init=a.ff_w_init, pbar_alpha=a.pbar_alpha,
-              in_current_pA=a.in_current_pA, in_bias_pA=a.in_bias_pA, hidden_lr_scale=a.hidden_lr_scale, no_bdsp=a.no_bdsp)
+              in_current_pA=a.in_current_pA, in_bias_pA=a.in_bias_pA, hidden_lr_scale=a.hidden_lr_scale, no_bdsp=a.no_bdsp, bdsp_wmax=a.bdsp_wmax, freeze_hidden=a.freeze_hidden)
     t0 = time.time()
 
     if a.poscontrol_only:
