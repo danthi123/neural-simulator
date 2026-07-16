@@ -458,7 +458,7 @@ def positive_control(seed, task_kwargs, n_pos=40, hidden=32, settle=40, eprop_lr
 # Full seed: stage-0 depth gate + rate oracle + e-prop train + inherit held-out + permuted + shuffle-DFA controls.
 # ============================================================================================================
 def run_seed(seed, hidden, settle, epochs, batch, eprop_lr, eps_leak, surrogate, alpha_surr, beta_surr,
-             logit_source, w_clip, train_subsample, task_kwargs, hp=None, n_hidden_layers=2, pool_k=1):
+             logit_source, w_clip, train_subsample, task_kwargs, hp=None, n_hidden_layers=2, pool_k=1, reservoir_control=True):
     (Xtr, ytr, Ltr), (Xte, yte, Lte), meta, idx = make_task_semantic_inheritance(seed, **task_kwargs)
     k = meta["k_classes"]; n_in = Xtr.shape[1]
     inh_idx = idx["inh_idx"]
@@ -504,13 +504,36 @@ def run_seed(seed, hidden, settle, epochs, batch, eprop_lr, eps_leak, surrogate,
     snet = _mk(); _train_eprop(snet, Xtr_b, ytr_b, epochs, batch, seed, shuffle_dfa=True)
     shuf_inh = snet.acc_on(Xte, yte, inh_idx)
 
+    # --- RESERVOIR CONTROL -> the deep credit must BEAT a frozen-hidden baseline (added 2026-07-16) ---
+    # WHY THIS EXISTS: until today this gate had NO frozen-hidden arm, so a result that was mostly a FIXED RANDOM
+    # SPIKING RESERVOIR + a trained linear readout passed it UNCHANGED -- and the banked headline ("feedforward
+    # spiking deep credit is ALREADY GO, K=8 0.877") turned out to be ~80% exactly that (measured: FULL 0.889 vs
+    # FROZEN 0.778 vs chance 0.333 => the reservoir is 80% of the margin; deep credit adds ~20%, seed-variable
+    # +0.037..+0.185). The isolation hook (train_layers, :153) had been written FOR THIS and never once invoked.
+    # A gate that can pass WITHOUT this control cannot distinguish "the network learned deeply" from "a random
+    # projection plus logistic regression" -- so the control is now DEFAULT-ON and part of `trains`.
+    froz_inh = float("nan"); deep_share = float("nan")
+    if reservoir_control:
+        fnet = _mk()
+        fnet.train_layers = {fnet.n_hidden_layers}   # train ONLY the linear readout; hidden FF frozen at init
+        _train_eprop(fnet, Xtr_b, ytr_b, epochs, batch, seed)
+        froz_inh = fnet.acc_on(Xte, yte, inh_idx)
+        if not (np.isnan(inh_acc) or np.isnan(froz_inh)) and (inh_acc - chance) > 1e-9:
+            deep_share = float((inh_acc - froz_inh) / (inh_acc - chance))   # fraction of the margin that is DEEP
+
     trains = bool((not np.isnan(inh_acc)) and inh_acc > chance + 0.05 and inh_acc > perm_inh + 0.05
-                  and inh_acc > shuf_inh + 0.05)
+                  and inh_acc > shuf_inh + 0.05
+                  and ((not reservoir_control) or (not np.isnan(froz_inh) and inh_acc > froz_inh + 0.05)))
     return {"seed": seed, "chance": chance, "k_classes": int(k), "n_train_smoke": int(len(ytr_b)),
             "stage0_depth_separating": bool(s0.get("depth_separating")),
             "stage0_deep_best": s0.get("deep_best_inherit_heldout"), "stage0_l1": s0.get("l1_inherit_heldout"),
             "oracle_inherit": oracle_inh, "eprop_train_acc": train_acc, "eprop_inherit_heldout": inh_acc,
             "eprop_ff_weight_moved": ff_moved, "permuted_inherit": perm_inh, "shuffle_dfa_inherit": shuf_inh,
+            # frozen_hidden_inherit = the RESERVOIR baseline. reservoir_control_run=False means the gate could NOT
+            # distinguish deep credit from a random projection + logistic regression -- a GO is then NOT a
+            # deep-credit claim, and must not be reported as one.
+            "frozen_hidden_inherit": froz_inh, "deep_credit_share": deep_share,
+            "reservoir_control_run": bool(reservoir_control),
             "trains_the_task": trains}
 
 

@@ -113,3 +113,38 @@ def test_hebbian_decay_uses_ensure_gate_capacity_not_the_raw_array():
         "the Hebbian weight-decay must use _ensure_gate_capacity for cp_plasticity_rate_gain; using the raw array "
         "breaks (silently, via a swallowed broadcast error) as soon as structural plasticity grows nnz"
     )
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# 4: the deep-credit GO gate must include a RESERVOIR control (added 2026-07-16).
+# ---------------------------------------------------------------------------------------------------------------
+
+def test_deep_credit_gate_includes_a_reservoir_control():
+    """The banked headline "feedforward spiking deep credit is ALREADY GO (K=8 0.877)" turned out to be ~80% a
+    FIXED RANDOM SPIKING RESERVOIR + a trained linear readout (measured 2026-07-16: FULL 0.889 vs FROZEN 0.778 vs
+    chance 0.333). It passed its gate because `trains_the_task` compared against chance / permuted / shuffle-DFA --
+    and NOT ONE of those is a frozen-hidden baseline, so a reservoir result passed UNCHANGED. Worse, the isolation
+    hook (`train_layers`, documented in-file as "None => update all FF pathways; a set => update only those
+    (isolation)") had been written FOR EXACTLY THIS and was never once invoked.
+
+    Source-level guard: if someone drops the frozen-hidden arm from the gate, a random projection + logistic
+    regression can be reported as deep credit again, and NOTHING else in the suite would catch it -- the failure is
+    a silently-passing GO, not an error."""
+    import inspect
+    from research.runners import _onbridge_eprop_port_derisk as m
+
+    src = inspect.getsource(m.run_seed)
+    assert "reservoir_control" in src, "run_seed must run a frozen-hidden RESERVOIR control"
+    assert "train_layers" in src, "the reservoir control must use the train_layers isolation hook"
+    i = src.find("trains = bool(")
+    assert i != -1, "could not locate the GO gate"
+    gate = src[i:i + 700]
+    assert "froz_inh" in gate, (
+        "the GO gate must compare against the frozen-hidden baseline. Without it, a fixed random reservoir + a "
+        "linear readout passes as 'deep credit' -- exactly how the banked K=8 0.877 headline (~80% reservoir) "
+        "passed for months."
+    )
+    sig = inspect.signature(m.run_seed)
+    assert sig.parameters["reservoir_control"].default is True, (
+        "the reservoir control must default ON -- a gate that CAN pass without it is the bug itself"
+    )
