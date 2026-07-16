@@ -213,9 +213,11 @@ def run_seed(seed, stories, vocab, cat_ids, a, mode="cotrain"):
         return M, p, mc
     out = {"seed": seed, "mode": mode, "n_windows": nwin, "NtA": NtA, "NtB": NtB}
     if mode in ("cotrain", "separateA", "shared"):
-        MA, pA, mcA = metrics(hubA_r, tgtA_r, NtA, CA, catA_ids); out.update(codeA=round(pA, 4), corrA=round(mcA, 4))
+        MA, pA, mcA = metrics(hubA_r, tgtA_r, NtA, CA, catA_ids); out.update(codeA=round(pA, 4), corrA=round(mcA, 4),
+                                                                             corrA_raw=float(mcA))
     if mode in ("cotrain", "separateB", "shared"):
-        MB, pB, mcB = metrics(hubB_r, tgtB_r, NtB, CB, catB_ids); out.update(codeB=round(pB, 4), corrB=round(mcB, 4))
+        MB, pB, mcB = metrics(hubB_r, tgtB_r, NtB, CB, catB_ids); out.update(codeB=round(pB, 4), corrB=round(mcB, 4),
+                                                                             corrB_raw=float(mcB))
     print(f"[cotrain {mode} s{seed}] {nwin}w ({time.time()-t0:.0f}s) NtA={NtA} NtB={NtB} | "
           + " ".join(f"{k}={out[k]}" for k in out if k in ("codeA", "corrA", "codeB", "corrB")), flush=True)
     return out
@@ -252,11 +254,16 @@ def main():
         shr = run_seed(s, stories, vocab, cat_ids, a, mode="shared")
         # GO: co-trained corr ~= separate-bridge corr (no degradation from co-residence) for BOTH learners,
         #     AND the shared-target cross-talk +control DEGRADES (proves the metric detects cross-talk when regions overlap).
-        dA = co["corrA"] - sepA["corrA"]; dB = co["corrB"] - sepB["corrB"]
+        # RAW (unrounded) deltas: corrA/corrB are stored round(...,4), so deltas taken from them are quantized
+        # to 1e-4 -- which made "is the timing-matched baseline bit-identical?" unfalsifiable (every answer came
+        # back 0 or +-1e-4 regardless of physics). Fall back to the rounded fields for older JSONs.
+        dA = co.get("corrA_raw", co["corrA"]) - sepA.get("corrA_raw", sepA["corrA"])
+        dB = co.get("corrB_raw", co["corrB"]) - sepB.get("corrB_raw", sepB["corrB"])
         shared_degrades = (shr["corrA"] < sepA["corrA"] - 0.05) or (shr["corrB"] < sepB["corrB"] - 0.05)
         go = (dA > -0.08) and (dB > -0.08) and shared_degrades
         row = {"seed": s, "cotrain": co, "sepA": sepA, "sepB": sepB, "shared": shr,
-               "dA_vs_sep": round(dA, 4), "dB_vs_sep": round(dB, 4), "shared_degrades": bool(shared_degrades), "GO": bool(go)}
+               "dA_vs_sep": round(dA, 4), "dB_vs_sep": round(dB, 4),
+               "dA_raw": float(dA), "dB_raw": float(dB), "shared_degrades": bool(shared_degrades), "GO": bool(go)}
         rows.append(row)
         print(f"  ==> seed {s}: co corrA/B {co['corrA']}/{co['corrB']} vs sep {sepA['corrA']}/{sepB['corrB']} "
               f"(dA {dA:+.3f} dB {dB:+.3f}) | shared-ctrl corrA/B {shr['corrA']}/{shr['corrB']} degrades={shared_degrades} | GO={go}", flush=True)
