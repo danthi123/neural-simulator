@@ -215,3 +215,37 @@ Kept current as a standing part of the workflow: whenever an experiment lands a 
 ## 10. The months-scale plan (the forward-looking sequence)
 
 This roadmap is the STATUS surface. The forward-looking **plan** — the two-gap framing (unification + scale/data), the ordered shortcut burn-down with "unblocks", the unification critical path (★ next edge = unite the content-store + RUNG6d STP binder), the three decision gates (invest-day+-wallclock / convert-generator / spend-cloud, with the 2026-07-15 broadened compute policy), and the honest distance (one-brain-all-spiking ~2-4 months; bounded grounded-conversation milestone ~3-5 months; open-ended fluency = a field-wide wall) — lives in **`docs/plans/2026-07-15-months-scale-plan-to-one-brain-and-small-llm-conversation.md`**. Synthesized 2026-07-15 from a 4-lens strategic audit; supersedes the stale `2026-06-08-brain-fidelity-roadmap.md` + `2026-06-23-inventory-burndown-roadmap.md`.
+
+**Status against that plan's LONGEST POLE (updated 2026-07-16) — segment (a) CLOSED: 🟩.** The plan's line 46 names the
+longest pole: *"co-training the learning pieces (stream cortex + deep-credit + long-range learner) **without cross-talk**
+at scale — the plasticity-isolation gates are validated but simultaneous stream-cortex co-training is unshown."*
+
+- **🟩 Segment (a) — two ACTIVELY-LEARNING stream cortices co-training on ONE bridge: DONE, and the cost is now
+  EXPLAINED.** Clean post-budget-fix 6-seed table: **93.2% of separate-bridge fidelity retained** (min 86.5%), **5/6 GO**
+  (seed 43 misses the strict −0.08 gate), overlapped-region positive control degrades **6/6** (so the metric genuinely
+  detects collision). This RETIRES a confounded banked table (it had given each co-trained learner half its baseline's
+  reinforcement) — and the headline **survived** the fix. **The decomposition is the real content: ~97% of the cost is
+  TIME-SHARING** (each learner's neurons decay with zero input between its own windows — a constitutive property of
+  sharing a step loop) **and only ~3% is interference** (sign-varying). **⇒ the cost is a FIXED PRICE PER ADDED LEARNER,
+  not compounding interference — co-training SCALES.** Honest scope: both learners use the SAME rule (global
+  rate-Hebbian) and DISJOINT regions, so this tests spatial isolation only. `research/findings/2026-07-16-cotraining-cost-is-TIME-SHARING-not-interference-clean-6seed-postbudgetfix.md`
+- **⬜ Segment (b) — the HARDER half: RULE HETEROGENEITY** (stream cortex + the deep-credit learner). Segment (a) holds
+  the rule constant, so *"do two DIFFERENT learning rules interfere when sharing one substrate?"* is entirely untested.
+  Scoped: the flag conflict is **not** the blocker (Hebbian is gate-isolable via `cp_plasticity_rate_gain`; homeostasis is
+  per-region isolable). The genuine blockers: **STP + structural plasticity are GLOBAL with no per-pathway escape — and
+  the stream cortex's validated +0.705 was obtained with BOTH ON**, so it needs re-validating with them off; and
+  `inject_explicit_wiring` REPLACES all connectivity, so the two wirings must merge into ONE region-framework plan.
+- **🟧 GATING (b): the deep-credit GO is being RE-VERIFIED.** Use the deep-credit learner in its **GO regime = e-prop +
+  POPULATION CODING** — *not* bare on-bridge BDSP, which is a decisive 6-seed at-or-below-chance NEGATIVE (the plan's §3
+  row 1 said "the committed feedforward BDSP rule"; corrected in place 2026-07-16). The GO's **magnitude** is under
+  re-check: the port keeps `enable_bdsp=True` and relies on `lr=0` for inertness, but `fused_bdsp_update` ends in an
+  UNCONDITIONAL `cp.clip` (`sim/kernels.py:485`) — at `eta=0` the add term vanishes, the clip does not — so with
+  `ff_w_init=2000` vs the inherited `bdsp_w_max=6.0` it silently crushes the FF synapses whose presyn fired (measured
+  239/512, mean |w| 370 → ≤6) on **every forward**. A single-variable A/B (clip widened, block still running) is in
+  flight; seed 42 reproduces **inherit-heldout 0.852** vs the banked 0.877, so the result itself looks real.
+- **🐛 Engine fix this cycle (affects work well beyond this arc):** the Hebbian weight-decay used the RAW
+  `cp_plasticity_rate_gain`, so any bridge with **both a `plasticity_gate` and structural growth** (on by default) hit
+  `operands could not be broadcast` every step — **silently caught** — and **stopped decaying weights entirely**. Known
+  bug class (`_ensure_gate_capacity`, added 2026-06-08, already guards 7 other sites); the Hebbian block was missed.
+  The merged nav+conversational work uses plasticity gates heavily. Fixed byte-identically (46/46).
+
