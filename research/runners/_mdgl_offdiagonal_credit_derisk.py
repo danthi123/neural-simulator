@@ -36,12 +36,18 @@ def make_task(kind, T, n_trials, seed, K=4, F=6):
     V = K + 2 + F
     seqs, rpos, tgt = [], [], []
     for _ in range(n_trials):
-        x1 = int(rng.integers(K)); x2 = int(rng.integers(K))
-        fill = [FILL0 + int(rng.integers(F)) for _ in range(T)]
-        seq = [STORE, x1] + fill + [x2, RECALL]
+        fill = lambda: [FILL0 + int(rng.integers(F)) for _ in range(T)]
+        if kind == "parity3":                            # 3 temporally-separated cues -> reliably breaks the diagonal
+            x1, x2, x3 = (int(rng.integers(K)) for _ in range(3))
+            seq = [STORE, x1] + fill() + [x2] + fill() + [x3, RECALL]
+            y = int((x1 + x2 + x3) % K)
+        else:
+            x1 = int(rng.integers(K)); x2 = int(rng.integers(K))
+            seq = [STORE, x1] + fill() + [x2, RECALL]
+            y = int(x1 == x2) if kind == "dms" else int((x1 + x2) % K)
         seqs.append(np.asarray(seq, dtype=np.int64))
-        rpos.append(len(seq) - 1)                       # predict the target AT the RECALL step
-        tgt.append(int(x1 == x2) if kind == "dms" else int((x1 + x2) % K))
+        rpos.append(len(seq) - 1)                        # predict the target AT the RECALL step
+        tgt.append(y)
     n_cls = 2 if kind == "dms" else K
     return seqs, rpos, tgt, V, n_cls
 
