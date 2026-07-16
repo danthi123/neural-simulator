@@ -31,7 +31,7 @@
 
 | # | Shortcut / stand-in | Status | Retirement path | Effort · compute | Unblocks |
 |---|---|---|---|---|---|
-| 1 | **FHRR exact-inverse bind → learned bilinear** | de-risked (numpy 0.87 held-out 12-seed + transport-free 6/12; `2026-07-15-TEST-A` + `-learned-bilinear-...`) | ship the learned bilinear binder over decorrelated codes; on-substrate fixed-conjunction bind with LEARNED projections trained by the committed feedforward BDSP rule (the deep-credit-GO regime) | **days-weeks**, GPU | systematicity engine off the "idealization" list; the shallow learned-representation build |
+| 1 | **FHRR exact-inverse bind → learned bilinear** | de-risked (numpy 0.87 held-out 12-seed + transport-free 6/12; `2026-07-15-TEST-A` + `-learned-bilinear-...`) | ship the learned bilinear binder over decorrelated codes; on-substrate fixed-conjunction bind with LEARNED projections trained by the committed feedforward deep-credit rule **in its GO regime = e-prop-family credit + POPULATION CODING** (see the 2026-07-16 correction note below -- writing "BDSP" unqualified here was misleading: bare on-bridge BDSP is a 6-seed at-or-below-chance NEGATIVE) | **days-weeks**, GPU | systematicity engine off the "idealization" list; the shallow learned-representation build |
 | 2 | **word-cortex normalization in host code** | de-risked-rate-level (CYCLE 93b) | per-concept feedforward inhibition + per-hub adaptation post-f-I | **days-weeks**, GPU | fully-brain-based read-out |
 | 3 | **formula reward residue + missing value critic** | partial (spiking DA-RPE done; explicit critic NOT built) | build the explicit spiking value-critic population (§5.4) | **weeks**, GPU | RL self-taught policy (gates #7); value purity |
 | 4 | **given vs stream-learned codes (64 vs 320)** | partial (stream cortex GO @64 on-bridge) | scale learn-from-listening to 320 — **bottleneck is a DATA gate**: a cleanly-extractable is-a/taxonomic corpus (triple-negative on WikiText/TinyStories/dictionary, CYCLE 1038) | **weeks** data-acquisition + GPU | fully-learned 320-concept vocabulary |
@@ -79,3 +79,33 @@ The learning rule (feedforward deep-credit / BDSP, GO) → the recurrent languag
 ---
 
 *The near-term critical path is integration (Edge 5) + settling the fluency question with a fair test; the deep learning-rule frontier is correctly parked; the ANN generator stays a scored interim behind the moat, not a permanent dependency. The science status was well-documented; this sequenced plan + the decision gates were the missing piece — now committed.*
+
+---
+
+## ⚠️ CORRECTION (2026-07-16) — "the committed feedforward BDSP rule (the deep-credit-GO regime)" was MISLEADING; the GO ingredient is POPULATION CODING
+
+Caught while staging the longest pole's segment (b) (co-train the stream cortex WITH the deep-credit learner): §3 row 1
+originally named the deep-credit-GO regime "the committed feedforward BDSP rule" unqualified. Read against the findings,
+that phrasing points a reader at a rule this project has already exhausted:
+
+- **Bare on-bridge BDSP (burst-multiplexed, point neurons, no population coding) = a decisive 6-seed NEGATIVE.**
+  `2026-07-15-onsubstrate-bind-onbridge-bdsp-readout-RUNG3-BOUNDARY.md`: "BDSP is AT-or-BELOW chance on ALL 6 seeds --
+  it NEVER gets above chance"; the moat does not hold (BDSP ~= lesion on 5/6); NEGATIVE across lr / P-bar / pool-k /
+  task-difficulty / the dense-redundant BurstCCN regime. Crucially the obvious escape was already tried and closed: the
+  apical-DECOUPLED confound was FOUND and FIXED (`--soma-g 120` makes B rise 0.000 -> ~0.24, directed credit genuinely
+  delivered) and **the boundary still held on both task families** -> a genuine credit-QUALITY limit, not a wiring bug.
+- **The GO is the e-prop-family rule PLUS population coding.** The 2026-07-15 deep-research gate: "feedforward spiking
+  deep credit is ALREADY GO (e-prop + population coding)" -- transport-free forward eligibility x membrane-potential
+  surrogate sigma'(v-theta) x fixed-random DFA, 6-seed GO, shuffle-DFA collapses, K=8 -> 0.877 ~= the LIF ceiling 0.89.
+
+**These are NOT rival rules and the plan is not fabricating** -- `2026-07-11-eprop-recurrent-learning-...md` states
+e-prop/RFLO IS "the rate analogue of the BDSP/Burstprop already in `sim/bridge.py` (`enable_bdsp`)", i.e. the SAME family,
+and BDSP is the committed `sim/` kernel. The structure is this project's recurring **rate-vs-spike gap**:
+rate e-prop/RFLO = REAL-WITH-SCOPE; the same family on SPIKING point neurons = NEGATIVE; **population coding is the
+ingredient that closes it** (it graded-ifies the sparse binary spike signal the eligibility is built from -- the same
+lever that later FAILED to rescue the RECURRENT off-diagonal, which is a separate, now-CLOSED arc).
+
+**⇒ Operational consequence for the longest pole (line 46).** Segment (b) co-trains the stream cortex with the deep-credit
+learner **in its GO regime (e-prop-family + population coding)**. Co-training bare on-bridge BDSP would be meaningless:
+a learner that never exceeds chance cannot show whether co-residence costs it anything. Anyone reading §3 row 1 and
+building on unqualified "BDSP" would burn a GPU cycle on a closed boundary.
