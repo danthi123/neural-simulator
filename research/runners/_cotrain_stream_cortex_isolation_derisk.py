@@ -31,7 +31,8 @@ from research.runners._phaseB_onbridge_stream_cortex_derisk import (
 from sim.backend import to_host
 
 
-def build_cotrain_bridge(NtA, NtB, n_hub, n_per, seed, shared_target=False, decay=0.00001, homeostasis=True):
+def build_cotrain_bridge(NtA, NtB, n_hub, n_per, seed, shared_target=False, decay=0.00001, homeostasis=True,
+                         struct_plast=True):
     """ONE bridge with hub_A/target_A + hub_B/target_B (or a SHARED target if shared_target). Two plastic pathways."""
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.bridge import SimulationBridge
@@ -67,6 +68,13 @@ def build_cotrain_bridge(NtA, NtB, n_hub, n_per, seed, shared_target=False, deca
     cfg.dt = 1.0
     cfg.seed = cfg.ou_seed = cfg.heterogeneity_seed = seed
     cfg.enable_ou_process = False; cfg.enable_stdp = False; cfg.enable_homeostasis = homeostasis
+    # STRUCTURAL PLASTICITY is enable_structural_plasticity=True BY DEFAULT (sim/config.py:677) and this runner never
+    # disabled it -- so every result so far ran WITH it. It is a genuine GLOBAL COUPLING CHANNEL between otherwise
+    # disjoint learners: it draws from a SHARED RNG stream (so the other learner's firing shifts RNG consumption and
+    # desynchronizes this learner's structural draws) and struct_plast_activity_bias couples formation to activity.
+    # Note also weight_mean=0.05 sits exactly AT struct_plast_weight_threshold=0.05 (config.py:680).
+    # Suspected source of the ~5e-5 residual that survives --idle-match. Default True = byte-identical to HEAD.
+    cfg.enable_structural_plasticity = struct_plast
     cfg.enable_hebbian_learning = True
     cfg.hebbian_learning_rate = 0.03; cfg.hebbian_max_weight = 5.0; cfg.hebbian_min_weight = 0.0
     cfg.hebbian_weight_decay = decay
@@ -103,7 +111,8 @@ def run_seed(seed, stories, vocab, cat_ids, a, mode="cotrain"):
     hubidx = {w: i for i, w in enumerate(hubs)}; keep = setA | setB | set(hubs)
 
     shared = (mode == "shared")
-    bridge, idx = build_cotrain_bridge(NtA, NtB, n_hub, n_per, seed, shared_target=shared, decay=a.hebbian_decay, homeostasis=a.homeostasis)
+    bridge, idx = build_cotrain_bridge(NtA, NtB, n_hub, n_per, seed, shared_target=shared, decay=a.hebbian_decay, homeostasis=a.homeostasis,
+                                       struct_plast=bool(getattr(a, "struct_plast", 1)))
     xp = bridge._cp if hasattr(bridge, "_cp") else None
     tgtA_name = "target" if shared else "targetA"; tgtB_name = "target" if shared else "targetB"
     hubA_r, tgtA_r = idx["hubA"], idx[tgtA_name]; hubB_r, tgtB_r = idx["hubB"], idx[tgtB_name]
@@ -222,6 +231,9 @@ def main():
     p.add_argument("--homeostasis", type=int, default=1)
     p.add_argument("--gate-plasticity", type=int, default=0, dest="gate_plasticity",
                    help="freeze the IDLE learner's pathway during the other's window (spurious-LTP probe); 0 = off (byte-identical)")
+    p.add_argument("--struct-plast", type=int, default=1, dest="struct_plast",
+                   help="cfg.enable_structural_plasticity (sim/config.py:677 defaults True; this runner never disabled it). "
+                        "A shared-RNG + activity-biased GLOBAL coupling channel between disjoint learners. 1 = byte-identical.")
     p.add_argument("--idle-match", type=int, default=0, dest="idle_match",
                    help="TIMING-MATCH the separate baseline: run the same idle steps the co-trained arm spends on the "
                         "other learner (zero input, nothing presented/counted). Tests whether the residual is a "
