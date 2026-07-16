@@ -39,6 +39,11 @@ SOURCES = [
                  os.path.join(SIM, "CLAUDE.md"), os.path.join(SIM, "ROADMAP.md"), os.path.join(SIM, "README.md")]),
     ("catalog", [os.path.join(CAT, "*.md")]),
     ("kandel",  [os.path.join(CAT, "textbooks", "kandel-pns-6e", "full-book.txt")]),
+    # the specialty TEXTS/PAPERS/BOOKS the workflow already cites by name (Marr 1969, Albus 1971, Buzsaki Rhythms,
+    # O'Keefe-Nadel, Schultz, Sutton-Barto, the Tepper/Bolam BG reviews). Text is extracted alongside each PDF as a
+    # .txt sibling (tools/rag/extract_reference_pdfs.py). MUST come AFTER "kandel" so the dedupe in load_docs()
+    # leaves full-book.txt as source_type=kandel rather than re-claiming it here (same path => same Document id_).
+    ("paper",   [os.path.join(CAT, "textbooks", "*", "*.txt")]),
 ]
 
 
@@ -49,11 +54,14 @@ EXCLUDE_BASENAMES = {"AUTONOMOUS_STATE.md", "AUTONOMOUS_STATE_ARCHIVE.md"}
 
 def load_docs():
     docs = []
+    seen = set()   # a path claimed by an EARLIER source_type wins: Document id_ IS the path, so indexing a file under
+                   # two source types would emit duplicate ids (e.g. kandel/full-book.txt also matches the paper glob).
     for stype, patterns in SOURCES:
         files = []
         for p in patterns:
             files.extend(sorted(glob.glob(p)))
         files = [f for f in files if os.path.basename(f) not in EXCLUDE_BASENAMES]
+        files = [f for f in files if not (f in seen or seen.add(f))]
         n = 0
         for f in files:
             try:

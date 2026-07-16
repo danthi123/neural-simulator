@@ -10,11 +10,13 @@ Broadened corpus (source_type shown per hit; build via tools/rag/build_llamainde
   doc     : docs/*.md + CLAUDE/ROADMAP/README
   catalog : sim-catalog/references/*.md      -> "is there a CATALOG ENTRY for X?"
   kandel  : Kandel 6e full text              -> "how does the BIOLOGY do X?"
+  paper   : the specialty texts/papers/books -> "what does the ORIGINAL SOURCE say?" (Marr 1969, Albus 1971,
+            Buzsaki "Rhythms of the Brain", O'Keefe-Nadel "Cognitive Map", Schultz, Sutton-Barto, Tepper/Bolam BG)
 
 Run with the isolated RAG venv (has llama-index; base sim env untouched -- installing llama-index into the sim
 venv would churn its pinned torch/cupy CUDA stack):
     .venv-rag/bin/python tools/rag/rag_search.py "<question>" [top_k] [--corpus TYPE]
-  --corpus one of {all(default), finding, plan, doc, catalog, kandel} -- target one corpus (e.g. --corpus kandel for biology).
+  --corpus one of {all(default), finding, plan, doc, catalog, kandel, paper} -- target one corpus (e.g. --corpus kandel for biology).
 
 Index location resolves in order: $SIM_RAG_ROOT -> <parent-of-repo>/rag_index -> the legacy Windows path.
 Falls back to the findings-only index if the broadened one isn't built. See docs/RAG_COMPARISON.md."""
