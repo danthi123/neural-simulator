@@ -34,8 +34,11 @@ docs/plans/2026-05-11-cpu-ram-ssd-tiering-design.md Phase 2.
 """
 from __future__ import annotations
 
+import logging
 import os
 from typing import Tuple, Any
+
+_log = logging.getLogger(__name__)
 
 # Module-level cache so repeated get_backend() calls don't re-import.
 _cached_backend: Any = None
@@ -108,6 +111,32 @@ def get_backend(name: str | None = None) -> Tuple[Any, str]:
         import numpy
         _cached_backend = numpy
         _cached_name = "numpy"
+        # WARN LOUDLY when NumPy is selected on a box that HAS a usable GPU. This is a perf cliff that is otherwise
+        # invisible: the process stays alive, burns 100% CPU, grows its log -- every liveness signal says healthy --
+        # while running 10-50x slower on the wrong device.
+        # HOW THIS BIT US (2026-07-16): 327 research runners do os.environ.setdefault("SIM_BACKEND", "numpy").
+        # That was HARMLESS for months only because `scipy` was MISSING: get_sparse_module() raised
+        # ModuleNotFoundError, sim/bridge.py:45's `except ImportError:` swallowed it, and bridge fell back to
+        # `import cupy as cp`. So those runners ASKED for numpy and silently got the GPU. Installing scipy made the
+        # request REAL -- and a 4-arm sweep then ground ~50 min on CPU before anyone noticed. The runners were not
+        # broken by the fix; the fix started HONORING what they literally asked for, and revealed the ask was wrong.
+        # A warning cannot fix their default, but it makes the choice VISIBLE at the one place every caller passes.
+        try:
+            import cupy as _cp  # noqa: F401
+            if _cp.cuda.runtime.getDeviceCount() > 0:
+                _log.warning(
+                    "SIM_BACKEND=numpy selected, but a CUDA GPU + CuPy ARE available -> this run is on the CPU "
+                    "(typically 10-50x slower). If you did not mean that, pass SIM_BACKEND=cupy explicitly: many "
+                    "research runners do os.environ.setdefault('SIM_BACKEND','numpy'), which silently wins unless "
+                    "the caller overrides it."
+                )
+        except ImportError:
+            pass   # no cupy installed => numpy is the correct and only choice; stay quiet.
+        except Exception as _e:
+            # NARROW, and never silent: a bare `except Exception: pass` here previously swallowed a NameError in
+            # this very warning (a missing `_log`), so the warning never fired and nothing said so -- the exact
+            # failure mode this warning exists to surface.
+            _log.debug("backend GPU-availability probe failed (%s: %s)", type(_e).__name__, _e)
     elif name == "mlx":
         # Apple Silicon / MLX is reserved for a future phase. The
         # detection logic + this stub document the extensibility point.

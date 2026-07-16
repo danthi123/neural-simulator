@@ -97,6 +97,22 @@ def _pids():
     return rows
 
 
+def _gpu_pids():
+    """PIDs currently registered as CUDA compute apps.
+
+    WHY (2026-07-16, learned the hard way): a 4-arm sweep ran ~50 min on the CPU while this poller happily reported
+    RUNNING -- and it was RIGHT: processes alive, CPU climbing, logs growing, all true. It simply could not see WHICH
+    DEVICE. The cause was a runner doing os.environ.setdefault("SIM_BACKEND","numpy"), harmless for months only
+    because a MISSING scipy made numpy mode throw and fall back to cupy; installing scipy made that default REAL.
+    "Running on the wrong accelerator" is exactly the silent-wrongness this tool exists to catch, so it must look."""
+    try:
+        out = subprocess.run(["nvidia-smi", "--query-compute-apps=pid", "--format=csv,noheader"],
+                             capture_output=True, text=True, timeout=10).stdout
+    except Exception:
+        return None                      # no nvidia-smi => cannot judge; report unknown rather than a false alarm
+    return {int(x.strip()) for x in out.split() if x.strip().isdigit()}
+
+
 def _cpu_ticks(pid):
     """utime+stime from /proc/<pid>/stat. RISING => the proc is genuinely computing, however quiet its log is."""
     try:
@@ -126,7 +142,7 @@ def _tail(path, n=400_000):
         return ""
 
 
-def classify(log, pids, stall_s, prog_re, prev):
+def classify(log, pids, stall_s, prog_re, prev, gpu_pids=None):
     stem = log[:-4] if log.endswith(".log") else log
     exists = os.path.exists(log)
     size = os.path.getsize(log) if exists else 0
@@ -146,7 +162,12 @@ def classify(log, pids, stall_s, prog_re, prev):
     #   HUNG  = alive but CPU FLAT across a tick   -> a REAL alarm (deadlock / blocked forever / sleeping)
     #   QUIET = alive, CPU RISING, log stale       -> INFORMATIONAL: working, just between log lines
     cpu_moved = None
-    if alive and ticks is not None and prev is not None and prev.get("ticks") is not None:
+    if (alive and ticks is not None and prev is not None and prev.get("ticks") is not None
+            and prev.get("pid") == pid):
+        # `and prev.get("pid") == pid` is LOAD-BEARING: without it, a relaunch (new pid, tick counter restarting
+        # near 0) compares against the DEAD proc's accumulated ticks, reads as CPU-flat, and fires a FALSE HUNG on
+        # a healthy run. Observed 2026-07-16 on all four arms at once. A monitor that cries wolf is as corrosive as
+        # one that stays silent -- it trains the reader to ignore it.
         cpu_moved = ticks > prev["ticks"]
 
     if alive:
@@ -166,7 +187,12 @@ def classify(log, pids, stall_s, prog_re, prev):
     if err:
         first = ERROR_RE.search(txt).group(0).strip()[:60]
         detail = f" | {n_err} error-hit(s), first: {first}"
-    return {"state": state, "prog": prog, "size": size, "age": age, "detail": detail,
+    # DEVICE: a live worker that is NOT a registered CUDA compute app is running on the CPU. Flag it -- a run on
+    # the wrong device looks identical to a healthy one by every other signal (alive, CPU rising, log growing).
+    dev = ""
+    if alive and gpu_pids is not None:
+        dev = " [GPU]" if pid in gpu_pids else "  <-- ON CPU, not the GPU (SIM_BACKEND / setdefault?)"
+    return {"state": state, "prog": prog, "size": size, "age": age, "detail": detail + dev,
             "ticks": ticks, "pid": pid, "json": os.path.exists(stem + ".json")}
 
 
@@ -188,7 +214,8 @@ def main():
         tick += 1
         logs = sorted({p for pat in a.logs for p in (glob.glob(pat) or [pat])})
         pids = _pids()
-        rows = {log: classify(log, pids, stall_s, prog_re, last.get(log)) for log in logs}
+        gpu = _gpu_pids()
+        rows = {log: classify(log, pids, stall_s, prog_re, last.get(log), gpu) for log in logs}
         beat = (tick % a.heartbeat == 0)
         mins = (time.time() - t0) / 60.0
 
