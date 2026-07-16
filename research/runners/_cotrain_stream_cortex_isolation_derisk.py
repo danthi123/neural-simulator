@@ -31,7 +31,7 @@ from research.runners._phaseB_onbridge_stream_cortex_derisk import (
 from sim.backend import to_host
 
 
-def build_cotrain_bridge(NtA, NtB, n_hub, n_per, seed, shared_target=False):
+def build_cotrain_bridge(NtA, NtB, n_hub, n_per, seed, shared_target=False, decay=0.00001):
     """ONE bridge with hub_A/target_A + hub_B/target_B (or a SHARED target if shared_target). Two plastic pathways."""
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.bridge import SimulationBridge
@@ -65,7 +65,7 @@ def build_cotrain_bridge(NtA, NtB, n_hub, n_per, seed, shared_target=False):
     cfg.enable_ou_process = False; cfg.enable_stdp = False
     cfg.enable_hebbian_learning = True
     cfg.hebbian_learning_rate = 0.03; cfg.hebbian_max_weight = 5.0; cfg.hebbian_min_weight = 0.0
-    cfg.hebbian_weight_decay = 0.00001
+    cfg.hebbian_weight_decay = decay
     rt = RuntimeState(); rt.actual_seed_used = seed
     bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(), runtime_state=rt, gpu_config=GPUConfig())
     bridge._initialize_simulation_data()
@@ -99,7 +99,7 @@ def run_seed(seed, stories, vocab, cat_ids, a, mode="cotrain"):
     hubidx = {w: i for i, w in enumerate(hubs)}; keep = setA | setB | set(hubs)
 
     shared = (mode == "shared")
-    bridge, idx = build_cotrain_bridge(NtA, NtB, n_hub, n_per, seed, shared_target=shared)
+    bridge, idx = build_cotrain_bridge(NtA, NtB, n_hub, n_per, seed, shared_target=shared, decay=a.hebbian_decay)
     xp = bridge._cp if hasattr(bridge, "_cp") else None
     tgtA_name = "target" if shared else "targetA"; tgtB_name = "target" if shared else "targetB"
     hubA_r, tgtA_r = idx["hubA"], idx[tgtA_name]; hubB_r, tgtB_r = idx["hubB"], idx[tgtB_name]
@@ -128,18 +128,22 @@ def run_seed(seed, stories, vocab, cat_ids, a, mode="cotrain"):
             if hub_ids and aids: wins.append(("A", aids, hub_ids))
             if hub_ids and bids: wins.append(("B", bids, hub_ids))
     rng.shuffle(wins)                                   # interleave A/B streams
+    # PER-LEARNER window budget (each learner gets max_windows) so co-training and separate give each the SAME
+    # data budget -> the co-vs-sep comparison isolates CROSS-TALK, not a halved data budget (the design-confound fix).
+    nwinA = nwinB = 0
     for which, tgt_ids, hub_ids in wins:
-        if nwin >= a.max_windows: break
-        if which == "A" and mode in ("cotrain", "separateA", "shared"):
+        if nwinA >= a.max_windows and nwinB >= a.max_windows: break
+        if which == "A" and nwinA < a.max_windows and mode in ("cotrain", "separateA", "shared"):
             present(hubA_r, tgtA_r, nA, hub_ids, tgt_ids)
             for t in tgt_ids:
                 for h in hub_ids: CA[t, h] += 1.0
-            nwin += 1
-        elif which == "B" and mode in ("cotrain", "separateB", "shared"):
+            nwinA += 1
+        elif which == "B" and nwinB < a.max_windows and mode in ("cotrain", "separateB", "shared"):
             present(hubB_r, tgtB_r, nB, hub_ids, tgt_ids)
             for t in tgt_ids:
                 for h in hub_ids: CB[t, h] += 1.0
-            nwin += 1
+            nwinB += 1
+    nwin = nwinA + nwinB
     bridge.cp_external_input_current[:] = 0.0
 
     def metrics(hub_r, tgt_r, Nt, C, catids):
@@ -166,6 +170,7 @@ def main():
     p.add_argument("--n-per", type=int, default=16); p.add_argument("--window-steps", type=int, default=2)
     p.add_argument("--hub-scale", type=float, default=250.0); p.add_argument("--tgt-scale", type=float, default=1200.0)
     p.add_argument("--max-windows", type=int, default=24000); p.add_argument("--max-vocab", type=int, default=64)
+    p.add_argument("--hebbian-decay", type=float, default=0.00001)
     p.add_argument("--corpus", default=None); p.add_argument("--out", default="research/findings/raw/_cotrain_stream_isolation.json")
     a = p.parse_args()
     vocab, cat_ids, _ = taxonomy_to_vocab_categories(TAXONOMY_8x8)
