@@ -1,0 +1,12 @@
+# Dev / TEST dependencies -- NOT needed to run the simulator, REQUIRED to run its test suite.
+#   pip install -r requirements.txt -r requirements-dev.txt
+#
+# Why this file exists (2026-07-16): `pytest` is imported by 323 test files yet appeared in NO manifest, so a fresh
+# clone that followed the documented `pip install -r requirements.txt` could not run a single test. This was not
+# hypothetical -- on the Linux migration box pytest was simply absent, which means every "CI passes" / "tests green"
+# claim made there was vacuous until it was noticed. An undocumented test dependency is a silent one.
+
+pytest>=8.0
+
+# tests/test_figure_export.py renders figures.
+matplotlib

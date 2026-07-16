@@ -30,3 +30,40 @@ pydantic>=2.0
 # tkinter is usually included with Python standard distributions,
 # but if you encounter issues, you might need to install it separately
 # depending on your OS and Python environment (e.g., sudo apt-get install python3-tk on Debian/Ubuntu).
+
+# ---------------------------------------------------------------------------------------------------
+# OPTIONAL EXTRAS -- not needed for the core simulator, but REQUIRED by parts of the project that are
+# documented as working. Audited 2026-07-16 by walking every third-party import in the tree and diffing
+# against this file; the gaps below were all real and all silent. See also requirements-dev.txt (tests).
+# ---------------------------------------------------------------------------------------------------
+
+# Main-entry niceties. Both are GUARDED (try/except ImportError) in neural-simulator.py, so the GUI runs
+# without them -- but their features silently switch off: psutil = memory/CPU stats; hdf5plugin = LZ4
+# recording compression (falls back to slower gzip).
+psutil
+hdf5plugin
+
+# The generative / language arc (torch is a HARD import in sim/tiny_transformer.py and ~48 research runners:
+# BPTT-SNN, the TinyStories generator, the spiking-forward conversions, the Qwen faculty). NOT needed to
+# import or run the core sim -- sim/__init__.py does not pull them in (verified) -- but needed for that work.
+# Install the torch build matching your CUDA (this box: torch 2.11.0+cu128).
+# torch
+# transformers
+
+# Lazy imports (inside a function -- the module loads fine without them, the FEATURE is what's unavailable):
+#   cuda-python   -- viz/renderer.py:305 `from cuda import cudart` (CUDA<->OpenGL interop path)
+#   openai        -- sim/llm_adapters.py, the Ollama / OpenAI-compatible endpoint adapter
+
+# Individual research runners / tests (install as needed):
+#   scikit-learn  -- clustering/metrics in a few probes
+#   spacy         -- corpus frame mining (_bucketB_corpus_mined_frames_derisk)
+#   pillow        -- image handling in perception probes
+#   datasets      -- _download_simplewiki
+#   pypdf         -- tools/rag/extract_reference_pdfs.py (RAG venv; see below)
+#   llama-index-core, llama-index-embeddings-huggingface, llama-index-retrievers-bm25,
+#   sentence-transformers  -- tools/rag/* (RAG venv; see below)
+
+# The RAG tooling (tools/rag/*) deliberately lives in a SEPARATE venv (.venv-rag) so llama-index's dependency
+# resolution cannot churn this env's pinned torch/cupy CUDA stack:
+#   python -m venv .venv-rag && .venv-rag/bin/pip install llama-index-core llama-index-embeddings-huggingface \
+#       llama-index-retrievers-bm25 sentence-transformers pypdf
