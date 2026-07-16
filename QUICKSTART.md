@@ -55,8 +55,11 @@ python -m research.runners.g11_bg_runner --moving-goal --goal-schedule multi --d
     --out research/findings/raw/g11_bg/quickstart_navigation.json
 ```
 
-Takes ~10 min on RTX 3090. Agent should reach mean Manhattan distance
-~3 (validated 2.97 ± 0.12 on the 16×16 grid, ~38% of timesteps at goal).
+Takes ~10 min on RTX 3090. The headline metric is `sum_finalQ` — the SUM
+over the 4 goal phases of each phase's final-quarter mean Manhattan distance
+(`g11_bg_runner.py:8158`), i.e. ~4 terms of ~0.74, NOT a mean distance.
+Validated 2.97 ± 0.12 on the 16×16 grid, ~38% of timesteps at goal. Do not
+compare it against `mean_distance_overall` (also printed) — they differ ~4×.
 The move decision is made in spikes by default — the action emerges from a
 race between competing neural populations, not an off-brain shortcut. (Use
 `--readout-source motor` to swap in the old shortcut as a baseline.)

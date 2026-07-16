@@ -3182,7 +3182,10 @@ python -m research.runners.g11_bg_runner --moving-goal --goal-schedule multi --d
     --grid-size 32 --seed N --n-steps 1800
 ```
 
-**Scaling result (2026-05-05 step 3):**
+**Scaling result (2026-05-05 step 3)** — all figures are **`sum_finalQ`**: the SUM over the 4 goal
+phases of each phase's final-quarter mean Manhattan distance (`g11_bg_runner.py:8158`), i.e. ~4 terms
+of ~0.7. **It is NOT `mean_distance_overall`** (also printed by the runner); the two differ ~4× and
+conflating them makes a healthy run look like a 4× improvement. Compare sums to sums:
 - **32×32 (n=6): 2.57 ± 0.11**, range 2.42–2.72. 6/6 seeds beat 16×16 baseline.
 - 16×16 (n=3): 2.97 ± 0.12 (Cluster K v2 baseline)
 - 32×32 random walk baseline: ~21 estimated
