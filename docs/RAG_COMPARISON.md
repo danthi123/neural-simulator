@@ -141,6 +141,17 @@ so `cur_ids` (Linux paths) would match nothing → **every ref_doc deleted (line
 sentinel is in place, so a commit touching `research/findings/|docs/|CLAUDE|ROADMAP|README` refreshes incrementally
 (~45 s debounce, lock + manifest gated) as designed.
 
+**VERIFIED end-to-end, not assumed** (2026-07-16). (1) The hook fires: a `docs/` commit triggered it and it correctly
+hit the lock held by a manual rebuild — `another update is running; skip (it will pick up these changes)`. (2) The
+INCREMENTAL path is correct on the new ids — the load-bearing check, since a stale-id index is what silently wipes:
+```
+llamaindex refreshed (1/1924 new-or-changed, 0 deleted)   [28 s]
+```
+**`0 deleted` is the proof.** With foreign (E:) ids this run would instead have reported ~1924 deleted + ~1924
+re-embedded. It found exactly the ONE file just edited and finished in 28 s vs 271 s for a full rebuild ⇒ the index
+is genuinely incremental, correct, and self-maintaining. Re-run `update_indexes.py --force` (no `--rebuild`) to
+re-check this cheaply after any corpus/path change.
+
 **SOMA is NOT restored** (neither the module nor the bundles migrated). Its call site in `update_indexes.py` is already
 `try/except`-wrapped, so it degrades cleanly — the log line `SOMA rebuild failed (LlamaIndex still updated): No module
 named 'soma'` is EXPECTED on this box, not a fault. Consequence: `tools/rag/rag_eval.py`'s two-engine comparison is
