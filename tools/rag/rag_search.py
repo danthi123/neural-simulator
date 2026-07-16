@@ -11,10 +11,12 @@ Broadened corpus (source_type shown per hit; build via tools/rag/build_llamainde
   catalog : sim-catalog/references/*.md      -> "is there a CATALOG ENTRY for X?"
   kandel  : Kandel 6e full text              -> "how does the BIOLOGY do X?"
 
-Run with the isolated RAG venv (has llama-index; base sim env untouched):
-    E:/Documents/Projects/rag_compare_env/Scripts/python.exe tools/rag/rag_search.py "<question>" [top_k] [--corpus TYPE]
+Run with the isolated RAG venv (has llama-index; base sim env untouched -- installing llama-index into the sim
+venv would churn its pinned torch/cupy CUDA stack):
+    .venv-rag/bin/python tools/rag/rag_search.py "<question>" [top_k] [--corpus TYPE]
   --corpus one of {all(default), finding, plan, doc, catalog, kandel} -- target one corpus (e.g. --corpus kandel for biology).
 
+Index location resolves in order: $SIM_RAG_ROOT -> <parent-of-repo>/rag_index -> the legacy Windows path.
 Falls back to the findings-only index if the broadened one isn't built. See docs/RAG_COMPARISON.md."""
 import os, io, sys, time
 os.environ["TRANSFORMERS_VERBOSITY"] = "error"
@@ -22,8 +24,13 @@ os.environ["HF_HUB_DISABLE_PROGRESS_BARS"] = "1"
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 from contextlib import redirect_stderr
 
-FULL = r"E:\Documents\Projects\rag_compare\llamaindex_full"
-FINDINGS = r"E:\Documents\Projects\rag_compare\llamaindex_findings"
+_REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+_ROOTS = [os.environ.get("SIM_RAG_ROOT"),
+          os.path.join(os.path.dirname(_REPO), "rag_index"),
+          r"E:\Documents\Projects\rag_compare"]
+_ROOT = next((r for r in _ROOTS if r and os.path.isdir(r)), _ROOTS[1])
+FULL = os.path.join(_ROOT, "llamaindex_full")
+FINDINGS = os.path.join(_ROOT, "llamaindex_findings")
 
 argv = sys.argv[1:]
 corpus = "all"

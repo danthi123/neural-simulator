@@ -20,12 +20,13 @@ import os, sys, time, json, hashlib, shutil, glob, argparse
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import build_llamaindex_full as B   # SOURCES + load_docs (+ PERSIST)
 
-RAG = r"E:\Documents\Projects\rag_compare"
+RAG = B.RAG_ROOT                      # portable: see build_llamaindex_full ($SIM_RAG_ROOT / <parent-of-repo>/rag_index)
 PERSIST = B.PERSIST
 LOCK = os.path.join(RAG, ".update.lock")
 MANIFEST = os.path.join(RAG, ".rag_manifest.json")
-SOMA_BUNDLE = r"E:\Documents\Projects\soma_bundles\sim_kb"
-SOMA_MANIFEST = r"E:\Documents\Projects\soma_bundles\.soma_kb_manifest.json"
+_SOMA_ROOT = os.environ.get("SIM_SOMA_ROOT") or os.path.join(os.path.dirname(B.SIM), "soma_bundles")
+SOMA_BUNDLE = os.path.join(_SOMA_ROOT, "sim_kb")
+SOMA_MANIFEST = os.path.join(_SOMA_ROOT, ".soma_kb_manifest.json")
 # evolving source types SOMA covers (Kandel excluded — static)
 SOMA_TYPES = {"finding", "plan", "doc", "catalog"}
 

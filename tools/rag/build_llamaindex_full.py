@@ -20,9 +20,16 @@ from llama_index.core import Document, VectorStoreIndex, Settings
 from llama_index.core.node_parser import SentenceSplitter
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 
-SIM = r"E:\Documents\Projects\sim"
-CAT = r"E:\Documents\Projects\sim-catalog\references"
-PERSIST = r"E:\Documents\Projects\rag_compare\llamaindex_full"
+# Paths resolve from this file's location (repo root = two dirs up) with env overrides, so the tooling is portable:
+#   $SIM_REPO      -> the sim repo            (default: two dirs above this file)
+#   $SIM_CATALOG   -> sim-catalog/references  (default: <parent-of-repo>/sim-catalog/references)
+#   $SIM_RAG_ROOT  -> the index root          (default: <parent-of-repo>/rag_index)
+_HERE = os.path.dirname(os.path.abspath(__file__))
+SIM = os.environ.get("SIM_REPO") or os.path.dirname(os.path.dirname(_HERE))
+_PARENT = os.path.dirname(SIM)
+CAT = os.environ.get("SIM_CATALOG") or os.path.join(_PARENT, "sim-catalog", "references")
+RAG_ROOT = os.environ.get("SIM_RAG_ROOT") or os.path.join(_PARENT, "rag_index")
+PERSIST = os.path.join(RAG_ROOT, "llamaindex_full")
 
 # (source_type, list of file globs / explicit files)
 SOURCES = [
