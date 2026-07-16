@@ -46,8 +46,10 @@ def build_cotrain_bridge(NtA, NtB, n_hub, n_per, seed, shared_target=False, deca
             BrainRegion(name="target", n_neurons=Nt * n_per, exc_fraction=1.0, internal_density=0.0),
         ]
         cfg.region_pathways = [
-            RegionPathway(from_region="hubA", to_region="target", density=1.0, weight_mean=0.05, weight_jitter=0.0, plastic=True),
-            RegionPathway(from_region="hubB", to_region="target", density=1.0, weight_mean=0.05, weight_jitter=0.0, plastic=True),
+            RegionPathway(from_region="hubA", to_region="target", density=1.0, weight_mean=0.05, weight_jitter=0.0, plastic=True,
+                          plasticity_gate="learnA"),
+            RegionPathway(from_region="hubB", to_region="target", density=1.0, weight_mean=0.05, weight_jitter=0.0, plastic=True,
+                          plasticity_gate="learnB"),
         ]
     else:
         cfg.brain_regions = [
@@ -57,8 +59,10 @@ def build_cotrain_bridge(NtA, NtB, n_hub, n_per, seed, shared_target=False, deca
             BrainRegion(name="targetB", n_neurons=NtB * n_per, exc_fraction=1.0, internal_density=0.0),
         ]
         cfg.region_pathways = [
-            RegionPathway(from_region="hubA", to_region="targetA", density=1.0, weight_mean=0.05, weight_jitter=0.0, plastic=True),
-            RegionPathway(from_region="hubB", to_region="targetB", density=1.0, weight_mean=0.05, weight_jitter=0.0, plastic=True),
+            RegionPathway(from_region="hubA", to_region="targetA", density=1.0, weight_mean=0.05, weight_jitter=0.0, plastic=True,
+                          plasticity_gate="learnA"),
+            RegionPathway(from_region="hubB", to_region="targetB", density=1.0, weight_mean=0.05, weight_jitter=0.0, plastic=True,
+                          plasticity_gate="learnB"),
         ]
     cfg.dt = 1.0
     cfg.seed = cfg.ou_seed = cfg.heterogeneity_seed = seed
@@ -130,15 +134,59 @@ def run_seed(seed, stories, vocab, cat_ids, a, mode="cotrain"):
     rng.shuffle(wins)                                   # interleave A/B streams
     # PER-LEARNER window budget (each learner gets max_windows) so co-training and separate give each the SAME
     # data budget -> the co-vs-sep comparison isolates CROSS-TALK, not a halved data budget (the design-confound fix).
+    # --gate-plasticity: freeze the IDLE learner's pathway during the other's window (attentional / neuromodulatory
+    # gating of plasticity to the attended stream). Tests the SPURIOUS-LTP cross-talk vector that the decay and
+    # homeostasis probes could not: present() zeroes external input but STILL steps the WHOLE bridge, so during a
+    # B-window the global Hebbian rule keeps running on hubA->targetA against A's residual (membrane/conductance/NMDA)
+    # activity -- pairing A's synapses with content that has nothing to do with them. That asymmetry exists ONLY in the
+    # co-trained arm (separate arms present their own windows back-to-back).
+    # NOTE the control arms are UNAFFECTED by construction: in separateA only A-windows are presented, so learnA is
+    # held at 1.0 throughout == ungated. So this flag isolates the co-trained arm -- a clean single variable.
+    _gate = bool(getattr(a, "gate_plasticity", 0))
+    def set_gates(active):
+        # tolerate a gate that never registered: a pathway with no synapses (e.g. a degenerate tiny-vocab config
+        # where one half's target region is empty) declares no gate, and set_plasticity_gate would KeyError.
+        if not _gate: return
+        for nm, act in (("learnA", "A"), ("learnB", "B")):
+            try:
+                bridge.set_plasticity_gate(nm, 1.0 if active == act else 0.0)
+            except KeyError:
+                pass
+
+    # --idle-match: TIMING-MATCH the separate baseline to the co-trained arm.
+    # THE CONTROL CONFOUND (found by reading this loop, 2026-07-16): in `separateA` the B-windows are SKIPPED
+    # ENTIRELY -- no steps run -- so A's windows are BACK-TO-BACK. In `cotrain` every A-window is separated by
+    # window_steps of B-window, during which A's neurons decay with ZERO external input. So a co-trained learner
+    # starts each of its windows from a COLDER (more-decayed) membrane/conductance state than its own baseline ever
+    # does. That is a TIMING asymmetry between treatment and control, not cross-talk between the learners --
+    # and it is the same CLASS of confound as the already-fixed data-budget bug (a baseline that does not match
+    # the treatment arm). It also explains BOTH prior refutations: it is not weight decay (so --hebbian-decay 0
+    # could not touch it) and not threshold drift (so --homeostasis 0 cannot either).
+    # With --idle-match 1 the separate arm runs the SAME number of idle steps the co-trained arm would have spent
+    # on the other learner -- zero input, nothing presented, nothing counted, no window budget consumed.
+    # If the gap closes => the residual was a baseline artifact and co-training cross-talk is ~FREE.
+    _idle = bool(getattr(a, "idle_match", 0))
+    def idle_steps():
+        if not _idle: return
+        bridge.cp_external_input_current[:] = 0.0
+        for _ in range(a.window_steps): bridge._run_one_simulation_step()
+
     nwinA = nwinB = 0
     for which, tgt_ids, hub_ids in wins:
         if nwinA >= a.max_windows and nwinB >= a.max_windows: break
+        # in a SEPARATE arm, the other learner's window is where the co-trained arm would have spent idle steps
+        if _idle and mode == "separateA" and which == "B" and nwinB < a.max_windows:
+            idle_steps(); nwinB += 1; continue
+        if _idle and mode == "separateB" and which == "A" and nwinA < a.max_windows:
+            idle_steps(); nwinA += 1; continue
         if which == "A" and nwinA < a.max_windows and mode in ("cotrain", "separateA", "shared"):
+            set_gates("A")
             present(hubA_r, tgtA_r, nA, hub_ids, tgt_ids)
             for t in tgt_ids:
                 for h in hub_ids: CA[t, h] += 1.0
             nwinA += 1
         elif which == "B" and nwinB < a.max_windows and mode in ("cotrain", "separateB", "shared"):
+            set_gates("B")
             present(hubB_r, tgtB_r, nB, hub_ids, tgt_ids)
             for t in tgt_ids:
                 for h in hub_ids: CB[t, h] += 1.0
@@ -172,6 +220,12 @@ def main():
     p.add_argument("--max-windows", type=int, default=24000); p.add_argument("--max-vocab", type=int, default=64)
     p.add_argument("--hebbian-decay", type=float, default=0.00001)
     p.add_argument("--homeostasis", type=int, default=1)
+    p.add_argument("--gate-plasticity", type=int, default=0, dest="gate_plasticity",
+                   help="freeze the IDLE learner's pathway during the other's window (spurious-LTP probe); 0 = off (byte-identical)")
+    p.add_argument("--idle-match", type=int, default=0, dest="idle_match",
+                   help="TIMING-MATCH the separate baseline: run the same idle steps the co-trained arm spends on the "
+                        "other learner (zero input, nothing presented/counted). Tests whether the residual is a "
+                        "baseline artifact rather than cross-talk. 0 = off (byte-identical)")
     p.add_argument("--corpus", default=None); p.add_argument("--out", default="research/findings/raw/_cotrain_stream_isolation.json")
     a = p.parse_args()
     vocab, cat_ids, _ = taxonomy_to_vocab_categories(TAXONOMY_8x8)
