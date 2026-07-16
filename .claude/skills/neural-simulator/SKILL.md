@@ -73,9 +73,65 @@ If I'm doing ANY of these, I've drifted — stop and re-anchor:
 7. **Relabeling a shortcut as acceptable biology.** Calling a host stand-in or external model "defensible / permanent / pragmatic" to dodge simulating the circuitry. When I catch myself arguing WHY a scaffold can stay, THAT argument is the drift.
 8. **Believing a "surpass" without adversarial verification** (NEW). Committing a GO because it looked clean, without independent skeptics probing for the confound. See the workflow's step 4.
 9. **Skimming the sources** (NEW). Grepping the catalog index + citing abstracts instead of READING the original chapter/PDF in depth, and searching only biology (not the external engineering literature). See workflow step 1.
+11. **Trusting an unverified instrument, or a claim nothing checks** (NEW 2026-07-16). Reporting a number without
+    reading the runner's own verdict; writing "this is inert/byte-identical" as a comment instead of an assertion;
+    running an A/B whose lever moves >1 variable; saying "pushed"/"on GPU"/"tests pass" without verifying. See
+    "⛔ THE SILENT-FAILURE CLASS". **Six in one session; three of the retractions were my own claims.**
 10. **Whack-a-mole — hand-building conversational capabilities one at a time** (2026-07-10 owner steer). Reaching for a fresh dedicated mechanism / router / register / template for a conversational capability instead of asking *"what learning substrate + training stream makes this EMERGE?"*. See "⭐ THE EMERGENCE BAR." A new hand-built capability is allowed ONLY as an explicit temporary scaffold on the ladder to its learned replacement, or as a probe of a substrate limit — never as the capability's permanent home.
 
 ---
+
+## ⛔ THE SILENT-FAILURE CLASS — the OTHER way this project loses (added 2026-07-16, after SIX in one session)
+
+The drift modes above are about **stopping too early**. This class is the opposite failure and the skill was blind
+to it: **work that runs, reports success, and is confidently WRONG — while every liveness signal says healthy.**
+One session produced six, and **three of the resulting retractions were my own claims.** These are not carelessness;
+they are *structural*, and they recur even while actively hunting them (I authored a bare-`except` that swallowed
+my own warning ON THE DAY I documented that exact pattern five times). So they need MECHANICAL guards, not vigilance.
+
+**The shape, every time: THE MACHINERY TO CHECK THE CLAIM ALREADY EXISTED; NOTHING INVOKED IT.**
+`_ensure_gate_capacity` guarded 7 sites but not the Hebbian one → the decay silently stopped applying. A
+`train_layers` isolation hook was written, documented "for isolation", and **never once invoked** → a fixed random
+reservoir passed as "deep credit" for months. A requirements file nothing audited. An install doc telling you to run
+a tool it never told you to install.
+
+**THE RULES (each earned by a real, costly instance):**
+
+1. **NEVER lift a metric out of a run whose own verdict is negative.** The banked "feedforward deep credit is GO,
+   K=8 0.877, anti-cheat-clean" was produced by averaging the `inherit` field from three runs that EACH printed
+   `SIGNAL=False` / `HONEST NEGATIVE` with the anti-cheat FAILING. **The instrument was not broken — it was
+   OVERRIDDEN.** A runner that prints a negative has already done the analysis. Read the verdict, not the field.
+2. **"X is inert / byte-identical / a no-op" is a HYPOTHESIS. It belongs in an ASSERTION, not a comment.** A comment
+   cannot fail; it rots, and the result rots with it. Three such claims were false in one day (`lr=0` didn't defeat
+   an unconditional `cp.clip`; a "byte-identical" gate-tag flipped a scalar code path to a stale array; a runner
+   silently no-op'd in its own documented mode). If you write "this is inert", write the test.
+3. **VERIFY THE INSTRUMENT BEFORE TRUSTING ITS OUTPUT — and a REFUTATION needs it verified exactly as much as a
+   CONFIRMATION.** A metric that stored `round(x,4)` and then differenced the ROUNDED values quantized every delta
+   to 1e-4, making a sub-1e-4 question *unfalsifiable by construction* — I then "refuted" a hypothesis with that
+   readout, a VOID test I nearly recorded. Before an A/B: print the lever's effect and confirm the DEFAULT arm is
+   genuinely unchanged (`train_layers=None` vs `{2}` — had the default also frozen, both arms would be reservoirs
+   and the verdict meaningless while looking perfectly plausible).
+4. **ONE FLAG ≠ ONE VARIABLE.** `--bdsp-wmax` was one config field but two functional variables (the clamp is
+   global over `cp_connections`, which held BOTH the spiking synapses AND a host-side linear readout) → the A/B
+   freed a linear classifier and I read it as deep credit. **Ask what else the lever touches, in code, before running.**
+5. **A BROAD `except` IS A SILENT-FAILURE FACTORY.** `except ImportError: pass` around a backend import made
+   `SIM_BACKEND=numpy` silently run on the GPU for months; a swallowed broadcast error stopped Hebbian decay every
+   step (10023 tracebacks, zero alarms). Catch NARROW; log the catch-all at `debug` at minimum. **Never `pass`.**
+6. **VERIFY, DON'T ASSERT — especially the boring infrastructure.** `git push -q ... ; echo pushed` reports success
+   unconditionally (`-q` hides it, `| tail -1` eats it): ~20 "pushed both remotes" claims on faith. Use
+   `tools/push_both.sh` (pushes then `git ls-remote`-verifies; a cached remote-tracking ref will happily agree with
+   a FAILED push). Same for the DEVICE: a 4-arm sweep ran ~50 min on CPU while the monitor correctly said RUNNING —
+   it could not see *which device*. `tools/monitor_runs.py` now reports `[GPU]` / `ON CPU`.
+7. **IF A CONTROL EXISTS IN THE CODE AND IS NEVER INVOKED, RUN IT** — that is where the unasked question lives.
+8. **A FALSE ALARM IS AS CORROSIVE AS A MISSED ONE** — it trains the reader to ignore the alerts, which is how a
+   real failure slips through. My monitor cried wolf twice (log-staleness on a healthy 99%-CPU run that logs once
+   per seed; CPU-ticks compared ACROSS a pid change after a relaunch). **Test a monitor against a run you KNOW is
+   broken, not only a healthy one.**
+9. **A GATE THAT CAN PASS WITHOUT ITS KEY CONTROL IS THE BUG.** Make the control DEFAULT-ON and CI-guard it. The
+   cost of a 4th arm (~25% runtime) is nothing against a months-scale plan built on a random projection.
+
+**THE SELF-CHECK:** *"If this were silently wrong, what would look different?"* If the answer is "nothing" — the
+process is alive, the log grows, the number is plausible — **you have no evidence, only an absence of alarms.**
 
 ## THE PROVEN BOUNDARY-SURPASSING WORKFLOW (use it every time — it has repeatedly turned "walls" into wins)
 
@@ -145,6 +201,10 @@ Every capability hypothesis passes through: (1) state the capability; (2) test t
 
 ## SELF-CHECK (ask continuously)
 
+- **"If this were silently wrong, what would look different?"** If nothing would → I have no evidence, only an
+  absence of alarms. Check the runner's OWN verdict (never average a metric out of a run whose SIGNAL is False);
+  check the DEVICE/backend; verify the push with `tools/push_both.sh`; confirm the A/B's lever moves exactly ONE
+  variable; confirm the DEFAULT arm is genuinely unchanged. See "⛔ THE SILENT-FAILURE CLASS".
 - "Am I about to call something a wall, defer it, or ask the owner what to do?" → **STOP.** What mechanism surpasses it? Run the (3-part) research gate + the next de-risk.
 - "Is the next thing I output a status-report ending in a question, or a wrap-up?" → replace it with the next concrete mechanism step, and take it.
 - "Did I get a clean GO that would enter the record as a surpass?" → adversarially verify it FIRST (step 4); do the cheapest load-bearing check myself.
