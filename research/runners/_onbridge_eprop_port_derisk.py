@@ -126,6 +126,15 @@ class OnBridgeEpropNet(OnBridgeBDSPNet):
                          tonic_h_pA=hp.get("tonic_h_pA", 100.0), tonic_o_pA=hp.get("tonic_o_pA", 150.0),
                          apical_gain_pA=hp.get("apical_gain_pA", 2000.0), ff_w_init=hp.get("ff_w_init", 2000.0),
                          pbar_alpha=hp.get("pbar_alpha", 0.05))
+        # --no-bdsp: the kernel's OWN documented inertness lever. The comment above ("lr=0.0 -> the committed BDSP
+        # kernel is byte-INERT") is FALSE: fused_bdsp_update ENDS in `return cp.clip(w_new, w_min, w_max)`
+        # (kernels.py:485) -- at eta=0 the ADD term vanishes but the CLIP does not, and the parent sets
+        # bdsp_w_min/max = -6/+6 (:183) while ff_w_init=2000 and --w-clip=4000. So every forward silently crushes
+        # the FF synapses whose PREsyn fired (call site restricts to active_bd, bridge.py:7280) from ~2000-scale to
+        # |w|<=6. The step loop reads cfg.enable_bdsp per-step, so flipping it post-init makes the block UNREACHED
+        # = the kernel's documented byte-inert condition. Default False => byte-identical to the banked runs.
+        if bool(hp.get("no_bdsp", False)):
+            self.br.core_config.enable_bdsp = False
         self.eprop_lr = float(eprop_lr); self.eps_leak = float(eps_leak)
         self.surrogate = str(surrogate); self.alpha_surr = float(alpha_surr); self.beta_surr = float(beta_surr)
         self.logit_source = str(logit_source); self.w_clip = float(w_clip); self.reset_state = bool(reset_state)
@@ -506,6 +515,14 @@ def main():
     ap.add_argument("--w-clip", type=float, default=4000.0)
     ap.add_argument("--train-subsample", type=int, default=240)
     ap.add_argument("--pool-k", type=int, default=1)
+    ap.add_argument("--no-bdsp", action="store_true",
+                    help="Set cfg.enable_bdsp=False AFTER init -- the kernel's OWN documented inertness lever "
+                         "(\"byte-inert when enable_bdsp is False: the block is unreached\", kernels.py:480). "
+                         "This runner instead keeps enable_bdsp=True and relies on lr=0, but fused_bdsp_update "
+                         "ENDS in `return cp.clip(w_new, w_min, w_max)` (kernels.py:485) -- at eta=0 the ADD "
+                         "term vanishes, the CLIP does NOT. With the inherited bdsp_w_max=6.0 vs this runner's "
+                         "--w-clip 4000, every forward silently crushes the FF synapses whose presyn fired "
+                         "(measured 239/512, mean |w| 370 -> <=6). Default off = byte-identical to the banked runs.")
     # positive control knobs
     ap.add_argument("--poscontrol-only", action="store_true")
     ap.add_argument("--pos-n", type=int, default=40)
@@ -537,7 +554,7 @@ def main():
                        n_prop=a.n_prop, member_id_dim=a.member_id_dim, n_obs=a.n_obs, noise=a.noise,
                        feature_seed=a.feature_seed)
     hp = dict(tonic_h_pA=a.tonic_h_pA, tonic_o_pA=a.tonic_o_pA, ff_w_init=a.ff_w_init, pbar_alpha=a.pbar_alpha,
-              in_current_pA=a.in_current_pA, in_bias_pA=a.in_bias_pA, hidden_lr_scale=a.hidden_lr_scale)
+              in_current_pA=a.in_current_pA, in_bias_pA=a.in_bias_pA, hidden_lr_scale=a.hidden_lr_scale, no_bdsp=a.no_bdsp)
     t0 = time.time()
 
     if a.poscontrol_only:
