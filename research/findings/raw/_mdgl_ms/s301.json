@@ -1,0 +1,1 @@
+[{"seed": 301, "task": "xor", "T": 8, "chance": 0.25, "n_cls": 4, "acc": {"bptt": 0.356, "eprop": 0.556, "mdgl": 0.412, "mdgl_zeroGamma": 0.556, "eprop_permuted": 0.276, "mdgl_signflip": 0.348}, "bptt_solves": false, "eprop_lags": false, "mdgl_closes_gap": false, "zeroGamma_collapses": true, "permuted_chance": true, "GO": false}]
