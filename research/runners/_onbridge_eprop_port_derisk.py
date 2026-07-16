@@ -642,6 +642,22 @@ def main():
                          a.alpha_surr, a.beta_surr, a.logit_source, a.w_clip, a.train_subsample, task_kwargs, hp=hp,
                          n_hidden_layers=a.n_hidden_layers, pool_k=a.pool_k)
             per.append(r)
+            # PER-SEED CHECKPOINT (2026-07-16): previously --out was written ONCE, after ALL seeds (line ~701), so
+            # any interruption -- a reboot, an OOM, a kill -- destroyed the entire arm's work. A 3-seed arm is ~3h
+            # at ~62 min/seed, so that is a 3-hour loss to preserve nothing. Measured the day it bit: a 4-arm sweep
+            # was killed for a reboot at 49 min with 0/3 seeds done in every arm and NOT ONE byte on disk.
+            # Cost is a sub-millisecond JSON write per ~hour of compute. `partial: True` marks it as incomplete so a
+            # truncated file can never be mistaken for a finished run (the day's own rule: an exit without the
+            # success marker is a FAILURE, never a pass).
+            try:
+                Path(a.out).parent.mkdir(parents=True, exist_ok=True)
+                Path(a.out).write_text(json.dumps(
+                    {"probe": "onbridge-eprop-port", "partial": True, "seeds_done": [x["seed"] for x in per],
+                     "seeds_requested": list(a.seeds), "config": vars(a), "per_seed": per,
+                     "SIGNAL": None, "verdict": "PARTIAL -- run still in progress; NOT a verdict."},
+                    indent=2, default=str))
+            except Exception as _ck:   # a checkpoint must never take the run down with it
+                print(f"[warn] per-seed checkpoint failed ({type(_ck).__name__}: {_ck})", flush=True)
             print("-" * 100, flush=True)
             print(f"[seed {s}] k={r['k_classes']} chance {r['chance']:.3f} | STAGE0 depth-sep {r['stage0_depth_separating']} "
                   f"(deep-best {r['stage0_deep_best']:.3f} vs 1-layer {r['stage0_l1']:.3f}) | oracle {r['oracle_inherit']:.3f}", flush=True)
