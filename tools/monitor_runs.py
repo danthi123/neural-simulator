@@ -9,14 +9,23 @@ WHY THIS EXISTS (three real failures on 2026-07-16, all in one session):
      logged NOTHING and never exited. No log-tailing monitor can ever detect that; only "the log stopped growing
      while the process is still alive" can.
 
-THE FIX: do not tail. POLL STATE. Every tick, classify each run into exactly one of four states -- and note that
-SILENCE IS A STATE (`STALLED`), not the absence of one:
+THE FIX: do not tail. POLL STATE -- and use CPU-TIME DELTA, not log growth, as the liveness signal. Every tick each
+run is classified into exactly one of five states. Note that SILENCE IS A STATE, not the absence of one -- but note
+equally that silence is NOT automatically bad:
 
-  RUNNING  proc alive + log grew since the last tick
-  STALLED  proc alive + log has NOT grown for --stall-min minutes   <- the hang/silent-no-op case
+  RUNNING  proc alive + CPU rising + log fresh
+  QUIET    proc alive + CPU RISING + log stale for --stall-min   -> INFORMATIONAL: working, just between log lines
+  HUNG     proc alive + CPU FLAT across a tick                   -> the REAL alarm (deadlock / blocked / sleeping)
   DONE     proc gone  + a success marker present
   CRASHED  proc gone  + an error marker present, OR no success marker (an exit without a marker is a FAILURE,
            never a pass -- "it stopped" must never be read as "it finished")
+
+WHY CPU-DELTA AND NOT LOG-STALENESS (learned immediately, the hard way): the first version used log growth alone and
+CRIED WOLF within one tick -- a perfectly healthy e-prop arm pinned at 99.8% CPU logs only once per SEED (30-60 min),
+so a 20-min log gap flagged STALLED while its utime was rising a full core per second. A FALSE alarm is a lie in the
+other direction: it trains the reader to ignore the alerts, which is exactly how a real crash gets missed. Log
+staleness cannot distinguish "computing hard but quiet" from "hung"; CPU-time delta can, so staleness is demoted to
+an informational QUIET and only CPU-flat raises an alarm.
 
 Emits ONE compact line per run, only when something a human would act on changes (state flips, or new progress),
 plus a periodic heartbeat so a healthy long run still reports in. Exits when every run reaches a terminal state,
@@ -33,7 +42,8 @@ USAGE (as a Monitor command; each stdout line becomes one notification):
 
   --interval    seconds between polls (default 300 = 5 min; a 2h GPU run does not need 30s polling)
   --heartbeat   emit a status line every N ticks even when nothing changed (default 3 => ~15 min at 300s)
-  --stall-min   minutes of no log growth (proc still alive) before declaring STALLED (default 20)
+  --stall-min   minutes of no log growth before a live, CPU-rising run is reported QUIET (default 20;
+                raise it for runners that only log per-seed -- it is informational, not an alarm)
   --progress-re regex whose LAST match is shown as the run's progress (default: seed/epoch/step lines)
   --max-ticks   safety bound so the poller cannot outlive the session (default 288 = 24h at 300s)
 """
@@ -68,11 +78,42 @@ def _procs():
             if "python" in l and not _SHELL_WRAPPER.match(l.strip()) and " -c " not in l[:200]]
 
 
-def _alive(stem, procs):
-    """A run is alive if some python proc's cmdline mentions its json (the --out arg). The log itself is a shell
-    redirect and never appears in a cmdline, so the json stem is the only reliable link."""
+def _pids():
+    """(pid, cmdline) of live python WORKER procs -- same shell-wrapper exclusion as _procs()."""
+    try:
+        out = subprocess.run(["ps", "-eo", "pid,args"], capture_output=True, text=True, timeout=10).stdout
+    except Exception:
+        return []
+    rows = []
+    for line in out.splitlines()[1:]:
+        line = line.strip()
+        if not line or "python" not in line:
+            continue
+        pid, _, args = line.partition(" ")
+        if _SHELL_WRAPPER.match(args.strip()) or " -c " in args[:200]:
+            continue
+        if pid.isdigit():
+            rows.append((int(pid), args))
+    return rows
+
+
+def _cpu_ticks(pid):
+    """utime+stime from /proc/<pid>/stat. RISING => the proc is genuinely computing, however quiet its log is."""
+    try:
+        with open(f"/proc/{pid}/stat", "rb") as f:
+            parts = f.read().decode("utf-8", "replace").rsplit(")", 1)[1].split()
+        return int(parts[11]) + int(parts[12])       # utime, stime (fields 14,15; 1-indexed pre-split)
+    except Exception:
+        return None
+
+
+def _find(stem, pids):
+    """Map a run to its worker pid via the --out json (a `> x.log` redirect never appears in a cmdline)."""
     needle = os.path.basename(stem) + ".json"
-    return any(needle in p for p in procs)
+    for pid, args in pids:
+        if needle in args:
+            return pid
+    return None
 
 
 def _tail(path, n=400_000):
@@ -85,19 +126,36 @@ def _tail(path, n=400_000):
         return ""
 
 
-def classify(log, procs, stall_s, prog_re):
+def classify(log, pids, stall_s, prog_re, prev):
     stem = log[:-4] if log.endswith(".log") else log
     exists = os.path.exists(log)
     size = os.path.getsize(log) if exists else 0
     age = (time.time() - os.path.getmtime(log)) if exists else 0.0
     txt = _tail(log)
-    alive = _alive(stem, procs)
+    pid = _find(stem, pids)
+    alive = pid is not None
+    ticks = _cpu_ticks(pid) if alive else None
     err = ERROR_RE.search(txt)
     ok = SUCCESS_RE.search(txt)
     n_err = len(ERROR_RE.findall(txt))
 
+    # LIVENESS = CPU-TIME DELTA, not log growth. Log-staleness alone CANNOT tell "computing hard but quiet" from
+    # "hung" -- and it cried wolf immediately in practice: a healthy e-prop arm at 99.8% CPU logs only once per
+    # SEED (30-60 min), so a 20-min log gap flagged STALLED while utime was rising a full core's worth per second.
+    # A false STALLED is a lie in the other direction -- it trains the reader to ignore the alerts. So:
+    #   HUNG  = alive but CPU FLAT across a tick   -> a REAL alarm (deadlock / blocked forever / sleeping)
+    #   QUIET = alive, CPU RISING, log stale       -> INFORMATIONAL: working, just between log lines
+    cpu_moved = None
+    if alive and ticks is not None and prev is not None and prev.get("ticks") is not None:
+        cpu_moved = ticks > prev["ticks"]
+
     if alive:
-        state = "STALLED" if age > stall_s else "RUNNING"
+        if cpu_moved is False:
+            state = "HUNG"
+        elif age > stall_s:
+            state = "QUIET"
+        else:
+            state = "RUNNING"
     else:
         # An exit WITHOUT a success marker is a FAILURE, never a pass. Silence is not success.
         state = "DONE" if (ok and not err) else "CRASHED"
@@ -109,7 +167,7 @@ def classify(log, procs, stall_s, prog_re):
         first = ERROR_RE.search(txt).group(0).strip()[:60]
         detail = f" | {n_err} error-hit(s), first: {first}"
     return {"state": state, "prog": prog, "size": size, "age": age, "detail": detail,
-            "json": os.path.exists(stem + ".json")}
+            "ticks": ticks, "pid": pid, "json": os.path.exists(stem + ".json")}
 
 
 def main():
@@ -129,8 +187,8 @@ def main():
     while tick < a.max_ticks:
         tick += 1
         logs = sorted({p for pat in a.logs for p in (glob.glob(pat) or [pat])})
-        procs = _procs()
-        rows = {log: classify(log, procs, stall_s, prog_re) for log in logs}
+        pids = _pids()
+        rows = {log: classify(log, pids, stall_s, prog_re, last.get(log)) for log in logs}
         beat = (tick % a.heartbeat == 0)
         mins = (time.time() - t0) / 60.0
 
@@ -139,7 +197,9 @@ def main():
             changed = (prev is None or prev["state"] != r["state"] or prev["prog"] != r["prog"])
             if changed or beat:
                 name = os.path.basename(log)[:-4]
-                flag = {"RUNNING": "", "STALLED": "  <-- NO LOG GROWTH, proc still alive (hang? silent no-op?)",
+                flag = {"RUNNING": "",
+                        "QUIET": f"  (working: CPU rising; no log line for {r['age']/60:.0f}m -- normal for runners that log per-seed)",
+                        "HUNG": "  <-- ALARM: alive but CPU FLAT (deadlock / blocked / sleeping)",
                         "DONE": "", "CRASHED": "  <-- CRASHED"}[r["state"]]
                 print(f"[{mins:5.1f}m] {r['state']:<8} {name:<34} {r['prog']}{r['detail']}{flag}", flush=True)
             last[log] = r
