@@ -4,6 +4,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Repository**: https://github.com/danthi123/neural-simulator
 
+## ⭐ ACTIVE MISSION (2026-07-17) — read [`GAP_CLOSURE_MISSION.md`](GAP_CLOSURE_MISSION.md) FIRST, EVERY session
+
+The owner's current standing directive: **close the 5-gap cluster to FULLY-WORKING, fully-spiking, one-brain,
+biology-based functionality** — (1) open fluent generation, (2) a learned binder over the brain's own structured
+codes, (3) multi-referent disambiguation, (4) the dendritic/local-credit keystone, (5) CA3 completion/imaginative
+replay (audit: `research/findings/2026-07-17-banked-capabilities-audit-two-buckets.md`). **THE LAW: a wall/negative is
+a verdict on a METHOD, never a license to abandon a CAPABILITY — bank the failing method, take a new biology/spiking/
+one-brain method, and keep going until it WORKS. Closure cannot be deferred.** `GAP_CLOSURE_MISSION.md` is the single
+source of truth + the self-anchor that **replaces needing to run `/neural-simulator`** — read + update it every cycle;
+a plain "continue" from the owner + that board is enough to re-anchor.
+
 ## Project Overview
 
 GPU-accelerated neural network simulator with real-time 3D OpenGL visualization. Uses NVIDIA CUDA/CuPy for massively parallel GPU computation, simulating large-scale networks (10K-100K+ neurons) with biologically-inspired neuron models (Izhikevich, Hodgkin-Huxley, AdEx), synaptic plasticity, and spatial connectivity.
