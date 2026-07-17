@@ -148,6 +148,27 @@ a tool it never told you to install.
    land in the output artifact**; if you must reconstruct a config from a filename or a log's byte-count, the record
    is already broken. **And validate any forensic instrument before trusting it** — show it DISCRIMINATES (a
    synapse count that were constant across `pool_k` would have "confirmed" anything).
+11. **A CORRECTION IS A CLAIM — verify it like one, MORE than one.** On 2026-07-16 I corrected the nav sum-vs-mean
+   conflation in `CLAUDE.md` by writing *"all figures are `sum_finalQ`"* — one line above a figure that is a **MEAN**.
+   **I fixed the LABEL without re-checking the NUMBER, and the correction CERTIFIED the conflation it was written to
+   kill** — worse than the original, because a future session reads a correction as *already audited*. A later 94-agent
+   audit caught it. ⇒ when you correct a number, **recompute it from the artifact**; when you correct a label, **check
+   every figure the label now covers.**
+12. **DEV-SEED SELECTION IS THIS PROJECT'S RECURRING FAILURE — the blind half IS the claim.** Two independent instances
+   found in one day: the deep-credit "6-seed GO" (3 dev seeds; blind never run) and `CLAUDE.md`'s A+E "3.31 ± 0.74"
+   (its own cited source's headline: *"favorable-seed selection … n=12 is not significant at Welch t=0.65"* — the
+   retraction was published 2026-04-29 and the headline outlived it by 2.5 months). **The standing 6-seed rule is
+   necessary and NOT sufficient: *which* six.** Before quoting an N-seed number, list the seeds; if they are all
+   42/43/44(/100/101/102-as-dev), it is a dev result. **And screen task instances for validity first** — at one
+   measured config **36% of seeds were degenerate** (an oracle could not solve them), so an unscreened 6-seed mean
+   silently averages ~2 unsolvable instances and confounds "the rule is seed-variable" with "the task is seed-variable".
+13. **TWO SAME-SHAPED NUMBERS ON ONE OUTPUT LINE WILL BE QUOTED INTERCHANGEABLY.** `g11_bg_runner.py:8158-8161` prints
+   `sum_finalQ` and `mean_distance_overall` together; **4 of 10 audited defects trace to that single line** (a mean
+   quoted as a sum in `CLAUDE.md`, a sum under a "Mean Manhattan" header in a findings table, a 13.3% computed by
+   subtracting one from the other). The fix is **upstream**: never emit two same-shaped numbers without labels that
+   travel with them into every quote. **Corollary — a blanket quantifier ("each", "every", "all figures are") is a
+   claim about EVERY member**: enumerate them or weaken the word ("each 6-seed GO" was true of 12/15; "every result
+   6-seed" of 7/8).
 
 **THE SELF-CHECK:** *"If this were silently wrong, what would look different?"* If the answer is "nothing" — the
 process is alive, the log grows, the number is plausible — **you have no evidence, only an absence of alarms.**

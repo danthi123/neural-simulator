@@ -27,11 +27,22 @@ python -m research.experiment_runner experiments/scale_64x64_validation.yaml
 
 ## Scaling comparison
 
-| Grid | Mean Manhattan | std | n | Notes |
+| Grid | Mean Manhattan (`mean_distance_overall`) | std | n | Notes |
 |---|---|---|---|---|
-| 16×16 | 2.97 | ± 0.12 | 3 | Cluster K v2 baseline |
-| 32×32 | **2.57** | ± 0.11 | 6 | Today's peak (13.3% better than 16×16) |
-| 64×64 | **8.80** | ± 0.54 | 6 | Today's scaling test |
+| 16×16 | **1.06** | ± 0.03 | 3 | Cluster K v2 baseline (⚠️ this cell read **2.97 ± 0.12** — that is its `sum_finalQ`, NOT a mean) |
+| 32×32 | **2.57** | ± 0.11 | 6 | Today's peak (its `sum_finalQ` is 2.75 ± 0.17) |
+| 64×64 | **8.80** | ± 0.54 | 6 | Today's scaling test (its `sum_finalQ` is 2.85) |
+
+> **⚠️ CORRECTION 2026-07-16 — this table mixed TWO METRICS under one "Mean Manhattan" header.** The runner prints both
+> `sum_finalQ` and `mean_distance_overall` on one line (`g11_bg_runner.py:8158-8161`). Recomputed from the raw
+> artifacts, each original row matched exactly **one** of them: 16×16 "2.97 ± 0.12" = **`sum_finalQ`** (2.968 ± 0.121;
+> its true mean is **1.06 ± 0.03**), while 32×32 "2.57 ± 0.11" and 64×64 "8.80 ± 0.54" = **`mean_distance_overall`**
+> (2.575 ± 0.114 / 8.801 ± 0.535). **So the 16×16 row was a sum and the other two were means**, and the struck
+> "13.3% better than 16×16" subtracted a mean from a sum.
+> **Why it matters for this doc's own argument:** with like-for-like means (**1.06 → 2.57 → 8.80**) degradation begins
+> at **32×32** and is monotonic. The table as written implied it begins at 64×64, which is the premise of this doc's
+> central question ("what broke between 32 and 64?") and of its claim that 32×32 is a sound confirmed baseline.
+> Same root cause as the `CLAUDE.md` 32×32 correction.
 
 Random walk baselines (estimated, uniform random position to fixed point):
 - 16×16: ~7

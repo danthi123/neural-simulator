@@ -31,7 +31,14 @@ near-one-hot that the attractor slots deliver — the spiking read *matches* the
 
 ## The floor (the anti-cheat: the read is load-bearing)
 If the metric were simply insensitive to the agent read, the test would prove nothing. It is not — an extreme read
-collapses it (3 dev seeds):
+collapses it (⚠️ **CORRECTED 2026-07-16: seed 44 ONLY, n=1 — not "3 dev seeds"**; `raw/_d3_readfloor*` is a single
+file whose `seed` field is `44` and whose nine values are byte-for-byte the table below. No seed 42/43 run exists.
+Note seed 44 is the **outlier-high** seed on this exact harness — its `exact` a_prev is 0.597 vs 0.423/0.447 for
+42/43 — so this anti-cheat rests on the least representative seed. The **survival** half of this finding IS genuinely
+6-seed (`_d3_readnoise_seed{42,43,44,100,101,102}.json` all present), so the mismatch is confined to the floor.
+Cheap fix: run the readfloor arm on 42/43. Low severity — this is a collapse control arguing *against* the arc's own
+interest, and a 1-spike multinomial read from a ~6-way soft code collapsing to chance is near-arithmetically forced —
+but the label was wrong and it propagated to `CLAUDE.md`'s "a real floor (1 spike → chance)"):
 
 | read | a_prev | a_curr | emission |
 |---|---|---|---|

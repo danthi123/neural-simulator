@@ -11,7 +11,22 @@
 | **FIXED ±1 BIND + strongly-regularized linear read-out** | **0.87** (0.786–0.929) | EXTRAPOLATES — the structural bind computes a(X)b for ANY combo incl. held-out; the read-out reads intent |
 | oracle (ridge on the TRUE a(X)b) = the recoverability ceiling | **0.96** (0.929–1.000) | the map IS recoverable+generalizable; the fixed bind ACHIEVES it (0.87 ≈ 0.96) |
 | **deep-credit LEARNER (2-hidden e-prop on [cat;q])** | **0.39** (0.000–0.500) | FAILS — train often 1.0 (MEMORIZES) but held-out at/below chance |
-| linear on [cat;q] concat | 0.31 | fails (can't represent the XOR combination) |
+| linear on [cat;q] concat | **0.42** | fails (≈ the deep learner's 0.39 — depth buys no advantage; both fail) |
+
+> **⚠️ CORRECTION 2026-07-16 — this row said `0.31`; the artifact says `0.4166`.** From
+> `raw/_fixedbind_systematicity.json`, `linear_concat_held` = [0.214, 0.5, 0.071, 0.357, 0.571, 0.786] → **mean
+> 0.4166**. Isolated transcription error: **every other cell in this table reproduces to 2dp** from the same file
+> (fixedbind 0.8690→0.87, oracle 0.9643→0.96, learner 0.3928→0.39, memfloor 0.5119→0.51, permuted 0.2619→0.26), and
+> this doc's own blind paragraph computes its linear mean correctly. It also propagated into commit `46ec30ff`.
+> **What changes:** the true 0.42 sits *at* the deep e-prop learner's 0.39, so the honest reading is **"depth buys no
+> advantage over a plain linear model — both fail"**, not "the learner beats a linear control." Per-seed the two are
+> mixed (linear wins 44/101/102, learner wins 42/100, tie 43); on the **blind** seeds the plain linear model actually
+> **WINS** (linear 0.571 vs learner 0.500), while on dev the learner marginally edges it (0.286 vs 0.262).
+> **What does NOT change:** the headline and the GO. `fixedbind 0.87 ≫ linear 0.42` holds, the GO is computed per-seed
+> in code from the true values, and a linear control sitting at the learner's floor **supports** this doc's thesis
+> (a from-scratch learner has no systematicity to lose). It does, however, weaken any use of "0.39 = the systematicity
+> wall" as a clean dichotomy — `ROADMAP.md:215` leans on that phrasing — and hints the e-prop MLP is partly just
+> poorly fit, the same weak-baseline confound this arc's own RUNG-1/2 adversarial-verify caught.
 | 1-NN memorization floor | 0.51 | beaten by the fixed bind on 5/6 |
 | permuted labels (anti-cheat) | ~0.26 | collapses to chance (5/6) |
 - **The fixed bind >> the learner on ALL 6 seeds (0.87 vs 0.39)** and TRACKS the oracle ceiling (achieves the recoverable map). The learner MEMORIZES train (often 1.0) but cannot EXTRAPOLATE — the systematicity wall, exactly as our record showed for deep e-prop (dispatch hard-split 0.264) AND the BPTT oracle (binder 0.007).
