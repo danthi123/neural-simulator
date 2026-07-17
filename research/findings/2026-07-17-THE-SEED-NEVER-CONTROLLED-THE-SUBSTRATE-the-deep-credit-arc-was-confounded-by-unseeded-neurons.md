@@ -138,6 +138,21 @@ substrate, compare. It costs 60 seconds and it is the foundation every other num
 
 ---
 
+## ANCHOR-DOC EXPOSURE — checked, and it is ZERO. No auto-loaded claim is at risk from the 8 unseeded runners.
+
+The load-bearing follow-up for a session that just corrected 10 anchor-doc defects: **do any of the 8 unseeded
+runners feed a claim in `CLAUDE.md` or `ROADMAP.md` (the docs auto-loaded into every session)?**
+
+**Checked — NO.** None of the 8 runner names appears in either anchor doc (0 hits each). And the D1/BDSP arc's own
+fragile headline numbers — `_gnw_d1_spiking_bdsp_derisk`'s held-out **0.664** and **0.521** (vs oracle 0.958), which
+ARE in the marginal-effect regime where unseeded heterogeneity can bite — are **not quoted in `CLAUDE.md`** (the
+apparent 0.83/0.89 hits there are coincidental: EMERGE-53's RSA 0.83, D3's alignment cos, the A+E ceiling 0.83 — all
+unrelated runners).
+
+⇒ **The anchor docs need NO seed caveat.** The exposure is confined to the **findings corpus** (the 31 findings citing
+the 8 runners), where the D1/BDSP marginal numbers are the priority — exactly the triage the spawned task
+(`task_f077cbfa`) owns, with the ±0.2-margin rule as its filter. This is a *bounded* check, not that triage.
+
 ## ✅ THE ENGINE IS EXONERATED — and this is why a green determinism suite never caught it
 
 **`sim/` is CORRECT. `tests/test_determinism.py` is CORRECT (7/7 pass, 140s). The bug is entirely in how 8 runners
