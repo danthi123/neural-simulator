@@ -98,3 +98,35 @@ The **per-seed** gate (`trains_the_task`) genuinely lacked a reservoir control �
 2. **ROADMAP + `docs/plans/2026-07-15-months-scale-plan-...` §4** open the unification critical path with *"The learning rule (feedforward deep-credit / BDSP, GO)"*. Corrected once today (BDSP→e-prop+population-coding); the **GO itself is now unsupported as stated**.
 3. **The 2026-07-15 gate's "feedforward spiking deep credit is SOLVED / not a blocker; the genuine frontier is RECURRENT off-diagonal"** is wrong at its root: the **feedforward** side never passed its own aggregate gate. The frontier is wider than the record says, and the off-diagonal arc was deprioritized partly *because* feedforward was believed solved.
 4. **Never average a metric out of a run whose own SIGNAL is False.** A runner that prints `HONEST NEGATIVE` has already done the analysis; lifting its numbers past its verdict is the failure mode this addendum documents.
+
+---
+
+## ⛔ ADDENDUM 2 (2026-07-16) — "6-seed GO" was **THREE dev seeds, all `SIGNAL=False`**. The blind seeds were never run.
+
+The `SIGNAL=False`-vs-banked-"6-seed GO" contradiction is now fully run down, and the claim fails on **four** counts, each independently checkable from the files it cites.
+
+**THE CLAIM:** *"on the production Izhikevich bridge to the LIF ceiling, K=1 0.47 → K=8 0.877, **6-seed GO**"*.
+
+**THE FILES:**
+
+| file | seeds it contains | SIGNAL |
+|---|---|---|
+| `raw/_epropport/k8_s42.json` | `[42]` | **False** |
+| `raw/_epropport/k8_s43.json` | `[43]` | **False** |
+| `raw/_epropport/k8_s44.json` | `[44]` | **False** |
+| blind seeds 100 / 101 / 102 | **NO FILE ANYWHERE** (grep for `"seed": 10[012]` across `_epropport/` + `_onbridge_eprop*` → empty) | — |
+
+1. **"6-seed" is THREE seeds** — 42/43/44 only.
+2. **The BLIND seeds were NEVER RUN.** `CLAUDE.md` states the standing rule verbatim: *"6-seed validation (42/43/44/100/101/102) before any generalization claim."* The dev/blind split is the whole point of the rule — dev seeds are the ones a config was tuned against. This claim generalized off dev seeds alone.
+3. **"GO" is `SIGNAL=False`** on every one of the three, each printing *"HONEST NEGATIVE — the ported e-prop does NOT cleanly train the task on the bridge."*
+4. **The number is ~80% RESERVOIR** (this doc's main body: FULL 0.889 vs FROZEN 0.778 vs chance 0.333).
+
+**⇒ Four failures in one sentence: the seed COUNT, the seed SPLIT, the VERDICT, and the MECHANISM.** Every one is contradicted by the very files the claim cites — none required new compute to detect, only reading them.
+
+**Note what this does NOT impugn:** the underlying runs are honest. The runner computed the right controls, applied its own gate correctly, and printed `HONEST NEGATIVE` three times. **Every guard worked.** The failure is entirely at the WRITE-UP layer — a negative was read as a positive, three files were called six seeds, and the result propagated into the ROADMAP, the months-scale plan's critical path, and the decision to deprioritize the recurrent off-diagonal arc "because feedforward was solved".
+
+**IN FLIGHT:** the 6-seed FULL-vs-FROZEN (4-wide, cupy-pinned, `[GPU]`-confirmed) covers `FULL/FROZEN × (42,43,44)/(100,101,102)` — i.e. it produces **the first blind-seed data this claim has ever had**, alongside the reservoir control it never had. The gate now carries the reservoir arm DEFAULT-ON + CI-guarded (`tests/test_plasticity_inertness.py`).
+
+**STANDING RULES this produced (both now in the skill's SILENT-FAILURE CLASS):**
+- *Never average a metric out of a run whose own `SIGNAL` is False.*
+- **NEW:** *"N-seed GO" is a claim about FILES — count them, and check the SPLIT.* "6-seed" that is three dev seeds is not a weaker result; it is a different claim entirely, and the blind half is the half that tests generalization.
