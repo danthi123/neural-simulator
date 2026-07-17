@@ -37,7 +37,9 @@ def test_bdsp_kernel_at_eta0_is_NOT_inert_it_still_clips():
 
     w = xp.asarray([-4000.0, -7.0, -6.0, 0.0, 2000.0], dtype=xp.float32)   # e-prop-scale weights
     z = xp.zeros_like(w)
-    out = fused_bdsp_update(w, z, z, z, z, eta=0.0, w_min=-6.0, w_max=6.0)
+    # positional: cupy's @fuse() kernels reject keyword args, so kwargs here made the test pass on numpy
+    # and TypeError on cupy -- a test that only works on one backend is a broken instrument.
+    out = fused_bdsp_update(w, z, z, z, z, 0.0, -6.0, 6.0)
     out_h = np.asarray(out.get() if hasattr(out, "get") else out)
 
     # The ADD term IS inert at eta=0 (weights already inside the band are untouched)...
@@ -60,7 +62,9 @@ def test_bdsp_kernel_at_eta0_IS_inert_inside_the_clip_band():
     w0 = rng.uniform(-5.0, 5.0, size=64).astype(np.float32)
     w = xp.asarray(w0)
     z = xp.zeros_like(w)
-    out = fused_bdsp_update(w, z, z, z, z, eta=0.0, w_min=-6.0, w_max=6.0)
+    # positional: cupy's @fuse() kernels reject keyword args, so kwargs here made the test pass on numpy
+    # and TypeError on cupy -- a test that only works on one backend is a broken instrument.
+    out = fused_bdsp_update(w, z, z, z, z, 0.0, -6.0, 6.0)
     out_h = np.asarray(out.get() if hasattr(out, "get") else out)
     np.testing.assert_allclose(out_h, w0, rtol=0, atol=0)
 
@@ -148,3 +152,46 @@ def test_deep_credit_gate_includes_a_reservoir_control():
     assert sig.parameters["reservoir_control"].default is True, (
         "the reservoir control must default ON -- a gate that CAN pass without it is the bug itself"
     )
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# 5: PROVENANCE -- every knob that changes the experiment must reach the output artifact (added 2026-07-16).
+# ---------------------------------------------------------------------------------------------------------------
+
+def test_output_config_records_pool_k_and_freeze_hidden():
+    """`--pool-k` DEFAULTS TO 1 while this whole arc runs at 8, and `pool_k` was NOT written into the output config
+    -- so a result file that does not mention pool_k is INDISTINGUISHABLE FROM A pool_k=1 RUN, and the only
+    provenance for the arc's most load-bearing knob was the string "k8" in a FILENAME. Recovering it for
+    `_eprop_banked_{FULL,FROZEN}.json` required forensics off the bridge's synapse count (1408 @ k=1, 22528 @ k=4,
+    90112 @ k=8 -- exact k^2 scaling).
+
+    The general rule this pins: AN ABSENT FLAG MEANS *DEFAULT*, NOT *OFF*. If a config must be reconstructed from a
+    filename or a log's byte-count, the record is already broken."""
+    import inspect
+    from research.runners import _onbridge_eprop_port_derisk as m
+
+    src = inspect.getsource(m.main)
+    # main() builds TWO "config" dicts (the positive-control summary and the real one); select the one
+    # carrying the real run's knobs, not whichever comes first.
+    i = src.find('"train_subsample": a.train_subsample')
+    assert i != -1, "could not locate the main output config dict"
+    cfg = src[max(0, i - 800):i + 800]
+    for knob in ('"pool_k"', '"freeze_hidden"'):
+        assert knob in cfg, (
+            f"{knob} must be recorded in the output config. It changes the experiment: pool_k sizes the network "
+            f"(population coding; the parent ctor takes it) and freeze_hidden decides whether the hidden layers "
+            f"learn at all. Unrecorded => the artifact cannot be told apart from a default run."
+        )
+
+
+def test_per_seed_records_the_linear_floor():
+    """`stage0_depth_genuineness` COMPUTES `linear_inherit_heldout` (the no-hidden linear floor) and run_seed used to
+    record only `l1`, so the linear floor never reached any output file -- leaving "is the task just linearly
+    decodable?" unanswerable from the artifacts. It is the cheapest rebuttal available (measured 0.265, BELOW chance
+    0.333 at this config). Ladder: chance -> l0 -> l1 -> frozen_hidden -> inherit."""
+    import inspect
+    from research.runners import _onbridge_eprop_port_derisk as m
+
+    src = inspect.getsource(m.run_seed)
+    assert "stage0_l0_linear" in src, "run_seed must record the LINEAR floor (stage0's linear_inherit_heldout)"
+    assert "linear_inherit_heldout" in src, "the linear floor must come from stage0's own computed value"

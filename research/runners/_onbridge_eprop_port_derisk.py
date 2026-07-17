@@ -527,6 +527,12 @@ def run_seed(seed, hidden, settle, epochs, batch, eprop_lr, eps_leak, surrogate,
     return {"seed": seed, "chance": chance, "k_classes": int(k), "n_train_smoke": int(len(ytr_b)),
             "stage0_depth_separating": bool(s0.get("depth_separating")),
             "stage0_deep_best": s0.get("deep_best_inherit_heldout"), "stage0_l1": s0.get("l1_inherit_heldout"),
+            # stage0_l0 = the LINEAR (no-hidden) floor. stage0_depth_genuineness COMPUTES it
+            # (`linear_inherit_heldout`) and this record used to THROW IT AWAY, so the control ladder
+            # never reached any output file. It is the cheapest possible rebuttal to "the task is linearly
+            # trivial" -- measured 0.265 (BELOW chance 0.333) at this config, which is what rules that out.
+            # Ladder: chance -> l0 linear -> l1 trained-shallow -> frozen_hidden (random-deep) -> inherit (learned-deep).
+            "stage0_l0_linear": s0.get("linear_inherit_heldout"),
             "oracle_inherit": oracle_inh, "eprop_train_acc": train_acc, "eprop_inherit_heldout": inh_acc,
             "eprop_ff_weight_moved": ff_moved, "permuted_inherit": perm_inh, "shuffle_dfa_inherit": shuf_inh,
             # frozen_hidden_inherit = the RESERVOIR baseline. reservoir_control_run=False means the gate could NOT
@@ -669,10 +675,19 @@ def main():
         err = repr(e); traceback.print_exc()
 
     summary = {"probe": "onbridge_eprop_port", "seeds": a.seeds,
+               # PROVENANCE (2026-07-16): record EVERY knob that changes the experiment. `pool_k` and `freeze_hidden`
+               # were MISSING here while `--pool-k` DEFAULTS TO 1 and the whole arc runs at 8 -- so a file that does
+               # not mention pool_k is INDISTINGUISHABLE from a pool_k=1 run, and the ONLY provenance was the string
+               # "k8" in a filename. Recovering it for `_eprop_banked_{FULL,FROZEN}.json` needed forensics (the
+               # bridge's synapse count: 1408 @ k=1, 22528 @ k=4, 90112 @ k=8 -- exact k^2 scaling). An absent flag
+               # means DEFAULT, not off; if a config must be reconstructed from a filename, the record is broken.
                "config": {"hidden": a.hidden, "n_hidden_layers": a.n_hidden_layers, "settle": a.settle_steps,
                           "epochs": a.epochs, "batch": a.batch, "eprop_lr": a.eprop_lr, "eps_leak": a.eps_leak,
                           "surrogate": a.surrogate, "alpha_surr": a.alpha_surr, "logit_source": a.logit_source,
                           "w_clip": a.w_clip, "train_subsample": a.train_subsample, "task": task_kwargs,
+                          "pool_k": a.pool_k, "freeze_hidden": bool(a.freeze_hidden),
+                          "reservoir_control": True, "hidden_lr_scale": a.hidden_lr_scale,
+                          "no_bdsp": bool(a.no_bdsp), "bdsp_wmax": a.bdsp_wmax,
                           "backend": os.environ.get("SIM_BACKEND")},
                "elapsed_seconds": round(time.time() - t0, 1), "per_seed": per}
     if err is None and per:
