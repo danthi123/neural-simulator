@@ -84,6 +84,22 @@ and tractable (a biased-competition WTA between referent attractors). **Planned 
 - Parallelize independent work; adversarially verify before committing a GO; both remotes every commit; GPU/CuPy for
   real runs (numpy tiny-smoke only); measure before fanning wide.
 
+### STAYING ANCHORED WITHIN A LONG (hours-long) SESSION — the start-of-session load RECEDES; do NOT rely on it
+
+The `CLAUDE.md` pointer + memory + this board load at SESSION START and then drift toward the back of the context as
+the conversation grows; only a compaction event auto-reloads them. So within a long session the anchor is NOT
+self-maintaining — these THREE keep it live (do all three; do not rely on the start-of-session load alone):
+1. **This board is LIVING working-memory — UPDATE the CURRENT STATE section after EVERY meaningful step** (a de-risk
+   result, a build, a commit, a gap moving). The act of updating re-reads the anchor, so it never recedes, and it
+   keeps the resume point current for compaction AND reboot.
+2. **RE-READ this whole board at every gap-step boundary** (before starting a research-gate / de-risk / build /
+   verify / close). Cheap, and it re-loads THE LAW + the current gap before each phase.
+3. **The automatic anchor-heartbeat (a Monitor, armed 2026-07-17) fires ~every 25 min** with a re-anchor + anti-stall
+   self-check. Each firing is NOT a user message — it is a forced re-anchor: on it, RE-READ this board, verify you
+   are executing the current gap-step per THE LAW (a wall defers a METHOD not the CAPABILITY), and if you have drifted
+   (wrapped up, deferred a capability, stopped taking the next step, relabelled a wall as a stop), CORRECT NOW. If the
+   heartbeat is not running (new session, or it was stopped), RE-ARM it as the first action after re-anchoring.
+
 ---
 
 ## REBOOT / PAUSE PROTOCOL (lose minimal work on short notice)
