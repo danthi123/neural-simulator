@@ -178,8 +178,13 @@ def save_developed_brain(agent, path, *, seed=42, D=None, composer_kind="rf",
                       ensure_ascii=False)
 
     # --- grounded codes -> a compact .npz (word -> phases[D]) ---
+    #     Keys are PREFIXED "g:" so a concept word can never collide with a numpy reserved kwarg of
+    #     np.savez_compressed(file, *args, allow_pickle=..., **kwds) -- a concept literally named
+    #     "file"/"allow_pickle" would otherwise raise "multiple values for argument 'file'" under
+    #     numpy>=2. Concepts are [a-z]+ (the corpus tokenizer), so ":" never appears in a word.
+    #     _load_codes_npz strips the prefix (and reads old, unprefixed bundles unchanged).
     np.savez_compressed(str(root / "grounded_codes.npz"),
-                        **{w: np.asarray(ph, dtype=np.float32) for w, ph in codes.items()})
+                        **{f"g:{w}": np.asarray(ph, dtype=np.float32) for w, ph in codes.items()})
 
     # --- facts -> facts.json (the brain's accumulated knowledge) ---
     with open(root / "facts.json", "w", encoding="utf-8") as fh:
@@ -253,7 +258,10 @@ def _load_codes_npz(path) -> dict[str, np.ndarray]:
     if not p.exists():
         return {}
     with np.load(str(p)) as data:
-        return {w: np.asarray(data[w], dtype=float) for w in data.files}
+        # keys are "g:"-prefixed (see save_developed_brain); strip it. Old bundles saved raw
+        # word keys (no prefix) -> fall back to the key as-is for backward compatibility.
+        return {(k[2:] if k.startswith("g:") else k): np.asarray(data[k], dtype=float)
+                for k in data.files}
 
 
 def _load_facts_json(path) -> list[dict]:
