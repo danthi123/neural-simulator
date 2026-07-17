@@ -43,7 +43,7 @@
 
 ## 4. The unification CRITICAL PATH ("one-brain-that-LEARNS")
 
-The learning rule (feedforward deep-credit / BDSP, GO) → the recurrent language cortex that develops structure from a stream → learned codes at full vocab (#4, DATA-gated) → the composer becoming a LEARNED binder (#1, rate-level GO) → the generator spiking (#6) → structural growth (#7). **★ Single highest-leverage next edge:** unite the content-addressable store (#5) + the RUNG6d STP binder on one bridge (activity-silent synaptic WM). **Longest pole:** co-training the learning pieces (stream cortex + deep-credit + long-range learner) *without cross-talk* at scale — the plasticity-isolation gates are validated but simultaneous stream-cortex co-training is unshown.
+The learning rule (feedforward deep-credit — **⚠️ the "GO" here is CORRECTED 2026-07-16: it is ~80% a fixed random RESERVOIR, see the correction note at the end of this doc; and the rule is e-prop+population-coding, NOT BDSP**) → the recurrent language cortex that develops structure from a stream → learned codes at full vocab (#4, DATA-gated) → the composer becoming a LEARNED binder (#1, rate-level GO) → the generator spiking (#6) → structural growth (#7). **★ Single highest-leverage next edge:** unite the content-addressable store (#5) + the RUNG6d STP binder on one bridge (activity-silent synaptic WM). **Longest pole:** co-training the learning pieces (stream cortex + deep-credit + long-range learner) *without cross-talk* at scale — the plasticity-isolation gates are validated but simultaneous stream-cortex co-training is unshown.
 
 ---
 
@@ -109,3 +109,35 @@ lever that later FAILED to rescue the RECURRENT off-diagonal, which is a separat
 learner **in its GO regime (e-prop-family + population coding)**. Co-training bare on-bridge BDSP would be meaningless:
 a learner that never exceeds chance cannot show whether co-residence costs it anything. Anyone reading §3 row 1 and
 building on unqualified "BDSP" would burn a GPU cycle on a closed boundary.
+
+
+---
+
+## ⛔ CORRECTION (2026-07-16) — the critical path's FIRST link is not what it says. "The learning rule (feedforward deep-credit / BDSP, GO)" is wrong twice over.
+
+§4's unification critical path opens with *"The learning rule (feedforward deep-credit / BDSP, GO)"*. Both halves of that are now corrected, and the second correction is the serious one.
+
+**1. It is NOT BDSP.** Bare on-bridge BDSP is a decisive **6-seed at-or-below-chance NEGATIVE** (`2026-07-15-onsubstrate-bind-onbridge-bdsp-readout-RUNG3-BOUNDARY.md`) — and the obvious escape was already closed: the apical-DECOUPLED confound was FOUND and FIXED (`--soma-g 120` makes B rise 0.000→~0.24, directed credit genuinely delivered) and **the boundary still held on both task families** ⇒ a credit-QUALITY limit, not a wiring bug. The regime that works is **e-prop-family credit + POPULATION CODING**. (§3 row 1 corrected separately, same day.)
+
+**2. The "GO" itself is ~80% a RESERVOIR — and it was lifted out of runs that reported HONEST NEGATIVE.** The banked headline (*"K=8 0.877 ≈ LIF ceiling 0.89, anti-cheat-clean"*) traces to `research/findings/raw/_epropport/k8_s4{2,3,4}.json`, whose `inherit` values **0.889/0.926/0.815 average to exactly 0.877** — and **all three report `SIGNAL=False` with `shuf_ok=False`** (shuffle-DFA 0.556/0.593/0.630 against a required ≤0.433), each printing *"HONEST NEGATIVE — the ported e-prop does NOT cleanly train the task on the bridge"*. **The instrument was not broken; it was OVERRIDDEN.**
+
+Measured with the frozen-hidden RESERVOIR control that the gate never had (the `train_layers` isolation hook existed in-file, documented for exactly this, and had **never once been invoked**):
+
+| seed | FULL | FROZEN (fixed random reservoir + linear readout) | deep-credit contribution |
+|---|---|---|---|
+| 42 | 0.852 | 0.667 | +0.185 |
+| 43 | 0.926 | 0.889 | **+0.037** |
+| **mean** | **0.889** | **0.778** | **+0.111** |
+
+Above chance (0.333): **reservoir +0.444, deep credit +0.111 ⇒ the reservoir is ~80% of the margin.** Deep credit is REAL and positive but MINOR and seed-variable. Reproduction is exact (seed 43 = 0.926, matching `k8_s43` to 3dp, `SIGNAL=False`) ⇒ not a migration artifact.
+
+**CONSEQUENCES FOR THIS PLAN:**
+- **The critical path's first link is weaker than stated.** "The learning rule ... GO" should read: *e-prop + population coding reaches ~0.89 held-out inheritance on the bridge, but ~80% of that margin is a fixed random spiking reservoir + a linear readout; the deep-credit share is ~20% and seed-variable; the runner's own aggregate gate does not pass.*
+- **The LONGEST POLE's segment (b) is GATED.** Co-training "the stream cortex + the deep-credit learner" would mostly test co-residence of a **reservoir**, not of a second learning **RULE** — which is the entire purpose of (b) (rule heterogeneity). Segment (a) is DONE (see the ROADMAP §10 entry: 93.2% retained, 5/6 GO, cost decomposed ~97% time-sharing / ~3% interference ⇒ co-training SCALES).
+- **The 2026-07-15 gate's "feedforward is SOLVED / not a blocker — the frontier is RECURRENT off-diagonal" is wrong at its root**, and that conclusion REDIRECTED the programme: the off-diagonal arc was prioritized partly BECAUSE feedforward was believed solved, and it then closed as a decisive negative. The feedforward side never passed its own aggregate gate. **The frontier is wider than this plan says.**
+
+**STATUS:** a **6-seed FULL-vs-FROZEN** is in flight (the above is n=2 = INDICATIVE, against the standing 6-seed rule). The gate now carries the reservoir control DEFAULT-ON + CI-guarded (`tests/test_plasticity_inertness.py`), so this cannot recur silently.
+
+**STANDING RULE this produced:** *never average a metric out of a run whose own `SIGNAL` is False.* A runner printing `HONEST NEGATIVE` has already done the analysis.
+
+Full audit: `research/findings/2026-07-16-deep-credit-GO-is-80pct-RESERVOIR-the-frozen-hidden-control-was-never-run.md`.
