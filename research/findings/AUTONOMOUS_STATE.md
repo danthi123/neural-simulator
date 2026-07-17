@@ -10930,3 +10930,17 @@ The arms' first progress lines, from the live cupy run:
 2. **Do NOT compare `_eprop7_*` to any banked number** — the banked runs were never reproducible, so they were never a valid baseline. This is the arc's **first** valid baseline.
 3. **Then segment (b)** — only if the blind arm shows a real deep-credit share.
 4. **Spawned task `task_f077cbfa`:** fix the 8 unseeded runners (worst: `_gnw_d1_spiking_bdsp_derisk`, 9 findings, the D1/BDSP arc) — each needs its own `cfg.seed` line + the **hash test** as the per-runner acceptance gate. **TRIAGE, do not blanket-retract:** unseeded ≠ invalid; fatal only where the effect ≈ the confound (deep credit: +0.111 vs ±0.33); large structural effects (lesion→chance, 1.00-vs-0.24) very likely survive. **Any claim with a margin within ~±0.2 on a bridge runner from that list is UNSAFE until re-run seeded.**
+
+**📊 FIRST VALID DATA from the seed-fixed sweep (08:00, n=4 — NO VERDICT, the gate needs the n=11 blind arm).** First `deep_credit_share` in this arc measured with `net` and `fnet` on **IDENTICAL neurons**:
+
+| seed | FULL | FROZEN | share | gate |
+|---|---|---|---|---|
+| 103 (blind) | 0.778 | **0.852** | **−0.167** | False |
+| 110 (blind) | 0.852 | 0.593 | **+0.500** | True |
+| 100 (blind) | 0.741 | **0.852** | **−0.273** | False |
+| 42 (dev) | 0.815 | 0.778 | +0.077 | False |
+
+- **On 2 of 4 seeds the FROZEN reservoir BEATS the trained network.** share mean **+0.034**; gate passes **1/4**.
+- **⭐ THE VARIANCE IS NOW REAL.** Identical neurons ⇒ the −0.273…+0.500 spread is **genuine seed/task variance**, not the threshold artifact. **This VINDICATES the n=11 screen**: the n=2 blind arm I nearly settled for would have been worthless, and n=6 would be marginal. *Screening extra seeds BEFORE seeing data is what made the arm adequate.*
+- **⛔ NO VERDICT AT n=4 — do not read this early.** The pre-registered gate is `share > 0` **consistently across the SCREENED BLIND seeds (100, 102 + 103,104,105,107,108,110,114,115,116 = n=11)**; 101 excluded-and-reported. The project's own rule: 3-seed indicators are unreliable. **If the trend holds it points where my WITHDRAWN 80%-reservoir claim pointed — which is the WORST possible reason to stop waiting.** Let the arm finish (~18:00).
+- **Blind-seed SCREEN CONFIRMED on live GPU:** seeds 103 (`deep-best 1.000`) and 110 (`1.000`) match the CPU screen exactly, as do 42 (`l1 0.444`) and 100 (`0.407`) — a second independent confirmation that the Stage-0 reconstruction (which licensed the 101 exclusion + the screen) is faithful.
