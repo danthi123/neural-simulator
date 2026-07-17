@@ -330,6 +330,83 @@ if __name__ == "__main__":
     test_conn = TestDeterministicConnectivity()
     test_conn.test_connectivity_generation()
     
+
+class TestSubstrateActuallySeeded:
+    """THE TEST THAT WOULD HAVE CAUGHT THE 2026-07-17 BUG -- and the gap it closes.
+
+    Every other test in this file seeds the CONSTRUCTOR (`CoreSimConfig(..., seed=42, ...)`) and therefore passes.
+    `TestSeedTracking` asserts `runtime_state.actual_seed_used == 12345` -- i.e. that the REPORTING FIELD IS SET.
+    Neither shape can catch a caller that builds `CoreSimConfig()` BARE and then sets `actual_seed_used`, which is
+    exactly what 8 research runners did:
+
+        cfg = CoreSimConfig()            # cfg.seed stays -1
+        cfg.actual_seed_used = int(seed) # a REPORTING field -- the bridge never reads it
+
+    The bridge seeds heterogeneity from `cfg.seed` (bridge.py:2136):
+        het_seed = cfg.heterogeneity_seed if cfg.heterogeneity_seed >= 0 else cfg.seed
+        if het_seed >= 0: cp.random.seed(het_seed)
+    Both default to -1 => the guard never fires => the per-neuron firing thresholds (bridge.py:1508,
+    `cp.random.uniform`) come from the UNSEEDED GLOBAL RNG. MEASURED CONSEQUENCE: two builds at the same seed got
+    DIFFERENT NEURONS (18.4 mV apart), which silently confounded an entire arc's same-seed comparisons -- the
+    confound was ~3x the effect being measured.
+
+    THE GENERAL LESSON THIS ENCODES: a test that asserts a FIELD IS SET is not a test that the field DOES ANYTHING.
+    Assert the PROPERTY (same seed => same substrate), not the bookkeeping.
+    """
+
+    def test_same_seed_gives_identical_neurons_within_a_process(self):
+        """Two bridges built back-to-back with the same seed must have identical neurons. This is the one that fails
+        loudest under the bug: each build advances the global RNG, so the 2nd differs from the 1st."""
+        import numpy as np
+        from sim.config import CoreSimConfig, GPUConfig, VisualizationConfig, RuntimeState
+        from sim.bridge import SimulationBridge
+
+        def build():
+            cfg = CoreSimConfig()
+            cfg.num_neurons = 64
+            cfg.dt_ms = 1.0
+            cfg.seed = 4242                 # <- the field the bridge ACTUALLY reads. Omit it and this test fails.
+            cfg.actual_seed_used = 4242     # reporting only; asserted here to prove it is NOT what makes it pass
+            br = SimulationBridge(core_config=cfg, gpu_config=GPUConfig(),
+                                  viz_config=VisualizationConfig(), runtime_state=RuntimeState())
+            br._initialize_simulation_data()
+            t = br.cp_neuron_firing_thresholds
+            return np.asarray(t.get() if hasattr(t, "get") else t)
+
+        a, b = build(), build()
+        assert a.shape == b.shape and a.size > 0, "no thresholds allocated -- test cannot discriminate"
+        np.testing.assert_array_equal(
+            a, b,
+            err_msg=("same seed produced DIFFERENT neurons. cfg.seed is not reaching the bridge's heterogeneity "
+                     "seeding (bridge.py:2136) -- every same-seed comparison built on this is confounded."),
+        )
+
+    def test_the_reporting_field_alone_does_NOT_seed(self):
+        """Pins the trap itself: setting ONLY `actual_seed_used` must NOT be mistaken for seeding. If this ever
+        starts producing identical neurons, the engine changed (actual_seed_used became load-bearing) and the
+        guidance in CLAUDE.md + the runner comments must be revisited."""
+        import numpy as np
+        from sim.config import CoreSimConfig, GPUConfig, VisualizationConfig, RuntimeState
+        from sim.bridge import SimulationBridge
+
+        def build_unseeded():
+            cfg = CoreSimConfig()
+            cfg.num_neurons = 64
+            cfg.dt_ms = 1.0
+            cfg.actual_seed_used = 4242     # ONLY the reporting field -- cfg.seed left at its -1 default
+            br = SimulationBridge(core_config=cfg, gpu_config=GPUConfig(),
+                                  viz_config=VisualizationConfig(), runtime_state=RuntimeState())
+            br._initialize_simulation_data()
+            t = br.cp_neuron_firing_thresholds
+            return np.asarray(t.get() if hasattr(t, "get") else t)
+
+        a, b = build_unseeded(), build_unseeded()
+        assert not np.array_equal(a, b), (
+            "setting ONLY actual_seed_used now yields identical neurons. Either the engine changed (the field became "
+            "load-bearing) or this test no longer discriminates. Both require revisiting the 2026-07-17 finding."
+        )
+
+
     test_seed = TestSeedTracking()
     test_seed.test_explicit_seed_tracked()
     test_seed.test_random_seed_generated()
