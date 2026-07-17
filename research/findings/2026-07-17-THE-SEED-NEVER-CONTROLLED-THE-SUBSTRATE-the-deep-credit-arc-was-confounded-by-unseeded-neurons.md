@@ -170,6 +170,35 @@ was not knowledge; it was that **nothing ever asserted the property end-to-end o
 The new tests close it for the e-prop arc (source-guard: the builder must set `cfg.seed`); the other 8 runners need
 the same (see BLAST RADIUS + the spawned task).
 
+## Is there a WIDER class of dead config fields? **Audited: NO — and the negative result sharpens the lesson.**
+
+Natural follow-up: if `actual_seed_used` was set-but-inert, how many other `CoreSimConfig` fields do runners set that
+the engine ignores? **Audited all 227 fields against `sim/` + `experiment/` + the host: ZERO are set-by-a-runner and
+never-read. The config surface is CLEAN.**
+
+*(First pass reported **52** — all FALSE POSITIVES. My regex matched only attribute access (`cfg.field`) while the
+engine reads config **heavily via `getattr(cfg, "field", default)`** — a STRING lookup. `bdsp_w_max` and
+`enable_d1_d2_asymmetry` were both in that list and both are plainly read (`bridge.py:7300`, `:2738`). **I verified
+the classifier before reporting, which is the only reason 52 false accusations did not enter the record.** Same
+lesson, fourth time tonight: **the instrument needs checking before its output does.**)*
+
+**⇒ THE NEGATIVE RESULT IS THE POINT, and it sharpens rule 15 considerably:**
+
+> **`actual_seed_used` was never a "set but never read" field. It IS read — `bridge.py` records it, for REPORTING.
+> It simply does not CONTROL the RNG.**
+
+So the real class is **narrower and nastier than a dead field**: **a field that IS READ, but only for REPORTING.**
+
+- A static *"does anything read this?"* audit — **the exact audit above** — returns **YES** and hands out **false
+  comfort**. It would NOT have caught this bug.
+- Grepping for the field's *name* finds hits (in the recorder, the checkpoint writer, the test that asserts it is set).
+- **The ONLY thing that catches it is a BEHAVIOURAL PROPERTY TEST**: set the field, change nothing else, and assert
+  the thing it claims to govern actually changed (or, for a seed: run twice and assert the substrate is IDENTICAL).
+
+**⇒ rule 15's sharp form: do not ask "is this field read?" — ask "if I change it, does the thing it names change?"**
+That is why the fix ships with `TestSubstrateActuallySeeded` (a discriminating pair) rather than a source-guard alone:
+a source-guard pins *this* runner; only the property test catches *the next* one.
+
 ## BLAST RADIUS — scoped mechanically. **The bug is NOT project-wide: 85 of 93 runners seed correctly. EIGHT do not.**
 
 **Method.** Every file that sets `actual_seed_used` AND constructs a `CoreSimConfig()`; for each, check whether the
