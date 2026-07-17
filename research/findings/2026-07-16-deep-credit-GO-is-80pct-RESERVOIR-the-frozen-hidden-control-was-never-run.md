@@ -130,3 +130,42 @@ The `SIGNAL=False`-vs-banked-"6-seed GO" contradiction is now fully run down, an
 **STANDING RULES this produced (both now in the skill's SILENT-FAILURE CLASS):**
 - *Never average a metric out of a run whose own `SIGNAL` is False.*
 - **NEW:** *"N-seed GO" is a claim about FILES — count them, and check the SPLIT.* "6-seed" that is three dev seeds is not a weaker result; it is a different claim entirely, and the blind half is the half that tests generalization.
+
+---
+
+## ADDENDUM 3 (2026-07-16) — HOW FAR DOES THE CONTAMINATION SPREAD? Audited mechanically: **it does not.** One write-up, not a systemic failure.
+
+Having found the 07-15 headline lifted out of `SIGNAL=False` runs, the obvious next question is whether the arc is
+riddled with the same defect. **Answered mechanically rather than by assertion** (rule 1 applied to itself):
+
+**Method.** Scan every `research/findings/raw/**/*.json` for a self-reported verdict; map each negative back to every
+`findings/*.md` that cites it; flag any citing finding whose header claims GO / BREAKTHROUGH / CONFIRMED / VALIDATED /
+SOLVED. That is the rule-1 violation shape, made grep-able.
+
+**Population.** 1259 raw results carry a verdict field: **`SIGNAL=True` 7, `SIGNAL=False` 65.** The negatives
+outnumber the positives ~9:1 — the runners are, overwhelmingly, honest reporters. *That ratio is exactly why lifting
+a field out of a negative is the live hazard: negatives are the common case, so a positive-looking sub-field is
+almost always sitting inside one.*
+
+**Result: 5 flagged → 5 explained. Zero new contraband.**
+
+| flagged finding | disposition |
+|---|---|
+| `2026-07-15-...-SOLVED-...` (cites `k8_s42/43`) | **the known defect** — CORRECTION block already appended today |
+| `2026-07-16-...-80pct-RESERVOIR...` (this doc) | **false positive by design** — cites the negatives precisely to expose them |
+| `AUTONOMOUS_STATE.md` | the running log; cites everything |
+| `2026-07-08-...-feedforward-arc-COMPLETE-...` (cites `_rolefiller_binding_seed42_smoke`) | **CLEAN.** Run: *"STAGE-0 BOUNDARY (honest) — role-filler binding … is NOT depth-separating."* Finding: *"single role-filler binding is NOT depth-required"*, verdict *"honest boundary"*. Claim == run. Flagged only because my regex hit "COMPLETE"/"validated but NARROW". |
+| `2026-07-08-...-inheritance-is-linear-...` (cites `_semantic_inheritance_ppmi_deep_credit`) | **CLEAN.** Run: *"HONEST STAGE-0 FINDING — NOT depth-required on REAL-PPMI codes."* Finding verdict: *"honest boundary + a clarifying reframe (**NOT a GO** — Stage-1 correctly NOT run on a shallow task)."* Claim == run. |
+
+**Conclusion — and it matters for what to do next.** The deep-credit arc is **not** systemically overclaimed. Its
+sibling findings state their negatives plainly and even decline to run Stage-1 when Stage-0 says shallow. **The 07-15
+write-up is the single point of failure**, and it failed at the *write-up layer*, downstream of instruments that were
+telling the truth in three separate files.
+
+⇒ The remedy is therefore the **mechanical guard, not a re-audit of the science**: rule 1 (never lift a metric out of
+a negative run) + rule 10 (an absent flag means DEFAULT, not OFF) + the now-default-on reservoir control. The arc's
+*measurements* stand; only the one headline built on top of them does not.
+
+**Honest scope of this audit:** it catches the shape "cites a negative, claims a positive." It cannot catch a finding
+that overclaims **without citing its raw file**, or one whose run reports no verdict field at all (1259 do; most
+runners do not). So this bounds the *known* contamination — it does not prove the arc globally clean.
