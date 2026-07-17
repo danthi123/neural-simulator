@@ -169,3 +169,47 @@ a negative run) + rule 10 (an absent flag means DEFAULT, not OFF) + the now-defa
 **Honest scope of this audit:** it catches the shape "cites a negative, claims a positive." It cannot catch a finding
 that overclaims **without citing its raw file**, or one whose run reports no verdict field at all (1259 do; most
 runners do not). So this bounds the *known* contamination — it does not prove the arc globally clean.
+
+---
+
+## ADDENDUM 4 (2026-07-16) — WHY A WELL-DESIGNED GATE STILL LET A RESERVOIR THROUGH: **"depth-required" ≠ "learned-depth-required."** The task is genuinely deep; a RANDOM expansion satisfies it without learning.
+
+Zero-GPU read of the banked runs' own Stage-0 fields (they were recorded all along, at `:528-529`, nested in
+`per_seed` — I first suspected they were discarded and **that suspicion was wrong; verified before recording**):
+
+| seed | `stage0_depth_separating` | `stage0_deep_best` | `stage0_l1` (**trained** 1-hidden oracle) | chance |
+|---|---|---|---|---|
+| 42 | **True** | 1.000 | 0.444 | 0.333 |
+| 43 | **True** | 1.000 | 0.370 | 0.333 |
+| 44 | **True** | 1.000 | 0.111 | 0.333 |
+
+**Good news first, and it is real: the task IS genuinely depth-required.** A deep rate oracle solves it outright
+(1.000) while a **trained** single-hidden-layer oracle sits at chance (0.44 / 0.37 / 0.11 vs 0.333). The Stage-0 gate
+was well-built and it was telling the truth. **The arc is not measuring nothing.**
+
+**Now the tension that explains everything.** FROZEN — **two random, untrained hidden layers + a trained readout** —
+scored **0.778**. That is a frozen reservoir *beating a trained depth-1 oracle by ~0.35*. Not a contradiction:
+it is **Cover's theorem**. A sufficiently wide random nonlinear expansion (here amplified by `--pool-k 8` population
+coding = an 8× widening) makes a depth-required task **linearly separable at the readout**. That is the whole
+reservoir-computing thesis, and it is working exactly as advertised.
+
+**⇒ THE LESSON, and it generalizes past this runner:** a depth gate of the form *"a deep oracle beats a shallow
+oracle"* certifies **the TASK needs more than one layer**. It says **nothing** about whether the hidden layer must be
+**LEARNED**. A random projection clears the depth bar by brute force, with zero credit assignment. So:
+
+> **"Depth-required" and "learned-depth-required" are different properties, and only the second one is evidence for a
+> credit-assignment rule.** A Stage-0 depth gate cannot separate them **by construction** — only a frozen-hidden arm can.
+
+This is why the missing control was not a nicety. The gate could be perfectly designed, honest, and passing, and a
+fixed random projection still walks through it — which is precisely what happened for months. It also retro-explains
+the measured split: FULL 0.889 vs FROZEN 0.778 vs chance 0.333 ⇒ the random expansion buys ~0.445 of the ~0.556
+margin (~80%), learning buys ~0.111.
+
+**What the in-flight sweep therefore actually asks** — sharpened: not *"is the task deep?"* (answered: yes) but
+**"does LEARNING the depth beat RANDOMLY PROJECTING to it, on seeds nobody tuned against?"** The blind arm
+(100/101/102) is the whole experiment; on dev seeds the +0.111 was already seed-variable (+0.185 / +0.037).
+
+**Follow-on this suggests (cheap, CPU, not yet run):** record `stage0_l0` — `stage0_depth_genuineness` **computes**
+`linear_inherit_heldout` (a no-hidden linear floor, `_semantic_inheritance_deep_credit_derisk.py:308/316`) but
+`run_seed` records only `l1`, so **the linear floor never reaches the output.** It costs nothing and completes the
+ladder: chance → **l0 linear** → l1 trained-shallow → FROZEN random-deep → FULL learned-deep.
