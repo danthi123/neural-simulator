@@ -10863,3 +10863,17 @@ The claim "4-wide is ~1.9× (then ~1.43×) worse than 2-wide" rested on comparin
 - **The ACTION (stay 2-wide) survives — for a DIFFERENT reason than I gave.** With flat throughput, total wall-clock for all 60 nets is **~the same either way (~15h)**; width only changes **WHEN each arm lands**. 2-wide **front-loads the FULL arms** ⇒ the ADDENDUM-5 reproducibility check + the first blind seeds arrive **hours earlier** (~03:45) instead of everything landing together at ~13:00. With per-seed checkpointing, earlier partial data is strictly better. **So: stay 2-wide, and relaunch BLIND when FULL finishes** (as planned) — but on throughput grounds it was a coin flip, not a 1.9× win.
 - **What I actually cost:** ~1h of BLIND_A/B progress, killed on a void analysis. Cheap, but self-inflicted.
 - **⇒ STANDING CORRECTION to the earlier claim in this log:** *"the audit's +4% was a SYNTHETIC PROXY and does NOT hold for the real workload"* — **that dismissal is RETRACTED.** The proxy's number (+4%) matches the real measurement (~1%) far better than my cross-run inference did. **A synthetic proxy validated against nothing beat a real comparison confounded three ways.** The lesson is not "proxies are bad" — it is **"an invalid comparison is worse than a caveated proxy."**
+
+**📏 THROUGHPUT — SETTLED BY THE CLEAN MEASUREMENT (01:45): 4-WIDE IS 12.7% BETTER. Went back to 4-wide; BLIND arms relaunched.**
+- **The clean like-for-like intervals, both inside this sweep, cupy throughout, no D5 contamination:**
+  - **4-wide: net1→net2 = 59.1 min/net** (22:25:24→23:24:29)
+  - **2-wide: net4→net5 = 33.3 min/net** (01:06:30→01:39:48 — pure 2-wide; BLIND killed 00:40, D5 done ~00:15)
+- ⇒ **4-wide 4/59.1 = 0.0677 nets/min vs 2-wide 2/33.3 = 0.0601 ⇒ 4-WIDE IS 12.7% BETTER.** **My "4-wide is 1.9× worse" was wrong in DIRECTION as well as magnitude**, and the Linux-GPU audit's **"+4% at 4 procs"** — which I dismissed as a synthetic proxy — was **directionally RIGHT and if anything conservative.**
+- **Cost of my error:** ~1h of BLIND_A/B progress killed, plus ~1h at the slower 2-wide rate. **Self-inflicted, on a comparison confounded three ways** (nets/seed, CPU-vs-GPU backend, unknown concurrency).
+- **Relaunched at 4-wide** (`setsid`, own pgid, `SIM_BACKEND=cupy` verified `GPU memory`): `_eprop6x_BLIND_A` (103,104,105,107,108) + `_eprop6x_BLIND_B` (110,114,115,116). **Total remaining ~50 nets ⇒ ~12.3h at 4-wide (vs 13.9h at 2-wide) ⇒ all arms ~14:00.** Per-seed checkpoints land continuously regardless.
+
+**✅ THE PRE-REGISTRATION'S INSTRUMENT IS VALIDATED BY LIVE GPU DATA (01:44) — the CPU reconstruction was FAITHFUL.**
+The arms' first progress lines, from the live cupy run:
+- `[seed 42] k=5 chance 0.333 | STAGE0 depth-sep True (deep-best 1.000 vs 1-layer 0.444) | oracle 1.000`
+- `[seed 100] k=5 chance 0.333 | STAGE0 depth-sep True (deep-best 1.000 vs 1-layer 0.407) | oracle 1.000`
+**Both match my 2026-07-16 22:41 CPU pre-registration TO THE DIGIT** (42 → l1 0.444; 100 → l1 0.407; both dsep True, deep_best 1.000) — and that table was filed **before any sweep result existed**. ⇒ **the seed-101 degenerate exclusion and the 9-seed task-validity screen rest on a reconstruction the live run confirms**, across a backend change (numpy→cupy). *This is what a validated instrument looks like, and it is the contrast with the throughput analysis above: the stage-0 reconstruction was checked against the banked artifacts BEFORE use; the throughput number was not checked against anything.*
