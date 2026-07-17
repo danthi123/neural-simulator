@@ -321,9 +321,24 @@ remaining ~20% now looks **more like real learning than like noise**, on this ev
 - it is not an under-training artifact (both arms are converged);
 - it is not a linear-decodability artifact (ADDENDUM 4: l0 = 0.265, *below* chance).
 
-**What this does NOT establish, and why the sweep still matters.** n=2 seeds; the gain is seed-variable
-(+0.185 / +0.037); and the pattern could still be a capacity/regularization effect rather than credit assignment
-(freezing the hidden layers *removes parameters*, which alone can shift a fit/generalize trade-off). The blind,
-task-validity-screened arm (n=11) remains the test. **Pre-registered addition to the read-out:** report **train_acc
-alongside inherit for both arms**. If the blind arm reproduces "FROZEN fits better, generalizes worse", the deep-credit
-share is real-but-small. If FROZEN matches FULL on *both*, it is a reservoir and the plan's first link needs re-scoping.
+**The capacity/regularization null — I named it, then checked its DIRECTION, and it is DISFAVORED.** The obvious null is
+*"freezing removes trainable parameters, and parameter count alone shifts a fit/generalize trade-off — no credit
+assignment required."* But run the arrow: **FULL trains MORE parameters** (all FF pathways) than **FROZEN** (the last FF
+pathway only). More trainable parameters should fit the training set **better**. **FULL fits WORSE (0.956 vs 0.983).**
+The simple capacity story predicts the *opposite* of the observed direction on the fit axis, and the classic
+overfitting story (more params → better fit, worse transfer) is contradicted on *both* axes at once. What the data fits
+instead: FROZEN's readout sits on a **wide fixed random code** that is easy to memorize and transfers poorly (the
+textbook reservoir failure), while FULL's feedback-alignment credit is **noisy** — it perturbs the very features the
+readout is fitting, so it fits less well yet lands on features that transfer. Both arms share the same readout size, so
+this is about **feature quality, not parameter budget.**
+
+**What this still does NOT establish, and why the sweep remains the test.** **n=2 seeds** — this whole fit/generalize
+argument rests on four numbers, and I have spent today documenting what happens when a story is built on too few files.
+The gain is seed-variable (+0.185 / +0.037). Other nulls survive (e.g. training the hidden layers could act as a
+*noise-injection regularizer* — helping generalization without the credit being directional; that is a real mechanism
+and this data cannot exclude it). The blind, task-validity-screened arm (n=11) remains the test.
+**Pre-registered addition to the read-out:** report **train_acc alongside inherit for both arms**.
+- Blind arm reproduces *"FROZEN fits better, generalizes worse"* → the deep-credit share is **real but small**, and
+  the honest headline becomes "mostly reservoir, with a genuine minority learning contribution."
+- FROZEN matches FULL on **both** → it is a **reservoir**, and the plan's first link needs re-scoping.
+- FROZEN fits *worse* and generalizes worse → the fit/generalize reading here was an n=2 artifact; say so plainly.
