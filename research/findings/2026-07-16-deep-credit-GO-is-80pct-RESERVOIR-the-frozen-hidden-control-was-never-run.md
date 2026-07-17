@@ -280,3 +280,50 @@ falsifiable check on the experiment, fixed before its data exists.
 **5. Fix owed (not applied mid-flight):** record `pool_k` (and `freeze_hidden`) in the output config. One dict key each.
 Until then the ONLY provenance for the most load-bearing knob in this arc is a **synapse count in a log file** — which
 is how a `pool_k=1` run and a `pool_k=8` run become indistinguishable in the record.
+
+---
+
+## ADDENDUM 6 (2026-07-16) — the epochs confound is **RESOLVED from artifacts**, and the same read produces evidence that cuts **FOR** deep credit. Recorded because it cuts against this document's own thesis.
+
+**The worry (mine, and a real one).** FROZEN trains only a linear readout over fixed features — convex, converges fast.
+FULL keeps improving its hidden layers. So the deep-credit share could **grow with epochs**, and the in-flight sweep
+runs `epochs=120` while the headline used `150`. Concluding "deep credit is ~0" from an **under-trained** arm would be
+exactly the error class this document exists to correct.
+
+**Resolved from existing artifacts — the confound is not live:**
+
+| config | train_acc | inherit (held-out) |
+|---|---|---|
+| `ep300_s4{2,3,4}` — **pool_k=1**, epochs **300** | **0.41 / 0.53 / 0.55** | 0.370 / 0.556 / 0.407 |
+| banked FULL — **pool_k=8**, epochs **120** | **0.956** | 0.889 |
+| banked FROZEN — **pool_k=8**, epochs **120** | **0.983** | 0.778 |
+
+At `pool_k=1`, **300 epochs cannot even FIT the training set** (train 0.41–0.55). At `pool_k=8`, **120 epochs reaches
+train 0.956–0.983 — already saturated.** ⇒ **`pool_k` is the dominant lever; epochs is not.** Both arms have
+essentially fit their training data at 120; 30 more epochs (→150) cannot materially move a converged fit, and
+`ep300` shows epochs does not rescue a network that lacks the representational width. **The 120-vs-150 residual named
+in ADDENDUM 5 is therefore immaterial to the FULL-vs-FROZEN contrast** (it still explains the 0.852-vs-0.889
+single-seed gap; it does not threaten the comparison).
+
+**And the same table cuts FOR deep credit — recorded because it opposes this doc's thesis:**
+
+> **FROZEN FITS BETTER (train 0.983 vs 0.956) yet GENERALIZES WORSE (held-out 0.778 vs 0.889).**
+
+That is the **memorization signature**. The fixed random reservoir's readout has ample capacity to fit the training set
+by brute force — and does, *better* than the learned network — but it transfers less. Learning the hidden layers buys
+**+0.111 of GENERALIZATION while fitting the training data LESS well.** That is what genuine representation learning
+looks like, and it is **not** what "the +0.111 is noise" would look like.
+
+**Honest update to this document's thesis.** The headline claim stands unchanged: **the frozen-hidden control was never
+run, and when run it accounts for ~80% of the margin — so "deep credit is GO" as banked is unsupported.** But the
+remaining ~20% now looks **more like real learning than like noise**, on this evidence:
+- it is a *generalization* gain accompanied by *worse* training fit (the memorization signature runs the other way);
+- it is not an under-training artifact (both arms are converged);
+- it is not a linear-decodability artifact (ADDENDUM 4: l0 = 0.265, *below* chance).
+
+**What this does NOT establish, and why the sweep still matters.** n=2 seeds; the gain is seed-variable
+(+0.185 / +0.037); and the pattern could still be a capacity/regularization effect rather than credit assignment
+(freezing the hidden layers *removes parameters*, which alone can shift a fit/generalize trade-off). The blind,
+task-validity-screened arm (n=11) remains the test. **Pre-registered addition to the read-out:** report **train_acc
+alongside inherit for both arms**. If the blind arm reproduces "FROZEN fits better, generalizes worse", the deep-credit
+share is real-but-small. If FROZEN matches FULL on *both*, it is a reservoir and the plan's first link needs re-scoping.
