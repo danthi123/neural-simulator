@@ -78,11 +78,39 @@ class OnBridgeNPNet(OnBridgeBDSPNet):
         drive = np.asarray(to_host(self._drive_dev)).astype(np.float32).copy()
         drive[self.idx_hid] += xi.astype(np.float32)            # the node perturbation = intrinsic-noise current on hidden
         pert = from_host(drive)
+        if getattr(self, "graded", False):                      # rate-net positive control (see _grade_acc)
+            acc = self._grade_acc(self.idx_out, settle_steps, pert=pert)
+            return np.array([acc[c * self.pool_out:(c + 1) * self.pool_out].sum() for c in range(self.n_classes)])
         acc = np.zeros(len(self.idx_out))
         for _ in range(settle_steps):
             self.sb.cp_external_input_current[:] = pert
             self.sb._run_one_simulation_step()
             acc += np.asarray(to_host(self.sb.cp_firing_states[self.idx_out])).astype(float)
+        return np.array([acc[c * self.pool_out:(c + 1) * self.pool_out].sum() for c in range(self.n_classes)])
+
+    # --- RATE-NET POSITIVE CONTROL (2026-07-17): read a GRADED depolarization instead of DISCRETE spike counts, to
+    # test whether the spike-count readout DISCRETENESS is the shared supervised-readout wall (frontier map #1).
+    # graded signal = per-neuron depolarization above the reset floor, CAPPED so the +30mV spike peak does not
+    # dominate the subthreshold graded signal (a monotone rate proxy that avoids the spike/reset artifact).
+    # Default OFF (self.graded absent/False) => the spiking path below is byte-identical. The built-in hidden_frozen
+    # mode + the depth_helps gate are the anti-cheat: if the graded read trivially carries the class signal,
+    # hidden_frozen ALSO passes and depth_helps=False (correctly: the readout, not NP, is doing it).
+    def _grade_acc(self, idx, settle_steps, pert=None):
+        from sim.backend import to_host
+        floor = float(np.asarray(to_host(self.sb.cp_izh_c_reset)).ravel()[0]) if hasattr(self.sb, "cp_izh_c_reset") and self.sb.cp_izh_c_reset is not None else -65.0
+        acc = np.zeros(len(idx))
+        for _ in range(settle_steps):
+            self.sb.cp_external_input_current[:] = self._drive_dev if pert is None else pert
+            self.sb._run_one_simulation_step()
+            v = np.asarray(to_host(self.sb.cp_membrane_potential_v[idx])).astype(float)
+            acc += np.clip(v - floor, 0.0, 50.0)
+        return acc
+
+    def _readout(self, x_bits, settle_steps):
+        if not getattr(self, "graded", False):
+            return super()._readout(x_bits, settle_steps)
+        self._reset_membrane(); self._set_apical(None); self.cfg.bdsp_learning_rate = 0.0; self._set_input_drive(x_bits)
+        acc = self._grade_acc(self.idx_out, settle_steps)
         return np.array([acc[c * self.pool_out:(c + 1) * self.pool_out].sum() for c in range(self.n_classes)])
 
     def _write_in2hid_delta(self, delta_in_hid):
@@ -157,7 +185,7 @@ class OnBridgeNPNet(OnBridgeBDSPNet):
 
 
 def run(seed, task, parity_bits, epochs, lr_hid, lr_out, sigma, hidden, settle_steps, k,
-        pool_out=24, hidden_bias=0.0, output_bias=0.0, fwd_wmean=90.0, max_train=0, max_test=0):
+        pool_out=24, hidden_bias=0.0, output_bias=0.0, fwd_wmean=90.0, max_train=0, max_test=0, graded=False):
     (Xtr, ytr), (Xte, yte), n_bits = _load_task(task, seed, parity_bits)
     Xtr = np.asarray(Xtr, float); Xte = np.asarray(Xte, float)
     if max_train and len(Xtr) > max_train:      # subsample for a tractable on-bridge GO/no-go (many settles per example)
@@ -170,6 +198,7 @@ def run(seed, task, parity_bits, epochs, lr_hid, lr_out, sigma, hidden, settle_s
     for mode in ("np", "shuffle_dl", "hidden_frozen"):
         net = OnBridgeNPNet(seed, n_bits, hidden=hidden, pool_out=pool_out, hidden_bias=hidden_bias,
                             output_bias=output_bias, fwd_wmean=fwd_wmean, fwd_wjit=2.0)
+        net.graded = bool(graded)                               # rate-net positive control (default off = byte-identical)
         net.train_np(Xtr, ytr, epochs, lr_hid, lr_out, sigma, settle_steps, seed, mode=mode, k=k)
         out[mode] = round(net.accuracy(Xte, yte, settle_steps), 3)
         del net
@@ -199,12 +228,13 @@ def main():
     ap.add_argument("--fwd-wmean", type=float, default=90.0)  # strong forward => input reaches output (fwdsweep)
     ap.add_argument("--max-train", type=int, default=0); ap.add_argument("--max-test", type=int, default=0)
     ap.add_argument("--smoke", action="store_true"); ap.add_argument("--out", type=str, default=None)
+    ap.add_argument("--graded", action="store_true", help="RATE-NET positive control: read graded depolarization instead of discrete spike counts (tests whether the spike-count readout discreteness is the shared supervised-readout wall)")
     a = ap.parse_args()
     if a.smoke:
         a.epochs = 4; a.settle_steps = 20
     res = [run(s, a.task, a.parity_bits, a.epochs, a.lr_hid, a.lr_out, a.sigma, a.hidden, a.settle_steps, a.k,
                pool_out=a.pool_out, hidden_bias=a.hidden_bias, output_bias=a.output_bias, fwd_wmean=a.fwd_wmean,
-               max_train=a.max_train, max_test=a.max_test)
+               max_train=a.max_train, max_test=a.max_test, graded=a.graded)
            for s in a.seeds]
     if len(res) > 1:
         ng = sum(1 for r in res if r["GO"])
