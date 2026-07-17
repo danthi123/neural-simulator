@@ -93,6 +93,28 @@ guard still requires a non-negative seed (so *"not setting `cfg.seed`" means "no
 never reproducible, so they were never a valid baseline. This is not a regression; it is the first time the arc has
 had one.
 
+## The fix is VERIFIED END-TO-END, not just on the thresholds (2026-07-17)
+
+Fixing the thresholds is necessary but not sufficient: **cupy's atomics can make GPU reductions non-deterministic
+run-to-run even under perfect seeding**, which would leave residual noise in every comparison. Tested rather than
+assumed — same seed, two fresh cupy processes, build → train 2 epochs → evaluate:
+
+| quantity | run 1 | run 2 |
+|---|---|---|
+| thresholds md5 | `f151e39d1ec89ee6` | `f151e39d1ec89ee6` ✅ |
+| post-train `ff_weight_norm` | `100385.3125000000` | **identical to 10 dp** ✅ |
+| post-train inherit acc | `0.3333333333` | identical ✅ |
+
+⇒ **the whole pipeline — bridge construction, spiking dynamics, e-prop training, evaluation — is now DETERMINISTIC
+run-to-run on cupy.** The seed controls the experiment, end to end, for the first time in this arc. *(Accuracy sits at
+chance because this is 2 epochs on 40 examples; the test is determinism, not learning.)*
+
+**Honest scope:** determinism holds **WITHIN a backend, not ACROSS one.** The cupy thresholds (`f151e39d…`) differ
+from numpy's (`6d44f9a7…`) at the same seed — different RNG implementations draw different numbers. So a numpy result
+and a cupy result are still **not** byte-comparable; each is internally reproducible. **This is exactly why the
+earlier cross-backend "reproducibility check" was void** (rule 14) — and it is now a *property of the design*, not an
+unknown.
+
 ## How it was found — and why the process matters more than the bug
 
 Not by looking for it. By **a number refusing to reconcile**, and refusing to let it go:
