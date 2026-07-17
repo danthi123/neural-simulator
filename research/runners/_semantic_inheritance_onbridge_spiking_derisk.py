@@ -184,6 +184,22 @@ class OnBridgeBDSPNet:
         cfg.enable_stdp = False
         cfg.enable_hebbian_learning = False
         cfg.actual_seed_used = int(seed)
+        # ⛔ REPRODUCIBILITY BUG, FOUND + FIXED 2026-07-17. `actual_seed_used` is a REPORTING field -- the bridge
+        # NEVER reads it. It seeds heterogeneity from `cfg.seed` (bridge.py:2136:
+        #   het_seed = cfg.heterogeneity_seed if cfg.heterogeneity_seed >= 0 else cfg.seed
+        #   if het_seed >= 0: cp.random.seed(het_seed)
+        # ), and BOTH defaulted to -1 => the guard was FALSE => `cp.random.seed()` was NEVER CALLED => the per-neuron
+        # firing thresholds (bridge.py:1508, `cp.random.uniform(...)`) were drawn from the UNSEEDED GLOBAL RNG.
+        # CONSEQUENCE: `--seeds 42` did NOT control the substrate. MEASURED: two FRESH processes at seed 42 gave
+        # DIFFERENT thresholds (md5 55c612a7 vs cc6815c6; means -44.48 vs -41.79), and four nets built back-to-back
+        # in ONE process differed from each other (max 18.4 mV) because each `_mk()` advanced the global RNG. That
+        # silently CONFOUNDED every FULL-vs-FROZEN comparison in this arc -- net(1st build) and fnet(4th build) had
+        # DIFFERENT NEURONS -- and the confound (share swinging +0.33 / 0.00 / -0.33 on the SAME seed 42) is LARGER
+        # than the deep-credit effect (+0.111) it was meant to measure.
+        # THE FIX: set cfg.seed, which is what the bridge actually reads. VERIFIED: two fresh processes now produce
+        # byte-identical thresholds (md5 6d44f9a7bd615770 both). Also seeds ou_seed's fallback (config.py:124), so
+        # the OU noise is deterministic too. Pinned by tests/test_plasticity_inertness.py.
+        cfg.seed = int(seed)
         self.cfg = cfg
         br = SimulationBridge(core_config=cfg, gpu_config=GPUConfig(),
                               viz_config=VisualizationConfig(), runtime_state=RuntimeState())

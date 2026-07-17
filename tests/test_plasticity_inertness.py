@@ -195,3 +195,53 @@ def test_per_seed_records_the_linear_floor():
     src = inspect.getsource(m.run_seed)
     assert "stage0_l0_linear" in src, "run_seed must record the LINEAR floor (stage0's linear_inherit_heldout)"
     assert "linear_inherit_heldout" in src, "the linear floor must come from stage0's own computed value"
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# 6: REPRODUCIBILITY -- the seed must actually control the SUBSTRATE, not just the weights (found 2026-07-17).
+# ---------------------------------------------------------------------------------------------------------------
+
+def test_onbridge_net_seeds_cfg_seed_not_only_actual_seed_used():
+    """THE BUG THIS PINS (found 2026-07-17, after it silently confounded an entire arc):
+
+    The builder set `cfg.actual_seed_used = seed` -- a REPORTING field the bridge never reads. The bridge seeds
+    heterogeneity from `cfg.seed` (bridge.py:2136):
+        het_seed = cfg.heterogeneity_seed if cfg.heterogeneity_seed >= 0 else cfg.seed
+        if het_seed >= 0: cp.random.seed(het_seed)
+    Both defaulted to -1, so the guard was FALSE and `cp.random.seed()` was NEVER CALLED -- leaving the per-neuron
+    firing thresholds (bridge.py:1508 `cp.random.uniform(...)`) drawn from the UNSEEDED GLOBAL RNG.
+
+    MEASURED CONSEQUENCE: `--seeds 42` did not control the substrate. Two FRESH processes at seed 42 produced
+    DIFFERENT thresholds (md5 55c612a7 vs cc6815c6), and four nets built back-to-back in ONE process differed by up
+    to 18.4 mV (each _mk() advanced the global RNG). So every FULL-vs-FROZEN comparison in the arc compared nets with
+    DIFFERENT NEURONS, and the confound was LARGER than the effect (deep_credit_share swung +0.33 / 0.00 / -0.33 on
+    the same seed 42).
+
+    Source-level guard: if `cfg.seed` is dropped again, the arc silently returns to measuring noise, and NOTHING
+    else in the suite would catch it -- the failure is a plausible number, not an error."""
+    import inspect
+    from research.runners import _semantic_inheritance_onbridge_spiking_derisk as m
+
+    src = inspect.getsource(m.OnBridgeBDSPNet.__init__)
+    assert "cfg.seed = int(seed)" in src, (
+        "OnBridgeBDSPNet must set cfg.seed -- that is the field the bridge reads for heterogeneity "
+        "(bridge.py:2136). cfg.actual_seed_used is a REPORTING field only; setting it alone leaves the "
+        "per-neuron firing thresholds on the UNSEEDED global RNG, which confounds every same-seed comparison."
+    )
+    i = src.find("cfg.actual_seed_used")
+    j = src.find("cfg.seed = int(seed)")
+    assert i != -1 and j > i, "cfg.seed must be set alongside/after actual_seed_used in the config block"
+
+
+def test_bridge_heterogeneity_guard_still_requires_a_nonnegative_seed():
+    """Pins WHY the bug existed, so a future reader cannot mistake it for paranoia: the bridge's heterogeneity
+    seeding is GUARDED by `het_seed >= 0`, and both source fields default to -1. The guard is correct; the builder
+    was simply not setting the field it reads. If this guard ever becomes unconditional, this test should be
+    revisited -- but until then, NOT setting cfg.seed means NOT seeding."""
+    import inspect
+    from sim import bridge as bridge_mod
+
+    src = inspect.getsource(bridge_mod)
+    assert "cfg.heterogeneity_seed if cfg.heterogeneity_seed >= 0 else cfg.seed" in src, (
+        "the bridge's het_seed derivation changed -- re-verify what the builder must set"
+    )
