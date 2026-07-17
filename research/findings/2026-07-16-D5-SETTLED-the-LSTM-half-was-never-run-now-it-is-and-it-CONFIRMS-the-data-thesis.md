@@ -65,8 +65,19 @@ strategic call SURVIVES — and is no longer an assertion.**
 3. **A smaller LSTM was not tried.** The capacity/data mismatch is the mechanism; a right-sized recurrent model at 2M
    words is unmeasured. This does not threaten the DATA thesis (a model too small to overfit is also too small to
    extract deep structure), but it is not excluded.
-4. **Seed 42 is complete; 43/44 were in flight at write-up.** The margin is large (−1.4 nats) and monotone across six
-   depth buckets, so seed noise is an implausible explanation — but this is stated as **n=1 → 3**, not 6.
+4. **~~Seed 42 is complete; 43/44 were in flight at write-up.~~ → RESOLVED: 3 seeds, UNANIMOUS and TIGHT.**
+
+| seed | shallow margin | deep margin | verdict |
+|---|---|---|---|
+| 42 | −0.791 | −1.392 | bigram wins at every depth |
+| 43 | −0.956 | −1.445 | bigram wins at every depth |
+| 44 | −0.729 | −1.408 | bigram wins at every depth |
+| **mean** | **−0.825** | **−1.415** | **0/3 seeds beat the bigram** |
+
+   **deep_margin range is −1.445 … −1.392 — a 0.053-nat spread.** The effect is ~27× its own seed-spread, so seed
+   noise is not a candidate explanation and n=3 is ample here (contrast the deep-credit arc, where the effect
+   +0.037..+0.185 was *smaller than* its spread — which is exactly why THAT one needs n=11 and this one does not).
+   **Reported as 3-seed, not 6, and not inflated.**
 
 ## Process notes (both cost real time today)
 
