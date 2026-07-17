@@ -175,6 +175,18 @@ a tool it never told you to install.
    travel with them into every quote. **Corollary — a blanket quantifier ("each", "every", "all figures are") is a
    claim about EVERY member**: enumerate them or weaken the word ("each 6-seed GO" was true of 12/15; "every result
    6-seed" of 7/8).
+14. **COMPARING TWO RUNS REQUIRES PROVING THEY ARE THE SAME EXPERIMENT — and AN INVALID COMPARISON IS WORSE THAN A
+   CAVEATED PROXY.** On 2026-07-17 I "measured" that 4-wide was **1.9× worse** than 2-wide by dividing a banked run's
+   `elapsed_seconds` by its seeds. **It was wrong three ways, each found only AFTER I had acted on it:** I divided by
+   **4 nets/seed** when that run predated the reservoir control and had **3** (its `per_seed` keys prove it); it ran
+   **`backend='numpy'` (CPU)** while the sweep ran **cupy (GPU)** — *I compared a CPU run to a GPU run and called it
+   throughput*; and its concurrency was unknown. **The real like-for-like interval, taken inside one sweep, showed
+   2-wide ≈ 4-wide within ~1%** — i.e. exactly the **+4%** the Linux-GPU audit's *synthetic proxy* had predicted and
+   which **I had explicitly dismissed as "not holding for the real workload."** ⇒ **`elapsed_seconds` is not a
+   measurement; it is a number attached to a config you must READ.** Before any cross-run comparison, diff the configs
+   (backend, code version, concurrency, what the run actually did). If you cannot, **measure an interval inside ONE
+   run** instead. And do not discard a caveated-but-valid proxy in favour of a confident-but-confounded comparison —
+   the proxy won.
 
 **THE SELF-CHECK:** *"If this were silently wrong, what would look different?"* If the answer is "nothing" — the
 process is alive, the log grows, the number is plausible — **you have no evidence, only an absence of alarms.**
