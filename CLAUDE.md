@@ -3652,6 +3652,30 @@ Directories:
 
 All RNG sources (CuPy, NumPy, random) are seeded together for determinism. The `RuntimeState.actual_seed_used` tracks the seed used. Separate seeds exist for heterogeneity and noise (`heterogeneity_seed`, `ou_seed`).
 
+> ### ⛔ **`actual_seed_used` DOES NOT SEED ANYTHING. Set `cfg.seed`.** (a real bug, 2026-07-17 — read this before writing a runner)
+>
+> **`actual_seed_used` is a REPORTING field. The bridge never reads it.** Heterogeneity is seeded from **`cfg.seed`**
+> (`bridge.py:2136`): `het_seed = cfg.heterogeneity_seed if cfg.heterogeneity_seed >= 0 else cfg.seed;
+> if het_seed >= 0: cp.random.seed(het_seed)`. **Both default to `-1`**, so if you never set one, **the guard never
+> fires** and the per-neuron firing thresholds (`bridge.py:1508`, `cp.random.uniform`) come from the **UNSEEDED GLOBAL
+> RNG** — `--seeds 42` will NOT control your substrate.
+>
+> ```python
+> cfg = CoreSimConfig(..., seed=42, ...)   # ✅ correct — what the determinism suite does
+> cfg = CoreSimConfig(); cfg.seed = 42     # ✅ also correct
+> cfg = CoreSimConfig(); cfg.actual_seed_used = 42   # ⛔ SEEDS NOTHING. Different neurons every run.
+> ```
+>
+> **This cost the deep-credit arc months of confounded results**: two fresh processes at the same seed got different
+> neurons; four nets built back-to-back in ONE process differed by up to **18.4 mV** (each build advances the global
+> RNG), so every FULL-vs-FROZEN comparison compared **different neurons** — a confound **~3× the effect** being
+> measured (`deep_credit_share` read **+0.333 / 0.000 / −0.333** on the *same* seed). **8 of 93 runners had this bug.**
+>
+> **The engine is fine** — it seeds correctly the moment you pass `seed=`. **Verify, don't assume:** build twice at one
+> seed and hash `cp_neuron_firing_thresholds`; identical ⇒ seeded. Pinned by
+> `tests/test_determinism.py::TestSubstrateActuallySeeded`. Finding:
+> [`2026-07-17-THE-SEED-NEVER-CONTROLLED-THE-SUBSTRATE-...`](research/findings/2026-07-17-THE-SEED-NEVER-CONTROLLED-THE-SUBSTRATE-the-deep-credit-arc-was-confounded-by-unseeded-neurons.md).
+
 ## GPU Memory Considerations
 
 - Networks >100K neurons require 20GB+ VRAM
