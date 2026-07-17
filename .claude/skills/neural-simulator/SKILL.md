@@ -139,6 +139,15 @@ a tool it never told you to install.
    grep its own `.cmd.json` for the flag that closes it **and** read that flag's default. One-line check; would
    have caught this on day one. **Corollary — a claim inherited from a neighbouring config is not evidence:** the
    config that earns a claim and the config that quotes it are different experiments.
+   **The WRITING-SIDE half (same defect, other end): RECORD THE KNOB — a FILENAME IS NOT PROVENANCE.**
+   `_onbridge_eprop_port_derisk.py` never writes `pool_k` into its output config (`:672-673`) and never prints it,
+   while `--pool-k` **defaults to 1** and the whole arc runs at 8. So the ONLY provenance for the most load-bearing
+   knob was the string `k8` in a filename — and a file not named that (`_eprop_banked_FULL.json`) is
+   **indistinguishable from a `pool_k=1` run in the record.** Recovering it needed forensics (the bridge's synapse
+   count: 1408 @ k=1, 22528 @ k=4, 90112 @ k=8 — exact k² scaling). ⇒ **every knob that changes the experiment must
+   land in the output artifact**; if you must reconstruct a config from a filename or a log's byte-count, the record
+   is already broken. **And validate any forensic instrument before trusting it** — show it DISCRIMINATES (a
+   synapse count that were constant across `pool_k` would have "confirmed" anything).
 
 **THE SELF-CHECK:** *"If this were silently wrong, what would look different?"* If the answer is "nothing" — the
 process is alive, the log grows, the number is plausible — **you have no evidence, only an absence of alarms.**
