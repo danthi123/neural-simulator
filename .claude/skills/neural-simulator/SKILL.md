@@ -188,6 +188,23 @@ a tool it never told you to install.
    run** instead. And do not discard a caveated-but-valid proxy in favour of a confident-but-confounded comparison —
    the proxy won.
 
+15. **A SEED IS A HYPOTHESIS UNTIL YOU HASH THE STATE IT IS SUPPOSED TO CONTROL.** The deepest defect of the whole
+   2026-07-16/17 audit arc: **`--seeds` never controlled the substrate.** The on-bridge builder set
+   `cfg.actual_seed_used` — a **REPORTING field the bridge never reads** — while the bridge seeds heterogeneity from
+   `cfg.seed` (`bridge.py:2136`, `if het_seed >= 0: cp.random.seed(het_seed)`). Both defaulted to `-1`, so the guard
+   was **False**, `cp.random.seed()` was **NEVER CALLED**, and the per-neuron firing thresholds (`bridge.py:1508`,
+   `cp.random.uniform`) came from the **UNSEEDED GLOBAL RNG**. **Measured:** two fresh processes at seed 42 →
+   different thresholds (means −44.48 vs −41.79); four nets built back-to-back in ONE process → **18.4 mV** apart,
+   because each build advanced the global RNG. ⇒ **every FULL-vs-FROZEN comparison in the arc compared DIFFERENT
+   NEURONS**, and the confound (`deep_credit_share` = **+0.333 / 0.000 / −0.333 on the SAME seed**) was **~3× the
+   effect** it measured. It invalidated a live 7h sweep and my own "80% reservoir" headline from the same day.
+   **The guard was correct; the builder never set the field it reads.** ⇒ **Reproducibility is not a property of
+   PASSING a seed — it is a property you MEASURE.** Run it twice, **hash the substrate** (thresholds/weights/state),
+   compare. **60 seconds**, and every number in the arc rests on it. **Corollary: `foo_seed_used`-style fields are
+   usually REPORTING, not CONTROL — grep who READS the field, never trust its name.** *(It survived for months
+   because `--seeds 42` is the most natural thing in the world to assume works — and because I checked the RUNNER's
+   RNG discipline and never checked the BRIDGE's.)*
+
 **THE SELF-CHECK:** *"If this were silently wrong, what would look different?"* If the answer is "nothing" — the
 process is alive, the log grows, the number is plausible — **you have no evidence, only an absence of alarms.**
 

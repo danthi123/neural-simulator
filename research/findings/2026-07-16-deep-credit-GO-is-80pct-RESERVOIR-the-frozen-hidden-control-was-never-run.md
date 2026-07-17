@@ -1,5 +1,41 @@
 # The banked "feedforward spiking deep credit is ALREADY GO (K=8 0.877)" is **80% a fixed random reservoir + a linear readout** — the frozen-hidden control existed in the code, unused, and the GO gate never included it
 
+> # ⛔⛔ THE "80%" NUMBER IS **CONFOUNDED** — CORRECTION 2026-07-17. READ THIS FIRST.
+>
+> **The critique in this document STANDS. The specific 80/20 split DOES NOT.**
+>
+> A reproducibility bug found 2026-07-17 invalidates the *measurement* this headline rests on: **`--seeds` never
+> controlled the substrate.** The builder set `cfg.actual_seed_used` (a REPORTING field the bridge never reads) but
+> **not `cfg.seed`**, so `bridge.py:2136`'s guard `if het_seed >= 0` was **False**, `cp.random.seed()` was **never
+> called**, and the per-neuron firing thresholds (`bridge.py:1508`) came from the **UNSEEDED GLOBAL RNG**.
+> **Measured:** two fresh processes at seed 42 → different thresholds (means −44.48 vs −41.79); four nets built
+> back-to-back in one process → up to **18.4 mV** apart.
+>
+> **⇒ FULL (0.889) and FROZEN (0.778) were measured in SEPARATE PROCESSES — on DIFFERENT NEURONS.** The 80/20 split
+> compares two substrates. The confound is **~3× the effect**: on the SAME seed 42, `deep_credit_share` reads
+> **+0.333** (banked), **0.000** (cupy/new code), **−0.333** (numpy/new code) — the last has the frozen reservoir
+> BEATING the trained net, which is a coin flip, not a result.
+>
+> **WHAT STANDS** (about a MISSING CONTROL and a WRITE-UP, not about the number): the frozen-hidden control was never
+> run, and `train_layers` was written for it and never invoked; the gate could not distinguish deep credit from a
+> random projection + linear readout, **so the banked headline is unsupported as stated**; the GO was lifted from runs
+> whose own `SIGNAL` was False (ADDENDUM 1/2) and "6-seed" was 3 dev seeds; ADDENDUM 4's *"depth-required ≠
+> learned-depth-required"* (a Stage-0 RATE-ORACLE result — no bridge, no unseeded thresholds — independently
+> reproduced to the digit by the live GPU run).
+>
+> **WITHDRAWN pending the fixed re-run:** the 80/20 split; ADDENDUM 5's *"the 80% claim survives"*; **ADDENDUM 6's
+> fit/generalize argument** (its four numbers come from confounded pairs); and the reading that +0.185/+0.037 is
+> *seed* variance — part of it is unseeded threshold noise, which is exactly why the effect looked "smaller than its
+> own spread."
+>
+> **Fixed** (`cfg.seed = int(seed)`; byte-identical across processes, pinned by tests) and the sweep **relaunched** as
+> `_eprop7_*`; confounded partials archived `*.PRE-SEEDFIX-CONFOUNDED.*`. Full analysis:
+> [`2026-07-17-THE-SEED-NEVER-CONTROLLED-THE-SUBSTRATE-...`](2026-07-17-THE-SEED-NEVER-CONTROLLED-THE-SUBSTRATE-the-deep-credit-arc-was-confounded-by-unseeded-neurons.md).
+>
+> *This document's thesis applied to itself: the instrument was unverified. I checked the runner's RNG discipline and
+> never checked the bridge's.*
+
+
 **Date:** 2026-07-16
 **Runner:** `research/runners/_onbridge_eprop_port_derisk.py` (+ new `--freeze-hidden`). CuPy, banked config (`enable_bdsp=True`, `lr=0`, `--pool-k 8` = exactly what produced 0.877), seeds 42/43, ONE variable.
 **Verdict:** the GO's NUMBER **reproduces** (FULL 0.889 vs banked 0.877). Its **mechanistic claim does not**: a fixed random spiking reservoir + a trained linear readout accounts for **80% of the margin above chance**; deep credit adds **+0.111**, and it is **seed-variable** (+0.185 / +0.037). The runner's **own aggregate gate returns `SIGNAL=False`** for both arms.
