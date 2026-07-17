@@ -113,3 +113,51 @@ survived because `--seeds 42` is the most natural thing in the world to assume w
 **⇒ THE STANDING RULE THIS EARNS: a seed is a HYPOTHESIS until you hash the state it is supposed to control.**
 Reproducibility is not a property of passing a seed; it is a property you **measure** — run it twice, hash the
 substrate, compare. It costs 60 seconds and it is the foundation every other number in an arc rests on.
+
+---
+
+## BLAST RADIUS — scoped mechanically. **The bug is NOT project-wide: 85 of 93 runners seed correctly. EIGHT do not.**
+
+**Method.** Every file that sets `actual_seed_used` AND constructs a `CoreSimConfig()`; for each, check whether the
+**config object** it built ever gets `.seed` or `.heterogeneity_seed` assigned. *(My first pass used a loose regex
+`\.seed\s*=\s*seed`, which also matches `self.seed = seed` — a net attribute, not the config — and would have handed
+out false OKs. Re-done keyed on the actual `CoreSimConfig()`-bound variable names. **The classifier needed the same
+verification as everything else tonight.**)*
+
+**Result: 94 files set `actual_seed_used`; 85 also seed the config ✅; 9 flagged — of which `sim/bridge.py` is a FALSE
+POSITIVE (it is the bridge, which READS the field). ⇒ 8 genuinely-unseeded runners.**
+
+| runner | findings citing it |
+|---|---|
+| **`_gnw_d1_spiking_bdsp_derisk.py`** | **9** ← the D1/BDSP deep-credit arc |
+| `snc_pavlovian_probe.py` | 6 |
+| `_da_composer_salience_cleanup_derisk.py` | 5 |
+| `_homeostatic_spiking_agent_integration.py` | 3 |
+| `_homeostatic_spiking_drive_mechanism_derisk.py` | 3 |
+| `_batched_onbridge_forward_derisk.py` | 2 |
+| `_homeostatic_spiking_reward_plasticity_derisk.py` | 2 |
+| `_d1_apical_soma_coupling_probe.py` | 1 |
+
+**`_onbridge_eprop_port_derisk.py` builds ZERO `CoreSimConfig`s** — it inherits `OnBridgeBDSPNet`, so **the fix
+already covers the whole e-prop/semantic-inheritance arc.** ✅
+
+## What this does and does NOT mean — do not over-read it
+
+**"Unseeded substrate" ≠ "invalid finding."** It means those runs are **not reproducible** and their same-seed
+comparisons carry an **uncontrolled neuron-heterogeneity term**. Whether that **invalidates** a given result depends
+entirely on **effect size vs the confound**:
+
+- **FATAL** where the effect is **comparable to or smaller than** the threshold noise — exactly the deep-credit case
+  (effect +0.111, confound ±0.33 ⇒ the confound is ~3× the signal, and the verdict flips between runs).
+- **PROBABLY SURVIVES** where the effect is **large and structural** — e.g. a lesion that collapses a result to
+  chance, or a 1.00-vs-0.24 separation. Threshold jitter does not manufacture a 0.76 gap.
+
+⇒ **The honest action is TRIAGE BY EFFECT SIZE, not a blanket retraction.** The rule: **any claim whose margin is
+within ~±0.2 on a bridge-based runner from this list is UNSAFE until re-run seeded.** `_gnw_d1_spiking_bdsp_derisk`
+(9 findings, the deep-credit family — precisely the marginal-effect regime) is the priority; the homeostatic/SNc
+probes mostly report large structural collapses and are likely safe, but that is a **hypothesis, not a clearance.**
+
+**NOT fixed in this commit** — deliberately. Each of the 8 needs its own `cfg.seed` line placed against its own
+variable names and then **verified by the hash test** (two fresh processes → identical thresholds). A blind `sed`
+across 8 load-bearing runners at the tail of a long session is exactly how a "fix" becomes the next silent failure.
+**Queued as its own task**, with the hash test as the acceptance gate for each.
