@@ -1,0 +1,31 @@
+{
+ "screened": [
+  103,
+  104,
+  105,
+  106,
+  107,
+  108,
+  109,
+  110,
+  111,
+  112,
+  113,
+  114,
+  115,
+  116
+ ],
+ "usable": [
+  103,
+  104,
+  105,
+  107,
+  108,
+  110,
+  114,
+  115,
+  116
+ ],
+ "criterion": "depth_separating AND deep_best>=0.95",
+ "note": "task-validity screen only; independent of FULL/FROZEN; filed before any sweep result"
+}

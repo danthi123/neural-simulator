@@ -79,3 +79,54 @@ Not "is the task deep?" (**yes**, 5/6 seeds), and not "is it linearly trivial?" 
 `run_seed` should record `stage0_l0` alongside `stage0_l1`. It is one dict key; the value is already computed and
 thrown away. **Deliberately not edited while the sweep is in flight** — the running processes have the module loaded,
 and I will not perturb a 3 h run for a logging nicety.
+
+---
+
+## ADDENDUM A (2026-07-16 22:47, still **before any sweep result existed**) — the blind arm is n=2, which is too thin. An EXTENDED blind arm, pre-screened on task-validity only.
+
+Excluding 101 leaves the blind arm at **n=2** (100, 102) against a dev effect that was already seed-variable
+(+0.185 / +0.037). n=2 will very likely be **inconclusive**, which would waste the whole 3 h run. Fixed cheaply, and
+pre-registered here rather than after seeing the outcome.
+
+**The screen (CPU, `research/findings/raw/_eprop6_blindseed_screen.json`).** Candidate seeds 103–116 were scored on
+**task validity ONLY** — `depth_separating AND deep_best >= 0.95`. This criterion is computed from the **task and a
+rate oracle**; it never touches FULL, FROZEN, e-prop, or the bridge, so **it cannot select for the effect under test.**
+Reported in full, pass and fail:
+
+| seed | deep_best | dsep | usable | | seed | deep_best | dsep | usable |
+|---|---|---|---|---|---|---|---|---|
+| 103 | 1.000 | True | **YES** | | 110 | 1.000 | True | **YES** |
+| 104 | 0.963 | True | **YES** | | 111 | 0.704 | False | no |
+| 105 | 1.000 | True | **YES** | | 112 | 0.815 | True | no (deep_best < 0.95) |
+| 106 | 0.370 | False | no | | 113 | 0.926 | True | no (deep_best < 0.95) |
+| 107 | 1.000 | True | **YES** | | 114 | 1.000 | True | **YES** |
+| 108 | 1.000 | True | **YES** | | 115 | 1.000 | True | **YES** |
+| 109 | 0.815 | True | no (deep_best < 0.95) | | 116 | 1.000 | True | **YES** |
+
+**Usable new blind seeds: `103 104 105 107 108 110 114 115 116` (9/14).**
+
+### The screen's failure rate is itself a result — and it has teeth
+
+**5 of 14 (~36%) candidate seeds are degenerate at this exact task config.** Seed 101 was not bad luck; it is the
+base rate. Consequences:
+
+1. **Any unscreened "6-seed" claim at this config runs ~2 degenerate instances** — task instances whose ceiling is
+   chance. Those seeds contribute pure noise to a mean and inflate its spread.
+2. **Retrospective:** the banked dev effect's seed-variance (+0.185 vs +0.037) may be substantially **task-instance
+   variance, not credit-rule variance.** This is a *hypothesis this pre-registration does not test* — but it means
+   "the deep-credit share is seed-variable" and "the task is seed-variable" are currently **confounded**, and the
+   screened arm below is the first data that separates them.
+3. ⇒ **Screening task instances for validity should precede any expensive arm at this config**, exactly as one
+   excludes a degenerate stimulus before running subjects.
+
+### Pre-registered plan
+
+> **Blind arm = `100, 102` (already in flight) + the 9 screened seeds = n=11**, all `depth_separating=True`,
+> `deep_best >= 0.95`. Launch the extended arm **when the in-flight sweep completes** (it owns the GPU until ~01:30;
+> a second concurrent sweep would contend for one 3090). Same config (`--pool-k 8`, `SIM_BACKEND=cupy`, no MPS,
+> per-seed checkpointing), FULL and FROZEN.
+>
+> **The gate is unchanged and was fixed before any data:** deep credit is real iff `FULL − FROZEN` > 0 consistently
+> across the screened blind seeds. n=11 makes that answerable; n=2 would not have been.
+>
+> **Seed 101 and the 5 screened-out seeds are reported, never silently dropped.**
