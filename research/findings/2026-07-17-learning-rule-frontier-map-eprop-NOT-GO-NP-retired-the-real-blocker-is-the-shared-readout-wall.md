@@ -86,6 +86,9 @@ scale); the on-bridge STP store (BANKED as hard, key-quality-bound); **and any p
 comparison with margin within ~±0.2 from the 8 unseeded runners until re-run seeded** (the ±0.33 confound is ~3× a
 deep-credit effect — `task_f077cbfa`).
 
+
+> **✅ #1 DE-RISK DONE 2026-07-17 (the rate-net positive control):** GRADED coding does NOT unlock supervised deep credit — 6-seed × {spiking,graded}, `depth_helps 0/6` in both readouts, graded slightly worse. The graded readout marginally improves the reservoir's readability but NP's credit adds nothing on top ⇒ **the block is the RULE (NP's credit assignment), not the readout discreteness.** Scope caveat: nothing beats chance (underpowered config) so it's DIRECTIONAL, not a clean readout-vs-rule proof — but the escape hatch does not obviously work. ⇒ **supervised deep credit stays PARKED; commit to the UNSUPERVISED stream cortex (rec #3).** See `2026-07-17-rate-net-control-graded-coding-does-NOT-unlock-supervised-deep-credit-block-is-the-rule.md`.**
+
 ## Bottom line
 
 The 2026-07-17 not-GO is **not a surprise and not a dead end** — it hardens a three-ways-confirmed conclusion
