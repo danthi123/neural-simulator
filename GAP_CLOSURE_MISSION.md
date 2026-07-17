@@ -121,6 +121,13 @@ and tractable (a biased-competition WTA between referent attractors). **Planned 
     the way the stream-cortex CODES already self-organize — since biology DEVELOPS binding from local wiring rules,
     not supervised credit? Rank unsupervised/self-organizing binder mechanisms FIRST; a supervised local rule is a
     fallback, not the default. This makes #4 and #2 the same research-gate (the substrate that DEVELOPS the binder).
+  - **Prior-work grounding for #4/#2 (a-1 done — the gate must SURPASS these, not re-derive):** single-attribute
+    learned bind is **GO on spikes** (`2026-06-16-onsubstrate-learned-binder-single-attr-GO-bundling-NEGATIVE`);
+    the two open negatives to surpass are (a) **multi-attribute BUNDLING from scratch = NEGATIVE** (additive has no
+    inverse; learned-linear-inverse ≈chance) and (b) **binding over CORRELATED/structured codes ≈ chance**
+    (`2026-06-11-cortex-learned-binder-systematicity-NEGATIVE-ON-CORRELATED`). Both failures used SUPERVISED
+    inverse-learning → the self-organizing reframe (develop the binding structure from local rules, unsupervised) is
+    the un-tried angle. Read both docs in depth as move (1) of the gate.
   - Launch gap #3's research-gate in parallel (self-contained, tractable): biased-competition WTA between referent
     attractors (the 2 prior NEGATIVEs were recency + salience-boost; the named fix is winner-take-all inhibition).
 - **Continuation mechanism (owner chose 2026-07-17):** MANUAL — the owner says "continue" (no watchdog, no system
