@@ -116,14 +116,38 @@ self-maintaining — these THREE keep it live (do all three; do not rely on the 
 
 ---
 
+## KEYSTONE (#4/#2) GATE GROUNDING — a-1 deep-read DONE 2026-07-17 (read-only, during the scale run)
+
+The conversational bind decomposes (from `2026-06-16-onsubstrate-learned-binder-single-attr-GO-bundling-NEGATIVE` +
+`2026-06-11-cortex-learned-binder-systematicity-NEGATIVE-ON-CORRELATED`, both read in full):
+1. **Concept codes — LEARNED on spikes** ✅ (stream cortex, the scale787 run is confirming at 787).
+2. **Single-attribute binding — LEARNED + validated on real LIF** ✅ (on-bridge held-out 0.833 = 100% of numpy).
+3. **Multi-attribute BUNDLING (a fact) — THE OPEN WALL.** NEGATIVE for any *point-neuron* learned bind (additive 0.193;
+   learned-LINEAR-inverse 0.056 ≈ chance) because unbinding a role from a superposition needs a **role-specific
+   MULTIPLICATIVE inverse (1/u_t)** and a shared *linear* unbind is *structurally* incapable of role-dependent scaling
+   (Mikulasch-Priesemann point-neuron limit — multiplication is a DENDRITIC op). A **learned BILINEAR** binder DOES
+   generalize systematically — but only on **DECORRELATED** codes (held-out 1.000); it goes **NEGATIVE on CORRELATED/
+   structured** codes, which is exactly what the brain's own emergent codes are.
+
+**⇒ the sharp keystone question (gaps #4+#2 are ONE gate):** bind over the brain's OWN correlated/structured codes with
+a **DENDRITIC multiplicative** operation **whose structure SELF-ORGANIZES** (not the hand-set ±1/FHRR algebra, not a
+supervised learned-linear inverse — both closed). The un-tried levers, all present: the **D2 two-compartment dendritic
+substrate is BUILT** (`sim/dendritic_neuron.py`, `dendritic_mlp.py`, `dendritic_plasticity.py`); a **bilinear
+multiplicative** bind is native to a dendrite; and `2026-07-16-MDGL-offdiagonal-...-replay-is-the-biological-path`
+flags **replay** as a candidate for the credit the point-neuron rules couldn't carry. The research-gate ranks:
+dendritic-multiplicative bind on D2 · correlated-code-tolerant binding · replay-driven / developmental self-organization
+of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-grounded, done" conclusion of the
+2026-06-16 doc is a DISGUISED boundary under THE LAW — it does not self-organize, so the capability stays OPEN.)
+
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
-- **Phase:** finishing the pre-pivot confirmation run, then STARTING the gap assault (owner: pivot *after* the current
-  run completes).
+- **Phase:** finishing the pre-pivot confirmation run + read-only keystone research-gate prep (the anchor-heartbeat
+  correctly caught idle-waiting → doing the read-only gate prep, which is NOT the build-pivot the owner sequenced).
 - **Running jobs:**
   - `scale787` develop loop (787-concept "given enough training" test) — GPU, monitor `bois5ocpf` (gate-anomaly +
-    heartbeat + done/crash). Root `bridges/developed/scale787`, log in scratchpad `scale787_full.log`. Tracking GO
-    (corr +0.85 @ day 16/33). PAUSE sentinel: `bridges/developed/scale787/PAUSE`.
+    heartbeat + done/crash). Root `bridges/developed/scale787`, log `scale787_full.log`. Day 24/33, 600 concepts,
+    still GO (corr +0.83 ≥ 0.70 gate, retain 1.00, moat 0). PAUSE sentinel: `bridges/developed/scale787/PAUSE`.
+  - anchor-heartbeat `bj0sku4ga` (~25min self-check) · (audit workflow DONE).
 - **Gap order (planned):** #4 keystone research-gate FIRST (unlocks #2/#5/#1) · #3 multi-referent parallel tractable
   lane · then #2/#5 on the keystone · then #1.
 - **⚠️ EXACT NEXT ACTION:** when `scale787` fires TERMINAL → run `_scale787_analyze` vs the FROZEN gate → write the
