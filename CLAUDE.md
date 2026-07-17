@@ -3193,8 +3193,16 @@ conflating them makes a healthy run look like a 4× improvement. Compare sums to
 - Per-quarter: Q1 ~4.3 (exploration), Q2-Q4 ~1.7-2.3 (stable AT goal)
 
 The architecture has demonstrated unexploited capacity — handles 4×
-larger grid with TIGHTER variance. Closes 4 of 5 original cheats
-(heuristic, (gx,gy), (x,y), beacon). See
+larger grid with TIGHTER variance. ⚠️ **CORRECTED 2026-07-16 — the "closes 4 of 5 cheats
+(heuristic, (gx,gy), (x,y), beacon)" claim was FALSE and is WITHDRAWN.** This config leaves
+`--heuristic-strength` at its **default 1.0** → 800 pA into `cortex_N/E/S/W` derived from **direct
+`gy > y` / `gx > x` goal reads**. The flag that actually closes the heuristic is
+`--cue-reflex-replaces-heuristic` (`g11_bg_runner.py:7042-7045`), and it is **absent from this run's own
+recorded command** (`raw/g11_bg/k_v2_stress_16x16_seed100.cmd.json`). The claim was copied from the
+2026-04-27 flagship, which DOES carry that flag (so the "NO heuristic" line further down, for THAT
+config, is correct). **The 2.97/2.57 numbers stand as measured — with the heuristic ON;** the visual
+pathway's independent contribution is unquantified. Finding:
+[`2026-07-16-clusterKv2-NO-heuristic-claim-is-FALSE-the-flag-that-closes-it-is-absent.md`](research/findings/2026-07-16-clusterKv2-NO-heuristic-claim-is-FALSE-the-flag-that-closes-it-is-absent.md). See
 [`research/findings/2026-05-05-step3-32x32-scaling-success.md`](research/findings/2026-05-05-step3-32x32-scaling-success.md)
 for the smoke result and [`research/findings/2026-05-05-FINAL-autonomous-arc-synthesis.md`](research/findings/2026-05-05-FINAL-autonomous-arc-synthesis.md)
 for the full autonomous arc that produced this result.

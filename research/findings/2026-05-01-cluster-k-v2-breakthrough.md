@@ -175,3 +175,32 @@ python -m research.runners.g11_bg_runner --moving-goal --goal-schedule multi --d
 Score: 2.97 ± 0.12 at 16×16 with NO hand-coded perception, NO heuristic,
 NO direct (gx, gy) or (x, y) access. Only simulated reward (Manhattan-
 based) remains as a non-biological signal.
+
+> ## ⚠️ CORRECTION 2026-07-16 — "NO heuristic, NO direct (gx, gy) or (x, y) access" is **FALSE**. WITHDRAWN.
+>
+> The heuristic was **ON at full strength** in this very run. Verified from this run's own artifacts:
+>
+> - `--heuristic-strength` **defaults to `1.0`** (`g11_bg_runner.py:9475`), driving `h_drive = 800.0 pA`
+>   into `cortex_N/E/S/W` from **direct `gy > y` / `gx > x` goal-coordinate reads** (`:7047-7078`).
+> - **This run's recorded command contains no heuristic flag at all** —
+>   `raw/g11_bg/k_v2_stress_16x16_seed100.cmd.json`.
+> - `h_strength` is zeroed only by `in_sleep`, `in_goal_silence_step`, `heuristic_wean_adaptive`
+>   (default `False`, not implied by `--enable-visual-cortex`), or `cue_reflex_replaces_heuristic`
+>   — **none of which this config sets.** Control reaches `else: h_strength = heuristic_strength` (`:7046`).
+> - `--visual-cortex-action-warmup-steps 600` only opens the `visual_cortex_action` **plasticity gate**
+>   (`:6722-6730`); it never touches `h_strength`.
+>
+> **Root cause:** the sentence is true of the 2026-04-27 perception-arc flagship, which passes
+> `--cue-reflex --cue-reflex-replaces-heuristic` (that pair genuinely sets `h_strength = 0.0`,
+> `:7042-7045`). It was copied onto a config that lacks the flag.
+>
+> **What survives:** the **number**. 2.97 ± 0.12 was measured and is not disputed here. What is withdrawn
+> is its description. Honest restatement: *2.97 ± 0.12 at 16×16, measured **with the hand-coded heuristic
+> at full strength**; the Cluster-K-v2 visual pathway's independent contribution is **unquantified**.*
+>
+> **Open, deliberately not chased:** (1) the score at `--heuristic-strength 0` — the one run that separates
+> "the visual cortex navigates" from "the heuristic navigates"; (2) whether this run's visual pathway was
+> silently inert via `except KeyError: pass  # Gate not present (no IT -> cortex synapses)` (`:6731-6732`),
+> which **cannot be determined** — the k_v2 artifacts carry no stdout log.
+>
+> Full analysis: [`2026-07-16-clusterKv2-NO-heuristic-claim-is-FALSE-the-flag-that-closes-it-is-absent.md`](2026-07-16-clusterKv2-NO-heuristic-claim-is-FALSE-the-flag-that-closes-it-is-absent.md)

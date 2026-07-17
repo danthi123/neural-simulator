@@ -129,6 +129,16 @@ a tool it never told you to install.
    broken, not only a healthy one.**
 9. **A GATE THAT CAN PASS WITHOUT ITS KEY CONTROL IS THE BUG.** Make the control DEFAULT-ON and CI-guard it. The
    cost of a 4th arm (~25% runtime) is nothing against a months-scale plan built on a random projection.
+10. **AN ABSENT FLAG MEANS *DEFAULT*, NOT *OFF* — check the default before claiming a cheat is closed.** A recorded
+   command (`.cmd.json` `extra_args`) stores only the **delta from defaults**, so absence reads as "off" and is
+   almost never verified. Cluster K v2's *"2.97 at 16×16 with NO heuristic, NO direct (gx, gy) or (x, y) access"*
+   stood for 2.5 months and propagated into `CLAUDE.md`; its own `.cmd.json` carries no heuristic flag — because
+   `--heuristic-strength` **defaults to 1.0**, so the run drove 800 pA into `cortex_N/E/S/W` straight from
+   `gy > y` / `gx > x`. The flag that closes it (`--cue-reflex-replaces-heuristic`) belongs to a DIFFERENT config,
+   where the sentence is true; **it was copied onto one that lacks it.** ⇒ When a finding says a cheat is closed,
+   grep its own `.cmd.json` for the flag that closes it **and** read that flag's default. One-line check; would
+   have caught this on day one. **Corollary — a claim inherited from a neighbouring config is not evidence:** the
+   config that earns a claim and the config that quotes it are different experiments.
 
 **THE SELF-CHECK:** *"If this were silently wrong, what would look different?"* If the answer is "nothing" — the
 process is alive, the log grows, the number is plausible — **you have no evidence, only an absence of alarms.**
