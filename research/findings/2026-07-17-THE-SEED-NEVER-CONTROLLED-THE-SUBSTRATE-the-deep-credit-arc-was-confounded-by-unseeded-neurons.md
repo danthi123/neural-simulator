@@ -138,6 +138,38 @@ substrate, compare. It costs 60 seconds and it is the foundation every other num
 
 ---
 
+## ✅ THE ENGINE IS EXONERATED — and this is why a green determinism suite never caught it
+
+**`sim/` is CORRECT. `tests/test_determinism.py` is CORRECT (7/7 pass, 140s). The bug is entirely in how 8 runners
+CONSTRUCT their config.**
+
+The passing determinism test seeds the **constructor**:
+```python
+config = CoreSimConfig(..., seed=42, ...)     # -> cfg.seed = 42 -> guard fires -> cp.random.seed(42) -> deterministic
+```
+The affected runners build it **bare** and then set the wrong field:
+```python
+cfg = CoreSimConfig()                          # -> cfg.seed stays -1
+cfg.actual_seed_used = int(seed)               # -> a REPORTING field; the guard never fires
+```
+
+**⇒ the engine seeds correctly the moment you pass `seed=`. Nothing in `sim/` needs changing.**
+
+**Why the suite missed it — the night's pattern, one level deeper:**
+1. **It tests the MAIN path, never a RESEARCH-RUNNER path.** Every `*_deterministic_spikes` test builds its own
+   correctly-seeded `CoreSimConfig`. The runner path — 93 files, the entire research corpus — was **never covered**.
+2. **`test_explicit_seed_tracked` asserts `runtime_state.actual_seed_used == 12345`** — i.e. it tests that the
+   **REPORTING field is set**, which is exactly the field that **controls nothing**. **The test enshrines the very
+   confusion that caused the bug**: it makes "the seed is handled" look verified when only the bookkeeping is.
+3. **`CLAUDE.md:3653` is technically right and practically misleading:** *"`RuntimeState.actual_seed_used` **tracks**
+   the seed used"* — **tracks**, correctly stated. But a runner author reading it naturally sets `actual_seed_used`
+   and believes they have seeded. **The doc is accurate; the affordance is a trap.**
+
+⇒ **a green test suite, an accurate doc, and a correct engine — and the arc still ran unseeded for months.** The gap
+was not knowledge; it was that **nothing ever asserted the property end-to-end on the path the science actually uses.**
+The new tests close it for the e-prop arc (source-guard: the builder must set `cfg.seed`); the other 8 runners need
+the same (see BLAST RADIUS + the spawned task).
+
 ## BLAST RADIUS — scoped mechanically. **The bug is NOT project-wide: 85 of 93 runners seed correctly. EIGHT do not.**
 
 **Method.** Every file that sets `actual_seed_used` AND constructs a `CoreSimConfig()`; for each, check whether the
