@@ -116,4 +116,7 @@ and tractable (a biased-competition WTA between referent attractors). **Planned 
   candidates to scope: dendritic predictive-coding / target-prop / equilibrium-prop / burst-dependent variants /
   three-factor local rules; a-1 our own record first). Launch #3's research-gate in parallel (biased-competition WTA
   between referent attractors).
-- **Self-wake mechanism for zero-interaction autonomy:** PENDING owner choice (see the question asked 2026-07-17).
+- **Continuation mechanism (owner chose 2026-07-17):** MANUAL — the owner says "continue" (no watchdog, no system
+  changes). That + this board + the CLAUDE.md pointer re-anchor instantly. Within a session, NEVER stop (async
+  pattern); across a reboot/idle, a plain "continue" resumes from EXACT NEXT ACTION. Do NOT propose a watchdog again
+  unless the owner asks.
