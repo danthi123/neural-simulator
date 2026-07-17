@@ -213,3 +213,70 @@ margin (~80%), learning buys ~0.111.
 `linear_inherit_heldout` (a no-hidden linear floor, `_semantic_inheritance_deep_credit_derisk.py:308/316`) but
 `run_seed` records only `l1`, so **the linear floor never reaches the output.** It costs nothing and completes the
 ladder: chance → **l0 linear** → l1 trained-shallow → FROZEN random-deep → FULL learned-deep.
+
+---
+
+## ADDENDUM 5 (2026-07-16) — **I AUDITED MY OWN 80% NUMBER'S PROVENANCE.** It survives, with a named residual — and it exposed a rule-10 gap **in my own runner**.
+
+Rule 1 applied to me: the FULL 0.889 / FROZEN 0.778 I built this finding on come from `raw/_eprop_banked_{FULL,FROZEN}.json`,
+and **both of those files carry `SIGNAL=False` / "HONEST NEGATIVE"** — the same shape I criticized. So I checked mine.
+
+**1. Why those files are `SIGNAL=False` — and why the numbers are still usable.** The gate breaks down as
+`trains_the_task_all_seeds=True` ✅, `permuted_chance=True` ✅, **`shuffle_dfa_chance=False` ❌**. They fail on the
+*shuffle-DFA anti-cheat alone* (`shuffle_dfa_inherit` ≈ 0.52-0.63, not chance 0.333). That is not a defect in the
+comparison — **it is the reservoir result showing up in a second instrument**: if a random projection does most of the
+work, corrupting the DFA credit *should not* collapse performance to chance. (It also retro-explains my own earlier
+"shuffle-DFA refutes the reservoir hypothesis" reading, which I had already retracted as VOID: the shuffle collapses
+even with the hidden layers FROZEN, so it was never testing the hidden layers.) **The difference between the two files
+is ONE flag; the comparison is internally valid.** What would have been rule-1 contraband is *"deep credit is GO,
+0.877"* — a **verdict** claim. *"FULL scores X, FROZEN scores Y, same config"* is a **measurement** contrast, and the
+runner's negative verdict is about a different proposition.
+
+**2. Provenance recovered — the config was NOT recorded, so I recovered it forensically.** `per_seed`:
+
+| arm | seed 42 | seed 43 | mean | deep-credit share |
+|---|---|---|---|---|
+| FULL | 0.852 | 0.926 | **0.889** | — |
+| FROZEN | 0.667 | 0.889 | **0.778** | **+0.185 / +0.037** |
+
+(the shares match this doc's quoted seed-variance exactly ⇒ these are the source files). But **`seed 42` = 0.852 here
+vs `k8_s42` = 0.889 — same seed, different number ⇒ a DIFFERENT CONFIG.** So I pinned it:
+
+**`pool_k` IS NEVER RECORDED IN THE OUTPUT.** `run_seed`'s config dict (`:672-673`) stores hidden / n_hidden_layers /
+settle / epochs / batch / eprop_lr / eps_leak / task — **no `pool_k`**, and the runner never prints it. `--pool-k`
+**defaults to 1**. ⇒ *"the file doesn't mention pool_k"* is **exactly rule 10 — absence means DEFAULT (1), not 8** —
+**and it is my own runner doing it.** The filename (`k8_*`) was the only provenance, and my files aren't named that.
+
+**Recovered from the logs via a VALIDATED instrument:** `pool_k` sizes the network (`super().__init__(..., pool_k=pool_k)`,
+`:124`), so the bridge's synapse count is sensitive to it. The instrument **discriminates** (verified against known runs
+— it is not a constant):
+
+| run | pool_k | `installed N synapses` |
+|---|---|---|
+| `_onbridge_eprop_task_s42`, `ep300_s4*` | 1 (default) | **1,408** |
+| `k4_*` | 4 | **22,528** = 1408 × 4² |
+| `k8_*` (the 0.877 headline) | 8 | **90,112** = 1408 × 8² |
+| the in-flight sweep (**known** `--pool-k 8`) | 8 | **90,112** |
+| **`_eprop_banked_FULL` (was unknown)** | **⇒ 8** | **90,112** |
+
+The exact k² scaling confirms the instrument. **⇒ my FULL/FROZEN WERE `pool_k=8`** — the same population coding as the
+headline and as the sweep. **The 80% claim survives.**
+
+**3. The named residual (smaller than feared, still real).** The banked FULL/FROZEN ran at **`epochs=120`** (the
+default) while the 0.877 headline ran at **`epochs=150`** (explicitly passed), and mine is **n=2** seeds (42, 43) vs the
+headline's 3. That is why seed 42 reads 0.852 here and 0.889 there: **30 more epochs.** So, precisely:
+
+> The reservoir share (~80%) is measured at `pool_k=8, epochs=120, n=2` and applied to a headline produced at
+> `pool_k=8, epochs=150, n=3`. Same task, same architecture, same population coding; **different training budget.**
+> The qualitative claim — *the frozen-hidden control was never run, and when run it accounts for most of the margin* —
+> is robust. The **specific "80%" is config-scoped and should always be quoted with its config.**
+
+**4. A free reproducibility check the sweep now carries (pre-registered here, before results).** The in-flight sweep is
+`pool_k=8, epochs=120` — **exactly the banked FULL/FROZEN config**, differing only in backend (cupy vs numpy). So its
+dev arm should **reproduce** `FULL 42→0.852, 43→0.926` and `FROZEN 42→0.667, 43→0.889` up to float/backend differences.
+**If it does not, the sweep's instrument is suspect and its blind arm must not be trusted.** This is a
+falsifiable check on the experiment, fixed before its data exists.
+
+**5. Fix owed (not applied mid-flight):** record `pool_k` (and `freeze_hidden`) in the output config. One dict key each.
+Until then the ONLY provenance for the most load-bearing knob in this arc is a **synapse count in a log file** — which
+is how a `pool_k=1` run and a `pool_k=8` run become indistinguishable in the record.
