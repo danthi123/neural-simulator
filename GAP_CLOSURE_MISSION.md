@@ -111,11 +111,18 @@ and tractable (a biased-competition WTA between referent attractors). **Planned 
 - **Gap order (planned):** #4 keystone research-gate FIRST (unlocks #2/#5/#1) · #3 multi-referent parallel tractable
   lane · then #2/#5 on the keystone · then #1.
 - **⚠️ EXACT NEXT ACTION:** when `scale787` fires TERMINAL → run `_scale787_analyze` vs the FROZEN gate → write the
-  RESULT doc + reconcile ROADMAP §5.10 → **then START gap #4's research-gate** (a NEW biology-based local spiking
-  credit rule: read the current SNN/neuromorphic credit-assignment literature IN DEPTH — beyond e-prop/NP/BDSP —
-  candidates to scope: dendritic predictive-coding / target-prop / equilibrium-prop / burst-dependent variants /
-  three-factor local rules; a-1 our own record first). Launch #3's research-gate in parallel (biased-competition WTA
-  between referent attractors).
+  RESULT doc + reconcile ROADMAP §5.10 → **then START gap #4's research-gate.**
+  - **KEYSTONE REFRAME (a-1 done 2026-07-17, the load-bearing insight):** every failing credit method (e-prop
+    feedforward NOT-GO, recurrent refuted, NP retired, BDSP-on-readout blocked, graded-readout no-unlock) was
+    **SUPERVISED global-loss deep credit through a spiking CLASSIFIER READOUT** — that *shared readout wall* is the
+    common cause (`2026-07-17-learning-rule-frontier-map`), and it is exactly what the UNSUPERVISED stream cortex
+    already sidesteps. ⇒ do NOT re-run the supervised family. The research-gate's FIRST question is the SURPASS
+    reframe: **can the BINDING STRUCTURE (gap #2) SELF-ORGANIZE unsupervised** — Hebbian/BCM/competitive/developmental,
+    the way the stream-cortex CODES already self-organize — since biology DEVELOPS binding from local wiring rules,
+    not supervised credit? Rank unsupervised/self-organizing binder mechanisms FIRST; a supervised local rule is a
+    fallback, not the default. This makes #4 and #2 the same research-gate (the substrate that DEVELOPS the binder).
+  - Launch gap #3's research-gate in parallel (self-contained, tractable): biased-competition WTA between referent
+    attractors (the 2 prior NEGATIVEs were recency + salience-boost; the named fix is winner-take-all inhibition).
 - **Continuation mechanism (owner chose 2026-07-17):** MANUAL — the owner says "continue" (no watchdog, no system
   changes). That + this board + the CLAUDE.md pointer re-anchor instantly. Within a session, NEVER stop (async
   pattern); across a reboot/idle, a plain "continue" resumes from EXACT NEXT ACTION. Do NOT propose a watchdog again
