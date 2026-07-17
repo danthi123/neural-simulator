@@ -148,6 +148,14 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
     heartbeat + done/crash). Root `bridges/developed/scale787`, log `scale787_full.log`. Day 24/33, 600 concepts,
     still GO (corr +0.83 ≥ 0.70 gate, retain 1.00, moat 0). PAUSE sentinel: `bridges/developed/scale787/PAUSE`.
   - anchor-heartbeat `bj0sku4ga` (~25min self-check) · (audit workflow DONE).
+  - **keystone research-gate workflow `wb5udqdul`** (read-only: our-record · biology · external-lit · correlated-code
+    angle → ranked self-organizing dendritic-bind de-risk). Running.
+- **⚠️ EXACT NEXT ACTION (updated):** (1) when `wb5udqdul` completes → review its ranked de-risk, TRUST-BUT-VERIFY the
+  load-bearing claims (esp. "the D2 dendritic neuron can multiply" + "method X tolerates correlated codes"), write the
+  keystone gate doc `research/findings/2026-07-17-keystone-binder-research-gate.md`. (2) when `scale787` fires TERMINAL
+  → `_scale787_analyze` vs frozen gate → RESULT doc + reconcile ROADMAP §5.10. (3) THEN start the #1 cheap-first
+  de-risk from the gate (the build-pivot the owner sequenced after the run) — rate→spike→one-brain ladder, anti-cheats,
+  6-seed, `cfg.seed` set. Launch gap #3's research-gate (multi-referent WTA) in parallel.
 - **Gap order (planned):** #4 keystone research-gate FIRST (unlocks #2/#5/#1) · #3 multi-referent parallel tractable
   lane · then #2/#5 on the keystone · then #1.
 - **⚠️ EXACT NEXT ACTION:** when `scale787` fires TERMINAL → run `_scale787_analyze` vs the FROZEN gate → write the
