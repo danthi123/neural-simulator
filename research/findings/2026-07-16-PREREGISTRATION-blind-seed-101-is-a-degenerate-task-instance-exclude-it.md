@@ -130,3 +130,48 @@ base rate. Consequences:
 > across the screened blind seeds. n=11 makes that answerable; n=2 would not have been.
 >
 > **Seed 101 and the 5 screened-out seeds are reported, never silently dropped.**
+
+---
+
+## ADDENDUM B (2026-07-16 23:40) — **DESIGN CORRECTION: the separate FROZEN arms were REDUNDANT.** Killed; the freed GPU now runs the extended blind arm ~2h early.
+
+**The error (mine).** I launched 4 arms as `FULL/FROZEN × dev/blind`. But `run_seed`'s **`reservoir_control` defaults
+to `True`** (I added it earlier the same day) and already does this, per seed, internally (`:517-524`):
+
+```
+fnet = _mk(); fnet.train_layers = {fnet.n_hidden_layers}   # hidden FROZEN at init, readout only
+_train_eprop(fnet, ...); froz_inh = fnet.acc_on(...)
+deep_share = (inh_acc - froz_inh) / (inh_acc - chance)
+```
+
+⇒ **a FULL run already yields `eprop_inherit_heldout` (FULL), `frozen_hidden_inherit` (FROZEN) AND
+`deep_credit_share` for that seed.** And `--freeze-hidden` sets the *identical* `train_layers={n_hidden_layers}`
+(`:153-158`), so a **FROZEN arm trains frozen-vs-frozen** — its `deep_share` is **0 by construction**. Two of four arms
+were computing nothing.
+
+**Fixed:** `SIGKILL` on the two FROZEN arms (SIGTERM was ignored; identified unambiguously by `/proc/<pid>/cmdline`
+`--out` path, not a `pgrep` pattern that could self-match). Both FULL arms untouched and still `[GPU]`.
+
+**Consequence — a strict improvement, no information lost:**
+- The extended blind arm launches **now (~23:40) instead of ~01:30**.
+- It needs **FULL only ⇒ 9 seed-runs, not 18** — half the pre-registered cost.
+- Every quantity the gate needs is still produced, per seed, by the same code path.
+
+**Deviation from ADDENDUM A, stated explicitly:** A said the extended arm would run "FULL and FROZEN". It runs **FULL
+only**. This is a *mechanical* change (the frozen baseline is computed inside each run) and **not** a change to the
+gate, the seeds, or the read-out. **The pre-registered gate is unchanged:** deep credit is real iff `FULL − FROZEN`
+(i.e. `deep_credit_share` > 0) holds consistently across the screened blind seeds.
+
+**In flight now (4 arms, all productive):**
+| arm | seeds | role |
+|---|---|---|
+| `_eprop6_FULL_42-43-44` | 42, 43, 44 | dev — carries the ADDENDUM-5 reproducibility check (should reproduce FULL 42→0.852, 43→0.926) |
+| `_eprop6_FULL_100-101-102` | 100, 101, 102 | first blind (101 pre-excluded as degenerate; reported not dropped) |
+| `_eprop6x_BLIND_A` | 103, 104, 105, 107, 108 | extended blind, task-validity screened |
+| `_eprop6x_BLIND_B` | 110, 114, 115, 116 | extended blind, task-validity screened |
+
+**Blind arm = 100, 102 + the 9 screened = n=11**, exactly as pre-registered.
+
+*Note this is the same class of error the day's audit kept finding, caught on myself in real time: I designed the arms
+from a mental model of the runner rather than from the runner. The cost was ~70 min of redundant GPU — cheap, because
+reading `run_seed` before launching would have been free.*
