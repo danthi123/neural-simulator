@@ -154,6 +154,12 @@ a tool it never told you to install.
    kill** — worse than the original, because a future session reads a correction as *already audited*. A later 94-agent
    audit caught it. ⇒ when you correct a number, **recompute it from the artifact**; when you correct a label, **check
    every figure the label now covers.**
+   **AND: when a statement CHANGES, REWRITE it — do NOT append.** A correction stacked on a correction **is** a
+   contradiction. Twice in ten minutes on 2026-07-16 I appended a settle-note onto a correction and produced cells
+   that said *"the LSTM has NEVER been run"* **and** *"the settle RAN and CONFIRMED"* in the same sentence — recreating
+   the exact self-contradiction class I was fixing (the upstream finding said the LSTM loses on `:6` and *"a
+   full-backprop LSTM reaches it"* on `:7`). **Layered corrections read as a changelog; a reader needs the current
+   claim.** Rewrite the statement once, then let the finding doc carry the history.
 12. **DEV-SEED SELECTION IS THIS PROJECT'S RECURRING FAILURE — the blind half IS the claim.** Two independent instances
    found in one day: the deep-credit "6-seed GO" (3 dev seeds; blind never run) and `CLAUDE.md`'s A+E "3.31 ± 0.74"
    (its own cited source's headline: *"favorable-seed selection … n=12 is not significant at Welch t=0.65"* — the
