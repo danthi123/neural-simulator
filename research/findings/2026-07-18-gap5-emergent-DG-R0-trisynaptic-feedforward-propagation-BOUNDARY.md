@@ -19,6 +19,10 @@ mechanism), distinct from the gap#4↔gap#5 unification (mechanism 6/6 GO), whic
    detonation-strength issue — the mossy `dg→ca3` pathway simply does not drive CA3 to fire (the CA3 cells' firing
    threshold is not reached by mossy input, however dense), while a DIRECT 3000 pA current fires them fine. The
    boundary is CA3-not-firing-from-mossy, deeper than just the missing DG burst.
+5. **Even DETONATOR-strength mossy fails:** `mossy_weight` up to **500** (a true detonator) still gives CA3 |A|=0 — so
+   it is NOT the synaptic weight either. The synaptic feedforward fundamentally does not drive the sparse hippocampal
+   cells to threshold (a conductance-vs-direct-current scaling + asynchronous-firing/synchrony issue), while a direct
+   3000 pA external current fires the SAME CA3 cells fine. ⇒ 11 probes: a robust, definitive boundary.
 
 ## The biological diagnosis (why — and why it is a deep sub-arc)
 This is the DOCUMENTED trisynaptic boundary (`CLAUDE.md`: "EC-driven test (drive lang_input, propagate through the
