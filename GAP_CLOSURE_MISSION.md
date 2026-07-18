@@ -166,7 +166,15 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   robustness frontier while easier un-closed work sat idle. Corrected order of UN-CLOSED work: **(A) gap #3 residuals
   [EASIEST — capability already GO] → (B) gap #5 robust completion [hard, mechanism demonstrated] → (C) gap #4 keystone
   [very hard, a-1 only] → (D) gap #1 open generation [hardest].**
-- **Phase:** GAP-CLOSING (easiest-first). **Gap #2 FULLY CLOSED** ✅ · **Gap #3 FULLY CLOSED (2026-07-18)** ✅ —
+- **📍 SESSION LANDMARK (2026-07-18):** closed **gap #3 FULLY** (spiking feature-compat + D3 Cb + deployment-learns-from-experience)
+  + **gap #5's functional completion MECHANISM** (5/6 GO, 6/6 perfect specificity+bistability — the completion trilemma
+  RESOLVED by an intrinsic DENDRITIC BISTABILITY keystone [self-regen NMDA plateau + KIR + asymmetric read], at CHANCE
+  the project's whole history) + BUILT the dendritic-bistability `sim/` keystone (single-cell latch-and-hold + CI,
+  byte-identical-when-off — this is also gap #4's dendritic substrate). All committed/pushed/CI-green. **Next-continue
+  candidates (fresh arcs):** gap #4 local-credit rule ON the new bistability substrate (strongest — the substrate now
+  exists) · gap #5 emergent-DG or SWR (both demonstrated fresh integration arcs) · gap #1 open generation.
+- **Phase:** GAP-CLOSING. **Gap #2 FULLY CLOSED** ✅ · **Gap #3 FULLY CLOSED (2026-07-18)** ✅ · **Gap #5 completion
+  MECHANISM CLOSED (2026-07-18)** ✅ (emergent DG + SWR replay = fresh follow-on arcs; magnitude 5/6 seed-variable) —
   A1: the referent-bias feature-compatibility is a SPIKING LEARNED map (corpus co-occurrence → feature-detector
   spikes) replacing host `content_bias_target` (mechanism 6-seed GO + spiking 6-seed GO, permuted-corpus collapses).
   A2: the all-compatible tie is broken by the CUE-COMBINATION (content decides clear cases; on a feature-silent tie the
@@ -300,11 +308,15 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   CLOSED** (soma read, anti-cheat-verified 6/6 specificity+bistability, 5/6 magnitude). **(2) EMERGENT
   DG-selected assembly** — the mossy/DG pattern-separation front end SELECTS the sparse CA3 set from experience (the
   completion mechanism is selection-agnostic — it binds whatever sparse set co-fires), so `structural_sep`/`selective_inhib`
-  become EMERGENT, not hand-applied; the bistable dendrite may now resolve the banked "sparsity-without-synchrony can't
-  select" blocker (each cell latches intrinsically — no synchrony needed). Then a queryable console. Optional: robustify
-  the magnitude floor (seed 101/102 ~0.18) via a per-seed-invariant read calibration (`rate_homeo` on the apical read).
-  Overlaps the gap #4 dendritic keystone [[project_dendritic_cortex_for_emergence]]. ⚠️ prior-arc perm/self-sustain
-  numbers were silence-confounded (fixed by the `_hard_silence` dendritic-state reset).
+  become EMERGENT, not hand-applied. PROBED (2026-07-18): driving `language_input -> ec -> dg -> ca3` (gates open) does
+  NOT propagate as-is — ec fires 0.006, dg 0.000, CA3 selection 0. The DG's strong feedforward inhibition (dg_pv_basket)
+  + the lang->ec->dg pathway weights need tuning so a pattern drives a SPARSE (<5%) SEPARATED CA3 set (then use THAT as
+  the assembly, encode, complete via the bistable gate). A fresh integration/tuning arc. **⇒ BOTH gap #5 follow-ons (SWR
+  ca1-drive, emergent DG) are fresh integration arcs that DON'T work as-is (demonstrated, not assumed); the completion
+  MECHANISM — gap #5's core — is CLOSED.** Optional: magnitude floor via `rate_homeo` on the read (seed-variable, 5/6
+  robust). Overlaps the gap #4 dendritic keystone [[project_dendritic_cortex_for_emergence]] (the bistability substrate
+  now EXISTS — gap #4's local-credit rule on it is a strong candidate next arc). ⚠️ prior-arc perm/self-sustain numbers
+  were silence-confounded (fixed by the `_hard_silence` dendritic-state reset).
 - **🔬 gap#5 Rung 2/3 RESULT (2026-07-17):** the mossy-detonator SPARSIFIES CA3 (0.43→0.03) but sparsity WITHOUT
   synchrony can't select — within/silent separation goes NEGATIVE (−0.27 to −0.47; the sparse cells fire async →
   co-activity traces never clear threshold → no potentiation). Rung 3 (input gamma-pulse) is INERT (byte-identical to
