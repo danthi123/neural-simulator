@@ -163,3 +163,16 @@ every T. ⇒ the seed-fragility is NOT fixable by the weight-sum homeostatic T �
 connectivity + E/I). The robust close needs a per-neuron rate-homeostatic / reduced heterogeneity / E-I calibration,
 NOT T-tuning. Gap #5 BANKED at "mechanism demonstrated (seed 42)"; sequenced after the easier gap #3 residuals per the
 2026-07-18 easiest-first strategy correction.
+
+---
+
+## ⛔ RETRACTION 2 (2026-07-18) — the "WANG-NMDA genuine bistable+specific on seed 42" block above is ALSO retracted
+
+The Wang seed-42 "cue=0.264 / perm=0.056" result was measured with recall-time PLASTICITY ON and OU NOISE ON. Adding
+a plasticity freeze at recall + OU control shows it was a CONFOUND: with the attractor genuinely FROZEN and OU OFF, the
+Wang-NMDA attractor (w_within=49) produces cue=0.000 (DEAD); with OU ON it is 0.500 everywhere (pure noise-driven).
+The recall-time hebbian LTP was strengthening the within-ensemble weights DURING the 150-step recall. ⇒ same class as
+RETRACTION 1 (the self-sustaining artifact), caught this time by the plasticity-freeze. The true isolated wall is
+NON-SPECIFIC completion (a frozen dendritic attractor completes from ANY cue), and BIOLOGICAL SPARSE recurrence
+(Guzman-Jonas ~2%) is the mechanism that produces cue-specificity. See
+`2026-07-18-gap5-wang-GO-was-plasticity-noise-confound-sparse-recurrence-gives-specificity.md`.
