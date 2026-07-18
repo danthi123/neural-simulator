@@ -202,7 +202,15 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   SEED-FRAGILE — exactly the 2026-07-14 scale-boundary (2/6 clean at small scale), which that finding predicted SCALE
   fixes.** **⚙️ Scale test running** (`<id>`: the GO config at n_ca3=1000, 6-seed). **⚠️ EXACT NEXT ACTION:** read it →
   if scale robustifies to ≥5/6 → gap#5 completion mechanism CLOSED → wire EMERGENT mossy/DG selection → SWR loop →
-  console. If still fragile at 1000 → n_ca3=2000, or per-seed k_thresh/lam widening, or engram intrinsic-excitability.
+  console. **SCALE RESULT (n_ca3=1000): 3/6 GO** (seeds 43/44/102 clear; 42/100/101 miss). KEY: **all 6 seeds show
+  SPECIFIC completion** (h_comp ≥ 2× non-stored on EVERY seed — the mechanism works on all), but the MAGNITUDE is a
+  knife-edge at 0.30 (0.303/0.368/0.418 clear; 0.107/0.216/0.088 miss). ⇒ NOT a mechanism failure — a formation-strength
+  variance (the 2026-07-14 scale-boundary). **⚙️ Robustness sweep running** (targeting the fragile seeds: lr/events/
+  assembly-size to push all seeds' magnitude past 0.30). **⚠️ EXACT NEXT ACTION:** read it → find a config with ≥5/6
+  clearing 0.30 (or widen assembly redundancy / n_ca3=2000). THEN: gap#5 functional-completion CLOSED → wire EMERGENT
+  mossy/DG selection → SWR loop → console. HONEST MILESTONE: gap#5 completion went from CHANCE (project-lifetime) to a
+  WORKING specific learned-attractor completion (all 6 seeds specific, 3/6 clearing the strict magnitude bar) — a real
+  breakthrough; robust 6-seed is a knife-edge tuning continuation.
 - (superseded by the breakthrough above) direct synchronous assembly encoding did NOT grow the weights — DECAYED,
   and sync=async BYTE-IDENTICAL (the gamma mechanism was inert because NOTHING was potentiating). The rate-window LTP
   isn't firing: a cell firing ~1/3 of steps has trace ≈0.33 → product ≈0.11 < the 0.25 coactivity threshold → no
