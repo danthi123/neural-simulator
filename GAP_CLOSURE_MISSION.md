@@ -222,10 +222,16 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   (non 0.995) — the optimal assembly density is SEED-VARYING, so one fixed frac misses some seeds' sweet spot. The
   principled fix (2026-07-14 gate cited PMC12244581): assembly-SELECTIVE feedback inhibition (k-WTA capping the active
   count at recall → specificity robust to density). **⚙️ `bo9depc5z` running** (n_ca3=2000, fb_inhib 15/40, seeds
-  42/101/44). **⚠️ EXACT NEXT ACTION:** read it → if fb_inhib restores s44 specificity while 42/101 stay GO → one robust
-  config → full 6-seed → CLOSE mechanism → wire EMERGENT mossy/DG selection → SWR loop → console. If still per-seed →
-  a homeostatic/adaptive sparsity target, OR record the mechanism-found+strong-at-scale state (MASSIVE advance on the
-  2026-07-14 boundary: chance → h_comp 0.9 specific) + continue. Per owner "close ALL fully": keep pushing to robust.
+  42/101/44). **🎉🎉🎉 FB-INHIB FIXED IT (2026-07-18): fb_inhib=15 at
+  n_ca3=2000/assembly 0.008 → ALL THREE tested seeds (42, 101, 44) complete PERFECTLY + SPECIFICALLY: h_comp=1.000,
+  non-stored=0.000, GO.** Assembly-selective inhibition caps the completion spread (non-members silent) while held
+  members fully reactivate — density-robust, exactly PMC12244581. **THE ROBUST CONFIG:** n_ca3=2000, assembly_frac
+  0.008, continuous drive 3000pA, coact_thresh 0.02, hebb_lr 2.0, lam 0.5, k_thresh 15, recall_steps 100, ca3_fb_inhib
+  15. **⚙️ FULL 6-SEED + no-encoding anti-cheat running** (`b4ncflcd4`). **⚠️ EXACT NEXT ACTION:** read it → if 6/6 GO
+  + no-encoding collapses → **gap#5 FUNCTIONAL CA3 COMPLETION MECHANISM = 6-SEED GO** (biology-faithful CA3
+  autoassociator, at CHANCE the project's entire history, now closed on a LEARNED attractor) → write the finding →
+  then (a) wire the EMERGENT mossy/DG assembly SELECTION (replace pre-assigned = experience-derived) → (b) SWR
+  generative-replay loop → (c) console. If <6/6 → per-seed fb_inhib tune (15 vs 40 both worked on the 3 tested).
 - (superseded by the breakthrough above) direct synchronous assembly encoding did NOT grow the weights — DECAYED,
   and sync=async BYTE-IDENTICAL (the gamma mechanism was inert because NOTHING was potentiating). The rate-window LTP
   isn't firing: a cell firing ~1/3 of steps has trace ≈0.33 → product ≈0.11 < the 0.25 coactivity threshold → no
