@@ -190,6 +190,14 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   two committed edits; NO new `sim/` edit. ⇒ the ENCODING half of "BTSP stores the CA3 assembly the bistable CA3
   completes" works on the spiking substrate. **REMAINING piece of the unification:** wire STORED→COMPLETES on one bridge
   (a BTSP-stored assembly, then a partial cue → the bistable CA3 completes it) — reuse the gap#5 completion config.
+- **↳ COMPLETION is gap#5-CONFIG-DEPENDENT, not a stored-weight artifact (2026-07-18, honest BOUNDARY that scopes the
+  rung).** A minimal-config recall-bias probe (`_gap4_btsp_recall_bias_probe.py`): after BTSP stores the assembly, a
+  partial cue does NOT drive the held-out partners in a 40-60-cell pool (heldout ~ non-assembly, at noise) even denser/
+  no-reset. ⇒ STRONG stored weights alone do NOT complete — completion needs the gap#5 trilemma config (n_ca3=2000,
+  dense assembly, bistable dendrites + selective inhibition + structural separation), exactly as gap#5 found. So the
+  full unification's completion half **must** run BTSP-encoding INSIDE the gap#5 completion config (reuse
+  `_riii_ca3_synchronous_assembly_derisk`'s `_build` + `_measure_ca1`, swap the Hebbian encode for BTSP) — a focused
+  deep integration, the precise next rung. Storing (GO) and completion (gap#5-config) are cleanly separated.
 - **✅ GAP #4 ON-BRIDGE BTSP RULE VALIDATED (2026-07-18) — the working credit rule runs ON THE SPIKING SUBSTRATE.** Added `fused_btsp_update` (`sim/kernels.py`) + a guarded default-off `enable_btsp` block in
   `bridge._run_one_simulation_step` (seconds-long per-neuron pre-eligibility `cp_btsp_pre_elig` on `coo.row` × the
   dendritic plateau `cp_v_apical` above v_hold on `coo.col`, gated by plastic-mask + plasticity_rate_gain like BDSP) +
