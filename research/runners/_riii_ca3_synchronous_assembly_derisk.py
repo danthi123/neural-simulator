@@ -33,14 +33,18 @@ from research.runners.validate_trisynaptic_loop import measure_region_response  
 
 def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_on=2, sync_off=4,
         encode_drive=700.0, recall_drive=250.0, lam_dep_wi=0.5, hebb_max=2000.0, ca3_fb_inhib=20.0,
-        reset_steps=15, drive_steps=48, recall_steps=60, ens_thresh=2, no_sync=False):
+        reset_steps=15, drive_steps=48, recall_steps=60, ens_thresh=2, no_sync=False,
+        coact_thresh=0.02, hebb_lr=None):
+    # DIAGNOSED LEVERS (2026-07-18 workflow): the rate-window LTP is an EMA-trace rule -- a cell's co-activity trace
+    # tops out ~0.03-0.2 (point Izh fires ~0.2 duty @700pA), so coact_thresh MUST be BELOW it (~0.02) or nothing
+    # potentiates; the gamma OFF-gap DECAYS the EMA (0.9^off) so CONTINUOUS drive (sync_off<=1) is required, NOT
+    # synchrony; higher hebb_lr + strong drive (~3000pA -> ~0.5 duty) climb the weight toward the completion scale.
     from sim.backend import get_backend, to_host
     from sim.kernels import fused_htm_winner_inactive_depression
     cp, _ = get_backend()
-    # high hebb_max so the within-ensemble can GROW to the completion scale IF the synchronous co-firing supplies the
-    # co-activity; ca3w=6 init; two_comp dendritic read-out (CYCLE-1068), feedback inhibition to keep non-assembly sparse.
     bridge = _build(seed, n_ca3=n_ca3, ca3w=6.0, ca3_density=0.5, coincidence=True, two_comp=True, apical_R=50.0,
-                    train=True, hebb_max=hebb_max, hebb_rate=True, ca3_fb_inhib=ca3_fb_inhib)
+                    train=True, hebb_max=hebb_max, hebb_rate=True, ca3_fb_inhib=ca3_fb_inhib,
+                    coact_thresh=coact_thresh, hebb_lr=hebb_lr)
     rm = bridge.region_manager
     ca3_idx = list(rm.indices("ca3")); ca3_arr = cp.asarray(ca3_idx, dtype=cp.int64)
     n = bridge.core_config.num_neurons
