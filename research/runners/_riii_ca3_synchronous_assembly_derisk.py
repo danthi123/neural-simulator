@@ -61,7 +61,7 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
         plateau_self_regen=0.0, plateau_v_hold=-35.0, apical_kir_g=0.0, apical_gc_read=None, read_apical=False,
         read_ca1=False, schaffer_boost=1.0,
         encode_btsp=False, btsp_lr=0.02, encode_ca3w=None, encode_plateau_pA=250.0, encode_structural_sep=0,
-        encode_hetero=0.0, assemblies_ext=None):
+        encode_hetero=0.0, encode_btsp_hetero=0.0, assemblies_ext=None):
     # DIAGNOSED LEVERS (2026-07-18 workflow): the rate-window LTP is an EMA-trace rule -- a cell's co-activity trace
     # tops out ~0.03-0.2 (point Izh fires ~0.2 duty @700pA), so coact_thresh MUST be BELOW it (~0.02) or nothing
     # potentiates; the gamma OFF-gap DECAYS the EMA (0.9^off) so CONTINUOUS drive (sync_off<=1) is required, NOT
@@ -133,6 +133,10 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
         cfg_b.coincidence_plateau_v_hold = float(plateau_v_hold); cfg_b.apical_kir_g = float(apical_kir_g)
         cfg_b.enable_btsp = True; cfg_b.btsp_learning_rate = float(btsp_lr)
         cfg_b.btsp_elig_tau_ms = 1000.0; cfg_b.btsp_w_max = float(hebb_max)
+        # gap#4<->gap#5 UNIFICATION FIX: the STRUCTURED one-shot storing rule -- add the heterosynaptic-COMPETITION arm
+        # (Milstein-Magee bidirectional; sharpen the stored assembly the way Hebbian's lam_dep_wi does). 0 = uniform
+        # (the characterized ~0.18 residual); >0 = competition-shaped (the head-to-head predicts a stronger completion).
+        cfg_b.btsp_hetero_dep = float(encode_btsp_hetero)
         n_all_b = cfg_b.num_neurons
         bridge.cp_bdsp_apical_drive = cp.zeros(n_all_b, dtype=cp.float32)
         for m, assy in enumerate(assemblies):

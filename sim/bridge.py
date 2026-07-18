@@ -95,6 +95,7 @@ from sim.kernels import (fused_izhikevich_legacy_dynamics_update,
                          fused_stdp_weight_update,
                          fused_bdsp_update,
                          fused_btsp_update,
+                         fused_btsp_hetero_update,
                          fused_eligibility_trace_decay)
 from experiment import ExperimentEngine
 from experiment.engine import experiment_config_from_dict, experiment_config_to_dict
@@ -7380,14 +7381,30 @@ class SimulationBridge:
                 coo_bt = self._get_cached_coo()
                 etilde_bt = self.cp_btsp_pre_elig[coo_bt.row]
                 is_bt = _is_post_bt[coo_bt.col]
-                active_bt = cp.where((etilde_bt > 1e-6) & (is_bt > 1e-6))[0]
+                # gap#4<->gap#5 unification: with heterosynaptic competition (btsp_hetero_dep>0) a plateauing cell also
+                # DEPRESSES its NON-coincident inputs, so the active set must include synapses whose post plateaus even
+                # where the pre is silent (etilde~0). Default (_hdep<=0): the exact pure-potentiation set (both>1e-6),
+                # byte-identical.
+                _hdep = float(getattr(cfg, "btsp_hetero_dep", 0.0))
+                if _hdep > 0.0:
+                    active_bt = cp.where(is_bt > 1e-6)[0]
+                else:
+                    active_bt = cp.where((etilde_bt > 1e-6) & (is_bt > 1e-6))[0]
                 if active_bt.size > 0:
                     cur_w = self.cp_connections.data[active_bt]
-                    new_w = fused_btsp_update(
-                        cur_w, etilde_bt[active_bt], is_bt[active_bt],
-                        cp.float32(getattr(cfg, "btsp_learning_rate", 0.001)),
-                        cp.float32(getattr(cfg, "btsp_w_min", 0.0)),
-                        cp.float32(getattr(cfg, "btsp_w_max", 5.0)))
+                    if _hdep > 0.0:
+                        new_w = fused_btsp_hetero_update(
+                            cur_w, etilde_bt[active_bt], is_bt[active_bt],
+                            cp.float32(getattr(cfg, "btsp_learning_rate", 0.001)),
+                            cp.float32(_hdep),
+                            cp.float32(getattr(cfg, "btsp_w_min", 0.0)),
+                            cp.float32(getattr(cfg, "btsp_w_max", 5.0)))
+                    else:
+                        new_w = fused_btsp_update(
+                            cur_w, etilde_bt[active_bt], is_bt[active_bt],
+                            cp.float32(getattr(cfg, "btsp_learning_rate", 0.001)),
+                            cp.float32(getattr(cfg, "btsp_w_min", 0.0)),
+                            cp.float32(getattr(cfg, "btsp_w_max", 5.0)))
                     if self.cp_synapse_plastic_mask is not None:
                         plastic_bt = self._ensure_gate_capacity(
                             "cp_synapse_plastic_mask", self.cp_connections.nnz,

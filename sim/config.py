@@ -304,6 +304,12 @@ class CoreSimConfig:
     btsp_elig_tau_ms: float = 1000.0               # tau of the seconds-long presynaptic eligibility low-pass (Milstein pre-side)
     btsp_w_min: float = 0.0                        # BTSP weight lower clip (potentiation-dominated; non-negative)
     btsp_w_max: float = 5.0                        # BTSP weight upper clip (the (w_max-w) saturation ceiling)
+    btsp_hetero_dep: float = 0.0                   # gap#4<->gap#5 unification: heterosynaptic-COMPETITION coefficient.
+    # 0.0 (default) => the BTSP block uses pure-potentiation fused_btsp_update (byte-identical). >0 => the structured
+    # fused_btsp_hetero_update (Milstein-Magee 2021 bidirectional arm / Chistiakova-Volgushev heterosynaptic
+    # competition): a plateauing cell depresses its NON-coincident inputs by lam_dep*(1-Etilde_pre)*(w-w_min) while
+    # potentiating its coincident ones -- the competition that sharpens the stored assembly -> a stronger completion
+    # attractor (head-to-head: structured 0.226 vs uniform 0.179). Still one-shot + plateau-gated + local.
     # BDSP MICROCIRCUIT variant (D1 completion, 2026-07-07; Sacramento-Senn 2018 + Urbanczik-Senn 2014). ONLY
     # meaningful when enable_bdsp is also True. Raw Burstprop must LOCALLY ESTIMATE credit from a noisy per-neuron
     # burst fraction, so its held-out accuracy is finite-sample-noise-limited (EMERGE-5c; D1 held-out 0.66 < 0.75).

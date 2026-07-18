@@ -521,6 +521,37 @@ def fused_btsp_update(w, etilde_pre, is_post, eta, w_min, w_max):
     return cp.clip(w_new, w_min, w_max)
 
 @fuse()
+def fused_btsp_hetero_update(w, etilde_pre, is_post, eta, lam_dep, w_min, w_max):
+    """Structured (heterosynaptic-COMPETITION) BTSP one-shot weight update -- the gap#4<->gap#5 UNIFICATION storing
+    rule (2026-07-18). Extends fused_btsp_update with the Milstein-Magee 2021 (eLife 73046) BIDIRECTIONAL arm /
+    Chistiakova-Volgushev heterosynaptic plasticity / Oja competitive normalization: a plateauing cell POTENTIATES
+    its plateau-coincident inputs AND DEPRESSES its non-coincident inputs -- the COMPETITION that sharpens the stored
+    assembly into a stronger, more-specific recurrent attractor:
+
+        dw_ij = eta * IS_i * [ Etilde_j * (w_max - w_ij)  -  lam_dep * (1 - Etilde_j) * (w_ij - w_min) ]
+
+    where (PER-SYNAPSE, gathered by the caller from the cached COO exactly like fused_btsp_update):
+      w          : current recurrent weight in [w_min, w_max].
+      etilde_pre : the SECONDS-long presynaptic synaptic-eligibility of source j (Milstein pre-side, in ~[0,1]); high
+                   for a plateau-coincident (assembly) input, ~0 for a non-coincident one.
+      is_post    : the POSTsynaptic dendritic PLATEAU instructive signal max(v_apical - v_hold, 0) (the learning gate;
+                   IS==0 => dw==0 at rest = the no-spurious-learning moat, by construction).
+      lam_dep    : heterosynaptic-depression coefficient. lam_dep=0 => this reduces EXACTLY to the pure-potentiation
+                   fused_btsp_update (the depression term vanishes) => byte-identical to the default BTSP path.
+
+    WHY: the structured-vs-uniform head-to-head (structured Hebbian+competition cue 0.226 vs uniform BTSP 0.179, same
+    assembly/recall/seed, 3-seed) proved the completion-magnitude residual is a property of the STORING RULE'S
+    structure -- heterosynaptic competition sharpens the attractor; uniform (w_max-w) saturation leaves it diffuse.
+    This rule keeps BTSP's one-shot behavioral-timescale plateau-gating (gap#4) AND adds the competition (gap#5
+    completion strength) -- the SHARED fix for both residuals. Fully local; NO weight transport; NO global loss.
+    Pure math, no simulator deps. Called ONLY from the guarded `if cfg.enable_btsp and btsp_hetero_dep>0` sub-branch
+    of the BTSP block in bridge._run_one_simulation_step, gated by cp_plasticity_rate_gain -> byte-inert by default."""
+    pot = etilde_pre * (w_max - w)
+    dep = lam_dep * (1.0 - etilde_pre) * (w - w_min)
+    w_new = w + eta * is_post * (pot - dep)
+    return cp.clip(w_new, w_min, w_max)
+
+@fuse()
 def fused_eligibility_trace_decay(trace, decay_factor):
     """Fused kernel for eligibility trace exponential decay.
 

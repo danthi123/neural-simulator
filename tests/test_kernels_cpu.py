@@ -1452,5 +1452,34 @@ def test_fused_btsp_update_plateau_gated_oneshot():
     assert np.allclose(np.asarray(out_eta0), w0), "eta=0 must be byte-inert"
 
 
+def test_fused_btsp_hetero_update_competition_arm():
+    """gap#4<->gap#5 UNIFICATION (2026-07-18): fused_btsp_hetero_update adds the Milstein-Magee bidirectional /
+    heterosynaptic-COMPETITION arm to BTSP -- a plateauing cell POTENTIATES its plateau-coincident inputs AND DEPRESSES
+    its non-coincident inputs: dw = eta*IS*[Etilde*(w_max-w) - lam_dep*(1-Etilde)*(w-w_min)]. Pins: lam_dep=0 reduces
+    to pure BTSP; lam_dep>0 depresses non-coincident inputs while still potentiating coincident ones; the MOAT holds
+    (IS=0 => no change even with competition on); eta=0 byte-inert. The competition is the completion-magnitude fix the
+    structured-vs-uniform head-to-head localized (structured 0.226 vs uniform 0.179)."""
+    import os
+    os.environ.setdefault("SIM_BACKEND", "numpy")
+    from sim.kernels import fused_btsp_update, fused_btsp_hetero_update
+    w0 = np.array([0.3, 2.0, 4.0, 1.0], dtype=np.float32)
+    etilde = np.array([0.9, 0.9, 0.0, 0.2], dtype=np.float32)     # 3rd synapse: NO eligibility (heterosynaptic target)
+    is_hi = np.array([5.0, 5.0, 5.0, 5.0], dtype=np.float32)      # all under the plateau
+    # (1) lam_dep = 0 reduces to pure-potentiation BTSP (the default-path equivalence)
+    pure = np.asarray(fused_btsp_update(w0.copy(), etilde, is_hi, 0.02, 0.0, 300.0))
+    het0 = np.asarray(fused_btsp_hetero_update(w0.copy(), etilde, is_hi, 0.02, 0.0, 0.0, 300.0))
+    assert np.allclose(pure, het0, rtol=1e-5), "lam_dep=0 must reduce to pure BTSP (float tol)"
+    # (2) lam_dep > 0: a plateau-coincident synapse still potentiates; a NON-coincident (etilde=0) one is DEPRESSED
+    het1 = np.asarray(fused_btsp_hetero_update(w0.copy(), etilde, is_hi, 0.02, 0.5, 0.0, 300.0))
+    assert het1[0] > w0[0] + 1e-4, "coincident synapse must still potentiate under competition"
+    assert het1[2] < w0[2] - 1e-3, "heterosynaptic competition must DEPRESS the non-coincident (etilde=0) synapse"
+    # (3) the MOAT: IS = 0 (silent plateau) => NO change even with competition on (no spurious depression at rest)
+    het_moat = np.asarray(fused_btsp_hetero_update(w0.copy(), etilde, np.zeros(4, dtype=np.float32), 0.02, 0.5, 0.0, 300.0))
+    assert np.allclose(het_moat, w0), "IS=0 must not change any weight even with lam_dep>0 (the moat)"
+    # (4) eta = 0 is byte-inert regardless of lam_dep
+    het_eta0 = np.asarray(fused_btsp_hetero_update(w0.copy(), etilde, is_hi, 0.0, 0.5, 0.0, 300.0))
+    assert np.allclose(het_eta0, w0), "eta=0 must be byte-inert even with competition on"
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
