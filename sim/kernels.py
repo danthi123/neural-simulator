@@ -251,7 +251,8 @@ def fused_nmda_update_and_current(g_nmda, g_nmda_rise, decay_nmda, decay_nmda_ri
 
 @fuse()
 def fused_coincidence_plateau(g, g_rise, decay, decay_rise, v, E_e, mg_conc,
-                              c_count, k_thresh, gain, plateau_strength):
+                              c_count, k_thresh, gain, plateau_strength,
+                              self_regen=0.0, v_hold=-35.0, v_hold_k=0.2):
     """Dendritic-COINCIDENCE (NMDA-spike) plateau. A per-neuron SUPRALINEAR, all-or-none switch on the
     COUNT of SYNCHRONOUS clustered inputs c_count: >= k_thresh coincident inputs this step -> a
     regenerative plateau conductance increment; fewer -> ~0. The plateau then decays with the SAME
@@ -264,10 +265,18 @@ def fused_coincidence_plateau(g, g_rise, decay, decay_rise, v, E_e, mg_conc,
     Hausser 2010 temporal sensitivity -> the jitter anti-cheat.) Called ONLY from the guarded
     coincidence block in bridge._run_one_simulation_step, so its presence is byte-inert when
     cfg.enable_coincidence_detection is False (the block is unreached and this kernel is never invoked)."""
-    # All-or-none sigmoid switch on the coincidence count (the supralinear subunit).
+    # All-or-none sigmoid switch on the coincidence count (the supralinear subunit) = the INPUT TRIGGER.
     g_inc = plateau_strength / (1.0 + cp.exp(-gain * (c_count - k_thresh)))
-    # Dual-exponential plateau (g_slow - g_rise), mirroring the NMDA dual-exp kinetics.
-    g_new = g * decay + g_inc
+    # v-GATED SELF-REGENERATING SUSTAIN (default self_regen=0 -> zero -> byte-identical). Once the compartment is
+    # depolarized past v_hold, this REPLENISHES the SLOW reservoir g each step (weighted by the Mg-unblock, computed
+    # below) so the plateau HOLDS after the input volley ends -- the intrinsic bistable up state (Antic 2010). Added to
+    # the SLOW g only (NOT g_rise), so it does not cancel in g_eff = g - g_rise; needs a KIR down-state stabilizer
+    # (apical ODE) for a robust bistable band (Sanders 2013). mg_block is recomputed here to gate the self-drive.
+    _mg = 1.0 / (1.0 + (mg_conc / 3.57) * cp.exp(-0.062 * v))
+    sustain = self_regen * _mg / (1.0 + cp.exp(-v_hold_k * (v - v_hold)))
+    # Dual-exponential plateau (g_slow - g_rise), mirroring the NMDA dual-exp kinetics. The trigger drives both (rise);
+    # the sustain replenishes only the slow reservoir (hold).
+    g_new = g * decay + g_inc + sustain
     g_rise_new = g_rise * decay_rise + g_inc
     g_eff = g_new - g_rise_new
     g_eff = cp.maximum(g_eff, 0.0)

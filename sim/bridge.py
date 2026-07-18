@@ -6517,7 +6517,11 @@ class SimulationBridge:
                     c_drive,  # COUNT (default) or WEIGHTED coincident sum (cfg.coincidence_weighted_drive)
                     cp.float32(getattr(cfg, "coincidence_k_threshold", 6.0)),  # WEIGHT units when weighted_drive
                     cp.float32(getattr(cfg, "coincidence_gain", 2.0)),
-                    cp.float32(getattr(cfg, "coincidence_plateau_strength", 80.0)))
+                    cp.float32(getattr(cfg, "coincidence_plateau_strength", 80.0)),
+                    # dendritic bistability (2026-07-18): v-gated self-regenerating sustain (default 0 = byte-identical)
+                    cp.float32(getattr(cfg, "coincidence_plateau_self_regen", 0.0)),
+                    cp.float32(getattr(cfg, "coincidence_plateau_v_hold", -35.0)),
+                    cp.float32(getattr(cfg, "coincidence_plateau_v_hold_k", 0.2)))
                 if _two_comp:
                     _gc = cp.float32(getattr(cfg, "apical_g_couple", 1.0))
                     _tau = cp.float32(getattr(cfg, "apical_tau_ms", 15.0))
@@ -6527,6 +6531,17 @@ class SimulationBridge:
                     # apical leaky-membrane ODE: leak toward rest + R*plateau current + electrotonic soma coupling
                     _dv = (-(self.cp_v_apical - _Er) + _R * I_coincidence
                            + _gc * (self.cp_membrane_potential_v - self.cp_v_apical))
+                    # KIR down-state stabilizer (2026-07-18, gap#5 dendritic bistability): an inward-rectifier K+
+                    # conductance HIGH at hyperpolarized, LOW at depolarized (Sanders 2013 "perfect couple") -> a robust
+                    # bistable band the linear leak alone cannot give. Guarded: default apical_kir_g=0 -> not computed ->
+                    # byte-identical. g_KIR = apical_kir_g / (1 + exp((v - vhalf)/k)); current g_KIR*(E_K - v), leak-relative.
+                    _kir_g = float(getattr(cfg, "apical_kir_g", 0.0))
+                    if _kir_g != 0.0:
+                        _ek = cp.float32(getattr(cfg, "apical_kir_E_K", -90.0))
+                        _vh = cp.float32(getattr(cfg, "apical_kir_vhalf", -50.0))
+                        _kk = cp.float32(getattr(cfg, "apical_kir_k", 8.0))
+                        _gkir = cp.float32(_kir_g) / (1.0 + cp.exp((self.cp_v_apical - _vh) / _kk))
+                        _dv = _dv + _gkir * (_ek - self.cp_v_apical)
                     self.cp_v_apical = self.cp_v_apical + (_dt / _tau) * _dv
                     # only the attenuated electrotonic coupling reaches the soma (a full apical plateau stays sub-threshold)
                     total_input_current_pA = (total_input_current_pA

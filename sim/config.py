@@ -201,6 +201,14 @@ class CoreSimConfig:
     rf_dense_weights: bool = False
     coincidence_gain: float = 2.0               # sigmoid slope of the all-or-none switch (~0.88/0.12 at K+/-1)
     coincidence_plateau_strength: float = 80.0  # per-step plateau conductance increment scale (the regenerative NMDA-spike drive)
+    # INTRINSIC DENDRITIC BISTABILITY (2026-07-18, gap#5): a v-GATED self-regenerating plateau conductance that
+    # REPLENISHES the slow reservoir while the compartment is depolarized past v_hold -> the plateau HOLDS after the
+    # input volley ends (a stable up fixed point), not just a transient dAP. Offline I-V validated (Antic 2010
+    # regenerative NMDA plateau; needs the apical_kir_g down-state stabilizer for a robust bistable band, Sanders 2013).
+    # Default 0.0 -> the sustain term is zero -> byte-identical to the transient coincidence plateau.
+    coincidence_plateau_self_regen: float = 0.0  # g_regen: scale of the v-gated self-sustaining conductance (0 = off)
+    coincidence_plateau_v_hold: float = -35.0    # the hold/trigger voltage (~the middle unstable fixed point), mV
+    coincidence_plateau_v_hold_k: float = 0.2    # sigmoid slope of the v-gate (per mV)
     coincidence_tau_decay_ms: float = 80.0      # plateau duration (Major-Larkum-Schiller NMDA spike 50-100ms)
     coincidence_tau_rise_ms: float = 2.0        # plateau rise (ms)
     # rung-4 two-compartment dAP (2026-07-02, EMERGE-10 Stage A'). A single-compartment coincidence plateau
@@ -215,6 +223,14 @@ class CoreSimConfig:
     apical_R: float = 0.15                       # plateau-current -> apical-voltage scale (pA -> mV)
     apical_g_couple: float = 1.0                 # electrotonic soma<->apical coupling conductance (attenuation to the soma)
     apical_E_rest: float = -65.0                 # apical resting potential (mV)
+    # KIR down-state stabilizer (2026-07-18, gap#5 dendritic bistability): an inward-rectifier K+ conductance on the
+    # apical -- HIGH at hyperpolarized, LOW at depolarized (Sanders-Berends-Major-Goldman-Lisman 2013 "perfect couple").
+    # Offline I-V test: a LINEAR apical leak gives NO robust bistable band; KIR opens a WIDE one. Anchors a silent down
+    # state without fighting the up state. Default 0.0 -> no KIR current added -> the apical ODE is byte-identical.
+    apical_kir_g: float = 0.0                    # KIR conductance scale (0 = off; the linear leak alone remains)
+    apical_kir_E_K: float = -90.0               # K+ reversal (mV)
+    apical_kir_vhalf: float = -50.0             # half-activation voltage of the inward rectification (mV)
+    apical_kir_k: float = 8.0                   # rectification slope (mV); g_KIR = apical_kir_g/(1+exp((v-vhalf)/k))
     # HTM Temporal-Memory permanence learning (rung-4 Stage C, Bouhadjar-Diesmann 2022 three-term rule). When True,
     # the coincidence_detector-routed distal synapses (cp_coincidence_synapse_mask) have their WEIGHTS (= HTM
     # permanences in [0,1]) updated each step by fused_htm_permanence_update: causal potentiation (pre-on-previous

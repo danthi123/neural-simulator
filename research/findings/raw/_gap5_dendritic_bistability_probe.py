@@ -1,61 +1,64 @@
-"""Gap #5 — dendritic-plateau BISTABILITY probe: does a single two-compartment dAP neuron HOLD a plateau (a stable
-high fixed point) after a transient partial cue, AND stay silent at rest? (The intrinsic bistability that resolves the
-completion trilemma: magnitude vs bistability, since a strong point-neuron attractor self-sustains.)
+"""Gap #5 — dendritic-plateau BISTABILITY latch-and-hold probe (single cell, numpy, uses the REAL kernel).
 
-Tests, per neuron (no recurrence -- pure single-cell dendritic dynamics):
-  1. LATCH-AND-HOLD: drive the apical with a coincident cue for `cue_steps`, then REMOVE it and run `hold_steps` -> does
-     v_apical STAY depolarized (plateau held)? A transient dAP decays; a bistable dendrite holds.
-  2. SILENT REST: no cue -> v_apical stays at rest (no self-ignition).
-  3. RESET: a hyperpolarizing (inhibitory) kick knocks it out of the plateau back to rest.
-
-Baseline (current transient kernel) is expected to DECAY after cue removal (test 1 fails) -> that is the gap the
-self-regenerating-conductance kernel change must close. GPU. Uses the existing enable_two_compartment_dap machinery.
+Drives the coincidence plateau with a cue volley for `cue_steps`, then REMOVES the input and runs `hold_steps`; reads
+the apical voltage. A transient dAP (self_regen=0) decays back to rest; a bistable dendrite (self_regen>0 + KIR down-
+state stabilizer) HOLDS the plateau. Also: no-cue -> silent. This validates the sim/ kernel change end-to-end at the
+single-cell mechanism level (before wiring into the CA3 network). GO signature: HELD-high with regen+KIR, DECAYS
+without, SILENT with no cue.
 """
 import os, sys
-os.environ.setdefault("SIM_BACKEND", "cupy")
+os.environ.setdefault("SIM_BACKEND", "numpy")
 _REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 if _REPO not in sys.path:
     sys.path.insert(0, _REPO)
 import numpy as np
+from sim.kernels import fused_coincidence_plateau  # numpy backend -> plain callable
 
 
-def build(seed=42, n=64, k_thresh=6.0, plateau_strength=80.0, mg=1.0, apical_R=0.15, apical_gc=1.0,
-          self_regen=0.0):
-    from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
-    from sim.bridge import SimulationBridge
-    from sim.regions import BrainRegion, RegionPathway
-    regions = [BrainRegion(name="d", n_neurons=n, exc_fraction=1.0, internal_density=0.0,
-                           exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False)]
-    pathways = [RegionPathway(from_region="d", to_region="d", density=0.0, weight_mean=0.0, weight_jitter=0.0, plastic=False)]
-    cfg = CoreSimConfig(); cfg.seed = cfg.heterogeneity_seed = cfg.ou_seed = int(seed)
-    cfg.dt_ms = 1.0; cfg.enable_brain_region_framework = True
-    cfg.brain_regions = regions; cfg.region_pathways = pathways
-    cfg.enable_stdp = False; cfg.enable_homeostasis = False; cfg.enable_hebbian_learning = False
-    cfg.enable_short_term_plasticity = False; cfg.enable_ou_process = False
-    cfg.enable_structural_plasticity = False; cfg.fast_spike_reset = True; cfg.enable_nmda = True
-    cfg.enable_coincidence_detection = True; cfg.coincidence_weighted_drive = True
-    cfg.coincidence_k_threshold = float(k_thresh); cfg.coincidence_plateau_strength = float(plateau_strength)
-    cfg.nmda_mg_concentration = float(mg)
-    cfg.enable_two_compartment_dap = True
-    cfg.apical_R = float(apical_R); cfg.apical_g_couple = float(apical_gc)
-    if hasattr(cfg, "coincidence_plateau_self_regen"):
-        cfg.coincidence_plateau_self_regen = float(self_regen)   # the kernel-change knob (0 = current transient behavior)
-    b = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
-                         runtime_state=RuntimeState(), gpu_config=GPUConfig())
-    b._initialize_simulation_data(called_from_playback_init=False)
-    return b, cfg
+def sim_cell(self_regen, kir_g, cue_c=8.0, cue_steps=40, hold_steps=250, k_thresh=6.0,
+             plateau_strength=4.0, gain=2.0, mg=1.0, tau=15.0, R=0.15, Er=-65.0, dt=1.0,
+             v_hold=-35.0, v_hold_k=0.2, kir_ek=-90.0, kir_vhalf=-50.0, kir_k=8.0, n_sub=8):
+    """n_sub sub-steps + a physiological v clamp [-90, 5] mV keep explicit Euler stable across the stiff plateau
+    (the plateau self-limits at E_e=0; the clamp only bounds numerical overshoot, it does not create the up state)."""
+    decay = float(np.exp(-dt / 80.0)); decay_rise = float(np.exp(-dt / 2.0))
+    g = np.array([0.0]); g_rise = np.array([0.0]); v = np.array([Er])
+    sdt = dt / n_sub
+    trace = []
+    for t in range(cue_steps + hold_steps):
+        c = np.array([cue_c if t < cue_steps else 0.0])
+        g, g_rise, I = fused_coincidence_plateau(g, g_rise, decay, decay_rise, v, 0.0, mg,
+                                                 c, k_thresh, gain, plateau_strength,
+                                                 self_regen, v_hold, v_hold_k)
+        for _ in range(n_sub):                       # sub-step the membrane ODE for stability (I held over the step)
+            dv = -(v - Er) + R * I                    # apical leak + plateau current (NO soma coupling: isolated cell)
+            if kir_g != 0.0:
+                gkir = kir_g / (1.0 + np.exp((v - kir_vhalf) / kir_k))
+                dv = dv + gkir * (kir_ek - v)
+            v = np.clip(v + (sdt / tau) * dv, -90.0, 5.0)
+        trace.append(float(v[0]))
+    return np.array(trace), cue_steps
 
 
-def probe(self_regen=0.0, cue_steps=40, hold_steps=120, cue_c_drive=20.0):
-    """Drive the coincidence c_drive high for cue_steps (trigger the plateau), remove it, watch v_apical over hold_steps.
-    NOTE: driving c_drive directly requires access to the coincidence path; here we inject a strong somatic current +
-    a coincident-input proxy. Placeholder for the full probe once the self-regen kernel knob exists."""
-    from sim.backend import to_host
-    b, cfg = build(self_regen=self_regen)
-    va0 = float(np.mean(np.asarray(to_host(b.cp_v_apical)))) if b.cp_v_apical is not None else float("nan")
-    return {"self_regen": self_regen, "v_apical_rest": va0,
-            "note": "harness scaffold; full latch-hold measurement wired once the self-regen kernel knob lands"}
+def summary(self_regen, kir_g, cue_c=20.0):
+    tr, cs = sim_cell(self_regen, kir_g, cue_c=cue_c)
+    v_cue = float(np.mean(tr[cs - 5:cs]))            # apical V at end of cue
+    v_hold = float(np.mean(tr[-30:]))                # apical V long after cue removed
+    return v_cue, v_hold
 
 
 if __name__ == "__main__":
-    print(probe(self_regen=0.0))
+    Er = -65.0
+    print("single-cell latch-and-hold (apical V, mV): v_cue=end of volley, v_hold=250 steps after removal")
+    print(f"  rest = {Er}")
+    for sr, kg, label in [(0.0, 0.0, "transient (current default)"),
+                          (0.02, 0.0, "regen, no KIR"),
+                          (0.02, 3.0, "regen + KIR (bistable target)"),
+                          (0.05, 3.0, "stronger regen + KIR"),
+                          (0.02, 5.0, "regen + stronger KIR")]:
+        vc, vh = summary(sr, kg)
+        held = "HELD" if vh > Er + 15 else ("silent/decayed" if vh < Er + 5 else "partial")
+        print(f"  self_regen={sr:.2f} kir_g={kg:.1f} [{label:30s}]: v_cue={vc:6.1f} v_hold={vh:6.1f} -> {held}")
+    print("no-cue control (cue_c=0, should stay silent):")
+    for sr, kg in [(0.02, 3.0), (0.05, 3.0)]:
+        vc, vh = summary(sr, kg, cue_c=0.0)
+        print(f"  self_regen={sr:.2f} kir_g={kg:.1f}: v_cue={vc:6.1f} v_hold={vh:6.1f} -> {'SILENT' if vh < Er+5 else 'SELF-IGNITED (bad)'}")
