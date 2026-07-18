@@ -61,7 +61,7 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
         plateau_self_regen=0.0, plateau_v_hold=-35.0, apical_kir_g=0.0, apical_gc_read=None, read_apical=False,
         read_ca1=False, schaffer_boost=1.0,
         encode_btsp=False, btsp_lr=0.02, encode_ca3w=None, encode_plateau_pA=250.0, encode_structural_sep=0,
-        encode_hetero=0.0):
+        encode_hetero=0.0, assemblies_ext=None):
     # DIAGNOSED LEVERS (2026-07-18 workflow): the rate-window LTP is an EMA-trace rule -- a cell's co-activity trace
     # tops out ~0.03-0.2 (point Izh fires ~0.2 duty @700pA), so coact_thresh MUST be BELOW it (~0.02) or nothing
     # potentiates; the gamma OFF-gap DECAYS the EMA (0.9^off) so CONTINUOUS drive (sync_off<=1) is required, NOT
@@ -91,7 +91,14 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
     # completion (cue 0.29->0.038) -- the completion's recurrent dynamics depend on the assembly's full composition. The
     # ca1 inhibition and the completion are COUPLED; the SWR ca1-drive is a hard fresh-pass integration, not a quick fix.
     n_assy = max(6, int(assembly_frac * n_ca3))
-    assemblies = [np.asarray(sorted(rng.choice(ca3_idx, n_assy, replace=False)), dtype=np.int64) for _ in range(n_mem)]
+    if assemblies_ext is not None:
+        # EMERGENT-DG integrated select-and-store: use the externally-SELECTED assemblies (e.g. mossy-seeded from a
+        # synchronized DG volley) instead of the random draw. Each entry = global CA3 indices; the rest of run() (BTSP
+        # store, structural_sep, selective_inhib, bistable completion, anti-cheats) is parameterized purely by this list.
+        assemblies = [np.asarray(sorted(int(x) for x in a), dtype=np.int64) for a in assemblies_ext]
+        n_mem = len(assemblies)
+    else:
+        assemblies = [np.asarray(sorted(rng.choice(ca3_idx, n_assy, replace=False)), dtype=np.int64) for _ in range(n_mem)]
 
     _extract = _extract_ca3ca3_all if nmda_recurrent else _extract_ca3ca3_coincidence
     flat_h, pre_l_h, post_l_h = _extract(bridge, ca3_idx, to_host)

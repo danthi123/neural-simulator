@@ -52,6 +52,16 @@ Two later probes change the picture from "hard boundary" to "a tractable INTEGRA
   the bistable CA3 completes; anti-cheats = input-driven (permute input → different assembly), pattern-separation
   (sep_cos < 0.4 across inputs), + the completion nocue/perm/no-encode. This reuses everything already built.
 
+## The integrated select-and-store REFRAME was TESTED — and does NOT sidestep the boundary (honest, verified)
+Built the enabling hook (`run(assemblies_ext=...)`, default None → byte-preserved) + ran the integrated test at the
+COMPLETION scale (n_ca3=2000): a synchronized mossy volley selected **|A_m| = 1 CA3 cell** — far too weak to seed a
+storable assembly. So the reframe's optimism (from the n_ca3=400 `sep_cos` 0.53 transient) does NOT scale: at
+n_ca3=2000 the mossy → CA3 activity is essentially nothing, and the integrated select-AND-store cannot proceed. ⇒ the
+mossy→CA3-firing boundary is ROBUST ACROSS SCALES and is the genuine core obstacle; it must be fixed BEFORE any
+select-and-store. (Verified rather than assumed — the reframe looked tractable but the real-scale test refuted it; this
+is the silent-failure discipline in action.) The `assemblies_ext` hook remains a valid, byte-preserved tool for when
+the feedforward is fixed.
+
 ## Status + the next mechanism (per THE LAW)
 - **BOUNDARY (well-characterized):** emergent-DG via the trisynaptic feedforward is blocked by feedforward propagation
   — the hippocampal chain (EC→DG→CA3) does not carry an input to fire downstream cells at reasonable drives; the mossy
