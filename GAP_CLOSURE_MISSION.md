@@ -255,12 +255,15 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   doesn't complete). BUT magnitude capped ~0.05 (5% reactivation); every boost lever breaks the regime (higher cap →
   self-sustains; higher k_thresh → collapses to 0). The ca3→ca3 already route through the dendritic dAP NMDA-plateau
   (CYCLE-1068), so it's NOT pure-AMPA. The trilemma (magnitude vs bistability vs specificity) has no wide window here.
-  Full finding boundary block: `2026-07-18-gap5-ca3-functional-completion-CLOSED-6seed-GO-learned-attractor.md`. **⚠️
-  EXACT NEXT ACTION = DEEP-RESEARCH GATE (standing practice at a confirmed boundary)** — mechanisms for a ROBUST
-  bistable+specific pattern-completion attractor on spiking point neurons: SOMATIC recurrent NMDA-slow bistability
-  (Wang 2002 / Amit-Brunel — hysteresis + temporal integration widen the window), E-I-balanced attractor networks, vs
-  the dendritic-dAP-coincidence readout used now; rank cheap-first + the anti-cheats (the bistable gate is baked in).
-  Then build the ranked one → 6-seed bistable gate → REAL completion → emergent DG-selection → SWR loop → console.
+  Full finding boundary block: `2026-07-18-gap5-ca3-functional-completion-CLOSED-6seed-GO-learned-attractor.md`. **⚙️ DEEP-RESEARCH
+  GATE DISPATCHED (`a768161d8c642e53b`, running)** — ranking mechanisms for a ROBUST bistable+specific completion:
+  SOMATIC recurrent NMDA-slow bistability (Wang 2002 / Amit-Brunel; the project HAS `exc_receptor="nmda_slow"` /
+  `enable_nmda_recurrent` from the D3 persistent-slot work — likely the #1 cheap reuse: switch ca3→ca3 from plain-exc
+  to nmda_slow) vs E-I-balanced attractors vs the dendritic-dAP readout used now; + whether we missed a lever
+  (assembly size / recall duration vs the NMDA τ / a background working point). **⚠️ EXACT NEXT ACTION:** read the
+  research gate's ranked recommendation (`2026-07-18-gap5-bistable-completion-mechanism-research-gate.md`) → build the
+  #1 cheap mechanism → 6-seed BISTABLE gate (no-cue silent + correct-cue strong + permuted silent) → REAL completion →
+  emergent DG-selection → SWR loop → console.
   **What STANDS:** strong SPECIFIC learned attractor 6-seed + genuine (weak) bistable+specific completion demonstrated;
   the retraction's lesson (mandatory no-cue+permuted gates) is baked in. Gaps #1/#4 remain per "close ALL fully".
 - (superseded by the breakthrough above) direct synchronous assembly encoding did NOT grow the weights — DECAYED,
