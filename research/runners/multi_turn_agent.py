@@ -221,9 +221,18 @@ class MultiTurnAgent:
         # the favored referent: the D3 composed-focus source if wired (brain-based Centering Cb), else the HOST
         # content_bias_target feature-lookup (default). The composed focus binds the pronoun to the discourse center
         # rather than mere feature-compatibility -- the production wire-in of the D3 anaphora integration.
-        fav = (self._focus_bias_source(held, query_verb) if self._focus_bias_source is not None
-               else self._feat_compat_source(held, query_verb) if self._feat_compat_source is not None
-               else content_bias_target(held, query_verb))
+        # Resolution cue-combination (Bates-MacWhinney): CONTENT feature-compatibility decides the clear cases; on a
+        # feature-SILENT TIE (both candidates compatible -> content abstains, gap #3 residual A2) the DISCOURSE-SALIENCE
+        # center (D3 Cb) breaks it. Order: feature-compat (or host) first; if it abstains AND a focus source is wired,
+        # fall back to the Cb salience. (A focus source alone, no feat-compat, stays focus-first = the prior D3 behavior.)
+        if self._feat_compat_source is not None:
+            fav = self._feat_compat_source(held, query_verb)
+            if fav is None and self._focus_bias_source is not None:
+                fav = self._focus_bias_source(held, query_verb)          # A2: feature-silent tie -> discourse center
+        elif self._focus_bias_source is not None:
+            fav = self._focus_bias_source(held, query_verb)
+        else:
+            fav = content_bias_target(held, query_verb)
         if fav is None:
             return None  # content silent -> abstain (moat)
         if not self._graded_bias:

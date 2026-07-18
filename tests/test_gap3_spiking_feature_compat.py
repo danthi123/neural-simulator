@@ -47,3 +47,16 @@ def test_feat_compat_default_off_byte_identical():
     a = MultiTurnAgent(referent_concepts=NOUNS, concepts={w: None for w in VOCAB}, seed=42,
                        enable_biased_competition=True)
     assert a._feat_compat_source is None
+
+
+def test_A2_feature_silent_tie_broken_by_salience():
+    """Gap #3 residual A2: two SAME-animacy candidates (cat, dog) -> the feature-compat ABSTAINS (tie); the
+    discourse-salience focus (the D3 Cb; a stub here) breaks it. Content decides clear cases, salience breaks ties."""
+    fc = SpikingFeatureCompat(seed=42)
+    focus = lambda held, verb: (sorted(held)[0] if held else None)      # salience stub (real D3 Cb is 6-seed GO)
+    a = MultiTurnAgent(referent_concepts=NOUNS, concepts={w: None for w in VOCAB}, seed=42,
+                       enable_biased_competition=True, feat_compat_source=fc, focus_bias_source=focus)
+    a.agent.composer.store("cat", "eat", "fish"); a.agent.composer.store("dog", "eat", "bird")
+    a._write_referent("cat"); a._write_referent("dog")                  # both animate -> feature-silent tie
+    assert fc.bias_target(["cat", "dog"], "eat") is None                # feature-compat ties -> abstains
+    assert a._resolve_biased("eat") is not None                        # the salience focus breaks the tie
