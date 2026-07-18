@@ -173,14 +173,20 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   distinct role-drives select DISTINCT competitive slots via the EMERGE-41 pooler `FSWTAProbe` (3-seed, all 6-col
   non-empty, Jaccard ~0.07). The load-bearing slot-separation property holds. Also identified: sequential selections
   on a REUSED bridge give `[6,0,6,0]` (adaptation + FS carryover suppresses the next selection — the EMERGE-61 family).
-- **⚠️ EXACT NEXT ACTION — BUILD STEP 2: multi-slot COEXISTENCE + role-cued retrieval on ONE bridge.** Compose:
-  pooler-SELECT the slot (step 1) → **D3 persistent-slot ATTRACTOR** holds it (`_d3_persistent_slot_derisk.py`, stable
-  zero-input, coexisting) per bind, with a per-selection reset (EMERGE-61 wash-out) or the attractor absorbing the
-  carryover → **role-cued RETRIEVE** (drive role → complete the matching slot → decode filler). GO bar: a fact's P≥3
-  bundle recovers on spikes ≥0.80 where the write-rule capped ~2; anti-cheats permuted-role→chance /
-  lesion-the-competition→~2 / homeostasis-OFF→collapse; 6-seed, `cfg.seed` set. First verifiable sub-step: does the D3
-  attractor HOLD a single pooler-selected slot (zero-input persistence)? BOUNDARY (inter-region conductance ~1000×
-  weak) → gate's #2 theta-gamma (EMERGE-85). Never a stop.
+- **BUILD STEP 2 progress:** step 1 (slot separation) GO · step 2a (P=3 NMDA slots COEXIST, no-recur collapses) GO ·
+  step 2c (role-cued retrieval) = runner `_keystone2_spiking_slot_binder_derisk.py` BUILT + diagnosed. Single-bind
+  mechanism WORKS (held slot drives its filler, argmax correct, f0=0.45). Two composition bugs found+fixed (reset
+  breaks retrieval → rely on NMDA hold; shared→per-slot gates). Decay ruled OUT by reading the substrate
+  (`bridge.py:7051` decay IS gated). **Remaining = WRITE STRENGTH in the multi-bind flow** (w0→f2 weak/lost: 0.02 at
+  teach1, 0.00 at retrieve). All in `2026-07-17-keystone-2-spiking-slot-binder-STEP1-prereq-GO.md`.
+- **⚠️ EXACT NEXT ACTION (fresh-focus debug of step 2c write strength):** instrument `_coact` for the slot→filler
+  synapses during teach (is it below `hebbian_coactivity_thresh=0.25`, `bridge.py:7006`?) + print the resulting weight;
+  and check whether the multi-slot FS inhibition (P held slots → strong FS → suppresses the driven slot's filler
+  drive) is the read-side culprit. Fix = tune the write (lower thresh / higher lr / longer teach / stronger slot drive)
+  so w_r→f_r consolidates AND survives multi-bind, then re-run the full slot-sep(≥0.80 P≥3) vs shared(~2) +
+  no-recur-collapse + permuted→chance, 6-seed, `cfg.seed` set. The mechanism is SOUND (single-bind GO); this is
+  write-calibration, the last piece. BOUNDARY (write can't be made robust on-substrate) → gate's #2 theta-gamma
+  (EMERGE-85, timing-based, sidesteps rate-write). Never a stop.
 - **Gap #3 = LARGELY CLOSED** (audit corrected); its cheap residual (neuralize `content_bias_target`) is a parallel
   emergence-bar-polish lane available anytime.
 - **Gap order (planned):** #4 keystone research-gate FIRST (unlocks #2/#5/#1) · #3 multi-referent parallel tractable
