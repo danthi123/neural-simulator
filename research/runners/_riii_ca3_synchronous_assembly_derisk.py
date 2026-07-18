@@ -84,6 +84,9 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
     rng = np.random.default_rng(seed * 17 + 3)
 
     # PRE-ASSIGN sparse assemblies (~1% of CA3), disjoint-ish (random draw).
+    # NOTE (2026-07-18): an EXCITATORY-only assembly was tried to remove ca1 g_i for the SWR read, but it BROKE the
+    # completion (cue 0.29->0.038) -- the completion's recurrent dynamics depend on the assembly's full composition. The
+    # ca1 inhibition and the completion are COUPLED; the SWR ca1-drive is a hard fresh-pass integration, not a quick fix.
     n_assy = max(6, int(assembly_frac * n_ca3))
     assemblies = [np.asarray(sorted(rng.choice(ca3_idx, n_assy, replace=False)), dtype=np.int64) for _ in range(n_mem)]
 
