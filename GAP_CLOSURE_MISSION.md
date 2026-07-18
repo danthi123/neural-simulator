@@ -211,6 +211,15 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   mossy/DG selection → SWR loop → console. HONEST MILESTONE: gap#5 completion went from CHANCE (project-lifetime) to a
   WORKING specific learned-attractor completion (all 6 seeds specific, 3/6 clearing the strict magnitude bar) — a real
   breakthrough; robust 6-seed is a knife-edge tuning continuation.
+- **ROBUSTNESS sweep (2026-07-18, n_ca3=1000):** larger/redundant assembly + longer recall LIFTS the fragile seeds
+  (assembly 0.02 + recall 100: worst seed 101 0.088→**0.425 GO**, seed 42 0.107→0.256). BUT pushing assembly_frac to
+  0.025-0.04 OVERSHOOTS into the Marr INDISCRIMINATE regime (h_comp ~1.0 AND non-stored ~1.0 — the denser attractor
+  spreads to non-members, overwhelming the competition). ⇒ the sweet spot is SPARSE-yet-REDUNDANT, which trade off at
+  n_ca3=1000 → the 2026-07-14 prescription: **n_ca3=2000 so a <1% assembly is BOTH sparse AND redundant.** **⚙️
+  `b90pmxei1` running** (n_ca3=2000, assembly_frac 0.008/0.012, recall 100, seeds 42/101/44). **⚠️ EXACT NEXT ACTION:**
+  read it → if the sparse-assembly-at-scale clears 0.30 SPECIFICALLY on the fragile seeds → full 6-seed → CLOSE → wire
+  emergent selection → SWR loop. If still knife-edge → per-seed lam/k_thresh, or accept the mechanism-found +
+  scale-boundary-characterized state (a real advance on the 2026-07-14 boundary) + move to gap #1/#4 per "close all".
 - (superseded by the breakthrough above) direct synchronous assembly encoding did NOT grow the weights — DECAYED,
   and sync=async BYTE-IDENTICAL (the gamma mechanism was inert because NOTHING was potentiating). The rate-window LTP
   isn't firing: a cell firing ~1/3 of steps has trace ≈0.33 → product ≈0.11 < the 0.25 coactivity threshold → no
