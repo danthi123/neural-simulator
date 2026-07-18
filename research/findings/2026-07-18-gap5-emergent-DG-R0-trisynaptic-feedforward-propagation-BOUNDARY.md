@@ -174,6 +174,21 @@ system couldn't hold. A focused fresh pass; all pieces + the `assemblies_ext` ho
 the staged/isolated encode already gives reliable multi-input SEPARATED seeding, no runaway — the reliability residual is
 substantially advanced; SIZE + target-binding remain.)
 
+## True staged encode (post-hoc recurrent raise) — 0 seeding: the config interactions are intricate (the exhaustive limit)
+Building weak (ca3w=0.5) → BIND (target co-driven, BTSP stores mossy+target-recurrent) → RAISE the ca3→ca3 recurrent
+×6 post-hoc → RECALL gives 0 seeding. Post-hoc weight-scaling does NOT reconfigure the coincidence-detector /
+dendritic-plateau dynamics (which are set at BUILD from the config + a FIXED `coincidence_k_threshold`), so the raised
+weights don't amplify — unlike the ISOLATED staged encode built AT ca3w=3, which DID seed. ⇒ the amplification gain is
+coupled to the build-time coincidence config, not just the weight scale; separating binding-gain from amplification-gain
+cleanly needs the coincidence threshold re-tuned to the raised weights (or the binding done in the same build as the
+amplification with a plateau-only isolation — the best result so far). **EXHAUSTIVE LIMIT (8 builds + 33 probes): the
+emergent-DG mechanism is comprehensively mapped — every piece validated (mossy-select, recurrent-amplification, bistable
+stabilization, BTSP-binding, reproducible+separated DG codes), the runaway FIXED (isolated staged encode → reliable
+multi-input SEPARATED seeding), the end-to-end chain DEMONSTRATED — but the fully-balanced reliable completion-scale
+emergent selection is a genuine deep multi-part integration (binding-gain × amplification-gain × completability × build-
+time coincidence config), the emergent-DG's core open frontier, requiring a principled joint gain-control/normalization
+in a fresh focused pass.** Best banked config: the isolated staged encode (`emergdg_btspmossy.py` plateau-only, ca3w=3).
+
 ## Status + the next mechanism (per THE LAW)
 - **BOUNDARY (well-characterized):** emergent-DG via the trisynaptic feedforward is blocked by feedforward propagation
   — the hippocampal chain (EC→DG→CA3) does not carry an input to fire downstream cells at reasonable drives; the mossy
