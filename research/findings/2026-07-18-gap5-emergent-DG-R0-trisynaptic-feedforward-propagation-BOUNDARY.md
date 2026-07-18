@@ -62,6 +62,24 @@ select-and-store. (Verified rather than assumed — the reframe looked tractable
 is the silent-failure discipline in action.) The `assemblies_ext` hook remains a valid, byte-preserved tool for when
 the feedforward is fixed.
 
+## ⭐ CORRECTION / ADVANCE — the reframe was RIGHT (recurrent amplification WORKS); my "refuted" call was itself wrong
+The integrated-test refutation above used a WEAK recurrent (`ca3w=1.5`, forced by `train=False`) — so there was no
+attractor to amplify the mossy seed, and I wrongly concluded the reframe was refuted. Retesting WITH the amplification
+(build `train=True`, `coincidence=True` [the dendritic-plateau read], a MODERATE recurrent `ca3w≈4`, + feedback
+inhibition) OVERTURNS that: a synchronized mossy volley SEEDS CA3 and the dendritic-coincidence recurrent AMPLIFIES the
+seed into a **sparse assembly** — e.g. input-11 → **15-26 CA3 cells**, `sep_cos` 0.10-0.20 (separated from the other
+inputs' responses). ⇒ the emergent-DG mechanism WORKS; it is NOT a hard boundary. (Self-correction, SURPASS discipline:
+I nearly accepted an over-comfortable "boundary" that the proper amplification test overturned — the heartbeat pushing
+the next concrete step is what cracked it.)
+- **Remaining residual = ROBUSTNESS (fragility), not existence:** the amplification is at a knife-edge — some inputs
+  seed enough to amplify (input-11 → a real assembly), others don't (inputs 22/33 → 0), and too-strong recurrent
+  (`ca3w=5`) saturates to all 2000 cells. So the working point (mossy seed strength × recurrent gain × feedback
+  inhibition) needs tuning for RELIABLE amplification across inputs (every input → a sparse separated assembly). That
+  is the next tuning, NOT a fundamental wall.
+- **Resume: tune the amplification working point** (mossy_weight × ca3w × ca3_fb_inhib × sync) for a stable sparse
+  specific multi-input assembly, then the integrated select-and-store (encode_btsp on the amplified assembly + bistable
+  complete) + the anti-cheats. The recurrent-amplification insight is the unlock; everything else is already built.
+
 ## Status + the next mechanism (per THE LAW)
 - **BOUNDARY (well-characterized):** emergent-DG via the trisynaptic feedforward is blocked by feedforward propagation
   — the hippocampal chain (EC→DG→CA3) does not carry an input to fire downstream cells at reasonable drives; the mossy
