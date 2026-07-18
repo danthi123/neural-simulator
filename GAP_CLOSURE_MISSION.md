@@ -173,6 +173,13 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   byte-identical-when-off — this is also gap #4's dendritic substrate). All committed/pushed/CI-green. **Next-continue
   candidates (fresh arcs):** gap #4 local-credit rule ON the new bistability substrate (strongest — the substrate now
   exists) · gap #5 emergent-DG or SWR (both demonstrated fresh integration arcs) · gap #1 open generation.
+- **▶ GAP #4 NOW ACTIVE (2026-07-18): deep-research gate DISPATCHED** (a-1'd on the newest findings: the deep-credit
+  block is the RULE not the readout [graded 12/12 negative]; e-prop/NP/BDSP-on-classifier all failed; the arc was partly
+  seed-confounded). The NEW angle: a LOCAL apical-based credit rule (Urbanczik-Senn / Sacramento / Payeur burstprop) that
+  uses the just-built BISTABLE APICAL as a held credit/target signal — the prior BDSP attempt had no bistable apical to
+  hold the error. On research return: review the ranked rule, cheap-first de-risk (local apical rule beats a
+  frozen-hidden reservoir = the depth_helps gate), 6-seed. `_d1_onbridge_learn_to_accuracy` + the two-compartment
+  machinery are the substrate.
 - **Phase:** GAP-CLOSING. **Gap #2 FULLY CLOSED** ✅ · **Gap #3 FULLY CLOSED (2026-07-18)** ✅ · **Gap #5 completion
   MECHANISM CLOSED (2026-07-18)** ✅ (emergent DG + SWR replay = fresh follow-on arcs; magnitude 5/6 seed-variable) —
   A1: the referent-bias feature-compatibility is a SPIKING LEARNED map (corpus co-occurrence → feature-detector
