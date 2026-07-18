@@ -196,10 +196,16 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   two-compartment bistable apical + asymmetric `apical_g_couple_to_soma`, which makes B RISE + HOLD). **EXACT NEXT ACTION
   (the fix build): thread `enable_two_compartment_dap` + `enable_coincidence_detection` + a routed coincidence pathway +
   `apical_g_couple_to_soma` (asymmetric strong read) + `coincidence_plateau_self_regen` + `apical_kir_g` into
-  `_d1_onbridge_learn_to_accuracy`'s cfg (the runner sets only pure `enable_bdsp` today); verify B_rises True (the 2026-07-10
-  coupling edit got separation 1.33×→20× but never ran to accuracy); then microcircuit + held-apical vs the 0.75 accuracy
-  bar + moat, 6-seed, with the cfg.seed hash-verify + dendritic-reset instrument checks. Finding:
-  `2026-07-18-gap4-research-gate-BDSP-on-bistable-apical-the-held-credit-signal.md`.
+  `_d1_onbridge_learn_to_accuracy`'s cfg (the runner sets only pure `enable_bdsp` today); verify B_rises True; then
+  microcircuit + held-apical vs the 0.75 accuracy bar + moat, 6-seed, with the cfg.seed hash-verify + dendritic-reset
+  instrument checks. Finding: `2026-07-18-gap4-research-gate-BDSP-on-bistable-apical-the-held-credit-signal.md`.
+- **✅ CONFIRMED (2026-07-18): the `--soma-g` (`bdsp_apical_couples_soma`) tuning does NOT fix it** — `--soma-g 2.0` gave
+  an IDENTICAL result (B 0.000, dw 129.036, BDSP=chance) → the runner's verdict stands: the fix is the TWO-COMPARTMENT
+  path (`enable_two_compartment_dap` + `enable_coincidence_detection` + a ROUTED coincidence pathway + `apical_g_couple_to_soma`),
+  = the just-built keystone, a real integration to thread into the runner (NOT a runner tuning). ⚠️ It is a CAREFUL build
+  (route a coincidence pathway so the two-comp apical ODE + soma coupling run; the research demands cfg.seed hash-verify +
+  dendritic-reset + the depth_helps/moat/wrong-sign/lesion anti-cheats) — do it in a FOCUSED pass, not rushed. Gap #4 is
+  precisely characterized: root-cause reproduced + the fix = the keystone via the two-comp path + the build scoped.
 - **(prior) deep-research gate DISPATCHED note:** (a-1'd on the newest findings: the deep-credit
   block is the RULE not the readout [graded 12/12 negative]; e-prop/NP/BDSP-on-classifier all failed; the arc was partly
   seed-confounded). The NEW angle: a LOCAL apical-based credit rule (Urbanczik-Senn / Sacramento / Payeur burstprop) that
