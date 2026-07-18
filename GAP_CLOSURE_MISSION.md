@@ -173,7 +173,21 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   byte-identical-when-off — this is also gap #4's dendritic substrate). All committed/pushed/CI-green. **Next-continue
   candidates (fresh arcs):** gap #4 local-credit rule ON the new bistability substrate (strongest — the substrate now
   exists) · gap #5 emergent-DG or SWR (both demonstrated fresh integration arcs) · gap #1 open generation.
-- **▶ GAP #4 NOW ACTIVE (2026-07-18): deep-research gate DISPATCHED** (a-1'd on the newest findings: the deep-credit
+- **▶ GAP #4 ACTIVE (2026-07-18): deep-research gate RETURNED (`2026-07-18-gap4-research-gate-BDSP-on-bistable-apical-…`).**
+  The deep-credit block is FIXABLE, not a wall: the prior BDSP failed because the apical raised the burst-PROBABILITY read
+  P but NOT the measured burst rate B (apical→soma coupling was missing; the rule reads B) — root-caused, and a 2026-07-10
+  sim/ edit already lifted directed-credit separation 1.33×→20×, but the LEARNING-TO-ACCURACY run was NEVER completed
+  (then seed-confounded). **The just-built BISTABLE apical + asymmetric read supply the missing HELD credit signal** (a
+  latched UP-state read strongly into the soma → SUSTAINED bursts B; the KIR down-state → silent rest → the P₀ moat holds
+  by construction). **#1 rule: BDSP with the apical error carried by the bistable held plateau** (minimal code on committed
+  kernels `fused_bdsp_update` + `fused_coincidence_plateau(self_regen>0)` + `apical_g_couple_to_soma`). Fallback: BTSP
+  (Bittner-Magee, local one-shot plateau-gated, no global-loss backward pass — best mission-fit). **EXACT NEXT ACTION:
+  the 3-arm depth_helps de-risk** — `BurstpropMLP` (rate, ~30-50 lines, no sim/ edit) on EMERGE-1 depth-2, arms
+  {frozen_hidden, transient_apical [self_regen=0], held_apical [self_regen≥0.8]}, GO = held > frozen+0.05 AND held >
+  transient+0.05, + anti-cheats (wrong-sign anti-learns / no-teaching moat / apical-lesion / oracle≥0.80 / no-transport
+  assert) + MANDATORY instrument checks (cfg.seed + hash-verify; reset cp_v_apical/cp_conductance_g_coincidence between
+  conditions), 6-seed. CPU/minutes, decisive.
+- **(prior) deep-research gate DISPATCHED note:** (a-1'd on the newest findings: the deep-credit
   block is the RULE not the readout [graded 12/12 negative]; e-prop/NP/BDSP-on-classifier all failed; the arc was partly
   seed-confounded). The NEW angle: a LOCAL apical-based credit rule (Urbanczik-Senn / Sacramento / Payeur burstprop) that
   uses the just-built BISTABLE APICAL as a held credit/target signal — the prior BDSP attempt had no bistable apical to
