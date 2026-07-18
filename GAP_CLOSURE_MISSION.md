@@ -218,6 +218,20 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   slots' `u` decays → early slots free up → collisions at scale), and a neural-occupancy scan is behaviorally
   identical to the counter. ⇒ no refinement needed; the counter is legitimate infrastructure (like a hippocampal
   allocation pointer), not a hand-designed cognitive shortcut. **Gap #2 is FULLY CLOSED.**
+- **▶ NEXT GAP = #5 (CA3 completion / imaginative replay) — owner chose "whichever closes quicker" (2026-07-17).** a-1
+  DONE: the root cause is a CONCRETE MECHANICAL BUG never fixed — the **ca3→ca3 recurrent synapses are functionally
+  SILENT** (~0.2 mV at weight-120, ~1000× too weak) and **WEIGHT-INVARIANT** (24× weight → byte-identical Vm = a
+  transmission bug, NOT a point-neuron limit; the old "point-neuron completion boundary" was RETRACTED because of
+  this, `2026-07-08-riii-CORRECTION-ca3-recurrents-functionally-silent-...`). This ONE bug blocks BOTH gap-#5
+  sub-problems (learned-attractor completion + SWR generative-replay reactivation). The dendritic dAP completion
+  READOUT is already 6-seed GO (on a hand-installed attractor), so fixing the recurrents is the single enabler.
+  Candidates to investigate in `sim/bridge.py` (per the finding): effective-synaptic-strength scaling for within-region
+  recurrent RegionPathways · conductance-decay tau vs recurrent input rate · CSR matvec orientation for SELF-pathways
+  (from_region==to_region) · whether recurrent synapses are in the per-step conductance update at all. **⚠️ EXACT NEXT
+  ACTION:** READ the sim/ recurrent-current delivery code (feedback: read the substrate before theorizing), reproduce
+  the weight-invariance with `_riii_ca3_completion_specificity_derisk.py`, find the ~1000× discrepancy, fix (guarded
+  sim/ edit if a genuine bug), re-run held-out completion + SWR replay, 6-seed + anti-cheats. If it's a real bug →
+  quick close of #5; if it's a legit biophysics property → the dendritic-plateau mechanism is the method (banked path).
 - **✅ Gap #4 a-1 RAG check DONE (2026-07-17) — the research-gate is essentially the `learning-rule-frontier-map`
   (2026-07-17), re-read + current:** SUPERVISED deep credit on spikes (e-prop / NP / D1-BDSP) is PARKED — all blocked
   by ONE shared "spiking-classifier-readout-training wall"; the rate-net positive control (done) confirmed the block
