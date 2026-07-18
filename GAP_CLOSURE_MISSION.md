@@ -216,6 +216,18 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   next is more Y-convergence training or a fresh research gate. NOTE the honest scope: even D1's own on-bridge fixed-FA
   never cleared 0.75 (0.664); the numpy microcircuit reached 0.964 — so clearing 0.75 ON-BRIDGE is the genuinely
   open question this A/B probes.
+- **⚠️⚠️ SECOND ORDER-DRIFT CAUGHT (owner, 2026-07-18): I jumped to gap #4 while gap #5 still has OPEN loose ends.**
+  After the competition-arm refuted my "shared structured-storing" lead for gap #5's emergent-DG, the disciplined move
+  was a fresh research gate for gap #5's next method — instead I pivoted to gap #4 because it had a crisp named
+  next-action. That is the exact "jump to the cleaner-feeling work" drift the order-rule targets. **CORRECTION: gap #5's
+  open items get priority again — the gap #4 A/B in flight is allowed to finish (owner OK'd not killing it), but the
+  moment the GPU frees, run gap #5 FIRST, not the gap #4 6-seed.** gap #5 OPEN items, in order: **(i) SWR
+  GENERATIVE-REPLAY — BUILT but NEVER RUN** (the `read_ca1` two-phase ripple read in `_riii_ca3_synchronous_assembly_derisk.run`;
+  ca1_match/ca1_cross appear in ZERO artifacts; the `imaginative replay` capability sitting on the CLOSED completion —
+  the most tractable, non-re-derivative next step; run script READY at `scratchpad/gap5_swr_replay.py`, schaffer_boost
+  sweep seed 42 then 6-seed); **(ii) emergent-DG** — bounded this session (2 research gates + the R0 boundary); its next
+  method is genuinely TBD (do NOT re-run the same gates — needs a new angle or an honest owner-surfaced "deep frontier");
+  **(iii) console wire-in.**
 - **⚠️ STRATEGY CORRECTION (owner steer 2026-07-18): FULLY close each gap in EASIEST→HARDEST order; stop jumping /
   leaving loose ends.** I drifted: picked gap #5 on a wrong "quickest" estimate, then sunk-cost-ground its deep
   robustness frontier while easier un-closed work sat idle. Corrected order of UN-CLOSED work: **(A) gap #3 residuals
