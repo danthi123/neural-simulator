@@ -37,11 +37,16 @@ ALL of this by driving CA3 DIRECTLY (encode_drive=3000 on the assembly) — it n
 - **BOUNDARY (well-characterized):** emergent-DG via the trisynaptic feedforward is blocked by feedforward propagation
   — the hippocampal chain (EC→DG→CA3) does not carry an input to fire downstream cells at reasonable drives; the mossy
   detonation needs DG BURSTING the substrate doesn't produce.
-- **The next mechanism (a deep sub-arc, NOT chased here):** make the mossy a TRUE DETONATOR — DG granule-cell BURSTING
-  (an intrinsic-bursting DG neuron type / a burst-generating current) so a single active DG cell reliably fires its ~15
-  CA3 targets (Vyleta-Jonas / Henze-Urban), + a stronger/trained EC→DG perforant path so the EC volley fires DG. This
-  is likely a neuron-parameter / `sim/`-mechanism change (a DG bursting neuron), i.e. a genuine research build, not a
-  config knob — deferred below the completed gap#4↔gap#5 unification.
+- **The next mechanism (a deep sub-arc, NOT chased here) — CONCRETE + likely CONFIG-LEVEL:** make the mossy a TRUE
+  DETONATOR via DG granule-cell BURSTING so the mossy conductance TEMPORALLY SUMMATES (a burst of tight spikes drives
+  the CA3 target over threshold where asynchronous single spikes don't). The substrate ALREADY has intrinsic-bursting
+  neuron types (`sim/enums.py`: `IZH2007_STN_BURST`, `ADEX_IB_BURSTING`, `IZH2007_HIPPO_PYRAMIDAL`/IB-like,
+  `HH_CA3_PYRAMIDAL_BURST`) — so the FIRST thing to try is a CONFIG change: set the DG region's `izh_neuron_type` to an
+  intrinsic-bursting type (via `build_biological_brain_regions`'s DG region), then re-run the R0 probe (does a bursting
+  DG fire CA3 via mossy summation?) + a stronger/trained EC→DG so the EC volley fires DG. If the config change alone
+  fires CA3, the emergent-DG boundary FLIPS to tractable (no `sim/` edit); if not, a burst-generating current on DG is
+  the `sim/`-level fallback. This is the precise, actionable resume point for the emergent-DG arc — deferred below the
+  completed gap#4↔gap#5 unification, taken as its own focused pass.
 - **UNAFFECTED:** the gap#4↔gap#5 unification (BTSP stores → bistable CA3 completes, mechanism 6/6 GO) stands — it uses
   a PRE-ASSIGNED assembly + direct CA3 drive; the emergence of the assembly (from cortical input) is this open boundary.
 - Infra: `_gap5_emergent_dg_selection_derisk.py` (the R0 diagnostic — a valid tool for when the feedforward is fixed).
