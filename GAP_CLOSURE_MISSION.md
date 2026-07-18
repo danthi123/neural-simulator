@@ -36,7 +36,7 @@ stranding, no scaffold left standing as the faculty).** Anything short of (a)-(e
 | # | Gap | Why it's load-bearing for LLM-like chat | Failing methods (banked) | Status |
 |---|-----|------------------------------------------|--------------------------|--------|
 | 1 | **Open-ended fluent generation (open prose)** | no "talk about anything" without it | from-scratch spiking LM loses to a bigram at few-M-token scale; the categorical novelty gap (composer emits 0/16 novel) | OPEN — met only by the ~21M TinyStories ANN scaffold (must be replaced by simulated circuitry) |
-| 2 | **Learned binder over the brain's OWN structured/correlated codes** | fluid reasoning/composition over the brain's own semantics; replaces the hand-designed exact-inverse FHRR algebra | multi-attr bundling from scratch NEGATIVE; learned-linear-inverse ≈chance; deep-dendritic-credit binder BOUNDARY; write-rule multi-bind capped ~2 (EDGE-5); naive always-on filler-WTA HURT; more-filler-pools lever at P=4 REFUTED (0.71<0.79) | **🎉 FULLY-SPIKING 6-SEED GO** — the SELF-ORGANIZING competitive-SLOT binder recovers a fact's role-filler bundle on SPIKES, **reset now NEURALIZED** (FS inhibitory burst = the D3 CLEAR): at the SVO load P=3, slot-sep **1.00 (6/6) >> shared cap 0.33, permuted→0.00, neural-clear == host-reset EXACTLY per-seed**. P=4 graceful-degrade 0.79 (intrinsic 4-slot read edge, honest). Replaces the FHRR algebra with a learned self-organizing spiking binder. `2026-07-17-keystone-2-spiking-slot-binder-STEP1-prereq-GO`. **Follow-on (a) DONE.** Remaining for full closure: (b) adversarial-verify (partly done: neural==host, permuted 0, no-recur 0.83); (c) wire into the conversational pipeline. Honest: LTM (hold not load-bearing) not WM. |
+| 2 | **Learned binder over the brain's OWN structured/correlated codes** | fluid reasoning/composition over the brain's own semantics; replaces the hand-designed exact-inverse FHRR algebra | multi-attr bundling from scratch NEGATIVE; learned-linear-inverse ≈chance; deep-dendritic-credit binder BOUNDARY; write-rule multi-bind capped ~2 (EDGE-5); naive always-on filler-WTA HURT; more-filler-pools lever at P=4 REFUTED (0.71<0.79) | **🎉 FULLY-SPIKING 6-SEED GO** — the SELF-ORGANIZING competitive-SLOT binder recovers a fact's role-filler bundle on SPIKES, **reset now NEURALIZED** (FS inhibitory burst = the D3 CLEAR): at the SVO load P=3, slot-sep **1.00 (6/6) >> shared cap 0.33, permuted→0.00, neural-clear == host-reset EXACTLY per-seed**. P=4 graceful-degrade 0.79 (intrinsic 4-slot read edge, honest). Replaces the FHRR algebra with a learned self-organizing spiking binder. `2026-07-17-keystone-2-spiking-slot-binder-STEP1-prereq-GO`. **(a) neuralize-reset DONE. (b) adversarial-verify CONFIRMED** (independent skeptic: no-teach→chance, scramble-teach→0.00, KF=12 11× chance — genuine learned role-addressed binder). **(c) wire-in mechanism 6-seed GO** (content-addressable multi-fact recall: query 1.00 both dirs, moat+perm abstain 1.00, scramble→chance). Remaining: promote to `SlotBinderComposer` + agent-wire + CI. Honest: LTM not WM; concept-pool fillers (generalization = separate closed arc). |
 | 3 | **Multi-referent disambiguation** | real dialogue holds several entities; bind a bare pronoun to the salient one | recency/salience-boost/symmetric-WTA NEGATIVE — but SURPASSED | **LARGELY CLOSED** (audit MISfiled it) — biased-competition WTA GO 6-seed (controls) + CI-guarded + wired into `MultiTurnAgent` + D3 centering-focus (0.945 vs host 0.000). Residual = EMERGENCE-BAR polish: neuralize the host `content_bias_target` scoring → a learned synaptic feature-compatibility map (cheap, flagged in-code) + the all-compatible tie (moat-safe abstention). `2026-07-17-gap3-...-LARGELY-CLOSED` |
 | 4 | **Dendritic / local-credit learning lever (KEYSTONE — engine for #2 & #5, upstream of #1)** | a substrate that LEARNS its binding + sequence structure, no weight transport | e-prop feedforward NOT-GO; recurrent e-prop refuted; Node Perturbation retired; BDSP-on-classifier-readout blocked; graded-readout escape does-not-unlock (2026-07-17) | OPEN / NOT-GO — needs a NEW biology-based local spiking credit rule |
 | 5 | **CA3 completion / imaginative-replay (episodic memory + imagination)** | remember/complete/imagine episodes; SWR generative replay | on-bridge replay at chance (5.78% vs 6.25%); held-out completion 0; dAP completion only as a read-out on a hand-installed attractor | OPEN — point-neuron boundary characterized; needs the dendritic dAP substrate (ties to #4) |
@@ -190,13 +190,24 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   **Follow-on (a) neuralize-reset = DONE.** All in `2026-07-17-keystone-2-spiking-slot-binder-STEP1-prereq-GO.md`.
 - **Gap #3 = LARGELY CLOSED** (audit corrected); its cheap residual (neuralize `content_bias_target`) is a parallel
   emergence-bar-polish lane available anytime.
-- **⚠️ EXACT NEXT ACTION (gap #2 full closure — user chose "finish gap #2 fully"):** (b) adversarial-verify the GO via
-  an independent skeptic subagent (probe for: is the read genuinely role-addressed vs code-similarity? does the
-  learned slot→filler write carry the information vs a fixed-structure artifact? is P=3 real or a KF=6 small-space
-  coincidence?) — write it up; THEN (c) **wire the slot-binder into the conversational pipeline** (it replaces the
-  FHRR/VSA exact-inverse composer as the fact store/recall for `BrainConversationalAgent`/`OneBrainComposer`). Then
-  commit + push both remotes + update this board. After gap #2 fully closed → gap #4 keystone research-gate (unlocks
-  #5/#1) or gap #1 open generation, owner's call or by leverage.
+- **✅ (b) ADVERSARIAL-VERIFY = CONFIRMED (2026-07-17, independent skeptic subagent):** GO survives every control —
+  **NO-TEACH → chance 0.167** (the learned write IS load-bearing), **SCRAMBLE-TEACH → 0.00** (genuine learned read,
+  not fixed structure / drive-leak), **KF=12 → 11× chance** (not small-space luck), permuted reads its OWN taught
+  filler (genuine role-addressing, not silence), neural-clear == host byte-identical, `cfg.seed` genuinely varies the
+  substrate (3 distinct threshold hashes). Honest scope (author-disclosed, not confounds): LTM not WM; "shared caps ~2"
+  label loose (recovers ~1); small scale KF≤12; P=4 graceful-degrade.
+- **✅ (c) WIRE-IN MECHANISM = 6-SEED GO (2026-07-17, `_slotbinder_content_addressable_probe.py`):** content-addressable
+  multi-fact recall on the spiking slot-binder — each (fact,role)→its own slot; recall = a NEURAL SCAN (drive each
+  fact's agent/verb slots, match read-back to the cue, read the matching patient; abstain if none = the moat). 6/6:
+  query_patient 1.00, query_agent 1.00, **moat-abstain 1.00, permuted-cue-abstain 1.00**; scramble-store collapses to
+  chance 0.33. Uses concept POOLS as fillers (the validated g20/Pulvermüller representation) — generalization across
+  SIMILAR concepts is the separate already-closed arc, not this.
+- **⚠️ EXACT NEXT ACTION (finish gap #2 (c) fully):** promote `ProbeStore` → a real **`SlotBinderComposer`** class
+  implementing the composer contract (`store(a,v,p,polarity)`, `query_patient`, `query_agent`, `ask_yes_no`,
+  `render_fact`, `.words`/`.D`/`.concepts`), wire it as a selectable composer in `BrainConversationalAgent`
+  (`composer=SlotBinderComposer(...)` / `composer_kind="slotbinder"`), add a CI test that the AGENT answers the
+  who/what matrix + abstains through it, commit + push. THEN gap #2 is fully closed → next: gap #4 keystone
+  research-gate (unlocks #5/#1) or gap #1 open generation.
   - **KEYSTONE REFRAME (a-1 done 2026-07-17, the load-bearing insight):** every failing credit method (e-prop
     feedforward NOT-GO, recurrent refuted, NP retired, BDSP-on-readout blocked, graded-readout no-unlock) was
     **SUPERVISED global-loss deep credit through a spiking CLASSIFIER READOUT** — that *shared readout wall* is the
