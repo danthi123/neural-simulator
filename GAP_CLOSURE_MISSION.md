@@ -226,15 +226,20 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   completes. **Remaining = the SPECIFICITY horn:** perm ~0.14 ≈ cue ~0.18 (ratio ~1.3) — the permuted cue's avalanche
   still TRIGGERS the latch (kir=5 over-suppresses cue; structural_sep drops cue). 0/12 GO on this sweep, but the horn
   that was IMPOSSIBLE on a point soma is now solved.
-- **⚠️ EXACT NEXT ACTION (B — gap #5): close the SPECIFICITY horn — trigger-specificity sweep RUNNING (task b5qaq8qio).**
-  Decouple encode (low k_thresh → strong learned weights) vs RECALL (HIGH `recall_k_thresh` 40-110) so ONLY the strong
-  LEARNED within-assembly coincidence can TRIGGER a latch; a permuted cue's generic coincidence cannot cross → no latch →
-  specific. + `selective_inhib`, kir=3 (the silent-rest band), self_regen {0.15,0.30}. If a config hits cue≥0.20 AND
-  cue≥3×perm AND nocue≤0.10 → 6-seed validate (driver `_gap5_wang_rate_homeo_driver.py` has `--plateau-self-regen`/
-  `--apical-kir-g`) with the frozen + no-cue + permuted anti-cheats → completion trilemma RESOLVED → gap #5 CLOSED.
-  Overlaps the gap #4 dendritic keystone [[project_dendritic_cortex_for_emergence]]. Infra banked (bistable gate +
-  plasticity-freeze + enable_ou + ca3_density + selective_inhib + structural_sep + rate_homeo + recall_k_thresh +
-  plateau_self_regen + apical_kir_g, all default-off).
+- **🎉 gap #5 SPECIFICITY horn SOLVED too (2026-07-18, trigger sweep b5qaq8qio) — all THREE trilemma horns now
+  individually solved.** High `recall_k_thresh` (only the strong LEARNED within-assembly coincidence latches; the
+  permuted cue's generic coincidence can't cross) climbs the specificity ratio: recall_k=110 → cue/perm **3.36**, nocue
+  **0.006** (silent rest). So on the bistable dendrite: BISTABILITY ✓ (nocue 0.006) + SPECIFICITY ✓ (ratio 3.36) — both
+  horns the point soma could NEVER jointly reach. **Remaining = MAGNITUDE at that operating point:** cue fell to
+  0.06-0.09 (need ≥0.20; the high trigger threshold latches few held members).
+- **⚠️ EXACT NEXT ACTION (B — gap #5): recover MAGNITUDE at the specific+bistable point — sweep RUNNING (task ba40ub6hr).**
+  Larger assembly (frac 0.12→0.25: more within-partners per held member → more cross the learned-coincidence trigger) ×
+  stronger apical→soma coupling (`apical_gc` 1→3: a latched plateau drives the soma harder → higher soma firing, since
+  completion is read from soma) at recall_k=70, self_regen=0.15, kir=3, selective_inhib. If a config hits cue≥0.20 AND
+  cue≥3×perm AND nocue≤0.10 → 6-seed validate (`_gap5_wang_rate_homeo_driver.py --dendritic --plateau-self-regen 0.15
+  --apical-kir-g 3 --recall-k-thresh 70 --selective-inhib ...`) with frozen + no-cue + permuted anti-cheats → completion
+  trilemma RESOLVED → gap #5 CLOSED. If magnitude resists, add structural_sep + tune W_rec/encoding. Overlaps the gap #4
+  dendritic keystone [[project_dendritic_cortex_for_emergence]]. Infra banked (all levers default-off).
 - **🔬 gap#5 Rung 2/3 RESULT (2026-07-17):** the mossy-detonator SPARSIFIES CA3 (0.43→0.03) but sparsity WITHOUT
   synchrony can't select — within/silent separation goes NEGATIVE (−0.27 to −0.47; the sparse cells fire async →
   co-activity traces never clear threshold → no potentiation). Rung 3 (input gamma-pulse) is INERT (byte-identical to
