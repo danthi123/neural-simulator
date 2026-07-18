@@ -218,17 +218,23 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   bistability DECOUPLES completion (one-shot trigger) from self-sustaining (intrinsic per-cell) → the trilemma's root
   cause is fixed. CI `tests/test_dendritic_bistability.py` 3/3. Config: `coincidence_plateau_self_regen`/`_v_hold`/`_v_hold_k`
   + `apical_kir_g`/`_E_K`/`_vhalf`/`_k` (all default 0/off).
-- **⚠️ EXACT NEXT ACTION (B — gap #5): THE PAYOFF TEST — wire the bistable dendrite into the CA3 completion network.**
-  Thread the new flags through `_riii_ca3_coincidence_completion_derisk._build` / `_riii_ca3_synchronous_assembly_derisk.run`
-  (set `coincidence_plateau_self_regen` + `apical_kir_g` on the ca3→ca3 coincidence path so each CA3 cell has a bistable
-  dendrite), use SUB-CRITICAL recurrent W_rec (weak, so the NETWORK does not self-sustain — sustaining is now
-  intrinsic per-cell) + `structural_sep` + `selective_inhib`, then run the FROZEN + no-cue + permuted anti-cheats,
-  6-seed. PREDICTION: a correct partial cue delivers the coincident within-assembly trigger → the held members LATCH
-  their plateaus → completion HOLDS; a permuted cue delivers no coincident within-assembly trigger → no latch → no
-  completion (specific); rest silent (bistable down state). If GO → the completion trilemma is RESOLVED → gap #5's
-  functional cue-gated bistable+specific completion CLOSED. Overlaps the gap #4 dendritic keystone
-  [[project_dendritic_cortex_for_emergence]]. Infra banked (bistable gate + plasticity-freeze + enable_ou + ca3_density +
-  selective_inhib + structural_sep + rate_homeo + recall_k_thresh + the bistability flags, all default-off).
+- **⚙️ gap #5 PAYOFF IN PROGRESS — the bistable dendrite SOLVES the bistability horn (2026-07-18, seed-42 sweep b8yfrhu20).**
+  Wired the bistable dendrite into CA3 (`plateau_self_regen`/`apical_kir_g` threaded through `_build`/`run`). Sweep
+  (self_regen × kir × structural_sep): at kir=3 the network now has a SILENT REST (nocue ~0.06) WITH a completing cue
+  (cue ~0.18) — a genuine bistable low state the point-neuron attractor NEVER achieved (it always self-sustained). ⇒ the
+  MAGNITUDE-vs-BISTABILITY opposition is broken: sustaining is now intrinsic per-cell, so the rest is silent AND the cue
+  completes. **Remaining = the SPECIFICITY horn:** perm ~0.14 ≈ cue ~0.18 (ratio ~1.3) — the permuted cue's avalanche
+  still TRIGGERS the latch (kir=5 over-suppresses cue; structural_sep drops cue). 0/12 GO on this sweep, but the horn
+  that was IMPOSSIBLE on a point soma is now solved.
+- **⚠️ EXACT NEXT ACTION (B — gap #5): close the SPECIFICITY horn — trigger-specificity sweep RUNNING (task b5qaq8qio).**
+  Decouple encode (low k_thresh → strong learned weights) vs RECALL (HIGH `recall_k_thresh` 40-110) so ONLY the strong
+  LEARNED within-assembly coincidence can TRIGGER a latch; a permuted cue's generic coincidence cannot cross → no latch →
+  specific. + `selective_inhib`, kir=3 (the silent-rest band), self_regen {0.15,0.30}. If a config hits cue≥0.20 AND
+  cue≥3×perm AND nocue≤0.10 → 6-seed validate (driver `_gap5_wang_rate_homeo_driver.py` has `--plateau-self-regen`/
+  `--apical-kir-g`) with the frozen + no-cue + permuted anti-cheats → completion trilemma RESOLVED → gap #5 CLOSED.
+  Overlaps the gap #4 dendritic keystone [[project_dendritic_cortex_for_emergence]]. Infra banked (bistable gate +
+  plasticity-freeze + enable_ou + ca3_density + selective_inhib + structural_sep + rate_homeo + recall_k_thresh +
+  plateau_self_regen + apical_kir_g, all default-off).
 - **🔬 gap#5 Rung 2/3 RESULT (2026-07-17):** the mossy-detonator SPARSIFIES CA3 (0.43→0.03) but sparsity WITHOUT
   synchrony can't select — within/silent separation goes NEGATIVE (−0.27 to −0.47; the sparse cells fire async →
   co-activity traces never clear threshold → no potentiation). Rung 3 (input gamma-pulse) is INERT (byte-identical to
