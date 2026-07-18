@@ -263,10 +263,17 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   (τ=100ms). **#1 (built, running):** flip ca3→ca3 to `exc_receptor="nmda_slow"` (added `nmda_recurrent` to `_build` +
   threaded through the de-risk; NO sim/ edit — reuses D3 machinery, proven bistable on this substrate) + 2 near-free
   levers the gate found (recall_steps 300 >> the &lt;100 I used = &lt;1 NMDA τ; settle-to-low-background not dead). Kopsick
-  2024: keep ABSOLUTE weight moderate + high SNR (not magnitude), assembly 150-300 (our 16 is far below). **⚙️ Wang
-  NMDA bistable sweep running** (`bkevuycl6`: hebb_max {120,250,500}). **⚠️ EXACT NEXT ACTION:** read it → if a config
-  gives cue≥0.20 + nocue/perm/rest~0 → 6-seed BISTABLE gate → REAL robust completion → emergent DG-selection → SWR loop
-  → console. If weak → the Kopsick levers (larger assembly + n_ca3 scale + homeostatic downscaling + background).
+  2024: keep ABSOLUTE weight moderate + high SNR (not magnitude), assembly 150-300 (our 16 is far below). **Wang
+  NMDA mode BUILT + runs** (mask-free ca3→ca3 extraction fix for no-coincidence-mask). First sweep (16-cell assembly):
+  NO clean window — silent at low cap, self-sustains at cap 500 (+ an anomalous cue=0.000/rest=0.156, a small-assembly
+  artifact). Per the research gate's KEY lever (my 16-cell assembly is far below Wang/Kopsick's 150-300 robust range —
+  a bistable high state needs enough neurons for stable statistics). **⚙️ Kopsick larger-assembly sweep running**
+  (`bykapov6s`: n_ca3=2000, frac {0.06,0.10}=120/200 cells, Wang NMDA, recall 300). **⚠️ EXACT NEXT ACTION:** read it →
+  if a config gives cue≥0.20 + nocue/perm/rest~0 → 6-seed BISTABLE gate → REAL robust completion → emergent DG-selection
+  → SWR loop → console. If still no window → the full Kopsick working point (moderate weight + high SNR via homeostatic
+  divisive downscaling + `w_max∝1/size` + a stable asynchronous BACKGROUND not a dead net + the low-background settle,
+  not hard-silence-to-zero). HONEST: gap #5 completion is a genuine deep multi-parameter (Wang/Kopsick working-point)
+  problem, mechanism-identified + built, working-point tuning in progress. Gaps #1/#4 remain.
   **What STANDS:** strong SPECIFIC learned attractor 6-seed + genuine (weak) bistable+specific completion demonstrated;
   the retraction's lesson (mandatory no-cue+permuted gates) is baked in. Gaps #1/#4 remain per "close ALL fully".
 - (superseded by the breakthrough above) direct synchronous assembly encoding did NOT grow the weights — DECAYED,
