@@ -108,6 +108,19 @@ amplification currently yields ~24 (1.2%). The mechanism is demonstrated end-to-
 multi-input seeding + completion-scale assembly size) are the genuine open frontier — a broader/denser seed + wider
 amplification, or a completion config tuned for a sparse emergent assembly (lower density so fewer cells still connect).
 
+## Completion-scale full chain (|A_m|=252) — stores, anti-cheats clean, but completes WEAKLY (a structural residual)
+Tuned the amplification to a COMPLETION-SCALE emergent assembly (denser DG code 0.30 + wider mossy 0.20 → input-11
+selects **252 cells** ≈ 13% of CA3, matching the 240-cell target, bistability-capped, no runaway). Full chain: cue
+**0.038**, nocue 0.000, perm 0.000, no-encode 0.000. So even at the RIGHT size the emergent assembly completes weakly
+(0.038 vs the pre-assigned 240-cell's 0.18). ⇒ beyond size, the emergent assembly's STRUCTURE differs from a clean
+random draw: the mossy-selected cells (chosen by the DG code + broad amplification) are co-active but likely NOT a
+tightly recurrently-interconnected set, so the BTSP-stored within-assembly recurrent is diffuse → a weaker attractor.
+⇒ TWO deep residuals: (1) reliable multi-input seeding, (2) emergent-assembly COMPLETABILITY (the selected set must be a
+well-connected sparse cluster, not a broad co-active smear — likely needs the amplification to converge to a tight WTA
+assembly, or the DG→CA3 map learned so each code maps to a fixed tight cluster). Exhaustively characterized (32 probes +
+2 full-chain tests). The MECHANISM is demonstrated end-to-end at completion scale; completability + reliability are the
+genuine open frontier for a focused pass.
+
 ## Status + the next mechanism (per THE LAW)
 - **BOUNDARY (well-characterized):** emergent-DG via the trisynaptic feedforward is blocked by feedforward propagation
   — the hippocampal chain (EC→DG→CA3) does not carry an input to fire downstream cells at reasonable drives; the mossy
