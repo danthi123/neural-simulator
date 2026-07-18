@@ -59,7 +59,8 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
         rate_homeo_steps=400, rate_homeo_cap=800.0, enable_ou=True, ca3_density=0.5,
         selective_inhib=False, sel_inhib_spare=0.0, recall_k_thresh=None, structural_sep=False,
         plateau_self_regen=0.0, plateau_v_hold=-35.0, apical_kir_g=0.0, apical_gc_read=None, read_apical=False,
-        read_ca1=False, schaffer_boost=1.0):
+        read_ca1=False, schaffer_boost=1.0,
+        encode_btsp=False, btsp_lr=0.02, encode_ca3w=None, encode_plateau_pA=250.0, encode_structural_sep=0):
     # DIAGNOSED LEVERS (2026-07-18 workflow): the rate-window LTP is an EMA-trace rule -- a cell's co-activity trace
     # tops out ~0.03-0.2 (point Izh fires ~0.2 duty @700pA), so coact_thresh MUST be BELOW it (~0.02) or nothing
     # potentiates; the gamma OFF-gap DECAYS the EMA (0.9^off) so CONTINUOUS drive (sync_off<=1) is required, NOT
@@ -69,7 +70,8 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
     cp, _ = get_backend()
     # WANG-2002 mode (nmda_recurrent): the ca3->ca3 recurrent is SOMATIC slow-NMDA (the bistable attractor itself);
     # the dendritic-coincidence dAP readout (coincidence/two_comp) is OFF. Else: the dAP-coincidence readout (default).
-    bridge = _build(seed, n_ca3=n_ca3, ca3w=6.0, ca3_density=ca3_density,
+    _init_ca3w = float(encode_ca3w) if (encode_btsp and encode_ca3w is not None) else 6.0   # BTSP-encode: init recurrent LOW so BTSP builds it
+    bridge = _build(seed, n_ca3=n_ca3, ca3w=_init_ca3w, ca3_density=ca3_density,
                     coincidence=(not nmda_recurrent), two_comp=(not nmda_recurrent),
                     nmda_recurrent=nmda_recurrent, nmda_tau=nmda_tau, nmda_ratio=nmda_ratio, apical_R=apical_R,
                     apical_gc=apical_gc, k_thresh=k_thresh, plateau_strength=plateau_strength,
@@ -108,24 +110,57 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
 
     _set_gates(bridge, 1.0)
     period = int(sync_on) + int(sync_off)
-    for m, assy in enumerate(assemblies):
-        assy_arr = cp.asarray(assy, dtype=cp.int64)
-        # the KNOWN assembly is the competition member set (pre-assigned; local ca3 positions)
-        member_mask = cp.zeros(len(ca3_idx), dtype=cp.float32)
-        member_mask[cp.asarray([ca3_pos[int(g)] for g in assy], dtype=cp.int64)] = 1.0
-        for ev in range(train_events):
-            bridge.cp_external_input_current[:] = 0.0
-            for _ in range(reset_steps):
-                bridge._run_one_simulation_step()
-            for _st in range(drive_steps):
+    if encode_btsp:
+        # gap#4<->gap#5 UNIFICATION ENCODE: BTSP plateau-gated ONE-SHOT storing instead of rate-window Hebbian. Disable
+        # the Hebbian; enable the bistable BDSP apical (my keystone) + the BTSP block. During the co-fire, drive the
+        # PLATEAU DIRECTLY on the pre-assigned assembly (the "encode-this" teaching signal, analogous to the Hebbian
+        # path's DIRECT synchronous assembly drive) -> only the assembly cells have BOTH pre-eligibility (co-firing) AND
+        # a plateau (IS_post) -> BTSP potentiates the WITHIN-assembly recurrent SPECIFICALLY (member->non-member post has
+        # no plateau -> not stored). Specificity is BY CONSTRUCTION (where the plateau is), not from avalanche. Recall
+        # (below) uses the two_comp coincidence plateau for completion, so enable_bdsp/enable_btsp are DISABLED after.
+        cfg_b = bridge.core_config
+        cfg_b.enable_hebbian_learning = False
+        cfg_b.enable_bdsp = True; cfg_b.bdsp_apical_bistable = True; cfg_b.bdsp_learning_rate = 0.0
+        cfg_b.coincidence_plateau_self_regen = float(plateau_self_regen)
+        cfg_b.coincidence_plateau_v_hold = float(plateau_v_hold); cfg_b.apical_kir_g = float(apical_kir_g)
+        cfg_b.enable_btsp = True; cfg_b.btsp_learning_rate = float(btsp_lr)
+        cfg_b.btsp_elig_tau_ms = 1000.0; cfg_b.btsp_w_max = float(hebb_max)
+        n_all_b = cfg_b.num_neurons
+        bridge.cp_bdsp_apical_drive = cp.zeros(n_all_b, dtype=cp.float32)
+        for m, assy in enumerate(assemblies):
+            assy_arr = cp.asarray(assy, dtype=cp.int64)
+            for ev in range(train_events):
                 bridge.cp_external_input_current[:] = 0.0
-                on = True if no_sync else ((_st % period) < int(sync_on))   # no_sync = drive every step (async control)
-                if on:
-                    bridge.cp_external_input_current[assy_arr] = float(encode_drive)   # DIRECT synchronous assembly drive
-                bridge._run_one_simulation_step()
-            if do_comp:
-                _apply_competition(member_mask)
-        bridge.cp_external_input_current[:] = 0.0
+                bridge.cp_bdsp_apical_drive[:] = 0.0
+                for _ in range(reset_steps):
+                    bridge._run_one_simulation_step()
+                for _st in range(drive_steps):
+                    bridge.cp_external_input_current[:] = 0.0
+                    bridge.cp_external_input_current[assy_arr] = float(encode_drive)      # co-fire the assembly (pre-elig)
+                    bridge.cp_bdsp_apical_drive[:] = 0.0
+                    bridge.cp_bdsp_apical_drive[assy_arr] = float(encode_plateau_pA)      # plateau ON the assembly (IS_post)
+                    bridge._run_one_simulation_step()
+            bridge.cp_external_input_current[:] = 0.0
+        cfg_b.enable_bdsp = False; cfg_b.enable_btsp = False; bridge.cp_bdsp_apical_drive = None  # recall uses two_comp only
+    else:
+        for m, assy in enumerate(assemblies):
+            assy_arr = cp.asarray(assy, dtype=cp.int64)
+            # the KNOWN assembly is the competition member set (pre-assigned; local ca3 positions)
+            member_mask = cp.zeros(len(ca3_idx), dtype=cp.float32)
+            member_mask[cp.asarray([ca3_pos[int(g)] for g in assy], dtype=cp.int64)] = 1.0
+            for ev in range(train_events):
+                bridge.cp_external_input_current[:] = 0.0
+                for _ in range(reset_steps):
+                    bridge._run_one_simulation_step()
+                for _st in range(drive_steps):
+                    bridge.cp_external_input_current[:] = 0.0
+                    on = True if no_sync else ((_st % period) < int(sync_on))   # no_sync = drive every step (async control)
+                    if on:
+                        bridge.cp_external_input_current[assy_arr] = float(encode_drive)   # DIRECT synchronous assembly drive
+                    bridge._run_one_simulation_step()
+                if do_comp:
+                    _apply_competition(member_mask)
+            bridge.cp_external_input_current[:] = 0.0
     _set_gates(bridge, 0.0)
 
     # within-ensemble vs member->silent weight read (did the weights GROW to the completion scale?)
