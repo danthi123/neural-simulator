@@ -173,7 +173,20 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   byte-identical-when-off — this is also gap #4's dendritic substrate). All committed/pushed/CI-green. **Next-continue
   candidates (fresh arcs):** gap #4 local-credit rule ON the new bistability substrate (strongest — the substrate now
   exists) · gap #5 emergent-DG or SWR (both demonstrated fresh integration arcs) · gap #1 open generation.
-- **▶ GAP #4 ACTIVE (2026-07-18): deep-research gate RETURNED (`2026-07-18-gap4-research-gate-BDSP-on-bistable-apical-…`).**
+- **✅ GAP #4 MECHANISM GO (2026-07-18) — the local-credit keystone now has a WORKING rule (the resume point).** BTSP
+  plateau-gated ONE-SHOT credit is 6-seed GO (`_gap4_btsp_plateau_gated_derisk.py`; finding
+  `2026-07-18-gap4-BTSP-plateau-gated-oneshot-credit-GO-the-keystone-is-the-enabler.md`; CI
+  `test_btsp_bistable_plateau_extends_credit_window_to_seconds`): the gap#5 BISTABLE dendritic plateau (self-regen
+  SUSTAIN + KIR, the `sim/` keystone) IS the enabler — it converts ms spike-timing plasticity into a seconds-long
+  BEHAVIORAL-TIMESCALE window (held plateau potentiates a pre-input 0.9 s later one-shot [far 40.6]; transient does NOT
+  [far 0.000]; moat clean; local, no weight transport, no global loss). This is the EMERGENCE-BAR-aligned gap#4 target
+  (a local biological rule that lets the substrate LEARN), reached by PIVOTING off the confirmed depth-fragile
+  supervised-backprop wall (banked method) per THE LAW. **NEXT rungs (fresh arcs):** (a) on-bridge SPIKING BTSP (drive
+  the plateau on a real `SimulationBridge`; potentiate a co-active synapse one-shot); (b) a one-shot association/
+  place-field TASK; (c) integrate with gap#5 CA3/CA1 (BTSP = the STORING rule, CA3 completion = the RECALL; they share
+  the keystone). Honest scope: MECHANISM de-risk (rate/analytic on the real plateau voltage), NOT yet a spiking task or
+  multi-layer credit (deep BTSP is confirmed-hard per the 2025 preprint — banked, not the capability).
+- **▶ GAP #4 (earlier this session): deep-research gate RETURNED (`2026-07-18-gap4-research-gate-BDSP-on-bistable-apical-…`).**
   The deep-credit block is FIXABLE, not a wall: the prior BDSP failed because the apical raised the burst-PROBABILITY read
   P but NOT the measured burst rate B (apical→soma coupling was missing; the rule reads B) — root-caused, and a 2026-07-10
   sim/ edit already lifted directed-credit separation 1.33×→20×, but the LEARNING-TO-ACCURACY run was NEVER completed
