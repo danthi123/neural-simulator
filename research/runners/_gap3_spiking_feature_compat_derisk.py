@@ -102,6 +102,62 @@ def run_seed(seed, permute=False):
     return ok / ntot if ntot else 0.0
 
 
+class SpikingFeatureCompat:
+    """Reusable spiking feature-compatibility bias-target chooser (the A1 wire-in of `content_bias_target`). Learns the
+    concept-animacy / verb-selection signs from a corpus (offline-EM scaffold), holds a persistent 2-pool bridge, and
+    `bias_target(candidates, query_verb)` returns the compatible candidate via the spiking coincidence readout (or None
+    = abstain, keeping the no-confab moat). Drop-in for `MultiTurnAgent(feat_compat_source=...)`."""
+
+    def __init__(self, seed=42, corpus=None):
+        self.seed = int(seed)
+        facts = corpus if corpus is not None else make_corpus(seed)
+        self.ca, self.vs = learn_features(facts)
+        agree = np.mean([np.sign(self.ca.get(c, 0.0)) == (1 if ANIMACY.get(c) == "animate" else -1)
+                         for c in CONCEPTS if self.ca.get(c, 0.0) != 0]) if CONCEPTS else 0.5
+        self.sign = 1.0 if agree >= 0.5 else -1.0
+        self.b = _build(seed); self.n = self.b.core_config.num_neurons
+        self.f_anim = np.asarray(list(self.b.region_manager.indices("F_anim")), int)
+        self.f_inan = np.asarray(list(self.b.region_manager.indices("F_inanim")), int)
+
+    def _pool(self, s):
+        return self.f_anim if s > 0 else self.f_inan
+
+    def _score(self, verb, cand, steps=25, drive=500.0):
+        from sim.backend import to_host, from_host
+        vsel = np.sign(self.vs.get(verb, 0.0) * self.sign); casign = np.sign(self.ca.get(cand, 0.0) * self.sign)
+        if vsel == 0 or casign == 0:
+            return 0.0
+        vpool = self._pool(vsel)
+        b = self.b
+        if getattr(b, "cp_izh_c_reset", None) is not None:
+            b.cp_membrane_potential_v[:] = b.cp_izh_c_reset
+        else:
+            b.cp_membrane_potential_v[:] = -65.0
+        b.cp_recovery_variable_u[:] = 0.0
+        if getattr(b, "cp_firing_states", None) is not None:
+            b.cp_firing_states[:] = False
+        for _a in ("cp_conductance_g_e", "cp_conductance_g_i"):
+            _arr = getattr(b, _a, None)
+            if _arr is not None:
+                _arr[:] = 0.0
+        cur = np.zeros(self.n); cur[vpool] += drive; cur[self._pool(casign)] += drive
+        dev = from_host(cur.astype(np.float64)); rate = 0.0
+        for _ in range(steps):
+            b.cp_external_input_current[:] = dev; b._run_one_simulation_step()
+            rate += float(np.asarray(to_host(b.cp_firing_states))[vpool].mean())
+        return rate
+
+    def bias_target(self, candidates, query_verb):
+        cands = list(candidates)
+        scores = {c: self._score(query_verb, c) for c in cands}
+        if not scores:
+            return None
+        top = max(scores, key=scores.get)
+        return top if (scores[top] > 1e-6 and list(scores.values()).count(scores[top]) == 1) else None
+
+    __call__ = bias_target
+
+
 def main():
     os.environ.setdefault("SIM_BACKEND", "numpy")
     seeds = (42, 43, 44, 100, 101, 102)

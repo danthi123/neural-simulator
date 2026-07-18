@@ -37,3 +37,13 @@ selection pool, each candidate its learned animacy pool; the COMPATIBLE candidat
 anti-cheat collapses 0.00.** The learned signs are the offline-EM scaffold (like the concept codes); the DECISION is
 spiking. Remaining A1: wire the spiking bias-target into `BiasedCompetitionContextBuffer.read(bias_concept=...)` in
 place of the host `content_bias_target` call, keeping the 6-seed GO competition + moat → A1 fully closed.
+
+## WIRE-IN + CI — A1 FULLY CLOSED (2026-07-18)
+`MultiTurnAgent(feat_compat_source=SpikingFeatureCompat(...))` routes the spiking learned feature-compatibility as the
+bias-target chooser in `_resolve_biased`, in place of the host `content_bias_target` (tried after the D3 focus, before
+the host fallback; default None = byte-identical). Exercised end-to-end: 'it'+'eat' → cat (via SPIKING feature-compat,
+not host lookup) → the full turn answers "fish". CI: `tests/test_gap3_spiking_feature_compat.py` 4/4 (mechanism +
+spiking==host + agent wire-in resolution + default-off byte-identity). ⇒ **gap #3 residual A1 CLOSED** — the
+referent-bias feature-compatibility is now LEARNED from corpus co-occurrence + computed by SPIKING neurons, no host
+lexicon. Remaining gap #3 residual: A2 (the all-COMPATIBLE tie → composite discourse-salience ranking; the helper
+currently ABSTAINS = moat-safe, so a capability extension not a break).

@@ -65,7 +65,8 @@ class MultiTurnAgent:
                  biased_competition_window=20, graded_bias=False, graded_bias_gain=1.0,
                  graded_bias_ref=0.20, graded_bias_cap_pA=8000.0, defer_parser=False, defer_planner=False,
                  communicable_mode=False, communicable_draw="spiking", communicable_config=None,
-                 speak_value_Q=None, D=128, focus_bias_source=None, event_register=None):
+                 speak_value_Q=None, D=128, focus_bias_source=None, event_register=None,
+                 feat_compat_source=None):
         self.seed = int(seed)
         # composer_kind passes through to the inner agent: "rf" (default) or "onebrain" (the integrated one-brain
         # composer -- the cleanup arc validates multi-turn anaphora + cued multi-hop on it).
@@ -113,6 +114,12 @@ class MultiTurnAgent:
         # discourse-CENTER tracker (Centering Cb over the heard SVO facts, `_d3_centering_focus_derisk`) plugs in so the
         # pronoun binds to the BRAIN-BASED composed focus rather than a host feature-lookup. None -> content_bias_target.
         self._focus_bias_source = focus_bias_source
+        # A1 WIRE-IN HOOK (default None = byte-identical): a callable (held_referents, query_verb) -> the favored referent,
+        # computed by the SPIKING learned feature-compatibility (`_gap3_spiking_feature_compat_derisk.SpikingFeatureCompat`)
+        # in place of the HOST `content_bias_target` lexicon lookup -- the emergence-bar close of gap #3 residual A1 (the
+        # animacy x verb-selection compatibility LEARNED from corpus co-occurrence + computed by feature-detector spikes).
+        # Tried AFTER the D3 focus, BEFORE the host fallback. None -> content_bias_target (byte-identical).
+        self._feat_compat_source = feat_compat_source
         # RUNNING-EVENT REGISTER HOOK (default None = byte-identical): an object with observe(subject_word, agent, patient)
         # + who_agent()/who_patient(), maintaining a running FACTORED (agent, patient) EVENT across the heard discourse via
         # the D3 discrete-attractor (`_d3_event_agent_derisk.D3EventRegister`). `hear` folds each heard fact into it; the
@@ -215,6 +222,7 @@ class MultiTurnAgent:
         # content_bias_target feature-lookup (default). The composed focus binds the pronoun to the discourse center
         # rather than mere feature-compatibility -- the production wire-in of the D3 anaphora integration.
         fav = (self._focus_bias_source(held, query_verb) if self._focus_bias_source is not None
+               else self._feat_compat_source(held, query_verb) if self._feat_compat_source is not None
                else content_bias_target(held, query_verb))
         if fav is None:
             return None  # content silent -> abstain (moat)
