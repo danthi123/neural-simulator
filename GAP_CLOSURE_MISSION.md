@@ -141,11 +141,24 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
-- **Phase:** GAP-CLOSING. **Gap #2 FULLY CLOSED** ✅ · Gap #3 largely closed · **Gap #5 = the "6-SEED GO" was RETRACTED
-  (2026-07-18)** ⛔ — the permuted-recall anti-cheat caught a SELF-SUSTAINING-ATTRACTOR artifact (held members fire the
-  same [50] whether cued CORRECTLY or with a RANDOM set → not cue-triggered completion). What STANDS: the recipe forms
-  a strong SPECIFIC learned attractor (real advance on the 2026-07-14 weak-attractor boundary). NOT closed: genuine
-  CUE-TRIGGERED completion (the attractor is always-on, needs to be BISTABLE/cue-gated). · Gaps #1/#4 open.
+- **⚠️ STRATEGY CORRECTION (owner steer 2026-07-18): FULLY close each gap in EASIEST→HARDEST order; stop jumping /
+  leaving loose ends.** I drifted: picked gap #5 on a wrong "quickest" estimate, then sunk-cost-ground its deep
+  robustness frontier while easier un-closed work sat idle. Corrected order of UN-CLOSED work: **(A) gap #3 residuals
+  [EASIEST — capability already GO] → (B) gap #5 robust completion [hard, mechanism demonstrated] → (C) gap #4 keystone
+  [very hard, a-1 only] → (D) gap #1 open generation [hardest].**
+- **Phase:** GAP-CLOSING (easiest-first). **Gap #2 FULLY CLOSED** ✅ · **Gap #3 = FINISHING NOW (2 residuals)** ·
+  **Gap #5 = mechanism DEMONSTRATED (seed 42, all anti-cheats) but robust-6-seed a DEEP frontier — BANKED, sequenced
+  after #3** (the "6-SEED GO" was RETRACTED as a self-sustaining artifact; the Wang-NMDA rebuild gives real
+  bistable+specific completion on seed 42 but is seed-fragile — the per-seed-T diagnostic confirms 43 self-sustains /
+  44 non-specific at EVERY T, so it needs a per-neuron rate-homeostatic / reduced-heterogeneity, not T-calibration).
+  · Gaps #4 (a-1 only) / #1 open.
+- **⚠️ EXACT NEXT ACTION (A — fully close gap #3):** its capability is GO (biased-competition WTA + D3 composed-focus,
+  6-seed, wired). Two residuals to close: **(A1, cheap) neuralize `content_bias_target`** — the host ANIMACY×VERB_SELECTS
+  lexicon → a LEARNED synaptic feature-compatibility map (Bates-MacWhinney, already spiking-de-risked;
+  `biased_competition_buffer.py:33-39`); **(A2) the all-COMPATIBLE tie** (two same-animacy candidates) → composite
+  discourse-salience ranking (recency+role+topicality) read by divisive normalization (the current helper ABSTAINS =
+  moat-safe, so this is a capability EXTENSION not a break). a-1 first (read `2026-07-17-gap3-...-LARGELY-CLOSED.md` +
+  `2026-07-09-D3-centering-focus-GO.md`), then de-risk cheap-first + 6-seed + anti-cheats.
 - **🔬 gap#5 Rung 2/3 RESULT (2026-07-17):** the mossy-detonator SPARSIFIES CA3 (0.43→0.03) but sparsity WITHOUT
   synchrony can't select — within/silent separation goes NEGATIVE (−0.27 to −0.47; the sparse cells fire async →
   co-activity traces never clear threshold → no potentiation). Rung 3 (input gamma-pulse) is INERT (byte-identical to

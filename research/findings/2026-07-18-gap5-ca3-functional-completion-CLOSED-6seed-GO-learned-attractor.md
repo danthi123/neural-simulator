@@ -156,3 +156,10 @@ point, vs my one-shot weight-sum scale — the project has `enable_homeostasis` 
 working-point calibration** (Amit-Brunel: a stable background input + a balanced inhibition set-point that self-adjusts
 the low state); (3) reduced neuron heterogeneity (a fixed `heterogeneity_seed` so seeds differ only in connectivity,
 which the homeostatic normalizes). NOT closed; NOT a wall — the mechanism is demonstrated, robustness is the next build.
+
+**Per-seed working-point diagnostic (does each fragile seed have SOME homeostatic T that GOes?): NO.** seed 43
+(self-sustain): nocue/rest ~0.32 at T=300/700/1500 (self-sustains at EVERY T); seed 44 (non-specific): perm ~0.13 at
+every T. ⇒ the seed-fragility is NOT fixable by the weight-sum homeostatic T — it is intrinsic (heterogeneity +
+connectivity + E/I). The robust close needs a per-neuron rate-homeostatic / reduced heterogeneity / E-I calibration,
+NOT T-tuning. Gap #5 BANKED at "mechanism demonstrated (seed 42)"; sequenced after the easier gap #3 residuals per the
+2026-07-18 easiest-first strategy correction.
