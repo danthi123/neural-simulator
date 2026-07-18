@@ -63,3 +63,45 @@ def test_self_regen_default_off_byte_identical():
     b = fused_coincidence_plateau(g0.copy(), gr0.copy(), decay, dr, v, 0.0, 1.0, c, 6.0, 2.0, 80.0, 0.0, -35.0, 0.2)
     for x, y in zip(a, b):
         assert np.allclose(np.asarray(x), np.asarray(y)), "self_regen=0 must be byte-identical to the no-arg default"
+
+
+# --- gap #4 (2026-07-18): the BDSP top-down apical integration made BISTABLE (bridge.py ~7258). These pin the MATH of
+# that edit (self-contained numpy reproduction of the exact _dvb formula), the same way the kernel tests above pin the
+# plateau kernel. The REAL on-bridge "measured burst rate B rises" behavior is the runner probe's job, not CI.
+
+def _bdsp_apical_run(bistable, self_regen, kir_g, drive_val, drive_steps=40, hold_steps=250,
+                     tau=15.0, dt=1.0, v_hold=-35.0, v_hold_k=0.2, e_e=0.0,
+                     kir_ek=-90.0, kir_vhalf=-50.0, kir_k=8.0):
+    """Reproduce the bridge.py:7258 BDSP-apical integration EXACTLY, for one cell, drive ON then removed.
+    Sustain = self_regen*sigmoid(v_hold_k*(v-v_hold))*(E_e - v) (self-limiting), matching fused_coincidence_plateau."""
+    v = np.array([ER])
+    tr = []
+    for t in range(drive_steps + hold_steps):
+        drive = drive_val if t < drive_steps else 0.0
+        dvb = -(v - ER) + drive                                         # the prior plain leaky expression
+        if bistable:
+            if self_regen != 0.0:
+                dvb = dvb + (self_regen / (1.0 + np.exp(-v_hold_k * (v - v_hold)))) * (e_e - v)
+            if kir_g != 0.0:
+                dvb = dvb + (kir_g / (1.0 + np.exp((v - kir_vhalf) / kir_k))) * (kir_ek - v)
+        v = v + (dt / tau) * dvb
+        tr.append(float(v[0]))
+    return np.array(tr)
+
+
+def test_bdsp_apical_bistable_off_is_plain_leaky():
+    # bdsp_apical_bistable=False => _dvb is exactly -(v-Er)+drive => identical to the pre-edit single line, drive on or off
+    off = _bdsp_apical_run(bistable=False, self_regen=2.0, kir_g=1.0, drive_val=40.0)   # bistable knobs set but flag OFF
+    plain = _bdsp_apical_run(bistable=False, self_regen=0.0, kir_g=0.0, drive_val=40.0)
+    assert np.allclose(off, plain), "flag OFF must be byte-identical to the plain leaky integration regardless of knobs"
+    # and the plain path is a pure transient: with the drive removed it relaxes back toward E_rest
+    assert plain[-1] < ER + 3.0, f"plain BDSP apical must DECAY after the drive is removed, got {plain[-1]:.2f}"
+
+
+def test_bdsp_apical_bistable_on_latches_and_holds():
+    held = _bdsp_apical_run(bistable=True, self_regen=2.0, kir_g=1.0, drive_val=80.0)     # error latches
+    silent = _bdsp_apical_run(bistable=True, self_regen=2.0, kir_g=1.0, drive_val=0.0)    # no error -> P0 moat
+    transient = _bdsp_apical_run(bistable=False, self_regen=0.0, kir_g=0.0, drive_val=80.0)
+    assert held[-1] > ER + 30.0, f"a real top-down error must LATCH a held apical plateau, got {held[-1]:.2f}"
+    assert silent[-1] < ER + 3.0, f"no error must stay SILENT at rest (the P0 moat), got {silent[-1]:.2f}"
+    assert held[-1] - transient[-1] > 30.0, "the bistability must be load-bearing vs the transient regime"

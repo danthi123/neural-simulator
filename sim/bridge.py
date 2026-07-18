@@ -7255,8 +7255,33 @@ class SimulationBridge:
                     # leaky integration of the top-down drive toward (E_rest + drive); tau = apical_tau_ms
                     _atau = cp.float32(max(getattr(cfg, "apical_tau_ms", 15.0), 1e-6))
                     _adt = cp.float32(cfg.dt_ms)
-                    self.cp_v_apical = self.cp_v_apical + (_adt / _atau) * (
-                        -(self.cp_v_apical - _Er) + self.cp_bdsp_apical_drive)
+                    _dvb = -(self.cp_v_apical - _Er) + self.cp_bdsp_apical_drive
+                    # gap#4 keystone (2026-07-18): make the BDSP apical BISTABLE so the top-down teaching error LATCHES +
+                    # HOLDS across the eligibility window (the root-caused decoupled-transient failure: a blip apical never
+                    # sustained real bursts B). Reuses the just-validated gap#5 dendritic-bistability terms -- the v-gated
+                    # self-regen SUSTAIN + the KIR DOWN-state -- so a real error latches a held plateau (silent at rest =>
+                    # the P0 moat) and, with bdsp_apical_couples_soma ON, the held plateau lifts the soma => B rises.
+                    # Default bdsp_apical_bistable=False => neither term computed => _dvb is the prior expression exactly
+                    # => the update below is BYTE-IDENTICAL to the original single line.
+                    if getattr(cfg, "bdsp_apical_bistable", False):
+                        _sr = float(getattr(cfg, "coincidence_plateau_self_regen", 0.0))
+                        if _sr != 0.0:
+                            # self-limiting REGENERATIVE inward current == fused_coincidence_plateau's sustain form:
+                            # self_regen * sigmoid(v_hold_k*(v - v_hold)) * (E_e - v). OFF below v_hold (silent), a
+                            # depolarizing drive toward E_e above it (the latch), self-limiting as v -> E_e (no runaway).
+                            _vhold = cp.float32(getattr(cfg, "coincidence_plateau_v_hold", -35.0))
+                            _vhk = cp.float32(getattr(cfg, "coincidence_plateau_v_hold_k", 0.2))
+                            _ee = cp.float32(getattr(cfg, "syn_reversal_potential_e", 0.0))
+                            _dvb = _dvb + (cp.float32(_sr) / (1.0 + cp.exp(-_vhk * (self.cp_v_apical - _vhold)))) \
+                                * (_ee - self.cp_v_apical)
+                        _kir_gb = float(getattr(cfg, "apical_kir_g", 0.0))
+                        if _kir_gb != 0.0:
+                            _ekb = cp.float32(getattr(cfg, "apical_kir_E_K", -90.0))
+                            _kvhb = cp.float32(getattr(cfg, "apical_kir_vhalf", -50.0))
+                            _kkb = cp.float32(getattr(cfg, "apical_kir_k", 8.0))
+                            _gkirb = cp.float32(_kir_gb) / (1.0 + cp.exp((self.cp_v_apical - _kvhb) / _kkb))
+                            _dvb = _dvb + _gkirb * (_ekb - self.cp_v_apical)
+                    self.cp_v_apical = self.cp_v_apical + (_adt / _atau) * _dvb
                 if _bdsp_raw_apical is not None:
                     self.cp_bdsp_apical_drive = _bdsp_raw_apical   # restore the runner-supplied raw drive (no accumulation)
                 _beta = cp.float32(getattr(cfg, "bdsp_beta", 1.0))

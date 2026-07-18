@@ -329,6 +329,14 @@ class CoreSimConfig:
     # in _run_one_simulation_step is unreached). See 2026-07-10-D1-onbridge-BDSP-apical-decoupled-from-soma-BOUNDARY.
     bdsp_apical_couples_soma: bool = False
     bdsp_apical_soma_g: float = 0.0              # pA per unit of P-space apical depolarization (v_apical_scale*(v_apical-E_rest)); 0 disables
+    # gap#4 keystone (2026-07-18): make the BDSP top-down apical BISTABLE so the teaching error LATCHES + HOLDS across
+    # the eligibility window (the root-caused decoupled-transient failure: a blip apical never sustained real bursts B).
+    # When on, the BDSP apical integration in _run_one_simulation_step (~7258) adds the SAME gap#5 dendritic-bistability
+    # terms it validated -- the v-gated self-regen SUSTAIN (coincidence_plateau_self_regen/_v_hold/_v_hold_k) + the KIR
+    # down-state (apical_kir_*) -- so a real teaching error latches a held plateau (silent DOWN at rest -> the P0 moat)
+    # and, with bdsp_apical_couples_soma ON, the held plateau lifts the soma -> measured bursts B rise -> directed credit.
+    # Default False => neither term is computed => byte-identical to the prior plain leaky integration.
+    bdsp_apical_bistable: bool = False
     # Poirazi-Mel 2003 WEIGHTED-subunit refinement (2026-06-09). The count form above switches the plateau
     # on the bare COUNT of coincident routed inputs (c_i = mask^T @ prev_fired), so it is WEIGHT-BLIND: a
     # sparse-distinct ensemble that fires >= K cells everywhere triggers the same plateau regardless of the
