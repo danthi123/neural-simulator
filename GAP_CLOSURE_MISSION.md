@@ -141,9 +141,10 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
-- **Phase:** GAP-CLOSING. **Gap #2 FULLY CLOSED (2026-07-17)** ✅ · Gap #3 largely closed · Gap #5 = completion
-  FUNCTION met via other methods, but the biology-faithful CA3-autoassociator is a DEEP theta-gamma frontier (not the
-  quick close it was picked for — STRATEGIC REASSESSMENT, see below) · Gaps #1/#4 open.
+- **Phase:** GAP-CLOSING. **Gap #2 FULLY CLOSED** ✅ · Gap #3 largely closed · **Gap #5 CA3 functional-completion
+  MECHANISM = 6-SEED GO (2026-07-18)** 🎉 — a LEARNED CA3 attractor completes a held-out pattern specifically (h_comp
+  1.000/non 0.000 all 6 seeds, no-encoding collapses), CLOSING a wall at chance the project's ENTIRE history; remaining
+  gap-#5 pieces = emergent DG-selection + SWR replay loop + console. · Gaps #1/#4 open.
 - **🔬 gap#5 Rung 2/3 RESULT (2026-07-17):** the mossy-detonator SPARSIFIES CA3 (0.43→0.03) but sparsity WITHOUT
   synchrony can't select — within/silent separation goes NEGATIVE (−0.27 to −0.47; the sparse cells fire async →
   co-activity traces never clear threshold → no potentiation). Rung 3 (input gamma-pulse) is INERT (byte-identical to
@@ -227,11 +228,16 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   non-stored=0.000, GO.** Assembly-selective inhibition caps the completion spread (non-members silent) while held
   members fully reactivate — density-robust, exactly PMC12244581. **THE ROBUST CONFIG:** n_ca3=2000, assembly_frac
   0.008, continuous drive 3000pA, coact_thresh 0.02, hebb_lr 2.0, lam 0.5, k_thresh 15, recall_steps 100, ca3_fb_inhib
-  15. **⚙️ FULL 6-SEED + no-encoding anti-cheat running** (`b4ncflcd4`). **⚠️ EXACT NEXT ACTION:** read it → if 6/6 GO
-  + no-encoding collapses → **gap#5 FUNCTIONAL CA3 COMPLETION MECHANISM = 6-SEED GO** (biology-faithful CA3
-  autoassociator, at CHANCE the project's entire history, now closed on a LEARNED attractor) → write the finding →
-  then (a) wire the EMERGENT mossy/DG assembly SELECTION (replace pre-assigned = experience-derived) → (b) SWR
-  generative-replay loop → (c) console. If <6/6 → per-seed fb_inhib tune (15 vs 40 both worked on the 3 tested).
+  15. **⚙️ FULL 6-SEED + no-encoding anti-cheat running** (`b4ncflcd4`). **🎉🎉🎉 6/6 GO — CLOSED (2026-07-18):** all 6 seeds
+  h_comp 1.000-1.003 / non-stored 0.000; no-encoding anti-cheat collapses (h_comp 0.000 = learned attractor
+  load-bearing). Finding: `2026-07-18-gap5-ca3-functional-completion-CLOSED-6seed-GO-learned-attractor.md`. **The
+  functional-completion MECHANISM is CLOSED** (a learned CA3 attractor completes specifically, biology-faithful, at
+  chance the project's whole history). **⚠️ EXACT NEXT ACTION (finish gap #5 fully, per "close ALL"):** (0) permuted-recall
+  anti-cheat (cue a non-assembly set → must NOT complete) for rigor [running]; (a) **wire the EMERGENT mossy/DG assembly
+  SELECTION** — replace the pre-assigned assembly with the DG-pattern-separated set (the mechanism is selection-agnostic:
+  it binds whatever sparse set co-fires), so the assembly is experience-derived (the emergence bar); (b) the SWR
+  generative-replay loop (`_riii_swr_generative_replay_derisk.py`, gated on this attractor); (c) a queryable console.
+  Then gap #5 is FULLY closed → gaps #1 (open generation) + #4 (dendritic engine) remain per "close ALL fully".
 - (superseded by the breakthrough above) direct synchronous assembly encoding did NOT grow the weights — DECAYED,
   and sync=async BYTE-IDENTICAL (the gamma mechanism was inert because NOTHING was potentiating). The rate-window LTP
   isn't firing: a cell firing ~1/3 of steps has trace ≈0.33 → product ≈0.11 < the 0.25 coactivity threshold → no
