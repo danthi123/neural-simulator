@@ -193,11 +193,16 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   pre-assigned sparse assembly + CONTINUOUS strong drive (3000pA, NO gamma) + coact_thresh 0.02 + hebb_lr 2.0 +
   heterosynaptic competition lam 0.5 + dendritic dAP read-out k_thresh 15. **⚙️ 6-seed + anti-cheat confirmation running**
   (`bklj3vokg`: 6 seeds + GAMMA control [no_sync=False → should collapse: the OFF-gap decays the EMA trace] +
-  NO-ENCODING control [drive=0 → should collapse]). **⚠️ EXACT NEXT ACTION:** read it → if 6-seed GO + anti-cheats
-  collapse → confirm at n_ca3=1000 → **gap#5 functional-completion mechanism CLOSED** → then (a) wire the EMERGENT
-  mossy/DG assembly SELECTION (replace the pre-assigned assembly = experience-derived, the emergence bar) → (b) SWR
-  generative-replay loop (`_riii_swr_generative_replay_derisk.py`) → (c) console. If seed-fragile → widen the sweet
-  spot per seed or decouple encode-vs-recall k_thresh.
+  NO-ENCODING control [drive=0 → should collapse]). **RESULT (honest, n_ca3=500): 2/6 GO** (seed 42 h_comp 0.367,
+  seed 100 0.840; seeds 43/44/101/102 fail — weights collapse / completion 0). NO-ENCODING collapses (2.3, h_comp
+  0.167 = encoding load-bearing ✓). BUT the GAMMA anti-cheat does NOT collapse (h_comp 0.625) → **CORRECTION: the
+  "continuous drive is load-bearing" claim is REFUTED** — at coact_thresh=0.02 BOTH gamma and continuous potentiate
+  (the threshold is below even the gamma-decayed trace); the load-bearing levers are LOW coact_thresh + high lr +
+  competition + the k_thresh sweet spot, NOT the drive pattern. **⇒ off chance (0/6) → 2/6 GO + mechanism found, but
+  SEED-FRAGILE — exactly the 2026-07-14 scale-boundary (2/6 clean at small scale), which that finding predicted SCALE
+  fixes.** **⚙️ Scale test running** (`<id>`: the GO config at n_ca3=1000, 6-seed). **⚠️ EXACT NEXT ACTION:** read it →
+  if scale robustifies to ≥5/6 → gap#5 completion mechanism CLOSED → wire EMERGENT mossy/DG selection → SWR loop →
+  console. If still fragile at 1000 → n_ca3=2000, or per-seed k_thresh/lam widening, or engram intrinsic-excitability.
 - (superseded by the breakthrough above) direct synchronous assembly encoding did NOT grow the weights — DECAYED,
   and sync=async BYTE-IDENTICAL (the gamma mechanism was inert because NOTHING was potentiating). The rate-window LTP
   isn't firing: a cell firing ~1/3 of steps has trace ≈0.33 → product ≈0.11 < the 0.25 coactivity threshold → no
