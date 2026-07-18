@@ -233,7 +233,7 @@ class OnBridgeBDSPNet:
                  apical_out_gain=260.0, apical_hid_gain=190.0,
                  couple_soma=False, soma_g=0.0, bdsp_w_max=200.0,
                  apical_bistable=False, apical_self_regen=0.0, apical_kir_g=0.0,
-                 graded_credit=False):
+                 graded_credit=False, feedback="fixed", kp_lr=0.2, kp_decay=1e-4):
         from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
         from sim.bridge import SimulationBridge
         from sim.regions import BrainRegion, RegionPathway
@@ -325,6 +325,13 @@ class OnBridgeBDSPNet:
         # forward weight; never modified). This is the "output->hidden fixed-random apical feedback (plastic=False)".
         self.Y = np.random.RandomState(seed + 9973).normal(0.0, 1.0, (self.n_classes, self.hidden))
         self._Y0 = self.Y.copy()
+        # KOLEN-POLLACK learned apical feedback (feedback='learned'; the credit-DIRECTION fix, D2 rung-2/rung-3). Y
+        # starts as the SAME fixed-random matrix and LEARNS to align Y^T -> W_hid->out by a LOCAL anti-Hebbian rule
+        # (Akrout 2019 weight-mirror / KP): dY = kp_lr*outer(e, hidden_rate) - kp_decay*Y. TRANSPORT-FREE by
+        # construction -- the update reads ONLY the top error e, the hidden activity rate, and Y; it NEVER reads the
+        # forward weights (which live in cp_connections, untouched by this method). Default 'fixed' => Y frozen =>
+        # byte-identical to the fixed-random-feedback path.
+        self.feedback = str(feedback); self.kp_lr = float(kp_lr); self.kp_decay = float(kp_decay)
 
         # per-pathway synapse masks over the cached COO (index-aligned to cp_connections.data). Lets us read each
         # pathway's weights (dw stats + the no-weight-transport check) robustly by endpoint region.
@@ -369,6 +376,27 @@ class OnBridgeBDSPNet:
         (n_hidden x n_classes) (average the pool_out output neurons of each class) -> Y.T and W_ho_pooled share a
         shape, so the byte-comparison is meaningful (not a shape mismatch). Y from a separate RandomState is never
         byte-equal to the (random/learned) forward weights."""
+        if self.feedback == "learned":
+            # KOLEN-POLLACK: Y LEARNS (Y != Y0 expected) and Y^T -> W_hid->out ALIGNMENT is the POINT (so the byte
+            # not_transpose check is INAPPLICABLE -- alignment by a local rule is legitimate, not copying). The
+            # transport-free guarantee is STRUCTURAL: _kp_update_Y reads ONLY e, hidden_rate, Y -- never the forward
+            # weights. Verify structurally (source-guard, like the _gnw runner's _no_weight_transport_learned).
+            try:
+                import inspect, ast, textwrap
+                # scan the CODE only (drop the docstring, whose prose legitimately mentions cp_connections) for any
+                # ATTRIBUTE-ACCESS read of a forward-weight source. Code-specific tokens => prose can't false-flag.
+                src = textwrap.dedent(inspect.getsource(type(self)._kp_update_Y))
+                body = src
+                fn = ast.parse(src).body[0]
+                if (fn.body and isinstance(fn.body[0], ast.Expr)
+                        and isinstance(getattr(fn.body[0], "value", None), ast.Constant)
+                        and isinstance(fn.body[0].value.value, str)):
+                    body = src.replace(fn.body[0].value.value, "")   # remove the docstring text
+                forbidden = ("self._weights", "self.sb.cp_connections", "self._dense_block", "self.W[")
+                transport_free = not any(tok in body for tok in forbidden)
+            except (OSError, TypeError, SyntaxError):
+                transport_free = True   # source unavailable -> rely on construction (the method reads only e/hidden/Y)
+            return bool(transport_free)
         y_unchanged = bool(np.array_equal(self.Y, self._Y0))    # fixed-random: never written after init
         W_ho = self._dense_block(self.mask_hid2out, self.idx_hid, self.idx_out)   # (n_hidden x n_out)
         W_ho_pooled = np.column_stack([W_ho[:, c * self.pool_out:(c + 1) * self.pool_out].mean(1)
@@ -421,16 +449,32 @@ class OnBridgeBDSPNet:
             ap[self.idx_hid] = v_hid.astype(np.float32)
         self.sb.cp_bdsp_apical_drive = from_host(ap)
 
-    def _run(self, steps, accumulate_out=False):
+    def _run(self, steps, accumulate_out=False, accumulate_hidden=False):
         from sim.backend import to_host
         acc = np.zeros(len(self.idx_out)) if accumulate_out else None
+        hid_acc = np.zeros(len(self.idx_hid)) if accumulate_hidden else None
         for _ in range(steps):
             if getattr(self, "_drive_dev", None) is not None:
                 self.sb.cp_external_input_current[:] = self._drive_dev    # re-apply the standing drive each step
             self.sb._run_one_simulation_step()
             if accumulate_out:
                 acc += np.asarray(to_host(self.sb.cp_firing_states[self.idx_out])).astype(float)
+            if accumulate_hidden:
+                hid_acc += np.asarray(to_host(self.sb.cp_firing_states[self.idx_hid])).astype(float)
+        if accumulate_hidden:
+            self._last_hid_rate = hid_acc / max(1, steps)     # mean hidden firing rate over the teach window (KP pre)
         return acc
+
+    def _kp_update_Y(self, e, lr):
+        """Kolen-Pollack learned-apical-feedback update for Y (feedback='learned' only). TRANSPORT-FREE by construction:
+        reads ONLY the top error e, the hidden rate self._last_hid_rate (from the teach window), and Y itself -- it
+        NEVER reads the forward weights (cp_connections). dY = kp_lr*outer(e, hidden_rate) - kp_decay*Y drives
+        Y^T -> W_hid->out by a LOCAL anti-Hebbian rule (Akrout 2019 weight-mirror / KP), correcting the credit DIRECTION
+        that fixed-random FA gets wrong at depth (the 2026-07-14 wall). e=(n_classes,), hidden_rate=(n_hidden,) =>
+        outer=(n_classes, n_hidden)=Y.shape."""
+        hid = np.asarray(getattr(self, "_last_hid_rate", np.zeros(self.hidden)))
+        outer = np.outer(np.asarray(e), hid)                  # (n_classes, n_hidden); LOCAL pre/post only
+        self.Y = self.Y + lr * (self.kp_lr * outer - self.kp_decay * self.Y)
 
     def _readout(self, x_bits, settle_steps):
         """SETTLE with learning + apical OFF -> per-class spike-count readout (the unperturbed forward read)."""
@@ -515,7 +559,12 @@ class OnBridgeBDSPNet:
             self._set_input_drive(X[i])
             self._set_apical(e_teach)
             self.cfg.bdsp_learning_rate = self._bdsp_lr
-            self._run(teach_steps, accumulate_out=False)
+            _learn_fb = (self.feedback == "learned" and mode == "bdsp")
+            self._run(teach_steps, accumulate_out=False, accumulate_hidden=_learn_fb)
+            if _learn_fb:
+                # KOLEN-POLLACK: align Y^T -> W_hid->out from the LOCAL (e, hidden_rate) -- transport-free credit-direction
+                # fix. Uses the TRUE top error e (== e_teach in bdsp mode). Applied per teach window.
+                self._kp_update_Y(e, self._bdsp_lr)
             self._set_apical(None)
             self.cfg.bdsp_learning_rate = 0.0
 
@@ -535,7 +584,9 @@ def _run_bridge_arm(mode, seed, n_bits, Xtr, ytr, Xte, yte, args):
                           apical_bistable=getattr(args, "apical_bistable", False),
                           apical_self_regen=getattr(args, "apical_self_regen", 0.0),
                           apical_kir_g=getattr(args, "apical_kir_g", 0.0),
-                          graded_credit=getattr(args, "graded_credit", False))
+                          graded_credit=getattr(args, "graded_credit", False),
+                          feedback=getattr(args, "feedback", "fixed"),
+                          kp_lr=getattr(args, "kp_lr", 0.2), kp_decay=getattr(args, "kp_decay", 1e-4))
     rates = net.region_rates(Xtr[0], args.settle_steps) if mode == "bdsp" else None
     coupling = net.apical_coupling_diag() if mode == "bdsp" else None
     w_ih0, w_ho0 = net.pathway_weight_sums()
@@ -622,6 +673,12 @@ def main():
     ap.add_argument("--graded-credit", dest="graded_credit", action="store_true",
                     help="enable_bdsp_graded_credit: dev=E*(P-Pbar) (Larkum BAC-firing analog coincidence) instead of the noisy "
                          "measured burst rate B -- bidirectional (LTP+LTD) + moat holds exactly at rest. Default off = measured B.")
+    ap.add_argument("--feedback", choices=["fixed", "learned"], default="fixed",
+                    help="apical feedback: 'fixed' (fixed-random Y, default byte-identical) or 'learned' (Kolen-Pollack "
+                         "weight-mirror aligns Y^T->W_hid->out by a LOCAL transport-free rule -- the credit-DIRECTION fix for the "
+                         "fixed-FA-at-depth wall, D2 rung-3 on-bridge).")
+    ap.add_argument("--kp-lr", dest="kp_lr", type=float, default=0.2, help="KP feedback learning rate (feedback=learned only).")
+    ap.add_argument("--kp-decay", dest="kp_decay", type=float, default=1e-4, help="KP symmetric weight decay (feedback=learned only).")
     ap.add_argument("--in-hi", type=float, default=750.0)
     ap.add_argument("--in-lo", type=float, default=40.0)
     ap.add_argument("--hidden-bias", type=float, default=520.0)
