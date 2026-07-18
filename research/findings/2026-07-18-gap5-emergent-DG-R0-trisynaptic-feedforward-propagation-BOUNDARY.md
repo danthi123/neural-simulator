@@ -96,6 +96,18 @@ the next concrete step is what cracked it.)
   frontier, but the CORE mechanism (mossy seed → bistable-dendrite amplification → stable sparse assembly) is SURPASSED
   and works. Resume = reliable-seeding mechanism, then the integrated select-and-store + anti-cheats.
 
+## FULL emergent chain RUNS END-TO-END (select → amplify → store → recall) — honest result: assembly too SMALL to complete
+Ran the full chain for a seeding input via the `assemblies_ext` hook: mossy-seed → bistable-amplify → SELECT an EMERGENT
+assembly (|A_m|=24 cells) → `encode_btsp` store → bistable recall. Result: **cue 0.017**, nocue 0.000, perm 0.000,
+no-encode 0.000. So the chain runs (the emergent assembly IS stored + the anti-cheats are clean), but it barely
+completes — because the emergent assembly (24 cells) is too SMALL: at n_ca3=2000, density 0.05, a 24-cell assembly has
+only ~1.2 within-assembly connections per cell (vs ~12 for the pre-assigned 240-cell / assembly_frac-0.12 assembly that
+completes at cue 0.18). Too few convergent recurrents → no attractor → no completion. ⇒ a SECOND precise residual: the
+emergent SELECTION must produce a COMPLETION-SCALE assembly (~240 cells / 12%), but the mossy-seed + bistable
+amplification currently yields ~24 (1.2%). The mechanism is demonstrated end-to-end; the two residuals (reliable
+multi-input seeding + completion-scale assembly size) are the genuine open frontier — a broader/denser seed + wider
+amplification, or a completion config tuned for a sparse emergent assembly (lower density so fewer cells still connect).
+
 ## Status + the next mechanism (per THE LAW)
 - **BOUNDARY (well-characterized):** emergent-DG via the trisynaptic feedforward is blocked by feedforward propagation
   — the hippocampal chain (EC→DG→CA3) does not carry an input to fire downstream cells at reasonable drives; the mossy
