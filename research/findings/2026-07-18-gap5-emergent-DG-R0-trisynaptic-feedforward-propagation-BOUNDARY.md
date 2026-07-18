@@ -133,6 +133,19 @@ encoding phase. Then the DG code ALONE reliably fires its bound cluster (reliabl
 tight set (completable). This directly resolves BOTH residuals (reliability + completability) and is EMERGENCE-aligned
 (input → emergent DG separation → learned reliable input→cluster mapping). NEXT: build the learned mossy map.
 
+## The naive Hebbian learned-map was TESTED — it does NOT work (two concrete reasons, the deeper fix named)
+Built + ran the learned-mossy-map test (co-drive each reproducible DG code + a target 240-cell CA3 cluster, Hebbian on
+`dg→ca3`, then drive the DG code alone). Result: **0 seeding** for all inputs (the DG code fires NO CA3 cells after
+training — worse than the weak-but-nonzero firing before). Two concrete causes: (1) the SPARSE random mossy (density
+0.10) means a DG code connects to only ~10% of CA3, so it CANNOT bind to an ARBITRARY 240-cell target cluster — there
+are too few existing DG-code→target synapses to strengthen; (2) likely the documented Hebbian-DECAY behavior (the mossy
+weights DECAYED under `enable_hebbian_learning`, from weak-nonzero to zero — the `CLAUDE.md` Hebbian-decay gotcha). ⇒
+the naive Hebbian map is refuted (verified, not assumed). The deeper fix (the genuine next mechanism): (a) a DENSER or
+STRUCTURED mossy so every DG code reaches enough CA3, AND (b) a NON-DECAYING plateau-gated binding rule — BTSP ON THE
+MOSSY (drive the DG code + a plateau on the target cluster → BTSP potentiates the co-active dg→ca3 one-shot, no decay),
+binding each reproducible DG code to a fixed completable cluster. That is the emergent-DG's precise open frontier — a
+focused build (BTSP-on-mossy + denser mossy), reusing the BTSP machinery already built.
+
 ## Status + the next mechanism (per THE LAW)
 - **BOUNDARY (well-characterized):** emergent-DG via the trisynaptic feedforward is blocked by feedforward propagation
   — the hippocampal chain (EC→DG→CA3) does not carry an input to fire downstream cells at reasonable drives; the mossy
