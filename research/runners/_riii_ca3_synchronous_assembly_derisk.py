@@ -35,7 +35,7 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
         encode_drive=700.0, recall_drive=250.0, lam_dep_wi=0.5, hebb_max=2000.0, ca3_fb_inhib=20.0,
         reset_steps=15, drive_steps=48, recall_steps=60, ens_thresh=2, no_sync=False,
         coact_thresh=0.02, hebb_lr=None, k_thresh=18.0, plateau_strength=120.0, apical_R=50.0, apical_gc=None,
-        permute_recall=False, bistable=False):
+        permute_recall=False, bistable=False, nmda_recurrent=False, nmda_tau=100.0):
     # DIAGNOSED LEVERS (2026-07-18 workflow): the rate-window LTP is an EMA-trace rule -- a cell's co-activity trace
     # tops out ~0.03-0.2 (point Izh fires ~0.2 duty @700pA), so coact_thresh MUST be BELOW it (~0.02) or nothing
     # potentiates; the gamma OFF-gap DECAYS the EMA (0.9^off) so CONTINUOUS drive (sync_off<=1) is required, NOT
@@ -43,7 +43,11 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
     from sim.backend import get_backend, to_host
     from sim.kernels import fused_htm_winner_inactive_depression
     cp, _ = get_backend()
-    bridge = _build(seed, n_ca3=n_ca3, ca3w=6.0, ca3_density=0.5, coincidence=True, two_comp=True, apical_R=apical_R,
+    # WANG-2002 mode (nmda_recurrent): the ca3->ca3 recurrent is SOMATIC slow-NMDA (the bistable attractor itself);
+    # the dendritic-coincidence dAP readout (coincidence/two_comp) is OFF. Else: the dAP-coincidence readout (default).
+    bridge = _build(seed, n_ca3=n_ca3, ca3w=6.0, ca3_density=0.5,
+                    coincidence=(not nmda_recurrent), two_comp=(not nmda_recurrent),
+                    nmda_recurrent=nmda_recurrent, nmda_tau=nmda_tau, apical_R=apical_R,
                     apical_gc=apical_gc, k_thresh=k_thresh, plateau_strength=plateau_strength,
                     train=True, hebb_max=hebb_max, hebb_rate=True, ca3_fb_inhib=ca3_fb_inhib,
                     coact_thresh=coact_thresh, hebb_lr=hebb_lr)

@@ -30,7 +30,8 @@ def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0,
            hebb_max=None, mg=None, apical_R=None, apical_gc=None, hebb_lr=None, hebb_decay=None, hebb_sym=False,
            hebb_rate=False, coact_decay=None, coact_thresh=None, ca3_fb_inhib=None, ca3_fb_n=None, mossy_weight=None,
            mossy_density=None, dg_ffi_weight=None,
-           ca3_to_ca1_density=0.30, ca1_fb_inhib=None, ca1_fb_n=None, ca1_ff_inhib=None):
+           ca3_to_ca1_density=0.30, ca1_fb_inhib=None, ca1_fb_n=None, ca1_ff_inhib=None,
+           nmda_recurrent=False, nmda_tau=100.0, nmda_ratio=1.0):
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.bridge import SimulationBridge
     from research.runners.text_minimal_isolation import build_biological_brain_regions
@@ -46,6 +47,15 @@ def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0,
         for p in pathways:
             if getattr(p, "from_region", None) == "ca3" and getattr(p, "to_region", None) == "ca3":
                 p.coincidence_detector = True
+    if nmda_recurrent:
+        # WANG-2002 (research gate 2026-07-18): route ca3->ca3 through SOMATIC slow-NMDA reverberatory excitation
+        # (exc_receptor="nmda_slow", tau~100ms) -- the attractor ITSELF, not the dendritic-coincidence READOUT (which
+        # detects co-activity but cannot HOLD a stable high fixed point -> the magnitude/bistability/specificity
+        # trilemma). Slow NMDA gives a wide bistable window (stable silent low state + cue-ignitable high state) +
+        # temporal integration that rejects transient/permuted cues. Reuses the D3 persistent-slot machinery. NO sim/ edit.
+        for p in pathways:
+            if getattr(p, "from_region", None) == "ca3" and getattr(p, "to_region", None) == "ca3":
+                p.exc_receptor = "nmda_slow"; p.coincidence_detector = False
     if ca3_fb_inhib is not None:
         # CYCLE-1072 FIX (research gate 2026-07-09): CA3 has NO feedback inhibition wired (internal_density=0.0
         # leaves its 15% inhibitory cells unconnected; every X->ca3 pathway is excitatory) -> uncapped recurrent
@@ -126,6 +136,9 @@ def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0,
     cfg.enable_brain_region_framework = True
     cfg.brain_regions = list(regions); cfg.region_pathways = list(pathways)
     cfg.dt_ms = 1.0; cfg.seed = seed; cfg.enable_nmda = True
+    if nmda_recurrent:
+        cfg.enable_nmda_recurrent = True; cfg.nmda_recurrent_tau_decay_ms = float(nmda_tau)
+        cfg.nmda_recurrent_ratio = float(nmda_ratio)
     cfg.enable_structural_plasticity = False; cfg.enable_per_type_stp = False
     cfg.enable_hebbian_learning = True; cfg.stdp_w_max = max(10.0, 2.5 * ca3w); cfg.fast_spike_reset = True
     if hebb_lr is not None:
