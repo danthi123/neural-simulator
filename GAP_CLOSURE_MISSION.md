@@ -256,12 +256,21 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   `2026-07-08-riii-ca3-attractor-formation-symmetric-hebbian.md` — the default Hebbian is CAUSAL-offset (pre@t-1 &
   post@t) but co-ensemble members fire SYNCHRONOUSLY → offset never satisfied → ~0 potentiation → collapse; a guarded
   `hebbian_symmetric` config (offset-free same-step co-firing) already exists + forms a SPECIFIC but WEAK attractor
-  (+0.87, capped at `hebbian_max_weight=30` = ~53× below the ≥1600 completion threshold). **⚠️ EXACT NEXT ACTION (the
-  concrete close):** read the Workflow synthesis+verify, then build the closing de-risk — `hebbian_symmetric=True` +
-  raise `hebbian_max_weight` toward ~2000 + enough co-activity (a RATE-WINDOW co-activity rule OR many encoding events)
-  to grow within-ensemble to the ≥1600 completion threshold → re-run held-out completion (GO gate: trained>0.30 &
-  recurrence-gain>0.15) + specificity + no-train control, 6-seed. Then wire completion → the SWR generative-replay
-  loop → a queryable console. This CLOSES gap #5 (completion is achievable; it was a TRAINING-RULE bug).
+  (+0.87, capped at `hebbian_max_weight=30`). **SYNTHESIS+VERIFY DONE (6-agent, adversarially confirmed):** the
+  Hebbian-collapse confound is confirmed exactly (Hebbian-OFF: 120→120; ON: 120 AND 600 → 0.846). **VERIFIER
+  CORRECTION (flips the ordering):** H4's completion threshold is NON-reproducible — the point-neuron all-to-all volley
+  needs raw w≈**6000** (not 1600; intermediate weights SUPPRESS the cue), so even a de-confounded sweep at built
+  weights 120–600 likely still misses the >0.30 gate. ⇒ **the dendritic-dAP completion (already 6-seed GO, completes
+  at far lower weight) is the PRIMARY closer**, fed by a learned pattern-specific attractor; the point-neuron volley is
+  secondary/extreme-weight only. Full finding: `2026-07-17-gap5-completion-ROOT-CAUSED-hebbian-collapse-not-a-floor-workflow-6agent-verified.md`.
+  **⚠️ EXACT NEXT ACTION (the verified close, cheapest-first):** STEP 1 (decisive, near-free) — scratchpad copy of the
+  diagnostic, de-confound (ca3→ca3 `plastic=False` OR `enable_hebbian_learning=False`, + fix the `train=False`
+  weight=1.5 bug at `_build:~29` so both arms build at the swept weight) → re-run sweep → the weight axis goes LIVE
+  (completion MOVES with weight = confound confirmed; do NOT treat passing as closure). STEP 2 (the closer) — a LEARNED
+  pattern-specific attractor via `hebbian_symmetric` (raise the cap + a RATE-WINDOW co-activity rule / many events to
+  reach ignition) + **dendritic-dAP completion** (`2026-07-08-riii-onsubstrate-dendritic-dAP-completion-SURPASS-6seed`)
+  → held-out completion GO gate (trained>0.30 & recurrence-gain>0.15 & specificity & no-train collapse), 6-seed → then
+  wire completion → SWR replay loop → queryable console. CLOSES gap #5.
 - **✅ Gap #4 a-1 RAG check DONE (2026-07-17) — the research-gate is essentially the `learning-rule-frontier-map`
   (2026-07-17), re-read + current:** SUPERVISED deep credit on spikes (e-prop / NP / D1-BDSP) is PARKED — all blocked
   by ONE shared "spiking-classifier-readout-training wall"; the rate-net positive control (done) confirmed the block
