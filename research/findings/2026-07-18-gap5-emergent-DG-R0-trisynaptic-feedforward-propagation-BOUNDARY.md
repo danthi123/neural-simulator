@@ -76,9 +76,19 @@ the next concrete step is what cracked it.)
   (`ca3w=5`) saturates to all 2000 cells. So the working point (mossy seed strength × recurrent gain × feedback
   inhibition) needs tuning for RELIABLE amplification across inputs (every input → a sparse separated assembly). That
   is the next tuning, NOT a fundamental wall.
-- **Resume: tune the amplification working point** (mossy_weight × ca3w × ca3_fb_inhib × sync) for a stable sparse
-  specific multi-input assembly, then the integrated select-and-store (encode_btsp on the amplified assembly + bistable
-  complete) + the anti-cheats. The recurrent-amplification insight is the unlock; everything else is already built.
+- **The BISTABILITY KEYSTONE stabilizes the emergent selection too (the deeper unlock, ~20 probes):** plain recurrent
+  amplification (coincidence only) hits the completion TRILEMMA in the SELECTION — too weak → 0, too strong → runaway
+  to all 2000 cells (input-dependent). Adding the gap#5 dendritic-bistability keystone (`two_comp=True` + self_regen
+  0.15 + KIR 3 + apical_gc_read 5) CAPS the runaway: a STRONG mossy seed (weight ~1500) ignites the bistable UP-state
+  for a STABLE SPARSE set (e.g. **6-cell** assemblies, NO runaway) — 2 of 4 inputs at ca3w=4.5 (sep_cos 0.40). ⇒ the
+  SAME keystone that resolved gap#5 COMPLETION also resolves the emergent SELECTION trilemma (stable sparse latch
+  without a pre-assigned mask — the KIR down-state gives the intrinsic sparsity/stability). The emergent-DG mechanism
+  WORKS: mossy seeds → bistable-dendrite amplification → stable sparse emergent assembly.
+- **Remaining residual (tractable): ROBUSTNESS + SIZE.** Only ~half the inputs seed strongly enough to ignite (the DG
+  code varies per input), and the assemblies are small (~6 cells vs the ~240 completion scale). Resume = tune the mossy
+  seed strength / DG code density+synchrony / ca3w / fb-inhib for a RELIABLE multi-input sparse assembly of a
+  completable size, then the integrated select-and-store (encode_btsp on the amplified assembly + bistable complete) +
+  the anti-cheats. The recurrent-amplification + bistability-stabilization insight is the unlock; everything else built.
 
 ## Status + the next mechanism (per THE LAW)
 - **BOUNDARY (well-characterized):** emergent-DG via the trisynaptic feedforward is blocked by feedforward propagation
