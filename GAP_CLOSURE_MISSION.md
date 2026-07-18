@@ -141,10 +141,11 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
-- **Phase:** GAP-CLOSING. **Gap #2 FULLY CLOSED** ✅ · Gap #3 largely closed · **Gap #5 CA3 functional-completion
-  MECHANISM = 6-SEED GO (2026-07-18)** 🎉 — a LEARNED CA3 attractor completes a held-out pattern specifically (h_comp
-  1.000/non 0.000 all 6 seeds, no-encoding collapses), CLOSING a wall at chance the project's ENTIRE history; remaining
-  gap-#5 pieces = emergent DG-selection + SWR replay loop + console. · Gaps #1/#4 open.
+- **Phase:** GAP-CLOSING. **Gap #2 FULLY CLOSED** ✅ · Gap #3 largely closed · **Gap #5 = the "6-SEED GO" was RETRACTED
+  (2026-07-18)** ⛔ — the permuted-recall anti-cheat caught a SELF-SUSTAINING-ATTRACTOR artifact (held members fire the
+  same [50] whether cued CORRECTLY or with a RANDOM set → not cue-triggered completion). What STANDS: the recipe forms
+  a strong SPECIFIC learned attractor (real advance on the 2026-07-14 weak-attractor boundary). NOT closed: genuine
+  CUE-TRIGGERED completion (the attractor is always-on, needs to be BISTABLE/cue-gated). · Gaps #1/#4 open.
 - **🔬 gap#5 Rung 2/3 RESULT (2026-07-17):** the mossy-detonator SPARSIFIES CA3 (0.43→0.03) but sparsity WITHOUT
   synchrony can't select — within/silent separation goes NEGATIVE (−0.27 to −0.47; the sparse cells fire async →
   co-activity traces never clear threshold → no potentiation). Rung 3 (input gamma-pulse) is INERT (byte-identical to
@@ -228,16 +229,21 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   non-stored=0.000, GO.** Assembly-selective inhibition caps the completion spread (non-members silent) while held
   members fully reactivate — density-robust, exactly PMC12244581. **THE ROBUST CONFIG:** n_ca3=2000, assembly_frac
   0.008, continuous drive 3000pA, coact_thresh 0.02, hebb_lr 2.0, lam 0.5, k_thresh 15, recall_steps 100, ca3_fb_inhib
-  15. **⚙️ FULL 6-SEED + no-encoding anti-cheat running** (`b4ncflcd4`). **🎉🎉🎉 6/6 GO — CLOSED (2026-07-18):** all 6 seeds
-  h_comp 1.000-1.003 / non-stored 0.000; no-encoding anti-cheat collapses (h_comp 0.000 = learned attractor
-  load-bearing). Finding: `2026-07-18-gap5-ca3-functional-completion-CLOSED-6seed-GO-learned-attractor.md`. **The
-  functional-completion MECHANISM is CLOSED** (a learned CA3 attractor completes specifically, biology-faithful, at
-  chance the project's whole history). **⚠️ EXACT NEXT ACTION (finish gap #5 fully, per "close ALL"):** (0) permuted-recall
-  anti-cheat (cue a non-assembly set → must NOT complete) for rigor [running]; (a) **wire the EMERGENT mossy/DG assembly
-  SELECTION** — replace the pre-assigned assembly with the DG-pattern-separated set (the mechanism is selection-agnostic:
-  it binds whatever sparse set co-fires), so the assembly is experience-derived (the emergence bar); (b) the SWR
-  generative-replay loop (`_riii_swr_generative_replay_derisk.py`, gated on this attractor); (c) a queryable console.
-  Then gap #5 is FULLY closed → gaps #1 (open generation) + #4 (dendritic engine) remain per "close ALL fully".
+  15. **⚙️ FULL 6-SEED + no-encoding anti-cheat running** (`b4ncflcd4`). **⛔ "6/6 GO" RETRACTED (2026-07-18) — self-sustaining-attractor
+  artifact.** The permuted-recall anti-cheat + ABSOLUTE-firing instrumentation: NORMAL held_abs=50/cue_abs=50; PERMUTED
+  (random wrong cue) held_abs=**50**/cue_abs=0 → **held members fire the SAME (50) regardless of the cue.** The strong
+  learned attractor is SELF-SUSTAINING (always-on limit cycle clamped by fb_inhib), NOT cue-triggered completion. The
+  cue-normalized h_comp=1.000 masked it (both fire at the clamped rate); no-encoding collapsed only because no attractor
+  exists to self-sustain. Finding retraction block:
+  `2026-07-18-gap5-ca3-functional-completion-CLOSED-6seed-GO-learned-attractor.md`. **STANDS:** the recipe forms a strong
+  SPECIFIC learned attractor on-substrate (6-seed) — a real advance on the 2026-07-14 weak-attractor boundary. **⚠️ EXACT
+  NEXT ACTION (the REAL problem, correctly scoped):** make the attractor BISTABLE — SILENT at rest, ignited ONLY by a
+  partial cue, SPECIFICALLY to the cued pattern. Levers: weaker recurrent self-drive (so it doesn't self-ignite) +
+  stronger partial-cue trigger; a settle that genuinely SILENCES; store ≥2 patterns and require cue-A→pattern-A (not B).
+  **MANDATORY gates from now on:** the permuted-recall control AND a NO-CUE control (drive nothing at recall → held must
+  be SILENT) — both were missing, which is how the artifact slipped through. Also re-check the 2026-07-14 hand-installed
+  "completion" (CYCLE-1068) with these controls (it may share the artifact). Then: emergent DG-selection → SWR loop →
+  console. Gaps #1/#4 remain per "close ALL fully".
 - (superseded by the breakthrough above) direct synchronous assembly encoding did NOT grow the weights — DECAYED,
   and sync=async BYTE-IDENTICAL (the gamma mechanism was inert because NOTHING was potentiating). The rate-window LTP
   isn't firing: a cell firing ~1/3 of steps has trace ≈0.33 → product ≈0.11 < the 0.25 coactivity threshold → no

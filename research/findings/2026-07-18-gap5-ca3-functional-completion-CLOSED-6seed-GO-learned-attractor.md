@@ -1,4 +1,6 @@
-# 🎉 Gap #5 — CA3 functional pattern completion from a LEARNED attractor: 6-SEED GO (CLOSED). At chance for the project's entire history; closed by the full biology recipe: continuous strong encoding + a co-activity threshold below the achievable trace + heterosynaptic competition + the dendritic dAP read-out at the Marr sweet spot + assembly-selective feedback inhibition, at scale.
+# ⛔ RETRACTED (see the retraction block at the BOTTOM) — the "6-seed GO CLOSED" claim below was a SELF-SUSTAINING-ATTRACTOR artifact caught by the permuted-recall anti-cheat. What STANDS: the recipe forms a strong SPECIFIC learned attractor (a real advance on the 2026-07-14 weak-attractor boundary). What is NOT closed: genuine CUE-TRIGGERED pattern completion (the attractor is currently always-on, not bistable/cue-gated). Original (now-retracted) title follows.
+
+# 🎉 [RETRACTED] Gap #5 — CA3 functional pattern completion from a LEARNED attractor: 6-SEED GO (CLOSED). At chance for the project's entire history; closed by the full biology recipe: continuous strong encoding + a co-activity threshold below the achievable trace + heterosynaptic competition + the dendritic dAP read-out at the Marr sweet spot + assembly-selective feedback inhibition, at scale.
 
 **2026-07-18.** Owner directive: "close out ALL gaps FULLY." Gap #5 = CA3 pattern completion / imaginative replay.
 The completion READ-OUT (two-compartment dendritic dAP) was 6-seed GO since 2026-07-08 but only on a HAND-INSTALLED
@@ -60,3 +62,35 @@ completion scale, because the rate-window LTP wasn't potentiating. The full fix:
   no-encoding + specificity controls (running).
 
 ⇒ **Gap #5's core wall — a learned, biology-faithful CA3 autoassociator that completes — is SURPASSED, 6-seed GO.**
+
+---
+
+## ⛔ RETRACTED (2026-07-18, same session) — the permuted-recall anti-cheat caught a SELF-SUSTAINING-ATTRACTOR artifact
+
+The 6-seed "GO" above is **RETRACTED**. Adding the permuted-recall anti-cheat (cue a RANDOM non-assembly set) and
+instrumenting ABSOLUTE firing rates (not the cue-normalized h_comp) reveals the "completion" is not cue-triggered:
+
+| recall | held_abs | cue_abs | non_abs | h_comp |
+|---|---|---|---|---|
+| NORMAL (correct 50% cue) | 50.0 | 50.0 | 0.0 | 1.000 |
+| PERMUTED (random wrong cue) | **50.0** | 0.0 | 0.0 | 50.000 (metric blows up: cue≈0) |
+
+**The stored assembly's held members fire exactly 50 REGARDLESS of the cue** (correct or random). The strong learned
+attractor is **SELF-SUSTAINING** (a persistent limit cycle at ~0.5 rate, clamped by the assembly-selective feedback
+inhibition) — it fires on its own once formed, so a "partial cue" is not what reactivates it. The no-encoding control
+collapsed only because without encoding there is no attractor to self-sustain, which MASKED the artifact; and the
+cue-normalized h_comp=1.000 looked like clean completion precisely because both cue and held fire at the same clamped
+rate. This is the exact silent-failure class: a clean-looking GO that a proper anti-cheat refutes.
+
+**What is genuinely true (stands):** the encoding recipe (continuous drive + coact_thresh 0.02 + hebb_lr + competition
++ fb_inhib) DOES form a strong, SPECIFIC learned attractor on-substrate (within-ensemble grows, non-members silent,
+6-seed) — a real advance on the 2026-07-14 weak-attractor boundary. **What is NOT closed:** genuine CUE-TRIGGERED
+pattern completion (the attractor SILENT at rest, ignited by a PARTIAL cue, SPECIFICALLY to the cued pattern). The
+attractor is currently mono-stable/always-on, not bistable/cue-gated.
+
+**The real remaining problem (correctly scoped now):** make the attractor BISTABLE — silent at rest, so a partial cue
+of pattern A ignites A (and only A). Levers: weaker recurrent self-drive (so it doesn't self-ignite) + a stronger
+partial-cue drive to trigger; a rest/settle that genuinely silences (the current measure_region_response settle does
+NOT silence a self-sustaining attractor); test WITH the permuted control + a NO-CUE control (drive nothing → held must
+be SILENT) as MANDATORY gates from now on. The 2026-07-14 hand-installed-attractor "completion" (CYCLE-1068) should
+ALSO be re-checked with these controls — it may share this artifact.

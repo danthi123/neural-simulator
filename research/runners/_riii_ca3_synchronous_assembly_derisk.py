@@ -111,6 +111,7 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
     # RECALL: partial cue (50% of each assembly) DIRECT on CA3 -> does the held-out 50% fire?
     non_stored = np.array([g for g in ca3_idx if g not in set(int(x) for a in assemblies for x in a)], dtype=np.int64)
     held_list, ns_list = [], []
+    held_abs_l, cue_abs_l, ns_abs_l = [], [], []
     for m, assy in enumerate(assemblies):
         a = assy.copy(); np.random.default_rng(seed + m).shuffle(a)
         half = max(2, len(a) // 2); cue, held = a[:half], a[half:]
@@ -120,13 +121,18 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
             cue = np.asarray(np.random.default_rng(seed * 7 + m + 999).choice(non_stored, len(cue), replace=False), dtype=np.int64)
         resp = measure_region_response(bridge, "ca3", cue.tolist(), drive_pA=recall_drive,
                                        drive_region="ca3", n_steps=recall_steps)
-        cue_act = float(np.mean(resp[[ca3_pos[int(g)] for g in cue]])) or 1.0
-        held_list.append(float(np.mean(resp[[ca3_pos[int(g)] for g in held]])) / (cue_act + 1e-9))
-        ns_list.append(float(np.mean(resp[[ca3_pos[int(g)] for g in non_stored[:40]]])) / (cue_act + 1e-9))
+        held_abs = float(np.mean(resp[[ca3_pos[int(g)] for g in held]]))
+        cue_abs = float(np.mean(resp[[ca3_pos[int(g)] for g in cue]]))
+        ns_abs = float(np.mean(resp[[ca3_pos[int(g)] for g in non_stored[:40]]]))
+        held_abs_l.append(held_abs); cue_abs_l.append(cue_abs); ns_abs_l.append(ns_abs)
+        cue_act = cue_abs or 1.0
+        held_list.append(held_abs / (cue_act + 1e-9))
+        ns_list.append(ns_abs / (cue_act + 1e-9))
     h_comp, n_comp = float(np.mean(held_list)), float(np.mean(ns_list))
     go = h_comp >= 0.30 and h_comp >= 2.0 * (n_comp + 1e-9)
     return {"seed": seed, "w_within": w_within, "w_silent": w_silent,
-            "w_ratio": (w_within / (w_silent + 1e-9)), "h_comp": h_comp, "n_comp": n_comp, "go": bool(go)}
+            "w_ratio": (w_within / (w_silent + 1e-9)), "h_comp": h_comp, "n_comp": n_comp, "go": bool(go),
+            "held_abs": float(np.mean(held_abs_l)), "cue_abs": float(np.mean(cue_abs_l)), "ns_abs": float(np.mean(ns_abs_l))}
 
 
 def main():
