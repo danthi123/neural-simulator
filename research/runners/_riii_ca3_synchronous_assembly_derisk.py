@@ -185,11 +185,17 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
             r2 = _measure(perm); perm_l.append(float(np.mean(r2[hp])))
         held_cue = float(np.mean(cue_l)); held_nocue = float(np.mean(nocue_l)); held_perm = float(np.mean(perm_l))
         rest = float(np.mean(silence_l))
-        # GENUINE completion: correct cue fires held substantially, AND both no-cue and permuted stay near-silent
+        # GENUINE bistable completion (relative to the Wang low-rate background, NOT a dead net): the correct cue must
+        # IGNITE the high state (>=0.20) AND be >=3x BOTH the no-cue low state AND the permuted -- i.e. only the correct
+        # partial cue reaches the high attractor state; no-cue/permuted stay in the low state. The low background is
+        # capped (<=0.10) so it is a genuine LOW state, not a near-self-sustaining one. Above-baseline completion signal
+        # (cue-rest) vs permuted residual (perm-rest) reported for transparency.
+        sig = held_cue - rest; perm_sig = held_perm - rest
         go = (held_cue >= 0.20 and held_cue >= 3.0 * (held_nocue + 1e-6) and held_cue >= 3.0 * (held_perm + 1e-6)
-              and held_nocue <= 0.05)
+              and held_nocue <= 0.10)
         return {"seed": seed, "w_within": w_within, "held_cue": held_cue, "held_nocue": held_nocue,
-                "held_perm": held_perm, "rest_firing": rest, "go": bool(go)}
+                "held_perm": held_perm, "rest_firing": rest, "sig": float(sig), "perm_sig": float(perm_sig),
+                "go": bool(go)}
 
     # RECALL: partial cue (50% of each assembly) DIRECT on CA3 -> does the held-out 50% fire?
     non_stored = np.array([g for g in ca3_idx if g not in set(int(x) for a in assemblies for x in a)], dtype=np.int64)

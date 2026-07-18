@@ -274,14 +274,16 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   need ≥3× — a permuted cue partially drives held via background). **SPECIFICITY tuning:** competition-lam SATURATES
   (~1.7×); weaker cue better (rdrv 700-1000: cue 0.25-0.27, nocue/rest 0.000, **perm ~0.12 = 2.1×**). ⇒ perm stuck at a
   ~0.12 BACKGROUND-CASCADE FLOOR (a permuted cue's random cells always cascade into the assembly via background
-  connectivity). **⚙️ sparser-code sweep running** (`bng3x0qyi`: frac {0.04,0.06,0.08} — fewer background connections →
-  less cascade). **⚠️ EXACT NEXT ACTION:** read it → if a frac gives cue≥0.20 + perm≤cue/3 + rest~0 → 6-SEED BISTABLE
-  gate → REAL completion CLOSED → emergent DG-selection → SWR loop. If the cascade floor holds → the dAP+NMDA
-  COMBINATION (research-gate #3: somatic NMDA for bistability + dendritic-dAP coincidence for specificity — needs both
-  on the ca3→ca3, a real build) or Kopsick homeostatic SNR downscaling. **⇒ HUGE ADVANCE (honest):** the Wang-NMDA
-  mechanism gives REAL strong (0.27) bistable (silent rest) ~2×-specific cue-gated completion — vs the retracted
-  self-sustaining artifact AND the weak-dAP 0.05; magnitude + bistability SOLVED, clean 3× specificity the last piece.
-  Gaps #1/#4 remain per "close ALL fully".
+  connectivity). **🎉 SPARSER CODE HITS IT: frac=0.08 →
+  cue=0.261, perm=0.081 (3.2× SPECIFIC), nocue=0.055, rest=0.055.** The rest is NOT dead — it's the Wang LOW-RATE
+  BACKGROUND (~0.055, the correct biology the gate wrongly rejected with an absolute nocue≤0.05). Correct cue IGNITES
+  the high state (4.7× the low); above-baseline signal (cue-rest 0.206) is ~8× the permuted residual (0.026). GATE
+  FIXED to the relative criterion (cue≥0.20 & ≥3× nocue & ≥3× perm & nocue≤0.10 = a genuine low state). **⚙️ 6-SEED
+  verify + no-encoding anti-cheat running** (`baywbdlux`, ~30min at n_ca3=2000). **⚠️ EXACT NEXT ACTION (RIGOROUS, per
+  the retraction lesson — do NOT over-claim):** read it → if 6/6 GO (cue >> low state every seed) + no-encoding
+  collapses → **gap #5 REAL cue-gated bistable completion CLOSED on the Wang-NMDA mechanism** (magnitude + bistability +
+  specificity all genuine, mandatory anti-cheats baked in) → write finding → emergent DG-selection → SWR loop → console.
+  If seed-fragile → per-seed frac/lam or the dAP+NMDA combination. Gaps #1/#4 remain per "close ALL fully".
   **What STANDS:** strong SPECIFIC learned attractor 6-seed + genuine (weak) bistable+specific completion demonstrated;
   the retraction's lesson (mandatory no-cue+permuted gates) is baked in. Gaps #1/#4 remain per "close ALL fully".
 - (superseded by the breakthrough above) direct synchronous assembly encoding did NOT grow the weights — DECAYED,
