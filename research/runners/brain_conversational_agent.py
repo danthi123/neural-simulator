@@ -265,6 +265,16 @@ class BrainConversationalAgent:
                                              enable_multiframe=enable_multiframe,
                                              enable_spiking_cleanup=enable_spiking_cleanup,
                                              integrated_loop=integrated_loop)
+        elif composer_kind == "slotbinder":
+            # the gap-#2 SlotBinderComposer: a fully-spiking competitive-slot binder (each (fact, role) -> its own
+            # slot = the win over the FHRR superposition cap) with content-addressable multi-fact recall by a neural
+            # scan + the no-confab moat. Replaces the exact-inverse FHRR/VSA algebra with a learned slot->filler
+            # associative store (6-seed GO, adversarially verified: no-teach->chance, scramble-teach->0.00). Flat SVO
+            # facts (embedded-clause / attributed patients = a named follow-on). See
+            # 2026-07-17-gap2-adversarial-verify-CONFIRMED-and-content-addressable-wire-in-GO.md.
+            from research.runners.slotbinder_composer import SlotBinderComposer
+            vocab = sorted(concepts.keys()) if isinstance(concepts, dict) else None
+            self.composer = SlotBinderComposer(seed=seed, D=D, vocab=vocab, grounded_codes=grounded_codes)
         else:
             from research.runners.rf_phasor_composer import RFPhasorComposer
             vocab = sorted(concepts.keys()) if isinstance(concepts, dict) else None
