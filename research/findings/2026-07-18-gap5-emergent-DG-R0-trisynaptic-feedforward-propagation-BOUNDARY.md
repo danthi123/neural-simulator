@@ -14,6 +14,11 @@ mechanism), distinct from the gap#4↔gap#5 unification (mechanism 6/6 GO), whic
 3. **DG-direct barely fires + dg→ca3 FAILS:** driving DG DIRECTLY at 3000 pA fires only **2.5% of DG**, and the mossy
    `dg→ca3` (weight 8-50, density 0.04-0.10) produces **NO CA3 assembly** (|A|=0 at every config) — different DG codes
    give no CA3 selection.
+4. **POPULATION convergence ALSO fails:** even a DENSE DG code (drive 20-40% of DG → **20% DG firing**) + high mossy
+   density (0.15-0.25) + strong weight gives **CA3 |A|=0** at every config. So it is NOT a sparsity / single-cell-
+   detonation-strength issue — the mossy `dg→ca3` pathway simply does not drive CA3 to fire (the CA3 cells' firing
+   threshold is not reached by mossy input, however dense), while a DIRECT 3000 pA current fires them fine. The
+   boundary is CA3-not-firing-from-mossy, deeper than just the missing DG burst.
 
 ## The biological diagnosis (why — and why it is a deep sub-arc)
 This is the DOCUMENTED trisynaptic boundary (`CLAUDE.md`: "EC-driven test (drive lang_input, propagate through the

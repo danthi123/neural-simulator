@@ -223,6 +223,18 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   `selective_inhib` + `structural_sep` + a bounded drive so co-firing assembly cells latch the plateau but the network
   doesn't avalanche + numerically stable), then `_measure_ca1` h_comp + the permuted/no-encode anti-cheats + 6-seed. The
   design is now fully characterized; it is a careful build, not a tuning knob. Rushing it yields a runaway-artifact GO.
+- **↳ gap#5 EMERGENT-DG — R0 BOUNDARY (2026-07-18, exhaustively characterized).** Scoped (workflow, finding
+  `2026-07-18-gap5-emergent-DG-scoping.md`) + risk-first R0 run (`_gap5_emergent_dg_selection_derisk.py`, finding
+  `...-R0-trisynaptic-feedforward-propagation-BOUNDARY.md`): the emergent-DG (input -> DG -> mossy -> CA3 selection)
+  is blocked by the DOCUMENTED trisynaptic FEEDFORWARD-PROPAGATION boundary. 9 GPU probes localize it: lang->ec fails
+  (EC=0), ec->dg fails (DG=0 even with FFI off + ec->dg boosted 5x), and dg->ca3 fails (CA3 |A|=0 at every config —
+  even a DENSE 20%-DG code + high mossy density; the mossy simply doesn't fire CA3, while a direct 3000pA current does).
+  Biological diagnosis: the mossy detonation needs DG BURSTING (single-EPSP p~0.12 vs 3x-burst p~0.82, Vyleta-Jonas)
+  the substrate's DG doesn't produce, AND CA3 doesn't fire from mossy at all. The gap#5 completion BYPASSES this (drives
+  CA3 directly). **Next mechanism (deep sub-arc, deferred): a DG BURSTING neuron / more-excitable hippocampal
+  feedforward / true detonator synapses — a `sim/`-level neuron change, a genuine research build, not a config knob.**
+  The gap#4<->gap#5 unification (below) is UNAFFECTED (pre-assigned assembly + direct drive). Frontier now: this
+  DG-bursting sub-arc, gap#5 SWR, or gap#1 open generation.
 - **✅ gap#4<->gap#5 UNIFICATION — MECHANISM 6/6 GO (2026-07-18, the focused build DONE).** The `encode_btsp` path was
   built into the gap#5 completion runner (default-off/byte-identical; Hebbian baseline cue 0.217 unchanged): BTSP drives
   the plateau DIRECTLY on the pre-assigned assembly during co-fire (specificity by construction) -> stores the
