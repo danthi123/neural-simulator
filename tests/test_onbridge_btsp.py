@@ -78,3 +78,16 @@ def test_onbridge_btsp_byte_identical_when_off():
     dw, alloc = _run(enable_btsp=False, plateau=True)
     assert abs(dw) < 1e-9, f"enable_btsp=False must move no weight (byte-identical), got dw={dw:.6f}"
     assert not alloc, "cp_btsp_pre_elig must stay None when enable_btsp=False"
+
+
+def test_onbridge_btsp_behavioral_timescale_via_real_bistable_plateau():
+    """The REAL bistable plateau (bistable BDSP apical) makes on-bridge BTSP seconds-long: a HELD plateau potentiates
+    ~8x more than a TRANSIENT one (the bistability is load-bearing on the substrate). One seed of the 6-seed GO de-risk."""
+    from research.runners._gap4_btsp_onbridge_behavioral_timescale_derisk import run
+    r = run(42)
+    assert r["held_dw"] >= 0.3, f"held plateau must potentiate one-shot, got {r['held_dw']:.3f}"
+    assert r["held_dw"] > 3.0 * max(r["transient_dw"], 1e-6), "the bistable latch must be load-bearing vs transient"
+    assert abs(r["moat_dw"]) <= 0.02 * r["held_dw"], "silent apical must not potentiate (the moat)"
+    assert abs(r["off_dw"]) < 1e-9, "enable_btsp=False must be byte-identical"
+    assert r["held_v_apical_end"] > -35.0, "the held plateau must stay above v_hold (a real seconds-long latch)"
+    assert r["transient_v_apical_end"] < -50.0, "the transient plateau must decay back toward rest"

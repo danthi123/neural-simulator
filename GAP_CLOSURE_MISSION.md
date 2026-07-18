@@ -173,8 +173,17 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   byte-identical-when-off — this is also gap #4's dendritic substrate). All committed/pushed/CI-green. **Next-continue
   candidates (fresh arcs):** gap #4 local-credit rule ON the new bistability substrate (strongest — the substrate now
   exists) · gap #5 emergent-DG or SWR (both demonstrated fresh integration arcs) · gap #1 open generation.
-- **✅ GAP #4 ON-BRIDGE BTSP RULE VALIDATED (2026-07-18) — the working credit rule now runs ON THE SPIKING SUBSTRATE
-  (the resume point).** Added `fused_btsp_update` (`sim/kernels.py`) + a guarded default-off `enable_btsp` block in
+- **✅ GAP #4 ON-BRIDGE BTSP BEHAVIORAL-TIMESCALE GO — 6-seed (2026-07-18, the resume point).** The on-bridge BTSP rule
+  now runs at BEHAVIORAL TIMESCALE via the REAL bistable plateau (`_gap4_btsp_onbridge_behavioral_timescale_derisk.py`,
+  finding `2026-07-18-gap4-BTSP-onbridge-behavioral-timescale-GO-6seed-...`): reusing BOTH session edits (the bistable
+  BDSP apical + the BTSP block, NO new `sim/` edit), a BRIEF apical pulse LATCHES the plateau (v_apical held −24.2 >
+  v_hold) so on-bridge BTSP potentiates a co-active synapse one-shot over a seconds-long window (held_dw ~110) — **8.4×**
+  a TRANSIENT plateau (v_apical decayed −65, dw ~13); moat 0.0, byte-identical off, all 6 seeds. CI `test_onbridge_btsp`
+  (4 tests). ⇒ **the gap#4 local-credit keystone is a WORKING, on-bridge, biological rule** (BTSP one-shot plateau-gated
+  credit; the gap#5 bistable plateau is its on-brain enabler). **NEXT rungs (fresh arcs):** (b) a one-shot TASK
+  (association/place-field) the substrate LEARNS via BTSP; (c) gap#5 UNIFICATION (BTSP stores the CA3 assembly the
+  bistable CA3 completes — the two gaps share the keystone). Deep supervised backprop credit stays a banked boundary.
+- **✅ GAP #4 ON-BRIDGE BTSP RULE VALIDATED (2026-07-18) — the working credit rule runs ON THE SPIKING SUBSTRATE.** Added `fused_btsp_update` (`sim/kernels.py`) + a guarded default-off `enable_btsp` block in
   `bridge._run_one_simulation_step` (seconds-long per-neuron pre-eligibility `cp_btsp_pre_elig` on `coo.row` × the
   dendritic plateau `cp_v_apical` above v_hold on `coo.col`, gated by plastic-mask + plasticity_rate_gain like BDSP) +
   config `enable_btsp/btsp_learning_rate/btsp_elig_tau_ms/btsp_w_min/w_max`. VALIDATED on a real 16-neuron bridge (CI
