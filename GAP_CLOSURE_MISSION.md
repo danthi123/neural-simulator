@@ -187,6 +187,19 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   transient+0.05, + anti-cheats (wrong-sign anti-learns / no-teaching moat / apical-lesion / oracle≥0.80 / no-transport
   assert) + MANDATORY instrument checks (cfg.seed + hash-verify; reset cp_v_apical/cp_conductance_g_coincidence between
   conditions), 6-seed. CPU/minutes, decisive.
+- **✅ MICROCIRCUIT baseline RUN (2026-07-18, the never-completed experiment) — REPRODUCES the root-cause + the runner's
+  own verdict NAMES my keystone as the fix.** `_d1_onbridge_learn_to_accuracy --microcircuit` seed 42: oracle 0.989 (task
+  valid), no-transport True, BUT **apical DECOUPLED — P rises 0.30→1.00 while B stays 0.000→0.000 (B_rises False)** → the
+  FF update gets no apical credit, moat doesn't hold (credit dw 129 ≈ lesion 108), BDSP held 0.549 = chance. The runner's
+  VERDICT: *"the apical→soma coupling (enable_two_compartment_dap + enable_coincidence_detection + a routed coincidence
+  pathway) is the fix path — a research-gated build."* **⇒ that fix = EXACTLY the keystone I built this session** (the
+  two-compartment bistable apical + asymmetric `apical_g_couple_to_soma`, which makes B RISE + HOLD). **EXACT NEXT ACTION
+  (the fix build): thread `enable_two_compartment_dap` + `enable_coincidence_detection` + a routed coincidence pathway +
+  `apical_g_couple_to_soma` (asymmetric strong read) + `coincidence_plateau_self_regen` + `apical_kir_g` into
+  `_d1_onbridge_learn_to_accuracy`'s cfg (the runner sets only pure `enable_bdsp` today); verify B_rises True (the 2026-07-10
+  coupling edit got separation 1.33×→20× but never ran to accuracy); then microcircuit + held-apical vs the 0.75 accuracy
+  bar + moat, 6-seed, with the cfg.seed hash-verify + dendritic-reset instrument checks. Finding:
+  `2026-07-18-gap4-research-gate-BDSP-on-bistable-apical-the-held-credit-signal.md`.
 - **(prior) deep-research gate DISPATCHED note:** (a-1'd on the newest findings: the deep-credit
   block is the RULE not the readout [graded 12/12 negative]; e-prop/NP/BDSP-on-classifier all failed; the arc was partly
   seed-confounded). The NEW angle: a LOCAL apical-based credit rule (Urbanczik-Senn / Sacramento / Payeur burstprop) that
