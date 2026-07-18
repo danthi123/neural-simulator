@@ -160,15 +160,23 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   attractor); the "6-SEED GO" closure was RETRACTED (self-sustaining-attractor artifact caught by the permuted-recall +
   absolute-firing anti-cheats). NOT closed = bistable CUE-GATED completion (held members fire the SAME cued-correctly vs
   permuted → always-on attractor, not cue-triggered). · Gaps #4 (a-1 only) / #1 open.
-- **⚠️ EXACT NEXT ACTION (B — gap #5 robust bistable cue-gated completion):** the retraction (commit b7be09d5) found the
-  learned attractor is SELF-SUSTAINING (fires ~50 whether cued CORRECTLY or with a RANDOM permuted set), clamped by
-  fb_inhib — so it is a strong SPECIFIC attractor but NOT cue-triggered completion. Mandatory new gates: permuted-recall
-  (cue a non-assembly set → stored assembly must NOT complete) + no-cue (silence → assembly must NOT self-ignite). a-1
-  FIRST to the NEWEST gap#5 findings (`2026-07-18-gap5-*`, `2026-07-14-ca3-competitive-hebbian-formation-6seed-GO.md`)
-  before building — the drift-#12 lesson (4× re-derivation this session). Then: the attractor must be BISTABLE (a
-  low-rate background rest state that does NOT self-ignite, + a cue-triggered high-rate completed state) — the Wang-2002
-  somatic slow-NMDA bistability with a working point below self-ignition. de-risk cheap-first + 6-seed + the two new
-  anti-cheats.
+- **⚠️ gap #5 DIAGNOSTIC ADVANCE (2026-07-18, commit 70dd3daf) — two retractions + the mechanism direction FOUND:**
+  (1) **The Wang-NMDA "seed-42 genuine bistable+specific" claim is RETRACTED** — it was a recall-time-PLASTICITY + OU-NOISE
+  confound. Fix: FREEZE plasticity at recall (a fixed autoassociator must not learn while completing) + control OU. With
+  the attractor genuinely frozen + OU off, the Wang attractor (w_within 49) is DEAD (cue=0.000). (2) **The real ISOLATED
+  wall = NON-SPECIFIC completion:** the DENDRITIC formation attractor (w_within 450), frozen + OU-off, IS a genuine
+  bistable attractor (rest 0.05-0.10 low) that completes — BUT a PERMUTED cue completes the held members as much as the
+  correct cue (cue/perm ≈ 0.94), robust across recall_drive 400-2000 × k_thresh 15-45. Root cause: `ca3_density=0.5`
+  (dense 50% recurrence) lets ANY input flood the assembly. (3) **MECHANISM FOUND:** BIOLOGICAL SPARSE recurrence
+  (Guzman-Jonas 2016 ~2%, not 50%) makes completion cue-SPECIFIC — at density 0.05 + 150-cell assembly, cue (0.199) >
+  perm (0.145) for the FIRST TIME (cue/perm 1.37). Finding:
+  `2026-07-18-gap5-wang-GO-was-plasticity-noise-confound-sparse-recurrence-gives-specificity.md`.
+- **⚠️ EXACT NEXT ACTION (B — gap #5):** a (density × assembly_frac × fb_inhib) grid sweep is RUNNING (task bjbfiy99y,
+  seed 42, frozen + OU-off) to find the working point that is BOTH specific (cue ≥ 3× perm) AND strong (cue ≥ 0.20,
+  nocue ≤ 0.10). The sparse recurrence weakens the within-ensemble weight concentration (w 450→27), so the lever balance
+  is: sparse-enough for specificity + large-enough assembly for a strong correct completion + fb_inhib to suppress the
+  generic spread. When a GO working point is found → 6-seed with the MANDATORY frozen + no-cue + permuted anti-cheats.
+  The infra is banked (bistable gate + plasticity-freeze + enable_ou + ca3_density + rate_homeo, all default-off).
 - **🔬 gap#5 Rung 2/3 RESULT (2026-07-17):** the mossy-detonator SPARSIFIES CA3 (0.43→0.03) but sparsity WITHOUT
   synchrony can't select — within/silent separation goes NEGATIVE (−0.27 to −0.47; the sparse cells fire async →
   co-activity traces never clear threshold → no potentiation). Rung 3 (input gamma-pulse) is INERT (byte-identical to
