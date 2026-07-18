@@ -244,12 +244,24 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   returned **BYTE-IDENTICAL to 3 decimals across ALL configs** (TRAINED held-out=0.027, NO-TRAIN=0.027, gain=+0.000,
   own_cos=0.506≈√0.5 the drive-artifact floor). Impossible if weight/density reach the computation — yet my direct
   probe PROVES the recurrents scale with weight. So the sweep is untrustworthy (silent failure). **A Workflow
-  (`wxim0nt7c`) is diagnosing in parallel:** H1 params-applied? · H2 do held-out neurons get supra-threshold recurrent
-  current at recall? · H3 is the completion METRIC valid (positive-control: force held-out firing → does it register)?
-  · H4 does a HAND-INSTALLED strong symmetric attractor complete at ALL (sweep installed w 200/800/3000)? → synthesis
-  → adversarial verify. **⚠️ EXACT NEXT ACTION:** read the Workflow result → it tells us whether the byte-identical is
-  a params/metric bug (fix the harness) or a genuine attractor floor (→ the already-6-seed-GO dendritic dAP completion
-  is the method). Then close completion → wire into SWR replay → queryable console; 6-seed + anti-cheats.
+  (`wxim0nt7c`) diagnosed it — DECISIVE (H1/H3/H4 in; synthesis+verify pending):** **H1 REFUTED→ROOT CAUSE:** build
+  params DO apply (density 0.30→6654 syn/0.60→13312; weight 120→build-mean 120/600→600) BUT **after TRAINING both
+  collapse to an IDENTICAL ca3→ca3 mean|w|=0.846** — training's Hebbian COLLAPSES the recurrent weights regardless of
+  init (the Hebbian-decay-to-floor). That is the byte-identical cause. **H3 REFUTED:** the completion metric is VALID
+  (force held-out firing → completion 0.000→6.023). **H4 REFUTED:** a HAND-INSTALLED strong symmetric attractor
+  **DOES complete** — reliable at effective weight ≥1600 (raw ×0.05), held-out ignites to match the cue, specific
+  (non-ensemble silent, no runaway to w3000), bistable (~600 threshold). ⇒ **the point-neuron CA3 CAN complete; the
+  only blocker is that TRAINING collapses the attractor instead of building it** (NOT a substrate floor, NOT a
+  transmission bug — both prior diagnoses REFUTED). Prior half-fix exists:
+  `2026-07-08-riii-ca3-attractor-formation-symmetric-hebbian.md` — the default Hebbian is CAUSAL-offset (pre@t-1 &
+  post@t) but co-ensemble members fire SYNCHRONOUSLY → offset never satisfied → ~0 potentiation → collapse; a guarded
+  `hebbian_symmetric` config (offset-free same-step co-firing) already exists + forms a SPECIFIC but WEAK attractor
+  (+0.87, capped at `hebbian_max_weight=30` = ~53× below the ≥1600 completion threshold). **⚠️ EXACT NEXT ACTION (the
+  concrete close):** read the Workflow synthesis+verify, then build the closing de-risk — `hebbian_symmetric=True` +
+  raise `hebbian_max_weight` toward ~2000 + enough co-activity (a RATE-WINDOW co-activity rule OR many encoding events)
+  to grow within-ensemble to the ≥1600 completion threshold → re-run held-out completion (GO gate: trained>0.30 &
+  recurrence-gain>0.15) + specificity + no-train control, 6-seed. Then wire completion → the SWR generative-replay
+  loop → a queryable console. This CLOSES gap #5 (completion is achievable; it was a TRAINING-RULE bug).
 - **✅ Gap #4 a-1 RAG check DONE (2026-07-17) — the research-gate is essentially the `learning-rule-frontier-map`
   (2026-07-17), re-read + current:** SUPERVISED deep credit on spikes (e-prop / NP / D1-BDSP) is PARKED — all blocked
   by ONE shared "spiking-classifier-readout-training wall"; the rate-net positive control (done) confirmed the block
