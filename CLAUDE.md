@@ -13,7 +13,9 @@ replay (audit: `research/findings/2026-07-17-banked-capabilities-audit-two-bucke
 a verdict on a METHOD, never a license to abandon a CAPABILITY — bank the failing method, take a new biology/spiking/
 one-brain method, and keep going until it WORKS. Closure cannot be deferred.** `GAP_CLOSURE_MISSION.md` is the single
 source of truth + the self-anchor that **replaces needing to run `/neural-simulator`** — read + update it every cycle;
-a plain "continue" from the owner + that board is enough to re-anchor.
+a plain "continue" from the owner + that board is enough to re-anchor. **SESSION START: arm the within-session
+anti-stall heartbeat Monitor as your FIRST action (exact recipe in `GAP_CLOSURE_MISSION.md` → "SESSION START"), then
+resume from CURRENT STATE.** Cross-session continuation is MANUAL by owner choice (2026-07-18) — no watchdog/daemon.
 
 ## Project Overview
 

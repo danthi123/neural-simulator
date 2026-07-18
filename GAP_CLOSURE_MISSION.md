@@ -6,6 +6,24 @@ first, act on the CURRENT STATE section, update it every cycle. You do NOT need 
 
 ---
 
+## ⚡ SESSION START — DO THIS FIRST, EVERY session (owner-chosen 2026-07-18: doc-instruction arming, NO hooks/daemon)
+
+**FIRST ACTION: arm the within-session anti-stall heartbeat.** It is a SESSION-SCOPED `Monitor` — it dies when the
+session ends, so it must be re-armed at the start of EVERY new session (it survives compaction, not a session end).
+This is the *in-session* backstop that re-invokes you if you go idle; it is NOT the cross-session "watchdog/daemon" the
+owner declined (see the Continuation-mechanism note in CURRENT STATE — that stays MANUAL). There is no way for a doc or
+hook to auto-*execute* this call; arming it IS your first action. Exact recipe (≈25-min cadence):
+
+```
+Monitor(persistent=true, description="anti-stall heartbeat",
+  command='while true; do sleep 1500; echo "⚓ ANTI-STALL HEARTBEAT: if no run is live and you are not mid-action, re-read GAP_CLOSURE_MISSION.md CURRENT STATE and take the NEXT concrete gap step NOW — never end a turn on a status report or a promise; the only turn-enders are an explicit owner stop or a safety gate."; done')
+```
+
+Then read CURRENT STATE below and resume from EXACT NEXT ACTION. (If a heartbeat Monitor is already live this session,
+do not arm a second one.)
+
+---
+
 ## THE DIRECTIVE (owner, 2026-07-17 — verbatim intent)
 
 Fully focus on **closing the 5-gap cluster** the 2026-07-17 audit identified
@@ -94,11 +112,13 @@ self-maintaining — these THREE keep it live (do all three; do not rely on the 
    keeps the resume point current for compaction AND reboot.
 2. **RE-READ this whole board at every gap-step boundary** (before starting a research-gate / de-risk / build /
    verify / close). Cheap, and it re-loads THE LAW + the current gap before each phase.
-3. **The automatic anchor-heartbeat (a Monitor, armed 2026-07-17) fires ~every 25 min** with a re-anchor + anti-stall
-   self-check. Each firing is NOT a user message — it is a forced re-anchor: on it, RE-READ this board, verify you
-   are executing the current gap-step per THE LAW (a wall defers a METHOD not the CAPABILITY), and if you have drifted
-   (wrapped up, deferred a capability, stopped taking the next step, relabelled a wall as a stop), CORRECT NOW. If the
-   heartbeat is not running (new session, or it was stopped), RE-ARM it as the first action after re-anchoring.
+3. **The within-session anti-stall heartbeat (the session-scoped `Monitor` armed at SESSION START above) fires ~every
+   25 min** with a re-anchor + anti-stall self-check. Each firing is NOT a user message — it is a forced re-anchor: on
+   it, RE-READ this board, verify you are executing the current gap-step per THE LAW (a wall defers a METHOD not the
+   CAPABILITY), and if you have drifted (wrapped up, deferred a capability, stopped taking the next step, relabelled a
+   wall as a stop), CORRECT NOW. If it is not running (new session, or it was stopped), RE-ARM it per the SESSION START
+   recipe. This heartbeat is a WITHIN-session backstop only (it dies with the session) — it is distinct from, and not in
+   conflict with, the MANUAL cross-session continuation the owner chose (CURRENT STATE below).
 
 ---
 
@@ -540,7 +560,11 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
     the un-tried angle. Read both docs in depth as move (1) of the gate.
   - Launch gap #3's research-gate in parallel (self-contained, tractable): biased-competition WTA between referent
     attractors (the 2 prior NEGATIVEs were recency + salience-boost; the named fix is winner-take-all inhibition).
-- **Continuation mechanism (owner chose 2026-07-17):** MANUAL — the owner says "continue" (no watchdog, no system
-  changes). That + this board + the CLAUDE.md pointer re-anchor instantly. Within a session, NEVER stop (async
-  pattern); across a reboot/idle, a plain "continue" resumes from EXACT NEXT ACTION. Do NOT propose a watchdog again
-  unless the owner asks.
+- **Continuation mechanism (owner re-confirmed 2026-07-18): TWO distinct layers, do not conflate them.**
+  (1) **WITHIN-session anti-stall = the heartbeat Monitor**, armed as the FIRST ACTION every session (see SESSION START
+  at the top). Owner chose (2026-07-18) doc-instruction arming — NO SessionStart hook, NO daemon. This is the in-session
+  backstop; it is NOT a "watchdog/system change."
+  (2) **CROSS-session / reboot = MANUAL** (owner re-confirmed 2026-07-18, "keep manual"): the owner types "continue" and
+  this board + the CLAUDE.md pointer re-anchor from EXACT NEXT ACTION. NO systemd/cron/bash re-launcher (the old Windows
+  `scripts/autonomous_watchdog.ps1` is dead on CachyOS — E: drive gone). Do NOT build or propose a cross-session watchdog
+  unless the owner asks. Within a session, NEVER stop (async pattern).
