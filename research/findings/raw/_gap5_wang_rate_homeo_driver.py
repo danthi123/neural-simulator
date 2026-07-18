@@ -21,6 +21,7 @@ def main():
     ap.add_argument("--recall-k-thresh", type=float, default=None)   # decouple encode (low) vs recall (high) dAP threshold
     ap.add_argument("--fb-inhib", type=float, default=20.0)
     ap.add_argument("--selective-inhib", action="store_true", help="assembly-selective inhibition (spare own engram, Kim-Kim 2025)")
+    ap.add_argument("--structural-sep", action="store_true", help="structural pattern separation (zero non-member->member recurrents)")
     ap.add_argument("--lam-dep-wi", type=float, default=0.5)
     ap.add_argument("--encode-drive", type=float, default=3000.0)   # formation lever: continuous strong drive
     ap.add_argument("--hebb-lr", type=float, default=2.0)           # formation lever
@@ -47,6 +48,7 @@ def main():
         r = run(s, n_ca3=a.n_ca3, assembly_frac=a.assembly_frac, ca3_density=a.ca3_density, bistable=True,
                 nmda_recurrent=(not a.dendritic), k_thresh=a.k_thresh, recall_k_thresh=a.recall_k_thresh,
                 ca3_fb_inhib=a.fb_inhib, lam_dep_wi=a.lam_dep_wi, selective_inhib=a.selective_inhib,
+                structural_sep=a.structural_sep,
                 encode_drive=a.encode_drive, hebb_lr=a.hebb_lr, no_sync=a.no_sync,
                 nmda_tau=a.nmda_tau, nmda_ratio=a.nmda_ratio, recall_steps=a.recall_steps, recall_drive=a.recall_drive,
                 homeostatic=((not a.no_weightsum_homeo) and not a.dendritic), homeo_target=a.homeo_target,

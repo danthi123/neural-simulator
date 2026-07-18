@@ -57,7 +57,7 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
         homeostatic=False, homeo_target=None,
         rate_homeo=False, rate_homeo_target=0.02, rate_homeo_alpha=0.1, rate_homeo_adapt=15.0,
         rate_homeo_steps=400, rate_homeo_cap=800.0, enable_ou=True, ca3_density=0.5,
-        selective_inhib=False, sel_inhib_spare=0.0, recall_k_thresh=None):
+        selective_inhib=False, sel_inhib_spare=0.0, recall_k_thresh=None, structural_sep=False):
     # DIAGNOSED LEVERS (2026-07-18 workflow): the rate-window LTP is an EMA-trace rule -- a cell's co-activity trace
     # tops out ~0.03-0.2 (point Izh fires ~0.2 duty @700pA), so coact_thresh MUST be BELOW it (~0.02) or nothing
     # potentiates; the gamma OFF-gap DECAYS the EMA (0.9^off) so CONTINUOUS drive (sync_off<=1) is required, NOT
@@ -156,6 +156,21 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
             idxs = cp.asarray([int(flat_h[k]) for k in wk], dtype=cp.int64)
             vals = cp.asarray([float(d[int(flat_h[k])]) for k in wk], dtype=conn.data.dtype)
             conn.data[idxs] = vals
+        w_within, w_silent = _wstats()
+
+    if structural_sep:
+        # STRUCTURAL PATTERN SEPARATION (the DG's job, Kandel Ch 54 / Marr): zero the recurrent synapses FROM
+        # non-members INTO assembly members, so an assembly cell receives recurrent drive ONLY from its within-assembly
+        # partners. Then a permuted cue (random non-member cells) cannot leak-activate the assembly even with STRONG
+        # within-weights -> strong AND specific completion (resolving the strength-vs-specificity tension: the leaked-
+        # activation path is removed structurally, so the within-weights can be strong). Realized runner-side with the
+        # pre-assigned assembly mask (like `_apply_competition`); the emergent DG-selected version is the follow-on.
+        assy_pos_set2 = set(ca3_pos[int(g)] for a in assemblies for g in a)   # local ca3 positions of members
+        zk = [k for k in range(len(flat_h))
+              if int(post_l_h[k]) in assy_pos_set2 and int(pre_l_h[k]) not in assy_pos_set2]  # non-member -> member
+        if zk:
+            idxs = cp.asarray([int(flat_h[k]) for k in zk], dtype=cp.int64)
+            conn.data[idxs] = cp.zeros(len(zk), dtype=conn.data.dtype)
         w_within, w_silent = _wstats()
 
     if recall_k_thresh is not None:
