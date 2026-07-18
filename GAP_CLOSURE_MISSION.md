@@ -171,21 +171,26 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   (Guzman-Jonas 2016 ~2%, not 50%) makes completion cue-SPECIFIC — at density 0.05 + 150-cell assembly, cue (0.199) >
   perm (0.145) for the FIRST TIME (cue/perm 1.37). Finding:
   `2026-07-18-gap5-wang-GO-was-plasticity-noise-confound-sparse-recurrence-gives-specificity.md`.
-- **🎉 gap #5 SPECIFICITY MECHANISM VALIDATED (2026-07-18) — ASSEMBLY-SELECTIVE INHIBITION (Kim-Kim 2025).** The
-  diagnostic ruled out threshold/drive/sparse-density tuning (perm ≈ cue at every config — the stored attractor
-  completes from ANY input via a network avalanche). Deep-read Kim-Kim 2025 (PMC12244581): the fix is
-  assembly-selective inhibition ("spare your own engram") — the recipe's `ca3_fb_inhib` was a GLOBAL shared basket
-  (fails per the paper). Realized `selective_inhib` (runner-side, spare the assembly's cells from the basket I→E,
-  inhibit non-members → a permuted cue's non-members are quenched before they avalanche): **seed 42 cue/perm 0.94 →
-  3.19 (≥3× GO bar), nocue 0.000 (clean bistable).** SPECIFICITY SOLVED — the FIRST cue-specific frozen CA3 completion
-  in the project. Finding: `2026-07-18-gap5-specificity-research-gate-assembly-selective-inhibition.md`.
-- **⚠️ EXACT NEXT ACTION (B — gap #5):** the residual is MAGNITUDE — with selective inhibition specific, cue is weak
-  (0.048, need ≥0.20; the strong non-member inhibition also damps the correct completion). Tuning RUNNING (task
-  bh1244f2d): lower k_thresh + larger assembly to boost cue while keeping ratio ≥3× (the avalanche is now blocked by the
-  selective inhibition, not the threshold, so a lower held-member threshold is safe). Then 6-seed with the MANDATORY
-  frozen + no-cue + permuted anti-cheats. Infra banked (bistable gate + plasticity-freeze + enable_ou + ca3_density +
-  selective_inhib + rate_homeo, all default-off). Honest scope: `selective_inhib` currently uses the pre-assigned
-  assembly mask (the LEARNED outcome); the emergent DG-selected + E→I-plasticity-tuned version is the follow-on.
+- **🎯 gap #5 COMPLETION TRILEMMA characterized + ROOT-CAUSED (2026-07-18) — the deep frontier is now precise.** The
+  specificity mechanism (assembly-selective inhibition, Kim-Kim 2025) was VALIDATED (seed-42 cue/perm 0.94 → 3.19, the
+  FIRST cue-specific frozen CA3 completion) — but only in the WEAK regime (cue ~0.045, seed-variable to ~0). Pushing for
+  strong+specific surfaced a TRILEMMA: **magnitude (strong within-weights) vs bistability (silent rest) vs specificity**
+  pull against each other. ROOT CAUSE (decisive): the single-compartment POINT SOMA has NO INTRINSIC BISTABILITY — a
+  recurrent attractor strong enough to complete self-SUSTAINS (0.499 everywhere), and NOTHING tames it (structural
+  separation [zero non-member→member] AND a −2000 pA per-cell rate-homeostatic bias both fail). Same family as the
+  documented point-neuron whitening/graded-magnitude walls. Findings:
+  `2026-07-18-gap5-completion-trilemma-magnitude-vs-specificity-vs-bistability.md`,
+  `2026-07-18-gap5-specificity-research-gate-assembly-selective-inhibition.md`.
+- **⚠️ EXACT NEXT ACTION (B — gap #5, per THE LAW = the next mechanism, NOT a wall):** the missing piece is **intrinsic
+  DENDRITIC PLATEAU bistability** — a self-regenerating NMDA plateau that HOLDS two stable states (silent + plateau) at
+  the SAME recurrent input, so magnitude and bistability stop opposing (the recurrent gain need not be cranked to
+  self-sustain). The two-compartment machinery EXISTS (`enable_two_compartment_dap`, `apical_R`, `apical_g_couple`) but
+  is currently a transient dAP READOUT, not a bistable HOLD (Wang finding). NEXT: research-gate the dendritic-plateau
+  bistability parameterization (Major-Larkum-Schiller; the Mg-regenerative apical regime), make the apical HOLD, then
+  combine with `structural_sep` + `selective_inhib`, 6-seed frozen + no-cue + permuted anti-cheats. This overlaps the
+  gap #4 dendritic keystone (the dendritic substrate is the standing priority [[project_dendritic_cortex_for_emergence]]).
+  Infra banked (bistable gate + plasticity-freeze + enable_ou + ca3_density + selective_inhib + structural_sep +
+  rate_homeo + recall_k_thresh, all default-off / byte-identical).
 - **🔬 gap#5 Rung 2/3 RESULT (2026-07-17):** the mossy-detonator SPARSIFIES CA3 (0.43→0.03) but sparsity WITHOUT
   synchrony can't select — within/silent separation goes NEGATIVE (−0.27 to −0.47; the sparse cells fire async →
   co-activity traces never clear threshold → no potentiation). Rung 3 (input gamma-pulse) is INERT (byte-identical to
