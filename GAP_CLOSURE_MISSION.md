@@ -249,12 +249,20 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   the permuted cue drives held ~0.06 vs correct ~0.11 (a strong drive to random cells spreads via background
   connectivity). The specificity mechanism = the dendritic dAP COINCIDENCE threshold (a held member fires only when
   ≥k WITHIN-assembly members drive it → a permuted cue can't provide k). **⚙️ k_thresh specificity sweep running**
-  (`biz67z0eh`: cap 120 × rdrv {800,1500} × k_thresh {30,50,80} → want cue high, perm~0, nocue~0). **⚠️ EXACT NEXT
-  ACTION:** read it → if a (k_thresh, rdrv) gives cue >> perm with rest silent → 6-seed bistable GO → REAL completion →
-  emergent DG-selection → SWR loop. If k_thresh can't separate cue-vs-perm → DEEP-RESEARCH GATE (standing practice at a
-  confirmed boundary): bistable+specific pattern completion on spiking point neurons (Wang-2002 NMDA-slow bistability /
-  Amit-Brunel / dAP-coincidence / E-I balance). Also re-check CYCLE-1068 hand-installed completion with the bistable
-  gate (may share the artifact). Gaps #1/#4 remain per "close ALL fully".
+  (`biz67z0eh`: cap 120 × rdrv {800,1500} × k_thresh {30,50,80} → want cue high, perm~0, nocue~0). **RESULT: GENUINE bistable+specific completion ACHIEVED but WEAK —
+  a CONFIRMED BOUNDARY.** At cap 120 + rdrv 1500 + k_thresh 30: **cue=0.050, perm=0.004 (12× specific), nocue=0.000,
+  rest=0.000** — real cue-gated completion (held reactivate specifically from a partial cue, silent at rest, permuted
+  doesn't complete). BUT magnitude capped ~0.05 (5% reactivation); every boost lever breaks the regime (higher cap →
+  self-sustains; higher k_thresh → collapses to 0). The ca3→ca3 already route through the dendritic dAP NMDA-plateau
+  (CYCLE-1068), so it's NOT pure-AMPA. The trilemma (magnitude vs bistability vs specificity) has no wide window here.
+  Full finding boundary block: `2026-07-18-gap5-ca3-functional-completion-CLOSED-6seed-GO-learned-attractor.md`. **⚠️
+  EXACT NEXT ACTION = DEEP-RESEARCH GATE (standing practice at a confirmed boundary)** — mechanisms for a ROBUST
+  bistable+specific pattern-completion attractor on spiking point neurons: SOMATIC recurrent NMDA-slow bistability
+  (Wang 2002 / Amit-Brunel — hysteresis + temporal integration widen the window), E-I-balanced attractor networks, vs
+  the dendritic-dAP-coincidence readout used now; rank cheap-first + the anti-cheats (the bistable gate is baked in).
+  Then build the ranked one → 6-seed bistable gate → REAL completion → emergent DG-selection → SWR loop → console.
+  **What STANDS:** strong SPECIFIC learned attractor 6-seed + genuine (weak) bistable+specific completion demonstrated;
+  the retraction's lesson (mandatory no-cue+permuted gates) is baked in. Gaps #1/#4 remain per "close ALL fully".
 - (superseded by the breakthrough above) direct synchronous assembly encoding did NOT grow the weights — DECAYED,
   and sync=async BYTE-IDENTICAL (the gamma mechanism was inert because NOTHING was potentiating). The rate-window LTP
   isn't firing: a cell firing ~1/3 of steps has trace ≈0.33 → product ≈0.11 < the 0.25 coactivity threshold → no

@@ -94,3 +94,32 @@ partial-cue drive to trigger; a rest/settle that genuinely silences (the current
 NOT silence a self-sustaining attractor); test WITH the permuted control + a NO-CUE control (drive nothing → held must
 be SILENT) as MANDATORY gates from now on. The 2026-07-14 hand-installed-attractor "completion" (CYCLE-1068) should
 ALSO be re-checked with these controls — it may share this artifact.
+
+---
+
+## POST-RETRACTION: GENUINE bistable+specific completion ACHIEVED but WEAK — a confirmed boundary (2026-07-18)
+
+Built the proper bistable gate (`run(..., bistable=True)`: hard-silence → read held firing under NO-CUE / CORRECT-CUE
+/ PERMUTED-CUE). Systematic sweep (recurrent cap × cue strength × dАP k_thresh × magnitude):
+
+- The retracted config is genuinely SELF-SUSTAINING (cue=nocue=perm=rest=0.500 — re-ignites from a hard-silence).
+- Weak recurrents (cap 120) + strong cue (rdrv 1500) + dАP k_thresh 30 gives GENUINE bistable+specific completion:
+  **cue=0.050, perm=0.004 (12× specific), nocue=0.000, rest=0.000** — the held members reactivate specifically from a
+  partial cue, silent at rest, a permuted cue does NOT complete. This is REAL (if weak) cue-gated pattern completion.
+- BUT the MAGNITUDE is capped ~0.05 (held reactivate at only ~5% rate). Every lever to boost it breaks the regime:
+  higher cap → self-sustains (cap 220: nocue 0.029 > cue) or doesn't grow (co-activity-capped); higher k_thresh →
+  completion collapses to 0 (k 50/80: all silent); the cap/cue/threshold trilemma (magnitude vs bistability vs
+  specificity) has no wide window on the current substrate. The ca3→ca3 recurrents already route through the dendritic
+  dАP NMDA-spike plateau (CYCLE-1068), so this is NOT a pure-AMPA limitation — the dАP coincidence readout is active.
+
+**⇒ CONFIRMED BOUNDARY (a verdict on the METHOD, not the capability):** the current substrate (dАP-coincidence readout
+over a competitively-formed learned attractor) does genuine bistable+specific completion but only WEAKLY (~5% held
+reactivation). A ROBUST autoassociator (strong held reactivation, silent rest, specific) needs a mechanism that widens
+the bistable window — the research-gated next step: SOMATIC recurrent NMDA-slow bistability (Wang 2002 / Amit-Brunel:
+slow voltage-dependent recurrent excitation → hysteresis + temporal integration of the specific cue), and/or a
+proper E-I-balanced attractor network, distinct from the dendritic-dАP coincidence readout used here.
+
+**What STANDS:** (1) the formation recipe builds a strong SPECIFIC learned attractor 6-seed (real advance on
+2026-07-14); (2) genuine bistable+specific cue-gated completion is DEMONSTRATED (weakly) — the retraction's lesson
+(mandatory no-cue + permuted gates) is now baked into the de-risk. **NOT closed:** a ROBUST completion. Next: the
+deep-research gate on bistable pattern-completion mechanisms → build the ranked one → 6-seed with the bistable gate.
