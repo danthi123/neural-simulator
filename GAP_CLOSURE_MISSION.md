@@ -210,16 +210,25 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   boosting→self-trigger) but a WIDE robust bistable band (3 fixed points, g_res 2-14) with a KIR (inward-rectifier K⁺)
   load line. ⇒ intrinsic bistability IS achievable on this substrate; it needs a KIR down-state stabilizer (which the
   point soma lacks). Finding: `2026-07-18-gap5-dendritic-bistability-offline-IV-validated-KIR-needed.md`.
-- **⚠️ EXACT NEXT ACTION (B — gap #5): implement the kernel change (research Rank 1 + Rank 2, now offline-designed).** In
-  `fused_coincidence_plateau` (`sim/kernels.py:253`): (1) split the plateau conductance into an input `trigger` term + a
-  v-gated self-regenerating `sustain` term (`g_regen·mg_block(v)·sigmoid(k_v·(v−v_hold))`) + slow reservoir decay → the
-  plateau HOLDS after the volley; (2) add a KIR-shaped down-state stabilizer → robust bistability. Additive / default-off
-  / byte-identical when off (deep-research gate CLEARED the sim/ edit). Then: single-cell latch-and-hold probe
-  (`_gap5_dendritic_bistability_probe.py`, extend it: ignite→remove input→verify HOLD; no-cue→silent; permuted→no latch)
-  → sweep the bistable band on-substrate → wire into CA3 with SUB-CRITICAL W_rec + `structural_sep` + `selective_inhib`,
-  6-seed frozen + no-cue + permuted anti-cheats. Overlaps the gap #4 dendritic keystone [[project_dendritic_cortex_for_emergence]].
-  Infra banked (bistable gate + plasticity-freeze + enable_ou + ca3_density + selective_inhib + structural_sep +
-  rate_homeo + recall_k_thresh, all default-off).
+- **🎉 gap #5 DENDRITIC BISTABILITY KERNEL CHANGE — BUILT + single-cell DEMONSTRATED (2026-07-18, commit d15e8019).**
+  `fused_coincidence_plateau` (`sim/kernels.py`) now has a v-gated self-regenerating SUSTAIN term (holds the plateau
+  past the volley) + the apical ODE a KIR down-state stabilizer — additive / default-off / **byte-identity verified**
+  (21 dendritic/two-comp CI pass). Single-cell LATCH-AND-HOLD triad: correct-cue LATCHES + HOLDS (−6.3mV), transient
+  (no self_regen) DECAYS (−80.9), no-cue SILENT (−81.6); clean hold-threshold bifurcation at self_regen≈0.8. Intrinsic
+  bistability DECOUPLES completion (one-shot trigger) from self-sustaining (intrinsic per-cell) → the trilemma's root
+  cause is fixed. CI `tests/test_dendritic_bistability.py` 3/3. Config: `coincidence_plateau_self_regen`/`_v_hold`/`_v_hold_k`
+  + `apical_kir_g`/`_E_K`/`_vhalf`/`_k` (all default 0/off).
+- **⚠️ EXACT NEXT ACTION (B — gap #5): THE PAYOFF TEST — wire the bistable dendrite into the CA3 completion network.**
+  Thread the new flags through `_riii_ca3_coincidence_completion_derisk._build` / `_riii_ca3_synchronous_assembly_derisk.run`
+  (set `coincidence_plateau_self_regen` + `apical_kir_g` on the ca3→ca3 coincidence path so each CA3 cell has a bistable
+  dendrite), use SUB-CRITICAL recurrent W_rec (weak, so the NETWORK does not self-sustain — sustaining is now
+  intrinsic per-cell) + `structural_sep` + `selective_inhib`, then run the FROZEN + no-cue + permuted anti-cheats,
+  6-seed. PREDICTION: a correct partial cue delivers the coincident within-assembly trigger → the held members LATCH
+  their plateaus → completion HOLDS; a permuted cue delivers no coincident within-assembly trigger → no latch → no
+  completion (specific); rest silent (bistable down state). If GO → the completion trilemma is RESOLVED → gap #5's
+  functional cue-gated bistable+specific completion CLOSED. Overlaps the gap #4 dendritic keystone
+  [[project_dendritic_cortex_for_emergence]]. Infra banked (bistable gate + plasticity-freeze + enable_ou + ca3_density +
+  selective_inhib + structural_sep + rate_homeo + recall_k_thresh + the bistability flags, all default-off).
 - **🔬 gap#5 Rung 2/3 RESULT (2026-07-17):** the mossy-detonator SPARSIFIES CA3 (0.43→0.03) but sparsity WITHOUT
   synchrony can't select — within/silent separation goes NEGATIVE (−0.27 to −0.47; the sparse cells fire async →
   co-activity traces never clear threshold → no potentiation). Rung 3 (input gamma-pulse) is INERT (byte-identical to
