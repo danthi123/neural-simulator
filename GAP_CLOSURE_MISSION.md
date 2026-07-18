@@ -176,6 +176,20 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   vs the 0.75 held-out accuracy bar + depth_helps gate, 6-seed** (the microcircuit's clean apical error + the bistable
   held-UP-state noise-averaging is the named fix for the 0.664 noise-limited shortfall — the highest-unlock item: gap#4 is
   the engine for #2/#5/#1).
+- **⚠️ a-1 RAG on the gap#4 accuracy run (2026-07-18, prevents re-derivation — drift #12 nearly hit):** the
+  `enable_bdsp_graded_credit` (E·P Larkum-BAC analog) path has PRIOR HISTORY. On the **semantic-inheritance / hard
+  compositional task** it was already REFUTED 6-seed (`2026-07-14-deep-credit-...graded-credit-decisive`: graded 0/6
+  inh 0.204 ≈ binary 0.228, both < chance; DECOLLE 0/6; population K=1→8 barely) — the wall there is CREDIT-STRUCTURE
+  (the FA direction at depth on point-neurons), NOT read-variance. That finding's forward-vs-learning isolation is
+  decisive: **a spiking net trained by surrogate-BPTT reaches 0.972/0.673** on the hard task ⇒ the spiking substrate is
+  VIABLE; the wall is specifically the LOCAL BDSP rule's weight-finding on the HARD task at cheap scale. **SCOPE
+  DISTINCTION (why the current run is still legitimate):** `emerge1` (the board-named accuracy target) is a DISTINCT
+  depth-2 task (XOR-of-5-pairs → majority-threshold; provably needs 2 nonlinear layers; generalizes to unseen patterns)
+  where D1 already showed BDSP partial success (probe 0.92, held-out 0.664, batch-fragile) — NOT the semantic-inheritance
+  task. So the current scale run (graded + hidden=128, emerge1) legitimately completes the board-named "never-completed
+  on-bridge accuracy run", scoped to the depth-2 XOR-threshold task; the harder semantic-inheritance frontier stays a
+  distinct open gap#4 sub-problem (needs scale or a genuinely-new credit-DIRECTION mechanism per 2026-07-14; graded is
+  spent THERE — do NOT re-run graded on the inheritance task).
 - **⚠️ STRATEGY CORRECTION (owner steer 2026-07-18): FULLY close each gap in EASIEST→HARDEST order; stop jumping /
   leaving loose ends.** I drifted: picked gap #5 on a wrong "quickest" estimate, then sunk-cost-ground its deep
   robustness frontier while easier un-closed work sat idle. Corrected order of UN-CLOSED work: **(A) gap #3 residuals
