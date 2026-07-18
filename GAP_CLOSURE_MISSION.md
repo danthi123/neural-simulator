@@ -206,6 +206,17 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   (route a coincidence pathway so the two-comp apical ODE + soma coupling run; the research demands cfg.seed hash-verify +
   dendritic-reset + the depth_helps/moat/wrong-sign/lesion anti-cheats) — do it in a FOCUSED pass, not rushed. Gap #4 is
   precisely characterized: root-cause reproduced + the fix = the keystone via the two-comp path + the build scoped.
+- **🎯 gap #4 FIX PINNED TO THE EXACT LINE (2026-07-18) — a BOUNDED additive `sim/` edit reusing the keystone.** There are
+  TWO separate apical integrations of `cp_v_apical`: (i) `bridge.py:6545` (two-compartment) HAS the soma coupling +
+  bistability but is driven bottom-up (`R*I_coincidence`); (ii) `bridge.py:7258` (BDSP: `cp_v_apical += (dt/tau)*(-(v-Er)
+  + cp_bdsp_apical_drive)`) has the TOP-DOWN error but **NO soma coupling + NO bistability** -> the apical depolarizes but
+  never reaches the soma -> **B stays 0** (the exact root-cause). **THE FIX = add, at 7258, the asymmetric soma coupling
+  (`+ apical_g_couple_to_soma*(v_soma - v_apical)` into total_input_current, like 6532) + KIR (`+ g_kir*(E_K - v)`) + the
+  self-regen sustain (v-gated) -- REUSING the just-built keystone terms -- guarded by a new default-off flag (byte-identical
+  when off).** Then: `_d1_onbridge_learn_to_accuracy --microcircuit` with it ON, verify B_rises True -> moat holds (dev≈0 at
+  rest via KIR) -> learning clears the floor; add held-apical (self_regen) for noise-averaging vs the 0.75 bar; 6-seed +
+  cfg.seed-hash + dendritic-reset + depth_helps/wrong-sign/lesion/moat anti-cheats. The single, well-specified, bounded
+  protected edit that closes the gap #4 keystone — a focused-pass build.
 - **(prior) deep-research gate DISPATCHED note:** (a-1'd on the newest findings: the deep-credit
   block is the RULE not the readout [graded 12/12 negative]; e-prop/NP/BDSP-on-classifier all failed; the arc was partly
   seed-confounded). The NEW angle: a LOCAL apical-based credit rule (Urbanczik-Senn / Sacramento / Payeur burstprop) that
