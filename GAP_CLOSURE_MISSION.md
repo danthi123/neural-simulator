@@ -161,6 +161,21 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
+- **📍 RESUME POINT (2026-07-18, latest): the gap#4↔#5 unification MAGNITUDE polish is CLOSED as a REFUTED method →
+  PIVOTED to the gap#4 KEYSTONE learning-to-accuracy run (the board's highest-leverage OPEN item).** The
+  "structured-BTSP = one-shot + heterosynaptic-competition" hypothesis was REFUTED by the substrate: the competition arm
+  ERODES the within-assembly recurrent weight (w_within 72→28, cue collapses to ~0.02 at every recall threshold), it does
+  NOT sharpen it (in the one-shot plateau-gated regime the depression `(1-Etilde)(w-w_min)` erodes within-assembly pairs
+  whose eligibility dips between spikes). Finding
+  `2026-07-18-gap4-gap5-unification-competition-arm-REFUTED-erodes-within-assembly`. The failing METHOD is banked; the
+  infra (`fused_btsp_hetero_update` + `btsp_hetero_dep`, additive/byte-safe/CI-guarded, committed 81c64daf) is retained.
+  **The unification STANDS at cue ~0.18 (BTSP uniform, mechanism-6/6-GO — a real completion by the gap#5 standard); the
+  stronger 0.226 completion is ALREADY delivered by the gap#5 Hebbian rule.** ⇒ no open capability gap in the magnitude
+  polish — it was polish on a GO result, not chased further (p-hacking risk). **EXACT NEXT ACTION: the gap#4 KEYSTONE
+  never-completed learning-to-accuracy run — `_d1_onbridge_learn_to_accuracy --microcircuit --apical-bistable --soma-g>0`
+  vs the 0.75 held-out accuracy bar + depth_helps gate, 6-seed** (the microcircuit's clean apical error + the bistable
+  held-UP-state noise-averaging is the named fix for the 0.664 noise-limited shortfall — the highest-unlock item: gap#4 is
+  the engine for #2/#5/#1).
 - **⚠️ STRATEGY CORRECTION (owner steer 2026-07-18): FULLY close each gap in EASIEST→HARDEST order; stop jumping /
   leaving loose ends.** I drifted: picked gap #5 on a wrong "quickest" estimate, then sunk-cost-ground its deep
   robustness frontier while easier un-closed work sat idle. Corrected order of UN-CLOSED work: **(A) gap #3 residuals
