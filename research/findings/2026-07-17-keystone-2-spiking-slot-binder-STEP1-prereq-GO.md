@@ -35,3 +35,17 @@ Composed `build_persistent_slot` (K NMDA-recurrent pools + shared FS): load P=3 
 ## ⇒ Step-2 status: slot SEPARATION (step 1) GO + slot COEXISTENCE (step 2a) GO. Remaining:
 - **step 2b — role-cued RETRIEVAL:** drive a role/partial cue → the matching coexisting slot completes/wins → decode its filler. (The slot must be role-addressable — the composition of the pooler selection + the NMDA hold + a decode read.)
 - **step 2c — the full multi-bind recovery test:** a fact's P≥3 role-filler bundle recovers ≥0.80 where the write-rule capped ~2; anti-cheats permuted-role / lesion-the-competition→~2 / homeostasis-OFF; 6-seed.
+
+---
+
+## BUILD STEP 2c (role-cued retrieval) — runner built + PRECISELY diagnosed to a substrate bug (in progress)
+
+Runner `research/runners/_keystone2_spiking_slot_binder_derisk.py` (slot pools NMDA-recurrent + FS + KF filler pools + a PER-SLOT-gated PLASTIC slot→filler pathway; role→slot→filler store + role-cued retrieve; slot-separated vs shared, + no-recur / permuted-role anti-cheats).
+
+**The mechanism WORKS single-bind** (isolated diagnostic): teach (drive slot+filler, co-activation → Hebbian) → retrieve (drive the slot) → the filler pool fires, argmax = the correct filler (f0 rate 0.45). Two composition bugs found + fixed along the way: (a) `_reset` between binds BREAKS retrieval (the mechanism needs the NMDA hold — reset=False works, reset=True gives 0), (b) a SHARED plasticity gate let a bind's teach decay the OTHER slots' associations → switched to PER-SLOT gates.
+
+**The remaining bug (precisely pinned, undiagnosed-to-root):** the MULTI-bind store loses the earlier association. teach0 writes w0→f2 (it transmits — at teach1, f2 still fires 0.02 from the held w0); but at RETRIEVE, **f2 = 0.00 despite w0 firing 0.12** ⇒ a SUBSEQUENT bind's teach window eroded w0→f2 **despite slot0's per-slot gate being frozen (gain 0) during teach1**. This points to a **Hebbian decay that `set_plasticity_gate` does not fully freeze** for a frozen pathway (or a gate-freeze gap). 
+
+**Next debug (fresh focus): verify whether `set_plasticity_gate(name, 0.0)` fully freezes the Hebbian DECAY (not just potentiation) for that pathway's synapses** — read the Hebbian update in `sim/bridge.py` for whether the decay term is scaled by `cp_plasticity_rate_gain`. If NOT gated: write the associations decay-free (freeze `enable_hebbian_learning` after each write + a manual/eligibility write, or a per-slot store that never re-opens). Then re-run: slot-sep P≥3 ≥0.80 vs shared ~2, no-recur collapse, permuted→chance, 6-seed.
+
+**Honest status: steps 1 (separation) + 2a (coexistence) GO; step 2c (retrieval) is a built runner diagnosed to a specific gated-Hebbian-decay substrate question — the last piece of the gap-#2 spiking closure.**
