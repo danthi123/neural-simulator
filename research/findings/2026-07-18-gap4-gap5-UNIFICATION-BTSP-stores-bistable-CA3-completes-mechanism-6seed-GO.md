@@ -45,9 +45,14 @@ matrix, while Hebbian's rate-window LTP + heterosynaptic competition + heterogen
 recall_k_thresh 40→150, recall_drive 700→1200, apical_gc_read 5→15) maps it precisely: cue peaks ~0.19 at MODERATE
 storing (w_within ~70) + low recall threshold, and OVER-strong uniform weights (w_within 166) NON-monotonically HURT
 (over-drive the recall, cue → 0.05). apical_gc_read is not a clean read-side lever here (enable_bdsp uses it during
-encode too). ⇒ closing the last ~0.02-0.04 needs STRUCTURED BTSP storing (heterogeneous plateau drive / a
-non-saturating BTSP variant / adding heterogeneity to the co-firing) to match Hebbian's distribution — a mechanism
-change, the precise next lever. NOT a config knob, and NOT chased further here (diminishing returns / p-hacking risk).
+encode too). The STRUCTURED-storing mechanism lever was ALSO tried: `encode_hetero` (a per-cell plateau multiplier so
+assembly cells latch at heterogeneous strengths, default 0 = uniform/byte-preserved) — it HURTS (cue 0.174→0.172→0.133
+→0.106 as hetero 0→0.4→0.7→1.0; the low-multiplier cells just store less). ⇒ the magnitude residual is genuinely a
+property of BTSP's plateau-gated storing and is NOT closed by config (9 GPU sweeps) OR plateau-heterogeneity. Closing
+the last ~0.02-0.04 would need a fundamentally DIFFERENT storing rule (a non-saturating BTSP variant, or replicating
+Hebbian's rate-window + heterosynaptic-competition structure via a different mechanism) — a deep new arc, NOT warranted
+for a ~0.02 magnitude refinement of an already-mechanism-GO result (and NOT chased further = p-hacking risk). The
+residual is an EXHAUSTIVELY-CHARACTERIZED honest boundary at cue ~0.18 (a real completion by the gap#5 standard).
 
 ## Status
 - **UNIFIED (mechanism, 6/6):** the gap#4 credit rule (BTSP) and the gap#5 completion (bistable CA3) run on ONE

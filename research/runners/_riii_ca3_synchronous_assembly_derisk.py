@@ -60,7 +60,8 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
         selective_inhib=False, sel_inhib_spare=0.0, recall_k_thresh=None, structural_sep=False,
         plateau_self_regen=0.0, plateau_v_hold=-35.0, apical_kir_g=0.0, apical_gc_read=None, read_apical=False,
         read_ca1=False, schaffer_boost=1.0,
-        encode_btsp=False, btsp_lr=0.02, encode_ca3w=None, encode_plateau_pA=250.0, encode_structural_sep=0):
+        encode_btsp=False, btsp_lr=0.02, encode_ca3w=None, encode_plateau_pA=250.0, encode_structural_sep=0,
+        encode_hetero=0.0):
     # DIAGNOSED LEVERS (2026-07-18 workflow): the rate-window LTP is an EMA-trace rule -- a cell's co-activity trace
     # tops out ~0.03-0.2 (point Izh fires ~0.2 duty @700pA), so coact_thresh MUST be BELOW it (~0.02) or nothing
     # potentiates; the gamma OFF-gap DECAYS the EMA (0.9^off) so CONTINUOUS drive (sync_off<=1) is required, NOT
@@ -129,6 +130,15 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
         bridge.cp_bdsp_apical_drive = cp.zeros(n_all_b, dtype=cp.float32)
         for m, assy in enumerate(assemblies):
             assy_arr = cp.asarray(assy, dtype=cp.int64)
+            # STRUCTURED storing (encode_hetero>0, default 0 = uniform/byte-preserved): a per-cell plateau multiplier so
+            # assembly cells latch/store at HETEROGENEOUS strengths -> a varied within-assembly distribution (like
+            # Hebbian's heterogeneous co-firing), closing the uniform-BTSP-vs-structured-Hebbian magnitude residual.
+            if float(encode_hetero) > 0.0:
+                _hrng = np.random.default_rng(seed * 131 + m + 7)
+                _hmul = (1.0 + float(encode_hetero) * (2.0 * _hrng.random(len(assy)) - 1.0)).clip(0.1, 3.0)
+                plateau_vec = cp.asarray((float(encode_plateau_pA) * _hmul).astype(np.float32))
+            else:
+                plateau_vec = cp.full(len(assy), float(encode_plateau_pA), dtype=cp.float32)
             for ev in range(train_events):
                 bridge.cp_external_input_current[:] = 0.0
                 bridge.cp_bdsp_apical_drive[:] = 0.0
@@ -138,7 +148,7 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
                     bridge.cp_external_input_current[:] = 0.0
                     bridge.cp_external_input_current[assy_arr] = float(encode_drive)      # co-fire the assembly (pre-elig)
                     bridge.cp_bdsp_apical_drive[:] = 0.0
-                    bridge.cp_bdsp_apical_drive[assy_arr] = float(encode_plateau_pA)      # plateau ON the assembly (IS_post)
+                    bridge.cp_bdsp_apical_drive[assy_arr] = plateau_vec                   # plateau ON the assembly (IS_post; per-cell when hetero>0)
                     bridge._run_one_simulation_step()
             bridge.cp_external_input_current[:] = 0.0
         cfg_b.enable_bdsp = False; cfg_b.enable_btsp = False; bridge.cp_bdsp_apical_drive = None  # recall uses two_comp only
