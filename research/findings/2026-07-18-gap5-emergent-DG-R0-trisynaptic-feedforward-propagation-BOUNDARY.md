@@ -33,6 +33,25 @@ so no single DG cell detonates its CA3 targets → no assembly is selected. Plus
 sparse (DG's pattern-separation design) + the pathways are plastic/unlearned. The gap#5 completion mechanism sidesteps
 ALL of this by driving CA3 DIRECTLY (encode_drive=3000 on the assembly) — it never relies on feedforward propagation.
 
+## REFRAME (the richer picture from the membrane + synchrony probes — the actionable path)
+Two later probes change the picture from "hard boundary" to "a tractable INTEGRATED select-and-store":
+- **The mossy DOES reach CA3:** at `mossy_weight`=500 some CA3 cells cross threshold (v_max −31.7 > the −40 threshold),
+  though v_mean stays −65. So the conductance arrives; the problem is that ASYNCHRONOUS sparse DG firing gives each CA3
+  cell only transient, non-coincident input.
+- **Synchronizing the DG volley makes CA3 INPUT-SPECIFIC:** a GAMMA-pulsed DG drive (2-3 on / 2-4 off) raises the
+  CA3-rate-vector separation `sep_cos` from 0.00 → **0.53** (distinct inputs → distinct CA3 responses) — the mossy IS
+  selecting an input-specific CA3 seed. It still does not SUSTAIN firing (|A|=0 at ≥0.15) because the CA3 recurrent is
+  weak here (ca3w=1.5, no attractor amplification).
+- ⇒ **the emergent-DG is an INTEGRATED select-and-store, not select-THEN-store:** the synchronized mossy SEEDS
+  input-specific CA3 co-activity; the assembly SUSTAINS only once the CA3 recurrent exists — which is exactly what BTSP
+  BUILDS. So the tractable path is to run the mossy-seeding + the BTSP store TOGETHER (on the first synchronized
+  presentation the mossy seed co-fires CA3 → BTSP stores it → the recurrent grows → the assembly emerges + completes),
+  at the completion-scale config (n_ca3=2000, the gap#5 recall machinery). R0's strict "sustained |A_m| before any
+  storing" metric was too strict for the SEED. **Resume: build the integrated select-and-store** — a synchronized DG
+  volley seeds CA3 co-activity, `encode_btsp` stores it (the assembly = the mossy-seeded co-firing cells, read live),
+  the bistable CA3 completes; anti-cheats = input-driven (permute input → different assembly), pattern-separation
+  (sep_cos < 0.4 across inputs), + the completion nocue/perm/no-encode. This reuses everything already built.
+
 ## Status + the next mechanism (per THE LAW)
 - **BOUNDARY (well-characterized):** emergent-DG via the trisynaptic feedforward is blocked by feedforward propagation
   — the hippocampal chain (EC→DG→CA3) does not carry an input to fire downstream cells at reasonable drives; the mossy
