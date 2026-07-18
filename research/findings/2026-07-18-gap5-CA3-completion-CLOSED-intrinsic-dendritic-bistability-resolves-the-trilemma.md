@@ -1,4 +1,4 @@
-# 🎉 Gap #5 — CA3 functional cue-gated BISTABLE + SPECIFIC pattern completion, via INTRINSIC DENDRITIC BISTABILITY. All three trilemma horns solved simultaneously; 5-6/6 seeds. At CHANCE the project's entire history.
+# 🎉 Gap #5 — CA3 functional cue-gated BISTABLE + SPECIFIC pattern completion, via INTRINSIC DENDRITIC BISTABILITY. All three trilemma horns solved simultaneously; MECHANISM 6/6 (specificity + bistability perfect on all seeds), strict magnitude bar 5/6. At CHANCE the project's entire history.
 
 **2026-07-18.** CA3 pattern completion — a partial cue reactivates the stored assembly's held-out members, a random cue
 does NOT, and the network rests silent — has been at chance for the project's entire history (2026-05 → the 2026-07-14
@@ -47,8 +47,14 @@ structural_sep, selective_inhib, apical_gc 1.0, apical_gc_read 5.0. `_gap5_ca3_b
 
 **5/6 GO; 6/6 PERFECT specificity (perm 0.000) + bistability (nocue 0.000).** The lone miss (seed 101, cue 0.181) is a
 MAGNITUDE marginal-miss (0.019 under the bar), NOT a mechanism failure. **NO-ENCODING anti-cheat: cue 0.000** (the
-completion is load-bearing on the LEARNED attractor, not a drive/leak artifact). [A small uniform read boost
-apical_gc_read 5→6 for a clean 6/6 is under test — updated inline.]
+completion is load-bearing on the LEARNED attractor, not a drive/leak artifact).
+
+**5/6 is the HONEST result — NOT seed-fished to 6/6.** Two principled attempts to lift the magnitude floor were WORSE,
+so recall_k=110/gc_read=5 (5/6) stands: apical_gc_read 5→6 is non-monotonic (dropped seed 42 to 0.194); recall_k_thresh
+110→90 lifted 42-44/100 but dropped seed 102 (0.200→0.189) → 4/6. The magnitude is genuinely seed-variable in
+~[0.18, 0.33]; specificity + bistability are perfect on ALL 6 regardless. So the MECHANISM (bistable + specific
+completion, trilemma resolved) is 6/6-robust; the strict cue≥0.20 magnitude bar is met on 5/6 (the 6th at 0.181, still a
+real specific held completion). Not chasing a fished 6/6 — the honest closure is 5/6 GO + 6/6 mechanism.
 
 ## What's closed vs open
 - **CLOSED: the FUNCTIONAL cue-gated BISTABLE + SPECIFIC completion MECHANISM** — genuine partial-cue completion that a
