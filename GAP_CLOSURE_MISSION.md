@@ -218,14 +218,23 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   slots' `u` decays → early slots free up → collisions at scale), and a neural-occupancy scan is behaviorally
   identical to the counter. ⇒ no refinement needed; the counter is legitimate infrastructure (like a hippocampal
   allocation pointer), not a hand-designed cognitive shortcut. **Gap #2 is FULLY CLOSED.**
-- **⚠️ EXACT NEXT ACTION (gap #2 done — determine + START the next frontier):** the remaining gaps are #1 (open fluent
-  generation), #4 (dendritic/local-credit keystone — the EMERGENCE ENGINE, unlocks #5/#1 by making capabilities LEARN
-  vs be hand-built), #5 (CA3 completion / imaginative replay). Planned order: **#4 keystone research-gate FIRST** (the
-  engine; a read-only research-gate is cheap + is the standing deep-research-first move at a new direction). OPENING
-  MOVE = the a-1 RAG check: read our OWN prior findings on the dendritic/local-credit frontier (BDSP/D1, EDGE-5, the
-  learning-rule-frontier-map, `_burndown_3B`, `project_dendritic_cortex_for_emergence`) so the gate SURPASSES prior
-  work, not re-derives it. (Owner may redirect to #1 or #5 — a genuine strategic fork — but per the mission, proceed
-  autonomously to #4 unless told otherwise.)
+- **✅ Gap #4 a-1 RAG check DONE (2026-07-17) — the research-gate is essentially the `learning-rule-frontier-map`
+  (2026-07-17), re-read + current:** SUPERVISED deep credit on spikes (e-prop / NP / D1-BDSP) is PARKED — all blocked
+  by ONE shared "spiking-classifier-readout-training wall"; the rate-net positive control (done) confirmed the block
+  is the RULE, not the readout. NP is retired (12-seed refuted). The WORKING emergence engine = the UNSUPERVISED
+  on-spike stream cortex (HTM + committed BDSP `fused_htm_permanence_update`), which SIDESTEPS the wall. **Gap #2's
+  just-completed closure VALIDATES this** — it closed via unsupervised/local Hebbian slots, no deep-credit engine.
+  ⚠️ **Per THE LAW: supervised deep credit is a BANKED METHOD (parked), NOT an abandoned capability** — the capability
+  (a learning engine for emergence) is served by the working unsupervised path.
+- **⚠️ EXACT NEXT ACTION (gap #4, a-1-ranked rec #2):** the ONE live unresolved fork in the record — does the
+  off-diagonal recurrent-credit gap REPRODUCE on the real on-bridge recurrent substrate (→ MDGL warranted) or DISSOLVE
+  under real population coding (→ stop, advance the unsupervised path). Build: a small recurrent on-bridge Izhikevich
+  net on a delayed-cue task, diagonal e-prop only (reuse `_onbridge_eprop_port_derisk.py` + a recurrent slice),
+  **SEEDED (`cfg.seed` set + two-process threshold-hash verified — the seed bug confounded the whole prior arc)**,
+  frozen-hidden + shuffle/wrong-sign anti-cheats, ≥6 seeds. Cheap (hours, CPU), decisive either way. Docs to read to
+  scope it: `2026-07-15-offdiagonal-recurrent-credit-ARC-SYNTHESIS-*` + `2026-07-15-emergence-engine-research-gate-horizon-frontier`
+  (the two disagreeing gates) + `_onbridge_eprop_port_derisk.py`. (Owner may redirect to #5 CA3-completion or #1
+  open-generation — a genuine strategic fork — but per the standing dendritic/emergence-engine priority, proceed here.)
   - **KEYSTONE REFRAME (a-1 done 2026-07-17, the load-bearing insight):** every failing credit method (e-prop
     feedforward NOT-GO, recurrent refuted, NP retired, BDSP-on-readout blocked, graded-readout no-unlock) was
     **SUPERVISED global-loss deep credit through a spiking CLASSIFIER READOUT** — that *shared readout wall* is the
