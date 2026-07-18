@@ -160,6 +160,20 @@ system — a genuine deep integration, the emergent-DG's core open frontier, for
 gain-control / normalization across the binding+amplification, or a staged encode: bind the mossy at low gain, THEN
 raise the recurrent, THEN store). The `run(assemblies_ext=...)` hook + all the pieces are ready.
 
+## Staged/isolated encode — ADVANCE (fixes the runaway; all inputs seed + separated) + the precise next step
+The ISOLATED staged encode (plateau on the target but NO target co-drive → only `dg→ca3` potentiates, NOT the recurrent)
+FIXES the runaway: all 3 inputs now seed DISTINCT assemblies (13, 5, 29 cells — no 0, no 2000) that are WELL-SEPARATED
+(Jaccard ~0.00-0.06). But the seeds are the mossy's NATURAL image of the DG code (recall-of-chosen-target ~0) — because
+a plateau-only binding cannot bind a target that does not fire. ⇒ the tension is now PRECISE: co-driving the target
+BINDS it but drives the recurrent to RUNAWAY; plateau-only avoids runaway but binds the natural (small, arbitrary)
+image. THE TRUE STAGED FIX (the precise next step): build with a WEAK recurrent → BIND the mossy WITH the target
+co-driven (no runaway because the recurrent is weak) → then RAISE the ca3→ca3 recurrent weights (post-binding scale) +
+BTSP-store the target's within-recurrent → RECALL with the raised recurrent so the learned mossy seed amplifies into the
+completable target. This separates the binding gain from the amplification gain — the multi-part balance the un-staged
+system couldn't hold. A focused fresh pass; all pieces + the `assemblies_ext` hook ready. (Genuine incremental progress:
+the staged/isolated encode already gives reliable multi-input SEPARATED seeding, no runaway — the reliability residual is
+substantially advanced; SIZE + target-binding remain.)
+
 ## Status + the next mechanism (per THE LAW)
 - **BOUNDARY (well-characterized):** emergent-DG via the trisynaptic feedforward is blocked by feedforward propagation
   — the hippocampal chain (EC→DG→CA3) does not carry an input to fire downstream cells at reasonable drives; the mossy
