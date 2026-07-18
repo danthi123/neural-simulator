@@ -58,7 +58,8 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
         rate_homeo=False, rate_homeo_target=0.02, rate_homeo_alpha=0.1, rate_homeo_adapt=15.0,
         rate_homeo_steps=400, rate_homeo_cap=800.0, enable_ou=True, ca3_density=0.5,
         selective_inhib=False, sel_inhib_spare=0.0, recall_k_thresh=None, structural_sep=False,
-        plateau_self_regen=0.0, plateau_v_hold=-35.0, apical_kir_g=0.0, apical_gc_read=None, read_apical=False):
+        plateau_self_regen=0.0, plateau_v_hold=-35.0, apical_kir_g=0.0, apical_gc_read=None, read_apical=False,
+        read_ca1=False, schaffer_boost=1.0):
     # DIAGNOSED LEVERS (2026-07-18 workflow): the rate-window LTP is an EMA-trace rule -- a cell's co-activity trace
     # tops out ~0.03-0.2 (point Izh fires ~0.2 duty @700pA), so coact_thresh MUST be BELOW it (~0.02) or nothing
     # potentiates; the gamma OFF-gap DECAYS the EMA (0.9^off) so CONTINUOUS drive (sync_off<=1) is required, NOT
@@ -323,9 +324,47 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
         sig = held_cue - rest; perm_sig = held_perm - rest
         go = (held_cue >= 0.20 and held_cue >= 3.0 * (held_nocue + 1e-6) and held_cue >= 3.0 * (held_perm + 1e-6)
               and held_nocue <= 0.10)
-        return {"seed": seed, "w_within": w_within, "held_cue": held_cue, "held_nocue": held_nocue,
-                "held_perm": held_perm, "rest_firing": rest, "sig": float(sig), "perm_sig": float(perm_sig),
-                "mean_bias": float(np.mean(bias_full[ca3_arr_host])), "go": bool(go)}
+        out = {"seed": seed, "w_within": w_within, "held_cue": held_cue, "held_nocue": held_nocue,
+               "held_perm": held_perm, "rest_firing": rest, "sig": float(sig), "perm_sig": float(perm_sig),
+               "mean_bias": float(np.mean(bias_full[ca3_arr_host])), "go": bool(go)}
+        if read_ca1:
+            # SWR GENERATIVE-REPLAY Rung 1 on the VALIDATED completion: does a PARTIAL cue's dendritic completion drive
+            # the SAME ca1 (Schaffer) pattern as the FULL assembly (correct), and a DIFFERENT one for another assembly
+            # (specific)? schaffer_boost potentiates ca3->ca1 so the completed assembly drives ca1 above threshold.
+            ca1_idx = np.asarray(list(rm.indices("ca1")), dtype=int)
+            if schaffer_boost != 1.0:
+                cc = bridge.cp_connections; nnzc = int(cc.nnz)
+                ip = np.asarray(to_host(cc.indptr)); ind = np.asarray(to_host(cc.indices))
+                prec = np.searchsorted(ip, np.arange(nnzc), side="right") - 1
+                c3s = set(int(g) for g in ca3_idx); c1s = set(int(g) for g in ca1_idx)
+                sk = [k for k in range(nnzc) if int(prec[k]) in c3s and int(ind[k]) in c1s]
+                if sk:
+                    ix = cp.asarray(sk, dtype=cp.int64); cc.data[ix] = cc.data[ix] * cp.float32(schaffer_boost)
+
+            def _measure_ca1(cue_idx):
+                _hard_silence(); cur = bias_full.copy()
+                if cue_idx is not None and len(cue_idx):
+                    cur[np.asarray(cue_idx, dtype=int)] += float(recall_drive)
+                dev = from_host(cur.astype(np.float64)); c1 = np.zeros(len(ca1_idx))
+                for _ in range(recall_steps):
+                    bridge.cp_external_input_current[:] = dev; bridge._run_one_simulation_step()
+                    c1 += np.asarray(to_host(bridge.cp_firing_states))[ca1_idx].astype(float)
+                bridge.cp_external_input_current[:] = 0.0
+                return c1 / recall_steps
+
+            def _cos(x, y):
+                nx, ny = float(np.linalg.norm(x)), float(np.linalg.norm(y))
+                return float(x @ y / (nx * ny)) if nx > 1e-9 and ny > 1e-9 else 0.0
+            fulls, parts = [], []
+            for m, assy in enumerate(assemblies):
+                a = assy.copy(); np.random.default_rng(seed + m).shuffle(a); cue = a[:max(2, len(a) // 2)]
+                fulls.append(_measure_ca1(assy)); parts.append(_measure_ca1(cue))
+            nA = len(assemblies)
+            matches = [_cos(parts[m], fulls[m]) for m in range(nA)]
+            crosses = [_cos(parts[m], fulls[(m + 1) % nA]) for m in range(nA)] if nA > 1 else [0.0]
+            out.update(ca1_match=float(np.mean(matches)), ca1_cross=float(np.mean(crosses)),
+                       ca1_fire=float(np.mean([np.mean(f) for f in fulls])))
+        return out
 
     # RECALL: partial cue (50% of each assembly) DIRECT on CA3 -> does the held-out 50% fire?
     non_stored = np.array([g for g in ca3_idx if g not in set(int(x) for a in assemblies for x in a)], dtype=np.int64)
