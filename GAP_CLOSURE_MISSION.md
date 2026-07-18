@@ -183,9 +183,12 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   (`enable_bdsp`: burst-P = sigmoid(beta·`cp_v_apical`) = the apical IS the credit signal; `cp_bdsp_apical_drive`, the
   `enable_bdsp_microcircuit` interneuron cancellation, `enable_bdsp_graded_credit`; runners `_d1_*` = the whole D1/BDSP
   arc). The prior "BDSP-on-classifier blocked" used a TRANSIENT apical -> the credit signal DECAYED; **the just-built
-  BISTABLE apical HOLDS the burst-probability credit** -> re-run the `_d1_onbridge_learn_to_accuracy` depth_helps gate
-  with `enable_bdsp` + the bistability flags (`coincidence_plateau_self_regen` + `apical_kir_g`) ON. That is the
-  cheap-first de-risk the research return should confirm/rank.
+  BISTABLE apical could HOLD the burst-probability credit.** BUT (a-1 refinement): it is NOT a simple flag-flip -- the
+  BDSP drives the apical via `cp_bdsp_apical_drive` (the error), while the bistability (self_regen + KIR) acts on
+  `cp_v_apical` via the COINCIDENCE-PLATEAU path; making the bistable apical HOLD the BDSP error signal is a real
+  integration (how does the self-regenerating plateau latch onto the top-down BDSP apical drive rather than a coincident
+  bottom-up volley?). The research gate must specify this integration; THEN re-run the `_d1_onbridge_learn_to_accuracy`
+  depth_helps gate (learned hidden must beat a frozen-hidden reservoir), 6-seed, correctly seeded (cfg.seed).
 - **Phase:** GAP-CLOSING. **Gap #2 FULLY CLOSED** ✅ · **Gap #3 FULLY CLOSED (2026-07-18)** ✅ · **Gap #5 completion
   MECHANISM CLOSED (2026-07-18)** ✅ (emergent DG + SWR replay = fresh follow-on arcs; magnitude 5/6 seed-variable) —
   A1: the referent-bias feature-compatibility is a SPIKING LEARNED map (corpus co-occurrence → feature-detector
