@@ -123,3 +123,36 @@ proper E-I-balanced attractor network, distinct from the dendritic-dАP coincide
 2026-07-14); (2) genuine bistable+specific cue-gated completion is DEMONSTRATED (weakly) — the retraction's lesson
 (mandatory no-cue + permuted gates) is now baked into the de-risk. **NOT closed:** a ROBUST completion. Next: the
 deep-research gate on bistable pattern-completion mechanisms → build the ranked one → 6-seed with the bistable gate.
+
+---
+
+## WANG-NMDA MECHANISM: genuine bistable+specific completion DEMONSTRATED (seed 42), but robust 6-seed is a seed-dependent working-point frontier (2026-07-18)
+
+Per the research gate (`2026-07-18-gap5-bistable-completion-mechanism-research-gate.md`), the ca3→ca3 was flipped from
+the dendritic-coincidence READOUT to the SOMATIC slow-NMDA reverberatory attractor (`exc_receptor="nmda_slow"`, the
+Wang-2002 mechanism; runner-side pathway flip, NO `sim/` edit) + recall extended past the NMDA τ + a larger assembly
+(Kopsick 150-300 range) + the Kopsick homeostatic weight-sum normalization.
+
+**RESULT — the mechanism genuinely WORKS (seed 42), a real bistable+specific cue-gated completion:**
+- seed 42 (T=800 homeostatic): **cue=0.264, nocue=perm=rest=0.056** — the correct 50% cue ignites the HIGH state (4.7×
+  the low-rate Wang background), the permuted cue does NOTHING above baseline (perfectly specific), the rest is a stable
+  LOW state (not dead — the correct biology). no-encoding anti-cheat → cue=0.000 (attractor load-bearing). This is a
+  categorically HONEST result vs the retracted self-sustaining artifact (all the mandatory anti-cheats pass on seed 42).
+
+**BUT it is SEED-FRAGILE (1/6):** 5/6 seeds fail in two modes — SELF-SUSTAIN (43/100/101/102: the low state is high
+0.19-0.33 → mono-stable) or NON-SPECIFIC (44: perm ≈ cue). The bistable working point is SEED-DEPENDENT (the well-known
+Wang/Amit-Brunel finickiness), and it **resists every robustness lever tried:** fixed-config tuning (fb_inhib, lam,
+frac, cap, recall_drive), stronger feedback inhibition (fb=30 → 0/6, WORSE), and the Kopsick weight-sum homeostatic
+normalization (T=800 → still 1/6). The seed-dependence comes from MORE than the recurrent weight sum — neuron threshold
+heterogeneity (seeded per `cfg.seed`), connectivity structure, and the E/I working point all vary per seed, and a
+weight-sum normalization can't equalize them.
+
+**⇒ HONEST STATE (a verdict on the METHOD, per THE LAW — the capability is demonstrated, robustness is the frontier):**
+the Wang-NMDA + Kopsick mechanism achieves genuine cue-gated bistable+specific completion (seed 42, all anti-cheats),
+a real advance over both the retracted artifact AND the weak dАP (0.05). Robust 6-seed needs a mechanism that equalizes
+the bistable WORKING POINT across seeds — the ranked next mechanisms: (1) a **per-neuron intrinsic/rate homeostatic**
+(the TRUE Kopsick homeostatic targets a per-cell FIRING RATE, auto-calibrating each seed to the same low-state working
+point, vs my one-shot weight-sum scale — the project has `enable_homeostasis` rate-scaling to reuse); (2) an **E/I
+working-point calibration** (Amit-Brunel: a stable background input + a balanced inhibition set-point that self-adjusts
+the low state); (3) reduced neuron heterogeneity (a fixed `heterogeneity_seed` so seeds differ only in connectivity,
+which the homeostatic normalizes). NOT closed; NOT a wall — the mechanism is demonstrated, robustness is the next build.

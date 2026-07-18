@@ -287,12 +287,20 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   (`homeostatic`/`homeo_target` in the de-risk: divisively normalize each member's TOTAL incoming within-assembly
   recurrent weight to a common set-point T → every seed gets the SAME gain → the SAME bistable window; runner-side, NO
   sim/ edit). **At T=800 it CLEANED UP seed 42: cue=0.264, nocue=perm=rest=0.056** — the permuted cue does NOTHING above
-  the low-rate baseline (perm=rest, perfectly specific) + stable Wang low state. **⚙️ 6-SEED homeostatic verify +
-  no-encoding anti-cheat running** (`b8tz782th`, ~35min). **⚠️ EXACT NEXT ACTION (RIGOROUS, per the retraction lesson):**
-  read it → if 6/6 GO (homeostatic makes all seeds land the same working point) + no-encoding collapses → **gap #5 REAL
-  robust cue-gated bistable completion CLOSED** (Wang somatic-NMDA attractor + Kopsick homeostatic set-point + mandatory
-  no-cue/permuted/no-encoding gates, NO sim/ edit) → write finding → emergent DG-selection → SWR loop → console. If
-  &lt;6/6 → sweep T per the fragility. Gaps #1/#4 remain per "close ALL fully".
+  the low-rate baseline (perm=rest, perfectly specific) + stable Wang low state. **6-SEED HOMEOSTATIC = STILL 1/6** (only seed
+  42; weight-sum normalization at T=800 doesn't equalize the working point — the seed-dependence is MORE than the
+  recurrent weight sum: neuron threshold heterogeneity + connectivity structure + E/I set-point all vary per seed).
+  no-encoding collapses ✓. **⇒ HONEST STATE (verdict on the METHOD, per THE LAW — capability DEMONSTRATED, robustness is
+  the frontier):** the Wang-NMDA + Kopsick mechanism gives GENUINE cue-gated bistable+specific completion (seed 42, ALL
+  anti-cheats: cue 0.264 = 4.7× the low state, permuted does NOTHING above baseline, no-encoding→0) — a real advance
+  over the retracted artifact AND the weak dАP. But it is SEED-FRAGILE and resists EVERY robustness lever tried
+  (fixed-config, fb_inhib, weight-sum homeostatic). Full arc: `2026-07-18-gap5-ca3-functional-completion-CLOSED-6seed-GO-learned-attractor.md`
+  (Wang-NMDA block). **⚠️ EXACT NEXT ACTION — the ranked next mechanisms for the robust WORKING POINT:** (1) the TRUE
+  Kopsick homeostatic = a per-neuron RATE-target scaling (reuse the project's `enable_homeostasis`), auto-calibrating
+  each seed to the same low-state working point (vs my one-shot weight-sum scale); (2) Amit-Brunel E/I working-point
+  (stable background + a self-adjusting inhibition set-point); (3) reduced neuron heterogeneity (fixed `heterogeneity_seed`
+  → seeds differ only in connectivity, which the homeostatic normalizes). Build (1) next → 6-seed bistable gate → robust
+  completion CLOSED → emergent DG-selection → SWR loop → console. Gaps #1/#4 remain per "close ALL fully".
   **What STANDS:** strong SPECIFIC learned attractor 6-seed + genuine (weak) bistable+specific completion demonstrated;
   the retraction's lesson (mandatory no-cue+permuted gates) is baked in. Gaps #1/#4 remain per "close ALL fully".
 - (superseded by the breakthrough above) direct synchronous assembly encoding did NOT grow the weights — DECAYED,
