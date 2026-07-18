@@ -289,10 +289,15 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   (apical-read cue 0.032) -> **the NETWORK completion is SOMA-FIRING-driven** (recurrent + a TRANSIENT apical, gated by
   the bistable DOWN-state), not a sustained apical plateau latch as in the single cell. The SOMA completion (cue 0.30,
   nocue 0, perm 0, anti-cheats pass) is genuinely bistable+specific -> **the gap #5 closure STANDS** (the dendritic
-  bistability provides the silent down-state that makes it specific+bistable; the held firing is recurrent-driven). SWR
-  fresh-pass fix: identify the completed cells by SOMA FIRING during phase 1 (not the apical), ripple THOSE. Then the
-  emergent DG-selected assembly (2). All read-out infra is on the validated bistable gate; **the completion — gap #5's
-  core — is CLOSED.** **(2) EMERGENT
+  bistability provides the silent down-state that makes it specific+bistable; the held firing is recurrent-driven).
+  **DEFINITIVE SWR root-cause (2026-07-18): ca1 is INHIBITED — g_i 10.16 > g_e 4.70 (from ec->ca1 + ca1-internal
+  interneurons); the Schaffer excitation from the completed assembly CANNOT overcome it (ca1_fire 0.000 even identifying
+  completed cells by SOMA firing + rippling them at 800pA).** The SWR downstream ca1-drive is a genuine integration block
+  for a FRESH FOCUSED PASS: reduce ca1 inhibition (wire/tune a weaker ca1 feedback, or the `ca1_fb_inhib`/`ca1_ff_inhib`
+  E%-max regime the SWR runner exposes) OR a FAR stronger excitatory Schaffer, so the completed assembly drives ca1 above
+  its inhibitory floor; THEN match(partial ca1, full ca1) high + cross low = Rung 1 GO -> Rung 2. Then the emergent
+  DG-selected assembly (2). All read-out infra is on the validated bistable gate; **the completion — gap #5's core — is
+  CLOSED** (soma read, anti-cheat-verified 6/6 specificity+bistability, 5/6 magnitude). **(2) EMERGENT
   DG-selected assembly** — the mossy/DG pattern-separation front end SELECTS the sparse CA3 set from experience (the
   completion mechanism is selection-agnostic — it binds whatever sparse set co-fires), so `structural_sep`/`selective_inhib`
   become EMERGENT, not hand-applied; the bistable dendrite may now resolve the banked "sparsity-without-synchrony can't

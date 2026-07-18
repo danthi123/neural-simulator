@@ -358,9 +358,13 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
                 if cue_idx is not None and len(cue_idx):
                     base[np.asarray(cue_idx, dtype=int)] += float(recall_drive)
                 dev_base = from_host(base.astype(np.float64))
-                for _ in range(recall_steps):                        # PHASE 1: establish completion
+                fire_acc = np.zeros(len(ca3_arr_host))
+                for _ in range(recall_steps):                        # PHASE 1: establish completion, accumulate CA3 firing
                     bridge.cp_external_input_current[:] = dev_base; bridge._run_one_simulation_step()
-                latched = ca3_arr_host[np.asarray(to_host(bridge.cp_v_apical))[ca3_arr_host] > float(plateau_v_hold)]
+                    fire_acc += np.asarray(to_host(bridge.cp_firing_states))[ca3_arr_host].astype(float)
+                # the COMPLETED assembly = cells that FIRED (soma) during phase 1 (the network completion is soma-driven,
+                # NOT a sustained apical latch -- apical>v_hold identifies only ~3%; diagnostic 2026-07-18).
+                latched = ca3_arr_host[(fire_acc / recall_steps) > 0.08]
                 rip = bias_full.copy()
                 if len(latched):
                     rip[latched] += float(ripple_pA)               # PHASE 2: strong burst of the LATCHED completed cells
