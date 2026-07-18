@@ -243,11 +243,18 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   cue=nocue=perm=rest=0.500** — the assembly RE-IGNITES from a hard-silence, so it's the recurrent STRENGTH (w_within
   grew to hundreds → supra-threshold), NOT the recall protocol. **⚙️ Bistable-regime sweep running** (`bbgvd0gcq`:
   hebb_max cap DOWN {30,60,120,250} → want held_nocue~0 [silent at rest] AND held_cue high [50% cue completes] AND
-  held_perm~0 [specific]). **⚠️ EXACT NEXT ACTION:** read it → find the cap where the attractor is BISTABLE (silent at
-  rest, cue-ignitable); if found → 6-seed + the mandatory no-cue/permuted gates → real completion → emergent DG-selection
-  → SWR loop → console. If no cap is bistable (too-weak-doesn't-complete vs too-strong-self-sustains with no window) →
-  the E/I-balance / thresholded-recall mechanism (a cue that must EXCEED a completion threshold). Also re-check the
-  2026-07-14 hand-installed CYCLE-1068 "completion" with the bistable gate (may share the artifact). Gaps #1/#4 remain.
+  held_perm~0 [specific]). **BISTABLE-REGIME SWEEP RESULT:** no window on the cap axis alone (cap≤120
+  silent everywhere; cap 250 self-ignites). BUT **weak recurrents (cap 120) + STRONG cue (rdrv 1000-2000) → the REST
+  STATE IS GENUINELY SILENT (nocue 0.000, rest 0.000)** — the bistable rest achieved. **Remaining issue = SPECIFICITY:**
+  the permuted cue drives held ~0.06 vs correct ~0.11 (a strong drive to random cells spreads via background
+  connectivity). The specificity mechanism = the dendritic dAP COINCIDENCE threshold (a held member fires only when
+  ≥k WITHIN-assembly members drive it → a permuted cue can't provide k). **⚙️ k_thresh specificity sweep running**
+  (`biz67z0eh`: cap 120 × rdrv {800,1500} × k_thresh {30,50,80} → want cue high, perm~0, nocue~0). **⚠️ EXACT NEXT
+  ACTION:** read it → if a (k_thresh, rdrv) gives cue >> perm with rest silent → 6-seed bistable GO → REAL completion →
+  emergent DG-selection → SWR loop. If k_thresh can't separate cue-vs-perm → DEEP-RESEARCH GATE (standing practice at a
+  confirmed boundary): bistable+specific pattern completion on spiking point neurons (Wang-2002 NMDA-slow bistability /
+  Amit-Brunel / dAP-coincidence / E-I balance). Also re-check CYCLE-1068 hand-installed completion with the bistable
+  gate (may share the artifact). Gaps #1/#4 remain per "close ALL fully".
 - (superseded by the breakthrough above) direct synchronous assembly encoding did NOT grow the weights — DECAYED,
   and sync=async BYTE-IDENTICAL (the gamma mechanism was inert because NOTHING was potentiating). The rate-window LTP
   isn't firing: a cell firing ~1/3 of steps has trace ≈0.33 → product ≈0.11 < the 0.25 coactivity threshold → no
