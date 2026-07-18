@@ -231,8 +231,13 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   even a DENSE 20%-DG code + high mossy density; the mossy simply doesn't fire CA3, while a direct 3000pA current does).
   Biological diagnosis: the mossy detonation needs DG BURSTING (single-EPSP p~0.12 vs 3x-burst p~0.82, Vyleta-Jonas)
   the substrate's DG doesn't produce, AND CA3 doesn't fire from mossy at all. The gap#5 completion BYPASSES this (drives
-  CA3 directly). **Next mechanism (deep sub-arc, deferred): a DG BURSTING neuron / more-excitable hippocampal
-  feedforward / true detonator synapses — a `sim/`-level neuron change, a genuine research build, not a config knob.**
+  CA3 directly). **Next mechanism (deep sub-arc, deferred; CORRECTED by reading the substrate): DG is ALREADY IB-bursting
+  (`IZH2007_HIPPO_PYRAMIDAL`), so NOT a missing-bursting fix. Real residuals: DG fires only 2.5% even at 3000pA
+  (threshold+FFI near-silence) AND the mossy CONDUCTANCE doesn't fire CA3 even at detonator weight 500 (a direct 3000pA
+  current fires the same CA3). ⇒ resume = a deeper hippocampal-feedforward-excitability investigation (measure the mossy
+  PSC vs an equivalent external current + conductance/reversal/synchrony; make DG fire a dense synchronous gamma volley
+  so the mossy summates) — `sim/`-level or deep-config. (Lesson: read the region's neuron type before proposing a
+  neuron-type fix.)**
   The gap#4<->gap#5 unification (below) is UNAFFECTED (pre-assigned assembly + direct drive). Frontier now: this
   DG-bursting sub-arc, gap#5 SWR, or gap#1 open generation.
 - **✅ gap#4<->gap#5 UNIFICATION — MECHANISM 6/6 GO (2026-07-18, the focused build DONE).** The `encode_btsp` path was
