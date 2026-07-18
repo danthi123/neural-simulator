@@ -91,3 +91,14 @@ def test_onbridge_btsp_behavioral_timescale_via_real_bistable_plateau():
     assert abs(r["off_dw"]) < 1e-9, "enable_btsp=False must be byte-identical"
     assert r["held_v_apical_end"] > -35.0, "the held plateau must stay above v_hold (a real seconds-long latch)"
     assert r["transient_v_apical_end"] < -50.0, "the transient plateau must decay back toward rest"
+
+
+def test_onbridge_btsp_stores_recurrent_assembly_specifically():
+    """gap#4<->gap#5 unification (STORING half): BTSP potentiates a recurrent assembly's WITHIN synapses one-shot,
+    SPECIFICALLY (within >> between) and plateau-GATED (>> no-plateau). One seed of the 6-seed GO de-risk."""
+    from research.runners._gap4_btsp_stores_recurrent_assembly_derisk import run
+    r = run(42)
+    assert r["within_dw"] >= 0.3, f"within-assembly recurrent weights must be stored one-shot, got {r['within_dw']:.3f}"
+    assert r["within_dw"] > 3.0 * max(r["between_dw"], 1e-6), "storing must be SPECIFIC (within >> between)"
+    assert r["within_dw"] > 5.0 * max(r["noplateau_within_dw"], 1e-6), "storing must be plateau-GATED (the moat)"
+    assert abs(r["off_within_dw"]) < 1e-9, "enable_btsp=False must be byte-identical"

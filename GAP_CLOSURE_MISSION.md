@@ -183,6 +183,13 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   credit; the gap#5 bistable plateau is its on-brain enabler). **NEXT rungs (fresh arcs):** (b) a one-shot TASK
   (association/place-field) the substrate LEARNS via BTSP; (c) gap#5 UNIFICATION (BTSP stores the CA3 assembly the
   bistable CA3 completes — the two gaps share the keystone). Deep supervised backprop credit stays a banked boundary.
+- **✅ GAP #4<->GAP #5 UNIFICATION — STORING half GO, 6-seed (2026-07-18).** On-bridge BTSP STORES a recurrent assembly
+  one-shot (`_gap4_btsp_stores_recurrent_assembly_derisk.py`, CI `test_onbridge_btsp`): the WITHIN-assembly recurrent
+  weights grow (within_dw ~1.77) far more than BETWEEN (0.026, **68×** — only co-firing+plateaued pairs stored);
+  no-plateau (gate lesion) → 0.0 (plateau-gated moat); enable_btsp=False → 0.0 (byte-identical). All 6 seeds. Reuses the
+  two committed edits; NO new `sim/` edit. ⇒ the ENCODING half of "BTSP stores the CA3 assembly the bistable CA3
+  completes" works on the spiking substrate. **REMAINING piece of the unification:** wire STORED→COMPLETES on one bridge
+  (a BTSP-stored assembly, then a partial cue → the bistable CA3 completes it) — reuse the gap#5 completion config.
 - **✅ GAP #4 ON-BRIDGE BTSP RULE VALIDATED (2026-07-18) — the working credit rule runs ON THE SPIKING SUBSTRATE.** Added `fused_btsp_update` (`sim/kernels.py`) + a guarded default-off `enable_btsp` block in
   `bridge._run_one_simulation_step` (seconds-long per-neuron pre-eligibility `cp_btsp_pre_elig` on `coo.row` × the
   dendritic plateau `cp_v_apical` above v_hold on `coo.col`, gated by plastic-mask + plasticity_rate_gain like BDSP) +
