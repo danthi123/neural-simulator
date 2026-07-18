@@ -228,10 +228,23 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   Candidates to investigate in `sim/bridge.py` (per the finding): effective-synaptic-strength scaling for within-region
   recurrent RegionPathways · conductance-decay tau vs recurrent input rate · CSR matvec orientation for SELF-pathways
   (from_region==to_region) · whether recurrent synapses are in the per-step conductance update at all. **⚠️ EXACT NEXT
-  ACTION:** READ the sim/ recurrent-current delivery code (feedback: read the substrate before theorizing), reproduce
-  the weight-invariance with `_riii_ca3_completion_specificity_derisk.py`, find the ~1000× discrepancy, fix (guarded
-  sim/ edit if a genuine bug), re-run held-out completion + SWR replay, 6-seed + anti-cheats. If it's a real bug →
-  quick close of #5; if it's a legit biophysics property → the dendritic-plateau mechanism is the method (banked path).
+  ACTION (SUPERSEDED — see the RE-OPENING below):** READ the sim/ recurrent-current delivery code, reproduce the
+  weight-invariance, find the discrepancy, fix. [This assumed a transmission bug; a direct probe refuted it.]
+- **🔎 gap#5 RE-OPENING (2026-07-17) — the "silent recurrents transmission bug" is REFUTED by a direct instrument.**
+  Read the substrate first: the ca3→ca3 pathway is plain-AMPA (no nmda_slow suppression; the gate is plasticity-only,
+  not current), matvec orientation correct, `propagation_strength=0.05` small but WEIGHT-PROPORTIONAL. A direct g_e/Vm
+  probe (override the recurrent weights in `cp_connections`, drive 24 presynaptics ~125 spikes, measure targets):
+  **weight 120 → target g_e ~10, Vm Δ 3.66 mV; weight 5 → g_e 0.15, Vm Δ 1.43 mV** — the recurrents TRANSMIT and SCALE
+  with weight. ⇒ NOT silent, NOT a transmission bug (the 2026-07-08 "~1000× too weak / weight-invariant" was a
+  WEAK-DRIVE artifact — 8 presynaptics/18 spikes near the floor; my own FIRST probe also mis-read it because
+  `_build(train=False)` HARDCODES weight 1.5). **The real question is attractor STRENGTH** (3.66 mV won't fire non-cue
+  members from a partial cue → needs stronger recurrent weight / density / LTP), NOT a sim/ fix.
+  `2026-07-17-gap5-ca3-recurrents-NOT-silent-transmission-refuted-attractor-strength-is-the-real-question.md`.
+- **⚠️ EXACT NEXT ACTION (gap #5, in flight):** read the weight×density sweep `bombi1iba` (w120/300/600 × d0.30/0.50/0.60;
+  GO gate = trained held-out completion>0.30 & recurrence-gain>0.15). If a stronger attractor GOes → gap #5 completion
+  closes via attractor-strength (no sim/ edit); if even w600/d0.60 stays at chance → the point-neuron attractor is
+  genuinely too weak → the dendritic-plateau completion (already 6-seed GO as a read-out) is the method, on an HONEST
+  basis (not a mis-diagnosed bug). Then wire completion → the SWR replay loop → a queryable console; 6-seed + anti-cheats.
 - **✅ Gap #4 a-1 RAG check DONE (2026-07-17) — the research-gate is essentially the `learning-rule-frontier-map`
   (2026-07-17), re-read + current:** SUPERVISED deep credit on spikes (e-prop / NP / D1-BDSP) is PARKED — all blocked
   by ONE shared "spiking-classifier-readout-training wall"; the rate-net positive control (done) confirmed the block
