@@ -267,13 +267,16 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   NMDA mode BUILT + runs** (mask-free ca3→ca3 extraction fix for no-coincidence-mask). First sweep (16-cell assembly):
   NO clean window — silent at low cap, self-sustains at cap 500 (+ an anomalous cue=0.000/rest=0.156, a small-assembly
   artifact). Per the research gate's KEY lever (my 16-cell assembly is far below Wang/Kopsick's 150-300 robust range —
-  a bistable high state needs enough neurons for stable statistics). **⚙️ Kopsick larger-assembly sweep running**
-  (`bykapov6s`: n_ca3=2000, frac {0.06,0.10}=120/200 cells, Wang NMDA, recall 300). **⚠️ EXACT NEXT ACTION:** read it →
-  if a config gives cue≥0.20 + nocue/perm/rest~0 → 6-seed BISTABLE gate → REAL robust completion → emergent DG-selection
-  → SWR loop → console. If still no window → the full Kopsick working point (moderate weight + high SNR via homeostatic
-  divisive downscaling + `w_max∝1/size` + a stable asynchronous BACKGROUND not a dead net + the low-background settle,
-  not hard-silence-to-zero). HONEST: gap #5 completion is a genuine deep multi-parameter (Wang/Kopsick working-point)
-  problem, mechanism-identified + built, working-point tuning in progress. Gaps #1/#4 remain.
+  a bistable high state needs enough neurons for stable statistics). **🎉 KOPSICK LARGER-ASSEMBLY WORKS:** at
+  frac=0.1 (200 cells, n_ca3=2000) + Wang NMDA (cap 250): **cue=0.266 (STRONG, ≥0.20), nocue=0.000, rest=0.000
+  (genuinely SILENT at rest = bistable!)** — the larger assembly + somatic NMDA fixed BOTH the magnitude AND the
+  bistability the dАP version couldn't. The mechanism WORKS. Only SPECIFICITY remains (perm=0.168 vs cue 0.266 = 1.6×,
+  need ≥3× — a permuted cue partially drives held via background). **⚙️ competition-lam specificity sweep running**
+  (`bm1dvz4i1`: lam {0.5,0.7,0.9} — depresses non-member→member paths → sharper). **⚠️ EXACT NEXT ACTION:** read it →
+  if a lam gives cue≥0.20 + perm≤cue/3 + rest~0 → 6-SEED BISTABLE gate (no-cue/permuted/no-encoding) → REAL robust
+  cue-gated completion CLOSED → emergent DG-selection → SWR loop → console. If lam can't sharpen → sparser code (lower
+  frac + the assembly-selective fb_inhib) or the Kopsick homeostatic-downscaling SNR working point. ⇒ gap #5 completion
+  is CLOSE on the Wang-NMDA mechanism (magnitude + bistability solved; specificity the last piece). Gaps #1/#4 remain.
   **What STANDS:** strong SPECIFIC learned attractor 6-seed + genuine (weak) bistable+specific completion demonstrated;
   the retraction's lesson (mandatory no-cue+permuted gates) is baked in. Gaps #1/#4 remain per "close ALL fully".
 - (superseded by the breakthrough above) direct synchronous assembly encoding did NOT grow the weights — DECAYED,
