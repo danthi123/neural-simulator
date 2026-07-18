@@ -203,6 +203,19 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   `_d1_onbridge_learn_to_accuracy` (add `--feedback learned`) + enough epochs for Y to converge, on-bridge, 6-seed —
   the transport-free biological credit-DIRECTION fix. This is a well-scoped, already-de-risked-mechanism build, NOT a
   new research gate.**
+- **▶ IN FLIGHT (2026-07-18, the decisive gap#4 A/B — resume here): the KP on-bridge port is BUILT + committed
+  (d4284c66; `--feedback learned` in `_d1_onbridge_learn_to_accuracy`, transport-free source-guarded, default fixed
+  byte-identical, smoke clean).** Two D1-scale runs (h128/ep300/train300, emerge1, microcircuit+graded) launched
+  concurrently, single seed 42, differing ONLY in feedback: **(1) fixed-FA** (PID 493315, log
+  `scratchpad/d1_scale_graded.log`) vs **(2) KP-learned** (PID 500564, log `scratchpad/d1_scale_kp.log`) — the
+  single-variable credit-DIRECTION A/B. **Read both verdicts + held-out on completion.** Expected reads: (a) if KP
+  clears the 0.75 bar (or lifts held-out meaningfully over fixed) → the credit-direction fix works on-bridge → 6-seed
+  + anti-cheats (permuted/lesion/wrong-sign) → close the gap#4 accuracy milestone; (b) if KP shows only a weak lift
+  trend (Y likely under-converged at ep=300, per D2's cos~0.30 at ep=800) → MORE epochs (ep 600–1000) for Y to align is
+  the lever; (c) if KP == fixed at chance → the credit-direction wall holds even with learned feedback at this scale →
+  next is more Y-convergence training or a fresh research gate. NOTE the honest scope: even D1's own on-bridge fixed-FA
+  never cleared 0.75 (0.664); the numpy microcircuit reached 0.964 — so clearing 0.75 ON-BRIDGE is the genuinely
+  open question this A/B probes.
 - **⚠️ STRATEGY CORRECTION (owner steer 2026-07-18): FULLY close each gap in EASIEST→HARDEST order; stop jumping /
   leaving loose ends.** I drifted: picked gap #5 on a wrong "quickest" estimate, then sunk-cost-ground its deep
   robustness frontier while easier un-closed work sat idle. Corrected order of UN-CLOSED work: **(A) gap #3 residuals
