@@ -251,6 +251,14 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   reliably concentrates+seeds) + reproducible per-input DG codes — NOT a knob. `run(assemblies_ext=...)` (default None,
   byte-preserved) is ready for the store+complete once seeding is reliable. Self-correction (SURPASS discipline): I
   nearly closed this as a hard boundary; taking the next concrete step (the amplification test) overturned it.**
+  **↳ FULL CHAIN DEMONSTRATED END-TO-END (32 probes + 2 full-chain tests): input → DG → mossy-SELECT → bistable-AMPLIFY →
+  `encode_btsp` STORE → bistable RECALL runs, at completion scale (tuned a denser DG code 0.30 + wider mossy 0.20 → a
+  252-cell emergent assembly, bistability-capped). The emergent assembly STORES + anti-cheats clean (nocue/perm/no-encode
+  0), but completes WEAKLY (cue 0.038 vs the pre-assigned 240-cell's 0.18 at the SAME size). ⇒ TWO deep residuals: (1)
+  reliable multi-input seeding (~2/5), (2) emergent-assembly COMPLETABILITY — the mossy-selected cells are co-active but
+  not a TIGHTLY recurrently-connected cluster, so the BTSP recurrent is diffuse → weak attractor. Both point to the SAME
+  next mechanism: a LEARNED/structured DG→CA3 map (Hebbian mossy) so each DG code maps to a fixed TIGHT completable
+  cluster reliably. That is the emergent-DG's genuine open frontier — a focused deep-research pass.**
   The gap#4<->gap#5 unification (below) is UNAFFECTED (pre-assigned assembly + direct drive). Frontier now: this
   DG-bursting sub-arc, gap#5 SWR, or gap#1 open generation.
 - **✅ gap#4<->gap#5 UNIFICATION — MECHANISM 6/6 GO (2026-07-18, the focused build DONE).** The `encode_btsp` path was
