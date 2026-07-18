@@ -86,7 +86,7 @@ def _idx(b, name):
     return np.asarray(list(b.region_manager.indices(name)), int)
 
 
-def run_seed(seed, K=4, KF=6, P=3, shared=False, nmda=True, permute=False, drive_steps=25, teach_steps=25,
+def run_seed(seed, K=4, KF=6, P=3, shared=False, nmda=True, permute=False, drive_steps=25, teach_steps=40,
              retr_steps=40, gain=400.0):
     from sim.backend import to_host, from_host
     rng = np.random.default_rng(seed * 131 + 5)
@@ -130,11 +130,14 @@ def run_seed(seed, K=4, KF=6, P=3, shared=False, nmda=True, permute=False, drive
         s = slots_for_role[r]; f = int(fillers[r])
         cur = np.zeros(n); cur[slot_idx[s]] = gain; cur[fill_idx[f]] = gain
         drive(cur, teach_steps, learn_slot=s)      # open ONLY slot s's gate
-    # RETRIEVE each role: drive the ROLE's slot (the cue), read the filler-pool rates
+    # RETRIEVE each role: RESET the held slots (an inhibitory-reset CLEAR of the coexisting slots -- the D3 CLEAR
+    # mechanism; here a host reset, to be neuralized as an FS burst), then drive ONLY the cued slot so its filler
+    # fires cleanly (no held-slot competition). reset-held + read-calibration (maxw=250) = 1.00 GO; each alone fails.
     hits = 0
     for r in range(P):
+        _reset()                                                            # CLEAR the coexisting held slots
         s = slots_for_role[(r + 1) % P] if permute else slots_for_role[r]   # permute = wrong slot cue
-        cur = np.zeros(n); cur[slot_idx[s]] = gain                          # DRIVE the cued slot ABOVE the held rate
+        cur = np.zeros(n); cur[slot_idx[s]] = gain                          # DRIVE only the cued slot
         dev = from_host(cur.astype(np.float64)); rate = np.zeros(KF)
         for _ in range(retr_steps):
             b.cp_external_input_current[:] = dev; b._run_one_simulation_step()

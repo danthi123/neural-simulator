@@ -124,3 +124,25 @@ Runner defaults now bake the read-calibration (maxw=250, lr=0.05). 3-seed P=3:
 ⇒ **the gate's competitive-slot thesis is VALIDATED on the real substrate with clean anti-cheats.** The naive always-on filler-WTA was tested and REVERTED (it HURT: 0.56→0.11, suppressing the target filler, esp. at teach). The only shortfall is ABSOLUTE recovery (0.56 < 0.80 GO bar).
 
 **⇒ RESUME (the robustness piece, fresh focus): a TUNED filler-WTA — readout-ONLY (disabled during teach) + weaker inhibition — and/or a fixed strong slot→filler readout map (vs from-0 Hebbian) to lift 0.56 → ≥0.80.** The mechanism + all controls are proven; this is bounded readout-competition tuning. **STATUS: gap #2 spiking closure — steps 1+2a+write+transmission GO; the competitive-slot READ is directionally-GO with clean anti-cheats (5× over shared), robustness-tuning is the last bounded piece. NOT a wall; the core science is done.**
+
+---
+
+## 🎉 GAP #2 SPIKING CLOSURE — 6-SEED GO (2026-07-17): the competitive-slot binder recovers a fact's bundle on spikes, beating the shared-superposition cap
+
+**Runner `_keystone2_spiking_slot_binder_derisk.py` (teach=40, maxw=250, reset-held-at-readout), P=3 (SVO fact), seeds 42/43/44/100/101/102:**
+| metric | value | reading |
+|---|---|---|
+| **SLOT-SEP recovery** | **1.00 (6/6 seeds)** | a fact's 3 role-filler binds recover PERFECTLY on spikes |
+| shared (~2 cap) | 0.33 | the shared-superposition store interferes (the write-rule ~2 boundary) |
+| permuted-role | 0.00 | wrong-slot cue → 0 ⇒ the read is genuinely ROLE-ADDRESSED, not coincidence |
+| runner GO gate (slot-sep ≥0.80 & > shared) | **GO** | ✓ |
+| P=4 | slot-sep 0.79 | graceful degradation (the slots separate; not a superposition SNR cliff) |
+
+**⇒ the gate's competitive-slot thesis is CLOSED on the real spiking substrate:** each role-filler bind lands in its own competitively-selected slot (step 1) with its filler in a plastic slot→filler map; at readout the held slots are cleared and the cued slot drives its filler cleanly. Capacity is slot-count-limited, not the SNR-limited ~2 of the shared store. This REPLACES the hand-designed FHRR exact-inverse algebra with a LEARNED, self-organizing, fully-spiking binder over the brain's codes.
+
+**Honest caveats (per the silent-failure discipline — 3 self-corrections this arc):**
+1. **The NMDA hold is NOT load-bearing** (no-recur=0.83 ≥ slot-sep). The working mechanism is a competitive-slot **LTM store** (plastic slot→filler weights + reset-read), NOT the WM-hold coexistence (step 2a). Step 2a validated the hold works, but the GO does not use it. The RIGHT anti-cheats for this LTM mechanism (shared-caps, permuted→chance) both PASS.
+2. **The readout reset-held is a HOST op** (clearing v/u/NMDA on the coexisting slots) — a stand-in for a NEURAL inhibitory-reset BURST (the validated D3 CLEAR / an FS burst). Neuralizing it is a known follow-on conversion (D3 CLEAR is 6-seed validated).
+3. Scale: validated at 6 fillers / K=4 slots / P=3-4; broader vocab is a data lever.
+
+**⇒ gap #2 spiking closure = GO (6-seed), with the reset-neuralization (host→FS-burst) as the one tracked follow-on.** The core capability — a self-organizing spiking binder that beats the superposition cap — is achieved on-substrate.
