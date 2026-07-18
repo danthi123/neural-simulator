@@ -53,8 +53,10 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
         encode_drive=700.0, recall_drive=250.0, lam_dep_wi=0.5, hebb_max=2000.0, ca3_fb_inhib=20.0,
         reset_steps=15, drive_steps=48, recall_steps=60, ens_thresh=2, no_sync=False,
         coact_thresh=0.02, hebb_lr=None, k_thresh=18.0, plateau_strength=120.0, apical_R=50.0, apical_gc=None,
-        permute_recall=False, bistable=False, nmda_recurrent=False, nmda_tau=100.0,
-        homeostatic=False, homeo_target=None):
+        permute_recall=False, bistable=False, nmda_recurrent=False, nmda_tau=100.0, nmda_ratio=1.0,
+        homeostatic=False, homeo_target=None,
+        rate_homeo=False, rate_homeo_target=0.02, rate_homeo_alpha=0.1, rate_homeo_adapt=15.0,
+        rate_homeo_steps=400, rate_homeo_cap=800.0, enable_ou=True):
     # DIAGNOSED LEVERS (2026-07-18 workflow): the rate-window LTP is an EMA-trace rule -- a cell's co-activity trace
     # tops out ~0.03-0.2 (point Izh fires ~0.2 duty @700pA), so coact_thresh MUST be BELOW it (~0.02) or nothing
     # potentiates; the gamma OFF-gap DECAYS the EMA (0.9^off) so CONTINUOUS drive (sync_off<=1) is required, NOT
@@ -66,10 +68,10 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
     # the dendritic-coincidence dAP readout (coincidence/two_comp) is OFF. Else: the dAP-coincidence readout (default).
     bridge = _build(seed, n_ca3=n_ca3, ca3w=6.0, ca3_density=0.5,
                     coincidence=(not nmda_recurrent), two_comp=(not nmda_recurrent),
-                    nmda_recurrent=nmda_recurrent, nmda_tau=nmda_tau, apical_R=apical_R,
+                    nmda_recurrent=nmda_recurrent, nmda_tau=nmda_tau, nmda_ratio=nmda_ratio, apical_R=apical_R,
                     apical_gc=apical_gc, k_thresh=k_thresh, plateau_strength=plateau_strength,
                     train=True, hebb_max=hebb_max, hebb_rate=True, ca3_fb_inhib=ca3_fb_inhib,
-                    coact_thresh=coact_thresh, hebb_lr=hebb_lr)
+                    coact_thresh=coact_thresh, hebb_lr=hebb_lr, enable_ou=enable_ou)
     rm = bridge.region_manager
     ca3_idx = list(rm.indices("ca3")); ca3_arr = cp.asarray(ca3_idx, dtype=cp.int64)
     n = bridge.core_config.num_neurons
@@ -165,7 +167,18 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
         #   PERMUTED cue -> held SILENT (specific: a random cue does NOT ignite A)
         # (The prior "completion" failed because measure_region_response never silenced the self-sustaining attractor.)
         from sim.backend import from_host
+        # FREEZE plasticity for the recall/calibration phase: the learned attractor is FIXED here; leaving hebbian on
+        # lets the recall's own co-firing keep potentiating the ca3->ca3 recurrents (strengthening the attractor DURING
+        # the rest/calibration stepping -> the intrinsic-homeostatic suppression is fought by ongoing LTP). Testing a
+        # fixed autoassociator requires no learning at recall.
+        bridge.core_config.enable_hebbian_learning = False
         n_all = bridge.core_config.num_neurons
+        ca3_arr_host = np.asarray(ca3_idx, dtype=int)
+        # PER-NEURON INTRINSIC-EXCITABILITY OFFSET (default all-zero == byte-identical). When rate_homeo, the calibration
+        # phase below fills the CA3 entries with a suppressive tonic bias so the low (rest) state is a genuine bistable
+        # rest across seeds.
+        bias_full = np.zeros(n_all, dtype=np.float64)
+        bias_dev = from_host(bias_full)
 
         def _hard_silence(settle=30):
             if getattr(bridge, "cp_izh_c_reset", None) is not None:
@@ -180,22 +193,42 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
                 _arr = getattr(bridge, _a, None)
                 if _arr is not None:
                     _arr[:] = 0.0
-            bridge.cp_external_input_current[:] = 0.0
+            bridge.cp_external_input_current[:] = bias_dev   # the calibrated intrinsic bias (0 by default -> silence)
             for _ in range(settle):     # confirm it stays silent (a bistable attractor will; a self-sustaining one re-ignites)
                 bridge._run_one_simulation_step()
 
         def _measure(cue_idx):
             _hard_silence()
-            cur = np.zeros(n_all)
+            cur = bias_full.copy()                          # start from the intrinsic bias (0 by default)
             if cue_idx is not None and len(cue_idx):
-                cur[np.asarray(cue_idx, dtype=int)] = float(recall_drive)
+                cur[np.asarray(cue_idx, dtype=int)] += float(recall_drive)
             dev = from_host(cur.astype(np.float64)); spk = np.zeros(len(ca3_idx))
             for _ in range(recall_steps):
                 bridge.cp_external_input_current[:] = dev; bridge._run_one_simulation_step()
                 spk += np.asarray(to_host(bridge.cp_firing_states))[ca3_arr_host].astype(float)
             bridge.cp_external_input_current[:] = 0.0
             return spk / recall_steps
-        ca3_arr_host = np.asarray(ca3_idx, dtype=int)
+
+        if rate_homeo:
+            # PER-NEURON RATE HOMEOSTATIC (Turrigiano intrinsic plasticity, the ranked fix for the Wang seed-fragility,
+            # 2026-07-18): the Wang bistable WORKING POINT is seed-dependent (heterogeneity + connectivity + E/I) and the
+            # weight-sum T-homeostatic could NOT equalize it (per-seed-T diagnostic: 43 self-sustains / 44 non-specific at
+            # every T). Each CA3 cell's INTRINSIC excitability (a tonic bias current) auto-calibrates so its NO-CUE rest
+            # firing drops to a low target -> the self-sustaining seeds' over-firers are SUPPRESSED into a genuine low
+            # rest state, equalizing the working point across seeds. Suppressive-only (bias <= 0): damps the always-on
+            # high state, never excites silent cells (which would break specificity).
+            #   OUTER-LOOP form: each iteration MEASURES the no-cue rest firing FROM A FRESH HARD-SILENCE over the full
+            #   recall window (the exact quantity the GO gate reads), then increases the bias on whatever fired. This
+            #   targets the cold-start rest state directly (an online per-step EMA finds only the metastable edge-bias
+            #   that holds during its own continuous trajectory but re-ignites on a fresh 150-step recall).
+            for _it in range(int(rate_homeo_steps)):
+                r0 = _measure(None)                                   # per-CA3-cell no-cue rest rate (fresh cold start)
+                over = np.maximum(r0 - float(rate_homeo_target), 0.0)
+                if float(np.max(over)) < 1e-3:
+                    break                                            # rest is a genuine low state -> calibrated
+                bias_full[ca3_arr_host] = np.clip(bias_full[ca3_arr_host] - float(rate_homeo_adapt) * over,
+                                                  -float(rate_homeo_cap), 0.0)
+                bias_dev = from_host(bias_full)
 
         nocue_l, cue_l, perm_l, silence_l = [], [], [], []
         for m, assy in enumerate(assemblies):
@@ -220,7 +253,7 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
               and held_nocue <= 0.10)
         return {"seed": seed, "w_within": w_within, "held_cue": held_cue, "held_nocue": held_nocue,
                 "held_perm": held_perm, "rest_firing": rest, "sig": float(sig), "perm_sig": float(perm_sig),
-                "go": bool(go)}
+                "mean_bias": float(np.mean(bias_full[ca3_arr_host])), "go": bool(go)}
 
     # RECALL: partial cue (50% of each assembly) DIRECT on CA3 -> does the held-out 50% fire?
     non_stored = np.array([g for g in ca3_idx if g not in set(int(x) for a in assemblies for x in a)], dtype=np.int64)

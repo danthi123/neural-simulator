@@ -31,7 +31,7 @@ def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0,
            hebb_rate=False, coact_decay=None, coact_thresh=None, ca3_fb_inhib=None, ca3_fb_n=None, mossy_weight=None,
            mossy_density=None, dg_ffi_weight=None,
            ca3_to_ca1_density=0.30, ca1_fb_inhib=None, ca1_fb_n=None, ca1_ff_inhib=None,
-           nmda_recurrent=False, nmda_tau=100.0, nmda_ratio=1.0):
+           nmda_recurrent=False, nmda_tau=100.0, nmda_ratio=1.0, enable_ou=True):
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.bridge import SimulationBridge
     from research.runners.text_minimal_isolation import build_biological_brain_regions
@@ -136,6 +136,7 @@ def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0,
     cfg.enable_brain_region_framework = True
     cfg.brain_regions = list(regions); cfg.region_pathways = list(pathways)
     cfg.dt_ms = 1.0; cfg.seed = seed; cfg.enable_nmda = True
+    cfg.enable_ou_process = bool(enable_ou)   # OU off isolates the DETERMINISTIC bistability (noise-robustness = a separate dimension)
     if nmda_recurrent:
         cfg.enable_nmda_recurrent = True; cfg.nmda_recurrent_tau_decay_ms = float(nmda_tau)
         cfg.nmda_recurrent_ratio = float(nmda_ratio)
