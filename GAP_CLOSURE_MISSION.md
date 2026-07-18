@@ -160,14 +160,23 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   its own bounded slot so binds don't interfere; the slot competition must SELF-ORGANIZE, NOT a hand-tuned FS-WTA
   [EDGE-5 banked that]). The rate rung is DONE (my #2 key-addressed store = 1.000 @ K=12 = slot-separation); the open
   edge is specifically its SPIKING realization past the ~2 write-rule cap. A deep frontier (EDGE-5's own term).
-- **Running jobs:** anchor-heartbeat `bj0sku4ga` (~25min self-check). keystone-slot-binder research-gate (launching).
-- **⚠️ EXACT NEXT ACTION:** research-gate DONE → BUILD the self-organizing spiking slot binder de-risk (competitive
-  slot assignment, non-hand-tuned; reuse EMERGE competitive-pooler / D2 dendritic / novel-referent Hebbian
-  fast-weight `slot(c)=argmax(Wc) if>θ else next-free`; SWR/BTSP one-shot write). GO bar: a fact's P≥3 role-filler
-  bundle recovers on SPIKES ≥0.80 where the write-rule store capped at ~2; slot-competition self-organizes (lesion
-  the competition → collapse); 6-seed. THEN compositional-reasoning check + wire-in = gap #2 CLOSED. THE LAW: the
-  write-rule METHOD is refuted/deferred, the CAPABILITY (robust spiking multi-bind) stays OPEN until the slot binder
-  works. (gap #3 multi-referent WTA research-gate in parallel.)
+- **Slot-binder research-gate DONE + verified + written** (`2026-07-17-keystone-slot-binder-research-gate.md`).
+  Diagnosis: the ~2 cap = wrong storage primitive (SNR-limited shared sum); a COMPETITIVE SLOT store converts capacity
+  to slot-count-limited (combinatorial). **#1 de-risk = compose already-GO pieces (residual is COMPOSITION, no new
+  `sim/`): the EMERGE spiking competitive pooler (EMERGE-41 rank-order + `sim/kernels.fused_htm_permanence_update`
+  hfac homeostatic boosting = the SELF-CALIBRATING, non-hand-tuned threshold) as a slot allocator + the
+  `HebbianBinder` retrieve-vs-allocate rule + the D3 persistent-slot attractor, on the EDGE-5 role-filler task.** All 6
+  pieces + the kernels VERIFIED present. The ONE host residual = the retrieve-vs-allocate θ (self-calibrates via the
+  Bogacz-Brown familiarity gate; named, non-blocking).
+- **Running jobs:** anchor-heartbeat `bj0sku4ga`. **gap#3 multi-referent research-gate `wa2ucpp1p` (running, parallel lane).**
+- **⚠️ EXACT NEXT ACTION:** the ~2 cap is a SPIKING artifact (rate model is already clean — my #2 K=12=1.000), so go
+  straight to the SPIKING build: compose the EMERGE-41 spiking competitive pooler (slot allocator) + `fused_htm`
+  homeostatic kernels + D3 attractor on the EDGE-5 P=2→4 role-filler task on a real bridge — each bind → its own
+  competitively-selected sparse slot. GO bar: P≥3 recovers ≥0.80 where the write-rule capped ~2; 3 anti-cheats
+  (permuted-role→chance; **lesion-the-competition→collapse to ~2** [decisive: proves slot-separation]; **homeostasis-OFF
+  →collapse/hog** [the emergence-bar control: proves the threshold self-calibrates, not hand-tuned]); 6-seed, `cfg.seed`
+  set. GO → wire into the persistent multi-fact store + BTSP one-shot; BOUNDARY (likely the inter-region conductance
+  ~1000× weak) → gate's #2 theta-gamma (EMERGE-85, sidesteps conductance) — never a stop. THEN process the gap#3 gate.
 - **Gap order (planned):** #4 keystone research-gate FIRST (unlocks #2/#5/#1) · #3 multi-referent parallel tractable
   lane · then #2/#5 on the keystone · then #1.
 - **⚠️ EXACT NEXT ACTION:** when `scale787` fires TERMINAL → run `_scale787_analyze` vs the FROZEN gate → write the
