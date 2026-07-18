@@ -166,15 +166,24 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   `sync_on/off`) but OVER-SUPPRESS at 150 CA3 (knife-edge). ⇒ **functional completion is SCALE-BOUNDED**: needs
   ~1000-2000 CA3 for a robust <1% assembly + redundancy. My session's silent-recurrents/Hebbian-collapse/mossy-sync at
   150 = all re-derivation, none new. **LESSON: a-1 to the NEWEST findings FIRST (drift-#12, 4× this session).**
-- **⚠️ EXACT NEXT ACTION (gap #5, the 2026-07-14 PINNED step):** run the Kopsick coordinated recipe at PROPER CA3 SCALE
-  — `_riii_ca3_competitive_completion_payoff_derisk.py` at **n_ca3 ~1000-2000** (GPU `SIM_BACKEND=cupy`, monitored),
-  competitive formation (lam=0.5) + sparse DG (`dg_ffi_weight`) + sparse-strong mossy (`mossy_density`/weight) +
-  feedback inhibition (`ca3_fb_inhib`) + gamma-sync, JOINTLY tuned → gate on FUNCTIONAL held-out completion (held-out
-  reactivates from a partial cue > non-stored, robust 6-seed), NOT the weight-ratio proxy. If robust at scale → gap #5
-  completion CLOSES → wire → SWR replay loop → console. If scale doesn't fix it → next ranked mechanisms (engram
-  intrinsic-excitability boost / theta-gamma sequential recall E%-max, both named in the 2026-07-14 finding). NOTE:
-  the SWR generative-replay half (`_riii_swr_generative_replay_derisk.py` + `2026-07-09-riii-swr-...-rung1`) is the
-  other gap-#5 piece, gated on this same emergent attractor.
+- **✅ SCALE + CAP tested (2026-07-18, GPU n_ca3=1000):** scale ALONE doesn't fix it (functional held-out completion
+  ~0 at n_ca3=1000, all configs). The DECISIVE cap-vs-synchrony test — raise `hebb_max` 30→2000 → **BYTE-IDENTICAL**
+  (c_drive 52.60/52.60, h_comp 0.009/0.009): the cap is NOT the lever, the within-ensemble weights are stuck at ~7.5
+  (co-activity-limited), ~200× below the completion weight scale (hand-installed that completes = raw ~1600). ⇒ **the
+  crux is DEFINITIVELY SYNCHRONY** — the members fire ASYNC → low co-activity traces → the rate-window LTP can't grow
+  the within-ensemble weights, no matter the cap or the scale. `run_payoff` drives the INPUT (lang), which smears; the
+  un-tried mechanism (2026-07-14 named it, never built) = **the Kopsick recipe done right: drive the assembly members
+  DIRECTLY + SYNCHRONOUSLY during encoding** so they co-fire strongly → high co-activity → within-ensemble LTP reaches
+  the completion scale → dAP completion.
+- **⚠️ EXACT NEXT ACTION (gap #5, the synchrony-isolation build — IN PROGRESS):** a focused de-risk
+  (`_riii_ca3_synchronous_assembly_derisk.py`, being written) that ISOLATES the synchrony hypothesis: pre-assign a
+  sparse CA3 assembly (~1% = ~10 cells at n_ca3=1000) per pattern, drive those cells DIRECTLY with strong SYNCHRONOUS
+  gamma-pulsed current during encoding (all fire together each window), competition ON (depress to non-assembly), then
+  recall a 50% partial cue → does the held-out 50% FIRE (functional completion)? If GO → synchrony IS the fix (then
+  wire the EMERGENT mossy/DG assembly selection as the follow-on, keeping it experience-derived); if NO even with
+  perfect synchrony → a deeper issue. Gate: h_comp≥0.30 & ≥2× non-stored, lam=0 vs lam=0.5, 6-seed. Then the emergent
+  version → wire → SWR replay loop (`_riii_swr_generative_replay_derisk.py`) → console. (This is a genuinely deep,
+  multi-cycle open problem — the project's expert prior work 2026-07-08/09/14 reached this exact frontier unsolved.)
 - **DONE this session:** scale787 = **CLOSED GO** (corr +0.81≥0.70 @787, retain 1.00, moat 0; RESULT doc + ROADMAP;
   run PAUSED/resumable). Keystone research-gate `wb5udqdul` = DONE + verified + written
   (`2026-07-17-keystone-binder-research-gate.md`; kernel+harness verified, codes regenerated from scale787's own
