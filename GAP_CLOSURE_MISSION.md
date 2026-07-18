@@ -259,6 +259,14 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   not a TIGHTLY recurrently-connected cluster, so the BTSP recurrent is diffuse → weak attractor. Both point to the SAME
   next mechanism: a LEARNED/structured DG→CA3 map (Hebbian mossy) so each DG code maps to a fixed TIGHT completable
   cluster reliably. That is the emergent-DG's genuine open frontier — a focused deep-research pass.**
+  **↳ CULMINATION (6 builds + 33 probes, EXHAUSTIVE): the DG codes ARE reproducible (Jaccard 1.00) + separated
+  (0.07-0.18) — so seeding is NOT a DG problem, purely the sparse mossy. Tested a naive Hebbian mossy map (0 seeding:
+  sparse-connectivity + Hebbian-decay) and BTSP-on-mossy (0 seeding alone; integrated with amplification → RUNAWAY to
+  2000). ⇒ the emergent-DG is a delicate MULTI-PART trilemma: mossy-firing × learned dg→ca3 binding × recurrent
+  amplification × bistability × completable-cluster — EACH piece validated individually, but the integrated working
+  point (stable sparse reliable specific, not 0 and not 2000) is NARROW + un-found. The core open frontier = BALANCING
+  the multi-part system (principled gain-control/normalization, or a STAGED encode: bind the mossy at low gain → raise
+  the recurrent → store) — a focused fresh pass; all pieces + the `assemblies_ext` hook are ready.**
   The gap#4<->gap#5 unification (below) is UNAFFECTED (pre-assigned assembly + direct drive). Frontier now: this
   DG-bursting sub-arc, gap#5 SWR, or gap#1 open generation.
 - **✅ gap#4<->gap#5 UNIFICATION — MECHANISM 6/6 GO (2026-07-18, the focused build DONE).** The `encode_btsp` path was
