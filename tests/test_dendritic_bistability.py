@@ -105,3 +105,22 @@ def test_bdsp_apical_bistable_on_latches_and_holds():
     assert held[-1] > ER + 30.0, f"a real top-down error must LATCH a held apical plateau, got {held[-1]:.2f}"
     assert silent[-1] < ER + 3.0, f"no error must stay SILENT at rest (the P0 moat), got {silent[-1]:.2f}"
     assert held[-1] - transient[-1] > 30.0, "the bistability must be load-bearing vs the transient regime"
+
+
+# --- gap #4 (2026-07-18): the bistable plateau is the BTSP enabler -- it converts ms-timescale plasticity into a
+# seconds-long BEHAVIORAL-TIMESCALE one-shot credit window (Bittner-Magee 2017 / Milstein 2021). Pins the core contrast
+# from the _gap4_btsp_plateau_gated de-risk (the GO is 6-seed; CI checks one seed's mechanism + moat).
+
+def test_btsp_bistable_plateau_extends_credit_window_to_seconds():
+    from research.runners._gap4_btsp_plateau_gated_derisk import run
+    r = run(42)
+    # HELD plateau: an input ~0.9 s after the trigger still potentiates (behavioral timescale)
+    assert r["held_far"] >= 0.5 * r["held_near"], "held plateau must potentiate a far (~0.9s) input (behavioral timescale)"
+    # TRANSIENT plateau: the co-active input potentiates (ms window) but the far input does NOT
+    assert r["transient_near"] > 0.0, "transient plateau must potentiate a co-active input (the ms window exists)"
+    assert r["transient_far"] < 0.05 * r["held_near"], "transient plateau must NOT reach a far input (no seconds window)"
+    # the bistability is load-bearing: held reaches far, transient does not
+    assert r["held_far"] > r["transient_far"] + 0.3 * r["held_near"], "the bistable latch is load-bearing for the window"
+    # the moat: no plateau (gate lesion) and no eligibility (never-active) => no potentiation
+    assert r["held_noplateau"] <= 0.05 * r["held_near"], "no-plateau (gate lesion) must not potentiate (the moat)"
+    assert r["held_neveractive"] <= 0.05 * r["held_near"], "never-active (no eligibility) must not potentiate"
