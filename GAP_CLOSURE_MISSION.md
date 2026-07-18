@@ -247,14 +247,22 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   self-sustain is the ASSEMBLY'S OWN within-member recurrent loop (member soma fires → member→member recurrents →
   re-trigger latches). Per-cell bistability does NOT decouple completion from self-sustain at the ASSEMBLY level. Finding:
   `2026-07-18-gap5-CA3-bistable-dendrite-payoff-bistability+specificity-solved-magnitude-capped.md`.
-- **⚠️ EXACT NEXT ACTION (B — gap #5): the DECOUPLED READ-OUT (per THE LAW, the residual's next mechanism).** Read
-  completion from the held APICAL PLATEAU state (`cp_v_apical > plateau_v_hold`, intrinsically bistable) with a WEAK
-  apical→soma coupling, so the plateau HOLDS (completion) without the soma firing hard enough to close the recurrent
-  loop → high specific magnitude WITHOUT self-sustain. Add a `read_apical` option to the bistable gate's `_measure` (read
-  cp_v_apical instead of cp_firing_states), test seed 42 (correct-cue plateau HIGH, permuted LOW, nocue SILENT), then
-  6-seed. Biologically the apical UP state IS the held memory (the soma spike is the output). If the plateau read is
-  specific + high → completion is demonstrated at the dendritic level (the magnitude cap was a soma-read/loop artifact).
-  Overlaps the gap #4 dendritic keystone [[project_dendritic_cortex_for_emergence]]. Infra banked (all default-off).
+- **🎉🎉 gap #5 CA3 completion — SEED-42 GO, all THREE trilemma horns SOLVED SIMULTANEOUSLY (2026-07-18, commit b35b6e64).**
+  A CRITICAL instrument fix unlocked it: the bistable-gate `_hard_silence` did NOT reset `cp_v_apical` /
+  `cp_conductance_g_coincidence`, so an encoding-latched plateau PERSISTED through "silence" → inflated perm AND nocue
+  across the WHOLE prior payoff arc (caught by the new `read_apical` read-out). With the fix: **perm 0.000, nocue 0.000**
+  (PERFECT specificity + bistability), and the earlier "strong read self-sustains" was that same bug. Then the asymmetric
+  read (strong apical→soma `apical_gc_read=5`, weak soma→apical back) gives high magnitude WITHOUT self-sustain:
+  **seed 42 cue=0.257 (≥0.20), nocue=0.000, perm=0.000 → GO.** Intrinsic dendritic bistability delivers genuine cue-gated
+  bistable+specific pattern completion — the trilemma RESOLVED (magnitude+specificity+bistability jointly, impossible on
+  a point soma, at CHANCE the project's entire history).
+- **⚠️ EXACT NEXT ACTION (B — gap #5): 6-SEED VALIDATION RUNNING (task b3r6n70cr)** of the GO config (`_gap5_ca3_bistable_6seed.py`:
+  asym read + silence-fixed + frozen + OU-off + no-cue + permuted anti-cheats + a NO-ENCODING load-bearing anti-cheat).
+  If 6/6 GO + no-encoding collapses → gap #5 FUNCTIONAL CUE-GATED BISTABLE+SPECIFIC COMPLETION **CLOSED** (chance →
+  6-seed GO). Then: emergent DG-selected assembly (replace the pre-assigned mask), SWR replay loop, console. GO config:
+  n_ca3=2000 density0.05 frac0.12 encode3000 hebb_lr2 coact0.02 lam0.9 fb_inhib30 k_thresh15 recall_k110 recall_drive700
+  bistable dendritic selective_inhib structural_sep=1 self_regen0.15 kir3 apical_gc1 apical_gc_read5. Overlaps the gap #4
+  dendritic keystone [[project_dendritic_cortex_for_emergence]]. ⚠️ prior-arc perm/self-sustain numbers were silence-confounded.
 - **🔬 gap#5 Rung 2/3 RESULT (2026-07-17):** the mossy-detonator SPARSIFIES CA3 (0.43→0.03) but sparsity WITHOUT
   synchrony can't select — within/silent separation goes NEGATIVE (−0.27 to −0.47; the sparse cells fire async →
   co-activity traces never clear threshold → no potentiation). Rung 3 (input gamma-pulse) is INERT (byte-identical to
