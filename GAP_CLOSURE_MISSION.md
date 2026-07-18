@@ -276,8 +276,13 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   ca1 g_e 4.05 @boost15); BUT ca1 does NOT fire (0.008 even @boost 80) because the bistable completion's held firing is
   SPARSE (~0.28 = occasional / ASYNCHRONOUS) -> too sparse to sustain the schaffer drive. **The precise mechanism: ca1
   needs a SYNCHRONOUS SWR-RIPPLE BURST** (drive the completed assembly in gamma volleys -> a strong coincident schaffer
-  volley -> ca1 fires; exactly what the SWR runner's gamma-volley `_recall` does). NEXT: add a ripple-burst read to
-  `_measure_ca1`, then match(partial-cue ca1, full ca1) high + cross low = Rung 1 GO -> Rung 2 (ca3->ca1 STDP consolidation). **(2) EMERGENT
+  volley -> ca1 fires). Ripple-burst read ADDED to `_measure_ca1` (gamma-pulsed global CA3 drive) but ca1 still 0.008.
+  **ROOT-CAUSED (2026-07-18): ca1 is INHIBITED — under CA3 drive it has g_i 10.16 > g_e 4.70.** The `schaffer_boost`
+  scales the ca3->ca1 synapses from INHIBITORY ca3 cells too (synapse sign = the PRE cell's trait, not the weight), so
+  it amplifies inhibition past excitation. **FIX (cheap, specified): boost ONLY EXCITATORY ca3->ca1** (filter the boosted
+  `sk` to synapses whose pre-cell is NOT inhibitory — use the bridge inhibitory mask), re-test read_ca1 (ca1 should now
+  fire), then match high + cross low = Rung 1 GO -> Rung 2 (ca3->ca1 STDP consolidation). Then the emergent DG-selected
+  assembly (2). All read-out infra is on the validated bistable gate; the completion itself is CLOSED. **(2) EMERGENT
   DG-selected assembly** — the mossy/DG pattern-separation front end SELECTS the sparse CA3 set from experience (the
   completion mechanism is selection-agnostic — it binds whatever sparse set co-fires), so `structural_sep`/`selective_inhib`
   become EMERGENT, not hand-applied; the bistable dendrite may now resolve the banked "sparsity-without-synchrony can't
