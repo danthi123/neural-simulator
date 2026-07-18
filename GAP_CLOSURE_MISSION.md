@@ -220,6 +220,20 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   `selective_inhib` + `structural_sep` + a bounded drive so co-firing assembly cells latch the plateau but the network
   doesn't avalanche + numerically stable), then `_measure_ca1` h_comp + the permuted/no-encode anti-cheats + 6-seed. The
   design is now fully characterized; it is a careful build, not a tuning knob. Rushing it yields a runaway-artifact GO.
+- **✅ gap#4<->gap#5 UNIFICATION — MECHANISM 6/6 GO (2026-07-18, the focused build DONE).** The `encode_btsp` path was
+  built into the gap#5 completion runner (default-off/byte-identical; Hebbian baseline cue 0.217 unchanged): BTSP drives
+  the plateau DIRECTLY on the pre-assigned assembly during co-fire (specificity by construction) -> stores the
+  within-assembly recurrent one-shot; recall uses the two_comp bistable CA3 for completion. `_gap4_btsp_completion_unification_6seed.py`
+  + finding `2026-07-18-gap4-gap5-UNIFICATION-...`: **all 6 seeds cue-gated (cue ~0.18 vs nocue 0), specific (perm 0),
+  bistable (nocue 0), load-bearing on the stored assembly (no-encode 0)** = the two gaps genuinely UNIFIED on ONE
+  substrate sharing ONE dendritic-bistability keystone (BTSP stores, the bistable CA3 completes). NO new `sim/` edit.
+  The design problem was solved: BTSP's UNIFORM within-assembly distribution wants recall_k_thresh=40 (vs Hebbian's
+  110); the runaway was my ad-hoc count-coincidence, cured by driving the plateau directly on the assembly. **Residual
+  (honest):** completion magnitude ~0.18 is marginal vs the strict 0.20 bar (Hebbian 0.217) — a REAL completion by the
+  gap#5 standard (which called 0.18-0.19 a real held completion), the uniform-vs-structured distribution difference,
+  mapped by 8 GPU sweeps; the next lever is STRUCTURED BTSP storing (heterogeneous encode), NOT a config knob (not
+  chased further = p-hacking risk). ⇒ gap#4 is now a WORKING on-brain credit rule that STORES the gap#5 assembly the
+  bistable CA3 COMPLETES — the keystone unifies the two gaps.
 - **✅ GAP #4 ON-BRIDGE BTSP RULE VALIDATED (2026-07-18) — the working credit rule runs ON THE SPIKING SUBSTRATE.** Added `fused_btsp_update` (`sim/kernels.py`) + a guarded default-off `enable_btsp` block in
   `bridge._run_one_simulation_step` (seconds-long per-neuron pre-eligibility `cp_btsp_pre_elig` on `coo.row` × the
   dendritic plateau `cp_v_apical` above v_hold on `coo.col`, gated by plastic-mask + plasticity_rate_gain like BDSP) +
