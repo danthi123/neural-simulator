@@ -15,6 +15,13 @@ def main():
     ap.add_argument("--seeds", default="42,43,44,100,101,102")
     ap.add_argument("--n-ca3", type=int, default=2000)
     ap.add_argument("--assembly-frac", type=float, default=0.008)
+    ap.add_argument("--ca3-density", type=float, default=0.5)     # Guzman-Jonas biological ~0.02-0.05 gives specificity
+    ap.add_argument("--dendritic", action="store_true", help="dendritic dAP readout (nmda_recurrent=False), the mode that completes")
+    ap.add_argument("--k-thresh", type=float, default=18.0)
+    ap.add_argument("--recall-k-thresh", type=float, default=None)   # decouple encode (low) vs recall (high) dAP threshold
+    ap.add_argument("--fb-inhib", type=float, default=20.0)
+    ap.add_argument("--selective-inhib", action="store_true", help="assembly-selective inhibition (spare own engram, Kim-Kim 2025)")
+    ap.add_argument("--lam-dep-wi", type=float, default=0.5)
     ap.add_argument("--encode-drive", type=float, default=3000.0)   # formation lever: continuous strong drive
     ap.add_argument("--hebb-lr", type=float, default=2.0)           # formation lever
     ap.add_argument("--no-sync", action="store_true", default=True) # continuous (no gamma off-gap decay)
@@ -37,10 +44,12 @@ def main():
     print(f"[gap5 wang rate-homeo] n_ca3={a.n_ca3} frac={a.assembly_frac} nmda_tau={a.nmda_tau} "
           f"recall_steps={a.recall_steps} recall_drive={a.recall_drive} weightsum_T={a.homeo_target} {tag}", flush=True)
     for s in seeds:
-        r = run(s, n_ca3=a.n_ca3, assembly_frac=a.assembly_frac, bistable=True, nmda_recurrent=True,
+        r = run(s, n_ca3=a.n_ca3, assembly_frac=a.assembly_frac, ca3_density=a.ca3_density, bistable=True,
+                nmda_recurrent=(not a.dendritic), k_thresh=a.k_thresh, recall_k_thresh=a.recall_k_thresh,
+                ca3_fb_inhib=a.fb_inhib, lam_dep_wi=a.lam_dep_wi, selective_inhib=a.selective_inhib,
                 encode_drive=a.encode_drive, hebb_lr=a.hebb_lr, no_sync=a.no_sync,
                 nmda_tau=a.nmda_tau, nmda_ratio=a.nmda_ratio, recall_steps=a.recall_steps, recall_drive=a.recall_drive,
-                homeostatic=(not a.no_weightsum_homeo), homeo_target=a.homeo_target,
+                homeostatic=((not a.no_weightsum_homeo) and not a.dendritic), homeo_target=a.homeo_target,
                 rate_homeo=a.rate_homeo, rate_homeo_target=a.rh_target, rate_homeo_adapt=a.rh_adapt,
                 rate_homeo_steps=a.rh_steps, rate_homeo_cap=a.rh_cap, enable_ou=(not a.no_ou))
         ngo += int(r["go"])

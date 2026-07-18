@@ -56,7 +56,8 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
         permute_recall=False, bistable=False, nmda_recurrent=False, nmda_tau=100.0, nmda_ratio=1.0,
         homeostatic=False, homeo_target=None,
         rate_homeo=False, rate_homeo_target=0.02, rate_homeo_alpha=0.1, rate_homeo_adapt=15.0,
-        rate_homeo_steps=400, rate_homeo_cap=800.0, enable_ou=True):
+        rate_homeo_steps=400, rate_homeo_cap=800.0, enable_ou=True, ca3_density=0.5,
+        selective_inhib=False, sel_inhib_spare=0.0, recall_k_thresh=None):
     # DIAGNOSED LEVERS (2026-07-18 workflow): the rate-window LTP is an EMA-trace rule -- a cell's co-activity trace
     # tops out ~0.03-0.2 (point Izh fires ~0.2 duty @700pA), so coact_thresh MUST be BELOW it (~0.02) or nothing
     # potentiates; the gamma OFF-gap DECAYS the EMA (0.9^off) so CONTINUOUS drive (sync_off<=1) is required, NOT
@@ -66,7 +67,7 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
     cp, _ = get_backend()
     # WANG-2002 mode (nmda_recurrent): the ca3->ca3 recurrent is SOMATIC slow-NMDA (the bistable attractor itself);
     # the dendritic-coincidence dAP readout (coincidence/two_comp) is OFF. Else: the dAP-coincidence readout (default).
-    bridge = _build(seed, n_ca3=n_ca3, ca3w=6.0, ca3_density=0.5,
+    bridge = _build(seed, n_ca3=n_ca3, ca3w=6.0, ca3_density=ca3_density,
                     coincidence=(not nmda_recurrent), two_comp=(not nmda_recurrent),
                     nmda_recurrent=nmda_recurrent, nmda_tau=nmda_tau, nmda_ratio=nmda_ratio, apical_R=apical_R,
                     apical_gc=apical_gc, k_thresh=k_thresh, plateau_strength=plateau_strength,
@@ -157,7 +158,40 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
             conn.data[idxs] = vals
         w_within, w_silent = _wstats()
 
+    if recall_k_thresh is not None:
+        # DECOUPLE encoding vs recall dAP threshold: a LOW k_thresh during encoding lets the plateau fire freely so the
+        # rate-window LTP grows STRONG within-ensemble weights; a HIGH k_thresh at RECALL means only the strong LEARNED
+        # coincident drive (correct cue) crosses the plateau, not scattered generic/avalanche drive (permuted cue) ->
+        # specificity WITHOUT starving the encoding (the two were coupled through one cfg.coincidence_k_threshold).
+        bridge.core_config.coincidence_k_threshold = float(recall_k_thresh)
+
     non_stored0 = np.array([g for g in ca3_idx if g not in set(int(x) for a in assemblies for x in a)], dtype=np.int64)
+
+    if selective_inhib:
+        # ASSEMBLY-SELECTIVE INHIBITION -- "spare your own engram" (Kim-Kim 2025 PMC12244581, research gate
+        # 2026-07-18). The GLOBAL shared basket (ca3_pv_basket) inhibits every cell equally -> a permuted cue's
+        # non-member cells avalanche through the generic recurrents and spuriously complete the stored assembly. The
+        # paper's fix: an assembly's co-active interneurons SPARE the assembly's excitatory cells (weak I->E onto them)
+        # but INHIBIT non-members -> a random cue's cells are suppressed before they can avalanche, while the correct
+        # cue's (spared) assembly cells build up + complete. Realized here as the LEARNED OUTCOME (like `_apply_competition`
+        # uses the pre-assigned assembly mask): DEPRESS the ca3_pv_basket->ca3 (I->E) synapses ONTO assembly members
+        # (spare them) toward `sel_inhib_spare`; leave those onto non-members intact (inhibit the avalanche). The
+        # emergent DG-selected + E->I-plasticity-tuned version is the follow-on. NO sim/ edit.
+        bask_idx = list(rm.indices("ca3_pv_basket"))
+        bask_set = set(int(g) for g in bask_idx)
+        assy_pos_set = set(int(g) for a in assemblies for g in a)   # global CA3 indices that are assembly members
+        conn2 = bridge.cp_connections
+        nnz = int(conn2.nnz)
+        indptr = np.asarray(to_host(conn2.indptr)); indices = np.asarray(to_host(conn2.indices))
+        pre_of = np.searchsorted(indptr, np.arange(nnz), side="right") - 1
+        d = np.asarray(to_host(conn2.data)).copy()
+        spare_k = [k for k in range(nnz)
+                   if int(pre_of[k]) in bask_set and int(indices[k]) in assy_pos_set]  # basket -> assembly-member (I->E)
+        for k in spare_k:
+            d[k] = float(sel_inhib_spare)                          # spare the assembly's own cells from inhibition
+        if spare_k:
+            idxs = cp.asarray(spare_k, dtype=cp.int64)
+            conn2.data[idxs] = cp.asarray([float(d[k]) for k in spare_k], dtype=conn2.data.dtype)
 
     if bistable:
         # GENUINE CUE-GATED COMPLETION TEST: hard-SILENCE the network (clear v/u/firing/conductances to rest), then
