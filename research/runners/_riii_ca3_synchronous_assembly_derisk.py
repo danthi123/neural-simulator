@@ -58,7 +58,7 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
         rate_homeo=False, rate_homeo_target=0.02, rate_homeo_alpha=0.1, rate_homeo_adapt=15.0,
         rate_homeo_steps=400, rate_homeo_cap=800.0, enable_ou=True, ca3_density=0.5,
         selective_inhib=False, sel_inhib_spare=0.0, recall_k_thresh=None, structural_sep=False,
-        plateau_self_regen=0.0, plateau_v_hold=-35.0, apical_kir_g=0.0):
+        plateau_self_regen=0.0, plateau_v_hold=-35.0, apical_kir_g=0.0, apical_gc_read=None):
     # DIAGNOSED LEVERS (2026-07-18 workflow): the rate-window LTP is an EMA-trace rule -- a cell's co-activity trace
     # tops out ~0.03-0.2 (point Izh fires ~0.2 duty @700pA), so coact_thresh MUST be BELOW it (~0.02) or nothing
     # potentiates; the gamma OFF-gap DECAYS the EMA (0.9^off) so CONTINUOUS drive (sync_off<=1) is required, NOT
@@ -74,7 +74,8 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
                     apical_gc=apical_gc, k_thresh=k_thresh, plateau_strength=plateau_strength,
                     train=True, hebb_max=hebb_max, hebb_rate=True, ca3_fb_inhib=ca3_fb_inhib,
                     coact_thresh=coact_thresh, hebb_lr=hebb_lr, enable_ou=enable_ou,
-                    plateau_self_regen=plateau_self_regen, plateau_v_hold=plateau_v_hold, apical_kir_g=apical_kir_g)
+                    plateau_self_regen=plateau_self_regen, plateau_v_hold=plateau_v_hold, apical_kir_g=apical_kir_g,
+                    apical_gc_read=apical_gc_read)
     rm = bridge.region_manager
     ca3_idx = list(rm.indices("ca3")); ca3_arr = cp.asarray(ca3_idx, dtype=cp.int64)
     n = bridge.core_config.num_neurons
@@ -167,9 +168,16 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
         # within-weights -> strong AND specific completion (resolving the strength-vs-specificity tension: the leaked-
         # activation path is removed structurally, so the within-weights can be strong). Realized runner-side with the
         # pre-assigned assembly mask (like `_apply_competition`); the emergent DG-selected version is the follow-on.
+        # structural_sep=1: zero non-member->member (the permuted cue can't reach the assembly). structural_sep=2: FULL
+        # bidirectional isolation -- ALSO zero member->non-member, so a STRONG completed assembly cannot SPREAD to
+        # non-members (the network recurrent->coincidence->latch loop that self-sustains when the read is strong). Full
+        # isolation = the complete DG pattern-separation outcome (the assembly is a closed set), the emergent version.
         assy_pos_set2 = set(ca3_pos[int(g)] for a in assemblies for g in a)   # local ca3 positions of members
+        _full = int(structural_sep) >= 2
         zk = [k for k in range(len(flat_h))
-              if int(post_l_h[k]) in assy_pos_set2 and int(pre_l_h[k]) not in assy_pos_set2]  # non-member -> member
+              if (int(post_l_h[k]) in assy_pos_set2) != (int(pre_l_h[k]) in assy_pos_set2)] if _full else \
+             [k for k in range(len(flat_h))
+              if int(post_l_h[k]) in assy_pos_set2 and int(pre_l_h[k]) not in assy_pos_set2]  # non-member->member (+member->non-member if full)
         if zk:
             idxs = cp.asarray([int(flat_h[k]) for k in zk], dtype=cp.int64)
             conn.data[idxs] = cp.zeros(len(zk), dtype=conn.data.dtype)

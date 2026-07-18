@@ -6543,9 +6543,14 @@ class SimulationBridge:
                         _gkir = cp.float32(_kir_g) / (1.0 + cp.exp((self.cp_v_apical - _vh) / _kk))
                         _dv = _dv + _gkir * (_ek - self.cp_v_apical)
                     self.cp_v_apical = self.cp_v_apical + (_dt / _tau) * _dv
-                    # only the attenuated electrotonic coupling reaches the soma (a full apical plateau stays sub-threshold)
+                    # only the attenuated electrotonic coupling reaches the soma (a full apical plateau stays sub-threshold).
+                    # ASYMMETRIC read (2026-07-18): the apical->soma conductance may exceed the soma->apical one above
+                    # (sentinel <0 -> equal -> byte-identical). A strong read lifts a completed cell's soma firing while
+                    # the weak back-coupling in _dv stops soma noise leaking into the apical latch.
+                    _gc_read = _gc if float(getattr(cfg, "apical_g_couple_to_soma", -1.0)) < 0 \
+                        else cp.float32(getattr(cfg, "apical_g_couple_to_soma", -1.0))
                     total_input_current_pA = (total_input_current_pA
-                                              + _gc * (self.cp_v_apical - self.cp_membrane_potential_v))
+                                              + _gc_read * (self.cp_v_apical - self.cp_membrane_potential_v))
                 else:
                     total_input_current_pA = total_input_current_pA + I_coincidence
 

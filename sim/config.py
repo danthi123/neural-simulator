@@ -222,6 +222,13 @@ class CoreSimConfig:
     apical_tau_ms: float = 15.0                 # apical membrane time constant
     apical_R: float = 0.15                       # plateau-current -> apical-voltage scale (pA -> mV)
     apical_g_couple: float = 1.0                 # electrotonic soma<->apical coupling conductance (attenuation to the soma)
+    # ASYMMETRIC coupling (2026-07-18, gap#5 dendritic bistability): the dendrite->soma FORWARD read can be STRONGER than
+    # the soma->dendrite BACK-coupling (biology: forward AP-independent propagation vs distal-apical backprop attenuation).
+    # apical_g_couple = the soma->apical (back) conductance; apical_g_couple_to_soma = the apical->soma (read) conductance.
+    # A strong read raises the completed cell's soma firing (magnitude) while a WEAK back-coupling stops soma noise from
+    # leaking into the apical latch (specificity + no network self-sustain). Sentinel <0 -> use apical_g_couple for BOTH
+    # (symmetric) -> byte-identical to today.
+    apical_g_couple_to_soma: float = -1.0
     apical_E_rest: float = -65.0                 # apical resting potential (mV)
     # KIR down-state stabilizer (2026-07-18, gap#5 dendritic bistability): an inward-rectifier K+ conductance on the
     # apical -- HIGH at hyperpolarized, LOW at depolarized (Sanders-Berends-Major-Goldman-Lisman 2013 "perfect couple").

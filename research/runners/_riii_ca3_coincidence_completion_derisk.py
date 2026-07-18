@@ -32,7 +32,7 @@ def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0,
            mossy_density=None, dg_ffi_weight=None,
            ca3_to_ca1_density=0.30, ca1_fb_inhib=None, ca1_fb_n=None, ca1_ff_inhib=None,
            nmda_recurrent=False, nmda_tau=100.0, nmda_ratio=1.0, enable_ou=True,
-           plateau_self_regen=0.0, plateau_v_hold=-35.0, apical_kir_g=0.0):
+           plateau_self_regen=0.0, plateau_v_hold=-35.0, apical_kir_g=0.0, apical_gc_read=None):
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.bridge import SimulationBridge
     from research.runners.text_minimal_isolation import build_biological_brain_regions
@@ -182,6 +182,8 @@ def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0,
                 cfg.coincidence_plateau_v_hold = float(plateau_v_hold)
             if apical_kir_g:
                 cfg.apical_kir_g = float(apical_kir_g)
+            if apical_gc_read is not None:
+                cfg.apical_g_couple_to_soma = float(apical_gc_read)   # asymmetric: strong apical->soma read, weak back
     bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                               runtime_state=RuntimeState(), gpu_config=GPUConfig())
     bridge.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)
