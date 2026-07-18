@@ -249,6 +249,33 @@ class MultiTurnAgent:
         rates = self.bcw.read(window=self._bc_window, bias_concept=fav, bias_pA=pA)
         return resolve_referent(rates, spec_threshold=self._bc_spec)
 
+    def heard_facts(self):
+        """The (agent, verb, patient) SVO facts this agent has HEARD (its own experience), read from the composer's
+        fact store (`kb`/`facts`). The corpus the referent-bias feature-compatibility LEARNS from (gap #3 A1 deploy)."""
+        comp = getattr(self.agent, "composer", None)
+        store = getattr(comp, "kb", None)
+        if store is None:
+            store = getattr(comp, "facts", None)
+        out = []
+        for entry in (store or []):
+            f = entry[0] if isinstance(entry, (tuple, list)) and entry else entry
+            if isinstance(f, dict) and f.get("agent") and f.get("action") and f.get("patient"):
+                out.append((f["agent"], f["action"], f["patient"]))
+        return out
+
+    def build_referent_bias_from_experience(self, facts=None, min_facts=40, seed=None):
+        """Gap #3 A1 DEPLOYMENT (default-on path): LEARN the referent-bias feature-compatibility from the agent's OWN
+        heard SVO facts (its experience) + default the multi-referent resolution to the resulting SPIKING chooser
+        (`SpikingFeatureCompat`), retiring the host `content_bias_target` lexicon lookup. `facts` defaults to the
+        agent's `heard_facts()`; needs `>= min_facts` animacy-structured facts to learn a usable map (else returns
+        False, leaving the current source unchanged so the host fallback still answers). Returns True if installed."""
+        facts = list(facts) if facts is not None else self.heard_facts()
+        if len(facts) < int(min_facts):
+            return False
+        from research.runners._gap3_spiking_feature_compat_derisk import SpikingFeatureCompat
+        self._feat_compat_source = SpikingFeatureCompat(seed=self.seed if seed is None else int(seed), corpus=facts)
+        return True
+
     def _resolve(self, word, query_verb=None):
         """If `word` is an anaphor, resolve it from the held WM referent (None if unresolved); else return `word`.
 

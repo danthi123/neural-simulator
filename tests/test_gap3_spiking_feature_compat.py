@@ -9,12 +9,14 @@ import os
 os.environ.setdefault("SIM_BACKEND", "numpy")
 
 from research.runners._gap3_spiking_feature_compat_derisk import SpikingFeatureCompat
-from research.runners._gap3_learned_feature_compat_derisk import run_seed as _mech_seed
-from research.runners.biased_competition_buffer import content_bias_target
+from research.runners._gap3_learned_feature_compat_derisk import run_seed as _mech_seed, make_corpus
+from research.runners.biased_competition_buffer import content_bias_target, ANIMACY, VERB_SELECTS
 from research.runners.multi_turn_agent import MultiTurnAgent
 
 NOUNS = ["dog", "cat", "fish", "bird", "worm", "ball"]
 VOCAB = NOUNS + ["chase", "eat"]
+ALL_CONCEPTS = list(ANIMACY.keys())
+FULL_VOCAB = ALL_CONCEPTS + list(VERB_SELECTS.keys())
 
 
 def test_learned_feature_compat_mechanism():
@@ -46,6 +48,32 @@ def test_feat_compat_default_off_byte_identical():
     # default (no feat_compat_source) still uses content_bias_target -> byte-identical
     a = MultiTurnAgent(referent_concepts=NOUNS, concepts={w: None for w in VOCAB}, seed=42,
                        enable_biased_competition=True)
+    assert a._feat_compat_source is None
+
+
+def test_agent_learns_referent_bias_from_own_experience():
+    """Gap #3 A1 DEPLOYMENT: the agent LEARNS the referent-bias feature-compatibility from the SVO facts IT heard
+    (its own experience in `composer.kb`), then defaults the multi-referent resolution to that SPIKING chooser
+    (retiring the host `content_bias_target` lexicon)."""
+    heard = make_corpus(42, n=80)                                  # 80 SVO facts the agent HEARS
+    a = MultiTurnAgent(referent_concepts=ALL_CONCEPTS, concepts={w: None for w in FULL_VOCAB}, seed=42,
+                       enable_biased_competition=True)             # NO feat_compat_source -> starts on the host lookup
+    assert a._feat_compat_source is None
+    for ag, v, pt in heard:
+        a.agent.composer.store(ag, v, pt)                          # accumulates into composer.kb (the agent's memory)
+    assert len(a.heard_facts()) >= 40                             # it remembers what it heard
+    assert a.build_referent_bias_from_experience() is True         # LEARN the feature-compat from that experience
+    assert isinstance(a._feat_compat_source, SpikingFeatureCompat) # now defaults to the spiking brain-based chooser
+    # the learned-from-experience chooser resolves the pronoun (eat selects animate -> cat, not ball) == host
+    assert a._feat_compat_source.bias_target(["cat", "ball"], "eat") == "cat"
+
+
+def test_build_referent_bias_insufficient_experience_returns_false():
+    # too few heard facts -> does NOT install (leaves the host fallback answering; moat-safe, no half-learned map)
+    a = MultiTurnAgent(referent_concepts=ALL_CONCEPTS, concepts={w: None for w in FULL_VOCAB}, seed=42,
+                       enable_biased_competition=True)
+    a.agent.composer.store("cat", "eat", "fish")
+    assert a.build_referent_bias_from_experience() is False
     assert a._feat_compat_source is None
 
 
