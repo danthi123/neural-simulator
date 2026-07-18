@@ -189,6 +189,21 @@ emergent selection is a genuine deep multi-part integration (binding-gain × amp
 time coincidence config), the emergent-DG's core open frontier, requiring a principled joint gain-control/normalization
 in a fresh focused pass.** Best banked config: the isolated staged encode (`emergdg_btspmossy.py` plateau-only, ca3w=3).
 
+## Step 0 decoupling probe (research gate) — BOUNDS the arc: the blocker is COMPLETABILITY, and it UNIFIES with the gap#4↔#5 magnitude residual
+The research gate (3-report consensus: E%-max feedforward inhibition to fix sparsity) prescribed a cheap Step-0
+decoupling probe FIRST: host top-10% read of the CA3 rate → a 200-cell emergent-image → `run(assemblies_ext, encode_btsp,
+bistable, ca3_density=0.08)`. Result: **cue 0.033**, nocue/perm/no-encode 0.000. ⇒ per the gate's own logic, the blocker
+is **COMPLETABILITY, NOT sparsity** — so the ff-inhib port (which fixes the 0-or-runaway *sparsity* trilemma) is NOT the
+fix (the emergent-image is already at completion scale + fixed sparsity, and STILL doesn't complete). This SAVED building
+the wrong fix (the research gate + Step-0 discipline did their job). **KEY UNIFYING INSIGHT: the emergent-DG completability
+IS the SAME residual as the gap#4↔gap#5 UNIFICATION magnitude** — both are "BTSP's UNIFORM one-shot storing produces a
+weak, diffuse attractor" (random pre-assigned assembly completes at cue ~0.18; a specific emergent-image set at ~0.03,
+even weaker because its cells are broadly co-active hubs, not a tight cluster). BOTH gaps' full closure bottleneck on the
+SAME frontier: a STRONGER / STRUCTURED completion — a non-uniform storing rule (Hebbian rate-window + heterosynaptic
+competition builds a structured attractor that completes at 0.18-0.33; BTSP's uniform saturation caps ~0.18 and worse for
+specific sets), OR a different attractor-completion mechanism. ⇒ the highest-leverage NEXT MECHANISM (closes BOTH the
+unification magnitude AND the emergent-DG completability): a structured / competition-shaped one-shot storing rule.
+
 ## Status + the next mechanism (per THE LAW)
 - **BOUNDARY (well-characterized):** emergent-DG via the trisynaptic feedforward is blocked by feedforward propagation
   — the hippocampal chain (EC→DG→CA3) does not carry an input to fire downstream cells at reasonable drives; the mossy
