@@ -1,0 +1,27 @@
+# KEYSTONE gap #2 — de-risk #2 (rate rung): a SELF-ORGANIZING fast-weight bind handles the brain's own CORRELATED codes, beating both the fixed algebra and the additive wall (GO, 3-seed numpy; honest limits stated)
+
+**2026-07-17, per the keystone gate `2026-07-17-keystone-binder-research-gate.md` (ranked #2). Runner `research/runners/_phaseB_deltarule_bind_bundled_derisk.py`.**
+
+## Result (3-seed, correlated fillers mean|cos|=0.76, chance 0.016)
+
+| arm | recall (top-1, strict exact-concept) |
+|---|---|
+| **delta-rule fast-weight** (`W += β(v−Wk)kᵀ`, unbind `Wk`) | **1.000** |
+| plain-Hebbian fast-weight (`W += vkᵀ`) | 1.000 |
+| permuted-role anti-cheat (unbind by WRONG key) | **0.000** (collapses ⇒ read is genuinely role-addressed, not correlated-code artifact) |
+| decorrelated-code control | 1.000 |
+| K-sweep (roles/fact 3→5→8→12) | **1.000 throughout**, delta==hebbian |
+
+**Vs the prior arms on the SAME wall:** fixed ±1 FHRR bundled 0.873 (#1); additive point-neuron 0.193; learned-linear-inverse 0.056 (`2026-06-16`). The fast-weight bind **beats all of them (1.000)** with a LOCAL write.
+
+## Why it works (the mechanistic insight) — and why this is on the emergence bar
+
+A fast-weight bind stores each (role-key, filler-value) as an OUTER PRODUCT into a per-fact matrix `W = Σ vₖᵀ`; unbind is `W k_t` — **key-addressed**. So the filler correlation, which crosstalks an elementwise `role⊙filler` product, is **irrelevant to the read** (the read is addressed by the near-orthogonal ROLE key, not by the correlated filler). This is a **different, biology-grounded binding STRUCTURE** — synaptic associative memory (Hopfield/Kanerva/Ba-Hinton fast weights; Tsodyks-Markram STP) — that SIDESTEPS the coincidence-product wall rather than fixing it. Per THE LAW that is a legitimate NEW method: it is self-organizing (a LOCAL write rule, NO backprop, NO weight transport), it has NO hand-set conjugate-inverse tie (unbind is just `Wk`), the role keys are developmental random draws, and the filler values are the LEARNED stream-cortex codes.
+
+## Honest limits (stated, not buried — this is a rate-rung result, NOT gap-#2 closure)
+1. **The delta rule is NOT load-bearing here.** Random role-keys are near-orthogonal at D=128 ⇒ no key-crosstalk to error-correct ⇒ plain Hebbian ties delta everywhere (incl. K=12). The mechanism simplifies to a **plain Hebbian associative memory**; the delta rule would matter only with CORRELATED role-keys (not the case). Honest: the win is the KEY-ADDRESSED STRUCTURE, not the error-correction.
+2. **This is the CORE bind+bundle+recall, not the full VSA algebra.** It does not yet demonstrate the composer's compositional operations (nested binding, `query_chain` multi-hop) nor generalization-via-correlation (recalling about a never-stored but SIMILAR concept — the fast-weight recalls the EXACT stored value). Those are the fuller gap #2 and the next layer.
+3. **Rate-rung numpy only.** The fully-spiking one-brain realization (the mission requirement) is the next rung: store the fact in real SYNAPTIC fast-weights on the bridge (the gate's route: RF complex synapses `cp_rf_w_re/im` / STP / eligibility), unbind via spiking transmission, 6-seed. **Closure = that spiking one-brain version wired into the conversational pipeline; this rate rung only greenlights the structure.**
+
+## Verdict
+GO (rate rung): a self-organizing, biology-grounded fast-weight bind handles the brain's own correlated codes, beating the fixed algebra and the additive wall — the OP-structure for gap #2. NOT closure. **Next (per THE LAW): the spiking one-brain realization on synaptic fast-weights + the compositional-reasoning check.**
