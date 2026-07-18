@@ -238,13 +238,15 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   PSC vs an equivalent external current + conductance/reversal/synchrony; make DG fire a dense synchronous gamma volley
   so the mossy summates) — `sim/`-level or deep-config. (Lesson: read the region's neuron type before proposing a
   neuron-type fix.)**
-  **↳ REFRAME (13+ probes, the ACTIONABLE resume, NOT a deep fix): the mossy DOES reach CA3 (v_max −31 > −40 thresh at
-  weight 500) and a GAMMA-synchronized DG volley makes CA3 INPUT-SPECIFIC (sep_cos 0.00→0.53); it doesn't SUSTAIN only
-  because the CA3 recurrent is weak (ca3w=1.5) = exactly what BTSP BUILDS. ⇒ emergent-DG is a tractable INTEGRATED
-  select-AND-store: a synchronized mossy volley SEEDS input-specific CA3 co-activity → `encode_btsp` stores the seeded
-  co-firing cells (read live, top-K during the volley) → the bistable CA3 completes. Reuses EVERYTHING already built.
-  Resume = build the integrated select-and-store + anti-cheats (input-driven / pattern-separation / completion
-  nocue/perm/no-encode). NO `sim/` edit expected.**
+  **↳ REFRAME TESTED + REFUTED at real scale (14+ probes + the integrated test — the VERIFIED conclusion): at n_ca3=400
+  a gamma-synchronized DG volley makes CA3 input-specific (sep_cos 0.00→0.53) so it LOOKED like a tractable INTEGRATED
+  select-and-store — BUT the integrated test at the COMPLETION scale (n_ca3=2000) selected only |A_m|=1 CA3 cell (too
+  weak to seed a storable assembly). So the reframe does NOT sidestep the boundary; the mossy→CA3-firing boundary is
+  ROBUST ACROSS SCALES and must be fixed FIRST. Added `run(assemblies_ext=...)` (default None => byte-preserved) as a
+  valid tool for when the feedforward is fixed. ⇒ the genuine resume = the DEEP hippocampal-feedforward-excitability
+  sub-arc (why the mossy CONDUCTANCE doesn't fire CA3 at n_ca3=2000 while a direct current does: measure the mossy PSC
+  vs an equivalent current, the conductance/reversal-potential scaling, DG firing density+synchrony) — likely a
+  `sim/`-level mechanism, a focused fresh pass. (Verified the reframe rather than overclaiming it.)**
   The gap#4<->gap#5 unification (below) is UNAFFECTED (pre-assigned assembly + direct drive). Frontier now: this
   DG-bursting sub-arc, gap#5 SWR, or gap#1 open generation.
 - **✅ gap#4<->gap#5 UNIFICATION — MECHANISM 6/6 GO (2026-07-18, the focused build DONE).** The `encode_btsp` path was
