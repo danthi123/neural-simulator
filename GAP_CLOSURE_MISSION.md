@@ -187,11 +187,17 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   TRADEOFF**: at k_thresh=18 completion is SPECIFIC but weak (h_comp 0.233, non 0.007); at k_thresh=6 it's STRONG but
   INDISCRIMINATE (h_comp ~1.0 AND non ~1.0 — lowering k_thresh floods the plateau during encoding too, the exact
   2026-07-14 warning). **⚙️ 2D sweep `bb15znulo` running** (k_thresh {15,12,10} × lam {0.3,0.5}) for the intermediate
-  sweet spot: h_comp≥0.30 AND ≥2× non-stored (specific completion). **⚠️ EXACT NEXT ACTION:** read it → if a (k_thresh,
-  lam) clears the specific-GO bar → confirm at n_ca3=1000 + 6-seed + anti-cheats (async control [must be worse],
-  no-encoding, permuted) → gap#5 completion CLOSES → wire the EMERGENT mossy/DG assembly selection (experience-derived,
-  replacing the pre-assigned assembly) → SWR replay loop → console. If no clean sweet spot → decouple encoding-k_thresh
-  from recall-k_thresh (set the plateau threshold higher at recall), or the engram intrinsic-excitability lever.
+  sweet spot: h_comp≥0.30 AND ≥2× non-stored (specific completion). **🎉🎉 SEED-42 GO FOUND (2026-07-18): k_thresh=15,
+  lam=0.5 → h_comp=0.367 (≥0.30), non-stored 0.007 (52× SPECIFIC)** — the FIRST specific functional CA3 pattern
+  completion from a LEARNED attractor in the project's history (it was at chance the entire time). Full recipe:
+  pre-assigned sparse assembly + CONTINUOUS strong drive (3000pA, NO gamma) + coact_thresh 0.02 + hebb_lr 2.0 +
+  heterosynaptic competition lam 0.5 + dendritic dAP read-out k_thresh 15. **⚙️ 6-seed + anti-cheat confirmation running**
+  (`bklj3vokg`: 6 seeds + GAMMA control [no_sync=False → should collapse: the OFF-gap decays the EMA trace] +
+  NO-ENCODING control [drive=0 → should collapse]). **⚠️ EXACT NEXT ACTION:** read it → if 6-seed GO + anti-cheats
+  collapse → confirm at n_ca3=1000 → **gap#5 functional-completion mechanism CLOSED** → then (a) wire the EMERGENT
+  mossy/DG assembly SELECTION (replace the pre-assigned assembly = experience-derived, the emergence bar) → (b) SWR
+  generative-replay loop (`_riii_swr_generative_replay_derisk.py`) → (c) console. If seed-fragile → widen the sweet
+  spot per seed or decouple encode-vs-recall k_thresh.
 - (superseded by the breakthrough above) direct synchronous assembly encoding did NOT grow the weights — DECAYED,
   and sync=async BYTE-IDENTICAL (the gamma mechanism was inert because NOTHING was potentiating). The rate-window LTP
   isn't firing: a cell firing ~1/3 of steps has trace ≈0.33 → product ≈0.11 < the 0.25 coactivity threshold → no
