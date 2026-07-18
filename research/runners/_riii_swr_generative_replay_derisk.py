@@ -127,14 +127,19 @@ def _scale_pathway(bridge, cp, pre_idx, post_idx, factor):
 def run_seed(seed, n_ca3=500, n_assembly=12, n_mem=3, presentations=60, drive_pA=1000.0, cue_drive=1000.0,
              hebb_lr=10.0, gamma_on=8, gamma_off=12, ca3_fb_inhib=120.0, k_thresh=20.0, plateau_strength=300.0,
              apical_R=50.0, hebb_max=120.0, schaffer_boost=6.0, ca3_to_ca1_density=0.30, ca3_density=0.5,
-             ca1_fb_inhib=None, ca1_ff_inhib=None, n_replay=0, replay_drive=None, burst=True, coincidence=True):
+             ca1_fb_inhib=None, ca1_ff_inhib=None, n_replay=0, replay_drive=None, burst=True, coincidence=True,
+             plateau_self_regen=0.0, apical_kir_g=0.0, apical_gc_read=None):
     from sim.backend import get_backend
     cp, _ = get_backend()
+    # DENDRITIC BISTABILITY (2026-07-18): with the gap#5-closed intrinsic bistable dendrite (self-regen plateau + KIR +
+    # asymmetric read), the CA3 assembly LATCHES + HOLDS a partial cue (completion) -> drives ca1. Default 0/None ->
+    # byte-identical to the prior coincidence-only completion path.
     bridge = _build(seed, n_ca3=n_ca3, ca3_density=ca3_density, ca3w=6.0, coincidence=coincidence, two_comp=True,
                     apical_R=apical_R, k_thresh=k_thresh, plateau_strength=plateau_strength, weighted=True, train=True,
                     hebb_rate=True, hebb_lr=hebb_lr, hebb_decay=0.0, coact_thresh=0.001, ca3_fb_inhib=ca3_fb_inhib,
                     hebb_max=hebb_max, ca3_to_ca1_density=ca3_to_ca1_density, ca1_fb_inhib=ca1_fb_inhib,
-                    ca1_ff_inhib=ca1_ff_inhib)
+                    ca1_ff_inhib=ca1_ff_inhib, plateau_self_regen=plateau_self_regen, apical_kir_g=apical_kir_g,
+                    apical_gc_read=apical_gc_read)
     rm = bridge.region_manager
     ca3_idx = np.asarray(list(rm.indices("ca3")), dtype=np.int64)
     ca1_idx = np.asarray(list(rm.indices("ca1")), dtype=np.int64)
