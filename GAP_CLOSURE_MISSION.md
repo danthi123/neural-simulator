@@ -146,26 +146,29 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   robustness frontier while easier un-closed work sat idle. Corrected order of UN-CLOSED work: **(A) gap #3 residuals
   [EASIEST — capability already GO] → (B) gap #5 robust completion [hard, mechanism demonstrated] → (C) gap #4 keystone
   [very hard, a-1 only] → (D) gap #1 open generation [hardest].**
-- **Phase:** GAP-CLOSING (easiest-first). **Gap #2 FULLY CLOSED** ✅ · **Gap #3 A1+A2 CLOSED (2026-07-18)** ✅ —
-  A1: the referent-bias feature-compatibility is now a SPIKING LEARNED map (corpus co-occurrence → feature-detector
-  spikes) wired into `MultiTurnAgent(feat_compat_source=)`, replacing host `content_bias_target` (mechanism GO +
-  spiking GO + wire exercised + CI 4/4). A2: the all-compatible tie is broken by the CUE-COMBINATION (content decides
-  clear cases; on a feature-silent tie the D3 Cb discourse-salience [6-seed GO] breaks it; CI + regression clean
-  10/10). Findings: `2026-07-18-gap3-A1-learned-feature-compatibility-cheap-first-GO.md`. Remaining gap#3 = the
-  DEPLOYMENT default-on (the agent LEARNS the feat-compat from its OWN heard corpus + defaults to the brain-based
-  resolution, retiring the host lookup) — a bounded follow-on. ·
-  **Gap #5 = mechanism DEMONSTRATED (seed 42, all anti-cheats) but robust-6-seed a DEEP frontier — BANKED, sequenced
-  after #3** (the "6-SEED GO" was RETRACTED as a self-sustaining artifact; the Wang-NMDA rebuild gives real
-  bistable+specific completion on seed 42 but is seed-fragile — the per-seed-T diagnostic confirms 43 self-sustains /
-  44 non-specific at EVERY T, so it needs a per-neuron rate-homeostatic / reduced-heterogeneity, not T-calibration).
-  · Gaps #4 (a-1 only) / #1 open.
-- **⚠️ EXACT NEXT ACTION (A — fully close gap #3):** its capability is GO (biased-competition WTA + D3 composed-focus,
-  6-seed, wired). Two residuals to close: **(A1, cheap) neuralize `content_bias_target`** — the host ANIMACY×VERB_SELECTS
-  lexicon → a LEARNED synaptic feature-compatibility map (Bates-MacWhinney, already spiking-de-risked;
-  `biased_competition_buffer.py:33-39`); **(A2) the all-COMPATIBLE tie** (two same-animacy candidates) → composite
-  discourse-salience ranking (recency+role+topicality) read by divisive normalization (the current helper ABSTAINS =
-  moat-safe, so this is a capability EXTENSION not a break). a-1 first (read `2026-07-17-gap3-...-LARGELY-CLOSED.md` +
-  `2026-07-09-D3-centering-focus-GO.md`), then de-risk cheap-first + 6-seed + anti-cheats.
+- **Phase:** GAP-CLOSING (easiest-first). **Gap #2 FULLY CLOSED** ✅ · **Gap #3 FULLY CLOSED (2026-07-18)** ✅ —
+  A1: the referent-bias feature-compatibility is a SPIKING LEARNED map (corpus co-occurrence → feature-detector
+  spikes) replacing host `content_bias_target` (mechanism 6-seed GO + spiking 6-seed GO, permuted-corpus collapses).
+  A2: the all-compatible tie is broken by the CUE-COMBINATION (content decides clear cases; on a feature-silent tie the
+  D3 Cb discourse-salience [6-seed GO] breaks it). **DEPLOYMENT default-on (2026-07-18, commit ded836d2):** the agent
+  LEARNS the feat-compat from the SVO facts IT HEARD (`composer.kb` → `heard_facts()` → `build_referent_bias_from_experience`)
+  + defaults resolution to the spiking `SpikingFeatureCompat`, retiring the host lookup — the DECISION path is
+  ground-truth-free (the global sign is invariant to `bias_target`); host fallback when <min_facts experience (moat-safe).
+  CI 7 gap3 + 8 regression pass; NO sim/ edit. Findings: `2026-07-18-gap3-A1-learned-feature-compatibility-cheap-first-GO.md`.
+  · **Gap #5 = NOW ACTIVE (the next easiest un-closed).** Mechanism FOUND (continuous strong drive + coact_thresh 0.02 +
+  heterosynaptic competition + dendritic dAP at Marr sweet spot + assembly-selective fb-inhib gives SPECIFIC learned
+  attractor); the "6-SEED GO" closure was RETRACTED (self-sustaining-attractor artifact caught by the permuted-recall +
+  absolute-firing anti-cheats). NOT closed = bistable CUE-GATED completion (held members fire the SAME cued-correctly vs
+  permuted → always-on attractor, not cue-triggered). · Gaps #4 (a-1 only) / #1 open.
+- **⚠️ EXACT NEXT ACTION (B — gap #5 robust bistable cue-gated completion):** the retraction (commit b7be09d5) found the
+  learned attractor is SELF-SUSTAINING (fires ~50 whether cued CORRECTLY or with a RANDOM permuted set), clamped by
+  fb_inhib — so it is a strong SPECIFIC attractor but NOT cue-triggered completion. Mandatory new gates: permuted-recall
+  (cue a non-assembly set → stored assembly must NOT complete) + no-cue (silence → assembly must NOT self-ignite). a-1
+  FIRST to the NEWEST gap#5 findings (`2026-07-18-gap5-*`, `2026-07-14-ca3-competitive-hebbian-formation-6seed-GO.md`)
+  before building — the drift-#12 lesson (4× re-derivation this session). Then: the attractor must be BISTABLE (a
+  low-rate background rest state that does NOT self-ignite, + a cue-triggered high-rate completed state) — the Wang-2002
+  somatic slow-NMDA bistability with a working point below self-ignition. de-risk cheap-first + 6-seed + the two new
+  anti-cheats.
 - **🔬 gap#5 Rung 2/3 RESULT (2026-07-17):** the mossy-detonator SPARSIFIES CA3 (0.43→0.03) but sparsity WITHOUT
   synchrony can't select — within/silent separation goes NEGATIVE (−0.27 to −0.47; the sparse cells fire async →
   co-activity traces never clear threshold → no potentiation). Rung 3 (input gamma-pulse) is INERT (byte-identical to
