@@ -25,3 +25,16 @@ A fast-weight bind stores each (role-key, filler-value) as an OUTER PRODUCT into
 
 ## Verdict
 GO (rate rung): a self-organizing, biology-grounded fast-weight bind handles the brain's own correlated codes, beating the fixed algebra and the additive wall — the OP-structure for gap #2. NOT closure. **Next (per THE LAW): the spiking one-brain realization on synaptic fast-weights + the compositional-reasoning check.**
+
+---
+
+## ⚠️ CONNECTION + CORRECTION (drift-#12 a-1, same day) — the EDGE-5 arc already did most of this; the genuine open edge is precise
+
+A read of our own record (before building the spiking rung) found the **EDGE-5 arc (2026-07-15)** is mechanistically the SAME content-addressable fast-weight store (barcode/role → value/filler). It already establishes:
+- **`2026-07-15-edge5-rung2-STP-store-onbridge-6seed-GO`**: the **SINGLE-bind store is realized ON SPIKES** on a real `SimulationBridge` via Mongillo STP facilitation — retrieve 0.97, novel-barcode 0.21 (genuine content-addressing), STP-off lesion 0.06. 6/6 GO. **So the spiking store half is DONE.**
+- **BUT the MULTI-bind on-bridge store COLLAPSES** (P1 0.92 → P2 0.11, below chance) because **raw STP facilitation is ADDITIVE, not DELTA** — multiple binds interfere/saturate. **NAMED SURPASS (un-built): a delta-like error-correcting on-bridge write** (read the current prediction, write `value − prediction`).
+- EDGE-5 rung-1 (numpy) already showed **delta > additive for a SHARED multi-bind store.**
+
+**Correction to my #2 test above:** it used a PER-FACT isolated `W`, which is why delta tied Hebbian (isolated facts, orthogonal keys → no interference). The realistic conversational memory is a **SHARED persistent store** where facts interfere — and there delta IS load-bearing (EDGE-5 + the numpy rung-1 show it). My per-fact result correctly shows the OP structure works, but it trivialized the regime that makes delta matter.
+
+**⇒ the GENUINE gap-#2 spiking closure edge (concrete, un-built):** an **on-bridge delta-like error-correcting write for the MULTI-bind store**, keyed by SVO roles over the brain's correlated filler codes — the EDGE-5 named surpass, applied to the fact binder. Build: extend `_edge5_rung2_stp_store_onbridge_derisk.py` with a read-then-write-the-error plasticity (reward-modulated or subtractive-normalization) so a new bind subtracts the current prediction before writing; GO bar = multi-bind on-bridge retrieve ≥0.80 at P≥3, delta-vs-additive load-bearing, 6-seed. THAT is the closure step, not building the store from scratch.
