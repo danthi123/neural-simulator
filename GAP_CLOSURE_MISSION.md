@@ -169,14 +169,20 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   pieces + the kernels VERIFIED present. The ONE host residual = the retrieve-vs-allocate θ (self-calibrates via the
   Bogacz-Brown familiarity gate; named, non-blocking).
 - **Running jobs:** anchor-heartbeat `bj0sku4ga`. **gap#3 multi-referent research-gate `wa2ucpp1p` (running, parallel lane).**
-- **⚠️ EXACT NEXT ACTION:** the ~2 cap is a SPIKING artifact (rate model is already clean — my #2 K=12=1.000), so go
-  straight to the SPIKING build: compose the EMERGE-41 spiking competitive pooler (slot allocator) + `fused_htm`
-  homeostatic kernels + D3 attractor on the EDGE-5 P=2→4 role-filler task on a real bridge — each bind → its own
-  competitively-selected sparse slot. GO bar: P≥3 recovers ≥0.80 where the write-rule capped ~2; 3 anti-cheats
-  (permuted-role→chance; **lesion-the-competition→collapse to ~2** [decisive: proves slot-separation]; **homeostasis-OFF
-  →collapse/hog** [the emergence-bar control: proves the threshold self-calibrates, not hand-tuned]); 6-seed, `cfg.seed`
-  set. GO → wire into the persistent multi-fact store + BTSP one-shot; BOUNDARY (likely the inter-region conductance
-  ~1000× weak) → gate's #2 theta-gamma (EMERGE-85, sidesteps conductance) — never a stop. THEN process the gap#3 gate.
+- **gap#2 spiking slot binder — BUILD STEP 1 = GO** (`2026-07-17-keystone-2-spiking-slot-binder-STEP1-prereq-GO`):
+  distinct role-drives select DISTINCT competitive slots via the EMERGE-41 pooler `FSWTAProbe` (3-seed, all 6-col
+  non-empty, Jaccard ~0.07). The load-bearing slot-separation property holds. Also identified: sequential selections
+  on a REUSED bridge give `[6,0,6,0]` (adaptation + FS carryover suppresses the next selection — the EMERGE-61 family).
+- **⚠️ EXACT NEXT ACTION — BUILD STEP 2: multi-slot COEXISTENCE + role-cued retrieval on ONE bridge.** Compose:
+  pooler-SELECT the slot (step 1) → **D3 persistent-slot ATTRACTOR** holds it (`_d3_persistent_slot_derisk.py`, stable
+  zero-input, coexisting) per bind, with a per-selection reset (EMERGE-61 wash-out) or the attractor absorbing the
+  carryover → **role-cued RETRIEVE** (drive role → complete the matching slot → decode filler). GO bar: a fact's P≥3
+  bundle recovers on spikes ≥0.80 where the write-rule capped ~2; anti-cheats permuted-role→chance /
+  lesion-the-competition→~2 / homeostasis-OFF→collapse; 6-seed, `cfg.seed` set. First verifiable sub-step: does the D3
+  attractor HOLD a single pooler-selected slot (zero-input persistence)? BOUNDARY (inter-region conductance ~1000×
+  weak) → gate's #2 theta-gamma (EMERGE-85). Never a stop.
+- **Gap #3 = LARGELY CLOSED** (audit corrected); its cheap residual (neuralize `content_bias_target`) is a parallel
+  emergence-bar-polish lane available anytime.
 - **Gap order (planned):** #4 keystone research-gate FIRST (unlocks #2/#5/#1) · #3 multi-referent parallel tractable
   lane · then #2/#5 on the keystone · then #1.
 - **⚠️ EXACT NEXT ACTION:** when `scale787` fires TERMINAL → run `_scale787_analyze` vs the FROZEN gate → write the
