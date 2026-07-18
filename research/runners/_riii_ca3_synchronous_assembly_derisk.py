@@ -34,7 +34,8 @@ from research.runners.validate_trisynaptic_loop import measure_region_response  
 def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_on=2, sync_off=4,
         encode_drive=700.0, recall_drive=250.0, lam_dep_wi=0.5, hebb_max=2000.0, ca3_fb_inhib=20.0,
         reset_steps=15, drive_steps=48, recall_steps=60, ens_thresh=2, no_sync=False,
-        coact_thresh=0.02, hebb_lr=None, k_thresh=18.0, plateau_strength=120.0, apical_R=50.0, apical_gc=None):
+        coact_thresh=0.02, hebb_lr=None, k_thresh=18.0, plateau_strength=120.0, apical_R=50.0, apical_gc=None,
+        permute_recall=False):
     # DIAGNOSED LEVERS (2026-07-18 workflow): the rate-window LTP is an EMA-trace rule -- a cell's co-activity trace
     # tops out ~0.03-0.2 (point Izh fires ~0.2 duty @700pA), so coact_thresh MUST be BELOW it (~0.02) or nothing
     # potentiates; the gamma OFF-gap DECAYS the EMA (0.9^off) so CONTINUOUS drive (sync_off<=1) is required, NOT
@@ -113,6 +114,10 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
     for m, assy in enumerate(assemblies):
         a = assy.copy(); np.random.default_rng(seed + m).shuffle(a)
         half = max(2, len(a) // 2); cue, held = a[:half], a[half:]
+        if permute_recall:
+            # ANTI-CHEAT: cue a RANDOM NON-assembly set (same size) -> the stored assembly's held members must NOT
+            # complete (rules out "any cue completes anything" / a drive artifact independent of the learned attractor).
+            cue = np.asarray(np.random.default_rng(seed * 7 + m + 999).choice(non_stored, len(cue), replace=False), dtype=np.int64)
         resp = measure_region_response(bridge, "ca3", cue.tolist(), drive_pA=recall_drive,
                                        drive_region="ca3", n_steps=recall_steps)
         cue_act = float(np.mean(resp[[ca3_pos[int(g)] for g in cue]])) or 1.0
