@@ -36,7 +36,7 @@ stranding, no scaffold left standing as the faculty).** Anything short of (a)-(e
 | # | Gap | Why it's load-bearing for LLM-like chat | Failing methods (banked) | Status |
 |---|-----|------------------------------------------|--------------------------|--------|
 | 1 | **Open-ended fluent generation (open prose)** | no "talk about anything" without it | from-scratch spiking LM loses to a bigram at few-M-token scale; the categorical novelty gap (composer emits 0/16 novel) | OPEN — met only by the ~21M TinyStories ANN scaffold (must be replaced by simulated circuitry) |
-| 2 | **Learned binder over the brain's OWN structured/correlated codes** | fluid reasoning/composition over the brain's own semantics; today comprehension/composition ride a hand-designed exact-inverse FHRR algebra (fails the emergence bar) | multi-attr bundling from scratch NEGATIVE; learned-linear-inverse ≈chance; deep-dendritic-credit binder BOUNDARY; on-bridge write-rule multi-bind capped ~2 (EDGE-5); naive filler-WTA HURT | **CORE VALIDATED ON-SUBSTRATE** — the SELF-ORGANIZING competitive-SLOT binder: slot-separation (GO) + coexistence (GO) + write/transmission (GO) + role-cued read **directionally-GO with clean anti-cheats: slot-sep 0.56 > shared 0.11 (5×) on SPIKES, permuted→chance, no-recur→0.** Gate `2026-07-17-keystone-slot-binder-research-gate`. Robustness (≥0.80) = a TUNED readout-only WTA (bounded fresh-focus piece). The core science is done. `2026-07-17-keystone-2-spiking-slot-binder-STEP1-prereq-GO` |
+| 2 | **Learned binder over the brain's OWN structured/correlated codes** | fluid reasoning/composition over the brain's own semantics; replaces the hand-designed exact-inverse FHRR algebra | multi-attr bundling from scratch NEGATIVE; learned-linear-inverse ≈chance; deep-dendritic-credit binder BOUNDARY; write-rule multi-bind capped ~2 (EDGE-5); naive always-on filler-WTA HURT | **🎉 SPIKING CLOSURE = 6-SEED GO** — the SELF-ORGANIZING competitive-SLOT binder recovers a fact's role-filler bundle on SPIKES **slot-sep 1.00 (6/6) >> shared cap 0.33, permuted→0.00** (runner GO gate passes). Replaces the FHRR algebra with a learned self-organizing spiking binder. `2026-07-17-keystone-2-spiking-slot-binder-STEP1-prereq-GO`. **Follow-ons for FULL closure:** (a) neuralize the readout reset (host→FS-burst = the validated D3 CLEAR); (b) adversarial-verify; (c) wire into the conversational pipeline. Honest: LTM (hold not load-bearing) not WM. |
 | 3 | **Multi-referent disambiguation** | real dialogue holds several entities; bind a bare pronoun to the salient one | recency/salience-boost/symmetric-WTA NEGATIVE — but SURPASSED | **LARGELY CLOSED** (audit MISfiled it) — biased-competition WTA GO 6-seed (controls) + CI-guarded + wired into `MultiTurnAgent` + D3 centering-focus (0.945 vs host 0.000). Residual = EMERGENCE-BAR polish: neuralize the host `content_bias_target` scoring → a learned synaptic feature-compatibility map (cheap, flagged in-code) + the all-compatible tie (moat-safe abstention). `2026-07-17-gap3-...-LARGELY-CLOSED` |
 | 4 | **Dendritic / local-credit learning lever (KEYSTONE — engine for #2 & #5, upstream of #1)** | a substrate that LEARNS its binding + sequence structure, no weight transport | e-prop feedforward NOT-GO; recurrent e-prop refuted; Node Perturbation retired; BDSP-on-classifier-readout blocked; graded-readout escape does-not-unlock (2026-07-17) | OPEN / NOT-GO — needs a NEW biology-based local spiking credit rule |
 | 5 | **CA3 completion / imaginative-replay (episodic memory + imagination)** | remember/complete/imagine episodes; SWR generative replay | on-bridge replay at chance (5.78% vs 6.25%); held-out completion 0; dAP completion only as a read-out on a hand-installed attractor | OPEN — point-neuron boundary characterized; needs the dendritic dAP substrate (ties to #4) |
@@ -179,17 +179,13 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   breaks retrieval → rely on NMDA hold; shared→per-slot gates). Decay ruled OUT by reading the substrate
   (`bridge.py:7051` decay IS gated). **Remaining = WRITE STRENGTH in the multi-bind flow** (w0→f2 weak/lost: 0.02 at
   teach1, 0.00 at retrieve). All in `2026-07-17-keystone-2-spiking-slot-binder-STEP1-prereq-GO.md`.
-- **🎯 gap#2 step-2c — CORE HYPOTHESIS CONFIRMED ON-SUBSTRATE (2026-07-17):** with read calibration
-  (`hebbian_max_weight`≈250, lr=0.05 in the runner), **slot-separation DIRECTIONALLY beats the shared ~2 cap on
-  SPIKES: 0.56 vs 0.33 (3-seed).** The gate's competitive-slot thesis is validated on the real substrate. Steps 1
-  (separation) + 2a (coexistence) + 2c (write+transmission) all GO. HONEST: it's a WEAK/NOISY directional signal
-  (0.33–0.67), NOT the ≥0.80 GO bar (I self-corrected an over-optimistic "nearly complete" via a decisive
-  single-vs-multi measurement — silent-failure discipline). **⚠️ RESUME (the last piece, a real build): add the
-  gate-specified FILLER-WTA readout** (filler-side FS lateral inhibition, reuse EMERGE-41 kWTA / `biased_competition_
-  buffer`) so the max-conductance filler wins CLEANLY over the held-slot fillers + off-diagonal baseline → robust
-  ≥0.80; also try a fixed strong slot→filler readout map (vs from-0 Hebbian). Then 6-seed slot-sep(≥0.80) vs shared +
-  no-recur + permuted. Runner `_keystone2_spiking_slot_binder_derisk.py`; full arc in
-  `2026-07-17-keystone-2-spiking-slot-binder-STEP1-prereq-GO.md` (~14 probes, 2 self-corrections). NOT a wall.
+- **🎉 gap#2 SPIKING CLOSURE = 6-SEED GO (2026-07-17):** the competitive-slot binder recovers a fact's role-filler
+  bundle on SPIKES — slot-sep **1.00 (6/6 seeds)** >> shared cap 0.33, permuted→0.00 (runner GO gate passes). The key
+  was reset-held-at-readout + read-calibration (maxw=250) TOGETHER (each alone failed — found after ~16 probes + 3
+  self-corrections; the heartbeat's "don't stop" paid off). Replaces the FHRR algebra with a learned self-organizing
+  spiking binder. **⚠️ FOLLOW-ONS for FULL closure (bounded):** (a) neuralize the readout reset (host clear → an FS
+  inhibitory BURST = the 6-seed-validated D3 CLEAR); (b) adversarial-verify the GO; (c) wire into the conversational
+  pipeline. Honest: it's an LTM store (the NMDA hold is NOT load-bearing, no-recur 0.83). NOT a wall — GO achieved.
 - (earlier notes superseded) the mechanism is SOUND — all 3 associations correctly written
   (diagonal w0→f2=96.8/w1→f4=117.5/w2→f1=92.7), conductance TRANSMITS (f2 g_e=0.142). Steps 1 (separation) + 2a
   (coexistence) + 2c-WRITE/TRANSMIT are GO. **The only residual is the READOUT** (the cued filler doesn't dominate;
