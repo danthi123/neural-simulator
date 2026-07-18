@@ -238,15 +238,19 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   PSC vs an equivalent external current + conductance/reversal/synchrony; make DG fire a dense synchronous gamma volley
   so the mossy summates) — `sim/`-level or deep-config. (Lesson: read the region's neuron type before proposing a
   neuron-type fix.)**
-  **↳ REFRAME TESTED + REFUTED at real scale (14+ probes + the integrated test — the VERIFIED conclusion): at n_ca3=400
-  a gamma-synchronized DG volley makes CA3 input-specific (sep_cos 0.00→0.53) so it LOOKED like a tractable INTEGRATED
-  select-and-store — BUT the integrated test at the COMPLETION scale (n_ca3=2000) selected only |A_m|=1 CA3 cell (too
-  weak to seed a storable assembly). So the reframe does NOT sidestep the boundary; the mossy→CA3-firing boundary is
-  ROBUST ACROSS SCALES and must be fixed FIRST. Added `run(assemblies_ext=...)` (default None => byte-preserved) as a
-  valid tool for when the feedforward is fixed. ⇒ the genuine resume = the DEEP hippocampal-feedforward-excitability
-  sub-arc (why the mossy CONDUCTANCE doesn't fire CA3 at n_ca3=2000 while a direct current does: measure the mossy PSC
-  vs an equivalent current, the conductance/reversal-potential scaling, DG firing density+synchrony) — likely a
-  `sim/`-level mechanism, a focused fresh pass. (Verified the reframe rather than overclaiming it.)**
+  **↳ SURPASSED (~28 probes) — the "hard boundary" was WRONG; the emergent-DG MECHANISM WORKS.** The refutation above
+  used a WEAK recurrent (ca3w=1.5, no attractor to amplify the seed). WITH recurrent amplification (train=True,
+  `coincidence=True` dendritic read, ca3w≈4) the mossy seed AMPLIFIES; and adding the gap#5 BISTABILITY KEYSTONE
+  (`two_comp` + self_regen 0.15 + KIR 3 + gc_read 5) resolves the amplification TRILEMMA (plain amplification → 0 or
+  runaway-to-2000; the keystone CAPS it) → a STRONG mossy seed (~1500) ignites a STABLE SPARSE assembly (5-24 cells, no
+  runaway). ⇒ **the SAME dendritic-bistability keystone that resolved gap#5 COMPLETION also resolves the emergent
+  SELECTION trilemma** (intrinsic sparse latch, no pre-assigned mask). **Residual, precisely characterized = RELIABLE
+  MULTI-INPUT SEEDING:** only ~2/5 inputs seed (the others → 0), and this does NOT improve with mossy weight (3000) or
+  density (0.30) — a property of the sparse RANDOM mossy (only DG codes whose mossy concentrates on some CA3 fire a
+  seed). ⇒ the next mechanism (EMERGENCE-BAR-aligned): a LEARNED/structured DG→CA3 map (Hebbian mossy so every DG code
+  reliably concentrates+seeds) + reproducible per-input DG codes — NOT a knob. `run(assemblies_ext=...)` (default None,
+  byte-preserved) is ready for the store+complete once seeding is reliable. Self-correction (SURPASS discipline): I
+  nearly closed this as a hard boundary; taking the next concrete step (the amplification test) overturned it.**
   The gap#4<->gap#5 unification (below) is UNAFFECTED (pre-assigned assembly + direct drive). Frontier now: this
   DG-bursting sub-arc, gap#5 SWR, or gap#1 open generation.
 - **✅ gap#4<->gap#5 UNIFICATION — MECHANISM 6/6 GO (2026-07-18, the focused build DONE).** The `encode_btsp` path was
