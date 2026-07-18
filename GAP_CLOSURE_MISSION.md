@@ -201,16 +201,25 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   documented point-neuron whitening/graded-magnitude walls. Findings:
   `2026-07-18-gap5-completion-trilemma-magnitude-vs-specificity-vs-bistability.md`,
   `2026-07-18-gap5-specificity-research-gate-assembly-selective-inhibition.md`.
-- **⚠️ EXACT NEXT ACTION (B — gap #5, per THE LAW = the next mechanism, NOT a wall):** the missing piece is **intrinsic
-  DENDRITIC PLATEAU bistability** — a self-regenerating NMDA plateau that HOLDS two stable states (silent + plateau) at
-  the SAME recurrent input, so magnitude and bistability stop opposing (the recurrent gain need not be cranked to
-  self-sustain). The two-compartment machinery EXISTS (`enable_two_compartment_dap`, `apical_R`, `apical_g_couple`) but
-  is currently a transient dAP READOUT, not a bistable HOLD (Wang finding). NEXT: research-gate the dendritic-plateau
-  bistability parameterization (Major-Larkum-Schiller; the Mg-regenerative apical regime), make the apical HOLD, then
-  combine with `structural_sep` + `selective_inhib`, 6-seed frozen + no-cue + permuted anti-cheats. This overlaps the
-  gap #4 dendritic keystone (the dendritic substrate is the standing priority [[project_dendritic_cortex_for_emergence]]).
+- **🎉 gap #5 DENDRITIC BISTABILITY — research-gated + OFFLINE-VALIDATED (2026-07-18).** The next mechanism (per THE LAW)
+  is intrinsic DENDRITIC PLATEAU bistability (a self-regenerating NMDA plateau HOLDS two states — silent + plateau — at
+  the SAME input, so magnitude and bistability stop opposing: completion = a one-shot coincidence trigger, sustaining =
+  intrinsic per-cell, so W_rec can be SUB-CRITICAL = specific + silent rest). Deep-research gate returned (Antic 2010,
+  Major-Larkum-Schiller 2013, Sanders 2013 "perfect couple") + the OFFLINE I-V test (`_gap5_dendritic_bistability_offline_IV.py`)
+  DECISIVELY confirms: the kernel's own Jahr-Stevens Mg-block gives NO bistable band with a LINEAR leak (knife-edge,
+  boosting→self-trigger) but a WIDE robust bistable band (3 fixed points, g_res 2-14) with a KIR (inward-rectifier K⁺)
+  load line. ⇒ intrinsic bistability IS achievable on this substrate; it needs a KIR down-state stabilizer (which the
+  point soma lacks). Finding: `2026-07-18-gap5-dendritic-bistability-offline-IV-validated-KIR-needed.md`.
+- **⚠️ EXACT NEXT ACTION (B — gap #5): implement the kernel change (research Rank 1 + Rank 2, now offline-designed).** In
+  `fused_coincidence_plateau` (`sim/kernels.py:253`): (1) split the plateau conductance into an input `trigger` term + a
+  v-gated self-regenerating `sustain` term (`g_regen·mg_block(v)·sigmoid(k_v·(v−v_hold))`) + slow reservoir decay → the
+  plateau HOLDS after the volley; (2) add a KIR-shaped down-state stabilizer → robust bistability. Additive / default-off
+  / byte-identical when off (deep-research gate CLEARED the sim/ edit). Then: single-cell latch-and-hold probe
+  (`_gap5_dendritic_bistability_probe.py`, extend it: ignite→remove input→verify HOLD; no-cue→silent; permuted→no latch)
+  → sweep the bistable band on-substrate → wire into CA3 with SUB-CRITICAL W_rec + `structural_sep` + `selective_inhib`,
+  6-seed frozen + no-cue + permuted anti-cheats. Overlaps the gap #4 dendritic keystone [[project_dendritic_cortex_for_emergence]].
   Infra banked (bistable gate + plasticity-freeze + enable_ou + ca3_density + selective_inhib + structural_sep +
-  rate_homeo + recall_k_thresh, all default-off / byte-identical).
+  rate_homeo + recall_k_thresh, all default-off).
 - **🔬 gap#5 Rung 2/3 RESULT (2026-07-17):** the mossy-detonator SPARSIFIES CA3 (0.43→0.03) but sparsity WITHOUT
   synchrony can't select — within/silent separation goes NEGATIVE (−0.27 to −0.47; the sparse cells fire async →
   co-activity traces never clear threshold → no potentiation). Rung 3 (input gamma-pulse) is INERT (byte-identical to
