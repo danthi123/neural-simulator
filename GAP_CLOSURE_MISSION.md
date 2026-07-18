@@ -198,6 +198,17 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   full unification's completion half **must** run BTSP-encoding INSIDE the gap#5 completion config (reuse
   `_riii_ca3_synchronous_assembly_derisk`'s `_build` + `_measure_ca1`, swap the Hebbian encode for BTSP) — a focused
   deep integration, the precise next rung. Storing (GO) and completion (gap#5-config) are cleanly separated.
+- **↳ EMPIRICAL SCOPING of the completion integration (2026-07-18, one careful attempt = confirmed focused-pass build).**
+  A verification-first smoke (`scratchpad/btsp_in_gap5_config_smoke.py`) into the completion-config `_build` exposed the
+  real gotchas: (1) `enable_hebbian_learning` stays True (setting `hebb_lr=0` does NOT disable it — the encode Hebbian
+  must be turned off explicitly); (2) the config PRE-SETS the ca3→ca3 recurrent to ~6.0 (already near the completion
+  scale — encoding must GROW them beyond, or the baseline must be lowered so BTSP's growth is the signal); (3) the
+  coincidence plateau's firing during BTSP encoding is unclear (max apical read 0.0 — needs the k_thresh/drive tuned so
+  the co-firing assembly actually latches the plateau BTSP reads); (4) BTSP was a no-op (on==off) under those conditions.
+  ⇒ the BTSP-encode-in-gap#5-completion-config integration is a genuine FOCUSED-PASS deep build (disable the encode
+  Hebbian + lower/zero the pre-set recurrent so BTSP is the sole encoder + tune the plateau to fire during encode + then
+  the `_measure_ca1` h_comp check + anti-cheats + 6-seed) — NOT a quick win. Do it with full attention (the completion
+  trilemma config is hard-won; rushing it is the silent-failure risk). The STORING half stands GO independently.
 - **✅ GAP #4 ON-BRIDGE BTSP RULE VALIDATED (2026-07-18) — the working credit rule runs ON THE SPIKING SUBSTRATE.** Added `fused_btsp_update` (`sim/kernels.py`) + a guarded default-off `enable_btsp` block in
   `bridge._run_one_simulation_step` (seconds-long per-neuron pre-eligibility `cp_btsp_pre_elig` on `coo.row` × the
   dendritic plateau `cp_v_apical` above v_hold on `coo.col`, gated by plastic-mask + plasticity_rate_gain like BDSP) +
