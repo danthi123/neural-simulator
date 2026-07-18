@@ -1,0 +1,143 @@
+"""R-iii gap#5 — SYNCHRONY-ISOLATION de-risk: does DIRECT SYNCHRONOUS assembly encoding grow the within-ensemble
+CA3 recurrent weights to the completion scale (the diagnostic-pinned residual)?
+
+2026-07-18. The 2026-07-14 arc pinned the functional-completion blocker: the learned within-ensemble weights stay
+~7.5 (co-activity-limited), ~200× below the ~1600 the hand-installed attractor needs, because the members fire
+ASYNCHRONOUSLY. This session's cap-vs-synchrony test confirmed it (hebb_max 30→2000 byte-identical → NOT the cap).
+The 2026-07-14 finding named but NEVER BUILT the fix: "my tests drove the UPSTREAM input, not the assembly cells
+directly" (Kopsick-Ascoli 2024: drive the assembly PCs together in a gamma window → dense co-firing → strong LTP).
+
+This de-risk ISOLATES that hypothesis: pre-assign a sparse CA3 assembly per pattern, drive THOSE cells DIRECTLY with
+strong SYNCHRONOUS gamma-pulsed current during encoding (all fire together each ON window), rate-window LTP + the
+committed EMERGE-40 competition ON, then recall a 50% partial cue directly on CA3 → does the held-out 50% FIRE
+(functional pattern completion)? GO = h_comp≥0.30 & ≥2× non-stored, competition load-bearing (lam=0 vs 0.5),
+async-control collapses (sync OFF → back to the ~7.5 weak weights → no completion). If GO → synchrony IS the fix →
+the follow-on wires the EMERGENT mossy/DG assembly selection (experience-derived). If NO even with perfect synchrony
+→ a deeper issue. GPU.
+"""
+import argparse
+import os
+import sys
+import time
+
+import numpy as np
+
+_REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+if _REPO not in sys.path:
+    sys.path.insert(0, _REPO)
+
+from research.runners._riii_ca3_coincidence_completion_derisk import _build, _set_gates  # noqa: E402
+from research.runners._riii_ca3_competitive_completion_payoff_derisk import _extract_ca3ca3_coincidence  # noqa: E402
+from research.runners.validate_trisynaptic_loop import measure_region_response  # noqa: E402
+
+
+def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_on=2, sync_off=4,
+        encode_drive=700.0, recall_drive=250.0, lam_dep_wi=0.5, hebb_max=2000.0, ca3_fb_inhib=20.0,
+        reset_steps=15, drive_steps=48, recall_steps=60, ens_thresh=2, no_sync=False):
+    from sim.backend import get_backend, to_host
+    from sim.kernels import fused_htm_winner_inactive_depression
+    cp, _ = get_backend()
+    # high hebb_max so the within-ensemble can GROW to the completion scale IF the synchronous co-firing supplies the
+    # co-activity; ca3w=6 init; two_comp dendritic read-out (CYCLE-1068), feedback inhibition to keep non-assembly sparse.
+    bridge = _build(seed, n_ca3=n_ca3, ca3w=6.0, ca3_density=0.5, coincidence=True, two_comp=True, apical_R=50.0,
+                    train=True, hebb_max=hebb_max, hebb_rate=True, ca3_fb_inhib=ca3_fb_inhib)
+    rm = bridge.region_manager
+    ca3_idx = list(rm.indices("ca3")); ca3_arr = cp.asarray(ca3_idx, dtype=cp.int64)
+    n = bridge.core_config.num_neurons
+    ca3_pos = {int(g): i for i, g in enumerate(ca3_idx)}
+    rng = np.random.default_rng(seed * 17 + 3)
+
+    # PRE-ASSIGN sparse assemblies (~1% of CA3), disjoint-ish (random draw).
+    n_assy = max(6, int(assembly_frac * n_ca3))
+    assemblies = [np.asarray(sorted(rng.choice(ca3_idx, n_assy, replace=False)), dtype=np.int64) for _ in range(n_mem)]
+
+    flat_h, pre_l_h, post_l_h = _extract_ca3ca3_coincidence(bridge, ca3_idx, to_host)
+    conn = bridge.cp_connections
+    do_comp = lam_dep_wi > 0.0 and len(flat_h) > 0
+    if do_comp:
+        flat_pos = cp.asarray(flat_h, dtype=cp.int64)
+        pre_local = cp.asarray(pre_l_h, dtype=cp.int64)
+        post_local = cp.asarray(post_l_h, dtype=cp.int64)
+
+    def _apply_competition(member_mask_local):
+        fpre = member_mask_local[pre_local]; fpost = member_mask_local[post_local]
+        w = conn.data[flat_pos]
+        w = fused_htm_winner_inactive_depression(w, fpre, fpost, float(lam_dep_wi), 0.0, float(hebb_max))
+        w = fused_htm_winner_inactive_depression(w, fpost, fpre, float(lam_dep_wi), 0.0, float(hebb_max))
+        conn.data[flat_pos] = w
+
+    _set_gates(bridge, 1.0)
+    period = int(sync_on) + int(sync_off)
+    for m, assy in enumerate(assemblies):
+        assy_arr = cp.asarray(assy, dtype=cp.int64)
+        # the KNOWN assembly is the competition member set (pre-assigned; local ca3 positions)
+        member_mask = cp.zeros(len(ca3_idx), dtype=cp.float32)
+        member_mask[cp.asarray([ca3_pos[int(g)] for g in assy], dtype=cp.int64)] = 1.0
+        for ev in range(train_events):
+            bridge.cp_external_input_current[:] = 0.0
+            for _ in range(reset_steps):
+                bridge._run_one_simulation_step()
+            for _st in range(drive_steps):
+                bridge.cp_external_input_current[:] = 0.0
+                on = True if no_sync else ((_st % period) < int(sync_on))   # no_sync = drive every step (async control)
+                if on:
+                    bridge.cp_external_input_current[assy_arr] = float(encode_drive)   # DIRECT synchronous assembly drive
+                bridge._run_one_simulation_step()
+            if do_comp:
+                _apply_competition(member_mask)
+        bridge.cp_external_input_current[:] = 0.0
+    _set_gates(bridge, 0.0)
+
+    # within-ensemble vs member->silent weight read (did the weights GROW to the completion scale?)
+    def _wstats():
+        d = np.asarray(to_host(conn.data))
+        wi, ws = [], []
+        assy_set = set(int(g) for a in assemblies for g in a)
+        for k, (pl, ql) in enumerate(zip(pre_l_h, post_l_h)):
+            pre_g = ca3_idx[pl]; post_g = ca3_idx[ql]
+            if pre_g in assy_set and post_g in assy_set:
+                wi.append(d[flat_h[k]])
+            elif pre_g in assy_set and post_g not in assy_set:
+                ws.append(d[flat_h[k]])
+        return (float(np.mean(wi)) if wi else 0.0), (float(np.mean(ws)) if ws else 0.0)
+    w_within, w_silent = _wstats()
+
+    # RECALL: partial cue (50% of each assembly) DIRECT on CA3 -> does the held-out 50% fire?
+    non_stored = np.array([g for g in ca3_idx if g not in set(int(x) for a in assemblies for x in a)], dtype=np.int64)
+    held_list, ns_list = [], []
+    for m, assy in enumerate(assemblies):
+        a = assy.copy(); np.random.default_rng(seed + m).shuffle(a)
+        half = max(2, len(a) // 2); cue, held = a[:half], a[half:]
+        resp = measure_region_response(bridge, "ca3", cue.tolist(), drive_pA=recall_drive,
+                                       drive_region="ca3", n_steps=recall_steps)
+        cue_act = float(np.mean(resp[[ca3_pos[int(g)] for g in cue]])) or 1.0
+        held_list.append(float(np.mean(resp[[ca3_pos[int(g)] for g in held]])) / (cue_act + 1e-9))
+        ns_list.append(float(np.mean(resp[[ca3_pos[int(g)] for g in non_stored[:40]]])) / (cue_act + 1e-9))
+    h_comp, n_comp = float(np.mean(held_list)), float(np.mean(ns_list))
+    go = h_comp >= 0.30 and h_comp >= 2.0 * (n_comp + 1e-9)
+    return {"seed": seed, "w_within": w_within, "w_silent": w_silent,
+            "w_ratio": (w_within / (w_silent + 1e-9)), "h_comp": h_comp, "n_comp": n_comp, "go": bool(go)}
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--seeds", default="42")
+    ap.add_argument("--n-ca3", type=int, default=1000)
+    ap.add_argument("--lam-dep-wi", type=float, default=0.5)
+    ap.add_argument("--hebb-max", type=float, default=2000.0)
+    ap.add_argument("--encode-drive", type=float, default=700.0)
+    ap.add_argument("--no-sync", action="store_true", help="ASYNC control: drive every step (no gamma pulse)")
+    a = ap.parse_args()
+    t0 = time.time()
+    print(f"[R-iii synchrony-isolation] n_ca3={a.n_ca3} lam={a.lam_dep_wi} hebb_max={a.hebb_max} "
+          f"encode_drive={a.encode_drive} no_sync={a.no_sync}", flush=True)
+    for s in [int(x) for x in a.seeds.split(",")]:
+        r = run(s, n_ca3=a.n_ca3, lam_dep_wi=a.lam_dep_wi, hebb_max=a.hebb_max,
+                encode_drive=a.encode_drive, no_sync=a.no_sync)
+        print(f"  [seed {s}] w_within={r['w_within']:.1f} w_silent={r['w_silent']:.1f} ratio={r['w_ratio']:.2f} | "
+              f"FUNCTIONAL h_comp={r['h_comp']:.3f} non-stored={r['n_comp']:.3f} -> {'GO' if r['go'] else 'NO'} "
+              f"({time.time()-t0:.0f}s)", flush=True)
+
+
+if __name__ == "__main__":
+    main()
