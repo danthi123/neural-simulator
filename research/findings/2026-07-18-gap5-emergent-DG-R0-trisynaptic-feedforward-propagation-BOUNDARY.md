@@ -121,6 +121,18 @@ assembly, or the DG→CA3 map learned so each code maps to a fixed tight cluster
 2 full-chain tests). The MECHANISM is demonstrated end-to-end at completion scale; completability + reliability are the
 genuine open frontier for a focused pass.
 
+## KEY ENABLER — the DG codes are REPRODUCIBLE + SEPARATED (the learned-map path is clearly tractable)
+Verified: driving the same DG input twice gives an IDENTICAL DG code (Jaccard **1.00** for all 3 inputs), and distinct
+inputs give distinct codes (Jaccard **0.07-0.18** = well-separated), each ~60 DG cells (20%). So the earlier worry
+("single-seed-fragile DG codes") was WRONG — the DG pattern separation is reliable + deterministic. ⇒ the emergent-DG's
+reliable-seeding residual is NOT a DG problem; it is purely the SPARSE RANDOM mossy map (which CA3 cells a reproducible
+DG code fires is random). ⇒ the fix is clearly tractable: a LEARNED Hebbian mossy DG→CA3 map binds each reproducible DG
+code to a FIXED completable CA3 cluster. The chicken-and-egg (Hebbian needs CA3 to fire) is solved by CO-DRIVING a
+target CA3 cluster during encoding (the mossy LEARNS to detonate it) — biologically the mossy-fiber potentiation of the
+encoding phase. Then the DG code ALONE reliably fires its bound cluster (reliable seeding) + the cluster is a chosen
+tight set (completable). This directly resolves BOTH residuals (reliability + completability) and is EMERGENCE-aligned
+(input → emergent DG separation → learned reliable input→cluster mapping). NEXT: build the learned mossy map.
+
 ## Status + the next mechanism (per THE LAW)
 - **BOUNDARY (well-characterized):** emergent-DG via the trisynaptic feedforward is blocked by feedforward propagation
   — the hippocampal chain (EC→DG→CA3) does not carry an input to fire downstream cells at reasonable drives; the mossy
