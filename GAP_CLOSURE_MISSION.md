@@ -271,12 +271,17 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   frac=0.1 (200 cells, n_ca3=2000) + Wang NMDA (cap 250): **cue=0.266 (STRONG, ≥0.20), nocue=0.000, rest=0.000
   (genuinely SILENT at rest = bistable!)** — the larger assembly + somatic NMDA fixed BOTH the magnitude AND the
   bistability the dАP version couldn't. The mechanism WORKS. Only SPECIFICITY remains (perm=0.168 vs cue 0.266 = 1.6×,
-  need ≥3× — a permuted cue partially drives held via background). **⚙️ competition-lam specificity sweep running**
-  (`bm1dvz4i1`: lam {0.5,0.7,0.9} — depresses non-member→member paths → sharper). **⚠️ EXACT NEXT ACTION:** read it →
-  if a lam gives cue≥0.20 + perm≤cue/3 + rest~0 → 6-SEED BISTABLE gate (no-cue/permuted/no-encoding) → REAL robust
-  cue-gated completion CLOSED → emergent DG-selection → SWR loop → console. If lam can't sharpen → sparser code (lower
-  frac + the assembly-selective fb_inhib) or the Kopsick homeostatic-downscaling SNR working point. ⇒ gap #5 completion
-  is CLOSE on the Wang-NMDA mechanism (magnitude + bistability solved; specificity the last piece). Gaps #1/#4 remain.
+  need ≥3× — a permuted cue partially drives held via background). **SPECIFICITY tuning:** competition-lam SATURATES
+  (~1.7×); weaker cue better (rdrv 700-1000: cue 0.25-0.27, nocue/rest 0.000, **perm ~0.12 = 2.1×**). ⇒ perm stuck at a
+  ~0.12 BACKGROUND-CASCADE FLOOR (a permuted cue's random cells always cascade into the assembly via background
+  connectivity). **⚙️ sparser-code sweep running** (`bng3x0qyi`: frac {0.04,0.06,0.08} — fewer background connections →
+  less cascade). **⚠️ EXACT NEXT ACTION:** read it → if a frac gives cue≥0.20 + perm≤cue/3 + rest~0 → 6-SEED BISTABLE
+  gate → REAL completion CLOSED → emergent DG-selection → SWR loop. If the cascade floor holds → the dAP+NMDA
+  COMBINATION (research-gate #3: somatic NMDA for bistability + dendritic-dAP coincidence for specificity — needs both
+  on the ca3→ca3, a real build) or Kopsick homeostatic SNR downscaling. **⇒ HUGE ADVANCE (honest):** the Wang-NMDA
+  mechanism gives REAL strong (0.27) bistable (silent rest) ~2×-specific cue-gated completion — vs the retracted
+  self-sustaining artifact AND the weak-dAP 0.05; magnitude + bistability SOLVED, clean 3× specificity the last piece.
+  Gaps #1/#4 remain per "close ALL fully".
   **What STANDS:** strong SPECIFIC learned attractor 6-seed + genuine (weak) bistable+specific completion demonstrated;
   the retraction's lesson (mandatory no-cue+permuted gates) is baked in. Gaps #1/#4 remain per "close ALL fully".
 - (superseded by the breakthrough above) direct synchronous assembly encoding did NOT grow the weights — DECAYED,
