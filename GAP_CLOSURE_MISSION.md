@@ -240,11 +240,16 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   `_build(train=False)` HARDCODES weight 1.5). **The real question is attractor STRENGTH** (3.66 mV won't fire non-cue
   members from a partial cue → needs stronger recurrent weight / density / LTP), NOT a sim/ fix.
   `2026-07-17-gap5-ca3-recurrents-NOT-silent-transmission-refuted-attractor-strength-is-the-real-question.md`.
-- **⚠️ EXACT NEXT ACTION (gap #5, in flight):** read the weight×density sweep `bombi1iba` (w120/300/600 × d0.30/0.50/0.60;
-  GO gate = trained held-out completion>0.30 & recurrence-gain>0.15). If a stronger attractor GOes → gap #5 completion
-  closes via attractor-strength (no sim/ edit); if even w600/d0.60 stays at chance → the point-neuron attractor is
-  genuinely too weak → the dendritic-plateau completion (already 6-seed GO as a read-out) is the method, on an HONEST
-  basis (not a mis-diagnosed bug). Then wire completion → the SWR replay loop → a queryable console; 6-seed + anti-cheats.
+- **⚠️ gap#5 sweep RESULT = SILENT-FAILURE SIGNATURE (2026-07-17):** the w120/300/600 × d0.30/0.50/0.60 completion sweep
+  returned **BYTE-IDENTICAL to 3 decimals across ALL configs** (TRAINED held-out=0.027, NO-TRAIN=0.027, gain=+0.000,
+  own_cos=0.506≈√0.5 the drive-artifact floor). Impossible if weight/density reach the computation — yet my direct
+  probe PROVES the recurrents scale with weight. So the sweep is untrustworthy (silent failure). **A Workflow
+  (`wxim0nt7c`) is diagnosing in parallel:** H1 params-applied? · H2 do held-out neurons get supra-threshold recurrent
+  current at recall? · H3 is the completion METRIC valid (positive-control: force held-out firing → does it register)?
+  · H4 does a HAND-INSTALLED strong symmetric attractor complete at ALL (sweep installed w 200/800/3000)? → synthesis
+  → adversarial verify. **⚠️ EXACT NEXT ACTION:** read the Workflow result → it tells us whether the byte-identical is
+  a params/metric bug (fix the harness) or a genuine attractor floor (→ the already-6-seed-GO dendritic dAP completion
+  is the method). Then close completion → wire into SWR replay → queryable console; 6-seed + anti-cheats.
 - **✅ Gap #4 a-1 RAG check DONE (2026-07-17) — the research-gate is essentially the `learning-rule-frontier-map`
   (2026-07-17), re-read + current:** SUPERVISED deep credit on spikes (e-prop / NP / D1-BDSP) is PARKED — all blocked
   by ONE shared "spiking-classifier-readout-training wall"; the rate-net positive control (done) confirmed the block
