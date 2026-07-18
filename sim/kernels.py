@@ -493,6 +493,34 @@ def fused_bdsp_update(w, etilde_pre, B_post, Pbar_post, E_post, eta, w_min, w_ma
     return cp.clip(w_new, w_min, w_max)
 
 @fuse()
+def fused_btsp_update(w, etilde_pre, is_post, eta, w_min, w_max):
+    """Behavioral-Timescale Synaptic Plasticity (BTSP) plateau-gated ONE-SHOT weight update (gap#4, 2026-07-18;
+    Bittner-Magee 2017 10.1126/science.aan3846; Milstein-Magee 2021 eLife 73046). The LOCAL, plateau-gated,
+    no-weight-transport, no-global-loss credit rule the gap#4 rate de-risk confirmed 6-seed:
+
+        dw_ij = eta * Etilde_j * IS_i * (w_max - w_ij)   (saturating one-shot potentiation)
+
+    where (PER-SYNAPSE, gathered by the caller from the cached COO exactly like fused_bdsp_update):
+      w         : current feedforward weight (in [w_min, w_max]).
+      etilde_pre: the PRESYNAPTIC synaptic-eligibility trace of source j (cp_eligibility_trace gathered on coo.row) --
+                  a SECONDS-long decaying trace of j's recent activity (Milstein's pre-side eligibility).
+      is_post   : the POSTsynaptic INSTRUCTIVE signal of target i = max(v_apical_i - v_hold, 0), the dendritic PLATEAU
+                  depolarization above threshold (gathered on coo.col). With the gap#5 BISTABLE apical (self-regen +
+                  KIR) a triggered plateau LATCHES for SECONDS -> a seconds-long is_post -> a BEHAVIORAL-TIMESCALE
+                  credit window (a pre-input active seconds before/after the plateau still potentiates); a transient
+                  apical gives only a ms window. At rest the apical is silent (KIR down-state) => is_post == 0 =>
+                  dw == 0 (the no-spurious-learning moat, by construction).
+
+    Saturating (w_max - w) potentiation (Milstein's BTSP is dominated by potentiation of low-w synapses co-active with
+    the plateau; the slower LTD arm is a separate process, omitted here). ONE-SHOT: a single plateau presentation
+    shifts w. Fully local; NO weight transport (is_post is the cell's OWN apical plateau, not a transpose of any forward
+    W); NO global loss. Pure math, no simulator deps. Called ONLY from the guarded `if cfg.enable_btsp` block in
+    bridge._run_one_simulation_step, gated by cp_plasticity_rate_gain, so byte-inert when enable_btsp is False (the
+    block is unreached, this kernel never invoked). A no-op wherever the plateau is silent (is_post ~ 0)."""
+    w_new = w + eta * etilde_pre * is_post * (w_max - w)
+    return cp.clip(w_new, w_min, w_max)
+
+@fuse()
 def fused_eligibility_trace_decay(trace, decay_factor):
     """Fused kernel for eligibility trace exponential decay.
 

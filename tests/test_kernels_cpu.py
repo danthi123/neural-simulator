@@ -1423,5 +1423,34 @@ class TestEligibilityTrace:
         assert trace[0] < 1e-5, f"Trace should be nearly zero after 10 tau: {trace[0]}"
 
 
+def test_fused_btsp_update_plateau_gated_oneshot():
+    """gap#4 (2026-07-18): fused_btsp_update = dw = eta*Etilde_pre*IS_post*(w_max-w) (saturating one-shot potentiation),
+    IS_post = the dendritic plateau above v_hold. Pins: the MOAT (IS=0 => no change), one-shot potentiation toward
+    w_max, monotone in IS, and the saturating (w_max-w) shape."""
+    import os
+    os.environ.setdefault("SIM_BACKEND", "numpy")
+    from sim.kernels import fused_btsp_update
+    w0 = np.array([0.2, 0.2, 0.2, 0.2], dtype=np.float32)
+    etilde = np.array([1.0, 1.0, 1.0, 0.0], dtype=np.float32)     # last synapse has NO eligibility
+    # MOAT: is_post == 0 (silent plateau) => NO weight change, regardless of eligibility
+    out0 = fused_btsp_update(w0.copy(), etilde, np.zeros(4, dtype=np.float32), 0.01, 0.0, 1.0)
+    assert np.allclose(np.asarray(out0), w0), "IS=0 (silent plateau) must not change any weight (the moat)"
+    # POTENTIATION: is_post > 0 + eligibility > 0 => w rises toward w_max; a never-eligible synapse does NOT
+    is_hi = np.array([30.0, 30.0, 30.0, 30.0], dtype=np.float32)  # plateau 30 mV above v_hold
+    out1 = np.asarray(fused_btsp_update(w0.copy(), etilde, is_hi, 0.01, 0.0, 1.0))
+    assert out1[0] > w0[0] + 1e-4, "eligible synapse under a plateau must potentiate (one-shot)"
+    assert np.isclose(out1[3], w0[3]), "a never-eligible synapse must NOT potentiate even under the plateau"
+    # MONOTONE in IS + SATURATING (w_max - w): stronger plateau => more potentiation; a near-w_max synapse barely moves
+    is_lo = np.array([10.0, 10.0, 10.0, 10.0], dtype=np.float32)
+    out_lo = np.asarray(fused_btsp_update(w0.copy(), etilde, is_lo, 0.01, 0.0, 1.0))
+    assert out1[0] > out_lo[0] > w0[0], "potentiation must be monotone in the plateau (instructive) magnitude"
+    w_near = np.array([0.99, 0.99, 0.99, 0.99], dtype=np.float32)
+    out_sat = np.asarray(fused_btsp_update(w_near.copy(), etilde, is_hi, 0.01, 0.0, 1.0))
+    assert (out_sat[0] - w_near[0]) < (out1[0] - w0[0]), "(w_max - w) saturation: a near-w_max synapse moves less"
+    # eta == 0 is byte-inert (the byte-identity-when-off guard for the guarded bridge block)
+    out_eta0 = fused_btsp_update(w0.copy(), etilde, is_hi, 0.0, 0.0, 1.0)
+    assert np.allclose(np.asarray(out_eta0), w0), "eta=0 must be byte-inert"
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
