@@ -113,3 +113,14 @@ Raising the readout strength (`hebbian_max_weight`≈250, `lr`=0.05) so the diag
 **⇒ slot-separation DIRECTIONALLY beats the shared cap on spikes (0.56 vs 0.33)** — the core competitive-slot hypothesis is confirmed on the real substrate. BUT it is WEAK + NOISY (0.33–0.67), **not the ≥0.80 GO bar**, and maxw=500 over-drives (saturates, 0.33). Honest: this is a directional GO on the mechanism, not a clean capability GO.
 
 **⇒ RESUME (the last piece, a real build): add the gate-specified FILLER-WTA readout** — filler-side FS lateral inhibition (reuse EMERGE-41 kWTA / `biased_competition_buffer`) so the max-conductance filler wins CLEANLY over the held-slot fillers + the off-diagonal baseline, converting the weak 0.56 into a robust ≥0.80. Also worth: a fixed strong slot→filler readout map (not a from-0 Hebbian grow) for a cleaner diagonal. Then 6-seed slot-sep(≥0.80) vs shared + no-recur + permuted. **STATUS: gap #2 spiking closure — steps 1+2a+write+transmission GO; the end-to-end read is DIRECTIONALLY confirmed (slot-sep > shared on spikes) but needs a filler-WTA to be robust.** The core hypothesis (competitive slots beat the ~2 superposition cap) is validated on-substrate; robustness is the remaining engineering. NOT a wall.
+
+### ↳ step-2c FINAL (this session): directional GO with CLEAN ANTI-CHEATS; naive WTA hurts (reverted)
+
+Runner defaults now bake the read-calibration (maxw=250, lr=0.05). 3-seed P=3:
+- **SLOT-SEP 0.56 vs shared(~2cap) 0.11 → competitive slots beat the shared superposition cap by 5× ON SPIKES.**
+- **permuted-role 0.22** (~chance 0.17) → the read is genuinely role-addressed, not a coincidence.
+- **no-recur 0.00** → the NMDA hold is load-bearing.
+
+⇒ **the gate's competitive-slot thesis is VALIDATED on the real substrate with clean anti-cheats.** The naive always-on filler-WTA was tested and REVERTED (it HURT: 0.56→0.11, suppressing the target filler, esp. at teach). The only shortfall is ABSOLUTE recovery (0.56 < 0.80 GO bar).
+
+**⇒ RESUME (the robustness piece, fresh focus): a TUNED filler-WTA — readout-ONLY (disabled during teach) + weaker inhibition — and/or a fixed strong slot→filler readout map (vs from-0 Hebbian) to lift 0.56 → ≥0.80.** The mechanism + all controls are proven; this is bounded readout-competition tuning. **STATUS: gap #2 spiking closure — steps 1+2a+write+transmission GO; the competitive-slot READ is directionally-GO with clean anti-cheats (5× over shared), robustness-tuning is the last bounded piece. NOT a wall; the core science is done.**

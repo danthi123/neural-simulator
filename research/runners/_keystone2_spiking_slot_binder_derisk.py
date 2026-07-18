@@ -61,13 +61,18 @@ def build_binder_bridge(seed, K, KF, n_word=20, n_fs=24, n_fill=20, recur=25.0, 
         for f in range(KF):
             pathways.append(RegionPathway(from_region=f"w{k}", to_region=f"f{f}", density=1.0, weight_mean=0.0,
                                           weight_jitter=0.0, plastic=True, plasticity_gate=f"slot{k}_to_filler"))
+    # NOTE: a NAIVE always-on filler-WTA (f->ffs->f inhibition) HURT (0.56->0.11) -- it suppresses the target filler,
+    # esp. during teach. A tuned WTA (weaker inhibition, readout-ONLY / disabled during teach) is the fresh-focus piece.
+    # The best working config is read-calibration WITHOUT the WTA (maxw~250, lr=0.05): slot-sep 0.56 > shared 0.33.
     cfg = CoreSimConfig()
     cfg.seed = cfg.heterogeneity_seed = cfg.ou_seed = int(seed); cfg.dt_ms = 1.0; cfg.num_traits = 1
     cfg.enable_brain_region_framework = True; cfg.brain_regions = list(regions); cfg.region_pathways = list(pathways)
     cfg.enable_nmda = bool(nmda); cfg.enable_nmda_recurrent = bool(nmda); cfg.nmda_recurrent_tau_decay_ms = 100.0
     cfg.enable_stdp = False; cfg.enable_homeostasis = False; cfg.enable_short_term_plasticity = False
     cfg.enable_ou_process = False; cfg.enable_structural_plasticity = False; cfg.fast_spike_reset = True
-    cfg.enable_hebbian_learning = True; cfg.hebbian_learning_rate = 0.02; cfg.hebbian_max_weight = 30.0
+    # read-calibration (2026-07-17): the readout weight must clear the ~0.1 held-slot rate to fire the filler robustly.
+    # maxw~250/lr=0.05 gives slot-sep 0.56 > shared 0.33 on spikes (directional GO); maxw=30 gave 0.00 (too weak).
+    cfg.enable_hebbian_learning = True; cfg.hebbian_learning_rate = 0.05; cfg.hebbian_max_weight = 250.0
     b = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                          runtime_state=RuntimeState(), gpu_config=GPUConfig())
     b._initialize_simulation_data(called_from_playback_init=False)
