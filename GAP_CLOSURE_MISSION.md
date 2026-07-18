@@ -283,12 +283,16 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   (cue=0.000 ✓ = attractor load-bearing). But 5/6 fail in two modes: 43/100/101 SELF-SUSTAIN (low state high 0.19-0.32
   → mono-stable); 44/102 NON-SPECIFIC (perm ≈ cue). The Wang/Kopsick bistable working point is SEED-DEPENDENT (the
   known fragility). ⇒ the mechanism genuinely WORKS (seed 42 = real bistable+specific completion) but is not robust on
-  one fixed config. **⚙️ fb_inhib=30 6-seed running** (`baiimbism`: stronger feedback inhibition suppresses BOTH failure
-  modes — lowers the self-sustain low state + dampens the permuted cascade). **⚠️ EXACT NEXT ACTION:** read it → if
-  ≥5/6 GO → close; if still fragile → the KOPSICK HOMEOSTATIC working point (divisive downscaling / `w_max∝1/size` so
-  each seed self-adjusts to the right SNR set-point — the principled robustness fix, a real build) OR the dAP+NMDA
-  combination. HONEST: real bistable+specific cue-gated completion DEMONSTRATED (seed 42) on the research-gated Wang
-  mechanism, NO sim/ edit; robust 6-seed = the homeostatic working point. Gaps #1/#4 remain per "close ALL fully".
+  one fixed config. fb_inhib=30 = 0/6 (WORSE — not the lever). **⇒ BUILT the KOPSICK HOMEOSTATIC working point**
+  (`homeostatic`/`homeo_target` in the de-risk: divisively normalize each member's TOTAL incoming within-assembly
+  recurrent weight to a common set-point T → every seed gets the SAME gain → the SAME bistable window; runner-side, NO
+  sim/ edit). **At T=800 it CLEANED UP seed 42: cue=0.264, nocue=perm=rest=0.056** — the permuted cue does NOTHING above
+  the low-rate baseline (perm=rest, perfectly specific) + stable Wang low state. **⚙️ 6-SEED homeostatic verify +
+  no-encoding anti-cheat running** (`b8tz782th`, ~35min). **⚠️ EXACT NEXT ACTION (RIGOROUS, per the retraction lesson):**
+  read it → if 6/6 GO (homeostatic makes all seeds land the same working point) + no-encoding collapses → **gap #5 REAL
+  robust cue-gated bistable completion CLOSED** (Wang somatic-NMDA attractor + Kopsick homeostatic set-point + mandatory
+  no-cue/permuted/no-encoding gates, NO sim/ edit) → write finding → emergent DG-selection → SWR loop → console. If
+  &lt;6/6 → sweep T per the fragility. Gaps #1/#4 remain per "close ALL fully".
   **What STANDS:** strong SPECIFIC learned attractor 6-seed + genuine (weak) bistable+specific completion demonstrated;
   the retraction's lesson (mandatory no-cue+permuted gates) is baked in. Gaps #1/#4 remain per "close ALL fully".
 - (superseded by the breakthrough above) direct synchronous assembly encoding did NOT grow the weights — DECAYED,

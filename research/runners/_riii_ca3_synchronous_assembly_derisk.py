@@ -53,7 +53,8 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
         encode_drive=700.0, recall_drive=250.0, lam_dep_wi=0.5, hebb_max=2000.0, ca3_fb_inhib=20.0,
         reset_steps=15, drive_steps=48, recall_steps=60, ens_thresh=2, no_sync=False,
         coact_thresh=0.02, hebb_lr=None, k_thresh=18.0, plateau_strength=120.0, apical_R=50.0, apical_gc=None,
-        permute_recall=False, bistable=False, nmda_recurrent=False, nmda_tau=100.0):
+        permute_recall=False, bistable=False, nmda_recurrent=False, nmda_tau=100.0,
+        homeostatic=False, homeo_target=None):
     # DIAGNOSED LEVERS (2026-07-18 workflow): the rate-window LTP is an EMA-trace rule -- a cell's co-activity trace
     # tops out ~0.03-0.2 (point Izh fires ~0.2 duty @700pA), so coact_thresh MUST be BELOW it (~0.02) or nothing
     # potentiates; the gamma OFF-gap DECAYS the EMA (0.9^off) so CONTINUOUS drive (sync_off<=1) is required, NOT
@@ -130,6 +131,30 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
                 ws.append(d[flat_h[k]])
         return (float(np.mean(wi)) if wi else 0.0), (float(np.mean(ws)) if ws else 0.0)
     w_within, w_silent = _wstats()
+
+    if homeostatic and homeo_target is not None:
+        # KOPSICK homeostatic working point (research gate 2026-07-18): divisively normalize each assembly member's
+        # TOTAL incoming within-assembly recurrent weight to a common set-point T, so every seed/neuron gets the SAME
+        # effective recurrent gain -> the SAME bistable working point (fixes the seed-fragility: a too-high per-seed gain
+        # self-sustains, too-low doesn't complete). Runner-side rescale of cp_connections; NO sim/ edit.
+        member_pos = set(ca3_pos[int(g)] for a in assemblies for g in a)
+        d = np.asarray(to_host(conn.data)).copy()
+        wk = [k for k in range(len(flat_h)) if int(pre_l_h[k]) in member_pos and int(post_l_h[k]) in member_pos]
+        by_post = {}
+        for k in wk:
+            by_post.setdefault(int(post_l_h[k]), []).append(k)
+        for _post, ks in by_post.items():
+            s = float(sum(d[int(flat_h[k])] for k in ks))
+            if s > 1e-6:
+                sc = float(homeo_target) / s
+                for k in ks:
+                    d[int(flat_h[k])] *= sc
+        if wk:
+            idxs = cp.asarray([int(flat_h[k]) for k in wk], dtype=cp.int64)
+            vals = cp.asarray([float(d[int(flat_h[k])]) for k in wk], dtype=conn.data.dtype)
+            conn.data[idxs] = vals
+        w_within, w_silent = _wstats()
+
     non_stored0 = np.array([g for g in ca3_idx if g not in set(int(x) for a in assemblies for x in a)], dtype=np.int64)
 
     if bistable:
