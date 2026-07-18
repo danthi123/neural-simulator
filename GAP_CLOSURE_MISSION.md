@@ -175,8 +175,18 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   un-tried mechanism (2026-07-14 named it, never built) = **the Kopsick recipe done right: drive the assembly members
   DIRECTLY + SYNCHRONOUSLY during encoding** so they co-fire strongly → high co-activity → within-ensemble LTP reaches
   the completion scale → dAP completion.
-- **🔬 SYNCHRONY-ISOLATION built + first result (2026-07-18, `_riii_ca3_synchronous_assembly_derisk.py`):** direct
-  synchronous assembly encoding did NOT grow the within-ensemble weights — they DECAYED (w_within 2.7-5.2 < init 6.0),
+- **🎉 gap#5 COMPLETION MOVING OFF CHANCE (2026-07-18) — the mechanism is FOUND (first time in the project).** The
+  workflow (`wkn6apwgj`) diagnosed the growth failure: (1) my "synchrony" framing was WRONG for this EMA rule — the
+  gamma OFF-gap DECAYS the 10-step co-activity trace (0.9^off/cycle) below the 0.25 threshold at ANY drive, so sync=async
+  and nothing potentiated; the fix is CONTINUOUS strong drive (high avg firing DUTY), not bursts. (2) coact_thresh 0.25
+  sits above the achievable co-activity product (~0.03 @700pA) → lower it to 0.02. (3) lr 0.0005 too slow. **GROW-SWEEP
+  with the levers (continuous 3000pA + coact_thresh 0.02 + higher lr, n_ca3=500 seed 42):** the within-ensemble weights
+  now GROW (6.0 → 15.9 @lr0.05 → 28.2 @lr0.5) and **functional completion rose 0.000 → 0.214, SPECIFIC** (h_comp 0.214
+  vs non-stored 0.007 = ~30×). Just below the 0.30 GO bar; the trend is monotone in lr/growth. **⚠️ Push-sweep running**
+  (`bxbqy2uz1`: lr 1/2/5 × train 120/200 × recall_drive) to clear h_comp≥0.30. **⚠️ EXACT NEXT ACTION:** read it → if a
+  config clears 0.30 → confirm at n_ca3=1000 + 6-seed + anti-cheats (async control, lam=0, no-encoding, permuted) → gap#5
+  completion CLOSES → wire the EMERGENT mossy/DG assembly selection (experience-derived) → SWR replay loop → console.
+- (superseded by the breakthrough above) direct synchronous assembly encoding did NOT grow the weights — DECAYED,
   and sync=async BYTE-IDENTICAL (the gamma mechanism was inert because NOTHING was potentiating). The rate-window LTP
   isn't firing: a cell firing ~1/3 of steps has trace ≈0.33 → product ≈0.11 < the 0.25 coactivity threshold → no
   potentiation → only decay. Likely fixes: fb_inhib over-suppresses the (already-sparse pre-assigned) assembly →
