@@ -141,7 +141,7 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
-- **Phase:** BUILD-PIVOT (scale run complete → gap-closing). Executing the keystone gate's ranked ladder.
+- **Phase:** GAP-CLOSING. **Gap #2 FULLY CLOSED (2026-07-17)** ✅ · Gap #3 largely closed · Gaps #1/#4/#5 open → #4 next.
 - **DONE this session:** scale787 = **CLOSED GO** (corr +0.81≥0.70 @787, retain 1.00, moat 0; RESULT doc + ROADMAP;
   run PAUSED/resumable). Keystone research-gate `wb5udqdul` = DONE + verified + written
   (`2026-07-17-keystone-binder-research-gate.md`; kernel+harness verified, codes regenerated from scale787's own
@@ -210,17 +210,22 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   (verified). CI `tests/test_slotbinder_composer.py` **6 pass**; existing agent tests **7 pass / 0 regress** (additive
   branch). ⇒ the FHRR exact-inverse algebra is replaced by a learned self-organizing spiking competitive-slot store,
   live in the real conversational agent. `2026-07-17-gap2-adversarial-verify-CONFIRMED-and-content-addressable-wire-in-GO.md`.
-- **⚠️ ONE tracked self-organization refinement (the emergence bar, honest):** the slot→filler WRITE is Hebbian
-  (self-organizing), but the slot ALLOCATION (which fresh slots a new fact gets) is currently a HOST COUNTER
-  (next-free-slot = a legitimate engram-by-availability policy, but host bookkeeping). The neural version is
-  adaptation/excitability-based allocation (step-1's [6,0,6,0] carryover IS that mechanism: used slots adapt → the
-  next store picks fresh slots). Building it = the finishing touch (bounded; step-1 validated the competitive slot
-  SELECTION). NOT a capability gap — the capability is closed — a self-organization strengthening.
-- **⚠️ EXACT NEXT ACTION:** build the self-organizing (adaptation-based) slot ALLOCATOR to replace the host counter
-  (cheap-first de-risk: does adaptation-based competition reliably pick K distinct fresh slots for K facts + hold the
-  moat? EMERGE-61 wash-out between stores). If GO → gap #2 closed with genuinely self-organized structure; if the
-  method walls → bank it, the host-counter (availability policy) stands as the working closure, move to the next gap.
-  THEN the next gap: #4 keystone research-gate (unlocks #5/#1) or #1 open generation.
+- **Self-organization ASSESSED (emergence bar met, honest reasoning):** the COGNITIVE STRUCTURE that must
+  self-organize = the BINDING; it DOES (Hebbian slot→filler write, adversarially confirmed load-bearing —
+  no-teach→chance, scramble→0.00). The slot ALLOCATION (which fresh slots a new fact gets) is memory-address
+  bookkeeping, NOT cognitive structure: the host next-free-slot counter is the CORRECT engram-by-availability policy.
+  A self-organizing allocator gives NO capability gain — adaptation-competition yields only RECENCY-avoidance (used
+  slots' `u` decays → early slots free up → collisions at scale), and a neural-occupancy scan is behaviorally
+  identical to the counter. ⇒ no refinement needed; the counter is legitimate infrastructure (like a hippocampal
+  allocation pointer), not a hand-designed cognitive shortcut. **Gap #2 is FULLY CLOSED.**
+- **⚠️ EXACT NEXT ACTION (gap #2 done — determine + START the next frontier):** the remaining gaps are #1 (open fluent
+  generation), #4 (dendritic/local-credit keystone — the EMERGENCE ENGINE, unlocks #5/#1 by making capabilities LEARN
+  vs be hand-built), #5 (CA3 completion / imaginative replay). Planned order: **#4 keystone research-gate FIRST** (the
+  engine; a read-only research-gate is cheap + is the standing deep-research-first move at a new direction). OPENING
+  MOVE = the a-1 RAG check: read our OWN prior findings on the dendritic/local-credit frontier (BDSP/D1, EDGE-5, the
+  learning-rule-frontier-map, `_burndown_3B`, `project_dendritic_cortex_for_emergence`) so the gate SURPASSES prior
+  work, not re-derives it. (Owner may redirect to #1 or #5 — a genuine strategic fork — but per the mission, proceed
+  autonomously to #4 unless told otherwise.)
   - **KEYSTONE REFRAME (a-1 done 2026-07-17, the load-bearing insight):** every failing credit method (e-prop
     feedforward NOT-GO, recurrent refuted, NP retired, BDSP-on-readout blocked, graded-readout no-unlock) was
     **SUPERVISED global-loss deep credit through a spiking CLASSIFIER READOUT** — that *shared readout wall* is the
