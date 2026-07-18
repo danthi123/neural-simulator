@@ -152,11 +152,17 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   into gamma volleys DIRECTLY, N.15/N.19), a guarded sim/ mechanism — a DEEP build. Completion FUNCTION is met (EMERGE
   spreading-activation 12-seed GO, graded-confidence 12-seed GO, composer scan, gap-#2 slot-binder); imaginative
   RECOMBINATION is GO; SWR replay reactivation is blocked by the same CA3-attractor gap.
-  `2026-07-17-gap5-rung2-mossy-sparsifies-but-sync-unsolved-CA3-attractor-is-the-theta-gamma-frontier.md`. **⚠️ STRATEGIC
-  FORK (surfaced to owner):** gap #5's CA3-autoassociator is deeper than "quick" — invest in the Rung-4 theta-gamma
-  pacemaker (biology-faithful, multi-cycle sim/ build) OR redirect (the completion FUNCTION is met; a different gap may
-  be genuinely quicker). Awaiting owner steer; if none, proceed with Rung 4 per THE LAW (the biology-faithful mechanism
-  is the target, not just the function).
+  `2026-07-17-gap5-rung2-mossy-sparsifies-but-sync-unsolved-CA3-attractor-is-the-theta-gamma-frontier.md`. **✅ OWNER
+  STEER (2026-07-18): "close out ALL gaps FULLY"** — NO banking-as-function-met; build the biology-faithful CA3
+  autoassociator (Rung 4 theta-gamma pacemaker), then close #4 and #1 fully too. **⚠️ EXACT NEXT ACTION (gap #5 Rung
+  4):** the SYNCHRONY mechanism — a theta-gamma PACEMAKER pacing the sparse CA3 survivors into gamma volleys DIRECTLY
+  (so members co-fire in a tight window → the rate-window rule binds a strong attractor → dAP completion). Research
+  gate FIRST (new mechanism class): a-1 for existing project theta-gamma/PING/oscillatory-inhibition machinery to
+  reuse (EMERGE-85 theta-gamma WM buffer + `2026-07-03-spiking-theta-gamma-wm-buffer-research-gate`; SPEAR theta;
+  neuromodulator oscillatory drive) + the 2026-07-09 gate's biology (Lisman-Idiart / Buzsáki N.15/N.19; the ca3_pv_basket
+  PING that was too coarse). Then cheapest-first: pace the `ca3_pv_basket` inhibition rhythmically (gamma) OR a guarded
+  sim/ oscillatory drive → the sparse survivors fire in synchronous volleys → within/silent ratio ≥3× → dAP completion
+  GO (trained>0.30 & specificity & no-train collapse & LESION), 6-seed → wire → SWR replay loop → console.
 - **DONE this session:** scale787 = **CLOSED GO** (corr +0.81≥0.70 @787, retain 1.00, moat 0; RESULT doc + ROADMAP;
   run PAUSED/resumable). Keystone research-gate `wb5udqdul` = DONE + verified + written
   (`2026-07-17-keystone-binder-research-gate.md`; kernel+harness verified, codes regenerated from scale787's own
