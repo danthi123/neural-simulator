@@ -28,3 +28,12 @@ learned features + the compatibility as SPIKING neurons (reuse the 2026-06-15 on
 features + the validated spiking coincidence for the compatibility), (b) route the compatibility output as the bias
 current into the existing `BiasedCompetitionContextBuffer` WTA (replacing the host `content_bias_target` call), keeping
 the 6-seed GO competition + the no-confab moat. Then gap #3 residual A1 is fully closed on spikes.
+
+## SPIKING realization — GO (2026-07-18)
+`research/runners/_gap3_spiking_feature_compat_derisk.py`: the compatibility READOUT is now computed by SPIKING neurons
+on a real `SimulationBridge` — two feature-detector pools (F_anim, F_inanim); the query verb drives its learned
+selection pool, each candidate its learned animacy pool; the COMPATIBLE candidate co-drives the verb's selection pool
+(coincidence) → highest firing → the bias target. **spiking==host `content_bias_target` 1.00 (6-seed); permuted-corpus
+anti-cheat collapses 0.00.** The learned signs are the offline-EM scaffold (like the concept codes); the DECISION is
+spiking. Remaining A1: wire the spiking bias-target into `BiasedCompetitionContextBuffer.read(bias_concept=...)` in
+place of the host `content_bias_target` call, keeping the 6-seed GO competition + moat → A1 fully closed.
