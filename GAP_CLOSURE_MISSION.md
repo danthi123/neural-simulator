@@ -216,10 +216,16 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   0.025-0.04 OVERSHOOTS into the Marr INDISCRIMINATE regime (h_comp ~1.0 AND non-stored ~1.0 — the denser attractor
   spreads to non-members, overwhelming the competition). ⇒ the sweet spot is SPARSE-yet-REDUNDANT, which trade off at
   n_ca3=1000 → the 2026-07-14 prescription: **n_ca3=2000 so a <1% assembly is BOTH sparse AND redundant.** **⚙️
-  `b90pmxei1` running** (n_ca3=2000, assembly_frac 0.008/0.012, recall 100, seeds 42/101/44). **⚠️ EXACT NEXT ACTION:**
-  read it → if the sparse-assembly-at-scale clears 0.30 SPECIFICALLY on the fragile seeds → full 6-seed → CLOSE → wire
-  emergent selection → SWR loop. If still knife-edge → per-seed lam/k_thresh, or accept the mechanism-found +
-  scale-boundary-characterized state (a real advance on the 2026-07-14 boundary) + move to gap #1/#4 per "close all".
+  `b90pmxei1` running** (n_ca3=2000, assembly_frac 0.008/0.012, recall 100, seeds 42/101/44). **SCALE-2K RESULT (major):** at n_ca3=2000, assembly_frac 0.008
+  (<1%), the FORMERLY-CHANCE fragile seeds now show STRONG SPECIFIC completion — **seed 42 0.107→0.917 (non 0.014, GO),
+  seed 101 0.088→0.481 (non 0.006, GO)**. The scale prescription WORKS. But seed 44 now OVERSHOOTS to indiscriminate
+  (non 0.995) — the optimal assembly density is SEED-VARYING, so one fixed frac misses some seeds' sweet spot. The
+  principled fix (2026-07-14 gate cited PMC12244581): assembly-SELECTIVE feedback inhibition (k-WTA capping the active
+  count at recall → specificity robust to density). **⚙️ `bo9depc5z` running** (n_ca3=2000, fb_inhib 15/40, seeds
+  42/101/44). **⚠️ EXACT NEXT ACTION:** read it → if fb_inhib restores s44 specificity while 42/101 stay GO → one robust
+  config → full 6-seed → CLOSE mechanism → wire EMERGENT mossy/DG selection → SWR loop → console. If still per-seed →
+  a homeostatic/adaptive sparsity target, OR record the mechanism-found+strong-at-scale state (MASSIVE advance on the
+  2026-07-14 boundary: chance → h_comp 0.9 specific) + continue. Per owner "close ALL fully": keep pushing to robust.
 - (superseded by the breakthrough above) direct synchronous assembly encoding did NOT grow the weights — DECAYED,
   and sync=async BYTE-IDENTICAL (the gamma mechanism was inert because NOTHING was potentiating). The rate-window LTP
   isn't firing: a cell firing ~1/3 of steps has trace ≈0.33 → product ≈0.11 < the 0.25 coactivity threshold → no
