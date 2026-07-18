@@ -267,6 +267,15 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   point (stable sparse reliable specific, not 0 and not 2000) is NARROW + un-found. The core open frontier = BALANCING
   the multi-part system (principled gain-control/normalization, or a STAGED encode: bind the mossy at low gain → raise
   the recurrent → store) — a focused fresh pass; all pieces + the `assemblies_ext` hook are ready.**
+  **↳ EXHAUSTIVE LIMIT (8 builds + 33 probes): the ISOLATED staged encode (build ca3w=3 + coincidence + bistability +
+  BTSP mossy-bind with the target PLATEAU-ONLY, no soma co-drive) FIXES the runaway → all inputs seed DISTINCT
+  SEPARATED assemblies (13/5/29 cells, Jaccard ~0) = the BEST BANKED config (`scratchpad/emergdg_btspmossy.py`, reliable
+  multi-input separated seeding). The TRUE post-hoc staged raise (build weak → ×6 recurrent) → 0 seeding, because
+  post-hoc weight-scaling doesn't reconfigure the BUILD-TIME coincidence/plateau (fixed k_threshold) — so the
+  amplification gain is COUPLED to the build coincidence config. ⇒ the core open frontier = a JOINT gain-control /
+  normalization across binding-gain × amplification-gain × completability × build-coincidence-config (the coincidence
+  k_threshold re-tuned to the raised/bound weights), a focused fresh pass. The mechanism is COMPREHENSIVELY mapped;
+  every piece validated; the balanced full integration is the deep frontier.**
   The gap#4<->gap#5 unification (below) is UNAFFECTED (pre-assigned assembly + direct drive). Frontier now: this
   DG-bursting sub-arc, gap#5 SWR, or gap#1 open generation.
 - **✅ gap#4<->gap#5 UNIFICATION — MECHANISM 6/6 GO (2026-07-18, the focused build DONE).** The `encode_btsp` path was
