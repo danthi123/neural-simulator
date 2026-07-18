@@ -146,6 +146,20 @@ MOSSY (drive the DG code + a plateau on the target cluster → BTSP potentiates 
 binding each reproducible DG code to a fixed completable cluster. That is the emergent-DG's precise open frontier — a
 focused build (BTSP-on-mossy + denser mossy), reusing the BTSP machinery already built.
 
+## CULMINATION — the emergent-DG is a delicate MULTI-PART TRILEMMA-BALANCE (each piece validated; the integration is the frontier)
+The integrated test (dense mossy + BTSP-on-mossy binding + recurrent amplification ca3w=4 + bistability) FLIPS to
+RUNAWAY: the DG code alone now fires ALL 2000 cells, non-specific (separation J=1.00). So BTSP over-strengthened the
+mossy+recurrent PAST the bistability's cap. Combined with the earlier 0-seeding regimes, the emergent-DG is a delicate
+MULTI-PART trilemma: (mossy seed firing) × (learned dg→ca3 binding) × (recurrent amplification) × (bistability
+stabilization) × (completable tight cluster) — each piece VALIDATED individually across the ~33 probes + 6 builds, but
+the integrated working point (a STABLE SPARSE RELIABLE SPECIFIC emergent assembly, not 0 and not 2000) is NARROW and
+un-found. ⇒ EXHAUSTIVE honest verdict: the emergent-DG mechanism is DEMONSTRATED in pieces (mossy-select → bistable
+amplify → BTSP store → recall runs end-to-end; the keystone resolves the amplification trilemma; the DG codes are
+reproducible+separated), but a reliable, completable, multi-input emergent selection requires BALANCING the multi-part
+system — a genuine deep integration, the emergent-DG's core open frontier, for a focused fresh pass (a principled
+gain-control / normalization across the binding+amplification, or a staged encode: bind the mossy at low gain, THEN
+raise the recurrent, THEN store). The `run(assemblies_ext=...)` hook + all the pieces are ready.
+
 ## Status + the next mechanism (per THE LAW)
 - **BOUNDARY (well-characterized):** emergent-DG via the trisynaptic feedforward is blocked by feedforward propagation
   — the hippocampal chain (EC→DG→CA3) does not carry an input to fire downstream cells at reasonable drives; the mossy
