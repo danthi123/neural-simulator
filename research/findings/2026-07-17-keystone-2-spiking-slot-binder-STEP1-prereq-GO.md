@@ -101,3 +101,15 @@ A direct single-vs-multi measurement corrects the prior optimism: retrieve role0
 - **CORRECTED:** the END-TO-END read is genuinely WEAK, not merely a competition tie. The NMDA-held slot fires only ~0.1, and (per-synapse diagonal ~0.24) × that low rate barely crosses the filler's threshold even single-bind; multi-bind it fails. My "nearly complete" framing was over-optimistic — the read REGIME is uncalibrated, a bigger residual than "just add a WTA."
 
 **⇒ RESUME (honestly re-scoped): the read regime needs calibration so the filler fires ROBUSTLY from a held slot** — candidates: (a) a much stronger slot→filler drive (raise `hebbian_max_weight` / a fixed strong readout weight, not a from-0 Hebbian grow that caps low relative to the held rate); (b) make the filler pools more excitable / lower-threshold or add slot→filler NMDA so the low held rate integrates; (c) reconsider WM-vs-LTM: read by re-driving the slot HARD (not the held rate) into a strong fixed slot→filler map + a filler-WTA. This is a real read-regime calibration, NOT a one-line WTA. Steps 1+2a + the write/transmission are GO; the end-to-end read is the genuine open residual. The single-bind filler=0.014 (weak-but-nonzero) shows the path is real but under-driven. Fallback: theta-gamma (EMERGE-85). Honest: this is further from done than the prior entry implied.
+
+### ↳ step-2c: read calibration → DIRECTIONAL confirmation on spikes (weak, not yet GO)
+
+Raising the readout strength (`hebbian_max_weight`≈250, `lr`=0.05) so the diagonal drives the filler above the held-slot rate lifts recovery from 0.00 to a real signal, 3-seed:
+| config | slot-sep P=3 (3-seed) | shared (~2cap) |
+|---|---|---|
+| maxw=250 lr=0.05 | 0.33 / 0.67 / 0.67 = **0.56** | **0.33** |
+| maxw=200 lr=0.05 | 0.33 / 0.33 / 0.67 = 0.44 | — |
+
+**⇒ slot-separation DIRECTIONALLY beats the shared cap on spikes (0.56 vs 0.33)** — the core competitive-slot hypothesis is confirmed on the real substrate. BUT it is WEAK + NOISY (0.33–0.67), **not the ≥0.80 GO bar**, and maxw=500 over-drives (saturates, 0.33). Honest: this is a directional GO on the mechanism, not a clean capability GO.
+
+**⇒ RESUME (the last piece, a real build): add the gate-specified FILLER-WTA readout** — filler-side FS lateral inhibition (reuse EMERGE-41 kWTA / `biased_competition_buffer`) so the max-conductance filler wins CLEANLY over the held-slot fillers + the off-diagonal baseline, converting the weak 0.56 into a robust ≥0.80. Also worth: a fixed strong slot→filler readout map (not a from-0 Hebbian grow) for a cleaner diagonal. Then 6-seed slot-sep(≥0.80) vs shared + no-recur + permuted. **STATUS: gap #2 spiking closure — steps 1+2a+write+transmission GO; the end-to-end read is DIRECTIONALLY confirmed (slot-sep > shared on spikes) but needs a filler-WTA to be robust.** The core hypothesis (competitive slots beat the ~2 superposition cap) is validated on-substrate; robustness is the remaining engineering. NOT a wall.
