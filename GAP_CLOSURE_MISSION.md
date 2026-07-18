@@ -153,16 +153,28 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   spreading-activation 12-seed GO, graded-confidence 12-seed GO, composer scan, gap-#2 slot-binder); imaginative
   RECOMBINATION is GO; SWR replay reactivation is blocked by the same CA3-attractor gap.
   `2026-07-17-gap5-rung2-mossy-sparsifies-but-sync-unsolved-CA3-attractor-is-the-theta-gamma-frontier.md`. **✅ OWNER
-  STEER (2026-07-18): "close out ALL gaps FULLY"** — NO banking-as-function-met; build the biology-faithful CA3
-  autoassociator (Rung 4 theta-gamma pacemaker), then close #4 and #1 fully too. **⚠️ EXACT NEXT ACTION (gap #5 Rung
-  4):** the SYNCHRONY mechanism — a theta-gamma PACEMAKER pacing the sparse CA3 survivors into gamma volleys DIRECTLY
-  (so members co-fire in a tight window → the rate-window rule binds a strong attractor → dAP completion). Research
-  gate FIRST (new mechanism class): a-1 for existing project theta-gamma/PING/oscillatory-inhibition machinery to
-  reuse (EMERGE-85 theta-gamma WM buffer + `2026-07-03-spiking-theta-gamma-wm-buffer-research-gate`; SPEAR theta;
-  neuromodulator oscillatory drive) + the 2026-07-09 gate's biology (Lisman-Idiart / Buzsáki N.15/N.19; the ca3_pv_basket
-  PING that was too coarse). Then cheapest-first: pace the `ca3_pv_basket` inhibition rhythmically (gamma) OR a guarded
-  sim/ oscillatory drive → the sparse survivors fire in synchronous volleys → within/silent ratio ≥3× → dAP completion
-  GO (trained>0.30 & specificity & no-train collapse & LESION), 6-seed → wire → SWR replay loop → console.
+  STEER (2026-07-18): "close out ALL gaps FULLY"** — NO banking-as-function-met.
+- **⛔ A-1 FAILURE CORRECTED (2026-07-18) — my ENTIRE session gap-#5 work was RE-DERIVATION (4× I built from stale
+  findings, not the newest).** TRUE latest = `2026-07-14-ca3-competitive-hebbian-formation-6seed-GO.md`: (1) **FORMATION
+  = 6-SEED GO** — COMPETITIVE-HEBBIAN (committed EMERGE-40 `fused_htm_winner_inactive_depression` on ca3→ca3 recurrents,
+  1st time) gives within/silent **5.2-8.9×** (pure-LTP 1.01×; lam=0 control 1.01 = load-bearing), surpassing the
+  2026-07-09 saturation, NO sim/ edit. (2) **BUT weight-ratio ≠ functional completion** — depression-based → LOW
+  absolute within-ensemble drive → dAP plateau doesn't fire; completion SEED-FRAGILE (2/6 clean). (3) **Root-caused
+  (recall-inhibition diagnostic: ZERO recall inhibition still fails → iSTDP RULED OUT):** bottleneck = the
+  RECURRENT-WEIGHT STRUCTURE (learned within-ensemble too weak); members must fire STRONGLY+SYNCHRONOUSLY at encoding
+  (Kopsick-Ascoli 2024) for a HIGH-ABSOLUTE attractor. (4) **Kopsick knobs BUILT** (`mossy_density`, `dg_ffi_weight`,
+  `sync_on/off`) but OVER-SUPPRESS at 150 CA3 (knife-edge). ⇒ **functional completion is SCALE-BOUNDED**: needs
+  ~1000-2000 CA3 for a robust <1% assembly + redundancy. My session's silent-recurrents/Hebbian-collapse/mossy-sync at
+  150 = all re-derivation, none new. **LESSON: a-1 to the NEWEST findings FIRST (drift-#12, 4× this session).**
+- **⚠️ EXACT NEXT ACTION (gap #5, the 2026-07-14 PINNED step):** run the Kopsick coordinated recipe at PROPER CA3 SCALE
+  — `_riii_ca3_competitive_completion_payoff_derisk.py` at **n_ca3 ~1000-2000** (GPU `SIM_BACKEND=cupy`, monitored),
+  competitive formation (lam=0.5) + sparse DG (`dg_ffi_weight`) + sparse-strong mossy (`mossy_density`/weight) +
+  feedback inhibition (`ca3_fb_inhib`) + gamma-sync, JOINTLY tuned → gate on FUNCTIONAL held-out completion (held-out
+  reactivates from a partial cue > non-stored, robust 6-seed), NOT the weight-ratio proxy. If robust at scale → gap #5
+  completion CLOSES → wire → SWR replay loop → console. If scale doesn't fix it → next ranked mechanisms (engram
+  intrinsic-excitability boost / theta-gamma sequential recall E%-max, both named in the 2026-07-14 finding). NOTE:
+  the SWR generative-replay half (`_riii_swr_generative_replay_derisk.py` + `2026-07-09-riii-swr-...-rung1`) is the
+  other gap-#5 piece, gated on this same emergent attractor.
 - **DONE this session:** scale787 = **CLOSED GO** (corr +0.81≥0.70 @787, retain 1.00, moat 0; RESULT doc + ROADMAP;
   run PAUSED/resumable). Keystone research-gate `wb5udqdul` = DONE + verified + written
   (`2026-07-17-keystone-binder-research-gate.md`; kernel+harness verified, codes regenerated from scale787's own
