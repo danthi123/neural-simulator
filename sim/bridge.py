@@ -94,6 +94,7 @@ from sim.kernels import (fused_izhikevich_legacy_dynamics_update,
                          fused_homeostasis_update,
                          fused_stdp_weight_update,
                          fused_bdsp_update,
+                         fused_btsp_update,
                          fused_eligibility_trace_decay)
 from experiment import ExperimentEngine
 from experiment.engine import experiment_config_from_dict, experiment_config_to_dict
@@ -297,6 +298,7 @@ class SimulationBridge:
         self.cp_bdsp_apical_drive = None
         self.cp_bdsp_int_drive = None
         self._bdsp_step_counter = 0                         # monotone step index for burst-ISI detection (BDSP only)
+        self.cp_btsp_pre_elig = None                        # gap#4 BTSP seconds-long per-neuron presynaptic eligibility (None unless enable_btsp)
         self.cp_conductance_g_coincidence_rise = None     # dual-exp rise component
         self.cp_coincidence_synapse_mask = None           # bool per-synapse: True for coincidence_detector-routed synapses
         # GRADED dendritic-plateau READ-OUT (Stage 1, 2026-06-20). The SMOOTH/non-saturating sibling of
@@ -7355,6 +7357,47 @@ class SimulationBridge:
                         new_w = cur_w + (new_w - cur_w) * gain_bd
                     self.cp_connections.data[active_bd] = new_w
                     self._mock_total_plasticity_events += int(active_bd.size)
+
+            # --- 4b-bis. gap#4 BTSP plateau-gated ONE-SHOT credit (2026-07-18; Bittner-Magee 2017 / Milstein 2021).
+            # ADDITIVE / default-off: enable_btsp=False => this block is unreached, cp_btsp_pre_elig stays None,
+            # fused_btsp_update is never called => byte-identical. dw = eta*Etilde_pre*IS_post*(w_max-w): the SECONDS-long
+            # PRE-eligibility (per-neuron low-pass of firing, tau=btsp_elig_tau_ms, gathered on coo.row) x the dendritic
+            # PLATEAU instructive signal IS = max(v_apical - v_hold, 0) (gathered on coo.col). With the gap#5 BISTABLE
+            # apical the plateau HOLDS for seconds => a BEHAVIORAL-TIMESCALE window (a pre-input active seconds before the
+            # plateau still overlaps it -> potentiates one-shot). At rest the apical is silent (KIR down-state) => IS==0
+            # => dw==0 (the no-spurious-learning moat, by construction). Gated by the plastic mask + plasticity_rate_gain
+            # exactly like the BDSP block (a frozen pathway is untouched). Local; no weight transport; no global loss.
+            if getattr(cfg, "enable_btsp", False) and self.cp_v_apical is not None and self.cp_connections.nnz > 0:
+                _nN = self.cp_membrane_potential_v.size
+                if self.cp_btsp_pre_elig is None or self.cp_btsp_pre_elig.size != _nN:
+                    self.cp_btsp_pre_elig = cp.zeros(_nN, dtype=cp.float32)
+                _bt_tau = cp.float32(np.exp(-cfg.dt_ms / max(getattr(cfg, "btsp_elig_tau_ms", 1000.0), 1e-6)))
+                self.cp_btsp_pre_elig = self.cp_btsp_pre_elig * _bt_tau
+                if _fired_any:
+                    self.cp_btsp_pre_elig = self.cp_btsp_pre_elig + (1.0 - _bt_tau) * fired_this_step.astype(cp.float32)
+                _vhold_bt = cp.float32(getattr(cfg, "coincidence_plateau_v_hold", -35.0))
+                _is_post_bt = cp.maximum(self.cp_v_apical - _vhold_bt, cp.float32(0.0))    # plateau above v_hold = the instructive signal
+                coo_bt = self._get_cached_coo()
+                etilde_bt = self.cp_btsp_pre_elig[coo_bt.row]
+                is_bt = _is_post_bt[coo_bt.col]
+                active_bt = cp.where((etilde_bt > 1e-6) & (is_bt > 1e-6))[0]
+                if active_bt.size > 0:
+                    cur_w = self.cp_connections.data[active_bt]
+                    new_w = fused_btsp_update(
+                        cur_w, etilde_bt[active_bt], is_bt[active_bt],
+                        cp.float32(getattr(cfg, "btsp_learning_rate", 0.001)),
+                        cp.float32(getattr(cfg, "btsp_w_min", 0.0)),
+                        cp.float32(getattr(cfg, "btsp_w_max", 5.0)))
+                    if self.cp_synapse_plastic_mask is not None:
+                        plastic_bt = self._ensure_gate_capacity(
+                            "cp_synapse_plastic_mask", self.cp_connections.nnz,
+                            fill=False, dtype=cp.bool_)[active_bt]
+                        new_w = cp.where(plastic_bt, new_w, cur_w)
+                    if self.cp_plasticity_rate_gain is not None:
+                        gain_bt = self.cp_plasticity_rate_gain[active_bt]
+                        new_w = cur_w + (new_w - cur_w) * gain_bt
+                    self.cp_connections.data[active_bt] = new_w
+                    self._mock_total_plasticity_events += int(active_bt.size)
 
             # --- 4c0. Neuromodulator subsystem update (Session E.1, opt-in) ---
             # Run NM production+decay BEFORE reward modulation so this step's

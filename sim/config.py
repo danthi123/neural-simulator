@@ -292,6 +292,18 @@ class CoreSimConfig:
     bdsp_v_apical_scale: float = 0.05              # scales cp_v_apical (mV, ~[-65..+20]) into the sigmoid argument so P spans (0,1) around v_apical=E_rest -> P~Pbar
     bdsp_w_min: float = -5.0                       # BDSP feedforward weight lower clip (signed weights: FA credit can drive LTD)
     bdsp_w_max: float = 5.0                        # BDSP feedforward weight upper clip
+    # gap#4 BTSP (Behavioral-Timescale Synaptic Plasticity) plateau-gated ONE-SHOT credit (2026-07-18; Bittner-Magee
+    # 2017, Milstein-Magee 2021). Additive/default-off: the guarded `if cfg.enable_btsp` block in
+    # _run_one_simulation_step is unreached when False, no cp_btsp_* array is allocated, fused_btsp_update is never
+    # invoked => byte-identical. dw = eta*Etilde_pre*IS_post*(w_max-w); Etilde_pre = a SECONDS-long per-neuron
+    # pre-eligibility low-pass (gathered on coo.row); IS_post = the dendritic PLATEAU above v_hold (cp_v_apical gathered
+    # on coo.col) -- the gap#5 BISTABLE apical makes it seconds-long (behavioral timescale). Needs cp_v_apical present
+    # (enable_two_compartment_dap or enable_bdsp) + the bistability terms for the held plateau.
+    enable_btsp: bool = False
+    btsp_learning_rate: float = 0.001              # eta: BTSP one-shot potentiation rate per plateau-overlap step
+    btsp_elig_tau_ms: float = 1000.0               # tau of the seconds-long presynaptic eligibility low-pass (Milstein pre-side)
+    btsp_w_min: float = 0.0                        # BTSP weight lower clip (potentiation-dominated; non-negative)
+    btsp_w_max: float = 5.0                        # BTSP weight upper clip (the (w_max-w) saturation ceiling)
     # BDSP MICROCIRCUIT variant (D1 completion, 2026-07-07; Sacramento-Senn 2018 + Urbanczik-Senn 2014). ONLY
     # meaningful when enable_bdsp is also True. Raw Burstprop must LOCALLY ESTIMATE credit from a noisy per-neuron
     # burst fraction, so its held-out accuracy is finite-sample-noise-limited (EMERGE-5c; D1 held-out 0.66 < 0.75).
