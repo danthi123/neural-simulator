@@ -238,6 +238,13 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   PSC vs an equivalent external current + conductance/reversal/synchrony; make DG fire a dense synchronous gamma volley
   so the mossy summates) — `sim/`-level or deep-config. (Lesson: read the region's neuron type before proposing a
   neuron-type fix.)**
+  **↳ REFRAME (13+ probes, the ACTIONABLE resume, NOT a deep fix): the mossy DOES reach CA3 (v_max −31 > −40 thresh at
+  weight 500) and a GAMMA-synchronized DG volley makes CA3 INPUT-SPECIFIC (sep_cos 0.00→0.53); it doesn't SUSTAIN only
+  because the CA3 recurrent is weak (ca3w=1.5) = exactly what BTSP BUILDS. ⇒ emergent-DG is a tractable INTEGRATED
+  select-AND-store: a synchronized mossy volley SEEDS input-specific CA3 co-activity → `encode_btsp` stores the seeded
+  co-firing cells (read live, top-K during the volley) → the bistable CA3 completes. Reuses EVERYTHING already built.
+  Resume = build the integrated select-and-store + anti-cheats (input-driven / pattern-separation / completion
+  nocue/perm/no-encode). NO `sim/` edit expected.**
   The gap#4<->gap#5 unification (below) is UNAFFECTED (pre-assigned assembly + direct drive). Frontier now: this
   DG-bursting sub-arc, gap#5 SWR, or gap#1 open generation.
 - **✅ gap#4<->gap#5 UNIFICATION — MECHANISM 6/6 GO (2026-07-18, the focused build DONE).** The `encode_btsp` path was
