@@ -263,14 +263,25 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   weights 120–600 likely still misses the >0.30 gate. ⇒ **the dendritic-dAP completion (already 6-seed GO, completes
   at far lower weight) is the PRIMARY closer**, fed by a learned pattern-specific attractor; the point-neuron volley is
   secondary/extreme-weight only. Full finding: `2026-07-17-gap5-completion-ROOT-CAUSED-hebbian-collapse-not-a-floor-workflow-6agent-verified.md`.
-  **⚠️ EXACT NEXT ACTION (the verified close, cheapest-first):** STEP 1 (decisive, near-free) — scratchpad copy of the
-  diagnostic, de-confound (ca3→ca3 `plastic=False` OR `enable_hebbian_learning=False`, + fix the `train=False`
-  weight=1.5 bug at `_build:~29` so both arms build at the swept weight) → re-run sweep → the weight axis goes LIVE
-  (completion MOVES with weight = confound confirmed; do NOT treat passing as closure). STEP 2 (the closer) — a LEARNED
-  pattern-specific attractor via `hebbian_symmetric` (raise the cap + a RATE-WINDOW co-activity rule / many events to
-  reach ignition) + **dendritic-dAP completion** (`2026-07-08-riii-onsubstrate-dendritic-dAP-completion-SURPASS-6seed`)
-  → held-out completion GO gate (trained>0.30 & recurrence-gain>0.15 & specificity & no-train collapse), 6-seed → then
-  wire completion → SWR replay loop → queryable console. CLOSES gap #5.
+  **⚠️ FRONTIER CORRECTED (a-1 to the LATEST findings, 2026-07-09 — I had a-1'd only to 2026-07-08 + the audit, a
+  drift-#12 re-derivation; my session's Hebbian-collapse/attractor-strength work was toward an ALREADY-ANSWERED
+  question).** The real R-iii state: **completion half = SOLVED** (dendritic dAP, 6-seed GO on a strong attractor).
+  **Formation:** ALL 4 plasticity rules (incl. rate-window) form only a WEAK ~1.44× attractor because the trained CA3
+  code is DISTRIBUTED (35-47% active, async) — no Hebbian rule binds cells that don't co-fire strongly
+  (`2026-07-09-riii-formation-rules-saturate-ensemble-dynamics-is-the-blocker`). Root cause: **CA3 has NO feedback
+  inhibition** (`internal_density=0.0` leaves its 15% inh cells unconnected). **Rung 1 (add `ca3_pv_basket` feedback
+  inhibition, runner-side, NO sim/ edit) sparsifies 0.43→0.21 but is NON-SELECTIVE** (global inhib suppresses members
+  too → ratio stuck 1.16×). **THE OPEN FRONTIER = Rung 2 the MOSSY-DETONATOR** (`2026-07-09-riii-ca3-feedback-inhibition-sparsifies-but-nonselective`):
+  strengthen `dg→ca3` mossy so a few CA3 cells fire HARD (detonate = the ensemble) despite the inhibition → a SPARSE +
+  strongly-firing SELECTIVE ensemble → does within/silent ratio pass ~3×? Runner-side, NO sim/ edit. **⚠️ EXACT NEXT
+  ACTION:** run the Rung-2 sweep — `_riii_ca3_attractor_diag.py --mossy-weight {8,30,80} --ca3-fb-inhib 120 --hebb-rate
+  --hebb-max <high>` measuring the within/silent RATIO + sparsity (gate: ratio ≥3× AND sparsity ~0.05). If it passes →
+  `_riii_ca3_coincidence_completion_derisk.py --two-comp` (dAP) on that config → held-out completion GO (trained>0.30 &
+  specificity & no-train collapse & LESION), 6-seed. Rung 3 (`--sync-on/--sync-off` gamma-pulse) is the named fallback
+  if PING is too coarse. Then wire completion → SWR replay loop → console. CLOSES gap #5. (My session's contributions
+  that STAND: recurrents transmit + scale [refutes the silent-transmission bug]; the substrate CAN complete
+  [hand-installed attractor]; the diagnostic's byte-identical sweep is a Hebbian-collapse confound — all consistent
+  with the 2026-07-09 picture, just downstream of the real frontier.)
 - **✅ Gap #4 a-1 RAG check DONE (2026-07-17) — the research-gate is essentially the `learning-rule-frontier-map`
   (2026-07-17), re-read + current:** SUPERVISED deep credit on spikes (e-prop / NP / D1-BDSP) is PARKED — all blocked
   by ONE shared "spiking-classifier-readout-training wall"; the rate-net positive control (done) confirmed the block
