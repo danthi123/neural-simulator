@@ -231,7 +231,8 @@ class OnBridgeBDSPNet:
                  fwd_wmean=6.0, fwd_wjit=0.5, fwd_density=1.0,
                  in_hi=750.0, in_lo=40.0, hidden_bias=520.0, output_bias=520.0,
                  apical_out_gain=260.0, apical_hid_gain=190.0,
-                 couple_soma=False, soma_g=0.0, bdsp_w_max=200.0):
+                 couple_soma=False, soma_g=0.0, bdsp_w_max=200.0,
+                 apical_bistable=False, apical_self_regen=0.0, apical_kir_g=0.0):
         from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
         from sim.bridge import SimulationBridge
         from sim.regions import BrainRegion, RegionPathway
@@ -274,6 +275,12 @@ class OnBridgeBDSPNet:
         # firing -> no bursts -> no learning). This is CLAUDE.md's documented STDP-w_max gotcha in BDSP form. Set it
         # above the forward design weight so the forward drive survives.
         cfg.bdsp_w_max = float(bdsp_w_max)
+        # gap#4 BISTABLE BDSP apical (2026-07-18 sim/ edit; default off => byte-identical). When on, the top-down apical
+        # LATCHES a held plateau (v-gated self-regen SUSTAIN + KIR down-state), boosting v_apical above its driven level
+        # => stronger apical->soma coupling => stronger measured bursts B => a larger directed-credit fraction of dw.
+        cfg.bdsp_apical_bistable = bool(apical_bistable)
+        cfg.coincidence_plateau_self_regen = float(apical_self_regen)
+        cfg.apical_kir_g = float(apical_kir_g)
         self._bdsp_lr = float(bdsp_lr)
 
         regions = [
@@ -518,7 +525,10 @@ def _run_bridge_arm(mode, seed, n_bits, Xtr, ytr, Xte, yte, args):
                           in_hi=args.in_hi, in_lo=args.in_lo, hidden_bias=args.hidden_bias,
                           output_bias=args.output_bias, apical_out_gain=args.apical_out_gain,
                           apical_hid_gain=args.apical_hid_gain,
-                          couple_soma=(args.soma_g > 0.0), soma_g=args.soma_g)   # apical->soma coupling (2026-07-10 edit): soma_g>0 -> bursts B rise -> DIRECTED credit
+                          couple_soma=(args.soma_g > 0.0), soma_g=args.soma_g,   # apical->soma coupling (2026-07-10 edit): soma_g>0 -> bursts B rise -> DIRECTED credit
+                          apical_bistable=getattr(args, "apical_bistable", False),
+                          apical_self_regen=getattr(args, "apical_self_regen", 0.0),
+                          apical_kir_g=getattr(args, "apical_kir_g", 0.0))
     rates = net.region_rates(Xtr[0], args.settle_steps) if mode == "bdsp" else None
     coupling = net.apical_coupling_diag() if mode == "bdsp" else None
     w_ih0, w_ho0 = net.pathway_weight_sums()
@@ -593,6 +603,13 @@ def main():
     # forward pathway init + drive / apical (the smoke levers; controller tunes for accuracy)
     ap.add_argument("--fwd-wmean", type=float, default=6.0)
     ap.add_argument("--fwd-wjit", type=float, default=0.5)
+    ap.add_argument("--apical-bistable", dest="apical_bistable", action="store_true",
+                    help="gap#4 (2026-07-18): make the BDSP top-down apical BISTABLE (held-plateau latch + KIR down-state) "
+                         "so a strong apical boosts B above the plain-leaky level. Default off = byte-identical.")
+    ap.add_argument("--apical-self-regen", dest="apical_self_regen", type=float, default=2.0,
+                    help="coincidence_plateau_self_regen for the bistable apical (only used with --apical-bistable).")
+    ap.add_argument("--apical-kir-g", dest="apical_kir_g", type=float, default=1.0,
+                    help="apical_kir_g down-state stabilizer for the bistable apical (only used with --apical-bistable).")
     ap.add_argument("--soma-g", type=float, default=0.0,
                     help="bdsp_apical_soma_g: >0 couples apical->soma so bursts B rise (DIRECTED credit); 0=decoupled (byte-identical to before).")
     ap.add_argument("--in-hi", type=float, default=750.0)
