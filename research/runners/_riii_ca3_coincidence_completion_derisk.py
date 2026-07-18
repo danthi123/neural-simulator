@@ -31,7 +31,8 @@ def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0,
            hebb_rate=False, coact_decay=None, coact_thresh=None, ca3_fb_inhib=None, ca3_fb_n=None, mossy_weight=None,
            mossy_density=None, dg_ffi_weight=None,
            ca3_to_ca1_density=0.30, ca1_fb_inhib=None, ca1_fb_n=None, ca1_ff_inhib=None,
-           nmda_recurrent=False, nmda_tau=100.0, nmda_ratio=1.0, enable_ou=True):
+           nmda_recurrent=False, nmda_tau=100.0, nmda_ratio=1.0, enable_ou=True,
+           plateau_self_regen=0.0, plateau_v_hold=-35.0, apical_kir_g=0.0):
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.bridge import SimulationBridge
     from research.runners.text_minimal_isolation import build_biological_brain_regions
@@ -173,6 +174,14 @@ def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0,
                 cfg.apical_R = float(apical_R)
             if apical_gc is not None:
                 cfg.apical_g_couple = float(apical_gc)
+            # DENDRITIC BISTABILITY (2026-07-18, gap#5): make each CA3 cell's apical dendrite BISTABLE so it LATCHES a
+            # plateau on a coincident within-assembly cue + HOLDS it (intrinsic per-cell), decoupling completion from the
+            # recurrent loop gain -> W_rec can be SUB-CRITICAL (specific + silent rest). Default 0 -> byte-identical.
+            if plateau_self_regen:
+                cfg.coincidence_plateau_self_regen = float(plateau_self_regen)
+                cfg.coincidence_plateau_v_hold = float(plateau_v_hold)
+            if apical_kir_g:
+                cfg.apical_kir_g = float(apical_kir_g)
     bridge = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                               runtime_state=RuntimeState(), gpu_config=GPUConfig())
     bridge.runtime_state.max_delay_steps = int(cfg.max_synaptic_delay_ms / cfg.dt_ms)

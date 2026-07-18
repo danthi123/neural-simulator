@@ -57,7 +57,8 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
         homeostatic=False, homeo_target=None,
         rate_homeo=False, rate_homeo_target=0.02, rate_homeo_alpha=0.1, rate_homeo_adapt=15.0,
         rate_homeo_steps=400, rate_homeo_cap=800.0, enable_ou=True, ca3_density=0.5,
-        selective_inhib=False, sel_inhib_spare=0.0, recall_k_thresh=None, structural_sep=False):
+        selective_inhib=False, sel_inhib_spare=0.0, recall_k_thresh=None, structural_sep=False,
+        plateau_self_regen=0.0, plateau_v_hold=-35.0, apical_kir_g=0.0):
     # DIAGNOSED LEVERS (2026-07-18 workflow): the rate-window LTP is an EMA-trace rule -- a cell's co-activity trace
     # tops out ~0.03-0.2 (point Izh fires ~0.2 duty @700pA), so coact_thresh MUST be BELOW it (~0.02) or nothing
     # potentiates; the gamma OFF-gap DECAYS the EMA (0.9^off) so CONTINUOUS drive (sync_off<=1) is required, NOT
@@ -72,7 +73,8 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
                     nmda_recurrent=nmda_recurrent, nmda_tau=nmda_tau, nmda_ratio=nmda_ratio, apical_R=apical_R,
                     apical_gc=apical_gc, k_thresh=k_thresh, plateau_strength=plateau_strength,
                     train=True, hebb_max=hebb_max, hebb_rate=True, ca3_fb_inhib=ca3_fb_inhib,
-                    coact_thresh=coact_thresh, hebb_lr=hebb_lr, enable_ou=enable_ou)
+                    coact_thresh=coact_thresh, hebb_lr=hebb_lr, enable_ou=enable_ou,
+                    plateau_self_regen=plateau_self_regen, plateau_v_hold=plateau_v_hold, apical_kir_g=apical_kir_g)
     rm = bridge.region_manager
     ca3_idx = list(rm.indices("ca3")); ca3_arr = cp.asarray(ca3_idx, dtype=cp.int64)
     n = bridge.core_config.num_neurons
