@@ -173,7 +173,19 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   byte-identical-when-off — this is also gap #4's dendritic substrate). All committed/pushed/CI-green. **Next-continue
   candidates (fresh arcs):** gap #4 local-credit rule ON the new bistability substrate (strongest — the substrate now
   exists) · gap #5 emergent-DG or SWR (both demonstrated fresh integration arcs) · gap #1 open generation.
-- **✅ GAP #4 MECHANISM GO (2026-07-18) — the local-credit keystone now has a WORKING rule (the resume point).** BTSP
+- **✅ GAP #4 ON-BRIDGE BTSP RULE VALIDATED (2026-07-18) — the working credit rule now runs ON THE SPIKING SUBSTRATE
+  (the resume point).** Added `fused_btsp_update` (`sim/kernels.py`) + a guarded default-off `enable_btsp` block in
+  `bridge._run_one_simulation_step` (seconds-long per-neuron pre-eligibility `cp_btsp_pre_elig` on `coo.row` × the
+  dendritic plateau `cp_v_apical` above v_hold on `coo.col`, gated by plastic-mask + plasticity_rate_gain like BDSP) +
+  config `enable_btsp/btsp_learning_rate/btsp_elig_tau_ms/btsp_w_min/w_max`. VALIDATED on a real 16-neuron bridge (CI
+  `test_onbridge_btsp` + `test_fused_btsp_update_*`): a co-active synapse under a PLATEAU potentiates one-shot (dw +7.9);
+  a SILENT apical → dw 0 (moat); `enable_btsp=False` → dw 0 + no array (byte-identical; determinism 9pass). ⇒ the
+  6-seed-GO BTSP mechanism now runs on the brain. **NEXT rung:** the full BEHAVIORAL-TIMESCALE on-bridge demo — trigger
+  the REAL bistable plateau via a coincidence cue (the gap#5 CA3 machinery: `enable_two_compartment_dap` + coincidence +
+  the bistability params), fire a pre-input SECONDS earlier, show the HELD plateau potentiates it one-shot where a
+  TRANSIENT plateau does not (6-seed + moat/lesion anti-cheats + cfg.seed-hash + dendritic-reset). Then (b) a one-shot
+  TASK (association/place-field) + (c) gap#5 UNIFICATION (BTSP stores the CA3 assembly the bistable CA3 completes).
+- **✅ GAP #4 MECHANISM GO (2026-07-18) — the local-credit keystone now has a WORKING rule (rate/analytic).** BTSP
   plateau-gated ONE-SHOT credit is 6-seed GO (`_gap4_btsp_plateau_gated_derisk.py`; finding
   `2026-07-18-gap4-BTSP-plateau-gated-oneshot-credit-GO-the-keystone-is-the-enabler.md`; CI
   `test_btsp_bistable_plateau_extends_credit_window_to_seconds`): the gap#5 BISTABLE dendritic plateau (self-regen
