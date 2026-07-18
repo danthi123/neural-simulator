@@ -182,10 +182,16 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   sits above the achievable co-activity product (~0.03 @700pA) → lower it to 0.02. (3) lr 0.0005 too slow. **GROW-SWEEP
   with the levers (continuous 3000pA + coact_thresh 0.02 + higher lr, n_ca3=500 seed 42):** the within-ensemble weights
   now GROW (6.0 → 15.9 @lr0.05 → 28.2 @lr0.5) and **functional completion rose 0.000 → 0.214, SPECIFIC** (h_comp 0.214
-  vs non-stored 0.007 = ~30×). Just below the 0.30 GO bar; the trend is monotone in lr/growth. **⚠️ Push-sweep running**
-  (`bxbqy2uz1`: lr 1/2/5 × train 120/200 × recall_drive) to clear h_comp≥0.30. **⚠️ EXACT NEXT ACTION:** read it → if a
-  config clears 0.30 → confirm at n_ca3=1000 + 6-seed + anti-cheats (async control, lam=0, no-encoding, permuted) → gap#5
-  completion CLOSES → wire the EMERGENT mossy/DG assembly selection (experience-derived) → SWR replay loop → console.
+  vs non-stored 0.007 = ~30×). Just below the 0.30 GO bar. **PUSH + READOUT sweeps (2026-07-18): encoding/growth SOLVED** — w_within grows 6→65 (lr)
+  → 250-459 (lowering k_thresh, which is entangled with encoding). BUT the remaining lever is the **MARR COMPLETION
+  TRADEOFF**: at k_thresh=18 completion is SPECIFIC but weak (h_comp 0.233, non 0.007); at k_thresh=6 it's STRONG but
+  INDISCRIMINATE (h_comp ~1.0 AND non ~1.0 — lowering k_thresh floods the plateau during encoding too, the exact
+  2026-07-14 warning). **⚙️ 2D sweep `bb15znulo` running** (k_thresh {15,12,10} × lam {0.3,0.5}) for the intermediate
+  sweet spot: h_comp≥0.30 AND ≥2× non-stored (specific completion). **⚠️ EXACT NEXT ACTION:** read it → if a (k_thresh,
+  lam) clears the specific-GO bar → confirm at n_ca3=1000 + 6-seed + anti-cheats (async control [must be worse],
+  no-encoding, permuted) → gap#5 completion CLOSES → wire the EMERGENT mossy/DG assembly selection (experience-derived,
+  replacing the pre-assigned assembly) → SWR replay loop → console. If no clean sweet spot → decouple encoding-k_thresh
+  from recall-k_thresh (set the plateau threshold higher at recall), or the engram intrinsic-excitability lever.
 - (superseded by the breakthrough above) direct synchronous assembly encoding did NOT grow the weights — DECAYED,
   and sync=async BYTE-IDENTICAL (the gamma mechanism was inert because NOTHING was potentiating). The rate-window LTP
   isn't firing: a cell firing ~1/3 of steps has trace ≈0.33 → product ≈0.11 < the 0.25 coactivity threshold → no
