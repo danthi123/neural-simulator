@@ -269,15 +269,21 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   recall_k=110/gc_read=5 (5/6) stands. specificity + bistability PERFECT on ALL 6 (perm 0.000, nocue 0.000); magnitude
   seed-variable [0.181, 0.328], 5/6 ≥ 0.20 (seed 101 the 0.181 marginal miss); no-encoding collapses (load-bearing). The
   completion TRILEMMA is RESOLVED by intrinsic dendritic bistability — the piece at CHANCE the project's whole history.
-- **⚠️ EXACT NEXT ACTION (B — gap #5 EMERGENT follow-ons, per the emergence bar):** the assembly is PRE-ASSIGNED (a fixed
-  sparse mask; `structural_sep`/`selective_inhib` apply it as the LEARNED OUTCOME). NEXT: (1) the EMERGENT DG-selected
-  assembly — the mossy/DG pattern-separation front end SELECTS the sparse CA3 set from experience (the mechanism is
-  selection-agnostic: it binds whatever sparse set co-fires), so `structural_sep`/`selective_inhib` become emergent, not
-  hand-applied; (2) the SWR generative-replay loop (`_riii_swr_generative_replay_derisk.py`, gated on exactly this
-  attractor); (3) a queryable console. Also optional: robustify the magnitude floor (seed 101/102 ~0.18) via a
-  per-seed-invariant read calibration (Turrigiano homeostatic on the apical read — reuse `rate_homeo`). Overlaps the gap
-  #4 dendritic keystone [[project_dendritic_cortex_for_emergence]]. ⚠️ prior-arc perm/self-sustain numbers were
-  silence-confounded (fixed by the `_hard_silence` dendritic-state reset).
+- **⚠️ EXACT NEXT ACTION (B — gap #5 EMERGENT follow-ons, per the emergence bar). Two scoped arcs, either order:**
+  **(1) SWR generative replay Rung 1** — a `read_ca1`/`schaffer_boost` ca1-readout is now ON the VALIDATED bistable gate
+  (`run(..., read_ca1=True, schaffer_boost=)`); the CA3 completion is strong (cue 0.287) and the ca3→ca1 Schaffer pathway
+  is healthy (71996 synapses, w4→boosted, 120 ca1 cells), BUT ca1 does NOT fire (ca1_fire 0.003 even @boost 15) → DEBUG
+  the ca1 drive: read `cp_conductance_g_e[ca1]` + `cp_firing_states[ca1]` while driving the full assembly to find where
+  the drive is lost (ca1 intrinsic excitability? the IZH2007_HIPPO_PYRAMIDAL ca1 threshold? a settling/timing issue? try
+  a longer ca1 read window / direct ca1 drive as a positive control). Once ca1 fires: match(partial-cue ca1, full ca1)
+  high + cross low = Rung 1 GO → then Rung 2 (open the ca3→ca1 STDP gate during replay → consolidation). **(2) EMERGENT
+  DG-selected assembly** — the mossy/DG pattern-separation front end SELECTS the sparse CA3 set from experience (the
+  completion mechanism is selection-agnostic — it binds whatever sparse set co-fires), so `structural_sep`/`selective_inhib`
+  become EMERGENT, not hand-applied; the bistable dendrite may now resolve the banked "sparsity-without-synchrony can't
+  select" blocker (each cell latches intrinsically — no synchrony needed). Then a queryable console. Optional: robustify
+  the magnitude floor (seed 101/102 ~0.18) via a per-seed-invariant read calibration (`rate_homeo` on the apical read).
+  Overlaps the gap #4 dendritic keystone [[project_dendritic_cortex_for_emergence]]. ⚠️ prior-arc perm/self-sustain
+  numbers were silence-confounded (fixed by the `_hard_silence` dendritic-state reset).
 - **🔬 gap#5 Rung 2/3 RESULT (2026-07-17):** the mossy-detonator SPARSIFIES CA3 (0.43→0.03) but sparsity WITHOUT
   synchrony can't select — within/silent separation goes NEGATIVE (−0.27 to −0.47; the sparse cells fire async →
   co-activity traces never clear threshold → no potentiation). Rung 3 (input gamma-pulse) is INERT (byte-identical to
