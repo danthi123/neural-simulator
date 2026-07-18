@@ -276,6 +276,16 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   normalization across binding-gain × amplification-gain × completability × build-coincidence-config (the coincidence
   k_threshold re-tuned to the raised/bound weights), a focused fresh pass. The mechanism is COMPREHENSIVELY mapped;
   every piece validated; the balanced full integration is the deep frontier.**
+  **↳ RESEARCH GATE + Step-0 (2026-07-18, disciplined pivot after >=2 failed approaches): a 3-report workflow reached
+  CONSENSUS (E%-max feedforward inhibition, `2026-07-18-gap5-emergent-DG-gain-balance-research-gate.md`) + prescribed a
+  cheap Step-0 decoupling probe FIRST. Step-0 BOUNDED the arc: a 200-cell emergent-image completes WEAKLY (cue 0.033)
+  ⇒ the blocker is COMPLETABILITY, NOT sparsity (so the E%-max/ff-inhib port is NOT the fix — the discipline SAVED
+  building the wrong thing). **KEY UNIFYING INSIGHT: the emergent-DG completability IS the SAME residual as the
+  gap#4↔#5 unification MAGNITUDE** — BTSP's UNIFORM one-shot storing → a weak/diffuse attractor (random assembly
+  completes ~0.18, the emergent-image ~0.03 because its cells are broadly co-active HUBS, not a tight cluster). ⇒ BOTH
+  gaps' full closure bottleneck on ONE shared frontier: (a) a STRUCTURED/competition-shaped stronger one-shot storing
+  rule, AND (b) for emergent-DG specifically, a selection that picks a TIGHT specific cluster (not hubs). The highest-
+  leverage next mechanism closes BOTH the unification magnitude AND the emergent-DG completability.**
   The gap#4<->gap#5 unification (below) is UNAFFECTED (pre-assigned assembly + direct drive). Frontier now: this
   DG-bursting sub-arc, gap#5 SWR, or gap#1 open generation.
 - **✅ gap#4<->gap#5 UNIFICATION — MECHANISM 6/6 GO (2026-07-18, the focused build DONE).** The `encode_btsp` path was
