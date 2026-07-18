@@ -232,14 +232,20 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   **0.006** (silent rest). So on the bistable dendrite: BISTABILITY ✓ (nocue 0.006) + SPECIFICITY ✓ (ratio 3.36) — both
   horns the point soma could NEVER jointly reach. **Remaining = MAGNITUDE at that operating point:** cue fell to
   0.06-0.09 (need ≥0.20; the high trigger threshold latches few held members).
-- **⚠️ EXACT NEXT ACTION (B — gap #5): recover MAGNITUDE at the specific+bistable point — sweep RUNNING (task ba40ub6hr).**
-  Larger assembly (frac 0.12→0.25: more within-partners per held member → more cross the learned-coincidence trigger) ×
-  stronger apical→soma coupling (`apical_gc` 1→3: a latched plateau drives the soma harder → higher soma firing, since
-  completion is read from soma) at recall_k=70, self_regen=0.15, kir=3, selective_inhib. If a config hits cue≥0.20 AND
-  cue≥3×perm AND nocue≤0.10 → 6-seed validate (`_gap5_wang_rate_homeo_driver.py --dendritic --plateau-self-regen 0.15
-  --apical-kir-g 3 --recall-k-thresh 70 --selective-inhib ...`) with frozen + no-cue + permuted anti-cheats → completion
-  trilemma RESOLVED → gap #5 CLOSED. If magnitude resists, add structural_sep + tune W_rec/encoding. Overlaps the gap #4
-  dendritic keystone [[project_dendritic_cortex_for_emergence]]. Infra banked (all levers default-off).
+- **⚙️ gap #5 payoff — structural_sep breaks the magnitude/self-sustain tension (full-combo sweep b2a75ssns).** Raising
+  apical_gc alone re-ignites the network (the latched plateaus fire the soma → recurrent spread); adding `structural_sep`
+  (zero non-member→member recurrents) lets gc boost cue WITHOUT self-sustain → best: cue 0.166, nocue 0.010, perm 0.090,
+  ratio 1.85 (gc=4, recall_k=130). So on the bistable dendrite: bistable (nocue 0.01) + specific-ish (ratio ~1.9) +
+  magnitude climbing (0.087→0.166). Near the joint bar (cue≥0.20 AND ratio≥3) but not yet — the residual coupled tension
+  is gc-couples-soma-noise-into-the-apical (higher gc → higher cue but higher perm).
+- **⚠️ EXACT NEXT ACTION (B — gap #5): stronger ENCODING for the final magnitude push — sweep RUNNING (task b0q2v2ie8).**
+  hebb_lr {3,5} × train_events 200 at the best specific config (gc=2.5, recall_k=110, structural_sep, frac0.12, sr0.15,
+  kir3, sel_inhib): stronger within-assembly weights → more held members cross the trigger → higher cue, structural_sep
+  holds specificity. If a config hits the joint bar → 6-seed validate → gap #5 completion CLOSED. If it plateaus below,
+  the next mechanism is ASYMMETRIC apical coupling (strong apical→soma read, weak soma→apical so soma noise can't leak
+  into the latch = the gc-couples-noise root) — a small guarded sim/ refinement. HUGE advance regardless: from
+  "always-self-sustaining, non-specific" (retracted) → bistable+specific CA3 completion (impossible on a point soma).
+  Overlaps the gap #4 dendritic keystone [[project_dendritic_cortex_for_emergence]]. Infra banked (all levers default-off).
 - **🔬 gap#5 Rung 2/3 RESULT (2026-07-17):** the mossy-detonator SPARSIFIES CA3 (0.43→0.03) but sparsity WITHOUT
   synchrony can't select — within/silent separation goes NEGATIVE (−0.27 to −0.47; the sparse cells fire async →
   co-activity traces never clear threshold → no potentiation). Rung 3 (input gamma-pulse) is INERT (byte-identical to
