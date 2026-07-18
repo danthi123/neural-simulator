@@ -347,23 +347,31 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
                 if sk:
                     ix = cp.asarray(sk, dtype=cp.int64); cc.data[ix] = cc.data[ix] * cp.float32(schaffer_boost)
 
-            def _measure_ca1(cue_idx, ripple_pA=60.0, g_on=8, g_off=4):
-                # SWR RIPPLE read: hold the cue (completion) + a WEAK GAMMA-PULSED global CA3 drive. The weak ripple only
-                # fires the PRIMED (latched/completed) cells (their apical plateau + the asymmetric read put them near
-                # threshold) SYNCHRONOUSLY -> a coincident Schaffer volley -> ca1 fires. Non-latched cells stay silent
-                # (the weak ripple can't fire a resting cell) -> the ca1 pattern reflects the COMPLETED assembly.
+            def _measure_ca1(cue_idx, ripple_pA=800.0, g_on=8, g_off=4):
+                # SWR two-phase read (honest ripple mechanism): PHASE 1 -- hold the cue so the bistable dendrite completes
+                # (settle), then READ which cells LATCHED (cp_v_apical > v_hold = the completed assembly, a correct cue
+                # latches the full assembly, a wrong cue latches ~none). PHASE 2 -- a SHARP-WAVE RIPPLE drives ONLY the
+                # LATCHED cells DIRECTLY in strong gamma volleys (no bistable suppression) -> they fire SYNCHRONOUSLY -> a
+                # coincident Schaffer volley -> ca1 fires. The ca1 pattern reflects the COMPLETED assembly; specificity is
+                # inherited from WHICH cells latched.
                 _hard_silence(); base = bias_full.copy()
                 if cue_idx is not None and len(cue_idx):
                     base[np.asarray(cue_idx, dtype=int)] += float(recall_drive)
-                ripple = base.copy(); ripple[ca3_arr_host] += float(ripple_pA)
-                dev_base = from_host(base.astype(np.float64)); dev_rip = from_host(ripple.astype(np.float64))
-                c1 = np.zeros(len(ca1_idx)); period = g_on + g_off
-                for t in range(recall_steps):
-                    bridge.cp_external_input_current[:] = dev_rip if (t % period) < g_on else dev_base
+                dev_base = from_host(base.astype(np.float64))
+                for _ in range(recall_steps):                        # PHASE 1: establish completion
+                    bridge.cp_external_input_current[:] = dev_base; bridge._run_one_simulation_step()
+                latched = ca3_arr_host[np.asarray(to_host(bridge.cp_v_apical))[ca3_arr_host] > float(plateau_v_hold)]
+                rip = bias_full.copy()
+                if len(latched):
+                    rip[latched] += float(ripple_pA)               # PHASE 2: strong burst of the LATCHED completed cells
+                dev_rip = from_host(rip.astype(np.float64)); dev_off = from_host(bias_full.astype(np.float64))
+                c1 = np.zeros(len(ca1_idx)); period = g_on + g_off; n_rip = 60
+                for t in range(n_rip):
+                    bridge.cp_external_input_current[:] = dev_rip if (t % period) < g_on else dev_off
                     bridge._run_one_simulation_step()
                     c1 += np.asarray(to_host(bridge.cp_firing_states))[ca1_idx].astype(float)
                 bridge.cp_external_input_current[:] = 0.0
-                return c1 / recall_steps
+                return c1 / n_rip
 
             def _cos(x, y):
                 nx, ny = float(np.linalg.norm(x)), float(np.linalg.norm(y))
