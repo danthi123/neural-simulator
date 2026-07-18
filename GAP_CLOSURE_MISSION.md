@@ -36,7 +36,7 @@ stranding, no scaffold left standing as the faculty).** Anything short of (a)-(e
 | # | Gap | Why it's load-bearing for LLM-like chat | Failing methods (banked) | Status |
 |---|-----|------------------------------------------|--------------------------|--------|
 | 1 | **Open-ended fluent generation (open prose)** | no "talk about anything" without it | from-scratch spiking LM loses to a bigram at few-M-token scale; the categorical novelty gap (composer emits 0/16 novel) | OPEN — met only by the ~21M TinyStories ANN scaffold (must be replaced by simulated circuitry) |
-| 2 | **Learned binder over the brain's OWN structured/correlated codes** | fluid reasoning/composition over the brain's own semantics; today comprehension/composition ride a hand-designed exact-inverse FHRR algebra (fails the emergence bar) | multi-attr bundling from scratch NEGATIVE (additive 0.193 / learned-linear-inverse 0.056 ≈ chance); learned binder ≈chance on correlated codes | OPEN — single-attr learned bind is on-spike GO; bundling + structured-code binding are not |
+| 2 | **Learned binder over the brain's OWN structured/correlated codes** | fluid reasoning/composition over the brain's own semantics; today comprehension/composition ride a hand-designed exact-inverse FHRR algebra (fails the emergence bar) | multi-attr bundling from scratch NEGATIVE (additive 0.193 / learned-linear-inverse 0.056 ≈ chance); learned binder ≈chance on correlated codes; deep-dendritic-credit-assignment binder BOUNDARY (`_burndown_3B`) | IN PROGRESS — gate `2026-07-17-keystone-binder-research-gate`; **#1 bounding-probe GO** (coincidence-product bundles CORRELATED codes 0.873≥0.80 @ 0.755 cos, 3-seed); **building #2 delta-rule self-organizing write (the actual closure — #1 still uses the fixed algebra scaffold)** |
 | 3 | **Multi-referent disambiguation** | real dialogue holds several entities; bind a bare pronoun to the salient one | recency NEGATIVE; salience-boost NEGATIVE (2 converging negatives) | OPEN — named fix (biased-competition WTA / attention-salience pointer) specified but UNBUILT |
 | 4 | **Dendritic / local-credit learning lever (KEYSTONE — engine for #2 & #5, upstream of #1)** | a substrate that LEARNS its binding + sequence structure, no weight transport | e-prop feedforward NOT-GO; recurrent e-prop refuted; Node Perturbation retired; BDSP-on-classifier-readout blocked; graded-readout escape does-not-unlock (2026-07-17) | OPEN / NOT-GO — needs a NEW biology-based local spiking credit rule |
 | 5 | **CA3 completion / imaginative-replay (episodic memory + imagination)** | remember/complete/imagine episodes; SWR generative replay | on-bridge replay at chance (5.78% vs 6.25%); held-out completion 0; dAP completion only as a read-out on a hand-installed attractor | OPEN — point-neuron boundary characterized; needs the dendritic dAP substrate (ties to #4) |
@@ -141,21 +141,33 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
-- **Phase:** finishing the pre-pivot confirmation run + read-only keystone research-gate prep (the anchor-heartbeat
-  correctly caught idle-waiting → doing the read-only gate prep, which is NOT the build-pivot the owner sequenced).
-- **Running jobs:**
-  - `scale787` develop loop (787-concept "given enough training" test) — GPU, monitor `bois5ocpf` (gate-anomaly +
-    heartbeat + done/crash). Root `bridges/developed/scale787`, log `scale787_full.log`. Day 24/33, 600 concepts,
-    still GO (corr +0.83 ≥ 0.70 gate, retain 1.00, moat 0). PAUSE sentinel: `bridges/developed/scale787/PAUSE`.
-  - anchor-heartbeat `bj0sku4ga` (~25min self-check) · (audit workflow DONE).
-  - **keystone research-gate workflow `wb5udqdul`** (read-only: our-record · biology · external-lit · correlated-code
-    angle → ranked self-organizing dendritic-bind de-risk). Running.
-- **⚠️ EXACT NEXT ACTION (updated):** (1) when `wb5udqdul` completes → review its ranked de-risk, TRUST-BUT-VERIFY the
-  load-bearing claims (esp. "the D2 dendritic neuron can multiply" + "method X tolerates correlated codes"), write the
-  keystone gate doc `research/findings/2026-07-17-keystone-binder-research-gate.md`. (2) when `scale787` fires TERMINAL
-  → `_scale787_analyze` vs frozen gate → RESULT doc + reconcile ROADMAP §5.10. (3) THEN start the #1 cheap-first
-  de-risk from the gate (the build-pivot the owner sequenced after the run) — rate→spike→one-brain ladder, anti-cheats,
-  6-seed, `cfg.seed` set. Launch gap #3's research-gate (multi-referent WTA) in parallel.
+- **Phase:** BUILD-PIVOT (scale run complete → gap-closing). Executing the keystone gate's ranked ladder.
+- **DONE this session:** scale787 = **CLOSED GO** (corr +0.81≥0.70 @787, retain 1.00, moat 0; RESULT doc + ROADMAP;
+  run PAUSED/resumable). Keystone research-gate `wb5udqdul` = DONE + verified + written
+  (`2026-07-17-keystone-binder-research-gate.md`; kernel+harness verified, codes regenerated from scale787's own
+  correlated codes, `_burndown_3B` deep-dendritic-credit route already a BOUNDARY). **Keystone #1 bounding-probe = GO**
+  (coincidence-product bundles CORRELATED codes **0.873 ≥ 0.80**, 3-seed, @0.755 mean-cos; additive 0.193 / chance
+  0.062 — the OP class bundles correlated codes; graceful degrade from 0.989 at lower correlation).
+- **DONE (cont'd):** keystone **#2 rate-rung GO** (self-organizing fast-weight bind, correlated codes 1.000, beats
+  fixed-FHRR 0.873; local write, no conj-inverse; permuted-role collapses) — `2026-07-17-keystone-2-...RATE-GO`. **DRIFT-#12
+  CONNECTION (load-bearing):** the EDGE-5 arc (2026-07-15) already realized the **spiking single-bind store 6-seed GO**
+  (`edge5-rung2-STP-store-onbridge`) AND found the **multi-bind on-bridge store COLLAPSES** (additive STP, below chance
+  at P=2) with the **named surpass = a delta-like error-correcting on-bridge write** (un-built). My #2 per-fact test
+  trivialized delta (isolated facts); the realistic SHARED store is where delta matters (EDGE-5 numpy rung-1 confirms).
+- **DRIFT-#12 catch #2 (the on-bridge delta write is REFUTED):** EDGE-5 rung-3/3b already built + refuted it (delta ≈
+  additive at 2 scales; value-specific potentiation caps at ~2 binds). **⇒ the genuine gap-#2 spiking edge is the
+  SELF-ORGANIZING SPIKING SLOT BINDER** (keystone gate #3: sparse-conjunctive competitive cells + BTSP; each bind →
+  its own bounded slot so binds don't interfere; the slot competition must SELF-ORGANIZE, NOT a hand-tuned FS-WTA
+  [EDGE-5 banked that]). The rate rung is DONE (my #2 key-addressed store = 1.000 @ K=12 = slot-separation); the open
+  edge is specifically its SPIKING realization past the ~2 write-rule cap. A deep frontier (EDGE-5's own term).
+- **Running jobs:** anchor-heartbeat `bj0sku4ga` (~25min self-check). keystone-slot-binder research-gate (launching).
+- **⚠️ EXACT NEXT ACTION:** research-gate DONE → BUILD the self-organizing spiking slot binder de-risk (competitive
+  slot assignment, non-hand-tuned; reuse EMERGE competitive-pooler / D2 dendritic / novel-referent Hebbian
+  fast-weight `slot(c)=argmax(Wc) if>θ else next-free`; SWR/BTSP one-shot write). GO bar: a fact's P≥3 role-filler
+  bundle recovers on SPIKES ≥0.80 where the write-rule store capped at ~2; slot-competition self-organizes (lesion
+  the competition → collapse); 6-seed. THEN compositional-reasoning check + wire-in = gap #2 CLOSED. THE LAW: the
+  write-rule METHOD is refuted/deferred, the CAPABILITY (robust spiking multi-bind) stays OPEN until the slot binder
+  works. (gap #3 multi-referent WTA research-gate in parallel.)
 - **Gap order (planned):** #4 keystone research-gate FIRST (unlocks #2/#5/#1) · #3 multi-referent parallel tractable
   lane · then #2/#5 on the keystone · then #1.
 - **⚠️ EXACT NEXT ACTION:** when `scale787` fires TERMINAL → run `_scale787_analyze` vs the FROZEN gate → write the
