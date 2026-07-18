@@ -166,13 +166,16 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   robustness frontier while easier un-closed work sat idle. Corrected order of UN-CLOSED work: **(A) gap #3 residuals
   [EASIEST — capability already GO] → (B) gap #5 robust completion [hard, mechanism demonstrated] → (C) gap #4 keystone
   [very hard, a-1 only] → (D) gap #1 open generation [hardest].**
-- **📍 SESSION LANDMARK (2026-07-18):** closed **gap #3 FULLY** (spiking feature-compat + D3 Cb + deployment-learns-from-experience)
-  + **gap #5's functional completion MECHANISM** (5/6 GO, 6/6 perfect specificity+bistability — the completion trilemma
-  RESOLVED by an intrinsic DENDRITIC BISTABILITY keystone [self-regen NMDA plateau + KIR + asymmetric read], at CHANCE
-  the project's whole history) + BUILT the dendritic-bistability `sim/` keystone (single-cell latch-and-hold + CI,
-  byte-identical-when-off — this is also gap #4's dendritic substrate). All committed/pushed/CI-green. **Next-continue
-  candidates (fresh arcs):** gap #4 local-credit rule ON the new bistability substrate (strongest — the substrate now
-  exists) · gap #5 emergent-DG or SWR (both demonstrated fresh integration arcs) · gap #1 open generation.
+- **📍 SESSION LANDMARK (2026-07-18):** closed **gap #3 FULLY** + **gap #5's functional completion MECHANISM** (5/6 GO,
+  6/6 specificity+bistability — the completion trilemma RESOLVED by an intrinsic DENDRITIC BISTABILITY keystone) + BUILT
+  the dendritic-bistability `sim/` keystone (CI, byte-identical-when-off) + **COMPREHENSIVELY ADVANCED gap #4 AND UNIFIED
+  it with gap #5** (see the ✅ gap#4 block directly below): the keystone → a WORKING on-brain credit rule (BTSP,
+  behavioral-timescale one-shot) → UNIFIED with gap #5 (BTSP stores the CA3 assembly the bistable CA3 completes,
+  MECHANISM 6/6 GO). The SAME dendritic bistability serves BOTH gaps. All committed/pushed/CI-green. **THE FRONTIER NOW
+  (fresh arcs, per the easiest→hardest order):** the gap#4↔#5 unification MAGNITUDE (~0.18, an exhaustively-characterized
+  boundary — a fundamentally new storing rule, deprioritized vs new capability) · **gap #5 EMERGENT-DG** (make the
+  assembly EMERGE from experience vs the pre-assigned mask — directly aligned with the EMERGENCE BAR + extends the
+  unification) · gap #5 SWR generative-replay · **gap #1 OPEN GENERATION [hardest, untouched this session]**.
 - **✅ GAP #4 ON-BRIDGE BTSP BEHAVIORAL-TIMESCALE GO — 6-seed (2026-07-18, the resume point).** The on-bridge BTSP rule
   now runs at BEHAVIORAL TIMESCALE via the REAL bistable plateau (`_gap4_btsp_onbridge_behavioral_timescale_derisk.py`,
   finding `2026-07-18-gap4-BTSP-onbridge-behavioral-timescale-GO-6seed-...`): reusing BOTH session edits (the bistable
