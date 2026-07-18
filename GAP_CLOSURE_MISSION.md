@@ -179,7 +179,17 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   breaks retrieval → rely on NMDA hold; shared→per-slot gates). Decay ruled OUT by reading the substrate
   (`bridge.py:7051` decay IS gated). **Remaining = WRITE STRENGTH in the multi-bind flow** (w0→f2 weak/lost: 0.02 at
   teach1, 0.00 at retrieve). All in `2026-07-17-keystone-2-spiking-slot-binder-STEP1-prereq-GO.md`.
-- **⚠️ EXACT NEXT ACTION (fresh-focus debug of step 2c write strength):** instrument `_coact` for the slot→filler
+- **🎯 gap#2 step-2c BREAKTHROUGH (2026-07-17):** the mechanism is SOUND — all 3 associations correctly written
+  (diagonal w0→f2=96.8/w1→f4=117.5/w2→f1=92.7), conductance TRANSMITS (f2 g_e=0.142). Steps 1 (separation) + 2a
+  (coexistence) + 2c-WRITE/TRANSMIT are GO. **The only residual is the READOUT** (the cued filler doesn't dominate;
+  a spurious ~20 off-diagonal baseline on every slot→filler). **⚠️ RESUME (well-scoped): (1)** kill the off-diagonal —
+  the Hebbian may be the `(max−current)` FORM (`bridge.py:7024`, potentiates ALL of an active pre's synapses toward
+  max regardless of post) not the CO-ACTIVITY form (`:7006`); switch to co-activity so ONLY co-firing (slot,filler)
+  potentiates → decisive diagonal:off-diagonal ratio; **(2)** add the gate-specified filler-WTA readout (reuse
+  `biased_competition_buffer.py` / EMERGE-41 kWTA) so the max-conductance filler wins. Then slot-sep(≥0.80 P≥3) vs
+  shared + no-recur + permuted, 6-seed. NOT a wall — a fresh-focus finish; fallback = theta-gamma (EMERGE-85). All in
+  `2026-07-17-keystone-2-spiking-slot-binder-STEP1-prereq-GO.md`.
+- (superseded earlier note) instrument `_coact` for the slot→filler
   synapses during teach (is it below `hebbian_coactivity_thresh=0.25`, `bridge.py:7006`?) + print the resulting weight;
   and check whether the multi-slot FS inhibition (P held slots → strong FS → suppresses the driven slot's filler
   drive) is the read-side culprit. Fix = tune the write (lower thresh / higher lr / longer teach / stronger slot drive)
