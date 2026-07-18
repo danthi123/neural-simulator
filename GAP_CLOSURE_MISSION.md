@@ -146,7 +146,14 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   robustness frontier while easier un-closed work sat idle. Corrected order of UN-CLOSED work: **(A) gap #3 residuals
   [EASIEST — capability already GO] → (B) gap #5 robust completion [hard, mechanism demonstrated] → (C) gap #4 keystone
   [very hard, a-1 only] → (D) gap #1 open generation [hardest].**
-- **Phase:** GAP-CLOSING (easiest-first). **Gap #2 FULLY CLOSED** ✅ · **Gap #3 = FINISHING NOW (2 residuals)** ·
+- **Phase:** GAP-CLOSING (easiest-first). **Gap #2 FULLY CLOSED** ✅ · **Gap #3 A1+A2 CLOSED (2026-07-18)** ✅ —
+  A1: the referent-bias feature-compatibility is now a SPIKING LEARNED map (corpus co-occurrence → feature-detector
+  spikes) wired into `MultiTurnAgent(feat_compat_source=)`, replacing host `content_bias_target` (mechanism GO +
+  spiking GO + wire exercised + CI 4/4). A2: the all-compatible tie is broken by the CUE-COMBINATION (content decides
+  clear cases; on a feature-silent tie the D3 Cb discourse-salience [6-seed GO] breaks it; CI + regression clean
+  10/10). Findings: `2026-07-18-gap3-A1-learned-feature-compatibility-cheap-first-GO.md`. Remaining gap#3 = the
+  DEPLOYMENT default-on (the agent LEARNS the feat-compat from its OWN heard corpus + defaults to the brain-based
+  resolution, retiring the host lookup) — a bounded follow-on. ·
   **Gap #5 = mechanism DEMONSTRATED (seed 42, all anti-cheats) but robust-6-seed a DEEP frontier — BANKED, sequenced
   after #3** (the "6-SEED GO" was RETRACTED as a self-sustaining artifact; the Wang-NMDA rebuild gives real
   bistable+specific completion on seed 42 but is seed-fragile — the per-seed-T diagnostic confirms 43 self-sustains /
