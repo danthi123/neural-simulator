@@ -35,7 +35,7 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
         encode_drive=700.0, recall_drive=250.0, lam_dep_wi=0.5, hebb_max=2000.0, ca3_fb_inhib=20.0,
         reset_steps=15, drive_steps=48, recall_steps=60, ens_thresh=2, no_sync=False,
         coact_thresh=0.02, hebb_lr=None, k_thresh=18.0, plateau_strength=120.0, apical_R=50.0, apical_gc=None,
-        permute_recall=False):
+        permute_recall=False, bistable=False):
     # DIAGNOSED LEVERS (2026-07-18 workflow): the rate-window LTP is an EMA-trace rule -- a cell's co-activity trace
     # tops out ~0.03-0.2 (point Izh fires ~0.2 duty @700pA), so coact_thresh MUST be BELOW it (~0.02) or nothing
     # potentiates; the gamma OFF-gap DECAYS the EMA (0.9^off) so CONTINUOUS drive (sync_off<=1) is required, NOT
@@ -107,6 +107,66 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
                 ws.append(d[flat_h[k]])
         return (float(np.mean(wi)) if wi else 0.0), (float(np.mean(ws)) if ws else 0.0)
     w_within, w_silent = _wstats()
+    non_stored0 = np.array([g for g in ca3_idx if g not in set(int(x) for a in assemblies for x in a)], dtype=np.int64)
+
+    if bistable:
+        # GENUINE CUE-GATED COMPLETION TEST: hard-SILENCE the network (clear v/u/firing/conductances to rest), then
+        # drive a condition, and read the HELD (non-cued stored) members' firing. Real pattern completion requires:
+        #   NO-CUE       -> held SILENT (the attractor is not self-sustaining/always-on)
+        #   CORRECT cue  -> held FIRES (partial cue A ignites the full pattern A)
+        #   PERMUTED cue -> held SILENT (specific: a random cue does NOT ignite A)
+        # (The prior "completion" failed because measure_region_response never silenced the self-sustaining attractor.)
+        from sim.backend import from_host
+        n_all = bridge.core_config.num_neurons
+
+        def _hard_silence(settle=30):
+            if getattr(bridge, "cp_izh_c_reset", None) is not None:
+                bridge.cp_membrane_potential_v[:] = bridge.cp_izh_c_reset
+            else:
+                bridge.cp_membrane_potential_v[:] = -65.0
+            bridge.cp_recovery_variable_u[:] = 0.0
+            if getattr(bridge, "cp_firing_states", None) is not None:
+                bridge.cp_firing_states[:] = False
+            for _a in ("cp_conductance_g_nmda_recurrent", "cp_conductance_g_e", "cp_conductance_g_i",
+                       "cp_conductance_g_nmda", "cp_conductance_g_nmda_rise"):
+                _arr = getattr(bridge, _a, None)
+                if _arr is not None:
+                    _arr[:] = 0.0
+            bridge.cp_external_input_current[:] = 0.0
+            for _ in range(settle):     # confirm it stays silent (a bistable attractor will; a self-sustaining one re-ignites)
+                bridge._run_one_simulation_step()
+
+        def _measure(cue_idx):
+            _hard_silence()
+            cur = np.zeros(n_all)
+            if cue_idx is not None and len(cue_idx):
+                cur[np.asarray(cue_idx, dtype=int)] = float(recall_drive)
+            dev = from_host(cur.astype(np.float64)); spk = np.zeros(len(ca3_idx))
+            for _ in range(recall_steps):
+                bridge.cp_external_input_current[:] = dev; bridge._run_one_simulation_step()
+                spk += np.asarray(to_host(bridge.cp_firing_states))[ca3_arr_host].astype(float)
+            bridge.cp_external_input_current[:] = 0.0
+            return spk / recall_steps
+        ca3_arr_host = np.asarray(ca3_idx, dtype=int)
+
+        nocue_l, cue_l, perm_l, silence_l = [], [], [], []
+        for m, assy in enumerate(assemblies):
+            a = assy.copy(); np.random.default_rng(seed + m).shuffle(a)
+            half = max(2, len(a) // 2); cue, held = a[:half], a[half:]
+            hp = [ca3_pos[int(g)] for g in held]
+            # NO-CUE: also read the whole assembly's rest firing (self-sustain check)
+            r0 = _measure(None); nocue_l.append(float(np.mean(r0[hp])))
+            silence_l.append(float(np.mean(r0[[ca3_pos[int(g)] for g in a]])))
+            r1 = _measure(cue); cue_l.append(float(np.mean(r1[hp])))
+            perm = np.random.default_rng(seed * 7 + m + 999).choice(non_stored0, len(cue), replace=False)
+            r2 = _measure(perm); perm_l.append(float(np.mean(r2[hp])))
+        held_cue = float(np.mean(cue_l)); held_nocue = float(np.mean(nocue_l)); held_perm = float(np.mean(perm_l))
+        rest = float(np.mean(silence_l))
+        # GENUINE completion: correct cue fires held substantially, AND both no-cue and permuted stay near-silent
+        go = (held_cue >= 0.20 and held_cue >= 3.0 * (held_nocue + 1e-6) and held_cue >= 3.0 * (held_perm + 1e-6)
+              and held_nocue <= 0.05)
+        return {"seed": seed, "w_within": w_within, "held_cue": held_cue, "held_nocue": held_nocue,
+                "held_perm": held_perm, "rest_firing": rest, "go": bool(go)}
 
     # RECALL: partial cue (50% of each assembly) DIRECT on CA3 -> does the held-out 50% fire?
     non_stored = np.array([g for g in ca3_idx if g not in set(int(x) for a in assemblies for x in a)], dtype=np.int64)

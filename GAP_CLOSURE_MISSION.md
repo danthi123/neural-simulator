@@ -236,14 +236,18 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   cue-normalized h_comp=1.000 masked it (both fire at the clamped rate); no-encoding collapsed only because no attractor
   exists to self-sustain. Finding retraction block:
   `2026-07-18-gap5-ca3-functional-completion-CLOSED-6seed-GO-learned-attractor.md`. **STANDS:** the recipe forms a strong
-  SPECIFIC learned attractor on-substrate (6-seed) — a real advance on the 2026-07-14 weak-attractor boundary. **⚠️ EXACT
-  NEXT ACTION (the REAL problem, correctly scoped):** make the attractor BISTABLE — SILENT at rest, ignited ONLY by a
-  partial cue, SPECIFICALLY to the cued pattern. Levers: weaker recurrent self-drive (so it doesn't self-ignite) +
-  stronger partial-cue trigger; a settle that genuinely SILENCES; store ≥2 patterns and require cue-A→pattern-A (not B).
-  **MANDATORY gates from now on:** the permuted-recall control AND a NO-CUE control (drive nothing at recall → held must
-  be SILENT) — both were missing, which is how the artifact slipped through. Also re-check the 2026-07-14 hand-installed
-  "completion" (CYCLE-1068) with these controls (it may share the artifact). Then: emergent DG-selection → SWR loop →
-  console. Gaps #1/#4 remain per "close ALL fully".
+  SPECIFIC learned attractor on-substrate (6-seed) — a real advance on the 2026-07-14 weak-attractor boundary. **⚠️ THE REAL PROBLEM = BISTABLE cue-gated completion.** Built the proper
+  gate into the de-risk (`run(..., bistable=True)`: HARD-SILENCE the net [clear v/u/firing/conductances + 30 settle
+  steps] then read held-member firing under NO-CUE / CORRECT-CUE / PERMUTED-CUE; GO = correct fires ≥0.20 AND ≥3× both
+  no-cue & permuted AND no-cue ≤0.05). **Confirmed self-sustaining at the retracted config (seed 42, n_ca3=2000):
+  cue=nocue=perm=rest=0.500** — the assembly RE-IGNITES from a hard-silence, so it's the recurrent STRENGTH (w_within
+  grew to hundreds → supra-threshold), NOT the recall protocol. **⚙️ Bistable-regime sweep running** (`bbgvd0gcq`:
+  hebb_max cap DOWN {30,60,120,250} → want held_nocue~0 [silent at rest] AND held_cue high [50% cue completes] AND
+  held_perm~0 [specific]). **⚠️ EXACT NEXT ACTION:** read it → find the cap where the attractor is BISTABLE (silent at
+  rest, cue-ignitable); if found → 6-seed + the mandatory no-cue/permuted gates → real completion → emergent DG-selection
+  → SWR loop → console. If no cap is bistable (too-weak-doesn't-complete vs too-strong-self-sustains with no window) →
+  the E/I-balance / thresholded-recall mechanism (a cue that must EXCEED a completion threshold). Also re-check the
+  2026-07-14 hand-installed CYCLE-1068 "completion" with the bistable gate (may share the artifact). Gaps #1/#4 remain.
 - (superseded by the breakthrough above) direct synchronous assembly encoding did NOT grow the weights — DECAYED,
   and sync=async BYTE-IDENTICAL (the gamma mechanism was inert because NOTHING was potentiating). The rate-window LTP
   isn't firing: a cell firing ~1/3 of steps has trace ≈0.33 → product ≈0.11 < the 0.25 coactivity threshold → no
