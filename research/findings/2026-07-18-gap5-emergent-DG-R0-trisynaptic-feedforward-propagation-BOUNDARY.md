@@ -84,11 +84,17 @@ the next concrete step is what cracked it.)
   SAME keystone that resolved gap#5 COMPLETION also resolves the emergent SELECTION trilemma (stable sparse latch
   without a pre-assigned mask — the KIR down-state gives the intrinsic sparsity/stability). The emergent-DG mechanism
   WORKS: mossy seeds → bistable-dendrite amplification → stable sparse emergent assembly.
-- **Remaining residual (tractable): ROBUSTNESS + SIZE.** Only ~half the inputs seed strongly enough to ignite (the DG
-  code varies per input), and the assemblies are small (~6 cells vs the ~240 completion scale). Resume = tune the mossy
-  seed strength / DG code density+synchrony / ca3w / fb-inhib for a RELIABLE multi-input sparse assembly of a
-  completable size, then the integrated select-and-store (encode_btsp on the amplified assembly + bistable complete) +
-  the anti-cheats. The recurrent-amplification + bistability-stabilization insight is the unlock; everything else built.
+- **Remaining residual, PRECISELY characterized (~28 probes): RELIABLE MULTI-INPUT SEEDING.** The bistable amplification
+  gives a stable sparse assembly for the inputs that DO seed (~2 of 5 inputs → 5-24 cell assemblies, sep_cos ~0.2, no
+  runaway), but the OTHER inputs seed NOTHING — and this does NOT improve with mossy weight (to 3000) OR mossy density
+  (to 0.30); it only shifts WHICH inputs seed. So the fragility is a property of the SPARSE RANDOM mossy wiring: only DG
+  codes whose sparse mossy targets happen to CONCENTRATE on some CA3 cells fire a coincident seed; codes that spread
+  their mossy fire none. (Possibly compounded by the DG codes themselves being only single-seed-validated — D.13
+  completion was seed-fragile.) ⇒ the deeper fix for RELIABILITY is not a mossy-weight/density knob but a more reliable
+  SEEDING: a structured/learned (not purely-random) DG→CA3 map so every DG code concentrates, and/or a reproducible DG
+  code per input (re-validate DG separation multi-seed first). This is the emergent-DG's genuine open residual — a real
+  frontier, but the CORE mechanism (mossy seed → bistable-dendrite amplification → stable sparse assembly) is SURPASSED
+  and works. Resume = reliable-seeding mechanism, then the integrated select-and-store + anti-cheats.
 
 ## Status + the next mechanism (per THE LAW)
 - **BOUNDARY (well-characterized):** emergent-DG via the trisynaptic feedforward is blocked by feedforward propagation
