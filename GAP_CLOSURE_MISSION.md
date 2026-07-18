@@ -279,10 +279,15 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   volley -> ca1 fires). Ripple-burst read ADDED to `_measure_ca1` (gamma-pulsed global CA3 drive) but ca1 still 0.008.
   **ROOT-CAUSED (2026-07-18): ca1 is INHIBITED — under CA3 drive it has g_i 10.16 > g_e 4.70.** The `schaffer_boost`
   scales the ca3->ca1 synapses from INHIBITORY ca3 cells too (synapse sign = the PRE cell's trait, not the weight), so
-  it amplifies inhibition past excitation. **FIX (cheap, specified): boost ONLY EXCITATORY ca3->ca1** (filter the boosted
-  `sk` to synapses whose pre-cell is NOT inhibitory — use the bridge inhibitory mask), re-test read_ca1 (ca1 should now
-  fire), then match high + cross low = Rung 1 GO -> Rung 2 (ca3->ca1 STDP consolidation). Then the emergent DG-selected
-  assembly (2). All read-out infra is on the validated bistable gate; the completion itself is CLOSED. **(2) EMERGENT
+  it amplifies inhibition past excitation. Excitatory-only boost DONE (excludes inhibitory ca3), but ca1 STILL 0.009:
+  g_i also comes from ec->ca1 / ca1-internal, and MORE fundamentally the BISTABLE config SUPPRESSES the assembly firing
+  during the read -> too SPARSE to drive a strong synchronous Schaffer volley even with the ripple. **FRESH-PASS DESIGN
+  (a focused pass, NOT tail-of-session knob-turns): SEPARATE the ca1 read from the bistable completion** -- (i) establish
+  completion (bistable gate; identify LATCHED cells = cp_v_apical > v_hold), then (ii) a SEPARATE ripple phase drives the
+  LATCHED cells DIRECTLY in strong gamma volleys (a sharp-wave burst, no bistable suppression) -> strong coincident
+  Schaffer volley -> ca1 fires; match(partial ca1, full ca1) high + cross low = Rung 1 GO -> Rung 2 (STDP consolidation).
+  Then the emergent DG-selected assembly (2). All read-out infra is on the validated bistable gate; **the completion
+  itself — gap #5's core — is CLOSED.** **(2) EMERGENT
   DG-selected assembly** — the mossy/DG pattern-separation front end SELECTS the sparse CA3 set from experience (the
   completion mechanism is selection-agnostic — it binds whatever sparse set co-fires), so `structural_sep`/`selective_inhib`
   become EMERGENT, not hand-applied; the bistable dendrite may now resolve the banked "sparsity-without-synchrony can't
