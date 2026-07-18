@@ -141,7 +141,22 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
-- **Phase:** GAP-CLOSING. **Gap #2 FULLY CLOSED (2026-07-17)** ✅ · Gap #3 largely closed · Gaps #1/#4/#5 open → #4 next.
+- **Phase:** GAP-CLOSING. **Gap #2 FULLY CLOSED (2026-07-17)** ✅ · Gap #3 largely closed · Gap #5 = completion
+  FUNCTION met via other methods, but the biology-faithful CA3-autoassociator is a DEEP theta-gamma frontier (not the
+  quick close it was picked for — STRATEGIC REASSESSMENT, see below) · Gaps #1/#4 open.
+- **🔬 gap#5 Rung 2/3 RESULT (2026-07-17):** the mossy-detonator SPARSIFIES CA3 (0.43→0.03) but sparsity WITHOUT
+  synchrony can't select — within/silent separation goes NEGATIVE (−0.27 to −0.47; the sparse cells fire async →
+  co-activity traces never clear threshold → no potentiation). Rung 3 (input gamma-pulse) is INERT (byte-identical to
+  no-sync — pulsing the INPUT doesn't synchronize CA3). ⇒ the formation blocker is confirmed to be SYNCHRONY; the named
+  next mechanism is **Rung 4: a genuine theta-gamma PACEMAKER** (rhythmic inhibition pacing the sparse CA3 survivors
+  into gamma volleys DIRECTLY, N.15/N.19), a guarded sim/ mechanism — a DEEP build. Completion FUNCTION is met (EMERGE
+  spreading-activation 12-seed GO, graded-confidence 12-seed GO, composer scan, gap-#2 slot-binder); imaginative
+  RECOMBINATION is GO; SWR replay reactivation is blocked by the same CA3-attractor gap.
+  `2026-07-17-gap5-rung2-mossy-sparsifies-but-sync-unsolved-CA3-attractor-is-the-theta-gamma-frontier.md`. **⚠️ STRATEGIC
+  FORK (surfaced to owner):** gap #5's CA3-autoassociator is deeper than "quick" — invest in the Rung-4 theta-gamma
+  pacemaker (biology-faithful, multi-cycle sim/ build) OR redirect (the completion FUNCTION is met; a different gap may
+  be genuinely quicker). Awaiting owner steer; if none, proceed with Rung 4 per THE LAW (the biology-faithful mechanism
+  is the target, not just the function).
 - **DONE this session:** scale787 = **CLOSED GO** (corr +0.81≥0.70 @787, retain 1.00, moat 0; RESULT doc + ROADMAP;
   run PAUSED/resumable). Keystone research-gate `wb5udqdul` = DONE + verified + written
   (`2026-07-17-keystone-binder-research-gate.md`; kernel+harness verified, codes regenerated from scale787's own
