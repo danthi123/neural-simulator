@@ -179,7 +179,13 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   uses the just-built BISTABLE APICAL as a held credit/target signal — the prior BDSP attempt had no bistable apical to
   hold the error. On research return: review the ranked rule, cheap-first de-risk (local apical rule beats a
   frozen-hidden reservoir = the depth_helps gate), 6-seed. `_d1_onbridge_learn_to_accuracy` + the two-compartment
-  machinery are the substrate.
+  machinery are the substrate. **CONCRETE DE-RISK FOUND (a-1): the Payeur BDSP machinery ALREADY EXISTS + is extensive**
+  (`enable_bdsp`: burst-P = sigmoid(beta·`cp_v_apical`) = the apical IS the credit signal; `cp_bdsp_apical_drive`, the
+  `enable_bdsp_microcircuit` interneuron cancellation, `enable_bdsp_graded_credit`; runners `_d1_*` = the whole D1/BDSP
+  arc). The prior "BDSP-on-classifier blocked" used a TRANSIENT apical -> the credit signal DECAYED; **the just-built
+  BISTABLE apical HOLDS the burst-probability credit** -> re-run the `_d1_onbridge_learn_to_accuracy` depth_helps gate
+  with `enable_bdsp` + the bistability flags (`coincidence_plateau_self_regen` + `apical_kir_g`) ON. That is the
+  cheap-first de-risk the research return should confirm/rank.
 - **Phase:** GAP-CLOSING. **Gap #2 FULLY CLOSED** ✅ · **Gap #3 FULLY CLOSED (2026-07-18)** ✅ · **Gap #5 completion
   MECHANISM CLOSED (2026-07-18)** ✅ (emergent DG + SWR replay = fresh follow-on arcs; magnitude 5/6 seed-variable) —
   A1: the referent-bias feature-compatibility is a SPIKING LEARNED map (corpus co-occurrence → feature-detector
