@@ -232,7 +232,8 @@ class OnBridgeBDSPNet:
                  in_hi=750.0, in_lo=40.0, hidden_bias=520.0, output_bias=520.0,
                  apical_out_gain=260.0, apical_hid_gain=190.0,
                  couple_soma=False, soma_g=0.0, bdsp_w_max=200.0,
-                 apical_bistable=False, apical_self_regen=0.0, apical_kir_g=0.0):
+                 apical_bistable=False, apical_self_regen=0.0, apical_kir_g=0.0,
+                 graded_credit=False):
         from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
         from sim.bridge import SimulationBridge
         from sim.regions import BrainRegion, RegionPathway
@@ -281,6 +282,11 @@ class OnBridgeBDSPNet:
         cfg.bdsp_apical_bistable = bool(apical_bistable)
         cfg.coincidence_plateau_self_regen = float(apical_self_regen)
         cfg.apical_kir_g = float(apical_kir_g)
+        # graded (Larkum BAC-firing analog) burst-credit: dev = E*(P - Pbar) using P=sigmoid(beta*apical) instead of the
+        # noisy MEASURED burst rate B. Bidirectional around Pbar (signals LTP AND LTD -- the measured B can't fall below
+        # 0) + the moat holds EXACTLY at rest (P==Pbar). The analog dendritic-somatic coincidence (event x apical-depol),
+        # the pre-spike two-compartment signal the point-neuron-limit reasoning endorses. Computed from neural quantities.
+        cfg.enable_bdsp_graded_credit = bool(graded_credit)
         self._bdsp_lr = float(bdsp_lr)
 
         regions = [
@@ -528,7 +534,8 @@ def _run_bridge_arm(mode, seed, n_bits, Xtr, ytr, Xte, yte, args):
                           couple_soma=(args.soma_g > 0.0), soma_g=args.soma_g,   # apical->soma coupling (2026-07-10 edit): soma_g>0 -> bursts B rise -> DIRECTED credit
                           apical_bistable=getattr(args, "apical_bistable", False),
                           apical_self_regen=getattr(args, "apical_self_regen", 0.0),
-                          apical_kir_g=getattr(args, "apical_kir_g", 0.0))
+                          apical_kir_g=getattr(args, "apical_kir_g", 0.0),
+                          graded_credit=getattr(args, "graded_credit", False))
     rates = net.region_rates(Xtr[0], args.settle_steps) if mode == "bdsp" else None
     coupling = net.apical_coupling_diag() if mode == "bdsp" else None
     w_ih0, w_ho0 = net.pathway_weight_sums()
@@ -612,6 +619,9 @@ def main():
                     help="apical_kir_g down-state stabilizer for the bistable apical (only used with --apical-bistable).")
     ap.add_argument("--soma-g", type=float, default=0.0,
                     help="bdsp_apical_soma_g: >0 couples apical->soma so bursts B rise (DIRECTED credit); 0=decoupled (byte-identical to before).")
+    ap.add_argument("--graded-credit", dest="graded_credit", action="store_true",
+                    help="enable_bdsp_graded_credit: dev=E*(P-Pbar) (Larkum BAC-firing analog coincidence) instead of the noisy "
+                         "measured burst rate B -- bidirectional (LTP+LTD) + moat holds exactly at rest. Default off = measured B.")
     ap.add_argument("--in-hi", type=float, default=750.0)
     ap.add_argument("--in-lo", type=float, default=40.0)
     ap.add_argument("--hidden-bias", type=float, default=520.0)
