@@ -217,6 +217,23 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   rest via KIR) -> learning clears the floor; add held-apical (self_regen) for noise-averaging vs the 0.75 bar; 6-seed +
   cfg.seed-hash + dendritic-reset + depth_helps/wrong-sign/lesion/moat anti-cheats. The single, well-specified, bounded
   protected edit that closes the gap #4 keystone — a focused-pass build.
+- **✅ gap #4 BUILT + RUN (2026-07-18) — coupling REVIVED, depth-fragile boundary CONFIRMED, pivot to BTSP.** The bounded
+  `sim/` edit is BUILT: `bdsp_apical_bistable` (config) + the guarded `bridge.py:7258` block (self-limiting self-regen
+  SUSTAIN `sr*sigmoid(v-v_hold)*(E_e-v)` + KIR), byte-identical off, CI-pinned (`test_bdsp_apical_bistable_*` +
+  `test_plasticity_inertness` 15pass); runner wired (`--apical-bistable/-self-regen/-kir-g`). Outcomes (finding
+  `2026-07-18-gap4-onbridge-BDSP-coupling-REVIVED-depth-fragile-boundary-confirmed-BTSP-pivot.md`): **(1) ADVANCE —
+  coupling IS the fix**: strong `soma_g` (20-50, NOT the under-powered 2.0 prior arc tested) makes measured bursts rise
+  (B_rest 0.000 -> B_apical 0.11 @ soma_g=50, `B_rises True`), moat intact; sparse output_bias (240-280) gives a CLEAN
+  MOAT (lesion hid>out dw << credit, 8-10:1). The 2026-07-10 "never completed" coupling arc is now completed. **(2)
+  HONEST NEGATIVE — bistability does NOT help THIS runner**: `train_epoch` HOLDS the apical during teach, so the latch
+  (which engages only after a drive is removed) is inert, and forced-on it HURTS (B->0, KIR fights the held coupling);
+  the bistability's value is the brief-error / gap#5 regime, not a held-drive booster. **(3) CONFIRMED BOUNDARY**: even
+  with clean directed credit + 12 epochs, on-bridge BDSP held-out = chance on depth-2 — the SAME depth-fragile FA-credit
+  wall the rate model caps at (`_emerge1b` 0.715 < 0.75; D2 depth-fragile). The rate ceiling upper-bounds on-bridge => not
+  a tuning miss. **(4) PIVOT (per THE LAW + this arc's own research gate)**: BTSP (Bittner-Magee 2017) — local, one-shot,
+  plateau-gated, eligibility-trace, NO global-loss backward pass, where the gap#5 bistable plateau IS the enabler.
+  Reframes gap#4 from "deep supervised backprop credit" (a wall) to "local plateau-gated credit that lets the substrate
+  LEARN" (biological, mission-aligned, EMERGENCE-BAR fit). NEXT = the BTSP cheap-first de-risk on the bistable plateau.
 - **(prior) deep-research gate DISPATCHED note:** (a-1'd on the newest findings: the deep-credit
   block is the RULE not the readout [graded 12/12 negative]; e-prop/NP/BDSP-on-classifier all failed; the arc was partly
   seed-confounded). The NEW angle: a LOCAL apical-based credit rule (Urbanczik-Senn / Sacramento / Payeur burstprop) that
