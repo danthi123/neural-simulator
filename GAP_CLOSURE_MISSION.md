@@ -179,7 +179,18 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   breaks retrieval → rely on NMDA hold; shared→per-slot gates). Decay ruled OUT by reading the substrate
   (`bridge.py:7051` decay IS gated). **Remaining = WRITE STRENGTH in the multi-bind flow** (w0→f2 weak/lost: 0.02 at
   teach1, 0.00 at retrieve). All in `2026-07-17-keystone-2-spiking-slot-binder-STEP1-prereq-GO.md`.
-- **🎯 gap#2 step-2c BREAKTHROUGH (2026-07-17):** the mechanism is SOUND — all 3 associations correctly written
+- **🎯 gap#2 step-2c — CORE HYPOTHESIS CONFIRMED ON-SUBSTRATE (2026-07-17):** with read calibration
+  (`hebbian_max_weight`≈250, lr=0.05 in the runner), **slot-separation DIRECTIONALLY beats the shared ~2 cap on
+  SPIKES: 0.56 vs 0.33 (3-seed).** The gate's competitive-slot thesis is validated on the real substrate. Steps 1
+  (separation) + 2a (coexistence) + 2c (write+transmission) all GO. HONEST: it's a WEAK/NOISY directional signal
+  (0.33–0.67), NOT the ≥0.80 GO bar (I self-corrected an over-optimistic "nearly complete" via a decisive
+  single-vs-multi measurement — silent-failure discipline). **⚠️ RESUME (the last piece, a real build): add the
+  gate-specified FILLER-WTA readout** (filler-side FS lateral inhibition, reuse EMERGE-41 kWTA / `biased_competition_
+  buffer`) so the max-conductance filler wins CLEANLY over the held-slot fillers + off-diagonal baseline → robust
+  ≥0.80; also try a fixed strong slot→filler readout map (vs from-0 Hebbian). Then 6-seed slot-sep(≥0.80) vs shared +
+  no-recur + permuted. Runner `_keystone2_spiking_slot_binder_derisk.py`; full arc in
+  `2026-07-17-keystone-2-spiking-slot-binder-STEP1-prereq-GO.md` (~14 probes, 2 self-corrections). NOT a wall.
+- (earlier notes superseded) the mechanism is SOUND — all 3 associations correctly written
   (diagonal w0→f2=96.8/w1→f4=117.5/w2→f1=92.7), conductance TRANSMITS (f2 g_e=0.142). Steps 1 (separation) + 2a
   (coexistence) + 2c-WRITE/TRANSMIT are GO. **The only residual is the READOUT** (the cued filler doesn't dominate;
   a spurious ~20 off-diagonal baseline on every slot→filler). **⚠️ RESUME (well-scoped): (1)** kill the off-diagonal —
