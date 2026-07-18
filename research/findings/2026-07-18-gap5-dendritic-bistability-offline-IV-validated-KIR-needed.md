@@ -47,3 +47,26 @@ network trilemma: "boosting" = the current transient dAP, "self-triggering" = th
 Sources: Antic 2010 (10.1002/jnr.22444), Major-Larkum-Schiller 2013 (10.1146/annurev-neuro-062111-150343),
 Sanders et al 2013 "perfect couple" (10.1523/JNEUROSCI.1854-12.2013), Jadi et al 2012 (10.1371/journal.pcbi.1002550).
 Probe: `research/findings/raw/` (offline I-V, inline). Kernel to modify: `fused_coincidence_plateau` (`sim/kernels.py:253`).
+
+## UPDATE — the kernel change is IMPLEMENTED + single-cell LATCH-AND-HOLD demonstrated (2026-07-18)
+
+The Rank 1 + Rank 2 change is built (additive / default-off / byte-identical when off; 21 dendritic/two-comp CI tests
+pass unchanged): `fused_coincidence_plateau` gains a v-gated self-regenerating `sustain` term (replenishes the slow
+reservoir past `v_hold` → the plateau HOLDS) + the apical ODE gains a KIR down-state stabilizer. New config:
+`coincidence_plateau_self_regen`/`_v_hold`/`_v_hold_k` + `apical_kir_g`/`_E_K`/`_vhalf`/`_k`, all default 0/off.
+
+Single-cell latch-and-hold probe (`research/findings/raw/_gap5_dendritic_bistability_probe.py`, uses the REAL kernel),
+the decisive TRIAD (apical V, mV; rest −65; an AMPA-like cue kick triggers, the coincidence plateau + self-regen sustain):
+
+| condition | v_cue (end of volley) | v_hold (250 steps after removal) | verdict |
+|---|---|---|---|
+| correct cue + regen(1.5)+KIR(2) | −1.7 (ignites) | **−6.3 (HELD)** | latches + holds |
+| same cue, NO self-regen | −1.9 (ignites) | **−80.9 (decays)** | sustain is load-bearing |
+| no cue, regen+KIR | −81.6 | **−81.6 (SILENT)** | stable down state, no self-ignition |
+
+Plus a clean **hold threshold / bifurcation** at `self_regen≈0.8` (below → decays, above → holds). ⇒ intrinsic
+dendritic bistability is REAL on the substrate: a coincident cue LATCHES the plateau and it HOLDS with no continued
+input, while rest stays silent — decoupling completion (a one-shot trigger) from self-sustaining (intrinsic per-cell).
+CI: `tests/test_dendritic_bistability.py` (triad + bifurcation + default-path byte-identity, 3/3). NEXT: wire into the
+CA3 completion network (SUB-CRITICAL W_rec + `structural_sep` + `selective_inhib`) and re-run the frozen + no-cue +
+permuted anti-cheats — prediction: completion survives permuted-recall because sustaining is now intrinsic, not loop-driven.

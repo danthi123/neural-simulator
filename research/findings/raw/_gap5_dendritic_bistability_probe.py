@@ -17,7 +17,11 @@ from sim.kernels import fused_coincidence_plateau  # numpy backend -> plain call
 
 def sim_cell(self_regen, kir_g, cue_c=8.0, cue_steps=40, hold_steps=250, k_thresh=6.0,
              plateau_strength=4.0, gain=2.0, mg=1.0, tau=15.0, R=0.15, Er=-65.0, dt=1.0,
-             v_hold=-35.0, v_hold_k=0.2, kir_ek=-90.0, kir_vhalf=-50.0, kir_k=8.0, n_sub=8):
+             v_hold=-35.0, v_hold_k=0.2, kir_ek=-90.0, kir_vhalf=-50.0, kir_k=8.0, n_sub=8,
+             cue_depol=40.0):
+    """cue_depol = a direct depolarizing (AMPA-like) current during the cue only, kicking v into the plateau-ignition
+    zone (biology: AMPA triggers, NMDA sustains). The HOLD test is whether the plateau stays up AFTER both the
+    coincidence drive AND this kick are removed."""
     """n_sub sub-steps + a physiological v clamp [-90, 5] mV keep explicit Euler stable across the stiff plateau
     (the plateau self-limits at E_e=0; the clamp only bounds numerical overshoot, it does not create the up state)."""
     decay = float(np.exp(-dt / 80.0)); decay_rise = float(np.exp(-dt / 2.0))
@@ -29,8 +33,9 @@ def sim_cell(self_regen, kir_g, cue_c=8.0, cue_steps=40, hold_steps=250, k_thres
         g, g_rise, I = fused_coincidence_plateau(g, g_rise, decay, decay_rise, v, 0.0, mg,
                                                  c, k_thresh, gain, plateau_strength,
                                                  self_regen, v_hold, v_hold_k)
+        depol = cue_depol if t < cue_steps else 0.0  # AMPA-like kick during the cue only
         for _ in range(n_sub):                       # sub-step the membrane ODE for stability (I held over the step)
-            dv = -(v - Er) + R * I                    # apical leak + plateau current (NO soma coupling: isolated cell)
+            dv = -(v - Er) + R * I + depol            # apical leak + plateau current + cue kick (isolated cell)
             if kir_g != 0.0:
                 gkir = kir_g / (1.0 + np.exp((v - kir_vhalf) / kir_k))
                 dv = dv + gkir * (kir_ek - v)
@@ -46,19 +51,22 @@ def summary(self_regen, kir_g, cue_c=20.0):
     return v_cue, v_hold
 
 
+def summary2(self_regen, kir_g, cue_c=8.0, cue_depol=40.0):
+    tr, cs = sim_cell(self_regen, kir_g, cue_c=cue_c, cue_depol=cue_depol)
+    return float(np.mean(tr[cs - 5:cs])), float(np.mean(tr[-30:]))
+
+
 if __name__ == "__main__":
     Er = -65.0
-    print("single-cell latch-and-hold (apical V, mV): v_cue=end of volley, v_hold=250 steps after removal")
-    print(f"  rest = {Er}")
-    for sr, kg, label in [(0.0, 0.0, "transient (current default)"),
-                          (0.02, 0.0, "regen, no KIR"),
-                          (0.02, 3.0, "regen + KIR (bistable target)"),
-                          (0.05, 3.0, "stronger regen + KIR"),
-                          (0.02, 5.0, "regen + stronger KIR")]:
-        vc, vh = summary(sr, kg)
+    print("single-cell latch-and-hold (apical V, mV): v_cue=end of volley, v_hold=250 steps after cue removed")
+    print(f"  rest = {Er}  | GO = correct cue HELD (v_hold high), transient/no-cue NOT held")
+    print("[A] self_regen sweep at kir_g=2 (find the HOLD threshold):")
+    for sr in (0.0, 0.3, 0.8, 1.5, 3.0):
+        vc, vh = summary2(sr, 2.0)
         held = "HELD" if vh > Er + 15 else ("silent/decayed" if vh < Er + 5 else "partial")
-        print(f"  self_regen={sr:.2f} kir_g={kg:.1f} [{label:30s}]: v_cue={vc:6.1f} v_hold={vh:6.1f} -> {held}")
-    print("no-cue control (cue_c=0, should stay silent):")
-    for sr, kg in [(0.02, 3.0), (0.05, 3.0)]:
-        vc, vh = summary(sr, kg, cue_c=0.0)
-        print(f"  self_regen={sr:.2f} kir_g={kg:.1f}: v_cue={vc:6.1f} v_hold={vh:6.1f} -> {'SILENT' if vh < Er+5 else 'SELF-IGNITED (bad)'}")
+        print(f"  self_regen={sr:.1f} kir_g=2.0: v_cue={vc:6.1f} v_hold={vh:6.1f} -> {held}")
+    print("[B] the bistability triad at a HOLD-regime self_regen (regen+KIR):")
+    SR = 1.5
+    vc, vh = summary2(SR, 2.0);                    print(f"  correct cue (regen+KIR):  v_cue={vc:6.1f} v_hold={vh:6.1f} -> {'HELD' if vh>Er+15 else 'no'}")
+    vc, vh = summary2(0.0, 2.0);                   print(f"  transient (no regen):     v_cue={vc:6.1f} v_hold={vh:6.1f} -> {'decays' if vh<Er+5 else 'HELD(bad)'}")
+    vc, vh = summary2(SR, 2.0, cue_c=0.0, cue_depol=0.0); print(f"  no cue (regen+KIR):       v_cue={vc:6.1f} v_hold={vh:6.1f} -> {'SILENT' if vh<Er+5 else 'self-ignited(bad)'}")
