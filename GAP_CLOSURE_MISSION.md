@@ -285,9 +285,14 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   (a focused pass, NOT tail-of-session knob-turns): SEPARATE the ca1 read from the bistable completion** -- (i) establish
   completion (bistable gate; identify LATCHED cells = cp_v_apical > v_hold), then (ii) a SEPARATE ripple phase drives the
   LATCHED cells DIRECTLY in strong gamma volleys (a sharp-wave burst, no bistable suppression) -> strong coincident
-  Schaffer volley -> ca1 fires; match(partial ca1, full ca1) high + cross low = Rung 1 GO -> Rung 2 (STDP consolidation).
-  Then the emergent DG-selected assembly (2). All read-out infra is on the validated bistable gate; **the completion
-  itself — gap #5's core — is CLOSED.** **(2) EMERGENT
+  Schaffer volley -> ca1 fires. FOUND (diagnostic): identifying completed cells by `cp_v_apical > v_hold` gives only ~3%
+  (apical-read cue 0.032) -> **the NETWORK completion is SOMA-FIRING-driven** (recurrent + a TRANSIENT apical, gated by
+  the bistable DOWN-state), not a sustained apical plateau latch as in the single cell. The SOMA completion (cue 0.30,
+  nocue 0, perm 0, anti-cheats pass) is genuinely bistable+specific -> **the gap #5 closure STANDS** (the dendritic
+  bistability provides the silent down-state that makes it specific+bistable; the held firing is recurrent-driven). SWR
+  fresh-pass fix: identify the completed cells by SOMA FIRING during phase 1 (not the apical), ripple THOSE. Then the
+  emergent DG-selected assembly (2). All read-out infra is on the validated bistable gate; **the completion — gap #5's
+  core — is CLOSED.** **(2) EMERGENT
   DG-selected assembly** — the mossy/DG pattern-separation front end SELECTS the sparse CA3 set from experience (the
   completion mechanism is selection-agnostic — it binds whatever sparse set co-fires), so `structural_sep`/`selective_inhib`
   become EMERGENT, not hand-applied; the bistable dendrite may now resolve the banked "sparsity-without-synchrony can't

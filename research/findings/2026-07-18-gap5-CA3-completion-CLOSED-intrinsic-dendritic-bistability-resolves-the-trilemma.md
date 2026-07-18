@@ -64,6 +64,18 @@ real specific held completion). Not chasing a fished 6/6 — the honest closure 
 - **Open (the emergent follow-ons):** the assembly is PRE-ASSIGNED (a fixed sparse mask; `structural_sep`/`selective_inhib`
   use it as the LEARNED OUTCOME) — the emergent DG-selected + E→I-plasticity-tuned version is next; then the SWR
   generative-replay loop (gated on exactly this attractor) + a queryable console.
+## Honest mechanistic scoping (added 2026-07-18, from the SWR ca1-drive diagnostic)
+The single-cell probe shows a sustained apical LATCH (v_apical holds > v_hold after the volley). In the NETWORK,
+however, a diagnostic (`read_apical` on the held cells) shows only ~3% of the completed held cells have
+`v_apical > v_hold` during recall (apical-read cue 0.032 vs soma-read cue 0.30). So the network completion is
+**SOMA-FIRING-driven** (recurrent drive + a TRANSIENT apical + the asymmetric read), GATED by the bistable DOWN-state
+(the self-regen + KIR keep the rest silent so a random/no cue can't ignite) — NOT a population of sustained apical
+plateaus. The GO metrics (cue 0.30, nocue 0.000, perm 0.000, no-encoding collapse, 6/6 specificity+bistability) are the
+SOMA read and are genuine + anti-cheat-verified, so **the bistable+specific completion capability is CLOSED**; the
+bistability's load-bearing role is the SILENT DOWN-STATE (which a point soma cannot provide). Do NOT overclaim a
+"sustained apical latch" for the network. (This also scopes the SWR downstream: identify the completed cells by SOMA
+firing, not the apical, for the ripple read.)
+
 - Infra (all additive / default-off / byte-identical when off; sim/ edits deep-research-gated): the bistability kernel
   (`coincidence_plateau_self_regen`/`_v_hold`/`_v_hold_k`) + KIR (`apical_kir_*`) + asymmetric coupling
   (`apical_g_couple_to_soma`); runner: `plateau_self_regen`/`apical_kir_g`/`apical_gc_read`/`read_apical`/`structural_sep`
