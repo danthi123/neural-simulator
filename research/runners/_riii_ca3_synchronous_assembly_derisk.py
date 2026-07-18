@@ -31,6 +31,24 @@ from research.runners._riii_ca3_competitive_completion_payoff_derisk import _ext
 from research.runners.validate_trisynaptic_loop import measure_region_response  # noqa: E402
 
 
+def _extract_ca3ca3_all(bridge, ca3_idx, to_host):
+    """ca3->ca3 synapses (ALL, NO coincidence mask) -> (flat_pos, pre_local, post_local). For the Wang nmda_slow mode,
+    where cp_coincidence_synapse_mask is None (coincidence detection off)."""
+    conn = bridge.cp_connections
+    nnz = int(conn.nnz)
+    indptr = np.asarray(to_host(conn.indptr)); indices = np.asarray(to_host(conn.indices))
+    pre_of = np.searchsorted(indptr, np.arange(nnz), side="right") - 1
+    post_of = indices[:nnz]
+    ca3_pos = {int(g): i for i, g in enumerate(ca3_idx)}
+    ca3_set = set(ca3_pos.keys())
+    flat, pre_l, post_l = [], [], []
+    for k in range(nnz):
+        pre, post = int(pre_of[k]), int(post_of[k])
+        if pre in ca3_set and post in ca3_set:
+            flat.append(k); pre_l.append(ca3_pos[pre]); post_l.append(ca3_pos[post])
+    return (np.asarray(flat, dtype=np.int64), np.asarray(pre_l, dtype=np.int64), np.asarray(post_l, dtype=np.int64))
+
+
 def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_on=2, sync_off=4,
         encode_drive=700.0, recall_drive=250.0, lam_dep_wi=0.5, hebb_max=2000.0, ca3_fb_inhib=20.0,
         reset_steps=15, drive_steps=48, recall_steps=60, ens_thresh=2, no_sync=False,
@@ -61,7 +79,8 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
     n_assy = max(6, int(assembly_frac * n_ca3))
     assemblies = [np.asarray(sorted(rng.choice(ca3_idx, n_assy, replace=False)), dtype=np.int64) for _ in range(n_mem)]
 
-    flat_h, pre_l_h, post_l_h = _extract_ca3ca3_coincidence(bridge, ca3_idx, to_host)
+    _extract = _extract_ca3ca3_all if nmda_recurrent else _extract_ca3ca3_coincidence
+    flat_h, pre_l_h, post_l_h = _extract(bridge, ca3_idx, to_host)
     conn = bridge.cp_connections
     do_comp = lam_dep_wi > 0.0 and len(flat_h) > 0
     if do_comp:
