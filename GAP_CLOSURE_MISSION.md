@@ -190,6 +190,19 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   on-bridge accuracy run", scoped to the depth-2 XOR-threshold task; the harder semantic-inheritance frontier stays a
   distinct open gap#4 sub-problem (needs scale or a genuinely-new credit-DIRECTION mechanism per 2026-07-14; graded is
   spent THERE — do NOT re-run graded on the inheritance task).
+- **✅ NEXT METHOD IDENTIFIED (a-1 RAG, 2026-07-18) for the credit-DIRECTION wall = KOLEN-POLLACK LEARNED APICAL
+  FEEDBACK (transport-free), already built + adversarially-verified sound.** `2026-07-07-D2-rung2-learned-apical-feedback-lifts-deep-credit-alignment-transport-free`: the `_kp_update` in
+  `_gnw_d1_spiking_bdsp_derisk.py --feedback learned` LEARNS the feedback matrix `Y→Wᵀ` by a LOCAL anti-Hebbian rule
+  (reads only local pre/post + Y, never W — structurally verified; permuted at chance) → aligns the credit DIRECTION
+  that fixed-random FA gets wrong at depth (the exact 2026-07-14 wall). On the numpy toy it was INCONCLUSIVE (dev-seed
+  artifact, `cos(Yᵀ,W)`~0.30 = Y far from converged at ep=800) but explicitly a TOY/INSTRUMENT limit, NOT a substrate
+  boundary; the named next was **rung-3: KP ON the spiking substrate at a real task + enough training for Y to
+  converge** (deferred then for expensive training; Greedy-Costa 2026 reach depth-8 with more training). The current
+  on-bridge accuracy runner uses FIXED feedback → it hits the fixed-FA-at-depth wall KP fixes. **⇒ if the D1-scale
+  fixed-FA run does NOT clear the 0.75 bar, the next build is porting the KP learned feedback into
+  `_d1_onbridge_learn_to_accuracy` (add `--feedback learned`) + enough epochs for Y to converge, on-bridge, 6-seed —
+  the transport-free biological credit-DIRECTION fix. This is a well-scoped, already-de-risked-mechanism build, NOT a
+  new research gate.**
 - **⚠️ STRATEGY CORRECTION (owner steer 2026-07-18): FULLY close each gap in EASIEST→HARDEST order; stop jumping /
   leaving loose ends.** I drifted: picked gap #5 on a wrong "quickest" estimate, then sunk-cost-ground its deep
   robustness frontier while easier un-closed work sat idle. Corrected order of UN-CLOSED work: **(A) gap #3 residuals
