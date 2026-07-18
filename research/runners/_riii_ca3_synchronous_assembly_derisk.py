@@ -58,7 +58,7 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
         rate_homeo=False, rate_homeo_target=0.02, rate_homeo_alpha=0.1, rate_homeo_adapt=15.0,
         rate_homeo_steps=400, rate_homeo_cap=800.0, enable_ou=True, ca3_density=0.5,
         selective_inhib=False, sel_inhib_spare=0.0, recall_k_thresh=None, structural_sep=False,
-        plateau_self_regen=0.0, plateau_v_hold=-35.0, apical_kir_g=0.0, apical_gc_read=None):
+        plateau_self_regen=0.0, plateau_v_hold=-35.0, apical_kir_g=0.0, apical_gc_read=None, read_apical=False):
     # DIAGNOSED LEVERS (2026-07-18 workflow): the rate-window LTP is an EMA-trace rule -- a cell's co-activity trace
     # tops out ~0.03-0.2 (point Izh fires ~0.2 duty @700pA), so coact_thresh MUST be BELOW it (~0.02) or nothing
     # potentiates; the gamma OFF-gap DECAYS the EMA (0.9^off) so CONTINUOUS drive (sync_off<=1) is required, NOT
@@ -248,10 +248,16 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
             if getattr(bridge, "cp_firing_states", None) is not None:
                 bridge.cp_firing_states[:] = False
             for _a in ("cp_conductance_g_nmda_recurrent", "cp_conductance_g_e", "cp_conductance_g_i",
-                       "cp_conductance_g_nmda", "cp_conductance_g_nmda_rise"):
+                       "cp_conductance_g_nmda", "cp_conductance_g_nmda_rise",
+                       # CRITICAL for the BISTABLE test: reset the dendritic-plateau conductance too, or a plateau
+                       # latched during encoding PERSISTS through "silence" (the apical read-out caught this: nocue
+                       # showed plateaus ON). A valid no-cue/permuted anti-cheat must start from a genuine silent down state.
+                       "cp_conductance_g_coincidence", "cp_conductance_g_coincidence_rise"):
                 _arr = getattr(bridge, _a, None)
                 if _arr is not None:
                     _arr[:] = 0.0
+            if getattr(bridge, "cp_v_apical", None) is not None:   # reset the apical compartment to rest (the bistable up state must be cleared)
+                bridge.cp_v_apical[:] = cp.float32(getattr(bridge.core_config, "apical_E_rest", -65.0))
             bridge.cp_external_input_current[:] = bias_dev   # the calibrated intrinsic bias (0 by default -> silence)
             for _ in range(settle):     # confirm it stays silent (a bistable attractor will; a self-sustaining one re-ignites)
                 bridge._run_one_simulation_step()
@@ -264,7 +270,14 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
             dev = from_host(cur.astype(np.float64)); spk = np.zeros(len(ca3_idx))
             for _ in range(recall_steps):
                 bridge.cp_external_input_current[:] = dev; bridge._run_one_simulation_step()
-                spk += np.asarray(to_host(bridge.cp_firing_states))[ca3_arr_host].astype(float)
+                if read_apical:
+                    # DECOUPLED READ-OUT: read the held APICAL PLATEAU state (cp_v_apical > plateau_v_hold = the
+                    # intrinsically-bistable UP state = the held memory) instead of soma firing, so a WEAK apical->soma
+                    # coupling lets the plateau HOLD (completion) without the soma driving the recurrent loop (self-sustain).
+                    va = np.asarray(to_host(bridge.cp_v_apical))[ca3_arr_host]
+                    spk += (va > float(plateau_v_hold)).astype(float)
+                else:
+                    spk += np.asarray(to_host(bridge.cp_firing_states))[ca3_arr_host].astype(float)
             bridge.cp_external_input_current[:] = 0.0
             return spk / recall_steps
 
