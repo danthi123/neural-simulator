@@ -175,8 +175,17 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   un-tried mechanism (2026-07-14 named it, never built) = **the Kopsick recipe done right: drive the assembly members
   DIRECTLY + SYNCHRONOUSLY during encoding** so they co-fire strongly → high co-activity → within-ensemble LTP reaches
   the completion scale → dAP completion.
-- **⚠️ EXACT NEXT ACTION (gap #5, the synchrony-isolation build — IN PROGRESS):** a focused de-risk
-  (`_riii_ca3_synchronous_assembly_derisk.py`, being written) that ISOLATES the synchrony hypothesis: pre-assign a
+- **🔬 SYNCHRONY-ISOLATION built + first result (2026-07-18, `_riii_ca3_synchronous_assembly_derisk.py`):** direct
+  synchronous assembly encoding did NOT grow the within-ensemble weights — they DECAYED (w_within 2.7-5.2 < init 6.0),
+  and sync=async BYTE-IDENTICAL (the gamma mechanism was inert because NOTHING was potentiating). The rate-window LTP
+  isn't firing: a cell firing ~1/3 of steps has trace ≈0.33 → product ≈0.11 < the 0.25 coactivity threshold → no
+  potentiation → only decay. Likely fixes: fb_inhib over-suppresses the (already-sparse pre-assigned) assembly →
+  lower/remove it; AND/OR lower `hebbian_coactivity_thresh`. **⚙️ Workflow `wkn6apwgj` running:** diagnose (assembly
+  firing / coact-thresh / competition-crush / does-LTP-apply-at-all positive-control) → joint-sweep to GROW w_within to
+  the completion scale + functional completion → adversarial-verify + multiseed. **⚠️ EXACT NEXT ACTION:** read the
+  workflow result → if a config GROWS the attractor + completes robustly → gap #5 completion CLOSES (wire emergent
+  mossy/DG selection → SWR replay loop → console); if not → the precise remaining blocker (knob / scale / deeper).
+- **(superseded plan below — the synchrony-isolation build IS this, now running via the workflow):** pre-assign a
   sparse CA3 assembly (~1% = ~10 cells at n_ca3=1000) per pattern, drive those cells DIRECTLY with strong SYNCHRONOUS
   gamma-pulsed current during encoding (all fire together each window), competition ON (depress to non-assembly), then
   recall a 50% partial cue → does the held-out 50% FIRE (functional completion)? If GO → synchrony IS the fix (then
