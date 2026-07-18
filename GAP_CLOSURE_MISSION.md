@@ -209,6 +209,17 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   Hebbian + lower/zero the pre-set recurrent so BTSP is the sole encoder + tune the plateau to fire during encode + then
   the `_measure_ca1` h_comp check + anti-cheats + 6-seed) — NOT a quick win. Do it with full attention (the completion
   trilemma config is hard-won; rushing it is the silent-failure risk). The STORING half stands GO independently.
+- **↳ THREE empirical attempts precisely mapped the completion integration (2026-07-18) — a focused-pass build with a
+  clear design spec.** (1) `enable_hebbian_learning` must be set False explicitly (not via `hebb_lr=0`) — done, then BTSP
+  is the SOLE encoder (btsp off → within dw +0.000; on → +7.5, confirmed). (2) Init the ca3→ca3 recurrent LOW (ca3w~0.5,
+  no pre-built attractor) so BTSP's growth IS the signal — done. (3) THE REAL DESIGN PROBLEM: with count-coincidence
+  (`weighted=False`) + strong drive the plateau fires EVERYWHERE (numerical runaway v_apical~3e5; within AND silent both
+  grow to the ceiling 8.0 → **NO specificity**) — the completion trilemma reappears in the ENCODING: the plateau must
+  fire ONLY on the assembly, which needs the SAME selective-inhibition + structural-separation + controlled drive the
+  completion half uses. ⇒ the spec for the focused pass: BTSP-encode with the plateau made assembly-SPECIFIC (apply
+  `selective_inhib` + `structural_sep` + a bounded drive so co-firing assembly cells latch the plateau but the network
+  doesn't avalanche + numerically stable), then `_measure_ca1` h_comp + the permuted/no-encode anti-cheats + 6-seed. The
+  design is now fully characterized; it is a careful build, not a tuning knob. Rushing it yields a runaway-artifact GO.
 - **✅ GAP #4 ON-BRIDGE BTSP RULE VALIDATED (2026-07-18) — the working credit rule runs ON THE SPIKING SUBSTRATE.** Added `fused_btsp_update` (`sim/kernels.py`) + a guarded default-off `enable_btsp` block in
   `bridge._run_one_simulation_step` (seconds-long per-neuron pre-eligibility `cp_btsp_pre_elig` on `coo.row` × the
   dendritic plateau `cp_v_apical` above v_hold on `coo.col`, gated by plastic-mask + plasticity_rate_gain like BDSP) +
