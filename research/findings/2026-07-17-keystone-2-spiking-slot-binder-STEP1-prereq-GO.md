@@ -146,3 +146,41 @@ Runner defaults now bake the read-calibration (maxw=250, lr=0.05). 3-seed P=3:
 3. Scale: validated at 6 fillers / K=4 slots / P=3-4; broader vocab is a data lever.
 
 **⇒ gap #2 spiking closure = GO (6-seed), with the reset-neuralization (host→FS-burst) as the one tracked follow-on.** The core capability — a self-organizing spiking binder that beats the superposition cap — is achieved on-substrate.
+
+---
+
+## FOLLOW-ON (a) DONE — the readout reset is NEURALIZED (fully-spiking, byte-identical to the host reset)
+
+The one host op flagged above (the readout reset clearing v/u/NMDA on the coexisting slots) is now replaced by
+the **D3 CLEAR done on spikes**: an FS inhibitory BURST + a settle gap.
+
+`_neural_clear()` in `_keystone2_spiking_slot_binder_derisk.py`:
+1. drive the shared FS pool at `clear_gain=1500` for `clear_steps=250` (2.5×τ_NMDA) — the FS inhibition silences the
+   held slots while their recurrent NMDA decays over the long burst (the exact `_d3_persistent_slot` CLEAR mechanism);
+2. a **settle gap** of 50 zero-input steps so the fast inhibitory conductance g_i decays before the cued-slot read
+   (WITHOUT the settle, residual g_i suppresses the subsequent read → collapse to 0.11 — the diagnosed failure).
+
+`neural_clear=True` is now the runner **default** (the binder is fully-spiking end-to-end; no host array-clear).
+
+**6-seed result (42/43/44/100/101/102), neural clear:**
+
+| Load | slot-sep | shared cap | permuted-role | no-recur |
+|---|---|---|---|---|
+| P=2 | 1.00 | 0.50 | 0.00 | 1.00 |
+| **P=3 (SVO)** | **1.00** | **0.33** | **0.00** | **1.00** |
+| P=4 | 0.79 | 0.25 | 0.00 | 1.00 |
+
+**The neural clear reproduces the host reset EXACTLY.** Head-to-head, 6-seed, P=4: HOST reset 0.792
+`[0.75 0.75 1. 0.75 0.75 0.75]` == NEURAL clear 0.792 `[0.75 0.75 1. 0.75 0.75 0.75]` — identical per-seed.
+So neuralizing the reset cost **nothing**; the FS-burst clear is a perfect substitute for the host op.
+
+- **P=3 (the SVO fact — agent/verb/patient) is a decisive 6-seed fully-spiking GO** (1.00 vs shared superposition 0.33).
+- **P=4 = 0.79** is the mechanism's intrinsic 4-slot read edge (5/6 seeds read exactly 3-of-4). The cheap lever
+  (more filler pools for read separation) is **REFUTED**: KF=10 → 0.71 < KF=6's 0.79 (more distractors tighten the
+  read). Honest graceful degradation beyond the SVO core; the next lever (per-slot FS instead of shared, or stronger
+  write at high load) is named for if 4+-role facts are later needed — NOT a blocker for the SVO conversational use.
+
+⇒ **gap #2 is now a FULLY-SPIKING 6-seed GO with the reset neuralized** (no host op left in the loop). The binder is a
+learned self-organizing spiking competitive-slot store that recovers a role-cued fact bundle past the ~2 superposition
+cap, replacing the hand-designed FHRR exact-inverse algebra. Remaining for full closure per the mission: (b)
+adversarial-verify, (c) wire into the conversational pipeline.

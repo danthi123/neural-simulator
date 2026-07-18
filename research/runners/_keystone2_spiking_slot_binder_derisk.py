@@ -87,13 +87,14 @@ def _idx(b, name):
 
 
 def run_seed(seed, K=4, KF=6, P=3, shared=False, nmda=True, permute=False, drive_steps=25, teach_steps=40,
-             retr_steps=40, gain=400.0):
+             retr_steps=40, gain=400.0, neural_clear=True, clear_steps=250, clear_gain=1500.0):
     from sim.backend import to_host, from_host
     rng = np.random.default_rng(seed * 131 + 5)
     b = build_binder_bridge(seed, K, KF, nmda=nmda)
     n = b.core_config.num_neurons
     slot_idx = [_idx(b, f"w{k}") for k in range(K)]
     fill_idx = [_idx(b, f"f{f}") for f in range(KF)]
+    fs_idx = _idx(b, "fs")
 
     def drive(cur, steps, learn_slot=None):
         if learn_slot is not None:
@@ -130,12 +131,22 @@ def run_seed(seed, K=4, KF=6, P=3, shared=False, nmda=True, permute=False, drive
         s = slots_for_role[r]; f = int(fillers[r])
         cur = np.zeros(n); cur[slot_idx[s]] = gain; cur[fill_idx[f]] = gain
         drive(cur, teach_steps, learn_slot=s)      # open ONLY slot s's gate
-    # RETRIEVE each role: RESET the held slots (an inhibitory-reset CLEAR of the coexisting slots -- the D3 CLEAR
-    # mechanism; here a host reset, to be neuralized as an FS burst), then drive ONLY the cued slot so its filler
-    # fires cleanly (no held-slot competition). reset-held + read-calibration (maxw=250) = 1.00 GO; each alone fails.
+    def _neural_clear(settle_steps=50):
+        # the D3 CLEAR done ON SPIKES: drive the FS pool hard for > tau_NMDA so its inhibition SILENCES the held slots
+        # (recurrent NMDA decays over the long burst) -- an inhibitory-reset burst, NO host array-clear. Then a SETTLE
+        # gap (zero input) so the fast inhibitory conductance g_i decays before the cued-slot read (else it suppresses it).
+        cur = np.zeros(n); cur[fs_idx] = clear_gain; dev = from_host(cur.astype(np.float64))
+        for _ in range(clear_steps):
+            b.cp_external_input_current[:] = dev; b._run_one_simulation_step()
+        b.cp_external_input_current[:] = 0.0
+        for _ in range(settle_steps):
+            b._run_one_simulation_step()
+
+    # RETRIEVE each role: CLEAR the coexisting held slots -- either a NEURAL inhibitory burst (fully-spiking, the D3
+    # CLEAR) or a host reset (the shortcut) -- then drive ONLY the cued slot so its filler fires cleanly.
     hits = 0
     for r in range(P):
-        _reset()                                                            # CLEAR the coexisting held slots
+        _neural_clear() if neural_clear else _reset()                       # CLEAR the coexisting held slots
         s = slots_for_role[(r + 1) % P] if permute else slots_for_role[r]   # permute = wrong slot cue
         cur = np.zeros(n); cur[slot_idx[s]] = gain                          # DRIVE only the cued slot
         dev = from_host(cur.astype(np.float64)); rate = np.zeros(KF)
