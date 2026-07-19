@@ -90,3 +90,21 @@ uniform decay. So the on-bridge realization is straightforward: a region of D ch
 (uniform tau) is the leaky state, driven by the trained Wv, read via ON/OFF firing rates → the trained Wo_sp/head.
 `--recurrence ssm --spiking-state --uniform-decay`. The actual on-bridge build (real Izhikevich spiking, per-token
 `_run_one_simulation_step`, per-position `cp_firing_states` read) is the remaining engineering step.
+
+## ON-BRIDGE realization — first attempt WRONG, caught by VERIFY-FIRST (silent-failure discipline working); correct design specified
+Built `_emerge_wkv_onbridge_derisk.py` with a **verify-first** guard (compare the on-bridge firing-rate state trajectory to
+the rate-SSM analog state; corr>0.3 required BEFORE any GO). The first-attempt mapping was WRONG and the guard caught it
+(corr=nan, VERDICT no-go — NO false GO claimed): (a) a bridge-build error (`profile_name_for_conn`) from a zero-connectivity
+region config; (b) more fundamentally, I drove the **external current** (which hits the FAST Izhikevich membrane) and
+expected the **NMDA slow conductance** (which is SYNAPTICALLY driven) to hold the leaky state — a wrong substrate mapping.
+- **The CORRECT design (specified for the careful next build):** the SSM leaky state `a_t = decay·a_{t-1} + v_t` must live
+  in a slow conductance that PERSISTS across the fast spiking AND integrates the input. The faithful realization = a
+  **DIAGONAL self-NMDA leaky integral**: each channel neuron fires at a rate ∝ its input drive `v_t`, and a slow NMDA
+  SELF-recurrence (per-neuron autapse, NMDA tau = the SSM decay) integrates its own firing = the per-channel leaky state
+  (a DIAGONAL recurrence, NOT the random mixing of a reservoir — random mixing is the fading store that FAILED). This needs
+  explicit diagonal wiring (`inject_explicit_wiring`), a careful build. The verify-first corr gates it (a wrong diagonal
+  design shows corr≈0). NO `sim/` edit intended (drives + reads public arrays + explicit wiring).
+- **Honest scope:** the rate-level de-risking is COMPREHENSIVE + GO (every constraint), strongly establishing the
+  fully-spiking realization will work; the on-bridge CONFIRMATION needs the correct diagonal-self-NMDA design (a careful
+  focused build — a hasty first attempt was wrong, per the caught bug). The `_emerge_wkv_onbridge_derisk.py` verify-first
+  harness is the reusable instrument for that build.
