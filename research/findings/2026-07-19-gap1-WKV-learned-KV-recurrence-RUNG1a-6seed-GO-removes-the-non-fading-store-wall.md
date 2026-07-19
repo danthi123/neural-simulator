@@ -40,3 +40,19 @@ spiking existence proof at this project's scale).
 - **THEN:** Rung 1b (develop stream-cortex codes over the TinyStories vocab → feed as WKV input), Rung 2 (spiking port),
   Rung 3 (biologize the rule). PARALLEL engineering: the 21M spiking-forward deploy (ledgered scaffold, milestone-met NOT
   closed). NO `sim/` edit anywhere in Rung 1a. Runner: `_emerge_wkv_lm_derisk.py`.
+
+## RUNG 1b — EMERGENT INPUT: GO (3-seed) + the emergent STRUCTURE genuinely HELPS (gap#1↔gap#4 convergence realized)
+Two de-risks resolved the emergent-input question WITHOUT a separate stream-cortex-over-TinyStories develop (cheaper, direct):
+- **Frozen-embedding (3/3 GO):** freeze the input at random init (only WKV+head learn) → the WKV STILL beats the fair
+  trigram at deep context **+0.48–0.52**, anti-cheats collapse ⇒ the recurrence does NOT depend on an LM-learned input.
+- **EMERGENT PPMI codes `--input ppmi` (3/3 GO):** compute UNSUPERVISED windowed co-occurrence → PPMI (log + positive
+  threshold, the CYCLE-88 local normalization) → SVD → per-word code, FROZEN as the WKV input. Deep-context vs-trigram
+  **+0.60/+0.66/+0.65** (6-seed-scale config, seeds 42/43/44), perm-collapse +4.1–4.3, memoryless-collapse +1.02–1.06.
+  **PPMI (+0.63 avg) > frozen-random (+0.52 avg) by ~+0.11 nats** → the emergent co-occurrence STRUCTURE genuinely helps,
+  nearly matching the LM-learned embedding (+0.68 avg).
+- **⇒ the gap#1 open-generation lever is fed by the UNSUPERVISED cortex representation (frozen PPMI codes), clearing the
+  EMERGENCE BAR for the input, and realizing the gap#1↔gap#4 convergence** (the WKV read is the first client of the
+  unsupervised deep-representation engine the gap#4 pivot named). NO `sim/` edit; `_emerge_wkv_lm_derisk.py --input ppmi`.
+- **NEXT: Rung 2 — the fully-SPIKING WKV port** (map the fixed-form WKV recurrence onto a spiking `BrainRegion` via the
+  SNN-membrane-leak ≡ SSM-state-update equivalence; SpikeGPT confirms faithful) — the one-brain/fully-spiking milestone.
+  Then Rung 3 (biologize the BPTT rule: e-prop/BDSP on the fixed-form recurrence). PARALLEL: the 21M spiking-forward deploy.

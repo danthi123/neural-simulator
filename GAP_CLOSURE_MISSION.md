@@ -174,6 +174,13 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
      Rung 3 (biologize the rule); + PARALLEL the 21M spiking-forward deploy (ledgered scaffold). **NEXT (in flight):**
      the FROZEN-embedding de-risk (`--freeze-emb`) — does the mechanism GO with a FIXED input (the Rung 1b regime) before
      its expensive TinyStories-develop prerequisite. `2026-07-19-gap1-WKV-learned-KV-recurrence-RUNG1a-6seed-GO-removes-the-non-fading-store-wall`.
+     **RUNG 1b DONE (GO): the EMERGENT input works + STRUCTURE HELPS.** Frozen-emb 3/3 GO (+0.48-0.52, the WKV needs no
+     LM-learned input) → EMERGENT PPMI co-occurrence codes (`--input ppmi`, frozen) 3/3 GO **+0.60-0.66 > frozen-random
+     +0.52 by ~+0.11** → the emergent unsupervised structure HELPS, nearly matching the learned embedding. ⇒ the gap#1
+     open-generation lever is FED BY the unsupervised cortex representation (the gap#1↔gap#4 convergence), emergence bar
+     cleared for the input. **NEXT = Rung 2: the fully-SPIKING WKV port** (WKV recurrence → a spiking `BrainRegion` via
+     SNN-membrane-leak ≡ SSM-state-update; the one-brain/fully-spiking milestone), then Rung 3 (biologize the rule);
+     PARALLEL = the 21M spiking-forward deploy (ledgered scaffold).
   -2. **gap#1 NEXT BUILD DECIDED + gap#4 supervised PARKED (capability met by the unsupervised method) — 2026-07-19.**
      gap#1 research gate `wf_dd786412-527` (4-lens, decisive): the next build is a **spiking RWKV/linear-attention
      (SpikeGPT-family) LEARNED key–value recurrence** over the emergent stream-cortex codes, decoded by the existing
