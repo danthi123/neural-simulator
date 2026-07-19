@@ -476,20 +476,28 @@ class OnBridgeBDSPNet:
         outer = np.outer(np.asarray(e), hid)                  # (n_classes, n_hidden); LOCAL pre/post only
         self.Y = self.Y + lr * (self.kp_lr * outer - self.kp_decay * self.Y)
 
-    def _readout(self, x_bits, settle_steps):
-        """SETTLE with learning + apical OFF -> per-class spike-count readout (the unperturbed forward read)."""
+    def _readout(self, x_bits, settle_steps, baseline=None):
+        """SETTLE with learning + apical OFF -> per-class spike-count readout (the unperturbed forward read).
+        baseline (opt-in, default None = byte-identical): subtract the no-input bias-driven baseline so the
+        INPUT-DEPENDENT (learned) modulation is what argmax reads -- fixes the degenerate readout where the
+        uniform output-bias swamps the learned hidden->output signal (2026-07-19 gap#4 diagnosis)."""
         self._reset_membrane()
         self._set_apical(None)
         self.cfg.bdsp_learning_rate = 0.0                       # freeze BDSP during the read (moat-clean)
         self._set_input_drive(x_bits)
         acc = self._run(settle_steps, accumulate_out=True)
         readout = np.array([acc[c * self.pool_out:(c + 1) * self.pool_out].sum() for c in range(self.n_classes)])
+        if baseline is not None:
+            readout = readout - baseline
         return readout
 
-    def accuracy(self, X, y, settle_steps):
+    def accuracy(self, X, y, settle_steps, differential=False):
         X = np.asarray(X); y = np.asarray(y); correct = 0
+        # differential (opt-in): the no-discriminative-input baseline (all bits low) = the bias-driven common firing;
+        # subtracting it exposes the input-dependent learned response (default False = byte-identical raw read).
+        base = self._readout(np.zeros(self.n_bits), settle_steps) if differential else None
         for i in range(len(X)):
-            r = self._readout(X[i], settle_steps)
+            r = self._readout(X[i], settle_steps, baseline=base)
             if int(np.argmax(r)) == int(y[i]):
                 correct += 1
         return correct / max(1, len(X))
@@ -594,7 +602,7 @@ def _run_bridge_arm(mode, seed, n_bits, Xtr, ytr, Xte, yte, args):
     for ep in range(args.epochs):
         net.train_epoch(Xtr, ytr, mode, args.settle_steps, args.teach_steps, seed + 1000 * ep + 7)
     w_ih1, w_ho1 = net.pathway_weight_sums()
-    heldout = net.accuracy(Xte, yte, args.settle_steps)
+    heldout = net.accuracy(Xte, yte, args.settle_steps, differential=getattr(args, "differential_readout", False))
     return {"mode": mode, "heldout": float(heldout),
             "dw_in2hid": float(abs(w_ih1 - w_ih0)), "dw_hid2out": float(abs(w_ho1 - w_ho0)),
             "w_in2hid_before": float(w_ih0), "w_in2hid_after": float(w_ih1),
@@ -689,6 +697,10 @@ def main():
     ap.add_argument("--oracle-epochs", type=int, default=500)
     ap.add_argument("--oracle-lr", type=float, default=0.5)
     ap.add_argument("--oracle-batch", type=int, default=64)
+    ap.add_argument("--differential-readout", dest="differential_readout", action="store_true",
+                    help="subtract the no-input bias baseline at readout so argmax reads the INPUT-dependent learned "
+                         "modulation, not the bias-swamped raw counts (gap#4 degenerate-readout fix, 2026-07-19). "
+                         "Default off = byte-identical raw read.")
     # smoke vs full
     ap.add_argument("--smoke", action="store_true",
                     help="tiny fast CPU smoke: subset train/test, few epochs (proves the pipeline+mechanism).")
