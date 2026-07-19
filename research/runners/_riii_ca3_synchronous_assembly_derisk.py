@@ -61,7 +61,7 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
         plateau_self_regen=0.0, plateau_v_hold=-35.0, apical_kir_g=0.0, apical_gc_read=None, read_apical=False,
         read_ca1=False, schaffer_boost=1.0,
         encode_btsp=False, btsp_lr=0.02, encode_ca3w=None, encode_plateau_pA=250.0, encode_structural_sep=0,
-        encode_hetero=0.0, encode_btsp_hetero=0.0, assemblies_ext=None, swr_ripple_pA=800.0):
+        encode_hetero=0.0, encode_btsp_hetero=0.0, assemblies_ext=None, swr_ripple_pA=800.0, swr_ca1_ff_inhib=None):
     # DIAGNOSED LEVERS (2026-07-18 workflow): the rate-window LTP is an EMA-trace rule -- a cell's co-activity trace
     # tops out ~0.03-0.2 (point Izh fires ~0.2 duty @700pA), so coact_thresh MUST be BELOW it (~0.02) or nothing
     # potentiates; the gamma OFF-gap DECAYS the EMA (0.9^off) so CONTINUOUS drive (sync_off<=1) is required, NOT
@@ -79,7 +79,9 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
                     train=True, hebb_max=hebb_max, hebb_rate=True, ca3_fb_inhib=ca3_fb_inhib,
                     coact_thresh=coact_thresh, hebb_lr=hebb_lr, enable_ou=enable_ou,
                     plateau_self_regen=plateau_self_regen, plateau_v_hold=plateau_v_hold, apical_kir_g=apical_kir_g,
-                    apical_gc_read=apical_gc_read)
+                    apical_gc_read=apical_gc_read, ca1_ff_inhib=swr_ca1_ff_inhib)
+    if os.environ.get("SWR_NO_STP"):
+        bridge.core_config.enable_short_term_plasticity = False   # DIAGNOSTIC: does the ca3->ca1 boost reach g_e without STP?
     rm = bridge.region_manager
     ca3_idx = list(rm.indices("ca3")); ca3_arr = cp.asarray(ca3_idx, dtype=cp.int64)
     n = bridge.core_config.num_neurons
@@ -437,19 +439,34 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
                 dev_rip = from_host(rip.astype(np.float64)); dev_off = from_host(bias_full.astype(np.float64))
                 c1 = np.zeros(len(ca1_idx)); period = g_on + g_off; n_rip = 60
                 _dbg = os.environ.get("SWR_DEBUG"); _ca3fire = 0.0; _lat_arr = np.asarray(latched, dtype=int)
+                _peak_ge = 0.0; _peak_ca3sync = 0.0
+                # SWR readout fix (2026-07-19): STP depression on the Schaffer (ca3->ca1) crushes g_e under the ripple's
+                # sustained firing -> disable STP during PHASE 2 ONLY so the completed assembly's volley reaches ca1
+                # (phase 1 keeps STP so the completion is normal). Gated (env), restored after.
+                _p2_nostp = bool(os.environ.get("SWR_PHASE2_NOSTP"))
+                _stp_was = bridge.core_config.enable_short_term_plasticity
+                if _p2_nostp:
+                    bridge.core_config.enable_short_term_plasticity = False
                 for t in range(n_rip):
                     bridge.cp_external_input_current[:] = dev_rip if (t % period) < g_on else dev_off
                     bridge._run_one_simulation_step()
                     c1 += np.asarray(to_host(bridge.cp_firing_states))[ca1_idx].astype(float)
                     if _dbg and len(_lat_arr):
-                        _ca3fire += float(np.asarray(to_host(bridge.cp_firing_states))[_lat_arr].mean())
+                        _ca3_now = float(np.asarray(to_host(bridge.cp_firing_states))[_lat_arr].mean())
+                        _ca3fire += _ca3_now; _peak_ca3sync = max(_peak_ca3sync, _ca3_now)  # max SIMULTANEOUS latched-fire fraction
+                        _ge_now = getattr(bridge, "cp_conductance_g_e", None)
+                        if _ge_now is not None:
+                            _peak_ge = max(_peak_ge, float(np.asarray(to_host(_ge_now))[ca1_idx].max()))  # peak ca1 g_e DURING ripple
                 bridge.cp_external_input_current[:] = 0.0
+                if _p2_nostp:
+                    bridge.core_config.enable_short_term_plasticity = _stp_was   # restore
                 if _dbg:
                     _ge = getattr(bridge, "cp_conductance_g_e", None)
                     _ca1_ge = float(np.asarray(to_host(_ge))[ca1_idx].mean()) if _ge is not None else -1.0
                     _ca1_v = float(np.asarray(to_host(bridge.cp_membrane_potential_v))[ca1_idx].mean())
                     print(f"    [SWR debug] latched={len(latched)} | phase2: ca3-latched-fire-rate={_ca3fire/n_rip:.3f} "
-                          f"ca1_g_e={_ca1_ge:.3f} ca1_v={_ca1_v:.1f} ca1_fire_sum={float((c1/n_rip).sum()):.3f}", flush=True)
+                          f"PEAK-ca3-sync={_peak_ca3sync:.3f} PEAK-ca1_g_e={_peak_ge:.3f} end-ca1_g_e={_ca1_ge:.3f} "
+                          f"ca1_v={_ca1_v:.1f} ca1_fire_sum={float((c1/n_rip).sum()):.3f}", flush=True)
                 return c1 / n_rip
 
             def _cos(x, y):

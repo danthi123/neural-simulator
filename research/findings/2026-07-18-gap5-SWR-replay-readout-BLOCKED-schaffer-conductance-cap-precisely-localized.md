@@ -41,6 +41,35 @@ doesn't scale with them. So it is NOT a simple weight-cache staleness; it is a d
 region's synaptic-current path, a per-region conductance scaling, or the ca1 cell type's g_e→current conversion). A
 genuine `sim/`-level investigation — the honest limit of runner-side diagnosis. Deferred to a focused future pass.
 
+## 🎯 ROOT CAUSE FOUND (2026-07-19): STP DEPRESSION on the Schaffer (ca3→ca1) crushes g_e — the cap is not a mystery
+With `enable_short_term_plasticity=False` (diagnostic): PEAK ca1_g_e jumps ~1 → **~3000** (the boost NOW reaches g_e) and
+**ca1 FIRES** (0.34). ⇒ STP depression was the cap: `effective_synaptic_strength = cc.data × stp_u × stp_x`, and under
+the ripple's sustained ca3 firing the resource `stp_x` depletes so the effective Schaffer strength is capped by the
+resource, NOT the weight — boosting the weight is nullified. Two caveats (why the fix is TARGETED, not global STP-off):
+(a) global STP-off makes the COMPLETION run away (latched 2000/2000, ca1_v → −30000 numerical blow-up — STP was also
+bounding the ca3→ca3 recurrent); (b) g_e=3000 at boost=800 is wildly over-driven. **⇒ THE FIX = disable STP on the
+Schaffer (ca3→ca1) pathway ONLY (keep it on ca3→ca3 for the completion) + a MODERATE boost → the completed assembly's
+volley reaches ca1 cleanly.** A per-pathway STP config, not a global toggle. Turns the SWR readout from a "hard
+integration" into a targeted fix. (Next: implement per-pathway/phase-2 Schaffer STP-off + moderate boost, verify ca1
+fires WITH SPECIFICITY — ca1_match >> ca1_cross.)
+
+## 🎯 SPECIFICITY BARRIER FOUND (2026-07-19): fixed-random DENSE Schaffer can't discriminate assemblies — needs LEARNED weights
+With the STP fix (phase-2 STP-off → ca1 FIRES), the readout now has the OPPOSITE problem: **no specificity** (ca1_match =
+ca1_cross = 1.000 at every boost 0.02→20 + every ca1_ff_inhib 20→150). Every completed assembly drives EVERY ca1 cell
+to saturation (fire_sum ~40-50 of 120, ca1_v explodes negative from Izhikevich u-accumulation under the sustained
+ripple). ROOT CAUSE (structural): the Schaffer ca3→ca1 projection is FIXED-RANDOM + DENSE (61161 synapses, ~510 inputs
+per ca1). A large completed assembly (~300-400 cells) delivers NEAR-IDENTICAL drive (~76±9 inputs) to EVERY ca1 cell →
+no cell is preferentially driven by ANY specific assembly → E%-max inhibition can't discriminate a near-tied drive, and
+reducing the boost just moves between all-fire and all-silent (no specific-subset window). ⇒ **the SWR readout
+specificity fundamentally needs LEARNED Schaffer weights** — the ca3→ca1 association POTENTIATED during encoding (the
+CA3-assembly → CA1-target-pattern binding), so recall of an assembly drives ITS specific ca1 pattern. That is the
+biologically-correct consolidation mechanism (Schaffer collateral LTP), NOT a fixed-random projection. **NEXT MECHANISM
+(clear, biology-grounded): (a) LEARN the Schaffer ca3→ca1 during encoding** (Hebbian/BTSP potentiation when the assembly
+co-fires with a target ca1 pattern) → recall gives the specific pattern; OR (b) a BRIEF single-volley sharp-wave read
+(not the 60-step sustained ripple) so ca1 fires ONCE (the who-fires-most pattern) + sparse top-k. (a) is the real fix.
+⇒ gap#5 (i) went from "hard integration, ca1_fire=0, mystery cap" → precisely: STP crushed g_e (fixed) + fixed-random
+Schaffer blocks specificity (needs learned associations). A clear mechanism build, no longer a mystery.
+
 ## Status (per THE LAW — a precisely-characterized boundary that names the next lever)
 - **The SWR readout is BLOCKED by the ca3→ca1 effective-conductance cap** — a real, precisely-localized hard
   integration (the documented "hard fresh-pass integration" snag, now root-caused). It is NOT closeable by the
