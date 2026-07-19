@@ -161,6 +161,29 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
+- **🏁 SESSION 2026-07-19 SUMMARY (headline: gap#5 (i) SWR readout CLOSED) + the CLEAR NEXT STEPS.** A long, productive
+  session. Achievements + resume points, most-recent-first:
+  1. **gap#5 (i) SWR generative-replay readout — CLOSED** (6/6 GO ratio 10.79×, anti-cheat 0/6). The multiply-confirmed
+     near-tie blocker SOLVED via the biology-verified STACK: sparse+synchronous+`recall_k_thresh=30` SPECIFIC CA3
+     completion → learned sparse Schaffer → E%-max CA1 top-k read (`swr_ca1_topk`, additive default-None). Valero 2017 +
+     Kwon 2018 verified vs primary sources. Config: `n_ca3=2000 assembly_frac=0.03 no_sync=False recall_k_thresh=30
+     hebb_max=150 recall_drive=1200 bistable selective_inhib hebb_lr=4 lam_dep_wi=1 swr_disjoint swr_learn_schaffer
+     hi=80/lo=0 swr_ca1_topk=0.1`. **DONE.**
+  2. **gap#5 (ii) emergent-DG SELECTION — 6-seed GO** (stable 0.94-1.00 / sparse 10-37 / separated sep_cos 0.04-0.16 /
+     input-specific / moat-safe; mossy-lesion load-bearing). The DG-volley SELECTS a pattern-separated CA3 assembly.
+  3. **gap#4↔#5 UNIFICATION — characterized (integration is the next build).** The unification (mossy-select → store →
+     self-sustain/complete) is a careful INTEGRATION of the selection (small/sparse, GO) + the store+complete (larger/dense,
+     GO 2026-07-09) — 4 regime mismatches precisely characterized. **NEXT: mossy-SELECT on the larger dense completion/SWR
+     bridge so selection + store+complete share one regime.** Finding `2026-07-19-gap4-gap5-unification-derisk-...`.
+  4. **gap#4 keystone (supervised BDSP-to-accuracy) — RESEARCH-GATED, deeply walled.** My 7 diagnostic runs RE-DERIVED a
+     KNOWN result (the apical-decoupled bug C1, 2026-07-10, SAME runner — the invariance was the tell of a forward/wiring
+     failure, pre-determined null). A scout reading the project's own record: 3 stacked failures (A forward-collapse, B
+     degenerate-readout, C1 apical-decoupled) upstream of the rate-code wall. **DE-RISK: frozen-reservoir + WTA + trained
+     population readout, `cfg.seed` SET. MISSION-PATH FORK (owner: "your call, close the gaps"): supervised BDSP vs the
+     2026-07-17 UNSUPERVISED stream-cortex decision that sidesteps it.** Finding `2026-07-19-gap4-research-gate-...`.
+  - **Discipline:** ~9 silent-failure/de-risk-bug catches (incl. my own FABRICATED "3 arms crashed" — refuted by `ps`;
+    the research gate catching my re-derivation of a known bug = the `read-your-record-first` lesson). NO `sim/` edit all
+    session (SWR readout = runner params + the additive default-None E%-max read). All committed to both remotes.
 - **📍 RESUME POINT (2026-07-19, latest — parallel batch): gap#5 (i) SWR COMPREHENSIVELY CHARACTERIZED; gap#5 (ii)
   emergent-DG ROOT-CAUSED (feedforward-conduction, unifies with gap#4); gap#4 keystone accuracy arms IN FLIGHT.**
   (1) **gap#5 (i) SWR — FINAL characterization:** the parallelized strength sweep + no-learn anti-cheat resolved the
