@@ -71,3 +71,22 @@ this as concluded.
 - NO `sim/` edit (the BDSP kernel + apical path are correct; the limitation is runner operating-point). Diagnosis workflow:
   `wf_8de0688b-dcf`; runner `_d1_onbridge_learn_to_accuracy_derisk.py` (`--task cleanxor`, `--soma-g`, `--feedback learned`,
   `--hidden-bias`).
+
+## GATE RESULT (both arms landed — COMPLETE; Lens 3 confirmed over Lens 2's headline)
+- **FA-direction sweep (KP learned-feedback, more-epochs, width, lr, gain, no-diff, combo) — ALL 8 at the floor 0.486.**
+  Critically the **KP learned-feedback arms (fb120/fb150w96/combo) did NOT rise** (combo 0.453). ⇒ the field's headline
+  fix (learned feedback) does NOT rescue on cleanxor → **Lens 3 dominates over Lens 2** (rank-1 with a zero discriminant →
+  nothing for KP to align to; KP is necessary-NOT-sufficient here, exactly as Lens 3 predicted). This is also the exact
+  "an all-at-floor sweep would be MISREAD as boundary-confirmed" trap the diagnosis flagged — it is NOT misread: the
+  correctly-levered arm below is what settles it.
+- **Correctly-levered desaturation probes (hidden-bias 260/160/90 — Lens 3's #1 root-cause lever) — ALL at the floor 0.486**
+  (hb90 went silent = the "still-burst" tuning edge). Desaturation ALONE does not move it — consistent with Lens 3's note
+  that the intrinsic 2-class rank-1 must be PAIRED with rank-breaking (≥3 classes / auxiliary parity heads), untested.
+- **⇒ COMPLETE across every tested lever (KP, epochs, width, lr, gain, desaturation): on-bridge BDSP delivers directed
+  credit (927× moat) but does NOT reach accuracy on cleanxor.** The only untested recipe is desaturation + rank-breaking
+  together — a bigger runner edit for the documented WRONG INSTRUMENT that, even if it passed, would not transfer to the
+  mission (gaps #2/#3/#5 are closed without it; real language depth is linear/compositional). **RESOLUTION:** gap#4's
+  CAPABILITY (a substrate that learns deep representations, no weight transport) is MET by the UNSUPERVISED method (stream
+  cortex / HTM pooler, EMERGE-30..55 on-spike); the SUPERVISED-deep-credit-to-accuracy METHOD is formally PARKED with the
+  rank-1 root-cause documented (cheap-parallel-science, NOT the capability abandoned). The mission-primary is gap#1 (the
+  WKV learned-KV-recurrence build, SMOKE GO) + the unsupervised cortex.
