@@ -213,12 +213,14 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   -4. **🎯 gap#1 ON-BRIDGE realization CHARACTERIZED → gap#1↔gap#4 CONNECTED (2026-07-19).** Built the on-bridge WKV/SSM
      realization (`_emerge_wkv_onbridge_derisk.py`, diagonal self-NMDA autapse = per-channel leaky integral, verify-first
      corr-gated). The DESIGN is confirmed (a diagonal self-NMDA realizes a leaky state on REAL Izhikevich spikes, corr
-     0.6-0.79). But the on-bridge LM read-out stays at ~chance across EVERY lever (drive/self-NMDA/T_STEP/receptance/
-     smaller-V/population-coding-K8), and the **`--exact-state` isolating test settles WHY:** even reading the EXACT
-     leaky state (corr 0.786) the LINEAR read-out gives chance ⇒ **the limit is that a trained-LINEAR read (reservoir-
-     computing) CANNOT match the rate-SSM's JOINTLY-TRAINED NONLINEAR read** (Wo_sp+receptance+head). The proper
-     fully-spiking WKV needs **END-TO-END training through the on-bridge spiking = the gap#4 deep-credit lever** (field-hard,
-     characterized this same session). ⇒ **gap#1's fully-spiking realization is GATED on gap#4** — the two deepest open
+     0.6-0.79). The on-bridge LINEAR read-out stays at ~chance (the `--exact-state` test settles WHY: even reading the
+     EXACT leaky state at corr 0.786, a LINEAR read can't match the rate-SSM's jointly-trained NONLINEAR read Wo_sp+
+     receptance+head). **BUT a NONLINEAR MLP read-out + POPULATION coding + more fit data RECOVERS MOST of the capture:
+     onbridge deep-NLL progression linear −2.4 → MLP −0.62 → +pop4 −0.169 → +pop8+data −0.110 vs the fair trigram (BEATS
+     the bigram), asymptoting at the ~0.58 spiking-STATE-FIDELITY ceiling.** So the fully-spiking-emergent WKV is within a
+     HAIR (~0.11) of the rate-level bar via reservoir-computing; the LAST gap rides **END-TO-END training through the
+     spiking = the gap#4 deep-credit lever** OR a higher-fidelity spiking realization (field-hard, characterized this
+     session). ⇒ **gap#1's fully-spiking realization is GATED on gap#4** — the two deepest open
      threads meet. The MECHANISM (WKV removes the non-fading-store wall) is comprehensively proven at the rate level;
      making it fully-spiking-emergent rides the deep-credit frontier. Near-term open-gen deliverables: the rate-level WKV +
      emergent input (Rung 1a/1b, done) + the 21M spiking-forward deploy (ledgered scaffold). verify-first prevented a FALSE
