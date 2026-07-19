@@ -207,6 +207,13 @@ Ported the emergent-completion recipe (sparse `assembly_frac=0.03` + SYNCHRONOUS
   homeostasis to kill the runaway) → match ≥0.6 robustly, then 6-seed + anti-cheats (no-learn→cross≈1, permuted-cue→no-match).**
   The specificity is solved; this is a strength/stability tune on a GO-adjacent result. NO sim/ edit (runner params + the
   additive E%-max read).
+- **✅ STRENGTHENING WORKED — SWR readout specificity 3-seed GO (2026-07-19).** Raising `recall_k_thresh` 20→30 (kills the
+  runaway avalanche) + `hebb_max=150` + `recall_drive=1200` lifts match above the bar while cross stays ~0.09:
+  **k30_hm150_d1200 + E%-max topk=0.1 → seed 42 match 0.754/cross 0.084, seed 43 0.603/0.097, seed 44 0.717/0.086; MEAN
+  match 0.692 / cross 0.089 / ratio 7.75× — GO all 3 seeds** (match≥0.6 AND cross≤0.3). ⇒ **the SWR generative-replay
+  readout specificity is 3-seed GO — the multiply-confirmed near-tie blocker is SOLVED** (distinct assemblies → distinct
+  CA1, 7.75× discrimination). PENDING: 6-seed (42/43/44/100/101/102) + anti-cheats (no-learn dense-random Schaffer →
+  near-tie back = the learned Schaffer + stack is load-bearing; permuted-cue → no match). NO sim/ edit.
 
 ## Status (per THE LAW — a precisely-characterized boundary that names the next lever)
 - **The SWR readout is BLOCKED by the ca3→ca1 effective-conductance cap** — a real, precisely-localized hard
