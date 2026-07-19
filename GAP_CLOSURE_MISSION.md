@@ -161,7 +161,22 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
-- **🏁 SESSION 2026-07-19 SUMMARY (headline: gap#5 (i) SWR readout CLOSED) + the CLEAR NEXT STEPS.** A long, productive
+- **🏁🏁 SESSION 2026-07-19 CAPSTONE (updated headline): gap#4 FULLY RESOLVED + gap#1 OPEN-GENERATION LEVER (WKV)
+  COMPREHENSIVELY VALIDATED + DEMONSTRATED + SCALING-CONFIRMED.** The mission-primary gap#1 (open fluent generation) was
+  attacked via a decisive research gate → the **WKV learned-key-value recurrence** (the non-fading store every fading
+  reservoir lacked; SpikeGPT existence proof). It is now validated on EVERY axis: removes-the-non-fading-store-wall
+  (6-seed) · emergent PPMI-input (3-seed, gap#1↔gap#4 convergence) · multi-sentence CROSS-SENTENCE discourse (learned
+  6-seed + emergent 3-seed) · **GENERATES coherent open prose** (learned + fully-emergent) · **SCALES toward production
+  fluency** (deep-context margin GROWS +0.78→0.92 with scale, fluent ⟨unk⟩-free generation) · rate-level-spiking-faithful.
+  The fully-spiking-emergent version is CHARACTERIZED as **gated on gap#4's deep-credit lever** (the on-bridge realization:
+  design confirmed on real spikes corr 0.6-0.79, but a linear read can't match the jointly-trained WKV read → needs
+  end-to-end deep-credit-through-spiking = gap#4; the two deepest threads CONNECTED). gap#4 itself FULLY RESOLVED
+  (directed-credit-≠-accuracy root-caused as rank-1 collapse; capability met by the unsupervised method). ⇒ the honest
+  open-generation path: the WKV mechanism is proven + the rate-level BPTT WKV is the tracked scaffold; the near-term usable
+  deliverable is the 21M spiking-forward deploy; the end-state fully-spiking-emergent WKV rides gap#4's deep-credit lever
+  (the unsupervised stream-cortex path). See `2026-07-19-gap1-WKV-...RUNG1a-6seed-GO...` (the full gap#1 arc) +
+  `2026-07-19-gap4-directed-credit-not-accuracy-ROOT-CAUSED...`. ~33 commits both remotes, rigorous verify-first discipline.
+- **🏁 SESSION 2026-07-19 SUMMARY (earlier headline: gap#5 (i) SWR readout CLOSED) + the CLEAR NEXT STEPS.** A long, productive
   session. Achievements + resume points, most-recent-first:
   -6. **🎉🎉 gap#1 GENERATION CAPSTONE (2026-07-19) — the WKV PRODUCES coherent open prose (the mission capability).**
      `--generate`: trained on contiguous passages (d256/10ep), the WKV autoregressively GENERATES grammatical,
