@@ -150,8 +150,14 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                 # out = receptance-gated read. If GO, the spiking membrane leak realizes this state directly.
                 a = torch.zeros(B, D, device=x.device); outs = []
                 spiking = getattr(args, "spiking_state", False)
+                sn = float(getattr(args, "state_noise", 0.0))
                 for t in range(T):
                     a = wdec * a + v[:, t]
+                    if sn > 0.0 and self.training:
+                        # DEGRADE the state fidelity to simulate the on-bridge substrate (~0.55 corr): does the SpikeGPT-
+                        # faithful architecture (spike-coded output) still beat the trigram from a LOSSY graded state? If GO,
+                        # end-to-end training suffices on the substrate's real 0.55 state; if not, a >0.8 line-attractor is needed.
+                        a = a + torch.randn_like(a) * (sn * a.detach().std())
                     if spiking:
                         # SPIKING-FAITHFUL read: firing rates are NON-NEGATIVE; encode the signed leaky state via ON/OFF
                         # rate channels [relu(a), relu(-a)] (the two-population sign code a spiking region uses). If GO,
@@ -288,6 +294,7 @@ def main():
                     help="(ssm only) read the leaky state via NON-NEGATIVE ON/OFF firing-rate channels [relu(a),relu(-a)] "
                          "= the spiking firing-rate constraint; GO => the on-bridge firing-rate read preserves deep context.")
     ap.add_argument("--quantize-state", dest="quantize_state", action="store_true")
+    ap.add_argument("--state-noise", dest="state_noise", type=float, default=0.0, help="degrade state fidelity (train-time noise) to simulate the on-bridge substrate")
     ap.add_argument("--spike-output", dest="spike_output", action="store_true",
                     help="SpikeGPT-faithful: GRADED state + SPIKE-CODED output y_t (straight-through), trained end-to-end")
     ap.add_argument("--uniform-decay", dest="uniform_decay", action="store_true",
