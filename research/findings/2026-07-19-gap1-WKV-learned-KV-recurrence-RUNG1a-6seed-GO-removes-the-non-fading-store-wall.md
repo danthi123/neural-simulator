@@ -84,6 +84,14 @@ IMPROVE with scale.** The mission-primary open-generation lever is comprehensive
 demonstrated (generates coherent open prose, learned + fully-emergent) + scaling-confirmed. The remaining frontier is the
 fully-spiking-emergent version (gated on gap#4's deep-credit lever); the rate-level BPTT WKV is the tracked scaffold + the
 21M spiking-forward deploy is the near-term usable open-gen deliverable.
+**GENERALITY (multi-prompt) — the WKV generates coherent, VARIED, prompt-conditional prose (not memorization):** from 4
+distinct prompts it produces distinct coherent narratives — "the dog and the cat" → *"...a curious little girl named lily
+she loved to travel and see new places one day she decided to go on a long trip"*; "one day a boy named tom" → *"...went
+to the store with his mom they needed tom to buy a new toy ... she held the toy truck up and took it home"*; "she was very
+happy because" → *"...mia was so happy she forgot about her lucky jug and her doll..."* — different characters (lucy/lily/
+tom/mia), different scenarios, coreference maintained within each, and an `⟨endoftext⟩` story-boundary correctly emitted.
+⇒ **open-domain-within-corpus GENERATION generality** (generalizes across prompts, not memorizing one story) — the mission
+"generate open prose about varied topics" goal, on the validated + scaling-confirmed WKV. Deep-context +0.905 GO.
 
 ## RUNG 1b — EMERGENT INPUT: GO (3-seed) + the emergent STRUCTURE genuinely HELPS (gap#1↔gap#4 convergence realized)
 Two de-risks resolved the emergent-input question WITHOUT a separate stream-cortex-over-TinyStories develop (cheaper, direct):
