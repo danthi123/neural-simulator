@@ -92,6 +92,14 @@ happy because" → *"...mia was so happy she forgot about her lucky jug and her 
 tom/mia), different scenarios, coreference maintained within each, and an `⟨endoftext⟩` story-boundary correctly emitted.
 ⇒ **open-domain-within-corpus GENERATION generality** (generalizes across prompts, not memorizing one story) — the mission
 "generate open prose about varied topics" goal, on the validated + scaling-confirmed WKV. Deep-context +0.905 GO.
+**VOCAB BREADTH (V=5000) — the WKV MAINTAINS its advantage at broader vocab (the last scaling axis, GO):** at V=5000 /
+150K passages / d512, deep-context is **+0.932** (even higher than V=3000's +0.905, memoryless-collapse +1.025 the highest
+yet), generation coherent (*"...a little girl named sue sue loved to draw flowers ... with her crayons"*; *"the dog and
+the cat ... lived happily ever after ⟨endoftext⟩ once upon a time there was a little girl named lucy she was very helpful
+and loved to explore"* — correct story boundary). ⇒ **the WKV scales ROBUSTLY across EVERY axis — model size (d256→d512),
+data, VOCAB (2000→5000), and generality — maintaining/IMPROVING its deep-context advantage + fluency as scale grows.** No
+degradation at broader vocab (toward the mission's ~10K need). This completes the WKV's scaling characterization: genuine
+PRODUCTION HEADROOM. The mission-primary open-generation lever is fully validated + demonstrated + scaling-characterized.
 
 ## RUNG 1b — EMERGENT INPUT: GO (3-seed) + the emergent STRUCTURE genuinely HELPS (gap#1↔gap#4 convergence realized)
 Two de-risks resolved the emergent-input question WITHOUT a separate stream-cortex-over-TinyStories develop (cheaper, direct):
