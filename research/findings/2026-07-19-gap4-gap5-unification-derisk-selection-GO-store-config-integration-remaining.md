@@ -54,6 +54,18 @@ that same (larger, dense) bridge, so the selection + the store+complete share on
 the reconciliation is the fresh build. **Honest scope:** this session DE-RISKED the SELECTION (6-seed GO) + characterized
 the integration precisely (4 mismatches); the integration build is the clear, well-specified next step. NO `sim/` edit.
 
+## ROOT CAUSE of the small assembly + the key scoping insight (6th run: top-K selection)
+Selecting top-K (10% = 40) still yields 3-20 cells — because **the mossy VOLLEY itself only detonates 3-20 CA3 cells**
+(sparse detonation is INHERENT to the separated selection; the completion-arc's ~40-cell assembly came from language-input
+→ec→dg→ca3 drive, which fires more CA3 via the trained feedforward, NOT sparse mossy detonation). ⇒ the sparse-mossy
+selection (separated, 3-20 cells) and the dense-attractor completion (~40 cells) are a genuine REGIME tension needing a
+DESIGNED reconciliation (biology's DG-sparse-separation → CA3-dense-attractor two-stage), not a quick de-risk.
+**KEY SCOPING INSIGHT:** THIS session's **SWR readout closing already achieved the CORE gap#5 capability** — store +
+complete + SPECIFIC readout of network-selected assemblies = imaginative/generative replay. The emergent-DG
+mossy-selection is a MORE-EMERGENT selection front-end — a REFINEMENT (the assembly is DG-volley-selected rather than
+language-input-selected), NOT a new capability. ⇒ gap#5 (CA3 completion / imaginative replay) is substantially closed this
+session; the unification is a nice-to-have refinement with a designed-integration next step, not a gap-closing blocker.
+
 ## Status
 - **DE-RISKED:** the DG-volley SELECTION of a sparse assembly (6-seed GO) + the honest identification that a brief default
   store is insufficient. **REMAINING (recombination):** wire the validated completion-arc store config onto the selected
