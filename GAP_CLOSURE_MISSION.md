@@ -163,6 +163,16 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 - **🏁 SESSION 2026-07-19 SUMMARY (headline: gap#5 (i) SWR readout CLOSED) + the CLEAR NEXT STEPS.** A long, productive
   session. Achievements + resume points, most-recent-first:
+  0. **gap#4 keystone — MECHANISM PIPELINE-VALIDATED (corrects item 4b's "field-hard" verdict), definitive accuracy run
+     IN FLIGHT.** Ran the board's named gap#4 action; the missing knob was **`--soma-g>0`** (apical→soma electrotonic
+     coupling — absent → default 0 → apical raises P but not measured B → credit≈lesion = the BOUNDARY item 4b hit). WITH
+     `--soma-g 8 --microcircuit --apical-bistable --graded-credit`: **directed hidden-layer credit (in→hid 8.46 vs LESION
+     0.11 = 75× clean moat), P0 moat holds, no weight transport** — the credit assignment WORKS mechanistically. Item 4b's
+     "deep-credit-fails" was the coupling-OFF path. Added a clean discriminator task **`--task cleanxor`** (single-bit
+     latents copied to k afferents → oracle 0.997, linear floor 0.514=chance, deep-margin 0.48, vs the dense majority-vote's
+     thin 0.04). **IN FLIGHT: the definitive single-seed accuracy run** (cleanxor, hidden=64, ep=30, graded+coupling vs the
+     0.75 bar) — the never-completed learning-to-accuracy run, now on a proper task. GO = held-out clears the 0.514 floor
+     toward 0.75 AND wrong-sign < chance (sign-informative) → 6-seed. `2026-07-19-gap4-soma-coupling-flips-BOUNDARY-to-PIPELINE-VALIDATED`.
   1. **gap#5 (i) SWR generative-replay readout — CLOSED** (6/6 GO ratio 10.79×, anti-cheat 0/6). The multiply-confirmed
      near-tie blocker SOLVED via the biology-verified STACK: sparse+synchronous+`recall_k_thresh=30` SPECIFIC CA3
      completion → learned sparse Schaffer → E%-max CA1 top-k read (`swr_ca1_topk`, additive default-None). Valero 2017 +
