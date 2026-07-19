@@ -87,7 +87,10 @@ achieved (small/variable/config-fragile margin over the reservoir; fails at k=5)
 BPTT / rate readouts reach accuracy; sparse local credit does not).** My `_d1` runner's degenerate 0.42 was additionally
 its argmax-readout bug (Failure B) masking even the shallow signal. **The gap#4 keystone (DEEP biological local-credit to
 accuracy) remains the honest, field-hard open frontier** — NOT "substantially achieved" (I over-claimed; corrected). The
-frozen-reservoir arm (the substrate-carries-signal number) completes when the 3-seed run finishes. NEXT if pursued: the
+frozen-reservoir re-verification was KILLED (impractically slow — 1h38m and still on seed 42, ~5h for 3 seeds on-bridge);
+the documented FROZEN 0.778 (2026-07-16) stands as the substrate-carries-signal number, corroborated by THIS run's STAGE0
+(the task IS separable: numpy deep-best 1.000 vs 1-layer 0.444). The load-bearing NEW datum — learned deep credit FAILS
+on-bridge (inherit 0.222 < chance at k=5) — was captured before the kill. NEXT if pursued: the
 C1 apical-coupling fix + a proper leaky/population readout, then measure the deep-credit margin over the reservoir
 SEED-CLEAN — but the field-evidence says expect a small margin. The UNSUPERVISED stream cortex (2026-07-17) stays the
 more-promising mission path.
