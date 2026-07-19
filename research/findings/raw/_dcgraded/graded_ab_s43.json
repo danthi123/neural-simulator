@@ -1,0 +1,74 @@
+{
+  "probe": "onbridge_deep_credit_graded_vs_binary_AB",
+  "seed": 43,
+  "config": {
+    "hidden": 24,
+    "epochs": 50,
+    "lr": 0.25,
+    "settle_steps": 25,
+    "credit_steps": 15,
+    "n_hidden_layers": 2,
+    "train_subsample": 80,
+    "hp": {
+      "tonic_h_pA": 560.0,
+      "tonic_o_pA": 620.0,
+      "apical_gain_pA": 2000.0,
+      "ff_w_init": 4.5,
+      "pbar_alpha": 0.05
+    },
+    "task": {
+      "n_super": 12,
+      "n_members": 8,
+      "held_per_super": 3,
+      "n_prop": 2,
+      "member_id_dim": 3,
+      "n_obs": 16,
+      "noise": 0.02,
+      "feature_seed": 0
+    }
+  },
+  "elapsed_seconds": 360.1,
+  "result": {
+    "seed": 43,
+    "chance": 0.3333333333333333,
+    "meta": {
+      "n_super": 12,
+      "n_members": 8,
+      "held_per_super": 3,
+      "n_prop": 2,
+      "k_classes": 5,
+      "member_id_dim": 3,
+      "n_obs": 16,
+      "noise": 0.02,
+      "feature_seed": 0,
+      "n_features": 7,
+      "n_train": 720,
+      "n_heldout": 276,
+      "n_inherit_heldout": 27,
+      "n_memctrl_heldout": 9,
+      "n_supers_untaught": 3
+    },
+    "stage0_depth_separating": true,
+    "oracle": {
+      "inherit_heldout": 1.0,
+      "train": 1.0
+    },
+    "floor_inherit_heldout": 0.18518518518518517,
+    "binary": {
+      "inherit_heldout": 0.2962962962962963,
+      "train": 0.2,
+      "ff_weight_moved": 3426.826416015625,
+      "trains_at_all": false
+    },
+    "graded": {
+      "inherit_heldout": 0.14814814814814814,
+      "train": 0.275,
+      "ff_weight_moved": 2.67620849609375,
+      "trains_at_all": false
+    },
+    "graded_permuted_inherit": 0.2962962962962963,
+    "graded_lesion_inherit": 0.1111111111111111
+  },
+  "GO_graded_rescues": false,
+  "verdict": "GRADED fails (inh 0.148, train 0.275) vs BINARY fails (inh 0.296, train 0.200); chance 0.333, floor 0.185, oracle 1.000; graded permuted 0.296, lesion 0.111. NO rescue at this config (points deeper: credit-STRUCTURE or scale, not read-variance)"
+}

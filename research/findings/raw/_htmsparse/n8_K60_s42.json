@@ -1,0 +1,40 @@
+{
+  "probe": "emerge15_sparse_pool_scale",
+  "n_subj": 8,
+  "vocab": 19,
+  "chance": 0.125,
+  "best_ngram": 0.125,
+  "k_syn": 60,
+  "dense": {
+    "htm": 1.0,
+    "synapses": 547200
+  },
+  "sparse": {
+    "htm": 0.125,
+    "synapses": 45600
+  },
+  "synapse_ratio": 0.08333333333333333,
+  "GO": false,
+  "elapsed_seconds": 587.6,
+  "per_seed": {
+    "dense": [
+      {
+        "seed": 42,
+        "htm": 1.0,
+        "n_syn": 547200,
+        "vocab_n": 19,
+        "nE": 40
+      }
+    ],
+    "sparse": [
+      {
+        "seed": 42,
+        "htm": 0.125,
+        "n_syn": 45600,
+        "vocab_n": 19,
+        "nE": 40
+      }
+    ]
+  },
+  "verdict": "SPARSE pool (K=60/post) HTM 0.125 vs DENSE 1.0 (best n-gram 0.125); synapses sparse 45600 vs dense 547200 (8.3% of dense). read substance: does sparse match dense + beat the n-gram?"
+}

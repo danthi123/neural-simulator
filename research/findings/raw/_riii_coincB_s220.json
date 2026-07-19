@@ -1,0 +1,14 @@
+[
+ {
+  "seed": 42,
+  "on_held": 0.06948529268772864,
+  "off_held": 0.06948529268772864,
+  "notrain_held": 0.06948529268772864,
+  "on_nonstored": 0.015441176861250655,
+  "held_cdrive": 0.0,
+  "nonstored_cdrive": 0.0,
+  "gain_vs_linear": 0.0,
+  "gain_vs_notrain": 0.0,
+  "n_stored": 15
+ }
+]

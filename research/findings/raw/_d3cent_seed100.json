@@ -1,0 +1,9 @@
+[
+ {
+  "seed": 100,
+  "K": 6,
+  "D3_Cb_track": 0.97,
+  "step_delta": 1.0,
+  "recency_floor": 0.0
+ }
+]

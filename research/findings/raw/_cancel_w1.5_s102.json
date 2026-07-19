@@ -1,0 +1,18 @@
+{
+  "verdict": "NEGATIVE",
+  "w_exc": 1.5,
+  "per_seed": [
+    {
+      "seed": 102,
+      "pos": "~cat",
+      "coh": 0.118,
+      "exc_member": "man",
+      "cancel": "yes",
+      "own": "no",
+      "n_other_held": 12,
+      "n_collateral": 0,
+      "permuted_still_inherits": "yes",
+      "moat_ok": true
+    }
+  ]
+}

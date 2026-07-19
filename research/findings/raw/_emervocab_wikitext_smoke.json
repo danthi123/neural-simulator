@@ -1,0 +1,94 @@
+{
+  "verdict": "DATA_BOUND",
+  "why": "no K was evaluable -- the corpus is too small/narrow to populate even the smallest vocab with enough probe words. A bigger corpus is the prerequisite.",
+  "seeds": [
+    42
+  ],
+  "vocab_sizes": [
+    256
+  ],
+  "mode": "real_corpus",
+  "corpus": "data/corpus/wikitext.txt",
+  "n_stories": 1,
+  "n_tokens": 1673821,
+  "n_unique": 28948,
+  "config": {
+    "window": 2,
+    "n_hub": 500,
+    "hold_frac": 0.6,
+    "collapse_gap": 0.1,
+    "above_chance": 0.1,
+    "syn_occ_per_word": null
+  },
+  "detail": {
+    "per_K_learned_coherence": {
+      "256": null
+    },
+    "per_K_scrambled_coherence": {
+      "256": null
+    },
+    "per_K_freq_only_coherence": {
+      "256": null
+    },
+    "per_K_host_ppmi_coherence": {
+      "256": null
+    },
+    "per_K_learned_margin": {
+      "256": null
+    },
+    "per_K_scrambled_margin": {
+      "256": null
+    },
+    "per_K_freq_only_margin": {
+      "256": null
+    },
+    "per_K_host_margin": {
+      "256": null
+    },
+    "per_K_chance": {
+      "256": null
+    },
+    "evaluable_K": []
+  },
+  "per_seed": {
+    "42": [
+      {
+        "K": 256,
+        "n_vocab": 256,
+        "n_hubs": 500,
+        "n_updates": 403316,
+        "n_probe_words": 0,
+        "n_probe_categories": 0,
+        "per_cat_probe_counts": {},
+        "vocab_head": [
+          "unk",
+          "from",
+          "which",
+          "their",
+          "first",
+          "also",
+          "its",
+          "been",
+          "two",
+          "who",
+          "after",
+          "other",
+          "time",
+          "into",
+          "would",
+          "more",
+          "over",
+          "when",
+          "during",
+          "only"
+        ],
+        "probe_min_count": 0,
+        "learned": null,
+        "scrambled": null,
+        "freq_only": null,
+        "host": null
+      }
+    ]
+  },
+  "note": "Emergent-vocab breadth scale de-risk: the vocab is DISCOVERED from the corpus (top-K content words by frequency), the co-occurrence structure LEARNED via the emergent online stream cortex (Hebbian WM-window co-occurrence + running-freq + log-double-center, NO global PPMI matrix). The probe taxonomy is an EVALUATION YARDSTICK ONLY (it never labels the discovered vocab). Anti-cheats: scrambled-corpus (co-occurrence destroyed, unigram frequency preserved) + frequency-only baseline. NO sim/ edits; reuse-by-import."
+}

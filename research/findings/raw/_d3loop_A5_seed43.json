@@ -1,0 +1,11 @@
+[
+ {
+  "seed": 43,
+  "group": "A5",
+  "K": 60,
+  "spk_step_delta_same": 0.513,
+  "FULLSPK_deeper_track": 0.0,
+  "FULLSPK_host_agree": 0.945,
+  "NO_REDISC_deeper_track": 0.0
+ }
+]

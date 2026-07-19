@@ -1,0 +1,46 @@
+{
+  "probe": "emerge15_word_sequence_lm",
+  "verdict": "GO -- the emergent HTM Temporal-Memory sequence cortex is a HIGH-ORDER WORD-LEVEL LANGUAGE MODEL on the real spiking bridge: next-word accuracy at the earlier-context-dependent branch 1.000 >> the best fixed-order n-gram Markov floor 0.250 (bigram 0.250/trigram 0.250/4gram 0.250) -- it BEATS the order-blind baseline by carrying the SUBJECT context through the shared middle. The prediction is DRIVEN by the earlier context: injecting a different subject makes the branch prediction FOLLOW it (swap-follows-context 1.000). dAP-LESION collapses it to 0.000 (the high-order coincidence recurrence is load-bearing); untrained 0.000; no teacher; multi-seed. => the rung-4 substrate PREDICTS words from high-order context -- the honest, simulate-don't-bolt-on path toward the language cortex, replacing the transformer's next-word role. NO sim/ edit.",
+  "mechanism": "the rung-4 emergent on-bridge HTM Temporal-Memory (self-organizing high-order context-specific next-symbol prediction + on-substrate three-term learning) fed WORD tokens = a high-order word-level language model; next-word prediction beats a fixed-order n-gram by using earlier context",
+  "task": "high-order word corpus (branch depends on the earlier subject through a shared middle); next-word accuracy at the branch vs bigram/trigram/4gram Markov floor + dAP-lesion + permuted + untrained + multi-seed",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "n_subj": 4,
+    "epochs": 80,
+    "k_win": 4,
+    "act_th": 3,
+    "bigram": 0.25,
+    "trigram": 0.25,
+    "fourgram": 0.25,
+    "chance": 0.25
+  },
+  "elapsed_seconds": 36.9,
+  "per_seed": [
+    {
+      "seed": 42,
+      "htm": 1.0,
+      "swap_follows": 1.0,
+      "lesion": 0.0,
+      "untrained": 0.0
+    },
+    {
+      "seed": 43,
+      "htm": 1.0,
+      "swap_follows": 1.0,
+      "lesion": 0.0,
+      "untrained": 0.0
+    },
+    {
+      "seed": 44,
+      "htm": 1.0,
+      "swap_follows": 1.0,
+      "lesion": 0.0,
+      "untrained": 0.0
+    }
+  ],
+  "HONEST_NOTE": "reuse-by-import of the rung-4 on-bridge learner; NO sim/ edit. The corpus is a tiny high-order structure isolating the earlier-context dependency the n-gram cannot capture. Open residual (next gate): open-domain surface fluency + a real corpus at scale (the transformer's last unique job)."
+}

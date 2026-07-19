@@ -1,0 +1,147 @@
+{
+  "probe": "onbridge_deep_credit_population_ksweep",
+  "seeds": [
+    42
+  ],
+  "k_list": [
+    1
+  ],
+  "config": {
+    "hidden": 24,
+    "epochs": 100,
+    "lr": 0.25,
+    "settle_steps": 25,
+    "credit_steps": 40,
+    "n_hidden_layers": 2,
+    "train_subsample": 80,
+    "task": {
+      "n_super": 12,
+      "n_members": 8,
+      "held_per_super": 3,
+      "n_prop": 2,
+      "member_id_dim": 3,
+      "n_obs": 16,
+      "noise": 0.02,
+      "feature_seed": 0
+    },
+    "hp": {
+      "tonic_h_pA": 560.0,
+      "tonic_o_pA": 620.0,
+      "apical_gain_pA": 2000.0,
+      "ff_w_init": 4.5,
+      "pbar_alpha": 0.05
+    },
+    "backend": "numpy"
+  },
+  "elapsed_seconds": 887.2,
+  "per_seed": [
+    {
+      "seed": 42,
+      "meta": {
+        "n_super": 12,
+        "n_members": 8,
+        "held_per_super": 3,
+        "n_prop": 2,
+        "k_classes": 5,
+        "member_id_dim": 3,
+        "n_obs": 16,
+        "noise": 0.02,
+        "feature_seed": 0,
+        "n_features": 7,
+        "n_train": 720,
+        "n_heldout": 276,
+        "n_inherit_heldout": 27,
+        "n_memctrl_heldout": 9,
+        "n_supers_untaught": 3
+      },
+      "chance": 0.3333333333333333,
+      "k_list": [
+        1
+      ],
+      "stage0_depth_genuineness": {
+        "chance": 0.3333333333333333,
+        "n_features": 7,
+        "linear_inherit_heldout": 0.37037037037037035,
+        "linear_train": 0.3625,
+        "l1_inherit_heldout": 0.4444444444444444,
+        "l1_train": 1.0,
+        "l2_inherit_heldout": 1.0,
+        "l2_train": 1.0,
+        "l3_inherit_heldout": 0.3333333333333333,
+        "l3_train": 1.0,
+        "deep_best_inherit_heldout": 1.0,
+        "depth_gap": 0.5555555555555556,
+        "depth_separating": true
+      },
+      "oracle": {
+        "inherit_heldout": 1.0,
+        "memctrl_heldout": 0.0,
+        "train": 1.0
+      },
+      "per_k": [
+        {
+          "pool_k": 1,
+          "deep_inherit_heldout": 0.1111111111111111,
+          "deep_memctrl_heldout": 0.4444444444444444,
+          "deep_train": 0.1875,
+          "ff_weight_moved": 2615.350341796875,
+          "floor_inherit_heldout": 0.2222222222222222,
+          "floor_train": 0.275,
+          "read_snr_corr": [
+            0.41869554891445704,
+            0.37085347502640803
+          ],
+          "read_snr_corr_mean": 0.39477451197043256,
+          "trains_at_all": false
+        }
+      ],
+      "anticheat_k": 1,
+      "permuted": {
+        "inherit_heldout": 0.18518518518518517,
+        "pool_k": 1
+      },
+      "apical_lesion": {
+        "inherit_heldout": 0.18518518518518517,
+        "pool_k": 1
+      }
+    }
+  ],
+  "aggregate": {
+    "seeds": [
+      42
+    ],
+    "k_list": [
+      1
+    ],
+    "chance": 0.3333333333333333,
+    "stage0_depth_separating": true,
+    "oracle_inherit": 1.0,
+    "oracle_memctrl": 0.0,
+    "per_k": [
+      {
+        "pool_k": 1,
+        "deep_inherit_heldout": 0.1111111111111111,
+        "floor_inherit_heldout": 0.2222222222222222,
+        "read_snr_corr_mean": 0.39477451197043256,
+        "ff_weight_moved": 2615.350341796875,
+        "deep_train": 0.1875,
+        "trains_at_all": false
+      }
+    ],
+    "permuted_inherit": 0.18518518518518517,
+    "apical_lesion_inherit": 0.18518518518518517,
+    "k1_reproduces_boundary": true,
+    "population_lifts_training": false,
+    "corr_k1": 0.39477451197043256,
+    "corr_kmax": 0.39477451197043256,
+    "corr_direction": 0.0,
+    "corr_rises_with_K": false,
+    "permuted_chance": true,
+    "lesion_collapses": true,
+    "oracle_ok": true,
+    "memctrl_holds": true,
+    "GO_CANDIDATE": false
+  },
+  "GO_CANDIDATE": false,
+  "verdict": "HONEST NEGATIVE (1-seed smoke) -- population coding did NOT lift training at K in [1] AND the read-SNR corr did NOT clearly rise (+0.000). This maps toward a CREDIT-STRUCTURE residual (population would NOT fix it; the microcircuit clean-error channel is the lever) OR the smoke is too small/short to move either. K=1 reproduces the boundary (True). CONTROLLER: scale + run the microcircuit arm K-sweep + the temporal-matched control. (K=1: inh 0.111 (floor 0.222, corr 0.395, trains False))"
+}

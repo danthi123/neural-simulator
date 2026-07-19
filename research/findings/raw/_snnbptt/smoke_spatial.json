@@ -1,0 +1,37 @@
+{
+  "probe": "snn_bptt_forward_vs_learning_isolation",
+  "seed": 42,
+  "config": {
+    "hidden": 48,
+    "n_hidden_layers": 2,
+    "T": 20,
+    "epochs": 40,
+    "lr": 0.05,
+    "in_gain": 1.0,
+    "train_subsample": 200,
+    "credit_mode": "spatial",
+    "task": {
+      "n_super": 12,
+      "n_members": 8,
+      "held_per_super": 3,
+      "n_prop": 2,
+      "member_id_dim": 3,
+      "n_obs": 16,
+      "noise": 0.02,
+      "feature_seed": 0
+    }
+  },
+  "elapsed_seconds": 5.4,
+  "result": {
+    "seed": 42,
+    "chance": 0.3333333333333333,
+    "stage0_depth_separating": true,
+    "oracle_inherit": 1.0,
+    "snn_train_acc": 0.345,
+    "snn_inherit_heldout": 0.37037037037037035,
+    "floor_inherit_heldout": 0.3333333333333333,
+    "permuted_inherit": 0.2962962962962963,
+    "trains_at_all": true
+  },
+  "verdict": "surrogate-BPTT SNN TRAINS the depth-2 task (train 0.345, inherit 0.370; chance 0.333, floor 0.333, permuted 0.296, oracle 1.000). => the SPIKING FORWARD CAN represent+learn it with a good credit signal -> the OnBridgeBDSPNet failure is the LOCAL BDSP credit at cheap scale, NOT the forward (lever: scaled/richer local on-spike credit)."
+}

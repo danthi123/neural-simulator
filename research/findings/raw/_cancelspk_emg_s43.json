@@ -1,0 +1,17 @@
+{
+  "verdict": "NEGATIVE",
+  "K": 1024,
+  "per_seed": [
+    {
+      "seed": 43,
+      "pos": 2,
+      "passes": 12,
+      "inherit_before": true,
+      "cancel": false,
+      "not_class": false,
+      "n_others": 23,
+      "n_collateral": 0,
+      "lesion_override": false
+    }
+  ]
+}

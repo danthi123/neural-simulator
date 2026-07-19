@@ -1,0 +1,11 @@
+[
+ {
+  "seed": 42,
+  "trained_heldout": 0.0,
+  "notrain_heldout": 0.0,
+  "recurrence_gain": 0.0,
+  "trained_own_cos": 0.4701219213079009,
+  "trained_spec": 0.23981394073781714,
+  "n_stored": 15
+ }
+]

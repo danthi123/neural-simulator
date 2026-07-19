@@ -1,0 +1,18 @@
+{
+  "verdict": "GO",
+  "w_exc": 3.0,
+  "per_seed": [
+    {
+      "seed": 44,
+      "pos": "~forest",
+      "coh": 0.068,
+      "exc_member": "family",
+      "cancel": "no",
+      "own": "yes",
+      "n_other_held": 10,
+      "n_collateral": 0,
+      "permuted_still_inherits": "yes",
+      "moat_ok": true
+    }
+  ]
+}

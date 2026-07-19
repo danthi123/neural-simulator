@@ -1,0 +1,35 @@
+{
+  "probe": "gap5_emergent_dg_selection_R0",
+  "GO": false,
+  "verdict": "BOUNDARY -- not sparse/right-sized (size 0.0, sparsity 0.000); not stable (Jaccard 0.00). Per THE LAW: sweep dg_ffi/ca3_fb/mossy for the sparsity+separation working point, NOT a stop.",
+  "seeds": [
+    42
+  ],
+  "config": {
+    "n_ca3": 400,
+    "dg_ffi": 6.0,
+    "ca3_fb": 20.0,
+    "mossy_w": 8.0
+  },
+  "elapsed_seconds": 3.5,
+  "per_seed": [
+    {
+      "seed": 42,
+      "dg_sparsity": 0.0,
+      "ca3_sizes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "mean_size": 0.0,
+      "ca3_sparsity": 0.0,
+      "stability": 0.0,
+      "sep_cos": 0.0,
+      "sep_jac": 0.0,
+      "noinput_size": 0,
+      "perm_cos": 0.0,
+      "lesion_size": 0
+    }
+  ]
+}

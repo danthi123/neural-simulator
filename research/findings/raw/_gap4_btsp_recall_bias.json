@@ -1,0 +1,35 @@
+{
+  "probe": "gap4_btsp_recall_bias",
+  "GO": false,
+  "verdict": "BOUNDARY -- no recall bias (heldout 0.000 vs non 0.003). Per THE LAW: tune the store/recall drive or assembly, NOT a stop.",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "elapsed_seconds": 0.1,
+  "per_seed": [
+    {
+      "seed": 42,
+      "heldout_rate": 0.0,
+      "nonassembly_rate": 0.0017857142857142857,
+      "nostore_heldout_rate": 0.0,
+      "nostore_nonassembly_rate": 0.0017857142857142857
+    },
+    {
+      "seed": 43,
+      "heldout_rate": 0.0,
+      "nonassembly_rate": 0.0035714285714285713,
+      "nostore_heldout_rate": 0.0,
+      "nostore_nonassembly_rate": 0.0023809523809523807
+    },
+    {
+      "seed": 44,
+      "heldout_rate": 0.0,
+      "nonassembly_rate": 0.0029761904761904765,
+      "nostore_heldout_rate": 0.0027777777777777775,
+      "nostore_nonassembly_rate": 0.0011904761904761904
+    }
+  ],
+  "HONEST_NOTE": "A recall BIAS (partial cue -> stored partners fire more), NOT full attractor completion (needs the gap#5 trilemma config: bistable dendrites + selective inhib + structural sep). Reuses the storing setup + the two committed edits; NO new sim/ edit."
+}

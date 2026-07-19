@@ -1,0 +1,2 @@
+=== NP learns W_in on the VALIDATED order-gated instrument (seeds [42, 43, 44], chance 0.250, k=8) ===
+dist=0: NP=0.396 oracle=0.404 frozen=0.307 shuffle=0.373 wrong_sign=0.453 -> no (beats_frozen=True shuffle_collapses=False wrong_anti=False)

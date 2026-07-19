@@ -1,0 +1,106 @@
+{
+  "probe": "emerge_reservoir_lm_rung2_distal_referent",
+  "verdict": "GO -- a single-slot DISTAL-REFERENT TOPIC BUFFER restores a discourse dependency BEYOND the on-bridge spiking reservoir's fading-memory horizon. At D*=32 filler clauses (beyond the horizon: reservoir-only dep_acc 0.075 ~ chance 0.167), conditioning the Rung-1 reservoir next-token read-out on the CONCATENATED [reservoir | topic-buffer] feature lifts the referent-dependent token to 1.000 (+0.925 over reservoir-only, MARGIN 0.15) -- the buffer is LOAD-BEARING, not a decoration. Every control COLLAPSES: buffer SLOT-SCRAMBLE (latch a random subject, same slot) 0.150 ~ reservoir-only (the held CONTENT is load-bearing); REFERENT-SHUFFLE (deranged topic->den map in training) 0.000 ~ chance (the learned mapping is broken); BAG-of-prefix 0.200 <= chance (the topic is not readable from unordered counts -- the same-category distractors mask it); BIGRAM 0.200 <= chance (not readable from the previous token). The reservoir is genuinely active (0.0209 spikes/neuron/step). 1 seeds. ==> the ESN/LSM reservoir (fading memory) + a NON-fading single-slot WM latch (Grosz-Sidner attentional focus / a prefrontal topic register) together carry a distal discourse referent a reservoir alone cannot. HONEST SCOPE: a controlled discourse-referent grammar (closed template domain), NOT open prose (R4); the buffer is a functional single-slot latch (the spiking theta-gamma / NMDA-WM realization is the follow-on rung). Reuse-by-import; NO sim/ edit; NO edit to any existing runner.",
+  "go": true,
+  "state_feature": "both",
+  "mechanism": "condition the Rung-1 on-bridge spiking reservoir (EMERGE-82 OnBridgeLSM: a recurrent Izhikevich BrainRegion on a real SimulationBridge; the per-token running_cumulative spike-rate read) + its one-step next-token delta read-out on the CONCATENATED [reservoir-state | topic-buffer one-hot] feature. The TopicBuffer is a single gated WM slot that latches the discourse topic when the DOC boundary marker is seen (the next token) and holds it unfading. Standardize the reservoir sub-block only; leave the buffer one-hot as-is. Reuse-by-import; NO sim/ edit; NO edit to any existing runner.",
+  "task": "a controlled discourse-referent grammar: DOC the <TOPIC> can <v> . ; D same-category filler clauses ; it goes to the <DEN=HOME[TOPIC]> . -- score ONLY the dependent DEN token, which is fixed only by the distally-introduced topic (never mentioned in intro/fillers). At D* BEYOND the reservoir's fading-memory horizon: does the topic buffer restore the dependency (buffer > reservoir-only by MARGIN), while slot-scramble ~ reservoir-only, referent-shuffle ~ chance, bag <= chance, bigram <= chance; reservoir genuinely active; 6-seed",
+  "crux": "the HORIZON SWEEP must find a D* where reservoir-only dep_acc falls to ~chance (the reservoir forgets the distal topic under same-category interference); the GO experiment runs AT/beyond D*. If reservoir-only never falls to chance, the buffer is not load-bearing at this scale (an honest negative).",
+  "thresholds": {
+    "margin": 0.15,
+    "collapse_eps": 0.08,
+    "chance_tol": 0.12,
+    "active_min": 0.0001
+  },
+  "params": {
+    "n_pool": 300,
+    "vocab": 24,
+    "epochs": 10,
+    "lr": 0.02,
+    "weight_decay": 0.001,
+    "label_smoothing": 0.05,
+    "n_docs": 400,
+    "filler_distance": 32,
+    "n_distractors": 3,
+    "max_train": 120,
+    "max_eval": 40,
+    "state_feature": "both",
+    "horizon_sweep": false,
+    "sweep_distances": [
+      2,
+      8,
+      16,
+      32
+    ]
+  },
+  "seeds": [
+    44
+  ],
+  "elapsed_seconds": 161.0,
+  "reservoir_fell_to_chance": true,
+  "aggregate": {
+    "dstar": 32,
+    "chance": 0.16666666666666666,
+    "reservoir_only_dep_acc": 0.075,
+    "buffer_dep_acc": 1.0,
+    "slot_scramble_dep_acc": 0.15,
+    "referent_shuffle_dep_acc": 0.0,
+    "bag_dep_acc": 0.2,
+    "bigram_dep_acc": 0.2,
+    "mean_rate": 0.020905556435770835,
+    "checks": {
+      "buffer_helps": true,
+      "reservoir_near_chance": true,
+      "scramble_collapses": true,
+      "referent_collapses": true,
+      "bag_le_chance": true,
+      "bigram_le_chance": true,
+      "active": true
+    }
+  },
+  "per_seed": [
+    {
+      "seed": 44,
+      "K_subjects": 6,
+      "vocab_size": 25,
+      "chance": 0.16666666666666666,
+      "n_pool": 300,
+      "state_feature": "both",
+      "dstar": 32,
+      "reservoir_fell_to_chance": true,
+      "reservoir_min_dep_acc": 0.075,
+      "dstar_row": {
+        "D": 32,
+        "doc_len": 139,
+        "n_train": 120,
+        "n_eval": 40,
+        "mean_rate": 0.020905556435770835,
+        "chance": 0.16666666666666666,
+        "reservoir_only_dep_acc": 0.075,
+        "reservoir_only_dep_ce": 3.010898052565296,
+        "buffer_dep_acc": 1.0,
+        "buffer_dep_ce": 0.23102101065451244,
+        "slot_scramble_dep_acc": 0.15,
+        "slot_scramble_dep_ce": 4.5893523028664776,
+        "referent_shuffle_dep_acc": 0.0,
+        "referent_shuffle_dep_ce": 3.792087148963423,
+        "bag_dep_acc": 0.2,
+        "bag_dep_ce": 2.098574612700532,
+        "bigram_dep_acc": 0.2,
+        "bigram_dep_ce": 1.8832306601279882
+      },
+      "checks": {
+        "buffer_helps": true,
+        "reservoir_near_chance": true,
+        "scramble_collapses": true,
+        "referent_collapses": true,
+        "bag_le_chance": true,
+        "bigram_le_chance": true,
+        "active": true
+      },
+      "seed_go": true,
+      "horizon": null
+    }
+  ],
+  "HONEST_NOTE": "RUNG 2 of the emergent-generation ladder: a single-slot distal-referent working-memory buffer conditions the Rung-1 on-bridge spiking reservoir LM so a topic introduced beyond the reservoir's fading-memory horizon still determines a later token. GO = at D* beyond the horizon (reservoir-only ~ chance), the buffer restores the dependency AND every control collapses (slot-scramble ~ reservoir-only, referent-shuffle ~ chance, bag/bigram <= chance). This de-risk is designed to REFUTE the buffer if the reservoir already carries the referent -- an honest negative (reservoir never falls to chance) is the deliverable, with named levers (bigger D, more distractors, leakier/smaller reservoir, per_window feature). Controlled discourse-referent grammar (closed domain), NOT open prose (R4). The buffer is a functional single-slot latch (spiking theta-gamma/NMDA-WM = the follow-on rung). Reuse-by-import; NO sim/ edit; NO edit to any existing runner."
+}

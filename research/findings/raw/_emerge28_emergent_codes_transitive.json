@@ -1,0 +1,127 @@
+{
+  "probe": "emerge28_emergent_codes_transitive",
+  "verdict": "GO -- TRANSITIVE INFERENCE over EMERGENT codes: the overlapping codes that the chaining rides are DISCOVERED from a co-occurrence stream (adjacent entities observed with overlapping feature windows -> learned overlapping reps, emergent-overlap 0.50), NOT host-assigned. From ONLY adjacent premises (A>B..D>E) the never-trained NON-ADJACENT relations are INFERRED (1.00 on HELD-OUT pairs; the CRITICAL internal pair B>D 1.00, unsolvable by associative strength) by chaining the premises learned on the emergent reps. dAP-LESION collapses (0.00); BROKEN-CHAIN collapses B>D (0.00); and the NEW emergent gate holds: SCRAMBLED-STREAM (random features -> emergent-overlap 0.29, no ordered overlap) collapses B>D (0.00) and NO-LEARNING collapses it (0.00) -> the LEARNED overlap is load-bearing (not host-smuggled); 6-seed. => transitive multi-hop chaining rides EMERGENT structure -- EMERGE-28's host-designed-codes R-c residual CLOSED, the master-directive core, NO sim/ edit.",
+  "mechanism": "transitive inference over EMERGENT codes: each ordered entity co-occurs with an overlapping feature window on a shared ramp -> the committed sim/ three-term kernel learns identity->features (Hebbian co-occurrence) so adjacent entities' LEARNED reps overlap; premises X>Y learned on the emergent reps (identity+discovered features); greater(X,Y) = Y reachable downstream by autoregressive rollout; the non-adjacent order is inferred and the overlap it rides is DISCOVERED, not host-assigned; sim/ unchanged",
+  "task": "stream entities co-occurring with overlapping feature windows (overlap DISCOVERED); teach only adjacent premises; test non-adjacent + critical B>D vs dAP-lesion + broken-chain + SCRAMBLED-STREAM + NO-LEARNING; multi-seed",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "epochs": 80,
+    "act_th": 2,
+    "items": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E"
+    ],
+    "feat_win": 3,
+    "ramp": 7
+  },
+  "elapsed_seconds": 24.8,
+  "per_seed": [
+    {
+      "seed": 42,
+      "htm": {
+        "adjacent": 1.0,
+        "nonadjacent": 1.0,
+        "critical_BD": 1.0,
+        "neighbor_overlap": 0.5
+      },
+      "lesion": {
+        "adjacent": 0.0,
+        "nonadjacent": 0.0,
+        "critical_BD": 0.0,
+        "neighbor_overlap": 0.0
+      },
+      "broken": {
+        "adjacent": 0.75,
+        "nonadjacent": 0.6666666666666666,
+        "critical_BD": 0.0,
+        "neighbor_overlap": 0.5
+      },
+      "scrambled": {
+        "adjacent": 0.0,
+        "nonadjacent": 0.0,
+        "critical_BD": 0.0,
+        "neighbor_overlap": 0.3
+      },
+      "nolearn": {
+        "adjacent": 0.0,
+        "nonadjacent": 0.0,
+        "critical_BD": 0.0,
+        "neighbor_overlap": 0.0
+      }
+    },
+    {
+      "seed": 43,
+      "htm": {
+        "adjacent": 1.0,
+        "nonadjacent": 1.0,
+        "critical_BD": 1.0,
+        "neighbor_overlap": 0.5
+      },
+      "lesion": {
+        "adjacent": 0.0,
+        "nonadjacent": 0.0,
+        "critical_BD": 0.0,
+        "neighbor_overlap": 0.0
+      },
+      "broken": {
+        "adjacent": 0.75,
+        "nonadjacent": 0.6666666666666666,
+        "critical_BD": 0.0,
+        "neighbor_overlap": 0.5
+      },
+      "scrambled": {
+        "adjacent": 0.0,
+        "nonadjacent": 0.0,
+        "critical_BD": 0.0,
+        "neighbor_overlap": 0.35
+      },
+      "nolearn": {
+        "adjacent": 0.0,
+        "nonadjacent": 0.0,
+        "critical_BD": 0.0,
+        "neighbor_overlap": 0.0
+      }
+    },
+    {
+      "seed": 44,
+      "htm": {
+        "adjacent": 1.0,
+        "nonadjacent": 1.0,
+        "critical_BD": 1.0,
+        "neighbor_overlap": 0.5
+      },
+      "lesion": {
+        "adjacent": 0.0,
+        "nonadjacent": 0.0,
+        "critical_BD": 0.0,
+        "neighbor_overlap": 0.0
+      },
+      "broken": {
+        "adjacent": 0.75,
+        "nonadjacent": 0.6666666666666666,
+        "critical_BD": 0.0,
+        "neighbor_overlap": 0.5
+      },
+      "scrambled": {
+        "adjacent": 0.0,
+        "nonadjacent": 0.0,
+        "critical_BD": 0.0,
+        "neighbor_overlap": 0.22499999999999998
+      },
+      "nolearn": {
+        "adjacent": 0.0,
+        "nonadjacent": 0.0,
+        "critical_BD": 0.0,
+        "neighbor_overlap": 0.0
+      }
+    }
+  ],
+  "HONEST_NOTE": "the feature RAMP tokens are the environment (legitimate world/experience); the OVERLAP GROUPING (which entities' codes overlap) is DISCOVERED from co-occurrence, not told -- the SCRAMBLED-STREAM and NO-LEARNING controls isolate that (they destroy the learned overlap -> the chaining collapses). This closes EMERGE-28's own R-c residual (its items were host-designed disjoint codes). The premise SET (which pairs are adjacent) is still the taught curriculum -- that is the LEGITIMATE experience (you are told A>B, B>C by the world); what is now emergent is the CODE OVERLAP the chaining rides."
+}

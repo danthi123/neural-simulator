@@ -1,0 +1,84 @@
+{
+  "probe": "gap4_btsp_plateau_gated",
+  "GO": true,
+  "verdict": "GO -- BTSP plateau-gated ONE-SHOT credit works AND the BISTABLE plateau is load-bearing for the BEHAVIORAL-TIMESCALE (seconds) window. A pre-input ~0.9 s AFTER the plateau potentiates with the HELD plateau (far 40.628 vs near 43.566) but NOT with the TRANSIENT plateau (far 0.000) -- the seconds-long latch (== the gap#5 keystone terms) extends the credit window from ms to seconds. Gate-lesion no-plateau ~0 (0.0000); never-active ~0 (0.0000) = the moat. One-shot (single plateau). Local, no weight transport, no global loss. 6-seed. => gap#4's local plateau-gated credit rule WORKS in BTSP's robust regime; the bistable dendritic plateau IS the enabler.",
+  "mechanism": "BTSP one-shot plateau-gated credit (Bittner-Magee 2017 / Milstein-Magee 2021): dw = eta * integral E_pre(t)*IS_plateau(t) dt * (w_max-w); IS = the REAL bistable apical plateau (gap#5 keystone terms). Held plateau => seconds-long behavioral-timescale window; transient => ms.",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "elapsed_seconds": 1.4,
+  "per_seed": [
+    {
+      "seed": 42,
+      "held_near": 43.370703705603965,
+      "held_far": 40.66842943395506,
+      "transient_near": 11.611833277257338,
+      "transient_far": 0.0,
+      "held_noplateau": 0.0,
+      "held_neveractive": 0.0,
+      "IS_held_hold": -4.759026665062413,
+      "IS_tran_hold": -77.29694704600344
+    },
+    {
+      "seed": 43,
+      "held_near": 43.60944903542083,
+      "held_far": 40.62492363768717,
+      "transient_near": 11.37966480575583,
+      "transient_far": 0.0,
+      "held_noplateau": 0.0,
+      "held_neveractive": 0.0,
+      "IS_held_hold": -4.759026665062413,
+      "IS_tran_hold": -77.29694704600344
+    },
+    {
+      "seed": 44,
+      "held_near": 43.65716578448101,
+      "held_far": 40.60292482868053,
+      "transient_near": 11.190330142495604,
+      "transient_far": 0.0,
+      "held_noplateau": 0.0,
+      "held_neveractive": 0.0,
+      "IS_held_hold": -4.759026665062413,
+      "IS_tran_hold": -77.29694704600344
+    },
+    {
+      "seed": 100,
+      "held_near": 43.66253122555173,
+      "held_far": 40.59555515635932,
+      "transient_near": 11.116432954256135,
+      "transient_far": 0.0,
+      "held_noplateau": 0.0,
+      "held_neveractive": 0.0,
+      "IS_held_hold": -4.759026665062413,
+      "IS_tran_hold": -77.29694704600344
+    },
+    {
+      "seed": 101,
+      "held_near": 43.51385872325652,
+      "held_far": 40.64675809649741,
+      "transient_near": 11.520065110576908,
+      "transient_far": 0.0,
+      "held_noplateau": 0.0,
+      "held_neveractive": 0.0,
+      "IS_held_hold": -4.759026665062413,
+      "IS_tran_hold": -77.29694704600344
+    },
+    {
+      "seed": 102,
+      "held_near": 43.582891437511485,
+      "held_far": 40.6322199908841,
+      "transient_near": 11.431888907352707,
+      "transient_far": 0.0,
+      "held_noplateau": 0.0,
+      "held_neveractive": 0.0,
+      "IS_held_hold": -4.759026665062413,
+      "IS_tran_hold": -77.29694704600344
+    }
+  ],
+  "HONEST_NOTE": "Targets BTSP's ROBUST native regime (shallow, one-shot) -- the 2025 BTSP-credit preprint (biorxiv 2025.06.12.659336) finds generalized BTSP ALSO gets harder with DEPTH, so this does NOT claim deep multi-layer credit; it claims a working LOCAL plateau-gated rule on the bistable substrate (the EMERGENCE-BAR-aligned gap#4 target)."
+}

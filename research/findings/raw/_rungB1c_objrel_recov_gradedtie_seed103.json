@@ -1,0 +1,76 @@
+{
+  "rows": [
+    {
+      "seed": 103,
+      "read": "gradedtie",
+      "in_scale": 320.0,
+      "rec_scale": 1.0,
+      "t_step": 12,
+      "read_t": 25,
+      "read_in_scale": 0.5,
+      "read_thresh": 1.0,
+      "ridge_lambda": 0.1,
+      "feat_dim": 301,
+      "spiking_objrel": {
+        "objrel_acc": 1.0,
+        "objrel_slot0_THEME": 1.0,
+        "objrel_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ]
+      },
+      "spiking_canonical": {
+        "canonical_acc": 1.0,
+        "canonical_slot0_AGENT": 1.0,
+        "canonical_per_slot": [
+          "12/12",
+          "12/12",
+          "12/12"
+        ]
+      },
+      "objrel_slot0_THEME": 1.0,
+      "objrel_acc": 1.0,
+      "canonical_acc": 1.0,
+      "elapsed_s": 38.4,
+      "objrel_present": true,
+      "canonical_ok": true
+    }
+  ],
+  "agg": {
+    "read": "gradedtie",
+    "reservoir_config": {
+      "in_scale": 320.0,
+      "rec_scale": 1.0,
+      "t_step": 12
+    },
+    "readout_op": {
+      "read_t": 25,
+      "read_in_scale": 0.5,
+      "read_thresh": 1.0
+    },
+    "baseline_reservoir": {
+      "in_scale": 320.0,
+      "rec_scale": 1.0,
+      "t_step": 12
+    },
+    "baseline_readout_op": {
+      "read_t": 25,
+      "read_in_scale": 0.5,
+      "read_thresh": 1.0
+    },
+    "n_seeds": 1,
+    "n_objrel_present": 1,
+    "objrel_present_seeds": [
+      103
+    ],
+    "objrel_failing_seeds": [],
+    "canonical_all_ok": true,
+    "mean_objrel_slot0_THEME": 1.0,
+    "mean_canonical_acc": 1.0,
+    "ridge_lambda": 0.1,
+    "n_train": 60,
+    "n_test": 12,
+    "total_elapsed_s": 38.6
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "seeds": [
+    42,
+    103,
+    104
+  ],
+  "part1_graded_is_ridge": [
+    {
+      "seed": 42,
+      "n_objrel_slot0": 12,
+      "max_abs_diff_meancentred": 0.10358228,
+      "max_rel_diff_meancentred": 0.5,
+      "graded_argmax_equals_ridge_argmax": "12/12",
+      "graded_IS_ridge": false
+    },
+    {
+      "seed": 103,
+      "n_objrel_slot0": 12,
+      "max_abs_diff_meancentred": 0.10471831,
+      "max_rel_diff_meancentred": 0.49999998,
+      "graded_argmax_equals_ridge_argmax": "12/12",
+      "graded_IS_ridge": false
+    },
+    {
+      "seed": 104,
+      "n_objrel_slot0": 12,
+      "max_abs_diff_meancentred": 0.10804786,
+      "max_rel_diff_meancentred": 0.49999997,
+      "graded_argmax_equals_ridge_argmax": "12/12",
+      "graded_IS_ridge": false
+    }
+  ]
+}

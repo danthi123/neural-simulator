@@ -1,0 +1,28 @@
+{
+  "runner": "_emerge_reservoir_lm_realcorpus_derisk",
+  "corpus": "data/corpus/tinystories.txt",
+  "seeds": [
+    42
+  ],
+  "vocab": 200,
+  "per_seed": {
+    "42": {
+      "V": 200,
+      "n_train": 5000,
+      "n_eval": 400,
+      "reservoir_ce": 3.304,
+      "reservoir_acc": 0.343,
+      "bigram_ce": 3.049,
+      "bigram_acc": 0.372,
+      "trigram_ce": 3.511,
+      "unigram_chance_ce": 5.298,
+      "permuted_corpus_ce": 4.189,
+      "beats_bigram": false,
+      "permuted_collapses": true,
+      "seed_go": false
+    }
+  },
+  "n_go": 0,
+  "n_seeds": 1,
+  "elapsed_s": 11641.5
+}

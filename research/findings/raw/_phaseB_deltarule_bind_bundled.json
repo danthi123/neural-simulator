@@ -1,0 +1,34 @@
+{
+  "rows": [
+    {
+      "seed": 42,
+      "delta": 1.0,
+      "hebb": 1.0,
+      "permuted_role": 0.0,
+      "decorrelated": 1.0
+    },
+    {
+      "seed": 43,
+      "delta": 1.0,
+      "hebb": 1.0,
+      "permuted_role": 0.0,
+      "decorrelated": 1.0
+    },
+    {
+      "seed": 44,
+      "delta": 1.0,
+      "hebb": 1.0,
+      "permuted_role": 0.0,
+      "decorrelated": 1.0
+    }
+  ],
+  "mean": {
+    "delta": 1.0,
+    "hebb": 1.0,
+    "permuted_role": 0.0,
+    "decorrelated": 1.0
+  },
+  "chance": 0.015625,
+  "go": true,
+  "filler_mean_cos": 0.7596539037582429
+}

@@ -1,0 +1,18 @@
+{
+  "verdict": "NEGATIVE",
+  "w_exc": 2.0,
+  "per_seed": [
+    {
+      "seed": 42,
+      "pos": "~bird",
+      "coh": 0.094,
+      "exc_member": "bunny",
+      "cancel": "no",
+      "own": "yes",
+      "n_other_held": 14,
+      "n_collateral": 1,
+      "permuted_still_inherits": "yes",
+      "moat_ok": true
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+[
+ {
+  "seed": 42,
+  "n": 30,
+  "n_pop": 0,
+  "NOWafterPOP_popgate": 0.0,
+  "NOWafterPOP_pushonly": 0.0,
+  "NOWafterPOP_recency": 0.0,
+  "BEFORE_popgate": 0.8,
+  "BEFORE_pushlesion": 0.8,
+  "BEFORE_gatedcopy": 0.767,
+  "BEFORE_single": 0.0,
+  "BEFORE_recency": 0.267,
+  "BEFORE_naive": 0.033,
+  "NOW_popgate": 0.9,
+  "NOW_pushonly": 0.9,
+  "r_on_deployed_pops": 0.896,
+  "r_on_deployed_bounds": 0.025
+ }
+]

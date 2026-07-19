@@ -1,0 +1,10 @@
+[
+ {
+  "seed": 101,
+  "K": 6,
+  "rate_deeper_track": 0.917,
+  "rate_step_delta": 1.0,
+  "SPK_deeper_track": 0.7,
+  "SPK_host_agree": 0.943
+ }
+]

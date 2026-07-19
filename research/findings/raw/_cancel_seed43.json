@@ -1,0 +1,18 @@
+{
+  "verdict": "GO",
+  "w_exc": 3.0,
+  "per_seed": [
+    {
+      "seed": 43,
+      "pos": "~spot",
+      "coh": 0.096,
+      "exc_member": "when",
+      "cancel": "no",
+      "own": "yes",
+      "n_other_held": 8,
+      "n_collateral": 0,
+      "permuted_still_inherits": "yes",
+      "moat_ok": true
+    }
+  ]
+}

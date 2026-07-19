@@ -1,0 +1,17 @@
+{
+  "verdict": "GO",
+  "K": 1024,
+  "per_seed": [
+    {
+      "seed": 44,
+      "pos": 2,
+      "passes": 7,
+      "inherit_before": true,
+      "cancel": true,
+      "not_class": true,
+      "n_others": 23,
+      "n_collateral": 0,
+      "lesion_override": false
+    }
+  ]
+}

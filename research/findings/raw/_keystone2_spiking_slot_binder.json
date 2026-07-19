@@ -1,0 +1,23 @@
+[
+  {
+    "P": 2,
+    "separated": 1.0,
+    "shared": 0.5,
+    "permuted": 0.0,
+    "no_recur": 1.0
+  },
+  {
+    "P": 3,
+    "separated": 1.0,
+    "shared": 0.3333333333333333,
+    "permuted": 0.0,
+    "no_recur": 1.0
+  },
+  {
+    "P": 4,
+    "separated": 0.7916666666666666,
+    "shared": 0.25,
+    "permuted": 0.0,
+    "no_recur": 1.0
+  }
+]

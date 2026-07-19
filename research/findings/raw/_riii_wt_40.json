@@ -1,0 +1,14 @@
+[
+ {
+  "seed": 42,
+  "ca3_density": 0.3,
+  "ca3_weight": 40.0,
+  "trained_heldout": 0.0,
+  "notrain_heldout": 0.0,
+  "heldout_fullcue": 2.6875,
+  "recurrence_gain": 0.0,
+  "trained_own_cos": 0.49336190704048327,
+  "trained_spec": 0.451841960688142,
+  "n_stored": 15
+ }
+]

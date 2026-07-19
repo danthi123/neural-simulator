@@ -1,0 +1,211 @@
+{
+  "probe": "schema_script_default_filling",
+  "verdict": "NEGATIVE / BOUNDARY (build-informative) -- schema-fill 0.250 < 0.90; didn't beat the n-gram floor (0.250 vs 0.250); dAP-lesion didn't collapse (0.250 vs 0.000). positive-control 0.250, omitted-middle 0.25. If the full-partial positive control is high but the rollout-from-cue schema-fill is not, the HTM next-state predictor MEMORIZES exact continuations but does not perform the SR-style multi-hop cue->typical fill unaided -> schema default-filling needs more than the one-step predictor (a true successor-representation / multi-hop reachability read). An honest map of the residual.",
+  "mechanism": "the emergent on-bridge HTM Temporal-Memory next-state predictor (EMERGE-14, self-organizing high-order context + on-substrate three-term learning) rolled out autoregressively over a learned event-script corpus to fill the unstated-but-typical continuation from the situation cue; graded apical read gives an abstain (no-confab moat) on never-seen scripts",
+  "task": "event-script corpus (marker + shared middle + script-typical continuation); rollout-from-cue schema fill vs bigram/trigram/4gram Markov floor + permuted-script + dAP-lesion + held-out-disjoint + moat abstain, 6-seed",
+  "citations": "Schank & Abelson 1977 (scripts); Stachenfeld-Botvinick-Gershman 2017 (successor representation -> inference); gate 2026-07-08 \u00a73(b)/\u00a74 row (b)",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "config": {
+    "n_scripts": 4,
+    "epochs": 80
+  },
+  "seed_errors": {},
+  "elapsed_seconds": 6082.3,
+  "aggregate": {
+    "schema_fill": 0.25,
+    "positive_control": 0.25,
+    "omitted_middle": 0.25,
+    "moat_abstain": 1.0,
+    "permuted": 0.08333333333333333,
+    "lesion": 0.0,
+    "ngram_floor": 0.25,
+    "chance": 0.25
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "schema_fill": 0.25,
+      "positive_control": 0.25,
+      "omitted_middle": 0.25,
+      "moat_abstain": 1.0,
+      "permuted": 0.0,
+      "lesion": 0.0,
+      "bigram": 0.25,
+      "trigram": 0.25,
+      "fourgram": 0.25,
+      "ngram_floor": 0.25,
+      "chance": 0.25,
+      "example_rollouts": [
+        {
+          "script": "@restaurant",
+          "rollout": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "want_typ": 7,
+          "hit": true
+        },
+        {
+          "script": "@shop",
+          "rollout": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "want_typ": 8,
+          "hit": false
+        },
+        {
+          "script": "@clinic",
+          "rollout": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "want_typ": 9,
+          "hit": false
+        },
+        {
+          "script": "@bank",
+          "rollout": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "want_typ": 10,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "seed": 43,
+      "schema_fill": 0.25,
+      "positive_control": 0.25,
+      "omitted_middle": 0.25,
+      "moat_abstain": 1.0,
+      "permuted": 0.25,
+      "lesion": 0.0,
+      "bigram": 0.25,
+      "trigram": 0.25,
+      "fourgram": 0.25,
+      "ngram_floor": 0.25,
+      "chance": 0.25,
+      "example_rollouts": [
+        {
+          "script": "@restaurant",
+          "rollout": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "want_typ": 7,
+          "hit": true
+        },
+        {
+          "script": "@shop",
+          "rollout": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "want_typ": 8,
+          "hit": false
+        },
+        {
+          "script": "@clinic",
+          "rollout": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "want_typ": 9,
+          "hit": false
+        },
+        {
+          "script": "@bank",
+          "rollout": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "want_typ": 10,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "schema_fill": 0.25,
+      "positive_control": 0.25,
+      "omitted_middle": 0.25,
+      "moat_abstain": 1.0,
+      "permuted": 0.0,
+      "lesion": 0.0,
+      "bigram": 0.25,
+      "trigram": 0.25,
+      "fourgram": 0.25,
+      "ngram_floor": 0.25,
+      "chance": 0.25,
+      "example_rollouts": [
+        {
+          "script": "@restaurant",
+          "rollout": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "want_typ": 7,
+          "hit": true
+        },
+        {
+          "script": "@shop",
+          "rollout": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "want_typ": 8,
+          "hit": false
+        },
+        {
+          "script": "@clinic",
+          "rollout": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "want_typ": 9,
+          "hit": false
+        },
+        {
+          "script": "@bank",
+          "rollout": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "want_typ": 10,
+          "hit": false
+        }
+      ]
+    }
+  ],
+  "HONEST_NOTE": "reuse-by-import of the rung-4 EMERGE-14 on-bridge learner; NO sim/ edit. The corpus is a small high-order script structure isolating the cue->typical dependency the n-gram cannot capture. The OMITTED-MIDDLE probe is reported (not gated): it maps whether the next-state predictor is robust to a skipped event (a true SR) or only carries the cue through an unbroken chain."
+}

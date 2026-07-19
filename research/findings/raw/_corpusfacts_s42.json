@@ -1,0 +1,22 @@
+{
+  "verdict": "GO",
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_facts": 40,
+      "n_distinct_words": 25,
+      "what_acc": 1.0,
+      "who_acc": 1.0,
+      "moat_abstain": 1.0,
+      "sample_facts": [
+        "bird saw cat",
+        "dog saw cat",
+        "cat saw dog",
+        "cat saw bird",
+        "dog saw ball",
+        "girl saw bird"
+      ],
+      "permuted_overlap": 0.0
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+[
+ {
+  "seed": 44,
+  "n_shifted": 10,
+  "D3_focus_res": 0.7,
+  "SALIENCE_res": 0.0,
+  "bias_follows": 1.0,
+  "moat_abstain": 0.4
+ }
+]

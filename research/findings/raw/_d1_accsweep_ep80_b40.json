@@ -1,0 +1,18 @@
+{
+ "task": "emerge1",
+ "n_bits": 10,
+ "soma_g": 80.0,
+ "bias": 40.0,
+ "epochs": 80,
+ "chance": 0.549,
+ "oracle": 0.958,
+ "floor": 0.543,
+ "task_valid": true,
+ "boundary_heldout": 0.504,
+ "boundary_B_rises": false,
+ "surpass_heldout": 0.476,
+ "surpass_B_rises": true,
+ "wrong_sign_heldout": 0.443,
+ "apical_lesion_heldout": 0.496,
+ "GO": false
+}

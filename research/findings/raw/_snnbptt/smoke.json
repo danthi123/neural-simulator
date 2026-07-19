@@ -1,0 +1,36 @@
+{
+  "probe": "snn_bptt_forward_vs_learning_isolation",
+  "seed": 42,
+  "config": {
+    "hidden": 32,
+    "n_hidden_layers": 2,
+    "T": 20,
+    "epochs": 8,
+    "lr": 0.05,
+    "in_gain": 1.0,
+    "train_subsample": 120,
+    "task": {
+      "n_super": 12,
+      "n_members": 8,
+      "held_per_super": 3,
+      "n_prop": 2,
+      "member_id_dim": 3,
+      "n_obs": 16,
+      "noise": 0.02,
+      "feature_seed": 0
+    }
+  },
+  "elapsed_seconds": 4.4,
+  "result": {
+    "seed": 42,
+    "chance": 0.3333333333333333,
+    "stage0_depth_separating": true,
+    "oracle_inherit": 1.0,
+    "snn_train_acc": 0.20833333333333334,
+    "snn_inherit_heldout": 0.2222222222222222,
+    "floor_inherit_heldout": 0.2962962962962963,
+    "permuted_inherit": 0.25925925925925924,
+    "trains_at_all": false
+  },
+  "verdict": "surrogate-BPTT SNN fails the depth-2 task (train 0.208, inherit 0.222; chance 0.333, floor 0.296, permuted 0.259, oracle 1.000). => even the best-possible on-spike credit (surrogate-BPTT) fails -> a representational/scale wall of the spiking forward at this net size (lever: genuine scale)."
+}

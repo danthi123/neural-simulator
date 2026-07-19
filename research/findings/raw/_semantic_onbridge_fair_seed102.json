@@ -1,0 +1,164 @@
+{
+  "probe": "semantic_inheritance_onbridge_spiking",
+  "seeds": [
+    102
+  ],
+  "config": {
+    "hidden": 40,
+    "epochs": 40,
+    "batch": 120,
+    "lr": 0.3,
+    "settle_steps": 30,
+    "credit_steps": 18,
+    "n_hidden_layers": 2,
+    "train_subsample": 160,
+    "task": {
+      "n_super": 12,
+      "n_members": 8,
+      "held_per_super": 3,
+      "n_prop": 2,
+      "member_id_dim": 3,
+      "n_obs": 16,
+      "noise": 0.02,
+      "feature_seed": 0
+    },
+    "backend": "numpy"
+  },
+  "elapsed_seconds": 724.3,
+  "per_seed": [
+    {
+      "seed": 102,
+      "meta": {
+        "n_super": 12,
+        "n_members": 8,
+        "held_per_super": 3,
+        "n_prop": 2,
+        "k_classes": 5,
+        "member_id_dim": 3,
+        "n_obs": 16,
+        "noise": 0.02,
+        "feature_seed": 0,
+        "n_features": 7,
+        "n_train": 720,
+        "n_heldout": 276,
+        "n_inherit_heldout": 27,
+        "n_memctrl_heldout": 9,
+        "n_supers_untaught": 3,
+        "n_train_smoke": 160
+      },
+      "chance": 0.3333333333333333,
+      "stage0_depth_genuineness": {
+        "chance": 0.3333333333333333,
+        "n_features": 7,
+        "linear_inherit_heldout": 0.18518518518518517,
+        "linear_train": 0.4486111111111111,
+        "l1_inherit_heldout": 0.37037037037037035,
+        "l1_train": 1.0,
+        "l2_inherit_heldout": 1.0,
+        "l2_train": 1.0,
+        "l3_inherit_heldout": 0.7407407407407407,
+        "l3_train": 1.0,
+        "deep_best_inherit_heldout": 1.0,
+        "depth_gap": 0.6296296296296297,
+        "depth_separating": true
+      },
+      "arms": {
+        "plain_fa": {
+          "rule": "plain_fa",
+          "mode": "bdsp",
+          "inherit_heldout": 0.14814814814814814,
+          "memctrl_heldout": 0.5555555555555556,
+          "train": 0.1625,
+          "ff_weight_norm_before": 1380.363037109375,
+          "ff_weight_norm_after": 7322.04296875,
+          "ff_weight_moved": 5941.679931640625,
+          "no_weight_transport": true
+        },
+        "burstprop": {
+          "rule": "burstprop",
+          "mode": "bdsp",
+          "inherit_heldout": 0.1111111111111111,
+          "memctrl_heldout": 0.5555555555555556,
+          "train": 0.1375,
+          "ff_weight_norm_before": 1380.363037109375,
+          "ff_weight_norm_after": 8565.66015625,
+          "ff_weight_moved": 7185.297119140625,
+          "no_weight_transport": true
+        },
+        "microcircuit": {
+          "rule": "microcircuit",
+          "mode": "bdsp",
+          "inherit_heldout": 0.2222222222222222,
+          "memctrl_heldout": 0.0,
+          "train": 0.31875,
+          "ff_weight_norm_before": 1380.363037109375,
+          "ff_weight_norm_after": 10195.392578125,
+          "ff_weight_moved": 8815.029541015625,
+          "no_weight_transport": true
+        }
+      },
+      "single_layer": {
+        "rule": "plain_fa",
+        "mode": "bdsp",
+        "inherit_heldout": 0.2222222222222222,
+        "memctrl_heldout": 0.2222222222222222,
+        "train": 0.2875,
+        "ff_weight_norm_before": 382.14111328125,
+        "ff_weight_norm_after": 2149.16943359375,
+        "ff_weight_moved": 1767.0283203125,
+        "no_weight_transport": true
+      },
+      "permuted": {
+        "rule": "microcircuit",
+        "mode": "bdsp",
+        "inherit_heldout": 0.2222222222222222,
+        "memctrl_heldout": 0.0,
+        "train": 0.25,
+        "ff_weight_norm_before": 1380.363037109375,
+        "ff_weight_norm_after": 7876.40625,
+        "ff_weight_moved": 6496.043212890625,
+        "no_weight_transport": true
+      },
+      "apical_lesion": {
+        "rule": "microcircuit",
+        "mode": "apical_lesion",
+        "inherit_heldout": 0.1111111111111111,
+        "memctrl_heldout": 0.1111111111111111,
+        "train": 0.23125,
+        "ff_weight_norm_before": 1380.363037109375,
+        "ff_weight_norm_after": 9036.759765625,
+        "ff_weight_moved": 7656.396728515625,
+        "no_weight_transport": true
+      },
+      "oracle": {
+        "inherit_heldout": 1.0,
+        "memctrl_heldout": 0.0,
+        "train": 1.0
+      }
+    }
+  ],
+  "aggregate": {
+    "chance": 0.3333333333333333,
+    "plain_fa_inherit": 0.14814814814814814,
+    "burstprop_inherit": 0.1111111111111111,
+    "microcircuit_inherit": 0.2222222222222222,
+    "single_layer_inherit": 0.2222222222222222,
+    "oracle_inherit": 1.0,
+    "oracle_memctrl": 0.0,
+    "permuted_inherit": 0.2222222222222222,
+    "apical_lesion_inherit": 0.1111111111111111,
+    "ff_weight_moved_fa": 5941.679931640625,
+    "stage0_depth_separating": true,
+    "trains_at_all": false,
+    "bio_beats_fa": true,
+    "mc_beats_fa": true,
+    "bp_beats_fa": false,
+    "permuted_chance": true,
+    "lesion_collapses": true,
+    "memctrl_holds": true,
+    "ff_weight_moves": true,
+    "oracle_ok": true
+  },
+  "SIGNAL": false,
+  "verdict": "ON-BRIDGE SMOKE: the depth-2 SPIKING net does NOT clearly train the 4-class task at this smoke scale (best-arm inherit 0.222 vs 1-layer floor 0.222, chance 0.333). RED-FLAG for the controller: the spiking forward/credit at H40/ep40 is under-trained -- scale (more settle/credit steps, wider H, more epochs, GPU) before the contrast is readable. The anti-cheats (permuted 0.222, lesion 0.111) are reported."
+}

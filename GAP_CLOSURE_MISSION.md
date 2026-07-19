@@ -219,13 +219,15 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   (3) **gap#4 keystone accuracy — NEGATIVE at scale + 3 arms CRASHED (2026-07-19).** The 1 arm that finished (graded+KP
   ep300): **BDSP held-out 0.420 == LESION 0.420 == wrong-sign 0.420, all < chance 0.549 (GO=false)** — the mechanism is
   validated (weights move dw 1973, moat holds, no transport) but the BDSP credit produces NO accuracy gain over the lesion
-  = the credit-DIRECTION wall (D2/D3: graded fixes moat, not direction). The other 3 arms (fixed ep300, KP ep600, measB)
-  **CRASHED empty** — **my GPU over-parallelization** (the gap#4 arms run on-bridge/CuPy; I stacked multiple concurrent
-  n_ca3=2000 SWR runs on the same 24GB GPU → CUDA OOM crashed them; stderr lost to the stdout-only redirect). ⇒ the
-  fixed-vs-KP credit-DIRECTION A/B is UNRESOLVED. **NEXT (re-run GPU-ISOLATED): the KP learned-feedback A/B at the
-  accuracy-tuned config (width/epochs/drive), ONE arm at a time with nvidia-smi headroom, NOT concurrent with SWR runs.**
-  **LESSON (silent-failure): watch GPU memory; the gap#4 arms use the GPU — don't stack GPU-heavy runs on them.** Finding
-  `2026-07-19-gap4-keystone-accuracy-NEGATIVE-at-scale-...`. **The gap#4↔#5 UNIFICATION (one-shot plateau-gated recurrent
+  = the credit-DIRECTION wall (D2/D3: graded fixes moat, not direction). **KEY DIAGNOSTIC: firing rates in/hid/out
+  0.04/0.07/0.05 — the net BARELY FIRES → output near-silent → held BELOW the numpy single-layer floor (0.51). Hypothesis:
+  the DRIVE (`hidden-bias=520`) is too low, not (only) the credit direction.** The other 3 arms (fixed ep300, KP ep600,
+  measB ep300) are **STILL RUNNING at 3.5h+** (100% CPU) — NOT crashed; a Monitor false-positive ("ALL COMPLETE" + 0-byte
+  buffered logs) nearly made me record a fabricated crash, corrected by `ps` (silent-failure: verify the process, don't
+  trust a Monitor completion signal). ⇒ the fixed-vs-KP A/B is STILL PENDING (grinding). **NEXT: (a) let the 3 arms finish
+  for the A/B; (b) test the low-firing hypothesis — re-run with higher `hidden-bias`/drive (ep~20 for a fast firing-rate
+  read) to see if more firing lifts held-out above the floor, THEN the credit-direction A/B is meaningful.** Finding
+  `2026-07-19-gap4-keystone-accuracy-NEGATIVE-at-scale-BDSP-credit-equals-lesion`. **The gap#4↔#5 UNIFICATION (one-shot plateau-gated recurrent
   potentiation) is the shared keystone for BOTH gap#4 (credit) AND gap#5-ii (emergent attractor).**
 - **📍 RESUME POINT (2026-07-19, earlier): gap#4 A/B step-1 DONE = INCONCLUSIVE (undertrained); gap#5 (i) SWR ROOT-CAUSED + a
   learned-Schaffer closer in flight.** (1) **gap#4 A/B re-run (ep=100/train=150, fixed vs KP-learned):** BOTH arms

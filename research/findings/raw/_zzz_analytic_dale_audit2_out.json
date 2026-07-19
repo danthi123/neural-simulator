@@ -1,0 +1,97 @@
+{
+  "rows": [
+    {
+      "seed": 42,
+      "n_theme": 12,
+      "n_agent": 12,
+      "theme_slot0_acc": 1.0,
+      "agent_slot0_acc": 1.0,
+      "mixed_slot0_acc": 1.0,
+      "theme_mean_output_spikes_per_role": [
+        3.0,
+        0.0,
+        4.0
+      ],
+      "agent_mean_output_spikes_per_role": [
+        8.0,
+        0.0,
+        3.0
+      ],
+      "theme_spike_separation_winner_minus_runnerup": 1.0,
+      "agent_spike_separation_winner_minus_runnerup": 5.0,
+      "inh_silence_theme_flips_to_AGENT_frac": 1.0,
+      "inh_silence_flip_breakdown": {
+        "to_agent": 12,
+        "to_pred": 0,
+        "stays_theme": 0
+      },
+      "spike_vs_membrane_argmax_agree_frac": 1.0,
+      "elapsed_s": 29.1
+    },
+    {
+      "seed": 43,
+      "n_theme": 12,
+      "n_agent": 12,
+      "theme_slot0_acc": 1.0,
+      "agent_slot0_acc": 1.0,
+      "mixed_slot0_acc": 1.0,
+      "theme_mean_output_spikes_per_role": [
+        4.0,
+        0.0,
+        5.0
+      ],
+      "agent_mean_output_spikes_per_role": [
+        6.0,
+        0.0,
+        1.92
+      ],
+      "theme_spike_separation_winner_minus_runnerup": 1.0,
+      "agent_spike_separation_winner_minus_runnerup": 4.083,
+      "inh_silence_theme_flips_to_AGENT_frac": 1.0,
+      "inh_silence_flip_breakdown": {
+        "to_agent": 12,
+        "to_pred": 0,
+        "stays_theme": 0
+      },
+      "spike_vs_membrane_argmax_agree_frac": 1.0,
+      "elapsed_s": 28.6
+    },
+    {
+      "seed": 44,
+      "n_theme": 12,
+      "n_agent": 12,
+      "theme_slot0_acc": 1.0,
+      "agent_slot0_acc": 1.0,
+      "mixed_slot0_acc": 1.0,
+      "theme_mean_output_spikes_per_role": [
+        4.0,
+        0.0,
+        6.0
+      ],
+      "agent_mean_output_spikes_per_role": [
+        4.0,
+        0.0,
+        0.42
+      ],
+      "theme_spike_separation_winner_minus_runnerup": 2.0,
+      "agent_spike_separation_winner_minus_runnerup": 3.583,
+      "inh_silence_theme_flips_to_AGENT_frac": 1.0,
+      "inh_silence_flip_breakdown": {
+        "to_agent": 12,
+        "to_pred": 0,
+        "stays_theme": 0
+      },
+      "spike_vs_membrane_argmax_agree_frac": 1.0,
+      "elapsed_s": 29.4
+    }
+  ],
+  "agg": {
+    "n_seeds": 3,
+    "mean_theme_slot0_acc": 1.0,
+    "mean_agent_slot0_acc": 1.0,
+    "mean_mixed_slot0_acc": 1.0,
+    "mean_inh_silence_theme_flips_to_AGENT_frac": 1.0,
+    "mean_theme_spike_sep": 1.333,
+    "mean_agent_spike_sep": 4.222
+  }
+}

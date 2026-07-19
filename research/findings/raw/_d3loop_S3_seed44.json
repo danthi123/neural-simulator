@@ -1,0 +1,11 @@
+[
+ {
+  "seed": 44,
+  "group": "S3",
+  "K": 6,
+  "spk_step_delta_same": 1.0,
+  "FULLSPK_deeper_track": 0.975,
+  "FULLSPK_host_agree": 0.996,
+  "NO_REDISC_deeper_track": 0.675
+ }
+]

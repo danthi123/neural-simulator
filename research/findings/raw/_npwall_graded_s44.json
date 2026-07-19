@@ -1,0 +1,1 @@
+{"results": [{"seed": 44, "task": "emerge1", "chance": 0.524, "n_bits": 10, "np": 0.49, "shuffle_dl": 0.493, "hidden_frozen": 0.493, "np_beats_chance": false, "shuffle_collapses": true, "depth_helps": false, "GO": false}]}

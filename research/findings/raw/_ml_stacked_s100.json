@@ -1,0 +1,20 @@
+{
+  "verdict": "NEGATIVE",
+  "per_seed": [
+    {
+      "seed": 100,
+      "cooc": {
+        "acc": 0.30337078651685395,
+        "deranged": 0.2966292134831461,
+        "chance": 0.25,
+        "n_supers": 4
+      },
+      "centroid": {
+        "acc": 0.5923076923076923,
+        "deranged": 0.5138461538461538,
+        "chance": 0.2,
+        "n_supers": 5
+      }
+    }
+  ]
+}

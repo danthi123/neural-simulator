@@ -1,0 +1,75 @@
+{
+  "runner": "_emerge_reservoir_lm_content_addr_derisk",
+  "corpus": "data/corpus/wikitext.txt",
+  "seeds": [
+    42
+  ],
+  "beta": 8.0,
+  "n_window": 64,
+  "per_seed": {
+    "42": {
+      "V": 150,
+      "by_arm": {
+        "interp": {
+          "by_depth": {
+            "1": {
+              "n": 150,
+              "base_ce": 2.345,
+              "global_lam": 0.05,
+              "global_ce": 2.396,
+              "gain": -0.051,
+              "gain_bestpd": 0.0,
+              "best_lam_pd": 0.0
+            },
+            "2": {
+              "n": 150,
+              "base_ce": 2.725,
+              "global_lam": 0.05,
+              "global_ce": 2.751,
+              "gain": -0.026,
+              "gain_bestpd": 0.0,
+              "best_lam_pd": 0.0
+            },
+            "3": {
+              "n": 146,
+              "base_ce": 2.556,
+              "global_lam": 0.05,
+              "global_ce": 2.562,
+              "gain": -0.006,
+              "gain_bestpd": 0.0,
+              "best_lam_pd": 0.0
+            },
+            "4-5": {
+              "n": 276,
+              "base_ce": 2.379,
+              "global_lam": 0.05,
+              "global_ce": 2.369,
+              "gain": 0.009,
+              "gain_bestpd": 0.009,
+              "best_lam_pd": 0.05
+            },
+            "6-9": {
+              "n": 461,
+              "base_ce": 2.581,
+              "global_lam": 0.05,
+              "global_ce": 2.569,
+              "gain": 0.012,
+              "gain_bestpd": 0.012,
+              "best_lam_pd": 0.05
+            },
+            "10-99": {
+              "n": 280,
+              "base_ce": 2.82,
+              "global_lam": 0.05,
+              "global_ce": 2.697,
+              "gain": 0.123,
+              "gain_bestpd": 0.249,
+              "best_lam_pd": 0.35
+            }
+          }
+        }
+      }
+    }
+  },
+  "elapsed_s": 4.0
+}

@@ -1,23 +1,23 @@
 {
   "single": 1.0,
-  "bundled": 0.9894444444444445,
+  "bundled": 0.8727777777777778,
   "chance": 0.0625,
   "learned_additive_bundled": 0.193,
   "per_seed": [
     {
       "seed": 42,
       "single": 1.0,
-      "bundled": 0.98
+      "bundled": 0.8116666666666666
     },
     {
       "seed": 43,
       "single": 1.0,
-      "bundled": 0.9966666666666667
+      "bundled": 0.915
     },
     {
       "seed": 44,
       "single": 1.0,
-      "bundled": 0.9916666666666667
+      "bundled": 0.8916666666666667
     }
   ]
 }

@@ -1,0 +1,62 @@
+{
+  "probe": "onbridge_eprop_port_poscontrol",
+  "seeds": [
+    43,
+    44
+  ],
+  "config": {
+    "hidden": 32,
+    "settle": 40,
+    "surrogate": "atan_vt",
+    "alpha_surr": 0.15,
+    "logit_source": "leaky_readout",
+    "eprop_lr": 0.5,
+    "eps_leak": 0.9,
+    "pos_epochs": 200,
+    "task": {
+      "n_super": 12,
+      "n_members": 8,
+      "held_per_super": 3,
+      "n_prop": 2,
+      "member_id_dim": 3,
+      "n_obs": 16,
+      "noise": 0.02,
+      "feature_seed": 0
+    }
+  },
+  "elapsed_seconds": 68.3,
+  "positive_control": [
+    {
+      "n_pos": 40,
+      "k": 5,
+      "chance": 0.375,
+      "train_acc_before": 0.375,
+      "train_acc_after": 0.975,
+      "ff_weight_moved": 46024.4140625,
+      "surrogate": "atan_vt",
+      "alpha_surr": 0.15,
+      "logit_source": "leaky_readout",
+      "eprop_lr": 0.5,
+      "eps_leak": 0.9,
+      "epochs": 200,
+      "passes": true
+    },
+    {
+      "n_pos": 40,
+      "k": 5,
+      "chance": 0.375,
+      "train_acc_before": 0.375,
+      "train_acc_after": 0.95,
+      "ff_weight_moved": 67558.90625,
+      "surrogate": "atan_vt",
+      "alpha_surr": 0.15,
+      "logit_source": "leaky_readout",
+      "eprop_lr": 0.5,
+      "eps_leak": 0.9,
+      "epochs": 200,
+      "passes": true
+    }
+  ],
+  "error": null,
+  "PASSES": true
+}

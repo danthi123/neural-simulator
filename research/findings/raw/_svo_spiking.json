@@ -1,0 +1,32 @@
+{
+  "verdict": "GO",
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_facts": 8,
+      "n_words": 24,
+      "what_acc": 1.0,
+      "who_acc": 1.0,
+      "moat_abstain": 1.0,
+      "permuted_acc": 0.0
+    },
+    {
+      "seed": 43,
+      "n_facts": 8,
+      "n_words": 24,
+      "what_acc": 1.0,
+      "who_acc": 1.0,
+      "moat_abstain": 1.0,
+      "permuted_acc": 0.0
+    },
+    {
+      "seed": 44,
+      "n_facts": 8,
+      "n_words": 24,
+      "what_acc": 1.0,
+      "who_acc": 1.0,
+      "moat_abstain": 1.0,
+      "permuted_acc": 0.0
+    }
+  ]
+}

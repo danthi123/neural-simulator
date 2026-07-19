@@ -1,0 +1,104 @@
+{
+  "runner": "_emerge_reservoir_lm_rung3_agent_role_generation_derisk",
+  "seeds": [
+    42
+  ],
+  "epochs": 300,
+  "lr": 0.05,
+  "chance": 0.15789473684210525,
+  "n_train_sents": 36,
+  "n_held": 8,
+  "per_seed": {
+    "42": {
+      "main": {
+        "arm": "main",
+        "heldagent_cat_acc": 0.625,
+        "heldagent_2way": 0.8333333333333334,
+        "heldagent_isaction": 0.75,
+        "train_cat_acc": 1.0
+      },
+      "onehot": {
+        "arm": "onehot",
+        "heldagent_cat_acc": 0.5,
+        "heldagent_2way": 0.6666666666666666,
+        "heldagent_isaction": 0.75,
+        "train_cat_acc": 1.0
+      },
+      "nonrecurrent": {
+        "arm": "nonrecurrent",
+        "heldagent_cat_acc": 0.0,
+        "heldagent_2way": 0.0,
+        "heldagent_isaction": 0.0,
+        "train_cat_acc": 0.0
+      },
+      "permuted": {
+        "arm": "permuted",
+        "heldagent_cat_acc": 0.625,
+        "heldagent_2way": 0.625,
+        "heldagent_isaction": 1.0,
+        "train_cat_acc": 0.6666666666666666
+      },
+      "deranged": {
+        "arm": "deranged",
+        "heldagent_cat_acc": 0.75,
+        "heldagent_2way": 0.75,
+        "heldagent_isaction": 1.0,
+        "train_cat_acc": 1.0
+      },
+      "untrained": {
+        "arm": "untrained",
+        "heldagent_cat_acc": 0.0,
+        "heldagent_2way": 0.0,
+        "heldagent_isaction": 0.0,
+        "train_cat_acc": 0.0
+      }
+    }
+  },
+  "aggregate": {
+    "main": {
+      "heldagent_cat_acc": 0.625,
+      "heldagent_2way": 0.8333333333333334,
+      "heldagent_isaction": 0.75,
+      "train_cat_acc": 1.0
+    },
+    "onehot": {
+      "heldagent_cat_acc": 0.5,
+      "heldagent_2way": 0.6666666666666666,
+      "heldagent_isaction": 0.75,
+      "train_cat_acc": 1.0
+    },
+    "nonrecurrent": {
+      "heldagent_cat_acc": 0.0,
+      "heldagent_2way": 0.0,
+      "heldagent_isaction": 0.0,
+      "train_cat_acc": 0.0
+    },
+    "permuted": {
+      "heldagent_cat_acc": 0.625,
+      "heldagent_2way": 0.625,
+      "heldagent_isaction": 1.0,
+      "train_cat_acc": 0.6666666666666666
+    },
+    "deranged": {
+      "heldagent_cat_acc": 0.75,
+      "heldagent_2way": 0.75,
+      "heldagent_isaction": 1.0,
+      "train_cat_acc": 1.0
+    },
+    "untrained": {
+      "heldagent_cat_acc": 0.0,
+      "heldagent_2way": 0.0,
+      "heldagent_isaction": 0.0,
+      "train_cat_acc": 0.0
+    }
+  },
+  "main_heldagent_cat_acc": 0.625,
+  "worst_control_cat_acc": 0.75,
+  "margin": -0.125,
+  "per_seed_go": [
+    false
+  ],
+  "n_go": 0,
+  "n_seeds": 1,
+  "elapsed_s": 8.2
+}

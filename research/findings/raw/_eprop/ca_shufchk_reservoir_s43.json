@@ -1,0 +1,75 @@
+{
+  "runner": "_emerge_reservoir_lm_content_addr_derisk",
+  "corpus": "data/corpus/wikitext.txt",
+  "seeds": [
+    43
+  ],
+  "beta": 8.0,
+  "n_window": 64,
+  "per_seed": {
+    "43": {
+      "V": 300,
+      "by_arm": {
+        "interp": {
+          "by_depth": {
+            "1": {
+              "n": 300,
+              "base_ce": 3.042,
+              "global_lam": 0.05,
+              "global_ce": 3.094,
+              "gain": -0.051,
+              "gain_bestpd": 0.0,
+              "best_lam_pd": 0.0
+            },
+            "2": {
+              "n": 300,
+              "base_ce": 3.32,
+              "global_lam": 0.05,
+              "global_ce": 3.295,
+              "gain": 0.025,
+              "gain_bestpd": 0.028,
+              "best_lam_pd": 0.1
+            },
+            "3": {
+              "n": 289,
+              "base_ce": 3.227,
+              "global_lam": 0.05,
+              "global_ce": 3.191,
+              "gain": 0.036,
+              "gain_bestpd": 0.05,
+              "best_lam_pd": 0.1
+            },
+            "4-5": {
+              "n": 534,
+              "base_ce": 3.172,
+              "global_lam": 0.05,
+              "global_ce": 3.144,
+              "gain": 0.028,
+              "gain_bestpd": 0.03,
+              "best_lam_pd": 0.1
+            },
+            "6-9": {
+              "n": 889,
+              "base_ce": 3.097,
+              "global_lam": 0.05,
+              "global_ce": 3.098,
+              "gain": -0.001,
+              "gain_bestpd": 0.0,
+              "best_lam_pd": 0.0
+            },
+            "10-99": {
+              "n": 664,
+              "base_ce": 3.168,
+              "global_lam": 0.05,
+              "global_ce": 3.125,
+              "gain": 0.043,
+              "gain_bestpd": 0.043,
+              "best_lam_pd": 0.05
+            }
+          }
+        }
+      }
+    }
+  },
+  "elapsed_s": 201.3
+}

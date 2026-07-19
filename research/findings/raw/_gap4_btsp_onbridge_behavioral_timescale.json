@@ -1,0 +1,72 @@
+{
+  "probe": "gap4_btsp_onbridge_behavioral_timescale",
+  "GO": true,
+  "verdict": "GO -- on-bridge BTSP is BEHAVIORAL-TIMESCALE via the REAL bistable plateau. A HELD plateau (the bistable BDSP apical, self-regen+KIR) potentiates the co-active pre->post synapse one-shot over a seconds-long window (held_dw 109.667); a TRANSIENT plateau gives only a brief window (transient_dw 13.023, 8.4x less). Silent apical -> moat (moat_dw 0.0000); enable_btsp=False byte-identical (off_dw 0.0000). 6-seed. => the gap#5 bistable plateau makes on-bridge BTSP a seconds-long one-shot credit rule, on the spiking substrate. NO new sim/ edit.",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "elapsed_seconds": 0.4,
+  "per_seed": [
+    {
+      "seed": 42,
+      "held_dw": 103.17657470703125,
+      "transient_dw": 11.637939453125,
+      "moat_dw": 0.0,
+      "off_dw": 0.0,
+      "held_v_apical_end": -24.151432037353516,
+      "transient_v_apical_end": -64.99911499023438
+    },
+    {
+      "seed": 43,
+      "held_dw": 120.31367492675781,
+      "transient_dw": 15.0443115234375,
+      "moat_dw": 0.0,
+      "off_dw": 0.0,
+      "held_v_apical_end": -24.151432037353516,
+      "transient_v_apical_end": -64.99911499023438
+    },
+    {
+      "seed": 44,
+      "held_dw": 120.15696716308594,
+      "transient_dw": 14.497421264648438,
+      "moat_dw": 0.0,
+      "off_dw": 0.0,
+      "held_v_apical_end": -24.151432037353516,
+      "transient_v_apical_end": -64.99911499023438
+    },
+    {
+      "seed": 100,
+      "held_dw": 96.3179931640625,
+      "transient_dw": 10.93368911743164,
+      "moat_dw": 0.0,
+      "off_dw": 0.0,
+      "held_v_apical_end": -24.151432037353516,
+      "transient_v_apical_end": -64.99911499023438
+    },
+    {
+      "seed": 101,
+      "held_dw": 122.69334411621094,
+      "transient_dw": 15.0653076171875,
+      "moat_dw": 0.0,
+      "off_dw": 0.0,
+      "held_v_apical_end": -24.151432037353516,
+      "transient_v_apical_end": -64.99911499023438
+    },
+    {
+      "seed": 102,
+      "held_dw": 95.34514617919922,
+      "transient_dw": 10.956890106201172,
+      "moat_dw": 0.0,
+      "off_dw": 0.0,
+      "held_v_apical_end": -24.151432037353516,
+      "transient_v_apical_end": -64.99911499023438
+    }
+  ],
+  "mechanism": "on-bridge BTSP (fused_btsp_update) reading the REAL bistable BDSP apical (bdsp_apical_bistable) as the instructive signal; held plateau => seconds-long credit, transient => brief.",
+  "HONEST_NOTE": "Reuses the two committed session edits (bistable BDSP apical + the BTSP block); NO new sim/ edit. On-bridge behavioral-timescale one-shot credit; NOT a multi-layer/deep-credit claim."
+}

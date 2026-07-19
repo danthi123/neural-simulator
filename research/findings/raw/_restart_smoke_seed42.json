@@ -1,0 +1,139 @@
+{
+  "rows": [
+    {
+      "seed": 42,
+      "h_inh": 48,
+      "read_t": 25,
+      "epochs": 300,
+      "lr": 0.01,
+      "salience_power": 1.0,
+      "slot0_class_counts": [
+        420,
+        0,
+        60
+      ],
+      "baseline_fixed_spiking_wta": {
+        "canonical_acc": 0.972,
+        "objrel_slot0_THEME": 0.0
+      },
+      "pre_learning_k0": {
+        "objrel_slot0_THEME": 0.0,
+        "objrel_acc": 0.0,
+        "canonical_acc": 0.667,
+        "canonical_slot0": 0.0
+      },
+      "genuinely_emergent": true,
+      "analytic_dale_reference": {
+        "canonical_acc": 1.0,
+        "objrel_slot0_THEME": 1.0
+      },
+      "per_k": {
+        "1": {
+          "objrel_slot0_THEME": 1.0,
+          "objrel_acc": 1.0,
+          "objrel_per_slot": [
+            "12/12",
+            "12/12",
+            "12/12"
+          ],
+          "canonical_acc": 1.0,
+          "canonical_slot0": 1.0,
+          "mean_out_spikes_canon": 25.0,
+          "mean_out_spikes_objr": 25.0,
+          "test_oracle_objrel_slot0": 1.0,
+          "test_oracle_objrel_acc": 1.0,
+          "no_reward_objrel_slot0": 0.0,
+          "shuffled_reward_objrel_slot0": 0.0,
+          "scramble_objrel_slot0": 0.0,
+          "no_spike_objrel_slot0": 0.0,
+          "no_spike_out_spikes": 0.0,
+          "dale_legal": true,
+          "selected_restart_idx": {
+            "0": [
+              0,
+              0,
+              0
+            ],
+            "1": [
+              0,
+              0,
+              0
+            ],
+            "2": [
+              0,
+              0,
+              0
+            ]
+          },
+          "genuinely_spiking": true,
+          "no_spike_collapses": true,
+          "reward_load_bearing": true,
+          "canonical_not_regressed": true,
+          "scramble_chance": true,
+          "objrel_recovers": true,
+          "train_reward_matches_oracle": true,
+          "elapsed_s": 16.6
+        }
+      },
+      "elapsed_s": 60.3
+    }
+  ],
+  "agg": {
+    "counted_seeds": [
+      42
+    ],
+    "excluded_init_lucky_seeds": [],
+    "recovery_by_k": {
+      "1": {
+        "n_counted": 1,
+        "n_recovered": 1,
+        "n_counted_blind": 0,
+        "n_recovered_blind": 0,
+        "all_blind_recovered": false,
+        "mean_objrel_slot0": 1.0,
+        "mean_test_oracle_objrel_slot0": 1.0,
+        "genuinely_spiking_all": true,
+        "no_spike_collapses_all": true,
+        "dale_legal_all": true,
+        "reward_load_bearing_counted": true,
+        "canonical_not_regressed_all": true,
+        "scramble_chance_all": true,
+        "train_reward_matches_oracle_counted": true,
+        "per_seed_recovered": {
+          "42": true
+        }
+      }
+    },
+    "recovery_curve_counted": [
+      1
+    ],
+    "monotone_in_k": true,
+    "k1_baseline_recovered": 1,
+    "kmax": 1,
+    "kmax_recovered": 1,
+    "kmax_all_blind_recovered": false,
+    "kmax_counted": 1
+  },
+  "verdict": "BOUNDARY",
+  "pre_registered": {
+    "DEV": [
+      42,
+      43,
+      44,
+      45,
+      46
+    ],
+    "BLIND": [
+      100,
+      101,
+      102,
+      103,
+      104
+    ],
+    "ks": [
+      1
+    ],
+    "genuine_pre_thresh": 0.85
+  },
+  "total_elapsed_s": 60.4
+}

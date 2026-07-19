@@ -1,0 +1,9 @@
+[
+ {
+  "seed": 42,
+  "spk": {
+   "step_delta_train": 0.8459444444444445,
+   "step_delta_same": 0.6077777777777778,
+   "step_delta_deeper": 0.3686,
+   "weights": {
+    "emb": 

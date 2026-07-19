@@ -1,0 +1,30 @@
+{
+  "probe": "onbridge_eprop_port_poscontrol",
+  "seeds": [
+    42
+  ],
+  "config": {
+    "hidden": 32,
+    "settle": 30,
+    "surrogate": "atan_vt",
+    "alpha_surr": 0.15,
+    "logit_source": "spike_sum",
+    "eprop_lr": 0.08,
+    "eps_leak": 0.9,
+    "pos_epochs": 150,
+    "task": {
+      "n_super": 12,
+      "n_members": 8,
+      "held_per_super": 3,
+      "n_prop": 2,
+      "member_id_dim": 3,
+      "n_obs": 16,
+      "noise": 0.02,
+      "feature_seed": 0
+    }
+  },
+  "elapsed_seconds": 35.0,
+  "positive_control": [],
+  "error": "IndexError('index 1405 is out of bounds for axis 0 with size 1405')",
+  "PASSES": false
+}

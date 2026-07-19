@@ -1,0 +1,1 @@
+[{"seed": 42, "n_in": 48, "chance": 0.5, "n_members": 16, "n_held": 1, "roots": ["animal"], "n_unknown": 3, "parity_train": 1.0, "heldout_member_to_reasoner": 0.0, "moat_unknown_to_nonreasoner": 1.0, "moat_false_accepts": 0, "permuted_parity_train": 0.8666666666666667, "GO": false}]

@@ -1,0 +1,74 @@
+{
+  "probe": "onbridge_deep_credit_decolle_vs_deepfa_AB",
+  "seed": 101,
+  "config": {
+    "hidden": 24,
+    "epochs": 50,
+    "lr": 0.25,
+    "settle_steps": 25,
+    "credit_steps": 15,
+    "n_hidden_layers": 2,
+    "train_subsample": 80,
+    "hp": {
+      "tonic_h_pA": 560.0,
+      "tonic_o_pA": 620.0,
+      "apical_gain_pA": 2000.0,
+      "ff_w_init": 4.5,
+      "pbar_alpha": 0.05
+    },
+    "task": {
+      "n_super": 12,
+      "n_members": 8,
+      "held_per_super": 3,
+      "n_prop": 2,
+      "member_id_dim": 3,
+      "n_obs": 16,
+      "noise": 0.02,
+      "feature_seed": 0
+    }
+  },
+  "elapsed_seconds": 300.3,
+  "result": {
+    "seed": 101,
+    "chance": 0.3333333333333333,
+    "meta": {
+      "n_super": 12,
+      "n_members": 8,
+      "held_per_super": 3,
+      "n_prop": 2,
+      "k_classes": 5,
+      "member_id_dim": 3,
+      "n_obs": 16,
+      "noise": 0.02,
+      "feature_seed": 0,
+      "n_features": 7,
+      "n_train": 720,
+      "n_heldout": 276,
+      "n_inherit_heldout": 27,
+      "n_memctrl_heldout": 9,
+      "n_supers_untaught": 3
+    },
+    "stage0_depth_separating": false,
+    "oracle": {
+      "inherit_heldout": 0.37037037037037035,
+      "train": 1.0
+    },
+    "floor_inherit_heldout": 0.2962962962962963,
+    "deep_fa": {
+      "inherit_heldout": 0.2222222222222222,
+      "train": 0.225,
+      "ff_weight_moved": 2068.1275634765625,
+      "trains_at_all": false
+    },
+    "decolle": {
+      "inherit_heldout": 0.14814814814814814,
+      "train": 0.2625,
+      "ff_weight_moved": 2014.7945556640625,
+      "trains_at_all": false
+    },
+    "decolle_permuted_inherit": 0.37037037037037035,
+    "decolle_lesion_inherit": 0.2222222222222222
+  },
+  "GO_decolle_rescues": false,
+  "verdict": "DECOLLE fails (inh 0.148, train 0.263) vs deep-FA fails (inh 0.222, train 0.225); chance 0.333, floor 0.296, oracle 0.370; decolle permuted 0.370, lesion 0.222. NO rescue (the wall survives deletion of the deep chain -> deeper: on-spike credit fundamentally, or scale)"
+}

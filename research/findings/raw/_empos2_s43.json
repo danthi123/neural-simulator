@@ -1,0 +1,30 @@
+{
+  "verdict": "PARTIAL",
+  "per_seed": [
+    {
+      "seed": 43,
+      "n_vocab": 256,
+      "n_closed": 80,
+      "emergent": {
+        "n": 637,
+        "obj_adj": 0.175,
+        "sample": [
+          "always wanted more",
+          "never found way",
+          "just like other",
+          "things like toys",
+          "fast like other",
+          "just like old"
+        ]
+      },
+      "raw_open": {
+        "n": 7789,
+        "obj_adj": 0.75
+      },
+      "curated": {
+        "n": 327,
+        "obj_adj": 0.0
+      }
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+
+===== seed 43  V=300 =====
+  DEEP token-weighted CE (n=2101):  fixed 3.2128  plastic 3.115  (plastic-minus-fixed -0.0978)
+           plastic: d1 vs fixed +0.093 | DEEP(wt) vs fixed -0.0978 | agg 3.619 | ||W_rec|| 18.395 sr 1.1241 FAcos 0.0938
+      shuffle_elig: d1 vs fixed -0.005 | DEEP(wt) vs fixed +0.0026 | agg 3.664
+       zero_signal: d1 vs fixed +0.000 | DEEP(wt) vs fixed +0.0000 | agg 3.665
+     random_signal: d1 vs fixed -0.004 | DEEP(wt) vs fixed +1.1175 | agg 4.209 | ||W_rec|| 22.147 sr 10.2743 FAcos 0.0148
+        random_dir: d1 vs fixed +0.063 | DEEP(wt) vs fixed +1.3737 | agg 4.341 | ||W_rec|| 24.977 sr 13.0107 FAcos 0.0207
+         symmetric: d1 vs fixed +0.212 | DEEP(wt) vs fixed +0.8461 | agg 4.031 | ||W_rec|| 20.76 sr 6.1506 FAcos 1.0
+         sign_flip: d1 vs fixed +0.100 | DEEP(wt) vs fixed -0.0992 | agg 3.62 | ||W_rec|| 18.408 sr 1.1189 FAcos 0.1573
+  [ctrl1 scramble] DEEP(wt) plastic-minus-fixed:  UNSCRAMBLED -0.0978   SCRAMBLED -0.0838
+  [ctrl2 n-gram DEEP(wt)]: add1-bi 3.1756  addk-bi(k=0.05) 2.818  tri-add1 3.8022  4g-add1 4.3629  tri-interp 2.7612  || plastic 3.115
+
+-> research/findings/raw/_eproplm_controls/controls_s43.json (1810.7s)

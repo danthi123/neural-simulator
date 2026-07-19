@@ -1,0 +1,66 @@
+{
+  "probe": "onbridge_eprop_port",
+  "seeds": [
+    43
+  ],
+  "config": {
+    "hidden": 32,
+    "n_hidden_layers": 2,
+    "settle": 40,
+    "epochs": 150,
+    "batch": 20,
+    "eprop_lr": 0.5,
+    "eps_leak": 0.9,
+    "surrogate": "atan_vt",
+    "alpha_surr": 0.15,
+    "logit_source": "leaky_readout",
+    "w_clip": 4000.0,
+    "train_subsample": 240,
+    "task": {
+      "n_super": 12,
+      "n_members": 8,
+      "held_per_super": 3,
+      "n_prop": 2,
+      "member_id_dim": 3,
+      "n_obs": 16,
+      "noise": 0.02,
+      "feature_seed": 0
+    },
+    "backend": "numpy"
+  },
+  "elapsed_seconds": 1923.3,
+  "per_seed": [
+    {
+      "seed": 43,
+      "chance": 0.3333333333333333,
+      "k_classes": 5,
+      "n_train_smoke": 240,
+      "stage0_depth_separating": true,
+      "stage0_deep_best": 1.0,
+      "stage0_l1": 0.37037037037037035,
+      "oracle_inherit": 1.0,
+      "eprop_train_acc": 0.7166666666666667,
+      "eprop_inherit_heldout": 0.5555555555555556,
+      "eprop_ff_weight_moved": 2464459.625,
+      "permuted_inherit": 0.4444444444444444,
+      "shuffle_dfa_inherit": 0.37037037037037035,
+      "trains_the_task": true
+    }
+  ],
+  "aggregate": {
+    "chance": 0.3333333333333333,
+    "oracle_inherit": 1.0,
+    "eprop_train_acc": 0.7166666666666667,
+    "eprop_inherit_heldout": 0.5555555555555556,
+    "permuted_inherit": 0.4444444444444444,
+    "shuffle_dfa_inherit": 0.37037037037037035,
+    "ff_weight_moved": 2464459.625,
+    "stage0_depth_separating": true,
+    "trains_the_task_all_seeds": true,
+    "permuted_chance": false,
+    "shuffle_dfa_chance": true,
+    "ff_weight_moves": true
+  },
+  "SIGNAL": false,
+  "verdict": "HONEST NEGATIVE -- the ported e-prop does NOT cleanly train the task on the bridge: train 0.717, inherit 0.556 (chance 0.333, oracle 1.000); permuted 0.444, shuffle-DFA 0.370. (Positive control gates whether the port itself is sound -- run --poscontrol-only.) The exact residual: controls not clean."
+}

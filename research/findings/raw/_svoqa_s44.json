@@ -1,0 +1,19 @@
+{
+  "verdict": "GO",
+  "aggregate": {
+    "answer": 1.0,
+    "moat": 1.0,
+    "permuted": 0.0
+  },
+  "per_seed": [
+    {
+      "seed": 44,
+      "n_facts": 12,
+      "n_vocab": 256,
+      "chance": 0.00390625,
+      "answer_acc": 1.0,
+      "moat_abstain": 1.0,
+      "permuted_acc": 0.0
+    }
+  ]
+}

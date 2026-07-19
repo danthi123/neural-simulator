@@ -1,0 +1,12 @@
+[
+ {
+  "seed": 43,
+  "order_changes": 0.488,
+  "STATE_deeper_prop": 0.514,
+  "STATE_deeper_track": 0.017,
+  "STATE_same_prop": 0.698,
+  "PROPERTY_deeper_prop": 0.513,
+  "CONTINUOUS_deeper_prop": 0.512,
+  "SHUFFLE_deeper_prop": 0.504
+ }
+]

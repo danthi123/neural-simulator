@@ -1,0 +1,10 @@
+[
+ {
+  "seed": 42,
+  "heldout": 0.9999999999666667,
+  "nonassembly": 0.9999999999666667,
+  "disjoint": true,
+  "n_total": 3649,
+  "n_ca3": 500
+ }
+]

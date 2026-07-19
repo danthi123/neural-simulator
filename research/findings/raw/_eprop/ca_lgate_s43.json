@@ -1,0 +1,63 @@
+{
+  "runner": "_emerge_reservoir_lm_content_addr_derisk",
+  "corpus": "data/corpus/wikitext.txt",
+  "seeds": [
+    43
+  ],
+  "beta": 8.0,
+  "n_window": 64,
+  "per_seed": {
+    "43": {
+      "V": 300,
+      "by_arm": {
+        "learned_gate": {
+          "by_depth": {
+            "1": {
+              "n": 300,
+              "base_ce": 3.042,
+              "gated_ce": 3.044,
+              "gain": -0.002,
+              "mean_lam": 0.002
+            },
+            "2": {
+              "n": 300,
+              "base_ce": 3.32,
+              "gated_ce": 3.304,
+              "gain": 0.016,
+              "mean_lam": 0.285
+            },
+            "3": {
+              "n": 289,
+              "base_ce": 3.227,
+              "gated_ce": 3.166,
+              "gain": 0.061,
+              "mean_lam": 0.198
+            },
+            "4-5": {
+              "n": 534,
+              "base_ce": 3.172,
+              "gated_ce": 3.247,
+              "gain": -0.076,
+              "mean_lam": 0.31
+            },
+            "6-9": {
+              "n": 889,
+              "base_ce": 3.097,
+              "gated_ce": 3.266,
+              "gain": -0.169,
+              "mean_lam": 0.319
+            },
+            "10-99": {
+              "n": 664,
+              "base_ce": 3.168,
+              "gated_ce": 3.25,
+              "gain": -0.082,
+              "mean_lam": 0.26
+            }
+          }
+        }
+      }
+    }
+  },
+  "elapsed_s": 138.0
+}

@@ -1,0 +1,21 @@
+{
+  "verdict": "GO",
+  "aggregate": {
+    "obj": 1.0,
+    "subj": 1.0,
+    "permuted": 0.0
+  },
+  "per_seed": [
+    {
+      "seed": 102,
+      "n_facts": 12,
+      "n_vocab": 256,
+      "chance": 0.00390625,
+      "obj_acc": 1.0,
+      "subj_acc": 1.0,
+      "permuted_acc": 0.0,
+      "stored_margin": 0.7588,
+      "unstored_margin": 0.0123
+    }
+  ]
+}

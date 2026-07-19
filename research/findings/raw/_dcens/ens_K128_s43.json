@@ -1,0 +1,41 @@
+{
+  "probe": "onbridge_deep_credit_population_ksweep",
+  "seeds": [
+    43
+  ],
+  "k_list": [
+    1,
+    128
+  ],
+  "config": {
+    "hidden": 24,
+    "epochs": 50,
+    "lr": 0.25,
+    "settle_steps": 25,
+    "credit_steps": 15,
+    "n_hidden_layers": 2,
+    "train_subsample": 80,
+    "task": {
+      "n_super": 12,
+      "n_members": 8,
+      "held_per_super": 3,
+      "n_prop": 2,
+      "member_id_dim": 3,
+      "n_obs": 16,
+      "noise": 0.02,
+      "feature_seed": 0
+    },
+    "hp": {
+      "tonic_h_pA": 560.0,
+      "tonic_o_pA": 620.0,
+      "apical_gain_pA": 2000.0,
+      "ff_w_init": 4.5,
+      "pbar_alpha": 0.05
+    },
+    "backend": "cupy"
+  },
+  "elapsed_seconds": 5.1,
+  "per_seed": [],
+  "GO_CANDIDATE": false,
+  "verdict": "ERROR -- TypeError('Implicit conversion to a NumPy array is not allowed. Please use `.get()` to construct a NumPy array explicitly.')"
+}

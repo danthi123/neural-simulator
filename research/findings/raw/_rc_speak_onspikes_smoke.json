@@ -1,0 +1,79 @@
+{
+  "verdict": "GO",
+  "per_seed": [
+    {
+      "pos": "~bowl",
+      "neg": "~saw",
+      "transcript": [
+        {
+          "word": "sue",
+          "expect": "yes",
+          "answer": "yes",
+          "spoken_on_spikes": "fly",
+          "renders": 1
+        },
+        {
+          "word": "own",
+          "expect": "yes",
+          "answer": "no",
+          "spoken_on_spikes": "swim",
+          "renders": 1
+        },
+        {
+          "word": "face",
+          "expect": "yes",
+          "answer": "yes",
+          "spoken_on_spikes": "fly",
+          "renders": 1
+        },
+        {
+          "word": "ugly",
+          "expect": "yes",
+          "answer": "yes",
+          "spoken_on_spikes": "fly",
+          "renders": 1
+        },
+        {
+          "word": "said",
+          "expect": "no",
+          "answer": "no",
+          "spoken_on_spikes": "swim",
+          "renders": 1
+        },
+        {
+          "word": "big",
+          "expect": "no",
+          "answer": "no",
+          "spoken_on_spikes": "swim",
+          "renders": 1
+        },
+        {
+          "word": "very",
+          "expect": "no",
+          "answer": "no",
+          "spoken_on_spikes": "swim",
+          "renders": 1
+        },
+        {
+          "word": "saw",
+          "expect": "no",
+          "answer": "no",
+          "spoken_on_spikes": "swim",
+          "renders": 1
+        },
+        {
+          "word": "zzzqqx",
+          "expect": "idk",
+          "answer": "idk",
+          "spoken_on_spikes": null,
+          "renders": 0
+        }
+      ],
+      "spike_render_count": 8,
+      "spoken_accuracy": 1.0,
+      "moat_renders_on_abstain": 0,
+      "n_spoken": 8,
+      "seed": 42
+    }
+  ]
+}

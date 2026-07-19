@@ -1,0 +1,18 @@
+[
+ {
+  "seed": 44,
+  "K": 6,
+  "STATE_deeper_track": 0.293,
+  "STATE_deeper_prop": 0.757,
+  "STATE_same_track": 0.91,
+  "TF_deeper_track": 0.867,
+  "TF_step_delta": 0.999,
+  "CONTINUOUS_deeper_prop": 0.777,
+  "PROPERTY_deeper_prop": 0.803,
+  "SHUFFLE_deeper_prop": 0.761,
+  "order_change": 0.199,
+  "markov_floor": 0.708,
+  "retention_floor": 0.829,
+  "lastname_floor": 0.708
+ }
+]

@@ -1,0 +1,104 @@
+{
+  "probe": "gap4_btsp_completion_unification",
+  "GO": false,
+  "n_go": 0,
+  "verdict": "BOUNDARY 0/6 -- BTSP plateau-gated ONE-SHOT encoding did not reliably produce a CA3 assembly the bistable CA3 completes: cue 0.179 vs nocue 0.000 / perm 0.000; no-encode anti-cheat cue 0.000. Per THE LAW: tune the encode plateau/ca3w/btsp_lr/train_events, NOT a stop.",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "elapsed_seconds": 130.0,
+  "per_seed": [
+    {
+      "seed": 42,
+      "w_within": 73.295654296875,
+      "held_cue": 0.1868333333333333,
+      "held_nocue": 0.0,
+      "held_perm": 0.0,
+      "rest_firing": 0.0,
+      "noencode_cue": 0.0,
+      "seed_go": false
+    },
+    {
+      "seed": 43,
+      "w_within": 68.28544616699219,
+      "held_cue": 0.16847222222222225,
+      "held_nocue": 0.0,
+      "held_perm": 0.0,
+      "rest_firing": 0.0,
+      "noencode_cue": 0.0,
+      "seed_go": false
+    },
+    {
+      "seed": 44,
+      "w_within": 71.33355712890625,
+      "held_cue": 0.18455555555555556,
+      "held_nocue": 0.0,
+      "held_perm": 0.0,
+      "rest_firing": 0.0,
+      "noencode_cue": 0.0,
+      "seed_go": false
+    },
+    {
+      "seed": 100,
+      "w_within": 70.10810089111328,
+      "held_cue": 0.16591666666666668,
+      "held_nocue": 0.0,
+      "held_perm": 0.0,
+      "rest_firing": 0.0,
+      "noencode_cue": 0.0,
+      "seed_go": false
+    },
+    {
+      "seed": 101,
+      "w_within": 72.95277404785156,
+      "held_cue": 0.1765,
+      "held_nocue": 0.0,
+      "held_perm": 0.0,
+      "rest_firing": 0.0,
+      "noencode_cue": 0.0,
+      "seed_go": false
+    },
+    {
+      "seed": 102,
+      "w_within": 66.64440155029297,
+      "held_cue": 0.19058333333333335,
+      "held_nocue": 0.0,
+      "held_perm": 0.0,
+      "rest_firing": 0.0,
+      "noencode_cue": 0.0,
+      "seed_go": false
+    }
+  ],
+  "config": {
+    "BTSP": {
+      "n_ca3": 2000,
+      "ca3_density": 0.05,
+      "assembly_frac": 0.12,
+      "encode_drive": 3000.0,
+      "no_sync": true,
+      "recall_k_thresh": 40.0,
+      "recall_drive": 700,
+      "recall_steps": 150,
+      "bistable": true,
+      "nmda_recurrent": false,
+      "enable_ou": false,
+      "selective_inhib": true,
+      "structural_sep": 1,
+      "plateau_self_regen": 0.15,
+      "apical_kir_g": 3.0,
+      "apical_gc": 1.0,
+      "apical_gc_read": 5.0,
+      "encode_btsp": true,
+      "encode_ca3w": 0.5,
+      "encode_plateau_pA": 250.0,
+      "btsp_lr": 0.02,
+      "hebb_max": 300.0,
+      "train_events": 30
+    }
+  }
+}

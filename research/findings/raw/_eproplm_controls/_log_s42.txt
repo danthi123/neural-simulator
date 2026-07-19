@@ -1,0 +1,15 @@
+[faithcheck] train_ctrl == committed train on {fixed,plastic,shuffle_elig,zero_signal,symmetric}  ->  PASS
+
+===== seed 42  V=300 =====
+  DEEP token-weighted CE (n=2127):  fixed 3.2367  plastic 3.1698  (plastic-minus-fixed -0.0669)
+           plastic: d1 vs fixed +0.083 | DEEP(wt) vs fixed -0.0669 | agg 3.631 | ||W_rec|| 19.215 sr 1.1033 FAcos 0.0751
+      shuffle_elig: d1 vs fixed +0.003 | DEEP(wt) vs fixed -0.0043 | agg 3.658
+       zero_signal: d1 vs fixed +0.000 | DEEP(wt) vs fixed +0.0000 | agg 3.657
+     random_signal: d1 vs fixed +0.034 | DEEP(wt) vs fixed +0.6463 | agg 3.959 | ||W_rec|| 23.095 sr 10.5973 FAcos 0.061
+        random_dir: d1 vs fixed +0.064 | DEEP(wt) vs fixed +0.7509 | agg 4.037 | ||W_rec|| 25.865 sr 12.8776 FAcos 0.0209
+         symmetric: d1 vs fixed +0.176 | DEEP(wt) vs fixed +0.1646 | agg 3.668 | ||W_rec|| 21.471 sr 6.0877 FAcos 1.0
+         sign_flip: d1 vs fixed +0.063 | DEEP(wt) vs fixed -0.0693 | agg 3.629 | ||W_rec|| 19.191 sr 1.1334 FAcos 0.1231
+  [ctrl1 scramble] DEEP(wt) plastic-minus-fixed:  UNSCRAMBLED -0.0669   SCRAMBLED -0.0602
+  [ctrl2 n-gram DEEP(wt)]: add1-bi 3.2135  addk-bi(k=0.05) 2.8599  tri-add1 3.8395  4g-add1 4.388  tri-interp 2.7935  || plastic 3.1698
+
+-> research/findings/raw/_eproplm_controls/controls_s42.json (1851.8s)
