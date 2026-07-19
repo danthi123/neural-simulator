@@ -233,6 +233,8 @@ def main():
     ap.add_argument("--recur-integrator", dest="recur_integrator", action="store_true", help="LINE-ATTRACTOR: per-channel NMDA-recurrent population integrator (Wong-Wang alpha<1)")
     ap.add_argument("--kick-steps", dest="kick_steps", type=int, default=0, help="transient-kick: drive only the first K steps per token, then let the recurrence sustain")
     ap.add_argument("--plateau-center", dest="plateau_center", type=float, default=8.0)
+    ap.add_argument("--plateau-signed", dest="plateau_signed", action="store_true", help="dense signed drive ON=(bias+v) OFF=(bias-v) -> ON-OFF diff = signed leaky state (fixes the integral-of-relu mismatch)")
+    ap.add_argument("--plateau-signed-bias", dest="plateau_signed_bias", type=float, default=3.0)
     ap.add_argument("--plateau-calib", dest="plateau_calib", action="store_true", help="per-channel v calibration so all channels land in the graded window")
     ap.add_argument("--graded-plateau", dest="graded_plateau", action="store_true", help="DENDRITIC GRADED PLATEAU: WKV leaky state in cp_conductance_g_graded_plateau (0.98 core fidelity, point-neuron limit surpassed)")
     ap.add_argument("--learn-recur", dest="learn_recur", action="store_true", help="EMERGENT: Hebbian-plastic recurrent weights self-organize the attractor during the drive")
@@ -342,7 +344,11 @@ def main():
                 _a = decay * _a + v
                 chan_drive = np.concatenate([np.maximum(_a, 0.0), np.maximum(-_a, 0.0)]) * args.drive_scale
             else:
-                chan_drive = np.concatenate([np.maximum(v, 0.0), np.maximum(-v, 0.0)]) * args.drive_scale   # [2D] ON|OFF
+                if getattr(args, "plateau_signed", False):
+                    _bz = float(args.plateau_signed_bias)
+                    chan_drive = np.concatenate([_bz + v, _bz - v]) * args.drive_scale   # DENSE signed: ON-OFF diff = signed state
+                else:
+                    chan_drive = np.concatenate([np.maximum(v, 0.0), np.maximum(-v, 0.0)]) * args.drive_scale   # [2D] ON|OFF
             if _graded or getattr(args, 'graded_plateau', False):
                 # bias the INPUT pool into its LINEAR f-I regime so firing ~= baseline + gain*v_t (small v_t must still
                 # modulate firing, not fall below threshold) -> g_nmda = leaky integral LINEAR in v_t. The constant baseline
