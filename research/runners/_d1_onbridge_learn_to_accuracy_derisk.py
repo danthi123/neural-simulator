@@ -147,6 +147,29 @@ def _load_task(task, seed, parity_bits):
         idx = rng.permutation(n); cut = int(0.7 * n)
         tr, te = idx[:cut], idx[cut:]
         Xtr, ytr, Xte, yte = X[tr], label[tr], X[te], label[te]
+    elif task == "cleanxor":
+        # CLEAN redundant-XOR (2026-07-19): the dense majority-vote latent is a hard threshold-on-sum (LTU) => low MLP
+        # ceiling (~0.73) + a thin deep-advantage margin (~0.04) => a POOR accuracy discriminator for deep credit. This
+        # variant keeps the DENSE-REDUNDANT (spiking-trainable) property but makes each latent a CLEAN single hidden bit
+        # REDUNDANTLY COPIED to k input positions (biology: a feature robustly represented by many afferents), + filler
+        # random bits. label = latA XOR latB => deterministic (oracle -> ~1.0), floor ~0.5, margin ~0.5: a clean target
+        # the on-bridge deep credit must clear the LINEAR floor to hit. n_copies is the redundancy (the single variable).
+        n_bits = max(24, int(parity_bits))
+        rng = np.random.default_rng(seed)
+        n = 1200
+        n_copies = max(4, n_bits // 6)                          # each latent redundantly encoded by ~n_bits/6 bits
+        latA = (rng.random(n) < 0.5).astype(np.int64)
+        latB = (rng.random(n) < 0.5).astype(np.int64)
+        X = (rng.random((n, n_bits)) < 0.5).astype(np.float64)  # filler background
+        colsA = rng.choice(n_bits, size=n_copies, replace=False)
+        colsB = rng.choice(np.setdiff1d(np.arange(n_bits), colsA), size=n_copies, replace=False)
+        flip = 0.05                                             # small per-copy corruption (robust-redundant, not exact)
+        X[:, colsA] = (latA[:, None] ^ (rng.random((n, n_copies)) < flip)).astype(np.float64)
+        X[:, colsB] = (latB[:, None] ^ (rng.random((n, n_copies)) < flip)).astype(np.float64)
+        label = (latA ^ latB).astype(np.int64)                  # XOR of the two clean latents -> needs the hidden layer
+        idx = rng.permutation(n); cut = int(0.7 * n)
+        tr, te = idx[:cut], idx[cut:]
+        Xtr, ytr, Xte, yte = X[tr], label[tr], X[te], label[te]
     else:
         raise ValueError(f"unknown task {task!r}")
     ytr = np.asarray(ytr).astype(np.int64); yte = np.asarray(yte).astype(np.int64)
@@ -649,7 +672,7 @@ def _mean(per, *keys):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=[42])
-    ap.add_argument("--task", choices=["emerge1", "parity", "dense"], default="emerge1")
+    ap.add_argument("--task", choices=["emerge1", "parity", "dense", "cleanxor"], default="emerge1")
     ap.add_argument("--parity-bits", type=int, default=4)
     ap.add_argument("--microcircuit", action="store_true",
                     help="enable_bdsp_microcircuit (interneuron-cancelled clean apical error); default = Burstprop")
