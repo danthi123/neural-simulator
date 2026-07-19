@@ -165,7 +165,18 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                             sat = 0.5 * torch.tanh(rate)             # saturating f-I (cap at the 0.5 refractory ceiling)
                             q = torch.round(sat * ts) / ts           # quantize to the on-bridge firing levels
                             rate = sat + (q - sat).detach()          # straight-through: forward quantized, backward smooth
-                        outs.append(r[:, t] * self.Wo_sp(rate))
+                        y = r[:, t] * self.Wo_sp(rate)
+                        if getattr(args, "spike_output", False):
+                            # SpikeGPT-faithful: the STATE stays GRADED (no state-quantize needed), the block OUTPUT y_t is
+                            # SPIKE-CODED (a per-token spike-rate). Straight-through signed quantization to 2*ts+1 firing
+                            # levels (forward spiked, backward smooth) = the single per-token output binarization SpikeGPT
+                            # absorbs via BPTT (non-compounding across the recurrence). This is the "spikes for I/O, graded
+                            # local state" bar (biology + SpikeGPT), not the stricter self-imposed "state = firing rate".
+                            ts = float(getattr(args, "t_step", 6))
+                            ysat = 0.5 * torch.tanh(y)               # saturating output f-I
+                            yq = torch.round(ysat * ts) / ts         # signed spike-rate levels {-0.5..0..0.5}
+                            y = ysat + (yq - ysat).detach()          # straight-through
+                        outs.append(y)
                     else:
                         outs.append(r[:, t] * self.Wo(a))
                 return self.head(torch.stack(outs, 1))
@@ -277,6 +288,8 @@ def main():
                     help="(ssm only) read the leaky state via NON-NEGATIVE ON/OFF firing-rate channels [relu(a),relu(-a)] "
                          "= the spiking firing-rate constraint; GO => the on-bridge firing-rate read preserves deep context.")
     ap.add_argument("--quantize-state", dest="quantize_state", action="store_true")
+    ap.add_argument("--spike-output", dest="spike_output", action="store_true",
+                    help="SpikeGPT-faithful: GRADED state + SPIKE-CODED output y_t (straight-through), trained end-to-end")
     ap.add_argument("--uniform-decay", dest="uniform_decay", action="store_true",
                     help="(ssm only) ONE shared decay across channels = the substrate's uniform NMDA tau (simplifies the "
                          "on-bridge realization); GO => no per-neuron tau array is needed on the bridge.")
