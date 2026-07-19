@@ -68,3 +68,16 @@ enhancement (realizable on spikes via FS divisive inhibition if wanted). **Rung 
 remaining build is the full ON-BRIDGE realization (a recurrent spiking `BrainRegion` with a slow leaky conductance as the
 state + the trained K/V/receptance weights, read from `cp_firing_states`), reusing the EMERGE-82 on-bridge-LSM machinery.
 NO `sim/` edit in the de-risk; `_emerge_wkv_lm_derisk.py --recurrence ssm`.
+
+**Rung 2 spiking firing-rate constraint (GO) + at-scale confirmation (3-seed GO):** `--spiking-state` reads the leaky
+state via NON-NEGATIVE ON/OFF rate channels `[relu(a), relu(-a)]` (the two-population sign code a spiking region uses).
+Smoke +0.374 == signed-analog +0.375 (the firing-rate constraint costs NOTHING). At V2000 scale (3-seed): the FULLY
+spiking-faithful form (membrane-leak recurrence + non-negative firing-rate read) beats the fair trigram at deep context
+**+0.55/+0.61/+0.59**, perm-collapse +4.4-4.6, memoryless-collapse **+1.73-1.85** (GROWS at scale — the recurrence carries
+MORE deep-context info with data). ⇒ **the entire fully-spiking open-generation path is de-risked END-TO-END at the rate
+level** (Rung 1a mechanism 6-seed · Rung 1b emergent input 3-seed · Rung 2 spiking-faithful recurrence + firing-rate read
+3-seed-at-scale). **The remaining build is the ACTUAL on-bridge realization** (a recurrent Izhikevich `BrainRegion` of D
+channels, each a slow leaky conductance = the state, learned decay→conductance tau, learned Wv→input synapses, driven
+through `_run_one_simulation_step`, read from `cp_firing_states` → the Wo_sp read-out — reusing the EMERGE-82 on-bridge-LSM
+pattern), then Rung 3 (biologize the BPTT rule: e-prop/BDSP on the fixed-form recurrence). PARALLEL: the 21M spiking-forward
+deploy (ledgered scaffold).

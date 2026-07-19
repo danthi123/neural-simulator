@@ -181,6 +181,14 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
      cleared for the input. **NEXT = Rung 2: the fully-SPIKING WKV port** (WKV recurrence → a spiking `BrainRegion` via
      SNN-membrane-leak ≡ SSM-state-update; the one-brain/fully-spiking milestone), then Rung 3 (biologize the rule);
      PARALLEL = the 21M spiking-forward deploy (ledgered scaffold).
+     **RUNG 2 rate-level DE-RISKED END-TO-END (GO):** the spiking-faithful SSM leaky-integrator (`--recurrence ssm`,
+     membrane-leak form) beats the trigram at deep context +0.375, AND the NON-NEGATIVE ON/OFF firing-rate read
+     (`--spiking-state`, the spiking constraint) costs NOTHING (+0.374 == analog), 3-seed-at-scale GO +0.55-0.61 with
+     memoryless-collapse GROWING at scale (+1.73-1.85). ⇒ the WHOLE fully-spiking open-generation path is de-risked at the
+     rate level (1a mechanism · 1b emergent input · 2 spiking-faithful recurrence+read). **NEXT = the ACTUAL ON-BRIDGE
+     realization** (a recurrent Izhikevich `BrainRegion`, slow leaky conductance = state, learned decay→tau, learned
+     Wv→input synapses, `_run_one_simulation_step` + `cp_firing_states` read → Wo_sp; reuse EMERGE-82's on-bridge-LSM
+     pattern), then Rung 3 (biologize the BPTT rule). All rate-level de-risks NO `sim/` edit.
   -2. **gap#1 NEXT BUILD DECIDED + gap#4 supervised PARKED (capability met by the unsupervised method) — 2026-07-19.**
      gap#1 research gate `wf_dd786412-527` (4-lens, decisive): the next build is a **spiking RWKV/linear-attention
      (SpikeGPT-family) LEARNED key–value recurrence** over the emergent stream-cortex codes, decoded by the existing
