@@ -34,6 +34,13 @@ Schaffer ca3→ca1 synapses found = **61161**, mean_w(pre-boost) = 3.558, n_ca1 
   conductance/effective-strength cap. Neither runner-side lever can overcome it; the fix is a bridge-level `sim/`
   investigation (the effective_synaptic_strength / g_e cap on the ca1 pathway), a focused future pass.
 
+## Refinement (2026-07-18): the boost IS in the live weight matrix, so it's a deeper g_e-PATH puzzle
+`base_synaptic_weights = self.cp_connections.data` (bridge.py:5970) directly — the schaffer_boost edits `cc.data`, so
+the boosted weights ARE in the live matrix the g_e matmul uses (not a cached CSR, not a separate array). Yet ca1_g_e
+doesn't scale with them. So it is NOT a simple weight-cache staleness; it is a deeper g_e-path issue (e.g. the ca1
+region's synaptic-current path, a per-region conductance scaling, or the ca1 cell type's g_e→current conversion). A
+genuine `sim/`-level investigation — the honest limit of runner-side diagnosis. Deferred to a focused future pass.
+
 ## Status (per THE LAW — a precisely-characterized boundary that names the next lever)
 - **The SWR readout is BLOCKED by the ca3→ca1 effective-conductance cap** — a real, precisely-localized hard
   integration (the documented "hard fresh-pass integration" snag, now root-caused). It is NOT closeable by the
