@@ -74,6 +74,24 @@ that carries the class signal to a readable, input-selective output). Only THEN 
 meaningful. This session localized it precisely across 3 diagnostic runs (drive sweep, readout-fix, A/B arms); the
 next cycle does the coordinated forward-propagation tuning.
 
+## DIFFERENTIAL READOUT — engages but DOESN'T fix it (readout-side EXHAUSTED; forward-propagation confirmed as THE blocker)
+Built the input-differential readout (`--differential-readout`: subtract the no-input bias baseline). VERIFIED it engages
+(a `--smoke` A/B, per the silent-failure discipline of checking a refutation): raw held 0.604 → differential 0.396 — a
+REAL change. BUT **0.604 and 0.396 are COMPLEMENTS**: raw predicts always-class-A (0.604 = A's frequency), differential
+predicts always-class-B (0.396 = B's) — both still CONSTANT-CLASS (degenerate); the differential just flips WHICH constant.
+And BDSP == LESION in BOTH modes (credit makes no difference). At the full config the differential held 0.420 == lesion too.
+⇒ **the readout is degenerate regardless of raw/differential because NO class-selective signal reaches the output.** Across
+SIX diagnostic runs (drive sweep · readout-fix · fixed/measB A/B · differential full · smoke A/B) the held-out is invariant
+to credit-type, weight-magnitude (2000×), drive, output-bias, AND readout scheme. **THE READOUT-SIDE IS EXHAUSTED; the
+blocker is definitively the FORWARD PROPAGATION** — the on-bridge net does not carry the input's class distinction through
+input→hidden→output (the hidden fires bias-driven at 0.07, not input-selectively). **NEXT (the only remaining lever): make
+the FORWARD PATH input-selective** — the hidden layer must fire DIFFERENTLY for different input classes BEFORE any readout
+can work. Concretely: strengthen/init the input→hidden forward weights so the input pattern (not the hidden-bias) sets the
+hidden firing, verify hidden input-selectivity directly (drive class-A vs class-B, compare hidden patterns) as the gating
+check, then hidden→output, then re-test the credit-direction A/B. This is the "width+drive tuning" the runner's verdict
+named — a coordinated forward-weight/bias dive, the focused next-cycle investigation. Minor provenance gap to fix: the
+runner doesn't write `differential_readout` into its config JSON (record the knob).
+
 ## Status (per THE LAW — the negative names the next mechanism)
 - **gap#4 keystone accuracy = NOT achieved at ep300/hidden128** — the BDSP fixed-feedback credit doesn't produce
   accuracy-useful hidden-layer learning (== lesion). The mechanism/wiring/moat are all correct; the credit DIRECTION is the wall.
