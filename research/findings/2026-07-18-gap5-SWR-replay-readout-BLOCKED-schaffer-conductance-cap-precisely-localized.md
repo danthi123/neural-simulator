@@ -187,6 +187,27 @@ peak Schaffer g_e (the winner-set). Result (BASE config, n_mem=3, 3 seeds):
   0.12→0.03) + synchronous drive (drop `no_sync`) + k_thresh specificity (the emergent-completion 12.6× recipe), then re-add
   E%-max on top. The E%-max option is kept (it's component #1, needed once the completion is clean). NO sim/ edit (runner-only).
 
+## 🎯 THE STACK BREAKS THE NEAR-TIE (2026-07-19) — sparse+sync completion + E%-max read → cross 0.98→0.092 (ratio 6.77×)
+Ported the emergent-completion recipe (sparse `assembly_frac=0.03` + SYNCHRONOUS `no_sync=False` + low `recall_k_thresh=20`
++ `hebb_max=120`) into the SWR readout, THEN added the E%-max CA1 top-k read (`swr_ca1_topk=0.1`). Result (n_mem=3, 3 seeds):
+| config | match | cross | ratio |
+|---|---|---|---|
+| baseline (12%-async, no top-k) | 0.98 | 0.98 | 1.0 (near-tie) |
+| E%-max alone (12%-async) | 0.90 | 0.87 | 1.0 (no help — g_e non-specific) |
+| **sparse+sync completion, no top-k** | 0.94 | 0.87 | 1.08 (specific completion but broad read) |
+| **sparse+sync completion + E%-max top-k** | **0.626** | **0.092** | **6.77×** (42: 0.059, 43: 0.086, 44: 0.132) |
+- **The latched-breakdown confirms the mechanism:** the sparse+sync completion is SPECIFIC (`[58,0,0]`, `[0,29,0]`, `[0,0,60]`
+  — assembly A completes ONLY A's cells, non-assembly=0), so A's Schaffer g_e is SPECIFIC → the E%-max top-k fires only A's
+  target cells → cross 0.092. This is the STACK exactly as the research predicted: E%-max is necessary-not-sufficient (did
+  nothing on the cross-confused 12% completion; drops cross to 0.09 on the SPECIFIC completion). **The near-tie — the SWR
+  specificity blocker — is BROKEN** (cross 0.98 → 0.092, a real 6.77× discrimination).
+- **Remaining shortfall = MATCH (0.626, marginal vs the 0.6 bar), NOT specificity.** The completion is WEAK (held_cue ~0.004)
+  + two residual measures RUN AWAY (`non-assembly=1820` = a whole-network avalanche at k_thresh=20 on the n_ca3=2000 scale) —
+  both dilute the match. **NEXT: strengthen the completion (higher `hebb_max` / `recall_drive` + `rate_homeo` intrinsic
+  homeostasis to kill the runaway) → match ≥0.6 robustly, then 6-seed + anti-cheats (no-learn→cross≈1, permuted-cue→no-match).**
+  The specificity is solved; this is a strength/stability tune on a GO-adjacent result. NO sim/ edit (runner params + the
+  additive E%-max read).
+
 ## Status (per THE LAW — a precisely-characterized boundary that names the next lever)
 - **The SWR readout is BLOCKED by the ca3→ca1 effective-conductance cap** — a real, precisely-localized hard
   integration (the documented "hard fresh-pass integration" snag, now root-caused). It is NOT closeable by the
