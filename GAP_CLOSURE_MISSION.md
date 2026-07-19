@@ -171,14 +171,16 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   hold the moat (lesion dw 0.000, wt_ok True) — the mechanism is correct; only accuracy-at-scale is unproven.
   (2) **gap#5 (i) SWR readout — MAJOR advance (2026-07-19):** ROOT-CAUSED the ca1_fire=0 (STP depression on the Schaffer
   crushes g_e; phase-2 STP-off → ca1 FIRES) + the specificity barrier → built the LEARNED-SCHAFFER fix (associative
-  ca3(assembly)→ca1(distinct target) potentiation) → firing now SPARSE+SANE (~10 ca1 cells, v near rest) + `swr_disjoint`
-  assemblies → **specificity PARTIALLY closed: ca1_match 0.993 vs ca1_cross 0.80** (was 0.98/0.98). RESIDUAL precisely
-  named: an ASYMMETRIC completion DOMINANT-ATTRACTOR (assembly-1's completion co-activates assembly-0, breakdown
-  [206,232]) — the completion recurrent-BALANCE/distinctness residual (= the same completion-magnitude residual, deeper
-  arc). Next lever (future pass): balance the completion attractors (between-assembly selective inhibition / balanced
-  encoding) so no assembly dominates → cross→low. Knobs `swr_learn_schaffer`/`swr_disjoint`/`swr_ca1_ff_inhib`/
-  `swr_ripple_pA`/`SWR_PHASE2_NOSTP` all default-off byte-identical (determinism CI 9/9). ⇒ SWR (i): firing SOLVED,
-  specificity partially closed — a MAJOR advance from "mystery cap / ca1_fire=0". Finding
+  ca3(assembly)→ca1(distinct target) potentiation) → firing now SPARSE+SANE (~10 ca1 cells, v near rest). **FIRING =
+  SOLVED (robust). SPECIFICITY = NOT ROBUSTLY CLOSED (honest correction):** a single fb_inhib=40 run showed match 0.99
+  vs cross 0.31, but MULTI-SEED (42/43/44) = **0/3 GO** (cross 0.72-0.86); that 0.31 run only differed by `SWR_DEBUG=1`
+  whose `to_host` syncs flipped the NON-DETERMINISTIC transpose-SpMV FP order, which flipped the completion's dominant-
+  attractor NEAR-TIE. ⇒ the SWR specificity is bottlenecked by a NEAR-TIE completion (assemblies not distinctly
+  separated) = the completion-distinctness residual (same class as the completion-magnitude residual); the fix needs a
+  genuinely MORE-DISTINCT completion (deep completion-quality work), NOT a tune. The multi-seed+variance+config-diff
+  discipline caught a debug-on lucky run I briefly believed (silent-failure discipline working). Knobs
+  `swr_learn_schaffer`/`swr_disjoint`/`swr_ca1_ff_inhib`/`swr_ripple_pA`/`SWR_PHASE2_NOSTP` all default-off byte-identical
+  (determinism CI 9/9). ⇒ SWR (i): firing SOLVED, specificity NOT closed (near-tie completion). Finding
   `2026-07-18-gap5-SWR-replay-readout-BLOCKED-...`.
 - **⏸️ PAUSED FOR GAMING (owner, 2026-07-18) — RESUME PLAN when the owner is back:** the owner is gaming, so I KILLED
   all GPU jobs (both gap#4 A/B runs + all SWR/emergent-DG diagnostics); GPU is free. **The gap#4 A/B (fixed-FA vs

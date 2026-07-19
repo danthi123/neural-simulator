@@ -108,6 +108,19 @@ Schaffer + phase-2 STP-off), (2) specificity PARTIALLY closed (disjoint assembli
 root-caused to recurrent cross-assembly dominance → the named fix is dynamic between-assembly WTA (future build). A
 major advance from the opening "mystery cap / ca1_fire=0 / hard integration".
 
+## ⚠️ HONEST CORRECTION (2026-07-19): the fb_inhib=40 "specificity" (cross 0.31) was NON-ROBUST — the completion is a NEAR-TIE
+A single fb_inhib=40 run showed clean specificity (match 0.99 vs cross 0.31) and I nearly claimed the SWR readout closed.
+**Multi-seed (42/43/44) = 0/3 GO** (cross 0.72-0.86); a 3× same-seed variance check = reproducibly cross **0.77**. The
+0.31 run had ONE difference: `SWR_DEBUG=1` (read-only instrumentation). Its `to_host` synchronizations shifted the FP
+summation order of the NON-DETERMINISTIC transpose SpMV (bridge.py:6193, `deterministic_transpose_matvec` default off),
+which FLIPPED the completion's dominant-attractor near-tie from spreading (0.77) to specific (0.31). ⇒ the completion
+between-assembly separation is a NEAR-TIE so fragile that debug-vs-no-debug flips it — the SWR specificity is NOT robustly
+closed; the honest typical result is cross ~0.77 (not specific). The multi-seed + variance + config-diff discipline caught
+a debug-on lucky run I briefly believed. **⇒ SWR (i) HONEST final: firing SOLVED (robust); specificity NOT closed —
+bottlenecked by a NEAR-TIE completion (assemblies not distinctly separated), the completion-distinctness residual. The
+fix requires a genuinely more-DISTINCT completion (better-separated attractors) — deep completion-quality work, the same
+residual class as the completion magnitude.** Not a quick tune (fb_inhib/disjoint help but don't robustly separate).
+
 ## Status (per THE LAW — a precisely-characterized boundary that names the next lever)
 - **The SWR readout is BLOCKED by the ca3→ca1 effective-conductance cap** — a real, precisely-localized hard
   integration (the documented "hard fresh-pass integration" snag, now root-caused). It is NOT closeable by the
