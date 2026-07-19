@@ -161,6 +161,18 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
+- **🏁 SESSION 2026-07-19 (fully-spiking on-bridge WKV — COMPLETE cheap-lever map, honest verdict): the WKV realized on
+  REAL Izhikevich spikes (diagonal self-NMDA autapse = a leaky integral) reaches PARITY with the fair interpolated trigram
+  at deep context — a strong positive no fading reservoir achieved — via reservoir-computing + nonlinear MLP read +
+  quantization co-adaptation. The robust BEAT is CAPPED by the ~0.5 spiking-state-read fidelity, and NO cheap lever
+  overcomes it: co-adaptation→parity, population(pk8→24)→near-parity(mean −0.009) but too slow for thin seeds,
+  conductance-read(research-gate top pick)→NEGATIVE (probe operating-point didn't transfer), SCALE(V=1000/d128)→REFUTED
+  3/3 (mean −0.43; penalty grows with V faster than the margin because the 0.5 fidelity is a fixed FRACTION → more classes
+  cost more absolute NLL). NOT a declared wall (parity is positive; the mechanism is 6-seed-GO + GENERATES prose at the rate
+  level). ONE untested cheap lever remains — a LONGER read window (time-averaging the spike-rate estimate, vs population's
+  space-averaging) — then the robust BEAT is deep-lever-gated (higher-fidelity spiking-state code, or end-to-end deep-credit
+  = gap#4, itself a documented wall). Every cheap lever verify-first (Lever 1 REFUTED an over-claim; drift#11 held). NO
+  `sim/` edit. `2026-07-19-gap1-WKV-...` (on-bridge cheap-lever map + verdict).
 - **🏁🏁 SESSION 2026-07-19 CAPSTONE (updated headline): gap#4 FULLY RESOLVED + gap#1 OPEN-GENERATION LEVER (WKV)
   COMPREHENSIVELY VALIDATED + DEMONSTRATED + SCALING-CONFIRMED.** The mission-primary gap#1 (open fluent generation) was
   attacked via a decisive research gate → the **WKV learned-key-value recurrence** (the non-fading store every fading
