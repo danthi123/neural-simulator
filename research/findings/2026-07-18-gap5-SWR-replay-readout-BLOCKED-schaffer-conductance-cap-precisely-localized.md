@@ -95,6 +95,19 @@ between-assembly selective inhibition, or balanced-strength encoding) so no asse
 FINAL state this session: firing SOLVED, specificity PARTIALLY closed (cross 0.80), residual precisely named
 (completion dominant-attractor). A major advance from "mystery cap / ca1_fire=0 / hard integration".
 
+## Residual root cause = RECURRENT cross-assembly attractor dynamics (sparing REFUTED, 2026-07-19)
+Tested the "static spare-all causes spreading" hypothesis: `selective_inhib=OFF` made specificity WORSE (cross
+0.775→0.987) and shifted WHICH assembly spreads. ⇒ the sparing is NOT the cause — the cross-assembly spreading is the
+RANDOM RECURRENT ca3→ca3 connectivity creating cross-assembly attractor paths, with one assembly an ASYMMETRIC DOMINANT
+attractor (e.g. cue-1 completes assembly-1 [233] but the recurrent pulls in assembly-0 [206]). This is the deep
+completion-distinctness/BALANCE residual (same class as the completion-magnitude residual). **The real fix = DYNAMIC
+between-assembly WTA (lateral inhibition strong enough that the active assembly suppresses the others despite the
+recurrent cross-drive) — a genuine mechanism build (pattern-separation competition), NOT the static spare-all the
+completion has.** ⇒ SWR (i) FINAL (this session): a precise 2-stage chain — (1) firing SOLVED (STP root-cause + learned
+Schaffer + phase-2 STP-off), (2) specificity PARTIALLY closed (disjoint assemblies, cross 0.775) with the residual
+root-caused to recurrent cross-assembly dominance → the named fix is dynamic between-assembly WTA (future build). A
+major advance from the opening "mystery cap / ca1_fire=0 / hard integration".
+
 ## Status (per THE LAW — a precisely-characterized boundary that names the next lever)
 - **The SWR readout is BLOCKED by the ca3→ca1 effective-conductance cap** — a real, precisely-localized hard
   integration (the documented "hard fresh-pass integration" snag, now root-caused). It is NOT closeable by the
