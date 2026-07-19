@@ -51,6 +51,17 @@ plateau-gated BTSP keystone). ⇒ the emergent-DG (gap#5 ii) and the dendritic-c
 3. one-shot BTSP (plasticity ON) to potentiate the recurrent among the co-active set → a self-sustaining attractor —
    Problem B = the gap#4 mechanism.
 
+## ⚠️ QUALIFIER (2026-07-19, verify-don't-assert correction) — "does not conduct" is config-specific, not absolute
+Verified against the COMPLETION-arc default build (`_riii..._completion` `_build`: ca3_density=0.5, default mossy,
+**`enable_ou=True`**): the feedforward DOES conduct there (EC fires 18, DG 7, CA3 6) even before training. The
+non-conduction is SPECIFIC to the emergent-DG build's config — **`enable_ou=False` (no background synaptic bombardment
+to help weak drive cross threshold) + the weak default mossy (w=8)**. ⇒ the accurate statement: the emergent-DG build's
+feedforward does not conduct BECAUSE OU is off AND the mossy is weak; turning OU on (completion default) OR using strong
+mossy (the selection de-risk, w=200) makes it conduct. The completion arc relies on OU-noisy selection + Hebbian training
+to form a stable attractor; the selection de-risk (`2026-07-19-...-SELECTION-de-risked-GO-6seed`) uses OU-off + strong
+mossy for a DETERMINISTIC sparse selection (no training). Both are valid; the "does not conduct" headline overstated a
+config-specific result. The unification conclusion (one-shot BTSP forms the self-sustaining attractor) is unaffected.
+
 ## Status
 - **Honest reframe recorded.** The 3-layer "amplification" framing (2026-07-18) was chasing the wrong variable — the
   input never reached CA3. This instrumentation (≈20 min) found in the substrate what the operating-point sweeps missed,
