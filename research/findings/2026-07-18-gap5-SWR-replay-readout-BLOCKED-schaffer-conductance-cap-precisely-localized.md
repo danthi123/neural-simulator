@@ -121,6 +121,21 @@ bottlenecked by a NEAR-TIE completion (assemblies not distinctly separated), the
 fix requires a genuinely more-DISTINCT completion (better-separated attractors) — deep completion-quality work, the same
 residual class as the completion magnitude.** Not a quick tune (fb_inhib/disjoint help but don't robustly separate).
 
+## STRENGTH SWEEP + ANTI-CHEAT (2026-07-19, parallelized 6-seed) — mechanism VALIDATED, specificity needs PATTERN SEPARATION
+Parallelized sweep of the within-assembly separation strength (found via the parallel batch, not the serial grind):
+- **strong_within (hebb_lr 4 / lam_dep 1):** 2/3 GO (cross ~0.27 on the separable seeds, 0.845 on seed 44) — best.
+- **h8/l2:** 2/6 GO (cross 0.589); **h12/l2:** 1/6 GO (cross 0.708) — MORE strength is WORSE (over-strong recurrent).
+- **NO-LEARN anti-cheat (uniform boost, no learned Schaffer):** 0/6, cross 0.999 — the learned ca3→ca1 association is
+  GENUINELY LOAD-BEARING for the specificity (not a fixed-random-projection artifact). ⇒ the readout MECHANISM is
+  validated; the learned Schaffer is the specificity source.
+- **⇒ the specificity is SEED-DEPENDENT (~2/6), NOT robustly closeable by any within-assembly strength lever.** The
+  completion near-tie is a FUNDAMENTAL property of RANDOM assembly codes (random recurrent → attractors sometimes
+  distinct, sometimes near-tie, by seed). **Robust specificity fundamentally needs PATTERN-SEPARATED assembly codes —
+  which is exactly the emergent-DG's job (sparse decorrelated codes).** ⇒ the two gap#5 extensions UNIFY: robust SWR
+  specificity REQUIRES the emergent-DG's pattern separation; random pre-assigned codes give seed-dependent near-ties.
+  ⇒ SWR (i) FINAL: firing SOLVED + readout mechanism VALIDATED (learned Schaffer, anti-cheat clean); specificity
+  bottlenecked by (and requiring) the emergent-DG pattern separation = the shared gap#5 unlock.
+
 ## Status (per THE LAW — a precisely-characterized boundary that names the next lever)
 - **The SWR readout is BLOCKED by the ca3→ca1 effective-conductance cap** — a real, precisely-localized hard
   integration (the documented "hard fresh-pass integration" snag, now root-caused). It is NOT closeable by the

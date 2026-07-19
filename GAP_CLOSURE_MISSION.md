@@ -161,7 +161,31 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
-- **📍 RESUME POINT (2026-07-19): gap#4 A/B step-1 DONE = INCONCLUSIVE (undertrained); gap#5 (i) SWR ROOT-CAUSED + a
+- **📍 RESUME POINT (2026-07-19, latest — parallel batch): gap#5 (i) SWR COMPREHENSIVELY CHARACTERIZED; gap#5 (ii)
+  emergent-DG ROOT-CAUSED (feedforward-conduction, unifies with gap#4); gap#4 keystone accuracy arms IN FLIGHT.**
+  (1) **gap#5 (i) SWR — FINAL characterization:** the parallelized strength sweep + no-learn anti-cheat resolved the
+  specificity: the learned-Schaffer readout MECHANISM is VALIDATED (no-learn anti-cheat 0/6, cross 0.999 → the learned
+  ca3→ca1 association is genuinely load-bearing), but the specificity is SEED-DEPENDENT (~2/6) and NOT robustly closeable
+  by within-assembly recurrent strength (strong_within h4 2/3, h8/l2 2/6, h12/l2 1/6 — MORE strength is WORSE). ⇒ the
+  completion near-tie is a FUNDAMENTAL property of RANDOM assembly codes; robust SWR specificity REQUIRES pattern-SEPARATED
+  codes = the emergent-DG (item ii). **The two gap#5 extensions UNIFY: SWR specificity needs the emergent-DG's separation.**
+  (2) **gap#5 (ii) emergent-DG — ROOT-CAUSED via read-your-substrate instrumentation (NOT amplification):** traced the
+  trisynaptic loop firing at every stage → **the FEEDFORWARD chain `lang→ec→dg→ca3` does not conduct a volley** — every
+  hop dies (lang→ec: EC g_e 0.8 < g_i 1.1 → EC 0; ec→dg: 0; dg→ca3: CA3 g_e only 0.17 at mossy w=8, ~10-30× too weak,
+  scales LINEARLY with mossy w, INVARIANT to feedback inhibition). Strong mossy (w=100-400) fires cells transiently
+  (up to 45% = the "distributed code") but NO assembly latches, because the read pass has plasticity OFF so no attractor
+  forms + the bistable latch is apical/recurrent-triggered (chicken-and-egg for a novel assembly). **⇒ the fix UNIFIES
+  with gap#4: one-shot BTSP potentiation of the recurrent among the co-active set = the self-sustaining attractor.** The
+  loop was never exposed as broken because all prior CA3 work drove CA3 DIRECTLY. Finding
+  `2026-07-19-gap5-emergent-DG-ROOT-CAUSE-trisynaptic-feedforward-does-not-conduct-unifies-with-gap4-BTSP`. NEXT (GPU):
+  strong-mossy sparse-set drive + E%-max ff-inhib + plasticity-ON one-shot BTSP → test self-sustain (this is the gap#4
+  mechanism on the CA3 recurrent → both gap items close together).
+  (3) **gap#4 keystone accuracy — 4 CPU-bound arms IN FLIGHT** (`_d1_onbridge_learn_to_accuracy --microcircuit`, emerge1,
+  h128, seed 42, ~50-60 min each): graded+KP ep300 (→d1_kp_accuracy.log), graded+fixed ep300 (→d1_fixed_ep300.log),
+  graded+KP ep600 (→d1_kp_ep600.log), measured-B+KP ep300 (→d1_measB_kp_ep300.log). Verdicts pending; if any clears the
+  0.75 bar → 6-seed + anti-cheats → gap#4 accuracy milestone. **The gap#4↔#5 UNIFICATION (one-shot plateau-gated recurrent
+  potentiation) is now the shared keystone for BOTH gap#4 (credit) AND gap#5-ii (emergent attractor).**
+- **📍 RESUME POINT (2026-07-19, earlier): gap#4 A/B step-1 DONE = INCONCLUSIVE (undertrained); gap#5 (i) SWR ROOT-CAUSED + a
   learned-Schaffer closer in flight.** (1) **gap#4 A/B re-run (ep=100/train=150, fixed vs KP-learned):** BOTH arms
   held-out **0.400** (below chance 0.549) — undertrained at ep=100, so fixed-vs-KP is UNRESOLVED. The KP arm moved MORE
   weight (in→hid dw **710 vs fixed 198**) but same accuracy — consistent with D2's finding that KP's `Y` needs MANY
