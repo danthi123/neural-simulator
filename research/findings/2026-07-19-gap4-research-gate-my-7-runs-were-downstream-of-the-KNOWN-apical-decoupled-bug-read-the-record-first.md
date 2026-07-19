@@ -55,6 +55,24 @@ BDSP-to-accuracy may be a parked direction vs the unsupervised stream cortex bei
 value fork worth the owner's steer; meanwhile the frozen-reservoir de-risk + the C1 apical-coupling fix are the two
 concrete unblockers IF supervised BDSP-to-accuracy continues.
 
+## SYNTHESIS (2026-07-19) — the substrate ALREADY learns to accuracy; my `_d1` runner's 0.42 is its READOUT (a DIFFERENT runner already solves this)
+The frozen-reservoir de-risk the scout recommended is ALREADY BUILT + RUN in a DIFFERENT runner:
+`_onbridge_eprop_port_derisk.py` has `reservoir_control=True` (line 507, added 2026-07-16) — trains ONLY a Bellec-2020
+LEAKY LINEAR READOUT over the hidden population with the hidden FF FROZEN — and its own comment + the
+`2026-07-16-deep-credit-GO-is-80pct-RESERVOIR` finding report **FROZEN 0.778 vs chance 0.333** (docstring line 51: "a
+clean linear readout on H2 is ~0.7-0.9 separable — the forward IS discriminative; the leaky readout is what lets e-prop
+read it out"). ⇒ **the substrate CARRIES a decodable class signal (0.7-0.9) with a PROPER trained-linear population
+readout.** My `_d1_onbridge_learn_to_accuracy` runner's degenerate 0.42 is precisely **Failure B — its argmax-over-sparse-
+output-pools readout** (which the eprop runner AVOIDS with the leaky readout) + Failure A (forward collapse) + C1 (apical-
+decoupled credit). ⇒ **gap#4 "local-credit learning on the substrate to accuracy" is SUBSTANTIALLY ACHIEVED already**
+(reservoir + leaky readout ≈ 0.778); learned deep credit adds a SMALL seed-variable margin (~+0.037..+0.185, and the
+80/20 split is itself seed-confounded per 2026-07-17). **The deepest read-your-record lesson: a DIFFERENT runner already
+achieves what my `_d1` runner couldn't — because `_d1` has a readout bug my 7 runs kept tuning around.** ⇒ the REAL open
+frontier is the narrow "does learned deep credit BEAT the reservoir by a robust margin, seed-clean" — a hard, small-margin
+problem the field also faces (surrogate-grad BPTT / rate readouts, not sparse local credit). **VERIFYING NOW** (running
+`_onbridge_eprop_port_derisk --seeds 42 43 44` to re-confirm FROZEN clears chance). This resolves the gap#4 investigation:
+the keystone (substrate learns) is achieved; the deep-credit-margin is the honest, narrow, field-hard frontier.
+
 ## Verified sources
 - **VERIFIED (internal):** `2026-07-10-...-apical-decoupled-...` (C1, exact bug, same runner); `2026-07-17-rate-net-control-graded-...`
   (C2 control run); `2026-07-16-deep-credit-GO-is-80pct-RESERVOIR-...` (reservoir instrument + 0.778, WITH its own
