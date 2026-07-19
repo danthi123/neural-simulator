@@ -163,6 +163,12 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 - **🏁 SESSION 2026-07-19 SUMMARY (headline: gap#5 (i) SWR readout CLOSED) + the CLEAR NEXT STEPS.** A long, productive
   session. Achievements + resume points, most-recent-first:
+  -5. **🎉 gap#1 CROSS-SENTENCE R4 OPEN-PROSE 6-SEED GO (2026-07-19) — the WKV carries MULTI-SENTENCE discourse.** On
+     contiguous multi-sentence passages (`--contiguous`, 48-token spans crossing sentence boundaries), the WKV beats the
+     fair interpolated trigram at CROSS-SENTENCE deep context (d10-99, n=76k) by **+0.764-0.796 all 6 seeds** (tight),
+     margin grows with depth, anti-cheats collapse (perm +5.1, mless +0.71). ⇒ the mission-primary open-generation lever
+     carries genuine MULTI-SENTENCE DISCOURSE = the actual R4 "open prose" capability (which the fading reservoir couldn't),
+     robustly. Extends Rung 1a (within-sentence) to real open-prose long-range. `2026-07-19-gap1-WKV-...` (cross-sentence).
   -4. **🎯 gap#1 ON-BRIDGE realization CHARACTERIZED → gap#1↔gap#4 CONNECTED (2026-07-19).** Built the on-bridge WKV/SSM
      realization (`_emerge_wkv_onbridge_derisk.py`, diagonal self-NMDA autapse = per-channel leaky integral, verify-first
      corr-gated). The DESIGN is confirmed (a diagonal self-NMDA realizes a leaky state on REAL Izhikevich spikes, corr
