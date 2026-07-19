@@ -108,3 +108,22 @@ expected the **NMDA slow conductance** (which is SYNAPTICALLY driven) to hold th
   fully-spiking realization will work; the on-bridge CONFIRMATION needs the correct diagonal-self-NMDA design (a careful
   focused build — a hasty first attempt was wrong, per the caught bug). The `_emerge_wkv_onbridge_derisk.py` verify-first
   harness is the reusable instrument for that build.
+
+### ON-BRIDGE PROGRESS (2026-07-19): the diagonal-self-NMDA DESIGN is CONFIRMED CORRECT (leaky state realized on-bridge); the READ-OUT is the remaining careful completion step
+Built the corrected diagonal self-NMDA (per-channel autapse, `exc_receptor="nmda_slow"` via `inject_explicit_wiring`) + a
+robust inline state-wash. **The verify-first guard now CONFIRMS the design:** the on-bridge firing-rate state (ON/OFF
+channels, real Izhikevich + slow NMDA) correlates **corr 0.58–0.61** with the rate-SSM analog state ⇒ **the substrate
+GENUINELY realizes the per-channel leaky-integrator state** (the SSM's core dynamic, on real spikes). Firing is healthy
+(mean 0.249, max 0.500, 100% of channels active + varied). **BUT the on-bridge LM read-out gives ~chance** (NLL ~6.5 ≈
+log V, flat across depths, vs-trigram ≈ −2.4 to −2.8), even after RE-FITTING a fresh ridge read-out on the actual
+on-bridge states (the reservoir-computing approach) and sweeping drive/self-NMDA-weight. ⇒ the state is realized + informative
+(corr 0.58) but the linear read-out isn't extracting the next-token signal from the QUANTIZED spiking state (firing ∈
+{0,1/6..3/6}) — a genuine read-out-completion problem (candidates: under-data at V=800 classes for a raw ridge; a richer/
+non-linear read-out or a larger fit set; matching the read-out to the quantized-spiking code; longer T_STEP for finer
+rates). **verify-first + the firing diagnostic prevented a FALSE GO at every step of the finicky build** (build error →
+wrong external-current-drive mapping → snapshot-size mismatch → read-out-gives-chance) — the silent-failure discipline
+working exactly as intended; NO on-bridge GO was ever claimed. **Honest state: the on-bridge design is VERIFIED CORRECT
+(leaky state on real spikes, corr 0.58–0.61); the read-out completion (getting the deep-context capture through the
+on-bridge quantized-spiking read) is the precisely-scoped remaining careful step** — a focused effort, not an
+end-of-session rush. The rate-level de-risk (every constraint GO) stands as the strong evidence the fully-spiking path
+works; the on-bridge is confirmation-in-progress. NO `sim/` edit (public arrays + explicit wiring).

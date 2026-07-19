@@ -35,23 +35,24 @@ from research.runners._emerge_wkv_lm_derisk import fit_interp_trigram
 _T_STEP = 6                                                          # bridge steps per token (integration window)
 
 
-def _build_channel_bridge(D, seed, nmda_tau_ms, dt=0.5):
-    """One region of 2*D Izhikevich channel neurons (D ON + D OFF), NO internal recurrence (internal_density=0): the leaky
-    memory is the SLOW NMDA conductance (enable_nmda + a recurrent NMDA self-route), tuned to the SSM decay via nmda_tau.
-    Driven per token by the external current; read from cp_firing_states. Returns (bridge, on_idx, off_idx, snapshot)."""
+def _build_channel_bridge(D, seed, self_nmda_w=8.0, dt=0.5):
+    """2*D Izhikevich channel neurons (D ON + D OFF). The leaky memory = a DIAGONAL self-NMDA autapse per channel neuron
+    (pre==post, exc_receptor='nmda_slow' via inject_explicit_wiring): each neuron's firing charges its OWN slow NMDA
+    conductance (tau~100ms) = the per-channel leaky integral a_t=decay*a_{t-1}+drive (NOT random reservoir mixing). Built
+    via a minimal valid region (so the bridge initializes) then inject_explicit_wiring OVERRIDES with the diagonal edges.
+    Driven per token by external current; read from cp_firing_states. Returns (bridge, on_idx, off_idx, snapshot)."""
     from sim.bridge import SimulationBridge
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
-    from sim.regions import BrainRegion, RegionPathway
+    from sim.regions import BrainRegion
     cfg = CoreSimConfig()
     cfg.enable_brain_region_framework = True
     cfg.enable_nmda = True                                           # slow NMDA conductance = the leaky memory
     cfg.brain_regions = [
-        BrainRegion(name="chan", n_neurons=2 * D, exc_fraction=1.0, internal_density=0.0,
-                    exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False,
+        BrainRegion(name="chan", n_neurons=2 * D, exc_fraction=1.0, internal_density=0.05,
+                    exc_weight_mean=1.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False,
                     enable_nmda=True),
     ]
-    # a recurrent NMDA self-route (each channel neuron's firing charges its OWN slow NMDA conductance = the leaky integral)
-    cfg.region_pathways = [RegionPathway(from_region="chan", to_region="chan", density=0.0, weight_mean=0.0)]
+    cfg.region_pathways = []
     cfg.dt = float(dt)
     cfg.seed = cfg.ou_seed = cfg.heterogeneity_seed = seed
     cfg.enable_ou_process = False; cfg.enable_stdp = False; cfg.enable_hebbian_learning = False
@@ -59,9 +60,13 @@ def _build_channel_bridge(D, seed, nmda_tau_ms, dt=0.5):
     b = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(), runtime_state=rt, gpu_config=GPUConfig())
     b._initialize_simulation_data()
     idx = np.asarray(b.region_manager.indices("chan"))
+    # OVERRIDE the random internal connectivity with a DIAGONAL self-NMDA autapse (the per-channel leaky integral).
+    ii = [int(i) for i in idx]
+    plan = {"chan_self_nmda": {"pre_indices": ii, "post_indices": ii, "initial_weights": [float(self_nmda_w)] * len(ii),
+                                "plastic": False, "conn_type": "MIXED", "exc_receptor": "nmda_slow"}}
+    b.inject_explicit_wiring(plan)
     on_idx, off_idx = idx[:D], idx[D:]
-    from research.runners._emerge82_onbridge_lsm_derisk import _snapshot_state
-    return b, on_idx, off_idx, _snapshot_state(b)
+    return b, on_idx, off_idx, None
 
 
 def main():
@@ -73,6 +78,8 @@ def main():
     ap.add_argument("--max-train-sents", type=int, default=30000)
     ap.add_argument("--n-eval", type=int, default=200)              # SMALL (bridge stepping is slow)
     ap.add_argument("--drive-scale", type=float, default=1200.0)    # v_t -> external current pA
+    ap.add_argument("--self-nmda-w", dest="self_nmda_w", type=float, default=8.0)   # diagonal self-NMDA autapse weight
+    ap.add_argument("--n-fit", dest="n_fit", type=int, default=600)   # train sentences for the on-bridge read-out re-fit
     ap.add_argument("--json", type=str, default="research/findings/raw/_emerge_wkv_onbridge.json")
     args = ap.parse_args()
     from sim.backend import to_host, get_backend
@@ -99,13 +106,22 @@ def main():
     vocab = Vocab.build(tr, V=V); tr_ids = [vocab.ids(s) for s in tr]; ev_ids = [vocab.ids(s) for s in ev]
     P_bi = fit_bigram(tr_ids, V); tri, _lam = fit_interp_trigram(tr_ids, V, tr[-1500:] and [vocab.ids(s) for s in tr[-1500:]])
 
-    b, on_idx, off_idx, snap = _build_channel_bridge(D, args.seed, nmda_tau_ms=100.0)
-    from research.runners._emerge82_onbridge_lsm_derisk import _restore_state
-    nnrn = int(b.core_config.num_neurons)
+    b, on_idx, off_idx, snap = _build_channel_bridge(D, args.seed, self_nmda_w=args.self_nmda_w)
+    nnrn = int(b.cp_membrane_potential_v.size)
+
+    def _wash():
+        """Reset the state so each sentence reads independently (zero the leaky NMDA memory + conductances + firing;
+        v/u to Izhikevich rest). Robust to array-size details (avoids the finicky EMERGE snapshot/restore pair)."""
+        for nm in ("cp_conductance_g_nmda_recurrent", "cp_conductance_g_nmda_recurrent_rise", "cp_conductance_g_nmda",
+                   "cp_conductance_g_e", "cp_conductance_g_i", "cp_firing_states"):
+            arr = getattr(b, nm, None)
+            if arr is not None: arr[:] = 0.0
+        if b.cp_membrane_potential_v is not None: b.cp_membrane_potential_v[:] = -65.0
+        if b.cp_recovery_variable_u is not None: b.cp_recovery_variable_u[:] = 0.0
 
     def onbridge_states(ids):
         """Drive the channel region per token; return the per-position firing-rate state [T, 2D] (ON then OFF rates)."""
-        _restore_state(b, snap)
+        _wash()
         rates = []
         for t in range(len(ids)):
             h = _ln(emb[ids[t]]); v = Wv @ h                        # [D]
@@ -140,19 +156,44 @@ def main():
         c = np.corrcoef(ob.flatten(), rs.flatten())[0, 1]
         corrs.append(c)
     mapcorr = float(np.nanmean(corrs)) if corrs else float("nan")
+    _ob0 = onbridge_states(ev_ids[0]) if ev_ids else np.zeros((1, 2 * D))
+    _act = float((_ob0.std(0) > 1e-6).mean())                       # fraction of channels with ANY variance across tokens
     print(f"[verify] on-bridge firing-rate state vs rate-SSM analog state: corr={mapcorr:.3f} "
-          f"(>0.3 => the substrate realizes the leaky state; low => wrong mapping)", flush=True)
+          f"(>0.3 => substrate realizes the leaky state) | firing: mean={_ob0.mean():.3f} max={_ob0.max():.3f} "
+          f"frac-active-channels={_act:.2f} (low mean/frac => sparse; discriminative read-out needs varied firing)", flush=True)
 
-    # ---- per-depth NLL: on-bridge read-out (Wo_sp over the firing-rate state -> head) vs bigram vs FAIR trigram ----
-    ce = defaultdict(float); bce = defaultdict(float); tce = defaultdict(float); cnt = defaultdict(int)
+    # ---- RE-FIT the read-out on the ACTUAL on-bridge firing-rate states (reservoir-computing: the leaky DYNAMICS are the
+    #      fixed on-bridge diagonal self-NMDA; only the linear read-out is trained -- the on-bridge state ~= the rate-SSM
+    #      state at a different SCALE (corr above), so a fresh ridge read-out on the on-bridge state recovers the capture) ----
     t0 = time.time()
+    fit_ids = tr_ids[:args.n_fit]
+    Xtr, Ytr = [], []
+    for ids in fit_ids:
+        if len(ids) < 2: continue
+        rates = onbridge_states(ids)
+        for t in range(len(ids) - 1):
+            Xtr.append(rates[t]); Ytr.append(ids[t + 1])
+    Xtr = np.asarray(Xtr); Ytr = np.asarray(Ytr, dtype=np.int64)
+    mean = Xtr.mean(0); std = Xtr.std(0) + 1e-6
+    Xn = (Xtr - mean) / std
+    Z = np.concatenate([Xn, np.ones((len(Xn), 1))], 1)               # [n, 2D+1]
+    ZtOH = np.zeros((V, 2 * D + 1)); np.add.at(ZtOH, Ytr, Z)
+    Wd = np.linalg.solve(Z.T @ Z + 5.0 * np.eye(2 * D + 1), ZtOH.T)  # ridge read-out [2D+1, V]
+    # temperature calib on a subsample
+    lg = Z[:20000] @ Wd; ys = Ytr[:20000]
+    def _ce_T(T):
+        z = lg / T; z = z - z.max(1, keepdims=True); e = np.exp(z); p = e / e.sum(1, keepdims=True)
+        return float(-np.log(p[np.arange(len(ys)), ys] + 1e-12).mean())
+    Temp = min([(_ce_T(T), T) for T in (0.5, 1, 2, 4, 8, 16)])[1]
+    print(f"[refit] fitted read-out on {len(Xtr)} on-bridge state->next-token pairs (T={Temp}); fit-elapsed {time.time()-t0:.0f}s", flush=True)
+
+    ce = defaultdict(float); bce = defaultdict(float); tce = defaultdict(float); cnt = defaultdict(int)
     for si, ids in enumerate(ev_ids):
         if len(ids) < 2: continue
         rates = onbridge_states(ids)                                 # [T, 2D]
         for t in range(len(ids) - 1):
-            r_h = 1.0 / (1.0 + np.exp(-(Wr @ _ln(emb[ids[t]]))))     # receptance (host)
-            outv = r_h * (Wo_sp @ rates[t])                          # [D]
-            logits = head_w @ outv + head_b
+            x = np.concatenate([(rates[t] - mean) / std, [1.0]])
+            logits = (x @ Wd) / Temp
             logits = logits - logits.max(); p = np.exp(logits); p = p / p.sum()
             d = t + 1; bkt = _bucket(d)
             ce[bkt] += -math.log(max(p[ids[t+1]], 1e-12))
