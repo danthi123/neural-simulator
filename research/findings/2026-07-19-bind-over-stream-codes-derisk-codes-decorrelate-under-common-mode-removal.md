@@ -37,4 +37,25 @@ per `2026-07-17-stream-cortex-787-concept-scale-test-RESULT`). NO `sim/` edit; C
   generalization >> RAW + memorizer on the normalized codes → the "learned binder over the brain's own codes" is unblocked
   by a feedforward normalization → wire the normalization into the composer front-end. This is the convergence lever
   (gaps #2/#4/#5): grounded reasoning over the brain's OWN learned semantics.
+## ⚠️ TEMPERING FINDING (nearest-neighbor semantic-structure check) — the codes' generalizable structure is WEAK, and decorrelation DESTROYS it
+Checked whether the 787 codes encode SEMANTIC SIMILARITY (the property that enables generalization — similar concepts →
+similar codes):
+- **RAW codes:** nearest neighbors are MOSTLY SEMANTICALLY UNRELATED (dog→time/wife/show/**cat**(0.83)/coat/girl;
+  king→storm/is/church/bottle/elephant; water→airport/display/camera; fish→piano/butterfly/traffic). A WEAK semantic
+  signal exists (cat IS in dog's top-6), swamped by the uniform common mode + noise.
+- **COMMON-MODE-REMOVED codes:** the weak semantic signal is DESTROYED — dog→show/time/wife/history/cross/question (NO cat).
+  ⇒ **the common mode CONTAINS the (weak) semantic similarity; global decorrelation REMOVES it.** This is exactly the
+  CYCLE-88 tension (CLAUDE.md): *"a generalizing cortex needs feedforward LOCAL normalization, NOT cross-neuron
+  decorrelation (which would DESTROY generalization)."* My global per-dim mean-subtraction is NOT the PPMI local
+  normalization (log + per-hub + per-concept + threshold) — it conditions for BINDING but destroys generalization.
+- **⇒ HONEST, TEMPERED read of the scout's #1:** the 787 codes at develop_D=128 (a) are recall-usable + decorrelatable
+  (bindable), but (b) encode WEAK semantic-similarity structure (nearest neighbors mostly unrelated), and (c) the
+  decorrelation that enables binding DESTROYS the little generalizable structure there is. So "a learned binder over the
+  brain's own STRUCTURED codes for GENERALIZATION" is NOT a cheap win on these codes — it is limited by weak semantic
+  structure (likely a develop_D=128 capacity limit at 787 concepts; the 787 finding itself flagged the D=128 FHRR-capacity
+  curve) AND the binding-vs-generalization tension. The levers: (i) HIGHER develop_D (more capacity → stronger semantic
+  structure), (ii) the PROPER PPMI local normalization (conditions without destroying generalization, per CYCLE-88),
+  (iii) validate on codes with KNOWN category structure (the EMERGE taxonomy) rather than the raw 787. This is a
+  genuine, precisely-characterized boundary for the convergence-lever direction — NOT the cheap unblock the first
+  decorrelation measurement suggested. The recall (distinctness) works today; the GENERALIZATION needs stronger codes.
 - Diagnostics: `scratchpad/bind_over_stream_codes.py`. NO `sim/` edit. Uses cached scale787 codes.
