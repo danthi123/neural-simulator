@@ -70,6 +70,49 @@ def _build_channel_bridge(D, seed, self_nmda_w=8.0, dt=0.5, pop_k=1):
     return b, chan_groups, None, None
 
 
+def _build_recur_channel_bridge(D, seed, recur_w=0.35, n_recur=20, dt=0.5, density=0.5):
+    """LINE-ATTRACTOR INTEGRATOR (the scoped deep frontier, next-arc de-risk): each channel = a POPULATION of n_recur neurons
+    with block-diagonal NMDA-slow RECURRENT self-excitation (Wong-Wang 2002/Seung-Goldman graded persistent-activity integrator,
+    soft-WTA gain alpha<1 -> RAMPS/HOLDS a graded value under evidence, never self-ignites), NOT a single self-NMDA autapse. A
+    recurrent POPULATION holds a graded leaky value at higher fidelity than a single cell's mean rate (the whole point of a line
+    attractor). Driven per token by graded current propto v_t; read the population mean rate. Reuses biased_competition_buffer's
+    sel-pool design (NMDA-slow recurrent, alpha<1)."""
+    from sim.bridge import SimulationBridge
+    from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
+    from sim.regions import BrainRegion
+    cfg = CoreSimConfig()
+    cfg.enable_brain_region_framework = True
+    cfg.enable_nmda = True
+    cfg.brain_regions = [
+        BrainRegion(name="chan", n_neurons=2 * D * n_recur, exc_fraction=1.0, internal_density=0.05,
+                    exc_weight_mean=1.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False, enable_nmda=True),
+    ]
+    cfg.region_pathways = []
+    cfg.dt = float(dt)
+    cfg.seed = cfg.ou_seed = cfg.heterogeneity_seed = seed
+    cfg.enable_ou_process = False; cfg.enable_stdp = False; cfg.enable_hebbian_learning = False
+    rt = RuntimeState(); rt.actual_seed_used = seed
+    b = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(), runtime_state=rt, gpu_config=GPUConfig())
+    b._initialize_simulation_data()
+    idx = np.asarray(b.region_manager.indices("chan"))
+    # BLOCK-DIAGONAL NMDA recurrent self-excitation: within each channel's n_recur block, dense recurrent edges (the Wang-2002
+    # integrator). rng-sparsify to `density`; alpha<1 via recur_w (soft-WTA, holds/ramps, no self-ignition).
+    rng = np.random.default_rng(seed + 7)
+    pre, post = [], []
+    for c in range(2 * D):
+        blk = idx[c * n_recur:(c + 1) * n_recur]
+        for i in blk:
+            for j in blk:
+                if i != j and rng.random() < density:
+                    pre.append(int(i)); post.append(int(j))
+    plan = {"chan_recur_nmda": {"pre_indices": pre, "post_indices": post,
+                                "initial_weights": [float(recur_w)] * len(pre),
+                                "plastic": False, "conn_type": "MIXED", "exc_receptor": "nmda_slow"}}
+    b.inject_explicit_wiring(plan)
+    chan_groups = [idx[c * n_recur:(c + 1) * n_recur] for c in range(2 * D)]
+    return b, chan_groups, None, None
+
+
 def _build_ff_channel_bridge(D, seed, ff_nmda_w=8.0, dt=0.5, pop_k=1, nmda_tau_ms=100.0):
     """SpikeGPT-consistent GRADED-STATE realization (research gate GO): the leaky WKV state = a FEEDFORWARD NMDA conductance,
     NOT a spike-charged self-autapse. Two populations: an INPUT pool (driven per token by graded current proportional to v_t;
@@ -133,6 +176,8 @@ def main():
                     help="bias current (pA) to put the graded-charge input pool in its linear f-I regime")
     ap.add_argument("--graded-gain-lo", dest="graded_gain_lo", type=float, default=0.15)  # staggered pop-member gains
     ap.add_argument("--graded-gain-hi", dest="graded_gain_hi", type=float, default=2.5)   # -> graded population rate code
+    ap.add_argument("--recur-integrator", dest="recur_integrator", action="store_true", help="LINE-ATTRACTOR: per-channel NMDA-recurrent population integrator (Wong-Wang alpha<1)")
+    ap.add_argument("--recur-w", dest="recur_w", type=float, default=0.35, help="recurrent NMDA self-excitation weight (alpha<1)")
     ap.add_argument("--hetero-gain", dest="hetero_gain", action="store_true",
                     help="heterogeneous-population code on the self-NMDA path: staggered pop-member drive gains (staggered effective thresholds) -> higher-fidelity graded population rate")
     ap.add_argument("--pop-k", dest="pop_k", type=int, default=1)
@@ -174,6 +219,12 @@ def main():
                                                                     pop_k=args.pop_k, dt=_dt, nmda_tau_ms=_tau)
         print(f"[graded] SSM decay={decay:.4f} -> matched nmda_tau={_tau:.1f}ms (t_step={args.t_step}, dt={_dt})", flush=True)
         drive_groups = inp_groups                                    # drive the presynaptic input pool
+    elif getattr(args, "recur_integrator", False):
+        # LINE-ATTRACTOR: each channel = an NMDA-recurrent POPULATION integrator (Wong-Wang, alpha<1); drive propto v_t, read
+        # the population mean rate. A recurrent population holds a graded value at higher fidelity than a single self-NMDA cell.
+        b, chan_groups, _cg2, snap = _build_recur_channel_bridge(D, args.seed, recur_w=args.recur_w, n_recur=args.pop_k)
+        drive_groups = chan_groups
+        print(f"[recur] line-attractor integrator: n_recur={args.pop_k}, recur_w={args.recur_w}", flush=True)
     else:
         b, chan_groups, _cg2, snap = _build_channel_bridge(D, args.seed, self_nmda_w=args.self_nmda_w, pop_k=args.pop_k)
         drive_groups = chan_groups                                  # self-NMDA: drive == read pool
