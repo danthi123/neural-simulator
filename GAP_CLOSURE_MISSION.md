@@ -222,10 +222,16 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   next-action. That is the exact "jump to the cleaner-feeling work" drift the order-rule targets. **CORRECTION: gap #5's
   open items get priority again — the gap #4 A/B in flight is allowed to finish (owner OK'd not killing it), but the
   moment the GPU frees, run gap #5 FIRST, not the gap #4 6-seed.** gap #5 OPEN items, in order: **(i) SWR
-  GENERATIVE-REPLAY — BUILT but NEVER RUN** (the `read_ca1` two-phase ripple read in `_riii_ca3_synchronous_assembly_derisk.run`;
-  ca1_match/ca1_cross appear in ZERO artifacts; the `imaginative replay` capability sitting on the CLOSED completion —
-  the most tractable, non-re-derivative next step; run script READY at `scratchpad/gap5_swr_replay.py`, schaffer_boost
-  sweep seed 42 then 6-seed); **(ii) emergent-DG** — NOT walled (I over-pessimized above; re-read
+  GENERATIVE-REPLAY — RUN 2026-07-18, ca1_fire=0, BLOCKED + precisely localized (NOT the tractable quick-win I framed).**
+  The `read_ca1` two-phase ripple read fires CA1 ZERO at every schaffer_boost (2→400). 4 diagnostics localized it: the
+  completion WORKS (latched 116-320 CA3 cells), the Schaffer pathway is abundant (61161 ca3→ca1 synapses), CA3 fires in
+  phase-2, CA1 receives g_e — BUT **ca1_g_e does NOT scale with schaffer_boost** (it tracks the CA3 firing rate, ~0.25-0.6
+  regardless of boost 8→400) → the ca3→ca1 weight boost is SILENTLY CLIPPED (a bridge effective-strength/conductance cap)
+  → g_e ~0.5nS = ~33pA = ~20× too weak → ca1_v stays at rest (-66) → 0 firing. The `schaffer_boost` lever is the WRONG
+  knob (clipped). Next levers (NOT bigger boost): raise the ca3→ca1 effective-strength cap; OR raise CA1 excitability
+  with a COMPETITIVE ca1 mechanism (preserve specificity, not a uniform bias); OR more/faster phase-2 CA3 firing (g_e
+  only tracks rate). Finding `2026-07-18-gap5-SWR-replay-readout-BLOCKED-schaffer-conductance-cap-precisely-localized`.
+  A focused future pass. (SWR_DEBUG-gated instrumentation added to `_measure_ca1`, default-off byte-identical.) **(ii) emergent-DG** — NOT walled (I over-pessimized above; re-read
   `2026-07-18-gap5-emergent-DG-R0-...-BOUNDARY`): the amplification test OVERTURNED the "hard boundary" — a synchronized
   mossy volley + recurrent amplification + the bistability keystone DOES seed a sparse SEPARATED assembly (input-11 →
   15-26 CA3 cells, sep_cos 0.10-0.20). The residual is **ROBUSTNESS/fragility** (knife-edge: some inputs amplify, some

@@ -403,6 +403,10 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
                     ca3_inh = set()
                 c3s = set(int(g) for g in ca3_idx) - ca3_inh; c1s = set(int(g) for g in ca1_idx)
                 sk = [k for k in range(nnzc) if int(prec[k]) in c3s and int(ind[k]) in c1s]
+                if os.environ.get("SWR_DEBUG"):
+                    _wm = float(cp.asnumpy(cc.data[cp.asarray(sk, dtype=cp.int64)]).mean()) if sk else 0.0
+                    print(f"    [SWR debug] Schaffer ca3->ca1 synapses found={len(sk)} mean_w(pre-boost)={_wm:.3f} "
+                          f"n_ca1={len(c1s)}", flush=True)
                 if sk:
                     ix = cp.asarray(sk, dtype=cp.int64); cc.data[ix] = cc.data[ix] * cp.float32(schaffer_boost)
 
@@ -423,17 +427,27 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
                     fire_acc += np.asarray(to_host(bridge.cp_firing_states))[ca3_arr_host].astype(float)
                 # the COMPLETED assembly = cells that FIRED (soma) during phase 1 (the network completion is soma-driven,
                 # NOT a sustained apical latch -- apical>v_hold identifies only ~3%; diagnostic 2026-07-18).
-                latched = ca3_arr_host[(fire_acc / recall_steps) > 0.08]
+                _far = fire_acc / recall_steps
+                latched = ca3_arr_host[_far > 0.08]
                 rip = bias_full.copy()
                 if len(latched):
                     rip[latched] += float(ripple_pA)               # PHASE 2: strong burst of the LATCHED completed cells
                 dev_rip = from_host(rip.astype(np.float64)); dev_off = from_host(bias_full.astype(np.float64))
                 c1 = np.zeros(len(ca1_idx)); period = g_on + g_off; n_rip = 60
+                _dbg = os.environ.get("SWR_DEBUG"); _ca3fire = 0.0; _lat_arr = np.asarray(latched, dtype=int)
                 for t in range(n_rip):
                     bridge.cp_external_input_current[:] = dev_rip if (t % period) < g_on else dev_off
                     bridge._run_one_simulation_step()
                     c1 += np.asarray(to_host(bridge.cp_firing_states))[ca1_idx].astype(float)
+                    if _dbg and len(_lat_arr):
+                        _ca3fire += float(np.asarray(to_host(bridge.cp_firing_states))[_lat_arr].mean())
                 bridge.cp_external_input_current[:] = 0.0
+                if _dbg:
+                    _ge = getattr(bridge, "cp_conductance_g_e", None)
+                    _ca1_ge = float(np.asarray(to_host(_ge))[ca1_idx].mean()) if _ge is not None else -1.0
+                    _ca1_v = float(np.asarray(to_host(bridge.cp_membrane_potential_v))[ca1_idx].mean())
+                    print(f"    [SWR debug] latched={len(latched)} | phase2: ca3-latched-fire-rate={_ca3fire/n_rip:.3f} "
+                          f"ca1_g_e={_ca1_ge:.3f} ca1_v={_ca1_v:.1f} ca1_fire_sum={float((c1/n_rip).sum()):.3f}", flush=True)
                 return c1 / n_rip
 
             def _cos(x, y):
