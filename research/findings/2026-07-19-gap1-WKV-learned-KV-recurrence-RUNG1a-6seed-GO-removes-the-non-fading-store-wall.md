@@ -41,14 +41,15 @@ spiking existence proof at this project's scale).
   Rung 3 (biologize the rule). PARALLEL engineering: the 21M spiking-forward deploy (ledgered scaffold, milestone-met NOT
   closed). NO `sim/` edit anywhere in Rung 1a. Runner: `_emerge_wkv_lm_derisk.py`.
 
-## CROSS-SENTENCE (R4 open-prose) — GO: the WKV carries MULTI-SENTENCE long-range, not just within-sentence
+## CROSS-SENTENCE (R4 open-prose) — 6-SEED GO: the WKV carries MULTI-SENTENCE long-range, not just within-sentence
 `--contiguous`: chunk the corpus into contiguous multi-sentence passages (48 tokens each, spanning sentence boundaries)
 instead of independent ≤16-token sentences. At CROSS-SENTENCE deep context (d10-99, n=**76,000** positions spanning
-sentence boundaries): **WKV 2.886 beats the fair trigram 3.664 by +0.778**, margin GROWS with depth (d2 +0.04 → d10-99
-+0.78), anti-cheats collapse (perm +5.1, memoryless +0.71). ⇒ **the WKV mechanism carries context ACROSS sentence
-boundaries = genuine MULTI-SENTENCE DISCOURSE, the actual R4 "open prose" capability** (the fading reservoir couldn't). This
-extends Rung 1a (within-sentence) to real cross-sentence long-range — a meaningful step of the mission-primary lever toward
-open generation. NO `sim/` edit; `_emerge_wkv_lm_derisk.py --contiguous`.
+sentence boundaries): **6-SEED GO — WKV beats the fair trigram by +0.764 to +0.796 (all 6 seeds, tight variance)**, margin
+GROWS with depth (d2 +0.04 → d10-99 +0.78), anti-cheats collapse (perm +5.1, memoryless +0.70-0.72, all seeds). ⇒ **the WKV
+mechanism carries context ACROSS sentence boundaries = genuine MULTI-SENTENCE DISCOURSE, the actual R4 "open prose"
+capability** (the fading reservoir couldn't), robustly (6/6). This extends Rung 1a (within-sentence) to real cross-sentence
+long-range — a meaningful, confirmed advance of the mission-primary lever toward open generation. NO `sim/` edit;
+`_emerge_wkv_lm_derisk.py --contiguous`.
 
 ## RUNG 1b — EMERGENT INPUT: GO (3-seed) + the emergent STRUCTURE genuinely HELPS (gap#1↔gap#4 convergence realized)
 Two de-risks resolved the emergent-input question WITHOUT a separate stream-cortex-over-TinyStories develop (cheaper, direct):
