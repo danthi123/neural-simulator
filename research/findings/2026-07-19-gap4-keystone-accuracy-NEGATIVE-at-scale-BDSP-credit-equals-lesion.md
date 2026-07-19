@@ -92,6 +92,21 @@ check, then hidden→output, then re-test the credit-direction A/B. This is the 
 named — a coordinated forward-weight/bias dive, the focused next-cycle investigation. Minor provenance gap to fix: the
 runner doesn't write `differential_readout` into its config JSON (record the knob).
 
+## COMPLETE A/B + the RATE-CODE-WALL reframe → RESEARCH GATE dispatched (2026-07-19)
+All 4 A/B arms finished, ALL held 0.420 == lesion: KP ep300 (dw 187), fixed ep300 (dw 776), measB ep300 (dw 141,649),
+**KP ep600 (dw 3645) — even the Y-converged learned-feedback at 600 epochs is 0.420 == lesion.** ⇒ across every credit
+type, a 2000× weight range, 300-600 epochs, all drives/biases, and both readout schemes, the on-bridge net is degenerate.
+**KEY REFRAME:** the SAME BDSP algorithm reaches accuracy on NUMPY (D3: 97%/73%, rate/graded signals) but is degenerate
+ON the spiking point-neuron bridge (firing 0.04/0.07/0.05, sparse). ⇒ the wall is likely the **rate-code / point-neuron
+limit** (the documented graded-magnitude family): the sparse spiking substrate does not carry the GRADED class signal the
+numpy version uses; the hidden fires bias-driven (not input-selective) so no class distinction propagates → degenerate
+readout. **This is a wall in a KNOWN family → the deep-research gate FIRES** (per the standing directive). A read-only
+research scout is dispatched (how do multi-layer SNNs with LOCAL biological credit reach accuracy — population coding /
+rate-window / WTA-hidden / balanced-E-I / population readout; does BDSP require a rate regime; ranked cheap-first fixes).
+**NEXT: act on the research scout's ranked fix (the rate-code-wall lift) — the highest-leverage single change to make the
+hidden layer carry a class-selective signal a local-credit rule can read to accuracy.** This is the standing research-gate
+opening move at a known-family wall, NOT more blind config tuning (which is exhausted — 7 diagnostic runs).
+
 ## Status (per THE LAW — the negative names the next mechanism)
 - **gap#4 keystone accuracy = NOT achieved at ep300/hidden128** — the BDSP fixed-feedback credit doesn't produce
   accuracy-useful hidden-layer learning (== lesion). The mechanism/wiring/moat are all correct; the credit DIRECTION is the wall.
