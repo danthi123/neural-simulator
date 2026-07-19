@@ -50,5 +50,9 @@ selection, already 6-seed GO) upstream** — confirming the standing conclusion 
 emergent-DG pattern separation is the shared unlock. #1+#2+#5 lift per-seed specificity WHEN the completion is clean.
 
 ## To verify further (controller trust-but-verify queue)
-- Kwon 2018 structured-E/random-I claim (read the connectivity figure). - Kim-Kim 2025 90% vs 30-60% numbers. - de
-  Almeida-Idiart-Lisman E%-max exact form. (Valero 2017 = VERIFIED above.)
+- **Valero 2017 = VERIFIED** (abstract: CA1 firing selectivity dominated by event/cell-SPECIFIC synaptic drive modulated
+  by the intracellular E/I ratio; collapses to co-firing in fast ripples).
+- **Kwon 2018 = VERIFIED** (J Neurosci, mGRASP: CA3→CA1 PYRAMIDAL connectivity spatially STRUCTURED; CA3→PV-interneuron
+  "significantly more random"; Peters' rule enhances PC structure but randomizes PV — i.e. excitatory Schaffer is
+  structured, inhibitory random; the model's dense-random EXCITATORY Schaffer is the inverted prior).
+- Still queued: Kim-Kim 2025 90% vs 30-60% numbers; de Almeida-Idiart-Lisman E%-max exact form (verify when building #1/#4).
