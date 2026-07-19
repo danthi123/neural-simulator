@@ -182,6 +182,18 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   learned-Schaffer hi=80/lo=0` + SWR_DEBUG) to confirm whether the CA3 recall is specific (→ prioritize the readout
   fixes #1/#2/#5) or cross-confused (→ prioritize self-organized assemblies #3). [First swr_localize used the wrong
   branch — missed `bistable=True` — so ca1_match=None; the working config is swr_validate.py BASE.]
+  **🎯 THE STACK BREAKS THE NEAR-TIE (2026-07-19, the big gap#5-i advance):** localization showed BOTH layers compound —
+  the 12%-async completion is CROSS-confused (cueing A latches A+B+C) AND even a specific CA3 pattern (seed 44) reads
+  near-tie at CA1 (the Valero all-fire collapse). The E%-max CA1 top-k read ALONE = not-GO (cross ~0.85, confirms
+  necessary-not-sufficient). But the FULL STACK — **sparse (`assembly_frac=0.03`) + SYNCHRONOUS (`no_sync=False`) + low
+  `recall_k_thresh=20` completion** (latched-breakdown `[58,0,0]` = A completes ONLY A) **+ E%-max top-k read** (`swr_ca1_topk=0.1`,
+  additive/default-None/byte-identical) — drops **cross 0.98 → 0.092 (ratio 6.77×, 3 seeds)**. THE NEAR-TIE IS BROKEN. The
+  only shortfall is MATCH (0.626, marginal vs the 0.6 bar) from weak completion (held_cue 0.004) + a k_thresh=20 runaway
+  avalanche. **IN FLIGHT: a completion-STRENGTHENING sweep** (k_thresh × hebb_max × recall_drive to kill the runaway +
+  raise match ≥0.6 while cross stays low). Then 6-seed + anti-cheats (no-learn→cross≈1, permuted-cue→no-match) → the SWR
+  readout specificity GO. Findings `2026-07-19-gap5-SWR-readout-specificity-research-gate-...` +
+  `2026-07-18-gap5-SWR-replay-readout-BLOCKED-...` (§THE STACK BREAKS THE NEAR-TIE). NO sim/ edit (runner params + additive
+  E%-max read). ⇒ the SWR generative-replay readout (item i) is going from "blocked near-tie" to a GO-adjacent stack.
   (2) **gap#5 (ii) emergent-DG — SELECTION DE-RISKED, 6-seed GO (2026-07-19).** Read-your-substrate ROOT-CAUSED the
   0-firing (the trisynaptic FEEDFORWARD does not conduct — every hop sub-threshold; default mossy w=8 gives CA3 g_e 0.17,
   ~10-30× too weak), then DE-RISKED the core question — **can a stable pattern-separated CA3 assembly be SELECTED from a
