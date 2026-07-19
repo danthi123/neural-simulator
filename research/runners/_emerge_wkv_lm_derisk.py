@@ -157,6 +157,14 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                         # rate channels [relu(a), relu(-a)] (the two-population sign code a spiking region uses). If GO,
                         # the on-bridge realization (firing-rate read of the region's slow conductance) preserves it.
                         rate = torch.cat([torch.relu(a), torch.relu(-a)], -1)
+                        if getattr(args, "quantize_state", False):
+                            # CO-ADAPT to the on-bridge realization: a SATURATING f-I (cap 0.5 = refractory) + STRAIGHT-
+                            # THROUGH quantization to the T_STEP firing levels {0,1/ts..0.5} -- so the WKV learns a read
+                            # ROBUST to the spiking noise/quantization/refractory (the ~0.11 on-bridge residual).
+                            ts = float(getattr(args, "t_step", 6))
+                            sat = 0.5 * torch.tanh(rate)             # saturating f-I (cap at the 0.5 refractory ceiling)
+                            q = torch.round(sat * ts) / ts           # quantize to the on-bridge firing levels
+                            rate = sat + (q - sat).detach()          # straight-through: forward quantized, backward smooth
                         outs.append(r[:, t] * self.Wo_sp(rate))
                     else:
                         outs.append(r[:, t] * self.Wo(a))
@@ -268,6 +276,7 @@ def main():
     ap.add_argument("--spiking-state", dest="spiking_state", action="store_true",
                     help="(ssm only) read the leaky state via NON-NEGATIVE ON/OFF firing-rate channels [relu(a),relu(-a)] "
                          "= the spiking firing-rate constraint; GO => the on-bridge firing-rate read preserves deep context.")
+    ap.add_argument("--quantize-state", dest="quantize_state", action="store_true")
     ap.add_argument("--uniform-decay", dest="uniform_decay", action="store_true",
                     help="(ssm only) ONE shared decay across channels = the substrate's uniform NMDA tau (simplifies the "
                          "on-bridge realization); GO => no per-neuron tau array is needed on the bridge.")
