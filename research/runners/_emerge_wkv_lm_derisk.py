@@ -129,7 +129,13 @@ def build_and_train_wkv(tr_ids, V, seed, args, device):
         return torch.tensor(X, device=device), torch.tensor(msk, device=device)
 
     net = WKV(V, D).to(device)
-    opt = torch.optim.Adam(net.parameters(), lr=args.lr, weight_decay=args.weight_decay)
+    if getattr(args, "freeze_emb", False):
+        # Rung 1b de-risk: FREEZE the input embedding at random init (only WKV+head learn) => the mechanism must capture
+        # deep context WITHOUT a learned input = the emergent-pooler-codes regime (codes learned by the unsupervised
+        # cortex, FROZEN for the LM). GO here => the WKV recurrence does not depend on an LM-learned embedding.
+        net.emb.weight.requires_grad = False
+    params = [p for p in net.parameters() if p.requires_grad]
+    opt = torch.optim.Adam(params, lr=args.lr, weight_decay=args.weight_decay)
     lossf = nn.CrossEntropyLoss(reduction="none")
     seqs = [s for s in tr_ids if len(s) >= 2]
     rng = np.random.default_rng(seed * 7 + 3)
@@ -187,6 +193,9 @@ def main():
     ap.add_argument("--batch", type=int, default=128)
     ap.add_argument("--lr", type=float, default=3e-3)
     ap.add_argument("--weight-decay", type=float, default=1e-4)
+    ap.add_argument("--freeze-emb", dest="freeze_emb", action="store_true",
+                    help="Rung 1b de-risk: freeze the input embedding at random init (only WKV+head learn) = the frozen "
+                         "emergent-code regime; GO => the recurrence does not need an LM-learned input.")
     ap.add_argument("--json", type=str, default=str(OUT))
     args = ap.parse_args()
     import torch

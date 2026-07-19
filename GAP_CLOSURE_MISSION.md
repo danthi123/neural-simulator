@@ -163,6 +163,17 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 - **🏁 SESSION 2026-07-19 SUMMARY (headline: gap#5 (i) SWR readout CLOSED) + the CLEAR NEXT STEPS.** A long, productive
   session. Achievements + resume points, most-recent-first:
+  -3. **🎉 gap#1 Rung 1a — WKV LEARNED-KV-RECURRENCE 6-SEED GO (2026-07-19), the mission-primary open-generation lever
+     VALIDATED.** Built + ran `_emerge_wkv_lm_derisk.py`: at ceiling-valid scale (TinyStories V2000, d256, 80K sents,
+     ~9 min) the WKV op (content-selective NON-FADING learned K/V store) **BEATS the FAIR interpolated trigram at deep
+     context by +0.62–0.73 nats, 6/6** — the exact bar every fading reservoir FAILED — with the margin GROWING with depth
+     (d2 +0.23 → d6-9 +0.67) + both anti-cheats collapsing (perm +4.2-4.4, memoryless +1.06-1.16, growing with depth =
+     the recurrence carries the deep-context info). Removes the documented non-fading-store wall (the arc's own "deepest
+     unbuilt frontier"). HONEST SCOPE: rate-level, LEARNED embedding, within-sentence, BPTT — the ladder ahead is Rung 1b
+     (EMERGENT pooler-codes input, the emergence-bar priority + the gap#1↔gap#4 convergence), Rung 2 (spiking port),
+     Rung 3 (biologize the rule); + PARALLEL the 21M spiking-forward deploy (ledgered scaffold). **NEXT (in flight):**
+     the FROZEN-embedding de-risk (`--freeze-emb`) — does the mechanism GO with a FIXED input (the Rung 1b regime) before
+     its expensive TinyStories-develop prerequisite. `2026-07-19-gap1-WKV-learned-KV-recurrence-RUNG1a-6seed-GO-removes-the-non-fading-store-wall`.
   -2. **gap#1 NEXT BUILD DECIDED + gap#4 supervised PARKED (capability met by the unsupervised method) — 2026-07-19.**
      gap#1 research gate `wf_dd786412-527` (4-lens, decisive): the next build is a **spiking RWKV/linear-attention
      (SpikeGPT-family) LEARNED key–value recurrence** over the emergent stream-cortex codes, decoded by the existing
