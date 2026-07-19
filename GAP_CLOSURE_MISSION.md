@@ -225,9 +225,14 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   GENERATIVE-REPLAY — BUILT but NEVER RUN** (the `read_ca1` two-phase ripple read in `_riii_ca3_synchronous_assembly_derisk.run`;
   ca1_match/ca1_cross appear in ZERO artifacts; the `imaginative replay` capability sitting on the CLOSED completion —
   the most tractable, non-re-derivative next step; run script READY at `scratchpad/gap5_swr_replay.py`, schaffer_boost
-  sweep seed 42 then 6-seed); **(ii) emergent-DG** — bounded this session (2 research gates + the R0 boundary); its next
-  method is genuinely TBD (do NOT re-run the same gates — needs a new angle or an honest owner-surfaced "deep frontier");
-  **(iii) console wire-in.**
+  sweep seed 42 then 6-seed); **(ii) emergent-DG** — NOT walled (I over-pessimized above; re-read
+  `2026-07-18-gap5-emergent-DG-R0-...-BOUNDARY`): the amplification test OVERTURNED the "hard boundary" — a synchronized
+  mossy volley + recurrent amplification + the bistability keystone DOES seed a sparse SEPARATED assembly (input-11 →
+  15-26 CA3 cells, sep_cos 0.10-0.20). The residual is **ROBUSTNESS/fragility** (knife-edge: some inputs amplify, some
+  don't), and the concrete fix is the **E%-max feedforward inhibition** (de Almeida-Idiart-Lisman divisive normalization
+  — constant firing fraction across >10× drive; the SAME `ca1_ff_inhib` machinery the CLOSED completion uses, applied to
+  the DG→CA3 selection) → every input reliably amplifies to a sparse separated assembly regardless of input strength. A
+  concrete GPU TUNING task reusing closed-completion machinery, NOT a research gate. **(iii) console wire-in.**
 - **⚠️ STRATEGY CORRECTION (owner steer 2026-07-18): FULLY close each gap in EASIEST→HARDEST order; stop jumping /
   leaving loose ends.** I drifted: picked gap #5 on a wrong "quickest" estimate, then sunk-cost-ground its deep
   robustness frontier while easier un-closed work sat idle. Corrected order of UN-CLOSED work: **(A) gap #3 residuals
