@@ -155,9 +155,17 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                 if getattr(args, "dual_nonneg", False):
                     # DUAL non-negative: two POSITIVE leaky integrators relu(+v), relu(-v) = the plateau's ACTUAL realizable
                     # state (each a positive plateau at 0.98; the read-out uses both, no opponency difference-of-large-integrals).
+                    _psg = getattr(args, "plateau_surrogate", False)
+                    _pc = float(getattr(args, "plateau_sur_center", 1.0)); _psl = float(getattr(args, "plateau_sur_slope", 1.0))
                     ap2 = torch.zeros(B, D, device=x.device); an2 = torch.zeros(B, D, device=x.device); outs2 = []
                     for t in range(T):
-                        ap2 = wdec * ap2 + torch.relu(v[:, t]); an2 = wdec * an2 + torch.relu(-v[:, t])
+                        ip = torch.relu(v[:, t]); im = torch.relu(-v[:, t])
+                        if _psg:
+                            # PLATEAU SURROGATE (rate-level co-adaptation): the input passes the plateau's own SIGMOID transfer
+                            # (a differentiable model of fused_graded_dendritic_plateau's logistic) BEFORE integrating, so the
+                            # WKV read + input map co-adapt to the plateau's realizable state. If GO -> the actual port beats.
+                            ip = torch.sigmoid(_psl * (ip - _pc)); im = torch.sigmoid(_psl * (im - _pc))
+                        ap2 = wdec * ap2 + ip; an2 = wdec * an2 + im
                         rate = torch.cat([ap2, an2], -1)
                         outs2.append(r[:, t] * self.Wo_sp(rate))
                     return self.head(torch.stack(outs2, 1))
@@ -307,6 +315,9 @@ def main():
                          "= the spiking firing-rate constraint; GO => the on-bridge firing-rate read preserves deep context.")
     ap.add_argument("--quantize-state", dest="quantize_state", action="store_true")
     ap.add_argument("--state-noise", dest="state_noise", type=float, default=0.0, help="degrade state fidelity (train-time noise) to simulate the on-bridge substrate")
+    ap.add_argument("--plateau-surrogate", dest="plateau_surrogate", action="store_true", help="apply the plateau sigmoid transfer to the input (rate-level co-adaptation to the plateau)")
+    ap.add_argument("--plateau-sur-center", dest="plateau_sur_center", type=float, default=1.0)
+    ap.add_argument("--plateau-sur-slope", dest="plateau_sur_slope", type=float, default=1.0)
     ap.add_argument("--dual-nonneg", dest="dual_nonneg", action="store_true", help="two positive leaky integrators = the plateau realizable state")
     ap.add_argument("--nonneg-state", dest="nonneg_state", action="store_true", help="rectified non-negative leaky state a=relu(decay*a+v) -> the dendritic plateau holds it directly, no ON/OFF opponency")
     ap.add_argument("--spike-output", dest="spike_output", action="store_true",
