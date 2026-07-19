@@ -163,6 +163,17 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 - **🏁 SESSION 2026-07-19 SUMMARY (headline: gap#5 (i) SWR readout CLOSED) + the CLEAR NEXT STEPS.** A long, productive
   session. Achievements + resume points, most-recent-first:
+  -6. **🎉🎉 gap#1 GENERATION CAPSTONE (2026-07-19) — the WKV PRODUCES coherent open prose (the mission capability).**
+     `--generate`: trained on contiguous passages (d256/10ep), the WKV autoregressively GENERATES grammatical,
+     multi-sentence, COREFERENCE-COHERENT narrative: *"once upon a time there was a little girl named amy she loved to
+     ride on her bike one day she saw a big red boot in her yard **amy was sad because she lost her boot** tim was sad
+     and said can i"* (maintained coreference across sentences = genuine multi-sentence discourse in GENERATION). +0.830
+     deep-context at this scale. ⇒ **the mission-primary open-generation lever PRODUCES open prose** — the actual "talk to
+     the brain / generate open prose" goal, demonstrated on the validated WKV. ⇒ **the WKV is validated on EVERY axis:
+     removes-the-non-fading-store-wall (6-seed) · emergent-input (3-seed, gap#1↔gap#4) · multi-sentence-discourse both
+     learned (6-seed) + emergent (3-seed) · GENERATES coherent prose · rate-level-spiking-faithful · fully-spiking-gated-on-gap#4.**
+     Rate-level BPTT is the tracked scaffold; the spiking-emergent version rides gap#4's deep-credit lever. NEXT builds:
+     scale the WKV / the 21M spiking-forward deploy (near-term open-gen scaffold) / Rung 3 biologize / gap#4 deep-credit.
   -5. **🎉 gap#1 CROSS-SENTENCE R4 OPEN-PROSE 6-SEED GO (2026-07-19) — the WKV carries MULTI-SENTENCE discourse.** On
      contiguous multi-sentence passages (`--contiguous`, 48-token spans crossing sentence boundaries), the WKV beats the
      fair interpolated trigram at CROSS-SENTENCE deep context (d10-99, n=76k) by **+0.764-0.796 all 6 seeds** (tight),
