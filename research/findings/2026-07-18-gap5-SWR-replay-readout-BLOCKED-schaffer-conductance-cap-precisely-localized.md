@@ -26,6 +26,14 @@ Schaffer ca3→ca1 synapses found = **61161**, mean_w(pre-boost) = 3.558, n_ca1 
   the drive is ~33 pA (g_e × ~66mV driving force) — ~20× too weak to fire an Izhikevich CA1 cell from -66mV, and it
   CANNOT be increased by boosting because the boost doesn't reach g_e. So `ca1_v` stays at rest (-66) and CA1 fires 0.
 
+## BOTH diagnosis-aligned levers EXHAUSTED (2026-07-18) — it is a HARD conductance cap, not weight OR rate
+- **Weight lever (schaffer_boost 8→400):** ca1_g_e ~0.25-0.6, unchanged → the boost is clipped.
+- **Rate lever (ripple_pA 800→8000):** CA3 phase-2 fire-rate ROSE to 0.32-0.41 (from ~0.1), yet **ca1_g_e stayed
+  0.11-0.46** (unchanged/lower), ca1_v -66 to -68 (rest), ca1_fire 0. So g_e does NOT scale with the CA3 firing rate
+  EITHER. ⇒ ca1_g_e is HARD-CAPPED at ~0.5 regardless of weight or rate — a bridge-level ca1 synaptic
+  conductance/effective-strength cap. Neither runner-side lever can overcome it; the fix is a bridge-level `sim/`
+  investigation (the effective_synaptic_strength / g_e cap on the ca1 pathway), a focused future pass.
+
 ## Status (per THE LAW — a precisely-characterized boundary that names the next lever)
 - **The SWR readout is BLOCKED by the ca3→ca1 effective-conductance cap** — a real, precisely-localized hard
   integration (the documented "hard fresh-pass integration" snag, now root-caused). It is NOT closeable by the

@@ -61,7 +61,7 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
         plateau_self_regen=0.0, plateau_v_hold=-35.0, apical_kir_g=0.0, apical_gc_read=None, read_apical=False,
         read_ca1=False, schaffer_boost=1.0,
         encode_btsp=False, btsp_lr=0.02, encode_ca3w=None, encode_plateau_pA=250.0, encode_structural_sep=0,
-        encode_hetero=0.0, encode_btsp_hetero=0.0, assemblies_ext=None):
+        encode_hetero=0.0, encode_btsp_hetero=0.0, assemblies_ext=None, swr_ripple_pA=800.0):
     # DIAGNOSED LEVERS (2026-07-18 workflow): the rate-window LTP is an EMA-trace rule -- a cell's co-activity trace
     # tops out ~0.03-0.2 (point Izh fires ~0.2 duty @700pA), so coact_thresh MUST be BELOW it (~0.02) or nothing
     # potentiates; the gamma OFF-gap DECAYS the EMA (0.9^off) so CONTINUOUS drive (sync_off<=1) is required, NOT
@@ -410,7 +410,9 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
                 if sk:
                     ix = cp.asarray(sk, dtype=cp.int64); cc.data[ix] = cc.data[ix] * cp.float32(schaffer_boost)
 
-            def _measure_ca1(cue_idx, ripple_pA=800.0, g_on=8, g_off=4):
+            def _measure_ca1(cue_idx, ripple_pA=None, g_on=8, g_off=4):
+                if ripple_pA is None:
+                    ripple_pA = float(swr_ripple_pA)
                 # SWR two-phase read (honest ripple mechanism): PHASE 1 -- hold the cue so the bistable dendrite completes
                 # (settle), then READ which cells LATCHED (cp_v_apical > v_hold = the completed assembly, a correct cue
                 # latches the full assembly, a wrong cue latches ~none). PHASE 2 -- a SHARP-WAVE RIPPLE drives ONLY the
