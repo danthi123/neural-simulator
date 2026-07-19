@@ -161,6 +161,20 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
+- **⚠️ EXACT NEXT ACTION (2026-07-19, gap#1 fully-spiking substrate frontier — the ONE residual; capability already DEMONSTRATED):**
+  The fully-spiking-CONSISTENT open generation is DONE at the architecture level (SpikeGPT-faithful: graded state + spike-coded
+  output, 6-seed robust BEAT + GENERATES prose + CI). The one residual = realizing the graded state as an on-substrate
+  high-fidelity conductance. Exhaustively characterized (9 read/state levers → ~0.57 ceiling; end-to-end-on-lossy-state ruled
+  out via `--state-noise`; line-attractor BEGUN + Seung's knife-edge fine-tuning problem characterized over 3 de-risks in
+  `_emerge_wkv_onbridge_derisk.py` `--recur-integrator`/`--recur-w`/`--kick-steps`/`--tonic-bias`). **The EMERGENCE-BAR-aligned
+  next mechanism: a HOMEOSTATIC self-tuning rule on the recurrent weights that converges the population to α≈1 (the integrator
+  regime) — biology solves Seung's fine-tuning problem via homeostatic plasticity, NOT hand-tuning (the project has homeostasis
+  machinery). Build: a per-channel homeostatic rule adjusting recur_w to a target activity/gain, trained over the corpus, then
+  re-measure corr-vs-analog (target >0.8) + the deep-NLL vs the fair trigram, 6-seed.** Alternatives if it plateaus:
+  per-neuron adaptation compensation / derivative-feedback integrator / graded-synapse facilitation. NOTE (emergence bar): the
+  line-attractor substrate is a refinement of an ALREADY-DEMONSTRATED capability — weigh it against the broader north star
+  (reachability: wire the validated WKV generation into a talkable console; or the emergent stream-cortex). All 5 gaps are
+  mechanism-closed; gap#1's capability is demonstrated. See the finding's "🏁🏁 SESSION 2026-07-19 gap#1 COMPREHENSIVE OUTCOME".
 - **🎉🏁 SESSION 2026-07-19 (fully-spiking WKV robust BEAT ACHIEVED at the architecture level — 6-SEED GO): acting on the
   research-gate reframe (SpikeGPT keeps the WKV state GRADED; the fully-spiking bar is spiked I/O + a graded LOCAL state), the
   additive `--spike-output` mode (graded state + SPIKE-CODED output y_t via straight-through, trained end-to-end) ROBUSTLY BEATS
