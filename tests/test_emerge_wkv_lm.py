@@ -58,3 +58,33 @@ def test_wkv_op_trains_and_clears_chance_with_anticheats():
     wkv = deep_nll(False); mless = deep_nll(True); chance = math.log(V)
     assert wkv < chance - 0.3, f"WKV should clear chance on the lag-4 task (wkv {wkv:.3f} vs chance {chance:.3f})"
     assert mless > wkv + 0.1, f"memoryless control must be WORSE (mless {mless:.3f} vs wkv {wkv:.3f}) = the recurrence is load-bearing"
+
+
+def test_spikegpt_faithful_spike_output_still_learns():
+    """SpikeGPT-faithful architecture (GRADED state + SPIKE-CODED output y_t via straight-through) still carries the lag-4
+    dependency = the output binarization is absorbed end-to-end (the 6-seed-GO turnaround: spiked I/O + graded local state)."""
+    torch = pytest.importorskip("torch")
+    from types import SimpleNamespace
+    from research.runners._emerge_wkv_lm_derisk import build_and_train_wkv
+    V = 12
+    rng = np.random.default_rng(2)
+    seqs = []
+    for _ in range(600):
+        s = list(rng.integers(0, V, size=12))
+        for t in range(4, len(s)):
+            s[t] = (s[t - 4] + 1) % V
+        seqs.append(s)
+    args = SimpleNamespace(d_model=32, epochs=8, batch=64, lr=3e-3, weight_decay=1e-4, recurrence="ssm",
+                           input="learned", spiking_state=True, uniform_decay=True, quantize_state=False,
+                           spike_output=True, t_step=6)
+    net, _ = build_and_train_wkv(seqs, V, seed=2, args=args, device="cpu")
+    ce = n = 0
+    with torch.no_grad():
+        for s in seqs[:200]:
+            logp = torch.log_softmax(net(torch.tensor([s]))[0], -1).numpy()
+            for t in range(4, len(s) - 1):
+                ce += -logp[t, s[t + 1]]; n += 1
+    wkv = ce / n; chance = math.log(V)
+    # the output binarization costs some margin (the 6-seed-GO result: it eats a thin small-scale margin but SCALES); on this
+    # tiny task it still clearly clears chance, confirming the spike-coded-output architecture carries the dependency.
+    assert wkv < chance - 0.1, f"spike-output WKV should still clear chance (wkv {wkv:.3f} vs chance {chance:.3f})"
