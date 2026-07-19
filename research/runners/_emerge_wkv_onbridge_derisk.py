@@ -335,7 +335,7 @@ def main():
                 chan_drive = np.concatenate([np.maximum(_a, 0.0), np.maximum(-_a, 0.0)]) * args.drive_scale
             else:
                 chan_drive = np.concatenate([np.maximum(v, 0.0), np.maximum(-v, 0.0)]) * args.drive_scale   # [2D] ON|OFF
-            if _graded:
+            if _graded or getattr(args, 'graded_plateau', False):
                 # bias the INPUT pool into its LINEAR f-I regime so firing ~= baseline + gain*v_t (small v_t must still
                 # modulate firing, not fall below threshold) -> g_nmda = leaky integral LINEAR in v_t. The constant baseline
                 # is a per-channel offset the read-out removes; the MODULATION carries the signal.

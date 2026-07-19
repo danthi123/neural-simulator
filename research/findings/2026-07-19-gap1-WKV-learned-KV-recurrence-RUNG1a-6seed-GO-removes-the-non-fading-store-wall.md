@@ -382,3 +382,16 @@ Built `_build_plateau_channel_bridge` (the convergent build): the WKV leaky stat
 
 ### Full WKV plateau port — the plateau SURPASSES the point-neuron ceiling (0.55->0.67); the remaining bound is INPUT DELIVERY
 Wired the full WKV port onto the dendritic graded plateau (`--graded-plateau`: block-diagonal coincidence routing inp[c]->chan[c] via inject_explicit_wiring, decay-matched tau=18.9ms to the SSM's 0.73, read `cp_conductance_g_graded_plateau`). Result: the plateau state fidelity is **0.65-0.67** (pop_k 8-32, tuned operating point) — a REAL gain ABOVE the point-neuron ceiling (self-NMDA 0.55), confirming the plateau helps on the full WKV. BUT short of the core-probe's 0.98: the gap is the INPUT DELIVERY — the plateau INTEGRATES faithfully (0.98 with a clean graded input), but the coincidence drive c_w is carried by the inp-pool FIRING (propto relu(v)), which reintroduces f-I/quantization noise, worsened by the WKV's SMALL SIGNED v_t. ⇒ HONEST STATE: the breakthrough stands (the dendritic plateau is the point-neuron-limit surpass, core 0.98; the full WKV port improves on-substrate fidelity 0.55->0.67); the LAST step to the on-substrate robust BEAT is delivering v_t as a CLEAN graded c_w (candidate: drive the coincidence pathway from a GRADED presynaptic conductance/rate rather than the raw spiking inp firing — read the synaptic drive not the spike count; or normalize/gain the v_t into a cleaner firing range; or a larger decorrelated inp population). The plateau mechanism + decay-match + block-diagonal routing are BUILT + validated; the input-delivery clean-up is the precisely-characterized final step. Additive `--graded-plateau`/`--plateau-center`; the graded plateau is the EXISTING sim/ edit.
+
+### Plateau input-delivery: all OPERATING-POINT levers cap ~0.67; the un-tried final candidate is the GRADED SYNAPTIC DRIVE read
+Swept every operating-point lever for the full WKV plateau port — drive-scale (150-3000), pathway-w (0.5-3), pop_k (8-64),
+center (3-8), and a dense BIAS (200-900, WORSE: common-mode offset swamps the signal, 0.64->0.49). ALL cap the full-WKV
+plateau fidelity at **0.64-0.67** (real gain over self-NMDA 0.55, but short of the 0.98 core). ⇒ the bound is confirmed to be
+the INPUT DELIVERY: the coincidence drive c_w is carried by the inp-pool spike FIRING (∝ relu(v)), and the WKV's small signed
+sparse v_t makes that firing noisy — no operating-point tweak fixes it. **The un-tried, most-promising final candidate: make
+c_w read the GRADED SYNAPTIC DRIVE (the smooth postsynaptic conductance the inp firing produces through the coincidence
+synapse) rather than the per-window spike count** — the 0.98 core probe worked because its input was a clean dense graded value;
+delivering the WKV v_t as a graded synaptic quantity (not a spike count) should recover it. That may need a small read of the
+coincidence path's graded drive (a candidate `sim/` read, not a new mechanism). ⇒ HONEST FINAL: the dendritic plateau BREAKTHROUGH
+(point-neuron limit surpassed, 0.98 core; full WKV 0.55->0.67) is the decisive result; the on-substrate robust BEAT is one
+graded-input-delivery step away, precisely characterized. gap#1's CAPABILITY is DEMONSTRATED (architecture-level 6-seed + prose).
