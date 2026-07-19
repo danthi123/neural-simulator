@@ -231,8 +231,17 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   15-26 CA3 cells, sep_cos 0.10-0.20). The residual is **ROBUSTNESS/fragility** (knife-edge: some inputs amplify, some
   don't), and the concrete fix is the **E%-max feedforward inhibition** (de Almeida-Idiart-Lisman divisive normalization
   — constant firing fraction across >10× drive; the SAME `ca1_ff_inhib` machinery the CLOSED completion uses, applied to
-  the DG→CA3 selection) → every input reliably amplifies to a sparse separated assembly regardless of input strength. A
-  concrete GPU TUNING task reusing closed-completion machinery, NOT a research gate. **(iii) console wire-in.**
+  the DG→CA3 selection). **⚠️ TESTED 2026-07-18 — it's a 3-LAYER problem + I mis-scoped:** the ff-inhibition (`--ca3-ff`,
+  BUILT/committed 4d3a2fee, correct) is DOWNSTREAM of amplification. On the runner's DEFAULT config (ca3w=1.5,
+  train=False, coincidence=False) NOTHING fires (sizes [0,0,0,0] feedforward OR feedback) — there's no firing to
+  sparsify. Layer-1 = mossy→CA3 propagation (the raw R0 boundary, ~0 firing); layer-2 = amplification (the finding's
+  15-26-cell assembly needed `train=True, coincidence=True, ca3w≈4`, a SYNCHRONIZED gamma-pulsed DG volley, + the
+  bistability keystone — a SEPARATE probe, NOT the runner default); layer-3 = my ff-inhibition robustness fix.
+  **Genuine emergent-DG next build = wire LAYER-2 amplification into `_gap5_emergent_dg_selection_derisk` FIRST, THEN
+  the ff-inhibition.** A multi-layer build (the hardest gap#5 sub-item). Finding
+  `2026-07-18-gap5-emergent-DG-ff-inhibition-is-downstream-of-amplification-3-layer-structure`. **⇒ within gap#5, item
+  (i) SWR replay is the MORE TRACTABLE priority (reads on the CLOSED completion, no amplification needed) — do it FIRST.**
+  **(iii) console wire-in.**
 - **⚠️ STRATEGY CORRECTION (owner steer 2026-07-18): FULLY close each gap in EASIEST→HARDEST order; stop jumping /
   leaving loose ends.** I drifted: picked gap #5 on a wrong "quickest" estimate, then sunk-cost-ground its deep
   robustness frontier while easier un-closed work sat idle. Corrected order of UN-CLOSED work: **(A) gap #3 residuals
