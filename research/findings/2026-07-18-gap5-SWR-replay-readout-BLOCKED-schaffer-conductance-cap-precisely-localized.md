@@ -214,6 +214,18 @@ Ported the emergent-completion recipe (sparse `assembly_frac=0.03` + SYNCHRONOUS
   readout specificity is 3-seed GO — the multiply-confirmed near-tie blocker is SOLVED** (distinct assemblies → distinct
   CA1, 7.75× discrimination). PENDING: 6-seed (42/43/44/100/101/102) + anti-cheats (no-learn dense-random Schaffer →
   near-tie back = the learned Schaffer + stack is load-bearing; permuted-cue → no match). NO sim/ edit.
+- **🎯🎯 CLOSED — SWR READOUT SPECIFICITY 6/6 GO + ANTI-CHEAT CLEAN (2026-07-19).** The `k30_hm150_d1200 + E%-max topk=0.1`
+  stack, 6 seeds: match 0.754/0.603/0.717/0.708/0.706/0.713 (mean 0.700), cross 0.084/0.097/0.086/0.034/0.070/0.018
+  (mean **0.065**), ratio 6.2-39.4× (mean **10.79×**) — **GO 6/6** (match≥0.6 AND cross≤0.3 every seed). **ANTI-CHEAT
+  (no-learn, dense-random Schaffer): COLLAPSES to near-tie** — match≈cross (0.95/0.89, 1.00/1.00, 0.89/0.84, 0.87/0.86,
+  ratio ~1.0) → the learned Schaffer + the stack is GENUINELY LOAD-BEARING (not a fixed-random-projection artifact). Also
+  ROBUST across the strengthening sweep (k30 7.75×, k40 8.32×, k50 7.00× — all 3-seed GO, not a knife-edge). ⇒ **the SWR
+  generative-replay readout SPECIFICITY is CLOSED on the spiking substrate** — distinct CA3 assemblies drive distinct CA1
+  patterns via the biology-grounded STACK (sparse+synchronous+k_thresh SPECIFIC completion → learned sparse Schaffer →
+  E%-max CA1 winner-set read; de Almeida-Idiart-Lisman 2009 + Valero 2017 + Kwon 2018, all verified). NO sim/ edit (runner
+  params + the additive default-None E%-max read). ⇒ gap#5 (i) SWR readout: firing SOLVED + completion mechanism VALIDATED
+  + **specificity CLOSED**. Remaining polish (not blockers): raise absolute match (held_cue is weak); the emergent (mossy-
+  selected, `2026-07-19-...-SELECTION-de-risked-GO`) assemblies as the developmental version of the sparse+sync completion.
 
 ## Status (per THE LAW — a precisely-characterized boundary that names the next lever)
 - **The SWR readout is BLOCKED by the ca3→ca1 effective-conductance cap** — a real, precisely-localized hard

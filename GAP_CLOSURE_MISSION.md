@@ -194,6 +194,13 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   readout specificity GO. Findings `2026-07-19-gap5-SWR-readout-specificity-research-gate-...` +
   `2026-07-18-gap5-SWR-replay-readout-BLOCKED-...` (§THE STACK BREAKS THE NEAR-TIE). NO sim/ edit (runner params + additive
   E%-max read). ⇒ the SWR generative-replay readout (item i) is going from "blocked near-tie" to a GO-adjacent stack.
+  **🎯🎯 CLOSED — SWR READOUT SPECIFICITY 6/6 GO + ANTI-CHEAT CLEAN (2026-07-19).** `k30_hm150_d1200 + E%-max topk=0.1`,
+  6 seeds: match mean 0.700, cross mean **0.065**, ratio mean **10.79×** (per-seed 6.2-39.4×) — GO all 6. **Anti-cheat
+  (no-learn dense-random Schaffer) COLLAPSES to near-tie** (match≈cross, ratio ~1.0) → the learned Schaffer + stack is
+  LOAD-BEARING. Robust across k30/k40/k50 (all GO). ⇒ **gap#5 (i) SWR generative-replay readout: firing SOLVED + completion
+  VALIDATED + SPECIFICITY CLOSED** via the biology-grounded STACK (sparse+sync+k_thresh SPECIFIC completion → learned sparse
+  Schaffer → E%-max CA1 winner-set read; Valero 2017 + Kwon 2018 + de Almeida-Idiart-Lisman 2009, all verified). NO sim/
+  edit. The multiply-confirmed SWR near-tie blocker — blocked all session — is SOLVED on the spiking substrate.
   (2) **gap#5 (ii) emergent-DG — SELECTION DE-RISKED, 6-seed GO (2026-07-19).** Read-your-substrate ROOT-CAUSED the
   0-firing (the trisynaptic FEEDFORWARD does not conduct — every hop sub-threshold; default mossy w=8 gives CA3 g_e 0.17,
   ~10-30× too weak), then DE-RISKED the core question — **can a stable pattern-separated CA3 assembly be SELECTED from a
