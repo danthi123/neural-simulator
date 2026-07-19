@@ -151,3 +151,18 @@ banked; the untried NEXT METHOD is POPULATION CODING** — K neurons per channel
 fix that averages out spiking noise → higher state fidelity), and/or an end-to-end on-bridge-trained read-out. The
 capability (fully-spiking open generation) stays OPEN; the next-method is precisely scoped. NO `sim/` edit.
 `_emerge_wkv_onbridge_derisk.py` (`--t-step`, `--self-nmda-w`, `--drive-scale`, receptance-gated read-out, verify-first).
+
+**POPULATION CODING (K=8) tried → the ~0.6 fidelity ceiling is STRUCTURAL, not noise (decisive).** K=8 neurons per
+channel (population-averaged rate) barely moved the corr (0.55→0.596) and left the read-out far below bigram. ⇒ since
+noise-averaging does NOT help, the fidelity ceiling is **structural**: the self-NMDA autapse integrates the neuron's
+*FIRING* (a threshold-nonlinear function of input+state), whereas the SSM integrates the *INPUT* `v_t` — a genuine
+**firing-integral-vs-input-integral mismatch** that caps the fidelity at ~0.6 regardless of noise mitigation. **The
+precisely-scoped NEXT METHOD (the capability stays OPEN):** a mapping that integrates the INPUT directly — drive a slow
+*input* NMDA synapse (input pop firing ∝ `v_t` → slow NMDA onto the channel = the leaky integral of `v_t`, matching the
+SSM), OR train the read-out END-TO-END through the on-bridge spiking (surrogate-grad), OR realize the state directly in a
+slow conductance array driven by `v_t` (least "emergent" but exact). **Net honest state of the on-bridge stretch: the
+DESIGN is confirmed (a diagonal self-NMDA realizes a leaky state on real spikes, verify-first corr ~0.6), and the
+firing-integral realization's ~0.6 structural fidelity is characterized as insufficient for the LM read-out — a banked
+METHOD with a precisely-scoped next (input-integral mapping). The rate-level de-risk (every constraint GO) remains the
+strong evidence the MECHANISM works.** verify-first + the firing/corr diagnostics prevented a FALSE GO at every one of
+~7 finicky steps (build → mapping → snapshot → chance-read-out → V=200 → receptance → T_STEP → population-coding).

@@ -35,7 +35,7 @@ from research.runners._emerge_wkv_lm_derisk import fit_interp_trigram
 _T_STEP_DEFAULT = 6                                                          # bridge steps per token (integration window)
 
 
-def _build_channel_bridge(D, seed, self_nmda_w=8.0, dt=0.5):
+def _build_channel_bridge(D, seed, self_nmda_w=8.0, dt=0.5, pop_k=1):
     """2*D Izhikevich channel neurons (D ON + D OFF). The leaky memory = a DIAGONAL self-NMDA autapse per channel neuron
     (pre==post, exc_receptor='nmda_slow' via inject_explicit_wiring): each neuron's firing charges its OWN slow NMDA
     conductance (tau~100ms) = the per-channel leaky integral a_t=decay*a_{t-1}+drive (NOT random reservoir mixing). Built
@@ -48,7 +48,7 @@ def _build_channel_bridge(D, seed, self_nmda_w=8.0, dt=0.5):
     cfg.enable_brain_region_framework = True
     cfg.enable_nmda = True                                           # slow NMDA conductance = the leaky memory
     cfg.brain_regions = [
-        BrainRegion(name="chan", n_neurons=2 * D, exc_fraction=1.0, internal_density=0.05,
+        BrainRegion(name="chan", n_neurons=2 * D * pop_k, exc_fraction=1.0, internal_density=0.05,
                     exc_weight_mean=1.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False,
                     enable_nmda=True),
     ]
@@ -65,8 +65,9 @@ def _build_channel_bridge(D, seed, self_nmda_w=8.0, dt=0.5):
     plan = {"chan_self_nmda": {"pre_indices": ii, "post_indices": ii, "initial_weights": [float(self_nmda_w)] * len(ii),
                                 "plastic": False, "conn_type": "MIXED", "exc_receptor": "nmda_slow"}}
     b.inject_explicit_wiring(plan)
-    on_idx, off_idx = idx[:D], idx[D:]
-    return b, on_idx, off_idx, None
+    # channel c (0..2D-1) -> the pop_k neurons idx[c*pop_k:(c+1)*pop_k] (population coding; averaged read = less spiking noise)
+    chan_groups = [idx[c * pop_k:(c + 1) * pop_k] for c in range(2 * D)]
+    return b, chan_groups, None, None
 
 
 def main():
@@ -80,6 +81,7 @@ def main():
     ap.add_argument("--drive-scale", type=float, default=1200.0)    # v_t -> external current pA
     ap.add_argument("--self-nmda-w", dest="self_nmda_w", type=float, default=8.0)   # diagonal self-NMDA autapse weight
     ap.add_argument("--n-fit", dest="n_fit", type=int, default=600)   # train sentences for the on-bridge read-out re-fit
+    ap.add_argument("--pop-k", dest="pop_k", type=int, default=1)
     ap.add_argument("--t-step", dest="t_step", type=int, default=_T_STEP_DEFAULT)   # bridge steps/token (finer rate=less noise)
     ap.add_argument("--json", type=str, default="research/findings/raw/_emerge_wkv_onbridge.json")
     args = ap.parse_args()
@@ -108,8 +110,12 @@ def main():
     vocab = Vocab.build(tr, V=V); tr_ids = [vocab.ids(s) for s in tr]; ev_ids = [vocab.ids(s) for s in ev]
     P_bi = fit_bigram(tr_ids, V); tri, _lam = fit_interp_trigram(tr_ids, V, tr[-1500:] and [vocab.ids(s) for s in tr[-1500:]])
 
-    b, on_idx, off_idx, snap = _build_channel_bridge(D, args.seed, self_nmda_w=args.self_nmda_w)
+    b, chan_groups, _cg2, snap = _build_channel_bridge(D, args.seed, self_nmda_w=args.self_nmda_w, pop_k=args.pop_k)
     nnrn = int(b.cp_membrane_potential_v.size)
+    # per-neuron -> channel map (channel c drives+reads its pop_k neurons; averaged read = population noise-averaging)
+    all_drive_idx = np.concatenate([np.asarray(g) for g in chan_groups]).astype(np.int64)
+    chan_of = np.concatenate([[c] * len(chan_groups[c]) for c in range(2 * D)]).astype(np.int64)
+    gsize = np.array([len(g) for g in chan_groups], dtype=np.float64)
 
     def _wash():
         """Reset the state so each sentence reads independently (zero the leaky NMDA memory + conductances + firing;
@@ -127,18 +133,18 @@ def main():
         rates = []
         for t in range(len(ids)):
             h = _ln(emb[ids[t]]); v = Wv @ h                        # [D]
+            chan_drive = np.concatenate([np.maximum(v, 0.0), np.maximum(-v, 0.0)]) * args.drive_scale   # [2D] ON|OFF
             cur = np.zeros(nnrn, np.float32)
-            cur[on_idx] = np.maximum(v, 0.0) * args.drive_scale
-            cur[off_idx] = np.maximum(-v, 0.0) * args.drive_scale
+            cur[all_drive_idx] = chan_drive[chan_of]                # broadcast each channel's drive to its pop_k neurons
             cnt = np.zeros(2 * D, np.float64)
             for _ in range(_T_STEP):
                 b.cp_external_input_current[:] = 0.0
-                b.cp_external_input_current[on_idx] = xp.asarray(cur[on_idx]) if xp is not None else cur[on_idx]
-                b.cp_external_input_current[off_idx] = xp.asarray(cur[off_idx]) if xp is not None else cur[off_idx]
+                b.cp_external_input_current[all_drive_idx] = (xp.asarray(cur[all_drive_idx]) if xp is not None
+                                                             else cur[all_drive_idx])
                 b._run_one_simulation_step()
                 fs = np.asarray(to_host(b.cp_firing_states))
-                cnt += np.concatenate([fs[on_idx], fs[off_idx]]).astype(np.float64)
-            rates.append(cnt / _T_STEP)
+                np.add.at(cnt, chan_of, fs[all_drive_idx].astype(np.float64))   # sum spikes per channel (over its pop_k)
+            rates.append(cnt / (_T_STEP * gsize))                   # channel firing rate = pop-averaged (noise-averaged)
         b.cp_external_input_current[:] = 0.0
         return np.asarray(rates)                                     # [T, 2D]
 
