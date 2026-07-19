@@ -58,15 +58,17 @@ similar codes):
   (iii) validate on codes with KNOWN category structure (the EMERGE taxonomy) rather than the raw 787. This is a
   genuine, precisely-characterized boundary for the convergence-lever direction — NOT the cheap unblock the first
   decorrelation measurement suggested. The recall (distinctness) works today; the GENERALIZATION needs stronger codes.
-## FURTHER (develop-day check) — structure is BETTER EARLY, degrades over training (unexpected)
-The 788-concept vocab is PRE-ALLOCATED (all days have 788, not growing). Checking day 0 vs 23: **day 0 dog →
-toy(0.39), cat(0.37)** (genuinely semantic!) but **day 23 dog → show/time/wife** (unrelated) — the semantic structure
-is BETTER EARLY and DEGRADES over training, even as the raw top-neighbor cosine slightly rises (0.245→0.270). ⇒ the
-develop-loop appears to drift the codes toward co-occurrence ARTIFACTS rather than sharpening semantic structure (small
-sample: one concept; a real signal worth a proper multi-concept check). This is NOT the develop_D-capacity story I
-hypothesized — it's a training-DYNAMICS issue (the codes lose their early semantic structure). ⇒ the scout's #1
-convergence lever needs the codes' semantic structure fixed FIRST (why does it degrade? early-stop? the co-occurrence
-target? PPMI conditioning?) before a binder over them can generalize. **Net: the reader/binder-over-stream-codes direction
-is thoroughly characterized as NOT a cheap win — the codes are bindable (recall) but their generalizable semantic
-structure is weak + degrades; the real sub-problem is code QUALITY (semantic structure), upstream of the binder.**
+## FURTHER (develop-day check) — ⚠️ my "degrades over training" claim was ONE-CONCEPT NOISE (multi-concept REFUTES it); structure is weak but IMPROVES with training
+The 788-concept vocab is PRE-ALLOCATED (all days have 788). I initially saw day-0 dog→toy/cat (semantic) vs day-23
+dog→show/time/wife (unrelated) and claimed structure DEGRADES over training. **A proper MULTI-CONCEPT check (10
+hand-labeled semantic pairs: dog-cat, king-queen, mother-father, run-walk, boy-girl, sun-moon, big-small, happy-sad,
+eat-food, water-fire) REFUTES it:** day 23 is BETTER than day 0 (semantic-pair median rank **174 vs 222** of 788, top-20
+frac **0.38 vs 0.25**) — structure IMPROVES with training. The dog case was one-concept noise (verify-don't-assert: my 4th
+self-caught error this session). **But the load-bearing tempering STANDS: the structure is WEAK even at day 23** — semantic
+pairs rank ~174th of 788 (top-20 frac 0.38), i.e. only ~38% of clearly-semantic pairs land in the top-20 nearest. ⇒ the
+codes DO learn a real-but-WEAK semantic structure (improves with training), not strong enough for robust generalization
+via a binder. **Net: the reader/binder-over-stream-codes direction is thoroughly characterized as NOT a cheap win — the
+codes are bindable (recall) but their generalizable semantic structure is real-but-WEAK (the code-QUALITY limit is
+upstream of the binder). Levers: higher develop_D, PPMI local-normalization (conditions without destroying structure),
+or validate the binder on the EMERGE known-category codes (strong structure by construction) to isolate binder-vs-codes.**
 - Diagnostics: `scratchpad/bind_over_stream_codes.py`. NO `sim/` edit. Uses cached scale787 codes.
