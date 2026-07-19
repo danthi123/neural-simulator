@@ -30,26 +30,41 @@ OUT = _REPO / "research" / "findings" / "raw" / "_gap5_emergent_dg_selection.jso
 
 
 def _build_bridge(seed, n_ca3, dg_ffi_weight, ca3_fb_inhib, mossy_weight, mossy_density, n_lang=384, n_dg=300,
-                  ca3_ff_inhib=None):
-    b = _build(seed, n_lang=n_lang, n_dg=n_dg, n_ca3=n_ca3, ca3_density=0.05, ca3w=1.5, coincidence=False,
-               two_comp=False, train=False, ca3_fb_inhib=ca3_fb_inhib, dg_ffi_weight=dg_ffi_weight,
-               mossy_weight=mossy_weight, mossy_density=mossy_density, enable_ou=False, ca3_ff_inhib=ca3_ff_inhib)
+                  ca3_ff_inhib=None, amplify=False, amp_ca3w=4.0):
+    if amplify:
+        # LAYER-2 AMPLIFICATION (2026-07-19): the layer-1 default (ca3w=1.5, coincidence/train off) gives 0 CA3 firing
+        # (raw R0 boundary). The finding's 15-26-cell selection needs a MODERATE recurrent (ca3w~4) + the dendritic-
+        # plateau coincidence read + two-compartment + plastic recurrent + the bistability keystone, so a synchronized
+        # mossy seed AMPLIFIES into a sparse assembly. NO sim/ edit (all _build params).
+        b = _build(seed, n_lang=n_lang, n_dg=n_dg, n_ca3=n_ca3, ca3_density=0.05, ca3w=float(amp_ca3w),
+                   coincidence=True, two_comp=True, train=True, ca3_fb_inhib=ca3_fb_inhib, dg_ffi_weight=dg_ffi_weight,
+                   mossy_weight=mossy_weight, mossy_density=mossy_density, enable_ou=False, ca3_ff_inhib=ca3_ff_inhib,
+                   plateau_self_regen=0.15, apical_kir_g=3.0)
+    else:
+        b = _build(seed, n_lang=n_lang, n_dg=n_dg, n_ca3=n_ca3, ca3_density=0.05, ca3w=1.5, coincidence=False,
+                   two_comp=False, train=False, ca3_fb_inhib=ca3_fb_inhib, dg_ffi_weight=dg_ffi_weight,
+                   mossy_weight=mossy_weight, mossy_density=mossy_density, enable_ou=False, ca3_ff_inhib=ca3_ff_inhib)
     b.core_config.enable_hebbian_learning = False   # read pass: no plasticity (the feedforward always conducts)
     return b
 
 
-def _select(bridge, lang, ca3_arr, dg_arr, pat_idx, drive_pA=200.0, n_events=6, reset_steps=10, drive_steps=40, theta=0.3):
-    """Drive language_input[pat_idx], run the loop, return (assembly set A over ca3-LOCAL indices, ca3 rate vec, dg_sparsity)."""
+def _select(bridge, lang, ca3_arr, dg_arr, pat_idx, drive_pA=200.0, n_events=6, reset_steps=10, drive_steps=40, theta=0.3,
+            sync=False, g_on=3, g_off=3):
+    """Drive language_input[pat_idx], run the loop, return (assembly set A over ca3-LOCAL indices, ca3 rate vec, dg_sparsity).
+    sync=True gamma-pulses the drive (g_on on / g_off off) -> a SYNCHRONIZED DG volley (the finding's amplification prereq:
+    coincident mossy fibers detonate CA3)."""
     lang_arr = np.asarray(lang, dtype=np.int64)
     drv = cp.asarray(lang_arr[pat_idx], dtype=cp.int64) if len(pat_idx) else None
     ca3_spk = cp.zeros(len(ca3_arr), dtype=cp.float32); dg_spk = cp.zeros(len(dg_arr), dtype=cp.float32); nrec = 0
+    _period = g_on + g_off
     for ev in range(n_events):
         bridge.cp_external_input_current[:] = 0.0
         for _ in range(reset_steps):
             bridge._run_one_simulation_step()
-        for _ in range(drive_steps):
+        for _t in range(drive_steps):
             bridge.cp_external_input_current[:] = 0.0
-            if drv is not None:
+            _drive_now = (not sync) or ((_t % _period) < g_on)     # sync: gamma-pulsed volley
+            if drv is not None and _drive_now:
                 bridge.cp_external_input_current[drv] = float(drive_pA)
             bridge._run_one_simulation_step()
             if ev >= n_events - 3:                        # record the last 3 events (settled)
@@ -75,18 +90,21 @@ def _cos(u, v):
 
 
 def run(seed, n_ca3=400, n_inputs=4, dg_ffi_weight=6.0, ca3_fb_inhib=20.0, mossy_weight=8.0, mossy_density=0.10,
-        ca3_ff_inhib=None):
-    b = _build_bridge(seed, n_ca3, dg_ffi_weight, ca3_fb_inhib, mossy_weight, mossy_density, ca3_ff_inhib=ca3_ff_inhib)
+        ca3_ff_inhib=None, amplify=False, amp_ca3w=4.0, sync=False, sel_drive=200.0):
+    import functools
+    _sel = functools.partial(_select, sync=sync, drive_pA=sel_drive)
+    b = _build_bridge(seed, n_ca3, dg_ffi_weight, ca3_fb_inhib, mossy_weight, mossy_density, ca3_ff_inhib=ca3_ff_inhib,
+                      amplify=amplify, amp_ca3w=amp_ca3w)
     rm = b.region_manager
     lang = list(rm.indices("language_input")); ca3_arr = np.asarray(list(rm.indices("ca3")), dtype=np.int64)
     dg_arr = np.asarray(list(rm.indices("dg")), dtype=np.int64)
     pats = [build_drive_pattern(len(lang), 0.1, seed * 100 + m) for m in range(n_inputs)]
-    sel = [_select(b, lang, ca3_arr, dg_arr, p) for p in pats]
+    sel = [_sel(b, lang, ca3_arr, dg_arr, p) for p in pats]
     A = [s[0] for s in sel]; rates = [s[1] for s in sel]; dg_sp = float(np.mean([s[2] for s in sel]))
     sizes = [len(a) for a in A]
     ca3_sparsity = float(np.mean([len(a) / len(ca3_arr) for a in A]))
     # stability: re-present each input from a fresh run -> Jaccard
-    sel2 = [_select(b, lang, ca3_arr, dg_arr, p) for p in pats]
+    sel2 = [_sel(b, lang, ca3_arr, dg_arr, p) for p in pats]
     stability = float(np.mean([_jacc(A[m], sel2[m][0]) for m in range(n_inputs) if len(A[m]) or len(sel2[m][0])] or [0.0]))
     # separation: pairwise cos of the rate vectors + Jaccard of the assemblies
     pair_cos, pair_jac = [], []
@@ -95,13 +113,14 @@ def run(seed, n_ca3=400, n_inputs=4, dg_ffi_weight=6.0, ca3_fb_inhib=20.0, mossy
             pair_cos.append(_cos(rates[i], rates[j])); pair_jac.append(_jacc(A[i], A[j]))
     sep_cos = float(np.mean(pair_cos)) if pair_cos else 0.0; sep_jac = float(np.mean(pair_jac)) if pair_jac else 0.0
     # anti-cheats
-    A_noin, _, _ = _select(b, lang, ca3_arr, dg_arr, np.array([], dtype=np.int64))           # no-input -> the moat
+    A_noin, _, _ = _sel(b, lang, ca3_arr, dg_arr, np.array([], dtype=np.int64))           # no-input -> the moat
     perm = np.random.default_rng(seed + 555).permutation(len(lang))[:len(pats[0])]           # a scrambled input
-    A_perm, r_perm, _ = _select(b, lang, ca3_arr, dg_arr, perm)
+    A_perm, r_perm, _ = _sel(b, lang, ca3_arr, dg_arr, perm)
     perm_cos = _cos(rates[0], r_perm)                                                         # different from input 0 => input-driven
-    bl = _build_bridge(seed, n_ca3, dg_ffi_weight, ca3_fb_inhib, 0.0, mossy_density, ca3_ff_inhib=ca3_ff_inhib)  # mossy-LESION (dg->ca3 weight 0)
+    bl = _build_bridge(seed, n_ca3, dg_ffi_weight, ca3_fb_inhib, 0.0, mossy_density, ca3_ff_inhib=ca3_ff_inhib,
+                       amplify=amplify, amp_ca3w=amp_ca3w)  # mossy-LESION (dg->ca3 weight 0)
     rm2 = bl.region_manager
-    A_les, _, _ = _select(bl, list(rm2.indices("language_input")),
+    A_les, _, _ = _sel(bl, list(rm2.indices("language_input")),
                           np.asarray(list(rm2.indices("ca3")), dtype=np.int64),
                           np.asarray(list(rm2.indices("dg")), dtype=np.int64), pats[0])
     mean_size = float(np.mean(sizes)) if sizes else 0.0
