@@ -161,6 +161,19 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
+- **⏸️ PAUSED FOR GAMING (owner, 2026-07-18) — RESUME PLAN when the owner is back:** the owner is gaming, so I KILLED
+  all GPU jobs (both gap#4 A/B runs + all SWR/emergent-DG diagnostics); GPU is free. **The gap#4 A/B (fixed-FA vs
+  KP-learned graded, h128/ep300) was killed BEFORE producing verdicts** — it was OVER-SCOPED (ep=300×train=300, 2
+  concurrent → CPU-bound, ~150 min; a scout should be ep~100, one run). **RESUME STEP 1 = re-run the gap#4 A/B at a
+  SANE scope:** `_d1_onbridge_learn_to_accuracy --microcircuit --graded-credit --hidden 128 --epochs 100 --train-subset
+  150 --seeds 42` (fixed feedback) vs the same `+ --feedback learned` (KP) — the single-variable credit-DIRECTION test,
+  fast. If KP lifts held-out over fixed → 6-seed + anti-cheats → the gap#4 accuracy milestone. **The turn's work is all
+  committed (both remotes; last 8f4caaca)** — gap#5 both extensions precisely characterized this session: (i) SWR
+  readout BLOCKED by a bridge-level ca1 g_e-path cap (`2026-07-18-gap5-SWR-replay-readout-BLOCKED-...`, a focused `sim/`
+  pass), (ii) emergent-DG needs the layer-2 amplification wired in (`...-ff-inhibition-is-downstream-of-amplification-...`).
+  Both are focused future passes; the gap#5 completion MECHANISM stays CLOSED. Ordering (owner steer): finish gap#5's
+  extensions before further gap#4 depth — but the gap#4 A/B re-run (step 1) is a quick loose-end to close first since
+  it was interrupted.
 - **📍 RESUME POINT (2026-07-18, latest): the gap#4↔#5 unification MAGNITUDE polish is CLOSED as a REFUTED method →
   PIVOTED to the gap#4 KEYSTONE learning-to-accuracy run (the board's highest-leverage OPEN item).** The
   "structured-BTSP = one-shot + heterosynaptic-competition" hypothesis was REFUTED by the substrate: the competition arm
