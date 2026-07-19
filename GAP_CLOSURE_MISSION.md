@@ -170,10 +170,16 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   GPU). Next: launch a single KP-arm accuracy run (ep=400) as a long background run, OR reduce steps/sample.** Both arms
   hold the moat (lesion dw 0.000, wt_ok True) — the mechanism is correct; only accuracy-at-scale is unproven.
   (2) **gap#5 (i) SWR readout — MAJOR advance (2026-07-19):** ROOT-CAUSED the ca1_fire=0 (STP depression on the Schaffer
-  crushes g_e; phase-2 STP-off → ca1 FIRES) + the specificity barrier (fixed-random DENSE Schaffer drives every ca1
-  identically) → built the LEARNED-SCHAFFER fix (associative ca3(assembly)→ca1(target) potentiation; `swr_learn_schaffer`
-  + `swr_ca1_ff_inhib`/`swr_ripple_pA`/`SWR_PHASE2_NOSTP`, all default-off byte-identical). Learned-Schaffer specificity
-  test IN FLIGHT. Finding `2026-07-18-gap5-SWR-replay-readout-BLOCKED-...` (root cause + fix path).
+  crushes g_e; phase-2 STP-off → ca1 FIRES) + the specificity barrier → built the LEARNED-SCHAFFER fix (associative
+  ca3(assembly)→ca1(distinct target) potentiation) → firing now SPARSE+SANE (~10 ca1 cells, v near rest) + `swr_disjoint`
+  assemblies → **specificity PARTIALLY closed: ca1_match 0.993 vs ca1_cross 0.80** (was 0.98/0.98). RESIDUAL precisely
+  named: an ASYMMETRIC completion DOMINANT-ATTRACTOR (assembly-1's completion co-activates assembly-0, breakdown
+  [206,232]) — the completion recurrent-BALANCE/distinctness residual (= the same completion-magnitude residual, deeper
+  arc). Next lever (future pass): balance the completion attractors (between-assembly selective inhibition / balanced
+  encoding) so no assembly dominates → cross→low. Knobs `swr_learn_schaffer`/`swr_disjoint`/`swr_ca1_ff_inhib`/
+  `swr_ripple_pA`/`SWR_PHASE2_NOSTP` all default-off byte-identical (determinism CI 9/9). ⇒ SWR (i): firing SOLVED,
+  specificity partially closed — a MAJOR advance from "mystery cap / ca1_fire=0". Finding
+  `2026-07-18-gap5-SWR-replay-readout-BLOCKED-...`.
 - **⏸️ PAUSED FOR GAMING (owner, 2026-07-18) — RESUME PLAN when the owner is back:** the owner is gaming, so I KILLED
   all GPU jobs (both gap#4 A/B runs + all SWR/emergent-DG diagnostics); GPU is free. **The gap#4 A/B (fixed-FA vs
   KP-learned graded, h128/ep300) was killed BEFORE producing verdicts** — it was OVER-SCOPED (ep=300×train=300, 2

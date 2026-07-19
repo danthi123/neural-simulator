@@ -84,6 +84,17 @@ weak/spreading completion (cue ~0.18-0.22 magnitude residual) + overlapping asse
 DEEPER arc = the completion-magnitude/distinctness residual + disjoint assemblies). ⇒ gap#5 (i) SWR is now precisely a
 2-stage chain: (1) firing — SOLVED; (2) specificity — downstream of completion distinctness (the deeper open residual).
 
+## DISJOINT assemblies → specificity PARTIALLY CLOSED (2026-07-19): cross 0.98 → 0.80; residual = completion dominant-attractor
+`swr_disjoint` (draw all assemblies from ONE without-replacement pool → no shared cells) removes the overlap that seeded
+cross-talk. Result: assembly-0 completes CLEANLY (breakdown [239,0] full, [161,0] partial — zero spread) and specificity
+IMPROVED: **ca1_match 0.993 vs ca1_cross 0.803** (was 0.98/0.98). ⇒ removing the overlap fixed HALF the cross-talk. The
+RESIDUAL is ASYMMETRIC: assembly-1's completion still co-activates assembly-0 (breakdown [206,232]) — a DOMINANT-ATTRACTOR
+effect (one assembly is a stronger attractor pulled in from the other's cue). That is the completion recurrent-BALANCE /
+distinctness residual (not overlap). **Next lever (for a future pass): balance the completion attractors (stronger
+between-assembly selective inhibition, or balanced-strength encoding) so no assembly dominates → cross → low.** ⇒ SWR (i)
+FINAL state this session: firing SOLVED, specificity PARTIALLY closed (cross 0.80), residual precisely named
+(completion dominant-attractor). A major advance from "mystery cap / ca1_fire=0 / hard integration".
+
 ## Status (per THE LAW — a precisely-characterized boundary that names the next lever)
 - **The SWR readout is BLOCKED by the ca3→ca1 effective-conductance cap** — a real, precisely-localized hard
   integration (the documented "hard fresh-pass integration" snag, now root-caused). It is NOT closeable by the

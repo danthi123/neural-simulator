@@ -62,7 +62,7 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
         read_ca1=False, schaffer_boost=1.0,
         encode_btsp=False, btsp_lr=0.02, encode_ca3w=None, encode_plateau_pA=250.0, encode_structural_sep=0,
         encode_hetero=0.0, encode_btsp_hetero=0.0, assemblies_ext=None, swr_ripple_pA=800.0, swr_ca1_ff_inhib=None,
-        swr_learn_schaffer=False, swr_target_frac=0.15, swr_schaffer_hi=60.0, swr_schaffer_lo=0.2):
+        swr_learn_schaffer=False, swr_target_frac=0.15, swr_schaffer_hi=60.0, swr_schaffer_lo=0.2, swr_disjoint=False):
     # DIAGNOSED LEVERS (2026-07-18 workflow): the rate-window LTP is an EMA-trace rule -- a cell's co-activity trace
     # tops out ~0.03-0.2 (point Izh fires ~0.2 duty @700pA), so coact_thresh MUST be BELOW it (~0.02) or nothing
     # potentiates; the gamma OFF-gap DECAYS the EMA (0.9^off) so CONTINUOUS drive (sync_off<=1) is required, NOT
@@ -100,6 +100,11 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
         # store, structural_sep, selective_inhib, bistable completion, anti-cheats) is parameterized purely by this list.
         assemblies = [np.asarray(sorted(int(x) for x in a), dtype=np.int64) for a in assemblies_ext]
         n_mem = len(assemblies)
+    elif swr_disjoint:
+        # DISJOINT assemblies (SWR specificity test): draw all n_mem*n_assy cells from ONE without-replacement pool so
+        # the assemblies share NO cells -> removes the overlap that seeds cross-assembly completion spreading.
+        _pool = rng.choice(ca3_idx, n_assy * n_mem, replace=False)
+        assemblies = [np.asarray(sorted(_pool[i * n_assy:(i + 1) * n_assy]), dtype=np.int64) for i in range(n_mem)]
     else:
         assemblies = [np.asarray(sorted(rng.choice(ca3_idx, n_assy, replace=False)), dtype=np.int64) for _ in range(n_mem)]
 
