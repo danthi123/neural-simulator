@@ -161,6 +161,19 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
+- **📍 RESUME POINT (2026-07-19): gap#4 A/B step-1 DONE = INCONCLUSIVE (undertrained); gap#5 (i) SWR ROOT-CAUSED + a
+  learned-Schaffer closer in flight.** (1) **gap#4 A/B re-run (ep=100/train=150, fixed vs KP-learned):** BOTH arms
+  held-out **0.400** (below chance 0.549) — undertrained at ep=100, so fixed-vs-KP is UNRESOLVED. The KP arm moved MORE
+  weight (in→hid dw **710 vs fixed 198**) but same accuracy — consistent with D2's finding that KP's `Y` needs MANY
+  epochs to converge (cos~0.30 at ep=800), so at ep=100 KP≈fixed. **⇒ to test KP's credit-direction benefit needs the
+  ACCURACY + Y-CONVERGENCE regime (ep≥300-600), which is CPU-BOUND-slow (~75 min/arm — the Python per-step loop, not
+  GPU). Next: launch a single KP-arm accuracy run (ep=400) as a long background run, OR reduce steps/sample.** Both arms
+  hold the moat (lesion dw 0.000, wt_ok True) — the mechanism is correct; only accuracy-at-scale is unproven.
+  (2) **gap#5 (i) SWR readout — MAJOR advance (2026-07-19):** ROOT-CAUSED the ca1_fire=0 (STP depression on the Schaffer
+  crushes g_e; phase-2 STP-off → ca1 FIRES) + the specificity barrier (fixed-random DENSE Schaffer drives every ca1
+  identically) → built the LEARNED-SCHAFFER fix (associative ca3(assembly)→ca1(target) potentiation; `swr_learn_schaffer`
+  + `swr_ca1_ff_inhib`/`swr_ripple_pA`/`SWR_PHASE2_NOSTP`, all default-off byte-identical). Learned-Schaffer specificity
+  test IN FLIGHT. Finding `2026-07-18-gap5-SWR-replay-readout-BLOCKED-...` (root cause + fix path).
 - **⏸️ PAUSED FOR GAMING (owner, 2026-07-18) — RESUME PLAN when the owner is back:** the owner is gaming, so I KILLED
   all GPU jobs (both gap#4 A/B runs + all SWR/emergent-DG diagnostics); GPU is free. **The gap#4 A/B (fixed-FA vs
   KP-learned graded, h128/ep300) was killed BEFORE producing verdicts** — it was OVER-SCOPED (ep=300×train=300, 2
