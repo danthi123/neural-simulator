@@ -136,6 +136,23 @@ Parallelized sweep of the within-assembly separation strength (found via the par
   ⇒ SWR (i) FINAL: firing SOLVED + readout mechanism VALIDATED (learned Schaffer, anti-cheat clean); specificity
   bottlenecked by (and requiring) the emergent-DG pattern separation = the shared gap#5 unlock.
 
+## NEAR-TIE RELOCATED (2026-07-19, a-1 RAG catch — avoided a false "CONFUSED") — CA3 completion IS specific; the near-tie is DOWNSTREAM in the CA1 readout
+A cross-assembly specificity test (does A's partial cue complete to A not B?) came back "CONFUSED" (within≈cross≈0.02),
+but the POSITIVE CONTROL was DEAD (within-completion ~0.015 ≪ the 0.30 completion bar) → the verdict was VOID, not a
+real confusion (silent-failure rule #1: never lift a metric from a run whose positive control fails; the test reused the
+coincidence-completion-via-language_input path with default params + a weak feedforward drive → no completion fired).
+The a-1 RAG check then found the answer already banked: **`2026-07-09-riii-emergent-ca3-completion-kopsick-formation` —
+the EMERGENT CA3 completion is 6-seed GO with within/cross ratio 12.6×** (self-organized assembly, DIRECT synchronous
+gamma drive, `hebb_max=120 k_thresh=20`; non-assembly / LINEAR / NO-TRAIN / PERM-CUE = 0.000 every seed). ⇒ the CA3
+RECURRENT completion is SPECIFIC when the assembly is SELF-ORGANIZED (a strong learned within-recurrent attractor).
+**So the SWR specificity near-tie (cross 0.72-0.86 in the strength sweep) is NOT in the CA3 completion — it is DOWNSTREAM
+in the Schaffer→CA1 readout, and/or a consequence of the SWR using RANDOM/disjoint assemblies (weak within-recurrent) vs
+the emergent-completion's SELF-ORGANIZED assemblies.** The decisive next test: feed SELF-ORGANIZED (or mossy-SELECTED,
+`2026-07-19-...-SELECTION-de-risked-GO-6seed`) assemblies into the SWR readout via the runner's `assemblies_ext` hook,
+and re-measure CA1 specificity — does the near-tie survive well-separated, strongly-attractored assemblies (⇒ the readout
+is the bottleneck) or vanish (⇒ it was the random assemblies)? This connects the emergent-DG SELECTION + the emergent
+CA3 completion (both GO) to the SWR readout.
+
 ## Status (per THE LAW — a precisely-characterized boundary that names the next lever)
 - **The SWR readout is BLOCKED by the ca3→ca1 effective-conductance cap** — a real, precisely-localized hard
   integration (the documented "hard fresh-pass integration" snag, now root-caused). It is NOT closeable by the
