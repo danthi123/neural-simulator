@@ -73,6 +73,25 @@ problem the field also faces (surrogate-grad BPTT / rate readouts, not sparse lo
 `_onbridge_eprop_port_derisk --seeds 42 43 44` to re-confirm FROZEN clears chance). This resolves the gap#4 investigation:
 the keystone (substrate learns) is achieved; the deep-credit-margin is the honest, narrow, field-hard frontier.
 
+## ⚠️ SYNTHESIS REFINED (verify-don't-assert — the eprop run caught my loose framing)
+Running `_onbridge_eprop_port_derisk --seeds 42 43 44` to verify: seed 42 shows the LEARNED e-prop deep credit
+**FAILS on-bridge (inherit-heldout 0.222 < chance 0.333, "TRAINS-THE-TASK False")** while a numpy deep net gets 1.000
+(the task IS separable + deep helps — STAGE0 deep-best 1.000 vs 1-layer 0.444). ⇒ my earlier "the substrate learns to
+0.778" CONFLATED two distinct things: (a) the FIXED random forward pass + a trained LINEAR readout (RESERVOIR COMPUTING —
+SHALLOW learning, carries the signal ~0.7-0.9 per the docstring/finding); vs (b) DEEP local-credit learning (learning the
+hidden layer via e-prop/BDSP), which this run shows is CONFIG-FRAGILE and here FAILS (0.222 < chance). The prior banked
+"K=8 0.877" (2026-07-16) was 80% the reservoir + a small deep-credit margin; this k=5 run's deep credit fails outright.
+**⇒ the HONEST, PRECISE gap#4 read: the substrate's FORWARD PASS is discriminative (a shallow reservoir/linear readout
+carries the class signal) — but DEEP local-credit LEARNING to accuracy on the sparse spiking substrate is NOT robustly
+achieved (small/variable/config-fragile margin over the reservoir; fails at k=5). This matches the field (surrogate-grad
+BPTT / rate readouts reach accuracy; sparse local credit does not).** My `_d1` runner's degenerate 0.42 was additionally
+its argmax-readout bug (Failure B) masking even the shallow signal. **The gap#4 keystone (DEEP biological local-credit to
+accuracy) remains the honest, field-hard open frontier** — NOT "substantially achieved" (I over-claimed; corrected). The
+frozen-reservoir arm (the substrate-carries-signal number) completes when the 3-seed run finishes. NEXT if pursued: the
+C1 apical-coupling fix + a proper leaky/population readout, then measure the deep-credit margin over the reservoir
+SEED-CLEAN — but the field-evidence says expect a small margin. The UNSUPERVISED stream cortex (2026-07-17) stays the
+more-promising mission path.
+
 ## Verified sources
 - **VERIFIED (internal):** `2026-07-10-...-apical-decoupled-...` (C1, exact bug, same runner); `2026-07-17-rate-net-control-graded-...`
   (C2 control run); `2026-07-16-deep-credit-GO-is-80pct-RESERVOIR-...` (reservoir instrument + 0.778, WITH its own

@@ -175,6 +175,15 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
      self-sustain/complete) is a careful INTEGRATION of the selection (small/sparse, GO) + the store+complete (larger/dense,
      GO 2026-07-09) — 4 regime mismatches precisely characterized. **NEXT: mossy-SELECT on the larger dense completion/SWR
      bridge so selection + store+complete share one regime.** Finding `2026-07-19-gap4-gap5-unification-derisk-...`.
+  4b. **gap#4 SYNTHESIS (2026-07-19, verify-don't-assert corrected an over-claim):** the substrate's FORWARD PASS is
+     discriminative (a shallow RESERVOIR + trained-LINEAR readout carries the class signal ~0.7-0.9); my `_d1` runner's
+     degenerate 0.42 was its argmax-over-sparse-pools READOUT bug (Failure B) masking it. BUT DEEP local-credit LEARNING
+     to accuracy on the sparse spiking substrate is NOT robustly achieved — the eprop verification run shows learned
+     e-prop deep credit FAILS on-bridge (inherit 0.222 < chance 0.333 at k=5; the prior "K=8 0.877" was 80% reservoir +
+     a small margin). ⇒ **gap#4 keystone (DEEP biological local-credit to accuracy) remains the honest, field-hard OPEN
+     frontier** (surrogate-grad/rate readouts reach accuracy; sparse local credit does not). I initially over-claimed
+     "substantially achieved" — corrected. **The UNSUPERVISED stream cortex (2026-07-17) stays the more-promising mission
+     path.** Finding `2026-07-19-gap4-research-gate-...` §SYNTHESIS REFINED.
   4. **gap#4 keystone (supervised BDSP-to-accuracy) — RESEARCH-GATED, deeply walled.** My 7 diagnostic runs RE-DERIVED a
      KNOWN result (the apical-decoupled bug C1, 2026-07-10, SAME runner — the invariance was the tell of a forward/wiring
      failure, pre-determined null). A scout reading the project's own record: 3 stacked failures (A forward-collapse, B
