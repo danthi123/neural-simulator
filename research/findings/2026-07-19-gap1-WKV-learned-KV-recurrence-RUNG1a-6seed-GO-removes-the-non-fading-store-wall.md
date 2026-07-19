@@ -135,3 +135,19 @@ rate-SSM's END-TO-END read (which has the receptance gate `r_t=σ(Wr·h_t)` + jo
 on-bridge read-out COMPLETION needs to match that end-to-end read (receptance-gated + a jointly/adequately-fit read-out on
 the on-bridge quantized-spiking state), not a raw linear ridge — a precisely-scoped, careful engineering step, NOT a quick
 tweak. **The design (leaky state on real spikes, corr 0.58) is confirmed; the read-out form is the remaining completion.**
+
+### ON-BRIDGE CHARACTERIZED (honest boundary): the DESIGN works but ACTUAL Izhikevich spiking degrades the state to ~0.55 fidelity — next-method = POPULATION CODING
+Exhausted the read-out + tuning levers (raw ridge, RECEPTANCE-gated feature, smaller V=200, longer T_STEP=30, drive/
+self-NMDA sweep). The on-bridge LM read-out stays FAR below bigram at every setting (onbridge deep-NLL ~4.8 vs bigram ~2.6),
+and the state↔rate-SSM correlation is STUCK at **~0.55** regardless (firing capped at 0.5 = the Izhikevich refractory limit).
+⇒ **precisely-characterized: the ACTUAL spiking realization (Izhikevich noise + firing-rate quantization + refractory cap)
+degrades the SSM leaky state to ~0.55 fidelity** — a real cost BEYOND the idealized rate-level spiking-faithful constraints
+(which used a CLEAN `[relu(a),relu(-a)]` read of the exact state, all GO). A read-out on the ~0.55-fidelity state can't
+recover the deep-context capture. **This is an honest, well-characterized substrate-fidelity cost, NOT a mechanism
+failure** — the rate-level de-risk (every constraint GO) stands as strong evidence the MECHANISM removes the
+non-fading-store wall; the single-neuron-per-channel spiking realization loses fidelity to spiking noise. **Per the mission
+law (a boundary is a verdict on a METHOD, not the capability): the D=64/ONE-neuron-per-channel/linear-read-out METHOD is
+banked; the untried NEXT METHOD is POPULATION CODING** — K neurons per channel, population-averaged rate (the standard NEF
+fix that averages out spiking noise → higher state fidelity), and/or an end-to-end on-bridge-trained read-out. The
+capability (fully-spiking open generation) stays OPEN; the next-method is precisely scoped. NO `sim/` edit.
+`_emerge_wkv_onbridge_derisk.py` (`--t-step`, `--self-nmda-w`, `--drive-scale`, receptance-gated read-out, verify-first).

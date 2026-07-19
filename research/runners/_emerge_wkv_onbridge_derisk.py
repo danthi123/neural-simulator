@@ -32,7 +32,7 @@ from research.runners._emerge_reservoir_lm_realcorpus_derisk import load_sentenc
 from research.runners._emerge_reservoir_lm_context_depth_derisk import BUCKETS, _bucket
 from research.runners._emerge_wkv_lm_derisk import fit_interp_trigram
 
-_T_STEP = 6                                                          # bridge steps per token (integration window)
+_T_STEP_DEFAULT = 6                                                          # bridge steps per token (integration window)
 
 
 def _build_channel_bridge(D, seed, self_nmda_w=8.0, dt=0.5):
@@ -80,8 +80,10 @@ def main():
     ap.add_argument("--drive-scale", type=float, default=1200.0)    # v_t -> external current pA
     ap.add_argument("--self-nmda-w", dest="self_nmda_w", type=float, default=8.0)   # diagonal self-NMDA autapse weight
     ap.add_argument("--n-fit", dest="n_fit", type=int, default=600)   # train sentences for the on-bridge read-out re-fit
+    ap.add_argument("--t-step", dest="t_step", type=int, default=_T_STEP_DEFAULT)   # bridge steps/token (finer rate=less noise)
     ap.add_argument("--json", type=str, default="research/findings/raw/_emerge_wkv_onbridge.json")
     args = ap.parse_args()
+    _T_STEP = int(args.t_step)
     from sim.backend import to_host, get_backend
     xp, _bk = get_backend()
 
@@ -165,6 +167,13 @@ def main():
     # ---- RE-FIT the read-out on the ACTUAL on-bridge firing-rate states (reservoir-computing: the leaky DYNAMICS are the
     #      fixed on-bridge diagonal self-NMDA; only the linear read-out is trained -- the on-bridge state ~= the rate-SSM
     #      state at a different SCALE (corr above), so a fresh ridge read-out on the on-bridge state recovers the capture) ----
+    def _feat(rate_t, ids_t):
+        """read-out feature: the raw ON/OFF firing state (2D) + the RECEPTANCE-gated signed state r_h*(ON-OFF) (D) --
+        the SSM's current-token gating of the leaky state that the raw linear read-out lacked."""
+        r_h = 1.0 / (1.0 + np.exp(-(Wr @ _ln(emb[ids_t]))))          # receptance (current-token gate), D
+        signed = rate_t[:D] - rate_t[D:]                            # ON-OFF ~= the signed leaky state a
+        return np.concatenate([rate_t, r_h * signed])              # [3D]
+
     t0 = time.time()
     fit_ids = tr_ids[:args.n_fit]
     Xtr, Ytr = [], []
@@ -172,13 +181,14 @@ def main():
         if len(ids) < 2: continue
         rates = onbridge_states(ids)
         for t in range(len(ids) - 1):
-            Xtr.append(rates[t]); Ytr.append(ids[t + 1])
+            Xtr.append(_feat(rates[t], ids[t])); Ytr.append(ids[t + 1])
     Xtr = np.asarray(Xtr); Ytr = np.asarray(Ytr, dtype=np.int64)
+    nf = Xtr.shape[1]                                                 # 3D
     mean = Xtr.mean(0); std = Xtr.std(0) + 1e-6
     Xn = (Xtr - mean) / std
-    Z = np.concatenate([Xn, np.ones((len(Xn), 1))], 1)               # [n, 2D+1]
-    ZtOH = np.zeros((V, 2 * D + 1)); np.add.at(ZtOH, Ytr, Z)
-    Wd = np.linalg.solve(Z.T @ Z + 5.0 * np.eye(2 * D + 1), ZtOH.T)  # ridge read-out [2D+1, V]
+    Z = np.concatenate([Xn, np.ones((len(Xn), 1))], 1)               # [n, 3D+1]
+    ZtOH = np.zeros((V, nf + 1)); np.add.at(ZtOH, Ytr, Z)
+    Wd = np.linalg.solve(Z.T @ Z + 5.0 * np.eye(nf + 1), ZtOH.T)     # ridge read-out [3D+1, V]
     # temperature calib on a subsample
     lg = Z[:20000] @ Wd; ys = Ytr[:20000]
     def _ce_T(T):
@@ -192,7 +202,7 @@ def main():
         if len(ids) < 2: continue
         rates = onbridge_states(ids)                                 # [T, 2D]
         for t in range(len(ids) - 1):
-            x = np.concatenate([(rates[t] - mean) / std, [1.0]])
+            x = np.concatenate([(_feat(rates[t], ids[t]) - mean) / std, [1.0]])
             logits = (x @ Wd) / Temp
             logits = logits - logits.max(); p = np.exp(logits); p = p / p.sum()
             d = t + 1; bkt = _bucket(d)
