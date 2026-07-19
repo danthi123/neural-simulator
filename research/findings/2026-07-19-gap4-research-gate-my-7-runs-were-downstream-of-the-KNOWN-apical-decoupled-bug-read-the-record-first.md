@@ -1,0 +1,63 @@
+# gap#4 research gate — the 7-run "definitive characterization" was RE-DERIVING a KNOWN result: my runs tuned DOWNSTREAM of the already-root-caused apical-decoupled bug (C1) + a forward-pass collapse. The real de-risk is the frozen-reservoir + WTA + trained-readout control (with cfg.seed). Read-the-record-first lesson.
+
+**2026-07-19.** After 7 diagnostic runs concluded the gap#4 on-bridge BDSP keystone was "definitively blocked (held 0.420
+== lesion, invariant to everything), likely the rate-code wall," a read-only research scout — reading the PROJECT'S OWN
+record — delivered a major, verified reframe. My hypothesis was the deepest-and-mis-targeted of three stacked failures.
+
+## The 3 stacked failures (only C2 was my hypothesis; A + C1 are the actual cause, and C1 is a KNOWN bug)
+- **Failure A (PRIMARY) — forward-pass representation collapse.** "Hidden fires bias-driven (0.07), not input-selective"
+  is the smoking gun: the hidden layer fires from tonic drive, not the input pattern → NO class-conditional hidden
+  representation → nothing for the readout to decode (→ constant-class 0.420) AND no class-conditional eligibility for
+  ANY rule (BDSP/e-prop/backprop) to shape (→ BDSP==LESION *necessarily*). An E/I-balance + input-drive + lack-of-
+  competition problem, upstream of every credit question.
+- **Failure B — degenerate readout.** argmax over sparse per-class output-pool counts collapses to the bias class; the
+  differential readout I tried didn't help because Failure A means there is no underlying class signal to recover.
+- **Failure C1 (a KNOWN, ALREADY-ROOT-CAUSED bug) — the immediate cause of BDSP==LESION.** VERIFIED against
+  `2026-07-10-D1-onbridge-BDSP-apical-decoupled-from-soma-BOUNDARY-root-caused.md` (the SAME runner
+  `_d1_onbridge_learn_to_accuracy_derisk.py` I re-ran): the committed `enable_bdsp` apical raises the burst-PROBABILITY
+  read P (0.30→1.00) but NOT the measured burst rate B (0.000→0.000), and the rule `dw ∝ ẽ·(B − P̄·E)` uses the MEASURED
+  B (soma-set, apical-independent). ⇒ **the apical delivers ZERO directed credit → BDSP≡LESION, invariant to dw
+  magnitude / epochs / bias — the EXACT symptom + the literal "apical-decoupled" run label.** Kolen-Pollack is learning a
+  feedback direction for a signal that never reaches the update — moot until C1 is fixed.
+- **Failure C2 (my rate-code hypothesis) — the DEEPEST layer, and already partially refuted.** Even wired correctly, BDSP
+  credit is a burst FRACTION (a rate) that a point neuron at 0.07 firing can't estimate. BUT the project ALREADY ran the
+  graded-coding control (`2026-07-17-rate-net-control-graded-coding-does-NOT-unlock-supervised-deep-credit-...`): graded
+  coding does NOT rescue supervised deep credit (0/6 both spiking + graded) → "the block is the RULE" (directional, the
+  control was under-powered).
+
+## The tell I missed + the honest lesson
+**The INVARIANCE to everything (2000× dw range, credit type, epochs, drive, readout) is the signature of a FORWARD/WIRING
+failure, not a credit-tuning failure.** With the apical decoupled (C1) and the hidden bias-driven (A), BDSP CANNOT differ
+from LESION — every one of my 7 runs was PRE-DETERMINED to read null. **I re-ran the same runner and re-derived a symptom
+the project root-caused 9 days ago, without reading `2026-07-10-...-apical-decoupled-...md` first.** This is exactly the
+`feedback_read_own_substrate_before_theorizing` lesson: read the record/wiring BEFORE re-diagnosing. The deep-research gate
+(reading the project's OWN findings) is what caught it — a strong argument for firing the gate at the START of a
+re-investigation, not after 7 runs.
+
+## The de-risk (the scout's recommendation, = the project's own vindicated instrument)
+**Frozen-reservoir + trained-linear population readout, with a competitive/balanced forward pass, ≥6 seeds, `cfg.seed`
+SET** (⚠️ the `2026-07-17-THE-SEED-NEVER-CONTROLLED-THE-SUBSTRATE` bug would confound it by ~3× the effect — verify
+two-process threshold-hash identity first). Freeze input→hidden at random init; add lateral-inhibition WTA +
+threshold-homeostasis (Diehl-Cook 2015 → input-selectivity, fixes A) + turn the tonic bias down (balanced E/I, van
+Vreeswijk-Sompolinsky 1996 / Vogels 2011); train ONLY a logistic readout over the FULL hidden population (fixes B); longer
+settle window + higher input rate. READ AS A FORK: clears chance → the substrate CARRIES a decodable signal, ~0.42 was
+A+B (not the rate-code wall) → then fix C1 (route the apical through the two-compartment coupling so it raises REAL bursts
+B) and re-ask "does BDSP beat the reservoir?" (the project's frozen reservoir already reached ~0.778 — confounded by the
+seed bug, but directionally the substrate can carry the signal). Stays at chance → the forward pass itself is broken;
+iterate competition/balance before any credit. **Do NOT run another BDSP sweep before this control — it is pre-determined
+to read null.**
+
+## Mission-path note (surface for the owner)
+The scout flags the project's standing 2026-07-17 decision (`learning-rule-frontier-map`) to pursue the UNSUPERVISED
+on-spike stream cortex (HTM competitive pooler + `fused_htm_permanence_update`), which learns deep representations from a
+stream WITHOUT supervised global-loss deep credit — sidestepping this whole wall. ⇒ the gap#4 keystone as SUPERVISED
+BDSP-to-accuracy may be a parked direction vs the unsupervised stream cortex being the mission-critical path. A genuine
+value fork worth the owner's steer; meanwhile the frozen-reservoir de-risk + the C1 apical-coupling fix are the two
+concrete unblockers IF supervised BDSP-to-accuracy continues.
+
+## Verified sources
+- **VERIFIED (internal):** `2026-07-10-...-apical-decoupled-...` (C1, exact bug, same runner); `2026-07-17-rate-net-control-graded-...`
+  (C2 control run); `2026-07-16-deep-credit-GO-is-80pct-RESERVOIR-...` (reservoir instrument + 0.778, WITH its own
+  2026-07-17 seed-confound correction). Primary (to verify when building): Payeur 2021 Nat Neurosci 24:1010 (BDSP=burst
+  probability, needs ensembles/rate); Diehl-Cook 2015 (WTA+adaptive-threshold→selectivity); Maass 2002 + Cover 1965
+  (reservoir+linear readout); van Vreeswijk-Sompolinsky 1996 / Vogels 2011 (balanced E/I).

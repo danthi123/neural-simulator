@@ -239,6 +239,19 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   the runner's own verdict named. A focused multi-param next-cycle dive (mechanism/moat/no-transport validated; the
   missing piece is a forward path carrying the class signal to a readable input-selective output). Localized precisely
   across 3 diagnostic runs (drive sweep, readout-fix, A/B).
+  **⚠️ RESEARCH-GATE REFRAME (2026-07-19, read-the-record-first — my 7 runs RE-DERIVED a KNOWN result):** a scout reading
+  the PROJECT'S OWN record found the immediate cause of BDSP==LESION is the ALREADY-ROOT-CAUSED apical-decoupled bug (C1,
+  `2026-07-10-D1-onbridge-BDSP-apical-decoupled-...`, VERIFIED, SAME runner): the committed `enable_bdsp` apical raises the
+  burst-PROBABILITY read P but NOT the measured burst rate B the rule uses → ZERO directed credit → BDSP≡LESION invariant
+  to everything (the literal "apical-decoupled" label). Plus Failure A (hidden bias-driven, not input-selective) + B
+  (degenerate readout). **The INVARIANCE was the tell of a FORWARD/WIRING failure — every run was PRE-DETERMINED to read
+  null; I re-ran the same runner without reading the 2026-07-10 finding first (the read-your-record lesson; fire the gate
+  at the START).** THE DE-RISK: frozen-reservoir + WTA/threshold-homeostasis (Diehl-Cook 2015) + balanced-E/I + a TRAINED
+  linear population readout, ≥6 seeds `cfg.seed` SET (⚠️ 2026-07-17 seed bug) — a FORK (clears chance → substrate carries
+  the signal, ~0.42 was A+B not the rate-code wall → then fix C1; stays at chance → forward pass broken). **DON'T run
+  another BDSP sweep (pre-determined null). MISSION-PATH FORK (owner steer): supervised BDSP-to-accuracy vs the 2026-07-17
+  decision to pursue the UNSUPERVISED on-spike stream cortex that SIDESTEPS this wall.** Finding
+  `2026-07-19-gap4-research-gate-my-7-runs-were-downstream-of-the-KNOWN-apical-decoupled-bug-read-the-record-first`.
   The other 3 arms (fixed ep300, KP ep600,
   measB ep300) are **STILL RUNNING at 3.5h+** (100% CPU) — NOT crashed; a Monitor false-positive ("ALL COMPLETE" + 0-byte
   buffered logs) nearly made me record a fabricated crash, corrected by `ps` (silent-failure: verify the process, don't
