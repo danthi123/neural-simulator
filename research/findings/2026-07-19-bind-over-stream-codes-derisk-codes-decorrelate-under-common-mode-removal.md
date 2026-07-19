@@ -58,4 +58,15 @@ similar codes):
   (iii) validate on codes with KNOWN category structure (the EMERGE taxonomy) rather than the raw 787. This is a
   genuine, precisely-characterized boundary for the convergence-lever direction — NOT the cheap unblock the first
   decorrelation measurement suggested. The recall (distinctness) works today; the GENERALIZATION needs stronger codes.
+## FURTHER (develop-day check) — structure is BETTER EARLY, degrades over training (unexpected)
+The 788-concept vocab is PRE-ALLOCATED (all days have 788, not growing). Checking day 0 vs 23: **day 0 dog →
+toy(0.39), cat(0.37)** (genuinely semantic!) but **day 23 dog → show/time/wife** (unrelated) — the semantic structure
+is BETTER EARLY and DEGRADES over training, even as the raw top-neighbor cosine slightly rises (0.245→0.270). ⇒ the
+develop-loop appears to drift the codes toward co-occurrence ARTIFACTS rather than sharpening semantic structure (small
+sample: one concept; a real signal worth a proper multi-concept check). This is NOT the develop_D-capacity story I
+hypothesized — it's a training-DYNAMICS issue (the codes lose their early semantic structure). ⇒ the scout's #1
+convergence lever needs the codes' semantic structure fixed FIRST (why does it degrade? early-stop? the co-occurrence
+target? PPMI conditioning?) before a binder over them can generalize. **Net: the reader/binder-over-stream-codes direction
+is thoroughly characterized as NOT a cheap win — the codes are bindable (recall) but their generalizable semantic
+structure is weak + degrades; the real sub-problem is code QUALITY (semantic structure), upstream of the binder.**
 - Diagnostics: `scratchpad/bind_over_stream_codes.py`. NO `sim/` edit. Uses cached scale787 codes.
