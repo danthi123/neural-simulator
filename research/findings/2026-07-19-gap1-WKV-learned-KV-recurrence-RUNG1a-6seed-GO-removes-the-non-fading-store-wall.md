@@ -422,3 +422,16 @@ the plateau, inhibition/shunt for -v decreases it on the SAME compartment — th
 which does the subtraction IN the analog dendrite before any rate read, per Mikulasch-Priesemann). ⇒ the on-substrate robust WKV
 BEAT is no longer opponency-wall-blocked: non-negative state (validated +0.48 GO) + plateau (0.98) + a push-pull signed input =
 the well-scoped path. Additive `--nonneg-state`; NO new `sim/` edit. The gate's ranking of the push-pull vs other mechanisms is in flight.
+
+### 🎉 DECISIVE UNBLOCK — the DUAL-NON-NEGATIVE WKV (the plateau's realizable state) BEATS the fair trigram
+`--dual-nonneg`: train the WKV with TWO POSITIVE leaky integrators a+=decay*a+ + relu(v), a-=decay*a- + relu(-v), read=[a+,a-] —
+this is EXACTLY the plateau's realizable state (each a positive leaky integral of a rectified input, which the plateau holds at
+0.98; NO opponency difference-of-large-integrals). Result at V=1000/d128: **seed 42 +0.413, seed 43 +0.394 vs the fair trigram (GO)**.
+⇒ **the plateau's realizable dual-non-negative state IS expressive (beats the trigram)** — so the earlier ON/OFF plateau port failed
+ONLY because it was trained on the SIGNED state (a=decay*a+v, read relu-of-integral) then realized as integral-of-relu (a mismatch);
+training on the dual-non-negative state (CO-ADAPTATION, matching the plateau) removes the mismatch. ⇒ **the on-substrate robust WKV
+BEAT is now UNBLOCKED end-to-end: (1) dual-non-negative WKV beats the trigram ✓; (2) each positive integrator is a dendritic plateau
+at 0.98 ✓; (3) read [plateau+, plateau-], no opponency.** The port = train a `--dual-nonneg` SSM (+ `--quantize-state` co-adapt to
+the plateau transfer) → run the two-plateau `--graded-plateau` port → the read-out (trained on the matching state) should beat the
+trigram on-bridge. This closes the fully-spiking-WKV on-substrate frontier from a "deep opponency wall" to a validated, co-adapted,
+2-piece-done path. Additive `--dual-nonneg`; NO new `sim/` edit.

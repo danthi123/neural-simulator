@@ -152,6 +152,15 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                 spiking = getattr(args, "spiking_state", False)
                 sn = float(getattr(args, "state_noise", 0.0))
                 _nn = getattr(args, "nonneg_state", False)
+                if getattr(args, "dual_nonneg", False):
+                    # DUAL non-negative: two POSITIVE leaky integrators relu(+v), relu(-v) = the plateau's ACTUAL realizable
+                    # state (each a positive plateau at 0.98; the read-out uses both, no opponency difference-of-large-integrals).
+                    ap2 = torch.zeros(B, D, device=x.device); an2 = torch.zeros(B, D, device=x.device); outs2 = []
+                    for t in range(T):
+                        ap2 = wdec * ap2 + torch.relu(v[:, t]); an2 = wdec * an2 + torch.relu(-v[:, t])
+                        rate = torch.cat([ap2, an2], -1)
+                        outs2.append(r[:, t] * self.Wo_sp(rate))
+                    return self.head(torch.stack(outs2, 1))
                 for t in range(T):
                     a = wdec * a + v[:, t]
                     if _nn:
@@ -298,6 +307,7 @@ def main():
                          "= the spiking firing-rate constraint; GO => the on-bridge firing-rate read preserves deep context.")
     ap.add_argument("--quantize-state", dest="quantize_state", action="store_true")
     ap.add_argument("--state-noise", dest="state_noise", type=float, default=0.0, help="degrade state fidelity (train-time noise) to simulate the on-bridge substrate")
+    ap.add_argument("--dual-nonneg", dest="dual_nonneg", action="store_true", help="two positive leaky integrators = the plateau realizable state")
     ap.add_argument("--nonneg-state", dest="nonneg_state", action="store_true", help="rectified non-negative leaky state a=relu(decay*a+v) -> the dendritic plateau holds it directly, no ON/OFF opponency")
     ap.add_argument("--spike-output", dest="spike_output", action="store_true",
                     help="SpikeGPT-faithful: GRADED state + SPIKE-CODED output y_t (straight-through), trained end-to-end")
