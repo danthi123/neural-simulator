@@ -38,6 +38,22 @@ CA3 with a DENSE recurrent (or a two-stage DG-sparse → CA3-dense route), so th
 that CAN hold it. NEXT: mossy-select → project the selected assembly into a DENSE-recurrent CA3 → store+complete there
 (both pieces GO on their own densities; the integration is resolving the sparse→dense hand-off). NO `sim/` edit.
 
+## FULL EXPLORATION → the unification is a careful INTEGRATION (4 regime mismatches characterized), not a quick de-risk
+Ran the de-risk through 5 configs, each fix revealing the next regime mismatch between the emergent-DG SELECTION and the
+completion-arc STORE+COMPLETE (both validated separately, but tuned for DIFFERENT regimes):
+1. **global-Hebbian-disrupts-selection** → fixed by separating SELECT (plasticity off) from STORE (drive selected cells).
+2. **sparse recurrent (0.05) can't self-sustain** → tried dense (0.5) + strong fb-inhib. Still 0.00.
+3. **free-run self-sustain is HARDER than the validated protocol** → fixed to the completion-arc cue-driven completion
+   (drive the partial cue throughout + read held-out/cue ratio). Still 0.00.
+4. **SMALL assembly**: the mossy selection gives 3-20 cells, but the completion-arc GO used ~40-cell assemblies (10% of
+   CA3) driven via language_input→ec→dg→ca3 with `k_thresh=20`. A 3-cell assembly can't form a robust completable attractor.
+**⇒ the unification is a genuine careful INTEGRATION** reconciling the emergent-DG selection (small, sparse, mossy-driven)
+with the completion-arc store+complete (larger, dense-recurrent, language-input-driven, `k_thresh`-tuned) — NOT a
+drop-in. The cleanest path: run the VALIDATED completion/SWR runner but source its assembly from a mossy-SELECTION step ON
+that same (larger, dense) bridge, so the selection + the store+complete share one regime. Each piece is GO on its own;
+the reconciliation is the fresh build. **Honest scope:** this session DE-RISKED the SELECTION (6-seed GO) + characterized
+the integration precisely (4 mismatches); the integration build is the clear, well-specified next step. NO `sim/` edit.
+
 ## Status
 - **DE-RISKED:** the DG-volley SELECTION of a sparse assembly (6-seed GO) + the honest identification that a brief default
   store is insufficient. **REMAINING (recombination):** wire the validated completion-arc store config onto the selected
