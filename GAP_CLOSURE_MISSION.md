@@ -161,7 +161,23 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
-- **🎯 EXACT NEXT ACTION (2026-07-19, gap#1 — the OPPONENCY WALL is BYPASSABLE; the on-substrate BEAT path is now WELL-SCOPED):**
+- **⚠️ EXACT NEXT ACTION (2026-07-19, gap#1 — on-substrate robust BEAT is deep-arc-gated on END-TO-END substrate co-adaptation = converges with gap#4; capability DEMONSTRATED):**
+  Comprehensive, verify-first-disciplined characterization of the on-substrate WKV frontier (15+ mechanisms). THREE real results:
+  (1) the dendritic GRADED PLATEAU realizes a leaky integral of a CLEAN graded value at corr **0.98** — surpasses the point-neuron
+  limit (Mikulasch-Priesemann); (2) a NON-NEGATIVE / DUAL-NON-NEGATIVE WKV state (`--nonneg-state`/`--dual-nonneg`) still BEATS the
+  fair trigram (+0.41-0.48 GO) — the opponency/signed-state concern is BYPASSED; BUT (3) verify-first: the full-WKV plateau PORT
+  (signed OR dual-nonneg) caps at corr ~0.6 and deep-NLL −1.0 → does NOT beat the trigram. **The bound is the FULL-WKV SUBSTRATE
+  REALIZATION** (the spiking INPUT DELIVERY ∝ relu(v) + the plateau SIGMOID transfer + large-magnitude states + post-hoc read
+  conditioning — the core-probe 0.98 was a clean single channel, doesn't transfer to the noisy multi-channel WKV; no operating-point
+  sweep fixes it). ⇒ **the clean fix is END-TO-END co-adaptation: train the WKV THROUGH the substrate's actual transfer
+  (surrogate-BPTT-through-the-bridge), so the read + input map co-adapt to the plateau — which CONVERGES with gap#4's deep-credit /
+  learn-through-the-spiking-substrate lever** (the project has `sim/surrogate_grad.py` + `bptt_snn_gpu.py` + the BDSP on-bridge work).
+  This is a genuine DEEP arc (substantial), NOT a one-step clean-up. The self-NMDA PARITY (+0.017) remains the best on-substrate WKV
+  result; the DEMONSTRATED capability (architecture-level 6-seed robust BEAT + generates prose, CI) is the solid deliverable and is
+  UNAFFECTED. ⇒ NEXT: either (A) the end-to-end substrate co-adaptation deep arc (= gap#4 territory, unlocks the on-substrate BEAT +
+  multi-attr compose + apical-basal credit), OR (B) the NORTH STAR — wire the DEMONSTRATED WKV generation into a talkable console
+  (reachability; the capability is met). All 5 gaps mechanism-closed. See the finding's "⚠️ VERIFY-FIRST (again)".
+- **🎯 (superseded by verify-first) gap#1 — the OPPONENCY WALL is BYPASSABLE; the on-substrate BEAT path was scoped:**
   Decisive progress: the on-substrate robust WKV BEAT went from "deep opponency-wall frontier" to a well-scoped 3-piece path,
   2 of 3 VALIDATED: (1) **non-negative-state WKV** (`--nonneg-state`, a=relu(decay*a+v)) still BEATS the fair trigram +0.48/+0.41
   GO at V=1000/d128 — a signed state is NOT needed ✓; (2) the **dendritic plateau** holds a non-negative value at **corr 0.98** ✓
