@@ -70,7 +70,7 @@ def _build_channel_bridge(D, seed, self_nmda_w=8.0, dt=0.5, pop_k=1):
     return b, chan_groups, None, None
 
 
-def _build_recur_channel_bridge(D, seed, recur_w=0.35, n_recur=20, dt=0.5, density=0.5):
+def _build_recur_channel_bridge(D, seed, recur_w=0.35, n_recur=20, dt=0.5, density=0.5, learn=False):
     """LINE-ATTRACTOR INTEGRATOR (the scoped deep frontier, next-arc de-risk): each channel = a POPULATION of n_recur neurons
     with block-diagonal NMDA-slow RECURRENT self-excitation (Wong-Wang 2002/Seung-Goldman graded persistent-activity integrator,
     soft-WTA gain alpha<1 -> RAMPS/HOLDS a graded value under evidence, never self-ignites), NOT a single self-NMDA autapse. A
@@ -90,13 +90,17 @@ def _build_recur_channel_bridge(D, seed, recur_w=0.35, n_recur=20, dt=0.5, densi
     cfg.region_pathways = []
     cfg.dt = float(dt)
     cfg.seed = cfg.ou_seed = cfg.heterogeneity_seed = seed
-    cfg.enable_ou_process = False; cfg.enable_stdp = False; cfg.enable_hebbian_learning = False
+    cfg.enable_ou_process = False; cfg.enable_stdp = False
+    cfg.enable_hebbian_learning = bool(learn)                        # EMERGENT: Hebbian self-organization of the recurrence
+    if learn:
+        cfg.hebbian_max_weight = 50.0
     rt = RuntimeState(); rt.actual_seed_used = seed
     b = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(), runtime_state=rt, gpu_config=GPUConfig())
     b._initialize_simulation_data()
     idx = np.asarray(b.region_manager.indices("chan"))
     # BLOCK-DIAGONAL NMDA recurrent self-excitation: within each channel's n_recur block, dense recurrent edges (the Wang-2002
-    # integrator). rng-sparsify to `density`; alpha<1 via recur_w (soft-WTA, holds/ramps, no self-ignition).
+    # integrator). rng-sparsify to `density`; alpha<1 via recur_w (soft-WTA, holds/ramps, no self-ignition). PLASTIC when learn=
+    # True -> the recurrence SELF-ORGANIZES (Hebbian: co-active neurons within a channel strengthen -> a learned attractor).
     rng = np.random.default_rng(seed + 7)
     pre, post = [], []
     for c in range(2 * D):
@@ -107,7 +111,7 @@ def _build_recur_channel_bridge(D, seed, recur_w=0.35, n_recur=20, dt=0.5, densi
                     pre.append(int(i)); post.append(int(j))
     plan = {"chan_recur_nmda": {"pre_indices": pre, "post_indices": post,
                                 "initial_weights": [float(recur_w)] * len(pre),
-                                "plastic": False, "conn_type": "MIXED", "exc_receptor": "nmda_slow"}}
+                                "plastic": bool(learn), "conn_type": "MIXED", "exc_receptor": "nmda_slow"}}
     b.inject_explicit_wiring(plan)
     chan_groups = [idx[c * n_recur:(c + 1) * n_recur] for c in range(2 * D)]
     return b, chan_groups, None, None
@@ -178,6 +182,7 @@ def main():
     ap.add_argument("--graded-gain-hi", dest="graded_gain_hi", type=float, default=2.5)   # -> graded population rate code
     ap.add_argument("--recur-integrator", dest="recur_integrator", action="store_true", help="LINE-ATTRACTOR: per-channel NMDA-recurrent population integrator (Wong-Wang alpha<1)")
     ap.add_argument("--kick-steps", dest="kick_steps", type=int, default=0, help="transient-kick: drive only the first K steps per token, then let the recurrence sustain")
+    ap.add_argument("--learn-recur", dest="learn_recur", action="store_true", help="EMERGENT: Hebbian-plastic recurrent weights self-organize the attractor during the drive")
     ap.add_argument("--tonic-bias", dest="tonic_bias", type=float, default=0.0, help="post-kick tonic current to keep the recurrent population near threshold (persistence)")
     ap.add_argument("--recur-w", dest="recur_w", type=float, default=0.35, help="recurrent NMDA self-excitation weight (alpha<1)")
     ap.add_argument("--hetero-gain", dest="hetero_gain", action="store_true",
@@ -224,7 +229,7 @@ def main():
     elif getattr(args, "recur_integrator", False):
         # LINE-ATTRACTOR: each channel = an NMDA-recurrent POPULATION integrator (Wong-Wang, alpha<1); drive propto v_t, read
         # the population mean rate. A recurrent population holds a graded value at higher fidelity than a single self-NMDA cell.
-        b, chan_groups, _cg2, snap = _build_recur_channel_bridge(D, args.seed, recur_w=args.recur_w, n_recur=args.pop_k)
+        b, chan_groups, _cg2, snap = _build_recur_channel_bridge(D, args.seed, recur_w=args.recur_w, n_recur=args.pop_k, learn=getattr(args, "learn_recur", False))
         drive_groups = chan_groups
         print(f"[recur] line-attractor integrator: n_recur={args.pop_k}, recur_w={args.recur_w}", flush=True)
     else:
