@@ -260,6 +260,8 @@ def main():
     ap.add_argument("--uniform-decay", dest="uniform_decay", action="store_true",
                     help="(ssm only) ONE shared decay across channels = the substrate's uniform NMDA tau (simplifies the "
                          "on-bridge realization); GO => no per-neuron tau array is needed on the bridge.")
+    ap.add_argument("--save-ssm", dest="save_ssm", type=str, default=None,
+                    help="save the trained SSM weights to <path>_seed<N>.npz (for the on-bridge realization).")
     ap.add_argument("--json", type=str, default=str(OUT))
     args = ap.parse_args()
     import torch
@@ -283,6 +285,12 @@ def main():
 
         init_emb = build_ppmi_codes(tr_ids, V, args.d_model, args.ppmi_window) if args.input == "ppmi" else None
         net, WKV_cls = build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=init_emb)
+        if getattr(args, "save_ssm", None):                      # save the trained SSM weights for the on-bridge realization
+            import torch as _t
+            sd = {k: v.detach().cpu().numpy() for k, v in net.state_dict().items()}
+            np.savez(f"{args.save_ssm}_seed{seed}.npz", V=V, d_model=args.d_model,
+                     words=np.array(vocab.i2w, dtype=object), **sd)
+            print(f"    [seed {seed}] saved SSM weights -> {args.save_ssm}_seed{seed}.npz", flush=True)
         wkv_ce, cnt = eval_perdepth(net, WKV_cls, ev_ids, V, device, seed=seed)
         wkv_perm, _ = eval_perdepth(net, WKV_cls, ev_ids, V, device, permute=True, seed=seed)
         wkv_mless, _ = eval_perdepth(net, WKV_cls, ev_ids, V, device, memoryless=True, seed=seed)
