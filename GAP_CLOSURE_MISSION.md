@@ -210,19 +210,20 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
      margin grows with depth, anti-cheats collapse (perm +5.1, mless +0.71). ⇒ the mission-primary open-generation lever
      carries genuine MULTI-SENTENCE DISCOURSE = the actual R4 "open prose" capability (which the fading reservoir couldn't),
      robustly. Extends Rung 1a (within-sentence) to real open-prose long-range. `2026-07-19-gap1-WKV-...` (cross-sentence).
-  -4b. **🎉 gap#1 FULLY-SPIKING on-bridge WKV BEATS the fair trigram (+0.017 at deep context, 2026-07-19) — the
-     fully-spiking realization essentially COMPLETES.** The final push (co-adapted SSM via straight-through quantization +
-     nonlinear MLP read + population-k=8 + n_fit=9000): on-bridge deep-NLL **2.284 < fair trigram 2.301 = +0.017** (beats
-     bigram 2.570) → **the fully-spiking-on-substrate WKV BEATS the fair interpolated trigram at deep context on REAL
-     Izhikevich spikes** = the exact bar every fading reservoir FAILED. Full progression: linear −2.4 → MLP −0.62 → +pop
-     −0.11 → +quantize-co-adapt −0.044 → **+0.017** (crosses). Each lever (nonlinear reservoir read + population
-     noise-averaging + co-adapting the WKV to the spiking quantization + fit data) recovered more of the capture until it
-     crossed the rate-level bar. So the earlier "gated on gap#4" ceiling is SURPASSED at the rate-level bar via
-     reservoir-computing — the fully-spiking realization does NOT strictly need end-to-end deep-credit to reach the fair
-     trigram (deep-credit remains the HEADROOM lever for margin). NO `sim/` edit. **HONEST SCOPE: single-seed, at the
-     margin (+0.017; the runner's strict GO gate is 0.02, so its auto-verdict reads no-go by 0.003, at the ~0.55
-     spiking-state-fidelity floor). A 3-SEED CONFIRMATION is IN FLIGHT (train co-adapted SSMs @43/44 + on-bridge test
-     @42/43/44).** `2026-07-19-gap1-WKV-...RUNG1a-6seed-GO...` (fully-spiking section).
+  -4b. **🎯 gap#1 FULLY-SPIKING on-bridge WKV reaches PARITY with the fair trigram (3-seed, 2026-07-19) — the
+     fully-spiking realization MATCHES the bar every fading reservoir fell below.** Co-adapted SSM (straight-through
+     quantization) + nonlinear MLP read + population-k=8 + n_fit=9000, 3-seed on-bridge: seed 42 **+0.017**, seed 43
+     **−0.136**, seed 44 **+0.022** → **2 of 3 cross the fair trigram, mean ≈ −0.032 (parity, seed-variable at the
+     margin)**. Full progression: linear −2.4 → MLP −0.62 → +pop −0.11 → +quantize-co-adapt −0.044 → +data → **parity**.
+     ⇒ unlike every fading reservoir (all well BELOW the fair trigram), the fully-spiking-on-substrate WKV **reaches the
+     fair-trigram bar (parity) on REAL Izhikevich spikes** via reservoir-computing — the mission-primary open-generation
+     lever realized fully on spikes, at parity with the exact bar the reservoir arc could never clear. **HONEST: NOT a
+     robust BEAT (single-seed "+0.017 BEATS" was over-claimed → corrected by the 3-seed).** The ~0.55 spiking-state-fidelity
+     floor is INTRINSIC (fidelity sweep: pop-k 16 → 0.554, self-NMDA-40 → 0.554, both unchanged — not liftable by
+     population/self-recurrence). The robust-BEAT margin lever is therefore the **gap#4 deep-credit headroom** (end-to-end
+     training through the spiking) OR a richer spiking-state read (spike-timing/latency vs mean rate). ⇒ gap#1-fully-spiking
+     and gap#4-deep-credit genuinely meet at the margin. NO `sim/` edit. `2026-07-19-gap1-WKV-...` (fully-spiking + 3-seed
+     correction).
   -4. **🎯 gap#1 ON-BRIDGE realization CHARACTERIZED → gap#1↔gap#4 CONNECTED (2026-07-19).** Built the on-bridge WKV/SSM
      realization (`_emerge_wkv_onbridge_derisk.py`, diagonal self-NMDA autapse = per-channel leaky integral, verify-first
      corr-gated). The DESIGN is confirmed (a diagonal self-NMDA realizes a leaky state on REAL Izhikevich spikes, corr
