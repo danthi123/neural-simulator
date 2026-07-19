@@ -62,7 +62,8 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
         read_ca1=False, schaffer_boost=1.0,
         encode_btsp=False, btsp_lr=0.02, encode_ca3w=None, encode_plateau_pA=250.0, encode_structural_sep=0,
         encode_hetero=0.0, encode_btsp_hetero=0.0, assemblies_ext=None, swr_ripple_pA=800.0, swr_ca1_ff_inhib=None,
-        swr_learn_schaffer=False, swr_target_frac=0.15, swr_schaffer_hi=60.0, swr_schaffer_lo=0.2, swr_disjoint=False):
+        swr_learn_schaffer=False, swr_target_frac=0.15, swr_schaffer_hi=60.0, swr_schaffer_lo=0.2, swr_disjoint=False,
+        swr_ca1_topk=None):
     # DIAGNOSED LEVERS (2026-07-18 workflow): the rate-window LTP is an EMA-trace rule -- a cell's co-activity trace
     # tops out ~0.03-0.2 (point Izh fires ~0.2 duty @700pA), so coact_thresh MUST be BELOW it (~0.02) or nothing
     # potentiates; the gamma OFF-gap DECAYS the EMA (0.9^off) so CONTINUOUS drive (sync_off<=1) is required, NOT
@@ -488,6 +489,11 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
                 c1 = np.zeros(len(ca1_idx)); period = g_on + g_off; n_rip = 60
                 _dbg = os.environ.get("SWR_DEBUG"); _ca3fire = 0.0; _lat_arr = np.asarray(latched, dtype=int)
                 _peak_ge = 0.0; _peak_ca3sync = 0.0
+                # E%-max CA1 winner-set read (de Almeida-Idiart-Lisman 2009; Valero 2017 cell-specific-drive selectivity):
+                # accumulate per-CA1-cell PEAK g_e (the Schaffer drive) so we can fire ONLY the top-k most-driven CA1 cells
+                # (the winner-set), converting the all-fire g_e-180+ collapse into a discriminating sparse pattern.
+                # Default None => byte-identical (no extra reads, returns c1 firing as before).
+                _topk_ge = np.zeros(len(ca1_idx)) if swr_ca1_topk is not None else None
                 # SWR readout fix (2026-07-19): STP depression on the Schaffer (ca3->ca1) crushes g_e under the ripple's
                 # sustained firing -> disable STP during PHASE 2 ONLY so the completed assembly's volley reaches ca1
                 # (phase 1 keeps STP so the completion is normal). Gated (env), restored after.
@@ -499,6 +505,10 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
                     bridge.cp_external_input_current[:] = dev_rip if (t % period) < g_on else dev_off
                     bridge._run_one_simulation_step()
                     c1 += np.asarray(to_host(bridge.cp_firing_states))[ca1_idx].astype(float)
+                    if _topk_ge is not None:
+                        _ge_v = getattr(bridge, "cp_conductance_g_e", None)
+                        if _ge_v is not None:
+                            _topk_ge = np.maximum(_topk_ge, np.asarray(to_host(_ge_v))[ca1_idx].astype(float))
                     if _dbg and len(_lat_arr):
                         _ca3_now = float(np.asarray(to_host(bridge.cp_firing_states))[_lat_arr].mean())
                         _ca3fire += _ca3_now; _peak_ca3sync = max(_peak_ca3sync, _ca3_now)  # max SIMULTANEOUS latched-fire fraction
@@ -515,6 +525,13 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
                     print(f"    [SWR debug] latched={len(latched)} | phase2: ca3-latched-fire-rate={_ca3fire/n_rip:.3f} "
                           f"PEAK-ca3-sync={_peak_ca3sync:.3f} PEAK-ca1_g_e={_peak_ge:.3f} end-ca1_g_e={_ca1_ge:.3f} "
                           f"ca1_v={_ca1_v:.1f} ca1_fire_sum={float((c1/n_rip).sum()):.3f}", flush=True)
+                if _topk_ge is not None:
+                    # E%-max winner-set: keep the top-k CA1 cells by peak Schaffer g_e (fire only the cells within E% of
+                    # the max-driven cell), the pattern = their graded g_e; the rest zeroed. This is the discriminating
+                    # read (a specific CA3 assembly -> its strongest-driven CA1 target cells win; the weak leak is cut).
+                    _k = max(1, int(float(swr_ca1_topk) * len(ca1_idx)))
+                    _thr = float(np.sort(_topk_ge)[-_k])
+                    return _topk_ge * (_topk_ge >= _thr).astype(float)
                 return c1 / n_rip
 
             def _cos(x, y):

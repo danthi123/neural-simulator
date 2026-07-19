@@ -153,6 +153,40 @@ and re-measure CA1 specificity — does the near-tie survive well-separated, str
 is the bottleneck) or vanish (⇒ it was the random assemblies)? This connects the emergent-DG SELECTION + the emergent
 CA3 completion (both GO) to the SWR readout.
 
+## LATCHED-BREAKDOWN LOCALIZATION (2026-07-19, validated BASE config + SWR_DEBUG) — the near-tie is in BOTH layers (confirms the research "both compound")
+Ran the SWR readout (`n_ca3=2000, assembly_frac=0.12, bistable, selective_inhib, hebb_lr=4, learned-Schaffer hi=80/lo=0,
+swr_disjoint`) with SWR_DEBUG to read WHICH assembly's cells latch when a specific assembly is cued (n_mem=3, 3 seeds):
+- **Seeds 42/43 — CA3 completion is CROSS-CONFUSED.** Cueing assembly A latches A/B/C NEAR-UNIFORMLY (`[144,114,131]`,
+  `[56,238,122]` — the cued assembly leads only slightly; total latched ~400 of 720 = ~55% of ALL assembly cells regardless
+  of which is cued). ⇒ the 12%-LARGE, ASYNC (`no_sync=True`), no-k_thresh assemblies do NOT pattern-separate → the
+  completion SPREADS across assemblies. The CA1 near-tie (match 0.98 / cross 0.97) is INHERITED from this CA3
+  cross-completion.
+- **Seed 44 — CA3 completion IS SPECIFIC yet CA1 STILL near-ties.** Cueing A latches A dominantly (`[239,72,63]`), but
+  ca1_match 0.98 / ca1_cross 0.97 — **the CA1 readout does NOT preserve a specific CA3 pattern.** PEAK-ca1_g_e ~180-250
+  drives EVERY CA1 cell (the Valero-2017 "all-fire" collapse: dense-uniform drive → no cell-specific selectivity), and the
+  read fires all of them → a broad, non-discriminating CA1 pattern.
+- **⇒ BOTH layers are bottlenecks (the research's "both compound" — CONFIRMED empirically):** (b) CA3 cross-completion
+  (fix: sparser ~3% + synchronous + k_thresh-specificity / self-organized assemblies) AND (a) CA1 readout degeneracy (fix:
+  E%-max top-k read to convert the all-fire g_e 180+ into a winner-set + sparse structured Schaffer). The single
+  highest-leverage CHEAP fix is the **E%-max CA1 top-k read** — it fixes seed-44's all-fire collapse directly (fire only
+  A's strongest-driven target cells) and is a pure read-side change. NEXT BUILD ORDER: E%-max read → sparser/self-organized
+  assemblies → sparse structured Schaffer (the stack, cheapest-first).
+
+## E%-MAX READ ALONE = NOT-GO (2026-07-19) — confirms the research: the completion is the GATING fix
+Built the E%-max CA1 top-k read (`swr_ca1_topk`, additive/default-None/byte-identical — the `if _topk_ge is not None`
+guard skips all new code when off; the topk=None block reproduced the baseline exactly): fire only the top-k CA1 cells by
+peak Schaffer g_e (the winner-set). Result (BASE config, n_mem=3, 3 seeds):
+- baseline (topk=None): match 0.981 / cross 0.981 (the near-tie). topk=0.05: match 0.804 / cross 0.848 (ratio 0.95, WORSE);
+  topk=0.10: match 0.896 / cross 0.873 (ratio 1.03, barely). **E%-max alone does NOT break the near-tie** (cross stays ~0.85).
+- **WHY (confirms Valero 2017 + the scout's "E%-max necessary-not-sufficient"):** the CA3 completion is CROSS-confused (A's
+  cue latches A+B+C, per the latched-breakdown), so the Schaffer drives A's AND B's AND C's CA1 targets → the CA1 g_e is
+  NON-SPECIFIC → the top-k winner-set includes cells from all targets → cross high. No read-side sharpening can discriminate
+  a non-specific DRIVE. **⇒ the GATING fix is the COMPLETION (#3): sparser / synchronous / pattern-separated / self-organized
+  assemblies so A's cue completes ONLY A → the Schaffer g_e becomes SPECIFIC → THEN E%-max discriminates.** The emergent-DG
+  selection (6-seed GO) is the shared unlock. NEXT: test the cheapest completion fix — sparser assemblies (`assembly_frac`
+  0.12→0.03) + synchronous drive (drop `no_sync`) + k_thresh specificity (the emergent-completion 12.6× recipe), then re-add
+  E%-max on top. The E%-max option is kept (it's component #1, needed once the completion is clean). NO sim/ edit (runner-only).
+
 ## Status (per THE LAW — a precisely-characterized boundary that names the next lever)
 - **The SWR readout is BLOCKED by the ca3→ca1 effective-conductance cap** — a real, precisely-localized hard
   integration (the documented "hard fresh-pass integration" snag, now root-caused). It is NOT closeable by the
