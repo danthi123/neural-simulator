@@ -81,6 +81,7 @@ def main():
     ap.add_argument("--drive-scale", type=float, default=1200.0)    # v_t -> external current pA
     ap.add_argument("--self-nmda-w", dest="self_nmda_w", type=float, default=8.0)   # diagonal self-NMDA autapse weight
     ap.add_argument("--n-fit", dest="n_fit", type=int, default=600)   # train sentences for the on-bridge read-out re-fit
+    ap.add_argument("--exact-state", dest="exact_state", action="store_true")
     ap.add_argument("--pop-k", dest="pop_k", type=int, default=1)
     ap.add_argument("--t-step", dest="t_step", type=int, default=_T_STEP_DEFAULT)   # bridge steps/token (finer rate=less noise)
     ap.add_argument("--json", type=str, default="research/findings/raw/_emerge_wkv_onbridge.json")
@@ -131,9 +132,17 @@ def main():
         """Drive the channel region per token; return the per-position firing-rate state [T, 2D] (ON then OFF rates)."""
         _wash()
         rates = []
+        _a = np.zeros(D)                                             # host leaky state (for --exact-state isolating test)
         for t in range(len(ids)):
             h = _ln(emb[ids[t]]); v = Wv @ h                        # [D]
-            chan_drive = np.concatenate([np.maximum(v, 0.0), np.maximum(-v, 0.0)]) * args.drive_scale   # [2D] ON|OFF
+            if getattr(args, "exact_state", False):
+                # ISOLATE the spiking READ: drive with the EXACT host-computed rate-SSM state (leaky integral done in host)
+                # -> the neurons transduce the exact state to firing; if this GOes, the read is fine + the substrate's
+                # input-integral (self-NMDA ~0.6 fidelity) is the only gap; if not, the spiking read itself is the limit.
+                _a = decay * _a + v
+                chan_drive = np.concatenate([np.maximum(_a, 0.0), np.maximum(-_a, 0.0)]) * args.drive_scale
+            else:
+                chan_drive = np.concatenate([np.maximum(v, 0.0), np.maximum(-v, 0.0)]) * args.drive_scale   # [2D] ON|OFF
             cur = np.zeros(nnrn, np.float32)
             cur[all_drive_idx] = chan_drive[chan_of]                # broadcast each channel's drive to its pop_k neurons
             cnt = np.zeros(2 * D, np.float64)

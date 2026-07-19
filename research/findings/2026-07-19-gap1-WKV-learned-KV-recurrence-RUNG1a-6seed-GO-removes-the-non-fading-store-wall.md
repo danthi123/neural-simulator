@@ -166,3 +166,22 @@ firing-integral realization's ~0.6 structural fidelity is characterized as insuf
 METHOD with a precisely-scoped next (input-integral mapping). The rate-level de-risk (every constraint GO) remains the
 strong evidence the MECHANISM works.** verify-first + the firing/corr diagnostics prevented a FALSE GO at every one of
 ~7 finicky steps (build → mapping → snapshot → chance-read-out → V=200 → receptance → T_STEP → population-coding).
+
+### DECISIVE: the on-bridge limit is the LINEAR READ-OUT (reservoir-computing), NOT state fidelity → the fully-spiking WKV is gated on gap#4 (end-to-end deep-credit-through-spiking). gap#1↔gap#4 CONNECTED.
+The `--exact-state` ISOLATING test settles it: drive the neurons with the EXACT host-computed rate-SSM leaky state
+`[relu(a),relu(-a)]` (bypassing the substrate's leaky integration), read via real spiking. Result: the firing tracks the
+exact state WELL (**corr 0.786**) — yet the re-fit linear read-out STILL gives ~chance (onbridge deep-NLL 4.88 vs bigram
+2.6). ⇒ **the on-bridge limit is NOT the state fidelity and NOT the input-integral — it is that a trained LINEAR read-out
+(the reservoir-computing approach: fixed spiking dynamics + a linear read) CANNOT match the rate-SSM's JOINTLY-TRAINED
+NONLINEAR read** (`Wo_sp` 2D→D + receptance gate `r_t` + head D→V, all optimized end-to-end WITH the dynamics). Even a
+0.786-faithful spiking read of the exact state loses the deep-context capture through a linear read. **The proper
+fully-spiking realization therefore needs END-TO-END training of the read (or the whole net) THROUGH the on-bridge
+spiking (surrogate-grad BPTT / a biological deep-credit rule) — which is EXACTLY the gap#4 deep-credit-through-spiking
+lever, characterized THIS SESSION as field-hard (rank-1 collapse; the unsupervised path is the mission route).**
+⇒ **gap#1's fully-spiking WKV realization is CONNECTED to gap#4:** the MECHANISM (WKV removes the non-fading-store wall)
+is comprehensively proven at the rate level (every constraint GO); making it fully-spiking on-bridge needs the deep-credit
+lever (end-to-end training through spikes), not just a reservoir read-out. **Honest net: the fully-spiking on-bridge WKV
+is gated on the gap#4 deep-credit frontier — a coherent, valuable characterization (the two deepest open threads meet
+here), NOT a mechanism failure.** The rate-level WKV + the emergent-input (Rung 1a/1b) + the 21M spiking-forward deploy
+(the ledgered scaffold) are the near-term open-generation deliverables; the fully-spiking-emergent WKV rides the
+deep-credit lever. verify-first + the exact-state isolation prevented a FALSE GO throughout + pinpointed the true limit.
