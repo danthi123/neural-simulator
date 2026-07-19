@@ -190,9 +190,22 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
      degenerate-readout, C1 apical-decoupled) upstream of the rate-code wall. **DE-RISK: frozen-reservoir + WTA + trained
      population readout, `cfg.seed` SET. MISSION-PATH FORK (owner: "your call, close the gaps"): supervised BDSP vs the
      2026-07-17 UNSUPERVISED stream-cortex decision that sidesteps it.** Finding `2026-07-19-gap4-research-gate-...`.
-  - **Discipline:** ~9 silent-failure/de-risk-bug catches (incl. my own FABRICATED "3 arms crashed" — refuted by `ps`;
-    the research gate catching my re-derivation of a known bug = the `read-your-record-first` lesson). NO `sim/` edit all
-    session (SWR readout = runner params + the additive default-None E%-max read). All committed to both remotes.
+  5. **NEXT-DIRECTION scoped + de-risked (strategic scout + a cheap probe):** the highest-value next lever is a
+     READER/BINDER over the stream cortex's OWN structured codes (the convergence lever under gaps #2/#4/#5). Probed the
+     cached 787 codes: they're correlated via a uniform COMMON MODE (between-cos 0.751) that a feedforward per-dim
+     mean-subtraction removes (→ decorrelated, bindable); a fixed HRR bind RECALLS held-out facts (0.997, but that's a
+     distinctness test). **HONEST TEMPERING: NOT a cheap win** — the codes' generalizable SEMANTIC structure is
+     real-but-WEAK (semantic pairs rank ~174th/788, only 38% in top-20 at develop_D=128) AND global decorrelation
+     DESTROYS what structure there is (the CYCLE-88 tension). ⇒ the sub-problem is code QUALITY (semantic structure),
+     upstream of the binder. **Levers: higher develop_D, PROPER PPMI local-normalization (not global decorrelation), or
+     validate the binder on EMERGE known-category codes to isolate binder-vs-codes.** Findings
+     `2026-07-19-bind-over-stream-codes-...`. NO `sim/` edit (numpy on cached artifacts).
+  - **Discipline:** ~11 silent-failure/over-claim catches — FOUR were my OWN, all caught by verification: the FABRICATED
+    "3 arms crashed" (refuted by `ps`), "substrate learns to 0.778" (refuted by running the eprop verify → deep credit
+    FAILS 0.222), "structure degrades over training" (refuted by a multi-concept check), and the read-your-record lesson
+    (7 gap#4 runs re-derived a known bug). The rest were mechanism/metric/instrument catches (dead-positive-control,
+    void cross-spec test, false-positive Monitor completion, sep_cos-0.00 noise, stability-0.00 reset artifact). NO `sim/`
+    edit all session (SWR readout = runner params + the additive default-None E%-max read). All committed to both remotes.
 - **📍 RESUME POINT (2026-07-19, latest — parallel batch): gap#5 (i) SWR COMPREHENSIVELY CHARACTERIZED; gap#5 (ii)
   emergent-DG ROOT-CAUSED (feedforward-conduction, unifies with gap#4); gap#4 keystone accuracy arms IN FLIGHT.**
   (1) **gap#5 (i) SWR — FINAL characterization:** the parallelized strength sweep + no-learn anti-cheat resolved the
