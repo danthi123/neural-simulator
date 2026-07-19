@@ -175,7 +175,22 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   open-generation path: the WKV mechanism is proven + the rate-level BPTT WKV is the tracked scaffold; the near-term usable
   deliverable is the 21M spiking-forward deploy; the end-state fully-spiking-emergent WKV rides gap#4's deep-credit lever
   (the unsupervised stream-cortex path). See `2026-07-19-gap1-WKV-...RUNG1a-6seed-GO...` (the full gap#1 arc) +
-  `2026-07-19-gap4-directed-credit-not-accuracy-ROOT-CAUSED...`. ~33 commits both remotes, rigorous verify-first discipline.
+  `2026-07-19-gap4-directed-credit-not-accuracy-ROOT-CAUSED...`. ~38 commits both remotes, rigorous verify-first discipline.
+  **The WKV arc is CI-GUARDED** (`tests/test_emerge_wkv_lm.py`: the op clears chance on a lag-4 long-range task, memoryless
+  control worse = recurrence load-bearing; trigram/PPMI/loader functions tested). **NEXT-THRUST (precisely scoped for the
+  continuation — both substantial fresh efforts, pick per owner steer / value):**
+  (A) **Near-term USABLE deliverable — the 21M spiking-forward deploy** (buys "owner talks open topics on spikes NOW",
+      per the decision): the 21M TinyStories generator ckpt is local-only + gitignored (85MB, REGENERABLE — first step is
+      regen or locate it), then the validated spiking-forward on the RF bridge (== ANN, 88.6M ppl_ratio 1.0) behind the
+      gate-first moat, with the ONE named blocker = the KV-cache lever (generation ~4.4→interactive tok/s). Levers proven
+      bit-exact (dense-matvec ~9000×, on-GPU forward). Ledger as MILESTONE-MET-by-scaffold, NOT gap#1 closed.
+  (B) **End-state FULLY-SPIKING-EMERGENT WKV — rides gap#4's deep-credit lever** (the mission's deepest goal): the on-bridge
+      WKV read-out needs END-TO-END training through the spiking (a LINEAR read can't match the jointly-trained WKV read —
+      the `--exact-state` isolation proved it), which IS the gap#4 deep-credit-through-spiking (field-hard; the
+      research-gated path is the UNSUPERVISED stream cortex). The emergent-input WKV (PPMI, GO) is the rate-level
+      gap#1↔gap#4 convergence; the spiking version needs the deep-credit lever. Fire the research gate before building.
+  (C) Wire the WKV as a generation option into a console (make the validated lever reachable) — bounded, but needs a REPL
+      (owner-interactive) so it is an owner-verification step, not autonomous.
 - **🏁 SESSION 2026-07-19 SUMMARY (earlier headline: gap#5 (i) SWR readout CLOSED) + the CLEAR NEXT STEPS.** A long, productive
   session. Achievements + resume points, most-recent-first:
   -6. **🎉🎉 gap#1 GENERATION CAPSTONE (2026-07-19) — the WKV PRODUCES coherent open prose (the mission capability).**
