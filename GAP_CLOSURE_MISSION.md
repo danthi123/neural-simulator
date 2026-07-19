@@ -169,6 +169,19 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   by within-assembly recurrent strength (strong_within h4 2/3, h8/l2 2/6, h12/l2 1/6 — MORE strength is WORSE). ⇒ the
   completion near-tie is a FUNDAMENTAL property of RANDOM assembly codes; robust SWR specificity REQUIRES pattern-SEPARATED
   codes = the emergent-DG (item ii). **The two gap#5 extensions UNIFY: SWR specificity needs the emergent-DG's separation.**
+  **RESEARCH GATE (2026-07-19, Valero 2017 VERIFIED):** CA1 ripple selectivity = cell-SPECIFIC synaptic drive + E/I balance,
+  NOT the shared ripple envelope (Valero et al. 2017 Neuron 94:1234 — collapses to co-firing in fast ripples = the model's
+  dense-uniform-Schaffer collapse); Kwon 2018 = biology's excitatory Schaffer is STRUCTURED (the model inverted it with
+  dense-random). No CA1 readout can manufacture a distinction absent from CA3 ⇒ 6-seed-robust specificity needs the
+  pattern-separated completion (the emergent-DG selection, already GO) upstream. **NEXT BUILD = the specificity STACK**
+  (`2026-07-19-gap5-SWR-readout-specificity-research-gate-ranked-mechanisms`, cheap-first): source assemblies via
+  `assemblies_ext` from the self-organized/mossy-selection (NOT random-disjoint) + `swr_learn_schaffer` with a SPARSE init
+  (drop dense-random) + E%-max CA1 top-k read + brief single-volley read; GO bar match≥0.6/cross≤0.3/ratio≥3×/6-seed,
+  anti-cheats no-learn→cross≈1 + permuted-cue→no-match. **A latched-breakdown localization is IN FLIGHT** (swr_localize2,
+  the validated BASE config `n_ca3=2000 bistable=True selective_inhib=True hebb_lr=4 lam_dep_wi=1 swr_disjoint=True
+  learned-Schaffer hi=80/lo=0` + SWR_DEBUG) to confirm whether the CA3 recall is specific (→ prioritize the readout
+  fixes #1/#2/#5) or cross-confused (→ prioritize self-organized assemblies #3). [First swr_localize used the wrong
+  branch — missed `bistable=True` — so ca1_match=None; the working config is swr_validate.py BASE.]
   (2) **gap#5 (ii) emergent-DG — SELECTION DE-RISKED, 6-seed GO (2026-07-19).** Read-your-substrate ROOT-CAUSED the
   0-firing (the trisynaptic FEEDFORWARD does not conduct — every hop sub-threshold; default mossy w=8 gives CA3 g_e 0.17,
   ~10-30× too weak), then DE-RISKED the core question — **can a stable pattern-separated CA3 assembly be SELECTED from a
