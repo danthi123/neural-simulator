@@ -68,6 +68,12 @@ genuine multi-sentence discourse in GENERATION, not just scoring. Deep-context +
 open-generation lever PRODUCES coherent open prose** — the actual "talk to the brain / generate open prose" mission
 capability, demonstrated on the validated WKV mechanism (rate-level, BPTT-trained, a tracked scaffold toward the
 spiking-emergent version gated on gap#4). NO `sim/` edit; `_emerge_wkv_lm_derisk.py --contiguous --generate`.
+**FULLY-EMERGENT generation (loop closed):** the EMERGENT PPMI-input WKV ALSO generates coherent multi-sentence prose
+(*"...a little girl named amy she loved to skip every day she would ⟨unk⟩ it with her mom in her room ... she played with
+the ⟨unk⟩ and the trees"*, maintained coreference amy→she→her mom; +0.749 deep-context GO) — with a few `⟨unk⟩` where the
+FROZEN PPMI codes are less expressive than a learned embedding (an honest fluency cost of frozen emergent codes, a
+code-quality/scale lever). ⇒ **the gap#1↔gap#4-convergent lever — open generation fed by the UNSUPERVISED cortex codes —
+PRODUCES multi-sentence open prose.** The fully-emergent open-generation capability is demonstrated end-to-end.
 
 ## RUNG 1b — EMERGENT INPUT: GO (3-seed) + the emergent STRUCTURE genuinely HELPS (gap#1↔gap#4 convergence realized)
 Two de-risks resolved the emergent-input question WITHOUT a separate stream-cortex-over-TinyStories develop (cheaper, direct):
