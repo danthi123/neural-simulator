@@ -110,6 +110,7 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
     torch.manual_seed(seed)
     D = args.d_model
 
+    RECUR = getattr(args, "recurrence", "wkv")
     class WKV(nn.Module):
         def __init__(self, V, D, memoryless=False):
             super().__init__()
@@ -129,6 +130,15 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
             wdec = torch.exp(-torch.nn.functional.softplus(self.w))       # per-channel decay in (0,1)
             if self.memoryless:
                 wdec = torch.zeros_like(wdec)           # ANTI-CHEAT: no carry -> only the current token
+            if RECUR == "ssm":
+                # SPIKING-SUBSTRATE-FAITHFUL leaky-integrator (Rung 2 de-risk): a_t = decay*a_{t-1} + v_t (a slow
+                # conductance/membrane leak -- NO exp(k) weighting, NO num/den normalization = the part hard on spikes),
+                # out = receptance-gated read. If GO, the spiking membrane leak realizes this state directly.
+                a = torch.zeros(B, D, device=x.device); outs = []
+                for t in range(T):
+                    a = wdec * a + v[:, t]
+                    outs.append(r[:, t] * self.Wo(a))
+                return self.head(torch.stack(outs, 1))
             u = self.u
             a = torch.zeros(B, D, device=x.device); b = torch.zeros(B, D, device=x.device)
             pmax = torch.full((B, D), -1e30, device=x.device)            # running max for numerical stability
@@ -230,6 +240,9 @@ def main():
                     help="learned = LM-trained embedding (Rung 1a); ppmi = EMERGENT unsupervised PPMI co-occurrence codes, "
                          "frozen (Rung 1b, the gap#1<->gap#4 convergence).")
     ap.add_argument("--ppmi-window", type=int, default=5)
+    ap.add_argument("--recurrence", choices=["wkv", "ssm"], default="wkv",
+                    help="wkv = full RWKV linear-attention (num/den normalized); ssm = spiking-substrate-faithful "
+                         "leaky-integrator (a_t=decay*a_{t-1}+v_t, no normalization = the Rung 2 spiking-port form).")
     ap.add_argument("--json", type=str, default=str(OUT))
     args = ap.parse_args()
     import torch

@@ -56,3 +56,15 @@ Two de-risks resolved the emergent-input question WITHOUT a separate stream-cort
 - **NEXT: Rung 2 — the fully-SPIKING WKV port** (map the fixed-form WKV recurrence onto a spiking `BrainRegion` via the
   SNN-membrane-leak ≡ SSM-state-update equivalence; SpikeGPT confirms faithful) — the one-brain/fully-spiking milestone.
   Then Rung 3 (biologize the BPTT rule: e-prop/BDSP on the fixed-form recurrence). PARALLEL: the 21M spiking-forward deploy.
+
+## RUNG 2 — SPIKING-SUBSTRATE-FAITHFUL recurrence de-risked at the rate level (GO): the LEAKY-INTEGRATOR form works
+The full WKV op has a divisive num/den NORMALIZATION that is hard on spikes. The `--recurrence ssm` variant tests the
+spiking-FAITHFUL form: a plain LEAKY INTEGRATOR `a_t = decay·a_{t-1} + v_t` (a slow membrane/conductance leak — NO exp(k)
+weighting, NO normalization), receptance-gated read. **Smoke GO:** beats the fair trigram at deep context **+0.375**
+(vs the full WKV's +0.472 at the same scale — only ~0.1 nat cost for dropping the normalization), perm-collapse +3.68,
+memoryless-collapse +0.61. ⇒ **the spiking membrane-leak form CAPTURES deep context and beats the trigram** — the
+SNN-membrane-leak ≡ SSM-state equivalence holds at the rate level; the WKV normalization is an optional ~0.1-nat
+enhancement (realizable on spikes via FS divisive inhibition if wanted). **Rung 2's core recurrence is de-risked;** the
+remaining build is the full ON-BRIDGE realization (a recurrent spiking `BrainRegion` with a slow leaky conductance as the
+state + the trained K/V/receptance weights, read from `cp_firing_states`), reusing the EMERGE-82 on-bridge-LSM machinery.
+NO `sim/` edit in the de-risk; `_emerge_wkv_lm_derisk.py --recurrence ssm`.
