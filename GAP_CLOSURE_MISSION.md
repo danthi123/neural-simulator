@@ -161,7 +161,18 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
-- **🏁 SESSION 2026-07-19 (fully-spiking WKV — FINAL, research-gate REFRAME): the ~0.55 state-fidelity floor is SELF-IMPOSED.**
+- **🎉🏁 SESSION 2026-07-19 (fully-spiking WKV robust BEAT ACHIEVED at the architecture level — 6-SEED GO): acting on the
+  research-gate reframe (SpikeGPT keeps the WKV state GRADED; the fully-spiking bar is spiked I/O + a graded LOCAL state), the
+  additive `--spike-output` mode (graded state + SPIKE-CODED output y_t via straight-through, trained end-to-end) ROBUSTLY BEATS
+  the fair interpolated trigram at deep context: V=1000/d128 6/6 GO (seeds 42/43/44/100/101/102 = +0.27/+0.30/+0.24/+0.23/+0.23/
+  +0.29, mean +0.26; anti-cheats collapse). The output-spike cost is ~FIXED (~0.13) while the rate margin GROWS with scale -> it
+  SCALES (opposite of the mean-rate-state penalty that grew with V). ⇒ the ~0.55 mean-rate floor was a SELF-IMPOSED "state=firing-
+  rate" constraint; under SpikeGPT's actual bar the fully-spiking WKV robustly beats the trigram, 6-seed. ONE engineering step
+  remains (scoped, not a wall): realize the graded state as an on-substrate slow CONDUCTANCE (NMDA/Ca plateau, Wang-2002/Seung-
+  Goldman line attractor -- legit biology; spike-CHARGING is lossy per the `--graded-charge` honest-negative, so the path is a
+  graded-current-driven conductance OR end-to-end surrogate-BPTT co-adapting the validated architecture). NO `sim/` edit. See
+  `2026-07-19-gap1-WKV-...` ("THE TURNAROUND"). Below: the earlier PARITY characterization + the 8-lever map (still valid, now SUPERSEDED as the ceiling — the robust BEAT is reached by relaxing the self-imposed bar, not by beating the mean-rate floor).
+- **🏁 SESSION 2026-07-19 (fully-spiking WKV — research-gate REFRAME): the ~0.55 state-fidelity floor is SELF-IMPOSED.**
   A research gate (SpikeGPT paper, verified by 2 agents) established: SpikeGPT keeps the WKV state as a REAL-VALUED FP32 float
   (only I/O is spike-coded); biology holds integrator state in GRADED slow conductances (NMDA plateaus, Wang-2002/Seung-Goldman
   attractors). So "state = spike firing-rate" is stricter than the SOTA spiking LM AND biology, and is the SOLE cause of the
