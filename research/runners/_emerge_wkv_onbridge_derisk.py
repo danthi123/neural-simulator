@@ -85,6 +85,8 @@ def main():
     ap.add_argument("--exact-state", dest="exact_state", action="store_true")
     ap.add_argument("--read-gnmda", dest="read_gnmda", action="store_true",
                     help="LEVER 1: read the standing cp_conductance_g_nmda (100ms leaky integral) instead of firing rate")
+    ap.add_argument("--read-latency", dest="read_latency", action="store_true",
+                    help="READ-CODE: first-spike latency (Thorpe rank-order), graded where mean-rate saturates")
     ap.add_argument("--pop-k", dest="pop_k", type=int, default=1)
     ap.add_argument("--t-step", dest="t_step", type=int, default=_T_STEP_DEFAULT)   # bridge steps/token (finer rate=less noise)
     ap.add_argument("--json", type=str, default="research/findings/raw/_emerge_wkv_onbridge.json")
@@ -149,14 +151,27 @@ def main():
             cur = np.zeros(nnrn, np.float32)
             cur[all_drive_idx] = chan_drive[chan_of]                # broadcast each channel's drive to its pop_k neurons
             cnt = np.zeros(2 * D, np.float64)
-            for _ in range(_T_STEP):
+            _latency = getattr(args, "read_latency", False)
+            first_spk = np.full(len(all_drive_idx), float(_T_STEP)) if _latency else None  # per drive-neuron 1st-spike step
+            for _step in range(_T_STEP):
                 b.cp_external_input_current[:] = 0.0
                 b.cp_external_input_current[all_drive_idx] = (xp.asarray(cur[all_drive_idx]) if xp is not None
                                                              else cur[all_drive_idx])
                 b._run_one_simulation_step()
                 fs = np.asarray(to_host(b.cp_firing_states))
                 np.add.at(cnt, chan_of, fs[all_drive_idx].astype(np.float64))   # sum spikes per channel (over its pop_k)
-            if getattr(args, "read_gnmda", False):
+                if _latency:
+                    fired = fs[all_drive_idx] > 0
+                    newly = fired & (first_spk == float(_T_STEP))   # record FIRST spike step only
+                    first_spk[newly] = float(_step)
+            if _latency:
+                # READ-CODE = first-spike LATENCY (Thorpe rank-order): earlier spike -> higher activation (T_STEP-t)/T_STEP
+                # in [0,1], 0 if never fired. Graded where the mean-rate code saturates; carries magnitude info rate discards.
+                act = (float(_T_STEP) - first_spk) / float(_T_STEP)
+                lat = np.zeros(2 * D, np.float64)
+                np.add.at(lat, chan_of, act)
+                rates.append(lat / gsize)                           # latency-code activation, pop-averaged
+            elif getattr(args, "read_gnmda", False):
                 # LEVER 1 (research-gate GO): read the STANDING NMDA conductance (the ~100 ms leaky integral) directly,
                 # not the within-window spike count. cp_conductance_g_nmda IS the analog leaky-SSM state on real spikes
                 # (self-NMDA autapse charges it; decays tau=100 ms; not washed within a sentence). Skips the
