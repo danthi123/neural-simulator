@@ -70,6 +70,20 @@ co-fires with a target ca1 pattern) → recall gives the specific pattern; OR (b
 ⇒ gap#5 (i) went from "hard integration, ca1_fire=0, mystery cap" → precisely: STP crushed g_e (fixed) + fixed-random
 Schaffer blocks specificity (needs learned associations). A clear mechanism build, no longer a mystery.
 
+## 🎯 SPECIFICITY BOTTLENECK = COMPLETION DISTINCTNESS (2026-07-19, learned-Schaffer + latched breakdown)
+Built the LEARNED-SCHAFFER fix (`swr_learn_schaffer`: each assembly potentiates ca3(assembly)→ca1(distinct sparse
+target), non-associated Schaffer held low). With phase-2 STP-off it makes ca1 fire SPARSE + SANE (fire ~0.08-0.10 = ~10
+cells, ca1_v back near rest −70, no explosion) — a big improvement — BUT still **match ≈ cross (~0.98)**. The latched
+breakdown (per-assembly counts of the completed CA3 cells) shows WHY, decisively: the completion SPREADS across
+assemblies AND the pre-assigned assemblies OVERLAP. E.g. cue-1 latches 233 of assembly-1 but ALSO **163 of assembly-0**;
+part-1 latches BOTH nearly equally (128 vs 116); the non-assembly count is NEGATIVE (double-counting = the two
+assemblies share ~28 cells). ⇒ both cues activate BOTH assemblies → both ca1 targets fire → the ca1 pattern is a common
+mix → no discrimination. **So the SWR readout specificity is BOTTLENECKED by the COMPLETION's distinctness** — the same
+weak/spreading completion (cue ~0.18-0.22 magnitude residual) + overlapping assemblies. The readout FIRING is fixed
+(STP root-cause + learned Schaffer); the SPECIFICITY needs a cleaner, more-distinct, non-overlapping completion (a
+DEEPER arc = the completion-magnitude/distinctness residual + disjoint assemblies). ⇒ gap#5 (i) SWR is now precisely a
+2-stage chain: (1) firing — SOLVED; (2) specificity — downstream of completion distinctness (the deeper open residual).
+
 ## Status (per THE LAW — a precisely-characterized boundary that names the next lever)
 - **The SWR readout is BLOCKED by the ca3→ca1 effective-conductance cap** — a real, precisely-localized hard
   integration (the documented "hard fresh-pass integration" snag, now root-caused). It is NOT closeable by the

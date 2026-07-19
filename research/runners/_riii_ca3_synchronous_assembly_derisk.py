@@ -61,7 +61,8 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
         plateau_self_regen=0.0, plateau_v_hold=-35.0, apical_kir_g=0.0, apical_gc_read=None, read_apical=False,
         read_ca1=False, schaffer_boost=1.0,
         encode_btsp=False, btsp_lr=0.02, encode_ca3w=None, encode_plateau_pA=250.0, encode_structural_sep=0,
-        encode_hetero=0.0, encode_btsp_hetero=0.0, assemblies_ext=None, swr_ripple_pA=800.0, swr_ca1_ff_inhib=None):
+        encode_hetero=0.0, encode_btsp_hetero=0.0, assemblies_ext=None, swr_ripple_pA=800.0, swr_ca1_ff_inhib=None,
+        swr_learn_schaffer=False, swr_target_frac=0.15, swr_schaffer_hi=60.0, swr_schaffer_lo=0.2):
     # DIAGNOSED LEVERS (2026-07-18 workflow): the rate-window LTP is an EMA-trace rule -- a cell's co-activity trace
     # tops out ~0.03-0.2 (point Izh fires ~0.2 duty @700pA), so coact_thresh MUST be BELOW it (~0.02) or nothing
     # potentiates; the gamma OFF-gap DECAYS the EMA (0.9^off) so CONTINUOUS drive (sync_off<=1) is required, NOT
@@ -393,7 +394,44 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
             # the SAME ca1 (Schaffer) pattern as the FULL assembly (correct), and a DIFFERENT one for another assembly
             # (specific)? schaffer_boost potentiates ca3->ca1 so the completed assembly drives ca1 above threshold.
             ca1_idx = np.asarray(list(rm.indices("ca1")), dtype=int)
-            if schaffer_boost != 1.0:
+            if swr_learn_schaffer:
+                # LEARNED SCHAFFER (2026-07-19): the biology-correct SWR readout. The fixed-random DENSE Schaffer drives
+                # every ca1 near-identically (no specificity). Instead, ASSOCIATIVELY POTENTIATE ca3(assembly_m)->
+                # ca1(target_m): each assembly gets a distinct sparse ca1 TARGET pattern, and only the assembly->target
+                # synapses are potentiated (Schaffer collateral LTP during encoding); all other ca3->ca1 held LOW. So
+                # recall of an assembly drives ITS specific ca1 pattern -> ca1_match(same) high, ca1_cross(other) low.
+                cc = bridge.cp_connections; nnzc = int(cc.nnz)
+                ip = np.asarray(to_host(cc.indptr)); ind = np.asarray(to_host(cc.indices))
+                prec = np.searchsorted(ip, np.arange(nnzc), side="right") - 1
+                try:
+                    ca3_inh = set(int(g) for g in rm.inhibitory_indices("ca3"))
+                except Exception:
+                    ca3_inh = set()
+                c1_list = list(ca1_idx); n_ca1_l = len(c1_list)
+                n_tgt = max(2, int(swr_target_frac * n_ca1_l))
+                # per-assembly: a distinct sparse ca1 target (deterministic, disjoint-ish random draw)
+                asm_of = {}                                       # ca3 global -> assembly m
+                tgt_of = {}                                       # assembly m -> set(ca1 global)
+                for m, assy in enumerate(assemblies):
+                    for g in assy:
+                        asm_of[int(g)] = m
+                    _tr = np.random.default_rng(seed * 71 + m + 13)
+                    tgt_of[m] = set(int(c1_list[i]) for i in _tr.choice(n_ca1_l, n_tgt, replace=False))
+                data_h = np.asarray(to_host(cc.data)).copy()
+                _npot = 0
+                for k in range(nnzc):
+                    pre = int(prec[k]); post = int(ind[k])
+                    if pre in ca3_inh or post not in set(c1_list):
+                        continue
+                    if pre in asm_of and post in tgt_of[asm_of[pre]]:
+                        data_h[k] = float(swr_schaffer_hi); _npot += 1     # associative LTP: assembly -> its target
+                    elif post in set(c1_list):
+                        data_h[k] = float(swr_schaffer_lo)                 # non-associated Schaffer held LOW
+                cc.data[:] = cp.asarray(data_h, dtype=cc.data.dtype)
+                if os.environ.get("SWR_DEBUG"):
+                    print(f"    [SWR debug] LEARNED Schaffer: {_npot} assembly->target synapses potentiated to "
+                          f"{swr_schaffer_hi}, others->{swr_schaffer_lo}; n_target/assembly={n_tgt}", flush=True)
+            elif schaffer_boost != 1.0:
                 cc = bridge.cp_connections; nnzc = int(cc.nnz)
                 ip = np.asarray(to_host(cc.indptr)); ind = np.asarray(to_host(cc.indices))
                 prec = np.searchsorted(ip, np.arange(nnzc), side="right") - 1
@@ -433,6 +471,11 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
                 # NOT a sustained apical latch -- apical>v_hold identifies only ~3%; diagnostic 2026-07-18).
                 _far = fire_acc / recall_steps
                 latched = ca3_arr_host[_far > 0.08]
+                if os.environ.get("SWR_DEBUG"):
+                    _ls = set(int(x) for x in latched)
+                    _brk = [len(_ls & set(int(g) for g in _a)) for _a in assemblies]   # latched-in-each-assembly
+                    _nonasm = len(_ls) - sum(_brk)
+                    print(f"    [SWR debug] latched-breakdown per-assembly={_brk} non-assembly={_nonasm} (total {len(_ls)})", flush=True)
                 rip = bias_full.copy()
                 if len(latched):
                     rip[latched] += float(ripple_pA)               # PHASE 2: strong burst of the LATCHED completed cells
