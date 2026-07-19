@@ -163,6 +163,19 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 - **🏁 SESSION 2026-07-19 SUMMARY (headline: gap#5 (i) SWR readout CLOSED) + the CLEAR NEXT STEPS.** A long, productive
   session. Achievements + resume points, most-recent-first:
+  -4. **🎯 gap#1 ON-BRIDGE realization CHARACTERIZED → gap#1↔gap#4 CONNECTED (2026-07-19).** Built the on-bridge WKV/SSM
+     realization (`_emerge_wkv_onbridge_derisk.py`, diagonal self-NMDA autapse = per-channel leaky integral, verify-first
+     corr-gated). The DESIGN is confirmed (a diagonal self-NMDA realizes a leaky state on REAL Izhikevich spikes, corr
+     0.6-0.79). But the on-bridge LM read-out stays at ~chance across EVERY lever (drive/self-NMDA/T_STEP/receptance/
+     smaller-V/population-coding-K8), and the **`--exact-state` isolating test settles WHY:** even reading the EXACT
+     leaky state (corr 0.786) the LINEAR read-out gives chance ⇒ **the limit is that a trained-LINEAR read (reservoir-
+     computing) CANNOT match the rate-SSM's JOINTLY-TRAINED NONLINEAR read** (Wo_sp+receptance+head). The proper
+     fully-spiking WKV needs **END-TO-END training through the on-bridge spiking = the gap#4 deep-credit lever** (field-hard,
+     characterized this same session). ⇒ **gap#1's fully-spiking realization is GATED on gap#4** — the two deepest open
+     threads meet. The MECHANISM (WKV removes the non-fading-store wall) is comprehensively proven at the rate level;
+     making it fully-spiking-emergent rides the deep-credit frontier. Near-term open-gen deliverables: the rate-level WKV +
+     emergent input (Rung 1a/1b, done) + the 21M spiking-forward deploy (ledgered scaffold). verify-first prevented a FALSE
+     GO at all ~8 finicky steps. `2026-07-19-gap1-WKV-...RUNG1a-6seed-GO...` (on-bridge section).
   -3. **🎉 gap#1 Rung 1a — WKV LEARNED-KV-RECURRENCE 6-SEED GO (2026-07-19), the mission-primary open-generation lever
      VALIDATED.** Built + ran `_emerge_wkv_lm_derisk.py`: at ceiling-valid scale (TinyStories V2000, d256, 80K sents,
      ~9 min) the WKV op (content-selective NON-FADING learned K/V store) **BEATS the FAIR interpolated trigram at deep
