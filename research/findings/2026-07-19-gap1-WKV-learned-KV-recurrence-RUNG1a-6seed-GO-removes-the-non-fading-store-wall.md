@@ -212,6 +212,25 @@ fix that averages out spiking noise → higher state fidelity), and/or an end-to
 capability (fully-spiking open generation) stays OPEN; the next-method is precisely scoped. NO `sim/` edit.
 `_emerge_wkv_onbridge_derisk.py` (`--t-step`, `--self-nmda-w`, `--drive-scale`, receptance-gated read-out, verify-first).
 
+### ON-BRIDGE WKV — NONLINEAR read-out + population coding recovers MOST of the capture (within −0.11 of the trigram); the residual rides gap#4
+The `--exact-state` test showed a LINEAR read can't match the jointly-trained WKV read. A NONLINEAR (MLP) read-out on the
+on-bridge states (`--mlp-readout`; reservoir-computing with a nonlinear read) + POPULATION coding (`--pop-k`) + more fit
+data progressively closes the gap, ASYMPTOTICALLY approaching the fair trigram:
+| read-out | onbridge deep-NLL | vs fair trigram |
+|---|---|---|
+| linear ridge | ~4.8 | −2.4 |
+| MLP (n_fit=1200) | 2.93 (near-bigram) | −0.62 |
+| MLP + pop-k=4 + n_fit=2500 | 2.482 (**beats bigram**) | −0.169 |
+| MLP + pop-k=8 + n_fit=5000 | 2.404 (beats bigram) | **−0.110** |
+⇒ **the fully-spiking on-bridge WKV (reservoir-computing: fixed spiking dynamics + a NONLINEAR read + population +
+data) recovers MOST of the deep-context capture — it comfortably BEATS the bigram and approaches the fair trigram,
+plateauing at the ~0.58 spiking-STATE-FIDELITY ceiling** (the residual is the spiking noise/quantization/refractory of the
+on-bridge state, corr ~0.58 to the clean rate-SSM state — NOT the read-out anymore). **The last ~0.11 to CLEAR the trigram
+needs either END-TO-END training through the spiking (= gap#4's deep-credit lever) or a HIGHER-fidelity spiking realization**
+— confirming the gap#1↔gap#4 connection precisely: the fully-spiking-emergent WKV is within a hair of the rate-level bar via
+reservoir-computing, and the final gap rides gap#4. NO `sim/` edit. (Note: a near-miss commit was accidentally bundled with
+untracked artifacts via a `git add -A` and DROPPED via force-push; re-recorded here + staged file-specific.)
+
 **POPULATION CODING (K=8) tried → the ~0.6 fidelity ceiling is STRUCTURAL, not noise (decisive).** K=8 neurons per
 channel (population-averaged rate) barely moved the corr (0.55→0.596) and left the read-out far below bigram. ⇒ since
 noise-averaging does NOT help, the fidelity ceiling is **structural**: the self-NMDA autapse integrates the neuron's
