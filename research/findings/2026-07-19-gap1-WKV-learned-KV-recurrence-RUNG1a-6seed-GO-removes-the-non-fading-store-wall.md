@@ -127,3 +127,11 @@ working exactly as intended; NO on-bridge GO was ever claimed. **Honest state: t
 on-bridge quantized-spiking read) is the precisely-scoped remaining careful step** — a focused effort, not an
 end-of-session rush. The rate-level de-risk (every constraint GO) stands as the strong evidence the fully-spiking path
 works; the on-bridge is confirmation-in-progress. NO `sim/` edit (public arrays + explicit wiring).
+
+**REFINED read-out diagnosis (V=200 test):** at V=200 (far less under-data), the on-bridge linear read-out is ABOVE
+chance (onbridge deep-NLL 4.85 < chance log200=5.30) but far below bigram (2.55) — so it is NOT broken (it learns) and
+NOT merely under-data. The precise gap: the re-fit LINEAR ridge read-out on the on-bridge firing rates is weaker than the
+rate-SSM's END-TO-END read (which has the receptance gate `r_t=σ(Wr·h_t)` + joint training + the exact `Wo_sp`). ⇒ the
+on-bridge read-out COMPLETION needs to match that end-to-end read (receptance-gated + a jointly/adequately-fit read-out on
+the on-bridge quantized-spiking state), not a raw linear ridge — a precisely-scoped, careful engineering step, NOT a quick
+tweak. **The design (leaky state on real spikes, corr 0.58) is confirmed; the read-out form is the remaining completion.**
