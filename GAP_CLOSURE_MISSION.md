@@ -221,7 +221,15 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   validated (weights move dw 1973, moat holds, no transport) but the BDSP credit produces NO accuracy gain over the lesion
   = the credit-DIRECTION wall (D2/D3: graded fixes moat, not direction). **KEY DIAGNOSTIC: firing rates in/hid/out
   0.04/0.07/0.05 — the net BARELY FIRES → output near-silent → held BELOW the numpy single-layer floor (0.51). Hypothesis:
-  the DRIVE (`hidden-bias=520`) is too low, not (only) the credit direction.** The other 3 arms (fixed ep300, KP ep600,
+  the DRIVE (`hidden-bias=520`) is too low, not (only) the credit direction.** DRIVE-DIAGNOSTIC (2026-07-19): higher
+  bias DOES raise firing (hidden 0.07→0.19, output 0.05→0.16 as bias 520→1600) BUT **held stays 0.420 == lesion at every
+  drive AND the held is INVARIANT to the learned output weights** (BDSP hid→out dw 9-18 vs lesion dw 0.000 → SAME held
+  0.420). ⇒ the REAL blocker is a DEGENERATE READOUT: the uniform `output-bias` drives all class pools ~equally → the
+  learned hidden→output modulation is swamped → argmax constant (one class ≈ 0.420). **NEXT (readout fix, upstream of the
+  credit-direction A/B): make the class-pool firing INPUT-SELECTIVE — drive the output pools through the LEARNED
+  hidden→output weights (not a uniform bias), or a differential/normalized readout.** Only then is the fixed-vs-KP A/B
+  meaningful. Finding `2026-07-19-gap4-keystone-accuracy-NEGATIVE-at-scale-BDSP-credit-equals-lesion` (§DRIVE-DIAGNOSTIC).
+  The other 3 arms (fixed ep300, KP ep600,
   measB ep300) are **STILL RUNNING at 3.5h+** (100% CPU) — NOT crashed; a Monitor false-positive ("ALL COMPLETE" + 0-byte
   buffered logs) nearly made me record a fabricated crash, corrected by `ps` (silent-failure: verify the process, don't
   trust a Monitor completion signal). ⇒ the fixed-vs-KP A/B is STILL PENDING (grinding). **NEXT: (a) let the 3 arms finish

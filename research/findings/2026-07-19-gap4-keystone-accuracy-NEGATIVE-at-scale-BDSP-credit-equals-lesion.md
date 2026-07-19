@@ -25,6 +25,28 @@ actually dead (`ps`), don't trust a Monitor's completion signal or an empty log 
 general caution "on-bridge runs hold GPU memory, watch nvidia-smi" remains sound as a principle, but NO such incident
 happened here.)
 
+## DRIVE-DIAGNOSTIC (2026-07-19) — the blocker is a DEGENERATE READOUT, not credit-direction or drive
+Tested the low-firing hypothesis (baseline fires 0.04/0.07/0.05): higher `hidden/output-bias` DOES raise firing —
+bias 520→1000→1600 gives hidden 0.07→0.12→0.19, output 0.05→0.07→0.16 — **but held-out stays 0.420 == LESION ==
+wrong-sign at EVERY drive** (and at both ep=20 and ep=300). ⇒ **the held-out is INVARIANT to BOTH the credit AND the
+drive.** That is not a credit-direction wall (the credit does move weights) and not a drive problem (firing rises) —
+**the on-bridge READOUT is DEGENERATE:** held 0.420 has the signature of a FIXED always-predict-one-class output (0.420 ≈
+one class's frequency in the held-out set), i.e. the learned output-layer weights do NOT reach the prediction. Likely the
+output readout is dominated by the fixed `output-bias` (all output neurons driven ~equally by the bias, not by the
+input-dependent learned weights) → argmax is constant → accuracy pinned to a class frequency regardless of learning.
+**⇒ the REAL gap#4 keystone blocker (precisely localized): the on-bridge held-out READOUT does not reflect the learned
+weights.** The decisive evidence: BDSP moves the hidden→output weights (dw 9-18) while the LESION does NOT (dw 0.000), yet
+BOTH give held 0.420 — **the readout is INVARIANT to the learned output weights themselves.** The readout is
+`argmax` over per-class output-pool spike counts (`_readout`, line 479-487); the uniform `output-bias` (520-1600) drives
+ALL class pools ~equally → the small learned hidden→output modulation is swamped → argmax is CONSTANT (one class always,
+≈ its held-out frequency 0.420). NEXT (the readout fix, upstream of credit-direction): make the class-pool firing
+INPUT-SELECTIVE — either (a) drop the uniform output-bias and drive the output pools ONLY through the learned
+hidden→output weights (so the correct class's pool fires more), (b) strengthen the learned hidden→output signal so it
+dominates the bias (larger lr / init / more training targeted at output-class-selectivity), or (c) a differential/
+normalized readout that subtracts the common bias-driven baseline. Only once the readout reflects the learned output can
+the credit-DIRECTION A/B (fixed vs KP) be meaningfully tested. The mechanism (weights move, moat, no-transport) remains
+validated; the blocker is that the learned output is not class-selective at the readout.
+
 ## Status (per THE LAW — the negative names the next mechanism)
 - **gap#4 keystone accuracy = NOT achieved at ep300/hidden128** — the BDSP fixed-feedback credit doesn't produce
   accuracy-useful hidden-layer learning (== lesion). The mechanism/wiring/moat are all correct; the credit DIRECTION is the wall.
