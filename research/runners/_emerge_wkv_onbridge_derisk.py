@@ -70,7 +70,8 @@ def _build_channel_bridge(D, seed, self_nmda_w=8.0, dt=0.5, pop_k=1):
     return b, chan_groups, None, None
 
 
-def _build_plateau_channel_bridge(D, seed, pathway_w=3.0, pop_k=8, dt=1.0, center=8.0, slope=0.33, strength=80.0):
+def _build_plateau_channel_bridge(D, seed, pathway_w=3.0, pop_k=8, dt=1.0, center=8.0, slope=0.33, strength=80.0,
+                                  tau_decay_ms=80.0):
     """DENDRITIC GRADED-PLATEAU realization (the convergent build; the point-neuron-limit SURPASS): the WKV leaky state lives
     in a GRADED dendritic plateau CONDUCTANCE (`enable_graded_dendritic_plateau`, the validated protected sim/ edit) — a
     Mikulasch-Priesemann ANALOG read-out the point-neuron soma provably cannot be. Each channel = a plateau compartment fed by
@@ -94,20 +95,26 @@ def _build_plateau_channel_bridge(D, seed, pathway_w=3.0, pop_k=8, dt=1.0, cente
     cfg.enable_graded_dendritic_plateau = True
     cfg.graded_plateau_center = float(center); cfg.graded_plateau_slope = float(slope)
     cfg.graded_plateau_strength = float(strength)
-    cfg.graded_plateau_tau_decay_ms = 80.0; cfg.graded_plateau_tau_rise_ms = 2.0
+    cfg.graded_plateau_tau_decay_ms = float(tau_decay_ms); cfg.graded_plateau_tau_rise_ms = 2.0  # DECAY-MATCH to the SSM
     cfg.brain_regions = [
-        BrainRegion(name="inp", n_neurons=2 * D * pop_k, exc_fraction=1.0, internal_density=0.0,
+        BrainRegion(name="inp", n_neurons=2 * D * pop_k, exc_fraction=1.0, internal_density=0.05,
                     exc_weight_mean=1.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False),
-        BrainRegion(name="chan", n_neurons=2 * D, exc_fraction=1.0, internal_density=0.0,
+        BrainRegion(name="chan", n_neurons=2 * D, exc_fraction=1.0, internal_density=0.05,
                     exc_weight_mean=1.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False),
     ]
-    # DIAGONAL-block inp[c*pop_k:(c+1)*pop_k] -> chan[c], tagged coincidence_detector so the plateau reads c_w propto v_t
-    cfg.region_pathways = [RegionPathway(from_region="inp", to_region="chan", density=1.0, weight_mean=float(pathway_w),
-                                         weight_jitter=0.0, plastic=False, coincidence_detector=True)]
+    cfg.region_pathways = []
     rt = RuntimeState(); rt.actual_seed_used = seed
     b = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(), runtime_state=rt, gpu_config=GPUConfig())
     b._initialize_simulation_data()
     inp = np.asarray(b.region_manager.indices("inp")); chan = np.asarray(b.region_manager.indices("chan"))
+    # BLOCK-DIAGONAL coincidence pathway inp[c*pop_k:(c+1)*pop_k] -> chan[c] (each channel's plateau integrates ITS OWN v_t)
+    pre, post = [], []
+    for c in range(2 * D):
+        for i in inp[c * pop_k:(c + 1) * pop_k]:
+            pre.append(int(i)); post.append(int(chan[c]))
+    b.inject_explicit_wiring({"inp_to_chan_coinc": {"pre_indices": pre, "post_indices": post,
+                              "initial_weights": [float(pathway_w)] * len(pre), "plastic": False,
+                              "conn_type": "MIXED", "coincidence_detector": True}})
     inp_groups = [inp[c * pop_k:(c + 1) * pop_k] for c in range(2 * D)]
     chan_groups = [chan[c:c + 1] for c in range(2 * D)]
     return b, inp_groups, chan_groups, None
@@ -225,6 +232,8 @@ def main():
     ap.add_argument("--graded-gain-hi", dest="graded_gain_hi", type=float, default=2.5)   # -> graded population rate code
     ap.add_argument("--recur-integrator", dest="recur_integrator", action="store_true", help="LINE-ATTRACTOR: per-channel NMDA-recurrent population integrator (Wong-Wang alpha<1)")
     ap.add_argument("--kick-steps", dest="kick_steps", type=int, default=0, help="transient-kick: drive only the first K steps per token, then let the recurrence sustain")
+    ap.add_argument("--plateau-center", dest="plateau_center", type=float, default=8.0)
+    ap.add_argument("--graded-plateau", dest="graded_plateau", action="store_true", help="DENDRITIC GRADED PLATEAU: WKV leaky state in cp_conductance_g_graded_plateau (0.98 core fidelity, point-neuron limit surpassed)")
     ap.add_argument("--learn-recur", dest="learn_recur", action="store_true", help="EMERGENT: Hebbian-plastic recurrent weights self-organize the attractor during the drive")
     ap.add_argument("--tonic-bias", dest="tonic_bias", type=float, default=0.0, help="post-kick tonic current to keep the recurrent population near threshold (persistence)")
     ap.add_argument("--recur-w", dest="recur_w", type=float, default=0.35, help="recurrent NMDA self-excitation weight (alpha<1)")
@@ -269,6 +278,14 @@ def main():
                                                                     pop_k=args.pop_k, dt=_dt, nmda_tau_ms=_tau)
         print(f"[graded] SSM decay={decay:.4f} -> matched nmda_tau={_tau:.1f}ms (t_step={args.t_step}, dt={_dt})", flush=True)
         drive_groups = inp_groups                                    # drive the presynaptic input pool
+    elif getattr(args, "graded_plateau", False):
+        # DENDRITIC GRADED PLATEAU (the breakthrough: 0.98 core fidelity): the WKV leaky state lives in the graded plateau
+        # CONDUCTANCE. Drive the inp pool propto v_t -> coincidence drive c_w -> plateau integrates (decay-matched to the SSM).
+        _tau = float(-args.t_step * 1.0 / np.log(decay)) if 0 < decay < 1 else 80.0
+        b, inp_groups, chan_groups, snap = _build_plateau_channel_bridge(D, args.seed, pathway_w=args.self_nmda_w,
+                                                                         pop_k=args.pop_k, tau_decay_ms=_tau, center=getattr(args,"plateau_center",8.0))
+        drive_groups = inp_groups
+        print(f"[plateau] dendritic graded plateau: SSM decay={decay:.4f} -> matched plateau tau={_tau:.1f}ms, pop_k={args.pop_k}", flush=True)
     elif getattr(args, "recur_integrator", False):
         # LINE-ATTRACTOR: each channel = an NMDA-recurrent POPULATION integrator (Wong-Wang, alpha<1); drive propto v_t, read
         # the population mean rate. A recurrent population holds a graded value at higher fidelity than a single self-NMDA cell.
@@ -347,7 +364,14 @@ def main():
                     fired = fs[all_drive_idx] > 0
                     newly = fired & (first_spk == float(_T_STEP))   # record FIRST spike step only
                     first_spk[newly] = float(_step)
-            if _graded:
+            if getattr(args, "graded_plateau", False):
+                # DENDRITIC GRADED PLATEAU (0.98 core fidelity): read the graded plateau CONDUCTANCE directly (the
+                # Mikulasch-Priesemann analog value the point-neuron soma can't be) = the high-fidelity leaky WKV state.
+                gp = np.zeros(2 * D, np.float64)
+                gplat = np.asarray(to_host(b.cp_conductance_g_graded_plateau)).astype(np.float64)
+                np.add.at(gp, chan_of, gplat[read_idx])
+                rates.append(gp / gsize)
+            elif _graded:
                 # SpikeGPT-consistent GRADED STATE: read the STATE pool's slow NMDA conductance (charged FEEDFORWARD by the
                 # input pool's presynaptic spikes) = the exact linear leaky integral a_t=decay*a_{t-1}+input_t, held in a real
                 # postsynaptic conductance (not a spike-rate code, not a self-fired autapse). The f-I nonlinearity applies
