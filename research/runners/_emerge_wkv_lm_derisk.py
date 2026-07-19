@@ -37,6 +37,17 @@ from research.runners._emerge_reservoir_lm_context_depth_derisk import BUCKETS, 
 OUT = Path("research/findings/raw/_emerge_wkv_lm.json")
 
 
+def load_stories(path, max_stories, max_len=48):
+    """CONTIGUOUS multi-sentence passages (R4 open-prose test): each corpus line is a STORY -> tokenize the WHOLE story as
+    ONE sequence (NOT split into sentences), so deep-context (d>16) spans SENTENCE BOUNDARIES = genuine cross-sentence
+    long-range. Caps at max_len tokens."""
+    import re
+    txt = open(path, encoding="utf-8", errors="ignore").read(max_stories * max_len * 8)   # bounded read
+    toks = re.findall(r"[a-z']+", txt.lower())                       # ONE contiguous token stream (the corpus is 1 line)
+    stories = [toks[i:i + max_len] for i in range(0, min(len(toks), max_stories * max_len), max_len)]
+    return [s for s in stories if len(s) >= 8][:max_stories]         # contiguous max_len-token passages (cross-sentence)
+
+
 # ------------------------------------------------------------------ FAIR interpolated trigram (the KEY control) --------
 def fit_interp_trigram(tr_ids, V, held_ids):
     """Deleted-interpolation trigram: P(w|u,v) = l3 P3 + l2 P2 + l1 P1 + l0 (uniform), lambdas tuned on a held-out split
@@ -262,6 +273,8 @@ def main():
                          "on-bridge realization); GO => no per-neuron tau array is needed on the bridge.")
     ap.add_argument("--save-ssm", dest="save_ssm", type=str, default=None,
                     help="save the trained SSM weights to <path>_seed<N>.npz (for the on-bridge realization).")
+    ap.add_argument("--contiguous", action="store_true", help="CONTIGUOUS multi-sentence stories (R4 cross-sentence long-range test)")
+    ap.add_argument("--max-len", type=int, default=48, help="(--contiguous) max tokens per story")
     ap.add_argument("--json", type=str, default=str(OUT))
     args = ap.parse_args()
     import torch
@@ -269,7 +282,8 @@ def main():
 
     if not Path(args.corpus).exists():
         args.corpus = "data/corpus/tinystories.txt"
-    sents = load_sentences(args.corpus, args.n_sentences)
+    sents = (load_stories(args.corpus, args.n_sentences, max_len=args.max_len)
+             if getattr(args, "contiguous", False) else load_sentences(args.corpus, args.n_sentences))
     t0 = time.time(); per_seed = {}
     for seed in args.seeds:
         rng = np.random.default_rng(seed)
