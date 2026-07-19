@@ -229,6 +229,16 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   credit-direction A/B): make the class-pool firing INPUT-SELECTIVE — drive the output pools through the LEARNED
   hidden→output weights (not a uniform bias), or a differential/normalized readout.** Only then is the fixed-vs-KP A/B
   meaningful. Finding `2026-07-19-gap4-keystone-accuracy-NEGATIVE-at-scale-BDSP-credit-equals-lesion` (§DRIVE-DIAGNOSTIC).
+  **FINAL CHARACTERIZATION (2026-07-19):** the readout-fix (output-bias→100 + lr→0.2) SILENCED the output (firing 0.00,
+  dw hid→out 0.037 — no fire ⇒ no credit) → NO output-bias works (high swamps, low silences); the A/B confirmed held
+  INVARIANT to a 2000× weight range + every credit type. ⇒ **the on-bridge net does not propagate the class DISTINCTION
+  selectively through the forward path (input 0.04 → hidden/output bias-driven) → degenerate always-one-class readout.
+  No SINGLE lever fixes it.** THE FIX = coordinated FORWARD-PROPAGATION tuning (strengthen input→hidden→output forward
+  weights so the CLASS signal, not the bias, drives hidden+output selectively; step the biases down as weights grow;
+  confirm hidden fires INPUT-dependently before the output; or an input-differential readout) — the "width+drive tuning"
+  the runner's own verdict named. A focused multi-param next-cycle dive (mechanism/moat/no-transport validated; the
+  missing piece is a forward path carrying the class signal to a readable input-selective output). Localized precisely
+  across 3 diagnostic runs (drive sweep, readout-fix, A/B).
   The other 3 arms (fixed ep300, KP ep600,
   measB ep300) are **STILL RUNNING at 3.5h+** (100% CPU) — NOT crashed; a Monitor false-positive ("ALL COMPLETE" + 0-byte
   buffered logs) nearly made me record a fabricated crash, corrected by `ps` (silent-failure: verify the process, don't

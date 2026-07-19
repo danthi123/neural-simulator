@@ -56,6 +56,24 @@ always-one-class output, independent of ALL learning. **The fixed-vs-KP credit-D
 accuracy until the readout is fixed** (every arm reads 0.420 regardless). ⇒ the readout fix (input-selective readout,
 IN FLIGHT: output-bias 520→100 + bdsp-lr 0.03→0.2) is the sole gating requirement for the entire gap#4 keystone-accuracy line.
 
+## FINAL CHARACTERIZATION (2026-07-19) — the readout fix confirms: it's coordinated FORWARD-PROPAGATION, not one knob
+The readout-fix run (output-bias 520→100 + bdsp-lr 0.03→0.2) made the OUTPUT go SILENT (firing 0.00) → still degenerate,
+and dw hid→out collapsed to 0.037 (a silent output gets no BDSP credit — chicken-and-egg). ⇒ **there is NO output-bias
+that works: high swamps the learned signal, low silences the output.** Combined with the A/B (invariant to a 2000×
+weight range + every credit type) + the drive sweep (firing rises but held fixed), the precise picture is: **the on-bridge
+net does not propagate the class DISTINCTION selectively through the forward path** — input fires 0.04 (sparse), hidden
+0.07 (bias-driven, not input-driven), output 0.05 (bias-driven) → the output is bias-dominated → argmax is a constant
+always-one-class output (held 0.420) invariant to credit-type / weight-magnitude(2000×) / drive / output-bias. **No SINGLE
+lever fixes it** (output-bias, input-drive [already 750], credit-type, lr all tested → 0.420). ⇒ the fix is COORDINATED
+forward-propagation tuning: strengthen the input→hidden→output forward weights (init + lr) so the CLASS signal (not the
+bias) drives the hidden+output selectively, reduce the biases in step as the forward weights grow (or an
+input-differential readout that subtracts the bias baseline), and confirm the hidden layer fires INPUT-dependently before
+expecting the output to. This is the "width + drive tuning" the runner's own verdict named — a multi-parameter dive best
+done as a focused next investigation (the mechanism/moat/no-transport are validated; the missing piece is a forward path
+that carries the class signal to a readable, input-selective output). Only THEN is the credit-DIRECTION (fixed vs KP) test
+meaningful. This session localized it precisely across 3 diagnostic runs (drive sweep, readout-fix, A/B arms); the
+next cycle does the coordinated forward-propagation tuning.
+
 ## Status (per THE LAW — the negative names the next mechanism)
 - **gap#4 keystone accuracy = NOT achieved at ep300/hidden128** — the BDSP fixed-feedback credit doesn't produce
   accuracy-useful hidden-layer learning (== lesion). The mechanism/wiring/moat are all correct; the credit DIRECTION is the wall.
