@@ -118,6 +118,7 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
             self.ln = nn.LayerNorm(D)
             self.Wk = nn.Linear(D, D, bias=False); self.Wv = nn.Linear(D, D, bias=False)
             self.Wr = nn.Linear(D, D, bias=False); self.Wo = nn.Linear(D, D, bias=False)
+            self.Wo_sp = nn.Linear(2 * D, D, bias=False)   # spiking-state read-out over ON/OFF non-negative rate channels
             self.w = nn.Parameter(torch.zeros(D))     # log-decay (softplus -> positive decay rate)
             self.u = nn.Parameter(torch.zeros(D))     # current-token bonus
             self.head = nn.Linear(D, V)
@@ -135,9 +136,17 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                 # conductance/membrane leak -- NO exp(k) weighting, NO num/den normalization = the part hard on spikes),
                 # out = receptance-gated read. If GO, the spiking membrane leak realizes this state directly.
                 a = torch.zeros(B, D, device=x.device); outs = []
+                spiking = getattr(args, "spiking_state", False)
                 for t in range(T):
                     a = wdec * a + v[:, t]
-                    outs.append(r[:, t] * self.Wo(a))
+                    if spiking:
+                        # SPIKING-FAITHFUL read: firing rates are NON-NEGATIVE; encode the signed leaky state via ON/OFF
+                        # rate channels [relu(a), relu(-a)] (the two-population sign code a spiking region uses). If GO,
+                        # the on-bridge realization (firing-rate read of the region's slow conductance) preserves it.
+                        rate = torch.cat([torch.relu(a), torch.relu(-a)], -1)
+                        outs.append(r[:, t] * self.Wo_sp(rate))
+                    else:
+                        outs.append(r[:, t] * self.Wo(a))
                 return self.head(torch.stack(outs, 1))
             u = self.u
             a = torch.zeros(B, D, device=x.device); b = torch.zeros(B, D, device=x.device)
@@ -243,6 +252,9 @@ def main():
     ap.add_argument("--recurrence", choices=["wkv", "ssm"], default="wkv",
                     help="wkv = full RWKV linear-attention (num/den normalized); ssm = spiking-substrate-faithful "
                          "leaky-integrator (a_t=decay*a_{t-1}+v_t, no normalization = the Rung 2 spiking-port form).")
+    ap.add_argument("--spiking-state", dest="spiking_state", action="store_true",
+                    help="(ssm only) read the leaky state via NON-NEGATIVE ON/OFF firing-rate channels [relu(a),relu(-a)] "
+                         "= the spiking firing-rate constraint; GO => the on-bridge firing-rate read preserves deep context.")
     ap.add_argument("--json", type=str, default=str(OUT))
     args = ap.parse_args()
     import torch
