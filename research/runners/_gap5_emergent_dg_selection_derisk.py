@@ -29,10 +29,11 @@ cp, _ = get_backend()
 OUT = _REPO / "research" / "findings" / "raw" / "_gap5_emergent_dg_selection.json"
 
 
-def _build_bridge(seed, n_ca3, dg_ffi_weight, ca3_fb_inhib, mossy_weight, mossy_density, n_lang=384, n_dg=300):
+def _build_bridge(seed, n_ca3, dg_ffi_weight, ca3_fb_inhib, mossy_weight, mossy_density, n_lang=384, n_dg=300,
+                  ca3_ff_inhib=None):
     b = _build(seed, n_lang=n_lang, n_dg=n_dg, n_ca3=n_ca3, ca3_density=0.05, ca3w=1.5, coincidence=False,
                two_comp=False, train=False, ca3_fb_inhib=ca3_fb_inhib, dg_ffi_weight=dg_ffi_weight,
-               mossy_weight=mossy_weight, mossy_density=mossy_density, enable_ou=False)
+               mossy_weight=mossy_weight, mossy_density=mossy_density, enable_ou=False, ca3_ff_inhib=ca3_ff_inhib)
     b.core_config.enable_hebbian_learning = False   # read pass: no plasticity (the feedforward always conducts)
     return b
 
@@ -73,8 +74,9 @@ def _cos(u, v):
     return float(u @ v / (nu * nv)) if nu > 1e-9 and nv > 1e-9 else 0.0
 
 
-def run(seed, n_ca3=400, n_inputs=4, dg_ffi_weight=6.0, ca3_fb_inhib=20.0, mossy_weight=8.0, mossy_density=0.10):
-    b = _build_bridge(seed, n_ca3, dg_ffi_weight, ca3_fb_inhib, mossy_weight, mossy_density)
+def run(seed, n_ca3=400, n_inputs=4, dg_ffi_weight=6.0, ca3_fb_inhib=20.0, mossy_weight=8.0, mossy_density=0.10,
+        ca3_ff_inhib=None):
+    b = _build_bridge(seed, n_ca3, dg_ffi_weight, ca3_fb_inhib, mossy_weight, mossy_density, ca3_ff_inhib=ca3_ff_inhib)
     rm = b.region_manager
     lang = list(rm.indices("language_input")); ca3_arr = np.asarray(list(rm.indices("ca3")), dtype=np.int64)
     dg_arr = np.asarray(list(rm.indices("dg")), dtype=np.int64)
@@ -97,7 +99,7 @@ def run(seed, n_ca3=400, n_inputs=4, dg_ffi_weight=6.0, ca3_fb_inhib=20.0, mossy
     perm = np.random.default_rng(seed + 555).permutation(len(lang))[:len(pats[0])]           # a scrambled input
     A_perm, r_perm, _ = _select(b, lang, ca3_arr, dg_arr, perm)
     perm_cos = _cos(rates[0], r_perm)                                                         # different from input 0 => input-driven
-    bl = _build_bridge(seed, n_ca3, dg_ffi_weight, ca3_fb_inhib, 0.0, mossy_density)          # mossy-LESION (dg->ca3 weight 0)
+    bl = _build_bridge(seed, n_ca3, dg_ffi_weight, ca3_fb_inhib, 0.0, mossy_density, ca3_ff_inhib=ca3_ff_inhib)  # mossy-LESION (dg->ca3 weight 0)
     rm2 = bl.region_manager
     A_les, _, _ = _select(bl, list(rm2.indices("language_input")),
                           np.asarray(list(rm2.indices("ca3")), dtype=np.int64),
@@ -114,13 +116,17 @@ def main():
     ap.add_argument("--n-ca3", type=int, default=400)
     ap.add_argument("--dg-ffi", type=float, default=6.0)
     ap.add_argument("--ca3-fb", type=float, default=20.0)
+    ap.add_argument("--ca3-ff", dest="ca3_ff", type=float, default=None,
+                    help="E%-max FEEDFORWARD ca3 inhibition (dg-afferent-driven basket) -> robust sparse selection across "
+                         "inputs (emergent-DG fragility fix). None (default) = feedback-only (byte-identical).")
     ap.add_argument("--mossy-w", type=float, default=8.0)
     ap.add_argument("--out", default=str(OUT))
     a = ap.parse_args()
     t0 = time.time(); err = None; per = []
     try:
         for s in a.seeds:
-            r = run(s, n_ca3=a.n_ca3, dg_ffi_weight=a.dg_ffi, ca3_fb_inhib=a.ca3_fb, mossy_weight=a.mossy_w)
+            r = run(s, n_ca3=a.n_ca3, dg_ffi_weight=a.dg_ffi, ca3_fb_inhib=a.ca3_fb, mossy_weight=a.mossy_w,
+                    ca3_ff_inhib=a.ca3_ff)
             per.append(r)
             print(f"  [seed {s}] dg_sp {r['dg_sparsity']:.3f} | ca3 size {r['mean_size']:.1f} sparsity {r['ca3_sparsity']:.3f} "
                   f"| stability {r['stability']:.2f} | sep_cos {r['sep_cos']:.2f} sep_jac {r['sep_jac']:.2f} || "

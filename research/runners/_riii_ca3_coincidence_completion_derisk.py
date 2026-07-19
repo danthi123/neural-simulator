@@ -29,7 +29,7 @@ def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0,
            coincidence=True, k_thresh=18.0, plateau_strength=120.0, weighted=True, two_comp=False, train=True,
            hebb_max=None, mg=None, apical_R=None, apical_gc=None, hebb_lr=None, hebb_decay=None, hebb_sym=False,
            hebb_rate=False, coact_decay=None, coact_thresh=None, ca3_fb_inhib=None, ca3_fb_n=None, mossy_weight=None,
-           mossy_density=None, dg_ffi_weight=None,
+           mossy_density=None, dg_ffi_weight=None, ca3_ff_inhib=None, ca3_ff_n=None,
            ca3_to_ca1_density=0.30, ca1_fb_inhib=None, ca1_fb_n=None, ca1_ff_inhib=None,
            nmda_recurrent=False, nmda_tau=100.0, nmda_ratio=1.0, enable_ou=True,
            plateau_self_regen=0.0, plateau_v_hold=-35.0, apical_kir_g=0.0, apical_gc_read=None):
@@ -76,6 +76,29 @@ def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0,
                                       density=0.40, weight_mean=5.0, weight_jitter=0.2, plastic=False))
         pathways.append(RegionPathway(from_region="ca3_pv_basket", to_region="ca3",
                                       density=1.0, weight_mean=float(ca3_fb_inhib), weight_jitter=0.2, plastic=False))
+    if ca3_ff_inhib is not None:
+        # E%-max FEEDFORWARD inhibition for the CA3 SELECTION (emergent-DG robustness fix, 2026-07-18; de
+        # Almeida-Idiart-Lisman 2009 / Pouille-Scanziani 2001). The FEEDBACK ca3_fb_inhib above is a knife-edge (its
+        # sparsity is the loop GAIN, a fixed global weight that cannot self-adjust to per-input drive -> some inputs
+        # amplify, some don't = the emergent-DG fragility). The FIX = FEEDFORWARD: drive a ca3 basket from the DG
+        # AFFERENT volley (the mossy source), NOT ca3 output -> the CA3 firing THRESHOLD rises in proportion to the
+        # total DG drive -> a ~CONSTANT FRACTION of CA3 fires across a >10x input-strength range (divisive
+        # normalization, threshold-set-by-input) -> a RELIABLE sparse SEPARATED assembly for EVERY input. Mirrors the
+        # ca1_ff_inhib block; the CA3 afferent is DG. Additive/default-None => byte-identical (the closed completion
+        # never sets it). Runner append; NO sim/ edit.
+        from sim.regions import BrainRegion, RegionPathway
+        from sim.enums import NeuronType
+        _nbf3 = int(ca3_ff_n) if ca3_ff_n is not None else max(8, int(0.25 * n_ca3))
+        regions.append(BrainRegion(
+            name="ca3_ff_basket", n_neurons=_nbf3, exc_fraction=0.0, internal_density=0.0,
+            exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False,
+            izh_neuron_type=NeuronType.IZH2007_FS_CORTICAL_INTERNEURON.name))
+        pathways.append(RegionPathway(from_region="dg", to_region="ca3_ff_basket",    # FEEDFORWARD: the DG/mossy afferent volley drives the basket (sets HOW MANY CA3 fire)
+                                      density=0.40, weight_mean=5.0, weight_jitter=0.2, plastic=False))
+        pathways.append(RegionPathway(from_region="ca3", to_region="ca3_ff_basket",   # WEAK FEEDBACK arm = E%-max within-cycle competition (selects WHICH fire)
+                                      density=0.40, weight_mean=2.0, weight_jitter=0.2, plastic=False))
+        pathways.append(RegionPathway(from_region="ca3_ff_basket", to_region="ca3",
+                                      density=1.0, weight_mean=float(ca3_ff_inhib), weight_jitter=0.2, plastic=False))
     if ca1_fb_inhib is not None:
         # CYCLE-1086 lever: CA1 feedback inhibition -> SPARSE ca1 firing during SWR replay. The consolidation is
         # assembly-specific ONLY when ca1 fires sparsely (broad ca1 firing potentiates the Schaffer non-specifically);
