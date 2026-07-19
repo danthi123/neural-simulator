@@ -77,8 +77,35 @@ def fit_interp_trigram(tr_ids, V, held_ids):
     return prob, best
 
 
+# --------------------------------------------------- EMERGENT input: PPMI co-occurrence codes (Rung 1b, gap#1<->gap#4) --
+def build_ppmi_codes(tr_ids, V, d, window=5):
+    """UNSUPERVISED stream-cortex-style codes: a windowed co-occurrence matrix over the corpus -> PPMI (log + positive
+    threshold, the CYCLE-88 local-normalization) -> SVD to d dims -> unit-normalized per-word code. This is the emergent
+    representation (learned from the stream, NOT by the LM) that Rung 1b feeds (frozen) into the WKV -- the convergence of
+    gap#1 (open generation) with the gap#4-pivot unsupervised cortex. NO LM gradient touches it."""
+    C = np.zeros((V, V), dtype=np.float64)
+    for ids in tr_ids:
+        n = len(ids)
+        for i in range(n):
+            lo, hi = max(0, i - window), min(n, i + window + 1)
+            for j in range(lo, hi):
+                if i != j:
+                    C[ids[i], ids[j]] += 1.0
+    tot = C.sum() + 1e-12; rs = C.sum(1); cs = C.sum(0)
+    P = C / tot; Pw = rs / tot; Pc = cs / tot
+    pmi = np.log((P + 1e-12) / (np.outer(Pw, Pc) + 1e-12))
+    ppmi = np.maximum(pmi, 0.0)                                     # positive PMI (local normalization)
+    U, S, _ = np.linalg.svd(ppmi, full_matrices=False)
+    k = min(d, U.shape[1])
+    codes = U[:, :k] * np.sqrt(S[:k] + 1e-12)
+    if k < d:                                                       # pad if d>rank
+        codes = np.concatenate([codes, np.zeros((V, d - k))], 1)
+    codes = codes / (np.linalg.norm(codes, axis=1, keepdims=True) + 1e-12)
+    return codes.astype(np.float32)                                # [V, d]
+
+
 # ------------------------------------------------------------------ the WKV LM (torch) --------------------------------
-def build_and_train_wkv(tr_ids, V, seed, args, device):
+def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
     import torch, torch.nn as nn
     torch.manual_seed(seed)
     D = args.d_model
@@ -129,10 +156,13 @@ def build_and_train_wkv(tr_ids, V, seed, args, device):
         return torch.tensor(X, device=device), torch.tensor(msk, device=device)
 
     net = WKV(V, D).to(device)
-    if getattr(args, "freeze_emb", False):
-        # Rung 1b de-risk: FREEZE the input embedding at random init (only WKV+head learn) => the mechanism must capture
-        # deep context WITHOUT a learned input = the emergent-pooler-codes regime (codes learned by the unsupervised
-        # cortex, FROZEN for the LM). GO here => the WKV recurrence does not depend on an LM-learned embedding.
+    if init_emb is not None:
+        with torch.no_grad():                                       # Rung 1b EMERGENT input: seed the emb with PPMI codes
+            net.emb.weight.copy_(torch.tensor(init_emb, device=device))
+    if getattr(args, "freeze_emb", False) or init_emb is not None:
+        # FREEZE the input (only WKV+head learn) => the mechanism must capture deep context WITHOUT an LM-learned input =
+        # the emergent-codes regime (codes learned by the unsupervised cortex, FROZEN for the LM). GO => the WKV
+        # recurrence does not depend on an LM-learned embedding; PPMI>random => the emergent structure HELPS.
         net.emb.weight.requires_grad = False
     params = [p for p in net.parameters() if p.requires_grad]
     opt = torch.optim.Adam(params, lr=args.lr, weight_decay=args.weight_decay)
@@ -196,6 +226,10 @@ def main():
     ap.add_argument("--freeze-emb", dest="freeze_emb", action="store_true",
                     help="Rung 1b de-risk: freeze the input embedding at random init (only WKV+head learn) = the frozen "
                          "emergent-code regime; GO => the recurrence does not need an LM-learned input.")
+    ap.add_argument("--input", choices=["learned", "ppmi"], default="learned",
+                    help="learned = LM-trained embedding (Rung 1a); ppmi = EMERGENT unsupervised PPMI co-occurrence codes, "
+                         "frozen (Rung 1b, the gap#1<->gap#4 convergence).")
+    ap.add_argument("--ppmi-window", type=int, default=5)
     ap.add_argument("--json", type=str, default=str(OUT))
     args = ap.parse_args()
     import torch
@@ -217,7 +251,8 @@ def main():
         P_bi = fit_bigram(tr_ids, V)
         tri, lambdas = fit_interp_trigram(tr_ids, V, dev_ids)
 
-        net, WKV_cls = build_and_train_wkv(tr_ids, V, seed, args, device)
+        init_emb = build_ppmi_codes(tr_ids, V, args.d_model, args.ppmi_window) if args.input == "ppmi" else None
+        net, WKV_cls = build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=init_emb)
         wkv_ce, cnt = eval_perdepth(net, WKV_cls, ev_ids, V, device, seed=seed)
         wkv_perm, _ = eval_perdepth(net, WKV_cls, ev_ids, V, device, permute=True, seed=seed)
         wkv_mless, _ = eval_perdepth(net, WKV_cls, ev_ids, V, device, memoryless=True, seed=seed)
