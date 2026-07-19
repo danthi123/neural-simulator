@@ -163,6 +163,22 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 - **🏁 SESSION 2026-07-19 SUMMARY (headline: gap#5 (i) SWR readout CLOSED) + the CLEAR NEXT STEPS.** A long, productive
   session. Achievements + resume points, most-recent-first:
+  -1. **gap#4 ROOT-CAUSED + DECISIVE PIVOT to UNSUPERVISED (2026-07-19, 4-lens diagnosis `wf_8de0688b-dcf`).** The mechanism
+     pipeline-validates (927× directed hidden credit) but held-out stays at the FLOOR on a clean task (cleanxor: oracle
+     0.994, floor 0.514). ROOT CAUSE (Lens 3): the BDSP hidden update collapses to a **rank-1 linear-discriminant learner**
+     and cleanxor's discriminant is identically zero (2-class scalar error → same scalar×frozen d_j to every unit; XOR info
+     is 2nd-order) + a **saturated hidden gate** (hidden_bias=520 kills the f'-analog); the 927× movement is orthogonal →
+     wrong-sign-at-floor. LITERATURE (Lens 2): the field reaches accuracy ONLY with LEARNED feedback (KP), but that's
+     necessary-NOT-sufficient here (rank-1). **This was a RE-DERIVATION** (Lens 1: record already said "commit to the
+     unsupervised path"; drift #12). **DECISIVE 4-lens CALL: PIVOT the mission-primary to the UNSUPERVISED stream cortex**
+     (deep-representation engine, already validated EMERGE-30..55); supervised local-credit = cheap decision-gate only, then
+     close either way. Gates IN FLIGHT: the FA-direction sweep (KP/epochs/width/lr/gain — predicted all-at-floor per Lens 3)
+     + the CORRECTLY-LEVERED desaturation probes (hidden-bias 260/160/90 — the root-cause test the sweep omits). GATE:
+     held-out > floor AND wrong-sign < chance. `2026-07-19-gap4-directed-credit-not-accuracy-ROOT-CAUSED-rank1-collapse-and-the-decisive-pivot-to-unsupervised`.
+     **PIVOT next-build determination IN FLIGHT:** gap#1 open-generation research gate `wf_dd786412-527` (the single
+     genuinely-OPEN capability; emergent spiking producer EMERGE-59..74 renders a BOUNDED inventory on spikes, R4 open-prose
+     is the deferred wall). Mission-bar note: the D3 "who-was-doing-it-before" stranding is ALREADY de-stranded into
+     `brain_chat_tui.py` (the CLAUDE.md "previously unreachable" note is stale).
   0. **gap#4 keystone — MECHANISM PIPELINE-VALIDATED (corrects item 4b's "field-hard" verdict), definitive accuracy run
      IN FLIGHT.** Ran the board's named gap#4 action; the missing knob was **`--soma-g>0`** (apical→soma electrotonic
      coupling — absent → default 0 → apical raises P but not measured B → credit≈lesion = the BOUNDARY item 4b hit). WITH
