@@ -177,6 +177,11 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   BEAT + multi-attr compose + apical-basal credit at once.** OR (emergence-bar / north-star option, since the CAPABILITY is
   demonstrated): reachability (wire the validated WKV generation into a talkable console) / the emergent stream-cortex. All 5
   gaps mechanism-closed; gap#1's capability demonstrated. See the finding's "de-risk #5 + THE DECISIVE CONNECTION".
+  **CONCRETE convergent build (machinery ALREADY EXISTS): the dendritic GRADED-PLATEAU readout — `research/runners/`
+  `_dendrite_stage1_onbridge_graded_plateau.py` + `_dendrite_deriskA_graded_plateau_readout.py` + `sim/dendritic_plasticity.py`
+  (Urbanczik-Senn) — holds a graded value in an analog dendritic compartment (the point-neuron-limit surpass). NEXT DE-RISK:
+  realize the WKV leaky state in a two-compartment dendritic graded plateau, measure corr-vs-analog (target >0.8, vs the ~0.55
+  point-neuron ceiling) + deep-NLL vs the fair trigram. This is the concrete first step of the convergent dendritic arc.**
 - **🎉🏁 SESSION 2026-07-19 (fully-spiking WKV robust BEAT ACHIEVED at the architecture level — 6-SEED GO): acting on the
   research-gate reframe (SpikeGPT keeps the WKV state GRADED; the fully-spiking bar is spiked I/O + a graded LOCAL state), the
   additive `--spike-output` mode (graded state + SPIKE-CODED output y_t via straight-through, trained end-to-end) ROBUSTLY BEATS
