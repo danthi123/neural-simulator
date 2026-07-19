@@ -80,6 +80,7 @@ def main():
     ap.add_argument("--n-eval", type=int, default=200)              # SMALL (bridge stepping is slow)
     ap.add_argument("--drive-scale", type=float, default=1200.0)    # v_t -> external current pA
     ap.add_argument("--self-nmda-w", dest="self_nmda_w", type=float, default=8.0)   # diagonal self-NMDA autapse weight
+    ap.add_argument("--mlp-readout", dest="mlp_readout", action="store_true")
     ap.add_argument("--n-fit", dest="n_fit", type=int, default=600)   # train sentences for the on-bridge read-out re-fit
     ap.add_argument("--exact-state", dest="exact_state", action="store_true")
     ap.add_argument("--pop-k", dest="pop_k", type=int, default=1)
@@ -201,24 +202,47 @@ def main():
     nf = Xtr.shape[1]                                                 # 3D
     mean = Xtr.mean(0); std = Xtr.std(0) + 1e-6
     Xn = (Xtr - mean) / std
-    Z = np.concatenate([Xn, np.ones((len(Xn), 1))], 1)               # [n, 3D+1]
-    ZtOH = np.zeros((V, nf + 1)); np.add.at(ZtOH, Ytr, Z)
-    Wd = np.linalg.solve(Z.T @ Z + 5.0 * np.eye(nf + 1), ZtOH.T)     # ridge read-out [3D+1, V]
-    # temperature calib on a subsample
-    lg = Z[:20000] @ Wd; ys = Ytr[:20000]
-    def _ce_T(T):
-        z = lg / T; z = z - z.max(1, keepdims=True); e = np.exp(z); p = e / e.sum(1, keepdims=True)
-        return float(-np.log(p[np.arange(len(ys)), ys] + 1e-12).mean())
-    Temp = min([(_ce_T(T), T) for T in (0.5, 1, 2, 4, 8, 16)])[1]
-    print(f"[refit] fitted read-out on {len(Xtr)} on-bridge state->next-token pairs (T={Temp}); fit-elapsed {time.time()-t0:.0f}s", flush=True)
+    if getattr(args, "mlp_readout", False):
+        # NONLINEAR (MLP) read-out on the on-bridge states: the --exact-state test showed a LINEAR read can't match the
+        # jointly-trained WKV read; a small MLP is the obvious next-method (reservoir-computing with a nonlinear read).
+        import torch, torch.nn as nn
+        torch.manual_seed(args.seed)
+        Xt = torch.tensor(Xn, dtype=torch.float32); Yt = torch.tensor(Ytr)
+        mlp = nn.Sequential(nn.Linear(nf, 256), nn.GELU(), nn.Linear(256, V))
+        opt = torch.optim.Adam(mlp.parameters(), lr=2e-3, weight_decay=1e-4); lf = nn.CrossEntropyLoss()
+        for _ in range(30):
+            perm = torch.randperm(len(Xt))
+            for i in range(0, len(Xt), 256):
+                b_ = perm[i:i+256]; opt.zero_grad(); lf(mlp(Xt[b_]), Yt[b_]).backward(); opt.step()
+        _mlp = mlp
+        print(f"[refit-mlp] trained MLP read-out on {len(Xtr)} on-bridge states (nonlinear); fit-elapsed {time.time()-t0:.0f}s", flush=True)
+        Wd = None; Temp = 1.0
+    else:
+        Z = np.concatenate([Xn, np.ones((len(Xn), 1))], 1)               # [n, 3D+1]
+        ZtOH = np.zeros((V, nf + 1)); np.add.at(ZtOH, Ytr, Z)
+        Wd = np.linalg.solve(Z.T @ Z + 5.0 * np.eye(nf + 1), ZtOH.T)     # ridge read-out [3D+1, V]
+        _mlp = None
+    if _mlp is None:                                                # temperature calib (ridge only)
+        lg = Z[:20000] @ Wd; ys = Ytr[:20000]
+        def _ce_T(T):
+            z = lg / T; z = z - z.max(1, keepdims=True); e = np.exp(z); p = e / e.sum(1, keepdims=True)
+            return float(-np.log(p[np.arange(len(ys)), ys] + 1e-12).mean())
+        Temp = min([(_ce_T(T), T) for T in (0.5, 1, 2, 4, 8, 16)])[1]
+    print(f"[refit] fitted {'MLP' if _mlp is not None else 'ridge'} read-out on {len(Xtr)} on-bridge states (T={Temp}); fit-elapsed {time.time()-t0:.0f}s", flush=True)
 
     ce = defaultdict(float); bce = defaultdict(float); tce = defaultdict(float); cnt = defaultdict(int)
     for si, ids in enumerate(ev_ids):
         if len(ids) < 2: continue
         rates = onbridge_states(ids)                                 # [T, 2D]
         for t in range(len(ids) - 1):
-            x = np.concatenate([(_feat(rates[t], ids[t]) - mean) / std, [1.0]])
-            logits = (x @ Wd) / Temp
+            if _mlp is not None:
+                import torch
+                xf = ((_feat(rates[t], ids[t]) - mean) / std).astype(np.float32)
+                with torch.no_grad():
+                    logits = _mlp(torch.tensor(xf)).numpy()
+            else:
+                x = np.concatenate([(_feat(rates[t], ids[t]) - mean) / std, [1.0]])
+                logits = (x @ Wd) / Temp
             logits = logits - logits.max(); p = np.exp(logits); p = p / p.sum()
             d = t + 1; bkt = _bucket(d)
             ce[bkt] += -math.log(max(p[ids[t+1]], 1e-12))
