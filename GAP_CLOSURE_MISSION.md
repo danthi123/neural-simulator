@@ -161,6 +161,18 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
+- **🏁 SESSION 2026-07-19 (fully-spiking WKV — FINAL, research-gate REFRAME): the ~0.55 state-fidelity floor is SELF-IMPOSED.**
+  A research gate (SpikeGPT paper, verified by 2 agents) established: SpikeGPT keeps the WKV state as a REAL-VALUED FP32 float
+  (only I/O is spike-coded); biology holds integrator state in GRADED slow conductances (NMDA plateaus, Wang-2002/Seung-Goldman
+  attractors). So "state = spike firing-rate" is stricter than the SOTA spiking LM AND biology, and is the SOLE cause of the
+  floor. EIGHT levers tried verify-first to push PARITY→robust-BEAT (co-adapt/population/read-window/conductance-read/latency/
+  scale/feedforward-graded-conductance/decay-match) — ALL characterized, none reach a robust BEAT; the feedforward graded-
+  conductance (`--graded-charge`) is an HONEST NEGATIVE (spike-charging a conductance is lossy: corr flat 0.10 across ff-weight/
+  drive/decay/population, WORSE than self-NMDA's 0.55). ⇒ the PARITY result + the reframe are the honest deliverables; the robust
+  BEAT rides the ONE unbuilt path = **SpikeGPT's method: keep the state graded/differentiable, spike-code ONLY the output y_t,
+  train END-TO-END with surrogate-BPTT** (project has `sim/surrogate_grad.py` + `bptt_snn_gpu.py`) — the neural-integrator deep
+  frontier, a substantial arc, NOT a declared wall. Default path byte-preserved; NO `sim/` edit. NEXT-ARC de-risk: an output-
+  spike-coded WKV at the rate level (does it still beat the trigram?), then the graded-state on-bridge port. `2026-07-19-gap1-WKV-...`.
 - **🏁 SESSION 2026-07-19 (fully-spiking on-bridge WKV — COMPLETE cheap-lever map, honest verdict): the WKV realized on
   REAL Izhikevich spikes (diagonal self-NMDA autapse = a leaky integral) reaches PARITY with the fair interpolated trigram
   at deep context — a strong positive no fading reservoir achieved — via reservoir-computing + nonlinear MLP read +
