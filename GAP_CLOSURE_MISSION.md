@@ -172,7 +172,13 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   sweep fixes it). ⇒ **the clean fix is END-TO-END co-adaptation: train the WKV THROUGH the substrate's actual transfer
   (surrogate-BPTT-through-the-bridge), so the read + input map co-adapt to the plateau — which CONVERGES with gap#4's deep-credit /
   learn-through-the-spiking-substrate lever** (the project has `sim/surrogate_grad.py` + `bptt_snn_gpu.py` + the BDSP on-bridge work).
-  This is a genuine DEEP arc (substantial), NOT a one-step clean-up. The self-NMDA PARITY (+0.017) remains the best on-substrate WKV
+  **MECHANISM-LEVEL PINPOINT (this session's final refinement): the bound is NOT the plateau's sigmoid transfer — `--plateau-surrogate`
+  (co-adapt the WKV to the plateau's sigmoid) STILL beats the trigram +0.25/+0.34 GO. The bound is the SPIKING INPUT-DELIVERY NOISE
+  (c_w ∝ inp firing ∝ relu(v)) COMPOUNDING through the leaky recurrence — and co-adapting to that noise via a surrogate DEGRADES the
+  WKV (`--state-noise` went negative), so it needs the WKV to learn a noise-robust recurrence tuned to the ACTUAL per-step substrate
+  noise = surrogate-BPTT THROUGH the real bridge = gap#4's learn-through-the-spiking-substrate lever, exactly.** So the on-substrate
+  robust WKV BEAT and gap#4's deep-credit lever are the SAME next arc. This is a genuine DEEP arc (substantial), NOT a one-step clean-up.
+  The self-NMDA PARITY (+0.017) remains the best on-substrate WKV
   result; the DEMONSTRATED capability (architecture-level 6-seed robust BEAT + generates prose, CI) is the solid deliverable and is
   UNAFFECTED. ⇒ NEXT: either (A) the end-to-end substrate co-adaptation deep arc (= gap#4 territory, unlocks the on-substrate BEAT +
   multi-attr compose + apical-basal credit), OR (B) the NORTH STAR — wire the DEMONSTRATED WKV generation into a talkable console
