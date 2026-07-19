@@ -161,7 +161,20 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
-- **⚠️ EXACT NEXT ACTION (2026-07-19, gap#1 — the DENDRITIC PLATEAU is a real MECHANISM win but does NOT yet yield the full-WKV BEAT; verify-first corrected):**
+- **🎯 EXACT NEXT ACTION (2026-07-19, gap#1 — the OPPONENCY WALL is BYPASSABLE; the on-substrate BEAT path is now WELL-SCOPED):**
+  Decisive progress: the on-substrate robust WKV BEAT went from "deep opponency-wall frontier" to a well-scoped 3-piece path,
+  2 of 3 VALIDATED: (1) **non-negative-state WKV** (`--nonneg-state`, a=relu(decay*a+v)) still BEATS the fair trigram +0.48/+0.41
+  GO at V=1000/d128 — a signed state is NOT needed ✓; (2) the **dendritic plateau** holds a non-negative value at **corr 0.98** ✓
+  (no ON/OFF, no opponency); (3) THE ONE REMAINING PIECE — the INPUT v is still signed and a conductance-charging plateau can only
+  ADD+decay (realizes integral of relu(v), not relu(decay*a+v)) → needs a **dendritic PUSH-PULL input** (excitation charges the
+  plateau for +v, inhibition/shunt on the SAME compartment decreases it for -v — the common-mode subtraction happens IN the analog
+  dendrite before any rate read, per Mikulasch-Priesemann). NEXT DE-RISK: train a `--nonneg-state` SSM (save), build a SINGLE-plateau
+  (no ON/OFF) port driven push-pull (coincidence exc for relu(+v) + an inhibitory/shunt drive for relu(-v) to discharge the plateau),
+  read `cp_conductance_g_graded_plateau`, measure corr-vs-nonneg-analog (target >0.8) + the WKV deep-NLL vs the fair trigram, 6-seed.
+  A research gate (`wj4jyehvl`) is ranking the push-pull vs 3 alternatives (bidirectional Ih/KIR current, divisive-normalized pair,
+  the reframe itself). ⇒ the on-substrate robust BEAT is a well-scoped ~1-2 de-risk path, NOT a wall. All 5 gaps mechanism-closed;
+  gap#1 capability demonstrated (arch-level 6-seed + prose). See the finding's "🎯 THE REFRAME VALIDATED".
+- **⚠️ (superseded) gap#1 — the DENDRITIC PLATEAU is a real MECHANISM win but does NOT yet yield the full-WKV BEAT; verify-first corrected:**
   The fully-spiking-CONSISTENT open generation is DONE + DEMONSTRATED (SpikeGPT-faithful architecture, 6-seed robust BEAT +
   generates prose + CI) — the mission-primary CAPABILITY is met. The on-substrate high-fidelity graded state (the deep
   residual) is PARTLY advanced: the **dendritic GRADED PLATEAU** (`enable_graded_dendritic_plateau`; `--graded-plateau` in
