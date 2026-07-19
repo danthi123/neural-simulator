@@ -47,6 +47,15 @@ normalized readout that subtracts the common bias-driven baseline. Only once the
 the credit-DIRECTION A/B (fixed vs KP) be meaningfully tested. The mechanism (weights move, moat, no-transport) remains
 validated; the blocker is that the learned output is not class-selective at the readout.
 
+## A/B ARMS CONFIRM (2026-07-19) — held-out is INVARIANT across a ~2000× weight-change range AND every credit type
+The remaining A/B arms finished (KP ep600 still running): **fixed ep300** → BDSP held 0.420 == lesion (dw in→hid 776 vs 0);
+**measured-B ep300** → BDSP held **0.420 == lesion even with dw in→hid 141,649** (vs lesion 212). ⇒ across KP / fixed /
+measured-B credit AND a ~2000× range of weight-change magnitude (dw in→hid 65 → 141,649) AND drive (bias 520-1600), the
+held-out is ALWAYS 0.420 == lesion. **This DEFINITIVELY confirms the degenerate readout** — held 0.420 is a fixed
+always-one-class output, independent of ALL learning. **The fixed-vs-KP credit-DIRECTION question is UNANSWERABLE via
+accuracy until the readout is fixed** (every arm reads 0.420 regardless). ⇒ the readout fix (input-selective readout,
+IN FLIGHT: output-bias 520→100 + bdsp-lr 0.03→0.2) is the sole gating requirement for the entire gap#4 keystone-accuracy line.
+
 ## Status (per THE LAW — the negative names the next mechanism)
 - **gap#4 keystone accuracy = NOT achieved at ep300/hidden128** — the BDSP fixed-feedback credit doesn't produce
   accuracy-useful hidden-layer learning (== lesion). The mechanism/wiring/moat are all correct; the credit DIRECTION is the wall.
