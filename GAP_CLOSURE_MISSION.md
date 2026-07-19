@@ -216,11 +216,17 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   feed these separated assemblies to the SWR → does the completion become distinct → SWR specificity closed? Findings
   `2026-07-19-gap5-emergent-DG-{ROOT-CAUSE-...,SELECTION-de-risked-GO-6seed-mossy-detonator-...}`. NEXT (GPU): (a) one-shot
   BTSP-store the selected assembly → self-sustain + complete; (b) feed selected assemblies to SWR → test specificity.
-  (3) **gap#4 keystone accuracy — 4 CPU-bound arms IN FLIGHT** (`_d1_onbridge_learn_to_accuracy --microcircuit`, emerge1,
-  h128, seed 42, ~50-60 min each): graded+KP ep300 (→d1_kp_accuracy.log), graded+fixed ep300 (→d1_fixed_ep300.log),
-  graded+KP ep600 (→d1_kp_ep600.log), measured-B+KP ep300 (→d1_measB_kp_ep300.log). Verdicts pending; if any clears the
-  0.75 bar → 6-seed + anti-cheats → gap#4 accuracy milestone. **The gap#4↔#5 UNIFICATION (one-shot plateau-gated recurrent
-  potentiation) is now the shared keystone for BOTH gap#4 (credit) AND gap#5-ii (emergent attractor).**
+  (3) **gap#4 keystone accuracy — NEGATIVE at scale + 3 arms CRASHED (2026-07-19).** The 1 arm that finished (graded+KP
+  ep300): **BDSP held-out 0.420 == LESION 0.420 == wrong-sign 0.420, all < chance 0.549 (GO=false)** — the mechanism is
+  validated (weights move dw 1973, moat holds, no transport) but the BDSP credit produces NO accuracy gain over the lesion
+  = the credit-DIRECTION wall (D2/D3: graded fixes moat, not direction). The other 3 arms (fixed ep300, KP ep600, measB)
+  **CRASHED empty** — **my GPU over-parallelization** (the gap#4 arms run on-bridge/CuPy; I stacked multiple concurrent
+  n_ca3=2000 SWR runs on the same 24GB GPU → CUDA OOM crashed them; stderr lost to the stdout-only redirect). ⇒ the
+  fixed-vs-KP credit-DIRECTION A/B is UNRESOLVED. **NEXT (re-run GPU-ISOLATED): the KP learned-feedback A/B at the
+  accuracy-tuned config (width/epochs/drive), ONE arm at a time with nvidia-smi headroom, NOT concurrent with SWR runs.**
+  **LESSON (silent-failure): watch GPU memory; the gap#4 arms use the GPU — don't stack GPU-heavy runs on them.** Finding
+  `2026-07-19-gap4-keystone-accuracy-NEGATIVE-at-scale-...`. **The gap#4↔#5 UNIFICATION (one-shot plateau-gated recurrent
+  potentiation) is the shared keystone for BOTH gap#4 (credit) AND gap#5-ii (emergent attractor).**
 - **📍 RESUME POINT (2026-07-19, earlier): gap#4 A/B step-1 DONE = INCONCLUSIVE (undertrained); gap#5 (i) SWR ROOT-CAUSED + a
   learned-Schaffer closer in flight.** (1) **gap#4 A/B re-run (ep=100/train=150, fixed vs KP-learned):** BOTH arms
   held-out **0.400** (below chance 0.549) — undertrained at ep=100, so fixed-vs-KP is UNRESOLVED. The KP arm moved MORE
