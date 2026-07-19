@@ -178,6 +178,7 @@ def main():
     ap.add_argument("--graded-gain-hi", dest="graded_gain_hi", type=float, default=2.5)   # -> graded population rate code
     ap.add_argument("--recur-integrator", dest="recur_integrator", action="store_true", help="LINE-ATTRACTOR: per-channel NMDA-recurrent population integrator (Wong-Wang alpha<1)")
     ap.add_argument("--kick-steps", dest="kick_steps", type=int, default=0, help="transient-kick: drive only the first K steps per token, then let the recurrence sustain")
+    ap.add_argument("--tonic-bias", dest="tonic_bias", type=float, default=0.0, help="post-kick tonic current to keep the recurrent population near threshold (persistence)")
     ap.add_argument("--recur-w", dest="recur_w", type=float, default=0.35, help="recurrent NMDA self-excitation weight (alpha<1)")
     ap.add_argument("--hetero-gain", dest="hetero_gain", action="store_true",
                     help="heterogeneous-population code on the self-NMDA path: staggered pop-member drive gains (staggered effective thresholds) -> higher-fidelity graded population rate")
@@ -280,13 +281,17 @@ def main():
             _latency = getattr(args, "read_latency", False)
             first_spk = np.full(len(all_drive_idx), float(_T_STEP)) if _latency else None  # per drive-neuron 1st-spike step
             _kick = int(getattr(args, "kick_steps", 0))
+            _tonic = float(getattr(args, "tonic_bias", 0.0))
             for _step in range(_T_STEP):
                 b.cp_external_input_current[:] = 0.0
                 if _kick <= 0 or _step < _kick:
-                    # TRANSIENT-KICK (line-attractor): drive only the first _kick steps, then ZERO so the recurrent population
-                    # SUSTAINS the graded value (the integrator regime). _kick<=0 = the default constant-drive window.
+                    # TRANSIENT-KICK (line-attractor): drive the first _kick steps with the token input, then only a small
+                    # TONIC bias so the population stays near threshold and the recurrence SUSTAINS the graded value (breaks
+                    # the persistence bootstrap). _kick<=0 = the default constant-drive window.
                     b.cp_external_input_current[all_drive_idx] = (xp.asarray(cur[all_drive_idx]) if xp is not None
                                                                  else cur[all_drive_idx])
+                elif _tonic > 0.0:
+                    b.cp_external_input_current[all_drive_idx] = _tonic
                 b._run_one_simulation_step()
                 fs = np.asarray(to_host(b.cp_firing_states))
                 np.add.at(cnt, drive_chan_of, fs[all_drive_idx].astype(np.float64))   # sum spikes per channel (drive pool)
