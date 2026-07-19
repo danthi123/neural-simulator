@@ -233,6 +233,7 @@ def main():
     ap.add_argument("--recur-integrator", dest="recur_integrator", action="store_true", help="LINE-ATTRACTOR: per-channel NMDA-recurrent population integrator (Wong-Wang alpha<1)")
     ap.add_argument("--kick-steps", dest="kick_steps", type=int, default=0, help="transient-kick: drive only the first K steps per token, then let the recurrence sustain")
     ap.add_argument("--plateau-center", dest="plateau_center", type=float, default=8.0)
+    ap.add_argument("--plateau-calib", dest="plateau_calib", action="store_true", help="per-channel v calibration so all channels land in the graded window")
     ap.add_argument("--graded-plateau", dest="graded_plateau", action="store_true", help="DENDRITIC GRADED PLATEAU: WKV leaky state in cp_conductance_g_graded_plateau (0.98 core fidelity, point-neuron limit surpassed)")
     ap.add_argument("--learn-recur", dest="learn_recur", action="store_true", help="EMERGENT: Hebbian-plastic recurrent weights self-organize the attractor during the drive")
     ap.add_argument("--tonic-bias", dest="tonic_bias", type=float, default=0.0, help="post-kick tonic current to keep the recurrent population near threshold (persistence)")
@@ -257,6 +258,11 @@ def main():
     def _ln(v):
         m = v.mean(); s = v.std() + 1e-5
         return (v - m) / s * ln_w + ln_b
+
+    # PER-CHANNEL calibration (plateau): each channel's v_t std over the vocab -> normalize so ALL channels land in the graded
+    # sigmoid window (the global center/slope can then match all channels; else some saturate/floor and carry no info).
+    _vall = np.stack([Wv @ _ln(emb[t]) for t in range(V)], 0)         # [V, D]
+    v_chan_scale = _vall.std(0) + 1e-6                                 # [D] per-channel scale
 
     if not Path(args.corpus).exists():
         args.corpus = "data/corpus/tinystories.txt"
@@ -327,6 +333,8 @@ def main():
         _a = np.zeros(D)                                             # host leaky state (for --exact-state isolating test)
         for t in range(len(ids)):
             h = _ln(emb[ids[t]]); v = Wv @ h                        # [D]
+            if getattr(args, "graded_plateau", False) and getattr(args, "plateau_calib", False):
+                v = v / v_chan_scale                                # PER-CHANNEL calibration -> all channels in the graded window
             if getattr(args, "exact_state", False):
                 # ISOLATE the spiking READ: drive with the EXACT host-computed rate-SSM state (leaky integral done in host)
                 # -> the neurons transduce the exact state to firing; if this GOes, the read is fine + the substrate's
