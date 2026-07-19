@@ -70,6 +70,46 @@ def _build_channel_bridge(D, seed, self_nmda_w=8.0, dt=0.5, pop_k=1):
     return b, chan_groups, None, None
 
 
+def _build_ff_channel_bridge(D, seed, ff_nmda_w=8.0, dt=0.5, pop_k=1, nmda_tau_ms=100.0):
+    """SpikeGPT-consistent GRADED-STATE realization (research gate GO): the leaky WKV state = a FEEDFORWARD NMDA conductance,
+    NOT a spike-charged self-autapse. Two populations: an INPUT pool (driven per token by graded current proportional to v_t;
+    it FIRES = presynaptic spikes) and a STATE pool. inp[c] -> chan[c] is a DIAGONAL FEEDFORWARD nmda_slow synapse, so
+    chan.g_nmda(t) = decay*g_nmda(t-1) + w*(inp spikes) = the exact LINEAR leaky integral a_t = decay*a_{t-1} + input_t --
+    the channel never self-fires to charge its own state, so the f-I nonlinearity does NOT compound across the recurrence
+    (that compounding was the 0.786->0.55 STATE loss). Biology: a slow postsynaptic NMDA/Ca conductance charged by
+    presynaptic spikes = neurons+synapses+communication (the project's BRAIN-BASED standard; spikes carry I/O, the graded
+    slow conductance holds the integrator state -- exactly what SpikeGPT + Wang-2002/Seung-Goldman line attractors do)."""
+    from sim.bridge import SimulationBridge
+    from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
+    from sim.regions import BrainRegion
+    cfg = CoreSimConfig()
+    cfg.enable_brain_region_framework = True
+    cfg.enable_nmda = True
+    cfg.nmda_tau_decay = float(nmda_tau_ms)                          # MATCH the g_nmda decay to the SSM per-token decay
+    cfg.brain_regions = [
+        BrainRegion(name="inp", n_neurons=2 * D * pop_k, exc_fraction=1.0, internal_density=0.05,
+                    exc_weight_mean=1.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False, enable_nmda=False),
+        BrainRegion(name="chan", n_neurons=2 * D * pop_k, exc_fraction=1.0, internal_density=0.05,
+                    exc_weight_mean=1.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False, enable_nmda=True),
+    ]
+    cfg.region_pathways = []
+    cfg.dt = float(dt)
+    cfg.seed = cfg.ou_seed = cfg.heterogeneity_seed = seed
+    cfg.enable_ou_process = False; cfg.enable_stdp = False; cfg.enable_hebbian_learning = False
+    rt = RuntimeState(); rt.actual_seed_used = seed
+    b = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(), runtime_state=rt, gpu_config=GPUConfig())
+    b._initialize_simulation_data()
+    inp = np.asarray(b.region_manager.indices("inp")); chan = np.asarray(b.region_manager.indices("chan"))
+    # OVERRIDE random internal connectivity with a DIAGONAL FEEDFORWARD nmda_slow synapse inp[i] -> chan[i] (no self-autapse)
+    ii = [int(i) for i in inp]; oo = [int(i) for i in chan]
+    plan = {"inp_to_chan_nmda": {"pre_indices": ii, "post_indices": oo, "initial_weights": [float(ff_nmda_w)] * len(ii),
+                                 "plastic": False, "conn_type": "MIXED", "exc_receptor": "nmda_slow"}}
+    b.inject_explicit_wiring(plan)
+    inp_groups = [inp[c * pop_k:(c + 1) * pop_k] for c in range(2 * D)]
+    chan_groups = [chan[c * pop_k:(c + 1) * pop_k] for c in range(2 * D)]
+    return b, inp_groups, chan_groups, None
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--ssm", required=True, help="saved SSM weights (_emerge_wkv_lm_derisk --save-ssm ..._seed<N>.npz)")
@@ -87,6 +127,12 @@ def main():
                     help="LEVER 1: read the standing cp_conductance_g_nmda (100ms leaky integral) instead of firing rate")
     ap.add_argument("--read-latency", dest="read_latency", action="store_true",
                     help="READ-CODE: first-spike latency (Thorpe rank-order), graded where mean-rate saturates")
+    ap.add_argument("--graded-charge", dest="graded_charge", action="store_true",
+                    help="SpikeGPT-consistent: leaky state = FEEDFORWARD NMDA conductance (input pool spikes charge chan g_nmda), read the graded conductance -- no self-fired f-I compounding")
+    ap.add_argument("--graded-bias", dest="graded_bias", type=float, default=300.0,
+                    help="bias current (pA) to put the graded-charge input pool in its linear f-I regime")
+    ap.add_argument("--graded-gain-lo", dest="graded_gain_lo", type=float, default=0.15)  # staggered pop-member gains
+    ap.add_argument("--graded-gain-hi", dest="graded_gain_hi", type=float, default=2.5)   # -> graded population rate code
     ap.add_argument("--pop-k", dest="pop_k", type=int, default=1)
     ap.add_argument("--t-step", dest="t_step", type=int, default=_T_STEP_DEFAULT)   # bridge steps/token (finer rate=less noise)
     ap.add_argument("--json", type=str, default="research/findings/raw/_emerge_wkv_onbridge.json")
@@ -116,12 +162,33 @@ def main():
     vocab = Vocab.build(tr, V=V); tr_ids = [vocab.ids(s) for s in tr]; ev_ids = [vocab.ids(s) for s in ev]
     P_bi = fit_bigram(tr_ids, V); tri, _lam = fit_interp_trigram(tr_ids, V, tr[-1500:] and [vocab.ids(s) for s in tr[-1500:]])
 
-    b, chan_groups, _cg2, snap = _build_channel_bridge(D, args.seed, self_nmda_w=args.self_nmda_w, pop_k=args.pop_k)
+    _graded = getattr(args, "graded_charge", False)
+    if _graded:
+        # SpikeGPT-consistent: drive the INPUT pool (inp_groups) with graded current, read the STATE pool g_nmda (chan_groups)
+        # MATCH the g_nmda per-token decay to the SSM decay: exp(-t_step*dt/tau) == decay  ->  tau = -t_step*dt/ln(decay)
+        _dt = 0.5
+        _tau = float(-args.t_step * _dt / np.log(decay)) if 0 < decay < 1 else 100.0
+        b, inp_groups, chan_groups, snap = _build_ff_channel_bridge(D, args.seed, ff_nmda_w=args.self_nmda_w,
+                                                                    pop_k=args.pop_k, dt=_dt, nmda_tau_ms=_tau)
+        print(f"[graded] SSM decay={decay:.4f} -> matched nmda_tau={_tau:.1f}ms (t_step={args.t_step}, dt={_dt})", flush=True)
+        drive_groups = inp_groups                                    # drive the presynaptic input pool
+    else:
+        b, chan_groups, _cg2, snap = _build_channel_bridge(D, args.seed, self_nmda_w=args.self_nmda_w, pop_k=args.pop_k)
+        drive_groups = chan_groups                                  # self-NMDA: drive == read pool
     nnrn = int(b.cp_membrane_potential_v.size)
-    # per-neuron -> channel map (channel c drives+reads its pop_k neurons; averaged read = population noise-averaging)
-    all_drive_idx = np.concatenate([np.asarray(g) for g in chan_groups]).astype(np.int64)
+    # per-neuron -> channel maps: drive on drive_groups; READ on chan_groups (== drive for self-NMDA; the state pool for FF)
+    all_drive_idx = np.concatenate([np.asarray(g) for g in drive_groups]).astype(np.int64)
+    drive_chan_of = np.concatenate([[c] * len(drive_groups[c]) for c in range(2 * D)]).astype(np.int64)
+    read_idx = np.concatenate([np.asarray(g) for g in chan_groups]).astype(np.int64)
     chan_of = np.concatenate([[c] * len(chan_groups[c]) for c in range(2 * D)]).astype(np.int64)
     gsize = np.array([len(g) for g in chan_groups], dtype=np.float64)
+    # GRADED-POPULATION code (graded-charge only): stagger the per-pop-member drive GAIN so the input pool's POPULATION rate
+    # is ~linear in v_t (a Goldman/Seung graded integrator: member k fires only above its effective threshold; more members
+    # fire as |v_t| grows -> population rate proportional to |v_t|, not a single saturating neuron). Fixes the g_nmda ceiling.
+    drive_gain = np.ones(len(all_drive_idx))
+    if _graded and args.pop_k > 1:
+        gains = np.linspace(float(args.graded_gain_lo), float(args.graded_gain_hi), args.pop_k)
+        drive_gain = np.concatenate([gains for _ in range(2 * D)])   # per channel: pop_k staggered gains (matches group order)
 
     def _wash():
         """Reset the state so each sentence reads independently (zero the leaky NMDA memory + conductances + firing;
@@ -148,8 +215,13 @@ def main():
                 chan_drive = np.concatenate([np.maximum(_a, 0.0), np.maximum(-_a, 0.0)]) * args.drive_scale
             else:
                 chan_drive = np.concatenate([np.maximum(v, 0.0), np.maximum(-v, 0.0)]) * args.drive_scale   # [2D] ON|OFF
+            if _graded:
+                # bias the INPUT pool into its LINEAR f-I regime so firing ~= baseline + gain*v_t (small v_t must still
+                # modulate firing, not fall below threshold) -> g_nmda = leaky integral LINEAR in v_t. The constant baseline
+                # is a per-channel offset the read-out removes; the MODULATION carries the signal.
+                chan_drive = chan_drive + float(args.graded_bias)
             cur = np.zeros(nnrn, np.float32)
-            cur[all_drive_idx] = chan_drive[chan_of]                # broadcast each channel's drive to its pop_k neurons
+            cur[all_drive_idx] = chan_drive[drive_chan_of] * drive_gain   # staggered per-member gain (graded-pop) or 1.0
             cnt = np.zeros(2 * D, np.float64)
             _latency = getattr(args, "read_latency", False)
             first_spk = np.full(len(all_drive_idx), float(_T_STEP)) if _latency else None  # per drive-neuron 1st-spike step
@@ -159,17 +231,26 @@ def main():
                                                              else cur[all_drive_idx])
                 b._run_one_simulation_step()
                 fs = np.asarray(to_host(b.cp_firing_states))
-                np.add.at(cnt, chan_of, fs[all_drive_idx].astype(np.float64))   # sum spikes per channel (over its pop_k)
+                np.add.at(cnt, drive_chan_of, fs[all_drive_idx].astype(np.float64))   # sum spikes per channel (drive pool)
                 if _latency:
                     fired = fs[all_drive_idx] > 0
                     newly = fired & (first_spk == float(_T_STEP))   # record FIRST spike step only
                     first_spk[newly] = float(_step)
-            if _latency:
+            if _graded:
+                # SpikeGPT-consistent GRADED STATE: read the STATE pool's slow NMDA conductance (charged FEEDFORWARD by the
+                # input pool's presynaptic spikes) = the exact linear leaky integral a_t=decay*a_{t-1}+input_t, held in a real
+                # postsynaptic conductance (not a spike-rate code, not a self-fired autapse). The f-I nonlinearity applies
+                # only per-token to the input pool's firing, NOT compounded across the recurrence -> kills the STATE loss.
+                gn = np.zeros(2 * D, np.float64)
+                gnmda = np.asarray(to_host(b.cp_conductance_g_nmda)).astype(np.float64)
+                np.add.at(gn, chan_of, gnmda[read_idx])            # read the STATE pool (chan), aggregate per channel
+                rates.append(gn / gsize)
+            elif _latency:
                 # READ-CODE = first-spike LATENCY (Thorpe rank-order): earlier spike -> higher activation (T_STEP-t)/T_STEP
                 # in [0,1], 0 if never fired. Graded where the mean-rate code saturates; carries magnitude info rate discards.
                 act = (float(_T_STEP) - first_spk) / float(_T_STEP)
                 lat = np.zeros(2 * D, np.float64)
-                np.add.at(lat, chan_of, act)
+                np.add.at(lat, drive_chan_of, act)
                 rates.append(lat / gsize)                           # latency-code activation, pop-averaged
             elif getattr(args, "read_gnmda", False):
                 # LEVER 1 (research-gate GO): read the STANDING NMDA conductance (the ~100 ms leaky integral) directly,
