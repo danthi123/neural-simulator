@@ -137,3 +137,7 @@ data/corpus/
 
 # bridge state snapshots (large local build artifacts -- regenerable, kept local)
 *.simstate.h5
+
+# accidental-add guards (2026-07-19)
+.venv-rag/
+bridges/developed/
