@@ -83,6 +83,8 @@ def main():
     ap.add_argument("--mlp-readout", dest="mlp_readout", action="store_true")
     ap.add_argument("--n-fit", dest="n_fit", type=int, default=600)   # train sentences for the on-bridge read-out re-fit
     ap.add_argument("--exact-state", dest="exact_state", action="store_true")
+    ap.add_argument("--read-gnmda", dest="read_gnmda", action="store_true",
+                    help="LEVER 1: read the standing cp_conductance_g_nmda (100ms leaky integral) instead of firing rate")
     ap.add_argument("--pop-k", dest="pop_k", type=int, default=1)
     ap.add_argument("--t-step", dest="t_step", type=int, default=_T_STEP_DEFAULT)   # bridge steps/token (finer rate=less noise)
     ap.add_argument("--json", type=str, default="research/findings/raw/_emerge_wkv_onbridge.json")
@@ -154,7 +156,19 @@ def main():
                 b._run_one_simulation_step()
                 fs = np.asarray(to_host(b.cp_firing_states))
                 np.add.at(cnt, chan_of, fs[all_drive_idx].astype(np.float64))   # sum spikes per channel (over its pop_k)
-            rates.append(cnt / (_T_STEP * gsize))                   # channel firing rate = pop-averaged (noise-averaged)
+            if getattr(args, "read_gnmda", False):
+                # LEVER 1 (research-gate GO): read the STANDING NMDA conductance (the ~100 ms leaky integral) directly,
+                # not the within-window spike count. cp_conductance_g_nmda IS the analog leaky-SSM state on real spikes
+                # (self-NMDA autapse charges it; decays tau=100 ms; not washed within a sentence). Skips the
+                # spike-quantization + f-I-saturation + 3 ms-window read losses (the 0.786 READ ceiling). I_nmda is exactly
+                # the postsynaptic current a downstream neuron integrates, so this reads the graded dendritic signal (the
+                # mission-compliant spike-pure closure = route it to a downstream read-out pool, a cheap follow-on).
+                gn = np.zeros(2 * D, np.float64)
+                gnmda = np.asarray(to_host(b.cp_conductance_g_nmda)).astype(np.float64)
+                np.add.at(gn, chan_of, gnmda[all_drive_idx])
+                rates.append(gn / gsize)                            # standing NMDA integral, pop-averaged
+            else:
+                rates.append(cnt / (_T_STEP * gsize))               # channel firing rate = pop-averaged (noise-averaged)
         b.cp_external_input_current[:] = 0.0
         return np.asarray(rates)                                     # [T, 2D]
 
