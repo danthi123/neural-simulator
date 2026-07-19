@@ -70,6 +70,49 @@ def _build_channel_bridge(D, seed, self_nmda_w=8.0, dt=0.5, pop_k=1):
     return b, chan_groups, None, None
 
 
+def _build_plateau_channel_bridge(D, seed, pathway_w=3.0, pop_k=8, dt=1.0, center=8.0, slope=0.33, strength=80.0):
+    """DENDRITIC GRADED-PLATEAU realization (the convergent build; the point-neuron-limit SURPASS): the WKV leaky state lives
+    in a GRADED dendritic plateau CONDUCTANCE (`enable_graded_dendritic_plateau`, the validated protected sim/ edit) — a
+    Mikulasch-Priesemann ANALOG read-out the point-neuron soma provably cannot be. Each channel = a plateau compartment fed by
+    an input pool through a coincidence_detector pathway (weighted drive c_w propto v_t); the plateau integrates strength*
+    sigmoid(slope*(c_w-center)) with an 80ms decay = a LEAKY INTEGRAL held in the ANALOG conductance, read DIRECTLY from
+    cp_conductance_g_graded_plateau (no firing-rate read loss, no spike-charging distortion — the two losses that capped the
+    point-neuron paths at ~0.55)."""
+    from sim.bridge import SimulationBridge
+    from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
+    from sim.regions import BrainRegion, RegionPathway
+    cfg = CoreSimConfig()
+    cfg.enable_brain_region_framework = True
+    cfg.dt = float(dt)
+    cfg.seed = cfg.ou_seed = cfg.heterogeneity_seed = seed
+    cfg.enable_ou_process = False; cfg.enable_stdp = False; cfg.enable_hebbian_learning = False
+    cfg.enable_homeostasis = False; cfg.enable_short_term_plasticity = False
+    cfg.enable_parameter_heterogeneity = False; cfg.enable_conductance_noise = False
+    # the graded dendritic plateau (the validated sim/ edit): reads the coincidence_detector WEIGHTED drive, graded-only
+    cfg.enable_coincidence_detection = True; cfg.coincidence_weighted_drive = True
+    cfg.coincidence_k_threshold = 1e9; cfg.coincidence_plateau_strength = 0.0   # all-or-none OFF; graded carries the value
+    cfg.enable_graded_dendritic_plateau = True
+    cfg.graded_plateau_center = float(center); cfg.graded_plateau_slope = float(slope)
+    cfg.graded_plateau_strength = float(strength)
+    cfg.graded_plateau_tau_decay_ms = 80.0; cfg.graded_plateau_tau_rise_ms = 2.0
+    cfg.brain_regions = [
+        BrainRegion(name="inp", n_neurons=2 * D * pop_k, exc_fraction=1.0, internal_density=0.0,
+                    exc_weight_mean=1.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False),
+        BrainRegion(name="chan", n_neurons=2 * D, exc_fraction=1.0, internal_density=0.0,
+                    exc_weight_mean=1.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False),
+    ]
+    # DIAGONAL-block inp[c*pop_k:(c+1)*pop_k] -> chan[c], tagged coincidence_detector so the plateau reads c_w propto v_t
+    cfg.region_pathways = [RegionPathway(from_region="inp", to_region="chan", density=1.0, weight_mean=float(pathway_w),
+                                         weight_jitter=0.0, plastic=False, coincidence_detector=True)]
+    rt = RuntimeState(); rt.actual_seed_used = seed
+    b = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(), runtime_state=rt, gpu_config=GPUConfig())
+    b._initialize_simulation_data()
+    inp = np.asarray(b.region_manager.indices("inp")); chan = np.asarray(b.region_manager.indices("chan"))
+    inp_groups = [inp[c * pop_k:(c + 1) * pop_k] for c in range(2 * D)]
+    chan_groups = [chan[c:c + 1] for c in range(2 * D)]
+    return b, inp_groups, chan_groups, None
+
+
 def _build_recur_channel_bridge(D, seed, recur_w=0.35, n_recur=20, dt=0.5, density=0.5, learn=False):
     """LINE-ATTRACTOR INTEGRATOR (the scoped deep frontier, next-arc de-risk): each channel = a POPULATION of n_recur neurons
     with block-diagonal NMDA-slow RECURRENT self-excitation (Wong-Wang 2002/Seung-Goldman graded persistent-activity integrator,
