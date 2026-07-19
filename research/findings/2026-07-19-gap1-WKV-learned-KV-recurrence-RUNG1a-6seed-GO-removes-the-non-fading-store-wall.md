@@ -58,6 +58,17 @@ lever is validated on every probed axis: removes-the-non-fading-store-wall (6-se
 multi-sentence-discourse with BOTH learned (6-seed) and emergent (3-seed) input · rate-level-spiking-faithful · fully-spiking
 gated-on-gap#4.
 
+## GENERATION CAPSTONE — the WKV PRODUCES coherent open prose (not just scores it)
+`--generate 40` (autoregressive rollout from "once upon a time", trained on 45K contiguous passages, d256/10ep): the WKV
+GENERATES grammatical, multi-sentence, COREFERENCE-COHERENT narrative:
+> "once upon a time there was a little girl named amy she loved to ride on her bike one day she saw a big red boot in her
+> yard **amy was sad because she lost her boot** tim was sad and said can i"
+Note the maintained coreference across sentences (amy → her bike → her boot → *amy was sad because she lost her boot*) =
+genuine multi-sentence discourse in GENERATION, not just scoring. Deep-context +0.830 at this scale. ⇒ **the mission-primary
+open-generation lever PRODUCES coherent open prose** — the actual "talk to the brain / generate open prose" mission
+capability, demonstrated on the validated WKV mechanism (rate-level, BPTT-trained, a tracked scaffold toward the
+spiking-emergent version gated on gap#4). NO `sim/` edit; `_emerge_wkv_lm_derisk.py --contiguous --generate`.
+
 ## RUNG 1b — EMERGENT INPUT: GO (3-seed) + the emergent STRUCTURE genuinely HELPS (gap#1↔gap#4 convergence realized)
 Two de-risks resolved the emergent-input question WITHOUT a separate stream-cortex-over-TinyStories develop (cheaper, direct):
 - **Frozen-embedding (3/3 GO):** freeze the input at random init (only WKV+head learn) → the WKV STILL beats the fair

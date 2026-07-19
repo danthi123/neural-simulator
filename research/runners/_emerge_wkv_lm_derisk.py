@@ -273,6 +273,7 @@ def main():
                          "on-bridge realization); GO => no per-neuron tau array is needed on the bridge.")
     ap.add_argument("--save-ssm", dest="save_ssm", type=str, default=None,
                     help="save the trained SSM weights to <path>_seed<N>.npz (for the on-bridge realization).")
+    ap.add_argument("--generate", type=int, default=0, help="autoregressive: generate N tokens after training")
     ap.add_argument("--contiguous", action="store_true", help="CONTIGUOUS multi-sentence stories (R4 cross-sentence long-range test)")
     ap.add_argument("--max-len", type=int, default=48, help="(--contiguous) max tokens per story")
     ap.add_argument("--json", type=str, default=str(OUT))
@@ -299,6 +300,16 @@ def main():
 
         init_emb = build_ppmi_codes(tr_ids, V, args.d_model, args.ppmi_window) if args.input == "ppmi" else None
         net, WKV_cls = build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=init_emb)
+        if getattr(args, "generate", 0):                             # AUTOREGRESSIVE generation (does the WKV produce prose?)
+            import torch
+            prompt = ["once", "upon", "a", "time"]
+            ids_g = [vocab.w2i.get(w, vocab.unk) for w in prompt]
+            with torch.no_grad():
+                for _ in range(args.generate):
+                    logits = net(torch.tensor([ids_g], device=device))[0, -1]
+                    p = torch.softmax(logits / 0.8, -1).cpu().numpy()
+                    ids_g.append(int(np.random.default_rng(seed * 91 + len(ids_g)).choice(V, p=p / p.sum())))
+            print(f"    [seed {seed}] GENERATED: {' '.join(vocab.i2w[i] for i in ids_g)}", flush=True)
         if getattr(args, "save_ssm", None):                      # save the trained SSM weights for the on-bridge realization
             import torch as _t
             sd = {k: v.detach().cpu().numpy() for k, v in net.state_dict().items()}
