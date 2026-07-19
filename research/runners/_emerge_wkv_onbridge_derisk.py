@@ -133,6 +133,8 @@ def main():
                     help="bias current (pA) to put the graded-charge input pool in its linear f-I regime")
     ap.add_argument("--graded-gain-lo", dest="graded_gain_lo", type=float, default=0.15)  # staggered pop-member gains
     ap.add_argument("--graded-gain-hi", dest="graded_gain_hi", type=float, default=2.5)   # -> graded population rate code
+    ap.add_argument("--hetero-gain", dest="hetero_gain", action="store_true",
+                    help="heterogeneous-population code on the self-NMDA path: staggered pop-member drive gains (staggered effective thresholds) -> higher-fidelity graded population rate")
     ap.add_argument("--pop-k", dest="pop_k", type=int, default=1)
     ap.add_argument("--t-step", dest="t_step", type=int, default=_T_STEP_DEFAULT)   # bridge steps/token (finer rate=less noise)
     ap.add_argument("--json", type=str, default="research/findings/raw/_emerge_wkv_onbridge.json")
@@ -186,7 +188,7 @@ def main():
     # is ~linear in v_t (a Goldman/Seung graded integrator: member k fires only above its effective threshold; more members
     # fire as |v_t| grows -> population rate proportional to |v_t|, not a single saturating neuron). Fixes the g_nmda ceiling.
     drive_gain = np.ones(len(all_drive_idx))
-    if _graded and args.pop_k > 1:
+    if (_graded or getattr(args, "hetero_gain", False)) and args.pop_k > 1:
         gains = np.linspace(float(args.graded_gain_lo), float(args.graded_gain_hi), args.pop_k)
         drive_gain = np.concatenate([gains for _ in range(2 * D)])   # per channel: pop_k staggered gains (matches group order)
 
