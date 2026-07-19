@@ -50,6 +50,13 @@ mechanism carries context ACROSS sentence boundaries = genuine MULTI-SENTENCE DI
 capability** (the fading reservoir couldn't), robustly (6/6). This extends Rung 1a (within-sentence) to real cross-sentence
 long-range — a meaningful, confirmed advance of the mission-primary lever toward open generation. NO `sim/` edit;
 `_emerge_wkv_lm_derisk.py --contiguous`.
+**COMBINED (Rung 1b + R4): the EMERGENT PPMI-input WKV ALSO carries cross-sentence discourse — 3/3 GO** (+0.722-0.725,
+tight; perm +5.1, mless +0.72). ⇒ **the gap#1↔gap#4-convergent lever (open generation fed by the UNSUPERVISED cortex
+codes) has the R4 open-prose capability** — fully-emergent-input multi-sentence discourse (`--contiguous --input ppmi`).
+The emergent codes (+0.72) are just below the learned embedding (+0.78) — a clear, robust GO. ⇒ the WKV open-generation
+lever is validated on every probed axis: removes-the-non-fading-store-wall (6-seed) · emergent-input (3-seed) ·
+multi-sentence-discourse with BOTH learned (6-seed) and emergent (3-seed) input · rate-level-spiking-faithful · fully-spiking
+gated-on-gap#4.
 
 ## RUNG 1b — EMERGENT INPUT: GO (3-seed) + the emergent STRUCTURE genuinely HELPS (gap#1↔gap#4 convergence realized)
 Two de-risks resolved the emergent-input question WITHOUT a separate stream-cortex-over-TinyStories develop (cheaper, direct):
