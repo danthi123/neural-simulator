@@ -81,3 +81,12 @@ channels, each a slow leaky conductance = the state, learned decay→conductance
 through `_run_one_simulation_step`, read from `cp_firing_states` → the Wo_sp read-out — reusing the EMERGE-82 on-bridge-LSM
 pattern), then Rung 3 (biologize the BPTT rule: e-prop/BDSP on the fixed-form recurrence). PARALLEL: the 21M spiking-forward
 deploy (ledgered scaffold).
+
+**Rung 2 UNIFORM-decay de-risk (GO) — the on-bridge realization is maximally simplified.** `--uniform-decay` uses ONE
+shared decay across all channels (= the substrate's native uniform NMDA tau, no per-neuron tau array). Smoke +0.373 ==
+per-channel +0.374 — the uniform decay costs NOTHING. ⇒ **all three on-bridge-simplifying constraints preserve the
+deep-context capture:** (1) membrane-leak leaky-integrator recurrence, (2) non-negative ON/OFF firing-rate read, (3)
+uniform decay. So the on-bridge realization is straightforward: a region of D channels whose SLOW NMDA CONDUCTANCE
+(uniform tau) is the leaky state, driven by the trained Wv, read via ON/OFF firing rates → the trained Wo_sp/head.
+`--recurrence ssm --spiking-state --uniform-decay`. The actual on-bridge build (real Izhikevich spiking, per-token
+`_run_one_simulation_step`, per-position `cp_firing_states` read) is the remaining engineering step.

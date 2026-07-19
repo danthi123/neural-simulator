@@ -119,7 +119,9 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
             self.Wk = nn.Linear(D, D, bias=False); self.Wv = nn.Linear(D, D, bias=False)
             self.Wr = nn.Linear(D, D, bias=False); self.Wo = nn.Linear(D, D, bias=False)
             self.Wo_sp = nn.Linear(2 * D, D, bias=False)   # spiking-state read-out over ON/OFF non-negative rate channels
-            self.w = nn.Parameter(torch.zeros(D))     # log-decay (softplus -> positive decay rate)
+            # UNIFORM-decay (--uniform-decay): ONE shared decay = the substrate's uniform NMDA tau (simplifies the on-bridge
+            # realization -- no per-neuron tau array); default = per-channel learned decay.
+            self.w = nn.Parameter(torch.zeros(1 if getattr(args, "uniform_decay", False) else D))
             self.u = nn.Parameter(torch.zeros(D))     # current-token bonus
             self.head = nn.Linear(D, V)
             self.memoryless = memoryless
@@ -255,6 +257,9 @@ def main():
     ap.add_argument("--spiking-state", dest="spiking_state", action="store_true",
                     help="(ssm only) read the leaky state via NON-NEGATIVE ON/OFF firing-rate channels [relu(a),relu(-a)] "
                          "= the spiking firing-rate constraint; GO => the on-bridge firing-rate read preserves deep context.")
+    ap.add_argument("--uniform-decay", dest="uniform_decay", action="store_true",
+                    help="(ssm only) ONE shared decay across channels = the substrate's uniform NMDA tau (simplifies the "
+                         "on-bridge realization); GO => no per-neuron tau array is needed on the bridge.")
     ap.add_argument("--json", type=str, default=str(OUT))
     args = ap.parse_args()
     import torch
