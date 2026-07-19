@@ -163,6 +163,21 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 - **🏁 SESSION 2026-07-19 SUMMARY (headline: gap#5 (i) SWR readout CLOSED) + the CLEAR NEXT STEPS.** A long, productive
   session. Achievements + resume points, most-recent-first:
+  -2. **gap#1 NEXT BUILD DECIDED + gap#4 supervised PARKED (capability met by the unsupervised method) — 2026-07-19.**
+     gap#1 research gate `wf_dd786412-527` (4-lens, decisive): the next build is a **spiking RWKV/linear-attention
+     (SpikeGPT-family) LEARNED key–value recurrence** over the emergent stream-cortex codes, decoded by the existing
+     spiking-Broca producer — the ONE build that removes the documented NON-FADING-store wall (every reservoir fades →
+     loses to a fair trigram; RWKV's WKV op IS a learned content-selective non-fading store; SpikeGPT = a published spiking
+     LM at 45M/this-project-scale = existence proof). Cheap-first: `_emerge_wkv_lm_derisk.py` (rate-level, reuse the
+     `_emerge_reservoir_lm_*`/`_ssm` harness, input = pooler codes, TinyStories 24M/V≈2000, deep-context d10-99 NLL, GO =
+     BEATS the fair interpolated trigram at d≥10 + margin grows with depth + 4 anti-cheats collapse, 6-seed). Deploy the
+     21M spiking-forward in PARALLEL as a ledgered scaffold (milestone-met, NOT closed). `2026-07-19-gap1-open-generation-research-gate-WKV-learned-KV-recurrence-is-the-next-build`.
+     **gap#4 supervised update:** the correctly-levered desaturation gate (hidden-bias 260/160/90 — Lens-3's #1 root-cause
+     lever) STAYED AT THE FLOOR (all BDSP 0.486 == floor == wrong-sign; the intrinsic 2-class rank-1 needs pairing with
+     rank-breaking, untested). Per the decisive 4-lens call (re-derivation + wrong instrument + gaps #2/#3/#5 closed
+     without it): gap#4's CAPABILITY (a substrate that learns deep representations, no weight transport) is **MET by the
+     UNSUPERVISED method** (stream cortex / HTM pooler, EMERGE-30..55 on-spike); the SUPERVISED-deep-credit-to-accuracy
+     METHOD is PARKED (root-caused: rank-1 collapse) as cheap-parallel-science, NOT the capability abandoned.
   -1. **gap#4 ROOT-CAUSED + DECISIVE PIVOT to UNSUPERVISED (2026-07-19, 4-lens diagnosis `wf_8de0688b-dcf`).** The mechanism
      pipeline-validates (927× directed hidden credit) but held-out stays at the FLOOR on a clean task (cleanxor: oracle
      0.994, floor 0.514). ROOT CAUSE (Lens 3): the BDSP hidden update collapses to a **rank-1 linear-discriminant learner**
