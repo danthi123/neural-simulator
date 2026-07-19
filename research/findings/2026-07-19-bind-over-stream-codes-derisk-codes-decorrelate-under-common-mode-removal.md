@@ -71,4 +71,24 @@ via a binder. **Net: the reader/binder-over-stream-codes direction is thoroughly
 codes are bindable (recall) but their generalizable semantic structure is real-but-WEAK (the code-QUALITY limit is
 upstream of the binder). Levers: higher develop_D, PPMI local-normalization (conditions without destroying structure),
 or validate the binder on the EMERGE known-category codes (strong structure by construction) to isolate binder-vs-codes.**
+## PPMI-normalization test — post-hoc conditioning does NOT fix the weak structure (the limit is the LEARNING)
+Tested whether the PROPER PPMI local normalization (CYCLE-88: log + per-hub + per-concept center + positive threshold —
+conditions WITHOUT global decorrelation) strengthens the semantic structure vs RAW, on the 10 semantic pairs:
+| normalization | median rank / 788 | top-20 | top-50 |
+|---|---|---|---|
+| **RAW** | **88** | 0.25 | 0.38 |
+| global mean-sub (my earlier) | 174 | 0.38 | 0.38 |
+| PPMI (log+per-hub+per-concept+thresh) | 127 | 0.38 | **0.50** |
+| PPMI no-threshold | 257 | 0.12 | 0.12 |
+| per-dim z-score | 185 | 0.38 | 0.38 |
+⇒ **NO normalization dramatically fixes it.** RAW is best for median (~88th — a CORRECTION: my earlier "~174th" was the
+mean-subtracted codes, so RAW structure is a bit better than I'd stated); PPMI helps the TAIL (top-50 0.50) but hurts the
+median; all remain WEAK (semantic pairs ~88-127th of 788, top-50 0.38-0.50). **The code-quality limit is in the LEARNING
+(the develop_D=128 stream cortex does not strongly encode semantic similarity), NOT post-hoc-fixable by any normalization.**
+⇒ **FINAL characterization of the scout's #1 convergence lever: it is blocked UPSTREAM by weak code semantic-structure,
+which needs a code-QUALITY improvement in the LEARNING — a re-develop at higher develop_D (more capacity) and/or a better
+co-occurrence learning rule — NOT a cheap post-hoc fix. The binder itself works when codes ARE strong (the EMERGE
+inheritance/taxonomy arcs, EMERGE-26/27/28, generalize on is-a-structured codes). So: binder OK; stream-code QUALITY is
+the gating sub-problem; the concrete next build is a higher-develop_D re-develop + re-measure the semantic-pair ranks (a
+multi-hour GPU job).** This precisely bounds the highest-value next direction.
 - Diagnostics: `scratchpad/bind_over_stream_codes.py`. NO `sim/` edit. Uses cached scale787 codes.
