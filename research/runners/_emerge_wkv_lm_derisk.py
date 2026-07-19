@@ -151,8 +151,11 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                 a = torch.zeros(B, D, device=x.device); outs = []
                 spiking = getattr(args, "spiking_state", False)
                 sn = float(getattr(args, "state_noise", 0.0))
+                _nn = getattr(args, "nonneg_state", False)
                 for t in range(T):
                     a = wdec * a + v[:, t]
+                    if _nn:
+                        a = torch.relu(a)                            # NON-NEGATIVE state -> plateau holds it directly (no opponency)
                     if sn > 0.0 and self.training:
                         # DEGRADE the state fidelity to simulate the on-bridge substrate (~0.55 corr): does the SpikeGPT-
                         # faithful architecture (spike-coded output) still beat the trigram from a LOSSY graded state? If GO,
@@ -295,6 +298,7 @@ def main():
                          "= the spiking firing-rate constraint; GO => the on-bridge firing-rate read preserves deep context.")
     ap.add_argument("--quantize-state", dest="quantize_state", action="store_true")
     ap.add_argument("--state-noise", dest="state_noise", type=float, default=0.0, help="degrade state fidelity (train-time noise) to simulate the on-bridge substrate")
+    ap.add_argument("--nonneg-state", dest="nonneg_state", action="store_true", help="rectified non-negative leaky state a=relu(decay*a+v) -> the dendritic plateau holds it directly, no ON/OFF opponency")
     ap.add_argument("--spike-output", dest="spike_output", action="store_true",
                     help="SpikeGPT-faithful: GRADED state + SPIKE-CODED output y_t (straight-through), trained end-to-end")
     ap.add_argument("--uniform-decay", dest="uniform_decay", action="store_true",
