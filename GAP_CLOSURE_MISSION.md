@@ -161,7 +161,23 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
-- **⚠️ EXACT NEXT ACTION (2026-07-19, gap#1 fully-spiking substrate frontier — DECISIVELY connected to the DENDRITIC frontier):**
+- **🎉 EXACT NEXT ACTION (2026-07-19, gap#1 — the DENDRITIC PLATEAU BREAKTHROUGH: point-neuron limit SURPASSED, one input step left):**
+  The fully-spiking-CONSISTENT open generation is DONE (SpikeGPT-faithful architecture, 6-seed robust BEAT + generates prose +
+  CI). The on-substrate high-fidelity graded state — the deep residual — is now SOLVED at the core-mechanism level: the
+  **dendritic GRADED PLATEAU** (`enable_graded_dendritic_plateau`, existing validated `sim/` edit; `--graded-plateau` in
+  `_emerge_wkv_onbridge_derisk.py`, `_build_plateau_channel_bridge`) realizes the WKV leaky state at **corr 0.980**
+  (integration-controlled: integral 0.980 vs memoryless 0.073) — DECISIVELY surpassing the ~0.55 point-neuron ceiling (the
+  documented Mikulasch-Priesemann limit). The full WKV port (block-diagonal coincidence routing + decay-match tau=18.9ms) is
+  BUILT and improves the on-substrate fidelity 0.55→**0.67** (above the ceiling). **THE ONE REMAINING STEP: clean INPUT DELIVERY**
+  — the plateau integrates faithfully (0.98) but the coincidence drive c_w is carried by the inp-pool FIRING (∝ relu(v)), which
+  reintroduces f-I/quantization noise on the WKV's small signed v_t (caps the port at 0.67). NEXT DE-RISK (ranked): (1) drive
+  c_w from the GRADED synaptic drive/conductance, not the raw spike count (read the smooth synaptic quantity); (2) a v-gain /
+  normalization so relu(v) spans a clean firing range like the 0.98 core probe; (3) a larger decorrelated inp population. Get
+  the full-WKV corr to >0.8 → the on-substrate robust BEAT (deep-NLL vs the fair trigram, 6-seed) follows with no fidelity
+  penalty. The mechanism + decay-match + routing are BUILT+validated; only the input clean-up remains. This ALSO unlocks
+  multi-attr compose + apical-basal credit (the convergent dendritic frontier). All 5 gaps mechanism-closed. See the finding's
+  "🎉🎉 BREAKTHROUGH" + "Full WKV plateau port".
+- **⚠️ (superseded by the breakthrough above) gap#1 fully-spiking substrate frontier — connected to the DENDRITIC frontier:**
   The fully-spiking-CONSISTENT open generation is DONE at the architecture level (SpikeGPT-faithful: graded state + spike-coded
   output, 6-seed robust BEAT + GENERATES prose + CI). The one residual = realizing the graded state as an on-substrate
   high-fidelity conductance. **EXHAUSTIVELY characterized + DECISIVELY diagnosed:** 13+ mechanisms (9 read/state levers → ~0.57
