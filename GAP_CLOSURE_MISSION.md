@@ -245,9 +245,13 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   SHUFFLE→4×-collapse + MEMORY load-bearing (> memoryless 0.401). (⚠ under-estimated the ceiling THREE times —
   0.42/0.49/0.667 — all under-training; verify-to-convergence before a ceiling.) ⇒ on-bridge fully-spiking read-out
   learning is GO AND STRONG (~0.8 by a pure local rule), not just "mechanism works".
-  `_gap_onbridge_ssm_readout_learn_derisk.py`. **NEXT rung (iii):** the single-LINEAR read-out ceilings ~0.49 (weak
-  memory use); the full memory-dependent copy needs the MULTI-LAYER gated read-out on-bridge (`head @ (sigmoid(Wr@h) *
-  (Wo_sp@state))`) + the FA feedback for the hidden layers (off-bridge multi-layer FA reached 0.998 reduced). Finding
+  `_gap_onbridge_ssm_readout_learn_derisk.py`. **Rung (iii) — generic 2-layer FA UNDER-performs (honest negative,
+  `--n-hidden`):** a relu hidden layer + fixed-random FA plateaus ~0.47 < the single-linear ~0.8 (the FA hidden credit
+  is coarser than the EXACT single-linear delta; the approximation cost > the capacity benefit). ⇒ the exact
+  single-linear delta is the better on-bridge read-out. **NEXT rung (iv):** the last ~0.2 to the off-bridge 0.998
+  needs the SPECIFIC gated read-out (`head @ (sigmoid(Wr@h) * (Wo_sp@state))`, current-token gate + graded-clean-error/
+  KP — the exact off-bridge recipe that reached 0.998), realized as `cp_ssm_readout_w = Wo_sp` (state projection
+  on-bridge) + the gate/head host-side. A fiddly build; the capability is off-bridge-de-risked (0.998). Finding
   `2026-07-20-onbridge-ssm-readout-learning-rung-ii-mechanism-GO-...`.
 - **🎯 gap#4 KEYSTONE REFRAMED (2026-07-20 close-state) — deep local credit is MECHANISM-ESTABLISHED; the apparent
   "contrast blocker" was a TASK ARTIFACT.** After rungs 1-9 + 6 pre-flights + a 28-agent adversarial audit, the
