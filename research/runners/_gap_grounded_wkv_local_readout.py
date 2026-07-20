@@ -73,9 +73,13 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--eval-every", type=int, default=1000)
     ap.add_argument("--random-input", action="store_true", help="freeze Wv at RANDOM (true reservoir) instead of pretrained")
-    ap.add_argument("--credit", choices=["fa", "kp", "bptt"], default="kp",
+    ap.add_argument("--credit", choices=["fa", "kp", "bptt", "burstprop"], default="kp",
                     help="fa = fixed-random feedback alignment; kp = Kolen-Pollack learned feedback (transport-free, "
-                         "aligns to W -> the biological close); bptt = weight-transport reference ceiling")
+                         "aligns to W -> the biological close); bptt = weight-transport reference ceiling; burstprop = "
+                         "the EXACT committed on-bridge rule form (output credit = burst-rate deviation P-P0, FA-routed)")
+    ap.add_argument("--burst-sampled", action="store_true", help="(burstprop) SAMPLE the burst B~Bernoulli(P) (the coarse on-bridge credit) instead of the graded P")
+    ap.add_argument("--burst-gain", type=float, default=4.0, help="(burstprop) apical gain: P=sigmoid(logit(P0)-gain*error)")
+    ap.add_argument("--burst-p0", type=float, default=0.2, help="(burstprop) baseline burst prob Pbar (the P0 no-spurious-learning moat)")
     ap.add_argument("--shuffle-feedback", action="store_true", help="anti-cheat: shuffle the FA feedback matrices (must collapse)")
     ap.add_argument("--readout-from-scratch", action="store_true",
                     help="init the read-out (Wr/Wo_sp/head) from SMALL RANDOM instead of the pretrained (BPTT) values -> "
@@ -152,8 +156,8 @@ def main():
         params += [Br, Bo, Bh]                           # KP: feedback learns the same local update -> aligns to W
 
     def readout(h, state):
-        """logits = head @ (sigmoid(Wr@h) * (Wo_sp@state)). fa/kp -> LinearFA (transport-free); bptt -> plain."""
-        if args.credit in ("fa", "kp"):
+        """logits = head @ (sigmoid(Wr@h) * (Wo_sp@state)). fa/kp/burstprop -> LinearFA (transport-free); bptt -> plain."""
+        if args.credit in ("fa", "kp", "burstprop"):
             rh = torch.sigmoid(fa(h, Wr, Br, _kp))
             s = fa(state, Wo_sp, Bo, _kp)
             return fa(rh * s, head_w, Bh, _kp) + head_b
@@ -214,20 +218,57 @@ def main():
     # step rule only; the credit assignment is FA/KP (transport-free) + local. SGD = a pure local plasticity rule.
     opt = (torch.optim.SGD(params, lr=args.lr, momentum=0.0) if args.optimizer == "sgd"
            else torch.optim.Adam(params, lr=args.lr))
+    _P0 = float(args.burst_p0); _P0logit = float(np.log(_P0 / (1 - _P0)))
+
+    def _train_step(X, Mm):
+        """One local-rule update. For burstprop the OUTPUT credit is the burst-rate DEVIATION (P-P0) [graded] or
+        (B-P0) [sampled] instead of the clean softmax error; it is then FA-routed to the hidden read-out layers
+        (the exact committed on-bridge rule: dw = eta*pre*(B - Pbar*E), the sign set by the fixed-random apical)."""
+        h, st = reservoir_states(X)                       # frozen reservoir (detached => no BPTT)
+        lg = readout(h, st)
+        lgf = lg[:, :-1].reshape(-1, V); tgt = X[:, 1:].reshape(-1); m = Mm[:, 1:].reshape(-1)
+        opt.zero_grad()
+        if args.credit == "burstprop":
+            with torch.no_grad():
+                p = torch.softmax(lgf, -1)
+                e = p - F.one_hot(tgt, V).float()          # clean output error (softmax - target)
+                P = torch.sigmoid(_P0logit - args.burst_gain * e)   # apical raises/lowers burst prob by -error
+                Pd = (torch.bernoulli(P.clamp(1e-6, 1 - 1e-6)) if args.burst_sampled else P)
+                # EXACT committed form: dev = B - Pbar*E = E*(P - Pbar); E = the postsynaptic event rate (~ softmax p).
+                # The E-gating (multiplexing invariant) restricts credit to ACTIVE units + is 0 at rest (the P0 moat).
+                dev = p * (Pd - _P0)
+                # opt does w -= lr*grad; -dev is the descent direction => the burst-deviation IS the local credit
+                bg = (-dev) * m[:, None] / m.sum().clamp(min=1)
+            lgf.backward(gradient=bg)                       # FA-routes the burst credit to the hidden read-out layers
+            loss = float((F.cross_entropy(lgf, tgt, reduction="none") * m).sum() / m.sum().clamp(min=1))
+        else:
+            loss_t = (F.cross_entropy(lgf, tgt, reduction="none") * m).sum() / m.sum().clamp(min=1)
+            loss_t.backward(); loss = float(loss_t)
+        opt.step()
+        return loss
+
     ppl0 = tiny_ppl()
-    print(f"[credit={args.credit}{' SHUFFLED-FB' if args.shuffle_feedback else ''}"
-          f"{' random-Wv' if args.random_input else ''}] TinyStories ppl BEFORE: {ppl0:.2f}")
+    print(f"[credit={args.credit}{' SAMPLED-burst' if args.burst_sampled else ''}"
+          f"{' SHUFFLED-FB' if args.shuffle_feedback else ''}{' random-Wv' if args.random_input else ''}] "
+          f"TinyStories ppl BEFORE: {ppl0:.2f}")
+    # verify-first: one grounded step MUST decrease that batch's loss (else the credit sign is wrong)
+    _vx, _vm = pad(grounded_batch(args.batch))
+    with torch.no_grad():
+        _l0 = float((F.cross_entropy(readout(*reservoir_states(_vx))[:, :-1].reshape(-1, V), _vx[:, 1:].reshape(-1),
+                                     reduction="none") * _vm[:, 1:].reshape(-1)).sum() / _vm[:, 1:].reshape(-1).sum().clamp(min=1))
+    _ = _train_step(_vx, _vm)
+    with torch.no_grad():
+        _l1 = float((F.cross_entropy(readout(*reservoir_states(_vx))[:, :-1].reshape(-1, V), _vx[:, 1:].reshape(-1),
+                                     reduction="none") * _vm[:, 1:].reshape(-1)).sum() / _vm[:, 1:].reshape(-1).sum().clamp(min=1))
+    print(f"[verify-first] one {args.credit} step: batch loss {_l0:.4f} -> {_l1:.4f} ({'DESCENDS' if _l1 < _l0 else 'ASCENDS (sign bug!)'})")
+    assert _l1 < _l0 + 1e-4, f"credit {args.credit} does NOT descend the loss (sign bug): {_l0} -> {_l1}"
     t0 = time.time()
     for step in range(1, args.steps + 1):
         seqs = grounded_batch(args.batch) if random.random() < args.grounded_frac else tiny_batch(args.batch)
         X, Mm = pad(seqs)
-        h, st = reservoir_states(X)                       # frozen reservoir (detached => no BPTT)
-        lg = readout(h, st)
-        loss = F.cross_entropy(lg[:, :-1].reshape(-1, V), X[:, 1:].reshape(-1), reduction="none")
-        m = Mm[:, 1:].reshape(-1); loss = (loss * m).sum() / m.sum().clamp(min=1)
-        opt.zero_grad(); loss.backward(); opt.step()
+        loss = _train_step(X, Mm)
         if step % args.eval_every == 0 or step == 1:
-            print(f"[step {step}/{args.steps}] loss={float(loss):.4f} ppl_tiny={tiny_ppl():.3f} ({time.time()-t0:.0f}s)", flush=True)
+            print(f"[step {step}/{args.steps}] loss={loss:.4f} ppl_tiny={tiny_ppl():.3f} ({time.time()-t0:.0f}s)", flush=True)
     ppl1 = tiny_ppl()
 
     # save an npz in the WKVFaculty format so the ceiling probe can eval the grounded copy

@@ -1,0 +1,63 @@
+{
+  "n": 22,
+  "cont": {
+    "verified": 0,
+    "confab": 16,
+    "fallback": 6
+  },
+  "complete": {
+    "top1": 0,
+    "top5": 5,
+    "n": 22
+  },
+  "ra_faithful": {
+    "follows": 0,
+    "bias": 2,
+    "n": 44
+  },
+  "examples": [],
+  "ra_examples": [
+    {
+      "cue": [
+        "dog",
+        "eat"
+      ],
+      "prompt_p": "ball",
+      "true_p": "meat",
+      "ans": "the bear makes web",
+      "follows": false
+    },
+    {
+      "cue": [
+        "dog",
+        "eat"
+      ],
+      "prompt_p": "cake",
+      "true_p": "meat",
+      "ans": "the bear makes seed",
+      "follows": false
+    },
+    {
+      "cue": [
+        "cat",
+        "eat"
+      ],
+      "prompt_p": "ball",
+      "true_p": "fish",
+      "ans": "the bear makes web",
+      "follows": false
+    },
+    {
+      "cue": [
+        "cat",
+        "eat"
+      ],
+      "prompt_p": "cake",
+      "true_p": "fish",
+      "ans": "the bear makes seed",
+      "follows": false
+    }
+  ],
+  "ckpt": "bridges/wkv_ckpt/_bp_sampled.npz",
+  "verdict": "residual-B (format fine-tune) NEEDED"
+}
