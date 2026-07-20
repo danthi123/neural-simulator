@@ -213,7 +213,22 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   rule; the ON-BRIDGE local-rule realization (`enable_selective_ssm_state` + validated eligibility) is the fully-spiking
   follow-on. Finding `2026-07-20-wkv-cortex-biological-learning-CLOSE-local-rule-readout-retires-BPTT.md`.
   **NEXT parallel frontiers:** close the general-fluency ppl gap (KP + more steps / a stricter delta rule / on-bridge
-  eligibility for `Wv`); the ON-BRIDGE fully-spiking local-rule learning; gap#1 V/D scaling toward richer fluency.
+  eligibility for `Wv`); the ON-BRIDGE fully-spiking local-rule learning (scoped, below); gap#1 V/D scaling.
+- **🔬 ON-BRIDGE fully-spiking local-rule LEARNING — SCOPED (2026-07-20 research gate + trust-but-verify).** The
+  biological-learning close is OFF-bridge (torch FA/KP). The fully-spiking end-state realizes the read-out LEARNING on
+  the substrate. Gate verdict: the RULE is already committed + verified — `fused_bdsp_update` (`sim/kernels.py:461-493`)
+  is burstprop = the biology of FA/KP ("fully local, no weight transport, apical = fixed-random pathway", default-off
+  byte-inert); the graded state is on-bridge + M1-GO (`enable_selective_ssm_state`). The genuine gap = ONE additive
+  default-off `sim/` mechanism (propagate `cp_ssm_state` as synaptic read-out DRIVE + presynaptic eligibility — the
+  output analogue of M2's built synaptic INPUT decode). **The gate's "biggest risk" (the shared-readout wall,
+  `2026-07-15-...RUNG3-BOUNDARY`) is ALREADY ESCAPED by the off-bridge close: the wall is a barely-firing RATE-pool
+  phenomenon; my FA/KP close trained over the GRADED state (0.86-0.91), the exact escape the gate names.** Ranked
+  ladder (skip rung i = host read-out over on-bridge state, GO-by-construction): **rung (ii) = a single-layer SYNAPTIC
+  read-out over the graded state, learned on-bridge by committed `enable_bdsp`(+graded_credit +apical_couples_soma)**
+  → rung (iii) FA feedback for a 2-layer read-out → rung (iv) the full gated read-out. The remaining named risk = the
+  COARSER burst-deviation credit (vs a clean gradient) — seed-variable per `2026-07-11`; test the exact burstprop rule
+  off-bridge over the graded state FIRST (no `sim/` edit), then the on-bridge port. ⚠ set `cfg.seed` (the
+  `actual_seed_used` bug); name the apical-lesion arm correctly. Scoping in the a14d research-gate result.
 - **🎯 gap#4 KEYSTONE REFRAMED (2026-07-20 close-state) — deep local credit is MECHANISM-ESTABLISHED; the apparent
   "contrast blocker" was a TASK ARTIFACT.** After rungs 1-9 + 6 pre-flights + a 28-agent adversarial audit, the
   honest status of "does the substrate learn DEEP representations by a biological rule?":
