@@ -143,3 +143,52 @@ the CA1 never changes its firing at all. Before any further task work:
     delta metric (now in place) **plus** pool-level normalization.
 (c) **Do not** report any future version without dev/blind separated. This run is the third instance in this project
     where dev-only numbers would have produced a false GO.
+
+---
+
+# 🔬 DIAGNOSTIC (run immediately after the NO-GO): the credit is CORRECT; the READ-OUT is the blocker
+
+The NO-GO's failure mode was ambiguous between two hypotheses that predict **different fixes**, so rather than tune,
+I probed the **post-induction WEIGHT MAP** directly (plateau at bin `b=12`, mean `pos_k → ca1` weight per bin):
+
+| seed | weight-map peak bin | **offset from plateau** | `dw_max` | bins potentiated | FIRING Δ | reading |
+|---|---|---|---|---|---|---|
+| **100** (blind, scored 0.00) | 11 | **−1** | 4.164 | 20/20 | **0.00000** | **H1 read-out** |
+| **101** (blind, scored 0.00) | 11 | **−1** | 4.238 | 20/20 | **0.00000** | **H1 read-out** |
+| 42 (dev, scored 0.80) | 11 | **−1** | 4.117 | 20/20 | 0.01688 | field formed |
+
+## What this establishes
+
+**On EVERY seed — including both blind seeds that scored zero — BTSP potentiates the CORRECT BACKWARD BIN
+(offset −1 from the plateau), with essentially identical `dw_max` (~4.1-4.2).** The credit assignment is working, is
+correctly targeted, is biologically shaped (backward-shifted, Bittner-Magee), and is **stable across seeds**.
+
+**H1 CONFIRMED, H2 REFUTED.** The failure is NOT that eligibility missed the plateau (timing) — the weights moved to
+exactly the right place on all three seeds. The failure is that **the potentiated drive remains sub-threshold**, so
+CA1 firing does not change and the behaviour cannot be expressed. On 2/3 seeds the neuron simply never crosses
+threshold; on seed 42 it barely does (Δ = 0.017).
+
+**This reframes the NO-GO.** The correct statement is **not** "the biological rule fails to assign credit" — it
+demonstrably assigns credit correctly, on every seed. It is: **the read-out cannot express the credit that was
+correctly assigned.** Those are very different verdicts with very different next steps, and the earlier write-up could
+not distinguish them.
+
+## Also revealed: the potentiation is NOT selective
+
+`n_bins_potentiated = 20/20` on every seed — **all** bins potentiate, with a peak at −1. So the weight map has correct
+*structure* (a backward-shifted maximum) but poor *contrast*. A near-uniform potentiation with a small peak is exactly
+what a sub-threshold read-out cannot turn into a localized field. This is consistent with `Etilde_pre` being non-zero
+for every pool (each pool fires during its own bin, and the 1000 ms eligibility spans several bins), so every synapse
+gets some potentiation.
+
+## Corrected next levers (now well-posed)
+
+1. **Read-out sensitivity is the binding constraint** — the CA1 must be responsive enough to express a graded field.
+   The obstacle already measured: `W0 ≤ 2.0` gives a *silent* cell, `W0 ≥ 3.0` gives a *non-flat baseline* (per-pool
+   threshold heterogeneity, flatness 7-9). The delta metric (already implemented) neutralizes the baseline
+   inhomogeneity; combined with a larger CA1 population this is the direct fix.
+2. **Contrast, not just magnitude** — near-uniform potentiation needs either heterosynaptic depression
+   (`btsp_hetero_dep`, currently 0.0 and previously burned once) or a sparser eligibility so non-coincident pools do
+   not potentiate. This is the mechanism-level question worth a research gate, not a sweep.
+3. The credit-assignment half of gap#4 **does not need further work at this scale** — it is correct and stable. That
+   is a genuine, if narrow, positive result recovered from a decisive NO-GO.
