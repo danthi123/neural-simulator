@@ -125,6 +125,7 @@ def main():
     ap.add_argument("--input-mode", dest="input_mode", choices=["nef", "tokensdr"], default="nef",
                     help="nef = M2 (byte-identical default); tokensdr = gap#1 M5 discrete-selection encode")
     ap.add_argument("--k-active", dest="k_active", type=int, default=8, help="tokensdr: SDR neurons per token")
+    ap.add_argument("--debias", action="store_true", help="M0 reframe: fit a per-channel AFFINE (gain+offset) read-out to remove the encode's systematic bias")
     ap.add_argument("--drive-pa", dest="drive_pa", type=float, default=900.0, help="tokensdr: SDR drive current")
     ap.add_argument("--reset-membrane", dest="reset_membrane", action="store_true", help="DIAGNOSTIC: reset membrane per token")
     ap.add_argument("--pool-density", dest="pool_density", type=float, default=0.05, help="pool internal recurrent density; NEF encoders should be INDEPENDENT (~0)")
@@ -286,9 +287,19 @@ def main():
         if len(ids) < 3: continue
         Xs.append(onbridge_states(ids)); Ys.append(ref_states(ids))
     Xs = np.concatenate(Xs, 0); Ys = np.concatenate(Ys, 0)
-    gains = (Xs * Ys).sum(0) / np.maximum((Xs * Xs).sum(0), 1e-12)
-    gains = np.where(np.isfinite(gains) & (np.abs(gains) > 1e-9), gains, 1.0)
-    _res = Xs * gains - Ys
+    if getattr(args, "debias", False):
+        # M0 REFRAME: the encode error is BIASED, so fit a per-channel AFFINE map (gain + OFFSET), not gain-only.
+        # gain[c] = cov(X,Y)/var(X); offset[c] = mean(Y) - gain*mean(X) -> removes the systematic per-channel bias.
+        _mx = Xs.mean(0); _my = Ys.mean(0)
+        _cov = ((Xs - _mx) * (Ys - _my)).sum(0); _var = ((Xs - _mx) ** 2).sum(0)
+        gains = np.where(np.abs(_var) > 1e-12, _cov / np.maximum(_var, 1e-12), 1.0)
+        gains = np.where(np.isfinite(gains) & (np.abs(gains) > 1e-9), gains, 1.0)
+        offset = _my - gains * _mx
+    else:
+        gains = (Xs * Ys).sum(0) / np.maximum((Xs * Xs).sum(0), 1e-12)
+        gains = np.where(np.isfinite(gains) & (np.abs(gains) > 1e-9), gains, 1.0)
+        offset = np.zeros_like(gains)
+    _res = Xs * gains + offset - Ys
     _sig = float(np.std(_res) / max(1e-9, np.std(Ys)))
     print(f"[m3-calib] spiking-delivery RESIDUAL noise after per-channel gain: sigma_rel = {_sig:.3f} "
           f"(this is the noise level an end-to-end co-adaptation must train against = M3 input)", flush=True)
@@ -296,7 +307,7 @@ def main():
     cs = []
     for ids in ev_ids[:5]:
         if len(ids) < 4: continue
-        ob = onbridge_states(ids) * gains; rf = ref_states(ids)
+        ob = onbridge_states(ids) * gains + offset; rf = ref_states(ids)
         cs.append(np.corrcoef(ob.flatten(), rf.flatten())[0, 1])
     mapcorr = float(np.nanmean(cs)) if cs else float("nan")
     print(f"[verify] corr(on-bridge SSM state via SPIKING NEF input, numpy ref) POST-rescale = {mapcorr:.3f} "
@@ -305,7 +316,7 @@ def main():
     ce = defaultdict(float); bce = defaultdict(float); tce = defaultdict(float); cnt = defaultdict(int)
     for ids in ev_ids:
         if len(ids) < 2: continue
-        st = onbridge_states(ids) * gains
+        st = onbridge_states(ids) * gains + offset
         for t in range(len(ids) - 1):
             rh = 1.0 / (1.0 + np.exp(-(Wr @ _ln(emb[ids[t]]))))
             lg = head_w @ (rh * (Wo_sp @ st[t])) + head_b

@@ -59,3 +59,43 @@ M0 done, ~1 hour, no new mechanism. It converts an apparently-hard wall (need ne
 DIFFERENT, more tractable problem (make the encode error UNBIASED; the i.i.d. tolerance is corr ~0.80). The cheapest
 next de-risk is the DE-BIAS of the existing NEF/token-SDR encode; the RF phase code is the principled build if
 de-bias confirms bias is the issue.
+
+---
+
+## DE-BIAS TEST — the bias is NOT a constant offset; it is value-dependent/nonlinear (points to RF phase)
+
+Tested the cheapest de-bias: replace the read-out's per-channel gain-only fit with a per-channel AFFINE fit
+(gain + OFFSET), removing any constant systematic offset.
+
+| NEF read-out | verify corr | deep vs-trigram |
+|---|---|---|
+| gain-only (baseline) | 0.616 | -2.904 |
+| **affine (gain + offset, --debias)** | 0.665 | **-2.933** (no recovery) |
+
+**A linear affine read-out does NOT fix it** (-2.904 -> -2.933, essentially unchanged despite corr 0.616 -> 0.665).
+⇒ the encode's structured error is **NOT a constant per-channel offset** — it is a **value-dependent / nonlinear
+distortion** (a dead-zone on small values + saturation on large, the residual of the rate-code transfer that
+distributed NEF intercepts only partly tile), which a LINEAR read-out cannot correct and which accumulates coherently
+over the recurrence.
+
+## Sharpened conclusion + the motivated next build
+
+- The wall is a **value-dependent nonlinear encode distortion** (dead-zone/saturation), not raw fidelity and not a
+  constant bias. i.i.d. noise tolerance is corr ~0.80; the encodes are ~1.5-2 nats worse because their error is a
+  systematic nonlinear function of the delivered value.
+- **A read-out-side fix cannot work** (de-bias refuted) — the fix must be at the ENCODE: a transfer that is LINEAR
+  and SYMMETRIC across the value range.
+- ⇒ **The RF PHASE code (research-gate #1) is now the well-motivated build:** phase θ ∝ value is a LINEAR map with
+  SYMMETRIC (timing-jitter) error and NO dead-zone/saturation, delivered exactly through the project's validated
+  resonate-and-fire complex synapses (atol 1e-9). It directly targets the diagnosed failure mode (value-dependent
+  rate-code distortion) rather than fighting raw fidelity.
+- **Pre-flight (baked in):** before pre-registering the RF encode, verify its per-token error is APPROXIMATELY
+  i.i.d./symmetric across the value range on the DEPLOYED accumulated state (measure error-vs-value, not just corr) —
+  if it is, corr ~0.82 suffices per the M0 curve; if the RF code also has a value-dependent distortion, it will fail
+  the same way and that is a cheap pre-flight kill.
+
+## Net
+
+M0 + de-bias converted the gap#1 wall from "need near-1.0 spiking fidelity (impossible on the rate-code floor)" into
+"the encode transfer is value-dependent/nonlinear; need a LINEAR-SYMMETRIC encode (RF phase), for which corr ~0.82
+suffices." That is a tractable, well-motivated build target — the highest-value output of this gap#1 continuation.
