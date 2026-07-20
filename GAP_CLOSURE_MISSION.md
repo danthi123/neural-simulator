@@ -307,6 +307,22 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   Also FIXED this session: 3 runners flagged unseeded on 2026-07-17 were STILL unseeded (zero commits in 3 days) —
   `cfg.seed` added + verified by two-process threshold hash. Finding:
   `2026-07-20-gap4-status-audit-THREE-audits-converge-deep-credit-is-OPEN.md`.
+- **🎯 gap#1 DEFINITIVE (2026-07-20) — harness VALIDATED (M1 +0.542 GO), the ENCODE is the wall (confirmed +
+  quantified), token-SDR REFUTED. The spiking-INPUT is a REAL, precisely-located wall — a verdict on the METHODS
+  tried, not the capability.** The last root cause of the harness chaos: the checkpoint's decay `w` is PER-CHANNEL
+  ([128] std 0.80) but `cp_ssm_state` uses ONE `k_leak` and the runners read `w[0]` -> uniform-decay state vs a
+  per-channel model (~1.4-nat residual); the M1 finding used `--uniform-decay`, I had omitted it. Retrain
+  `--recurrence ssm --dual-nonneg --uniform-decay` -> off-bridge +0.360, **M1 on-bridge exact-state (corr 1.000) =
+  +0.542 GO** (reproduces + exceeds the finding's +0.486). **DEFINITIVE ENCODE RESULT on the validated harness:**
+  M1 exact state (corr 1.000) **+0.542 GO** · NEF regression (corr 0.616) -2.904 · token-SDR selection (corr 0.501)
+  -3.416. ⇒ (1) **the ENCODE is the wall, quantified** — a PERFECT input is GO but ANY spiking encode collapses it;
+  the deep-NLL is HYPERSENSITIVE to state fidelity (corr 1.000->+0.542, 0.616->-2.904), so the encode must reach
+  near-1.0 state corr and ~0.6 is catastrophically short. (2) **token-SDR REFUTED** (0.501 < NEF 0.616; my standalone
+  0.906 measured a non-deployed quantity). **NET: the recurrent STATE + READ-OUT are SOLVED on-bridge with a perfect
+  host input; the spiking INPUT is the open wall with a QUANTIFIED requirement (near-1.0 fidelity; NEF and token-SDR
+  both cap ~0.5-0.6).** Both ranked encodes exhausted -> the research gate fires for a high-fidelity encode (or
+  co-adaptation on the now-VALID harness). Usable artifact: `wkv_ssmU_v1000_d128_seed42.npz`. Findings:
+  `2026-07-20-gap1-DEFINITIVE-...`, `-ROOT-CAUSE-...`. Superseded intermediate note below:
 - **⛔ gap#1 TOKEN-SDR REFUTED + M1-realization residual (2026-07-20 FINAL) — the spiking-INPUT half is a real,
   honestly-documented WALL; the token-SDR escape does not work.** ROOT CAUSE of the day's harness chaos found by
   READING THE WKV SOURCE (not config sweeps): my regenerated checkpoint was trained with the DEFAULT `--recurrence
