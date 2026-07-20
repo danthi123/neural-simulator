@@ -142,6 +142,38 @@ degrading the reservoir signal (0.67→0.40) is consistent with an un-coupled, m
     (BDSP > reservoir-baseline, wrong_sign < baseline) sign-informative gate. Only a JOINTLY-tuned, COUPLED run answers
     the credit question; every single-lever run so far confounds forward operating point, coupling, and credit magnitude.
 
+## The drive-vs-coupling TENSION (why the joint tuning is hard) — a structural finding
+
+Swept (soma-g × output_bias) at the input-selective forward (fw=500, hb=300, in_hi=2000) measuring coupling only
+(cheap, no training). At this forward the output region's baseline burst rate is already HIGH (B_rest ~0.34-0.36,
+driven by the now-active hidden→output pathway), so the apical +300pA can barely raise it:
+
+| soma-g | out_bias 520 | out_bias 200 | out_bias 80 |
+|---|---|---|---|
+| 200 | rise −0.030 (couples=F) | −0.053 (F) | −0.053 (F) |
+| 800 | −0.024 (F) | −0.042 (F) | −0.042 (F) |
+| 2000 | −0.007 (F) | −0.034 (F) | −0.034 (F) |
+| 5000 | **+0.011 (couples=T)** | −0.010 (F) | −0.010 (F) |
+
+**⇒ STRUCTURAL TENSION: the strong forward drive that makes the HIDDEN input-selective is the same drive that
+SATURATES the OUTPUT's baseline bursting (B_rest ~0.35), which kills the apical→burst COUPLING the credit needs**
+(coupling requires B_rest LOW so the apical can raise it). At the smoke's weak drive (in_hi=750) the output was silent
+(B_rest 0.000) so soma-g 200 coupled cleanly; at the input-selective drive it cannot. Only soma-g=5000 barely couples
+(+0.011). These two requirements — input-selective hidden (strong drive) and couplable output (low baseline bursting) —
+are in direct tension at every tested config.
+
+**LIKELY RESOLUTION + the runner limitation:** the tension is because ONE `--fwd-wmean` sets BOTH pathways. The fix is
+INDEPENDENT pathway weights — strong input→hidden (for hidden selectivity) + WEAK hidden→output (so the output does not
+over-burst, keeping B_rest low + couplable). The runner's `RegionPathway`s already exist separately (`bridge.py`
+`input→hidden`, `hidden→output`), so this is a bounded runner change (`--fwd-wmean-ih` / `--fwd-wmean-ho`), NOT a `sim/`
+edit. That is the concrete NEXT experiment before any credit verdict.
+
+**HONEST SCOPE:** single forward config (fw=500/hb=300/in_hi=2000); a different input-selective config (e.g. lower
+in_hi + longer settle) might give a lower output B_rest — part of the joint search. The gap#4 KEYSTONE (deep local
+credit works + composes across a layer) is separately ESTABLISHED (rung 10, Poisson geometry); THIS sub-thread is the
+harder on-bridge learn-to-ACCURACY demonstration, now characterized as blocked by a drive-vs-coupling operating-point
+tension — a well-posed engineering problem on a signal-carrying substrate, not a wall.
+
 ## Method lesson
 
 The banked "pipeline-validated" result was gated on a dw ratio while its OWN coupling diagnostic said DECOUPLED, and its
