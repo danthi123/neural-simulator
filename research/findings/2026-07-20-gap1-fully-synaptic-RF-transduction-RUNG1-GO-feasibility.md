@@ -32,10 +32,24 @@ decay-leaky state vs exact. Calibration: the log read-out recovers the value cor
   by the WKV's trained per-channel read-out bias). RUNG 4 (end-to-end deep-NLL through the deployed pipeline with the
   synaptic read) is the final confirmation; the M0 curve predicts a positive deep-NLL at corr 0.97.
 
-**⇒ RUNG 1+2+3 GO: the fully-synaptic transduction WORKS — numerically (RUNG 1, corr 1.0), on-bridge via a real synapse
-(RUNG 2, corr 1.0), and on the deployed distribution (RUNG 3, accum corr 0.97 > threshold). The last host read
-(`rf_read_phases`) is replaceable by a genuine conductance synapse; gap#1's spiking input is (validated-)fully synaptic.**
-RUNG 4 (deployed deep-NLL parity) is the last integration.
+## RUNG 4 — GO (deployed deep-NLL through the runner): gap#1's spiking input is FULLY SYNAPTIC end-to-end
+
+Wired the fully-synaptic read into the deployed runner (`--rf-synaptic`: the RF spike drives the slow-NMDA synapse; read
+the readout `g_nmda` + a calibrated log read-out, NO host `rf_read_phases`) and ran the deployed deep-NLL (seed 42,
+n_eval=200):
+- calib corr 1.0000; on-bridge state vs rate-SSM analog corr **0.974** (matches RUNG 3's deployed 0.97).
+- **deep-10-99 vs-trigram = +0.735 (VERDICT GO)** — decisively positive, close to the host-phase-read reference
+  (+0.878; the gap is the log-decode fidelity 0.974 vs 0.999, exactly as RUNG 3 predicted). The M0 prediction
+  (corr 0.97 → positive deep-NLL) is CONFIRMED.
+- ⇒ **the deep-context language capture SURVIVES the fully-synaptic delivery — gap#1's spiking input is FULLY SYNAPTIC
+  end-to-end, NO host `rf_read_phases` anywhere: the RF spike → a real slow-NMDA synapse → readout `g_nmda` → the value
+  → charges the graded state → deep-NLL GO.** `--rf-synaptic` additive/default-off (byte-identical when absent).
+
+**⇒ RUNG 1+2+3+4 GO — the last host read is REMOVED: gap#1's spiking input is FULLY SYNAPTIC, deep-NLL GO (+0.735).**
+Validated end-to-end: numeric (RUNG 1, corr 1.0), on-bridge synapse (RUNG 2, corr 1.0), deployed fidelity (RUNG 3, corr
+0.97), and deployed deep-NLL through the runner (RUNG 4, +0.735 GO). The RF spike drives a genuine conductance synapse;
+no host phase read. (Follow-on polish: close the +0.735-vs-+0.878 fidelity gap — a stronger synapse / read calibration
+on the zero-inflated small-value band — a bounded tuning, not a wall.)
 
 ## RUNG 1 — GO (feasibility, kept below)
 

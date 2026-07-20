@@ -332,9 +332,11 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   value (corr −0.974; fixed log read-out recovers corr 1.0000, rms 0.16% of range, UNBIASED), matching the host
   phase-read, NO host `rf_read_phases`, NO `sim/` edit. **The last host read is REPLACED by a genuine synapse on the
   substrate.** **RUNG 3 GO (deployed): the fully-synaptic read on the REAL deployed injects gives accumulated-state corr
-  0.970 (> the ~0.9 deep-NLL threshold; ref rf_read_phases 0.998) — validated on the deployed distribution.** ⇒ RUNG
-  1+2+3 GO: gap#1's spiking input is (validated-)fully synaptic (no host rf_read_phases). RUNG 4 (deployed deep-NLL
-  parity through the runner) is the last integration; the M0 curve predicts a positive deep-NLL at corr 0.97. `2026-07-20-gap1-fully-synaptic-RF-transduction-RUNG1-GO-feasibility.md`. Also V/D scaling. Finding
+  0.970 (> the ~0.9 deep-NLL threshold; ref rf_read_phases 0.998) — validated on the deployed distribution.** ⇒ **RUNG 1+2+3+4 GO: the last host read is REMOVED — gap#1's spiking input is FULLY SYNAPTIC end-to-end.** RUNG 4
+  (deployed deep-NLL through the runner, `--rf-synaptic`): the RF spike drives a real slow-NMDA synapse, readout g_nmda
+  -> value -> graded state -> **deep-10-99 vs-trigram +0.735 GO** (map-corr 0.974; ref rf_read_phases +0.878; M0's corr
+  0.97->positive CONFIRMED). NO host rf_read_phases anywhere; `--rf-synaptic` additive/default-off. Follow-on polish:
+  close the +0.735-vs-+0.878 fidelity gap (log-decode on the zero-inflated small-value band), a bounded tuning. `2026-07-20-gap1-fully-synaptic-RF-transduction-RUNG1-GO-feasibility.md`. Also V/D scaling. Finding
   `2026-07-20-gap1-RF-PHASE-ENCODE-first-spiking-encode-PAST-the-wall.md`; runners `_gap1_rf_phase_deployed_preflight.py`
   + `_emerge_wkv_onbridge_derisk.py --rf-phase-encode`; matched set `wkv_ssmU6_v1000_d128_seed{42..102}.npz`.
   **⇒ EXTENDED to GENERATION (2026-07-20): the spiking WKV cortex GENERATES prose on-bridge, not just comprehends.**

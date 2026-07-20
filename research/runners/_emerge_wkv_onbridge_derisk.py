@@ -277,6 +277,31 @@ def _build_rf_encoder(n, seed=42):
     return b
 
 
+def _build_synaptic_rf_encoder(n_chan, w=30.0, seed=42):
+    """RUNG 4 (fully-synaptic gap#1 input): 2*n_chan neurons = n_chan ENCODERS [0..n) + n_chan READOUTS [n..2n), with a
+    diagonal SLOW-NMDA synapse enc_i->rdt_i. The RF spike drives the synapse; readout_i's g_nmda = w*exp(-latency/tau) =
+    the value (RUNG 1/2/3 validated). Replaces the host rf_read_phases with a genuine conductance synapse. NO sim/ edit."""
+    from sim.bridge import SimulationBridge
+    from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
+    from sim.enums import NeuronModel
+    cfg = CoreSimConfig(); cfg.num_neurons = 2 * int(n_chan)
+    cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name; cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"
+    cfg.seed = seed; cfg.dt_ms = 1.0; cfg.connections_per_neuron = 0; cfg.num_traits = 1
+    for f in ("enable_stdp", "enable_hebbian_learning", "enable_short_term_plasticity", "enable_structural_plasticity",
+              "enable_homeostasis", "enable_reward_modulation", "enable_watts_strogatz", "enable_neuromodulator_subsystem",
+              "enable_brain_region_framework"):
+        if hasattr(cfg, f): setattr(cfg, f, False)
+    cfg.ou_std_current_pA = 0.0; cfg.enable_nmda = True
+    b = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(), runtime_state=RuntimeState(), gpu_config=GPUConfig())
+    b._initialize_simulation_data(called_from_playback_init=False)
+    enc = np.arange(n_chan); rdt = np.arange(n_chan) + n_chan
+    b.inject_explicit_wiring({"enc2rdt": {"pre_indices": enc.tolist(), "post_indices": rdt.tolist(),
+                              "initial_weights": [float(w)] * n_chan, "plastic": False, "conn_type": "enc2rdt",
+                              "exc_receptors": ["nmda_slow"] * n_chan}})
+    b.core_config.neuron_model_type = NeuronModel.RESONATE_AND_FIRE.name
+    return b, enc, rdt
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--ssm", required=True, help="saved SSM weights (_emerge_wkv_lm_derisk --save-ssm ..._seed<N>.npz)")
@@ -339,6 +364,10 @@ def main():
                     help="(--rf-phase-encode ANTI-CHEAT) permute the RF-decoded injects ACROSS channels with a fixed "
                          "seed -> same spikes, destroyed channel->value map -> the deep-NLL MUST collapse (isolates 'the "
                          "RF phase carries the CORRECT per-channel value' from 'the machinery produces a plausible state').")
+    ap.add_argument("--rf-synaptic", dest="rf_synaptic", action="store_true",
+                    help="(--rf-phase-encode RUNG 4) FULLY-SYNAPTIC read: the RF spike drives a real slow-NMDA synapse "
+                         "(encoder->readout); read the readout g_nmda + a calibrated log read-out -- NO host rf_read_phases. "
+                         "Removes the last host read; gap#1 spiking input fully synaptic.")
     ap.add_argument("--rf-numpy-quantize", dest="rf_numpy_quantize", action="store_true",
                     help="(--rf-phase-encode adversarial-verify LENS-1 control) replace the RF resonate loop with the "
                          "analytic phase quantizer it implements; == real RF within roundoff => the RF pool is a phase ADC.")
@@ -388,14 +417,41 @@ def main():
         _flat = _INJ_DICT[_ev_tok].reshape(-1)
         _RF_VMAX = float(np.percentile(_flat[_flat > 0], args.rf_vmax_pct)) if (_flat > 0).any() else 1.0
         _RF_PLO, _RF_PHI = 0.05, 0.95                              # guard-banded phase arc: no value hits the 0/1 wrap
-        _rfb = _build_rf_encoder(2 * D, seed=args.seed)
-        print(f"[rf-phase-encode] {2*D} independent RF oscillators, period={args.rf_period}, VMAX(p{args.rf_vmax_pct})={_RF_VMAX:.4f} "
-              f"(deployed frac-zero={float((_flat==0).mean()):.3f})", flush=True)
+        _rf_syn = getattr(args, "rf_synaptic", False)
+        _NCH = 2 * D                                                  # channels; synaptic bridge has 2*_NCH neurons
+        if _rf_syn:
+            # RUNG 4: FULLY-SYNAPTIC read — the RF spike drives a slow-NMDA synapse; read the readout g_nmda (no rf_read_phases)
+            _rfb, _enc, _rdt = _build_synaptic_rf_encoder(_NCH, w=30.0, seed=args.seed)
+            def _syn_run(pvec):
+                z = np.zeros(2 * _NCH, np.complex64); z[_enc] = np.exp(1j * 2 * np.pi * pvec).astype(np.complex64)
+                mask = np.zeros(2 * _NCH, bool); mask[_enc] = True
+                try: _rfb.rf_kick(z, period=int(args.rf_period), neuron_mask=mask)
+                except TypeError: _rfb.rf_kick(z, period=int(args.rf_period))
+                for _ in range(int(args.rf_period) + 8):
+                    _rfb.cp_external_input_current[:] = 0.0; _rfb._run_one_simulation_step()
+                return np.asarray(to_host(_rfb.cp_conductance_g_nmda), np.float64)[_rdt]
+            # calibrate the fixed log read-out g_nmda -> value ONCE (a fixed synaptic nonlinearity; tau,w fixed)
+            _cal_v = np.linspace(0.0, _RF_VMAX, _NCH)
+            _gcal = _syn_run(_RF_PLO + (_RF_PHI - _RF_PLO) * (_cal_v / max(_RF_VMAX, 1e-9)))
+            _gmax = max(_gcal.max(), 1e-9); _cm = _gcal > 1e-9
+            _xc = np.log(np.clip(_gcal[_cm] / _gmax, 1e-12, 1.0))
+            _coef = np.linalg.lstsq(np.vstack([_xc, np.ones_like(_xc)]).T, _cal_v[_cm], rcond=None)[0]
+            _crec = np.corrcoef(_coef[0] * _xc + _coef[1], _cal_v[_cm])[0, 1]
+            print(f"[rf-synaptic] RUNG4 fully-synaptic read (slow-NMDA synapse, no rf_read_phases): calib corr {_crec:.4f}", flush=True)
+        else:
+            _rfb = _build_rf_encoder(_NCH, seed=args.seed)
+            print(f"[rf-phase-encode] {2*D} independent RF oscillators, period={args.rf_period}, VMAX(p{args.rf_vmax_pct})={_RF_VMAX:.4f} "
+                  f"(deployed frac-zero={float((_flat==0).mean()):.3f})", flush=True)
 
         def _rf_encode_decode(inj):
-            """inj [2D] non-negative -> RF phase in [PLO,PHI] -> resonate -> read phase -> decode. The spiking delivery."""
+            """inj [2D] non-negative -> RF phase in [PLO,PHI] -> resonate -> read -> decode. The spiking delivery."""
             d = np.clip(np.asarray(inj, np.float64), 0.0, _RF_VMAX)
             p = _RF_PLO + (_RF_PHI - _RF_PLO) * (d / max(_RF_VMAX, 1e-9))
+            if _rf_syn:
+                g = _syn_run(p)                                       # FULLY-SYNAPTIC: readout g_nmda (no host phase read)
+                out = np.clip(_coef[0] * np.log(np.clip(g / _gmax, 1e-12, 1.0)) + _coef[1], 0.0, _RF_VMAX)
+                if getattr(args, "rf_scramble", False): out = out[_RF_PERM]
+                return out
             if getattr(args, "rf_numpy_quantize", False):
                 # ADVERSARIAL-VERIFY control (LENS 1, 2026-07-20): replace the resonate loop with the ANALYTIC phase
                 # quantizer the resonate implements (spike_step ~= period*(1-p)). If this == the real RF run within
