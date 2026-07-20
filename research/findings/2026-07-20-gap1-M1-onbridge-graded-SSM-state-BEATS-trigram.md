@@ -177,7 +177,14 @@ landing the fully-spiking-input path within **0.03 nats** of the fair trigram �
 explicit and monotone: co-adaptation buys on-bridge robustness by *spending* off-bridge capability (+0.113 → +0.019),
 and past σ=1.5 the cost dominates the benefit. This is a real optimum, not a tuning plateau.
 
-⇒ **All levers WITHIN the M2 design are now exhausted** (population, cross-talk, calibration basis, window). The
+**M4 — combining the best of every lever does NOT cross either.** The encoder sweep had previously been run *without*
+co-adaptation and at the *bad* window, so the combination was genuinely untested. Run at the co-adaptation peak
+(σ=1.5) + the best window (t_step=24) + low pool density: n_enc **48 → −0.044**, **144 → −0.075**, **288 → −0.258**.
+Encoder scaling *hurts* monotonically in every configuration tried — the 1/N expectation is refuted a third time, now
+under the most favourable conditions available. The best result remains the base config at **−0.030**.
+
+⇒ **All levers WITHIN the M2 design are now exhausted** (population, cross-talk, calibration basis, window,
+co-adaptation, and all combinations). The
 spiking input delivery tops out at fidelity **0.786** / σ_rel **0.622**, costing ~0.18-0.3 nats — real, bounded, and
 precisely quantified. **The remaining fix is M3: stop fighting the noise and TRAIN THROUGH IT** — co-adapt the input map
 and read-out to the *measured* delivery noise so the model is robust to it. That is precisely the
