@@ -161,7 +161,26 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
-- **⚠️ EXACT NEXT ACTION (2026-07-19, gap#1 — on-substrate robust BEAT is deep-arc-gated on END-TO-END substrate co-adaptation = converges with gap#4; capability DEMONSTRATED):**
+- **⏸️ OWNER PAUSE (2026-07-19 evening) — gaming reboot into Windows. ALL work committed + pushed to both remotes
+  (latest incl. the gap#1 arc below). GPU free of gap jobs. Resume is MANUAL: a plain "continue" from the owner
+  re-anchors from the RESUME ANCHOR just below. Do NOT start new long work until the owner returns.**
+- **⚠️ EXACT NEXT ACTION / RESUME ANCHOR (2026-07-19, refined this session — gap#1 on-substrate WKV state):**
+  This session PRECISELY CHARACTERIZED the on-bridge WKV-state boundary BY DIRECT MEASUREMENT (`fi_probe`): the
+  graded-plateau input pool fires only a FEW spikes/token → `c_weighted` is a NOISY, THRESHOLD-nonlinear,
+  refractory-bounded map of relu(v), NOT a clean transfer; **population scaling does NOT fix it** (pop_k=500 still
+  non-monotone, dead-zone below relu(v)~1) → operating-point + pop tuning are EXHAUSTED = the point-neuron rate-code
+  wall on the WKV state. The `--plateau-exact` fix (torch recurrence IS the exact bridge transfer, train end-to-end)
+  **BEATS the trigram OFF-bridge at all 4 ops (+0.10..+0.12)** but the **on-bridge DEPLOY is NEGATIVE (−1.17/−1.80)**
+  because the off-bridge `relu(v)` input ≠ the on-bridge saturating input-pool f-I. **RESEARCH GATE DISPATCHED**
+  (subagent, read-only) → writes `research/findings/2026-07-19-onbridge-wkv-state-fidelity-research-gate.md`:
+  RAG-checks whether the LINE-ATTRACTOR population (`--recur-integrator`, `_build_recur_channel_bridge`) was ever
+  run to a verdict, and ranks it vs FULL-CHAIN surrogate-gradient BPTT (= gap#4 convergence) vs more-neurons-per-
+  channel population code. **⇒ ON RESUME: read that research doc first, then run its cheap-first ranked mechanism**
+  (do NOT re-improvise operating points — that path is exhausted). gap#1 CAPABILITY is DEMONSTRATED + this session
+  produced a concrete PROSE SAMPLE (SpikeGPT-faithful spike-output generates coherent TinyStories text + beats
+  trigram +0.103). Finding: `2026-07-19-gap1-WKV-...-store-wall.md` (see the last 4 appended sections). Also
+  delivered this session (owner request): the full brain-architecture flowchart artifact. Older detailed scoping ↓
+- **⚠️ (prior, still valid framing) gap#1 — on-substrate robust BEAT is deep-arc-gated on END-TO-END substrate co-adaptation = converges with gap#4; capability DEMONSTRATED:**
   Comprehensive, verify-first-disciplined characterization of the on-substrate WKV frontier (15+ mechanisms). THREE real results:
   (1) the dendritic GRADED PLATEAU realizes a leaky integral of a CLEAN graded value at corr **0.98** — surpasses the point-neuron
   limit (Mikulasch-Priesemann); (2) a NON-NEGATIVE / DUAL-NON-NEGATIVE WKV state (`--nonneg-state`/`--dual-nonneg`) still BEATS the
