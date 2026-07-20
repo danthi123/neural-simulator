@@ -80,6 +80,9 @@ def main():
     ap.add_argument("--readout-from-scratch", action="store_true",
                     help="init the read-out (Wr/Wo_sp/head) from SMALL RANDOM instead of the pretrained (BPTT) values -> "
                          "FA aligns the forward weights from scratch (the clean emergence test; FA degrades a pretrained solution)")
+    ap.add_argument("--optimizer", choices=["adam", "sgd"], default="adam",
+                    help="step rule: adam (fast) or sgd (a pure local plasticity rule = strictest biological claim; "
+                         "no per-param adaptivity/momentum, just error x input x lr)")
     args = ap.parse_args()
 
     torch.manual_seed(args.seed); random.seed(args.seed); np.random.seed(args.seed)
@@ -208,7 +211,9 @@ def main():
             m = Mm[:, 1:].reshape(-1); tot += float((loss * m).sum()); ntok += float(m.sum())
         return float(np.exp(tot / max(1, ntok)))
 
-    opt = torch.optim.Adam(params, lr=args.lr)   # step rule only; credit assignment is FA (transport-free) + local
+    # step rule only; the credit assignment is FA/KP (transport-free) + local. SGD = a pure local plasticity rule.
+    opt = (torch.optim.SGD(params, lr=args.lr, momentum=0.0) if args.optimizer == "sgd"
+           else torch.optim.Adam(params, lr=args.lr))
     ppl0 = tiny_ppl()
     print(f"[credit={args.credit}{' SHUFFLED-FB' if args.shuffle_feedback else ''}"
           f"{' random-Wv' if args.random_input else ''}] TinyStories ppl BEFORE: {ppl0:.2f}")

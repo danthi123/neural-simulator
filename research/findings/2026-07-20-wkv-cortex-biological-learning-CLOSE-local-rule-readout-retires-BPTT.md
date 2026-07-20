@@ -65,9 +65,13 @@ transport anywhere.
   general-fluency biologization is a training-budget/convergence-rate lever, not a fundamental limit; the GROUNDED task
   (the mission capability) already matches BPTT at the standard budget (the copy read-out forms fine over the working
   features).
-- **Adam was the step rule** (the credit is FA/KP-local + no BPTT; Adam is only the optimizer — not weight transport).
-  A pure-SGD/delta-rule version is a stricter follow-on. **On-bridge** local-rule learning (the committed
-  `enable_selective_ssm_state` + the validated on-bridge eligibility) is the fully-spiking follow-on.
+- **The Adam caveat is RESOLVED — the strictest biological claim holds.** KP + **pure SGD** (a delta rule: error ⊗
+  input × lr, NO per-param adaptivity, NO momentum, NO BPTT, NO weight transport) reaches grounded verified-fluent
+  **0.86 == the BPTT ceiling**, RA-faithful **1.00** (`--optimizer sgd`). So the grounded fluent render is learnable
+  by a FULLY biologically-plausible pure local plasticity rule (transport-free KP feedback + delta-rule SGD updates).
+  (SGD converges slower on general fluency — ppl 51 — the same convergence-rate lever as above; the grounded task
+  matches BPTT.) **On-bridge** local-rule learning (the committed `enable_selective_ssm_state` + the validated
+  on-bridge eligibility) is the fully-spiking follow-on.
 - **The reservoir dynamics were fixed** (the reservoir/shallow-readout emergence path, per the project's R3 reframe).
   Closing the general-fluency ppl gap to BPTT (KP + more steps, or an on-bridge eligibility for `Wv`) is the remaining
   bounded lever.
