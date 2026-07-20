@@ -235,6 +235,17 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   decode), then `enable_bdsp_graded_credit` updates the read-out synapses.** A fresh focused arc (a careful `sim/`
   build). ⚠ set `cfg.seed` (the `actual_seed_used` bug); name the apical-lesion arm correctly; use a REDUCED read-out
   vocab. Findings `2026-07-20-onbridge-learning-burstprop-probe-...`; scoping in the a14d research-gate result.
+  **✅ RUNG (ii) MECHANISM GO (2026-07-20) — the on-bridge read-out LEARNS on the substrate.** Built the additive
+  default-off `sim/` FORWARD mechanism (`cp_ssm_readout_w`/`cp_ssm_readout_out` in `bridge.py`: `out = W @ cp_ssm_state`
+  in the step loop = the OUTPUT analogue of M2's synaptic INPUT decode; byte-identical when off = 15 tests pass;
+  ON-path byte-exact). A SINGLE-layer read-out over the on-bridge graded state LEARNS the grounded map by a PURE local
+  plasticity rule (DELTA rule, `cp_ssm_state` as the presynaptic eligibility — no BPTT, no weight transport, no
+  adaptive optimizer): grounded next-token acc 0.478 (52× chance), FROZEN→chance + SHUFFLE→4×-collapse + MEMORY
+  load-bearing (0.478 > memoryless 0.401 at sufficient training — a self-caught under-training correction).
+  `_gap_onbridge_ssm_readout_learn_derisk.py`. **NEXT rung (iii):** the single-LINEAR read-out ceilings ~0.49 (weak
+  memory use); the full memory-dependent copy needs the MULTI-LAYER gated read-out on-bridge (`head @ (sigmoid(Wr@h) *
+  (Wo_sp@state))`) + the FA feedback for the hidden layers (off-bridge multi-layer FA reached 0.998 reduced). Finding
+  `2026-07-20-onbridge-ssm-readout-learning-rung-ii-mechanism-GO-...`.
 - **🎯 gap#4 KEYSTONE REFRAMED (2026-07-20 close-state) — deep local credit is MECHANISM-ESTABLISHED; the apparent
   "contrast blocker" was a TASK ARTIFACT.** After rungs 1-9 + 6 pre-flights + a 28-agent adversarial audit, the
   honest status of "does the substrate learn DEEP representations by a biological rule?":
