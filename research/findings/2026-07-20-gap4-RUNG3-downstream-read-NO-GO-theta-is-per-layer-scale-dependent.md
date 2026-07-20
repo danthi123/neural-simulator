@@ -65,3 +65,53 @@ pathways have eligibility distributions ~100× apart and **no single θ can serv
 Rungs 1–2 stand unchanged (6-seed, blind-clean, controls collapsing). What rung 3 establishes is that **the local rule
 composes WITHIN a layer but does not yet stack ACROSS layers**, for a specific and fixable reason. gap#4's deep-credit
 frontier remains **open** — but it is now open at a named, mechanical obstacle rather than a diffuse one.
+
+---
+
+## UPDATE — per-pathway θ implemented and tested: NECESSARY but NOT SUFFICIENT
+
+Lever 1 was implemented (`sim/bridge.py`: per-synapse `cp_btsp_theta`, `None` ⇒ the scalar cfg value ⇒
+byte-identical; the kernel already takes θ elementwise). Layer 1 keeps θ=0.012; layer 2 gets its own θ calibrated to
+the **measured** CA1 eligibility scale:
+
+| pathway | presynaptic eligibility (measured) | θ |
+|---|---|---|
+| layer 1 `pos→ca1` | 0.00052 – 0.02310 | 0.012 |
+| layer 2 `ca1→l2` | 0.0000000 – 0.00084 | 0.00045 |
+
+**Measured scale ratio: 27.4×** — confirming a single global θ cannot serve both layers.
+
+**Result: still NO-GO.** Depression softened (`dw` −1289 → −685.8, so θ *is* doing its job) but
+**`l2_delta_max = 0.00000` and `l2_peak = −1` on every seed** — the response to each of the four fields stays
+`[0.0, 0.0, 0.0, 0.0]`.
+
+## The deeper blocker: the learned code has too little DYNAMIC RANGE to express graded learning
+
+This is the C9 signature again, one layer up: **substantial weight change (`dw` = −686) with zero behavioural
+change.** Combined with the gain measurement (L2 silent below `w0≈60`, responding at 60–150 with 4/20 bins active),
+the picture is:
+
+- CA1's learned code fires at **0.005 spikes/neuron/step** — extremely sparse.
+- At that sparsity, L2's response to a field is effectively **all-or-none**: it fires when some CA1 field is active
+  and not otherwise.
+- Graded weight changes therefore produce **no graded firing change** — there is no dynamic range for learning to
+  express itself in.
+
+⇒ **Stacking is blocked by the SPARSITY of the learned representation, not (only) by the credit rule or by θ.** The
+same property that makes the layer-1 field crisp and localized — very sparse, near-binary output — leaves the next
+layer nothing to modulate. Per-pathway θ remains a correct and necessary fix (kept, default-off, byte-identical), but
+it does not address this.
+
+## Revised next levers
+
+1. **Increase the learned code's dynamic range** — more CA1 neurons per field and/or a baseline that lets CA1 fire
+   *gradedly* rather than near-binary. Note rung 1 measured the analogous bind at layer 1 (silent below W0≈2,
+   saturated above 5); layer 2 inherits it and compounds it.
+2. **Read the graded conductance rather than spikes.** This project has repeatedly found that graded/analog reads
+   succeed where spike-rate reads hit the point-neuron wall — and gap#1's M1 result this same day is exactly that
+   (the on-bridge WKV state works *because* it is held in a graded conductance, not a firing rate). The same move may
+   apply here: let L2 read CA1's graded plateau/conductance instead of its sparse spikes.
+3. Only after dynamic range is addressed does re-testing the credit rule across layers become informative.
+
+**Honest status:** rungs 1–2 stand (6-seed, blind-clean). Rung 3 is a NO-GO with the blocker now localized to
+**representation sparsity / dynamic range**, with per-pathway θ implemented and eliminated as the (sole) cause.

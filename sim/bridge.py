@@ -452,6 +452,13 @@ class SimulationBridge:
         # neuromodulator-gated learning windows. See sim/regions.py
         # RegionPathway.plasticity_gate docstring for biology.
         self.cp_plasticity_rate_gain = None
+        # gap#4 (2026-07-20): PER-SYNAPSE BTSP depression threshold. A single global btsp_hetero_theta
+        # cannot serve two layers: the threshold is calibrated to a pathway's ELIGIBILITY SCALE, and a
+        # learned layer fires ~100x more sparsely than a current-driven input layer, so every synapse in
+        # the second pathway falls below a theta tuned for the first and takes full depression (measured:
+        # dw=-1289, crushing the weights it should shape). None => the scalar cfg value is used for every
+        # synapse => byte-identical to the committed behaviour.
+        self.cp_btsp_theta = None
         self._plasticity_gate_to_synapses = {}
         self._plasticity_gate_indices_gpu = {}
         self._plasticity_gate_values = {}
@@ -7400,8 +7407,15 @@ class SimulationBridge:
                             cp.float32(_hdep),
                             cp.float32(getattr(cfg, "btsp_w_min", 0.0)),
                             cp.float32(getattr(cfg, "btsp_w_max", 5.0)),
-                            cp.float32(_hthe), cp.float32(1.0 / _hthe if _hthe > 0.0 else 0.0),
-                            cp.float32(1.0 if _hthe > 0.0 else 0.0))
+                            (self.cp_btsp_theta[active_bt] if self.cp_btsp_theta is not None
+                             else cp.float32(_hthe)),
+                            (cp.where(self.cp_btsp_theta[active_bt] > 0.0,
+                                      1.0 / cp.maximum(self.cp_btsp_theta[active_bt], 1e-12), 0.0)
+                             if self.cp_btsp_theta is not None
+                             else cp.float32(1.0 / _hthe if _hthe > 0.0 else 0.0)),
+                            (cp.where(self.cp_btsp_theta[active_bt] > 0.0, 1.0, 0.0)
+                             if self.cp_btsp_theta is not None
+                             else cp.float32(1.0 if _hthe > 0.0 else 0.0)))
                     else:
                         new_w = fused_btsp_update(
                             cur_w, etilde_bt[active_bt], is_bt[active_bt],
