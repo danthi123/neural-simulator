@@ -21,6 +21,7 @@ def probe(two_comp, coinc, apical_g_couple=1.0, seed=42):
     cfg.enable_two_compartment_dap = bool(two_comp)
     cfg.enable_coincidence_detection = bool(coinc)
     cfg.apical_g_couple = float(apical_g_couple)
+    cfg.seed = seed                      # cfg.seed is what ACTUALLY seeds the substrate
     cfg.actual_seed_used = seed
     try:
         br = SimulationBridge(core_config=cfg, gpu_config=GPUConfig(),

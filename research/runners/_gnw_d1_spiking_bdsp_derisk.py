@@ -649,6 +649,7 @@ def stage_a_bridge_detector(seed):
         cfg.bdsp_p0 = 0.30
         cfg.enable_stdp = False                # detector-only: no STDP; BDSP uses cp_bdsp_E as its presynaptic factor
         cfg.enable_hebbian_learning = False
+        cfg.seed = seed                      # cfg.seed is what ACTUALLY seeds the substrate
         cfg.actual_seed_used = seed
         br = SimulationBridge(core_config=cfg, gpu_config=GPUConfig(),
                               viz_config=VisualizationConfig(), runtime_state=RuntimeState())
@@ -702,6 +703,7 @@ def stage_a_bridge_learns(seed, apical_pA=300.0):
             cfg.bdsp_p0 = 0.30
             cfg.enable_stdp = False                # isolate BDSP-driven dw (no STDP moving weights in parallel)
             cfg.enable_hebbian_learning = False
+            cfg.seed = seed                      # cfg.seed is what ACTUALLY seeds the substrate
             cfg.actual_seed_used = seed
             br = SimulationBridge(core_config=cfg, gpu_config=GPUConfig(),
                                   viz_config=VisualizationConfig(), runtime_state=RuntimeState())
@@ -757,6 +759,7 @@ def stage_a_bridge_microcircuit(seed, apical_pA=300.0):
             cfg.bdsp_p0 = 0.30
             cfg.enable_stdp = False
             cfg.enable_hebbian_learning = False
+            cfg.seed = seed                      # cfg.seed is what ACTUALLY seeds the substrate
             cfg.actual_seed_used = seed
             br = SimulationBridge(core_config=cfg, gpu_config=GPUConfig(),
                                   viz_config=VisualizationConfig(), runtime_state=RuntimeState())

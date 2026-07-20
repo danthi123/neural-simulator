@@ -48,6 +48,7 @@ def build_net(n_in, hidden, k, W, seed, settle_steps, n_copies=1):
     cfg.num_traits = 1   # <-- THE ROOT: cp_traits = cp.random.randint(0,num_traits) (bridge-internal RNG, NOT seeded by
                          # actual_seed_used) assigns neuron TYPE -> vr -> v_init. num_traits=1 => all trait 0 => identical
                          # deterministic vr => reproducible init => the block-diagonal batched forward is EXACT.
+    cfg.seed = int(seed)                      # cfg.seed is what ACTUALLY seeds the substrate
     cfg.actual_seed_used = int(seed)
     br = SimulationBridge(core_config=cfg, gpu_config=GPUConfig(),
                           viz_config=VisualizationConfig(), runtime_state=RuntimeState())
