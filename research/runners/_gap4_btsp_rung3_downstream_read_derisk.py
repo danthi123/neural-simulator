@@ -335,13 +335,18 @@ def main():
     args = ap.parse_args()
     set_track_length(args.n_bins)
     if args.poisson_cells > 0:
+        # NOTE: re-drawn PER SEED inside the loop below. Drawing once from seeds[0] would give every
+        # seed the SAME layout and defeat the whole point of testing geometry-dependence.
         tg, tc = set_map_poisson(args.poisson_cells, seed=args.seeds[0])
-        print(f'[map] POISSON placement (Rich 2014): {len(tg)} cells {tg} target_cell={tc}')
+        print(f'[map] POISSON placement (Rich 2014), re-drawn per seed; seed0 example: {tg}')
     else:
         tg, tc = set_map_density(args.spacing)
     print(f'[map] spacing={args.spacing} CELL_TARGETS={tg} N_CELL={len(tg)} TARGET_CELL={tc} (bin {TARGET_BIN})')
     arms = {}
     for s in args.seeds:
+        if args.poisson_cells > 0:
+            _tg, _tc = set_map_poisson(args.poisson_cells, seed=s)
+            print(f"  [map seed {s}] centres {_tg} target_cell={_tc}", flush=True)
         _band = dict(band_lo=args.band_lo, band_hi=args.band_hi,
                      dog_a_dep=args.dog_a_dep, tau_slow=args.tau_slow,
                      mk_pot=args.mk_pot, mk_dep=args.mk_dep)
