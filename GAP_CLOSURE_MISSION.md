@@ -317,7 +317,18 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   D-dim SUBTRACTED value vs the deployed 2D accumulated [relu(+v);relu(-v)] — a different quantity. **AND the M5
   deep-NLL is INVALID:** the NEF control gives deep vs-trigram -3.069, NOT its known -0.030, so the checkpoint/harness
   is misconfigured (a control that doesn't reproduce invalidates the run; the first runs also hit the documented
-  n-sentences 40000-vs-80000 vocab-mismatch silent failure). **NO mechanism verdict.** REQUIRED NEXT: make the NEF
+  n-sentences 40000-vs-80000 vocab-mismatch silent failure). **NO mechanism verdict — and it went DEEPER: I could not reproduce M1's +0.486
+  at all on the regenerated checkpoint.** Even the CANONICAL M1 config (`--ssm-state --use-ssm-readout`, state corr
+  **1.000** byte-exact, the SSM's OWN read-out, saved vocab) gives **-3.013**, so the regenerated checkpoint is not
+  on-bridge-compatible (a state-layout/read-out/eval-stream convention differs from the original M1 checkpoint, which
+  is lost post-migration; off-bridge training was GO +0.512, so the model is fine, its on-bridge realization is not).
+  ⇒ **NO encode comparison was ever valid; the token-SDR is neither confirmed nor refuted (never validly tested).**
+  Applied a real additive fix (on-bridge runners must use the checkpoint's SAVED `words`, not rebuild vocab) but the
+  incompatibility persists beyond it. REQUIRED-NEXT is now a HARNESS task: produce a checkpoint on which `--ssm-state
+  --use-ssm-readout` reproduces ~+0.486 (the M1 control MUST pass before any encode test). **META-LESSON: FOUR
+  consecutive self-corrections in one thread, each surfaced by a failing control — I kept building forward on an
+  unvalidated foundation when the FIRST action should have been to make the M1 control reproduce. The gap#4 discipline
+  (run the control FIRST) is exactly what I failed to front-load.** [superseded intermediate note:] make the NEF
   control reproduce ~-0.030 on a validated checkpoint+harness (the corr-0.66-but-deep-NLL--3.07 inconsistency points
   to a read-out-scaling or vocab-provenance bug), THEN measure tokensdr against a working baseline with write-fidelity
   on the DEPLOYED accumulated state. **The day's core lesson (validate on DEPLOYED inputs; run the deployment's own
