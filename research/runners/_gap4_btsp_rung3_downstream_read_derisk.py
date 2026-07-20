@@ -174,7 +174,7 @@ def run_lap(sb, pos, cells, l2, *, ca1_targets=None, l2_plateau_bin=None, bin_st
     return ca1_rates, l2_rates
 
 
-def one_run(seed, *, l2_eta=0.02, do_l2_plateau=True, score_cell=None, bin_steps=200, l2_w0=150.0,
+def one_run(seed, *, l2_eta=0.02, do_l2_plateau=True, score_cell=None, plateau_cell=None, bin_steps=200, l2_w0=150.0,
             elig_tau_ms=1000.0, dt_ms=1.0):
     from sim.backend import to_host
     sb, pos, cells, l2 = build(seed, l2_w0=l2_w0)
@@ -187,7 +187,12 @@ def one_run(seed, *, l2_eta=0.02, do_l2_plateau=True, score_cell=None, bin_steps
     ca1_peaks = [int(np.argmax(ca1_delta[c])) if ca1_delta[c].max() > 0 else -1 for c in range(N_CELL)]
     map_ok = all(p >= 0 for p in ca1_peaks) and len(set(ca1_peaks)) == N_CELL
     # ---- STAGE 2: L2 learns to READ the map. Plateau L2 at the TARGET cell's own field peak. ----
-    tgt_bin = ca1_peaks[TARGET_CELL] if ca1_peaks[TARGET_CELL] >= 0 else CELL_TARGETS[TARGET_CELL]
+    # plateau_cell is a genuine MANIPULATION: it moves WHERE the L2 plateau is delivered, so the whole
+    # of stage 2 re-runs under a different cause. (The previous `score_cell`-only control merely
+    # re-indexed the SCORING of an unchanged run, so it was identical to MAIN by construction and
+    # carried zero evidential weight -- see the self-correction in the rung-3 finding.)
+    _pc = TARGET_CELL if plateau_cell is None else int(plateau_cell)
+    tgt_bin = ca1_peaks[_pc] if ca1_peaks[_pc] >= 0 else CELL_TARGETS[_pc]
     sb.core_config.enable_btsp = True
     sb.core_config.btsp_learning_rate = float(l2_eta)
     w0 = float(np.abs(np.asarray(to_host(sb.cp_connections.data))).sum())
@@ -204,8 +209,11 @@ def one_run(seed, *, l2_eta=0.02, do_l2_plateau=True, score_cell=None, bin_steps
     #     shift_bins = tau_elig_ms / (bin_steps * dt_ms)
     # Deriving it in BINS (not in cell INDICES) is what makes it survive a map-density change --
     # an index-based "one cell back" silently means a different distance at a different spacing.
+    # The expectation follows the MANIPULATION: whichever cell the plateau was actually delivered at,
+    # L2 should read the cell one eligibility-window BEFORE it. Scoring C2 against the unmoved target
+    # would make it fail trivially (and would prove nothing about selectivity).
     shift_bins = int(round(elig_tau_ms / float(bin_steps * dt_ms)))
-    expected_bin = (TARGET_BIN - shift_bins) % N_BINS
+    expected_bin = (CELL_TARGETS[_pc] - shift_bins) % N_BINS
     expected = int(np.argmin([abs(((t - expected_bin + N_BINS // 2) % N_BINS) - N_BINS // 2)
                               for t in CELL_TARGETS]))
     sc = expected if score_cell is None else score_cell
@@ -242,7 +250,7 @@ def main():
     for s in args.seeds:
         for name, kw in [("MAIN", {}), ("C1_l2_frozen", dict(l2_eta=0.0)),
                          ("C3_no_l2_plateau", dict(do_l2_plateau=False)),
-                         ("C2_wrong_target", dict(score_cell=(TARGET_CELL + 1) % N_CELL))]:
+                         ("C2_wrong_target", dict(plateau_cell=(TARGET_CELL + 1) % N_CELL))]:
             r = one_run(s, bin_steps=args.bin_steps, **kw)
             arms.setdefault(name, []).append((s, r))
             print(f"  seed {s} {name:17s} read_hit={int(r['read_hit'])} sel={r['selectivity']:.2f} "

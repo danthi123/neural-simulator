@@ -278,3 +278,63 @@ works in both places. Two independent gaps, one substrate limitation, one remedy
 The next method is named by the finding itself: give L2 a *graded* read of the CA1 population (the mechanism already
 demonstrated at 0.92 here and end-to-end in gap#1 M1), and/or densify the CA1 map so the population tiles the track
 continuously rather than at 4 points.
+
+---
+
+## ⛔ SELF-CORRECTION (2026-07-20, same day, ~30 min after the block above) — MY "DECISIVE" READING OF C2 WAS WRONG
+
+The block above states, as its headline claim:
+
+> **MAIN and the WRONG-TARGET control are identical to five decimal places.** This is not "selectivity is weak" —
+> it is *the target plays no causal role at all*.
+
+**That is FALSE, and it is my error, not the instrument's.** `score_cell` is used at exactly ONE line in
+`one_run` (`sc = expected if score_cell is None else score_cell`). It does **not** touch `l2_plateau_bin`, which
+is set from `do_l2_plateau` and `tgt_bin`. So `C2_wrong_target` **re-scores the SAME simulation against a
+different cell — it never re-runs with the plateau delivered somewhere else.**
+
+⇒ MAIN and C2 producing identical `r_tgt` / `r_oth` / `dw` is **TRUE BY CONSTRUCTION**. It is not evidence of
+anything. I read a scoring re-index as a causal manipulation and called the result "decisive".
+
+**What this does and does not change:**
+- **The NO-GO STANDS, on its own gate:** read_acc 0.000, selectivity 0.000 — both far below the pre-registered
+  0.80, on an instrument whose moat controls (C1, C3) are now verified clean at dw=0. That verdict never
+  depended on C2.
+- **The "target plays no causal role" claim is WITHDRAWN.** It was never tested. The design lacks a genuine
+  wrong-target manipulation control.
+- **The mechanistic hypothesis (sparse CA1 map -> backward window illegible downstream) is UNAFFECTED** — it was
+  motivated by `l2_peak=7` being invariant and by the spike-vs-graded gap, not by C2.
+
+**This is the sixth instance this session of the same structural failure: a control that LOOKS like it probes the
+mechanism but does not invoke it.** It is the exact shape the operating rules already name — "if a control exists
+in the code and is never invoked, run it", and "one flag != one variable". Here it was worse than un-invoked: it
+ran, printed plausible numbers, and I built a headline on them. **A control's NAME is not its SEMANTICS; read what
+the parameter actually reaches before citing the control as evidence.**
+
+FIX APPLIED: `C2_wrong_target` is replaced by a genuine manipulation — re-run the whole of stage 2 with the L2
+plateau delivered at a DIFFERENT cell's field, and require L2 to then read THAT cell. Results below are from the
+corrected control only; the old C2 numbers are not cited.
+
+## RUNG 3b — CA1 MAP DENSITY AS THE SINGLE VARIABLE (3 dev seeds, a-priori window)
+
+Window derived a priori from the rule: `shift_bins = tau_elig/(bin_steps*dt) = 1000/200 = 5 bins`, mapped to the
+nearest cell. `TARGET_BIN=13` fixed; `TARGET_CELL` derived, so density cannot silently repoint the target.
+
+| arm | map | `map_ok` | read_acc | selectivity | verdict |
+|---|---|---|---|---|---|
+| spacing 4 | 5 cells `[1,5,9,13,17]` | **1** | 0.000 | **0.500** | NO-GO |
+| spacing 2 | 10 cells `[1,3,...,19]` | **0** | 0.000 | 0.000 | **INVALID — stage 1 failed** |
+
+**The dense arm did not test the hypothesis — it failed upstream of it.** At spacing 2 the CA1 peaks come back
+`[0,2,1,1,3,5,7,9,11,11]`: duplicated entries (1,1 and 11,11), so the distinct-field assertion fails and
+`map_ok=0`. With ~3-bin field width plus the 5-bin backward shift, fields at spacing 2 **collide**. Stage 1 never
+formed a valid map, so **the density hypothesis is UNTESTED, not refuted.** (The assertion did its job: this is
+the instrument catching an invalid run rather than me reading its downstream numbers.)
+
+**The sparse arm is the informative one:** at 5 cells the map forms cleanly (`map_ok=1`) and **selectivity rises
+0.000 -> 0.500** vs the original 4-cell rung-3 config — moving in the direction the sparsity hypothesis predicts,
+while still failing the 0.80 gate. That is a hint, not a result: n=3 dev seeds, still no functional seed variation
+(values identical to ~4 decimals across seeds), and one density step.
+
+⇒ **Honest state: rung 3 remains NO-GO. The density hypothesis is live but untested** — testing it needs an
+intermediate density (spacing 3) where fields tile more finely WITHOUT colliding, plus restored seed variation.
