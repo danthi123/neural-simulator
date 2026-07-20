@@ -50,8 +50,14 @@ state is the fixed reservoir's own dynamics). Reduced grounded vocab (112 words)
   adaptive optimizer), on the substrate, load-bearing (frozen→chance, shuffle→4× collapse, memory load-bearing >
   memoryless 0.401). This is the first on-bridge realization of the biological-learning close's local-rule read-out
   learning — and the single-LINEAR read-out already reaches ~0.8 (not just "mechanism works").
+- **Rung (iii) — a GENERIC 2-layer FA read-out UNDER-performs (honest negative):** a hidden relu layer over the state
+  with fixed-random FA credit (`--n-hidden 256`, W1 by FA + W2 by delta) reaches only **~0.47** (70 epochs, plateaued)
+  — WORSE than the single-linear ~0.8. The FA-routed hidden credit is coarser than the EXACT single-linear delta
+  (the output layer's gradient is local + exact), so the approximation cost exceeds the capacity benefit. ⇒ for THIS
+  on-bridge read-out the exact single-linear delta is the better rule; adding a generic FA hidden layer HURTS.
 - **The next rung (accuracy top-up):** the single-linear ~0.8 is below the off-bridge MULTI-layer 0.998 — closing the
-  last ~0.2 (the hardest memory-dependent copies) is **rung (iii): the gated read-out
+  last ~0.2 needs the SPECIFIC off-bridge recipe (the current-token GATE `sigmoid(Wr@h)` + the graded clean-error /
+  KP, which reached 0.998), NOT a generic 2-layer — **rung (iv): the gated read-out
   `head @ (sigmoid(Wr@h) * (Wo_sp@state))` on-bridge, with the FA feedback pathway for the hidden layers** (the D3
   clean-error channel / `enable_bdsp_graded_credit`). The off-bridge multi-layer FA reached 0.998 reduced, so the
   on-bridge multi-layer read-out is de-risked at the rule level; realizing the gated forward on-bridge (rung iv) +

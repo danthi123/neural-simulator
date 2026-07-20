@@ -38,6 +38,9 @@ def main():
     ap.add_argument("--shuffle-elig", action="store_true", help="anti-cheat: shuffle the state->readout association (must collapse)")
     ap.add_argument("--memoryless", action="store_true", help="anti-cheat: k_leak=1 (no memory) -> collapse")
     ap.add_argument("--frozen", action="store_true", help="anti-cheat: no weight update -> chance")
+    ap.add_argument("--n-hidden", type=int, default=0,
+                    help="rung (iii): a 2-LAYER read-out — W1[H,N]@state (on-bridge) -> relu -> W2[nv,H] (host). W1 by "
+                         "FA (fixed-random feedback B[H,nv], transport-free), W2 by delta. 0 = the single-layer rung ii.")
     args = ap.parse_args()
 
     xp, bname = get_backend()
@@ -78,10 +81,18 @@ def main():
     gsize = np.array([len(gp) for gp in chan_groups], np.float64)
     _scg = max(1e-6, 1.0 - decay)
 
-    # the READ-OUT weights W [nv, N] (single linear layer over the on-bridge state); small random init
-    W = (0.01 * rng.standard_normal((nv, N))).astype(np.float32)
+    # the READ-OUT: single linear layer W[nv,N] over the on-bridge state, OR (rung iii) a 2-LAYER read-out
+    # W1[H,N]@state (on-bridge) -> relu -> W2[nv,H] (host), W1 by FA (fixed-random feedback), W2 by delta.
+    H = int(args.n_hidden)
+    if H > 0:
+        W1 = (0.05 / N ** 0.5 * rng.standard_normal((H, N))).astype(np.float32)
+        W2 = (0.05 / H ** 0.5 * rng.standard_normal((nv, H))).astype(np.float32)
+        Bfa = (rng.standard_normal((H, nv)) / nv ** 0.5).astype(np.float32)   # fixed-random FA feedback (transport-free)
+        b.cp_ssm_readout_w = xp.asarray(W1)
+    else:
+        W = (0.01 * rng.standard_normal((nv, N))).astype(np.float32)
+        b.cp_ssm_readout_w = xp.asarray(W)
     perm = rng.permutation(N) if args.shuffle_elig else None         # anti-cheat: shuffle state->readout association
-    b.cp_ssm_readout_w = xp.asarray(W)
 
     def charge(rid):
         v = Wv @ _ln(wkv_emb(rid))
@@ -108,13 +119,22 @@ def main():
         seq, mask = frame()
         wash(); correct = tot = 0
         for t in range(len(seq) - 1):
-            out, state = charge(seq[t])
-            if mask[t + 1]:
-                pred = int(np.argmax(out)); correct += int(pred == seq[t + 1]); tot += 1
-                if train:
-                    p = np.exp(out - out.max()); p /= p.sum(); err = p.copy(); err[seq[t + 1]] -= 1.0   # softmax - onehot
-                    elig = state[perm] if perm is not None else state           # presynaptic eligibility = the on-bridge state
-                    W[:] = W - args.lr * np.outer(err, elig).astype(np.float32)  # DELTA RULE (local, no transport, no BPTT)
+            out, state = charge(seq[t])            # out = W@state (single) OR hidden_pre = W1@state (2-layer), on-bridge
+            if not mask[t + 1]:
+                continue
+            hidden = np.maximum(out, 0.0) if H > 0 else None                    # relu (2-layer)
+            logits = (W2 @ hidden) if H > 0 else out
+            pred = int(np.argmax(logits)); correct += int(pred == seq[t + 1]); tot += 1
+            if train:
+                p = np.exp(logits - logits.max()); p /= p.sum(); err = p.copy(); err[seq[t + 1]] -= 1.0  # softmax - onehot
+                elig = state[perm] if perm is not None else state              # presynaptic eligibility = the on-bridge state
+                if H > 0:
+                    W2[:] = W2 - args.lr * np.outer(err, hidden).astype(np.float32)   # delta (output layer, local)
+                    err_h = (Bfa @ err) * (out > 0)                                   # FA to hidden (transport-free) * relu'
+                    W1[:] = W1 - args.lr * np.outer(err_h, elig).astype(np.float32)   # FA update of W1 (state as eligibility)
+                    b.cp_ssm_readout_w = xp.asarray(W1)
+                else:
+                    W[:] = W - args.lr * np.outer(err, elig).astype(np.float32)       # DELTA RULE (local, no transport, no BPTT)
                     b.cp_ssm_readout_w = xp.asarray(W)
         return correct, tot
 
