@@ -332,8 +332,16 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   transfer. ⇒ **the well-motivated build is the RF PHASE code** (phase ~ value, linear + symmetric timing-jitter error,
   no dead-zone, via the validated resonate-and-fire complex synapses atol 1e-9); with an unbiased encode, corr ~0.82
   SUFFICES (per the M0 curve). The wall is converted from 'impossible near-1.0 fidelity' to a TRACTABLE target.
-  Findings: `2026-07-20-gap1-M0-REFRAME-...`, `-DEFINITIVE-...`. **NEXT: build the RF phase encode; pre-flight = verify
-  its per-token error is ~i.i.d./symmetric across the value range on the DEPLOYED accumulated state before pre-registering.** Usable artifact: `wkv_ssmU_v1000_d128_seed42.npz`. Findings:
+  Findings: `2026-07-20-gap1-M0-REFRAME-...`, `-DEFINITIVE-...`. **RF PHASE PRE-FLIGHT GREENLIT (2026-07-20):** encoding 128 values as RF phases on a real
+  RESONATE_AND_FIRE bridge, the error is UNBIASED across the value range (corr 0.954, bias-spread across value bands
+  **0.0007** ~= zero, tiny constant bias -0.015, NO dead-zone) — the EXACT property M0 requires. Since unbiased error
+  accumulates GRACEFULLY (M0 i.i.d. curve, GO at corr 0.95) unlike the rate code's coherently-compounding bias, this
+  is the FIRST gap#1 encode with a PRINCIPLED reason to expect it clears the wall (not just a hope of higher fidelity).
+  **NEXT: build the full RF phase encode** (per-token v_t as RF phases via the precomputed V-vector phasor dictionary
+  -> decode -> charge the validated cp_ssm_state -> deep-NLL gate); pre-flight the DEPLOYED accumulated-state bias
+  (re-confirm M1 +0.542, measure per-channel error MEAN stays unbiased) before pre-registering; GO target deep-NLL>0
+  predicted by the M0 curve at the achieved corr. Pre-flight runner `_gap1_rf_phase_preflight.py`; finding
+  `2026-07-20-gap1-RF-PHASE-preflight-GREENLIT-...`. Usable artifact: `wkv_ssmU_v1000_d128_seed42.npz`. Findings:
   `2026-07-20-gap1-DEFINITIVE-...`, `-ROOT-CAUSE-...`. Superseded intermediate note below:
 - **⛔ gap#1 TOKEN-SDR REFUTED + M1-realization residual (2026-07-20 FINAL) — the spiking-INPUT half is a real,
   honestly-documented WALL; the token-SDR escape does not work.** ROOT CAUSE of the day's harness chaos found by
