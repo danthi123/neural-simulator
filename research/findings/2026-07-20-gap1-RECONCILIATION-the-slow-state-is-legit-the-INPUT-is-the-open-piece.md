@@ -58,3 +58,29 @@ read-out is validated (2026-07-13 spiking-readout GO); the ONLY unvalidated stag
   RAG check has already done the gate's reconciliation half; the build gate should rank conductance-drive
   realizations (direct `g_syn` read vs slow-NMDA-with-modulated-decay) cheap-first.
 - No re-derivation: this reconciliation PREVENTED launching a gate that would have re-run the 2026-07-13 arc.
+
+---
+
+## SUBSTRATE VERIFICATION (independent of the running gate) — route 2 is CHEAP and ADDITIVE
+
+Verified at source before the gate reports, so its recommendation can be checked against the actual machinery:
+
+- **The audit's point confirmed at source:** `cp_ssm_inject` is host-written in the runner
+  (`_emerge_wkv_onbridge_derisk.py:409`: `b.cp_ssm_inject[:] = _cur`). That is the entire "zero spiking input".
+- **The conductances the spikes produce ALREADY exist and are ALREADY current at the SSM update point:**
+  `cp_conductance_g_e` and `cp_conductance_g_nmda` are bridge arrays (bridge.py:246/1246, saved-state list 2406),
+  and the synaptic-conductance update is pipeline step 2 while the SSM-state update
+  (`bridge.py:5951-5953: cp_ssm_state = lam*cp_ssm_state + (1-lam)*cp_ssm_inject`) is later in the same step.
+- ⇒ **Route 2 needs NO scalar decode and NO structural sim/ edit:** the slow NMDA conductance the network's spikes
+  drive through synapses is available to feed `cp_ssm_state`'s input in place of the host-written scalar. The
+  cheapest de-risk is: build a small recurrent language net whose token embedding drives real synapses -> the
+  spikes those produce set `cp_conductance_g_nmda` -> the SSM integrator reads THAT as its input (not a decoded
+  scalar) -> does it still beat the trigram at deep context? This is the M2 test with the lossy decode REMOVED.
+- **The pre-flight (today's hardest-won lesson):** BEFORE pre-registering, verify on DEPLOYED inputs that
+  `cp_conductance_g_nmda` at the SSM update carries the per-token input with enough fidelity — measure its
+  correlation with the intended `v_t` on real spikes, exactly as the M2 failure taught (validate the property on
+  the inputs the implementation actually generates, not idealized ones).
+
+This is recorded as substrate fact, NOT a decision to build ahead of the gate — the gate ranks realizations and may
+prefer the modulated-decay form or find a burned-arm caveat. But it establishes the route is cheap, additive, and
+reuses existing arrays, which bounds the cost of the recommendation.
