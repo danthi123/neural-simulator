@@ -177,7 +177,14 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   (c_w ∝ inp firing ∝ relu(v)) COMPOUNDING through the leaky recurrence — and co-adapting to that noise via a surrogate DEGRADES the
   WKV (`--state-noise` went negative), so it needs the WKV to learn a noise-robust recurrence tuned to the ACTUAL per-step substrate
   noise = surrogate-BPTT THROUGH the real bridge = gap#4's learn-through-the-spiking-substrate lever, exactly.** So the on-substrate
-  robust WKV BEAT and gap#4's deep-credit lever are the SAME next arc. This is a genuine DEEP arc (substantial), NOT a one-step clean-up.
+  robust WKV BEAT and gap#4's deep-credit lever are the SAME next arc. **EXHAUSTIVELY CONFIRMED (2026-07-19, ~7 rate-level variants):
+  plateau (0.98 clean) · dual-nonneg (bypasses opponency, +0.41 rate GO) · plateau-surrogate (+0.25 rate GO) · input-noise co-adapt
+  (+0.20 rate GO, lifts on-substrate corr 0.60→0.73) · bigger population — EVERY ONE improves a piece, NONE closes the on-substrate
+  deep-NLL (stays −1.0): the plateau captures the common/shallow variance but LOSES the deep-context discriminative signal, and a
+  post-hoc read-out on frozen states cannot recover it. ⇒ the fix is UNAVOIDABLY end-to-end BPTT through the ACTUAL bridge (train the
+  read + input map on the actual plateau states). The concrete build: a CALIBRATED faithful differentiable surrogate of the bridge's
+  measured per-channel plateau transfer+noise (system-identification), train the WKV through it, deploy + thin re-fit — OR true
+  surrogate-gradient BPTT via `sim/surrogate_grad.py`+`bptt_snn_gpu.py`.** This is a genuine DEEP arc (substantial), NOT a one-step clean-up.
   The self-NMDA PARITY (+0.017) remains the best on-substrate WKV
   result; the DEMONSTRATED capability (architecture-level 6-seed robust BEAT + generates prose, CI) is the solid deliverable and is
   UNAFFECTED. ⇒ NEXT: either (A) the end-to-end substrate co-adaptation deep arc (= gap#4 territory, unlocks the on-substrate BEAT +
