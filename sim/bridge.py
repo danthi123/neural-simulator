@@ -349,6 +349,13 @@ class SimulationBridge:
         self.cp_ssm_state = None                          # per-neuron slow graded SSM state s (the held value)
         self.cp_ssm_inject = None                         # per-neuron injection drive (the "new input" written when released)
         self.cp_ssm_shunt = None                          # per-neuron input-driven shunt g (higher -> more leak -> release)
+        # On-bridge GRADED read-out over the SSM state (rung-ii, 2026-07-20): the read-out weights ARE the synapses and
+        # the transmission is GRADED (out = W @ cp_ssm_state = sum_i W[j,i]*state[i], the value in the synapses, per M2).
+        # Both None by default -> the step block is skipped -> byte-identical. The runner sets cp_ssm_readout_w
+        # (a [n_out, N] weight matrix) + reads cp_ssm_readout_out ([n_out]) each step, and updates W by a local rule
+        # (BDSP graded-clean-error) using cp_ssm_state as the presynaptic eligibility.
+        self.cp_ssm_readout_w = None
+        self.cp_ssm_readout_out = None
         self.cp_input_divisive_mask = None                # bool per-neuron: True for per-concept divisive-norm neurons (None unless flagged region)
         self.cp_input_divisive_mask_2 = None              # bool per-neuron: SECOND independent divisive-norm pool (FIX A, sel_X; None unless flagged region)
         # Cluster G v2 (2026-05-01): per-neuron NMDA mask (1.0 for neurons
@@ -5951,6 +5958,13 @@ class SimulationBridge:
             if self.cp_ssm_state is not None:
                 _ssm_lam = cp.clip(1.0 - float(getattr(cfg, "ssm_k_leak", 0.06)) * (1.0 + self.cp_ssm_shunt), 0.0, 1.0)
                 self.cp_ssm_state = _ssm_lam * self.cp_ssm_state + (1.0 - _ssm_lam) * self.cp_ssm_inject
+
+            # On-bridge GRADED read-out over the SSM state (rung-ii): out = W @ state (the read-out value carried through
+            # the synapse weights, graded transmission -- the OUTPUT analogue of M2's synaptic INPUT decode). Additive +
+            # self-contained (reads cp_ssm_state/cp_ssm_readout_w, writes cp_ssm_readout_out); skipped + byte-identical
+            # when cp_ssm_readout_w is None. The runner sets W each build + reads out + updates W by a local rule.
+            if self.cp_ssm_readout_w is not None and self.cp_ssm_state is not None:
+                self.cp_ssm_readout_out = self.cp_ssm_readout_w @ self.cp_ssm_state
 
             # Step profiler: optional per-section wall-clock timing for bottleneck analysis.
             # Enable via GPUConfig.enable_step_profiler. Logs summary every 500 steps.
