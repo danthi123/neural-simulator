@@ -248,8 +248,7 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   `_gap_onbridge_ssm_readout_learn_derisk.py`. **Rung (iii) — generic 2-layer FA UNDER-performs** (`--n-hidden`, ~0.47
   < 0.8; FA hidden credit coarser than the exact delta — honest negative). **✅ Rung (iii') — a LINEAR current-token
   term reaches ~0.88 (the clean win, `--add-token`):** `logits = W@state + Wh@h` (both by the exact delta rule; the
-  current token disambiguates the copy) → dev-multi-seed **42/43/44 = 0.90/0.84/0.91 @ 70 ep**, and at 160 ep (seed
-  42) **CONVERGES TO 0.957** (still rising 0.75→0.90→0.92→0.957), FROZEN→chance. **✅✅ ON-BRIDGE LEARNING CLOSED:
+  current token disambiguates the copy) → dev-multi-seed **42/43/44 = 0.90/0.84/0.91 @ 70 ep**, and at 160 ep **CONVERGES multi-seed 42/43/44 = 0.949/0.949/0.929 (mean ~0.94)**, FROZEN→chance. **✅✅ ON-BRIDGE LEARNING CLOSED:
   ~0.95 on the substrate, at the off-bridge 0.998 ceiling, by the SIMPLEST biological rule (pure exact delta over the
   graded state + current token — NO BPTT, NO weight transport, NO FA, NO adaptive optimizer). The mission's
   "fully-spiking, one-brain" LEARNING is achieved; the fiddly gated rung (iv) is UNNECESSARY.** (Firming follow-on:
