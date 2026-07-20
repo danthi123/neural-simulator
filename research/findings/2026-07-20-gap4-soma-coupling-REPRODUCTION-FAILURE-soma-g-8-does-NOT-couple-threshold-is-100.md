@@ -120,6 +120,28 @@ much stronger fwd weights) or is ruled out is the decisive NEXT step, BEFORE re-
 floor itself is 3-seed: BDSP 0.564/0.531/0.489 ≈ lesion, oracle 0.97-0.99). ⇒ the gap#4 deep-credit-to-accuracy
 question is not yet answerable — the substrate must first be shown to carry input signal through the hidden layer.
 
+## Follow-up: BDSP AT the input-selective operating point — under-tuned/decoupled, needs JOINT tuning
+
+Found an input-selective forward operating point (settle=60, fwd_wmean=500, hidden_bias=300, in_hi=2000): the hidden
+now fires input-differentially (‖h1−h2‖≈12.8, hid-active 0.99) and a random-hidden reservoir readout reaches **0.67**
+(> input-linear floor 0.510; < oracle 0.989 as expected for random features). So the forward IS expressive here.
+
+Ran BDSP at this operating point (soma-g 200, e12, cleanxor, seed 42): **BDSP 0.400 ≈ LESION 0.406 ≈ wrong 0.406**, all
+BELOW the reservoir baseline 0.67 AND the linear floor 0.567 — AND **`apical_couples_to_bursts=False`** (B_apical 0.310
+but no rise vs rest). So at in_hi=2000's stronger-drive burst regime, soma-g 200 no longer couples (same decoupled
+signature as soma-g 8 at the weak drive) and BDSP≈lesion (the decoupled null); the apical gains/lr were not rescaled
+for the 3× stronger forward drive. **This is an under-tuned, DECOUPLED run — NOT a credit verdict.** The credit
+degrading the reservoir signal (0.67→0.40) is consistent with an un-coupled, mis-scaled update, not "credit is harmful."
+
+**⇒ the gap#4 deep-credit-to-accuracy test requires JOINT tuning — a multi-dimensional search, the next step:**
+(1) hold the input-selective forward (settle 60 / fw ~300-500 / hb ~150-300 / in_hi ~2000);
+(2) re-find the soma-g that COUPLES at THIS burst regime (sweep soma-g upward until `apical_couples_to_bursts=True`
+    with B rising above the now-higher B_rest — likely soma-g ≫ 200);
+(3) rescale the credit magnitude (apical_out/hid_gain, bdsp_lr) to the new drive;
+(4) THEN read whether BDSP climbs the reservoir baseline (0.67) toward the oracle (0.989), 6-seed, vs the
+    (BDSP > reservoir-baseline, wrong_sign < baseline) sign-informative gate. Only a JOINTLY-tuned, COUPLED run answers
+    the credit question; every single-lever run so far confounds forward operating point, coupling, and credit magnitude.
+
 ## Method lesson
 
 The banked "pipeline-validated" result was gated on a dw ratio while its OWN coupling diagnostic said DECOUPLED, and its
