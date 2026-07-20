@@ -226,6 +226,12 @@ the honest on-bridge capability IS the reservoir readout (0.765), with the credi
 consistent with R3. (Note: the lesion dw 64,403 at fw_ih=180 shows the lesion arm's weights still drift, so BDSP-vs-lesion
 is mildly confounded; the BDSP-vs-RESERVOIR comparison, which is credit-independent, is the clean load-bearing one.)
 
+## 3-seed firming (clean operating point) — the NEGATIVE holds
+
+BDSP at the confound-free operating point (fw_ih=180 < w_max, coupled, no clip), 3 seeds: **BDSP 0.553 / 0.519 / 0.503
+(mean 0.525)** vs **reservoir baseline ~0.765** — the credit-trained net underperforms the reservoir readout on ALL
+three seeds. The clean NEGATIVE is firmed (not a seed-42 artifact).
+
 ## a-1 SYNTHESIS — this re-confirms the project's OWN 2026-07-10 conclusion (and corrects a drifted board claim)
 
 The a-1 RAG/grep check surfaced `2026-07-10-D1-onbridge-deep-credit-poolk-already-run-confounded-by-weight-blowup.md`,
