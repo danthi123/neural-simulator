@@ -161,6 +161,29 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
+- **🎯 gap#4 KEYSTONE REFRAMED (2026-07-20 close-state) — deep local credit is MECHANISM-ESTABLISHED; the apparent
+  "contrast blocker" was a TASK ARTIFACT.** After rungs 1-9 + 6 pre-flights + a 28-agent adversarial audit, the
+  honest status of "does the substrate learn DEEP representations by a biological rule?":
+  **(1) one-shot local credit WORKS** (rung 1, repaired on fresh seeds under the declared metric; the
+  seconds-long-window sub-claim withdrawn); **(2) it composes to a POPULATION** (rung 2, back-ported genuine
+  delivery-manipulation control: 4 distinct fields in one lap on shared inputs); **(3) it composes ACROSS A LAYER**
+  (rung 3d, PRE-REGISTERED 6/6 fresh seeds: a downstream layer learns a plateau-locked read of the learned code,
+  offset +0, tracks the plateau 1:1, both lesions collapse it) — **THIS is the keystone's stacking half,
+  demonstrated.** **(4) The "adjacent-contrast deficit" that appeared to block stacking is GEOMETRY-DETERMINED**
+  (rung 8, pre-registered: c_adj ranges 0.965-1.902 purely with field layout; favourable layouts clear the 1.60
+  bar with tiny dw) — and the even-spacing layout eight mechanisms were tuned against has **NO empirical basis**
+  (Rich 2014: real CA1 spacing is Poisson, modal gap ZERO, backward-shift LARGER than spacing). **(5) The literature
+  explains why separation was the wrong objective** — biology makes the update SIGN depend on current weight
+  (Milstein 2021: weak potentiate/strong depress, final-vs-initial r=0.04), NOT by separating collided signals.
+  **OPEN (well-specified, not walls):** a geometry-ROBUST deep-credit gate (per-seed expected-bin/neighbour sets;
+  rung 9's even-spacing metric does not transfer to Poisson layouts — recorded INVALID, not a verdict), and the
+  weight-dependent rule's contrast on a valid instrument (its fixed point is confirmed on deployed traces by PF-5;
+  its contrast untested after two config/instrument-invalidated attempts). **NOT open:** whether local credit
+  assigns credit and composes across a layer — it does, lesion-confirmed. **Every `sim/` edit in the arc was
+  additive/default-off/byte-identical-when-off, each ASSERTED; CI confirmed clean (the cupy-path failures predate
+  this arc).** **⚠️ METHOD LESSON: the load-bearing wrong assumption was the TASK GEOMETRY, which NO measurement
+  ever supported and a single literature question would have flagged — the parameters nobody questions are the ones
+  worth questioning.** Superseded literature-reframe note kept below for the trail:
 - **gap#4 — the LITERATURE REFRAME (2026-07-20) overturns the arc's premise; the task itself is now under test.**
   Read-in-depth check (Bittner 2017 · Milstein 2021 · Rich 2014) returns: **real CA1 field spacing is SMALLER than
   the BTSP backward shift**, not larger — locations are a spatial **Poisson process** (uniform, exponential
