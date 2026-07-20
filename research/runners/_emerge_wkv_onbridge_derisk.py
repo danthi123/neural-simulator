@@ -262,6 +262,8 @@ def main():
     ap.add_argument("--max-train-sents", type=int, default=30000)
     ap.add_argument("--n-eval", type=int, default=200)              # SMALL (bridge stepping is slow)
     ap.add_argument("--drive-scale", type=float, default=1200.0)    # v_t -> external current pA
+    ap.add_argument("--inject-noise", dest="inject_noise", type=float, default=0.0,
+                    help="M0: per-channel Gaussian noise (x per-channel std) added to the exact v_t before it charges the state, to measure the fidelity->deep-NLL curve.")
     ap.add_argument("--self-nmda-w", dest="self_nmda_w", type=float, default=8.0)   # diagonal self-NMDA autapse weight
     ap.add_argument("--mlp-readout", dest="mlp_readout", action="store_true")
     ap.add_argument("--n-fit", dest="n_fit", type=int, default=600)   # train sentences for the on-bridge read-out re-fit
@@ -399,6 +401,14 @@ def main():
         _a = np.zeros(D)                                             # host leaky state (for --exact-state isolating test)
         for t in range(len(ids)):
             h = _ln(emb[ids[t]]); v = Wv @ h                        # [D]
+            _injn = float(getattr(args, "inject_noise", 0.0))
+            if _injn > 0.0:
+                # M0 (gap#1 fidelity-sensitivity curve): add calibrated per-channel Gaussian noise to the EXACT v_t
+                # BEFORE it charges the state, scaled by each channel's own std, so the accumulated cp_ssm_state lands
+                # at a target fidelity. Measures what encode-fidelity the deep-NLL requires (on the DEPLOYED accumulated
+                # state, not a per-token proxy). Deterministic per (seed, token position) so repeats are reproducible.
+                _rng = np.random.default_rng(1000 + t)
+                v = v + _injn * (_vall.std(0) + 1e-6) * _rng.standard_normal(v.shape)
             if getattr(args, "graded_plateau", False) and getattr(args, "plateau_calib", False):
                 v = v / v_chan_scale                                # PER-CHANNEL calibration -> all channels in the graded window
             if getattr(args, "ssm_state", False):
