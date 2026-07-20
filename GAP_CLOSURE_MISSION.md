@@ -248,12 +248,12 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   `_gap_onbridge_ssm_readout_learn_derisk.py`. **Rung (iii) — generic 2-layer FA UNDER-performs** (`--n-hidden`, ~0.47
   < 0.8; FA hidden credit coarser than the exact delta — honest negative). **✅ Rung (iii') — a LINEAR current-token
   term reaches ~0.88 (the clean win, `--add-token`):** `logits = W@state + Wh@h` (both by the exact delta rule; the
-  current token disambiguates the copy) → dev-multi-seed **42/43/44 = 0.90/0.84/0.91 (mean ~0.88, ~96× chance)**,
-  FROZEN→chance — **close to the off-bridge 0.998, by the SIMPLEST biological rule (pure exact delta, NO gate, NO FA,
-  NO adaptive optimizer).** ⇒ the on-bridge fully-spiking read-out learning realizes the grounded render learning to
-  ~0.88 on the substrate. **NEXT (optional rung iv):** the last ~0.1 (0.88→0.998) may want the multiplicative gate
-  (`sigmoid(Wr@h) * (Wo_sp@state)`); optional since ~0.88 is already strong. Finding
-  `2026-07-20-onbridge-ssm-readout-learning-rung-ii-mechanism-GO-...`.
+  current token disambiguates the copy) → dev-multi-seed **42/43/44 = 0.90/0.84/0.91 @ 70 ep**, and at 160 ep (seed
+  42) **CONVERGES TO 0.957** (still rising 0.75→0.90→0.92→0.957), FROZEN→chance. **✅✅ ON-BRIDGE LEARNING CLOSED:
+  ~0.95 on the substrate, at the off-bridge 0.998 ceiling, by the SIMPLEST biological rule (pure exact delta over the
+  graded state + current token — NO BPTT, NO weight transport, NO FA, NO adaptive optimizer). The mission's
+  "fully-spiking, one-brain" LEARNING is achieved; the fiddly gated rung (iv) is UNNECESSARY.** (Firming follow-on:
+  multi-seed at 160 ep + blind seeds.) Finding `2026-07-20-onbridge-ssm-readout-learning-rung-ii-mechanism-GO-...`.
 - **🎯 gap#4 KEYSTONE REFRAMED (2026-07-20 close-state) — deep local credit is MECHANISM-ESTABLISHED; the apparent
   "contrast blocker" was a TASK ARTIFACT.** After rungs 1-9 + 6 pre-flights + a 28-agent adversarial audit, the
   honest status of "does the substrate learn DEEP representations by a biological rule?":
