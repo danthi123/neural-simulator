@@ -136,6 +136,10 @@ def main():
     ap.add_argument("--grounded-frac", type=float, default=0.5, help="fraction of batches that are grounded copy frames")
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--eval-every", type=int, default=150)
+    ap.add_argument("--freeze-input", action="store_true",
+                    help="RESERVOIR/emergence-path test: freeze Wv (input->state map) + decay (recurrence) at the "
+                         "pretrained values; train ONLY the read-out (Wr/Wo_sp/head) + emb -> is the grounded copy a "
+                         "SHALLOW-readout adaptation over a FIXED cortex (no deep BPTT of the recurrence)?")
     args = ap.parse_args()
 
     torch.manual_seed(args.seed); random.seed(args.seed); np.random.seed(args.seed)
@@ -152,6 +156,11 @@ def main():
 
     net = TorchWKV(V, D).to(dev)
     net.load_npz(z, extra_tokens=len(markers))
+    if args.freeze_input:
+        net.Wv.weight.requires_grad_(False)   # input->state map FIXED (reservoir)
+        net.w.requires_grad_(False)            # recurrence decay FIXED
+        print("[freeze-input] RESERVOIR test: Wv (input->state) + decay FROZEN; training only emb + read-out "
+              "(Wr/Wo_sp/head) -> is the grounded copy shallow-readout-learnable over a fixed cortex?")
 
     # --- verify-first: the torch forward matches the numpy WKVFaculty logits (before training) ---
     from research.runners._wkv_faculty import WKVFaculty
