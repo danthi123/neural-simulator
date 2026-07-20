@@ -216,3 +216,65 @@ Rungs 1–2 stand (6-seed, blind-clean, controls collapsing). **Rung 3 does not.
 encouraging and the blocker is now understood as a *representation/read-out* problem rather than a credit problem —
 but the instrument has three named defects, so rung 3 is recorded as **NOT YET VALID**, not as a result. gap#4's
 deep-credit frontier remains open.
+
+---
+
+## RE-RUN ON THE FIXED INSTRUMENT (2026-07-20, later) — the moat defect is FIXED, and the result is a CLEAN NO-GO
+
+The bounded release (stop as soon as every apical is back below `v_hold`, instead of a fixed-length pulse) fixed
+instrument defect #1. **The controls now prove it, rather than me asserting it:**
+
+| control | before (broken release) | after (bounded release) |
+|---|---|---|
+| `C1_l2_frozen`  dw | 4.899e+04 | **0** |
+| `C3_no_l2_plateau` dw | 4.899e+04 | **0** |
+| CA1 apical after release | **-501 mV** (artifact) | -84..-137 mV, **0/32 latched** |
+
+So the moat holds: with L2 plasticity frozen, or with no L2 plateau at all, **nothing moves.** That axis is now
+trustworthy.
+
+### The result on the fixed instrument is a NO-GO — and the decisive number is not the gate
+
+**Pre-registered gate: FAILED.** read_acc 0.000 dev / 0.000 blind, selectivity 0.000 dev / 0.000 blind (bar 0.80).
+
+But the number that actually settles it is the comparison the gate does not look at:
+
+| arm | r_tgt | r_oth | dw |
+|---|---|---|---|
+| `MAIN`            | 0.18184 | [0.12092, 0.19048, 0.13155] | 583.5 |
+| `C2_wrong_target` | 0.18184 | [0.12092, 0.19048, 0.13155] | 583.6 |
+
+**MAIN and the WRONG-TARGET control are identical to five decimal places.** This is not "selectivity is weak" —
+it is *the target plays no causal role at all*. Whatever L2 learned, it learned the same thing when the plateau
+was delivered to the wrong cell. Note also that one non-target response (0.19048) **exceeds** the target's
+(0.18184), and `l2_peak=7` in every arm regardless of condition.
+
+⇒ **The honest verdict: BTSP does not stack to a second layer under this design.** Not "not yet tuned" — the
+manipulation has no effect on the read-out.
+
+### Why, mechanistically (the hypothesis this licenses, NOT a claim)
+
+L2 reads 4 CA1 cells whose fields sit at [1,3,7,11] on a 20-bin track. That population is **too sparse in time**:
+at most track positions *zero* CA1 cells are active, so L2's eligibility at plateau time is dominated by whichever
+CA1 cell happens to fire most across the lap, not by what was active in the seconds-long window before the plateau.
+The backward-window signal that made rungs 1-2 work is present at CA1 but is not *legible* to L2 through a sparse
+spike code. That is consistent with — and is the same shape as — the graded-vs-spike finding below.
+
+### Remaining instrument defect (unfixed, and it bounds this write-up)
+
+Seeds 44/100/101/102 still return **identical values to 5 decimals**. The documented n=1 trap is NOT resolved here
+(it was resolved in rungs 1-2 via `weight_jitter`). So this NO-GO is honestly **n=1 on a deterministic instrument**,
+not a 4-seed result. It is strong enough to reject the design (MAIN==C2 is a structural fact, not a noisy one) and
+NOT strong enough to quantify anything.
+
+### What survives, and what it points at
+
+The cross-gap mechanism finding is unchanged and is the durable output of this rung: **the spike read is 0.000000
+in every condition while the graded conductance read shows 0.92.** The point-neuron rate-code wall blocks a
+downstream *spike* read of a sparse learned code exactly as it blocked gap#1's WKV state — and the same graded fix
+works in both places. Two independent gaps, one substrate limitation, one remedy.
+
+**Per THE LAW: this is a verdict on a METHOD (stack BTSP at layer 2 reading CA1 spikes), not on the CAPABILITY.**
+The next method is named by the finding itself: give L2 a *graded* read of the CA1 population (the mechanism already
+demonstrated at 0.92 here and end-to-end in gap#1 M1), and/or densify the CA1 map so the population tiles the track
+continuously rather than at 4 points.
