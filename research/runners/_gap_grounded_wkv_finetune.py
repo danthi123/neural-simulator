@@ -144,6 +144,10 @@ def main():
                     help="STRICTER reservoir test: freeze the ENTIRE input encoding (original emb + Wv + decay); train "
                          "ONLY the read-out (Wr/Wo_sp/head) + the 2 marker emb rows -> is the grounded copy PURE "
                          "shallow-readout over a TOTALLY fixed cortex?")
+    ap.add_argument("--random-input", action="store_true",
+                    help="Rung B (TRUE-reservoir bound): re-init Wv to fresh RANDOM (a Sussillo-Abbott reservoir, NOT "
+                         "BPTT-pretrained) before freezing -> with --freeze-input, does a random reservoir + trained "
+                         "read-out reach fluency? (quantifies how load-bearing the LEARNED input map is)")
     args = ap.parse_args()
 
     torch.manual_seed(args.seed); random.seed(args.seed); np.random.seed(args.seed)
@@ -160,6 +164,10 @@ def main():
 
     net = TorchWKV(V, D).to(dev)
     net.load_npz(z, extra_tokens=len(markers))
+    if args.random_input:
+        with torch.no_grad():                          # Rung B: a fresh random reservoir input map (not BPTT-pretrained)
+            torch.nn.init.xavier_uniform_(net.Wv.weight, generator=torch.Generator(device=dev).manual_seed(args.seed))
+        print(f"[random-input] Rung B: Wv re-init to fresh RANDOM (Xavier, seed {args.seed}) -> a true reservoir")
     if args.freeze_input or args.freeze_cortex:
         net.Wv.weight.requires_grad_(False)   # input->state map FIXED (reservoir)
         net.w.requires_grad_(False)            # recurrence decay FIXED
@@ -184,7 +192,12 @@ def main():
     match = float(np.corrcoef(lt, ln)[0, 1]); maxdiff = float(np.abs(lt - ln).max())
     print(f"[verify-first] torch-vs-numpy forward: corr={match:.6f} maxdiff={maxdiff:.4f} "
           f"(argmax torch={words_new[int(lt.argmax())]!r} numpy={words[int(ln.argmax())]!r})")
-    assert match > 0.999 and maxdiff < 0.05, f"torch forward does NOT match numpy WKVFaculty (corr={match}, maxdiff={maxdiff})"
+    if args.random_input:
+        # Rung B deliberately randomizes Wv, so the torch forward is EXPECTED to diverge from the original-Wv numpy
+        # reference; the verify-first bit-match check applies only to the load-preserving paths.
+        print("[verify-first] SKIPPED the bit-match assertion (--random-input deliberately changes Wv).")
+    else:
+        assert match > 0.999 and maxdiff < 0.05, f"torch forward does NOT match numpy WKVFaculty (corr={match}, maxdiff={maxdiff})"
 
     # --- build the grounded copy-frame vocab (in-WKV-vocab SVO combos), held-out the test facts ---
     cur = json.load(open(CUR_PATH))
