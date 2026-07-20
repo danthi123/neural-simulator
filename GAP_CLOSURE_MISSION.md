@@ -161,6 +161,24 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
+- **✅✅ gap#1 — COMPLETE on the spiking substrate (2026-07-20 landmark). The mission's primary capability is achieved.**
+  The home-grown recurrent WKV language cortex now (1) **COMPREHENDS** — the RF-phase spiking-input encode clears the
+  deep-NLL wall (6-seed GO, adversarially verified by 5 skeptics, phase-ADC framing empirically pinned) where 3 prior
+  encodes catastrophically failed; (2) **GENERATES fluent prose** end-to-end on-bridge (coherent TinyStories with
+  character names, scaling to genuine fluency at the documented ~24M-token scale, no external model — a prompt-tokenization
+  bug + `<unk>`-suppression fixed); (3) takes its input through a **FULLY-SYNAPTIC path at FULL PARITY** (RF spike → a real
+  slow-NMDA conductance synapse → the value → the graded state → deep-NLL +0.872 == host-read +0.878 at period=500, no host
+  `rf_read_phases` anywhere, zero fidelity cost — the residual was spike-step quantization, closed by one knob after 3
+  wrong "fixes" were tested+rejected). **The DEFINITIVE COMBINED CAPSTONE demonstrated: the fully-synaptic (no host read)
+  spiking cortex GENERATES fluent prose.** NO `sim/` edit anywhere in the arc; findings
+  `2026-07-20-gap1-RF-PHASE-ENCODE-...` + `-gap1-fully-synaptic-RF-transduction-RUNG1-GO-...`.
+  **⇒ NEXT FRONTIER (the north star "a brain you COMMUNICATE with"): GROUNDED FLUENT CONVERSATION** — combine gap#1's OPEN
+  fluent generation (the WKV cortex) with the EMERGE grounded reasoning + the fluid console (which do query→grounded answer
+  over BOUNDED frames). A fresh substantial arc warranting its OWN deep-research gate (a0-scoped: existing consoles
+  `_fluidconv_chat_repl` / `_emerge*console` / the fluid dispatch; wiring findings `2026-07-13-emergent-generation-ladder-
+  wired-into-a-talkable-console`, `2026-07-08-fully-spiking-generation-...-answer-GO`). Other open: gap#4 learn-to-accuracy
+  via a different credit mechanism (deep-credit is a parallel frontier per the a-1 synthesis; reservoir/shallow-readout is
+  the emergence path); gap#1 V/D scaling.
 - **🎯 gap#4 KEYSTONE REFRAMED (2026-07-20 close-state) — deep local credit is MECHANISM-ESTABLISHED; the apparent
   "contrast blocker" was a TASK ARTIFACT.** After rungs 1-9 + 6 pre-flights + a 28-agent adversarial audit, the
   honest status of "does the substrate learn DEEP representations by a biological rule?":
