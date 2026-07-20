@@ -58,13 +58,13 @@ transport anywhere.
   over a random reservoir it reaches 0.73 (GO). **The BPTT shortcut is retired for the grounded renderer.**
 - **The evidence FA/KP are genuinely transport-free (not silently falling back to BPTT):** their general-fluency ppl
   DIFFERS from BPTT (FA/KP 63–80 vs BPTT 34) — the backward is genuinely a different (transport-free) credit rule.
-- **The general TinyStories FLUENCY gap is CLOSEABLE (convergence-rate, not a wall) — characterized.** On pure
-  fluency (grounded-frac 0), more budget narrows it: at 10000 steps KP 63 vs BPTT 34 (1.9×); at 20000 steps **KP 38.2
-  (still monotonically dropping: 53→45→39→38) vs BPTT 29.5 (1.3×)**. KP is NOT plateaued — the local rule converges
-  SLOWER than BPTT (the R3-reframe's ~78% was a fixed-budget snapshot) but keeps approaching the ceiling. ⇒ the
-  general-fluency biologization is a training-budget/convergence-rate lever, not a fundamental limit; the GROUNDED task
-  (the mission capability) already matches BPTT at the standard budget (the copy read-out forms fine over the working
-  features).
+- **The general TinyStories FLUENCY gap is CLOSEABLE (convergence-rate, not a wall) — CONFIRMED at large budget.** On
+  pure fluency (grounded-frac 0), more budget monotonically narrows the KP-vs-BPTT gap: **10k steps KP 63 (1.9×) →
+  20k KP 38.2 (1.3×) → 40k KP 35.1 (1.19×), and STILL DROPPING** (44.7→38.3→36.2→35.1) vs BPTT ~29.5. KP never
+  plateaus — the transport-free local rule converges SLOWER than BPTT (the R3-reframe's ~78% was a fixed-budget
+  snapshot) but asymptotically APPROACHES the ceiling. ⇒ the general-fluency biologization is a training-budget/
+  convergence-rate lever, NOT a fundamental limit; and the GROUNDED task (the mission capability) already MATCHES BPTT
+  at the standard budget. Both halves of the render are biologizable by the local rule.
 - **The Adam caveat is RESOLVED — the strictest biological claim holds.** KP + **pure SGD** (a delta rule: error ⊗
   input × lr, NO per-param adaptivity, NO momentum, NO BPTT, NO weight transport) reaches grounded verified-fluent
   **0.86 == the BPTT ceiling**, RA-faithful **1.00** (`--optimizer sgd`). So the grounded fluent render is learnable
