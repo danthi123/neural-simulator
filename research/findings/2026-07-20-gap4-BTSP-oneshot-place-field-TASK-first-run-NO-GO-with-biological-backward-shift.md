@@ -80,3 +80,66 @@ graded field form; (b) pre-register the backward-window criterion and validate o
 `plateau_hold_ms` against `btsp_elig_tau_ms` — the hold currently makes the field partly forward-dominant, opposing the
 backward eligibility. **Do not** report any of these as a result without the full C1-C12 table and a separate blind-seed
 block.
+
+---
+
+# ⛔ FINAL VERDICT (corrected pre-registered metric, dev + BLIND): decisive NO-GO — and it vindicates C9
+
+After the first run, the metric was corrected and **RE-PRE-REGISTERED before the blind seeds were touched**:
+score the **DELTA map** (post − pre; the baseline map is NOT flat — per-pool threshold heterogeneity makes some bins
+drive CA1 harder for free, flatness 7-9) against the **BACKWARD window** (−5..+1; BTSP forms the field BEHIND the
+plateau). Note this correction made the test **HARDER**, not easier: the window spans 7/20 bins, so chance rose
+**0.25 → 0.35** and the 0.80 bar became 2.3× chance.
+
+## The result
+
+| arm | DEV (42/43/44 — metric developed here) | **BLIND (100/101/102 — never touched)** |
+|---|---|---|
+| **MAIN** | 0.80 / 0.40 / 0.60 → **0.600** | 0.00 / 0.00 / 0.40 → **0.133** |
+| C1 frozen | 0.000 | 0.000 |
+| C3 no-plateau moat | 0.000 | 0.000 |
+| C2 mis-targeted | 0.20–0.40 | 0.000 |
+| C2b random bin | 0.20–0.40 | 0.00 / 0.00 / **0.40** |
+| C10 transient | 0.20–0.60 | 0.00 / 0.00 / 0.40 |
+
+**VERDICT: NO-GO.** Blind mean **0.133 — BELOW chance (0.35)**.
+
+**The dev result did not transfer at all** (0.600 → 0.133). This is the exact failure mode this arc has already been
+burned by twice (the record's own example: dev `3.31±0.74` → blind `4.56±1.95`). Had I reported dev seeds as "6-seed"
+— the documented past error — this would have entered the record as a GO.
+
+Two further facts kill any salvage reading:
+1. **On 2 of 3 blind seeds NO FIELD FORMS AT ALL** (`field_acc` 0.00 with `width` 0.0 — the delta map is empty).
+2. **On the one blind seed with signal (102), MAIN 0.40 EQUALS its own random-plateau control C2b 0.40** — and its
+   transient arm too. Indistinguishable from a plateau delivered at a random bin.
+
+## 🔴 This is the decisive vindication of C9 (dw is NOT the gate)
+
+`dw ≈ 3949 / 4049 / 4064` on the blind MAIN arms — **large, healthy weight change — while `field_acc = 0.00`.**
+
+Every BTSP result banked in this project gates on a weight change ("held dw is 8.4× transient dw"). **This experiment
+gated on BEHAVIOUR, and the same substrate that produces a big dw produces no learned behaviour.** A dw gate would
+have called this a GO. That is not a hypothetical: it is what the prior results did.
+
+## What this means for gap#4 — the honest picture is now worse, and clearer
+
+- **Local one-shot plateau-gated credit MOVES WEIGHT on the real substrate** — that part of the 2026-07-18 6-seed GO
+  stands, and its controls (frozen 0.000, moat 0.000) are clean here too.
+- **It does NOT produce a reliable learned BEHAVIOUR.** The capability gap#4 actually claims — *a substrate that
+  learns from experience* — is **not met at the one-shot-task level**, on blind seeds, below chance.
+- ⇒ gap#4 remains **OPEN**, and the earlier board correction ("FULLY RESOLVED is a scope redefinition") is if anything
+  understated: the one on-substrate result that looked closest to a learning capability does not survive a
+  behaviour-level test on unseen seeds.
+
+## Named next levers (none of them "tune it")
+
+The failure is **field formation reliability**, not credit direction. On 2/3 blind seeds the delta map is EMPTY —
+the CA1 never changes its firing at all. Before any further task work:
+(a) **diagnose why no field forms** — is the potentiated weight insufficient to change firing (a read-out threshold
+    problem), or is the eligibility not overlapping the plateau on those seeds (a timing problem)? These predict
+    different fixes and are cheaply separable by probing the post-induction weight map directly.
+(b) the CA1 is **silent at baseline** (W0 ≤ 2 gives zero firing) so the read-out is near-binary; a graded field needs
+    a responsive baseline — but raising W0 introduces the per-pool inhomogeneity confound above, so this needs the
+    delta metric (now in place) **plus** pool-level normalization.
+(c) **Do not** report any future version without dev/blind separated. This run is the third instance in this project
+    where dev-only numbers would have produced a false GO.
