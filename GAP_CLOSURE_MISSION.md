@@ -198,9 +198,22 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   **NEXT (remaining follow-ons/frontiers):** (a) the full ONE-BRIDGE consolidation (composer + WKV as disjoint SLICES of
   a single `SimulationBridge`, the nav+conv-merge pattern — De-risk 5 has them on separate cupy bridges in one process);
   (b) the wikidata-tail + persistence + showcase on the on-bridge renderer; (c) a multi-fact-frame fine-tune / longer-
-  memory WKV to push single-pass synthesis past 1 fact (a scale lever, not a hard wall). Parallel frontiers: gap#4
-  learn-to-accuracy via a different credit mechanism (reservoir/shallow-readout is the emergence path per the a-1
-  synthesis); gap#1 V/D scaling toward richer fluency.
+  memory WKV to push single-pass synthesis past 1 fact (a scale lever, not a hard wall).
+- **✅ THE LAST SHORTCUT (BPTT) RETIRED for the grounded renderer (2026-07-20, biological-learning CLOSE).** The WKV
+  cortex was trained by BPTT (the mission's non-negotiable end state = a biological LOCAL rule, no weight transport, no
+  BPTT). Research gate + a 4-agent adversarial verification (which CORRECTED the gate's "2.8% shallow" framing [emb ~44%
+  is through-time when trained] + a Zucchet-rule overstatement) → sharpened close: the WKV recurrence is a DIAGONAL
+  scalar-decay leaky integrator (no recurrent weight matrix), and Rung B shows `Wv` needn't be learned (random reservoir
+  reaches ppl 25.6 ≤ BPTT 28.1) → FREEZE the whole cortex, train ONLY the read-out by a transport-free LOCAL rule
+  (`_gap_grounded_wkv_local_readout.py`, `LinearFA`: error routed through a feedback matrix B not W^T, local weight
+  update; FA fixed-random, KP learned-feedback-aligns). **Grounded copy (held-out): KP 0.91 / FA 0.91 MATCH/BEAT the
+  BPTT ceiling 0.86; fully-from-scratch over a RANDOM reservoir + KP (NO BPTT anywhere) 0.73 (GO).** ⇒ the grounded
+  fluent render is biologically learnable (no BPTT, no weight transport). Honest residual: general TinyStories fluency
+  has a ppl gap (FA/KP 63–80 vs BPTT 34, the R3 ~78% shape; the grounded task doesn't need it); Adam is only the step
+  rule; the ON-BRIDGE local-rule realization (`enable_selective_ssm_state` + validated eligibility) is the fully-spiking
+  follow-on. Finding `2026-07-20-wkv-cortex-biological-learning-CLOSE-local-rule-readout-retires-BPTT.md`.
+  **NEXT parallel frontiers:** close the general-fluency ppl gap (KP + more steps / a stricter delta rule / on-bridge
+  eligibility for `Wv`); the ON-BRIDGE fully-spiking local-rule learning; gap#1 V/D scaling toward richer fluency.
 - **🎯 gap#4 KEYSTONE REFRAMED (2026-07-20 close-state) — deep local credit is MECHANISM-ESTABLISHED; the apparent
   "contrast blocker" was a TASK ARTIFACT.** After rungs 1-9 + 6 pre-flights + a 28-agent adversarial audit, the
   honest status of "does the substrate learn DEEP representations by a biological rule?":
