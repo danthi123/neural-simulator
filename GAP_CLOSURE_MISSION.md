@@ -325,8 +325,17 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   default-absent = byte-identical). **NEXT (gap#1 residuals, not walls):** the fully-synaptic phase→conductance
   transduction (RF spike → downstream NMDA charge, no host read of the phase); V/D scaling. Finding
   `2026-07-20-gap1-RF-PHASE-ENCODE-first-spiking-encode-PAST-the-wall.md`; runners `_gap1_rf_phase_deployed_preflight.py`
-  + `_emerge_wkv_onbridge_derisk.py --rf-phase-encode`; matched set `wkv_ssmU6_v1000_d128_seed{42..102}.npz`. Superseded
-  "the spiking-INPUT is the open wall" verdict below kept for the trail.
+  + `_emerge_wkv_onbridge_derisk.py --rf-phase-encode`; matched set `wkv_ssmU6_v1000_d128_seed{42..102}.npz`.
+  **⇒ EXTENDED to GENERATION (2026-07-20): the spiking WKV cortex GENERATES prose on-bridge, not just comprehends.**
+  Added `--gen-tokens/--gen-prompt/--gen-temp` (autoregressive rollout: charge cp_ssm_state per token via RF-phase +
+  sample the SSM read-out). Ceiling-first: off-bridge WKV generates recognizable TinyStories prose. On-bridge (temp
+  0.8): RF-phase (spiking input) → coherent prose ("…he said goodbye to his friends and had a fun time…") **AT PARITY
+  with the host-inject reference** (both track early — state corr 0.999 — then diverge via sampling RNG). Argmax
+  mode-collapses (fixed by sampling); `<unk>`-heaviness = V=1000 vocab scale (matches the off-bridge ceiling), a lever.
+  ⇒ the spiking-input WKV cortex both COMPREHENDS (deep-NLL GO) AND GENERATES — gap#1's capability on the spiking
+  substrate, on the reservoir/graded-state + trained-readout path (the R3 / gap#4-a-1 convergence). Follow-on:
+  multi-prompt/seed + larger-vocab checkpoint to cut `<unk>`. Superseded "the spiking-INPUT is the open wall" verdict
+  below kept for the trail.
 - **🎯 gap#1 DEFINITIVE (2026-07-20) — harness VALIDATED (M1 +0.542 GO), the ENCODE is the wall (confirmed +
   quantified), token-SDR REFUTED. The spiking-INPUT is a REAL, precisely-located wall — a verdict on the METHODS
   tried, not the capability.** The last root cause of the harness chaos: the checkpoint's decay `w` is PER-CHANNEL

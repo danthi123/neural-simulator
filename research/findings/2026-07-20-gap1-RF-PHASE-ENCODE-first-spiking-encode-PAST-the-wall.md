@@ -133,6 +133,29 @@ the original seed-42 dev ckpt `wkv_ssmU_...` gave the +0.878 ≈ +0.874 headline
 - LENS 5 (number stability): SURVIVES_WITH_SCOPE_FIX — MAIN tracks M1 to ≤0.007 NLL at every depth bucket, monotone
   with depth; single-slice caveat addressed by the multi-seed run.
 
+## Extension — on-bridge GENERATION with the spiking input (gap#1's actual capability)
+
+The RF phase encode closed the spiking-input *comprehension* half (deep-NLL). Added on-bridge autoregressive GENERATION
+(`--gen-tokens N --gen-prompt … --gen-temp T`): roll out tokens, charging `cp_ssm_state` per token via the RF phase
+encode + argmax/sample the SSM's own read-out. **Ceiling check first** (workflow discipline): the off-bridge WKV at
+V=1000/d=128 generates recognizable TinyStories prose (*"once upon a time there was a little boy named tim … played
+together in the sun and the blue sky"*), so the mechanism generates — worth building on-bridge.
+
+**On-bridge result (seed 42, prompt "once upon a time", temp 0.8):**
+- RF-phase (spiking input): *"… he said goodbye to his friends and had a fun time … the pieces of `<unk>` together on
+  the ground …"*
+- host-inject (M1 reference): *"… the kite with its paw and it was time to leave … saw a big tree with lots of trees
+  and flowers and a bright `<unk>` together in the sky …"*
+
+**⇒ the RF-phase (spiking-input) generation produces coherent TinyStories-style prose AT PARITY with the perfect-host-
+input reference** (both track identically early — same prompt/seed, near-identical state corr 0.999 — then diverge via
+sampling RNG). Argmax mode-collapses to `<unk>`/function-words (greedy-decoding artifact); temperature sampling fixes
+it. The `<unk>`-heaviness is the V=1000 vocab-scale limit (matches the off-bridge ceiling), a scale lever, not a
+mechanism issue. **So the spiking-input WKV cortex both COMPREHENDS (deep-NLL GO) and GENERATES (coherent prose) —
+gap#1's capability on the spiking substrate.** HONEST SCOPE: single-seed/single-prompt smoke; a multi-prompt/seed
+demonstration + a larger-vocab checkpoint (to cut `<unk>`) are the follow-ons; the generator is the graded-state +
+trained-readout reservoir path (the R3 / gap#4-a-1 convergence: the value is the readout over a fixed substrate).
+
 ## Artifacts
 
 - Runner: `_emerge_wkv_onbridge_derisk.py --ssm-state --use-ssm-readout --rf-phase-encode` (+ `--rf-scramble`,

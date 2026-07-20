@@ -320,6 +320,14 @@ def main():
                     help="heterogeneous-population code on the self-NMDA path: staggered pop-member drive gains (staggered effective thresholds) -> higher-fidelity graded population rate")
     ap.add_argument("--pop-k", dest="pop_k", type=int, default=1)
     ap.add_argument("--t-step", dest="t_step", type=int, default=_T_STEP_DEFAULT)   # bridge steps/token (finer rate=less noise)
+    ap.add_argument("--gen-tokens", dest="gen_tokens", type=int, default=0,
+                    help="(gap#1 capability) autoregressive GENERATION on-bridge: after building, roll out N tokens from "
+                         "--gen-prompt, charging cp_ssm_state per token (RF-phase-encoded if --rf-phase-encode) and "
+                         "argmax-ing the SSM read-out. Prints the generated prose. 0 = off.")
+    ap.add_argument("--gen-prompt", dest="gen_prompt", type=str, default="once upon a time",
+                    help="(--gen-tokens) the seed prompt for on-bridge generation.")
+    ap.add_argument("--gen-temp", dest="gen_temp", type=float, default=0.0,
+                    help="(--gen-tokens) temperature SAMPLING (>0) instead of argmax; argmax mode-collapses to <unk>/function-words.")
     ap.add_argument("--rf-phase-encode", dest="rf_phase_encode", action="store_true",
                     help="(gap#1 spiking-input, greenlit 2026-07-20) deliver the per-token dual-nonneg inject via RF PHASE "
                          "(value in a spike's timing, no rate-code dead-zone) on an independent RF-oscillator pool, decode, "
@@ -611,6 +619,49 @@ def main():
         c = np.corrcoef(ob.flatten(), rs.flatten())[0, 1]
         corrs.append(c)
     mapcorr = float(np.nanmean(corrs)) if corrs else float("nan")
+
+    # ---- gap#1 CAPABILITY: on-bridge AUTOREGRESSIVE GENERATION (does the spiking WKV cortex produce prose?) ----
+    if getattr(args, "gen_tokens", 0) > 0 and getattr(args, "ssm_state", False) and getattr(args, "use_ssm_readout", False):
+        _scg = max(1e-6, 1.0 - (0.0 if getattr(args, "ssm_memoryless", False) else decay))
+
+        def _charge_token(tid):
+            v = Wv @ _ln(emb[tid])
+            _inj = np.concatenate([np.maximum(v, 0.0), np.maximum(-v, 0.0)]) / _scg
+            if _rf_enc:                                              # deliver the value through a spike's PHASE (gap#1 spiking input)
+                _inj = _rf_encode_decode(_inj)
+            _cur = np.zeros(nnrn, np.float32); _cur[read_idx] = _inj[chan_of].astype(np.float32)
+            b.cp_ssm_inject[:] = (xp.asarray(_cur) if xp is not None else _cur)
+            b.cp_ssm_shunt[:] = 0.0
+            b._run_one_simulation_step()
+            _st = np.asarray(to_host(b.cp_ssm_state)).astype(np.float64)
+            _agg = np.zeros(2 * D, np.float64); np.add.at(_agg, chan_of, _st[read_idx])
+            return _agg / gsize                                     # [2D] on-bridge SSM state
+
+        def _next_logits(tid, state):                              # the SSM's OWN trained read-out (exactly the forward)
+            _rh = 1.0 / (1.0 + np.exp(-(Wr @ _ln(emb[tid]))))
+            return head_w @ (_rh * (Wo_sp @ state)) + head_b
+
+        _wash()
+        prompt_ids = [i for i in vocab.ids(args.gen_prompt) if 0 <= i < V]
+        if not prompt_ids:
+            prompt_ids = [vocab.ids("the")[0] if vocab.ids("the") else 0]
+        gen = list(prompt_ids); _state = None
+        for _tid in prompt_ids:                                     # charge the prompt (state persists, no wash between)
+            _state = _charge_token(_tid)
+        _grng = np.random.default_rng(args.seed)
+        _gtemp = float(getattr(args, "gen_temp", 0.0))
+        for _ in range(int(args.gen_tokens)):                       # autoregressive rollout
+            _lg = _next_logits(gen[-1], _state)
+            if _gtemp > 0.0:                                        # temperature SAMPLING (argmax mode-collapses to <unk>/function-words)
+                _z = _lg / _gtemp; _z = _z - _z.max(); _p = np.exp(_z); _p = _p / _p.sum()
+                _nxt = int(_grng.choice(len(_p), p=_p))
+            else:
+                _nxt = int(np.argmax(_lg))
+            gen.append(_nxt); _state = _charge_token(_nxt)
+        _txt = " ".join(words[i] if 0 <= i < len(words) else "<unk>" for i in gen)
+        print(f"[GEN on-bridge{' RF-phase' if _rf_enc else ' host-inject'}] prompt='{args.gen_prompt}' -> {_txt}", flush=True)
+        if int(args.gen_tokens) > 0 and getattr(args, "n_eval", 0) <= 0:
+            return
     _ob0 = onbridge_states(ev_ids[0]) if ev_ids else np.zeros((1, 2 * D))
     _act = float((_ob0.std(0) > 1e-6).mean())                       # fraction of channels with ANY variance across tokens
     print(f"[verify] on-bridge firing-rate state vs rate-SSM analog state: corr={mapcorr:.3f} "
