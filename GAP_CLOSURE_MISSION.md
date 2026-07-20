@@ -323,9 +323,17 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   both cap ~0.5-0.6).** THREE encode methods now EXHAUSTED on the validated harness: NEF regression (0.616,
   -2.904), token-SDR selection (0.501, -3.416, REFUTED), and CO-ADAPTATION (train-with-input-noise 0.9: 0.579,
   -2.876, +0.028 = no recovery). Co-adaptation can't work because the deep-context win REQUIRES the accurate
-  accumulated state that the noisy encode corrupts (no accurate signal to co-adapt toward). ⇒ the research gate fires
-  for a FUNDAMENTALLY different encode (reduce PER-TOKEN encode noise, or a representation where deep-context survives
-  ~0.6 fidelity) — a fresh problem with a QUANTIFIED target (encode state corr ~>0.9) and three eliminated methods. Usable artifact: `wkv_ssmU_v1000_d128_seed42.npz`. Findings:
+  accumulated state that the noisy encode corrupts (no accurate signal to co-adapt toward). ⇒ research-gate #1's cheap META-DE-RISK (M0)
+  REFRAMED the wall decisively: injecting calibrated i.i.d. Gaussian noise into the exact v_t gives a GRACEFUL curve
+  that crosses zero at corr ~0.80 (M1 re-confirmed +0.542 at noise 0), but the ACTUAL encodes are ~1.5-2 nats WORSE
+  than i.i.d. at the same corr (NEF corr 0.616 -> -2.904 vs i.i.d. ~-1.1). **So the wall is NOT raw fidelity (which
+  would be near-impossible) — it is a VALUE-DEPENDENT NONLINEAR encode distortion (dead-zone/saturation).** A linear
+  affine read-out (de-bias) does NOT fix it (-2.904 -> -2.933), so the fix must be at the ENCODE = a LINEAR SYMMETRIC
+  transfer. ⇒ **the well-motivated build is the RF PHASE code** (phase ~ value, linear + symmetric timing-jitter error,
+  no dead-zone, via the validated resonate-and-fire complex synapses atol 1e-9); with an unbiased encode, corr ~0.82
+  SUFFICES (per the M0 curve). The wall is converted from 'impossible near-1.0 fidelity' to a TRACTABLE target.
+  Findings: `2026-07-20-gap1-M0-REFRAME-...`, `-DEFINITIVE-...`. **NEXT: build the RF phase encode; pre-flight = verify
+  its per-token error is ~i.i.d./symmetric across the value range on the DEPLOYED accumulated state before pre-registering.** Usable artifact: `wkv_ssmU_v1000_d128_seed42.npz`. Findings:
   `2026-07-20-gap1-DEFINITIVE-...`, `-ROOT-CAUSE-...`. Superseded intermediate note below:
 - **⛔ gap#1 TOKEN-SDR REFUTED + M1-realization residual (2026-07-20 FINAL) — the spiking-INPUT half is a real,
   honestly-documented WALL; the token-SDR escape does not work.** ROOT CAUSE of the day's harness chaos found by
