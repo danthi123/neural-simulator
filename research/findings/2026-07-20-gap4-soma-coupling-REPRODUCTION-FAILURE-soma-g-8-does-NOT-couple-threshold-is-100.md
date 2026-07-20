@@ -226,6 +226,38 @@ the honest on-bridge capability IS the reservoir readout (0.765), with the credi
 consistent with R3. (Note: the lesion dw 64,403 at fw_ih=180 shows the lesion arm's weights still drift, so BDSP-vs-lesion
 is mildly confounded; the BDSP-vs-RESERVOIR comparison, which is credit-independent, is the clean load-bearing one.)
 
+## a-1 SYNTHESIS — this re-confirms the project's OWN 2026-07-10 conclusion (and corrects a drifted board claim)
+
+The a-1 RAG/grep check surfaced `2026-07-10-D1-onbridge-deep-credit-poolk-already-run-confounded-by-weight-blowup.md`,
+which ALREADY established, months before this arc: (1) the **weight-blowup confound** (ff weights scale ~K², blow up) —
+the SAME confound I re-hit (fw_ih=500 clipped, dw 734k); (2) **on-bridge deep BDSP/Burstprop/microcircuit credit does
+NOT train to accuracy at cheap scale** (2/9 trains_at_all, uncorrelated with K) — the SAME clean NEGATIVE I re-derived;
+(3) the strategic framing: **"deep multi-layer credit on real spikes is a GENUINE open frontier … but NOT the blocker
+for a first emergent language cortex: a fixed recurrent RESERVOIR + a learned SHALLOW read-out (EMERGE-78..85,
+Hinaut-Dominey) and the stream-cortex rate-Hebbian population learner both LEARN structure WITHOUT deep credit."**
+
+**⇒ two honest conclusions:**
+1. **My arc corrected a DRIFTED board claim.** Board line-59's 2026-07-19 "PIPELINE-VALIDATED, next = scale sweep" had
+   REGRESSED from the 2026-07-10 conclusion (deep credit doesn't train; reservoir is the path). Control-first
+   reproduction caught the regression (soma-g 8 doesn't couple, unreproducible), and clearing ALL confounds
+   (input-selective forward + coupling + no clip) re-confirmed the 2026-07-10 NEGATIVE on a STRONGER, fully
+   confound-free substrate — with the decisive clean comparison the earlier arc lacked: **BDSP 0.553 < RESERVOIR
+   readout 0.765** (the credit UNDERPERFORMS reservoir computing). This is the drift-#12 lesson (a summary regressed
+   from the findings) caught by the a-1 check — after the re-derivation, not before, but it re-anchored the board.
+2. **This CONVERGES with gap#1 (closed this session) and R3.** gap#1's RF-phase-encode feeds a GRADED state + a
+   TRAINED read-out on the recurrent WKV cortex — the reservoir/shallow-readout path. R3 (ROADMAP §9.1): a fixed
+   reservoir + trained readout BEATS training the recurrent scaffold. All three say the SAME thing: **the value is the
+   trained READOUT over a fixed/reservoir substrate + the learned INPUT representation, NOT deep-credit-training the
+   hidden.** So the emergence engine proceeds on the validated reservoir/shallow-readout + stream-cortex substrate
+   (which LEARNS from experience WITHOUT deep credit); deep-credit-to-accuracy stays a characterized parallel frontier.
+
+**⇒ HONEST NEXT (re-anchored to the record):** deep-credit-beats-reservoir is a parallel frontier the record already
+deprioritized — NOT the emergence blocker. The productive frontier is the reservoir/shallow-readout + learned-input path
+(gap#1's fluent-generation-on-the-WKV-cortex, the EMERGE stream-cortex learner), where structure LEARNS from experience
+without deep credit. gap#4's KEYSTONE (credit ASSIGNMENT works + composes, rung 10) is established; its
+learn-to-ACCURACY-beating-a-reservoir sub-thread is now confound-free CHARACTERIZED as a parallel frontier, per
+2026-07-10.
+
 ## Method lesson
 
 The banked "pipeline-validated" result was gated on a dw ratio while its OWN coupling diagnostic said DECOUPLED, and its
