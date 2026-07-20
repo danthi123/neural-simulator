@@ -152,8 +152,11 @@ input reference** (both track identically early — same prompt/seed, near-ident
 sampling RNG). Argmax mode-collapses to `<unk>`/function-words (greedy-decoding artifact); temperature sampling fixes
 it. The `<unk>`-heaviness is the V=1000 vocab-scale limit (matches the off-bridge ceiling), a scale lever, not a
 mechanism issue. **So the spiking-input WKV cortex both COMPREHENDS (deep-NLL GO) and GENERATES (coherent prose) —
-gap#1's capability on the spiking substrate.** HONEST SCOPE: single-seed/single-prompt smoke; a multi-prompt/seed
-demonstration + a larger-vocab checkpoint (to cut `<unk>`) are the follow-ons; the generator is the graded-state +
+gap#1's capability on the spiking substrate.** **Multi-prompt firming (3 prompts × seeds 43/44/100, RF-phase):** all produce coherent TinyStories prose after a short
+`<unk>` warmup — *"…he knew he had to do a walk with the giant…"* / *"…for everyone to eat their dinner with the … and
+their friends … to play on the swings…"* / *"…she could help her friend the duck and his mom were very happy"*. So the
+generation is NOT prompt-specific. HONEST SCOPE: single checkpoint, V=1000 vocab-limited (the `<unk>` warmup + OOV
+density); a larger-vocab checkpoint (to cut `<unk>`) is the follow-on; the generator is the graded-state +
 trained-readout reservoir path (the R3 / gap#4-a-1 convergence: the value is the readout over a fixed substrate).
 
 ## Artifacts
