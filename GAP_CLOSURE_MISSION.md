@@ -183,7 +183,17 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   CITING ANY GAP#4 NUMBER: `research/findings/2026-07-20-RETRACTION-adversarial-audit-withdraws-rung1-and-gap1-M1.md`.**
   A 28-agent audit withdrew RUNG 1 and gap#1 M1's "on-bridge" claim and severely qualified RUNG 2; I re-verified
   every load-bearing charge and the audit is correct on all of them.
-  **RUNG 1 = WITHDRAWN.** The cited eligibility-tau ablation ("1000ms -> 1.000, 50ms -> 0.000") **DOES NOT EXIST** —
+  **RUNG 1 = PARTIALLY RESTORED (2026-07-20, repaired on fresh seeds 500-505 with a REAL tau arm + BOTH windows).**
+  Under the symmetric `dist<=2` window the file ALWAYS DECLARED, every control behaves as pre-registered: MAIN 1.000,
+  C1_frozen 0.000, C3_moat 0.000, C2_mistarget 0.200 (BELOW its 0.25 chance), C2b_random 0.233 (at chance),
+  C10_transient 0.000 (COLLAPSES). That control set is strictly CLEANER than under the window I moved to (where
+  C2_mistarget sits above chance and C10 fails to collapse) — **the swap broke two passing controls while
+  manufacturing a separation elsewhere.** ⇒ RESTORED: one plateau gives a CA1 cell a localized field it did not have;
+  lesions produce none; mis-target scores below chance. **STILL DEAD: the eligibility-tau claim** — C11_tau50 reads
+  **1.000, identical to MAIN**, under the declared window, so "the seconds-long window is load-bearing" was purely a
+  window artifact (C11b_tau200 reads 1.000 under BOTH, so even the moved window's separation rested on a single
+  200->50ms step). The runner now prints BOTH windows so neither can be cited alone.
+  **Superseded wholesale-withdrawal note kept for the trail:** The cited eligibility-tau ablation ("1000ms -> 1.000, 50ms -> 0.000") **DOES NOT EXIST** —
   no arm varies `elig_tau`, no artifact holds it; run properly, tau=50ms still forms a field on every instance and
   SHARPER (contrast 10.0 vs 6.67). It scored 0.000 only because of a scoring window I moved at 02:06:10 — **22
   minutes after committing at 01:43:52 that re-centering it would be goalpost-moving** — annotated "PRE-REGISTERED"
