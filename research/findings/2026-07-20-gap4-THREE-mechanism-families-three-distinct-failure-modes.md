@@ -43,3 +43,28 @@ or what changes the geometry so that they are separable?* The geometric route (f
 live, falsifiable option the second failure handed us and which no mechanism above addresses.
 
 **NOT claimed:** that adjacent-band contrast is unachievable. Three methods failed; the capability is untouched.
+
+---
+
+## PF-2 (transfer-loss route) — probe INVALID, but the route is metric inflation and is dropped
+
+**The probe is invalid and its numbers are not cited.** It returned CA1 peaks `[0, 0, 3, 7, 11]` — a duplicate, so
+stage 1 produced a degenerate map — because I omitted the `map_ok` guard that the runners themselves carry. Its
+`c_adj = 1.003` is therefore not comparable to the recorded 1.213. My own omission, of the exact assertion class
+that has caught several errors today.
+
+**One structural point survives, and it kills the route independently of the probe:**
+
+- **Divisive normalization cannot change a contrast ratio at all** — dividing every bin by a constant leaves ratios
+  identical (the probe shows 1.003 -> 1.003, as it must).
+- **A pointwise expansive read maps `c -> c^p`** (verified in the probe's own numbers: 1.003, 1.006, 1.009 = exactly
+  1.003^1,2,3). Applied to the real 1.213, `p=3` gives **1.785 > the 1.60 target**.
+
+**And that is precisely why the route is rejected.** Clearing the bar that way changes no learned weight and adds no
+information — it inflates every ratio equally, including noise and the already-healthy far contrast (2.609 -> 17.8).
+It is the same family as the read-out-sensitivity lever the record already excluded analytically, arriving by a
+different door.
+
+⇒ **The transfer loss is NOT a route to the goal.** The 1.5x compression is real and worth knowing as a constraint
+on how much weight contrast any fix must deliver — but recovering it by read-out exponent would be gaming the
+metric, not solving the problem. Dropped, and recorded as dropped so it is not revisited as a fresh idea.
