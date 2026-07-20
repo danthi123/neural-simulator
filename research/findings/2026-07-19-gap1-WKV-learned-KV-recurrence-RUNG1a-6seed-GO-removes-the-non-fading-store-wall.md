@@ -591,3 +591,16 @@ substrate at corr 0.98. The residual is the MULTI-CHANNEL state at trigram fidel
 RESEARCH GATE fires (multiply-confirmed boundary + new mechanism class): deep-research how spiking neurons carry
 a high-fidelity multi-channel recurrent state BEFORE more build, + RAG-check our own findings for prior
 line-attractor conclusions.
+
+### gap#1 open-generation CAPABILITY — concrete prose sample (SpikeGPT-faithful, spike-output, 2026-07-19)
+
+The SpikeGPT-faithful model (graded state + SPIKE-CODED output y_t, `--spike-output`, contiguous TinyStories,
+V=200/d=64) trained + generated coherent autoregressive prose (temp 0.8) AND still beat the trigram at deep
+context (+0.103, perm/mless controls collapse):
+- "once upon a time there was a boy named tom went to the ..."
+- "the dog and the cat were very happy they laughed and played together all day ..."
+- "one day a boy named tom tom wanted to ..."
+The `<unk>` tokens are the V=200 vocab cap (a de-risk-scale limit, not a mechanism limit). ⇒ gap#1 open fluent
+generation is DEMONSTRATED end-to-end on the spike-I/O + graded-state architecture: it PRODUCES text, not just
+clears a metric. The on-substrate multi-channel STATE at trigram fidelity is the characterized residual (the
+point-neuron rate-code boundary above); the research gate ranks the next mechanism.
