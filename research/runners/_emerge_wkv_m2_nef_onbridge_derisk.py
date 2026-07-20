@@ -34,7 +34,7 @@ from research.runners._emerge_reservoir_lm_context_depth_derisk import _bucket
 from research.runners._emerge_wkv_lm_derisk import fit_interp_trigram
 
 
-def build_nef_ssm_bridge(D, seed, decay, n_enc, dec_p, dec_m, dt=1.0):
+def build_nef_ssm_bridge(D, seed, decay, n_enc, dec_p, dec_m, dt=1.0, pool_density=0.05):
     """pool (D*n_enc NEF encoders) --[decoder weights AS SYNAPSES]--> chan (2D graded SSM-state neurons)."""
     from sim.bridge import SimulationBridge
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
@@ -49,7 +49,7 @@ def build_nef_ssm_bridge(D, seed, decay, n_enc, dec_p, dec_m, dt=1.0):
     cfg.enable_homeostasis = False; cfg.enable_short_term_plasticity = False
     cfg.enable_parameter_heterogeneity = False; cfg.enable_conductance_noise = False
     cfg.brain_regions = [
-        BrainRegion(name="pool", n_neurons=D * n_enc, exc_fraction=1.0, internal_density=0.05,
+        BrainRegion(name="pool", n_neurons=D * n_enc, exc_fraction=1.0, internal_density=float(pool_density),
                     exc_weight_mean=1.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False),
         BrainRegion(name="chan", n_neurons=2 * D, exc_fraction=1.0, internal_density=0.05,
                     exc_weight_mean=1.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False),
@@ -79,6 +79,7 @@ def main():
     ap.add_argument("--n-sentences", dest="n_sentences", type=int, default=40000)
     ap.add_argument("--corpus", type=str, default="data/corpus/tinystories_train.txt")
     ap.add_argument("--n-enc", dest="n_enc", type=int, default=48, help="NEF encoders per channel")
+    ap.add_argument("--pool-density", dest="pool_density", type=float, default=0.05, help="pool internal recurrent density; NEF encoders should be INDEPENDENT (~0)")
     ap.add_argument("--t-step", dest="t_step", type=int, default=6, help="encode-window bridge steps per token")
     ap.add_argument("--memoryless", action="store_true", help="anti-cheat: lam=0 (no integration) -> ~bigram")
     ap.add_argument("--homogeneous", action="store_true", help="anti-cheat: homogeneous encoders + uniform decode (must fail)")
@@ -125,7 +126,7 @@ def main():
     ccfg.enable_ou_process = False; ccfg.enable_stdp = False; ccfg.enable_hebbian_learning = False
     ccfg.enable_homeostasis = False; ccfg.enable_short_term_plasticity = False
     ccfg.enable_parameter_heterogeneity = False; ccfg.enable_conductance_noise = False
-    ccfg.brain_regions = [BrainRegion(name="pool", n_neurons=N, exc_fraction=1.0, internal_density=0.05,
+    ccfg.brain_regions = [BrainRegion(name="pool", n_neurons=N, exc_fraction=1.0, internal_density=float(args.pool_density),
                                       exc_weight_mean=1.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False)]
     ccfg.region_pathways = []
     crt = RuntimeState(); crt.actual_seed_used = args.seed
@@ -139,12 +140,14 @@ def main():
         bridge.cp_membrane_potential_v[:] = -65.0; bridge.cp_recovery_variable_u[:] = 0.0
         bridge.cp_firing_states[:] = 0.0
         cnt = np.zeros(len(ids_))
+        _dec_e = math.exp(-float(bridge.core_config.dt_ms) / float(bridge.core_config.syn_tau_g_e))
         for _ in range(args.t_step):
             bridge.cp_external_input_current[:] = 0.0
             bridge.cp_external_input_current[ids_] = (xp.asarray(cur[ids_]) if xp is not None else cur[ids_])
             bridge._run_one_simulation_step()
-            cnt += np.asarray(to_host(bridge.cp_firing_states))[ids_]
-        return cnt / args.t_step
+            # SAME recursion as cp_conductance_g_e (g = g*decay_e + input) => the decoder is fit on the deployed basis
+            cnt = cnt * _dec_e + np.asarray(to_host(bridge.cp_firing_states))[ids_]
+        return cnt
 
     vs = np.linspace(-2.5, 2.5, 51)
     R = np.stack([pool_rates(v, cb, cidx, cn) for v in vs], 0)            # [n_v, N]
@@ -165,7 +168,8 @@ def main():
     del cb
 
     # ---- the real bridge: pool --[decoder synapses]--> chan(graded SSM state) ----
-    b, pool_groups, chan = build_nef_ssm_bridge(D, args.seed, dec_eff, N, dec_p, dec_m)
+    b, pool_groups, chan = build_nef_ssm_bridge(D, args.seed, dec_eff, N, dec_p, dec_m,
+                                               pool_density=args.pool_density)
     nn = int(b.core_config.num_neurons)
     pool_all = np.concatenate(pool_groups).astype(np.int64)
     pool_chan_of = np.concatenate([[c] * len(pool_groups[c]) for c in range(D)]).astype(np.int64)
@@ -223,6 +227,10 @@ def main():
     Xs = np.concatenate(Xs, 0); Ys = np.concatenate(Ys, 0)
     gains = (Xs * Ys).sum(0) / np.maximum((Xs * Xs).sum(0), 1e-12)
     gains = np.where(np.isfinite(gains) & (np.abs(gains) > 1e-9), gains, 1.0)
+    _res = Xs * gains - Ys
+    _sig = float(np.std(_res) / max(1e-9, np.std(Ys)))
+    print(f"[m3-calib] spiking-delivery RESIDUAL noise after per-channel gain: sigma_rel = {_sig:.3f} "
+          f"(this is the noise level an end-to-end co-adaptation must train against = M3 input)", flush=True)
     # VERIFY-FIRST (post-rescale = the state that ACTUALLY feeds the read-out), on HELD-OUT eval sentences.
     cs = []
     for ids in ev_ids[:5]:
