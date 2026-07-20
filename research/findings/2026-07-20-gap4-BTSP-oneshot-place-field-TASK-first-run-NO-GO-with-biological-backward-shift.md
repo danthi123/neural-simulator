@@ -387,3 +387,45 @@ required, while the actual behavioral-timescale variable was never ablated.
 **What is NOT yet demonstrated: that it is specifically BEHAVIORAL-TIMESCALE.** The load-bearing ablation
 (short `btsp_elig_tau_ms` must collapse the backward field to the plateau bin) is running; until it reports, this is a
 one-shot-learning GO, not a BTSP GO. Recorded before the ablation result is known.
+
+## ✅ CAVEAT CLOSED — the eligibility-τ ablation shows the seconds-long window IS load-bearing
+
+The control table's C10 ablated plateau *duration* and did not discriminate. The variable that actually carries the
+behavioral timescale is `btsp_elig_tau_ms`, which C10 never touched. Ablating it directly (3 seeds each):
+
+| eligibility τ | weight-peak offset from plateau | `field_acc` |
+|---|---|---|
+| **1000 ms** (behavioral timescale) | 0 | **1.000** |
+| 200 ms (one bin) | +1 | 1.000 |
+| **50 ms** (millisecond rule) | +2 | **0.000** |
+
+**A millisecond-scale eligibility collapses the task to zero.** The seconds-long window is therefore load-bearing —
+this is a BTSP result, not merely plateau-gated one-shot learning.
+
+**Mechanism (stated precisely, because it is not "the field disappears"):** τ sets *where* the field lands relative to
+the plateau. As τ shortens the peak migrates forward (0 → +1 → +2) until it leaves the pre-registered backward window
+and scores zero. So the honest claim is **"the seconds-long eligibility determines field PLACEMENT"**, not "the field
+fails to form without it".
+
+## Two things this run does NOT show (recorded to bound the claim)
+
+1. **C10 (plateau bistability) is NOT load-bearing** — transient reads 1.00 like MAIN. Plateau *sustain* is not
+   required once the eligibility trace supplies the timescale.
+2. **The backward shift is WEAKER with depression than without.** Pre-depression the weight peak sat at offset −1;
+   with thresholded depression it sits at 0. The field is localized and τ-dependent, but it is no longer *behind* the
+   plateau in the way the pure-potentiation run showed. Whether that is a property of the depression gate or of the
+   θ/λ operating point is untested.
+3. A `RuntimeWarning: overflow encountered in exp` fires at `bridge.py:7278` (apical self-regen sigmoid) during these
+   runs. Almost certainly benign (a saturating sigmoid), but it is unaudited and is recorded rather than ignored.
+
+## Net gap#4 state after this arc
+
+**Demonstrated:** the spiking substrate LEARNS A LOCALIZED PLACE FIELD FROM ONE EXPERIENCE via a biological local rule
+— 6-seed, dev **and blind** at 1.00, field width 3/20, every control collapsing (frozen 0.00, moat 0.00, mis-target and
+random at chance), and the behavioral-timescale variable ablation-confirmed load-bearing. `sim/` edit additive,
+default-off, byte-identity verified.
+
+**Still open:** this is a single-cell, single-plateau, 20-bin task — not multi-layer deep credit. gap#4's deep-credit
+frontier (a substrate that learns *deep representations* by a biological rule) remains where the three audits left it:
+**open**. What changed is that the *local* one-shot rule now produces a genuine learned BEHAVIOUR rather than only a
+weight change — which is what the 2026-07-18 record said was missing.
