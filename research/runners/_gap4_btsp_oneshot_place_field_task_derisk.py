@@ -51,12 +51,19 @@ DEV_SEEDS = [42, 43, 44]
 BLIND_SEEDS = [100, 101, 102]
 
 
-def build(seed, *, btsp=True, eta=0.02, bistable=True, elig_tau=1000.0, dt=1.0):
+def build(seed, *, btsp=True, eta=0.02, bistable=True, elig_tau=1000.0, dt=1.0, w0=0.6, ca1_n=None):
     from sim.bridge import SimulationBridge
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.regions import BrainRegion, RegionPathway
     cfg = CoreSimConfig(seed=seed)                       # ⛔ constructor kwarg: cfg.seed is what ACTUALLY seeds the substrate
     cfg.dt_ms = float(dt)
+    # ⛔ THE DOMINANT CONFOUND (research gate 2026-07-20): cfg.num_traits defaults to 5, so the bridge deals FIVE
+    # Izhikevich cell types (rheobase 42-306 pA) into CA1 and the position pools -> 2.0-2.5x drive spread ->
+    # ~7-10x RATE spread (f-I gain ~3.36). BTSP's own contrast is 1.5x in weight ~= 3.9x in rate, so argmax was
+    # decided by WHICH CELL TYPE THE RNG DEALT, not by the weights. This is gated on num_traits>1 ALONE
+    # (bridge.py:1552) -- disabling enable_parameter_heterogeneity does NOT touch it. Seed 100 had ZERO RS
+    # neurons and scored 0.00 with a CORRECT weight map; seed 42 had two and formed a field.
+    cfg.num_traits = 1
     cfg.enable_brain_region_framework = True
     # every other writer to cp_connections.data OFF, so BTSP is the sole weight-mover
     for f in ("enable_short_term_plasticity", "enable_hebbian_learning", "enable_homeostasis",
@@ -82,11 +89,11 @@ def build(seed, *, btsp=True, eta=0.02, bistable=True, elig_tau=1000.0, dt=1.0):
         BrainRegion(name=f"pos{k}", n_neurons=POS_N, exc_fraction=1.0, internal_density=0.0,
                     exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False)
         for k in range(N_BINS)
-    ] + [BrainRegion(name="ca1", n_neurons=CA1_N, exc_fraction=1.0, internal_density=0.0,
+    ] + [BrainRegion(name="ca1", n_neurons=int(ca1_n or CA1_N), exc_fraction=1.0, internal_density=0.0,
                      exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False)]
     cfg.region_pathways = [
         RegionPathway(from_region=f"pos{k}", to_region="ca1", density=1.0,
-                      weight_mean=0.6, weight_jitter=0.0, plastic=True)
+                      weight_mean=float(w0), weight_jitter=0.0, plastic=True)
         for k in range(N_BINS)
     ]
     rt = RuntimeState(); rt.actual_seed_used = seed
@@ -146,7 +153,9 @@ def run_lap(sb, pos, ca1, *, plateau_bin=None, bin_steps=200, drive_pA=900.0,
 
 def field_metrics(rate, b):
     if rate.max() <= 0:
-        return dict(peak_bin=-1, width=0, hit=False, dead=True, flat=True, ratio=0.0)
+        # NOTE: with DELTA scoring this path is reachable whenever post <= pre everywhere (no field formed),
+        # which is a legitimate MISS, not an error.
+        return dict(peak_bin=-1, width=0, hit=False, offset=0, dead=True, flat=True, ratio=0.0)
     peak = int(np.argmax(rate)); hm = 0.5 * rate.max()
     bins = {peak}
     for d in (1, -1):
@@ -156,8 +165,10 @@ def field_metrics(rate, b):
             if k in bins or rate[k] < hm:
                 break
             bins.add(k)
-    dist = min(abs(peak - b), N_BINS - abs(peak - b))
-    return dict(peak_bin=peak, width=len(bins), hit=bool(dist <= 2), dead=False,
+    off = (peak - b + N_BINS // 2) % N_BINS - N_BINS // 2   # signed circular offset
+    # PRE-REGISTERED backward window: BTSP forms the field BEHIND the plateau (Bittner-Magee); the eligibility
+    # window is btsp_elig_tau_ms=1000ms = 5 bins at 200ms/bin, plus one bin of forward allowance.
+    return dict(peak_bin=peak, width=len(bins), hit=bool(-5 <= off <= 1), offset=int(off), dead=False,
                 flat=bool(rate.max() / max(rate.mean(), 1e-9) <= 1.5),
                 ratio=float(rate.max() / max(rate.mean(), 1e-9)))
 
@@ -173,9 +184,11 @@ def one_instance(seed, b, *, btsp=True, eta=0.02, bistable=True, plateau_bin=Non
     dw = _w_sum(sb) - w0
     sb.core_config.enable_btsp = False                    # probe with plasticity OFF
     post, _, _ = run_lap(sb, pos, ca1, plateau_bin=None, bin_steps=bin_steps, record=True)
-    m = field_metrics(post, b)
+    delta = post - pre                                    # PRE-REGISTERED: score the CHANGE, not the absolute map
+    m = field_metrics(delta, b)
     m.update(dw=float(dw), n_IS=int(is_pos), v_apical_end=float(v_end),
-             pre_ratio=float(pre.max() / max(pre.mean(), 1e-9)))
+             pre_ratio=float(pre.max() / max(pre.mean(), 1e-9)),
+             pre_flatness=float(pre.max() / max(pre.mean(), 1e-9)))
     return m
 
 
@@ -184,7 +197,7 @@ def arm(seed, *, label, **kw):
     for b in INSTANCE_BINS:
         m = one_instance(seed, b, **kw)
         hits.append(m["hit"]); widths.append(m["width"])
-        mech.append({k: m[k] for k in ("dw", "n_IS", "v_apical_end", "peak_bin", "width", "ratio", "dead", "flat")})
+        mech.append({k: m[k] for k in ("dw", "n_IS", "v_apical_end", "peak_bin", "width", "ratio", "dead", "flat", "offset")})
     return dict(label=label, seed=seed, field_acc=float(np.mean(hits)),
                 mean_width=float(np.mean(widths)), mechanism=mech)
 
