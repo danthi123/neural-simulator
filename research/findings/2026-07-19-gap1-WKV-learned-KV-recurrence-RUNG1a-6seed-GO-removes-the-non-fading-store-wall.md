@@ -561,3 +561,33 @@ METHOD banked, CAPABILITY not abandoned. Next method (cheap-first): MEASURE the 
 co-adapts to the ACTUAL on-bridge transfer input. If that closes it -> on-substrate BEAT -> 6-seed. If not ->
 the FULL-chain end-to-end (differentiable surrogate of input-pool-f-I + plateau in the training loop, or true
 BPTT through the bridge) = the gap#1<->gap#4 convergent deep arc.
+
+### The on-bridge multi-channel WKV state at trigram fidelity is BOUNDED by the input-pool rate-code (2026-07-19, verify-first, boundary precisely characterized) -> research gate fires
+
+MEASURED the on-bridge chain directly (fi_probe): drive the graded-plateau channel's input pool at
+`drive_scale*relu(v) + graded_bias`, read the plateau conductance. Findings:
+- pop_k=16, T_STEP=6: input pool fires only **0-22 spikes total** -> `c_weighted` is a NOISY, QUANTIZED,
+  NON-MONOTONE few-spike estimate of relu(v). The graded plateau faithfully integrates whatever `c_weighted`
+  it gets (corr 0.98 for a CLEAN value), but the few-spike input rate is noise-dominated.
+- SCALE lever tested (pop_k up to 500): does NOT fix it. plateau vs relu(v) stays NON-MONOTONE with a
+  DEAD-ZONE below relu(v)~1 (e.g. pop_k=500 ds=100: 0.1/0.3/0.6 -> 0, then 1.0->15.4, 1.5->23.7, 2.0->15.4
+  i.e. a bump then DOWN). So it is NOT just noise -- it is the input pool's THRESHOLD + REFRACTORY
+  nonlinearity: the few-spike firing is a threshold-nonlinear, refractory-bounded map of relu(v),
+  fundamentally unlike the clean relu(v) the off-bridge SSM assumes.
+
+⇒ operating-point tuning (drive_scale, center, pathway_w, per_pop) AND population scaling are EXHAUSTED. The
+"train off-bridge with an idealized transfer, deploy on-bridge" METHOD is banked -- the on-bridge multi-channel
+WKV state at trigram fidelity hits the documented POINT-NEURON RATE-CODE WALL (the project's deepest boundary),
+now on the WKV state.
+
+CAPABILITY NOT abandoned. gap#1 open generation is DEMONSTRATED off-substrate (SpikeGPT-faithful --spike-output,
+6-seed robust BEAT + generates prose + CI-guarded); the graded plateau realizes a CLEAN single value on the
+substrate at corr 0.98. The residual is the MULTI-CHANNEL state at trigram fidelity. Two scoped next methods:
+(a) the LINE-ATTRACTOR population (`_build_recur_channel_bridge` + `--recur-integrator`, Wong-Wang alpha<1,
+    ALREADY coded as "the scoped deep frontier") -- a recurrent NMDA population HOLDS a graded value, higher
+    fidelity than a single-window few-spike rate;
+(b) FULL-CHAIN end-to-end: surrogate-gradient BPTT through the ACTUAL on-bridge chain (input-pool spiking f-I +
+    plateau), so the read-out + input map co-adapt to the real threshold/refractory/noise map (gap#1<->gap#4).
+RESEARCH GATE fires (multiply-confirmed boundary + new mechanism class): deep-research how spiking neurons carry
+a high-fidelity multi-channel recurrent state BEFORE more build, + RAG-check our own findings for prior
+line-attractor conclusions.
