@@ -85,9 +85,37 @@ refractory). Measured REAL Izhikevich tuning curves on a bridge over a dense `v`
 Heterogeneity = distributed **intercepts** (tile the range → kills the dead-zone) + **mixed-sign** preferred directions
 + distributed gains; the decoder is per-neuron least-squares, NOT a uniform sum. (The project's earlier `--hetero-gain`
 was a half-measure: heterogeneous gains but still a uniform-sum decode — which is why it only moved 0.551→0.574.)
-⇒ a genuine SPIKING input population CAN deliver `v_t` cleanly. Next: wire it on-bridge (pool → decoder-weighted
-synapses → `cp_ssm_inject`), freezing the state during the encode window via `shunt=-1` (`lam=1`) so the per-token
-update stays exactly `a_t = decay*a_{t-1} + v̂_t`.
+
+### M2 ON-BRIDGE — 6-seed: the NEF encoding is LOAD-BEARING, but the spiking delivery is still SHORT of the trigram
+
+Wired on-bridge (`_emerge_wkv_m2_nef_onbridge_derisk.py`): an NEF pool projects to the state channel through synapses
+**whose weights ARE the decoder** (the decode happens in the synapses), the state is frozen during the encode window via
+`shunt=-1` (`lam=1`) and advanced by ONE step at `shunt=0`, so the per-token update is exactly `a_t = decay*a_{t-1}+v̂_t`.
+**Dale's law forced a design change:** the bridge routes exc/inh **per presynaptic neuron**, so a mixed-sign decoder is
+not expressible on the substrate → NNLS **sign-constrained** decoders on an excitatory pool.
+
+| | mean (6 seeds: 42/43/44/100/101/102) |
+|---|---|
+| **M1** (exact graded inject) | **+0.126 — GO** |
+| **M2** (spiking NEF input, n_enc=48) | **−0.345** (range −0.207..−0.557) |
+| M2 **HOMOGENEOUS control** (the old encoding) | **−0.889** (range −0.630..−1.040) |
+| M2 verify corr (post-rescale, held-out) | 0.613 |
+
+⇒ **The NEF heterogeneity + optimal decode is LOAD-BEARING: +0.544 nats over the homogeneous control, 6/6 seeds.**
+⇒ **But M2 does NOT reach the trigram.** The spiking input delivery has fidelity 0.613 (vs M1's exact 1.000), and that
+costs ~0.47 nats. The residual is now precisely localized: **input-delivery fidelity**, not the state and not the read-out.
+
+**⚠️ SELF-CAUGHT OVERCLAIM (recorded, per verify-first):** an n_eval=60 smoke of M2 read **+0.118 "GO"** — with only
+**30 deep tokens**. The proper n_eval=250 run is **−0.319** on that same seed. A 30-token deep bucket is noise; the smoke
+GO was a small-sample artifact and was retracted before it entered any claim. (Two further harness defects were caught
+in the same pass: the per-channel gains were being fit **on eval sentences** against the reference — a leak, now
+train-only — and the verify corr was measured **pre-rescale**, so it could not validate what actually feeds the
+read-out; now post-rescale on held-out.)
+
+**Next levers for the input residual:** (a) NEF error scales ~1/N (Eliasmith-Anderson: ~100 neurons/dim → ~1% RMSE) and
+we used only 48/dim — a population-scaling sweep (96/192/384) is the cheap first test; (b) if scaling plateaus, **M3 =
+calibrated end-to-end surrogate-BPTT through the measured substrate transfer**, so the input map + read-out co-adapt to
+the lossy spiking delivery — which is exactly the **gap#4 (learn-through-the-substrate) convergence**.
 
 ## Process note
 
