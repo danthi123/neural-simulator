@@ -86,12 +86,29 @@ def main():
     cal_vals = np.linspace(0.0, VMAX, n_chan)
     g_cal = synaptic_read(cal_vals)
     m = g_cal > 1e-9
-    x = np.log(np.clip(g_cal[m] / max(g_cal.max(), 1e-9), 1e-12, 1.0))
-    A = np.vstack([x, np.ones_like(x)]).T
-    coef, *_ = np.linalg.lstsq(A, cal_vals[m], rcond=None)
-    def decode(g):
-        gg = np.clip(g / max(g_cal.max(), 1e-9), 1e-12, 1.0)
-        return np.clip(coef[0] * np.log(gg) + coef[1], 0.0, VMAX)
+    if os.environ.get("GAP1_PERCHAN", "0") == "1":
+        # PER-CHANNEL calibration: sweep NC constant values across ALL channels; fit each channel's (log g -> value) map.
+        NC = 8; grid = np.linspace(0.05 * VMAX, VMAX, NC)
+        Gs = np.stack([synaptic_read(np.full(n_chan, v)) for v in grid], 0)       # [NC, n_chan]
+        gmaxc = np.maximum(Gs.max(0), 1e-9)
+        Xc = np.log(np.clip(Gs / gmaxc[None, :], 1e-12, 1.0))                      # [NC, n_chan]
+        # per-channel linear fit value ~ a*log(g)+b
+        a = np.zeros(n_chan); bpc = np.zeros(n_chan)
+        for c in range(n_chan):
+            A2 = np.vstack([Xc[:, c], np.ones(NC)]).T
+            cc, *_ = np.linalg.lstsq(A2, grid, rcond=None); a[c], bpc[c] = cc
+        def decode(g):
+            xx = np.log(np.clip(g / gmaxc, 1e-12, 1.0))
+            return np.clip(a * xx + bpc, 0.0, VMAX)
+        print(f"[calib] PER-CHANNEL log read-out ({NC} pts x {n_chan} ch)")
+    else:
+        _ORD = int(os.environ.get("GAP1_CAL_ORD", "1"))            # 1=log-linear, 3=cubic-in-log (richer inverse of real g_nmda)
+        x = np.log(np.clip(g_cal[m] / max(g_cal.max(), 1e-9), 1e-12, 1.0))
+        A = np.vstack([x**k for k in range(_ORD, -1, -1)]).T
+        coef, *_ = np.linalg.lstsq(A, cal_vals[m], rcond=None)
+        def decode(g):
+            xx = np.log(np.clip(g / max(g_cal.max(), 1e-9), 1e-12, 1.0))
+            return np.clip(np.vstack([xx**k for k in range(_ORD, -1, -1)]).T @ coef, 0.0, VMAX)
     print(f"[calib] log read-out on {int(m.sum())}/{n_chan} channels: recovered corr "
           f"{np.corrcoef(decode(g_cal[m]), cal_vals[m])[0,1]:.4f}")
 

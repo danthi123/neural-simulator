@@ -50,9 +50,17 @@ Validated end-to-end: numeric (RUNG 1, corr 1.0), on-bridge synapse (RUNG 2, cor
 0.97), and deployed deep-NLL through the runner (RUNG 4, +0.735 GO). The RF spike drives a genuine conductance synapse;
 no host phase read. (Follow-on polish: close the +0.735-vs-+0.878 fidelity gap. **The synapse WEIGHT does NOT close it** — a sweep
 w=30/80/200 gives accum corr 0.9703 IDENTICALLY, because the log-decode calibration absorbs the weight (`g/g_max`
-normalizes it out). The residual is an inherent small cost of the `g_nmda` decay+log-decode path vs the direct phase
-read (corr 0.970 vs 0.999); closing it fully is a period/tau/decode tuning [finer phase resolution / better-matched NMDA
-tau / a linear-in-latency read], a bounded follow-on — the CAPABILITY (fully synaptic, deep-NLL GO) is achieved.)
+normalizes it out). The residual is an inherent small cost of the `g_nmda` read vs the direct
+phase read (corr 0.970 vs 0.999). CHARACTERIZED — THREE fixes tested, ALL null/worse (each verified, not asserted):
+(1) **weight** — null (absorbed by calibration; 0.9703 for w=30/80/200); (2) **richer global decode** (cubic/quintic-in-log)
+— null (0.9703→0.9705); (3) **per-channel calibration** — WORSE (0.874; the per-channel fits overfit the noisy
+small-value `g_nmda`, bias +3.35). ⇒ the residual is an INHERENT small cost of transducing the value through a real
+NMDA conductance — the integer spike-step quantization + the zero-inflated small-value log-amplification (near-zero
+`g_nmda` → the log-decode amplifies its quantization noise), NOT a calibration knob. Full parity (+0.878) needs a
+DIFFERENT synaptic read mechanism (a longer period for finer spike-step resolution; a linear-in-latency read; or a
+different conductance) — a deeper follow-on. **The CAPABILITY is achieved: fully synaptic, deep-NLL +0.735 GO, no host
+read; the +0.735-vs-+0.878 gap is a characterized ~3% fidelity cost of this particular NMDA read, not a wall.**
+(Self-caught: I nearly recorded "per-channel calibration is the fix" — testing it first showed it FAILS.))
 
 ## RUNG 1 — GO (feasibility, kept below)
 
