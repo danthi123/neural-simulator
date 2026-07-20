@@ -7415,7 +7415,12 @@ class SimulationBridge:
                              else cp.float32(1.0 / _hthe if _hthe > 0.0 else 0.0)),
                             (cp.where(self.cp_btsp_theta[active_bt] > 0.0, 1.0, 0.0)
                              if self.cp_btsp_theta is not None
-                             else cp.float32(1.0 if _hthe > 0.0 else 0.0)))
+                             else cp.float32(1.0 if _hthe > 0.0 else 0.0)),
+                            # Milstein 2021 adjacent-band depression. Both thresholds 0.0 => use_band=0
+                            # => byte-identical to the pre-2026-07-20 rule (asserted on both backends).
+                            cp.float32(getattr(cfg, "btsp_band_lo", 0.0)),
+                            cp.float32(getattr(cfg, "btsp_band_hi", 0.0)),
+                            cp.float32(1.0 if float(getattr(cfg, "btsp_band_hi", 0.0)) > 0.0 else 0.0))
                     else:
                         new_w = fused_btsp_update(
                             cur_w, etilde_bt[active_bt], is_bt[active_bt],

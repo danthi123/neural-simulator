@@ -522,10 +522,11 @@ def fused_btsp_update(w, etilde_pre, is_post, eta, w_min, w_max):
 
 @fuse()
 def fused_btsp_hetero_update(w, etilde_pre, is_post, eta, lam_dep, w_min, w_max,
-                             dep_theta=0.0, inv_theta=0.0, use_thresh=0.0):
+                             dep_theta=0.0, inv_theta=0.0, use_thresh=0.0,
+                             band_lo=0.0, band_hi=0.0, use_band=0.0):
     """Structured (heterosynaptic-COMPETITION) BTSP one-shot weight update -- the gap#4<->gap#5 UNIFICATION storing
     rule (2026-07-18). Extends fused_btsp_update with the Milstein-Magee 2021 (eLife 73046) BIDIRECTIONAL arm /
-    Chistiakova-Volgushev heterosynaptic plasticity / Oja competitive normalization: a plateauing cell POTENTIATES
+    Chistiakova-Volgushev heterosynaptic plasticity / Miller-MacKay/Chistiakova-Volgushev (NOT Oja: Oja is MULTIPLICATIVE and PRESERVES ratios rather than sharpening them -- that citation inverted the result it was invoked to support; caught by the 2026-07-20 research gate) competitive normalization: a plateauing cell POTENTIATES
     its plateau-coincident inputs AND DEPRESSES its non-coincident inputs -- the COMPETITION that sharpens the stored
     assembly into a stronger, more-specific recurrent attractor:
 
@@ -560,7 +561,14 @@ def fused_btsp_hetero_update(w, etilde_pre, is_post, eta, lam_dep, w_min, w_max,
     # use_thresh=0 => dep_gate == (1 - etilde_pre) EXACTLY => byte-identical to the committed linear behaviour.
     gate_lin = 1.0 - etilde_pre
     gate_thr = cp.maximum(dep_theta - etilde_pre, 0.0) * inv_theta
-    dep_gate = use_thresh * gate_thr + (1.0 - use_thresh) * gate_lin
+    # BAND gate (Milstein 2021): depression fires ONLY in a window BETWEEN two thresholds
+    # (band_lo < Etilde < band_hi) -- i.e. the lags ADJACENT to the peak, NOT the far field.
+    # The thresholded gate above depresses LOW-eligibility (= FAR) synapses, which lowers a
+    # distant floor roughly uniformly and leaves the peak's NEIGHBOURS elevated; measured
+    # 2026-07-20, that is exactly the observed defect (far contrast 2.60x, adjacent 1.21x).
+    gate_band = cp.where((etilde_pre > band_lo) & (etilde_pre < band_hi), 1.0, 0.0)
+    dep_gate = (use_band * gate_band
+                + (1.0 - use_band) * (use_thresh * gate_thr + (1.0 - use_thresh) * gate_lin))
     dep = lam_dep * dep_gate * (w - w_min)
     w_new = w + eta * is_post * (pot - dep)
     return cp.clip(w_new, w_min, w_max)

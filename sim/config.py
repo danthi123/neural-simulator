@@ -309,6 +309,12 @@ class CoreSimConfig:
     # (1-Etilde) gate (byte-identical). >0 => depress only inputs with eligibility BELOW theta, protecting
     # strongly co-active pairs -- lowers the pedestal without lowering the peak. See fused_btsp_hetero_update.
     btsp_hetero_theta: float = 0.0
+    # Milstein 2021 split-threshold ADJACENT-BAND depression: depress ONLY synapses whose
+    # eligibility falls BETWEEN these thresholds (the lags adjacent to the peak), instead of
+    # the far field. Both 0.0 => band gate OFF => byte-identical to the pre-2026-07-20 rule
+    # (asserted: numpy 2000 trials and cupy 2.048M elements, max|diff| = 0.0).
+    btsp_band_lo: float = 0.0
+    btsp_band_hi: float = 0.0
     # 0.0 (default) => the BTSP block uses pure-potentiation fused_btsp_update (byte-identical). >0 => the structured
     # fused_btsp_hetero_update (Milstein-Magee 2021 bidirectional arm / Chistiakova-Volgushev heterosynaptic
     # competition): a plateauing cell depresses its NON-coincident inputs by lam_dep*(1-Etilde_pre)*(w-w_min) while

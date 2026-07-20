@@ -90,3 +90,27 @@ about the readout (independently excluded twice). **Wrong about the sufficiency 
 inputs"** — that is precisely what was implemented, and it targets the FAR field. The correction the prediction
 missed: the depression must be **positionally targeted at the band ADJACENT to the peak**, not at low-eligibility
 inputs generally. A prediction that was directionally right and mechanistically incomplete.
+
+---
+
+## Rank 0c EXECUTED (zero GPU) — the arc is correctly scoped; the INPUT is fine at both layers
+
+The gate's criterion: adjacent-bin afferent cos ~0.99 ⇒ no local rule can carve a sharp field (arc mis-scoped);
+cos <= 0.8 ⇒ input is fine and the RULE is the blocker.
+
+| layer | afferent | adjacent-bin cos | verdict |
+|---|---|---|---|
+| L1 | position pools (disjoint one-hot) | **0.0000** (min 0, max 0) | maximally separable |
+| L2 | the LEARNED CA1 population code | **0.7436** (min 0.500, max 0.833) | below the 0.8 bar |
+
+**Both pass. The input is not the blocker at either layer — the rule is.** This arc is correctly scoped, and the
+alternative hypothesis (a smooth position code needing the repo's 5-module grid fix) is REFUTED for this setup.
+
+**A positive finding falls out of it:** the repo's validated grid-code work took adjacent cos from 0.9921 to
+**0.7379**. BTSP's own learned CA1 map lands at **0.7436** — essentially the same decorrelation, achieved by the
+plasticity rule itself rather than by an engineered input code. **The rule DOES decorrelate; what it does not do is
+carve the adjacent-band trough.** Those are separable properties and only the second is missing.
+
+⇒ Diagnosis complete and singular: **everything required is in place EXCEPT positionally-targeted adjacent-band
+depression.** Proceed to build it (Rank 3, Milstein split-threshold band), with Rank 2's zero-DC kernel as the
+fallback whose pedestal-cancellation is algebraic rather than tuned.
