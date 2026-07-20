@@ -1,0 +1,60 @@
+# gap#1 M5 — INVALID harness + RETRACTION: my standalone write-fidelity 0.906 measured a NON-DEPLOYED quantity
+
+Two honest corrections, both instances of the day's core lesson (validate on DEPLOYED inputs; a control that does
+not reproduce its known value invalidates the run) — this time biting my own gap#1 work.
+
+## 1. The M5 deep-NLL harness is INVALID — the NEF CONTROL does not reproduce
+
+I wired a `--input-mode tokensdr` into the M2 runner and ran the pre-registered deep-NLL test. **Before reading any
+tokensdr verdict, I ran the NEF control on the same checkpoint** — and it FAILS to reproduce M2's known result:
+
+| mode | verify corr(state, ref) | deep d10-99 vs-trigram |
+|---|---|---|
+| **NEF (M2's own mode, KNOWN ~-0.030)** | **0.663** | **-3.069** |
+| tokensdr (M5) | 0.388 | -3.062 |
+
+**NEF gives -3.069, not its known -0.030.** A control that does not reproduce its established value invalidates the
+whole run: the checkpoint (regenerated today at V=1000/d=128) and/or the eval harness is misconfigured relative to
+what M2's finding used. **No mechanism verdict is readable from M5** — the -3.06 for tokensdr is meaningless while
+the control is broken. (Also caught en route: the FIRST M5 runs used the M2 runner's `--n-sentences` DEFAULT 40000
+while the checkpoint was trained at 80000 — the EXACT documented vocab-mismatch silent failure I wrote about earlier
+today. Fixed by passing 80000; the NEF control still fails, so that was not the only issue.)
+
+## 2. ⛔ RETRACTION: my standalone write-fidelity 0.906 measured a NON-DEPLOYED quantity
+
+The standalone write-fidelity de-risk reported token-SDR **0.906 > M2's 0.786** ("selection beats regression"). The
+deployed M5 state correlation REVERSES this: **tokensdr 0.388 < nef 0.663.** The token-SDR is deployed-WORSE than
+NEF, the opposite of what my standalone metric claimed.
+
+**Why the standalone was optimistic — it measured a different quantity than the deployment uses:**
+- it RESET the membrane per token (`drive_token_window` set v=-65 each call); the deployed encode does NOT (membrane
+  carries over). Adding a per-token reset to M5 moved the state corr 0.546 -> 0.697 — real but partial.
+- it read `ge_pos - ge_neg` (a D-dim SUBTRACTED value) and correlated it against `v_true`; the deployed state is the
+  2D UN-subtracted `[relu(+v); relu(-v)]` accumulated over the sequence through the slow integrator. Per-token
+  instantaneous v-fidelity is NOT the accumulated-state fidelity the read-out consumes.
+
+⇒ **The "token-SDR beats M2 (0.906 vs 0.786)" claim is WITHDRAWN.** It was measured on a per-token, membrane-reset,
+subtracted quantity that the deployment does not use. The honest deployed number is the accumulated-state corr
+(0.39), which is WORSE than NEF's 0.66.
+
+## The lesson, a third time — and the specific process failure
+
+The day's rule is "verify the claimed property on the DEPLOYED inputs before pre-registering." I built a standalone
+write-fidelity probe, got 0.906, and pre-registered a deep-NLL test on it — WITHOUT first confirming the probe
+measured what the deployment consumes. It did not. The deep-NLL integration (with its NEF control) is what exposed
+it. **A standalone metric that is cheaper than the deployment is worth exactly nothing if it measures a different
+quantity** — and the cheapest way to know is to run the deployment's OWN control first.
+
+## Honest status of gap#1 after this
+
+- **UNCHANGED / STANDS:** M1's graded-state result (host-inject) beats the trigram; the reservoir arc's slow-state
+  legitimacy; the gate's ENCODE-is-the-wall reframe (that correction to my reconciliation stands).
+- **RETRACTED:** "token-SDR selection beats M2 at write-fidelity 0.906." The deployed number is 0.39, worse than NEF.
+- **INVALID (no verdict):** the M5 deep-NLL, because the NEF control gives -3.069 vs its known -0.030.
+- **REQUIRED NEXT (before any gap#1 spiking-input verdict):** (a) make the NEF control reproduce its ~-0.030 on a
+  freshly validated checkpoint+harness (diagnose the state-corr-0.66-but-deep-NLL--3.07 inconsistency, likely a
+  read-out scaling or vocab-provenance issue); (b) ONLY THEN measure tokensdr against a working NEF baseline, with
+  write-fidelity computed on the DEPLOYED accumulated state, not a standalone proxy.
+
+No mechanism conclusion about the token-SDR encode is claimed. The honest deliverable here is the retraction + the
+invalid-harness diagnosis.

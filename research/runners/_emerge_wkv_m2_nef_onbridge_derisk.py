@@ -71,6 +71,49 @@ def build_nef_ssm_bridge(D, seed, decay, n_enc, dec_p, dec_m, dt=1.0, pool_densi
     return b, pool_groups, chan
 
 
+def build_tokensdr_ssm_bridge(D, seed, decay, Vval, k_active, dt=1.0):
+    """gap#1 M5: token-SDR SELECTION (V groups x K exc neurons) --[FIXED Wv value synapses]--> chan (2D). The encode
+    is a discrete selection + fixed-synapse lookup (NOT the NEF regression). Same chan/state/read as the NEF path,
+    so M2's eval is reused verbatim. relu(+v)->chan[:D], relu(-v)->chan[D:2D], both via g_e (Dale: exc-only tokens);
+    the read subtracts the two halves = M2's ge-gi read."""
+    from sim.bridge import SimulationBridge
+    from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
+    from sim.regions import BrainRegion
+    V = Vval.shape[0]
+    cfg = CoreSimConfig()
+    cfg.enable_brain_region_framework = True
+    cfg.enable_selective_ssm_state = True
+    cfg.ssm_k_leak = float(max(0.0, min(1.0, 1.0 - decay)))
+    cfg.dt = float(dt)
+    cfg.seed = cfg.ou_seed = cfg.heterogeneity_seed = seed
+    cfg.enable_ou_process = False; cfg.enable_stdp = False; cfg.enable_hebbian_learning = False
+    cfg.enable_homeostasis = False; cfg.enable_short_term_plasticity = False
+    cfg.enable_parameter_heterogeneity = False; cfg.enable_conductance_noise = False
+    cfg.brain_regions = [
+        BrainRegion(name="tok", n_neurons=V * k_active, exc_fraction=1.0, internal_density=0.05,
+                    exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False),
+        BrainRegion(name="chan", n_neurons=2 * D, exc_fraction=1.0, internal_density=0.05,
+                    exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False),
+    ]
+    cfg.region_pathways = []
+    rt = RuntimeState(); rt.actual_seed_used = seed
+    b = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(), runtime_state=rt, gpu_config=GPUConfig())
+    b._initialize_simulation_data()
+    tok = np.asarray(b.region_manager.indices("tok")); chan = np.asarray(b.region_manager.indices("chan"))
+    pre, post, w = [], [], []
+    for x in range(V):
+        srng = tok[x * k_active:(x + 1) * k_active]
+        vx = Vval[x]
+        for c in range(D):
+            vp = max(vx[c], 0.0) / k_active; vm = max(-vx[c], 0.0) / k_active
+            for j in srng:
+                if vp > 0: pre.append(int(j)); post.append(int(chan[c]));     w.append(float(vp))
+                if vm > 0: pre.append(int(j)); post.append(int(chan[D + c])); w.append(float(vm))
+    b.inject_explicit_wiring({"wv_lookup": {"pre_indices": pre, "post_indices": post,
+                                            "initial_weights": w, "plastic": False, "conn_type": "EXC"}})
+    return b, tok, chan
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--ssm", required=True)
@@ -79,6 +122,11 @@ def main():
     ap.add_argument("--n-sentences", dest="n_sentences", type=int, default=40000)
     ap.add_argument("--corpus", type=str, default="data/corpus/tinystories_train.txt")
     ap.add_argument("--n-enc", dest="n_enc", type=int, default=48, help="NEF encoders per channel")
+    ap.add_argument("--input-mode", dest="input_mode", choices=["nef", "tokensdr"], default="nef",
+                    help="nef = M2 (byte-identical default); tokensdr = gap#1 M5 discrete-selection encode")
+    ap.add_argument("--k-active", dest="k_active", type=int, default=8, help="tokensdr: SDR neurons per token")
+    ap.add_argument("--drive-pa", dest="drive_pa", type=float, default=900.0, help="tokensdr: SDR drive current")
+    ap.add_argument("--reset-membrane", dest="reset_membrane", action="store_true", help="DIAGNOSTIC: reset membrane per token")
     ap.add_argument("--pool-density", dest="pool_density", type=float, default=0.05, help="pool internal recurrent density; NEF encoders should be INDEPENDENT (~0)")
     ap.add_argument("--t-step", dest="t_step", type=int, default=6, help="encode-window bridge steps per token")
     ap.add_argument("--memoryless", action="store_true", help="anti-cheat: lam=0 (no integration) -> ~bigram")
@@ -168,13 +216,20 @@ def main():
     del cb
 
     # ---- the real bridge: pool --[decoder synapses]--> chan(graded SSM state) ----
-    b, pool_groups, chan = build_nef_ssm_bridge(D, args.seed, dec_eff, N, dec_p, dec_m,
-                                               pool_density=args.pool_density)
+    _tokensdr = (args.input_mode == "tokensdr")
+    if _tokensdr:
+        Vval = np.stack([Wv @ _ln(emb[x]) for x in range(V)])           # [V, D] the per-token value lookup
+        b, tok_ids, chan = build_tokensdr_ssm_bridge(D, args.seed, dec_eff, Vval, args.k_active)
+        pool_groups = None
+    else:
+        b, pool_groups, chan = build_nef_ssm_bridge(D, args.seed, dec_eff, N, dec_p, dec_m,
+                                                   pool_density=args.pool_density)
     nn = int(b.core_config.num_neurons)
-    pool_all = np.concatenate(pool_groups).astype(np.int64)
-    pool_chan_of = np.concatenate([[c] * len(pool_groups[c]) for c in range(D)]).astype(np.int64)
-    enc_of = np.concatenate([np.arange(len(pool_groups[c])) for c in range(D)]).astype(np.int64)
     scale = 1.0 / max(1e-6, (1.0 - dec_eff))
+    if not _tokensdr:                                                    # NEF-only pool index maps
+        pool_all = np.concatenate(pool_groups).astype(np.int64)
+        pool_chan_of = np.concatenate([[c] * len(pool_groups[c]) for c in range(D)]).astype(np.int64)
+        enc_of = np.concatenate([np.arange(len(pool_groups[c])) for c in range(D)]).astype(np.int64)
 
     def onbridge_states(ids):
         for nm in ("cp_ssm_state", "cp_ssm_inject", "cp_ssm_shunt", "cp_conductance_g_e",
@@ -184,18 +239,24 @@ def main():
         b.cp_membrane_potential_v[:] = -65.0; b.cp_recovery_variable_u[:] = 0.0
         out = []
         for t in range(len(ids)):
-            h = _ln(emb[ids[t]]); v = Wv @ h                              # [D] the per-channel value to deliver
-            # (1) ENCODE window: freeze the state (shunt=-1 => lam=1) while the NEF pool spikes through the decoder synapses
-            b.cp_ssm_shunt[:] = -1.0
-            drv = (gain[enc_of] * sgn[enc_of] * (v[pool_chan_of] - x_int[enc_of]) if not args.homogeneous
-                   else gain[enc_of] * v[pool_chan_of])
-            cur = np.zeros(nn, np.float32); cur[pool_all] = np.maximum(drv, 0.0).astype(np.float32)
-            # zero the FAST synaptic conductances so g_e reads THIS token's decoded value (the MEMORY lives in the
-            # slow cp_ssm_state, not in g_e) -- otherwise the read mixes the new input with the decay of the old.
-            b.cp_conductance_g_e[:] = 0.0; b.cp_conductance_g_i[:] = 0.0
+            b.cp_ssm_shunt[:] = -1.0                                       # (1) ENCODE: freeze the state (lam=1)
+            b.cp_conductance_g_e[:] = 0.0; b.cp_conductance_g_i[:] = 0.0   # g_e reads THIS token only (memory is in the slow state)
+            if _tokensdr:
+                # M5: drive token x's SDR (fixed current, identity selection); the fixed Wv synapses deliver v as g_e.
+                if getattr(args, "reset_membrane", False):
+                    b.cp_membrane_potential_v[:] = -65.0; b.cp_recovery_variable_u[:] = 0.0   # per-token reset (diagnostic)
+                sdr = tok_ids[ids[t] * args.k_active:(ids[t] + 1) * args.k_active]
+                cur = np.zeros(nn, np.float32); cur[sdr] = args.drive_pa
+                drive_idx = sdr
+            else:
+                h = _ln(emb[ids[t]]); v = Wv @ h                          # [D] the per-channel value to deliver
+                drv = (gain[enc_of] * sgn[enc_of] * (v[pool_chan_of] - x_int[enc_of]) if not args.homogeneous
+                       else gain[enc_of] * v[pool_chan_of])
+                cur = np.zeros(nn, np.float32); cur[pool_all] = np.maximum(drv, 0.0).astype(np.float32)
+                drive_idx = pool_all
             for _ in range(args.t_step):
                 b.cp_external_input_current[:] = 0.0
-                b.cp_external_input_current[pool_all] = (xp.asarray(cur[pool_all]) if xp is not None else cur[pool_all])
+                b.cp_external_input_current[drive_idx] = (xp.asarray(cur[drive_idx]) if xp is not None else cur[drive_idx])
                 b._run_one_simulation_step()
             # (2) READ the SYNAPTICALLY-DECODED value off the postsynaptic conductances (exc - inh = what the membrane sums)
             ge = np.asarray(to_host(b.cp_conductance_g_e)).astype(np.float64)[chan]
