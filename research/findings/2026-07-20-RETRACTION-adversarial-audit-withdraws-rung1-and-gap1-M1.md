@@ -134,3 +134,48 @@ audited, not the most** — exactly inverted from what the record implies.
    genuine manipulations before it ran. It stands as the only claim of the session built the right way round.
 5. **Back-port every fix**: rung 1's C2 geometry, rung 2's scoring-only control, C7 wiring, and the self-
    contradicting docstring at `:29`.
+
+---
+
+## BACK-PORT #1 APPLIED AND RUN — rung 2's core claim SURVIVES a control that can actually fail
+
+The audit's structural charge was that my fixes never travel backward. First back-port, applied and executed on
+**fresh seeds 200-202**: rung 2's scoring-only `C2_shuffled` replaced with a genuine delivery manipulation
+(`deliver_shuffled` permutes WHICH BIN each cell's plateau is delivered at, re-running the experiment under a
+different cause). The old arm is deliberately RETAINED so its by-construction identity to MAIN stays visible in
+the output.
+
+| arm | peaks | `per_cell_acc` |
+|---|---|---|
+| MAIN (plateaus at 5,9,13,17) | [4, 8, 12, 16] | 1.00 |
+| `C2_shuffled` (OLD, scoring-only) | **[4, 8, 12, 16] — UNCHANGED** | 0.00 |
+| `C2r` deliver-moved, score vs ORIGINAL | **[12, 16, 4, 8] — MOVED** | **0.00** ✓ collapses |
+| `C2p` deliver-moved, score vs WHERE-MOVED | **[12, 16, 4, 8] — MOVED** | **1.00** ✓ passes |
+
+3/3 seeds, identical pattern. **The old and new arms sit side by side and show the defect directly**: the
+scoring-only control leaves the peaks exactly where MAIN put them (it changed nothing but the index it compared
+against), while the real manipulation MOVES the peaks — and the peaks follow the delivery.
+
+⇒ **Rung 2's central claim now rests on a control that could have failed and did not:** four cells sharing one
+presynaptic pool each learn a field tracking THEIR OWN delivered plateau bin, and moving the delivery moves the
+fields 1:1.
+
+**The audit's other rung-2 qualifications STAND unchanged** — non-interference is true by wiring (no interference
+channel exists), `distinctness` is not load-bearing (random peaks pass its gate ~60% of the time), the "-1 backward
+shift" is an argmax tie-break (centroids are exactly on target), and cell 3 was measured with its plateau latched.
+Those are not repaired by this back-port and are not claimed to be.
+
+## BACK-PORT #2 APPLIED — rung 1's self-contradicting metric
+
+The header declared `dist<=2` (chance 0.25) while the code scored `-5 <= off <= 1` (chance 0.35) under a
+**"PRE-REGISTERED"** annotation added 22 minutes after I had committed that moving this window would be
+goalpost-moving. The false label is removed and the contradiction is now documented in the file itself: neither
+window is treated as pre-registered, BOTH must be reported, and no result may be cited under one without the other.
+
+## Remaining back-ports (named, not yet done)
+
+- Wire C7 in rung 1 (`flat` is computed at `:174` and never read) — it was named as the cause of an earlier
+  retraction and is still unwired.
+- Fix rung 1's C2 geometry (0.400 against a true chance of 0.350, versus a pre-registration reading "below chance").
+- Re-run rung 1 end-to-end on fresh seeds under BOTH windows, with a real eligibility-tau arm, before any rung-1
+  claim is made again.
