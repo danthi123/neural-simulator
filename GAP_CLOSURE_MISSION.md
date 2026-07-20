@@ -240,8 +240,9 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   in the step loop = the OUTPUT analogue of M2's synaptic INPUT decode; byte-identical when off = 15 tests pass;
   ON-path byte-exact). A SINGLE-layer read-out over the on-bridge graded state LEARNS the grounded map by a PURE local
   plasticity rule (DELTA rule, `cp_ssm_state` as the presynaptic eligibility — no BPTT, no weight transport, no
-  adaptive optimizer): grounded next-token acc 0.478 (52× chance), FROZEN→chance + SHUFFLE→4×-collapse + MEMORY
-  load-bearing (0.478 > memoryless 0.401 at sufficient training — a self-caught under-training correction).
+  adaptive optimizer): grounded next-token acc **0.667 at 40 epochs (74× chance) and STILL RISING** (not converged),
+  FROZEN→chance + SHUFFLE→4×-collapse + MEMORY load-bearing (> memoryless 0.401). (⚠ under-estimated the ceiling TWICE
+  — bigram-0.42 then 0.49 — both under-training; the plateau is above 0.667. Verify-before-concluding.)
   `_gap_onbridge_ssm_readout_learn_derisk.py`. **NEXT rung (iii):** the single-LINEAR read-out ceilings ~0.49 (weak
   memory use); the full memory-dependent copy needs the MULTI-LAYER gated read-out on-bridge (`head @ (sigmoid(Wr@h) *
   (Wo_sp@state))`) + the FA feedback for the hidden layers (off-bridge multi-layer FA reached 0.998 reduced). Finding
