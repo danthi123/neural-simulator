@@ -161,6 +161,28 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
+- **🎉 gap#4 RUNGS 1-2 GO / RUNG 3 NOT-YET-VALID (2026-07-20) — the substrate LEARNS A BEHAVIOUR from ONE experience,
+  and the blocker to STACKING is now a read-out problem, not a credit problem.**
+  **RUNG 1 (6-seed, dev 1.00 + BLIND 1.00, width 3/20):** a CA1 cell learns a LOCALIZED PLACE FIELD from ONE plateau.
+  All controls collapse (frozen 0.00, moat 0.00, mis-target/random at chance) and the **eligibility-tau ablation is
+  load-bearing** (tau 1000ms -> 1.000, tau 50ms -> 0.000), so it is genuinely BEHAVIORAL-TIMESCALE, not merely
+  plateau-gated. Required three fixes, none of them the plasticity rule: `num_traits=5` cell-type lottery (7-10x rate
+  spread vs BTSP's 3.9x signal); `weight_jitter` to restore functional seed variation (a "6-seed GO" was n=1 repeated
+  six times); and **THRESHOLDED heterosynaptic depression** — the committed LINEAR gate is provably uniform
+  (Cone-Shouval; Milstein ran it AS A CONTROL), so the 2026-07-18 competition "refutation" refuted the IMPLEMENTATION,
+  not the mechanism. `sim/` edit additive, default-off, byte-identity verified.
+  **RUNG 2 (6-seed, dev 1.00 + BLIND 1.00):** the rule COMPOSES — 4 cells sharing the SAME input each learn a DISTINCT
+  field in ONE lap (peaks [4,8,12,16] vs targets [5,9,13,17]), distinctness 1.00, shuffled-target control **0.00**.
+  **RUNG 3 (stacking) — NOT YET VALID, do not cite its numbers.** Pre-registered gate fails (selectivity 0.33 << 0.80)
+  AND the instrument has three named defects (late plateaus never release -> 8/32 cells latched -> moat broken; no
+  functional seed variation; a metric that folded stage-1 into "L2 learning", caught by C1-frozen). **But the MECHANISM
+  finding is solid and cross-gap: the SPIKE read is 0.000000 in EVERY condition while the GRADED CONDUCTANCE read shows
+  0.92 — the point-neuron rate-code wall blocks a downstream spike read of a sparse learned code EXACTLY as it blocked
+  gap#1's WKV state, and the SAME graded fix works.** Also: the backward window PROPAGATES across layers (L2 learns the
+  field that PRECEDED the plateau), and `btsp_w_max` must exceed the operating weight or potentiation inverts.
+  **⇒ NEXT: re-run rung 3 on the fixed instrument (bounded release now returns the apical below v_hold without the
+  -501mV artifact), with functional seed variation asserted; then the graded-read principle applied systematically.**
+  Findings: `2026-07-20-gap4-BTSP-oneshot-place-field-TASK-*.md`, `-RUNG2-*.md`, `-RUNG3-*.md`.
 - **⛔ gap#4 KEYSTONE RAN (2026-07-20) — decisive BLIND NO-GO, and it VINDICATES "dw is not the gate".** The BTSP
   one-shot place-field TASK (named 2026-07-18, never run until now) asks gap#4's actual capability question: does the
   substrate acquire a BEHAVIOUR from ONE experience? **DEV 0.600 → BLIND 0.133 (BELOW chance 0.35).** The dev result

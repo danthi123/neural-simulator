@@ -138,8 +138,15 @@ def run_lap(sb, pos, cells, l2, *, ca1_targets=None, l2_plateau_bin=None, bin_st
     # FORCE-RELEASE: a plateau started late in the lap has its release scheduled past the lap end, so it
     # never fires and the cell stays LATCHED into the next stage (8/32 CA1 neurons measured above v_hold),
     # which breaks the no-plateau moat (dw != 0 with no instructive signal). Release everything at lap end.
+    # BOUNDED release: drive down only while the apical is still latched, and stop as soon as every cell is below
+    # v_hold. A fixed 20-step -900pA pulse clears the latch but slams the apical to ~-501 mV (unphysiological) and
+    # leaves the next stage starting from a deeply hyperpolarized state.
+    _vh = float(getattr(sb.core_config, "coincidence_plateau_v_hold", -35.0))
     _rel = np.zeros(n, np.float32); _rel[:] = -release_pA
-    for _ in range(20):
+    for _ in range(60):
+        _va = np.asarray(to_host(sb.cp_v_apical)) if sb.cp_v_apical is not None else None
+        if _va is None or not bool((_va > _vh).any()):
+            break
         sb.cp_external_input_current[:] = 0.0
         sb.cp_bdsp_apical_drive = (xp.asarray(_rel) if xp is not None else _rel)
         sb._run_one_simulation_step()
