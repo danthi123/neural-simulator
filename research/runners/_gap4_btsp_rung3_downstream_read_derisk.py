@@ -276,7 +276,9 @@ def main():
         _band = dict(band_lo=args.band_lo, band_hi=args.band_hi,
                      dog_a_dep=args.dog_a_dep, tau_slow=args.tau_slow)
         # Both band arms run in the SAME invocation so the ON/OFF comparison cannot drift across configs.
-        for name, kw in [("MAIN_bandON", dict(_band)),
+        for name, kw in [("MAIN_ruleON", dict(_band)),   # label is generic: _band now carries EITHER band OR DoG params.
+                         # (It was "MAIN_bandON" while carrying DoG params -- a name/semantics mismatch,
+                         #  the exact defect class the 2026-07-20 audit flagged. Renamed.)
                          ("P4_ruleOFF", dict(band_lo=0.0, band_hi=0.0, dog_a_dep=0.0, tau_slow=0.0)),
                          ("C1_l2_frozen", dict(l2_eta=0.0, **_band)),
                          ("C3_no_l2_plateau", dict(do_l2_plateau=False, **_band)),
