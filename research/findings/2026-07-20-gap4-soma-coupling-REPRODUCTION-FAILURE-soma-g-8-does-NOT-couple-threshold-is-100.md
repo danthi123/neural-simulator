@@ -54,6 +54,37 @@ boundary of the coarse spiking burst-credit is the NEXT test — an epochs×driv
 research gate for a stronger credit-direction signal (the microcircuit clean-error is already on; next classes: a
 learned-feedback / Kolen-Pollack credit direction, or a richer read-out).
 
+## Tuning sweep result (cleanxor, h48, soma-g 200, seed 42) — the accuracy floor is ROBUST across every credit lever
+
+Ran the named epochs×drive×feedback sweep. BDSP held-out (floor 0.561, oracle 0.989):
+
+| lever | BDSP | LESION | wrong_sign | note |
+|---|---|---|---|---|
+| e24 (base) | 0.564 | 0.439 | 0.439 | at floor |
+| e60 | 0.561 | 0.439 | 0.439 | at floor |
+| e120 | **0.439** | 0.439 | 0.561 | DEGRADES — collapses to lesion; wrong-sign inverts above |
+| apical-hid-gain 500 (vs 190) | 0.564 | 0.439 | — | at floor |
+| hidden-bias 220 (vs 520) | 0.561 | 0.439 | — | at floor |
+| **KP learned feedback** (vs fixed-random) | **0.564** | 0.439 | — | **no help** |
+
+**VERDICT: the on-bridge spiking BDSP burst-credit does NOT build accuracy above the linear floor on cleanxor, robust
+to epochs (24/60/120), credit gain, hidden bias, AND the learned Kolen-Pollack feedback direction.** The credit is
+*sign-informative* (BDSP > lesion/wrong-sign at short training; it lifts the net from below-chance anti-learning 0.439
+to ~chance 0.564) but does not extract the hidden structure the numpy-backprop oracle finds (0.989). More epochs (120)
+DEGRADE it (BDSP → 0.439, wrong-sign inverts above), so it is not under-training. **KP learned feedback not helping
+rules out the feedback DIRECTION (fixed-random FA) as the fix within this family.** Whether the residual boundary is
+the coarse burst-credit QUALITY or the spiking FORWARD/READOUT (the net reaches ~0.56 while the numpy-backprop oracle
+reaches 0.989 on the SAME architecture) is NOT yet distinguished — that is the decisive open control below, and I do
+NOT claim "credit boundary" until it is run.
+
+**OPEN (honest scope + the decisive next control):** (1) single-seed characterization — a 2-3 seed confirmation of the
+floor firms the boundary. (2) **The credit-vs-forward diagnosis is not yet run:** the on-bridge net reaches only ~0.56
+while the oracle (numpy backprop, SAME in→hid→out architecture) reaches 0.989 — so before calling this a CREDIT
+boundary, install the oracle's trained weights into the on-bridge spiking net and read its accuracy; if the spiking
+forward+differential-readout can't express ~0.99 even with perfect weights, the boundary is the spiking
+FORWARD/READOUT, not the credit. (3) THE LAW: raw burst-credit + FA/KP is exhausted → a research gate for a
+fundamentally different credit signal (not more of this family).
+
 ## Method lesson
 
 The banked "pipeline-validated" result was gated on a dw ratio while its OWN coupling diagnostic said DECOUPLED, and its
