@@ -71,7 +71,7 @@ def _build_channel_bridge(D, seed, self_nmda_w=8.0, dt=0.5, pop_k=1):
 
 
 def _build_plateau_channel_bridge(D, seed, pathway_w=3.0, pop_k=8, dt=1.0, center=8.0, slope=0.33, strength=80.0,
-                                  tau_decay_ms=80.0):
+                                  tau_decay_ms=80.0, per_pop=False):
     """DENDRITIC GRADED-PLATEAU realization (the convergent build; the point-neuron-limit SURPASS): the WKV leaky state lives
     in a GRADED dendritic plateau CONDUCTANCE (`enable_graded_dendritic_plateau`, the validated protected sim/ edit) — a
     Mikulasch-Priesemann ANALOG read-out the point-neuron soma provably cannot be. Each channel = a plateau compartment fed by
@@ -112,8 +112,11 @@ def _build_plateau_channel_bridge(D, seed, pathway_w=3.0, pop_k=8, dt=1.0, cente
     for c in range(2 * D):
         for i in inp[c * pop_k:(c + 1) * pop_k]:
             pre.append(int(i)); post.append(int(chan[c]))
+    # OPT-IN: normalize the pathway weight by pop_k so c_w = Sum_j (w/pop_k * firing_j) = w * (MEAN firing) is POP-INDEPENDENT
+    # (more population then reduces the firing-rate-estimate noise WITHOUT shifting the sigmoid operating point / saturating).
+    w_eff = (float(pathway_w) / float(pop_k)) if per_pop else float(pathway_w)
     b.inject_explicit_wiring({"inp_to_chan_coinc": {"pre_indices": pre, "post_indices": post,
-                              "initial_weights": [float(pathway_w)] * len(pre), "plastic": False,
+                              "initial_weights": [w_eff] * len(pre), "plastic": False,
                               "conn_type": "MIXED", "coincidence_detector": True}})
     inp_groups = [inp[c * pop_k:(c + 1) * pop_k] for c in range(2 * D)]
     chan_groups = [chan[c:c + 1] for c in range(2 * D)]
@@ -235,6 +238,7 @@ def main():
     ap.add_argument("--plateau-center", dest="plateau_center", type=float, default=8.0)
     ap.add_argument("--plateau-signed", dest="plateau_signed", action="store_true", help="dense signed drive ON=(bias+v) OFF=(bias-v) -> ON-OFF diff = signed leaky state (fixes the integral-of-relu mismatch)")
     ap.add_argument("--plateau-signed-bias", dest="plateau_signed_bias", type=float, default=3.0)
+    ap.add_argument("--pathway-per-pop", dest="pathway_per_pop", action="store_true", help="normalize pathway weight by pop_k (c_w population-independent; more pop = less noise, no operating-point shift)")
     ap.add_argument("--plateau-calib", dest="plateau_calib", action="store_true", help="per-channel v calibration so all channels land in the graded window")
     ap.add_argument("--graded-plateau", dest="graded_plateau", action="store_true", help="DENDRITIC GRADED PLATEAU: WKV leaky state in cp_conductance_g_graded_plateau (0.98 core fidelity, point-neuron limit surpassed)")
     ap.add_argument("--learn-recur", dest="learn_recur", action="store_true", help="EMERGENT: Hebbian-plastic recurrent weights self-organize the attractor during the drive")
@@ -291,7 +295,7 @@ def main():
         # CONDUCTANCE. Drive the inp pool propto v_t -> coincidence drive c_w -> plateau integrates (decay-matched to the SSM).
         _tau = float(-args.t_step * 1.0 / np.log(decay)) if 0 < decay < 1 else 80.0
         b, inp_groups, chan_groups, snap = _build_plateau_channel_bridge(D, args.seed, pathway_w=args.self_nmda_w,
-                                                                         pop_k=args.pop_k, tau_decay_ms=_tau, center=getattr(args,"plateau_center",8.0))
+                                                                         pop_k=args.pop_k, tau_decay_ms=_tau, center=getattr(args,"plateau_center",8.0), per_pop=getattr(args,"pathway_per_pop",False))
         drive_groups = inp_groups
         print(f"[plateau] dendritic graded plateau: SSM decay={decay:.4f} -> matched plateau tau={_tau:.1f}ms, pop_k={args.pop_k}", flush=True)
     elif getattr(args, "recur_integrator", False):
