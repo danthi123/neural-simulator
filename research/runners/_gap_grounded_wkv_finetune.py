@@ -140,6 +140,10 @@ def main():
                     help="RESERVOIR/emergence-path test: freeze Wv (input->state map) + decay (recurrence) at the "
                          "pretrained values; train ONLY the read-out (Wr/Wo_sp/head) + emb -> is the grounded copy a "
                          "SHALLOW-readout adaptation over a FIXED cortex (no deep BPTT of the recurrence)?")
+    ap.add_argument("--freeze-cortex", action="store_true",
+                    help="STRICTER reservoir test: freeze the ENTIRE input encoding (original emb + Wv + decay); train "
+                         "ONLY the read-out (Wr/Wo_sp/head) + the 2 marker emb rows -> is the grounded copy PURE "
+                         "shallow-readout over a TOTALLY fixed cortex?")
     args = ap.parse_args()
 
     torch.manual_seed(args.seed); random.seed(args.seed); np.random.seed(args.seed)
@@ -156,11 +160,15 @@ def main():
 
     net = TorchWKV(V, D).to(dev)
     net.load_npz(z, extra_tokens=len(markers))
-    if args.freeze_input:
+    if args.freeze_input or args.freeze_cortex:
         net.Wv.weight.requires_grad_(False)   # input->state map FIXED (reservoir)
         net.w.requires_grad_(False)            # recurrence decay FIXED
-        print("[freeze-input] RESERVOIR test: Wv (input->state) + decay FROZEN; training only emb + read-out "
-              "(Wr/Wo_sp/head) -> is the grounded copy shallow-readout-learnable over a fixed cortex?")
+        print("[freeze-input] RESERVOIR test: Wv (input->state) + decay FROZEN; training the read-out (Wr/Wo_sp/head)"
+              + (" + ALL emb" if not args.freeze_cortex else " + ONLY the 2 marker emb rows (original emb FROZEN)"))
+    if args.freeze_cortex:
+        # per-row emb gradient mask: zero the gradient on the ORIGINAL Vold rows, leaving the 2 marker rows trainable
+        _emask = torch.zeros(V, 1, device=dev); _emask[Vold:] = 1.0
+        net.emb.weight.register_hook(lambda g, m=_emask: g * m)
 
     # --- verify-first: the torch forward matches the numpy WKVFaculty logits (before training) ---
     from research.runners._wkv_faculty import WKVFaculty

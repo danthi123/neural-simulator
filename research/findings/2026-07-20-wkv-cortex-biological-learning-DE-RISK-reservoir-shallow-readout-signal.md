@@ -25,11 +25,23 @@ the read-out (+ token emb). The grounded-render capability is a **shallow-readou
 NOT a deep-credit problem. This is exactly the reservoir/shallow-readout emergence-path shape (the R3 reframe): the
 recurrence is a fixed reservoir; the task is learned by the read-out.
 
+**STRICTER test (`--freeze-cortex`): freeze the ENTIRE input encoding (original emb + Wv + decay); train ONLY the
+read-out (Wr/Wo_sp/head) + the 2 marker emb rows.** Same result: **focused-grounded 0.86 (19/22), RA-faithful 1.00
+(44/44)**, anti-forget OK (ppl 28.12 → 29.85, a small cost from the frozen emb). ⇒ the grounded copy is a **PURE
+shallow-readout skill over a TOTALLY FIXED cortex** — the task adaptation requires ZERO deep credit and ZERO cortex
+change; it is entirely in the (linear-ish) read-out. This is the cleanest possible reservoir/shallow-readout result
+for the grounded task.
+
 ## Honest scope — what this does NOT yet show
 
 - The frozen `Wv` was itself **pretrained by BPTT** on TinyStories — so this shows the TASK adaptation is
   shallow-readout-learnable over the fixed pretrained cortex, NOT that the PRETRAINING (the TinyStories fluency) is
   biologizable. `emb` was also still trained (the token encoding).
+- The read-out was trained by **Adam** (a global optimizer), so this shows the grounded task is SHALLOW-learnable
+  (no deep credit), not yet that it's learnable by a LOCAL rule specifically. But a shallow linear-ish read-out is
+  the canonical case a LOCAL rule handles (delta rule / feedback-alignment, no weight transport) — the natural next
+  de-risk (train the read-out by feedback-alignment instead of Adam; the project already has a feedback-alignment /
+  clean-error credit channel — the D3 "Urbanczik-Senn M2.6" route).
 - The deeper open question — **can the WKV cortex's PRETRAINING be learned by a biological local rule (e-prop /
   feedback-alignment / burstprop, no BPTT-through-time) and still reach fluency?** — is what the parallel read-only
   research gate is scoping (ranked cheap-first de-risks: e.g. random-`Wv` true-reservoir + shallow read-out; a local

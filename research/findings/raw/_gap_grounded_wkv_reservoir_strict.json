@@ -1,0 +1,121 @@
+{
+  "n": 22,
+  "cont": {
+    "verified": 19,
+    "confab": 3,
+    "fallback": 0
+  },
+  "complete": {
+    "top1": 15,
+    "top5": 17,
+    "n": 22
+  },
+  "ra_faithful": {
+    "follows": 44,
+    "bias": 0,
+    "n": 44
+  },
+  "examples": [
+    {
+      "cue": [
+        "dog",
+        "eat"
+      ],
+      "taught_p": "meat",
+      "cont_ans": "the dog eats meat",
+      "cont_verified": true,
+      "cont_ung": [],
+      "complete_top5": [
+        "meat",
+        "hay",
+        "apple",
+        "the",
+        "seed"
+      ]
+    },
+    {
+      "cue": [
+        "cat",
+        "eat"
+      ],
+      "taught_p": "fish",
+      "cont_ans": "the fish eats fish",
+      "cont_verified": false,
+      "cont_ung": [
+        [
+          "fish",
+          "eat",
+          "fish"
+        ]
+      ],
+      "complete_top5": [
+        "cat",
+        "flag",
+        "hay",
+        "the",
+        "seed"
+      ]
+    },
+    {
+      "cue": [
+        "bird",
+        "eat"
+      ],
+      "taught_p": "seed",
+      "cont_ans": "the bird eats seed",
+      "cont_verified": true,
+      "cont_ung": [],
+      "complete_top5": [
+        "seed",
+        "its",
+        "meat",
+        "the",
+        "apple"
+      ]
+    }
+  ],
+  "ra_examples": [
+    {
+      "cue": [
+        "dog",
+        "eat"
+      ],
+      "prompt_p": "ball",
+      "true_p": "meat",
+      "ans": "the dog eats ball",
+      "follows": true
+    },
+    {
+      "cue": [
+        "dog",
+        "eat"
+      ],
+      "prompt_p": "cake",
+      "true_p": "meat",
+      "ans": "the dog eats cake",
+      "follows": true
+    },
+    {
+      "cue": [
+        "cat",
+        "eat"
+      ],
+      "prompt_p": "ball",
+      "true_p": "fish",
+      "ans": "the cat eats ball",
+      "follows": true
+    },
+    {
+      "cue": [
+        "cat",
+        "eat"
+      ],
+      "prompt_p": "cake",
+      "true_p": "fish",
+      "ans": "the cat eats cake",
+      "follows": true
+    }
+  ],
+  "ckpt": "bridges/wkv_ckpt/_reservoir_strict_ft.npz",
+  "verdict": "GROUNDED FLUENT RENDER GO (focused-grounded high + RA-faithful)"
+}
