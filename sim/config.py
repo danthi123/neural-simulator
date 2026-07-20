@@ -305,6 +305,10 @@ class CoreSimConfig:
     btsp_w_min: float = 0.0                        # BTSP weight lower clip (potentiation-dominated; non-negative)
     btsp_w_max: float = 5.0                        # BTSP weight upper clip (the (w_max-w) saturation ceiling)
     btsp_hetero_dep: float = 0.0                   # gap#4<->gap#5 unification: heterosynaptic-COMPETITION coefficient.
+    # gap#4 (2026-07-20): THRESHOLD for the heterosynaptic depression gate. 0.0 => the committed LINEAR
+    # (1-Etilde) gate (byte-identical). >0 => depress only inputs with eligibility BELOW theta, protecting
+    # strongly co-active pairs -- lowers the pedestal without lowering the peak. See fused_btsp_hetero_update.
+    btsp_hetero_theta: float = 0.0
     # 0.0 (default) => the BTSP block uses pure-potentiation fused_btsp_update (byte-identical). >0 => the structured
     # fused_btsp_hetero_update (Milstein-Magee 2021 bidirectional arm / Chistiakova-Volgushev heterosynaptic
     # competition): a plateauing cell depresses its NON-coincident inputs by lam_dep*(1-Etilde_pre)*(w-w_min) while

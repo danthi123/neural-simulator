@@ -7386,6 +7386,7 @@ class SimulationBridge:
                 # where the pre is silent (etilde~0). Default (_hdep<=0): the exact pure-potentiation set (both>1e-6),
                 # byte-identical.
                 _hdep = float(getattr(cfg, "btsp_hetero_dep", 0.0))
+                _hthe = float(getattr(cfg, "btsp_hetero_theta", 0.0))   # 0.0 => linear gate (byte-identical)
                 if _hdep > 0.0:
                     active_bt = cp.where(is_bt > 1e-6)[0]
                 else:
@@ -7398,7 +7399,9 @@ class SimulationBridge:
                             cp.float32(getattr(cfg, "btsp_learning_rate", 0.001)),
                             cp.float32(_hdep),
                             cp.float32(getattr(cfg, "btsp_w_min", 0.0)),
-                            cp.float32(getattr(cfg, "btsp_w_max", 5.0)))
+                            cp.float32(getattr(cfg, "btsp_w_max", 5.0)),
+                            cp.float32(_hthe), cp.float32(1.0 / _hthe if _hthe > 0.0 else 0.0),
+                            cp.float32(1.0 if _hthe > 0.0 else 0.0))
                     else:
                         new_w = fused_btsp_update(
                             cur_w, etilde_bt[active_bt], is_bt[active_bt],

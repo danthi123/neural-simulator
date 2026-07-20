@@ -521,7 +521,8 @@ def fused_btsp_update(w, etilde_pre, is_post, eta, w_min, w_max):
     return cp.clip(w_new, w_min, w_max)
 
 @fuse()
-def fused_btsp_hetero_update(w, etilde_pre, is_post, eta, lam_dep, w_min, w_max):
+def fused_btsp_hetero_update(w, etilde_pre, is_post, eta, lam_dep, w_min, w_max,
+                             dep_theta=0.0, inv_theta=0.0, use_thresh=0.0):
     """Structured (heterosynaptic-COMPETITION) BTSP one-shot weight update -- the gap#4<->gap#5 UNIFICATION storing
     rule (2026-07-18). Extends fused_btsp_update with the Milstein-Magee 2021 (eLife 73046) BIDIRECTIONAL arm /
     Chistiakova-Volgushev heterosynaptic plasticity / Oja competitive normalization: a plateauing cell POTENTIATES
@@ -547,7 +548,20 @@ def fused_btsp_hetero_update(w, etilde_pre, is_post, eta, lam_dep, w_min, w_max)
     Pure math, no simulator deps. Called ONLY from the guarded `if cfg.enable_btsp and btsp_hetero_dep>0` sub-branch
     of the BTSP block in bridge._run_one_simulation_step, gated by cp_plasticity_rate_gain -> byte-inert by default."""
     pot = etilde_pre * (w_max - w)
-    dep = lam_dep * (1.0 - etilde_pre) * (w - w_min)
+    # THRESHOLDED depression (2026-07-20 research gate). The LINEAR (1 - Etilde) gate is exactly the form theory says
+    # must fail: Cone & Shouval 2021 give W_i(D) = I_p/(I_p+I_d), which for shared trace parameters is 0.5 for EVERY
+    # delay -- i.e. provably UNIFORM potentiation; Milstein 2021 ran a linear-instead-of-sigmoidal variant as a control
+    # and it "predicted a single value regardless of the timing". So the 2026-07-18 competition REFUTATION refutes the
+    # LINEAR implementation, not heterosynaptic competition itself -- and this project's own adjacent HTM result fixed
+    # the identical failure by THRESHOLDING (per-event keying fails; a cumulative/thresholded mask gives 5.2-8.9x).
+    # Thresholded gate: depress only inputs whose eligibility is BELOW theta, PROTECTING strongly co-active pairs
+    # (the salvage the burned finding itself named and deferred). This lowers the PEDESTAL without lowering the PEAK,
+    # which is the only way out of the measured bind (a pedestal big enough to cross threshold destroys contrast).
+    # use_thresh=0 => dep_gate == (1 - etilde_pre) EXACTLY => byte-identical to the committed linear behaviour.
+    gate_lin = 1.0 - etilde_pre
+    gate_thr = cp.maximum(dep_theta - etilde_pre, 0.0) * inv_theta
+    dep_gate = use_thresh * gate_thr + (1.0 - use_thresh) * gate_lin
+    dep = lam_dep * dep_gate * (w - w_min)
     w_new = w + eta * is_post * (pot - dep)
     return cp.clip(w_new, w_min, w_max)
 

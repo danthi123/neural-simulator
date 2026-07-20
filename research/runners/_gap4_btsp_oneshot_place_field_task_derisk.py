@@ -51,7 +51,8 @@ DEV_SEEDS = [42, 43, 44]
 BLIND_SEEDS = [100, 101, 102]
 
 
-def build(seed, *, btsp=True, eta=0.005, bistable=True, elig_tau=1000.0, dt=1.0, w0=0.6, ca1_n=None, wj=0.15):
+def build(seed, *, btsp=True, eta=0.02, bistable=True, elig_tau=1000.0, dt=1.0, w0=0.6, ca1_n=None, wj=0.15,
+          hdep=0.3, htheta=0.012):
     from sim.bridge import SimulationBridge
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.regions import BrainRegion, RegionPathway
@@ -84,7 +85,8 @@ def build(seed, *, btsp=True, eta=0.005, bistable=True, elig_tau=1000.0, dt=1.0,
     cfg.btsp_learning_rate = float(eta)
     cfg.btsp_elig_tau_ms = float(elig_tau)
     cfg.btsp_w_min, cfg.btsp_w_max = 0.0, 5.0
-    cfg.btsp_hetero_dep = 0.0
+    cfg.btsp_hetero_dep = float(hdep)      # >0 engages heterosynaptic depression
+    cfg.btsp_hetero_theta = float(htheta)  # >0 = THRESHOLDED gate (protects strongly co-active pairs)
     cfg.brain_regions = [
         BrainRegion(name=f"pos{k}", n_neurons=POS_N, exc_fraction=1.0, internal_density=0.0,
                     exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False)
@@ -173,7 +175,7 @@ def field_metrics(rate, b):
                 ratio=float(rate.max() / max(rate.mean(), 1e-9)))
 
 
-def one_instance(seed, b, *, btsp=True, eta=0.005, bistable=True, plateau_bin=None,
+def one_instance(seed, b, *, btsp=True, eta=0.02, bistable=True, plateau_bin=None,
                  do_plateau=True, bin_steps=200, wj=0.15):
     """Baseline -> ONE induction lap -> probe. Returns metrics + the mechanism block."""
     sb, pos, ca1 = build(seed, btsp=btsp, eta=eta, bistable=bistable, wj=wj)
@@ -272,7 +274,7 @@ def main():
     if args.json:
         json.dump(dict(summary=summary, arms=arms, C5=c5, C12=c12, verdict="GO" if go else "NO-GO",
                        config=dict(bin_steps=bs, instance_bins=INSTANCE_BINS, n_bins=N_BINS,
-                                   ca1_n=CA1_N, pos_n=POS_N, eta=0.005, elig_tau=1000.0,
+                                   ca1_n=CA1_N, pos_n=POS_N, eta=0.02, elig_tau=1000.0,
                                    plateau_hold_ms=700.0, threshold_md5=h[0],
                                    backend=os.environ.get("SIM_BACKEND"))),
                   open(args.json, "w"), indent=2)
