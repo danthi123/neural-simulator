@@ -307,6 +307,26 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   Also FIXED this session: 3 runners flagged unseeded on 2026-07-17 were STILL unseeded (zero commits in 3 days) —
   `cfg.seed` added + verified by two-process threshold hash. Finding:
   `2026-07-20-gap4-status-audit-THREE-audits-converge-deep-credit-is-OPEN.md`.
+- **✅🎯 gap#1 SPIKING-INPUT HALF **CLOSED** (2026-07-20) — the RF PHASE ENCODE is the FIRST spiking-input encode PAST
+  the wall, 6-seed GO, adversarially verified.** The greenlit RF phase build LANDED and cleared the wall the 3 prior
+  encodes couldn't. Per-token value delivered as the PHASE of a resonate-and-fire spike (FHRR) — unbiased across the
+  value range (deployed accumulated corr **0.998** vs NEF 0.616 / SDR 0.501 / co-adapt 0.579) — charging the validated
+  graded `cp_ssm_state`. **THE GATE (deep-NLL vs fair trigram, `--rf-phase-encode`):** seed-42 dev ckpt RF **+0.878 ≈
+  M1 host-inject +0.874** (parity with a PERFECT input); anti-cheats collapse (memoryless −0.434, scramble map_corr
+  0.070 / −1.652). **6-SEED matched-set GO (dev 42/43/44 + blind 100/101/102): RF tracks M1 to ≤0.015 nat on EVERY
+  seed, map_corr ≥ 0.997, all GO**; blind-seed anti-cheats collapse (memoryless −0.906, scramble 0.109/−2.469).
+  **Control-first honored** (M1 re-confirmed +0.874 before any encode test; M1 reproduces on all 6 fresh ckpts,
+  map_corr 1.000). **Byte-identity TESTED** (default path unchanged +0.874/1.000). **Adversarially verified** (5
+  skeptic lenses → SURVIVES_WITH_SCOPE_FIXES): **honest framing = spiking DELIVERY (a high-fidelity phase ADC — the RF
+  pool is independent oscillators, no synapses), NOT spike-based deep-context COMPUTATION** (the graded `cp_ssm_state`
+  does the capture; MAIN==MEMORYLESS map_corr 0.99927 but diverging deep-NLL proves it) — pinned empirically by the
+  numpy-quantize control (+0.867 ≈ +0.878). This is exactly the SpikeGPT/biology-faithful target the M1 finding named:
+  spike the I/O, hold the recurrent state graded. NO `sim/` edit (RF ops reused from `bridge.py`; `--rf-phase-encode`
+  default-absent = byte-identical). **NEXT (gap#1 residuals, not walls):** the fully-synaptic phase→conductance
+  transduction (RF spike → downstream NMDA charge, no host read of the phase); V/D scaling. Finding
+  `2026-07-20-gap1-RF-PHASE-ENCODE-first-spiking-encode-PAST-the-wall.md`; runners `_gap1_rf_phase_deployed_preflight.py`
+  + `_emerge_wkv_onbridge_derisk.py --rf-phase-encode`; matched set `wkv_ssmU6_v1000_d128_seed{42..102}.npz`. Superseded
+  "the spiking-INPUT is the open wall" verdict below kept for the trail.
 - **🎯 gap#1 DEFINITIVE (2026-07-20) — harness VALIDATED (M1 +0.542 GO), the ENCODE is the wall (confirmed +
   quantified), token-SDR REFUTED. The spiking-INPUT is a REAL, precisely-located wall — a verdict on the METHODS
   tried, not the capability.** The last root cause of the harness chaos: the checkpoint's decay `w` is PER-CHANNEL

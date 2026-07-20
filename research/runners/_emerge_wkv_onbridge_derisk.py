@@ -253,6 +253,30 @@ def _build_ff_channel_bridge(D, seed, ff_nmda_w=8.0, dt=0.5, pop_k=1, nmda_tau_m
     return b, inp_groups, chan_groups, None
 
 
+def _build_rf_encoder(n, seed=42):
+    """RF PHASE ENCODE (gap#1 spiking-input, greenlit by the deployed pre-flight 2026-07-20): n INDEPENDENT
+    resonate-and-fire oscillators (connections_per_neuron=0), each carrying ONE channel's inject value in the PHASE of
+    a single spike (Frady-Sommer FHRR). The value rides a spike's TIMING, not a rate -> no rate-code dead-zone; the
+    deployed pre-flight confirmed the near-zero band (50% of relu injects) is UNBIASED and the accumulated state corr is
+    0.998 (vs NEF 0.616 / token-SDR 0.501). Returns the RF bridge (Izhikevich-init then switched to RF, exactly as the
+    validated pre-flight); NO sim/ edit."""
+    from sim.bridge import SimulationBridge
+    from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
+    from sim.enums import NeuronModel
+    cfg = CoreSimConfig(); cfg.num_neurons = int(n)
+    cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name; cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"
+    cfg.seed = seed; cfg.dt_ms = 1.0; cfg.connections_per_neuron = 0; cfg.num_traits = 1
+    for f in ("enable_stdp", "enable_hebbian_learning", "enable_short_term_plasticity", "enable_structural_plasticity",
+              "enable_homeostasis", "enable_reward_modulation", "enable_watts_strogatz", "enable_neuromodulator_subsystem",
+              "enable_brain_region_framework"):
+        if hasattr(cfg, f): setattr(cfg, f, False)
+    cfg.ou_std_current_pA = 0.0
+    b = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(), runtime_state=RuntimeState(), gpu_config=GPUConfig())
+    b._initialize_simulation_data(called_from_playback_init=False)
+    b.core_config.neuron_model_type = NeuronModel.RESONATE_AND_FIRE.name
+    return b
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--ssm", required=True, help="saved SSM weights (_emerge_wkv_lm_derisk --save-ssm ..._seed<N>.npz)")
@@ -296,6 +320,20 @@ def main():
                     help="heterogeneous-population code on the self-NMDA path: staggered pop-member drive gains (staggered effective thresholds) -> higher-fidelity graded population rate")
     ap.add_argument("--pop-k", dest="pop_k", type=int, default=1)
     ap.add_argument("--t-step", dest="t_step", type=int, default=_T_STEP_DEFAULT)   # bridge steps/token (finer rate=less noise)
+    ap.add_argument("--rf-phase-encode", dest="rf_phase_encode", action="store_true",
+                    help="(gap#1 spiking-input, greenlit 2026-07-20) deliver the per-token dual-nonneg inject via RF PHASE "
+                         "(value in a spike's timing, no rate-code dead-zone) on an independent RF-oscillator pool, decode, "
+                         "then charge cp_ssm_state. The first spiking encode past the fidelity wall (deployed accum corr 0.998). "
+                         "Requires --ssm-state. Absent => byte-identical to M1 (host-inject).")
+    ap.add_argument("--rf-scramble", dest="rf_scramble", action="store_true",
+                    help="(--rf-phase-encode ANTI-CHEAT) permute the RF-decoded injects ACROSS channels with a fixed "
+                         "seed -> same spikes, destroyed channel->value map -> the deep-NLL MUST collapse (isolates 'the "
+                         "RF phase carries the CORRECT per-channel value' from 'the machinery produces a plausible state').")
+    ap.add_argument("--rf-numpy-quantize", dest="rf_numpy_quantize", action="store_true",
+                    help="(--rf-phase-encode adversarial-verify LENS-1 control) replace the RF resonate loop with the "
+                         "analytic phase quantizer it implements; == real RF within roundoff => the RF pool is a phase ADC.")
+    ap.add_argument("--rf-period", dest="rf_period", type=int, default=200, help="RF resonate steps per token (phase resolution ~1/period)")
+    ap.add_argument("--rf-vmax-pct", dest="rf_vmax_pct", type=float, default=99.8, help="phase-range VMAX = this pct of deployed injects (guard vs outlier wrap)")
     ap.add_argument("--json", type=str, default="research/findings/raw/_emerge_wkv_onbridge.json")
     args = ap.parse_args()
     _T_STEP = int(args.t_step)
@@ -330,6 +368,43 @@ def main():
     # Vocab.build), giving garbage emb/Wv lookups (M1 host-inject gave -3.062 vs +0.486; root cause 2026-07-20).
     vocab = Vocab(words[:-1]); tr_ids = [vocab.ids(s) for s in tr]; ev_ids = [vocab.ids(s) for s in ev]
     P_bi = fit_bigram(tr_ids, V); tri, _lam = fit_interp_trigram(tr_ids, V, tr[-1500:] and [vocab.ids(s) for s in tr[-1500:]])
+
+    # ---- RF PHASE ENCODE setup (gap#1 spiking-input): build the independent RF-oscillator pool + the deployed VMAX ----
+    _rf_enc = getattr(args, "rf_phase_encode", False)
+    if _rf_enc:
+        _sc0 = max(1e-6, 1.0 - (0.0 if getattr(args, "ssm_memoryless", False) else decay))
+        _INJ_DICT = np.concatenate([np.maximum(_vall, 0.0), np.maximum(-_vall, 0.0)], 1) / _sc0   # [V, 2D] the deployed injects
+        _ev_tok = np.concatenate([np.asarray(i) for i in ev_ids if len(i)]) if any(len(i) for i in ev_ids) else np.array([0])
+        _flat = _INJ_DICT[_ev_tok].reshape(-1)
+        _RF_VMAX = float(np.percentile(_flat[_flat > 0], args.rf_vmax_pct)) if (_flat > 0).any() else 1.0
+        _RF_PLO, _RF_PHI = 0.05, 0.95                              # guard-banded phase arc: no value hits the 0/1 wrap
+        _rfb = _build_rf_encoder(2 * D, seed=args.seed)
+        print(f"[rf-phase-encode] {2*D} independent RF oscillators, period={args.rf_period}, VMAX(p{args.rf_vmax_pct})={_RF_VMAX:.4f} "
+              f"(deployed frac-zero={float((_flat==0).mean()):.3f})", flush=True)
+
+        def _rf_encode_decode(inj):
+            """inj [2D] non-negative -> RF phase in [PLO,PHI] -> resonate -> read phase -> decode. The spiking delivery."""
+            d = np.clip(np.asarray(inj, np.float64), 0.0, _RF_VMAX)
+            p = _RF_PLO + (_RF_PHI - _RF_PLO) * (d / max(_RF_VMAX, 1e-9))
+            if getattr(args, "rf_numpy_quantize", False):
+                # ADVERSARIAL-VERIFY control (LENS 1, 2026-07-20): replace the resonate loop with the ANALYTIC phase
+                # quantizer the resonate implements (spike_step ~= period*(1-p)). If this == the real RF run within
+                # roundoff, it proves the RF pool is functionally a high-fidelity phase ADC (no spiking COMPUTATION,
+                # only faithful phase DELIVERY) -> pins the honest "spiking-delivery/fidelity, not spike-computation" framing.
+                sp = np.round(int(args.rf_period) * (1.0 - p))
+                pr = ((int(args.rf_period) - sp) % int(args.rf_period)) / float(int(args.rf_period))
+            else:
+                z = np.exp(1j * 2 * np.pi * p).astype(np.complex64)
+                _rfb.rf_kick(z, period=int(args.rf_period))
+                for _ in range(int(args.rf_period) + 8):
+                    _rfb.cp_external_input_current[:] = 0.0
+                    _rfb._run_one_simulation_step()
+                pr = np.asarray(to_host(_rfb.rf_read_phases()), np.float64)
+            out = np.clip((pr - _RF_PLO) / (_RF_PHI - _RF_PLO) * _RF_VMAX, 0.0, _RF_VMAX)
+            if getattr(args, "rf_scramble", False):
+                out = out[_RF_PERM]                                # anti-cheat: destroy channel->value correspondence
+            return out
+        _RF_PERM = np.random.default_rng(9973).permutation(2 * D)
 
     _graded = getattr(args, "graded_charge", False)
     if _graded:
@@ -417,6 +492,9 @@ def main():
                 # the graded state the BRIDGE itself advanced. No spike-rate encoding of the state anywhere.
                 _sc = max(1e-6, 1.0 - (0.0 if getattr(args, "ssm_memoryless", False) else decay))
                 _inj = np.concatenate([np.maximum(v, 0.0), np.maximum(-v, 0.0)]) / _sc
+                if _rf_enc:
+                    # gap#1: deliver the inject through an RF-oscillator's spike PHASE (spiking input), not a host float
+                    _inj = _rf_encode_decode(_inj)
                 _cur = np.zeros(nnrn, np.float32)
                 _cur[read_idx] = _inj[chan_of].astype(np.float32)
                 b.cp_ssm_inject[:] = (xp.asarray(_cur) if xp is not None else _cur)
