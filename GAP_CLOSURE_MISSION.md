@@ -307,6 +307,21 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   Also FIXED this session: 3 runners flagged unseeded on 2026-07-17 were STILL unseeded (zero commits in 3 days) —
   `cfg.seed` added + verified by two-process threshold hash. Finding:
   `2026-07-20-gap4-status-audit-THREE-audits-converge-deep-credit-is-OPEN.md`.
+- **⛔ gap#1 TOKEN-SDR REFUTED + M1-realization residual (2026-07-20 FINAL) — the spiking-INPUT half is a real,
+  honestly-documented WALL; the token-SDR escape does not work.** ROOT CAUSE of the day's harness chaos found by
+  READING THE WKV SOURCE (not config sweeps): my regenerated checkpoint was trained with the DEFAULT `--recurrence
+  wkv`, but the on-bridge runners realize the `ssm/dual-nonneg [ap;an]` state + `Wo_sp` read-out — so `Wo_sp` was
+  untrained -> near-uniform garbage despite corr 1.000. Retraining with `--recurrence ssm --dual-nonneg` fixed the
+  catastrophe (-3.013 -> -0.958). **On the CORRECT checkpoint the mechanism verdict is decisive:** M1 exact-state
+  (corr 1.000) -0.958 · NEF regression (corr 0.630) -3.421 · **token-SDR selection (corr 0.524) -3.723 — DEPLOYED-WORSE
+  than NEF.** ⇒ the gate's "selection beats regression" escape FAILS in deployment; my standalone 0.906 (> M2 0.786)
+  measured a NON-DEPLOYED quantity (per-token reset + subtracted D-dim, not the deployed accumulated 2D state) and the
+  deployed ordering REVERSES. **Token-SDR is REFUTED.** PLUS a real ~1.4-nat M1-REALIZATION RESIDUAL (off-bridge
+  +0.429 vs on-bridge exact-state -0.958) — a floor no encode beats until closed. **NET: the spiking-INPUT
+  recurrent-state problem is genuinely OPEN** (the off-bridge graded-state result stands; its on-bridge spiking-input
+  realization does not; the token-SDR escape is refuted; the M1-realization residual is uncharacterized — next check:
+  compare on-bridge vs off-bridge logits on identical tokens). Correct artifact: `wkv_ssm_v1000_d128_seed42.npz`.
+  Findings: `2026-07-20-gap1-ROOT-CAUSE-...`, `-M5-INVALID-and-RETRACTION-...`. Superseded intermediate note below:
 - **⛔ gap#1 CONDUCTANCE-DRIVE (M5) INVALID + RETRACTION (2026-07-20, later): my standalone write-fidelity 0.906
   measured a NON-DEPLOYED quantity, and the M5 deep-NLL harness is invalid.** A research gate reframed gap#1's open
   piece (the wall is the ENCODE — a few-spike rate-code of a continuous v_t — not the read; that correction to my own
