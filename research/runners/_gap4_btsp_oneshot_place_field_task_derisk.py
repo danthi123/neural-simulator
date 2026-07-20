@@ -215,8 +215,10 @@ def arm(seed, *, label, **kw):
         hits.append(m["hit"]); widths.append(m["width"])
         hits_sym.append(m.get("hit_sym", m["hit"])); hits_back.append(m.get("hit_back", m["hit"]))
         mech.append({k: m[k] for k in ("dw", "n_IS", "v_apical_end", "peak_bin", "width", "ratio", "dead", "flat", "offset")})
-    return dict(label=label, seed=seed, field_acc=float(np.mean(hits,
-                acc_sym=float(np.mean(hits_sym)), acc_back=float(np.mean(hits_back)))),
+    return dict(label=label, seed=seed,
+                field_acc=float(np.mean(hits)),
+                acc_sym=float(np.mean(hits_sym)),      # symmetric dist<=2 window (chance 0.25)
+                acc_back=float(np.mean(hits_back)),    # asymmetric -5..1 window (chance 0.35)
                 mean_width=float(np.mean(widths)), mechanism=mech)
 
 
@@ -281,14 +283,18 @@ def main():
 
     def agg(name, seeds):
         rs = [a for a in arms.get(name, []) if a["seed"] in seeds]
-        return dict(n=len(rs), field_acc=float(np.mean([r["field_acc"] for r in rs])) if rs else float("nan"))
+        return dict(n=len(rs),
+                    field_acc=float(np.mean([r["field_acc"] for r in rs])) if rs else float("nan"),
+                    acc_sym=float(np.mean([r.get("acc_sym", r["field_acc"]) for r in rs])) if rs else float("nan"),
+                    acc_back=float(np.mean([r.get("acc_back", r["field_acc"]) for r in rs])) if rs else float("nan"))
 
     dev = [s for s in args.seeds if s in DEV_SEEDS]; blind = [s for s in args.seeds if s in BLIND_SEEDS]
     summary = {k: dict(dev=agg(k, dev), blind=agg(k, blind), all=agg(k, args.seeds)) for k in arms}
     print("\n=== SUMMARY (C6: dev and blind reported SEPARATELY) ===", flush=True)
     for k, v in summary.items():
-        print(f"  {k:14s} dev={v['dev']['field_acc']:.3f} blind={v['blind']['field_acc']:.3f} "
-              f"all={v['all']['field_acc']:.3f}", flush=True)
+        print(f"  {k:14s} acc_SYM(dist<=2, chance .25)={v['all']['acc_sym']:.3f}  "
+              f"acc_BACK(-5..1, chance .35)={v['all']['acc_back']:.3f}  "
+              f"| dev={v['dev']['field_acc']:.3f} blind={v['blind']['field_acc']:.3f}", flush=True)
     main_all = summary.get("MAIN", {}).get("all", {}).get("field_acc", float("nan"))
     main_blind = summary.get("MAIN", {}).get("blind", {}).get("field_acc", float("nan"))
     go = bool(main_all >= 0.80 and (math.isnan(main_blind) or main_blind >= 0.80))
