@@ -161,6 +161,21 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
+- **⛔ gap#4 KEYSTONE RAN (2026-07-20) — decisive BLIND NO-GO, and it VINDICATES "dw is not the gate".** The BTSP
+  one-shot place-field TASK (named 2026-07-18, never run until now) asks gap#4's actual capability question: does the
+  substrate acquire a BEHAVIOUR from ONE experience? **DEV 0.600 → BLIND 0.133 (BELOW chance 0.35).** The dev result
+  did NOT transfer; 2/3 blind seeds form **no field at all** (width 0.0); the one with signal (0.40) **equals its own
+  random-plateau control**. The metric correction (delta-map + backward window) was RE-PRE-REGISTERED before blind and
+  made the test HARDER (chance 0.25→0.35). **🔴 THE DECISIVE FACT: `dw ≈ 4000` on every blind MAIN arm WITH
+  `field_acc = 0.00` — large healthy weight change, ZERO learned behaviour.** Every BTSP result banked in this project
+  gates on `dw`; this one gated on BEHAVIOUR and fails, so **a dw gate would have called this a GO**. Controls clean
+  throughout (C1 frozen 0.000, C3 moat 0.000). ⇒ **local one-shot plateau-gated credit MOVES WEIGHT on the substrate
+  (that stands) but does NOT produce a reliable learned BEHAVIOUR.** gap#4's capability is NOT met; the correction
+  below is if anything understated. **NEXT is DIAGNOSTIC, not tuning:** on 2/3 blind seeds the delta map is EMPTY —
+  determine whether the potentiated weight is insufficient to change firing (read-out threshold) or the eligibility
+  never overlaps the plateau (timing); these predict different fixes and are cheaply separable by probing the
+  post-induction weight map directly. Runner `_gap4_btsp_oneshot_place_field_task_derisk.py` (13 controls, dev/blind
+  split enforced). Finding: `2026-07-20-gap4-BTSP-oneshot-place-field-TASK-first-run-NO-GO-with-biological-backward-shift.md`.
 - **⚠️ gap#4 STATUS CORRECTED (2026-07-20, three independent read-only audits converge) — "FULLY RESOLVED" below is a
   SCOPE REDEFINITION, not a result. gap#4's deep-credit capability is OPEN.** This board carries THREE incompatible
   gap#4 verdicts all dated 2026-07-19 ("FULLY RESOLVED" `:333`, "PARKED" `:423`, "remains the honest OPEN frontier"
