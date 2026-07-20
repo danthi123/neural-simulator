@@ -1,0 +1,119 @@
+{
+  "n": 6,
+  "cont": {
+    "verified": 1,
+    "confab": 0,
+    "fallback": 5
+  },
+  "complete": {
+    "top1": 0,
+    "top5": 0,
+    "n": 6
+  },
+  "examples": [
+    {
+      "cue": [
+        "dog",
+        "eat"
+      ],
+      "taught_p": "meat",
+      "cont_ans": "and the apple fell on the ground and the ground became even bigger again and bigger",
+      "cont_verified": false,
+      "cont_ung": [],
+      "complete_top5": [
+        "and",
+        "for",
+        "the",
+        "all",
+        "with"
+      ]
+    },
+    {
+      "cue": [
+        "cat",
+        "eat"
+      ],
+      "taught_p": "fish",
+      "cont_ans": "and the fish swam away from the pond and the fish swam away from the pond",
+      "cont_verified": true,
+      "cont_ung": [],
+      "complete_top5": [
+        "and",
+        "the",
+        "some",
+        "all",
+        "for"
+      ]
+    },
+    {
+      "cue": [
+        "bird",
+        "eat"
+      ],
+      "taught_p": "seed",
+      "cont_ans": "said i can help you find my toy car to play with it and make it",
+      "cont_verified": false,
+      "cont_ung": [],
+      "complete_top5": [
+        "and",
+        "the",
+        "all",
+        "it",
+        "some"
+      ]
+    },
+    {
+      "cue": [
+        "fox",
+        "chase"
+      ],
+      "taught_p": "rabbit",
+      "cont_ans": "and the squirrel said i want to play with you too much or you can play",
+      "cont_verified": false,
+      "cont_ung": [],
+      "complete_top5": [
+        "the",
+        "them",
+        "him",
+        "tim",
+        "lily"
+      ]
+    },
+    {
+      "cue": [
+        "bee",
+        "make"
+      ],
+      "taught_p": "honey",
+      "cont_ans": "and the bird fly away from the sky and the sun was blue and the sky",
+      "cont_verified": false,
+      "cont_ung": [],
+      "complete_top5": [
+        "a",
+        "it",
+        "them",
+        "the",
+        "me"
+      ]
+    },
+    {
+      "cue": [
+        "fish",
+        "live"
+      ],
+      "taught_p": "water",
+      "cont_ans": "and the fish swam away from the pond and the fish swam away from the pond",
+      "cont_verified": false,
+      "cont_ung": [],
+      "complete_top5": [
+        "in",
+        "on",
+        "and",
+        "far",
+        "by"
+      ]
+    }
+  ],
+  "ckpt": "bridges/wkv_ckpt/wkv_ssmU_v4000_d256_big_seed42.npz",
+  "verdict": "residual-B (format fine-tune) NEEDED"
+}
