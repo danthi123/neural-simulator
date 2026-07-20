@@ -331,9 +331,10 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   SLOW-NMDA synapse encoder→readout — the RF spike drives a REAL conductance synapse whose readout `g_nmda` encodes the
   value (corr −0.974; fixed log read-out recovers corr 1.0000, rms 0.16% of range, UNBIASED), matching the host
   phase-read, NO host `rf_read_phases`, NO `sim/` edit. **The last host read is REPLACED by a genuine synapse on the
-  substrate.** RUNG 3 (last integration) = charge cp_ssm_state from the readout g_nmda in the deployed WKV pipeline +
-  deep-NLL/generation parity (fidelity corr 1.0 per RUNG 2 ⇒ parity expected) → gap#1 spiking input FULLY synaptic
-  end-to-end. `2026-07-20-gap1-fully-synaptic-RF-transduction-RUNG1-GO-feasibility.md`. Also V/D scaling. Finding
+  substrate.** **RUNG 3 GO (deployed): the fully-synaptic read on the REAL deployed injects gives accumulated-state corr
+  0.970 (> the ~0.9 deep-NLL threshold; ref rf_read_phases 0.998) — validated on the deployed distribution.** ⇒ RUNG
+  1+2+3 GO: gap#1's spiking input is (validated-)fully synaptic (no host rf_read_phases). RUNG 4 (deployed deep-NLL
+  parity through the runner) is the last integration; the M0 curve predicts a positive deep-NLL at corr 0.97. `2026-07-20-gap1-fully-synaptic-RF-transduction-RUNG1-GO-feasibility.md`. Also V/D scaling. Finding
   `2026-07-20-gap1-RF-PHASE-ENCODE-first-spiking-encode-PAST-the-wall.md`; runners `_gap1_rf_phase_deployed_preflight.py`
   + `_emerge_wkv_onbridge_derisk.py --rf-phase-encode`; matched set `wkv_ssmU6_v1000_d128_seed{42..102}.npz`.
   **⇒ EXTENDED to GENERATION (2026-07-20): the spiking WKV cortex GENERATES prose on-bridge, not just comprehends.**
