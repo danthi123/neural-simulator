@@ -51,7 +51,7 @@ DEV_SEEDS = [42, 43, 44]
 BLIND_SEEDS = [100, 101, 102]
 
 
-def build(seed, *, btsp=True, eta=0.02, bistable=True, elig_tau=1000.0, dt=1.0, w0=0.6, ca1_n=None):
+def build(seed, *, btsp=True, eta=0.005, bistable=True, elig_tau=1000.0, dt=1.0, w0=0.6, ca1_n=None, wj=0.15):
     from sim.bridge import SimulationBridge
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.regions import BrainRegion, RegionPathway
@@ -93,7 +93,7 @@ def build(seed, *, btsp=True, eta=0.02, bistable=True, elig_tau=1000.0, dt=1.0, 
                      exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False)]
     cfg.region_pathways = [
         RegionPathway(from_region=f"pos{k}", to_region="ca1", density=1.0,
-                      weight_mean=float(w0), weight_jitter=0.0, plastic=True)
+                      weight_mean=float(w0), weight_jitter=float(wj), plastic=True)
         for k in range(N_BINS)
     ]
     rt = RuntimeState(); rt.actual_seed_used = seed
@@ -173,10 +173,10 @@ def field_metrics(rate, b):
                 ratio=float(rate.max() / max(rate.mean(), 1e-9)))
 
 
-def one_instance(seed, b, *, btsp=True, eta=0.02, bistable=True, plateau_bin=None,
-                 do_plateau=True, bin_steps=200):
+def one_instance(seed, b, *, btsp=True, eta=0.005, bistable=True, plateau_bin=None,
+                 do_plateau=True, bin_steps=200, wj=0.15):
     """Baseline -> ONE induction lap -> probe. Returns metrics + the mechanism block."""
-    sb, pos, ca1 = build(seed, btsp=btsp, eta=eta, bistable=bistable)
+    sb, pos, ca1 = build(seed, btsp=btsp, eta=eta, bistable=bistable, wj=wj)
     pb = (b if plateau_bin is None else plateau_bin) if do_plateau else None
     pre, _, _ = run_lap(sb, pos, ca1, plateau_bin=None, bin_steps=bin_steps, record=True)
     w0 = _w_sum(sb)
@@ -272,7 +272,7 @@ def main():
     if args.json:
         json.dump(dict(summary=summary, arms=arms, C5=c5, C12=c12, verdict="GO" if go else "NO-GO",
                        config=dict(bin_steps=bs, instance_bins=INSTANCE_BINS, n_bins=N_BINS,
-                                   ca1_n=CA1_N, pos_n=POS_N, eta=0.02, elig_tau=1000.0,
+                                   ca1_n=CA1_N, pos_n=POS_N, eta=0.005, elig_tau=1000.0,
                                    plateau_hold_ms=700.0, threshold_md5=h[0],
                                    backend=os.environ.get("SIM_BACKEND"))),
                   open(args.json, "w"), indent=2)

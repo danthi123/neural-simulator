@@ -280,3 +280,41 @@ sensitivity. Two candidates, both to be judged by the research gate rather than 
   arm once** ("erodes within-assembly", 2026-07-18), so it must not be re-run naively.
 
 Recorded as a prediction *before* the gate reports, so the gate's recommendation can be scored against it.
+
+---
+
+# ⛔ RETRACTION #2: the post-confound-fix "6-seed GO (1.00)" was **n=1 repeated six times**
+
+The research gate identified the dominant confound (`cfg.num_traits=5` dealing five Izhikevich cell types, rheobase
+42-306 pA, into CA1 and the position pools -> 2.0-2.5x drive spread -> ~7-10x rate spread, versus BTSP's own 1.5x
+weight contrast). Setting `cfg.num_traits = 1` collapsed rheobase to a single 51.4 pA on every seed (**verified**), and
+the re-run reported **`field_acc = 1.00` on all six seeds, VERDICT: GO**.
+
+**That GO is withdrawn.** Three independent tells:
+
+1. **The numbers were byte-identical across seeds** — `field_acc=1.00`, `width=8.4`, **`dw=4041`** on all six. Real
+   seeds do not agree to four significant figures.
+2. **Direct test: the seeds are FUNCTIONALLY IDENTICAL.** Threshold arrays differ
+   (`b1e0ae470f` vs `7e7048f27f`) but the FIRING and WEIGHT hashes are bit-identical (`cb415e05b8` / `8e5090d9a3`,
+   `w_sum` 4760.284 on both). `cp_neuron_firing_thresholds` varies but **the Izhikevich path never reads it**. With
+   `num_traits=1` and every noise source disabled, there was **no functional seed variation left** — the six-seed
+   validation was vacuous.
+3. **C7 fails anyway:** MAIN `width = 8.4 > 8` (the spec's track-spanning bound), and **C10-transient also scored
+   1.00**, i.e. the behavioral-timescale bistability was NOT load-bearing in that configuration — which is the one
+   property that distinguishes BTSP from a coincidence rule.
+
+**The runner's own verdict logic was at fault too:** C7 was specified in the design but never wired into the GO
+condition, so the runner printed GO while its own width guard was failing. Fixing the *analysis* is not enough if the
+*gate* does not enforce it.
+
+## What the fix-of-the-fix is
+
+| cause | fix | status |
+|---|---|---|
+| cell-type lottery (gate cause #1) | `cfg.num_traits = 1` | done, verified (rheobase spread 1.000) |
+| **no functional seed variation** (introduced by that fix) | `weight_jitter = 0.15` | done — **the ONLY knob that works**: `enable_parameter_heterogeneity` is *also* gated behind `num_traits>1`, so it changes nothing (measured). The DELTA metric already cancels the baseline inhomogeneity jitter introduces |
+| `w_max` saturation (gate cause #2) | dose `eta` 0.02 -> **0.005** | done — peak sits at 0.65 of the clip instead of 0.98; **contrast 1.647 -> 2.003** |
+| no depression arm (gate cause #3) | thresholded heterosynaptic depression | **OPEN** — contrast 2.0 is still below Milstein's 2.5x-plus-sub-baseline-flanks |
+
+Re-running the same pre-registered gate on the now-valid instrument (confound removed **and** seeds genuinely
+differing **and** dose off the clip). **No result from before this point should be cited.**
