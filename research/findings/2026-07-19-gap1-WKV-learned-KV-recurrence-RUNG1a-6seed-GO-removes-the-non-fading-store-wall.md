@@ -478,3 +478,15 @@ and unavoidably. This is the exhaustive confirmation (5+ rate-level co-adaptatio
 ONE deep arc: surrogate-gradient BPTT through the real SimulationBridge (project machinery: `sim/surrogate_grad.py` + `bptt_snn_gpu.py`
 + the differentiable plateau/input path). The DEMONSTRATED capability (architecture-level 6-seed + prose) is the deliverable; the
 on-substrate BEAT is the precisely-confirmed gap#1<->gap#4 convergent deep arc.
+
+### Deep-arc step 1 (system-id): the actual plateau transfer measured — monotone-saturating, WKV v spans into saturation
+First concrete step of the gap#1<->gap#4 convergent deep arc (calibrated end-to-end surrogate): measured the actual bridge's
+steady-state input->plateau transfer (drive channel 0 with constant relu(v), read cp_conductance_g_graded_plateau): relu(v)
+0.05/0.2/0.5/1/2/4/8 -> plateau 0/107/220/419/761/1155/1337 (threshold ~0.1, ~linear 0.2-2.0 at ~380/unit, SATURATING above 4).
+The WKV's |v|~2 (measured earlier) spans into the saturating regime, so a CALIBRATED surrogate (this transfer, not the generic
+center=1/slope=1 I used) would let the WKV co-adapt to keep v in the faithful range. HONEST caveat: this is the STEADY-STATE transfer;
+the actual port runs only T_STEP=6-10 steps/token (transient + cross-token accumulation), so the full calibrated surrogate must model
+the per-token DYNAMICS + the input-delivery noise, not just this static curve — a genuine multi-step system-identification build. ⇒
+the deep arc (calibrated differentiable bridge surrogate -> train WKV through it -> deploy) is PRECISELY BEGUN (transfer measured);
+it remains a substantial multi-step arc converging gap#1+gap#4. The DEMONSTRATED capability (architecture-level 6-seed + prose) is the
+session's deliverable; the on-substrate robust BEAT is the precisely-scoped, precisely-begun gap#1<->gap#4 convergent deep arc.
