@@ -318,3 +318,72 @@ condition, so the runner printed GO while its own width guard was failing. Fixin
 
 Re-running the same pre-registered gate on the now-valid instrument (confound removed **and** seeds genuinely
 differing **and** dose off the clip). **No result from before this point should be cited.**
+
+---
+
+# ✅ THRESHOLDED DEPRESSION BREAKS THE BIND — 6-seed GO on the pre-registered gate (one caveat OPEN)
+
+## The bind, measured from both directions
+
+Pure-potentiation BTSP **cannot simultaneously cross threshold and have contrast**:
+
+| dose | peak | contrast | outcome |
+|---|---|---|---|
+| η=0.02 | 4.90 | 1.65 | fires, but field spans the track (C7 fail, width 8.4) |
+| η=0.005 | 3.27 | 2.00 | better contrast — but **silent on all 6 seeds, every arm 0.00** |
+
+The pedestal that gets the cell over threshold is exactly what destroys localization. So a depression arm is
+**necessary, not optional**.
+
+## The fix, and why the previously-"refuted" mechanism was fine
+
+The committed heterosynaptic gate is `lam_dep·(1 − Etilde)·(w − w_min)` — **linear**, which is the form theory says
+must fail: Cone & Shouval 2021 give `W_i(D) = I_p/(I_p+I_d)`, i.e. **0.5 for every delay** with shared trace
+parameters (provably uniform); Milstein 2021 ran a linear-instead-of-sigmoidal variant **as a control** and it
+"predicted a single value regardless of the timing". So the 2026-07-18 competition REFUTATION refutes the
+**implementation**, not heterosynaptic competition — and this project's own adjacent HTM result had already fixed the
+identical failure by **thresholding**. Implemented the salvage that burned finding itself named and deferred.
+
+`sim/` edit: additive, default-off, **byte-identity verified** (`use_thresh=0` → `max|diff| = 0.0` vs the committed
+linear kernel).
+
+**⚠️ My own error, caught by measurement:** I first set `theta = 0.3` — while the **measured** eligibility range is
+**0.0068–0.0227**, so it protected **0.0% of synapses** and degenerated to the linear gate (which is exactly why
+"thresholded" first read identical to linear, 0.347 vs 0.331). The eligibility gradient itself is textbook-correct:
+0.0068→0.0227 across bins 6→12, ratio ~1.22/bin ≈ exp(200/1000).
+
+With θ calibrated to the real range:
+
+| config | peak | pedestal | contrast |
+|---|---|---|---|
+| none | 4.900 | 2.976 | 1.647 |
+| **θ=0.012, λ=0.3** | **4.549** (preserved) | **0.932** (3.2× lower) | **4.878** |
+| θ=0.018, λ=0.3 | 3.524 | 0.476 | **7.400** |
+
+θ=0.018 reproduces the research gate's **independently predicted 7.4×**.
+
+## Task result — 6-seed GO
+
+| arm | all 6 seeds | width |
+|---|---|---|
+| **MAIN** | **1.00** (dev 1.00, **blind 1.00**) | **3.0** (C7 bound 8 ✓) |
+| C1 frozen | 0.00 | — |
+| C3 no-plateau moat | 0.00 | — |
+| C2 mis-targeted | 0.40 ≈ chance (0.35) | 3.0 — **forms a tight field at the MOVED plateau** |
+| C2b random bin | 0.20–0.60, mean ≈ chance | 3.0 |
+
+**Checks that killed the previous false GO now pass:** `dw` **varies** across seeds (582.2/591.0/582.0/589.3/588.5/584.6
+— not the byte-identical n=1 signature), and width is **3.0**, not 8.4. The mis-target arm is the strongest evidence
+the mechanism is real: move the plateau and the field moves with it.
+
+## ⚠️ OPEN CAVEAT — the "behavioral timescale" claim is NOT yet supported
+
+**C10-transient also reads 1.00.** As designed, C10 disables `bdsp_apical_bistable` — i.e. it ablates plateau
+**duration** — but the seconds-long window in this design lives in **`btsp_elig_tau_ms = 1000 ms`**, which C10 leaves
+untouched. So C10 matching MAIN does **not** show the timescale is irrelevant; it shows plateau *sustain* is not
+required, while the actual behavioral-timescale variable was never ablated.
+
+⇒ **What is demonstrated: plateau-gated ONE-SHOT learning of a localized place field, 6-seed, blind-clean.**
+**What is NOT yet demonstrated: that it is specifically BEHAVIORAL-TIMESCALE.** The load-bearing ablation
+(short `btsp_elig_tau_ms` must collapse the backward field to the plateau bin) is running; until it reports, this is a
+one-shot-learning GO, not a BTSP GO. Recorded before the ablation result is known.

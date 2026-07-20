@@ -176,9 +176,10 @@ def field_metrics(rate, b):
 
 
 def one_instance(seed, b, *, btsp=True, eta=0.02, bistable=True, plateau_bin=None,
-                 do_plateau=True, bin_steps=200, wj=0.15):
+                 do_plateau=True, bin_steps=200, wj=0.15, hdep=0.3, htheta=0.012, elig_tau=1000.0):
     """Baseline -> ONE induction lap -> probe. Returns metrics + the mechanism block."""
-    sb, pos, ca1 = build(seed, btsp=btsp, eta=eta, bistable=bistable, wj=wj)
+    sb, pos, ca1 = build(seed, btsp=btsp, eta=eta, bistable=bistable, wj=wj,
+                         hdep=hdep, htheta=htheta, elig_tau=elig_tau)
     pb = (b if plateau_bin is None else plateau_bin) if do_plateau else None
     pre, _, _ = run_lap(sb, pos, ca1, plateau_bin=None, bin_steps=bin_steps, record=True)
     w0 = _w_sum(sb)
