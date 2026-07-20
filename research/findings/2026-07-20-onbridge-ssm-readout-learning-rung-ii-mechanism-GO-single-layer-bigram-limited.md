@@ -27,6 +27,9 @@ state is the fixed reservoir's own dynamics). Reduced grounded vocab (112 words)
   under-estimated the ceiling THREE times (bigram-0.42 → 0.49 → 0.667), each an UNDER-TRAINING artifact — the single
   LINEAR read-out over the on-bridge state is genuinely STRONG (~0.8), not bigram-bound. The repeated lesson:
   verify-to-convergence before stamping a ceiling.
+- **MULTI-SEED (dev) FIRMED:** at 70 epochs the grounded accuracy is **seed 42 ~0.80 / 43 0.786 / 44 0.797** — tight,
+  consistent, ~87× chance. The on-bridge local-rule read-out learning is dev-multi-seed GO (blind seeds 100/101/102 =
+  a follow-on).
 - **Anti-cheats:** FROZEN (no update) → **0.004 = chance** (the learning is load-bearing); SHUFFLE-ELIG (shuffle the
   state→readout association) → **0.105** (4× collapse — the state association matters); **MEMORYLESS (k_leak=1) →
   0.401** at the same 20-epoch budget.
