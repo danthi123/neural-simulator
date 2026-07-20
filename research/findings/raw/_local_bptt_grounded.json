@@ -1,0 +1,63 @@
+{
+  "n": 22,
+  "cont": {
+    "verified": 19,
+    "confab": 3,
+    "fallback": 0
+  },
+  "complete": {
+    "top1": 16,
+    "top5": 17,
+    "n": 22
+  },
+  "ra_faithful": {
+    "follows": 44,
+    "bias": 0,
+    "n": 44
+  },
+  "examples": [],
+  "ra_examples": [
+    {
+      "cue": [
+        "dog",
+        "eat"
+      ],
+      "prompt_p": "ball",
+      "true_p": "meat",
+      "ans": "the dog eats ball",
+      "follows": true
+    },
+    {
+      "cue": [
+        "dog",
+        "eat"
+      ],
+      "prompt_p": "cake",
+      "true_p": "meat",
+      "ans": "the dog eats cake",
+      "follows": true
+    },
+    {
+      "cue": [
+        "cat",
+        "eat"
+      ],
+      "prompt_p": "ball",
+      "true_p": "fish",
+      "ans": "the cat eats ball",
+      "follows": true
+    },
+    {
+      "cue": [
+        "cat",
+        "eat"
+      ],
+      "prompt_p": "cake",
+      "true_p": "fish",
+      "ans": "the cat eats cake",
+      "follows": true
+    }
+  ],
+  "ckpt": "bridges/wkv_ckpt/_local_bptt.npz",
+  "verdict": "GROUNDED FLUENT RENDER GO (focused-grounded high + RA-faithful)"
+}

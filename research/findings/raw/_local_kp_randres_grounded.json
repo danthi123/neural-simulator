@@ -1,0 +1,138 @@
+{
+  "n": 22,
+  "cont": {
+    "verified": 16,
+    "confab": 5,
+    "fallback": 1
+  },
+  "complete": {
+    "top1": 14,
+    "top5": 17,
+    "n": 22
+  },
+  "ra_faithful": {
+    "follows": 36,
+    "bias": 0,
+    "n": 44
+  },
+  "examples": [
+    {
+      "cue": [
+        "dog",
+        "eat"
+      ],
+      "taught_p": "meat",
+      "cont_ans": "the dog eats meat",
+      "cont_verified": true,
+      "cont_ung": [],
+      "complete_top5": [
+        "meat",
+        "bone",
+        "seed",
+        "apple",
+        "cake"
+      ]
+    },
+    {
+      "cue": [
+        "cat",
+        "eat"
+      ],
+      "taught_p": "fish",
+      "cont_ans": "the fish eats fish",
+      "cont_verified": false,
+      "cont_ung": [
+        [
+          "fish",
+          "eat",
+          "fish"
+        ]
+      ],
+      "complete_top5": [
+        "cat",
+        "water",
+        "bone",
+        "fish",
+        "worm"
+      ]
+    },
+    {
+      "cue": [
+        "bird",
+        "eat"
+      ],
+      "taught_p": "seed",
+      "cont_ans": "the bird eats seed",
+      "cont_verified": true,
+      "cont_ung": [],
+      "complete_top5": [
+        "seed",
+        "leaf",
+        "water",
+        "pot",
+        "rock"
+      ]
+    },
+    {
+      "cue": [
+        "cow",
+        "eat"
+      ],
+      "taught_p": "grass",
+      "cont_ans": "the cow eats grass",
+      "cont_verified": true,
+      "cont_ung": [],
+      "complete_top5": [
+        "grass",
+        "hay",
+        "water",
+        "hat",
+        "pot"
+      ]
+    }
+  ],
+  "ra_examples": [
+    {
+      "cue": [
+        "dog",
+        "eat"
+      ],
+      "prompt_p": "ball",
+      "true_p": "meat",
+      "ans": "the dog eats ball",
+      "follows": true
+    },
+    {
+      "cue": [
+        "dog",
+        "eat"
+      ],
+      "prompt_p": "cake",
+      "true_p": "meat",
+      "ans": "the dog eats cake",
+      "follows": true
+    },
+    {
+      "cue": [
+        "cat",
+        "eat"
+      ],
+      "prompt_p": "ball",
+      "true_p": "fish",
+      "ans": "the cat eats ball",
+      "follows": true
+    },
+    {
+      "cue": [
+        "cat",
+        "eat"
+      ],
+      "prompt_p": "cake",
+      "true_p": "fish",
+      "ans": "the cat eats cake",
+      "follows": true
+    }
+  ],
+  "ckpt": "bridges/wkv_ckpt/_local_kp_randres.npz",
+  "verdict": "GROUNDED FLUENT RENDER GO (focused-grounded high + RA-faithful)"
+}
