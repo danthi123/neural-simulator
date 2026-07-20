@@ -320,8 +320,12 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   near-1.0 state corr and ~0.6 is catastrophically short. (2) **token-SDR REFUTED** (0.501 < NEF 0.616; my standalone
   0.906 measured a non-deployed quantity). **NET: the recurrent STATE + READ-OUT are SOLVED on-bridge with a perfect
   host input; the spiking INPUT is the open wall with a QUANTIFIED requirement (near-1.0 fidelity; NEF and token-SDR
-  both cap ~0.5-0.6).** Both ranked encodes exhausted -> the research gate fires for a high-fidelity encode (or
-  co-adaptation on the now-VALID harness). Usable artifact: `wkv_ssmU_v1000_d128_seed42.npz`. Findings:
+  both cap ~0.5-0.6).** THREE encode methods now EXHAUSTED on the validated harness: NEF regression (0.616,
+  -2.904), token-SDR selection (0.501, -3.416, REFUTED), and CO-ADAPTATION (train-with-input-noise 0.9: 0.579,
+  -2.876, +0.028 = no recovery). Co-adaptation can't work because the deep-context win REQUIRES the accurate
+  accumulated state that the noisy encode corrupts (no accurate signal to co-adapt toward). ⇒ the research gate fires
+  for a FUNDAMENTALLY different encode (reduce PER-TOKEN encode noise, or a representation where deep-context survives
+  ~0.6 fidelity) — a fresh problem with a QUANTIFIED target (encode state corr ~>0.9) and three eliminated methods. Usable artifact: `wkv_ssmU_v1000_d128_seed42.npz`. Findings:
   `2026-07-20-gap1-DEFINITIVE-...`, `-ROOT-CAUSE-...`. Superseded intermediate note below:
 - **⛔ gap#1 TOKEN-SDR REFUTED + M1-realization residual (2026-07-20 FINAL) — the spiking-INPUT half is a real,
   honestly-documented WALL; the token-SDR escape does not work.** ROOT CAUSE of the day's harness chaos found by
