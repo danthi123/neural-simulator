@@ -7437,8 +7437,27 @@ class SimulationBridge:
                         except Exception:
                             cp.add.at(_sum_h, _post_idx, _h)
                             cp.add.at(_cnt_h, _post_idx, cp.ones_like(_h))
-                        _mean_h = _sum_h / cp.maximum(_cnt_h, 1.0)
-                        _centred = _h - _msub * _mean_h[_post_idx]
+                        # ACTIVE-SET PROJECTION (Dale-compliant). The naive form subtracts the mean over ALL
+                        # afferents, which drives ~half the increments negative; 51% of weights then clip at
+                        # w_min=0 and the surviving positive increments drag the mean UP -- measured, and the
+                        # reason the naive version was refuted pre-flight. The gate's proposed fix (w_min < 0)
+                        # is NOT available here: this substrate assigns polarity PER PRESYNAPTIC NEURON
+                        # (exc_fraction / inhibitory_indices), so a negative weight would flip an excitatory
+                        # synapse inhibitory and violate Dale's law. Instead project onto the FREE set: only
+                        # synapses not pinned at a bound participate in the mean, so sum_j dw_ij = 0 holds
+                        # among exactly those that can actually move.
+                        _free = ((cur_w > _wmin_ms + 1e-6) | (_h > 0.0)).astype(cp.float32)
+                        _sum_hf = cp.zeros(_nn_ms, dtype=cp.float32)
+                        _cnt_hf = cp.zeros(_nn_ms, dtype=cp.float32)
+                        try:
+                            import cupyx
+                            cupyx.scatter_add(_sum_hf, _post_idx, _h * _free)
+                            cupyx.scatter_add(_cnt_hf, _post_idx, _free)
+                        except Exception:
+                            cp.add.at(_sum_hf, _post_idx, _h * _free)
+                            cp.add.at(_cnt_hf, _post_idx, _free)
+                        _mean_h = _sum_hf / cp.maximum(_cnt_hf, 1.0)
+                        _centred = (_h - _msub * _mean_h[_post_idx]) * _free
                         new_w = cp.clip(cur_w + _eta_ms * is_bt[active_bt] * _centred, _wmin_ms, _wmax_ms)
                     elif self.cp_btsp_pre_elig_slow is not None:
                         new_w = fused_btsp_dog_update(

@@ -68,3 +68,44 @@ different door.
 ⇒ **The transfer loss is NOT a route to the goal.** The 1.5x compression is real and worth knowing as a constraint
 on how much weight contrast any fix must deliver — but recovering it by read-out exponent would be gaming the
 metric, not solving the problem. Dropped, and recorded as dropped so it is not revisited as a fresh idea.
+
+---
+
+## Rank 4 CLOSED in BOTH forms — subtractive normalization is structurally incompatible with a Dale substrate
+
+The gate's named correction for the mean-subtracted increment was **`w_min < 0`**. That is **not available on this
+substrate**: polarity is assigned PER PRESYNAPTIC NEURON (`exc_fraction` / `inhibitory_indices`), so a negative
+weight would flip an excitatory synapse inhibitory and violate Dale's law — and the repo's own decorrelation
+research explicitly works under "non-negative (Dale), point-neuron" constraints. Checked BEFORE building it.
+
+The Dale-compliant alternative is an **active-set projection**: subtract the mean only over synapses not pinned at
+a bound, so `sum_j dw_ij = 0` holds among exactly those that can move. Implemented and pre-flighted (seed 800):
+
+| | naive mean-subtract | active-set projection |
+|---|---|---|
+| clipped at `w_min` | 4240 / 8320 (51%) | **5040 / 8320 (61%) — WORSE** |
+| total dw | +342,212 | +137,299 |
+| per-post-cell mean \|sum(dw)\| | ~= typical \|dw\| | **4767.8 vs typical 4893.8 — still no cancellation** |
+
+**Both forms fail, and the reason is structural rather than a tuning matter.** Even with an exact per-step zero-sum
+over the free set, the free set **shrinks monotonically**: each step some synapses pin at the floor and stop
+contributing negative increments, so the accumulated total drifts positive regardless. Subtractive normalization
+requires the weight vector to be able to absorb negative mass; a hard non-negative floor — which Dale's law makes
+mandatory here — removes exactly that capacity.
+
+⇒ **Miller-MacKay subtractive normalization is closed on this substrate, in both its naive and Dale-compliant
+forms, at ZERO seed cost.** This is a general result, not a property of one parameterization: any rule whose
+guarantee is "the increments sum to zero" is defeated by a bound that absorbs one sign.
+
+## Running tally: five mechanism families closed, five distinct causes, three at zero seed cost
+
+| mechanism | cause | seeds spent |
+|---|---|---|
+| Milstein split-threshold band | geometric collision (spacing == backward shift) | 12 (2 pre-registered attempts) |
+| zero-DC difference-of-exponentials | trace-amplitude mismatch (validated on inputs never generated) | 6 |
+| Milstein two-sigmoid on `ET*IS` | no separating axis (1.001x; the gate predicted this itself) | **0** |
+| Miller-MacKay subtractive (both forms) | hard floor absorbs negative mass; `w_min<0` violates Dale | **0** |
+| expansive/normalizing read-out | metric inflation — `c -> c^p` adds no information | **0** |
+
+The pre-flight rule (*verify the claimed property on DEPLOYED inputs before pre-registering*), learned from the DoG
+failure at a cost of one 6-seed run plus a retraction, has now closed three candidates for nothing.
