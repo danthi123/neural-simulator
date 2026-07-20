@@ -336,7 +336,7 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   (deployed deep-NLL through the runner, `--rf-synaptic`): the RF spike drives a real slow-NMDA synapse, readout g_nmda
   -> value -> graded state -> **deep-10-99 vs-trigram +0.735 GO** (map-corr 0.974; ref rf_read_phases +0.878; M0's corr
   0.97->positive CONFIRMED). NO host rf_read_phases anywhere; `--rf-synaptic` additive/default-off. Follow-on polish:
-  close the +0.735-vs-+0.878 fidelity gap (log-decode on the zero-inflated small-value band), a bounded tuning. `2026-07-20-gap1-fully-synaptic-RF-transduction-RUNG1-GO-feasibility.md`. Also V/D scaling. Finding
+**⭐ FULL PARITY ACHIEVED: at period=500 the fully-synaptic deep-NLL is +0.872 (== host-phase-read +0.878), accum corr 0.9977** — the +0.735-vs-+0.878 gap was spike-step QUANTIZATION (period 200 too coarse; weight/decode-order/per-channel all null-or-worse, self-caught; the CORRECT knob is period, sweep 200→0.970/500→0.9977/1000→0.9984). ⇒ **gap#1's spiking input is FULLY SYNAPTIC AT FULL PARITY (deep-NLL +0.872, verify corr 0.999), no host rf_read_phases anywhere, zero fidelity cost;** period = fidelity/compute tradeoff (200 fast/+0.735, 500 full-parity/2.5× steps). `2026-07-20-gap1-fully-synaptic-RF-transduction-RUNG1-GO-feasibility.md`. Also V/D scaling. Finding
   `2026-07-20-gap1-RF-PHASE-ENCODE-first-spiking-encode-PAST-the-wall.md`; runners `_gap1_rf_phase_deployed_preflight.py`
   + `_emerge_wkv_onbridge_derisk.py --rf-phase-encode`; matched set `wkv_ssmU6_v1000_d128_seed{42..102}.npz`.
   **⇒ EXTENDED to GENERATION (2026-07-20): the spiking WKV cortex GENERATES prose on-bridge, not just comprehends.**
