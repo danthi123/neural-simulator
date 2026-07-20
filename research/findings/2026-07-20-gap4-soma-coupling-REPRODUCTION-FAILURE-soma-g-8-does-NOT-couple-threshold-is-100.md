@@ -194,6 +194,38 @@ read BDSP-vs-reservoir(0.67), 6-seed, vs (BDSP > reservoir-baseline, wrong_sign 
 input-selective run answers the credit-to-accuracy question. The resolution (independent pathway weights) is a real
 mechanistic unlock; the stability sweep is the last confound to clear.
 
+## DEFINITIVE VERDICT (clean substrate) — the BDSP credit does NOT beat a reservoir readout; the value is the readout, not credit-training the hidden
+
+The "instability" was an artifact: lowering `bdsp_lr` (0.003→0.00003) changed NOTHING (BDSP/lesion identical; lesion
+dw stuck at 734,339). Reading the weights: `fw_ih=500` init (w_in2hid 1,169,708 ≈ 500/synapse) is CLIPPED to
+`bdsp_w_max=200` (435,369 ≈ 189/synapse) — the CLAUDE.md STDP-w_max gotcha, an lr-independent clip artifact, NOT a
+runaway. Fixed by using `fw_ih=180 < w_max` (no clip): it STILL gives input-selective hidden (‖h1−h2‖=11.6) AND clean
+coupling (B_rest 0.000, rise +0.50) — a fully confound-free operating point.
+
+**THE CLEAN TEST (fw_ih=180, fw_ho=6, in_hi=2000, soma-g 1000, coupled, no clip, seed 42):**
+
+| arm | held-out | (floor 0.510, oracle 0.989) |
+|---|---|---|
+| **RESERVOIR readout** (trained readout on RANDOM-hidden features, credit-independent) | **0.765** | reservoir computing WORKS — the substrate's random hidden features are useful |
+| BDSP credit-trained | 0.553 | ≈ lesion 0.550 ≈ wrong 0.564 |
+
+**VERDICT: at a confound-free operating point, the BDSP graded-burst-credit produces NO accuracy benefit — BDSP 0.553 ≈
+lesion 0.550 ≈ wrong 0.564, ALL well BELOW the reservoir baseline 0.765.** The load-bearing comparison is clean (BDSP vs
+the credit-INDEPENDENT reservoir): **the BDSP-credit-trained net UNDERPERFORMS a simple trained readout on the same
+random hidden features.** So the deep BDSP credit does not learn accuracy-relevant hidden features on this substrate —
+the value is in the trainable READOUT over a fixed random hidden layer, not in credit-training the hidden. **This
+directly echoes the project's own R3 reservoir reframe** (a fixed random recurrent/hidden scaffold + a trained readout
+BEATS training the scaffold; ROADMAP §9.1).
+
+**⇒ CLEAN NEGATIVE (finally on a valid substrate) — a verdict on the METHOD, not the capability, per THE LAW.** The raw
++ graded burst-credit + FA/KP family does not beat reservoir computing on this task. gap#4's KEYSTONE (deep local credit
+works + composes across a layer, rung 10 Poisson geometry) stands SEPARATELY — this is the harder learn-a-classification-
+task-to-ACCURACY sub-thread. **NEXT:** (1) firm it multi-seed (single-seed here; but the whole arc is now confound-free);
+(2) a fresh research gate for a stronger credit signal that beats a reservoir readout — OR accept that on this substrate
+the honest on-bridge capability IS the reservoir readout (0.765), with the credit's role being the read-out training,
+consistent with R3. (Note: the lesion dw 64,403 at fw_ih=180 shows the lesion arm's weights still drift, so BDSP-vs-lesion
+is mildly confounded; the BDSP-vs-RESERVOIR comparison, which is credit-independent, is the clean load-bearing one.)
+
 ## Method lesson
 
 The banked "pipeline-validated" result was gated on a dw ratio while its OWN coupling diagnostic said DECOUPLED, and its
