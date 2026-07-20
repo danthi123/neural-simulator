@@ -161,9 +161,44 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
-- **⏸️ OWNER PAUSE (2026-07-19 evening) — gaming reboot into Windows. ALL work committed + pushed to both remotes
-  (latest incl. the gap#1 arc below). GPU free of gap jobs. Resume is MANUAL: a plain "continue" from the owner
-  re-anchors from the RESUME ANCHOR just below. Do NOT start new long work until the owner returns.**
+- **⚠️ gap#4 STATUS CORRECTED (2026-07-20, three independent read-only audits converge) — "FULLY RESOLVED" below is a
+  SCOPE REDEFINITION, not a result. gap#4's deep-credit capability is OPEN.** This board carries THREE incompatible
+  gap#4 verdicts all dated 2026-07-19 ("FULLY RESOLVED" `:333`, "PARKED" `:423`, "remains the honest OPEN frontier"
+  `:481`). No experiment closed it: the supervised-deep-credit-to-accuracy METHOD was parked after failing and the
+  CAPABILITY was reassigned to the pre-existing unsupervised stream cortex. By this board's OWN criterion (e)
+  ("wired into the actual system the owner uses") gap#4 fails — `enable_btsp` appears in no console and no agent.
+  **GENUINELY established on-substrate, clean-seeded, 6-seed: BTSP local ONE-SHOT plateau-gated credit** (its own
+  finding scopes it: *"NOT multi-layer/deep credit (confirmed-hard, not claimed)"*), two-compartment dAP as a
+  read-out primitive, dendritic bistability (which is NEGATIVE as a credit booster). **NEGATIVE / BOUNDARY / RETIRED:**
+  BDSP→accuracy on-bridge (6-seed, multiple configs), e-prop feedforward on-bridge (NOT-GO), e-prop recurrent LM
+  (REFUTED by controls), node perturbation (RETIRED, 12-seed refutation), MDGL on spikes (DECISIVE NEGATIVE),
+  feedback-alignment/KP family (exhausted; KP lift was a DEV-SEED artifact). "Replay replaces BPTT" is a real 6-seed
+  GO but **numpy RATE, not spikes**. **⇒ EXACT NEXT for gap#4: the BTSP one-shot TASK — named 2026-07-18, NEVER RUN**
+  (converts "a weight moves 8.4×" into "the substrate LEARNS a behaviour"); template
+  `_gap4_btsp_onbridge_behavioral_timescale_derisk.py`; MUST carry the frozen-weight control, wrong-sign/permuted
+  plateau BELOW chance, no-plateau moat dw=0.000, `enable_btsp=False` byte-identity, `cfg.seed` + two-process hash,
+  6 seeds with BLIND seeds reported separately. Then wire it into something the owner uses (criterion (e)).
+  ⚠️ **STALE — do NOT run:** `:1435-1441`'s off-diagonal/MDGL next-action (superseded by the MDGL DECISIVE NEGATIVE).
+  Also FIXED this session: 3 runners flagged unseeded on 2026-07-17 were STILL unseeded (zero commits in 3 days) —
+  `cfg.seed` added + verified by two-process threshold hash. Finding:
+  `2026-07-20-gap4-status-audit-THREE-audits-converge-deep-credit-is-OPEN.md`.
+- **🎉 gap#1 M1 — 6-SEED GO (2026-07-20): the ON-BRIDGE WKV state BEATS the fair interpolated trigram at deep context,
+  6/6 seeds (mean +0.126, range +0.061..+0.238). THE ON-SUBSTRATE BOUNDARY IS SURPASSED.** Mechanism: hold the leaky
+  state in the SHIPPED graded `cp_ssm_state` integrator (`enable_selective_ssm_state`) — `k_leak=1-decay`, `shunt=0`
+  ⇒ `lam=decay`, `inject=v/(1-decay)` reproduces `a_t=decay*a_{t-1}+v_t` EXACTLY (verify-first corr **1.000**);
+  dual-nonneg keeps it biology-faithful; the SSM's OWN trained read-out runs on the bridge-held state unchanged
+  (`--use-ssm-readout`) — a fresh post-hoc read-out was an under-fit proxy MASKING the result (−1.66 vs +0.077).
+  ANTI-CHEATS load-bearing: memoryless(lam=0) collapses **6/6** (mean −0.720, separation 0.846 nats); the rate-read
+  control reproduces the wall (−0.491) ⇒ the GRADED delivery is what closed it. NO `sim/` edit.
+  **Enabled by the research gate's reframe:** the spike-rate-coded state was the WRONG target (no spiking LM —
+  SpikeGPT/SPikE-SSM/SpikingSSMs/SiLIF — nor biology holds the state that way; all keep it graded and spike only I/O).
+  Finding: `2026-07-20-gap1-M1-onbridge-graded-SSM-state-BEATS-trigram.md`.
+  **M2 (input via a GENUINE SPIKING NEF population, closing M1's host-inject residual) — off-bridge GO** (hetero
+  encoders + optimal decoder corr **0.9993** vs the old homogeneous+uniform-sum 0.8167 w/ 36/40 DEAD steps);
+  **on-bridge smoke GO** (verify corr 0.615 post-rescale, deep **+0.118**), 6-seed + homogeneous-control validation
+  IN FLIGHT. Dale's law forced NNLS sign-constrained decoders (the bridge routes exc/inh per PRESYNAPTIC neuron).
+  **⇒ NEXT after M2: M3 = calibrated end-to-end surrogate-BPTT through the substrate = THE gap#4 CONVERGENCE**
+  (the learning-substrate keystone), then LLM-like conversational capability per the owner's standing directive.
 - **⚠️ EXACT NEXT ACTION / RESUME ANCHOR (2026-07-19, refined this session — gap#1 on-substrate WKV state):**
   This session PRECISELY CHARACTERIZED the on-bridge WKV-state boundary BY DIRECT MEASUREMENT (`fi_probe`): the
   graded-plateau input pool fires only a FEW spikes/token → `c_weighted` is a NOISY, THRESHOLD-nonlinear,
