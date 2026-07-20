@@ -100,8 +100,25 @@ def main():
             examples.append({"cue": [a, v], "taught_p": p, "cont_ans": ans, "cont_verified": verified,
                              "cont_ung": ung, "complete_top5": rank_words})
 
+    # --- RA-FAITHFULNESS (the copy-skill generalization test): prompt a DIFFERENT (in-vocab) patient -> the answer
+    #     must follow the PROMPT fact, not a memorized/bias one. This is what makes the render GROUNDED on the retrieved
+    #     fact (rides the brain's fact) rather than the model's own bias -- the phase2 RA GO criterion. ---
+    ra = {"follows": 0, "bias": 0, "n": 0}
+    ra_ex = []
+    alt_pool = ["ball", "cake", "hat", "toy", "bone", "bread", "milk", "key", "cup", "box"]
+    for (a, v, p) in cases:
+        for alt in [o for o in alt_pool if o != p][:2]:
+            if not fac.in_vocab(alt):
+                continue
+            ans = fac.answer(f"the {a} {_v3(v)} {alt} .", f"what does the {a} {v} ?")
+            follows = alt in ans.split()
+            usedbias = (p in ans.split()) and not follows
+            ra["n"] += 1; ra["follows"] += int(follows); ra["bias"] += int(usedbias)
+            if len(ra_ex) < 4:
+                ra_ex.append({"cue": [a, v], "prompt_p": alt, "true_p": p, "ans": ans, "follows": follows})
+
     n = len(cases)
-    print(f"\n=== CEILING (raw WKV, no fine-tune, n={n} grounded facts, ckpt={os.path.basename(args.ckpt)}) ===")
+    print(f"\n=== CEILING (WKV, n={n} grounded facts, ckpt={os.path.basename(args.ckpt)}) ===")
     print(f"CONT (prompt-condition + generate + console VERIFY):")
     print(f"   verified-fluent (states fact, no confab): {cont['verified']}/{n} = {cont['verified']/n:.2f}")
     print(f"   would-confab (introduces ungrounded SVO): {cont['confab']}/{n} = {cont['confab']/n:.2f}")
@@ -114,12 +131,17 @@ def main():
         print(f"   {e['cue']} (taught={e['taught_p']}): CONT={'OK' if e['cont_verified'] else 'ramble'} "
               f"ung={e['cont_ung']}  ans='{e['cont_ans'][:70]}'")
         print(f"       COMPLETE top5={e['complete_top5']}")
+    print(f"RA-FAITHFUL (prompt a DIFFERENT patient -> follow the PROMPT fact, not bias):")
+    print(f"   follows-prompt: {ra['follows']}/{ra['n']} = {ra['follows']/max(1,ra['n']):.2f}   "
+          f"used-bias: {ra['bias']}/{ra['n']}")
+    for e in ra_ex:
+        print(f"   {e['cue']} prompt={e['prompt_p']} (true={e['true_p']}) -> '{e['ans']}' follows={e['follows']}")
     verdict = ("residual-B (format fine-tune) NEEDED" if cont["verified"] / n < 0.5
-               else "raw WKV already answers -- cheaper than expected")
-    print(f"\nVERDICT: CONT verified {cont['verified']/n:.2f} -> {verdict}")
+               else "GROUNDED FLUENT RENDER GO (focused-grounded high + RA-faithful)")
+    print(f"\nVERDICT: CONT verified {cont['verified']/n:.2f}, RA-faithful {ra['follows']/max(1,ra['n']):.2f} -> {verdict}")
     os.makedirs(os.path.dirname(args.out), exist_ok=True)
-    json.dump({"n": n, "cont": cont, "complete": complete, "examples": examples, "ckpt": args.ckpt,
-               "verdict": verdict}, open(args.out, "w"), indent=2)
+    json.dump({"n": n, "cont": cont, "complete": complete, "ra_faithful": ra, "examples": examples,
+               "ra_examples": ra_ex, "ckpt": args.ckpt, "verdict": verdict}, open(args.out, "w"), indent=2)
     print(f"[out] {args.out}")
 
 

@@ -1,0 +1,12 @@
+{
+  "ppl_before": 28.120917114229613,
+  "ppl_after": 28.41639396514985,
+  "steps": 3000,
+  "lr": 0.0003,
+  "grounded_frac": 0.65,
+  "markers": [
+    "<ans>",
+    "<eos>"
+  ],
+  "out": "bridges/wkv_ckpt/wkv_ssmU_v4000_d256_grounded_ft.npz"
+}

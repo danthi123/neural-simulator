@@ -1,18 +1,18 @@
 {
   "n": 6,
   "cont": {
-    "verified": 1,
-    "confab": 0,
-    "fallback": 5
+    "verified": 5,
+    "confab": 1,
+    "fallback": 0
   },
   "complete": {
-    "top1": 0,
-    "top5": 0,
+    "top1": 4,
+    "top5": 4,
     "n": 6
   },
   "ra_faithful": {
-    "follows": 3,
-    "bias": 1,
+    "follows": 12,
+    "bias": 0,
     "n": 12
   },
   "examples": [
@@ -22,15 +22,15 @@
         "eat"
       ],
       "taught_p": "meat",
-      "cont_ans": "and the apple fell on the ground and",
-      "cont_verified": false,
+      "cont_ans": "the dog eats meat",
+      "cont_verified": true,
       "cont_ung": [],
       "complete_top5": [
-        "and",
-        "for",
+        "meat",
+        "hay",
+        "small",
         "the",
-        "all",
-        "with"
+        "water"
       ]
     },
     {
@@ -39,15 +39,21 @@
         "eat"
       ],
       "taught_p": "fish",
-      "cont_ans": "and the fish swam away from the pond",
-      "cont_verified": true,
-      "cont_ung": [],
+      "cont_ans": "the fish eats fish",
+      "cont_verified": false,
+      "cont_ung": [
+        [
+          "fish",
+          "eat",
+          "fish"
+        ]
+      ],
       "complete_top5": [
-        "and",
+        "cat",
+        "web",
         "the",
-        "some",
-        "all",
-        "for"
+        "light",
+        "water"
       ]
     },
     {
@@ -56,15 +62,15 @@
         "eat"
       ],
       "taught_p": "seed",
-      "cont_ans": "said i can help you find my toy",
-      "cont_verified": false,
+      "cont_ans": "the bird eats seed",
+      "cont_verified": true,
       "cont_ung": [],
       "complete_top5": [
-        "and",
-        "the",
-        "all",
-        "it",
-        "some"
+        "seed",
+        "its",
+        "hay",
+        "honey",
+        "rabbit"
       ]
     },
     {
@@ -73,15 +79,15 @@
         "chase"
       ],
       "taught_p": "rabbit",
-      "cont_ans": "and the squirrel said i want to play",
-      "cont_verified": false,
+      "cont_ans": "the fox chases rabbit",
+      "cont_verified": true,
       "cont_ung": [],
       "complete_top5": [
-        "the",
-        "them",
-        "him",
-        "tim",
-        "lily"
+        "rabbit",
+        "hay",
+        "web",
+        "<eos>",
+        "flag"
       ]
     },
     {
@@ -90,15 +96,15 @@
         "make"
       ],
       "taught_p": "honey",
-      "cont_ans": "and the bird fly away from the sky",
-      "cont_verified": false,
+      "cont_ans": "the bee makes honey",
+      "cont_verified": true,
       "cont_ung": [],
       "complete_top5": [
+        "honey",
         "a",
+        "hay",
         "it",
-        "them",
-        "the",
-        "me"
+        "something"
       ]
     },
     {
@@ -107,14 +113,14 @@
         "live"
       ],
       "taught_p": "water",
-      "cont_ans": "and the fish swam away from the pond",
-      "cont_verified": false,
+      "cont_ans": "the fish sees water",
+      "cont_verified": true,
       "cont_ung": [],
       "complete_top5": [
         "in",
-        "on",
-        "and",
         "far",
+        "on",
+        "there",
         "by"
       ]
     }
@@ -127,7 +133,7 @@
       ],
       "prompt_p": "ball",
       "true_p": "meat",
-      "ans": "and the ball went into the park with",
+      "ans": "the dog eats ball",
       "follows": true
     },
     {
@@ -137,8 +143,8 @@
       ],
       "prompt_p": "cake",
       "true_p": "meat",
-      "ans": "and milk and the sweet treat fell on",
-      "follows": false
+      "ans": "the dog eats cake",
+      "follows": true
     },
     {
       "cue": [
@@ -147,7 +153,7 @@
       ],
       "prompt_p": "ball",
       "true_p": "fish",
-      "ans": "and the ball went into the park with",
+      "ans": "the cat eats ball",
       "follows": true
     },
     {
@@ -157,10 +163,10 @@
       ],
       "prompt_p": "cake",
       "true_p": "fish",
-      "ans": "and milk and the sweet sweet sweet sweet",
-      "follows": false
+      "ans": "the cat eats cake",
+      "follows": true
     }
   ],
-  "ckpt": "bridges/wkv_ckpt/wkv_ssmU_v4000_d256_big_seed42.npz",
-  "verdict": "residual-B (format fine-tune) NEEDED"
+  "ckpt": "bridges/wkv_ckpt/wkv_ssmU_v4000_d256_grounded_ft.npz",
+  "verdict": "GROUNDED FLUENT RENDER GO (focused-grounded high + RA-faithful)"
 }

@@ -38,10 +38,16 @@ class WKVFaculty:
         self.V = len(self.words)
         self.D = self.emb.shape[1]
         self.w2i = {w: i for i, w in enumerate(self.words)}
-        self.unk = self.V - 1  # <unk> is the trailing vocab entry (matches the runner's Vocab(words[:-1]))
+        # <unk> BY NAME, not position: a format fine-tune appends <ans>/<eos> AFTER <unk>, so V-1 no longer
+        # points at <unk> (it points at <eos>). The V-1 assumption silently suppressed <eos> as "unk". Index by name.
+        self.unk = self.w2i.get("<unk>", self.V - 1)
         self.max_new = int(max_new)
         self.seed = int(seed)
         self.ckpt = ckpt
+        self.device = "numpy(cpu)"  # off-bridge reference; the on-bridge spiking forward is the RF-phase parity swap
+        self.npar = (self.emb.size + self.head_w.size + self.head_b.size + self.Wv.size + self.Wr.size
+                     + self.Wo_sp.size + self.ln_w.size + self.ln_b.size) / 1e6
+        self.n_invocations = 0  # gate-first moat instrument: must stay 0 on abstains (faculty never reached)
 
     # ---- forward (bit-matches _emerge_wkv_onbridge_derisk.rate_ssm_states + _next_logits) ----
     def _ln(self, v):
@@ -68,14 +74,18 @@ class WKVFaculty:
             ap, an = self._charge(t, ap, an)
         return ap, an
 
-    def generate(self, prompt_words, max_new=None, temp=0.0, no_unk=True, stop_words=None):
-        """Autoregressive rollout from a WORD prompt. Returns the generated continuation words (excludes the prompt)."""
+    def generate(self, prompt_words, max_new=None, temp=0.0, no_unk=True, stop_words=None, stop_on_repeat=False):
+        """Autoregressive rollout from a WORD prompt. Returns the generated continuation words (excludes the prompt).
+        stop_on_repeat: halt on a degenerate A-A / A-B-A-B loop (the WKV's short memory makes a position-dependent
+        <eos> unreliable in free-running; no-repeat-ngram is the standard decoding fix, harmless for grounded SVO
+        answers where no legitimate immediate repeat exists)."""
         max_new = self.max_new if max_new is None else int(max_new)
         ids = self.ids([w for w in prompt_words if w])
         if not ids:
             ids = [self.w2i.get("the", 0)]
         ap, an = self._charge_prompt(ids)
         gen = list(ids)
+        n0 = len(ids)
         rng = np.random.default_rng(self.seed)
         stop = set(stop_words or [])
         for _ in range(max_new):
@@ -91,8 +101,14 @@ class WKVFaculty:
             if w in stop:
                 break
             gen.append(nxt)
+            g = gen[n0:]
+            if stop_on_repeat and (
+                (len(g) >= 2 and g[-1] == g[-2]) or                              # A A
+                (len(g) >= 4 and g[-1] == g[-3] and g[-2] == g[-4])):            # A B A B
+                gen.pop()                                                        # drop the repeating token
+                break
             ap, an = self._charge(nxt, ap, an)
-        return [self.words[i] for i in gen[len(ids):]]
+        return [self.words[i] for i in gen[n0:]]
 
     def next_ranked(self, prompt_words, no_unk=True):
         """The full logit ranking of the next word after a prompt (for fact-completion ceiling probes)."""
@@ -105,13 +121,23 @@ class WKVFaculty:
         return [(self.words[i], float(lg[i])) for i in order]
 
     # ---- the FTFaculty-compatible console interface ----
+    @property
+    def has_markers(self):
+        return "<ans>" in self.w2i and "<eos>" in self.w2i
+
     def answer(self, facts_ctx, question, max_new=None):
-        """Match FTFaculty.answer(facts_ctx, question). RAW behavior: prompt-condition on the natural fact
-        (in-vocab words only; the WKV has no punctuation/format tokens) and generate a focused continuation.
-        A residual-B format fine-tune retargets this prompt to a fact-RESTATEMENT (answer-not-ramble)."""
+        """Match FTFaculty.answer(facts_ctx, question). If the checkpoint was format-fine-tuned (residual-B: the
+        <ans>/<eos> markers are in vocab), build the learned frame '{fact words} <ans>' and generate the focused
+        restatement until <eos> -- the COPY skill (answer-not-ramble, RA-faithful to the prompt fact). Else (RAW,
+        un-fine-tuned) prompt-condition on the natural fact and generate a continuation (the ceiling: it RAMBLES)."""
+        self.n_invocations += 1
         prompt = [w for w in facts_ctx.replace(".", " ").split() if self.in_vocab(w)]
-        out = self.generate(prompt, max_new=(self.max_new if max_new is None else max_new), temp=0.0)
-        # truncate to a focused first clause (mirror FTFaculty's first-sentence truncation)
+        mn = self.max_new if max_new is None else max_new
+        if self.has_markers:
+            out = self.generate(prompt + ["<ans>"], max_new=mn, temp=0.0, stop_words={"<eos>"}, stop_on_repeat=True)
+            out = [w for w in out if w not in ("<ans>", "<eos>")]
+            return " ".join(out).strip()
+        out = self.generate(prompt, max_new=mn, temp=0.0)
         return " ".join(out).strip()
 
 

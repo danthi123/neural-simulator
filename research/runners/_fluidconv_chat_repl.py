@@ -93,7 +93,7 @@ def _join_and(items):
 class FluidChat:
     """One coherent fluid-conversation agent (Phases 2-5 assembled)."""
 
-    def __init__(self, seed=42, extra_vocab=None, open_vocab_dispatch=False):
+    def __init__(self, seed=42, extra_vocab=None, open_vocab_dispatch=False, renderer="ft", wkv_ckpt=None):
         with open(os.path.abspath(CURRICULUM), "r", encoding="utf-8") as fh:
             self.cur = json.load(fh)
         facts = self.cur.get("facts", [])
@@ -127,7 +127,15 @@ class FluidChat:
             except Exception:
                 pass
         self.store_keys = {tuple(f) for f in facts}
-        self.faculty = FTFaculty()
+        # RENDERER: default "ft" = the ~21M ANN (byte-identical to the shipped console). "wkv" = the SPIKING WKV cortex
+        # (gap#1's open generator, format-fine-tuned = residual-B) -> retires the ANN scaffold for the render path,
+        # behind the UNCHANGED gate-first moat + VERIFY (the faculty is never reached on an abstain).
+        if renderer == "wkv":
+            from research.runners._wkv_faculty import WKVFaculty, BIG_CKPT
+            self.faculty = WKVFaculty(ckpt=(wkv_ckpt or "bridges/wkv_ckpt/wkv_ssmU_v4000_d256_grounded_ft.npz"), max_new=8)
+        else:
+            self.faculty = FTFaculty()
+        self.renderer = renderer
         self.npar = self.faculty.npar
         # OPEN-VOCAB discourse routing (default off = byte-identical keyword routing): a learned PPMI-semantic
         # nearest-intent + novelty router replaces the CLOSED keyword sets, so a novel synonym ("versus"/"alike"/
@@ -654,12 +662,18 @@ def main():
                     help="LEARNED PPMI-semantic discourse routing (a novel synonym 'versus'/'alike'/'lineage' routes by "
                          "meaning; default off = the verbatim keyword-set routing)")
     ap.add_argument("--out", default=str(OUT))
+    ap.add_argument("--renderer", choices=["ft", "wkv"], default="ft",
+                    help="fluency renderer: 'ft' = the ~21M ANN (default, byte-identical); 'wkv' = the SPIKING WKV "
+                         "cortex (gap#1's format-fine-tuned open generator) -> retires the ANN scaffold, moat unchanged")
+    ap.add_argument("--wkv-ckpt", default=None, help="(renderer=wkv) checkpoint path")
     a = ap.parse_args()
-    if not os.path.exists(FT_CKPT):
-        print(f"NOT-RUNNABLE: fine-tuned ckpt absent ({FT_CKPT})"); return 2
+    _need_ckpt = FT_CKPT if a.renderer == "ft" else (a.wkv_ckpt or "bridges/wkv_ckpt/wkv_ssmU_v4000_d256_grounded_ft.npz")
+    if not os.path.exists(_need_ckpt):
+        print(f"NOT-RUNNABLE: renderer '{a.renderer}' ckpt absent ({_need_ckpt})"); return 2
     t0 = time.time()
     try:
-        chat = FluidChat(seed=a.seed, open_vocab_dispatch=a.open_vocab_dispatch)
+        chat = FluidChat(seed=a.seed, open_vocab_dispatch=a.open_vocab_dispatch,
+                         renderer=a.renderer, wkv_ckpt=a.wkv_ckpt)
         if a.persist:
             n = chat.load_state(a.persist)
             if n:
