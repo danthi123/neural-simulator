@@ -173,7 +173,19 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   not the mechanism. `sim/` edit additive, default-off, byte-identity verified.
   **RUNG 2 (6-seed, dev 1.00 + BLIND 1.00):** the rule COMPOSES — 4 cells sharing the SAME input each learn a DISTINCT
   field in ONE lap (peaks [4,8,12,16] vs targets [5,9,13,17]), distinctness 1.00, shuffled-target control **0.00**.
-  **RUNG 3 (stacking) — NOT YET VALID, do not cite its numbers.** Pre-registered gate fails (selectivity 0.33 << 0.80)
+  **RUNG 3 (stacking) — MECHANISM POSITIVE, pre-registered GATE NO-GO, instrument now understood.** With the
+  wrong-target control REBUILT as a genuine manipulation (it had only re-indexed SCORING of an unchanged run, so it
+  was identical to MAIN by construction — a control that ran, printed plausible numbers, and carried zero evidence),
+  L2 is shown to GENUINELY LEARN a read of the CA1 population: freezing L2 plasticity collapses the response **24x**
+  (0.158 -> 0.0067, dw exactly 0), removing the plateau collapses it identically, and **MOVING the plateau MOVES the
+  read EXACTLY** (7 -> 7, 11 -> 11). ⇒ one-shot local credit DOES compose across a layer. The GATE is separately shown
+  INVALID (it demands a backward-shifted peak, so the do-nothing controls score read_hit=1 while the learned arm
+  scores 0) — but it is NOT re-centered here, because the record already warns I have mis-centered this metric twice.
+  So the NO-GO stands as filed and is not merged into a GO without fresh pre-registration on fresh seeds.
+  **TWO of my own claims were retracted in the process:** "the target plays no causal role" (built on the
+  by-construction control) and "the backward window PROPAGATES across layers" (measured offset is **+0**, not
+  negative — inferred while mis-reading which bin the plateau lands in).
+  **Superseded rung-3 note, kept for the trail:** Pre-registered gate fails (selectivity 0.33 << 0.80)
   AND the instrument has three named defects (late plateaus never release -> 8/32 cells latched -> moat broken; no
   functional seed variation; a metric that folded stage-1 into "L2 learning", caught by C1-frozen). **But the MECHANISM
   finding is solid and cross-gap: the SPIKE read is 0.000000 in EVERY condition while the GRADED CONDUCTANCE read shows
