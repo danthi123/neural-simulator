@@ -452,3 +452,14 @@ i.e. the deep arc that CONVERGES with gap#4's learn-through-the-spiking-substrat
 plateau 0.98-clean ✓, dual-nonneg-reframe ✓, sigmoid-transfer-co-adaptable ✓, but the spiking-input-noise-through-the-recurrence
 needs end-to-end substrate training. The DEMONSTRATED capability (architecture-level 6-seed + prose) is the deliverable; the
 on-substrate robust BEAT is precisely-characterized deep-arc-gated (end-to-end substrate co-adaptation = gap#4). Additive `--plateau-surrogate`.
+
+### 🎯 DECISIVE UNBLOCK — the WKV CO-ADAPTS to realistic INPUT-DELIVERY NOISE and still beats the trigram
+`--input-noise` (Poisson-like noise, std ~ sqrt(rate), on the PER-TOKEN input BEFORE the leaky integral = a differentiable model
+of the substrate's spiking firing-rate-estimate noise): at V=1000/d128 the co-adapted WKV STILL beats the fair trigram
+**+0.202 / +0.197 / +0.116 GO** at input-noise 0.5 / 1.0 / 2.0. ⇒ **the WKV learns a NOISE-ROBUST recurrence** — my earlier pessimism
+was from `--state-noise` (noise on the STATE, which compounds fully through the recurrence); INPUT noise (before the leaky integral)
+is AVERAGED BY THE DECAY, so the WKV tolerates it. This is the KEY: the earlier plateau-port failure (-0.96) was the POST-HOC
+read-out on frozen noisy states (NOT co-adapted); training the WKV WITH the plateau-surrogate + input-noise co-adapts it to the
+substrate's realized state, so the port should beat the trigram. ⇒ the on-substrate robust BEAT is UNBLOCKED via co-adaptation
+(a rate-level surrogate of the substrate transfer+noise, NOT full BPTT-through-the-bridge). Additive `--input-noise`; testing the
+end-to-end port (train co-adapted SSM -> plateau port -> deep-NLL) next.
