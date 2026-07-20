@@ -23,8 +23,9 @@ optimizer). Full vocab (V=4000), TinyStories next-token, held-out ppl:
 - **MAIN (lr 0.005, 500 train sentences): ppl 11511 → 356 in epoch 1 (32× drop) — the cortex's FLUENCY LEARNS on the
   substrate.** It then rises (356→394→419) = OVERFITTING the tiny 500-sentence smoke set (the off-bridge plateau ~40
   used 100000 sentences; early-stop/more data closes this).
-- **MULTI-SEED (dev) proof-of-mechanism: 42/43/44 all drop ~24-32× in epoch 1** — 11511→356 (32×), 11834→466 (25×),
-  9699→401 (24×). The on-substrate fluency learning is robust across seeds (not seed-lucky).
+- **6-SEED proof-of-mechanism (dev + BLIND): all drop ~23-32× in epoch 1** — dev 42/43/44 = 11511→356 (32×) /
+  11834→466 (25×) / 9699→401 (24×); blind 100/101/102 = 8781→375 (23×) / 11365→382 (30×) / 10475→382 (27×). The
+  on-substrate fluency learning is robust across ALL 6 seeds (not seed-lucky; dev ≈ blind).
 - **Stability:** lr 0.05 (the reduced-vocab grounded lr) DIVERGED (ppl → 8e8) — the online per-token update over the
   full 4000-vocab with the state accumulating over 18-token sentences has much higher variance than the batched
   off-bridge de-risk; lr 0.005 is stable (learns).
