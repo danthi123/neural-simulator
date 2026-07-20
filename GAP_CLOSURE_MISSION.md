@@ -161,6 +161,26 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
+- **gap#4 — the LITERATURE REFRAME (2026-07-20) overturns the arc's premise; the task itself is now under test.**
+  Read-in-depth check (Bittner 2017 · Milstein 2021 · Rich 2014) returns: **real CA1 field spacing is SMALLER than
+  the BTSP backward shift**, not larger — locations are a spatial **Poisson process** (uniform, exponential
+  intervals, uncorrelated; **0/61 cells deviate**), so the **modal gap is ZERO**, while potentiation spans 75-150 cm.
+  ⇒ the seven separation-based mechanisms were pursuing **a separation biology never achieves**. Biology instead
+  makes the **SIGN of the update depend on the synapse's CURRENT WEIGHT** (weak potentiate / strong depress;
+  dVm-vs-initial **r = -0.91**, final-vs-initial **r = 0.04** = a genuine fixed point). Also: the feedback-inhibition
+  route I had listed as "the one remaining" is **MIS-SCOPED** — it governs which CELLS plateau, not which synapses.
+  **Weight-dependent BTSP built (Milstein kernel, published thresholds, `k_pot = k_dep` so no free parameter).
+  PF-5 = the FIRST pre-flight to PASS**: the fixed point is real on deployed traces (starts 0.3 / 2.0 converge to
+  1.31 / 1.36, final maps **r = +0.997**, zero floor pinning), and the unit check passes on **8.5M** deployed
+  per-synapse samples (zones 68.9/9.6/21.5%). **But its CONTRAST is still untested after two attempts:** rung 7 was
+  invalid (one global `w_max` serving pathways whose scales differ **250x** — the same defect class as the
+  documented 27.4x theta issue, which I had written myself); rung 7b, on a repaired per-pathway instrument, found
+  the rule's equilibrium `w* = w_max/2 = 2.5` sits **BELOW the firing threshold** (baseline reaches 5) so CA1 goes
+  silent, 6/6. **I can see the fix (raise `k_pot` vs `k_dep`) and the cap forbids it — recorded, deliberately
+  unused.**
+  **NOW UNDER TEST (rung 8): the TASK.** Even spacing has **no empirical basis**; plain BTSP returns `c_adj` 1.213
+  *identically* on every seed across five runs because the geometry is fixed. Under per-seed Poisson placement,
+  **if geometry drives the deficit `c_adj` must vary** — interpretation for all three outcomes fixed in advance.
 - **gap#4 CONTRAST ARC — CLOSED OUT (2026-07-20). SEVEN routes eliminated, seven distinct causes, FOUR at zero seed
   cost. ONE named route remains, untested.** Robust core, unchanged across FOUR independent runs and TWO track
   lengths: **adjacent-field contrast is deficient (1.213x @20-bin, 1.449x @40-bin) while far-field contrast is
