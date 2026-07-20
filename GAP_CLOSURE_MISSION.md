@@ -327,9 +327,13 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   a decaying-conductance latency read of the RF spike (`g=exp(-(period-spike_step)/tau)`) + a fixed log inverse recovers
   the value PERFECTLY (corr 1.0000, rms 0.3% of range, UNBIASED, tau-INDEPENDENT), matching the host phase-read — so the
   last host read (`rf_read_phases`) IS removable (a downstream synapse's decayed conductance IS the value, read by a
-  biological log-compressive read-out). RUNG 2 (next build) = wire on-bridge (co-resident RF + decaying-conductance
-  synapse charging cp_ssm_state, no host read) + re-run deep-NLL/generation for parity.
-  `2026-07-20-gap1-fully-synaptic-RF-transduction-RUNG1-GO-feasibility.md`. Also V/D scaling. Finding
+  biological log-compressive read-out). **RUNG 2 GO (2026-07-20, ON-BRIDGE):** an RF bridge + a diagonal
+  SLOW-NMDA synapse encoder→readout — the RF spike drives a REAL conductance synapse whose readout `g_nmda` encodes the
+  value (corr −0.974; fixed log read-out recovers corr 1.0000, rms 0.16% of range, UNBIASED), matching the host
+  phase-read, NO host `rf_read_phases`, NO `sim/` edit. **The last host read is REPLACED by a genuine synapse on the
+  substrate.** RUNG 3 (last integration) = charge cp_ssm_state from the readout g_nmda in the deployed WKV pipeline +
+  deep-NLL/generation parity (fidelity corr 1.0 per RUNG 2 ⇒ parity expected) → gap#1 spiking input FULLY synaptic
+  end-to-end. `2026-07-20-gap1-fully-synaptic-RF-transduction-RUNG1-GO-feasibility.md`. Also V/D scaling. Finding
   `2026-07-20-gap1-RF-PHASE-ENCODE-first-spiking-encode-PAST-the-wall.md`; runners `_gap1_rf_phase_deployed_preflight.py`
   + `_emerge_wkv_onbridge_derisk.py --rf-phase-encode`; matched set `wkv_ssmU6_v1000_d128_seed{42..102}.npz`.
   **⇒ EXTENDED to GENERATION (2026-07-20): the spiking WKV cortex GENERATES prose on-bridge, not just comprehends.**

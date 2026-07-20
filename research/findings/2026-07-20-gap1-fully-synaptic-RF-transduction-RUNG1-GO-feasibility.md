@@ -1,6 +1,29 @@
-# gap#1 fully-synaptic RF-phase transduction — RUNG 1 GO (feasibility): the last host read is removable
+# gap#1 fully-synaptic RF-phase transduction — RUNG 1 + RUNG 2 GO: the last host read is REPLACED by a real synapse on-bridge
 
-**Date:** 2026-07-20 · **Status:** RUNG 1 (feasibility) GO; RUNG 2 (on-bridge wiring) specified.
+**Date:** 2026-07-20 · **Status:** RUNG 1 (feasibility) GO **+ RUNG 2 (on-bridge synaptic read) GO** — the RF spike
+drives a REAL slow-NMDA conductance synapse whose conductance encodes the value on the substrate, NO host `rf_read_phases`.
+
+## RUNG 2 — GO (on the real substrate)
+
+`_gap1_rf_synaptic_onbridge_rung2_probe.py`: an RF bridge (64 encoders + 64 readouts) with a diagonal SLOW-NMDA synapse
+encoder_i→readout_i. The encoders resonate (value-phases), each RF spike (landing in `cp_firing_states`) charges
+readout_i's `g_nmda` via the standard synaptic update; at period-end `g_nmda[i] = w·exp(-(period-spike_step_i)/tau_nmda)`
+= RUNG 1's decaying-conductance read. Reading `g_nmda` (a standard on-bridge conductance read, like reading
+`cp_ssm_state`) + a fixed log read-out:
+- readout `g_nmda`: 64/64 nonzero, **corr(g_nmda, value) = −0.974** — the SYNAPSE transduces the value into the conductance.
+- fixed log read-out recovers the value **PERFECTLY: corr 1.0000, rms 0.038 (0.16% of range 24), band-bias +0.003 /
+  −0.005 (UNBIASED)** — matching the host phase-read reference (corr 1.0000).
+- ⇒ **the last host read (`rf_read_phases`) is REPLACED by a genuine conductance synapse on the substrate: the RF spike
+  → slow-NMDA synapse → readout `g_nmda` = the value, read by a biological log-compressive read-out. NO host phase read,
+  NO `sim/` edit** (`inject_explicit_wiring` + reading public `cp_conductance_g_nmda`).
+
+**RUNG 3 (last integration, next):** wire this into the deployed WKV pipeline — the RF encoder's readout `g_nmda`
+charges `cp_ssm_state` (replacing the host `_inj` write) → re-run the deep-NLL / generation for parity (encode fidelity
+is corr 1.0 on-bridge per RUNG 2, so parity is expected). Then gap#1's spiking input is FULLY synaptic end-to-end.
+
+## RUNG 1 — GO (feasibility, kept below)
+
+**Date:** 2026-07-20 · original RUNG 1 status: feasibility GO; RUNG 2 (on-bridge wiring) specified.
 
 ## The residual this closes
 
