@@ -155,6 +155,18 @@ def build(seed, *, eta=0.02, hdep=0.3, htheta=0.012, elig_tau=1000.0, w0=0.6, wj
     sb = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
                           runtime_state=rt, gpu_config=GPUConfig())
     sb._initialize_simulation_data()
+    # PER-PATHWAY w_max (gap#4 rung 7 diagnosis): one global bound cannot serve pathways whose
+    # natural scales differ 250x. pos->ca1 lives at ~w0 (0.6); ca1->l2 lives at ~l2_w0 (150).
+    # A single w_max chosen for layer 2 inflates layer-1 weights 92x and destroys field formation.
+    if float(mk_dep) > 0.0:
+        from sim.backend import to_host as _th, get_backend as _gb
+        _xp, _ = _gb()
+        _coo = sb._get_cached_coo()
+        _row = np.asarray(_th(_coo.row)); _col = np.asarray(_th(_coo.col))
+        _l2set = set(int(i) for i in np.asarray(sb.region_manager.indices("l2")))
+        _wm = np.full(len(_row), max(5.0, 2.0 * float(w0)), np.float32)      # layer-1 scale
+        _wm[np.array([int(c) in _l2set for c in _col])] = max(5.0, 2.0 * float(l2_w0))  # layer-2 scale
+        sb.cp_btsp_wmax = (_xp.asarray(_wm) if _xp is not None else _wm)
     pos = [np.asarray(sb.region_manager.indices(f"pos{k}")) for k in range(N_BINS)]
     cells = [np.asarray(sb.region_manager.indices(f"ca1_{c}")) for c in range(N_CELL)]
     l2 = np.asarray(sb.region_manager.indices("l2"))

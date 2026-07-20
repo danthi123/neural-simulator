@@ -303,6 +303,9 @@ class SimulationBridge:
         self._bdsp_step_counter = 0                         # monotone step index for burst-ISI detection (BDSP only)
         self.cp_btsp_pre_elig = None                        # gap#4 BTSP seconds-long per-neuron presynaptic eligibility (None unless enable_btsp)
         self.cp_btsp_pre_elig_slow = None                   # gap#4 Rank-2: SLOW companion trace (None unless btsp_dog_a_dep>0)
+        self.cp_btsp_wmax = None                            # gap#4: PER-SYNAPSE w_max. None => the cfg scalar => byte-identical.
+                                                            # Exists because ONE GLOBAL w_max cannot serve pathways whose natural
+                                                            # scales differ 250x (measured); same reason cp_btsp_theta exists (27.4x).
         self.cp_conductance_g_coincidence_rise = None     # dual-exp rise component
         self.cp_coincidence_synapse_mask = None           # bool per-synapse: True for coincidence_detector-routed synapses
         # GRADED dendritic-plateau READ-OUT (Stage 1, 2026-06-20). The SMOOTH/non-saturating sibling of
@@ -7433,7 +7436,8 @@ class SimulationBridge:
                             cp.float32(getattr(cfg, "btsp_milstein_k_pot", 0.0)),
                             cp.float32(_mk_dep),
                             cp.float32(getattr(cfg, "btsp_w_min", 0.0)),
-                            cp.float32(getattr(cfg, "btsp_w_max", 5.0)))
+                            (self.cp_btsp_wmax[active_bt] if self.cp_btsp_wmax is not None
+                             else cp.float32(getattr(cfg, "btsp_w_max", 5.0))))
                     elif (lambda _m: _m > 0.0)(float(getattr(cfg, "btsp_mean_subtract", 0.0))):
                         _msub = float(getattr(cfg, "btsp_mean_subtract", 0.0))
                         # Rank-4 Miller-MacKay subtractive normalization. h = the raw potentiation
