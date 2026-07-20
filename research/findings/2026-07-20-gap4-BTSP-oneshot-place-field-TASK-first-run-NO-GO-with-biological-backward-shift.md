@@ -192,3 +192,53 @@ gets some potentiation.
    not potentiate. This is the mechanism-level question worth a research gate, not a sweep.
 3. The credit-assignment half of gap#4 **does not need further work at this scale** — it is correct and stable. That
    is a genuine, if narrow, positive result recovered from a decisive NO-GO.
+
+---
+
+# 🔬 LEVER-1 TEST (read-out sensitivity, DEV ONLY) — does NOT rescue it, and reveals the real structure
+
+Delta scoring neutralizes the baseline-inhomogeneity confound, so W0 could finally be raised. Dev seeds 42/43/44,
+plateau at `b=12`:
+
+| W0 / CA1_N | `pre_max` | `delta_max` | peak offsets (per seed) | in window (−5..+1) |
+|---|---|---|---|---|
+| 0.6 / 8 (original) | 0.00000 | 0.02063 | **[−4, −6, −4]** | 2/3 |
+| 3.0 / 32 | 0.03938 | 0.08458 | [3, −6, −4] | 1/3 |
+| 4.0 / 32 | 0.10354 | 0.02604 | **[−4, −6, −4]** | 2/3 |
+| **5.0 / 32** | 0.12646 | **0.00000** | — | **0/3 — no field at all** |
+| **6.0 / 32** | 0.12958 | **0.00000** | — | **0/3 — no field at all** |
+| 4.0 / 64 | 0.19417 | 0.04979 | **[−4, −6, −4]** | 2/3 |
+
+**Lever 1 does not rescue the task**, and it has a hard ceiling: at `W0 ≥ 5` the delta **vanishes entirely** — once the
+cell fires appreciably at baseline, potentiation no longer increases its firing (saturation). So the operating window
+between "silent" and "saturated" is narrow, and inside it the hit rate stays ~2/3.
+
+## The real structure: the field forms at a lag ≈ the eligibility time constant
+
+The peak offsets are **strikingly consistent at −4 to −6 bins across every read-out configuration and seed**. At
+200 ms/bin that is **800–1200 ms behind the plateau — i.e. ≈ `btsp_elig_tau_ms = 1000 ms` almost exactly.**
+
+⇒ **The one-shot field forms at a reproducible backward LAG set by the eligibility time constant.** That is a real,
+mechanistically coherent characterization of what this rule does on this substrate, and it is consistent across seeds
+that scored 0.00 on the task.
+
+## ⛔ I am NOT re-scoring against a lag-centered window, and the NO-GO STANDS
+
+A window centered on −4..−6 would raise the score. **I am not doing that.** I have already mis-centered this metric
+twice (first on `b`, then −5..+1), and re-centering a third time — now with full knowledge of where the peaks land —
+is precisely the goalpost-moving this project has been burned by. The pre-registered verdict (**blind 0.133, NO-GO**)
+stands as the task result.
+
+**What a legitimate future test looks like:** derive the window from `btsp_elig_tau_ms` **a priori** (the lag is
+predicted by the rule's own time constant, not fitted to the data), pre-register it, and validate on seeds never used
+in any of the above — 42/43/44 and 100/101/102 are all now contaminated for this purpose.
+
+## Net state of gap#4 after this arc
+
+- **Credit assignment: WORKS.** Correct backward bin, stable magnitude, on every seed including task failures.
+- **Field lag: CHARACTERIZED.** ≈ `τ_elig`, reproducible across read-outs and seeds.
+- **Behaviour: NOT demonstrated.** Blind 0.133; the read-out expresses the credit only weakly and only in a narrow
+  non-saturated band; potentiation is non-selective (20/20 bins).
+- **The binding constraint is CONTRAST, not sensitivity** — lever 1 is now tested and bounded. The open mechanism
+  question is how to make potentiation *selective* (heterosynaptic depression, sparser eligibility), which is a
+  research-gate question, not a sweep.
