@@ -1,0 +1,45 @@
+# gap#4 — the ranked contrast candidates are EXHAUSTED: three families, three distinct diagnosed failures
+
+The research gate ranked four mechanisms for raising adjacent-band contrast. Three have now been built and tested,
+each failing for a **different and precisely identified** reason. None was abandoned on a hunch.
+
+| # | mechanism | outcome | root cause |
+|---|---|---|---|
+| Rank 3 | Milstein split-threshold **band** | FAILED, 2 pre-registered attempts, cap fired | **geometric collision**: field spacing (4 bins) == backward shift (4-6 bins), so "the adjacent field" and "where THIS field forms" are the SAME lag. No band in eligibility space can separate what lag space does not. |
+| Rank 2 | **zero-DC** difference-of-exponentials | FAILED pre-registered test | **trace-amplitude mismatch**: validated on EQUAL-amplitude idealized traces, but deployed traces are normalized EMAs with increments 1e-3 vs 3.33e-4 → amplitude ratio 0.36, so `a_dep*slow` cannot cancel the fast DC. Over-potentiates 3x and saturates stage 1. |
+| Rank 4 | **mean-subtracted increment** (Miller-MacKay) | REFUTED PRE-FLIGHT (no seeds spent) | **the w_min floor breaks the structural guarantee**: mean subtraction makes ~half the increments negative, and **4240 / 8320 weights (51%) clip at w_min = 0**, so the surviving positive increments drift the mean UP. Total dw RISES (+342k vs +206k) — the opposite of the intended effect. |
+| Rank 5 | replacing traces | not applicable here | spike count has **zero variance** in this task (every pool fires exactly 250), so the count-vs-timing concern cannot bite; measured corr(eligibility, lag) = **-0.9445**. |
+
+## The process point: Rank 4 cost ZERO seeds
+
+Rung 5's root cause was that I validated a kernel on inputs the implementation never generates. The correction —
+**verify the claimed property on the DEPLOYED traces before pre-registering** — was applied immediately to Rank 4
+and caught its failure pre-flight, at the cost of two short probes instead of a 6-seed run plus a pre-registration
+plus a retraction. One cycle, one lesson, immediately repaid.
+
+⚠️ It also caught a smaller error of the same family: I wrote a print statement concluding *"the clip breaks the
+zero-sum"* while that same test showed **0/64 clipped and sum(dw) ≈ 0**. I had written the explanation before
+reading the numbers. The real cause (the w_min floor, 51% of synapses) came from actually measuring which bound
+was being hit.
+
+## What the three failures have in common
+
+Every mechanism tried so far manipulates the update as a function of **eligibility magnitude** on the synapse's own
+afferent. Each fails at a different place, but the pattern is that the adjacent-lag population is not separable
+from the field-forming population **by any per-synapse scalar available at the time of the update** — the band
+tried to select it, the DoG tried to subtract it, and the mean subtraction tried to normalize it away.
+
+## Where this leaves gap#4 — unchanged blocker, much better characterized
+
+**ROBUST ANCHOR (the most reproduced measurement in this arc):** adjacent contrast **1.213x** vs far **2.609x**,
+reproduced 6/6 on fresh seeds across THREE separate runs (rung 4, 4b, 5). The input is not the blocker (afferent
+adjacent-bin cos 0.0000 at L1, 0.7436 at L2). The rule already decorrelates as well as the repo's engineered grid
+code (0.7436 vs 0.7379).
+
+**NEXT: a second research gate, now armed with three diagnosed failure modes** rather than a general question. That
+is a materially better-posed gate than the first one, and it should be asked as: *given that adjacent-lag and
+field-forming synapses are not separable by any per-synapse scalar at update time, what mechanism separates them —
+or what changes the geometry so that they are separable?* The geometric route (field spacing > backward shift) is a
+live, falsifiable option the second failure handed us and which no mechanism above addresses.
+
+**NOT claimed:** that adjacent-band contrast is unachievable. Three methods failed; the capability is untouched.

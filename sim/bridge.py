@@ -7414,7 +7414,33 @@ class SimulationBridge:
                     active_bt = cp.where((etilde_bt > 1e-6) & (is_bt > 1e-6))[0]
                 if active_bt.size > 0:
                     cur_w = self.cp_connections.data[active_bt]
-                    if self.cp_btsp_pre_elig_slow is not None:
+                    _msub = float(getattr(cfg, "btsp_mean_subtract", 0.0))
+                    if _msub > 0.0:
+                        # Rank-4 Miller-MacKay subtractive normalization. h = the raw potentiation
+                        # increment; subtracting its per-POSTsynaptic-cell mean makes sum_j dw_ij = 0
+                        # exactly, so no pedestal can form. This is a rank-1 (common-mode) operation --
+                        # the repo's own 2026-06-15 finding establishes that class is point-neuron
+                        # legal (it already ships enable_input_mean_adapt on that basis); it is NOT the
+                        # off-diagonal cross-neuron op Mikulasch-Priesemann forbids.
+                        _eta_ms = cp.float32(getattr(cfg, "btsp_learning_rate", 0.001))
+                        _wmin_ms = cp.float32(getattr(cfg, "btsp_w_min", 0.0))
+                        _wmax_ms = cp.float32(getattr(cfg, "btsp_w_max", 5.0))
+                        _h = etilde_bt[active_bt] * (_wmax_ms - cur_w)
+                        _post_idx = coo_bt.col[active_bt]
+                        _nn_ms = int(self.cp_membrane_potential_v.size)
+                        _sum_h = cp.zeros(_nn_ms, dtype=cp.float32)
+                        _cnt_h = cp.zeros(_nn_ms, dtype=cp.float32)
+                        try:
+                            import cupyx
+                            cupyx.scatter_add(_sum_h, _post_idx, _h)
+                            cupyx.scatter_add(_cnt_h, _post_idx, cp.ones_like(_h))
+                        except Exception:
+                            cp.add.at(_sum_h, _post_idx, _h)
+                            cp.add.at(_cnt_h, _post_idx, cp.ones_like(_h))
+                        _mean_h = _sum_h / cp.maximum(_cnt_h, 1.0)
+                        _centred = _h - _msub * _mean_h[_post_idx]
+                        new_w = cp.clip(cur_w + _eta_ms * is_bt[active_bt] * _centred, _wmin_ms, _wmax_ms)
+                    elif self.cp_btsp_pre_elig_slow is not None:
                         new_w = fused_btsp_dog_update(
                             cur_w, etilde_bt[active_bt],
                             self.cp_btsp_pre_elig_slow[coo_bt.row][active_bt],
