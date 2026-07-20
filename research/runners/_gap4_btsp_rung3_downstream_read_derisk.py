@@ -213,7 +213,11 @@ def one_run(seed, *, l2_eta=0.02, do_l2_plateau=True, score_cell=None, plateau_c
     # L2 should read the cell one eligibility-window BEFORE it. Scoring C2 against the unmoved target
     # would make it fail trivially (and would prove nothing about selectivity).
     shift_bins = int(round(elig_tau_ms / float(bin_steps * dt_ms)))
-    expected_bin = (CELL_TARGETS[_pc] - shift_bins) % N_BINS
+    # Derive from the bin the plateau was ACTUALLY delivered at (tgt_bin = ca1_peaks[_pc]),
+    # NOT the nominal CELL_TARGETS[_pc] -- those differ (e.g. 7 vs 13) because the layer-1
+    # fields are themselves backward-shifted, so the nominal value is inconsistent with the
+    # manipulation and silently mis-specifies the expectation.
+    expected_bin = (tgt_bin - shift_bins) % N_BINS
     expected = int(np.argmin([abs(((t - expected_bin + N_BINS // 2) % N_BINS) - N_BINS // 2)
                               for t in CELL_TARGETS]))
     sc = expected if score_cell is None else score_cell

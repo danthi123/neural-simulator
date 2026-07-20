@@ -338,3 +338,69 @@ while still failing the 0.80 gate. That is a hint, not a result: n=3 dev seeds, 
 
 ⇒ **Honest state: rung 3 remains NO-GO. The density hypothesis is live but untested** — testing it needs an
 intermediate density (spacing 3) where fields tile more finely WITHOUT colliding, plus restored seed variation.
+
+---
+
+## RUNG 3c — THE CORRECTED CONTROL FIRES, AND IT OVERTURNS A SECOND CLAIM OF MINE
+
+With `C2` rebuilt as a genuine manipulation (it now MOVES the L2 plateau and re-runs all of stage 2), the
+spacing-4 arm (`map_ok=1`, 3 dev seeds, values stable to ~4 dp) reads:
+
+| arm | dw | `l2_peak` | plateau bin | `r_tgt` |
+|---|---|---|---|---|
+| MAIN | 448.1 | **7** | 7 | 0.158 |
+| C1_l2_frozen (eta=0) | **0** | 4 | 7 | **0.0067** |
+| C3_no_l2_plateau | **0** | 4 | — | **0.0067** |
+| C2_plateau_moved | 452 | **11** | 11 | 0.185 |
+
+**L2 genuinely learned to read the CA1 population.** Three independent controls agree:
+- freezing L2 plasticity collapses the response **24x** (0.158 -> 0.0067) and `dw` to exactly 0;
+- removing the L2 plateau collapses it identically;
+- **moving the plateau MOVES the read, exactly**: plateau 7 -> `l2_peak` 7; plateau 11 -> `l2_peak` 11.
+
+### ⛔ SECOND RETRACTION: "the backward window PROPAGATES across layers" is FALSE
+
+An earlier block in this file states the backward window propagates and that "L2 learns the field that PRECEDED
+the plateau". **The measured offset is `l2_peak - plateau_bin = +0` in BOTH arms.** There is no backward shift at
+layer 2 at all. That claim is WITHDRAWN. (It was never measured — it was inferred from `l2_peak=7` while
+mis-reading which bin the plateau was actually delivered at: the plateau goes to `ca1_peaks[cell]` = bin 7, not to
+the NOMINAL `CELL_TARGETS[cell]` = bin 13.)
+
+### THE GATE IS DEMONSTRABLY INVALID — and I am NOT re-scoring on it
+
+The pre-registered gate asks whether `l2_peak` lands within +/-2 bins of a **backward-shifted** reference
+(`tau_elig/bin_duration` = 5 bins earlier). L2 peaks at offset 0, so MAIN scores `read_hit=0`.
+
+**But look at the controls: `C1_l2_frozen` and `C3_no_l2_plateau` both score `read_hit=1`.** A gate that the
+do-nothing arms PASS and the genuinely-learned arm FAILS is measuring the wrong thing. This is precisely the named
+defect "a gate that can pass without its key control".
+
+**I am NOT re-centering the window on this data.** The record already carries an explicit warning that I have
+mis-centered this metric twice and that "a third re-centering with full knowledge of where the peaks land is
+goalpost-moving". So: **the pre-registered NO-GO STANDS as filed.** What changes is that the gate is now known to
+be invalid, which is a statement about the INSTRUMENT, not a rescue of the result.
+
+Also fixed for future runs (a real bug, not a re-scoring): the expectation was derived from the NOMINAL
+`CELL_TARGETS[_pc]` while the plateau is delivered at the OBSERVED `ca1_peaks[_pc]` — two different bins (13 vs 7),
+so the expectation was inconsistent with the manipulation.
+
+### POST-HOC mechanism (explicitly labelled: generated AFTER seeing the data, NOT validated)
+
+Why offset 0 at layer 2 when layer 1 shows a clear backward shift: at layer 1 the input is position, and a plateau
+at bin b credits inputs still decaying from earlier bins, so the field shifts BACK. At layer 2 the input is the CA1
+population **whose fields have ALREADY shifted**. L2 plateaued at bin 7 sees the CA1 cell whose field peaks at 7
+maximally active *at that instant*, so the strongest eligibility is the CONCURRENT one. **The shift happens once,
+upstream; it does not compound.**
+
+This is a hypothesis, not a finding. It yields a falsifiable PRE-REGISTERED prediction for a future run on
+**fresh, uncontaminated seeds**: `l2_peak - plateau_bin == 0 +/- 1`, with the plateau-moved control tracking 1:1.
+All six seeds used here are now contaminated for that test.
+
+### Net state of rung 3
+
+- Pre-registered gate: **NO-GO** (stands, unrescued).
+- Underlying mechanism: **one-shot local credit DOES compose across a layer** — L2 learns a plateau-locked read of
+  a learned population code, causally confirmed by three controls. That is the substantive gap#4 question, and the
+  answer measured here is positive.
+- These cannot be merged into a "GO" without a fresh pre-registration on fresh seeds. Recorded as: **mechanism
+  positive, gate NO-GO, instrument now understood.**
