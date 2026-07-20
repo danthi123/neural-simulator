@@ -172,13 +172,25 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   wrong "fixes" were tested+rejected). **The DEFINITIVE COMBINED CAPSTONE demonstrated: the fully-synaptic (no host read)
   spiking cortex GENERATES fluent prose.** NO `sim/` edit anywhere in the arc; findings
   `2026-07-20-gap1-RF-PHASE-ENCODE-...` + `-gap1-fully-synaptic-RF-transduction-RUNG1-GO-...`.
-  **⇒ NEXT FRONTIER (the north star "a brain you COMMUNICATE with"): GROUNDED FLUENT CONVERSATION** — combine gap#1's OPEN
-  fluent generation (the WKV cortex) with the EMERGE grounded reasoning + the fluid console (which do query→grounded answer
-  over BOUNDED frames). A fresh substantial arc warranting its OWN deep-research gate (a0-scoped: existing consoles
-  `_fluidconv_chat_repl` / `_emerge*console` / the fluid dispatch; wiring findings `2026-07-13-emergent-generation-ladder-
-  wired-into-a-talkable-console`, `2026-07-08-fully-spiking-generation-...-answer-GO`). Other open: gap#4 learn-to-accuracy
-  via a different credit mechanism (deep-credit is a parallel frontier per the a-1 synthesis; reservoir/shallow-readout is
-  the emergence path); gap#1 V/D scaling.
+- **✅✅ NORTH STAR — GROUNDED FLUENT CONVERSATION de-risked END-TO-END on the spiking substrate (2026-07-20, the
+  landmark this session): "a brain you COMMUNICATE with" — type a question → the brain (comprehension + grounded-fact
+  retrieval + gate-first no-confab moat) → the answer is rendered as fluent grounded prose by the SPIKING WKV cortex.**
+  Research gate scoped it (trust-but-verified all 3 load-bearing claims myself: the gate-first handoff `_answer:319-333`,
+  the FTFaculty interface, vocab-compat 0-missing): the whole grounded console (`_fluidconv_chat_repl.py`) is already GO;
+  the ONE residual was swapping the ~21M ANN renderer for gap#1's spiking WKV + a format fine-tune. The 4-rung ladder:
+  **De-risk 0 (ceiling)** raw WKV 0.17 (rambles) → residual-B needed; **De-risk 2 (format fine-tune, EMERGE-57 lever)**
+  6-SEED GO — focused-grounded DEV 0.833 / BLIND 0.849, RA-faithful ~1.00, anti-forget stable, on held-out facts (a
+  torch module bit-matches the numpy forward, verify-first; caught+fixed a silent `unk=V-1`→suppressed-`<eos>` bug);
+  **De-risk 1 (wiring+moat)** `FluidChat(renderer="wkv")` renders grounded Q&A + growth, GATE-FIRST MOAT VERIFIED (WKV
+  invoked 0× on every abstain); **De-risk 3 (fully-spiking on-bridge)** the grounded answer renders ON SPIKES via
+  RF-phase + fully-synaptic input at parity ("the dog eats meat `<eos>`", "the fox chases rabbit `<eos>`", etc.). The
+  ANN scaffold is RETIRED for the render path (and was absent/gitignored here anyway — the 9.8MB WKV npz is the only
+  portable + spiking renderer). NO `sim/` edit anywhere. Findings `2026-07-20-grounded-fluent-conversation-DE-RISK-{0,1-2,3}-*`.
+  **⇒ NEXT FRONTIER: De-risk 4 = OPEN/RICH multi-fact PROSE (elaboration/discussion — the honest field wall; render-per-fact
+  + VERIFY, the P10/P16 pattern) where the WKV's open fluency exceeds a template.** Firming follow-ons: the true one-process
+  co-execution (numpy composer + cupy on-bridge WKV, the EMERGE-70/71 pattern); the wikidata-tail + persistence paths on the
+  WKV renderer. Other open (parallel frontiers): gap#4 learn-to-accuracy via a different credit mechanism (reservoir/shallow-
+  readout is the emergence path per the a-1 synthesis); gap#1 V/D scaling.
 - **🎯 gap#4 KEYSTONE REFRAMED (2026-07-20 close-state) — deep local credit is MECHANISM-ESTABLISHED; the apparent
   "contrast blocker" was a TASK ARTIFACT.** After rungs 1-9 + 6 pre-flights + a 28-agent adversarial audit, the
   honest status of "does the substrate learn DEEP representations by a biological rule?":
