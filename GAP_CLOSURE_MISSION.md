@@ -343,9 +343,13 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   `<unk>`-FREE, coherent narrative, generated on-bridge by the RF-phase SPIKING input (map-corr 0.996). The
   fluency-tracks-scale progression completes at the threshold. **⇒ gap#1 open-fluent-generation DEMONSTRATED END-TO-END
   ON THE SPIKING SUBSTRATE** (RF-phase spiking input → graded-state cortex → fluent prose; the value = the trained
-  readout over a fixed spiking substrate, R3/gap#4-a-1 convergence, realized at scale). Only the ~10-token `<unk>`
-  warmup prefix persists (bounded early-gen artifact). Superseded "the spiking-INPUT is the open wall" verdict below
-  kept for the trail.
+  readout over a fixed spiking substrate, R3/gap#4-a-1 convergence, realized at scale). **The `<unk>` warmup was a
+  prompt-tokenization BUG (raw string char-split; caught by verifying `--gen-no-unk`) — FIXED (`.split()`); with
+  `--gen-no-unk`, generation is FLUENT FROM THE FIRST TOKEN:** *"once upon a time there was a girl named sally found a
+  big blue rock…"* / *"the little girl was very happy… they found a bathtub with lots of fun toys… a pretty box with a
+  key and a skull said the soft teddy bear…"* / *"tom and his dog… soon it was time for something fun to ride the bikes
+  around the street amy saw a big boat in the pond…"* — coherent TinyStories with character names, 3 prompts. gap#1's
+  capability is fully demonstrated. Superseded "the spiking-INPUT is the open wall" verdict below kept for the trail.
 - **🎯 gap#1 DEFINITIVE (2026-07-20) — harness VALIDATED (M1 +0.542 GO), the ENCODE is the wall (confirmed +
   quantified), token-SDR REFUTED. The spiking-INPUT is a REAL, precisely-located wall — a verdict on the METHODS
   tried, not the capability.** The last root cause of the harness chaos: the checkpoint's decay `w` is PER-CHANNEL

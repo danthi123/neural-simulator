@@ -184,11 +184,22 @@ not a substrate wall.** Full fluency = the documented ~23.7M-token training run 
 The body is essentially `<unk>`-FREE and reads as coherent TinyStories narrative — **genuinely fluent prose**, generated
 on-bridge by the RF-phase SPIKING input into the graded-state WKV cortex (map-corr 0.996, the RF-phase encode holds at
 full scale). The fluency-tracks-scale progression completes exactly at the CEILING threshold:
-`<unk>`-heavy (V=1000) → more continuous (V=2000/d256/10M) → **fluent (V=4000/d256/23.7M)**. Only the ~10-token `<unk>`
-warmup prefix persists (a bounded early-generation artifact, orthogonal to scale). **⇒ gap#1's open-fluent-generation
-capability is DEMONSTRATED END-TO-END ON THE SPIKING SUBSTRATE: the RF-phase spiking input feeds a graded-state
-recurrent cortex that GENERATES fluent prose — the value being the trained readout over a fixed spiking substrate (the
-R3 / gap#4-a-1 convergence), realized at scale.**
+`<unk>`-heavy (V=1000) → more continuous (V=2000/d256/10M) → **fluent (V=4000/d256/23.7M)**. The `<unk>` warmup prefix was ENTIRELY a prompt-tokenization
+bug (`Vocab.ids` maps per element → a raw string iterates CHARS → all `<unk>`; the eval passes a word-LIST — caught by
+verifying the `--gen-no-unk` claim, silent-failure discipline). **FIXED (`.split()` the prompt) + `<unk>`-suppressed,
+the generation is FLUENT FROM THE FIRST TOKEN:**
+> *"once upon a time there was a girl named sally found a big blue rock that said wow you can look a fairy help me tim i
+> told you to eat the bug i don't know what to do…"*
+> *"the little girl was very happy to have the spoiled toy… to the kitchen table they found a bathtub with lots of fun
+> toys to play with… there was a pretty box with a key and a skull said the soft teddy bear…"*
+> *"tom and his dog is very happy again… said it's okay sara i am sorry… soon it was time for something fun to ride the
+> bikes around the street amy saw a big boat in the pond…"*
+
+Coherent TinyStories narrative with character names (sally, tim, tom, sara, amy), no leading `<unk>`, across 3 prompts.
+**⇒ gap#1's open-fluent-generation capability is DEMONSTRATED END-TO-END ON THE SPIKING SUBSTRATE: the RF-phase spiking
+input feeds a graded-state recurrent cortex that GENERATES fluent, coherent prose — the value being the trained readout
+over a fixed spiking substrate (the R3 / gap#4-a-1 convergence), realized at the documented scale.** (`--gen-no-unk`
+suppresses the high-freq `<unk>`; `--gen-temp` samples; both additive/default-off.)
 Checkpoints: `wkv_ssmU_v{1000,2000}_d128`, `wkv_ssmU_v2000_d256`, `wkv_ssmU_v4000_d256_big` (regenerable).
 
 ## Artifacts

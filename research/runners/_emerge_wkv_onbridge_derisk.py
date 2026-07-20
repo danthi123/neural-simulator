@@ -328,6 +328,8 @@ def main():
                     help="(--gen-tokens) the seed prompt for on-bridge generation.")
     ap.add_argument("--gen-temp", dest="gen_temp", type=float, default=0.0,
                     help="(--gen-tokens) temperature SAMPLING (>0) instead of argmax; argmax mode-collapses to <unk>/function-words.")
+    ap.add_argument("--gen-no-unk", dest="gen_no_unk", action="store_true",
+                    help="(--gen-tokens) suppress the <unk> token in sampling (it is the high-freq default) for clean prose.")
     ap.add_argument("--rf-phase-encode", dest="rf_phase_encode", action="store_true",
                     help="(gap#1 spiking-input, greenlit 2026-07-20) deliver the per-token dual-nonneg inject via RF PHASE "
                          "(value in a spike's timing, no rate-code dead-zone) on an independent RF-oscillator pool, decode, "
@@ -642,7 +644,7 @@ def main():
             return head_w @ (_rh * (Wo_sp @ state)) + head_b
 
         _wash()
-        prompt_ids = [i for i in vocab.ids(args.gen_prompt) if 0 <= i < V]
+        prompt_ids = [i for i in vocab.ids(args.gen_prompt.split()) if 0 <= i < V]  # split into WORDS (ids() maps per element; a raw string iterates CHARS -> all <unk>)
         if not prompt_ids:
             prompt_ids = [vocab.ids("the")[0] if vocab.ids("the") else 0]
         gen = list(prompt_ids); _state = None
@@ -650,8 +652,11 @@ def main():
             _state = _charge_token(_tid)
         _grng = np.random.default_rng(args.seed)
         _gtemp = float(getattr(args, "gen_temp", 0.0))
+        _unk_idx = (len(words) - 1) if (words and words[-1] == "<unk>") else -1   # <unk> is the trailing vocab entry
         for _ in range(int(args.gen_tokens)):                       # autoregressive rollout
             _lg = _next_logits(gen[-1], _state)
+            if getattr(args, "gen_no_unk", False) and 0 <= _unk_idx < len(_lg):
+                _lg = _lg.copy(); _lg[_unk_idx] = -1e30             # suppress <unk> (the high-freq default) for clean prose
             if _gtemp > 0.0:                                        # temperature SAMPLING (argmax mode-collapses to <unk>/function-words)
                 _z = _lg / _gtemp; _z = _z - _z.max(); _p = np.exp(_z); _p = _p / _p.sum()
                 _nxt = int(_grng.choice(len(_p), p=_p))
