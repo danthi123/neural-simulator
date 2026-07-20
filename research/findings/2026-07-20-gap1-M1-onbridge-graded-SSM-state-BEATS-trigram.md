@@ -156,6 +156,27 @@ last ~15 steps — a longer window adds NO information to the read while accumul
 adaptation** (`cp_recovery_variable_u`, the same accumulation that bit EMERGE-61), which distorts the rate code.
 ⇒ **the optimum is a window long enough to sample but short enough to precede adaptation (~24 steps).**
 
+### M3 (learn-through-the-substrate co-adaptation) — closes 83% of the remaining gap, but does NOT cross
+
+Rather than fight the delivery noise, TRAIN THROUGH IT: the model is trained with input noise so the input map and
+read-out co-adapt to the actual spiking delivery (the gap#4 lever), then deployed on the SAME spiking NEF path
+(t_step=24, n_enc=48).
+
+| co-adaptation noise | off-bridge (capability retained) | ON THE SPIKING INPUT PATH |
+|---|---|---|
+| none (naive M2) | +0.113 | −0.181 |
+| 0.3 | +0.111 | −0.104 |
+| 0.6 | +0.089 | −0.087 |
+| 1.0 | +0.086 | −0.052 |
+| **1.5** | +0.062 | **−0.030 ← PEAK** |
+| 2.0 | +0.038 | −0.060 |
+| 3.0 | +0.019 | −0.099 |
+
+**A clean inverted-U with a genuine optimum at σ≈1.5.** Co-adaptation recovers **83% of the gap** (−0.181 → −0.030),
+landing the fully-spiking-input path within **0.03 nats** of the fair trigram — but it does not cross. The tradeoff is
+explicit and monotone: co-adaptation buys on-bridge robustness by *spending* off-bridge capability (+0.113 → +0.019),
+and past σ=1.5 the cost dominates the benefit. This is a real optimum, not a tuning plateau.
+
 ⇒ **All levers WITHIN the M2 design are now exhausted** (population, cross-talk, calibration basis, window). The
 spiking input delivery tops out at fidelity **0.786** / σ_rel **0.622**, costing ~0.18-0.3 nats — real, bounded, and
 precisely quantified. **The remaining fix is M3: stop fighting the noise and TRAIN THROUGH IT** — co-adapt the input map
