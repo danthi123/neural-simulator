@@ -55,9 +55,15 @@ state is the fixed reservoir's own dynamics). Reduced grounded vocab (112 words)
   — WORSE than the single-linear ~0.8. The FA-routed hidden credit is coarser than the EXACT single-linear delta
   (the output layer's gradient is local + exact), so the approximation cost exceeds the capacity benefit. ⇒ for THIS
   on-bridge read-out the exact single-linear delta is the better rule; adding a generic FA hidden layer HURTS.
-- **The next rung (accuracy top-up):** the single-linear ~0.8 is below the off-bridge MULTI-layer 0.998 — closing the
-  last ~0.2 needs the SPECIFIC off-bridge recipe (the current-token GATE `sigmoid(Wr@h)` + the graded clean-error /
-  KP, which reached 0.998), NOT a generic 2-layer — **rung (iv): the gated read-out
+- **Rung (iii') — a LINEAR current-token term reaches 0.90 (the clean win, `--add-token`):** augment the exact
+  single-linear read-out with a linear current-token term (`logits = W@state + Wh@h`, BOTH by the exact delta rule) —
+  the current token disambiguates which copy-position is being produced. **Grounded acc 0.900 (70 ep, still rising:
+  0.61→0.84→0.897→0.900)**, up from ~0.8 and CLOSE to the off-bridge multi-layer 0.998 — achieved by the SIMPLEST
+  biological rule (pure exact delta, NO gate, NO FA, NO adaptive optimizer). ⇒ the on-bridge fully-spiking read-out
+  learning reaches **~0.90** by a pure exact local plasticity rule; the multiplicative gate + FA (rung iv) is not
+  needed for most of the gain (the current-token info enters linearly).
+- **The last few %:** ~0.90 → 0.998 (the hardest memory-dependent copies) may still want the multiplicative gate —
+  **rung (iv, optional): the gated read-out
   `head @ (sigmoid(Wr@h) * (Wo_sp@state))` on-bridge, with the FA feedback pathway for the hidden layers** (the D3
   clean-error channel / `enable_bdsp_graded_credit`). The off-bridge multi-layer FA reached 0.998 reduced, so the
   on-bridge multi-layer read-out is de-risked at the rule level; realizing the gated forward on-bridge (rung iv) +

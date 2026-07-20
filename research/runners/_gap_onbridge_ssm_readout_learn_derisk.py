@@ -41,6 +41,9 @@ def main():
     ap.add_argument("--n-hidden", type=int, default=0,
                     help="rung (iii): a 2-LAYER read-out — W1[H,N]@state (on-bridge) -> relu -> W2[nv,H] (host). W1 by "
                          "FA (fixed-random feedback B[H,nv], transport-free), W2 by delta. 0 = the single-layer rung ii.")
+    ap.add_argument("--add-token", action="store_true",
+                    help="rung (iii'): augment the exact single-linear read-out with a LINEAR current-token term "
+                         "(logits = W@state + Wh@h, both by exact delta) -> the current token disambiguates the copy.")
     args = ap.parse_args()
 
     xp, bname = get_backend()
@@ -92,6 +95,7 @@ def main():
     else:
         W = (0.01 * rng.standard_normal((nv, N))).astype(np.float32)
         b.cp_ssm_readout_w = xp.asarray(W)
+    Wh = (0.01 * rng.standard_normal((nv, D))).astype(np.float32) if args.add_token else None  # linear current-token term
     perm = rng.permutation(N) if args.shuffle_elig else None         # anti-cheat: shuffle state->readout association
 
     def charge(rid):
@@ -123,11 +127,16 @@ def main():
             if not mask[t + 1]:
                 continue
             hidden = np.maximum(out, 0.0) if H > 0 else None                    # relu (2-layer)
-            logits = (W2 @ hidden) if H > 0 else out
+            logits = (W2 @ hidden) if H > 0 else out.copy()
+            h_tok = _ln(wkv_emb(seq[t])) if Wh is not None else None            # current-token feature (for the linear token term)
+            if Wh is not None:
+                logits = logits + Wh @ h_tok
             pred = int(np.argmax(logits)); correct += int(pred == seq[t + 1]); tot += 1
             if train:
                 p = np.exp(logits - logits.max()); p /= p.sum(); err = p.copy(); err[seq[t + 1]] -= 1.0  # softmax - onehot
                 elig = state[perm] if perm is not None else state              # presynaptic eligibility = the on-bridge state
+                if Wh is not None:
+                    Wh[:] = Wh - args.lr * np.outer(err, h_tok).astype(np.float32)   # delta on the current-token term
                 if H > 0:
                     W2[:] = W2 - args.lr * np.outer(err, hidden).astype(np.float32)   # delta (output layer, local)
                     err_h = (Bfa @ err) * (out > 0)                                   # FA to hidden (transport-free) * relu'
