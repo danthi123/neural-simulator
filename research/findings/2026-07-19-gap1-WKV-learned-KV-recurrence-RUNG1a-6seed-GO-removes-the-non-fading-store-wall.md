@@ -501,3 +501,63 @@ per-token window (T_STEP) so the plateau tracks each token, + a re-tuned operati
 the bound from "fundamental noise" to "transient tracking" — a tunable, likely-closable issue (the hi-fidelity test at T_STEP 20-40 tests
 exactly this). If longer-window closes the corr -> the on-substrate BEAT is reachable at deploy (no training-through-the-bridge needed).
 Genuine forward progress: the earlier "-1.0 deep-NLL, deep-arc-gated" was partly a SHORT-WINDOW artifact, not purely fundamental.
+
+## On-bridge hi-fidelity WKV port — POST-HOC read-out caps below trigram at EVERY operating point; the fix is end-to-end training through the exact plateau transfer (2026-07-19, verify-first)
+
+**Question:** can the FULL multi-channel WKV state run on the actual bridge (spiking Izhikevich soma + graded dendritic
+plateau channels) with enough fidelity to BEAT the fair interpolated trigram at deep context (the "fully-spiking one-brain
+purity" bar for gap#1)? The DEMONSTRATED gap#1 closure (SpikeGPT-faithful --spike-output, graded state + spike output,
+6-seed robust BEAT + generates prose) already exists; this is the stricter on-substrate realization.
+
+**Corrected per-pop operating-point sweep (graded-plateau read, `--pathway-per-pop`, pathway_w=16, center=8; the read is
+`cp_conductance_g_graded_plateau`, the corr-0.98-core Mikulasch-Priesemann analog value):**
+
+| config | state-corr (on-bridge vs rate-SSM) | deep-NLL (d10-99) vs trigram |
+|---|---|---|
+| pk16 ts6  | 0.555 | **-0.890** (best) |
+| pk48 ts6  | 0.624 | -1.331 |
+| pk16 ts20 | 0.497 | -1.015 |
+| pk48 ts20 | 0.487 | -1.194 |
+
+(exact-state READ ceiling, earlier: corr 0.795 -> deep-NLL **-0.34** = the best-case ceiling of the post-hoc read-out.)
+
+**Three verified conclusions (each caught an over-optimism of mine — verify-first):**
+1. **The short-window-transient reframe is REFUTED.** Longer per-token window (ts20) is WORSE than ts6, not better. The
+   transient is just a constant gain absorbed by the read-out; it is NOT the bound.
+2. **State-fidelity/read-out DISSOCIATION.** More population RAISES state-corr (0.555 -> 0.624) yet LOWERS deep-NLL
+   (-0.89 -> -1.33). So the bound is NOT the state realization (the substrate realizes the leaky state fine) -- it is the
+   POST-HOC read-out generalization at deep context.
+3. **ROOT CAUSE = the plateau integrates `sigmoid(value)` (a SATURATING transfer: center=8, slope=0.33), while the
+   off-bridge SSM integrates the RAW value.** The SSM learns |v|~2; 16*relu(2)=32 >> center 8 -> sigmoid saturates -> the
+   graded middle (the information) is lost. The post-hoc reservoir read-out inherits an input map trained for RAW
+   integration (it produces saturating values), so no operating-point tuning (pop/window/per_pop) can recover deep context.
+
+**THE FIX (gap#1<->gap#4 convergence, in flight): `--plateau-exact`** -- a torch recurrence that IS the exact bridge
+transfer `V = relu(sigmoid(slope*(pathway_w*rate - center)) - floor)` (the floor-subtracted logistic
+`fused_graded_dendritic_plateau` reads), trained END-TO-END so the input map LEARNS to keep values in the plateau GRADED
+range. Deploy on-bridge with matching (center, pathway_w) -> the on-bridge state matches (corr->1.0) -> the trigram-beating
+read-out applies. This is exactly the "learn through the substrate" deep-credit lever (gap#4): the post-hoc reservoir
+read-out cannot fix a saturating input map; only end-to-end co-adaptation through the actual transfer can.
+Off-bridge precondition sweep (does end-to-end through the exact transfer beat the trigram off-bridge, at which operating
+point) running; then deploy the winner on-bridge.
+
+### plateau-exact: GO off-bridge (+0.10..+0.12 all 4 configs), but the on-bridge DEPLOY is NEGATIVE (-1.17) -- the input-pool f-I is the missing piece (2026-07-19, verify-first)
+
+End-to-end training through the EXACT plateau transfer (`--plateau-exact`, center=8/slope=0.33/pathway_w=16)
+BEATS the fair trigram OFF-bridge at all 4 operating points (+0.111/+0.105/+0.104/+0.123, perm/mless controls
+collapse). The precondition holds: end-to-end co-adaptation to the plateau transfer works.
+
+BUT the on-bridge DEPLOY of that SSM (matching center=8, pathway_w=16, per_pop) is NEGATIVE: deep-NLL **-1.169**
+(pk16), WORSE than the plain dual-nonneg deploy (-0.89). ROOT CAUSE (verify-first, my "corr->1 on deploy"
+prediction was WRONG): the off-bridge model fed `relu(v)` DIRECTLY as the transfer "rate", but on-bridge the
+transfer input is `pathway_w * firing_rate` where `firing_rate = f-I(drive_scale * relu(v))` -- a SATURATING
+input-pool f-I. At drive_scale=800 the input pool SATURATES (all values -> firing ~0.5) -> c_weighted ~ center
+for every value -> V ~ 0.5 uniformly -> NO discrimination -> worse than dual-nonneg. The off-bridge GO trained
+the input map for a transfer input (relu(v)) that the on-bridge chain does NOT deliver.
+
+METHOD banked, CAPABILITY not abandoned. Next method (cheap-first): MEASURE the on-bridge input-pool f-I
+(drive -> firing) directly, calibrate drive_scale so `f-I(drive_scale*relu(v)) ~ relu(v)` over the active range
+(un-saturated, graded), AND/OR bake the measured f-I into the off-bridge plateau-exact model so the input map
+co-adapts to the ACTUAL on-bridge transfer input. If that closes it -> on-substrate BEAT -> 6-seed. If not ->
+the FULL-chain end-to-end (differentiable surrogate of input-pool-f-I + plateau in the training loop, or true
+BPTT through the bridge) = the gap#1<->gap#4 convergent deep arc.

@@ -159,6 +159,29 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                     _pc = float(getattr(args, "plateau_sur_center", 1.0)); _psl = float(getattr(args, "plateau_sur_slope", 1.0))
                     ap2 = torch.zeros(B, D, device=x.device); an2 = torch.zeros(B, D, device=x.device); outs2 = []
                     _inz = float(getattr(args, "input_noise", 0.0))
+                    if getattr(args, "plateau_exact", False):
+                        # EXACT on-bridge plateau transfer (gap#1<->gap#4 convergence): the recurrence IS
+                        # fused_graded_dendritic_plateau's read state -- V = relu(sigmoid(slope*(pathway_w*rate - center)) - floor),
+                        # floor = sigmoid(-slope*center) so V(0)=0. The leaky-integral of V (strength absorbed by the read-out) is
+                        # exactly what the on-bridge runner reads from cp_conductance_g_graded_plateau. Training end-to-end through
+                        # THIS transfer makes the input map LEARN to keep values in the plateau's GRADED (non-saturating) range, so
+                        # the deployed on-bridge state matches (corr->1.0) and the trigram-beating read-out applies -- the fix the
+                        # post-hoc reservoir read-out cannot do (it inherits a saturating input map trained for raw integration).
+                        import math as _m
+                        _pxc = float(getattr(args, "px_center", 8.0)); _pxs = float(getattr(args, "px_slope", 0.33))
+                        _pxw = float(getattr(args, "px_pathway_w", 16.0))
+                        _floor = 1.0 / (1.0 + _m.exp(_pxs * _pxc))       # = sigmoid(-slope*center) = V at rate=0
+                        for t in range(T):
+                            ip = torch.relu(v[:, t]); im = torch.relu(-v[:, t])
+                            if _inz > 0.0 and self.training:
+                                ip = torch.relu(ip + _inz * torch.sqrt(ip + 1e-4) * torch.randn_like(ip))
+                                im = torch.relu(im + _inz * torch.sqrt(im + 1e-4) * torch.randn_like(im))
+                            Von = torch.relu(torch.sigmoid(_pxs * (_pxw * ip - _pxc)) - _floor)
+                            Voff = torch.relu(torch.sigmoid(_pxs * (_pxw * im - _pxc)) - _floor)
+                            ap2 = wdec * ap2 + Von; an2 = wdec * an2 + Voff
+                            rate = torch.cat([ap2, an2], -1)
+                            outs2.append(r[:, t] * self.Wo_sp(rate))
+                        return self.head(torch.stack(outs2, 1))
                     for t in range(T):
                         ip = torch.relu(v[:, t]); im = torch.relu(-v[:, t])
                         if _inz > 0.0 and self.training:
@@ -324,6 +347,10 @@ def main():
     ap.add_argument("--state-noise", dest="state_noise", type=float, default=0.0, help="degrade state fidelity (train-time noise) to simulate the on-bridge substrate")
     ap.add_argument("--input-noise", dest="input_noise", type=float, default=0.0, help="Poisson-like input-delivery noise (end-to-end co-adaptation to the substrate)")
     ap.add_argument("--plateau-surrogate", dest="plateau_surrogate", action="store_true", help="apply the plateau sigmoid transfer to the input (rate-level co-adaptation to the plateau)")
+    ap.add_argument("--plateau-exact", dest="plateau_exact", action="store_true", help="EXACT on-bridge plateau transfer as the recurrence (gap#1<->gap#4): V=relu(sigmoid(slope*(pathway_w*rate-center))-floor); train end-to-end so the input map learns the plateau's GRADED range -> the deployed on-bridge read-out matches (corr->1) and beats the trigram (the post-hoc reservoir read-out cannot)")
+    ap.add_argument("--px-center", dest="px_center", type=float, default=8.0, help="(plateau-exact) logistic center in weight units (match the on-bridge graded_plateau_center)")
+    ap.add_argument("--px-slope", dest="px_slope", type=float, default=0.33, help="(plateau-exact) logistic slope (match graded_plateau_slope)")
+    ap.add_argument("--px-pathway-w", dest="px_pathway_w", type=float, default=16.0, help="(plateau-exact) input->plateau coincidence weight (match the on-bridge per_pop pathway_w)")
     ap.add_argument("--plateau-sur-center", dest="plateau_sur_center", type=float, default=1.0)
     ap.add_argument("--plateau-sur-slope", dest="plateau_sur_slope", type=float, default=1.0)
     ap.add_argument("--dual-nonneg", dest="dual_nonneg", action="store_true", help="two positive leaky integrators = the plateau realizable state")
