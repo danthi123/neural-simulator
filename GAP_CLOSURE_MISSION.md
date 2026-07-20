@@ -173,13 +173,26 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   **BEATS the trigram OFF-bridge at all 4 ops (+0.10..+0.12)** but the **on-bridge DEPLOY is NEGATIVE (−1.17/−1.80)**
   because the off-bridge `relu(v)` input ≠ the on-bridge saturating input-pool f-I. **RESEARCH GATE DISPATCHED**
   (subagent, read-only) → writes `research/findings/2026-07-19-onbridge-wkv-state-fidelity-research-gate.md`:
-  RAG-checks whether the LINE-ATTRACTOR population (`--recur-integrator`, `_build_recur_channel_bridge`) was ever
-  run to a verdict, and ranks it vs FULL-CHAIN surrogate-gradient BPTT (= gap#4 convergence) vs more-neurons-per-
-  channel population code. **⇒ ON RESUME: read that research doc first, then run its cheap-first ranked mechanism**
-  (do NOT re-improvise operating points — that path is exhausted). gap#1 CAPABILITY is DEMONSTRATED + this session
-  produced a concrete PROSE SAMPLE (SpikeGPT-faithful spike-output generates coherent TinyStories text + beats
-  trigram +0.103). Finding: `2026-07-19-gap1-WKV-...-store-wall.md` (see the last 4 appended sections). Also
-  delivered this session (owner request): the full brain-architecture flowchart artifact. Older detailed scoping ↓
+  ranks the mechanisms. **RESEARCH GATE COMPLETE + trust-but-verified** (`2026-07-19-onbridge-wkv-state-fidelity-research-gate.md`,
+  323 lines). DECISIVE REFRAME: the "state = mean firing RATE" bar was SELF-IMPOSED and stricter than BOTH SpikeGPT
+  AND biology — NO spiking LM (SpikeGPT/SPikE-SSM/SpikingSSMs/SiLIF) realizes the recurrent state as spikes; they
+  ALL keep it graded (FP32/analog conductance) + spike only I/O, and biology holds integrator state in graded slow
+  conductances (NMDA plateaus, line attractors). So the ~0.55 spike-rate ceiling is the WRONG TARGET. The genuine
+  residual is ONE stage: encoding the D-channel input v_t. RAG-check: the LINE-ATTRACTOR was ALREADY run to a
+  5-de-risk verdict (all cap ≤0.55, rate-read) → **DO NOT re-run it**. And it found an OVERLOOKED SHIPPED ASSET:
+  **`cp_ssm_state`** (`enable_selective_ssm_state`, sim/config.py:266 + bridge.py:343/1372, RUNG4b) holds a
+  multi-channel graded leaky SSM state BYTE-EQUAL to numpy (1e-7) — never pointed at the WKV/trigram task.
+  **⇒ EXACT NEXT EXPERIMENT ON RESUME = M1 (cheapest, ~1 session, likely GO, NO sim/ edit):** add a `--ssm-state`
+  path to `_emerge_wkv_onbridge_derisk.py` that writes `cp_ssm_inject=v_t` (dual-nonneg), `cp_ssm_shunt=0` (leak
+  matched to WKV decay), steps once, reads `cp_ssm_state`, fits the existing WKV read-out, reports deep-NLL vs the
+  fair trigram. Since `cp_ssm_state`==numpy-SSM-state (which beats the trigram +0.6..+0.9), it SHOULD beat it
+  on-bridge. **Load-bearing anti-cheats: verify-first corr(cp_ssm_state, numpy state)>0.99; memoryless(leak→0)→bigram;
+  perm→collapse; + the OLD firing-rate-read path MUST reproduce the −0.9..−1.8 wall on the same sentences** (proves
+  the graded delivery closed it). Then M2 (NEF heterogeneous-encoder + OPTIMAL least-squares decoder input pop — the
+  theory fix for the dead-zone/non-monotone; `--hetero-gain` was a half-measure) → M3 (calibrated end-to-end
+  surrogate-BPTT = gap#1↔gap#4). gap#1 CAPABILITY DEMONSTRATED + concrete PROSE SAMPLE this session (SpikeGPT-faithful
+  generates coherent TinyStories + beats trigram +0.103). Also delivered (owner request): the full brain-architecture
+  flowchart artifact. Older detailed scoping ↓
 - **⚠️ (prior, still valid framing) gap#1 — on-substrate robust BEAT is deep-arc-gated on END-TO-END substrate co-adaptation = converges with gap#4; capability DEMONSTRATED:**
   Comprehensive, verify-first-disciplined characterization of the on-substrate WKV frontier (15+ mechanisms). THREE real results:
   (1) the dendritic GRADED PLATEAU realizes a leaky integral of a CLEAN graded value at corr **0.98** — surpasses the point-neuron
