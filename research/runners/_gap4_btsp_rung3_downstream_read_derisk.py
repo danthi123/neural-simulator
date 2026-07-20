@@ -38,11 +38,29 @@ import numpy as np
 
 N_BINS = 20
 POS_N = 10
+# CA1 map density is the SINGLE variable under test in rung 3b.
+#   sparse (the rung-3 NO-GO config): 4 cells at spacing 4 -> the population is silent at most
+#     track positions, so the seconds-long backward window is not legible downstream.
+#   dense: spacing 2 -> the population tiles the track continuously.
+# TARGET_BIN is PRE-REGISTERED and fixed; TARGET_CELL is DERIVED from it, so the pre-registration
+# survives the density change instead of silently pointing at a different cell.
+TARGET_BIN = 13
 CELL_TARGETS = [5, 9, 13, 17]
 N_CELL = len(CELL_TARGETS)
 CA1_PER_CELL = 8
 L2_N = 8
-TARGET_CELL = 2                      # PRE-REGISTERED: L2 must learn to read CA1 cell 2 (target bin 13)
+TARGET_CELL = CELL_TARGETS.index(TARGET_BIN)
+
+
+def set_map_density(spacing):
+    """Rebuild the CA1 map at a given target spacing. Returns the new (CELL_TARGETS, TARGET_CELL)."""
+    global CELL_TARGETS, N_CELL, TARGET_CELL
+    CELL_TARGETS = list(range(TARGET_BIN % spacing or spacing, N_BINS, spacing))
+    if TARGET_BIN not in CELL_TARGETS:            # keep the pre-registered target reachable
+        CELL_TARGETS = sorted(set(CELL_TARGETS) | {TARGET_BIN})
+    N_CELL = len(CELL_TARGETS)
+    TARGET_CELL = CELL_TARGETS.index(TARGET_BIN)
+    return CELL_TARGETS, TARGET_CELL
 DEV_SEEDS = [42, 43, 44]
 BLIND_SEEDS = [100, 101, 102]
 
@@ -156,7 +174,8 @@ def run_lap(sb, pos, cells, l2, *, ca1_targets=None, l2_plateau_bin=None, bin_st
     return ca1_rates, l2_rates
 
 
-def one_run(seed, *, l2_eta=0.02, do_l2_plateau=True, score_cell=None, bin_steps=200, l2_w0=150.0):
+def one_run(seed, *, l2_eta=0.02, do_l2_plateau=True, score_cell=None, bin_steps=200, l2_w0=150.0,
+            elig_tau_ms=1000.0, dt_ms=1.0):
     from sim.backend import to_host
     sb, pos, cells, l2 = build(seed, l2_w0=l2_w0)
     # ---- STAGE 1: form the map (rung 2), L2 plasticity irrelevant here ----
@@ -179,10 +198,16 @@ def one_run(seed, *, l2_eta=0.02, do_l2_plateau=True, score_cell=None, bin_steps
     _, l2_post = run_lap(sb, pos, cells, l2, bin_steps=bin_steps, record=True)
     l2_delta = l2_post - l2_mid   # STAGE-2 ONLY: l2_pre would fold in the CA1 map forming (C1_frozen caught this)
     l2_peak = int(np.argmax(l2_delta)) if l2_delta.max() > 0 else -1
-    # A PRIORI (derived from the rule, pre-registered): a plateau at field f credits the field that
-    # PRECEDED it -- at plateau time the preceding cell has been accumulating eligibility for several
-    # bins while the concurrent cell has only just begun. Same backward shift rung 1 measured (-1).
-    expected = (TARGET_CELL - 1) % N_CELL
+    # A PRIORI, derived from the RULE not from the observed peaks (the record required this
+    # explicitly: "derive the window from tau_elig A PRIORI"). A plateau at bin b credits what was
+    # active ~tau_elig earlier; at bin_steps steps/bin and dt ms/step that is a fixed number of BINS:
+    #     shift_bins = tau_elig_ms / (bin_steps * dt_ms)
+    # Deriving it in BINS (not in cell INDICES) is what makes it survive a map-density change --
+    # an index-based "one cell back" silently means a different distance at a different spacing.
+    shift_bins = int(round(elig_tau_ms / float(bin_steps * dt_ms)))
+    expected_bin = (TARGET_BIN - shift_bins) % N_BINS
+    expected = int(np.argmin([abs(((t - expected_bin + N_BINS // 2) % N_BINS) - N_BINS // 2)
+                              for t in CELL_TARGETS]))
     sc = expected if score_cell is None else score_cell
     ref_peak = ca1_peaks[sc] if ca1_peaks[sc] >= 0 else CELL_TARGETS[sc]
     hit = False
@@ -207,8 +232,12 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=DEV_SEEDS + BLIND_SEEDS)
     ap.add_argument("--bin-steps", dest="bin_steps", type=int, default=200)
+    ap.add_argument("--spacing", type=int, default=4,
+                help="CA1 target spacing in bins. 4 = the rung-3 sparse NO-GO config; 2 = dense (tiles the track).")
     ap.add_argument("--json", default=None)
     args = ap.parse_args()
+    tg, tc = set_map_density(args.spacing)
+    print(f'[map] spacing={args.spacing} CELL_TARGETS={tg} N_CELL={len(tg)} TARGET_CELL={tc} (bin {TARGET_BIN})')
     arms = {}
     for s in args.seeds:
         for name, kw in [("MAIN", {}), ("C1_l2_frozen", dict(l2_eta=0.0)),
