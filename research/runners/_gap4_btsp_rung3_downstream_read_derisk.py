@@ -64,7 +64,9 @@ def build(seed, *, eta=0.02, hdep=0.3, htheta=0.012, elig_tau=1000.0, w0=0.6, wj
     cfg.coincidence_plateau_self_regen = 2.0; cfg.coincidence_plateau_v_hold = -35.0; cfg.apical_kir_g = 1.0
     cfg.enable_btsp = True
     cfg.btsp_learning_rate = float(eta); cfg.btsp_elig_tau_ms = float(elig_tau)
-    cfg.btsp_w_min, cfg.btsp_w_max = 0.0, 5.0
+    # w_max MUST exceed the layer-2 operating weight (l2_w0): pot = etilde*(w_max - w) goes NEGATIVE
+    # otherwise and every 'potentiation' becomes a large depression (the documented soft-bound gotcha).
+    cfg.btsp_w_min, cfg.btsp_w_max = 0.0, max(5.0, 2.0 * float(l2_w0))
     cfg.btsp_hetero_dep = float(hdep); cfg.btsp_hetero_theta = float(htheta)
     cfg.brain_regions = (
         [BrainRegion(name=f"pos{k}", n_neurons=POS_N, exc_fraction=1.0, internal_density=0.0,
@@ -131,10 +133,19 @@ def run_lap(sb, pos, cells, l2, *, ca1_targets=None, l2_plateau_bin=None, bin_st
                 fs = np.asarray(to_host(sb.cp_firing_states))
                 for c in range(N_CELL):
                     ca1_rates[c, k] += float(fs[cells[c]].sum())
-                l2_rates[k] += float(fs[l2].sum())
+                l2_rates[k] += float(np.asarray(to_host(sb.cp_conductance_g_e))[l2].mean())
             step += 1
+    # FORCE-RELEASE: a plateau started late in the lap has its release scheduled past the lap end, so it
+    # never fires and the cell stays LATCHED into the next stage (8/32 CA1 neurons measured above v_hold),
+    # which breaks the no-plateau moat (dw != 0 with no instructive signal). Release everything at lap end.
+    _rel = np.zeros(n, np.float32); _rel[:] = -release_pA
+    for _ in range(20):
+        sb.cp_external_input_current[:] = 0.0
+        sb.cp_bdsp_apical_drive = (xp.asarray(_rel) if xp is not None else _rel)
+        sb._run_one_simulation_step()
+    sb.cp_bdsp_apical_drive = (xp.asarray(np.zeros(n, np.float32)) if xp is not None else np.zeros(n, np.float32))
     if record:
-        ca1_rates /= float(CA1_PER_CELL * bin_steps); l2_rates /= float(L2_N * bin_steps)
+        ca1_rates /= float(CA1_PER_CELL * bin_steps); l2_rates /= float(bin_steps)
     return ca1_rates, l2_rates
 
 
@@ -145,7 +156,7 @@ def one_run(seed, *, l2_eta=0.02, do_l2_plateau=True, score_cell=None, bin_steps
     ca1_pre, l2_pre = run_lap(sb, pos, cells, l2, ca1_targets=None, bin_steps=bin_steps, record=True)
     run_lap(sb, pos, cells, l2, ca1_targets=list(CELL_TARGETS), bin_steps=bin_steps, record=False)
     sb.core_config.enable_btsp = False
-    ca1_mid, _ = run_lap(sb, pos, cells, l2, bin_steps=bin_steps, record=True)
+    ca1_mid, l2_mid = run_lap(sb, pos, cells, l2, bin_steps=bin_steps, record=True)  # l2_mid = post-stage-1 baseline
     ca1_delta = ca1_mid - ca1_pre
     ca1_peaks = [int(np.argmax(ca1_delta[c])) if ca1_delta[c].max() > 0 else -1 for c in range(N_CELL)]
     map_ok = all(p >= 0 for p in ca1_peaks) and len(set(ca1_peaks)) == N_CELL
@@ -159,9 +170,13 @@ def one_run(seed, *, l2_eta=0.02, do_l2_plateau=True, score_cell=None, bin_steps
     dw = float(np.abs(np.asarray(to_host(sb.cp_connections.data))).sum()) - w0
     sb.core_config.enable_btsp = False
     _, l2_post = run_lap(sb, pos, cells, l2, bin_steps=bin_steps, record=True)
-    l2_delta = l2_post - l2_pre
+    l2_delta = l2_post - l2_mid   # STAGE-2 ONLY: l2_pre would fold in the CA1 map forming (C1_frozen caught this)
     l2_peak = int(np.argmax(l2_delta)) if l2_delta.max() > 0 else -1
-    sc = TARGET_CELL if score_cell is None else score_cell
+    # A PRIORI (derived from the rule, pre-registered): a plateau at field f credits the field that
+    # PRECEDED it -- at plateau time the preceding cell has been accumulating eligibility for several
+    # bins while the concurrent cell has only just begun. Same backward shift rung 1 measured (-1).
+    expected = (TARGET_CELL - 1) % N_CELL
+    sc = expected if score_cell is None else score_cell
     ref_peak = ca1_peaks[sc] if ca1_peaks[sc] >= 0 else CELL_TARGETS[sc]
     hit = False
     if l2_peak >= 0:
@@ -173,8 +188,8 @@ def one_run(seed, *, l2_eta=0.02, do_l2_plateau=True, score_cell=None, bin_steps
             return 0.0
         lo, hi = max(0, p - 1), min(N_BINS, p + 2)
         return float(l2_delta[lo:hi].max())
-    r_t = resp_at(ca1_peaks[TARGET_CELL])
-    r_o = [resp_at(ca1_peaks[c]) for c in range(N_CELL) if c != TARGET_CELL]
+    r_t = resp_at(ca1_peaks[expected])
+    r_o = [resp_at(ca1_peaks[c]) for c in range(N_CELL) if c != expected]
     sel = float(np.mean([1.0 if (r_t >= 2.0 * max(r, 1e-9)) else 0.0 for r in r_o])) if r_o else 0.0
     del sb
     return dict(read_hit=bool(hit), selectivity=sel, l2_peak=l2_peak, ca1_peaks=ca1_peaks,
@@ -191,7 +206,7 @@ def main():
     for s in args.seeds:
         for name, kw in [("MAIN", {}), ("C1_l2_frozen", dict(l2_eta=0.0)),
                          ("C3_no_l2_plateau", dict(do_l2_plateau=False)),
-                         ("C2_wrong_target", dict(score_cell=(TARGET_CELL + 2) % N_CELL))]:
+                         ("C2_wrong_target", dict(score_cell=(TARGET_CELL + 1) % N_CELL))]:
             r = one_run(s, bin_steps=args.bin_steps, **kw)
             arms.setdefault(name, []).append((s, r))
             print(f"  seed {s} {name:17s} read_hit={int(r['read_hit'])} sel={r['selectivity']:.2f} "

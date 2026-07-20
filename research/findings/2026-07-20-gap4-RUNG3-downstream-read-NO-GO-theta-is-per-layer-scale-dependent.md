@@ -168,3 +168,51 @@ the earlier update implied: the learned representation **is** readable by a down
 **does** acquire a large selective response via the same local rule, and the read must be **graded, not spike-rate**.
 What is not yet demonstrated is that it lands where a correctly-specified target says it should — which is a
 pre-registration problem, not a substrate one, and is cheap to settle.
+
+---
+
+## FINAL STATUS — rung 3 is NO-GO, and its instrument is NOT yet clean. Do not cite rung-3 numbers.
+
+With the corrected stage-2-only metric and the a-priori (preceding-field) target:
+
+| arm | read_hit | selectivity | note |
+|---|---|---|---|
+| **MAIN** | **1** | **0.33** | hits the a-priori target but far below the 0.80 selectivity bar |
+| C1 L2-frozen | 0 | 0.00 | correct — no response, `dw = 0` |
+| C3 no-L2-plateau | 0 | 0.00 | response-wise correct, but `dw = 4.9e4` (see defect 1) |
+| C2 wrong-target | 0 | 0.33 | correct |
+
+**VERDICT: NO-GO** on the pre-registered gate (selectivity 0.33 < 0.80).
+
+### Three instrument defects found — the numbers above are NOT trustworthy
+
+1. **Unreleased plateau broke the moat.** A plateau starting late in the lap (cell 3 at bin 17) has its release
+   scheduled ~700 ms later ≈ bin 20.5 — **past the end of the 20-bin lap** — so it never fires. Measured: **8/32 CA1
+   neurons still above `v_hold` after stage 1** (apical −24.15 vs −35), keeping `IS_post > 0` into stage 2 and giving
+   `dw = 4.9e4` with **no instructive signal**. A force-release at lap end clears it (0/32 latched) but drives the
+   apical to **−501 mV**, which is unphysiological — so the fix is itself an artifact and needs a proper bounded
+   release before any rung-3 number is quoted.
+2. **No functional seed variation.** Seeds 44/100/101/102 return **identical** values to 5 decimals
+   (`r_tgt = 0.25101`, `ca1_peaks = [1,3,7,11]`). The n=1 trap that already invalidated one "6-seed GO" in this arc.
+3. **An earlier metric bug, caught by a control.** `l2_delta` was measured from the *pre-stage-1* baseline, folding
+   the CA1 map's formation into "L2 learning" — C1-frozen exposed it by showing a response with `dw = 0`. Fixed to a
+   stage-2-only baseline; every pre-fix rung-3 number is void.
+
+### What IS solid from this rung (mechanism, not verdict)
+
+- **The graded-read lever is confirmed and is the important result.** The SPIKE read is **0.000000 in every condition
+  tested**, while the graded conductance read shows a large response (0.92 at the best operating point). The
+  point-neuron rate-code wall blocks a downstream *spike* read of a sparse learned code exactly as it blocked gap#1's
+  WKV state — and the same graded fix works. This is a genuine cross-gap connection: gap#1's M1 and gap#4's stacking
+  are limited by the same thing.
+- **The backward window propagates across layers.** L2 acquires its response to the field that *preceded* the
+  plateau, not the concurrent one — the same −1 shift rung 1 measured at layer 1, now one layer up.
+- **`btsp_w_max` must exceed the operating weight.** Reading a sparse learned code needs ~100-250× the input-layer
+  weight, which silently inverts BTSP's potentiation term unless `w_max` is raised with it.
+
+### Honest bottom line
+
+Rungs 1–2 stand (6-seed, blind-clean, controls collapsing). **Rung 3 does not.** The substantive signals are
+encouraging and the blocker is now understood as a *representation/read-out* problem rather than a credit problem —
+but the instrument has three named defects, so rung 3 is recorded as **NOT YET VALID**, not as a result. gap#4's
+deep-credit frontier remains open.
