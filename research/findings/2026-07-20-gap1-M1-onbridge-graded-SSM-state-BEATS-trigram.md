@@ -64,6 +64,24 @@ match the deployed state FORM — integral-of-relu, not relu-of-integral — so 
    MEMORYLESS control is the stronger form (it removes the memory entirely rather than scrambling it), and the
    off-bridge SSM's own perm control collapses **+4.45**. Recorded honestly as not-run rather than implied.
 
+## M1 SCALES — and the margin GROWS with scale (the bridge toward the LLM-like target)
+
+| scale | on-bridge vs trigram | verify corr | memoryless control |
+|---|---|---|---|
+| V=200, d=64 (6-seed) | +0.126 | 1.000 | −0.720 |
+| **V=1000, d=128** (5× vocab, 2× width) | **+0.486** | **1.000** | **−0.919** (1.4-nat separation) |
+
+The mechanism is exact, so it transfers by construction — and the *margin over the trigram grows* as vocabulary and
+width increase, which is the direction the LLM-like target needs.
+
+**⚠️ A SILENT FAILURE CAUGHT HERE (recorded).** The first V=1000 run read **−3.790 with corr = 1.000** — an impossible
+combination (an exact state + the model's own read-out must reproduce the off-bridge +0.370). Cause: my script trained
+the SSM with `--n-sentences 80000` but the on-bridge runner defaults to **40000**, so it rebuilt a **different vocab** →
+token ids no longer matched the trained embedding. **The state-corr could not catch it** because both the on-bridge
+state and the numpy reference were computed from the *same* mismatched tokens, so they agreed perfectly while both
+were wrong. Re-run with matched `--n-sentences`: **+0.486**. Lesson for this harness: *a verify metric that consumes
+the same upstream input as the thing it checks cannot detect an upstream error.*
+
 ## HONEST SCOPE (what this does and does NOT claim)
 
 - **Claims:** a multi-channel GRADED recurrent LM state runs on the `SimulationBridge`, advanced by the bridge's own
