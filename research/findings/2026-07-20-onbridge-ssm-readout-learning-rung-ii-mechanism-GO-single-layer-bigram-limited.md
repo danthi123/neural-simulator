@@ -21,25 +21,31 @@ state is the fixed reservoir's own dynamics). Reduced grounded vocab (112 words)
 
 ## Result — the MECHANISM learns (GO), the single linear layer is bigram-limited (honest)
 
-- **MAIN: grounded next-token acc 0.42 (46× chance 1/112)** — the on-bridge graded read-out LEARNS the grounded map
-  by the pure local rule, on the substrate (verify-first 0→36/20-frames).
+- **MAIN: grounded next-token acc 0.42 (5 epochs) → 0.478 (20 epochs), plateauing ~0.49 (≈52× chance 1/112)** — the
+  on-bridge graded read-out LEARNS the grounded map by the pure local rule, on the substrate (verify-first 0→36).
 - **Anti-cheats:** FROZEN (no update) → **0.004 = chance** (the learning is load-bearing); SHUFFLE-ELIG (shuffle the
   state→readout association) → **0.105** (4× collapse — the state association matters); **MEMORYLESS (k_leak=1) →
-  0.420 == MAIN (did NOT collapse).**
-- **The honest read of MEMORYLESS-not-collapsing:** the single LINEAR read-out reaches 0.42 by learning the LOCAL /
-  bigram structure (the function words `the`, the `<EOS>` marker — locally predictable from the current token), NOT
-  the memory-dependent CONTENT copy (recalling the subject 5-6 tokens back needs the graded memory). A single linear
-  layer over the state cannot express the memory-dependent copy — the same reason the off-bridge single-layer under-
-  performs the multi-layer gated read-out (Wr·Wo_sp·head), which reached **0.998** on the reduced vocab.
+  0.401** at the same 20-epoch budget.
+- **The MEMORY IS load-bearing (corrected — verify-before-concluding):** at 5 epochs MAIN and MEMORYLESS were EQUAL
+  (both 0.42), which looked like a bigram ceiling — but that was UNDER-TRAINING. With 20 epochs **MAIN 0.478 >
+  MEMORYLESS 0.401** (a ~0.08 gap): the single-layer read-out DOES use the graded memory (recalling content held in
+  the state), not just the local/bigram structure (function words + `<EOS>`). ⚠ Lesson: I nearly recorded "memory not
+  load-bearing" from the under-trained equal result — the fix was to train longer and re-check (the silent-failure
+  discipline).
+- **The single-LINEAR ceiling (~0.49) is real, though:** a single linear layer over the state uses the memory only
+  WEAKLY; the off-bridge MULTI-layer gated read-out (Wr·Wo_sp·head) reached **0.998** on the same reduced vocab. So the
+  full memory-dependent copy needs the multi-layer read-out (rung iii), not more single-layer training.
 
 ## Read-out
 
 - **⇒ the on-bridge fully-spiking read-out LEARNING mechanism is GO:** a graded read-out over the on-bridge SSM state
   learns by a pure local plasticity rule (delta rule — no BPTT, no weight transport, no adaptive optimizer), on the
-  substrate, load-bearing (frozen→chance, shuffle→4× collapse). This is the first on-bridge realization of the
-  biological-learning close's local-rule read-out learning.
-- **Honest limit + the next rung:** a single LINEAR read-out is bigram-bound (memory not load-bearing at 0.42). The
-  memory-dependent grounded CONTENT (the copy) needs the MULTI-LAYER read-out — **rung (iii): the gated read-out
+  substrate, load-bearing (frozen→chance, shuffle→4× collapse, and the MEMORY is load-bearing: MAIN 0.478 > memoryless
+  0.401 at sufficient training). This is the first on-bridge realization of the biological-learning close's local-rule
+  read-out learning.
+- **Honest limit + the next rung:** the single-LINEAR read-out uses the memory only WEAKLY (ceiling ~0.49 vs the
+  off-bridge MULTI-layer 0.998). The full memory-dependent grounded CONTENT (the copy) needs the MULTI-LAYER read-out
+  — **rung (iii): the gated read-out
   `head @ (sigmoid(Wr@h) * (Wo_sp@state))` on-bridge, with the FA feedback pathway for the hidden layers** (the D3
   clean-error channel / `enable_bdsp_graded_credit`). The off-bridge multi-layer FA reached 0.998 reduced, so the
   on-bridge multi-layer read-out is de-risked at the rule level; realizing the gated forward on-bridge (rung iv) +
