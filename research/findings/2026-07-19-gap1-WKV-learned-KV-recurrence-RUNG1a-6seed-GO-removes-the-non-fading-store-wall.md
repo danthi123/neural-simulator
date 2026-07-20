@@ -463,3 +463,18 @@ read-out on frozen noisy states (NOT co-adapted); training the WKV WITH the plat
 substrate's realized state, so the port should beat the trigram. ⇒ the on-substrate robust BEAT is UNBLOCKED via co-adaptation
 (a rate-level surrogate of the substrate transfer+noise, NOT full BPTT-through-the-bridge). Additive `--input-noise`; testing the
 end-to-end port (train co-adapted SSM -> plateau port -> deep-NLL) next.
+
+### EXHAUSTIVE confirmation — the co-adaptation improves the corr (0.73) but the DEEP-CONTEXT signal needs full end-to-end BPTT
+End-to-end test: the co-adapted SSM (plateau-surrogate + input-noise) on the plateau port IMPROVES the state corr 0.60->**0.729**
+(the input-noise co-adaptation genuinely helps) but the deep-NLL is still **-1.04** (the port already z-normalizes features, so it
+is not raw conditioning). ⇒ the precise, exhaustive finding: the plateau realization captures the COMMON/SHALLOW variance (0.73
+overall corr) but LOSES THE DEEP-CONTEXT DISCRIMINATIVE SIGNAL SPECIFICALLY (the hard ~27% not in the 0.73), and a POST-HOC read-out
+on frozen plateau states cannot recover it — even with a noise-robust co-adapted input map. Every RATE-LEVEL surrogate approach
+(plateau-surrogate ✓ beats trigram, input-noise co-adapt ✓ beats trigram + lifts corr to 0.73) improves pieces but NONE closes the
+on-substrate deep-NLL, because the surrogate is not the ACTUAL bridge (exact plateau dynamics, per-channel operating points, exact
+per-step noise). ⇒ the on-substrate robust BEAT genuinely requires END-TO-END BPTT THROUGH THE ACTUAL BRIDGE (train the read-out +
+input map on the ACTUAL plateau states so the deep signal is extracted) = gap#4's learn-through-the-spiking-substrate lever, exactly
+and unavoidably. This is the exhaustive confirmation (5+ rate-level co-adaptation variants) that the two deepest gaps converge on
+ONE deep arc: surrogate-gradient BPTT through the real SimulationBridge (project machinery: `sim/surrogate_grad.py` + `bptt_snn_gpu.py`
++ the differentiable plateau/input path). The DEMONSTRATED capability (architecture-level 6-seed + prose) is the deliverable; the
+on-substrate BEAT is the precisely-confirmed gap#1<->gap#4 convergent deep arc.
