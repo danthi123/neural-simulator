@@ -177,7 +177,12 @@ def field_metrics(rate, b):
     off = (peak - b + N_BINS // 2) % N_BINS - N_BINS // 2   # signed circular offset
     # ⚠️ NOT PRE-REGISTERED (mislabelled until the 2026-07-20 audit; see the header). Backward window:
     # window is btsp_elig_tau_ms=1000ms = 5 bins at 200ms/bin, plus one bin of forward allowance.
+    # BOTH windows are now reported. The audit showed that citing one without the other is exactly how
+    # the (non-existent) eligibility-tau ablation appeared to separate: under `hit_sym` tau=50ms scores
+    # 1.000 and the ablation separates by ZERO, while under `hit_back` it scores 0.000.
     return dict(peak_bin=peak, width=len(bins), hit=bool(-5 <= off <= 1), offset=int(off), dead=False,
+                hit_back=bool(-5 <= off <= 1),      # asymmetric backward window (chance 7/20 = 0.35)
+                hit_sym=bool(abs(off) <= 2),        # symmetric window the header declared (chance 5/20 = 0.25)
                 flat=bool(rate.max() / max(rate.mean(), 1e-9) <= 1.5),
                 ratio=float(rate.max() / max(rate.mean(), 1e-9)))
 
@@ -204,11 +209,14 @@ def one_instance(seed, b, *, btsp=True, eta=0.02, bistable=True, plateau_bin=Non
 
 def arm(seed, *, label, **kw):
     hits = []; widths = []; mech = []
+    hits_sym = []; hits_back = []
     for b in INSTANCE_BINS:
         m = one_instance(seed, b, **kw)
         hits.append(m["hit"]); widths.append(m["width"])
+        hits_sym.append(m.get("hit_sym", m["hit"])); hits_back.append(m.get("hit_back", m["hit"]))
         mech.append({k: m[k] for k in ("dw", "n_IS", "v_apical_end", "peak_bin", "width", "ratio", "dead", "flat", "offset")})
-    return dict(label=label, seed=seed, field_acc=float(np.mean(hits)),
+    return dict(label=label, seed=seed, field_acc=float(np.mean(hits,
+                acc_sym=float(np.mean(hits_sym)), acc_back=float(np.mean(hits_back)))),
                 mean_width=float(np.mean(widths)), mechanism=mech)
 
 
@@ -259,6 +267,13 @@ def main():
             arm(s, label="C2b_random", plateau_bin=int(rng.integers(0, N_BINS)), bin_steps=bs))
         arms.setdefault("C3_moat", []).append(arm(s, label="C3_moat", do_plateau=False, bin_steps=bs))
         arms.setdefault("C10_transient", []).append(arm(s, label="C10_transient", bistable=False, bin_steps=bs))
+        # BACK-PORT (2026-07-20 audit): the eligibility-tau ablation cited as load-bearing DID NOT EXIST
+        # in code -- no arm varied elig_tau, and no artifact held the numbers. These are the real arms.
+        # The audit measured that at tau=50ms a field STILL forms (sharper: contrast 10.0 vs 6.67) and
+        # scores 0 only under the moved window; under the header's declared dist<=2 it scores 1.000 and
+        # the ablation separates by ZERO. Both windows are now reported so this cannot recur.
+        arms.setdefault("C11_tau50", []).append(arm(s, label="C11_tau50", elig_tau=50.0, bin_steps=bs))
+        arms.setdefault("C11b_tau200", []).append(arm(s, label="C11b_tau200", elig_tau=200.0, bin_steps=bs))
         for k, v in arms.items():
             if v[-1]["seed"] == s:
                 print(f"  seed {s} {k:14s} field_acc={v[-1]['field_acc']:.2f} width={v[-1]['mean_width']:.1f} "
