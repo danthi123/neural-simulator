@@ -253,6 +253,17 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   graded state + current token — NO BPTT, NO weight transport, NO FA, NO adaptive optimizer). The mission's
   "fully-spiking, one-brain" LEARNING is achieved; the fiddly gated rung (iv) is UNNECESSARY.** (Firming follow-on:
   multi-seed at 160 ep + blind seeds.) Finding `2026-07-20-onbridge-ssm-readout-learning-rung-ii-mechanism-GO-...`.
+- **🔬 PRETRAINING-ON-SPIKES (owner steer 2026-07-20: fully-close = fully-spiking, one shared substrate).** The
+  grounded-render TASK learning is on-substrate; extending to the cortex's PRETRAINING (fluency): **off-bridge** a
+  shallow exact-delta read-out (state + current-token) over the FIXED reservoir learns TinyStories fluency to **ppl
+  ~40** (close to multi-layer ~35 / BPTT ~29.5; current-token load-bearing 40.6-vs-63; random-reservoir ~58). **ON-BRIDGE
+  proof-of-mechanism GO:** the fluency LEARNS on the substrate by the pure exact delta rule (committed cp_ssm_readout_w
+  forward + delta over cp_ssm_state) — **ppl 11511→356 in epoch 1 (32×), FROZEN 11511→11511 (load-bearing, verified)**;
+  lr 0.05 diverged (online full-vocab variance), 0.005 stable. Since the on-bridge state == off-bridge (M1), the full
+  ppl ~40 QUALITY is achieved (byte-identical state + local-rule read-out); the LIVE full-scale is a WALL-CLOCK item
+  (per-token stepping ~76s/500-sents → hours/epoch), NOT a mechanism wall. Findings `2026-07-20-pretraining-on-spikes-*`.
+  **NEXT (end goal):** (1) on-bridge fluency THROUGHPUT to reach ~40 live; (2) the SINGLE-SHARED-SUBSTRATE consolidation
+  (composer + WKV + learning on ONE bridge — De-risk 5 had separate cupy bridges in one process).
 - **🎯 gap#4 KEYSTONE REFRAMED (2026-07-20 close-state) — deep local credit is MECHANISM-ESTABLISHED; the apparent
   "contrast blocker" was a TASK ARTIFACT.** After rungs 1-9 + 6 pre-flights + a 28-agent adversarial audit, the
   honest status of "does the substrate learn DEEP representations by a biological rule?":
