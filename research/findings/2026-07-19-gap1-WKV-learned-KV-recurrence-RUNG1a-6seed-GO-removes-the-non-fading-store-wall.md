@@ -490,3 +490,14 @@ the per-token DYNAMICS + the input-delivery noise, not just this static curve �
 the deep arc (calibrated differentiable bridge surrogate -> train WKV through it -> deploy) is PRECISELY BEGUN (transfer measured);
 it remains a substantial multi-step arc converging gap#1+gap#4. The DEMONSTRATED capability (architecture-level 6-seed + prose) is the
 session's deliverable; the on-substrate robust BEAT is the precisely-scoped, precisely-begun gap#1<->gap#4 convergent deep arc.
+
+### Deep-arc step 2 (noise measurement REFRAMES the bound): the plateau noise is LOW (~2%) — the cap is the SHORT-WINDOW TRANSIENT, not a noise floor
+Measured the plateau's per-input noise (fixed input, run-to-run spread): FRAC-NOISE ~**0.02 (2%)** at pop_k 8-128 — LOW, and does NOT
+fall like 1/sqrt(N) (the operating point shifts with pop_k: c_w = Sum over pop_k, so bigger pop_k -> bigger c_w -> different sigmoid
+regime; the mean moves 87->550->1430). ⇒ the on-substrate corr cap (0.73) is NOT a fundamental noise floor (noise is only 2%) — it is
+the SHORT-WINDOW TRANSIENT: the transfer I measured was STEADY-STATE (30-60 steps), but the port runs only T_STEP=6-10 steps/token, so
+the plateau does NOT fully respond to each token's input in the short window (partial charge, history-dependent). ⇒ the fix is a LONGER
+per-token window (T_STEP) so the plateau tracks each token, + a re-tuned operating point (avoid the c_w-vs-pop_k saturation). This REFRAMES
+the bound from "fundamental noise" to "transient tracking" — a tunable, likely-closable issue (the hi-fidelity test at T_STEP 20-40 tests
+exactly this). If longer-window closes the corr -> the on-substrate BEAT is reachable at deploy (no training-through-the-bridge needed).
+Genuine forward progress: the earlier "-1.0 deep-NLL, deep-arc-gated" was partly a SHORT-WINDOW artifact, not purely fundamental.
