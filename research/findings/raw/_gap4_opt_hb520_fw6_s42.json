@@ -1,0 +1,12 @@
+[
+  {
+    "seed": 42,
+    "task": "cleanxor",
+    "oracle": 0.9888888888888889,
+    "floor": 0.5666666666666667,
+    "reservoir_hidden_diff": 0.445,
+    "reservoir_hidden_raw": 0.445,
+    "input_linear": 0.51,
+    "hidden_feat_active_frac": 0.0003125
+  }
+]

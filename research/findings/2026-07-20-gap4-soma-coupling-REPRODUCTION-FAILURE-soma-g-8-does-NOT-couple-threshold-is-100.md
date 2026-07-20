@@ -85,6 +85,41 @@ forward+differential-readout can't express ~0.99 even with perfect weights, the 
 FORWARD/READOUT, not the credit. (3) THE LAW: raw burst-credit + FA/KP is exhausted → a research gate for a
 fundamentally different credit signal (not more of this family).
 
+## Credit-vs-forward diagnostic (the decisive control) — the accuracy floor is a forward OPERATING-POINT issue, not a pure credit boundary
+
+Built a reservoir probe (`_gap4_credit_vs_forward_probe.py`): freeze input→hidden at random (NO BDSP), read each
+sample's hidden firing (baseline-subtracted), train a numpy readout on those random-hidden features. Also swept the
+operating point (hidden_bias 20-520 × fwd_wmean 6-80). ALL configs (seed 42, cleanxor, oracle 0.989, input-linear
+floor 0.510):
+
+| hidden_bias | fwd_wmean | hid-feat-active | reservoir readout | (input-linear 0.510) |
+|---|---|---|---|---|
+| 520 | 6 | 0.00 | 0.445 | at chance |
+| 100 | 6 | 0.00 | 0.445 | at chance |
+| 20 | 6 | 0.00 | 0.445 | at chance |
+| 100 | 40 | 0.00 | 0.445 | at chance |
+| 20 | 40 | 0.00 | 0.445 | at chance |
+| 20 | 80 | 0.00 | 0.460 | at chance |
+
+`hid-feat-active=0.00` = the hidden firing is IDENTICAL across inputs at every tested operating point. Direct
+verification (build net, drive 3 inputs, read raw firing): the **HIDDEN layer NEVER FIRES** (rate 0.0, 0/48) at hb=20
+even with fwd_wmean=80, while the **INPUT layer DOES fire and differ** across samples (rate 0.05, ‖i1−i2‖=2.0). So the
+input→hidden synaptic drive is negligible vs the bias/threshold — the hidden is silent (low bias) or bias-saturated
+(high bias), never input-selective; the sparse input firing (0.05) does not modulate it.
+
+**⇒ REFRAME (corrects my own premature "bias-saturation" read — the probe bug-check caught it): the ~0.5 accuracy
+floor is (at least partly) a forward OPERATING-POINT issue, NOT a pure credit boundary and NOT a
+forward-representation limit.** The on-bridge net's forward was never configured for a working computation — the
+runner's operating point is tuned for the mechanism SMOKE (does dw move under credit?), which does NOT require an
+input-selective hidden layer. No credit rule can build accuracy from a hidden layer that carries zero input signal.
+
+**HONEST BOUND (no overclaim):** I have NOT found an operating point where the hidden IS input-selective — only shown
+the tested ones (bias 20-520, drive 6-80, settle 10) carry no signal. Whether an input-selective hidden regime EXISTS
+(aggressive drive/bias/settle/input-rate search — the input firing 0.05 is very sparse; longer settle + higher in_hi +
+much stronger fwd weights) or is ruled out is the decisive NEXT step, BEFORE re-testing credit. Also single-seed (the
+floor itself is 3-seed: BDSP 0.564/0.531/0.489 ≈ lesion, oracle 0.97-0.99). ⇒ the gap#4 deep-credit-to-accuracy
+question is not yet answerable — the substrate must first be shown to carry input signal through the hidden layer.
+
 ## Method lesson
 
 The banked "pipeline-validated" result was gated on a dw ratio while its OWN coupling diagnostic said DECOUPLED, and its
