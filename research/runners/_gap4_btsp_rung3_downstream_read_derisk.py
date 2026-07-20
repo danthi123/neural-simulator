@@ -75,7 +75,7 @@ BLIND_SEEDS = [100, 101, 102]
 
 
 def build(seed, *, eta=0.02, hdep=0.3, htheta=0.012, elig_tau=1000.0, w0=0.6, wj=0.15, dt=1.0, l2_w0=0.6,
-          band_lo=0.0, band_hi=0.0, dog_a_dep=0.0, tau_slow=0.0):
+          band_lo=0.0, band_hi=0.0, dog_a_dep=0.0, tau_slow=0.0, mk_pot=0.0, mk_dep=0.0):
     from sim.bridge import SimulationBridge
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.regions import BrainRegion, RegionPathway
@@ -100,6 +100,9 @@ def build(seed, *, eta=0.02, hdep=0.3, htheta=0.012, elig_tau=1000.0, w0=0.6, wj
     cfg.btsp_band_lo = float(band_lo); cfg.btsp_band_hi = float(band_hi)
     # Rank-2 zero-DC DoG: both > 0 to engage; 0 => unreachable => byte-identical default.
     cfg.btsp_dog_a_dep = float(dog_a_dep); cfg.btsp_elig_tau_slow_ms = float(tau_slow)
+    # Milstein weight-dependent bidirectional BTSP. k_dep = 0 => OFF => byte-identical.
+    # alphas are the PUBLISHED values (0.24/0.09) on the normalized overlap, NOT tuned.
+    cfg.btsp_milstein_k_pot = float(mk_pot); cfg.btsp_milstein_k_dep = float(mk_dep)
     cfg.brain_regions = (
         [BrainRegion(name=f"pos{k}", n_neurons=POS_N, exc_fraction=1.0, internal_density=0.0,
                      exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False)
@@ -189,10 +192,12 @@ def run_lap(sb, pos, cells, l2, *, ca1_targets=None, l2_plateau_bin=None, bin_st
 
 
 def one_run(seed, *, l2_eta=0.02, do_l2_plateau=True, score_cell=None, plateau_cell=None, bin_steps=200, l2_w0=150.0,
-            elig_tau_ms=1000.0, dt_ms=1.0, band_lo=0.0, band_hi=0.0, dog_a_dep=0.0, tau_slow=0.0):
+            elig_tau_ms=1000.0, dt_ms=1.0, band_lo=0.0, band_hi=0.0, dog_a_dep=0.0, tau_slow=0.0,
+            mk_pot=0.0, mk_dep=0.0):
     from sim.backend import to_host
     sb, pos, cells, l2 = build(seed, l2_w0=l2_w0, band_lo=band_lo, band_hi=band_hi,
-                               dog_a_dep=dog_a_dep, tau_slow=tau_slow)
+                               dog_a_dep=dog_a_dep, tau_slow=tau_slow,
+                               mk_pot=mk_pot, mk_dep=mk_dep)
     # ---- STAGE 1: form the map (rung 2), L2 plasticity irrelevant here ----
     ca1_pre, l2_pre = run_lap(sb, pos, cells, l2, ca1_targets=None, bin_steps=bin_steps, record=True)
     run_lap(sb, pos, cells, l2, ca1_targets=list(CELL_TARGETS), bin_steps=bin_steps, record=False)
@@ -268,6 +273,10 @@ def main():
     ap.add_argument("--bin-steps", dest="bin_steps", type=int, default=200)
     ap.add_argument("--n-bins", dest="n_bins", type=int, default=20,
                     help="track length in bins. 40 is required for spacing>shift to be testable with >=4 cells.")
+    ap.add_argument("--mk-pot", dest="mk_pot", type=float, default=0.0,
+                    help="Milstein weight-dependent BTSP potentiation rate (0 = OFF).")
+    ap.add_argument("--mk-dep", dest="mk_dep", type=float, default=0.0,
+                    help="Milstein depression rate (0 = OFF). Set equal to --mk-pot: the fixed point is then set purely by the published sigmoid ratio, with no free tuning.")
     ap.add_argument("--dog-a-dep", dest="dog_a_dep", type=float, default=0.0,
                     help="Rank-2 zero-DC DoG depression coefficient (0 = OFF). Derived, see the pre-registration.")
     ap.add_argument("--tau-slow", dest="tau_slow", type=float, default=0.0,
@@ -286,12 +295,13 @@ def main():
     arms = {}
     for s in args.seeds:
         _band = dict(band_lo=args.band_lo, band_hi=args.band_hi,
-                     dog_a_dep=args.dog_a_dep, tau_slow=args.tau_slow)
+                     dog_a_dep=args.dog_a_dep, tau_slow=args.tau_slow,
+                     mk_pot=args.mk_pot, mk_dep=args.mk_dep)
         # Both band arms run in the SAME invocation so the ON/OFF comparison cannot drift across configs.
         for name, kw in [("MAIN_ruleON", dict(_band)),   # label is generic: _band now carries EITHER band OR DoG params.
                          # (It was "MAIN_bandON" while carrying DoG params -- a name/semantics mismatch,
                          #  the exact defect class the 2026-07-20 audit flagged. Renamed.)
-                         ("P4_ruleOFF", dict(band_lo=0.0, band_hi=0.0, dog_a_dep=0.0, tau_slow=0.0)),
+                         ("P4_ruleOFF", dict(band_lo=0.0, band_hi=0.0, dog_a_dep=0.0, tau_slow=0.0, mk_pot=0.0, mk_dep=0.0)),
                          ("C1_l2_frozen", dict(l2_eta=0.0, **_band)),
                          ("C3_no_l2_plateau", dict(do_l2_plateau=False, **_band)),
                          ("C2_wrong_target", dict(plateau_cell=(TARGET_CELL + 1) % N_CELL, **_band))]:
