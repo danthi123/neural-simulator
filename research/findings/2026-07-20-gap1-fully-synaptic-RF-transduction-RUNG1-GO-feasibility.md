@@ -41,6 +41,18 @@ that conductance (a log-compressive read-out), NO `rf_read_phases`. Then re-run 
 confirm parity with the host-read path (the encode fidelity is corr 1.0 per RUNG 1, so the deep-NLL should hold). This
 makes gap#1's spiking input FULLY synaptic — no host read anywhere in the encode.
 
+## RUNG 2 build path — CONFIRMED reuse-by-import (a0 read of the RF step)
+
+`sim/bridge.py:6936` (the `RESONATE_AND_FIRE` step) sets `self.cp_firing_states[:] = fired_this_step` — the RF spike
+lands in the STANDARD firing array. ⇒ an RF encoder neuron can drive a REGULAR conductance synapse to a downstream
+readout neuron (the RF spike propagates through `cp_connections` like any spike, charging the downstream conductance).
+So RUNG 2 is **reuse-by-import** (the step-2b masked-RF co-residence pattern + a conductance synapse RF→readout; read
+the readout's decayed conductance `cp_conductance_g_*` at period-end → log read-out → charge `cp_ssm_state`), **NO `sim/`
+edit** — the machinery all exists. The build: (1) a co-resident bridge = RF encoder slice + readout slice (per token:
+`rf_kick` the phases on the RF slice, run the masked resonate, the RF spike charges the readout conductance); (2) read
+the readout's decayed conductance on-bridge; (3) log read-out → `cp_ssm_state`; (4) deep-NLL/generation parity vs the
+host-read path (encode fidelity is corr 1.0 per RUNG 1, so parity is expected). This is the next cycle's build.
+
 ## Scope
 
 RUNG 1 is a numeric feasibility check on the real RF substrate (reads public `cp_rf_spike_step`); it proves the
