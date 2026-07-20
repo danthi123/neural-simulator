@@ -115,3 +115,56 @@ it does not address this.
 
 **Honest status:** rungs 1–2 stand (6-seed, blind-clean). Rung 3 is a NO-GO with the blocker now localized to
 **representation sparsity / dynamic range**, with per-pathway θ implemented and eliminated as the (sole) cause.
+
+---
+
+## UPDATE 2 — a soft-bound trap of my own, then a real (mis-targeted) layer-2 learning signal
+
+### ⛔ MY ERROR: `l2_w0 = 150` exceeded `btsp_w_max = 5.0`
+
+To make the sparse learned code readable I raised the `ca1→l2` weight to 150 (measured requirement). But BTSP's
+potentiation term is `etilde·(w_max − w)`, and with `w = 150 > w_max = 5` **every "potentiation" event was a large
+NEGATIVE** — the rule was depressing whenever it should have been potentiating. This is the **documented project
+gotcha** (`CLAUDE.md`: *"when weight_mean > w_max, every 'LTP' event is strongly negative and weights collapse"*), and
+it explains every negative `dw` in this rung (−1289, −686) and the λ-sweep collapse. **The earlier "per-pathway θ is
+necessary but not sufficient" conclusion was measured under this broken configuration and is therefore
+uninterpretable — it is withdrawn pending a clean re-test.**
+
+### With `btsp_w_max = 300 > l2_w0 = 150`: layer 2 DOES learn, selectively
+
+| λ | L2 graded response per field `[f0, f1, f2(target), f3]` |
+|---|---|
+| 0.0 | [0.532, **0.923**, 0.127, 0.055] |
+| 0.05 | [0.464, **0.925**, 0.290, 0.062] |
+| 0.3 | [0.348, **0.866**, 0.307, 0.055] |
+
+L2's response is **large and strongly peaked on ONE field** (0.92 vs 0.06–0.13 elsewhere) — i.e. the learned code IS
+readable and the downstream layer DOES acquire a selective response. Two things follow:
+
+1. **The graded-read lever (lever 2) is confirmed**: the SPIKE read is 0.000000 in every one of these conditions
+   while the graded conductance read shows 0.92. The point-neuron rate-code wall blocks the spike read at layer 2
+   exactly as it did for gap#1's WKV state — and the same fix works.
+2. **But the peak is on field 1, not the pre-registered target field 2.** This is BTSP's **backward window
+   propagating across layers**: the L2 plateau fired at field 2's location, but by then field 1's CA1 cell had been
+   accumulating eligibility for several bins while field 2's had only just begun firing. L2 therefore learned the
+   **preceding** field — mechanistically correct for this rule, and exactly the backward shift rung 1 measured at
+   layer 1 (offset −1).
+
+### ⛔ NOT re-scored — and what a legitimate rung-3 test looks like
+
+Scoring against field 1 would turn this into a GO. **I am not doing that.** The target was pre-registered as the
+concurrent field; discovering that the rule credits the preceding field is a *finding*, not a licence to move the
+target after seeing the data — the same discipline applied when the rung-1 window was mis-centred twice.
+
+A legitimate rung 3 must: (a) fix `btsp_w_max > l2_w0` from the start; (b) **derive the expected target from the
+eligibility window a priori** (the preceding field, as the rule predicts) rather than fitting it; (c) pre-register
+that target and the selectivity bar; (d) validate on seeds not used above — 42/43 are now contaminated for this
+metric.
+
+### Honest status of rung 3
+
+**NO-GO on the pre-registered gate stands** (the target was missed). But the substantive picture is much better than
+the earlier update implied: the learned representation **is** readable by a downstream layer, the downstream layer
+**does** acquire a large selective response via the same local rule, and the read must be **graded, not spike-rate**.
+What is not yet demonstrated is that it lands where a correctly-specified target says it should — which is a
+pre-registration problem, not a substrate one, and is cheap to settle.
