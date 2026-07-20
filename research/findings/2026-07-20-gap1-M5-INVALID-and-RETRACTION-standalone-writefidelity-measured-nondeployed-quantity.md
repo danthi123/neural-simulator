@@ -58,3 +58,49 @@ quantity** — and the cheapest way to know is to run the deployment's OWN contr
 
 No mechanism conclusion about the token-SDR encode is claimed. The honest deliverable here is the retraction + the
 invalid-harness diagnosis.
+
+---
+
+## DECISIVE DIAGNOSTIC — the root cause is VOCAB PROVENANCE, not the encode (M1 reference ALSO fails)
+
+Ran M1 on-bridge (host-inject, the EXACT-input reference that should give +0.486 at V=1000/d=128) on the SAME
+regenerated checkpoint:
+
+| reference | verify corr | deep d10-99 vs-trigram | expected |
+|---|---|---|---|
+| **M1 host-inject** | 0.751 | **-3.062** | **+0.486** |
+
+**M1 — the host-inject reference with a KNOWN +0.486 — also gives -3.062.** Since the exact-input path fails
+identically to NEF and tokensdr, the encode is NOT the cause: **the regenerated checkpoint + the on-bridge vocab
+rebuild are mismatched.** onbridge NLL 6.7 ~= ln(1000)=6.9 (near-uniform), so the read-out is producing garbage
+logits even with perfect input — the emb/Wv/head indices do not correspond to the re-tokenized stream.
+
+**Root cause (pinned):** the on-bridge runners REBUILD the vocab with `Vocab.build(tr, V)` rather than loading the
+checkpoint's SAVED `words`, and the rebuild does not reproduce the training token->id mapping even with n-sentences
+matched — the LM trainer applies a `max_train_sents` truncation to `tr` BEFORE `Vocab.build` that the on-bridge
+runner does not, so `tr` (hence the frequency-ordered vocab) differs. The checkpoint stores `words`; the on-bridge
+eval ignores it. This is exactly the "vocab-provenance issue" the retraction above predicted as the required-next.
+
+## What this means for the whole gap#1 deep-NLL push today
+
+**EVERY on-bridge deep-NLL number produced today on this regenerated checkpoint is INVALID** — M1, M2 (NEF), and M5
+(tokensdr) all -3.06, because they share the broken vocab rebuild. This does NOT retroactively invalidate the
+ORIGINAL M1 +0.126/+0.486 (those used a checkpoint+eval that were vocab-consistent, per the M1 finding's own matched
+n-sentences fix); it invalidates only TODAY's regenerated-checkpoint runs.
+
+## The precise, decisive REQUIRED-NEXT
+
+The on-bridge runners must use the checkpoint's SAVED vocab (`words`) instead of rebuilding it — a small, additive
+fix (load `W["words"]` and build the token->id map from it, bypassing `Vocab.build`). ONLY after M1 host-inject
+reproduces ~+0.486 on the checkpoint is ANY encode comparison (NEF vs tokensdr) meaningful. Until then, no gap#1
+spiking-input verdict is possible, and the token-SDR mechanism is neither confirmed nor refuted — it was never
+validly tested.
+
+## The honest tally for gap#1 today
+
+Three self-corrections in one thread: (1) the reconciliation's "conductance-drive escapes M2" was a false dichotomy
+(gate); (2) the standalone write-fidelity 0.906 measured a non-deployed quantity (deployed 0.39 < NEF 0.66,
+retracted); (3) the deep-NLL harness is invalid via a vocab-provenance mismatch (M1 reference fails too). The
+constant across all three: I trusted a cheaper proxy (a reconciliation framing, a standalone metric, a regenerated
+checkpoint) without running the deployment's OWN control first. Running the M1/NEF control FIRST would have caught
+every one before a single mechanism claim.
