@@ -87,6 +87,10 @@ def main():
     ap.add_argument("--optimizer", choices=["adam", "sgd"], default="adam",
                     help="step rule: adam (fast) or sgd (a pure local plasticity rule = strictest biological claim; "
                          "no per-param adaptivity/momentum, just error x input x lr)")
+    ap.add_argument("--reduced-vocab", action="store_true",
+                    help="the gate's rung-(ii) ESCAPE: restrict the read-out softmax to the ~50 grounded words "
+                         "(curriculum + markers + function/inflection) so the E-gating (p~1/50) is tractable -> does "
+                         "the E-gated BDSP/burstprop rule train the reduced read-out? (forces grounded-frac 1.0)")
     args = ap.parse_args()
 
     torch.manual_seed(args.seed); random.seed(args.seed); np.random.seed(args.seed)
@@ -181,6 +185,18 @@ def main():
     objs = [o for o in OBJECTS if o in w2i and w2i[o] != w2i["<unk>"]]
     verbs = [(b, s) for (b, s, _p) in VERBS if b in w2i and s in w2i and w2i[s] != w2i["<unk>"]]
 
+    # ---- reduced-vocab (rung-ii escape): restrict the read-out softmax to the ~50 grounded words ----
+    vmask = None
+    if args.reduced_vocab:
+        red = set(["the", "a", "<ans>", "<eos>"]) | set(subs) | set(objs)
+        for (b, s) in verbs:
+            red |= {b, s}
+        red_ids = sorted({w2i[w] for w in red if w in w2i})
+        vmask = torch.full((V,), -1e30, device=dev); vmask[torch.tensor(red_ids, device=dev)] = 0.0
+        args.grounded_frac = 1.0     # the reduced read-out is for the grounded task only (TinyStories is full-vocab)
+        print(f"[reduced-vocab] rung-ii escape: read-out restricted to {len(red_ids)} grounded words "
+              f"(E-gating p~1/{len(red_ids)}); grounded-frac forced to 1.0")
+
     def grounded_batch(bs):
         seqs = []
         while len(seqs) < bs:
@@ -215,6 +231,16 @@ def main():
             m = Mm[:, 1:].reshape(-1); tot += float((loss * m).sum()); ntok += float(m.sum())
         return float(np.exp(tot / max(1, ntok)))
 
+    @torch.no_grad()
+    def grounded_acc(n=256):
+        """Next-token accuracy on the answer span of grounded frames (the reduced-read-out learning signal)."""
+        seqs = grounded_batch(n); X, Mm = pad(seqs); h, st = reservoir_states(X)
+        lg = readout(h, st)
+        if vmask is not None:
+            lg = lg + vmask
+        pred = lg[:, :-1].argmax(-1); tgt = X[:, 1:]; m = Mm[:, 1:] > 0
+        return float(((pred == tgt) & m).sum() / m.sum().clamp(min=1))
+
     # step rule only; the credit assignment is FA/KP (transport-free) + local. SGD = a pure local plasticity rule.
     opt = (torch.optim.SGD(params, lr=args.lr, momentum=0.0) if args.optimizer == "sgd"
            else torch.optim.Adam(params, lr=args.lr))
@@ -226,6 +252,8 @@ def main():
         (the exact committed on-bridge rule: dw = eta*pre*(B - Pbar*E), the sign set by the fixed-random apical)."""
         h, st = reservoir_states(X)                       # frozen reservoir (detached => no BPTT)
         lg = readout(h, st)
+        if vmask is not None:
+            lg = lg + vmask                               # reduced read-out: mask non-grounded words
         lgf = lg[:, :-1].reshape(-1, V); tgt = X[:, 1:].reshape(-1); m = Mm[:, 1:].reshape(-1)
         opt.zero_grad()
         if args.credit == "burstprop":
@@ -268,8 +296,12 @@ def main():
         X, Mm = pad(seqs)
         loss = _train_step(X, Mm)
         if step % args.eval_every == 0 or step == 1:
-            print(f"[step {step}/{args.steps}] loss={loss:.4f} ppl_tiny={tiny_ppl():.3f} ({time.time()-t0:.0f}s)", flush=True)
-    ppl1 = tiny_ppl()
+            _metric = f"grounded_acc={grounded_acc():.3f}" if vmask is not None else f"ppl_tiny={tiny_ppl():.3f}"
+            print(f"[step {step}/{args.steps}] loss={loss:.4f} {_metric} ({time.time()-t0:.0f}s)", flush=True)
+    ppl1 = tiny_ppl() if vmask is None else float("nan")
+    if vmask is not None:
+        print(f"[reduced-vocab RESULT] grounded next-token accuracy = {grounded_acc(512):.3f} "
+              f"(credit={args.credit}{' SAMPLED' if args.burst_sampled else ''}) -- does the E-gated local rule train the reduced read-out?")
 
     # save an npz in the WKVFaculty format so the ceiling probe can eval the grounded copy
     def _np(t): return t.detach().cpu().numpy().astype(np.float32)

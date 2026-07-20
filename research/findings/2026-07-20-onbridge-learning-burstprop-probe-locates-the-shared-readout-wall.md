@@ -27,6 +27,24 @@ the hidden read-out layers. Verify-first (loss must descend) is mandatory.
   correctly aborted it). ⇒ the exact E-gated burstprop credit on a LARGE-VOCAB classifier read-out is delicate — this
   IS the shared-readout-wall mechanism (the biological E-gating suppresses credit for a large-vocab softmax).
 
+## The reduced-vocab escape (the gate's rung-ii) — CLEAN-ERROR rule GO, burst-deviation delicate off-bridge
+
+`--reduced-vocab` restricts the read-out softmax to the ~113 grounded words (curriculum + markers + broad SVO vocab),
+so the E-gating (p ~ 1/113) is far less severe than the full 4002-way softmax. Grounded next-token accuracy:
+- **FA (clean-gradient, zero-sum error `p − onehot`): 0.998** — the transport-free local rule trains the reduced
+  read-out easily. ⇒ the escape WORKS for a clean-error local rule (the on-bridge port with a graded CLEAN-error
+  channel — the D3 Urbanczik-Senn M2.6 `E*P` graded-credit, `enable_bdsp_graded_credit` — is de-risked).
+- **E-gated burst-deviation (`dev = E*(P−P0)`, the exact committed form): DELICATE off-bridge** — ASCENDS at lr
+  0.05/0.01/0.005 (the verify-first correctly aborts). Root cause: the burst-DEVIATION credit is NOT zero-sum (unlike
+  the softmax gradient), so the FA-routed hidden gradient carries a systematic bias → drift. The committed on-bridge
+  kernel is kept stable by the P0-baseline moat + real burst dynamics (`B_i ≈ P_i·E_i` at baseline) that an off-bridge
+  softmax simulation does not reproduce faithfully. ⇒ the faithful E-gated burst-deviation rule must be realized
+  ON-BRIDGE (with the real neuron dynamics), not simulated off-bridge — exactly the rung-(ii)/`sim/` build.
+
+⇒ **honest split:** the LOCAL RULE with a CLEAN (zero-sum) error is de-risked both full-vocab (FA/KP 0.86-0.91) and
+reduced-vocab (FA 0.998); the on-bridge port should use the graded CLEAN-error channel (`enable_bdsp_graded_credit`),
+NOT the raw sampled burst. The raw E-gated burst-deviation is delicate and belongs to the on-bridge dynamics.
+
 ## Read-out — the honest frontier map
 
 - **The LOCAL RULE is de-risked (via FA/clean-gradient):** my off-bridge close reached grounded 0.86-0.91 with the
