@@ -52,6 +52,15 @@ L2_N = 8
 TARGET_CELL = CELL_TARGETS.index(TARGET_BIN)
 
 
+def set_track_length(n_bins):
+    """Set the track length. Needed because on a 20-bin track NO configuration gives both
+    spacing > backward-shift (4-6 bins) AND >= 4 cells -- so the geometric hypothesis is untestable
+    there. Running BOTH spacings on the SAME lengthened track keeps spacing the single variable."""
+    global N_BINS
+    N_BINS = int(n_bins)
+    return N_BINS
+
+
 def set_map_density(spacing):
     """Rebuild the CA1 map at a given target spacing. Returns the new (CELL_TARGETS, TARGET_CELL)."""
     global CELL_TARGETS, N_CELL, TARGET_CELL
@@ -257,6 +266,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=DEV_SEEDS + BLIND_SEEDS)
     ap.add_argument("--bin-steps", dest="bin_steps", type=int, default=200)
+    ap.add_argument("--n-bins", dest="n_bins", type=int, default=20,
+                    help="track length in bins. 40 is required for spacing>shift to be testable with >=4 cells.")
     ap.add_argument("--dog-a-dep", dest="dog_a_dep", type=float, default=0.0,
                     help="Rank-2 zero-DC DoG depression coefficient (0 = OFF). Derived, see the pre-registration.")
     ap.add_argument("--tau-slow", dest="tau_slow", type=float, default=0.0,
@@ -269,6 +280,7 @@ def main():
                 help="CA1 target spacing in bins. 4 = the rung-3 sparse NO-GO config; 2 = dense (tiles the track).")
     ap.add_argument("--json", default=None)
     args = ap.parse_args()
+    set_track_length(args.n_bins)
     tg, tc = set_map_density(args.spacing)
     print(f'[map] spacing={args.spacing} CELL_TARGETS={tg} N_CELL={len(tg)} TARGET_CELL={tc} (bin {TARGET_BIN})')
     arms = {}
