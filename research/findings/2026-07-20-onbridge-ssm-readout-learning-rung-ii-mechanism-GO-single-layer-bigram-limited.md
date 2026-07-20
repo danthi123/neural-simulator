@@ -61,7 +61,10 @@ state is the fixed reservoir's own dynamics). Reduced grounded vocab (112 words)
   0.61→0.84→0.897→0.900)**, up from ~0.8 and CLOSE to the off-bridge multi-layer 0.998 — achieved by the SIMPLEST
   biological rule (pure exact delta, NO gate, NO FA, NO adaptive optimizer). ⇒ the on-bridge fully-spiking read-out
   learning reaches **~0.90** by a pure exact local plasticity rule; the multiplicative gate + FA (rung iv) is not
-  needed for most of the gain (the current-token info enters linearly).
+  needed for most of the gain (the current-token info enters linearly). **MULTI-SEED (dev) FIRMED: 42/43/44 =
+  0.90/0.84/0.91 (mean ~0.88, ~96× chance); FROZEN anti-cheat → 0.005 = chance (learning load-bearing).** ⇒ the
+  on-bridge fully-spiking read-out learning is dev-multi-seed GO at ~0.88, a pure exact delta rule over the graded
+  state + current token, close to the off-bridge 0.998.
 - **The last few %:** ~0.90 → 0.998 (the hardest memory-dependent copies) may still want the multiplicative gate —
   **rung (iv, optional): the gated read-out
   `head @ (sigmoid(Wr@h) * (Wo_sp@state))` on-bridge, with the FA feedback pathway for the hidden layers** (the D3
