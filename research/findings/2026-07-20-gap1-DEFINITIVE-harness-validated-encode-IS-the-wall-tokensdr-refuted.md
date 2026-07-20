@@ -73,3 +73,41 @@ robust to NEF tuning; (2) the token-SDR refutation is a RELATIVE comparison on t
 NEF 0.616), so token-SDR being worse than NEF holds regardless of NEF's absolute tuning. A fully-tuned NEF might
 reach the finding's 0.786/-0.030, but token-SDR (0.501) is below even my untuned NEF (0.616), so a tuned NEF would
 only widen the gap. **The token-SDR is refuted; the exact NEF ceiling is a separate, non-load-bearing tuning question.**
+
+---
+
+## CO-ADAPTATION also FAILS on the validated harness — three encode methods now exhausted
+
+Tested the natural surpass (M3, "train-through-noise"): retrained with `--input-noise 0.9` (matched to the encode's
+measured sigma_rel ~0.905) so the read-out co-adapts to the spiking delivery, then deployed on the NEF encode.
+
+| model on NEF encode | verify corr | deep vs-trigram |
+|---|---|---|
+| clean model | 0.616 | -2.904 |
+| **co-adapted (input-noise 0.9)** | 0.579 | **-2.876** |
+
+**Co-adaptation moved it +0.028 (nothing).** It does NOT recover the deep-NLL — still catastrophically below M1's
+exact-state +0.542. This confirms the prior M3 retraction's conclusion ("closes some, does NOT cross"), now cleanly
+on a VALIDATED harness (the retraction was on a broken harness and couldn't establish it).
+
+**Why co-adaptation cannot work here:** the encode noise ACCUMULATES over the recurrence to a ~0.6-corr state, and
+the deep-context win REQUIRES the accurate accumulated state — the information the read-out needs IS the accurate
+state, which the noisy encode corrupts and which co-adaptation cannot restore (there is no accurate signal to
+co-adapt toward; the model can only learn to rely LESS on the corrupted state, which sacrifices the deep win).
+
+## FINAL gap#1 verdict — a validated, precisely-characterized WALL on the spiking-input half
+
+- **SOLVED:** the recurrent STATE + READ-OUT on-bridge with a perfect host input — M1 exact-state **+0.542 GO**,
+  corr 1.000, on a reproducible validated harness.
+- **WALL (spiking input):** THREE encode methods exhausted on the validated harness — NEF regression (corr 0.616,
+  -2.904), token-SDR selection (corr 0.501, -3.416, REFUTED as worse than NEF), and co-adaptation (corr 0.579,
+  -2.876, no recovery). The deep-NLL is hypersensitive to state fidelity (corr 1.000 -> +0.542, ~0.6 -> ~-2.9), and
+  none of the three reaches the near-1.0 the deep win requires.
+- **Per THE LAW (a wall is a verdict on a METHOD, not the capability):** the spiking-input capability is NOT
+  abandoned. The three tried methods are refuted/bounded; the next mechanism must fundamentally reduce the encode's
+  PER-TOKEN noise (co-adaptation on the model side is ruled out; the noise must drop at the ENCODE), OR change the
+  representation so the deep-context information survives a ~0.6-fidelity accumulated state. That is a fresh
+  research-gate problem, now posed with a QUANTIFIED target (encode state corr must reach ~>0.9) and three
+  eliminated methods.
+
+The spiking-input half is the genuine open frontier of gap#1 — honestly documented, validated, and precisely bounded.
