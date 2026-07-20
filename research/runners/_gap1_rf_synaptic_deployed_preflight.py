@@ -46,8 +46,10 @@ def main():
     ap.add_argument("--n-sentences", type=int, default=40000)
     ap.add_argument("--n-eval", type=int, default=20)
     ap.add_argument("--w", type=float, default=30.0)
+    ap.add_argument("--period", type=int, default=200)
     ap.add_argument("--seed", type=int, default=42)
     args = ap.parse_args()
+    global PERIOD; PERIOD = int(args.period)
 
     W = np.load(args.ssm, allow_pickle=True)
     V = int(W["V"]); D = int(W["d_model"]); words = list(W["words"])

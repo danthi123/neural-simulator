@@ -56,11 +56,15 @@ phase read (corr 0.970 vs 0.999). CHARACTERIZED — THREE fixes tested, ALL null
 — null (0.9703→0.9705); (3) **per-channel calibration** — WORSE (0.874; the per-channel fits overfit the noisy
 small-value `g_nmda`, bias +3.35). ⇒ the residual is an INHERENT small cost of transducing the value through a real
 NMDA conductance — the integer spike-step quantization + the zero-inflated small-value log-amplification (near-zero
-`g_nmda` → the log-decode amplifies its quantization noise), NOT a calibration knob. Full parity (+0.878) needs a
-DIFFERENT synaptic read mechanism (a longer period for finer spike-step resolution; a linear-in-latency read; or a
-different conductance) — a deeper follow-on. **The CAPABILITY is achieved: fully synaptic, deep-NLL +0.735 GO, no host
-read; the +0.735-vs-+0.878 gap is a characterized ~3% fidelity cost of this particular NMDA read, not a wall.**
-(Self-caught: I nearly recorded "per-channel calibration is the fix" — testing it first showed it FAILS.))
+`g_nmda` → the log-decode amplifies its quantization noise), NOT a calibration knob. The fix is a LONGER PERIOD (finer spike-step
+resolution — the residual WAS the quantization, as diagnosed). **⭐ FULL PARITY ACHIEVED:** period sweep — 200 → accum
+corr 0.9703 (deep-NLL +0.735); **500 → 0.9977; 1000 → 0.9984** (== the rf_read_phases ref 0.998). At period=500 the
+deployed deep-NLL is **+0.872 (VERDICT GO, verify corr 0.999) — essentially identical to the host-phase-read +0.878.**
+⇒ **the fully-synaptic read reaches FULL PARITY with the direct phase-read, ZERO fidelity cost: the last host read is
+removed and gap#1's spiking input is FULLY SYNAPTIC AT FULL PARITY (deep-NLL +0.872 ≈ +0.878), no host `rf_read_phases`
+anywhere, at period≥500.** (The silent-failure discipline paid off: I tested weight/decode-order/per-channel FIRST — all
+null/worse, and I nearly recorded the wrong "per-channel is the fix" — then the CORRECT knob, period, closed it to full
+parity. period is a fidelity/compute tradeoff: 200 = +0.735 GO / fast, 500 = +0.872 full-parity / 2.5× steps.))
 
 ## RUNG 1 — GO (feasibility, kept below)
 
