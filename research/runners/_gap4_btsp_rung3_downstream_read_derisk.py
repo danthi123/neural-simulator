@@ -61,6 +61,36 @@ def set_track_length(n_bins):
     return N_BINS
 
 
+def set_map_poisson(n_cells, seed, min_gap=2):
+    """Draw field centres UNIFORMLY AT RANDOM instead of evenly spaced.
+
+    Rich, Liaw & Lee 2014 (Science 345:814) measured CA1 field locations as a spatial POISSON process:
+    locations uniform, interfield intervals exponential, uncorrelated between cells (0/61 cells deviate).
+    So the modal gap between neighbouring fields is ZERO and there is no characteristic spacing.
+
+    Evenly-spaced-by-N is a modelling convenience with NO empirical basis -- the BTSP theory paper that
+    uses it (Front. Comput. Neurosci. 2021) adopts equal spacing explicitly for tractability. This project
+    inherited it, and it may be generating artifacts of its own.
+
+    min_gap is a concession to measurability, not biology: with a truly Poisson draw, fields can coincide
+    and `map_ok` (which requires DISTINCT peaks) would fail for reasons unrelated to the mechanism. Stated
+    so the departure from the cited biology is explicit rather than silent.
+    """
+    global CELL_TARGETS, N_CELL, TARGET_CELL
+    rng = np.random.default_rng(int(seed))
+    picks = [TARGET_BIN]
+    guard = 0
+    while len(picks) < int(n_cells) and guard < 10000:
+        guard += 1
+        c = int(rng.integers(0, N_BINS))
+        if all(abs(c - p) >= min_gap for p in picks):
+            picks.append(c)
+    CELL_TARGETS = sorted(picks)
+    N_CELL = len(CELL_TARGETS)
+    TARGET_CELL = CELL_TARGETS.index(TARGET_BIN)
+    return CELL_TARGETS, TARGET_CELL
+
+
 def set_map_density(spacing):
     """Rebuild the CA1 map at a given target spacing. Returns the new (CELL_TARGETS, TARGET_CELL)."""
     global CELL_TARGETS, N_CELL, TARGET_CELL
@@ -271,6 +301,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=DEV_SEEDS + BLIND_SEEDS)
     ap.add_argument("--bin-steps", dest="bin_steps", type=int, default=200)
+    ap.add_argument("--poisson-cells", dest="poisson_cells", type=int, default=0,
+                    help="draw N field centres UNIFORMLY AT RANDOM (Rich 2014) instead of evenly spaced. 0 = even spacing.")
     ap.add_argument("--n-bins", dest="n_bins", type=int, default=20,
                     help="track length in bins. 40 is required for spacing>shift to be testable with >=4 cells.")
     ap.add_argument("--mk-pot", dest="mk_pot", type=float, default=0.0,
@@ -290,7 +322,11 @@ def main():
     ap.add_argument("--json", default=None)
     args = ap.parse_args()
     set_track_length(args.n_bins)
-    tg, tc = set_map_density(args.spacing)
+    if args.poisson_cells > 0:
+        tg, tc = set_map_poisson(args.poisson_cells, seed=args.seeds[0])
+        print(f'[map] POISSON placement (Rich 2014): {len(tg)} cells {tg} target_cell={tc}')
+    else:
+        tg, tc = set_map_density(args.spacing)
     print(f'[map] spacing={args.spacing} CELL_TARGETS={tg} N_CELL={len(tg)} TARGET_CELL={tc} (bin {TARGET_BIN})')
     arms = {}
     for s in args.seeds:
