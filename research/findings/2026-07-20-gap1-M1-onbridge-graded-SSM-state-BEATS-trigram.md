@@ -200,6 +200,21 @@ is smaller than the seed noise at this scale.
 - **M1's 6-seed GO** — +0.126 mean with **all 6 seeds positive**, and **+0.486** at V=1000. Effect ≫ variance.
 - **M2's heterogeneity contrast** — +0.544 nats over the homogeneous control, **6/6 seeds**. Effect ≫ variance.
 
+**SHARPENED (the variance is across MODEL INSTANCES, not across the lever).** Re-testing at the *mild* setting
+(σ=0.6) on the same blind seeds separates the two explanations:
+
+| seed | σ=0.6 (mild) | σ=1.5 (aggressive) |
+|---|---|---|
+| 43 | −0.211 | −0.066 |
+| 44 | **+0.077** | **+0.080** |
+
+Seed 44 **crosses at BOTH** noise levels; seed 43 **fails at both**. So the spread is not the co-adaptation
+hyperparameter — it is *which trained model instance you got*. Some models transfer to the spiking-input path and beat
+the fair trigram; others do not, and the co-adaptation lever does not decide it. ⇒ the honest statement is:
+**the fully-spiking-input path beats the trigram for SOME model instances and not others, with instance variance
+(~0.2 nats) dominating every lever tested (~0.03-0.05).** Chasing the lever further is below the resolution of the
+experiment; the productive question, if resumed, is *what distinguishes a transferable instance* — not which σ to use.
+
 This is the project's documented recurring failure mode (dev-seed selection) caught in my own work, by the control that
 exists to catch it. It cost four extra runs and prevented a false characterization entering the record.
 
