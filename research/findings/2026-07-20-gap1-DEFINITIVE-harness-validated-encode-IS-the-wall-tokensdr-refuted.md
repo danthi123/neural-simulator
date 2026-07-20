@@ -59,3 +59,17 @@ diagnosis with the fidelity requirement quantified, and a refuted token-SDR — 
 
 `bridges/wkv_ckpt/wkv_ssmU_v1000_d128_seed42.npz` (uniform-decay, dual-nonneg) is THE usable on-bridge checkpoint.
 The `wkv` and non-uniform `ssm` checkpoints are not on-bridge-compatible.
+
+
+---
+
+## Honest caveat on the NEF absolute number (does NOT affect the token-SDR verdict)
+
+My NEF on the validated checkpoint reads corr 0.616 / deep -2.904, WORSE than the M2 finding's tuned NEF (corr 0.786
+/ deep -0.030). So my NEF config (n_enc / t_step / calibration) is likely UNTUNED relative to the M2 finding — the
+absolute encode number is not the M2 finding's best. **This does NOT affect the two load-bearing conclusions:**
+(1) the encode-is-the-wall is a RELATIVE fact (exact input corr 1.000 -> +0.542 GO vs ANY spiking encode's collapse),
+robust to NEF tuning; (2) the token-SDR refutation is a RELATIVE comparison on the SAME harness (token-SDR 0.501 <
+NEF 0.616), so token-SDR being worse than NEF holds regardless of NEF's absolute tuning. A fully-tuned NEF might
+reach the finding's 0.786/-0.030, but token-SDR (0.501) is below even my untuned NEF (0.616), so a tuned NEF would
+only widen the gap. **The token-SDR is refuted; the exact NEF ceiling is a separate, non-load-bearing tuning question.**
