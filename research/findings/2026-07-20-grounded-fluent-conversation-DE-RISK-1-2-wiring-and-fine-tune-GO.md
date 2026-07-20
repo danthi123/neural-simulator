@@ -37,6 +37,18 @@ fine-tune appends `<ans>`/`<eos>` AFTER `<unk>`, so `V-1` pointed at `<eos>`, an
 top-1; free-running said eos absent — same frame). Fixed by indexing `<unk>` **by name**. After the fix every answer
 is clean (eos fires). (Also added standard no-repeat-ngram loop-stop decoding as belt-and-suspenders.)
 
+## DE-RISK 2 — 6-SEED FIRMING (n=22 held-out facts): GO, dev/blind reported separately
+
+`_gap_grounded_wkv_multiseed_firm.py` — fine-tune the SAME base checkpoint with 6 different TRAINING seeds (varies
+frame sampling + marker init + torch RNG), eval focused-grounded + RA-faithful on ALL 22 curriculum SVO facts (held
+out of training):
+- **DEV (42/43/44):** focused-grounded **0.833** (min 0.818), RA-faithful **1.00** (min 1.00), confab 0.167.
+- **BLIND (100/101/102):** focused-grounded **0.849** (min 0.818), RA-faithful **0.992** (min 0.977), confab 0.151.
+- anti-forgetting stable every seed (TinyStories ppl 28.12 → 28.1–28.4). Blind ≈ dev (no overfit to the dev seeds).
+
+⇒ the single-seed caveat is resolved: the format-fine-tuned WKV renders grounded fluent answers at a **6-seed GO**
+(focused-grounded ~0.84, RA-faithful ~1.00, confab ~0.16 → safe template fallback), on facts held out of training.
+
 ## DE-RISK 1 — WIRING + MOAT: GO
 
 `FluidChat(renderer="wkv")` (additive; default `"ft"` = byte-identical) drops `WKVFaculty` in place of `FTFaculty`

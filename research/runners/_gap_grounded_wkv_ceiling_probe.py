@@ -39,6 +39,7 @@ def main():
     ap.add_argument("--curriculum", default=CUR_PATH)
     ap.add_argument("--out", default="research/findings/raw/_gap_grounded_wkv_ceiling.json")
     ap.add_argument("--show", type=int, default=8, help="print this many example generations")
+    ap.add_argument("--all-facts", action="store_true", help="test ALL curriculum SVO facts (n=22), not just the 6 patient-recall cues")
     args = ap.parse_args()
 
     cur = json.load(open(args.curriculum))
@@ -58,17 +59,19 @@ def main():
     def _ung(t):
         return [s for s in _svos(t) if _fact_key(s) not in store_keys]
 
-    # test on the 'patient' recall queries (mirror the phase2 eval scope), else fall back to all facts as (a,v)->p
-    test = [(q["cue"][0], q["cue"][1]) for q in cur.get("queries_recall", []) if q["type"] == "patient"]
-    if not test:
-        test = [(a, v) for (a, v, p) in facts]
-    # dedup, keep the taught patient
-    seen = {}
-    for a, v in test:
-        p = next((pp for (aa, vv, pp) in facts if aa == a and vv == v), None)
-        if p is not None and (a, v) not in seen:
-            seen[(a, v)] = p
-    cases = [(a, v, p) for (a, v), p in seen.items()]
+    if args.all_facts:
+        cases = [(a, v, p) for (a, v, p) in facts]                    # ALL curriculum SVO facts (n=22, robust)
+    else:
+        # test on the 'patient' recall queries (mirror the phase2 eval scope), else fall back to all facts as (a,v)->p
+        test = [(q["cue"][0], q["cue"][1]) for q in cur.get("queries_recall", []) if q["type"] == "patient"]
+        if not test:
+            test = [(a, v) for (a, v, p) in facts]
+        seen = {}
+        for a, v in test:
+            p = next((pp for (aa, vv, pp) in facts if aa == a and vv == v), None)
+            if p is not None and (a, v) not in seen:
+                seen[(a, v)] = p
+        cases = [(a, v, p) for (a, v), p in seen.items()]
 
     cont = {"verified": 0, "confab": 0, "fallback": 0}
     complete = {"top1": 0, "top5": 0, "n": 0}
