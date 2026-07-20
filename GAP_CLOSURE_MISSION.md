@@ -323,7 +323,13 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   numpy-quantize control (+0.867 ≈ +0.878). This is exactly the SpikeGPT/biology-faithful target the M1 finding named:
   spike the I/O, hold the recurrent state graded. NO `sim/` edit (RF ops reused from `bridge.py`; `--rf-phase-encode`
   default-absent = byte-identical). **NEXT (gap#1 residuals, not walls):** the fully-synaptic phase→conductance
-  transduction (RF spike → downstream NMDA charge, no host read of the phase); V/D scaling. Finding
+  transduction (RF spike → downstream NMDA charge, no host read of the phase) — **RUNG 1 GO (2026-07-20, feasibility):**
+  a decaying-conductance latency read of the RF spike (`g=exp(-(period-spike_step)/tau)`) + a fixed log inverse recovers
+  the value PERFECTLY (corr 1.0000, rms 0.3% of range, UNBIASED, tau-INDEPENDENT), matching the host phase-read — so the
+  last host read (`rf_read_phases`) IS removable (a downstream synapse's decayed conductance IS the value, read by a
+  biological log-compressive read-out). RUNG 2 (next build) = wire on-bridge (co-resident RF + decaying-conductance
+  synapse charging cp_ssm_state, no host read) + re-run deep-NLL/generation for parity.
+  `2026-07-20-gap1-fully-synaptic-RF-transduction-RUNG1-GO-feasibility.md`. Also V/D scaling. Finding
   `2026-07-20-gap1-RF-PHASE-ENCODE-first-spiking-encode-PAST-the-wall.md`; runners `_gap1_rf_phase_deployed_preflight.py`
   + `_emerge_wkv_onbridge_derisk.py --rf-phase-encode`; matched set `wkv_ssmU6_v1000_d128_seed{42..102}.npz`.
   **⇒ EXTENDED to GENERATION (2026-07-20): the spiking WKV cortex GENERATES prose on-bridge, not just comprehends.**
