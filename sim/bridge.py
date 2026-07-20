@@ -77,7 +77,8 @@ from sim.connectivity import (generate_spatial_connections_gpu,
                               generate_watts_strogatz_3d,
                               generate_motif_connections_3d,
                               _calculate_distances_3d_gpu)
-from sim.kernels import (fused_izhikevich_legacy_dynamics_update,
+from sim.kernels import (
+    fused_btsp_dog_update,fused_izhikevich_legacy_dynamics_update,
                          fused_izhikevich2007_dynamics_update,
                          fused_hodgkin_huxley_dynamics_update,
                          fused_hh_m_current_update,
@@ -300,6 +301,7 @@ class SimulationBridge:
         self.cp_bdsp_int_drive = None
         self._bdsp_step_counter = 0                         # monotone step index for burst-ISI detection (BDSP only)
         self.cp_btsp_pre_elig = None                        # gap#4 BTSP seconds-long per-neuron presynaptic eligibility (None unless enable_btsp)
+        self.cp_btsp_pre_elig_slow = None                   # gap#4 Rank-2: SLOW companion trace (None unless btsp_dog_a_dep>0)
         self.cp_conductance_g_coincidence_rise = None     # dual-exp rise component
         self.cp_coincidence_synapse_mask = None           # bool per-synapse: True for coincidence_detector-routed synapses
         # GRADED dendritic-plateau READ-OUT (Stage 1, 2026-06-20). The SMOOTH/non-saturating sibling of
@@ -7379,10 +7381,22 @@ class SimulationBridge:
                 _nN = self.cp_membrane_potential_v.size
                 if self.cp_btsp_pre_elig is None or self.cp_btsp_pre_elig.size != _nN:
                     self.cp_btsp_pre_elig = cp.zeros(_nN, dtype=cp.float32)
+                # gap#4 Rank-2: allocate the SLOW trace only when the zero-DC rule is enabled.
+                _dog_a = float(getattr(cfg, "btsp_dog_a_dep", 0.0))
+                _tau_slow = float(getattr(cfg, "btsp_elig_tau_slow_ms", 0.0))
+                if _dog_a > 0.0 and _tau_slow > 0.0:
+                    if self.cp_btsp_pre_elig_slow is None or self.cp_btsp_pre_elig_slow.size != _nN:
+                        self.cp_btsp_pre_elig_slow = cp.zeros(_nN, dtype=cp.float32)
                 _bt_tau = cp.float32(np.exp(-cfg.dt_ms / max(getattr(cfg, "btsp_elig_tau_ms", 1000.0), 1e-6)))
                 self.cp_btsp_pre_elig = self.cp_btsp_pre_elig * _bt_tau
                 if _fired_any:
                     self.cp_btsp_pre_elig = self.cp_btsp_pre_elig + (1.0 - _bt_tau) * fired_this_step.astype(cp.float32)
+                if self.cp_btsp_pre_elig_slow is not None:
+                    _bt_tau_slow = cp.float32(math.exp(-float(cfg.dt_ms) / max(_tau_slow, 1e-9)))
+                    self.cp_btsp_pre_elig_slow = self.cp_btsp_pre_elig_slow * _bt_tau_slow
+                    if _fired_any:
+                        self.cp_btsp_pre_elig_slow = (self.cp_btsp_pre_elig_slow
+                                                      + (1.0 - _bt_tau_slow) * fired_this_step.astype(cp.float32))
                 _vhold_bt = cp.float32(getattr(cfg, "coincidence_plateau_v_hold", -35.0))
                 _is_post_bt = cp.maximum(self.cp_v_apical - _vhold_bt, cp.float32(0.0))    # plateau above v_hold = the instructive signal
                 coo_bt = self._get_cached_coo()
@@ -7400,7 +7414,16 @@ class SimulationBridge:
                     active_bt = cp.where((etilde_bt > 1e-6) & (is_bt > 1e-6))[0]
                 if active_bt.size > 0:
                     cur_w = self.cp_connections.data[active_bt]
-                    if _hdep > 0.0:
+                    if self.cp_btsp_pre_elig_slow is not None:
+                        new_w = fused_btsp_dog_update(
+                            cur_w, etilde_bt[active_bt],
+                            self.cp_btsp_pre_elig_slow[coo_bt.row][active_bt],
+                            is_bt[active_bt],
+                            cp.float32(getattr(cfg, "btsp_learning_rate", 0.001)),
+                            cp.float32(_dog_a),
+                            cp.float32(getattr(cfg, "btsp_w_min", 0.0)),
+                            cp.float32(getattr(cfg, "btsp_w_max", 5.0)))
+                    elif _hdep > 0.0:
                         new_w = fused_btsp_hetero_update(
                             cur_w, etilde_bt[active_bt], is_bt[active_bt],
                             cp.float32(getattr(cfg, "btsp_learning_rate", 0.001)),

@@ -315,6 +315,9 @@ class CoreSimConfig:
     # (asserted: numpy 2000 trials and cupy 2.048M elements, max|diff| = 0.0).
     btsp_band_lo: float = 0.0
     btsp_band_hi: float = 0.0
+    # gap#4 Rank-2 zero-DC difference-of-exponentials. btsp_dog_a_dep = 0.0 => OFF (byte-identical).
+    btsp_elig_tau_slow_ms: float = 0.0
+    btsp_dog_a_dep: float = 0.0
     # 0.0 (default) => the BTSP block uses pure-potentiation fused_btsp_update (byte-identical). >0 => the structured
     # fused_btsp_hetero_update (Milstein-Magee 2021 bidirectional arm / Chistiakova-Volgushev heterosynaptic
     # competition): a plateauing cell depresses its NON-coincident inputs by lam_dep*(1-Etilde_pre)*(w-w_min) while

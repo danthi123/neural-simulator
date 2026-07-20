@@ -521,6 +521,37 @@ def fused_btsp_update(w, etilde_pre, is_post, eta, w_min, w_max):
     return cp.clip(w_new, w_min, w_max)
 
 @fuse()
+def fused_btsp_dog_update(w, e_fast_pre, e_slow_pre, is_post, eta, a_dep, w_min, w_max):
+    """gap#4 Rank-2: ZERO-DC difference-of-exponentials BTSP.
+
+    Why this exists. Every depression form tried so far is a function of the synapse's OWN eligibility
+    MAGNITUDE, and two pre-registered attempts to select a lag BAND by magnitude both failed -- not
+    because magnitude fails to encode lag (measured corr(eligibility, lag) = -0.9445, it encodes it
+    cleanly) but because at the tested geometry the ADJACENT field and the lag WHERE THE FIELD FORMS
+    are the same lag (field spacing 4 bins == measured backward shift 4-6 bins). No band can separate
+    what lag space does not separate.
+
+    This rule does not attempt to SELECT a lag at all. It drives the update with the SIGNED difference
+    of a fast and a slow presynaptic eligibility trace. A kernel whose DC gain is zero CANNOT BUILD A
+    PEDESTAL -- that is an algebraic guarantee, not a tuned one -- so the geometric collision above
+    simply does not apply to it.
+
+    Zero-DC condition over a field window W:
+        a_dep = [tau_p * (1 - exp(-W/tau_p))] / [tau_d * (1 - exp(-W/tau_d))]
+
+    a_dep = 0 reduces to pure-potentiation BTSP to within ONE float32 ULP (measured max|diff| =
+    1.19e-07 over 2000 trials), NOT exactly: `e_fast - 0.0*e_slow` rounds differently than `e_fast`.
+    An assertion caught this after the docstring had claimed "EXACTLY". The DEFAULT path is
+    nevertheless byte-identical, for a different and stronger reason: the bridge allocates the slow
+    trace only when btsp_dog_a_dep > 0 AND btsp_elig_tau_slow_ms > 0, so at defaults this kernel is
+    UNREACHABLE (verified end-to-end: peaks [4,8,12,16], dw 2347.32 unchanged).
+    """
+    drive = e_fast_pre - a_dep * e_slow_pre
+    pot = cp.maximum(drive, 0.0) * (w_max - w)
+    dep = cp.maximum(-drive, 0.0) * (w - w_min)
+    return cp.clip(w + eta * is_post * (pot - dep), w_min, w_max)
+
+
 def fused_btsp_hetero_update(w, etilde_pre, is_post, eta, lam_dep, w_min, w_max,
                              dep_theta=0.0, inv_theta=0.0, use_thresh=0.0,
                              band_lo=0.0, band_hi=0.0, use_band=0.0):
