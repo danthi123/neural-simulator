@@ -172,10 +172,36 @@ read-out co-adapt to the actual spiking delivery (the gap#4 lever), then deploye
 | 2.0 | +0.038 | −0.060 |
 | 3.0 | +0.019 | −0.099 |
 
-**A clean inverted-U with a genuine optimum at σ≈1.5.** Co-adaptation recovers **83% of the gap** (−0.181 → −0.030),
-landing the fully-spiking-input path within **0.03 nats** of the fair trigram — but it does not cross. The tradeoff is
-explicit and monotone: co-adaptation buys on-bridge robustness by *spending* off-bridge capability (+0.113 → +0.019),
-and past σ=1.5 the cost dominates the benefit. This is a real optimum, not a tuning plateau.
+**⛔ RETRACTION (2026-07-20, blind-seed check) — the curve above is SEED 42 ONLY and its structure is BELOW the
+cross-seed noise floor. I originally wrote "a clean inverted-U with a genuine optimum at σ≈1.5 … a real optimum, not a
+tuning plateau." That claim is NOT SUPPORTED and is withdrawn.**
+
+Re-running the σ=1.5 "peak" config on blind seeds:
+
+| seed | off-bridge | ON THE SPIKING INPUT PATH |
+|---|---|---|
+| 42 (the tuned/dev seed) | +0.062 | −0.030 |
+| 43 | +0.002 | −0.066 |
+| 44 | +0.081 | **+0.080** |
+| 100 | +0.022 | −0.124 |
+| **mean** | +0.042 | **−0.035**, **spread 0.204** |
+
+**The effect sizes I was tuning (~0.03–0.05 nats) are ~4-6× SMALLER than the cross-seed variance (~0.2 nats).** So the
+entire M3 lever sweep — the monotone improvement, the peak, the inverted-U — was operating *below the noise floor* on a
+single seed. 1 of 4 seeds actually crosses (+0.080); the mean is −0.035. Off-bridge capability at σ=1.5 is also
+seed-fragile (+0.002 on seed 43 = nearly destroyed).
+
+**What this changes:** the honest characterization of the fully-spiking-input path is **"at parity with the fair
+trigram, seed-variance-dominated, straddling zero"** — NOT "short by 0.03", and NOT "co-adaptation has an optimum at
+σ=1.5". Any future work here must pre-register seeds and report blind seeds separately, because the margin of interest
+is smaller than the seed noise at this scale.
+
+**What SURVIVES this correction (both well above the noise floor):**
+- **M1's 6-seed GO** — +0.126 mean with **all 6 seeds positive**, and **+0.486** at V=1000. Effect ≫ variance.
+- **M2's heterogeneity contrast** — +0.544 nats over the homogeneous control, **6/6 seeds**. Effect ≫ variance.
+
+This is the project's documented recurring failure mode (dev-seed selection) caught in my own work, by the control that
+exists to catch it. It cost four extra runs and prevented a false characterization entering the record.
 
 **M4 — combining the best of every lever does NOT cross either.** The encoder sweep had previously been run *without*
 co-adaptation and at the *bad* window, so the combination was genuinely untested. Run at the co-adaptation peak
