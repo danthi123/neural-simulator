@@ -123,6 +123,49 @@ def _build_plateau_channel_bridge(D, seed, pathway_w=3.0, pop_k=8, dt=1.0, cente
     return b, inp_groups, chan_groups, None
 
 
+def _build_ssm_state_bridge(D, seed, decay, pop_k=1, dt=1.0):
+    """M1 (research-gate ranked #1, `2026-07-19-onbridge-wkv-state-fidelity-research-gate.md`): hold the WKV leaky state in
+    the SHIPPED `cp_ssm_state` GRADED integrator (`enable_selective_ssm_state`, RUNG4b — byte-equal to numpy at 1e-7).
+
+    WHY this is the right target (the gate's decisive reframe): NO spiking LM realizes the recurrent state as SPIKES —
+    SpikeGPT / SPikE-SSM / SpikingSSMs / SiLIF all keep the SSM state real-valued/graded and spike only the I/O, and biology
+    holds integrator state in graded slow conductances (NMDA plateaus, line-attractor persistent activity). Our prior
+    "state = mean firing RATE" bar was SELF-IMPOSED, stricter than SpikeGPT AND biology, and is the SOLE cause of the ~0.55
+    ceiling + the -0.9..-1.8 on-bridge deep-NLL wall (the input pool's few-spike rate code is threshold-nonlinear,
+    refractory-bounded and dead-zoned; pop_k->500 does not fix it).
+
+    EXACT MAPPING: the bridge update is s = lam*s + (1-lam)*inject with lam = clip(1 - k_leak*(1+shunt), 0, 1). Setting
+    k_leak = 1-decay and shunt = 0 gives lam = decay, so injecting v_t/(1-decay) reproduces EXACTLY a_t = decay*a_{t-1} + v_t.
+    The state is held per-neuron on the bridge and advanced by the bridge's OWN step; DUAL-NONNEG (2D channels each holding
+    a non-negative integral of relu(+/-v)) keeps it biology-faithful (two positive conductances, no signed-difference
+    opponency). HONEST SCOPE: the per-token inject is still written by the host (standing in for the upstream cortical
+    population's graded synaptic drive) -> making that input a genuine spiking population is M2 (NEF heterogeneous-encoder
+    + optimal least-squares decoder)."""
+    from sim.bridge import SimulationBridge
+    from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
+    from sim.regions import BrainRegion
+    cfg = CoreSimConfig()
+    cfg.enable_brain_region_framework = True
+    cfg.enable_selective_ssm_state = True
+    cfg.ssm_k_leak = float(max(0.0, min(1.0, 1.0 - decay)))          # lam_eff == decay at shunt=0
+    cfg.dt = float(dt)
+    cfg.seed = cfg.ou_seed = cfg.heterogeneity_seed = seed
+    cfg.enable_ou_process = False; cfg.enable_stdp = False; cfg.enable_hebbian_learning = False
+    cfg.enable_homeostasis = False; cfg.enable_short_term_plasticity = False
+    cfg.enable_parameter_heterogeneity = False; cfg.enable_conductance_noise = False
+    cfg.brain_regions = [
+        BrainRegion(name="chan", n_neurons=2 * D * pop_k, exc_fraction=1.0, internal_density=0.05,
+                    exc_weight_mean=1.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False),
+    ]
+    cfg.region_pathways = []
+    rt = RuntimeState(); rt.actual_seed_used = seed
+    b = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(), runtime_state=rt, gpu_config=GPUConfig())
+    b._initialize_simulation_data()
+    idx = np.asarray(b.region_manager.indices("chan"))
+    chan_groups = [idx[c * pop_k:(c + 1) * pop_k] for c in range(2 * D)]
+    return b, chan_groups, None, None
+
+
 def _build_recur_channel_bridge(D, seed, recur_w=0.35, n_recur=20, dt=0.5, density=0.5, learn=False):
     """LINE-ATTRACTOR INTEGRATOR (the scoped deep frontier, next-arc de-risk): each channel = a POPULATION of n_recur neurons
     with block-diagonal NMDA-slow RECURRENT self-excitation (Wong-Wang 2002/Seung-Goldman graded persistent-activity integrator,
@@ -233,6 +276,9 @@ def main():
                     help="bias current (pA) to put the graded-charge input pool in its linear f-I regime")
     ap.add_argument("--graded-gain-lo", dest="graded_gain_lo", type=float, default=0.15)  # staggered pop-member gains
     ap.add_argument("--graded-gain-hi", dest="graded_gain_hi", type=float, default=2.5)   # -> graded population rate code
+    ap.add_argument("--ssm-state", dest="ssm_state", action="store_true", help="M1 (research-gate #1): hold the WKV leaky state in the shipped GRADED `cp_ssm_state` integrator (enable_selective_ssm_state; k_leak=1-decay, inject=v/(1-decay) => exactly a=decay*a+v). The SpikeGPT/biology-faithful bar (graded state, spikes carry I/O) instead of the self-imposed spike-rate-coded state that caps at ~0.55.")
+    ap.add_argument("--use-ssm-readout", dest="use_ssm_readout", action="store_true", help="apply the SSM's OWN trained read-out (Wo_sp/Wr/head) to the on-bridge state instead of re-fitting a fresh one -- valid ONLY when the on-bridge state is byte-exact (verify corr ~1.0); the honest M1 claim")
+    ap.add_argument("--ssm-memoryless", dest="ssm_memoryless", action="store_true", help="(--ssm-state anti-cheat) k_leak=1 => lam=0 => NO integration; must collapse toward bigram")
     ap.add_argument("--recur-integrator", dest="recur_integrator", action="store_true", help="LINE-ATTRACTOR: per-channel NMDA-recurrent population integrator (Wong-Wang alpha<1)")
     ap.add_argument("--kick-steps", dest="kick_steps", type=int, default=0, help="transient-kick: drive only the first K steps per token, then let the recurrence sustain")
     ap.add_argument("--plateau-center", dest="plateau_center", type=float, default=8.0)
@@ -298,6 +344,15 @@ def main():
                                                                          pop_k=args.pop_k, tau_decay_ms=_tau, center=getattr(args,"plateau_center",8.0), per_pop=getattr(args,"pathway_per_pop",False))
         drive_groups = inp_groups
         print(f"[plateau] dendritic graded plateau: SSM decay={decay:.4f} -> matched plateau tau={_tau:.1f}ms, pop_k={args.pop_k}", flush=True)
+    elif getattr(args, "ssm_state", False):
+        # M1: the WKV state lives in the SHIPPED graded `cp_ssm_state` integrator (byte-equal to numpy, RUNG4b).
+        _mless = getattr(args, "ssm_memoryless", False)
+        _dec = 0.0 if _mless else decay                              # anti-cheat: lam=0 => no integration => ~bigram
+        b, chan_groups, _cg2, snap = _build_ssm_state_bridge(D, args.seed, _dec, pop_k=max(1, args.pop_k))
+        drive_groups = chan_groups
+        print(f"[ssm-state] GRADED cp_ssm_state integrator: SSM decay={decay:.4f} -> k_leak={1.0-_dec:.4f} "
+              f"(lam_eff={_dec:.4f}), inject=v/(1-decay), pop_k={max(1,args.pop_k)}"
+              + (" [MEMORYLESS ANTI-CHEAT]" if _mless else ""), flush=True)
     elif getattr(args, "recur_integrator", False):
         # LINE-ATTRACTOR: each channel = an NMDA-recurrent POPULATION integrator (Wong-Wang, alpha<1); drive propto v_t, read
         # the population mean rate. A recurrent population holds a graded value at higher fidelity than a single self-NMDA cell.
@@ -326,7 +381,9 @@ def main():
         """Reset the state so each sentence reads independently (zero the leaky NMDA memory + conductances + firing;
         v/u to Izhikevich rest). Robust to array-size details (avoids the finicky EMERGE snapshot/restore pair)."""
         for nm in ("cp_conductance_g_nmda_recurrent", "cp_conductance_g_nmda_recurrent_rise", "cp_conductance_g_nmda",
-                   "cp_conductance_g_e", "cp_conductance_g_i", "cp_firing_states"):
+                   "cp_conductance_g_e", "cp_conductance_g_i", "cp_firing_states",
+                   "cp_ssm_state", "cp_ssm_inject", "cp_ssm_shunt",
+                   "cp_conductance_g_graded_plateau", "cp_conductance_g_graded_plateau_rise"):
             arr = getattr(b, nm, None)
             if arr is not None: arr[:] = 0.0
         if b.cp_membrane_potential_v is not None: b.cp_membrane_potential_v[:] = -65.0
@@ -341,6 +398,21 @@ def main():
             h = _ln(emb[ids[t]]); v = Wv @ h                        # [D]
             if getattr(args, "graded_plateau", False) and getattr(args, "plateau_calib", False):
                 v = v / v_chan_scale                                # PER-CHANNEL calibration -> all channels in the graded window
+            if getattr(args, "ssm_state", False):
+                # M1: write the per-channel GRADED inject (dual-nonneg; scaled by 1/(1-decay) so lam=decay reproduces
+                # a_t = decay*a_{t-1} + v_t EXACTLY), advance ONE bridge step per token (= one recurrence step), and read
+                # the graded state the BRIDGE itself advanced. No spike-rate encoding of the state anywhere.
+                _sc = max(1e-6, 1.0 - (0.0 if getattr(args, "ssm_memoryless", False) else decay))
+                _inj = np.concatenate([np.maximum(v, 0.0), np.maximum(-v, 0.0)]) / _sc
+                _cur = np.zeros(nnrn, np.float32)
+                _cur[read_idx] = _inj[chan_of].astype(np.float32)
+                b.cp_ssm_inject[:] = (xp.asarray(_cur) if xp is not None else _cur)
+                b.cp_ssm_shunt[:] = 0.0
+                b._run_one_simulation_step()
+                _st = np.asarray(to_host(b.cp_ssm_state)).astype(np.float64)
+                _agg = np.zeros(2 * D, np.float64); np.add.at(_agg, chan_of, _st[read_idx])
+                rates.append(_agg / gsize)
+                continue
             if getattr(args, "exact_state", False):
                 # ISOLATE the spiking READ: drive with the EXACT host-computed rate-SSM state (leaky integral done in host)
                 # -> the neurons transduce the exact state to firing; if this GOes, the read is fine + the substrate's
@@ -423,6 +495,17 @@ def main():
 
     def rate_ssm_states(ids):
         """The reference rate-SSM analog [relu(a),relu(-a)] per position (to VERIFY the on-bridge mapping)."""
+        if getattr(args, "ssm_state", False):
+            # M1 reference MUST match the deployed state FORM: the dual-nonneg bridge state holds the INTEGRAL-OF-RELU
+            # (ap = decay*ap + relu(v); an = decay*an + relu(-v)), NOT relu-of-integral. Comparing against the wrong form
+            # would report a misleadingly low corr; this makes the verify-first check a genuine equivalence test (~1.0).
+            _dec = 0.0 if getattr(args, "ssm_memoryless", False) else decay
+            ap = np.zeros(D); an = np.zeros(D); out = []
+            for t in range(len(ids)):
+                h = _ln(emb[ids[t]]); v = Wv @ h
+                ap = _dec * ap + np.maximum(v, 0.0); an = _dec * an + np.maximum(-v, 0.0)
+                out.append(np.concatenate([ap, an]))
+            return np.asarray(out)                                   # [T, 2D]
         a = np.zeros(D); out = []
         for t in range(len(ids)):
             h = _ln(emb[ids[t]]); a = decay * a + (Wv @ h)
@@ -454,7 +537,11 @@ def main():
         return np.concatenate([rate_t, r_h * signed])              # [3D]
 
     t0 = time.time()
-    fit_ids = tr_ids[:args.n_fit]
+    # M1: when the on-bridge state is byte-EXACT (corr 1.000), the SSM's OWN trained read-out runs on it UNCHANGED --
+    # a fresh post-hoc read-out is a weaker, under-fit proxy that MASKS the exact-state result. Fit a token set only to
+    # keep the code path alive; the eval uses the own-read-out branch below.
+    _use_own = getattr(args, "use_ssm_readout", False)
+    fit_ids = tr_ids[:(2 if _use_own else args.n_fit)]
     Xtr, Ytr = [], []
     for ids in fit_ids:
         if len(ids) < 2: continue
@@ -498,7 +585,12 @@ def main():
         if len(ids) < 2: continue
         rates = onbridge_states(ids)                                 # [T, 2D]
         for t in range(len(ids) - 1):
-            if _mlp is not None:
+            if _use_own:
+                # the SSM's OWN trained read-out applied to the BRIDGE-HELD state:
+                #   logits = head( sigmoid(Wr @ LN(emb[x_t])) * (Wo_sp @ state_t) )   -- exactly the trained forward
+                _rh = 1.0 / (1.0 + np.exp(-(Wr @ _ln(emb[ids[t]]))))
+                logits = head_w @ (_rh * (Wo_sp @ rates[t])) + head_b
+            elif _mlp is not None:
                 import torch
                 xf = ((_feat(rates[t], ids[t]) - mean) / std).astype(np.float32)
                 with torch.no_grad():
