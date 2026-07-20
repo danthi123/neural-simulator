@@ -226,8 +226,19 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   Also FIXED this session: 3 runners flagged unseeded on 2026-07-17 were STILL unseeded (zero commits in 3 days) —
   `cfg.seed` added + verified by two-process threshold hash. Finding:
   `2026-07-20-gap4-status-audit-THREE-audits-converge-deep-credit-is-OPEN.md`.
-- **🎉 gap#1 M1 — 6-SEED GO (2026-07-20): the ON-BRIDGE WKV state BEATS the fair interpolated trigram at deep context,
-  6/6 seeds (mean +0.126, range +0.061..+0.238). THE ON-SUBSTRATE BOUNDARY IS SURPASSED.** Mechanism: hold the leaky
+- **⛔ gap#1 M1 — "ON-BRIDGE" WITHDRAWN by adversarial audit (2026-07-20); the SSM result survives, the SUBSTRATE
+  claim does not. THE ON-SUBSTRATE BOUNDARY IS **NOT** SURPASSED.** The runner writes `cp_ssm_inject` and NEVER
+  `cp_external_input_current`, then `continue`s ⇒ **total spikes = 0**. Four lesions each give `max|diff| = 0.0`:
+  all synapses zeroed; membranes pinned to -90 mV; **every firing threshold set to +1e6 (whole network silenced)**;
+  and 12-vs-240 neurons. Silencing the entire network changes the result by exactly nothing. `verify-corr 1.000` is
+  CIRCULAR (the reference is rebuilt as the deployed recurrence from the same host `v`) and the **memoryless null
+  also scores 1.000**, auto-satisfying half the gate. No artifact backs any headline; the one `--json` on disk reads
+  `"go": false, vs_trigram -3.391`; V=1000's +0.486 is n=1 on the config that silently produced -3.790.
+  **SURVIVING RESIDUE (real, and worth keeping):** a graded leaky SSM recurrence — host-parameterized elementwise
+  arithmetic that merely EXECUTES inside `_run_one_simulation_step`, with ZERO spiking participation — beats a fair
+  interpolated trigram at deep context, 6/6 seeds positive, aggregate +0.126 (sign test p~0.016). **That is a claim
+  about an SSM RECURRENCE, not about the SimulationBridge and not about anything spiking.** Original (now-corrected)
+  claim below for the trail:** Mechanism: hold the leaky
   state in the SHIPPED graded `cp_ssm_state` integrator (`enable_selective_ssm_state`) — `k_leak=1-decay`, `shunt=0`
   ⇒ `lam=decay`, `inject=v/(1-decay)` reproduces `a_t=decay*a_{t-1}+v_t` EXACTLY (verify-first corr **1.000**);
   dual-nonneg keeps it biology-faithful; the SSM's OWN trained read-out runs on the bridge-held state unchanged
