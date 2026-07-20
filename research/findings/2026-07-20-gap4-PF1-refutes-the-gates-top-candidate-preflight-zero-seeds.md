@@ -61,3 +61,28 @@ best-characterized object in the arc: **adjacent contrast 1.213x vs far 2.609x, 
 independent runs.** Remaining ranked candidates (untested): weight-keyed depression in isolation, STC winner-take-all
 capture over a finite cell-wide pool, corrected Miller-MacKay with `w_min < 0`, and the population kWTA read-out that
 attacks the 1.5x transfer loss rather than the weight contrast.
+
+
+---
+
+## ⛔ CORRECTION: the "discrepancy" I flagged against the gate was MY probe's error, not the gate's
+
+Above I recorded that the gate measured `ET*IS` percentiles ~10x lower than mine and flagged it as unresolved,
+noting I was "NOT claiming the gate is wrong". **The gate was right and my probe was wrong.**
+
+My probe computed `et.max() * IS.max()` — a single PEAK scalar per timestep — and called it the overlap
+distribution. The correct quantity is the **PER-SYNAPSE** overlap `et[pre] * IS[post]` across all synapses.
+Measured properly (n = **8,555,600** samples): normalized p10 0.0036, p50 0.0280, p90 0.5374, giving
+
+| zone (Milstein normalized units) | share |
+|---|---|
+| depress-only (< 0.09) | **68.9%** |
+| mixed (0.09-0.24) | **9.6%** |
+| potentiate (>= 0.24) | **21.5%** |
+
+**All three zones are meaningfully populated, so the published thresholds are usable on the deployed distribution
+without rescaling** — which is precisely the gate's load-bearing claim, now confirmed on real per-synapse data.
+
+Note what this does NOT change: PF-1's finding that the overlap provides **no separation** between adjacent-lag and
+field-forming synapses (1.001x) stands, and was measured correctly. But per the literature reframe, separation was
+the wrong objective anyway — so PF-1 refuted a claim the mechanism never needed to make.

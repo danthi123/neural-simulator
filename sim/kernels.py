@@ -521,6 +521,39 @@ def fused_btsp_update(w, etilde_pre, is_post, eta, w_min, w_max):
     return cp.clip(w_new, w_min, w_max)
 
 @fuse()
+def fused_btsp_milstein_update(w, q_pot, q_dep, is_post, k_pot, k_dep, w_min, w_max):
+    """gap#4: WEIGHT-DEPENDENT BIDIRECTIONAL BTSP (Milstein et al. 2021, eLife 10:e73046).
+
+    Biology (measured, not modelled): "weak inputs potentiate, and strong inputs depress." dVm vs INITIAL Vm
+    correlates at r = -0.91 while FINAL Vm vs initial Vm correlates at r = 0.04 -- the field converges to a
+    target shape essentially independent of where it started. BTSP is "inherently stable, converting synaptic
+    potentiation into depression when input strengths exceed a particular range."
+
+    WHY THIS RULE AND NOT SEPARATION. Seven mechanisms were built to SEPARATE adjacent-lag from field-forming
+    synapses; all failed. The literature says why: real CA1 field spacing is Poisson with a MODAL GAP OF ZERO
+    while the potentiation window spans 75-150 cm, so biology never separates them -- it lets them collide and
+    resolves the collision by the SIGN of the update. No separation is attempted here.
+
+    Structurally immune to the three failure modes that killed the predecessors:
+      * depression is MULTIPLICATIVE in (w - w_min), so it VANISHES at the floor -- the Miller-MacKay pathology
+        (51% of weights pinned at w_min, surviving positive increments dragging the mean up) cannot arise;
+      * potentiation is multiplicative in (w_max - w), so weights asymptote to an INTERIOR fixed point;
+      * the fixed point w* = (k_pot*q_pot) / (k_pot*q_pot + k_dep*q_dep) is a RATIO, invariant to any common
+        rescaling of both drives -- the zero-DC DoG died to exactly such an amplitude mismatch (0.36x).
+
+    q_pot / q_dep are the caller's sigmoids of the NORMALIZED overlap (eligibility x instructive signal).
+    Milstein's published thresholds (alpha_dep 0.09, alpha_pot 0.24) are in NORMALIZED units -- applying them to
+    raw eligibility puts both sigmoids off the data and renders the rule inert, which is the DoG failure verbatim.
+    Callers MUST normalize and unit-check before use.
+
+    k_dep = 0 reduces to pure-potentiation BTSP.
+    """
+    pot = k_pot * q_pot * (w_max - w)
+    dep = k_dep * q_dep * (w - w_min)
+    return cp.clip(w + is_post * (pot - dep), w_min, w_max)
+
+
+@fuse()
 def fused_btsp_dog_update(w, e_fast_pre, e_slow_pre, is_post, eta, a_dep, w_min, w_max):
     """gap#4 Rank-2: ZERO-DC difference-of-exponentials BTSP.
 

@@ -318,6 +318,13 @@ class CoreSimConfig:
     # gap#4 Rank-2 zero-DC difference-of-exponentials. btsp_dog_a_dep = 0.0 => OFF (byte-identical).
     btsp_elig_tau_slow_ms: float = 0.0
     btsp_dog_a_dep: float = 0.0
+    # gap#4: weight-dependent bidirectional BTSP (Milstein 2021). k_dep = 0 => OFF (byte-identical).
+    # Thresholds are on the NORMALIZED overlap (eligibility x instructive signal), per the paper's units.
+    btsp_milstein_k_pot: float = 0.0
+    btsp_milstein_k_dep: float = 0.0
+    btsp_milstein_alpha_pot: float = 0.24
+    btsp_milstein_alpha_dep: float = 0.09
+    btsp_milstein_slope: float = 20.0
     # gap#4 Rank-4 (Miller-MacKay 1994 subtractive normalization): subtract, per POSTsynaptic cell, the
     # MEAN increment across that cell's afferents, so sum_j dw_ij = 0 BY CONSTRUCTION -- a pedestal
     # cannot be built and there is no free parameter to mis-derive. 0.0 => OFF => byte-identical.
