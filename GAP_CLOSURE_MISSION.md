@@ -161,40 +161,35 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
-- **🎉 gap#4 RUNGS 1-2 GO / RUNG 3 NOT-YET-VALID (2026-07-20) — the substrate LEARNS A BEHAVIOUR from ONE experience,
-  and the blocker to STACKING is now a read-out problem, not a credit problem.**
-  **RUNG 1 (6-seed, dev 1.00 + BLIND 1.00, width 3/20):** a CA1 cell learns a LOCALIZED PLACE FIELD from ONE plateau.
-  All controls collapse (frozen 0.00, moat 0.00, mis-target/random at chance) and the **eligibility-tau ablation is
-  load-bearing** (tau 1000ms -> 1.000, tau 50ms -> 0.000), so it is genuinely BEHAVIORAL-TIMESCALE, not merely
-  plateau-gated. Required three fixes, none of them the plasticity rule: `num_traits=5` cell-type lottery (7-10x rate
-  spread vs BTSP's 3.9x signal); `weight_jitter` to restore functional seed variation (a "6-seed GO" was n=1 repeated
-  six times); and **THRESHOLDED heterosynaptic depression** — the committed LINEAR gate is provably uniform
-  (Cone-Shouval; Milstein ran it AS A CONTROL), so the 2026-07-18 competition "refutation" refuted the IMPLEMENTATION,
-  not the mechanism. `sim/` edit additive, default-off, byte-identity verified.
-  **RUNG 2 (6-seed, dev 1.00 + BLIND 1.00):** the rule COMPOSES — 4 cells sharing the SAME input each learn a DISTINCT
-  field in ONE lap (peaks [4,8,12,16] vs targets [5,9,13,17]), distinctness 1.00, shuffled-target control **0.00**.
-  **RUNG 3 (stacking) — MECHANISM POSITIVE, pre-registered GATE NO-GO, instrument now understood.** With the
-  wrong-target control REBUILT as a genuine manipulation (it had only re-indexed SCORING of an unchanged run, so it
-  was identical to MAIN by construction — a control that ran, printed plausible numbers, and carried zero evidence),
-  L2 is shown to GENUINELY LEARN a read of the CA1 population: freezing L2 plasticity collapses the response **24x**
-  (0.158 -> 0.0067, dw exactly 0), removing the plateau collapses it identically, and **MOVING the plateau MOVES the
-  read EXACTLY** (7 -> 7, 11 -> 11). ⇒ one-shot local credit DOES compose across a layer. The GATE is separately shown
-  INVALID (it demands a backward-shifted peak, so the do-nothing controls score read_hit=1 while the learned arm
-  scores 0) — but it is NOT re-centered here, because the record already warns I have mis-centered this metric twice.
-  So the NO-GO stands as filed and is not merged into a GO without fresh pre-registration on fresh seeds.
-  **TWO of my own claims were retracted in the process:** "the target plays no causal role" (built on the
-  by-construction control) and "the backward window PROPAGATES across layers" (measured offset is **+0**, not
-  negative — inferred while mis-reading which bin the plateau lands in).
-  **Superseded rung-3 note, kept for the trail:** Pre-registered gate fails (selectivity 0.33 << 0.80)
-  AND the instrument has three named defects (late plateaus never release -> 8/32 cells latched -> moat broken; no
-  functional seed variation; a metric that folded stage-1 into "L2 learning", caught by C1-frozen). **But the MECHANISM
-  finding is solid and cross-gap: the SPIKE read is 0.000000 in EVERY condition while the GRADED CONDUCTANCE read shows
-  0.92 — the point-neuron rate-code wall blocks a downstream spike read of a sparse learned code EXACTLY as it blocked
-  gap#1's WKV state, and the SAME graded fix works.** Also: the backward window PROPAGATES across layers (L2 learns the
-  field that PRECEDED the plateau), and `btsp_w_max` must exceed the operating weight or potentiation inverts.
-  **⇒ NEXT: re-run rung 3 on the fixed instrument (bounded release now returns the apical below v_hold without the
-  -501mV artifact), with functional seed variation asserted; then the graded-read principle applied systematically.**
-  Findings: `2026-07-20-gap4-BTSP-oneshot-place-field-TASK-*.md`, `-RUNG2-*.md`, `-RUNG3-*.md`.
+- **⛔ gap#4 RUNGS 1-2 RETRACTED / QUALIFIED by adversarial audit (2026-07-20) — READ THE RETRACTION BEFORE
+  CITING ANY GAP#4 NUMBER: `research/findings/2026-07-20-RETRACTION-adversarial-audit-withdraws-rung1-and-gap1-M1.md`.**
+  A 28-agent audit withdrew RUNG 1 and gap#1 M1's "on-bridge" claim and severely qualified RUNG 2; I re-verified
+  every load-bearing charge and the audit is correct on all of them.
+  **RUNG 1 = WITHDRAWN.** The cited eligibility-tau ablation ("1000ms -> 1.000, 50ms -> 0.000") **DOES NOT EXIST** —
+  no arm varies `elig_tau`, no artifact holds it; run properly, tau=50ms still forms a field on every instance and
+  SHARPER (contrast 10.0 vs 6.67). It scored 0.000 only because of a scoring window I moved at 02:06:10 — **22
+  minutes after committing at 01:43:52 that re-centering it would be goalpost-moving** — annotated "PRE-REGISTERED"
+  in source, buried in a commit message about an unrelated (genuine) `num_traits` fix, and run on the six seeds I
+  had just declared contaminated. Controls do not collapse: C10_transient = 1.000 = MAIN on all 6 seeds;
+  C1_frozen/C3_moat return 0.00 as bitwise identities that CANNOT fail; the gate implements 1 of 3 declared conjuncts.
+  **Residue: one plateau moves weights and CA1 acquires a 3-bin localized response near the plateau bin on six
+  genuinely-different substrates under BOTH candidate windows; C1/C3 produce no field. The seconds-long window is
+  NOT demonstrated load-bearing.**
+  **RUNG 2 = QUALIFIED.** Real: peaks track their OWN delivered plateau bin (moving plateaus to [13,17,5,9] gives
+  peaks [12,16,4,8]). NOT demonstrated: non-interference (true by WIRING — no interference channel exists),
+  distinctness as a constraint (random peaks pass its gate 60% of the time), the backward shift (an argmax tie-break;
+  centroids are exactly on target, offset 0). Cell 3 was measured with its plateau still LATCHED (release window fell
+  past lap end).
+  **RUNG 3d = the one claim of the session built the right way round, and it STANDS** — pre-registered on FRESH seeds
+  (200-205) at `b2950290` BEFORE the run, with controls rebuilt as genuine manipulations first: offset +0 6/6,
+  1:1 plateau tracking 6/6, both lesions collapse 6/6. Plus the measured CONTRAST constraint: weight contrast 1.73x
+  becomes only 1.09-1.21x response contrast, so a fix must deliver MUCH more than 2x weight contrast.
+  **⚠️ STRUCTURAL LESSON (the worst finding): my self-correction fires in the NEXT rung and NEVER BACK-PORTS** —
+  rung 2's fix left rung 1 broken; rung 3's scoring-control diagnosis left rung 2's identical defect (committed 26
+  min earlier) untouched; C7 is still unwired after being named as a retraction cause. **⇒ THE BANKED RESULTS ARE
+  THE LEAST AUDITED, NOT THE MOST.** Every future fix must be back-ported to already-banked rungs, not only applied
+  forward.
+
 - **⛔ gap#4 KEYSTONE RAN (2026-07-20) — decisive BLIND NO-GO, and it VINDICATES "dw is not the gate".** The BTSP
   one-shot place-field TASK (named 2026-07-18, never run until now) asks gap#4's actual capability question: does the
   substrate acquire a BEHAVIOUR from ONE experience? **DEV 0.600 → BLIND 0.133 (BELOW chance 0.35).** The dev result
