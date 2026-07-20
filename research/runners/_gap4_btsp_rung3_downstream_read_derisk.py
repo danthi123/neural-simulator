@@ -296,6 +296,29 @@ def one_run(seed, *, l2_eta=0.02, do_l2_plateau=True, score_cell=None, plateau_c
         return float(l2_delta[lo:hi].max())
     r_t = resp_at(ca1_peaks[expected])
     r_o = [resp_at(ca1_peaks[c]) for c in range(N_CELL) if c != expected]
+    # ---- GEOMETRY-ROBUST DEEP-CREDIT metrics (rung 9+): the even-spacing metric above does not
+    # transfer to Poisson layouts. Rung 3d MEASURED the L2 read at offset +0 from the plateau bin
+    # (the backward shift happens ONCE, upstream), so the correct expectation is L2 peaking AT the
+    # plateau-delivered cell. Neighbour sets are derived PER-SEED from the actual field layout. ----
+    def _bin_of(c):
+        return ca1_peaks[c] if 0 <= c < N_CELL and ca1_peaks[c] >= 0 else (CELL_TARGETS[c] if 0 <= c < N_CELL else -1)
+    _plat_bin = _bin_of(_pc)
+    # read-accuracy: L2 peak within +/-2 bins of the plateau-delivered cell's field (offset-0 expectation)
+    read_hit_l2 = False
+    if l2_peak >= 0 and _plat_bin >= 0:
+        _o = (l2_peak - _plat_bin + N_BINS // 2) % N_BINS - N_BINS // 2
+        read_hit_l2 = bool(abs(_o) <= 2)
+    # per-seed nearest-neighbour contrast: L2 response at the plateau cell vs at its CLOSEST other field
+    _r_plat = resp_at(_plat_bin)
+    _others = [(abs(((_bin_of(c) - _plat_bin + N_BINS // 2) % N_BINS) - N_BINS // 2), resp_at(_bin_of(c)))
+               for c in range(N_CELL) if c != _pc and _bin_of(c) >= 0]
+    _others = [o for o in _others if o[0] > 0]
+    if _others:
+        _nn_dist = min(o[0] for o in _others)
+        _nn_resp = max(r for d, r in _others if d == _nn_dist)
+        c_nn = float(_r_plat / _nn_resp) if _nn_resp > 0 else float("nan")
+    else:
+        _nn_dist, c_nn = -1, float("nan")
     # RUNG-4 PRE-REGISTERED metrics: contrast of the response AT the plateau cell against the
     # ADJACENT field (1 cell away) and the FAR field (>=2 away). The measured deficit is adjacent-only.
     _rp = resp_at(ca1_peaks[_pc])
@@ -305,7 +328,7 @@ def one_run(seed, *, l2_eta=0.02, do_l2_plateau=True, score_cell=None, plateau_c
     c_far = float(_rp / max(_far)) if _far and max(_far) > 0 else float('nan')
     sel = float(np.mean([1.0 if (r_t >= 2.0 * max(r, 1e-9)) else 0.0 for r in r_o])) if r_o else 0.0
     del sb
-    return dict(read_hit=bool(hit), selectivity=sel, l2_peak=l2_peak, c_adj=c_adj, c_far=c_far, ca1_peaks=ca1_peaks,
+    return dict(read_hit=bool(hit), selectivity=sel, l2_peak=l2_peak, c_adj=c_adj, c_far=c_far, read_hit_l2=read_hit_l2, c_nn=c_nn, nn_dist=_nn_dist, r_plat=_r_plat, ca1_peaks=ca1_peaks,
                 map_ok=bool(map_ok), dw=dw, r_target=r_t, r_others=r_o)
 
 
@@ -363,7 +386,7 @@ def main():
             print(f"  seed {s} {name:17s} c_adj={r.get('c_adj', float('nan')):.3f} "
                   f"c_far={r.get('c_far', float('nan')):.3f} "
                   f"read_hit={int(r['read_hit'])} sel={r['selectivity']:.2f} "
-                  f"l2_peak={r['l2_peak']} map_ok={int(r['map_ok'])} dw={r['dw']:.4g}", flush=True)
+                  f"read_L2={int(r.get('read_hit_l2',False))} c_nn={r.get('c_nn',float('nan')):.3f} nn_d={r.get('nn_dist',-1)} r_plat={r.get('r_plat',0.0):.4f} l2_peak={r['l2_peak']} map_ok={int(r['map_ok'])} dw={r['dw']:.4g}", flush=True)
     def agg(n, seeds, key):
         rs = [r for (s, r) in arms.get(n, []) if s in seeds]
         return float(np.mean([float(r[key]) for r in rs])) if rs else float("nan")
