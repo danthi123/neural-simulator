@@ -174,6 +174,26 @@ credit works + composes across a layer) is separately ESTABLISHED (rung 10, Pois
 harder on-bridge learn-to-ACCURACY demonstration, now characterized as blocked by a drive-vs-coupling operating-point
 tension — a well-posed engineering problem on a signal-carrying substrate, not a wall.
 
+## Tension RESOLVED (independent pathway weights) → the next layer is a plasticity INSTABILITY
+
+Added independent pathway weights to the runner (`--fwd-wmean-ho`, default None = byte-identical; verified: h12/e3
+default path reproduces in2hid 0.484 / held 0.731). Strong input→hidden (fw_ih=500) + WEAK hidden→output (fw_ho=6-20)
+RESOLVES the tension: the output B_rest drops to 0.000 (couplable) → the apical **couples cleanly (B rises +0.18 to
++0.50 at soma-g 800-2000)** WHILE the hidden stays input-selective (‖h1−h2‖=13.2, unchanged — selectivity rides
+input→hidden, coupling rides the low output baseline). So the operating point where BOTH hold now EXISTS.
+
+BUT the BDSP run there (fw_ih=500, fw_ho=6, soma-g 1000, in_hi=2000, e12) exposes the NEXT layer — a plasticity
+INSTABILITY: **couples=True (B_apical 0.504)** but **BDSP 0.439 < LESION 0.575 < reservoir 0.67**, with the smoking gun
+**dw_in2hid lesion = 734,339 vs bdsp 5.1** — the input→hidden weights EXPLODED in the lesion arm. The strong drive
+(in_hi=2000, fw_ih=500) + unrescaled `bdsp_lr=0.03` causes runaway plasticity (the CLAUDE.md STDP-w_max gotcha in BDSP
+form). The run is unstable/mis-tuned, so the BDSP<lesion comparison is CONFOUNDED, not a credit verdict.
+
+**⇒ NEXT (the "rescale credit magnitude" step, now concrete): a lr × w_max STABILITY sweep at the resolved operating
+point** — lower `bdsp_lr` (0.03 → 3e-3/3e-4) + tighten `bdsp_w_max` until the lesion dw is bounded (no runaway), THEN
+read BDSP-vs-reservoir(0.67), 6-seed, vs (BDSP > reservoir-baseline, wrong_sign < baseline). Only a STABLE, coupled,
+input-selective run answers the credit-to-accuracy question. The resolution (independent pathway weights) is a real
+mechanistic unlock; the stability sweep is the last confound to clear.
+
 ## Method lesson
 
 The banked "pipeline-validated" result was gated on a dw ratio while its OWN coupling diagnostic said DECOUPLED, and its

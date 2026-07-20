@@ -251,7 +251,7 @@ class OnBridgeBDSPNet:
 
     def __init__(self, seed, n_bits, hidden=12, in_pop=2, pool_out=6, microcircuit=False,
                  bdsp_lr=0.03, bdsp_p0=0.30, bdsp_beta=1.0, burst_isi_ms=6.0,
-                 fwd_wmean=6.0, fwd_wjit=0.5, fwd_density=1.0,
+                 fwd_wmean=6.0, fwd_wjit=0.5, fwd_density=1.0, fwd_wmean_ho=None,
                  in_hi=750.0, in_lo=40.0, hidden_bias=520.0, output_bias=520.0,
                  apical_out_gain=260.0, apical_hid_gain=190.0,
                  couple_soma=False, soma_g=0.0, bdsp_w_max=200.0,
@@ -324,8 +324,12 @@ class OnBridgeBDSPNet:
             # the two PLASTIC feedforward pathways the committed BDSP rule shapes.
             RegionPathway(from_region="input", to_region="hidden", density=float(fwd_density),
                           weight_mean=float(fwd_wmean), weight_jitter=float(fwd_wjit), plastic=True),
+            # hidden->output: independent weight (default None => == fwd_wmean, byte-identical). A WEAK hidden->output
+            # keeps the output's baseline burst rate LOW (couplable) while a STRONG input->hidden keeps the hidden
+            # input-selective -> resolves the drive-vs-coupling tension (2026-07-20).
             RegionPathway(from_region="hidden", to_region="output", density=float(fwd_density),
-                          weight_mean=float(fwd_wmean), weight_jitter=float(fwd_wjit), plastic=True),
+                          weight_mean=float(fwd_wmean if fwd_wmean_ho is None else fwd_wmean_ho),
+                          weight_jitter=float(fwd_wjit), plastic=True),
         ]
         cfg.brain_regions = regions; cfg.region_pathways = pathways
         sb = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
@@ -608,6 +612,7 @@ def _run_bridge_arm(mode, seed, n_bits, Xtr, ytr, Xte, yte, args):
                           microcircuit=args.microcircuit, bdsp_lr=args.bdsp_lr, bdsp_p0=args.bdsp_p0,
                           bdsp_beta=args.bdsp_beta, burst_isi_ms=args.burst_isi_ms,
                           fwd_wmean=args.fwd_wmean, fwd_wjit=args.fwd_wjit,
+                          fwd_wmean_ho=getattr(args, "fwd_wmean_ho", None),
                           in_hi=args.in_hi, in_lo=args.in_lo, hidden_bias=args.hidden_bias,
                           output_bias=args.output_bias, apical_out_gain=args.apical_out_gain,
                           apical_hid_gain=args.apical_hid_gain,
@@ -691,6 +696,10 @@ def main():
     ap.add_argument("--burst-isi-ms", type=float, default=6.0)
     # forward pathway init + drive / apical (the smoke levers; controller tunes for accuracy)
     ap.add_argument("--fwd-wmean", type=float, default=6.0)
+    ap.add_argument("--fwd-wmean-ho", dest="fwd_wmean_ho", type=float, default=None,
+                    help="independent hidden->output init weight (default None => == --fwd-wmean, byte-identical). Set "
+                         "WEAK (with a strong --fwd-wmean) so the output stays low-bursting + couplable while the hidden "
+                         "is input-selective -- resolves the drive-vs-coupling tension (2026-07-20).")
     ap.add_argument("--fwd-wjit", type=float, default=0.5)
     ap.add_argument("--apical-bistable", dest="apical_bistable", action="store_true",
                     help="gap#4 (2026-07-18): make the BDSP top-down apical BISTABLE (held-plateau latch + KIR down-state) "
