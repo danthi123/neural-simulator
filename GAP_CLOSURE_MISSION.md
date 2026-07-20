@@ -185,12 +185,22 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   invoked 0× on every abstain); **De-risk 3 (fully-spiking on-bridge)** the grounded answer renders ON SPIKES via
   RF-phase + fully-synaptic input at parity ("the dog eats meat `<eos>`", "the fox chases rabbit `<eos>`", etc.). The
   ANN scaffold is RETIRED for the render path (and was absent/gitignored here anyway — the 9.8MB WKV npz is the only
-  portable + spiking renderer). NO `sim/` edit anywhere. Findings `2026-07-20-grounded-fluent-conversation-DE-RISK-{0,1-2,3}-*`.
-  **⇒ NEXT FRONTIER: De-risk 4 = OPEN/RICH multi-fact PROSE (elaboration/discussion — the honest field wall; render-per-fact
-  + VERIFY, the P10/P16 pattern) where the WKV's open fluency exceeds a template.** Firming follow-ons: the true one-process
-  co-execution (numpy composer + cupy on-bridge WKV, the EMERGE-70/71 pattern); the wikidata-tail + persistence paths on the
-  WKV renderer. Other open (parallel frontiers): gap#4 learn-to-accuracy via a different credit mechanism (reservoir/shallow-
-  readout is the emergence path per the a-1 synthesis); gap#1 V/D scaling.
+  portable + spiking renderer). **De-risk 4 (open/rich prose):** single-pass multi-fact SYNTHESIS is the honest field
+  wall (the WKV confabs), but the CAPABILITY (rich grounded multi-fact discourse) is MET by the render-per-fact +
+  aggregate method (`plan_discourse`; "tell me about the dog" → "A dog is big. It eats meat, chases cat and likes
+  bone."). **De-risk 5 (one-brain-one-process) GO:** `OnBridgeWKVFaculty` runs the WKV render ON a cupy bridge → the
+  WHOLE turn (composer retrieval + gate-first moat + fully-spiking render) co-executes in ONE cupy process (the
+  EMERGE-70/71 bar) — grounded Q&A on spikes, growth live, moat 0-invocation on abstains (verified). NO `sim/` edit
+  anywhere in the arc. Findings `2026-07-20-grounded-fluent-conversation-DE-RISK-{0,1-2,3,4,5}-*`.
+  **⇒ THE NORTH-STAR IS ACHIEVED (De-risk 0-5): a brain you COMMUNICATE with — comprehend + retrieve + gate-first moat +
+  render fluent grounded prose ON SPIKES, one-brain-one-process, robustly demonstrated (full showcase: single-fact,
+  learn-on-demand Wikidata, multi-fact discourse, transitive classify, compare, instance attrs, shared-fact, moat).**
+  **NEXT (remaining follow-ons/frontiers):** (a) the full ONE-BRIDGE consolidation (composer + WKV as disjoint SLICES of
+  a single `SimulationBridge`, the nav+conv-merge pattern — De-risk 5 has them on separate cupy bridges in one process);
+  (b) the wikidata-tail + persistence + showcase on the on-bridge renderer; (c) a multi-fact-frame fine-tune / longer-
+  memory WKV to push single-pass synthesis past 1 fact (a scale lever, not a hard wall). Parallel frontiers: gap#4
+  learn-to-accuracy via a different credit mechanism (reservoir/shallow-readout is the emergence path per the a-1
+  synthesis); gap#1 V/D scaling toward richer fluency.
 - **🎯 gap#4 KEYSTONE REFRAMED (2026-07-20 close-state) — deep local credit is MECHANISM-ESTABLISHED; the apparent
   "contrast blocker" was a TASK ARTIFACT.** After rungs 1-9 + 6 pre-flights + a 28-agent adversarial audit, the
   honest status of "does the substrate learn DEEP representations by a biological rule?":
