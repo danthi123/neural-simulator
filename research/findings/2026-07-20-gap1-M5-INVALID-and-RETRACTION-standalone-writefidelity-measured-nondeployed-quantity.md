@@ -104,3 +104,45 @@ retracted); (3) the deep-NLL harness is invalid via a vocab-provenance mismatch 
 constant across all three: I trusted a cheaper proxy (a reconciliation framing, a standalone metric, a regenerated
 checkpoint) without running the deployment's OWN control first. Running the M1/NEF control FIRST would have caught
 every one before a single mechanism claim.
+
+---
+
+## FINAL: I could NOT reproduce M1's +0.486 on a regenerated checkpoint — the whole gap#1 deep-NLL push was unvalidatable
+
+Chased the M1 reference through every config, applying the vocab fix (use saved `words`) and the correct M1 mode:
+
+| M1 config | verify corr | deep vs-trigram | expected |
+|---|---|---|---|
+| firing-rate readout, rebuilt vocab | 0.66 | -3.06 | — |
+| firing-rate readout, **saved vocab** | 0.756 | -3.026 | — |
+| **`--ssm-state`** (graded), saved vocab | **1.000** | -3.011 | — |
+| **`--ssm-state --use-ssm-readout`** (CANONICAL +0.486 config), saved vocab | **1.000** | **-3.013** | **+0.486** |
+
+**Even the canonical M1 config — byte-exact state (corr 1.000) + the SSM's OWN trained read-out + the saved vocab —
+gives -3.013, not +0.486.** With the state provably exact and the model's own read-out, the only remaining cause is
+that **the regenerated checkpoint is not on-bridge-compatible** (a state-layout / read-out-input convention, or the
+eval-stream reconstruction, differs from whatever produced the ORIGINAL M1 checkpoint). The off-bridge WKV training
+itself was GO (+0.512), so the model is fine; the on-bridge REALIZATION of THIS checkpoint is not.
+
+## The honest, decisive close of the gap#1 push today
+
+- **I never established a working M1 reference on the regenerated checkpoint**, so NO on-bridge encode comparison
+  (NEF, tokensdr) was ever valid. **The token-SDR mechanism is neither confirmed nor refuted — it was never validly
+  tested**, and the standalone 0.906 remains retracted (non-deployed quantity).
+- **The regenerated checkpoint (`bridges/wkv_ckpt/wkv_v1000_d128_seed42.npz`) is UNUSABLE for the on-bridge path** as
+  produced — a fresh `_emerge_wkv_lm_derisk --save-ssm` run does not yield an on-bridge-reproducing artifact under
+  the configs tried. Reproducing M1 requires either the ORIGINAL checkpoint (lost post-migration; `.npz` gitignored)
+  or diagnosing the exact state-layout/read-out/eval-stream convention the original M1 realization used.
+- **REQUIRED-NEXT is now a HARNESS task, not a mechanism task:** produce a checkpoint on which `--ssm-state
+  --use-ssm-readout` reproduces ~+0.486 (the M1 control MUST pass before any encode is tested). Only then is the
+  token-SDR question answerable.
+
+## The meta-lesson, stated plainly
+
+Four consecutive self-corrections in this one thread (false-dichotomy reconciliation -> non-deployed metric ->
+vocab-provenance -> checkpoint-incompatibility), each surfaced only by running a control that failed. The through-
+line: **I kept building forward (a probe, a pre-registration, an encode, a deep-NLL) on an unvalidated foundation,
+when the FIRST action should have been "make the M1 control reproduce its known +0.486 on this checkpoint."** Every
+error was downstream of skipping that. The discipline that WORKED today (gap#4: pre-register, verify on deployed
+inputs, run the control first, cap the tuning) is exactly what I failed to front-load here. The gap#1 push produced
+no mechanism result — its honest deliverable is this negative + the precise harness blocker.

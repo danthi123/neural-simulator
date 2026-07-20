@@ -323,7 +323,10 @@ def main():
     idx = rng.permutation(len(sents)); cut = int(0.85 * len(sents))
     tr = [sents[i] for i in idx[:cut]][:args.max_train_sents]
     ev = [sents[i] for i in idx[cut:]][:args.n_eval]
-    vocab = Vocab.build(tr, V=V); tr_ids = [vocab.ids(s) for s in tr]; ev_ids = [vocab.ids(s) for s in ev]
+    # USE THE CHECKPOINT'S SAVED VOCAB (words = vocab.i2w incl trailing <unk>), NOT a rebuild — the rebuild's
+    # token->id mapping does not reproduce training (the LM trainer truncates tr by max_train_sents before
+    # Vocab.build), giving garbage emb/Wv lookups (M1 host-inject gave -3.062 vs +0.486; root cause 2026-07-20).
+    vocab = Vocab(words[:-1]); tr_ids = [vocab.ids(s) for s in tr]; ev_ids = [vocab.ids(s) for s in ev]
     P_bi = fit_bigram(tr_ids, V); tri, _lam = fit_interp_trigram(tr_ids, V, tr[-1500:] and [vocab.ids(s) for s in tr[-1500:]])
 
     _graded = getattr(args, "graded_charge", False)
