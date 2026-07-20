@@ -307,6 +307,22 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   Also FIXED this session: 3 runners flagged unseeded on 2026-07-17 were STILL unseeded (zero commits in 3 days) —
   `cfg.seed` added + verified by two-process threshold hash. Finding:
   `2026-07-20-gap4-status-audit-THREE-audits-converge-deep-credit-is-OPEN.md`.
+- **⛔ gap#1 CONDUCTANCE-DRIVE (M5) INVALID + RETRACTION (2026-07-20, later): my standalone write-fidelity 0.906
+  measured a NON-DEPLOYED quantity, and the M5 deep-NLL harness is invalid.** A research gate reframed gap#1's open
+  piece (the wall is the ENCODE — a few-spike rate-code of a continuous v_t — not the read; that correction to my own
+  reconciliation STANDS) and ranked #1 = token-SDR discrete-selection + fixed Wv value-synapses. I regenerated the
+  V=1000/d=128 SSM checkpoint, built the token-SDR path, and a standalone probe read write-fidelity 0.906 (> M2's
+  0.786). **RETRACTED:** the deployed accumulated-state corr REVERSES it — tokensdr 0.388 < NEF 0.663 (deployed-WORSE
+  than M2). The standalone was optimistic because it reset the membrane per token (deployment doesn't) and read a
+  D-dim SUBTRACTED value vs the deployed 2D accumulated [relu(+v);relu(-v)] — a different quantity. **AND the M5
+  deep-NLL is INVALID:** the NEF control gives deep vs-trigram -3.069, NOT its known -0.030, so the checkpoint/harness
+  is misconfigured (a control that doesn't reproduce invalidates the run; the first runs also hit the documented
+  n-sentences 40000-vs-80000 vocab-mismatch silent failure). **NO mechanism verdict.** REQUIRED NEXT: make the NEF
+  control reproduce ~-0.030 on a validated checkpoint+harness (the corr-0.66-but-deep-NLL--3.07 inconsistency points
+  to a read-out-scaling or vocab-provenance bug), THEN measure tokensdr against a working baseline with write-fidelity
+  on the DEPLOYED accumulated state. **The day's core lesson (validate on DEPLOYED inputs; run the deployment's own
+  control FIRST) bit my own gap#1 work a THIRD time.** Finding:
+  `2026-07-20-gap1-M5-INVALID-and-RETRACTION-...`.
 - **⛔ gap#1 M1 — "ON-BRIDGE" WITHDRAWN by adversarial audit (2026-07-20); the SSM result survives, the SUBSTRATE
   claim does not. THE ON-SUBSTRATE BOUNDARY IS **NOT** SURPASSED.** The runner writes `cp_ssm_inject` and NEVER
   `cp_external_input_current`, then `continue`s ⇒ **total spikes = 0**. Four lesions each give `max|diff| = 0.0`:
