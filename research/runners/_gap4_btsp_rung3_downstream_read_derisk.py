@@ -65,7 +65,8 @@ DEV_SEEDS = [42, 43, 44]
 BLIND_SEEDS = [100, 101, 102]
 
 
-def build(seed, *, eta=0.02, hdep=0.3, htheta=0.012, elig_tau=1000.0, w0=0.6, wj=0.15, dt=1.0, l2_w0=0.6):
+def build(seed, *, eta=0.02, hdep=0.3, htheta=0.012, elig_tau=1000.0, w0=0.6, wj=0.15, dt=1.0, l2_w0=0.6,
+          band_lo=0.0, band_hi=0.0):
     from sim.bridge import SimulationBridge
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.regions import BrainRegion, RegionPathway
@@ -86,6 +87,8 @@ def build(seed, *, eta=0.02, hdep=0.3, htheta=0.012, elig_tau=1000.0, w0=0.6, wj
     # otherwise and every 'potentiation' becomes a large depression (the documented soft-bound gotcha).
     cfg.btsp_w_min, cfg.btsp_w_max = 0.0, max(5.0, 2.0 * float(l2_w0))
     cfg.btsp_hetero_dep = float(hdep); cfg.btsp_hetero_theta = float(htheta)
+    # RUNG 4: adjacent-band depression (Milstein 2021). Both 0.0 => band OFF => byte-identical.
+    cfg.btsp_band_lo = float(band_lo); cfg.btsp_band_hi = float(band_hi)
     cfg.brain_regions = (
         [BrainRegion(name=f"pos{k}", n_neurons=POS_N, exc_fraction=1.0, internal_density=0.0,
                      exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False)
@@ -175,9 +178,9 @@ def run_lap(sb, pos, cells, l2, *, ca1_targets=None, l2_plateau_bin=None, bin_st
 
 
 def one_run(seed, *, l2_eta=0.02, do_l2_plateau=True, score_cell=None, plateau_cell=None, bin_steps=200, l2_w0=150.0,
-            elig_tau_ms=1000.0, dt_ms=1.0):
+            elig_tau_ms=1000.0, dt_ms=1.0, band_lo=0.0, band_hi=0.0):
     from sim.backend import to_host
-    sb, pos, cells, l2 = build(seed, l2_w0=l2_w0)
+    sb, pos, cells, l2 = build(seed, l2_w0=l2_w0, band_lo=band_lo, band_hi=band_hi)
     # ---- STAGE 1: form the map (rung 2), L2 plasticity irrelevant here ----
     ca1_pre, l2_pre = run_lap(sb, pos, cells, l2, ca1_targets=None, bin_steps=bin_steps, record=True)
     run_lap(sb, pos, cells, l2, ca1_targets=list(CELL_TARGETS), bin_steps=bin_steps, record=False)
@@ -234,9 +237,16 @@ def one_run(seed, *, l2_eta=0.02, do_l2_plateau=True, score_cell=None, plateau_c
         return float(l2_delta[lo:hi].max())
     r_t = resp_at(ca1_peaks[expected])
     r_o = [resp_at(ca1_peaks[c]) for c in range(N_CELL) if c != expected]
+    # RUNG-4 PRE-REGISTERED metrics: contrast of the response AT the plateau cell against the
+    # ADJACENT field (1 cell away) and the FAR field (>=2 away). The measured deficit is adjacent-only.
+    _rp = resp_at(ca1_peaks[_pc])
+    _adj = [resp_at(ca1_peaks[c]) for c in range(N_CELL) if abs(c - _pc) == 1]
+    _far = [resp_at(ca1_peaks[c]) for c in range(N_CELL) if abs(c - _pc) >= 2]
+    c_adj = float(_rp / max(_adj)) if _adj and max(_adj) > 0 else float('nan')
+    c_far = float(_rp / max(_far)) if _far and max(_far) > 0 else float('nan')
     sel = float(np.mean([1.0 if (r_t >= 2.0 * max(r, 1e-9)) else 0.0 for r in r_o])) if r_o else 0.0
     del sb
-    return dict(read_hit=bool(hit), selectivity=sel, l2_peak=l2_peak, ca1_peaks=ca1_peaks,
+    return dict(read_hit=bool(hit), selectivity=sel, l2_peak=l2_peak, c_adj=c_adj, c_far=c_far, ca1_peaks=ca1_peaks,
                 map_ok=bool(map_ok), dw=dw, r_target=r_t, r_others=r_o)
 
 
@@ -244,6 +254,10 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=DEV_SEEDS + BLIND_SEEDS)
     ap.add_argument("--bin-steps", dest="bin_steps", type=int, default=200)
+    ap.add_argument("--band-lo", dest="band_lo", type=float, default=0.0,
+                    help="RUNG 4: adjacent-band depression lower edge (0 = OFF). Derived a priori, see the pre-registration.")
+    ap.add_argument("--band-hi", dest="band_hi", type=float, default=0.0,
+                    help="RUNG 4: adjacent-band depression upper edge (0 = OFF).")
     ap.add_argument("--spacing", type=int, default=4,
                 help="CA1 target spacing in bins. 4 = the rung-3 sparse NO-GO config; 2 = dense (tiles the track).")
     ap.add_argument("--json", default=None)
@@ -252,14 +266,19 @@ def main():
     print(f'[map] spacing={args.spacing} CELL_TARGETS={tg} N_CELL={len(tg)} TARGET_CELL={tc} (bin {TARGET_BIN})')
     arms = {}
     for s in args.seeds:
-        for name, kw in [("MAIN", {}), ("C1_l2_frozen", dict(l2_eta=0.0)),
-                         ("C3_no_l2_plateau", dict(do_l2_plateau=False)),
-                         ("C2_wrong_target", dict(plateau_cell=(TARGET_CELL + 1) % N_CELL))]:
+        _band = dict(band_lo=args.band_lo, band_hi=args.band_hi)
+        # Both band arms run in the SAME invocation so the ON/OFF comparison cannot drift across configs.
+        for name, kw in [("MAIN_bandON", dict(_band)),
+                         ("P4_bandOFF", dict(band_lo=0.0, band_hi=0.0)),
+                         ("C1_l2_frozen", dict(l2_eta=0.0, **_band)),
+                         ("C3_no_l2_plateau", dict(do_l2_plateau=False, **_band)),
+                         ("C2_wrong_target", dict(plateau_cell=(TARGET_CELL + 1) % N_CELL, **_band))]:
             r = one_run(s, bin_steps=args.bin_steps, **kw)
             arms.setdefault(name, []).append((s, r))
-            print(f"  seed {s} {name:17s} read_hit={int(r['read_hit'])} sel={r['selectivity']:.2f} "
-                  f"l2_peak={r['l2_peak']} ca1_peaks={r['ca1_peaks']} map_ok={int(r['map_ok'])} "
-                  f"r_tgt={r['r_target']:.5f} r_oth={[round(x,5) for x in r['r_others']]} dw={r['dw']:.4g}", flush=True)
+            print(f"  seed {s} {name:17s} c_adj={r.get('c_adj', float('nan')):.3f} "
+                  f"c_far={r.get('c_far', float('nan')):.3f} "
+                  f"read_hit={int(r['read_hit'])} sel={r['selectivity']:.2f} "
+                  f"l2_peak={r['l2_peak']} map_ok={int(r['map_ok'])} dw={r['dw']:.4g}", flush=True)
     def agg(n, seeds, key):
         rs = [r for (s, r) in arms.get(n, []) if s in seeds]
         return float(np.mean([float(r[key]) for r in rs])) if rs else float("nan")
