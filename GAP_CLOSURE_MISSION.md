@@ -225,10 +225,16 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   phenomenon; my FA/KP close trained over the GRADED state (0.86-0.91), the exact escape the gate names.** Ranked
   ladder (skip rung i = host read-out over on-bridge state, GO-by-construction): **rung (ii) = a single-layer SYNAPTIC
   read-out over the graded state, learned on-bridge by committed `enable_bdsp`(+graded_credit +apical_couples_soma)**
-  → rung (iii) FA feedback for a 2-layer read-out → rung (iv) the full gated read-out. The remaining named risk = the
-  COARSER burst-deviation credit (vs a clean gradient) — seed-variable per `2026-07-11`; test the exact burstprop rule
-  off-bridge over the graded state FIRST (no `sim/` edit), then the on-bridge port. ⚠ set `cfg.seed` (the
-  `actual_seed_used` bug); name the apical-lesion arm correctly. Scoping in the a14d research-gate result.
+  → rung (iii) FA feedback for a 2-layer read-out → rung (iv) the full gated read-out. **OFF-BRIDGE DE-RISK DONE
+  (2026-07-20 burstprop probe + reduced-vocab):** the CLEAN-error local rule trains a reduced-vocab read-out to
+  **0.998** (and full-vocab FA/KP 0.86-0.91) → the on-bridge port should use the graded CLEAN-error channel
+  (`enable_bdsp_graded_credit` / D3 M2.6), NOT the raw sampled burst (the raw E-gated burst-DEVIATION is delicate
+  off-bridge — non-zero-sum drift — its stabilizers, the P0-moat + real burst dynamics, live ON-bridge). ⇒ **the
+  remaining rung-(ii) work = ONE additive default-off `sim/` mechanism: propagate `cp_ssm_state` as synaptic read-out
+  DRIVE to output units + expose it as the presynaptic eligibility (the OUTPUT analogue of M2's built synaptic INPUT
+  decode), then `enable_bdsp_graded_credit` updates the read-out synapses.** A fresh focused arc (a careful `sim/`
+  build). ⚠ set `cfg.seed` (the `actual_seed_used` bug); name the apical-lesion arm correctly; use a REDUCED read-out
+  vocab. Findings `2026-07-20-onbridge-learning-burstprop-probe-...`; scoping in the a14d research-gate result.
 - **🎯 gap#4 KEYSTONE REFRAMED (2026-07-20 close-state) — deep local credit is MECHANISM-ESTABLISHED; the apparent
   "contrast blocker" was a TASK ARTIFACT.** After rungs 1-9 + 6 pre-flights + a 28-agent adversarial audit, the
   honest status of "does the substrate learn DEEP representations by a biological rule?":
