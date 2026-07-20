@@ -45,6 +45,7 @@ def main():
     ap.add_argument("--corpus", default="data/corpus/tinystories_train.txt")
     ap.add_argument("--n-sentences", type=int, default=40000)
     ap.add_argument("--n-eval", type=int, default=20)
+    ap.add_argument("--w", type=float, default=30.0)
     ap.add_argument("--seed", type=int, default=42)
     args = ap.parse_args()
 
@@ -66,7 +67,7 @@ def main():
     VMAX = float(np.percentile(flat[flat > 0], 99.8)) if (flat > 0).any() else 1.0
 
     n_chan = 2 * D
-    b, enc, rdt = build_synaptic_rf(n_chan, w=30.0, seed=args.seed)
+    b, enc, rdt = build_synaptic_rf(n_chan, w=args.w, seed=args.seed)
 
     def synaptic_read(inj):
         """inj [2D] >=0 -> RF phase on encoders -> resonate -> READOUT g_nmda (fully synaptic) -> value (log decode)."""

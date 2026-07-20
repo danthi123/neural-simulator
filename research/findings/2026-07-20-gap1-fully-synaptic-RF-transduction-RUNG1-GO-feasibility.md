@@ -48,8 +48,11 @@ n_eval=200):
 **⇒ RUNG 1+2+3+4 GO — the last host read is REMOVED: gap#1's spiking input is FULLY SYNAPTIC, deep-NLL GO (+0.735).**
 Validated end-to-end: numeric (RUNG 1, corr 1.0), on-bridge synapse (RUNG 2, corr 1.0), deployed fidelity (RUNG 3, corr
 0.97), and deployed deep-NLL through the runner (RUNG 4, +0.735 GO). The RF spike drives a genuine conductance synapse;
-no host phase read. (Follow-on polish: close the +0.735-vs-+0.878 fidelity gap — a stronger synapse / read calibration
-on the zero-inflated small-value band — a bounded tuning, not a wall.)
+no host phase read. (Follow-on polish: close the +0.735-vs-+0.878 fidelity gap. **The synapse WEIGHT does NOT close it** — a sweep
+w=30/80/200 gives accum corr 0.9703 IDENTICALLY, because the log-decode calibration absorbs the weight (`g/g_max`
+normalizes it out). The residual is an inherent small cost of the `g_nmda` decay+log-decode path vs the direct phase
+read (corr 0.970 vs 0.999); closing it fully is a period/tau/decode tuning [finer phase resolution / better-matched NMDA
+tau / a linear-in-latency read], a bounded follow-on — the CAPABILITY (fully synaptic, deep-NLL GO) is achieved.)
 
 ## RUNG 1 — GO (feasibility, kept below)
 
