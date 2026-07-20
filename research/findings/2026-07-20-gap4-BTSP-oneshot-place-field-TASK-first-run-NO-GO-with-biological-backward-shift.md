@@ -242,3 +242,41 @@ in any of the above — 42/43/44 and 100/101/102 are all now contaminated for th
 - **The binding constraint is CONTRAST, not sensitivity** — lever 1 is now tested and bounded. The open mechanism
   question is how to make potentiation *selective* (heterosynaptic depression, sparser eligibility), which is a
   research-gate question, not a sweep.
+
+---
+
+# 📐 QUANTITATIVE: the weight-map CONTRAST is only ~1.6×, which analytically explains the silent/saturated bind
+
+Measured the actual post-induction weight map (mean `pos_k → ca1` weight per bin, plateau at `b=12`):
+
+| seed | `w_pre` | `w_post` mean | peak | min | **contrast (peak/mean)** |
+|---|---|---|---|---|---|
+| 42 (dev, passed) | 0.600 | 2.918 | 4.707 | 0.600 | **1.613** |
+| 100 (blind, scored 0.00) | 0.600 | 2.861 | 4.755 | 0.600 | **1.662** |
+| 101 (blind, scored 0.00) | 0.600 | 2.914 | 4.830 | 0.600 | **1.658** |
+
+**BTSP raises the PEDESTAL ~5× (0.600 → ~2.9) while the peak sits only ~1.6× above that pedestal** — and this is
+near-identical on the seeds that scored 0.00 and the one that scored 0.80, confirming again that the *weight* outcome
+is stable and the *behaviour* difference is downstream noise.
+
+## This analytically explains the empirically-measured silent/saturated bind
+
+A threshold read-out must separate peak (~4.7) from mean (~2.9):
+- put the threshold **above ~4.7** → nothing fires → the cell is **silent** (observed at `W0 ≤ 2`, delta ~0)
+- put it **below ~2.9** → every bin drives the cell → **no localization**, and once the cell already fires at baseline,
+  potentiation adds nothing → **delta vanishes** (observed at `W0 ≥ 5`, delta exactly 0.000)
+- the usable band between them is narrow, which is precisely the ~2/3 hit rate the read-out sweep plateaued at.
+
+⇒ **The read-out was never the fixable half.** With contrast 1.6× on a 5× pedestal, *no* threshold setting localizes
+this map. Lever 1 is not merely bounded — it is **analytically excluded**.
+
+## What this predicts the fix must be
+
+Localization requires **lowering the pedestal**, i.e. DEPRESSION of the non-coincident inputs, not more read-out
+sensitivity. Two candidates, both to be judged by the research gate rather than assumed:
+- **Bidirectional BTSP** (Milstein et al. 2021): BTSP *depresses* already-strong/non-coincident synapses — this is the
+  mechanism that would flatten the pedestal while preserving the peak, and it is the biologically-attested form.
+- **Heterosynaptic depression** (`btsp_hetero_dep`, currently 0.0) — **but this project already burned a competition
+  arm once** ("erodes within-assembly", 2026-07-18), so it must not be re-run naively.
+
+Recorded as a prediction *before* the gate reports, so the gate's recommendation can be scored against it.
