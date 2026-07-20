@@ -26,7 +26,14 @@ PRE-REGISTERED GO (filed before any BTSP result exists):
     GO iff  field_acc_BTSP >= 0.80  (>= 24/30 instances)
        AND  width_fast / width_slow >= 1.5 on >= 5/6 seeds
        AND  every control in the table below passes.
-`field_acc` = fraction of instances whose peak bin is within 2 bins of `b`. Chance = 5/20 = 0.25.
+`field_acc` = fraction of instances whose peak bin lies in the scoring window (see below). ⚠️ THIS FILE
+SHIPPED A SELF-CONTRADICTION: this line declared a symmetric `dist<=2` window (chance 5/20 = 0.25) while the code
+scored an ASYMMETRIC backward window `-5 <= off <= 1` (chance 7/20 = 0.35) that was introduced at 02:06:10 and
+annotated "PRE-REGISTERED" -- 22 MINUTES AFTER a commit (d0f3c455, 01:43:52) explicitly ruling that re-centering
+this metric with knowledge of where the peaks land is GOALPOST-MOVING. An adversarial audit found that the swap
+alone MANUFACTURED the eligibility-tau separation (under `dist<=2`, tau=50ms scores 1.000 and the ablation
+separates by ZERO) and flipped C2_mistarget from passing to failing. Neither window is now treated as
+pre-registered; BOTH are reported, and no result may be cited under one window without the other.
 0.80 is the project's own task-validity bar (the same number required of a working oracle).
 
 CONTROLS (run order): C12 flag-engagement smoke · C5 two-process substrate hash · MAIN · C7 degenerate-readout guard
@@ -168,7 +175,7 @@ def field_metrics(rate, b):
                 break
             bins.add(k)
     off = (peak - b + N_BINS // 2) % N_BINS - N_BINS // 2   # signed circular offset
-    # PRE-REGISTERED backward window: BTSP forms the field BEHIND the plateau (Bittner-Magee); the eligibility
+    # ⚠️ NOT PRE-REGISTERED (mislabelled until the 2026-07-20 audit; see the header). Backward window:
     # window is btsp_elig_tau_ms=1000ms = 5 bins at 200ms/bin, plus one bin of forward allowance.
     return dict(peak_bin=peak, width=len(bins), hit=bool(-5 <= off <= 1), offset=int(off), dead=False,
                 flat=bool(rate.max() / max(rate.mean(), 1e-9) <= 1.5),

@@ -129,10 +129,17 @@ def peak_of(d):
     return int(np.argmax(d)) if d.max() > 0 else -1
 
 
-def one_run(seed, *, do_plateau=True, eta=0.02, score_shuffled=False, bin_steps=200):
+def one_run(seed, *, do_plateau=True, eta=0.02, score_shuffled=False, deliver_shuffled=False, bin_steps=200):
     from sim.backend import to_host
     sb, pos, cells = build(seed, eta=eta)
-    targets = list(CELL_TARGETS) if do_plateau else [None] * N_CELL
+    # deliver_shuffled is a GENUINE MANIPULATION: it permutes WHICH BIN each cell's plateau is delivered at,
+    # so the whole run re-executes under a different cause. (score_shuffled only re-indexes the SCORING of an
+    # unchanged run -- it is identical to MAIN by construction and carries ZERO evidential weight. That defect
+    # was diagnosed in rung 3 and is BACK-PORTED here; the audit found rung 2 had committed it 26 min earlier.)
+    _sh_d = N_CELL // 2
+    _delivered = ([CELL_TARGETS[(c + _sh_d) % N_CELL] for c in range(N_CELL)]
+                  if deliver_shuffled else list(CELL_TARGETS))
+    targets = _delivered if do_plateau else [None] * N_CELL
     pre = run_lap(sb, pos, cells, targets=None, bin_steps=bin_steps, record=True)
     w0 = float(np.abs(np.asarray(to_host(sb.cp_connections.data))).sum())
     run_lap(sb, pos, cells, targets=targets, bin_steps=bin_steps, record=False)
@@ -147,7 +154,10 @@ def one_run(seed, *, do_plateau=True, eta=0.02, score_shuffled=False, bin_steps=
     # 0.75 instead of chance -- a flaw in the CONTROL's geometry, not in the mechanism. Shift-by-2 separates
     # them maximally (peak-to-scored-target offset ~ +/-9, well outside the window).
     _sh = max(1, N_CELL // 2)
-    score_t = ([CELL_TARGETS[(c + _sh) % N_CELL] for c in range(N_CELL)] if score_shuffled else CELL_TARGETS)
+    # Scoring reference: when the delivery was shuffled we can score EITHER against what was actually
+    # delivered (must PASS -- peaks follow delivery) or against the original targets (must COLLAPSE).
+    score_t = ([CELL_TARGETS[(c + _sh) % N_CELL] for c in range(N_CELL)] if score_shuffled
+               else (CELL_TARGETS if deliver_shuffled else _delivered))
     hits = []
     for c in range(N_CELL):
         if peaks[c] < 0:
@@ -184,6 +194,13 @@ def main():
         arms.setdefault("C1_frozen", []).append((s, one_run(s, eta=0.0, bin_steps=args.bin_steps)))
         arms.setdefault("C3_moat", []).append((s, one_run(s, do_plateau=False, bin_steps=args.bin_steps)))
         arms.setdefault("C2_shuffled", []).append((s, one_run(s, score_shuffled=True, bin_steps=args.bin_steps)))
+        # BACK-PORTED genuine controls (the pair that can actually fail):
+        #   C2r_deliver_shuffled_score_orig : plateaus MOVED, scored against the ORIGINAL targets -> must COLLAPSE
+        #   C2p_deliver_shuffled_score_moved: plateaus MOVED, scored against WHERE THEY WERE MOVED TO -> must PASS
+        arms.setdefault("C2r_deliver_shuffled_score_orig", []).append(
+            (s, one_run(s, deliver_shuffled=True, bin_steps=args.bin_steps)))
+        arms.setdefault("C2p_deliver_shuffled_score_moved", []).append(
+            (s, one_run(s, deliver_shuffled=True, score_shuffled=True, bin_steps=args.bin_steps)))
         for k, v in arms.items():
             if v[-1][0] == s:
                 r = v[-1][1]
