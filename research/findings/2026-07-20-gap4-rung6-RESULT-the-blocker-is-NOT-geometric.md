@@ -71,3 +71,39 @@ to far contrast, reproduced on fresh seeds across four independent runs and two 
 touched: **a non-local instructive signal — feedback inhibition gating plateau probability (Milstein's own
 answer)**. It requires a task rewrite rather than a rule change, which is precisely why it was deferred, and it is
 now the only candidate not eliminated. That is a well-posed next arc, not a wall.
+
+---
+
+## REGIME CHECK — I tested the threat to my own falsification, and it half-holds
+
+I recorded above that plain BTSP's `dw` is "NEGATIVE in both arms (-1262, -632.8) where the 20-bin track gave
++445.5". **That statement conflates two quantities and is corrected here:** those are *stage-2* `dw` from `one_run`
+(the L2 read learning), not the stage-1 lap. Measuring the stage-1 lap directly:
+
+| | 20-bin | 40-bin |
+|---|---|---|
+| total stage-1 dw | **+205,969** | **+418,724** — positive in BOTH |
+| synapses increased | 5039 | 12,856 |
+| synapses decreased | 3281 | 19,784 |
+| **majority sign** | **UP** | **DOWN — flips** |
+| at `w_min` floor | 2880 / 8320 (34.6%) | 13,680 / 32,640 (**41.9%**) |
+
+**So the longer lap IS measurably more depression-dominated** — the majority of synapses now decrease, and floor
+occupancy rises 7 points — even though the total remains positive because the increases are larger.
+
+### What this does and does not do to the rung-6 falsification
+
+**It does NOT invalidate it.** The comparison was A-vs-B *within* the 40-bin track, one variable, same regime for
+both arms: spacing 8 gives adjacent contrast 1.227 against spacing 4's 1.449. The geometric hypothesis predicted
+the reverse. That is a valid falsification **of the hypothesis as tested**.
+
+**It DOES bound it.** The 40-bin regime differs measurably from the 20-bin one in which the deficit was originally
+characterized. So the precise claim is: **the geometric hypothesis is falsified in the only regime where it is
+testable at all** — testing it *requires* spacing > shift, which *requires* the longer track, which is *itself*
+the regime shift. That circularity is unavoidable given the substrate, and I am stating it rather than letting the
+falsification read as broader than it is.
+
+**Corrected verdict:** the blocker is not the spacing/shift collision, established within the regime where the
+question can be posed. A residual possibility survives and is named: that widening the spacing helps at 20 bins but
+the confound of lengthening the track masks it. Testing that would need a way to widen spacing without lengthening
+the lap — which this task geometry does not admit. Recorded as an honest limitation, not resolved.
