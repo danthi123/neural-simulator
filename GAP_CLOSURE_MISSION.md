@@ -161,24 +161,31 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
-- **gap#4 CONTRAST ARC (2026-07-20) — blocker LOCALIZED to ADJACENT-BAND; TWO mechanism families now failed
-  pre-registered tests. Robust anchor: the asymmetry itself, reproduced 6/6 on fresh seeds in THREE separate runs —
-  adjacent contrast 1.213x (deficient) vs far 2.609x (healthy).** The input is NOT the blocker (afferent adjacent-bin
-  cos 0.0000 at L1, 0.7436 at L2, both under the 0.8 bar); the rule already decorrelates as well as the repo's
-  engineered grid code (0.7436 vs 0.7379) — it just does not carve the adjacent trough.
-  **FAILED #1 — eligibility-magnitude BAND (Milstein split-threshold), 2 pre-registered attempts, CAP FIRED.** Not
-  because magnitude fails to encode lag (corr(eligibility, lag) = **-0.9445**, it encodes it cleanly) but because at
-  this geometry **field spacing (4 bins) == backward shift (4-6 bins)**, so "the adjacent field" and "where THIS field
-  forms" are the SAME lag. No band can separate what lag space does not separate.
-  **FAILED #2 — zero-DC difference-of-exponentials.** Root cause: I validated the zero-DC property on EQUAL-AMPLITUDE
-  idealized traces, but the deployed traces are normalized EMAs whose increments differ by construction (1e-3 vs
-  3.33e-4), giving an amplitude ratio of 0.36 — so `a_dep*slow` cannot cancel the fast DC. It over-potentiates 3x
-  and saturates stage 1. **The kernel was tested correctly; its INPUTS were never checked against the assumption.**
-  **⚠️ P0 EARNED ITS KEEP:** three seeds reported c_adj 3.085/1.642/2.010 (above the 1.60 target, map_ok=1) while
-  stage-2 dw was **0 on all six** — an unlearned read-out that would have read as a clean partial pass.
-  **NEXT (per the pre-registered cap): Rank 4 mean-subtracted increment (Miller-MacKay), where `sum_j dw_ij = 0`
-  holds BY CONSTRUCTION with no free parameter to mis-derive.** The corrected DoG a_dep (~1.23) is RECORDED and
-  deliberately NOT acted on — naming a value that would plausibly work is exactly when the cap is load-bearing.
+- **gap#4 CONTRAST ARC — CLOSED OUT (2026-07-20). SEVEN routes eliminated, seven distinct causes, FOUR at zero seed
+  cost. ONE named route remains, untested.** Robust core, unchanged across FOUR independent runs and TWO track
+  lengths: **adjacent-field contrast is deficient (1.213x @20-bin, 1.449x @40-bin) while far-field contrast is
+  healthy (2.609x / 3.225x)** — neighbours are what localize a field. Ruled out by measurement, not assumption: the
+  INPUT (afferent adjacent cos 0.0000 L1 / 0.7436 L2), the READ-OUT (graded 0.92 vs spike 0.000000; expansive reads
+  are metric inflation), and lag-encoding (corr(eligibility, lag) = **-0.9445**, clean).
+  **THE UNIFYING RESULT:** adjacent-lag and field-forming synapses are **NOT separable by ANY quantity locally
+  available at the synapse at update time** — eligibility magnitude (1.001x), its rank (monotone in the same),
+  overlap with the instructive signal (`IS` uniform because the plateau drives the whole cell), current weight
+  (1.093x), or any pointwise read-out transform.
+  **Eliminated:** split-threshold band (placement destroys field formation, 2 attempts, cap) · zero-DC DoG
+  (trace-amplitude mismatch: validated on equal-amplitude idealized traces the EMAs never generate) · two-sigmoid on
+  `ET*IS` (no separating axis — the gate predicted this itself) · Miller-MacKay both forms (hard floor absorbs
+  negative mass; the proposed `w_min<0` fix breaks **Dale's law** on this substrate) · expansive read-out (metric
+  inflation, `c -> c^p`) · rank-based STC capture (rank monotone in a non-separating magnitude) · **geometric
+  separation (REFUTED: wider spacing gives LOWER adjacent contrast, 1.227 @sp8 vs 1.449 @sp4 — the opposite of the
+  prediction)**.
+  **⇒ THE ONE REMAINING NAMED ROUTE, untouched: a NON-LOCAL instructive signal — feedback inhibition gating plateau
+  probability (Milstein's own answer).** Needs a task rewrite, not a rule change. A well-posed next arc, not a wall.
+  **⚠️ PROCESS LESSON THAT PAID REPEATEDLY:** *verify the claimed property on the DEPLOYED inputs before
+  pre-registering.* Learned from the DoG failure (cost: a 6-seed run + pre-registration + retraction); it then closed
+  THREE candidates for nothing. And a would-be first positive (rank capture, 0% vs 28.6% replicating 9/9) was a
+  TAUTOLOGY in my own masks — caught only because identical-to-one-decimal replication is the signature of a metric
+  that does not read the system.
+
 - **⛔ gap#4 RUNGS 1-2 RETRACTED / QUALIFIED by adversarial audit (2026-07-20) — READ THE RETRACTION BEFORE
   CITING ANY GAP#4 NUMBER: `research/findings/2026-07-20-RETRACTION-adversarial-audit-withdraws-rung1-and-gap1-M1.md`.**
   A 28-agent audit withdrew RUNG 1 and gap#1 M1's "on-bridge" claim and severely qualified RUNG 2; I re-verified
