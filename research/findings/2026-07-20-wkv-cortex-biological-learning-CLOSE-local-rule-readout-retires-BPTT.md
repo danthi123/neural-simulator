@@ -58,9 +58,13 @@ transport anywhere.
   over a random reservoir it reaches 0.73 (GO). **The BPTT shortcut is retired for the grounded renderer.**
 - **The evidence FA/KP are genuinely transport-free (not silently falling back to BPTT):** their general-fluency ppl
   DIFFERS from BPTT (FA/KP 63–80 vs BPTT 34) — the backward is genuinely a different (transport-free) credit rule.
-- **The general TinyStories FLUENCY has a gap:** FA/KP reach ppl 63–80 vs BPTT 34 — the local rule reaches
-  working-but-suboptimal broad fluency (the R3-reframe's ~78%-of-ceiling shape). The GROUNDED task does not need the
-  full fluency (the copy read-out forms fine over the working features).
+- **The general TinyStories FLUENCY gap is CLOSEABLE (convergence-rate, not a wall) — characterized.** On pure
+  fluency (grounded-frac 0), more budget narrows it: at 10000 steps KP 63 vs BPTT 34 (1.9×); at 20000 steps **KP 38.2
+  (still monotonically dropping: 53→45→39→38) vs BPTT 29.5 (1.3×)**. KP is NOT plateaued — the local rule converges
+  SLOWER than BPTT (the R3-reframe's ~78% was a fixed-budget snapshot) but keeps approaching the ceiling. ⇒ the
+  general-fluency biologization is a training-budget/convergence-rate lever, not a fundamental limit; the GROUNDED task
+  (the mission capability) already matches BPTT at the standard budget (the copy read-out forms fine over the working
+  features).
 - **Adam was the step rule** (the credit is FA/KP-local + no BPTT; Adam is only the optimizer — not weight transport).
   A pure-SGD/delta-rule version is a stricter follow-on. **On-bridge** local-rule learning (the committed
   `enable_selective_ssm_state` + the validated on-bridge eligibility) is the fully-spiking follow-on.
