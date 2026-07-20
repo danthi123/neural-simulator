@@ -112,10 +112,37 @@ in the same pass: the per-channel gains were being fit **on eval sentences** aga
 train-only — and the verify corr was measured **pre-rescale**, so it could not validate what actually feeds the
 read-out; now post-rescale on held-out.)
 
-**Next levers for the input residual:** (a) NEF error scales ~1/N (Eliasmith-Anderson: ~100 neurons/dim → ~1% RMSE) and
-we used only 48/dim — a population-scaling sweep (96/192/384) is the cheap first test; (b) if scaling plateaus, **M3 =
-calibrated end-to-end surrogate-BPTT through the measured substrate transfer**, so the input map + read-out co-adapt to
-the lossy spiking delivery — which is exactly the **gap#4 (learn-through-the-substrate) convergence**.
+### FOUR hypotheses for the ~0.6 input-fidelity ceiling — three REFUTED, one partial, all by direct measurement
+
+| hypothesis | test | verdict |
+|---|---|---|
+| NEF error scales ~1/N (need ~100 neurons/dim) | n_enc 48→96→192→384 | **REFUTED** — fidelity got *worse* (0.615→0.578→0.551→0.594) |
+| recurrent cross-talk inside the encoder pool | `pool_density` 0.05→0.001 | **REFUTED** — essentially identical (0.615→0.614) |
+| decoder fit on the wrong basis (flat rate vs the deployed leaky CONDUCTANCE, `decay_e`=0.8187/step) | fit on the `g = g*decay_e + input` recursion | **marginal** (0.615→0.620) |
+| **window quantization** (few spikes/neuron in a 6-step window) | t_step 6→12→24→48 | **CONFIRMED then BOUNDED** (below) |
+
+**Window sweep (t_step at dt=1ms IS the per-token integration time):**
+
+| t_step | fidelity | σ_rel | vs trigram |
+|---|---|---|---|
+| 6 | 0.620 | 0.771 | −0.276 |
+| 12 | 0.677 | 0.727 | −0.266 |
+| 24 | **0.786** | **0.622** | **−0.181 (best)** |
+| 48 | 0.738 | 0.627 | −0.405 |
+
+**⚠️ MY EXTRAPOLATION WAS REFUTED (recorded).** From the monotone 6→24 trend I predicted fidelity would keep rising and
+cross zero near t_step≈150-200 (≈ normal speech rate) — and I queued a 96/192 run on that basis. **t_step=48 broke the
+trend** (fidelity 0.786→0.738, NLL −0.181→−0.405), so the 96/192 run was KILLED rather than burn GPU on a dead
+hypothesis. **Mechanism of the peak:** the read is the excitatory conductance with `tau_e`=5 ms, so it only "sees" the
+last ~15 steps — a longer window adds NO information to the read while accumulating Izhikevich **spike-frequency
+adaptation** (`cp_recovery_variable_u`, the same accumulation that bit EMERGE-61), which distorts the rate code.
+⇒ **the optimum is a window long enough to sample but short enough to precede adaptation (~24 steps).**
+
+⇒ **All levers WITHIN the M2 design are now exhausted** (population, cross-talk, calibration basis, window). The
+spiking input delivery tops out at fidelity **0.786** / σ_rel **0.622**, costing ~0.18-0.3 nats — real, bounded, and
+precisely quantified. **The remaining fix is M3: stop fighting the noise and TRAIN THROUGH IT** — co-adapt the input map
+and read-out to the *measured* delivery noise so the model is robust to it. That is precisely the
+**gap#4 learn-through-the-substrate lever**, and the calibration it needs (σ_rel ≈ 0.62) is now measured.
 
 ## Process note
 
