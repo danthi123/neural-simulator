@@ -131,8 +131,14 @@ class FluidChat:
         # (gap#1's open generator, format-fine-tuned = residual-B) -> retires the ANN scaffold for the render path,
         # behind the UNCHANGED gate-first moat + VERIFY (the faculty is never reached on an abstain).
         if renderer == "wkv":
-            from research.runners._wkv_faculty import WKVFaculty, BIG_CKPT
+            from research.runners._wkv_faculty import WKVFaculty
             self.faculty = WKVFaculty(ckpt=(wkv_ckpt or "bridges/wkv_ckpt/wkv_ssmU_v4000_d256_grounded_ft.npz"), max_new=8)
+        elif renderer == "wkv_onbridge":
+            # FULLY-SPIKING render on a bridge -> with SIM_BACKEND=cupy the whole turn (composer retrieval + gate +
+            # this on-bridge WKV render) runs in ONE cupy process = the true one-brain-one-process (EMERGE-70/71 pattern).
+            from research.runners._wkv_onbridge_faculty import OnBridgeWKVFaculty
+            self.faculty = OnBridgeWKVFaculty(ckpt=(wkv_ckpt or "bridges/wkv_ckpt/wkv_ssmU_v4000_d256_grounded_ft.npz"),
+                                              max_new=8, seed=seed)
         else:
             self.faculty = FTFaculty()
         self.renderer = renderer
@@ -662,7 +668,7 @@ def main():
                     help="LEARNED PPMI-semantic discourse routing (a novel synonym 'versus'/'alike'/'lineage' routes by "
                          "meaning; default off = the verbatim keyword-set routing)")
     ap.add_argument("--out", default=str(OUT))
-    ap.add_argument("--renderer", choices=["ft", "wkv"], default="ft",
+    ap.add_argument("--renderer", choices=["ft", "wkv", "wkv_onbridge"], default="ft",
                     help="fluency renderer: 'ft' = the ~21M ANN (default, byte-identical); 'wkv' = the SPIKING WKV "
                          "cortex (gap#1's format-fine-tuned open generator) -> retires the ANN scaffold, moat unchanged")
     ap.add_argument("--wkv-ckpt", default=None, help="(renderer=wkv) checkpoint path")
