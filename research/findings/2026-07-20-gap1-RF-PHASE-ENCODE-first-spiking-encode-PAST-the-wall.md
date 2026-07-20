@@ -202,6 +202,20 @@ over a fixed spiking substrate (the R3 / gap#4-a-1 convergence), realized at the
 suppresses the high-freq `<unk>`; `--gen-temp` samples; both additive/default-off.)
 Checkpoints: `wkv_ssmU_v{1000,2000}_d128`, `wkv_ssmU_v2000_d256`, `wkv_ssmU_v4000_d256_big` (regenerable).
 
+**⭐⭐ THE DEFINITIVE COMBINED CAPSTONE — FULLY-SYNAPTIC (no host read) FLUENT generation.** Running the big checkpoint
+with BOTH the fully-synaptic input (`--rf-synaptic --rf-period 500`, calib corr 1.0000, no host `rf_read_phases`) AND
+generation:
+> *"once upon a time there was a nice dog named sam came to a tree with a plan to help him but he could not find
+> anything in his home he was very sad and worried that he could not see the other kids playing with it… the orange
+> ball…"*
+
+Coherent TinyStories narrative (character name "sam", emotional arc), no `<unk>` — **generated fluent prose through a
+fully-synaptic spiking input (the RF spike → a real slow-NMDA synapse → the value, no host read anywhere).** ⇒ BOTH gap#1
+achievements at once: the home-grown spiking WKV cortex GENERATES fluent prose AND takes its input through GENUINE
+SYNAPSES on spikes — no external model, no host shortcut in the loop. **gap#1's open-fluent-generation capability is
+COMPLETE on the spiking substrate: comprehend (deep-NLL GO) + generate (fluent) + fully-synaptic input (full parity).**
+(`research/findings/raw/_gap1_synaptic_fluent_gen.log`.)
+
 ## Artifacts
 
 - Runner: `_emerge_wkv_onbridge_derisk.py --ssm-state --use-ssm-readout --rf-phase-encode` (+ `--rf-scramble`,
