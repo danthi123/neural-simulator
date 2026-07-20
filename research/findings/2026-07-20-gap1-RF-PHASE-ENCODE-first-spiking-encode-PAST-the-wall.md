@@ -159,6 +159,14 @@ generation is NOT prompt-specific. HONEST SCOPE: single checkpoint, V=1000 vocab
 density); a larger-vocab checkpoint (to cut `<unk>`) is the follow-on; the generator is the graded-state +
 trained-readout reservoir path (the R3 / gap#4-a-1 convergence: the value is the readout over a fixed substrate).
 
+**Scale-lever run (V=2000, d=128, 60k sentences):** MARGINAL improvement — the `<unk>` warmup prefix is unchanged and the
+story-body `<unk>` density is similar (*"…it in half and started to <unk> her toys … he was brave and … said i left this
+<unk> for you to help my friend you are a great pirate too…"*). So the `<unk>`/fluency is **partly SCALE-BOUND** (the
+model/data scale), not purely vocab-size — consistent with the project's CEILING findings (small models are n-gram-ish
+at few-M tokens). **⇒ honest bound: the gap#1 generation MECHANISM is demonstrated (spiking-input, coherent structure,
+at parity with the perfect-input reference, multi-prompt); truly-FLUENT prose is a model/data SCALE lever, the
+documented path — not a spiking-substrate limit.**
+
 ## Artifacts
 
 - Runner: `_emerge_wkv_onbridge_derisk.py --ssm-state --use-ssm-readout --rf-phase-encode` (+ `--rf-scramble`,

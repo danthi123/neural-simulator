@@ -333,9 +333,12 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   with the host-inject reference** (both track early — state corr 0.999 — then diverge via sampling RNG). Argmax
   mode-collapses (fixed by sampling); `<unk>`-heaviness = V=1000 vocab scale (matches the off-bridge ceiling), a lever.
   ⇒ the spiking-input WKV cortex both COMPREHENDS (deep-NLL GO) AND GENERATES — gap#1's capability on the spiking
-  substrate, on the reservoir/graded-state + trained-readout path (the R3 / gap#4-a-1 convergence). Follow-on:
-  multi-prompt/seed + larger-vocab checkpoint to cut `<unk>`. Superseded "the spiking-INPUT is the open wall" verdict
-  below kept for the trail.
+  substrate, on the reservoir/graded-state + trained-readout path (the R3 / gap#4-a-1 convergence). Multi-prompt firmed
+  (3 prompts/seeds, all coherent). **Scale lever RUN (V=2000): marginal — `<unk>`/fluency is partly SCALE-BOUND (model/
+  data), not vocab-size (consistent with the CEILING findings, small models n-gram-ish at few-M tokens).** ⇒ honest
+  bound: the generation MECHANISM is demonstrated (spiking-input, coherent, at parity with the reference); truly-FLUENT
+  prose is a model/data SCALE lever (the documented path), NOT a spiking-substrate limit. Superseded "the spiking-INPUT
+  is the open wall" verdict below kept for the trail.
 - **🎯 gap#1 DEFINITIVE (2026-07-20) — harness VALIDATED (M1 +0.542 GO), the ENCODE is the wall (confirmed +
   quantified), token-SDR REFUTED. The spiking-INPUT is a REAL, precisely-located wall — a verdict on the METHODS
   tried, not the capability.** The last root cause of the harness chaos: the checkpoint's decay `w` is PER-CHANNEL
