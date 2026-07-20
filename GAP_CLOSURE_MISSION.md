@@ -168,8 +168,11 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   seconds-long-window sub-claim withdrawn); **(2) it composes to a POPULATION** (rung 2, back-ported genuine
   delivery-manipulation control: 4 distinct fields in one lap on shared inputs); **(3) it composes ACROSS A LAYER**
   (rung 3d, PRE-REGISTERED 6/6 fresh seeds: a downstream layer learns a plateau-locked read of the learned code,
-  offset +0, tracks the plateau 1:1, both lesions collapse it) — **THIS is the keystone's stacking half,
-  demonstrated.** **(4) The "adjacent-contrast deficit" that appeared to block stacking is GEOMETRY-DETERMINED**
+  offset +0, tracks the plateau 1:1, both lesions collapse it) — **THIS is the keystone's stacking half, demonstrated** — and rung 10
+  CONFIRMED it under the biologically-correct POISSON geometry (pre-registered, 10/12 usable seeds: P1 the read is
+  LEARNED 10/10 [MAIN response 29-61x the lesion, collapsing completely], P2 localizes to the right cell 7/10 [~3x
+  chance, binomial p~0.003]; P3 neighbour-contrast geometry-dependent as rung 8 predicted). ⇒ rung 3d's even-geometry
+  result was NOT a geometry artifact — deep credit reads the right cell on the layout biology actually uses.** **(4) The "adjacent-contrast deficit" that appeared to block stacking is GEOMETRY-DETERMINED**
   (rung 8, pre-registered: c_adj ranges 0.965-1.902 purely with field layout; favourable layouts clear the 1.60
   bar with tiny dw) — and the even-spacing layout eight mechanisms were tuned against has **NO empirical basis**
   (Rich 2014: real CA1 spacing is Poisson, modal gap ZERO, backward-shift LARGER than spacing). **(5) The literature
