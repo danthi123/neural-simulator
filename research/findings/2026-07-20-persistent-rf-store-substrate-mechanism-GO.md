@@ -47,12 +47,17 @@ CI: `tests/test_rf_persistent_store.py` (4 tests, GPU-path).
 - **⇒ the substrate can now hold a PERSISTENT fact-store in device synapses** (disjoint from the per-op binds,
   byte-identical when off). This is the `sim/` mechanism the composer's fact-store host-persistence (the VSA
   idealization) needs to move on-substrate.
-- **Phase 2 (composer wire-in):** a `persistent_store=False` (default byte-identical) flag on `OneBrainComposer` that
-  installs `store_conns` via `rf_set_store_weights` once (instead of per-read `rf_set_complex_weights`) + bypasses the
-  per-read store install; de-risked 6-seed (recall parity staged↔continuous + moat) before any default flip. This is
-  the ONLY `sim/` edit in the single-substrate arc (additive/guarded/byte-identical-when-off/megakernel-preserving);
-  the perf note: an installed store forces the ~605ms loop over the ~96ms megakernel on the opt-in path (a follow-on
-  lever: pre-merge the store into the op CSR, or a `use_store`-guarded kernel edit).
+- **Phase 2 (composer wire-in) — the one open question is now RETIRED.** A `persistent_store=False` (default
+  byte-identical) flag on `OneBrainComposer` installs `store_conns` via `rf_set_store_weights` once (instead of
+  per-read `rf_set_complex_weights`) + bypasses the per-read store install. The ONLY on-path unknown was the
+  staged→continuous READ FIDELITY (a persistent store keeps driving the readout THROUGH the unbind/cleanup windows vs
+  the staged store swapped out). **De-risked (3-seed, `_gap_persistent_store_readfidelity_derisk.py`): on a minimal
+  FHRR store→unbind→decode, the persistent store reads the filler IDENTICALLY to the staged store — `mean circular
+  |Δphase| = 0.0000`, both decode the true filler at 0.0127 (chance ~0.25).** As reasoned: the RF read is PHASE-based +
+  magnitude-invariant, so a readout refreshed at full magnitude and one decaying carry the SAME phase. ⇒ the composer
+  wire-in produces IDENTICAL recall — a mechanical edit, no fidelity risk. CI `test_rf_persistent_store.py` (5 incl.
+  the fidelity test). Perf note: an installed store forces the ~605ms loop over the ~96ms megakernel on the opt-in
+  path (a follow-on lever: pre-merge the store into the op CSR, or a `use_store`-guarded kernel edit).
 
 `sim/bridge.py` (EDIT 1 attribute defaults, EDIT 2 `rf_set_store_weights`, EDIT 3 additive matvec term, EDIT 4
 megakernel BAIL guard, EDIT 5 invariant comment).
