@@ -161,7 +161,20 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
-- **✅✅ gap#1 — COMPLETE on the spiking substrate (2026-07-20 landmark). The mission's primary capability is achieved.**
+- **⚠️ gap#1 — CORRECTED 2026-07-21 (adversarial audit, verdict OVERCLAIMED): NOT "COMPLETE," and the recurrence is NOT spiking.**
+  The audit (a-1 RAG + code-read) found: (a) the recurrent language computation is a **GRADED, NON-SPIKING SSM leaky
+  integrator** — `bridge.py:6017` `cp_ssm_state = lam*cp_ssm_state + (1-lam)*cp_ssm_inject` is host elementwise
+  arithmetic (matmul read-out at :6024); only the I/O was made spiking (SpikeGPT-faithful). So "the recurrent WKV
+  language cortex on the spiking substrate" conflates spiking-INPUT with a spiking-cortex. (b) The `+0.872==+0.878 full
+  parity` is **single-seed/single-slice** (seed-42 dev ckpt), conflated in one sentence with the *separate* 6-seed
+  host-read encode (tracking M1) and a third checkpoint. (c) The later `2026-07-21-gap1-ceiling-...` finding explicitly
+  says **"This is NOT gap#1 closed — SCALE-PROGRESSING, not closed"** (later finding wins). (d) "No sim/ edit" holds
+  only for the RF wrapper — the enabling `cp_ssm_state` (Rung-4b) + `cp_ssm_readout_w` (01b2466a) are prior sim/ edits
+  the mechanism depends on. **HONEST STATUS: gap#1's spiking-INPUT transduction is closed (RF-phase 6-seed GO;
+  fully-synaptic RF→NMDA single-seed full-parity), and the WKV cortex generates fluent IN-DOMAIN prose — but
+  open-fluent generation is NOT closed (scale/capacity-bound) and the recurrence is not spiking.** Original (overclaimed)
+  landmark text retained below for the arc trail:
+- **[⚠️ OVERCLAIMED — see the correction directly above] gap#1 — "COMPLETE on the spiking substrate" (2026-07-20 landmark).**
   The home-grown recurrent WKV language cortex now (1) **COMPREHENDS** — the RF-phase spiking-input encode clears the
   deep-NLL wall (6-seed GO, adversarially verified by 5 skeptics, phase-ADC framing empirically pinned) where 3 prior
   encodes catastrophically failed; (2) **GENERATES fluent prose** end-to-end on-bridge (coherent TinyStories with
@@ -431,6 +444,20 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
     substrate + fact-store-on-device DONE); its own NEXTs are the megakernel-perf-with-store lever, multi-fact
     synthesis (fluency scale), the WKV render-fidelity wobble, and the clauses/reconsolidation read paths under
     persistent_store. Advance these as the gap-close polish completes.
+  - **⭐⭐ ADVERSARIAL AUDIT of ALL gap-close + north-star claims (2026-07-21, 8-skeptic workflow, read-only vs the
+    findings/code) — the honest TRUE state (this supersedes the optimistic headlines above):**
+    | claim | verdict | honest status |
+    |---|---|---|
+    | north-star conversation | **CONFIRMED** | genuinely de-risked end-to-end (De-risk 0-5): comprehend+retrieve+**code-verified** gate-first moat (0 WKV-invoc on abstains) → spiking WKV render at on-bridge parity → 6-seed dev/blind fine-tune → one-process one-bridge. (Scope: fluent render ~0.83, rest falls back to the moat-safe grounded template; fact-store Phase-2 opt-in perf-regressing 605 vs 96 ms.) |
+    | gap#4 deep-credit (learn-to-accuracy) | **CONFIRMED clean NEGATIVE** | artifact-backed 3-seed: BDSP 0.55/0.52/0.50 ≈ lesion ≪ credit-independent reservoir **0.765** at the coupled no-clip fw_ih=180 point; soma-g-8-doesn't-couple verified. A verdict on the METHOD (raw/graded burst-credit + FA/KP), not the capability. |
+    | gap#5 completion (piece 1) | **solid** | 5/6 GO + 6/6 mechanism, perm/nocue/no-encode all collapse to 0.000 (dendritic bistability). |
+    | gap#3 multi-referent | **already CLOSED (06-19/07-18), 07-21 rung OVERCLAIMED** | biased-competition was **already built spiking** (`2026-06-19-multireferent-biased-competition-derisk`, GO 5/6, controls 6/6, wired into `MultiTurnAgent`); the 07-21 numpy RATE rung with an INJECTED `sal=0.9**i` recency is a **drift-#12 re-derivation / rigor regression**, NOT the "never-built" gap-closer it claims. The spiking phase-cluster WTA is the real open Rank-4. |
+    | gap#1 "COMPLETE" | **OVERCLAIMED** | spiking-INPUT transduction closed (6-seed) + fluent in-domain prose, but recurrence is graded NON-spiking (`bridge.py:6017`); open generation scale-bound (see the corrected gap#1 block at the top of CURRENT STATE). |
+    | gap#1 ceiling 3.35× | **PARTIAL** | the SIGN (WKV beats count baselines, scale-progressing) is robust on clean corroboration (`_emerge_wkv_lm` disjoint 85/15 split, perm/memoryless collapse), but the flagship "3.35× on UNSEEN TinyStories, leakage fixed" rests on a **FALSE training-setup premise** (ckpt trained n_tr=400000 on `tinystories_train.txt`, NOT "first 100000 of tinystories.txt"; `--n-tiny`=20000 is the fine-tune arg) + ~17.7% verbatim held-out overlap + a 20×-data-handicapped bigram → magnitude INFLATED, sign real. |
+    | gap#2 learned binder | **PARTIAL** | real 6-seed 1.000 delta + permuted-role→0.000 on the RF substrate, BUT: **300 codes not 788** (finding overstates scale); the runner's own `delta>additive` gate is **NOT met** (additive also =1.000, did NOT collapse → the delta-rule is not shown load-bearing); the WRITE is a host-numpy outer-product (emergence bar unmet). |
+    | gaps #2/#3/#5 unification | **PARTIAL** | true as hedged at the numpy/rate level, but a **conceptual consolidation with no new substrate evidence**; #2/#5 are trivial nearest-neighbor at one tuned operating point; the runner docstring advertises anti-cheats (#2-permuted, #3-equal-salience) `main()` NEVER computes. |
+    **TRUE STATE:** the north-star conversation is genuinely closed; gap#3 is closed (from prior spiking work, not 07-21); gap#5-completion + gap#1-spiking-input are closed. **GENUINELY OPEN + LOAD-BEARING:** **gap#4 (dendritic/local-credit keystone) has NO working method** (confirmed honest negative) — and it is the COMMON unblocker for the two emergence-bar failures (gap#2's host-numpy bind-WRITE + gap#5's pre-assigned assemblies both exist *because* there is no working local-credit rule to GROW that structure from experience); gap#1 open-fluent generation is scale/capacity-bound (d1024 flat). Findings + runner false-narrations to fix are in the audit's fix-list (finding-correction subagents dispatched).
+    **⇒ HIGHEST-VALUE NEXT (per the audit + THE LAW — a negative is a verdict on a METHOD, never the capability): FIRE THE gap#4 DEEP-RESEARCH GATE** — the reservoir 0.765 proves the substrate CARRIES the signal, so the failure is specifically that BDSP's rule doesn't extract task credit better than a random readout = a RULE-DESIGN target, not a substrate wall. Rank cheap-first alternative spiking credit rules against the like-for-like reservoir-0.765 comparator, build, iterate. (Parallel secondary: gap#1 open-generation scale/data-vs-architecture research gate.)
 - **🎯 gap#4 KEYSTONE REFRAMED (2026-07-20 close-state) — deep local credit is MECHANISM-ESTABLISHED; the apparent
   "contrast blocker" was a TASK ARTIFACT.** After rungs 1-9 + 6 pre-flights + a 28-agent adversarial audit, the
   honest status of "does the substrate learn DEEP representations by a biological rule?":
