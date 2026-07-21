@@ -434,10 +434,20 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
     version (assembly SELECTED from experience, not a pre-assigned random mask) — + absolute-match polish. NOT
     re-opening completion or the readout.
   - **NEXT (gap-close, no deferrals) — updated 2026-07-21 (gap#5 completion+readout already CLOSED):**
-    (a) **gap#5 EMERGENT-DG wiring — RUNNING via a fresh subagent** (`_gap5_emergent_into_swr_derisk`): reproduce the
-    CLOSED 6/6 SWR config FIRST (the anti-cheat MUST collapse — my quick reconstruction landed in an adjacent regime),
-    then feed the emergent-DG-selected assemblies (`assemblies_ext`, cross-bridge with a verified ca3-global-index
-    match) into it → 6-seed + anti-cheats = the emergence-bar (selected-from-experience) close; (b) gap#1 scale toward
+    (a) **gap#5 EMERGENT-DG — RESULT (subagent, 2026-07-21): SWR readout REPRODUCES, emergent selection BLOCKED (open build).**
+    (i) The CLOSED 6/6 SWR config REPRODUCES — the missing ingredient was `SWR_PHASE2_NOSTP=1` (phase-2 Schaffer STP-off;
+    now defaulted in `_gap5_swr_specificity_stack_derisk.py`): match 0.626 / cross 0.042 / **ratio 14.9×** 5/6, no-learn
+    anti-cheat NOW collapses (near-tie), latched-breakdown specific `[60,0,0]` → the readout specificity is GENUINE +
+    load-bearing on PRE-ASSIGNED assemblies. (ii) Index-space matches (cross-bridge `assemblies_ext` valid). (iii) **The
+    emergent-DG SELECTION does NOT reproduce from committed code** — the "6-seed GO" rested on now-DELETED scratchpad
+    scripts (lost with E:); the committed `_gap5_emergent_dg_selection_derisk.py` has NO working window (STP-on → CA3
+    silent; STP-off → whole-network avalanche, cos 1.0, zero separation — the SAME STP-cap↔avalanche the Schaffer hit).
+    The subagent correctly REFUSED to feed garbage assemblies (verify-first). ⇒ **the gap#5 emergence-bar piece is a
+    GENUINE OPEN BUILD (the finding's "R1"), NOT a wiring:** per-pathway STP (STP-off on mossy dg→ca3 so it detonates,
+    STP-ON on ca3→ca3 so it doesn't avalanche — the same per-pathway STP the SWR finding prescribed for the Schaffer) +
+    detonator-sparse mossy (lower `mossy_density`) + inhibitory sparsification, tuned to a sparse(6-40) separated
+    assembly, then re-verify the emergent anti-cheats (input-specific / moat / mossy-lesion) before feeding SWR. NOT
+    currently exposed as runner params. (b) gap#1 scale toward
     real fluency (bigger model/corpus, or accept the scaffold + spiking-forward-convert the 88.6M — C1 GO); (c) the
     SPIKING gap#3 phase-cluster WTA; (d) the composer wire-in of the learned binder + the fully-on-bridge STP write
     (edge5). **⇒ LLM-CONVERSATION (owner's post-gap priority) is LARGELY ACHIEVED** (De-risk 0-5 north-star + single-
@@ -472,7 +482,10 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
     SELECTION** replacing the pre-assigned assemblies (subagent running) — unsupervised assembly selection;
     (2) **grow gap#2's binder J by the UNSUPERVISED local rule** (Hebbian STP on the RF complex synapses — the edge5
     follow-on the gap#2 finding names) instead of the host outer-product WRITE; (3) the gap#1 open-generation
-    SCALE/DATA-vs-architecture research gate (the other genuine open, parallel). The gap#4 KEYSTONE (credit ASSIGNMENT
+    SCALE/DATA-vs-architecture research gate (the other genuine open, parallel — gate FIRED 2026-07-21). **UPDATE
+    (2026-07-21): item (1) is now a GENUINE OPEN BUILD, not a wiring** — the emergent-DG selection is unreproducible from
+    committed code + BLOCKED (STP-cap↔avalanche); needs the per-pathway-STP mossy detonator build (see the gap#5
+    EMERGENT-DG RESULT above). The gap#4 KEYSTONE (credit ASSIGNMENT
     works+composes, rung-10 CONFIRMED-under-honest-geometry) stands; the learn-to-ACCURACY-beats-reservoir sub-thread is
     the characterized boundary — the capability lives on the unsupervised method, not a new supervised gate.
 - **🎯 gap#4 KEYSTONE REFRAMED (2026-07-20 close-state) — deep local credit is MECHANISM-ESTABLISHED; the apparent
