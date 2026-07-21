@@ -1,43 +1,44 @@
-# Render-LEARNING co-resides with the composer on ONE bridge — the WRITE side of "everything on one substrate" (GO)
+# Render read-out delta-update WIRE-UP runs co-resident with the composer on ONE bridge, and generalizes (GO)
 
-**Date:** 2026-07-20 · **Status:** GO (6-seed 42/43/44/100/101/102) — the render-LEARNING (a read-out over
-`cp_ssm_state`, updated by the pure exact DELTA rule) LEARNS on the shared bridge WHILE the composer (RF bind/query on
-its own region) coexists and its recall + no-confab moat stay correct. Closes the WRITE side of the single-shared-
-substrate consolidation (the capstone proved the READ side). NO `sim/` edit.
+**Date:** 2026-07-20 (revised post adversarial-audit) · **Status:** GO (3-seed 42/43/100) — the render read-out's
+delta-update WIRE-UP runs on the shared bridge (on-bridge FORWARD `cp_ssm_readout_out = cp_ssm_readout_w @
+cp_ssm_state` + on-bridge ELIGIBILITY `cp_ssm_state`; the delta weight-arithmetic is host numpy) WHILE the composer
+binds/queries on the same bridge, and it GENERALIZES on a teacher-student task with a HELD-OUT set (genuine learning
+of a MAP, not memorization of one point). NO `sim/` edit.
 
-## Why this matters (owner steer: "load everything onto the one shared substrate")
+## Honest framing (this replaces the original "render-LEARNING learns / ≥7×10⁸ drop")
 
-The capstone put the composer's RF ops + the WKV read-out on ONE bridge, and the crux proved `cp_ssm_readout_w @
-cp_ssm_state` (the read) co-resides byte-clean with the composer. This closes the remaining piece: the LEARNING (the
-delta-rule WRITE to `cp_ssm_readout_w`, reading `cp_ssm_state` as the presynaptic eligibility) runs on the SAME bridge
-as the composer, learning while the composer binds/queries — so the render-learning is ON the shared substrate too,
-not just the read.
+An adversarial audit correctly flagged the first version as overclaimed: it trained on a SINGLE fixed input→target,
+where an over-parameterized linear read-out reaches machine-zero by construction (trivial LMS-on-one-point), and it
+called that "learning." This revision fixes it:
+- **Teacher-student, over-determined, held-out.** A fixed random teacher `T` maps the chan-region `cp_ssm_state` →
+  target. `n_train=96 >> n_read=32` makes it OVER-determined, so the read-out must recover the TRUE `T` (it cannot
+  memorize individual points); a low HELD-OUT loss (on 16 unseen inputs) is genuine generalization.
+- **The credit arithmetic is host numpy** (`dw = -lr·err·state`), so this is a PURE DELTA RULE, not yet a spiking
+  local rule. The on-bridge BDSP graded-clean-error (anticipated at `bridge.py:355-356`) is the follow-on. The claim
+  is precisely: the delta-update wire-up runs co-resident, reading the ON-BRIDGE `cp_ssm_state`, and generalizes.
 
-## Result (`_gap_onebridge_learning_coresident_derisk.py`, 6-seed)
+## Result (`_gap_onebridge_learning_coresident_derisk.py`, 3-seed 42/43/100)
 
-On the capstone bridge (chan + encoder + composer regions), a read-out over the chan region's `cp_ssm_state` learns a
-supervised target by `dw = -lr·err·state` (no BPTT, no weight transport), with a composer query interleaved every 40
-steps:
-- **on-bridge delta-rule learning: loss → 0.000 (≥7×10⁸ drop, learned) — all 6 seeds.**
-- **composer recall (interleaved into the learning loop): `['cat','mouse']` correct — all 6 seeds.**
-- **no-confab moat: `None` (abstains on the unstored cue) — all 6 seeds.**
-- **ANTI-CHEAT (frozen read-out): loss DRIFTS (1.69 → 2.01) but NEVER learns (no 5× drop)** — with `W` frozen the loss
-  still moves because the ssm integrator settles `s` toward `inject` (so `out = W@s` changes), but it does not descend
-  toward 0; the delta update is load-bearing. (First-pass gate mis-specified this as "flat"; verify-first caught it —
-  the state evolution means frozen drifts, so the correct control is "does not LEARN," not "is flat.")
+- **HELD-OUT loss drops ~3000–6000× (generalizes=True) — all seeds** (e.g. seed 42: 0.0059 → 0.0000): genuine
+  generalization to unseen inputs, not memorization.
+- **INTERLEAVE non-interference: training WITH a composer op every 40 steps gives an IDENTICAL held-out loss to
+  training WITHOUT (≤1e-6) — all seeds.** The composer op (RF ops on its region, touching `v`/`u`+`cp_rf_*`) does not
+  perturb the WKV learning (which lives in `cp_ssm_state`+`cp_ssm_readout_w`).
+- **composer recall `['cat','mouse']` + no-confab moat `None` intact — all seeds.**
+- **ANTI-CHEAT (frozen read-out): held-out loss does NOT drop (0.0059 → 0.0059)** — the delta update is load-bearing
+  (the earlier "flat" mis-spec is moot here: held-out loss with no update simply stays at its initial value).
 
 CI: `tests/test_onebridge_learning_coresident.py` (2 tests, GPU-only).
 
 ## Read-out
 
-- **⇒ the render-LEARNING (exact delta rule over `cp_ssm_state`) + the composer + the WKV read-out are ALL on ONE
-  substrate, learning while the composer works.** Combined with the capstone (composer + WKV forward on one bridge,
-  byte-identical) this puts the whole grounded loop — comprehend/store/recall/abstain + spiking render + the
-  render-LEARNING — on a single `SimulationBridge`.
-- **Remaining "not on the shared substrate" item (honest):** the composer's FACT-STORE (the numpy-kb idealization —
-  the composer's documented "principled idealization"; its spiking bind/query resonate ops ARE on the shared bridge).
-  Consolidating the fact-store onto the shared bridge is a real arc (the substrate store uses `rf_set_complex_weights`
-  which REPLACES `cp_rf_w_*`, conflicting with the per-op bind — needs the persistent-store-on-slice machinery the
-  `CoResidentOneBrainComposer` uses), not a quick win.
+- **⇒ the render read-out's delta-update wire-up runs on the shared bridge (on-bridge forward + on-bridge
+  `cp_ssm_state` eligibility), GENERALIZES to held-out, and co-exists with the composer without perturbation.**
+  Combined with the capstone (composer + WKV forward on one bridge), the grounded loop's read-out training reads
+  on-bridge state on the same substrate the composer + WKV use.
+- **Honest residual:** the weight arithmetic is off-bridge host numpy — a pure delta rule, NOT a spiking/synaptic
+  local rule. Making the CREDIT ASSIGNMENT itself on-bridge (BDSP graded-clean-error) is the follow-on toward
+  "learning is on the substrate" in the fullest sense.
 
-Runner: `_gap_onebridge_learning_coresident_derisk.py` (`--seed`, `--n-steps`, `--lr`, `--frozen`).
+Runner: `_gap_onebridge_learning_coresident_derisk.py` (`--seed`, `--epochs`, `--lr`, `--frozen`).

@@ -22,7 +22,10 @@ renders the grounded prose. Everything on one bridge (chan + encoder = WKV; comp
 
 ## Result (seeds 42/43/100)
 
-- **grounded renders correct: True** (each answer contains the composer-retrieved word).
+- **answer word PRESENT in render: True** (each answer contains the composer-retrieved word). Honest (post
+  adversarial-audit): this is a presence check, NOT a faithfulness check — `ans` is injected into the WKV prompt, so a
+  subject-fidelity wobble ("the mouse chases mouse") still passes. Render faithfulness is the separate De-risk-5 WKV
+  render-quality item; the LOAD-BEARING claims here are the reachable single-substrate turn + the gate-first moat.
 - **no-confab moat: True** (abstains on the never-taught `lion roar` / `fish swim`).
 - **gate-FIRST: True — WKV invoked 0× across all abstains** (3 invocations for 3 known Qs, 0 for 2 abstains).
 

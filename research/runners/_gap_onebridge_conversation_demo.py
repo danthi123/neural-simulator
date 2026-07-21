@@ -150,9 +150,13 @@ def main():
     inv_after_unknown = chat.wkv.n_invocations
     moat_no_invoke = (inv_after_unknown == inv_before_unknown)   # WKV NOT invoked on any abstain
 
+    # NOTE (post adversarial-audit): render_ok is an "answer word PRESENT in the render" check, NOT a faithfulness
+    # check -- `ans` is injected into the WKV prompt, so a subject-fidelity wobble ("the mouse chases mouse") still
+    # passes. The load-bearing claims are the reachable single-substrate turn + the gate-first moat (0 invocations on
+    # abstains). Render FAITHFULNESS is the separate De-risk-5 WKV render-quality item.
     verdict = "GO" if (render_ok and moat_ok and moat_no_invoke) else "NO-GO"
     print(f"\n[RESULT {verdict}] single-substrate grounded conversation (seed {args.seed}):")
-    print(f"  grounded renders correct : {render_ok}   (each answer contains the composer-retrieved word)")
+    print(f"  answer word present in render : {render_ok}   (contains the composer-retrieved word; NOT a faithfulness check -- ans is prompt-injected)")
     print(f"  no-confab moat (abstain) : {moat_ok}")
     print(f"  gate-FIRST (WKV invoked 0x on abstains): {moat_no_invoke} "
           f"({inv_after_known - inv0} invocations for {len(known)} known Qs, "

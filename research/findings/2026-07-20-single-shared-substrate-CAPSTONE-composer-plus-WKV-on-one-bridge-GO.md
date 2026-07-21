@@ -23,7 +23,7 @@ literal "single shared substrate."
 A whole grounded turn on ONE substrate: composer **STORE** facts (RF bind) → composer **QUERY** (RF unbind + cleanup on
 the shared bridge) → the WKV **RENDER**s the retrieved answer (ssm forward on the same bridge).
 
-## Result (`_gap_onebridge_capstone_derisk.py`, seeds 42/43/100)
+## Result (`_gap_onebridge_capstone_derisk.py`, 6-seed 42/43/44/100/101/102 — the runner is `--seed`-driven, one seed per invocation; the CI `test_onebridge_capstone.py` guards seed 42)
 
 Facts `[dog→chase→cat, owl→eat→mouse, wolf→hunt→deer]`; shared-bridge composer + WKV vs isolated references:
 - **composer recall shared vs isolated: `['cat','mouse','deer']` == `['cat','mouse','deer']` → True** (all seeds) —

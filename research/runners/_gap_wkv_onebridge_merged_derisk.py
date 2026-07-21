@@ -94,6 +94,8 @@ def main():
     # read_idx maps into the chan region (region 0 => same indices as the chan-only bridge)
     mrg.read_idx = np.concatenate([np.asarray(g) for g in mchan_groups]).astype(np.int64)
     mrg._rf_encode_decode = types.MethodType(_merged_rf_encode_decode, mrg)
+    # bridge-identity: the merged faculty must use a DISTINCT, freshly-built bridge (not secretly reuse ref's bridges)
+    assert mrg.b is not ref.b and mrg.b is not getattr(ref, "_rfb", None), "merged faculty must use a distinct bridge"
 
     # a test token stream
     words = ["the", "penguin", "can", "not", "fly", "the", "owl", "can", "fly", "the"][: args.n_tokens]
@@ -117,9 +119,28 @@ def main():
     m_gen = mrg.generate(words[:3], max_new=8)
     gen_match = (r_gen == m_gen)
 
+    # LESION (load-bearing control, closes the 'encoder is a dead passenger fed by ref._rfb' confound): a merged
+    # faculty whose encoder output is SCRAMBLED (uses mb's encoder region, then permutes the decoded vector) must
+    # DIVERGE from the reference generation. If mb's encoder region were inert (the answer secretly flowing through
+    # ref._rfb), scrambling mb's encoder output would NOT change the result. It does -> mb's encoder is load-bearing.
+    _rng_les = np.random.default_rng(args.seed + 777)
+    _perm = None
+
+    def _scramble_encode(self, inj):
+        nonlocal _perm
+        d = _merged_rf_encode_decode(self, inj)                 # the real encode on mb's encoder region
+        if _perm is None or len(_perm) != len(d):
+            _perm = _rng_les.permutation(len(d))
+        return d[_perm]                                         # scramble -> wrong (but non-trivial) input
+
+    les = copy.copy(mrg); les.b = mb
+    les._rf_encode_decode = types.MethodType(_scramble_encode, les)
+    les._wash(); l_gen = les.generate(words[:3], max_new=8)
+    lesion_diverges = (l_gen != r_gen)
+
     state_ok = state_err < 1e-5
     logit_ok = logit_err < 1e-4
-    verdict = "GO" if (state_ok and logit_ok and gen_match) else "NO-GO"
+    verdict = "GO" if (state_ok and logit_ok and gen_match and lesion_diverges) else "NO-GO"
     print(f"[RESULT {verdict}] WKV faculty PHYSICALLY MERGED onto ONE bridge (seed {args.seed}, {len(ids)} tokens, "
           f"chan={2*D} + encoder={enc_n} on one bridge):")
     print(f"  accumulated state  merged vs two-bridge  max|err| = {state_err:.3e}  ({'byte-clean' if state_ok else 'DIVERGES'})")
@@ -127,6 +148,8 @@ def main():
     print(f"  greedy generation  merged == two-bridge : {gen_match}")
     print(f"  ref  gen: {' '.join(r_gen)}")
     print(f"  mrg  gen: {' '.join(m_gen)}")
+    print(f"  LESION (scramble mb encoder) diverges   : {lesion_diverges}  (les gen: {' '.join(l_gen)})  "
+          f"-- proves mb's encoder region is load-bearing, not a dead passenger fed by ref._rfb")
     print(f"  => the WKV cortex (ssm read-out + RF spike-encoder) runs on ONE SimulationBridge, forward-identical to "
           f"the two-bridge faculty. One step toward composer+WKV+learning on a single shared substrate.")
 

@@ -9,7 +9,7 @@ The cheap-first crux of the owner's "fully-spiking, one brain, single shared sub
 
 "Fully closing all gaps INHERENTLY means fully-spiking, one brain, single shared substrate." De-risk 5 had the
 composer + the WKV cortex CO-EXECUTING in one PROCESS but on SEPARATE cupy bridges. The consolidation is onto ONE
-bridge. This proves the crux — the two persistent spiking states can share a bridge byte-clean.
+bridge. This proves the crux — the WKV's GRADED read-out state (cp_ssm_state is a leaky integrator, not a spike train) and the composer's spiking RF phasor (v/u) can share a bridge byte-clean.
 
 ## Why it holds (read from the step loop + RF ops, `bridge.py`)
 
@@ -28,12 +28,17 @@ One bridge C holds BOTH the read-out (a fixed random `cp_ssm_readout_w`) AND a t
 slice. Interleaved rounds (WKV charge/step/read, then composer kick/resonate/read), compared to ISOLATED bridges
 A (read-out only) and B (RF only):
 
-- **WKV read-out co-resident vs isolated: `max|err| = 0.000e+00` (byte-clean) — all 6 seeds.**
+- **WKV read-out co-resident vs isolated: `max|err| = 0.000e+00` (byte-clean) — all 6 seeds.** (Honest: this side is
+  disjoint-BY-CONSTRUCTION — `cp_ssm_state` is never touched by the RF ops — so this gate is near-trivial; the genuine
+  interaction is the shared `v`/`u`.)
 - **Composer phase co-resident vs isolated: `max|err| = 0.000e+00` (byte-clean) — all 6 seeds.**
-- **ANTI-CHEAT (no-rekick): the composer SKIPS its kick after round 0 → the WKV's Izhikevich step corrupts the shared
-  `v`/`u` → phases DIVERGE from isolated by `0.959`–`0.993`** — proving `v`/`u` is genuinely shared and the composer
-  re-kick is load-bearing (so the byte-cleanliness is NOT a trivial two-untouched-bridges artifact; the substrate
-  really is shared, and co-residence works BECAUSE of the re-kick).
+- **DISCRIMINATING v/u-sharing control (revised post adversarial-audit): two NO-REKICK arms differing ONLY by whether
+  the WKV Izhikevich step runs between resonates, on the SAME kick sequence — arm A (WKV-step) DIVERGES from arm B
+  (no-WKV-step) by `0.959`–`0.993`.** If `v`/`u` were disjoint the two arms would be IDENTICAL, so this uniquely
+  isolates "the WKV step corrupts the shared `v`/`u`" (and the composer re-kick repairs it). This REPLACES the
+  original no-rekick-vs-isolated anti-cheat, which the audit correctly flagged as over-determined — it diverged from a
+  per-round kick-SEED mismatch alone (the no-rekick arm reused the round-0 seed while isolated re-kicked with a fresh
+  per-round seed), so it would have diverged whether or not `v`/`u` were shared.
 
 CI: `tests/test_onebridge_coresidence.py` (3 tests, GPU-only, skips on numpy).
 
@@ -60,7 +65,7 @@ Combined with the crux above, BOTH co-residence risks for the WKV-onto-one-bridg
 - **This is the CRUX de-risk, NOT the full consolidation.** The full end-goal build wires the ACTUAL composer (the RF
   encoder + the fact store + the parser) + the ACTUAL WKV faculty (with its own RF spike-encoder sub-bridge) onto
   ONE bridge and runs a full grounded conversational turn (comprehend → reason → spiking render) on that single
-  substrate. This de-risk removes the central risk (do the two persistent spiking states conflict on one bridge? —
+  substrate. This de-risk removes the central risk (do the WKV's graded read-out state and the composer's RF phasor conflict on one bridge? —
   NO) so that build is now an integration/wiring arc, not a research question.
 - **Next toward the end goal:** (1) merge the WKV's own RF spike-encoder sub-bridge onto the same bridge (the same
   masked-RF pattern, a second RF slice); (2) run the full De-risk-5 grounded turn on ONE consolidated bridge; (3) the

@@ -120,30 +120,41 @@ def main():
     read_maxerr = max(float(np.max(np.abs(co_reads[r] - iso_reads[r]))) for r in range(args.rounds))
     phase_maxerr = max(float(np.max(np.abs(co_phases[r] - iso_phases[r]))) for r in range(args.rounds))
 
-    # ANTI-CHEAT: NO-REKICK arm on a fresh co-resident bridge -> composer must DIVERGE from isolated (v/u shared).
+    # DISCRIMINATING control that v/u is GENUINELY shared (replaces the over-determined no-rekick-vs-isolated arm,
+    # which diverged from a per-round kick-SEED mismatch alone). Two NO-REKICK arms that differ ONLY by whether the
+    # WKV Izhikevich step runs between resonates, on the SAME kick sequence:
+    #   arm A: kick once (round 0), then each round run the WKV _charge_read (its Izhikevich step writes v/u) + resonate
+    #   arm B: kick once (round 0), then each round resonate ONLY (NO WKV step)
+    # If v/u is shared, arm A's phasor is corrupted by the WKV step and DIVERGES from arm B. If v/u were DISJOINT, the
+    # WKV step would not touch the composer's v/u and the two arms would be IDENTICAL. So (arm A != arm B) uniquely
+    # isolates "the WKV Izhikevich step corrupts the shared v/u" -- the thing the re-kick discipline exists to defeat.
     bD, _cgd, _cg2d, _snapd = _build_ssm_state_bridge(args.D, args.seed, decay, pop_k=1)
-    _install_readout(bD, xp, args.seed)
-    _install_rf(bD, slice_idx, args.seed)
-    nokick_phases = []
-    for r in range(args.rounds):
-        _charge_read(bD, xp, injects[r])                              # WKV step corrupts v/u
-        # first round kicks (to establish phasor), later rounds SKIP kick -> WKV's Izhikevich step corrupts it
-        nokick_phases.append(_composer_op(bD, xp, slice_idx, kick_seeds[r], args.n_resonate, do_kick=(r == 0)))
-    nokick_maxerr = max(float(np.max(np.abs(nokick_phases[r] - iso_phases[r]))) for r in range(1, args.rounds))
+    _install_readout(bD, xp, args.seed); _install_rf(bD, slice_idx, args.seed)
+    armA = [_composer_op(bD, xp, slice_idx, kick_seeds[0], args.n_resonate, do_kick=True)]   # round 0: kick + read
+    for r in range(1, args.rounds):
+        _charge_read(bD, xp, injects[r])                              # WKV Izhikevich step (writes v/u)
+        armA.append(_composer_op(bD, xp, slice_idx, 0, args.n_resonate, do_kick=False))       # resonate + read, NO kick
+    bE, _cge, _cg2e, _snape = _build_ssm_state_bridge(args.D, args.seed, decay, pop_k=1)
+    _install_rf(bE, slice_idx, args.seed)
+    armB = [_composer_op(bE, xp, slice_idx, kick_seeds[0], args.n_resonate, do_kick=True)]    # SAME round-0 kick
+    for r in range(1, args.rounds):
+        armB.append(_composer_op(bE, xp, slice_idx, 0, args.n_resonate, do_kick=False))       # resonate + read, NO WKV step
+    vu_shared_maxerr = max(float(np.max(np.abs(armA[r] - armB[r]))) for r in range(1, args.rounds))
 
     read_ok = read_maxerr < 1e-5
     phase_ok = phase_maxerr < 1e-5
-    nokick_diverges = nokick_maxerr > 1e-3
-    verdict = "GO" if (read_ok and phase_ok and nokick_diverges) else "NO-GO"
+    vu_shared = vu_shared_maxerr > 1e-3          # WKV step corrupts the composer's v/u => v/u genuinely shared
+    verdict = "GO" if (read_ok and phase_ok and vu_shared) else "NO-GO"
 
     print(f"[RESULT {verdict}] one-bridge co-residence (seed {args.seed}, {args.rounds} rounds, n={n}, "
           f"RF slice={len(slice_idx)}):")
-    print(f"  WKV read-out  co-resident vs isolated  max|err| = {read_maxerr:.3e}  ({'byte-clean' if read_ok else 'DIVERGES'})")
+    print(f"  WKV read-out  co-resident vs isolated  max|err| = {read_maxerr:.3e}  ({'byte-clean' if read_ok else 'DIVERGES'})  "
+          f"[disjoint-by-construction: cp_ssm_state is never touched by RF ops]")
     print(f"  composer phase co-resident vs isolated  max|err| = {phase_maxerr:.3e}  ({'byte-clean' if phase_ok else 'DIVERGES'})")
-    print(f"  ANTI-CHEAT no-rekick phase vs isolated  max|err| = {nokick_maxerr:.3e}  "
-          f"({'DIVERGES (v/u shared, re-kick load-bearing)' if nokick_diverges else 'NO DIVERGENCE -- SUSPECT'})")
-    print(f"  => the WKV read-out + the composer RF phasor CO-RESIDE on ONE bridge, each byte-identical to isolated, "
-          f"neither corrupting the other; the shared v/u is real (no-rekick diverges).")
+    print(f"  DISCRIMINATING v/u-sharing (WKV-step vs no-WKV-step, both no-rekick)  max|err| = {vu_shared_maxerr:.3e}  "
+          f"({'DIVERGES => WKV step corrupts the SHARED v/u (re-kick load-bearing)' if vu_shared else 'IDENTICAL -- v/u NOT shared, SUSPECT'})")
+    print(f"  => the WKV read-out (graded cp_ssm_state) + the composer RF phasor (v/u) CO-RESIDE on ONE bridge, each "
+          f"byte-identical to isolated; the v/u array is genuinely shared (the WKV step corrupts it; the re-kick repairs it).")
 
 
 if __name__ == "__main__":

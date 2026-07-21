@@ -45,15 +45,34 @@ def _setup():
     sh_wkv.read_idx = np.concatenate([np.asarray(g) for g in mchan]).astype(np.int64)
     sh_wkv._rf_encode_decode = types.MethodType(_merged_rf_encode_decode, sh_wkv)
     sh_wkv._wash(); sh_gen = sh_wkv.generate(["the", "dog", "can"], max_new=6)
-    return iso_ans, sh_ans, sh_abstain, iso_gen, sh_gen
+
+    # interleave-isolation: a composer op BETWEEN WKV charges must not perturb the WKV logits (byte-isolated)
+    sh_wkv._wash(); ids = sh_wkv.ids(["the", "dog", "can"]); st = None
+    for t in ids:
+        st = sh_wkv._charge(t)
+        sh_cmp.query_patient("dog", "chase")            # composer op interleaved on the SAME bridge
+    lg = sh_wkv._next_logits(ids[-1], st)
+    iso_wkv._wash(); ist = None
+    iids = iso_wkv.ids(["the", "dog", "can"])
+    for t in iids:
+        ist = iso_wkv._charge(t)
+    ilg = iso_wkv._next_logits(iids[-1], ist)
+    interleave_err = float(np.max(np.abs(lg - ilg)))
+    return iso_ans, sh_ans, sh_abstain, iso_gen, sh_gen, interleave_err
 
 
 def test_composer_recall_and_moat_on_shared_bridge():
-    iso_ans, sh_ans, sh_abstain, _, _ = _setup()
+    iso_ans, sh_ans, sh_abstain, _, _, _ = _setup()
     assert sh_ans == iso_ans, f"composer recall differs on shared bridge: {sh_ans} vs {iso_ans}"
     assert sh_abstain is None, "no-confab moat broken on shared bridge"
 
 
 def test_wkv_render_unchanged_on_shared_bridge():
-    _, _, _, iso_gen, sh_gen = _setup()
+    _, _, _, iso_gen, sh_gen, _ = _setup()
     assert sh_gen == iso_gen, f"WKV render differs on shared bridge: {sh_gen} vs {iso_gen}"
+
+
+def test_interleave_isolation_on_shared_bridge():
+    # the headline 'strongest result': a composer op interleaved between WKV tokens does not perturb the WKV logits
+    *_, interleave_err = _setup()
+    assert interleave_err < 1e-4, f"composer op perturbed the WKV logits on the shared bridge: {interleave_err}"

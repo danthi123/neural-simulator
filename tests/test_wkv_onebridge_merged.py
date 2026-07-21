@@ -31,6 +31,8 @@ def test_merged_wkv_forward_identical_to_two_bridge():
     mrg.b = mb; mrg.nnrn = int(mb.cp_membrane_potential_v.size); mrg._enc_idx = enc_idx
     mrg.read_idx = np.concatenate([np.asarray(g) for g in mchan]).astype(np.int64)
     mrg._rf_encode_decode = types.MethodType(_merged_rf_encode_decode, mrg)
+    # bridge-identity: the merged faculty uses a DISTINCT bridge, not a secret reuse of ref's bridges
+    assert mrg.b is not ref.b and mrg.b is not ref._rfb, "merged must use a distinct bridge"
 
     ids = ref.ids(["the", "penguin", "can", "not", "fly", "the"])
     ref._wash(); mrg._wash()
@@ -43,3 +45,18 @@ def test_merged_wkv_forward_identical_to_two_bridge():
     ref._wash(); r = ref.generate(["the", "penguin", "can"], max_new=6)
     mrg._wash(); m = mrg.generate(["the", "penguin", "can"], max_new=6)
     assert r == m, f"merged generation differs: {r} vs {m}"
+
+    # LESION (load-bearing): scrambling mb's encoder output must DIVERGE the generation -> the encoder region genuinely
+    # feeds the WKV state (not a dead passenger fed by ref._rfb).
+    _rng = np.random.default_rng(999); _perm = {}
+
+    def _scramble(self, inj):
+        d = _merged_rf_encode_decode(self, inj)
+        p = _perm.get(len(d))
+        if p is None:
+            p = _rng.permutation(len(d)); _perm[len(d)] = p
+        return d[p]
+    les = copy.copy(mrg); les.b = mb
+    les._rf_encode_decode = types.MethodType(_scramble, les)
+    les._wash(); l = les.generate(["the", "penguin", "can"], max_new=6)
+    assert l != r, "encoder lesion did NOT change the output -- encoder region is not load-bearing (dead-passenger confound)"

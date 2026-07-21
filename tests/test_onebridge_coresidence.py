@@ -36,15 +36,22 @@ def _run(seed=42, rounds=3, D=48):
         co_p.append(_composer_op(bC, xp, slice_idx, ks[r], 30, do_kick=True))
     read_err = max(float(np.max(np.abs(co_r[r] - iso_r[r]))) for r in range(rounds))
     phase_err = max(float(np.max(np.abs(co_p[r] - iso_p[r]))) for r in range(rounds))
-    # no-rekick divergence
+    # DISCRIMINATING v/u-sharing control: two no-rekick arms differing ONLY by whether the WKV step runs between
+    # resonates (same round-0 kick). Shared v/u => arm A (with WKV step) diverges from arm B (without). Disjoint =>
+    # identical. (Replaces the over-determined no-rekick-vs-isolated arm, which diverged from a kick-seed mismatch.)
     bD, *_ = _build_ssm_state_bridge(D, seed, decay, pop_k=1)
     _install_readout(bD, xp, seed); _install_rf(bD, slice_idx, seed)
-    nk = []
-    for r in range(rounds):
-        _charge_read(bD, xp, injects[r])
-        nk.append(_composer_op(bD, xp, slice_idx, ks[r], 30, do_kick=(r == 0)))
-    nk_err = max(float(np.max(np.abs(nk[r] - iso_p[r]))) for r in range(1, rounds))
-    return read_err, phase_err, nk_err
+    armA = [_composer_op(bD, xp, slice_idx, ks[0], 30, do_kick=True)]
+    for r in range(1, rounds):
+        _charge_read(bD, xp, injects[r])                     # WKV Izhikevich step
+        armA.append(_composer_op(bD, xp, slice_idx, 0, 30, do_kick=False))
+    bE, *_ = _build_ssm_state_bridge(D, seed, decay, pop_k=1)
+    _install_rf(bE, slice_idx, seed)
+    armB = [_composer_op(bE, xp, slice_idx, ks[0], 30, do_kick=True)]
+    for r in range(1, rounds):
+        armB.append(_composer_op(bE, xp, slice_idx, 0, 30, do_kick=False))   # NO WKV step
+    vu_shared_err = max(float(np.max(np.abs(armA[r] - armB[r]))) for r in range(1, rounds))
+    return read_err, phase_err, vu_shared_err
 
 
 def test_wkv_readout_byte_clean_co_resident():
@@ -57,7 +64,8 @@ def test_composer_phase_byte_clean_co_resident():
     assert phase_err < 1e-5, f"composer phase diverged co-resident: {phase_err}"
 
 
-def test_shared_vu_is_real_no_rekick_diverges():
-    # anti-cheat: without the composer re-kick, the WKV's Izhikevich step corrupts the shared v/u -> divergence.
-    _, _, nk_err = _run()
-    assert nk_err > 1e-3, f"no-rekick did NOT diverge ({nk_err}) -- v/u not genuinely shared (suspect)"
+def test_vu_genuinely_shared_discriminating():
+    # discriminating: with-WKV-step vs without-WKV-step (both no-rekick) must DIVERGE -> the WKV step corrupts the
+    # SHARED v/u. If v/u were disjoint the two arms would be identical.
+    _, _, vu_shared_err = _run()
+    assert vu_shared_err > 1e-3, f"v/u-sharing control did NOT diverge ({vu_shared_err}) -- v/u not genuinely shared"
