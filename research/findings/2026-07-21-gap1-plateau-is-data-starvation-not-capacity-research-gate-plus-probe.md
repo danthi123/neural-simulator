@@ -97,18 +97,21 @@ validity gate PASSED, so the refactor is sound and the comparison is clean). Sam
 | 1 | 4.793 (gate ≈ 4.796) | +0.79 | — | — |
 | **2** | **4.738** | **+0.850** | 4.719 | no (train ≈ held-out) |
 | 4 | 4.735 | +0.852 | 4.721 | no |
-- **Depth 1→2 HELPS ~0.055** (ppl 121→~114; margin +0.79→+0.85; real generalization — train 4.72 ≈ held-out 4.74, NOT
-  overfitting). **But 2→4 is FLAT** (4.738→4.735) — depth SATURATES at 2 layers.
-- ⇒ the single-layer plateau is NOT the absolute limit (depth lowers it slightly), but depth is a MODEST, quickly-
-  saturating lever that does NOT break the plateau toward fluency (~ppl 20-40 target). Combined: **data flat
-  (150k→850k) + width flat (d512→d1024) + depth modest-and-saturating (L2 helps, L4 flat)** — the plateau is a
-  fundamental SMALL-MODEL + LIMITED-DATA limit. Broad-domain "fluent about ANYTHING" needs the field's big-model +
-  big-data SCALE (managed via the 21M scaffold, C1 GO), NOT more wikitext, more width, or more depth-beyond-2.
-- Honest scope: single-seed (42); the +0.055 warrants a 2nd-seed firm-up, but the SATURATION (L2≈L4, two configs agree)
-  + the qualitative conclusion (depth doesn't reach fluency) are robust. The `--n-layers` WKV refactor (gate-verified)
-  is a reusable lever for future scale-up. ⇒ **gap#1 investigation COMPLETE: the broad-domain plateau is a scale
-  (model+data) arc, characterized on all three axes (data/width/depth); the substrate-native mechanism is GO and
-  fluent on a matched domain — "fluent about anything" is the field's scale wall, not a mechanism/architecture gap.**
+- **Depth 1→2 HELPS ~0.05 — 2-SEED ROBUST** (seed 42: 4.793→4.738 = −0.055; seed 43: 4.869→4.820 = −0.049; real
+  generalization — train ≈ held-out, NOT overfitting). **2→4 is DIMINISHING** (seed 42: 4.738→4.735 = −0.003 flat;
+  seed 43: 4.820→4.797 = −0.023 small) — so ~0.06-0.07 TOTAL L1→L4, a diminishing-returns lever (big step 1→2, small
+  step 2→4), NOT a clean saturation but clearly bounded.
+- ⇒ the single-layer plateau is NOT the absolute limit (depth lowers it ~0.06-0.07), but depth is a MODEST,
+  DIMINISHING-returns lever that does NOT break the plateau toward fluency (~ppl 20-40 target; L4 is still ppl ~112-114).
+  Combined: **data flat (150k→850k) + width flat (d512→d1024) + depth modest-diminishing (~0.06 total, 2-seed)** — the
+  plateau is a fundamental SMALL-MODEL + LIMITED-DATA limit. Broad-domain "fluent about ANYTHING" needs the field's
+  big-model + big-data SCALE (managed via the 21M scaffold, C1 GO), NOT more wikitext, more width, or a few more layers.
+- Honest scope: 2-seed (42, 43); the L1→L2 ~0.05 benefit is robust across both, the L2→L4 diminishing benefit is
+  seed-variable (flat/0.023) but small either way; the qualitative conclusion (depth gives a bounded improvement, does
+  NOT reach fluency) is robust. The `--n-layers` WKV refactor (gate-verified) is a reusable lever for future scale-up.
+  ⇒ **gap#1 investigation COMPLETE: the broad-domain plateau is a scale (model+data) arc, characterized on all three
+  axes (data/width/depth); the substrate-native mechanism is GO and fluent on a matched domain (TinyStories ppl 24) —
+  "fluent about anything" is the field's scale wall, not a mechanism/architecture gap.**
 
 ## Honest status
 gap#1's substrate-native mechanism WORKS + generalizes (beats fair count baselines at depth, in- and broad-domain);
