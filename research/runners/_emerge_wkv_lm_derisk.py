@@ -278,6 +278,7 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
     rng = np.random.default_rng(seed * 7 + 3)
     for ep in range(args.epochs):
         order = rng.permutation(len(seqs))
+        _ep_loss, _ep_n = 0.0, 0                          # per-epoch train-loss trajectory (capacity-vs-under-training diagnostic)
         for i in range(0, len(seqs), args.batch):
             batch = [seqs[j] for j in order[i:i+args.batch]]
             X, msk = pad_batch(batch)
@@ -286,6 +287,8 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
             L = lossf(logits.reshape(-1, V), tgt.reshape(-1)).reshape(tgt.shape)
             loss = (L * m).sum() / m.sum().clamp(min=1)
             opt.zero_grad(); loss.backward(); opt.step()
+            _ep_loss += float(loss); _ep_n += 1
+        print(f"    [train] epoch {ep+1}/{args.epochs} mean_train_loss={_ep_loss/max(1,_ep_n):.4f}", flush=True)
     return net, WKV
 
 
