@@ -66,6 +66,29 @@ needs big-model+big-data (the field's scale wall, managed via the 21M scaffold �
 substrate-native LM is FLUENT on a domain matched to its size (TinyStories), data-STARVED on broad-domain (wikitext
 1.7 tok/param), and broad-domain fluency is a compute/data-scale arc, NOT a mechanism wall.
 
+## ⇒ DECISIVE RESULT (the data-lever run, 2026-07-21): the plateau is SINGLE-LAYER CAPACITY, NOT data — the WKV SATURATES
+`d512/wikitext103/v8000, n_tr=850000, 12ep` (the data lever pulled 5.6× the baseline). Deep (d10-99) held-out NLL:
+| n_tr | WKV deep NLL | fair trigram | WKV−trigram margin |
+|---|---|---|---|
+| 150k (baseline) | 4.796 | 5.587 | **+0.791** |
+| 400k | 4.798 | 5.259 | +0.461 |
+| **850k (this run)** | **4.811** | **5.106** | **+0.296** |
+- **The WKV deep NLL is FLAT (~4.80) across 150k→850k — 5.6× more data does NOT lower it.** Combined with the record's
+  WIDTH-flat (d512→d1024 = 4.798→4.813), the plateau is ROBUST to BOTH data and width.
+- **The decisive tell: the fair trigram IMPROVES with data (5.587→5.106) while the WKV stays flat → its vs-trigram
+  margin SHRINKS (+0.791→+0.296).** A simple count model USES the extra data; the single-layer WKV does NOT. ⇒ the
+  WKV's (single-layer) CAPACITY has SATURATED on broad-domain wikitext — it is CAPACITY/ARCHITECTURE-bound, **NOT
+  data-starved-that-more-data-fixes** (at this corpus scale) and **NOT under-training** (the 36ep probe overfit).
+- **This RESOLVES the record's undisentangled "capacity vs under-training at 12 epochs" question: CAPACITY** (data +
+  width both flat; the model saturates while a trigram improves). The reframe corrects this finding's own earlier
+  "data-starvation is the whole story" (the gate's literature framing) at THIS operating point: the small SINGLE-LAYER
+  model cannot use more data — so the prerequisite lever is **DEPTH** (the architecture has NO layer-stacking; `n_layers`
+  never existed), then a fundamentally bigger model + corpus (the field's scale wall). Data helps only once the model
+  has the capacity/depth to use it. Both the ceiling (wikitext 1.7 tok/param) AND the saturation (WKV flat while trigram
+  improves) point the same way: broad-domain "fluent about anything" is an ARCHITECTURE (depth) + scale arc, not a
+  more-wikitext-data lever. The next cheap de-risk = **add depth (multi-layer WKV)** at fixed 150-850k data → does the
+  WKV deep NLL drop below ~4.80 (depth breaks the single-layer plateau)?
+
 ## Honest status
 gap#1's substrate-native mechanism WORKS + generalizes (beats fair count baselines at depth, in- and broad-domain);
 open-fluent generation "about anything" is bottlenecked, and this cycle DISENTANGLES the bottleneck: **data-starvation
