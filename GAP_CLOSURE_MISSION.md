@@ -356,6 +356,32 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   mechanical); (2) full `_fluidconv_chat_repl.py` wire-in (multi-turn/anaphora on the single substrate); (3) on-bridge
   fluency THROUGHPUT (batched) for LIVE full-scale; (4) the capability gaps — #1 breadth/depth, #4 deep-credit
   (research-gate frontiers; RAG-check prior work per drift-mode #12).
+- **⭐ GAP-CLOSE ARC (2026-07-21, owner: "gap-close workflows, no deferrals, then LLM-like conversation").** A deep
+  research-gate Workflow (a-1 RAG + external lit + ranked de-risks) reframed the two biggest gaps + delivered a
+  three-gaps-at-once plan; findings `2026-07-21-gap-close-research-gate-AKOrN-...-SCOPING.md`.
+  - **gap#1 (open generation) — CEILING GO + scale-progressing.** The deployed WKV cortex (v4000/d256, learns fluency
+    on the spiking substrate) beats a FAIR bigram 3.35× / a fair trigram +0.811 nats at depth on UNSEEN TinyStories
+    (leakage + smoothing fixed before believing it), GENERATES coherent prose ("tom and his dog went to the park…"),
+    and the scale lever is MEASURABLE (deep-ppl 26.5→24.3→23.8 as data 100k→200k then model d256→d512 grow). ⇒ NOT
+    mechanism-bound (the 2026-07-11 "transformer loses to a bigram" was config-specific, V=300); the lever is more
+    data + a bigger model. `_gap1_wkv_vs_bigram_ceiling.py`, `_gap1_scale_sweep.sh`. Finding
+    `2026-07-21-gap1-ceiling-wkv-cortex-beats-fair-bigram-3.35x-scale-progressing.md`.
+  - **gap#2 (learned binder over structured codes) — 6-seed GO, emergence-bar close.** Rank-1: replace the composer's
+    FIXED FHRR bind with a J WRITTEN by a LOCAL outer-product rule, READ via the committed RF resonate loop. Ceiling
+    (fixed-FHRR + iterative resonator) = 1.000 @ P=1..6 on the 788 correlated stream-cortex phasor codes; the LEARNED
+    binder (J as the full RF coupling) MATCHES it = 1.000 @ P=1..5, 6-seed, permuted-role→0.000 (role-addressed),
+    decorrelated-ctrl 1.000. ⇒ the fixed exact-inverse algebra is NOT load-bearing; a learned local binder replaces
+    it on spikes. Silent-failure catch (rule 3): the anti-cheat FLAGGED a delta-rule 128× overshoot (keys are unit
+    PHASORS, ⟨k,k⟩=D not 1); fix = /⟨k,k⟩. Honest: delta-vs-additive not load-bearing at near-orthogonal D=128 roles
+    (additive suffices; the shared-store collapse where delta matters is a compression follow-on — the composer's
+    separate-block store works); the WRITE is a host-computed local outer-product (fully-on-bridge STP = edge5
+    follow-on). `_gap2_binder_resonator_ceiling.py`, `_gap2_spiking_deltarule_binder_derisk.py`. Finding
+    `2026-07-21-gap2-spiking-learned-binder-6seed-GO-emergence-bar-close.md`.
+  - **NEXT (gap-close, no deferrals):** gap#3 multi-referent disambiguation = the gate's Rank-4, RIDES on the same RF
+    phase-cluster read (biased-competition WTA, Desimone-Duncan) over correlated referent attractors, vs the two prior
+    NEGATIVEs (recency, salience-boost); ONE VARIABLE lateral-inhibition ON/OFF, 6-seed. Then: gap#1 scale to a bigger
+    model/corpus toward real fluency; the fully-on-bridge STP write of the gap#2 binder (edge5); the composer wire-in
+    of the learned binder (retire the fixed FHRR).
 - **🎯 gap#4 KEYSTONE REFRAMED (2026-07-20 close-state) — deep local credit is MECHANISM-ESTABLISHED; the apparent
   "contrast blocker" was a TASK ARTIFACT.** After rungs 1-9 + 6 pre-flights + a 28-agent adversarial audit, the
   honest status of "does the substrate learn DEEP representations by a biological rule?":
