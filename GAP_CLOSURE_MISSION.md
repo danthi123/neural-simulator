@@ -454,9 +454,14 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
     Architecture = SINGLE-LAYER (no depth) = co-limit. OFF the table: width, attention-over-recurrence, spiking-BPTT-
     at-scale, reservoir-size. Probe: d512/36ep OVERFITS (train 3.10 vs held-out deep 6.296 no-go) = data-starvation
     signature (confound disclosed: `--max-train-sents` DEFAULT 60000 silently capped my --n-sentences 150000 → n_tr
-    60000). The record's "150k→400k FLAT" is real but ~<1 tok/param (still starved) — the data lever at scale was NEVER
-    tested. **DECISIVE RUN IN FLIGHT (bi27mss18, Monitor bt6rzwqrh): d512/1M-sentences/12ep vs 4.796 — data-drops =
-    lever real; flat = single-layer architecture is the limit (depth next).** Finding
+    60000). **DECISIVE RESULT (data-lever run n_tr=850000, 5.6× baseline): the WKV deep NLL is FLAT ~4.80 across
+    150k→400k→850k, while the fair TRIGRAM IMPROVES with data (5.587→5.106) → the WKV's margin SHRINKS (+0.791→+0.296).**
+    A count model USES the extra data; the single-layer WKV does NOT → **its CAPACITY is SATURATED.** With the record's
+    width-flat (d512→d1024), the plateau is robust to BOTH data AND width ⇒ **SINGLE-LAYER-CAPACITY-bound, NOT
+    under-training (36ep probe overfit) NOR data-starved-that-more-wikitext-fixes.** RESOLVES the record's undisentangled
+    "capacity vs under-training" = **CAPACITY.** **PINNED NEXT DE-RISK: add DEPTH (multi-layer WKV — the arch has NO
+    layer-stacking, `n_layers` never existed) at fixed 150-850k data → does the deep NLL drop below ~4.80?** Then the
+    field's big-model+big-data scale wall for "fluent about anything". Finding
     `2026-07-21-gap1-plateau-is-data-starvation-not-capacity-research-gate-plus-probe.md`. (b) gap#1 scale toward
     real fluency (bigger model/corpus, or accept the scaffold + spiking-forward-convert the 88.6M — C1 GO); (c) the
     SPIKING gap#3 phase-cluster WTA; (d) the composer wire-in of the learned binder + the fully-on-bridge STP write
