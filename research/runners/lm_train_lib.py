@@ -104,10 +104,34 @@ class ByteTokenizer:
         return cls()
 
 
+class HFTokenizer:
+    """Wrapper over a HuggingFace `tokenizers` BPE (fast Rust) — for large corpora where the pure-Python BPE is slow.
+    Interface-compatible subset (encode/decode/vocab_size). Trained + frozen by the FineWeb corpus-setup script."""
+    def __init__(self, tk):
+        self._tk = tk
+        self.vocab_size = tk.get_vocab_size()
+
+    def encode(self, text):
+        return self._tk.encode(text).ids
+
+    def decode(self, ids):
+        return self._tk.decode([int(i) for i in ids])
+
+    def save(self, path):
+        self._tk.save(str(path))
+
+    @classmethod
+    def load(cls, path):
+        from tokenizers import Tokenizer
+        return cls(Tokenizer.from_file(str(path)))
+
+
 def _load_tokenizer(run_dir: Path, cfg: TrainConfig):
     p = run_dir / "tokenizer.json"
     if cfg.tokenizer == "byte":
         return ByteTokenizer.load(str(p)) if p.exists() else ByteTokenizer()
+    if cfg.tokenizer == "hf":
+        return HFTokenizer.load(str(p))
     return BPETokenizer.load(str(p))
 
 
