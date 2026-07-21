@@ -301,9 +301,21 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   (documented "principled idealization"; its spiking bind/query resonate ops ARE on the shared bridge). Consolidating
   it is a real arc (substrate store uses rf_set_complex_weights which REPLACES cp_rf_w_*, conflicting with the per-op
   bind → needs the CoResidentOneBrainComposer persistent-store-on-slice machinery), NOT a quick win.
-  **NEXT (owner steer 'quickest wins onto the one shared substrate'):** (1) wire the single-substrate capstone into the
-  live console (`_fluidconv_chat_repl.py`) so the owner can TALK to the one-brain (full capacity); (2) the composer
-  fact-store-on-substrate arc; (3) on-bridge fluency THROUGHPUT (batched) for the LIVE full-scale.
+  **+ REACHABLE single-substrate conversation (GO 42/43/100, 2026-07-20):** `OneBridgeChat` /
+  `_gap_onebridge_conversation_demo.py` — teach facts → ask → composer retrieves+gates → the SPIKING WKV renders the
+  grounded answer → moat holds by construction (0 WKV invocations on abstains). "the dog chases cat" / "the owl eats
+  mouse" / lion,fish → "I don't know." CI `test_onebridge_conversation.py`. Honest scope: WKV subject-fidelity wobbles
+  on some frames (known De-risk-5 render scope; retrieved answer correct+present, moat holds); in-vocab facts only.
+  Finding `2026-07-20-single-substrate-grounded-conversation-REACHABLE-demo-GO.md`. INDEX synced.
+  ⇒ this turn's single-substrate arc: pretraining-on-spikes (6-seed) → co-residence crux (6-seed) → encoder-equiv →
+  WKV physical merge (byte-exact) → CAPSTONE composer+WKV grounded turn (6-seed) → render-LEARNING co-resident (6-seed)
+  → REACHABLE conversation demo. ALL the quick substrate-loading wins delivered; the whole grounded loop + learning +
+  a runnable "talk to the one-brain" all on ONE SimulationBridge.
+  **NEXT (remaining = substantial arcs, not quick wins):** (1) full `_fluidconv_chat_repl.py` wire-in (multi-turn/
+  anaphora/learn-a-fact on the single substrate); (2) composer fact-store-on-substrate (the numpy-kb idealization →
+  substrate; needs the CoResidentOneBrainComposer persistent-store-on-slice machinery); (3) on-bridge fluency
+  THROUGHPUT (batched) for LIVE full-scale; (4) the remaining capability gaps — #1 breadth/scale, #4 deep-credit
+  (research-gate frontiers).
 - **🎯 gap#4 KEYSTONE REFRAMED (2026-07-20 close-state) — deep local credit is MECHANISM-ESTABLISHED; the apparent
   "contrast blocker" was a TASK ARTIFACT.** After rungs 1-9 + 6 pre-flights + a 28-agent adversarial audit, the
   honest status of "does the substrate learn DEEP representations by a biological rule?":
