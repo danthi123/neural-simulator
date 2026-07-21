@@ -31,8 +31,15 @@ the staged store (phase-invariant RF read, |Δphase|=0.0000). This Phase-2 wire-
   path — all seeds.** The fact-store in device synapses reads identically to the host-list store.
 - **No-confab moat intact: an unstored cue (`apple stop`) abstains (`None`) under `persistent_store=True` — all seeds.**
 - **The store lives in device synapses: `cp_rf_store_re` is installed on the bridge after a read.**
-- **Default byte-identity: the existing `test_one_brain_composer_agent` (19) passes with `persistent_store=False`**
-  (the else branches are the verbatim staged code).
+- **Default byte-identity: `test_one_brain_composer_agent` — 19 passed (813s) with `persistent_store=False`** (the else
+  branches are the verbatim staged code; my edit did not touch the default path).
+- **MIXED-usage robustness (verified): a clause query (`_read_block`, staged) + a flat query (`_read_all_blocks`,
+  persistent) + the moat, in one session under `persistent_store=True`, all match the staged reference** — clause
+  `'cat look south'`, flat `'mouse'`, moat `None`, parity on all three. This confirms the honest subtlety: once
+  `cp_rf_store_re` is installed, a STAGED read path (not yet wired) gets a 2× store drive (staged `cp_rf_w_*` + the
+  persistent `cp_rf_store_*`) — but that is PHASE-CORRECT (the RF read is phase-invariant; 2×composite has composite's
+  phase), so the un-wired read paths decode IDENTICALLY. ⇒ the `_read_all_blocks`-only wire-in is already ROBUST for
+  mixed usage; extending the other paths is a cleanliness (perf) follow-on, NOT a correctness one.
 
 CI: `tests/test_onebrain_persistent_store.py` (2 tests) + `tests/test_rf_persistent_store.py` (5, the Phase-1
 mechanism + read-fidelity).
