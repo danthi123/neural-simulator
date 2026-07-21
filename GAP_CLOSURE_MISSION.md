@@ -457,7 +457,24 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
     | gap#2 learned binder | **PARTIAL** | real 6-seed 1.000 delta + permuted-role→0.000 on the RF substrate, BUT: **300 codes not 788** (finding overstates scale); the runner's own `delta>additive` gate is **NOT met** (additive also =1.000, did NOT collapse → the delta-rule is not shown load-bearing); the WRITE is a host-numpy outer-product (emergence bar unmet). |
     | gaps #2/#3/#5 unification | **PARTIAL** | true as hedged at the numpy/rate level, but a **conceptual consolidation with no new substrate evidence**; #2/#5 are trivial nearest-neighbor at one tuned operating point; the runner docstring advertises anti-cheats (#2-permuted, #3-equal-salience) `main()` NEVER computes. |
     **TRUE STATE:** the north-star conversation is genuinely closed; gap#3 is closed (from prior spiking work, not 07-21); gap#5-completion + gap#1-spiking-input are closed. **GENUINELY OPEN + LOAD-BEARING:** **gap#4 (dendritic/local-credit keystone) has NO working method** (confirmed honest negative) — and it is the COMMON unblocker for the two emergence-bar failures (gap#2's host-numpy bind-WRITE + gap#5's pre-assigned assemblies both exist *because* there is no working local-credit rule to GROW that structure from experience); gap#1 open-fluent generation is scale/capacity-bound (d1024 flat). Findings + runner false-narrations to fix are in the audit's fix-list (finding-correction subagents dispatched).
-    **⇒ HIGHEST-VALUE NEXT (per the audit + THE LAW — a negative is a verdict on a METHOD, never the capability): FIRE THE gap#4 DEEP-RESEARCH GATE** — the reservoir 0.765 proves the substrate CARRIES the signal, so the failure is specifically that BDSP's rule doesn't extract task credit better than a random readout = a RULE-DESIGN target, not a substrate wall. Rank cheap-first alternative spiking credit rules against the like-for-like reservoir-0.765 comparator, build, iterate. (Parallel secondary: gap#1 open-generation scale/data-vs-architecture research gate.)
+    **⇒ HIGHEST-VALUE NEXT — a-1 RAG RECONCILIATION (2026-07-21) that OVERTURNS the audit's own #4 recommendation
+    (drift-#12 caught by the check):** the audit's gap#4 agent said "fire a new deep-research gate + rank alternative
+    SPIKING CREDIT RULES against the reservoir-0.765" — but the full record already RETIRED that path.
+    `2026-07-17-learning-rule-frontier-map-...` (a sourced whole-record scan) + `2026-07-17-rate-net-control-...`
+    establish THREE-WAYS-CONFIRMED: the ENTIRE supervised-deep-credit-on-spikes FAMILY (e-prop NOT-GO, NP RETIRED,
+    BDSP-to-accuracy clean-negative, FA/KP) is blocked by ONE shared wall — the spiking-classifier-readout bottleneck —
+    and the rate-net positive control confirmed **the block is the RULE, not the substrate** (graded coding did NOT
+    unlock it). So a NEW supervised gap#4 gate = re-deriving an exhausted conclusion. **Per THE LAW the CAPABILITY
+    (self-organize the host-designed structure from experience) is NOT abandoned — it is pursued on the WORKING
+    UNSUPERVISED method: the stream cortex / competitive HTM pooler + the committed BDSP `fused_htm_permanence_update` /
+    Hebbian STP (the EMERGE-30..57 arc already learns rich multi-layer reps from a stream on-spike, sidestepping the
+    readout wall).** ⇒ the REAL next steps are the emergence-bar closes VIA THE UNSUPERVISED PATH: (1) **gap#5 emergent-DG
+    SELECTION** replacing the pre-assigned assemblies (subagent running) — unsupervised assembly selection;
+    (2) **grow gap#2's binder J by the UNSUPERVISED local rule** (Hebbian STP on the RF complex synapses — the edge5
+    follow-on the gap#2 finding names) instead of the host outer-product WRITE; (3) the gap#1 open-generation
+    SCALE/DATA-vs-architecture research gate (the other genuine open, parallel). The gap#4 KEYSTONE (credit ASSIGNMENT
+    works+composes, rung-10 CONFIRMED-under-honest-geometry) stands; the learn-to-ACCURACY-beats-reservoir sub-thread is
+    the characterized boundary — the capability lives on the unsupervised method, not a new supervised gate.
 - **🎯 gap#4 KEYSTONE REFRAMED (2026-07-20 close-state) — deep local credit is MECHANISM-ESTABLISHED; the apparent
   "contrast blocker" was a TASK ARTIFACT.** After rungs 1-9 + 6 pre-flights + a 28-agent adversarial audit, the
   honest status of "does the substrate learn DEEP representations by a biological rule?":
