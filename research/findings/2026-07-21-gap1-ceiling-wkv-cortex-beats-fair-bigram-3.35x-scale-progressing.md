@@ -82,10 +82,14 @@ memoryless-collapse +0.498 (still uses long-range state on diverse text) → **G
   (5.073 / ppl 160 vs 4.796 / ppl 121) — but that is the **vocab change** (12000 vs 8000 classes → higher NLL by
   construction), NOT a regression; the two wikitext runs differ in vocab so they do NOT form a clean data-scale trend.
   The CLEAN data-scale lever is the IN-DOMAIN sweep (same vocab 4000: ppl 26.5→24.3→23.8 as data+model grow).
-- **The honest gap#1 boundary:** the substrate-native WKV mechanism is GO (beats fair count baselines in-domain AND
-  broad-domain, generates coherent prose, uses long-range state) and the data-scale lever is confirmed in-domain; but
-  the absolute ppl (121-160) is FAR from LLM-fluent on broad-domain text (wikitext is genuinely hard). LLM-fluency
-  "about ANYTHING" from scratch is **the field's scale wall** (~100M+ params, billions of tokens — beyond feasible
-  local from-scratch training), which the project manages with the TEMPORARY ~21M ANN scaffold (spiking-forward
-  convertible, C1 GO). ⇒ gap#1 is not mechanism-bound (the substrate-native LM works + generalizes + scales in-domain);
-  its full closure is a compute/data-scale arc (cloud/big-compute or the staged scaffold), not a wall to break.
+- **Clean data-lever test (same vocab 8000, wikitext, 150k → 400k sentences): NLL 4.796 → 4.798 — FLAT.** More data
+  does NOT lower the broad-domain NLL at d512 → on broad-domain the WKV at d512 is **MODEL-CAPACITY-bound, not
+  data-bound** (unlike in-domain TinyStories, where data DID help: 26.5→24.3 at d256). So the broad-domain lever is
+  MODEL SIZE (a bigger d), not more data — a d1024 run confirms the model-capacity direction.
+- **The honest gap#1 boundary (sharpened):** the substrate-native WKV mechanism is GO (beats fair count baselines
+  in-domain AND broad-domain, generates coherent prose, uses long-range state); in-domain it scales with data + model;
+  on BROAD-DOMAIN it is MODEL-CAPACITY-bound (d512 saturates on data). LLM-fluency "about ANYTHING" from scratch needs a
+  MUCH bigger model (~100M+ params — the field's scale wall; d512 ≈ 15M), beyond feasible local from-scratch training —
+  which the project manages with the TEMPORARY ~21M ANN scaffold (spiking-forward convertible, C1 GO). ⇒ gap#1 is NOT
+  mechanism-bound (the LM works + generalizes + scales); its full closure is a model-CAPACITY / compute-scale arc
+  (cloud/big-compute or the staged scaffold), not a wall to break.
