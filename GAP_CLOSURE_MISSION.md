@@ -291,10 +291,19 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   `2026-07-20-single-shared-substrate-CAPSTONE-composer-plus-WKV-on-one-bridge-GO.md`. ⇒ the whole grounded turn
   (comprehend/store/recall/abstain + spiking render + the render-learning delta rule, all on this bridge type) is
   realizable on a SINGLE SimulationBridge — the "single shared substrate" end goal MET for the grounded turn.
-  **NEXT (end goal):** on-bridge fluency THROUGHPUT (batched stepping — the SSM block is elementwise) to run the LIVE
-  full-scale fluency (ppl ~40) on the single substrate; optionally consolidate the composer's substrate store
-  (enable_substrate_store) onto the same bridge. Honest scope: composer fact-store is the numpy-kb idealization (its
-  spiking resonate ops ARE consolidated); WKV D=256 + composer D=64 coexist as separate regions.
+  **CAPSTONE firmed 6-seed (42/43/44/100/101/102, all byte-identical).** **+ RENDER-LEARNING co-resident (6-seed GO,
+  2026-07-20):** the delta-rule read-out learning (dw=-lr*err*state over cp_ssm_state) LEARNS on the shared bridge WHILE
+  the composer binds/queries (loss->0, composer recall ['cat','mouse'] + moat None intact); frozen control drifts but
+  never learns (load-bearing; verify-first fixed a mis-specified 'flat' gate). `_gap_onebridge_learning_coresident_derisk.py`,
+  CI `test_onebridge_learning_coresident.py`. ⇒ the WHOLE grounded loop — comprehend/store/recall/abstain + spiking
+  render + the render-LEARNING — is on ONE SimulationBridge. Finding `2026-07-20-render-learning-coresident-*`.
+  **REMAINING "not on the shared substrate" (honest, 1 item):** the composer's FACT-STORE = the numpy-kb idealization
+  (documented "principled idealization"; its spiking bind/query resonate ops ARE on the shared bridge). Consolidating
+  it is a real arc (substrate store uses rf_set_complex_weights which REPLACES cp_rf_w_*, conflicting with the per-op
+  bind → needs the CoResidentOneBrainComposer persistent-store-on-slice machinery), NOT a quick win.
+  **NEXT (owner steer 'quickest wins onto the one shared substrate'):** (1) wire the single-substrate capstone into the
+  live console (`_fluidconv_chat_repl.py`) so the owner can TALK to the one-brain (full capacity); (2) the composer
+  fact-store-on-substrate arc; (3) on-bridge fluency THROUGHPUT (batched) for the LIVE full-scale.
 - **🎯 gap#4 KEYSTONE REFRAMED (2026-07-20 close-state) — deep local credit is MECHANISM-ESTABLISHED; the apparent
   "contrast blocker" was a TASK ARTIFACT.** After rungs 1-9 + 6 pre-flights + a 28-agent adversarial audit, the
   honest status of "does the substrate learn DEEP representations by a biological rule?":
