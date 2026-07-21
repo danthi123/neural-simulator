@@ -62,6 +62,15 @@ class OneBridgeChat:
         rendered = self.wkv.answer(ctx, f"what does the {subj} {verb} ?")   # already a spaced string
         return rendered, ans
 
+    def ask_who(self, verb, patient):
+        """Gate-FIRST 'who' query: query_agent(verb, patient) -> the agent (or None = abstain, WKV NOT invoked)."""
+        ans = self.cmp.query_agent(verb, patient)
+        if ans is None:
+            return "I don't know.", None
+        ctx = f"the {ans} {verb} {patient}"
+        self.wkv._wash()
+        return self.wkv.answer(ctx, f"who {verb} {patient} ?"), ans
+
     def teach(self, subj, verb, patient):
         """Learn a new fact LIVE on the shared substrate (composer stores it in the composer region)."""
         self.cmp.store(subj, verb, patient)
@@ -69,7 +78,7 @@ class OneBridgeChat:
         return f"ok -- learned '{subj} {verb} {patient}'."
 
     def handle(self, line):
-        """Parse one REPL line: 'teach S V P' | 'ask S V' | 'S V' (== ask). Returns a display string."""
+        """Parse one REPL line: 'teach S V P' | 'ask S V' | 'who V P' | 'S V' (== ask). Returns a display string."""
         toks = line.strip().split()
         if not toks:
             return ""
@@ -77,9 +86,11 @@ class OneBridgeChat:
             return self.teach(toks[1], toks[2], toks[3])
         if toks[0] == "ask" and len(toks) == 3:
             reply, _ = self.ask(toks[1], toks[2]); return reply
+        if toks[0] == "who" and len(toks) == 3:
+            reply, _ = self.ask_who(toks[1], toks[2]); return reply
         if len(toks) == 2:                                  # bare "S V" == ask
             reply, _ = self.ask(toks[0], toks[1]); return reply
-        return "usage: teach <subj> <verb> <patient> | ask <subj> <verb>"
+        return "usage: teach <subj> <verb> <patient> | ask <subj> <verb> | who <verb> <patient>"
 
 
 def main():
