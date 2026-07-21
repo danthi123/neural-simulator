@@ -89,6 +89,27 @@ substrate-native LM is FLUENT on a domain matched to its size (TinyStories), dat
   more-wikitext-data lever. The next cheap de-risk = **add depth (multi-layer WKV)** at fixed 150-850k data → does the
   WKV deep NLL drop below ~4.80 (depth breaks the single-layer plateau)?
 
+## ⇒ DEPTH DE-RISK RESULT (2026-07-21) — depth is a REAL but MODEST + SATURATING lever; it does NOT reach fluency
+Added multi-layer stacking to the WKV (pre-norm residual blocks, `--n-layers`; the `n_layers=1 → 4.793 ≈ 4.796`
+validity gate PASSED, so the refactor is sound and the comparison is clean). Same config (d512/wikitext103/v8000/150k/12ep):
+| n_layers | deep (d10-99) NLL | vs-trigram | train loss | overfit? |
+|---|---|---|---|---|
+| 1 | 4.793 (gate ≈ 4.796) | +0.79 | — | — |
+| **2** | **4.738** | **+0.850** | 4.719 | no (train ≈ held-out) |
+| 4 | 4.735 | +0.852 | 4.721 | no |
+- **Depth 1→2 HELPS ~0.055** (ppl 121→~114; margin +0.79→+0.85; real generalization — train 4.72 ≈ held-out 4.74, NOT
+  overfitting). **But 2→4 is FLAT** (4.738→4.735) — depth SATURATES at 2 layers.
+- ⇒ the single-layer plateau is NOT the absolute limit (depth lowers it slightly), but depth is a MODEST, quickly-
+  saturating lever that does NOT break the plateau toward fluency (~ppl 20-40 target). Combined: **data flat
+  (150k→850k) + width flat (d512→d1024) + depth modest-and-saturating (L2 helps, L4 flat)** — the plateau is a
+  fundamental SMALL-MODEL + LIMITED-DATA limit. Broad-domain "fluent about ANYTHING" needs the field's big-model +
+  big-data SCALE (managed via the 21M scaffold, C1 GO), NOT more wikitext, more width, or more depth-beyond-2.
+- Honest scope: single-seed (42); the +0.055 warrants a 2nd-seed firm-up, but the SATURATION (L2≈L4, two configs agree)
+  + the qualitative conclusion (depth doesn't reach fluency) are robust. The `--n-layers` WKV refactor (gate-verified)
+  is a reusable lever for future scale-up. ⇒ **gap#1 investigation COMPLETE: the broad-domain plateau is a scale
+  (model+data) arc, characterized on all three axes (data/width/depth); the substrate-native mechanism is GO and
+  fluent on a matched domain — "fluent about anything" is the field's scale wall, not a mechanism/architecture gap.**
+
 ## Honest status
 gap#1's substrate-native mechanism WORKS + generalizes (beats fair count baselines at depth, in- and broad-domain);
 open-fluent generation "about anything" is bottlenecked, and this cycle DISENTANGLES the bottleneck: **data-starvation

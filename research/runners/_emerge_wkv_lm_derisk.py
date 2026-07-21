@@ -122,8 +122,41 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
     D = args.d_model
 
     RECUR = getattr(args, "recurrence", "wkv")
+
+    class WkvLayer(nn.Module):
+        """DEPTH LEVER (2026-07-21, gap#1): one STACKABLE pre-norm residual WKV block, used for layers >=1 (the deeper
+        layers on top of the base single block). Its recurrence is BYTE-FOR-BYTE the baseline 'wkv' branch (the num/den
+        normalized RWKV linear-attention, exactly WKV.forward's default-branch loop), operating on a pre-norm'd input:
+        delta = block(LN(h)); the caller does the residual add h = h + delta. Each layer owns its own Wk/Wv/Wr/Wo + w/u."""
+        def __init__(self, D, uniform_decay):
+            super().__init__()
+            self.ln = nn.LayerNorm(D)
+            self.Wk = nn.Linear(D, D, bias=False); self.Wv = nn.Linear(D, D, bias=False)
+            self.Wr = nn.Linear(D, D, bias=False); self.Wo = nn.Linear(D, D, bias=False)
+            self.w = nn.Parameter(torch.zeros(1 if uniform_decay else D))
+            self.u = nn.Parameter(torch.zeros(D))
+
+        def forward(self, h):                          # h: [B,T,D] -> delta [B,T,D] (pre-norm residual block)
+            B, T, D = h.shape
+            z = self.ln(h)
+            k = self.Wk(z); v = self.Wv(z); r = torch.sigmoid(self.Wr(z))
+            wdec = torch.exp(-torch.nn.functional.softplus(self.w)); u = self.u
+            a = torch.zeros(B, D, device=h.device); b = torch.zeros(B, D, device=h.device)
+            pmax = torch.full((B, D), -1e30, device=h.device)
+            outs = []
+            for t in range(T):
+                kt = k[:, t]; vt = v[:, t]
+                q = torch.maximum(pmax, u + kt)
+                e1 = torch.exp(pmax - q); e2 = torch.exp(u + kt - q)
+                wkv = (e1 * a + e2 * vt) / (e1 * b + e2 + 1e-8)
+                outs.append(r[:, t] * self.Wo(wkv))
+                pmax2 = torch.maximum(pmax + torch.log(wdec + 1e-30), kt)
+                e1 = torch.exp(pmax + torch.log(wdec + 1e-30) - pmax2); e2 = torch.exp(kt - pmax2)
+                a = e1 * a + e2 * vt; b = e1 * b + e2; pmax = pmax2
+            return torch.stack(outs, 1)
+
     class WKV(nn.Module):
-        def __init__(self, V, D, memoryless=False):
+        def __init__(self, V, D, memoryless=False, n_layers=1):
             super().__init__()
             self.emb = nn.Embedding(V, D)
             self.ln = nn.LayerNorm(D)
@@ -136,6 +169,12 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
             self.u = nn.Parameter(torch.zeros(D))     # current-token bonus
             self.head = nn.Linear(D, V)
             self.memoryless = memoryless
+            # DEPTH LEVER (gap#1, 2026-07-21): the base block above (self.Wk/Wv/Wr/Wo/w/u) IS layer 0 = the exact original
+            # single-layer WKV. Extra pre-norm residual layers stack ON TOP of layer 0's output (wkv branch only).
+            # Constructed AFTER self.head so at n_layers=1 the ModuleList is EMPTY -> parameter-init RNG order + the forward
+            # are BYTE-IDENTICAL to the original single-block model (the load-bearing reproduction guarantee).
+            self.n_layers = n_layers
+            self.extra = nn.ModuleList([WkvLayer(D, getattr(args, "uniform_decay", False)) for _ in range(n_layers - 1)])
 
         def forward(self, x):                          # x: [B,T] token ids
             B, T = x.shape
@@ -145,6 +184,7 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
             if self.memoryless:
                 wdec = torch.zeros_like(wdec)           # ANTI-CHEAT: no carry -> only the current token
             if RECUR == "ssm":
+                assert self.n_layers == 1, "--n-layers>1 is only implemented for --recurrence wkv (the baseline branch)"
                 # SPIKING-SUBSTRATE-FAITHFUL leaky-integrator (Rung 2 de-risk): a_t = decay*a_{t-1} + v_t (a slow
                 # conductance/membrane leak -- NO exp(k) weighting, NO num/den normalization = the part hard on spikes),
                 # out = receptance-gated read. If GO, the spiking membrane leak realizes this state directly.
@@ -252,8 +292,10 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
                 pmax2 = torch.maximum(pmax + torch.log(wdec + 1e-30), kt)
                 e1 = torch.exp(pmax + torch.log(wdec + 1e-30) - pmax2); e2 = torch.exp(kt - pmax2)
                 a = e1 * a + e2 * vt; b = e1 * b + e2; pmax = pmax2
-            y = torch.stack(outs, 1)                     # [B,T,D]
-            return self.head(y)                          # [B,T,V]
+            h = torch.stack(outs, 1)                     # [B,T,D]  = layer-0 output (the original single block)
+            for blk in self.extra:                       # DEPTH: pre-norm residual WKV layers on top (empty at n_layers=1)
+                h = h + blk(h)
+            return self.head(h)                          # [B,T,V]
 
     def pad_batch(seqs):
         m = max(len(s) for s in seqs)
@@ -262,7 +304,7 @@ def build_and_train_wkv(tr_ids, V, seed, args, device, init_emb=None):
             X[i, :len(s)] = s; msk[i, :len(s)] = True
         return torch.tensor(X, device=device), torch.tensor(msk, device=device)
 
-    net = WKV(V, D).to(device)
+    net = WKV(V, D, n_layers=getattr(args, "n_layers", 1)).to(device)
     if init_emb is not None:
         with torch.no_grad():                                       # Rung 1b EMERGENT input: seed the emb with PPMI codes
             net.emb.weight.copy_(torch.tensor(init_emb, device=device))
@@ -329,6 +371,9 @@ def main():
     ap.add_argument("--max-train-sents", type=int, default=60000)
     ap.add_argument("--max-eval-sents", type=int, default=3000)
     ap.add_argument("--d-model", type=int, default=256)
+    ap.add_argument("--n-layers", dest="n_layers", type=int, default=1,
+                    help="DEPTH LEVER (gap#1): stack N pre-norm residual WKV layers. 1 = the original single block "
+                         "(byte-identical). >1 only implemented for --recurrence wkv (the baseline branch).")
     ap.add_argument("--epochs", type=int, default=12)
     ap.add_argument("--batch", type=int, default=128)
     ap.add_argument("--lr", type=float, default=3e-3)
