@@ -405,10 +405,18 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
     SPECIFICITY STACK on the SWR runner: pattern-separated CA3 completion (the emergent-DG, already 6-seed GO) UPSTREAM
     → structured+POTENTIATED SPARSE Schaffer (`swr_learn_schaffer` ON, drop dense-random) → E%-max/FFI CA1
     sparsification → brief single-volley read. GO bar ca1_match≥0.6/cross≤0.3/3×/6-seed. A substantial GPU arc, teed up.
-    **BUILD HANDLE (scoped 2026-07-21):** the stack is the `run()` params of `_riii_ca3_synchronous_assembly_derisk.py`
-    (`:52` — `assemblies_ext=` [source from `_gap5_emergent_dg_selection_derisk` mossy-selected assemblies, NOT
-    random-disjoint], `swr_learn_schaffer=True`, `swr_schaffer_hi/lo`, `swr_ca1_topk=` [E%-max ~10%], `swr_ca1_ff_inhib=`,
-    `read_ca1=True`) — write a small driver calling `run()` with these + read `ca1_match`/`cross`, 6-seed fanned. GPU.
+    **BUILD HANDLE (scoped 2026-07-21):** the SWR readout stack is the `run()` params of
+    `_riii_ca3_synchronous_assembly_derisk.py` (`swr_learn_schaffer=True`, `swr_ca1_topk=` E%-max, `read_ca1=True`) —
+    driver BUILT (`_gap5_swr_specificity_stack_derisk.py`). **But the CA3 COMPLETION must establish UPSTREAM first, and
+    it does NOT at the runner defaults:** probe (n_mem=2, encode≤1400, train≤300, n_ca3=1000) → `h_comp=0` all 4 despite
+    `w_ratio` 88-212 (weights potentiated, completion FUNCTIONALLY SILENT — abs recurrent drive ~1000× too weak; the
+    2026-07-08/17 diagnosis, CONFIRMED + encode/train alone don't fix). **PINNED NEXT MECHANISM (the intricate arc,
+    boundary=undiscovered-mechanism):** the multi-knob Kopsick-Ascoli 2024 completion recipe at n_ca3~1000-2000 —
+    strong SYNCHRONOUS encoding + joint `mossy_density`/`dg_ffi_weight`/`ca3_fb_inhib`/`sync` tuning (knobs in
+    `_riii_ca3_coincidence_completion_derisk._build` + the `--hebb-sym`/`--hebb-rate` CA3-attractor rules; "only ever run
+    at 150"). Get `h_comp≥0.3` FIRST → feed those completed assemblies as `assemblies_ext` → THEN the SWR readout stack.
+    An intricate multi-runner/multi-param hippocampal de-risk — verify-first, fresh focus (findings
+    `2026-07-21-gap5-swr-specificity-stack-driver-built-completion-upstream-required.md`).
   - **NEXT (gap-close, no deferrals):** (a) the gap#5 SWR SPECIFICITY STACK (the ranked de-risk above, GPU — the last of
     the unified three); (b) gap#1 scale toward real fluency (bigger model/corpus, or accept the scaffold + spiking-
     forward-convert the 88.6M — C1 GO); (c) the SPIKING gap#3 phase-cluster WTA; (d) the composer wire-in of the learned
