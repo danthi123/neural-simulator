@@ -405,6 +405,10 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
     SPECIFICITY STACK on the SWR runner: pattern-separated CA3 completion (the emergent-DG, already 6-seed GO) UPSTREAM
     → structured+POTENTIATED SPARSE Schaffer (`swr_learn_schaffer` ON, drop dense-random) → E%-max/FFI CA1
     sparsification → brief single-volley read. GO bar ca1_match≥0.6/cross≤0.3/3×/6-seed. A substantial GPU arc, teed up.
+    **BUILD HANDLE (scoped 2026-07-21):** the stack is the `run()` params of `_riii_ca3_synchronous_assembly_derisk.py`
+    (`:52` — `assemblies_ext=` [source from `_gap5_emergent_dg_selection_derisk` mossy-selected assemblies, NOT
+    random-disjoint], `swr_learn_schaffer=True`, `swr_schaffer_hi/lo`, `swr_ca1_topk=` [E%-max ~10%], `swr_ca1_ff_inhib=`,
+    `read_ca1=True`) — write a small driver calling `run()` with these + read `ca1_match`/`cross`, 6-seed fanned. GPU.
   - **NEXT (gap-close, no deferrals):** (a) the gap#5 SWR SPECIFICITY STACK (the ranked de-risk above, GPU — the last of
     the unified three); (b) gap#1 scale toward real fluency (bigger model/corpus, or accept the scaffold + spiking-
     forward-convert the 88.6M — C1 GO); (c) the SPIKING gap#3 phase-cluster WTA; (d) the composer wire-in of the learned
