@@ -116,8 +116,15 @@ class OneBrainComposer:
                  encoding_gain_fn=None, local_reciprocal_unbind=True, integrated_loop=False,
                  sequencer_match_thresh=0.06, sequencer_gain=0.11, sequencer_sigma=1.0, sequencer_input_gain=1.0,
                  enable_seq_vocab_shrink=True, persistent_loop=True, typed_roles=None, framecq_seed=None,
-                 use_spiking_cq=None, frame_lexicon=None, trace=False):
+                 use_spiking_cq=None, frame_lexicon=None, trace=False, persistent_store=False):
         self.seed = int(seed); self.D = int(D); self.period = int(period)
+        # PERSISTENT STORE (2026-07-20, fact-store on the substrate, opt-in DEFAULT-OFF = byte-identical): when True the
+        # fact composites live IN the device synapses (cp_rf_store_re/im via rf_set_store_weights) and PERSIST across
+        # per-op binds, instead of the host store_conns list being re-installed onto cp_rf_w_* per read. The read is
+        # IDENTICAL (de-risked: the RF read is phase-based + magnitude-invariant, staged vs persistent |Δphase|=0.0000).
+        # False (default) => the staged per-read install path is byte-unchanged (the rf/numpy oracle + all tests).
+        self.persistent_store = bool(persistent_store)
+        self._persistent_dirty = True                          # store changed since the last rf_set_store_weights
         # trace (B3 per-turn "brain activity", opt-in, DEFAULT-OFF = byte-identical): READ-ONLY trace of what the brain
         # DID on the LAST query -- the decoded role-words + their cleanup match-confidence (per role), which stored
         # fact-block matched + how many were scanned, and a scalar RF activity gauge (the fraction of the rf-slice
@@ -588,6 +595,7 @@ class OneBrainComposer:
         else:
             self.store_conns += block_conns                         # append (a new fact)
         self._store_dirty = True       # store_conns changed -> the cached store CSR is stale (both store + reconsolidation)
+        self._persistent_dirty = True  # (persistent_store) store_conns changed -> the device store synapses are stale
         if self.integrated_loop:
             self._seq_dirty = True     # (shortcut #3) the store changed -> the per-block sequencer drives are stale
             if self._fused:
@@ -785,6 +793,15 @@ class OneBrainComposer:
         self._store_dirty = False
         return self._store_csr
 
+    def _sync_persistent_store(self):
+        """(persistent_store) install the fact store into the DEVICE synapses (cp_rf_store_re/im) via
+        rf_set_store_weights, once per store mutation. The store's readout rows (store_base+i*block+1..+D) are DISJOINT
+        from the op operators' rows (Q at bat_q_base.., cleanup at bat_c_base..), so it never clobbers the per-op bind.
+        A per-op rf_set_complex_weights/rf_kick never touches cp_rf_store_* -> the store persists across binds."""
+        if self.persistent_store and self._persistent_dirty and self.store_conns:
+            self.b.rf_set_store_weights(self.store_conns)
+            self._persistent_dirty = False
+
     def _read_all_blocks(self):
         """A5 lever 1 (BATCHED): read ALL stored blocks in 3 resonate windows -- fire EVERY trigger (the readouts
         reconstruct in parallel, the validated per-block isolation, zero cross-talk) -> block-diagonal unbind (each
@@ -808,10 +825,14 @@ class OneBrainComposer:
             kick = np.zeros(self.n_total, dtype=np.complex128)
             for i in range(n):
                 kick[self.store_base + i * self.block] = 1.0                   # fire EVERY stored trigger
-            b.cp_rf_w_re, b.cp_rf_w_im = Sre, Sim                              # install the cached store operator
+            if self.persistent_store:
+                self._sync_persistent_store()                                 # store lives in cp_rf_store_* (device)
+                b.cp_rf_w_re = b.cp_rf_w_im = None                             # settle: only the persistent store drives
+            else:
+                b.cp_rf_w_re, b.cp_rf_w_im = Sre, Sim                          # install the cached store operator (staged)
             b.rf_kick(kick, period=Pd, lam=0.0, neuron_mask=self.rf_mask)
             b.rf_resonate_steps(Pd + 8)
-            b.cp_rf_w_re, b.cp_rf_w_im = Ure, Uim; b.rf_resonate_steps(Pd + 8)  # cached unbind
+            b.cp_rf_w_re, b.cp_rf_w_im = Ure, Uim; b.rf_resonate_steps(Pd + 8)  # unbind (persistent store keeps driving readouts)
             # (persistent_loop) op-handoff-as-spikes: re-kick the active batched Q run as clean unit phasors before the
             # cleanup operator install (no-op when OFF). _dev_rekick_into touches only v/u + the RF trackers, never the
             # cleanup CSR installed on the next line.
@@ -824,7 +845,12 @@ class OneBrainComposer:
         kick = np.zeros(self.n_total, dtype=np.complex128)
         for i in range(n):
             kick[self.store_base + i * self.block] = 1.0                       # fire EVERY stored trigger
-        b.rf_set_complex_weights(self.store_conns); b.rf_kick(kick, period=Pd, lam=0.0, neuron_mask=self.rf_mask)
+        if self.persistent_store:
+            self._sync_persistent_store()                                      # store lives in cp_rf_store_* (device)
+            b.cp_rf_w_re = b.cp_rf_w_im = None                                  # settle: only the persistent store drives
+        else:
+            b.rf_set_complex_weights(self.store_conns)                          # staged: re-install store onto cp_rf_w_*
+        b.rf_kick(kick, period=Pd, lam=0.0, neuron_mask=self.rf_mask)
         b.rf_resonate_steps(Pd + 8)
         nr, nm = self.n_roles, self.n_main
         pol_ri = self.bind_roles.index("polarity")
