@@ -446,8 +446,19 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
     GENUINE OPEN BUILD (the finding's "R1"), NOT a wiring:** per-pathway STP (STP-off on mossy dg→ca3 so it detonates,
     STP-ON on ca3→ca3 so it doesn't avalanche — the same per-pathway STP the SWR finding prescribed for the Schaffer) +
     detonator-sparse mossy (lower `mossy_density`) + inhibitory sparsification, tuned to a sparse(6-40) separated
-    assembly, then re-verify the emergent anti-cheats (input-specific / moat / mossy-lesion) before feeding SWR. NOT
-    currently exposed as runner params.
+    assembly, then re-verify the emergent anti-cheats (input-specific / moat / mossy-lesion) before feeding SWR.
+    **RESULT (subagent 2, 2026-07-21): per-pathway STP BUILT (a reusable `sim/` capability) but the window is a BOUNDARY.**
+    A new `RegionPathway.stp_disabled` → `cp_stp_disabled_mask` (`sim/bridge.py`+57/`regions.py`+16, additive/guarded/
+    BYTE-IDENTICAL-off, controller-verified `test_stp_disabled_pathway` 4/4 + `test_determinism` 9/9, COMMITTED 0193a3ca)
+    lets co-resident pathways hold OPPOSITE STP states (the substrate had only the global toggle; reusable — could
+    replace the SWR phase-2 global-STP-off hack). It FIRES (mossy detonation 12→1114 CA3 cells) but opens NO
+    sparse+separated+stable window across the full mossy_w×ff×dg_ffi×drive sweep: the bistable recurrent is ALL-OR-NONE
+    (sparse-unpotentiated → decays to [0,0,0]; un-depressed → [2000] avalanche). ⇒ **per-pathway STP is
+    necessary-NOT-sufficient; the NAMED next mechanism is ONE-SHOT BTSP DURING ENCODING** (plateau-gated recurrent
+    potentiation among the detonated set → the sparse set becomes a stable attractor) = **the gap#4↔#5 UNIFICATION**
+    (`2026-07-18-gap4-gap5-UNIFICATION-BTSP-...`), NOT mossy STP-depression. Also confirmed: the "emergent-DG 6-seed GO"
+    does NOT reproduce at n_ca3=2000 (scale-fragile). Finding
+    `2026-07-21-gap5-emergent-DG-per-pathway-STP-built-window-BOUNDARY-needs-oneshot-BTSP.md`.
     (a2) **gap#1 RESEARCH GATE + PROBE (2026-07-21): the broad-domain plateau (ppl 121) is DATA-STARVATION, not
     capacity.** Gate (external lit): 0.46 tok/param is ~40× below Chinchilla; production small-LMs reach wikitext ppl
     20-40 at 20-200+ tok/param; lever = TOKEN COUNT + dedup + quality (curriculum-ordering=skip; distillation-as-DATA).
