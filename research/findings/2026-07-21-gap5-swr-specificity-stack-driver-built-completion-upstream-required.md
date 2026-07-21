@@ -38,3 +38,24 @@ crucially `h_comp=0` (the CA3 COMPLETION itself fails), so `ca1_match=0` downstr
 
 Runner: `_gap5_swr_specificity_stack_derisk.py`; the SWR `run()` in `_riii_ca3_synchronous_assembly_derisk.py`
 (`assemblies_ext`, `swr_learn_schaffer`, `swr_ca1_topk`, `read_ca1`).
+
+---
+
+## ⛔ CORRECTION (2026-07-21, same day — the a-1 RAG check I skipped) — the "completion is an open boundary / needs the multi-knob Kopsick recipe at scale" read above is WRONG
+
+The `h_comp=0` probe above ran `run()` at the runner's **DEFAULT** completion params (no `bistable`, no dendritic
+bistability) — so it re-derived "silent" by NOT using the closing config. **The CA3 completion is CLOSED** (2026-07-18,
+`2026-07-18-gap5-CA3-completion-CLOSED-intrinsic-dendritic-bistability-resolves-the-trilemma.md`): **5/6 GO + 6/6
+mechanism** (perfect specificity + bistability every seed; cue 0.18-0.33, nocue/perm 0.000, no-encode collapses) via
+**intrinsic dendritic bistability** — the exact config `_gap4_btsp_completion_unification_6seed.GO_CFG`
+(n_ca3=2000, ca3_density=0.05, assembly_frac=0.12, encode_drive=3000, recall_k_thresh=110, bistable=True,
+structural_sep=1, selective_inhib=True, plateau_self_regen=0.15, apical_kir_g=3.0, apical_gc=1.0, apical_gc_read=5.0).
+The trilemma (magnitude vs specificity vs bistability) is resolved; the retracted self-sustaining/plasticity-noise
+artifacts were caught + superseded.
+
+⇒ the REAL gap#5 next step is NOT a Kopsick knob-sweep on the default config — it is the **SWR specificity readout ON
+the completing GO_CFG** (`swr_learn_schaffer=True`, `read_ca1=True`, `swr_ca1_topk` E%-max). The driver is now updated
+to embed `COMPLETION_CFG = GO_CFG` (verifies `held_cue` live before trusting `ca1_match`/`cross`). This CORRECTION is
+the drift-mode-#12 lesson: I trusted this doc's "upstream required" over the authoritative CLOSED finding — the finding
+wins. The remaining gap#5 pieces are the SWR readout (running) + the emergent-DG assembly wiring, NOT re-opening the
+completion.
