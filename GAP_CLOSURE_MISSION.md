@@ -270,9 +270,18 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   per op. `_gap_onebridge_coresidence_derisk.py`, CI `test_onebridge_coresidence.py` (3, GPU), NO sim/ edit. Finding
   `2026-07-20-single-shared-substrate-consolidation-coresidence-de-risk-GO.md`. ⇒ the central risk (do the two
   persistent spiking states conflict on one bridge?) is REMOVED; the full build is now integration/wiring, not research.
-  **NEXT (end goal):** (1) merge the WKV's own RF spike-encoder sub-bridge onto the same bridge (2nd masked-RF slice) +
-  run the full De-risk-5 grounded turn (comprehend→reason→spiking render) on ONE consolidated bridge; (2) on-bridge
-  fluency THROUGHPUT (batched stepping — the SSM block is elementwise) to reach the off-bridge ppl ~40 LIVE.
+  **WKV CORTEX PHYSICALLY MERGED onto ONE bridge — GO (2026-07-20, byte-exact seeds 42/43/100):** the WKV faculty's
+  TWO internal bridges (cp_ssm_state read-out + RF spike-encoder) become ONE SimulationBridge, two regions (chan +
+  encoder; encoder driven by masked rf_resonate_steps, NOT _run_one_simulation_step which would corrupt the ssm state).
+  Merged forward BYTE-IDENTICAL to the two-bridge faculty: accumulated state 0.000e+00, logits 0.000e+00, greedy
+  generation identical ("you help me get the cheese and milk"). `_gap_wkv_onebridge_merged_derisk.py`, CI
+  `test_wkv_onebridge_merged.py`, NO sim/ edit. Finding `2026-07-20-wkv-cortex-physically-merged-onto-one-bridge-GO.md`.
+  ⇒ the faculty's bridge-count is 2→1; the ssm read-out + the RF encoder + the on-bridge delta learning are all on
+  ONE bridge; the composer (RF phasor) is proven co-resident with the ssm read-out (crux). ONLY remaining piece: wire
+  the composer's fact-store region onto THIS bridge object + run a full grounded turn on the single substrate.
+  **NEXT (end goal):** (1) add the composer as a 3rd region on this bridge + run the full De-risk-5 grounded turn
+  (comprehend→reason→spiking render) end-to-end on ONE consolidated bridge (the capstone); (2) on-bridge fluency
+  THROUGHPUT (batched stepping — the SSM block is elementwise) to reach the off-bridge ppl ~40 LIVE.
 - **🎯 gap#4 KEYSTONE REFRAMED (2026-07-20 close-state) — deep local credit is MECHANISM-ESTABLISHED; the apparent
   "contrast blocker" was a TASK ARTIFACT.** After rungs 1-9 + 6 pre-flights + a 28-agent adversarial audit, the
   honest status of "does the substrate learn DEEP representations by a biological rule?":
