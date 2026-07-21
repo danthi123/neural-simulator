@@ -31,3 +31,20 @@ The 67M/1-week budget: 1.7B tokens (Chinchilla-MINIMAL) naive → ~5B (well-trai
 over-trained, genuinely fluent) with the chunked scan. SAME wall-clock, categorically better model. **⇒ realize the
 optimizations (bf16 + batch + chunked scan) BEFORE committing the big compute.** Probes:
 `_lmtrain_throughput_probe.py`, `_lmtrain_optim_probe.py`.
+
+## ⇒ CHUNKED SCAN IMPLEMENTED + VERIFIED (2026-07-21): ~30× total, correctness-gated
+`research/runners/_lmtrain_chunked_scan.py` (`gate`, `speed`). CORRECTNESS GATE PASSED (controller-verified
+independently): chunked_ssm is NUMERICALLY IDENTICAL to the Python loop — max|chunked-loop| = **4.77e-07** (<<1e-4)
+across C∈{8,16,32} × seeds; block-level 2.38e-07. Speed at 67M (d1024/L16/T256):
+| variant | tok/s | vs naive |
+|---|---|---|
+| naive fp32/B16/loop | 3043 | 1.0× |
+| bf16/B64/loop (easy) | 7538 | 2.5× |
+| bf16/B64/**chunked** | 49027 | 16.1× |
+| bf16/B64/**chunked+compile** | **~90000** (verified 89811) | **~30×** |
+| loop+compile | HANGS (>200s, T=256 unroll — never compiles) | — |
+- **torch.compile WORKS on the chunked (53s one-time) where it HANGS on the loop.** B=64 is the sweet spot (best tok/s,
+  6.7GB VRAM); B=128 = same throughput (compute-bound). C=16 (any of 8/16/32 exact — free knob).
+- **⇒ ~30× total → 1-week 67M budget: naive 1.84B tokens → optimized ~55B tokens (~40× Chinchilla = SmolLM-level
+  over-trained, genuinely fluent); OR Chinchilla-optimal (1.3B) in ~4 hours; OR a well-trained model in ~1 day (7.8B).**
+  The training path is now near the reasonable optimization ceiling BEFORE the big compute. NO `sim/` edit.
