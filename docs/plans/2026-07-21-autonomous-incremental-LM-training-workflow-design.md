@@ -69,6 +69,18 @@ metadata) for the checkpoint lineage.
    tokens, watch whether broad-domain ppl collapses from ~121 toward the 20-40 range (does the WKV track the scaling
    curve?). THIS is the go/no-go on "converse like a small LLM is a training run away vs needs the scaffold."
 
+
+## De-risk status (2026-07-21 — all LOAD-BEARING pieces validated)
+- ✅ **Resume correctness** (model+optimizer+RNG): bit-exact (loss diff 0.00). `_lmtrain_resume_correctness_derisk.py`
+- ✅ **Resumable data cursor** (stream continues exactly across restarts + epoch rollovers): 10/10 + 11/11.
+  `_lmtrain_stream_cursor_derisk.py`
+- ✅ **Throughput/VRAM**: measured; VRAM not the constraint. `_lmtrain_throughput_probe.py`
+- ✅ **Optimization**: ~30× (bf16 + batch + chunked-scan[correctness-gated 4.77e-07] + torch.compile), 3043→~90000 tok/s.
+  `_lmtrain_chunked_scan.py`, `_lmtrain_optim_probe.py`
+- ⏳ **Remaining (ASSEMBLY, not de-risk)**: (a) benchmark harness (wrap `eval_perdepth` + fixed-prompt samples); (b)
+  FineWeb-Edu download+tokenize (setup); (c) the autonomous train→ckpt→benchmark→continue loop + launcher (adapt
+  `develop_run.py`). All the RISKY pieces are proven; the rest is integration + a data download.
+
 ## 3. Open choices for the owner (decision points)
 - **Corpus:** FineWeb-Edu (educational-quality, best per-token) vs DCLM (reasoning/diversity) vs a mix (SmolLM2's 60/40).
   Default: FineWeb-Edu slice to start.
