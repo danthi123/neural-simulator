@@ -1,6 +1,6 @@
 # Single-shared-substrate CAPSTONE — the composer + the WKV cortex run a grounded turn on ONE bridge (GO)
 
-**Date:** 2026-07-20 · **Status:** GO (seeds 42/43/100) — the composer (RF bind/unbind/cleanup) AND the WKV cortex
+**Date:** 2026-07-20 · **Status:** GO (6-seed 42/43/44/100/101/102, all byte-identical) — the composer (RF bind/unbind/cleanup) AND the WKV cortex
 (cp_ssm_state read-out + RF spike-encoder) run a full grounded turn on ONE `SimulationBridge` (three regions), with
 the composer recall + the no-confab moat + the WKV render ALL byte-identical to isolated, and the composer op
 byte-isolated from the WKV state even when INTERLEAVED between WKV tokens. The owner's "fully-spiking, one brain,
