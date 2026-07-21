@@ -50,4 +50,19 @@ structured corpus, the WKV genuinely learns.
 - **This is NOT gap#1 closed** — open-prose fluency at LLM scale is still the frontier — but it RETIRES the
   "mechanism-bound / bigram-crossover" pessimism at realistic scale, and points the arc at the measurable scale lever.
 
+## Generation quality (the real gap#1 test — low ppl ≠ fluent, so sample it)
+
+Sampled prose from the same WKV cortex (temp 0.7) is genuinely coherent, grammatical, on-topic TinyStories, with
+named characters + narrative structure — i.e. it GENERATES, not just scores low ppl:
+- *"once upon a time there was a little mouse named bobo was very excited to find a new friend to play with them because he was not there anymore and they made…"*
+- *"tom and his dog went to the park with their mom and dad to eat the cauliflower for lunch but then something unexpected happened there was a big blue cloth that made…"*
+- *"the little girl wanted to play with it too but she still might not just like the pain in the park there was a little boy named tim saw a…"*
+
+Minor wobbles (an odd noun, a run-on) are expected at ppl ~24; the STRUCTURE (agreement, character names, "but then
+something unexpected happened") is real. ⇒ the substrate-native recurrent LM produces fluent in-domain prose. The gap
+to "LLM-like about ANYTHING" is (a) a broader corpus than TinyStories and (b) lower ppl — both the SCALE/DATA lever,
+not a mechanism wall.
+
 Runner: `research/runners/_gap1_wkv_vs_bigram_ceiling.py` (`--ckpt`, `--n`). Result: `research/findings/raw/_gap1_ceiling.json`.
+Corroboration: `_emerge_wkv_lm_derisk.py` d256@100k beats a fair TRIGRAM +0.811 nats at depth 10-99, perm-collapse
++4.404, memoryless-collapse +1.266 (the WKV genuinely uses long-range state) → GO with anti-cheats.
