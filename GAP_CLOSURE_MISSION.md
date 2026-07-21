@@ -466,11 +466,20 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
     lesion-0 / input-specific CA3 assembly at EVERY N 400→2000, where the dense fan fails at every N (sep 0.54-0.62,
     diffuse). 6-seed CORE criteria 6/6 (strict gate 4/6 = size-centering + hypergeometric-perm-bar artifacts). Two record
     corrections (the n_ca3=400 GO unreproducible; the snapshot-reset leaks state → fresh-build-per-presentation). NO
-    `sim/` edit (uses the committed `stp_disabled`). **⇒ the emergent-DG SELECTION half is DONE; the remaining piece is
-    the COMPLETABLE STORE — feed these emergent-selected assemblies to the one-shot BTSP-store + bistable-complete (the
-    gap#4↔#5 unification, now on EMERGENT-not-pre-assigned assemblies) → then the CLOSED SWR readout.** Findings
-    `2026-07-21-gap5-DG-sparse-separation-research-gate-...` + `-emergent-DG-SELECTION-recovered-at-scale-sparse-detonator-GO.md`.
-    Driver `_gap5_dg_selection_reset_scale_driver.py`.
+    `sim/` edit (uses the committed `stp_disabled`).
+    **⇒ R4 STORE+COMPLETE = GO (mechanism 6/6, 2026-07-21): the emergent-DG select→store→complete CHAIN is demonstrated
+    end-to-end on ONE spiking substrate.** The emergent-selected sparse assembly (R1) BTSP-STORES as a bistable
+    completable attractor — 6-seed cue-gated (held_cue 0.13-0.20) with nocue/perm/no-encode **ALL 0.000** (mechanism 6/6,
+    magnitude 4/6≥0.15, the SAME marginal profile as the reference PRE-ASSIGNED completion 0.166-0.191). So the gap#4↔#5
+    BTSP unification now runs on **EXPERIENCE-DERIVED** assemblies (self-organized memory from experience, stored +
+    completable) — the emergence-bar for the completion half MET. NO `sim/` edit (runner-only). **RESIDUAL (precise,
+    named): two co-stored emergent assemblies CROSS-complete** through the shared dense recurrent (ca1_match≈cross); the
+    principled fix `interassembly_isolate` (additive default-off = between-memory pattern-separation in RECURRENT space)
+    discriminates CLEANLY on 2/6 (seed 100: 12.5×) but is seed-fragile — **avalanche-stable co-storage of size-variable
+    emergent assemblies is the last named step** for robust multi-assembly SWR. Findings
+    `2026-07-21-gap5-DG-sparse-separation-research-gate-...`, `-SELECTION-recovered-at-scale-sparse-detonator-GO.md`,
+    `-store-complete-GO-chain-demonstrated-SWR-2assembly-boundary.md`. Drivers `_gap5_dg_selection_reset_scale_driver.py`,
+    `_gap5_r4_emergent_btsp_store.py`.
     (a2) **gap#1 RESEARCH GATE + PROBE (2026-07-21): the broad-domain plateau (ppl 121) is DATA-STARVATION, not
     capacity.** Gate (external lit): 0.46 tok/param is ~40× below Chinchilla; production small-LMs reach wikitext ppl
     20-40 at 20-200+ tok/param; lever = TOKEN COUNT + dedup + quality (curriculum-ordering=skip; distillation-as-DATA).
