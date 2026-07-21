@@ -24,8 +24,17 @@ crucially `h_comp=0` (the CA3 COMPLETION itself fails), so `ca1_match=0` downstr
   `ca1_match`/`cross`, 6-seed. GO bar match≥0.6 / cross≤0.3 / 3× / dense-random-collapses. This is the intricate
   multi-step build (the emergent-DG assemblies wiring + the readout params) — a research-frontier de-risk deserving
   careful, verify-first execution.
-- **Honest:** this cycle BUILT the SWR-stack driver + DIAGNOSED that the completion-upstream is the load-bearing input
-  (a genuine characterization, not a GO). The full stack (emergent-DG → readout) is the teed-up next arc.
+- **Completion probe (n_mem=2, encode∈{700,1400} × train∈{120,300}, n_ca3=1000): h_comp=0.000 ALL 4 — but w_ratio
+  88-212 (within-assembly weights strongly POTENTIATED).** ⇒ CONFIRMS the record's characterized boundary EXACTLY: the
+  within-assembly recurrent weights ARE learned (potentiated), but the completion is FUNCTIONALLY SILENT (the absolute
+  recurrent drive is ~1000× too weak to fire the held members from a partial cue — the 2026-07-08/07-17 diagnosis). And
+  **simple encode/train tuning does NOT fix it** (a new data point) — the pinned fix is the MULTI-KNOB Kopsick-Ascoli
+  2024 recipe (strong synchronous encoding + `mossy_density`/`dg_ffi_weight`/`sync`/`ca3_fb_inhib` joint tuning at
+  n_ca3~1000-2000, the record's pinned-but-only-run-at-150 attempt), an intricate multi-param arc.
+- **Honest:** this cycle BUILT the SWR-stack driver + CONFIRMED the completion boundary (functionally-silent despite
+  potentiated weights; encode/train alone don't fix it) — a genuine characterization, not a GO. The pinned NEXT
+  MECHANISM (per the mission's boundary=undiscovered-mechanism law) is the multi-knob Kopsick recipe at scale → then
+  the readout stack; an intricate multi-param hippocampal-completion de-risk deserving careful, verify-first execution.
 
 Runner: `_gap5_swr_specificity_stack_derisk.py`; the SWR `run()` in `_riii_ca3_synchronous_assembly_derisk.py`
 (`assemblies_ext`, `swr_learn_schaffer`, `swr_ca1_topk`, `read_ca1`).
