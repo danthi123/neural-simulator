@@ -32,7 +32,8 @@ def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0,
            mossy_density=None, dg_ffi_weight=None, ca3_ff_inhib=None, ca3_ff_n=None,
            ca3_to_ca1_density=0.30, ca1_fb_inhib=None, ca1_fb_n=None, ca1_ff_inhib=None,
            nmda_recurrent=False, nmda_tau=100.0, nmda_ratio=1.0, enable_ou=True,
-           plateau_self_regen=0.0, plateau_v_hold=-35.0, apical_kir_g=0.0, apical_gc_read=None):
+           plateau_self_regen=0.0, plateau_v_hold=-35.0, apical_kir_g=0.0, apical_gc_read=None,
+           mossy_stp_disabled=False):
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.bridge import SimulationBridge
     from research.runners.text_minimal_isolation import build_biological_brain_regions
@@ -150,6 +151,15 @@ def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0,
         for p in pathways:
             if getattr(p, "from_region", None) == "dg" and getattr(p, "to_region", None) == "ca3":
                 p.density = float(mossy_density)
+    if mossy_stp_disabled:
+        # gap#5 mossy DETONATOR (2026-07-21): the mossy dg->ca3 detonator must NOT depress (Tsodyks-Markram STP
+        # crushes its effective weight to ~4% -> CA3 silent under global STP), while the ca3->ca3 recurrent MUST
+        # keep STP (else it avalanches). A single global enable_short_term_plasticity toggle can only do one or the
+        # other -> the "no working window" boundary. Flip the mossy pathway's per-pathway STP-disable (the additive
+        # sim/ RegionPathway.stp_disabled -> cp_stp_disabled_mask): mossy detonates STP-off, recurrent stays STP-on.
+        for p in pathways:
+            if getattr(p, "from_region", None) == "dg" and getattr(p, "to_region", None) == "ca3":
+                p.stp_disabled = True
     if dg_ffi_weight is not None:
         # Kopsick sparse DG code: strengthen the dg_pv_basket->dg feedforward inhibition so the DG code is ~2-5% sparse
         # (expansion recoding + strong FF inhibition, Kandel Ch 54 pp 1357-1360) -> a sparse, decorrelated CA3 assembly.

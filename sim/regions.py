@@ -371,6 +371,19 @@ class RegionPathway:
     # -build-plan.md (Phase 1).
     graded: bool = False
 
+    # stp_disabled (2026-07-21, gap#5 mossy detonator): when True, this pathway's synapses SKIP
+    # Tsodyks-Markram short-term depression -- their effective STP factor (stp_u*stp_x) is forced to
+    # 1.0 (full base weight) in the step while ALL OTHER synapses keep STP. The global toggle
+    # cfg.enable_short_term_plasticity is only all-or-nothing; some circuits need OPPOSITE STP states
+    # at once -- e.g. a mossy dg->ca3 DETONATOR that must not depress (STP-off) co-resident with a
+    # ca3->ca3 recurrent that MUST keep STP to avoid an avalanche. The STP STATE (u/x) still evolves for
+    # these synapses; only the effective multiplier is overridden. Realized via a per-synapse boolean
+    # mask cp_stp_disabled_mask built iff >=1 pathway sets stp_disabled=True (no config flag -- the
+    # pathway flag alone is the opt-in, like the transmission_gate/graded precedents). Default False =>
+    # the mask is None and the STP factor is computed exactly as before -> byte-identical. See
+    # research/runners/_gap5_emergent_dg_selection_derisk.py.
+    stp_disabled: bool = False
+
     # Cluster E v1 (2026-04-29): distance-dependent connection probability.
     # When set AND both source and target regions have coordinate_dim > 0,
     # connections are sampled with Gaussian-weighted probability:
@@ -767,6 +780,9 @@ class RegionManager:
             # synapses transmit from the SOURCE's continuous MEMBRANE potential, a_cont = clip((v-rest)/scale,0,1),
             # not its spikes (the retina's horizontal-cell graded release). Default False = spike-mediated (byte-identical).
             "graded": bool(getattr(pw, "graded", False)),
+            # Per-pathway STP-disable flag (2026-07-21, gap#5): True => this pathway's synapses skip
+            # short-term depression (effective STP factor forced to 1.0). Default False = STP-gated (byte-identical).
+            "stp_disabled": bool(getattr(pw, "stp_disabled", False)),
         }
 
     def _has_coords(self, region_name: str) -> bool:

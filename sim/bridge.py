@@ -330,6 +330,13 @@ class SimulationBridge:
         # inject_explicit_wiring iff >=1 pathway sets graded=True (no config flag). See
         # 2026-06-15-analog-substrate-learned-cortex-build-plan.md (Phase 1).
         self.cp_graded_synapse_mask = None                # bool per-synapse: True for graded-routed synapses
+        # STP-DISABLE per-synapse routing (2026-07-21, gap#5 mossy detonator). True for synapses of any
+        # pathway tagged stp_disabled=True: in the step their effective STP factor (stp_u*stp_x) is
+        # forced to 1.0 (no depression) while all OTHER synapses keep STP. None by default -> the step
+        # keeps the original `base * stp_u * stp_x` expression verbatim (byte-identical). Built in
+        # inject_explicit_wiring iff >=1 pathway sets stp_disabled=True (no config flag). See
+        # RegionPathway.stp_disabled + research/runners/_gap5_emergent_dg_selection_derisk.py.
+        self.cp_stp_disabled_mask = None                  # bool per-synapse: True for stp_disabled-routed synapses
         # Slow per-hub INPUT-MEAN adaptation (axis-0 per-feature centering, 2026-06-15). The SEPARABLE
         # diagonal/DC half of whitening: each FLAGGED neuron maintains a SLOW EMA of its OWN pre-threshold
         # input drive (synaptic + external current) and subtracts gain*EMA from that drive BEFORE the
@@ -2511,6 +2518,7 @@ class SimulationBridge:
         all_exc_receptors = []  # exc_receptor per synapse ("ampa" default | "nmda_slow" -> slow recurrent NMDA)
         all_coincidence = []  # coincidence_detector bool per synapse (True -> dendritic-coincidence subunit)
         all_graded = []  # graded bool per synapse (True -> analog/non-spiking transmission from source g_e)
+        all_stp_disabled = []  # stp_disabled bool per synapse (True -> skip STP depression, effective factor 1.0)
         any_fixed = False
         any_gated = False
         any_trans_gated = False
@@ -2518,6 +2526,7 @@ class SimulationBridge:
         any_nmda_slow = False  # any synapse routed through the slow-NMDA recurrent conductance
         any_coincidence = False  # any synapse routed through the dendritic-coincidence plateau
         any_graded = False  # any synapse routed through the graded (analog) transmission path
+        any_stp_disabled = False  # any synapse tagged stp_disabled (skips STP depression)
         for name, group in wiring_plan.items():
             if not isinstance(group, dict) or "pre_indices" not in group:
                 continue
@@ -2528,6 +2537,7 @@ class SimulationBridge:
             exc_receptor = (group.get("exc_receptor", None) or "ampa")
             coincidence_flag = bool(group.get("coincidence_detector", False))
             graded_flag = bool(group.get("graded", False))
+            stp_disabled_flag = bool(group.get("stp_disabled", False))
             if not plastic_flag:
                 any_fixed = True
             if gate_name:
@@ -2542,6 +2552,8 @@ class SimulationBridge:
                 any_coincidence = True
             if graded_flag:
                 any_graded = True
+            if stp_disabled_flag:
+                any_stp_disabled = True
             n_syn = len(group["pre_indices"])
             all_pre.extend(group["pre_indices"])
             all_post.extend(group["post_indices"])
@@ -2553,6 +2565,7 @@ class SimulationBridge:
             all_exc_receptors.extend([exc_receptor] * n_syn)
             all_coincidence.extend([coincidence_flag] * n_syn)
             all_graded.extend([graded_flag] * n_syn)
+            all_stp_disabled.extend([stp_disabled_flag] * n_syn)
 
         if len(all_pre) == 0:
             self._log_console("inject_explicit_wiring: no synapses in plan.", "warning")
@@ -2589,18 +2602,21 @@ class SimulationBridge:
         # coincidence read below uses t[7]; the destructuring reads add one more trailing `_`.)
         # (graded appended 2026-06-15 for the analog/non-spiking transmission routing -- the index-based
         # graded read below uses t[8]; the destructuring reads add one more trailing `_`.)
+        # (stp_disabled appended 2026-07-21 for the per-pathway STP-disable mask -- the index-based read
+        # below uses t[9]; the destructuring reads add one more trailing `_`.)
         if (any_fixed or any_gated or any_trans_gated or any_gabab or any_nmda_slow
-                or any_coincidence or any_graded):
+                or any_coincidence or any_graded or any_stp_disabled):
             keyed = sorted(
                 zip(all_pre, all_post, all_plastic, all_gates, all_trans_gates,
-                    all_receptors, all_exc_receptors, all_coincidence, all_graded),
+                    all_receptors, all_exc_receptors, all_coincidence, all_graded,
+                    all_stp_disabled),
                 key=lambda t: (t[0], t[1]),
             )
         else:
             keyed = None
 
         if any_fixed:
-            sorted_plastic = np.asarray([p for _, _, p, _, _, _, _, _, _ in keyed], dtype=np.bool_)
+            sorted_plastic = np.asarray([p for _, _, p, _, _, _, _, _, _, _ in keyed], dtype=np.bool_)
             self.cp_synapse_plastic_mask = cp.asarray(sorted_plastic)
         else:
             self.cp_synapse_plastic_mask = None
@@ -2609,7 +2625,7 @@ class SimulationBridge:
         # Allocate cp_plasticity_rate_gain only if any synapse is gated; otherwise
         # leave None and the plasticity update paths skip gain multiplication.
         if any_gated:
-            sorted_gates = [g for _, _, _, g, _, _, _, _, _ in keyed]
+            sorted_gates = [g for _, _, _, g, _, _, _, _, _, _ in keyed]
             gate_to_indices: Dict[str, List[int]] = {}
             for syn_idx, gname in enumerate(sorted_gates):
                 if gname:
@@ -2641,7 +2657,7 @@ class SimulationBridge:
         # applied to effective_synaptic_strength in the step. Default 1.0 (open); runners call
         # set_transmission_gate(name, value) to open/close at runtime.
         if any_trans_gated:
-            sorted_trans = [tg for _, _, _, _, tg, _, _, _, _ in keyed]
+            sorted_trans = [tg for _, _, _, _, tg, _, _, _, _, _ in keyed]
             tgate_to_indices: Dict[str, List[int]] = {}
             for syn_idx, tgname in enumerate(sorted_trans):
                 if tgname:
@@ -2760,6 +2776,20 @@ class SimulationBridge:
                 (bool(gd) for gd in sorted_graded), dtype=np.bool_, count=nnz)
             self.cp_graded_synapse_mask = cp.zeros(self._synapse_capacity, dtype=cp.bool_)
             self.cp_graded_synapse_mask[:nnz] = cp.asarray(gr_mask_host)
+
+        # STP-DISABLE per-synapse routing mask (2026-07-21, gap#5 mossy detonator). True for synapses of any
+        # pathway tagged stp_disabled=True; the step forces their effective STP factor (stp_u*stp_x) to 1.0
+        # (no depression) while all OTHER synapses keep STP. Aligned with cp_connections.data order via the
+        # same (pre, post)-sorted `keyed` list (stp_disabled is keyed[9]). Built only when >=1 pathway sets
+        # stp_disabled=True (NO config flag -- the pathway flag alone is the opt-in, like the graded/
+        # transmission_gate precedents; else None -> the step keeps the original `base*stp_u*stp_x` expression
+        # verbatim and routing is byte-identical). Capacity-sized; new (grown) synapses default to False = STP-gated.
+        if any_stp_disabled and keyed is not None:
+            sorted_stp_dis = [t[9] for t in keyed]
+            sd_mask_host = np.fromiter(
+                (bool(sd) for sd in sorted_stp_dis), dtype=np.bool_, count=nnz)
+            self.cp_stp_disabled_mask = cp.zeros(self._synapse_capacity, dtype=cp.bool_)
+            self.cp_stp_disabled_mask[:nnz] = cp.asarray(sd_mask_host)
 
         # Cluster B.1 (2026-04-28): tag D2-targeting synapses with sign=-1.
         # D1-targeting + everything else stays at +1 (default). The reward-
@@ -6127,7 +6157,22 @@ class SimulationBridge:
                 actual_nnz = self.cp_connections.nnz
                 stp_u_active = self.cp_stp_u[:actual_nnz]
                 stp_x_active = self.cp_stp_x[:actual_nnz]
-                effective_synaptic_strength = base_synaptic_weights * stp_u_active * stp_x_active
+                if self.cp_stp_disabled_mask is None:
+                    effective_synaptic_strength = base_synaptic_weights * stp_u_active * stp_x_active
+                else:
+                    # Per-pathway STP DISABLE (2026-07-21, gap#5 mossy detonator): synapses of a pathway
+                    # tagged stp_disabled=True skip Tsodyks-Markram depression -- their effective STP factor
+                    # is forced to 1.0 (full base weight) while all OTHER synapses keep STP. Lets a mossy
+                    # dg->ca3 DETONATE (STP-off) co-resident with a ca3->ca3 recurrent that keeps STP (no
+                    # avalanche) -- which a single GLOBAL enable_short_term_plasticity toggle cannot express.
+                    # The STP STATE (u/x, updated above) still evolves for these synapses; only the effective
+                    # multiplier is overridden. GUARDED: cp_stp_disabled_mask is None unless a pathway sets
+                    # stp_disabled=True, so the branch above is taken and the expression is byte-identical.
+                    # (Mask grown to the live nnz with False padding, like the graded/GABA_B masks.)
+                    _stp_dis = self._ensure_gate_capacity(
+                        "cp_stp_disabled_mask", actual_nnz, fill=False, dtype=cp.bool_)[:actual_nnz]
+                    _stp_factor = cp.where(_stp_dis, cp.float32(1.0), stp_u_active * stp_x_active)
+                    effective_synaptic_strength = base_synaptic_weights * _stp_factor
 
                 # Neuromodulator subsystem: scope=all synaptic_gain multiplier.
                 if (getattr(cfg, "enable_neuromodulator_subsystem", False)

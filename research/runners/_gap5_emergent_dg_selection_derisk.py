@@ -30,7 +30,7 @@ OUT = _REPO / "research" / "findings" / "raw" / "_gap5_emergent_dg_selection.jso
 
 
 def _build_bridge(seed, n_ca3, dg_ffi_weight, ca3_fb_inhib, mossy_weight, mossy_density, n_lang=384, n_dg=300,
-                  ca3_ff_inhib=None, amplify=False, amp_ca3w=4.0):
+                  ca3_ff_inhib=None, amplify=False, amp_ca3w=4.0, mossy_stp_disabled=False):
     if amplify:
         # LAYER-2 AMPLIFICATION (2026-07-19): the layer-1 default (ca3w=1.5, coincidence/train off) gives 0 CA3 firing
         # (raw R0 boundary). The finding's 15-26-cell selection needs a MODERATE recurrent (ca3w~4) + the dendritic-
@@ -39,11 +39,12 @@ def _build_bridge(seed, n_ca3, dg_ffi_weight, ca3_fb_inhib, mossy_weight, mossy_
         b = _build(seed, n_lang=n_lang, n_dg=n_dg, n_ca3=n_ca3, ca3_density=0.05, ca3w=float(amp_ca3w),
                    coincidence=True, two_comp=True, train=True, ca3_fb_inhib=ca3_fb_inhib, dg_ffi_weight=dg_ffi_weight,
                    mossy_weight=mossy_weight, mossy_density=mossy_density, enable_ou=False, ca3_ff_inhib=ca3_ff_inhib,
-                   plateau_self_regen=0.15, apical_kir_g=3.0)
+                   plateau_self_regen=0.15, apical_kir_g=3.0, mossy_stp_disabled=mossy_stp_disabled)
     else:
         b = _build(seed, n_lang=n_lang, n_dg=n_dg, n_ca3=n_ca3, ca3_density=0.05, ca3w=1.5, coincidence=False,
                    two_comp=False, train=False, ca3_fb_inhib=ca3_fb_inhib, dg_ffi_weight=dg_ffi_weight,
-                   mossy_weight=mossy_weight, mossy_density=mossy_density, enable_ou=False, ca3_ff_inhib=ca3_ff_inhib)
+                   mossy_weight=mossy_weight, mossy_density=mossy_density, enable_ou=False, ca3_ff_inhib=ca3_ff_inhib,
+                   mossy_stp_disabled=mossy_stp_disabled)
     b.core_config.enable_hebbian_learning = False   # read pass: no plasticity (the feedforward always conducts)
     return b
 
@@ -90,11 +91,11 @@ def _cos(u, v):
 
 
 def run(seed, n_ca3=400, n_inputs=4, dg_ffi_weight=6.0, ca3_fb_inhib=20.0, mossy_weight=8.0, mossy_density=0.10,
-        ca3_ff_inhib=None, amplify=False, amp_ca3w=4.0, sync=False, sel_drive=200.0):
+        ca3_ff_inhib=None, amplify=False, amp_ca3w=4.0, sync=False, sel_drive=200.0, mossy_stp_disabled=False):
     import functools
     _sel = functools.partial(_select, sync=sync, drive_pA=sel_drive)
     b = _build_bridge(seed, n_ca3, dg_ffi_weight, ca3_fb_inhib, mossy_weight, mossy_density, ca3_ff_inhib=ca3_ff_inhib,
-                      amplify=amplify, amp_ca3w=amp_ca3w)
+                      amplify=amplify, amp_ca3w=amp_ca3w, mossy_stp_disabled=mossy_stp_disabled)
     rm = b.region_manager
     lang = list(rm.indices("language_input")); ca3_arr = np.asarray(list(rm.indices("ca3")), dtype=np.int64)
     dg_arr = np.asarray(list(rm.indices("dg")), dtype=np.int64)
@@ -118,7 +119,7 @@ def run(seed, n_ca3=400, n_inputs=4, dg_ffi_weight=6.0, ca3_fb_inhib=20.0, mossy
     A_perm, r_perm, _ = _sel(b, lang, ca3_arr, dg_arr, perm)
     perm_cos = _cos(rates[0], r_perm)                                                         # different from input 0 => input-driven
     bl = _build_bridge(seed, n_ca3, dg_ffi_weight, ca3_fb_inhib, 0.0, mossy_density, ca3_ff_inhib=ca3_ff_inhib,
-                       amplify=amplify, amp_ca3w=amp_ca3w)  # mossy-LESION (dg->ca3 weight 0)
+                       amplify=amplify, amp_ca3w=amp_ca3w, mossy_stp_disabled=mossy_stp_disabled)  # mossy-LESION (dg->ca3 weight 0)
     rm2 = bl.region_manager
     A_les, _, _ = _sel(bl, list(rm2.indices("language_input")),
                           np.asarray(list(rm2.indices("ca3")), dtype=np.int64),
@@ -139,13 +140,22 @@ def main():
                     help="E%-max FEEDFORWARD ca3 inhibition (dg-afferent-driven basket) -> robust sparse selection across "
                          "inputs (emergent-DG fragility fix). None (default) = feedback-only (byte-identical).")
     ap.add_argument("--mossy-w", type=float, default=8.0)
+    ap.add_argument("--mossy-density", type=float, default=0.10)
+    ap.add_argument("--amplify", action="store_true", help="layer-2 amplification build (coincidence+two_comp+train)")
+    ap.add_argument("--amp-ca3w", type=float, default=4.0)
+    ap.add_argument("--sync", action="store_true", help="gamma-pulsed (synchronized) DG volley during selection")
+    ap.add_argument("--sel-drive", type=float, default=200.0)
+    ap.add_argument("--mossy-stp-disabled", action="store_true",
+                    help="gap#5: flip the mossy dg->ca3 pathway's per-pathway STP-disable (detonates STP-off "
+                         "while the ca3->ca3 recurrent keeps STP -> no avalanche). Requires the sim/ RegionPathway.stp_disabled.")
     ap.add_argument("--out", default=str(OUT))
     a = ap.parse_args()
     t0 = time.time(); err = None; per = []
     try:
         for s in a.seeds:
             r = run(s, n_ca3=a.n_ca3, dg_ffi_weight=a.dg_ffi, ca3_fb_inhib=a.ca3_fb, mossy_weight=a.mossy_w,
-                    ca3_ff_inhib=a.ca3_ff)
+                    mossy_density=a.mossy_density, ca3_ff_inhib=a.ca3_ff, amplify=a.amplify, amp_ca3w=a.amp_ca3w,
+                    sync=a.sync, sel_drive=a.sel_drive, mossy_stp_disabled=a.mossy_stp_disabled)
             per.append(r)
             print(f"  [seed {s}] dg_sp {r['dg_sparsity']:.3f} | ca3 size {r['mean_size']:.1f} sparsity {r['ca3_sparsity']:.3f} "
                   f"| stability {r['stability']:.2f} | sep_cos {r['sep_cos']:.2f} sep_jac {r['sep_jac']:.2f} || "
