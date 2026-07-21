@@ -21,7 +21,7 @@ def main():
     ap.add_argument("--val-frac", type=float, default=0.004)
     args = ap.parse_args()
     root = Path(args.root); root.mkdir(parents=True, exist_ok=True)
-    from tokenizers import Tokenizer, models, trainers, pre_tokenizers
+    from tokenizers import Tokenizer, models, trainers, pre_tokenizers, decoders
     tk_path = root / "tokenizer.json"
 
     # 1. train + freeze BPE on the first N docs (if not already)
@@ -35,6 +35,7 @@ def main():
             if i + 1 >= args.bpe_train_docs: break
         tk = Tokenizer(models.BPE(unk_token="<unk>"))
         tk.pre_tokenizer = pre_tokenizers.ByteLevel(add_prefix_space=True)
+        tk.decoder = decoders.ByteLevel()  # matching decoder -> decode() cleans the 'Ġ' space markers back to text
         tk.train_from_iterator(sample, trainers.BpeTrainer(vocab_size=args.vocab_size,
                                                            special_tokens=["<unk>", "<eos>"]))
         tk.save(str(tk_path)); print(f"[bpe] trained vocab={tk.get_vocab_size()}", flush=True)

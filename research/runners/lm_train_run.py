@@ -272,7 +272,7 @@ def subprocess_capture(cmd):
 def _add_common(sp):
     sp.add_argument("--root", default="bridges/lmtrain/run1")
     sp.add_argument("--corpus-path", default="data/corpus/wikitext103.txt")
-    sp.add_argument("--tokenizer", choices=["bpe", "byte"], default="bpe")
+    sp.add_argument("--tokenizer", choices=["bpe", "byte", "hf"], default="bpe")
     sp.add_argument("--vocab-size", type=int, default=8000)
     sp.add_argument("--corpus-max-chars", type=int, default=0, help="0=whole file; else bound the tokenized slice")
     sp.add_argument("--bpe-train-chars", type=int, default=5_000_000)
