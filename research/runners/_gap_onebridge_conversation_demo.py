@@ -28,9 +28,15 @@ CKPT = "bridges/wkv_ckpt/wkv_ssmU_v4000_d256_grounded_ft.npz"
 class OneBridgeChat:
     """Composer (RF retrieval + moat) + WKV cortex (spiking grounded render), ALL on one SimulationBridge."""
 
+    # a generous pre-allocated vocab so new facts can be TAUGHT live (the composer's concept codes are fixed at build,
+    # like `_fluidconv_chat_repl.py`'s pre-allocated vocab). Words outside this pool cannot be taught.
+    POOL = ["dog", "cat", "owl", "mouse", "wolf", "rabbit", "fox", "bird", "fish", "lion", "deer", "bear", "frog",
+            "cow", "pig", "duck", "bee", "ant", "cheese", "milk", "bone", "seed", "worm", "leaf",
+            "chase", "eat", "hunt", "like", "see", "help", "find", "catch", "want", "hear", "roar", "swim"]
+
     def __init__(self, facts, seed=42, ckpt=CKPT, D_cmp=64):
         self.facts = list(facts)
-        vocab = sorted({w for f in facts for w in (f[0], f[1], f[2])})
+        vocab = sorted(set(self.POOL) | {w for f in facts for w in (f[0], f[1], f[2])})
         # reference WKV to load the ckpt weights + decode config
         ref = OnBridgeWKVFaculty(ckpt=ckpt, seed=seed, rf_synaptic=False)
         D_wkv = ref.D
@@ -56,13 +62,54 @@ class OneBridgeChat:
         rendered = self.wkv.answer(ctx, f"what does the {subj} {verb} ?")   # already a spaced string
         return rendered, ans
 
+    def teach(self, subj, verb, patient):
+        """Learn a new fact LIVE on the shared substrate (composer stores it in the composer region)."""
+        self.cmp.store(subj, verb, patient)
+        self.facts.append((subj, verb, patient))
+        return f"ok -- learned '{subj} {verb} {patient}'."
+
+    def handle(self, line):
+        """Parse one REPL line: 'teach S V P' | 'ask S V' | 'S V' (== ask). Returns a display string."""
+        toks = line.strip().split()
+        if not toks:
+            return ""
+        if toks[0] == "teach" and len(toks) == 4:
+            return self.teach(toks[1], toks[2], toks[3])
+        if toks[0] == "ask" and len(toks) == 3:
+            reply, _ = self.ask(toks[1], toks[2]); return reply
+        if len(toks) == 2:                                  # bare "S V" == ask
+            reply, _ = self.ask(toks[0], toks[1]); return reply
+        return "usage: teach <subj> <verb> <patient> | ask <subj> <verb>"
+
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--ckpt", default=CKPT)
+    ap.add_argument("--script", default=None, help="semicolon-separated commands, e.g. 'teach wolf eat rabbit; ask wolf eat'")
+    ap.add_argument("--interactive", action="store_true", help="REPL loop (teach/ask); for the owner to explore live")
     args = ap.parse_args()
     get_backend()
+
+    if args.script is not None or args.interactive:
+        chat = OneBridgeChat([("dog", "chase", "cat"), ("owl", "eat", "mouse")], seed=args.seed, ckpt=args.ckpt)
+        print("=== one-brain single-substrate chat (teach <S> <V> <P> | ask <S> <V>) ===")
+        print("  (pre-taught: dog chase cat, owl eat mouse)")
+        if args.script is not None:
+            for cmd in args.script.split(";"):
+                cmd = cmd.strip()
+                if cmd:
+                    print(f"> {cmd}\n  {chat.handle(cmd)}")
+        else:
+            while True:
+                try:
+                    line = input("> ")
+                except (EOFError, KeyboardInterrupt):
+                    print(); break
+                if line.strip() in ("quit", "exit"):
+                    break
+                print(f"  {chat.handle(line)}")
+        return
 
     facts = [("dog", "chase", "cat"), ("owl", "eat", "mouse"), ("cat", "chase", "mouse")]
     chat = OneBridgeChat(facts, seed=args.seed, ckpt=args.ckpt)
