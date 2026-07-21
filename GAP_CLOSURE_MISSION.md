@@ -263,8 +263,16 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   lr 0.05 diverged (online full-vocab variance), 0.005 stable. Since the on-bridge state == off-bridge (M1), the full
   ppl ~40 QUALITY is achieved (byte-identical state + local-rule read-out); the LIVE full-scale is a WALL-CLOCK item
   (per-token stepping ~76s/500-sents → hours/epoch), NOT a mechanism wall. Findings `2026-07-20-pretraining-on-spikes-*`.
-  **NEXT (end goal):** (1) on-bridge fluency THROUGHPUT to reach ~40 live; (2) the SINGLE-SHARED-SUBSTRATE consolidation
-  (composer + WKV + learning on ONE bridge — De-risk 5 had separate cupy bridges in one process).
+  **SINGLE-SHARED-SUBSTRATE consolidation — CRUX DE-RISK GO (2026-07-20, 6-seed):** the WKV read-out (cp_ssm_state +
+  cp_ssm_readout_w) and the composer RF phasor (cp_rf_* + rf_kick/resonate/read, masked slice) CO-RESIDE on ONE bridge
+  BYTE-IDENTICAL to isolated (0.000e+00 both, all 6 seeds); anti-cheat no-rekick DIVERGES 0.96-0.99 (v/u genuinely
+  shared, re-kick load-bearing). Disjoint persistent arrays (cp_ssm_* vs cp_rf_*); the one shared array (v/u) re-kicked
+  per op. `_gap_onebridge_coresidence_derisk.py`, CI `test_onebridge_coresidence.py` (3, GPU), NO sim/ edit. Finding
+  `2026-07-20-single-shared-substrate-consolidation-coresidence-de-risk-GO.md`. ⇒ the central risk (do the two
+  persistent spiking states conflict on one bridge?) is REMOVED; the full build is now integration/wiring, not research.
+  **NEXT (end goal):** (1) merge the WKV's own RF spike-encoder sub-bridge onto the same bridge (2nd masked-RF slice) +
+  run the full De-risk-5 grounded turn (comprehend→reason→spiking render) on ONE consolidated bridge; (2) on-bridge
+  fluency THROUGHPUT (batched stepping — the SSM block is elementwise) to reach the off-bridge ppl ~40 LIVE.
 - **🎯 gap#4 KEYSTONE REFRAMED (2026-07-20 close-state) — deep local credit is MECHANISM-ESTABLISHED; the apparent
   "contrast blocker" was a TASK ARTIFACT.** After rungs 1-9 + 6 pre-flights + a 28-agent adversarial audit, the
   honest status of "does the substrate learn DEEP representations by a biological rule?":
