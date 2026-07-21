@@ -228,7 +228,16 @@ Ported the emergent-completion recipe (sparse `assembly_frac=0.03` + SYNCHRONOUS
   + **specificity CLOSED**. Remaining polish (not blockers): raise absolute match (held_cue is weak); the emergent (mossy-
   selected, `2026-07-19-...-SELECTION-de-risked-GO`) assemblies as the developmental version of the sparse+sync completion.
 
-## Status (per THE LAW — a precisely-characterized boundary that names the next lever)
+## ⛔ STALE-STATUS CORRECTION (2026-07-21) — the "Status: BLOCKED" block BELOW is SUPERSEDED by the 2026-07-19 CLOSED block above
+The bottom "Status" section (and this doc's filename) predate the fix and are STALE (drift-#11 contradictory record).
+The ACTUAL status: the SWR readout is **CLOSED — 6/6 GO + anti-cheat clean** (the "🎯🎯 CLOSED" block above: STP
+root-cause fixed via phase-2 Schaffer STP-off → firing; the sparse+synchronous+`recall_k_thresh` SPECIFIC completion +
+learned sparse Schaffer + E%-max CA1 winner-set read → specificity, match 0.700 / cross 0.065 / 10.79× / 6-seed /
+no-learn collapses to 1.02×). The `ca3→ca1 conductance cap` below was the STP-depression cap, since root-caused +
+fixed. The remaining OPEN piece is the EMERGENT-DG assemblies as the developmental (selected-from-experience) version
+of the sparse+sync completion, NOT re-opening the readout. Original stale text retained below for the arc trail:
+
+## Status [STALE — see the correction directly above; superseded by the 2026-07-19 CLOSED block]
 - **The SWR readout is BLOCKED by the ca3→ca1 effective-conductance cap** — a real, precisely-localized hard
   integration (the documented "hard fresh-pass integration" snag, now root-caused). It is NOT closeable by the
   schaffer_boost lever the code provides (that's the wrong knob — it's clipped).

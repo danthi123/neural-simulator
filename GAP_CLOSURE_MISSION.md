@@ -405,16 +405,21 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
     SPECIFICITY STACK on the SWR runner: pattern-separated CA3 completion (the emergent-DG, already 6-seed GO) UPSTREAM
     → structured+POTENTIATED SPARSE Schaffer (`swr_learn_schaffer` ON, drop dense-random) → E%-max/FFI CA1
     sparsification → brief single-volley read. GO bar ca1_match≥0.6/cross≤0.3/3×/6-seed. A substantial GPU arc, teed up.
-    **CORRECTED 2026-07-21 (a-1 RAG check):** the CA3 COMPLETION is **CLOSED** — 5/6 GO + 6/6 mechanism (perfect
-    specificity + bistability every seed) via **intrinsic dendritic bistability** resolving the trilemma
-    (`2026-07-18-gap5-CA3-completion-CLOSED-intrinsic-dendritic-bistability-resolves-the-trilemma.md`), config
-    `_gap4_btsp_completion_unification_6seed.GO_CFG` (n_ca3=2000, bistable, plateau_self_regen=0.15, apical_kir_g=3,
-    recall_k_thresh=110, structural_sep=1, selective_inhib, apical_gc_read=5). My 2026-07-21 `h_comp=0` probe was WRONG
-    (it used the runner DEFAULTS, not GO_CFG); the "multi-knob Kopsick recipe at scale" was a stale-summary mis-read
-    (drift-#12). **REAL open piece:** the SWR specificity readout ON the completing GO_CFG (`swr_learn_schaffer=True`,
-    `read_ca1=True`, `swr_ca1_topk` E%-max) — driver `_gap5_swr_specificity_stack_derisk.py` now embeds GO_CFG (verifies
-    `held_cue` live) — plus wiring the emergent-DG assembly (`_gap5_emergent_dg_selection_derisk`, 6-seed GO) as
-    `assemblies_ext`. NOT re-opening the completion.
+    **CORRECTED 2026-07-21 (a-1 RAG check — two stale claims fixed):** BOTH sub-pieces are already CLOSED, and this
+    cycle's "completion open / SWR upstream required" re-derivation was working from a stale summary (drift-#12) with a
+    WRONG config. **(1) CA3 COMPLETION is CLOSED** — 5/6 GO + 6/6 mechanism via intrinsic dendritic bistability
+    (`2026-07-18-...-dendritic-bistability-resolves-the-trilemma.md`). **(2) SWR READOUT SPECIFICITY is CLOSED** — 6/6
+    GO + anti-cheat clean (`2026-07-18-gap5-SWR-replay-readout-BLOCKED-...` — despite the filename+stale bottom
+    "Status: BLOCKED" block, its 2026-07-19 CLOSED block reports the `k30_hm150_d1200` + E%-max `swr_ca1_topk=0.1`
+    stack: match 0.700 / cross 0.065 / **ratio 10.79×** 6/6, no-learn anti-cheat collapses to 1.02× = load-bearing).
+    The winning config is sparse `assembly_frac=0.03` + synchronous (`no_sync=False`) + `recall_k_thresh=30` +
+    `hebb_max=150` + `recall_drive=1200` + `hebb_lr=4` + `swr_disjoint` + learned Schaffer + E%-max — NOT the
+    `assembly_frac=0.12`-async, no-`hebb_lr` config my `_gap5_swr_specificity_stack_derisk.py` used (that gave a DEAD
+    completion, held_cue=0 → the ca1_match 0.966 was a cue-driven artifact, verify-first caught it). **REAL open piece
+    (the "shared unlock" the whole SWR arc names):** wire the EMERGENT-DG-selected assemblies
+    (`_gap5_emergent_dg_selection_derisk`, 6-seed GO) as `assemblies_ext` into the CLOSED stack — the emergence-bar
+    version (assembly SELECTED from experience, not a pre-assigned random mask) — + absolute-match polish. NOT
+    re-opening completion or the readout.
   - **NEXT (gap-close, no deferrals):** (a) the gap#5 SWR SPECIFICITY STACK (the ranked de-risk above, GPU — the last of
     the unified three); (b) gap#1 scale toward real fluency (bigger model/corpus, or accept the scaffold + spiking-
     forward-convert the 88.6M — C1 GO); (c) the SPIKING gap#3 phase-cluster WTA; (d) the composer wire-in of the learned

@@ -53,9 +53,21 @@ structural_sep=1, selective_inhib=True, plateau_self_regen=0.15, apical_kir_g=3.
 The trilemma (magnitude vs specificity vs bistability) is resolved; the retracted self-sustaining/plasticity-noise
 artifacts were caught + superseded.
 
-⇒ the REAL gap#5 next step is NOT a Kopsick knob-sweep on the default config — it is the **SWR specificity readout ON
-the completing GO_CFG** (`swr_learn_schaffer=True`, `read_ca1=True`, `swr_ca1_topk` E%-max). The driver is now updated
-to embed `COMPLETION_CFG = GO_CFG` (verifies `held_cue` live before trusting `ca1_match`/`cross`). This CORRECTION is
-the drift-mode-#12 lesson: I trusted this doc's "upstream required" over the authoritative CLOSED finding — the finding
-wins. The remaining gap#5 pieces are the SWR readout (running) + the emergent-DG assembly wiring, NOT re-opening the
-completion.
+## ⛔ CORRECTION 2 (2026-07-21, same day — the SWR readout is ALSO already CLOSED)
+Correction-1 (above) said "the real next step is the SWR readout on the completing GO_CFG." That too is superseded:
+**the SWR readout SPECIFICITY is already CLOSED — 6/6 GO + anti-cheat clean (2026-07-19)** (see
+`2026-07-18-gap5-SWR-replay-readout-BLOCKED-...` → its "🎯🎯 CLOSED" block: `k30_hm150_d1200` + E%-max
+`swr_ca1_topk=0.1`, match 0.700 / cross 0.065 / **10.79×** / 6 seeds; no-learn dense-random collapses to 1.02× =
+load-bearing). And my own attempt this cycle CONFIRMED the trap: my `_gap5_swr_specificity_stack_derisk.py` embedded a
+WRONG "GO_CFG" (`assembly_frac=0.12` async, NO `hebb_lr`/`coact_thresh`) → the completion was DEAD (held_cue=0.000) →
+the `ca1_match 0.966` it printed was a CUE-DRIVEN ARTIFACT (the readout's PHASE-1 drives the cue cells directly), which
+the `held_cue=0` verify-first guard caught. The ACTUAL closed config is sparse `assembly_frac=0.03` + synchronous
+(`no_sync=False`) + `recall_k_thresh=30` + `hebb_max=150` + `recall_drive=1200` + `hebb_lr=4` + `swr_disjoint` +
+learned Schaffer + E%-max.
+
+⇒ **BOTH gap#5 sub-pieces (completion + SWR readout) are CLOSED.** The one genuine open piece is the **EMERGENT-DG
+assemblies** (`_gap5_emergent_dg_selection_derisk`, 6-seed GO) wired as `assemblies_ext` into the CLOSED stack — the
+emergence-bar (selected-from-experience) version of the sparse+sync completion, which the SWR arc repeatedly names as
+"the shared unlock." This whole cycle is the drift-#12 lesson twice over: I trusted my own stale 2026-07-21 summary
+over the authoritative 2026-07-18/19 CLOSED findings; the a-1 RAG check (reading the actual findings) is what corrected
+it. The `_gap5_completion_kopsick_sweep.py` + the GO_CFG path in `_gap5_swr_specificity_stack_derisk.py` are moot.
