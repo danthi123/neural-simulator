@@ -46,6 +46,16 @@ the committed `_select_emergent` gives `[0,0,0]`; the read-pass sparse-selection
 STP (the GO rested on now-deleted scratchpad). So the emergent-DG piece is genuinely OPEN, and the honest next step is
 the one-shot-BTSP encoding (gap#4↔#5), not more STP/mossy tuning.
 
+## a-1 RAG on the named next mechanism (2026-07-21) — it is a SUBSTANTIAL build, not a quick wiring
+Checked `2026-07-18-gap4-gap5-UNIFICATION-BTSP-stores-bistable-CA3-completes-mechanism-6seed-GO.md`: the existing BTSP
+unification (6/6 mechanism, cue ~0.18) drove the plateau on a **PRE-ASSIGNED** assembly (`encode_btsp` path in
+`_riii_ca3_synchronous_assembly_derisk.run`). So the EMERGENT one-shot-BTSP does NOT transfer directly — it needs the
+mossy/DG to first SELECT a SPARSE (6-40) separated CA3 code (the pattern-separation the mossy sweep could NOT achieve —
+the STP-unblocked detonation was DIFFUSE, 1114 cells ~1.3 spikes each), and only THEN BTSP-store that emergent set. ⇒ the
+real chain is DG-pattern-separation (sparse code) → emergent-BTSP-store → bistable-complete; the binding blocker is the
+UPSTREAM DG sparsification (get the detonated set sparse), then the (validated) BTSP-store + bistable-complete follow.
+A substantial intricate frontier for a careful fresh pass, not a next-tick wiring.
+
 ## Deliverable
 BOUNDARY + a verified reusable `sim/` mechanism. The per-pathway STP-disable is committed (byte-identical, tested,
 reusable for any circuit needing opposite STP states on co-resident pathways — e.g. the SWR phase-2 Schaffer STP-off
