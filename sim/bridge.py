@@ -356,6 +356,15 @@ class SimulationBridge:
         # (BDSP graded-clean-error) using cp_ssm_state as the presynaptic eligibility.
         self.cp_ssm_readout_w = None
         self.cp_ssm_readout_out = None
+        # PERSISTENT RF store (2026-07-20): a SECOND complex CSR (cp_rf_store_re/im), DISTINCT from the per-op
+        # cp_rf_w_* so a per-op rf_set_complex_weights/rf_kick never wipes it -> a fact-store that persists IN the
+        # device synapses across binds (the composer's numpy-kb idealization, moved on-substrate). Summed ADDITIVELY
+        # into the _rf_advance_one matvec, non-zero ONLY in the store-readout region DISJOINT from every op row. None
+        # by default => the additive term is skipped and every RF path is byte-identical. Installed via
+        # rf_set_store_weights; the megakernel BAILS to the per-step loop when a store is present (CUDA src untouched).
+        self.cp_rf_store_re = None
+        self.cp_rf_store_im = None
+        self.cp_rf_store_dense = None
         self.cp_input_divisive_mask = None                # bool per-neuron: True for per-concept divisive-norm neurons (None unless flagged region)
         self.cp_input_divisive_mask_2 = None              # bool per-neuron: SECOND independent divisive-norm pool (FIX A, sel_X; None unless flagged region)
         # Cluster G v2 (2026-05-01): per-neuron NMDA mask (1.0 for neurons
@@ -5786,6 +5795,37 @@ class SimulationBridge:
                                   + 1j * self.cp_rf_w_im.toarray().astype(cp.complex128))
         else:
             self.cp_rf_w_dense = None
+        # INVARIANT: the persistent store lives under cp_rf_store_* and must NEVER be assigned by rf_set_complex_weights
+        # or rf_kick -- that distinctness is what lets a per-op bind coexist with a persistent fact-store.
+
+    def rf_set_store_weights(self, connections):
+        """Install a PERSISTENT complex store weight matrix (cp_rf_store_re/im) -- a structural sibling of
+        rf_set_complex_weights, but into DISTINCT arrays that per-op rf_set_complex_weights/rf_kick never touch, so a
+        stored fact PERSISTS in the device synapses across binds. `connections` = (post, pre, complex_w). The store's
+        non-zero POSTSYNAPTIC rows MUST be DISJOINT from the per-op operator's rows (asserted below when both present),
+        so the summed matvec W@z + Store@z writes into non-overlapping neurons (no cross-corruption). Called ONCE per
+        store mutation (never per-op). The additive store term in _rf_advance_one is float64-CSR@float32-state (same
+        promotion as the working term). See the persistent-store finding + docs/plans (fact-store-on-substrate)."""
+        n = self.core_config.num_neurons
+        m = len(connections)
+        rows = np.fromiter((int(post) for (post, pre, w) in connections), dtype=np.int32, count=m)
+        cols = np.fromiter((int(pre) for (post, pre, w) in connections), dtype=np.int32, count=m)
+        w_re = np.fromiter((float(complex(w).real) for (post, pre, w) in connections), dtype=np.float64, count=m)
+        w_im = np.fromiter((float(complex(w).imag) for (post, pre, w) in connections), dtype=np.float64, count=m)
+        r = cp.asarray(rows); c = cp.asarray(cols)
+        self.cp_rf_store_re = csp.csr_matrix((cp.asarray(w_re), (r, c)), shape=(n, n))
+        self.cp_rf_store_im = csp.csr_matrix((cp.asarray(w_im), (r, c)), shape=(n, n))
+        if getattr(self, "cp_rf_w_re", None) is not None and m > 0:
+            _store_rows = set(int(x) for x in np.unique(rows))
+            _op = self.cp_rf_w_re
+            _op_rows = set(int(x) for x in np.unique(np.asarray(_backend_to_host(_op.tocoo().row))))
+            _overlap = _store_rows & _op_rows
+            assert not _overlap, f"store rows overlap op rows {sorted(_overlap)[:8]} -- would cross-corrupt"
+        if getattr(self.core_config, "rf_dense_weights", False):
+            self.cp_rf_store_dense = (self.cp_rf_store_re.toarray().astype(cp.complex128)
+                                      + 1j * self.cp_rf_store_im.toarray().astype(cp.complex128))
+        else:
+            self.cp_rf_store_dense = None
 
     def _rf_advance_one(self):
         """One step of the resonate-and-fire dynamics: rotate the complex state Z=re+i*im (v=re, u=im) by
@@ -5812,6 +5852,19 @@ class SimulationBridge:
             else:
                 _rf_re_new = _rf_re_new + (self.cp_rf_w_re @ _rf_re - self.cp_rf_w_im @ _rf_im)
                 _rf_im_new = _rf_im_new + (self.cp_rf_w_re @ _rf_im + self.cp_rf_w_im @ _rf_re)
+        # PERSISTENT store term (2026-07-20): Store@z summed ADDITIVELY into the SAME _rf_re_new/_rf_im_new, BEFORE the
+        # crossing/writeback -- an independently-guarded sub-block. Non-zero ONLY in store-readout rows DISJOINT from
+        # the working operator's rows, so it never clobbers (and is never clobbered by) the per-op bind. When
+        # cp_rf_store_re is None this block is SKIPPED (zero extra float ops) => _rf_re_new/_rf_im_new + everything
+        # downstream is bit-identical to the pre-store code. (Store-only bridges [cp_rf_w_re None] are handled here too.)
+        if getattr(self, "cp_rf_store_re", None) is not None:
+            if getattr(self.core_config, "rf_dense_weights", False) and getattr(self, "cp_rf_store_dense", None) is not None:
+                _rf_smv = self.cp_rf_store_dense @ (_rf_re + 1j * _rf_im)
+                _rf_re_new = _rf_re_new + _rf_smv.real.astype(_rf_re_new.dtype)
+                _rf_im_new = _rf_im_new + _rf_smv.imag.astype(_rf_im_new.dtype)
+            else:
+                _rf_re_new = _rf_re_new + (self.cp_rf_store_re @ _rf_re - self.cp_rf_store_im @ _rf_im)
+                _rf_im_new = _rf_im_new + (self.cp_rf_store_re @ _rf_im + self.cp_rf_store_im @ _rf_re)
         self._rf_counter = int(getattr(self, "_rf_counter", 0)) + 1
         _rf_mag2 = _rf_re_new * _rf_re_new + _rf_im_new * _rf_im_new
         _rf_crossed = ((~self.cp_rf_fired) & (self.cp_rf_prev_im < 0.0)
@@ -5850,9 +5903,13 @@ class SimulationBridge:
             return
         if (getattr(self.core_config, "enable_rf_cudagraph", False) and is_gpu_backend()
                 and getattr(self, "cp_rf_w_re", None) is not None
-                and not getattr(self.core_config, "rf_dense_weights", False)):
+                and not getattr(self.core_config, "rf_dense_weights", False)
+                and getattr(self, "cp_rf_store_re", None) is None):
             # O-2-purity: the megakernel is CSR-specific; the dense-weight mode routes through the per-step loop
             # (`_rf_advance_one`, which has the dense-GEMV branch). Default-off rf_dense_weights => byte-identical.
+            # PERSISTENT-STORE BAIL (2026-07-20): when a store CSR is installed, route through the per-step loop (which
+            # applies BOTH the working AND the store matvec) -- the megakernel does only the working CSR. `and store is
+            # None` => `and True` when no store => the dispatch is byte-identical off-path (the CUDA source is UNTOUCHED).
             self._rf_resonate_steps_megakernel(int(n_steps))   # masked or unmasked (the kernel honors _rf_neuron_mask)
             return
         for _ in range(int(n_steps)):

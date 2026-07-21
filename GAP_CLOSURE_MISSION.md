@@ -320,12 +320,29 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   composer's DOCUMENTED VSA "principled idealization" (a memory-representation choice, NOT a spiking-computation
   shortcut — the store's READ is already a spiking scan). Finding
   `2026-07-20-composer-factstore-host-persistence-is-the-VSA-idealization-scoping.md`.
-  **NEXT (remaining = substantial DELIBERATE arcs, none a quick win):** (1) close the fact-store idealization with a
-  scoped ADDITIVE `sim/` store-synapse tensor DISJOINT from the per-op cp_rf_w_* (so the store survives an op) — a
-  deliberate sim/ mechanism, not a runner consolidation; (2) full `_fluidconv_chat_repl.py` wire-in (multi-turn/
-  anaphora on the single substrate); (3) on-bridge fluency THROUGHPUT (batched) for LIVE full-scale; (4) the remaining
-  capability gaps — #1 breadth/depth, #4 deep-credit (research-gate frontiers; RAG-check the extensive prior work
-  first per drift-mode #12).
+  **★ ADVERSARIAL AUDIT + REMEDIATION (2026-07-20, ultracode):** a 6-agent adversarial-refute workflow of the 5
+  single-substrate GO findings confirmed ALL real by code but FLAGGED legitimate weaknesses; ALL remediated + re-verified
+  (12/12 CI): F1 crux anti-cheat was over-determined (diverged from a kick-SEED mismatch) → REPLACED with a discriminating
+  control (WKV-step vs no-WKV-step, both no-rekick → diverges only if v/u genuinely shared); F2 capstone body synced to
+  the 6 seeds run + interleave test added to CI; F3 learning REWRITTEN from trivial single-point LMS to teacher-student
+  HELD-OUT generalization (~6000× drop, generalizes) + interleave counterfactual, reframed (credit arithmetic is host
+  delta, not yet spiking); F4 wkv-merge got an encoder-LESION + bridge-identity asserts (was byte-identity-by-construction
+  only); F5 conversation "renders correct" relabeled "answer word present" (prompt-injected). The adversarial-verify→
+  remediate loop worked as designed.
+  **★ FACT-STORE-ON-SUBSTRATE — Phase 1 (the sim/ mechanism) GO (2026-07-20):** a design workflow (8 agents) mapped every
+  RF matvec path + chose Approach A (megakernel BAIL). Implemented: a PERSISTENT complex store CSR cp_rf_store_re/im
+  (+dense), DISTINCT from the per-op cp_rf_w_*, installed by a new `rf_set_store_weights`, summed ADDITIVELY into the
+  _rf_advance_one matvec (non-zero only in store-readout rows DISJOINT from op rows → no corruption); the megakernel
+  BAILS to the loop when a store is present (CUDA source UNTOUCHED → provably byte-identical off-path). BYTE-IDENTICAL
+  when off (19 existing RF tests + store-off determinism); on-path: store SURVIVES per-op bind+kick, loop applies both
+  matvecs, megakernel bails. **THE ONLY sim/ EDIT in the single-substrate arc** (additive/guarded). CI
+  `test_rf_persistent_store.py` (4). Finding `2026-07-20-persistent-rf-store-substrate-mechanism-GO.md`. ⇒ the substrate
+  CAN now hold a persistent device-synapse fact-store (the VSA-idealization residual's sim/ half).
+  **NEXT (remaining = substantial DELIBERATE arcs):** (1) fact-store Phase 2 — wire OneBrainComposer `persistent_store`
+  flag (default byte-identical) to install store_conns via rf_set_store_weights + bypass the per-read install; 6-seed
+  recall-parity staged↔continuous + moat before any flip; (2) full `_fluidconv_chat_repl.py` wire-in (multi-turn/
+  anaphora); (3) on-bridge fluency THROUGHPUT (batched) for LIVE full-scale; (4) the capability gaps — #1 breadth/depth,
+  #4 deep-credit (research-gate frontiers; RAG-check prior work per drift-mode #12).
 - **🎯 gap#4 KEYSTONE REFRAMED (2026-07-20 close-state) — deep local credit is MECHANISM-ESTABLISHED; the apparent
   "contrast blocker" was a TASK ARTIFACT.** After rungs 1-9 + 6 pre-flights + a 28-agent adversarial audit, the
   honest status of "does the substrate learn DEEP representations by a biological rule?":
