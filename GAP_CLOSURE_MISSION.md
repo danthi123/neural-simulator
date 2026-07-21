@@ -338,11 +338,24 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   matvecs, megakernel bails. **THE ONLY sim/ EDIT in the single-substrate arc** (additive/guarded). CI
   `test_rf_persistent_store.py` (4). Finding `2026-07-20-persistent-rf-store-substrate-mechanism-GO.md`. ⇒ the substrate
   CAN now hold a persistent device-synapse fact-store (the VSA-idealization residual's sim/ half).
-  **NEXT (remaining = substantial DELIBERATE arcs):** (1) fact-store Phase 2 — wire OneBrainComposer `persistent_store`
-  flag (default byte-identical) to install store_conns via rf_set_store_weights + bypass the per-read install; 6-seed
-  recall-parity staged↔continuous + moat before any flip; (2) full `_fluidconv_chat_repl.py` wire-in (multi-turn/
-  anaphora); (3) on-bridge fluency THROUGHPUT (batched) for LIVE full-scale; (4) the capability gaps — #1 breadth/depth,
-  #4 deep-credit (research-gate frontiers; RAG-check prior work per drift-mode #12).
+  **★ FACT-STORE-ON-SUBSTRATE Phase 2 — DONE (2026-07-20): the composer fact-store now lives in DEVICE SYNAPSES.**
+  First the read-fidelity de-risk RETIRED the open question (`_gap_persistent_store_readfidelity_derisk.py`: persistent
+  vs staged read |Δphase| = 0.0000, identical — the RF read is phase-based + magnitude-invariant). Then the wire-in:
+  `OneBrainComposer(persistent_store=True)` installs store_conns into cp_rf_store_re/im via `_sync_persistent_store`→
+  rf_set_store_weights (persisting across binds), wired into `_read_all_blocks` (settle window sets the working op empty
+  so only the persistent store drives; unbind/cleanup unchanged). Recall PARITY with the staged path
+  ['cat','mouse','deer'] 3-seed 42/43/100, moat intact, store installed on the bridge. Default persistent_store=False =
+  else-branch verbatim staged → byte-identical (composer 19-test suite unaffected). NO new sim/ edit. CI
+  `test_onebrain_persistent_store.py` (2). Finding `2026-07-20-factstore-on-substrate-Phase2-composer-wirein-GO.md`.
+  ⇒ **the fact-store-on-substrate arc is COMPLETE** — the single-shared-substrate now holds not just every SPIKING
+  COMPUTATION (bind/unbind/cleanup/render/learning) but the fact-store DATA too (the VSA-idealization residual, opt-in).
+  Honest scope: the wire-in covers the main `_read_all_blocks` (who/what); the other read paths (clauses,
+  reconsolidation) use the staged install under persistent_store — a mechanical de-risked follow-on. Perf: an installed
+  store forces the ~605ms loop over the ~96ms megakernel (Phase-1 BAIL; a follow-on lever restores it).
+  **NEXT (remaining):** (1) extend persistent_store to the other composer read paths (clauses/reconsolidation —
+  mechanical); (2) full `_fluidconv_chat_repl.py` wire-in (multi-turn/anaphora on the single substrate); (3) on-bridge
+  fluency THROUGHPUT (batched) for LIVE full-scale; (4) the capability gaps — #1 breadth/depth, #4 deep-credit
+  (research-gate frontiers; RAG-check prior work per drift-mode #12).
 - **🎯 gap#4 KEYSTONE REFRAMED (2026-07-20 close-state) — deep local credit is MECHANISM-ESTABLISHED; the apparent
   "contrast blocker" was a TASK ARTIFACT.** After rungs 1-9 + 6 pre-flights + a 28-agent adversarial audit, the
   honest status of "does the substrate learn DEEP representations by a biological rule?":
