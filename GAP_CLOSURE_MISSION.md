@@ -258,7 +258,8 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   shallow exact-delta read-out (state + current-token) over the FIXED reservoir learns TinyStories fluency to **ppl
   ~40** (close to multi-layer ~35 / BPTT ~29.5; current-token load-bearing 40.6-vs-63; random-reservoir ~58). **ON-BRIDGE
   proof-of-mechanism GO:** the fluency LEARNS on the substrate by the pure exact delta rule (committed cp_ssm_readout_w
-  forward + delta over cp_ssm_state) — **ppl 11511→356 in epoch 1 (32×), FROZEN 11511→11511 (load-bearing, verified)**;
+  forward + delta over cp_ssm_state) — **6-SEED (dev+blind) ppl drop ~23-32× in epoch 1 (42:356 43:466 44:401 100:375
+  101:382 102:382), FROZEN 11511→11511 (load-bearing, verified)**;
   lr 0.05 diverged (online full-vocab variance), 0.005 stable. Since the on-bridge state == off-bridge (M1), the full
   ppl ~40 QUALITY is achieved (byte-identical state + local-rule read-out); the LIVE full-scale is a WALL-CLOCK item
   (per-token stepping ~76s/500-sents → hours/epoch), NOT a mechanism wall. Findings `2026-07-20-pretraining-on-spikes-*`.
