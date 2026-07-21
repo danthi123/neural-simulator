@@ -64,7 +64,8 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
         encode_hetero=0.0, encode_btsp_hetero=0.0, assemblies_ext=None, swr_ripple_pA=800.0, swr_ca1_ff_inhib=None,
         swr_learn_schaffer=False, swr_target_frac=0.15, swr_schaffer_hi=60.0, swr_schaffer_lo=0.2, swr_disjoint=False,
         swr_ca1_topk=None, interassembly_isolate=False,
-        per_assembly_sel_inhib=False, per_assembly_inhib_w=40.0, swr_disjoint_targets=False):
+        per_assembly_sel_inhib=False, per_assembly_inhib_w=40.0, per_assembly_ei_w=None,
+        swr_disjoint_targets=False):
     # DIAGNOSED LEVERS (2026-07-18 workflow): the rate-window LTP is an EMA-trace rule -- a cell's co-activity trace
     # tops out ~0.03-0.2 (point Izh fires ~0.2 duty @700pA), so coact_thresh MUST be BELOW it (~0.02) or nothing
     # potentiates; the gamma OFF-gap DECAYS the EMA (0.9^off) so CONTINUOUS drive (sync_off<=1) is required, NOT
@@ -334,6 +335,16 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
         # E->I: member m -> basket sub-pool != m  => zero (sub-pool m is driven ONLY by assembly-m)
         _ei = (pre_asm >= 0) & (post_bmask >= 0) & (pre_asm != post_bmask)
         _d[_ei] = 0.0
+        # WITHIN-assembly E->I POTENTIATION (Kim-Kim 2025 heterosynaptic E->I potentiation -- the CORE of the mechanism,
+        # was missing): SET member m -> own basket sub-pool m to a strong weight so a cue of m drives sub-pool m HARD ->
+        # it actually suppresses the OTHER assemblies (inhibit-other). The un-potentiated default left the sub-pools too
+        # weak, which both let the small assembly avalanche AND globally over-suppressed own-completion. Default None ->
+        # unchanged (byte-identical); only strengthens EXISTING member->own-sub-pool edges (biological potentiation).
+        if per_assembly_ei_w is not None:
+            _ei_within = (pre_asm >= 0) & (post_bmask >= 0) & (pre_asm == post_bmask)
+            print(f"[pa_ei_w] within-assembly E->I edges matched={int(_ei_within.sum())} "
+                  f"(cross-EI zeroed={int(_ei.sum())}); setting them to {float(per_assembly_ei_w)}", flush=True)
+            _d[_ei_within] = float(per_assembly_ei_w)
         # I->E: basket sub-pool m -> member: spare own (== m), inhibit other (!= m); magnitude only (pre is inhibitory)
         _ie_spare = (pre_bmask >= 0) & (post_asm >= 0) & (pre_bmask == post_asm)
         _ie_inhib = (pre_bmask >= 0) & (post_asm >= 0) & (pre_bmask != post_asm)

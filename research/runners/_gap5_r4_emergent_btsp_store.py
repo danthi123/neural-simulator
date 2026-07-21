@@ -87,7 +87,7 @@ def _verify_index_space(seed, r1_ca3_range):
 
 
 def run_seed(seed, do_swr=False, ca3_density=None, recall_k_thresh=None, structural_sep=None, isolate=False,
-             per_assembly_inhib=False, pa_inhib_w=40.0, n_patterns=2):
+             per_assembly_inhib=False, pa_inhib_w=40.0, pa_ei_w=None, n_patterns=2):
     t = {}
     assemblies, r1_range = emergent_assemblies(seed, n_patterns=n_patterns)
     sizes = [len(a) for a in assemblies]
@@ -107,6 +107,8 @@ def run_seed(seed, do_swr=False, ca3_density=None, recall_k_thresh=None, structu
         cfg["interassembly_isolate"] = True   # zero between-assembly recurrents (emergent equivalent of swr_disjoint)
     if per_assembly_inhib:
         cfg["per_assembly_sel_inhib"] = True; cfg["per_assembly_inhib_w"] = float(pa_inhib_w)  # Kim-Kim between-memory selective inhibition
+        if pa_ei_w is not None:
+            cfg["per_assembly_ei_w"] = float(pa_ei_w)  # within-assembly E->I potentiation (Kim-Kim heterosynaptic core)
     t["ca3_density"] = cfg["ca3_density"]; t["recall_k_thresh"] = cfg["recall_k_thresh"]
     t["structural_sep"] = cfg["structural_sep"]; t["isolate"] = bool(isolate); t["n_assemblies"] = len(assemblies)
     t["per_assembly_inhib"] = bool(per_assembly_inhib)
@@ -135,6 +137,7 @@ def main():
     ap.add_argument("--isolate", action="store_true", help="zero between-assembly recurrents (emergent swr_disjoint)")
     ap.add_argument("--per-assembly-inhib", action="store_true", help="Kim-Kim per-assembly selective inhibition (spare own, inhibit other)")
     ap.add_argument("--pa-inhib-w", type=float, default=40.0)
+    ap.add_argument("--pa-ei-w", type=float, default=None, help="within-assembly E->I potentiation (Kim-Kim heterosynaptic core; strengthens member->own-basket-sub-pool)")
     ap.add_argument("--n-patterns", type=int, default=2, help="number of co-stored emergent assemblies (2 or 3)")
     ap.add_argument("--out", default=str(OUT))
     a = ap.parse_args()
@@ -146,7 +149,8 @@ def main():
         for s in a.seeds:
             r = run_seed(s, do_swr=a.swr, ca3_density=a.ca3_density, recall_k_thresh=a.recall_k_thresh,
                          structural_sep=a.structural_sep, isolate=a.isolate,
-                         per_assembly_inhib=a.per_assembly_inhib, pa_inhib_w=a.pa_inhib_w, n_patterns=a.n_patterns)
+                         per_assembly_inhib=a.per_assembly_inhib, pa_inhib_w=a.pa_inhib_w, pa_ei_w=a.pa_ei_w,
+                         n_patterns=a.n_patterns)
             per.append(r)
             if r.get("error"):
                 print(f"  [seed {s}] {r['error']}", flush=True); continue
