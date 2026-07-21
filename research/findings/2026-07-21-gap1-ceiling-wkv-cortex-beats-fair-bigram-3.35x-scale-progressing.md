@@ -76,8 +76,16 @@ memoryless-collapse +0.498 (still uses long-range state on diverse text) → **G
 
 - **⇒ the substrate-native mechanism GENERALIZES to broad-domain "anything" text** — it is not a TinyStories-specific
   artifact; it learns real encyclopedic structure and beats the count baselines at depth.
-- **Honest:** the absolute ppl (121) is FAR from fluent (fluent wikitext is ~30-50) — wikitext103 is genuinely hard
-  (huge vocab, diverse topics), and this is a small model / short budget. So "about anything" FLUENCY is a real
-  SCALE arc (bigger model + much more data/epochs), the field's wall — but it is a lever to turn (a bigger-budget
-  wikitext run is characterizing the ppl trend), NOT a mechanism wall. The mechanism works on "anything"; the
-  fluency is scale-gated.
+- **Holds at a bigger budget:** a bigger wikitext run (V=12000, 400k sentences, d512) still beats a fair trigram at
+  depth (+0.533, perm +2.085, memoryless +0.547) — the mechanism holds at more data + a bigger vocab.
+- **Honest (silent-failure: different-vocab runs are NOT a scale trend):** the bigger run's absolute NLL is HIGHER
+  (5.073 / ppl 160 vs 4.796 / ppl 121) — but that is the **vocab change** (12000 vs 8000 classes → higher NLL by
+  construction), NOT a regression; the two wikitext runs differ in vocab so they do NOT form a clean data-scale trend.
+  The CLEAN data-scale lever is the IN-DOMAIN sweep (same vocab 4000: ppl 26.5→24.3→23.8 as data+model grow).
+- **The honest gap#1 boundary:** the substrate-native WKV mechanism is GO (beats fair count baselines in-domain AND
+  broad-domain, generates coherent prose, uses long-range state) and the data-scale lever is confirmed in-domain; but
+  the absolute ppl (121-160) is FAR from LLM-fluent on broad-domain text (wikitext is genuinely hard). LLM-fluency
+  "about ANYTHING" from scratch is **the field's scale wall** (~100M+ params, billions of tokens — beyond feasible
+  local from-scratch training), which the project manages with the TEMPORARY ~21M ANN scaffold (spiking-forward
+  convertible, C1 GO). ⇒ gap#1 is not mechanism-bound (the substrate-native LM works + generalizes + scales in-domain);
+  its full closure is a compute/data-scale arc (cloud/big-compute or the staged scaffold), not a wall to break.
