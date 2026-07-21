@@ -86,9 +86,10 @@ def _verify_index_space(seed, r1_ca3_range):
     return rng_b, (rng_b == r1_ca3_range)
 
 
-def run_seed(seed, do_swr=False, ca3_density=None, recall_k_thresh=None, structural_sep=None, isolate=False):
+def run_seed(seed, do_swr=False, ca3_density=None, recall_k_thresh=None, structural_sep=None, isolate=False,
+             per_assembly_inhib=False, pa_inhib_w=40.0, n_patterns=2):
     t = {}
-    assemblies, r1_range = emergent_assemblies(seed, n_patterns=2)
+    assemblies, r1_range = emergent_assemblies(seed, n_patterns=n_patterns)
     sizes = [len(a) for a in assemblies]
     btsp_range, ok = _verify_index_space(seed, r1_range)
     t["assembly_sizes"] = sizes; t["r1_ca3_range"] = r1_range; t["btsp_ca3_range"] = btsp_range
@@ -104,11 +105,15 @@ def run_seed(seed, do_swr=False, ca3_density=None, recall_k_thresh=None, structu
         cfg["structural_sep"] = int(structural_sep)   # 2 = full bidirectional isolation (closed set, no completion spread)
     if isolate:
         cfg["interassembly_isolate"] = True   # zero between-assembly recurrents (emergent equivalent of swr_disjoint)
+    if per_assembly_inhib:
+        cfg["per_assembly_sel_inhib"] = True; cfg["per_assembly_inhib_w"] = float(pa_inhib_w)  # Kim-Kim between-memory selective inhibition
     t["ca3_density"] = cfg["ca3_density"]; t["recall_k_thresh"] = cfg["recall_k_thresh"]
-    t["structural_sep"] = cfg["structural_sep"]; t["isolate"] = bool(isolate)
+    t["structural_sep"] = cfg["structural_sep"]; t["isolate"] = bool(isolate); t["n_assemblies"] = len(assemblies)
+    t["per_assembly_inhib"] = bool(per_assembly_inhib)
     # STEP 3: BTSP-store the EMERGENT assemblies + bistable completion
+    swr_cfg = {**cfg, "swr_learn_schaffer": True, "swr_ca1_topk": 0.1, "swr_disjoint_targets": True}
     r = btsp_run(seed, assemblies_ext=[a.copy() for a in assemblies], read_ca1=do_swr,
-                 **({**cfg, "swr_learn_schaffer": True, "swr_ca1_topk": 0.1} if do_swr else cfg))
+                 **(swr_cfg if do_swr else cfg))
     t.update(held_cue=r.get("held_cue"), held_nocue=r.get("held_nocue"), held_perm=r.get("held_perm"),
              rest_firing=r.get("rest_firing"), w_within=r.get("w_within"), completion_go=r.get("go"))
     if do_swr:
@@ -128,6 +133,9 @@ def main():
     ap.add_argument("--recall-k-thresh", type=float, default=None)
     ap.add_argument("--structural-sep", type=int, default=None, help="2 = full bidirectional isolation (closed set)")
     ap.add_argument("--isolate", action="store_true", help="zero between-assembly recurrents (emergent swr_disjoint)")
+    ap.add_argument("--per-assembly-inhib", action="store_true", help="Kim-Kim per-assembly selective inhibition (spare own, inhibit other)")
+    ap.add_argument("--pa-inhib-w", type=float, default=40.0)
+    ap.add_argument("--n-patterns", type=int, default=2, help="number of co-stored emergent assemblies (2 or 3)")
     ap.add_argument("--out", default=str(OUT))
     a = ap.parse_args()
     if a.swr:
@@ -137,7 +145,8 @@ def main():
     try:
         for s in a.seeds:
             r = run_seed(s, do_swr=a.swr, ca3_density=a.ca3_density, recall_k_thresh=a.recall_k_thresh,
-                         structural_sep=a.structural_sep, isolate=a.isolate)
+                         structural_sep=a.structural_sep, isolate=a.isolate,
+                         per_assembly_inhib=a.per_assembly_inhib, pa_inhib_w=a.pa_inhib_w, n_patterns=a.n_patterns)
             per.append(r)
             if r.get("error"):
                 print(f"  [seed {s}] {r['error']}", flush=True); continue

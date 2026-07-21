@@ -63,7 +63,8 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
         encode_btsp=False, btsp_lr=0.02, encode_ca3w=None, encode_plateau_pA=250.0, encode_structural_sep=0,
         encode_hetero=0.0, encode_btsp_hetero=0.0, assemblies_ext=None, swr_ripple_pA=800.0, swr_ca1_ff_inhib=None,
         swr_learn_schaffer=False, swr_target_frac=0.15, swr_schaffer_hi=60.0, swr_schaffer_lo=0.2, swr_disjoint=False,
-        swr_ca1_topk=None, interassembly_isolate=False):
+        swr_ca1_topk=None, interassembly_isolate=False,
+        per_assembly_sel_inhib=False, per_assembly_inhib_w=40.0, swr_disjoint_targets=False):
     # DIAGNOSED LEVERS (2026-07-18 workflow): the rate-window LTP is an EMA-trace rule -- a cell's co-activity trace
     # tops out ~0.03-0.2 (point Izh fires ~0.2 duty @700pA), so coact_thresh MUST be BELOW it (~0.02) or nothing
     # potentiates; the gamma OFF-gap DECAYS the EMA (0.9^off) so CONTINUOUS drive (sync_off<=1) is required, NOT
@@ -305,6 +306,41 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
             idxs = cp.asarray(spare_k, dtype=cp.int64)
             conn2.data[idxs] = cp.asarray([float(d[k]) for k in spare_k], dtype=conn2.data.dtype)
 
+    if per_assembly_sel_inhib and len(assemblies) > 1:
+        # PER-ASSEMBLY selective inhibition (Kim-Kim 2025 "spare your own engram" + Kopsick 2024 learned E->I), the
+        # BETWEEN-MEMORY separation: the shared ca3_pv_basket is PARTITIONED into one sub-pool per stored assembly, and
+        #   (E->I) sub-pool m is driven ONLY by assembly-m's excitatory cells (co-active interneurons), and
+        #   (I->E) sub-pool m SPARES assembly-m's members (weak, sel_inhib_spare) but INHIBITS the OTHER assemblies'
+        #          members (strong, per_assembly_inhib_w) and leaves non-members at the default general inhibition.
+        # => a partial cue of A ignites A's cells -> A's basket sub-pool fires -> it SUPPRESSES B's cells before they can
+        # avalanche through the shared recurrents, while sparing A -> A completes, B stays silent -> the two co-stored
+        # assemblies are INDEPENDENTLY ADDRESSABLE (the SWR readout can discriminate). Realized as the learned outcome on
+        # the emergent assemblies (like selective_inhib/structural_sep), fully vectorized. Default False => byte-identical.
+        _bask = np.asarray(list(rm.indices("ca3_pv_basket")), dtype=np.int64)
+        _nb = len(_bask); _na = len(assemblies)
+        conn3 = bridge.cp_connections; nnz3 = int(conn3.nnz)
+        _ip = np.asarray(to_host(conn3.indptr)); _ind = np.asarray(to_host(conn3.indices))
+        _pre = (np.searchsorted(_ip, np.arange(nnz3), side="right") - 1).astype(np.int64)
+        _post = _ind[:nnz3].astype(np.int64)
+        _d = np.asarray(to_host(conn3.data)).copy()
+        N = bridge.core_config.num_neurons
+        ca3_asm_arr = np.full(N, -1, dtype=np.int64)          # ca3 global -> assembly m (members only)
+        for _m, _a in enumerate(assemblies):
+            ca3_asm_arr[np.asarray(_a, dtype=np.int64)] = _m
+        bask_asm_arr = np.full(N, -1, dtype=np.int64)          # basket global -> sub-pool m (round-robin partition)
+        bask_asm_arr[_bask] = np.arange(_nb, dtype=np.int64) % _na
+        pre_asm = ca3_asm_arr[_pre]; post_asm = ca3_asm_arr[_post]
+        pre_bmask = bask_asm_arr[_pre]; post_bmask = bask_asm_arr[_post]
+        # E->I: member m -> basket sub-pool != m  => zero (sub-pool m is driven ONLY by assembly-m)
+        _ei = (pre_asm >= 0) & (post_bmask >= 0) & (pre_asm != post_bmask)
+        _d[_ei] = 0.0
+        # I->E: basket sub-pool m -> member: spare own (== m), inhibit other (!= m); magnitude only (pre is inhibitory)
+        _ie_spare = (pre_bmask >= 0) & (post_asm >= 0) & (pre_bmask == post_asm)
+        _ie_inhib = (pre_bmask >= 0) & (post_asm >= 0) & (pre_bmask != post_asm)
+        _d[_ie_spare] = float(sel_inhib_spare)
+        _d[_ie_inhib] = float(per_assembly_inhib_w)
+        conn3.data[:] = cp.asarray(_d, dtype=conn3.data.dtype)
+
     if bistable:
         # GENUINE CUE-GATED COMPLETION TEST: hard-SILENCE the network (clear v/u/firing/conductances to rest), then
         # drive a condition, and read the HELD (non-cued stored) members' firing. Real pattern completion requires:
@@ -433,14 +469,26 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
                     ca3_inh = set()
                 c1_list = list(ca1_idx); n_ca1_l = len(c1_list)
                 n_tgt = max(2, int(swr_target_frac * n_ca1_l))
-                # per-assembly: a distinct sparse ca1 target (deterministic, disjoint-ish random draw)
+                # per-assembly: a distinct sparse ca1 target (deterministic random draw)
                 asm_of = {}                                       # ca3 global -> assembly m
                 tgt_of = {}                                       # assembly m -> set(ca1 global)
-                for m, assy in enumerate(assemblies):
-                    for g in assy:
-                        asm_of[int(g)] = m
-                    _tr = np.random.default_rng(seed * 71 + m + 13)
-                    tgt_of[m] = set(int(c1_list[i]) for i in _tr.choice(n_ca1_l, n_tgt, replace=False))
+                if swr_disjoint_targets and n_tgt * len(assemblies) <= n_ca1_l:
+                    # DISJOINT ca1 targets: draw ALL assemblies' targets from ONE pool WITHOUT replacement so no two
+                    # assemblies share a ca1 target cell -> removes the CA1-readout overlap (the seed-fragility source:
+                    # independent random 18-of-120 draws overlap ~3 cells by chance, inflating ca1_cross). The
+                    # discrimination then reflects the CA3 completion, not the target-draw luck. Each target still sparse.
+                    _tp = np.random.default_rng(seed * 71 + 13).choice(n_ca1_l, n_tgt * len(assemblies), replace=False)
+                    for m in range(len(assemblies)):
+                        tgt_of[m] = set(int(c1_list[i]) for i in _tp[m * n_tgt:(m + 1) * n_tgt])
+                    for m, assy in enumerate(assemblies):
+                        for g in assy:
+                            asm_of[int(g)] = m
+                else:
+                    for m, assy in enumerate(assemblies):
+                        for g in assy:
+                            asm_of[int(g)] = m
+                        _tr = np.random.default_rng(seed * 71 + m + 13)
+                        tgt_of[m] = set(int(c1_list[i]) for i in _tr.choice(n_ca1_l, n_tgt, replace=False))
                 data_h = np.asarray(to_host(cc.data)).copy()
                 _npot = 0
                 for k in range(nnzc):
