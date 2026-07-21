@@ -28,6 +28,10 @@ decorrelating the activations so the SALIENCE wins:
   referents are correlated — the regime that broke the prior approaches.
 - **Anti-cheats clean, all seeds/corr:** permuted-position ~0.93 (the winner tracks SALIENCE, not position);
   equal-salience control ~0.245 ≈ chance (no spurious winner when there is no salient referent).
+- **Robust to MORE referents (corr 0.7, 6-seed):** N=4 → ON 0.928 / OFF 0.601; N=6 → ON 0.920 / OFF 0.457; N=8 → ON
+  0.919 / OFF 0.408. Biased-competition holds ~0.92 while read-max degrades toward chance as N grows (advantage grows
+  +0.33→+0.51); permuted-position ~0.91 and equal-salience ~chance at every N. It resolves the salient referent among
+  up to 8 correlated referents — well past the 2-3 a real dialogue holds.
 
 ## Read-out
 
