@@ -311,11 +311,21 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   WKV physical merge (byte-exact) → CAPSTONE composer+WKV grounded turn (6-seed) → render-LEARNING co-resident (6-seed)
   → REACHABLE conversation demo. ALL the quick substrate-loading wins delivered; the whole grounded loop + learning +
   a runnable "talk to the one-brain" all on ONE SimulationBridge.
-  **NEXT (remaining = substantial arcs, not quick wins):** (1) full `_fluidconv_chat_repl.py` wire-in (multi-turn/
-  anaphora/learn-a-fact on the single substrate); (2) composer fact-store-on-substrate (the numpy-kb idealization →
-  substrate; needs the CoResidentOneBrainComposer persistent-store-on-slice machinery); (3) on-bridge fluency
-  THROUGHPUT (batched) for LIVE full-scale; (4) the remaining capability gaps — #1 breadth/scale, #4 deep-credit
-  (research-gate frontiers).
+  Reachable demo firmed 6-seed (42/43/44/100/101/102); teach/ask/who + gate-first moat.
+  **★ HONEST REFRAME (2026-07-20, verified read of our own code):** the single-shared-substrate is COMPLETE for every
+  SPIKING COMPUTATION — bind/unbind/cleanup (composer resonate) + WKV read-out forward + WKV RF encoder + the
+  render-LEARNING (delta rule over cp_ssm_state) all on ONE bridge. The ONE host residual is the composer fact-store's
+  DATA persistence (`store_conns`/numpy-kb are HOST lists in BOTH composers; the bridge synapses are installed
+  transiently per read via rf_set_complex_weights, which REPLACES the single cp_rf_w_*). That host-list is the
+  composer's DOCUMENTED VSA "principled idealization" (a memory-representation choice, NOT a spiking-computation
+  shortcut — the store's READ is already a spiking scan). Finding
+  `2026-07-20-composer-factstore-host-persistence-is-the-VSA-idealization-scoping.md`.
+  **NEXT (remaining = substantial DELIBERATE arcs, none a quick win):** (1) close the fact-store idealization with a
+  scoped ADDITIVE `sim/` store-synapse tensor DISJOINT from the per-op cp_rf_w_* (so the store survives an op) — a
+  deliberate sim/ mechanism, not a runner consolidation; (2) full `_fluidconv_chat_repl.py` wire-in (multi-turn/
+  anaphora on the single substrate); (3) on-bridge fluency THROUGHPUT (batched) for LIVE full-scale; (4) the remaining
+  capability gaps — #1 breadth/depth, #4 deep-credit (research-gate frontiers; RAG-check the extensive prior work
+  first per drift-mode #12).
 - **🎯 gap#4 KEYSTONE REFRAMED (2026-07-20 close-state) — deep local credit is MECHANISM-ESTABLISHED; the apparent
   "contrast blocker" was a TASK ARTIFACT.** After rungs 1-9 + 6 pre-flights + a 28-agent adversarial audit, the
   honest status of "does the substrate learn DEEP representations by a biological rule?":

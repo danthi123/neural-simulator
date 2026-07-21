@@ -1,6 +1,6 @@
 # Single shared substrate — a REACHABLE grounded conversation on ONE bridge (GO)
 
-**Date:** 2026-07-20 · **Status:** GO (seeds 42/43/100) — a runnable grounded conversational turn on ONE
+**Date:** 2026-07-20 · **Status:** GO (6-seed 42/43/44/100/101/102) — a runnable grounded conversational turn on ONE
 `SimulationBridge`: teach facts → ask → the composer retrieves + gates → the SPIKING WKV cortex renders the grounded
 answer → the no-confab moat holds by construction (0 WKV invocations on abstains). Makes the single-substrate capstone
 REACHABLE (talk to the one-brain), not just a de-risk. NO `sim/` edit.
