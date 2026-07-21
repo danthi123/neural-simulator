@@ -279,9 +279,22 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   ⇒ the faculty's bridge-count is 2→1; the ssm read-out + the RF encoder + the on-bridge delta learning are all on
   ONE bridge; the composer (RF phasor) is proven co-resident with the ssm read-out (crux). ONLY remaining piece: wire
   the composer's fact-store region onto THIS bridge object + run a full grounded turn on the single substrate.
-  **NEXT (end goal):** (1) add the composer as a 3rd region on this bridge + run the full De-risk-5 grounded turn
-  (comprehend→reason→spiking render) end-to-end on ONE consolidated bridge (the capstone); (2) on-bridge fluency
-  THROUGHPUT (batched stepping — the SSM block is elementwise) to reach the off-bridge ppl ~40 LIVE.
+  **★ SINGLE-SHARED-SUBSTRATE CAPSTONE — GO (2026-07-20, seeds 42/43/100): the composer + the WKV cortex run a full
+  grounded turn on ONE bridge.** ONE SimulationBridge, THREE regions (chan=cp_ssm_state WKV read-out + encoder=WKV RF
+  spike-encoder + composer=RF bind/unbind/cleanup via the MergedRFComposer _resonate index-shift port). Grounded turn
+  STORE→QUERY→RENDER: composer recall ['cat','mouse','deer'] == isolated, no-confab moat None==None, WKV render
+  identical ("you help me find my way home and"), ALL byte-identical to the separate-bridge De-risk-5 pipeline.
+  STRONGEST: a composer op INTERLEAVED between WKV tokens perturbs the WKV logits by 0.000e+00 (byte-isolated under
+  interleaved use — composer touches v/u+cp_rf_* [re-kicked per op]; WKV state lives in cp_ssm_state). Chain (all
+  byte-clean): co-residence crux (6-seed 0.0) → encoder-equiv (0.0) → WKV physical merge (byte-exact) → THIS capstone.
+  `_gap_onebridge_capstone_derisk.py`, CI `test_onebridge_capstone.py`, NO sim/ edit. Finding
+  `2026-07-20-single-shared-substrate-CAPSTONE-composer-plus-WKV-on-one-bridge-GO.md`. ⇒ the whole grounded turn
+  (comprehend/store/recall/abstain + spiking render + the render-learning delta rule, all on this bridge type) is
+  realizable on a SINGLE SimulationBridge — the "single shared substrate" end goal MET for the grounded turn.
+  **NEXT (end goal):** on-bridge fluency THROUGHPUT (batched stepping — the SSM block is elementwise) to run the LIVE
+  full-scale fluency (ppl ~40) on the single substrate; optionally consolidate the composer's substrate store
+  (enable_substrate_store) onto the same bridge. Honest scope: composer fact-store is the numpy-kb idealization (its
+  spiking resonate ops ARE consolidated); WKV D=256 + composer D=64 coexist as separate regions.
 - **🎯 gap#4 KEYSTONE REFRAMED (2026-07-20 close-state) — deep local credit is MECHANISM-ESTABLISHED; the apparent
   "contrast blocker" was a TASK ARTIFACT.** After rungs 1-9 + 6 pre-flights + a 28-agent adversarial audit, the
   honest status of "does the substrate learn DEEP representations by a biological rule?":
