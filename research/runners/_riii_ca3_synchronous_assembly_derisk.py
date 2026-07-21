@@ -63,7 +63,7 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
         encode_btsp=False, btsp_lr=0.02, encode_ca3w=None, encode_plateau_pA=250.0, encode_structural_sep=0,
         encode_hetero=0.0, encode_btsp_hetero=0.0, assemblies_ext=None, swr_ripple_pA=800.0, swr_ca1_ff_inhib=None,
         swr_learn_schaffer=False, swr_target_frac=0.15, swr_schaffer_hi=60.0, swr_schaffer_lo=0.2, swr_disjoint=False,
-        swr_ca1_topk=None):
+        swr_ca1_topk=None, interassembly_isolate=False):
     # DIAGNOSED LEVERS (2026-07-18 workflow): the rate-window LTP is an EMA-trace rule -- a cell's co-activity trace
     # tops out ~0.03-0.2 (point Izh fires ~0.2 duty @700pA), so coact_thresh MUST be BELOW it (~0.02) or nothing
     # potentiates; the gamma OFF-gap DECAYS the EMA (0.9^off) so CONTINUOUS drive (sync_off<=1) is required, NOT
@@ -258,6 +258,24 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
         # coincident drive (correct cue) crosses the plateau, not scattered generic/avalanche drive (permuted cue) ->
         # specificity WITHOUT starving the encoding (the two were coupled through one cfg.coincidence_k_threshold).
         bridge.core_config.coincidence_k_threshold = float(recall_k_thresh)
+
+    if interassembly_isolate and len(assemblies) > 1 and len(flat_h) > 0:
+        # BETWEEN-ASSEMBLY recurrent isolation (the emergent equivalent of swr_disjoint / the DG's between-memory
+        # pattern-separation, Kandel Ch 54): zero ca3->ca3 recurrent edges whose pre and post are in DIFFERENT stored
+        # assemblies, so a partial cue of assembly A completes A but does NOT cross-complete assembly B through the shared
+        # dense recurrent substrate. structural_sep isolates the assembly-UNION from non-members; this isolates the
+        # assemblies from EACH OTHER (required for the SWR readout to discriminate two co-stored assemblies). Default
+        # False => byte-identical. Realizes R1's emergent SEPARATION in recurrent space; NO sim/ edit.
+        local_to_asm = {}
+        for _m, _a in enumerate(assemblies):
+            for _g in _a:
+                local_to_asm[ca3_pos[int(_g)]] = _m
+        zk = [k for k in range(len(flat_h))
+              if int(pre_l_h[k]) in local_to_asm and int(post_l_h[k]) in local_to_asm
+              and local_to_asm[int(pre_l_h[k])] != local_to_asm[int(post_l_h[k])]]
+        if zk:
+            idxs = cp.asarray([int(flat_h[k]) for k in zk], dtype=cp.int64)
+            conn.data[idxs] = cp.zeros(len(zk), dtype=conn.data.dtype)
 
     non_stored0 = np.array([g for g in ca3_idx if g not in set(int(x) for a in assemblies for x in a)], dtype=np.int64)
 
