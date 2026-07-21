@@ -394,10 +394,21 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
     `2026-07-21-gap235-unified-competitive-readout-family-6seed-GO.md`.
   - **⇒ this cycle advanced gaps #1 (scale-progressing, in-domain + broad-domain), #2 (spiking learned binder), #3
     (biased-competition), + the #2/#3/#5 unification — all 6-seed / anti-cheated / committed both remotes.**
-  - **NEXT (gap-close, no deferrals):** (a) gap#1 scale toward real fluency (bigger model/corpus — the wikitext scale
-    run + beyond; the biggest lever toward LLM-like conversation); (b) the SPIKING gap#3 phase-cluster WTA + gap#5 CA3
-    completion magnitude (~0.02, GPU); (c) the composer wire-in of the learned binder (retire the fixed FHRR); (d) the
-    fully-on-bridge STP write (edge5). Then integrate toward LLM-like conversation.
+  - **gap#1 honest BOUNDARY (characterized this cycle):** the substrate-native WKV LM works + generalizes (in-domain +
+    broad-domain wikitext, beats fair count baselines, coherent prose) + scales in-domain (ppl 26.5→23.8); but LLM-
+    fluency about ANYTHING from scratch is the FIELD'S SCALE WALL (~100M+ params, billions of tokens — beyond feasible
+    local from-scratch training), managed via the temporary 21M scaffold (C1 GO). Not mechanism-bound; a compute-scale
+    arc. (A clean-vocab wikitext data-lever run is finishing.)
+  - **gap#5 (CA3 completion / SWR readout) — CHARACTERIZED boundary + RANKED de-risk (a-1 read `2026-07-19-gap5-SWR-
+    readout-specificity-research-gate`):** the SWR-replay readout near-tie is a dense-random-Schaffer READOUT artifact
+    (Valero 2017: specificity lives in cell-specific structured+potentiated drive + E/I). The fix is a 4-mechanism
+    SPECIFICITY STACK on the SWR runner: pattern-separated CA3 completion (the emergent-DG, already 6-seed GO) UPSTREAM
+    → structured+POTENTIATED SPARSE Schaffer (`swr_learn_schaffer` ON, drop dense-random) → E%-max/FFI CA1
+    sparsification → brief single-volley read. GO bar ca1_match≥0.6/cross≤0.3/3×/6-seed. A substantial GPU arc, teed up.
+  - **NEXT (gap-close, no deferrals):** (a) the gap#5 SWR SPECIFICITY STACK (the ranked de-risk above, GPU — the last of
+    the unified three); (b) gap#1 scale toward real fluency (bigger model/corpus, or accept the scaffold + spiking-
+    forward-convert the 88.6M — C1 GO); (c) the SPIKING gap#3 phase-cluster WTA; (d) the composer wire-in of the learned
+    binder + the fully-on-bridge STP write (edge5). Then integrate the advanced gaps toward fuller LLM-like conversation.
 - **🎯 gap#4 KEYSTONE REFRAMED (2026-07-20 close-state) — deep local credit is MECHANISM-ESTABLISHED; the apparent
   "contrast blocker" was a TASK ARTIFACT.** After rungs 1-9 + 6 pre-flights + a 28-agent adversarial audit, the
   honest status of "does the substrate learn DEEP representations by a biological rule?":
