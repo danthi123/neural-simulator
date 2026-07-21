@@ -447,7 +447,17 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
     STP-ON on ca3→ca3 so it doesn't avalanche — the same per-pathway STP the SWR finding prescribed for the Schaffer) +
     detonator-sparse mossy (lower `mossy_density`) + inhibitory sparsification, tuned to a sparse(6-40) separated
     assembly, then re-verify the emergent anti-cheats (input-specific / moat / mossy-lesion) before feeding SWR. NOT
-    currently exposed as runner params. (b) gap#1 scale toward
+    currently exposed as runner params.
+    (a2) **gap#1 RESEARCH GATE + PROBE (2026-07-21): the broad-domain plateau (ppl 121) is DATA-STARVATION, not
+    capacity.** Gate (external lit): 0.46 tok/param is ~40× below Chinchilla; production small-LMs reach wikitext ppl
+    20-40 at 20-200+ tok/param; lever = TOKEN COUNT + dedup + quality (curriculum-ordering=skip; distillation-as-DATA).
+    Architecture = SINGLE-LAYER (no depth) = co-limit. OFF the table: width, attention-over-recurrence, spiking-BPTT-
+    at-scale, reservoir-size. Probe: d512/36ep OVERFITS (train 3.10 vs held-out deep 6.296 no-go) = data-starvation
+    signature (confound disclosed: `--max-train-sents` DEFAULT 60000 silently capped my --n-sentences 150000 → n_tr
+    60000). The record's "150k→400k FLAT" is real but ~<1 tok/param (still starved) — the data lever at scale was NEVER
+    tested. **DECISIVE RUN IN FLIGHT (bi27mss18, Monitor bt6rzwqrh): d512/1M-sentences/12ep vs 4.796 — data-drops =
+    lever real; flat = single-layer architecture is the limit (depth next).** Finding
+    `2026-07-21-gap1-plateau-is-data-starvation-not-capacity-research-gate-plus-probe.md`. (b) gap#1 scale toward
     real fluency (bigger model/corpus, or accept the scaffold + spiking-forward-convert the 88.6M — C1 GO); (c) the
     SPIKING gap#3 phase-cluster WTA; (d) the composer wire-in of the learned binder + the fully-on-bridge STP write
     (edge5). **⇒ LLM-CONVERSATION (owner's post-gap priority) is LARGELY ACHIEVED** (De-risk 0-5 north-star + single-
