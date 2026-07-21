@@ -459,6 +459,18 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
     (`2026-07-18-gap4-gap5-UNIFICATION-BTSP-...`), NOT mossy STP-depression. Also confirmed: the "emergent-DG 6-seed GO"
     does NOT reproduce at n_ca3=2000 (scale-fragile). Finding
     `2026-07-21-gap5-emergent-DG-per-pathway-STP-built-window-BOUNDARY-needs-oneshot-BTSP.md`.
+    **⇒ RESEARCH GATE → R1 → SELECTION RECOVERED (2026-07-21, GO 6/6 core): the fixed-fraction fan-out WAS the bug.**
+    The gate root-caused the diffuseness to CA3 (DG is fine) + the biologically-wrong FIXED-FRACTION mossy fan (d0.10
+    scales the detonation with N). R1 validated the fix: the N-INDEPENDENT SPARSE DETONATOR (`mossy_density=0.02` ≈40
+    syn/DG + `mossy_stp_disabled`) gives a sparse ~2% / SEPARATED (sep_cos 0.33-0.39 <0.4) / stable (0.90-0.98) / moat-0 /
+    lesion-0 / input-specific CA3 assembly at EVERY N 400→2000, where the dense fan fails at every N (sep 0.54-0.62,
+    diffuse). 6-seed CORE criteria 6/6 (strict gate 4/6 = size-centering + hypergeometric-perm-bar artifacts). Two record
+    corrections (the n_ca3=400 GO unreproducible; the snapshot-reset leaks state → fresh-build-per-presentation). NO
+    `sim/` edit (uses the committed `stp_disabled`). **⇒ the emergent-DG SELECTION half is DONE; the remaining piece is
+    the COMPLETABLE STORE — feed these emergent-selected assemblies to the one-shot BTSP-store + bistable-complete (the
+    gap#4↔#5 unification, now on EMERGENT-not-pre-assigned assemblies) → then the CLOSED SWR readout.** Findings
+    `2026-07-21-gap5-DG-sparse-separation-research-gate-...` + `-emergent-DG-SELECTION-recovered-at-scale-sparse-detonator-GO.md`.
+    Driver `_gap5_dg_selection_reset_scale_driver.py`.
     (a2) **gap#1 RESEARCH GATE + PROBE (2026-07-21): the broad-domain plateau (ppl 121) is DATA-STARVATION, not
     capacity.** Gate (external lit): 0.46 tok/param is ~40× below Chinchilla; production small-LMs reach wikitext ppl
     20-40 at 20-200+ tok/param; lever = TOKEN COUNT + dedup + quality (curriculum-ordering=skip; distillation-as-DATA).
