@@ -2,14 +2,15 @@
   "rows": [
     {
       "seed": 42,
-      "on_match": 0.0,
-      "on_cross": 0.0,
-      "off_match": 0.0,
-      "off_cross": 0.0
+      "held_cue": 0.0,
+      "on_match": 0.9265697286031109,
+      "on_cross": 0.133503285808847,
+      "off_match": 0.3973176564625726,
+      "off_cross": 0.11694747678599197
     }
   ],
-  "on_match": 0.0,
-  "on_cross": 0.0,
-  "off_cross": 0.0,
+  "on_match": 0.9265697286031109,
+  "on_cross": 0.133503285808847,
+  "off_cross": 0.11694747678599197,
   "go": false
 }

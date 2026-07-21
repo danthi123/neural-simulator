@@ -19,8 +19,11 @@ _WORD = _re.compile(r"[a-z']+")
 
 
 def load_range(path, w2i, skip, take, min_len=5, max_len=24):
-    """Tokenize the corpus, SKIP the first `skip` valid sentences, then take `take` -- so we can evaluate on
-    sentences the WKV (trained on the first 100000) never saw. Same tokenization as load_tiny_sentences."""
+    """Tokenize the corpus, SKIP the first `skip` valid sentences, then take `take`. Same tokenization as
+    load_tiny_sentences. NOTE (2026-07-21 audit): the big ckpt trained on data/corpus/tinystories_train.txt
+    (n_tr=400000, see raw/_gap1_train_big.log), NOT the first N of THIS file (tinystories.txt) -- so skipping
+    `skip` sentences here does NOT make the tail disjoint from the WKV's training corpus. Treat this ceiling's
+    magnitude as UNRELIABLE; the trustworthy disjoint measurement is _emerge_wkv_lm_derisk.py (random 85/15 split)."""
     txt = open(path, "r", errors="ignore").read().lower()
     out, seen = [], 0
     for raw in _re.split(r"[.!?]", txt):
@@ -93,12 +96,15 @@ def main():
         w2i["<unk>"] = V - 1
     model = TorchWKV(V, D).to(dev); model.load_npz(z, 0)
 
-    # FAIR + NO LEAKAGE: the WKV trained on the FIRST 100000 sentences. Train the bigram on the SAME distribution
-    # (first 20000), and evaluate BOTH on a far-offset chunk (past sentence 120000) the WKV NEVER saw.
-    train = load_tiny_sentences(args.corpus, 20000, w2i)      # bigram training (in the WKV's train distribution)
-    test = load_range(args.corpus, w2i, skip=120000, take=args.n)   # genuinely UNSEEN by the WKV (trained on first 100000)
+    # AUDIT CORRECTION (2026-07-21): the original "NO LEAKAGE / WKV trained on the first 100000 of tinystories.txt"
+    # premise is FALSE. The ckpt trained on data/corpus/tinystories_train.txt (n_tr=400000, raw/_gap1_train_big.log);
+    # this eval reads a DIFFERENT file (tinystories.txt), so skipping 120000 here does NOT make the tail disjoint from
+    # training (~17.7% of the tail is verbatim in the training corpus). The 3.35x magnitude from this runner is
+    # UNRELIABLE. Behavior below is UNCHANGED (narration-only fix); trust _emerge_wkv_lm_derisk.py's random 85/15 split.
+    train = load_tiny_sentences(args.corpus, 20000, w2i)      # bigram trained on 20000 sents (NB ~20x fewer than the WKV's 400000 -> inflates the ratio)
+    test = load_range(args.corpus, w2i, skip=120000, take=args.n)   # tail of tinystories.txt (NOT verified disjoint from the WKV's training corpus)
     print(f"[ceiling] V={V} D={D} | bigram-train {len(train)} sents / held-out {len(test)} sents past #120000 "
-          f"(~{sum(len(s) for s in test)} tokens, UNSEEN by the WKV trained on first 100000)")
+          f"(~{sum(len(s) for s in test)} tokens; NB NOT verified unseen by the WKV -- see 2026-07-21 audit correction)")
 
     wkv_ppl = wkv_heldout_ppl(model, test, dev)
     big_ppl = bigram_heldout_ppl(train, test, V, lam=0.7)

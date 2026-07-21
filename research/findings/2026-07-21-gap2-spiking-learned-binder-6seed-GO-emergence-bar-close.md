@@ -60,3 +60,41 @@ is MEASURABLY scale-progressing; the lever (more data + bigger model → lower p
 
 Runner: `_gap2_spiking_deltarule_binder_derisk.py` (`--seeds`, `--pmax`, `--n-facts`); ceiling
 `_gap2_binder_resonator_ceiling.py`.
+
+## ⛔ AUDIT CORRECTION (2026-07-21)
+
+An 8-skeptic adversarial audit returned **PARTIAL** on this finding. The original arc above is preserved for the
+trail; the following corrections are load-bearing. All three are verified directly against the raw seed logs
+(`research/findings/raw/_gap2_spk_seed{42,43,44,100,101,102}.log`) and the runner source.
+
+**(a) It ran on 300 codes, NOT 788.** The headline (line 13: "788 correlated stream-cortex phasor codes") and the
+runner docstring both say 788, but **every seed log prints `codes=300 D=128`** and `retrieve()` samples
+`fids = rng.choice(N=300, ...)`. The npz (`bridges/developed/scale787/day_9/grounded_codes.npz`) contains **788**
+`g:` codes, but the run used `--cap 300`, so it ran on the **first 300 of the 788 available**. The "788" figure is
+what the store holds, not what was tested. Corrected scale: **300 codes, D=128**.
+
+**(b) delta-vs-additive is NOT shown load-bearing — additive did NOT collapse.** The runner's own designed GO gate
+is `delta>=0.80 & delta>additive` (printed as the per-P annotation). But the **DATA has `additive 1.000` at every P
+(1..5), on all 6 seeds** — additive does **not** collapse — and `DELTA 1.000`, so **delta == additive**. The second
+gate clause (`delta > additive`) is therefore **FALSE**; the delta-rule is **not demonstrated to beat the additive
+(plain-Hebbian) baseline** at this scale. What the run actually shows is: delta reaches the **1.000 ceiling on the RF-
+substrate spiking read**, and the **permuted-role anti-cheat collapses to 0.000** (role-addressing is real). The GO is
+thus a **re-scoped verdict** (spiking-read-reaches-ceiling + permuted-role-collapses), NOT the designed
+delta-beats-additive gate. The finding's own Honest-scope item #1 already flags "delta-vs-additive is NOT load-bearing
+at this scale," so the body is partially self-consistent — but the **title, the results-table framing, and the
+"emergence-bar residual is closed" headline overstate it**, and the *runner's* summary line falsely narrated "while
+additive collapses" (now corrected in-place; behavior unchanged — string only).
+
+**(c) "emergence-bar close" is generous** for two independent reasons: **(i)** additive never collapsed (see (b)), so
+no learned error-correcting rule is shown necessary over a plain outer-product at this scale; and **(ii)** the **WRITE
+is a host-numpy outer-product** — `build_W` computes `np.outer(v - W @ k, k.conj()) / D` (and the additive arm
+`np.outer(v, k.conj()) / D`) entirely in numpy on the host, then installs the result as the RF coupling. **Only the
+READ** (`spiking_read` → `rf_set_complex_weights` / `rf_kick` / `rf_resonate_steps` / `rf_read_phases`) is on the
+spiking substrate. The finding's Honest-scope item #2 acknowledges the host WRITE, but the headline "the emergence-bar
+residual is closed" reads past that: the on-bridge, self-organized WRITE (STP/BTSP) remains open — the spiking claim
+covers the READ only.
+
+**Net (audit):** the *spiking-read* result (delta reaches the ceiling on the RF resonate loop at P=1..5, permuted-role
+→ 0.000) stands as measured at **300 codes**. What is **withdrawn / down-scoped**: "788 codes" (→ 300),
+"delta load-bearing over additive" (additive did not collapse; delta == additive == 1.000), and the unqualified
+"emergence-bar residual is closed" headline (the WRITE is host-numpy, not on-bridge; only the READ is spiking).

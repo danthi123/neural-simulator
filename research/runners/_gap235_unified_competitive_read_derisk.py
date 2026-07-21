@@ -8,8 +8,10 @@ codebook + biased-competition (lateral inhibition subtracting the code-overlap G
 All three call ONE function `competitive_read(cue, codebook, lam)`. This makes the unification concrete (not three
 mechanisms — ONE), and each rides on code OVERLAP (so it WANTS correlated codes, killing the decorrelation demand).
 
-Anti-cheats per gap: #2 permuted (wrong estimate->wrong concept); #3 equal-salience (~chance) + permuted-position;
-#5 no-overlap cue (chance). CPU/numpy, 6-seed. `--seeds`, `--D`, `--N`, `--corr`.
+Anti-cheats actually computed by main(): #3 matched-filter-only over the SAME referent set (no lateral inhibition ->
+scores worse than biased-competition, so the competition is load-bearing); #5 no-overlap cue (-> ~chance). NO #2
+control and NO #3 equal-salience/permuted-position control are computed here (the equal-salience -> chance collapse
+lives only in the standalone gap#3 runner). CPU/numpy, 6-seed. `--seeds`, `--D`, `--N`, `--corr`.
 """
 import argparse
 import numpy as np

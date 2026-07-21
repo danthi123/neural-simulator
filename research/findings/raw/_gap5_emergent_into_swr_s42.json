@@ -1,0 +1,42 @@
+{
+  "rows": [
+    {
+      "seed": 42,
+      "index_match": true,
+      "sizes": [
+        0,
+        0,
+        0
+      ],
+      "sep_cos": 0.0,
+      "usable": false,
+      "status": "selection-blocked:silent (all-empty: mossy STP-capped)"
+    }
+  ],
+  "swr_closed": {
+    "n_ca3": 2000,
+    "ca3_density": 0.05,
+    "encode_drive": 3000.0,
+    "no_sync": false,
+    "coact_thresh": 0.02,
+    "hebb_lr": 4.0,
+    "lam_dep_wi": 1.0,
+    "hebb_max": 150.0,
+    "ca3_fb_inhib": 30.0,
+    "k_thresh": 15.0,
+    "recall_k_thresh": 30.0,
+    "recall_drive": 1200,
+    "recall_steps": 150,
+    "bistable": true,
+    "nmda_recurrent": false,
+    "enable_ou": false,
+    "selective_inhib": true,
+    "structural_sep": 1,
+    "plateau_self_regen": 0.15,
+    "apical_kir_g": 3.0,
+    "apical_gc": 1.0,
+    "apical_gc_read": 5.0,
+    "swr_schaffer_hi": 80.0,
+    "swr_schaffer_lo": 0.0
+  }
+}

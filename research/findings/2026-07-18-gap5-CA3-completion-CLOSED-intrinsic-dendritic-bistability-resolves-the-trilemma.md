@@ -84,3 +84,26 @@ firing, not the apical, for the ripple read.)
   (`apical_g_couple_to_soma`); runner: `plateau_self_regen`/`apical_kir_g`/`apical_gc_read`/`read_apical`/`structural_sep`
   (1|2)/`selective_inhib`/`recall_k_thresh`/`rate_homeo`/`enable_ou`/`ca3_density` + the silence-reset fix. CI:
   `tests/test_dendritic_bistability.py` (single-cell latch-and-hold + bifurcation + default byte-identity).
+
+## ⛔ AUDIT CORRECTION (2026-07-21, 8-skeptic adversarial audit) — record-hygiene + scope notes; the completion MECHANISM verdict STANDS
+An 8-skeptic adversarial audit reviewed this finding as the paired piece to the SWR-readout finding
+(`2026-07-18-gap5-SWR-replay-readout-BLOCKED-...`). **Verdict on THIS piece: SOLID** — 5/6 GO + 6/6 mechanism (perfect
+specificity + bistability every seed; cue 0.18-0.33, nocue/perm 0.000, no-encoding collapse); the trilemma resolution via
+intrinsic dendritic bistability stands. Two record-hygiene corrections, NO claim retracted:
+
+1. **Runner-path:** the config header above cites `_gap5_ca3_bistable_6seed.py`, which is a raw GO-config ARTIFACT at
+   `research/findings/raw/_gap5_ca3_bistable_6seed.py` — NOT a `research/runners/` file. The executable runner carrying
+   this GO_CFG is `research/runners/_gap4_btsp_completion_unification_6seed.py` (its `GO_CFG` = n_ca3=2000,
+   ca3_density=0.05, assembly_frac=0.12, encode_drive=3000, no_sync=True, recall_k_thresh=110, bistable=True,
+   structural_sep=1, selective_inhib=True, plateau_self_regen=0.15, apical_kir_g=3.0, apical_gc=1.0, apical_gc_read=5.0 —
+   verified against the runner source).
+
+2. **Pre-assigned assemblies (already flagged in "What's closed vs open"):** the assembly is a fixed pre-assigned sparse
+   mask, not emergent-DG-selected — the one genuine open emergence-bar piece. Restated here because the paired
+   SWR-readout finding shares the same pre-assigned assemblies, so neither gap#5 piece yet demonstrates the *emergent*
+   (selected-from-experience) completion.
+
+Note: the SWR-readout finding's "specificity CLOSED 6/6" was NARROWED by the same audit (it runs on a weak completion,
+held_cue ~0.004, with no completion-LESION or permuted-cue CA1 control) — see the audit-correction block appended to
+`2026-07-18-gap5-SWR-replay-readout-BLOCKED-schaffer-conductance-cap-precisely-localized.md`. That narrowing does NOT
+touch this completion finding's verdict.

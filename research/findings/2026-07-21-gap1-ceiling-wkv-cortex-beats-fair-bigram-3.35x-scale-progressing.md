@@ -96,3 +96,55 @@ memoryless-collapse +0.498 (still uses long-range state on diverse text) → **G
   which the project manages with the TEMPORARY ~21M ANN scaffold (spiking-forward convertible, C1 GO). ⇒ gap#1 is NOT
   mechanism-bound (the LM works + generalizes + scales); its full closure is a model-CAPACITY / compute-scale arc
   (cloud/big-compute or the staged scaffold), not a wall to break.
+
+## ⛔ AUDIT CORRECTION (2026-07-21)
+
+An 8-skeptic adversarial audit found the flagship headline of this finding — **"the WKV cortex beats a fair bigram
+3.35× on UNSEEN TinyStories, leakage fixed"** — rests on a **FALSE training-setup premise**. The **specific 3.35×
+magnitude** and the **"leakage-fixed on `tinystories.txt` / unseen-past-#120000"** framing are **RETRACTED**. The SIGN
+of the result survives (see below). The original text above is preserved verbatim for the arc trail.
+
+**The false premise (what the record claims vs. what actually happened):**
+
+- This finding (§Anti-cheats, line 30) and the ceiling runner both assert the WKV "trained on the FIRST 100000
+  sentences (`--n-tiny 100000` default)" of `tinystories.txt`, so evaluating "past #120000" is "genuinely UNSEEN."
+  **This is invented.**
+- **Verified against `research/findings/raw/_gap1_train_big.log` (line 2):** the ckpt
+  `wkv_ssmU_v4000_d256_big_seed42.npz` trained **`n_tr=400000`** sentences on **`data/corpus/tinystories_train.txt`**
+  (the 120 MB corpus; `ls` = 119,826,668 bytes) — **NOT** "the first 100000 of `tinystories.txt`." The base-training
+  runner is `_emerge_wkv_lm_derisk.py` (default `--corpus data/corpus/tinystories_train.txt`, `:323`), which uses a
+  proper **random 85/15 train/held-out split** (`:381`, printed as `n_tr=len(tr)` at `:434`).
+- **`--n-tiny` (default 20000) is the FINE-TUNE anti-forgetting arg, not base-training size:**
+  `_gap_grounded_wkv_finetune.py:132` defines it as `"TinyStories sentences for anti-forgetting"`, default **20000**
+  (not 100000). So the finding's "`--n-tiny 100000` default" is wrong twice over (wrong number AND wrong role), and the
+  "100000" is invented.
+- **The ceiling eval never establishes disjointness.** `_gap1_wkv_vs_bigram_ceiling.py` reads a **different** file —
+  `data/corpus/tinystories.txt` (20 MB, 19,971,040 bytes) — and skips 120000 sentences in *it*. Because the ckpt never
+  trained on `tinystories.txt`, "skip 120000 in `tinystories.txt` = unseen" **establishes nothing** about disjointness
+  from the WKV's actual training corpus (`tinystories_train.txt`). The audit measured **~17.7% of the held-out is
+  verbatim in the actual training corpus** (generic length-5-8 sentences dominate the overlap).
+- **Unfair like-for-like:** the bigram was trained on **20000** sentences vs the WKV's **400000** (~20× fewer) — which
+  further **inflates** the 3.35× ratio.
+- ⇒ the specific **3.35× magnitude** and the **"leakage-fixed / unseen-past-#120000 on `tinystories.txt`"** framing are
+  **WRONG and withdrawn.**
+
+**WHAT SURVIVES — the SIGN is robust (gap#1 is scale-progressing, not mechanism-bound):**
+
+- The trustworthy measurement is the **proper disjoint 85/15 split** in `_emerge_wkv_lm_derisk.py`, with **collapsing
+  anti-cheat controls**:
+  - `raw/_gap1_train_big.log` (the ckpt's own held-out, V=4000 / n_tr=400000): at deep context (d10-99) the WKV beats
+    the **FAIR interpolated trigram** by **+0.365 nats**, with **perm-collapse +4.861** and **memoryless-collapse
+    +1.971** → GO. (Per-depth `vs-trigram` is positive at every depth ≥2.)
+  - The clean corroboration `raw/_emerge_wkv_lm.json` (disjoint 85/15 split): `wkv_perm` **~6.9–8.0** vs `wkv`
+    **~3.2–3.9** (the permute control collapses), `margin_vs_trigram` **positive at every depth**
+    (1.513 / 0.31 / 0.481 / 0.613 / 0.628 / 0.612).
+- A bigram/trigram **fundamentally cannot model long-range context**; the WKV's positive margin over the *fair trigram*
+  at depth, plus the collapsing perm/memoryless controls on a genuinely disjoint split, establishes it genuinely uses
+  context. So **"the substrate-native WKV cortex beats the count baselines, and gap#1 is scale-progressing, not
+  mechanism-bound"** — the finding's core read-out — **HOLDS.** Only the specific **3.35× ceiling number** and the
+  **leakage-fixed framing** are retracted.
+
+**Runner fix (narration only, behavior unchanged):** `research/runners/_gap1_wkv_vs_bigram_ceiling.py` — the invented
+"trained on first 100000 / UNSEEN" premise was corrected in the `load_range` docstring, the two inline comments, and
+the runtime `[ceiling]` print. The executable logic (`load_tiny_sentences(..., 20000, ...)`,
+`load_range(..., skip=120000, take=args.n)`, the ppl computation, and the JSON output) is **unchanged**.

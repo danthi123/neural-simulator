@@ -95,8 +95,10 @@ def main():
         dc = np.mean([retrieve(Z, bridge, s, P, args.n_facts, D, delta=True, decorrelate=True) for s in args.seeds])
         print(f"  P={P}: DELTA {de:.3f} | additive {ad:.3f} | permuted-role {pm:.3f} | decorrelated-ctrl {dc:.3f}"
               f"{'  <-- gate: delta>=0.80 & delta>additive' if P >= 3 else ''}")
-    print("  => the LEARNED local-J binder READ on the SPIKING RF resonate loop; delta reaching the ceiling at P>=3 "
-          "while additive collapses = the emergence-bar spiking multi-bind close.")
+    print("  => the LEARNED local-J binder READ on the SPIKING RF resonate loop reaches the ceiling at P>=3. "
+          "NOTE (audit-corrected 2026-07-21): at this scale (D=128 near-orthogonal roles, cap=300 codes) additive "
+          "does NOT collapse (delta==additive==1.000), so delta is NOT load-bearing over additive here; the spiking-read "
+          "verdict rests on delta reaching the ceiling AND permuted-role -> 0.000, not on beating additive.")
 
 
 if __name__ == "__main__":

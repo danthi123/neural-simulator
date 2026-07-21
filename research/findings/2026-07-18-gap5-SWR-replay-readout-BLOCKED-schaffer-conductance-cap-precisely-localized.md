@@ -250,3 +250,54 @@ of the sparse+sync completion, NOT re-opening the readout. Original stale text r
   (ca3→ca1 conductance cap), and (ii) emergent-DG (needs the layer-2 amplification wired in). The completion MECHANISM
   is CLOSED (5/6 GO); extending it in either direction is non-trivial. This is the honest gap#5 map.
 - Infra: SWR_DEBUG-gated instrumentation in `_measure_ca1` + the schaffer-boost block (default-off → byte-identical).
+
+## ⛔ AUDIT CORRECTION (2026-07-21, 8-skeptic adversarial audit — a NEW sub-block; does NOT overwrite the 2026-07-19 CLOSED block or the 2026-07-21 STALE-STATUS correction above) — the "SWR readout specificity CLOSED 6/6" OVERREACHES; honest scope narrowed
+An 8-skeptic adversarial audit re-examined the "🎯🎯 CLOSED — SWR READOUT SPECIFICITY 6/6 GO + ANTI-CHEAT CLEAN
+(2026-07-19)" block above. **Verdict on this finding: PARTIAL** — the paired CA3-completion piece
+(`2026-07-18-gap5-CA3-completion-CLOSED-...`) is solid, but THIS SWR-readout piece overreaches. The 6/6 GO number and
+the load-bearing learned-Schaffer control are REAL; the *claim they support* is narrower than the headline. Nothing above
+is deleted — the arc trail stands. The corrections:
+
+1. **The one VALID load-bearing control is the no-learn dense-random Schaffer** (the CLOSED block): stack-ON ratio 10.79×
+   vs no-learn 1.02× (collapses to a near-tie every seed). That genuinely shows the *learned sparse Schaffer + E%-max
+   read* is load-bearing FOR discrimination GIVEN assembly cues. That part stands.
+
+2. **But the 6/6 GO runs on a WEAK completion — held_cue ~0.004** (stated in this finding's own "Remaining shortfall =
+   MATCH" bullet; the CLOSED block's mean match is only 0.700). At held_cue ~0.004, `_measure_ca1`
+   (`research/runners/_riii_ca3_synchronous_assembly_derisk.py:459-478`) latches a set dominated by the DIRECTLY-DRIVEN
+   cue cells (PHASE-1 adds `recall_drive` onto `cue_idx`), with the completion's regenerated held-out members a near-zero
+   contribution. Distinct cues alone → distinct latched sets → distinct CA1. Nothing in the GO block isolates the
+   *completion's* contribution from the *cue-phase-1 drive's*.
+
+3. **NO anti-cheat isolates the completion as the driver** (verified in the runner). The CA1 readout block (lines
+   398-548) contains ONLY the `swr_learn_schaffer` ON/OFF control — which lesions the SCHAFFER READOUT, not the
+   COMPLETION. There is **no completion-LESION control** (nothing turns off the bistable/recurrent completion and
+   re-measures `ca1_match`) and **no permuted-cue CA1 control** (`_measure_ca1` is only ever called with the true
+   `assy`/`cue` at lines 541-543; the `permute_recall` flag at line 558 routes a random cue ONLY into the downstream CA3
+   held-recall metric via `measure_region_response`, NOT into the CA1 readout).
+
+4. **The permuted-cue CA1 control was listed PENDING and never delivered.** This finding promised it before the CLOSED
+   block ("...+ anti-cheats (... permuted-cue → no match)", twice), but the CLOSED block reports only the 6-seed run + the
+   no-learn anti-cheat. The permuted-cue anti-cheat is absent from BOTH the GO block AND the runner code.
+
+5. **This is exactly adjacent to the cue-driven-artifact regime this same 2026-07-21 record flagged.** The sibling finding
+   `2026-07-21-gap5-swr-specificity-stack-driver-built-completion-upstream-required.md` (its CORRECTION 2) documents that
+   on a DEAD completion (held_cue=0) the readout printed `ca1_match 0.966` as a CUE-DRIVEN ARTIFACT (PHASE-1 drives the
+   cue cells directly), caught only by the held_cue verify-first guard. The CLOSED config runs at held_cue ~0.004 —
+   LIVE-but-WEAK, i.e. just above the guard yet still in the neighbourhood of that artifact. The guard proves "not dead";
+   it does NOT prove "the completion, not the cue drive, is the CA1 specificity source."
+
+**⇒ Honest scope (what this finding actually establishes):** *learned sparse Schaffer + E%-max CA1 winner-set read
+DISCRIMINATES distinct assemblies GIVEN their assembly cues, 6/6, with the learned Schaffer load-bearing (no-learn →
+1.02×).* NOT: *the SWR generative-replay completion regenerating held-out members drives specific CA1.* The completion's
+contribution to the CA1 specificity is UNDEMONSTRATED. Closing the stronger claim requires (a) a completion-LESION control
+(bistable/recurrent completion off → `ca1_match` must collapse) AND (b) the promised permuted-cue CA1 control (random cue
+→ no match), BOTH on a completion strong enough (held_cue ≫ 0.004) that the held-out members — not the phase-1 cue drive —
+carry the latched set. Until then the "SWR readout specificity CLOSED 6/6" headline should read: *the Schaffer-read
+DISCRIMINATOR is 6/6 given cues; the completion-as-driver is not isolated.*
+
+**Record hygiene (audit-noted):** both this SWR piece and the paired CA3-completion piece use PRE-ASSIGNED (not
+emergent-DG-selected) assemblies — the one genuine open emergence-bar piece (both findings already say so). The runner
+cited by the completion finding, `_gap5_ca3_bistable_6seed.py`, lives at `research/findings/raw/` (a raw GO-config
+ARTIFACT), NOT `research/runners/`; the executable runner carrying that GO_CFG is
+`research/runners/_gap4_btsp_completion_unification_6seed.py`.

@@ -41,3 +41,41 @@ the anti-cheat/result told me the framing was wrong).
   honesty here.
 
 Runner: `_gap235_unified_competitive_read_derisk.py` (`--N`, `--D`, `--corr`, `--seeds`).
+
+## ⛔ AUDIT CORRECTION (2026-07-21)
+
+An 8-skeptic adversarial audit graded this finding **PARTIAL**. The correction below is appended (the original arc
+above is preserved intact). The headline framing — "unification 6-seed GO spanning three gaps (#2/#3/#5)" — **oversells
+a bookkeeping reframe.** Specifics, with evidence:
+
+1. **No new substrate evidence.** This is a rate-level **numpy CONCEPTUAL consolidation** of three ALREADY-CLAIMED GOs
+   (gap#2 spiking binder, gap#3 resolver, gap#5 completion — each has its own 2026-07-21 finding). It adds no new
+   spiking / on-bridge / one-brain result. The "Honest scope" note already conceded "rate-level (numpy) ... the SPIKING
+   realizations are the gap-by-gap findings" — the audit's point is that the GO **verb + "spanning three gaps"** in the
+   title reads as a fresh cross-gap result when it is a re-accounting of prior de-risks.
+
+2. **#2 and #5 are trivial at a single tuned operating point.** `matched_filter` (runner line 27) is
+   `argmax(cb @ cue)` over unit-normalized codes = plain **cosine nearest-neighbor** over an **N=64** codebook. The
+   1.000 / 1.000 scores are obtained at ONE hand-set operating point — `eta=0.06` (line 60, so `||noise||≈0.68` well
+   below `||code||=1`), completion `mask=0.5` (line 83), `corr=0.6` (default) — with **no sweep** over these knobs.
+   Nearest-neighbor recovering a lightly-noised / half-masked code out of 64 is expected, not a discovery. **`g2` has
+   NO anti-cheat computed at all** (line 66 stores only the accuracy).
+
+3. **#3 is the only nontrivial result, and its strongest control is absent from THIS runner.** The biased-competition
+   0.925 vs matched-filter-only 0.621 (+0.30) is genuine and its `matched-filter-only` control IS computed here
+   (lines 76-79). BUT the **true equal-salience → chance collapse** control — the one that shows the WM read isn't just
+   riding salience structure — **lives only in the standalone gap#3 runner**, not here. So within this runner, #3's
+   load-bearing evidence is the weaker matched-filter-only comparison only.
+
+4. **Runner false-narration fixed (this file's runner, docstring only — behavior unchanged).** The original docstring
+   (lines 11-12) advertised anti-cheats `#2 permuted (wrong estimate->wrong concept)` and
+   `#3 equal-salience (~chance) + permuted-position` that `main()` **NEVER computes** — the only controls actually run
+   are **#5 no-overlap** (line 87) and **#3 matched-filter-only** (line 78; the `g3_eq` variable name is a misnomer, it
+   is matched-filter-only, as line 76's comment and the line-95 print state). The docstring was corrected to list only
+   the controls actually computed and to explicitly note the equal-salience collapse lives in the standalone gap#3
+   runner. No code path changed.
+
+**Net:** the honest claim is "**one matched-filter primitive (+ a biased-competition variant) is a convenient shared
+ACCOUNT of three separately-de-risked read-outs at one rate-level operating point**" — not a new 6-seed GO spanning
+three gaps. #2/#5 are trivial nearest-neighbor demos; #3 is the only nontrivial piece and its decisive control is
+elsewhere.
