@@ -470,9 +470,14 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
     A count model USES the extra data; the single-layer WKV does NOT → **its CAPACITY is SATURATED.** With the record's
     width-flat (d512→d1024), the plateau is robust to BOTH data AND width ⇒ **SINGLE-LAYER-CAPACITY-bound, NOT
     under-training (36ep probe overfit) NOR data-starved-that-more-wikitext-fixes.** RESOLVES the record's undisentangled
-    "capacity vs under-training" = **CAPACITY.** **PINNED NEXT DE-RISK: add DEPTH (multi-layer WKV — the arch has NO
-    layer-stacking, `n_layers` never existed) at fixed 150-850k data → does the deep NLL drop below ~4.80?** Then the
-    field's big-model+big-data scale wall for "fluent about anything". Finding
+    "capacity vs under-training" = **CAPACITY.** **DEPTH DE-RISK DONE (multi-layer WKV `--n-layers`, gate n_layers=1 →
+    4.793 ≈ 4.796 PASSED): depth is a MODEST + SATURATING lever** — L1 4.793 → L2 4.738 (+0.055, real generalization not
+    overfit) → L4 4.735 (FLAT = saturates at 2 layers). Depth lowers the plateau slightly (ppl 121→~114) but does NOT
+    reach fluency. **⇒ gap#1 INVESTIGATION COMPLETE: the broad-domain plateau is characterized on ALL THREE axes —
+    data-flat (150k→850k) + width-flat (d512→d1024) + depth-modest-saturating (L2 helps, L4 flat) → a fundamental
+    SMALL-MODEL + LIMITED-DATA limit. "Fluent about ANYTHING" = the field's big-model+big-data SCALE WALL (managed via
+    the 21M scaffold, C1 GO), NOT a mechanism/architecture gap. The substrate-native LM is GO + fluent on a matched
+    domain (TinyStories ppl 24).** Finding
     `2026-07-21-gap1-plateau-is-data-starvation-not-capacity-research-gate-plus-probe.md`. (b) gap#1 scale toward
     real fluency (bigger model/corpus, or accept the scaffold + spiking-forward-convert the 88.6M — C1 GO); (c) the
     SPIKING gap#3 phase-cluster WTA; (d) the composer wire-in of the learned binder + the fully-on-bridge STP write
