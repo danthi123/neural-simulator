@@ -1,0 +1,15 @@
+{
+  "rows": [
+    {
+      "seed": 42,
+      "on_match": 0.0,
+      "on_cross": 0.0,
+      "off_match": 0.0,
+      "off_cross": 0.0
+    }
+  ],
+  "on_match": 0.0,
+  "on_cross": 0.0,
+  "off_cross": 0.0,
+  "go": false
+}

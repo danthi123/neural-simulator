@@ -83,9 +83,12 @@ memoryless-collapse +0.498 (still uses long-range state on diverse text) → **G
   construction), NOT a regression; the two wikitext runs differ in vocab so they do NOT form a clean data-scale trend.
   The CLEAN data-scale lever is the IN-DOMAIN sweep (same vocab 4000: ppl 26.5→24.3→23.8 as data+model grow).
 - **Clean data-lever test (same vocab 8000, wikitext, 150k → 400k sentences): NLL 4.796 → 4.798 — FLAT.** More data
-  does NOT lower the broad-domain NLL at d512 → on broad-domain the WKV at d512 is **MODEL-CAPACITY-bound, not
-  data-bound** (unlike in-domain TinyStories, where data DID help: 26.5→24.3 at d256). So the broad-domain lever is
-  MODEL SIZE (a bigger d), not more data — a d1024 run confirms the model-capacity direction.
+  does NOT lower the broad-domain NLL at d512 (unlike in-domain TinyStories, where data DID help: 26.5→24.3 at d256).
+- **Model-size test (d512 → d1024, same v8000/400k/12ep): NLL 4.798 → 4.813 — ALSO FLAT.** A 4× bigger model does not
+  lower it either. ⇒ on broad-domain wikitext the WKV **PLATEAUS at ~ppl 121** at this budget — BOTH data and model
+  saturate (whether the d1024 flat is capacity or under-training at 12 epochs is not disentangled, but the plateau is
+  real at feasible local scale). LLM-fluency on diverse text needs a fundamentally larger scale/budget (100M+ params,
+  many more epochs, bigger vocab), i.e. the field's scale wall — reachable only via big-compute or the staged scaffold.
 - **The honest gap#1 boundary (sharpened):** the substrate-native WKV mechanism is GO (beats fair count baselines
   in-domain AND broad-domain, generates coherent prose, uses long-range state); in-domain it scales with data + model;
   on BROAD-DOMAIN it is MODEL-CAPACITY-bound (d512 saturates on data). LLM-fluency "about ANYTHING" from scratch needs a
