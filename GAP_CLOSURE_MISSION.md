@@ -420,10 +420,17 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
     (`_gap5_emergent_dg_selection_derisk`, 6-seed GO) as `assemblies_ext` into the CLOSED stack — the emergence-bar
     version (assembly SELECTED from experience, not a pre-assigned random mask) — + absolute-match polish. NOT
     re-opening completion or the readout.
-  - **NEXT (gap-close, no deferrals):** (a) the gap#5 SWR SPECIFICITY STACK (the ranked de-risk above, GPU — the last of
-    the unified three); (b) gap#1 scale toward real fluency (bigger model/corpus, or accept the scaffold + spiking-
-    forward-convert the 88.6M — C1 GO); (c) the SPIKING gap#3 phase-cluster WTA; (d) the composer wire-in of the learned
-    binder + the fully-on-bridge STP write (edge5). Then integrate the advanced gaps toward fuller LLM-like conversation.
+  - **NEXT (gap-close, no deferrals) — updated 2026-07-21 (gap#5 completion+readout already CLOSED):**
+    (a) **gap#5 EMERGENT-DG wiring — RUNNING via a fresh subagent** (`_gap5_emergent_into_swr_derisk`): reproduce the
+    CLOSED 6/6 SWR config FIRST (the anti-cheat MUST collapse — my quick reconstruction landed in an adjacent regime),
+    then feed the emergent-DG-selected assemblies (`assemblies_ext`, cross-bridge with a verified ca3-global-index
+    match) into it → 6-seed + anti-cheats = the emergence-bar (selected-from-experience) close; (b) gap#1 scale toward
+    real fluency (bigger model/corpus, or accept the scaffold + spiking-forward-convert the 88.6M — C1 GO); (c) the
+    SPIKING gap#3 phase-cluster WTA; (d) the composer wire-in of the learned binder + the fully-on-bridge STP write
+    (edge5). **⇒ LLM-CONVERSATION (owner's post-gap priority) is LARGELY ACHIEVED** (De-risk 0-5 north-star + single-
+    substrate + fact-store-on-device DONE); its own NEXTs are the megakernel-perf-with-store lever, multi-fact
+    synthesis (fluency scale), the WKV render-fidelity wobble, and the clauses/reconsolidation read paths under
+    persistent_store. Advance these as the gap-close polish completes.
 - **🎯 gap#4 KEYSTONE REFRAMED (2026-07-20 close-state) — deep local credit is MECHANISM-ESTABLISHED; the apparent
   "contrast blocker" was a TASK ARTIFACT.** After rungs 1-9 + 6 pre-flights + a 28-agent adversarial audit, the
   honest status of "does the substrate learn DEEP representations by a biological rule?":
