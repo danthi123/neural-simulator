@@ -37,6 +37,21 @@ A (read-out only) and B (RF only):
 
 CI: `tests/test_onebridge_coresidence.py` (3 tests, GPU-only, skips on numpy).
 
+## Second de-risk — the WKV's OWN RF spike-encoder moves onto the shared bridge byte-identically
+
+The WKV faculty currently uses TWO bridges: `self.b` (the ssm-state read-out) + `self._rfb` (its RF spike-encoder,
+which runs `_run_one_simulation_step` with `neuron_model=RESONATE_AND_FIRE`). On a MERGED bridge the encoder CANNOT
+use `_run_one_simulation_step` (it would run the ssm block and corrupt the WKV state), so it must use the masked
+`rf_resonate_steps` loop. Verified they are equivalent:
+
+- **`rf_resonate_steps(k)` phases == `k`×`_run_one_simulation_step` phases: `max|err| = 0.000e+00` (BYTE-IDENTICAL).**
+  The RF branch of `_run_one_simulation_step` (`bridge.py:6957`) calls the SAME `_rf_advance_one()` that
+  `rf_resonate_steps` loops (`:5859`); the encoder is independent oscillators (`connections_per_neuron=0`, no RF
+  synapses) with all plasticity off + zeroed external input, so the extra step machinery is inert for `v`/`u`.
+
+⇒ the WKV's encoder can run as a masked `rf_resonate_steps` slice on the shared ssm bridge with zero output change.
+Combined with the crux above, BOTH co-residence risks for the WKV-onto-one-bridge merge are byte-clean.
+
 ## Read-out — honest scope
 
 - **⇒ the WKV cortex's read-out state and the composer's RF phasor CO-RESIDE on ONE bridge byte-clean** — the crux of
