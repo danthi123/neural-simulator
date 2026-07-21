@@ -161,6 +161,27 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
+- **🟢 LIVE (2026-07-21 evening) — TWO fronts in parallel (owner green-lit full autonomy on the training run):**
+  1. **LM-TRAINING WORKFLOW → real scaling run (the gap#1 SCALE lever + owner's explicit "train as long as I want
+     incrementally" request).** The autonomous incremental train→ckpt→benchmark→resume workflow is BUILT + de-risked +
+     **VALIDATED end-to-end on REAL FineWeb-Edu data** (83.2M WKV d1024/L16, `val_ppl` 440→283→235 monotone over 3
+     increments, coherent English samples at 7.4M tokens, by-depth NLL improves with context depth, ~68K tok/s via
+     chunked-scan+compile+bf16; resume bit-exact, cursor exact, ~30× optimized). run1=100M pipeline-validation DONE;
+     run2=1.5B FineWeb-Edu slice tokenizing now (the decisive go/no-go corpus, ~18 tok/param ≈ Chinchilla). **NEXT:
+     launch the 83M open-ended run on run2** (checkpoint+benchmark+sample each increment, PAUSE sentinel, armed Monitor)
+     → watch whether broad-domain `val_ppl` collapses from ~235 toward 20-40 (the go/no-go on "converse like a small LLM
+     is a training run away"); a bigger production corpus follows the go/no-go. Files
+     `research/runners/lm_{train_lib,train_run,fineweb_setup}.py`; design+de-risk `docs/plans/2026-07-21-autonomous-
+     incremental-LM-training-workflow-design.md`; finding `2026-07-21-LM-train-pipeline-VALIDATED-on-real-fineweb-edu.md`.
+     Fluid-abstain (confidence-conditioned generation, replaces the hard moat) = a parallel MODERATE build, not started.
+  2. **gap#5 last piece (avalanche-stable two-assembly co-storage) — Kim-Kim selective-inhibition de-risk IN FLIGHT.**
+     Research gate (Kim-Kim et al. 2025 *Selective inhibition in CA3*, read in depth) found the exact fix — assembly-
+     selective inhibition (spare-own/inhibit-other, condition-4 counteracts size-bias) — is ALREADY implemented+wired as
+     `--per-assembly-inhib` but the boundary finding only ran `--isolate`. Running `_gap5_r4_emergent_btsp_store --swr
+     --isolate --per-assembly-inhib --pa-inhib-w 40 --seeds 42..102` (6-seed, GPU). GO gate: both assemblies complete +
+     CA3 latch clean [~half A, ~0 B] + `ca1_match≥0.6`/`cross≤0.3`/≥3× on ≥5/6 + `--isolate`-alone reproduces the 4/6
+     BOUNDARY (inhibition load-bearing). If marginal → stack `homeostatic` size-normalization (Option B) or dendrite-
+     targeting (apical SOM) inhibition. Research-gate output this cycle; NO `sim/` edit (runs existing wired code).
 - **⚠️ gap#1 — CORRECTED 2026-07-21 (adversarial audit, verdict OVERCLAIMED): NOT "COMPLETE," and the recurrence is NOT spiking.**
   The audit (a-1 RAG + code-read) found: (a) the recurrent language computation is a **GRADED, NON-SPIKING SSM leaky
   integrator** — `bridge.py:6017` `cp_ssm_state = lam*cp_ssm_state + (1-lam)*cp_ssm_inject` is host elementwise
