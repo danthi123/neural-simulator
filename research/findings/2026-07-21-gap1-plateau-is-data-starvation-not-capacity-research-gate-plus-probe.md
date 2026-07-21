@@ -51,6 +51,21 @@ count, so ONLY data changes; ~16× the 60k probe, ~2.5-6× the 150-400k baseline
 - **If FLAT → the SINGLE-LAYER architecture is the co-limit** → depth (multi-layer, currently absent) is the next lever
   (a code change), with the gate's caution that attention buys little.
 
+## The DATA CEILING (measured this cycle) — reframes the whole path
+Counted wikitext103's usable sentences at the runner's len-3-16 filter: **~1.65M sentences ≈ 17.1M tokens = ~1.7
+tok/param** for the 9.8M d512 model. ⇒ **even training on the ENTIRE corpus stays ~12-120× below the 20-200 tok/param
+the gate says broad-domain fluency needs** — wikitext103 alone CANNOT reach "fluent about anything" at this model size,
+regardless of the 1M run's outcome (the 1M run tests whether *more within-corpus data* helps at all — a direction
+check, not a fluency run). Two compounding facts: (a) the corpus is small; (b) the **len≤16 filter discards most tokens**
+(typical wikitext sentences exceed 16 words → dropped/split), so the effective corpus is a fraction of the 540MB.
+**⇒ the local levers, sharpened:** (1) **relax the length filter** (max_len 16→48) + **add corpora** (FineWeb-Edu/DCLM
+per the gate) to reach ~5-10 tok/param (helps, still short of fluency); (2) **NARROW the distribution to the model's
+capacity** — the gate's TinyStories insight, and the project's OWN in-domain result (d512 TinyStories → ppl ~24,
+coherent prose) IS the small model being FLUENT on a matched distribution; "fluent about ANYTHING" is the one that
+needs big-model+big-data (the field's scale wall, managed via the 21M scaffold — C1 GO). ⇒ the honest gap#1 map: the
+substrate-native LM is FLUENT on a domain matched to its size (TinyStories), data-STARVED on broad-domain (wikitext
+1.7 tok/param), and broad-domain fluency is a compute/data-scale arc, NOT a mechanism wall.
+
 ## Honest status
 gap#1's substrate-native mechanism WORKS + generalizes (beats fair count baselines at depth, in- and broad-domain);
 open-fluent generation "about anything" is bottlenecked, and this cycle DISENTANGLES the bottleneck: **data-starvation
