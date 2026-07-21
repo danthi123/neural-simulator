@@ -377,11 +377,27 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
     separate-block store works); the WRITE is a host-computed local outer-product (fully-on-bridge STP = edge5
     follow-on). `_gap2_binder_resonator_ceiling.py`, `_gap2_spiking_deltarule_binder_derisk.py`. Finding
     `2026-07-21-gap2-spiking-learned-binder-6seed-GO-emergence-bar-close.md`.
-  - **NEXT (gap-close, no deferrals):** gap#3 multi-referent disambiguation = the gate's Rank-4, RIDES on the same RF
-    phase-cluster read (biased-competition WTA, Desimone-Duncan) over correlated referent attractors, vs the two prior
-    NEGATIVEs (recency, salience-boost); ONE VARIABLE lateral-inhibition ON/OFF, 6-seed. Then: gap#1 scale to a bigger
-    model/corpus toward real fluency; the fully-on-bridge STP write of the gap#2 binder (edge5); the composer wire-in
-    of the learned binder (retire the fixed FHRR).
+  - **gap#3 (multi-referent disambiguation) — 6-seed GO.** Biased-competition (Desimone-Duncan lateral inhibition)
+    resolves the salient referent among CORRELATED referents, where the two prior NEGATIVEs (recency, salience-boost)
+    failed: read-max 0.60→0.41 as N grows 4→8 / corr 0.6→0.9; biased-competition holds 0.92-0.95 (advantage GROWS with
+    correlation + N), permuted-position tracks salience not position, equal-salience → chance. Rate rung; spiking
+    phase-cluster WTA = follow-on. `_gap3_biased_competition_multiref_derisk.py`. Finding
+    `2026-07-21-gap3-biased-competition-multireferent-6seed-GO.md`.
+  - **gap#1 BROAD-DOMAIN GO:** the WKV cortex learns wikitext103 ("anything" text) — beats a fair trigram +0.791 at
+    depth, anti-cheats clean; the mechanism GENERALIZES beyond TinyStories (ppl 121, far from fluent — "about anything"
+    FLUENCY is a scale arc, the field's wall, but a lever). A bigger wikitext run is characterizing the scale trend.
+  - **gaps #2/#3/#5 UNIFICATION — 6-seed GO:** ONE read-out FAMILY spans them — the matched filter is SHARED for binder
+    cleanup (#2, 1.000) + pattern completion (#5, 1.000), biased-competition is the multi-referent (#3, 0.925 vs
+    matched-filter-only 0.621) VARIANT; all correlated codes (the read WANTS overlap, killing the decorrelation demand).
+    Silent-failure catch: a literal "one function" first pass was chance (6.8× noise bug + over-suppression at large N)
+    → corrected to the honest family. `_gap235_unified_competitive_read_derisk.py`. Finding
+    `2026-07-21-gap235-unified-competitive-readout-family-6seed-GO.md`.
+  - **⇒ this cycle advanced gaps #1 (scale-progressing, in-domain + broad-domain), #2 (spiking learned binder), #3
+    (biased-competition), + the #2/#3/#5 unification — all 6-seed / anti-cheated / committed both remotes.**
+  - **NEXT (gap-close, no deferrals):** (a) gap#1 scale toward real fluency (bigger model/corpus — the wikitext scale
+    run + beyond; the biggest lever toward LLM-like conversation); (b) the SPIKING gap#3 phase-cluster WTA + gap#5 CA3
+    completion magnitude (~0.02, GPU); (c) the composer wire-in of the learned binder (retire the fixed FHRR); (d) the
+    fully-on-bridge STP write (edge5). Then integrate toward LLM-like conversation.
 - **🎯 gap#4 KEYSTONE REFRAMED (2026-07-20 close-state) — deep local credit is MECHANISM-ESTABLISHED; the apparent
   "contrast blocker" was a TASK ARTIFACT.** After rungs 1-9 + 6 pre-flights + a 28-agent adversarial audit, the
   honest status of "does the substrate learn DEEP representations by a biological rule?":
