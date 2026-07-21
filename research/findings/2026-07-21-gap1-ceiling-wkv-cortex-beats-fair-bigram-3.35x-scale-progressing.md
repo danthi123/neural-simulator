@@ -66,3 +66,18 @@ not a mechanism wall.
 Runner: `research/runners/_gap1_wkv_vs_bigram_ceiling.py` (`--ckpt`, `--n`). Result: `research/findings/raw/_gap1_ceiling.json`.
 Corroboration: `_emerge_wkv_lm_derisk.py` d256@100k beats a fair TRIGRAM +0.811 nats at depth 10-99, perm-collapse
 +4.404, memoryless-collapse +1.266 (the WKV genuinely uses long-range state) → GO with anti-cheats.
+
+## Broad-domain — the WKV learns "ANYTHING" text (wikitext103), not just TinyStories
+
+The direct test of "LLM-like about ANYTHING": a WKV (V=8000, d512, 150k sentences) trained on **wikitext103** (real-world
+encyclopedic prose, the hard broad-domain corpus). DEEP (10-99 tokens): WKV NLL **4.796** (ppl 121) vs a fair trigram
+5.587 (ppl 267) vs bigram 6.454 — **WKV beats the fair trigram +0.791 nats at depth**, perm-collapse +2.075,
+memoryless-collapse +0.498 (still uses long-range state on diverse text) → **GO with anti-cheats.**
+
+- **⇒ the substrate-native mechanism GENERALIZES to broad-domain "anything" text** — it is not a TinyStories-specific
+  artifact; it learns real encyclopedic structure and beats the count baselines at depth.
+- **Honest:** the absolute ppl (121) is FAR from fluent (fluent wikitext is ~30-50) — wikitext103 is genuinely hard
+  (huge vocab, diverse topics), and this is a small model / short budget. So "about anything" FLUENCY is a real
+  SCALE arc (bigger model + much more data/epochs), the field's wall — but it is a lever to turn (a bigger-budget
+  wikitext run is characterizing the ppl trend), NOT a mechanism wall. The mechanism works on "anything"; the
+  fluency is scale-gated.
