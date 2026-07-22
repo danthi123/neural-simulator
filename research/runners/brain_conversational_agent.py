@@ -510,7 +510,12 @@ class BrainConversationalAgent:
             "query_nested needs BrainConversationalAgent(enable_embedded_clause=True)"
         if getattr(self, "_embedded_redundant", None) is not None:
             return self._embedded_redundant.query_patient(agent, action)
-        return self.composer.query_patient(agent, action)
+        # the slot-binder stores an embedded clause by INDIRECTION (the matrix patient slot holds a CLAUSE_j pointer,
+        # not the clause), so its query_patient returns the pointer label; query_clause FOLLOWS the pointer to the
+        # inner (a,v,p). The FHRR/rf path has no query_clause -> falls through to query_patient (returns a Clause),
+        # so this is byte-identical for rf/onebrain. (gap#2 FHRR-retirement agent wire-in, 2026-07-22.)
+        comp = self.composer
+        return comp.query_clause(agent, action) if hasattr(comp, "query_clause") else comp.query_patient(agent, action)
 
     def _ensure_attr_parser(self):
         """Lazily build + train the `AttributedBridgeParser` (BRAIN-LOAD SPEEDUP: deferred so a loaded Q&A-only brain
