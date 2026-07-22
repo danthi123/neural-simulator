@@ -42,23 +42,37 @@ NOATTR = "__NOATTR__"                 # the "no adjective" filler -> query_attri
 _ROLES = 5   # agent, verb, patient, polarity, attribute (attribute defaults to NOATTR for an un-attributed fact)
 
 
+def _CLAUSE_LABEL(j):
+    """The dedicated pointer/indirection filler-pool label for fact-group `j` (a POINTER, not a copy: the matrix
+    patient slot binds this pool; `query_clause` reads it back and FOLLOWS it to group `j`'s own slots). Appended as
+    extra filler pools exactly like the AFFIRM/NEGATE/NOATTR internal fillers. Depth-1 embedded clauses only."""
+    return f"__CLAUSE{j}__"
+
+
 class SlotBinderComposer:
     def __init__(self, seed=42, vocab=None, D=128, max_facts=16, concepts=None, grounded_codes=None,
-                 gain=400.0, teach_steps=40, retr_steps=40, **_ignored):
+                 gain=400.0, teach_steps=40, retr_steps=40, max_clauses=None, **_ignored):
         self.seed = int(seed)
         self.D = int(D)                        # API compat (unused: this composer binds pools, not D-dim codes)
         base = list(vocab) if vocab is not None else (list(concepts.keys()) if concepts else list(_DEFAULT_VOCAB))
-        # the two polarity pools are appended as extra filler pools
         self.words = base
-        self._vocab = base + [AFFIRM, NEGATE, NOATTR]
+        self.max_facts = int(max_facts)
+        # one pointer pool per possible fact-group (CLAUSE_j <-> group j, bijective; the pointer literally names the
+        # group index, so no host address table is load-bearing -- the pointer identity IS the address). A scale
+        # lever (like max_facts), not a wall.
+        self.max_clauses = int(max_facts if max_clauses is None else max_clauses)
+        self._clause_labels = [_CLAUSE_LABEL(j) for j in range(self.max_clauses)]
+        # polarity + noattr + the pointer pools are all appended as extra filler pools
+        self._vocab = base + [AFFIRM, NEGATE, NOATTR] + self._clause_labels
         self._w2i = {w: i for i, w in enumerate(self._vocab)}
         self._pol = {"AFFIRM": self._w2i[AFFIRM], "NEGATE": self._w2i[NEGATE]}
         self._noattr = self._w2i[NOATTR]
-        self.max_facts = int(max_facts)
+        self._clause_filler = {j: self._w2i[lab] for j, lab in enumerate(self._clause_labels)}   # group -> filler idx
+        self._clause_label_to_group = {lab: j for j, lab in enumerate(self._clause_labels)}       # label -> group
         self.gain, self.teach_steps, self.retr_steps = gain, teach_steps, retr_steps
         self.parser = None                     # no on-bridge parser -> the agent uses its own
         self.concepts = {w: i for i, w in enumerate(self.words)}
-        self.facts = []                        # list of dicts: {agent, action, patient, polarity}
+        self.facts = []                        # list of dicts: {agent, action, patient, polarity[, ptr_group]}
         self._b = None                         # bridge built lazily on first store
 
     # ---- lazy bridge + primitives -------------------------------------------------------------------
@@ -125,7 +139,62 @@ class SlotBinderComposer:
         adjs = list(adjs) if isinstance(adjs, (tuple, list)) else [adjs]
         return noun, (adjs[0] if adjs else None)
 
+    @staticmethod
+    def _as_clause(patient):
+        """A depth-1 embedded-clause patient -> its (agent, action, patient) triple; anything else -> None.
+        Accepts a `Clause` namedtuple, a {'agent','action','patient'} dict, or a plain 3-tuple of strings. A 2-tuple
+        `(adjs, noun)` is an ATTRIBUTE (handled by `_resolve_patient`), not a clause; a bare string is a flat noun."""
+        if hasattr(patient, "agent") and hasattr(patient, "action") and hasattr(patient, "patient"):
+            return (patient.agent, patient.action, patient.patient)          # Clause namedtuple
+        if isinstance(patient, dict) and {"agent", "action", "patient"} <= set(patient):
+            return (patient["agent"], patient["action"], patient["patient"])  # dict
+        if (isinstance(patient, tuple) and not hasattr(patient, "_fields")
+                and len(patient) == 3 and all(isinstance(x, str) for x in patient)):
+            return tuple(patient)                                            # plain 3-tuple (a,v,p)
+        return None
+
+    def _store_matrix_with_pointer(self, agent, action, ptr_group, polarity=None):
+        """Store a MATRIX fact whose patient slot binds the POINTER pool `CLAUSE_{ptr_group}` (indirection: the
+        patient is a reference to fact-group `ptr_group`, NOT a copy of its content). `ptr_group` may name a group
+        that is not (yet) stored -- `query_clause` then abstains (the dangling-pointer moat). Returns True/False."""
+        if not (agent in self._w2i and action in self._w2i and 0 <= ptr_group < self.max_clauses):
+            return False
+        self._ensure()
+        i = len(self.facts)
+        if i >= self.max_facts:
+            raise RuntimeError(f"SlotBinderComposer capacity {self.max_facts} facts reached (raise max_facts)")
+        pol = "NEGATE" if polarity in ("NEGATE", "neg", False) else "AFFIRM"
+        self._store_pair(_ROLES * i + 0, self._w2i[agent])
+        self._store_pair(_ROLES * i + 1, self._w2i[action])
+        self._store_pair(_ROLES * i + 2, self._clause_filler[ptr_group])     # the pointer pool in the patient slot
+        self._store_pair(_ROLES * i + 3, self._pol[pol])
+        self._store_pair(_ROLES * i + 4, self._noattr)
+        self.facts.append({"agent": agent, "action": action, "patient": _CLAUSE_LABEL(ptr_group),
+                           "polarity": pol, "attribute": None, "ptr_group": int(ptr_group)})
+        return True
+
+    def _store_clause_fact(self, agent, action, clause, polarity=None):
+        """Depth-1 recursion by INDIRECTION (point, don't copy): (1) store the inner clause `(ca,cv,cp)` as its OWN
+        flat fact at group `j` (the existing 6-seed-GO flat mechanism, its own near-orthogonal slots); (2) store the
+        matrix fact `(agent, action, PTR=CLAUSE_j)`. Read = `query_clause` scans the matrix -> reads the pointer ->
+        follows it to group `j`. No clause-level superposition (the gap-#2 win is preserved one level down)."""
+        ca, cv, cp = clause
+        if not all(w in self._w2i for w in (agent, action, ca, cv, cp)):
+            return False
+        self._ensure()
+        j = len(self.facts)                              # the inner clause's group index (== its pointer id)
+        if j >= self.max_clauses:
+            raise RuntimeError(f"SlotBinderComposer only has {self.max_clauses} pointer pools (raise max_clauses)")
+        if self.store(ca, cv, cp) is not True:           # inner clause as a flat fact -> group j
+            return False
+        return self._store_matrix_with_pointer(agent, action, j, polarity=polarity)
+
     def store(self, agent, action, patient, polarity=None, attribute=None):
+        # A depth-1 embedded-clause patient (Clause / dict / 3-tuple) routes through pointer/indirection; flat SVO +
+        # SINGLE attribute keep the byte-identical path below.
+        clause = self._as_clause(patient)
+        if clause is not None:
+            return self._store_clause_fact(agent, action, clause, polarity=polarity)
         # flat SVO + SINGLE attribute. The attribute may be passed via `attribute=` OR inline as a `(adjs, noun)`
         # tuple patient (split here); a bare-string patient keeps the flat path (attribute defaults to NOATTR).
         noun, tuple_attr = self._resolve_patient(patient)
@@ -189,13 +258,35 @@ class SlotBinderComposer:
         w = self._read_word(i, 4)
         return None if w == NOATTR else w
 
+    def query_clause(self, agent, action):
+        """FOLLOW an embedded-clause pointer: scan-match the matrix fact `(agent, action, PTR)`, read its patient
+        slot back to the pointer `CLAUSE_j`, then read group `j`'s (agent, action, patient) with the SAME scan and
+        return that inner triple. Returns None when: no matrix matches (moat); the matched fact's patient is a plain
+        noun (a flat fact, not a clause); or the pointer names no stored group (a dangling pointer -- the moat).
+        Depth-1 only (the inner patient is a plain noun; no depth-2 recursion is attempted)."""
+        i = self._match(cue_a=agent, cue_v=action)
+        if i is None:
+            return None                                         # no matrix fact -> abstain (moat)
+        ptr_word = self._read_word(i, 2)                        # the patient slot reads back the pointer pool
+        j = self._clause_label_to_group.get(ptr_word)
+        if j is None:
+            return None                                         # flat patient (not a pointer) -> not a clause fact
+        if j < 0 or j >= len(self.facts):
+            return None                                         # pointer names no stored group -> abstain (moat)
+        return (self._read_word(j, 0), self._read_word(j, 1), self._read_word(j, 2))
+
     def render_fact(self, agent, order_fn=None):
         i = self._match(cue_a=agent)
         if i is None:
             return None
         attr = self._read_word(i, 4)
         patient = self._read_word(i, 2)
-        patient_str = f"{attr} {patient}" if attr != NOATTR else patient   # 'big apple' when attributed
+        j = self._clause_label_to_group.get(patient)            # a clause pointer? expand it inline
+        if j is not None and 0 <= j < len(self.facts):
+            inner = f"( {self._read_word(j, 0)} {self._read_word(j, 1)} {self._read_word(j, 2)} )"
+            patient_str = inner
+        else:
+            patient_str = f"{attr} {patient}" if attr != NOATTR else patient   # 'big apple' when attributed
         words = [self._read_word(i, 0), self._read_word(i, 1), patient_str]
         order = order_fn(3) if order_fn is not None else [0, 1, 2]
         return " ".join(words[o] for o in order)
