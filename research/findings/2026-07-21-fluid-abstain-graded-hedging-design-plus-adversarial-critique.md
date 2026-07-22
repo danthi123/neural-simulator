@@ -82,3 +82,34 @@ The critique's option (A) is validated (3-seed, numpy/CPU, `scratchpad/s_calib.p
 - ⇒ **grounded single-fact fluid graded hedging is BUILDABLE** (bands over S on the gate-first seam, moat retained,
   calibrated per op-point). The design's architecture stands; S replaces the bimodal N as the signal. Open-domain hedging
   remains scale-bound (the trained LM's confidence — tracks the training axis #1).
+
+## ✅✅ BUILT + VERIFIED GO (2026-07-21) — fluid graded hedging over S, moat provably intact (owner priority #3 DELIVERED)
+`research/runners/_fluidconv_graded_hedging.py` (additive, NO `sim/` edit, CPU/numpy): `HedgingFluidChat(FluidChat)` with a
+default-off `enable_hedging` flag replaces the hard binary abstain with a graded ladder over the composer cleanup-score S,
+on the SAME gate-first seam. S surfaced via `composer.trace` → `last_trace` patient-chip confidence; `HedgeCalibrator.fit`
+sets S→band thresholds PER OPERATING POINT (asserts everything at the un-stressed high-D point where accuracy≈100%; a
+populated ladder when stressed). Bands: L0 assertive / L1 "I think {fact}" / L2 "I'm not certain, but {fact}" / L3 graceful
+soft-abstain "I'm not sure, but it might be {p}" (surfaces the grounded candidate, no confab) / MOAT unchanged hard
+"I don't know" for genuine unknowns (`what_does`→None).
+- **Anti-cheats — VERIFIED BY ME (not trusting the subagent), 3 seeds:** MOAT not weakened (abstain_leak=0, gate-first
+  invariant True, 0 demoted-to-answer, byte-identical on unknowns) · enable_hedging-OFF byte-identical (`_answer` + full
+  `turn()`) · hedge-rate monotone in S (Spearman −0.83 to −0.95, pooled 0.865) · permuted-map collapses (true −0.61 vs
+  permuted −0.005; pooled −0.477 vs −0.003) · graceful soft-abstain (matched-flat-IDK rate 0) · no extra confident-wrong
+  (pooled L0/L1 wrong 0.145 ≤ baseline 0.231) · deployment moat @ D=256 clean (0 false-accepts).
+- **The MOAT is gate-first by construction** (S read only AFTER `query_patient` decides answer-vs-abstain) → hedging adds
+  0 false-accepts, never converts an abstain to an answer. The load-bearing no-confab guarantee is preserved.
+- Demo (stressed op-point): wrong answers are DEMOTED to L2/L3 soft-abstain (S=0.318 → "I'm not sure, but it might be…")
+  instead of confidently asserted; correct high-S answers stay assertive; genuine unknowns → hard "I don't know".
+- **Honest limits:** (1) the ~21M FT ANN checkpoint is absent on this Linux box → the render TEXT was verified with a
+  deterministic stub faculty (the hedge-wrap/moat/byte-identity don't depend on the generator; re-verify on a box with the
+  ckpt); (2) GROUNDED single-fact hedging only — open-domain hedging remains scale-bound (the trained LM's confidence).
+- ⇒ **owner priority #3 (do away with the hard abstain moat → fluid natural hedging) DELIVERED** for grounded facts, moat
+  provably intact. Run: `SIM_BACKEND=numpy python -m research.runners._fluidconv_graded_hedging --anti-cheats|--demo`.
+
+## Session-deliverables adversarial verification (2026-07-21) — all 5 load-bearing claims CONFIRMED
+A 6-agent verify Workflow (GPU-free): (1) LM go/no-go val genuinely DISJOINT from train (on-disk perfect-partition proof,
+no seam-dup, MinHash-deduped) → the 235→59 val_ppl drop is real learning; (2) gap#5 completion anti-cheats genuine
+(no-encode matched control collapses cue to 0) — CAVEAT it's 3-seed (→ 6-seed confirmation run launched); (3) fluid-abstain
+S AUC~0.86 reproduces, non-circular labels; (4) chunked-scan gate caught 3 injected math bugs + an independent fp64
+reference (~30× bundles bf16+batch+chunk+compile; isolated chunk win ~6.3×); (5) resume bit-exact restores model+opt+sched+
+cursor+RNG. ⇒ the session's deliverables are SOUND.
