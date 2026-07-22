@@ -150,3 +150,28 @@ no-coupling), 3-seed:
 - **⇒ gap#5 episodic-memory CAPABILITY largely MET:** single-assembly emergent select→store→complete chain GO +
   two-assembly COMPLETION resolved. The two-assembly INDEPENDENT-ADDRESSING is the characterized geometry-sensitive
   residual with the principled next direction named. NO `sim/` edit anywhere (all additive default-off driver flags).
+
+## 6-SEED CONFIRMATION (2026-07-21, closing the verifier's 3-seed caveat) — completion RESOLVED holds; independent-addressing is genuinely 1/6
+`--isolate --structural-sep 2 --ca3-density 0.35`, seeds 42/43/44/100/101/102 (`dens035_isolate_sep2_6seed.log`):
+| seed | sizes | cue (completion) | ca1_cross | completion |
+|---|---|---|---|---|
+| 42 | [37,22] | 0.238 | **0.00** | GO |
+| 43 | [35,31] | 0.167 | 0.68 | GO |
+| 44 | [46,18] | 0.215 | 0.53 | GO |
+| 100 | [46,22] | 0.156 | 0.52 | GO |
+| 101 | [29,36] | 0.110 | 0.61 | (miss, 0.110<0.13) |
+| 102 | [57,31] | 0.221 | 0.49 | GO |
+- **COMPLETION-MECHANISM-GO 5/6** (cue ≥0.13 on 5/6; only seed 101 marginal at 0.110) — **the weak-completion binding-blocker
+  resolution HOLDS at 6-seed** (the "mechanism-6/6, magnitude-marginal" profile the reference BTSP completion also shows).
+  ⇒ the reframe (high within-density resolves completion) is confirmed at the standing 6-seed rule. The verifier's caveat
+  (3-seed → 6-seed) is closed: completion is genuinely resolved.
+- **INDEPENDENT-ADDRESSING (cross ≤0.2): 1/6 clean** (only seed 42; the rest 0.49-0.68) — the 3-seed 2/3 was OPTIMISTIC; the
+  honest 6-seed rate is **1/6**. This CONFIRMS the "geometry-sensitive residual" characterization at full rigor: co-storing
+  two size-variable emergent assemblies as independently-addressable attractors on the dense-recurrent point-neuron
+  substrate is genuinely HARD (the cross depends on the seed-dependent basin geometry; no config robustly separates them).
+- **⇒ HONEST FINAL (6-seed): the two-assembly COMPLETION is resolved (5/6); the two-assembly INDEPENDENT-ADDRESSING is a
+  characterized hard residual (1/6) — the sparse-separated-vs-strong-completion tension, principled next = the DG's
+  sparse-completable architecture (equal-k symmetric selection + strong within-density + zeroed between-basin coupling), a
+  deeper architectural piece.** gap#5 episodic-memory CAPABILITY: single-assembly select→store→complete GO + two-assembly
+  completion resolved; independent-addressing the honest open residual. NO `sim/` edit. Per THE LAW: a characterized deep
+  residual with the next mechanism named, NOT a wall.
