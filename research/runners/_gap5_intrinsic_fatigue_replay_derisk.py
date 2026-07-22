@@ -111,11 +111,17 @@ def one_seed(seed, cfg, a):
     # INTRINSIC: de-latch + cranked adaptation (the recommended mechanism)
     Fi = _rest_with_fatigue(prep, noise, a.rest_steps, seed, adapt=True, self_regen_read=a.self_regen_read,
                             d_abs=a.d_abs, a_abs=a.a_abs, verbose=True)
+    i = _fwd(Fi, al, det)
+    if a.intrinsic_only:                              # search: ONE arm (does intrinsic fatigue reactivate + order at this self_regen/d/a?)
+        go = (i[0] >= 0.50) and (i[2] >= 2)
+        print(f"  [seed {seed}][1ARM] INTRINSIC fwd={i[0]:.3f} rev={i[1]:.3f} (ev={i[4]} multi={i[2]} act={i[3]} pop={i[5]:.4f}) "
+              f"=> {'reactivates+orders' if go else 'no'}")
+        return dict(seed=seed, intrinsic=dict(fwd=i[0], rev=i[1], n_multi=i[2], act=i[3], pop=i[5]), go=bool(go))
     # ADAPTATION-LESION (de-latch, adaptation OFF) = Ecker's ExpIF control -> MUST co-ignite (adaptation is load-bearing)
     prep_l = _prepare_sequence(seed, cfg)
     Fl = _rest_with_fatigue(prep_l, noise, a.rest_steps, seed, adapt=False, self_regen_read=a.self_regen_read,
                             d_abs=a.d_abs, a_abs=a.a_abs)
-    i = _fwd(Fi, al, det); les = _fwd(Fl, al, det)
+    les = _fwd(Fl, al, det)
     if a.quick:                                       # calibration: only the load-bearing INTRINSIC vs ADAPT-LESION pair
         go = (i[0] >= 0.50) and (i[2] >= 2) and (les[0] < i[0] - 0.15)
         print(f"  [seed {seed}][QUICK] INTRINSIC fwd={i[0]:.3f} rev={i[1]:.3f} (ev={i[4]} multi={i[2]} act={i[3]} pop={i[5]:.4f}) | "
@@ -160,6 +166,7 @@ def main():
     ap.add_argument("--active-frac", type=float, default=0.12)
     ap.add_argument("--onset-frac", type=float, default=0.08)
     ap.add_argument("--quick", action="store_true", help="calibration: run only the load-bearing INTRINSIC vs ADAPT-LESION pair (2 arms, ~2x faster) -- skip LATCH-ON + NO-NOISE")
+    ap.add_argument("--intrinsic-only", action="store_true", help="SEARCH: run ONLY the INTRINSIC arm (1 encode+rest) to find the self_regen/d/a regime where the assembly reactivates + orders (fastest)")
     ap.add_argument("--out", default="research/findings/raw/gap5_r4/intrinsic_fatigue.json")
     a = ap.parse_args()
     cfg = dict(SEQ_CFG)
