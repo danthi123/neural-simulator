@@ -41,3 +41,15 @@ The "gap#4 clean-negative / deprioritized parallel frontier" framing rested enti
 task-specific. The keystone is more OPEN and more TRACTABLE than stated: the rule builds deep accuracy; the work is the
 spiking port + (possibly) learned feedback where depth-degradation actually bites. NO `sim/` edit; multi-seed; the
 reservoir/oracle controls are the load-bearing comparison. `research/findings/raw/gap4/mnist_depth{2_3seed,4_seed42}.log`.
+
+## Depth-6 extension (2026-07-22) — the biological rule is MORE robust than backprop at extreme depth
+Depth-6 (784->128x6->10, seed 42, 20 epochs): RESERVOIR=0.113, **FA=0.904, KP=0.909, ORACLE=0.108**. The backprop
+ORACLE **collapsed to chance** (0.108) — the classic deep-sigmoid vanishing-gradient failure — while feedback-alignment
+(FA/DFA) stayed robust at 0.90+. This is a genuine, known strength: DFA projects the output error DIRECTLY to each
+hidden layer, bypassing the deep multiplicative chain that vanishes under exact backprop, so the biological credit rule
+survives depths where backprop dies. Combined with depth-2/4: **FA beats the reservoir at every depth (2/4/6) AND beats
+backprop at extreme depth.** KP (learned feedback) is marginally above FA at depth-6 (0.909 vs 0.904) — a small edge,
+not decisive; the learned-feedback fix helps a little but the fixed-random rule is already robust. (Caveat: the ORACLE
+collapse is a deep-sigmoid artifact, so "FA > oracle" is depth-specific, not a universal claim; the load-bearing result
+remains FA >> reservoir at all depths.) ⇒ reinforces the reframe: the credit RULE is sound and robust in RATE; the open
+gap#4 piece is the spiking sparse-code, not the rule or the dendrite.
