@@ -135,3 +135,13 @@ tokenizing 6B FineWeb-Edu superset) targets a genuinely FLUENT 83M — SmolLM-sc
   --chunk-steps 1000 --max-increments 3000`. Then arm a coarse Monitor + the owner drives via `status`/`PAUSE`/resume.
 - Incremental "train as long as I want": resume continues within the run; to extend PAST 4 epochs, tokenize a bigger
   corpus (chunked-tokenize enhancement for >RAM sizes) or the WSD schedule (indefinite stable-LR) — the follow-on levers.
+
+## 7. CHAT INTERFACE (the owner's "talk to the brain like an LLM" — DELIVERED)
+`research/runners/lm_chat.py` — loads a trained run's frozen config + tokenizer + best (or latest) checkpoint weights and
+runs an interactive prompt→generate loop (or a one-shot `--prompt`). No retrain, read-only on the checkpoint; reuses the
+`lm_train_lib` `generate`/`build_model`/`_load_tokenizer` APIs.
+  `python -m research.runners.lm_chat --root bridges/lmtrain/run2 --device cuda`            # interactive
+  `python -m research.runners.lm_chat --root bridges/lmtrain/run3 --prompt "..." --gen-tokens 80`
+VERIFIED on run2 @ step 76000 (val_ppl ~55): coherent grounded English from an arbitrary prompt ("The best way to learn a
+new subject is to explore your own language by a cultural perspective. A good little book on regards to writing essays…").
+⇒ the owner can talk to the brain NOW; the production run (24B tokens, val_ppl→~35-40) makes it markedly more coherent.
