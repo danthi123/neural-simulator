@@ -234,22 +234,36 @@ def _prepare_sequence(seed, cfg, do_encode=True):
         # CHAIN phase FORWARD sweeps: A -> B -> ... each a short window separated by a THETA RESET (silence soma+apical,
         # KEEP eligibility) so the earlier assembly's plateau is OFF when the later fires -> A->B forms (elig_A x plateau_B)
         # but B->A does NOT (A has no plateau). eligibility persists -> forward links.
-        order_fwd = list(range(n_mem))
-        for _ev in range(int(cfg["chain_fwd"])):
-            _zero_elig(bridge)              # start each sweep with NO carried eligibility (no wrap-around C->A)
-            for m in order_fwd:
-                _silence_soma_apical(bridge, settle=2)   # theta reset: previous assembly OFF, eligibility kept
-                _drive_window(m, win)
-            bridge.cp_external_input_current[:] = 0.0
+        chain_edges = cfg.get("chain_edges")   # None = LINEAR order (default, byte-identical); else an explicit directed
+                                               # edge list [(pre,post),...] for a BRANCHING topology (RANK 3 recombination).
+        if chain_edges is None:
+            order_fwd = list(range(n_mem))
+            for _ev in range(int(cfg["chain_fwd"])):
+                _zero_elig(bridge)              # start each sweep with NO carried eligibility (no wrap-around C->A)
+                for m in order_fwd:
+                    _silence_soma_apical(bridge, settle=2)   # theta reset: previous assembly OFF, eligibility kept
+                    _drive_window(m, win)
+                bridge.cp_external_input_current[:] = 0.0
 
-        # CHAIN phase REVERSE sweeps (the symmetric component; fewer -> forward stays dominant): ... -> B -> A.
-        order_rev = list(range(n_mem - 1, -1, -1))
-        for _ev in range(int(cfg["chain_rev"])):
-            _zero_elig(bridge)
-            for m in order_rev:
-                _silence_soma_apical(bridge, settle=2)
-                _drive_window(m, win)
-            bridge.cp_external_input_current[:] = 0.0
+            # CHAIN phase REVERSE sweeps (the symmetric component; fewer -> forward stays dominant): ... -> B -> A.
+            order_rev = list(range(n_mem - 1, -1, -1))
+            for _ev in range(int(cfg["chain_rev"])):
+                _zero_elig(bridge)
+                for m in order_rev:
+                    _silence_soma_apical(bridge, settle=2)
+                    _drive_window(m, win)
+                bridge.cp_external_input_current[:] = 0.0
+        else:
+            # EXPLICIT-EDGE topology (RANK 3): form each directed edge (pre->post) independently. Each edge is its own
+            # 2-node theta-separated sweep with eligibility zeroed BEFORE it -> ONLY pre->post potentiates (pre has elig
+            # when post's plateau is up; post has no earlier elig for post->pre). A shared node B with edges (A,B),(B,C),
+            # (X,B),(B,Y) becomes a branch point whose replay can RECOMBINE A->B->Y / X->B->C (never stored as a whole).
+            for _ev in range(int(cfg["chain_fwd"])):
+                for (pre, post) in chain_edges:
+                    _zero_elig(bridge)
+                    _silence_soma_apical(bridge, settle=2); _drive_window(pre, win)
+                    _silence_soma_apical(bridge, settle=2); _drive_window(post, win)
+                bridge.cp_external_input_current[:] = 0.0
 
         # WITHIN-REFRESH (2026-07-22 fix, default off): the CHAIN phase's transient-plateau + per-window theta silencing
         # ERODES the within-attractors the within-encode built (measured: w_within 15.2 -> 6.3 at n_mem=2 -> below the
