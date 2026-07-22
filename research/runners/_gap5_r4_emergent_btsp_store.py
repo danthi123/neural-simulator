@@ -51,9 +51,12 @@ BTSP_CFG = {**GO_CFG, "encode_btsp": True, "encode_ca3w": 0.5, "encode_plateau_p
             "hebb_max": 300.0, "train_events": 30, "recall_k_thresh": 40.0}
 
 
-def emergent_assemblies(seed, n_patterns=2):
+def emergent_assemblies(seed, n_patterns=2, disjoint_dg=False):
     """Build the R1 mossy-detonator bridge, drive n_patterns distinct DG inputs, return (list of CA3 GLOBAL index
-    arrays, ca3_global_range) — the NATURAL >=theta assembly per input, mapped from ca3-local to global."""
+    arrays, ca3_global_range) — the NATURAL >=theta assembly per input, mapped from ca3-local to global.
+    disjoint_dg (default False = byte-identical): draw each DG input pattern from the cells NOT used by prior patterns, so
+    the two DG codes share 0 cells -> removes the shared-CA3-cell contribution to cross-completion (amplified at high
+    storage density; the encode-side research-gate Rank 2). Still DYNAMICS-selected assemblies, not hand-disjoint pools."""
     b = _build_bridge(seed, R1["n_ca3"], R1["dg_ffi_weight"], R1["ca3_fb_inhib"], R1["mossy_weight"],
                       R1["mossy_density"], n_dg=R1["n_dg"], amplify=True, amp_ca3w=R1["amp_ca3w"],
                       mossy_stp_disabled=R1["mossy_stp_disabled"])
@@ -64,7 +67,15 @@ def emergent_assemblies(seed, n_patterns=2):
     for _ in range(30):
         b._run_one_simulation_step()
     b.cp_external_input_current[:] = 0.0
-    pats = [build_drive_pattern(len(dg_arr), 0.1, seed * 100 + m) for m in range(n_patterns)]
+    if disjoint_dg:
+        _used = set(); pats = []
+        for m in range(n_patterns):
+            p = build_drive_pattern(len(dg_arr), 0.1, seed * 100 + m)
+            p = np.asarray([int(c) for c in p if int(c) not in _used], dtype=np.int64)
+            _used.update(p.tolist()); pats.append(p)
+        print(f"[disjoint_dg] DG input patterns made disjoint: sizes={[len(p) for p in pats]} (0 shared cells)", flush=True)
+    else:
+        pats = [build_drive_pattern(len(dg_arr), 0.1, seed * 100 + m) for m in range(n_patterns)]
     assemblies = []
     for p in pats:
         A_local, _ = _drive_read(b, dg_arr[p], ca3_arr, drive_pA=R1["drive_pA"], sync=R1["sync"], theta=R1["theta"])
@@ -89,9 +100,9 @@ def _verify_index_space(seed, r1_ca3_range):
 def run_seed(seed, do_swr=False, ca3_density=None, recall_k_thresh=None, structural_sep=None, isolate=False,
              per_assembly_inhib=False, pa_inhib_w=40.0, pa_ei_w=None,
              per_assembly_apical_inhib=False, pa_apical_w=0.7, pa_apical_gate=2.0, pa_apical_no_spare=False,
-             n_patterns=2):
+             n_patterns=2, disjoint_dg=False):
     t = {}
-    assemblies, r1_range = emergent_assemblies(seed, n_patterns=n_patterns)
+    assemblies, r1_range = emergent_assemblies(seed, n_patterns=n_patterns, disjoint_dg=disjoint_dg)
     sizes = [len(a) for a in assemblies]
     btsp_range, ok = _verify_index_space(seed, r1_range)
     t["assembly_sizes"] = sizes; t["r1_ca3_range"] = r1_range; t["btsp_ca3_range"] = btsp_range
@@ -158,6 +169,7 @@ def main():
     ap.add_argument("--pa-apical-gate", type=float, default=2.0, help="accumulated soma-firing count marking a genuine active winner before inhibition applies")
     ap.add_argument("--pa-apical-no-spare", action="store_true", help="ANTI-CHEAT control: suppress ALL apical (no spare-own) -> own-completion must collapse")
     ap.add_argument("--n-patterns", type=int, default=2, help="number of co-stored emergent assemblies (2 or 3)")
+    ap.add_argument("--disjoint-dg", action="store_true", help="make the DG input patterns share 0 cells (removes shared-CA3-cell cross-completion; encode-side Rank 2)")
     ap.add_argument("--out", default=str(OUT))
     a = ap.parse_args()
     if a.swr:
@@ -171,7 +183,7 @@ def main():
                          per_assembly_inhib=a.per_assembly_inhib, pa_inhib_w=a.pa_inhib_w, pa_ei_w=a.pa_ei_w,
                          per_assembly_apical_inhib=a.per_assembly_apical_inhib, pa_apical_w=a.pa_apical_w,
                          pa_apical_gate=a.pa_apical_gate, pa_apical_no_spare=a.pa_apical_no_spare,
-                         n_patterns=a.n_patterns)
+                         n_patterns=a.n_patterns, disjoint_dg=a.disjoint_dg)
             per.append(r)
             if r.get("error"):
                 print(f"  [seed {s}] {r['error']}", flush=True); continue

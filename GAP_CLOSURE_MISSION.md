@@ -176,19 +176,21 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
      `research/runners/lm_{train_lib,train_run,fineweb_setup}.py`; design+de-risk `docs/plans/2026-07-21-autonomous-
      incremental-LM-training-workflow-design.md`; finding `2026-07-21-LM-train-pipeline-VALIDATED-on-real-fineweb-edu.md`.
      Fluid-abstain (confidence-conditioned generation, replaces the hard moat) = a parallel MODERATE build, not started.
-  2. **gap#5 last piece (avalanche-stable two-assembly co-storage) — DENDRITE-TARGETING apical inhibition WORKS on the
-     hard seeds (the breakthrough this cycle); the residual is a winner-detection fix.** SOMATIC family failed (`--isolate`
-     2/6, Kim-Kim `--per-assembly-inhib` 2/6, `--pa-ei-w` worse) → diagnosed the coupling as DENDRITIC → built
-     dendrite-targeting apical O-LM inhibition (`--per-assembly-apical-inhib`, shunt loser's `cp_v_apical` toward −75mV,
-     winner-gated). **Result: the two PREVIOUSLY-FAILING seeds became CLEAN — seed 100 cross 0.45→0.06 (11.5× ratio),
-     seed 102 0.61→0.18 (3×); only the already-clean size-asymmetric seed 44 [50,18] regressed (0.00→0.69).** ⇒ dendritic
-     inhibition IS the mechanism that gates the cross-completion; the open piece = a WINNER-DETECTION/op-point fix so it
-     stops breaking the clean seeds (lower `--pa-apical-w`, gate on cross-risk, per-seed winner stability). **NOTE: I
-     banked a wrong "dendrite negative" mid-cycle from seeing only seed 44 before the run finished (drift-#12); RETRACTED
-     — read the per-seed SUBSTANCE not the aggregate.** A GPU-free encode-side research gate (w35tiy04u) runs in parallel
-     as a complementary angle. **Single-assembly emergent-DG chain UNCHANGED = GO.** Additive, default-off byte-identical,
-     NO `sim/` edit. NEXT: tune winner-detection → all-6-seeds-clean. Finding
-     `2026-07-21-gap5-2assembly-selective-inhibition-family-NEGATIVE-points-to-dendritic.md` (see the CORRECTION banner).
+  2. **gap#5 last piece (two-assembly co-storage) — REFRAMED + the BINDING BLOCKER RESOLVED; likely CLOSING.** Two
+     research-gate Workflows (5 agents each) + adversarial critiques reframed it TWICE: (a) recall-side inhibitory GATING
+     is ruled out (5 negatives: isolate 2/6, somatic Kim-Kim 2/6, E→I-pot worse, apical fixes-moderate-breaks-extreme,
+     size-norm-winner worse — "no downstream circuit manufactures a distinction absent from CA3"); (b) **the real binding
+     blocker was WEAK COMPLETION of the sparse ~20-30-cell emergent assemblies (`held_cue` ~0.10 < the 0.15 bar at
+     `ca3_density=0.05`), NOT cross-completion** — and the diagnostic showed the assemblies are DISJOINT (Jaccard <0.05),
+     coupled via recurrents + the member→non-member spread (`structural_sep=1` left open). **SYNTHESIZED FIX = high within
+     density (0.35, strong completion) + `--isolate` + `--structural-sep 2` (full basin isolation): 3-seed → COMPLETION-GO
+     3/3 (`cue` 0.176-0.200, binding blocker RESOLVED) + cross CLEAN 2/3 (42/100 at 0.00); only seed 102 (largest
+     assemblies [56,29], 4 shared cells) cross-completes 0.48 (shared cells amplified at high density).** Testing now
+     (bm4k9zjz7): + `--disjoint-dg` (Rank 2, removes the shared cells) to close seed 102. If GO → 6-seed confirm closes
+     the emergent two-assembly co-storage. **Single-assembly chain UNCHANGED = GO.** All additive default-off byte-
+     identical, NO `sim/` edit (+ `--disjoint-dg` flag). Findings: the `-selective-inhibition-family-NEGATIVE-...` doc
+     (CORRECTION + REFRAME banners). **NOTE: I banked a wrong "dendrite negative" mid-cycle (drift-#12, seeing 1 seed
+     before the run finished); RETRACTED — read per-seed SUBSTANCE not the aggregate.**
 - **⚠️ gap#1 — CORRECTED 2026-07-21 (adversarial audit, verdict OVERCLAIMED): NOT "COMPLETE," and the recurrence is NOT spiking.**
   The audit (a-1 RAG + code-read) found: (a) the recurrent language computation is a **GRADED, NON-SPIKING SSM leaky
   integrator** — `bridge.py:6017` `cp_ssm_state = lam*cp_ssm_state + (1-lam)*cp_ssm_inject` is host elementwise

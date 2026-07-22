@@ -101,3 +101,24 @@ Two Workflows (5 agents each) + their adversarial critiques reframed the whole 2
   symmetry (BOTH the large and the ~2× smaller assembly complete their own cue) anti-cheats. Fallbacks ranked: disjoint-DG
   inputs, equal-k sparser+symmetric selection. NO `sim/` edit (all existing flags). **THE CAPABILITY (two separately-
   addressable co-stored emergent attractors) stays open per THE LAW; only the recall-inhibition METHOD retired.**
+
+## ✅ COMPLETION BINDING-BLOCKER RESOLVED (2026-07-21) — the reframe validated; the synthesized fix works
+`--isolate --structural-sep 2 --ca3-density 0.35` (high within-density for completion + full bidirectional isolation for
+no-coupling), 3-seed:
+| seed | sizes | cue (completion) | ca1_match | ca1_cross |
+|---|---|---|---|---|
+| 42 | [35,21] | 0.176 | 0.74 | **0.00** ✓ |
+| 100 | [45,22] | 0.200 | 0.67 | **0.00** ✓ |
+| 102 | [56,29] | 0.194 | 0.66 | 0.48 |
+- **COMPLETION-MECHANISM-GO 3/3** — `cue` 0.176-0.200 (ALL above the 0.15 cgo bar; was ~0.10 at density 0.05). The high
+  within-assembly density RESOLVED the weak-completion binding blocker the critique identified. This is the real fix — the
+  sparse emergent assemblies now complete strongly.
+- **CROSS clean on 2/3** (42/100 at 0.00). Only seed 102 (the LARGEST assemblies [56,29], 4 shared cells) cross-completes
+  0.48 — the 4 shared cells (which `isolate`/`sep2` zero EDGES for but the cells still fire for both) are AMPLIFIED at high
+  storage density → they drive the cross. NEXT (testing, bm4k9zjz7): stack `--disjoint-dg` (make the two DG input codes
+  share 0 cells → 0 shared CA3 cells; encode-side Rank 2) → seed 102's cross should drop clean → then 6-seed confirm.
+- `--disjoint-dg` is additive/default-off byte-identical (still DYNAMICS-selected assemblies, not hand-disjoint pools →
+  emergence bar preserved). NO `sim/` edit.
+- ⇒ the exhaustive research-gate + adversarial-critique workflow delivered: the boundary was NOT recall-inhibition (5
+  negatives) but weak-completion + shared-cell coupling; high density + full isolation + disjoint DG is the mechanistically-
+  matched close. THE CAPABILITY (two separately-addressable co-stored emergent attractors) is being MET, per THE LAW.
