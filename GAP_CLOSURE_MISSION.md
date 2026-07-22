@@ -176,17 +176,19 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
      `research/runners/lm_{train_lib,train_run,fineweb_setup}.py`; design+de-risk `docs/plans/2026-07-21-autonomous-
      incremental-LM-training-workflow-design.md`; finding `2026-07-21-LM-train-pipeline-VALIDATED-on-real-fineweb-edu.md`.
      Fluid-abstain (confidence-conditioned generation, replaces the hard moat) = a parallel MODERATE build, not started.
-  2. **gap#5 last piece (avalanche-stable two-assembly co-storage) — 4 INHIBITORY-GATING mechanisms NEGATIVE; the fix is
-     NOT more inhibition (banked, per THE LAW → next mechanism = ENCODE-side separation).** Research gate (Kim-Kim 2025
-     *Selective inhibition in CA3*, read in depth) ranked assembly-selective inhibition; tested exhaustively: `--isolate`
-     alone 2/6, somatic Kim-Kim `--per-assembly-inhib` 2/6 (+weakened completion), within-E→I potentiation `--pa-ei-w`
-     worse (edges-confirmed-matched, not a no-op), dendrite-targeting apical `--per-assembly-apical-inhib` BREAKS the
-     clean seed (cross 0.00→0.69, fires 10064 cells). ⇒ **both somatic AND apical inhibition fail → the coupling of the
-     two size-variable emergent assemblies is not gateable by inhibition.** Next mechanism (fresh GPU-free research gate
-     dispatched): ENCODE/STORAGE-side separation (make the two emergent assemblies share fewer CA3 cells / orthogonal
-     basins — DG pattern-separation at store time, the untested Option C) or a different readout. **Single-assembly
-     emergent-DG select→store→complete chain UNCHANGED = GO.** All additive, default-off byte-identical, NO `sim/` edit.
-     Finding `2026-07-21-gap5-2assembly-selective-inhibition-family-NEGATIVE-points-to-dendritic.md`.
+  2. **gap#5 last piece (avalanche-stable two-assembly co-storage) — DENDRITE-TARGETING apical inhibition WORKS on the
+     hard seeds (the breakthrough this cycle); the residual is a winner-detection fix.** SOMATIC family failed (`--isolate`
+     2/6, Kim-Kim `--per-assembly-inhib` 2/6, `--pa-ei-w` worse) → diagnosed the coupling as DENDRITIC → built
+     dendrite-targeting apical O-LM inhibition (`--per-assembly-apical-inhib`, shunt loser's `cp_v_apical` toward −75mV,
+     winner-gated). **Result: the two PREVIOUSLY-FAILING seeds became CLEAN — seed 100 cross 0.45→0.06 (11.5× ratio),
+     seed 102 0.61→0.18 (3×); only the already-clean size-asymmetric seed 44 [50,18] regressed (0.00→0.69).** ⇒ dendritic
+     inhibition IS the mechanism that gates the cross-completion; the open piece = a WINNER-DETECTION/op-point fix so it
+     stops breaking the clean seeds (lower `--pa-apical-w`, gate on cross-risk, per-seed winner stability). **NOTE: I
+     banked a wrong "dendrite negative" mid-cycle from seeing only seed 44 before the run finished (drift-#12); RETRACTED
+     — read the per-seed SUBSTANCE not the aggregate.** A GPU-free encode-side research gate (w35tiy04u) runs in parallel
+     as a complementary angle. **Single-assembly emergent-DG chain UNCHANGED = GO.** Additive, default-off byte-identical,
+     NO `sim/` edit. NEXT: tune winner-detection → all-6-seeds-clean. Finding
+     `2026-07-21-gap5-2assembly-selective-inhibition-family-NEGATIVE-points-to-dendritic.md` (see the CORRECTION banner).
 - **⚠️ gap#1 — CORRECTED 2026-07-21 (adversarial audit, verdict OVERCLAIMED): NOT "COMPLETE," and the recurrence is NOT spiking.**
   The audit (a-1 RAG + code-read) found: (a) the recurrent language computation is a **GRADED, NON-SPIKING SSM leaky
   integrator** — `bridge.py:6017` `cp_ssm_state = lam*cp_ssm_state + (1-lam)*cp_ssm_inject` is host elementwise

@@ -1,5 +1,15 @@
 # gap#5 two-assembly co-storage — the SOMATIC selective-inhibition family (Kim-Kim E→I) VERIFIED-does-NOT-close the boundary; the cross-completion is NOT somatic-basket-gateable → the coupling is DENDRITIC (dendrite-targeting apical SOM is the ranked next mechanism). NO `sim/` edit (additive driver mechanism).
 
+## ⚠️⚠️ CORRECTION (2026-07-21, same cycle) — the DENDRITE-TARGETING apical inhibition is PROMISING, NOT negative. I banked a wrong verdict from PARTIAL data (drift-#12 / silent-failure: concluded from seed 44 before the run finished).
+The full 3-seed apical-inhib result (`apical_inhib_smoke.log`) is the OPPOSITE of what the "UPDATE — dendrite negative" section below claims:
+| seed | cross (isolate baseline) | cross (+apical-inhib w0.7) | verdict |
+|---|---|---|---|
+| 44 (was CLEAN) | 0.00 | **0.69** | BROKE (the only regression) |
+| 100 (was FAILING) | 0.45 | **0.06** | ✓ CLEAN — match 0.69, **11.5× ratio** |
+| 102 (was FAILING) | 0.61 | **0.18** | ✓ CLEAN — match 0.55, 3× ratio |
+⇒ **dendrite-targeting apical inhibition is the FIRST mechanism to actually gate the cross-completion on the hard seeds** (the two previously-FAILING seeds 100/102 became clean; the diagnosis "the coupling is dendritic" is CONFIRMED-and-fixable, not a wall). The ONLY regression is seed 44 (already-clean, size-asymmetric [50,18]) — the winner-detection/shunt breaks a seed that didn't need shunting. So the mechanism WORKS; the open piece is a WINNER-DETECTION/op-point fix so it stops breaking the clean seeds. **The "inhibitory-gating exhausted / 4th negative" framing below (and in the same-cycle commit fa501e80) is RETRACTED** — apical (dendritic) inhibition is the working mechanism; only the SOMATIC family failed. Reading the SUBSTANCE (per-seed), not the aggregate "SWR NO" (which seed-44's 0.69 drags up), was the lesson. NEXT: tune the winner-detection (lower `--pa-apical-w`, gate on cross-completion risk, or per-seed winner stability) → all-6-seeds clean.
+
+
 **2026-07-21.** Executing the research gate `2026-07-21` (Kim-Kim 2025 read in depth) for the last gap#5 piece:
 avalanche-stable, independently-addressable co-storage of two SIZE-VARIABLE emergent CA3 assemblies. The gate's Option A
 (assembly-selective inhibition — spare-own/inhibit-other, condition-4 counteracts size-bias) was already wired as
