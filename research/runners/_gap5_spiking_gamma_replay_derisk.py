@@ -131,7 +131,7 @@ def main():
     ap.add_argument("--rest-steps", type=int, default=1400)
     ap.add_argument("--theta-period", type=int, default=120, help="steps per theta cycle (one sequence); dt=0.5ms -> ~60ms")
     ap.add_argument("--fire-thresh", type=float, default=0.16, help="smoothed per-assembly active fraction to count as FIRED then SILENCE (must be ABOVE active_frac=0.12 so the assembly is DETECTED before it is silenced)")
-    ap.add_argument("--inhib-pa", type=float, default=-4000.0, help="post-fire silencing current (the gamma reset)")
+    ap.add_argument("--inhib-pa", type=float, default=-1500.0, help="post-fire silencing current (the gamma reset); -1500 = the release-without-killing-detection window (-4000 over-suppresses -> act=0)")
     ap.add_argument("--release-mode", action="store_true", help="RELEASE the bistable plateau (reset cp_v_apical to the down-state) instead of soma inhibition -- the correct un-latch that does not kill the burst/detection")
     ap.add_argument("--release-v", type=float, default=-75.0, help="apical down-state voltage for plateau release")
     ap.add_argument("--poisson-rate", type=float, default=0.015)
