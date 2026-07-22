@@ -77,3 +77,23 @@ CPU pre-check (n_ca3=2000, n_mem=2, seed 42, Poisson r=0.015/pa=1500/dur=10):
   numerical artifact (own fresh bridge). ⇒ RANK 1 is the honest cheapest first move demonstrated (spontaneous reactivation
   real, not the confounds); the learned-weight-isolation + 6-seed are the close. RANK 2 (sequence) / RANK 3 (imagination)
   follow. Per THE LAW: a promising-partial with the next control named, NOT a wall.
+
+## CAVEAT RESOLVED (2026-07-22) — the NO-STRUCT control shows the LEARNED attractor carries the selectivity → RANK 1 is a 1-seed CLEAN GO
+Added the decisive NO-STRUCT control (learned within-assembly weights INTACT, but `structural_sep=0` + `selective_inhib=False`)
++ the `learned_weight_carries` diagnostic, and re-ran seed 42 (independently reproducing the subagent's GO/NO-NOISE/NO-ENCODE):
+| condition | member_frac | random | interpretation |
+|---|---|---|---|
+| GO (learned + structure) | 0.319 | 0.048 | spontaneous, basin-selective (6.6× random) |
+| SHUFFLED-W (shuffled pattern + structure) | 0.213 | 0.048 | structure has REDUNDANT selectivity (partial) |
+| **NO-STRUCT (learned pattern, NO structure)** | **0.322** | 0.046 | **≈ full GO selectivity → the LEARNED attractor carries it** |
+| NO-NOISE (acid) | 0.000 (silent) | — | NOT the self-sustaining artifact ✓ |
+| NO-ENCODE | 0.000 | — | NOT the noise-artifact ✓ |
+- **The caveat is RESOLVED:** removing the structural scaffolding (NO-STRUCT) does NOT hurt selectivity (0.319→0.322) — the
+  LEARNED within-assembly attractor is SUFFICIENT for the full basin-selective spontaneous reactivation. The SHUFFLED-W
+  partial-collapse (0.213) just reflects the structure's *redundant* selectivity, not that it's the driver. `learned_weight_carries=True`.
+- **⇒ RANK 1 = a 1-seed CLEAN GO** (all 8 checks pass, learned-attractor-driven, none of the 3 retracted confounds): the
+  FIRST genuine non-artifact spontaneous basin-selective reactivation in the project — the first piece of the SWR generative-
+  replay loop de-risked on spikes. **NEXT (queued behind the live production run): the 6-seed GPU confirm** (`SIM_BACKEND=cupy
+  python -m research.runners._gap5_spontaneous_reactivation_derisk --seeds 42 43 44 100 101 102 --n-ca3 2000 --n-mem 2
+  --noise poisson --poisson-rate 0.015 --poisson-pa 1500 --poisson-dur 10 --rest-steps 1500`) — now WITH the NO-STRUCT
+  learned-attractor control built in. Then RANK 2 (sequence replay) → RANK 3 (imaginative recombination). NO `sim/` edit.

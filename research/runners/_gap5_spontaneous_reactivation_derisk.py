@@ -467,6 +467,19 @@ def one_seed(seed, cfg, noise_specs, rest_steps, W, ev_floor, ev_k, min_frac, sk
           f"specific={sh['n_specific']} memb={sh['member_frac']:.3f} rand={sh['random_frac']:.3f} "
           f"spec={sh['specificity']:+.3f} pop={sh['pop_rate']:.4f} ({time.time()-t0:.0f}s)", flush=True)
 
+    # NO-STRUCTURE (learned weights INTACT, but structural_sep=0 + selective_inhib=False) -> the DECISIVE isolation of the
+    # LEARNED-WEIGHT contribution. The SHUFFLED-W caveat: structural_sep + selective_inhib SURVIVE a weight-shuffle, so the
+    # shuffle only PARTIALLY collapses (structure carries the residual). This control removes the STRUCTURE while KEEPING
+    # the learned within-assembly weights: if events stay SELECTIVE (memb >> random), the LEARNED attractor carries the
+    # selectivity (clean GO on the learned-weight question); if memb -> random, the structural wiring was carrying it.
+    cfg_nostruct = {**cfg, "structural_sep": 0, "selective_inhib": False}
+    prep_nostruct = _prepare(seed, cfg_nostruct, do_encode=True)
+    nstr, _ = _rest_and_detect(prep_nostruct, best_ns, rest_steps, seed, W=W, ev_floor=ev_floor, ev_k=ev_k, min_frac=min_frac)
+    out["nostructure"] = nstr
+    print(f"  [seed {seed}] NO-STRUCT (learned wts, no sep/sel-inhib) {_noise_label(best_ns)}: events={nstr['n_events']} "
+          f"specific={nstr['n_specific']} memb={nstr['member_frac']:.3f} rand={nstr['random_frac']:.3f} "
+          f"spec={nstr['specificity']:+.3f} pop={nstr['pop_rate']:.4f} ({time.time()-t0:.0f}s)", flush=True)
+
     # -- PER-SEED VERDICT --
     # GO: discrete assembly-specific spontaneous events + net rests silent + all anti-cheats retire their confound.
     acid_noise_off = (nn["n_specific"] == 0 and nn["assembly_rest_frac"] < 0.05)   # NO-NOISE -> silent
@@ -478,11 +491,16 @@ def one_seed(seed, cfg, noise_specs, rest_steps, W, ev_floor, ev_k, min_frac, sk
     noencode_retired = (ne["n_specific"] == 0 or ne["member_frac"] < 0.5 * go["member_frac"])
     shuffle_retired = (sh["n_specific"] == 0 or sh["member_frac"] < 0.5 * go["member_frac"])
     permuted_retired = (go["member_frac"] > 2.0 * (go["random_frac"] + 1e-6))
+    # DIAGNOSTIC (does the LEARNED attractor carry the selectivity, or the structural wiring?): NO-STRUCT keeps the learned
+    # weights but removes sep/sel-inhib -> if still selective, the learned attractor carries it. A CLEAN RANK-1 GO wants
+    # this True; if False, the reactivation is real+spontaneous but its selectivity is structural, not learned (weaker).
+    learned_weight_carries = bool(nstr["n_specific"] >= 1 and nstr["member_frac"] > 2.0 * (nstr["random_frac"] + 1e-6))
     seed_go = bool(specific_events and discrete and acid_noise_off and frozen_ok and dendrite_reset_ok
                    and noencode_retired and shuffle_retired and permuted_retired)
     out["checks"] = dict(specific_events=specific_events, discrete=discrete, acid_noise_off=acid_noise_off,
                          frozen_ok=frozen_ok, dendrite_reset_ok=dendrite_reset_ok, noencode_retired=noencode_retired,
-                         shuffle_retired=shuffle_retired, permuted_retired=permuted_retired)
+                         shuffle_retired=shuffle_retired, permuted_retired=permuted_retired,
+                         learned_weight_carries=learned_weight_carries)
     out["seed_go"] = seed_go
     print(f"  [seed {seed}] => {'GO' if seed_go else 'no'}  checks={out['checks']}  best_noise={_noise_label(best_ns)} "
           f"({time.time()-t0:.0f}s)", flush=True)
