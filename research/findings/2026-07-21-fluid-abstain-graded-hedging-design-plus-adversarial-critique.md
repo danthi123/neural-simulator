@@ -62,3 +62,23 @@ Graded hedging is NOT a cheap N-threshold on this KB. The genuine graded signal 
   held-out grounded facts? — is the cheap decisive test for grounded graded hedging.
 - Full design/critique: workflow `wf_95e2b35f-2de` journal. NO code built (the critique showed the cheap rung is
   decorative — do NOT build it); the design is banked with its structural caveat.
+
+## ✅ S-CALIBRATION DE-RISK — GO (2026-07-21): S is a usable GRADED signal for grounded hedging (the critique's honest path validated)
+The critique's option (A) is validated (3-seed, numpy/CPU, `scratchpad/s_calib.py`). The composer cleanup match-score
+**S = clip(max_j Re(rec_z·conj(code_j))/D, 0, 1)** (`rf_phasor_composer.py:_cleanup_all_scored:447-462`, exposed via
+`last_trace` patient-chip `confidence`) SEPARATES correct-from-wrong grounded answers:
+- **AUC ~0.62-1.0 (typ ~0.85), permuted-label control ~0.50** (separation is genuinely tied to correctness, not decoration).
+- **GRADED, not bimodal** (S_correct 0.51-0.60 vs S_wrong 0.33-0.46, overlapping bands with ~0.12-0.18 mean gap) — the
+  OPPOSITE of N's empty-middle bimodality.
+- **Risk-coverage MONOTONE** (decisive): raising the S bar preferentially discards wrong answers (svo pooled: acc-of-answered
+  0.76 all → 0.89 @S≥0.5 → 1.0 @S≥0.55). ⇒ S is the primary band-splitter for grounded graded hedging.
+- **Moat orthogonal + intact** (`_scan_first_match` returns None on genuine unknowns BEFORE S is read).
+- **Honest caveats the build must respect:** (a) S carries signal only in the ERROR regime (at high D/low load accuracy=100%,
+  S flat ~0.5 → correctly assert everything, nothing to hedge); (b) absolute thresholds SHIFT with fact complexity (D/M) →
+  calibrate bands per operating point from held-out correct/wrong S, don't hardcode; (c) AUC~0.85 not 1.0 → the BAND ladder
+  (hedge the middle) is the right consumer, not a hard threshold; (d) grounded hedging tracks the within-fact D/M bundling
+  capacity + code noise, NOT KB size (facts don't bundle together). Band shape (svo knee, recalibrate per op-point): L0
+  assert S≳0.55 · L1 "I think" 0.45-0.55 · L2 "not certain" 0.38-0.45 · L3 soft-abstain S<0.38 · MOAT unchanged.
+- ⇒ **grounded single-fact fluid graded hedging is BUILDABLE** (bands over S on the gate-first seam, moat retained,
+  calibrated per op-point). The design's architecture stands; S replaces the bimodal N as the signal. Open-domain hedging
+  remains scale-bound (the trained LM's confidence — tracks the training axis #1).
