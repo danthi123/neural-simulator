@@ -77,7 +77,7 @@ def _rest_with_gamma(prep, noise, rest_steps, seed, gamma, theta_period, fire_th
             # inhibition self-scales through the real synaptic loop -> gamma windows (trough = reactivation possible).
             phase = (t % gamma_period) / gamma_period
             bridge.cp_external_input_current[basket_glob] += float(fs_amp) * (1.0 - np.cos(2.0 * np.pi * phase)) / 2.0
-        if gamma and not release_mode and not fs_gamma:
+        if gamma and not release_mode:                            # per-assembly self-avoidance (COMBINES with fs_gamma)
             for k, t0 in fired_at.items():
                 if t >= t0 + silence_delay:                       # POST-burst SOMA silence (the gamma reset)
                     if proportional and t > 0:

@@ -38,3 +38,20 @@ gamma-FS-pool build), a deeper multi-parameter mechanism than the RUNG-2 scaffol
 - Next: the FS-basket feedback + adaptation (RUNG 3). The capability (on-spikes ordered/imaginative replay) stays OPEN and
   pursued; this maps the crude method's boundary and names the proper mechanism. Driver + all variants:
   `_gap5_spiking_gamma_replay_derisk.py`; raw `research/findings/raw/gap5_r4/spiking_gamma_{gentle,2seed,prop}.log`.
+
+## FS-basket FEEDBACK inhibition SOLVES the reactivation-preservation (the crude approach's fatal flaw); ordering is the residual
+Built `--fs-gamma` (gamma-rhythm drive of the `ca3_pv_basket` -> feedback inhibition self-scales via the real synaptic loop):
+- **FS-basket ALONE:** reactivation PRESERVED + ENHANCED (act=[5,5,5], 13 events vs baseline's 5 -- the self-scaling
+  feedback does NOT over-suppress, unlike the crude injected current that gave act=[0,0,0]) but fwd=0.400 (no ordering --
+  the windows gate timing but the strongest within-attractor re-wins each window; no self-avoidance).
+- **FS-basket + gentle self-avoidance (-800), 3-seed:** 1/3 -- reactivation preserved every seed (act=[5,5,5]/[5,5,5]/[1,1,1]),
+  and seed 43 orders FORWARD (fwd 0.600 > chance 0.500, GO), but seeds 42 (reverse-leaning) + 44 (weak) fail. ⇒ the
+  FS-basket self-scaling FIXED the over-suppression (the crude approach's fatal flaw), but robust FORWARD ORDERING across
+  seeds is the residual -- it is seed-dependent (the on-spikes order does not track the numpy asym; the WTA-timing + gentle
+  silence orders on some seeds, not all).
+- **⇒ characterized state:** windows ✓ (FS-basket), reactivation-preservation ✓ (self-scaling feedback), ordering PARTIAL
+  (1/3, seed-dependent). The next lever for ROBUST ordering is **theta PHASE-PRECESSION** (Skaggs-McNaughton: encode the
+  sequence order in theta PHASE, read by phase rather than by a fragile WTA-timing race) -- the mechanism that makes
+  ordered replay robust in biology, and the same lever RANK 2's 4/6 wants. The on-spikes ordered-replay capability stays
+  OPEN with the mechanism space now thoroughly mapped (numpy-principle ✓, crude-inhib ✗, FS-basket-reactivation ✓,
+  FS-basket-ordering partial, theta-precession = next).

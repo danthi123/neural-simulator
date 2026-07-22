@@ -53,3 +53,9 @@ not decisive; the learned-feedback fix helps a little but the fixed-random rule 
 collapse is a deep-sigmoid artifact, so "FA > oracle" is depth-specific, not a universal claim; the load-bearing result
 remains FA >> reservoir at all depths.) ⇒ reinforces the reframe: the credit RULE is sound and robust in RATE; the open
 gap#4 piece is the spiking sparse-code, not the rule or the dendrite.
+
+## 6-SEED CONFIRMED (2026-07-22) — FA beats reservoir 6/6 on MNIST
+Added seeds 100/101/102 (depth-2): RESERVOIR 0.766/0.726/0.761, FA 0.930/0.933/0.931 -- FA>RESERVOIR all 3. Combined
+with 42/43/44 (FA>RES 3/3): **FA beats the reservoir 6/6 seeds** (means RES 0.751, FA 0.932, KP 0.933, ORACLE 0.942).
+The gap#4 reframe is now firm at the mission's 6-seed bar: the biological local credit rule builds deep accuracy that
+decisively beats a reservoir on a proper task; the cleanxor negative was a task artifact. `mnist_depth2_seeds100.log`.
