@@ -177,17 +177,22 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
     (`--rank1-encode`, 3 prior framings retracted), forward-replay deterministic numpy **4/6 clean forward (FWD 1.000),
     mean 0.806** (real+strong-on-most → method-limited; a uniform order wants the theta-precession ordered-replay
     mechanism). **RANK 3 (imagination = recombination):** reactivation of ALL 5 shared-node assemblies WORKS with a strong
-    within (w_within 129), but spontaneous replay forms no ordered transitions → the biologically-faithful **CUE-DRIVEN /
-    triggered-replay** method is under test [RESULT PENDING — waiter bqnd5lt1b, PID 219293]. RANK 3 = a bonus rung; gap#5's
-    core (completion + reactivation) is solid.
+    within (w_within 129), but BOTH direct-composition methods hit a **co-activation-vs-directionality boundary**:
+    spontaneous replay = reactivation-without-ordered-transitions; cue-driven = broad co-ignition (cueing A also lights up
+    X=0.73), not directional traversal (NO-SHARED control not clean, metric saturates). **RANK 3 = CHARACTERIZED BOUNDARY
+    of direct composition; next method = theta/gamma phase-organized replay (N.15 Lisman-Idiart / Skaggs-McNaughton — same
+    mechanism RANK 2's uniform order wants), DEFERRED as a bounded larger build.** RANK 3 is a bonus rung; gap#5's core
+    (completion CLOSED + RANK 1 reactivation GO + RANK 2 within-reactivation SOLVED) is solid. NO `sim/` edit in the whole
+    RANK 3 arc; infra (`_gap5_recombination_derisk.py` + `chain_edges`) retained for the theta-organized retry.
   - **Process notes (honest):** 2 premature-conclusion corrections logged this session (RANK 2 single-GPU-run "GO"; RANK 3
     topology-vs-strength off a partial arm set) — verify-not-assume, wait for ALL arms before concluding.
-  - **RESUME:** read the cue-driven RANK 3 result → finalize RANK 3 (recombination GO → 6-seed numpy, OR diagnose
-    propagation: partial-A completion cue / stronger chain / partial-overlap-B). Then the GPU-gated closures (gap#2
-    production default + 320-scale; gap#1 spiking-forward) fire when the training frees the GPU. All session work committed
-    both remotes; findings `2026-07-22-gap5-RANK{2-within-reactivation-blocker-SOLVED,3-imagination-recombinative-replay-
-    research-gate}.md`. (Pre-existing uncommitted non-session diffs in 5 files — `_ssm_reservoir_lm`, `_riii_ca3`, 3 raw/
-    finding files — left untouched; they predate this session.)** What's DONE (CPU): **FHRR-retirement
+  - **RESUME (next session):** the two open threads are (a) the **fluency training** (gap#1, left running — val_ppl ~60
+    descending; when it frees the GPU, fire the gap#2 production-default flip + 320-scale re-verify and the gap#1 spiking-
+    forward conversion), and (b) **RANK 3 via theta/phase-organized replay** (the named next method, a bounded larger build,
+    only if the imagination bonus rung is prioritized over other work). All session work committed both remotes; findings
+    `2026-07-22-gap5-RANK{2-within-reactivation-blocker-SOLVED,3-imagination-recombinative-replay-research-gate}.md`.
+    (Pre-existing uncommitted non-session diffs in 5 files — `_ssm_reservoir_lm`, `_riii_ca3`, 3 raw/finding files — left
+    untouched; they predate this session.) **CLOSED OUT 2026-07-22 ~11:35.** What's DONE (CPU): **FHRR-retirement
   MECHANICALLY COMPLETE + confirmed fully-spiking** (attribute slot + pointer-clause both 6-seed GO, agent-routed,
   CI-guarded, `SlotBinderComposer` = real bridge/`_run_one_simulation_step`/`cp_firing_states` — the #1 idealization
   shortcut replaced by the learned spiking slot-binder); gap#3 + gap#5-completion CLOSED; gap#4 deep-credit-to-accuracy
