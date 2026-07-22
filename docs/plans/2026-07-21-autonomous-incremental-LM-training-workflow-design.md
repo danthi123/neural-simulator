@@ -97,3 +97,26 @@ entropy/logprob for open) as a scalar; (2) fine-tune the generator to hedge cond
 abstain), interleaved to avoid forgetting; (3) verify calibration (hedge-rate rises as confidence drops; no confident-
 wrong on held-out; graceful soft-abstain replaces the flat refusal). Reuses the format-fine-tune lever. Weeks; independent
 of the base training.
+
+## 5. RESULTS — the decisive go/no-go (de-risk #5) is STRONGLY POSITIVE (2026-07-21 evening)
+The real 83M WKV (d1024/L16) run on the 1.5B FineWeb-Edu slice (run2), chunked-scan+compile+bf16 at ~65K tok/s:
+| step | tokens | val_ppl | lr |
+|---|---|---|---|
+| — (validation, 100M) | — | 235 | — |
+| 1000 | 8M | 203 | 3.0e-4 |
+| 3000 | 25M | 128 | 2.99e-4 |
+| 7000 | 57M | 93 | 2.97e-4 |
+| 12000 | 98M | **82** | 2.91e-4 |
+- **broad-domain val_ppl 235 → 82 in the first 98M tokens (6.5% of epoch 1), tracking the scaling curve toward 20-40.**
+  ⇒ **the go/no-go is POSITIVE: "converse like a small LLM is a TRAINING RUN AWAY, not a wall."** The WKV recurrent LM
+  learns broad FineWeb-Edu at real scale; #2/#3 collapse into this scale axis as predicted.
+- **PRODUCTION-run insight (for "train as long as I want incrementally"):** run2 uses cosine with `lr_decay_steps=100000`
+  (the launcher default), so the LR reaches min_lr by step 100k (~0.55 epochs) then stays at min — GOOD for a first
+  ~1-epoch go/no-go checkpoint (front-loads the LR budget), but SUBOPTIMAL for an indefinite run (700k steps at min_lr).
+  **The production run should use a WSD schedule (warmup → long STABLE plateau → decay-at-stop; SmolLM2's choice)** which
+  is exactly matched to "train as long as compute allows, then decay when you decide to stop" — add a `--lr-schedule wsd`
+  option to `lm_train_run` + continue from run2's checkpoint (model-only, fresh cursor) on a bigger corpus. This is the
+  next build once run2's first checkpoint matures (~4-6 hr to step 100k).
+- **Fluid-abstain (owner priority #3): design + adversarial critique DONE** (`2026-07-21-fluid-abstain-graded-hedging-...`).
+  The cheap N-threshold ladder is binary-in-disguise (bimodal familiarity novelty); grounded graded hedging needs the
+  cleanup-score S calibrated, and open-domain hedging is scale-bound (collapses into #1). Hard moat retained. No code built.
