@@ -178,10 +178,15 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   clause; the FHRR's own 2-attr-F3 ~29% + depth-2 are boundaries it doesn't cross either), and its no-confab moat is the
   intrinsic neural content-addressable scan (NOT a VSA-cleanup shortcut) — so BOTH shortcuts the field assessment
   flagged (FHRR algebra + VSA-cleanup moat) are retired by ONE learned spiking mechanism. NO `sim/` edit anywhere.
-  **REMAINING for gap#2 (GPU-gated behind the fluency training):** (a) wire the AGENT's `hear_nested`/`hear_attributed`
-  through the slot-binder's new pointer/attribute paths (CPU-tractable follow-on); (b) make the slot-binder the
-  production DEFAULT + 320-scale GPU re-verify (retire the rf/FHRR fallback). Findings:
-  `2026-07-22-gap2-{attribute-slot,pointer-clause}-*.md`.
+  **AGENT WIRE-IN ROUTING DONE (4f330b26):** `BrainConversationalAgent.query_nested` now routes to `composer.query_clause`
+  when available (the slot-binder follows the `CLAUSE_j` pointer to the inner clause); byte-identical for rf/onebrain
+  (no `query_clause` → `query_patient`); flat CI 0-regress. The routing is provably correct (query_clause is
+  de-risk-verified). **REMAINING for gap#2 — all cache/GPU-gated behind the fluency training (NOT CPU-completable now):**
+  (a) FULL agent-clause path verify (`hear_nested` parse→store→`query_nested`) needs the **denoise64 base-parser cache**
+  (GPU-generated; absent on this CPU setup) — the composer-level clause is already de-risk-GO, only the parse front-end
+  is unexercised; (b) make the slot-binder the production DEFAULT + **320-scale GPU re-verify** (retire the rf/FHRR
+  fallback). ⇒ the CPU-tractable FHRR-retirement is MECHANISTICALLY COMPLETE; the residue is verify/production behind
+  the GPU. Findings: `2026-07-22-gap2-{attribute-slot,pointer-clause}-*.md`, `-recursive-slotbinder-research-gate.md`.
 
 
 - **✅ GPU CRASH RECOVERED (2026-07-22 ~05:05 → ~05:15) — training RESUMED, no loss.** The 3090 fell off the bus
