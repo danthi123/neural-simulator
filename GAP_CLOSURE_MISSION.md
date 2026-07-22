@@ -175,18 +175,27 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
      fluent spiking-WKV render + no-confab moat (abstains on `zzz`) + graded hedging (asserts-when-confident) +
      learn-a-fact-live. The owner's MAIN goal WORKS TODAY; the production 83M WKV is the drop-in fluency upgrade.
      Finding `2026-07-22-northstar-grounded-fluent-moat-hedging-console-COMPOSES.md`.
-  3. **gap#5 (imagination line) advancing, COEXISTING on CPU:** RANK 1 (spontaneous single-assembly reactivation, 1-seed
-     clean GO) 6-SEED CONFIRM running on CPU (task b5n7l6m7d, `--skip-poscontrol` lean); RANK 2 (sequence replay A→B→C,
-     the Ecker-2022 template — the next imagination piece) BUILD dispatched to a subagent (a95e461a0e191ead2, GPU-free +
-     CPU smoke). Both zero GPU risk to the training.
+  3. **gap#5 (imagination line) ADVANCED, COEXISTING on CPU:** **RANK 1 (spontaneous single-assembly reactivation) is now
+     6-SEED GO** (42/43/44/100/101/102, memb 0.31-0.33, spec +0.26-0.28, NO-NOISE→0 acid every seed, all confound
+     anti-cheats clean; `learned_weight_carries` 5/6 secondary). The imagination line's FIRST RUNG is solid at the
+     standing rule. Finding `2026-07-22-gap5-RANK1-spontaneous-reactivation-6seed-GO.md`. **RANK 2 (ordered sequence
+     replay A→B→C)** built + de-risked: the FORWARD-CHAIN mechanism WORKS (asym=+2.53, chain_rev=0; the reverse-bias was
+     a temporal-order artifact), but the sequence assemblies don't spontaneously REACTIVATE — isolated to a
+     `_prepare_sequence` within-encode code-path DIVERGENCE from RANK 1's proven `_prepare` (configs/weights/assembly
+     byte-identical, yet 0 reactivation; two hypotheses refuted: density [RANK 1 uses 0.05 not 0.35] + self_regen). Fix =
+     reuse RANK 1's `_prepare` for the within-encode — DELEGATED to a subagent (a5d6028e448e40a10). Findings
+     `2026-07-22-gap5-RANK2-sequence-replay-forward-chain-GO-within-reactivation-blocker.md`. LESSON logged: over-parallel
+     CPU diagnostics starved+timed-out the RANK 1 6-seed once (re-run on dedicated CPU); thread-limit coexisting runs.
   4. **gap#4 keystone (deep-credit) seed-fix VERIFIED** — `TestSubstrateActuallySeeded` passes + audit found NO runner
      still carrying the buggy `actual_seed_used=` pattern ⇒ when the GPU frees (~3-4 days) the deep-credit re-derisk will
      be CLEAN, not re-confounded by the 2026-07-17 unseeded-substrate bug. (The re-derisk itself is GPU-bound → deferred
      to the GPU-free window; per the bar, the emergence engine [gap#1 cortex + gap#4 learning-substrate] is the path, not
      hand-building gap#2/#3.)
-  EXACT NEXT ACTION: hold in the async pattern for the gap#5 task notifications (b5n7l6m7d + a95e461a0e191ead2 re-invoke
-  on completion) → on RANK 1 6-seed result, update this board + advance RANK 2/3; keep verifying the production run
-  healthy each re-invocation; when the GPU frees, fire the gap#4 seed-fixed deep-credit re-derisk.
+  EXACT NEXT ACTION: RANK 1 6-seed GO DONE + committed (17335dbf). Await the RANK 2 `_prepare`-reuse subagent
+  (a5d6028e448e40a10) → if the within now reactivates + forward replay GO, run the 6-seed + adversarial-verify; else
+  iterate the encode faithfulness. Keep verifying the production run healthy each re-invocation (last: step ~106k,
+  val_ppl 67, fluent). When the GPU frees (~3-4 days), fire the gap#4 seed-fixed deep-credit re-derisk. Thread-limit any
+  coexisting CPU diagnostics so they never starve a priority run.
 - **✅ SESSION OUTCOME (2026-07-21, autonomous) — ALL THREE owner priorities DELIVERED + ADVERSARIALLY VERIFIED:**
   (1) **the autonomous incremental LM-training workflow** (train→ckpt→benchmark→resume, resumable/pausable, ~30×-optimized)
   is BUILT + VALIDATED on real FineWeb-Edu + RUNNING with a **go/no-go CONFIRMED POSITIVE** (`val_ppl` 235→~57 and
