@@ -161,6 +161,29 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
+- **🎉 CYCLE 2026-07-22 (cont.) — the FHRR exact-inverse algebra is FULLY RETIRABLE (gap#2 mechanism COMPLETE, both
+  de-risks 6-seed GO, CPU-tractable, coexisting with the training).** The owner steered to closing the idealization
+  shortcuts fully-spiking-on-one-substrate; the #1 shortcut (the FHRR/VSA exact-inverse binding algebra, flagged by the
+  2026-07-22 field-novelty assessment) is now replaced end-to-end by the learned spiking slot-binder. A read-only
+  research gate (`2026-07-22-recursive-slotbinder-research-gate.md`) scoped the residual to TWO cheap CPU de-risks +
+  reframed recursion as POINT-DON'T-COPY (Neural Blackboard Arch / assembly-projection pointers / Frankland-Greene
+  registers). Both DONE, controller-reproduced independently:
+  - **Step 1/2 attribute slot (GO, 9b0cdbe4):** single-attribute patients as a 5th flat role (`_ROLES` 4→5 + a NOATTR
+    moat pool); joint patient+attr recovery 1.000/6-seed, permuted→0.000, moat holds, CI 0-regress.
+  - **Step 2/2 pointer-clause (GO, efc3fe52):** depth-1 embedded clauses by INDIRECTION (inner clause = own slot-group,
+    matrix patient binds a `CLAUSE_j` pointer, recall follows it — the pointer identity IS the address, no host table);
+    emb 6/6 + mat 6/6, all 4 anti-cheats clean (permuted→0, lesion→pointer-not-content, right-group 1.0/wrong 0.0, moat),
+    CI+attr 0-regress.
+  ⇒ the slot-binder covers the COMPLETE deployed FHRR set (flat SVO + polarity + multi-hop + single-attr + depth-1
+  clause; the FHRR's own 2-attr-F3 ~29% + depth-2 are boundaries it doesn't cross either), and its no-confab moat is the
+  intrinsic neural content-addressable scan (NOT a VSA-cleanup shortcut) — so BOTH shortcuts the field assessment
+  flagged (FHRR algebra + VSA-cleanup moat) are retired by ONE learned spiking mechanism. NO `sim/` edit anywhere.
+  **REMAINING for gap#2 (GPU-gated behind the fluency training):** (a) wire the AGENT's `hear_nested`/`hear_attributed`
+  through the slot-binder's new pointer/attribute paths (CPU-tractable follow-on); (b) make the slot-binder the
+  production DEFAULT + 320-scale GPU re-verify (retire the rf/FHRR fallback). Findings:
+  `2026-07-22-gap2-{attribute-slot,pointer-clause}-*.md`.
+
+
 - **✅ GPU CRASH RECOVERED (2026-07-22 ~05:05 → ~05:15) — training RESUMED, no loss.** The 3090 fell off the bus
   mid-training (NVRM scrub timeout); owner rebooted; GPU came back clean (24 GB, healthy). **Training RESUMED bit-exact
   from step 189000** (`lm_train_run start --root bridges/lmtrain/run3`, nohup + controller-launched so it survives a
