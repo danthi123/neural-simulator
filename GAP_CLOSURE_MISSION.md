@@ -161,15 +161,20 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
-- **📍 SESSION STATE (2026-07-22 ~09:55) — gap#5 RANK 2 advanced substantially; RANK 3 (imagination) scoped + BUILT +
-  de-risking. THREE live runs + re-invocation set: (a) fluency training (crash-watch bz26vprsv, val_ppl ~60); (b)
-  RANK 2 deterministic numpy 6-seed (PID 159534, waiter b1rcfvid4) → the definitive forward-replay per-seed verdict
-  [GPU aggregate 0.794 > SCRAMBLE 0.667 > chance 0.500, non-det per-seed; numpy-42 clean 1.000]; (c) RANK 3
-  recombination single-seed de-risk (PID 170997, waiter bhdselipn). RESUME (when the waiters fire): (b) read the numpy
-  verdict → close/characterize RANK 2 forward-replay; (c) read RANK 3 → if recombination (cross>0, NO-NOISE/NO-ENCODE/
-  NO-SHARED clean) run the numpy 6-seed, else tune the shared-node B reactivation (smoke at reduced params gave
-  b_active=0 → full RANK 2 recipe params). RANK 3 infra committed 526435f7 (chain_edges branch topology +
-  `_gap5_recombination_derisk.py`).** What's DONE (CPU): **FHRR-retirement
+- **📍 SESSION STATE (2026-07-22 ~11:05) — gap#5 RANK 2 within-reactivation SOLVED + deterministic forward-replay
+  characterized; RANK 3 (imagination) on its escalation. DONE this session: RANK 2 within-reactivation blocker SOLVED
+  (`--rank1-encode`; 3 prior framings retracted); RANK 2 forward-replay deterministic numpy 6-seed = **4/6 clean forward
+  (FWD 1.000), mean 0.806** (real+strong-on-most, not uniform → method-limited; uniform order wants theta-precession).
+  RANK 3: the shared-node topology reactivates ALL 5 assemblies with a STRONG within (fix1 ev60/refresh24, w_within 129)
+  but spontaneous replay forms NO ordered transitions (within=0/cross=0) → escalated to **CUE-DRIVEN / triggered replay**
+  (cue A → propagate → does C[stored] or Y[imagined] ignite via B?). Two premature-conclusion corrections logged this
+  session (RANK 2 single-run GO; RANK 3 topology-vs-strength off fix2 alone) — verify-not-assume, wait for all arms.
+  LIVE: (a) fluency training (crash-watch bz26vprsv, val_ppl ~60, new low 59.52); (b) RANK 3 cue-driven test (PID 219293,
+  waiter bqnd5lt1b, ~30min GPU). RESUME: read the cue-driven result — if C&Y both ignite when cueing A (branch sampled)
+  + NO-SHARED control clean → RANK 3 recombination signal → 6-seed numpy; else diagnose propagation (cue may need
+  partial-A completion or a stronger chain). Findings: `2026-07-22-gap5-RANK{2-within-reactivation-blocker-SOLVED,
+  3-imagination-recombinative-replay-research-gate}.md`. OPEN FORK posed to owner: keep pushing RANK 3 imagination vs
+  hold gap#5 (strong state) + redirect the training-window effort.** What's DONE (CPU): **FHRR-retirement
   MECHANICALLY COMPLETE + confirmed fully-spiking** (attribute slot + pointer-clause both 6-seed GO, agent-routed,
   CI-guarded, `SlotBinderComposer` = real bridge/`_run_one_simulation_step`/`cp_firing_states` — the #1 idealization
   shortcut replaced by the learned spiking slot-binder); gap#3 + gap#5-completion CLOSED; gap#4 deep-credit-to-accuracy

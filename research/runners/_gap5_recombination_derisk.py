@@ -30,7 +30,7 @@ from sim.backend import get_backend  # noqa: E402
 from research.runners._gap5_sequence_replay_derisk import (  # noqa: E402
     SEQ_CFG, _prepare_sequence, _smooth, _event_windows,
 )
-from research.runners._gap5_spontaneous_reactivation_derisk import _rest_and_detect, _noise_label  # noqa: E402
+from research.runners._gap5_spontaneous_reactivation_derisk import _rest_and_detect, _noise_label, _hard_silence  # noqa: E402
 
 # 5 assemblies A=0 B=1(shared) C=2 X=3 Y=4; the two stored chains:
 SHARED_EDGES = [(0, 1), (1, 2), (3, 1), (1, 4)]      # A->B->C, X->B->Y (B shared)
@@ -87,6 +87,63 @@ def _count_transitions(F, assemblies_local, W, ev_floor, ev_k, onset_frac, min_l
     tot = within + cross
     return dict(events=len(events), b_active=b_active, b_to_learned=b_to_learned, per_asm=per_asm,
                 within=within, cross=cross, recomb_frac=(cross / tot if tot else 0.0), n_transitions=tot)
+
+
+def _cue_and_measure(prep, cue_idx, cue_pA, cue_steps, propagate_steps, assemblies_local, W, onset_frac):
+    """TRIGGERED replay: freeze plasticity + hard-silence (dendritic reset), then CUE predecessor `cue_idx` (strong drive
+    == RANK 1's 700pA completion cue) for cue_steps, then release and let the chain PROPAGATE for propagate_steps. Return
+    each assembly's peak active-fraction in the POST-cue window (the propagated activation, excluding the direct cue)."""
+    from sim.backend import get_backend, to_host
+    cp, _ = get_backend()
+    bridge = prep["bridge"]
+    bridge.core_config.enable_hebbian_learning = False
+    _hard_silence(bridge)
+    bridge.core_config.enable_ou_process = False
+    ca3_arr_host = prep["ca3_arr_host"]
+    cue_glob = cp.asarray(ca3_arr_host[assemblies_local[cue_idx]], dtype=cp.int64)
+    T = cue_steps + propagate_steps
+    F = np.zeros((T, len(ca3_arr_host)), dtype=bool)
+    for t in range(T):
+        bridge.cp_external_input_current[:] = 0.0
+        if t < cue_steps:
+            bridge.cp_external_input_current[cue_glob] = cue_pA
+        bridge._run_one_simulation_step()
+        F[t] = np.asarray(to_host(bridge.cp_firing_states))[ca3_arr_host].astype(bool)
+    post = []
+    for A in assemblies_local:
+        seg = F[cue_steps:, :][:, A]
+        a_t = _smooth(seg.sum(1).astype(float), W) / max(1, len(A))
+        post.append(round(float(a_t.max()) if a_t.size else 0.0, 3))
+    return post
+
+
+def _cue_driven(seed, a):
+    """RANK 3 escalation: cue each predecessor (A, X), measure which successor (C stored / Y recombined via B) PROPAGATES.
+    A→B→C is stored; A→B→Y is the imagined recombination (never stored as a whole). Uses the fix1 strong-within params so
+    the assemblies are reactivatable. NO-SHARED control (B!=D) must NOT recombine."""
+    _, backend = get_backend()
+    onset = a.onset_frac
+    prep = _prepare_sequence(seed, _make_cfg(a, SHARED_EDGES, n_mem=5))
+    prep_ns = _prepare_sequence(seed, _make_cfg(a, NOSHARE_EDGES, n_mem=6))
+    cue_kw = dict(cue_pA=a.cue_pa, cue_steps=a.cue_steps, propagate_steps=a.propagate_steps, W=a.window, onset_frac=onset)
+    out = {}
+    for name, prep_x, al in (("SHARED", prep, prep["assemblies_local"]),
+                             ("NOSHARE", prep_ns, prep_ns["assemblies_local"][:5])):
+        rowA = _cue_and_measure(prep_x, 0, assemblies_local=al, **cue_kw)   # cue A
+        rowX = _cue_and_measure(prep_x, 3, assemblies_local=al, **cue_kw)   # cue X
+        # post[0..4] = A,B,C,X,Y peak. stored: A->C, X->Y. recombined: A->Y, X->C.
+        out[name] = dict(cueA=rowA, cueX=rowX,
+                         A_to_C=rowA[2], A_to_Y=rowA[4], X_to_Y=rowX[4], X_to_C=rowX[2], B_from_A=rowA[1], B_from_X=rowX[1])
+    sh = out["SHARED"]; ns = out["NOSHARE"]
+    thr = a.succ_thresh
+    recomb = (sh["A_to_Y"] >= thr) or (sh["X_to_C"] >= thr)       # imagined path propagates in the shared topology
+    stored = (sh["A_to_C"] >= thr) and (sh["X_to_Y"] >= thr)      # stored paths propagate
+    noshare_clean = (ns["A_to_Y"] < thr) and (ns["X_to_C"] < thr)  # no branch node -> no recombination
+    go = bool(recomb and stored and noshare_clean)
+    print(f"  [seed {seed}] CUE-DRIVEN SHARED: cueA(A,B,C,X,Y)={sh['cueA']} cueX={sh['cueX']} "
+          f"| stored A->C={sh['A_to_C']} X->Y={sh['X_to_Y']} | RECOMB A->Y={sh['A_to_Y']} X->C={sh['X_to_C']} "
+          f"| NOSHARE recomb A->Y={ns['A_to_Y']} X->C={ns['X_to_C']} => {'RECOMB-GO' if go else 'no'}")
+    return dict(seed=seed, backend=backend, out=out, recomb=recomb, stored=stored, noshare_clean=noshare_clean, go=go)
 
 
 def _make_cfg(a, edges, n_mem):
@@ -157,9 +214,25 @@ def main():
     ap.add_argument("--onset-frac", type=float, default=0.10)
     ap.add_argument("--min-ev-len", type=int, default=4)
     ap.add_argument("--main-only", action="store_true", help="FAST diagnostic: run MAIN only + report per-assembly activation counts (skip anti-cheats)")
+    ap.add_argument("--cue-driven", action="store_true", help="TRIGGERED replay: cue predecessor A/X -> measure which successor (C stored / Y recombined) propagates via B (the biologically-faithful method)")
+    ap.add_argument("--cue-pa", type=float, default=700.0, help="cue drive (RANK 1 completion cue = 700 pA)")
+    ap.add_argument("--cue-steps", type=int, default=150)
+    ap.add_argument("--propagate-steps", type=int, default=250, help="post-cue steps for the chain to propagate")
+    ap.add_argument("--succ-thresh", type=float, default=0.12, help="successor peak active-fraction to count as PROPAGATED")
     ap.add_argument("--out", default="research/findings/raw/gap5_r4/rank3_recombination.json")
     a = ap.parse_args()
     _, backend = get_backend()
+    if a.cue_driven:
+        print(f"[gap5-recomb] RANK3 CUE-DRIVEN (triggered replay) A->B->C + X->B->Y, cue={a.cue_pa}pA x{a.cue_steps} "
+              f"propagate {a.propagate_steps} seeds={a.seeds} backend={backend}")
+        per = [_cue_driven(s, a) for s in a.seeds]
+        n_go = sum(p["go"] for p in per)
+        print(f"[gap5-recomb] CUE-DRIVEN VERDICT: {n_go}/{len(per)} seeds show TRIGGERED novel recombination "
+              f"(cue A propagates to Y and/or cue X to C via shared B) with the NO-SHARED-NODE control clean")
+        os.makedirs(os.path.dirname(a.out), exist_ok=True)
+        with open(a.out, "w") as f:
+            json.dump(dict(seeds=a.seeds, n_go=n_go, per=per), f, indent=2)
+        return
     print(f"[gap5-recomb] RANK3 shared-node A->B->C + X->B->Y (B shared) noise={_noise_label(('poisson', a.poisson_rate, a.poisson_pa, a.poisson_dur))} "
           f"rest_steps={a.rest_steps} seeds={a.seeds} backend={backend}")
     per = [one_seed(s, a) for s in a.seeds]
