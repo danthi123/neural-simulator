@@ -161,6 +161,32 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
+- **🟢 CYCLE 2026-07-22 (autonomous, owner steer: "continue with whatever pending work is highest value + can COEXIST
+  with the training") — coexist = CPU/GPU-free work, the GPU is the production run's. Advanced FOUR fronts, all
+  verify-not-assert:**
+  1. **gap#1 (production WKV) VERIFIED fluent + on track** — read the ACTUAL samples (not inferred from ppl): step 108k
+     `val_ppl` 67 producing coherent multi-sentence English ("she was willing to move around in public, to avoid being
+     discriminated against or punished. She was the first woman to explore…"). Trajectory 540→109→82→70→66.5-best over
+     108k steps; the flattening is the near-peak-LR grind (cosine `lr_decay_steps=3M`, LR still ~99.7% of peak at 3.5%),
+     and the go/no-go established fluency AT `val_ppl`~82 so **66 is already past threshold + improving**. (Caught + cleared
+     my own premature-plateau false alarm by checking the LR schedule + samples.) ~114s/1000 steps → fluent model ~3-4 days.
+  2. **NORTH-STAR console VERIFIED + committed (23e49dec)** — `HedgingFluidChat(renderer="wkv", enable_hedging=True)` runs
+     the WHOLE trustworthy loop on one ~20k-neuron spiking brain with the REAL spiking WKV renderer: grounded recall +
+     fluent spiking-WKV render + no-confab moat (abstains on `zzz`) + graded hedging (asserts-when-confident) +
+     learn-a-fact-live. The owner's MAIN goal WORKS TODAY; the production 83M WKV is the drop-in fluency upgrade.
+     Finding `2026-07-22-northstar-grounded-fluent-moat-hedging-console-COMPOSES.md`.
+  3. **gap#5 (imagination line) advancing, COEXISTING on CPU:** RANK 1 (spontaneous single-assembly reactivation, 1-seed
+     clean GO) 6-SEED CONFIRM running on CPU (task b5n7l6m7d, `--skip-poscontrol` lean); RANK 2 (sequence replay A→B→C,
+     the Ecker-2022 template — the next imagination piece) BUILD dispatched to a subagent (a95e461a0e191ead2, GPU-free +
+     CPU smoke). Both zero GPU risk to the training.
+  4. **gap#4 keystone (deep-credit) seed-fix VERIFIED** — `TestSubstrateActuallySeeded` passes + audit found NO runner
+     still carrying the buggy `actual_seed_used=` pattern ⇒ when the GPU frees (~3-4 days) the deep-credit re-derisk will
+     be CLEAN, not re-confounded by the 2026-07-17 unseeded-substrate bug. (The re-derisk itself is GPU-bound → deferred
+     to the GPU-free window; per the bar, the emergence engine [gap#1 cortex + gap#4 learning-substrate] is the path, not
+     hand-building gap#2/#3.)
+  EXACT NEXT ACTION: hold in the async pattern for the gap#5 task notifications (b5n7l6m7d + a95e461a0e191ead2 re-invoke
+  on completion) → on RANK 1 6-seed result, update this board + advance RANK 2/3; keep verifying the production run
+  healthy each re-invocation; when the GPU frees, fire the gap#4 seed-fixed deep-credit re-derisk.
 - **✅ SESSION OUTCOME (2026-07-21, autonomous) — ALL THREE owner priorities DELIVERED + ADVERSARIALLY VERIFIED:**
   (1) **the autonomous incremental LM-training workflow** (train→ckpt→benchmark→resume, resumable/pausable, ~30×-optimized)
   is BUILT + VALIDATED on real FineWeb-Edu + RUNNING with a **go/no-go CONFIRMED POSITIVE** (`val_ppl` 235→~57 and
