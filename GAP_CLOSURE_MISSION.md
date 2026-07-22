@@ -237,13 +237,19 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
      6-SEED GO** (42/43/44/100/101/102, memb 0.31-0.33, spec +0.26-0.28, NO-NOISE→0 acid every seed, all confound
      anti-cheats clean; `learned_weight_carries` 5/6 secondary). The imagination line's FIRST RUNG is solid at the
      standing rule. Finding `2026-07-22-gap5-RANK1-spontaneous-reactivation-6seed-GO.md`. **RANK 2 (ordered sequence
-     replay A→B→C)** built + de-risked: the FORWARD-CHAIN mechanism WORKS (asym=+2.53, chain_rev=0; the reverse-bias was
-     a temporal-order artifact), but the sequence assemblies don't spontaneously REACTIVATE — isolated to a
-     `_prepare_sequence` within-encode code-path DIVERGENCE from RANK 1's proven `_prepare` (configs/weights/assembly
-     byte-identical, yet 0 reactivation; two hypotheses refuted: density [RANK 1 uses 0.05 not 0.35] + self_regen). Fix =
-     reuse RANK 1's `_prepare` for the within-encode — DELEGATED to a subagent (a5d6028e448e40a10). Findings
-     `2026-07-22-gap5-RANK2-sequence-replay-forward-chain-GO-within-reactivation-blocker.md`. LESSON logged: over-parallel
-     CPU diagnostics starved+timed-out the RANK 1 6-seed once (re-run on dedicated CPU); thread-limit coexisting runs.
+     replay A→B→C) = SINGLE-SEED GO (2026-07-22), all anti-cheats clean → 6-seed pending.** The within-reactivation
+     blocker (2 prior over-framings on this exact question — an n_mem=1 confound + a "deeply-elusive rest-phase" verdict,
+     both RETRACTED) is SOLVED: it was the per-assembly `_silence_soma_apical + _zero_elig` boundary calls in
+     `_prepare_sequence`'s within-encode; RANK 1's `_prepare` keeps eligibility across assemblies + never clears the
+     boundary state. A verify-not-assume single-variable ladder (Tests A/B/B′/C/D/E) pinned it after ruling out
+     chain-erosion, disjoint-vs-overlap draw, within-strength, density, structural_sep, recall_k_thresh. Fix = the
+     additive default-off `--rank1-encode` flag; the residual within/chain co-existence tension (a strong within-encode
+     adds cross-links that flip the forward chain reverse) resolved by a SMALL `--within-refresh 8`.
+     **RECIPE: `--rank1-encode --within-events 30 --chain-fwd 24 --chain-rev 0 --within-refresh 8`** → FWD=1.000/REV=0.000,
+     asym=+5.26, within-reactivation events=7 asm_active=[4,4], NO-NOISE=0, NO-ENCODE=0, SCRAMBLE→FWD 0.333 (load-bearing).
+     Finding `2026-07-22-gap5-RANK2-within-reactivation-blocker-SOLVED-boundary-silence.md`. NEXT: 6-seed + n_mem=3 (A→B→C)
+     + adversarial-verify → then RANK 2 (imagination rung 2) CLOSES. LESSON: don't over-parallel CPU diagnostics; these
+     ran fine at ~1 concurrent GPU de-risk (~640MB) alongside the fluency training.
   4. **gap#4 keystone (deep-credit) seed-fix VERIFIED** — `TestSubstrateActuallySeeded` passes + audit found NO runner
      still carrying the buggy `actual_seed_used=` pattern ⇒ when the GPU frees (~3-4 days) the deep-credit re-derisk will
      be CLEAN, not re-confounded by the 2026-07-17 unseeded-substrate bug. (The re-derisk itself is GPU-bound → deferred

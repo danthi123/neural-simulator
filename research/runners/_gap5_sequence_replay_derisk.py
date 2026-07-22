@@ -146,9 +146,15 @@ def _prepare_sequence(seed, cfg, do_encode=True):
     n_assy = max(6, int(cfg["assembly_frac"] * n_ca3))
     # DISJOINT assemblies (share NO cells) -> unambiguous order (a shared cell would belong to two positions in the
     # sequence). Same seed draw family as RANK 1 (seed*17+3), drawn from ONE without-replacement pool.
+    # --overlap-draw (diagnostic, default off): RANK 1's INDEPENDENT per-assembly draw (each drawn from the full pool ->
+    # ~12% expected overlap at n_assy=240/n_ca3=2000). Isolates whether RANK 1's reactivation at n_mem>=2 rides on the
+    # inter-assembly OVERLAP that the disjoint (order-preserving) draw removes.
     rng = np.random.default_rng(seed * 17 + 3)
-    pool = rng.choice(ca3_idx, n_assy * n_mem, replace=False)
-    assemblies = [np.asarray(sorted(pool[i * n_assy:(i + 1) * n_assy]), dtype=np.int64) for i in range(n_mem)]
+    if cfg.get("overlap_draw"):
+        assemblies = [np.asarray(sorted(rng.choice(ca3_idx, n_assy, replace=False)), dtype=np.int64) for _ in range(n_mem)]
+    else:
+        pool = rng.choice(ca3_idx, n_assy * n_mem, replace=False)
+        assemblies = [np.asarray(sorted(pool[i * n_assy:(i + 1) * n_assy]), dtype=np.int64) for i in range(n_mem)]
 
     flat_h, pre_l_h, post_l_h = _extract_ca3ca3_vec(bridge, ca3_idx, to_host)
     conn = bridge.cp_connections
@@ -208,13 +214,18 @@ def _prepare_sequence(seed, cfg, do_encode=True):
         # settle=3 -> w_within 5.0; settle=0 -> 27-30; == RANK 1 27.4). The plateau VALUE is cleared by the state reset
         # alone; the settling steps are unnecessary here and were the sole divergence from RANK 1's _prepare that gave
         # 0 rest-phase reactivation. The CHAIN phase keeps its own settle=2 theta reset (untouched, asym forward stands).
+        rank1_encode = bool(cfg.get("rank1_encode"))   # diagnostic: EXACT RANK 1 loop (no boundary silence/zero_elig)
         for m in range(n_mem):
-            _silence_soma_apical(bridge, settle=0); _zero_elig(bridge)   # fresh start for assembly m (settle=0: no starving steps)
+            if not rank1_encode:
+                _silence_soma_apical(bridge, settle=0); _zero_elig(bridge)   # fresh start for assembly m (settle=0: no starving steps)
+            else:
+                bridge.cp_external_input_current[:] = 0.0; bridge.cp_bdsp_apical_drive[:] = 0.0   # == RANK 1's per-event zeroing only
             for _ev in range(int(cfg["within_events"])):
                 _reset(reset_steps)
                 _drive_window(m, drive_steps)
             bridge.cp_external_input_current[:] = 0.0
-        _silence_soma_apical(bridge, settle=0); _zero_elig(bridge)       # last assembly OFF before the chain phase (settle=0)
+        if not rank1_encode:
+            _silence_soma_apical(bridge, settle=0); _zero_elig(bridge)       # last assembly OFF before the chain phase (settle=0)
         # TRANSIENT plateau for the CHAIN phase (self_regen=0): the plateau tracks the drive so ONLY the currently-driven
         # assembly has IS_post -> clean asymmetric forward (a latched plateau would keep an earlier assembly's IS_post ON
         # into the later window -> reverse links). The within-attractors are already stored above (bistable plateau).
@@ -239,6 +250,33 @@ def _prepare_sequence(seed, cfg, do_encode=True):
                 _silence_soma_apical(bridge, settle=2)
                 _drive_window(m, win)
             bridge.cp_external_input_current[:] = 0.0
+
+        # WITHIN-REFRESH (2026-07-22 fix, default off): the CHAIN phase's transient-plateau + per-window theta silencing
+        # ERODES the within-attractors the within-encode built (measured: w_within 15.2 -> 6.3 at n_mem=2 -> below the
+        # reactivation threshold = the RANK 2 blocker). A post-chain bistable within-refresh RESTORES each within-attractor
+        # WITHOUT touching the asymmetric cross-links: driving assembly m ALONE (bistable plateau) potentiates within-m
+        # (pre=m eligible x plateau_m) but a cross-link m->k has post=k which is SILENT (no plateau) -> not potentiated,
+        # not depressed (btsp_hetero_dep=0). So the forward chain survives while the within-basin is rebuilt.
+        refresh = int(cfg.get("within_refresh", 0))
+        if refresh > 0:
+            cfg_b.coincidence_plateau_self_regen = float(cfg["plateau_self_regen"])   # BISTABLE (latching) for the refresh
+            # The refresh must build a REACTIVATABLE within-attractor -> use the SAME rank1_encode structure that Test C/D
+            # proved reactivates (NO per-assembly boundary silence/zero_elig -- those are the blocker). Clear the CHAIN's
+            # eligibility ONCE at the start so chain-elig does not corrupt the refresh potentiation, then a plain per-
+            # assembly loop keeping eligibility (== RANK 1). Cross-links added here are SYMMETRIC; the chain's forward
+            # asymmetry (asym +2.66) survives as long as it exceeds the symmetric refresh contribution.
+            _zero_elig(bridge)
+            for m in range(n_mem):
+                if not rank1_encode:
+                    _silence_soma_apical(bridge, settle=0); _zero_elig(bridge)
+                else:
+                    bridge.cp_external_input_current[:] = 0.0; bridge.cp_bdsp_apical_drive[:] = 0.0
+                for _ev in range(refresh):
+                    _reset(reset_steps)
+                    _drive_window(m, drive_steps)
+                bridge.cp_external_input_current[:] = 0.0
+            if not rank1_encode:
+                _silence_soma_apical(bridge, settle=0); _zero_elig(bridge)
 
         cfg_b.enable_bdsp = False; cfg_b.enable_btsp = False; bridge.cp_bdsp_apical_drive = None
         # restore the bistable plateau for recall/rest (completion latches)
@@ -543,6 +581,9 @@ def main():
     ap.add_argument("--onset-frac", type=float, default=0.08, help="per-assembly fraction for the ONSET crossing")
     ap.add_argument("--ca3-density", type=float, default=None, help="within-CA3 recurrent density (RANK 1 completion needs 0.35 for spontaneous reactivation; SEQ_CFG default 0.05 is too weak)")
     ap.add_argument("--structural-sep", type=int, default=None, help="basin isolation (RANK 1 completion uses 2; SEQ_CFG default 1)")
+    ap.add_argument("--within-refresh", type=int, default=0, help="post-chain bistable within-refresh events per assembly (fix: chain erodes within 15.2->6.3; refresh rebuilds the basin, preserves the forward chain)")
+    ap.add_argument("--overlap-draw", action="store_true", help="RANK 1-style INDEPENDENT (overlapping) assembly draw instead of DISJOINT (diagnostic: isolates whether reactivation rides on inter-assembly overlap)")
+    ap.add_argument("--rank1-encode", action="store_true", help="diagnostic: EXACT RANK 1 within-encode loop (no per-assembly boundary silence/zero_elig; eligibility persists across assemblies)")
     ap.add_argument("--encode-only", action="store_true", help="FAST tuning: build+encode + report w_within/w_fwd/w_rev only (no rest phase)")
     ap.add_argument("--out", default=str(OUT))
     a = ap.parse_args()
@@ -555,6 +596,9 @@ def main():
         cfg["ca3_density"] = float(a.ca3_density)
     if a.structural_sep is not None:
         cfg["structural_sep"] = int(a.structural_sep)
+    cfg["within_refresh"] = int(a.within_refresh)
+    cfg["overlap_draw"] = bool(a.overlap_draw)
+    cfg["rank1_encode"] = bool(a.rank1_encode)
     noise = ("poisson", a.poisson_rate, a.poisson_pa, a.poisson_dur) if a.noise == "poisson" else ("ou", a.sigma)
 
     if a.encode_only:
