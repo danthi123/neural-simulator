@@ -237,7 +237,8 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
      6-SEED GO** (42/43/44/100/101/102, memb 0.31-0.33, spec +0.26-0.28, NO-NOISE→0 acid every seed, all confound
      anti-cheats clean; `learned_weight_carries` 5/6 secondary). The imagination line's FIRST RUNG is solid at the
      standing rule. Finding `2026-07-22-gap5-RANK1-spontaneous-reactivation-6seed-GO.md`. **RANK 2 (ordered sequence
-     replay A→B→C) = SINGLE-SEED GO (2026-07-22), all anti-cheats clean → 6-seed pending.** The within-reactivation
+     replay A→B→C): within-reactivation SOLVED+robust; forward-replay REAL but GPU-order-metric non-deterministic
+     (deterministic-6-seed confirm running, PID 159534).** The within-reactivation
      blocker (2 prior over-framings on this exact question — an n_mem=1 confound + a "deeply-elusive rest-phase" verdict,
      both RETRACTED) is SOLVED: it was the per-assembly `_silence_soma_apical + _zero_elig` boundary calls in
      `_prepare_sequence`'s within-encode; RANK 1's `_prepare` keeps eligibility across assemblies + never clears the
@@ -247,9 +248,14 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
      adds cross-links that flip the forward chain reverse) resolved by a SMALL `--within-refresh 8`.
      **RECIPE: `--rank1-encode --within-events 30 --chain-fwd 24 --chain-rev 0 --within-refresh 8`** → FWD=1.000/REV=0.000,
      asym=+5.26, within-reactivation events=7 asm_active=[4,4], NO-NOISE=0, NO-ENCODE=0, SCRAMBLE→FWD 0.333 (load-bearing).
-     Finding `2026-07-22-gap5-RANK2-within-reactivation-blocker-SOLVED-boundary-silence.md`. NEXT: 6-seed + n_mem=3 (A→B→C)
-     + adversarial-verify → then RANK 2 (imagination rung 2) CLOSES. LESSON: don't over-parallel CPU diagnostics; these
-     ran fine at ~1 concurrent GPU de-risk (~640MB) alongside the fluency training.
+     Finding `2026-07-22-gap5-RANK2-within-reactivation-blocker-SOLVED-boundary-silence.md`. REPRODUCIBILITY: the
+     forward-ORDER fraction is GPU-non-deterministic (no CUBLAS_WORKSPACE_CONFIG; sparse-atomic reorder) — deterministic
+     numpy seed-42 = FWD 1.000, GPU 3/4 forward (42:0.500 the unlucky draw, 43:0.800, 44:1.000); reactivation robust every
+     run. ⇒ within-reactivation SOLVED+robust; forward-replay a REAL forward bias, deterministic-6-seed confirm running.
+     n_mem=3: all 3 assemblies reactivate, forward-biased (tau+0.667) but noisier order (per-n_mem refresh tuning). NEXT:
+     read the deterministic 6-seed → if forward holds, RANK 2 forward-replay closes; adversarial-verify. LESSON: the
+     forward-ORDER metric is non-deterministic on GPU (unlike RANK 1's robust reactivation metric) — use numpy/CUBLAS-det
+     for order claims; a single favorable GPU run is NOT a GO (caught the over-claim via the 6-seed).
   4. **gap#4 keystone (deep-credit) seed-fix VERIFIED** — `TestSubstrateActuallySeeded` passes + audit found NO runner
      still carrying the buggy `actual_seed_used=` pattern ⇒ when the GPU frees (~3-4 days) the deep-credit re-derisk will
      be CLEAN, not re-confounded by the 2026-07-17 unseeded-substrate bug. (The re-derisk itself is GPU-bound → deferred

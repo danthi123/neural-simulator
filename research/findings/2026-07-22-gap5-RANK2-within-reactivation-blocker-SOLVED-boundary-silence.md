@@ -50,10 +50,25 @@ survives). Seed 42, n_mem=2:
   1.000 vs reverse 0.000 vs SCRAMBLE 0.333 vs chance 0.500."
 - Refresh=30 (too strong) flipped asym to −10.15 (reverse); refresh=8 is the sweet spot — restore, don't overwrite.
 
+## ⚠️ REPRODUCIBILITY CORRECTION (same day — the forward-ORDER metric is GPU-non-deterministic; the effect is REAL, my single-run "GO 1/1" was risky)
+The 6-seed GPU run exposed that the FORWARD-ORDER fraction is **not bit-reproducible on GPU** (the runner enforces no
+`CUBLAS_WORKSPACE_CONFIG`; sparse-CSR spike-accumulation atomics reorder float sums → sensitive spike-order metric
+varies run-to-run). Same config, seed 42: my single-seed GPU run = FWD 1.000, the 6-seed GPU run = FWD 0.500.
+**BUT the effect is genuinely forward — the DETERMINISTIC (numpy CPU) seed-42 reproducibly = FWD 1.000, tau +1.000**, and
+GPU seeds 43/44 = 0.800/1.000. Spread so far (n_mem=2): numpy-42 **1.000**, GPU-42 0.500, GPU-43 0.800, GPU-44 1.000
+(3 of 4 strongly forward; GPU-42 the unlucky non-deterministic draw). Reactivation is robust on EVERY run
+(asm_active [6,6]/[5,5]/[2,2]/[3,3], NO-NOISE=0). **Honest read: within-reactivation SOLVED + robust; forward-replay is a
+REAL forward bias whose per-run order metric is GPU-non-deterministic — a MEASUREMENT caveat, not a mechanism failure.**
+The rigorous close is a DETERMINISTIC 6-seed (numpy, or GPU with `CUBLAS_WORKSPACE_CONFIG=:4096:8`). n_mem=3 (A→B→C):
+all 3 assemblies reactivate (asm_active=[2,2,2]), forward-biased (tau +0.667, REV=0.000) but noisier order (FWD 0.500) —
+the refresh=8 sweet-spot is n_mem-dependent (latched-plateau reverse links grow with n_mem).
+
 ## Status
-- **SOLVED:** the RANK 2 within-reactivation blocker (headline; corrects two prior over-framings on this exact question).
-- **SINGLE-SEED GO:** the full forward sequence replay (within-reactivation + forward chain co-exist) — all anti-cheats
-  clean. **Next: 6-seed (42/43/44/100/101/102) + n_mem=3 (A→B→C) + adversarial-verify → then RANK 2 CLOSES.**
+- **SOLVED + robust:** the RANK 2 within-reactivation blocker (headline; corrects THREE prior framings on this exact
+  question — an n_mem=1 confound, a "deeply-elusive rest-phase" verdict, and a risky single-GPU-run "GO 1/1").
+- **Forward-replay: REAL forward bias** (deterministic numpy FWD 1.000; GPU 3/4 forward), GPU-order-metric non-deterministic.
+  **Next: DETERMINISTIC 6-seed + adversarial-verify → then the forward-replay rung closes.** The within-reactivation solve
+  stands regardless. Per THE LAW this is a method/measurement caveat to resolve (enforce determinism), not a wall.
 - gap#5's solid rungs stand independent of this: the completion mechanism CLOSED (2026-07-18) + RANK 1 spontaneous
   reactivation 6-seed GO. RANK 2 (imagination-line rung 2) is a bonus; this advances it from "elusive blocker" to
   "within-reactivation solved, sequencing co-existence is the last tuning step."
