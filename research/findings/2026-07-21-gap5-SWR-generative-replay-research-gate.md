@@ -49,3 +49,31 @@ plateau_self_regen=0.15, apical_kir_g=3.0, apical_gc=1.0, apical_gc_read=5.0`). 
 
 ## RANK 2 (moderate) sequence replay (asymmetric-BTSP chain, Ecker) · RANK 3 (deep frontier) generative/novel-path replay.
 ## VERDICT: RANK 1 first — near-term, cheapest, NO `sim/` edit, anti-cheats pre-mapped, advances the loop WITHOUT re-deriving retracted work. RANK 2 moderate (re-de-riskable on the bistable substrate; old v16 boundary + R4 avalanche wall). RANK 3 deep (proven only at FHRR grain). GPU-preferred (n_ca3=2000 bistable); numpy-CPU smoke at n_ca3=500-1000 valid pre-check.
+
+## RANK 1 CPU PRE-CHECK RESULT (2026-07-22) — PROMISING/PARTIAL: spontaneous basin-selective reactivation demonstrated (NOT the retracted artifacts), but the LEARNED-weight contribution not yet cleanly isolated
+Built `research/runners/_gap5_spontaneous_reactivation_derisk.py` (NO `sim/` edit): BTSP-encode the bistable store → REST
+phase (freeze plasticity + `_hard_silence` + weak NON-SPECIFIC background, NO cue) → detect discrete CA3 co-firing events.
+CPU pre-check (n_ca3=2000, n_mem=2, seed 42, Poisson r=0.015/pa=1500/dur=10):
+| condition | events | member_frac | random | cross-asm | duty | notes |
+|---|---|---|---|---|---|---|
+| **GO (pa 1500)** | 3 (2 specific) | **0.319** | 0.048 | 0.091 | **0.079** | 6.6× random, 3.5× competing assembly; discrete (silent between) |
+| **NO-NOISE (acid)** | **0** | 0.000 | — | — | 0.000 | somatically SILENT (pop 0.0002) → NOT the self-sustaining artifact ✓ |
+| **NO-ENCODE** | **0** | 0.000 | 0.048 | — | 0.000 | encoded store necessary → not the noise-artifact ✓ |
+| SHUFFLED-W | 3 | **0.213** | 0.048 | — | 0.079 | PARTIAL collapse (still 4.4× random) — the caveat |
+- **Two load-bearing acid tests PASS** (verified, not asserted): NO-NOISE→silent (retires the self-sustaining artifact),
+  NO-ENCODE→0 (retires the noise-artifact); FROZEN plasticity byte-hash-verified (retires the Wang confound); dendritic
+  reset clean. ⇒ **the first genuine (non-artifact) spontaneous basin-selective reactivation in the project.**
+- **HONEST CAVEAT (subagent self-flagged): the SHUFFLED-within-weights control only PARTIALLY collapses** (0.319→0.213) —
+  the selectivity is mostly carried by the assembly's STRUCTURAL wiring (`structural_sep` + `selective_inhib` survive a
+  weight-shuffle), the LEARNED within-assembly weights add only ~33%. So "the LEARNED attractor selectively reactivates"
+  is NOT cleanly demonstrated at single-seed. VERDICT: **PROMISING/PARTIAL, not a clean GO.**
+- Config corrections banked: the completing store is the BTSP encode (NOT plain Hebbian, which never completes); needs
+  n_mem=2 + n_ca3=2000 (500/1000 too weak). Op-point narrow (pa=3000 → 0 events).
+- **NEXT (queued behind the live production run):** (1) TIGHTEN the shuffle control — add a structure-matched control that
+  ALSO removes `structural_sep`+`selective_inhib`, so the shuffle must drop member_frac toward random (0.05), isolating the
+  learned-weight contribution; (2) 6-seed GPU confirm: `SIM_BACKEND=cupy python -m
+  research.runners._gap5_spontaneous_reactivation_derisk --seeds 42 43 44 100 101 102 --n-ca3 2000 --n-mem 2 --noise
+  poisson --poisson-rate 0.015 --poisson-pa 1500 --poisson-dur 10 --rest-steps 1500`; (3) fix the NO-NOISE bridge-reuse
+  numerical artifact (own fresh bridge). ⇒ RANK 1 is the honest cheapest first move demonstrated (spontaneous reactivation
+  real, not the confounds); the learned-weight-isolation + 6-seed are the close. RANK 2 (sequence) / RANK 3 (imagination)
+  follow. Per THE LAW: a promising-partial with the next control named, NOT a wall.
