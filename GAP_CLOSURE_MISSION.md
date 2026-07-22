@@ -161,6 +161,20 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
+- **🔌 GPU CRASH + REBOOT (2026-07-22 ~05:05) — RESUME PLAN (owner is rebooting to recover the GPU):** the RTX 3090
+  fell off the bus mid-training (kernel: `NVRM GPU0 _scrubWaitAndSave: Timed out`, `API_GPU_ATTACHED_SANITY_CHECK
+  failed`; `nvidia-smi` → "No devices were found"). NOT a data problem — a driver/hardware hang; reboot is the fix.
+  **THE PRODUCTION-WKV TRAINING CHECKPOINT IS SAFE + RESUMABLE:** `bridges/lmtrain/run3/ckpt/latest.pt` = **step
+  189000, 1,548,288,000 tokens (1.55B), val_ppl ~65**, with model + optimizer state (resumes bit-exact — the workflow's
+  whole point). **AFTER THE REBOOT, do THIS:** (1) verify the GPU is back: `nvidia-smi` shows the 3090; (2) RESUME the
+  training: `python -m research.runners.lm_train_run resume --root bridges/lmtrain/run3` (clears any PAUSE, continues from
+  step 189000; or `start` with the same flags auto-resumes) — relaunch it as a controller `run_in_background`, NOT a
+  detached child, with a Monitor; (3) re-arm the anti-stall heartbeat Monitor (SESSION START recipe above); (4) re-verify
+  it's descending (`tail bridges/lmtrain/run3/train.log`). The reboot kills the RANK 2 subagent (CPU) — its WIP driver
+  edits are committed below; RE-VERIFY/RE-DISPATCH the RANK 2 `_prepare`-reuse fix after (see the CYCLE 2026-07-22 gap#5
+  bullet). gap#5 RANK 1 6-seed GO (committed 17335dbf) is the solid win, unaffected. gap#4 seed-fix verified — its
+  re-derisk can run once the GPU is back.
+
 - **🟢 CYCLE 2026-07-22 (autonomous, owner steer: "continue with whatever pending work is highest value + can COEXIST
   with the training") — coexist = CPU/GPU-free work, the GPU is the production run's. Advanced FOUR fronts, all
   verify-not-assert:**

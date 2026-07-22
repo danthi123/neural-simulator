@@ -198,16 +198,23 @@ def _prepare_sequence(seed, cfg, do_encode=True):
                 bridge._run_one_simulation_step()
 
         # WITHIN phase: each assembly a bistable-completable attractor (== RANK 1 single-assembly store, done n_mem x).
-        # Eligibility is KEPT across an assembly's own events (== RANK 1 -> the within weights accumulate to the ~70
-        # completion scale; zeroing per-event starves them to ~6). It is zeroed only at the assembly BOUNDARY (with a
-        # silence) so assembly m's eligibility/plateau cannot leak into m+1's within-encode as a spurious m->m+1 link.
+        # Eligibility is KEPT across an assembly's own events (== RANK 1 -> the within weights accumulate to the ~27
+        # completion scale). Per-assembly the event loop (_reset + _drive_window) is BYTE-IDENTICAL to RANK 1's proven
+        # _prepare loop (no silence between events). At the assembly BOUNDARY we state-reset the PREVIOUS assembly (clear
+        # its latched plateau + eligibility) so it cannot leak into m+1's within-encode as a spurious cross-link -- but
+        # with settle=0 (NO sim steps).
+        # *** THE RANK-2 within-reactivation FIX (2026-07-22): the boundary silence originally ran settle=3 SIM STEPS.
+        # Those steps -- not the state reset -- STARVE the bistable within-latch of the assembly that FOLLOWS (measured:
+        # settle=3 -> w_within 5.0; settle=0 -> 27-30; == RANK 1 27.4). The plateau VALUE is cleared by the state reset
+        # alone; the settling steps are unnecessary here and were the sole divergence from RANK 1's _prepare that gave
+        # 0 rest-phase reactivation. The CHAIN phase keeps its own settle=2 theta reset (untouched, asym forward stands).
         for m in range(n_mem):
-            _silence_soma_apical(bridge, settle=3); _zero_elig(bridge)   # fresh start for assembly m
+            _silence_soma_apical(bridge, settle=0); _zero_elig(bridge)   # fresh start for assembly m (settle=0: no starving steps)
             for _ev in range(int(cfg["within_events"])):
                 _reset(reset_steps)
                 _drive_window(m, drive_steps)
             bridge.cp_external_input_current[:] = 0.0
-        _silence_soma_apical(bridge, settle=3); _zero_elig(bridge)       # last assembly OFF before the chain phase
+        _silence_soma_apical(bridge, settle=0); _zero_elig(bridge)       # last assembly OFF before the chain phase (settle=0)
         # TRANSIENT plateau for the CHAIN phase (self_regen=0): the plateau tracks the drive so ONLY the currently-driven
         # assembly has IS_post -> clean asymmetric forward (a latched plateau would keep an earlier assembly's IS_post ON
         # into the later window -> reverse links). The within-attractors are already stored above (bistable plateau).
