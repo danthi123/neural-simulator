@@ -74,3 +74,16 @@ the refresh=8 sweet-spot is n_mem-dependent (latched-plateau reverse links grow 
   "within-reactivation solved, sequencing co-existence is the last tuning step."
 - Infra added (additive, default-off, byte-identical when off): `--rank1-encode`, `--within-refresh N`, `--overlap-draw`
   diagnostic flags on `_gap5_sequence_replay_derisk.py`. Raw: `research/findings/raw/gap5_r4/rank2_nmem2_*.log`.
+
+---
+
+## DETERMINISTIC 6-seed verdict (numpy, the definitive forward-replay result) — 4/6 clean forward, mean 0.806
+Ran the recipe on numpy (deterministic, no GPU non-determinism) across 42/43/44/100/101/102:
+- **seeds 42, 100, 101, 102 = FWD 1.000 / REV 0.000** (perfect forward replay); seed 44 = 0.500 (chance); seed 43 = 0.333
+  (reverse-leaning). **Mean forward_frac = 0.806** (vs chance 0.500).
+- **Within-reactivation robust on ALL 6 seeds** (the blocker-solve stands unconditionally).
+- ⇒ Honest verdict: the forward-ORDER via weight-asymmetry is a **REAL, strong-on-most-seeds but not uniform** effect
+  (4/6 perfect, 2/6 weak/reverse) — a **method-limited** result, not a clean 6/6 GO. The modest+variable ordering is the
+  known signature of a weight-asymmetry sequencer whose direction competes with the within-attractor reactivation
+  dynamics. The robust, closable deliverable is the **within-reactivation solve**; a uniform forward order would want the
+  biological ordered-replay mechanism (theta-phase precession / Skaggs-McNaughton compression), the ranked next method.
