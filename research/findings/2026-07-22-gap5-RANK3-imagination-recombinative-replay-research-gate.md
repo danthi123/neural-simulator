@@ -45,3 +45,25 @@ within-attractor + forward BTSP chain) on the shared-node topology — no new `s
 `_gap5_sequence_replay_derisk.py` (a shared-assembly draw + a second chain + a recombination detector). Build gated on
 the RANK 2 deterministic confirm (running) so RANK 3 rests on a solid RANK 2. De-risk cheap-first on numpy (deterministic),
 then 6-seed.
+
+---
+
+## DE-RISK RESULT #1 (2026-07-22, deterministic numpy) — the shared-node topology has a LEAKY-ATTRACTOR boundary; fixes in flight
+Built `_gap5_recombination_derisk.py` (+ additive `chain_edges` branch topology in `_gap5_sequence_replay_derisk.py`,
+default None = linear, byte-identical) using the proven RANK 1 (bistable within, `--rank1-encode`) + RANK 2 (forward BTSP
+chain, `--within-refresh 8`) recipe on the 5-assembly shared-node topology A→B→C + X→B→Y.
+
+**RESULT: events=0, per_asm(A,B,C,X,Y)=[0,0,0,0,0], w_within=21.7 — NONE of the 5 assemblies reactivate** (not just the
+branch node B). vs RANK 2's refresh-8 within=143. **Diagnosis: the branch topology's many cross-links (A→B, X→B, B→C,
+B→Y, plus the rank1-style refresh's cross-links spread across 5 assemblies) LEAK each within-attractor's recurrent
+excitation below the self-sustaining threshold — a "leaky attractor" from over-connectivity.** Note w_within=21.7 is
+ABOVE the 15.2 that reactivated at RANK 2 n_mem=2, so it is NOT a pure within-strength deficit — the CROSS-LINK LEAK is
+the mechanism (more connected → the noise ignition drains to neighbours instead of igniting one assembly's basin).
+
+This is a genuine, precisely-characterized boundary of the direct-composition approach (per THE LAW: a verdict on the
+METHOD, not the capability). Ranked fixes (testing): (1) a MUCH stronger within-attractor to dominate the cross-leak
+(within-events 60 + refresh 24); (2) a SPARSER chain (fewer chain iterations → weaker cross-links) + more refresh;
+(3 — if 1/2 fail, the next research-gated method) assembly-SELECTIVE inhibition scaling with connectivity, OR a theta/
+phase-gated read so only ONE branch is active per cycle (biology: SWR replay is phase-organized; the branch is sampled,
+not co-active), OR sparser (partial-overlap) assemblies so B shares only a FEW cells with each chain rather than being a
+full 4-edge hub. All numpy-deterministic (the order/recombination metric is GPU-non-deterministic).

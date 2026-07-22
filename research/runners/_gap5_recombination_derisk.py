@@ -63,10 +63,13 @@ def _count_transitions(F, assemblies_local, W, ev_floor, ev_k, onset_frac, min_l
     asize_ref = float(np.mean([max(1, len(a)) for a in assemblies_local]))
     events, _, _ = _event_windows(F, W=W, ev_floor=ev_floor, ev_k=ev_k, asize_ref=asize_ref)
     within = cross = b_active = b_to_learned = 0
+    per_asm = [0] * len(assemblies_local)   # per-assembly activation count across events (diagnostic)
     for (s, e) in events:
         if e - s < min_len:
             continue
         ons = _onsets(F, assemblies_local, s, e, W, onset_frac)
+        for k in ons:
+            per_asm[k] += 1
         if B_IDX not in ons:
             continue
         b_active += 1
@@ -82,7 +85,7 @@ def _count_transitions(F, assemblies_local, W, ev_floor, ev_k, onset_frac, min_l
                 else:
                     cross += 1
     tot = within + cross
-    return dict(events=len(events), b_active=b_active, b_to_learned=b_to_learned,
+    return dict(events=len(events), b_active=b_active, b_to_learned=b_to_learned, per_asm=per_asm,
                 within=within, cross=cross, recomb_frac=(cross / tot if tot else 0.0), n_transitions=tot)
 
 
@@ -109,6 +112,10 @@ def one_seed(seed, a):
     prep = _prepare_sequence(seed, _make_cfg(a, SHARED_EDGES, n_mem=5))
     _, F = _rest_and_detect(prep, noise, a.rest_steps, seed, W=a.window, ev_floor=0.5, ev_k=a.ev_k, min_frac=0.30)
     main = _count_transitions(F, prep["assemblies_local"], **det)
+    if getattr(a, "main_only", False):
+        print(f"  [seed {seed}] DIAGNOSE MAIN: events={main['events']} per_asm(A,B,C,X,Y)={main['per_asm']} "
+              f"b_active={main['b_active']} within={main['within']} cross={main['cross']} w_within(prep)={prep.get('w_within', 0):.1f}")
+        return dict(seed=seed, backend=backend, main=main, go=False)
 
     # NO-NOISE acid (no spontaneous recombination without background)
     _, Fnn = _rest_and_detect(prep, ("none",), a.rest_steps, seed, W=a.window, ev_floor=0.5, ev_k=a.ev_k, min_frac=0.30)
@@ -149,6 +156,7 @@ def main():
     ap.add_argument("--ev-k", type=float, default=4.0)
     ap.add_argument("--onset-frac", type=float, default=0.10)
     ap.add_argument("--min-ev-len", type=int, default=4)
+    ap.add_argument("--main-only", action="store_true", help="FAST diagnostic: run MAIN only + report per-assembly activation counts (skip anti-cheats)")
     ap.add_argument("--out", default="research/findings/raw/gap5_r4/rank3_recombination.json")
     a = ap.parse_args()
     _, backend = get_backend()
