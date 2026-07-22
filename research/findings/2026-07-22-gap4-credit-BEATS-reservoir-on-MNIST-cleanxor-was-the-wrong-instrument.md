@@ -59,3 +59,9 @@ Added seeds 100/101/102 (depth-2): RESERVOIR 0.766/0.726/0.761, FA 0.930/0.933/0
 with 42/43/44 (FA>RES 3/3): **FA beats the reservoir 6/6 seeds** (means RES 0.751, FA 0.932, KP 0.933, ORACLE 0.942).
 The gap#4 reframe is now firm at the mission's 6-seed bar: the biological local credit rule builds deep accuracy that
 decisively beats a reservoir on a proper task; the cleanxor negative was a task artifact. `mnist_depth2_seeds100.log`.
+
+## Depth-4 firmed to 6-seed (2026-07-22) — the reservoir collapse is ROBUST
+Depth-4, seeds 42/43/44/100/101/102: RESERVOIR 0.102/0.097/0.092/0.114/0.114/0.165 (all near CHANCE 0.10) while FA
+0.928/0.931/0.939/0.927/0.918/0.923 (~0.93 every seed). **FA beats reservoir 6/6 at depth-4, the random deep reservoir
+collapsing to chance every seed.** ⇒ the deeper the net, the more ESSENTIAL credit-training the hidden is (a random deep
+scaffold is useless; credit builds the near-oracle deep representation). Strongly firms the gap#4 reframe at the mission bar.

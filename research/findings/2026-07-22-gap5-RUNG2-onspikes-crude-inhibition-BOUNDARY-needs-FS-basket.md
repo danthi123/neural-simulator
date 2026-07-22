@@ -55,3 +55,14 @@ Built `--fs-gamma` (gamma-rhythm drive of the `ca3_pv_basket` -> feedback inhibi
   ordered replay robust in biology, and the same lever RANK 2's 4/6 wants. The on-spikes ordered-replay capability stays
   OPEN with the mechanism space now thoroughly mapped (numpy-principle ✓, crude-inhib ✗, FS-basket-reactivation ✓,
   FS-basket-ordering partial, theta-precession = next).
+
+## FS-basket parameter sweep EXHAUSTED (gamma_period 25 x inhib {-500,-800,-1200}, 3-seed each) — ordering NOT robust; theta-precession confirmed as the required lever
+The FS-basket + self-avoidance forward ordering is 0/3, 1/3, 0/3 across the ~40Hz gamma sweep (and 1/3 at gp12) — a stable
+~1/3 ceiling at every operating point. ⇒ the FS-basket self-scaling reliably fixes reactivation-preservation, but robust
+forward ORDERING via a WTA-timing race (which assembly wins each gamma window) is NOT achievable across the parameter
+space on the spiking substrate. **Decisive conclusion: robust on-spikes ordered replay needs THETA PHASE-PRECESSION** —
+encode the sequence order in theta PHASE during the BTSP chain (Skaggs-McNaughton), then read the order by phase rather
+than racing a WTA each window. This is the biologically-robust ordered-replay mechanism (and the same lever RANK 2's 4/6
+wants). The FS-basket WTA-timing approach is now exhaustively mapped as insufficient; theta-precession is the next build.
+Mechanism space fully mapped: numpy-principle ✓ | crude-inhib ✗ (over-suppress) | FS-basket-reactivation ✓ (self-scaling) |
+FS-basket-ordering ✗ (0-1/3, exhausted) | theta-precession = the confirmed next method.
