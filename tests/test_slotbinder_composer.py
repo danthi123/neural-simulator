@@ -84,3 +84,32 @@ def test_agent_path_who_what_moat_negation():
     assert ag.is_it_true("apple", "stop", "west") == "unknown"
     assert ag.describe("river") == "river stop west"
     assert ag.describe("apple") is None                     # moat
+
+
+def test_composer_attribute_slot():
+    """gap#2 FHRR-retirement step 1/2: single-attribute patients as a 5th flat role (2026-07-22, 6-seed GO in
+    research/runners/_gap2_attribute_slot_derisk.py). The bare-noun patient is unchanged; the attribute reads back
+    from its own slot; an un-attributed fact returns None (no confabulated adjective = the moat by construction)."""
+    c = SlotBinderComposer(seed=42, vocab=list(_VOCAB) + ["big", "small", "hot"], max_facts=8)
+    c.store("dog", "chase", ("big", "cat"))                  # attributed patient (adj, noun) tuple
+    c.store("bird", "see", ("small", "fish"))
+    c.store("river", "stop", "west")                          # un-attributed (flat)
+    assert c.query_patient("dog", "chase") == "cat"          # bare-noun patient unchanged
+    assert c.query_attribute("dog", "chase") == "big"        # the 5th attribute slot
+    assert c.query_attribute("bird", "see") == "small"
+    assert c.query_attribute("river", "stop") is None        # un-attributed -> no confabulated adjective (moat)
+    assert c.query_attribute("cat", "eat") is None           # never-stored cue -> abstain
+
+
+def test_composer_pointer_clause():
+    """gap#2 FHRR-retirement step 2/2: depth-1 embedded clauses by INDIRECTION -- the inner clause is its own
+    fact-group, the matrix patient binds a CLAUSE_j pointer, query_clause FOLLOWS it (2026-07-22, 6-seed GO in
+    research/runners/_gap2_pointer_clause_derisk.py). query_patient returns the pointer label (the lesion control);
+    query_clause returns the inner triple; a flat fact / dangling pointer / never-stored cue -> None (moat)."""
+    c = SlotBinderComposer(seed=42, vocab=list(_VOCAB), max_facts=8, max_clauses=8)
+    c.store("dog", "see", ("cat", "chase", "bird"))          # "dog saw (cat chase bird)" -- a 3-tuple Clause patient
+    c.store("river", "stop", "west")                          # flat fact
+    assert c.query_clause("dog", "see") == ("cat", "chase", "bird")     # follow the pointer -> the inner clause
+    assert str(c.query_patient("dog", "see")).startswith("__CLAUSE")    # lesion: matrix patient slot = the pointer, not content
+    assert c.query_clause("river", "stop") is None           # flat patient -> not a clause
+    assert c.query_clause("apple", "look") is None           # never-stored matrix -> abstain (moat)
