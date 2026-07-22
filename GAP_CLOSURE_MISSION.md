@@ -185,12 +185,19 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
      coupled via recurrents + the member→non-member spread (`structural_sep=1` left open). **SYNTHESIZED FIX = high within
      density (0.35, strong completion) + `--isolate` + `--structural-sep 2` (full basin isolation): 3-seed → COMPLETION-GO
      3/3 (`cue` 0.176-0.200, binding blocker RESOLVED) + cross CLEAN 2/3 (42/100 at 0.00); only seed 102 (largest
-     assemblies [56,29], 4 shared cells) cross-completes 0.48 (shared cells amplified at high density).** Testing now
-     (bm4k9zjz7): + `--disjoint-dg` (Rank 2, removes the shared cells) to close seed 102. If GO → 6-seed confirm closes
-     the emergent two-assembly co-storage. **Single-assembly chain UNCHANGED = GO.** All additive default-off byte-
-     identical, NO `sim/` edit (+ `--disjoint-dg` flag). Findings: the `-selective-inhibition-family-NEGATIVE-...` doc
-     (CORRECTION + REFRAME banners). **NOTE: I banked a wrong "dendrite negative" mid-cycle (drift-#12, seeing 1 seed
-     before the run finished); RETRACTED — read per-seed SUBSTANCE not the aggregate.**
+     assemblies [56,29], 4 shared cells) cross-completes 0.48. `--disjoint-dg` (Rank 2) is GEOMETRY-SENSITIVE not a fix
+     (broke clean seed 100 0.00→0.79). **HONEST STATE — the 2 sub-problems separated: (1) COMPLETION (the real binding
+     blocker) RESOLVED robustly (high density → 3/3 GO, cue 0.18-0.23); (2) INDEPENDENT-ADDRESSING (cross) = a
+     GEOMETRY-SENSITIVE residual (2/3 best, config-fragile) = the fundamental SPARSE-separated-vs-STRONG-completion
+     TENSION** (sparse basins separate but complete weakly; dense basins complete strongly but couple; every config knob
+     shifts the seed-dependent geometry). Recall-inhibition (5 configs) + disjoint-DG all method-negative. **PRINCIPLED
+     NEXT (named, per THE LAW — a characterized deep residual, NOT a wall): the DG's sparse-COMPLETABLE architecture —
+     equal-k SYMMETRIC selection (break the ~2× size-asymmetry gang effect) + high within-density + structurally-zeroed
+     between-basin coupling.** ⇒ **gap#5 episodic-memory CAPABILITY largely MET** (single-assembly select→store→complete
+     GO + 2-assembly COMPLETION resolved); 2-assembly independent-addressing = the characterized residual. Marginal value
+     diminished vs the headline (training) → REBALANCED. NO `sim/` edit. Finding: `-selective-inhibition-family-NEGATIVE-...`
+     (CORRECTION + REFRAME + HONEST STATE banners). **NOTE: banked a wrong "dendrite negative" mid-cycle (drift-#12);
+     RETRACTED.**
 - **⚠️ gap#1 — CORRECTED 2026-07-21 (adversarial audit, verdict OVERCLAIMED): NOT "COMPLETE," and the recurrence is NOT spiking.**
   The audit (a-1 RAG + code-read) found: (a) the recurrent language computation is a **GRADED, NON-SPIKING SSM leaky
   integrator** — `bridge.py:6017` `cp_ssm_state = lam*cp_ssm_state + (1-lam)*cp_ssm_inject` is host elementwise

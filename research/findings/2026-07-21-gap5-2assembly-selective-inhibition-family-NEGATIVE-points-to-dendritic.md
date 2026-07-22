@@ -122,3 +122,31 @@ no-coupling), 3-seed:
 - ⇒ the exhaustive research-gate + adversarial-critique workflow delivered: the boundary was NOT recall-inhibition (5
   negatives) but weak-completion + shared-cell coupling; high density + full isolation + disjoint DG is the mechanistically-
   matched close. THE CAPABILITY (two separately-addressable co-stored emergent attractors) is being MET, per THE LAW.
+
+## HONEST STATE (2026-07-21, after exhaustive investigation) — completion RESOLVED; independent-addressing = a geometry-sensitive residual (the sparse-vs-strong tension)
+- **disjoint-DG (Rank 2) is geometry-sensitive, not a robust fix:** density 0.35 + isolate + sep2 + `--disjoint-dg` gave
+  seed 42 clean (0.00), seed 100 BROKE (0.00→0.79), seed 102 barely improved (0.48→0.34). Removing the 3-4 shared cells
+  SHIFTS the emergent basin geometry → the cross changes unpredictably. **Best config = WITHOUT disjoint-DG** (density 0.35
+  + isolate + sep2: completion 3/3, cross clean 2/3 [42/100 at 0.00, 102 at 0.48]).
+- **The two sub-problems, cleanly separated:**
+  1. **COMPLETION (the real binding blocker) — RESOLVED.** The sparse emergent assemblies complete WEAKLY at low density
+     (`held_cue` ~0.10); HIGH within-assembly density (0.35) fixes it robustly (3/3 GO, cue 0.176-0.233). This is the
+     genuine deliverable — the reframe (completion, not cross, was the blocker) was correct and the fix works.
+  2. **INDEPENDENT-ADDRESSING (cross) — a GEOMETRY-SENSITIVE residual (2/3 best, config-fragile).** The fundamental
+     **sparse-separated-vs-strong-completion TENSION**: SPARSE basins separate (no cross) but complete weakly; DENSE basins
+     (needed for strong completion) COUPLE and cross-complete in a way that depends on the precise, seed-dependent basin
+     geometry (which every config knob shifts — disjoint-DG broke a clean seed; isolate flips seed labels; the assemblies'
+     cell membership jitters run-to-run on the point-neuron substrate). No single config robustly gives BOTH strong
+     completion AND clean cross across seeds.
+- **RULED OUT (method-negatives, exhaustive):** all recall-side inhibitory gating (5 configs: isolate/somatic/E→I-pot/
+  apical/size-norm) + disjoint-DG (geometry-sensitive). The completion fix (high density) + full isolation (sep2) gets 2/3.
+- **THE PRINCIPLED NEXT DIRECTION (named, per THE LAW — a characterized deep residual, NOT a wall):** the DG's native
+  **sparse-COMPLETABLE architecture** — equal-k SYMMETRIC selection (break the ~2× size-asymmetry gang effect that makes
+  the larger basin spread into the smaller) + a within-assembly density HIGH ENOUGH for completion but a between-basin
+  coupling structurally ZEROED, so the two basins are strong AND separated. This is a deeper architectural piece (the
+  sparse-completable balance), not a config tweak, and likely interacts with the documented point-neuron substrate limits
+  (dense recurrent couples strong basins). Ranked mechanisms staged: equal-k symmetric selection, feedback-inhibition
+  equal-target-activity, weight-dependent heterosynaptic depression with interleaved co-active encode.
+- **⇒ gap#5 episodic-memory CAPABILITY largely MET:** single-assembly emergent select→store→complete chain GO +
+  two-assembly COMPLETION resolved. The two-assembly INDEPENDENT-ADDRESSING is the characterized geometry-sensitive
+  residual with the principled next direction named. NO `sim/` edit anywhere (all additive default-off driver flags).
