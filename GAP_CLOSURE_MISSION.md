@@ -170,9 +170,14 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   the a-1 RAG confirmed the training IS the honest gap#1/#4 path (deep-credit correctly deprioritized, NOT re-derived);
   (3) **fluid-abstain (do away with the hard moat)** — designed → the decorative-N flaw caught by adversarial critique →
   the real graded signal S de-risked GO → **BUILT + verified GO with the MOAT PROVABLY INTACT** (`_fluidconv_graded_hedging.py`,
-  gate-first, 0 false-accepts, byte-identical default). NEXT: the fluency-sized PRODUCTION run launches when run3's 6B
-  corpus lands (~50 min; fresh 83M, 24B tokens ≈ 289 tok/param, matched cosine, PAUSE-checkpoint run2 first). Everything
-  committed to BOTH remotes. Findings: `2026-07-21-{LM-train-pipeline-VALIDATED,fluid-abstain-graded-hedging,gap5-2assembly-...}`.
+  gate-first, 0 false-accepts, byte-identical default). **⇒ the fluency-sized PRODUCTION RUN is NOW LIVE** (run2 go/no-go
+  PAUSE-checkpointed at step 83k val_ppl 52 [best ~76k]; fresh 83M on run3's 6B corpus, 24B tokens ≈ 289 tok/param, matched
+  cosine over 3M steps, ~3-4 days → a fluent model; checkpoint+sample every 1000 steps). **The owner talks to it via
+  `python -m research.runners.lm_chat --root bridges/lmtrain/run3`** (VERIFIED coherent English on run2 @ step 76k),
+  drives it via `lm_train_run status`/`PAUSE`/resume. **gap#5 6-SEED honest close:** two-assembly COMPLETION resolved
+  (5/6 GO); independent-addressing genuinely 1/6 = characterized hard geometry-sensitive residual (the 3-seed 2/3 was
+  optimistic), principled next = the DG sparse-completable arch. Everything committed BOTH remotes. Findings:
+  `2026-07-21-{LM-train-pipeline-VALIDATED,fluid-abstain-graded-hedging,gap5-2assembly-...}` + `lm_chat.py`.
 - **🟢 LIVE (2026-07-21 evening) — TWO fronts in parallel (owner green-lit full autonomy on the training run):**
   1. **LM-TRAINING WORKFLOW → real scaling run (the gap#1 SCALE lever + owner's explicit "train as long as I want
      incrementally" request).** The autonomous incremental train→ckpt→benchmark→resume workflow is BUILT + de-risked +
