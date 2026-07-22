@@ -1,0 +1,48 @@
+{
+  "seeds": [
+    42
+  ],
+  "per": [
+    {
+      "seed": 42,
+      "sizes": [
+        784,
+        256,
+        256,
+        10
+      ],
+      "rows": [
+        {
+          "frac": 1.0,
+          "fa": 0.9295,
+          "reservoir": 0.7435,
+          "fa_beats_res": true
+        },
+        {
+          "frac": 0.2,
+          "fa": 0.885,
+          "reservoir": 0.6855,
+          "fa_beats_res": true
+        },
+        {
+          "frac": 0.1,
+          "fa": 0.834,
+          "reservoir": 0.6115,
+          "fa_beats_res": true
+        },
+        {
+          "frac": 0.05,
+          "fa": 0.753,
+          "reservoir": 0.52,
+          "fa_beats_res": true
+        },
+        {
+          "frac": 0.02,
+          "fa": 0.6275,
+          "reservoir": 0.3605,
+          "fa_beats_res": true
+        }
+      ]
+    }
+  ]
+}

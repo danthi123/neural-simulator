@@ -1,0 +1,90 @@
+{
+  "seeds": [
+    43,
+    44
+  ],
+  "per": [
+    {
+      "seed": 43,
+      "sizes": [
+        784,
+        256,
+        256,
+        10
+      ],
+      "rows": [
+        {
+          "frac": 1.0,
+          "fa": 0.938,
+          "reservoir": 0.796,
+          "fa_beats_res": true
+        },
+        {
+          "frac": 0.2,
+          "fa": 0.869,
+          "reservoir": 0.666,
+          "fa_beats_res": true
+        },
+        {
+          "frac": 0.1,
+          "fa": 0.8235,
+          "reservoir": 0.64,
+          "fa_beats_res": true
+        },
+        {
+          "frac": 0.05,
+          "fa": 0.7475,
+          "reservoir": 0.5205,
+          "fa_beats_res": true
+        },
+        {
+          "frac": 0.02,
+          "fa": 0.6545,
+          "reservoir": 0.382,
+          "fa_beats_res": true
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "sizes": [
+        784,
+        256,
+        256,
+        10
+      ],
+      "rows": [
+        {
+          "frac": 1.0,
+          "fa": 0.9435,
+          "reservoir": 0.7885,
+          "fa_beats_res": true
+        },
+        {
+          "frac": 0.2,
+          "fa": 0.902,
+          "reservoir": 0.7075,
+          "fa_beats_res": true
+        },
+        {
+          "frac": 0.1,
+          "fa": 0.8205,
+          "reservoir": 0.6285,
+          "fa_beats_res": true
+        },
+        {
+          "frac": 0.05,
+          "fa": 0.7725,
+          "reservoir": 0.512,
+          "fa_beats_res": true
+        },
+        {
+          "frac": 0.02,
+          "fa": 0.6575,
+          "reservoir": 0.3545,
+          "fa_beats_res": true
+        }
+      ]
+    }
+  ]
+}

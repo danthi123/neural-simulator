@@ -1,0 +1,62 @@
+{
+  "seeds": [
+    43,
+    44
+  ],
+  "per": [
+    {
+      "seed": 43,
+      "sizes": [
+        784,
+        256,
+        256,
+        10
+      ],
+      "rows": [
+        {
+          "frac": 0.1,
+          "reservoir": 0.625,
+          "fa_linear": 0.8065,
+          "fa_coinc": 0.844,
+          "bdsp_nocoinc": 0.845,
+          "bdsp": 0.729
+        },
+        {
+          "frac": 0.05,
+          "reservoir": 0.525,
+          "fa_linear": 0.765,
+          "fa_coinc": 0.834,
+          "bdsp_nocoinc": 0.817,
+          "bdsp": 0.744
+        }
+      ]
+    },
+    {
+      "seed": 44,
+      "sizes": [
+        784,
+        256,
+        256,
+        10
+      ],
+      "rows": [
+        {
+          "frac": 0.1,
+          "reservoir": 0.6095,
+          "fa_linear": 0.832,
+          "fa_coinc": 0.848,
+          "bdsp_nocoinc": 0.8675,
+          "bdsp": 0.824
+        },
+        {
+          "frac": 0.05,
+          "reservoir": 0.5025,
+          "fa_linear": 0.785,
+          "fa_coinc": 0.8305,
+          "bdsp_nocoinc": 0.8335,
+          "bdsp": 0.8145
+        }
+      ]
+    }
+  ]
+}
