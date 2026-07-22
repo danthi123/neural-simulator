@@ -34,7 +34,7 @@ from research.runners._gap5_spontaneous_reactivation_derisk import _hard_silence
 
 
 def _rest_with_gamma(prep, noise, rest_steps, seed, gamma, theta_period, fire_thresh, inhib_pa, W_smooth,
-                     silence_delay=8, release_mode=False, release_v=-75.0):
+                     silence_delay=8, release_mode=False, release_v=-75.0, proportional=False):
     """Freeze plasticity + hard-silence + weak background, run REST; if gamma, apply theta/gamma self-avoidance (silence
     already-fired assemblies, reset the fired set every theta_period steps). Returns the CA3 firing matrix F."""
     from sim.backend import get_backend as _gb
@@ -71,8 +71,13 @@ def _rest_with_gamma(prep, noise, rest_steps, seed, gamma, theta_period, fire_th
             countdown[active] -= 1
         if gamma and not release_mode:
             for k, t0 in fired_at.items():
-                if t >= t0 + silence_delay:                       # POST-burst SOMA silence (fights the bistable hold)
-                    bridge.cp_external_input_current[asm_glob[k]] += inhib_pa
+                if t >= t0 + silence_delay:                       # POST-burst SOMA silence (the gamma reset)
+                    if proportional and t > 0:
+                        lo2 = max(0, t - W_smooth)                 # SELF-SCALING: inhibition ~ the assembly's OWN recent
+                        fr = F[lo2:t][:, assemblies_local[k]].sum() / (asm_sizes[k] * max(1, t - lo2))  # firing (feedback
+                        bridge.cp_external_input_current[asm_glob[k]] += inhib_pa * (fr / fire_thresh)   # inhibition scales
+                    else:
+                        bridge.cp_external_input_current[asm_glob[k]] += inhib_pa
         bridge._run_one_simulation_step()
         if gamma and release_mode and getattr(bridge, "cp_v_apical", None) is not None:
             for k, t0 in fired_at.items():
@@ -96,7 +101,7 @@ def one_seed(seed, cfg, a):
     det = dict(W=a.window, ev_floor=a.ev_floor, ev_k=a.ev_k, active_frac=a.active_frac, onset_frac=a.onset_frac)
     noise = ("poisson", a.poisson_rate, a.poisson_pa, a.poisson_dur)
     gk = dict(theta_period=a.theta_period, fire_thresh=a.fire_thresh, inhib_pa=a.inhib_pa, W_smooth=a.window,
-              release_mode=a.release_mode, release_v=a.release_v)
+              release_mode=a.release_mode, release_v=a.release_v, proportional=a.proportional)
 
     prep = _prepare_sequence(seed, cfg)
     al = prep["assemblies_local"]
@@ -134,6 +139,7 @@ def main():
     ap.add_argument("--inhib-pa", type=float, default=-1500.0, help="post-fire silencing current (the gamma reset); -1500 = the release-without-killing-detection window (-4000 over-suppresses -> act=0)")
     ap.add_argument("--release-mode", action="store_true", help="RELEASE the bistable plateau (reset cp_v_apical to the down-state) instead of soma inhibition -- the correct un-latch that does not kill the burst/detection")
     ap.add_argument("--release-v", type=float, default=-75.0, help="apical down-state voltage for plateau release")
+    ap.add_argument("--proportional", action="store_true", help="SELF-SCALING post-fire inhibition ~ the assembly's own firing (feedback inhibition; robust across seeds where a fixed current is seed-dependent)")
     ap.add_argument("--poisson-rate", type=float, default=0.015)
     ap.add_argument("--poisson-pa", type=float, default=1500.0)
     ap.add_argument("--poisson-dur", type=int, default=10)
