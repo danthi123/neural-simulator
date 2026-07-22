@@ -70,6 +70,7 @@ def _load_or_freeze_config(cfg_path: Path, a) -> TrainConfig:
                                                "tokenizer", "chunk_c", "batch"):
                 print(f"[lm_train] NOTE: --{k} {getattr(want,k)} ignored; lineage is frozen at {k}={v}.", flush=True)
         return cfg
+    cfg_path.write_text(json.dumps(want.frozen_dict(), indent=2))  # FREEZE identity on first start -> resume-identity-check + `status` work
     return want
 
 
