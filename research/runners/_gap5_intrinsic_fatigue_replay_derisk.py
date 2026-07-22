@@ -76,6 +76,10 @@ def _rest_with_fatigue(prep, noise, rest_steps, seed, adapt, self_regen_read, d_
         p_dur = int(noise[3]) if len(noise) > 3 else 5
         prng = np.random.default_rng(int(seed) * 100003 + 11)
         countdown = np.zeros(len(exc_glob), dtype=np.int32)
+    # NUMPY-REFERENCE / FROZEN-PLASTICITY GUARD (RANK-1 discipline): _prepare_sequence already disabled BTSP/BDSP +
+    # closed gates post-encode; capture the weights to VERIFY they are byte-unchanged across rest (order must ride the
+    # STORED frozen chain + the substrate's own u-fatigue, NOT any rest-phase re-encoding -- retires the Wang confound).
+    w_before = np.asarray(to_host(bridge.cp_connections.data)).copy()
     F = np.zeros((rest_steps, len(ca3_arr_host)), dtype=bool)
     for t in range(rest_steps):
         bridge.cp_external_input_current[:] = 0.0
@@ -88,6 +92,8 @@ def _rest_with_fatigue(prep, noise, rest_steps, seed, adapt, self_regen_read, d_
             countdown[active] -= 1
         bridge._run_one_simulation_step()          # NO external inhibition / argmax / per-assembly silence (numpy-ref guard)
         F[t] = np.asarray(to_host(bridge.cp_firing_states))[ca3_arr_host].astype(bool)
+    w_after = np.asarray(to_host(bridge.cp_connections.data))
+    assert np.array_equal(w_before, w_after), "PLASTICITY LEAK: cp_connections changed during rest (Wang confound not frozen)"
     return F
 
 
