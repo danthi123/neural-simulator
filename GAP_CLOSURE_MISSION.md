@@ -161,6 +161,18 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
+- **✅ SESSION OUTCOME (2026-07-21, autonomous) — ALL THREE owner priorities DELIVERED + ADVERSARIALLY VERIFIED:**
+  (1) **the autonomous incremental LM-training workflow** (train→ckpt→benchmark→resume, resumable/pausable, ~30×-optimized)
+  is BUILT + VALIDATED on real FineWeb-Edu + RUNNING with a **go/no-go CONFIRMED POSITIVE** (`val_ppl` 235→~57 and
+  descending, fluent English emerging; 6-agent adversarial verify CONFIRMED the val is genuinely held-out, resume
+  bit-exact, the opt gate catches injected bugs); (2) **gap-closing** — gap#5 completion binding-blocker RESOLVED
+  (anti-cheats verified genuine; 6-seed confirmation running), two-assembly independent-addressing honestly characterized;
+  the a-1 RAG confirmed the training IS the honest gap#1/#4 path (deep-credit correctly deprioritized, NOT re-derived);
+  (3) **fluid-abstain (do away with the hard moat)** — designed → the decorative-N flaw caught by adversarial critique →
+  the real graded signal S de-risked GO → **BUILT + verified GO with the MOAT PROVABLY INTACT** (`_fluidconv_graded_hedging.py`,
+  gate-first, 0 false-accepts, byte-identical default). NEXT: the fluency-sized PRODUCTION run launches when run3's 6B
+  corpus lands (~50 min; fresh 83M, 24B tokens ≈ 289 tok/param, matched cosine, PAUSE-checkpoint run2 first). Everything
+  committed to BOTH remotes. Findings: `2026-07-21-{LM-train-pipeline-VALIDATED,fluid-abstain-graded-hedging,gap5-2assembly-...}`.
 - **🟢 LIVE (2026-07-21 evening) — TWO fronts in parallel (owner green-lit full autonomy on the training run):**
   1. **LM-TRAINING WORKFLOW → real scaling run (the gap#1 SCALE lever + owner's explicit "train as long as I want
      incrementally" request).** The autonomous incremental train→ckpt→benchmark→resume workflow is BUILT + de-risked +
