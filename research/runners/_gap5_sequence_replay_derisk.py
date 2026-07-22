@@ -164,10 +164,12 @@ def _prepare_sequence(seed, cfg, do_encode=True):
         cfg_b = bridge.core_config
         cfg_b.enable_hebbian_learning = False
         cfg_b.enable_bdsp = True; cfg_b.bdsp_apical_bistable = True; cfg_b.bdsp_learning_rate = 0.0
-        # TRANSIENT plateau during encode (self_regen=0): the plateau tracks the drive, so ONLY the currently-driven
-        # assembly has IS_post in its window -> clean asymmetric forward (a latched plateau would keep IS_post ON for an
-        # earlier assembly into the later window -> reverse links). Restored to the recall value after encode.
-        cfg_b.coincidence_plateau_self_regen = 0.0
+        # BISTABLE plateau during the WITHIN encode (self_regen=plateau_self_regen, == RANK 1's proven _prepare): the
+        # latching plateau accumulates IS_post across events -> a strong within-attractor that spontaneously reactivates.
+        # (Switched to TRANSIENT=0 before the CHAIN phase below for clean asymmetric forward links; the earlier
+        # self_regen=0-for-the-whole-encode starved the within-attractor -> 0 reactivation, the RANK 2 blocker.)
+        # Restored to the recall value after encode.
+        cfg_b.coincidence_plateau_self_regen = float(cfg["plateau_self_regen"])
         cfg_b.coincidence_plateau_v_hold = float(cfg["plateau_v_hold"]); cfg_b.apical_kir_g = float(cfg["apical_kir_g"])
         cfg_b.enable_btsp = True; cfg_b.btsp_learning_rate = float(cfg["btsp_lr"])
         cfg_b.btsp_elig_tau_ms = 1000.0; cfg_b.btsp_w_max = float(cfg["hebb_max"])
@@ -206,6 +208,10 @@ def _prepare_sequence(seed, cfg, do_encode=True):
                 _drive_window(m, drive_steps)
             bridge.cp_external_input_current[:] = 0.0
         _silence_soma_apical(bridge, settle=3); _zero_elig(bridge)       # last assembly OFF before the chain phase
+        # TRANSIENT plateau for the CHAIN phase (self_regen=0): the plateau tracks the drive so ONLY the currently-driven
+        # assembly has IS_post -> clean asymmetric forward (a latched plateau would keep an earlier assembly's IS_post ON
+        # into the later window -> reverse links). The within-attractors are already stored above (bistable plateau).
+        cfg_b.coincidence_plateau_self_regen = 0.0
 
         # CHAIN phase FORWARD sweeps: A -> B -> ... each a short window separated by a THETA RESET (silence soma+apical,
         # KEEP eligibility) so the earlier assembly's plateau is OFF when the later fires -> A->B forms (elig_A x plateau_B)
