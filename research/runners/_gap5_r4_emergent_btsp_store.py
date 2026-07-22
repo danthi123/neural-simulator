@@ -87,7 +87,9 @@ def _verify_index_space(seed, r1_ca3_range):
 
 
 def run_seed(seed, do_swr=False, ca3_density=None, recall_k_thresh=None, structural_sep=None, isolate=False,
-             per_assembly_inhib=False, pa_inhib_w=40.0, pa_ei_w=None, n_patterns=2):
+             per_assembly_inhib=False, pa_inhib_w=40.0, pa_ei_w=None,
+             per_assembly_apical_inhib=False, pa_apical_w=0.7, pa_apical_gate=2.0, pa_apical_no_spare=False,
+             n_patterns=2):
     t = {}
     assemblies, r1_range = emergent_assemblies(seed, n_patterns=n_patterns)
     sizes = [len(a) for a in assemblies]
@@ -109,9 +111,21 @@ def run_seed(seed, do_swr=False, ca3_density=None, recall_k_thresh=None, structu
         cfg["per_assembly_sel_inhib"] = True; cfg["per_assembly_inhib_w"] = float(pa_inhib_w)  # Kim-Kim between-memory selective inhibition
         if pa_ei_w is not None:
             cfg["per_assembly_ei_w"] = float(pa_ei_w)  # within-assembly E->I potentiation (Kim-Kim heterosynaptic core)
+    if per_assembly_apical_inhib:
+        # DENDRITE-TARGETING apical O-LM/SOM inhibition (Muller-Remy 2014): the SOMATIC family above verified-does-NOT
+        # gate the DENDRITIC apical-plateau cross-completion; this shunts the OTHER assembly's cp_v_apical (correct
+        # compartment), sparing own. per-recall-step term in the mechanism's _measure/_measure_ca1; NO sim/ edit.
+        cfg["per_assembly_apical_inhib"] = True
+        cfg["per_assembly_apical_w"] = float(pa_apical_w)
+        cfg["per_assembly_apical_gate"] = float(pa_apical_gate)
+        cfg["per_assembly_apical_spare_own"] = (not bool(pa_apical_no_spare))  # no-spare = GLOBAL-suppression anti-cheat control
     t["ca3_density"] = cfg["ca3_density"]; t["recall_k_thresh"] = cfg["recall_k_thresh"]
     t["structural_sep"] = cfg["structural_sep"]; t["isolate"] = bool(isolate); t["n_assemblies"] = len(assemblies)
     t["per_assembly_inhib"] = bool(per_assembly_inhib)
+    t["per_assembly_apical_inhib"] = bool(per_assembly_apical_inhib)
+    if per_assembly_apical_inhib:
+        t["pa_apical_w"] = float(pa_apical_w); t["pa_apical_gate"] = float(pa_apical_gate)
+        t["pa_apical_spare_own"] = (not bool(pa_apical_no_spare))
     # STEP 3: BTSP-store the EMERGENT assemblies + bistable completion
     swr_cfg = {**cfg, "swr_learn_schaffer": True, "swr_ca1_topk": 0.1, "swr_disjoint_targets": True}
     r = btsp_run(seed, assemblies_ext=[a.copy() for a in assemblies], read_ca1=do_swr,
@@ -138,6 +152,11 @@ def main():
     ap.add_argument("--per-assembly-inhib", action="store_true", help="Kim-Kim per-assembly selective inhibition (spare own, inhibit other)")
     ap.add_argument("--pa-inhib-w", type=float, default=40.0)
     ap.add_argument("--pa-ei-w", type=float, default=None, help="within-assembly E->I potentiation (Kim-Kim heterosynaptic core; strengthens member->own-basket-sub-pool)")
+    ap.add_argument("--per-assembly-apical-inhib", action="store_true",
+                    help="DENDRITE-TARGETING apical O-LM/SOM inhibition (Muller-Remy 2014): shunt the OTHER assembly's cp_v_apical/plateau, spare own")
+    ap.add_argument("--pa-apical-w", type=float, default=0.7, help="per-recall-step apical shunt fraction toward E_inh (0..1)")
+    ap.add_argument("--pa-apical-gate", type=float, default=2.0, help="accumulated soma-firing count marking a genuine active winner before inhibition applies")
+    ap.add_argument("--pa-apical-no-spare", action="store_true", help="ANTI-CHEAT control: suppress ALL apical (no spare-own) -> own-completion must collapse")
     ap.add_argument("--n-patterns", type=int, default=2, help="number of co-stored emergent assemblies (2 or 3)")
     ap.add_argument("--out", default=str(OUT))
     a = ap.parse_args()
@@ -150,6 +169,8 @@ def main():
             r = run_seed(s, do_swr=a.swr, ca3_density=a.ca3_density, recall_k_thresh=a.recall_k_thresh,
                          structural_sep=a.structural_sep, isolate=a.isolate,
                          per_assembly_inhib=a.per_assembly_inhib, pa_inhib_w=a.pa_inhib_w, pa_ei_w=a.pa_ei_w,
+                         per_assembly_apical_inhib=a.per_assembly_apical_inhib, pa_apical_w=a.pa_apical_w,
+                         pa_apical_gate=a.pa_apical_gate, pa_apical_no_spare=a.pa_apical_no_spare,
                          n_patterns=a.n_patterns)
             per.append(r)
             if r.get("error"):

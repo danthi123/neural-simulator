@@ -45,3 +45,22 @@ apical compartment where the plateau integrates).
 - Additive code (kept, valid mechanism for the arc + future co-storage work, NO `sim/` edit): `per_assembly_ei_w` on
   `_riii_ca3_synchronous_assembly_derisk.py` + `--pa-ei-w` on `_gap5_r4_emergent_btsp_store.py` (default None =
   byte-identical). Logs: `research/findings/raw/gap5_r4/kimkim_{selinhib_6seed,ei_pot_smoke}.log`.
+
+## UPDATE — DENDRITE-TARGETING apical inhibition (the ranked escalation) ALSO negative at the default op-point
+Implemented per-assembly dendrite-targeting O-LM/SOM apical inhibition (shunt the LOSER assembly's `cp_v_apical` toward
+the GABA_A reversal −75mV, winner-detection-gated, sparing own; additive default-off, `--per-assembly-apical-inhib`
+`--pa-apical-w`/`--pa-apical-gate`). **Verified it FIRES** (`shunt-steps=296 cells_shunted=10064`, not a silent no-op).
+Result at w=0.7 (seed 44, the previously-CLEAN seed): **cross 0.00 → 0.69** — the apical shunt BROKE the clean
+discrimination (ca1_match 0.73 but ca1_cross 0.69). ⇒ shunting the apical compartment disrupts the completion/readout
+(likely the winner-detection shunts the target, or the strong shunt collapses the plateau non-selectively) — a NEGATIVE
+at the default op-point (a w-sweep / winner-detection fix is a follow-on, but inhibitory GATING of the completion — whether
+somatic OR apical — has now failed on 4 mechanisms).
+
+## Sharpened verdict — the 2-assembly boundary is not closable by INHIBITORY GATING of the completion
+Four mechanisms negative: isolate-alone (2/6), somatic Kim-Kim selective inhibition (2/6), within-E→I potentiation
+(worse), dendrite-targeting apical inhibition (breaks the clean seed). Both somatic AND apical inhibition fail → the fix
+is probably NOT "gate the completion with more inhibition." The next mechanism search should target the ENCODE/STORAGE
+side (separate the two emergent assemblies so they share fewer CA3 cells / have orthogonal recurrent basins — DG
+pattern-separation at store time, the untested ranked Option C) or a fundamentally different readout, NOT more inhibition.
+A fresh GPU-free research gate is dispatched for the next mechanism. **The single-assembly emergent-DG chain remains GO;
+this is the narrow 2-assembly independent-addressing piece.** Additive code kept (default-off byte-identical). NO `sim/` edit.

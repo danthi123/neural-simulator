@@ -65,6 +65,8 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
         swr_learn_schaffer=False, swr_target_frac=0.15, swr_schaffer_hi=60.0, swr_schaffer_lo=0.2, swr_disjoint=False,
         swr_ca1_topk=None, interassembly_isolate=False,
         per_assembly_sel_inhib=False, per_assembly_inhib_w=40.0, per_assembly_ei_w=None,
+        per_assembly_apical_inhib=False, per_assembly_apical_w=0.7, per_assembly_apical_gate=2.0,
+        per_assembly_apical_spare_own=True,
         swr_disjoint_targets=False):
     # DIAGNOSED LEVERS (2026-07-18 workflow): the rate-window LTP is an EMA-trace rule -- a cell's co-activity trace
     # tops out ~0.03-0.2 (point Izh fires ~0.2 duty @700pA), so coact_thresh MUST be BELOW it (~0.02) or nothing
@@ -396,14 +398,55 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
             for _ in range(settle):     # confirm it stays silent (a bistable attractor will; a self-sustaining one re-ignites)
                 bridge._run_one_simulation_step()
 
+        # ---- gap#5 DENDRITE-TARGETING apical inhibition (Muller-Remy 2014 O-LM/SOM), default-off byte-identical ----
+        # The SOMATIC selective-inhibition family (Kim-Kim PV-basket, --per-assembly-inhib/--pa-ei-w) VERIFIED-does-NOT
+        # gate the two-assembly cross-completion, because R4 completion is a DENDRITIC APICAL PLATEAU (cp_v_apical >
+        # plateau_v_hold, self-regenerating) that somatic g_i cannot shunt (wrong compartment). Here a per-assembly
+        # O-LM/SOM pool, driven by whichever assembly is CURRENTLY ACTIVE (emergent -- read from soma firing, NOT the
+        # host cue identity), shunts the OTHER assemblies' APICAL compartment toward E_inh each recall step. Because the
+        # plateau self-regen sigmoid reads cp_v_apical (bridge.py:6647,6654-6656), pulling v_apical below v_hold cascades
+        # to killing g_coincidence -> the other assembly's plateau cannot latch/hold; the active assembly's OWN apical is
+        # SPARED (spare-your-own-engram, on the CORRECT compartment the somatic basket could not reach). Activity-gated:
+        # no-cue / permuted-cue have no active winner -> zero inhibition (anti-cheats untouched). NO sim/ edit -- a
+        # per-recall-step runner term on cp_v_apical (the substrate updates the plateau; this is the O-LM shunt onto it).
+        _pa_apical_on = bool(per_assembly_apical_inhib) and len(assemblies) > 1 and (bridge.cp_v_apical is not None)
+        _pa_mem_dev = [cp.asarray(np.asarray(a, dtype=np.int64)) for a in assemblies] if _pa_apical_on else []
+        _pa_E_inh = cp.float32(-75.0)                          # GABA_A apical reversal (dendrite-targeting SOM/O-LM)
+        _pa_w = cp.float32(float(per_assembly_apical_w))        # per-step shunt fraction toward E_inh (0..1)
+        _pa_gate = float(per_assembly_apical_gate)              # accumulated soma-firing count that marks a genuine winner
+        _pa_spare = bool(per_assembly_apical_spare_own)         # False = GLOBAL-suppression anti-cheat control (own collapses)
+        _pa_stats = {"steps_fired": 0, "cells_shunted": 0, "printed": False}
+
+        def _apply_apical_inhib(acc):
+            """acc = list[nA] accumulated per-assembly soma-firing counts, mutated in place. Determine the currently-
+            active (winner) assembly from EMERGENT soma firing; shunt every OTHER assembly's cp_v_apical toward E_inh
+            (dendrite-targeting O-LM inhibition), sparing the winner. Gated: no inhibition until a winner is genuinely
+            active (>=_pa_gate accumulated spikes) so the initial transient + no-cue/permuted apply nothing."""
+            if not _pa_apical_on:
+                return
+            for _m in range(len(_pa_mem_dev)):
+                acc[_m] += float(bridge.cp_firing_states[_pa_mem_dev[_m]].astype(cp.float32).sum())
+            _win = int(np.argmax(acc))
+            if acc[_win] < _pa_gate:
+                return
+            for _m in range(len(_pa_mem_dev)):
+                if _pa_spare and _m == _win:
+                    continue
+                _idx = _pa_mem_dev[_m]
+                bridge.cp_v_apical[_idx] = bridge.cp_v_apical[_idx] + _pa_w * (_pa_E_inh - bridge.cp_v_apical[_idx])
+                _pa_stats["cells_shunted"] += int(_idx.size)
+            _pa_stats["steps_fired"] += 1
+
         def _measure(cue_idx):
             _hard_silence()
             cur = bias_full.copy()                          # start from the intrinsic bias (0 by default)
             if cue_idx is not None and len(cue_idx):
                 cur[np.asarray(cue_idx, dtype=int)] += float(recall_drive)
             dev = from_host(cur.astype(np.float64)); spk = np.zeros(len(ca3_idx))
+            _pa_acc = [0.0] * len(assemblies)                  # fresh winner accumulator per (silenced) measure call
             for _ in range(recall_steps):
                 bridge.cp_external_input_current[:] = dev; bridge._run_one_simulation_step()
+                _apply_apical_inhib(_pa_acc)                    # dendrite-targeting O-LM shunt (default-off byte-identical)
                 if read_apical:
                     # DECOUPLED READ-OUT: read the held APICAL PLATEAU state (cp_v_apical > plateau_v_hold = the
                     # intrinsically-bistable UP state = the held memory) instead of soma firing, so a WEAK apical->soma
@@ -449,6 +492,13 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
             r2 = _measure(perm); perm_l.append(float(np.mean(r2[hp])))
         held_cue = float(np.mean(cue_l)); held_nocue = float(np.mean(nocue_l)); held_perm = float(np.mean(perm_l))
         rest = float(np.mean(silence_l))
+        if _pa_apical_on and not _pa_stats["printed"]:
+            # VERIFY-THE-EDIT-TOOK-EFFECT (silent-failure discipline): confirm the mechanism actually fired + touched a
+            # non-trivial number of cells. cells_shunted==0 => silent no-op (the #1 failure mode) -> alarm.
+            _pa_stats["printed"] = True
+            print(f"[pa_apical] dendrite-targeting apical inhib FIRED: shunt-steps={_pa_stats['steps_fired']} "
+                  f"cells_shunted={_pa_stats['cells_shunted']} (w={float(_pa_w):.2f} gate={_pa_gate} "
+                  f"spare_own={_pa_spare}); assembly_sizes={[len(a) for a in assemblies]}", flush=True)
         # GENUINE bistable completion (relative to the Wang low-rate background, NOT a dead net): the correct cue must
         # IGNITE the high state (>=0.20) AND be >=3x BOTH the no-cue low state AND the permuted -- i.e. only the correct
         # partial cue reaches the high attractor state; no-cue/permuted stay in the low state. The low background is
@@ -547,8 +597,10 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
                     base[np.asarray(cue_idx, dtype=int)] += float(recall_drive)
                 dev_base = from_host(base.astype(np.float64))
                 fire_acc = np.zeros(len(ca3_arr_host))
+                _pa_acc = [0.0] * len(assemblies)                    # fresh winner accumulator per SWR phase-1 read
                 for _ in range(recall_steps):                        # PHASE 1: establish completion, accumulate CA3 firing
                     bridge.cp_external_input_current[:] = dev_base; bridge._run_one_simulation_step()
+                    _apply_apical_inhib(_pa_acc)                      # dendrite-targeting O-LM shunt -> the OTHER assembly does not latch -> not in `latched` -> ca1_cross drops
                     fire_acc += np.asarray(to_host(bridge.cp_firing_states))[ca3_arr_host].astype(float)
                 # the COMPLETED assembly = cells that FIRED (soma) during phase 1 (the network completion is soma-driven,
                 # NOT a sustained apical latch -- apical>v_hold identifies only ~3%; diagnostic 2026-07-18).

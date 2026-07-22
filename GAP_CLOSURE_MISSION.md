@@ -167,21 +167,26 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
      **VALIDATED end-to-end on REAL FineWeb-Edu data** (83.2M WKV d1024/L16, `val_ppl` 440→283→235 monotone over 3
      increments, coherent English samples at 7.4M tokens, by-depth NLL improves with context depth, ~68K tok/s via
      chunked-scan+compile+bf16; resume bit-exact, cursor exact, ~30× optimized). run1=100M pipeline-validation DONE;
-     run2=1.5B FineWeb-Edu slice tokenizing now (the decisive go/no-go corpus, ~18 tok/param ≈ Chinchilla). **NEXT:
-     launch the 83M open-ended run on run2** (checkpoint+benchmark+sample each increment, PAUSE sentinel, armed Monitor)
-     → watch whether broad-domain `val_ppl` collapses from ~235 toward 20-40 (the go/no-go on "converse like a small LLM
-     is a training run away"); a bigger production corpus follows the go/no-go. Files
+     run2=1.5B FineWeb-Edu slice tokenized (1.494B train). **RUNNING — the 83M open-ended go/no-go run is LIVE
+     (checkpoint+benchmark+sample every 1000 steps, PAUSE sentinel, armed Monitor bfavys7dl, capped ~4.4 epochs ≈ 1 day
+     → a fluent 83M ckpt). GO/NO-GO STRONGLY POSITIVE: broad-domain `val_ppl` 235 (validation) → 203 (8M tok) → 128 (24M)
+     → 111 (41M tok) — dropping steeply, tracking the scaling curve toward 20-40.** ⇒ the decisive answer forming:
+     "converse like a small LLM is a TRAINING RUN AWAY, not a wall." A bigger production corpus follows once confirmed.
+     Files
      `research/runners/lm_{train_lib,train_run,fineweb_setup}.py`; design+de-risk `docs/plans/2026-07-21-autonomous-
      incremental-LM-training-workflow-design.md`; finding `2026-07-21-LM-train-pipeline-VALIDATED-on-real-fineweb-edu.md`.
      Fluid-abstain (confidence-conditioned generation, replaces the hard moat) = a parallel MODERATE build, not started.
-  2. **gap#5 last piece (avalanche-stable two-assembly co-storage) — Kim-Kim selective-inhibition de-risk IN FLIGHT.**
-     Research gate (Kim-Kim et al. 2025 *Selective inhibition in CA3*, read in depth) found the exact fix — assembly-
-     selective inhibition (spare-own/inhibit-other, condition-4 counteracts size-bias) — is ALREADY implemented+wired as
-     `--per-assembly-inhib` but the boundary finding only ran `--isolate`. Running `_gap5_r4_emergent_btsp_store --swr
-     --isolate --per-assembly-inhib --pa-inhib-w 40 --seeds 42..102` (6-seed, GPU). GO gate: both assemblies complete +
-     CA3 latch clean [~half A, ~0 B] + `ca1_match≥0.6`/`cross≤0.3`/≥3× on ≥5/6 + `--isolate`-alone reproduces the 4/6
-     BOUNDARY (inhibition load-bearing). If marginal → stack `homeostatic` size-normalization (Option B) or dendrite-
-     targeting (apical SOM) inhibition. Research-gate output this cycle; NO `sim/` edit (runs existing wired code).
+  2. **gap#5 last piece (avalanche-stable two-assembly co-storage) — 4 INHIBITORY-GATING mechanisms NEGATIVE; the fix is
+     NOT more inhibition (banked, per THE LAW → next mechanism = ENCODE-side separation).** Research gate (Kim-Kim 2025
+     *Selective inhibition in CA3*, read in depth) ranked assembly-selective inhibition; tested exhaustively: `--isolate`
+     alone 2/6, somatic Kim-Kim `--per-assembly-inhib` 2/6 (+weakened completion), within-E→I potentiation `--pa-ei-w`
+     worse (edges-confirmed-matched, not a no-op), dendrite-targeting apical `--per-assembly-apical-inhib` BREAKS the
+     clean seed (cross 0.00→0.69, fires 10064 cells). ⇒ **both somatic AND apical inhibition fail → the coupling of the
+     two size-variable emergent assemblies is not gateable by inhibition.** Next mechanism (fresh GPU-free research gate
+     dispatched): ENCODE/STORAGE-side separation (make the two emergent assemblies share fewer CA3 cells / orthogonal
+     basins — DG pattern-separation at store time, the untested Option C) or a different readout. **Single-assembly
+     emergent-DG select→store→complete chain UNCHANGED = GO.** All additive, default-off byte-identical, NO `sim/` edit.
+     Finding `2026-07-21-gap5-2assembly-selective-inhibition-family-NEGATIVE-points-to-dendritic.md`.
 - **⚠️ gap#1 — CORRECTED 2026-07-21 (adversarial audit, verdict OVERCLAIMED): NOT "COMPLETE," and the recurrence is NOT spiking.**
   The audit (a-1 RAG + code-read) found: (a) the recurrent language computation is a **GRADED, NON-SPIKING SSM leaky
   integrator** — `bridge.py:6017` `cp_ssm_state = lam*cp_ssm_state + (1-lam)*cp_ssm_inject` is host elementwise
