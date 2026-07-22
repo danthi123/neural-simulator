@@ -34,7 +34,8 @@ from research.runners._gap5_spontaneous_reactivation_derisk import _hard_silence
 
 
 def _rest_with_gamma(prep, noise, rest_steps, seed, gamma, theta_period, fire_thresh, inhib_pa, W_smooth,
-                     silence_delay=8, release_mode=False, release_v=-75.0, proportional=False):
+                     silence_delay=8, release_mode=False, release_v=-75.0, proportional=False,
+                     fs_gamma=False, fs_amp=1200.0, gamma_period=12):
     """Freeze plasticity + hard-silence + weak background, run REST; if gamma, apply theta/gamma self-avoidance (silence
     already-fired assemblies, reset the fired set every theta_period steps). Returns the CA3 firing matrix F."""
     from sim.backend import get_backend as _gb
@@ -49,6 +50,8 @@ def _rest_with_gamma(prep, noise, rest_steps, seed, gamma, theta_period, fire_th
     assemblies_local = prep["assemblies_local"]                    # per-assembly LOCAL indices into ca3_arr_host
     asm_glob = [cp.asarray(ca3_arr_host[np.asarray(a, dtype=np.int64)], dtype=cp.int64) for a in assemblies_local]
     asm_sizes = [max(1, len(a)) for a in assemblies_local]
+    basket_glob = cp.asarray(np.asarray(list(prep["bridge"].region_manager.indices("ca3_pv_basket")), dtype=np.int64),
+                             dtype=cp.int64) if fs_gamma else None
     if poisson:
         p_rate, p_pa = float(noise[1]), float(noise[2])
         p_dur = int(noise[3]) if len(noise) > 3 else 5
@@ -69,7 +72,12 @@ def _rest_with_gamma(prep, noise, rest_steps, seed, gamma, theta_period, fire_th
             if active.any():
                 bridge.cp_external_input_current[exc_dev[cp.asarray(np.nonzero(active)[0], dtype=cp.int64)]] = p_pa
             countdown[active] -= 1
-        if gamma and not release_mode:
+        if gamma and fs_gamma:
+            # gamma-RHYTHM FS-basket FEEDBACK inhibition: drive the basket sinusoidally at gamma freq -> the basket->CA3
+            # inhibition self-scales through the real synaptic loop -> gamma windows (trough = reactivation possible).
+            phase = (t % gamma_period) / gamma_period
+            bridge.cp_external_input_current[basket_glob] += float(fs_amp) * (1.0 - np.cos(2.0 * np.pi * phase)) / 2.0
+        if gamma and not release_mode and not fs_gamma:
             for k, t0 in fired_at.items():
                 if t >= t0 + silence_delay:                       # POST-burst SOMA silence (the gamma reset)
                     if proportional and t > 0:
@@ -101,7 +109,8 @@ def one_seed(seed, cfg, a):
     det = dict(W=a.window, ev_floor=a.ev_floor, ev_k=a.ev_k, active_frac=a.active_frac, onset_frac=a.onset_frac)
     noise = ("poisson", a.poisson_rate, a.poisson_pa, a.poisson_dur)
     gk = dict(theta_period=a.theta_period, fire_thresh=a.fire_thresh, inhib_pa=a.inhib_pa, W_smooth=a.window,
-              release_mode=a.release_mode, release_v=a.release_v, proportional=a.proportional)
+              release_mode=a.release_mode, release_v=a.release_v, proportional=a.proportional,
+              fs_gamma=a.fs_gamma, fs_amp=a.fs_amp, gamma_period=a.gamma_period)
 
     prep = _prepare_sequence(seed, cfg)
     al = prep["assemblies_local"]
@@ -140,6 +149,9 @@ def main():
     ap.add_argument("--release-mode", action="store_true", help="RELEASE the bistable plateau (reset cp_v_apical to the down-state) instead of soma inhibition -- the correct un-latch that does not kill the burst/detection")
     ap.add_argument("--release-v", type=float, default=-75.0, help="apical down-state voltage for plateau release")
     ap.add_argument("--proportional", action="store_true", help="SELF-SCALING post-fire inhibition ~ the assembly's own firing (feedback inhibition; robust across seeds where a fixed current is seed-dependent)")
+    ap.add_argument("--fs-gamma", action="store_true", help="RUNG-3: gamma-rhythm FS-BASKET feedback inhibition (drive ca3_pv_basket sinusoidally) instead of per-assembly injected current -- self-scales via the real synaptic loop")
+    ap.add_argument("--fs-amp", type=float, default=1200.0, help="gamma basket drive amplitude")
+    ap.add_argument("--gamma-period", type=int, default=12, help="steps per gamma cycle (dt=0.5ms -> ~6ms ~ 160Hz; tune)")
     ap.add_argument("--poisson-rate", type=float, default=0.015)
     ap.add_argument("--poisson-pa", type=float, default=1500.0)
     ap.add_argument("--poisson-dur", type=int, default=10)
