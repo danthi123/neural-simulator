@@ -1,0 +1,1 @@
+  [seed 42] w_within=5.9 w_fwd=6.77 w_rev=0.50 asym=+6.27 | adj_fwd=6.34 adj_rev=0.50 (n_fwd=8494 n_rev=8547) sizes=[240, 240, 240] (597s)
