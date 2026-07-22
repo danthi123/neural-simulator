@@ -67,3 +67,14 @@ METHOD, not the capability). Ranked fixes (testing): (1) a MUCH stronger within-
 phase-gated read so only ONE branch is active per cycle (biology: SWR replay is phase-organized; the branch is sampled,
 not co-active), OR sparser (partial-overlap) assemblies so B shares only a FEW cells with each chain rather than being a
 full 4-edge hub. All numpy-deterministic (the order/recombination metric is GPU-non-deterministic).
+
+## DE-RISK #1 fix attempts — the leaky attractor is a TOPOLOGY boundary, not within-strength
+- **fix2 (sparse chain, chain-fwd 6 + refresh 16):** w_within **27.0** (HIGHER than the original 21.7) yet STILL
+  **events=0, per_asm=[0,0,0,0,0]**. ⇒ decisively rules OUT within-strength as the cause — more within does not help.
+- **fix1 (strong within, within-events 60 + refresh 24):** running (heavy on numpy); expected to confirm the same.
+- **⇒ the spontaneous-replay method is EXHAUSTED** for the densely-wired 5-assembly hub (B has 4 edges; the cross-links
+  drain every assembly's basin). Per THE LAW, the next METHOD: **cue-driven / triggered replay** — biology's SWR replay
+  is TRIGGERED and theta-phase-organized, not free spontaneous chaos in an over-connected net. Cue predecessor A briefly,
+  let the chain propagate, measure whether it reaches C (stored A→B→C) or Y (imagined A→B→Y); cue X → Y (stored) or C
+  (imagined). This samples ONE branch per cue (no co-active leak) and directly tests the imagination capability. Cheaper
+  fallback within this method: partial-overlap B (B shares a FEW cells with each chain, not a full 4-edge hub).
