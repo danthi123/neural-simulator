@@ -161,16 +161,22 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
-- **📍 SESSION END-STATE (2026-07-22 ~07:50) — the CPU-tractable gap-closing has reached its genuine limit; the deep
-  remaining work is GPU-gated behind the fluency training. RESUME = monitor the training + fire the gated closures when
-  the GPU frees.** What's DONE (CPU): **FHRR-retirement MECHANICALLY COMPLETE** (attribute slot + pointer-clause both
-  6-seed GO, agent-routed, CI-guarded — the #1 idealization shortcut replaced by the learned spiking slot-binder); gap#3
-  + gap#5-completion CLOSED; gap#5 RANK 1 spontaneous reactivation 6-seed GO; gap#4 deep-credit-to-accuracy characterized
-  clean-negative (emergence rides the reservoir/readout path). gap#5 RANK 2 (sequence replay) = characterized
-  **deeply-elusive rest-phase boundary** — BOTH robust fixes failed (settle=0 raised w_within; verbatim `_prepare` reuse
-  made the encode byte-faithful [w_within EXACTLY 27.4] yet still 0 reactivation, RULING OUT the encode; contradiction:
-  byte-identical bridge + deterministic-same noise, different dynamics), refactor REVERTED, next=per-step rest-phase
-  trace (deferred; gap#5's solid rung stands). **GPU-GATED (fire when the fluency training frees the GPU, ~2 days):**
+- **📍 SESSION STATE (2026-07-22 ~09:15) — gap#5 RANK 2 advanced substantially this session; RANK 3 (imagination)
+  scoped; deterministic RANK 2 confirm + fluency training both running. RESUME = read the RANK 2 numpy 6-seed (PID
+  159534) → close forward-replay → build the RANK 3 recombination de-risk.** What's DONE (CPU): **FHRR-retirement
+  MECHANICALLY COMPLETE + confirmed fully-spiking** (attribute slot + pointer-clause both 6-seed GO, agent-routed,
+  CI-guarded, `SlotBinderComposer` = real bridge/`_run_one_simulation_step`/`cp_firing_states` — the #1 idealization
+  shortcut replaced by the learned spiking slot-binder); gap#3 + gap#5-completion CLOSED; gap#4 deep-credit-to-accuracy
+  characterized clean-negative (emergence rides the reservoir/readout path). **gap#5 RANK 1 spontaneous reactivation
+  6-seed GO; gap#5 RANK 2 (sequence replay): the within-reactivation BLOCKER is now SOLVED** (it was the per-assembly
+  `_silence_soma_apical + _zero_elig` boundary calls in `_prepare_sequence`; `--rank1-encode` fix; the "deeply-elusive"
+  verdict + an n_mem=1 confound + a risky single-GPU-run "GO 1/1" all RETRACTED). Full forward replay recipe
+  `--rank1-encode --within-events 30 --chain-fwd 24 --chain-rev 0 --within-refresh 8` → FWD 1.000 deterministic
+  (numpy), GPU 3/4 forward, reactivation robust every run, anti-cheats clean; the forward-ORDER metric is
+  GPU-non-deterministic (deterministic 6-seed confirm running). **gap#5 RANK 3 (imagination = recombinative replay at a
+  shared branch node) SCOPED** (`2026-07-22-gap5-RANK3-imagination-recombinative-replay-research-gate.md`): store A→B→C
+  + X→B→Y sharing B → does replay generate novel A→B→Y/X→B→C? A direct composition of the working RANK 1/2 primitives,
+  no `sim/` edit; build gated on the RANK 2 confirm. **GPU-GATED (fire when the fluency training frees the GPU, ~2 days):**
   (1) make the slot-binder the production DEFAULT + 320-scale re-verify (retire the rf/FHRR fallback); (2) full
   agent-clause path verify (needs the denoise64 base-parser cache, GPU-generated); (3) fluency-generator spiking-forward
   conversion (gap#1, the last "fully-spiking" shortcut); (4) deep-credit re-derisk (seed-fixed, if revisited). The
