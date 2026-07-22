@@ -93,3 +93,27 @@ I committed the "topology boundary not within-strength" conclusion off **fix2 al
   completion cue) so A ignites → the A→B edge drives B → B→{C,Y} drives a successor; measure which. Use the fix1 strong-
   within params (ev60/refresh24) so the assemblies are reactivatable. Lesson (again): do not commit a conclusion off a
   partial arm set.
+
+## DE-RISK #2 (cue-driven / triggered replay) — HONEST NEGATIVE: broad co-ignition, not directional traversal
+Cued predecessor A (700pA×150, RANK 1's completion cue) + propagate 250, fix1 strong-within (w_within 129), seed 42:
+- **cueA post-peaks (A,B,C,X,Y) = [0.504, 0.537, 0.588, 0.729, 0.2]** — cueing A lights up not just A→B→C but **X=0.729**
+  (the OTHER predecessor); cueX = [0.312, 0.358, 0.421, 0.5, 0.229]. ⇒ the strong-within network + a strong cue **BROADLY
+  CO-IGNITES the whole connected CA3 component**, it does NOT traverse the chain directionally.
+- **NO-SHARED control is NOT clean:** A→Y = 2.208, X→C = 1.975 (values >1 = the moving-sum metric saturates in this
+  dense-firing regime; and Y ignites when cueing A even with NO shared node) → the metric cannot isolate directional
+  recombination here. Verdict **0/1, confounded**.
+- **⇒ BOTH direct-composition methods hit the same boundary:** spontaneous replay = reactivation-without-ordered-
+  transitions; cue-driven = broad co-ignition-without-directional-traversal. The root tension: a within-attractor strong
+  enough to reactivate the over-connected shared-node topology is TOO excitable for clean sequential/directional replay
+  (the same co-activation-vs-directionality tension as RANK 2's modest forward-order, amplified at the 4-edge hub).
+
+## RANK 3 verdict (honest) — CHARACTERIZED BOUNDARY of direct composition; next method = theta/phase-organized replay
+Per THE LAW, a method verdict, not the capability abandoned. The two direct-composition methods (spontaneous, cue-driven)
+are exhausted; the ranked next method is the biological one that SEPARATES assemblies IN TIME so they cannot co-ignite:
+**theta/gamma phase-organized replay** (Lisman-Idiart theta-gamma multiplexing / Skaggs-McNaughton theta phase-precession
+sequence compression — the project's catalog N.15, and the same mechanism RANK 2's uniform forward-order wants). This is a
+larger mechanism build (phase-gated sequential read-out) and is DEFERRED as a bounded next-arc. **gap#5's core stands
+unaffected: completion mechanism CLOSED, RANK 1 spontaneous reactivation 6-seed GO, RANK 2 within-reactivation SOLVED.**
+RANK 3 (imagination) is a bonus rung, now a precisely-characterized boundary with the named next method. NO `sim/` edit in
+the entire RANK 3 arc; the recombination infra (`_gap5_recombination_derisk.py` + `chain_edges`) is retained for the
+theta-organized retry.
