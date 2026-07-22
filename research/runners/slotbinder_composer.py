@@ -19,9 +19,10 @@ fully spiking (the readout reset is the neuralized D3 CLEAR); (4) the no-confab 
 matching fact -> abstain). Fillers are concept POOLS (the g20/Pulvermüller distributed-word-ensemble representation);
 generalization across SIMILAR concepts is the separate, already-closed cross-modal/PPMI arc, not this binder.
 
-Honest scope: it is an LTM plastic-weight store (the NMDA hold is not load-bearing); flat SVO facts (embedded-clause
-patients + attributed 'big apple' patients are the OneBrainComposer's job and a named follow-on); capacity =
-`max_facts` slots (a scale lever, not a wall). CPU/numpy or GPU/cupy (the underlying bridge is backend-agnostic).
+Honest scope: it is an LTM plastic-weight store (the NMDA hold is not load-bearing); flat SVO facts + SINGLE-attribute
+patients ('big apple' -- a 5th flat `attribute` role, gap-#2 attribute-slot step, 2026-07-22; embedded-clause patients
+are the follow-on pointer/indirection step); capacity = `max_facts` slots (a scale lever, not a wall). CPU/numpy or
+GPU/cupy (the underlying bridge is backend-agnostic).
 """
 
 import os
@@ -37,7 +38,8 @@ from research.runners._keystone2_spiking_slot_binder_derisk import build_binder_
 
 _DEFAULT_VOCAB = ["dog", "cat", "fish", "bird", "chase", "eat", "see", "hear", "north", "south"]
 AFFIRM, NEGATE = "__AFFIRM__", "__NEGATE__"
-_ROLES = 4   # agent, verb, patient, polarity
+NOATTR = "__NOATTR__"                 # the "no adjective" filler -> query_attribute returns None (moat by construction)
+_ROLES = 5   # agent, verb, patient, polarity, attribute (attribute defaults to NOATTR for an un-attributed fact)
 
 
 class SlotBinderComposer:
@@ -48,9 +50,10 @@ class SlotBinderComposer:
         base = list(vocab) if vocab is not None else (list(concepts.keys()) if concepts else list(_DEFAULT_VOCAB))
         # the two polarity pools are appended as extra filler pools
         self.words = base
-        self._vocab = base + [AFFIRM, NEGATE]
+        self._vocab = base + [AFFIRM, NEGATE, NOATTR]
         self._w2i = {w: i for i, w in enumerate(self._vocab)}
         self._pol = {"AFFIRM": self._w2i[AFFIRM], "NEGATE": self._w2i[NEGATE]}
+        self._noattr = self._w2i[NOATTR]
         self.max_facts = int(max_facts)
         self.gain, self.teach_steps, self.retr_steps = gain, teach_steps, retr_steps
         self.parser = None                     # no on-bridge parser -> the agent uses its own
@@ -111,20 +114,40 @@ class SlotBinderComposer:
         return self._vocab[idx]
 
     # ---- the composer contract ----------------------------------------------------------------------
-    def store(self, agent, action, patient, polarity=None):
-        # flat SVO only; a non-vocab / non-string patient (e.g. an embedded-clause embedding) is a named follow-on.
-        if not (isinstance(patient, str) and agent in self._w2i and action in self._w2i and patient in self._w2i):
+    @staticmethod
+    def _resolve_patient(patient):
+        """Split a patient operand into (noun, attribute). A bare word -> (word, None). An attributed entity
+        `(adjs, noun)` / `(adj, noun)` tuple -> (noun, the FIRST adjective) -- SINGLE-attribute only (a 2nd
+        adjective is dropped; the 2-attribute case is the FHRR's own ~29% boundary, deliberately out of scope)."""
+        if not isinstance(patient, tuple):
+            return patient, None
+        adjs, noun = patient                                   # (adj(s), noun)
+        adjs = list(adjs) if isinstance(adjs, (tuple, list)) else [adjs]
+        return noun, (adjs[0] if adjs else None)
+
+    def store(self, agent, action, patient, polarity=None, attribute=None):
+        # flat SVO + SINGLE attribute. The attribute may be passed via `attribute=` OR inline as a `(adjs, noun)`
+        # tuple patient (split here); a bare-string patient keeps the flat path (attribute defaults to NOATTR).
+        noun, tuple_attr = self._resolve_patient(patient)
+        if attribute is None:
+            attribute = tuple_attr
+        if not (isinstance(noun, str) and agent in self._w2i and action in self._w2i and noun in self._w2i):
+            return False
+        if attribute is not None and attribute not in self._w2i:
             return False
         self._ensure()
         i = len(self.facts)
         if i >= self.max_facts:
             raise RuntimeError(f"SlotBinderComposer capacity {self.max_facts} facts reached (raise max_facts)")
         pol = "NEGATE" if polarity in ("NEGATE", "neg", False) else "AFFIRM"
+        attr_filler = self._w2i[attribute] if attribute is not None else self._noattr
         self._store_pair(_ROLES * i + 0, self._w2i[agent])
         self._store_pair(_ROLES * i + 1, self._w2i[action])
-        self._store_pair(_ROLES * i + 2, self._w2i[patient])
+        self._store_pair(_ROLES * i + 2, self._w2i[noun])
         self._store_pair(_ROLES * i + 3, self._pol[pol])
-        self.facts.append({"agent": agent, "action": action, "patient": patient, "polarity": pol})
+        self._store_pair(_ROLES * i + 4, attr_filler)          # NOATTR when the fact has no adjective
+        self.facts.append({"agent": agent, "action": action, "patient": noun, "polarity": pol,
+                           "attribute": attribute})
         return True
 
     store_fact = None  # (agent uses store(); store_fact is an RF-only convenience)
@@ -157,11 +180,23 @@ class SlotBinderComposer:
             return "unknown"                                   # the moat
         return "yes" if self._read_word(i, 3) == AFFIRM else "no"
 
+    def query_attribute(self, agent, action):
+        """The single adjective bound to the matching fact's patient (e.g. 'big') -> None when the fact stored no
+        attribute (the attribute slot reads NOATTR) or the cue matches no fact (abstain = the moat)."""
+        i = self._match(cue_a=agent, cue_v=action)
+        if i is None:
+            return None
+        w = self._read_word(i, 4)
+        return None if w == NOATTR else w
+
     def render_fact(self, agent, order_fn=None):
         i = self._match(cue_a=agent)
         if i is None:
             return None
-        words = [self._read_word(i, 0), self._read_word(i, 1), self._read_word(i, 2)]
+        attr = self._read_word(i, 4)
+        patient = self._read_word(i, 2)
+        patient_str = f"{attr} {patient}" if attr != NOATTR else patient   # 'big apple' when attributed
+        words = [self._read_word(i, 0), self._read_word(i, 1), patient_str]
         order = order_fn(3) if order_fn is not None else [0, 1, 2]
         return " ".join(words[o] for o in order)
 
