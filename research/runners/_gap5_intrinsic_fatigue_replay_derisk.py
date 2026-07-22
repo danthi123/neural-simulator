@@ -109,6 +109,13 @@ def one_seed(seed, cfg, a):
     prep_l = _prepare_sequence(seed, cfg)
     Fl = _rest_with_fatigue(prep_l, noise, a.rest_steps, seed, adapt=False, self_regen_read=a.self_regen_read,
                             d_abs=a.d_abs, a_abs=a.a_abs)
+    i = _fwd(Fi, al, det); les = _fwd(Fl, al, det)
+    if a.quick:                                       # calibration: only the load-bearing INTRINSIC vs ADAPT-LESION pair
+        go = (i[0] >= 0.50) and (i[2] >= 2) and (les[0] < i[0] - 0.15)
+        print(f"  [seed {seed}][QUICK] INTRINSIC fwd={i[0]:.3f} rev={i[1]:.3f} (ev={i[4]} multi={i[2]} act={i[3]} pop={i[5]:.4f}) | "
+              f"ADAPT-LESION fwd={les[0]:.3f} (multi={les[2]} act={les[3]}) => {'ORDERS' if go else 'no'}")
+        return dict(seed=seed, intrinsic=dict(fwd=i[0], rev=i[1], n_multi=i[2], act=i[3], pop=i[5]),
+                    adapt_lesion=dict(fwd=les[0], n_multi=les[2], act=les[3]), go=bool(go))
     # LATCH-ON (bistable plateau kept + cranked adaptation) -> MUST degrade (soma adaptation can't release a dendritic latch)
     prep_o = _prepare_sequence(seed, cfg)
     Fo = _rest_with_fatigue(prep_o, noise, a.rest_steps, seed, adapt=True, self_regen_read=cfg["plateau_self_regen"],
@@ -117,8 +124,7 @@ def one_seed(seed, cfg, a):
     prep_n = _prepare_sequence(seed, cfg)
     Fn = _rest_with_fatigue(prep_n, ("none",), a.rest_steps, seed, adapt=True, self_regen_read=a.self_regen_read,
                             d_abs=a.d_abs, a_abs=a.a_abs)
-
-    i = _fwd(Fi, al, det); les = _fwd(Fl, al, det); latch = _fwd(Fo, al, det); nn = _fwd(Fn, al, det)
+    latch = _fwd(Fo, al, det); nn = _fwd(Fn, al, det)
     go = (i[0] >= 0.50) and (i[2] >= 2) and (les[0] < i[0] - 0.15) and (nn[2] == 0)
     print(f"  [seed {seed}] INTRINSIC fwd={i[0]:.3f} rev={i[1]:.3f} (ev={i[4]} multi={i[2]} act={i[3]} pop={i[5]:.4f}) | "
           f"ADAPT-LESION fwd={les[0]:.3f} (multi={les[2]} act={les[3]}) | LATCH-ON fwd={latch[0]:.3f} (act={latch[3]}) | "
@@ -147,6 +153,7 @@ def main():
     ap.add_argument("--ev-k", type=float, default=4.0)
     ap.add_argument("--active-frac", type=float, default=0.12)
     ap.add_argument("--onset-frac", type=float, default=0.08)
+    ap.add_argument("--quick", action="store_true", help="calibration: run only the load-bearing INTRINSIC vs ADAPT-LESION pair (2 arms, ~2x faster) -- skip LATCH-ON + NO-NOISE")
     ap.add_argument("--out", default="research/findings/raw/gap5_r4/intrinsic_fatigue.json")
     a = ap.parse_args()
     cfg = dict(SEQ_CFG)
