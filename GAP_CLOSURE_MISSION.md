@@ -161,9 +161,15 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
-- **📍 SESSION STATE (2026-07-22 ~09:15) — gap#5 RANK 2 advanced substantially this session; RANK 3 (imagination)
-  scoped; deterministic RANK 2 confirm + fluency training both running. RESUME = read the RANK 2 numpy 6-seed (PID
-  159534) → close forward-replay → build the RANK 3 recombination de-risk.** What's DONE (CPU): **FHRR-retirement
+- **📍 SESSION STATE (2026-07-22 ~09:55) — gap#5 RANK 2 advanced substantially; RANK 3 (imagination) scoped + BUILT +
+  de-risking. THREE live runs + re-invocation set: (a) fluency training (crash-watch bz26vprsv, val_ppl ~60); (b)
+  RANK 2 deterministic numpy 6-seed (PID 159534, waiter b1rcfvid4) → the definitive forward-replay per-seed verdict
+  [GPU aggregate 0.794 > SCRAMBLE 0.667 > chance 0.500, non-det per-seed; numpy-42 clean 1.000]; (c) RANK 3
+  recombination single-seed de-risk (PID 170997, waiter bhdselipn). RESUME (when the waiters fire): (b) read the numpy
+  verdict → close/characterize RANK 2 forward-replay; (c) read RANK 3 → if recombination (cross>0, NO-NOISE/NO-ENCODE/
+  NO-SHARED clean) run the numpy 6-seed, else tune the shared-node B reactivation (smoke at reduced params gave
+  b_active=0 → full RANK 2 recipe params). RANK 3 infra committed 526435f7 (chain_edges branch topology +
+  `_gap5_recombination_derisk.py`).** What's DONE (CPU): **FHRR-retirement
   MECHANICALLY COMPLETE + confirmed fully-spiking** (attribute slot + pointer-clause both 6-seed GO, agent-routed,
   CI-guarded, `SlotBinderComposer` = real bridge/`_run_one_simulation_step`/`cp_firing_states` — the #1 idealization
   shortcut replaced by the learned spiking slot-binder); gap#3 + gap#5-completion CLOSED; gap#4 deep-credit-to-accuracy
