@@ -74,3 +74,30 @@ side (separate the two emergent assemblies so they share fewer CA3 cells / have 
 pattern-separation at store time, the untested ranked Option C) or a fundamentally different readout, NOT more inhibition.
 A fresh GPU-free research gate is dispatched for the next mechanism. **The single-assembly emergent-DG chain remains GO;
 this is the narrow 2-assembly independent-addressing piece.** Additive code kept (default-off byte-identical). NO `sim/` edit.
+
+## ⚠️ MAJOR REFRAME (2026-07-21, from the encode-side research-gate Workflow + its adversarial critique reading the on-record data)
+Two Workflows (5 agents each) + their adversarial critiques reframed the whole 2-assembly arc:
+1. **DECISIVE DIAGNOSTIC (Agent A, measured):** the two co-stored emergent assemblies are **DISJOINT on ALL seeds**
+   (Jaccard <0.05; failing 100/102 share 3-4 cells, clean 42/44 share 0-1). NOT a shared-cell problem → the
+   cross-completion travels through **between-assembly ca3→ca3 recurrents AND the member→non-member spread path** in the
+   dense substrate (and `structural_sep=1` — the GO_CFG default — blocks only non-member→member, leaving the indirect
+   A→non-member→B channel open; that is WHY `--isolate` alone got 2/6).
+2. **THE BINDING BLOCKER IS WEAK COMPLETION, not cross (critique, reading `_gap5_r4_emergent_btsp_store.json` 20:22):**
+   on EVERY seed the emergent sparse assemblies complete at `held_cue` **~0.10** — BELOW the GO bar (0.13) and the cgo()
+   bar (0.15). The apical inhibition "fixed" cross on 100/102 but their completion was ALWAYS too weak to pass. The
+   sparse ~18-31-cell emergent assemblies at `ca3_density=0.05` have too little within-assembly fan-in (the driver's own
+   HONEST NOTE lines 17-19: ~30 cells at 0.05 gives cue ~0.05; the reference's 240-cell assembly completes because its
+   fan-in is 6× higher). **Lowering density (a ranked option) is BACKWARDS — completion needs HIGHER within density.**
+3. **The seed labels FLIP under `--isolate`:** with isolate ON, seed 44 has the WORST cross (0.72) and seed 100 already
+   passes (0.20) — so "44 clean / 100-102 fail" was the isolate-OFF regime; the mechanism must be judged per-seed on the
+   ACTUAL config, and 6-seed (the substrate jitters cell membership run-to-run).
+- **⇒ RULED OUT (method-negative, unanimous across both Workflows + Rolls-Treves): ALL recall-side inhibitory gating**
+  (the 4 negatives) — "no downstream circuit can manufacture a distinction absent from CA3." The fix is at the
+  STORE/recurrent-coupling level AND must FIRST restore strong completion.
+- **SYNTHESIZED de-risk (testing now, b7ge89lpb):** `--isolate --structural-sep 2 --ca3-density 0.35` — HIGH within-
+  assembly density (strong completion, the binding blocker) + full bidirectional isolation (zero cross-assembly AND
+  member↔non-member spread → no coupling). GO gate (6-seed): both assemblies complete `held_cue≥0.13` AND
+  `ca1_match≥0.6`/`cross≤0.3`/≥3× on ≥5/6, with the load-bearing lesion (isolate/sep OFF reproduces cross) + basin-
+  symmetry (BOTH the large and the ~2× smaller assembly complete their own cue) anti-cheats. Fallbacks ranked: disjoint-DG
+  inputs, equal-k sparser+symmetric selection. NO `sim/` edit (all existing flags). **THE CAPABILITY (two separately-
+  addressable co-stored emergent attractors) stays open per THE LAW; only the recall-inhibition METHOD retired.**
