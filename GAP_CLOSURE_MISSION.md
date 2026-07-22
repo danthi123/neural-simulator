@@ -161,20 +161,33 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
-- **📍 SESSION STATE (2026-07-22 ~11:05) — gap#5 RANK 2 within-reactivation SOLVED + deterministic forward-replay
-  characterized; RANK 3 (imagination) on its escalation. DONE this session: RANK 2 within-reactivation blocker SOLVED
-  (`--rank1-encode`; 3 prior framings retracted); RANK 2 forward-replay deterministic numpy 6-seed = **4/6 clean forward
-  (FWD 1.000), mean 0.806** (real+strong-on-most, not uniform → method-limited; uniform order wants theta-precession).
-  RANK 3: the shared-node topology reactivates ALL 5 assemblies with a STRONG within (fix1 ev60/refresh24, w_within 129)
-  but spontaneous replay forms NO ordered transitions (within=0/cross=0) → escalated to **CUE-DRIVEN / triggered replay**
-  (cue A → propagate → does C[stored] or Y[imagined] ignite via B?). Two premature-conclusion corrections logged this
-  session (RANK 2 single-run GO; RANK 3 topology-vs-strength off fix2 alone) — verify-not-assume, wait for all arms.
-  LIVE: (a) fluency training (crash-watch bz26vprsv, val_ppl ~60, new low 59.52); (b) RANK 3 cue-driven test (PID 219293,
-  waiter bqnd5lt1b, ~30min GPU). RESUME: read the cue-driven result — if C&Y both ignite when cueing A (branch sampled)
-  + NO-SHARED control clean → RANK 3 recombination signal → 6-seed numpy; else diagnose propagation (cue may need
-  partial-A completion or a stronger chain). Findings: `2026-07-22-gap5-RANK{2-within-reactivation-blocker-SOLVED,
-  3-imagination-recombinative-replay-research-gate}.md`. OPEN FORK posed to owner: keep pushing RANK 3 imagination vs
-  hold gap#5 (strong state) + redirect the training-window effort.** What's DONE (CPU): **FHRR-retirement
+- **📍 SESSION CLOSEOUT (2026-07-22 ~11:15, owner: "fully close everything out") — HONEST FINAL STATUS OF ALL 5 GAPS:**
+  - **gap#1 (open fluent generation) = OPEN, actively training.** The WKV/SSM cortex LM (83M, FineWeb-Edu) is at step
+    ~373k / ~3.06B tok, **val_ppl 59.68 (new low, descending)** — the path to replacing the 21M ANN scaffold. Spiking-
+    forward conversion + scale = the follow-ons (GPU-gated on this run). Crash-watch bz26vprsv keeps it alive.
+  - **gap#2 (learned binder / FHRR retirement) = CLOSED + verified fully-spiking** this session (`SlotBinderComposer` =
+    real bridge → `_run_one_simulation_step` → `cp_firing_states`; attribute-slot + pointer-clause both 6-seed GO,
+    agent-routed, CI-guarded). Production-default flip + 320-scale re-verify = GPU-gated (fire when the training frees GPU).
+  - **gap#3 (multi-referent) = CLOSED** (biased-competition WTA + learned spiking feature-compat, wired into MultiTurnAgent).
+  - **gap#4 (deep local credit) = CLEAN-NEGATIVE, characterized** — graded-burst credit does NOT beat a reservoir readout
+    (confound-free); the emergence engine rides the reservoir/shallow-readout + learned-input path. The credit-ASSIGNMENT
+    KEYSTONE (works+composes, rung 10) stands; deep-credit-to-accuracy is a deprioritized parallel frontier.
+  - **gap#5 (CA3 completion / imaginative replay):** completion mechanism CLOSED (2026-07-18); **RANK 1 spontaneous
+    reactivation 6-seed GO; RANK 2 ordered sequence replay — within-reactivation BLOCKER SOLVED this session**
+    (`--rank1-encode`, 3 prior framings retracted), forward-replay deterministic numpy **4/6 clean forward (FWD 1.000),
+    mean 0.806** (real+strong-on-most → method-limited; a uniform order wants the theta-precession ordered-replay
+    mechanism). **RANK 3 (imagination = recombination):** reactivation of ALL 5 shared-node assemblies WORKS with a strong
+    within (w_within 129), but spontaneous replay forms no ordered transitions → the biologically-faithful **CUE-DRIVEN /
+    triggered-replay** method is under test [RESULT PENDING — waiter bqnd5lt1b, PID 219293]. RANK 3 = a bonus rung; gap#5's
+    core (completion + reactivation) is solid.
+  - **Process notes (honest):** 2 premature-conclusion corrections logged this session (RANK 2 single-GPU-run "GO"; RANK 3
+    topology-vs-strength off a partial arm set) — verify-not-assume, wait for ALL arms before concluding.
+  - **RESUME:** read the cue-driven RANK 3 result → finalize RANK 3 (recombination GO → 6-seed numpy, OR diagnose
+    propagation: partial-A completion cue / stronger chain / partial-overlap-B). Then the GPU-gated closures (gap#2
+    production default + 320-scale; gap#1 spiking-forward) fire when the training frees the GPU. All session work committed
+    both remotes; findings `2026-07-22-gap5-RANK{2-within-reactivation-blocker-SOLVED,3-imagination-recombinative-replay-
+    research-gate}.md`. (Pre-existing uncommitted non-session diffs in 5 files — `_ssm_reservoir_lm`, `_riii_ca3`, 3 raw/
+    finding files — left untouched; they predate this session.)** What's DONE (CPU): **FHRR-retirement
   MECHANICALLY COMPLETE + confirmed fully-spiking** (attribute slot + pointer-clause both 6-seed GO, agent-routed,
   CI-guarded, `SlotBinderComposer` = real bridge/`_run_one_simulation_step`/`cp_firing_states` — the #1 idealization
   shortcut replaced by the learned spiking slot-binder); gap#3 + gap#5-completion CLOSED; gap#4 deep-credit-to-accuracy
