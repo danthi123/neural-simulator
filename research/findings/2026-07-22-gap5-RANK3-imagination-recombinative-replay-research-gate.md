@@ -78,3 +78,18 @@ full 4-edge hub. All numpy-deterministic (the order/recombination metric is GPU-
   let the chain propagate, measure whether it reaches C (stored A→B→C) or Y (imagined A→B→Y); cue X → Y (stored) or C
   (imagined). This samples ONE branch per cue (no co-active leak) and directly tests the imagination capability. Cheaper
   fallback within this method: partial-overlap B (B shares a FEW cells with each chain, not a full 4-edge hub).
+
+## ⛔ CORRECTION (same day) — fix1 REFUTES "topology boundary, not within-strength"; strong within DOES restore reactivation
+I committed the "topology boundary not within-strength" conclusion off **fix2 alone (w_within 27 → events=0)** while
+**fix1 was still running** — a premature conclusion (verify-not-assume violation: wait for all arms). **fix1 (within-events
+60 + refresh 24, w_within 129.3) restores reactivation of ALL FIVE assemblies: per_asm=[3,3,3,3,3], events=4.** So:
+- The shared-node topology RAISES the within threshold for reactivation (the over-connectivity leak IS real) — but it is
+  OVERCOME by a strong-enough within (~129, vs RANK 2's linear chain reactivating at ~15-143). fix2's 27 was just too weak.
+- **The genuine remaining issue is DIFFERENT: with strong within, the 5 assemblies reactivate INDEPENDENTLY but form NO
+  ordered pred→B→succ TRANSITIONS (within=0, cross=0).** The spontaneous replay fires assemblies but does not TRAVERSE the
+  chain in order — the same weak-chain-traversal signature as RANK 2's modest forward-order, amplified at the hub.
+- ⇒ the right next method is unchanged (cue-driven / triggered replay) but for a SHARPER reason: not to *enable
+  reactivation* (strong within already does) but to FORCE ordered chain TRAVERSAL — cue A strongly (RANK 1's 700pA×150
+  completion cue) so A ignites → the A→B edge drives B → B→{C,Y} drives a successor; measure which. Use the fix1 strong-
+  within params (ev60/refresh24) so the assemblies are reactivatable. Lesson (again): do not commit a conclusion off a
+  partial arm set.
