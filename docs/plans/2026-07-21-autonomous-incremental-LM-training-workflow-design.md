@@ -120,3 +120,18 @@ The real 83M WKV (d1024/L16) run on the 1.5B FineWeb-Edu slice (run2), chunked-s
 - **Fluid-abstain (owner priority #3): design + adversarial critique DONE** (`2026-07-21-fluid-abstain-graded-hedging-...`).
   The cheap N-threshold ladder is binary-in-disguise (bimodal familiarity novelty); grounded graded hedging needs the
   cleanup-score S calibrated, and open-domain hedging is scale-bound (collapses into #1). Hard moat retained. No code built.
+
+## 6. PRODUCTION-RUN CONFIG (refined 2026-07-21, for genuine fluency — executes on run3's 6B corpus)
+The go/no-go run (run2, 1.5B, cosine-100k) is the validation + a fallback checkpoint. The PRODUCTION run (run3, the
+tokenizing 6B FineWeb-Edu superset) targets a genuinely FLUENT 83M — SmolLM-scale fluency needs ~300 tok/param, so:
+- **~4 epochs of the 6B corpus = 24B training tokens ≈ 289 tok/param** (the Muennighoff data-repeat sweet spot ≤4 epochs).
+- Config: fresh 83M (d1024/L16, seq256, B32, chunk-c16), **`--lr-decay-steps 3000000 --max-increments 3000`** (3M steps =
+  24B tokens, cosine decays over the whole run → proper schedule, no min-lr waste), `--warmup-steps 2000 --compile 1`,
+  `--chunk-steps 1000`. ETA ~3-4.5 days at 65-90K tok/s → a fluent, well-trained model.
+- **Launch (on run3 corpus DONE):** `touch bridges/lmtrain/run2/PAUSE` (graceful-checkpoint-stop run2, its go/no-go
+  served + its cosine is ~80% done) → wait ~2 min for run2 to exit → `lm_train_run start --root bridges/lmtrain/run3
+  --corpus-path bridges/lmtrain/run3/tokens_train.npy --tokenizer hf --vocab-size 16000 --d-model 1024 --n-layers 16
+  --seq-len 256 --batch 32 --chunk-c 16 --device cuda --amp 1 --compile 1 --lr-decay-steps 3000000 --warmup-steps 2000
+  --chunk-steps 1000 --max-increments 3000`. Then arm a coarse Monitor + the owner drives via `status`/`PAUSE`/resume.
+- Incremental "train as long as I want": resume continues within the run; to extend PAST 4 epochs, tokenize a bigger
+  corpus (chunked-tokenize enhancement for >RAM sizes) or the WSD schedule (indefinite stable-LR) — the follow-on levers.
