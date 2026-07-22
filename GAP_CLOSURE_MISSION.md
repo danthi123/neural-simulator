@@ -161,6 +161,24 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
+- **📍 SESSION END-STATE (2026-07-22 ~07:50) — the CPU-tractable gap-closing has reached its genuine limit; the deep
+  remaining work is GPU-gated behind the fluency training. RESUME = monitor the training + fire the gated closures when
+  the GPU frees.** What's DONE (CPU): **FHRR-retirement MECHANICALLY COMPLETE** (attribute slot + pointer-clause both
+  6-seed GO, agent-routed, CI-guarded — the #1 idealization shortcut replaced by the learned spiking slot-binder); gap#3
+  + gap#5-completion CLOSED; gap#5 RANK 1 spontaneous reactivation 6-seed GO; gap#4 deep-credit-to-accuracy characterized
+  clean-negative (emergence rides the reservoir/readout path). gap#5 RANK 2 (sequence replay) = characterized
+  **deeply-elusive rest-phase boundary** — BOTH robust fixes failed (settle=0 raised w_within; verbatim `_prepare` reuse
+  made the encode byte-faithful [w_within EXACTLY 27.4] yet still 0 reactivation, RULING OUT the encode; contradiction:
+  byte-identical bridge + deterministic-same noise, different dynamics), refactor REVERTED, next=per-step rest-phase
+  trace (deferred; gap#5's solid rung stands). **GPU-GATED (fire when the fluency training frees the GPU, ~2 days):**
+  (1) make the slot-binder the production DEFAULT + 320-scale re-verify (retire the rf/FHRR fallback); (2) full
+  agent-clause path verify (needs the denoise64 base-parser cache, GPU-generated); (3) fluency-generator spiking-forward
+  conversion (gap#1, the last "fully-spiking" shortcut); (4) deep-credit re-derisk (seed-fixed, if revisited). The
+  training (gap#1) is LIVE + healthy (step ~264k, val_ppl ~61, descending; Monitors bz26vprsv crash-watch + bqhx1wfgg
+  heartbeat armed) and GENERATES the caches the gated closures need. Findings this cycle:
+  `2026-07-22-{recursive-slotbinder-research-gate, gap2-attribute-slot-GO, gap2-pointer-clause-GO, gap5-RANK2-verbatim-reuse-RULES-OUT-encode}.md`.
+
+
 - **🎉 CYCLE 2026-07-22 (cont.) — the FHRR exact-inverse algebra is FULLY RETIRABLE (gap#2 mechanism COMPLETE, both
   de-risks 6-seed GO, CPU-tractable, coexisting with the training).** The owner steered to closing the idealization
   shortcuts fully-spiking-on-one-substrate; the #1 shortcut (the FHRR/VSA exact-inverse binding algebra, flagged by the
