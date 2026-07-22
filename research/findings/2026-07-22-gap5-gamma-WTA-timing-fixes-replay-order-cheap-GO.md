@@ -36,3 +36,12 @@ literal temporal theta/gamma over the CA3 slice — a gamma FS pool for the E%-m
 the just-fired assembly, over RANK 2's existing BTSP chain + RANK 1 within-attractors. Honest scope: this is a RATE-level
 isolation on the real learned W (grounds the mechanism); the on-spikes RUNG-2 realization is the build it justifies.
 Multi-seed (43/44) confirming. `research/findings/raw/gap5_r4/gamma_wta_seed42_v2.log`.
+
+## Multi-seed confirm (42/43/44) — 3/3 GO, and the DECISIVE evidence: it works even when the raw asymmetry is REVERSE
+Seeds 43/44: ARM_B(gamma-WTA+silence)=**1.000** forward, SCRAMBLE(per-trial)=0.505/0.500, NO-ENCODE=0.568/0.535
+(chance). **Crucially, seeds 43 and 44 have a NEGATIVE forward/reverse asymmetry** (asym −1.01, −1.56 — the weights
+lean REVERSE), yet the gamma-WTA STILL produces perfect forward order. This is the strongest evidence for the mechanism:
+gamma-WTA + self-avoidance does NOT use the marginal fwd/rev asymmetry (which was RANK 2's fragile 4/6 crutch, and is
+here even reverse-signed) — it rides the robust ADJACENT-vs-SKIP structure (adj ~130-143 >> skip ~22-23) and forbids
+backward via self-avoidance. ⇒ phase-timing fixes the replay order EVEN WHERE the learned weight asymmetry points the
+wrong way. 3/3 GO. `research/findings/raw/gap5_r4/gamma_wta_{seed42_v2,2seed}.log`.
