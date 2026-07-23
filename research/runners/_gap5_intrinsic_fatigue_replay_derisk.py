@@ -38,7 +38,7 @@ import json
 import numpy as np
 
 from sim.backend import get_backend, to_host  # noqa: E402
-from research.runners._gap5_sequence_replay_derisk import _prepare_sequence, SEQ_CFG, _detect_sequence_events, _scramble_between_weights  # noqa: E402
+from research.runners._gap5_sequence_replay_derisk import _prepare_sequence, SEQ_CFG, _detect_sequence_events, _scramble_between_weights, _symmetrize_between_weights  # noqa: E402
 from research.runners._gap5_spontaneous_reactivation_derisk import _hard_silence, _configure_ou  # noqa: E402
 
 
@@ -148,21 +148,37 @@ def one_seed(seed, cfg, a):
     _scramble_between_weights(prep_s, seed)
     Fs = _rest_with_fatigue(prep_s, noise, a.rest_steps, seed, adapt=True, self_regen_read=a.self_regen_read,
                             d_abs=a.d_abs, a_abs=a.a_abs, apical_gc_read=a.apical_gc_read)
+    # ASYM-LESION (only for the FORWARD-ASYMMETRY store, --freeze-between-refresh): symmetrize the between-weights
+    # (adj_fwd == adj_rev; direction destroyed, within + budget kept) -> forward MUST collapse. THE load-bearing control
+    # proving the forward replay rides the WEIGHT ASYMMETRY, not adaptation-self-avoidance or the ignition point. Skipped
+    # (byte-identical) on the default near-symmetric store, where there is no asymmetry to lesion.
+    asym = None
+    if cfg.get("freeze_between_refresh"):
+        prep_a = _prepare_sequence(seed, cfg)
+        _symmetrize_between_weights(prep_a)
+        Fa = _rest_with_fatigue(prep_a, noise, a.rest_steps, seed, adapt=True, self_regen_read=a.self_regen_read,
+                                d_abs=a.d_abs, a_abs=a.a_abs, apical_gc_read=a.apical_gc_read)
+        asym = _fwd(Fa, al, det)
     # NO-ENCODE (fresh bridge, the chain is NOT stored) -> MUST give no ordered events (the chain is the learned store).
     prep_e = _prepare_sequence(seed, cfg, do_encode=False)
     Fe = _rest_with_fatigue(prep_e, noise, a.rest_steps, seed, adapt=True, self_regen_read=a.self_regen_read,
                             d_abs=a.d_abs, a_abs=a.a_abs, apical_gc_read=a.apical_gc_read)
     latch = _fwd(Fo, al, det); nn = _fwd(Fn, al, det); scr = _fwd(Fs, al, det); noe = _fwd(Fe, al, det)
+    _asym_ok = (asym is None) or (asym[0] < i[0] - 0.15)   # asymmetric store: symmetrizing the weights MUST collapse forward
     go = (i[0] >= 0.50) and (i[2] >= 2) and (les[0] < i[0] - 0.15) and (nn[2] == 0) \
-         and (scr[0] < i[0] - 0.15) and (noe[2] == 0)
+         and (scr[0] < i[0] - 0.15) and (noe[2] == 0) and _asym_ok
+    _asym_str = f" | ASYM-LESION fwd={asym[0]:.3f}" if asym is not None else ""
     print(f"  [seed {seed}] INTRINSIC fwd={i[0]:.3f} rev={i[1]:.3f} (ev={i[4]} multi={i[2]} act={i[3]} pop={i[5]:.4f}) | "
           f"ADAPT-LESION fwd={les[0]:.3f} (multi={les[2]} act={les[3]}) | LATCH-ON fwd={latch[0]:.3f} (act={latch[3]}) | "
-          f"NO-NOISE multi={nn[2]} | SCRAMBLE fwd={scr[0]:.3f} | NO-ENCODE multi={noe[2]} => "
+          f"NO-NOISE multi={nn[2]} | SCRAMBLE fwd={scr[0]:.3f} | NO-ENCODE multi={noe[2]}{_asym_str} => "
           f"{'INTRINSIC-FATIGUE-ORDERS' if go else 'no'}")
-    return dict(seed=seed, intrinsic=dict(fwd=i[0], rev=i[1], n_multi=i[2], act=i[3], pop=i[5]),
+    _ret = dict(seed=seed, intrinsic=dict(fwd=i[0], rev=i[1], n_multi=i[2], act=i[3], pop=i[5]),
                 adapt_lesion=dict(fwd=les[0], n_multi=les[2], act=les[3]),
                 latch_on=dict(fwd=latch[0], act=latch[3]), no_noise=dict(n_multi=nn[2]),
                 scramble=dict(fwd=scr[0]), no_encode=dict(n_multi=noe[2]), go=bool(go))
+    if asym is not None:
+        _ret["asym_lesion"] = dict(fwd=asym[0])
+    return _ret
 
 
 def main():
@@ -178,6 +194,9 @@ def main():
     ap.add_argument("--a-abs", type=float, default=0.008, help="cranked Izhikevich recovery rate a on CA3-exc (SMALLER=slower fatigue recovery, tau_u=1/a; 0.008 -> tau~125ms > theta)")
     ap.add_argument("--apical-gc-read", type=float, default=None, help="WEAKEN the apical->soma read (bridge.py:7111) during rest so somatic adaptation can silence a latched dendrite for hand-off (research gate 2026-07-23 candidate #1; e.g. 1.5-2.5). None = build value (byte-identical).")
     ap.add_argument("--stp", action="store_true", help="candidate #2 (2026-07-23): enable E->E ca3->ca3 short-term DEPRESSION as the replay DIRECTIONAL co-driver (mossy detonator carved out); adaptation SILENCES, STD DIRECTS -- test WITH intrinsic fatigue.")
+    ap.add_argument("--btsp-lr", type=float, default=None, help="gap#5 forward-asymmetry (2026-07-23): BTSP eligibility learning rate for the FORWARD chain (e.g. 0.5). None = SEQ_CFG default 0.02 (weak, near-symmetric). Use with --freeze-between-refresh for the asymmetric store the spiking readout needs.")
+    ap.add_argument("--freeze-between-refresh", action="store_true", help="gap#5 forward-asymmetry: freeze between-assembly synapses during the within-refresh so it does NOT write the ~137 SYMMETRIC contaminant -> the pure BTSP forward chain survives (WEIGHT-GATE GO: btsp_lr 0.5 + freeze -> ratio 7.65x, within 40).")
+    ap.add_argument("--chain-btsp-lr", type=float, default=None, help="gap#5: separate CHAIN btsp lr (decouples forward strength from the within-attractor). E.g. --btsp-lr 0.05 (within~200, reactivatable) + --chain-btsp-lr 0.5 (ratio 7.65x). Resolves the sweet-spot cliff.")
     ap.add_argument("--poisson-rate", type=float, default=0.015)
     ap.add_argument("--poisson-pa", type=float, default=1500.0)
     ap.add_argument("--poisson-dur", type=int, default=10)
@@ -195,6 +214,11 @@ def main():
     cfg["n_mem"] = int(a.n_mem); cfg["within_events"] = int(a.within_events)
     cfg["within_refresh"] = int(a.within_refresh); cfg["chain_fwd"] = int(a.chain_fwd); cfg["chain_rev"] = 0
     cfg["rank1_encode"] = True; cfg["overlap_draw"] = False
+    cfg["freeze_between_refresh"] = bool(a.freeze_between_refresh)   # gap#5 forward-asymmetry store (with --btsp-lr)
+    if a.btsp_lr is not None:
+        cfg["btsp_lr"] = float(a.btsp_lr)
+    if a.chain_btsp_lr is not None:
+        cfg["chain_btsp_lr"] = float(a.chain_btsp_lr)
     _, backend = get_backend()
     print(f"[gap5-fatigue] INTRINSIC-FATIGUE ordered replay (transient plateau + Izh adaptation, NO ext inhibition): "
           f"n_mem={a.n_mem} self_regen_read={a.self_regen_read} d_abs={a.d_abs} a_abs={a.a_abs} seeds={a.seeds} backend={backend}")

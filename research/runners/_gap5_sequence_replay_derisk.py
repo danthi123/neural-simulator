@@ -263,6 +263,14 @@ def _prepare_sequence(seed, cfg, do_encode=True):
         # CHAIN phase FORWARD sweeps: A -> B -> ... each a short window separated by a THETA RESET (silence soma+apical,
         # KEEP eligibility) so the earlier assembly's plateau is OFF when the later fires -> A->B forms (elig_A x plateau_B)
         # but B->A does NOT (A has no plateau). eligibility persists -> forward links.
+        # gap#5 (2026-07-23): DECOUPLE the CHAIN forward strength from the WITHIN-attractor strength. The within phases +
+        # refresh use btsp_lr (LOW -> a strong reactivatable within ~200); the CHAIN uses chain_btsp_lr (HIGH -> a strong
+        # forward bias). Resolves the sweet-spot cliff (one btsp_lr can't give both: lr0.05 within200/r1.7x vs lr0.5
+        # within40/r7.6x). btsp_learning_rate is read live by the BTSP kernel, so set it for the chain, restore for the
+        # refresh. Default chain_btsp_lr==None -> unchanged (byte-identical).
+        _chain_lr = cfg.get("chain_btsp_lr")
+        if _chain_lr is not None:
+            cfg_b.btsp_learning_rate = float(_chain_lr)
         chain_edges = cfg.get("chain_edges")   # None = LINEAR order (default, byte-identical); else an explicit directed
                                                # edge list [(pre,post),...] for a BRANCHING topology (RANK 3 recombination).
         if chain_edges is None:
@@ -299,6 +307,8 @@ def _prepare_sequence(seed, cfg, do_encode=True):
         if _stdp_saved is not None:
             (cfg_b.enable_btsp, cfg_b.enable_stdp, cfg_b.stdp_a_plus, cfg_b.stdp_a_minus,
              cfg_b.stdp_w_max, cfg_b.stdp_tau_plus_ms, cfg_b.stdp_tau_minus_ms) = _stdp_saved
+        if _chain_lr is not None:                       # restore the LOW within-phase btsp_lr for the refresh
+            cfg_b.btsp_learning_rate = float(cfg["btsp_lr"])
 
         # WITHIN-REFRESH (2026-07-22 fix, default off): the CHAIN phase's transient-plateau + per-window theta silencing
         # ERODES the within-attractors the within-encode built (measured: w_within 15.2 -> 6.3 at n_mem=2 -> below the
@@ -415,6 +425,24 @@ def _scramble_between_weights(prep, seed):
     vals = d[bf].copy()
     np.random.default_rng(seed * 29 + 7).shuffle(vals)
     conn.data[cp.asarray(bf, dtype=cp.int64)] = cp.asarray(vals, dtype=conn.data.dtype)
+    return int(len(bf))
+
+
+def _symmetrize_between_weights(prep):
+    """ASYM-LESION (the load-bearing control for the forward-asymmetry arc, 2026-07-23): flatten every BETWEEN-assembly
+    edge to the MEAN between-weight -> adj_fwd == adj_rev (the forward DIRECTION is destroyed; the within-attractors +
+    the total between budget are preserved). If forward replay collapses to chance under this while it holds on the real
+    asymmetric store -> the forward WEIGHT ASYMMETRY is load-bearing. Distinct from SCRAMBLE (which permutes the multiset,
+    also destroying the adjacent-vs-skip structure); this destroys ONLY the direction. Deterministic (no seed)."""
+    from sim.backend import get_backend, to_host
+    cp, _ = get_backend()
+    conn = prep["bridge"].cp_connections
+    bf = prep["between_flat"]
+    if len(bf) < 2:
+        return 0
+    d = np.asarray(to_host(conn.data))
+    m = float(d[bf].mean())
+    conn.data[cp.asarray(bf, dtype=cp.int64)] = cp.asarray(np.full(len(bf), m, dtype=np.float64), dtype=conn.data.dtype)
     return int(len(bf))
 
 

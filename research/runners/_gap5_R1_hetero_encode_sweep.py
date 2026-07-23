@@ -22,12 +22,14 @@ from research.runners._gap5_gamma_wta_replay_derisk import _extract_W
 
 def run_one(seed, hetero, n_mem=3, within_refresh=8, chain_fwd=24,
             chain_rule="btsp", stdp_a_plus=0.08, stdp_a_minus=0.10, stdp_tau=20.0, btsp_lr=None,
-            freeze_between_refresh=False, chain_rev=0):
+            freeze_between_refresh=False, chain_rev=0, chain_btsp_lr=None):
     cfg = dict(SEQ_CFG)
     cfg["n_mem"] = n_mem; cfg["within_events"] = 30; cfg["within_refresh"] = int(within_refresh)
     cfg["chain_fwd"] = int(chain_fwd); cfg["chain_rev"] = int(chain_rev); cfg["rank1_encode"] = True; cfg["overlap_draw"] = False
     cfg["encode_btsp_hetero"] = float(hetero)
     cfg["freeze_between_refresh"] = bool(freeze_between_refresh)
+    if chain_btsp_lr is not None:
+        cfg["chain_btsp_lr"] = float(chain_btsp_lr)
     cfg["chain_rule"] = str(chain_rule)
     cfg["stdp_a_plus"] = float(stdp_a_plus); cfg["stdp_a_minus"] = float(stdp_a_minus); cfg["stdp_tau"] = float(stdp_tau)
     if btsp_lr is not None:
@@ -59,13 +61,15 @@ def main():
     ap.add_argument("--btsp-lr", type=float, default=None)
     ap.add_argument("--freeze-between-refresh", action="store_true")
     ap.add_argument("--chain-rev", type=int, default=0)
+    ap.add_argument("--chain-btsp-lr", type=float, default=None, help="separate BTSP lr for the CHAIN phase (decouples forward strength from the within-attractor; e.g. within --btsp-lr 0.05 + --chain-btsp-lr 0.5)")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     r = run_one(a.seed, a.hetero, a.n_mem, a.within_refresh, a.chain_fwd,
                 a.chain_rule, a.stdp_a_plus, a.stdp_a_minus, a.stdp_tau, a.btsp_lr,
-                a.freeze_between_refresh, a.chain_rev)
+                a.freeze_between_refresh, a.chain_rev, a.chain_btsp_lr)
     r["within_refresh"] = a.within_refresh; r["chain_fwd"] = a.chain_fwd; r["chain_rule"] = a.chain_rule
     r["btsp_lr"] = a.btsp_lr; r["freeze_between_refresh"] = a.freeze_between_refresh; r["chain_rev"] = a.chain_rev
+    r["chain_btsp_lr"] = a.chain_btsp_lr
     os.makedirs(os.path.dirname(a.out), exist_ok=True)
     with open(a.out, "w") as f:
         json.dump(r, f, indent=2)
