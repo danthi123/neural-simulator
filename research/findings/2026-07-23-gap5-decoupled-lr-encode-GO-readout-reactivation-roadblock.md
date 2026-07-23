@@ -49,3 +49,22 @@ The decoupled encode (within-lr 0.05 + chain-lr 0.5 + freeze) is now validated a
 7.65-7.66x, remarkably consistent. Seeds 43/44/100/101/102 were run on the mini-PC pool, seed 42 + 100 locally
 (byte-identical, numpy 2.4.6 pinned). ⇒ the FORWARD-ASYMMETRIC + REACTIVATION-SCALE encode is a robust 6-seed GO;
 the spiking-readout discrete-reactivation on that store remains the scoped open piece.
+
+## UPDATE — Next-step-1 ANSWERED: the RANK-1 BISTABLE readout is an HONEST NEGATIVE on the decoupled store (6-seed, 2026-07-23)
+`_gap5_decoupled_store_bistable_readout_derisk.py --seeds 42 43 44 100 101 102` (numpy, fanned local):
+- **decoupled store ignites discretely: 1/6** (only seed 43, an outlier).
+- **readout works on the SYMMETRIC positive control: 4/6** (seeds 100/101/102 confirm the readout CAN ignite a
+  strong-between store; seed 43 ignited the decoupled one; seeds 42/44 the readout didn't ignite even the symmetric
+  control = INCONCLUSIVE, seed-fragile ignition).
+⇒ On the 4 seeds where the readout demonstrably works (ignites the symmetric store), the DECOUPLED forward-asymmetric
+store does NOT spontaneously ignite (0/4). This is exactly branch (B): **ev≈0 is a STORE property — the decoupled
+store's WEAK between-links (adj_fwd 38 / adj_rev 5) cannot spontaneously ignite a single within~206 assembly from
+Poisson noise.** The store is correct (forward-asymmetric, reactivation-scale) but SPONTANEOUS ignition is the wrong
+readout for weak-between-link stores.
+
+**⇒ Method verdict (per THE LAW — a verdict on the METHOD, not the capability):** spontaneous bistable ignition of the
+decoupled store = NO. The next method is **TARGETED ignition — the DG-DETONATOR** (Kandel Ch 54 detonator synapse:
+drive a single assembly's cells directly at rest, then let the forward-asymmetric between-links carry the transition),
+built preemptively (`_gap5_dg_detonator_ignition_derisk.py`) and running 6-seed on the mini-PC pool. That branch-B
+result decides whether targeted ignition + forward transition closes the imaginative-replay readout. NO `sim/` edit.
+The imaginative-replay CAPABILITY stays OPEN per THE LAW; the failing METHOD (spontaneous ignition) is banked.
