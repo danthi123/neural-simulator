@@ -165,6 +165,15 @@ def _prepare_sequence(seed, cfg, do_encode=True):
     for m, a in enumerate(assemblies):
         asm_of_local[np.asarray([ca3_pos[int(g)] for g in a], dtype=np.int64)] = m
 
+    # gap#5 forward-asymmetry (research gate 2026-07-23): flat CSR indices of the BETWEEN-assembly ca3->ca3 synapses.
+    # The WITHIN-REFRESH's bistable/completing plateau spreads through the chain to the NEIGHBOR assembly and writes
+    # ~137 SYMMETRIC between-links that swamp the ~6 p(asymmetric) BTSP forward bias. Freezing these during the refresh
+    # (cp_plasticity_rate_gain[between_flat]=0) leaves the pure forward BTSP chain as the sole between-write. Computed
+    # once here (indices into cp_connections.data, parallel to cp_plasticity_rate_gain); used only if freeze_between_refresh.
+    _a_pre_all = asm_of_local[pre_l_h]; _a_post_all = asm_of_local[post_l_h]
+    _between_mask = (_a_pre_all >= 0) & (_a_post_all >= 0) & (_a_pre_all != _a_post_all)
+    between_flat = flat_h[_between_mask].astype(np.int64)
+
     # ------------------------------------------------------------------ ENCODE ------------------------------------
     _set_gates(bridge, 1.0)
     if do_encode and cfg.get("encode_btsp"):
@@ -232,6 +241,25 @@ def _prepare_sequence(seed, cfg, do_encode=True):
         # into the later window -> reverse links). The within-attractors are already stored above (bistable plateau).
         cfg_b.coincidence_plateau_self_regen = 0.0
 
+        # gap#5 causal-STDP chain (2026-07-23, default OFF = byte-identical BTSP path). The BTSP chain produces a
+        # NEAR-SYMMETRIC store (R0/R1 proof: adj_fwd~=adj_rev; the numpy GO rode start=A). Swap the chain's operative
+        # rule to ASYMMETRIC (Bi-Poo) STDP on the forward-swept A->B->C drive: A spikes, theta-reset, B spikes ~win ms
+        # later -> the A->B synapse sees pre-before-post (Dt>0) -> LTP; the B->A synapse sees post-before-pre -> LTD.
+        # => adj_fwd >> adj_rev by construction (Skaggs-McNaughton phase precession + causal STDP, Sato-Yamaguchi).
+        # BTSP OFF so it doesn't overwrite with the symmetric store; STDP is the sole chain writer.
+        _chain_rule = str(cfg.get("chain_rule", "btsp"))
+        _stdp_saved = None
+        if _chain_rule == "stdp":
+            _stdp_saved = (cfg_b.enable_btsp, cfg_b.enable_stdp, cfg_b.stdp_a_plus, cfg_b.stdp_a_minus,
+                           cfg_b.stdp_w_max, cfg_b.stdp_tau_plus_ms, cfg_b.stdp_tau_minus_ms)
+            cfg_b.enable_btsp = False
+            cfg_b.enable_stdp = True
+            cfg_b.stdp_a_plus = float(cfg.get("stdp_a_plus", 0.08))    # boosted: few chain events must write meaningful fwd links
+            cfg_b.stdp_a_minus = float(cfg.get("stdp_a_minus", 0.10))  # a_minus > a_plus -> net LTD on the reverse link (sharpen asym)
+            cfg_b.stdp_w_max = float(cfg["hebb_max"])
+            cfg_b.stdp_tau_plus_ms = float(cfg.get("stdp_tau", 20.0))
+            cfg_b.stdp_tau_minus_ms = float(cfg.get("stdp_tau", 20.0))
+
         # CHAIN phase FORWARD sweeps: A -> B -> ... each a short window separated by a THETA RESET (silence soma+apical,
         # KEEP eligibility) so the earlier assembly's plateau is OFF when the later fires -> A->B forms (elig_A x plateau_B)
         # but B->A does NOT (A has no plateau). eligibility persists -> forward links.
@@ -266,6 +294,12 @@ def _prepare_sequence(seed, cfg, do_encode=True):
                     _silence_soma_apical(bridge, settle=2); _drive_window(post, win)
                 bridge.cp_external_input_current[:] = 0.0
 
+        # gap#5 causal-STDP: restore BTSP (and the STDP knobs) after the chain phase so the WITHIN-REFRESH (which relies
+        # on BTSP eligibility x plateau) runs its normal rule. Byte-identical when chain_rule != "stdp".
+        if _stdp_saved is not None:
+            (cfg_b.enable_btsp, cfg_b.enable_stdp, cfg_b.stdp_a_plus, cfg_b.stdp_a_minus,
+             cfg_b.stdp_w_max, cfg_b.stdp_tau_plus_ms, cfg_b.stdp_tau_minus_ms) = _stdp_saved
+
         # WITHIN-REFRESH (2026-07-22 fix, default off): the CHAIN phase's transient-plateau + per-window theta silencing
         # ERODES the within-attractors the within-encode built (measured: w_within 15.2 -> 6.3 at n_mem=2 -> below the
         # reactivation threshold = the RANK 2 blocker). A post-chain bistable within-refresh RESTORES each within-attractor
@@ -275,6 +309,17 @@ def _prepare_sequence(seed, cfg, do_encode=True):
         refresh = int(cfg.get("within_refresh", 0))
         if refresh > 0:
             cfg_b.coincidence_plateau_self_regen = float(cfg["plateau_self_regen"])   # BISTABLE (latching) for the refresh
+            _refresh_freeze_saved = None; _between_dev = None
+            if cfg.get("freeze_between_refresh") and between_flat.size > 0:
+                # gap#5 forward-asymmetry fix (research gate 2026-07-23, NO sim/ edit): FREEZE the between-assembly
+                # synapses during the refresh so the bistable plateau's spread does NOT write the ~137 SYMMETRIC
+                # between-link contaminant. cp_plasticity_rate_gain gates the BTSP write per-synapse; allocate ones if
+                # absent, zero the between subset, restore after the refresh. Default OFF = byte-identical.
+                if getattr(bridge, "cp_plasticity_rate_gain", None) is None:
+                    bridge.cp_plasticity_rate_gain = cp.ones(int(bridge.cp_connections.nnz), dtype=cp.float32)
+                _between_dev = cp.asarray(between_flat)
+                _refresh_freeze_saved = bridge.cp_plasticity_rate_gain[_between_dev].copy()
+                bridge.cp_plasticity_rate_gain[_between_dev] = 0.0
             # The refresh must build a REACTIVATABLE within-attractor -> use the SAME rank1_encode structure that Test C/D
             # proved reactivates (NO per-assembly boundary silence/zero_elig -- those are the blocker). Clear the CHAIN's
             # eligibility ONCE at the start so chain-elig does not corrupt the refresh potentiation, then a plain per-
@@ -292,6 +337,8 @@ def _prepare_sequence(seed, cfg, do_encode=True):
                 bridge.cp_external_input_current[:] = 0.0
             if not rank1_encode:
                 _silence_soma_apical(bridge, settle=0); _zero_elig(bridge)
+            if _refresh_freeze_saved is not None:
+                bridge.cp_plasticity_rate_gain[_between_dev] = _refresh_freeze_saved   # restore the between-synapse gate
 
         cfg_b.enable_bdsp = False; cfg_b.enable_btsp = False; bridge.cp_bdsp_apical_drive = None
         # restore the bistable plateau for recall/rest (completion latches)
