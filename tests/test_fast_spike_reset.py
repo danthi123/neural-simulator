@@ -110,12 +110,15 @@ def test_fast_spike_reset_numerically_equivalent_to_legacy(seed):
             ), f"step {step+1}, seed {seed}: refractory diverged"
 
 
-def test_fast_spike_reset_default_off():
-    """fast_spike_reset must default to False so existing runs are
-    bit-identical. Opt-in via cfg.fast_spike_reset = True."""
+def test_fast_spike_reset_default_on():
+    """fast_spike_reset is DEFAULT-ON (owner directive: perf on by default). Still
+    byte-identical: it is SCOPED to the Izhikevich dynamics branch (HH/AdEx use their
+    own reset) and byte-identical there (the equivalence tests above assert this), so
+    default-on speeds the Izhikevich reset with IDENTICAL results. Also the precondition
+    the step-megakernel guard requires. Set cfg.fast_spike_reset = False to opt out."""
     from sim.config import CoreSimConfig
     cfg = CoreSimConfig()
-    assert cfg.fast_spike_reset is False
+    assert cfg.fast_spike_reset is True
 
 
 def test_fast_spike_reset_handles_no_firings(seed=42):

@@ -215,11 +215,17 @@ class CoreSimConfig:
     # decay/I_syn/increment/Izhikevich-2007/threshold/fast_spike_reset math + op-order are byte-faithful to the
     # reference kernels. GPU-only, IZHIKEVICH-only, GUARDED to the SAME fully READ-ONLY regime as v1 (reuses
     # _step_megakernel_can_dispatch); any guard failure or the numpy backend falls through to the UNCHANGED Python step,
-    # so the default (flag off) AND every guard-failing config is byte-identical. FP note: the in-kernel double-accum
-    # matvec is NOT bit-guaranteed identical to cuSPARSE's float32 SpMV -> the spike raster staying bit-identical is the
-    # GPU acceptance gate (v/u within an FMA/summation residual). When set, this path is taken instead of the v1
-    # @cp.fuse path (v1 untouched). See tests/test_step_megakernel.py + docs/plans/2026-07-23-general-step-megakernel-design.md.
-    enable_step_megakernel_v2: bool = False
+    # so the default AND every guard-failing config is byte-identical (guard: GPU + IZHIKEVICH + read-only inference +
+    # fast_spike_reset + no NMDA + no per-step CSR rebuild -> else the Python step). ~4.3x over read_only_fast_step in
+    # the launch-bound regime. FP note: VERIFIED EMPIRICALLY BYTE-IDENTICAL to the Python/cuSPARSE reference -- raster
+    # bit-identical AND max|Δv/Δu|=0.00 at n=200/2000/5000, OU-controlled + dispatch-asserted (2026-07-23). The prior
+    # "diverges at scale (step 18, 1 neuron)" belief was an OU-NOISE-RESEED CONFOUND in an ad-hoc check that built both
+    # bridges THEN stepped both (drawing DIFFERENT noise); the clean comparison (build+step each in isolation, so OU
+    # reseeds identically) shows byte-identity. DEFAULT-ON (owner: perf on by default) -- byte-identical + faster; set
+    # False for the exact-Python reference path. When set, taken instead of the v1 @cp.fuse path (v1 untouched).
+    # See tests/test_step_megakernel.py + docs/plans/2026-07-23-general-step-megakernel-design.md +
+    # research/findings/2026-07-23-v2-megakernel-is-byte-identical-OU-confound.md.
+    enable_step_megakernel_v2: bool = True
     # Opt-in RF DENSE complex-weight mode (O-2-purity, default OFF -> byte-identical to the sparse complex-CSR path).
     # When True, rf_set_complex_weights ALSO materializes a DENSE complex weight `cp_rf_w_dense` (= W_re + i*W_im) from
     # the SAME weights, and the RF matvec uses a single dense cuBLAS GEMV (W_dense @ z) instead of four sparse SpMVs
@@ -574,8 +580,11 @@ class CoreSimConfig:
     # `if fired_indices.size > 0`. Uses cp.where masked-update instead of
     # fancy-index assignment. Numerically equivalent for the Izhikevich
     # path; biggest win on small networks where launch overhead dominates.
-    # Default False so existing runs are bit-identical; opt-in via this flag.
-    fast_spike_reset: bool = False
+    # SCOPED to the Izhikevich branch (bridge.py:7315; HH/AdEx use their own reset,
+    # unaffected) + byte-identical there (tests/test_fast_spike_reset.py). DEFAULT-ON
+    # (owner: perf on by default) -- byte-identical, and the precondition the
+    # step-megakernel guard requires.
+    fast_spike_reset: bool = True
 
     # Performance: VECTORIZED activity-driven transmission-gate couplings
     # (couple_gate_to_pool / _apply_gate_couplings). The per-step hook reads

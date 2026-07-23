@@ -72,11 +72,14 @@ def _run_capture(b, n_steps):
 # --------------------------------------------------------------------------------------------------
 # (A) byte-identical when the flag is off / when guards fail (runs on numpy CPU backend)
 # --------------------------------------------------------------------------------------------------
-def test_default_is_off_and_fields_exist():
+def test_default_flags_and_fields_exist():
     cfg = CoreSimConfig(num_neurons=10)
-    assert cfg.enable_step_megakernel is False   # default OFF -> byte-identical by construction
-    assert cfg.enable_step_cudagraph is False     # alias also default OFF
-    assert cfg.enable_step_megakernel_v2 is False  # v2 (in-kernel matvec) also default OFF
+    assert cfg.enable_step_megakernel is False   # v1 (@cp.fuse) stays default OFF (v2 supersedes it)
+    assert cfg.enable_step_cudagraph is False     # v1 alias also default OFF
+    # v2 (in-kernel matvec) is DEFAULT-ON (owner: perf on by default). Byte-identical to the Python/cuSPARSE
+    # reference -- raster + v/u bit-identical, OU-controlled + dispatch-asserted (the equivalence tests below
+    # prove it); ~4.3x faster in the launch-bound regime. Set False for the exact-Python reference path.
+    assert cfg.enable_step_megakernel_v2 is True
 
 
 @pytest.mark.parametrize("n_steps", [150])
