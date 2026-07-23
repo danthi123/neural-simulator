@@ -188,6 +188,12 @@ class CoreSimConfig:
     # syncs that make the resonate/inference loop launch-bound. Best for active inference loops (spikes present most
     # steps). See tests/test_read_only_fast_step.py (asserts bit-identical state on/off).
     read_only_fast_step: bool = True   # DEFAULT-ON: ~3x read-only-inference speedup, tested byte-identical (guarded-inert under learning)
+    # OPT-IN (default off -> byte-identical): branchless (compaction-free) STDP + Hebbian weight updates. Removes the
+    # per-step cp.where(mask)[0] nonzero-compaction device->host SYNCS by applying the update over ALL nnz with a masked
+    # select -- the internal STDP clip is DISCARDED off-active, so frozen out-of-bounds weights are preserved verbatim.
+    # 15-45x faster in the launch/sync-bound learning regime (~100K-1M nnz); byte-identical (tests/test_branchless_plasticity.py).
+    # Structural plasticity stays on the compacting path (it mutates the CSR nnz/shape) -- out of scope for this flag.
+    enable_branchless_plasticity: bool = False
     # Opt-in GENERAL-STEP MEGAKERNEL (perf, default OFF -> byte-identical to the per-step loop). Fuses the per-neuron
     # ELEMENT-WISE inference chain -- conductance decay + I_syn + (pre-computed) E/I matvec increment + total-input
     # assembly + Izhikevich-2007 dynamics + threshold-select + fast_spike_reset -- into ONE @cp.fuse launch, collapsing

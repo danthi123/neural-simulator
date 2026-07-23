@@ -767,6 +767,56 @@ class SimulationBridge:
         self._cached_stp_per_type = None  # STP per-synapse params depend on connectivity
         self._cached_inhibitory_mask = None  # Inhibitory mask depends on traits
 
+    def _apply_branchless_stdp(self, coo_matrix_stdp, candidate_mask, cfg):
+        """Branchless (compaction-free) STDP weight update (opt-in via cfg.enable_branchless_plasticity).
+
+        Byte-identical to the compacting STDP path in _run_one_simulation_step, but applies the update over ALL nnz
+        with a masked SELECT instead of cp.where(mask)[0] compaction -> removes the two per-step device->host syncs
+        (the ~15-45x learning-path win at 100K-1M nnz, where the compacting path is sync-bound ~5ms/step). The internal
+        clip in fused_stdp_weight_update is DISCARDED off-active by the final cp.where(active_mask, ...), so a frozen
+        out-of-bounds weight (e.g. a conversational read-out at 50 under stdp_w_max=2) is preserved verbatim -- the exact
+        clip hazard the compacting path avoids by never passing non-active synapses to the kernel.
+        See tests/test_branchless_plasticity.py. Structural plasticity stays on the compacting path (mutates the CSR).
+        """
+        nnz = self.cp_connections.nnz
+        pre_spike_all = self.cp_last_spike_time[coo_matrix_stdp.row]
+        post_spike_all = self.cp_last_spike_time[coo_matrix_stdp.col]
+        delta_t_all = post_spike_all - pre_spike_all
+        valid_all = (pre_spike_all > -500.0) & (post_spike_all > -500.0)
+        stdp_window_ms = max(cfg.stdp_tau_plus_ms, cfg.stdp_tau_minus_ms) * 5.0
+        # active_mask == the compacted active set (candidate & within-window & valid), as a per-nnz bool
+        active_mask = candidate_mask & (cp.abs(delta_t_all) < stdp_window_ms) & valid_all
+
+        w_all = self.cp_connections.data
+        updated_all = fused_stdp_weight_update(
+            delta_t_all, w_all,
+            cfg.stdp_a_plus, cfg.stdp_a_minus,
+            cfg.stdp_tau_plus_ms, cfg.stdp_tau_minus_ms,
+            cfg.stdp_w_min, cfg.stdp_w_max)
+
+        # per-synapse plastic mask (mirrors the compacting cp.where(plastic_here, updated, current), over all-nnz)
+        if self.cp_synapse_plastic_mask is not None:
+            plastic_full = self._ensure_gate_capacity(
+                "cp_synapse_plastic_mask", nnz, fill=False, dtype=cp.bool_)[:nnz]
+            updated_all = cp.where(plastic_full, updated_all, w_all)
+
+        # per-pathway plasticity gain (mirrors current + (updated-current)*gain; gain 0 -> frozen, delta 0)
+        if self.cp_plasticity_rate_gain is not None:
+            gain_full = self.cp_plasticity_rate_gain[:nnz]
+            updated_all = w_all + (updated_all - w_all) * gain_full
+
+        # the clip-hazard-safe select: write updated only where active; preserve w_all (incl. out-of-bounds frozen) elsewhere
+        w_new = cp.where(active_mask, updated_all, w_all)
+
+        # signed eligibility accumulation (mirrors elig[active] += (updated-current); the off-active delta is exactly 0)
+        if cfg.enable_reward_modulation and self.cp_eligibility_trace is not None:
+            self.cp_eligibility_trace[:nnz] += (w_new - w_all)
+
+        self.cp_connections.data[:] = w_new
+        # NOTE: _mock_total_plasticity_events (a diagnostic host int) is intentionally NOT maintained here -- computing
+        # the active count would re-introduce a device->host sync, defeating the purpose. It is not byte-guaranteed
+        # under this flag (the byte-identity test checks cp_connections.data + firing raster, not this counter).
+
     def _init_synapse_arrays_with_capacity(self, num_synapses, cfg):
         """Initializes synapse-indexed arrays with pre-allocated capacity for growth.
 
@@ -7689,9 +7739,16 @@ class SimulationBridge:
                     pre_fired_now = fired_this_step[coo_matrix_stdp.row]
                     post_fired_now = fired_this_step[coo_matrix_stdp.col]
                     candidate_mask = pre_fired_now | post_fired_now
-                    candidate_indices = cp.where(candidate_mask)[0]
+                    # Branchless (compaction-free) STDP (opt-in, enable_branchless_plasticity): apply the update over
+                    # ALL nnz with a masked select -> NO cp.where(mask)[0] nonzero-compaction device->host sync. Byte-
+                    # identical to the compacting path below (the internal clip in fused_stdp_weight_update is DISCARDED
+                    # off-active by the final select, so frozen out-of-bounds weights are preserved verbatim).
+                    _branchless = getattr(cfg, "enable_branchless_plasticity", False)
+                    if _branchless:
+                        self._apply_branchless_stdp(coo_matrix_stdp, candidate_mask, cfg)
+                    candidate_indices = None if _branchless else cp.where(candidate_mask)[0]
 
-                    if candidate_indices.size > 0:
+                    if (not _branchless) and candidate_indices.size > 0:
                         # Get spike times only for candidate synapses
                         pre_spike_times = self.cp_last_spike_time[coo_matrix_stdp.row[candidate_indices]]
                         post_spike_times = self.cp_last_spike_time[coo_matrix_stdp.col[candidate_indices]]
