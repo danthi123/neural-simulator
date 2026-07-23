@@ -130,7 +130,9 @@ def _start(a) -> int:
         step, tokens_seen = L.load_checkpoint(rd, model, opt, sched, stream, device)
         resumed = True
     if a.compile and device == "cuda":
-        model = torch.compile(model)
+        _cmode = getattr(a, "compile_mode", "default")
+        # 2026-07-23 A/B on the run3 config: max-autotune = +7.5% tok/s over default compile (reduce-overhead ~+1%).
+        model = torch.compile(model) if _cmode in (None, "", "default") else torch.compile(model, mode=_cmode)
 
     n_params = sum(p.numel() for p in (model.parameters()))
     _log(logf, f"{'RESUME' if resumed else 'START'} @ step={step} tokens={tokens_seen:,}  device={device} "
@@ -296,6 +298,7 @@ def _add_common(sp):
     sp.add_argument("--device", default="auto")
     sp.add_argument("--amp", type=int, default=1, help="bf16 autocast (GPU only)")
     sp.add_argument("--compile", type=int, default=0, help="torch.compile (GPU)")
+    sp.add_argument("--compile-mode", type=str, default="default", help="torch.compile mode: default | max-autotune | reduce-overhead (max-autotune ~+7.5%% on run3 per the 2026-07-23 A/B)")
     sp.add_argument("--chunk-steps", type=int, default=500, help="train steps per increment (checkpoint boundary)")
     sp.add_argument("--max-increments", type=int, default=0, help="stop after N increments this invocation (0=until paused/budget)")
     sp.add_argument("--max-tokens", type=int, default=0, help="budget cap (0=none)")
