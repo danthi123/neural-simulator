@@ -80,6 +80,9 @@ def test_byte_identical_with_stp_and_hebbian():
     _assert_bit_identical(common, common, label="stp+hebbian-on (flag guarded inert)")
 
 
-def test_default_is_off_and_field_exists():
+def test_default_is_on_and_field_exists():
+    # DEFAULT-ON (owner directive: performance improvements on by default). Still byte-identical to prior behavior:
+    # the flag is guarded-inert unless the step is genuinely read-only, and in that regime it is bit-identical (the
+    # equivalence tests above assert this). So default-on speeds read-only inference ~3x with IDENTICAL results.
     cfg = CoreSimConfig(num_neurons=10)
-    assert cfg.read_only_fast_step is False  # default OFF -> byte-identical to prior behavior by construction
+    assert cfg.read_only_fast_step is True

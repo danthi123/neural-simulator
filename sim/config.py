@@ -187,7 +187,7 @@ class CoreSimConfig:
     # byte-identical UNCONDITIONALLY (inert unless the step is genuinely read-only). Purpose: remove the two per-step
     # syncs that make the resonate/inference loop launch-bound. Best for active inference loops (spikes present most
     # steps). See tests/test_read_only_fast_step.py (asserts bit-identical state on/off).
-    read_only_fast_step: bool = False
+    read_only_fast_step: bool = True   # DEFAULT-ON: ~3x read-only-inference speedup, tested byte-identical (guarded-inert under learning)
     # Opt-in GENERAL-STEP MEGAKERNEL (perf, default OFF -> byte-identical to the per-step loop). Fuses the per-neuron
     # ELEMENT-WISE inference chain -- conductance decay + I_syn + (pre-computed) E/I matvec increment + total-input
     # assembly + Izhikevich-2007 dynamics + threshold-select + fast_spike_reset -- into ONE @cp.fuse launch, collapsing
