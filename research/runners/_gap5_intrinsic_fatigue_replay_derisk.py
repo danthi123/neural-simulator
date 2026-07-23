@@ -38,7 +38,7 @@ import json
 import numpy as np
 
 from sim.backend import get_backend, to_host  # noqa: E402
-from research.runners._gap5_sequence_replay_derisk import _prepare_sequence, SEQ_CFG, _detect_sequence_events  # noqa: E402
+from research.runners._gap5_sequence_replay_derisk import _prepare_sequence, SEQ_CFG, _detect_sequence_events, _scramble_between_weights  # noqa: E402
 from research.runners._gap5_spontaneous_reactivation_derisk import _hard_silence, _configure_ou  # noqa: E402
 
 
@@ -141,14 +141,28 @@ def one_seed(seed, cfg, a):
     prep_n = _prepare_sequence(seed, cfg)
     Fn = _rest_with_fatigue(prep_n, ("none",), a.rest_steps, seed, adapt=True, self_regen_read=a.self_regen_read,
                             d_abs=a.d_abs, a_abs=a.a_abs, apical_gc_read=a.apical_gc_read)
-    latch = _fwd(Fo, al, det); nn = _fwd(Fn, al, det)
-    go = (i[0] >= 0.50) and (i[2] >= 2) and (les[0] < i[0] - 0.15) and (nn[2] == 0)
+    # SCRAMBLE inter-assembly weights (same multiset, directional chain DESTROYED) -> forward order MUST collapse to
+    # chance. THE load-bearing control (research gate 2026-07-23): proves the order rides the LEARNED chain, not
+    # self-avoidance imposing an arbitrary permutation.
+    prep_s = _prepare_sequence(seed, cfg)
+    _scramble_between_weights(prep_s, seed)
+    Fs = _rest_with_fatigue(prep_s, noise, a.rest_steps, seed, adapt=True, self_regen_read=a.self_regen_read,
+                            d_abs=a.d_abs, a_abs=a.a_abs, apical_gc_read=a.apical_gc_read)
+    # NO-ENCODE (fresh bridge, the chain is NOT stored) -> MUST give no ordered events (the chain is the learned store).
+    prep_e = _prepare_sequence(seed, cfg, do_encode=False)
+    Fe = _rest_with_fatigue(prep_e, noise, a.rest_steps, seed, adapt=True, self_regen_read=a.self_regen_read,
+                            d_abs=a.d_abs, a_abs=a.a_abs, apical_gc_read=a.apical_gc_read)
+    latch = _fwd(Fo, al, det); nn = _fwd(Fn, al, det); scr = _fwd(Fs, al, det); noe = _fwd(Fe, al, det)
+    go = (i[0] >= 0.50) and (i[2] >= 2) and (les[0] < i[0] - 0.15) and (nn[2] == 0) \
+         and (scr[0] < i[0] - 0.15) and (noe[2] == 0)
     print(f"  [seed {seed}] INTRINSIC fwd={i[0]:.3f} rev={i[1]:.3f} (ev={i[4]} multi={i[2]} act={i[3]} pop={i[5]:.4f}) | "
           f"ADAPT-LESION fwd={les[0]:.3f} (multi={les[2]} act={les[3]}) | LATCH-ON fwd={latch[0]:.3f} (act={latch[3]}) | "
-          f"NO-NOISE multi={nn[2]} => {'INTRINSIC-FATIGUE-ORDERS' if go else 'no'}")
+          f"NO-NOISE multi={nn[2]} | SCRAMBLE fwd={scr[0]:.3f} | NO-ENCODE multi={noe[2]} => "
+          f"{'INTRINSIC-FATIGUE-ORDERS' if go else 'no'}")
     return dict(seed=seed, intrinsic=dict(fwd=i[0], rev=i[1], n_multi=i[2], act=i[3], pop=i[5]),
                 adapt_lesion=dict(fwd=les[0], n_multi=les[2], act=les[3]),
-                latch_on=dict(fwd=latch[0], act=latch[3]), no_noise=dict(n_multi=nn[2]), go=bool(go))
+                latch_on=dict(fwd=latch[0], act=latch[3]), no_noise=dict(n_multi=nn[2]),
+                scramble=dict(fwd=scr[0]), no_encode=dict(n_multi=noe[2]), go=bool(go))
 
 
 def main():
