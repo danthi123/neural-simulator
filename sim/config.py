@@ -205,6 +205,21 @@ class CoreSimConfig:
     # hand-authored megakernel, NOT a literal CUDA-graph capture (cuSPARSE SpMV can't be captured + graph capture would
     # freeze the OU RNG). Either flag enables the fused path; see the dispatch guard in _run_one_simulation_step.
     enable_step_cudagraph: bool = False
+    # Opt-in GENERAL-STEP MEGAKERNEL v2 (perf, default OFF -> byte-identical to the per-step loop). The higher-effort
+    # sibling of enable_step_megakernel: a hand-authored cp.RawKernel (`step_megastep`, one thread per postsynaptic
+    # neuron j) that folds the E/I-split TRANSPOSE synaptic matvec INTO the fused per-neuron chain -- so the whole
+    # read-only inference step is ONE launch (+ the pre-launch OU cp.random.randn draw), removing the cuSPARSE SpMV +
+    # element-wise launches v1 still pays. The in-kernel matvec gathers over a PRE-BUILT transposed CSR
+    # WT = cp_connections.T.tocsr() (cached, rebuilt on an id+nnz connectivity change) with a per-presynaptic-neuron
+    # exc/inh int8 flag, accumulating in DOUBLE (like the RF megakernel) to minimize FP divergence from cuSPARSE; the
+    # decay/I_syn/increment/Izhikevich-2007/threshold/fast_spike_reset math + op-order are byte-faithful to the
+    # reference kernels. GPU-only, IZHIKEVICH-only, GUARDED to the SAME fully READ-ONLY regime as v1 (reuses
+    # _step_megakernel_can_dispatch); any guard failure or the numpy backend falls through to the UNCHANGED Python step,
+    # so the default (flag off) AND every guard-failing config is byte-identical. FP note: the in-kernel double-accum
+    # matvec is NOT bit-guaranteed identical to cuSPARSE's float32 SpMV -> the spike raster staying bit-identical is the
+    # GPU acceptance gate (v/u within an FMA/summation residual). When set, this path is taken instead of the v1
+    # @cp.fuse path (v1 untouched). See tests/test_step_megakernel.py + docs/plans/2026-07-23-general-step-megakernel-design.md.
+    enable_step_megakernel_v2: bool = False
     # Opt-in RF DENSE complex-weight mode (O-2-purity, default OFF -> byte-identical to the sparse complex-CSR path).
     # When True, rf_set_complex_weights ALSO materializes a DENSE complex weight `cp_rf_w_dense` (= W_re + i*W_im) from
     # the SAME weights, and the RF matvec uses a single dense cuBLAS GEMV (W_dense @ z) instead of four sparse SpMVs

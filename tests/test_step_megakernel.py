@@ -76,6 +76,7 @@ def test_default_is_off_and_fields_exist():
     cfg = CoreSimConfig(num_neurons=10)
     assert cfg.enable_step_megakernel is False   # default OFF -> byte-identical by construction
     assert cfg.enable_step_cudagraph is False     # alias also default OFF
+    assert cfg.enable_step_megakernel_v2 is False  # v2 (in-kernel matvec) also default OFF
 
 
 @pytest.mark.parametrize("n_steps", [150])
@@ -112,6 +113,26 @@ def test_alias_flag_also_inert_numpy():
     assert np.array_equal(fired_off, fired_on)
     assert np.array_equal(v_off, v_on)
     assert np.array_equal(u_off, u_on)
+
+
+def test_v2_byte_identical_flag_on_guard_fails_numpy():
+    # v2 (enable_step_megakernel_v2, the in-kernel-matvec RawKernel path) ON but numpy backend => the dispatch guard
+    # fails at is_gpu_backend() => the UNCHANGED Python step runs. State must be bit-identical to the flag-OFF
+    # baseline -- the load-bearing "purely additive / inert unless the GPU RawKernel path activates" guarantee.
+    b_off = _build(enable_step_megakernel_v2=False)
+    fired_off, v_off, u_off = _run_capture(b_off, 150)
+    b_off.clear_simulation_state_and_gpu_memory()
+
+    b_on = _build(enable_step_megakernel_v2=True)
+    fired_on, v_on, u_on = _run_capture(b_on, 150)
+    b_on.clear_simulation_state_and_gpu_memory()
+
+    assert fired_off.sum() > 0, "no spikes fired -- test is vacuous, raise the drive"
+    assert np.array_equal(fired_off, fired_on), (
+        "firing states DIFFER with enable_step_megakernel_v2 on vs off on numpy -- flag is NOT inert when guards fail "
+        f"(first diff at step {int(np.argmax(np.any(fired_off != fired_on, axis=1)))})")
+    assert np.array_equal(v_off, v_on), "final membrane v differs (numpy, v2 flag should be inert)"
+    assert np.array_equal(u_off, u_on), "final recovery u differs (numpy, v2 flag should be inert)"
 
 
 # --------------------------------------------------------------------------------------------------
@@ -203,3 +224,57 @@ def test_onpath_equivalence_raster_identical_gpu():
     du = float(np.max(np.abs(u_off - u_on)))
     assert dv < 1e-4, f"max|Δv|={dv} exceeds the FMA residual tolerance"
     assert du < 1e-4, f"max|Δu|={du} exceeds the FMA residual tolerance"
+
+
+# --------------------------------------------------------------------------------------------------
+# (B2) v2 on-path equivalence: the RawKernel path that ALSO folds the E/I-split matvec into the single launch.
+# GPU ONLY. The in-kernel double-accum matvec is NOT bit-guaranteed identical to the cuSPARSE float32 SpMV, so the
+# RASTER staying bit-identical is the ACCEPTANCE GATE (a neuron on threshold could flip under the summation
+# residual). THIS is the pass/fail check the controller must run on the real GPU -- the CPU cannot verify it.
+# --------------------------------------------------------------------------------------------------
+@pytest.mark.skipif(not is_gpu_backend(), reason="megakernel is GPU-only; on-path equivalence needs the CuPy backend")
+def test_v2_onpath_equivalence_raster_identical_gpu():
+    n_steps = 200
+    b_off = _build(enable_step_megakernel_v2=False)   # pure Python step (all megakernel flags off)
+    fired_off, v_off, u_off = _run_capture(b_off, n_steps)
+    b_off.clear_simulation_state_and_gpu_memory()
+
+    b_on = _build(enable_step_megakernel_v2=True)
+    # sanity: the fused RawKernel path must actually be dispatching on this build
+    assert b_on._step_megakernel_can_dispatch(), "v2 megakernel did NOT dispatch on a read-only GPU build -- guard too strict"
+    fired_on, v_on, u_on = _run_capture(b_on, n_steps)
+    # the RawKernel must actually have compiled + run (not silently fallen through)
+    assert getattr(type(b_on), "_step_megastep_kernel", None) is not None, "v2 RawKernel never compiled -- path not taken"
+    b_on.clear_simulation_state_and_gpu_memory()
+
+    assert fired_off.sum() > 0, "no spikes fired -- test is vacuous, raise the drive"
+    # spikes are load-bearing: the raster must match bit-for-bit every step (the ABSOLUTE correctness bar)
+    assert np.array_equal(fired_off, fired_on), (
+        "fired raster DIFFERS off vs on (v2) -- a neuron flipped across threshold under the in-kernel matvec residual "
+        f"(first diff at step {int(np.argmax(np.any(fired_off != fired_on, axis=1)))})")
+    # v/u may differ by an FMA/summation residual (double-accum in-kernel matvec vs cuSPARSE float32 SpMV)
+    dv = float(np.max(np.abs(v_off - v_on)))
+    du = float(np.max(np.abs(u_off - u_on)))
+    assert dv < 1e-4, f"max|Δv|={dv} exceeds the FMA residual tolerance"
+    assert du < 1e-4, f"max|Δu|={du} exceeds the FMA residual tolerance"
+
+
+@pytest.mark.skipif(not is_gpu_backend(), reason="megakernel is GPU-only")
+def test_v2_matches_v1_raster_gpu():
+    # v1 (@cp.fuse + separate cuSPARSE matvec) and v2 (in-kernel matvec) must produce the SAME raster (both are
+    # equivalence targets against the Python step). If they agree, the in-kernel matvec reproduces the cuSPARSE one.
+    n_steps = 200
+    b1 = _build(enable_step_megakernel=True)
+    fired_v1, v_v1, u_v1 = _run_capture(b1, n_steps)
+    b1.clear_simulation_state_and_gpu_memory()
+
+    b2 = _build(enable_step_megakernel_v2=True)
+    fired_v2, v_v2, u_v2 = _run_capture(b2, n_steps)
+    b2.clear_simulation_state_and_gpu_memory()
+
+    assert fired_v1.sum() > 0
+    assert np.array_equal(fired_v1, fired_v2), (
+        "v1 vs v2 raster DIFFERS "
+        f"(first diff at step {int(np.argmax(np.any(fired_v1 != fired_v2, axis=1)))})")
+    assert float(np.max(np.abs(v_v1 - v_v2))) < 1e-4
+    assert float(np.max(np.abs(u_v1 - u_v2))) < 1e-4

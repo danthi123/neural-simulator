@@ -6050,7 +6050,8 @@ class SimulationBridge:
         Python path. A cheap all-attribute check (no GPU ops)."""
         cfg = self.core_config
         if not (getattr(cfg, "enable_step_megakernel", False)
-                or getattr(cfg, "enable_step_cudagraph", False)):
+                or getattr(cfg, "enable_step_cudagraph", False)
+                or getattr(cfg, "enable_step_megakernel_v2", False)):
             return False
         if not is_gpu_backend():
             return False
@@ -6233,6 +6234,214 @@ class SimulationBridge:
         # Prepare for next step.
         self.cp_prev_firing_states[:] = fired_this_step
 
+    # ------------------------------------------------------------------------------------------------------------
+    # GENERAL-STEP MEGAKERNEL v2 (enable_step_megakernel_v2): a hand-authored cp.RawKernel, ONE thread per
+    # postsynaptic neuron j, that folds the E/I-split TRANSPOSE synaptic matvec INTO the fused per-neuron chain --
+    # so the whole read-only inference step is ONE launch (+ the pre-launch OU draw). The higher-effort route in
+    # docs/plans/2026-07-23-general-step-megakernel-design.md; the RF megakernel (`_RF_MEGASTEP_SRC`) is the template.
+    #
+    # In-kernel, for post neuron j:
+    #   (1) E/I-split matvec over the PRE-BUILT transposed CSR WT = cp_connections.T.tocsr() (WT[j,i] = W[i,j]):
+    #       gather each incoming edge (pre source i = indices[p], weight w = wdata[p]); if the source fired last step,
+    #       add w to ge_acc (exc source) or gi_acc (inh source), scaled by prop_e / prop_i. Accumulated in DOUBLE
+    #       (like the RF kernel) to minimize FP divergence from the cuSPARSE float32 SpMV the Python path uses.
+    #   (2) conductance decay + I_syn from the DECAYED (pre-increment) conductances -- identical order to
+    #       fused_conductance_decay_and_current (I_syn uses ge_dec/gi_dec; the matvec increment is applied AFTER,
+    #       for the next step).
+    #   (3) total input = (I_syn + external[j]) + ou[j]  (ou passed IN -- the cp.random.randn draw + OU update stay
+    #       OUTSIDE the kernel, so the RNG stream is bit-faithful; NO in-kernel RNG).
+    #   (4) Izhikevich-2007 dynamics (byte-faithful op-order to fused_izhikevich2007_dynamics_update).
+    #   (5) threshold-select vs vpeak gated by the refractory timer.
+    #   (6) fast_spike_reset (v/u reset + refractory update, matching the cp.where path).
+    #   (7) write g_e/g_i/v/u/refractory in place (each thread owns its own j) + the NEW firing to a SEPARATE array
+    #       (cp_firing_states) -- the matvec reads cp_prev_firing_states, so writing firing to a different array is
+    #       race-free; the caller then copies firing -> prev_firing for the next step.
+    # E_i is a per-neuron array or a scalar (use_Ei_arr routes it, like the RF kernel's use_mask). exc_flag is a
+    # per-presynaptic-neuron int8 (1 = excitatory -> g_e; 0 = inhibitory -> g_i); in the no-E/I-split regime it is
+    # all-ones so every fired source drives g_e (matching the non-inhibitory Python branch, g_i just decays).
+    _STEP_MEGASTEP_SRC = r"""
+    extern "C" __global__ void step_megastep(
+        const int* indptr, const int* indices, const double* wdata,
+        const signed char* exc_flag, const bool* prev_fired,
+        float* g_e, float* g_i, float* v, float* u, int* refr,
+        const float* ext, const float* ou,
+        const float* C, const float* kk, const float* vr, const float* vt,
+        const float* aa, const float* bb, const float* vpeak,
+        const float* c_reset, const float* d_inc,
+        const float* Ei_arr, bool* firing,
+        const int n, const float decay_e, const float decay_i,
+        const float E_e, const float E_i_scalar, const int use_Ei_arr,
+        const float prop_e, const float prop_i, const float dt, const int refr_reset) {
+      int j = blockDim.x * blockIdx.x + threadIdx.x;
+      if (j >= n) return;
+      // (1) E/I-split transpose matvec over WT (double accumulation).
+      double ge_acc = 0.0, gi_acc = 0.0;
+      int s = indptr[j], e = indptr[j+1];
+      for (int p = s; p < e; ++p) {
+        int i = indices[p];
+        if (prev_fired[i]) {
+          double w = wdata[p];
+          if (exc_flag[i]) ge_acc += w; else gi_acc += w;
+        }
+      }
+      float ge_inc = (float)ge_acc * prop_e;
+      float gi_inc = (float)gi_acc * prop_i;
+      // (2) conductance decay + I_syn from the DECAYED (pre-increment) conductances.
+      float vv = v[j];
+      float ge_dec = g_e[j] * decay_e;
+      float gi_dec = g_i[j] * decay_i;
+      float E_i = use_Ei_arr ? Ei_arr[j] : E_i_scalar;
+      float I_syn = ge_dec * (E_e - vv) + gi_dec * (E_i - vv);
+      // (3) apply the matvec increment for the NEXT step + assemble total input.
+      float ge_new = ge_dec + ge_inc;
+      float gi_new = gi_dec + gi_inc;
+      float total_I = (I_syn + ext[j]) + ou[j];
+      // (4) Izhikevich-2007 dynamics (left-assoc, matching fused_izhikevich2007_dynamics_update).
+      float Cp = C[j];
+      float C_safe = (Cp == 0.0f) ? 1.0f : Cp;
+      float uu = u[j];
+      float vrj = vr[j];
+      float dv_dt = (kk[j] * (vv - vrj) * (vv - vt[j]) - uu + total_I) / C_safe;
+      float du_dt = aa[j] * (bb[j] * (vv - vrj) - uu);
+      float v_dyn = vv + dv_dt * dt;
+      float u_dyn = uu + du_dt * dt;
+      // (5) threshold-select gated by the refractory timer.
+      bool fired = (v_dyn >= vpeak[j]) && (refr[j] <= 0);
+      // (6) fast_spike_reset: v/u reset + refractory update.
+      float v_new = fired ? c_reset[j] : v_dyn;
+      float u_new = fired ? (u_dyn + d_inc[j]) : u_dyn;
+      int refr_dec = refr[j] - 1;                       // cp.maximum(refr - 1, 0), ternary = nvrtc-header-free
+      int refr_new = fired ? refr_reset : (refr_dec > 0 ? refr_dec : 0);
+      // (7) writeback (each thread owns j; firing is a separate array from prev_fired -> race-free).
+      g_e[j] = ge_new; g_i[j] = gi_new;
+      v[j] = v_new; u[j] = u_new; refr[j] = refr_new;
+      firing[j] = fired;
+    }
+    """
+
+    def _ensure_step_v2_transpose(self):
+        """Build + cache the transposed CSR WT = cp_connections.T.tocsr() (indptr/indices/data on device, weights in
+        DOUBLE for the in-kernel accumulation) plus the per-presynaptic-neuron exc/inh int8 flag. Rebuilt on an
+        id+nnz connectivity change (structural plasticity is guard-forbidden in this regime, but a checkpoint load /
+        connectivity swap changes the object). Mirrors the reference _cached_inhibitory_mask exactly so the E/I
+        routing matches the Python E/I-split matvec."""
+        conn = self.cp_connections
+        n = int(self.core_config.num_neurons)
+        key = (id(conn), int(conn.nnz))
+        if (getattr(self, "_step_v2_WT_key", None) == key
+                and getattr(self, "_step_v2_WT_indptr", None) is not None
+                and getattr(self, "_step_v2_exc_flag", None) is not None
+                and int(self._step_v2_exc_flag.shape[0]) == n):
+            return
+        WT = conn.T.tocsr()   # WT[j,i] = W[i,j]: row j = post neuron j's incoming edges (col = pre source)
+        self._step_v2_WT_indptr = WT.indptr.astype(cp.int32, copy=False)
+        self._step_v2_WT_indices = WT.indices.astype(cp.int32, copy=False)
+        self._step_v2_WT_data = WT.data.astype(cp.float64, copy=False)
+        cfg = self.core_config
+        if cfg.enable_inhibitory_neurons and self.cp_traits is not None:
+            inhibitory_indices = getattr(cfg, "inhibitory_trait_indices", None)
+            if inhibitory_indices:
+                inh_mask = cp.isin(self.cp_traits, cp.asarray(inhibitory_indices, dtype=cp.int32))
+            else:
+                inh_mask = (self.cp_traits == cfg.inhibitory_trait_index)
+            self._step_v2_exc_flag = (~inh_mask).astype(cp.int8)
+        else:
+            # No E/I split: every fired source drives g_e (g_i just decays) -- matches the non-inhibitory branch.
+            self._step_v2_exc_flag = cp.ones(n, dtype=cp.int8)
+        self._step_v2_WT_key = key
+
+    def _run_one_step_megakernel_v2(self):
+        """Opt-in fused READ-ONLY inference step (enable_step_megakernel_v2). ONE RawKernel launch does the whole
+        step -- the E/I-split transpose matvec IN-KERNEL (double-accum over the cached transposed CSR) plus the
+        per-neuron decay/I_syn/increment/Izhikevich/threshold/fast_spike_reset chain. Only the OU cp.random.randn
+        draw stays OUTSIDE (RNG bit-faithful). Byte-faithful to `_run_one_simulation_step` in the read-only regime
+        EXCEPT the matvec summation (double-accum vs cuSPARSE float32 -> an FMA/summation residual; the raster is the
+        acceptance gate). Mirrors the RF megakernel (`_rf_resonate_steps_megakernel`). Dispatched only via
+        `_step_megakernel_can_dispatch` with enable_step_megakernel_v2 set."""
+        cfg = self.core_config
+        n = int(self.core_config.num_neurons)
+        dt = cfg.dt_ms
+
+        # Cached transposed CSR + exc/inh flag (rebuilt on a connectivity change).
+        self._ensure_step_v2_transpose()
+
+        kern = getattr(SimulationBridge, "_step_megastep_kernel", None)
+        if kern is None:
+            kern = cp.RawKernel(self._STEP_MEGASTEP_SRC, "step_megastep")
+            SimulationBridge._step_megastep_kernel = kern
+
+        # --- OU noise: KEPT SEPARATE (identical lines to v1 / the Python step -> bit-identical RNG stream).
+        if cfg.enable_ou_process and getattr(self, "cp_ou_current", None) is not None:
+            noise_samples = cp.random.randn(n).astype(cp.float32)
+            self.cp_ou_current[:] = (
+                self.cp_ou_current * self.ou_decay_factor
+                + self.ou_mean * (1.0 - self.ou_decay_factor)
+                + self.ou_noise_std * noise_samples
+            )
+            ou_current = self.cp_ou_current
+        else:
+            ou_current = self._step_megakernel_scratch_zeros()
+
+        # E_inh: per-neuron array (routed by use_Ei_arr) or the global scalar.
+        if self.cp_syn_reversal_potential_i_per_neuron is not None:
+            Ei_arr = self.cp_syn_reversal_potential_i_per_neuron
+            use_Ei_arr = cp.int32(1)
+            Ei_scalar = cp.float32(0.0)
+        else:
+            Ei_arr = self._step_megakernel_scratch_zeros()   # dummy (short-circuited when use_Ei_arr == 0)
+            use_Ei_arr = cp.int32(0)
+            Ei_scalar = cp.float32(cfg.syn_reversal_potential_i)
+
+        # fired-neuron refractory reset (matches the fast_spike_reset off-by-one: period_steps - 1).
+        refractory_reset = cp.int32(max(0, cfg.refractory_period_steps - 1))
+
+        threads = 128
+        blocks = (n + threads - 1) // threads
+        kern((blocks,), (threads,), (
+            self._step_v2_WT_indptr, self._step_v2_WT_indices, self._step_v2_WT_data,
+            self._step_v2_exc_flag, self.cp_prev_firing_states,
+            self.cp_conductance_g_e, self.cp_conductance_g_i,
+            self.cp_membrane_potential_v, self.cp_recovery_variable_u, self.cp_refractory_timers,
+            self.cp_external_input_current, ou_current,
+            self.cp_izh_C, self.cp_izh_k, self.cp_izh_vr, self.cp_izh_vt,
+            self.cp_izh_a, self.cp_izh_b, self.cp_izh_vpeak,
+            self.cp_izh_c_reset, self.cp_izh_d_increment,
+            Ei_arr, self.cp_firing_states,
+            cp.int32(n), cp.float32(self._cached_decay_e), cp.float32(self._cached_decay_i),
+            cp.float32(cfg.syn_reversal_potential_e), Ei_scalar, use_Ei_arr,
+            cp.float32(cfg.propagation_strength), cp.float32(cfg.inhibitory_propagation_strength),
+            cp.float32(dt), refractory_reset,
+        ))
+
+        # --- Bookkeeping tail (byte-faithful to v1 / the read-only Python path; engram/gate-couplings inactive by
+        # the dispatch guard, kept for structural parity).
+        self._tick_engram_recordings()
+        self._apply_gate_couplings()
+
+        spike_count_gpu = cp.sum(self.cp_firing_states)
+        if self._accumulated_spikes_gpu is None:
+            self._accumulated_spikes_gpu = spike_count_gpu
+        else:
+            self._accumulated_spikes_gpu += spike_count_gpu
+        self._stats_sync_counter += 1
+        if self._stats_sync_counter >= self.gpu_config.stats_sync_interval_steps:
+            self._mock_num_spikes_this_step = int(self._accumulated_spikes_gpu) // self._stats_sync_counter
+            self._last_synced_spike_count = self._mock_num_spikes_this_step
+            self._accumulated_spikes_gpu = None
+            self._stats_sync_counter = 0
+        else:
+            self._mock_num_spikes_this_step = self._last_synced_spike_count
+
+        if self.cp_viz_activity_timers is not None:
+            max_highlight_val = opengl_viz_config.get('ACTIVITY_HIGHLIGHT_FRAMES', 7) if OPENGL_AVAILABLE else 7
+            self.cp_viz_activity_timers = cp.where(self.cp_firing_states,
+                                                   max_highlight_val,
+                                                   self.cp_viz_activity_timers)
+
+        # Prepare for next step (the kernel wrote NEW firing to cp_firing_states; the matvec read cp_prev_firing_states
+        # -- separate arrays -> race-free -- so copy firing -> prev_firing here for the next step).
+        self.cp_prev_firing_states[:] = self.cp_firing_states
+
     def _run_one_simulation_step(self):
         """Executes a single step of the simulation logic."""
         if not self.is_initialized or self.core_config.num_neurons == 0: return
@@ -6291,7 +6500,12 @@ class SimulationBridge:
             # a no-op in this regime (the guard requires cp_ssm_* None + profiler off), so dispatching here is
             # byte-identical to skipping it. See docs/plans/2026-07-23-general-step-megakernel-design.md.
             if self._step_megakernel_can_dispatch():
-                self._run_one_step_megakernel()
+                # v2 (enable_step_megakernel_v2): the RawKernel path that ALSO folds the E/I-split matvec into the
+                # single launch. Its own flag routes here instead of the v1 @cp.fuse path; v1 stays untouched.
+                if getattr(cfg, "enable_step_megakernel_v2", False):
+                    self._run_one_step_megakernel_v2()
+                else:
+                    self._run_one_step_megakernel()
                 return
 
             # --- 1. Synaptic Plasticity (STP) Update ---
