@@ -8,7 +8,8 @@ Exhaustive, **as-implemented** diagrams of the whole simulated brain: every regi
 
 | Marker | Meaning |
 |---|---|
-| *(none)* | a spiking neural circuit — the default |
+| ● *(or none)* | a spiking neural circuit — the default kind of box |
+| 🟩 | a **mature, multi-seed-validated** spiking subsystem |
 | ✅ | **learned from experience** (the structure was discovered, not hand-designed) |
 | ⚙ | a **fixed, hand-designed** mechanism — biologically defensible, but not itself learned (a stand-in to replace) |
 | 🧩 | a **temporary external model** (the one crutch, to be replaced by circuitry) |
@@ -52,7 +53,7 @@ flowchart TB
 
     World ==>|pixels| VIS ==> NAV ==>|movement| Body
     Turn ==>|words| COMP ==> CONCEPT ==> DISC ==> SPEAK ==> Reply
-    World -->|spoken command steers movement| NAV
+    COMP -.->|a spoken command steers movement| NAV
     VIS -.->|seen while moving| MEM
     CONCEPT --> MEM -.-> DISC
     REW -.->|modulates learning + confidence| SM
@@ -80,11 +81,11 @@ flowchart TB
 | Conversation | Tracks who/what across turns; the "I don't know" guard | ✅ |
 | Memory — hippocampus | Separate + complete patterns, memory tags, replay in "sleep" (detailed in §5) | 🟩 |
 | Reward + drive — dopamine | One shared limbic core driving both brains | 🟩 |
-| Learning rules | Spike-timing, Hebbian, three-factor, dendritic (detailed in §5) | 🟩 |
+| Learning rules | Spike-timing, Hebbian, reward-gated (dopamine), dendrite-based (detailed in §5) | 🟩 |
 
 ---
 
-## 2. The navigating brain — reach goals by moving, using only what it sees
+## 2. The navigating brain — reach goals by moving through the world
 
 The project's oldest and most-tested behaviour: an agent explores a world and reaches (or re-reaches, when it moves) a goal, choosing each step by a **spiking evidence-race** through the basal ganglia — the earlier hand-coded pick-one-winner shortcut is retired. Per-direction pools (north/east/south/west) are shown once with a ×4 badge.
 
@@ -142,7 +143,7 @@ flowchart TB
       SNC["Dopamine neurons"]:::reward
       VCRIT["Value critic ◐"]:::reward
       VCRIT -.->|subtracts expected value| SNC
-      SNC -.->|three-factor learning| D1
+      SNC -.->|reward-gated learning| D1
     end
 
     HIPPO["Place-cell map + replay"]:::mem
@@ -365,7 +366,7 @@ flowchart LR
       direction TB
       STDP["Spike-timing"]:::learn
       HEBB["Hebbian ✅"]:::learn
-      THREE["Three-factor"]:::learn
+      THREE["Reward-gated"]:::learn
       DEND["Dendritic credit ◐"]:::learn
     end
 
@@ -398,10 +399,10 @@ flowchart LR
 | Hippocampal loop (entorhinal → dentate → CA3 → CA1) | Dentate separates memories, CA3 completes one from a fragment (Marr), CA1 reads out | 🟩 |
 | Sleep replay | Replays the day's experience during "sleep" so it sticks — learning sequences over time without overwriting older memories | 🟩 |
 | Memory tags | Tag a trace, reactivate it later (engram cells) | 🟩 |
-| Dopamine — reward error | Actual − expected reward (Schultz) — gates three-factor learning | ● |
+| Dopamine — reward error | Actual − expected reward (Schultz) — gates reward-modulated (dopamine-gated) learning | ● |
 | Hunger / drive | A hungry brain raises dopamine, making it more careful about what it claims to know | ● |
 | Arousal / surprise (noradrenaline) | An unexpected outcome speeds up learning | ● |
-| Learning rules | Spike-timing plasticity; Hebbian co-occurrence (✅ how the word-cortex learns); three-factor (dopamine-gated); **dendritic credit assignment** (◐ the open lever for the *deep-composition* ceilings — a two-compartment burst rule, Payeur-Naud, idealized now, being brought fully onto spikes); **local input-representation learning on a fixed reservoir** (the *long-range-language* lever — a fixed random recurrent scaffold that learns only its input, beating full backprop; ~78% biology-legal, going onto spikes now with no engine edit — see [`ROADMAP.md`](../../ROADMAP.md) §9.1) | mixed |
+| Learning rules | Spike-timing plasticity; Hebbian co-occurrence (✅ how the word-cortex learns); reward-gated (dopamine-modulated); **dendrite-based credit assignment** (◐ the open lever for the *deep-composition* ceilings — a two-compartment burst rule, Payeur-Naud, idealized now, being brought fully onto spikes); **local input-representation learning on a fixed reservoir** (the *long-range-language* lever — a fixed random recurrent scaffold that learns only its input, beating full backprop; ~78% biology-legal, going onto spikes now with no engine edit — see [`ROADMAP.md`](../../ROADMAP.md) §9.1) | mixed |
 | Living over days | Wake + learn → converse → sleep + consolidate → grow → save + resume (not a blank slate next day) | 🟩 |
 
 ---

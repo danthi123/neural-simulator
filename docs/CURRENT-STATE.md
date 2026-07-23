@@ -1,548 +1,308 @@
 # Current State
 
-A comprehensive snapshot of what the neural simulator can do today,
-how it does it, and what's known about its limitations.
+A plain-language snapshot of what this project can do today, how it does it, and
+what it honestly cannot do yet.
 
-This document is the **authoritative current-state reference**.
-Update it whenever capabilities change. For the journey of how we
-got here, see `research/findings/`.
+This document is the **authoritative current-state reference** for readers. It is
+meant to be *holistically* current — a description of the project as it stands, not
+an old snapshot with new notes bolted on. For the session-by-session journey of how
+we got here, see [`research/findings/`](../research/findings/) (internal research
+notes, including negative results).
 
-**Last meaningful update:** 2026-06-22 (see "Recent milestones (2026-06)" below).
-
-**Recent milestones (2026-06):**
-- **Every host shortcut in the one brain is now closed by default (2026-06-22).**
-  The recent arc's goal: anything *between* sensation and action that had been
-  computed by ordinary code — even where the formula was biologically correct —
-  is now done by spiking neurons, or its limit honestly characterized. The last
-  one was the agent's position code, a hand-written Gaussian "place field"
-  formula; it is now a self-organizing **grid/place cell** front end (the
-  standard production default for the merged-nav agent), and the host Gaussian is
-  proven *absent* from the production bridge. With this, on the navigation side
-  the orienting reflex, the reward/value/dopamine limbic core, the position code,
-  and the move decision are all neural; on the conversation side the cleanup,
-  unbind, memory-store scan, and word-meaning learning are all spiking. The
-  acceptance gates (8/8 + 7/7, including the three "abstains when it doesn't
-  know" assertions) pass with the new defaults, and navigation is byte-unregressed.
-  **The honest residual is a substrate limit, not a shortcut:** reading a place
-  cell's *learned value* separately from its *intrinsic* near/far geometry is
-  something a single-point neuron cannot fully do (it reads their sum) — a real
-  neuron separates them across dendritic compartments. This is the "dendritic
-  frontier", the project's deepest open *neural* problem, pursued as its own arc.
-  And **the honest cost of this purity is latency:** with all the spiking
-  machinery on at the 320-concept scale a conversation runs much slower than the
-  same pipeline would with the (now-retired) host shortcuts; the single-query
-  path is already ~10–20× faster, and extending that to the rest of the
-  fully-spiking loop is the next engineering arc. Source:
-  [`2026-06-22-shortcut5b-CLOSED-grid-default.md`](../research/findings/2026-06-22-shortcut5b-CLOSED-grid-default.md).
-- **The navigation move-decision is now made in spikes — by default (2026-06-19).**
-  On the one shared brain, the choice of which way to step now *emerges* from a
-  race between competing neural populations (a working-memory-style accumulator
-  that integrates evidence, ending when the winner fires an all-or-none
-  committing burst) — the old off-brain "pick the best option" step is retired,
-  kept only as an optional baseline. Validated across six random seeds on a
-  32×32 grid: the spiking decision terminates on the neural burst 100% of the
-  time (never falling back to the shortcut) and costs about **16% more steps**
-  than the shortcut — a genuine, reported cost of doing the decision in neurons,
-  not a number that was hidden. The conversational half is untouched by this
-  (its neurons stay exactly unchanged, so the "won't make things up" guarantee
-  is preserved by construction). Source:
-  [`2026-06-19-spiking-decision-default-on-GO.md`](../research/findings/2026-06-19-spiking-decision-default-on-GO.md).
-- **The conversational engine is now 10–20× faster (2026-06-19).** Answering a
-  question used to rebuild a large internal table from scratch every single
-  query; that table actually never changes between queries, so it is now built
-  once and reused. A question now returns in under a tenth of a second on a
-  desktop GPU (a flat ~9.5 ms regardless of how many facts are stored), and the
-  speed-up grows with the size of the knowledge base. The answers are identical
-  to before, and the "won't make things up" guarantee is bit-for-bit unchanged.
-  Source: [`2026-06-19-latency-csr-cache-GO.md`](../research/findings/2026-06-19-latency-csr-cache-GO.md).
-- **The conversational stack is comprehensively complete (2026-06-17), and a
-  few richer skills were folded into the one production agent (2026-06-18/19).**
-  The agent now parses sentences, stores facts, recalls them, abstains on what
-  it was never told, handles yes/no and negation, generates word-ordered
-  replies, plans dialogue, **reasons across several facts** (multi-step
-  chaining), **tracks referents across turns** (resolving a later "it"), and
-  — newly consolidated — understands **described objects** ("the dog ate the big
-  apple" → "big apple") and **flexible word orders** (not just plain
-  subject-verb-object). The whole loop runs on the codes the system **learned
-  from conversation**, validated at the 320-concept scale (multi-seed, with zero
-  fabrications). One honest boundary stays open: an object with *two* attributes
-  ("big red ball") is not yet reliable on the learned codes. Sources:
-  [`2026-06-17-multihop-query-chain-GO.md`](../research/findings/2026-06-17-multihop-query-chain-GO.md),
-  [`2026-06-17-multiturn-anaphora-derisk-GO.md`](../research/findings/2026-06-17-multiturn-anaphora-derisk-GO.md),
-  [`2026-06-19-consolidation-attr-multiframe.md`](../research/findings/2026-06-19-consolidation-attr-multiframe.md).
-- **The unified embodied agent — one brain that navigates, perceives, composes,
-  and converses (2026-06-16).** A *single* network (one update loop) in which
-  navigation, perception, fact-composition, and conversation all run as
-  distinct groups of neurons. In one continuous run the agent navigates a grid
-  from simulated vision, perceives the objects it passes, **binds a perceived
-  object into a new fact**, answers a who/what question about it, and **abstains**
-  on anything it never saw. Validated first on a single random seed, then across
-  six: the integration, the no-fabrication guarantee, navigation,
-  fact-composition, conversation, and sentence-parsing all hold on every seed
-  (four are a full pass; the two misses are a per-seed fidelity wobble in the
-  *generalization* step only — see below — diagnosed as a side-effect of
-  co-locating the circuits, fix under test, and never a lapse in the
-  no-fabrication guarantee). Sources:
-  [`2026-06-16-unified-embodied-agent-stage2-GO.md`](../research/findings/2026-06-16-unified-embodied-agent-stage2-GO.md),
-  [`2026-06-16-navigate-to-compose-then-answer.md`](../research/findings/2026-06-16-navigate-to-compose-then-answer.md).
-- **The two brains genuinely interact through synapses (not just co-located).**
-  A spoken command can steer the navigating body (six-seed pass), and the agent
-  can navigate to **see** an object and afterward **recall** what it saw
-  (six-seed pass) — the first real cross-region "one brain" interactions, both
-  with decisive lesion controls. Sources:
-  [`2026-06-10-spoken-instruction-nav-GO.md`](../research/findings/2026-06-10-spoken-instruction-nav-GO.md),
-  [`2026-06-16-navigate-to-see-then-answer.md`](../research/findings/2026-06-16-navigate-to-see-then-answer.md).
-- **It generalizes across similar concepts (2026-06-16).** A *novel* object,
-  perceived through the simulated visual system (retina → edge-detectors),
-  makes its concept-neurons fire for the correct *category* (about 3× chance),
-  and the agent can then recall a fact about the matched category and answer.
-  The mechanism was de-risked four independent ways; the heavier biological
-  rewrite (modelling neuronal dendrites) people assumed was required turned out
-  **not** to be needed — plain point-neurons with local learning suffice. The
-  biology is convergence-zone / hub-and-spoke semantic memory (Patterson &
-  Lambon Ralph; spiking precedent Garagnani & Pulvermüller 2018). Sources:
-  [`2026-06-16-generalization-capstone-vision-to-concept.md`](../research/findings/2026-06-16-generalization-capstone-vision-to-concept.md),
-  [`2026-06-16-generalization-capstone-verbalize.md`](../research/findings/2026-06-16-generalization-capstone-verbalize.md).
-- **The conversational pipeline's cognitive steps are now neural, not
-  off-brain shortcuts (2026-06-16).** The four core steps — the no-fabrication
-  ("won't confabulate") gate, memory cleanup, concept-binding, and output
-  normalization — each have a validated spiking/neural mechanism. Notably the
-  neural no-fabrication gate is *cleaner* than the host check it replaced (zero
-  false-accepts on the same codes). Source:
-  [`2026-06-16-biologization-sweep-conversational-pipeline.md`](../research/findings/2026-06-16-biologization-sweep-conversational-pipeline.md).
-- **The conversational "composer" is now fully spiking** — the part that binds
-  words into facts uses phase-based spiking neurons (a resonate-and-fire model
-  with complex-valued synapses), which sidesteps a noise barrier that the
-  earlier firing-rate version hit. It handles who/what question answering,
-  refusing to answer when it doesn't know, negation and yes/no, embedded
-  clauses, dialogue, and sentence generation; correct at the 320-concept scale.
-- **The whole conversational pipeline runs on the core simulator** —
-  comprehension (a learned sentence parser), fact memory + question answering,
-  and dialogue planning all run as genuine spiking neurons on the core network,
-  with no separate maths-only module bolted on.
-- **Navigation is fully biology-based** — every step between seeing and acting
-  is done by simulated neurons (a spiking superior colliculus for orienting, a
-  neural reward signal, and a spiking basal-ganglia decision and dopamine
-  system), with no hand-coded shortcut in between.
-- **Navigation and conversation now share one network — roadmap step 2 COMPLETE** —
-  navigation, the sentence parser, the dialogue planner, and the fact-binding
-  composer all run as separate, non-overlapping groups of neurons on a single
-  network with one update loop, capability-equivalent to the separate brains.
-  The conversational behaviour works unchanged on the shared network (including
-  its refusal to make up answers), and navigation runs on it while the
-  conversational neurons stay **exactly unchanged** during navigation's live
-  learning (confirmed: the navigation score is identical to the bit with and
-  without the conversational half present). The two halves now also **interact
-  through synapses** (the spoken-command and navigate-to-see milestones above),
-  and the **unified embodied agent** above runs all of it together in one live
-  episode. See [`ARCHITECTURE_nav_conv_merge.md`](ARCHITECTURE_nav_conv_merge.md).
-- **Step 3 (the learned cortex) is now active — mid-build (2026-06-15).** The
-  fact-binding "composer" above uses a fixed, exact mathematical rule
-  (a vector-binding scheme) as a stand-in for cortex. Step 3 replaces it with a
-  *learned* model cortex whose internal codes carry meaning-similarity (so
-  similar concepts sit close together), which is what lets the system answer
-  about a never-seen concept by analogy to a similar known one (the
-  generalization milestone above). This is now real on the spiking network at
-  about **64 concepts**, and — importantly — **learned from a conversation
-  stream**: the network simply hears words in context (no pre-processing of the
-  text), learns their co-occurrence with a plain local learning rule, and then
-  carries the full who/what conversation plus the no-fabrication guarantee. A
-  blocker once feared here — having to strip the natural correlations out of the
-  concept codes — turned out to be a *red herring*; the fix was simple local
-  normalization plus online learning. The remaining build is scaling this
-  learned-from-conversation cortex to the **320-concept** production tier.
-  Reported as in-progress. Source:
-  [`2026-06-15-on-bridge-hebbian-co-occurrence-learning-mechanism-GO.md`](../research/findings/2026-06-15-on-bridge-hebbian-co-occurrence-learning-mechanism-GO.md).
-
-> The "At a glance" and detailed sections below predate the 2026-06 work and
-> describe the earlier multi-tag-retrieval era; the milestones above are the
-> current frontier. A full rewrite of the detailed sections is pending.
-
-**Earlier (2026-05-14):** concept-concept semantic conversation validated at 90%
-FULL / 100% PARTIAL multi-seed via multi-tag cue retrieval; bug retraction for
-prior compose_concept claims documented.
+**Last comprehensive rewrite:** 2026-07.
 
 ---
 
-## At a glance
+## What this project is
 
-The simulator is a GPU-accelerated spiking neural network with:
-- ~5,000 neurons in 50+ brain regions
-- ~175,000 synapses with multiple plasticity rules (STDP, STP, Hebbian, homeostasis, reward-modulated)
-- Real-time 3D visualization
-- Biology-grounded models: Izhikevich-2007, Hodgkin-Huxley, AdEx
-- over 300 biological mechanisms catalogued from Kandel + 12 specialty texts
+A **GPU-accelerated simulator for biologically realistic spiking neural networks**,
+with a real-time 3-D view of the neurons firing. Unlike a conventional deep-learning
+model, it learns the way brains are thought to:
 
-The agent solves three main tasks — and, as of the 2026-06 unified-agent
-milestone above, runs all three **together on one network** in a single live
-episode (navigate → perceive → compose a fact → converse):
+- Individual neurons fire in real time, moment to moment.
+- Connections change from the **millisecond timing of spikes** (spike-timing-dependent
+  plasticity) and from **local co-activity** (Hebbian rules).
+- A **dopamine-like reward signal** reinforces firings that led to useful behaviour.
 
-1. **Gridworld navigation** (the "main task") — find a goal on a 8×8
-   to 32×32 grid using only retinal input
-2. **Word-to-action mapping** (the "language task") — hear "north",
-   move motor cortex toward north
-3. **Conversation** — comprehend a sentence (a learned spiking
-   sentence parser), bind the words into a fact and answer who/what
-   questions about it, refuse to answer when it doesn't know, handle
-   negation and yes/no, embedded clauses, and plan what to say next —
-   all as genuine spiking neurons on the core network, correct at the
-   320-concept scale (see the 2026-06 milestones above). An earlier
-   multi-tag cue-retrieval mechanism (type "apple" → retrieves "big"
-   and "cat") is validated at 90% FULL / 100% PARTIAL multi-seed at
-   16-word vocabulary. See [`research/findings/2026-05-14-multitag-cue-retrieval-90pct-VALIDATED.md`](../research/findings/2026-05-14-multitag-cue-retrieval-90pct-VALIDATED.md).
+There is **no backpropagation through a static graph, no supervised labels, and no
+symbolic optimizer** inside the core brain. The learning is local and biological.
 
----
+The distinguishing long-term goal is a **single simulated brain** that both **navigates
+a world** and **holds a simple, grounded conversation**, with **every cognitive step
+performed by spiking neurons** rather than ordinary program code. This is an **active
+research project** aimed at an artificial-life "brain" that learns, grows, and can be
+talked to. Where the biology genuinely cannot yet do something on this substrate, the
+limit is **measured and reported honestly** — an honest negative is treated as a real
+scientific finding, not a failure to hide.
 
-## Validated capabilities
+**How to read this doc.** Capabilities below are tagged:
 
-### Navigation
-
-**Best result:** **32×32 grid, 1800-step session, 2.57 ± 0.11 mean
-Manhattan distance to goal** across 6 seeds (the biology-grounded,
-vision-only "G v2.5 + K v2" recipe; closes 4 of the 5 original
-shortcuts). 6/6 seeds beat the 16×16 baseline on a 4× larger grid.
-Agent spends ~36% of its time at the goal. (Since this result,
-navigation's last hand-computed steps — orienting, reward/value, the
-dopamine signal, and now the move-decision itself — have all been
-converted to genuine spiking circuits, the spiking decision being the
-default; see the 2026-06 milestones above and CLAUDE.md.)
-
-**How it works (in plain language):** the agent's "eyes" (32×32
-retina) see the gridworld image. Visual cortex extracts edges (V1),
-combines them into shapes (V2), then identifies what's where (IT).
-This information flows to multiple cortex pools competing for action
-selection. The basal ganglia picks one — say "go north" — and the
-motor cortex fires accordingly. If the move reduced distance to the
-goal, dopamine reinforces those particular neuron firings. Over time,
-the right vision-to-action mappings get strengthened.
-
-**Configuration:**
-
-```bash
-python -m research.runners.g11_bg_runner --moving-goal --goal-schedule multi --deterministic \
-    --enable-msn-lateral-inhibition --enable-d1-d2-asymmetry \
-    --enable-striatal-pv-fsi --enable-cluster-a-closed-loop \
-    --enable-cluster-e-topography --enable-dlpfc-wm --enable-pfc-nmda \
-    --enable-visual-cortex --visual-cortex-action-warmup-steps 600 \
-    --grid-size 16 --seed 42 --n-steps 1800
-```
-
-**No shortcuts:** agent does NOT have direct access to (agent_x,
-agent_y), (goal_x, goal_y), or a hand-coded heuristic. Everything
-must come through the visual pathway.
-
-### Word-to-action mapping
-
-**Best result:** **28.5% accuracy across 6 seeds, n=600 trials,
-p=0.027** vs 25% chance baseline.
-
-> **🚨 CRITICAL CAVEAT (2026-05-03 evening, autonomous overnight):
-> Permuted-label control test shows the 28.5% is NOT real word-action
-> learning.** Across 45+ runs spanning baseline / v2+SWR / v2+SWR-balanced
-> (H1) / H4 PFC isolation / fundamentals sweep (heb_only, drive_5x,
-> stdp_wmax_10, heb_drive, heb_stdp, drive_stdp) / H4 dose-1000 — **0/45
-> had the TRUE labeled mapping as the BEST of 24 permutations.** The
-> binomial p=0.027 measures whether the network has ANY structure above
-> chance, not whether that structure aligns with task labels. Best
-> permutations score 30-37% (8pp above chance) but are seed-dependent
-> and arbitrary, not aligned with N/E/S/W. See
-> [`research/findings/2026-05-03-architecture-fundamentally-cant-align.md`](../research/findings/2026-05-03-architecture-fundamentally-cant-align.md)
-> for the full analysis. **A biology-grounded sweep (topographic prior
-> 1.5/0.7 + motor PV-FS lateral inhibition) is in flight to test if
-> biology fixes can break the 0/N alignment streak.**
-
-**How it works (in plain language):** the agent's "ears" hear a word
-(language_input region with sparse pattern coding). The word activates
-specific cortex pools via the language→cortex pathway, AND directly
-activates motor cortex via a "PFC bypass" pathway that mimics the
-Wernicke→arcuate fasciculus→Broca→M1 anatomy in real human brains.
-After 100 episodes of training where the agent navigates while
-hearing the corresponding direction word, motor cortex starts to
-fire preferentially for the correct direction when given a fresh
-test word.
-
-**Configuration:**
-
-```bash
-python -m research.runners.text_eval_embodied \
-    --n-episodes 100 --steps-per-episode 30 --seed 42 \
-    --stim-steps-per-step 200 --reset-steps 100 \
-    --out-stats results.json
-```
-
-**Critical fixes** (commit 144eefd + 200f73c):
-- `cfg.enable_hebbian_learning = False` — Hebbian global decay
-  (1e-5/sub-step over ~990K sub-steps) was collapsing all weights to
-  the floor (0.05) and erasing learning. This isn't a "feature off",
-  it's a bug fix matching what every other research runner already does.
-- `cfg.stdp_w_max = 5.0` — STDP soft-bound was clipping
-  language→motor design weights (3.0) at 2.0, eliminating headroom.
-- Non-zero readout pathway init (0.5 ± 0.3) — pathways from cortex
-  to language_output were initialized at zero; STDP couldn't grow
-  them from scratch with weak training signal.
-
-**Known weakness:** the inverse direction (image → word readout) is
-unreliable. Per-seed range 21-33%, cumulative ~25% (chance). The
-multi-step image→V1→V2→IT→language_output pathway has too many
-plastic stages to consolidate cleanly.
-
-### What 9 architectural variations did NOT improve
-
-Tested on top of the v2 baseline at seed=42, none beat 28.5%:
-
-| Variation | I→W | W→A | Verdict |
-|---|---|---|---|
-| Reward shaping (no LTD penalty) | 33% | 25% | Negative |
-| Stronger drives (lang_in 200→400) | 33% | 25% | Negative |
-| Eval-time drive 500 reeval | 25% | 24% | Negative |
-| Bigger motor pools (10→30 neurons) | 24% | 24% | Negative |
-| Longer training (100→200 ep) | 22% | 24% | Negative |
-| Bigger language regions (256→512) | 25% | 18% | Negative |
-| Curriculum (visuomotor first 200 ep) | 24% | 23% | Negative |
-| Alternative decoders (4 variants) | 33% | 27% (delta) | Negative |
-| Motor cross-coupling (90° adj) | 29% | 22% | Negative |
-
-The most diagnostic finding came from the curriculum experiment:
-even when Phase 2 cascade reached 43% correct moves (vs. v2's 30%),
-the language pathway weights were *identical to v2 to 3 decimal places*.
-This shows the language pathway weights converge to a steady state
-determined by cascade STRUCTURE and STDP parameters, not by cascade
-ACCURACY. The 28.5% is a true architectural ceiling, not a tuning issue.
-
-### Working memory
-
-PFC holds goal location for ~10 seconds in NMDA-bistable activity
-patterns. Damage to PFC region (set NMDA conductance to zero) eliminates
-this and the agent can no longer hold goals in mind across delays.
-
-### Real-time interactive control
-
-Click anywhere in the gridworld during a live run to teleport the goal
-to that position. The agent will reorient and approach. Works at
-any grid size, any moving-goal cadence.
+- **[Robust]** — validated across multiple random seeds and wired into the working
+  system.
+- **[Research-stage]** — demonstrated in validating experiments, often at smaller
+  scale, and still part of active research. Real, but not a polished feature.
 
 ---
 
-## How the architecture is organized
+## The simulator (the foundation) — [Robust]
 
-The brain has 50+ regions wired in biology-grounded pathways. Major
-regions:
+The engine underneath everything:
 
-### Sensory front-end
-- **retina** (2,048 neurons) — 32×32 ON-channel + 32×32 OFF-channel
-  representing the gridworld image
-- **cortex_v1_simple** (1,024) — Gabor-tuned simple cells (Hubel-Wiesel)
-- **cortex_v1_complex** (512) — phase-pooled complex cells
-- **cortex_v2** (256) — feature integration
-- **cortex_it** (64) — high-level object/scene representation
+- **Spiking neuron models:** Izhikevich (2007 and a legacy variant),
+  Hodgkin–Huxley (temperature-dependent), and Adaptive Exponential Integrate-and-Fire
+  (AdEx) — plus a **resonate-and-fire** model with complex-valued synapses used by the
+  conversational binding system.
+- **Real-time 3-D visualization** (OpenGL) of the network firing, with a desktop GUI app.
+- **A declarative brain-region grammar.** Brain regions and the pathways between them are
+  described in configuration; the engine assembles a brain to match. This is how a single
+  codebase builds a navigation brain, a conversation brain, or one combined brain.
+- **A declarative neuromodulator subsystem** — dopamine-like and other modulators with
+  their own concentration dynamics and configurable effects on the network.
+- **Multiple concurrent plasticity rules:** spike-timing-dependent plasticity (STDP,
+  Bi & Poo 1998), three-factor reward-modulated learning (Schultz-style dopamine), short-term
+  plasticity (Tsodyks & Markram), homeostasis (Turrigiano), and structural plasticity.
+- **An experiment / stimulus system** for classic paradigms — Pavlovian conditioning,
+  reinforcement learning, frequency-response characterization, and more.
+- **Checkpointing and "lineages"** so a brain can keep learning across sessions rather than
+  starting fresh each run.
+- **A biological-validation suite** that checks the substrate reproduces textbook phenomena:
+  the STDP timing curve, excitation/inhibition balance, short-term-plasticity paired-pulse
+  behaviour, gamma oscillations, and homeostatic rate regulation.
 
-### Action selection
-- **cortex_{N,E,S,W}** (4 pools, 25 each) — premotor cortex,
-  one per cardinal direction
-- **str_D1/D2_{N,E,S,W}** (8 pools, 50 each) — direct/indirect
-  pathway striatum
-- **gpe_{N,E,S,W}**, **stn**, **gpi_{N,E,S,W}** — basal ganglia loops
-- **thal_{N,E,S,W}** (4 pools, 10 each) — thalamic relay
-- **motor_{N,E,S,W}** (4 pools, 10 each) — primary motor cortex output
-- **snc** (10) — substantia nigra dopamine cells
-
-### Working memory + language
-- **dlpfc_wm** (60 neurons) — dorsolateral PFC working memory
-- **language_input** (256) — Wernicke-like, hears words
-- **language_output** (256) — Broca-like, produces words
-- Pathways: language_input → dlpfc_wm, → cortex_X, → motor_X (PFC bypass);
-  cortex_X → language_output, IT → language_output
-
-### Memory system (optional, currently not integrated with text I/O)
-- **dg, ca3, ca1** — hippocampal trisynaptic loop with sharp-wave-ripple
-  consolidation infrastructure
-
----
-
-## Plasticity rules
-
-The brain learns through several mechanisms running concurrently:
-
-| Mechanism | What it does | Real biology |
-|---|---|---|
-| **STDP** | Strengthens connections when pre-spike precedes post-spike by 1-20 ms; weakens otherwise | Bi & Poo 1998 |
-| **Reward modulation** | Three-factor learning: STDP × eligibility × reward | Schultz 1998 dopamine RPE |
-| **Short-term plasticity (STP)** | Synapses depress with repeated firing, recover slowly | Tsodyks & Markram 1997 |
-| **Homeostasis** | Adjusts firing thresholds to keep average rate near target (~2 Hz) | Turrigiano 1999 |
-| **Hebbian (currently disabled in research runs)** | "Neurons that fire together wire together" | Hebb 1949 |
-
-**Note:** Hebbian is disabled in all research runners because the
-default global weight-decay constant (1e-5/sub-step) catastrophically
-erodes weights over hundreds of thousands of simulation steps. STDP
-+ reward modulation provide the actual learning signal.
+**Under the hood (verified):** the core engine (the `sim/` package) is **43 Python modules**;
+the largest is the central simulation orchestrator. Two interchangeable backends run the same
+code — **CuPy** (NVIDIA CUDA GPU) for speed and **NumPy** (CPU) for portability and continuous
+integration — selectable with the `SIM_BACKEND` environment variable (`cupy` / `numpy` /
+`auto`). **No GPU is required** to run on the NumPy backend. The engine scales to large
+networks (roughly 10K–100K+ neurons) using sparse connectivity, though the individual task
+brains described below are smaller. There are **472 test files** (mostly CPU-only),
+**~1,250 headless research runners**, and **47 saved simulation profiles**. Python 3.10+;
+**MIT-licensed**.
 
 ---
 
-## Performance
+## What the brain can do today
 
-### Throughput
+### Navigation — [Robust]
 
-- ~6 ms per simulation sub-step on RTX 3090
-- 100-episode text training run: ~50 minutes (with stim_steps=200)
-- 1800-step navigation run: ~15 minutes
-- **6-seed minimal-arch batch:** ~45-55 minutes (was ~6 hours pre-2026-05-03)
+One brain drives an agent through a 2-D gridworld toward a goal — including a goal that
+**moves** on a schedule, which the agent must re-acquire. Everything between seeing and
+acting is done by simulated neurons:
 
-### Speedup stack (shipped 2026-05-03 through 2026-05-05)
+- A **spiking visual cortex** (Gabor/V1-style edge filters feeding higher visual areas)
+  turns the gridworld image into a neural representation of what is where.
+- A biologically-structured **basal-ganglia action-selection circuit** — the direct and
+  indirect pathways, with dopamine — chooses which way to step.
+- The move choice is made by a **spiking decision step**: competing neural populations
+  race, integrating evidence like a working-memory accumulator, until the winner fires an
+  all-or-none committing "burst." This spiking decision is now the default; an older,
+  hand-coded pick-the-best-option step is retired to an optional comparison baseline.
+- A **neural reward/value/dopamine core** reinforces the firings that reduced distance to
+  the goal.
 
-Layered optimizations across multiple shipping waves:
+Performance is characterized across grid sizes and multiple random seeds, and doing the
+decision in neurons instead of code carries a modest, honestly-reported extra cost in steps.
 
-| Layer | Date | Speedup | Mechanism |
-|---|---|---|---|
-| dt = 0.5 → 1.0 ms | 2026-05-03 | ~2x | substep count halved, dynamics still stable |
-| Parallel-3 GPU sharing | 2026-05-03 | ~1.7x | 3 procs at ~70% efficiency each |
-| `fast_spike_reset` (cp.where masked-update) | 2026-05-03 | 1.29x | eliminates per-step GPU-CPU sync in spike-reset |
-| Three-factor GPU-port (Phase 1) | 2026-05-05 | ~2x (3-factor only) | eliminates per-event 6 MB CSR round-trip |
-| **`cfg.fp16_synapse_state`** | 2026-05-05 | 1.05-1.15x | fp16 storage for `cp_eligibility_trace` (validated <1mV drift) |
-| **Parallel=6** (use VRAM headroom) | 2026-05-05 | ~3x sweep throughput | 30-50% GPU util at parallel=2 → bumped per user observation |
+> **A note on older navigation numbers.** Some widely-copied navigation claims from earlier
+> notes (a specific "X% better than baseline," a "navigates with no shortcuts / all cheats
+> closed" configuration, and a cross-grid-size percentage comparison) were found on internal
+> audit to be wrong or overstated — a favourable-seed selection, a config that still had a
+> shortcut enabled, or a comparison of two different metrics. They are **not repeated here**.
+> Navigation is described qualitatively on purpose.
 
-Numerical equivalence + drift verified at:
-- `tests/test_fast_spike_reset.py` (6 tests, dt path)
-- `tests/test_three_factor_update.py` (7 tests, GPU-port logic)
-- `tests/test_fp16_drift.py` (4 tests, voltage drift <1mV over 1000 steps)
+### Grounded conversation, with a no-fabrication safeguard — [Robust]
 
-Default flags (all opt-in for backward compat):
-- `cfg.fast_spike_reset = False` (default-on in modern runners)
-- `cfg.fp16_synapse_state = False` (validated, ship default-on after sweep)
-- `gpu_eligibility = True` in three_factor runner
+The brain holds a simple, grounded conversation entirely on the spiking network:
 
-Honest perf-roadmap: `research/findings/2026-05-05-perf-roadmap.md`.
-Cloud H100 deploy: `docs/plans/2026-05-05-cloud-h100-deployment.md`
-(~$2/hr for 6-8× sweep throughput, ready for activation).
+- **Comprehension.** It parses a simple sentence into who-did-what-to-whom roles, and this
+  works for both active and passive phrasings ("the dog chased the cat" / "the cat was
+  chased by the dog" assign the same roles).
+- **Memory and question answering.** It stores facts and answers *who* and *what* questions
+  about them, handles **yes/no and negation**, does **simple multi-step reasoning** (following
+  a chain of stored facts), and **tracks referents across turns** (a later "it" resolves to
+  the earlier subject).
+- **The no-fabrication safeguard.** When it has no stored fact matching a question, it
+  **says it does not know** rather than guessing. This is the central honesty guarantee, and
+  it is built in by construction — the fluent generator (below) is never even invoked when the
+  brain decides to abstain.
 
-### Memory
+This is validated at a **few-hundred-concept vocabulary, across multiple random seeds**, with
+no fabricated answers.
 
-- ~5K neurons + 175K synapses uses ~1.3 GB GPU memory
-- Scales linearly to 100K+ neurons (network of 50K well within RTX 3090 limits)
+### Learning meaning and discovering categories from experience — [Research-stage]
 
-### Reproducibility
+Rather than being handed a dictionary, the brain can learn from experience:
 
-All random sources seeded together. Same `--seed` on same hardware
-produces bit-identical trajectories. Use `--deterministic` flag for
-maximum reproducibility (sets `CUBLAS_WORKSPACE_CONFIG`).
+- **Learning word meaning by listening.** As it "hears" a stream of text, it builds
+  word-meaning representations from context — words that appear in similar contexts end up
+  represented similarly. This is unsupervised, with a plain local learning rule; there is no
+  pre-processing of the text.
+- **Discovering categories and simple taxonomies on its own.** From co-occurrences — or from
+  actually *seeing* objects through the visual front end — it groups things into categories and
+  even multi-level taxonomies (for example, learning that several things are a kind of "bird,"
+  which is a kind of "animal") without being told the structure.
+- **Inheritance with exceptions.** Once it has a taxonomy, it can **inherit** a property it was
+  never directly told (a never-taught robin "can fly" because birds fly), while honouring
+  **exceptions** (a penguin walks). You can then converse with it about what it discovered.
+
+These are demonstrated in validating experiments (the emergent-language work) and are an
+active research frontier rather than a finished feature.
+
+### Fluent speech — two layers
+
+Turning the brain's grounded decisions into English happens in two layers:
+
+- **(a) A small, locally-trained language generator — [Robust, but a deliberate scaffold].**
+  A compact generator (tens of millions of parameters — far smaller than a typical large
+  language model, trained locally) supplies fluent English *phrasing only*. It does **not**
+  decide what is true or whether to answer — the brain does that first, and the generator is
+  never invoked when the brain abstains, so the no-fabrication safeguard holds. This generator
+  is explicitly a **temporary scaffold** on the way to fully brain-produced speech.
+
+- **(b) The brain's own spiking speech production — [Research-stage].** Increasingly, the
+  brain's **own spiking circuitry** produces the actual words and their order for a **bounded
+  set of sentence forms** — modelled on the human speech-production region (Broca's area). It
+  even learns the sentence structure (which words are function words, what order slots go in,
+  which slots a construction has) from a text stream rather than having it hand-written. This
+  is real for a limited inventory of sentence shapes; open-ended prose is a frontier (see below).
+
+### Development over simulated time, without forgetting — [Research-stage]
+
+The brain can live a simple simulated life:
+
+- It **forages under a hunger drive**, and it **perceives and remembers** the objects it
+  encounters as it moves.
+- Over simulated days it **grows its vocabulary and factual knowledge**, day over day, **without
+  catastrophically forgetting** what it already knew.
+- It **persists across restarts** (save and resume). A person can load the brain at a given
+  "day" and talk to it about what it has lived through.
+
+Validated across multiple random seeds in the artificial-life experiments; the *learned* spatial
+policy behind survival still uses a simplified stand-in and is part of the ongoing research.
+
+### One brain, one shared core — [Robust]
+
+Navigation, the conversational parser, a planning / working-memory region (modelling prefrontal
+cortex), the conversational binding system (which combines concepts into facts and reads them
+back), a hippocampus-style memory, and a **shared dopamine reward/drive core** all run as **one
+network on one update loop** — not separate programs stitched together. They are joined by
+validated **cross-region synaptic links**. Demonstrated interactions include:
+
+- A **spoken command can steer movement** (language routes to action).
+- An object **seen while moving can be recalled and talked about later** (perception routes to
+  memory and speech).
+- A **hungry brain's raised dopamine tightens both its actions and its conversational
+  confidence** — one drive modulating both halves of the same brain.
+
+When the two halves are combined, the conversational behaviour (including the no-fabrication
+safeguard) works unchanged, and navigation's live learning does not disturb the conversational
+neurons. See [`ARCHITECTURE_nav_conv_merge.md`](ARCHITECTURE_nav_conv_merge.md) for the
+architecture of the combined brain.
 
 ---
 
-## Limitations
+## Shipped/robust vs. research-stage — at a glance
 
-### Computational
-- 4-direction action space only (no diagonal moves)
-- Navigation handles a goal that moves on a schedule (multi-goal
-  re-acquisition), but not multi-goal compositional *planning*
-- 8×8 to 32×32 grid sizes
-- ~5K–7K neurons per agent (real brain regions have 10⁴–10⁶ each)
-
-### Biological
-- No developmental phases (no synaptic pruning, layer formation)
-- No protein-synthesis-dependent late-LTP for long-term consolidation
-- No spatial conduction delays beyond fixed per-pathway values
-- No neurovascular coupling, no glia
-- No multi-time-scale plasticity (only fast STDP)
-
-### Tasks
-- Vocabulary has scaled well past the original 4 directions: a 16-word
-  vocabulary is validated bidirectionally multi-seed, and a 320-concept
-  scale is validated for both retrieval and spiking fact composition
-  (see the 2026-06 milestones above and CLAUDE.md). The original
-  "4 cardinal directions only" limit no longer holds.
-- Compositional binding is **mixed**: binding words into a fact and
-  recalling it (the spiking composer) is validated multi-seed at the
-  320-concept scale, and engram-based composition is validated; but
-  learning verb→motor composition by growing synapse weights from
-  scratch was a documented negative (an honest boundary, not hidden).
-- No multi-modal tasks (smell, touch, sound modalities not modeled)
-- No social interaction (joint attention not implemented)
+| Capability | Status |
+|---|---|
+| The simulation engine, neuron models, plasticity, visualization, experiment system, validation suite | **Robust** |
+| Checkpointing / continuous-learning lineages | **Robust** |
+| Gridworld navigation (fully neural, spiking decision) | **Robust** |
+| Grounded who/what conversation + no-fabrication safeguard | **Robust** |
+| One shared brain (navigation + conversation) with cross-region synaptic routes | **Robust** |
+| Small local generator for fluent phrasing (a temporary scaffold) | **Robust (scaffold)** |
+| Learning word meaning by listening; discovering categories/taxonomies; inheritance with exceptions | **Research-stage** |
+| The brain's own spiking speech production (bounded sentence forms) | **Research-stage** |
+| Living/developing over simulated days + persistence | **Research-stage** |
 
 ---
 
-## Active research directions
+## Current research frontiers
 
-Current open experiments (as of 2026-05-04 ~00:30 EDT autonomous):
+The project is doing **autonomous, biology-grounded research** toward the single-brain,
+fully-spiking, conversational artificial-life goal. The near-term aim is to close the remaining
+gaps so that **every step is done by spiking neurons on one brain**. The active frontiers:
 
-1. **Biology-grounded sweep on minimal isolation arch** — IN FLIGHT.
-   The 0/N alignment finding (permuted-label control 2026-05-03) is
-   architectural, not a tuning issue. Testing whether two
-   biology-grounded fixes break the streak: topographic Wernicke→motor
-   prior (1.5/0.7 ratio per Pulvermüller 2001-2003) + cortical
-   PV-FSI lateral inhibition (~12% of motor pool per Vogels 2011).
-   4 conditions (baseline / +FS only / +Topo only / +Topo+FS) ×
-   6 seeds = 24 runs in parallel-3 (~3 hours). Auto-launches when
-   minimal-iso batch 2 finishes. See
-   `experiments/biology_sweep.yaml` and
-   `research/findings/2026-05-04-biology-sweep-followup-plan.md`.
+1. **Open-ended fluent generation** — moving beyond a bounded set of sentence forms toward free
+   conversation, produced by the brain's own circuitry rather than the temporary generator
+   scaffold.
+2. **Learned concept binding** — replacing today's fixed, hand-designed scheme for combining
+   concepts into facts with one the brain actually *learns*.
+3. **Resolving ambiguous references** — deciding which of several candidate things a bare
+   pronoun refers to.
+4. **Biological credit assignment** — a **dendrite-based** local learning rule (how a single
+   neuron works out which of its inputs to strengthen) that does not rely on backpropagation.
+   This is the likely enabler for open-ended generation and is the project's deepest open
+   *neural* problem.
+5. **Memory replay and imagination** — the brain internally replaying and recombining stored
+   sequences (as the hippocampus does during rest) to support planning and imagination.
 
-2. **Minimal-isolation INVERSION finding (2026-05-03 evening)**
-   The cascade-as-cause hypothesis is FALSIFIED. With cascade
-   stripped (no cluster_a, no cluster_e, no PFC, no visuomotor —
-   just language_input → motor_X under paired-stim training),
-   alignment ratio is 0/3 not 4/6. The cascade was a weak DAMPENER
-   on seed-dependent random structure, not its source. See
-   `research/findings/2026-05-04-minimal-isolation-INVERSION.md`.
+These are **open frontiers being actively worked on**, not solved features.
 
-3. **Pre-staged A/B follow-up decision chain.** A PowerShell
-   waiter polls for biology-sweep completion, runs the result
-   aggregator, and auto-launches the appropriate next experiment:
-   - Outcome A (≥ 4/6 aligned): `minimum_biology.yaml` —
-     dose-response (weak topo, minimal FS, strong topo, combo half)
-   - Outcome B (0-1/6): `eval_sanity_check.py` — hand-built
-     PERFECT weights, tests if the eval methodology itself works
-   - Tier-2 fallbacks pre-staged: `b2_sparse_codes.yaml` +
-     `b4_long_training.yaml` (sparse-code overlap + dose-response)
+---
 
-4. **Distributed motor pool architecture (Pulvermüller G.20)**
-   — implemented. 8 motor sub-pools at 45° intervals with
-   cosine-tuned thal pathways and population vector decoding. Tested
-   2026-05-02 at n=1, didn't beat the (now-debunked) 28.5% baseline.
-   No clear path forward without first establishing real W→A.
+## Known limitations (honest)
 
-### New tooling shipped 2026-05-03
+**Task scope**
+- Navigation uses a 4-direction action space (no diagonal moves) and small grids.
+- Navigation handles a goal that moves on a schedule, but not multi-step compositional
+  *planning*.
+- Conversation is grounded in stored/learned facts; **open-domain, free-topic conversation and
+  free open-world inference remain the field's unsolved walls**, and are managed here with
+  domain constraints, grounded retrieval, and honest abstention rather than claimed as solved.
+- Combining *two* attributes into one referent (e.g. "big red ball") is not yet reliable on the
+  learned codes — a documented boundary.
 
-- `sim/progress.py` — universal `[PROGRESS] {json}` event format.
-  All runners emit structured progress (kind, current, total, phase,
-  elapsed_seconds). Webapp parses for live progress display.
-- `research/experiment_runner.py` — YAML-driven experiment orchestrator
-  replacing per-experiment PowerShell scripts. Parallel-N batching,
-  master log + COMPLETE marker, auto pid management.
-- `research/result_aggregator.py` — parameterized cross-condition
-  result rollup with permuted-label aligned ratio + verdict line.
-  Built-in configs: swr-investigation, fundamentals, biology,
-  minimum_biology, sanity_check, b2_sparse_codes, b4_long_training.
-- `research/runners/profile_step.py --arch {v2|minimal}` — section
-  profiler for hot-path identification.
-- `research/runners/bench_parallel_gpu.py` — parallel-process GPU
-  contention benchmark.
+**Scaffolding still in place** (being actively converted to neural mechanisms)
+- The fluent generator is a conventional (non-spiking) model used for phrasing only.
+- Some structure the brain uses is still hand-designed rather than self-organized; replacing it
+  with developmentally self-organized structure is ongoing.
 
-Detailed roadmap:
-* `docs/plans/2026-05-03-autonomous-overnight-plan.md`
-* `research/findings/2026-05-04-biology-sweep-followup-plan.md`
-* `research/findings/2026-05-04-perf-speedup-stack.md`
+**Biological realism not yet modelled**
+- No full developmental phases (synaptic pruning, layer formation) beyond what auto-growth
+  provides.
+- No protein-synthesis-dependent late-stage consolidation; no glia or neurovascular coupling;
+  limited multi-time-scale plasticity.
+- No smell/touch/sound modalities and no social interaction (joint attention) yet.
+
+**Honest cost of purity**
+- Doing every step in spiking neurons is slower than the equivalent ordinary code would be.
+  Reducing that latency (so a fully-spiking conversation runs comfortably in real time) is an
+  ongoing engineering effort; single-query answering is already fast on a desktop GPU.
+
+---
+
+## Reproducibility and performance
+
+All random sources are seeded together, so the same `--seed` on the same hardware produces
+bit-identical trajectories; a `--deterministic` option maximizes reproducibility. Long
+research runs use the GPU (CuPy) backend; the NumPy backend is for portability, CI, and
+low-end hardware. Concrete throughput depends heavily on network size and configuration, so
+specific timings are best taken from the relevant runner rather than quoted here.
 
 ---
 
 ## Dependencies
 
-- Python 3.8+
-- CuPy (CUDA 11+ or 12+)
-- NumPy, h5py, dearpygui, PyOpenGL
-- (Optional) FastAPI + uvicorn for the webapp
+- **Python 3.10+**
+- **CuPy** (CUDA 11 or 12) for the GPU backend — optional; the NumPy CPU backend needs no GPU
+- **NumPy**, **h5py**, **DearPyGui**, **PyOpenGL**
+- *(Optional)* FastAPI + Uvicorn for the web console
 
-NVIDIA GPU with 6GB+ VRAM recommended. Can run on smaller GPUs by
-reducing network sizes.
+An NVIDIA GPU with several GB of VRAM is recommended for the heavier runs; smaller networks
+run on modest hardware or CPU-only.
 
 ---
 
 ## Where to go from here
 
-| If you want to... | Read this |
+| If you want to… | Read this |
 |---|---|
 | Run the simulator | [QUICKSTART.md](../QUICKSTART.md) |
+| See the brain's layout as a diagram (plain language) | [`diagrams/brain_architecture_current.md`](diagrams/brain_architecture_current.md) |
 | Understand the biology in plain language | [biology.md](biology.md) |
-| Modify or extend the codebase | [../CONTRIBUTING.md](../CONTRIBUTING.md) |
+| Understand the combined navigation + conversation brain | [ARCHITECTURE_nav_conv_merge.md](ARCHITECTURE_nav_conv_merge.md) |
 | Reproduce a specific result | [USER_GUIDE.md](../USER_GUIDE.md) |
-| Read scientific findings chronologically | [`research/findings/`](../research/findings/) |
-| See the full biology catalog | [`references/feature-catalog.md`](../references/feature-catalog.md) (catalog-build branch) |
-| Understand AI agent guidelines | [CLAUDE.md](../CLAUDE.md) |
+| Modify or extend the codebase | [../CONTRIBUTING.md](../CONTRIBUTING.md) |
+| Read the research findings chronologically | [`research/findings/`](../research/findings/) |
+| Understand the guidelines Claude follows on this repo | [../CLAUDE.md](../CLAUDE.md) |

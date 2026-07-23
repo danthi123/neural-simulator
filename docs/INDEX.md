@@ -12,13 +12,15 @@ Find what you need fast.
 | Understand what this project IS | [README.md](../README.md) |
 | Run the simulator | [QUICKSTART.md](../QUICKSTART.md) |
 | See what works today | [CURRENT-STATE.md](CURRENT-STATE.md) |
+| See where the project is headed | [ROADMAP.md](../ROADMAP.md) |
+| See the architecture at a glance | [diagrams/brain_architecture_current.md](diagrams/brain_architecture_current.md) |
 | Understand the biology | [biology.md](biology.md) |
 | Add a feature | [CONTRIBUTING.md](../CONTRIBUTING.md) |
 | Configure the GUI | [USER_GUIDE.md](../USER_GUIDE.md) |
 | Read AI agent guidelines | [CLAUDE.md](../CLAUDE.md) |
 | Read about a specific finding | [research/findings/](../research/findings/) |
 | See architecture decisions | [docs/plans/](plans/) |
-| Get the full biology catalog | [references/feature-catalog.md](../references/feature-catalog.md) (catalog-build branch) |
+| Get the full biology catalog | [references/glossary.md](../references/glossary.md) (the full catalog lives in a separate worktree) |
 
 ---
 
@@ -36,6 +38,15 @@ Latest validated result. Project structure.
 Install + run + 3 things to try. Cross-references for going deeper.
 
 **Read this if:** you just want to make it work.
+
+### `ROADMAP.md` — accomplished / in progress / what's left
+
+The kept-current source of truth for what the project has achieved, what it is
+working on now, and the open research frontiers on the path to the goal (a
+single spiking brain that navigates and holds a grounded conversation). Uses
+plain-language status badges (done / partial / boundary / scaffold / open).
+
+**Read this if:** you want the honest current status and near-term direction.
 
 ### `CLAUDE.md` — AI agent guidelines
 
@@ -77,21 +88,34 @@ rules, performance, limitations, active research.
 **Read this if:** you want a deep technical understanding of the
 project's current capabilities.
 
+### `docs/diagrams/` — architecture flowcharts
+
+The live, kept-current flowcharts of the whole simulated brain, as
+GitHub-native Mermaid markdown (they render directly on GitHub):
+- `brain_architecture_current.md` — newcomer overview, plain language.
+- `brain_architecture_detailed.md` — exhaustive per-region / per-pathway map.
+
+Also here: three hand-authored hero images (`brain_master.svg`,
+`brain_navigation.svg`, `brain_conversational.svg`, each with a rendered
+`.png`) — an archived June 2026 snapshot. See `docs/diagrams/README.md`.
+
+**Read these if:** you want to see how the regions connect at a glance.
+
 ### `docs/biology.md` — neuroscience tour, plain language
 
 Each section: real biology + how we model it + citations to source
-texts (Kandel 6e + 12 specialty references).
+texts (Kandel 6e + specialty references).
 
 **Read this if:** you want to understand the neuroscience without
 needing to be an expert.
 
 ### `docs/plans/` — architecture decision records
 
-Date-stamped design docs for specific architectural decisions.
-Examples:
+Date-stamped design docs for specific architectural decisions, paired
+with the findings that resulted. Examples span the project's history:
 - `2026-05-02-distributed-motor-pool-design.md`
-- `2026-05-02-swr-text-io-integration-design.md`
-- `2026-05-02-text-io-next-directions-biology-grounded.md`
+- `2026-07-13-np-recurrent-language-derisk-spec.md`
+- `2026-07-15-months-scale-plan-to-one-brain-and-small-llm-conversation.md`
 
 **Read these if:** you're investigating a specific architecture choice
 or trying to understand why a feature was designed a certain way.
@@ -125,58 +149,63 @@ It is dense and internal — the README and `CURRENT-STATE.md` are the
 plain-language versions.
 
 A few landmark findings worth knowing about:
-- `2026-04-27-NEW-BEST-4cheats-closed.md` — navigation: closing the
-  perception shortcuts (the navigation flagship)
-- `2026-05-14-multitag-cue-retrieval-90pct-VALIDATED.md` — the first
-  real concept-to-concept retrieval result
+- `2026-04-27-NEW-BEST-4cheats-closed.md` — an early navigation milestone
+  (note: some "closed all shortcuts / no heuristic" claims in older navigation
+  notes were later audited and corrected — see `ROADMAP.md` and the
+  navigation-audit findings for the honest current status)
+- `2026-05-14-multitag-cue-retrieval-90pct-VALIDATED.md` — an early
+  concept-to-concept retrieval result
 - `2026-05-16-G20-failure-mechanism-FINAL-SYNTHESIS.md` — the
-  distributed ~320-concept memory (continual + won't-confabulate)
-- `2026-06-11-familiarity-gate-v320-GO.md` — the "learned cortex"
-  arc forks (flat vs meaning-structured cortex)
-- `2026-06-13-phase1-32bridge-fanout-derisk-GO.md` — scaling the
-  learned cortex to ~2,048 concepts de-risked (production build in progress)
+  distributed few-hundred-concept memory (learns continually and declines
+  to answer rather than fabricate)
+- `2026-06-11-familiarity-gate-v320-GO.md` — the word-meaning-layer work
+  forks (a semantically flat vs. a meaning-structured version)
 - `2026-06-15-on-bridge-hebbian-co-occurrence-learning-mechanism-GO.md` —
-  a generalizing cortex that learns word meanings from a conversation
-  stream, realized on the spiking network (~64 concepts)
+  the brain learns word meanings by "listening" to a text stream, realized
+  on the spiking network (validated at a small vocabulary)
 - `2026-06-16-navigate-to-compose-then-answer.md` +
-  `2026-06-16-unified-embodied-agent-stage2-GO.md` — the unified embodied
-  agent: one network navigates, perceives, composes a fact, and converses
-  (six seeds)
+  `2026-06-16-unified-embodied-agent-stage2-GO.md` — one network navigates,
+  perceives an object, forms a fact about it, and converses (multiple seeds)
 - `2026-06-19-spiking-decision-default-on-GO.md` — the navigation
-  move-decision is now made in spikes by default (six seeds, honest ~16% cost)
+  move-decision is now made in spikes by default (multiple seeds; an honest
+  cost vs. the old hand-coded pick-the-max step is reported)
 - `2026-06-19-latency-csr-cache-GO.md` — the conversational engine sped up
-  10–20× (answers identical, "won't make things up" guarantee unchanged)
+  substantially (answers unchanged, the no-fabrication safeguard intact)
 
 **Read these if:** you want the chronological story of how the project
-evolved.
+evolved. For the plain-language current status, prefer `ROADMAP.md` and
+`docs/CURRENT-STATE.md`.
 
 ### `research/runners/` — experiment scripts
 
-Python modules implementing specific experiments (g1-g11, text_*, etc.).
-Each is invocable via `python -m research.runners.<name>`.
+Roughly 1,250 headless Python scripts, each implementing one experiment
+(navigation, conversation/chat, memory consolidation, the word-meaning-learning
+experiments, the language generator, and many more). Each runs via
+`python -m research.runners.<name>`.
 
 ---
 
 ## references/
 
-### `references/feature-catalog.md`
+### `references/feature-catalog.md` — *(separate worktree, not in this checkout)*
 
-(On `catalog-build` branch) Encyclopedia of over 300 biological mechanisms
-with citations. Each entry: biological description + sim status + cluster
-assignment.
+Encyclopedia of over 300 biological mechanisms with citations. Each entry:
+biological description + how/whether the sim models it. It is maintained in a
+separate `sim-catalog` worktree, so it will not appear in a normal checkout of
+this repository.
 
-**Read this if:** you want to look up a specific mechanism (e.g., "is
-NPY-LTS striatal interneuron modeled?") and find its citation.
+**Look here if:** you want to check whether a specific mechanism (e.g., "is
+the NPY-LTS striatal interneuron modeled?") is implemented, and find its citation.
 
-### `references/biology-buildout-roadmap.md`
+### `references/biology-buildout-roadmap.md` — *(separate worktree, not in this checkout)*
 
-(On `catalog-build` branch) Tier 0/1/2/3 implementation roadmap for
-mechanisms in the catalog.
+Tiered implementation roadmap for the mechanisms in the catalog above. Same
+`sim-catalog` worktree; not in a normal checkout.
 
 ### `references/language-mechanisms-additions.md`
 
-Language-specific neuroscience entries (G.20-G.25): Pulvermüller,
-Hagoort MUC, Tomasello, Indefrey, Hickok-Poeppel, Friederici.
+Language-specific neuroscience entries (Pulvermüller, Hagoort, Tomasello,
+Indefrey, Hickok–Poeppel, Friederici).
 
 ### `references/textbooks/`
 
@@ -197,7 +226,7 @@ Project-specific terminology.
 
 ## tests/
 
-`pytest`-runnable test suite. Most relevant for new contributors:
+`pytest`-runnable test suite (472 files, most CPU-only). A few worth knowing:
 
 - `test_distributed_motor_pop.py` — distributed motor architecture
 - `test_bridge_text_io.py` — text I/O bridge APIs

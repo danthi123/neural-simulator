@@ -110,7 +110,7 @@ At a glance (see [`ROADMAP.md`](ROADMAP.md) for the plain-language detail and ci
 | Working memory & recursion | Persistent-activity slots; graded fading memory | 🟩 Done · 🟧 nesting depth |
 | Artificial life | Develop over time; one merged brain; one drive; persistence | 🟩 Done (pieces) · 🟨 unified |
 
-Legend: ✅ emergent (learned from experience) · 🟩 done (with one hand-designed part) · 🟨 partial · 🟧 a mapped limit · 🧩 temporary stand-in · ⬜ open. **The two honest gaps to a large language model:** open-ended fluent speech without the small conventional-AI crutch (its first home-grown rung just landed — an emergent, on-brain, no-backpropagation next-word model that beats the standard baselines), and a deeper learning rule to lift the remaining ceilings. A real, bounded, multi-month distance — not a demo away, and not blocked. The roadmap also covers the body, supporting systems (cerebellum, sleep), the 3D viewer and interactive consoles, and future directions.
+Legend: ✅ emergent (learned from experience) · 🟩 done (with one hand-designed part) · 🟨 partial · 🟧 a mapped limit · 🧩 temporary stand-in · ⬜ open. **The two honest gaps to a large language model:** open-ended fluent speech without the small conventional-AI crutch (its first home-grown rung has landed as a research result — an emergent, on-brain, no-backpropagation next-word model), and a deeper learning rule to lift the remaining ceilings. A real, bounded, multi-month distance — not a demo away, and not blocked. The roadmap also covers the body, supporting systems (cerebellum, sleep), the 3D viewer and interactive consoles, and future directions.
 
 ---
 
@@ -145,7 +145,7 @@ hardware with no external model).
 
 | If you are a… | You'll care that… |
 |---|---|
-| **Software developer** | It's a scriptable Python engine: 50+ brain regions, sparse GPU kernels, a YAML-driven experiment runner, a web dashboard, and a NumPy fallback that runs with no GPU at all. |
+| **Software developer** | It's a scriptable Python engine: dozens of composable brain-region profiles, sparse GPU kernels, a YAML-driven experiment runner, a web dashboard, and a NumPy fallback that runs with no GPU at all. |
 | **Computational neuroscientist** | Neurons use published models (Izhikevich, Hodgkin–Huxley, adaptive exponential integrate-and-fire); learning reproduces measured timing curves (Bi & Poo 1998); regions, pathways, and neuromodulators are declared as data, not hand-wired — and results are validated across multiple random seeds with controls against accidental success. |
 | **Biologist** | Mechanisms are grounded in *Principles of Neural Science* (Kandel, 6th ed.) plus a dozen specialty texts, explained in plain language — see [`docs/biology.md`](docs/biology.md). |
 | **Curious reader** | You can watch a virtual brain learn to navigate and to remember words, in 3D, in real time — and see exactly how far "biology alone" gets you. |
@@ -158,42 +158,80 @@ hardware with no external model).
   hundred thousand neurons, organized into named brain regions (visual
   cortex, basal ganglia, thalamus, motor cortex, prefrontal cortex,
   hippocampus, language areas) wired together by biologically motivated
-  pathways. Runs are seed-controlled and reproducible.
+  pathways. Neurons use published models — Izhikevich, Hodgkin–Huxley,
+  adaptive exponential integrate-and-fire — and runs are seed-controlled and
+  reproducible.
 
-- **A vision-based navigation agent.** A simulated animal finds a goal on a
-  grid using only simulated vision — no direct coordinates and no hand-coded
-  distance signal. It chooses moves through a modeled basal-ganglia decision
-  circuit and improves through reward-driven learning. Every step *between*
-  seeing and acting is performed by neurons by default. This is a
-  demonstrated capability, validated across multiple random seeds.
+- **A vision-based navigation agent.** One brain drives a simulated animal
+  through a 2-D gridworld toward a goal — including moving goals — through a
+  biologically-structured basal-ganglia action-selection circuit
+  (direct/indirect pathways, dopamine), a spiking visual cortex (Gabor/V1-style
+  edge filters), and a spiking decision step: an evidence accumulator that
+  races to an all-or-none commit "burst." That spiking decision is now the
+  default; an older hand-coded pick-the-max step is kept only as an optional
+  comparison baseline. The steps between seeing and acting run in neurons by
+  default. Performance is characterized across grid sizes and multiple random
+  seeds.
 
-- **A small conversational agent built entirely from simulated neural
-  circuits** — not a bolted-on external language model. It parses short
-  sentences with a learned neural parser, stores facts, answers who/what and
-  yes/no questions (including negation), combines concepts into structured
-  facts ("who did what to whom", including nested clauses), chains several
-  facts to answer multi-step questions, and tracks what was just mentioned so
-  a later pronoun resolves correctly. Core question-answering is demonstrated
-  and validated across random seeds; several richer abilities are exploratory
-  or documented as current limits.
-
-- **A trustworthy, continual memory.** You can teach it word–concept facts;
-  it recalls them on cue and — the genuinely hard part — keeps old memories
-  intact while learning new ones (avoiding *catastrophic forgetting*, the
-  usual failure mode of continually trained neural networks). It has been
-  validated holding a few hundred distinct concepts across a multi-part model
-  cortex.
+- **A grounded conversation, on the spiking brain.** It parses a short
+  sentence into who-did-what-to-whom roles (working for both active and passive
+  phrasings), stores facts, answers who/what and yes/no questions (including
+  negation), does simple multi-step reasoning (chaining stored facts), and
+  tracks referents across turns so a later "it" resolves to the earlier
+  subject. Core question-answering is validated at a few-hundred-concept
+  vocabulary across multiple random seeds; richer abilities are exploratory and
+  documented as current limits.
 
 - **It refuses to make things up.** Asked about something it was never
   taught, it answers "I don't know" rather than fabricating a plausible-but-
-  wrong reply — a trust property that mainstream language models notably
-  lack. This is measured: there is a clear confidence gap between what it
-  knows and what it does not.
+  wrong reply — a trust property mainstream language models notably lack. This
+  is measured: there is a clear confidence gap between what it knows and what
+  it does not, and (below) the fluent-speech generator is never invoked when
+  the brain chooses to abstain.
 
-- **Generalization across similar things.** Shown a *novel* object through
-  its simulated eyes, it can recognize a never-seen shape as belonging to a
-  known category, then recall a fact about that category and answer. The
-  end-to-end demonstration works; per-run fidelity is the current open edge.
+- **A trustworthy, continual memory.** Teach it word–concept facts and it
+  recalls them on cue while — the genuinely hard part — keeping old memories
+  intact as it learns new ones (avoiding *catastrophic forgetting*, the usual
+  failure mode of continually trained neural networks). Validated holding a
+  few hundred distinct concepts.
+
+- **Learning meaning and categories from experience** (unsupervised,
+  research-stage). By "listening" to a stream of text, the brain learns
+  word-meaning representations — which words tend to occur in similar
+  contexts. By observing co-occurrences, or by *seeing* objects through its
+  visual front end, it discovers categories and simple taxonomies on its own
+  (that several things are a kind of "bird"), then *inherits* properties across
+  them — a never-taught robin "can fly" because a bird can — with exceptions (a
+  penguin walks). Shown a novel object through its simulated eyes, it can place
+  the never-seen shape in a known category and answer about it. You can then
+  converse with it about what it discovered.
+
+- **Fluent speech, in two layers.** (a) A small, locally-trained language
+  generator — tens of millions of parameters, far smaller than a typical large
+  language model — supplies fluent English *phrasing only*; the brain decides
+  *what* is true and whether to answer, and the generator is never called when
+  the brain abstains, so the no-fabrication safeguard holds by construction.
+  This generator is a deliberate, temporary scaffold. (b) Increasingly the
+  brain's *own spiking circuitry* produces the words and their order for a
+  bounded set of sentence forms — modelled on the human speech-production
+  region (Broca's area) — learning the sentence structure from a text stream
+  rather than having it hand-written.
+
+- **Development over simulated time.** The brain can live a simulated life:
+  forage under a hunger drive, perceive and remember the objects it
+  encounters, and grow its vocabulary and factual knowledge day over day
+  *without catastrophically forgetting* older knowledge — then *persist across
+  restarts* (save and resume). You can load the brain at a given "day" and talk
+  to it about what it has lived.
+
+- **One brain, one shared core.** Navigation, the conversational parser, a
+  planning/working-memory region (modelling prefrontal cortex), the
+  concept-binding system, a hippocampus-style memory, and a shared dopamine
+  reward/drive core all run as one network on one update loop, joined by
+  validated cross-region synaptic links. A spoken command can steer movement;
+  an object seen while moving can be recalled and talked about later; a hungry
+  brain's raised dopamine tightens both its actions and its conversational
+  confidence.
 
 - **Learning and plasticity mechanisms** drawn from the neuroscience
   literature: spike-timing-dependent plasticity, short-term plasticity,
@@ -209,14 +247,15 @@ hardware with no external model).
 
 ### One honest caveat up front
 
-The most recent research is the conversational and language-generation
-frontier, and it is genuinely early. The system's *own* spiking network is
-being trained to generate language, and its foundation is validated — it
-provably learns real text structure rather than noise — but it is **not yet
-fluent**, and far from a large language model. When a separate model is used,
-it serves only as a training-time teacher; after training the system runs
-entirely on its own, fully local, with no external model and no hand-written
-reply templates in the loop.
+The newest work — conversation and language built from neurons — is genuinely
+early. The brain's *own* spiking network is being trained to produce language,
+and its foundation is validated (it provably learns real text structure rather
+than noise), but it is **not yet fluent** and is far from a large language
+model. The small language generator that supplies phrasing today is a local,
+temporary scaffold sitting *behind* the brain's decisions — it never fabricates
+on its own, because it is only called once the brain has already decided what
+is true and chosen to answer. Any larger external model was only ever a
+training-time teacher; nothing in the cloud is in the runtime loop.
 
 ---
 
@@ -294,7 +333,8 @@ conversational demo.
 
 ### Watch it navigate
 
-Run the navigation agent headless (vision-only, 16×16 grid):
+Run the biologically-structured navigation agent headless on a moving-goal
+task (16×16 grid):
 
 ```bash
 python -m research.runners.g11_bg_runner --moving-goal --goal-schedule multi --deterministic \
@@ -343,9 +383,10 @@ OpenGL 3D rendering    lock-free     spike + plasticity kernels
 camera / interaction     queues      recording / checkpointing
 ```
 
-The engine lives in the `sim/` package (43 modules, ~21K lines). The central
-object is the **`SimulationBridge`**, which owns all neuron and synapse state
-as GPU arrays and advances the network one millisecond-scale step at a time:
+The engine lives in the `sim/` package (43 modules, ~16K lines of engine
+code). The central object is the **`SimulationBridge`**, which owns all neuron
+and synapse state as GPU arrays and advances the network one millisecond-scale
+step at a time:
 synaptic currents → background noise → neuron-model update → plasticity →
 visualization → recording.
 
@@ -355,7 +396,7 @@ visualization → recording.
 | `viz/` | OpenGL 3D renderer, camera, neuron picker, overlays |
 | `ui/` | DearPyGUI control panels and the configuration round-trip |
 | `experiment/` | Stimulus injection, neuron-group management, readout/analysis, training protocols |
-| `research/runners/` | Hundreds of headless experiment scripts (navigation, conversation, consolidation, and more) |
+| `research/runners/` | Over a thousand headless experiment scripts (navigation, conversation, consolidation, and more) |
 | `webapp/` | Web dashboard for launching runs and watching them live |
 
 Networks are stored as sparse connection matrices, so memory grows with the
@@ -391,26 +432,49 @@ demonstrated:
 
 - **The simulation engine, region framework, plasticity rules, and
   visualization** — the working platform.
-- **Vision-based navigation** — reaches a goal from simulated vision only,
-  with no coordinate or distance shortcuts, validated across multiple random
-  seeds. Every step between seeing and acting runs in neurons by default:
-  orienting toward the goal, a self-organizing position code, a neural
-  reward/value/dopamine system, and the move decision itself (which emerges
-  from a race between competing action circuits rather than an off-brain
-  "pick the best option" step).
+- **Vision-based navigation** — a biologically-structured basal-ganglia
+  circuit, a spiking visual cortex, and a spiking decision step drive an agent
+  to a goal (including moving goals), characterized across grid sizes and
+  multiple random seeds. The steps between seeing and acting run in neurons by
+  default: orienting toward the goal, a self-organizing position code, a neural
+  reward/value/dopamine system, and the move decision itself — which emerges
+  from a race between competing action circuits rather than an off-brain "pick
+  the best option" step.
 - **A continual, trustworthy memory** — teach it word–concept facts; it
   recalls them, keeps old memories intact while learning new ones, and
   declines to answer about anything it was never taught. Validated at a
   few-hundred-concept scale across multiple random seeds.
 
-The active frontier is **conversation and language built from neurons.** The
-whole conversational pipeline — parsing, storing facts, recalling them,
-combining them into structured facts, and answering — is being pushed to run
-as spiking neurons within a single shared network, and to *learn its concept
-representations from experience* (hearing words in context) rather than
-having them hand-assigned. Open-ended, fluent language generation remains a
-genuinely hard, honestly acknowledged frontier: the foundation is proven, but
-fluency is not there yet.
+And, demonstrated in pieces and still research-stage:
+
+- **Learning meaning and categories from experience, and development over
+  simulated time** — the brain learns word meanings by listening to text,
+  discovers categories and simple taxonomies on its own (inheriting properties,
+  with exceptions), and can forage a simulated life, remember what it
+  encounters, grow its knowledge day over day without forgetting, and persist
+  across restarts.
+
+The active frontier is **conversation and language built entirely from
+neurons, learned from experience.** Much of the conversational pipeline already
+runs as spiking neurons within one shared network and learns its concept
+representations by listening rather than having them hand-assigned. The
+remaining open frontiers, all under active work, are:
+
+1. **Open-ended fluent generation** — moving beyond a bounded set of sentence
+   forms toward free conversation produced by the brain's own circuitry.
+2. **Learned concept binding** — replacing the hand-designed scheme for
+   combining concepts into facts with one the brain *learns*.
+3. **Resolving ambiguous references** — deciding which of several things a bare
+   pronoun means.
+4. **A dendrite-based biological learning rule** — how a neuron decides which
+   of its inputs to strengthen, without backpropagation; the likely enabler of
+   open-ended generation.
+5. **Memory replay and imagination** — the brain internally replaying and
+   recombining stored sequences, as the hippocampus does at rest, to support
+   planning and imagination.
+
+These are honest research problems — a bounded, multi-month distance, not
+solved features and not blocked.
 
 The guiding principle throughout is strict: **everything between sensing the
 world and acting on it must be done by simulated neurons and synapses.** Only
@@ -497,7 +561,7 @@ neural-simulator/
 ├── docs/                  ← biology, current state, roadmap, guides, diagrams
 ├── webapp/                ← web dashboard
 ├── simulation_profiles/   ← 47 brain-region JSON profiles
-└── tests/                 ← pytest suite (425 files)
+└── tests/                 ← pytest suite (472 files)
 ```
 
 ---
@@ -514,7 +578,11 @@ A few terms recur in this project's documentation. In plain language:
 | **Catastrophic forgetting** | The usual failure mode where a network learning something new overwrites what it already knew. Avoiding it is a core goal here. |
 | **Refusal to fabricate** | The system's measured refusal to answer ("I don't know") when asked about something it was never taught, instead of inventing a wrong answer. |
 | **Composition / binding** | Combining separate concepts into a structured fact ("the dog ate the apple" = who-did-what), and later pulling them back apart — computed in spikes. |
-| **Model cortex** | The part of the system that stores concepts. A current effort is to make its internal codes carry *meaning-similarity*, learned from experience. |
+| **Word-meaning layer** | The part of the system that stores concepts. It learns codes that carry *meaning-similarity* by listening to text in context — words used alike get similar codes. |
+| **Category discovery & inheritance** | The brain grouping the things it experiences into categories on its own (unsupervised), then reusing a category's properties for its members — a robin "can fly" because a bird can — with exceptions. |
+| **Speech production (Broca's area)** | The brain's own spiking circuitry choosing words and their order. A small local text generator supplies fluent phrasing today as a temporary scaffold; increasingly the neurons do it themselves for a bounded set of sentence forms. |
+| **Development & persistence** | The brain living over simulated days — foraging, remembering, and growing its knowledge without forgetting — and saving/resuming that state across sessions (a "lineage"). |
+| **One brain** | Navigation, conversation, memory, and a shared dopamine core running as a single network on one update loop, joined by real synaptic links — not separate programs. |
 | **Multi-seed** | A result re-run with several different random starting seeds, so it isn't a one-off fluke. Claims here are reported with the seeds used. |
 | **Findings document** | A dated write-up of one research session's result — including negative ones — kept under `research/findings/`. |
 

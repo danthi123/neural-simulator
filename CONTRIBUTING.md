@@ -2,6 +2,24 @@
 
 Thank you for considering contributing to this project! This document provides guidelines and instructions for contributors.
 
+This is a GPU-accelerated simulator for biologically realistic spiking neural
+networks, with a real-time 3-D view of the neurons firing. It is an active
+research codebase — some capabilities are shipped and robust, others are
+research-stage; the docs try to be clear about which is which.
+
+## Getting oriented
+
+Before diving in, skim these:
+
+- [`README.md`](README.md) — what the project is, in plain language.
+- [`docs/INDEX.md`](docs/INDEX.md) — the full documentation map.
+- [`docs/CURRENT-STATE.md`](docs/CURRENT-STATE.md) — what works today, with technical detail.
+- [`docs/diagrams/brain_architecture_current.md`](docs/diagrams/brain_architecture_current.md)
+  and [`brain_architecture_detailed.md`](docs/diagrams/brain_architecture_detailed.md) —
+  live Mermaid flowcharts of the brain architecture (render on GitHub).
+- [`CLAUDE.md`](CLAUDE.md) — deep technical gotchas (STDP soft bounds, Hebbian
+  decay, NMDA configuration, seeding) worth knowing before you touch the engine.
+
 ## Development Setup
 
 ### Prerequisites
@@ -343,10 +361,10 @@ python benchmark.py --quick
 # Full benchmark
 python benchmark.py --output benchmarks/results.json
 
-# Run the flagship research runner
+# Run a navigation research runner (basal-ganglia action selection)
 python -m research.runners.g11_bg_runner --moving-goal --seed 42 --n-steps 1800
 
-# Run static cascade probe (validates BG architecture)
+# Run a static probe of the action-selection circuit
 python -m research.runners.g11_bg_runner --probe-action W
 
 # Check GPU memory
@@ -359,58 +377,63 @@ black neural-simulator.py sim/ experiment/ tests/
 ### File Structure
 
 ```
-neural-simulator.py            # GUI host + main entry point (2.2K lines)
-sim/                           # Core engine package (43 modules, ~20K lines)
+neural-simulator.py            # GUI host + main entry point (~2.2K lines)
+sim/                           # Core engine package (43 modules, ~15.7K lines of code)
   __init__.py                  # public API: SimulationBridge, configs, enums
-  bridge.py                    # SimulationBridge — GPU state + step loop
+  bridge.py                    # SimulationBridge — GPU state + step loop (largest module)
   config.py                    # @dataclass configs (CoreSimConfig etc.)
   enums.py                     # NeuronType, NeuronModel, preset managers
-  connectivity.py              # spatial / WS / motif generators (GPU)
-  kernels.py                   # @cp.fuse() Izh/HH/AdEx + plasticity kernels
-  profiles.py                  # NEURAL_STRUCTURE_PROFILES dict
+  connectivity.py              # spatial / small-world / motif generators (CuPy/NumPy)
+  kernels.py                   # fused Izhikevich/HH/AdEx + plasticity kernels
+  profiles.py                  # NEURAL_STRUCTURE_PROFILES dict (region presets)
   regions.py                   # BrainRegion, RegionPathway, RegionManager
-  neuromodulators.py           # declarative DA/NE/5-HT subsystem
+  neuromodulators.py           # declarative dopamine / norepinephrine / serotonin subsystem
+  backend.py                   # CuPy/NumPy backend abstraction (SIM_BACKEND)
   data_bus.py                  # DataChannel pub/sub
-  replicas.py                  # replicated wiring (multi-bridge support)
+  replicas.py                  # replicated wiring (multi-network support)
   text_embeddings.py           # token embeddings for language regions
-  visual_cortex.py             # Gabor RFs + retina (Cluster K v2)
+  visual_cortex.py             # Gabor/V1 receptive fields + retina rendering
+  lineage.py                   # continuous-learning state across sessions
   progress.py                  # universal [PROGRESS] {json} event format
+  # ... plus ~28 more modules (synapse storage, tokenizers, learning rules, etc.)
 viz/                           # OpenGL renderer / camera / picker / overlays
 ui/                            # DearPyGUI panels / callbacks / layout / plots
 experiment/                    # ExperimentEngine + StimulusManager + Readout + Training
-experiments/                   # YAML configs for autonomous sweeps
+experiments/                   # YAML configs for headless parameter sweeps
 research/
-  runners/                     # 560+ headless experiment scripts (navigation g1..g11, conversation/chat, consolidation, the multi-bridge "model cortex" arc, the language generator, …); each runs via `python -m research.runners.<name>`
-  findings/                    # session-by-session findings (900+ markdown docs)
-  findings/raw/                # raw JSON output per gate run
+  runners/                     # ~1250 headless experiment scripts (navigation, conversation/chat, memory consolidation, the word-meaning-learning experiments, the language generator, …); each runs via `python -m research.runners.<name>`
+  findings/                    # session-by-session research notes (~1760 markdown docs, incl. negative results)
+  findings/raw/                # raw JSON output per experiment run
   datasets/                    # synthetic datasets (e.g. tiny_patterns.npz)
   experiment_runner.py         # YAML-driven sweep orchestrator
-  result_aggregator.py         # cross-condition rollup + verdict line
+  result_aggregator.py         # cross-condition rollup + pass/fail summary
 docs/
+  INDEX.md                     # documentation map — start here to navigate the docs
   CURRENT-STATE.md             # what works today, technical details
-  SCIENCE_ROADMAP.md           # validation pillars + gate progression
+  SCIENCE_ROADMAP.md           # long-term scientific direction + results table
+  biology.md                   # neuroscience tour in plain language
+  diagrams/                    # live Mermaid architecture flowcharts (current + detailed)
   plans/                       # per-feature design docs (paired with findings)
 webapp/                        # FastAPI dashboard (server.py + static/)
-tests/                         # 457 test files
+tests/                         # 472 test files (mostly CPU-only)
   test_determinism.py          # RNG determinism (init + step)
   test_kernels_cpu.py          # CPU validation of fused kernels
   test_experiment_system.py    # experiment engine + stimulus manager
   test_neuromodulators.py      # neuromodulator subsystem
   test_regions.py              # brain-region framework + plasticity gates
   test_data_bus.py             # data-bus pub/sub
+  test_backend.py              # CuPy/NumPy backend parity
   test_g{1,2,3,5,6,8,9}_runner_smoke.py  # per-runner smoke tests
-  test_g11_bg_runner_flags.py  # G11 PFC/perception/scaling flag tests
+  test_g11_bg_runner_flags.py  # navigation runner flag tests
   test_plastic_mask.py         # per-synapse plastic freeze
   test_plastic_mask_checkpoint.py  # plastic mask survives checkpoints
   test_progress.py             # universal [PROGRESS] event format
   test_experiment_runner.py    # YAML sweep runner
-  test_result_aggregator.py    # cross-condition aggregator + verdict
-  test_eval_sanity_check.py    # eval methodology validator (perfect-weight)
-  test_fast_spike_reset.py     # cp.where masked-update spike reset (perf)
+  test_result_aggregator.py    # cross-condition aggregator
   ...
 benchmark.py                   # GPU throughput benchmark runner
 viz_benchmark.py               # visualization performance benchmark
-run_benchmarks.py              # biological validation suite (Bi&Poo, E/I, STP, gamma)
+run_benchmarks.py              # biological validation suite (STDP timing, E/I balance, STP, gamma)
 run_experiment_headless.py     # run a built-in experiment preset without GUI
 run_parameter_sweep.py         # grid/zip parameter sweep with t-test + Cohen's d
 simulation_profiles/           # 47 brain-region JSON profiles + auto-tune cache

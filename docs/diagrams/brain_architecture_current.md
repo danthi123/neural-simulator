@@ -1,4 +1,4 @@
-# Brain architecture — current state (2026-07-10)
+# Brain architecture — current state (reviewed 2026-07-22)
 
 Plain-language, **as-implemented** flowcharts of the whole simulated brain.
 These render directly on GitHub (Mermaid). They are written for a reader who has
@@ -59,13 +59,15 @@ flowchart TB
 
       subgraph GROUPS["Separate neuron groups (each does one job)"]
         direction TB
-        NAVG["Navigation group<br/>reaches goals by moving through the world<br/>using only what it sees (its oldest, most-tested behavior)"]:::nav
+        NAVG["Navigation group<br/>reaches goals by moving through the world<br/>(its oldest, most-tested behavior)"]:::nav
         COMPG["Comprehension group<br/>reads a sentence → who did what to whom"]:::conv
         MEMG["Fact memory group<br/>binds words into facts · stores · recalls"]:::mem
         PLANG["Planning group<br/>decides the next thing to say"]:::plan
       end
 
       LEARN["Word-meaning learning<br/>learns concept representations<br/>just by 'listening' to a stream of text"]:::learn
+
+      DRIVE["Reward and drive (dopamine)<br/>one shared signal reinforces useful<br/>behavior and sets how careful it is"]:::reward
 
       SAFE{{"No-fabrication safeguard<br/>is there a stored fact that<br/>matches the question?"}}:::moat
 
@@ -89,6 +91,12 @@ flowchart TB
     MEMG --> SAFE
     PLANG -.->|what to bring up next| MEMG
 
+    %% one shared core + the validated cross-region links that make it "one brain"
+    COMPG -.->|a spoken command can steer movement| NAVG
+    SENSE -.->|an object seen while moving is remembered| MEMG
+    DRIVE -.->|reinforces useful moves| NAVG
+    DRIVE -.->|a hungrier brain is more careful about what it claims| SAFE
+
     SAFE ==>|a matching fact exists| GEN
     SAFE ==>|no match| IDK
     GEN --> RECHK
@@ -104,6 +112,7 @@ flowchart TB
     classDef learn fill:#dcefd3,stroke:#2f8f4e,color:#1d1d1f;
     classDef moat fill:#fdebd0,stroke:#c8791a,color:#1d1d1f;
     classDef gen fill:#d1f2eb,stroke:#138d75,color:#1d1d1f;
+    classDef reward fill:#fcf3cf,stroke:#b9770e,color:#1d1d1f;
 ```
 
 **How to read it.** The brain holds the *knowledge* (word-meaning learning +
@@ -114,7 +123,11 @@ if no stored fact matches — the reply is simply "I don't know." The navigation
 group is a separate neuron group in the same network that reaches goals by
 turning what it sees into movement — the project's oldest and most thoroughly
 validated behavior, and the place where perception, action selection, reward, and
-spatial memory come together into one living behavior. All groups share one update
+spatial memory come together into one living behavior. One shared reward-and-drive
+signal (dopamine) reaches both halves — it reinforces useful moves and makes the
+brain more careful about what it claims to know — and a few validated cross-links
+tie the halves together: a spoken command can steer movement, and an object seen
+while moving can be remembered and talked about later. All groups share one update
 loop, which is what "one brain" means here.
 
 ---

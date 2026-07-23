@@ -1,10 +1,18 @@
-# Concept Chat REPL — Full conversational demo (2026-05-14)
+# Concept Chat REPL — example transcript (2026-05-14)
 
-Genuine semantic conversation with neural memory. 7 validated multi-seed
-metrics: 87.5% engram stim-recall, 90% multitag, 90% intersection,
-96.7% yes/no, 98.8% precision at 20-pair capacity, **100% 3-word
-sentence role queries**, **100% 4-word sentence role queries**. Plus
-5-word sentence support, cross-session persistence, natural-language I/O.
+> **Scope.** This is an example transcript of the **earlier, self-contained
+> concept-chat demo** (`compose_concept_chat.py`) — associative concept-concept
+> memory on a 16-word vocabulary. It is *not* the current grounded
+> conversational agent; for that (who-did-what parsing, reasoning across turns,
+> the no-fabrication safeguard, and the friendly chat consoles), see
+> [`CHAT-DEMO-GUIDE.md`](CHAT-DEMO-GUIDE.md). The metrics below are validated
+> across multiple seeds **for this specific demo**.
+
+This demo's associative memory reaches, across multiple seeds: 87.5% engram
+stim-recall, 90% multi-tag retrieval, 90% intersection, 96.7% yes/no, 98.8%
+precision at 20-pair capacity, and 100% on 3-word and 4-word sentence role
+queries. Plus 5-word sentence support, cross-session persistence, and
+natural-language input/output.
 
 ## Full conversation transcript
 

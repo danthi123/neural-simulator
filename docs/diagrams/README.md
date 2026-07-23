@@ -37,7 +37,7 @@ assemble almost the entire architecture, gated by opt-in flags. The diagrams
 reflect the **maximal** configuration (every flag on); a given run builds a
 subset.
 
-Two current-state headlines the diagrams now show: **(1)** navigation decides
+Two headlines the archived snapshot captured (accurate as of its 2026-06 date; for the live current state use the two Mermaid docs linked above): **(1)** navigation decides
 which way to move by a **spiking race** (an evidence accumulator → an all-or-none
 commit burst) — this is the **default**, and the old hand-coded `argmax`
 read-out is retired (kept only as an opt-in oracle); **(2)** the conversational

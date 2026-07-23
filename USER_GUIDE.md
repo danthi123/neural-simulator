@@ -89,13 +89,15 @@ The simulator is split into focused packages (it was once a single large `neural
   monitoring.
 - **Visualization** (`viz/` package): PyOpenGL-based 3D point cloud of neurons
   with synapse lines and optional synaptic pulse effects.
-- **Webapp** (`webapp/` package): FastAPI + uvicorn dashboard for live
-  monitoring, run history, and launcher control.
-- **Research runners** (`research/runners/`): 26+ headless runners for
-  research-gate experiments (G1 → G11) plus text I/O, perception, and
-  diagnostic tools (`text_eval_*`, `permuted_label_check.py`,
-  `eval_sanity_check.py`, `morning_briefing.py`, etc).
-  See [README.md#research-runners](README.md#research-runners).
+- **Webapp** (`webapp/` package): FastAPI + uvicorn web console for chatting
+  with a trained/developed brain (the centerpiece), visualizing runs (2-D
+  gridworld + 3-D region view), and launching/monitoring headless experiments.
+  See `docs/webapp-frontend-guide.md`.
+- **Research runners** (`research/runners/`): ~1250 headless runners for
+  research-gate experiments (G1 → G11), the conversational agent and its
+  demos, text I/O, perception, and diagnostic tools (`text_eval_*`,
+  `permuted_label_check.py`, `eval_sanity_check.py`, `morning_briefing.py`,
+  etc). See [README.md#research-runners](README.md#research-runners).
 - **Sweep orchestration** (`research/experiment_runner.py`,
   `research/result_aggregator.py`): YAML-driven cross-condition
   experiments with built-in verdict aggregation.
@@ -436,13 +438,14 @@ entry points:
 ### 9.1 Run a built-in experiment preset
 
 ```bash
-python run_experiment_headless.py --preset rl --seed 42
+python run_experiment_headless.py --experiment reinforcement --seed 42
 ```
 
-Available presets: `stim` (basic stimulus-response), `associative`
-(Pavlovian conditioning — pairing a neutral cue with a meaningful one),
-`rl` (reward-driven reinforcement learning), `freq` (frequency-response
-sweep). Output goes to `experiment_<preset>_<timestamp>.json`.
+The `--experiment` (or `-e`) flag selects one of: `stimulus-response` (basic
+stimulus-response), `associative` (Pavlovian conditioning — pairing a neutral
+cue with a meaningful one), `reinforcement` (reward-driven reinforcement
+learning), `frequency-response` (frequency-response sweep), or `all`. Output
+goes to `experiment_<name>_<timestamp>.json` unless you pass `--output PATH`.
 
 ### 9.2 Run a parameter sweep
 
@@ -472,23 +475,16 @@ adaptation of firing rates. All currently pass.
 
 ### 9.4 Research-gate runners
 
-For specific architectural experiments. Each runner writes raw data to
-`research/findings/raw/gN/` and a markdown summary to `research/findings/`.
+For specific architectural experiments. Runners write raw data under
+`research/findings/raw/` and markdown summaries to `research/findings/`.
+
+The flagship navigation runner and the text-I/O tools are directly runnable:
 
 ```bash
-# Encoder-decoder roundtrip (G1)
-python -m research.runners.g1_v3_runner --seed 42
-
-# Sensorimotor signed perceptron (G5)
-python -m research.runners.g5_v3_runner --seed 42
-
-# Moving-goal reinforcement learning with random motor exploration (G9)
-python -m research.runners.g9_runner --seed 42 --motor-exploration-rate-hz 15
-
-# Basal-ganglia action-selection circuit (G11) - moving-goal stress test
+# Basal-ganglia action-selection circuit (G11) — moving-goal stress test
 python -m research.runners.g11_bg_runner --moving-goal --seed 42 --n-steps 1800
 
-# Basal-ganglia circuit - static single-action probe
+# Basal-ganglia circuit — static single-action probe
 python -m research.runners.g11_bg_runner --probe-action W
 
 # Text input/output training + evaluation (learning to map a written
@@ -497,8 +493,8 @@ python -m research.runners.text_train_embodied --seed 42
 python -m research.runners.text_eval_embodied --seed 42
 
 # Diagnostic: is the word-to-action signal real learning, or just
-# random structure that happens to look right?
-python -m research.runners.permuted_label_check <eval_file.json>
+# random structure that happens to look right? (scans a set of eval JSONs)
+python -m research.runners.permuted_label_check --pattern "text_eval_*_seed*.json"
 
 # Eval methodology validation via hand-built perfect weights
 python -m research.runners.eval_sanity_check --seed 42
@@ -507,8 +503,12 @@ python -m research.runners.eval_sanity_check --seed 42
 python -m research.runners.morning_briefing
 ```
 
-See [README.md#research-runners](README.md#research-runners) for the full
-runner status table.
+The earlier research-gate modules (G1 encoder-decoder, G5 sensorimotor
+perceptron, G9 moving-goal RL) are **library modules**: their episode functions
+(`run_g1_v3`, `run_g5_v3_episode`, `run_g9_episode`) are imported and driven by
+seed-aggregating harnesses rather than invoked standalone. See
+[README.md#research-runners](README.md#research-runners) for the full runner
+status table.
 
 ### 9.5 YAML-driven sweeps
 
@@ -641,17 +641,19 @@ gates rather than from an off-brain "pick the highest score" step.
    connection (for example, a connection built at weight 25 needs
    `stdp_w_max = 30`, not the default of 2).
 
-**Result (3 random seeds, 1800 steps):** the agent settles about 1.7 grid
-cells from the goal on average (measured as grid-step, or "city-block",
-distance), versus about 5.5 for random wandering — a 74% improvement over the
-earlier baseline circuit.
+**Result (3 random seeds, 1800 steps):** with the per-action cascade the agent
+reliably reaches and stays near the goal — a clear, consistent improvement over
+the earlier shared-reservoir circuit, which suffered the silent-motor trap. The
+capability (each action's chain can be learned and selected) is the point here;
+specific navigation benchmark numbers from this period were later re-audited, so
+this guide describes navigation qualitatively (see the note in Section 12.1).
 
 See `research/findings/2026-04-25-phase-b-acid-test-real-win.md` for the
 full diagnosis.
 
-### 12.1 Current navigation flagship (2026-05-01)
+### 12.1 Extended navigation configuration
 
-The action-selection circuit above was the foundation. The current best
+The action-selection circuit above is the foundation. A more elaborate
 navigation setup adds several biologically motivated extensions: a closed
 feedback loop through the basal ganglia, a topographic (spatially organized)
 map in cortex, a slow synaptic channel (NMDA receptors) in the cortex, motor,
@@ -667,12 +669,22 @@ python -m research.runners.g11_bg_runner --moving-goal --goal-schedule multi --d
     --grid-size 16 --seed N --n-steps 1800
 ```
 
-Result on a 16×16 grid using simulated vision only (no built-in navigation
-rule, and no direct access to the goal's coordinates): the agent ends about
-3.0 grid cells from the goal on average across 3 random seeds — better than an
-earlier setup managed on a grid one-quarter the size, while removing four of
-the five information shortcuts the agent used to be given. See
-`research/findings/2026-05-01-cluster-k-v2-breakthrough.md` for details.
+This drives the agent through a moving-goal task using a spiking visual cortex,
+and its performance is characterized across grid sizes and multiple random
+seeds. In the integrated one-brain navigation path, the move each step is chosen
+by a **spiking winner-take-all decision** (an evidence accumulator that races to
+an all-or-none commit) rather than an off-brain "pick the highest score" step;
+the older host-side pick-the-max remains available as an optional comparison
+baseline via `--readout-source motor`.
+
+> **Accuracy note.** A mid-2026 internal audit found that several widely-copied
+> navigation benchmark claims from this period were wrong or overstated — in
+> particular, the claim that this configuration "navigates with no built-in
+> heuristic / no direct goal access / with four of five shortcuts closed" was
+> **false** (the built-in heuristic was actually still enabled by default in this
+> command), and one cross-grid "X% better" comparison mixed two different
+> metrics. Those figures have been withdrawn. This guide therefore describes
+> navigation qualitatively rather than repeating specific benchmark numbers.
 
 ---
 

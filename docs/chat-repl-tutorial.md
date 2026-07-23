@@ -1,9 +1,19 @@
 # Concept Chat REPL Tutorial
 
 The `compose_concept_chat.py` runner provides an interactive REPL for
-genuine concept-concept semantic conversation with the simulator's
-neural network. Validated 90% FULL / 100% PARTIAL multi-seed retrieval
-(2026-05-14).
+associative concept-concept memory on the simulator's neural network: you
+teach it pairs of concepts, and it retrieves the learned associations. Validated
+across multiple seeds at 90% full / 100% partial retrieval on a 16-word
+vocabulary (2026-05-14).
+
+> **Scope.** This is an **earlier, self-contained demo** built on the
+> concept-pool architecture and biological engram tagging. It stores and
+> retrieves *associations between concepts* — it is not the full grounded
+> conversational agent (who-did-what parsing, yes/no across turns, multi-step
+> reasoning, the no-fabrication safeguard on arbitrary questions). For the
+> current conversational agent and the friendly chat consoles, see
+> [`CHAT-DEMO-GUIDE.md`](CHAT-DEMO-GUIDE.md). This tutorial is kept because the
+> mechanism is small, self-contained, and instructive.
 
 ## Quick start
 

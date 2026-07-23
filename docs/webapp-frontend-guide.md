@@ -1,14 +1,65 @@
 # Webapp Frontend Architecture Guide
 
-How to add features, tabs, and visualizations to the research dashboard
-without breaking what's already there.
+How to add features, tabs, and visualizations to the web console without
+breaking what's already there.
 
-**Last updated:** 2026-06-22. This is a **contributor** guide — the
+**Last updated:** 2026-07-23. This is a **contributor** guide — the
 architectural patterns (tab registry, endpoint conventions, theming) are
-current and stable. The screenshot tour and the per-tab counts below predate
-later UI growth (the dashboard now has 12 tabs, including **Bridges** and
-**Lineages**, and surfaces 1000+ findings); treat the tour as illustrative
-of the *patterns*, not an exact inventory of the live UI.
+current and stable.
+
+**What the web console is for.** It is a functional console for the project,
+with three jobs, in priority order:
+
+1. **INTERACT** — chat with a trained/developed brain. This is the centerpiece
+   and the default (leftmost) tab.
+2. **VISUALIZE** — watch the brain work: a 2-D gridworld replay (**World**) and
+   a 3-D view of the regions and pathways firing (**Brain**).
+3. **LAUNCH / MANAGE** — start and monitor headless runs (**Lab**, **Runs**),
+   and browse results (Runs, Language, Findings, Plans, Bridges, Lineages).
+
+> The screenshot tour below is an **archived snapshot** that predates the
+> Interact-first redesign (2026-06-23) and the 3-D Brain view; it shows an
+> older dashboard-style layout with more tabs surfaced at the top level. Treat
+> it as illustrative of the *patterns*, not an inventory of the live nav — for
+> the current nav and the Interact tab, see **"Current console layout"** just
+> below.
+
+---
+
+## Current console layout
+
+The live nav (see `webapp/static/index.html` and `TAB_REGISTRY` in
+`webapp/static/app.js`) puts the three console jobs first, with the rest tucked
+under an "Archive ▾" submenu:
+
+- **Primary nav:** `💬 Interact` (default) · `🗺 World` · `🧠 Brain` · `▶ Lab` ·
+  `Runs`
+- **Archive submenu:** `Home` · `Experiments` · `Language` · `Findings` ·
+  `Plans` · `Bridges` · `Lineages` · `About`
+
+### Interact tab (the centerpiece)
+
+The Interact tab (`setupBrainChat()` in `app.js`, section `#tab-interact` in
+`index.html`) is a chat surface wired to a real conversational brain:
+
+- **Brain picker** — populated from `GET /api/brains` (built-in brains plus any
+  `bridges/developed/*` bundles the server can load). Picking one sets the
+  `brain` field for chat requests.
+- **Renderer selector** — chooses how replies are phrased fluently: the
+  off-brain language generator when a GPU is free, or a GPU-free template stub
+  otherwise (`auto` picks for you).
+- **Rich toggle** — a substantive multi-sentence grounded reply per turn (direct
+  recall + a multi-step chain + an elaboration), each sentence verified against
+  the brain.
+- **Show-fact / Show-activity toggles** — reveal the stored who-did-what fact
+  the brain recalled, and a small view of which regions fired, for each answer.
+- A turn `POST`s to `/api/brain-chat`; the brain does the comprehension,
+  recall, grounding, and the **no-fabrication safeguard** (it answers
+  "I don't know about that." when nothing matches), and the renderer only shapes
+  the surface wording. `POST /api/brain-chat/reset` clears a session.
+
+The CLI equivalent is `research/runners/brain_chat_tui.py` (which the endpoint
+reuses by import); see `docs/CHAT-DEMO-GUIDE.md`.
 
 ---
 
@@ -141,7 +192,7 @@ layout.
 
 ## TL;DR
 
-The frontend is a vanilla-JS dashboard at `webapp/static/`. To add a
+The frontend is a vanilla-JS web console at `webapp/static/`. To add a
 new feature you typically touch three things:
 
 1. **Tab registration** — append to `TAB_REGISTRY` in
@@ -165,8 +216,9 @@ For client-side rendering primitives, reuse the existing helpers:
   helpers in `ui.js`.
 - **Theme:** CSS variables on `:root`, switched via
   `document.documentElement.dataset.theme`.
-- **No external JS deps** beyond Three.js (planned for the Brain tab).
-  Charts use plain Canvas2D; no D3.
+- **Minimal external JS deps:** Three.js is used by the Brain tab's 3-D view
+  (`brain3d.js`), loaded from a CDN via an `<script type="importmap">` in
+  `index.html` (still no build step). Charts use plain Canvas2D; no D3.
 
 ---
 
@@ -174,11 +226,13 @@ For client-side rendering primitives, reuse the existing helpers:
 
 ```
 webapp/
-├── server.py                    # FastAPI app, all endpoints
+├── server.py                    # FastAPI app, all endpoints (incl. /api/brain-chat, /api/brains)
 ├── static/
-│   ├── index.html               # tab structure
-│   ├── app.js                   # main logic, tab registry, all loaders
-│   ├── world.js                 # 2D gridworld replay/live (1869 lines)
+│   ├── index.html               # tab structure + Three.js importmap
+│   ├── app.js                   # main logic, tab registry, all loaders (incl. setupBrainChat)
+│   ├── world.js                 # 2D gridworld replay/live
+│   ├── brain3d.js               # Three.js 3D view of regions + pathways (replay + live)
+│   ├── brain3d_layout.json      # region positions/families for the 3D view
 │   ├── charts.js                # Canvas2D line/bar charts + palette
 │   ├── ui.js                    # loadState, saveState, toast, fmtRelTime
 │   └── style.css                # all styling, CSS-variable theming
@@ -194,9 +248,10 @@ truth for tab metadata:
 
 ```javascript
 const TAB_REGISTRY = [
+  { id: "interact",    label: "Interact", order: 5,  onActivate: () => { if (!window._interactLoaded) setupBrainChat(); } },
   { id: "overview",    label: "Home",     order: 10, onActivate: () => { if (!window._overviewLoaded) loadOverview(); } },
   { id: "launcher",    label: "Lab",      order: 20, onActivate: null },
-  // ...
+  // ... world, brain, runs, experiments, language, findings, plans, bridges, lineages, info
 ];
 ```
 
@@ -268,9 +323,11 @@ For live training stream data, use the WebSocket pattern at
 3. WebSocket upgrades from a client `EventSource`-like endpoint.
 4. Each new line is broadcast to all connected clients.
 
-For the planned 3D Brain visualization we'll add `/ws/sim_stream` that
-subscribes to the bridge's `data_bus` channels (see `sim/data_bus.py`)
-and forwards `region_rates` / `pathway_pulses` / etc. at 10 Hz.
+The shipped Brain 3-D view (`brain3d.js`) currently gets its live data by
+polling `/api/inflight`. A future enhancement is a true push-stream —
+`/ws/sim_stream` subscribing to the bridge's `data_bus` channels (see
+`sim/data_bus.py`) and forwarding `region_rates` / `pathway_pulses` / etc. at
+~10 Hz — to replace the polling.
 
 ---
 
@@ -417,7 +474,10 @@ The current architecture supports adding:
 
 - **More tabs:** trivial via `TAB_REGISTRY`.
 - **More backend endpoints:** standard FastAPI patterns.
-- **Three.js 3D viz:** see `docs/plans/2026-05-02-webapp-3d-visualization-design.md`.
+- **Three.js 3D viz:** already shipped in `brain3d.js` (regions + pathways,
+  replay + live-polling). A future enhancement is a true push-stream (below)
+  instead of polling; design context in
+  `docs/plans/2026-05-02-webapp-3d-visualization-design.md`.
 - **Plugin-style external feature modules:** every tab's loader is a
   free function — could be loaded dynamically via `import()` if we ever
   ship community plugins.
