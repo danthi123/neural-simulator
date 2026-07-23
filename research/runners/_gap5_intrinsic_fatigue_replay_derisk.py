@@ -42,7 +42,7 @@ from research.runners._gap5_sequence_replay_derisk import _prepare_sequence, SEQ
 from research.runners._gap5_spontaneous_reactivation_derisk import _hard_silence, _configure_ou  # noqa: E402
 
 
-def _rest_with_fatigue(prep, noise, rest_steps, seed, adapt, self_regen_read, d_abs, a_abs, verbose=False):
+def _rest_with_fatigue(prep, noise, rest_steps, seed, adapt, self_regen_read, d_abs, a_abs, apical_gc_read=None, verbose=False):
     """Freeze plasticity + hard-silence + weak background, run REST. DE-LATCH the plateau (self_regen_read) and, if adapt,
     CRANK Izhikevich spike-frequency adaptation on the CA3-exc slice (cp_izh_d_increment=d_abs, cp_izh_a=a_abs) so the
     just-fired assembly self-fatigues and the stored forward chain drives the next. NO external inhibition. Returns F."""
@@ -52,6 +52,11 @@ def _rest_with_fatigue(prep, noise, rest_steps, seed, adapt, self_regen_read, d_
     bridge.core_config.enable_hebbian_learning = False
     # DE-LATCH: the plateau self-regen is read live each step (bridge.py:7399); lowering it makes each ignition transient.
     bridge.core_config.coincidence_plateau_self_regen = float(self_regen_read)
+    # Optional WEAKEN the apical->soma read during the rest (read live at bridge.py:7111; sentinel <0 = unchanged).
+    # A weaker sustained apical drive lets somatic adaptation SILENCE a latched dendrite so it can HAND OFF to the next
+    # assembly (research gate 2026-07-23 candidate #1: keep the plateau as the bump, weaken its grip so the bump travels).
+    if apical_gc_read is not None:
+        bridge.core_config.apical_g_couple_to_soma = float(apical_gc_read)
     _hard_silence(bridge)
     kind = noise[0]
     _configure_ou(bridge, (noise[1] if kind == "ou" else None), seed)
@@ -110,7 +115,7 @@ def one_seed(seed, cfg, a):
     al = prep["assemblies_local"]
     # INTRINSIC: de-latch + cranked adaptation (the recommended mechanism)
     Fi = _rest_with_fatigue(prep, noise, a.rest_steps, seed, adapt=True, self_regen_read=a.self_regen_read,
-                            d_abs=a.d_abs, a_abs=a.a_abs, verbose=True)
+                            d_abs=a.d_abs, a_abs=a.a_abs, apical_gc_read=a.apical_gc_read, verbose=True)
     i = _fwd(Fi, al, det)
     if a.intrinsic_only:                              # search: ONE arm (does intrinsic fatigue reactivate + order at this self_regen/d/a?)
         go = (i[0] >= 0.50) and (i[2] >= 2)
@@ -120,7 +125,7 @@ def one_seed(seed, cfg, a):
     # ADAPTATION-LESION (de-latch, adaptation OFF) = Ecker's ExpIF control -> MUST co-ignite (adaptation is load-bearing)
     prep_l = _prepare_sequence(seed, cfg)
     Fl = _rest_with_fatigue(prep_l, noise, a.rest_steps, seed, adapt=False, self_regen_read=a.self_regen_read,
-                            d_abs=a.d_abs, a_abs=a.a_abs)
+                            d_abs=a.d_abs, a_abs=a.a_abs, apical_gc_read=a.apical_gc_read)
     les = _fwd(Fl, al, det)
     if a.quick:                                       # calibration: only the load-bearing INTRINSIC vs ADAPT-LESION pair
         go = (i[0] >= 0.50) and (i[2] >= 2) and (les[0] < i[0] - 0.15)
@@ -131,11 +136,11 @@ def one_seed(seed, cfg, a):
     # LATCH-ON (bistable plateau kept + cranked adaptation) -> MUST degrade (soma adaptation can't release a dendritic latch)
     prep_o = _prepare_sequence(seed, cfg)
     Fo = _rest_with_fatigue(prep_o, noise, a.rest_steps, seed, adapt=True, self_regen_read=cfg["plateau_self_regen"],
-                            d_abs=a.d_abs, a_abs=a.a_abs)
+                            d_abs=a.d_abs, a_abs=a.a_abs, apical_gc_read=a.apical_gc_read)
     # NO-NOISE acid (intrinsic, no Poisson) -> MUST ->0
     prep_n = _prepare_sequence(seed, cfg)
     Fn = _rest_with_fatigue(prep_n, ("none",), a.rest_steps, seed, adapt=True, self_regen_read=a.self_regen_read,
-                            d_abs=a.d_abs, a_abs=a.a_abs)
+                            d_abs=a.d_abs, a_abs=a.a_abs, apical_gc_read=a.apical_gc_read)
     latch = _fwd(Fo, al, det); nn = _fwd(Fn, al, det)
     go = (i[0] >= 0.50) and (i[2] >= 2) and (les[0] < i[0] - 0.15) and (nn[2] == 0)
     print(f"  [seed {seed}] INTRINSIC fwd={i[0]:.3f} rev={i[1]:.3f} (ev={i[4]} multi={i[2]} act={i[3]} pop={i[5]:.4f}) | "
@@ -157,6 +162,7 @@ def main():
     ap.add_argument("--self-regen-read", type=float, default=0.0, help="plateau self-regen during the READ (0 = fully transient de-latch; the load-bearing knob)")
     ap.add_argument("--d-abs", type=float, default=40.0, help="cranked Izhikevich per-spike u-kick d_increment on CA3-exc (Ecker AdEx b~207pA analog; sweep)")
     ap.add_argument("--a-abs", type=float, default=0.008, help="cranked Izhikevich recovery rate a on CA3-exc (SMALLER=slower fatigue recovery, tau_u=1/a; 0.008 -> tau~125ms > theta)")
+    ap.add_argument("--apical-gc-read", type=float, default=None, help="WEAKEN the apical->soma read (bridge.py:7111) during rest so somatic adaptation can silence a latched dendrite for hand-off (research gate 2026-07-23 candidate #1; e.g. 1.5-2.5). None = build value (byte-identical).")
     ap.add_argument("--poisson-rate", type=float, default=0.015)
     ap.add_argument("--poisson-pa", type=float, default=1500.0)
     ap.add_argument("--poisson-dur", type=int, default=10)
