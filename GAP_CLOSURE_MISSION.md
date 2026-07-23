@@ -179,6 +179,37 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
+- **🔌 GPU CRASH + REBOOT HANDOFF (2026-07-22 ~20:00) — READ FIRST if resuming a fresh session after the reboot.**
+  The 3090 fell off the bus mid-training (`cudaErrorLaunchFailure`; kernel log = `_scrubWaitAndSave: Timed out` +
+  `API_GPU_ATTACHED_SANITY_CHECK failed` = HUNG CORE → reboot-only). Owner was away + asked Claude to handle it. Actions
+  taken (all committed; see `docs/GPU_CRASH_RECOVERY.md`): (1) **LACT power cap lowered 390→300 W** (`/etc/lact/config.yaml`;
+  backup `.bak-preclaude-2026-07-22`) = the likely-recurrence fix (3090 hang-under-load). (2) **`lmtrain-resume.service`
+  installed+enabled** → auto-resumes `lm_train_run resume --root bridges/lmtrain/run3` on boot (from step **626000**,
+  ~5.13B tok, val_ppl 56.22; checkpoint SAFE + bit-exact). (3) `tools/gpu_recover.sh` for future driver-glitch cases.
+  **Then Claude REBOOTED the machine.** ⇒ **FRESH-SESSION FIRST ACTIONS:** verify the training came back —
+  `systemctl status lmtrain-resume` + `.venv/bin/python3 -m research.runners.lm_train_run status --root bridges/lmtrain/run3`
+  (+ `tail bridges/lmtrain/run3/boot_resume.log`); confirm `nvidia-smi` works + power cap ~300 W. If training did NOT
+  resume, run the resume command manually. Claude's session did NOT survive the reboot (Claude Code is interactive; this is
+  the owner's normal manual-continue design — a "continue" + this board re-anchors).
+- **THIS SESSION's gap progress (2026-07-22, all committed both remotes; CPU work, coexisted with the training until the crash):**
+  - **gap#4 REFRAMED (corrects the "CLEAN-NEGATIVE" below):** the credit RULE's math is SOUND — feedback-alignment credit
+    BEATS a reservoir readout **6/6 on MNIST** (depth-2/4/6; the cleanxor "clean negative" was a WRONG-INSTRUMENT task
+    artifact), **survives sparsity to 2%** (3-seed), and the **FAITHFUL on-bridge BDSP rule** (coincidence-gate +
+    sigmoid-baseline credit) **BEATS the reservoir at spiking sparsity 3-seed** (5%: 0.779 vs 0.514). ⇒ the on-bridge
+    negative is an **OP-POINT / LR-SCALE issue, NOT the rule** (dense collapse was pure lr-scale, fixed at lr 0.03). Still a
+    deprioritized parallel frontier, but the "rule is broken" belief is RETIRED. Findings `2026-07-22-gap4-*`.
+  - **gap#5 on-spikes ordered replay — CORRECT MECHANISM identified (deep-research 5/5 unanimous):** the 3 failed
+    external-inhibition attempts were a HOLD-vs-PUSH category error; the fix is **INTRINSIC FATIGUE** (Izhikevich
+    spike-frequency adaptation / STD fatigues the just-active assembly → releases → the stored forward chain drives the
+    next; Ecker 2022, our substrate class). Runner `_gap5_intrinsic_fatigue_replay_derisk.py` built (byte-unchanged
+    plasticity guard; `--intrinsic-only`/`--quick`/full 4-arm). **CALIBRATION OPEN:** the de-latch + adaptation is
+    OVER-SUPPRESSING — d=200 (all self_regen 0.06–0.15) AND gentle (d=140/160, a 0.012–0.014) ALL give act=[0,0,0] (dead);
+    sr=0 also dead. Root cause: cranking d with SLOW `a` (low a → u never recovers → permanent suppression). **EXACT NEXT
+    ACTION (gap#5, CPU, no GPU needed — run alongside the resumed training):** sweep MODERATE `a` (~0.022–0.030, so u
+    recovers between bursts) × MODEST `d` (~110–135, just above baseline 99) at `--self-regen-read 0.15` (keep the sustain);
+    `--intrinsic-only` parallel probes (20 cores). Target: act ~[1,1,1] one-at-a-time + forward_frac↑. Then full 4-arm +
+    shuffled/reverse-chain anti-cheats, 6-seed (parallelize across seeds). Findings `2026-07-22-gap5-onspikes-replay-is-INTRINSIC-FATIGUE-*`.
+
 - **📍 SESSION CLOSEOUT (2026-07-22 ~11:15, owner: "fully close everything out") — HONEST FINAL STATUS OF ALL 5 GAPS:**
   - **gap#1 (open fluent generation) = OPEN, actively training.** The WKV/SSM cortex LM (83M, FineWeb-Edu) is at step
     ~373k / ~3.06B tok, **val_ppl 59.68 (new low, descending)** — the path to replacing the 21M ANN scaffold. Spiking-
