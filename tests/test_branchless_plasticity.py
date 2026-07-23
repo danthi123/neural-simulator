@@ -84,3 +84,40 @@ def test_branchless_stdp_clip_hazard():
         "branchless CLIP HAZARD: the frozen out-of-bounds weight was clipped -- the active-mask select is not discarding "
         "the kernel's clipped output off-active")
     assert np.array_equal(traj_off, traj_on), "clip-hazard case: branchless differs from compacting"
+
+
+def _build_hebbian(branchless):
+    from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
+    from sim.bridge import SimulationBridge
+    from sim.enums import NeuronModel
+    cfg = CoreSimConfig(
+        num_neurons=N, connections_per_neuron=60, seed=42, dt_ms=1.0,
+        neuron_model_type=NeuronModel.IZHIKEVICH.name, ou_std_current_pA=0.0,
+        enable_stdp=False, enable_reward_modulation=False,
+        enable_hebbian_learning=True, hebbian_symmetric=True,          # symmetric -> synchronous co-firing potentiates
+        enable_short_term_plasticity=False, enable_homeostasis=False, enable_structural_plasticity=False,
+        hebbian_max_weight=5.0, enable_branchless_plasticity=branchless,
+    )
+    b = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
+                         runtime_state=RuntimeState(), gpu_config=GPUConfig(enable_profiling=False))
+    b._initialize_simulation_data()
+    b.cp_connections.data[:] = W_INIT
+    return b
+
+
+def test_branchless_hebbian_byte_identical():
+    xp, _ = get_backend()
+
+    def _run_heb(b, steps=8):
+        traj = []
+        for _ in range(steps):
+            b.cp_external_input_current[:] = xp.full(N, 1000.0, dtype=xp.float32)  # synchronous -> symmetric Hebbian fires
+            b._run_one_simulation_step()
+            traj.append(to_host(b.cp_connections.data).copy())
+        return np.array(traj)
+
+    traj_off = _run_heb(_build_hebbian(False))
+    traj_on = _run_heb(_build_hebbian(True))
+    assert int((np.abs(traj_off[-1] - W_INIT) > 1e-6).sum()) > 0, "vacuous: Hebbian moved no weights"
+    assert np.array_equal(traj_off, traj_on), (
+        "branchless Hebbian potentiation weight TRAJECTORY differs from the compacting path -- not byte-identical")

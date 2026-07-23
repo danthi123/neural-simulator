@@ -817,6 +817,34 @@ class SimulationBridge:
         # the active count would re-introduce a device->host sync, defeating the purpose. It is not byte-guaranteed
         # under this flag (the byte-identity test checks cp_connections.data + firing raster, not this counter).
 
+    def _apply_branchless_hebbian(self, coo, cfg, fired_this_step):
+        """Branchless (compaction-free) Hebbian POTENTIATION (opt-in via cfg.enable_branchless_plasticity).
+
+        Byte-identical to the compacting rate-window / symmetric-causal potentiation in _run_one_simulation_step, but
+        applies the delta over ALL nnz with a masked SELECT instead of cp.where(pre&post)[0] / cp.where(coact>thr)[0]
+        -> removes the potentiation compaction sync. The whole-array Hebbian DECAY + clip (further down the block) are
+        untouched (already compaction-free). num_potentiation_events (diagnostic) is not maintained here.
+        """
+        nnz = self.cp_connections.nnz
+        w = self.cp_connections.data
+        _rate_win = getattr(cfg, "hebbian_rate_window", False) and self.cp_hebb_coactivity_trace is not None
+        if _rate_win:
+            _tr = self.cp_hebb_coactivity_trace
+            _coact = _tr[coo.row] * _tr[coo.col]
+            heb_mask = _coact > cp.float32(getattr(cfg, "hebbian_coactivity_thresh", 0.25))
+            delta_all = cfg.hebbian_learning_rate * _coact * (cfg.hebbian_max_weight - w)
+        else:
+            if getattr(cfg, "hebbian_symmetric", False):
+                pre_mask = fired_this_step[coo.row]
+            else:
+                pre_mask = self.cp_prev_firing_states[coo.row]
+            post_mask = fired_this_step[coo.col]
+            heb_mask = pre_mask & post_mask
+            delta_all = cfg.hebbian_learning_rate * (cfg.hebbian_max_weight - w)
+        if self.cp_plasticity_rate_gain is not None:
+            delta_all = delta_all * self.cp_plasticity_rate_gain[:nnz]
+        self.cp_connections.data[:] = cp.where(heb_mask, w + delta_all, w)
+
     def _init_synapse_arrays_with_capacity(self, num_synapses, cfg):
         """Initializes synapse-indexed arrays with pre-allocated capacity for growth.
 
@@ -7640,7 +7668,10 @@ class SimulationBridge:
                     coo_matrix_heb = self._get_cached_coo()  # Use cached COO
                     base_weights_data_array = self.cp_connections.data
                     num_potentiation_events = 0
-                    if _rate_win:
+                    if getattr(cfg, "enable_branchless_plasticity", False):
+                        # Branchless Hebbian potentiation (opt-in): all-nnz masked select, no cp.where(mask)[0] sync.
+                        self._apply_branchless_hebbian(coo_matrix_heb, cfg, fired_this_step)
+                    elif _rate_win:
                         # RATE-WINDOW: potentiate by the co-activity-trace PRODUCT at the two endpoints, for synapses
                         # whose product exceeds the specificity threshold; graded delta ∝ coactivity × (max - w).
                         _tr = self.cp_hebb_coactivity_trace
