@@ -580,10 +580,10 @@ class CoreSimConfig:
     # `if fired_indices.size > 0`. Uses cp.where masked-update instead of
     # fancy-index assignment. Numerically equivalent for the Izhikevich
     # path; biggest win on small networks where launch overhead dominates.
-    # SCOPED to the Izhikevich branch (bridge.py:7315; HH/AdEx use their own reset,
-    # unaffected) + byte-identical there (tests/test_fast_spike_reset.py). DEFAULT-ON
-    # (owner: perf on by default) -- byte-identical, and the precondition the
-    # step-megakernel guard requires.
+    # SCOPED to the Izhikevich + AdEx branches (bridge.py:7315 / the AdEx reset; HH uses its
+    # own continuous dynamics, unaffected) + byte-identical in both (tests/test_fast_spike_reset.py,
+    # tests/test_adex_fast_spike_reset.py). DEFAULT-ON (owner: perf on by default) -- byte-identical,
+    # and the precondition the step-megakernel guard requires.
     fast_spike_reset: bool = True
 
     # Performance: VECTORIZED activity-driven transmission-gate couplings

@@ -7460,16 +7460,31 @@ class SimulationBridge:
                 )
                 not_in_refractory = (self.cp_refractory_timers <= 0)
                 fired_this_step = (v_new >= cfg.adex_V_peak) & not_in_refractory
-                fired_indices = cp.where(fired_this_step)[0]
 
-                if fired_indices.size > 0:
-                    v_new[fired_indices] = cfg.adex_V_r
-                    w_new[fired_indices] += cfg.adex_b
-                    self.cp_refractory_timers[fired_indices] = cfg.refractory_period_steps
-
-                self.cp_membrane_potential_v[:] = v_new
-                self.cp_adex_w[:] = w_new
-                self.cp_refractory_timers[self.cp_refractory_timers > 0] -= 1
+                if getattr(cfg, "fast_spike_reset", False):
+                    # Fast path (mirrors the Izhikevich fast reset at bridge.py:7315): cp.where masked-update, so NO
+                    # cp.where(fired)[0] index materialization and NO boolean-mask decrement -> zero device->host syncs.
+                    # Numerically equivalent to the legacy AdEx reset below (V->V_r, w->w+b, refractory off-by-one N-1):
+                    # V_r/b are cast to float32 to match the legacy in-place-add dtype exactly. See tests/test_fast_spike_reset.py.
+                    v_new = cp.where(fired_this_step, cp.float32(cfg.adex_V_r), v_new)
+                    w_new = cp.where(fired_this_step, w_new + cp.float32(cfg.adex_b), w_new)
+                    new_refractory_for_fired = cp.int32(max(0, cfg.refractory_period_steps - 1))
+                    new_refractory_for_unfired = cp.maximum(
+                        self.cp_refractory_timers - cp.int32(1), cp.int32(0))
+                    self.cp_refractory_timers[:] = cp.where(
+                        fired_this_step, new_refractory_for_fired, new_refractory_for_unfired)
+                    self.cp_membrane_potential_v[:] = v_new
+                    self.cp_adex_w[:] = w_new
+                else:
+                    # Legacy path: fancy-index assignment + the `fired_indices.size > 0` device->host sync.
+                    fired_indices = cp.where(fired_this_step)[0]
+                    if fired_indices.size > 0:
+                        v_new[fired_indices] = cfg.adex_V_r
+                        w_new[fired_indices] += cfg.adex_b
+                        self.cp_refractory_timers[fired_indices] = cfg.refractory_period_steps
+                    self.cp_membrane_potential_v[:] = v_new
+                    self.cp_adex_w[:] = w_new
+                    self.cp_refractory_timers[self.cp_refractory_timers > 0] -= 1
 
             elif cfg.neuron_model_type == NeuronModel.RESONATE_AND_FIRE.name:
                 # Resonate-and-fire (Izhikevich 2001; Frady & Sommer 2019): a complex-state phasor neuron.
