@@ -88,6 +88,7 @@ from sim.kernels import (
                          fused_hh_NaP_current_update,
                          fused_adex_dynamics_update,
                          fused_conductance_decay_and_current,
+                         fused_readonly_izh_step,
                          fused_gabab_decay_and_current,
                          fused_nmda_update_and_current,
                          fused_coincidence_plateau,
@@ -6031,6 +6032,207 @@ class SimulationBridge:
         self.cp_membrane_potential_v[:] = a_re                # final state back into the canonical arrays
         self.cp_recovery_variable_u[:] = a_im
 
+    def _step_megakernel_scratch_zeros(self):
+        """Cached read-only zeros(n, float32) for the megakernel's unused inputs (g_i_increase when
+        inhibitory neurons are off; ou_current when the OU process is off). NEVER mutated -- both are
+        read-only kernel inputs. Rebuilt only when num_neurons changes."""
+        n = int(self.core_config.num_neurons)
+        z = getattr(self, "_step_mk_zeros_cache", None)
+        if z is None or int(z.shape[0]) != n:
+            z = cp.zeros(n, dtype=cp.float32)
+            self._step_mk_zeros_cache = z
+        return z
+
+    def _step_megakernel_can_dispatch(self):
+        """True iff the opt-in general-step megakernel can handle THIS step byte-faithfully. Guards to the
+        fully READ-ONLY inference regime so the fused single-launch path reproduces the Python step exactly
+        (raster bit-identical; v/u within an FMA residual). Any False here => the caller runs the unchanged
+        Python path. A cheap all-attribute check (no GPU ops)."""
+        cfg = self.core_config
+        if not (getattr(cfg, "enable_step_megakernel", False)
+                or getattr(cfg, "enable_step_cudagraph", False)):
+            return False
+        if not is_gpu_backend():
+            return False
+        if cfg.neuron_model_type != NeuronModel.IZHIKEVICH.name:
+            return False
+        if not getattr(cfg, "fast_spike_reset", False):
+            return False
+        if not getattr(cfg, "read_only_fast_step", False):
+            return False
+        # READ-ONLY regime (mirrors the _read_only_fast_step guard set exactly).
+        if (cfg.enable_hebbian_learning or cfg.enable_short_term_plasticity
+                or cfg.enable_homeostasis or cfg.enable_stdp
+                or cfg.enable_structural_plasticity or cfg.enable_reward_modulation):
+            return False
+        if self.experiment_engine is not None and self.experiment_engine.is_experiment_running:
+            return False
+        # No effective-connections divergence: STP/neuromod/transmission-gate/nmda-slow/graded/dendritic
+        # splits all OFF -> effective_connections_matrix IS cp_connections (the fused path assumes this).
+        if getattr(cfg, "enable_neuromodulator_subsystem", False) and self.neuromodulator_manager is not None:
+            return False
+        if self.cp_transmission_gain is not None:
+            return False
+        if self.cp_nmda_recurrent_synapse_mask is not None or self.cp_graded_synapse_mask is not None:
+            return False
+        if self.cp_dendritic_source_activity is not None:
+            return False
+        # No extra per-step current contributions beyond I_syn + external + OU.
+        if (cfg.enable_nmda or getattr(cfg, "enable_nmda_recurrent", False)
+                or getattr(cfg, "enable_coincidence_detection", False)):
+            return False
+        if getattr(cfg, "enable_gabab", False) or self.cp_conductance_g_gabab is not None:
+            return False
+        if self.cp_conductance_g_gabab_slow is not None or self.cp_conductance_g_graded_plateau is not None:
+            return False
+        if self.cp_v_apical is not None:
+            return False
+        if (self.cp_input_divisive_mask is not None or self.cp_input_divisive_mask_2 is not None
+                or self.cp_input_mean_ema is not None or self.cp_graded_lateral_M is not None):
+            return False
+        if self.cp_ssm_state is not None or self.cp_ssm_readout_w is not None:
+            return False
+        # Threshold path: no homeostasis threshold override -> vpeak is the threshold (fused-path assumption).
+        if self.cp_homeostasis_neuron_mask is not None:
+            return False
+        # Side-channels this step (must all be inactive -- the fused path skips them; else fall through).
+        if getattr(self, "_engram_recordings", None):
+            return False
+        if getattr(self, "_gate_couplings", None):
+            return False
+        if self.data_bus is not None or self.synapse_store is not None:
+            return False
+        if self.recording_file_handle:
+            return False
+        # cp_synapse_pulse_timers / _progress are VISUALIZATION-ONLY (the synaptic-pulse animation: written at the
+        # fire step + decremented per step for the GUI). They do NOT feed I_syn/dynamics/threshold, so the spike
+        # raster + v/u are identical whether or not the fused path maintains them. The fused path SKIPS them
+        # (headless inference has no animation), which is why their mere allocation is NOT a fallback trigger.
+        if self.gpu_config.enable_step_profiler:
+            return False
+        # Required arrays present.
+        if (self.cp_izh_C is None or self.cp_conductance_g_e is None or self.cp_conductance_g_i is None
+                or self.cp_firing_states is None or self.cp_prev_firing_states is None
+                or self.cp_refractory_timers is None or self.cp_izh_vpeak is None):
+            return False
+        return True
+
+    def _run_one_step_megakernel(self):
+        """Opt-in fused READ-ONLY inference step (enable_step_megakernel). Runs the cuSPARSE E/I-split matvec
+        + the OU-noise draw SEPARATELY (bit-faithful summation + RNG), then ONE fused @cp.fuse launch
+        (fused_readonly_izh_step) for the per-neuron element-wise chain, then the minimal bookkeeping the
+        Python step tail does in this regime (engram/gate-couplings are guaranteed inactive by the dispatch
+        guard). Byte-faithful to `_run_one_simulation_step` in the read-only regime; mirrors the RF megakernel
+        (`_rf_resonate_steps_megakernel`). Dispatched only via `_step_megakernel_can_dispatch`."""
+        cfg = self.core_config
+        n = int(self.core_config.num_neurons)
+        dt = cfg.dt_ms
+
+        # --- E/I-split synaptic matvec: KEPT SEPARATE (cuSPARSE), identical to _run_one_simulation_step.
+        # _prev_any is True in this regime, so the matvec always runs (a zero prev-firing vector adds zero,
+        # byte-identical). Produces the (already propagation-scaled) g_e_increase / g_i_increase.
+        prev_fired_float = self.cp_prev_firing_states.astype(cp.float32)
+        if self.cp_connections.nnz > 0:
+            if cfg.enable_inhibitory_neurons and self.cp_traits is not None:
+                if self._cached_inhibitory_mask is None:
+                    inhibitory_indices = getattr(cfg, "inhibitory_trait_indices", None)
+                    if inhibitory_indices:
+                        inhibitory_indices_cp = cp.asarray(inhibitory_indices, dtype=cp.int32)
+                        self._cached_inhibitory_mask = cp.isin(self.cp_traits, inhibitory_indices_cp)
+                    else:
+                        self._cached_inhibitory_mask = (self.cp_traits == cfg.inhibitory_trait_index)
+                is_inhibitory_neuron_output = self._cached_inhibitory_mask
+                exc_fired_prev = prev_fired_float * (~is_inhibitory_neuron_output)
+                inhib_fired_prev = prev_fired_float * is_inhibitory_neuron_output
+                fired_2col = cp.stack([exc_fired_prev, inhib_fired_prev], axis=1)
+                _eff_cT = self.cp_connections.T
+                if getattr(cfg, "deterministic_transpose_matvec", False):
+                    _eff_cT = _eff_cT.tocsr()
+                g_increase_2col = _eff_cT @ fired_2col
+                g_e_increase = g_increase_2col[:, 0] * cfg.propagation_strength
+                g_i_increase = g_increase_2col[:, 1] * cfg.inhibitory_propagation_strength
+            else:
+                _eff_cT1 = self.cp_connections.T
+                if getattr(cfg, "deterministic_transpose_matvec", False):
+                    _eff_cT1 = _eff_cT1.tocsr()
+                g_e_increase = (_eff_cT1 @ prev_fired_float) * cfg.propagation_strength
+                g_i_increase = self._step_megakernel_scratch_zeros()
+        else:
+            g_e_increase = self._step_megakernel_scratch_zeros()
+            g_i_increase = self._step_megakernel_scratch_zeros()
+
+        # --- OU noise: KEPT SEPARATE (the cp.random.randn draw preserves the bit-identical RNG stream).
+        # Exact OU update lines from _run_one_simulation_step (Gillespie 1996). OU off -> zeros (x + 0.0 == x).
+        if cfg.enable_ou_process and getattr(self, "cp_ou_current", None) is not None:
+            noise_samples = cp.random.randn(n).astype(cp.float32)
+            self.cp_ou_current[:] = (
+                self.cp_ou_current * self.ou_decay_factor
+                + self.ou_mean * (1.0 - self.ou_decay_factor)
+                + self.ou_noise_std * noise_samples
+            )
+            ou_current = self.cp_ou_current
+        else:
+            ou_current = self._step_megakernel_scratch_zeros()
+
+        E_inh_to_use = (
+            self.cp_syn_reversal_potential_i_per_neuron
+            if self.cp_syn_reversal_potential_i_per_neuron is not None
+            else cfg.syn_reversal_potential_i
+        )
+        # fired-neuron refractory reset (matches the fast_spike_reset off-by-one: period_steps - 1).
+        refractory_reset = cp.int32(max(0, cfg.refractory_period_steps - 1))
+
+        # --- ONE fused element-wise launch: decay + I_syn + increment + total + dynamics + threshold + reset.
+        (g_e_new, g_i_new, v_new, u_new, fired_this_step,
+         refractory_new) = fused_readonly_izh_step(
+            self.cp_conductance_g_e, self.cp_conductance_g_i, g_e_increase, g_i_increase,
+            self._cached_decay_e, self._cached_decay_i,
+            cfg.syn_reversal_potential_e, E_inh_to_use,
+            self.cp_membrane_potential_v, self.cp_recovery_variable_u,
+            self.cp_external_input_current, ou_current,
+            self.cp_izh_C, self.cp_izh_k, self.cp_izh_vr, self.cp_izh_vt,
+            self.cp_izh_a, self.cp_izh_b,
+            self.cp_izh_vpeak, self.cp_izh_c_reset, self.cp_izh_d_increment,
+            self.cp_refractory_timers, refractory_reset, dt,
+        )
+        self.cp_conductance_g_e[:] = g_e_new
+        self.cp_conductance_g_i[:] = g_i_new
+        self.cp_membrane_potential_v[:] = v_new
+        self.cp_recovery_variable_u[:] = u_new
+        self.cp_refractory_timers[:] = refractory_new
+        self.cp_firing_states[:] = fired_this_step
+
+        # --- Bookkeeping tail (byte-faithful to the read-only Python path). The dispatch guard requires
+        # engram-recordings / gate-couplings / data_bus / synapse_store / recording all INACTIVE, so these
+        # calls are cheap no-ops kept for structural parity + safety.
+        self._tick_engram_recordings()
+        self._apply_gate_couplings()
+
+        # Device-only spike count + periodic stats sync (identical to the Python tail; no per-step host sync).
+        spike_count_gpu = cp.sum(fired_this_step)
+        if self._accumulated_spikes_gpu is None:
+            self._accumulated_spikes_gpu = spike_count_gpu
+        else:
+            self._accumulated_spikes_gpu += spike_count_gpu
+        self._stats_sync_counter += 1
+        if self._stats_sync_counter >= self.gpu_config.stats_sync_interval_steps:
+            self._mock_num_spikes_this_step = int(self._accumulated_spikes_gpu) // self._stats_sync_counter
+            self._last_synced_spike_count = self._mock_num_spikes_this_step
+            self._accumulated_spikes_gpu = None
+            self._stats_sync_counter = 0
+        else:
+            self._mock_num_spikes_this_step = self._last_synced_spike_count
+
+        # Viz activity timers (kept for parity; None in headless inference so usually skipped).
+        if self.cp_viz_activity_timers is not None:
+            max_highlight_val = opengl_viz_config.get('ACTIVITY_HIGHLIGHT_FRAMES', 7) if OPENGL_AVAILABLE else 7
+            self.cp_viz_activity_timers = cp.where(fired_this_step,
+                                                   max_highlight_val,
+                                                   self.cp_viz_activity_timers)
+
+        # Prepare for next step.
+        self.cp_prev_firing_states[:] = fired_this_step
+
     def _run_one_simulation_step(self):
         """Executes a single step of the simulation logic."""
         if not self.is_initialized or self.core_config.num_neurons == 0: return
@@ -6078,6 +6280,19 @@ class SimulationBridge:
                 and not cfg.enable_structural_plasticity and not cfg.enable_reward_modulation
                 and not (self.experiment_engine is not None and self.experiment_engine.is_experiment_running))
             _prev_any = True if _read_only_fast_step else bool(self.cp_prev_firing_states.any())
+
+            # --- OPT-IN GENERAL-STEP MEGAKERNEL dispatch (perf, default OFF -> byte-identical) ---
+            # When enable_step_megakernel is set AND the step is the fully READ-ONLY inference regime
+            # (all learning/plasticity/neuromod/experiment/recording OFF, IZHIKEVICH + fast_spike_reset +
+            # read_only_fast_step, GPU), run the fused single-launch step and RETURN. Any guard failure (or the
+            # numpy backend) falls through to the UNCHANGED Python path below -- so the default flag-off state AND
+            # every guard-failing config is byte-identical. The guard is a cheap set of attribute checks (no GPU
+            # ops). Mirrors the RF megakernel dispatch (`_rf_resonate_steps`). The SSM/profiler prologue above is
+            # a no-op in this regime (the guard requires cp_ssm_* None + profiler off), so dispatching here is
+            # byte-identical to skipping it. See docs/plans/2026-07-23-general-step-megakernel-design.md.
+            if self._step_megakernel_can_dispatch():
+                self._run_one_step_megakernel()
+                return
 
             # --- 1. Synaptic Plasticity (STP) Update ---
             if _profiling: _backend_synchronize(); _prof['t_init'] = _time.perf_counter() - _t0; _t0 = _time.perf_counter()

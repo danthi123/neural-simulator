@@ -215,6 +215,62 @@ def fused_conductance_decay_and_current(g_e, g_i, decay_e, decay_i, v, E_e, E_i)
     return g_e_new, g_i_new, I_syn
 
 @fuse()
+def fused_readonly_izh_step(
+    g_e, g_i, g_e_increase, g_i_increase, decay_e, decay_i, E_e, E_i,
+    v, u, external_current, ou_current,
+    C_param, k_param, vr_param, vt_param, a_param, b_param,
+    vpeak, c_reset, d_increment, refractory, refractory_reset, dt,
+):
+    """Fused READ-ONLY inference megastep for the Izhikevich-2007 model (opt-in
+    enable_step_megakernel). Collapses the per-neuron ELEMENT-WISE chain of
+    `_run_one_simulation_step` -- conductance decay + synaptic current +
+    (pre-computed) E/I matvec increment + total-input assembly + Izhikevich-2007
+    dynamics + threshold-select + fast_spike_reset -- into ONE kernel launch. The
+    math + op ORDER are byte-faithful to the separate ops so the spike raster
+    matches (a neuron on threshold can flip under FMA/summation reordering, so
+    the ordering is load-bearing): I_syn is read from the DECAYED (pre-increment)
+    conductances exactly like fused_conductance_decay_and_current, then the matvec
+    increment (already scaled by propagation_strength / inhibitory_propagation_
+    strength) is applied to give the NEXT step's conductance; the total input is
+    assembled `(I_syn + external) + ou` left-to-right like the step; the dynamics
+    replicate fused_izhikevich2007_dynamics_update; the reset replicates the
+    fast_spike_reset cp.where path (v/u reset + refractory update).
+
+    The cuSPARSE E/I-split matvec (g_e_increase/g_i_increase) and the OU-noise
+    cp.random.randn draw stay OUTSIDE this kernel (keeps the RNG stream + sparse
+    summation bit-faithful). `E_i` is a scalar or a per-neuron array; `ou_current`
+    is the updated OU current (or a zeros array when OU is off); `g_i_increase` is
+    a zeros array when inhibitory neurons are disabled; `refractory_reset` is the
+    fired-neuron refractory value (max(0, refractory_period_steps - 1), int32).
+
+    Returns (g_e_new, g_i_new, v_new, u_new, fired, refractory_new).
+    """
+    # 1-2. Conductance decay + synaptic current from the DECAYED (pre-increment)
+    # conductances -- identical to fused_conductance_decay_and_current.
+    g_e_dec = g_e * decay_e
+    g_i_dec = g_i * decay_i
+    I_syn = g_e_dec * (E_e - v) + g_i_dec * (E_i - v)
+    # 3. Apply the (already propagation-scaled) matvec increment for the NEXT step
+    # (I_syn above used the pre-increment conductances -- matches the step order).
+    g_e_new = g_e_dec + g_e_increase
+    g_i_new = g_i_dec + g_i_increase
+    # 5. Total input assembly: (I_syn + external) + ou (left-to-right, matching the step).
+    total_I = I_syn + external_current + ou_current
+    # 6. Izhikevich-2007 dynamics -- identical to fused_izhikevich2007_dynamics_update.
+    C_safe = cp.where(C_param == 0.0, 1.0, C_param)
+    dv_dt = (k_param * (v - vr_param) * (v - vt_param) - u + total_I) / C_safe
+    du_dt = a_param * (b_param * (v - vr_param) - u)
+    v_dyn = v + dv_dt * dt
+    u_dyn = u + du_dt * dt
+    # 7. Threshold-select (vpeak) gated by the refractory timer.
+    fired = (v_dyn >= vpeak) & (refractory <= 0)
+    # 8. fast_spike_reset (the cp.where masked-update path): v/u reset + refractory update.
+    v_new = cp.where(fired, c_reset, v_dyn)
+    u_new = cp.where(fired, u_dyn + d_increment, u_dyn)
+    refractory_new = cp.where(fired, refractory_reset, cp.maximum(refractory - 1, 0))
+    return g_e_new, g_i_new, v_new, u_new, fired, refractory_new
+
+@fuse()
 def fused_gabab_decay_and_current(g_gabab, decay_gabab, v, E_gabab):
     """Slow GABA_B -> GIRK K+ inhibitory conductance (E_gabab ~ -90 mV, the
     potassium reversal). Metabotropic/slow: decay_gabab = exp(-dt/tau) with

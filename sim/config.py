@@ -188,6 +188,23 @@ class CoreSimConfig:
     # syncs that make the resonate/inference loop launch-bound. Best for active inference loops (spikes present most
     # steps). See tests/test_read_only_fast_step.py (asserts bit-identical state on/off).
     read_only_fast_step: bool = False
+    # Opt-in GENERAL-STEP MEGAKERNEL (perf, default OFF -> byte-identical to the per-step loop). Fuses the per-neuron
+    # ELEMENT-WISE inference chain -- conductance decay + I_syn + (pre-computed) E/I matvec increment + total-input
+    # assembly + Izhikevich-2007 dynamics + threshold-select + fast_spike_reset -- into ONE @cp.fuse launch, collapsing
+    # ~9-12 CuPy launches into ~1 (the launch-bound sim-inference fix, sibling of enable_rf_cudagraph). The cuSPARSE
+    # E/I-split synaptic matvec and the OU-noise cp.random.randn draw stay OUTSIDE the kernel (keeps the RNG stream +
+    # sparse summation bit-faithful). GPU-only, IZHIKEVICH-only, and GUARDED to the fully READ-ONLY inference regime
+    # (all learning/STP/homeostasis/STDP/structural/reward/neuromod/experiment OFF, no per-step CSR-rebuild gate, no
+    # recording/data_bus/engram/synapse_store this step, fast_spike_reset + read_only_fast_step on); any guard failure
+    # or the numpy backend falls through to the UNCHANGED Python step, so the default (flag off) AND every guard-failing
+    # config is byte-identical. FP note: the spike raster matches bit-for-bit; v/u may differ by an FMA/summation
+    # residual (the same class the existing transpose-SpMV atomic-scatter already has). See
+    # tests/test_step_megakernel.py + docs/plans/2026-07-23-general-step-megakernel-design.md.
+    enable_step_megakernel: bool = False
+    # Requested alias (enable_step_cudagraph): a MISNOMER kept for API symmetry with enable_rf_cudagraph -- this is a
+    # hand-authored megakernel, NOT a literal CUDA-graph capture (cuSPARSE SpMV can't be captured + graph capture would
+    # freeze the OU RNG). Either flag enables the fused path; see the dispatch guard in _run_one_simulation_step.
+    enable_step_cudagraph: bool = False
     # Opt-in RF DENSE complex-weight mode (O-2-purity, default OFF -> byte-identical to the sparse complex-CSR path).
     # When True, rf_set_complex_weights ALSO materializes a DENSE complex weight `cp_rf_w_dense` (= W_re + i*W_im) from
     # the SAME weights, and the RF matvec uses a single dense cuBLAS GEMV (W_dense @ z) instead of four sparse SpMVs
