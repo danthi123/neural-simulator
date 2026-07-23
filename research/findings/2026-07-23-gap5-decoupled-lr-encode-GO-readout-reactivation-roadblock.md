@@ -68,3 +68,17 @@ drive a single assembly's cells directly at rest, then let the forward-asymmetri
 built preemptively (`_gap5_dg_detonator_ignition_derisk.py`) and running 6-seed on the mini-PC pool. That branch-B
 result decides whether targeted ignition + forward transition closes the imaginative-replay readout. NO `sim/` edit.
 The imaginative-replay CAPABILITY stays OPEN per THE LAW; the failing METHOD (spontaneous ignition) is banked.
+
+## UPDATE — branch B (TARGETED DG-detonator ignition) is ALSO a CLEAN NEGATIVE (2026-07-23)
+A focused ignition sweep (`_gap5_ignition_sweep_probe`, LOCAL — the pool dispatch had HUNG 7h silently, caught by the
+anti-stall heartbeat) drove the SYMMETRIC positive control store at the COMPLETION scale n_ca3=2000 across a strong
+grid: det_pa ∈ {6k,12k,24k,48k} (up to 32× base 1500) × self_regen_read ∈ {0,0.15} × det_frac ∈ {0.15,0.30}, seeds
+42+43 = 32 configs. VERDICT: **IGNITES-NO, max_ev=0 across ALL 32 configs** — even a 32×-drive targeted detonator does
+NOT ignite even the strong-between symmetric store discretely on this substrate. ⇒ BOTH ignition-based readouts are
+now clean negatives: (A) spontaneous bistable = NO, (B) targeted detonator = NO. **The METHOD verdict is decisive:
+IGNITION is the wrong readout for this substrate/store — a driven CA3 assembly does not produce a discrete
+self-limiting burst here (consistent with the point-soma limit: no intrinsic burst-terminating mechanism at this
+scale).** ⇒ PIVOT to the board's candidate #3: order the chain by TIMING (theta-gamma PHASE / phase precession), NOT
+by igniting assemblies (the roadblock finding's through-line; rate-level GO `2026-07-22-gap5-gamma-WTA-timing`). The
+#3 spiking-phase-precession-encode RESEARCH GATE is dispatched (deep-research: biology of phase precession · project
+reusable machinery · SNN phase-coding lit → a buildable de-risk spec). NO `sim/` edit anywhere in the readout arc.
