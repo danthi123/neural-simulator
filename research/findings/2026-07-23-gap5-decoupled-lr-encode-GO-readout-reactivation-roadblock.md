@@ -42,3 +42,10 @@ necessary + now built, but a clean discrete reactivation+transition readout is t
 Encode: forward-asymmetric + reactivation-scale within = GO (weight level). Readout: discrete forward replay on the
 new store = OPEN (banked, precisely scoped). The static CA3 completion this rides on is CLOSED (2026-07-18); the
 imaginative-replay capability stays OPEN per THE LAW. NO sim/ edit anywhere in this arc.
+
+## UPDATE — encode is 6/6 GO (multi-seed confirmed, 2026-07-23)
+The decoupled encode (within-lr 0.05 + chain-lr 0.5 + freeze) is now validated across all 6 seeds
+(42,43,44,100,101,102): every seed lands at within ~196-207 (reactivatable) + adj_fwd 38 / adj_rev 5 / ratio
+7.65-7.66x, remarkably consistent. Seeds 43/44/100/101/102 were run on the mini-PC pool, seed 42 + 100 locally
+(byte-identical, numpy 2.4.6 pinned). ⇒ the FORWARD-ASYMMETRIC + REACTIVATION-SCALE encode is a robust 6-seed GO;
+the spiking-readout discrete-reactivation on that store remains the scoped open piece.
