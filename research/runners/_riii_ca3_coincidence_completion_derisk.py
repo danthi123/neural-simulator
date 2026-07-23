@@ -33,7 +33,7 @@ def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0,
            ca3_to_ca1_density=0.30, ca1_fb_inhib=None, ca1_fb_n=None, ca1_ff_inhib=None,
            nmda_recurrent=False, nmda_tau=100.0, nmda_ratio=1.0, enable_ou=True,
            plateau_self_regen=0.0, plateau_v_hold=-35.0, apical_kir_g=0.0, apical_gc_read=None,
-           mossy_stp_disabled=False):
+           mossy_stp_disabled=False, enable_stp=False):
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.bridge import SimulationBridge
     from research.runners.text_minimal_isolation import build_biological_brain_regions
@@ -174,7 +174,16 @@ def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0,
     if nmda_recurrent:
         cfg.enable_nmda_recurrent = True; cfg.nmda_recurrent_tau_decay_ms = float(nmda_tau)
         cfg.nmda_recurrent_ratio = float(nmda_ratio)
-    cfg.enable_structural_plasticity = False; cfg.enable_per_type_stp = False
+    cfg.enable_structural_plasticity = False
+    if enable_stp:
+        # Candidate #2 (gap#5 replay, 2026-07-23): E->E short-term DEPRESSION on the ca3->ca3 recurrent as the
+        # DIRECTIONAL co-driver (Tsodyks-Markram: the just-fired assembly's outgoing recurrent synapses deplete ->
+        # its forward/backward drive weakens -> the replay bump travels forward and cannot immediately recur). The
+        # mossy dg->ca3 detonator MUST be carved out (mossy_stp_disabled=True) or STP crushes it -> silent CA3.
+        cfg.enable_short_term_plasticity = True; cfg.enable_per_type_stp = False
+        cfg.stp_U = 0.5; cfg.stp_tau_d = 300.0; cfg.stp_tau_f = 50.0   # depression (high U, tau_d>>tau_f)
+    else:
+        cfg.enable_per_type_stp = False
     cfg.enable_hebbian_learning = True; cfg.stdp_w_max = max(10.0, 2.5 * ca3w); cfg.fast_spike_reset = True
     if hebb_lr is not None:
         cfg.hebbian_learning_rate = float(hebb_lr)   # CYCLE-1068 formation arc: does a stronger rate-Hebbian write within-ensemble specificity?

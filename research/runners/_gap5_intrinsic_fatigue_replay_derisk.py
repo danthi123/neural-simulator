@@ -177,6 +177,7 @@ def main():
     ap.add_argument("--d-abs", type=float, default=40.0, help="cranked Izhikevich per-spike u-kick d_increment on CA3-exc (Ecker AdEx b~207pA analog; sweep)")
     ap.add_argument("--a-abs", type=float, default=0.008, help="cranked Izhikevich recovery rate a on CA3-exc (SMALLER=slower fatigue recovery, tau_u=1/a; 0.008 -> tau~125ms > theta)")
     ap.add_argument("--apical-gc-read", type=float, default=None, help="WEAKEN the apical->soma read (bridge.py:7111) during rest so somatic adaptation can silence a latched dendrite for hand-off (research gate 2026-07-23 candidate #1; e.g. 1.5-2.5). None = build value (byte-identical).")
+    ap.add_argument("--stp", action="store_true", help="candidate #2 (2026-07-23): enable E->E ca3->ca3 short-term DEPRESSION as the replay DIRECTIONAL co-driver (mossy detonator carved out); adaptation SILENCES, STD DIRECTS -- test WITH intrinsic fatigue.")
     ap.add_argument("--poisson-rate", type=float, default=0.015)
     ap.add_argument("--poisson-pa", type=float, default=1500.0)
     ap.add_argument("--poisson-dur", type=int, default=10)
@@ -190,6 +191,7 @@ def main():
     ap.add_argument("--out", default="research/findings/raw/gap5_r4/intrinsic_fatigue.json")
     a = ap.parse_args()
     cfg = dict(SEQ_CFG)
+    cfg["enable_stp"] = bool(a.stp)                     # candidate #2: E->E ca3->ca3 STD directional co-driver
     cfg["n_mem"] = int(a.n_mem); cfg["within_events"] = int(a.within_events)
     cfg["within_refresh"] = int(a.within_refresh); cfg["chain_fwd"] = int(a.chain_fwd); cfg["chain_rev"] = 0
     cfg["rank1_encode"] = True; cfg["overlap_draw"] = False

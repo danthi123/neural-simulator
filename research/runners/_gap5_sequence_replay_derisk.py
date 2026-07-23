@@ -138,7 +138,8 @@ def _prepare_sequence(seed, cfg, do_encode=True):
                     plateau_strength=cfg["plateau_strength"], train=True, hebb_max=cfg["hebb_max"], hebb_rate=True,
                     ca3_fb_inhib=cfg["ca3_fb_inhib"], coact_thresh=cfg["coact_thresh"], hebb_lr=None, enable_ou=False,
                     plateau_self_regen=cfg["plateau_self_regen"], plateau_v_hold=cfg["plateau_v_hold"],
-                    apical_kir_g=cfg["apical_kir_g"], apical_gc_read=cfg["apical_gc_read"], ca1_ff_inhib=None)
+                    apical_kir_g=cfg["apical_kir_g"], apical_gc_read=cfg["apical_gc_read"], ca1_ff_inhib=None,
+                    enable_stp=cfg.get("enable_stp", False), mossy_stp_disabled=cfg.get("enable_stp", False))
     rm = bridge.region_manager
     ca3_idx = list(rm.indices("ca3"))
     ca3_pos = {int(g): i for i, g in enumerate(ca3_idx)}
