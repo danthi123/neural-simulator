@@ -85,15 +85,18 @@ seeds now read at the RF-faithful ~5e-6 level == seed 42. Direct before/after at
 
 AFTER (fixed code), FULL 6-seed `--seeds 42 43 44 100 101 102 --n-windows 16` -> `run3_rf_6seed.json`:
 ```
-6-seed running (pid 817739 on the local 3090); see research/findings/raw/wkv_spiking_forward/run3_rf_6seed.json
-for the runner's printed per-seed lines + the mean-ppl_ratio / mean-logit_fid / VERDICT line when it lands.
+per-seed ppl_ratio = 1.0000 all six; rf_max_read_err = 4.24 / 4.51 / 3.69 / 5.01 / 4.08 / 4.30 e-6
+mean ppl_ratio = 1.000000   mean logit_fid(spearman) = 1.000000   VERDICT: GO
 ```
+Every seed reads at the RF-faithful ~4-5e-6 level (incl. seed 43, the one the id-reuse bug had blown to 14.05).
 
-## Verdict
-The "NEGATIVE" was a **harness bug (id()-reuse cache aliasing), not a substrate limit**. With the fix, the
-2-seed cheap-first at the ORIGINAL config is **GO** (mean ppl_ratio 1.000000, mean logit_fid 1.0000, both
-seeds rf_read_err ~5e-6). run3's 83.17M chunked-WKV LM runs as a **faithful RF spiking-graded-read forward
-== the ANN**. The full 6-seed confirmation is in flight (`run3_rf_6seed.json`).
+## Verdict — GO (6-seed)
+The "NEGATIVE" was a **harness bug (id()-reuse cache aliasing), not a substrate limit**. With the fix, the FULL
+6-seed at production n_windows=16 is **GO: mean ppl_ratio 1.000000, mean logit_fid 1.000000, all six seeds
+rf_read_err ~4-5e-6**. run3's **83.17M chunked-WKV LM runs as a faithful RF spiking-graded-read forward == the
+ANN** — the project's largest TRAINED generative model validated as spiking-consolidatable (gap#1 "fully-spiking
+on one brain" prerequisite for the trained LM). NO `sim/` edit. Follow-on: the 267M's spiking-forward once it has a
+converged checkpoint (same runner, --ckpt run4_d2048).
 
 ## Knobs recorded
 - ckpt `bridges/lmtrain/run3/ckpt/best.pt` (83.17M, d=1024, L=16, V=16000, chunk_c=16, step 902000).
