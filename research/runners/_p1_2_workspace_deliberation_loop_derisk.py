@@ -46,9 +46,11 @@ ANTI-CHEATS (the anti-cheats ARE the result):
   - MULTI-CYCLE not one-shot: cap the loop at 1 cycle -> only the 1-hop neighbour is reached -> the 3-hop conclusion
     is unreachable (scored vs the 3-hop want -> collapse). Proves the conclusion emerges from ITERATED re-entry.
   - RE-CUE LESION: replace each committed winner with a RANDOM concept before re-cueing -> chain collapses to chance
-    (the broadcast-back re-entry is load-bearing).
+    (the broadcast-back re-entry is load-bearing). STOCHASTIC control -> estimated as the null MEAN over
+    N_CONTROL_SHUFFLES independent re-cue randomizations (a distribution, not one lucky draw; see N_CONTROL_SHUFFLES).
   - PERMUTED-PREMISES: re-store facts under scrambled patient assignment -> the 3-hop chase collapses (role structure,
-    not co-occurrence).
+    not co-occurrence). STOCHASTIC control -> estimated as the null MEAN over N_CONTROL_SHUFFLES independent patient
+    permutations.
   - SPREADING-ACTIVATION FLOOR (the mechanism the 2026-05-14 transitive-inference RETRACTION rode): undirected
     co-occurrence diffusion stays at chance; the re-entrant chase must BEAT it.
   - AFFECT-directedness (cheap-first salience-scalar STAND-IN; FULL form gated on P0.3 affect-state region): at a
@@ -130,6 +132,17 @@ DISTRACTOR_FRAC = 0.30         # competing-distractor drive as a fraction of the
 
 IGNITE_FRAC = 0.5              # a slot is "ignited" iff its late-window rate >= IGNITE_FRAC * SOLO_PLATEAU
 SOLO_PLATEAU = 1.0 / 3.0       # the rung-1 ignited period-3 limit-cycle rate
+
+# A STOCHASTIC shuffle/permutation control is a DISTRIBUTION over randomizations, not a single draw. The re-cue
+# lesion (random re-cue) and permuted-premises (scrambled patient assignment) controls were originally estimated
+# from ONE realization over only 8 held-out chains -> a 1/8 = 0.125 granularity, coarser than the 0.10 chance bar,
+# so a single chance-level lucky terminal match (a random re-cue/permuted-chase that coincidentally lands on the
+# want; expected ~17% of seeds by the binomial) spuriously trips the gate even though the control IS at chance
+# (24-shuffle probe: re-cue mean 0.021 == chance 0.025, permuted mean 0.005). Estimate each null the textbook way:
+# average over N_CONTROL_SHUFFLES independent randomizations. This STRENGTHENS the control (a genuine leak — structure
+# not actually destroyed — raises EVERY shuffle, so the mean stays high and the SAME strict 0.10 bar still catches it);
+# it does NOT weaken the anti-cheat. N=8 -> mean-SD ~0.021, the 0.10 bar sits ~3.8 SD above the chance mean. Runner-only.
+N_CONTROL_SHUFFLES = 8
 
 
 def build_workspace_bridge(seed: int, attractor_weight: float = DEFAULT_ATTRACTOR_WEIGHT,
@@ -357,22 +370,40 @@ def run_seed(seed: int, D: int, verbose: bool = True):
     onecycle_acc = onecycle_ok / tot
 
     # ── ANTI-CHEAT: RE-CUE LESION — random concept substituted before each re-cue -> collapse ──────────────────
-    recue_ok = 0
-    for ch in chains3:
-        term = reentrant_chase(b_i, xp, slots_i, snap_i, composer, ch[0], [EAT] * HOPS, all_concepts, dist_rng(),
-                               recue_lesion_rng=np.random.default_rng(seed * 7 + HOPS))
-        recue_ok += int(term == ch[HOPS])
-    recue_acc = recue_ok / tot
+    #    Averaged over N_CONTROL_SHUFFLES independent re-cue randomizations (the null distribution), not one draw
+    #    (see N_CONTROL_SHUFFLES). NOTE: si=0 uses a SINGLE cross-chain stream — it is NOT the pre-fix per-chain-reseeded
+    #    original (the recue RNG was re-scoped); recue_acc_single is a reference only. The 8-shuffle MEAN is the unbiased
+    #    null (MC match-rate ~0.0249 vs chance 0.025 — verified independently in adversarial review, 2026-07-24).
+    recue_accs = []
+    for si in range(N_CONTROL_SHUFFLES):
+        rc = np.random.default_rng(seed * 7 + HOPS + si * 1009)
+        ok = 0
+        for ch in chains3:
+            term = reentrant_chase(b_i, xp, slots_i, snap_i, composer, ch[0], [EAT] * HOPS, all_concepts,
+                                   dist_rng(), recue_lesion_rng=rc)
+            ok += int(term == ch[HOPS])
+        recue_accs.append(ok / tot)
+    recue_acc = float(np.mean(recue_accs))            # the gated value: the shuffle-null MEAN
+    recue_acc_single = float(recue_accs[0])           # si=0 single realization (reference only; NOT the pre-fix per-chain original — RNG re-scoped)
+    recue_acc_max = float(np.max(recue_accs))         # worst-case shuffle (a real leak would raise this AND the mean)
 
     # ── ANTI-CHEAT: PERMUTED-PREMISES — re-store facts under scrambled patient assignment -> collapse ──────────
-    comp_perm = RFPhasorComposer(seed=seed, D=D, vocab=vocab)
-    store_facts(comp_perm, CHAINS, permute_relation=True, rng=np.random.default_rng(seed * 101 + 5),
-                distractor_rng=np.random.default_rng(seed * 53 + 1))
-    perm_ok = 0
-    for ch in chains3:
-        term = reentrant_chase(b_i, xp, slots_i, snap_i, comp_perm, ch[0], [EAT] * HOPS, all_concepts, dist_rng())
-        perm_ok += int(term == ch[HOPS])
-    perm_acc = perm_ok / tot
+    #    Same shuffle-control rigor: average over N_CONTROL_SHUFFLES independent patient permutations (each destroys
+    #    the role structure), not one lucky/unlucky permutation. shuffle 0 == the original single realization.
+    perm_accs = []
+    for si in range(N_CONTROL_SHUFFLES):
+        comp_perm = RFPhasorComposer(seed=seed, D=D, vocab=vocab)
+        store_facts(comp_perm, CHAINS, permute_relation=True,
+                    rng=np.random.default_rng(seed * 101 + 5 + si * 1009),
+                    distractor_rng=np.random.default_rng(seed * 53 + 1))
+        ok = 0
+        for ch in chains3:
+            term = reentrant_chase(b_i, xp, slots_i, snap_i, comp_perm, ch[0], [EAT] * HOPS, all_concepts, dist_rng())
+            ok += int(term == ch[HOPS])
+        perm_accs.append(ok / tot)
+    perm_acc = float(np.mean(perm_accs))              # the gated value: the permutation-null MEAN
+    perm_acc_single = float(perm_accs[0])             # the original single-permutation estimate (reference)
+    perm_acc_max = float(np.max(perm_accs))
 
     # ── ANTI-CHEAT: MOAT — unstored cue + past-chain-end must abstain (None) at each hop ──────────────────────
     moat_unstored = reentrant_chase(b_i, xp, slots_i, snap_i, composer, "ball", [EAT] * HOPS, all_concepts, dist_rng())
@@ -443,7 +474,12 @@ def run_seed(seed: int, D: int, verbose: bool = True):
         "single_hop_reflex_acc": reflex_acc,
         "onecycle_3hop_acc": onecycle_acc,
         "recue_lesion_3hop_acc": recue_acc,
+        "recue_lesion_3hop_acc_single": recue_acc_single,
+        "recue_lesion_3hop_acc_max": recue_acc_max,
         "permuted_3hop_acc": perm_acc,
+        "permuted_3hop_acc_single": perm_acc_single,
+        "permuted_3hop_acc_max": perm_acc_max,
+        "n_control_shuffles": N_CONTROL_SHUFFLES,
         "moat_unstored_abstains": moat_unstored_abstains,
         "moat_overrun_abstains": moat_overrun_abstains,
         "moat_ok": moat_ok,
@@ -474,7 +510,9 @@ def run_seed(seed: int, D: int, verbose: bool = True):
               f"(spread_floor={spread_floor:.3f}, chance={chance:.3f})", flush=True)
         print(f"    DISSOCIATION: lesion_3hop={lesion_acc:.3f} (collapse) | single_hop_reflex={reflex_acc:.3f} (survives)",
               flush=True)
-        print(f"    anti-cheats: 1cycle={onecycle_acc:.3f} recue_lesion={recue_acc:.3f} permuted={perm_acc:.3f} "
+        print(f"    anti-cheats: 1cycle={onecycle_acc:.3f} "
+              f"recue_lesion={recue_acc:.3f}(shuffle-mean; single={recue_acc_single:.3f} max={recue_acc_max:.3f}) "
+              f"permuted={perm_acc:.3f}(shuffle-mean; single={perm_acc_single:.3f} max={perm_acc_max:.3f}) "
               f"| moat unstored={moat_unstored_abstains} overrun={moat_overrun_abstains}", flush=True)
         print(f"    mutual_exclusion(single-slot)={mutual_exclusion_frac:.3f} | affect directed={aff_directed_frac:.3f} "
               f"lesion_directed={aff_lesion_directed_frac:.3f} lesion_still_deliberates={aff_lesion_deliberates_frac:.3f} "
@@ -567,7 +605,12 @@ def main():
         "mean_single_hop_reflex_acc": mean("single_hop_reflex_acc"),
         "mean_onecycle_3hop_acc": mean("onecycle_3hop_acc"),
         "mean_recue_lesion_3hop_acc": mean("recue_lesion_3hop_acc"),
+        "mean_recue_lesion_3hop_acc_single": mean("recue_lesion_3hop_acc_single"),
+        "mean_recue_lesion_3hop_acc_max": mean("recue_lesion_3hop_acc_max"),
         "mean_permuted_3hop_acc": mean("permuted_3hop_acc"),
+        "mean_permuted_3hop_acc_single": mean("permuted_3hop_acc_single"),
+        "mean_permuted_3hop_acc_max": mean("permuted_3hop_acc_max"),
+        "n_control_shuffles": N_CONTROL_SHUFFLES,
         "mean_mutual_exclusion_frac": mean("mutual_exclusion_frac"),
         "mean_affect_directed_frac": mean("affect_directed_frac"),
         "mean_affect_lesion_directed_frac": mean("affect_lesion_directed_frac"),
