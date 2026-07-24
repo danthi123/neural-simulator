@@ -63,3 +63,22 @@ reward keeps it HONEST (it stops chasing noise + never confabulates). This is th
 owner's "don't refuse, grow instead." Phase-0 P0.2. Follow-on: on-bridge (`from_novelty` + spiking-SNc RPE + A→W
 question) + wire into the develop-loop teacher hook (P2.1). (`sim/` edit scope: the numpy probe is sim-free; the
 on-bridge realization adds ONE additive default-off `from_novelty` rule — see Adversarial verification above.)
+
+## UPDATE — the on-bridge `from_novelty` realization is 6-seed CPU GO (2026-07-24)
+
+`_curiosity_seek_learn_onbridge_derisk.py --seeds 42 43 44 100 101 102` (numpy `SimulationBridge`; the spiking
+curiosity drive = the `from_novelty` neuromodulator → ASK-pool firing, the learning-progress reward = the spiking-SNc
+RPE, the Bogacz-Brown familiarity gate, the honest-curiosity ELP veto) is **GO 6/6** (`_curiosity_onbridge_6seed_cpu.json`;
+seeds 42/43/44/100/101/102 all GO). Seed-42 representative, load-bearing metrics:
+- **real:** `corr(gap, spiking-want)` **+0.991**, learnable **8/8 mastered**, SNc DA **14.7 Hz** for learnable vs
+  **0.0 Hz** for noise, the noisy concept **ELP-vetoed** (`noisy_vetoed_frac` 1.0 → the brain does NOT chase
+  un-learnable noise, never confabulates), moat holds.
+- **controls collapse (load-bearing):** LESION `corr 0.0` / 0 asks / 0 mastered; PERMUTED `corr −0.083`; YOKED
+  `corr 0.243` (down from 0.991) — the value/curiosity drive is specific + necessary.
+
+Honest framing (carried from the adversarial-verify pass): the GO rests on `corr_gap_want` + the lesion/permuted
+collapse + the ELP-veto (`snc_noisy_hz` 0 / `mean_LP_noisy` ≈ 0), NOT on the by-construction `gate_b_askratio`
+(`rate_known ≡ 0` → ratio ~1e7 merely restates the moat) or the budget-artifact late≪early decay (`noisy_late_rate ≡ 0`).
+GPU seed-42 was GO in commit `25f23162`; the full-GPU 6-seed is a follow-on. NO new `sim/` edit (the additive
+default-off `from_novelty` rule is already committed + byte-identity-pinned). ⇒ the honest-curiosity inversion is
+realized ON the spiking substrate, 6-seed.
