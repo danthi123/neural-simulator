@@ -39,3 +39,19 @@ Two candidate directions the gate must rank (read the sources, don't assume):
    not an intrinsic dendritic pacemaker). This could work on point neurons if the gamma-slot mechanism carries it.
 The gate reads Buzsáki (theta-gamma), Kandel Ch 54, Lisman-Idiart, and the catalog to rank these + specify the cheap
 de-risk. NO `sim/` edit in this arc (the ramp is external current; theta-basket reuses the FS route).
+
+## UPDATE — the DENDRITIC Kamondi ramp ALSO fails 6-seed (option ② on the two-compartment substrate, 3090, 2026-07-24)
+The research gate's parallel diagnostic (`_gap5_ramp_dendritic_phase_advance_derisk`, NO `sim/` edit — reuses the guarded
+two-compartment apical path) tested whether a REAL apical compartment restores the phase-precession the point soma
+couldn't. **6-seed HONEST NEGATIVE 0/6.** The apical substrate is present (apical_present 6/6; ramp targets the apical;
+basket reference fires), but the readout produced NO clean forward-ordered phase-locking: **MAIN mean R ≈ 0.103 vs the
+point-neuron control ≈ 0.104 — the dendritic compartment did NOT lift phase-locking above the point neuron.**
+per_asm_active is the familiar dichotomy (`[6,6,6]`/`[4,4,4]` diffuse co-fire on some seeds, `[0,0,0]` no-ignition on
+others); forward_frac 0.292 vs chance 0.222 (not a clean order). Per-seed R noisy + inconsistent (0.03–0.36, and seed
+43's point-neuron control 0.368 > its dendritic 0.056).
+
+**⇒ The Kamondi single-cell-pacemaker phase-advance is banked NEGATIVE on BOTH point-neuron AND two-compartment
+substrates.** This CONFIRMS the research gate's load-bearing call: the intrinsic-pacemaker marginal phase-advance is a
+FRAGILE order carrier (even with a real dendrite), and the ROBUST ordering primitive is the NETWORK gamma-slot / cued
+theta-disinhibition sweep (option ①, riding self-avoidance + the adjacent-vs-skip structure, NOT the intrinsic
+oscillation) — which is the top pick and still running. Method banked; capability OPEN; the answer rides on ①.

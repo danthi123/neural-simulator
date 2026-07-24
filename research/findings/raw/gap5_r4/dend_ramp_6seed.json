@@ -1,0 +1,2358 @@
+{
+  "probe": "gap5_ramp_dendritic_phase_advance_readout",
+  "mechanism": "candidate #3 Kamondi ramp single-cell pacemaker, DENDRITIC (two-compartment apical)",
+  "GO": false,
+  "n_go": 0,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "sim_edit": false,
+  "decoupled_cfg": {
+    "apical_R": 50.0,
+    "apical_gc": 1.0,
+    "apical_gc_read": 5.0,
+    "apical_kir_g": 3.0,
+    "assembly_frac": 0.12,
+    "bistable": true,
+    "btsp_lr": 0.05,
+    "ca3_density": 0.05,
+    "ca3_fb_inhib": 20.0,
+    "chain_btsp_lr": 0.5,
+    "chain_fwd": 24,
+    "chain_reset_steps": 12,
+    "chain_rev": 0,
+    "chain_rule": "btsp",
+    "coact_thresh": 0.02,
+    "drive_steps": 48,
+    "enable_ou": false,
+    "encode_btsp": true,
+    "encode_btsp_hetero": 0.0,
+    "encode_ca3w": 0.5,
+    "encode_drive": 3000.0,
+    "encode_plateau_pA": 250.0,
+    "freeze_between_refresh": true,
+    "hebb_max": 300.0,
+    "k_thresh": 18.0,
+    "n_ca3": 2000,
+    "n_mem": 3,
+    "nmda_recurrent": false,
+    "no_sync": true,
+    "overlap_draw": false,
+    "plateau_self_regen": 0.15,
+    "plateau_strength": 120.0,
+    "plateau_v_hold": -35.0,
+    "rank1_encode": true,
+    "recall_k_thresh": 40.0,
+    "reset_steps": 15,
+    "sel_inhib_spare": 20.0,
+    "selective_inhib": true,
+    "seq_win_steps": 16,
+    "structural_sep": 1,
+    "within_events": 30,
+    "within_refresh": 8
+  },
+  "ramp_theta_cfg": {
+    "theta_period": 125,
+    "theta_depth": 400.0,
+    "basket_baseline": 0.0,
+    "sel_inhib_spare": 20.0,
+    "ramp_apical_mv": 30.0,
+    "ramp_soma_pa": 1000.0,
+    "ramp_rise": 1000,
+    "ramp_settle": 60,
+    "ramp_cell_frac": 1.0,
+    "self_regen_read": 0.15,
+    "no_adapt": false,
+    "d_abs": 40.0,
+    "a_abs": 0.008,
+    "n_ca3": 2000,
+    "n_mem": 3,
+    "rest_steps": 2200,
+    "r_floor": 0.15,
+    "r_go_floor": 0.15,
+    "window": 5,
+    "ev_floor": 0.4,
+    "ev_k": 4.0,
+    "active_frac": 0.12,
+    "onset_frac": 0.08
+  },
+  "point_neuron_reference": {
+    "mean_R": 0.055,
+    "note": "seed-42 point-neuron NEGATIVE (ramp-on-soma, self_regen=0)"
+  },
+  "elapsed_seconds": 536.6,
+  "verdict": "HONEST NEGATIVE 0/6 -- the two-compartment APICAL substrate is present (apical_present 6/6, basket_n>=1 on 6/6) and the ramp targets the apical, but the DENDRITIC ramp-phase-advance readout did NOT produce clean forward-ordered phase-locking (phase-order-forward 0/6; per-asm active [[0, 3, 2], [0, 0, 0], [2, 4, 4], [4, 4, 4], [6, 6, 6], [2, 2, 2]]; per-cycle forward_frac 0.292 vs chance 0.222; MAIN mean R 0.103 vs point-neuron control 0.104). Per THE LAW this is a verdict on THIS dendritic operating point, NOT on the phase-order CAPABILITY -- read the per-seed apical_read(mean/max) + per-asm-active + mean_R numbers to scope the next move (e.g. the bistable plateau LATCHES so it can't reset each theta cycle -> a NON-latching sub-threshold dendritic oscillation / stronger basket->soma->apical reset / lower self_regen).",
+  "per_seed": [
+    {
+      "seed": 42,
+      "encode_decoupled": {
+        "w_within": 197.61410522460938,
+        "w_adj_fwd": 38.583213806152344,
+        "w_adj_rev": 5.0,
+        "ratio_adj": 7.716642761230469,
+        "n_between_fwd": 8494,
+        "n_between_rev": 8547,
+        "assembly_sizes": [
+          240,
+          240,
+          240
+        ]
+      },
+      "two_compartment_dap": true,
+      "go": {
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 3.518583772020568,
+              "R": 0.9916020231218491,
+              "weight": 6.0
+            },
+            {
+              "mean_phase": 3.9949931641845278,
+              "R": 0.0290680088931965,
+              "weight": 64282.0
+            },
+            {
+              "mean_phase": 4.494969122235825,
+              "R": 0.04804907690176675,
+              "weight": 39632.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.56,
+            0.6358,
+            0.7154
+          ],
+          "R": [
+            0.9916,
+            0.0291,
+            0.048
+          ],
+          "weight": [
+            6.0,
+            64282.0,
+            39632.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            0.0758,
+            0.1554
+          ],
+          "all_locked": false,
+          "monotone_advance": true,
+          "phase_order_forward": false,
+          "mean_R": 0.3562397029722708,
+          "n_active": 3
+        },
+        "forward_frac": 1.0,
+        "reverse_frac": 0.0,
+        "n_multi": 2,
+        "chance_forward": 0.5,
+        "duty": 0.35909090909090907,
+        "per_asm_active": [
+          0,
+          3,
+          2
+        ],
+        "pop_rate": 0.02362818181818182,
+        "weights_frozen": true,
+        "basket_n": 500,
+        "ramp_n": 240,
+        "apical_read_mean": -77.54,
+        "apical_read_max": -75.98,
+        "apical_rest_max": -80.92121124267578,
+        "two_comp": true,
+        "has_apical": true
+      },
+      "shuffled_store": {
+        "n_between_shuffled": 17041,
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 4.104787652782154,
+              "R": 0.027522022497135073,
+              "weight": 74819.0
+            },
+            {
+              "mean_phase": 4.044440159956092,
+              "R": 0.04502846080032973,
+              "weight": 74899.0
+            },
+            {
+              "mean_phase": 4.786185159435216,
+              "R": 0.03730813699494378,
+              "weight": 26255.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.6533,
+            0.6437,
+            0.7617
+          ],
+          "R": [
+            0.0275,
+            0.045,
+            0.0373
+          ],
+          "weight": [
+            74819.0,
+            74899.0,
+            26255.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            0.9904,
+            0.1084
+          ],
+          "all_locked": false,
+          "monotone_advance": false,
+          "phase_order_forward": false,
+          "mean_R": 0.03661954009746953,
+          "n_active": 3
+        },
+        "forward_frac": 0.2,
+        "reverse_frac": 0.2,
+        "n_multi": 5,
+        "per_asm_active": [
+          5,
+          5,
+          5
+        ],
+        "weights_frozen": true
+      },
+      "reverse_asymmetry_lesion": {
+        "n_between_symmetrized": 17041,
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 3.383068231722361,
+              "R": 0.05715070423618675,
+              "weight": 37591.0
+            },
+            {
+              "mean_phase": 3.340447906564877,
+              "R": 0.051601144493290285,
+              "weight": 77674.0
+            },
+            {
+              "mean_phase": 3.8570863379704785,
+              "R": 0.029079612811063655,
+              "weight": 14649.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.5384,
+            0.5316,
+            0.6139
+          ],
+          "R": [
+            0.0572,
+            0.0516,
+            0.0291
+          ],
+          "weight": [
+            37591.0,
+            77674.0,
+            14649.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            0.9932,
+            0.0754
+          ],
+          "all_locked": false,
+          "monotone_advance": false,
+          "phase_order_forward": false,
+          "mean_R": 0.04594382051351356,
+          "n_active": 3
+        },
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "n_multi": 2,
+        "per_asm_active": [
+          2,
+          4,
+          2
+        ],
+        "weights_frozen": true
+      },
+      "basket_off": {
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": null,
+              "R": 0.0,
+              "weight": 0.0
+            },
+            {
+              "mean_phase": null,
+              "R": 0.0,
+              "weight": 0.0
+            },
+            {
+              "mean_phase": null,
+              "R": 0.0,
+              "weight": 0.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            null,
+            null,
+            null
+          ],
+          "R": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "weight": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "lags_cycfrac": null,
+          "all_locked": false,
+          "monotone_advance": false,
+          "phase_order_forward": false,
+          "mean_R": 0.0,
+          "n_active": 0
+        },
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "n_multi": 0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "pop_rate": 0.0,
+        "weights_frozen": true
+      },
+      "no_cue": {
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 4.206668394366044,
+              "R": 0.05099068890474899,
+              "weight": 35593.0
+            },
+            {
+              "mean_phase": 3.4637865503284755,
+              "R": 0.0598774989733569,
+              "weight": 66869.0
+            },
+            {
+              "mean_phase": 3.9689763220131242,
+              "R": 0.05093531340762604,
+              "weight": 33180.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.6695,
+            0.5513,
+            0.6317
+          ],
+          "R": [
+            0.051,
+            0.0599,
+            0.0509
+          ],
+          "weight": [
+            35593.0,
+            66869.0,
+            33180.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            0.8818,
+            0.9622
+          ],
+          "all_locked": false,
+          "monotone_advance": false,
+          "phase_order_forward": false,
+          "mean_R": 0.053934500428577316,
+          "n_active": 3
+        },
+        "forward_frac": 0.3333333333333333,
+        "reverse_frac": 0.3333333333333333,
+        "n_multi": 3,
+        "per_asm_active": [
+          2,
+          3,
+          3
+        ],
+        "pop_rate": 0.030845454545454544,
+        "weights_frozen": true
+      },
+      "point_neuron_control": {
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 1.6442561736905683,
+              "R": 0.02366395460717486,
+              "weight": 96469.0
+            },
+            {
+              "mean_phase": null,
+              "R": 0.0,
+              "weight": 0.0
+            },
+            {
+              "mean_phase": 1.983016058300082,
+              "R": 0.03655652310911383,
+              "weight": 21454.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.2617,
+            null,
+            0.3156
+          ],
+          "R": [
+            0.0237,
+            0.0,
+            0.0366
+          ],
+          "weight": [
+            96469.0,
+            0.0,
+            21454.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            null,
+            0.0539
+          ],
+          "all_locked": false,
+          "monotone_advance": false,
+          "phase_order_forward": false,
+          "mean_R": 0.02007349257209623,
+          "n_active": 2
+        },
+        "forward_frac": 0.75,
+        "reverse_frac": 0.25,
+        "n_multi": 4,
+        "per_asm_active": [
+          4,
+          0,
+          4
+        ],
+        "pop_rate": 0.026800681818181817,
+        "weights_frozen": true
+      },
+      "checks": {
+        "main_phase_order": false,
+        "R_substantially_above_point": true,
+        "per_cycle_support": true,
+        "shuffled_collapses": true,
+        "reverse_collapses": true,
+        "basket_off_collapses": true,
+        "nocue_collapses": true,
+        "point_neuron_collapses": true,
+        "frozen_ok": true,
+        "dendrite_reset_ok": true,
+        "apical_present": true,
+        "n_active": 3,
+        "mean_R_main": 0.3562,
+        "mean_R_basketoff": 0.0,
+        "mean_R_nocue": 0.0539,
+        "mean_R_pointneuron": 0.0201
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 43,
+      "encode_decoupled": {
+        "w_within": 196.69076538085938,
+        "w_adj_fwd": 37.7502326965332,
+        "w_adj_rev": 5.0,
+        "ratio_adj": 7.55004653930664,
+        "n_between_fwd": 8590,
+        "n_between_rev": 8641,
+        "assembly_sizes": [
+          240,
+          240,
+          240
+        ]
+      },
+      "two_compartment_dap": true,
+      "go": {
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 4.0770343344958455,
+              "R": 0.03889477331719293,
+              "weight": 97567.0
+            },
+            {
+              "mean_phase": 3.814541774399974,
+              "R": 0.07443415954860665,
+              "weight": 65554.0
+            },
+            {
+              "mean_phase": 4.253794097807463,
+              "R": 0.05415953620903134,
+              "weight": 58965.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.6489,
+            0.6071,
+            0.677
+          ],
+          "R": [
+            0.0389,
+            0.0744,
+            0.0542
+          ],
+          "weight": [
+            97567.0,
+            65554.0,
+            58965.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            0.9582,
+            0.0281
+          ],
+          "all_locked": false,
+          "monotone_advance": false,
+          "phase_order_forward": false,
+          "mean_R": 0.05582948969161031,
+          "n_active": 3
+        },
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "n_multi": 0,
+        "chance_forward": 0.0,
+        "duty": 0.0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "pop_rate": 0.05051454545454546,
+        "weights_frozen": true,
+        "basket_n": 500,
+        "ramp_n": 240,
+        "apical_read_mean": -294373.7,
+        "apical_read_max": 80627.15,
+        "apical_rest_max": -80.8911361694336,
+        "two_comp": true,
+        "has_apical": true
+      },
+      "shuffled_store": {
+        "n_between_shuffled": 17231,
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 3.5597609946846065,
+              "R": 0.07058349518852719,
+              "weight": 71647.0
+            },
+            {
+              "mean_phase": 3.3911818537548157,
+              "R": 0.06444960770887966,
+              "weight": 70753.0
+            },
+            {
+              "mean_phase": 3.843373949085548,
+              "R": 0.07930519763067272,
+              "weight": 26786.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.5666,
+            0.5397,
+            0.6117
+          ],
+          "R": [
+            0.0706,
+            0.0644,
+            0.0793
+          ],
+          "weight": [
+            71647.0,
+            70753.0,
+            26786.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            0.9732,
+            0.0451
+          ],
+          "all_locked": false,
+          "monotone_advance": false,
+          "phase_order_forward": false,
+          "mean_R": 0.07144610017602653,
+          "n_active": 3
+        },
+        "forward_frac": 0.5,
+        "reverse_frac": 0.25,
+        "n_multi": 4,
+        "per_asm_active": [
+          4,
+          4,
+          4
+        ],
+        "weights_frozen": true
+      },
+      "reverse_asymmetry_lesion": {
+        "n_between_symmetrized": 17231,
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 4.032792619110028,
+              "R": 0.04135662784310078,
+              "weight": 69871.0
+            },
+            {
+              "mean_phase": 4.037016269502146,
+              "R": 0.057493838568213634,
+              "weight": 69089.0
+            },
+            {
+              "mean_phase": 4.426145765134738,
+              "R": 0.06950827904943432,
+              "weight": 21963.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.6418,
+            0.6425,
+            0.7044
+          ],
+          "R": [
+            0.0414,
+            0.0575,
+            0.0695
+          ],
+          "weight": [
+            69871.0,
+            69089.0,
+            21963.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            0.0007,
+            0.0626
+          ],
+          "all_locked": false,
+          "monotone_advance": true,
+          "phase_order_forward": false,
+          "mean_R": 0.056119581820249585,
+          "n_active": 3
+        },
+        "forward_frac": 0.75,
+        "reverse_frac": 0.0,
+        "n_multi": 4,
+        "per_asm_active": [
+          4,
+          4,
+          3
+        ],
+        "weights_frozen": true
+      },
+      "basket_off": {
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": null,
+              "R": 0.0,
+              "weight": 0.0
+            },
+            {
+              "mean_phase": null,
+              "R": 0.0,
+              "weight": 0.0
+            },
+            {
+              "mean_phase": null,
+              "R": 0.0,
+              "weight": 0.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            null,
+            null,
+            null
+          ],
+          "R": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "weight": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "lags_cycfrac": null,
+          "all_locked": false,
+          "monotone_advance": false,
+          "phase_order_forward": false,
+          "mean_R": 0.0,
+          "n_active": 0
+        },
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "n_multi": 0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "pop_rate": 0.0,
+        "weights_frozen": true
+      },
+      "no_cue": {
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 3.5722411258764852,
+              "R": 0.03339109552620329,
+              "weight": 47237.0
+            },
+            {
+              "mean_phase": 4.060748691152794,
+              "R": 0.049112251640888005,
+              "weight": 67702.0
+            },
+            {
+              "mean_phase": 4.221874774626341,
+              "R": 0.03656401949580267,
+              "weight": 53778.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.5685,
+            0.6463,
+            0.6719
+          ],
+          "R": [
+            0.0334,
+            0.0491,
+            0.0366
+          ],
+          "weight": [
+            47237.0,
+            67702.0,
+            53778.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            0.0777,
+            0.1034
+          ],
+          "all_locked": false,
+          "monotone_advance": true,
+          "phase_order_forward": false,
+          "mean_R": 0.03968912222096466,
+          "n_active": 3
+        },
+        "forward_frac": 0.14285714285714285,
+        "reverse_frac": 0.42857142857142855,
+        "n_multi": 7,
+        "per_asm_active": [
+          5,
+          7,
+          7
+        ],
+        "pop_rate": 0.03838727272727273,
+        "weights_frozen": true
+      },
+      "point_neuron_control": {
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 1.9038377471162804,
+              "R": 0.022259258251826793,
+              "weight": 90215.0
+            },
+            {
+              "mean_phase": 3.482663862774042,
+              "R": 0.9934022776146944,
+              "weight": 60.0
+            },
+            {
+              "mean_phase": 2.3798112906489446,
+              "R": 0.0887182880618735,
+              "weight": 19025.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.303,
+            0.5543,
+            0.3788
+          ],
+          "R": [
+            0.0223,
+            0.9934,
+            0.0887
+          ],
+          "weight": [
+            90215.0,
+            60.0,
+            19025.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            0.2513,
+            0.0758
+          ],
+          "all_locked": false,
+          "monotone_advance": false,
+          "phase_order_forward": false,
+          "mean_R": 0.36812660797613156,
+          "n_active": 3
+        },
+        "forward_frac": 0.6,
+        "reverse_frac": 0.4,
+        "n_multi": 5,
+        "per_asm_active": [
+          5,
+          0,
+          5
+        ],
+        "pop_rate": 0.02484227272727273,
+        "weights_frozen": true
+      },
+      "checks": {
+        "main_phase_order": false,
+        "R_substantially_above_point": false,
+        "per_cycle_support": false,
+        "shuffled_collapses": true,
+        "reverse_collapses": true,
+        "basket_off_collapses": true,
+        "nocue_collapses": true,
+        "point_neuron_collapses": true,
+        "frozen_ok": true,
+        "dendrite_reset_ok": true,
+        "apical_present": true,
+        "n_active": 3,
+        "mean_R_main": 0.0558,
+        "mean_R_basketoff": 0.0,
+        "mean_R_nocue": 0.0397,
+        "mean_R_pointneuron": 0.3681
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 44,
+      "encode_decoupled": {
+        "w_within": 195.59503173828125,
+        "w_adj_fwd": 38.47499084472656,
+        "w_adj_rev": 5.0,
+        "ratio_adj": 7.694998168945313,
+        "n_between_fwd": 8461,
+        "n_between_rev": 8799,
+        "assembly_sizes": [
+          240,
+          240,
+          240
+        ]
+      },
+      "two_compartment_dap": true,
+      "go": {
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 4.214326241132146,
+              "R": 0.055080994794743585,
+              "weight": 33012.0
+            },
+            {
+              "mean_phase": 3.534161195336077,
+              "R": 0.06524290997625751,
+              "weight": 68559.0
+            },
+            {
+              "mean_phase": 3.5696044904259856,
+              "R": 0.07024070344558797,
+              "weight": 43752.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.6707,
+            0.5625,
+            0.5681
+          ],
+          "R": [
+            0.0551,
+            0.0652,
+            0.0702
+          ],
+          "weight": [
+            33012.0,
+            68559.0,
+            43752.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            0.8917,
+            0.8974
+          ],
+          "all_locked": false,
+          "monotone_advance": false,
+          "phase_order_forward": false,
+          "mean_R": 0.06352153607219635,
+          "n_active": 3
+        },
+        "forward_frac": 0.0,
+        "reverse_frac": 0.75,
+        "n_multi": 4,
+        "chance_forward": 0.3333333333333333,
+        "duty": 0.34954545454545455,
+        "per_asm_active": [
+          2,
+          4,
+          4
+        ],
+        "pop_rate": 0.033071363636363635,
+        "weights_frozen": true,
+        "basket_n": 500,
+        "ramp_n": 240,
+        "apical_read_mean": -89098.53,
+        "apical_read_max": 56435.0,
+        "apical_rest_max": -80.90538787841797,
+        "two_comp": true,
+        "has_apical": true
+      },
+      "shuffled_store": {
+        "n_between_shuffled": 17260,
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 3.8560627731766033,
+              "R": 0.019141637374314915,
+              "weight": 101307.0
+            },
+            {
+              "mean_phase": 3.4330484376159225,
+              "R": 0.029980170553638885,
+              "weight": 102575.0
+            },
+            {
+              "mean_phase": 4.554376400033748,
+              "R": 0.04925721738108746,
+              "weight": 28035.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.6137,
+            0.5464,
+            0.7249
+          ],
+          "R": [
+            0.0191,
+            0.03,
+            0.0493
+          ],
+          "weight": [
+            101307.0,
+            102575.0,
+            28035.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            0.9327,
+            0.1111
+          ],
+          "all_locked": false,
+          "monotone_advance": false,
+          "phase_order_forward": false,
+          "mean_R": 0.03279300843634709,
+          "n_active": 3
+        },
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "n_multi": 0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "weights_frozen": true
+      },
+      "reverse_asymmetry_lesion": {
+        "n_between_symmetrized": 17260,
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 3.280346927131906,
+              "R": 0.04630092231947092,
+              "weight": 90321.0
+            },
+            {
+              "mean_phase": 3.2752325829052524,
+              "R": 0.04862284461866828,
+              "weight": 92808.0
+            },
+            {
+              "mean_phase": 4.271760112714922,
+              "R": 0.0845535263233724,
+              "weight": 21483.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.5221,
+            0.5213,
+            0.6799
+          ],
+          "R": [
+            0.0463,
+            0.0486,
+            0.0846
+          ],
+          "weight": [
+            90321.0,
+            92808.0,
+            21483.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            0.9992,
+            0.1578
+          ],
+          "all_locked": false,
+          "monotone_advance": false,
+          "phase_order_forward": false,
+          "mean_R": 0.059825764420503864,
+          "n_active": 3
+        },
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "n_multi": 3,
+        "per_asm_active": [
+          3,
+          3,
+          3
+        ],
+        "weights_frozen": true
+      },
+      "basket_off": {
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": null,
+              "R": 0.0,
+              "weight": 0.0
+            },
+            {
+              "mean_phase": 4.941452929389769,
+              "R": 0.22235380964076332,
+              "weight": 30.0
+            },
+            {
+              "mean_phase": null,
+              "R": 0.0,
+              "weight": 0.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            null,
+            0.7865,
+            null
+          ],
+          "R": [
+            0.0,
+            0.2224,
+            0.0
+          ],
+          "weight": [
+            0.0,
+            30.0,
+            0.0
+          ],
+          "lags_cycfrac": null,
+          "all_locked": false,
+          "monotone_advance": false,
+          "phase_order_forward": false,
+          "mean_R": 0.0741179365469211,
+          "n_active": 1
+        },
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "n_multi": 0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "pop_rate": 1.1818181818181819e-05,
+        "weights_frozen": true
+      },
+      "no_cue": {
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 3.7580395873167287,
+              "R": 0.0415494623943332,
+              "weight": 45523.0
+            },
+            {
+              "mean_phase": 4.09521244037685,
+              "R": 0.06518806021199873,
+              "weight": 68429.0
+            },
+            {
+              "mean_phase": 4.174805323679788,
+              "R": 0.05244883277282255,
+              "weight": 51756.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.5981,
+            0.6518,
+            0.6644
+          ],
+          "R": [
+            0.0415,
+            0.0652,
+            0.0524
+          ],
+          "weight": [
+            45523.0,
+            68429.0,
+            51756.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            0.0537,
+            0.0663
+          ],
+          "all_locked": false,
+          "monotone_advance": true,
+          "phase_order_forward": false,
+          "mean_R": 0.053062118459718165,
+          "n_active": 3
+        },
+        "forward_frac": 0.2857142857142857,
+        "reverse_frac": 0.14285714285714285,
+        "n_multi": 7,
+        "per_asm_active": [
+          5,
+          7,
+          7
+        ],
+        "pop_rate": 0.03770681818181818,
+        "weights_frozen": true
+      },
+      "point_neuron_control": {
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 1.6601069129930646,
+              "R": 0.021012032769293223,
+              "weight": 87854.0
+            },
+            {
+              "mean_phase": 3.286748863744261,
+              "R": 0.08333804032383461,
+              "weight": 101745.0
+            },
+            {
+              "mean_phase": 2.9641248025837466,
+              "R": 0.08747537907624994,
+              "weight": 63830.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.2642,
+            0.5231,
+            0.4718
+          ],
+          "R": [
+            0.021,
+            0.0833,
+            0.0875
+          ],
+          "weight": [
+            87854.0,
+            101745.0,
+            63830.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            0.2589,
+            0.2075
+          ],
+          "all_locked": false,
+          "monotone_advance": false,
+          "phase_order_forward": false,
+          "mean_R": 0.0639418173897926,
+          "n_active": 3
+        },
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "n_multi": 0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "pop_rate": 0.0599375,
+        "weights_frozen": true
+      },
+      "checks": {
+        "main_phase_order": false,
+        "R_substantially_above_point": false,
+        "per_cycle_support": false,
+        "shuffled_collapses": true,
+        "reverse_collapses": true,
+        "basket_off_collapses": true,
+        "nocue_collapses": true,
+        "point_neuron_collapses": true,
+        "frozen_ok": true,
+        "dendrite_reset_ok": true,
+        "apical_present": true,
+        "n_active": 3,
+        "mean_R_main": 0.0635,
+        "mean_R_basketoff": 0.0741,
+        "mean_R_nocue": 0.0531,
+        "mean_R_pointneuron": 0.0639
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 100,
+      "encode_decoupled": {
+        "w_within": 199.0098114013672,
+        "w_adj_fwd": 38.2833137512207,
+        "w_adj_rev": 5.0,
+        "ratio_adj": 7.6566627502441404,
+        "n_between_fwd": 8641,
+        "n_between_rev": 8621,
+        "assembly_sizes": [
+          240,
+          240,
+          240
+        ]
+      },
+      "two_compartment_dap": true,
+      "go": {
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 3.533303696841908,
+              "R": 0.06546032202309002,
+              "weight": 66789.0
+            },
+            {
+              "mean_phase": 3.888957935569532,
+              "R": 0.06623278043850156,
+              "weight": 69995.0
+            },
+            {
+              "mean_phase": 3.93793108407997,
+              "R": 0.07119675435440516,
+              "weight": 56679.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.5623,
+            0.6189,
+            0.6267
+          ],
+          "R": [
+            0.0655,
+            0.0662,
+            0.0712
+          ],
+          "weight": [
+            66789.0,
+            69995.0,
+            56679.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            0.0566,
+            0.0644
+          ],
+          "all_locked": false,
+          "monotone_advance": true,
+          "phase_order_forward": false,
+          "mean_R": 0.06762995227199892,
+          "n_active": 3
+        },
+        "forward_frac": 0.25,
+        "reverse_frac": 0.0,
+        "n_multi": 4,
+        "chance_forward": 0.16666666666666666,
+        "duty": 0.3890909090909091,
+        "per_asm_active": [
+          4,
+          4,
+          4
+        ],
+        "pop_rate": 0.043983636363636364,
+        "weights_frozen": true,
+        "basket_n": 500,
+        "ramp_n": 240,
+        "apical_read_mean": -198999.41,
+        "apical_read_max": 63862.41,
+        "apical_rest_max": -80.91545104980469,
+        "two_comp": true,
+        "has_apical": true
+      },
+      "shuffled_store": {
+        "n_between_shuffled": 17262,
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 4.184321848876994,
+              "R": 0.03871159627593275,
+              "weight": 105757.0
+            },
+            {
+              "mean_phase": 4.146754280024254,
+              "R": 0.0485484285123921,
+              "weight": 105371.0
+            },
+            {
+              "mean_phase": 4.5541800918459145,
+              "R": 0.05860248831525408,
+              "weight": 34138.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.666,
+            0.66,
+            0.7248
+          ],
+          "R": [
+            0.0387,
+            0.0485,
+            0.0586
+          ],
+          "weight": [
+            105757.0,
+            105371.0,
+            34138.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            0.994,
+            0.0589
+          ],
+          "all_locked": false,
+          "monotone_advance": false,
+          "phase_order_forward": false,
+          "mean_R": 0.04862083770119297,
+          "n_active": 3
+        },
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "n_multi": 0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "weights_frozen": true
+      },
+      "reverse_asymmetry_lesion": {
+        "n_between_symmetrized": 17262,
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 3.514571415221449,
+              "R": 0.08464812412588213,
+              "weight": 35862.0
+            },
+            {
+              "mean_phase": 3.9974150053623854,
+              "R": 0.0547047357711461,
+              "weight": 68181.0
+            },
+            {
+              "mean_phase": 4.386249196043078,
+              "R": 0.05876622999748968,
+              "weight": 20020.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.5594,
+            0.6362,
+            0.6981
+          ],
+          "R": [
+            0.0846,
+            0.0547,
+            0.0588
+          ],
+          "weight": [
+            35862.0,
+            68181.0,
+            20020.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            0.0768,
+            0.1387
+          ],
+          "all_locked": false,
+          "monotone_advance": true,
+          "phase_order_forward": false,
+          "mean_R": 0.06603969663150597,
+          "n_active": 3
+        },
+        "forward_frac": 0.3333333333333333,
+        "reverse_frac": 0.0,
+        "n_multi": 3,
+        "per_asm_active": [
+          3,
+          6,
+          3
+        ],
+        "weights_frozen": true
+      },
+      "basket_off": {
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": null,
+              "R": 0.0,
+              "weight": 0.0
+            },
+            {
+              "mean_phase": null,
+              "R": 0.0,
+              "weight": 0.0
+            },
+            {
+              "mean_phase": null,
+              "R": 0.0,
+              "weight": 0.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            null,
+            null,
+            null
+          ],
+          "R": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "weight": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "lags_cycfrac": null,
+          "all_locked": false,
+          "monotone_advance": false,
+          "phase_order_forward": false,
+          "mean_R": 0.0,
+          "n_active": 0
+        },
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "n_multi": 0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "pop_rate": 0.0,
+        "weights_frozen": true
+      },
+      "no_cue": {
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 4.173541427712532,
+              "R": 0.05125761239255903,
+              "weight": 70322.0
+            },
+            {
+              "mean_phase": 4.03585660347461,
+              "R": 0.05457644487000292,
+              "weight": 35373.0
+            },
+            {
+              "mean_phase": 4.3813158945924435,
+              "R": 0.04783697002598044,
+              "weight": 48711.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.6642,
+            0.6423,
+            0.6973
+          ],
+          "R": [
+            0.0513,
+            0.0546,
+            0.0478
+          ],
+          "weight": [
+            70322.0,
+            35373.0,
+            48711.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            0.9781,
+            0.0331
+          ],
+          "all_locked": false,
+          "monotone_advance": false,
+          "phase_order_forward": false,
+          "mean_R": 0.05122367576284747,
+          "n_active": 3
+        },
+        "forward_frac": 0.5,
+        "reverse_frac": 0.0,
+        "n_multi": 4,
+        "per_asm_active": [
+          3,
+          3,
+          4
+        ],
+        "pop_rate": 0.03510636363636364,
+        "weights_frozen": true
+      },
+      "point_neuron_control": {
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 1.481312185443442,
+              "R": 0.029972153397551868,
+              "weight": 92106.0
+            },
+            {
+              "mean_phase": 3.5009557017516966,
+              "R": 0.07488980879131232,
+              "weight": 107273.0
+            },
+            {
+              "mean_phase": 3.2355459310603525,
+              "R": 0.07006130891810816,
+              "weight": 65793.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.2358,
+            0.5572,
+            0.515
+          ],
+          "R": [
+            0.03,
+            0.0749,
+            0.0701
+          ],
+          "weight": [
+            92106.0,
+            107273.0,
+            65793.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            0.3214,
+            0.2792
+          ],
+          "all_locked": false,
+          "monotone_advance": false,
+          "phase_order_forward": false,
+          "mean_R": 0.05830775703565746,
+          "n_active": 3
+        },
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "n_multi": 0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "pop_rate": 0.06269454545454546,
+        "weights_frozen": true
+      },
+      "checks": {
+        "main_phase_order": false,
+        "R_substantially_above_point": false,
+        "per_cycle_support": true,
+        "shuffled_collapses": true,
+        "reverse_collapses": true,
+        "basket_off_collapses": true,
+        "nocue_collapses": true,
+        "point_neuron_collapses": true,
+        "frozen_ok": true,
+        "dendrite_reset_ok": true,
+        "apical_present": true,
+        "n_active": 3,
+        "mean_R_main": 0.0676,
+        "mean_R_basketoff": 0.0,
+        "mean_R_nocue": 0.0512,
+        "mean_R_pointneuron": 0.0583
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 101,
+      "encode_decoupled": {
+        "w_within": 202.99839782714844,
+        "w_adj_fwd": 37.93458938598633,
+        "w_adj_rev": 5.0,
+        "ratio_adj": 7.586917877197266,
+        "n_between_fwd": 8758,
+        "n_between_rev": 8545,
+        "assembly_sizes": [
+          240,
+          240,
+          240
+        ]
+      },
+      "two_compartment_dap": true,
+      "go": {
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 4.162162696949667,
+              "R": 0.05120170304823044,
+              "weight": 71240.0
+            },
+            {
+              "mean_phase": 3.9575131015430993,
+              "R": 0.03927827299422361,
+              "weight": 80480.0
+            },
+            {
+              "mean_phase": 4.281276005128515,
+              "R": 0.03710558548699983,
+              "weight": 62058.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.6624,
+            0.6299,
+            0.6814
+          ],
+          "R": [
+            0.0512,
+            0.0393,
+            0.0371
+          ],
+          "weight": [
+            71240.0,
+            80480.0,
+            62058.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            0.9674,
+            0.019
+          ],
+          "all_locked": false,
+          "monotone_advance": false,
+          "phase_order_forward": false,
+          "mean_R": 0.04252852050981796,
+          "n_active": 3
+        },
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "n_multi": 6,
+        "chance_forward": 0.16666666666666666,
+        "duty": 0.15545454545454546,
+        "per_asm_active": [
+          6,
+          6,
+          6
+        ],
+        "pop_rate": 0.048639545454545456,
+        "weights_frozen": true,
+        "basket_n": 500,
+        "ramp_n": 240,
+        "apical_read_mean": -214382.93,
+        "apical_read_max": 82380.14,
+        "apical_rest_max": -80.89331817626953,
+        "two_comp": true,
+        "has_apical": true
+      },
+      "shuffled_store": {
+        "n_between_shuffled": 17303,
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 3.536238387801924,
+              "R": 0.06667402537848983,
+              "weight": 59567.0
+            },
+            {
+              "mean_phase": 3.390145433847491,
+              "R": 0.06189399138020702,
+              "weight": 60894.0
+            },
+            {
+              "mean_phase": 3.9730082240973754,
+              "R": 0.08467185773500611,
+              "weight": 29299.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.5628,
+            0.5396,
+            0.6323
+          ],
+          "R": [
+            0.0667,
+            0.0619,
+            0.0847
+          ],
+          "weight": [
+            59567.0,
+            60894.0,
+            29299.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            0.9767,
+            0.0695
+          ],
+          "all_locked": false,
+          "monotone_advance": false,
+          "phase_order_forward": false,
+          "mean_R": 0.07107995816456765,
+          "n_active": 3
+        },
+        "forward_frac": 0.3333333333333333,
+        "reverse_frac": 0.3333333333333333,
+        "n_multi": 3,
+        "per_asm_active": [
+          3,
+          3,
+          2
+        ],
+        "weights_frozen": true
+      },
+      "reverse_asymmetry_lesion": {
+        "n_between_symmetrized": 17303,
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 3.30201313576425,
+              "R": 0.05031336835162266,
+              "weight": 106763.0
+            },
+            {
+              "mean_phase": 3.283081774916028,
+              "R": 0.05361945666567492,
+              "weight": 68173.0
+            },
+            {
+              "mean_phase": 4.330187897073872,
+              "R": 0.06364472348295151,
+              "weight": 22274.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.5255,
+            0.5225,
+            0.6892
+          ],
+          "R": [
+            0.0503,
+            0.0536,
+            0.0636
+          ],
+          "weight": [
+            106763.0,
+            68173.0,
+            22274.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            0.997,
+            0.1636
+          ],
+          "all_locked": false,
+          "monotone_advance": false,
+          "phase_order_forward": false,
+          "mean_R": 0.055859182833416364,
+          "n_active": 3
+        },
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "n_multi": 0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "weights_frozen": true
+      },
+      "basket_off": {
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 5.459473149245665,
+              "R": 0.019141993500708467,
+              "weight": 52735.0
+            },
+            {
+              "mean_phase": null,
+              "R": 0.0,
+              "weight": 0.0
+            },
+            {
+              "mean_phase": 5.578586911299716,
+              "R": 0.0211961460370319,
+              "weight": 28373.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.8689,
+            null,
+            0.8879
+          ],
+          "R": [
+            0.0191,
+            0.0,
+            0.0212
+          ],
+          "weight": [
+            52735.0,
+            0.0,
+            28373.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            null,
+            0.019
+          ],
+          "all_locked": false,
+          "monotone_advance": false,
+          "phase_order_forward": false,
+          "mean_R": 0.013446046512580122,
+          "n_active": 2
+        },
+        "forward_frac": 0.5,
+        "reverse_frac": 0.5,
+        "n_multi": 2,
+        "per_asm_active": [
+          2,
+          0,
+          2
+        ],
+        "pop_rate": 0.020532272727272725,
+        "weights_frozen": true
+      },
+      "no_cue": {
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 4.168082883378276,
+              "R": 0.05307570252810168,
+              "weight": 68052.0
+            },
+            {
+              "mean_phase": 3.681800067833746,
+              "R": 0.07199900604466451,
+              "weight": 72614.0
+            },
+            {
+              "mean_phase": 3.8887689771934912,
+              "R": 0.07290009585550317,
+              "weight": 58220.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.6634,
+            0.586,
+            0.6189
+          ],
+          "R": [
+            0.0531,
+            0.072,
+            0.0729
+          ],
+          "weight": [
+            68052.0,
+            72614.0,
+            58220.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            0.9226,
+            0.9555
+          ],
+          "all_locked": false,
+          "monotone_advance": false,
+          "phase_order_forward": false,
+          "mean_R": 0.06599160147608979,
+          "n_active": 3
+        },
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "n_multi": 0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "pop_rate": 0.045259999999999995,
+        "weights_frozen": true
+      },
+      "point_neuron_control": {
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 1.6970767092162806,
+              "R": 0.039814828741295646,
+              "weight": 96626.0
+            },
+            {
+              "mean_phase": null,
+              "R": 0.0,
+              "weight": 0.0
+            },
+            {
+              "mean_phase": 2.4118833391248913,
+              "R": 0.08856767509423874,
+              "weight": 20913.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.2701,
+            null,
+            0.3839
+          ],
+          "R": [
+            0.0398,
+            0.0,
+            0.0886
+          ],
+          "weight": [
+            96626.0,
+            0.0,
+            20913.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            null,
+            0.1138
+          ],
+          "all_locked": false,
+          "monotone_advance": false,
+          "phase_order_forward": false,
+          "mean_R": 0.04279416794517813,
+          "n_active": 2
+        },
+        "forward_frac": 0.6,
+        "reverse_frac": 0.4,
+        "n_multi": 5,
+        "per_asm_active": [
+          5,
+          0,
+          5
+        ],
+        "pop_rate": 0.026737045454545454,
+        "weights_frozen": true
+      },
+      "checks": {
+        "main_phase_order": false,
+        "R_substantially_above_point": false,
+        "per_cycle_support": false,
+        "shuffled_collapses": true,
+        "reverse_collapses": true,
+        "basket_off_collapses": true,
+        "nocue_collapses": true,
+        "point_neuron_collapses": true,
+        "frozen_ok": true,
+        "dendrite_reset_ok": true,
+        "apical_present": true,
+        "n_active": 3,
+        "mean_R_main": 0.0425,
+        "mean_R_basketoff": 0.0134,
+        "mean_R_nocue": 0.066,
+        "mean_R_pointneuron": 0.0428
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 102,
+      "encode_decoupled": {
+        "w_within": 204.3464813232422,
+        "w_adj_fwd": 38.09284591674805,
+        "w_adj_rev": 5.0,
+        "ratio_adj": 7.618569183349609,
+        "n_between_fwd": 8467,
+        "n_between_rev": 8754,
+        "assembly_sizes": [
+          240,
+          240,
+          240
+        ]
+      },
+      "two_compartment_dap": true,
+      "go": {
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 3.5547507925729542,
+              "R": 0.029773843336790024,
+              "weight": 92251.0
+            },
+            {
+              "mean_phase": 4.01819200184577,
+              "R": 0.03950446284908422,
+              "weight": 83375.0
+            },
+            {
+              "mean_phase": 3.9819890033772603,
+              "R": 0.03277963235995423,
+              "weight": 68122.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.5658,
+            0.6395,
+            0.6338
+          ],
+          "R": [
+            0.0298,
+            0.0395,
+            0.0328
+          ],
+          "weight": [
+            92251.0,
+            83375.0,
+            68122.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            0.0738,
+            0.068
+          ],
+          "all_locked": false,
+          "monotone_advance": false,
+          "phase_order_forward": false,
+          "mean_R": 0.03401931284860949,
+          "n_active": 3
+        },
+        "forward_frac": 0.5,
+        "reverse_frac": 0.0,
+        "n_multi": 2,
+        "chance_forward": 0.16666666666666666,
+        "duty": 0.019090909090909092,
+        "per_asm_active": [
+          2,
+          2,
+          2
+        ],
+        "pop_rate": 0.055418636363636364,
+        "weights_frozen": true,
+        "basket_n": 500,
+        "ramp_n": 240,
+        "apical_read_mean": -335719.14,
+        "apical_read_max": 73455.96,
+        "apical_rest_max": -80.8857650756836,
+        "two_comp": true,
+        "has_apical": true
+      },
+      "shuffled_store": {
+        "n_between_shuffled": 17221,
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 4.015992745126235,
+              "R": 0.028787517544555476,
+              "weight": 100150.0
+            },
+            {
+              "mean_phase": 4.16984549235638,
+              "R": 0.03945466746319754,
+              "weight": 100489.0
+            },
+            {
+              "mean_phase": 4.584620322703389,
+              "R": 0.06625078928555661,
+              "weight": 27794.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.6392,
+            0.6637,
+            0.7297
+          ],
+          "R": [
+            0.0288,
+            0.0395,
+            0.0663
+          ],
+          "weight": [
+            100150.0,
+            100489.0,
+            27794.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            0.0245,
+            0.0905
+          ],
+          "all_locked": false,
+          "monotone_advance": true,
+          "phase_order_forward": false,
+          "mean_R": 0.044830991431103216,
+          "n_active": 3
+        },
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "n_multi": 0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "weights_frozen": true
+      },
+      "reverse_asymmetry_lesion": {
+        "n_between_symmetrized": 17221,
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 4.001716024275422,
+              "R": 0.035996727558173305,
+              "weight": 100711.0
+            },
+            {
+              "mean_phase": 4.170276529435988,
+              "R": 0.04623227613757804,
+              "weight": 71294.0
+            },
+            {
+              "mean_phase": 4.547343369364521,
+              "R": 0.07610453317049806,
+              "weight": 23405.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.6369,
+            0.6637,
+            0.7237
+          ],
+          "R": [
+            0.036,
+            0.0462,
+            0.0761
+          ],
+          "weight": [
+            100711.0,
+            71294.0,
+            23405.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            0.0268,
+            0.0868
+          ],
+          "all_locked": false,
+          "monotone_advance": true,
+          "phase_order_forward": false,
+          "mean_R": 0.05277784562208313,
+          "n_active": 3
+        },
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "n_multi": 0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "weights_frozen": true
+      },
+      "basket_off": {
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": null,
+              "R": 0.0,
+              "weight": 0.0
+            },
+            {
+              "mean_phase": null,
+              "R": 0.0,
+              "weight": 0.0
+            },
+            {
+              "mean_phase": null,
+              "R": 0.0,
+              "weight": 0.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            null,
+            null,
+            null
+          ],
+          "R": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "weight": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "lags_cycfrac": null,
+          "all_locked": false,
+          "monotone_advance": false,
+          "phase_order_forward": false,
+          "mean_R": 0.0,
+          "n_active": 0
+        },
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "n_multi": 0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "pop_rate": 0.0,
+        "weights_frozen": true
+      },
+      "no_cue": {
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 4.1927217434255795,
+              "R": 0.055303974632119106,
+              "weight": 71757.0
+            },
+            {
+              "mean_phase": 4.163988535097064,
+              "R": 0.059586410292554945,
+              "weight": 73429.0
+            },
+            {
+              "mean_phase": 4.248341079740351,
+              "R": 0.054831109986003324,
+              "weight": 58422.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.6673,
+            0.6627,
+            0.6761
+          ],
+          "R": [
+            0.0553,
+            0.0596,
+            0.0548
+          ],
+          "weight": [
+            71757.0,
+            73429.0,
+            58422.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            0.9954,
+            0.0089
+          ],
+          "all_locked": false,
+          "monotone_advance": false,
+          "phase_order_forward": false,
+          "mean_R": 0.056573831636892453,
+          "n_active": 3
+        },
+        "forward_frac": 0.6,
+        "reverse_frac": 0.0,
+        "n_multi": 5,
+        "per_asm_active": [
+          5,
+          4,
+          5
+        ],
+        "pop_rate": 0.04630340909090909,
+        "weights_frozen": true
+      },
+      "point_neuron_control": {
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 1.9819983090573674,
+              "R": 0.04462374101561828,
+              "weight": 92715.0
+            },
+            {
+              "mean_phase": 3.316723154733552,
+              "R": 0.07911350029329269,
+              "weight": 102962.0
+            },
+            {
+              "mean_phase": 2.9680447082434287,
+              "R": 0.08094944180725182,
+              "weight": 67835.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.3154,
+            0.5279,
+            0.4724
+          ],
+          "R": [
+            0.0446,
+            0.0791,
+            0.0809
+          ],
+          "weight": [
+            92715.0,
+            102962.0,
+            67835.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            0.2124,
+            0.1569
+          ],
+          "all_locked": false,
+          "monotone_advance": false,
+          "phase_order_forward": false,
+          "mean_R": 0.06822889437205426,
+          "n_active": 3
+        },
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "n_multi": 0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "pop_rate": 0.06206113636363637,
+        "weights_frozen": true
+      },
+      "checks": {
+        "main_phase_order": false,
+        "R_substantially_above_point": false,
+        "per_cycle_support": true,
+        "shuffled_collapses": true,
+        "reverse_collapses": true,
+        "basket_off_collapses": true,
+        "nocue_collapses": true,
+        "point_neuron_collapses": true,
+        "frozen_ok": true,
+        "dendrite_reset_ok": true,
+        "apical_present": true,
+        "n_active": 3,
+        "mean_R_main": 0.034,
+        "mean_R_basketoff": 0.0,
+        "mean_R_nocue": 0.0566,
+        "mean_R_pointneuron": 0.0682
+      },
+      "seed_go": false
+    }
+  ]
+}
