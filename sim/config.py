@@ -636,6 +636,14 @@ class CoreSimConfig:
     reward_eligibility_tau_ms: float = 1000.0  # Eligibility trace decay (ms, typical: 500-2000ms)
     reward_baseline: float = 0.0           # Expected reward (for prediction error)
     current_reward_signal: float = 0.0     # Current reward value (updated externally or via task)
+    # DR-1 curiosity inversion (2026-07-23): the brain's EPISTEMIC-GAP signal — the
+    # Bogacz-Brown familiarity-gate NOVELTY of the concept currently under consideration
+    # (catalog D.04, the SAME signal that drives the no-confab moat) — written here each
+    # step, read by the `from_novelty` neuromodulator production rule to drive a curiosity
+    # modulator (the exact sibling of current_reward_signal for from_reward). Additive,
+    # default 0.0 -> byte-identical when no from_novelty modulator is registered (none was).
+    current_novelty_signal: float = 0.0    # Current epistemic-gap/novelty value (0=familiar, ~1=novel)
+    novelty_baseline: float = 0.0          # Expected novelty (for the from_novelty production rule)
     # NAMING NOTE (2026-04-29 catalog): `current_reward_signal` is a SIGNED SCALAR
     # that conflates two biologically distinct DA responses (Schultz98/16):
     #   (1) phasic activation above tonic DA (positive value); LTP via D1

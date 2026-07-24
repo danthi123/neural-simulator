@@ -730,8 +730,29 @@ class NeuromodulatorManager:
             return 0.0
 
         if rt == "from_novelty":
-            # Reserved for future ACh
-            return 0.0
+            # Curiosity / learning-eagerness (DR-1 curiosity inversion, 2026-07-23):
+            # the brain's EPISTEMIC GAP — the Bogacz-Brown familiarity-gate NOVELTY of
+            # the concept currently under consideration (catalog D.04, the SAME signal
+            # that drives the no-confab moat) — drives a curiosity neuromodulator. Reads
+            # the novelty scalar the brain writes each step onto core_config
+            # (current_novelty_signal, the exact sibling of current_reward_signal used by
+            # from_reward), and produces sensitivity * (novelty - novelty_baseline). The
+            # modulator typically targets excitability_drive on an ASK/curiosity pool so
+            # HIGH novelty -> stronger drive -> more ASK-pool spiking (Oudeyer/Schmidhuber
+            # intrinsic motivation; Bromberg-Martin-Hikosaka information-as-reward;
+            # Yu-Dayan ACh learning-eagerness). This inverts the moat's ACTION: the same
+            # uncertainty that drives "I don't know" abstention drives ASKING instead.
+            #
+            # BYTE-IDENTICAL to the old reserved stub when off: the branch is only reached
+            # for a registered from_novelty production rule (none existed before this), and
+            # even then returns sensitivity*(0-0)=0.0 until a novelty signal is written
+            # (current_novelty_signal / novelty_baseline default to 0.0).
+            if bridge is None or not hasattr(bridge, "core_config"):
+                return 0.0
+            cc = bridge.core_config
+            novelty = float(getattr(cc, "current_novelty_signal", 0.0))
+            baseline = float(getattr(cc, "novelty_baseline", 0.0))
+            return rule.sensitivity * (novelty - baseline)
 
         if rt == "from_region_firing":
             # R3.6 (2026-04-29): neuropeptide co-release driven by D1/D2 MSN
