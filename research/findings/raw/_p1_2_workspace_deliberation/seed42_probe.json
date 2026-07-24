@@ -1,0 +1,53 @@
+{
+  "runner": "_p1_2_workspace_deliberation_loop_derisk",
+  "form": "per-hop-reset (cheap-first)",
+  "seeds": [
+    42
+  ],
+  "D": 256,
+  "backend": "numpy",
+  "all_go": true,
+  "n_go": 1,
+  "n_seeds": 1,
+  "mean_reentrant_3hop_acc": 1.0,
+  "mean_query_chain_3hop_acc": 1.0,
+  "mean_spreading_floor": 0.125,
+  "mean_lesion_3hop_acc": 0.0,
+  "mean_single_hop_reflex_acc": 1.0,
+  "mean_onecycle_3hop_acc": 0.0,
+  "mean_recue_lesion_3hop_acc": 0.0,
+  "mean_permuted_3hop_acc": 0.0,
+  "mean_mutual_exclusion_frac": 1.0,
+  "mean_affect_directed_frac": 1.0,
+  "mean_affect_lesion_directed_frac": 0.625,
+  "mean_affect_lesion_deliberates_frac": 1.0,
+  "all_moat_ok": true,
+  "per_seed": [
+    {
+      "seed": 42,
+      "D": 256,
+      "hops": 3,
+      "n_concepts": 40,
+      "chance": 0.025,
+      "n_chains": 8,
+      "K_slots": 4,
+      "reentrant_3hop_acc": 1.0,
+      "query_chain_3hop_acc": 1.0,
+      "spreading_floor": 0.125,
+      "lesion_3hop_acc": 0.0,
+      "single_hop_reflex_acc": 1.0,
+      "onecycle_3hop_acc": 0.0,
+      "recue_lesion_3hop_acc": 0.0,
+      "permuted_3hop_acc": 0.0,
+      "moat_unstored_abstains": true,
+      "moat_overrun_abstains": true,
+      "moat_ok": true,
+      "mutual_exclusion_frac": 1.0,
+      "affect_directed_frac": 1.0,
+      "affect_lesion_directed_frac": 0.625,
+      "affect_lesion_deliberates_frac": 1.0,
+      "affect_n": 8,
+      "seed_go": true
+    }
+  ]
+}
