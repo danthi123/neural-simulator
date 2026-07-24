@@ -41,3 +41,14 @@ dispatched on the ignition problem (esp. the theta-vs-SWR-state reframe + the cu
 edit anywhere in this readout arc. This is a memory-system wall (roadmap walls-ledger gap#5), NOT the pivot's core
 faculties (affect/reasoning/self/curiosity), which are being built in parallel — gap#5 keeps moving via the gate, but
 does not block the pivot.
+
+## UPDATE (2026-07-24, same day) — REFINED by the SWR-envelope build: it's op-point/STATE, NOT a substrate wall; "[0,0,0]" was partly a detection artifact
+The SWR research gate's Option-1 diagnostic (`_gap5_swr_envelope_replay_derisk --option1`, GPU seed 42) showed that at
+the COMPLETION operating point (sustained recall_drive=700/150 + self_regen=0.15 + k_thresh=110), assembly-0 IGNITES
+(`per_asm_frac` 24.4%). ⇒ ignition IS achievable; the 5-method boundary was operating-point / brain-STATE (theta vs
+SWR), **NOT a substrate wall**. The `per_asm_active [0,0,0]` no-ignition signature reported above was PARTLY a windower
+detection artifact (sustained cued firing isn't a discrete "event" for the windower — `per_asm_frac` shows it WAS
+igniting). The genuine residual is attractor-SELECTIVE forward HAND-OFF, not ignition-from-scratch. The SWR-envelope
+readout then confirmed 3/4 SWR ingredients (discrete ignition · self-termination · noise-seeded) with the 4th
+(attractor-selective hand-off) precisely localized → full result + the next mechanism (latch-then-release) in
+`2026-07-24-gap5-SWR-envelope-Option1-POSITIVE-Option2-3of4-selective-handoff-residual.md`. Capability OPEN + advancing.
