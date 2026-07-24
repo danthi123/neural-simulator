@@ -1,0 +1,74 @@
+{
+  "runner": "_false_belief_register_derisk",
+  "faculty": "W3 belief attribution / false belief (Stage-3 flagship social build; ToM ladder rung 1)",
+  "theory": "Fleming-Daw SELF=OTHER-INFERENCE meta-schema + Wimmer-Perner/Sally-Anne false belief; TPJ/mPFC mentalizing (FUNCTIONAL correlate only)",
+  "mechanism": "self-schema meta-schema class turned OUTWARD: agent-keyed belief store (GNW single-content attractor) with sim/'s own transmission_gate = witnessing-gated writes",
+  "seeds": [
+    42
+  ],
+  "n_trials": 20,
+  "backend": "numpy",
+  "w_write": 26.0,
+  "helper_pa": 3000.0,
+  "thresholds": {
+    "false_belief_acc": 0.85,
+    "true_belief_acc": 0.85,
+    "reality_baseline_max": 0.2,
+    "chance_loc": 0.45,
+    "scramble_chance": 0.7
+  },
+  "verdict": "GO",
+  "n_go": 1,
+  "n_seeds": 1,
+  "aggregate": {
+    "mean_false_belief_acc": 1.0,
+    "mean_true_belief_acc": 1.0,
+    "mean_reality_baseline_false_acc": 0.0,
+    "mean_lesion_false_belief_acc": 0.0,
+    "mean_scramble_belief_acc": 0.6,
+    "all_lesion_collapse": true,
+    "all_scramble_collapse": true,
+    "all_dissociation_ok": true
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_trials": 20,
+      "n_false_trials": 10,
+      "n_true_trials": 10,
+      "intact": {
+        "false_belief_acc": 1.0,
+        "true_belief_acc": 1.0,
+        "overall_belief_acc": 1.0,
+        "reality_baseline_false_acc": 0.0,
+        "reality_baseline_overall_acc": 0.45,
+        "true_belief_agree_belief_vs_reality": 0.9
+      },
+      "self_other_dissociation": {
+        "self_tracks_reality_on_false_trials": 1.0,
+        "belief_is_false_on_false_trials": 1.0,
+        "dissociation_ok": true
+      },
+      "other_lesion": {
+        "false_belief_acc": 0.0,
+        "predicts_reality_on_false_trials": 1.0,
+        "collapsed": true
+      },
+      "scramble_witnessing": {
+        "belief_acc_vs_true": 0.6,
+        "collapsed": true
+      },
+      "go_components": {
+        "false_belief": true,
+        "reality_baseline_fails": true,
+        "true_belief_updates": true,
+        "true_belief_agree": true,
+        "other_lesion_collapses": true,
+        "scramble_collapses": true,
+        "self_other_dissociation": true
+      },
+      "go": true
+    }
+  ],
+  "honest_scope": "A functional mentalizing correlate: an agent-keyed belief store (the self-schema meta-schema class turned outward) predicts another agent's action FROM the agent's witnessing-gated belief, dissociable from reality (reality-baseline fails) and from the self's belief; collapses under other-store lesion / scrambled witnessing. NOT a claim of access to another mind. Change-of-location only; unexpected-contents is the same mechanism (a semantic relabel) and a follow-on."
+}
