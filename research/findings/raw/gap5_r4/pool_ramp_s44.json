@@ -1,0 +1,336 @@
+{
+  "probe": "gap5_ramp_phase_advance_readout",
+  "mechanism": "candidate #3 Kamondi ramp single-cell pacemaker",
+  "GO": false,
+  "n_go": 0,
+  "seeds": [
+    44
+  ],
+  "decoupled_cfg": {
+    "apical_R": 50.0,
+    "apical_gc": 1.0,
+    "apical_gc_read": 5.0,
+    "apical_kir_g": 3.0,
+    "assembly_frac": 0.12,
+    "bistable": true,
+    "btsp_lr": 0.05,
+    "ca3_density": 0.05,
+    "ca3_fb_inhib": 20.0,
+    "chain_btsp_lr": 0.5,
+    "chain_fwd": 24,
+    "chain_reset_steps": 12,
+    "chain_rev": 0,
+    "chain_rule": "btsp",
+    "coact_thresh": 0.02,
+    "drive_steps": 48,
+    "enable_ou": false,
+    "encode_btsp": true,
+    "encode_btsp_hetero": 0.0,
+    "encode_ca3w": 0.5,
+    "encode_drive": 3000.0,
+    "encode_plateau_pA": 250.0,
+    "freeze_between_refresh": true,
+    "hebb_max": 300.0,
+    "k_thresh": 18.0,
+    "n_ca3": 2000,
+    "n_mem": 3,
+    "nmda_recurrent": false,
+    "no_sync": true,
+    "overlap_draw": false,
+    "plateau_self_regen": 0.15,
+    "plateau_strength": 120.0,
+    "plateau_v_hold": -35.0,
+    "rank1_encode": true,
+    "recall_k_thresh": 40.0,
+    "reset_steps": 15,
+    "sel_inhib_spare": 20.0,
+    "selective_inhib": true,
+    "seq_win_steps": 16,
+    "structural_sep": 1,
+    "within_events": 30,
+    "within_refresh": 8
+  },
+  "ramp_theta_cfg": {
+    "theta_period": 125,
+    "theta_depth": 400.0,
+    "basket_baseline": 0.0,
+    "sel_inhib_spare": 20.0,
+    "ramp_max_pa": 1000.0,
+    "ramp_rise": 1000,
+    "ramp_settle": 60,
+    "ramp_cell_frac": 1.0,
+    "self_regen_read": 0.0,
+    "d_abs": 40.0,
+    "a_abs": 0.008,
+    "n_ca3": 2000,
+    "n_mem": 3,
+    "rest_steps": 2200,
+    "r_floor": 0.05,
+    "window": 5,
+    "ev_floor": 0.4,
+    "ev_k": 4.0,
+    "active_frac": 0.12,
+    "onset_frac": 0.08
+  },
+  "elapsed_seconds": 3178.2,
+  "verdict": "HONEST NEGATIVE 0/1 -- the theta-basket reference is live (basket_n>=1 on 1/1) and the ramp drives assembly-0, but the ramp-phase-advance readout did NOT produce clean forward-ordered phases (phase-order-forward 0/1; per-asm active [[4, 0, 4]]; per-cycle forward_frac 0.500 vs chance 0.500; mean R 0.346). Per THE LAW this is a verdict on THIS timing-method's operating point, NOT on the phase-order CAPABILITY -- read the per-asm-active + R numbers to scope the next move (weak forward hand-off -> stronger sel_inhib_spare / adj-fwd, or a per-cycle re-seed ramp, or a wider theta window).",
+  "per_seed": [
+    {
+      "seed": 44,
+      "encode_decoupled": {
+        "w_within": 195.5721435546875,
+        "w_adj_fwd": 38.4766731262207,
+        "w_adj_rev": 5.0,
+        "ratio_adj": 7.695334625244141,
+        "n_between_fwd": 8461,
+        "n_between_rev": 8799,
+        "assembly_sizes": [
+          240,
+          240,
+          240
+        ]
+      },
+      "go": {
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 0.5169271519155528,
+              "R": 0.020025684255951425,
+              "weight": 107109.0
+            },
+            {
+              "mean_phase": 3.53434544097933,
+              "R": 0.9747027633221076,
+              "weight": 13.0
+            },
+            {
+              "mean_phase": 4.769709261161841,
+              "R": 0.04196513865635613,
+              "weight": 22789.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.0823,
+            0.5625,
+            0.7591
+          ],
+          "R": [
+            0.02,
+            0.9747,
+            0.042
+          ],
+          "weight": [
+            107109.0,
+            13.0,
+            22789.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            0.4802,
+            0.6769
+          ],
+          "all_locked": false,
+          "monotone_advance": false,
+          "phase_order_forward": false,
+          "mean_R": 0.34556452874480503,
+          "n_active": 3
+        },
+        "forward_frac": 0.5,
+        "reverse_frac": 0.5,
+        "n_multi": 4,
+        "chance_forward": 0.5,
+        "duty": 0.06318181818181819,
+        "per_asm_active": [
+          4,
+          0,
+          4
+        ],
+        "pop_rate": 0.029544545454545452,
+        "weights_frozen": true,
+        "basket_n": 500,
+        "ramp_n": 240
+      },
+      "shuffled_store": {
+        "n_between_shuffled": 17260,
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 0.7903825673160616,
+              "R": 0.012844376501131887,
+              "weight": 110898.0
+            },
+            {
+              "mean_phase": 3.2787457370154076,
+              "R": 0.05114415055865038,
+              "weight": 113817.0
+            },
+            {
+              "mean_phase": 4.535218603478383,
+              "R": 0.030089540916871577,
+              "weight": 19099.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.1258,
+            0.5218,
+            0.7218
+          ],
+          "R": [
+            0.0128,
+            0.0511,
+            0.0301
+          ],
+          "weight": [
+            110898.0,
+            113817.0,
+            19099.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            0.396,
+            0.596
+          ],
+          "all_locked": false,
+          "monotone_advance": false,
+          "phase_order_forward": false,
+          "mean_R": 0.031359355992217945,
+          "n_active": 3
+        },
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "n_multi": 0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "weights_frozen": true
+      },
+      "reverse_asymmetry_lesion": {
+        "n_between_symmetrized": 17260,
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 1.2595213158767575,
+              "R": 0.01693206894893463,
+              "weight": 110377.0
+            },
+            {
+              "mean_phase": 3.223404492721341,
+              "R": 0.061772151090824776,
+              "weight": 115833.0
+            },
+            {
+              "mean_phase": 4.892184236943126,
+              "R": 0.038582308995880034,
+              "weight": 17000.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.2005,
+            0.513,
+            0.7786
+          ],
+          "R": [
+            0.0169,
+            0.0618,
+            0.0386
+          ],
+          "weight": [
+            110377.0,
+            115833.0,
+            17000.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            0.3126,
+            0.5782
+          ],
+          "all_locked": false,
+          "monotone_advance": false,
+          "phase_order_forward": false,
+          "mean_R": 0.039095509678546476,
+          "n_active": 3
+        },
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "n_multi": 0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "weights_frozen": true
+      },
+      "basket_off": {
+        "phase": {
+          "per_assembly": [
+            {
+              "mean_phase": 4.412836698348531,
+              "R": 0.0070743907247824535,
+              "weight": 86984.0
+            },
+            {
+              "mean_phase": null,
+              "R": 0.0,
+              "weight": 0.0
+            },
+            {
+              "mean_phase": 4.5839126676976525,
+              "R": 0.07297305745185978,
+              "weight": 17401.0
+            }
+          ],
+          "mean_phase_cycfrac": [
+            0.7023,
+            null,
+            0.7296
+          ],
+          "R": [
+            0.0071,
+            0.0,
+            0.073
+          ],
+          "weight": [
+            86984.0,
+            0.0,
+            17401.0
+          ],
+          "lags_cycfrac": [
+            0.0,
+            null,
+            0.0272
+          ],
+          "all_locked": false,
+          "monotone_advance": false,
+          "phase_order_forward": false,
+          "mean_R": 0.02668248272554741,
+          "n_active": 2
+        },
+        "forward_frac": 0.5,
+        "reverse_frac": 0.5,
+        "n_multi": 4,
+        "per_asm_active": [
+          4,
+          0,
+          4
+        ],
+        "pop_rate": 0.023723863636363637,
+        "weights_frozen": true
+      },
+      "checks": {
+        "main_phase_order": false,
+        "per_cycle_support": false,
+        "shuffled_collapses": true,
+        "reverse_collapses": true,
+        "basket_off_collapses": true,
+        "frozen_ok": true,
+        "dendrite_reset_ok": true,
+        "n_active": 3,
+        "mean_R_main": 0.3456,
+        "mean_R_basketoff": 0.0267
+      },
+      "seed_go": false
+    }
+  ]
+}

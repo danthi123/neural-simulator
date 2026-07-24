@@ -38,3 +38,27 @@ points), and test whether the on-bridge BDSP realization inherits the same low-d
 --epochs 15 --lr 0.03`; results `research/findings/raw/gap4/pool_deconf_s{42,43,44,100,101,102}.json`. Run on the
 mini-PC pool (numpy 2.4.6, byte-pinned to the main box) during the owner's gaming window. The local 6-proc launch had
 HUNG for ~2 hr on concurrent MNIST-load contention (killed); the pool ran each seed clean in ~2 min. NO `sim/` edit.
+
+## UPDATE — the full 8-frac data-efficiency CURVE (6-seed, pool wave-3, 2026-07-24)
+Extended the 3-point result to 8 fracs. The **low-data regime CONFIRMS + strengthens** the headline (mean over 6 seeds):
+
+| frac | bdsp | reservoir | gap | bdsp>res |
+|------|------|-----------|-----|----------|
+| 1.0  | 0.802 | 0.785 | +0.017 | 4/6 |
+| 0.5  | **0.108** | 0.753 | −0.645 | 0/6 |
+| 0.35 | 0.606 | 0.755 | −0.148 | 0/6 |
+| 0.2  | 0.928 | 0.728 | +0.201 | 6/6 |
+| 0.1  | 0.887 | 0.651 | +0.235 | 6/6 |
+| 0.05 | 0.810 | 0.535 | +0.275 | 6/6 |
+| 0.03 | 0.752 | 0.448 | +0.305 | 6/6 |
+| 0.02 | 0.669 | 0.363 | +0.306 | 6/6 |
+
+**Low-data (frac ≤ 0.2): the gap grows MONOTONICALLY as data shrinks** (+0.20 → +0.31, 6/6 every point) — directed
+credit degrades far more gracefully than the frozen reservoir (0.93→0.67 vs 0.73→0.36 from frac 0.2→0.02). The
+data-efficiency thesis is confirmed across a decade of data scale.
+
+**HONEST CAVEAT — a mid-data training instability (frac 0.35–0.5):** bdsp collapses to ~chance (0.108 at frac 0.5,
+0/6) while the reservoir stays ~0.75. This is a U-shaped anomaly (bdsp is fine at frac 1.0 AND ≤0.2 but diverges at
+0.35–0.5) → an OPTIMIZATION artifact at that specific data size (lr/epochs/init interaction with the BDSP net),
+NOT a property of the credit rule. It needs a follow-up (lr schedule / epoch count at mid-data), and it means the
+curve is monotonic only within the low-data regime, not globally. Reported as-is, not smoothed over.

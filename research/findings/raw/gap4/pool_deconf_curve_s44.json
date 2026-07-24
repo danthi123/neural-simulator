@@ -1,0 +1,419 @@
+{
+  "seeds": [
+    44
+  ],
+  "args": {
+    "seeds": [
+      44
+    ],
+    "hidden": 256,
+    "depth": 2,
+    "fracs": [
+      1.0,
+      0.5,
+      0.35,
+      0.2,
+      0.1,
+      0.05,
+      0.03,
+      0.02
+    ],
+    "p0": 0.3,
+    "beta": 1.0,
+    "n_train": 8000,
+    "n_test": 2000,
+    "epochs": 15,
+    "batch": 64,
+    "lr": 0.03,
+    "out": "research/findings/raw/gap4/pool_deconf_curve_s44.json"
+  },
+  "per": [
+    {
+      "seed": 44,
+      "sizes": [
+        784,
+        256,
+        256,
+        10
+      ],
+      "rows": [
+        {
+          "frac": 1.0,
+          "reservoir": 0.7955,
+          "fa_linear": 0.947,
+          "bdsp": 0.793,
+          "bdsp_shufE": 0.117,
+          "bdsp_permB": 0.785,
+          "bdsp_shuffled_target": 0.1655,
+          "ncc_init": 0.793,
+          "sel_init": [
+            {
+              "active_rate": 0.4999,
+              "frac_units_input_differential": 1.0,
+              "code_diversity": 0.0005,
+              "mean_pairwise_hamming": 0.0,
+              "ncc_acc": 0.7965
+            },
+            {
+              "active_rate": 0.5005,
+              "frac_units_input_differential": 1.0,
+              "code_diversity": 0.0005,
+              "mean_pairwise_hamming": 0.0,
+              "ncc_acc": 0.793
+            }
+          ],
+          "sel_post_bdsp": [
+            {
+              "active_rate": 0.4244,
+              "frac_units_input_differential": 1.0,
+              "code_diversity": 0.0005,
+              "mean_pairwise_hamming": 0.0,
+              "ncc_acc": 0.8295
+            },
+            {
+              "active_rate": 0.154,
+              "frac_units_input_differential": 1.0,
+              "code_diversity": 0.0005,
+              "mean_pairwise_hamming": 0.0,
+              "ncc_acc": 0.733
+            }
+          ],
+          "gate_input_selective": true,
+          "gate_bdsp_gt_reservoir": false,
+          "gate_bdsp_gt_shufE": true,
+          "gate_shuffled_target_chance": true,
+          "GO": false
+        },
+        {
+          "frac": 0.5,
+          "reservoir": 0.762,
+          "fa_linear": 0.941,
+          "bdsp": 0.1225,
+          "bdsp_shufE": 0.1225,
+          "bdsp_permB": 0.1225,
+          "bdsp_shuffled_target": 0.097,
+          "ncc_init": 0.7015,
+          "sel_init": [
+            {
+              "active_rate": 0.5,
+              "frac_units_input_differential": 1.0,
+              "code_diversity": 1.0,
+              "mean_pairwise_hamming": 0.4937,
+              "ncc_acc": 0.788
+            },
+            {
+              "active_rate": 0.5,
+              "frac_units_input_differential": 1.0,
+              "code_diversity": 1.0,
+              "mean_pairwise_hamming": 0.3481,
+              "ncc_acc": 0.7015
+            }
+          ],
+          "sel_post_bdsp": [
+            {
+              "active_rate": 0.832,
+              "frac_units_input_differential": 1.0,
+              "code_diversity": 0.385,
+              "mean_pairwise_hamming": 0.2627,
+              "ncc_acc": 0.383
+            },
+            {
+              "active_rate": 1.0,
+              "frac_units_input_differential": 0.0,
+              "code_diversity": 0.0005,
+              "mean_pairwise_hamming": 0.0,
+              "ncc_acc": 0.0975
+            }
+          ],
+          "gate_input_selective": true,
+          "gate_bdsp_gt_reservoir": false,
+          "gate_bdsp_gt_shufE": false,
+          "gate_shuffled_target_chance": true,
+          "GO": false
+        },
+        {
+          "frac": 0.35,
+          "reservoir": 0.7665,
+          "fa_linear": 0.944,
+          "bdsp": 0.5905,
+          "bdsp_shufE": 0.1225,
+          "bdsp_permB": 0.5915,
+          "bdsp_shuffled_target": 0.097,
+          "ncc_init": 0.701,
+          "sel_init": [
+            {
+              "active_rate": 0.3516,
+              "frac_units_input_differential": 1.0,
+              "code_diversity": 1.0,
+              "mean_pairwise_hamming": 0.4527,
+              "ncc_acc": 0.787
+            },
+            {
+              "active_rate": 0.3516,
+              "frac_units_input_differential": 1.0,
+              "code_diversity": 1.0,
+              "mean_pairwise_hamming": 0.3605,
+              "ncc_acc": 0.701
+            }
+          ],
+          "sel_post_bdsp": [
+            {
+              "active_rate": 0.4988,
+              "frac_units_input_differential": 1.0,
+              "code_diversity": 0.9005,
+              "mean_pairwise_hamming": 0.4796,
+              "ncc_acc": 0.7125
+            },
+            {
+              "active_rate": 0.576,
+              "frac_units_input_differential": 1.0,
+              "code_diversity": 0.6585,
+              "mean_pairwise_hamming": 0.4673,
+              "ncc_acc": 0.4775
+            }
+          ],
+          "gate_input_selective": true,
+          "gate_bdsp_gt_reservoir": false,
+          "gate_bdsp_gt_shufE": true,
+          "gate_shuffled_target_chance": true,
+          "GO": false
+        },
+        {
+          "frac": 0.2,
+          "reservoir": 0.747,
+          "fa_linear": 0.9135,
+          "bdsp": 0.925,
+          "bdsp_shufE": 0.707,
+          "bdsp_permB": 0.9345,
+          "bdsp_shuffled_target": 0.0875,
+          "ncc_init": 0.689,
+          "sel_init": [
+            {
+              "active_rate": 0.1992,
+              "frac_units_input_differential": 1.0,
+              "code_diversity": 1.0,
+              "mean_pairwise_hamming": 0.3168,
+              "ncc_acc": 0.7825
+            },
+            {
+              "active_rate": 0.1992,
+              "frac_units_input_differential": 1.0,
+              "code_diversity": 1.0,
+              "mean_pairwise_hamming": 0.2843,
+              "ncc_acc": 0.689
+            }
+          ],
+          "sel_post_bdsp": [
+            {
+              "active_rate": 0.1993,
+              "frac_units_input_differential": 0.9805,
+              "code_diversity": 1.0,
+              "mean_pairwise_hamming": 0.2942,
+              "ncc_acc": 0.851
+            },
+            {
+              "active_rate": 0.1992,
+              "frac_units_input_differential": 0.7617,
+              "code_diversity": 0.9995,
+              "mean_pairwise_hamming": 0.2641,
+              "ncc_acc": 0.8935
+            }
+          ],
+          "gate_input_selective": true,
+          "gate_bdsp_gt_reservoir": true,
+          "gate_bdsp_gt_shufE": true,
+          "gate_shuffled_target_chance": true,
+          "GO": true
+        },
+        {
+          "frac": 0.1,
+          "reservoir": 0.6455,
+          "fa_linear": 0.851,
+          "bdsp": 0.924,
+          "bdsp_shufE": 0.6855,
+          "bdsp_permB": 0.8855,
+          "bdsp_shuffled_target": 0.089,
+          "ncc_init": 0.6065,
+          "sel_init": [
+            {
+              "active_rate": 0.1016,
+              "frac_units_input_differential": 1.0,
+              "code_diversity": 1.0,
+              "mean_pairwise_hamming": 0.1806,
+              "ncc_acc": 0.7685
+            },
+            {
+              "active_rate": 0.1016,
+              "frac_units_input_differential": 1.0,
+              "code_diversity": 1.0,
+              "mean_pairwise_hamming": 0.1746,
+              "ncc_acc": 0.6065
+            }
+          ],
+          "sel_post_bdsp": [
+            {
+              "active_rate": 0.102,
+              "frac_units_input_differential": 0.8203,
+              "code_diversity": 0.9745,
+              "mean_pairwise_hamming": 0.1631,
+              "ncc_acc": 0.8855
+            },
+            {
+              "active_rate": 0.1016,
+              "frac_units_input_differential": 0.5625,
+              "code_diversity": 0.9045,
+              "mean_pairwise_hamming": 0.1551,
+              "ncc_acc": 0.906
+            }
+          ],
+          "gate_input_selective": true,
+          "gate_bdsp_gt_reservoir": true,
+          "gate_bdsp_gt_shufE": true,
+          "gate_shuffled_target_chance": true,
+          "GO": true
+        },
+        {
+          "frac": 0.05,
+          "reservoir": 0.524,
+          "fa_linear": 0.794,
+          "bdsp": 0.827,
+          "bdsp_shufE": 0.6745,
+          "bdsp_permB": 0.817,
+          "bdsp_shuffled_target": 0.092,
+          "ncc_init": 0.501,
+          "sel_init": [
+            {
+              "active_rate": 0.0508,
+              "frac_units_input_differential": 1.0,
+              "code_diversity": 1.0,
+              "mean_pairwise_hamming": 0.0954,
+              "ncc_acc": 0.7175
+            },
+            {
+              "active_rate": 0.0508,
+              "frac_units_input_differential": 1.0,
+              "code_diversity": 1.0,
+              "mean_pairwise_hamming": 0.0946,
+              "ncc_acc": 0.501
+            }
+          ],
+          "sel_post_bdsp": [
+            {
+              "active_rate": 0.078,
+              "frac_units_input_differential": 0.5195,
+              "code_diversity": 0.9545,
+              "mean_pairwise_hamming": 0.118,
+              "ncc_acc": 0.8015
+            },
+            {
+              "active_rate": 0.0508,
+              "frac_units_input_differential": 0.3047,
+              "code_diversity": 0.607,
+              "mean_pairwise_hamming": 0.0769,
+              "ncc_acc": 0.7775
+            }
+          ],
+          "gate_input_selective": true,
+          "gate_bdsp_gt_reservoir": true,
+          "gate_bdsp_gt_shufE": true,
+          "gate_shuffled_target_chance": true,
+          "GO": true
+        },
+        {
+          "frac": 0.03,
+          "reservoir": 0.4385,
+          "fa_linear": 0.7405,
+          "bdsp": 0.779,
+          "bdsp_shufE": 0.5935,
+          "bdsp_permB": 0.772,
+          "bdsp_shuffled_target": 0.1045,
+          "ncc_init": 0.41,
+          "sel_init": [
+            {
+              "active_rate": 0.0312,
+              "frac_units_input_differential": 1.0,
+              "code_diversity": 0.999,
+              "mean_pairwise_hamming": 0.06,
+              "ncc_acc": 0.673
+            },
+            {
+              "active_rate": 0.0312,
+              "frac_units_input_differential": 1.0,
+              "code_diversity": 0.999,
+              "mean_pairwise_hamming": 0.0599,
+              "ncc_acc": 0.41
+            }
+          ],
+          "sel_post_bdsp": [
+            {
+              "active_rate": 0.0692,
+              "frac_units_input_differential": 0.3516,
+              "code_diversity": 0.9345,
+              "mean_pairwise_hamming": 0.0979,
+              "ncc_acc": 0.7795
+            },
+            {
+              "active_rate": 0.0312,
+              "frac_units_input_differential": 0.1719,
+              "code_diversity": 0.4215,
+              "mean_pairwise_hamming": 0.0453,
+              "ncc_acc": 0.7405
+            }
+          ],
+          "gate_input_selective": true,
+          "gate_bdsp_gt_reservoir": true,
+          "gate_bdsp_gt_shufE": true,
+          "gate_shuffled_target_chance": true,
+          "GO": true
+        },
+        {
+          "frac": 0.02,
+          "reservoir": 0.3555,
+          "fa_linear": 0.7105,
+          "bdsp": 0.6835,
+          "bdsp_shufE": 0.553,
+          "bdsp_permB": 0.6745,
+          "bdsp_shuffled_target": 0.1,
+          "ncc_init": 0.345,
+          "sel_init": [
+            {
+              "active_rate": 0.0195,
+              "frac_units_input_differential": 1.0,
+              "code_diversity": 0.991,
+              "mean_pairwise_hamming": 0.038,
+              "ncc_acc": 0.625
+            },
+            {
+              "active_rate": 0.0195,
+              "frac_units_input_differential": 1.0,
+              "code_diversity": 0.991,
+              "mean_pairwise_hamming": 0.0383,
+              "ncc_acc": 0.345
+            }
+          ],
+          "sel_post_bdsp": [
+            {
+              "active_rate": 0.0572,
+              "frac_units_input_differential": 0.2344,
+              "code_diversity": 0.9005,
+              "mean_pairwise_hamming": 0.0772,
+              "ncc_acc": 0.7745
+            },
+            {
+              "active_rate": 0.0195,
+              "frac_units_input_differential": 0.1055,
+              "code_diversity": 0.1825,
+              "mean_pairwise_hamming": 0.0277,
+              "ncc_acc": 0.6655
+            }
+          ],
+          "gate_input_selective": true,
+          "gate_bdsp_gt_reservoir": true,
+          "gate_bdsp_gt_shufE": true,
+          "gate_shuffled_target_chance": true,
+          "GO": true
+        }
+      ]
+    }
+  ]
+}
