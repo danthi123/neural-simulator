@@ -1,0 +1,186 @@
+{
+  "probe": "gap5_theta_sweep_replay",
+  "mechanism": "RANK 1 cued theta-disinhibition sweep",
+  "GO": false,
+  "n_go": 0,
+  "seeds": [
+    44
+  ],
+  "decoupled_cfg": {
+    "apical_R": 50.0,
+    "apical_gc": 1.0,
+    "apical_gc_read": 5.0,
+    "apical_kir_g": 3.0,
+    "assembly_frac": 0.12,
+    "bistable": true,
+    "btsp_lr": 0.05,
+    "ca3_density": 0.05,
+    "ca3_fb_inhib": 20.0,
+    "chain_btsp_lr": 0.5,
+    "chain_fwd": 24,
+    "chain_reset_steps": 12,
+    "chain_rev": 0,
+    "chain_rule": "btsp",
+    "coact_thresh": 0.02,
+    "drive_steps": 48,
+    "enable_ou": false,
+    "encode_btsp": true,
+    "encode_btsp_hetero": 0.0,
+    "encode_ca3w": 0.5,
+    "encode_drive": 3000.0,
+    "encode_plateau_pA": 250.0,
+    "freeze_between_refresh": true,
+    "hebb_max": 300.0,
+    "k_thresh": 18.0,
+    "n_ca3": 2000,
+    "n_mem": 3,
+    "nmda_recurrent": false,
+    "no_sync": true,
+    "overlap_draw": false,
+    "plateau_self_regen": 0.15,
+    "plateau_strength": 120.0,
+    "plateau_v_hold": -35.0,
+    "rank1_encode": true,
+    "recall_k_thresh": 40.0,
+    "reset_steps": 15,
+    "sel_inhib_spare": 0.0,
+    "selective_inhib": true,
+    "seq_win_steps": 16,
+    "structural_sep": 1,
+    "within_events": 30,
+    "within_refresh": 8
+  },
+  "theta_cfg": {
+    "theta_period": 220,
+    "theta_depth": 400.0,
+    "basket_baseline": 0.0,
+    "theta_exc_pa": 800.0,
+    "det_frac": 0.15,
+    "det_pa": 3000.0,
+    "det_dur": 12,
+    "det_settle": 60,
+    "self_regen_read": 0.15,
+    "d_abs": 40.0,
+    "a_abs": 0.008,
+    "n_ca3": 2000,
+    "n_mem": 3,
+    "rest_steps": 1500,
+    "window": 5,
+    "ev_floor": 0.4,
+    "ev_k": 4.0,
+    "active_frac": 0.12,
+    "onset_frac": 0.08
+  },
+  "elapsed_seconds": 3159.8,
+  "verdict": "HONEST NEGATIVE 0/1 -- the basket theta target is live (basket_n>=1 on 1/1) and the cue fires, but the cued theta-disinhibition sweep did NOT cleanly produce discrete forward-ordered bursts (forward_frac 0.000 vs chance 0.000; NO-THETA 0.000). => scopes the residual: tune theta_period/theta_depth/basket_baseline, det alignment, self_regen_read/d_abs, or add the RANK-2 E%-max ff_basket layer so ONE assembly bursts per gamma slot. A partial on the theta-sweep rung is a real, honestly-reported result.",
+  "per_seed": [
+    {
+      "seed": 44,
+      "encode_decoupled": {
+        "w_within": 195.5721435546875,
+        "w_adj_fwd": 38.4766731262207,
+        "w_adj_rev": 5.0,
+        "ratio_adj": 7.695334625244141,
+        "n_between_fwd": 8461,
+        "n_between_rev": 8799,
+        "assembly_sizes": [
+          240,
+          240,
+          240
+        ]
+      },
+      "go": {
+        "n_events": 0,
+        "n_multi": 0,
+        "n_full": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "mean_tau": 0.0,
+        "chance_forward": 0.0,
+        "duty_cycle": 0.0,
+        "pop_rate": 0.033639333333333334,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "weights_frozen": true,
+        "apical_rest_max": -80.46469550435077,
+        "apical_n_latched": 0,
+        "n_cues": 7,
+        "basket_n": 500
+      },
+      "no_theta": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "duty_cycle": 0.0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "weights_frozen": true
+      },
+      "theta_on_exc": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "pop_rate": 0.02766566666666667,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "weights_frozen": true
+      },
+      "no_cue": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "pop_rate": 1.7e-05,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "weights_frozen": true
+      },
+      "permuted_store": {
+        "n_between_shuffled": 17260,
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "weights_frozen": true
+      },
+      "reverse_asymmetry_lesion": {
+        "n_between_symmetrized": 17260,
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "weights_frozen": true
+      },
+      "checks": {
+        "forward_ordered": false,
+        "discrete": true,
+        "theta_lesion_load_bearing": true,
+        "wrong_target_collapses": true,
+        "cue_lesion_load_bearing": true,
+        "permuted_collapses": true,
+        "reverse_lesion_collapses": true,
+        "frozen_ok": true,
+        "dendrite_reset_ok": true
+      },
+      "seed_go": false
+    }
+  ]
+}
