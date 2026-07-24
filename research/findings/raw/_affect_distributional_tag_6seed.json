@@ -1,0 +1,124 @@
+{
+  "probe": "affect_distributional_tag (DR-2, P0.1)",
+  "verdict": "GO (6-seed) -- DISTRIBUTIONAL AFFECT TAG: a concept's valence EMERGES from the affective company it keeps. Held-out concepts (never seeded from norms) inherit valence by spreading activation over the LEARNED co-occurrence graph, correlating r=+0.811 with Warriner valence (>= 0.55). PERMUTED-GRAPH collapses (-0.064 -- random neighbourhoods carry no affect), SHUFFLED-SEED-LABELS collapses (-0.144), and the graph BEATS the seed-only constant baseline (+0.000). The opponent code is genuine: V+ and V- are OPPOSED on held-out (corr -0.806 < 0) and net valence separates positive from negative (sep +0.38). => the world-model is affectively COLOURED, not just factual; the affect tag rides the LEARNED structure, not a lookup. numpy-CPU; NO sim/ edit. (Arousal secondary, r=+0.694 -- the known weaker ceiling.)",
+  "GO": true,
+  "checks": {
+    "held_out_r>=0.55": true,
+    "beats_seed_only": true,
+    "permuted_collapses": true,
+    "shuffled_labels_collapse": true,
+    "opponent_sign(V+ vs V- corr<0)": true,
+    "opponent_separation(pos>neg)": true
+  },
+  "means": {
+    "r_real": 0.8109868060379805,
+    "r_permuted": -0.06379438197871633,
+    "r_seedonly": 0.0,
+    "r_shuffled": -0.14432531998320466,
+    "r_arousal": 0.6940778466905906,
+    "opp_corr": -0.8059210531016149,
+    "net_sep": 0.3832537331864721
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_vocab": 139,
+      "n_seed": 70,
+      "n_held": 69,
+      "r_real": 0.8146380404760998,
+      "r_permuted": -0.19925969200768706,
+      "r_seedonly": 0.0,
+      "r_shuffled": -0.19656496481561825,
+      "r_arousal": 0.6447951033571122,
+      "opp_corr": -0.7731064582499704,
+      "net_sep_pos_minus_neg": 0.39747951838328727
+    },
+    {
+      "seed": 43,
+      "n_vocab": 139,
+      "n_seed": 70,
+      "n_held": 69,
+      "r_real": 0.8086670715238439,
+      "r_permuted": -0.06598772730665779,
+      "r_seedonly": 0.0,
+      "r_shuffled": -0.16666473530987247,
+      "r_arousal": 0.7628753763187984,
+      "opp_corr": -0.7916920475412215,
+      "net_sep_pos_minus_neg": 0.3988120046781245
+    },
+    {
+      "seed": 44,
+      "n_vocab": 139,
+      "n_seed": 70,
+      "n_held": 69,
+      "r_real": 0.8314368040076906,
+      "r_permuted": -0.07517897891197003,
+      "r_seedonly": 0.0,
+      "r_shuffled": -0.4060075984040072,
+      "r_arousal": 0.7229126518796964,
+      "opp_corr": -0.7827409824775179,
+      "net_sep_pos_minus_neg": 0.39819514698357156
+    },
+    {
+      "seed": 100,
+      "n_vocab": 139,
+      "n_seed": 70,
+      "n_held": 69,
+      "r_real": 0.8185051839327339,
+      "r_permuted": 0.08699066055308133,
+      "r_seedonly": 0.0,
+      "r_shuffled": 0.20308128931532146,
+      "r_arousal": 0.7139267023245076,
+      "opp_corr": -0.8552136276991327,
+      "net_sep_pos_minus_neg": 0.34224633972856433
+    },
+    {
+      "seed": 101,
+      "n_vocab": 139,
+      "n_seed": 70,
+      "n_held": 69,
+      "r_real": 0.8277398074197683,
+      "r_permuted": 0.05284459439798548,
+      "r_seedonly": 0.0,
+      "r_shuffled": -0.26937315112012533,
+      "r_arousal": 0.644064936171955,
+      "opp_corr": -0.7702224422977049,
+      "net_sep_pos_minus_neg": 0.376026951046505
+    },
+    {
+      "seed": 102,
+      "n_vocab": 139,
+      "n_seed": 70,
+      "n_held": 69,
+      "r_real": 0.7649339288677452,
+      "r_permuted": -0.1821751485970499,
+      "r_seedonly": 0.0,
+      "r_shuffled": -0.0304227595649261,
+      "r_arousal": 0.6758923100914731,
+      "opp_corr": -0.8625507603441416,
+      "net_sep_pos_minus_neg": 0.38676243829878015
+    }
+  ],
+  "config": {
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "smoke": false,
+    "max_stories": 60000,
+    "n_hub": 500,
+    "window": 4,
+    "min_count": 5,
+    "seed_frac": 0.5,
+    "knn": 12,
+    "n_hops": 2,
+    "n_vocab": 139
+  },
+  "mechanism": "learned co-occurrence graph (rate-Hebbian, matched rule; PPMI stream-cortex code) -> opponent V+/V- seed from Warriner norms (Namburi-Tye) -> valence inherited to held-out by seed-clamped spreading activation (EMERGE-30 read / Zhu-Ghahramani harmonic) -> net = V+ - V-",
+  "HONEST_NOTE": "numpy-CPU read of the mechanism (on-bridge spiking opponent-population confirm = GPU follow-on). Warriner values are an embedded APPROXIMATE core lexicon biased to children's vocabulary (real 13,915-word CSV swappable via --warriner-csv); the learned co-occurrence graph is BUILT IN-RUNNER from TinyStories because no cached artifact maps concept codes to Warriner-labelled words. Seed/held-out split varies per RNG seed.",
+  "elapsed_seconds": 1.3
+}
