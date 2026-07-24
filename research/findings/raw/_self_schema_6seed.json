@@ -1,0 +1,383 @@
+{
+  "runner": "_self_schema_region_derisk",
+  "faculty": "F4 self-model/metacognition (DR-3 attention/agency SELF-SCHEMA region)",
+  "theory": "Graziano Attention Schema Theory + higher-order metacognition (FUNCTIONAL correlate only)",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_trials": 96,
+  "backend": "numpy",
+  "thresholds": {
+    "attention_acc": 0.85,
+    "confidence_spearman": 0.6,
+    "confidence_auc": 0.85,
+    "authorship_acc": 0.9,
+    "max_axis_corr": 0.3,
+    "chance_attention": 0.45,
+    "chance_authorship": 0.65,
+    "collapse_spearman": 0.3
+  },
+  "verdict": "GO",
+  "n_go": 6,
+  "n_seeds": 6,
+  "aggregate": {
+    "mean_attention_acc": 0.9739583333333334,
+    "mean_confidence_spearman": 0.9797250859106529,
+    "mean_confidence_auc": 0.9959490740740741,
+    "mean_authorship_acc": 1.0,
+    "all_self_lesion_collapse": true,
+    "all_shuffle_collapse": true,
+    "all_dissociation_ok": true,
+    "all_fam_lesion_flattens": true
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_trials": 96,
+      "familiarity_source": {
+        "corr_alpha_q": 0.6875746066196419,
+        "q_min": 0.030351263244759785,
+        "q_max": 0.9998316258043993,
+        "q_mean": 0.24615381020228452
+      },
+      "intact": {
+        "attention_acc": 0.96875,
+        "confidence_spearman": 0.9928920238741182,
+        "confidence_auc": 0.9969618055555556,
+        "authorship_acc": 1.0,
+        "conf_rate_range": [
+          0.03080808080808081,
+          0.10808080808080808
+        ],
+        "auth_rate_self_mean": 0.09191919191919189,
+        "auth_rate_heard_mean": 0.0
+      },
+      "dissociation": {
+        "corr_decoded_confidence_vs_content": -0.04037126009388217,
+        "corr_decoded_authorship_vs_content": 0.15247304209983314,
+        "corr_true_confidence_vs_content": -0.05905495484353309,
+        "per_content_confidence_spearman": {
+          "0": 0.9857142857142858,
+          "1": 0.9883116883116884,
+          "2": 0.9940711462450593,
+          "3": 0.9919354838709677
+        },
+        "min_per_content_spearman": 0.9857142857142858,
+        "dissociation_ok": true
+      },
+      "self_lesion": {
+        "attention_acc": 0.21875,
+        "confidence_spearman": 0.0,
+        "authorship_acc": 0.4583333333333333,
+        "collapsed": true
+      },
+      "shuffle_internal": {
+        "attention_acc": 0.25,
+        "confidence_spearman": 0.03267769940314704,
+        "authorship_acc": 0.4583333333333333,
+        "collapsed": true
+      },
+      "familiarity_lesion_flattens_confidence": true,
+      "go_components": {
+        "attention": true,
+        "confidence": true,
+        "authorship": true,
+        "self_lesion_collapses": true,
+        "shuffle_collapses": true,
+        "dissociation": true
+      },
+      "go": true
+    },
+    {
+      "seed": 43,
+      "n_trials": 96,
+      "familiarity_source": {
+        "corr_alpha_q": 0.6967444384156267,
+        "q_min": 0.030027287606257724,
+        "q_max": 0.9924579469453313,
+        "q_mean": 0.24616624792891928
+      },
+      "intact": {
+        "attention_acc": 1.0,
+        "confidence_spearman": 0.9747965274009767,
+        "confidence_auc": 0.9986979166666666,
+        "authorship_acc": 1.0,
+        "conf_rate_range": [
+          0.028282828282828285,
+          0.10707070707070707
+        ],
+        "auth_rate_self_mean": 0.09343434343434344,
+        "auth_rate_heard_mean": 0.0
+      },
+      "dissociation": {
+        "corr_decoded_confidence_vs_content": -0.01815443255461614,
+        "corr_decoded_authorship_vs_content": 0.04709813970670025,
+        "corr_true_confidence_vs_content": -0.036326799153348195,
+        "per_content_confidence_spearman": {
+          "0": 0.9704433497536946,
+          "1": 0.9792490118577075,
+          "2": 0.9584615384615385,
+          "3": 0.8929824561403509
+        },
+        "min_per_content_spearman": 0.8929824561403509,
+        "dissociation_ok": true
+      },
+      "self_lesion": {
+        "attention_acc": 0.3020833333333333,
+        "confidence_spearman": 0.0,
+        "authorship_acc": 0.5729166666666666,
+        "collapsed": true
+      },
+      "shuffle_internal": {
+        "attention_acc": 0.19791666666666666,
+        "confidence_spearman": 0.0597802495930548,
+        "authorship_acc": 0.4791666666666667,
+        "collapsed": true
+      },
+      "familiarity_lesion_flattens_confidence": true,
+      "go_components": {
+        "attention": true,
+        "confidence": true,
+        "authorship": true,
+        "self_lesion_collapses": true,
+        "shuffle_collapses": true,
+        "dissociation": true
+      },
+      "go": true
+    },
+    {
+      "seed": 44,
+      "n_trials": 96,
+      "familiarity_source": {
+        "corr_alpha_q": 0.6505018990775909,
+        "q_min": 0.03559096725879707,
+        "q_max": 0.9967595500314084,
+        "q_mean": 0.20750791373304248
+      },
+      "intact": {
+        "attention_acc": 0.9375,
+        "confidence_spearman": 0.9754069451980467,
+        "confidence_auc": 0.9954427083333334,
+        "authorship_acc": 1.0,
+        "conf_rate_range": [
+          0.029292929292929294,
+          0.10555555555555556
+        ],
+        "auth_rate_self_mean": 0.09545454545454546,
+        "auth_rate_heard_mean": 0.0
+      },
+      "dissociation": {
+        "corr_decoded_confidence_vs_content": -0.07377959582233783,
+        "corr_decoded_authorship_vs_content": -0.030916100325102776,
+        "corr_true_confidence_vs_content": -0.059490389410237675,
+        "per_content_confidence_spearman": {
+          "0": 0.9754385964912281,
+          "1": 0.9794871794871794,
+          "2": 0.9853479853479854,
+          "3": 0.8965217391304348
+        },
+        "min_per_content_spearman": 0.8965217391304348,
+        "dissociation_ok": true
+      },
+      "self_lesion": {
+        "attention_acc": 0.19791666666666666,
+        "confidence_spearman": 0.0,
+        "authorship_acc": 0.4895833333333333,
+        "collapsed": true
+      },
+      "shuffle_internal": {
+        "attention_acc": 0.3229166666666667,
+        "confidence_spearman": -0.07913727618014108,
+        "authorship_acc": 0.5625,
+        "collapsed": true
+      },
+      "familiarity_lesion_flattens_confidence": true,
+      "go_components": {
+        "attention": true,
+        "confidence": true,
+        "authorship": true,
+        "self_lesion_collapses": true,
+        "shuffle_collapses": true,
+        "dissociation": true
+      },
+      "go": true
+    },
+    {
+      "seed": 100,
+      "n_trials": 96,
+      "familiarity_source": {
+        "corr_alpha_q": 0.7596717308735756,
+        "q_min": 0.032966956094780064,
+        "q_max": 0.991636886017051,
+        "q_mean": 0.2542477516930867
+      },
+      "intact": {
+        "attention_acc": 1.0,
+        "confidence_spearman": 0.968651654910472,
+        "confidence_auc": 0.9878472222222222,
+        "authorship_acc": 1.0,
+        "conf_rate_range": [
+          0.029292929292929294,
+          0.10757575757575757
+        ],
+        "auth_rate_self_mean": 0.0939393939393939,
+        "auth_rate_heard_mean": 0.0
+      },
+      "dissociation": {
+        "corr_decoded_confidence_vs_content": -0.021111819039171927,
+        "corr_decoded_authorship_vs_content": -0.11033580830719321,
+        "corr_true_confidence_vs_content": -0.011642777517223556,
+        "per_content_confidence_spearman": {
+          "0": 0.9926470588235294,
+          "1": 0.9759398496240601,
+          "2": 0.9233716475095786,
+          "3": 0.9725806451612903
+        },
+        "min_per_content_spearman": 0.9233716475095786,
+        "dissociation_ok": true
+      },
+      "self_lesion": {
+        "attention_acc": 0.17708333333333334,
+        "confidence_spearman": 0.0,
+        "authorship_acc": 0.59375,
+        "collapsed": true
+      },
+      "shuffle_internal": {
+        "attention_acc": 0.2916666666666667,
+        "confidence_spearman": -0.1466087900162778,
+        "authorship_acc": 0.5416666666666666,
+        "collapsed": true
+      },
+      "familiarity_lesion_flattens_confidence": true,
+      "go_components": {
+        "attention": true,
+        "confidence": true,
+        "authorship": true,
+        "self_lesion_collapses": true,
+        "shuffle_collapses": true,
+        "dissociation": true
+      },
+      "go": true
+    },
+    {
+      "seed": 101,
+      "n_trials": 96,
+      "familiarity_source": {
+        "corr_alpha_q": 0.7205371676614216,
+        "q_min": 0.04245302249072236,
+        "q_max": 0.9997521382634625,
+        "q_mean": 0.2641737515069907
+      },
+      "intact": {
+        "attention_acc": 0.9375,
+        "confidence_spearman": 0.9721106890938687,
+        "confidence_auc": 0.9973958333333334,
+        "authorship_acc": 1.0,
+        "conf_rate_range": [
+          0.02878787878787879,
+          0.10404040404040404
+        ],
+        "auth_rate_self_mean": 0.09696969696969697,
+        "auth_rate_heard_mean": 0.0
+      },
+      "dissociation": {
+        "corr_decoded_confidence_vs_content": 0.0944349402633867,
+        "corr_decoded_authorship_vs_content": 0.05261391586139492,
+        "corr_true_confidence_vs_content": 0.09944592515344698,
+        "per_content_confidence_spearman": {
+          "0": 0.9566563467492261,
+          "1": 0.9644268774703557,
+          "2": 0.9842735042735042,
+          "3": 0.9763546798029556
+        },
+        "min_per_content_spearman": 0.9566563467492261,
+        "dissociation_ok": true
+      },
+      "self_lesion": {
+        "attention_acc": 0.1875,
+        "confidence_spearman": 0.0,
+        "authorship_acc": 0.5416666666666666,
+        "collapsed": true
+      },
+      "shuffle_internal": {
+        "attention_acc": 0.22916666666666666,
+        "confidence_spearman": 0.17377916440586,
+        "authorship_acc": 0.4375,
+        "collapsed": true
+      },
+      "familiarity_lesion_flattens_confidence": true,
+      "go_components": {
+        "attention": true,
+        "confidence": true,
+        "authorship": true,
+        "self_lesion_collapses": true,
+        "shuffle_collapses": true,
+        "dissociation": true
+      },
+      "go": true
+    },
+    {
+      "seed": 102,
+      "n_trials": 96,
+      "familiarity_source": {
+        "corr_alpha_q": 0.7231280520889853,
+        "q_min": 0.023126668623950297,
+        "q_max": 0.9997969337753516,
+        "q_mean": 0.28008128019401063
+      },
+      "intact": {
+        "attention_acc": 1.0,
+        "confidence_spearman": 0.9944926749864351,
+        "confidence_auc": 0.9993489583333334,
+        "authorship_acc": 1.0,
+        "conf_rate_range": [
+          0.027777777777777776,
+          0.10707070707070707
+        ],
+        "auth_rate_self_mean": 0.0909090909090909,
+        "auth_rate_heard_mean": 0.0
+      },
+      "dissociation": {
+        "corr_decoded_confidence_vs_content": -0.0008566965632566901,
+        "corr_decoded_authorship_vs_content": 0.04869208718264219,
+        "corr_true_confidence_vs_content": 0.0096501329170974,
+        "per_content_confidence_spearman": {
+          "0": 0.9948051948051948,
+          "1": 0.9956521739130435,
+          "2": 0.9915384615384616,
+          "3": 0.9822222222222222
+        },
+        "min_per_content_spearman": 0.9822222222222222,
+        "dissociation_ok": true
+      },
+      "self_lesion": {
+        "attention_acc": 0.21875,
+        "confidence_spearman": 0.0,
+        "authorship_acc": 0.5104166666666666,
+        "collapsed": true
+      },
+      "shuffle_internal": {
+        "attention_acc": 0.22916666666666666,
+        "confidence_spearman": 0.013781877373846988,
+        "authorship_acc": 0.4166666666666667,
+        "collapsed": true
+      },
+      "familiarity_lesion_flattens_confidence": true,
+      "go_components": {
+        "attention": true,
+        "confidence": true,
+        "authorship": true,
+        "self_lesion_collapses": true,
+        "shuffle_collapses": true,
+        "dissociation": true
+      },
+      "go": true
+    }
+  ],
+  "honest_scope": "A functional self-model correlate: a self_schema region reads the brain's OWN internal signals (GNW workspace occupancy + a familiarity-gate confidence scalar + an authorship tag) and jointly represents+reports them; the read-outs track ground-truth internal state and collapse under self-lesion / shuffled-signal. NOT a claim of subjective experience (phenomenal consciousness is OPEN, arguably untestable)."
+}
