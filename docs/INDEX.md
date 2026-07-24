@@ -12,7 +12,8 @@ Find what you need fast.
 | Understand what this project IS | [README.md](../README.md) |
 | Run the simulator | [QUICKSTART.md](../QUICKSTART.md) |
 | See what works today | [CURRENT-STATE.md](CURRENT-STATE.md) |
-| See where the project is headed | [ROADMAP.md](../ROADMAP.md) |
+| See the current master development plan (2026-07-23 pivot) | [plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md](plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md) |
+| See where the project is headed (plain-language status) | [ROADMAP.md](../ROADMAP.md) |
 | See the architecture at a glance | [diagrams/brain_architecture_current.md](diagrams/brain_architecture_current.md) |
 | Understand the biology | [biology.md](biology.md) |
 | Add a feature | [CONTRIBUTING.md](../CONTRIBUTING.md) |
@@ -43,10 +44,26 @@ Install + run + 3 things to try. Cross-references for going deeper.
 
 The kept-current source of truth for what the project has achieved, what it is
 working on now, and the open research frontiers on the path to the goal (a
-single spiking brain that navigates and holds a grounded conversation). Uses
-plain-language status badges (done / partial / boundary / scaffold / open).
+single spiking brain that **converses genuinely** — reasoning to its own
+conclusions, with an affective world-model, self-awareness, and curiosity).
+Uses plain-language status badges (done / partial / boundary / scaffold / open).
+This is the **status** surface; the **forward-looking** plan is the master
+development roadmap below.
 
 **Read this if:** you want the honest current status and near-term direction.
+
+### `docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md` — the current primary development plan
+
+The ordered, forward-looking master plan for the 2026-07-23 direction pivot: the
+complete faculty map, the one-brain architecture, six developmental stages (proto
+→ human-ready), a 14-wall ledger (each wall paired with a biological surpass), and
+the parallelization map. Its foundation is
+`docs/plans/2026-07-22-genuine-conversation-affective-self-aware-brain-plan.md`.
+The prior "5-gap closure" framing is subsumed here as the faculty-map +
+walls-ledger sub-view (still valid).
+
+**Read this if:** you want the current plan of record — where the work is going
+and in what order.
 
 ### `CLAUDE.md` — AI agent guidelines
 
@@ -116,6 +133,8 @@ with the findings that resulted. Examples span the project's history:
 - `2026-05-02-distributed-motor-pool-design.md`
 - `2026-07-13-np-recurrent-language-derisk-spec.md`
 - `2026-07-15-months-scale-plan-to-one-brain-and-small-llm-conversation.md`
+- **`2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md` — the current primary plan** (see above)
+- `2026-07-22-genuine-conversation-affective-self-aware-brain-plan.md` — its foundation
 
 **Read these if:** you're investigating a specific architecture choice
 or trying to understand why a feature was designed a certain way.
@@ -178,7 +197,7 @@ evolved. For the plain-language current status, prefer `ROADMAP.md` and
 
 ### `research/runners/` — experiment scripts
 
-Roughly 1,250 headless Python scripts, each implementing one experiment
+Roughly 1,270 headless Python scripts, each implementing one experiment
 (navigation, conversation/chat, memory consolidation, the word-meaning-learning
 experiments, the language generator, and many more). Each runs via
 `python -m research.runners.<name>`.

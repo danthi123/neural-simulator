@@ -17,6 +17,13 @@
 > [`brain_architecture_detailed.md`](brain_architecture_detailed.md) (Mermaid).
 > The hand-authored SVGs below are now an **archived 2026-06 snapshot** (they
 > predate the 2026-07 language arcs), superseded by that detailed doc.
+>
+> **For the TARGET one-brain architecture (2026-07-23)** — the same built
+> faculties **plus the four planned integrators** (affect-state, self/meta-schema,
+> ASK/curiosity pool, an explicit GNW workspace) — see
+> [`brain_architecture_target.md`](brain_architecture_target.md), the maintained
+> mirror of §3 of the master development roadmap. The two docs above are
+> *as-implemented*; that one is the *build map*.
 
 Honest, **as-implemented** flowcharts of the whole simulated brain — every
 region type, every distinct pathway, the direction and *nature* of each

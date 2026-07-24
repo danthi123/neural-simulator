@@ -9,11 +9,18 @@ strengthen or weaken based on millisecond-precise spike timing. The core
 runs on local biological rules — *not* backpropagation through a static
 graph, no supervised labels, no symbolic optimizer.
 
-The distinguishing goal: a *single* simulated brain that navigates a world
-and holds a simple, grounded conversation, with **every cognitive step done
-by spiking neurons** rather than ordinary code. Where the biology genuinely
-can't do something on this substrate, that limit is measured and reported
-rather than papered over.
+The north-star: a *single* simulated brain that not only navigates a world
+but learns to **converse genuinely** — reasoning to its own conclusions,
+building an emotionally-colored model of the world, and developing a working
+sense of what it does and doesn't know — with **every cognitive step done by
+spiking neurons** rather than ordinary code. It is meant to be raised the way a
+child is: first with a patient AI teacher, later through real interaction, with
+that teacher gradually replaced by the brain's own circuitry. This is a
+long-horizon research bet, pursued honestly — the project *builds and measures*
+the functional hallmarks of attention, emotion, and self-awareness on the
+spiking substrate, and is careful never to claim the brain actually *feels*
+anything. Where the biology genuinely can't do something on this substrate, that
+limit is measured and reported rather than papered over.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)
@@ -90,7 +97,7 @@ flowchart TB
 
 ## 🗺️ Roadmap — the full development path
 
-**[`ROADMAP.md`](ROADMAP.md) is the source of truth for progress toward the goal** — artificial life whose conversational ability approaches a large language model, built the honest way: one simulated spiking brain, learning from experience, with no permanent external AI model doing the thinking. It's written to be read without knowing the codebase, and lays out the whole developmental path stage by stage — each mapped to the brain region/function it reproduces (with textbook and paper citations), a status, what's done, what's open, and the next step — plus the temporary stand-ins still to be replaced, the honest remaining walls, and a no-hype assessment of the distance left.
+**[`ROADMAP.md`](ROADMAP.md) is the plain-language source of truth for progress toward the goal** — a single simulated spiking brain that learns to converse genuinely and develops toward emotion and self-awareness, built the honest way: learning from experience, with no permanent external AI model doing the thinking. It's written to be read without knowing the codebase, and lays out the whole developmental path stage by stage — each mapped to the brain region/function it reproduces (with textbook and paper citations), a status, what's done, what's open, and the next step — plus the temporary stand-ins still to be replaced, the honest remaining walls, and a no-hype assessment of the distance left. A deeper, engineer-level working plan (every faculty, each remaining wall, and the specific biological mechanism meant to get past it) lives in [`docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`](docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md).
 
 At a glance (see [`ROADMAP.md`](ROADMAP.md) for the plain-language detail and citations):
 
@@ -109,8 +116,11 @@ At a glance (see [`ROADMAP.md`](ROADMAP.md) for the plain-language detail and ci
 | Conversation | Working memory of who's-being-discussed; "I don't know" guard | ✅ **Emergent** · 🧩 fluent chat |
 | Working memory & recursion | Persistent-activity slots; graded fading memory | 🟩 Done · 🟧 nesting depth |
 | Artificial life | Develop over time; one merged brain; one drive; persistence | 🟩 Done (pieces) · 🟨 unified |
+| Emotion & affect | Concepts learn an emotional "coloring"; mood/arousal neuromodulators | 🟨 First results |
+| Self-model & metacognition | Reads + reports its own attention, confidence, and authorship | 🟨 First results |
+| Curiosity | Turns "I don't know" into asking a teacher and learning | 🟨 First results |
 
-Legend: ✅ emergent (learned from experience) · 🟩 done (with one hand-designed part) · 🟨 partial · 🟧 a mapped limit · 🧩 temporary stand-in · ⬜ open. **The two honest gaps to a large language model:** open-ended fluent speech without the small conventional-AI crutch (its first home-grown rung has landed as a research result — an emergent, on-brain, no-backpropagation next-word model), and a deeper learning rule to lift the remaining ceilings. A real, bounded, multi-month distance — not a demo away, and not blocked. The roadmap also covers the body, supporting systems (cerebellum, sleep), the 3D viewer and interactive consoles, and future directions.
+Legend: ✅ emergent (learned from experience) · 🟩 done (with one hand-designed part) · 🟨 partial / first results · 🟧 a mapped limit · 🧩 temporary stand-in · ⬜ open. **The honest distance ahead:** open-ended fluent speech without the small conventional-AI crutch (its first home-grown rung has landed as a research result — an emergent, on-brain, no-backpropagation next-word model); a deeper learning rule to lift the remaining ceilings; and the newest chapter — genuine reasoning, an emotionally-colored world-model, a working self-model, and curiosity — now begun with first validated results (see below). A real, bounded, multi-month distance — not a demo away, and not blocked. The roadmap also covers the body, supporting systems (cerebellum, sleep), the 3D viewer and interactive consoles, and future directions.
 
 ---
 
@@ -135,11 +145,18 @@ simulation engine, brain-region framework, and navigation agent are mature
 and demonstrated, while a small neuron-built conversational agent is a
 growing capability with validated core behaviors.
 
-It is **not** a large language model and does not try to be one. Its
-contribution is a memory and reasoning system that is continual (it keeps
-learning without forgetting), trustworthy (it declines to answer rather than
-fabricate), and self-contained (after training it runs entirely on local
-hardware with no external model).
+It is **not** a large language model and does not try to match one for raw
+fluency. Its aim is different, and in some ways harder: a brain that reasons to
+its own conclusions, colors what it knows with emotion, and develops a working
+sense of what it does and doesn't know — a memory-and-reasoning system that is
+continual (it keeps learning without forgetting), trustworthy (it can tell when
+it doesn't know something, and is learning to get *curious* about it rather than
+bluff), and self-contained (after training it runs entirely on local hardware
+with no external model). The longer-range wager is the *emergentist* one — that
+mind emerges from emulating a brain completely and faithfully enough — so the
+work is measured by the faithfulness of the biology, and every claim about
+"self-awareness" or "emotion" here means a *measured functional correlate*,
+never an assertion that the brain has inner experience.
 
 **Who might find it useful:**
 
@@ -182,12 +199,15 @@ hardware with no external model).
   vocabulary across multiple random seeds; richer abilities are exploratory and
   documented as current limits.
 
-- **It refuses to make things up.** Asked about something it was never
+- **It knows what it doesn't know.** Asked about something it was never
   taught, it answers "I don't know" rather than fabricating a plausible-but-
   wrong reply — a trust property mainstream language models notably lack. This
   is measured: there is a clear confidence gap between what it knows and what
   it does not, and (below) the fluent-speech generator is never invoked when
-  the brain chooses to abstain.
+  the brain chooses to abstain. In the newest work, that same
+  knows-what-it-doesn't-know signal is being turned into *curiosity* — asking
+  and learning instead of only declining (see the toward-conversation results
+  below).
 
 - **A trustworthy, continual memory.** Teach it word–concept facts and it
   recalls them on cue while — the genuinely hard part — keeping old memories
@@ -206,16 +226,44 @@ hardware with no external model).
   the never-seen shape in a known category and answer about it. You can then
   converse with it about what it discovered.
 
+- **Toward genuine conversation — emotion, self-model, and curiosity**
+  (newest, early-stage). Three first results, each checked across several random
+  seeds, open the project's next chapter — a brain that doesn't just recall
+  facts but reasons, feels, and knows what it's missing:
+  - *Emotional coloring.* Concepts acquire an emotional tone — roughly, how
+    positive or negative they are — on their own, from the company a word keeps
+    in the text it hears, with no hand-labeling; the result matches human
+    ratings closely even on words it was never explicitly told about.
+  - *A glimmer of self-awareness.* A small self-model region reads and reports
+    the brain's own internal state in spikes — what it is attending to, how
+    confident it is, and whether a thought was its own or something it heard.
+    Cut its access to the real internal state and those reports collapse,
+    confirming it reads a genuine internal signal rather than inventing one.
+    (This is a functional stepping-stone, measured as such — not a claim of
+    inner experience.)
+  - *Curiosity instead of a shrug.* The same uncertainty that today makes it
+    say "I don't know" can instead drive it to *ask* and *learn* — and it
+    declines to keep asking about things that can't be learned (random noise),
+    so curiosity doesn't turn into chasing nonsense.
+
 - **Fluent speech, in two layers.** (a) A small, locally-trained language
   generator — tens of millions of parameters, far smaller than a typical large
   language model — supplies fluent English *phrasing only*; the brain decides
   *what* is true and whether to answer, and the generator is never called when
   the brain abstains, so the no-fabrication safeguard holds by construction.
-  This generator is a deliberate, temporary scaffold. (b) Increasingly the
-  brain's *own spiking circuitry* produces the words and their order for a
-  bounded set of sentence forms — modelled on the human speech-production
-  region (Broca's area) — learning the sentence structure from a text stream
-  rather than having it hand-written.
+  The project trains this generator itself — currently a family at three sizes
+  (roughly 83, 162, and 267 million parameters), on local and rented cloud GPUs,
+  to test how much a bigger model learns from the same text. Crucially, a
+  trained 83-million-parameter model has been re-run *as spiking neurons* and
+  produces output identical to the standard (non-spiking) version, exactly,
+  across several random seeds — evidence that even the phrasing layer can be
+  faithfully moved onto the brain's own substrate. (An earlier apparent failure
+  of that test turned out to be a bug in the test harness, not a limit of the
+  neurons; once fixed, the match was exact.) This generator is a deliberate,
+  temporary scaffold. (b) Increasingly the brain's *own spiking circuitry*
+  produces the words and their order for a bounded set of sentence forms —
+  modelled on the human speech-production region (Broca's area) — learning the
+  sentence structure from a text stream rather than having it hand-written.
 
 - **Development over simulated time.** The brain can live a simulated life:
   forage under a hunger drive, perceive and remember the objects it
@@ -383,7 +431,7 @@ OpenGL 3D rendering    lock-free     spike + plasticity kernels
 camera / interaction     queues      recording / checkpointing
 ```
 
-The engine lives in the `sim/` package (43 modules, ~16K lines of engine
+The engine lives in the `sim/` package (43 modules, ~22K lines of engine
 code). The central object is the **`SimulationBridge`**, which owns all neuron
 and synapse state as GPU arrays and advances the network one millisecond-scale
 step at a time:
@@ -454,24 +502,43 @@ And, demonstrated in pieces and still research-stage:
   encounters, grow its knowledge day over day without forgetting, and persist
   across restarts.
 
-The active frontier is **conversation and language built entirely from
-neurons, learned from experience.** Much of the conversational pipeline already
-runs as spiking neurons within one shared network and learns its concept
-representations by listening rather than having them hand-assigned. The
-remaining open frontiers, all under active work, are:
+The active frontier — and the project's north-star — is a brain that
+**converses genuinely**: reasons to its own conclusions, carries an
+emotionally-colored model of the world, develops a working sense of self, and —
+instead of only refusing when unsure — grows curious and seeks to learn. It is
+meant to be raised developmentally, first with a patient AI teacher and later
+through real interaction, with that teacher (a temporary scaffold) gradually
+replaced by the brain's own circuitry. The bet behind this direction is the
+*emergentist* one — that mind emerges from emulating a brain completely and
+faithfully enough — so progress is measured by the completeness and faithfulness
+of the biology, not by a benchmark score. The disciplined posture is to **build
+and measure the functional hallmarks** of attention, self-modeling, confidence,
+and emotion, and to keep every self-report honest ("my familiarity monitor reads
+this as new, so I'm unsure") — never an unlicensed claim of inner experience.
+
+Much of the conversational pipeline already runs as spiking neurons within one
+shared network and learns its concept representations by listening rather than
+having them hand-assigned. The open research frontiers, all under active work,
+are:
 
 1. **Open-ended fluent generation** — moving beyond a bounded set of sentence
    forms toward free conversation produced by the brain's own circuitry.
-2. **Learned concept binding** — replacing the hand-designed scheme for
-   combining concepts into facts with one the brain *learns*.
-3. **Resolving ambiguous references** — deciding which of several things a bare
-   pronoun means.
-4. **A dendrite-based biological learning rule** — how a neuron decides which
+2. **An emotionally-colored, predictive world-model** — learning not just facts
+   but how to *feel* about them, and a model that can predict outcomes rather
+   than only recall (first "emotional coloring" results in hand).
+3. **A self-model and metacognition** — the brain reflecting on and reporting
+   its own knowledge and uncertainty (first results in hand).
+4. **Curiosity that seeks a teacher** — turning uncertainty into asking and
+   learning, honestly (first results in hand).
+5. **A dendrite-based biological learning rule** — how a neuron decides which
    of its inputs to strengthen, without backpropagation; the likely enabler of
-   open-ended generation.
-5. **Memory replay and imagination** — the brain internally replaying and
+   much of the above.
+6. **Memory replay and imagination** — the brain internally replaying and
    recombining stored sequences, as the hippocampus does at rest, to support
    planning and imagination.
+7. **Learned concept binding and resolving ambiguous references** — replacing
+   hand-designed schemes for combining concepts into facts, and for picking
+   which of several things a bare pronoun means, with ones the brain *learns*.
 
 These are honest research problems — a bounded, multi-month distance, not
 solved features and not blocked.
@@ -583,6 +650,10 @@ A few terms recur in this project's documentation. In plain language:
 | **Speech production (Broca's area)** | The brain's own spiking circuitry choosing words and their order. A small local text generator supplies fluent phrasing today as a temporary scaffold; increasingly the neurons do it themselves for a bounded set of sentence forms. |
 | **Development & persistence** | The brain living over simulated days — foraging, remembering, and growing its knowledge without forgetting — and saving/resuming that state across sessions (a "lineage"). |
 | **One brain** | Navigation, conversation, memory, and a shared dopamine core running as a single network on one update loop, joined by real synaptic links — not separate programs. |
+| **Affective coloring (valence)** | An emotional tone — roughly how positive or negative a concept is — that the brain learns on its own from the company a word keeps in text, rather than from hand-labels. |
+| **Self-model / metacognition** | A small region that reads and reports the brain's *own* internal state (what it's attending to, how confident it is, whether a thought was its own) — a measured functional stepping-stone toward self-awareness, not a claim of inner experience. |
+| **Curiosity / learning progress** | Turning uncertainty into a drive to ask and learn — rewarding *actual learning progress*, so the brain seeks out what it can learn and ignores unlearnable noise. |
+| **Emergentist bet** | The project's long-range wager that mind emerges from emulating a brain completely and faithfully enough; it motivates measuring functional correlates exhaustively while never asserting the brain actually *feels*. |
 | **Multi-seed** | A result re-run with several different random starting seeds, so it isn't a one-off fluke. Claims here are reported with the seeds used. |
 | **Findings document** | A dated write-up of one research session's result — including negative ones — kept under `research/findings/`. |
 
@@ -591,6 +662,8 @@ A few terms recur in this project's documentation. In plain language:
 ## Documentation & further reading
 
 - [QUICKSTART.md](QUICKSTART.md) — install, prerequisites, first run
+- [ROADMAP.md](ROADMAP.md) — the plain-language development path, stage by stage
+- [`docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`](docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md) — the detailed working plan: every faculty, each remaining wall, and the biological mechanism meant to get past it
 - [`docs/biology.md`](docs/biology.md) — the modeled biology, in plain language
 - [`docs/CURRENT-STATE.md`](docs/CURRENT-STATE.md) — what works today, technically
 - [`docs/CHAT-DEMO-GUIDE.md`](docs/CHAT-DEMO-GUIDE.md) — every conversational demo

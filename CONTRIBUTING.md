@@ -12,6 +12,19 @@ research-stage; the docs try to be clear about which is which.
 Before diving in, skim these:
 
 - [`README.md`](README.md) — what the project is, in plain language.
+- [`docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`](docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md)
+  — **the current primary development plan.** As of the 2026-07-23 direction
+  pivot the north-star is a sim-brain that **converses genuinely** — reasons to
+  its own conclusions and has an affective world-model, emotion, self-awareness,
+  and curiosity — not fact-recall/RAG and not large-language-model plausible
+  text. The master roadmap lays out the complete faculty map, the one-brain
+  architecture, the six developmental stages, and a 14-wall ledger (each wall
+  paired with a biological surpass). The earlier "5-gap closure" framing is
+  subsumed as a sub-view (the faculty-map + walls-ledger) and remains valid.
+  Its foundation is
+  [`docs/plans/2026-07-22-genuine-conversation-affective-self-aware-brain-plan.md`](docs/plans/2026-07-22-genuine-conversation-affective-self-aware-brain-plan.md).
+- [`ROADMAP.md`](ROADMAP.md) — the plain-language **status** source of truth
+  (what's done / in progress / open) that pairs with the master plan above.
 - [`docs/INDEX.md`](docs/INDEX.md) — the full documentation map.
 - [`docs/CURRENT-STATE.md`](docs/CURRENT-STATE.md) — what works today, with technical detail.
 - [`docs/diagrams/brain_architecture_current.md`](docs/diagrams/brain_architecture_current.md)
@@ -378,7 +391,7 @@ black neural-simulator.py sim/ experiment/ tests/
 
 ```
 neural-simulator.py            # GUI host + main entry point (~2.2K lines)
-sim/                           # Core engine package (43 modules, ~15.7K lines of code)
+sim/                           # Core engine package (43 modules, ~15.9K lines of code)
   __init__.py                  # public API: SimulationBridge, configs, enums
   bridge.py                    # SimulationBridge — GPU state + step loop (largest module)
   config.py                    # @dataclass configs (CoreSimConfig etc.)
@@ -401,8 +414,8 @@ ui/                            # DearPyGUI panels / callbacks / layout / plots
 experiment/                    # ExperimentEngine + StimulusManager + Readout + Training
 experiments/                   # YAML configs for headless parameter sweeps
 research/
-  runners/                     # ~1250 headless experiment scripts (navigation, conversation/chat, memory consolidation, the word-meaning-learning experiments, the language generator, …); each runs via `python -m research.runners.<name>`
-  findings/                    # session-by-session research notes (~1760 markdown docs, incl. negative results)
+  runners/                     # ~1,270 headless experiment scripts (navigation, conversation/chat, memory consolidation, the word-meaning-learning experiments, the language generator, …); each runs via `python -m research.runners.<name>`
+  findings/                    # session-by-session research notes (~1,780 markdown docs, incl. negative results)
   findings/raw/                # raw JSON output per experiment run
   datasets/                    # synthetic datasets (e.g. tiny_patterns.npz)
   experiment_runner.py         # YAML-driven sweep orchestrator
@@ -413,7 +426,7 @@ docs/
   SCIENCE_ROADMAP.md           # long-term scientific direction + results table
   biology.md                   # neuroscience tour in plain language
   diagrams/                    # live Mermaid architecture flowcharts (current + detailed)
-  plans/                       # per-feature design docs (paired with findings)
+  plans/                       # per-feature design docs (paired with findings); current primary plan: 2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md
 webapp/                        # FastAPI dashboard (server.py + static/)
 tests/                         # 472 test files (mostly CPU-only)
   test_determinism.py          # RNG determinism (init + step)

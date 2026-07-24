@@ -4,18 +4,37 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Repository**: https://github.com/danthi123/neural-simulator
 
-## ⭐ ACTIVE MISSION (2026-07-17) — read [`GAP_CLOSURE_MISSION.md`](GAP_CLOSURE_MISSION.md) FIRST, EVERY session
+## ⭐ ACTIVE MISSION (2026-07-23 PIVOT) — read [`docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`](docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md) + [`GAP_CLOSURE_MISSION.md`](GAP_CLOSURE_MISSION.md) (CURRENT STATE) FIRST, EVERY session
 
-The owner's current standing directive: **close the 5-gap cluster to FULLY-WORKING, fully-spiking, one-brain,
-biology-based functionality** — (1) open fluent generation, (2) a learned binder over the brain's own structured
-codes, (3) multi-referent disambiguation, (4) the dendritic/local-credit keystone, (5) CA3 completion/imaginative
-replay (audit: `research/findings/2026-07-17-banked-capabilities-audit-two-buckets.md`). **THE LAW: a wall/negative is
-a verdict on a METHOD, never a license to abandon a CAPABILITY — bank the failing method, take a new biology/spiking/
-one-brain method, and keep going until it WORKS. Closure cannot be deferred.** `GAP_CLOSURE_MISSION.md` is the single
-source of truth + the self-anchor that **replaces needing to run `/neural-simulator`** — read + update it every cycle;
-a plain "continue" from the owner + that board is enough to re-anchor. **SESSION START: arm the within-session
-anti-stall heartbeat Monitor as your FIRST action (exact recipe in `GAP_CLOSURE_MISSION.md` → "SESSION START"), then
-resume from CURRENT STATE.** Cross-session continuation is MANUAL by owner choice (2026-07-18) — no watchdog/daemon.
+**MAJOR DIRECTION PIVOT (owner, 2026-07-23).** The north-star is now a sim-brain that **CONVERSES GENUINELY** — reasons
+to its OWN conclusions, with an **affective world-model + emotion + self-awareness + curiosity** — NOT fact-recall/RAG,
+NOT LLM plausible-text. **Success is defined as TRUE CONSCIOUSNESS on the emergentist bet** (it emerges when a human
+brain's full faculties + behavior are emulated COMPLETELY + FAITHFULLY enough), so the job is **completeness +
+faithfulness of the biological emulation**, not a benchmark score. It is developed via a **TEMPORARY AI-teacher
+scaffold** (accelerates early growth) that then **graduates to real-human interaction**; every scaffold is biologized
+toward the one spiking brain (transformer minimized/retired). **HARD RULES: (1) DO NOT DEFER any functionality —
+surpass EVERY wall with a mechanism rooted in real biology (no "characterized limit" / "honest negative" as a stopping
+point); (2) speed is SECONDARY (slow-but-faithful biology — dendritic credit, seconds-long BTSP plateaus, sleep-replay
+consolidation — is explicitly in scope; never trade faithfulness for speed); (3) ONE spiking substrate (host code only
+for world + body + teacher-as-social-environment).** The **honesty boundary is a DELIVERABLE, not a caveat**: build +
+measure every functional consciousness / self-model / affect CORRELATE, design every self-report as an honest
+functional read-out ("my familiarity monitor reads this as novel, so I'm uncertain"), and NEVER assert phenomenal
+experience.
+
+**⭐ THE PRIMARY PLAN IS `docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`** — a LIVING staged faculty roadmap
+(complete faculty map · one-brain architecture · 6 developmental stages proto→human-ready · a 14-wall ledger where each
+wall carries its biological surpass · a parallelization map). Foundation: `docs/plans/2026-07-22-genuine-conversation-affective-self-aware-brain-plan.md`.
+**`GAP_CLOSURE_MISSION.md` remains the session-by-session working board** — its CURRENT STATE opens with this pivot
+block + the live compute lanes; read the roadmap for the PLAN and the board's CURRENT STATE for the RESUME point. **The
+prior "close the 5-gap cluster" framing is SUBSUMED** — the 5 gaps live on as the roadmap's faculty-map + walls-ledger
+(still valid, now a sub-view), no longer the top-level mission.
+
+**THE LAW (unchanged, now applied to every wall in the ledger): a wall/negative is a verdict on a METHOD, never a
+license to abandon a CAPABILITY — bank the failing method, take a new biology/spiking/one-brain method, and keep going
+until it WORKS. Closure cannot be deferred.** **SESSION START: arm the within-session anti-stall heartbeat Monitor as
+your FIRST action (exact recipe in `GAP_CLOSURE_MISSION.md` → "SESSION START"), then resume from CURRENT STATE.**
+Cross-session continuation is MANUAL by owner choice (a plain "continue" + the roadmap + that board re-anchors) — no
+watchdog/daemon.
 
 ## Project Overview
 
@@ -53,6 +72,54 @@ GPU-accelerated neural network simulator with real-time 3D OpenGL visualization.
 2. **The body** — the agent acting on its motor output (moving based on which motor pool fires).
 
 **Everything between sensation and action is the brain's job and MUST be neurons/synapses:** perception/salience, orienting decisions, reward, value, dopamine/neuromodulators, action selection. When a capability is realized by host computation (even biologically-shaped), it is a documented shortcut to be converted to a spiking/synaptic mechanism — and an **honest negative** (the neural version underperforming the host shortcut) **IS the scientific deliverable** (it maps what the substrate can/can't do on its own). Applies **PROJECT-WIDE** (navigation AND the conversational pipeline — e.g. the VSA composer's clean exact-inverse algebra is a host shortcut for what a learned cortex would do; see the "composer-as-idealization" note). **Re-classification:** the recent nav wins (N1 SC reflex, N5 perceived reward, N6 thal/argmax readout, N9-step-1 scalar RPE) are biologically-*shaped* but partly **host-computed → they are now shortcuts**, with their spiking/synaptic versions (a spiking superior colliculus, a neural reward/value system, a spiking SNc, a neural position code, a minimal motor read-out) the real target. The host versions become the *teaching scaffolds* for their neural replacements (the innate-reflex-teaches-a-learned-circuit pattern).
+
+## 🎉🧠 Recent arc (2026-07-23): the GENUINE-COGNITION PIVOT + 3 Phase-0 foundations GO + the LM width-ladder & spiking-forward validation + the gap#5 theta pivot (AWS multi-instance parallel compute)
+
+**(The session that RE-AIMED the project — from "close the 5-gap cluster" to the staged `2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`
+toward a genuinely-conversing, affective, self-aware sim-brain. Concise; see the ACTIVE MISSION block at the top +
+`GAP_CLOSURE_MISSION.md` CURRENT STATE + the `2026-07-23-*.md` findings. All Phase-0 GOs are reuse-by-import, 6-seed
+with anti-cheats, NO `sim/` edit.)**
+
+- **THE PIVOT (owner).** North-star = genuine conversation (reasons to its OWN conclusions) + affective world-model +
+  emotion + self-awareness + curiosity; success = TRUE CONSCIOUSNESS on the emergentist bet (completeness + faithfulness
+  of the biological emulation); TEMPORARY AI-teacher scaffold → real-human interaction; hard rules =
+  don't-defer-any-functionality / speed-secondary / one spiking substrate; the honesty boundary (build + measure
+  functional correlates, NEVER claim phenomenal experience) is a deliverable. Captured in the two plan docs above + the
+  ACTIVE MISSION block. The 5-gap cluster is now the roadmap's faculty-map + walls-ledger (a sub-view).
+- **THREE Phase-0 foundations of the new direction — ALL 6-seed GO + committed:** (1) **curiosity inversion** — the
+  no-confab moat's uncertainty signal is INVERTED into an HONEST curiosity drive: the brain asks about what it doesn't
+  know + learns it (corr(gap, want) +0.99), and a noisy-concept guard STOPS it chasing un-learnable noise WITHOUT
+  confabulating (`2026-07-23-DR1-curiosity-inversion-6seed-GO.md`). (2) **affective concept-tagging** — concepts LEARN
+  valence from the learned association graph (held-out r 0.81; permuted-graph collapses) — the seed of an affective
+  world-model (`2026-07-23-DR2-affective-concept-tagging-6seed-GO.md`). (3) **self-schema region** — the brain reads +
+  reports its OWN attention / confidence / authorship ON SPIKES (attn 0.974, confidence Spearman +0.98, self-lesion
+  collapses) — a functional self-awareness correlate (`2026-07-23-DR3-self-schema-region-6seed-GO.md`). Follow-ons:
+  on-bridge spiking realizations + wire into the develop-loop teacher hook.
+- **LM WIDTH-LADDER + SPIKING-FORWARD GO (gap#1 fluent-generation prereq).** A width-ladder trains IN PARALLEL on AWS —
+  83M (run3, done, ~55 val-ppl plateau) / 162M (run5_d1536) / 267M (run4_d2048) — the matched-token CAPACITY lever
+  CONFIRMED (267M lower ppl than 83M at every matched-token point). The trained 83M run3 is validated as a **faithful
+  SPIKING forward == the ANN, 6-seed GO** (mean ppl_ratio 1.000000, logit_fid 1.000000) — the project's largest TRAINED
+  generative LM shown spiking-consolidatable. The seed-43 "NEGATIVE" was a Python `id()`-reuse CSR-cache-aliasing
+  HARNESS bug (root-caused + fixed, NO `sim/` edit), not a substrate limit
+  (`2026-07-23-wkv-spiking-forward-run3-seed43-blowup-diagnosis.md`; AWS training spec
+  `2026-07-23-gap1-training-aws-experiment-spec.md`).
+- **gap#5 imaginative/ordered replay — encode GO, BOTH ignition readouts CLEAN NEGATIVE → PIVOT to theta-gamma TIMING.**
+  The encode is 6-seed GO, but both ignition-based readouts came back clean-negative (spontaneous-bistable 1/6;
+  targeted DG-detonator max_ev 0 across 32 configs at 32× drive), and both replay-ordering candidates are NEGATIVE
+  (intrinsic fatigue SILENCES co-ignition but does not DIRECT order; E→E short-term depression DESTROYS the DISCRETE
+  stored chain — Romani-Tsodyks assumes a continuous attractor). Through-line: order the discrete chain by TIMING
+  (theta/gamma PHASE), not by perturbing the store → candidate #3 = the Tsodyks cued theta-disinhibition sweep (theta
+  onto the BASKET, per-theta detonator cue, intrinsic-fatigue self-avoidance), in progress. Findings
+  `2026-07-23-gap5-replay-candidate1-intrinsic-fatigue-alone-NEGATIVE-pivot-to-STD.md`,
+  `2026-07-23-gap5-forward-asymmetry-mechanism-research-gate.md`.
+- **AWS multi-instance parallel-compute infra (git-ignored under `deploy/aws/`):** `aws_train.sh` (persistent multi-day
+  training — STANDING RULE: multi-day runs go on AWS, gaming-immune; the local 3090 runs only bounded gaming-pausable
+  GPU de-risks) + `aws_gpu_run.sh` (bounded self-terminating GPU jobs, spot-V100 lane); runs made gaming-portable
+  (pause → clean ckpt ↔ migrate to/from AWS). Two live billing g5 instances ran the width-ladder concurrently.
+- **gap#4 (deep credit) is BACK ON per the no-defer rule** (the pivot overrides the session's earlier "deprioritized"):
+  it SPLIT — one-shot BTSP credit is 6-seed GO on-bridge; deep DIRECTED credit is the one open wall but REFRAMED
+  BUILDABLE (the credit rule now beats a frozen reservoir 6-seed on MNIST — the old on-bridge negative was a
+  task/op-point artifact); the teacher-scaffold bridges it while the biology matures in parallel.
 
 ## 🎉🧠 Recent arc (2026-07-10): the D3 EVENT REGISTER — a spiking, two-gate discourse memory that tracks WHO across a multi-turn conversation, learned by a biological rule (replay + clean-error credit), NO `sim/` edit
 

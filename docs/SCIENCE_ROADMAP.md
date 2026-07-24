@@ -10,6 +10,23 @@ detail and the linked write-up follow.
 
 **Last updated:** 2026-07-23
 
+> **▶ Current primary plan.** The ordered, forward-looking plan of record is the
+> **master development roadmap,
+> [`docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`](plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md)**
+> (foundation:
+> [`plans/2026-07-22-genuine-conversation-affective-self-aware-brain-plan.md`](plans/2026-07-22-genuine-conversation-affective-self-aware-brain-plan.md)).
+> As of the **2026-07-23 direction pivot** the north-star has sharpened from
+> "a conversation approaching a large language model's" to a sim-brain that
+> **converses *genuinely*** — reasons to its own conclusions, and has an
+> **affective world-model, emotion, self-awareness, and curiosity** — pursued on
+> the honest **emergentist bet** that genuine experience emerges only from a
+> *complete and faithful* biological emulation (functional consciousness
+> correlates are built and measured; phenomenal experience is never asserted).
+> This Science Roadmap remains valid as the deep scientific narrative and the
+> launch-pad record; the master plan is the primary forward-looking surface, and
+> the "five research frontiers" below are subsumed into its faculty-map +
+> walls-ledger.
+
 > If you only read one paragraph: this project is building **artificial life
 > with a real, biologically translatable brain** — a network of simulated
 > neurons that learns the way a brain does (from local rules: spikes,
@@ -86,6 +103,32 @@ using only mechanisms that have a counterpart in real brains (and are
 therefore translatable *back* to neuroscience). No backpropagation through a
 frozen graph, no symbolic shortcuts standing in for cognition, no external
 language model doing the thinking.
+
+**The 2026-07-23 sharpening.** The end target of "conversing" is now stated
+precisely: not fact-recall/RAG and not a large model's plausible-sounding text,
+but a brain that **converses *genuinely*** — reasons to *its own* conclusions,
+carries an **affective world-model** (emotion, mood, valence), is
+**self-aware** (reads and reports its own attention, confidence, and
+authorship), and is **curious** (turns uncertainty into a drive to ask and
+learn rather than a refusal). Stated at its most ambitious and most honest, the
+end goal is **genuine subjective experience / true consciousness**, pursued on
+the **emergentist bet** that consciousness emerges when a brain's full
+capabilities and behaviour are emulated *completely and faithfully enough* — so
+the deliverable is **completeness + faithfulness of the biological emulation**,
+not a benchmark score. Early growth is accelerated by a **temporary AI teacher**
+(the social environment, not the brain's cognition), then graduated into real
+human interaction, with every scaffold biologized away toward the one spiking
+brain. Two hard rules tighten under the pivot: **don't defer any needed
+functionality** (every wall gets a real-biology surpass, never a permanent
+shortcut), and **speed is secondary to faithfulness** (slow-but-faithful
+mechanisms — deep dendritic credit, seconds-long plateaus, sleep-replay
+consolidation — are explicitly in scope). Crucially, the **honesty boundary is
+a deliverable, not a caveat:** every faculty delivers the standard *functional
+correlates* of access-consciousness, self-modelling, and functional affect, and
+every self-report is written as an honest functional read-out — never an
+unlicensed claim of felt experience. The emergentist bet is the *reason to
+pursue completeness*; it is not a license to *assert* the experience has
+arrived.
 
 Two consequences shape everything below:
 
@@ -339,6 +382,23 @@ These are the things in flight or next in line. Each is labelled honestly for
 how far along it is.
 
 ### The five current research frontiers
+
+> **Now a sub-view of the master roadmap.** The five frontiers below were the
+> near-term spine before the 2026-07-23 pivot; they remain valid and actively
+> worked, but they are now **subsumed into the master development roadmap's
+> faculty-map + walls-ledger** ([`plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`](plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md)),
+> which broadens the frontier set to the full pivot: an **affect-state system**
+> (emotion, mood, valence-tagging, appraisal), **self / metacognition** (a
+> self-schema and second-order confidence monitor), **curiosity** (uncertainty
+> as a learning drive), **memory consolidation** of composed/relational
+> memories, and **social cognition / theory-of-mind** — each with a named
+> biological surpass. The three Phase-0 foundations of that broader push landed
+> this cycle, each 6-seed GO: *curiosity inversion*
+> (`research/findings/2026-07-23-DR1-curiosity-inversion-6seed-GO.md`),
+> *affective concept tagging*
+> (`research/findings/2026-07-23-DR2-affective-concept-tagging-6seed-GO.md`), and
+> a *self-schema region*
+> (`research/findings/2026-07-23-DR3-self-schema-region-6seed-GO.md`).
 
 The project's near-term work is organized around **closing the remaining
 capability gaps so that every step is done by spiking neurons on one brain.**
