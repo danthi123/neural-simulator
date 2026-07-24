@@ -1,0 +1,799 @@
+{
+  "probe": "gap4_learned_microcircuit_selfpredict_cpurate",
+  "task": "xor_over_pool",
+  "arms": [
+    "reservoir",
+    "fixed_fa",
+    "kp",
+    "micro",
+    "transport_ceiling"
+  ],
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "config": {
+    "hidden": 96,
+    "deep_layers": 2,
+    "frac": 1.0,
+    "epochs": 250,
+    "lr": 0.3,
+    "batch": 128,
+    "kp_lr": 0.2,
+    "kp_decay": 0.0001,
+    "wpi_plastic": true,
+    "wpi_init": "noisy",
+    "wpi_lr": 0.2,
+    "backend": "numpy"
+  },
+  "elapsed_seconds": 63.8,
+  "per_seed": [
+    {
+      "seed": 42,
+      "meta": {
+        "n_super": 24,
+        "n_members": 8,
+        "held_per_super": 3,
+        "n_prop": 3,
+        "k_classes": 9,
+        "member_id_dim": 3,
+        "n_obs": 14,
+        "noise": 0.02,
+        "feature_seed": 0,
+        "n_features": 9,
+        "n_train": 1260,
+        "n_heldout": 492,
+        "n_inherit_heldout": 54,
+        "n_memctrl_heldout": 18,
+        "n_supers_untaught": 6
+      },
+      "sizes": [
+        9,
+        96,
+        96,
+        9
+      ],
+      "chance": 0.16666666666666666,
+      "stage0": {
+        "l1_inherit": 0.3888888888888889,
+        "deep_oracle_inherit": 1.0,
+        "depth_gap": 0.6111111111111112,
+        "depth_separating": true
+      },
+      "arms": {
+        "reservoir": {
+          "inherit_heldout": 0.1111111111111111,
+          "memctrl_heldout": 0.0,
+          "train": 0.19523809523809524
+        },
+        "fixed_fa": {
+          "inherit_heldout": 0.8703703703703703,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        },
+        "kp": {
+          "inherit_heldout": 0.7962962962962963,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        },
+        "micro": {
+          "inherit_heldout": 0.8703703703703703,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        },
+        "transport_ceiling": {
+          "inherit_heldout": 1.0,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        }
+      },
+      "selectivity": {
+        "code_diversity": 1.0,
+        "frac_input_differential": 1.0,
+        "ncc_diag": 0.18518518518518517,
+        "ncc_chance": 0.16666666666666666
+      },
+      "lesions": {
+        "apical_lesion": {
+          "inherit_heldout": 0.1111111111111111,
+          "memctrl_heldout": 0.0,
+          "train": 0.19523809523809524
+        },
+        "freeze_deepest": {
+          "inherit_heldout": 0.1111111111111111,
+          "memctrl_heldout": 0.0,
+          "train": 0.1111111111111111
+        },
+        "freeze_learned_feedback": {
+          "inherit_heldout": 0.8703703703703703,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        }
+      },
+      "permuted": {
+        "shuffled_target": {
+          "inherit_heldout": 0.07407407407407407,
+          "train_on_perm": 0.44682539682539685
+        },
+        "shufE": {
+          "inherit_heldout": 0.16666666666666666,
+          "memctrl_heldout": 0.0,
+          "train": 0.16666666666666666
+        }
+      },
+      "apical": {
+        "micro_plastic": {
+          "apical_correct": 0.06930910852768375,
+          "apical_incorrect": 1.0656788417796834,
+          "silent_ratio": 0.0650375195700353,
+          "frac_correct": 0.09552845528455285,
+          "selfpred_cos": 0.8891359981616733
+        },
+        "micro_frozen_wpi": {
+          "apical_correct": 1.163316612219358,
+          "apical_incorrect": 1.1361337581142517,
+          "silent_ratio": 1.0239257516203024,
+          "frac_correct": 0.09552845528455285,
+          "selfpred_cos": -0.04286076523095137
+        }
+      },
+      "guards": {
+        "ast_no_forward_W": true,
+        "wscramble_byte_identity": true,
+        "kp_cos_YtW_final": 0.3896739841914338,
+        "kp_no_weight_transport": true,
+        "micro_no_weight_transport": true,
+        "micro_selfpred_cos_final": 0.8891359981616733,
+        "ceiling_no_weight_transport": false,
+        "ceiling_guard_correctly_fails": true
+      }
+    },
+    {
+      "seed": 43,
+      "meta": {
+        "n_super": 24,
+        "n_members": 8,
+        "held_per_super": 3,
+        "n_prop": 3,
+        "k_classes": 9,
+        "member_id_dim": 3,
+        "n_obs": 14,
+        "noise": 0.02,
+        "feature_seed": 0,
+        "n_features": 9,
+        "n_train": 1260,
+        "n_heldout": 492,
+        "n_inherit_heldout": 54,
+        "n_memctrl_heldout": 18,
+        "n_supers_untaught": 6
+      },
+      "sizes": [
+        9,
+        96,
+        96,
+        9
+      ],
+      "chance": 0.16666666666666666,
+      "stage0": {
+        "l1_inherit": 0.24074074074074073,
+        "deep_oracle_inherit": 0.9814814814814815,
+        "depth_gap": 0.7407407407407408,
+        "depth_separating": true
+      },
+      "arms": {
+        "reservoir": {
+          "inherit_heldout": 0.14814814814814814,
+          "memctrl_heldout": 0.0,
+          "train": 0.2246031746031746
+        },
+        "fixed_fa": {
+          "inherit_heldout": 0.8888888888888888,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        },
+        "kp": {
+          "inherit_heldout": 0.8888888888888888,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        },
+        "micro": {
+          "inherit_heldout": 0.8888888888888888,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        },
+        "transport_ceiling": {
+          "inherit_heldout": 0.9814814814814815,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        }
+      },
+      "selectivity": {
+        "code_diversity": 0.9629629629629629,
+        "frac_input_differential": 1.0,
+        "ncc_diag": 0.1111111111111111,
+        "ncc_chance": 0.16666666666666666
+      },
+      "lesions": {
+        "apical_lesion": {
+          "inherit_heldout": 0.14814814814814814,
+          "memctrl_heldout": 0.0,
+          "train": 0.2246031746031746
+        },
+        "freeze_deepest": {
+          "inherit_heldout": 0.2222222222222222,
+          "memctrl_heldout": 0.0,
+          "train": 0.2650793650793651
+        },
+        "freeze_learned_feedback": {
+          "inherit_heldout": 0.8888888888888888,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        }
+      },
+      "permuted": {
+        "shuffled_target": {
+          "inherit_heldout": 0.16666666666666666,
+          "train_on_perm": 0.37777777777777777
+        },
+        "shufE": {
+          "inherit_heldout": 0.1111111111111111,
+          "memctrl_heldout": 0.0,
+          "train": 0.1111111111111111
+        }
+      },
+      "apical": {
+        "micro_plastic": {
+          "apical_correct": 0.07203777765256192,
+          "apical_incorrect": 1.0754389801209536,
+          "silent_ratio": 0.06698453281318936,
+          "frac_correct": 0.0975609756097561,
+          "selfpred_cos": 0.9006210787752321
+        },
+        "micro_frozen_wpi": {
+          "apical_correct": 1.0752677196498501,
+          "apical_incorrect": 1.1167248560346408,
+          "silent_ratio": 0.9628761407416299,
+          "frac_correct": 0.0975609756097561,
+          "selfpred_cos": 0.03961571296409329
+        }
+      },
+      "guards": {
+        "ast_no_forward_W": true,
+        "wscramble_byte_identity": true,
+        "kp_cos_YtW_final": 0.31759571775850676,
+        "kp_no_weight_transport": true,
+        "micro_no_weight_transport": true,
+        "micro_selfpred_cos_final": 0.9006210787752321,
+        "ceiling_no_weight_transport": false,
+        "ceiling_guard_correctly_fails": true
+      }
+    },
+    {
+      "seed": 44,
+      "meta": {
+        "n_super": 24,
+        "n_members": 8,
+        "held_per_super": 3,
+        "n_prop": 3,
+        "k_classes": 9,
+        "member_id_dim": 3,
+        "n_obs": 14,
+        "noise": 0.02,
+        "feature_seed": 0,
+        "n_features": 9,
+        "n_train": 1260,
+        "n_heldout": 492,
+        "n_inherit_heldout": 54,
+        "n_memctrl_heldout": 18,
+        "n_supers_untaught": 6
+      },
+      "sizes": [
+        9,
+        96,
+        96,
+        9
+      ],
+      "chance": 0.16666666666666666,
+      "stage0": {
+        "l1_inherit": 0.18518518518518517,
+        "deep_oracle_inherit": 0.9259259259259259,
+        "depth_gap": 0.7407407407407407,
+        "depth_separating": true
+      },
+      "arms": {
+        "reservoir": {
+          "inherit_heldout": 0.12962962962962962,
+          "memctrl_heldout": 0.0,
+          "train": 0.22380952380952382
+        },
+        "fixed_fa": {
+          "inherit_heldout": 0.8148148148148148,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        },
+        "kp": {
+          "inherit_heldout": 0.7962962962962963,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        },
+        "micro": {
+          "inherit_heldout": 0.8148148148148148,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        },
+        "transport_ceiling": {
+          "inherit_heldout": 0.9259259259259259,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        }
+      },
+      "selectivity": {
+        "code_diversity": 0.9814814814814815,
+        "frac_input_differential": 1.0,
+        "ncc_diag": 0.09259259259259259,
+        "ncc_chance": 0.16666666666666666
+      },
+      "lesions": {
+        "apical_lesion": {
+          "inherit_heldout": 0.12962962962962962,
+          "memctrl_heldout": 0.0,
+          "train": 0.22380952380952382
+        },
+        "freeze_deepest": {
+          "inherit_heldout": 0.1111111111111111,
+          "memctrl_heldout": 0.0,
+          "train": 0.1634920634920635
+        },
+        "freeze_learned_feedback": {
+          "inherit_heldout": 0.8148148148148148,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        }
+      },
+      "permuted": {
+        "shuffled_target": {
+          "inherit_heldout": 0.2222222222222222,
+          "train_on_perm": 0.4373015873015873
+        },
+        "shufE": {
+          "inherit_heldout": 0.1111111111111111,
+          "memctrl_heldout": 0.0,
+          "train": 0.1111111111111111
+        }
+      },
+      "apical": {
+        "micro_plastic": {
+          "apical_correct": 0.0650520936208995,
+          "apical_incorrect": 1.0252200733260732,
+          "silent_ratio": 0.06345183372170095,
+          "frac_correct": 0.08943089430894309,
+          "selfpred_cos": 0.8898743577661402
+        },
+        "micro_frozen_wpi": {
+          "apical_correct": 1.0713796700815486,
+          "apical_incorrect": 0.975219397947219,
+          "silent_ratio": 1.0986037319762536,
+          "frac_correct": 0.08943089430894309,
+          "selfpred_cos": -0.0033889912875354027
+        }
+      },
+      "guards": {
+        "ast_no_forward_W": true,
+        "wscramble_byte_identity": true,
+        "kp_cos_YtW_final": 0.34439415380703403,
+        "kp_no_weight_transport": true,
+        "micro_no_weight_transport": true,
+        "micro_selfpred_cos_final": 0.8898743577661402,
+        "ceiling_no_weight_transport": false,
+        "ceiling_guard_correctly_fails": true
+      }
+    },
+    {
+      "seed": 100,
+      "meta": {
+        "n_super": 24,
+        "n_members": 8,
+        "held_per_super": 3,
+        "n_prop": 3,
+        "k_classes": 9,
+        "member_id_dim": 3,
+        "n_obs": 14,
+        "noise": 0.02,
+        "feature_seed": 0,
+        "n_features": 9,
+        "n_train": 1260,
+        "n_heldout": 492,
+        "n_inherit_heldout": 54,
+        "n_memctrl_heldout": 18,
+        "n_supers_untaught": 6
+      },
+      "sizes": [
+        9,
+        96,
+        96,
+        9
+      ],
+      "chance": 0.16666666666666666,
+      "stage0": {
+        "l1_inherit": 0.24074074074074073,
+        "deep_oracle_inherit": 0.9814814814814815,
+        "depth_gap": 0.7407407407407408,
+        "depth_separating": true
+      },
+      "arms": {
+        "reservoir": {
+          "inherit_heldout": 0.09259259259259259,
+          "memctrl_heldout": 0.0,
+          "train": 0.2388888888888889
+        },
+        "fixed_fa": {
+          "inherit_heldout": 0.4074074074074074,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        },
+        "kp": {
+          "inherit_heldout": 0.35185185185185186,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        },
+        "micro": {
+          "inherit_heldout": 0.4074074074074074,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        },
+        "transport_ceiling": {
+          "inherit_heldout": 0.9814814814814815,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        }
+      },
+      "selectivity": {
+        "code_diversity": 1.0,
+        "frac_input_differential": 1.0,
+        "ncc_diag": 0.2222222222222222,
+        "ncc_chance": 0.16666666666666666
+      },
+      "lesions": {
+        "apical_lesion": {
+          "inherit_heldout": 0.09259259259259259,
+          "memctrl_heldout": 0.0,
+          "train": 0.2388888888888889
+        },
+        "freeze_deepest": {
+          "inherit_heldout": 0.16666666666666666,
+          "memctrl_heldout": 0.0,
+          "train": 0.16666666666666666
+        },
+        "freeze_learned_feedback": {
+          "inherit_heldout": 0.4074074074074074,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        }
+      },
+      "permuted": {
+        "shuffled_target": {
+          "inherit_heldout": 0.1111111111111111,
+          "train_on_perm": 0.3412698412698413
+        },
+        "shufE": {
+          "inherit_heldout": 0.16666666666666666,
+          "memctrl_heldout": 0.0,
+          "train": 0.16666666666666666
+        }
+      },
+      "apical": {
+        "micro_plastic": {
+          "apical_correct": 0.1695544890693572,
+          "apical_incorrect": 1.092280458330603,
+          "silent_ratio": 0.1552298109666286,
+          "frac_correct": 0.044715447154471545,
+          "selfpred_cos": 0.865085522718016
+        },
+        "micro_frozen_wpi": {
+          "apical_correct": 1.0047363686490227,
+          "apical_incorrect": 1.127688886367815,
+          "silent_ratio": 0.8909694693226051,
+          "frac_correct": 0.044715447154471545,
+          "selfpred_cos": 0.033432550139892984
+        }
+      },
+      "guards": {
+        "ast_no_forward_W": true,
+        "wscramble_byte_identity": true,
+        "kp_cos_YtW_final": 0.38918512075952,
+        "kp_no_weight_transport": true,
+        "micro_no_weight_transport": true,
+        "micro_selfpred_cos_final": 0.865085522718016,
+        "ceiling_no_weight_transport": false,
+        "ceiling_guard_correctly_fails": true
+      }
+    },
+    {
+      "seed": 101,
+      "meta": {
+        "n_super": 24,
+        "n_members": 8,
+        "held_per_super": 3,
+        "n_prop": 3,
+        "k_classes": 9,
+        "member_id_dim": 3,
+        "n_obs": 14,
+        "noise": 0.02,
+        "feature_seed": 0,
+        "n_features": 9,
+        "n_train": 1260,
+        "n_heldout": 492,
+        "n_inherit_heldout": 54,
+        "n_memctrl_heldout": 18,
+        "n_supers_untaught": 6
+      },
+      "sizes": [
+        9,
+        96,
+        96,
+        9
+      ],
+      "chance": 0.16666666666666666,
+      "stage0": {
+        "l1_inherit": 0.24074074074074073,
+        "deep_oracle_inherit": 0.8703703703703703,
+        "depth_gap": 0.6296296296296297,
+        "depth_separating": true
+      },
+      "arms": {
+        "reservoir": {
+          "inherit_heldout": 0.1111111111111111,
+          "memctrl_heldout": 0.0,
+          "train": 0.2365079365079365
+        },
+        "fixed_fa": {
+          "inherit_heldout": 0.6296296296296297,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        },
+        "kp": {
+          "inherit_heldout": 0.5555555555555556,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        },
+        "micro": {
+          "inherit_heldout": 0.6296296296296297,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        },
+        "transport_ceiling": {
+          "inherit_heldout": 0.8703703703703703,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        }
+      },
+      "selectivity": {
+        "code_diversity": 0.9629629629629629,
+        "frac_input_differential": 1.0,
+        "ncc_diag": 0.14814814814814814,
+        "ncc_chance": 0.16666666666666666
+      },
+      "lesions": {
+        "apical_lesion": {
+          "inherit_heldout": 0.1111111111111111,
+          "memctrl_heldout": 0.0,
+          "train": 0.2365079365079365
+        },
+        "freeze_deepest": {
+          "inherit_heldout": 0.48148148148148145,
+          "memctrl_heldout": 0.0,
+          "train": 0.6730158730158731
+        },
+        "freeze_learned_feedback": {
+          "inherit_heldout": 0.6296296296296297,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        }
+      },
+      "permuted": {
+        "shuffled_target": {
+          "inherit_heldout": 0.1111111111111111,
+          "train_on_perm": 0.3619047619047619
+        },
+        "shufE": {
+          "inherit_heldout": 0.1111111111111111,
+          "memctrl_heldout": 0.0,
+          "train": 0.1111111111111111
+        }
+      },
+      "apical": {
+        "micro_plastic": {
+          "apical_correct": 0.10457550005602351,
+          "apical_incorrect": 1.090734273543988,
+          "silent_ratio": 0.09587623914681197,
+          "frac_correct": 0.06910569105691057,
+          "selfpred_cos": 0.8873748355395152
+        },
+        "micro_frozen_wpi": {
+          "apical_correct": 1.0744432503748598,
+          "apical_incorrect": 1.0708449966049005,
+          "silent_ratio": 1.003360200384149,
+          "frac_correct": 0.06910569105691057,
+          "selfpred_cos": 0.028281770529960802
+        }
+      },
+      "guards": {
+        "ast_no_forward_W": true,
+        "wscramble_byte_identity": true,
+        "kp_cos_YtW_final": 0.4038180828384486,
+        "kp_no_weight_transport": true,
+        "micro_no_weight_transport": true,
+        "micro_selfpred_cos_final": 0.8873748355395152,
+        "ceiling_no_weight_transport": false,
+        "ceiling_guard_correctly_fails": true
+      }
+    },
+    {
+      "seed": 102,
+      "meta": {
+        "n_super": 24,
+        "n_members": 8,
+        "held_per_super": 3,
+        "n_prop": 3,
+        "k_classes": 9,
+        "member_id_dim": 3,
+        "n_obs": 14,
+        "noise": 0.02,
+        "feature_seed": 0,
+        "n_features": 9,
+        "n_train": 1260,
+        "n_heldout": 492,
+        "n_inherit_heldout": 54,
+        "n_memctrl_heldout": 18,
+        "n_supers_untaught": 6
+      },
+      "sizes": [
+        9,
+        96,
+        96,
+        9
+      ],
+      "chance": 0.16666666666666666,
+      "stage0": {
+        "l1_inherit": 0.16666666666666666,
+        "deep_oracle_inherit": 1.0,
+        "depth_gap": 0.8333333333333334,
+        "depth_separating": true
+      },
+      "arms": {
+        "reservoir": {
+          "inherit_heldout": 0.1111111111111111,
+          "memctrl_heldout": 0.0,
+          "train": 0.2253968253968254
+        },
+        "fixed_fa": {
+          "inherit_heldout": 0.5555555555555556,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        },
+        "kp": {
+          "inherit_heldout": 0.5555555555555556,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        },
+        "micro": {
+          "inherit_heldout": 0.5555555555555556,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        },
+        "transport_ceiling": {
+          "inherit_heldout": 1.0,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        }
+      },
+      "selectivity": {
+        "code_diversity": 0.9814814814814815,
+        "frac_input_differential": 1.0,
+        "ncc_diag": 0.2037037037037037,
+        "ncc_chance": 0.16666666666666666
+      },
+      "lesions": {
+        "apical_lesion": {
+          "inherit_heldout": 0.1111111111111111,
+          "memctrl_heldout": 0.0,
+          "train": 0.2253968253968254
+        },
+        "freeze_deepest": {
+          "inherit_heldout": 0.16666666666666666,
+          "memctrl_heldout": 0.0,
+          "train": 0.16666666666666666
+        },
+        "freeze_learned_feedback": {
+          "inherit_heldout": 0.5555555555555556,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        }
+      },
+      "permuted": {
+        "shuffled_target": {
+          "inherit_heldout": 0.18518518518518517,
+          "train_on_perm": 0.55
+        },
+        "shufE": {
+          "inherit_heldout": 0.1111111111111111,
+          "memctrl_heldout": 0.0,
+          "train": 0.1111111111111111
+        }
+      },
+      "apical": {
+        "micro_plastic": {
+          "apical_correct": 0.0793149445449191,
+          "apical_incorrect": 1.0430769904131132,
+          "silent_ratio": 0.07603939620356324,
+          "frac_correct": 0.06097560975609756,
+          "selfpred_cos": 0.8895382718289305
+        },
+        "micro_frozen_wpi": {
+          "apical_correct": 1.0865226157130377,
+          "apical_incorrect": 1.0392031912458326,
+          "silent_ratio": 1.0455343332899423,
+          "frac_correct": 0.06097560975609756,
+          "selfpred_cos": -0.01682163458249104
+        }
+      },
+      "guards": {
+        "ast_no_forward_W": true,
+        "wscramble_byte_identity": true,
+        "kp_cos_YtW_final": 0.4686220116289946,
+        "kp_no_weight_transport": true,
+        "micro_no_weight_transport": true,
+        "micro_selfpred_cos_final": 0.8895382718289305,
+        "ceiling_no_weight_transport": false,
+        "ceiling_guard_correctly_fails": true
+      }
+    }
+  ],
+  "aggregate": {
+    "chance": 0.16666666666666666,
+    "reservoir": 0.11728395061728396,
+    "credit_arms": {
+      "fixed_fa": 0.6944444444444445,
+      "kp": 0.6574074074074073,
+      "micro": 0.6944444444444445
+    },
+    "best_credit": 0.6944444444444445,
+    "transport_ceiling": 0.9598765432098766,
+    "code_diversity": 0.9814814814814815,
+    "frac_input_differential": 1.0,
+    "ncc_diag": 0.16049382716049382,
+    "ncc_chance": 0.16666666666666666,
+    "lesion_apical": 0.11728395061728396,
+    "lesion_freeze_deepest": 0.20987654320987656,
+    "permuted_shuffled_target": 0.1450617283950617,
+    "permuted_shufE": 0.12962962962962965,
+    "micro_plastic_silent_ratio": 0.08710322207032158,
+    "micro_frozen_silent_ratio": 1.0042116045558138,
+    "micro_plastic_selfpred_cos": 0.8869383441315847,
+    "micro_frozen_selfpred_cos": 0.006376440422161543,
+    "n_go_seeds": 6,
+    "n_seeds": 6,
+    "guards": {
+      "ast_no_forward_W": true,
+      "wscramble_byte_identity": true,
+      "kp_no_weight_transport": true,
+      "micro_no_weight_transport": true,
+      "ceiling_guard_correctly_fails": true
+    },
+    "credit_beats_reservoir": true,
+    "depth_separating_all": true,
+    "nondegenerate_ok": true,
+    "permuted_ok": true,
+    "shufE_ok": true,
+    "lesions_ok": true,
+    "guards_ok": true,
+    "apical_silent_earned": true
+  },
+  "GO": true,
+  "G2_scope": "HONEST SCOPE (FLAG G2): at this numpy RATE reference the LEARNED arms (kp, micro) are accuracy-indistinguishable from fixed_fa -- the learned/interneuron machinery is inert on the feedforward weights at rate. This run CONFIRMS credit>reservoir + all guards + the apical-silent EARNED property, but CANNOT separate the learned surpass from fixed-FA on accuracy. That separation is a SPIKING op-point question (the 3090 phase).",
+  "verdict": "GO (6/6 seeds). credit(best=0.694) vs reservoir(0.117) >= +0.10 | ceiling 0.960 | depth-sep True | non-degen code_div 0.98 frac_diff 1.00 True (ncc_diag 0.160~chance 0.167, expected) | perm shuffled-target 0.145 (<=chance 0.167) True | shufE 0.130 (collapsed to chance) True | lesions apical 0.117 freeze-deepest 0.210 True | guards True | apical-silent EARNED: plastic ratio 0.087 (cos 0.89) vs frozen ratio 1.004 (cos 0.01) -> True. HONEST SCOPE (FLAG G2): at this numpy RATE reference the LEARNED arms (kp, micro) are accuracy-indistinguishable from fixed_fa -- the learned/interneuron machinery is inert on the feedforward weights at rate. This run CONFIRMS credit>reservoir + all guards + the apical-silent EARNED property, but CANNOT separate the learned surpass from fixed-FA on accuracy. That separation is a SPIKING op-point question (the 3090 phase)."
+}

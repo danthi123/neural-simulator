@@ -1,0 +1,47 @@
+{
+  "probe": "op_point_precheck",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "hidden": 96,
+  "depths": [
+    2,
+    3,
+    4,
+    5
+  ],
+  "rows": [
+    {
+      "deep_layers": 2,
+      "reservoir": 0.1296,
+      "fixed_fa": 0.858,
+      "fa_minus_res": 0.7284,
+      "gap_exists": false
+    },
+    {
+      "deep_layers": 3,
+      "reservoir": 0.1543,
+      "fixed_fa": 0.1235,
+      "fa_minus_res": -0.0309,
+      "gap_exists": true
+    },
+    {
+      "deep_layers": 4,
+      "reservoir": 0.1543,
+      "fixed_fa": 0.1111,
+      "fa_minus_res": -0.0432,
+      "gap_exists": true
+    },
+    {
+      "deep_layers": 5,
+      "reservoir": 0.1481,
+      "fixed_fa": 0.1111,
+      "fa_minus_res": -0.037,
+      "gap_exists": true
+    }
+  ],
+  "any_gap_exists": true,
+  "verdict": "A GAP EXISTS at some reachable depth (reservoir >= fixed_fa) -> the learned-feedback distinction has room to matter; the 3090 on-bridge op-point sweep is warranted (still gated on CPU GO + a freed lane)."
+}
