@@ -1,61 +1,61 @@
 {
-  "chosen_weight": 2.0,
+  "chosen_weight": 12.0,
   "sweep": [
     {
-      "weight": 2.0,
-      "ret_on": 0.0,
-      "ret_off": 0.0,
-      "peak_on": 0.028,
-      "ok": false
-    },
-    {
-      "weight": 4.0,
-      "ret_on": 0.0,
-      "ret_off": 0.0,
-      "peak_on": 0.0295,
-      "ok": false
-    },
-    {
-      "weight": 6.0,
-      "ret_on": 0.0,
-      "ret_off": 0.0,
-      "peak_on": 0.0305,
-      "ok": false
-    },
-    {
-      "weight": 8.0,
-      "ret_on": 0.0,
-      "ret_off": 0.0,
-      "peak_on": 0.0315,
-      "ok": false
-    },
-    {
       "weight": 12.0,
-      "ret_on": 0.0,
+      "ret_on": 0.8258064516129031,
       "ret_off": 0.0,
-      "peak_on": 0.036,
-      "ok": false
+      "peak_on": 0.1395,
+      "ok": true
+    },
+    {
+      "weight": 16.0,
+      "ret_on": 0.7525862068965518,
+      "ret_off": 0.0,
+      "peak_on": 0.15466666666666667,
+      "ok": true
     },
     {
       "weight": 18.0,
-      "ret_on": 0.0,
+      "ret_on": 0.6998925886143931,
       "ret_off": 0.0,
-      "peak_on": 0.04016666666666667,
-      "ok": false
+      "peak_on": 0.15516666666666667,
+      "ok": true
+    },
+    {
+      "weight": 20.0,
+      "ret_on": 0.6455445544554456,
+      "ret_off": 0.0,
+      "peak_on": 0.1515,
+      "ok": true
+    },
+    {
+      "weight": 22.0,
+      "ret_on": 0.6211920529801325,
+      "ret_off": 0.0,
+      "peak_on": 0.151,
+      "ok": true
+    },
+    {
+      "weight": 24.0,
+      "ret_on": 0.5804651162790697,
+      "ret_off": 0.0,
+      "peak_on": 0.14333333333333334,
+      "ok": true
     },
     {
       "weight": 26.0,
-      "ret_on": 0.0,
+      "ret_on": 0.5758830694275273,
       "ret_off": 0.0,
-      "peak_on": 0.047,
-      "ok": false
+      "peak_on": 0.13683333333333333,
+      "ok": true
     }
   ],
-  "persist_ok": false,
-  "recall_delta_intact": 0.024999999999999998,
+  "persist_ok": true,
+  "recall_delta_intact": 0.08718750000000001,
   "recall_delta_lesion": 0.0,
   "recall_ok": true,
-  "smoke_go": false,
+  "smoke_go": true,
   "value_plausibility_corr": -0.015272328388347672,
   "dr2_value_plausibility_corr": -0.2668095488060327
 }
