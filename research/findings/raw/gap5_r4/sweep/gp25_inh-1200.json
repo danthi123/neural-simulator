@@ -1,0 +1,76 @@
+{
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "n_go": 0,
+  "per": [
+    {
+      "seed": 42,
+      "no_gamma": {
+        "fwd": 0.5,
+        "n_multi": 2,
+        "pop": 0.09306285714285714
+      },
+      "gamma": {
+        "fwd": 0.0,
+        "rev": 0.0,
+        "n_multi": 1,
+        "pop": 0.08231964285714286
+      },
+      "no_noise": {
+        "n_multi": 0
+      },
+      "no_encode": {
+        "fwd": 0.0,
+        "n_multi": 1
+      },
+      "go": false
+    },
+    {
+      "seed": 43,
+      "no_gamma": {
+        "fwd": 0.0,
+        "n_multi": 3,
+        "pop": 0.0924725
+      },
+      "gamma": {
+        "fwd": 1.0,
+        "rev": 0.0,
+        "n_multi": 1,
+        "pop": 0.08003214285714286
+      },
+      "no_noise": {
+        "n_multi": 0
+      },
+      "no_encode": {
+        "fwd": 0.0,
+        "n_multi": 1
+      },
+      "go": false
+    },
+    {
+      "seed": 44,
+      "no_gamma": {
+        "fwd": 0.0,
+        "n_multi": 2,
+        "pop": 0.09001
+      },
+      "gamma": {
+        "fwd": 0.0,
+        "rev": 0.0,
+        "n_multi": 1,
+        "pop": 0.07648678571428572
+      },
+      "no_noise": {
+        "n_multi": 0
+      },
+      "no_encode": {
+        "fwd": 0.0,
+        "n_multi": 1
+      },
+      "go": false
+    }
+  ]
+}

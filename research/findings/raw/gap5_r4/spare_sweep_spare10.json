@@ -1,0 +1,227 @@
+{
+  "sel_inhib_spare": 10.0,
+  "n_ca3": 2000,
+  "depths": [
+    0.0,
+    80.0,
+    160.0,
+    300.0
+  ],
+  "det_pa": 3000.0,
+  "theta_period": 220,
+  "rest_steps": 880,
+  "per_seed": [
+    {
+      "seed": 42,
+      "asymmetry": {
+        "within": 208.30235290527344,
+        "adj_fwd": 38.56049728393555,
+        "adj_rev": 5.0,
+        "ratio": 7.71209945678711,
+        "n_fwd": 8494,
+        "n_rev": 8547,
+        "sizes": [
+          240,
+          240,
+          240
+        ]
+      },
+      "rows": [
+        {
+          "depth": 0.0,
+          "pop_rate": 0.04365284090909091,
+          "n_events": 0,
+          "n_multi": 0,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "chance": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "duty": 0.0,
+          "n_cues": 4,
+          "frozen": true
+        },
+        {
+          "depth": 80.0,
+          "pop_rate": 0.036338636363636365,
+          "n_events": 0,
+          "n_multi": 0,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "chance": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "duty": 0.0,
+          "n_cues": 4,
+          "frozen": true
+        },
+        {
+          "depth": 160.0,
+          "pop_rate": 0.03555965909090909,
+          "n_events": 0,
+          "n_multi": 0,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "chance": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "duty": 0.0,
+          "n_cues": 4,
+          "frozen": true
+        },
+        {
+          "depth": 300.0,
+          "pop_rate": 0.03660340909090909,
+          "n_events": 0,
+          "n_multi": 0,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "chance": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "duty": 0.0,
+          "n_cues": 4,
+          "frozen": true
+        }
+      ],
+      "theta_reaches": true,
+      "completes": false,
+      "forward_ordered": false,
+      "best": {
+        "depth": 0.0,
+        "pop_rate": 0.04365284090909091,
+        "n_events": 0,
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "chance": 0.0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "duty": 0.0,
+        "n_cues": 4,
+        "frozen": true
+      }
+    },
+    {
+      "seed": 43,
+      "asymmetry": {
+        "within": 207.0304412841797,
+        "adj_fwd": 37.79753875732422,
+        "adj_rev": 5.0,
+        "ratio": 7.559507751464844,
+        "n_fwd": 8590,
+        "n_rev": 8641,
+        "sizes": [
+          240,
+          240,
+          240
+        ]
+      },
+      "rows": [
+        {
+          "depth": 0.0,
+          "pop_rate": 0.04355738636363636,
+          "n_events": 0,
+          "n_multi": 0,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "chance": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "duty": 0.0,
+          "n_cues": 4,
+          "frozen": true
+        },
+        {
+          "depth": 80.0,
+          "pop_rate": 0.036189204545454545,
+          "n_events": 0,
+          "n_multi": 0,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "chance": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "duty": 0.0,
+          "n_cues": 4,
+          "frozen": true
+        },
+        {
+          "depth": 160.0,
+          "pop_rate": 0.036042613636363637,
+          "n_events": 0,
+          "n_multi": 0,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "chance": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "duty": 0.0,
+          "n_cues": 4,
+          "frozen": true
+        },
+        {
+          "depth": 300.0,
+          "pop_rate": 0.034488068181818175,
+          "n_events": 0,
+          "n_multi": 0,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "chance": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "duty": 0.0,
+          "n_cues": 4,
+          "frozen": true
+        }
+      ],
+      "theta_reaches": true,
+      "completes": false,
+      "forward_ordered": false,
+      "best": {
+        "depth": 0.0,
+        "pop_rate": 0.04355738636363636,
+        "n_events": 0,
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "chance": 0.0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "duty": 0.0,
+        "n_cues": 4,
+        "frozen": true
+      }
+    }
+  ]
+}

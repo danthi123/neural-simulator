@@ -1,0 +1,32 @@
+{
+  "seeds": [
+    42
+  ],
+  "n_go": 0,
+  "per": [
+    {
+      "seed": 42,
+      "intrinsic": {
+        "fwd": 0.0,
+        "rev": 0.0,
+        "n_multi": 3,
+        "act": [
+          3,
+          3,
+          3
+        ],
+        "pop": 0.07400291666666667
+      },
+      "adapt_lesion": {
+        "fwd": 0.0,
+        "n_multi": 2,
+        "act": [
+          2,
+          2,
+          2
+        ]
+      },
+      "go": false
+    }
+  ]
+}

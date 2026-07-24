@@ -1,0 +1,30 @@
+{
+  "seeds": [
+    42
+  ],
+  "n_go": 0,
+  "per": [
+    {
+      "seed": 42,
+      "no_gamma": {
+        "fwd": 0.5,
+        "n_multi": 2,
+        "pop": 0.09306285714285714
+      },
+      "gamma": {
+        "fwd": 0.0,
+        "rev": 0.0,
+        "n_multi": 0,
+        "pop": 0.0913025
+      },
+      "no_noise": {
+        "n_multi": 0
+      },
+      "no_encode": {
+        "fwd": 0.0,
+        "n_multi": 0
+      },
+      "go": false
+    }
+  ]
+}

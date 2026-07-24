@@ -1,0 +1,49 @@
+{
+  "seeds": [
+    42
+  ],
+  "n_go": 0,
+  "per": [
+    {
+      "seed": 42,
+      "intrinsic": {
+        "fwd": 0.3333333333333333,
+        "rev": 0.0,
+        "n_multi": 3,
+        "act": [
+          3,
+          3,
+          3
+        ],
+        "pop": 0.07944583333333333
+      },
+      "adapt_lesion": {
+        "fwd": 0.5,
+        "n_multi": 2,
+        "act": [
+          2,
+          2,
+          2
+        ]
+      },
+      "latch_on": {
+        "fwd": 0.3333333333333333,
+        "act": [
+          3,
+          3,
+          3
+        ]
+      },
+      "no_noise": {
+        "n_multi": 0
+      },
+      "scramble": {
+        "fwd": 0.0
+      },
+      "no_encode": {
+        "n_multi": 0
+      },
+      "go": false
+    }
+  ]
+}

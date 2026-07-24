@@ -1,0 +1,176 @@
+{
+  "probe": "gap5_swr_envelope_replay",
+  "mechanism": "SWR-state E/I-transient envelope readout",
+  "seeds": [
+    42
+  ],
+  "n_ca3": 2000,
+  "n_mem": 3,
+  "rest_steps": 1800,
+  "env_cfg": {
+    "swr_period": 300,
+    "env_dur": 150,
+    "env_exc_pa": 260.0,
+    "env_basket_drop": 0.0,
+    "env_basket_boost": 200.0,
+    "noise_rate": 0.02,
+    "noise_pa": 3000.0,
+    "noise_dur": 5,
+    "self_regen_read": 0.0,
+    "recall_k_thresh": 40.0,
+    "d_abs": 80.0,
+    "a_abs": 0.008,
+    "sel_inhib_spare": 0.0
+  },
+  "elapsed_seconds": 93.7,
+  "verdict": "SWR-ENVELOPE PARTIAL/NEGATIVE 0/1 -- forward_frac 0.000 vs reverse 0.333 vs chance 0.167; per_asm_active~[3.0, 3.0, 3.0] duty 0.013; NO-SWR 0.000 NO-NOISE 0.000 SHUFFLED 0.000 REVERSE-ASYM 0.000. Per THE LAW: the envelope depth x duration x noise-sigma is the TUNING band -- over-drive -> [3,3,3] co-fire, under-drive -> [0,0,0] no-ignition. Tune env_exc_pa / env_basket_drop / swr_period / env_dur / noise_pa / self_regen_read (and try --sel-inhib-spare 20 so the basket drop reaches members). A partial on the SWR-envelope rung is a real, honestly-reported result.",
+  "per_seed": [
+    {
+      "seed": 42,
+      "encode_decoupled": {
+        "w_within": 203.56680297851562,
+        "w_adj_fwd": 38.583213806152344,
+        "w_adj_rev": 5.0,
+        "ratio_adj": 7.716642761230469,
+        "n_between_fwd": 8494,
+        "n_between_rev": 8547,
+        "assembly_sizes": [
+          240,
+          240,
+          240
+        ]
+      },
+      "go": {
+        "n_events": 5,
+        "n_multi": 3,
+        "n_full": 3,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.3333333333333333,
+        "mean_tau": -0.11111111111111112,
+        "chance_forward": 0.16666666666666666,
+        "duty_cycle": 0.013333333333333334,
+        "pop_rate": 0.09033555555555556,
+        "per_asm_active": [
+          3,
+          3,
+          3
+        ],
+        "per_asm_peak": [
+          2.423611111111111,
+          2.2972222222222225,
+          2.408333333333333
+        ],
+        "weights_frozen": true,
+        "apical_rest_max": -80.4554443359375,
+        "apical_n_latched": 0,
+        "n_env": 6,
+        "basket_n": 500
+      },
+      "no_swr": {
+        "n_multi": 2,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.5,
+        "duty_cycle": 0.07166666666666667,
+        "per_asm_active": [
+          2,
+          2,
+          2
+        ],
+        "pop_rate": 0.071935,
+        "weights_frozen": true
+      },
+      "no_noise": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "duty_cycle": 0.0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "pop_rate": 0.060443333333333335,
+        "weights_frozen": true
+      },
+      "adapt_lesion": {
+        "n_multi": 3,
+        "forward_frac": 0.0,
+        "duty_cycle": 0.07555555555555556,
+        "per_asm_active": [
+          3,
+          3,
+          3
+        ],
+        "pop_rate": 0.08277888888888889,
+        "weights_frozen": true
+      },
+      "permuted_assembly": {
+        "n_multi": 3,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "per_asm_active": [
+          3,
+          3,
+          3
+        ]
+      },
+      "no_encode": {
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "w_within": 0.4976925551891327,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "pop_rate": 0.04151666666666667,
+        "weights_frozen": true
+      },
+      "shuffled_store": {
+        "n_between_shuffled": 17041,
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "weights_frozen": true
+      },
+      "reverse_asym_lesion": {
+        "n_between_symmetrized": 17041,
+        "n_multi": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ],
+        "weights_frozen": true
+      },
+      "checks": {
+        "forward_ordered": false,
+        "ignites": true,
+        "discrete": true,
+        "no_swr_collapses": true,
+        "shuffled_collapses": true,
+        "reverse_lesion_collapses": true,
+        "permuted_chance": true,
+        "noise_acid": true,
+        "noencode_selective": true,
+        "noencode_ignite": [
+          0,
+          0,
+          0
+        ],
+        "adapt_lesion_cofire": true,
+        "frozen_ok": true,
+        "dendrite_reset_ok": true
+      },
+      "seed_go": false
+    }
+  ],
+  "GO": false,
+  "n_go": 0
+}

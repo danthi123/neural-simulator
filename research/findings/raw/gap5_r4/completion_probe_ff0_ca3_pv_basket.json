@@ -1,0 +1,176 @@
+{
+  "axis": "A(plain)",
+  "ff_inhib": 0.0,
+  "region": "ca3_pv_basket",
+  "self_regens": [
+    0.0,
+    0.05,
+    0.15
+  ],
+  "depths": [
+    0.0,
+    120.0
+  ],
+  "d_abs": 40.0,
+  "det_pa": 3000.0,
+  "per_seed": [
+    {
+      "seed": 42,
+      "asymmetry": {
+        "within": 208.30235290527344,
+        "adj_fwd": 38.56049728393555,
+        "adj_rev": 5.0,
+        "ratio": 7.71209945678711
+      },
+      "ff_basket_n": 0,
+      "rows": [
+        {
+          "self_regen": 0.0,
+          "depth": 0.0,
+          "a0_peak": 0.5525,
+          "asm_peaks": [
+            0.552,
+            0.0,
+            0.582
+          ],
+          "completes_a0": true,
+          "pop_rate": 0.04078409090909091,
+          "n_events": 0,
+          "n_multi": 0,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "duty": 0.0,
+          "basket_n": 500,
+          "n_cues": 4
+        },
+        {
+          "self_regen": 0.0,
+          "depth": 120.0,
+          "a0_peak": 0.5266666666666667,
+          "asm_peaks": [
+            0.527,
+            0.0,
+            0.27
+          ],
+          "completes_a0": true,
+          "pop_rate": 0.03411534090909091,
+          "n_events": 0,
+          "n_multi": 0,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "duty": 0.0,
+          "basket_n": 500,
+          "n_cues": 4
+        },
+        {
+          "self_regen": 0.05,
+          "depth": 0.0,
+          "a0_peak": 0.5125,
+          "asm_peaks": [
+            0.512,
+            0.0,
+            0.326
+          ],
+          "completes_a0": true,
+          "pop_rate": 0.03159147727272727,
+          "n_events": 0,
+          "n_multi": 0,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "duty": 0.0,
+          "basket_n": 500,
+          "n_cues": 4
+        },
+        {
+          "self_regen": 0.05,
+          "depth": 120.0,
+          "a0_peak": 0.53,
+          "asm_peaks": [
+            0.53,
+            0.0,
+            0.308
+          ],
+          "completes_a0": true,
+          "pop_rate": 0.030988636363636364,
+          "n_events": 0,
+          "n_multi": 0,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "duty": 0.0,
+          "basket_n": 500,
+          "n_cues": 4
+        },
+        {
+          "self_regen": 0.15,
+          "depth": 0.0,
+          "a0_peak": 0.5383333333333333,
+          "asm_peaks": [
+            0.538,
+            0.0,
+            0.307
+          ],
+          "completes_a0": true,
+          "pop_rate": 0.030375,
+          "n_events": 0,
+          "n_multi": 0,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "duty": 0.0,
+          "basket_n": 500,
+          "n_cues": 4
+        },
+        {
+          "self_regen": 0.15,
+          "depth": 120.0,
+          "a0_peak": 0.5341666666666666,
+          "asm_peaks": [
+            0.534,
+            0.0,
+            0.285
+          ],
+          "completes_a0": true,
+          "pop_rate": 0.030098863636363635,
+          "n_events": 0,
+          "n_multi": 0,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "duty": 0.0,
+          "basket_n": 500,
+          "n_cues": 4
+        }
+      ],
+      "a0_ever_ignites": true,
+      "forward_with_completion": false
+    }
+  ]
+}

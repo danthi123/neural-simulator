@@ -1,0 +1,1395 @@
+{
+  "probe": "gap5_sequence_replay",
+  "GO": false,
+  "n_go": 0,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_ca3": 2000,
+  "n_mem": 2,
+  "noise": "Poisson r=0.015 pA=1500 dur=10",
+  "rest_steps": 1400,
+  "within_events": 30,
+  "chain_fwd": 24,
+  "chain_rev": 0,
+  "elapsed_seconds": 1901.9,
+  "verdict": "PARTIAL/NEGATIVE 0/6 -- a stored 3-assembly chain did NOT cleanly replay in forward order under weak non-specific background: forward_frac 0.794 vs reverse 0.206 vs SCRAMBLE 0.667 vs chance 0.500; encode asym w_fwd-w_rev +5.89; NO-NOISE assembly rest 0.0001 (acid: ~0). Per THE LAW: a stored-sequence forward-order rung is the genuine open question -- tune the chain vs within strength (chain_fwd/within_events), noise (poisson pa/rate), seq_win_steps, recall_k_thresh; a partial/negative on the traveling-wave hand-off is a real, honestly-reported result.",
+  "per_seed": [
+    {
+      "seed": 42,
+      "encode": {
+        "w_within": 147.5154266357422,
+        "w_forward": 29.511137008666992,
+        "w_reverse": 21.218217849731445,
+        "w_adj_fwd": 29.511137008666992,
+        "w_adj_rev": 21.218217849731445,
+        "n_between_fwd": 2816,
+        "n_between_rev": 2814,
+        "assembly_sizes": [
+          240,
+          240
+        ]
+      },
+      "go": {
+        "n_events": 9,
+        "duty_cycle": 0.06928571428571428,
+        "pop_rate": 0.06573035714285715,
+        "n_multi": 6,
+        "n_full": 6,
+        "forward_frac": 0.5,
+        "reverse_frac": 0.5,
+        "forward_frac_full": 0.5,
+        "reverse_frac_full": 0.5,
+        "mean_tau": 0.0,
+        "chance_forward": 0.5,
+        "per_asm_active": [
+          6,
+          6
+        ],
+        "per_asm_peak": [
+          2.2881944444444446,
+          0.6847222222222223
+        ],
+        "events": [
+          {
+            "span": [
+              11,
+              16
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              31,
+              41
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              57,
+              69
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              76,
+              92
+            ],
+            "n_active": 2,
+            "tau": -1.0,
+            "fwd": false,
+            "rev": true,
+            "order": [
+              1,
+              0
+            ]
+          },
+          {
+            "span": [
+              93,
+              128
+            ],
+            "n_active": 2,
+            "tau": -1.0,
+            "fwd": false,
+            "rev": true,
+            "order": [
+              1,
+              0
+            ]
+          },
+          {
+            "span": [
+              129,
+              143
+            ],
+            "n_active": 2,
+            "tau": -1.0,
+            "fwd": false,
+            "rev": true,
+            "order": [
+              1,
+              0
+            ]
+          }
+        ],
+        "duty_from_rank1": 0.06928571428571428,
+        "weights_frozen": true,
+        "apical_rest_max": -80.46526336669922,
+        "apical_n_latched": 0,
+        "noise": "Poisson r=0.015 pA=1500 dur=10"
+      },
+      "nonoise": {
+        "n_events": 0,
+        "duty_cycle": 0.0,
+        "pop_rate": 8.928571428571428e-06,
+        "n_multi": 0,
+        "n_full": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "forward_frac_full": 0.0,
+        "reverse_frac_full": 0.0,
+        "mean_tau": 0.0,
+        "chance_forward": 0.0,
+        "per_asm_active": [
+          0,
+          0
+        ],
+        "per_asm_peak": [
+          0.0,
+          0.0
+        ],
+        "events": [],
+        "assembly_rest_frac": 7.44047619047619e-05
+      },
+      "noencode": {
+        "n_events": 0,
+        "duty_cycle": 0.0,
+        "pop_rate": 0.047706785714285715,
+        "n_multi": 0,
+        "n_full": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "forward_frac_full": 0.0,
+        "reverse_frac_full": 0.0,
+        "mean_tau": 0.0,
+        "chance_forward": 0.0,
+        "per_asm_active": [
+          0,
+          0
+        ],
+        "per_asm_peak": [
+          0.0,
+          0.0
+        ],
+        "events": [],
+        "w_within": 0.49961787462234497
+      },
+      "scramble": {
+        "n_events": 7,
+        "duty_cycle": 0.005,
+        "pop_rate": 0.065155,
+        "n_multi": 0,
+        "n_full": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "forward_frac_full": 0.0,
+        "reverse_frac_full": 0.0,
+        "mean_tau": 0.0,
+        "chance_forward": 0.0,
+        "per_asm_active": [
+          0,
+          0
+        ],
+        "per_asm_peak": [
+          0.0,
+          0.0
+        ],
+        "events": [],
+        "n_between_shuffled": 5630
+      },
+      "checks": {
+        "forward_ordered": false,
+        "discrete": true,
+        "acid_silent": true,
+        "frozen_ok": true,
+        "dendrite_reset_ok": true,
+        "scramble_collapses": true,
+        "noencode_retired": true,
+        "enough_multi": true,
+        "reverse_present": false
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 43,
+      "encode": {
+        "w_within": 146.79595947265625,
+        "w_forward": 29.906187057495117,
+        "w_reverse": 25.041154861450195,
+        "w_adj_fwd": 29.906187057495117,
+        "w_adj_rev": 25.041154861450195,
+        "n_between_fwd": 2864,
+        "n_between_rev": 2928,
+        "assembly_sizes": [
+          240,
+          240
+        ]
+      },
+      "go": {
+        "n_events": 6,
+        "duty_cycle": 0.11285714285714285,
+        "pop_rate": 0.06567357142857143,
+        "n_multi": 5,
+        "n_full": 5,
+        "forward_frac": 0.8,
+        "reverse_frac": 0.2,
+        "forward_frac_full": 0.8,
+        "reverse_frac_full": 0.2,
+        "mean_tau": 0.6,
+        "chance_forward": 0.5,
+        "per_asm_active": [
+          5,
+          5
+        ],
+        "per_asm_peak": [
+          2.1375,
+          0.675
+        ],
+        "events": [
+          {
+            "span": [
+              13,
+              19
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              30,
+              43
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              49,
+              163
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              167,
+              186
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              194,
+              199
+            ],
+            "n_active": 2,
+            "tau": -1.0,
+            "fwd": false,
+            "rev": true,
+            "order": [
+              1,
+              0
+            ]
+          }
+        ],
+        "duty_from_rank1": 0.11285714285714285,
+        "weights_frozen": true,
+        "apical_rest_max": -80.45909881591797,
+        "apical_n_latched": 0,
+        "noise": "Poisson r=0.015 pA=1500 dur=10"
+      },
+      "nonoise": {
+        "n_events": 0,
+        "duty_cycle": 0.0,
+        "pop_rate": 0.0,
+        "n_multi": 0,
+        "n_full": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "forward_frac_full": 0.0,
+        "reverse_frac_full": 0.0,
+        "mean_tau": 0.0,
+        "chance_forward": 0.0,
+        "per_asm_active": [
+          0,
+          0
+        ],
+        "per_asm_peak": [
+          0.0,
+          0.0
+        ],
+        "events": [],
+        "assembly_rest_frac": 0.0
+      },
+      "noencode": {
+        "n_events": 0,
+        "duty_cycle": 0.0,
+        "pop_rate": 0.04794107142857142,
+        "n_multi": 0,
+        "n_full": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "forward_frac_full": 0.0,
+        "reverse_frac_full": 0.0,
+        "mean_tau": 0.0,
+        "chance_forward": 0.0,
+        "per_asm_active": [
+          0,
+          0
+        ],
+        "per_asm_peak": [
+          0.0,
+          0.0
+        ],
+        "events": [],
+        "w_within": 0.5010727047920227
+      },
+      "scramble": {
+        "n_events": 5,
+        "duty_cycle": 0.1357142857142857,
+        "pop_rate": 0.06450857142857143,
+        "n_multi": 4,
+        "n_full": 4,
+        "forward_frac": 1.0,
+        "reverse_frac": 0.0,
+        "forward_frac_full": 1.0,
+        "reverse_frac_full": 0.0,
+        "mean_tau": 1.0,
+        "chance_forward": 0.5,
+        "per_asm_active": [
+          4,
+          4
+        ],
+        "per_asm_peak": [
+          2.0666666666666664,
+          0.403125
+        ],
+        "events": [
+          {
+            "span": [
+              12,
+              20
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              30,
+              46
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              47,
+              206
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              219,
+              225
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          }
+        ],
+        "n_between_shuffled": 5792
+      },
+      "checks": {
+        "forward_ordered": false,
+        "discrete": true,
+        "acid_silent": true,
+        "frozen_ok": true,
+        "dendrite_reset_ok": true,
+        "scramble_collapses": false,
+        "noencode_retired": true,
+        "enough_multi": true,
+        "reverse_present": false
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 44,
+      "encode": {
+        "w_within": 146.55628967285156,
+        "w_forward": 29.023473739624023,
+        "w_reverse": 21.868196487426758,
+        "w_adj_fwd": 29.023473739624023,
+        "w_adj_rev": 21.868196487426758,
+        "n_between_fwd": 2837,
+        "n_between_rev": 2857,
+        "assembly_sizes": [
+          240,
+          240
+        ]
+      },
+      "go": {
+        "n_events": 3,
+        "duty_cycle": 0.11214285714285714,
+        "pop_rate": 0.06540535714285714,
+        "n_multi": 2,
+        "n_full": 2,
+        "forward_frac": 1.0,
+        "reverse_frac": 0.0,
+        "forward_frac_full": 1.0,
+        "reverse_frac_full": 0.0,
+        "mean_tau": 1.0,
+        "chance_forward": 0.5,
+        "per_asm_active": [
+          2,
+          2
+        ],
+        "per_asm_peak": [
+          2.375,
+          1.0833333333333335
+        ],
+        "events": [
+          {
+            "span": [
+              10,
+              19
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              30,
+              175
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          }
+        ],
+        "duty_from_rank1": 0.11214285714285714,
+        "weights_frozen": true,
+        "apical_rest_max": -80.4560317993164,
+        "apical_n_latched": 0,
+        "noise": "Poisson r=0.015 pA=1500 dur=10"
+      },
+      "nonoise": {
+        "n_events": 0,
+        "duty_cycle": 0.0,
+        "pop_rate": 1.9285714285714285e-05,
+        "n_multi": 0,
+        "n_full": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "forward_frac_full": 0.0,
+        "reverse_frac_full": 0.0,
+        "mean_tau": 0.0,
+        "chance_forward": 0.0,
+        "per_asm_active": [
+          0,
+          0
+        ],
+        "per_asm_peak": [
+          0.0,
+          0.0
+        ],
+        "events": [],
+        "assembly_rest_frac": 0.0001607142857142857
+      },
+      "noencode": {
+        "n_events": 0,
+        "duty_cycle": 0.0,
+        "pop_rate": 0.047778571428571434,
+        "n_multi": 0,
+        "n_full": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "forward_frac_full": 0.0,
+        "reverse_frac_full": 0.0,
+        "mean_tau": 0.0,
+        "chance_forward": 0.0,
+        "per_asm_active": [
+          0,
+          0
+        ],
+        "per_asm_peak": [
+          0.0,
+          0.0
+        ],
+        "events": [],
+        "w_within": 0.49888309836387634
+      },
+      "scramble": {
+        "n_events": 13,
+        "duty_cycle": 0.08785714285714286,
+        "pop_rate": 0.06458392857142857,
+        "n_multi": 4,
+        "n_full": 4,
+        "forward_frac": 0.75,
+        "reverse_frac": 0.25,
+        "forward_frac_full": 0.75,
+        "reverse_frac_full": 0.25,
+        "mean_tau": 0.5,
+        "chance_forward": 0.5,
+        "per_asm_active": [
+          4,
+          4
+        ],
+        "per_asm_peak": [
+          2.254166666666667,
+          0.47395833333333337
+        ],
+        "events": [
+          {
+            "span": [
+              10,
+              17
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              30,
+              40
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              45,
+              121
+            ],
+            "n_active": 2,
+            "tau": -1.0,
+            "fwd": false,
+            "rev": true,
+            "order": [
+              1,
+              0
+            ]
+          },
+          {
+            "span": [
+              145,
+              162
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          }
+        ],
+        "n_between_shuffled": 5694
+      },
+      "checks": {
+        "forward_ordered": false,
+        "discrete": true,
+        "acid_silent": true,
+        "frozen_ok": true,
+        "dendrite_reset_ok": true,
+        "scramble_collapses": true,
+        "noencode_retired": true,
+        "enough_multi": false,
+        "reverse_present": false
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 100,
+      "encode": {
+        "w_within": 145.0679931640625,
+        "w_forward": 28.625368118286133,
+        "w_reverse": 24.215496063232422,
+        "w_adj_fwd": 28.625368118286133,
+        "w_adj_rev": 24.215496063232422,
+        "n_between_fwd": 2840,
+        "n_between_rev": 2824,
+        "assembly_sizes": [
+          240,
+          240
+        ]
+      },
+      "go": {
+        "n_events": 4,
+        "duty_cycle": 0.11642857142857142,
+        "pop_rate": 0.06591857142857142,
+        "n_multi": 3,
+        "n_full": 3,
+        "forward_frac": 0.6666666666666666,
+        "reverse_frac": 0.3333333333333333,
+        "forward_frac_full": 0.6666666666666666,
+        "reverse_frac_full": 0.3333333333333333,
+        "mean_tau": 0.3333333333333333,
+        "chance_forward": 0.5,
+        "per_asm_active": [
+          3,
+          3
+        ],
+        "per_asm_peak": [
+          2.2319444444444447,
+          0.9013888888888889
+        ],
+        "events": [
+          {
+            "span": [
+              12,
+              19
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              29,
+              179
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              194,
+              199
+            ],
+            "n_active": 2,
+            "tau": -1.0,
+            "fwd": false,
+            "rev": true,
+            "order": [
+              1,
+              0
+            ]
+          }
+        ],
+        "duty_from_rank1": 0.11642857142857142,
+        "weights_frozen": true,
+        "apical_rest_max": -80.43722534179688,
+        "apical_n_latched": 0,
+        "noise": "Poisson r=0.015 pA=1500 dur=10"
+      },
+      "nonoise": {
+        "n_events": 0,
+        "duty_cycle": 0.0,
+        "pop_rate": 0.0,
+        "n_multi": 0,
+        "n_full": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "forward_frac_full": 0.0,
+        "reverse_frac_full": 0.0,
+        "mean_tau": 0.0,
+        "chance_forward": 0.0,
+        "per_asm_active": [
+          0,
+          0
+        ],
+        "per_asm_peak": [
+          0.0,
+          0.0
+        ],
+        "events": [],
+        "assembly_rest_frac": 0.0
+      },
+      "noencode": {
+        "n_events": 0,
+        "duty_cycle": 0.0,
+        "pop_rate": 0.048323571428571424,
+        "n_multi": 0,
+        "n_full": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "forward_frac_full": 0.0,
+        "reverse_frac_full": 0.0,
+        "mean_tau": 0.0,
+        "chance_forward": 0.0,
+        "per_asm_active": [
+          0,
+          0
+        ],
+        "per_asm_peak": [
+          0.0,
+          0.0
+        ],
+        "events": [],
+        "w_within": 0.4994957149028778
+      },
+      "scramble": {
+        "n_events": 10,
+        "duty_cycle": 0.11928571428571429,
+        "pop_rate": 0.06462678571428572,
+        "n_multi": 4,
+        "n_full": 4,
+        "forward_frac": 0.75,
+        "reverse_frac": 0.25,
+        "forward_frac_full": 0.75,
+        "reverse_frac_full": 0.25,
+        "mean_tau": 0.5,
+        "chance_forward": 0.5,
+        "per_asm_active": [
+          4,
+          4
+        ],
+        "per_asm_peak": [
+          2.1947916666666667,
+          0.48854166666666665
+        ],
+        "events": [
+          {
+            "span": [
+              12,
+              19
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              29,
+              135
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              140,
+              181
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              192,
+              199
+            ],
+            "n_active": 2,
+            "tau": -1.0,
+            "fwd": false,
+            "rev": true,
+            "order": [
+              1,
+              0
+            ]
+          }
+        ],
+        "n_between_shuffled": 5664
+      },
+      "checks": {
+        "forward_ordered": false,
+        "discrete": true,
+        "acid_silent": true,
+        "frozen_ok": true,
+        "dendrite_reset_ok": true,
+        "scramble_collapses": true,
+        "noencode_retired": true,
+        "enough_multi": false,
+        "reverse_present": false
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 101,
+      "encode": {
+        "w_within": 145.05242919921875,
+        "w_forward": 26.535587310791016,
+        "w_reverse": 22.509384155273438,
+        "w_adj_fwd": 26.535587310791016,
+        "w_adj_rev": 22.509384155273438,
+        "n_between_fwd": 3013,
+        "n_between_rev": 2892,
+        "assembly_sizes": [
+          240,
+          240
+        ]
+      },
+      "go": {
+        "n_events": 8,
+        "duty_cycle": 0.095,
+        "pop_rate": 0.06613142857142858,
+        "n_multi": 5,
+        "n_full": 5,
+        "forward_frac": 0.8,
+        "reverse_frac": 0.2,
+        "forward_frac_full": 0.8,
+        "reverse_frac_full": 0.2,
+        "mean_tau": 0.6,
+        "chance_forward": 0.5,
+        "per_asm_active": [
+          5,
+          5
+        ],
+        "per_asm_peak": [
+          2.19,
+          0.7108333333333332
+        ],
+        "events": [
+          {
+            "span": [
+              11,
+              18
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              31,
+              45
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              49,
+              147
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              148,
+              153
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              179,
+              185
+            ],
+            "n_active": 2,
+            "tau": -1.0,
+            "fwd": false,
+            "rev": true,
+            "order": [
+              1,
+              0
+            ]
+          }
+        ],
+        "duty_from_rank1": 0.095,
+        "weights_frozen": true,
+        "apical_rest_max": -80.47001647949219,
+        "apical_n_latched": 0,
+        "noise": "Poisson r=0.015 pA=1500 dur=10"
+      },
+      "nonoise": {
+        "n_events": 0,
+        "duty_cycle": 0.0,
+        "pop_rate": 0.0,
+        "n_multi": 0,
+        "n_full": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "forward_frac_full": 0.0,
+        "reverse_frac_full": 0.0,
+        "mean_tau": 0.0,
+        "chance_forward": 0.0,
+        "per_asm_active": [
+          0,
+          0
+        ],
+        "per_asm_peak": [
+          0.0,
+          0.0
+        ],
+        "events": [],
+        "assembly_rest_frac": 0.0
+      },
+      "noencode": {
+        "n_events": 0,
+        "duty_cycle": 0.0,
+        "pop_rate": 0.048592500000000004,
+        "n_multi": 0,
+        "n_full": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "forward_frac_full": 0.0,
+        "reverse_frac_full": 0.0,
+        "mean_tau": 0.0,
+        "chance_forward": 0.0,
+        "per_asm_active": [
+          0,
+          0
+        ],
+        "per_asm_peak": [
+          0.0,
+          0.0
+        ],
+        "events": [],
+        "w_within": 0.4981847107410431
+      },
+      "scramble": {
+        "n_events": 5,
+        "duty_cycle": 0.12142857142857143,
+        "pop_rate": 0.06524821428571428,
+        "n_multi": 4,
+        "n_full": 4,
+        "forward_frac": 1.0,
+        "reverse_frac": 0.0,
+        "forward_frac_full": 1.0,
+        "reverse_frac_full": 0.0,
+        "mean_tau": 1.0,
+        "chance_forward": 0.5,
+        "per_asm_active": [
+          4,
+          4
+        ],
+        "per_asm_peak": [
+          2.115625,
+          0.6072916666666667
+        ],
+        "events": [
+          {
+            "span": [
+              11,
+              18
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              30,
+              156
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              157,
+              185
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              197,
+              205
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          }
+        ],
+        "n_between_shuffled": 5905
+      },
+      "checks": {
+        "forward_ordered": false,
+        "discrete": true,
+        "acid_silent": true,
+        "frozen_ok": true,
+        "dendrite_reset_ok": true,
+        "scramble_collapses": false,
+        "noencode_retired": true,
+        "enough_multi": true,
+        "reverse_present": false
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 102,
+      "encode": {
+        "w_within": 144.65948486328125,
+        "w_forward": 29.799943923950195,
+        "w_reverse": 23.182544708251953,
+        "w_adj_fwd": 29.799943923950195,
+        "w_adj_rev": 23.182544708251953,
+        "n_between_fwd": 2908,
+        "n_between_rev": 2820,
+        "assembly_sizes": [
+          240,
+          240
+        ]
+      },
+      "go": {
+        "n_events": 3,
+        "duty_cycle": 0.12571428571428572,
+        "pop_rate": 0.06586964285714286,
+        "n_multi": 3,
+        "n_full": 3,
+        "forward_frac": 1.0,
+        "reverse_frac": 0.0,
+        "forward_frac_full": 1.0,
+        "reverse_frac_full": 0.0,
+        "mean_tau": 1.0,
+        "chance_forward": 0.5,
+        "per_asm_active": [
+          3,
+          3
+        ],
+        "per_asm_peak": [
+          2.1527777777777777,
+          0.8250000000000001
+        ],
+        "events": [
+          {
+            "span": [
+              13,
+              20
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              31,
+              182
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              183,
+              201
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          }
+        ],
+        "duty_from_rank1": 0.12571428571428572,
+        "weights_frozen": true,
+        "apical_rest_max": -80.464599609375,
+        "apical_n_latched": 0,
+        "noise": "Poisson r=0.015 pA=1500 dur=10"
+      },
+      "nonoise": {
+        "n_events": 0,
+        "duty_cycle": 0.0,
+        "pop_rate": 3.642857142857143e-05,
+        "n_multi": 0,
+        "n_full": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "forward_frac_full": 0.0,
+        "reverse_frac_full": 0.0,
+        "mean_tau": 0.0,
+        "chance_forward": 0.0,
+        "per_asm_active": [
+          0,
+          0
+        ],
+        "per_asm_peak": [
+          0.0,
+          0.0
+        ],
+        "events": [],
+        "assembly_rest_frac": 0.00030357142857142855
+      },
+      "noencode": {
+        "n_events": 0,
+        "duty_cycle": 0.0,
+        "pop_rate": 0.04819285714285714,
+        "n_multi": 0,
+        "n_full": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "forward_frac_full": 0.0,
+        "reverse_frac_full": 0.0,
+        "mean_tau": 0.0,
+        "chance_forward": 0.0,
+        "per_asm_active": [
+          0,
+          0
+        ],
+        "per_asm_peak": [
+          0.0,
+          0.0
+        ],
+        "events": [],
+        "w_within": 0.49890121817588806
+      },
+      "scramble": {
+        "n_events": 11,
+        "duty_cycle": 0.04214285714285714,
+        "pop_rate": 0.06515142857142857,
+        "n_multi": 4,
+        "n_full": 4,
+        "forward_frac": 0.5,
+        "reverse_frac": 0.5,
+        "forward_frac_full": 0.5,
+        "reverse_frac_full": 0.5,
+        "mean_tau": 0.0,
+        "chance_forward": 0.5,
+        "per_asm_active": [
+          4,
+          4
+        ],
+        "per_asm_peak": [
+          2.164583333333333,
+          0.4552083333333333
+        ],
+        "events": [
+          {
+            "span": [
+              14,
+              18
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              32,
+              42
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              51,
+              71
+            ],
+            "n_active": 2,
+            "tau": -1.0,
+            "fwd": false,
+            "rev": true,
+            "order": [
+              1,
+              0
+            ]
+          },
+          {
+            "span": [
+              86,
+              104
+            ],
+            "n_active": 2,
+            "tau": -1.0,
+            "fwd": false,
+            "rev": true,
+            "order": [
+              1,
+              0
+            ]
+          }
+        ],
+        "n_between_shuffled": 5728
+      },
+      "checks": {
+        "forward_ordered": false,
+        "discrete": true,
+        "acid_silent": true,
+        "frozen_ok": true,
+        "dendrite_reset_ok": true,
+        "scramble_collapses": true,
+        "noencode_retired": true,
+        "enough_multi": false,
+        "reverse_present": false
+      },
+      "seed_go": false
+    }
+  ]
+}

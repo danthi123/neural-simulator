@@ -1,0 +1,49 @@
+{
+  "probe": "gap5_r4_emergent_btsp_store",
+  "GO": false,
+  "verdict": "COMPLETION-BOUNDARY 0/1 seeds (strict-0.20 bar 0/1; cue 0.109, nocue 0.000, perm 0.000, no-encode 0.000, w_within 127.8) || SWR NO (match 0.73 cross 0.00)",
+  "seeds": [
+    100
+  ],
+  "swr": true,
+  "elapsed_seconds": 192.7,
+  "per_seed": [
+    {
+      "assembly_sizes": [
+        46,
+        22
+      ],
+      "r1_ca3_range": [
+        1392,
+        3391,
+        2000
+      ],
+      "btsp_ca3_range": [
+        1392,
+        3391,
+        2000
+      ],
+      "index_space_match": true,
+      "ca3_density": 0.05,
+      "recall_k_thresh": 40.0,
+      "structural_sep": 1,
+      "isolate": true,
+      "n_assemblies": 2,
+      "per_assembly_inhib": false,
+      "per_assembly_apical_inhib": true,
+      "pa_apical_w": 0.7,
+      "pa_apical_gate": 2.0,
+      "pa_apical_spare_own": true,
+      "held_cue": 0.10884057971014494,
+      "held_nocue": 0.0,
+      "held_perm": 0.0,
+      "rest_firing": 0.0,
+      "w_within": 127.83749389648438,
+      "completion_go": false,
+      "ca1_match": 0.732111114477944,
+      "ca1_cross": 0.0,
+      "ca1_fire": 2.8735014994939165,
+      "noencode_cue": 0.0
+    }
+  ]
+}

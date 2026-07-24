@@ -1,0 +1,7 @@
+[rc=0] gcr1.5 :: INTRINSIC fwd=0.667 rev=0.000 (ev=3 multi=3 act=[3, 3, 3] pop=0.0726) | ADAPT-LESION fwd=1.000 (multi=2 act=[2, 2, 2]) => no
+[rc=0] gcr2.5 :: INTRINSIC fwd=0.333 rev=0.000 (ev=3 multi=3 act=[3, 3, 3] pop=0.0774) | ADAPT-LESION fwd=0.000 (multi=2 act=[2, 2, 2]) => no
+[rc=0] d130 :: INTRINSIC fwd=0.333 rev=0.000 (ev=7 multi=3 act=[3, 3, 3] pop=0.0798) | ADAPT-LESION fwd=0.667 (multi=3 act=[3, 3, 3]) => no
+[rc=0] a030 :: INTRINSIC fwd=0.667 rev=0.000 (ev=9 multi=3 act=[3, 3, 3] pop=0.0794) | ADAPT-LESION fwd=0.667 (multi=3 act=[3, 3, 3]) => no
+[rc=0] sr0.10 :: INTRINSIC fwd=0.667 rev=0.000 (ev=4 multi=3 act=[3, 3, 3] pop=0.0846) | ADAPT-LESION fwd=0.500 (multi=2 act=[2, 2, 2]) => ORDERS
+[rc=0] gcr2a030 :: INTRINSIC fwd=1.000 rev=0.000 (ev=2 multi=2 act=[2, 2, 2] pop=0.0746) | ADAPT-LESION fwd=0.500 (multi=2 act=[2, 2, 2]) => ORDERS
+SWEEP_DONE

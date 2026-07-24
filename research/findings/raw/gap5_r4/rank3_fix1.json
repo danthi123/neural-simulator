@@ -1,0 +1,29 @@
+{
+  "seeds": [
+    42
+  ],
+  "n_go": 0,
+  "per": [
+    {
+      "seed": 42,
+      "backend": "numpy",
+      "main": {
+        "events": 4,
+        "b_active": 3,
+        "b_to_learned": 0,
+        "per_asm": [
+          3,
+          3,
+          3,
+          3,
+          3
+        ],
+        "within": 0,
+        "cross": 0,
+        "recomb_frac": 0.0,
+        "n_transitions": 0
+      },
+      "go": false
+    }
+  ]
+}

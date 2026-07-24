@@ -1,0 +1,201 @@
+{
+  "probe": "gap5_sequence_replay",
+  "GO": false,
+  "n_go": 0,
+  "seeds": [
+    42
+  ],
+  "n_ca3": 2000,
+  "n_mem": 2,
+  "noise": "Poisson r=0.015 pA=1500 dur=10",
+  "rest_steps": 1400,
+  "within_events": 30,
+  "chain_fwd": 0,
+  "chain_rev": 0,
+  "elapsed_seconds": 289.6,
+  "verdict": "PARTIAL/NEGATIVE 0/1 -- a stored 3-assembly chain did NOT cleanly replay in forward order under weak non-specific background: forward_frac 1.000 vs reverse 0.000 vs SCRAMBLE 1.000 vs chance 0.500; encode asym w_fwd-w_rev -16.80; NO-NOISE assembly rest 0.0001 (acid: ~0). Per THE LAW: a stored-sequence forward-order rung is the genuine open question -- tune the chain vs within strength (chain_fwd/within_events), noise (poisson pa/rate), seq_win_steps, recall_k_thresh; a partial/negative on the traveling-wave hand-off is a real, honestly-reported result.",
+  "per_seed": [
+    {
+      "seed": 42,
+      "encode": {
+        "w_within": 113.87216186523438,
+        "w_forward": 21.40093231201172,
+        "w_reverse": 38.197967529296875,
+        "w_adj_fwd": 21.40093231201172,
+        "w_adj_rev": 38.197967529296875,
+        "n_between_fwd": 2816,
+        "n_between_rev": 2814,
+        "assembly_sizes": [
+          240,
+          240
+        ]
+      },
+      "go": {
+        "n_events": 5,
+        "duty_cycle": 0.005714285714285714,
+        "pop_rate": 0.062129642857142856,
+        "n_multi": 1,
+        "n_full": 1,
+        "forward_frac": 1.0,
+        "reverse_frac": 0.0,
+        "forward_frac_full": 1.0,
+        "reverse_frac_full": 0.0,
+        "mean_tau": 1.0,
+        "chance_forward": 0.5,
+        "per_asm_active": [
+          1,
+          1
+        ],
+        "per_asm_peak": [
+          1.7166666666666666,
+          0.25833333333333336
+        ],
+        "events": [
+          {
+            "span": [
+              11,
+              15
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          }
+        ],
+        "duty_from_rank1": 0.005714285714285714,
+        "weights_frozen": true,
+        "apical_rest_max": -80.46504211425781,
+        "apical_n_latched": 0,
+        "noise": "Poisson r=0.015 pA=1500 dur=10"
+      },
+      "nonoise": {
+        "n_events": 0,
+        "duty_cycle": 0.0,
+        "pop_rate": 3.0357142857142857e-05,
+        "n_multi": 0,
+        "n_full": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "forward_frac_full": 0.0,
+        "reverse_frac_full": 0.0,
+        "mean_tau": 0.0,
+        "chance_forward": 0.0,
+        "per_asm_active": [
+          0,
+          0
+        ],
+        "per_asm_peak": [
+          0.0,
+          0.0
+        ],
+        "events": [],
+        "assembly_rest_frac": 0.0001398809523809524
+      },
+      "noencode": {
+        "n_events": 0,
+        "duty_cycle": 0.0,
+        "pop_rate": 0.047706785714285715,
+        "n_multi": 0,
+        "n_full": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "forward_frac_full": 0.0,
+        "reverse_frac_full": 0.0,
+        "mean_tau": 0.0,
+        "chance_forward": 0.0,
+        "per_asm_active": [
+          0,
+          0
+        ],
+        "per_asm_peak": [
+          0.0,
+          0.0
+        ],
+        "events": [],
+        "w_within": 0.49961787462234497
+      },
+      "scramble": {
+        "n_events": 8,
+        "duty_cycle": 0.08142857142857143,
+        "pop_rate": 0.06349821428571428,
+        "n_multi": 3,
+        "n_full": 3,
+        "forward_frac": 1.0,
+        "reverse_frac": 0.0,
+        "forward_frac_full": 1.0,
+        "reverse_frac_full": 0.0,
+        "mean_tau": 1.0,
+        "chance_forward": 0.5,
+        "per_asm_active": [
+          3,
+          3
+        ],
+        "per_asm_peak": [
+          2.1694444444444447,
+          0.9166666666666666
+        ],
+        "events": [
+          {
+            "span": [
+              10,
+              18
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              31,
+              46
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              57,
+              143
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          }
+        ],
+        "n_between_shuffled": 5630
+      },
+      "checks": {
+        "forward_ordered": false,
+        "discrete": true,
+        "acid_silent": true,
+        "frozen_ok": true,
+        "dendrite_reset_ok": true,
+        "scramble_collapses": false,
+        "noencode_retired": true,
+        "enough_multi": false,
+        "reverse_present": false
+      },
+      "seed_go": false
+    }
+  ]
+}

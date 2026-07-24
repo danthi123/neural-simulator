@@ -1,0 +1,42 @@
+{
+  "INIT": {
+    "within": 0.501,
+    "base_med": 0.519,
+    "fwd_d1": 0.51,
+    "fwd_d2": 0.558,
+    "rev_d1": 0.496,
+    "bet_max": 0.729
+  },
+  "stdp_postWITHIN": {
+    "within": 208.418,
+    "base_med": 12.789,
+    "fwd_d1": 192.635,
+    "fwd_d2": 25.446,
+    "rev_d1": 157.625,
+    "bet_max": 300.0
+  },
+  "stdp_postCHAIN": {
+    "within": 5.0,
+    "base_med": 5.0,
+    "fwd_d1": 5.0,
+    "fwd_d2": 5.0,
+    "rev_d1": 5.0,
+    "bet_max": 5.0
+  },
+  "btsp_postWITHIN": {
+    "within": 208.418,
+    "base_med": 12.789,
+    "fwd_d1": 192.635,
+    "fwd_d2": 25.446,
+    "rev_d1": 157.625,
+    "bet_max": 300.0
+  },
+  "btsp_postCHAIN": {
+    "within": 28.351,
+    "base_med": 5.0,
+    "fwd_d1": 30.404,
+    "fwd_d2": 71.72,
+    "rev_d1": 5.0,
+    "bet_max": 79.504
+  }
+}

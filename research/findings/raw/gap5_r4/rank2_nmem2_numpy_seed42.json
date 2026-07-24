@@ -1,0 +1,243 @@
+{
+  "probe": "gap5_sequence_replay",
+  "GO": false,
+  "n_go": 0,
+  "seeds": [
+    42
+  ],
+  "n_ca3": 2000,
+  "n_mem": 2,
+  "noise": "Poisson r=0.015 pA=1500 dur=10",
+  "rest_steps": 1400,
+  "within_events": 30,
+  "chain_fwd": 24,
+  "chain_rev": 0,
+  "elapsed_seconds": 969.1,
+  "verdict": "PARTIAL/NEGATIVE 0/1 -- a stored 3-assembly chain did NOT cleanly replay in forward order under weak non-specific background: forward_frac 1.000 vs reverse 0.000 vs SCRAMBLE 0.750 vs chance 0.500; encode asym w_fwd-w_rev +10.13; NO-NOISE assembly rest 0.0001 (acid: ~0). Per THE LAW: a stored-sequence forward-order rung is the genuine open question -- tune the chain vs within strength (chain_fwd/within_events), noise (poisson pa/rate), seq_win_steps, recall_k_thresh; a partial/negative on the traveling-wave hand-off is a real, honestly-reported result.",
+  "per_seed": [
+    {
+      "seed": 42,
+      "encode": {
+        "w_within": 142.45285034179688,
+        "w_forward": 32.30362319946289,
+        "w_reverse": 22.17287254333496,
+        "w_adj_fwd": 32.30362319946289,
+        "w_adj_rev": 22.17287254333496,
+        "n_between_fwd": 2816,
+        "n_between_rev": 2814,
+        "assembly_sizes": [
+          240,
+          240
+        ]
+      },
+      "go": {
+        "n_events": 15,
+        "duty_cycle": 0.03142857142857143,
+        "pop_rate": 0.06560035714285715,
+        "n_multi": 3,
+        "n_full": 3,
+        "forward_frac": 1.0,
+        "reverse_frac": 0.0,
+        "forward_frac_full": 1.0,
+        "reverse_frac_full": 0.0,
+        "mean_tau": 1.0,
+        "chance_forward": 0.5,
+        "per_asm_active": [
+          3,
+          3
+        ],
+        "per_asm_peak": [
+          2.1916666666666664,
+          0.8291666666666666
+        ],
+        "events": [
+          {
+            "span": [
+              33,
+              38
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              79,
+              87
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              100,
+              115
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          }
+        ],
+        "duty_from_rank1": 0.03142857142857143,
+        "weights_frozen": true,
+        "apical_rest_max": -80.46497082837817,
+        "apical_n_latched": 0,
+        "noise": "Poisson r=0.015 pA=1500 dur=10"
+      },
+      "nonoise": {
+        "n_events": 0,
+        "duty_cycle": 0.0,
+        "pop_rate": 1.0357142857142856e-05,
+        "n_multi": 0,
+        "n_full": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "forward_frac_full": 0.0,
+        "reverse_frac_full": 0.0,
+        "mean_tau": 0.0,
+        "chance_forward": 0.0,
+        "per_asm_active": [
+          0,
+          0
+        ],
+        "per_asm_peak": [
+          0.0,
+          0.0
+        ],
+        "events": [],
+        "assembly_rest_frac": 8.630952380952381e-05
+      },
+      "noencode": {
+        "n_events": 0,
+        "duty_cycle": 0.0,
+        "pop_rate": 0.04758821428571429,
+        "n_multi": 0,
+        "n_full": 0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "forward_frac_full": 0.0,
+        "reverse_frac_full": 0.0,
+        "mean_tau": 0.0,
+        "chance_forward": 0.0,
+        "per_asm_active": [
+          0,
+          0
+        ],
+        "per_asm_peak": [
+          0.0,
+          0.0
+        ],
+        "events": [],
+        "w_within": 0.49961787462234497
+      },
+      "scramble": {
+        "n_events": 13,
+        "duty_cycle": 0.05857142857142857,
+        "pop_rate": 0.06463428571428571,
+        "n_multi": 4,
+        "n_full": 4,
+        "forward_frac": 0.75,
+        "reverse_frac": 0.25,
+        "forward_frac_full": 0.75,
+        "reverse_frac_full": 0.25,
+        "mean_tau": 0.5,
+        "chance_forward": 0.5,
+        "per_asm_active": [
+          4,
+          4
+        ],
+        "per_asm_peak": [
+          2.2906250000000004,
+          0.5145833333333333
+        ],
+        "events": [
+          {
+            "span": [
+              32,
+              39
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              47,
+              64
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              78,
+              90
+            ],
+            "n_active": 2,
+            "tau": 1.0,
+            "fwd": true,
+            "rev": false,
+            "order": [
+              0,
+              1
+            ]
+          },
+          {
+            "span": [
+              99,
+              134
+            ],
+            "n_active": 2,
+            "tau": -1.0,
+            "fwd": false,
+            "rev": true,
+            "order": [
+              1,
+              0
+            ]
+          }
+        ],
+        "n_between_shuffled": 5630
+      },
+      "checks": {
+        "forward_ordered": false,
+        "discrete": true,
+        "acid_silent": true,
+        "frozen_ok": true,
+        "dendrite_reset_ok": true,
+        "scramble_collapses": true,
+        "noencode_retired": true,
+        "enough_multi": false,
+        "reverse_present": false
+      },
+      "seed_go": false
+    }
+  ]
+}

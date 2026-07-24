@@ -1,0 +1,212 @@
+{
+  "probe": "gap5_dg_detonator_ignition",
+  "branch": "B (targeted DG-detonator ignition)",
+  "GO": false,
+  "n_go": 0,
+  "n_symmetric_ignites": 0,
+  "seeds": [
+    42
+  ],
+  "decoupled_cfg": {
+    "apical_R": 50.0,
+    "apical_gc": 1.0,
+    "apical_gc_read": 5.0,
+    "apical_kir_g": 3.0,
+    "assembly_frac": 0.12,
+    "bistable": true,
+    "btsp_lr": 0.05,
+    "ca3_density": 0.05,
+    "ca3_fb_inhib": 20.0,
+    "chain_btsp_lr": 0.5,
+    "chain_fwd": 3,
+    "chain_reset_steps": 12,
+    "chain_rev": 0,
+    "chain_rule": "btsp",
+    "coact_thresh": 0.02,
+    "drive_steps": 48,
+    "enable_ou": false,
+    "encode_btsp": true,
+    "encode_btsp_hetero": 0.0,
+    "encode_ca3w": 0.5,
+    "encode_drive": 3000.0,
+    "encode_plateau_pA": 250.0,
+    "freeze_between_refresh": true,
+    "hebb_max": 300.0,
+    "k_thresh": 18.0,
+    "n_ca3": 600,
+    "n_mem": 3,
+    "nmda_recurrent": false,
+    "no_sync": true,
+    "overlap_draw": false,
+    "plateau_self_regen": 0.15,
+    "plateau_strength": 120.0,
+    "plateau_v_hold": -35.0,
+    "rank1_encode": true,
+    "recall_k_thresh": 40.0,
+    "reset_steps": 15,
+    "sel_inhib_spare": 0.0,
+    "selective_inhib": true,
+    "seq_win_steps": 16,
+    "structural_sep": 1,
+    "within_events": 3,
+    "within_refresh": 1
+  },
+  "detonator_cfg": {
+    "det_frac": 0.15,
+    "det_pa": [
+      1500.0
+    ],
+    "det_dur": 15,
+    "det_period": 30,
+    "det_settle": 15,
+    "self_regen_read": 0.0,
+    "d_abs": 40.0,
+    "a_abs": 0.008,
+    "apical_gc_read": null,
+    "assembly_idx": 0,
+    "n_ca3": 600,
+    "n_mem": 3,
+    "rest_steps": 90,
+    "window": 5,
+    "ev_floor": 0.5,
+    "ev_k": 4.0,
+    "min_frac": 0.3,
+    "active_frac": 0.12,
+    "onset_frac": 0.08
+  },
+  "elapsed_seconds": 105.8,
+  "verdict": "INCONCLUSIVE 0/1 -- the DG-detonator did NOT ignite even the strong-between SYMMETRIC positive control at this scale/det_pa (sym forward 0.000). Re-check n_ca3=2000 + det_frac/det_pa/det_dur before concluding anything about the decoupled store.",
+  "per_seed": [
+    {
+      "seed": 42,
+      "encode_decoupled": {
+        "w_within": 9.257007598876953,
+        "w_adj_fwd": 36.15189743041992,
+        "w_adj_rev": 5.0,
+        "ratio_adj": 7.230379486083985,
+        "n_between_fwd": 794,
+        "n_between_rev": 771,
+        "assembly_sizes": [
+          72,
+          72,
+          72
+        ]
+      },
+      "go_runs": {
+        "det_pa=1500": {
+          "det_pa": 1500.0,
+          "k_det": 11,
+          "n_detonations": 3,
+          "n_events": 0,
+          "n_specific": 0,
+          "member_frac": 0.0,
+          "random_frac": 0.0,
+          "cross_frac": 0.0,
+          "specificity": 0.0,
+          "duty_cycle": 0.0,
+          "pop_rate": 0.003981481481481482,
+          "assembly_rest_frac": 0.033179012345679014,
+          "forward_frac": 0.0,
+          "reverse_frac": 0.0,
+          "n_multi": 0,
+          "chance_forward": 0.0,
+          "per_asm_active": [
+            0,
+            0,
+            0
+          ],
+          "weights_frozen": true,
+          "apical_rest_max": -80.45579764215277,
+          "apical_n_latched": 0
+        }
+      },
+      "best_det_pa": 1500.0,
+      "no_detonator": {
+        "n_events": 0,
+        "n_specific": 0,
+        "assembly_rest_frac": 0.0,
+        "pop_rate": 0.0,
+        "duty_cycle": 0.0,
+        "weights_frozen": true
+      },
+      "shuffled_detonator": {
+        "k_det": 11,
+        "n_events": 0,
+        "n_specific": 0,
+        "member_frac": 0.0,
+        "random_frac": 0.0,
+        "specificity": 0.0,
+        "forward_frac": 0.0
+      },
+      "no_encode": {
+        "w_within": 0.501596987247467,
+        "n_events": 0,
+        "n_specific": 0,
+        "member_frac": 0.0,
+        "random_frac": 0.0
+      },
+      "shuffled_within": {
+        "n_within_shuffled": 810,
+        "n_events": 0,
+        "n_specific": 0,
+        "member_frac": 0.0,
+        "random_frac": 0.0
+      },
+      "encode_symmetric": {
+        "w_within": 8.961201667785645,
+        "w_adj_fwd": 9.697638511657715,
+        "w_adj_rev": 8.929662704467773,
+        "ratio_adj": 1.086002778896195,
+        "n_between_fwd": 794,
+        "n_between_rev": 771,
+        "assembly_sizes": [
+          72,
+          72,
+          72
+        ]
+      },
+      "symmetric_readout": {
+        "w_within": 8.961201667785645,
+        "w_adj_fwd": 9.697638511657715,
+        "w_adj_rev": 8.929662704467773,
+        "n_events": 0,
+        "n_specific": 0,
+        "member_frac": 0.0,
+        "cross_frac": 0.0,
+        "duty_cycle": 0.0,
+        "forward_frac": 0.0,
+        "reverse_frac": 0.0,
+        "n_multi": 0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ]
+      },
+      "latch_on_diag": {
+        "n_events": 0,
+        "duty_cycle": 0.0,
+        "forward_frac": 0.0,
+        "per_asm_active": [
+          0,
+          0,
+          0
+        ]
+      },
+      "checks": {
+        "discrete_ignition": false,
+        "assembly_specific": false,
+        "forward_transition": false,
+        "no_detonator_silent": true,
+        "shuffled_detonator_retired": true,
+        "noencode_retired": true,
+        "shuffled_within_retired": true,
+        "frozen_ok": true,
+        "dendrite_reset_ok": true,
+        "readout_ignites_symmetric": false,
+        "cleaner_than_symmetric": false
+      },
+      "seed_go": false
+    }
+  ]
+}

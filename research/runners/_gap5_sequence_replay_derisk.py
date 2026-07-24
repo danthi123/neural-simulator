@@ -91,6 +91,12 @@ def _zero_elig(bridge):
     es = getattr(bridge, "cp_btsp_pre_elig_slow", None)
     if es is not None:
         es[:] = 0.0
+    # gap#5 Ecker-band (2026-07-24, hebb_sym chain rule): also clear the rate-window co-activity trace at each sweep
+    # boundary so the LAST assembly of sweep N does not bind to the FIRST of sweep N+1 (a spurious wrap-around H->A
+    # link). No-op / BYTE-IDENTICAL for the stdp/btsp paths (the trace is None unless the hebb_sym block allocated it).
+    ct = getattr(bridge, "cp_hebb_coactivity_trace", None)
+    if ct is not None:
+        ct[:] = 0.0
 
 
 def _silence_soma_apical(bridge, settle=2):
@@ -139,6 +145,10 @@ def _prepare_sequence(seed, cfg, do_encode=True):
                     ca3_fb_inhib=cfg["ca3_fb_inhib"], coact_thresh=cfg["coact_thresh"], hebb_lr=None, enable_ou=False,
                     plateau_self_regen=cfg["plateau_self_regen"], plateau_v_hold=cfg["plateau_v_hold"],
                     apical_kir_g=cfg["apical_kir_g"], apical_gc_read=cfg["apical_gc_read"], ca1_ff_inhib=None,
+                    ca3_ff_inhib=cfg.get("ca3_ff_inhib"), ca3_ff_n=cfg.get("ca3_ff_n"),   # gap#5 theta-sweep RANK-2:
+                    #   the E%-max FEEDFORWARD ca3_ff_basket (de Almeida-Idiart-Lisman 2009) -- a SEPARATE basket NOT
+                    #   subject to _prepare_sequence's ca3_pv_basket->member sparing, so theta-on-ff_basket reaches the
+                    #   assembly cells WITHOUT touching the GO store's sel_inhib_spare. Default None => byte-identical.
                     enable_stp=cfg.get("enable_stp", False), mossy_stp_disabled=cfg.get("enable_stp", False))
     rm = bridge.region_manager
     ca3_idx = list(rm.indices("ca3"))
@@ -260,6 +270,62 @@ def _prepare_sequence(seed, cfg, do_encode=True):
             cfg_b.stdp_tau_plus_ms = float(cfg.get("stdp_tau", 20.0))
             cfg_b.stdp_tau_minus_ms = float(cfg.get("stdp_tau", 20.0))
 
+        # gap#5 Ecker-2022 / Mishra-2016 SYMMETRIC CA3 band (research gate 2026-07-24, default OFF = byte-identical).
+        # DIAGNOSIS: our fused_stdp_weight_update is the ASYMMETRIC Bi-Poo rule (Δt>0 LTP toward w_max, Δt<0 LTD toward
+        # w_min) and cannot build Ecker's near-diagonal DECAYING band -- the band is produced by the temporally-SYMMETRIC
+        # BROAD (τ=62.5 ms) POTENTIATION rule measured in CA3 pyramidal pairs (Mishra et al. 2016; Ecker et al. 2022
+        # eLife 71850), where BOTH spike orders potentiate (A+=A-=+80 pA) so temporal PROXIMITY (not order) sets the
+        # weight -> overlapping-in-time (adjacent) assemblies bind more than distant ones = the monotone-decaying band,
+        # bidirectional by construction (= real forward-AND-reverse replay, Kandel Fig 5-2). Realized with the EXISTING
+        # hebbian_rate_window (BCM/windowed co-activity: potentiate by trace[pre]*trace[post], order-free, graded by the
+        # decaying co-activity trace = the STDP window). Co-activity decay is set to Ecker's τ=62.5 ms (exp(-1/62.5)≈0.984
+        # per 1 ms step). NO sim/ edit (runner-side config + trace allocation; the trace is zeroed per sweep in _zero_elig
+        # to prevent wrap-around). Use with chain_overlap=True so adjacent assemblies overlap in time.
+        _hebb_saved = None
+        if _chain_rule == "hebb_sym":
+            _hebb_saved = (cfg_b.enable_btsp, cfg_b.enable_stdp, cfg_b.enable_hebbian_learning,
+                           getattr(cfg_b, "hebbian_rate_window", False), cfg_b.hebbian_learning_rate,
+                           cfg_b.hebbian_weight_decay, cfg_b.hebbian_max_weight, cfg_b.hebbian_min_weight,
+                           getattr(cfg_b, "hebbian_coactivity_decay", 0.9),
+                           getattr(cfg_b, "hebbian_coactivity_thresh", 0.25))
+            cfg_b.enable_btsp = False
+            cfg_b.enable_stdp = False   # enable_stdp defaults True -> the asymmetric STDP would clip to stdp_w_max=10
+            cfg_b.enable_hebbian_learning = True
+            cfg_b.hebbian_rate_window = True
+            cfg_b.hebbian_coactivity_decay = float(cfg.get("hebb_coact_decay", 0.984))  # ~Ecker τ=62.5 ms window
+            cfg_b.hebbian_coactivity_thresh = float(cfg.get("hebb_coact_thresh", 0.02))  # low -> adjacent+skip both write
+            cfg_b.hebbian_learning_rate = float(cfg.get("hebb_sym_lr", 0.02))
+            cfg_b.hebbian_weight_decay = 0.0                                             # no per-step erosion of the band
+            cfg_b.hebbian_max_weight = float(cfg["hebb_max"])
+            cfg_b.hebbian_min_weight = 0.0
+            if getattr(bridge, "cp_hebb_coactivity_trace", None) is None:
+                bridge.cp_hebb_coactivity_trace = cp.zeros(int(cfg_b.num_neurons), dtype=cp.float32)
+            else:
+                bridge.cp_hebb_coactivity_trace[:] = 0.0
+
+        # gap#5 DIAGNOSTIC no-op chain (2026-07-24): disable ALL plasticity during the chain drive. If the ca3->ca3 store
+        # STILL collapses under a no-op rule, the collapse is DRIVE-intrinsic (an always-on per-step mechanism), NOT the
+        # plasticity rule. Byte-identical when chain_rule not in {stdp, hebb_sym, none}.
+        _noop_saved = None
+        if _chain_rule == "none":
+            _noop_saved = (cfg_b.enable_btsp, cfg_b.enable_stdp, cfg_b.enable_hebbian_learning)
+            cfg_b.enable_btsp = False
+            cfg_b.enable_stdp = False
+            cfg_b.enable_hebbian_learning = False
+
+        # gap#5 ROOT-CAUSE FIX (2026-07-24): BDSP is enabled for the whole encode (enable_bdsp=True, bdsp_learning_rate=0,
+        # for the within-phase bistable apical plateau) and `fused_bdsp_update` HARD-CLAMPS every BDSP-active synapse to
+        # [bdsp_w_min=-5, bdsp_w_max=5] EVERY step -- even at lr=0. In the TRANSIENT-plateau chain (self_regen=0) the
+        # sequential drive breaks self-prediction, so ca3->ca3 enters BDSP's active set and the within-built store (up to
+        # hebb_max) COLLAPSES to a uniform 5.0. THIS -- not STDP's LTD -- is why "STDP wrote nothing": BTSP's strong
+        # plateau-gated potentiation outruns the per-step clamp (-> the 14-34 fan-out); the weaker STDP / hebb_sym rules
+        # cannot, so they are pinned at the 5.0 BDSP ceiling. Widen the BDSP clip during the chain so the clamp does not
+        # fight the sequence rule. ONLY for the new (non-default) rules -> the btsp default stays byte-identical.
+        _bdsp_clip_saved = None
+        if _chain_rule in ("stdp", "hebb_sym", "none"):
+            _bdsp_clip_saved = (cfg_b.bdsp_w_min, cfg_b.bdsp_w_max)
+            cfg_b.bdsp_w_min = -float(cfg["hebb_max"]); cfg_b.bdsp_w_max = float(cfg["hebb_max"])
+
         # CHAIN phase FORWARD sweeps: A -> B -> ... each a short window separated by a THETA RESET (silence soma+apical,
         # KEEP eligibility) so the earlier assembly's plateau is OFF when the later fires -> A->B forms (elig_A x plateau_B)
         # but B->A does NOT (A has no plateau). eligibility persists -> forward links.
@@ -273,12 +339,20 @@ def _prepare_sequence(seed, cfg, do_encode=True):
             cfg_b.btsp_learning_rate = float(_chain_lr)
         chain_edges = cfg.get("chain_edges")   # None = LINEAR order (default, byte-identical); else an explicit directed
                                                # edge list [(pre,post),...] for a BRANCHING topology (RANK 3 recombination).
+        # gap#5 Ecker-band encode (research gate 2026-07-24, default OFF = byte-identical): chain_overlap SKIPS the hard
+        # `_silence_soma_apical` theta reset between sweep windows so the PREVIOUS assembly's activity DECAYS THROUGH the
+        # next assembly's spike (graded temporal OVERLAP). With chain_rule="stdp" (fast decaying kernel) this writes an
+        # ADJACENT-dominant DISTANCE-DECAYING forward band (adj_fwd > skip_fwd > skip2, reverse~=baseline) -- the Ecker
+        # 2022 near-diagonal band -- instead of BTSP's flat 1s-eligibility FAN-OUT (skip-dominant) or STDP's empty-Δt-window
+        # nothing (the hard reset was the bug). The hard-reset path (chain_overlap=False) is the anti-cheat control.
+        _overlap = bool(cfg.get("chain_overlap"))
         if chain_edges is None:
             order_fwd = list(range(n_mem))
             for _ev in range(int(cfg["chain_fwd"])):
                 _zero_elig(bridge)              # start each sweep with NO carried eligibility (no wrap-around C->A)
                 for m in order_fwd:
-                    _silence_soma_apical(bridge, settle=2)   # theta reset: previous assembly OFF, eligibility kept
+                    if not _overlap:
+                        _silence_soma_apical(bridge, settle=2)   # theta reset: previous assembly OFF, eligibility kept
                     _drive_window(m, win)
                 bridge.cp_external_input_current[:] = 0.0
 
@@ -287,7 +361,8 @@ def _prepare_sequence(seed, cfg, do_encode=True):
             for _ev in range(int(cfg["chain_rev"])):
                 _zero_elig(bridge)
                 for m in order_rev:
-                    _silence_soma_apical(bridge, settle=2)
+                    if not _overlap:
+                        _silence_soma_apical(bridge, settle=2)
                     _drive_window(m, win)
                 bridge.cp_external_input_current[:] = 0.0
         else:
@@ -307,6 +382,15 @@ def _prepare_sequence(seed, cfg, do_encode=True):
         if _stdp_saved is not None:
             (cfg_b.enable_btsp, cfg_b.enable_stdp, cfg_b.stdp_a_plus, cfg_b.stdp_a_minus,
              cfg_b.stdp_w_max, cfg_b.stdp_tau_plus_ms, cfg_b.stdp_tau_minus_ms) = _stdp_saved
+        if _hebb_saved is not None:
+            (cfg_b.enable_btsp, cfg_b.enable_stdp, cfg_b.enable_hebbian_learning, cfg_b.hebbian_rate_window,
+             cfg_b.hebbian_learning_rate, cfg_b.hebbian_weight_decay, cfg_b.hebbian_max_weight,
+             cfg_b.hebbian_min_weight, cfg_b.hebbian_coactivity_decay,
+             cfg_b.hebbian_coactivity_thresh) = _hebb_saved
+        if _noop_saved is not None:
+            (cfg_b.enable_btsp, cfg_b.enable_stdp, cfg_b.enable_hebbian_learning) = _noop_saved
+        if _bdsp_clip_saved is not None:
+            (cfg_b.bdsp_w_min, cfg_b.bdsp_w_max) = _bdsp_clip_saved
         if _chain_lr is not None:                       # restore the LOW within-phase btsp_lr for the refresh
             cfg_b.btsp_learning_rate = float(cfg["btsp_lr"])
 
