@@ -1,0 +1,179 @@
+{
+  "probe": "gap4_onbridge_spiking_selfpredict_FULL",
+  "seeds": [
+    100
+  ],
+  "config": {
+    "construct_smoke": false,
+    "full": true,
+    "seeds": [
+      100
+    ],
+    "arms": [
+      "reservoir",
+      "fixed_fa",
+      "kp",
+      "micro",
+      "transport_ceiling"
+    ],
+    "hidden": 64,
+    "pool_k": 16,
+    "n_hidden_layers": 2,
+    "settle_steps": 40,
+    "credit_steps": 25,
+    "epochs": 20,
+    "batch": 1,
+    "train_subsample": 128,
+    "lr": 0.05,
+    "beta": 1.0,
+    "p0": 0.3,
+    "in_current_pA": 520.0,
+    "in_bias_pA": 260.0,
+    "apical_gain_pA": 900.0,
+    "tonic_h_pA": 450.0,
+    "tonic_o_pA": 500.0,
+    "graded_credit": true,
+    "wpi_plastic": true,
+    "wpi_init": "noisy",
+    "wpi_lr": 0.2,
+    "kp_lr": 0.2,
+    "kp_decay": 0.0001,
+    "assert_no_transport": true,
+    "n_super": 24,
+    "n_members": 8,
+    "held_per_super": 3,
+    "n_prop": 3,
+    "member_id_dim": 3,
+    "n_obs": 14,
+    "noise": 0.02,
+    "oracle_epochs": 250,
+    "oracle_lr": 0.3,
+    "oracle_batch": 128,
+    "out": "research/findings/raw/gap4/onbridge_spiking_seed100.json"
+  },
+  "elapsed_seconds": 29443.9,
+  "error": null,
+  "per_seed": [
+    {
+      "seed": 100,
+      "meta": {
+        "n_super": 24,
+        "n_members": 8,
+        "held_per_super": 3,
+        "n_prop": 3,
+        "k_classes": 9,
+        "member_id_dim": 3,
+        "n_obs": 14,
+        "noise": 0.02,
+        "feature_seed": 0,
+        "n_features": 9,
+        "n_train": 1260,
+        "n_heldout": 492,
+        "n_inherit_heldout": 54,
+        "n_memctrl_heldout": 18,
+        "n_supers_untaught": 6
+      },
+      "chance": 0.16666666666666666,
+      "oracle_heldout": 1.0,
+      "n_in": 9,
+      "k": 9,
+      "arms": {
+        "reservoir": {
+          "inherit_heldout": 0.12962962962962962,
+          "memctrl_heldout": 0.0,
+          "no_weight_transport": true
+        },
+        "fixed_fa": {
+          "inherit_heldout": 0.12962962962962962,
+          "memctrl_heldout": 0.0,
+          "no_weight_transport": true
+        },
+        "kp": {
+          "inherit_heldout": 0.12962962962962962,
+          "memctrl_heldout": 0.0,
+          "no_weight_transport": true
+        },
+        "micro": {
+          "inherit_heldout": 0.12962962962962962,
+          "memctrl_heldout": 0.0,
+          "no_weight_transport": true
+        },
+        "transport_ceiling": {
+          "inherit_heldout": 0.09259259259259259,
+          "memctrl_heldout": 0.0,
+          "no_weight_transport": false
+        }
+      },
+      "lesion": {
+        "inherit_heldout": 0.1111111111111111
+      },
+      "shuffled_target": {
+        "inherit_heldout": 0.09259259259259259
+      },
+      "shufE": {
+        "inherit_heldout": 0.12962962962962962
+      },
+      "apical": {
+        "micro_plastic": {
+          "apical_correct": 0.6504310033517724,
+          "apical_incorrect": 0.7641294317810644,
+          "silent_ratio": 0.8512052753090138,
+          "frac_correct": 0.018292682926829267,
+          "selfpred_cos": 0.12207068929923032
+        },
+        "micro_frozen_wpi": {
+          "apical_correct": 0.7944437459267321,
+          "apical_incorrect": 0.790028089395272,
+          "silent_ratio": 1.005589239914032,
+          "frac_correct": 0.014227642276422764,
+          "selfpred_cos": 0.041233123390727384
+        }
+      },
+      "fa_wall": {
+        "reservoir": 0.12962962962962962,
+        "fixed_fa": 0.12962962962962962,
+        "best_learned": 0.12962962962962962,
+        "fa_wall_holds": true,
+        "seed_go": false
+      },
+      "elapsed_seconds": 29443.9,
+      "guards": {
+        "ast_no_forward_W": true
+      }
+    }
+  ],
+  "aggregate": {
+    "n_seeds": 1,
+    "n_fa_wall": 1,
+    "n_seed_go": 0,
+    "oracle": 1.0,
+    "chance": 0.16666666666666666,
+    "reservoir": 0.12962962962962962,
+    "fixed_fa": 0.12962962962962962,
+    "kp": 0.12962962962962962,
+    "micro": 0.12962962962962962,
+    "best_learned": 0.12962962962962962,
+    "transport_ceiling": 0.09259259259259259,
+    "lesion": 0.1111111111111111,
+    "shuffled_target": 0.09259259259259259,
+    "shufE": 0.12962962962962962,
+    "memctrl": 0.0,
+    "micro_plastic_silent_ratio": 0.8512052753090138,
+    "micro_plastic_selfpred_cos": 0.12207068929923032,
+    "micro_frozen_silent_ratio": 1.005589239914032,
+    "micro_frozen_selfpred_cos": 0.041233123390727384,
+    "fa_wall_holds_all": false,
+    "task_ok": true,
+    "ceiling_guard_correctly_fails": true,
+    "ast_no_forward_W": true,
+    "lesion_collapse": true,
+    "shuffled_collapse": true,
+    "shufE_collapse": true,
+    "memctrl_ok": true,
+    "apical_silent_earned": false,
+    "GO": false,
+    "verdict": "NO-GO (0/1 seed_go; FA-wall 1/1). reservoir 0.130 | fixed_fa 0.130 | kp 0.130 | micro 0.130 | ceiling 0.093 | oracle 1.000 (chance 0.167). apical-silent EARNED: plastic ratio 0.851 (cos 0.12) vs frozen 1.006 (cos 0.04). anti-cheats: lesion 0.111 shuf 0.093 shufE 0.130 memctrl 0.000; ceiling-guard-fails True; ast True."
+  },
+  "GO": false,
+  "NOTE": "GO = best(kp,micro) > fixed_fa on >=5/6 seeds IN the FA-wall regime (fixed_fa <= reservoir) + all anti-cheats; see 2026-07-24-gap4-onbridge-spiking-port-DESIGN.md S5."
+}
