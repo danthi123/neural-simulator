@@ -374,6 +374,7 @@ Perception/attention/WM, affect, curiosity, self/workspace/ToM, and language are
 - gap#4 credit-beats-reservoir 6-seed GO (2026-07-23) + faithful-on-bridge op-point diagnosis — the deep-credit engine is live.
 - gap#5 SWR-replay readout: theta-gamma phase-precession research gate dispatched 2026-07-23.
 - value-critic RANK-1 (value-driven choice) 6-seed GO (2026-07-23).
+- **Adversarial verification of the Phase-0 GOs (2026-07-23): DR-3 self-schema = SOLID; DR-1 / DR-2 / wkv = QUALIFIED (core mechanisms hold, packaging corrected in-place — see the corrected findings). `build→verify` is now DEFAULT.** Carry-forwards: DR-1 is sim-free in the numpy probe but the on-bridge realization adds ONE additive default-off `from_novelty` edit; DR-2 rests on held-out r + permuted collapse (mid-band r=0.683 = genuine graded inference); wkv's shuffle/lesion controls validate the SMOKE toy only — full-model faithfulness rests on ppl_ratio/logit_fid≈1.0 + read_err ~5e-6 + the pre-fix 130× failure, and "spiking" is scoped to the matvecs.
 
 **The next ~5 to queue (cheap-first, mostly [CPU], reuse-by-import, each with its GO-gate + anti-cheats in §4):**
 1. **DR-1 curiosity** (`_curiosity_seek_learn_cheap_first_probe.py`) — **[CPU]**, the reframe centerpiece; the noisy-concept honesty guard is non-negotiable. *No dependency — write first.*

@@ -98,6 +98,26 @@ ANN** — the project's largest TRAINED generative model validated as spiking-co
 on one brain" prerequisite for the trained LM). NO `sim/` edit. Follow-on: the 267M's spiking-forward once it has a
 converged checkpoint (same runner, --ckpt run4_d2048).
 
+## Adversarial verification (2026-07-23): QUALIFIED — the numbers HOLD, the control-support scope is corrected
+An independent 2-skeptic pass could NOT refute the headline: per-seed `ppl_ratio ≈ 1.0`, `logit_fid ≈ 1.0`,
+`rf_max_read_err` 3.69–5.01e-6 across all 6 seeds (incl. blind 100/101/102); the metric is falsifiable (it read 130× /
+fid 0.29 before the fix) and is measured against an INDEPENDENT ground-truth matmul (`h @ W`), not self-consistency;
+`NO sim/ edit` confirmed against the fix commit (runner-only); the id()-reuse cache-aliasing diagnosis + fix is genuine
+and cannot mask a real degradation (per-seed read_err genuinely differ; the live pre-fix 130× failure is a real
+falsification). TWO scope corrections:
+1. **The `shuffle-head` + `ssm-lesion` controls validate the SMOKE wiring ONLY** — they run only in `run_smoke` on a
+   V=64/D=32 UNTRAINED numpy toy, and are NOT invoked in `run_full_one_seed` on the run3 RF-bridge artifact. Moreover
+   `ssm_lesion` never produced its stated ppl-explosion even on the toy (ratio 0.996; it "passed" via a fallback
+   fid-delta clause), so its "validated in --mode full" note is an overclaim (full mode never runs it). The full-model
+   faithfulness therefore rests on the per-seed ground-truth `rf_max_read_err` (~4-5e-6), `ppl_ratio`/`logit_fid` ≈ 1.0,
+   AND the pre-fix 130× NEGATIVE (the real falsification) — NOT on the smoke-only controls.
+2. **"Spiking" is scoped to the matvecs.** Only Wv/Wr/Wo/head go through the RF complex-synapse read; LayerNorm, the two
+   sigmoids, the SSM temporal scan (the defining WKV op), and the residual are host-numpy. This de-risk validates
+   spiking MATVECS inside a host-orchestrated forward (== the C1 transformer precedent), NOT a spiking SSM. The
+   headline "runs as a faithful RF spiking-graded-read forward == the ANN" is true at exactly that scope.
+The 6-seed GO stands on the RF-read fidelity + the pre-fix failure; the control-support and spiking-scope claims are
+corrected to their true extent.
+
 ## Knobs recorded
 - ckpt `bridges/lmtrain/run3/ckpt/best.pt` (83.17M, d=1024, L=16, V=16000, chunk_c=16, step 902000).
 - RF read: `RF_PERIOD=100000`, `RF_LAMBDA=0.0`, `nsteps=8`; block_size=256; n_logit_pos=16.

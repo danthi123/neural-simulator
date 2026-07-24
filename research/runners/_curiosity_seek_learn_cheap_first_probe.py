@@ -10,10 +10,14 @@ THE MECHANISM (all signals HAVE; wiring unbuilt; this is the numpy cheap-first t
     (`RealAntiHebbianFamiliarity`, catalog D.04 perirhinal repetition suppression) — the very gate that drives the
     no-confab moat. Its novelty N(x) = ||x||^2 - x^T W x reads ~0 for a FAMILIAR (imprinted/learned) concept and ~1
     for a NOVEL one. That novelty IS the EPISTEMIC GAP g. (Reused-by-import, verbatim.)
-  * The gap g drives a CURIOSITY MODULATOR (wanting; Litman wanting != liking). On-bridge this fills the RESERVED,
-    currently-empty `from_novelty` production rule in sim/neuromodulators.py (an `excitability_drive` on an ASK pool);
-    HERE it is proxied at rate level EXACTLY as the homeostatic template proxies AgRP/POMC as `TwoPoolDrive` — no
-    sim/ edit (verify `git diff --ignore-cr-at-eol --stat sim/` stays empty; the pre-existing sim/ 'M' flags are CRLF).
+  * The gap g drives a CURIOSITY MODULATOR (wanting; Litman wanting != liking). On-bridge this fills the reserved
+    `from_novelty` production rule in sim/neuromodulators.py (an `excitability_drive` on an ASK pool) — built additively
+    + default-off by the SEPARATE on-bridge subagent (`_curiosity_seek_learn_onbridge_derisk.py`), NOT here.
+    THIS numpy probe proxies it at rate level EXACTLY as the homeostatic template proxies AgRP/POMC as `TwoPoolDrive`,
+    and imports NO `sim/` module — so its JSON numbers are sim-free regardless of the on-bridge edit. (CORRECTED
+    2026-07-23 adversarial verification: the earlier "verify `git diff --stat sim/` stays empty" recipe was WRONG — the
+    on-bridge realization DOES add an additive default-off `from_novelty` rule + two default-0.0 config fields; the
+    correct check is that THIS probe loads zero `sim` modules, not that the tree is clean.)
   * The POLICY ASKS a teacher when the gate reads NOVEL (moat-by-construction: it only seeks about genuinely-unknown
     concepts, and it later SPEAKS only the INGESTED answer — never an invented one).
   * INGESTING the answer = imprinting the teacher's render into the familiarity gate (the learn-a-fact / stream-cortex
@@ -33,14 +37,22 @@ THE DECISIVE STRUCTURE (a DOUBLE DISSOCIATION the runner measures):
     whole time. THIS keeps curiosity HONEST (learning-progress-seeking, not novelty/noise-chasing/confabulating).
 
 GO GATES (the runner prints its OWN verdict; smoke != GO):
-  (a) corr(epistemic-gap g, curiosity modulator) >= 0.9            -- the wanting tracks the gap.
-  (b) ask-rate on UNKNOWN (novel) >= 2x on KNOWN (mastered)        -- the drive biases seeking toward what it lacks.
-  (c) post-answer confidence on a newly-taught learnable concept RISES above the abstain floor  -- world-model updated.
-  (d) (reported) the seek-policy converges onto LEARNABLE gaps (late asks are ~all learnable; noisy vetoed).
+  (a) corr(epistemic-gap g, curiosity modulator) >= 0.9            -- the wanting tracks the gap. [LOAD-BEARING]
+  (b) ask-rate on UNKNOWN (novel) >= 2x on KNOWN (mastered)        -- NON-LOAD-BEARING / degenerate (CORRECTED
+      2026-07-23): the candidate filter hard-requires novelty, so rate_known == 0 in every run and the ratio ~= 8.3e7
+      passes BY CONSTRUCTION -- it restates the moat, it is not an emergent preference. Kept in the printout for the
+      trail but it does NOT discriminate; the load-bearing seeking evidence is gate (a) + the yoked/permuted collapse.
+  (c) post-answer confidence on a newly-taught learnable concept RISES above the abstain floor  -- world-model updated. [LOAD-BEARING]
+  (d) (reported, non-load-bearing) the seek-policy converges onto LEARNABLE gaps -- late-ask fraction is a BUDGET
+      artifact (the ASK_BUDGET is spent in the first ~30 turns, so the "late" third is never entered).
 
-ANTI-CHEATS (load-bearing; all INVOKED + verdict printed):
-  * NOISY-CONCEPT (MANDATORY honesty guard): unlearnable cue -> g_after~=g_before -> ~0 learning-progress -> the
-    policy STOPS asking it (late noisy ask-rate << early) WHILE its g stays HIGH (never spuriously learned).
+ANTI-CHEATS (all INVOKED + verdict printed):
+  * NOISY-CONCEPT (MANDATORY honesty guard, LOAD-BEARING): unlearnable cue -> g_after~=g_before -> ~0 learning-progress
+    -> its expected-LP value falls below the veto floor (STOPS being worth asking) WHILE its g stays HIGH (never
+    spuriously learned) AND real spends fewer noisy asks than yoked. (CORRECTED 2026-07-23: the "late noisy ask-rate <<
+    early" temporal-decay sub-condition is a BUDGET artifact -- noisy_late_rate == 0 in every mode because the budget is
+    spent in the first ~30 turns -- so it is NON-load-bearing; the honesty evidence is the never-learned g + the
+    ELP-veto + the real-vs-yoked noisy-ask contrast.)
   * LESION curiosity modulator (wanting held at 0) -> no drive -> no asking -> no learning (confidence flat).
   * YOKED-random gap (modulator = random draw from g's marginal, uninformative of true novelty) -> uninformed
     targeting -> per-ask learning + confidence-rise collapse vs real.
@@ -283,13 +295,16 @@ def evaluate(seed):
     permuted = run(seed, "permuted")
 
     # GO gates (real run)
-    gate_a = real["corr_gap_mod"] >= 0.9
-    gate_b = real["ratio_b"] >= 2.0
-    gate_c = (real["conf_rise"] > 0.3) and (real["conf_after_mean"] > real["abstain_floor"] + 0.3)
-    # decisive noisy-honesty test: asking about noise STOPS (late << early) BECAUSE the value vetoed it (elp<=floor),
-    # while its g stays HIGH (never learned) -> curious AND honest, not noise-chasing / confabulating.
-    noisy_stops = ((real["noisy_late_rate"] <= 0.5 * real["noisy_early_rate"] + 1e-9)
-                   and real["noisy_g_final"] > 0.7 and real["noisy_vetoed"])
+    gate_a = real["corr_gap_mod"] >= 0.9                          # LOAD-BEARING
+    gate_b = real["ratio_b"] >= 2.0                               # NON-load-bearing (CORRECTED 2026-07-23): degenerate
+    # -- rate_known == 0 by construction (candidate filter hard-requires novelty) -> ratio ~= 8.3e7 always passes.
+    # Kept in the conjunction for byte-compat with the committed JSON, but it does NOT discriminate (always True).
+    gate_c = (real["conf_rise"] > 0.3) and (real["conf_after_mean"] > real["abstain_floor"] + 0.3)  # LOAD-BEARING
+    # noisy-honesty test: the value VETOES noise (elp<=floor) while its g stays HIGH (never learned) -> curious AND
+    # honest. NOTE (CORRECTED 2026-07-23): the `noisy_late_rate <= 0.5*noisy_early_rate` term is a BUDGET artifact
+    # (noisy_late_rate == 0 in every mode -> always True); the load-bearing sub-conditions are noisy_g_final + vetoed.
+    noisy_stops = ((real["noisy_late_rate"] <= 0.5 * real["noisy_early_rate"] + 1e-9)  # <- non-load-bearing (always True)
+                   and real["noisy_g_final"] > 0.7 and real["noisy_vetoed"])            # <- LOAD-BEARING
     # supporting anti-cheats
     lesion_collapses = lesion["total_asks"] <= 1 and lesion["conf_rise"] < 0.15
     # yoked destroys the LP reward -> the value can no longer tell what is WORTH persisting on, so it wastes the finite
@@ -320,8 +335,10 @@ def main():
 
     print("[DR-1 curiosity inversion] crave-don't-refuse: does the epistemic gap DRIVE seeking, does the reward =\n"
           "  LEARNING PROGRESS (not novelty), and does the policy STOP asking about NOISE (curious + honest)?\n"
-          "  GO gates: (a) corr(gap,modulator)>=0.9  (b) ask-rate unknown>=2x known  (c) post-answer confidence rises\n"
-          "  DECISIVE anti-cheat: NOISY-concept -> asking stops (late<<early) while its gap stays HIGH.\n", flush=True)
+          "  GO gates (load-bearing): (a) corr(gap,modulator)>=0.9  (c) post-answer confidence rises  [(b) ask-ratio is\n"
+          "  degenerate/non-load-bearing]. Honesty anti-cheat: NOISY-concept g stays HIGH (never learned) AND its value\n"
+          "  is VETOED (elp<=floor), real spends fewer noisy asks than yoked. [the late<<early temporal decay is a\n"
+          "  budget artifact -- non-load-bearing.]\n", flush=True)
 
     results = []
     for seed in a.seeds:
