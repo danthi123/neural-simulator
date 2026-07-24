@@ -12,9 +12,11 @@ On the owner's "I'm back", run the COLLECT commands below, then the PENDING full
   `i-0c7c01b8409ac6463` / `i-045aaf797ab8329b9` (`aws ec2 describe-instances`).
 
 ## What's running on the POOL (3 nodes × 12 cores, numpy, detached via setsid/nohup)
-Each node runs `pool_queue.sh` (in `derisk-pool/sim/`): WAVE1 = gap#4 deconf (2 seeds, ~2 min, FAST) → WAVE2 = gap#5
-**ramp-phase-advance readout** 6-seed (the slow spiking frontier de-risk, the window-filler). pool42 also runs the
-gap#5 completion probe (AXIS-B ff_basket).
+Each node runs `pool_queue.sh` (in `derisk-pool/sim/`): WAVE1 = gap#4 deconf (2 seeds, ~2 min, FAST, DONE+committed)
+→ WAVE2 = gap#5 **ramp-phase-advance readout** 6-seed (the slow spiking frontier de-risk, the window-filler). pool42
+also runs the gap#5 completion probe (AXIS-B ff_basket). **WAVE3** (`pool_wave3.sh`, launched separately, WAITS for the
+ramp to finish then runs): the gap#4 **data-efficiency CURVE** — deconf at fracs `1.0 0.5 0.35 0.2 0.1 0.05 0.03 0.02`
+→ `pool_deconf_curve_s<seed>.json` (fills the curve between the 0.05/0.10/1.0 points from the committed 6-seed finding).
 - pool40 → seeds 42,43 ; pool41 → 44,100 ; pool42 → 101,102 + completion-probe.
 - **Completion sentinel per node:** `derisk-pool/sim/research/findings/raw/QUEUE_DONE_<hostname>.txt`.
 - **Outputs on the nodes:** deconf `research/findings/raw/gap4/pool_deconf_s<seed>.json(.log)`; ramp
@@ -24,7 +26,7 @@ gap#5 completion probe (AXIS-B ff_basket).
 ```bash
 cd ~/Projects/sim
 for h in pool40 pool41 pool42; do
-  rsync -az "$h:derisk-pool/sim/research/findings/raw/gap4/pool_deconf_s*.json" research/findings/raw/gap4/ 2>/dev/null
+  rsync -az "$h:derisk-pool/sim/research/findings/raw/gap4/pool_deconf*.json" research/findings/raw/gap4/ 2>/dev/null   # catches deconf 6-seed AND the wave3 curve
   rsync -az "$h:derisk-pool/sim/research/findings/raw/gap5_r4/pool_ramp_s*.json" research/findings/raw/gap5_r4/ 2>/dev/null
   rsync -az "$h:derisk-pool/sim/research/findings/raw/gap5_r4/pool_completion_ff20.json" research/findings/raw/gap5_r4/ 2>/dev/null
   ssh $h "ls -la derisk-pool/sim/research/findings/raw/QUEUE_DONE_* 2>/dev/null; tail -2 derisk-pool/sim/research/findings/raw/queue.log"
@@ -42,12 +44,11 @@ Known state at dispatch: deconf **4/6 collected GO-with-nuance** (see below); ra
 - NOTE: if these are SPOT instances they can be reclaimed; `describe-instances` first.
 
 ## PENDING full-workflow tasks (do on return, after collecting)
-1. **gap#4 de-confounded credit — write the finding (the headline is NUANCED, not a blanket GO).** Pattern across
-   seeds 42/43/44/100 (+ collect 101,102): at **full data (frac=1.0) bdsp ≈ reservoir** (seed 44 frac1.0 GO=False:
-   bdsp 0.793 vs RES 0.795); at **scarce data (frac 0.10, 0.05) directed credit BEATS the frozen reservoir** every
-   seed (bdsp>res True), with ALL de-confound controls passing (sel>0.20, bdsp>shufE, shufY<chance, permB). ⇒ the
-   directed-credit advantage is **DATA-EFFICIENCY (low-data regime)**, robust to the input-selectivity +
-   credit-scramble + shuffled-target confounds. Honest, not overstated. Commit + push both remotes.
+1. **gap#4 de-confounded credit — DONE this session** (finding `2026-07-24-gap4-deconfounded-credit-is-DATA-EFFICIENCY-6seed.md`,
+   commit `21487ee6`): 6-seed, the advantage is DATA-EFFICIENCY (wash at full data, +0.24-0.28 at scarce data), all
+   de-confound controls collapse. **EXTENSION pending:** collect the WAVE3 `pool_deconf_curve_s*.json` (8 frac points)
+   and UPDATE that finding with the full data-efficiency curve (does the bdsp-over-reservoir gap grow monotonically as
+   data shrinks? where does it cross?).
 2. **gap#5 ramp-phase-advance readout — read the 6-seed verdict** (`pool_ramp_s*.json`). This is the NEW Buzsáki-ramp
    mechanism (see `2026-07-23-gap5-phase-precession-research-gate-Buzsaki-ramp-mechanism.md`): does the forward chain
    occupy monotonically-advancing theta phases (order 0<1<2), with shuffled-store / reverse-cue / basket-off
