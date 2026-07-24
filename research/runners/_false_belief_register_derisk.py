@@ -106,6 +106,12 @@ STORE_FS_N = WORKSPACE_FS_N       # shared inhibitory pool per store (Rung-2 mut
 HOLD_STEPS = 25              # inter-event hold: external current off, stores self-sustain via their loops
 W_WRITE = 26.0               # world_k -> belief_k / self_k topographic WITNESSING-GATED write weight (transmission-
                              # gated synaptic IGNITE of the new belief when the gate is open; zero current = HOLD)
+WRITE_DRIVE_STEPS = 50       # WITNESSED-event encoding-window length (was the imported Rung-1 DRIVE_STEPS=35). The
+                             # write-reliability fix (2026-07-24): a longer witnessing window makes the fresh-from-
+                             # quiescence ignition of the new location reliably reach the self-sustaining attractor
+                             # basin on heterogeneity-adverse seeds (43 world/belief; 100 world). ONLY the driven
+                             # (witnessed) write path uses this; the unwitnessed HOLD receives ZERO current, so
+                             # false_belief_acc is structurally immune. Paired with helper_pa 3000->5000.
 
 
 def _restore_slice(bridge, snap, indices):
@@ -216,7 +222,7 @@ def build_tom_bridge(seed: int = 42, attractor_weight: float = DEFAULT_ATTRACTOR
 
 # ── one trial: place@A (witnessed) -> move@B (witnessed_other) -> query the three stores' late-window rates ─────
 def _run_tom_trial(bridge, xp, idx, snap, start_loc, end_loc, witnessed_other,
-                   lesion_other=False, helper_pa=0.0):
+                   lesion_other=False, helper_pa=0.0, drive_steps=None):
     """Run one change-of-location trial. Event 1: object placed at start_loc, X witnesses it. Event 2: object moved
     to end_loc, witness_other = witnessed_other (0=false-belief -> belief HOLDS start_loc; 1=true-belief -> belief
     UPDATES to end_loc). `self` always witnesses (updates every event). Each WITNESSED write = a witness-gated CLEAR
@@ -225,9 +231,14 @@ def _run_tom_trial(bridge, xp, idx, snap, start_loc, end_loc, witnessed_other,
     OPEN at every event AND through the query (the witnessing gate = the theory that X may NOT have seen it is
     ablated) -> belief mirrors reality. `helper_pa` (optional, >0) adds a witness-gated direct ignite to the written
     member (robustness aid; 0 = the write's ignite is carried purely by the transmission-gated synaptic pathway).
+    `drive_steps` = the WITNESSED-event encoding-window length (per event); None -> module WRITE_DRIVE_STEPS. A longer
+    witnessing window + a stronger `helper_pa` make the fresh-from-quiescence ignition reliably cross into the
+    self-sustaining attractor basin (the 2026-07-24 write-reliability fix). Both affect ONLY the driven (witnessed)
+    write path; the unwitnessed HOLD path (which produces false_belief_acc) receives ZERO current regardless.
     Returns per-store late-window member rates."""
     world_dev, belief_dev, self_dev = idx["world_dev"], idx["belief_dev"], idx["self_dev"]
     belief_all, self_all = idx["belief_all"], idx["self_all"]
+    ds = int(drive_steps) if drive_steps is not None else int(WRITE_DRIVE_STEPS)
 
     bridge.cp_external_input_current[:] = 0.0
     _restore_state(bridge, snap)
@@ -250,8 +261,8 @@ def _run_tom_trial(bridge, xp, idx, snap, start_loc, end_loc, witnessed_other,
         bridge.set_transmission_gate("witness_self", 1.0)
         # IGNITE from the cleared/quiescent slice: reality (world@loc) + the WITNESSED belief@loc + self@loc, each a
         # fresh validated ignition. The transmission-gated synaptic world->belief/self carries the same witnessing
-        # signal in parallel (gate open iff witnessed).
-        for _ in range(DRIVE_STEPS):
+        # signal in parallel (gate open iff witnessed). `ds` (>= imported DRIVE_STEPS) is the encoding window.
+        for _ in range(ds):
             bridge.cp_external_input_current[:] = 0.0
             bridge.cp_external_input_current[world_dev[loc]] = xp.float32(IGNITE_PA)
             bridge.cp_external_input_current[self_dev[loc]] = xp.float32(write_pa)
@@ -316,7 +327,7 @@ def make_trials(seed, n_trials):
 
 
 # ── evaluate one seed (intact GO + all anti-cheats) ────────────────────────────────────────────────────────────
-def evaluate_seed(seed, n_trials, thresholds, helper_pa=0.0, w_write=W_WRITE, verbose=False):
+def evaluate_seed(seed, n_trials, thresholds, helper_pa=0.0, w_write=W_WRITE, drive_steps=None, verbose=False):
     trials = make_trials(seed, n_trials)
     gt_belief = np.array([t["start"] if t["witnessed_other"] == 0 else t["end"] for t in trials], dtype=int)
     reality = np.array([t["end"] for t in trials], dtype=int)
@@ -329,7 +340,7 @@ def evaluate_seed(seed, n_trials, thresholds, helper_pa=0.0, w_write=W_WRITE, ve
         ps = np.zeros(len(trials), dtype=int)   # predicted-self
         for i, t in enumerate(trials):
             r = _run_tom_trial(bridge, xp, idx, snap, t["start"], t["end"], int(witnessed_flags[i]),
-                               lesion_other=lesion_other, helper_pa=helper_pa)
+                               lesion_other=lesion_other, helper_pa=helper_pa, drive_steps=drive_steps)
             pb[i] = _argmax_loc(r["belief"]); pr[i] = _argmax_loc(r["world"]); ps[i] = _argmax_loc(r["self"])
         return pb, pr, ps
 
@@ -442,9 +453,16 @@ def main():
     ap.add_argument("--seeds", type=int, nargs="+", default=None, help="multi-seed list (overrides --seed)")
     ap.add_argument("--n-trials", type=int, default=48, help="change-of-location trials per block")
     ap.add_argument("--smoke", action="store_true", help="tiny 1-seed smoke (fewer trials)")
-    ap.add_argument("--helper-pa", type=float, default=3000.0,
+    ap.add_argument("--helper-pa", type=float, default=5000.0,
                     help="witness-gated direct ignite current for the written belief/self member (from the "
-                         "restored/quiescent slot); <=0 falls back to IGNITE_PA. World@loc always uses IGNITE_PA.")
+                         "restored/quiescent slot); <=0 falls back to IGNITE_PA. World@loc always uses IGNITE_PA. "
+                         "(2026-07-24 fix: 3000->5000 for reliable belief/self ignition; use 3000 to reproduce the "
+                         "prior PARTIAL 4/6.)")
+    ap.add_argument("--drive-steps", type=int, default=WRITE_DRIVE_STEPS,
+                    help="WITNESSED-event encoding-window length per event (default 50; was 35). A longer window "
+                         "reliably ignites the WORLD store's new location on heterogeneity-adverse seeds. Use 35 to "
+                         "reproduce the prior PARTIAL 4/6. Only the driven write path uses it; unwitnessed HOLD is "
+                         "unaffected, so false_belief_acc is structurally immune.")
     ap.add_argument("--w-write", type=float, default=W_WRITE, help="world->belief/self witnessing-gated write weight")
     ap.add_argument("--backend", type=str, default="numpy", choices=["numpy", "cupy", "auto"])
     ap.add_argument("--json", type=str, default="research/findings/raw/_false_belief_smoke.json")
@@ -473,7 +491,7 @@ def main():
     per_seed = []
     for s in seeds:
         per_seed.append(evaluate_seed(s, n_trials, DEFAULT_THRESHOLDS, helper_pa=args.helper_pa,
-                                      w_write=args.w_write, verbose=True))
+                                      w_write=args.w_write, drive_steps=args.drive_steps, verbose=True))
 
     n_go = sum(1 for r in per_seed if r["go"])
     all_go = bool(n_go == len(per_seed))
@@ -514,7 +532,8 @@ def main():
             "write_ignite_pa": (float(args.helper_pa) if args.helper_pa > 0.0 else float(IGNITE_PA)),
             "world_ignite_pa": float(IGNITE_PA),
             "WS_TO_FS_WEIGHT": float(WS_TO_FS_WEIGHT), "FS_TO_WS_WEIGHT": float(FS_TO_WS_WEIGHT),
-            "DRIVE_STEPS": int(DRIVE_STEPS), "HOLD_STEPS": int(HOLD_STEPS), "FREE_STEPS": int(FREE_STEPS),
+            "DRIVE_STEPS": int(args.drive_steps), "rung1_DRIVE_STEPS": int(DRIVE_STEPS),
+            "HOLD_STEPS": int(HOLD_STEPS), "FREE_STEPS": int(FREE_STEPS),
             "SETTLE_STEPS": int(SETTLE_STEPS), "nmda_ratio": 0.5, "dt_ms": 1.0,
             "read_window": "late third of FREE_STEPS", "chance": 1.0 / K_LOC,
         },

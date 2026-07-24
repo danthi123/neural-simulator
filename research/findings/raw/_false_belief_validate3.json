@@ -1,0 +1,172 @@
+{
+  "runner": "_false_belief_register_derisk",
+  "faculty": "W3 belief attribution / false belief (Stage-3 flagship social build; ToM ladder rung 1)",
+  "theory": "Fleming-Daw SELF=OTHER-INFERENCE meta-schema + Wimmer-Perner/Sally-Anne false belief; TPJ/mPFC mentalizing (FUNCTIONAL correlate only)",
+  "mechanism": "self-schema meta-schema class turned OUTWARD: agent-keyed belief store (GNW single-content attractor) with sim/'s own transmission_gate = witnessing-gated writes",
+  "seeds": [
+    42,
+    43,
+    100
+  ],
+  "n_trials": 48,
+  "backend": "numpy",
+  "knobs": {
+    "K_LOC": 4,
+    "STORE_ASSEMBLY": 80,
+    "STORE_FS_N": 50,
+    "attractor_weight": 30.0,
+    "W_WRITE": 26.0,
+    "write_ignite_pa": 5000.0,
+    "world_ignite_pa": 2500.0,
+    "WS_TO_FS_WEIGHT": 6.0,
+    "FS_TO_WS_WEIGHT": 16.0,
+    "DRIVE_STEPS": 50,
+    "rung1_DRIVE_STEPS": 35,
+    "HOLD_STEPS": 25,
+    "FREE_STEPS": 100,
+    "SETTLE_STEPS": 40,
+    "nmda_ratio": 0.5,
+    "dt_ms": 1.0,
+    "read_window": "late third of FREE_STEPS",
+    "chance": 0.25
+  },
+  "w_write": 26.0,
+  "helper_pa": 5000.0,
+  "thresholds": {
+    "false_belief_acc": 0.85,
+    "true_belief_acc": 0.85,
+    "reality_baseline_max": 0.2,
+    "chance_loc": 0.45,
+    "scramble_chance": 0.7
+  },
+  "verdict": "GO",
+  "n_go": 3,
+  "n_seeds": 3,
+  "aggregate": {
+    "mean_false_belief_acc": 1.0,
+    "mean_true_belief_acc": 1.0,
+    "mean_reality_baseline_false_acc": 0.013888888888888888,
+    "mean_lesion_false_belief_acc": 0.0,
+    "mean_scramble_belief_acc": 0.47222222222222215,
+    "all_lesion_collapse": true,
+    "all_scramble_collapse": true,
+    "all_dissociation_ok": true
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_trials": 48,
+      "n_false_trials": 24,
+      "n_true_trials": 24,
+      "intact": {
+        "false_belief_acc": 1.0,
+        "true_belief_acc": 1.0,
+        "overall_belief_acc": 1.0,
+        "reality_baseline_false_acc": 0.0,
+        "reality_baseline_overall_acc": 0.5,
+        "true_belief_agree_belief_vs_reality": 1.0
+      },
+      "self_other_dissociation": {
+        "self_tracks_reality_on_false_trials": 1.0,
+        "belief_is_false_on_false_trials": 1.0,
+        "dissociation_ok": true
+      },
+      "other_lesion": {
+        "false_belief_acc": 0.0,
+        "predicts_reality_on_false_trials": 1.0,
+        "collapsed": true
+      },
+      "scramble_witnessing": {
+        "belief_acc_vs_true": 0.4583333333333333,
+        "collapsed": true
+      },
+      "go_components": {
+        "false_belief": true,
+        "reality_baseline_fails": true,
+        "true_belief_updates": true,
+        "true_belief_agree": true,
+        "other_lesion_collapses": true,
+        "scramble_collapses": true,
+        "self_other_dissociation": true
+      },
+      "go": true
+    },
+    {
+      "seed": 43,
+      "n_trials": 48,
+      "n_false_trials": 24,
+      "n_true_trials": 24,
+      "intact": {
+        "false_belief_acc": 1.0,
+        "true_belief_acc": 1.0,
+        "overall_belief_acc": 1.0,
+        "reality_baseline_false_acc": 0.0,
+        "reality_baseline_overall_acc": 0.5,
+        "true_belief_agree_belief_vs_reality": 1.0
+      },
+      "self_other_dissociation": {
+        "self_tracks_reality_on_false_trials": 1.0,
+        "belief_is_false_on_false_trials": 1.0,
+        "dissociation_ok": true
+      },
+      "other_lesion": {
+        "false_belief_acc": 0.0,
+        "predicts_reality_on_false_trials": 1.0,
+        "collapsed": true
+      },
+      "scramble_witnessing": {
+        "belief_acc_vs_true": 0.4583333333333333,
+        "collapsed": true
+      },
+      "go_components": {
+        "false_belief": true,
+        "reality_baseline_fails": true,
+        "true_belief_updates": true,
+        "true_belief_agree": true,
+        "other_lesion_collapses": true,
+        "scramble_collapses": true,
+        "self_other_dissociation": true
+      },
+      "go": true
+    },
+    {
+      "seed": 100,
+      "n_trials": 48,
+      "n_false_trials": 24,
+      "n_true_trials": 24,
+      "intact": {
+        "false_belief_acc": 1.0,
+        "true_belief_acc": 1.0,
+        "overall_belief_acc": 1.0,
+        "reality_baseline_false_acc": 0.041666666666666664,
+        "reality_baseline_overall_acc": 0.5208333333333334,
+        "true_belief_agree_belief_vs_reality": 1.0
+      },
+      "self_other_dissociation": {
+        "self_tracks_reality_on_false_trials": 1.0,
+        "belief_is_false_on_false_trials": 1.0,
+        "dissociation_ok": true
+      },
+      "other_lesion": {
+        "false_belief_acc": 0.0,
+        "predicts_reality_on_false_trials": 1.0,
+        "collapsed": true
+      },
+      "scramble_witnessing": {
+        "belief_acc_vs_true": 0.5,
+        "collapsed": true
+      },
+      "go_components": {
+        "false_belief": true,
+        "reality_baseline_fails": true,
+        "true_belief_updates": true,
+        "true_belief_agree": true,
+        "other_lesion_collapses": true,
+        "scramble_collapses": true,
+        "self_other_dissociation": true
+      },
+      "go": true
+    }
+  ],
+  "honest_scope": "A functional mentalizing correlate: an agent-keyed belief store (the self-schema meta-schema class turned outward) predicts another agent's action FROM the agent's witnessing-gated belief, dissociable from reality (reality-baseline fails) and from the self's belief; collapses under other-store lesion / scrambled witnessing. NOT a claim of access to another mind. Change-of-location only; unexpected-contents is the same mechanism (a semantic relabel) and a follow-on."
+}
