@@ -1,0 +1,61 @@
+{
+  "chosen_weight": 2.0,
+  "sweep": [
+    {
+      "weight": 2.0,
+      "ret_on": 0.0,
+      "ret_off": 0.0,
+      "peak_on": 0.028,
+      "ok": false
+    },
+    {
+      "weight": 4.0,
+      "ret_on": 0.0,
+      "ret_off": 0.0,
+      "peak_on": 0.0295,
+      "ok": false
+    },
+    {
+      "weight": 6.0,
+      "ret_on": 0.0,
+      "ret_off": 0.0,
+      "peak_on": 0.0305,
+      "ok": false
+    },
+    {
+      "weight": 8.0,
+      "ret_on": 0.0,
+      "ret_off": 0.0,
+      "peak_on": 0.0315,
+      "ok": false
+    },
+    {
+      "weight": 12.0,
+      "ret_on": 0.0,
+      "ret_off": 0.0,
+      "peak_on": 0.036,
+      "ok": false
+    },
+    {
+      "weight": 18.0,
+      "ret_on": 0.0,
+      "ret_off": 0.0,
+      "peak_on": 0.04016666666666667,
+      "ok": false
+    },
+    {
+      "weight": 26.0,
+      "ret_on": 0.0,
+      "ret_off": 0.0,
+      "peak_on": 0.047,
+      "ok": false
+    }
+  ],
+  "persist_ok": false,
+  "recall_delta_intact": 0.024999999999999998,
+  "recall_delta_lesion": 0.0,
+  "recall_ok": true,
+  "smoke_go": false,
+  "value_plausibility_corr": -0.015272328388347672,
+  "dr2_value_plausibility_corr": -0.2668095488060327
+}
