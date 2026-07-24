@@ -206,6 +206,19 @@ def _prepare_sequence(seed, cfg, do_encode=True):
         win = int(cfg["seq_win_steps"]); chain_reset = int(cfg["chain_reset_steps"])
         assy_dev = [cp.asarray(a, dtype=cp.int64) for a in assemblies]
 
+        # gap#5 CHAIN-WRITTEN BAND (2026-07-24): FREEZE the between-assembly links during the WITHIN phase so the within
+        # phase builds ONLY the within-attractors and writes NO cross-links -> the CHAIN (hebb_sym, the Ecker symmetric
+        # rule) becomes the SOLE between-assembly writer. Then the band is genuinely CHAIN-WRITTEN + load-bearing (the
+        # hard-reset anti-cheat MUST collapse it). Reuses the freeze_between_refresh machinery (cp_plasticity_rate_gain
+        # gates STDP/BTSP/BDSP/hebbian per-synapse). UNFROZEN just before the chain sweeps below. Default OFF = byte-identical.
+        _fbw_saved = None; _fbw_dev = None
+        if cfg.get("freeze_between_within") and between_flat.size > 0:
+            if getattr(bridge, "cp_plasticity_rate_gain", None) is None:
+                bridge.cp_plasticity_rate_gain = cp.ones(int(bridge.cp_connections.nnz), dtype=cp.float32)
+            _fbw_dev = cp.asarray(between_flat)
+            _fbw_saved = bridge.cp_plasticity_rate_gain[_fbw_dev].copy()
+            bridge.cp_plasticity_rate_gain[_fbw_dev] = 0.0
+
         def _reset(nsteps):
             bridge.cp_external_input_current[:] = 0.0
             bridge.cp_bdsp_apical_drive[:] = 0.0
@@ -346,6 +359,10 @@ def _prepare_sequence(seed, cfg, do_encode=True):
         # 2022 near-diagonal band -- instead of BTSP's flat 1s-eligibility FAN-OUT (skip-dominant) or STDP's empty-Δt-window
         # nothing (the hard reset was the bug). The hard-reset path (chain_overlap=False) is the anti-cheat control.
         _overlap = bool(cfg.get("chain_overlap"))
+        # gap#5 CHAIN-WRITTEN BAND: UNFREEZE the between-links now so the CHAIN writes the band (frozen through the whole
+        # within phase + its boundary silences above). From here the chain rule (hebb_sym) is the sole between-writer.
+        if _fbw_saved is not None:
+            bridge.cp_plasticity_rate_gain[_fbw_dev] = _fbw_saved
         if chain_edges is None:
             order_fwd = list(range(n_mem))
             for _ev in range(int(cfg["chain_fwd"])):

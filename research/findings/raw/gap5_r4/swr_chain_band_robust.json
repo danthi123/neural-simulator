@@ -1,0 +1,142 @@
+{
+  "probe": "chain_band_robust_6seed",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_adj_gt_skip": 4,
+  "n_sym_monotone": 3,
+  "n_real_gt_shuffnull": 4,
+  "per_seed": [
+    {
+      "seed": 42,
+      "sd": {
+        "1": 13.78,
+        "2": 10.1,
+        "3": 2.22,
+        "4": 0.6
+      },
+      "n_syn": {
+        "1": 364,
+        "2": 258,
+        "3": 196,
+        "4": 93
+      },
+      "real_sd1": 13.78,
+      "null_mean": 8.77,
+      "null_p95": 10.14,
+      "sym_mono": true,
+      "adj_gt_skip": true,
+      "real_gt_null": true
+    },
+    {
+      "seed": 43,
+      "sd": {
+        "1": 10.04,
+        "2": 5.36,
+        "3": 4.81,
+        "4": 0.51
+      },
+      "n_syn": {
+        "1": 329,
+        "2": 289,
+        "3": 167,
+        "4": 104
+      },
+      "real_sd1": 10.04,
+      "null_mean": 6.41,
+      "null_p95": 8.03,
+      "sym_mono": true,
+      "adj_gt_skip": true,
+      "real_gt_null": true
+    },
+    {
+      "seed": 44,
+      "sd": {
+        "1": 11.25,
+        "2": 9.45,
+        "3": 8.42,
+        "4": 0.52
+      },
+      "n_syn": {
+        "1": 371,
+        "2": 255,
+        "3": 185,
+        "4": 94
+      },
+      "real_sd1": 11.25,
+      "null_mean": 8.69,
+      "null_p95": 9.82,
+      "sym_mono": true,
+      "adj_gt_skip": true,
+      "real_gt_null": true
+    },
+    {
+      "seed": 100,
+      "sd": {
+        "1": 10.54,
+        "2": 10.56,
+        "3": 8.73,
+        "4": 0.59
+      },
+      "n_syn": {
+        "1": 370,
+        "2": 251,
+        "3": 168,
+        "4": 92
+      },
+      "real_sd1": 10.54,
+      "null_mean": 8.9,
+      "null_p95": 10.29,
+      "sym_mono": false,
+      "adj_gt_skip": false,
+      "real_gt_null": true
+    },
+    {
+      "seed": 101,
+      "sd": {
+        "1": 6.34,
+        "2": 5.76,
+        "3": 7.43,
+        "4": 0.5
+      },
+      "n_syn": {
+        "1": 355,
+        "2": 272,
+        "3": 180,
+        "4": 104
+      },
+      "real_sd1": 6.34,
+      "null_mean": 5.61,
+      "null_p95": 6.83,
+      "sym_mono": false,
+      "adj_gt_skip": true,
+      "real_gt_null": false
+    },
+    {
+      "seed": 102,
+      "sd": {
+        "1": 6.72,
+        "2": 8.05,
+        "3": 5.93,
+        "4": 1.67
+      },
+      "n_syn": {
+        "1": 411,
+        "2": 257,
+        "3": 173,
+        "4": 94
+      },
+      "real_sd1": 6.72,
+      "null_mean": 6.51,
+      "null_p95": 7.62,
+      "sym_mono": false,
+      "adj_gt_skip": false,
+      "real_gt_null": false
+    }
+  ]
+}

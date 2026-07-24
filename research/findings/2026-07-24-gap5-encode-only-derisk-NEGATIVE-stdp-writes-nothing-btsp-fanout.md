@@ -91,23 +91,73 @@ once the clamp bugs are fixed, where BTSP gives the fan-out. **HONEST SCOPE / tw
   research gate explicitly relaxes ("biology replays the same store forward AND reverse; require reverse≈chance only under a
   deliberately asymmetric encode"). The **forward-DOMINANT** variant (Ecker's asymmetric regime, `reverse≈baseline`) is a
   tuning follow-on that must overcome the symmetric within-store.
-- The band's ORIGIN is the **within-phase** BTSP-eligibility-decay + bistable-plateau store, NOT the chain rule: `none`
-  and `stdp` give ~the same band as `hebb_sym`, and the **hard-reset anti-cheat does NOT collapse it** (hebb_sym +
-  hard-reset = BAND=True, identical to overlap) — so the research gate's "overlap-is-load-bearing" anti-cheat FAILS here
-  because the overlap isn't what makes the band; the within-phase store is. The genuinely-chain-written Ecker band (the
-  faithful port target) would require FREEZING the between-links during the within phase so the `hebb_sym` symmetric chain
-  is the SOLE between-writer (the `freeze_between_refresh` machinery already exists; this is the immediate next tuning
-  step). Baseline is also moderately high for the same reason. Sharpness is encode-parameter-dependent (sharp at
-  n_mem≤4/within≤6; saturates at n_mem=6/within=10).
+- **[RESOLVED in §5]** In this §4 form the band's ORIGIN was the **within-phase** store, not the chain: `none`/`stdp` gave
+  ~the same band as `hebb_sym`, and the hard-reset anti-cheat did NOT collapse it — so the overlap wasn't load-bearing. §5
+  closes this with `freeze_between_within` (the within phase writes NO between-links → the `hebb_sym` chain is the sole
+  between-writer → the band is chain-written and the hard-reset now collapses it).
 
-The **moving-bump replay GO** (GPU, SWR-envelope + adaptation + Bayesian population decode + the structure-shuffle/reverse
-anti-cheats) is the next step, held until the GPU frees.
+## 5. CHAIN-WRITTEN band — load-bearing MECHANISM GO 6/6, band SHARPNESS seed-fragile ~4/6 (caveat (b) closed; sharpness deferred to the replay-decode arbiter, 2026-07-24)
+
+Caveat (b) is now closed. A new `freeze_between_within` (default OFF, reuses the `freeze_between_refresh` gain-gate
+machinery) **freezes the between-assembly links (`cp_plasticity_rate_gain[between_flat]=0`) through the WHOLE within phase**
+(BTSP respects the gain gate, verified `bridge.py:8176`), then **unfreezes them right before the chain sweeps** — so the
+within phase builds ONLY the attractors and the `hebb_sym` symmetric chain is the **SOLE between-assembly writer**. Tuned
+config (n_mem=5, `hebbian_coactivity_decay=0.95`, `hebbian_coactivity_thresh=0.15`, `hebb_sym_lr=0.03`, chain_fwd=15,
+overlap; `scratchpad/swr_chain_written_band.py` → `raw/gap5_r4/swr_chain_written_band.json`, seed 42):
+
+| test | within | base | FWD d1 / d2 / d3 | REV d1 / d2 | verdict |
+|---|---|---|---|---|---|
+| **GO** hebb_sym + overlap + freeze | 234 | 0.5 | **12.8 / 7.2 / 2.4** | 14.8 / 13.7 | **BAND=True** (mono, adj_dom 0.86, above base) |
+| **anti-cheat** hard-reset (no overlap) | 233 | 0.5 | **0.5 / 0.5 / 0.5** | 0.5 / 0.5 | **BAND=False → COLLAPSES** ✓ |
+| **anti-cheat** shuffle between-weights (911 edges) | 234 | 0.5 | 10.5 / 6.9 / 9.7 | 6.1 / 12.8 | mono=False → **BAND=False** ✓ |
+| ref: none + freeze | 233 | 0.5 | 0.5 / 0.5 / 0.5 | 0.5 / 0.5 | no band (confirms freeze blocks within-phase cross-writes) |
+
+On seed 42 the band is CHAIN-WRITTEN and LOAD-BEARING — a monotone-decaying, adjacent-dominant near-diagonal band written
+by the Ecker symmetric rule, above the un-potentiated init baseline (0.5), that (1) forms only with the chain overlap,
+(2) COLLAPSES under the hard-reset anti-cheat, (3) is destroyed by the structure-shuffle. NO `sim/` edit (two additive
+default-OFF runner flags: `chain_rule="hebb_sym"`, `freeze_between_within`; btsp default byte-identical).
+
+### 6-seed confirmation (seeds 42 43 44 100 101 102) — the LOAD-BEARING mechanism is robust; the SHARPNESS is seed-fragile (NOT a clean GO)
+
+`scratchpad/swr_chain_band_6seed.py` + robust re-analysis `scratchpad/swr_chain_band_robust.py`
+(→ `raw/gap5_r4/swr_chain_band_{6seed,robust}.json`). The strict per-seed pass/fail (single-permutation shuffle + forward-only
+monotone) is too NOISY for a sparse band (distant distance-bins hold few synapses; one shuffle permutation is chance-sensitive)
+— it gave a misleading 1/6. The **robust symmetric metric** (average fwd+rev per distance = 2× synapses/bin) + a proper
+**30-permutation shuffle-NULL** (Ecker's actual "structure not statistics" control) gives the true picture:
+
+| metric | result | seeds |
+|---|---|---|
+| **hard-reset anti-cheat COLLAPSES** (the load-bearing test) | **6/6** ✅ | all |
+| real adjacent-strength > shuffle-null p95 (near-diagonal clustering is real, not chance) | **4/6** | 42,43,44,100 |
+| symmetric-monotone `sd1 > sd2 > sd3` | 3/6 | 42,43,44 |
+| adjacent > skip1 (`sd1 > sd2`) | 4/6 | 42,43,44,101 |
+| far-tail `sd4` at baseline (freeze works) | 6/6 (0.5–1.7) | all |
+
+**⇒ HONEST VERDICT: NOT a clean ≥5/6 GO — this is a genuine ~4/6.** What IS robust (6/6): the band is **chain-written** (the
+within phase writes nothing between; `freeze_between_within` verified 6/6 — far pairs stay at init 0.5) and **load-bearing**
+(the hard-reset anti-cheat collapses it on every seed → the chain overlap, not the within phase, makes the band). What is
+**seed-fragile**: the band's SHARPNESS — on 4/6 seeds (42/43/44 cleanly, 100 marginally) the adjacent link exceeds the
+shuffle-null, but on seeds 101/102 the adjacent link is only marginal (`sd1 ≈` null p95, and `sd1 ≈ sd2`), so the
+near-diagonal clustering is weak. **Root cause of the fragility:** the co-activity window (decay 0.95, 16 ms sequential
+windows) makes adjacent (16 ms) only *marginally* more co-active than skip1 (32 ms); a sharper decay would distinguish them
+but SATURATES the weights (measured in the decay sweep — the two knobs are coupled: `1−decay` also scales the trace
+magnitude). This is a real tuning tension, not tuned away. Firming it up would need larger temporal separation (longer
+`seq_win`) and/or larger assemblies (more synapses per distance bin to cut variance) — OR let the **GPU replay-decode** be
+the arbiter (Ecker's real test is the *decoded population trajectory* collapsing under the shuffle-null, which integrates
+over the whole population and is far less sensitive to per-bin encode noise than these weight-bin means).
+
+The **moving-bump replay GO** (GPU, SWR-envelope + adaptation + Bayesian population decode + corrected anti-cheats:
+structure-shuffle-collapse, reverse-store-reverses, interior-seed-invariance, adapt-lesion) is the next and final step,
+held until the GPU frees.
 
 ## Files
 - Banked negative: `research/findings/raw/gap5_r4/swr_band_encode.json`
 - Diagnosis: `raw/gap5_r4/swr_stdp_diag_fast.json` (checkpoints), `scratchpad/swr_stdp_diag_fast.py`,
   `scratchpad/swr_collapse_trace2.py` (the `none`-control drive-intrinsic proof)
-- Fix + port: `research/runners/_gap5_sequence_replay_derisk.py` (`chain_rule="hebb_sym"` + BDSP-clip widen + STDP-disable,
-  all default-OFF), `scratchpad/swr_ecker_band_port.py` → `raw/gap5_r4/swr_ecker_band_port.json`
+- Fix + port: `research/runners/_gap5_sequence_replay_derisk.py` (`chain_rule="hebb_sym"` + BDSP-clip widen + STDP-disable
+  + `freeze_between_within`, all default-OFF), `scratchpad/swr_ecker_band_port.py` → `raw/gap5_r4/swr_ecker_band_port.json`
+- Chain-written load-bearing band (§5): `scratchpad/swr_chain_written_band.py` → `raw/gap5_r4/swr_chain_written_band.json`;
+  6-seed: `scratchpad/swr_chain_band_6seed.py` + `scratchpad/swr_chain_band_robust.py` →
+  `raw/gap5_r4/swr_chain_band_{6seed,robust}.json`
 - Root-cause code: `sim/kernels.py::fused_bdsp_update` (`cp.clip(w_new, bdsp_w_min=-5, bdsp_w_max=5)`),
   `sim/config.py:577` (`enable_stdp: bool = True`)

@@ -1,0 +1,59 @@
+{
+  "ref_none_freeze": {
+    "within": 233.4,
+    "base": 0.5,
+    "f1": 0.5,
+    "r1": 0.5,
+    "f2": 0.5,
+    "r2": 0.5,
+    "f3": 0.5,
+    "r3": 0.5,
+    "mono_fwd": false,
+    "adj_dom": 1.0,
+    "above_base": false,
+    "BAND": false
+  },
+  "GO_hebbsym_overlap": {
+    "within": 234.3,
+    "base": 0.5,
+    "f1": 12.8,
+    "r1": 14.8,
+    "f2": 7.2,
+    "r2": 13.7,
+    "f3": 2.4,
+    "r3": 2.1,
+    "mono_fwd": true,
+    "adj_dom": 0.86,
+    "above_base": true,
+    "BAND": true
+  },
+  "ANTICHEAT_hardreset": {
+    "within": 233.4,
+    "base": 0.5,
+    "f1": 0.5,
+    "r1": 0.5,
+    "f2": 0.5,
+    "r2": 0.5,
+    "f3": 0.5,
+    "r3": 0.5,
+    "mono_fwd": false,
+    "adj_dom": 1.0,
+    "above_base": false,
+    "BAND": false
+  },
+  "ANTICHEAT_shuffle": {
+    "within": 234.3,
+    "base": 0.5,
+    "f1": 10.5,
+    "r1": 6.1,
+    "f2": 6.9,
+    "r2": 12.8,
+    "f3": 9.7,
+    "r3": 5.7,
+    "mono_fwd": false,
+    "adj_dom": 1.52,
+    "above_base": true,
+    "BAND": false,
+    "n_shuffled": 911
+  }
+}
