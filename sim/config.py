@@ -353,6 +353,9 @@ class CoreSimConfig:
     # (1-Etilde) gate (byte-identical). >0 => depress only inputs with eligibility BELOW theta, protecting
     # strongly co-active pairs -- lowers the pedestal without lowering the peak. See fused_btsp_hetero_update.
     btsp_hetero_theta: float = 0.0
+    btsp_elig_exponent: float = 1.0                # supralinear presynaptic-eligibility exponent (Ca2+/CaMKII
+                                                   # cooperativity). >1.0 widens the strong-core-vs-weak-halo eligibility
+                                                   # gap so a rate-threshold separates them; 1.0 (default) = byte-identical.
     # Milstein 2021 split-threshold ADJACENT-BAND depression: depress ONLY synapses whose
     # eligibility falls BETWEEN these thresholds (the lags adjacent to the peak), instead of
     # the far field. Both 0.0 => band gate OFF => byte-identical to the pre-2026-07-20 rule

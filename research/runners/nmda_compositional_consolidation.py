@@ -326,6 +326,7 @@ def build_substrate(seed, args):
             # the distinct core the flood otherwise dilutes. lam_dep=0 -> byte-identical to pure-potentiation BTSP.
             cfg.btsp_hetero_dep = float(getattr(args, "comp_btsp_hetero_dep", 0.0))
             cfg.btsp_hetero_theta = float(getattr(args, "comp_btsp_hetero_theta", 0.0))
+            cfg.btsp_elig_exponent = float(getattr(args, "comp_btsp_elig_exp", 1.0))   # supralinear eligibility (widen core-halo gap)
 
     bridge = SimulationBridge(
         core_config=cfg, viz_config=VisualizationConfig(),

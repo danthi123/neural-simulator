@@ -145,6 +145,18 @@ reusing shipped kernels) + tested on the direct-weight gate:
   pattern-separated write, since DG's *committed* sparse code — not its flooded re-stim — is separated). The stack
   infrastructure (commit_top_k · FF-reinstatement · heterosynaptic write) is shipped + reusable for the next method.
 
+## Family-A SUPRALINEAR eligibility (first sim edit, additive/default-off) — PARTIAL, doesn't close the gate (2026-07-25)
+Root of the marginal element-3: the BTSP presynaptic eligibility is a LINEAR low-pass of firing (`elig = τ·elig +
+(1−τ)·fired`, `bridge.py:8043`), so the strong-core-vs-weak-halo eligibility gap a threshold must cut is small. Built a
+SUPRALINEAR eligibility exponent (`cfg.btsp_elig_exponent`, `bridge.py:8055` `etilde**p`; additive, default 1.0 →
+byte-identical; Ca²⁺/CaMKII cooperativity) to widen it. Result (seed-42, dep=0.8): exp=2/theta=0.15 raises own/other to
+**1.18–1.21 for 2/3 facts** (fact 1 regresses to 0.79); exp=3 or theta=0.25 flat. ⇒ a real but PARTIAL + inconsistent
+lever — still far below the 2.5 gate. **Confirms the write-side levers (rate-threshold + supralinear eligibility) cannot
+cleanly separate the core from the halo on point neurons** — the halo fires enough to overlap the core's eligibility even
+supralinearly. A focused research gate (workflow `wf_2e5d85a3-9ce`) is assessing whether ANY reuse/small-edit lever
+reaches the gate or the dendritic per-branch build is genuinely required. Infra shipped: `btsp_elig_exponent` +
+`_consol_direct_weight_probe --btsp-elig-exp`.
+
 ## Recommended first de-risk (GPU-when-free / Tuesday)
 Build the **Rank-2 CA1-separation de-risk**: add a feedforward-inhibitory kWTA pool to CA1 (or route slot-drive from DG),
 re-run `_consol_direct_weight_probe` → confirm Jaccard < 0.2 / active <5% AND own/other rises + own-is-max. Then chain the

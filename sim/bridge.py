@@ -8053,6 +8053,13 @@ class SimulationBridge:
                 _is_post_bt = cp.maximum(self.cp_v_apical - _vhold_bt, cp.float32(0.0))    # plateau above v_hold = the instructive signal
                 coo_bt = self._get_cached_coo()
                 etilde_bt = self.cp_btsp_pre_elig[coo_bt.row]
+                # SUPRALINEAR eligibility (Ca2+/CaMKII cooperativity; 2026-07-25 consolidation Rank-2): raising the
+                # presynaptic eligibility to an exponent WIDENS the strong-core-vs-weak-halo gap a linear low-pass leaves
+                # too small (core 0.8^p >> halo 0.2^p), so a rate-threshold can separate them. ADDITIVE / default-off:
+                # btsp_elig_exponent<=1.0 (default 1.0) => byte-identical.
+                _elig_exp = float(getattr(cfg, "btsp_elig_exponent", 1.0))
+                if _elig_exp > 1.0:
+                    etilde_bt = etilde_bt ** cp.float32(_elig_exp)
                 is_bt = _is_post_bt[coo_bt.col]
                 # gap#4<->gap#5 unification: with heterosynaptic competition (btsp_hetero_dep>0) a plateauing cell also
                 # DEPRESSES its NON-coincident inputs, so the active set must include synapses whose post plateaus even
