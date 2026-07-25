@@ -45,11 +45,28 @@ provide the LOCAL, activity-specific, correctly-timed inhibition a traveling bum
 recurrent spiking PVBC** (PC→PVBC→PC with Ecker's connectivity + timing). (Also: assembly-4 never fires in any config —
 the bump decays by assembly-3, consistent with the missing E/I balance a real PVBC loop provides.)
 
-## Verdict + next (per THE LAW)
-- **The gap#5 Ecker-regime replay boundary is localized to PVBC feedback inhibition.** Ignition (cue), propagation (band
-  strength), and hand-off seeding (transient cue) are DEMONSTRATED on the real spiking AdEx substrate. The full
-  Ecker CA3 model-build is NOT required — the build reduces to **adding a REAL spiking PVBC feedback pool** (the host/
-  global shortcut is refuted, so the model-fork investment IS warranted — do NOT waste effort on the phenomenological path).
+## The REAL spiking basket (E%-max) adds activity but does NOT discretize → the residual is theta/gamma TIMING
+The existing de Almeida-Idiart-Lisman E%-max ff-basket (`_build`'s `ca3_ff_inhib`/`ca3_ff_n` — a REAL inhibitory basket
+region, `exc_fraction=0`, feedforward + feedback arms) was enabled at the transient-seed + strong-band + ECKER config
+(weights 2/6/15/40). It RAISES activity (F_active 0.006→0.018, per_asm_frac up) but does **NOT** organize it into a
+discrete moving bump: `windows=0` (the event detector finds NO discrete events — the activity is too CONTINUOUS/diffuse),
+SIG=0, assembly-4 still never fires. ⇒ during cue-driven replay only the basket's FEEDBACK arm is active (no DG
+feedforward volley to set the E%-level), and feedback-inhibition alone does not DISCRETIZE the spread. **The missing
+organizing principle is theta/gamma TIMING** — the gamma-paced WTA that chops continuous activity into one-assembly-per-
+cycle SEQUENTIAL bumps (`_gap5_gamma_wta_replay_derisk`, validated at RATE level 1.000 forward, must be carried ON-SPIKES:
+a theta injector + gamma-phase-gated basket over the CA3 slice). `_build`'s basket is literally tagged "theta-sweep
+RANK-2" — the theta/gamma coupling is the un-enabled piece.
+
+## Verdict + next (per THE LAW — a precisely-mapped residual, NOT a wall)
+- **The gap#5 Ecker-regime replay boundary is characterized to a single residual: theta/gamma-timed DISCRETIZATION of the
+  bump.** DEMONSTRATED on the real spiking AdEx substrate: ignition (cue), propagation (band strength), hand-off seeding
+  (transient cue), and a real spiking inhibitory basket that raises + partly localizes activity. NOT achieved: a discrete
+  traveling decodable packet — because the activity stays CONTINUOUS without gamma-cycle discretization. The full Ecker
+  CA3 model-build is NOT required.
+- **NEXT LEVER:** carry the rate-validated gamma-WTA on-spikes — a theta injector (`experiment/stimulus.py`) + a
+  gamma-phase-gated E%-max basket over the CA3 slice (post-fire silence per gamma cycle) so the bump advances one
+  assembly per cycle. Re-test travel+decode; then 6-seed with the spec's controls. Ruled out this arc: global/host
+  feedback inhibition (silences uniformly); feedback-basket-alone (adds activity, no discretization).
 - **NEXT BUILD:** add the PVBC→PC feedback inhibition and re-test (transient seed + strong band + PVBC): does the bump
   now form a sharp localized packet that travels 0→4 and decodes (|r|>0.6, argmax sweeps)? **⚠️ The PVBC neuron-model
   fork (banked `8a31bc26`):** the global-scalar AdEx kernel can't trivially co-host PC-AdEx + PVBC-Izhikevich; resolve
