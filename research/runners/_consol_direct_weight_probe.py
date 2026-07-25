@@ -61,11 +61,15 @@ def _jac(a, c):
     return len(A & C) / max(1, len(A | C))
 
 
-def run_seed(seed, ffi_inh=0.0, ffi_drive=3.0, tag_drive=1500.0, commit_top_k=None):
+def run_seed(seed, ffi_inh=0.0, ffi_drive=3.0, tag_drive=1500.0, commit_top_k=None,
+             btsp_hetero_dep=0.0, btsp_hetero_theta=0.0):
     a = dict(BASE); a.update(comp_dendritic=True, comp_wta_weight=OP["wta"], comp_k_thresh=OP["k_thresh"],
                              comp_self_regen=OP["self_regen"], comp_kir_g=OP["kir_g"])
     if ffi_inh > 0:   # Rank-2 CA1 FFI-kWTA sparsification de-risk
         a.update(ca1_ffi_kwta=True, ca1_ffi_inh=float(ffi_inh), ca1_ffi_drive=float(ffi_drive))
+    if btsp_hetero_dep > 0:   # Rank-2 element 3: rate-gated heterosynaptic write
+        a.update(comp_btsp=True, comp_btsp_hetero_dep=float(btsp_hetero_dep),
+                 comp_btsp_hetero_theta=float(btsp_hetero_theta))
     b = build_substrate(seed, SimpleNamespace(**a))
     # SEED VERIFICATION (the seed-never-controlled-substrate trap): hash the per-neuron firing thresholds
     thr_hash = hashlib.md5(to_host(b.cp_neuron_firing_thresholds).tobytes()).hexdigest()[:12]
@@ -142,14 +146,18 @@ def main():
     ap.add_argument("--ca1-ffi-drive", type=float, default=3.0)
     ap.add_argument("--tag-drive", type=float, default=1500.0, help="replay+probe tag drive (gentler = sparser distinct core)")
     ap.add_argument("--commit-top-k", type=int, default=None, help="Rank-2 el.1: sparse engram-tag commit size (None=~85)")
+    ap.add_argument("--btsp-hetero-dep", type=float, default=0.0, help="Rank-2 el.3: heterosynaptic-depression coeff (0=off)")
+    ap.add_argument("--btsp-hetero-theta", type=float, default=0.0, help="Rank-2 el.3: eligibility threshold for depression")
     ap.add_argument("--out", default="research/findings/raw/consol_opsweep_gpu")
     args = ap.parse_args()
     from pathlib import Path
     Path(args.out).mkdir(parents=True, exist_ok=True)
     r = run_seed(args.seed, ffi_inh=args.ca1_ffi_inh, ffi_drive=args.ca1_ffi_drive, tag_drive=args.tag_drive,
-                 commit_top_k=args.commit_top_k)
+                 commit_top_k=args.commit_top_k, btsp_hetero_dep=args.btsp_hetero_dep,
+                 btsp_hetero_theta=args.btsp_hetero_theta)
     r["ca1_ffi_inh"] = args.ca1_ffi_inh; r["tag_drive"] = args.tag_drive; r["commit_top_k"] = args.commit_top_k
-    tag = (f"_ffi{args.ca1_ffi_inh:g}" if args.ca1_ffi_inh > 0 else "") + (f"_td{args.tag_drive:g}" if args.tag_drive != 1500 else "") + (f"_tk{args.commit_top_k}" if args.commit_top_k else "")
+    r["btsp_hetero_dep"] = args.btsp_hetero_dep
+    tag = (f"_ffi{args.ca1_ffi_inh:g}" if args.ca1_ffi_inh > 0 else "") + (f"_td{args.tag_drive:g}" if args.tag_drive != 1500 else "") + (f"_tk{args.commit_top_k}" if args.commit_top_k else "") + (f"_hd{args.btsp_hetero_dep:g}" if args.btsp_hetero_dep > 0 else "")
     Path(f"{args.out}/directwrite{tag}_seed{args.seed}.json").write_text(json.dumps(r, indent=2))
     # decision summary
     d0 = r["by_thresh"]["0.0"]; d5 = r["by_thresh"]["0.5"]

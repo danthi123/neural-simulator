@@ -121,6 +121,30 @@ rate-gated-READOUT shortcut is RULED OUT** (no readout recovers selectivity from
 change. Stack elements 1 (sparse commit) + 2 (gentle replay) + 3 (rate-gated heterosynaptic write) are all load-bearing,
 not optional. This is the decisive, precise handoff for the build.
 
+## THE 3-PART STACK — BUILT + TESTED (2026-07-25, seed-42); marginal, does NOT reach the GO-gate → a stronger mechanism is needed
+The owner greenlit building the scoped stack. All three elements were built (additive/default-off, NO `sim/` edit beyond
+reusing shipped kernels) + tested on the direct-weight gate:
+- **Element 1 — sparse tag-COMMIT** (`commit_top_k` thread-through, `unified_per_regime_monitor_runner._encode_facts`):
+  INSUFFICIENT ALONE. At `top_k`=10/20/40 the engram STILL fires ~85 cells — **CA1 recurrence re-densifies** the sparse
+  tag once `stimulate_tag` drives it.
+- **Element 2 — gentle FEEDFORWARD reinstatement** (drive only the CA3 tag portion → `ca3→ca1` completion,
+  `_consol_ff_reinstate_probe.py`): INSUFFICIENT. **CA1 responds DENSELY to ANY input path** (direct flood OR CA3-driven,
+  active-frac ~0.7, Jaccard ~0.57 either way). CA1's dense weak halo is inherent on this substrate.
+- **Element 3 — rate-gated HETEROSYNAPTIC write** (`comp_btsp` + `btsp_hetero_dep` + the auto-thresholded `btsp_hetero_theta`,
+  the shipped `fused_btsp_hetero_update`): the BEST but still MARGINAL. `theta`=0 doesn't rate-gate (the halo is coincident,
+  not depressed); at `theta`=0.3, `dep`=0.6 the write own/other rises to **~1.09, own-is-max 2/3** (higher theta
+  over-depresses → flat). Combined 1+3 (`top_k`=20 + `dep`=0.8 + `theta`=0.2–0.3): still **own/other ≤1.09, own-is-max ≤2/3**.
+- **VERDICT (per THE LAW — a METHOD verdict, not a capability abandonment):** the cheap reuse-only stack gives only a
+  marginal own-slot bias (~1.09), FAR below the GO-gate (own/other ≥2.5, own-is-max 3/3, 6-seed). The **core-vs-halo Etilde
+  gap is fundamentally too small** — the dense weak halo fires enough to be coincident + carry moderate eligibility, so
+  neither sparsification (1,2) nor rate-thresholded depression (3) separates it to the gate. This is the recurring
+  point-neuron divisive-normalization / kWTA limit (CA1 cannot sparsify its halo; no reuse-only write-rule localizes on it).
+- **NEXT METHOD (the boundary stays OPEN):** a genuinely stronger core-vs-halo separator — (i) a **dendritic** write where
+  the strong-core apical plateau gates the write per-branch (the deep dendritic line/bump the fork named, months-scale),
+  or (ii) a different consolidation architecture that does not route through a dense CA1 tag (e.g. a DG→cortex direct
+  pattern-separated write, since DG's *committed* sparse code — not its flooded re-stim — is separated). The stack
+  infrastructure (commit_top_k · FF-reinstatement · heterosynaptic write) is shipped + reusable for the next method.
+
 ## Recommended first de-risk (GPU-when-free / Tuesday)
 Build the **Rank-2 CA1-separation de-risk**: add a feedforward-inhibitory kWTA pool to CA1 (or route slot-drive from DG),
 re-run `_consol_direct_weight_probe` → confirm Jaccard < 0.2 / active <5% AND own/other rises + own-is-max. Then chain the

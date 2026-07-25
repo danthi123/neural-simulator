@@ -321,6 +321,11 @@ def build_substrate(seed, args):
             cfg.enable_btsp = True
             cfg.btsp_learning_rate = float(getattr(args, "comp_btsp_lr", 0.01))
             cfg.btsp_w_max = float(getattr(args, "comp_btsp_wmax", 8.0))
+            # Rank-2 stack element 3 (rate-gated HETEROSYNAPTIC write, 2026-07-25): potentiate the strong distinct-core
+            # ca1 inputs (high Etilde) AND thresholded-depress the weak dense HALO (low Etilde) -> the write focuses on
+            # the distinct core the flood otherwise dilutes. lam_dep=0 -> byte-identical to pure-potentiation BTSP.
+            cfg.btsp_hetero_dep = float(getattr(args, "comp_btsp_hetero_dep", 0.0))
+            cfg.btsp_hetero_theta = float(getattr(args, "comp_btsp_hetero_theta", 0.0))
 
     bridge = SimulationBridge(
         core_config=cfg, viz_config=VisualizationConfig(),
