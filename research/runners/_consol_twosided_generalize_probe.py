@@ -152,6 +152,39 @@ def run_seed(seed, v_teach=-25.0, cycles=3, btsp_lr=0.000003, self_regen=0.15, t
         for w in range(N):
             xfire_write[k, w] = float(wf[w][core[k]].mean()) if core[k].size > 0 else 0.0
 
+    # ---- M0 (2026-07-25 research gate, `-dendritic-spike-count-read-research-gate.md`): the GATED CEILING, computed on
+    # the DURING-WRITE counts. The proposed dendritic surpass applies a per-source ABSOLUTE windowed-spike-count gate
+    # BEFORE the synaptic sum. This asks the FREE question the gate would otherwise be built to answer: after such a
+    # gate, is the code the write actually sees fact-specific enough to support the 2.5 selectivity gate?
+    #   best gated ceiling >= 2.5  -> the gate has a real signal to amplify -> build M1' (the ~25-line additive sim edit).
+    #   best gated ceiling <  2.5  -> the WRITE WINDOWS are the lever, not dendrites (a gate would amplify a flat
+    #                                 signal — the arc's recurring error). Contrast vs the ISOLATED counts shows which.
+    WF = np.stack([wf[i] for i in range(N)])       # (N, n_ca1) per-cell spike counts DURING the write windows
+    FT = np.stack([fire[i] for i in range(N)])     # (N, n_ca1) per-cell counts under ISOLATED tag (the reference)
+
+    def _ceiling(G):
+        out = []
+        for i in range(N):
+            own = float((G[i] * G[i]).sum())
+            oth = float(np.mean([float((G[i] * G[j]).sum()) for j in range(N) if j != i]))
+            out.append(own / oth if oth > 1e-12 else 0.0)
+        return out
+
+    def _gated_scan(X, label):
+        xmax = float(X.max()) if X.size else 0.0
+        res = {"max_count": round(xmax, 1), "ungated_ceiling": [round(v, 3) for v in _ceiling(X)], "binary": {}, "hill": {}}
+        for frac in (0.3, 0.5, 0.6, 0.7, 0.8, 0.9):
+            th = round(frac * xmax, 2)
+            Gb = (X > th).astype(np.float64)                       # binary absolute-threshold gate
+            res["binary"][f"{frac:g}"] = dict(theta=th, ceiling=[round(v, 3) for v in _ceiling(Gb)],
+                                              n_active=[int(Gb[i].sum()) for i in range(N)])
+            Gh = X**8 / (X**8 + th**8 + 1e-30)                     # Hill n=8 (CaMKII-like), ABSOLUTE theta
+            res["hill"][f"{frac:g}"] = dict(theta=th, ceiling=[round(v, 3) for v in _ceiling(Gh)],
+                                            n_active=[int((Gh[i] > 0.5).sum()) for i in range(N)])
+        return res
+
+    m0 = {"during_write": _gated_scan(WF, "during_write"), "isolated_tag": _gated_scan(FT, "isolated_tag")}
+
     # reconstruct (pre, post-slot, weight)
     csr = b.cp_connections
     data = to_host(csr.data).astype(np.float64)[:int(csr.nnz)]
@@ -226,6 +259,7 @@ def run_seed(seed, v_teach=-25.0, cycles=3, btsp_lr=0.000003, self_regen=0.15, t
                random_ca1_own_over_other=[round(x, 3) for x in rand_oo],
                slot_mean_weight=slot_mean_w,
                sparse_core_ceiling=[round(x, 3) for x in sc],
+               m0_gated_ceiling=m0,
                xfire_under_tag=[[round(x, 2) for x in row] for row in xfire_tag.tolist()],
                xfire_during_write=[[round(x, 2) for x in row] for row in xfire_write.tolist()])
     return res
@@ -278,6 +312,36 @@ def main():
     print(f"  RANDOM-CA1  control own/other={r['random_ca1_own_over_other']}  <- must collapse to ~1.0 (else winner-slot artifact)")
     print(f"  PER-SLOT mean ca1->slot weight={r['slot_mean_weight']}  <- one slot >> others = winner-slot artifact")
     print(f"  sparse_core_ceiling={r['sparse_core_ceiling']}  <- max own/other the code supports on these cores")
+    _m0 = r.get("m0_gated_ceiling", {})
+    if _m0:
+        print("  === M0: GATED CEILING (does a per-source absolute spike-count gate recover fact-specificity?) ===")
+        for src in ("during_write", "isolated_tag"):
+            d = _m0[src]
+            best, bestlab = 0.0, ""
+            for kind in ("binary", "hill"):
+                for frac, e in d[kind].items():
+                    act = e["n_active"]
+                    if min(act) < 2:          # degenerate-gate guard: a 0/1-cell gate is not a real code
+                        continue
+                    mv = float(np.mean(e["ceiling"]))
+                    if mv > best:
+                        best, bestlab = mv, f"{kind}@{frac}x(theta={e['theta']},n_active={act})"
+            print(f"    {src:13s}: ungated={d['ungated_ceiling']} (mean {np.mean(d['ungated_ceiling']):.2f}) | BEST gated mean={best:.3f} via {bestlab}")
+        # VERDICT on PER-FACT passes, never the MEAN. (2026-07-25: a mean-based verdict called this a GO when only
+        # fact 0 — the FIRST-written fact — passed and facts 1/2 sat at 1.2-2.0 on 3-6-cell gates. That is the same
+        # one-of-N artifact class as the winner-slot bias. A mechanism must work for MOST facts, not carry the mean.)
+        _dw = _m0["during_write"]
+        best_np, best_lab, best_cl = 0, "", []
+        for kind in ("binary", "hill"):
+            for frac, e in _dw[kind].items():
+                if min(e["n_active"]) < 3:          # degenerate-gate guard: <3 cells makes own/other a small-number artifact
+                    continue
+                npass = sum(1 for c in e["ceiling"] if c >= 2.5)
+                if npass > best_np:
+                    best_np, best_lab, best_cl = npass, f"{kind}@{frac}x(n_active={e['n_active']})", e["ceiling"]
+        _need = N - 1                                # require MOST facts (>= N-1), not one
+        print(f"    M0 VERDICT: best per-fact passes = {best_np}/{N} via {best_lab or 'none'} ceilings={best_cl}")
+        print(f"      {'GO — >=%d/%d facts clear 2.5 -> the gate has UNIFORM signal to amplify -> build M1' % (_need, N) if best_np >= _need else 'KILL — only %d/%d facts clear 2.5 (typically just the FIRST-written fact, on a fresh network) -> the write windows degrade specificity CUMULATIVELY across the schedule; a gate would amplify a flat signal for every later fact' % (best_np, N)}")
     print(f"  xfire[core_K under tag_W] (fire-under-tag):")
     for k in range(N):
         print(f"     core_{k} (size {r['core_sizes'][k]}): {r['xfire_under_tag'][k]}  <- diag should dominate if core is fact-specific")

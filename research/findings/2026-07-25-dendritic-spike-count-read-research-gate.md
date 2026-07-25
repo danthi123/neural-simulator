@@ -393,3 +393,51 @@ mainstream framing. Substrate read directly: `sim/bridge.py`, `sim/kernels.py`, 
 `research/runners/_consol_decoupled_plateau_probe.py`, `_consol_twosided_generalize_probe.py`. §3 computed from
 `research/findings/raw/consol_opsweep_gpu/twosided_{reset_blocked_settle30,blocked,}_seed42.json`. Anti-cheat table per
 `.claude/skills/verify-go/SKILL.md` lens 7 (permuted-target / winner-slot artifact). NO code edits.
+
+---
+
+# M0 RESULT (2026-07-25, controller) — the gate's own recommendation, RUN: **KILL**, and it redirects the build again
+
+M0 implemented as ~30 lines of probe-side numpy in `_consol_twosided_generalize_probe.py` (`m0_gated_ceiling`): apply a
+per-source **ABSOLUTE** windowed-spike-count gate (binary + Hill n=8, θ swept at 0.3–0.9 × max) to the per-cell counts,
+then compute the code-overlap ceiling `Σg_i² / mean_j Σg_i·g_j` — on the **DURING-WRITE** counts (what the write sees)
+versus the **ISOLATED-tag** counts (the reference). NO `sim/` edit, as the gate prescribed.
+
+## Result 1 — the dendritic gate MECHANISM is validated, and it is excellent
+On the ISOLATED code the gate turns an unusable ungated ceiling into a large one, every seed:
+| seed | isolated ungated | isolated GATED | gate |
+|---|---|---|---|
+| 42 | 1.28 | **14.0** | binary θ=13.6, n_active [10,7,8] |
+| 43 | 1.28 | **10.2** | binary θ=12.8, n_active [10,6,13] |
+| 44 | 1.29 | **14.7** | binary θ=11.2, n_active [12,10,13] |
+⇒ the per-source absolute spike-count gate is a ~10× amplifier, far above the 2.5 requirement. The primitive is right.
+
+## Result 2 — but the code the WRITE sees cannot feed it: KILL, and the failure is ORDER-STRUCTURED
+On the DURING-WRITE counts, under **maximal isolation** (`--blocked --settle-steps 30 --reset-elig`), only **1/3 facts**
+clears 2.5 at every seed — and it is always **fact 0, the FIRST-written fact**:
+| seed | per-fact gated ceiling | gate sizes |
+|---|---|---|
+| 42 | `[5.33, 1.20, 1.67]` / `[9.33, 1.67, 1.33]` | `[32,6,10]` / `[28,5,4]` |
+| 43 | `[13.0, 2.00, 2.00]` | `[26,4,4]` |
+| 44 | `[9.33, 2.00, 1.50]` | `[28,6,3]` |
+Facts 1–2 never pass (1.2–2.0, and their "2.00" is a small-number artifact of 3–6-cell gates). Non-blocked variants are
+worse (best-config gated during-write 1.49 at settle 0, 1.82 at settle 60). ⇒ **the write windows degrade the code's
+fact-specificity CUMULATIVELY across the write schedule**: the first fact, on a fresh unadapted network, keeps it; every
+later fact loses it, and no isolation knob tried (blocked / settle 30–60 / eligibility reset / fixed order) prevents it.
+
+## Result 3 — a verdict-logic bug of the arc's OWN recurring class, found and fixed
+M0's first verdict used the **mean** over facts and printed "GO 2.73/5.67/4.28, 3/3 seeds". That was false: the mean was
+carried by fact 0 alone. This is structurally the **same one-of-N artifact** as the winner-slot bias that refuted the
+earlier lead. Fixed in-place: the verdict now counts **per-fact passes** (requires ≥ N−1) and raises the degenerate-gate
+guard to n_active ≥ 3. Under the corrected logic the config reports **1/3 → KILL**. (Lesson, now twice-earned in one
+session: never let a mean stand in for a per-item requirement — report per-item passes with the degenerate guard.)
+
+## Verdict + the redirected next method
+**Do NOT build M1′ (the dendritic gate) yet** — it would amplify a flat signal for every fact after the first, which is
+exactly the error this arc has made repeatedly. The gate is *validated and banked* for the moment its input is fixed.
+**The lever is the WRITE PROTOCOL**, and M0 has now localized it far more sharply than "the windows are bad": the
+degradation is **ordered / cumulative across facts**, so the target question is *what accumulates* — adaptation state,
+eligibility bleed the reset doesn't clear, plateau-clamp after-effects, or drifting CA1 excitability — and whether a
+protocol exists (true network re-initialisation between facts, interleaved-with-recovery replay, or per-fact
+write-window gating) that gives facts 1..N−1 the same fresh-network code fact 0 gets. That is the next cheap de-risk,
+and it is still free (no `sim/` edit). If such a protocol exists, M0 predicts the gate then delivers ~10× amplification.
