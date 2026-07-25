@@ -256,6 +256,24 @@ own/other → ~4.5 >> the 2.5 gate. **This is the live path; the FINAL VERDICT a
   survives the write) — the months-scale build the fork flagged. Infra shipped: `+--pure-hebbian`/`no_stdp` · replay-firing
   diagnostic · the oracle. This is the honest, exhaustively-characterized boundary.
 
+### Option-2 FIRST-MOVE (decoupled-plateau write) → DECISIVE re-attribution: the write is NOT the lever, CA1 code-overlap is
+Built `_consol_decoupled_plateau_probe.py` (NO sim/ edit): reinstate each fact ISOLATED (tag only → the clean 4.5 CA1
+pattern) + drive slot_i's apical plateau DIRECTLY as a pure BTSP teaching signal (clamp `cp_v_apical[slot_i]` high, hold
+the OTHER slots down = exclusive), so no somatic slot drive floods CA1. The BTSP write becomes clean + exclusive (dw≈7).
+**Result (seed 42): own/other = 0.99 — flat.** Direct measurement of WHY closes the question:
+- The write's selectivity is a **bilinear form of the CA1 rate code with itself**: own/other = `Σ_k fire_i[k]·w[k→slot_i] / mean_j Σ_k fire_i[k]·w[k→slot_j]`, and w[k→slot_j] ∝ eligibility ∝ fire_j[k], so own/other ≈ `Σ fire_i² / Σ fire_i·fire_j` = the code's **self/cross overlap**. No write mechanism can exceed it.
+- **Dense-code overlap CEILING = 1.54** (< the 2.5 gate). The measured write (0.99) sits at/below it. ⇒ **a better WRITE cannot pass** — Option-2-as-a-write-mechanism is fundamentally insufficient. Supralinear eligibility (exp 4/8), thresholded heterosynaptic depression, FFI-kWTA, attractor-off — ALL stay flat, because they can't change the code's overlap.
+- **SPARSE (>25%-of-max) overlap CEILING = 5.56** (≫ gate), n_active [1,10,15], Jaccard 0.064 (near-disjoint). ⇒ **the fix is UPSTREAM CA1 pattern-separation** — a working kWTA/DG sparse code giving each fact a robust ~10-15-cell disjoint ensemble lifts the ceiling above the gate, and then ANY write passes.
+- **Reconciles the record:** the earlier "fire-under-tag 4.5" was measured over fragile sparse DISTINCTIVE CORES (which don't even exist for fact 0, size 0); the robust FULL-code ceiling is 1.54. The 4.5 was a sparse-core artifact, not the write's achievable operating point.
+
+**⇒ RE-ATTRIBUTION, sharpened + PROVEN:** the consolidation A1 selective-write boundary is NOT a write-mechanism problem —
+it is the **CA1 code density** (no feedback inhibition → ~43% active, the known structural fact / point-neuron sparsity
+limit family). The write is already at its code-bounded ceiling. **The lever is CA1 pattern-separation (sparse coding),
+upstream of the write** — proven achievable-in-principle (sparse ceiling 5.56) but the point-neuron sparsification itself
+is the known-hard part (my FFI-kWTA attempt made Jaccard WORSE). This fires the RESEARCH GATE (new mechanism class in the
+documented DG/CA3-separation + Mikulasch-Priesemann whitening/point-neuron-sparsity family). Next: research-gate scope of
+CA1 sparsification mechanisms + an idle-GPU kWTA sweep (can any config get CA1 to <5% active with a high ceiling?).
+
 ## Recommended first de-risk (GPU-when-free / Tuesday)
 
 ## Recommended first de-risk (GPU-when-free / Tuesday)
