@@ -158,50 +158,51 @@ def band_max(b, pc):
     pcset = set(pc.tolist()); m = np.array([r in pcset and c in pcset for r, c in zip(rows, cols)])
     return float(vals[m].max()) if m.any() else 0.0
 
-print("-- DIAGNOSTIC seed 42 --", flush=True)
-bd, convd, pcd, cpd = build(42)
-print(f"  band_max after build={band_max(bd, pcd):.1f}", flush=True)
-drive_conv(bd, convd, cpd, steps=400)
-print(f"  band_max after WAKE-drive (STDP on)={band_max(bd, pcd):.1f}  <- collapsed to ~stdp_w_max(8)? = the clip gotcha", flush=True)
-switch_to_adex_sleep(bd, dt=0.1)
-_r, _w, _fa = replay_sleep(bd, pcd, cpd)
-print(f"  (B) full: after wake-drive, sleep replay: DECODE_r={_r:+.3f} F_active={_fa:.4f} width={_w:.1f} | "
-      f"band_max AFTER sleep replay={band_max(bd, pcd):.1f}  <- collapsed? = STDP hit the fixed band during the replay", flush=True)
-# (A) clean control
-bA, cA, pA, cpA = build(42)
-switch_to_adex_sleep(bA, dt=0.1); reset_transient_synaptic_state(bA)
-_rA, _wA, _faA = replay_sleep(bA, pA, cpA)
-print(f"  (A) NO wake-drive control: DECODE_r={_rA:+.3f} F_active={_faA:.4f}", flush=True)
-# (C) IDLE-wake (400 steps, NO conv drive) — isolates time/RNG/step carryover vs conv firing activity
-bC, cC, pC, cpC = build(42)
-for t in range(400):
-    bC.runtime_state.current_time_ms += bC.core_config.dt_ms
-    bC.cp_external_input_current[:] = 0.0; bC._run_one_simulation_step()
-switch_to_adex_sleep(bC, dt=0.1); reset_transient_synaptic_state(bC)
-_rC, _wC, _faC = replay_sleep(bC, pC, cpC)
-print(f"  (C) IDLE-wake 400 steps (no drive) then sleep: DECODE_r={_rC:+.3f} F_active={_faC:.4f} "
-      f"-> {'time/step carryover' if _rC < 0.6 else 'conv-firing-specific (idle is fine)'}", flush=True)
-# (G) wake-DRIVE conv, then FREEZE STDP before sleep (STDP is the only wake-history-carrying process active in sleep)
-bG, cG, pG, cpG = build(42)
-drive_conv(bG, cG, cpG, steps=400)
-bG.core_config.enable_stdp = False            # freeze plasticity for the sleep/replay phase
-switch_to_adex_sleep(bG, dt=0.1); reset_transient_synaptic_state(bG)
-_rG, _wG, _faG = replay_sleep(bG, pG, cpG)
-print(f"  (G) wake-drive + FREEZE STDP before sleep: DECODE_r={_rG:+.3f} F_active={_faG:.4f} "
-      f"-> {'STDP-in-sleep was the culprit!' if _rG > 0.6 else 'not STDP'}", flush=True)
-# (diagnostic done; run the full 6-seed below)
+if __name__ == "__main__":   # guarded so switch_to_izhikevich_wake / reset_transient_synaptic_state are importable
+    print("-- DIAGNOSTIC seed 42 --", flush=True)
+    bd, convd, pcd, cpd = build(42)
+    print(f"  band_max after build={band_max(bd, pcd):.1f}", flush=True)
+    drive_conv(bd, convd, cpd, steps=400)
+    print(f"  band_max after WAKE-drive (STDP on)={band_max(bd, pcd):.1f}  <- collapsed to ~stdp_w_max(8)? = the clip gotcha", flush=True)
+    switch_to_adex_sleep(bd, dt=0.1)
+    _r, _w, _fa = replay_sleep(bd, pcd, cpd)
+    print(f"  (B) full: after wake-drive, sleep replay: DECODE_r={_r:+.3f} F_active={_fa:.4f} width={_w:.1f} | "
+          f"band_max AFTER sleep replay={band_max(bd, pcd):.1f}  <- collapsed? = STDP hit the fixed band during the replay", flush=True)
+    # (A) clean control
+    bA, cA, pA, cpA = build(42)
+    switch_to_adex_sleep(bA, dt=0.1); reset_transient_synaptic_state(bA)
+    _rA, _wA, _faA = replay_sleep(bA, pA, cpA)
+    print(f"  (A) NO wake-drive control: DECODE_r={_rA:+.3f} F_active={_faA:.4f}", flush=True)
+    # (C) IDLE-wake (400 steps, NO conv drive) — isolates time/RNG/step carryover vs conv firing activity
+    bC, cC, pC, cpC = build(42)
+    for t in range(400):
+        bC.runtime_state.current_time_ms += bC.core_config.dt_ms
+        bC.cp_external_input_current[:] = 0.0; bC._run_one_simulation_step()
+    switch_to_adex_sleep(bC, dt=0.1); reset_transient_synaptic_state(bC)
+    _rC, _wC, _faC = replay_sleep(bC, pC, cpC)
+    print(f"  (C) IDLE-wake 400 steps (no drive) then sleep: DECODE_r={_rC:+.3f} F_active={_faC:.4f} "
+          f"-> {'time/step carryover' if _rC < 0.6 else 'conv-firing-specific (idle is fine)'}", flush=True)
+    # (G) wake-DRIVE conv, then FREEZE STDP before sleep (STDP is the only wake-history-carrying process active in sleep)
+    bG, cG, pG, cpG = build(42)
+    drive_conv(bG, cG, cpG, steps=400)
+    bG.core_config.enable_stdp = False            # freeze plasticity for the sleep/replay phase
+    switch_to_adex_sleep(bG, dt=0.1); reset_transient_synaptic_state(bG)
+    _rG, _wG, _faG = replay_sleep(bG, pG, cpG)
+    print(f"  (G) wake-drive + FREEZE STDP before sleep: DECODE_r={_rG:+.3f} F_active={_faG:.4f} "
+          f"-> {'STDP-in-sleep was the culprit!' if _rG > 0.6 else 'not STDP'}", flush=True)
+    # (diagnostic done; run the full 6-seed below)
 
-print("gap#5 ROUND-TRIP MERGE — WAKE(Izh)->SLEEP(AdEx replay)->WAKE(Izh) on a CO-RESIDENT conv+replay bridge, 6-seed. GO "
-      "iff the conversational-slice memory survives the full round-trip BYTE-IDENTICAL 6/6 AND the replay travels in sleep "
-      "(DECODE_r>0.6) 6/6.", flush=True)
-seeds = [42, 43, 44, 100, 101, 102]
-drs, pres = [], []
-for s in seeds:
-    dr, wdt, pr = one_seed(s)
-    drs.append(dr); pres.append(pr)
-    print(f"  [seed {s}] sleep-replay DECODE_r={dr:+.3f} width={wdt:.1f} | conv-memory-preserved={pr}", flush=True)
-drs = np.array(drs)
-rgo = int((drs > 0.6).sum()); pgo = int(sum(pres))
-verdict = "GO" if (rgo == 6 and pgo == 6) else "NO-GO"
-print(f"\n=== ROUND-TRIP 6-SEED: replay {np.round(drs,3).tolist()} travels {rgo}/6 | conv-memory-preserved {pgo}/6 -> {verdict} ===", flush=True)
-print("GAP5-ROUNDTRIP DONE", flush=True)
+    print("gap#5 ROUND-TRIP MERGE — WAKE(Izh)->SLEEP(AdEx replay)->WAKE(Izh) on a CO-RESIDENT conv+replay bridge, 6-seed. GO "
+          "iff the conversational-slice memory survives the full round-trip BYTE-IDENTICAL 6/6 AND the replay travels in sleep "
+          "(DECODE_r>0.6) 6/6.", flush=True)
+    seeds = [42, 43, 44, 100, 101, 102]
+    drs, pres = [], []
+    for s in seeds:
+        dr, wdt, pr = one_seed(s)
+        drs.append(dr); pres.append(pr)
+        print(f"  [seed {s}] sleep-replay DECODE_r={dr:+.3f} width={wdt:.1f} | conv-memory-preserved={pr}", flush=True)
+    drs = np.array(drs)
+    rgo = int((drs > 0.6).sum()); pgo = int(sum(pres))
+    verdict = "GO" if (rgo == 6 and pgo == 6) else "NO-GO"
+    print(f"\n=== ROUND-TRIP 6-SEED: replay {np.round(drs,3).tolist()} travels {rgo}/6 | conv-memory-preserved {pgo}/6 -> {verdict} ===", flush=True)
+    print("GAP5-ROUNDTRIP DONE", flush=True)

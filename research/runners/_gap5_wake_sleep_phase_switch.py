@@ -119,17 +119,18 @@ def one_seed(seed):
     return rZ, band_preserved
 
 
-print("gap#5 PHASE-SWITCH 6-SEED — WAKE(Izh/dt1.0) -> SLEEP(AdEx/dt0.1) on ONE bridge. GO iff the memory band survives the "
-      "switch byte-identical 6/6 AND the phase-switched replay decodes as a directional traveling replay (DECODE_r>0.6, "
-      "width<8) 6/6.", flush=True)
-seeds = [42, 43, 44, 100, 101, 102]
-drs, bps = [], []
-for s in seeds:
-    rZ, bp = one_seed(s)
-    drs.append(rZ[0]); bps.append(bp)
-    print(f"  [seed {s}] DECODE_r={rZ[0]:+.3f} width={rZ[1]:.1f} growth={rZ[2]:+.1f} band_preserved={bp}", flush=True)
-drs = np.array(drs)
-rgo = int((drs > 0.6).sum()); bgo = int(sum(bps))
-verdict = "GO" if (rgo == 6 and bgo == 6) else "NO-GO"
-print(f"\n=== PHASE-SWITCH 6-SEED: DECODE_r {np.round(drs,3).tolist()} | replay-travels {rgo}/6 | band-preserved {bgo}/6 -> {verdict} ===", flush=True)
-print("GAP5-PHASE-SWITCH DONE", flush=True)
+if __name__ == "__main__":   # guarded so the switch helpers are importable without running the 6-seed
+    print("gap#5 PHASE-SWITCH 6-SEED — WAKE(Izh/dt1.0) -> SLEEP(AdEx/dt0.1) on ONE bridge. GO iff the memory band survives "
+          "the switch byte-identical 6/6 AND the phase-switched replay decodes as a directional traveling replay "
+          "(DECODE_r>0.6, width<8) 6/6.", flush=True)
+    seeds = [42, 43, 44, 100, 101, 102]
+    drs, bps = [], []
+    for s in seeds:
+        rZ, bp = one_seed(s)
+        drs.append(rZ[0]); bps.append(bp)
+        print(f"  [seed {s}] DECODE_r={rZ[0]:+.3f} width={rZ[1]:.1f} growth={rZ[2]:+.1f} band_preserved={bp}", flush=True)
+    drs = np.array(drs)
+    rgo = int((drs > 0.6).sum()); bgo = int(sum(bps))
+    verdict = "GO" if (rgo == 6 and bgo == 6) else "NO-GO"
+    print(f"\n=== PHASE-SWITCH 6-SEED: DECODE_r {np.round(drs,3).tolist()} | replay-travels {rgo}/6 | band-preserved {bgo}/6 -> {verdict} ===", flush=True)
+    print("GAP5-PHASE-SWITCH DONE", flush=True)
