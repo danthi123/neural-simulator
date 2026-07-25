@@ -57,16 +57,30 @@ cycle SEQUENTIAL bumps (`_gap5_gamma_wta_replay_derisk`, validated at RATE level
 a theta injector + gamma-phase-gated basket over the CA3 slice). `_build`'s basket is literally tagged "theta-sweep
 RANK-2" — the theta/gamma coupling is the un-enabled piece.
 
+## The band was a CONFOUND — and correcting it reveals the real difficulty (the self-sustaining regime)
+Iterations 1–9 used the FLAT band (`within_events=6`, no `chain_adjacent_pairs`) — the encode finding's documented
+flat-band config, not the 6/6 SHARP band. Re-running on the correct SHARP band (`chain_adjacent_pairs=True`,
+`within_events=2`) FLIPS the failure mode: only **asm0 fires, weakly (0.021), with NO propagation** — the sharp band's
+WEAK within-attractor can't sustain the Ecker high-V_T PC long enough for the forward links to re-ignite asm1 (band-scale
+×1–25 doesn't bridge it). So: flat band → strong DIFFUSE spread (no clean bump); sharp band → asm0 too weak to propagate.
+**The self-sustaining traveling regime lives between these** (within-attractor strong enough to sustain + sharp forward
+links strong enough to re-ignite the next assembly before adaptation) and is NOT reachable by config sweeps on the
+existing band — it needs the Ecker **nS-calibrated** weights + connectivity (the spec's original "full model-build" call
+is VALIDATED), or a systematic (within_events × self_regen × band-nS × cue) search.
+
 ## Verdict + next (per THE LAW — a precisely-mapped residual, NOT a wall)
-- **The gap#5 Ecker-regime replay boundary is characterized to a single residual: theta/gamma-timed DISCRETIZATION of the
-  bump.** DEMONSTRATED on the real spiking AdEx substrate: ignition (cue), propagation (band strength), hand-off seeding
-  (transient cue), and a real spiking inhibitory basket that raises + partly localizes activity. NOT achieved: a discrete
-  traveling decodable packet — because the activity stays CONTINUOUS without gamma-cycle discretization. The full Ecker
-  CA3 model-build is NOT required.
-- **NEXT LEVER:** carry the rate-validated gamma-WTA on-spikes — a theta injector (`experiment/stimulus.py`) + a
-  gamma-phase-gated E%-max basket over the CA3 slice (post-fire silence per gamma cycle) so the bump advances one
-  assembly per cycle. Re-test travel+decode; then 6-seed with the spec's controls. Ruled out this arc: global/host
-  feedback inhibition (silences uniformly); feedback-basket-alone (adds activity, no discretization).
+- **The gap#5 Ecker-regime replay is characterized to the SELF-SUSTAINING traveling regime** — the coupled balance of
+  within-attractor strength ↔ forward-band nS ↔ PC threshold ↔ discretization timing. DEMONSTRATED on the real spiking
+  AdEx substrate: ignition (cue), propagation (flat-band spreads), hand-off seeding (transient cue moves the bump off
+  asm0), a real spiking inhibitory basket. NOT achieved: a discrete traveling decodable packet — the flat band spreads
+  diffusely (no clean bump), the sharp band's weak within can't sustain the bump to propagate, and no cheap sweep of
+  {band-scale, basket, gamma-gate, cue} on the existing band found the between-regime.
+- **NEXT (the honest build):** the spec's Ecker **nS-calibrated** model (exact PC→PC 0.1–6.3 nS band + connectivity
+  density + a properly-tuned spiking PVBC feedback loop over the SHARP band) — OR a systematic
+  {within_events × self_regen × band-nS × cue-duration} search to find the self-sustaining regime — then the on-spikes
+  gamma-WTA discretization on top. Ruled out this arc: global/host feedback inhibition (silences uniformly);
+  feedback-basket-alone (no discretization); gamma-gating on the flat band (no discretization). The individual ingredients
+  are de-risked, so the full-model build is well-founded.
 - **NEXT BUILD:** add the PVBC→PC feedback inhibition and re-test (transient seed + strong band + PVBC): does the bump
   now form a sharp localized packet that travels 0→4 and decodes (|r|>0.6, argmax sweeps)? **⚠️ The PVBC neuron-model
   fork (banked `8a31bc26`):** the global-scalar AdEx kernel can't trivially co-host PC-AdEx + PVBC-Izhikevich; resolve
