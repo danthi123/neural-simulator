@@ -658,3 +658,28 @@ reference reportedly succeeds. **▶ DECISIVE TEST IN FLIGHT: reference harness,
 - ≈87.5% ⇒ the shared path is **healthy**; the A1 runner's own delta is the entire remaining problem, and it can be
   bisected against a known-good reference instead of guessed at.
 - still ~0 ⇒ the recorded 87.5% depended on something neither harness reproduces today, and THAT becomes the question.
+
+### Static elimination round (done while the reference@800ev test runs) — candidate A1 deltas RULED OUT
+
+Comparing the A1 substrate builder against the reference builder parameter-by-parameter. **A first range-limited diff
+was misleading** — it made several settings look A1-only that the reference also sets. Corrected comparison:
+| parameter | reference | A1 | verdict |
+|---|---|---|---|
+| `concept_pool_exc_weight_mean` | `0.3` (:471) | `0.3` | **identical** |
+| `concept_pool_internal_density` | `0.05` (:470) | `0.05` | **identical** |
+| `concept_pool_inh_weight_mean` | `0.8` (:472) | `0.8` | **identical** |
+| `enable_hippocampus_consolidation` | `True` (:505) | `True` | identical |
+| `enable_dlpfc_verb` | `True` (:507) | `True` | identical |
+⇒ the "WEAK concept dynamics" choice A1 documents is **the reference's setting too** — not a delta.
+
+Also ruled out: **plasticity gates during Phase-1.** A1's `train_phase1` closes all `_CONCEPT_GATES` to 0.0 (:401-402),
+which looked like a strong candidate — but `train_word_to_pool` **reopens the target kind's gates per word**
+("Open ONLY the target kind's gates during training"), so the closure is compensated by design. Consistent with the
+direct measurement earlier: gate gain was **1.0** on all 492k `language_input→noun_pool` synapses.
+
+**Remaining A1-only additions** (all additive wiring, none obviously load-bearing for word→pool binding):
+`enable_cross_pool_concept_pathways` (the cortical noun→adj store) · the `comp_attr` slots (default-off) · dlpfc sizing.
+
+**Status: no static explanation found for A1's 800ev failure.** Recording the eliminations because they are the useful
+product — the next step is narrowed, not widened. **The reference@800ev measurement remains the arbiter**, and further
+static guessing before it lands would repeat the 0-for-4 pattern.
