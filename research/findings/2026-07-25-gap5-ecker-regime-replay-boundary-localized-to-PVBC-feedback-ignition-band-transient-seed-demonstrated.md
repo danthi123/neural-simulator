@@ -75,12 +75,18 @@ is VALIDATED), or a systematic (within_events × self_regen × band-nS × cue) s
   asm0), a real spiking inhibitory basket. NOT achieved: a discrete traveling decodable packet — the flat band spreads
   diffusely (no clean bump), the sharp band's weak within can't sustain the bump to propagate, and no cheap sweep of
   {band-scale, basket, gamma-gate, cue} on the existing band found the between-regime.
-- **NEXT (the honest build):** the spec's Ecker **nS-calibrated** model (exact PC→PC 0.1–6.3 nS band + connectivity
-  density + a properly-tuned spiking PVBC feedback loop over the SHARP band) — OR a systematic
-  {within_events × self_regen × band-nS × cue-duration} search to find the self-sustaining regime — then the on-spikes
-  gamma-WTA discretization on top. Ruled out this arc: global/host feedback inhibition (silences uniformly);
-  feedback-basket-alone (no discretization); gamma-gating on the flat band (no discretization). The individual ingredients
-  are de-risked, so the full-model build is well-founded.
+- **The systematic search is now EXHAUSTED (definitive):** a 12-cell joint grid {within_events (2,4) × self_regen
+  (0.15,0.45,0.8) × band_scale (6,20)} on the SHARP band gives the IDENTICAL result in every cell — only asm0 fires weakly
+  (0.02), NO propagation. self_regen (even 0.8) does not sustain the assembly; band_scale (even ×20) does not propagate
+  it. ⇒ the coincidence-plateau bistability + the chain-encode band do NOT produce a self-sustaining recurrent assembly
+  with the high-V_T Ecker PCs — NO cheap knob reaches the traveling regime.
+- **NEXT (the honest build, now confirmed necessary):** the spec's Ecker **nS-calibrated recurrent model** — the exact
+  CA3 PC→PC connectivity DENSITY + nS weight scale that Ecker 2022 uses to make the recurrent assembly self-sustaining
+  and traveling (NOT the existing chain-encode band, which even scaled ×20 dies at asm0), + a tuned spiking PVBC feedback
+  loop + on-spikes gamma-WTA discretization. This is a substantial build (a from-scratch Ecker-connectivity CA3), THE
+  honest next step. Ruled out this arc: global/host feedback inhibition; feedback-basket-alone; gamma-gating; and the
+  full {within × self_regen × band_scale} sweep — all de-risking the full-model build (ignition/propagation/seed/basket
+  work; the ONE missing piece is the self-sustaining recurrent connectivity).
 - **NEXT BUILD:** add the PVBC→PC feedback inhibition and re-test (transient seed + strong band + PVBC): does the bump
   now form a sharp localized packet that travels 0→4 and decodes (|r|>0.6, argmax sweeps)? **⚠️ The PVBC neuron-model
   fork (banked `8a31bc26`):** the global-scalar AdEx kernel can't trivially co-host PC-AdEx + PVBC-Izhikevich; resolve
