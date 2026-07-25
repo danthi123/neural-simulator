@@ -519,8 +519,17 @@ degenerate-gate guard — never a raw ratio:
 
 **⇒ VERDICT: BUILD M1′.** Both halves are now established independently: the gate MECHANISM amplifies a peaked code
 ~10× (isolated 1.27 → 12.3), and a write protocol now DELIVERS a peaked, uniformly fact-specific, mass-balanced code
-(gated ceiling 2.9–4.0, 3/3 facts, 3 seeds). Biologically the recovery gap is unobjectionable — real SWR replay events
-are discrete, seconds apart, on a recovered network, not back-to-back bursts. M1′ = the ~25-line additive, default-off
+(gated ceiling 2.9–4.0, 3/3 facts, 3 seeds). **Biological status of the recovery gap (checked against the local corpus, not asserted).** At `dt_ms=0.5` the winning
+protocol is a **15 ms replay burst per fact separated by a 100 ms recovery gap** (the failing settle-30 = a 15 ms gap).
+Buzsáki *Rhythms of the Brain* (2006, p. ~14400) describes hippocampal sharp waves as occurring **"irregularly"** —
+"the ultimate self-organized endogenous hippocampal events… they occur when the animal has no or minimal interaction
+with the environment" — i.e. **discrete, irregular, rest-state events, not back-to-back bursts**; and `docs/biology.md`
+§Sharp-wave-ripples records SWRs as **brief** 140–200 Hz bursts. So the protocol is *conservative* with respect to
+biology on both axes: our 15 ms burst is SHORTER than a real SWR, and our 100 ms inter-event gap is at the tight end of
+what an irregular, quiet-rest event train would provide. ⇒ the recovery gap is a biologically-faithful feature of replay,
+not a tuning hack. (HONEST SCOPE: an earlier draft of this section asserted real SWRs are "seconds apart"; the corpus
+passages read support *discrete/irregular/rest-state*, and a specific inter-event interval was NOT verified — the claim
+is narrowed to what the sources actually say.) M1′ = the ~25-line additive, default-off
 `sim/` edit scoped in §4 (per-source box-car windowed spike count with explicit reset → ABSOLUTE Hill gate → applied
 BEFORE the synaptic sum, on the write eligibility and the recall read), to be gated on: byte-identical when off, the
 mass triad on every reported ratio, permuted-core control, and 6 seeds.
