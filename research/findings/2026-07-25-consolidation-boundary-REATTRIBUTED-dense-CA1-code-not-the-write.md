@@ -274,6 +274,18 @@ is the known-hard part (my FFI-kWTA attempt made Jaccard WORSE). This fires the 
 documented DG/CA3-separation + Mikulasch-Priesemann whitening/point-neuron-sparsity family). Next: research-gate scope of
 CA1 sparsification mechanisms + an idle-GPU kWTA sweep (can any config get CA1 to <5% active with a high ceiling?).
 
+### Sparsification is the lever — but the CHEAP fixes are ALL falsified (the any-spike code the write sees is dense)
+Ran the empirical sparsification battery + a read-only research-gate scope (`2026-07-25-ca1-sparsification-research-gate-scope.md`).
+The research correctly reframed it as a **kWTA sparsification** problem (point-neuron-standard), NOT decorrelation/dendrites
+(a category error I'd made), and recommended a cheap fix (sparse `commit_top_k=15` + isolated SWR reinstatement + rate write).
+**Directly tested → the cheap fix is FALSIFIED, and so is every cheap sparsifier:**
+- **feedback-inhibition kWTA** (ca1→ca1_ffi→ca1, swept inh 10-50 × drive 3-6 × n 30-60, `_consol_ca1_sparsify_sweep.py`): CA1 stays **91-96% active**, ceiling stuck 1.30-1.39. Feedback inhibition is too slow/divisive vs the drive.
+- **sparse commit `top_k=15`**: the any-spike CA1 engram is still **91 cells** (Jaccard 0.62), ceiling 1.44 — `stimulate_tag` re-densifies via the drive. The sparse **>25%-core** is 12-13 cells (ceiling 4.68) — matching the research's "8-14 cells" — but the WRITE sees the any-spike code, not the core.
+- **gentle reinstatement drive** (400/600/900 pA) + **pool-drive OFF** + **pure-Hebbian rate write**: all flat (own/other ~1.0, ceiling ~1.45). Lowering the drive does NOT sparsify the graded rate code.
+- **per-region map** (`_consol_dg_overlap_probe`): the density is SYSTEMIC — ec 80% / dg 76% / ca3 78% / ca1 73% active under the tag flood. Even NATURAL perforant drive (`_consol_dg_natural_probe`) leaves DG **75% active** (Jaccard 0.61) — the existing `dg_pv_basket` FFI does not sparsify.
+- **RECONCILED with the research:** we agree the sparse >25% BINARY core exists + is near-disjoint (ceiling 4.68-5.56); the research's error was assuming the write would USE it. The write's eligibility is a low-pass of ALL firing → it copies the DENSE any-spike code (ceiling 1.45). **The genuine residual = make the any-spike CA1 code itself <5% active + fact-specific**, which no cheap point-neuron inhibition tried achieves.
+- **The real remaining path = the research's ESCALATION LADDER** (untested): fast spike-frequency adaptation (M-current / Izh-`d` so weak cells adapt out over the burst), structured/fast lateral inhibition (Diehl-Cook true k-WTA, not the slow divisive feedback loop), threshold-raising, or routing the write through a genuinely sparse CA3 assembly. These are substantial (need substrate levers), squarely in the known-hard point-neuron-sparsity family. Next: an exhaustive multi-mechanism workflow testing whether ANY sparsifies the any-spike code to lift the ceiling >2.5 (6-seed, anti-cheated: sparsity must be EARNED by inhibition/adaptation, the sparse code must stay fact-SPECIFIC not just sparse).
+
 ## Recommended first de-risk (GPU-when-free / Tuesday)
 
 ## Recommended first de-risk (GPU-when-free / Tuesday)

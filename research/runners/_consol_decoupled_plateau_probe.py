@@ -39,7 +39,7 @@ THRESH_FRACS = [0.0, 0.25, 0.5]
 
 
 def decoupled_plateau_write(bridge, facts, tags, cycles, seed, v_teach=-25.0, burst_steps=30, isolate=True,
-                            attractor_on=False):
+                            attractor_on=False, reinstate_drive=1500.0):
     """Isolated reinstatement (tag only) + a clamped apical teaching plateau on slot_i. BTSP writes ca1->slot_i on the
     clean eligible CA1 pattern, gated by the decoupled plateau (no somatic slot drive -> no CA1 flood).
     attractor_on=False: keep the CA1 pattern-completion attractor OFF so the fact-specific (4.5) reinstatement is NOT
@@ -62,7 +62,7 @@ def decoupled_plateau_write(bridge, facts, tags, cycles, seed, v_teach=-25.0, bu
         for i in order:
             tag = tags[i]
             bridge.cp_external_input_current[:] = 0.0
-            bridge.stimulate_tag(tag, drive_pA=1500.0, additive=False)   # ISOLATED CA3 engram cue (clean 4.5 pattern)
+            bridge.stimulate_tag(tag, drive_pA=float(reinstate_drive), additive=False)   # ISOLATED CA3 engram cue (SWR: gentle => sparse)
             si = slot_idx[i]
             for _ in range(int(burst_steps)):
                 if bridge.cp_v_apical is not None:
@@ -81,7 +81,7 @@ def decoupled_plateau_write(bridge, facts, tags, cycles, seed, v_teach=-25.0, bu
 
 
 def run_seed(seed, v_teach=-25.0, cycles=40, btsp_lr=0.02, self_regen=0.15, tag_drive=1500.0,
-             elig_exp=1.0, hetero_dep=0.0, hetero_theta=0.0, ffi_inh=0.0, ffi_drive=3.0):
+             elig_exp=1.0, hetero_dep=0.0, hetero_theta=0.0, ffi_inh=0.0, ffi_drive=3.0, commit_top_k=None):
     a = dict(BASE)
     a.update(comp_dendritic=True, comp_wta_weight=5.0, comp_k_thresh=2.0, comp_self_regen=float(self_regen),
              comp_kir_g=3.0, comp_v_hold=-50.0,
@@ -95,11 +95,12 @@ def run_seed(seed, v_teach=-25.0, cycles=40, btsp_lr=0.02, self_regen=0.15, tag_
     rm = b.region_manager
     ca1_idx = np.asarray(sorted(rm.indices("ca1")), dtype=np.int64)
     slot_idx = {s: np.asarray(sorted(rm.indices(f"comp_attr_{s}")), dtype=np.int64) for s in range(N)}
-    tags, _ = encode_facts_with_reinstatement(b, CONSOLIDATED_FACTS)
+    tags, _ = encode_facts_with_reinstatement(b, CONSOLIDATED_FACTS, commit_top_k=commit_top_k)
     if b.cp_v_apical is None:
         return {"seed": seed, "error": "cp_v_apical is None (two-compartment not allocated) — comp_dendritic off?"}
     w0 = _mean_gate_weight(b, "ca1_to_comp_attr")
-    decoupled_plateau_write(b, CONSOLIDATED_FACTS, tags, int(cycles), seed, v_teach=float(v_teach))
+    decoupled_plateau_write(b, CONSOLIDATED_FACTS, tags, int(cycles), seed, v_teach=float(v_teach),
+                            reinstate_drive=float(tag_drive))
     w1 = _mean_gate_weight(b, "ca1_to_comp_attr")
     # reconstruct (pre,post,weight)
     csr = b.cp_connections
@@ -187,13 +188,15 @@ def main():
     ap.add_argument("--hetero-theta", type=float, default=0.0, help="eligibility threshold for depression (sparse gate)")
     ap.add_argument("--ffi-inh", type=float, default=0.0, help="CA1 FFI-kWTA inhibition (0=off; sparsify the code)")
     ap.add_argument("--ffi-drive", type=float, default=3.0)
+    ap.add_argument("--commit-top-k", type=int, default=None, help="sparse engram-tag commit size (research-gate: 15 -> sparse near-disjoint CA1 code)")
+    ap.add_argument("--tag-drive", type=float, default=1500.0, help="reinstatement + read drive (SWR: gentle e.g. 400-600 => sparse, no re-densify)")
     ap.add_argument("--out", default="research/findings/raw/consol_opsweep_gpu")
     args = ap.parse_args()
     from pathlib import Path
     Path(args.out).mkdir(parents=True, exist_ok=True)
     r = run_seed(args.seed, v_teach=args.v_teach, cycles=args.cycles, btsp_lr=args.btsp_lr, self_regen=args.self_regen,
                  elig_exp=args.elig_exp, hetero_dep=args.hetero_dep, hetero_theta=args.hetero_theta,
-                 ffi_inh=args.ffi_inh, ffi_drive=args.ffi_drive)
+                 ffi_inh=args.ffi_inh, ffi_drive=args.ffi_drive, commit_top_k=args.commit_top_k, tag_drive=args.tag_drive)
     _tg = (f"_ee{args.elig_exp:g}" if args.elig_exp > 1 else "") + (f"_hd{args.hetero_dep:g}" if args.hetero_dep > 0 else "") + (f"_ffi{args.ffi_inh:g}" if args.ffi_inh > 0 else "")
     Path(f"{args.out}/decoupled_vt{args.v_teach:g}{_tg}_seed{args.seed}.json").write_text(json.dumps(r, indent=2))
     if "error" in r:
