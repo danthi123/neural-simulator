@@ -37,6 +37,11 @@ sweep, rate-weighted, seed-hash). It reads `ca1_engram_i → slot_j` weights dir
   `cp_neuron_firing_thresholds` hashes ⇒ the substrate is genuinely seeded** (the seed-never-controlled-substrate trap is
   NOT present here). The re-attribution is robust, not a seed-42 artifact.
 
+**No sparse-readout shortcut (checked):** at `thresh_frac=0.5` the engrams are EMPTY (0 distinctive cells, all 6 seeds) —
+i.e. CA1 responds to each tag with ~90% of cells firing WEAKLY (a few spikes each over 40 steps), a **dense, low-rate,
+overlapping** code with no sparse high-rate distinctive core. So a sparse readout that focuses on high-firing cells cannot
+rescue it (there is no such subset) — CA1 must be made to respond SPARSELY + DISTINCTLY (pattern-separation) upstream.
+
 ⇒ **The A1 consolidation boundary is an UPSTREAM CA1 pattern-separation problem, not a write or readout problem.** This is
 the project's own documented dense-CA-code failure mode (CA3-no-feedback-inhibition, 43% active vs sparse-wants-<5%;
 [[feedback_read_own_substrate_before_theorizing]]) — read from the substrate this time, not re-derived.
