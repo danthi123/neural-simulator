@@ -62,7 +62,7 @@ def _jac(a, c):
 
 
 def run_seed(seed, ffi_inh=0.0, ffi_drive=3.0, tag_drive=1500.0, commit_top_k=None,
-             btsp_hetero_dep=0.0, btsp_hetero_theta=0.0, btsp_elig_exp=1.0, replay_cycles=40):
+             btsp_hetero_dep=0.0, btsp_hetero_theta=0.0, btsp_elig_exp=1.0, replay_cycles=40, pool_drive=1400.0):
     a = dict(BASE); a.update(comp_dendritic=True, comp_wta_weight=OP["wta"], comp_k_thresh=OP["k_thresh"],
                              comp_self_regen=OP["self_regen"], comp_kir_g=OP["kir_g"])
     if ffi_inh > 0:   # Rank-2 CA1 FFI-kWTA sparsification de-risk
@@ -79,7 +79,7 @@ def run_seed(seed, ffi_inh=0.0, ffi_drive=3.0, tag_drive=1500.0, commit_top_k=No
     tags, _ = encode_facts_with_reinstatement(b, CONSOLIDATED_FACTS, commit_top_k=commit_top_k)
     w0 = _mean_gate_weight(b, "ca1_to_comp_attr")
     coactivation_replay(b, CONSOLIDATED_FACTS, tags, int(replay_cycles), seed, coactivate=True, attractor_on=True,
-                        slot_drive_pA=OP["slot_drive"], tag_drive_pA=float(tag_drive))
+                        slot_drive_pA=OP["slot_drive"], tag_drive_pA=float(tag_drive), pool_drive_pA=float(pool_drive))
     w1 = _mean_gate_weight(b, "ca1_to_comp_attr")
     # reconstruct (pre,post,weight)
     csr = b.cp_connections
@@ -150,13 +150,15 @@ def main():
     ap.add_argument("--btsp-hetero-theta", type=float, default=0.0, help="Rank-2 el.3: eligibility threshold for depression")
     ap.add_argument("--btsp-elig-exp", type=float, default=1.0, help="Rank-2 el.3b: supralinear eligibility exponent (>1 widens core-halo gap)")
     ap.add_argument("--replay-cycles", type=int, default=40, help="co-activation replay cycles (fewer = less w_max saturation)")
+    ap.add_argument("--pool-drive", type=float, default=1400.0, help="pool co-drive during replay (0 = tag+slot only, test if pools flood CA1)")
     ap.add_argument("--out", default="research/findings/raw/consol_opsweep_gpu")
     args = ap.parse_args()
     from pathlib import Path
     Path(args.out).mkdir(parents=True, exist_ok=True)
     r = run_seed(args.seed, ffi_inh=args.ca1_ffi_inh, ffi_drive=args.ca1_ffi_drive, tag_drive=args.tag_drive,
                  commit_top_k=args.commit_top_k, btsp_hetero_dep=args.btsp_hetero_dep,
-                 btsp_hetero_theta=args.btsp_hetero_theta, btsp_elig_exp=args.btsp_elig_exp, replay_cycles=args.replay_cycles)
+                 btsp_hetero_theta=args.btsp_hetero_theta, btsp_elig_exp=args.btsp_elig_exp, replay_cycles=args.replay_cycles,
+                 pool_drive=args.pool_drive)
     r["ca1_ffi_inh"] = args.ca1_ffi_inh; r["tag_drive"] = args.tag_drive; r["commit_top_k"] = args.commit_top_k
     r["btsp_hetero_dep"] = args.btsp_hetero_dep; r["btsp_elig_exp"] = args.btsp_elig_exp
     tag = (f"_ffi{args.ca1_ffi_inh:g}" if args.ca1_ffi_inh > 0 else "") + (f"_td{args.tag_drive:g}" if args.tag_drive != 1500 else "") + (f"_tk{args.commit_top_k}" if args.commit_top_k else "") + (f"_hd{args.btsp_hetero_dep:g}" if args.btsp_hetero_dep > 0 else "") + (f"_ee{args.btsp_elig_exp:g}" if args.btsp_elig_exp > 1 else "")

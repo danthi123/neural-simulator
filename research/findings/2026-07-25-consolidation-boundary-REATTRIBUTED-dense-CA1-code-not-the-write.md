@@ -208,11 +208,27 @@ rate-proportional ca1->slot write, sweep branch-assignment.
   The mechanism (a rate-proportional write) WOULD localize (oracle 8.19) IF the replay produced a clean fact-specific
   CA1 firing; the point-neuron replay cannot (every reinstatement floods CA1 — gentler drive, FF-synaptic, divisive-norm,
   fewer cycles all fail to sparsify/clean it). **The boundary is the point-neuron REPLAY-FLOODING / sparsification wall.**
-- **Untested cheap hypothesis (the one remaining cheap lever):** the co-activation replay also drives the CONCEPT POOLS
-  (noun/adj) alongside tag_i+slot_i; a pool->CA1 feedback may be what floods CA1 during the write (the isolated
-  fire-under-tag drives NO pools + IS cleaner). Testing tag+slot-only replay (no pool co-drive) is the next cheap probe;
-  if CA1 fires cleanly without the pools, the rate write localizes (per the oracle). Otherwise the wall is confirmed
-  point-neuron and the capability needs a genuinely different substrate (the honest deep boundary).
+- **Last cheap lever TESTED — NO-GO:** pool-co-drive-off replay (`pool_drive=0`, tag+slot only) is still FLAT (~1.0,
+  plain and rate-gated) → the concept-pool co-drive is NOT what floods CA1.
+
+## FINAL VERDICT (exhaustive) — the point-neuron write/replay wall; the capability needs a different substrate
+Across 2 research workflows + ~16 probes + 4 additive sim edits, EVERY cheap-to-moderate method is NO-GO or marginal:
+sparsification (fixed FFI · sparse commit · FF-synaptic reinstatement · divisive-norm · homeostasis — CA1 and DG both stay
+dense ~0.7), write-rule (rate-threshold · supralinear-normalized eligibility · heterosynaptic depression — all ~1.1 vs the
+2.5 gate), replay (gentler drive · fewer cycles · pool-off — all flat), and the multi-branch dendritic idea (the numpy
+oracle shows K=1 already 8.19, so branches aren't the key — but the oracle over-predicts the real substrate 8× because it
+assumes a clean rate-proportional write on the fire-under-tag pattern, which the real STDP/BTSP write on the flooded
+co-activation replay does not achieve). ⇒ **The consolidation A1 selective-write capability is genuinely blocked on the
+point-neuron substrate:** the enabling mechanism (a rate-proportional write on a sparse fact-specific hippocampal code)
+WOULD localize (oracle 8.19), but point neurons cannot (a) sparsify any hippocampal region to a sparse fact-specific code
+(the divisive-norm/kWTA limit) nor (b) realize the idealized rate-proportional write via spike-timing STDP on the flooded
+replay. **Per THE LAW the boundary stays OPEN**, but the honest next method is a genuinely DIFFERENT substrate/mechanism (a
+dendritic substrate that produces + reads sparse per-branch fact-specific codes, or a rate-based write on a
+developmentally-sparsified code) — all substantial, none a cheap knob. This is the deep, well-characterized boundary; the
+cheap-to-moderate search is comprehensively exhausted. Shipped reusable infra: `_consol_direct_weight_probe.py` (the write
+gate) · `_consol_multibranch_oracle.py` (the in-principle gate) · `btsp_elig_exponent` · `divnorm_regions` · `commit_top_k`.
+
+## Recommended first de-risk (GPU-when-free / Tuesday)
 
 ## Recommended first de-risk (GPU-when-free / Tuesday)
 Build the **Rank-2 CA1-separation de-risk**: add a feedforward-inhibitory kWTA pool to CA1 (or route slot-drive from DG),
