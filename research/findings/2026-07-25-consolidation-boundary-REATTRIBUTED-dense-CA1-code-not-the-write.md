@@ -66,6 +66,18 @@ shipped per-cell bistable HOLD (the one genuinely-dendritic ingredient, gap#5-va
 existing bridge; NONE needs a new sim mechanism. The STEP-A measurement is what prevents building an amplifier onto a flat
 write / dense code (the trap that produced this whole boundary).
 
+## Rank-2 FIRST DE-RISK RESULT (2026-07-25, seed-42 indicator): naive CA1 FFI-kWTA is INERT → pivot to the DG-source option
+Built the CA1 FFI-kWTA augmentation (`build_substrate` `ca1_ffi_kwta`, additive/default-off: a `ca1_ffi` inhibitory basket
+driven by CA1, inhibiting CA1, mirroring the shipped `comp_attr_inh` WTA pool) + swept the inhibition strength. **FFI ∈
+{6, 30, 60} ALL give engram_sizes ~85 + Jaccard ~0.57 — FLAT, no gradient → the FFI is inert on the density.** Root cause
+(read from the code): the engram tag is committed at a **FIXED `top_k = max(8, n_per_pool//4)` ≈ 85** (`_encode_facts`,
+`per_regime_monitor_runner.py:318`) with a strong `lang_input`+teacher drive, and the probe re-drives that committed tag
+DIRECTLY at 1500 pA — so inhibition can change neither the fixed tag size nor (as measured) the encode overlap. ⇒ **the
+naive FFI-on-CA1 is the wrong lever; the Rank-2 build should PIVOT to the DG-source option** — source the consolidation
+engram/slot-drive from **DG**, the ALREADY-VALIDATED pattern-separated locus (`dg`+`dg_pv_basket` in the trisynaptic loop;
+P1: DG cos 0.218 from input 0.800), OR drastically shrink the commit `top_k` AND sparsify the encode together. This is the
+precise, buildable next step (a real negative that refines the Rank-2 direction — the FFI infra + probe sweep are shipped).
+
 ## Recommended first de-risk (GPU-when-free / Tuesday)
 Build the **Rank-2 CA1-separation de-risk**: add a feedforward-inhibitory kWTA pool to CA1 (or route slot-drive from DG),
 re-run `_consol_direct_weight_probe` → confirm Jaccard < 0.2 / active <5% AND own/other rises + own-is-max. Then chain the
