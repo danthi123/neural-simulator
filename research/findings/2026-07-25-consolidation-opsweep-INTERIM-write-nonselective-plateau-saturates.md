@@ -1,3 +1,9 @@
+> ⚠️ **SUPERSEDED (same day) → `2026-07-25-consolidation-boundary-REATTRIBUTED-dense-CA1-code-not-the-write.md`.** An
+> adversarial-verify workflow + a DIRECT weight probe showed the `g_e` attribution below is CONFOUNDED (g_e own/other
+> 1.4–1.9× is a noise floor from near-uniform weights, not weight structure). The written weights ARE flat, but the ROOT
+> is a **dense/overlapping CA1 code** (Jaccard 0.58 any-spike), not "the write" — the lever is CA1 pattern-separation.
+> Read the re-attribution finding. The two solid points below (plateau saturates; weights end up flat) still stand.
+
 # Consolidation dendritic op-sweep — INTERIM (seed-42 indicator, sweep IN PROGRESS): the c_drive non-separation is the WRITE being non-selective (linear g_e median 1.025) AND the bistable plateau saturating (g_coincidence uniformly 1.000); the attractor-OFF-write fix is REFUTED (2026-07-25)
 
 **Status: INTERIM / seed-42 indicator.** The full 480-config sweep runs on the 3090 (seed 42, ~3h) + the mini-PC pool
