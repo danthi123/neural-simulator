@@ -30,8 +30,12 @@ sweep, rate-weighted, seed-hash). It reads `ca1_engram_i → slot_j` weights dir
 - **DISTINCTIVE-cell own/other ≈ [0.967, 1.005, 0.982], rate-weighted ≈ [1.02, 1.002, 1.002], own-is-max 1/3 (chance).**
 - **ROUTE = DENSE-CODE → CA1 PATTERN-SEPARATION (Rank 2).** The presynaptic signal is NOT selectable: ~90% of CA1 is
   co-active per fact, so NO `ca1→slot` write rule (heterosynaptic or otherwise) can localize `ca1_i→slot_i` — the
-  distinctive set is tiny (a few cells) and the shared ~90% pedestal is fact-agnostic. **6-SEED CONFIRMATION: [running —
-  seeds 43/44/100/101/102; finalize on completion].**
+  distinctive set is tiny (a few cells) and the shared ~90% pedestal is fact-agnostic. **6-SEED CONFIRMATION
+  (42/43/44/100/101/102): 6/6 DENSE-CODE, 0/6 selectable-write — UNANIMOUS.** Jaccard@any-spike **0.557 ± 0.023**,
+  @>50%-fire **0.000 ± 0.000** (the high-firing distinctive cells ARE disjoint — that is what the sparse-definition
+  "0.00–0.11" measured); rate-weighted own/other **1.014 ± 0.006** (chance), own-is-max 1–2/3. **6/6 unique
+  `cp_neuron_firing_thresholds` hashes ⇒ the substrate is genuinely seeded** (the seed-never-controlled-substrate trap is
+  NOT present here). The re-attribution is robust, not a seed-42 artifact.
 
 ⇒ **The A1 consolidation boundary is an UPSTREAM CA1 pattern-separation problem, not a write or readout problem.** This is
 the project's own documented dense-CA-code failure mode (CA3-no-feedback-inhibition, 43% active vs sparse-wants-<5%;
