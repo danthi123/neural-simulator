@@ -627,3 +627,34 @@ Checked rather than assumed, because a broad "the shared path is broken" finding
 | `ca1→slot` selective write, 6-seed | **GO, stands** | **no** (teacher-driven, tag-driven replay) |
 | A1 end-to-end capability gate | **unmeasurable today** | **yes** — blocked by it |
 | word→pool binding in the shared path | **does not bind today; cause unresolved** | is the path |
+
+### ⚠️ "SHARED-CODE REGRESSION" RETRACTED — the 2026-05-22 code fails identically (0/16 at 200ev)
+
+Ran the same probe against **commit `5b532756` (2026-05-22)** in an isolated git worktree — i.e. code from the era of
+the recorded 87.5%:
+```
+OLD CODE (2026-05-22), 200ev: 0/16 = 0.0%      # current code, same probe: also 0/16
+```
+**Identical failure on old and current code ⇒ nothing regressed.** The "shared-code regression" framing is **withdrawn**.
+The caveat recorded when that framing was proposed — *"'regression' presumes it once passed ON THIS CODE, which has not
+been re-run; the correct label today is 'does not bind', not 'we broke it'"* — is exactly what stopped this becoming a
+false alarm about a swath of past results. **Recording the caveat did the work.**
+
+**What the evidence now actually says**, assembled:
+| harness | events/word | result |
+|---|---|---|
+| reference (recorded, 2026-05-21) | **800** | **87.5%** |
+| reference, CURRENT code (this session) | 200 | **0/16** |
+| reference, OLD 2026-05-22 code (this session) | 200 | **0/16** |
+| A1 runner | 200 | 1/16 |
+| A1 runner | 800 | 0/16 |
+⇒ **200 events/word is simply insufficient for the reference harness** — on any code version. My reproduction was
+under-trained, and I tested the under-training hypothesis on the WRONG harness (the A1 runner, which turns out to carry
+an additional problem of its own, since it fails at 800ev too).
+
+**⇒ Partial vindication of the retracted under-training hypothesis, with the correction that matters:** under-training
+was real *for the reference reproduction*; it is NOT the whole story for the A1 runner, which fails at 800ev where the
+reference reportedly succeeds. **▶ DECISIVE TEST IN FLIGHT: reference harness, CURRENT code, 800 events/word.**
+- ≈87.5% ⇒ the shared path is **healthy**; the A1 runner's own delta is the entire remaining problem, and it can be
+  bisected against a known-good reference instead of guessed at.
+- still ~0 ⇒ the recorded 87.5% depended on something neither harness reproduces today, and THAT becomes the question.
