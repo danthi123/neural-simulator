@@ -82,13 +82,14 @@ def decoupled_plateau_write(bridge, facts, tags, cycles, seed, v_teach=-25.0, bu
 
 def run_seed(seed, v_teach=-25.0, cycles=40, btsp_lr=0.02, self_regen=0.15, tag_drive=1500.0,
              elig_exp=1.0, hetero_dep=0.0, hetero_theta=0.0, ffi_inh=0.0, ffi_drive=3.0, commit_top_k=None,
-             hippo_izh_type=None, hippo_izh_regions="dg"):
+             hippo_izh_type=None, hippo_izh_regions="dg", elig_hard_thresh=0.0):
     a = dict(BASE)
     a.update(comp_dendritic=True, comp_wta_weight=5.0, comp_k_thresh=2.0, comp_self_regen=float(self_regen),
              comp_kir_g=3.0, comp_v_hold=-50.0,
              comp_btsp=True, comp_btsp_lr=float(btsp_lr), comp_btsp_wmax=8.0,
              comp_btsp_elig_exp=float(elig_exp), comp_btsp_hetero_dep=float(hetero_dep),
-             comp_btsp_hetero_theta=float(hetero_theta))
+             comp_btsp_hetero_theta=float(hetero_theta),
+             comp_btsp_elig_hard_thresh=float(elig_hard_thresh))
     if ffi_inh > 0:   # sparsify the CA1 code (FFI kWTA) -> bigger disjoint per-fact cores
         a.update(ca1_ffi_kwta=True, ca1_ffi_inh=float(ffi_inh), ca1_ffi_drive=float(ffi_drive))
     if hippo_izh_type:   # sparse DG/CA3/CA1 phenotype (down-state-stable, high-threshold, adapting) -> sparse code
@@ -105,6 +106,12 @@ def run_seed(seed, v_teach=-25.0, cycles=40, btsp_lr=0.02, self_regen=0.15, tag_
     decoupled_plateau_write(b, CONSOLIDATED_FACTS, tags, int(cycles), seed, v_teach=float(v_teach),
                             reinstate_drive=float(tag_drive))
     w1 = _mean_gate_weight(b, "ca1_to_comp_attr")
+    # verify the hard-threshold gate actually fired (a sparse fraction survived, not 0 / not all)
+    elig_gate = None
+    if float(elig_hard_thresh) > 0.0 and getattr(b, "_btsp_elig_survivor_n", None) is not None:
+        _sn = int(to_host(b._btsp_elig_survivor_n)); _tn = int(getattr(b, "_btsp_elig_total_n", 0))
+        elig_gate = dict(survivor_syn=_sn, total_syn=_tn,
+                         survivor_frac=round(_sn / max(_tn, 1), 4), thresh=float(elig_hard_thresh))
     # reconstruct (pre,post,weight)
     csr = b.cp_connections
     data = to_host(csr.data).astype(np.float64)[:int(csr.nnz)]
@@ -126,7 +133,10 @@ def run_seed(seed, v_teach=-25.0, cycles=40, btsp_lr=0.02, self_regen=0.15, tag_
         return ca1_idx[fire[i] > frac * 40]
 
     res = {"seed": seed, "thr_hash": thr_hash, "dw": round(w1 - w0, 5), "v_teach": float(v_teach),
-           "self_regen": float(self_regen), "by_thresh": {}}
+           "self_regen": float(self_regen), "elig_hard_thresh": float(elig_hard_thresh),
+           "elig_gate": elig_gate,
+           "conn_hash": hashlib.md5(data.astype(np.float32).tobytes()).hexdigest()[:12],  # post-write weights (byte-id check)
+           "by_thresh": {}}
     for frac in THRESH_FRACS:
         engr = {i: engram_at(i, frac) for i in range(N)}
         sizes = {i: int(engr[i].size) for i in range(N)}
@@ -195,6 +205,7 @@ def main():
     ap.add_argument("--tag-drive", type=float, default=1500.0, help="reinstatement + read drive (SWR: gentle e.g. 400-600 => sparse, no re-densify)")
     ap.add_argument("--hippo-izh-type", type=str, default=None, help="sparse hippo phenotype, e.g. IZH2007_STRIATAL_MSN (down-state-stable, high-threshold, adapting)")
     ap.add_argument("--hippo-izh-regions", type=str, default="dg", help="comma-sep regions to give the sparse phenotype, e.g. dg,ca3,ca1")
+    ap.add_argument("--elig-hard-thresh", type=float, default=0.0, help="HARD write-side k-WTA gate on the BTSP eligibility (0=off; e.g. 0.25/0.4/0.6 -> only the sustained-firing CA1 core writes)")
     ap.add_argument("--out", default="research/findings/raw/consol_opsweep_gpu")
     args = ap.parse_args()
     from pathlib import Path
@@ -202,8 +213,9 @@ def main():
     r = run_seed(args.seed, v_teach=args.v_teach, cycles=args.cycles, btsp_lr=args.btsp_lr, self_regen=args.self_regen,
                  elig_exp=args.elig_exp, hetero_dep=args.hetero_dep, hetero_theta=args.hetero_theta,
                  ffi_inh=args.ffi_inh, ffi_drive=args.ffi_drive, commit_top_k=args.commit_top_k, tag_drive=args.tag_drive,
-                 hippo_izh_type=args.hippo_izh_type, hippo_izh_regions=args.hippo_izh_regions)
-    _tg = (f"_ee{args.elig_exp:g}" if args.elig_exp > 1 else "") + (f"_hd{args.hetero_dep:g}" if args.hetero_dep > 0 else "") + (f"_ffi{args.ffi_inh:g}" if args.ffi_inh > 0 else "")
+                 hippo_izh_type=args.hippo_izh_type, hippo_izh_regions=args.hippo_izh_regions,
+                 elig_hard_thresh=args.elig_hard_thresh)
+    _tg = (f"_ee{args.elig_exp:g}" if args.elig_exp > 1 else "") + (f"_hd{args.hetero_dep:g}" if args.hetero_dep > 0 else "") + (f"_ffi{args.ffi_inh:g}" if args.ffi_inh > 0 else "") + (f"_eht{args.elig_hard_thresh:g}" if args.elig_hard_thresh > 0 else "")
     Path(f"{args.out}/decoupled_vt{args.v_teach:g}{_tg}_seed{args.seed}.json").write_text(json.dumps(r, indent=2))
     if "error" in r:
         print(f"[seed {args.seed}] ERROR: {r['error']}"); print("DECOUPLED-PLATEAU-PROBE DONE", flush=True); return
@@ -215,6 +227,9 @@ def main():
     rw_mean = float(np.mean([x for x in rw["own_over_other"] if x > 0])) if any(x > 0 for x in rw["own_over_other"]) else 0.0
     rw_nmax = sum(rw["own_is_max"])
     print(f"[seed {args.seed}] backend={BACKEND} thr_hash={r['thr_hash']} dw={r['dw']} v_teach={args.v_teach}")
+    if r.get("elig_gate") is not None:
+        eg = r["elig_gate"]
+        print(f"  ELIG-GATE FIRES: {eg['survivor_syn']}/{eg['total_syn']} syn survive thresh={eg['thresh']}  frac={eg['survivor_frac']}  <- must be sparse (not 0, not all)")
     print(f"  DISTINCTIVE own/other @frac0={doo}  mean={mean_oo:.3f}  own_is_max={d0['own_is_max']} ({n_max}/{N})")
     print(f"  RATE-WEIGHTED own/other={rw_oo}  mean={rw_mean:.3f}  own_is_max={rw['own_is_max']} ({rw_nmax}/{N})  <- CAPABILITY metric")
     ceil = r.get("code_overlap_ceiling", {})

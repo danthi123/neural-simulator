@@ -359,6 +359,9 @@ def build_substrate(seed, args):
             cfg.btsp_hetero_dep = float(getattr(args, "comp_btsp_hetero_dep", 0.0))
             cfg.btsp_hetero_theta = float(getattr(args, "comp_btsp_hetero_theta", 0.0))
             cfg.btsp_elig_exponent = float(getattr(args, "comp_btsp_elig_exp", 1.0))   # supralinear eligibility (widen core-halo gap)
+            # HARD-THRESHOLD write-side k-WTA on the eligibility (2026-07-25 write-side de-risk): only the sustained-
+            # firing CA1 core (pre-elig >= thresh*peak) contributes to the ca1->slot potentiation. 0.0 => byte-identical.
+            cfg.btsp_elig_hard_thresh = float(getattr(args, "comp_btsp_elig_hard_thresh", 0.0))
 
     bridge = SimulationBridge(
         core_config=cfg, viz_config=VisualizationConfig(),

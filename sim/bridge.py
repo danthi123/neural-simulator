@@ -8064,6 +8064,21 @@ class SimulationBridge:
                     # suppressed super-proportionally while the strong core stays ~1 (2026-07-25 workflow-corrected).
                     _emax = etilde_bt.max()
                     etilde_bt = (etilde_bt / cp.maximum(_emax, cp.float32(1e-12))) ** cp.float32(_elig_exp)
+                # HARD-THRESHOLD eligibility k-WTA gate (2026-07-25 consolidation write-side de-risk): zero the
+                # eligibility of any synapse whose PRESYNAPTIC cell fired below thresh*peak-eligibility, so ONLY the
+                # sustained-firing core writes and the weak dense CA1 halo is cut. This gates the WRITE eligibility to
+                # the distinct fact-specific core the dense fire-count code otherwise dilutes (fire-count overlap 1.45).
+                # ADDITIVE / default-off: btsp_elig_hard_thresh<=0.0 (default 0.0) => the etilde path is byte-identical.
+                _elig_hthresh = float(getattr(cfg, "btsp_elig_hard_thresh", 0.0))
+                if _elig_hthresh > 0.0 and etilde_bt.size > 0:
+                    _ehmax = etilde_bt.max()
+                    etilde_bt = cp.where(etilde_bt >= cp.float32(_elig_hthresh) * _ehmax,
+                                         etilde_bt, cp.float32(0.0))
+                    # observability only (no behavior change): record the eligibility-survivor count as GPU scalars so a
+                    # probe can verify the gate actually fires (a sparse fraction, not 0 / not all). Kept lazy + on GPU
+                    # so the default (thresh=0) path never touches these attrs and the write loop takes no host sync.
+                    self._btsp_elig_survivor_n = (etilde_bt > cp.float32(1e-6)).sum()
+                    self._btsp_elig_total_n = int(etilde_bt.size)
                 is_bt = _is_post_bt[coo_bt.col]
                 # gap#4<->gap#5 unification: with heterosynaptic competition (btsp_hetero_dep>0) a plateauing cell also
                 # DEPRESSES its NON-coincident inputs, so the active set must include synapses whose post plateaus even

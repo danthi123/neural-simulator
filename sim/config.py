@@ -356,6 +356,11 @@ class CoreSimConfig:
     btsp_elig_exponent: float = 1.0                # supralinear presynaptic-eligibility exponent (Ca2+/CaMKII
                                                    # cooperativity). >1.0 widens the strong-core-vs-weak-halo eligibility
                                                    # gap so a rate-threshold separates them; 1.0 (default) = byte-identical.
+    btsp_elig_hard_thresh: float = 0.0             # HARD-threshold k-WTA gate on the presynaptic eligibility (2026-07-25
+                                                   # consolidation write-side de-risk): after etilde is formed, zero any
+                                                   # synapse whose pre-eligibility is below thresh*peak, so ONLY the
+                                                   # sustained-firing core writes (the weak dense halo is cut). 0.0
+                                                   # (default) = byte-identical (no gating). Typical 0.25-0.6.
     # Milstein 2021 split-threshold ADJACENT-BAND depression: depress ONLY synapses whose
     # eligibility falls BETWEEN these thresholds (the lags adjacent to the peak), instead of
     # the far field. Both 0.0 => band gate OFF => byte-identical to the pre-2026-07-20 rule
