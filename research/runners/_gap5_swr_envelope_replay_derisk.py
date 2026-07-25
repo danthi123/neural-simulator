@@ -71,6 +71,7 @@ from sim.backend import get_backend, to_host  # noqa: E402
 # between-edge weight-lesion controls (reuse-by-import; NO `sim/` edit anywhere)
 from research.runners._gap5_sequence_replay_derisk import (  # noqa: E402
     _prepare_sequence, _detect_sequence_events, _scramble_between_weights, _symmetrize_between_weights,
+    _event_windows, _smooth,
 )
 from research.runners._gap5_decoupled_store_bistable_readout_derisk import DECOUPLED_CFG  # noqa: E402
 # the RANK-1 rest building blocks (freeze/silence/OU) reused verbatim
@@ -111,9 +112,18 @@ def _setup_read(prep, seed, *, self_regen_read, recall_k_thresh, d_abs, a_abs, a
     except Exception:
         basket_glob = None
 
-    # crank Izhikevich spike-frequency adaptation on CA3-exc (the intrinsic-fatigue self-avoidance that turns co-firing
-    # into a forward sweep; Ecker 2022). adapt=False = the ADAPT-LESION control (d_abs->0 -> [3,3,3] co-fire).
-    if adapt and getattr(bridge, "cp_izh_d_increment", None) is not None:
+    # crank the spike-frequency adaptation that turns co-firing into a forward sweep (Ecker 2022). adapt=False = the
+    # ADAPT-LESION control. Izhikevich: per-neuron u-kick cp_izh_d_increment + recovery a on CA3-exc. AdEx: GLOBAL
+    # w-adaptation cfg.adex_b (spike-triggered) + cfg.adex_a (subthreshold) -- no per-neuron array, so the lesion zeros
+    # them globally (still a valid adapt-lesion: removes ALL w-adaptation). adapt=True keeps the band's built AdEx regime.
+    _adex_read = getattr(bridge, "cp_adex_w", None) is not None
+    if _adex_read:
+        _cfg = bridge.core_config
+        if not adapt:                                  # ADAPT-LESION: remove AdEx w-adaptation entirely
+            _cfg.adex_b = 0.0; _cfg.adex_a = 0.0
+        # adapt=True -> leave cfg.adex_b / adex_a / adex_tau_w as built (the Ecker RS-pyramidal regime), unless a runner
+        # explicitly re-tuned them via the build's adex_params. (d_abs/a_abs are Izhikevich-scale and not applied to AdEx.)
+    elif adapt and getattr(bridge, "cp_izh_d_increment", None) is not None:
         bridge.cp_izh_d_increment[exc_dev] = cp.float32(d_abs)
         bridge.cp_izh_a[exc_dev] = cp.float32(a_abs)
 
@@ -166,7 +176,12 @@ def _option1_cued_ignition(prep, seed, *, recall_drive, recall_steps, self_regen
 def _rest_swr_envelope(prep, rest_steps, seed, *, mode, noise_on, env_exc_pa, env_basket_drop, env_basket_boost,
                        swr_period, env_dur, noise_rate, noise_pa, noise_dur, self_regen_read, recall_k_thresh,
                        d_abs, a_abs, adapt, self_regen_ignite=None, ignite_frac=0.4, env_exc_ramp=False,
-                       verbose=False):
+                       seed_assembly=False, seed_pa=0.0, seed_dur=0, seed_frac=0.5, verbose=False):
+    # MECHANISM #3 (per-envelope single-assembly SEED = Diba-Buzsaki SWR initiation): when seed_assembly, each envelope a
+    # RANDOM assembly k (NOT always 0) gets a WEAK sub-detonator pulse (seed_pa to seed_frac of its cells) for the first
+    # seed_dur steps -> k ignites FIRST; the LEARNED forward links + SFA must then carry k->k+1->k+2 (forward FROM the
+    # seed). The random k is the LOAD-BEARING anti-cheat: forward order that only appears for k=0 = host-imposed = a cheat.
+    # env_seed_log records k per envelope so the scorer measures forward-FROM-seed (not absolute 0->1->2).
     # MECHANISM #1 (latch-then-release): when self_regen_ignite is not None, the plateau self-regen is HIGH (a bistable
     # LATCH) for the first ignite_frac of each envelope so a WEAK noise seed SELECTIVELY ignites+latches ONE assembly
     # (RANK-1: weak-noise+latch = selective single-assembly ignition), then DROPS to self_regen_read (transient) for the
@@ -189,6 +204,20 @@ def _rest_swr_envelope(prep, rest_steps, seed, *, mode, noise_on, env_exc_pa, en
     # poisson non-specific noise setup (CA3-EXC-targeted; deterministic host RNG; == RANK-1 _rest_and_detect)
     prng = np.random.default_rng(int(seed) * 100003 + 11)
     countdown = np.zeros(len(exc_glob), dtype=np.int32)
+
+    # MECHANISM #3 seed setup: precompute a FIXED sub-sample (seed_frac) of each assembly's cells (device indices); a
+    # SEPARATE per-envelope RNG picks which assembly k to seed each envelope (so the cell subsets stay fixed).
+    seed_cells_dev = None; env_seed_log = []
+    if seed_assembly:
+        _als = prep["assemblies_local"]
+        _cell_rng = np.random.default_rng(int(seed) * 314159 + 17)
+        seed_cells_dev = []
+        for a_loc in _als:
+            _k = max(1, int(round(float(seed_frac) * len(a_loc))))
+            _sub = np.sort(_cell_rng.choice(a_loc, min(_k, len(a_loc)), replace=False))
+            seed_cells_dev.append(cp.asarray(ca3_arr_host[_sub], dtype=cp.int64))
+        _choice_rng = np.random.default_rng(int(seed) * 271828 + 23)   # per-envelope RANDOM assembly choice
+        _cur_seed_k = None
 
     if verbose:
         print(f"      [swr mode={mode} noise={noise_on} env_exc={env_exc_pa} basket_drop={env_basket_drop} "
@@ -216,6 +245,13 @@ def _rest_swr_envelope(prep, rest_steps, seed, *, mode, noise_on, env_exc_pa, en
                     bridge.cp_external_input_current[exc_dev] += _ee                     # broad weak exc: raise E
                 if basket_glob is not None and env_basket_drop != 0.0:
                     bridge.cp_external_input_current[basket_glob] += -float(env_basket_drop)  # DROP feedback-I: I can't track E
+                # MECHANISM #3: per-envelope single-assembly seed (random k, weak sub-detonator pulse for the first seed_dur)
+                if seed_assembly:
+                    if phase_in == 0:
+                        _cur_seed_k = int(_choice_rng.integers(0, len(seed_cells_dev)))
+                        env_seed_log.append(_cur_seed_k)
+                    if phase_in < seed_dur and _cur_seed_k is not None and seed_pa != 0.0:
+                        bridge.cp_external_input_current[seed_cells_dev[_cur_seed_k]] += float(seed_pa)
                 if phase_in == 0:
                     n_env += 1
             else:
@@ -241,7 +277,66 @@ def _rest_swr_envelope(prep, rest_steps, seed, *, mode, noise_on, env_exc_pa, en
     w_after = np.asarray(to_host(bridge.cp_connections.data))
     frozen = bool(np.array_equal(w_before, w_after))
     return dict(F=F, weights_frozen=frozen, apical_rest_max=h["apical_rest_max"],
-                apical_n_latched=h["apical_n_latched"], n_env=n_env, basket_n=h["basket_n"])
+                apical_n_latched=h["apical_n_latched"], n_env=n_env, basket_n=h["basket_n"],
+                env_seed_log=env_seed_log)
+
+
+def _score_forward_from_seed(F, assemblies_local, env_seed_log, swr_period, W=5, ev_floor=0.4, ev_k=4.0,
+                             active_frac=0.12, onset_frac=0.08, min_ev_len=4):
+    """MECHANISM #3 scorer: forward-FROM-SEED. Each event is mapped to the envelope that contains its START (env_idx =
+    s // swr_period) -> the seeded assembly k = env_seed_log[env_idx]. A multi-assembly event is FORWARD-from-seed if,
+    ordering its active assemblies by onset, the seeded k has the EARLIEST onset AND the onset-sorted index sequence is
+    strictly INCREASING and CONTIGUOUS from k (k, k+1, k+2, ...); REVERSE-from-seed if strictly DECREASING from k
+    (k, k-1, ...). Because the store's only directional links are forward (adj_fwd 38 / adj_rev 5), a genuine cascade
+    riding the learned links produces k->k+1->k+2 REGARDLESS of which k was seeded -- so forward>>reverse here, while it
+    was seeded at RANDOM k, decisively rules out 'order = where I injected'. Also returns the per-seed-position breakdown."""
+    import math
+    T, nca3 = F.shape
+    n_mem = len(assemblies_local)
+    asizes = [max(1, len(a)) for a in assemblies_local]
+    asize_ref = float(np.mean(asizes))
+    events, duty, pop_rate = _event_windows(F, W=W, ev_floor=ev_floor, ev_k=ev_k, asize_ref=asize_ref)
+    per_asm_active = [0] * n_mem
+    n_multi = fwd = rev = seed_first = 0
+    chance_terms = []
+    by_seedpos = {k: {"multi": 0, "fwd": 0, "rev": 0} for k in range(n_mem)}
+    for (s, e) in events:
+        if e - s < min_ev_len:
+            continue
+        env_idx = s // swr_period
+        if env_idx >= len(env_seed_log):
+            continue
+        k = int(env_seed_log[env_idx])
+        active = []
+        for kk, A in enumerate(assemblies_local):
+            a_t = _smooth(F[s:e][:, A].sum(1), W) / asizes[kk]
+            if a_t.size and float(a_t.max()) >= active_frac:
+                per_asm_active[kk] += 1
+                cross = np.nonzero(a_t >= onset_frac)[0]
+                onset = float(cross[0]) if cross.size else float(np.argmax(a_t))
+                active.append((kk, onset + 1e-3 * float(np.argmax(a_t))))
+        if len(active) < 2:
+            continue
+        n_multi += 1
+        chance_terms.append(1.0 / math.factorial(len(active)))
+        order = [kk for kk, _ in sorted(active, key=lambda kv: kv[1])]     # assembly indices sorted by onset
+        by_seedpos[k]["multi"] += 1
+        if order[0] == k:
+            seed_first += 1
+        is_fwd = (order[0] == k) and all(order[i + 1] == order[i] + 1 for i in range(len(order) - 1))
+        is_rev = (order[0] == k) and all(order[i + 1] == order[i] - 1 for i in range(len(order) - 1))
+        if is_fwd:
+            fwd += 1; by_seedpos[k]["fwd"] += 1
+        if is_rev:
+            rev += 1; by_seedpos[k]["rev"] += 1
+    return dict(n_events=len(events), n_multi=n_multi, duty_cycle=duty, pop_rate=pop_rate,
+                per_asm_active=per_asm_active,
+                forward_from_seed=(fwd / n_multi) if n_multi else 0.0,
+                reverse_from_seed=(rev / n_multi) if n_multi else 0.0,
+                seed_first_frac=(seed_first / n_multi) if n_multi else 0.0,
+                chance=float(np.mean(chance_terms)) if chance_terms else 0.0,
+                by_seedpos={k: dict(v) for k, v in by_seedpos.items()},
+                n_seed_envs=len(env_seed_log))
 
 
 def _permuted_assembly_score(F, assemblies_local, seed, det):
@@ -266,7 +361,8 @@ def one_seed(seed, cfg, a):
     env_kw = dict(env_exc_pa=a.env_exc_pa, env_basket_drop=a.env_basket_drop, env_basket_boost=a.env_basket_boost,
                   swr_period=a.swr_period, env_dur=a.env_dur, noise_rate=a.noise_rate, noise_pa=a.noise_pa,
                   noise_dur=a.noise_dur, self_regen_read=a.self_regen_read, recall_k_thresh=a.recall_k_thresh,
-                  d_abs=a.d_abs, a_abs=a.a_abs)
+                  d_abs=a.d_abs, a_abs=a.a_abs, self_regen_ignite=a.self_regen_ignite, ignite_frac=a.ignite_frac,
+                  env_exc_ramp=a.env_exc_ramp)
 
     # -- BUILD the DECOUPLED forward-asymmetric store (reused frozen across all readout arms) --
     prep = _prepare_sequence(seed, cfg, do_encode=True)
@@ -391,7 +487,12 @@ def one_seed(seed, cfg, a):
     reverse_lesion_collapses = _collapsed(s_sym)
     permuted_chance = (s_pa["forward_frac"] <= max(0.67 * fwd, 1.5 * chance)) or (s_pa["n_multi"] == 0)
     noise_acid = _collapsed(s_nn)                                     # NO-NOISE must NOT give clean forward replay
-    noencode_retired = (s_ne["n_multi"] == 0) or (s_ne["forward_frac"] <= 1.5 * chance)
+    # NO-ENCODE SELECTIVITY GATE (load-bearing, coordinator 2026-07-24): the ignition must REQUIRE the learned attractor.
+    # With NO store (weights=0.5), the SAME envelope+noise must NOT ignite the labeled cells -> otherwise the drive is a
+    # broad DETONATOR (fires cells regardless of the store) and the "forward replay" is an artifact of the drive, not the
+    # chain. Require the no-encode run to stay near-silent (max per-assembly participation <= 1) AND not forward-above-chance.
+    noencode_selective = (max(s_ne["per_asm_active"]) <= 1) and (
+        (s_ne["n_multi"] == 0) or (s_ne["forward_frac"] <= 1.5 * chance))
     adapt_lesion_cofire = (max(s_al["per_asm_active"]) >= 2.0 * nev) or (s_al["duty_cycle"] >= 0.6) or _collapsed(s_al)
     frozen_ok = bool(r_go["weights_frozen"] and r_ns["weights_frozen"] and r_nn["weights_frozen"]
                      and r_al["weights_frozen"] and r_ne["weights_frozen"] and r_sc["weights_frozen"]
@@ -400,12 +501,13 @@ def one_seed(seed, cfg, a):
                          or r_go["apical_rest_max"] <= float(DECOUPLED_CFG["plateau_v_hold"]) + 1e-3)
 
     seed_go = bool(forward_ordered and ignites and discrete and no_swr_collapses and shuffled_collapses
-                   and reverse_lesion_collapses and permuted_chance and noise_acid and noencode_retired
+                   and reverse_lesion_collapses and permuted_chance and noise_acid and noencode_selective
                    and adapt_lesion_cofire and frozen_ok and dendrite_reset_ok)
     out["checks"] = dict(forward_ordered=forward_ordered, ignites=ignites, discrete=discrete,
                          no_swr_collapses=no_swr_collapses, shuffled_collapses=shuffled_collapses,
                          reverse_lesion_collapses=reverse_lesion_collapses, permuted_chance=permuted_chance,
-                         noise_acid=noise_acid, noencode_retired=noencode_retired,
+                         noise_acid=noise_acid, noencode_selective=noencode_selective,
+                         noencode_ignite=list(s_ne["per_asm_active"]),
                          adapt_lesion_cofire=adapt_lesion_cofire, frozen_ok=frozen_ok,
                          dendrite_reset_ok=dendrite_reset_ok)
     out["seed_go"] = seed_go
@@ -435,6 +537,9 @@ def main():
     ap.add_argument("--noise-dur", type=int, default=5, help="pulse duration (steps) each triggered CA3-EXC cell is driven")
     # readout substrate
     ap.add_argument("--self-regen-read", type=float, default=0.0, help="plateau self-regen during the READ (0 = transient de-latch -> discrete + able to hand off)")
+    ap.add_argument("--self-regen-ignite", type=float, default=None, help="MECHANISM #1 latch-then-release: HIGH self-regen (e.g. 0.15) for the first ignite-frac of each envelope (selective ignition), then drops to self-regen-read (de-latch + forward hand-off). None = constant self-regen-read (byte-identical).")
+    ap.add_argument("--ignite-frac", type=float, default=0.4, help="fraction of the envelope window held at self-regen-ignite (latch phase) before release")
+    ap.add_argument("--env-exc-ramp", action="store_true", help="MECHANISM #2: ramp env-exc-pa 0->peak across the envelope (most-excitable assembly crosses threshold FIRST -> sequences)")
     ap.add_argument("--recall-k-thresh", type=float, default=None, help="coincidence_k_threshold at read (None = the DECOUPLED store's own, 40)")
     ap.add_argument("--d-abs", type=float, default=40.0, help="Izhikevich per-spike u-kick on CA3-exc (SFA self-avoidance)")
     ap.add_argument("--a-abs", type=float, default=0.008, help="Izhikevich recovery rate a on CA3-exc")

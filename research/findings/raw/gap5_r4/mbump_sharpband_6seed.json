@@ -1,0 +1,95 @@
+{
+  "probe": "sharp_band_6seed_substantiation",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_sharp": 6,
+  "robust": true,
+  "ratios": [
+    9.83,
+    8.71,
+    9.34,
+    7.99,
+    9.76,
+    8.11
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "profile": {
+        "within": 234.7,
+        "base": 4.8,
+        "d1": 94.4,
+        "d2": 9.6,
+        "d3": 2.5
+      },
+      "ratio": 9.83,
+      "sharp": true
+    },
+    {
+      "seed": 43,
+      "profile": {
+        "within": 235.4,
+        "base": 5.6,
+        "d1": 97.5,
+        "d2": 11.2,
+        "d3": 2.2
+      },
+      "ratio": 8.71,
+      "sharp": true
+    },
+    {
+      "seed": 44,
+      "profile": {
+        "within": 235.3,
+        "base": 4.9,
+        "d1": 96.2,
+        "d2": 10.3,
+        "d3": 2.4
+      },
+      "ratio": 9.34,
+      "sharp": true
+    },
+    {
+      "seed": 100,
+      "profile": {
+        "within": 236.3,
+        "base": 6.5,
+        "d1": 95.9,
+        "d2": 12.0,
+        "d3": 2.3
+      },
+      "ratio": 7.99,
+      "sharp": true
+    },
+    {
+      "seed": 101,
+      "profile": {
+        "within": 235.2,
+        "base": 4.6,
+        "d1": 94.7,
+        "d2": 9.7,
+        "d3": 2.3
+      },
+      "ratio": 9.76,
+      "sharp": true
+    },
+    {
+      "seed": 102,
+      "profile": {
+        "within": 237.6,
+        "base": 7.9,
+        "d1": 96.5,
+        "d2": 11.9,
+        "d3": 2.8
+      },
+      "ratio": 8.11,
+      "sharp": true
+    }
+  ]
+}

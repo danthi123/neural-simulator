@@ -1,0 +1,296 @@
+{
+  "probe": "moving_bump_replay_6seed_GO",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_go": 0,
+  "overall_GO": false,
+  "config": {
+    "band": {
+      "n_ca3": 2000,
+      "ca3_density": 0.05,
+      "assembly_frac": 0.06,
+      "encode_drive": 3000.0,
+      "no_sync": true,
+      "bistable": true,
+      "nmda_recurrent": false,
+      "enable_ou": false,
+      "selective_inhib": true,
+      "structural_sep": 1,
+      "plateau_self_regen": 0.15,
+      "apical_kir_g": 3.0,
+      "apical_gc": 1.0,
+      "apical_gc_read": 5.0,
+      "encode_btsp": true,
+      "encode_ca3w": 0.5,
+      "encode_plateau_pA": 250.0,
+      "btsp_lr": 0.05,
+      "hebb_max": 300.0,
+      "recall_k_thresh": 40.0,
+      "drive_steps": 48,
+      "reset_steps": 15,
+      "k_thresh": 18.0,
+      "plateau_strength": 120.0,
+      "coact_thresh": 0.02,
+      "ca3_fb_inhib": 20.0,
+      "apical_R": 50.0,
+      "plateau_v_hold": -35.0,
+      "sel_inhib_spare": 0.0,
+      "encode_btsp_hetero": 0.0,
+      "n_mem": 6,
+      "within_events": 6,
+      "chain_fwd": 15,
+      "chain_rev": 0,
+      "seq_win_steps": 16,
+      "chain_reset_steps": 12,
+      "within_refresh": 0,
+      "rank1_encode": true,
+      "overlap_draw": false,
+      "freeze_between_refresh": true,
+      "chain_rule": "hebb_sym",
+      "chain_btsp_lr": 0.5,
+      "chain_overlap": true,
+      "freeze_between_within": true,
+      "hebb_coact_decay": 0.95,
+      "hebb_coact_thresh": 0.15,
+      "hebb_sym_lr": 0.03
+    },
+    "readout": {
+      "env_dur": 120,
+      "env_basket_drop": 120.0,
+      "d_abs": 120.0,
+      "recall_k_thresh": 90.0,
+      "env_exc_pa": 150.0,
+      "env_exc_ramp": true,
+      "noise_rate": 0.004,
+      "noise_pa": 500.0,
+      "seed_pa": 900.0,
+      "seed_dur": 8,
+      "self_regen_ignite": 0.15
+    },
+    "rest": 2500
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "real": {
+        "n_ev": 7,
+        "decoded": 6,
+        "n_sig": 0,
+        "mean_abs_r": 0.389,
+        "sig_fwd": 0.0,
+        "sig_rev": 0.0
+      },
+      "struct_shuffle": {
+        "n_ev": 18,
+        "decoded": 4,
+        "n_sig": 0,
+        "mean_abs_r": 0.668,
+        "sig_fwd": 0.0,
+        "sig_rev": 0.0
+      },
+      "adapt_lesion": {
+        "n_ev": 10,
+        "decoded": 7,
+        "n_sig": 2,
+        "mean_abs_r": 0.524,
+        "sig_fwd": 0.0,
+        "sig_rev": 0.2857142857142857
+      },
+      "no_noise": {
+        "n_ev": 0,
+        "decoded": 0,
+        "n_sig": 0,
+        "mean_abs_r": 0.0,
+        "sig_fwd": 0.0,
+        "sig_rev": 0.0
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 43,
+      "real": {
+        "n_ev": 6,
+        "decoded": 5,
+        "n_sig": 1,
+        "mean_abs_r": 0.429,
+        "sig_fwd": 0.0,
+        "sig_rev": 0.2
+      },
+      "struct_shuffle": {
+        "n_ev": 7,
+        "decoded": 4,
+        "n_sig": 1,
+        "mean_abs_r": 0.155,
+        "sig_fwd": 0.0,
+        "sig_rev": 0.25
+      },
+      "adapt_lesion": {
+        "n_ev": 23,
+        "decoded": 3,
+        "n_sig": 1,
+        "mean_abs_r": 0.333,
+        "sig_fwd": 0.0,
+        "sig_rev": 0.3333333333333333
+      },
+      "no_noise": {
+        "n_ev": 18,
+        "decoded": 5,
+        "n_sig": 1,
+        "mean_abs_r": 0.361,
+        "sig_fwd": 0.0,
+        "sig_rev": 0.2
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 44,
+      "real": {
+        "n_ev": 23,
+        "decoded": 9,
+        "n_sig": 0,
+        "mean_abs_r": 0.309,
+        "sig_fwd": 0.0,
+        "sig_rev": 0.0
+      },
+      "struct_shuffle": {
+        "n_ev": 11,
+        "decoded": 5,
+        "n_sig": 0,
+        "mean_abs_r": 0.268,
+        "sig_fwd": 0.0,
+        "sig_rev": 0.0
+      },
+      "adapt_lesion": {
+        "n_ev": 21,
+        "decoded": 6,
+        "n_sig": 0,
+        "mean_abs_r": 0.211,
+        "sig_fwd": 0.0,
+        "sig_rev": 0.0
+      },
+      "no_noise": {
+        "n_ev": 13,
+        "decoded": 6,
+        "n_sig": 0,
+        "mean_abs_r": 0.196,
+        "sig_fwd": 0.0,
+        "sig_rev": 0.0
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 100,
+      "real": {
+        "n_ev": 15,
+        "decoded": 8,
+        "n_sig": 1,
+        "mean_abs_r": 0.449,
+        "sig_fwd": 0.0,
+        "sig_rev": 0.125
+      },
+      "struct_shuffle": {
+        "n_ev": 6,
+        "decoded": 5,
+        "n_sig": 0,
+        "mean_abs_r": 0.229,
+        "sig_fwd": 0.0,
+        "sig_rev": 0.0
+      },
+      "adapt_lesion": {
+        "n_ev": 0,
+        "decoded": 0,
+        "n_sig": 0,
+        "mean_abs_r": 0.0,
+        "sig_fwd": 0.0,
+        "sig_rev": 0.0
+      },
+      "no_noise": {
+        "n_ev": 13,
+        "decoded": 7,
+        "n_sig": 1,
+        "mean_abs_r": 0.439,
+        "sig_fwd": 0.0,
+        "sig_rev": 0.14285714285714285
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 101,
+      "real": {
+        "n_ev": 19,
+        "decoded": 7,
+        "n_sig": 0,
+        "mean_abs_r": 0.31,
+        "sig_fwd": 0.0,
+        "sig_rev": 0.0
+      },
+      "struct_shuffle": {
+        "n_ev": 5,
+        "decoded": 3,
+        "n_sig": 0,
+        "mean_abs_r": 0.039,
+        "sig_fwd": 0.0,
+        "sig_rev": 0.0
+      },
+      "adapt_lesion": {
+        "n_ev": 14,
+        "decoded": 7,
+        "n_sig": 0,
+        "mean_abs_r": 0.529,
+        "sig_fwd": 0.0,
+        "sig_rev": 0.0
+      },
+      "no_noise": {
+        "n_ev": 7,
+        "decoded": 0,
+        "n_sig": 0,
+        "mean_abs_r": 0.0,
+        "sig_fwd": 0.0,
+        "sig_rev": 0.0
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 102,
+      "real": {
+        "n_ev": 9,
+        "decoded": 6,
+        "n_sig": 0,
+        "mean_abs_r": 0.484,
+        "sig_fwd": 0.0,
+        "sig_rev": 0.0
+      },
+      "struct_shuffle": {
+        "n_ev": 7,
+        "decoded": 5,
+        "n_sig": 0,
+        "mean_abs_r": 0.298,
+        "sig_fwd": 0.0,
+        "sig_rev": 0.0
+      },
+      "adapt_lesion": {
+        "n_ev": 10,
+        "decoded": 6,
+        "n_sig": 0,
+        "mean_abs_r": 0.407,
+        "sig_fwd": 0.0,
+        "sig_rev": 0.0
+      },
+      "no_noise": {
+        "n_ev": 14,
+        "decoded": 5,
+        "n_sig": 0,
+        "mean_abs_r": 0.353,
+        "sig_fwd": 0.0,
+        "sig_rev": 0.0
+      },
+      "seed_go": false
+    }
+  ]
+}

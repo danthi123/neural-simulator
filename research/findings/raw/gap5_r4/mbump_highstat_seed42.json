@@ -1,0 +1,35 @@
+{
+  "real": {
+    "n": 3,
+    "mean": 0.748,
+    "median": 0.837,
+    "p75": 0.918,
+    "n_clean": 2,
+    "frac_clean": 0.667
+  },
+  "struct_shuffle": {
+    "n": 1,
+    "mean": 0.093,
+    "median": 0.093,
+    "p75": 0.093,
+    "n_clean": 0,
+    "frac_clean": 0.0
+  },
+  "adapt_lesion": {
+    "n": 0,
+    "mean": 0.0,
+    "median": 0.0,
+    "p75": 0.0,
+    "n_clean": 0,
+    "frac_clean": 0.0
+  },
+  "no_noise": {
+    "n": 0,
+    "mean": 0.0,
+    "median": 0.0,
+    "p75": 0.0,
+    "n_clean": 0,
+    "frac_clean": 0.0
+  },
+  "GO_sep": true
+}

@@ -1,0 +1,226 @@
+{
+  "probe": "moving_bump_6seed_clean_GO",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_go": 0,
+  "overall_GO": false,
+  "config": {
+    "band": {
+      "n_ca3": 2000,
+      "ca3_density": 0.05,
+      "assembly_frac": 0.06,
+      "encode_drive": 3000.0,
+      "no_sync": true,
+      "bistable": true,
+      "nmda_recurrent": false,
+      "enable_ou": false,
+      "selective_inhib": true,
+      "structural_sep": 1,
+      "plateau_self_regen": 0.15,
+      "apical_kir_g": 3.0,
+      "apical_gc": 1.0,
+      "apical_gc_read": 5.0,
+      "encode_btsp": true,
+      "encode_ca3w": 0.5,
+      "encode_plateau_pA": 250.0,
+      "btsp_lr": 0.05,
+      "hebb_max": 300.0,
+      "recall_k_thresh": 40.0,
+      "drive_steps": 48,
+      "reset_steps": 15,
+      "k_thresh": 18.0,
+      "plateau_strength": 120.0,
+      "coact_thresh": 0.02,
+      "ca3_fb_inhib": 20.0,
+      "apical_R": 50.0,
+      "plateau_v_hold": -35.0,
+      "sel_inhib_spare": 0.0,
+      "encode_btsp_hetero": 0.0,
+      "n_mem": 6,
+      "within_events": 2,
+      "chain_fwd": 25,
+      "chain_rev": 0,
+      "seq_win_steps": 24,
+      "chain_reset_steps": 12,
+      "within_refresh": 0,
+      "rank1_encode": true,
+      "overlap_draw": false,
+      "freeze_between_refresh": true,
+      "chain_rule": "hebb_sym",
+      "chain_btsp_lr": 0.5,
+      "chain_overlap": true,
+      "freeze_between_within": true,
+      "hebb_coact_decay": 0.95,
+      "hebb_coact_thresh": 0.05,
+      "hebb_sym_lr": 0.02,
+      "chain_adjacent_pairs": true
+    },
+    "readout": {
+      "env_dur": 110,
+      "swr_period": 240,
+      "env_exc_pa": 80.0,
+      "recall_k_thresh": 50.0,
+      "d_abs": 140.0,
+      "env_basket_drop": 180.0,
+      "seed_pa": 1000.0,
+      "env_exc_ramp": false,
+      "noise_rate": 0.004,
+      "noise_pa": 500.0,
+      "seed_dur": 10,
+      "self_regen_ignite": 0.15
+    },
+    "rest": 6000
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "real": {
+        "n": 1,
+        "mean": 0.5,
+        "n_clean": 0
+      },
+      "struct_shuffle": {
+        "n": 6,
+        "mean": 0.395,
+        "n_clean": 1
+      },
+      "adapt_lesion": {
+        "n": 0,
+        "mean": 0.0,
+        "n_clean": 0
+      },
+      "no_noise": {
+        "n": 2,
+        "mean": 0.501,
+        "n_clean": 1
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 43,
+      "real": {
+        "n": 0,
+        "mean": 0.0,
+        "n_clean": 0
+      },
+      "struct_shuffle": {
+        "n": 19,
+        "mean": 0.354,
+        "n_clean": 4
+      },
+      "adapt_lesion": {
+        "n": 18,
+        "mean": 0.394,
+        "n_clean": 6
+      },
+      "no_noise": {
+        "n": 17,
+        "mean": 0.419,
+        "n_clean": 5
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 44,
+      "real": {
+        "n": 0,
+        "mean": 0.0,
+        "n_clean": 0
+      },
+      "struct_shuffle": {
+        "n": 7,
+        "mean": 0.259,
+        "n_clean": 1
+      },
+      "adapt_lesion": {
+        "n": 15,
+        "mean": 0.44,
+        "n_clean": 6
+      },
+      "no_noise": {
+        "n": 14,
+        "mean": 0.556,
+        "n_clean": 8
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 100,
+      "real": {
+        "n": 1,
+        "mean": 0.24,
+        "n_clean": 0
+      },
+      "struct_shuffle": {
+        "n": 3,
+        "mean": 0.337,
+        "n_clean": 0
+      },
+      "adapt_lesion": {
+        "n": 0,
+        "mean": 0.0,
+        "n_clean": 0
+      },
+      "no_noise": {
+        "n": 14,
+        "mean": 0.561,
+        "n_clean": 7
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 101,
+      "real": {
+        "n": 0,
+        "mean": 0.0,
+        "n_clean": 0
+      },
+      "struct_shuffle": {
+        "n": 14,
+        "mean": 0.403,
+        "n_clean": 3
+      },
+      "adapt_lesion": {
+        "n": 19,
+        "mean": 0.584,
+        "n_clean": 11
+      },
+      "no_noise": {
+        "n": 0,
+        "mean": 0.0,
+        "n_clean": 0
+      },
+      "seed_go": false
+    },
+    {
+      "seed": 102,
+      "real": {
+        "n": 0,
+        "mean": 0.0,
+        "n_clean": 0
+      },
+      "struct_shuffle": {
+        "n": 8,
+        "mean": 0.343,
+        "n_clean": 2
+      },
+      "adapt_lesion": {
+        "n": 0,
+        "mean": 0.0,
+        "n_clean": 0
+      },
+      "no_noise": {
+        "n": 0,
+        "mean": 0.0,
+        "n_clean": 0
+      },
+      "seed_go": false
+    }
+  ]
+}

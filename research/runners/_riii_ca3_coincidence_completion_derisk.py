@@ -33,7 +33,7 @@ def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0,
            ca3_to_ca1_density=0.30, ca1_fb_inhib=None, ca1_fb_n=None, ca1_ff_inhib=None,
            nmda_recurrent=False, nmda_tau=100.0, nmda_ratio=1.0, enable_ou=True,
            plateau_self_regen=0.0, plateau_v_hold=-35.0, apical_kir_g=0.0, apical_gc_read=None,
-           mossy_stp_disabled=False, enable_stp=False):
+           mossy_stp_disabled=False, enable_stp=False, adex=False, adex_params=None):
     from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
     from sim.bridge import SimulationBridge
     from research.runners.text_minimal_isolation import build_biological_brain_regions
@@ -170,6 +170,14 @@ def _build(seed, n_lang=384, n_ec=200, n_dg=300, n_ca3=150, n_ca1=120, ca3w=6.0,
     cfg.enable_brain_region_framework = True
     cfg.brain_regions = list(regions); cfg.region_pathways = list(pathways)
     cfg.dt_ms = 1.0; cfg.seed = seed; cfg.enable_nmda = True
+    if adex:
+        # gap#5 AdEx point-neuron swap (2026-07-24): Ecker 2022's traveling bump is on AdExpIF (a POINT neuron, no
+        # dendrites). GLOBAL model swap (whole net -> AdEx; there is no per-region AdEx heterogeneity). Defaults are the
+        # ADEX_RS pyramidal (a=4, b=80.5, tau_w=144); adex_params overrides {a,b,tau_w,...} to tune the adaptation regime.
+        from sim.enums import NeuronModel
+        cfg.neuron_model_type = NeuronModel.ADEX.name
+        for _k, _v in (adex_params or {}).items():
+            setattr(cfg, f"adex_{_k}", float(_v))
     cfg.enable_ou_process = bool(enable_ou)   # OU off isolates the DETERMINISTIC bistability (noise-robustness = a separate dimension)
     if nmda_recurrent:
         cfg.enable_nmda_recurrent = True; cfg.nmda_recurrent_tau_decay_ms = float(nmda_tau)

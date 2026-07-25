@@ -1,0 +1,57 @@
+{
+  "profile": {
+    "within": 235.0,
+    "base": 4.8,
+    "f1": 95.0,
+    "f2": 9.7,
+    "f3": 2.5
+  },
+  "ratio": 9.79,
+  "REAL": {
+    "n_ev": 5,
+    "mean_len": 4.2,
+    "decoded": 1,
+    "n_sig": 0,
+    "mean_abs_r": 0.0,
+    "trajs": [
+      {
+        "s": 2256,
+        "e": 2265,
+        "r": 0.0,
+        "argmax_pos": [
+          3,
+          3,
+          3
+        ]
+      }
+    ]
+  },
+  "STRUCT_SHUFFLE": {
+    "n_ev": 7,
+    "mean_len": 4.4,
+    "decoded": 0,
+    "n_sig": 0,
+    "mean_abs_r": 0.0,
+    "trajs": []
+  },
+  "ADAPT_LESION": {
+    "n_ev": 12,
+    "mean_len": 3.5,
+    "decoded": 1,
+    "n_sig": 0,
+    "mean_abs_r": 0.0,
+    "trajs": [
+      {
+        "s": 2256,
+        "e": 2265,
+        "r": 0.0,
+        "argmax_pos": [
+          3,
+          3,
+          3
+        ]
+      }
+    ]
+  },
+  "GO_seed42": false
+}

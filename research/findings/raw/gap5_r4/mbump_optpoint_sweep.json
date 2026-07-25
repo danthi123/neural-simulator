@@ -1,0 +1,144 @@
+{
+  "baseline": {
+    "n_events": 0,
+    "mean_len": 0.0,
+    "max_len": 0,
+    "n_decoded": 0,
+    "n_sig": 0,
+    "mean_abs_r": 0.0,
+    "F_active": 0.0738,
+    "trajs": []
+  },
+  "longer+strongSFA": {
+    "n_events": 4,
+    "mean_len": 43.0,
+    "max_len": 145,
+    "n_decoded": 2,
+    "n_sig": 0,
+    "mean_abs_r": 0.218,
+    "F_active": 0.0446,
+    "trajs": [
+      {
+        "s": 360,
+        "e": 379,
+        "r": -0.327,
+        "argmax_pos": [
+          4,
+          2,
+          0,
+          3
+        ]
+      },
+      {
+        "s": 388,
+        "e": 533,
+        "r": -0.109,
+        "argmax_pos": [
+          4,
+          2,
+          1,
+          3,
+          3,
+          3,
+          2,
+          2,
+          2,
+          3,
+          3,
+          4,
+          0,
+          2,
+          2,
+          2,
+          4,
+          4,
+          4,
+          2,
+          2,
+          2,
+          2,
+          4,
+          4,
+          2,
+          3,
+          2,
+          2,
+          2,
+          1,
+          3,
+          0,
+          4,
+          2,
+          3
+        ]
+      }
+    ]
+  },
+  "sparse+longSFA": {
+    "n_events": 7,
+    "mean_len": 21.9,
+    "max_len": 119,
+    "n_decoded": 2,
+    "n_sig": 0,
+    "mean_abs_r": 0.558,
+    "F_active": 0.0418,
+    "trajs": [
+      {
+        "s": 410,
+        "e": 425,
+        "r": -0.866,
+        "argmax_pos": [
+          3,
+          3,
+          2
+        ]
+      },
+      {
+        "s": 436,
+        "e": 555,
+        "r": -0.251,
+        "argmax_pos": [
+          3,
+          3,
+          3,
+          4,
+          4,
+          0,
+          0,
+          3,
+          3,
+          1,
+          4,
+          4,
+          0,
+          3,
+          3,
+          3,
+          2,
+          0,
+          0,
+          0,
+          3,
+          1,
+          2,
+          0,
+          0,
+          4,
+          2,
+          2,
+          3
+        ]
+      }
+    ]
+  },
+  "verysparse": {
+    "n_events": 1,
+    "mean_len": 4.0,
+    "max_len": 4,
+    "n_decoded": 0,
+    "n_sig": 0,
+    "mean_abs_r": 0.0,
+    "F_active": 0.0055,
+    "trajs": []
+  }
+}

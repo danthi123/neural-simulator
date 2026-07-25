@@ -1,0 +1,42 @@
+{
+  "exc40_s1500": {
+    "n_ev": 1,
+    "mean_len": 5.0,
+    "max_len": 5,
+    "decoded": 0,
+    "n_sig": 0,
+    "mean_abs_r": 0.0,
+    "F": 0.0088,
+    "trajs": []
+  },
+  "exc80_s2000": {
+    "n_ev": 0,
+    "mean_len": 0,
+    "max_len": 0,
+    "decoded": 0,
+    "n_sig": 0,
+    "mean_abs_r": 0.0,
+    "F": 0.0215,
+    "trajs": []
+  },
+  "exc20_s2500": {
+    "n_ev": 0,
+    "mean_len": 0,
+    "max_len": 0,
+    "decoded": 0,
+    "n_sig": 0,
+    "mean_abs_r": 0.0,
+    "F": 0.0204,
+    "trajs": []
+  },
+  "exc60_s1800_k30": {
+    "n_ev": 0,
+    "mean_len": 0,
+    "max_len": 0,
+    "decoded": 0,
+    "n_sig": 0,
+    "mean_abs_r": 0.0,
+    "F": 0.0333,
+    "trajs": []
+  }
+}

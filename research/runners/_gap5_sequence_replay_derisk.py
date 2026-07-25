@@ -106,11 +106,19 @@ def _silence_soma_apical(bridge, settle=2):
     plateau is gone (so no B->A reverse link forms from a self-sustaining latch). Load-bearing for the asymmetry."""
     from sim.backend import get_backend
     cp, _ = get_backend()
+    _cfg = bridge.core_config
+    _adex = getattr(bridge, "cp_adex_w", None) is not None
     if getattr(bridge, "cp_izh_c_reset", None) is not None:
         bridge.cp_membrane_potential_v[:] = bridge.cp_izh_c_reset
+    elif _adex:
+        bridge.cp_membrane_potential_v[:] = cp.float32(getattr(_cfg, "adex_V_r", -70.6))   # AdEx reset voltage
     else:
         bridge.cp_membrane_potential_v[:] = -65.0
-    bridge.cp_recovery_variable_u[:] = 0.0
+    # AdEx-aware adaptation-state reset (Izhikevich uses u; AdEx uses w). Guard both (either may be None per model).
+    if getattr(bridge, "cp_recovery_variable_u", None) is not None:
+        bridge.cp_recovery_variable_u[:] = 0.0
+    if _adex:
+        bridge.cp_adex_w[:] = 0.0
     if getattr(bridge, "cp_firing_states", None) is not None:
         bridge.cp_firing_states[:] = False
     for _a in ("cp_conductance_g_nmda_recurrent", "cp_conductance_g_e", "cp_conductance_g_i",
@@ -149,7 +157,8 @@ def _prepare_sequence(seed, cfg, do_encode=True):
                     #   the E%-max FEEDFORWARD ca3_ff_basket (de Almeida-Idiart-Lisman 2009) -- a SEPARATE basket NOT
                     #   subject to _prepare_sequence's ca3_pv_basket->member sparing, so theta-on-ff_basket reaches the
                     #   assembly cells WITHOUT touching the GO store's sel_inhib_spare. Default None => byte-identical.
-                    enable_stp=cfg.get("enable_stp", False), mossy_stp_disabled=cfg.get("enable_stp", False))
+                    enable_stp=cfg.get("enable_stp", False), mossy_stp_disabled=cfg.get("enable_stp", False),
+                    adex=bool(cfg.get("adex", False)), adex_params=cfg.get("adex_params"))   # gap#5 AdEx point-neuron swap
     rm = bridge.region_manager
     ca3_idx = list(rm.indices("ca3"))
     ca3_pos = {int(g): i for i, g in enumerate(ca3_idx)}
@@ -229,6 +238,20 @@ def _prepare_sequence(seed, cfg, do_encode=True):
             """Co-fire assembly m (pre-eligibility) + plateau on m (IS_post) for nsteps -> BTSP potentiates whatever has
             pre-eligibility NOW (incl. earlier assemblies in the sweep, tau 1000ms) ONTO m."""
             ad = assy_dev[m]
+            for _ in range(nsteps):
+                bridge.cp_external_input_current[:] = 0.0
+                bridge.cp_external_input_current[ad] = encode_drive
+                bridge.cp_bdsp_apical_drive[:] = 0.0
+                bridge.cp_bdsp_apical_drive[ad] = plateau_pA
+                bridge._run_one_simulation_step()
+
+        def _drive_pair(m1, m2, nsteps):
+            """gap#5 THETA-ADJACENT-PAIR encode (2026-07-24): co-fire ONLY the two adjacent assemblies m1,m2 together for
+            nsteps (others get NO drive -> the feedback basket suppresses reactivation) -> the co-activity rule potentiates
+            ONLY the m1<->m2 (adjacent) links = a SHARP near-diagonal band (d1 >> d2/skip ~ baseline), the point-neuron
+            realization of theta-compressed sequential activation (only local neighbors co-active per phase, NOT the whole
+            chain reactivating). Symmetric (both m1<->m2) = Ecker's bidirectional regime."""
+            ad = cp.concatenate([assy_dev[m1], assy_dev[m2]])
             for _ in range(nsteps):
                 bridge.cp_external_input_current[:] = 0.0
                 bridge.cp_external_input_current[ad] = encode_drive
@@ -363,7 +386,19 @@ def _prepare_sequence(seed, cfg, do_encode=True):
         # within phase + its boundary silences above). From here the chain rule (hebb_sym) is the sole between-writer.
         if _fbw_saved is not None:
             bridge.cp_plasticity_rate_gain[_fbw_dev] = _fbw_saved
-        if chain_edges is None:
+        _adj_pairs = bool(cfg.get("chain_adjacent_pairs"))
+        if _adj_pairs:
+            # gap#5 THETA-ADJACENT-PAIR band: present each ADJACENT pair (m,m+1) co-fired ALONE (distal assemblies
+            # suppressed) -> only adjacent links written -> a SHARP near-diagonal band. Each pair is theta-separated
+            # (silence + zero elig) so the previous pair's activity does not bleed into the next -> no skip links.
+            for _ev in range(int(cfg["chain_fwd"])):
+                for m in range(n_mem - 1):
+                    _silence_soma_apical(bridge, settle=2); _zero_elig(bridge)
+                    if getattr(bridge, "cp_hebb_coactivity_trace", None) is not None:
+                        bridge.cp_hebb_coactivity_trace[:] = 0.0
+                    _drive_pair(m, m + 1, win)
+                bridge.cp_external_input_current[:] = 0.0
+        elif chain_edges is None:
             order_fwd = list(range(n_mem))
             for _ev in range(int(cfg["chain_fwd"])):
                 _zero_elig(bridge)              # start each sweep with NO carried eligibility (no wrap-around C->A)

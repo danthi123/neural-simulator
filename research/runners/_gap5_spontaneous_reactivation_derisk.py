@@ -210,11 +210,18 @@ def _hard_silence(bridge, settle=30):
     cp, _ = get_backend()
     _ou_was = bridge.core_config.enable_ou_process
     bridge.core_config.enable_ou_process = False
+    _adex = getattr(bridge, "cp_adex_w", None) is not None
     if getattr(bridge, "cp_izh_c_reset", None) is not None:
         bridge.cp_membrane_potential_v[:] = bridge.cp_izh_c_reset
+    elif _adex:
+        bridge.cp_membrane_potential_v[:] = cp.float32(getattr(bridge.core_config, "adex_V_r", -70.6))
     else:
         bridge.cp_membrane_potential_v[:] = -65.0
-    bridge.cp_recovery_variable_u[:] = 0.0
+    # AdEx-aware adaptation-state reset (Izhikevich u vs AdEx w; either may be None per model)
+    if getattr(bridge, "cp_recovery_variable_u", None) is not None:
+        bridge.cp_recovery_variable_u[:] = 0.0
+    if _adex:
+        bridge.cp_adex_w[:] = 0.0
     if getattr(bridge, "cp_firing_states", None) is not None:
         bridge.cp_firing_states[:] = False
     for _a in ("cp_conductance_g_nmda_recurrent", "cp_conductance_g_e", "cp_conductance_g_i",

@@ -1,0 +1,74 @@
+{
+  "drive1200_pvh-45": {
+    "profile": {
+      "within": 93.5,
+      "base": 0.5,
+      "d1": 0.5,
+      "d2": 0.5,
+      "d3": 0.5
+    },
+    "ratio": 1.0,
+    "sharp": false,
+    "fired_20steps": 359
+  },
+  "drive1200_pvh-52": {
+    "profile": {
+      "within": 101.1,
+      "base": 0.5,
+      "d1": 0.5,
+      "d2": 0.5,
+      "d3": 0.5
+    },
+    "ratio": 1.0,
+    "sharp": false,
+    "fired_20steps": 357
+  },
+  "drive2000_pvh-45": {
+    "profile": {
+      "within": 140.9,
+      "base": 0.5,
+      "d1": 0.5,
+      "d2": 0.5,
+      "d3": 0.5
+    },
+    "ratio": 1.0,
+    "sharp": false,
+    "fired_20steps": 122
+  },
+  "drive2000_pvh-52": {
+    "profile": {
+      "within": 149.5,
+      "base": 0.5,
+      "d1": 0.5,
+      "d2": 0.5,
+      "d3": 0.5
+    },
+    "ratio": 1.0,
+    "sharp": false,
+    "fired_20steps": 122
+  },
+  "drive3000_pvh-45": {
+    "profile": {
+      "within": 169.0,
+      "base": 0.5,
+      "d1": 0.5,
+      "d2": 0.5,
+      "d3": 0.5
+    },
+    "ratio": 1.0,
+    "sharp": false,
+    "fired_20steps": 125
+  },
+  "drive3000_pvh-52": {
+    "profile": {
+      "within": 175.0,
+      "base": 0.5,
+      "d1": 0.5,
+      "d2": 0.5,
+      "d3": 0.5
+    },
+    "ratio": 1.0,
+    "sharp": false,
+    "fired_20steps": 126
+  }
+}
