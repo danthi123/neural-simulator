@@ -32,8 +32,9 @@ def _jac(a, c):
     return len(A & C) / max(1, len(A | C))
 
 
-def run(seed, li_drive, li_sparsity=0.1, ffi_lesion=False):
-    b = build_substrate(seed, SimpleNamespace(**BASE))
+def run(seed, li_drive, li_sparsity=0.1, ffi_lesion=False, divnorm_regions=""):
+    _ba = dict(BASE); _ba["divnorm_regions"] = divnorm_regions
+    b = build_substrate(seed, SimpleNamespace(**_ba))
     rm = b.region_manager
     if ffi_lesion:   # anti-cheat: zero dg_pv_basket->dg to confirm the FFI is load-bearing (DG should re-densify)
         _try_pgate(b, "dg_pv_basket_to_dg", 0.0); _try_tgate(b, "dg_pv_basket_to_dg", 0.0)
@@ -98,11 +99,13 @@ def main():
     ap.add_argument("--li-drive", type=float, default=200.0)
     ap.add_argument("--li-sparsity", type=float, default=0.1)
     ap.add_argument("--ffi-lesion", action="store_true")
+    ap.add_argument("--divnorm-regions", default="", help="Family B: comma-sep regions to apply activity-scaled divisive-norm (e.g. dg or ca1)")
     ap.add_argument("--out", default="research/findings/raw/consol_opsweep_gpu")
     args = ap.parse_args()
     from pathlib import Path
     Path(args.out).mkdir(parents=True, exist_ok=True)
-    r = run(args.seed, args.li_drive, args.li_sparsity, args.ffi_lesion)
+    r = run(args.seed, args.li_drive, args.li_sparsity, args.ffi_lesion, args.divnorm_regions)
+    r["divnorm_regions"] = args.divnorm_regions
     Path(f"{args.out}/dg_natural_seed{args.seed}_d{args.li_drive:g}_s{args.li_sparsity:g}{'_lesion' if args.ffi_lesion else ''}.json").write_text(json.dumps(r, indent=2))
     fl = r["methods"]["flood"]; na = r["methods"]["natural"]
     print(f"[seed {args.seed} li_drive={args.li_drive}] DG density: does NATURAL perforant drive sparsify DG?")

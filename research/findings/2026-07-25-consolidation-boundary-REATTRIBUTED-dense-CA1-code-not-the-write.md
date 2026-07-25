@@ -174,6 +174,25 @@ inert-ish). Testing Family B next (activity-SCALED self-tuning inhibition — di
 threshold, target ~2%), the design's decisive-either-way fallback; if it too can't sparsify, the wall is confirmed and
 the route is the Family-C dendritic numpy oracle. `_consol_dg_natural_probe.py`, `btsp_elig_exponent` (fixed).
 
+## Family B TESTED — NO-GO (divisive-norm is GAIN control, not kWTA) → the point-neuron sparsification wall is CONFIRMED
+Family B (activity-scaled self-tuning inhibition) on DG: added `divnorm_regions` to `build_substrate` (per-region
+`input_divisive_norm`, additive/default-off). **VERIFIED ENGAGED** (`cp_input_divisive_mask` sum=200=n_dg, cfg flag on)
+— yet DG stays DENSE (active 0.74–0.78, Jaccard 0.59–0.62), IDENTICAL to no-divnorm. Root: **divisive normalization
+scales input MAGNITUDE, it does not reduce the COUNT of active cells** — it is gain control, not a kWTA, so it cannot
+sparsify. (Homeostasis, also on by default at target 2%, is too slow for a 40-step reinstatement.)
+
+⇒ **THE VERDICT (comprehensive, definitive): the consolidation A1 selective-write boundary is blocked by the point-neuron
+SPARSIFICATION wall.** Two research workflows + ~12 probes + 2 additive sim edits exhausted every cheap-to-moderate method:
+no hippocampal region (CA1, DG) can be sparsified to the sparse regime (fixed FFI barely works · divisive-norm is gain not
+kWTA · homeostasis too slow · sparse commit re-densifies via recurrence), and no write-rule localizes on the dense code
+(rate-threshold, supralinear eligibility, heterosynaptic all top out ~1.1 vs the 2.5 gate). This is the recurring,
+well-documented point-neuron divisive-normalization/kWTA limit. **Per THE LAW the boundary stays OPEN**; the one remaining
+named method is the **multi-branch dendritic per-branch write (Family C, months-scale)** — gated FIRST by a cheap numpy
+oracle: model K per-branch plateaus + plateau-gated write on the REAL measured CA1 codes, sweep branch-assignment
+(oracle-clustered vs random). GO(oracle ≥2.5, random ≈1.0) ⇒ the months build is warranted; KILL(oracle <2.5) ⇒ per-branch
+gating cannot work on this dense-halo code even with perfect clustering ⇒ Family C is dead and the capability needs a
+different substrate entirely. That oracle is the decisive next gate.
+
 ## Recommended first de-risk (GPU-when-free / Tuesday)
 Build the **Rank-2 CA1-separation de-risk**: add a feedforward-inhibitory kWTA pool to CA1 (or route slot-drive from DG),
 re-run `_consol_direct_weight_probe` → confirm Jaccard < 0.2 / active <5% AND own/other rises + own-is-max. Then chain the

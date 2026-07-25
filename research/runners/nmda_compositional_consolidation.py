@@ -291,6 +291,16 @@ def build_substrate(seed, args):
     cfg.enable_brain_region_framework = True
     cfg.brain_regions = list(regions)
     cfg.region_pathways = list(pathways)
+    # Family B (2026-07-25): ACTIVITY-SCALED divisive normalization on a target hippocampal region -- self-limits its
+    # input by (sigma + gain*pop-mean) so a densely-driven region sparsifies WITHOUT the fixed-FFI knife-edge. Additive/
+    # default-off (divnorm_regions="" -> byte-identical). Comma-sep region names, e.g. "dg" or "ca1".
+    _dn = str(getattr(args, "divnorm_regions", "") or "")
+    if _dn:
+        cfg.enable_input_divisive_norm = True
+        _dnset = set(x.strip() for x in _dn.split(",") if x.strip())
+        for _r in cfg.brain_regions:
+            if _r.name in _dnset:
+                _r.input_divisive_norm = True
     cfg.dt_ms = 0.5
     cfg.seed = int(seed)                      # <-- SEEDS THE SUBSTRATE (not actual_seed_used)
     cfg.enable_nmda = bool(args.enable_global_nmda)
