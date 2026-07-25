@@ -1,3 +1,25 @@
+> # 📍 READ FIRST — CURRENT STATE (this doc is an append-log containing TWO major reversals; the top sections are the ORIGINAL discovery, not the final picture)
+>
+> **1. The 2026-07-25 consolidation "boundary" was NEVER REAL.** It was an artifact of `comp_apical_R=50.0` — a **333×
+> miscalibration** of a pA→mV units constant (engine default `0.15`) that parked `v_apical` at ~2×10⁵ mV and, through
+> `apical_g_couple_to_soma=5.0`, drove every soma. The "dense 93%-active CA1 code" it produced was runaway current, not a
+> hippocampal code. **VOID:** the dense-code re-attribution, the code-overlap ceilings, the 6-seed two-sided NO-GO, the
+> M0 GO, and the "surpass = dendritic per-branch write" conclusion.
+> **2. On a physically valid substrate the write LOCALIZES — 6-seed GO** (own-is-max **18/18 fact-seeds**, mean own/other
+> **4.06 vs permuted 0.43**). The suppressor was **soft-bound SATURATION** of BTSP's rank-1 outer product; sweeping the
+> learning rate down through the knee recovers selectivity monotonically. Real CA1 code: sparse (median cell 0 spikes),
+> near-disjoint (Jaccard 0.03–0.10), fact-specific (3.6–25.3).
+> **3. SCOPE:** that GO is on the **`ca1→comp_attr` SLOT** route — **not** the `cross_pool_concept` route the A1
+> capability test measures. The A1 runner never sets `comp_dendritic`, so **the original A1 test was never affected by
+> the miscalibration**; the VOID scope covers THIS ARC'S PROBES ONLY.
+> **4. A1's own blocker is UNDER-TRAINING, not a defect** — `--train-events 200` (the default) vs a recorded **800ev →
+> 87.5%** direct binding. The Hebbian/homeostasis debugging chased a non-bug. *(Separate real defect found en route:
+> `hebbian_max_weight=1.0` sits below the 3.015 design weights and INVERTS the rule — the same trap already documented
+> for STDP and BDSP, now seen on BTSP and Hebbian too.)*
+> **5. The through-line:** every "boundary" in this arc was a CONFIGURATION measured and reported as a property of the
+> BIOLOGY. Verification rules earned here are encoded in `.claude/skills/verify-go/SKILL.md` (mass-artifact triad ·
+> verifying a NEGATIVE · check the record for a known-good config first).
+
 # 🔴 CRITICAL (2026-07-25): `comp_apical_R = 50.0` is a **333× miscalibration** of a pA→mV units constant — the consolidation arc's dendritic substrate has been running at `v_apical ≈ ±10⁵–10⁶ mV`
 
 **Status: VERIFIED INDEPENDENTLY by the controller (not taken from the subagent report).** Found by the M1′ build's
