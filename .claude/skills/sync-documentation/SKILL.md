@@ -1,6 +1,6 @@
 ---
 name: sync-documentation
-description: Use when code changes (especially under sim/, research/runners/, experiment/, or new findings) may have made docs stale. Compares actual file state (line counts, class line numbers, runner flags, file counts, module exports) against claims made in README.md, CLAUDE.md, CHANGELOG.md, CONTRIBUTING.md, QUICKSTART.md, docs/SCIENCE_ROADMAP.md, and research/findings/INDEX.md. Updates numerical drift directly; flags semantic changes (new "best" recipe, new flag added, new milestone) for human review.
+description: Use when code OR findings change may have made docs stale — and run it SAME-CYCLE when a committed finding changes a wall/gap STATUS, the CURRENT FRONTIER, or a next-action. Two layers. (1) MECHANICAL drift — line counts, class line numbers, runner/test/findings counts, g11 flags, sim/__init__ exports — auto-fixed. (2) SEMANTIC summary-doc sync — the roadmap wall-ledger + GAP_CLOSURE_MISSION CURRENT STATE + AUTONOMOUS_STATE + ROADMAP.md must reflect the LATEST findings/git (status/frontier/next-action synced, contradictions between docs reconciled, abandoned docs banner-ed, a plain-language header + project-shorthand glossary kept). Layer (2) is what drifted on 2026-07-24 (findings committed, board left stale) and a mechanical pass alone cannot catch it.
 ---
 
 # Sync Documentation
@@ -11,7 +11,7 @@ This skill verifies the project's documentation against the actual code state an
 
 ## What this skill does
 
-The skill walks through eight check categories. For each, it reads the actual file state, compares to what the docs claim, and either fixes the drift or reports it.
+The skill walks through the check categories below. **Checks A–H are MECHANICAL** (numerical / line-number drift — auto-fixed). **Check I is the SEMANTIC summary-doc sync — the layer that actually drifts** and that a mechanical pass cannot catch (the 2026-07-24 failure). For each, it reads the actual state, compares to what the docs claim, and fixes or reports.
 
 ### Check A: Line counts on sim/*.py
 
@@ -101,6 +101,26 @@ For each recent finding doc:
 4. Is there a `CHANGELOG.md` entry for it?
 
 Recent commits with "MILESTONE", "best", or 🎉 emoji are the strongest signal that doc updates are needed.
+
+### Check I: SEMANTIC summary-doc sync (the layer that drifts — DO this, don't just flag)
+
+The **findings** are the source of truth; the **summary docs** are pointers that go stale. When a committed finding
+changes a wall/gap STATUS, the CURRENT FRONTIER, or a "next action", these must move WITH it. Ground-truth first:
+
+```bash
+git log --oneline -40
+ls -t research/findings/*.md | head -40
+```
+
+Then reconcile each, and **UPDATE them** (this is the same-cycle sync, not a flag-for-human — the invoker has the session context):
+
+1. **Freshness** — `GAP_CLOSURE_MISSION.md` CURRENT STATE, the master roadmap (`docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`) §8 "next to queue" + §2 faculty tags + §7 walls-ledger, and `ROADMAP.md` status must reflect the latest commits/findings. A "next action / next bet" pointing at *already-done* work is the worst drift (it mis-aims the next session) — fix those first.
+2. **Contradictions** — cross-check docs against each other (e.g. a legacy gap-table vs the CURRENT STATE); reconcile every contradictory status to the LATEST verdict, or retire the superseded table.
+3. **Abandoned docs** — any summary doc >~7 days stale that is no longer the working board (e.g. `AUTONOMOUS_STATE.md`) gets a one-line **`⚠️ SUPERSEDED → see <live board>`** banner at the top (don't silently leave 9-day-old drift looking live).
+4. **Accessibility** — verify: (a) `GAP_CLOSURE_MISSION.md` CURRENT STATE opens with a ≤5-line **STATE OF THE PROJECT** header (date · one-line north-star · current frontier · the single literal next command), everything below it explicitly "history"; (b) `ROADMAP.md` (the plain-language skim surface) is LINKED from the top of CLAUDE.md + GAP_CLOSURE_MISSION as "read this to skim"; (c) a **project-shorthand glossary** exists and covers the coinages (FHRR, BTSP, BDSP, GNW, PPMI, VSA, meta-d′, gap#N, RANK-N, DR-N, EMERGE, "the moat", "the composer", slot-binder) — inherent domain terms (NMDA/STDP/theta-gamma) need no gloss, project shorthand does. Add/fix if missing.
+5. **Prune** — CURRENT STATE is append-at-top; move closed entries older than the live resume-anchor to `docs/project-history-archive.md` so stale doesn't sit interleaved with live.
+
+Any genuine judgment-fork (which of two live directions is "the" frontier) is flagged for the human; the status/frontier/next-action *record-keeping* is done here.
 
 ## What to fix automatically vs flag for human
 
