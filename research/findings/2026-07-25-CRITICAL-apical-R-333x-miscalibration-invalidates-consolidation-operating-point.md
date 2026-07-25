@@ -482,3 +482,41 @@ magnitude-free twin, per-fact passes), THEN a hippo-lesioned slot recall becomes
 **Process note:** this is the pre-flight the session's own lessons demand — *verify the pathway can deliver the
 capability before building the read-out*. Building it as originally specified would have produced a guaranteed null
 (everything lesioned away) that would have looked like yet another "boundary".
+
+### ⛔ UNDER-TRAINING HYPOTHESIS REFUTED — 800ev is WORSE (0/16). The rule/config diagnosis is REINSTATED.
+
+Ran the A1 harness's own Phase-1 at `--train-events 800` (12,800 events, 57.8 min):
+```
+Phase-1 done (12800 events, 57.8 min)
+direct-binding sanity: 0/16 = 0.0%          <- 200ev gave 1/16 = 6.2%; 4x MORE training is WORSE
+[full] recalled 0/3 ... xpool_w=0.000       (all four arms identical to the 200ev run)
+--> SEED 42 NO
+```
+**⇒ my "the A1 failure is UNDER-TRAINING, the Hebbian chase was a non-bug" re-diagnosis was WRONG and is retracted.**
+More training does not help; it hurts. The earlier rule/config line was correct.
+
+**The coherent mechanism, now supported by every measurement taken:**
+1. `enable_hebbian` is **False** at the A1 defaults ⇒ **STDP is the only active rule**.
+2. The teacher protocol **co-drives** input and target simultaneously — a symmetric, Δt≈0 pairing — and this project has
+   already measured that **STDP cannot learn exactly that** (*656k events / 0 weight change at Δt≈0*). Hence the
+   trained pathway moving identically to untrained controls (−0.00017 vs −0.00019).
+3. Meanwhile the teacher drive is strong (target pool 4230 spikes/event) and triggers **homeostatic rate regulation**,
+   which SUPPRESSES the heavily-driven target. The 2-word probe showed exactly this inversion: TRAINED pools were the
+   quietest (APPLE 0.035, RIVER 0.015) while UNTRAINED pools dominated (DOG 0.215, CAT 0.145).
+4. ⇒ **more training buys no binding but accumulates more suppression** — precisely the observed 200ev 1/16 → 800ev 0/16.
+
+**The 87.5%-at-800ev record therefore comes from a materially different harness/config** (the 2026-05-21 v14-only /
+Unified substrate runs). The caveat recorded when I cited it was correct and is now load-bearing: **isolating what that
+harness did differently is the concrete next step**, and is cheaper than further knob-search here.
+
+**LIVE LEAD (from the Hebbian work that the retracted re-diagnosis wrongly dismissed):** with the bound corrected
+(`hebbian_max_weight` 1.0 → 8.0, above the 3.015 design weights) a **selective signal exists and scales with the
+learning rate** — trained-minus-control **+0.0056 at lr 5e-4 → +0.0516 at lr 5e-3** — but is swamped by a uniform
+−0.775 decay (`hebbian_weight_decay` over ~30k steps, affecting trained and control alike). **▶ NEXT: (a) diff this
+runner's Phase-1 config against the 2026-05-21 harness that scored 87.5%; (b) tune Hebbian lr vs decay (and check
+whether homeostasis must be quiesced during teacher-driven training) until trained-minus-control ≫ 0, scoring on the
+weight delta, not the 16-word accuracy.**
+
+**Process note — two reversals on one sub-question.** The under-training hypothesis was well-motivated (a real recorded
+87.5% at 4× the default) and was refuted in one run. That is the system working: it was recorded as a hypothesis with an
+explicit caveat about harness identity, tested directly, and retracted on the evidence rather than defended.
