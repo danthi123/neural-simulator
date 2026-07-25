@@ -114,6 +114,13 @@ STDP write is diluted by the flood. The buildable fix is a **STACK, not a single
 Each is buildable now (no `sim/` edit for 1–2; 3 reuses shipped kernels). The measurement gate at each stage: the direct
 `ca1_engram_i→slot_j` weight own/other (`_consol_direct_weight_probe.py`) must rise above ~2.5 with own-is-max, 6-seed.
 
+**DECISIVE capstone (6-seed, free re-read):** even on the genuinely-DISTINCT core (>25%-fire cells, ~18/fact, Jaccard
+0.08), the `ca1→slot` weights are FLAT — own/other **1.001**, own-is-max **7/18 ≈ chance**. So the distinct code exists but
+the write FLOODS it (the replay re-stimulates the whole tag, so STDP potentiates every firing cell equally). ⇒ **the cheap
+rate-gated-READOUT shortcut is RULED OUT** (no readout recovers selectivity from a flat write) — the WRITE + its drive must
+change. Stack elements 1 (sparse commit) + 2 (gentle replay) + 3 (rate-gated heterosynaptic write) are all load-bearing,
+not optional. This is the decisive, precise handoff for the build.
+
 ## Recommended first de-risk (GPU-when-free / Tuesday)
 Build the **Rank-2 CA1-separation de-risk**: add a feedforward-inhibitory kWTA pool to CA1 (or route slot-drive from DG),
 re-run `_consol_direct_weight_probe` → confirm Jaccard < 0.2 / active <5% AND own/other rises + own-is-max. Then chain the
