@@ -13,6 +13,7 @@ A GO that looks clean is the most dangerous thing in this project: it gets commi
 - Before COMMITTING a finding that reports a GO / surpass / milestone / capability close.
 - Before FLIPPING a default or claiming a cheat/shortcut is closed.
 - Before writing "inert / byte-identical / no-op / tests pass / pushed / on GPU" as fact.
+- **Before recording even an INTERIM "lead" / "partial positive" / "realizable" / "first non-flat result" into a finding or the board** (2026-07-25: a "lead" I wrote into TWO docs — "the two-sided read is REALIZABLE, fact-1 own/other 3.67" — was a **winner-slot artifact**; the disambiguating control, run only later by an adversarial subagent, refuted it. A non-flat number is not a lead until its control collapses; an interim positive mis-aims the next step exactly like a GO does).
 - NOT for routine mechanical edits (a typo, a refactor with a passing test you watched pass).
 
 ## The procedure — dispatch independent skeptics, one per lens
@@ -24,6 +25,7 @@ Spawn N skeptics (a `Workflow` parallel stage, or concurrent `Agent`s) — each 
 4. **Instrument-trust** — read the runner's OWN verdict line; NEVER lift a metric from a run that printed `SIGNAL=False` / `HONEST NEGATIVE`. Is the metric quantized/rounded so the effect is unfalsifiable by construction (differencing `round(x,4)` values)? A refutation needs the instrument verified exactly as much as a confirmation.
 5. **Seeding** — is `cfg.seed` set (NOT `actual_seed_used`, which seeds nothing)? Build twice at one seed and hash `cp_neuron_firing_thresholds` — identical ⇒ actually seeded.
 6. **Infra** — pushed? verify with `tools/push_both.sh` (ls-remote, not `echo pushed`). On GPU? `tools/monitor_runs.py` reports `[GPU]`/`ON CPU`. "byte-identical when off"? that's an ASSERTION (a test), not a comment.
+7. **Selectivity-metric bias (winner-target artifact)** — for ANY "own-vs-other" / ratio / argmax-selectivity metric (own/other, recall picks the right slot, this cue selects that assembly): is the "selectivity" just a systematically HEAVY target? Run the **permuted-target / shuffled-label / random-source control** — weight the read by a RANDOM item's core (not the true one); if own/other stays high (doesn't collapse to ~1.0), the metric is reading the heavy target, NOT earned selectivity. ALSO print the raw per-target magnitudes (2026-07-25: per-slot weight `[24, 80, 24]` — one slot 3.4× heavier made own/other 3.67 for whichever fact mapped to it, permuted control 3.37 = unearned). A ratio metric without its permuted control is unfalsifiable winner-bias.
 
 Not every lens applies to every result — pick the ones with teeth for this claim, but a GO that flips a default earns at least reproducibility + gate-cheat + control-integrity.
 
