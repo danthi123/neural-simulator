@@ -1,0 +1,99 @@
+{
+  "seed": 43,
+  "thr_hash": "90ff32ec773a",
+  "backend": "cupy",
+  "apical_R": 0.15,
+  "gc_read": 0.5,
+  "hippo_izh": "(default pyramidal)",
+  "v_apical_range": [
+    -5.33,
+    -3.44
+  ],
+  "v_apical_physiological": true,
+  "total_spikes": [
+    162.0,
+    222.0,
+    61.0
+  ],
+  "cells_above": {
+    "0": [
+      12,
+      19,
+      9
+    ],
+    "1": [
+      10,
+      16,
+      3
+    ],
+    "2": [
+      10,
+      16,
+      3
+    ],
+    "3": [
+      10,
+      16,
+      3
+    ],
+    "5": [
+      10,
+      16,
+      3
+    ],
+    "8": [
+      10,
+      12,
+      3
+    ],
+    "10": [
+      9,
+      11,
+      3
+    ],
+    "15": [
+      5,
+      6,
+      3
+    ]
+  },
+  "percentiles": {
+    "50": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "90": [
+      0.1,
+      8.2,
+      0.0
+    ],
+    "95": [
+      15.0,
+      15.05,
+      1.0
+    ],
+    "99": [
+      19.0,
+      20.0,
+      17.81
+    ]
+  },
+  "derived_core_threshold": 1,
+  "derived_core_sizes": [
+    10,
+    16,
+    3
+  ],
+  "core_jaccard": 0.0319,
+  "core_cosine_specificity": [
+    25.3,
+    8.95,
+    13.86
+  ],
+  "rate_cosine_specificity": [
+    21.2,
+    7.44,
+    10.18
+  ]
+}

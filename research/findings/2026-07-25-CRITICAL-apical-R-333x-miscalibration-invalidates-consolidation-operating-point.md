@@ -140,3 +140,35 @@ requires a structured re-derivation of the consolidation operating point** — p
 pyramidal phenotype, an activity-matched `core_thr_frac`, separated encode/write learning rates, and only then the
 own/other measurement with the full mass triad at 6 seeds. Ad-hoc sweeping from the artifact's constants is not the way
 in; the operating point should be derived from the substrate's own measured activity statistics.
+
+## The CALIBRATED operating point (derived from measured activity, not swept from the artifact's constants)
+
+New probe `research/runners/_consol_operating_point_calibration.py`: checks `v_apical` against physiological range,
+measures the CA1 per-cell spike-count distribution under an isolated tag, DERIVES the core threshold from that
+distribution (target core band), and reports code quality with the mass triad. Result (R=0.15, gc_read=0.5, default
+pyramidal phenotype):
+
+| | seed 42 | seed 43 |
+|---|---|---|
+| `v_apical` range | **[−5.32, −3.41] mV — PHYSIOLOGICAL ✓** | **[−5.33, −3.44] mV ✓** |
+| CA1 total spikes / window | `[159, 191, 307]` | `[162, 222, 61]` |
+| per-cell percentiles (50/90/95/99) | `0 / 0–12 / 12–14 / 18–20` | `0 / 0–8 / 1–15 / 17–20` |
+| cells active (>0 of 120) | `[13, 15, 30]` (11–25%) | `[12, 19, 9]` |
+| **derived core threshold** | **9 spikes** → cores `[9, 12, 20]` | 1 → cores `[10, 16, 3]` |
+| **core Jaccard** | **0.101** | **0.032** |
+| **core cosine specificity** | **[6.71, 7.75, 3.59]** | **[25.3, 8.95, 13.86]** |
+| rate cosine specificity | `[6.55, 6.44, 3.29]` | `[21.2, 7.44, 10.18]` |
+
+**The median cell fires 0 spikes while the 95–99th percentile fires 12–20** — a textbook sparse hippocampal code, with
+**near-disjoint cores (Jaccard 0.03–0.10)** and **fact-specificity 3.6–25.3**. Contrast the artifact regime: 93% active,
+Jaccard 0.877, specificity 1.35. **This is the separability a selective `ca1→slot` write is supposed to exploit, and it
+was present in the substrate the whole time — hidden under the miscalibration.**
+
+**Constants now FIXED for the write experiment** (supersede every value used in the arc): `comp_apical_R=0.15`,
+`comp_gc_read=0.5`, default hippocampal pyramidal phenotype (NOT MSN), core threshold ≈ 9 spikes / 40-step window
+(derive per seed), tag drive 1500 (saturated above this — not a lever).
+**One honest caveat carried forward:** per-fact drive is uneven (seed 43 fact 2: 61 spikes, 3-cell core vs facts 0/1 at
+10–16 cells), so a per-fact write result must be read against per-fact core size, never pooled.
+**The one piece still to build before the write experiment:** separate the **encode-phase** `btsp_lr` from the
+**write-phase** one — BTSP runs during `encode_facts_with_reinstatement`, so a write-scale lr corrupts the codes before
+they are measured (observed: `core_sizes=[3,7,112]` at lr=1e-2).
