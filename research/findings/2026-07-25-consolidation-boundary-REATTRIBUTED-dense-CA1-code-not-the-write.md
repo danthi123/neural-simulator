@@ -78,6 +78,22 @@ engram/slot-drive from **DG**, the ALREADY-VALIDATED pattern-separated locus (`d
 P1: DG cos 0.218 from input 0.800), OR drastically shrink the commit `top_k` AND sparsify the encode together. This is the
 precise, buildable next step (a real negative that refines the Rank-2 direction — the FFI infra + probe sweep are shipped).
 
+## Rank-2 SECOND de-risk (DG-source) + a REFINEMENT of the "dense code" picture (2026-07-25, seed-42)
+`_consol_dg_overlap_probe.py` measured the per-tag engram overlap for EVERY hippocampal region (ec/dg/ca3/ca1):
+- **@any-spike: ALL regions are dense + overlapping** — ec active-frac ~0.77 / J 0.593, **dg ~0.72 / J 0.582**, ca3
+  ~0.72 / J 0.556, ca1 ~0.73 / J 0.580. **DG is NOT more separated than CA1** → the naive DG-source doesn't obviously help.
+- **@>25%-fire: ALL regions become SPARSE + DISTINCT** — active-frac ~0.2, **ca1 Jaccard drops to 0.084** (ec 0.132, dg
+  0.117, ca3 0.105). **A sparse distinct CORE exists** in the strongly-firing cells of every region.
+⇒ **REFINEMENT of the re-attribution:** the "dense CA1 code" is substantially a **tag-RE-STIMULATION artifact** — the
+probe/replay drives the committed tag DIRECTLY at 1500 pA, flooding the committed cells so ~90% fire weakly; the natural
+pattern-separation (P1 DG cos 0.218) is masked by this flood. The write is diluted by the weak-firing majority; the
+distinct core is there but not what the STDP write latches onto. ⇒ **the Rank-2 lever refines to: (a) a GENTLER / more
+NATURAL replay drive** (drive CA1 via the trisynaptic feedforward at a physiological level, NOT a 1500 pA tag flood, so
+only the distinct strong-firing core fires during the write), **+ (b) a RATE-GATED HETEROSYNAPTIC write** (Rank 1;
+potentiate from the strong distinct cells, thresholded-depress the weak overlapping majority — `fused_btsp_hetero_update`
+shipped). Not "CA1 vs DG separation" (both dense under the flood). This is the precise, buildable next mechanism; the
+FFI-inert + DG-also-dense results narrow it to the write-drive + rate-gated-competition pair. `_consol_dg_overlap_probe.py`.
+
 ## Recommended first de-risk (GPU-when-free / Tuesday)
 Build the **Rank-2 CA1-separation de-risk**: add a feedforward-inhibitory kWTA pool to CA1 (or route slot-drive from DG),
 re-run `_consol_direct_weight_probe` → confirm Jaccard < 0.2 / active <5% AND own/other rises + own-is-max. Then chain the
