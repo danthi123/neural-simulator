@@ -64,6 +64,14 @@ substrate can't", run these:
    not a bound.
 5. **Do the positive controls fire?** If your harness cannot demonstrate the effect where it MUST exist, the harness is
    what you have measured.
+6. **DID IT EVER WORK — and at WHAT SETTINGS? Search the record for a known-good configuration BEFORE debugging.**
+   `rag_search` / `grep` the findings for the harness's own past PASSING numbers and the config that produced them, and
+   compare against the defaults you are running. A default is often a FAST setting, not the validated one. (2026-07-25:
+   I debugged an A1 harness through plasticity bounds, rule variants and homeostasis because its sanity check sat at
+   chance — then found the project's own record: *"direct binding at **800ev** saturated training: 15/16, 13/16, 14/16
+   = 87.5%"*, while the runner defaults to `--train-events 200`, **4× less**. The harness was never broken; it was
+   under-trained. Four rounds of knob-debugging chased a non-bug.) **A failing sanity check is a question about the
+   CONFIGURATION first and the mechanism second.**
 
 **Trigger:** the moment you are about to write "boundary / wall / can't / characterized limit / honest negative", or a
 mechanism has failed across many well-controlled variants. **Many variants failing identically is itself evidence of a
