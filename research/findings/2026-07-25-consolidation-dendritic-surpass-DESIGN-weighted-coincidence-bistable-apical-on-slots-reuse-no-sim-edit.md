@@ -71,6 +71,26 @@ PER-STEP window (calibrate per-step not max, check k±1); if `c_drive` shows NO 
 "no-specific-attractor" failure → escalate to Option 3 (BTSP) BEFORE declaring negative; soften `comp_wta_weight` if a
 residual global race remains (the per-cell bistable down-state does the separation now, not the WTA).
 
+## Option-1 BUILT + TESTED (2026-07-25, `2d5ff412`) — the plateau ENGAGES but the STDP feedforward is too weak (the r-iii diagnosis, confirmed) → escalate to BTSP (Option 3)
+Added default-off `comp_dendritic` to `build_substrate` (coincidence_detector on the `ca1→comp_attr_s` pathways + the
+cfg flags; constructs, byte-identical off, two-comp machinery engages — `cp_v_apical` lazily allocated on the first step).
+Tested (co-activation replay + `slot_ignition`, 6-seed):
+- **k_thresh=3: the plateau ENGAGES** (slots fire ~2200-2500 vs the point-neuron 131) but does NOT route selectively —
+  SELECTIVE [2,1,2,1,1,1] mean **1.33/3**, barely above the point-neuron baseline 1.17 (only 2/6 hit 2/3). All slots
+  plateau (over-firing), not just the fact's own.
+- **k_thresh sweep {8,15,25,40,60}: ALL give fire=0, sel=0/3** — a CLIFF: below the per-step drive → every slot plateaus;
+  above it → NO slot plateaus. **There is no intermediate k that fires ONLY the fact's own slot** ⇒ the per-step weighted
+  `ca1→slot` drive to the fact's own slot ≈ the other slots' — **NO c_drive separation.**
+- **⇒ this is exactly the r-iii "no specific structure to amplify" failure** the design foregrounded: the plateau is
+  necessary-not-sufficient; the STDP-written `ca1→slot` selectivity (the co-activation potentiation, directional but
+  small Δ+0.0057) is **too weak to give the plateau a separated structure to route on.**
+- **NEXT (the design's own escalation, per the risk register): Option 3 — BTSP.** Write the `ca1→slot_i` selectivity
+  ONE-SHOT plateau-gated (`enable_btsp`, on-bridge, needs the two-comp + bistability already wired): during co-activation
+  the held apical plateau on slot-i gates strong one-shot potentiation of the co-active `ca1_i→slot_i` synapses (the gap4
+  BTSP mechanism) → a LARGE held-vs-non c_drive separation the STDP write couldn't produce → then a calibrated k routes
+  selectively. If BTSP still shows no separation, the residual is the deeper dendritic line-attractor (months-scale). The
+  co-activation potentiation fix + the dendritic-plateau engagement both stand CONFIRMED.
+
 ## Provenance
 Design-gate (read-only) 2026-07-25. Findings cited inline (r-iii onsubstrate ×3, gap5 CA3-completion, dendrite-derisk-A,
 P0.3, the consolidation co-activation finding, D2 scoping). Builds on `a8597ee2`. Reuse-by-config; NO sim/ edit.
