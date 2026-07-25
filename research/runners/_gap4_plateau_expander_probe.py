@@ -63,15 +63,23 @@ class PlateauExpander:
                                          "plastic": False, "coincidence_detector": True, "conn_type": "ff"}})
         self.b, self.ci = b, ci
 
-    def codon(self, active_feats):
+    def _vap(self, active_feats):
         ab = np.zeros(len(self.ci), bool)
-        ab[np.asarray(list(active_feats), int)] = True
+        if len(active_feats):
+            ab[np.asarray(list(active_feats), int)] = True
         _prime_from_winners(self.b, self.ci, ab)
         vap = getattr(self.b, "cp_v_apical", None)
         if vap is None:
             return np.zeros(self.NC)
-        vap = np.asarray(_host(vap))[self.ci]
-        return (vap[self.NF:self.NF + self.NC] > FLOOR).astype(np.float64)
+        return np.asarray(_host(vap))[self.ci][self.NF:self.NF + self.NC]
+
+    def codon(self, active_feats):
+        return (self._vap(active_feats) > FLOOR).astype(np.float64)
+
+    def codon_graded(self, active_feats):
+        # GRADED plateau read (continuous cp_v_apical magnitude, still reliable/reset-based) — the graded-expander test
+        v = self._vap(active_feats)
+        return (v - v.mean()) / (v.std() + 1e-9)
 
 
 def _sm(z):
@@ -92,7 +100,7 @@ def topk_active(X, topk):
 
 N_COL = 200
 SEEDS = (42, 43, 44, 100, 101, 102)
-res = {r: {"lin": [], "rep": []} for r in ["CODON expand plateau", "CODON non-expand(ctrl)", "label-shuffle(ctrl)", "pool-silence(ctrl)"]}
+res = {r: {"lin": [], "rep": []} for r in ["CODON expand plateau", "GRADED-plateau expand", "CODON non-expand(ctrl)", "label-shuffle(ctrl)", "pool-silence(ctrl)"]}
 for SEED in SEEDS:
     t0 = time.time()
     (Xtr, ytr, _), (Xte, yte, _), meta, idx = make_task_semantic_inheritance(
@@ -108,6 +116,11 @@ for SEED in SEEDS:
         rep = float(np.mean([np.corrcoef(Cb[i], rep2[i])[0, 1] if Cb[i].std() > 0 and rep2[i].std() > 0 else 1.0 for i in range(8)]))
         clf = fit_lin(Cb, yb, k); res[tag]["lin"].append(float(np.mean(clf(Ch) == yh))); res[tag]["rep"].append(rep)
         if tag == "CODON expand plateau":
+            # GRADED plateau read (continuous cp_v_apical, still reset-based/reliable) — the graded-expander toward 0.772
+            Gb = np.asarray([exp.codon_graded(a) for a in afb]); Gh = np.asarray([exp.codon_graded(a) for a in afh])
+            Gr2 = np.asarray([exp.codon_graded(a) for a in afb[:8]])
+            grep = float(np.mean([np.corrcoef(Gb[i], Gr2[i])[0, 1] if Gb[i].std() > 0 and Gr2[i].std() > 0 else 1.0 for i in range(8)]))
+            clfg = fit_lin(Gb, yb, k); res["GRADED-plateau expand"]["lin"].append(float(np.mean(clfg(Gh) == yh))); res["GRADED-plateau expand"]["rep"].append(grep)
             ysh = np.random.default_rng(SEED).permutation(yb)
             clfs = fit_lin(Cb, ysh, k); res["label-shuffle(ctrl)"]["lin"].append(float(np.mean(clfs(Ch) == yh))); res["label-shuffle(ctrl)"]["rep"].append(rep)
             # pool-silence: codon with NO active feats -> should be constant -> chance

@@ -47,8 +47,13 @@ gap#4 forward-representability boundary is SURPASSED on the spiking substrate.
 
 ## Honest scope + the follow-ons (NOT a full close yet)
 - **0.611 = the binary CODON ceiling for this 7-dim continuous input** (matches the numpy codon 0.617), NOT the full
-  random-ReLU 0.772. A binary top-k coincidence codon on only 7 continuous features is limited; a **graded/continuous
-  reliable expander** (a reliable spiking random-feature/graded-coincidence read) is the follow-on for the full 0.772.
+  random-ReLU 0.772. A binary top-k coincidence codon on only 7 continuous features is limited.
+- **The graded plateau read does NOT close the gap to 0.772** (tested 6-seed, same runner): reading the continuous
+  `cp_v_apical` MAGNITUDE (not just `> FLOOR`) gives ho-lin **0.593 ± 0.030**, reproducibility 1.000 — ≈ the binary codon.
+  The plateau is a coincidence THRESHOLD-crossing (binary-ish), so its magnitude carries no extra separable structure. ⇒
+  the full-0.772 follow-on must be a **reliable spiking RANDOM-FEATURE expander** (a random Gaussian projection of the
+  GRADED input + reliable spiking read — the on-bridge analogue of the numpy random-ReLU), NOT a graded read of the
+  coincidence plateau. Reliability (the reset-based read) is solved; the remaining lever is a graded-input expansion.
 - **This surpasses the FORWARD boundary; it does not by itself deliver gap#4 ACCURACY.** The unblock: the forward is now
   representable, so the **CPU-rate-GO learned interneuron microcircuit credit** (56c90d67) / a trained readout now has
   linearly-separable features to shape on-bridge — the next build (wire the microcircuit/readout onto the plateau-codon
