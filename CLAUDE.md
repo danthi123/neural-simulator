@@ -40,6 +40,21 @@ never trust a subagent-armed Monitor / passive re-invocation to catch a completi
 Cross-session continuation is MANUAL by owner choice (a plain "continue" + the roadmap + that board re-anchors) — no
 watchdog/daemon.
 
+## Keep the SUMMARY docs synced when a finding lands (2026-07-24 — this session drifted by deferring it)
+
+**Committing a finding is NOT enough — the summary docs must move WITH it, in the SAME cycle, not "later".** When a
+committed finding changes a **wall/gap STATUS**, the **CURRENT FRONTIER**, or a **"next action"**, update — same cycle —
+the roadmap wall-ledger ([`docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`](docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md) §7),
+[`GAP_CLOSURE_MISSION.md`](GAP_CLOSURE_MISSION.md) CURRENT STATE, and [`research/findings/AUTONOMOUS_STATE.md`](research/findings/AUTONOMOUS_STATE.md).
+These three are the POINTERS every session re-anchors from; a stale one is the #1 cause of re-deriving concluded work
+(skill drift #12, stale-pointer). Deferring this sync — "I'll update the board later" — IS the drift (it happened all
+of 2026-07-24: findings committed, board left behind).
+**For MECHANICAL drift** (sim/*.py line counts, class/method line numbers, runner/test/findings COUNTS, new g11 CLI
+flags, new `sim/__init__` exports, a new flagship recipe): **run the `sync-documentation` skill.** A PostToolUse hook
+nudges it whenever `sim/` / `research/runners/` / `experiment/` / new findings change — RUN it when nudged, don't just
+acknowledge the nudge. (That skill catches MECHANICAL drift only; the semantic status/frontier sync above is a manual
+same-cycle habit the skill cannot do for you.)
+
 ## When Compacting (custom compaction instruction — must survive into every compaction)
 
 When this session auto-compacts or `/compact` runs, the summary MUST preserve (and may drop everything else to fit):
