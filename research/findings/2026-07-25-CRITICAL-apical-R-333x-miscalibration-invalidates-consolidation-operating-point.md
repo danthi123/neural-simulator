@@ -409,3 +409,29 @@ Hebbian. **Standing check: before enabling ANY plasticity rule, compare its boun
 `_mean_gate_weight(bridge, gate)` vs `cfg.<rule>_max_weight` — and verify the trained pathway moves DIFFERENTLY from an
 untrained control.** A rule whose bound sits below the weights does not merely fail to learn; it actively destroys the
 weights, uniformly, which reads as a substrate limitation.
+
+### ⚠️ RE-DIAGNOSIS: the A1 sanity failure is UNDER-TRAINING at the default, not a rule/config defect
+
+Before concluding the Hebbian/homeostasis chase, I checked whether this harness's Phase-1 has EVER worked. It has —
+`research/findings/2026-05-21-catastrophic-forgetting-multi-seed-...md` records:
+> *"Pre-silence direct binding (16-word task) at **800ev** saturated training: seed 42 = **15/16**, seed 43 = 13/16,
+> seed 44 = 14/16 (multi-seed aggregate 42/48 = **87.5%**)"* … *"the substrate has near-saturated direct binding at 800ev"*
+
+**The A1 runner defaults to `--train-events 200`** (per target: 16 targets × 200 = the observed 3200 events), i.e. **4×
+below the validated 800ev budget**, and yields 1/16 = 6.2% = chance. **⇒ direct binding is achievable on this substrate
+family; the A1 default is a FAST setting that does not train enough to bind.** The earlier chase (Hebbian bound,
+rate-window, homeostasis) was diagnosing a non-bug: gates were open, neurons fired correctly, and the rule was fine —
+there simply was not enough training. *(The `hebbian_max_weight=1.0` vs 3.015 inversion recorded above is still a REAL
+and separate defect — enabling that rule actively destroys weights — but it is not the cause of the sanity failure.)*
+
+**Corroborating detail from the 2-word probe:** the two TRAINED pools were the QUIETEST (APPLE 0.035, RIVER 0.015) while
+UNTRAINED pools dominated (DOG 0.215, CAT 0.145). Under-training plus homeostatic suppression of the heavily-driven
+target reproduces exactly that inversion — the teacher drive (4230 spikes) triggers rate regulation without yet having
+built compensating input weight.
+
+**HONEST CAVEAT:** the 800ev/87.5% figure comes from the v14-only / Unified substrate runs of 2026-05-21, a related but
+not necessarily identical harness/config to this A1 runner. It establishes achievability on the substrate family, not
+that 800ev alone fixes THIS runner. **▶ TEST IN FLIGHT: the A1 harness's own Phase-1 at `--train-events 800`** (≈4×
+14.4 min ≈ 1 h/seed), scored on its own `direct_binding_sanity`. If it clears, the A1 capability gate becomes
+measurable for the first time in this arc and the four-control run can proceed; if it does not, the difference between
+this runner and the 2026-05-21 harness is the next thing to isolate.
