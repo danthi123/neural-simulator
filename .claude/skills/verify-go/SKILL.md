@@ -38,6 +38,37 @@ Not every lens applies to every result — pick the ones with teeth for this cla
 - **A lens finds a mischaracterization** → do NOT silently drop or quietly downgrade. Commit-WITH-CAVEAT: state precisely what the result IS vs what it was claimed to be (W3 was a real GO but not "structurally immune"; the affect wiring was real but not the scalar claimed). An honest narrowed result is a first-class deliverable.
 - **A lens refutes it** → retract the GO, bank the method as a NO-GO with the root cause (per THE LAW the capability stays open), take the next mechanism.
 
+## Verifying a NEGATIVE — before you accept a BOUNDARY (2026-07-25: the costliest error of the session)
+
+A wrong GO wastes a build. **A wrong NO-GO closes a capability that was never actually blocked** — and it is far harder
+to notice, because a negative *feels* like rigour. Before recording any "wall / boundary / characterized limit / the
+substrate can't", run these:
+
+1. **IS THE SUBSTRATE PHYSICALLY VALID? Read its state variables in their PHYSICAL UNITS and check them against
+   physiological range.** Membrane potentials belong in ≈ −90…+50 mV; conductances, currents and rates have known
+   scales. **No metric can catch this — only looking at the numbers in units can.** (2026-07-25: an entire multi-hour
+   "dense CA1 code ⇒ no write can localize" boundary — ~15 write variants, a sparsification battery, a two-sided read,
+   two subagent builds, several confident findings — was a **333× miscalibration of a pA→mV constant** in ONE config
+   line. `v_apical` was parked at ~2×10⁵ mV, driving every soma; the "dense code" was runaway current, not a hippocampal
+   code. At a valid operating point the real code is sparse and near-disjoint and the write localizes, 6-seed.)
+2. **Check every constant that was TUNED while the artifact was present.** They were fitted to broken dynamics and will
+   silently re-break the fixed system. (Same session: a cell phenotype adopted to fight the artifact was undrivable once
+   voltages were physiological; a learning rate fitted to ~100× inflated activity saturated the write and pinned the
+   metric at exactly the null being "confirmed".)
+3. **Is the measurement itself inert?** A measurement must never be plastic. If learning is enabled while you *read*,
+   you are measuring the reader. (Same session: core sizes varied with the **write** learning rate although cores are
+   defined pre-write — because the rule was still learning during the read.)
+4. **Does the null survive at more than one operating point?** A null measured at a single point is a property of that
+   point. Sweep the parameter the mechanism is most sensitive to (here: the learning rate through its saturation knee)
+   and confirm the null is flat across it — a monotonic trend toward signal means you measured a bad operating point,
+   not a bound.
+5. **Do the positive controls fire?** If your harness cannot demonstrate the effect where it MUST exist, the harness is
+   what you have measured.
+
+**Trigger:** the moment you are about to write "boundary / wall / can't / characterized limit / honest negative", or a
+mechanism has failed across many well-controlled variants. **Many variants failing identically is itself evidence of a
+COMMON upstream cause — the shared substrate or a shared constant — not of independent confirmations.**
+
 ## What this skill MUST NOT do
 - Rubber-stamp — a skeptic that "confirms" without trying to break it did nothing. The prompt must push to REFUTE.
 - Verify only the happy path — test the claim against the case you'd EXPECT to break it (a run you KNOW is broken, the seed you fear).
