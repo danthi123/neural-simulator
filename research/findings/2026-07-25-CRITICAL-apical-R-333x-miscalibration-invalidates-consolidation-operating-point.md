@@ -279,3 +279,26 @@ selectively active, `--min-recall 2`/3 with `--antichance 1` across its four ant
 hippo-lesion-before-consolidation · no-confab on the withheld "cat" fact). That runner still uses the original
 `coactivation_replay` and the arc's (invalid) constants, so the next step is to wire the calibrated operating point and
 this write protocol into it and run the 4-control GO at 6 seeds.
+
+## ⚠️ SCOPE CORRECTION — the 6-seed GO is on a DIFFERENT pathway than the A1 capability test
+
+I had written that the 6-seed proxy GO would close A1 once run through the end-to-end test. **Tracing the code, that
+mapping is wrong and is corrected here:**
+- **The A1 capability test** (`nmda_compositional_consolidation.py` main → `measure_recall`) cues a NOUN and reads the
+  **adjective pools**; its load-bearing cortical store is **`cross_pool_concept`** (noun→adj), consolidated by
+  `run_concept_replay_phase` with that gate open. The route is `tag → CA1 → concept pools → cross_pool_concept`.
+- **The 6-seed GO** is on **`ca1→comp_attr`** — the *dedicated compositional-attractor SLOT* route (the later "Option 1"
+  addition), which is **additive and DEFAULT-OFF in that test** (`comp_attractor_slots=0` ⇒ byte-identical).
+These are different pathways. The slot-write GO is a real result about what the substrate can do, but it is **not** the
+concept-pool binding the A1 gate measures.
+
+**A second consequence, in the other direction:** the main A1 runner never sets `comp_dendritic` (default `False`, and
+no CLI flag for it), so **the original A1 capability test never used the two-compartment apical and was never affected
+by the 333× miscalibration.** The miscalibration invalidated *this arc's probes*, not the A1 test. The VOID scope above
+stands as written for the arc's probe results, and should not be read as touching the pre-arc A1 status.
+
+**⇒ Two distinct, separately-valid threads, and neither should be cited as the other:**
+1. **Slot route (this arc's GO):** a selective `ca1→slot` write is achievable at a physically valid operating point in
+   the unsaturated regime — 6-seed, fully controlled. Open: give it a capability read-out (recall keyed on slots).
+2. **Concept-pool route (the original A1 gate):** unaffected by the miscalibration; its current end-to-end status is
+   being re-measured from the runner's own defaults to establish ground truth before anything is wired.
