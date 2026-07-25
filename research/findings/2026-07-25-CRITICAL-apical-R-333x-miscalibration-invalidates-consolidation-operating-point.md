@@ -607,3 +607,23 @@ regression is entirely plausible rather than exotic.
   needs fixing — which would retire the "regression" framing entirely.
 Either way the next step is a measurement, not a hypothesis. **Nothing about the shared Phase-1 path should be cited
 until this resolves.**
+
+### Blast-radius check: the 6-seed slot-write GO is NOT affected by the shared word→pool breakage
+
+Checked rather than assumed, because a broad "the shared path is broken" finding invites over-reading:
+- **Neither slot-write probe ever runs Phase-1 word→pool training** — `grep -c "train_word_to_pool"` = **0** in both
+  `_consol_twosided_generalize_probe.py` and `_consol_direct_weight_probe.py`.
+- `encode_facts_with_reinstatement` drives the concept pools by **teacher current** ("the pools fire from lang+teacher"),
+  i.e. it does not depend on *learned* `language_input→pool` weights to make pools fire.
+- The GO metric is measured on `ca1→slot` weights after **tag-driven** replay — a path that never traverses the broken
+  binding.
+⇒ **the 6-seed slot-write GO stands independently.** The shared breakage bounds what can be claimed about the
+**concept-pool / A1 capability** line, not about the slot-write component result.
+
+**Current scoreboard for this arc, with each item's dependency stated:**
+| result | status | depends on the broken path? |
+|---|---|---|
+| the "dense CA1 code" boundary | **VOID** (a 333× units miscalibration) | — |
+| `ca1→slot` selective write, 6-seed | **GO, stands** | **no** (teacher-driven, tag-driven replay) |
+| A1 end-to-end capability gate | **unmeasurable today** | **yes** — blocked by it |
+| word→pool binding in the shared path | **does not bind today; cause unresolved** | is the path |
