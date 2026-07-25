@@ -1,50 +1,53 @@
-# gap#5 one-brain MERGE — the END-TO-END CAPSTONE DEMONSTRATED: the real conversing brain (OneBrainComposer) sleeps, runs a REAL traveling CA3 replay ON ITS OWN BRIDGE, wakes, and still converses — all on one brain (with a characterized production-bridge replay-quality gap) (2026-07-25)
+# gap#5 one-brain MERGE — the END-TO-END CAPSTONE is a CLEAN 6-SEED GO: the real conversing brain (OneBrainComposer) sleeps, runs a CLEAN traveling CA3 replay ON ITS OWN BRIDGE, wakes, and still converses — all on one brain; the replay-quality gap was ISOLATED to short-term plasticity (STP sharpens the Ecker bump) and FIXED (2026-07-25)
 
 ## Headline
-The full one-brain replay merge is demonstrated end-to-end on the **actual production conversational agent**. A CA3
-place-field replay track (2000 neurons + the forward-biased band) is made co-resident ON the `OneBrainComposer`'s own
-Izhikevich bridge; the composer stores + recalls facts (WAKE), the bridge switches to AdEx/dt0.1 for a SWR/sleep phase and
-runs a **real traveling CA3 replay on the track slice**, then switches back (WAKE) and the composer **still converses** —
-recall + no-confab moat perfectly preserved. All on ONE bridge. This assembles the two proven halves (the co-resident
-round-trip `1bdcc5a4` + the composer surviving the switch `e2b86dce`) into the complete loop.
+The full one-brain replay merge is demonstrated end-to-end on the **actual production conversational agent, CLEAN**. A
+CA3 place-field replay track (2000 neurons + the forward-biased band) is made co-resident ON the `OneBrainComposer`'s own
+bridge; the composer stores + recalls facts (WAKE), the bridge switches to AdEx/dt0.1 for a SWR/sleep phase and runs a
+**clean traveling CA3 replay on the track** (DECODE_r **1.000**, width 0.4), then switches back (WAKE) and the composer
+**still converses** — recall + no-confab moat perfectly preserved. All on ONE bridge. This is the substantive completion
+of the one-brain replay merge on the real agent.
 
-## Result (3 seeds; DEMONSTRATED with a characterized quality gap)
-- **Conversation preserved 3/3:** pre-sleep recall `['north','east','south']` == post-sleep, moat `[None,None]` intact
-  before AND after — the composer's store/recall/moat survive the sleep cycle with the CA3 track co-resident.
-- **Real traveling replay in sleep:** DECODE_r **+0.458** (deterministic across seeds), the bump **travels 42% of the
-  track** (range 42/100). The band is intact across the composer's Hebbian wake ops (147,150 synapses, max 599).
-- ⇒ the end-to-end loop (converse → sleep + real traveling replay → converse, one brain) **works in substance.**
-- **QUALIFIED, not a clean GO:** the replay decode on the composer's FLAT bridge (0.458, bump width 11.6) is below the
-  clean-standalone threshold (DECODE_r 1.000, width 0.4). The CLEAN replay is proven 6-seed on the region-framework
-  standalone (`d6e140bf`) + co-resident (`1bdcc5a4`) bridges; the capstone's gap is specific to the flat composer bridge.
+## Result — CLEAN 6-SEED GO (seeds 42/43/44/100/101/102)
+Store 3 SVO facts; query (WAKE 1); switch to AdEx/dt0.1 + freeze STDP/Hebbian, run the CA3 replay on the track (SLEEP);
+switch back (WAKE 2); re-query:
+- **SLEEP replay DECODE_r = +1.000, width 0.4, range 43/100 — all 6 seeds** — a clean localized directional traveling
+  replay on the composer's own bridge.
+- **WAKE recall preserved + moat intact 6/6:** `['north','east','south']` before == after; never-stored cues abstain
+  (`None`) — the composer's full conversational capability survives the sleep cycle.
+- ⇒ **the end-to-end loop (converse → sleep + clean traveling replay → converse, one brain) is a 6-seed GO.**
 
-## Integration points solved (the assembly plumbing)
-1. **RF kick sizing:** the composer builds RF kick vectors + its `rf_mask` at its own `n_total`; appending the CA3 slice
-   enlarges the bridge, so widen `c.n_total` to `num_neurons` and pad `rf_mask` with False over the CA3 slice (the
-   composer's RF ops never touch the track — its layout indices stay < the original n_total).
-2. **Band-injection ordering:** inject the CA3 band AFTER the composer wires its parser/RF (else their wiring rebuild
-   wipes it — the first attempt gave 0 band synapses).
-3. **Hebbian band-protection:** the composer runs Hebbian (`hebbian_max_weight=400` < the band's 600) during wake, but the
-   band stays at 599 (the masked Hebbian clip protects the plastic=False band; the CA3 neurons are quiescent in wake).
+## The isolated mechanism — SHORT-TERM PLASTICITY sharpens the Ecker replay bump
+The first capstone attempt gave a BROAD replay (DECODE_r 0.458, width 11.6) while the conversation was already perfect.
+A methodical isolation (each ruled out on a flat AdEx replay harness) traced it precisely:
+- NOT OU noise (on/off both 1.000), NOT parameter heterogeneity (on/off both 1.000), NOT inhibitory neurons (0/2000),
+  NOT the composer's ops (build_coresident_bridge + CA3 + no composer ops also gave 0.458), NOT flat-vs-region.
+- **It is `enable_short_term_plasticity`:** flat AdEx replay STP=True → DECODE_r **1.000** (width 0.4); STP=False →
+  **0.502** (width 11.6). All the clean 6-seed replay builds (`d6e140bf`, `1bdcc5a4`) left STP at its default (True);
+  `build_coresident_bridge` explicitly disables it, which is why the co-resident replay was broad.
+- **Mechanism (meaningful, not incidental):** STP (Tsodyks-Markram) short-term DEPRESSION weakens the trailing-edge
+  synapses that just fired, so they don't re-excite the packet → the traveling bump stays razor-narrow. STP is thus part
+  of the Ecker replay's sharpening/localization mechanism, alongside the band + AdEx refractoriness.
+- **The FIX:** build the composer's bridge with STP enabled (replicating `build_coresident_bridge` verbatim except
+  `enable_short_term_plasticity=True`). The composer's conversation is UNAFFECTED (recall + moat still perfect) — STP on
+  the parser/RF synapses does not disturb the who/what pipeline.
 
-## The un-isolated replay-quality gap (honest, precise)
-The flat composer bridge broadens the CA3 replay bump (width 11.6 vs the standalone's 0.4), capping the decode at 0.458.
-RULED OUT this session: OU noise (killing/matching it — no change), parser/RF neurons firing in sleep (silencing them —
-no change), inhibitory neurons in the CA3 slice (0/2000 — all excitatory, num_traits=1). The residual is a config
-difference between `build_coresident_bridge`'s flat CoreSimConfig and the region-framework `_build` used for the clean
-6-seed replays — NOT isolated to a specific field here. NEXT: field-by-field diff of the two configs (or build the CA3
-track as a proper region on the composer's bridge, matching the region-framework setup that gives the clean 1.000).
+## Assembly plumbing solved (for the record)
+1. **RF kick/mask sizing:** widen `c.n_total` to `num_neurons` + pad `rf_mask` False over the CA3 slice (the composer's
+   RF ops never touch the track).
+2. **Band-injection ordering:** inject the CA3 band AFTER the composer wires parser/RF (else their rebuild wipes it).
+3. **Hebbian band-protection:** the masked Hebbian clip protects the plastic=False band (max stays 599 through wake).
 
 ## Verdict + scope
-- **The one-brain replay merge is DEMONSTRATED end-to-end on the real production agent** — converse → sleep + real
-  traveling replay → converse, one brain, conversation fully preserved. This is the substantive completion of the merge.
-- **HONEST:** the production-bridge replay decode (0.458) is a QUALIFIED result, below the clean threshold that is
-  independently proven (1.000, 6-seed) on the region-framework bridges — a characterized flat-bridge config gap, the one
-  precise remaining tuning item.
-- Remaining for a clean end-to-end GO: isolate the flat-bridge config field (or region-frame the CA3 track on the composer
-  bridge). The neural replay-reader (Bayesian decode = measurement instrument) is the other gap#5 closure item.
+- **The one-brain replay merge is DEMONSTRATED end-to-end, CLEAN, on the real production agent** — converse → sleep +
+  clean traveling replay → converse, one brain, conversation fully preserved, DECODE_r 1.000.
+- **Bonus finding:** STP is a load-bearing part of the Ecker replay-bump sharpening (STP-off broadens it 1.000→0.50).
+- Remaining gap#5 closure item: the neural imaginative-replay READER (the Bayesian decode is a measurement instrument),
+  naturally built alongside replay-driven consolidation. A `sim/` first-class `switch_neuron_model_phase()` +
+  reserve-slice capability (additive, default-off) would replace the runner-side replication.
 
 ## Provenance
 `research/runners/_gap5_onebrain_capstone.py` (logs `capstone*.log`; the diagnostic ladder documents the ruled-out
-causes). Reuses the phase-switch helpers + the production `OneBrainComposer`. NO `sim/` edit (runner-side monkeypatch to
-enlarge the composer bridge + inject the track). GPU. Builds on the full gap#5 arc (`d6e140bf`→`e2b86dce`).
+causes + the STP isolation). Reuses the phase-switch helpers + the production `OneBrainComposer`. NO `sim/` edit
+(runner-side replication of build_coresident_bridge with STP on + the CA3 track). GPU. Builds on the full gap#5 arc
+(`d6e140bf`→`e2b86dce`).

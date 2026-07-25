@@ -11,6 +11,9 @@ for _tv in ("OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "MKL_NUM_THREADS", "NUMEX
     os.environ.setdefault(_tv, "1")
 sys.path.insert(0, "/home/dant123/Projects/sim")
 import numpy as np
+from sim.config import CoreSimConfig, RuntimeState, GPUConfig, VisualizationConfig
+from sim.bridge import SimulationBridge
+from sim.enums import NeuronModel
 from sim.backend import to_host, get_backend, is_gpu_backend
 from research.runners._gap5_ecker_recurrent_replay import decode_and_width
 from research.runners._gap5_wake_sleep_phase_switch import switch_to_adex_sleep
@@ -28,10 +31,28 @@ _orig_build = obc.build_coresident_bridge
 
 
 def _patched_build(seed, n_total, **kw):
-    """Enlarge the composer's bridge by N_CA3 neurons (the CA3 track slice [n_total : n_total+N_CA3]); the composer's own
-    layout (parser + RF, indices < n_total) is unchanged. The band is injected AFTER the composer wires its parser/RF (in
-    run()), else their wiring rebuild wipes it."""
-    b = _orig_build(seed, n_total + N_CA3, **kw)
+    """Enlarge the composer's bridge by N_CA3 neurons (the CA3 track slice [n_total : n_total+N_CA3]) AND enable
+    short-term plasticity (STP) -- the CA3-replay sharpener that `build_coresident_bridge` disables. Replicates
+    build_coresident_bridge's config verbatim EXCEPT enable_short_term_plasticity=True. The composer's own layout
+    (parser + RF, indices < n_total) is unchanged; the band is injected AFTER the composer wires its parser/RF (in run())."""
+    N = n_total + N_CA3
+    cfg = CoreSimConfig()
+    cfg.num_neurons = N
+    cfg.neuron_model_type = NeuronModel.IZHIKEVICH.name
+    cfg.neural_profile_name = "GENERIC_UNSTRUCTURED"
+    cfg.seed = int(seed); cfg.dt_ms = 1.0
+    cfg.connections_per_neuron = 0; cfg.num_traits = 1
+    cfg.enable_stdp = False
+    cfg.enable_hebbian_learning = True
+    cfg.hebbian_max_weight = 400.0; cfg.hebbian_learning_rate = 0.005
+    for f in ("enable_structural_plasticity", "enable_homeostasis", "enable_reward_modulation", "enable_watts_strogatz"):
+        setattr(cfg, f, False)
+    cfg.enable_short_term_plasticity = True   # <-- THE FIX (build_coresident_bridge sets this False; STP sharpens the replay)
+    cfg.enable_rf_cudagraph = bool(kw.get("enable_rf_cudagraph", False))
+    cfg.ou_std_current_pA = 20.0
+    b = SimulationBridge(core_config=cfg, viz_config=VisualizationConfig(),
+                         runtime_state=RuntimeState(), gpu_config=GPUConfig())
+    b._initialize_simulation_data(called_from_playback_init=False)
     b._ca3_pc = np.arange(n_total, n_total + N_CA3)
     return b
 
@@ -119,7 +140,7 @@ if not is_gpu_backend():
 obc.build_coresident_bridge = _patched_build      # install the CA3-track-appending bridge builder
 print("gap#5 END-TO-END CAPSTONE — the conversing brain SLEEPS, runs a REAL decodable CA3 replay on its own bridge, WAKES, "
       "and STILL CONVERSES. GO iff recall+moat preserved AND the sleep replay travels (DECODE_r>0.6), all seeds.", flush=True)
-seeds = [42, 43, 44]
+seeds = [42, 43, 44, 100, 101, 102]
 oks = []
 for s in seeds:
     try:
