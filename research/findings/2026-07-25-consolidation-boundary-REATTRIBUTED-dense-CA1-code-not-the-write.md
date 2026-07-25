@@ -326,6 +326,27 @@ single remaining method = a spiking/dendritic RECALL that gates `ca1→slot` act
 ignites only on the core's synchronous sustained drive), paired with the write-side core gate. That is the substantial
 D2 arc, and it is now the DEFINITIVELY-isolated load-bearing piece — the entire cheap write-side space is exhausted.
 
+### ⚠️ CORRECTION + LIVE LEAD (same session): "definitively exhausted" was PREMATURE — the two-sided read is REALIZABLE (partial GO)
+Continuing to probe (against my own "exhausted" verdict) found the missing piece: the write was **SATURATING**. The BTSP
+potentiation `dw ∝ (w_max−w)` converges to `w_max` given enough steps (dw=7.1 at w_max=8; dw=99 at w_max=100; dw=977 at
+w_max=1000 — it saturates regardless of lr/w_max/cycles because the strong teaching plateau IS=25 drives it to ceiling
+within a single 30-step burst), which **collapses the rate info to a near-binary flat pattern** — so even a core-gated
+recall of the written weights was flat. Added a **CORE-GATED RECALL** metric (read the real written weights through ONLY
+each fact's sustained-firing >25% core) + a `btsp_wmax` lever. **Forcing the UNSATURATED (graded, dw≪w_max) regime**
+(w_max=1000-2000, lr≈3-8e-6, dw≈120-160): the core-gated recall on the REAL written weights reaches **own/other 3.67 for
+fact 1** (> the 2.5 gate, ≈82% of its code ceiling 4.0) — **the FIRST non-flat write result across ~15 write variants.**
+⇒ **the two-sided read (unsaturated graded write + core-gated recall) IS the realizable surpass** — NOT flat, NOT
+"definitively exhausted." **HONEST SCOPE (why it is a LEAD, not yet a GO):** (1) NON-UNIFORM — fact 1 passes (3.67) but
+fact 0 is degenerate (1-cell core under the MSN phenotype) and fact 2 fails (0.44 despite a 29-cell core; its written
+weights leak to other slots — a write-dynamics/ordering idiosyncrasy the code-overlap doesn't predict); (2) HOST-MEASURED
+— the core-gated recall is a numpy read of the weights, NOT yet a spiking dendritic coincidence recall; (3) fiddly —
+needs the tiny-lr unsaturated regime. **⇒ the surpass is now a well-scoped, PARTIALLY-DEMONSTRATED build (not a blank
+months-arc):** (a) a NON-SATURATING / graded write rule (or tuned unsaturated BTSP) so all facts' cores keep rate info;
+(b) fix the per-fact non-uniformity (thin-core facts + fact-2 leakage — likely needs the CA1 code sparser/more-uniform,
+or the write ordering); (c) realize the core-gated recall as a spiking comp_dendritic coincidence read; (d) 6-seed. The
+"definitively exhausted / route to a blank different substrate" verdict above is **CORRECTED** — the mechanism is
+realizable and 1/3 already demonstrated on real weights.
+
 ## Recommended first de-risk (GPU-when-free / Tuesday)
 
 ## Recommended first de-risk (GPU-when-free / Tuesday)

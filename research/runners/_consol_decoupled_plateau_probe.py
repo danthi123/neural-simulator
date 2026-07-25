@@ -82,11 +82,11 @@ def decoupled_plateau_write(bridge, facts, tags, cycles, seed, v_teach=-25.0, bu
 
 def run_seed(seed, v_teach=-25.0, cycles=40, btsp_lr=0.02, self_regen=0.15, tag_drive=1500.0,
              elig_exp=1.0, hetero_dep=0.0, hetero_theta=0.0, ffi_inh=0.0, ffi_drive=3.0, commit_top_k=None,
-             hippo_izh_type=None, hippo_izh_regions="dg", elig_hard_thresh=0.0, elig_tau=None):
+             hippo_izh_type=None, hippo_izh_regions="dg", elig_hard_thresh=0.0, elig_tau=None, btsp_wmax=8.0):
     a = dict(BASE)
     a.update(comp_dendritic=True, comp_wta_weight=5.0, comp_k_thresh=2.0, comp_self_regen=float(self_regen),
              comp_kir_g=3.0, comp_v_hold=-50.0,
-             comp_btsp=True, comp_btsp_lr=float(btsp_lr), comp_btsp_wmax=8.0,
+             comp_btsp=True, comp_btsp_lr=float(btsp_lr), comp_btsp_wmax=float(btsp_wmax),
              comp_btsp_elig_exp=float(elig_exp), comp_btsp_hetero_dep=float(hetero_dep),
              comp_btsp_hetero_theta=float(hetero_theta),
              comp_btsp_elig_hard_thresh=float(elig_hard_thresh))
@@ -171,6 +171,21 @@ def run_seed(seed, v_teach=-25.0, cycles=40, btsp_lr=0.02, self_regen=0.15, tag_
     rw_oo = [float(rw[i, i] / np.mean([rw[i, j] for j in range(N) if j != i]))
              if np.mean([rw[i, j] for j in range(N) if j != i]) > 1e-12 else 0.0 for i in range(N)]
     res["rate_weighted"] = dict(own_over_other=rw_oo, own_is_max=[bool(np.argmax(rw[i]) == i) for i in range(N)])
+    # CORE-GATED RECALL (2026-07-25 two-sided de-risk): the RECALL read weighted by ONLY fact_i's sustained-firing CORE
+    # (fire_i > 0.25*max), not the dense halo. This is the second HALF of the surpass — if the ACTUAL WRITTEN weights read
+    # through the core give own/other > 2.5, then a coincidence-gated (dendritic) recall that ignores the halo would select
+    # slot_i, i.e. the two-sided read is GO-IN-PRINCIPLE on the real weights (not just the code-overlap ceiling).
+    rwc = np.zeros((N, N))
+    _CORE_THR = 0.25 * 40.0                       # same absolute threshold as the SPARSE CEILING (>25% of the 40-step window)
+    for i in range(N):
+        w_pre = np.zeros(csr.shape[0]); _core = fire[i] > _CORE_THR; w_pre[ca1_idx[_core]] = fire[i][_core]
+        for j in range(N):
+            m = (syn_slot == j) & (w_pre[pre_of] > 0)
+            rwc[i, j] = float((data[m] * w_pre[pre_of][m]).sum())
+    rwc_oo = [float(rwc[i, i] / np.mean([rwc[i, j] for j in range(N) if j != i]))
+              if np.mean([rwc[i, j] for j in range(N) if j != i]) > 1e-12 else 0.0 for i in range(N)]
+    res["core_gated_recall"] = dict(own_over_other=rwc_oo, own_is_max=[bool(np.argmax(rwc[i]) == i) for i in range(N)],
+                                    core_sizes=[int((fire[i] > _CORE_THR).sum()) for i in range(N)])
     # CODE-OVERLAP CEILING: the max own/other ANY linear write can reach on this CA1 rate code = Sum(fire_i^2)/mean_j Sum(fire_i*fire_j).
     # If the measured write's own/other ~= this ceiling, the WRITE is already at ceiling -> the code separability is the wall.
     F = np.stack([fire[i] for i in range(N)])          # (N, n_ca1) rate vectors
@@ -208,6 +223,7 @@ def main():
     ap.add_argument("--hippo-izh-type", type=str, default=None, help="sparse hippo phenotype, e.g. IZH2007_STRIATAL_MSN (down-state-stable, high-threshold, adapting)")
     ap.add_argument("--hippo-izh-regions", type=str, default="dg", help="comma-sep regions to give the sparse phenotype, e.g. dg,ca3,ca1")
     ap.add_argument("--elig-hard-thresh", type=float, default=0.0, help="HARD write-side k-WTA gate on the BTSP eligibility (0=off; e.g. 0.25/0.4/0.6 -> only the sustained-firing CA1 core writes)")
+    ap.add_argument("--btsp-wmax", type=float, default=8.0, help="BTSP w_max (high e.g. 100 = non-saturating graded write, preserves rate info)")
     ap.add_argument("--elig-tau", type=float, default=None, help="BTSP eligibility low-pass tau ms (default 1000=cross-fact; short e.g. 20/30/60 = per-fact-windowed, so the hard threshold can isolate a per-fact core)")
     ap.add_argument("--out", default="research/findings/raw/consol_opsweep_gpu")
     args = ap.parse_args()
@@ -217,7 +233,7 @@ def main():
                  elig_exp=args.elig_exp, hetero_dep=args.hetero_dep, hetero_theta=args.hetero_theta,
                  ffi_inh=args.ffi_inh, ffi_drive=args.ffi_drive, commit_top_k=args.commit_top_k, tag_drive=args.tag_drive,
                  hippo_izh_type=args.hippo_izh_type, hippo_izh_regions=args.hippo_izh_regions,
-                 elig_hard_thresh=args.elig_hard_thresh, elig_tau=args.elig_tau)
+                 elig_hard_thresh=args.elig_hard_thresh, elig_tau=args.elig_tau, btsp_wmax=args.btsp_wmax)
     _tg = (f"_ee{args.elig_exp:g}" if args.elig_exp > 1 else "") + (f"_hd{args.hetero_dep:g}" if args.hetero_dep > 0 else "") + (f"_ffi{args.ffi_inh:g}" if args.ffi_inh > 0 else "") + (f"_eht{args.elig_hard_thresh:g}" if args.elig_hard_thresh > 0 else "")
     Path(f"{args.out}/decoupled_vt{args.v_teach:g}{_tg}_seed{args.seed}.json").write_text(json.dumps(r, indent=2))
     if "error" in r:
@@ -235,6 +251,11 @@ def main():
         print(f"  ELIG-GATE FIRES: {eg['survivor_syn']}/{eg['total_syn']} syn survive thresh={eg['thresh']}  frac={eg['survivor_frac']}  <- must be sparse (not 0, not all)")
     print(f"  DISTINCTIVE own/other @frac0={doo}  mean={mean_oo:.3f}  own_is_max={d0['own_is_max']} ({n_max}/{N})")
     print(f"  RATE-WEIGHTED own/other={rw_oo}  mean={rw_mean:.3f}  own_is_max={rw['own_is_max']} ({rw_nmax}/{N})  <- CAPABILITY metric")
+    cg = r.get("core_gated_recall", {})
+    if cg:
+        cg_oo = [round(x, 3) for x in cg["own_over_other"]]
+        cg_mean = float(np.mean([x for x in cg["own_over_other"] if x > 0])) if any(x > 0 for x in cg["own_over_other"]) else 0.0
+        print(f"  CORE-GATED RECALL own/other={cg_oo}  mean={cg_mean:.3f}  own_is_max={cg['own_is_max']} ({sum(cg['own_is_max'])}/{N})  core_sizes={cg['core_sizes']}  <- the RECALL-side surpass on REAL written weights (>2.5 = two-sided GO-in-principle)")
     ceil = r.get("code_overlap_ceiling", {})
     print(f"  CODE-OVERLAP CEILING own/other={[round(x,3) for x in ceil.get('own_over_other',[])]}  mean={ceil.get('mean',0):.3f}  <- max ANY linear write can reach (dense code)")
     sc = r.get("sparse_ceiling", {})
