@@ -31,8 +31,12 @@ prior "close the 5-gap cluster" framing is SUBSUMED** — the 5 gaps live on as 
 
 **THE LAW (unchanged, now applied to every wall in the ledger): a wall/negative is a verdict on a METHOD, never a
 license to abandon a CAPABILITY — bank the failing method, take a new biology/spiking/one-brain method, and keep going
-until it WORKS. Closure cannot be deferred.** **SESSION START: arm the within-session anti-stall heartbeat Monitor as
-your FIRST action (exact recipe in `GAP_CLOSURE_MISSION.md` → "SESSION START"), then resume from CURRENT STATE.**
+until it WORKS. Closure cannot be deferred.** **SESSION START — OR ANY CONTINUATION (resumed from compaction): VERIFY a
+within-session anti-stall + RUN-STATE heartbeat Monitor is live (a prior session's died with it; a continuation usually
+has NONE), and arm one if not. It must be STATE-CHECKING (emits GPU / running-procs / recent-output every ~15 min) — a
+text-only "are you idle?" nudge is insufficient (the 2026-07-24 failure was a live-but-stalled run, not idleness). Exact
+recipe in `GAP_CLOSURE_MISSION.md` → "SESSION START". NEVER WAIT on a background run without a live state-heartbeat, and
+never trust a subagent-armed Monitor / passive re-invocation to catch a completion. Then resume from CURRENT STATE.**
 Cross-session continuation is MANUAL by owner choice (a plain "continue" + the roadmap + that board re-anchors) — no
 watchdog/daemon.
 

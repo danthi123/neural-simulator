@@ -8,19 +8,34 @@ first, act on the CURRENT STATE section, update it every cycle. You do NOT need 
 
 ## ⚡ SESSION START — DO THIS FIRST, EVERY session (owner-chosen 2026-07-18: doc-instruction arming, NO hooks/daemon)
 
-**FIRST ACTION: arm the within-session anti-stall heartbeat.** It is a SESSION-SCOPED `Monitor` — it dies when the
-session ends, so it must be re-armed at the start of EVERY new session (it survives compaction, not a session end).
-This is the *in-session* backstop that re-invokes you if you go idle; it is NOT the cross-session "watchdog/daemon" the
-owner declined (see the Continuation-mechanism note in CURRENT STATE — that stays MANUAL). There is no way for a doc or
-hook to auto-*execute* this call; arming it IS your first action. Exact recipe (≈25-min cadence):
+**FIRST ACTION: arm the within-session anti-stall + RUN-STATE heartbeat — at SESSION START AND on ANY CONTINUATION
+(resumed from compaction): VERIFY a heartbeat is actually live, do NOT assume.** It is a SESSION-SCOPED `Monitor` — it
+dies when the session ends, so a prior session's heartbeat is GONE and a fresh continuation typically has NONE (the
+2026-07-24 failure — I only armed one after two idle stalls). This is the *in-session* backstop; it is NOT the
+cross-session "watchdog/daemon" the owner declined (that stays MANUAL). Arming it IS your action (no doc/hook can
+auto-execute it). Exact recipe — **≈15-min cadence, STATE-CHECKING (a text-only nudge is insufficient: the failure was
+a live-but-stalled run, not idleness):**
 
 ```
-Monitor(persistent=true, description="anti-stall heartbeat",
-  command='while true; do sleep 1500; echo "⚓ ANTI-STALL HEARTBEAT: if no run is live and you are not mid-action, re-read GAP_CLOSURE_MISSION.md CURRENT STATE and take the NEXT concrete gap step NOW — never end a turn on a status report or a promise; the only turn-enders are an explicit owner stop or a safety gate."; done')
+Monitor(persistent=true, description="anti-stall + run-state heartbeat",
+  command='while true; do sleep 900; cd /home/dant123/Projects/sim; gpu=$(nvidia-smi --query-gpu=utilization.gpu,memory.used --format=csv,noheader 2>/dev/null | tr "\n" "|"); procs=$(pgrep -fc "research.runners" 2>/dev/null || echo 0); newj=$(find research/findings/raw -name "*.json" -newermt "-16 min" 2>/dev/null | wc -l); echo "⚓ HEARTBEAT $(date +%H:%M) gpu=[$gpu] research-procs=$procs new-json-16m=$newj — ACT: run FINISHED (new output) -> read+act; run ALIVE but GPU idle + no new output 2+ beats -> STALLED/launch-bound, check ps + kill/re-scope, do NOT keep waiting; NOTHING running + not mid-action -> take the NEXT gap step. NEVER trust a subagent-armed Monitor or passive re-invocation to catch a completion — THIS state-check is the backstop. Only turn-enders: owner stop or safety gate."; done')
 ```
 
-Then read CURRENT STATE below and resume from EXACT NEXT ACTION. (If a heartbeat Monitor is already live this session,
-do not arm a second one.)
+**Why STATE-CHECKING (2026-07-24, this exact failure twice in one session):** I relied on subagent-armed Monitors /
+passive re-invocation to signal long-run completion; both STALLED — a finished run sat un-relayed 1h, then a
+launch-bound run ran 2h with the GPU near-idle while I waited — and I sat idle ~2h total (the owner caught it, twice).
+A text-only "are you idle?" nudge would NOT have fired usefully (a run WAS live, I WAS mid-action responding to
+relays). The state-check (GPU + procs + recent output) surfaces the ACTUAL run state, so a completion or a stall is
+caught. **RULE: if you are about to WAIT on ANY background run, a state-checking heartbeat MUST be live first — verify
+it; and never conclude "waiting on the async pattern" without one.** **Corollary (the deeper 2026-07-24 lesson): when
+you dispatch SUBAGENTS that launch long runs, monitor at the CONTROLLER level too — do NOT trust the subagents'
+self-armed Monitors to relay (both stalled). Alongside the heartbeat, run the committed `tools/monitor_runs.py --logs
+'<glob>'` over each long run's log (CPU-delta liveness → done/crash/HUNG; see memory
+`feedback_proactively_monitor_long_runs`). A LAUNCH-BOUND run (high CPU + idle GPU) is genuinely computing but
+pathologically slow — the heartbeat's "GPU idle + no new output" catches it; kill + re-scope, do not wait hours.**
+
+Then read CURRENT STATE below and resume from EXACT NEXT ACTION. (If a state-checking heartbeat is already live this
+session, do not arm a second one.)
 
 ---
 
