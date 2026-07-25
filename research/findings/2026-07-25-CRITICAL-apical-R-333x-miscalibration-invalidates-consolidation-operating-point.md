@@ -244,3 +244,38 @@ artifact's ~100× inflated activity. None of them were properties of the substra
 **Still open / not claimed:** 6-seed completion is running (43/100/101/102); seed 42 clears the 2.5 gate on 2/3 facts,
 seed 44 on 3/3, so the formal multi-seed GO is not yet declared. And this remains the **PROXY** metric — A1 closes only
 on the end-to-end hippo-lesioned recall test with its four anti-cheats (see `GAP_CLOSURE_MISSION.md`).
+
+## ✅✅ 6-SEED GO (proxy metric) — the `ca1→slot` consolidation write localizes, fully controlled
+
+Operating point: `comp_apical_R=0.15`, `comp_gc_read=0.5`, default hippocampal pyramidal phenotype, `core_thr_frac=0.225`
+(≈9 spikes, derived from measured activity), `commit_top_k=85`, blocked schedule, single burst + 200-step (100 ms)
+recovery, `--encode-btsp-lr 0` (write rule quiescent during encode AND during the measurement), `btsp_lr=0.0005`
+(unsaturated: `dw` 0.12–0.18 vs `w_max` 2000).
+
+| seed | own/other | own-is-max | n_pass (≥2.5) | **permuted-core** | random-CA1 | per-slot mass | core sizes |
+|---|---|---|---|---|---|---|---|
+| 42 | `[2.33, 4.55, 3.23]` | **3/3** | 2/3 | `[0.16, 0.70, 0.75]` | `[0.89, 0.95, 1.17]` | 0.69/0.76/0.75 | `[9,20,22]` |
+| 43 | `[2.55, 5.74, 3.85]` | **3/3** | **3/3** | `[0.18, 0.49, 0.51]` | `[0.91, 0.26, 2.68]` | 0.67/0.69/0.71 | `[10,13,20]` |
+| 44 | `[4.24, 7.92, 4.61]` | **3/3** | **3/3** | `[0.08, 0.36, 0.79]` | `[1.34, 0.31, 1.74]` | 0.66/0.72/0.69 | `[7,13,6]` |
+| 100 | `[4.14, 2.74, 4.05]` | **3/3** | **3/3** | `[0.34, 0.70, 0.07]` | `[1.04, 1.28, 0.73]` | 0.66/0.71/0.71 | `[6,13,13]` |
+| 101 | `[4.30, 4.80, 3.60]` | **3/3** | **3/3** | `[0.29, 0.45, 0.58]` | `[1.46, 0.75, 0.88]` | 0.67/0.70/0.69 | `[12,17,13]` |
+| 102 | `[2.48, 4.34, 3.69]` | **3/3** | 2/3 | `[0.27, 0.46, 0.48]` | `[0.51, 0.64, 2.51]` | 0.66/0.70/0.70 | `[8,22,16]` |
+
+**Verdict: GO.** `own-is-max` on **18/18 fact-seeds**; **16/18** clear the 2.5 gate (the two misses, 2.33 and 2.48, are
+marginal); **≥2/3 facts pass on 6/6 seeds** (4 seeds at 3/3). Mean true own/other **4.06** vs mean permuted **0.43** —
+a ~9.4× separation.
+
+**Verify-go triad, all satisfied:** (a) the **permuted-core control collapses far below 1.0 in every one of the 18
+fact-seeds** (0.07–0.79) while the true cores reach 2.3–7.9 ⇒ selectivity is earned by each fact's own core, not slot
+mass; (b) **per-slot masses are balanced within ~15%** (0.66–0.76) — the winner-slot bias that faked earlier "positives"
+is absent, and the selectivity runs *against* the residual mass gradient; (c) reported **per fact, never as a mean**,
+with a degenerate-gate guard — all core sizes 6–22 cells, none degenerate. Additionally seed 44 is **converged** across
+two learning rates (0.001 vs 0.0005 ⇒ `[2.98,7.92,4.61]` vs `[4.24,7.92,4.61]`), so this is a structural fixed point,
+not ratio-noise from a vanishing `dw`.
+
+**⚠️ SCOPE — this is the PROXY, not the capability.** A1 closes only on the end-to-end test in
+`nmda_compositional_consolidation.py` main(): cue a noun with the **hippocampus lesioned**, the bound adjective pool is
+selectively active, `--min-recall 2`/3 with `--antichance 1` across its four anti-cheats (no-replay · nmda-lesion ·
+hippo-lesion-before-consolidation · no-confab on the withheld "cat" fact). That runner still uses the original
+`coactivation_replay` and the arc's (invalid) constants, so the next step is to wire the calibrated operating point and
+this write protocol into it and run the 4-control GO at 6 seeds.
