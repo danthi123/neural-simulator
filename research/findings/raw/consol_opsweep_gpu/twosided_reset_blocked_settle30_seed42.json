@@ -1,0 +1,87 @@
+{
+  "seed": 42,
+  "thr_hash": "ee7fcf106bea",
+  "dw": 14.83007,
+  "btsp_wmax": 2000.0,
+  "btsp_lr": 3e-06,
+  "elig_tau": 30.0,
+  "elig_hard_thresh": 0.4,
+  "commit_top_k": 15,
+  "hippo_izh": "IZH2007_STRIATAL_MSN",
+  "cycles": 3,
+  "reset_elig": true,
+  "fixed_order": false,
+  "settle_steps": 30,
+  "blocked": true,
+  "core_thr_frac": 0.25,
+  "core_sizes": [
+    15,
+    20,
+    17
+  ],
+  "core_gated_own_over_other": [
+    1.045,
+    1.024,
+    1.006
+  ],
+  "core_gated_own_is_max": [
+    true,
+    false,
+    false
+  ],
+  "n_pass": 0,
+  "permuted_core_own_over_other": [
+    0.935,
+    0.948,
+    1.037
+  ],
+  "random_ca1_own_over_other": [
+    1.029,
+    0.992,
+    0.979
+  ],
+  "slot_mean_weight": [
+    5.8804,
+    5.8029,
+    5.7995
+  ],
+  "sparse_core_ceiling": [
+    7.407,
+    7.712,
+    3.545
+  ],
+  "xfire_under_tag": [
+    [
+      13.4,
+      5.73,
+      8.13
+    ],
+    [
+      5.85,
+      12.75,
+      7.55
+    ],
+    [
+      7.59,
+      8.47,
+      12.76
+    ]
+  ],
+  "xfire_during_write": [
+    [
+      8.47,
+      5.8,
+      4.73
+    ],
+    [
+      10.8,
+      6.55,
+      6.7
+    ],
+    [
+      7.76,
+      6.53,
+      6.41
+    ]
+  ]
+}
