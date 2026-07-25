@@ -40,12 +40,20 @@ _CORE_THR = 0.25 * 40.0    # >25% of the 40-step fire-under-tag window (same as 
 
 
 def instrumented_write(bridge, facts, tags, cycles, seed, v_teach=-25.0, burst_steps=30, reinstate_drive=1500.0,
-                       reset_elig=False, fixed_order=False, settle_steps=0, ca1_idx=None, blocked=False):
+                       reset_elig=False, fixed_order=False, settle_steps=0, ca1_idx=None, blocked=False, write_order=None, reset_neurons=False, freeze_hippo=False):
     """Isolated-reinstatement + exclusive-apical-clamp teaching write (== decoupled_plateau_write) with instrumentation:
     captures per-fact-window CA1 firing, and optionally resets BTSP eligibility / settles / fixes order between facts.
     blocked=True: write ALL cycles of fact i before fact i+1 (full per-fact isolation — the decisive test of whether the
     leak is the interleaved schedule vs a deeper per-fact property)."""
     set_sleep_gates(bridge)
+    if freeze_hippo:
+        # 2026-07-25 (order-permutation follow-up): set_sleep_gates leaves ca3_to_ca1 PLASTIC (=1.0) during the write —
+        # the very pathway that determines CA1's code for each tag. So the FIRST fact's write modifies ca3->ca1 and
+        # every LATER fact's tag maps onto an altered CA1, which is exactly the positional/cumulative specificity loss
+        # (and it survives eligibility-reset + settle + neuron-reset because it lives in the WEIGHTS). Freeze all the
+        # named hippocampal/cortical gates, leaving ONLY ca1->comp_attr (the consolidation write) plastic.
+        from research.runners.text_minimal_isolation import freeze_all_gates
+        freeze_all_gates(bridge)
     _try_pgate(bridge, "ca1_to_comp_attr", 1.0)
     _try_tgate(bridge, "nmda_attractor", 0.0)
     rm = bridge.region_manager
@@ -79,6 +87,22 @@ def instrumented_write(bridge, facts, tags, cycles, seed, v_teach=-25.0, burst_s
             pass
         if bridge.cp_v_apical is not None:
             bridge.cp_v_apical[:] = cp.float32(Er)
+        if reset_neurons:
+            # TRUE per-fact network re-initialisation (2026-07-25 order-permutation follow-up). The permutation proved
+            # the specificity loss is POSITIONAL: whichever fact is written FIRST keeps it (~1.75) and every later fact
+            # is flat (~0.85), with eligibility-reset + settle ALREADY on. So what carries over is NEURON STATE, not
+            # eligibility: spike-triggered adaptation (the MSN phenotype's d_increment=150 loads cp_recovery_variable_u),
+            # membrane state, and short-term synaptic depression. Restore all three to rest so every fact sees the same
+            # fresh network the first one does.
+            _Vr = float(getattr(bridge.core_config, 'izh_c_reset', -65.0))
+            if getattr(bridge, 'cp_membrane_potential_v', None) is not None:
+                bridge.cp_membrane_potential_v[:] = cp.float32(_Vr)
+            if getattr(bridge, 'cp_recovery_variable_u', None) is not None:
+                bridge.cp_recovery_variable_u[:] = cp.float32(0.0)
+            if getattr(bridge, 'cp_stp_x', None) is not None:
+                bridge.cp_stp_x[:] = cp.float32(1.0)
+            if getattr(bridge, 'cp_stp_u', None) is not None:
+                bridge.cp_stp_u[:] = cp.float32(float(getattr(bridge.core_config, 'stp_U', 0.5)))
         if settle_steps > 0:      # let eligibility decay + slots return to down-state before the next fact
             bridge.cp_external_input_current[:] = 0.0
             for _ in range(int(settle_steps)):
@@ -86,7 +110,11 @@ def instrumented_write(bridge, facts, tags, cycles, seed, v_teach=-25.0, burst_s
                     bridge.cp_v_apical[all_slots] = cp.float32(Er)
                 bridge._run_one_simulation_step()
 
-    order0 = list(range(len(facts)))
+    # WRITE ORDER (2026-07-25 M0 follow-up): blocked mode always wrote 0,1,2, so "fact 0" and "written first" were
+    # perfectly confounded — and M0 found only the first-written fact keeps its specificity. write_order permutes the
+    # schedule to separate them: if the passing fact FOLLOWS the order, the degradation is cumulative-across-schedule;
+    # if fact 0 passes even when written last, the cause is specific to fact 0 instead.
+    order0 = list(write_order) if write_order else list(range(len(facts)))
     if blocked:
         for i in order0:
             for _c in range(int(cycles)):
@@ -104,7 +132,7 @@ def run_seed(seed, v_teach=-25.0, cycles=3, btsp_lr=0.000003, self_regen=0.15, t
              elig_exp=1.0, hetero_dep=0.0, hetero_theta=0.0, commit_top_k=15,
              hippo_izh_type="IZH2007_STRIATAL_MSN", hippo_izh_regions="dg,ca3,ca1",
              elig_hard_thresh=0.4, elig_tau=30.0, btsp_wmax=2000.0,
-             reset_elig=False, fixed_order=False, settle_steps=0, core_thr_frac=0.25, blocked=False):
+             reset_elig=False, fixed_order=False, settle_steps=0, core_thr_frac=0.25, blocked=False, write_order=None, reset_neurons=False, freeze_hippo=False):
     a = dict(BASE)
     a.update(comp_dendritic=True, comp_wta_weight=5.0, comp_k_thresh=2.0, comp_self_regen=float(self_regen),
              comp_kir_g=3.0, comp_v_hold=-50.0,
@@ -143,7 +171,7 @@ def run_seed(seed, v_teach=-25.0, cycles=3, btsp_lr=0.000003, self_regen=0.15, t
     w0 = _mean_gate_weight(b, "ca1_to_comp_attr")
     inst = instrumented_write(b, CONSOLIDATED_FACTS, tags, int(cycles), seed, v_teach=float(v_teach),
                               reinstate_drive=float(tag_drive), reset_elig=reset_elig, fixed_order=fixed_order,
-                              settle_steps=int(settle_steps), ca1_idx=ca1_idx, blocked=blocked)
+                              settle_steps=int(settle_steps), ca1_idx=ca1_idx, blocked=blocked, write_order=write_order, reset_neurons=reset_neurons, freeze_hippo=freeze_hippo)
     w1 = _mean_gate_weight(b, "ca1_to_comp_attr")
     wf = inst["window_fire"]
     # CROSS-FACT CORE-FIRING (actual write windows): mean firing of fact-K's core cells during fact-W's write reinstatement
@@ -172,7 +200,18 @@ def run_seed(seed, v_teach=-25.0, cycles=3, btsp_lr=0.000003, self_regen=0.15, t
 
     def _gated_scan(X, label):
         xmax = float(X.max()) if X.size else 0.0
-        res = {"max_count": round(xmax, 1), "ungated_ceiling": [round(v, 3) for v in _ceiling(X)], "binary": {}, "hill": {}}
+        # MAGNITUDE-FREE specificity (2026-07-25): the raw ceiling Sum(x_i^2)/Sum(x_i.x_j) rewards whichever window simply
+        # FIRES MORE — and the first-written window fires on a fresh network. That is a mass artifact of the same class as
+        # the winner-slot bias. Cosine specificity divides it out: spec_i = 1 / mean_j!=i cos(x_i, x_j). If the positional
+        # effect survives here it is REAL code specificity; if it vanishes, the "positional specificity" was just firing mass.
+        nrm = np.linalg.norm(X, axis=1); U = X / np.maximum(nrm, 1e-12)[:, None]
+        cos_spec = []
+        for i in range(N):
+            m = float(np.mean([float(U[i] @ U[j]) for j in range(N) if j != i]))
+            cos_spec.append(1.0 / m if m > 1e-12 else 0.0)
+        res = {"max_count": round(xmax, 1), "ungated_ceiling": [round(v, 3) for v in _ceiling(X)],
+               "total_spikes": [round(float(X[i].sum()), 1) for i in range(N)],
+               "cosine_specificity": [round(v, 3) for v in cos_spec], "binary": {}, "hill": {}}
         for frac in (0.3, 0.5, 0.6, 0.7, 0.8, 0.9):
             th = round(frac * xmax, 2)
             Gb = (X > th).astype(np.float64)                       # binary absolute-threshold gate
@@ -251,7 +290,7 @@ def run_seed(seed, v_teach=-25.0, cycles=3, btsp_lr=0.000003, self_regen=0.15, t
     res = dict(seed=int(seed), thr_hash=thr_hash, dw=round(w1 - w0, 5), btsp_wmax=float(btsp_wmax),
                btsp_lr=float(btsp_lr), elig_tau=elig_tau, elig_hard_thresh=float(elig_hard_thresh),
                commit_top_k=commit_top_k, hippo_izh=hippo_izh_type, cycles=int(cycles),
-               reset_elig=bool(reset_elig), fixed_order=bool(fixed_order), settle_steps=int(settle_steps), blocked=bool(blocked),
+               reset_elig=bool(reset_elig), fixed_order=bool(fixed_order), settle_steps=int(settle_steps), blocked=bool(blocked), write_order=(list(write_order) if write_order else None),
                core_thr_frac=float(core_thr_frac), core_sizes=core_sizes,
                core_gated_own_over_other=[round(x, 3) for x in rwc_oo],
                core_gated_own_is_max=rwc_max, n_pass=int(sum(1 for i in range(N) if rwc_oo[i] >= 2.5 and rwc_max[i])),
@@ -286,6 +325,9 @@ def main():
     ap.add_argument("--reset-elig", action="store_true", help="reset BTSP eligibility between facts (test temporal bleed)")
     ap.add_argument("--fixed-order", action="store_true", help="fixed (not shuffled) fact order in the write loop")
     ap.add_argument("--settle-steps", type=int, default=0, help="settle steps between facts (eligibility decay + down-state)")
+    ap.add_argument("--freeze-hippo", action="store_true", help="freeze ca3->ca1 etc during the write (only ca1->comp_attr plastic) — tests whether the WRITE corrupts the hippocampal code")
+    ap.add_argument("--reset-neurons", action="store_true", help="TRUE per-fact network re-init between facts (v/u/STP to rest) — tests whether ADAPTATION state is what accumulates")
+    ap.add_argument("--write-order", type=str, default=None, help="comma-sep fact write order, e.g. 2,1,0 — separates 'fact 0' from 'written first'")
     ap.add_argument("--blocked", action="store_true", help="write ALL cycles of fact i before fact i+1 (full per-fact isolation)")
     ap.add_argument("--out", default="research/findings/raw/consol_opsweep_gpu")
     ap.add_argument("--tag", default="")
@@ -297,7 +339,9 @@ def main():
                  commit_top_k=args.commit_top_k, tag_drive=args.tag_drive, hippo_izh_type=args.hippo_izh_type,
                  hippo_izh_regions=args.hippo_izh_regions, elig_hard_thresh=args.elig_hard_thresh, elig_tau=args.elig_tau,
                  btsp_wmax=args.btsp_wmax, reset_elig=args.reset_elig, fixed_order=args.fixed_order,
-                 settle_steps=args.settle_steps, core_thr_frac=args.core_thr_frac, blocked=args.blocked)
+                 settle_steps=args.settle_steps, core_thr_frac=args.core_thr_frac, blocked=args.blocked,
+                 write_order=[int(x) for x in args.write_order.split(',')] if args.write_order else None,
+                 reset_neurons=args.reset_neurons, freeze_hippo=args.freeze_hippo)
     _tg = (args.tag or "") + (f"_reset" if args.reset_elig else "") + (f"_fixed" if args.fixed_order else "") + \
           (f"_blocked" if args.blocked else "") + \
           (f"_settle{args.settle_steps}" if args.settle_steps else "") + (f"_ctf{args.core_thr_frac:g}" if args.core_thr_frac != 0.25 else "")
@@ -327,6 +371,7 @@ def main():
                     if mv > best:
                         best, bestlab = mv, f"{kind}@{frac}x(theta={e['theta']},n_active={act})"
             print(f"    {src:13s}: ungated={d['ungated_ceiling']} (mean {np.mean(d['ungated_ceiling']):.2f}) | BEST gated mean={best:.3f} via {bestlab}")
+            print(f"    {'':13s}  total_spikes={d.get('total_spikes')}  COSINE-spec (magnitude-free)={d.get('cosine_specificity')}")
         # VERDICT on PER-FACT passes, never the MEAN. (2026-07-25: a mean-based verdict called this a GO when only
         # fact 0 — the FIRST-written fact — passed and facts 1/2 sat at 1.2-2.0 on 3-6-cell gates. That is the same
         # one-of-N artifact class as the winner-slot bias. A mechanism must work for MOST facts, not carry the mean.)

@@ -441,3 +441,53 @@ eligibility bleed the reset doesn't clear, plateau-clamp after-effects, or drift
 protocol exists (true network re-initialisation between facts, interleaved-with-recovery replay, or per-fact
 write-window gating) that gives facts 1..N−1 the same fresh-network code fact 0 gets. That is the next cheap de-risk,
 and it is still free (no `sim/` edit). If such a protocol exists, M0 predicts the gate then delivers ~10× amplification.
+
+---
+
+# ⚠️ M0 FOLLOW-UP — the "cumulative-across-schedule" conclusion is RETRACTED: it was a FIRING-MASS artifact
+
+The M0 write-up above concluded the specificity loss was *ordered/cumulative across the write schedule* (only the
+first-written fact passing). Two further free experiments show that conclusion was **wrong**, and wrong in the same
+metric-artifact class that has now bitten this arc three times in one session.
+
+**1. Order permutation (`--write-order`) — the effect is positional, confirmed.** Adding a controllable write order
+(blocked mode had hard-coded 0,1,2, perfectly confounding "fact 0" with "written first"):
+| write order | ungated during-write | high fact |
+|---|---|---|
+| `0,1,2` | `[1.739, 0.859, 0.883]` | 0 |
+| `1,2,0` | `[0.828, 1.781, 0.874]` | 1 |
+| `2,1,0` | `[0.829, 0.900, 1.752]` | 2 |
+The high fact tracks the FIRST write position exactly, at essentially identical magnitude (1.74/1.78/1.75).
+
+**2. Two mechanistic hypotheses tested and REFUTED (both free):**
+- *Adaptation state carries it* — `--reset-neurons` (v/u/STP restored between facts) did NOT lift the later facts; it
+  LOWERED the first (1.74 → 1.30) and de-sparsified the gate (n_active 28 → 64). (Caveat: the reset used
+  `izh_c_reset`=−65 mV while the MSN phenotype rests at `vr`=−80 mV, so it left cells ~15 mV depolarised — a
+  non-physiological state. The refutation of "adaptation is the whole story" stands; a vr-correct reset is untested.)
+- *The write corrupts the hippocampal code* — `set_sleep_gates` leaves **`ca3_to_ca1` plastic (=1.0)** during the write,
+  the pathway that sets CA1's code per tag, so fact 0's write should blur every later tag. `--freeze-hippo`
+  (`freeze_all_gates` + re-open only `ca1_to_comp_attr`) changed **nothing**: `[1.662, 0.874, 0.845]`, and reversed order
+  still tracked position. ⇒ NOT ca3→ca1 plasticity.
+
+**3. THE ACTUAL EXPLANATION — firing MASS, not specificity.** The ungated ceiling `Σx_i²/Σx_i·x_j` is magnitude-sensitive,
+and the gate threshold is a fraction of the GLOBAL max, so a window that simply fires MORE wins on both. Measured:
+| code | total spikes / window | **cosine specificity (magnitude-free)** |
+|---|---|---|
+| during write | `[1203, 701, 625]` — first ≈ **2×** the others | `[1.159, 1.098, 1.114]` — **FLAT** |
+| isolated tag | `[783, 771, 813]` — balanced | `[1.288, 1.253, 1.274]` — flat |
+The first-written window fires ~2× more (fresh, unadapted network); later windows are adapted (13.4 → 7.0 spikes/step,
+vs 19.6/step isolated). **Divide mass out and all three facts are equally specific.** ⇒ **there is NO cumulative
+per-fact degradation across the schedule; the earlier M0 write-up's central claim is RETRACTED.**
+
+**4. The corrected, genuine residual.** During-write specificity is uniformly ~**1.11** vs isolated ~**1.27** — a modest,
+NON-positional drop — but the during-write code is far less **PEAKED**: the gate selects 31–80 cells there versus 11–17
+under isolated tag. That peakedness is what the absolute-threshold gate needs, which is exactly why it amplifies
+isolated 1.27 → **12.3** but during-write 1.11 → only **1.58**. ⇒ **the target is not "what accumulates" but "why is the
+write-window code less PEAKED than the isolated-tag code"** — the write window accumulates 3 cycles × 30 steps of a
+partially-adapted network, versus a single 40-step burst from rest. Next cheap tests: single-cycle windows, longer
+recovery, and a `vr`-correct network reset, each judged on **cosine specificity + peakedness**, never on a raw ratio.
+
+**LESSON (third instance in one session — now a hard rule).** A ratio/selectivity metric confounded by MASS produced:
+(1) the winner-slot artifact, (2) the mean-over-facts "GO", (3) this positional "cumulative degradation". **Every
+own/other-style number must be reported alongside its magnitude-free form (cosine / normalised) and the raw per-item
+masses.** Encoded into `.claude/skills/verify-go/SKILL.md` lens 7.
