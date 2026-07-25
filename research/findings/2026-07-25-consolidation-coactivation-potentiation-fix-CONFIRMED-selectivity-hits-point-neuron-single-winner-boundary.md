@@ -36,14 +36,18 @@ boundary** (`2026-07-24-P0.3-affect-state-region-6seed-GO.md`: on point neurons 
 → a single bistable winner, not a graded/selective assembly). The potentiation-strength sweep (30 vs 100 cycles, both
 chance-selectivity) confirms it is NOT a tuning shortfall in the routing — it is the point-neuron attractor dynamics.
 
-## SFA-eviction lever SYSTEMATICALLY EXHAUSTED (9-config sweep, 1-seed) — the point-neuron boundary is confirmed
+## SFA-eviction lever EXHAUSTED (9-config sweep, seed 42) + the 6-seed CORRECTION (the boundary is SEED-VARIABLE, at-chance-mean)
 Injected spike-frequency adaptation directly on the slot neurons (runner-side, no `sim/` edit: `cp_izh_d_increment` +
-`cp_izh_a`) and swept it: **no-SFA + a grid of d∈{50,100,200,300} × a∈{0.02,0.05} — every config gives SELECTIVE ≤1/3
-(= chance); BEST = 1/3 @ no-SFA.** (Strong SFA d=500/a=0.01 also over-suppresses to 0/3 ignition.) ⇒ **NO SFA regime
-produces one-of-N selective consolidation.** This is the systematic confirmation (not a 2-setting guess): a **point-neuron**
-adaptation+WTA+attractor does NOT grade into N selective assemblies — exactly the P0.3 saturation boundary. The confirmed
-next lever is the deeper **dendritic line/bump attractor** surpass (P0.3's named ultimate lever for graded/selective
-point-neuron assemblies; `sim/dendritic_*`) — squarely the project's standing dendritic-cortex priority.
+`cp_izh_a`) and swept it **at seed 42**: no-SFA + a grid of d∈{50,100,200,300} × a∈{0.02,0.05} → every config SELECTIVE
+≤1/3; BEST 1/3 @ no-SFA (strong SFA d=500/a=0.01 over-suppresses to 0/3 ignition). No SFA regime helps *at that seed*.
+**⚠️ 6-SEED CORRECTION (the honest refinement — my initial "systematically confirmed single-winner / all ≤chance" was a
+1-seed OVER-CLAIM; seed 42 is a low-selectivity seed):** running the no-SFA baseline across **6 seeds** gives SELECTIVE =
+**[1, 2, 1, 0, 1, 2], mean 1.17/3 ≈ chance (1.0/3)** — it is **SEED-VARIABLE**: 2/6 seeds reach 2/3, three are at chance
+1/3, one at 0/3, and it **NEVER robustly reaches the ≥⌈N/2⌉ GO bar (2/3 on only 2/6 seeds; never 3/3).** ⇒ the corrected
+verdict: the point-neuron regime is **at-chance-mean, seed-variable, NOT robustly one-of-N** — the boundary stands as
+"point neurons do not ROBUSTLY grade into selective compositional assemblies," but it is NOT the clean "always
+single-winner" the seed-42 sweep suggested. The SFA sweep itself was seed-42-only; the baseline is seed-variable. The
+dendritic surpass remains well-motivated (point neurons never robustly clear the GO bar) and is the confirmed next lever.
 
 ## Verdict + next (per THE LAW — the residual is precisely mapped + the surpass named, NOT a wall)
 - **CONFIRMED (1-seed):** co-activation replay clears the A1 frozen-wire failure (directional potentiation) + the
