@@ -575,3 +575,35 @@ protocol and the **identical** `direct_binding_sanity`. Single variable = the su
 - **If the reference ALSO FAILS** ⇒ a **shared-code regression since 2026-05-21**, which would be a far more important
   finding than the A1 blocker itself — it would put every result depending on that Phase-1 recipe in question.
 Either outcome is decisive and neither requires another guess. Test in flight.
+
+## 🔴🔴 THE REFERENCE HARNESS ALSO FAILS (0/16) — this is a SHARED-CODE REGRESSION, not an A1 problem
+
+Decisive single-variable test: the **reference runner's own** substrate builder
+(`unified_per_regime_monitor_runner._build_bridge_with_phase1_recipe`, the harness whose recorded score is **87.5%**),
+with the **identical** training protocol and the **identical** `direct_binding_sanity`:
+```
+REFERENCE substrate + identical protocol + identical sanity: 0/16 = 0.0%
+```
+**Word→pool direct binding is broken in the SHARED code path**, not in the A1 runner. This immediately explains why all
+three A1-specific hypotheses missed: the fault was never in A1. A1's failing capability gate is a **symptom**.
+
+**Why this matters more than the A1 blocker.** Phase-1 word→pool binding is the foundation the concept-pool line of work
+stands on — every result that presupposes "the brain has learned word↔meaning links" depends on it. If it has been
+silently broken for some time, results produced in that window need re-checking. Given this session has already found a
+**333× units miscalibration** and a **rule-inverting weight bound** sitting unnoticed in this codebase, a silent shared
+regression is entirely plausible rather than exotic.
+
+**HONEST CAVEATS — what is NOT yet established:**
+- The reference test was run at **200 events/word**; the recorded 87.5% was at **800**. Not strictly like-for-like.
+  *(Mitigating: the A1 runner at 800ev also gave 0/16, so it fails at both budgets — but the REFERENCE builder has only
+  been run at 200 here.)*
+- "Regression" presumes it once passed **on this code**. The 87.5% came from a commit ~2 months old; that has not yet
+  been re-run. **It is equally possible the recipe always needed something this reproduction omits.**
+- Therefore the correct label right now is **"the reference harness does not bind today"**, NOT "we broke it on date X".
+
+**▶ NEXT (systematic, no more guessing): run the SAME probe at the 2026-05-21-era commit in a git worktree.**
+- passes there ⇒ a genuine regression; `git bisect` the exact commit that broke it (mechanical from that point).
+- fails there too ⇒ the historical 87.5% depended on something this reproduction omits, and the reproduction is what
+  needs fixing — which would retire the "regression" framing entirely.
+Either way the next step is a measurement, not a hypothesis. **Nothing about the shared Phase-1 path should be cited
+until this resolves.**
