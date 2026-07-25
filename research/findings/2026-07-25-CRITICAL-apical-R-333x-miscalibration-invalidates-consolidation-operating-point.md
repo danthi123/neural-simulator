@@ -74,3 +74,38 @@ substrate that is physically valid — a far better place to be than continuing 
 and no metric could have revealed it — only reading the substrate's own state (`v_apical`) in physical units did.
 **When a mechanism refuses to work across many well-controlled variants, measure the substrate's state variables in
 their physical units and check them against physiological range, BEFORE concluding the capability is bounded.**
+
+---
+
+# ⛔ THE BOUNDARY ITSELF IS **VOID** — the "dense CA1 code" was the artifact. The real code is SPARSE and FACT-SPECIFIC.
+
+Apples-to-apples, identical measurement (`_fire_under_tag`, seed 42, drive 1500, same encode), three configs:
+
+| config | CA1 active (of 120) | Jaccard | **cosine specificity** | `v_apical` range (mV) |
+|---|---|---|---|---|
+| **1) BASE — no `comp_dendritic`** | `[8, 11, 10]` = **8%** | **0.058** | **[8.22, 15.0, 5.31]** | — |
+| **2) the ARC's config** (R=50, gc_read=5) | `[116, 111, 109]` = **93%** | **0.877** | **[1.34, 1.36, 1.36]** | **−2.2e6 … +6.8e3** |
+| **3) PHYSIOLOGICAL** (R=0.15, gc_read=0.5) | `[13, 15, 30]` = **16%** | **0.079** | **[6.55, 6.44, 3.29]** | **−5.3 … −3.0** |
+
+**The premise of the entire 2026-07-25 consolidation arc — "the CA1 code is DENSE and OVERLAPPING, therefore no
+`ca1→slot` write can localize (ceiling 1.45)" — IS FALSE.** That dense code existed *only* in the miscalibrated
+operating point, where a diverging apical compartment (spanning −2.2×10⁶ … +6.8×10³ mV) drove **every** soma through
+`apical_g_couple_to_soma=5.0`, producing 93%-active, Jaccard-0.88, specificity-1.35 network-wide activity that was never
+a hippocampal code at all. The **real** CA1 tag response is **sparse (8–16% active), near-disjoint (Jaccard 0.06–0.08),
+and strongly fact-specific (cosine specificity 3.3–15.0 vs the artifact's 1.35)** — i.e. exactly the pattern-separated
+sparse code the hippocampus is supposed to produce, and exactly the regime in which a selective write should succeed.
+
+**This retroactively explains the whole arc.** Every failure — ~15 write-rule variants, the sparsification battery, the
+two-sided read, the eligibility thresholds, M1′ — was an attempt to write onto a 93%-dense artifact. The measured
+"ceilings" (1.45 dense / 8.0 sparse-core), the winner-slot bias, the mass artifacts, and the M0 "GO" were all properties
+of that artifact, not of the substrate. **The boundary was never real.**
+
+**VOID (not merely suspect):** the dense-code re-attribution, the code-overlap ceilings, the 6-seed two-sided NO-GO,
+the M0 GO, and the "surpass = dendritic per-branch write" conclusion that followed from them. **STILL VALID:** the
+methodological results (winner-slot / mean-vs-per-fact / mass artifacts and the hardened verify-go triad), the M1′ edit
+itself (byte-identical-when-off, 4 CI tests) and its localiser, and this correction.
+
+**▶ NEXT: re-run the actual consolidation write + the END-TO-END capability test at the physiological operating point**
+(`comp_apical_R=0.15`, `comp_gc_read=0.5`, verified `v_apical` ∈ −90…+50 mV and CA1 sparse+specific before trusting any
+number). Prediction: on a sparse, near-disjoint, fact-specific code the `ca1→slot` write localizes without any dendritic
+gate. A1 may simply close. **Nothing from this arc should be cited until re-measured in a physically valid regime.**
