@@ -71,7 +71,7 @@ If I'm doing ANY of these, I've drifted — stop and re-anchor:
 5. **Wrapping up.** A "good stopping point," a status-report-and-wait, a summary with no next action.
 6. **Serializing independent work (under-using the hardware).** Running de-risks/sweeps/mechanisms one at a time, single-threaded (low CPU/GPU util), when they could run CONCURRENTLY. Waiting idle for a run/subagent.
 7. **Relabeling a shortcut as acceptable biology.** Calling a host stand-in or external model "defensible / permanent / pragmatic" to dodge simulating the circuitry. When I catch myself arguing WHY a scaffold can stay, THAT argument is the drift.
-8. **Believing a "surpass" without adversarial verification** (NEW). Committing a GO because it looked clean, without independent skeptics probing for the confound. See the workflow's step 4.
+8. **Believing a "surpass" without adversarial verification** (NEW). Committing a GO because it looked clean, without independent skeptics probing for the confound. See the workflow's step 4 → run the **verify-go** skill before any GO lands.
 9. **Skimming the sources** (NEW). Grepping the catalog index + citing abstracts instead of READING the original chapter/PDF in depth, and searching only biology (not the external engineering literature). See workflow step 1.
 11. **Trusting an unverified instrument, or a claim nothing checks** (NEW 2026-07-16). Reporting a number without
     reading the runner's own verdict; writing "this is inert/byte-identical" as a comment instead of an assertion;
