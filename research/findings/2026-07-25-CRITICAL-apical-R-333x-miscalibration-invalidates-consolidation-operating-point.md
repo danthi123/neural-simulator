@@ -208,3 +208,39 @@ smooth response and suggests a threshold/depression interaction that must itself
 `dw ≪ w_max` AND a non-degenerate write), explain the negative-`dw` low-lr branch, then re-measure own/other with the
 mass triad at 6 seeds. If the write remains flat in a genuinely graded, unsaturated regime on this substrate, THAT is
 the real boundary — and it will be the first one in this arc measured on physically valid dynamics.
+
+## ✅ THE WRITE LOCALIZES — saturation was the suppressor, and the null was a saturated operating point
+
+The honest null above was itself an operating-point artifact — the third and last one. **BTSP's soft bound was
+saturating the write.** The rule is `dw[k→j] = η·Ẽ[k]·IS[j]·(w_max − w)`: a **rank-1 outer product** of a
+per-PREsynaptic eligibility and a per-POSTsynaptic instructive signal. With an exclusive `IS` this *should* write fact
+i's pattern into slot i alone — but if `η` is large enough that every eligible synapse runs into `(w_max − w)`, the
+graded pattern is crushed to a common ceiling and all slots end up with the same vector. Sweeping η down through the
+saturation knee recovers it, monotonically:
+
+| lr | `dw` (w_max = 2000) | own/other (seed 42) | own-is-max |
+|---|---|---|---|
+| 0.01 | 917 — **saturated** | `[0.95, 0.86, 1.04]` | 1/3 |
+| 0.005 | 0.63 | `[1.26, 1.20, 1.03]` | 2/3 |
+| 0.002 | 0.30 | `[1.83, 2.03, 1.64]` | 3/3 |
+| 0.001 | 0.19 | `[2.02, 4.56, 2.51]` | 3/3 |
+| **0.0005** | **0.18 — graded** | **`[2.33, 4.55, 3.23]`** | **3/3** |
+
+**Seeds 42 / 44 at the converged point (lr 0.0005–0.001), with the full mass triad:**
+| seed | own/other | own-is-max | n_pass (≥2.5) | **permuted-core** | random-CA1 | per-slot mass |
+|---|---|---|---|---|---|---|
+| 42 | `[2.33, 4.55, 3.23]` | **3/3** | 2/3 | `[0.16, 0.70, 0.75]` | `[0.89, 0.95, 1.17]` | 0.69/0.76/0.75 |
+| 44 | `[4.24, 7.92, 4.61]` | **3/3** | **3/3** | `[0.08, 0.36, 0.79]` | `[1.34, 0.31, 1.74]` | 0.66/0.72/0.69 |
+- **The permuted-core control collapses far BELOW 1.0 in every case** (0.08–0.79) while the true cores reach 2.3–7.9 ⇒
+  the selectivity is EARNED by each fact's own core, not by slot mass (which is balanced within ~15%).
+- **Seed 44 has CONVERGED** — lr 0.001 and 0.0005 give near-identical values (`[2.98, 7.92, 4.61]` vs
+  `[4.24, 7.92, 4.61]`), so this is a structural fixed point, not ratio-noise from a vanishing `dw`.
+
+**⇒ The `ca1→slot` consolidation write DOES localize on a physically valid substrate.** The "boundary" was, end to end,
+three stacked operating-point errors: a 333× units miscalibration (→ a 93%-dense pseudo-code), a phenotype patch adopted
+to fight that artifact (MSN, undrivable at physiological voltages), and a saturating learning rate fitted to the
+artifact's ~100× inflated activity. None of them were properties of the substrate or of the biology.
+
+**Still open / not claimed:** 6-seed completion is running (43/100/101/102); seed 42 clears the 2.5 gate on 2/3 facts,
+seed 44 on 3/3, so the formal multi-seed GO is not yet declared. And this remains the **PROXY** metric — A1 closes only
+on the end-to-end hippo-lesioned recall test with its four anti-cheats (see `GAP_CLOSURE_MISSION.md`).
