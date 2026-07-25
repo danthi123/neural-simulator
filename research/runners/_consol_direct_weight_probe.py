@@ -61,7 +61,7 @@ def _jac(a, c):
     return len(A & C) / max(1, len(A | C))
 
 
-def run_seed(seed, ffi_inh=0.0, ffi_drive=3.0, tag_drive=1500.0):
+def run_seed(seed, ffi_inh=0.0, ffi_drive=3.0, tag_drive=1500.0, commit_top_k=None):
     a = dict(BASE); a.update(comp_dendritic=True, comp_wta_weight=OP["wta"], comp_k_thresh=OP["k_thresh"],
                              comp_self_regen=OP["self_regen"], comp_kir_g=OP["kir_g"])
     if ffi_inh > 0:   # Rank-2 CA1 FFI-kWTA sparsification de-risk
@@ -72,7 +72,7 @@ def run_seed(seed, ffi_inh=0.0, ffi_drive=3.0, tag_drive=1500.0):
     rm = b.region_manager
     ca1_idx = np.asarray(sorted(rm.indices("ca1")), dtype=np.int64)
     slot_idx = {s: np.asarray(sorted(rm.indices(f"comp_attr_{s}")), dtype=np.int64) for s in range(N)}
-    tags, _ = encode_facts_with_reinstatement(b, CONSOLIDATED_FACTS)
+    tags, _ = encode_facts_with_reinstatement(b, CONSOLIDATED_FACTS, commit_top_k=commit_top_k)
     w0 = _mean_gate_weight(b, "ca1_to_comp_attr")
     coactivation_replay(b, CONSOLIDATED_FACTS, tags, 40, seed, coactivate=True, attractor_on=True,
                         slot_drive_pA=OP["slot_drive"], tag_drive_pA=float(tag_drive))
@@ -141,13 +141,15 @@ def main():
     ap.add_argument("--ca1-ffi-inh", type=float, default=0.0, help="Rank-2: CA1 FFI-kWTA inhibition strength (0=off)")
     ap.add_argument("--ca1-ffi-drive", type=float, default=3.0)
     ap.add_argument("--tag-drive", type=float, default=1500.0, help="replay+probe tag drive (gentler = sparser distinct core)")
+    ap.add_argument("--commit-top-k", type=int, default=None, help="Rank-2 el.1: sparse engram-tag commit size (None=~85)")
     ap.add_argument("--out", default="research/findings/raw/consol_opsweep_gpu")
     args = ap.parse_args()
     from pathlib import Path
     Path(args.out).mkdir(parents=True, exist_ok=True)
-    r = run_seed(args.seed, ffi_inh=args.ca1_ffi_inh, ffi_drive=args.ca1_ffi_drive, tag_drive=args.tag_drive)
-    r["ca1_ffi_inh"] = args.ca1_ffi_inh; r["tag_drive"] = args.tag_drive
-    tag = (f"_ffi{args.ca1_ffi_inh:g}" if args.ca1_ffi_inh > 0 else "") + (f"_td{args.tag_drive:g}" if args.tag_drive != 1500 else "")
+    r = run_seed(args.seed, ffi_inh=args.ca1_ffi_inh, ffi_drive=args.ca1_ffi_drive, tag_drive=args.tag_drive,
+                 commit_top_k=args.commit_top_k)
+    r["ca1_ffi_inh"] = args.ca1_ffi_inh; r["tag_drive"] = args.tag_drive; r["commit_top_k"] = args.commit_top_k
+    tag = (f"_ffi{args.ca1_ffi_inh:g}" if args.ca1_ffi_inh > 0 else "") + (f"_td{args.tag_drive:g}" if args.tag_drive != 1500 else "") + (f"_tk{args.commit_top_k}" if args.commit_top_k else "")
     Path(f"{args.out}/directwrite{tag}_seed{args.seed}.json").write_text(json.dumps(r, indent=2))
     # decision summary
     d0 = r["by_thresh"]["0.0"]; d5 = r["by_thresh"]["0.5"]

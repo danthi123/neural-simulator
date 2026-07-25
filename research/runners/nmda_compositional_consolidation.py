@@ -413,11 +413,13 @@ def direct_binding_sanity(bridge):
 # ---------------------------------------------------------------------------
 # Encoding (hippocampal engram + selective ca1->concept reinstatement weights).
 # ---------------------------------------------------------------------------
-def encode_facts_with_reinstatement(bridge, facts):
+def encode_facts_with_reinstatement(bridge, facts, commit_top_k=None):
     """Encode each fact into the hippocampal engram AND grow selective
     ca1 -> concept reinstatement weights. cross_pool_concept is opened by
     encode_concept_pair internally; its weights are ZEROED afterward so REPLAY
-    is the load-bearing cortical binder."""
+    is the load-bearing cortical binder. `commit_top_k` (default None -> ~85)
+    overrides the engram-tag size: a SMALLER value commits only the strongly-firing
+    distinct core -> a sparse separable CA1 tag (Rank-2 stack element 1)."""
     dims_r = _phase1_recipe(False)
     all_words, _ = _all_words_word_to_idx()
     dims = {
@@ -436,7 +438,7 @@ def encode_facts_with_reinstatement(bridge, facts):
     _try_pgate(bridge, "ca1_to_concept_pool", 1.0)
     _try_tgate(bridge, "nmda_attractor", 0.0)
 
-    tags = _encode_facts(bridge, facts, dims, encoding_steps=200)
+    tags = _encode_facts(bridge, facts, dims, encoding_steps=200, commit_top_k=commit_top_k)
 
     # zero the cross_pool_concept weights encode_concept_pair grew -> clean
     # "cortex empty" pre-replay baseline (replay is the load-bearing binder).

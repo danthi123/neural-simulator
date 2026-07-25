@@ -857,10 +857,14 @@ def _compositional_query_ranked(bridge, cue_noun: str,
 # =====================================================================
 def _encode_facts(bridge, facts: List[Tuple[str, str]],
                    dims: Dict[str, Any],
-                   encoding_steps: int) -> List[str]:
+                   encoding_steps: int, commit_top_k: int = None) -> List[str]:
     """Encode each compositional (noun, adj) fact via the REUSED
     ``encode_concept_pair`` helper. Tag names are OPAQUE
     (``f"ep_{i}"``) -- they carry NO answer string (Stage-1 lesson).
+    ``commit_top_k`` (default None -> the standard n_per_pool//4 ~85) overrides
+    the engram-tag top_k: a SMALLER value commits only the strongly-firing distinct
+    core -> a sparse separable CA1 tag (consolidation Rank-2 stack element 1, byte-
+    identical when None).
     The cross_pool_concept gate is opened by ``encode_concept_pair``
     inside its body and CLOSED at the end of its body so it stays
     closed for the subsequent eval queries.
@@ -881,7 +885,7 @@ def _encode_facts(bridge, facts: List[Tuple[str, str]],
             n_lang_input=int(dims["n_lang_input"]),
             n_words_for_orthogonal=int(dims["n_words_for_orthogonal"]),
             region_filter=_HIPPO_TAG_REGIONS,
-            top_k=max(8, int(dims["n_per_pool"]) // 4),
+            top_k=(int(commit_top_k) if commit_top_k is not None else max(8, int(dims["n_per_pool"]) // 4)),
             balanced_teacher_pA=500.0,
             verbose=False,
         )
