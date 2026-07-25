@@ -334,3 +334,29 @@ input is empty. **▶ NEXT for the concept-pool thread: restore the direct-bindi
 `train_word_to_pool` / the pool-drive operating point — note this harness has its own constants, and per the lesson
 above they should be checked in physical units before anything is concluded), and only then re-measure the four-control
 capability gate. The slot-route 6-seed GO above is unaffected and remains the arc's standing positive result.
+
+## A1 upstream blocker LOCALIZED: Phase-1 training changes no weights at all
+
+Direct instrument test (rather than more reading): build the A1 substrate at the runner's own defaults, measure the
+`language_input→pool` gate weights, run 200 `train_word_to_pool` events for `apple`→`noun_pool_APPLE`, re-measure.
+```
+enable_stdp=True  enable_hebbian=False        <- the main runner's DEFAULT (--enable-hebbian is store_true)
+  BEFORE language_input_to_noun_pool: 3.01526   AFTER: 3.01509   (d = -0.00017)   <- the TRAINED pathway
+  BEFORE language_input_to_adjective_pool: 3.01305  AFTER: 3.01286 (d = -0.00019) <- untrained control
+  BEFORE language_input_to_motor: 3.01236          AFTER: 3.01220 (d = -0.00016)  <- untrained control
+```
+**The trained pathway moves by the same amount as the untrained controls** — a uniform ~-0.0002 drift (decay), not
+learning. **Phase-1 word→pool training is a no-op**, which fully explains direct-binding sanity 1/16 = 6.2% (chance),
+`xpool_w=0.000`, and the trivially-passing anti-cheats. The consolidation question was never reachable on this harness.
+
+**Leading hypothesis under test: `enable_hebbian=False` is the A1 runner's default**, while this arc's probe `BASE`
+config sets `enable_hebbian=True`. If the teacher-current word→pool protocol is Hebbian-dependent (STDP alone being
+insufficient for the co-driven, order-free pairing this protocol produces — cf. the project's own finding that STDP is
+the WRONG rule for symmetric co-occurrence, 656k events / 0 weight change at Δt≈0), then the A1 test has been running
+with its learning rule effectively disabled. Test in flight: identical 200-event protocol at
+`enable_hebbian=True` vs `False`, trained gate vs untrained control.
+
+**Wider implication worth checking beyond A1:** a `store_true` flag means the DEFAULT is off, and an absent flag in a
+recorded command reads as "off" — the same class as the documented `.cmd.json` gotcha (an absent flag means *default*,
+not *disabled*). Any A1-family result recorded without `--enable-hebbian` may have been produced with the learning rule
+off; that should be checked before any of them is cited.
