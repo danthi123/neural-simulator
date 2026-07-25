@@ -81,7 +81,8 @@ def decoupled_plateau_write(bridge, facts, tags, cycles, seed, v_teach=-25.0, bu
 
 
 def run_seed(seed, v_teach=-25.0, cycles=40, btsp_lr=0.02, self_regen=0.15, tag_drive=1500.0,
-             elig_exp=1.0, hetero_dep=0.0, hetero_theta=0.0, ffi_inh=0.0, ffi_drive=3.0, commit_top_k=None):
+             elig_exp=1.0, hetero_dep=0.0, hetero_theta=0.0, ffi_inh=0.0, ffi_drive=3.0, commit_top_k=None,
+             hippo_izh_type=None, hippo_izh_regions="dg"):
     a = dict(BASE)
     a.update(comp_dendritic=True, comp_wta_weight=5.0, comp_k_thresh=2.0, comp_self_regen=float(self_regen),
              comp_kir_g=3.0, comp_v_hold=-50.0,
@@ -90,6 +91,8 @@ def run_seed(seed, v_teach=-25.0, cycles=40, btsp_lr=0.02, self_regen=0.15, tag_
              comp_btsp_hetero_theta=float(hetero_theta))
     if ffi_inh > 0:   # sparsify the CA1 code (FFI kWTA) -> bigger disjoint per-fact cores
         a.update(ca1_ffi_kwta=True, ca1_ffi_inh=float(ffi_inh), ca1_ffi_drive=float(ffi_drive))
+    if hippo_izh_type:   # sparse DG/CA3/CA1 phenotype (down-state-stable, high-threshold, adapting) -> sparse code
+        a.update(hippo_izh_type=str(hippo_izh_type), hippo_izh_regions=str(hippo_izh_regions))
     b = build_substrate(seed, SimpleNamespace(**a))
     thr_hash = hashlib.md5(to_host(b.cp_neuron_firing_thresholds).tobytes()).hexdigest()[:12]
     rm = b.region_manager
@@ -190,13 +193,16 @@ def main():
     ap.add_argument("--ffi-drive", type=float, default=3.0)
     ap.add_argument("--commit-top-k", type=int, default=None, help="sparse engram-tag commit size (research-gate: 15 -> sparse near-disjoint CA1 code)")
     ap.add_argument("--tag-drive", type=float, default=1500.0, help="reinstatement + read drive (SWR: gentle e.g. 400-600 => sparse, no re-densify)")
+    ap.add_argument("--hippo-izh-type", type=str, default=None, help="sparse hippo phenotype, e.g. IZH2007_STRIATAL_MSN (down-state-stable, high-threshold, adapting)")
+    ap.add_argument("--hippo-izh-regions", type=str, default="dg", help="comma-sep regions to give the sparse phenotype, e.g. dg,ca3,ca1")
     ap.add_argument("--out", default="research/findings/raw/consol_opsweep_gpu")
     args = ap.parse_args()
     from pathlib import Path
     Path(args.out).mkdir(parents=True, exist_ok=True)
     r = run_seed(args.seed, v_teach=args.v_teach, cycles=args.cycles, btsp_lr=args.btsp_lr, self_regen=args.self_regen,
                  elig_exp=args.elig_exp, hetero_dep=args.hetero_dep, hetero_theta=args.hetero_theta,
-                 ffi_inh=args.ffi_inh, ffi_drive=args.ffi_drive, commit_top_k=args.commit_top_k, tag_drive=args.tag_drive)
+                 ffi_inh=args.ffi_inh, ffi_drive=args.ffi_drive, commit_top_k=args.commit_top_k, tag_drive=args.tag_drive,
+                 hippo_izh_type=args.hippo_izh_type, hippo_izh_regions=args.hippo_izh_regions)
     _tg = (f"_ee{args.elig_exp:g}" if args.elig_exp > 1 else "") + (f"_hd{args.hetero_dep:g}" if args.hetero_dep > 0 else "") + (f"_ffi{args.ffi_inh:g}" if args.ffi_inh > 0 else "")
     Path(f"{args.out}/decoupled_vt{args.v_teach:g}{_tg}_seed{args.seed}.json").write_text(json.dumps(r, indent=2))
     if "error" in r:

@@ -184,6 +184,20 @@ def build_substrate(seed, args):
     )
 
     pathways = list(pathways)
+    regions = list(regions)
+    # SPARSE-PHENOTYPE override (2026-07-25 escalation ladder): the consolidation write is code-overlap-bounded; the
+    # lever is a SPARSE fact-specific CA1 code, which no cheap inhibition achieved (feedback-FFI / sparse-commit / gentle-
+    # drive all left the code ~73-91% active). Real DG granule cells are ~2% active — down-state-STABLE, HIGH-threshold,
+    # strongly-ADAPTING (a natural k-WTA). The default IZH2007_HIPPO_PYRAMIDAL (vt=-40, d=50, b=+5) is far too excitable
+    # for a pattern-separator. Give the chosen hippocampal regions a sparse MSN-like phenotype (vt=-25, vr=-80, b=-20,
+    # d=150) so only strongly-driven cells fire -> a sparse code the write CAN localize. Additive/default-off (byte-identical
+    # when hippo_izh_type unset). Biologically motivated (DG/CA3 sparsity is a real high-threshold/adaptation phenotype).
+    _hippo_izh = getattr(args, "hippo_izh_type", None)
+    if _hippo_izh:
+        _tgt = set(str(getattr(args, "hippo_izh_regions", "dg")).split(","))
+        for r in regions:
+            if getattr(r, "name", None) in _tgt:
+                r.izh_neuron_type = _hippo_izh
     concept_pools = _NOUN_POOLS + ["verb_pool_%s" % v for v in cpd.VERB_NAMES] + _ADJ_POOLS
     skip_nmda = bool(getattr(args, "skip_nmda_additions", False))
 
