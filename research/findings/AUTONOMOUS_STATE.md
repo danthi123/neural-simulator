@@ -1,3 +1,5 @@
+> # ⚠️ SUPERSEDED — this file is NOT the live board (abandoned 2026-07-17; last entry 2026-07-15).
+> **The live working board is [`GAP_CLOSURE_MISSION.md`](../../GAP_CLOSURE_MISSION.md) (CURRENT STATE) + the plan is [`docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`](../../docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md); skim [`ROADMAP.md`](../../ROADMAP.md).** Everything below is a historical autonomous-cycle log kept for provenance only — do NOT resume from it.
 
 ## ⭐⭐⭐ NEWEST — DISPATCH WIRE-IN arc MAPPED + DECOMPOSED to GO pieces; open-vocab discourse-router DEPLOYED into FluidChat; anti-stall FIXED+verified (2026-07-15)
 

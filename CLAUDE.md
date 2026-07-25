@@ -314,7 +314,7 @@ Two critical functions must be kept in sync for profile save/load to work correc
 These are inverse operations: any parameter exposed in the UI must have a corresponding getter and setter to ensure bidirectional sync between UI state and simulation configuration.
 
 ### Experiment & Stimulus System (`experiment/` package)
-Programmable infrastructure for stimulus injection, I/O neuron group management, training protocols, readout/analysis, and multi-phase experiment orchestration. Configs live in `sim/config.py` (lines 774–960); engines live in `experiment/`.
+Programmable infrastructure for stimulus injection, I/O neuron group management, training protocols, readout/analysis, and multi-phase experiment orchestration. Configs live in `sim/config.py` (lines 1048–1227); engines live in `experiment/`.
 
 **Key Classes:**
 - `StimulusManager` (`experiment/stimulus.py`): Generates per-step GPU current arrays from channel definitions

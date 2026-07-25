@@ -2985,3 +2985,251 @@ The `--adaptive-da --adaptive-da-ema-decay-negative 0.7` config is kept opt-in b
 - `research/findings/2026-04-26-night-summary.md` — overall overview
 
 
+
+
+---
+
+## 📦 GAP_CLOSURE_MISSION.md — 2026-07-21 + 2026-07-22 CURRENT-STATE entries (pruned 2026-07-24 by doc-sync)
+
+_Closed cycle entries moved verbatim from `GAP_CLOSURE_MISSION.md` CURRENT STATE so the live board is not interleaved with stale history. Superseded by the 2026-07-24 STATE-OF-THE-PROJECT header. Covers the GPU-crash handoffs, the "fully close everything out" 5-gap closeout, the FHRR-retirement/gap#2 cycle, the 07-21 LM-training-workflow launch + fluid-abstain, and the 2026-07-21 gap#1 overclaim correction._
+
+- **🔌 GPU CRASH + REBOOT HANDOFF (2026-07-22 ~20:00) — READ FIRST if resuming a fresh session after the reboot.**
+  The 3090 fell off the bus mid-training (`cudaErrorLaunchFailure`; kernel log = `_scrubWaitAndSave: Timed out` +
+  `API_GPU_ATTACHED_SANITY_CHECK failed` = HUNG CORE → reboot-only). Owner was away + asked Claude to handle it. Actions
+  taken (all committed; see `docs/GPU_CRASH_RECOVERY.md`): (1) **LACT power cap lowered 390→300 W** (`/etc/lact/config.yaml`;
+  backup `.bak-preclaude-2026-07-22`) = the likely-recurrence fix (3090 hang-under-load). (2) **`lmtrain-resume.service`
+  installed+enabled** → auto-resumes `lm_train_run resume --root bridges/lmtrain/run3` on boot (from step **626000**,
+  ~5.13B tok, val_ppl 56.22; checkpoint SAFE + bit-exact). (3) `tools/gpu_recover.sh` for future driver-glitch cases.
+  **Then Claude REBOOTED the machine.** ⇒ **FRESH-SESSION FIRST ACTIONS:** verify the training came back —
+  `systemctl status lmtrain-resume` + `.venv/bin/python3 -m research.runners.lm_train_run status --root bridges/lmtrain/run3`
+  (+ `tail bridges/lmtrain/run3/boot_resume.log`); confirm `nvidia-smi` works + power cap ~300 W. If training did NOT
+  resume, run the resume command manually. Claude's session did NOT survive the reboot (Claude Code is interactive; this is
+  the owner's normal manual-continue design — a "continue" + this board re-anchors).
+- **THIS SESSION's gap progress (2026-07-22, all committed both remotes; CPU work, coexisted with the training until the crash):**
+  - **gap#4 REFRAMED (corrects the "CLEAN-NEGATIVE" below):** the credit RULE's math is SOUND — feedback-alignment credit
+    BEATS a reservoir readout **6/6 on MNIST** (depth-2/4/6; the cleanxor "clean negative" was a WRONG-INSTRUMENT task
+    artifact), **survives sparsity to 2%** (3-seed), and the **FAITHFUL on-bridge BDSP rule** (coincidence-gate +
+    sigmoid-baseline credit) **BEATS the reservoir at spiking sparsity 3-seed** (5%: 0.779 vs 0.514). ⇒ the on-bridge
+    negative is an **OP-POINT / LR-SCALE issue, NOT the rule** (dense collapse was pure lr-scale, fixed at lr 0.03). Still a
+    deprioritized parallel frontier, but the "rule is broken" belief is RETIRED. Findings `2026-07-22-gap4-*`.
+  - **⚠️ gap#5 replay SUPERSEDED (2026-07-23) — the note below is HISTORICAL; the calibration was RESOLVED and BOTH intrinsic-fatigue (#1) and E→E STD (#2) came back NEGATIVE → pivot to #3 (theta-gamma phase-precession).** The over-suppression was fixed (sr0.12 / a0.025 / d120 → act off [0,0,0]), but the seed-42 FULL run is NEGATIVE: INTRINSIC fwd=0.333 (chance) with ADAPT-LESION fwd=0.500 > it ⇒ fatigue SILENCES co-ignition but does NOT DIRECT (order rides the stored chain). Candidate #2 (E→E ca3→ca3 short-term depression, wired `_riii._build(enable_stp=)` + runner `--stp`, mossy carve-out) is WORSE (fwd 0.333→0.000): STD depresses the DISCRETE stored chain links → destroys forward propagation (Romani-Tsodyks moving-bump assumes a CONTINUOUS attractor, not our discrete-assembly chain). **THROUGH-LINE (deliverable):** order the discrete chain by TIMING (theta/gamma PHASE), NOT by perturbing the store. **EXACT NEXT ACTION:** candidate #3 = phase-precession-encoded theta-gamma timing (rate-level already GO `2026-07-22-gamma-WTA-timing`; on-spikes needs the phase-precession ENCODING) — research gate DISPATCHED 2026-07-23 to scope the encode; build #3 when it lands. Finding `2026-07-23-gap5-replay-candidate1-intrinsic-fatigue-alone-NEGATIVE-pivot-to-STD.md`.
+  - **gap#5 on-spikes ordered replay — CORRECT MECHANISM identified (deep-research 5/5 unanimous):** the 3 failed
+    external-inhibition attempts were a HOLD-vs-PUSH category error; the fix is **INTRINSIC FATIGUE** (Izhikevich
+    spike-frequency adaptation / STD fatigues the just-active assembly → releases → the stored forward chain drives the
+    next; Ecker 2022, our substrate class). Runner `_gap5_intrinsic_fatigue_replay_derisk.py` built (byte-unchanged
+    plasticity guard; `--intrinsic-only`/`--quick`/full 4-arm). **CALIBRATION OPEN:** the de-latch + adaptation is
+    OVER-SUPPRESSING — d=200 (all self_regen 0.06–0.15) AND gentle (d=140/160, a 0.012–0.014) ALL give act=[0,0,0] (dead);
+    sr=0 also dead. Root cause: cranking d with SLOW `a` (low a → u never recovers → permanent suppression). **EXACT NEXT
+    ACTION (gap#5, CPU, no GPU needed — run alongside the resumed training):** sweep MODERATE `a` (~0.022–0.030, so u
+    recovers between bursts) × MODEST `d` (~110–135, just above baseline 99) at `--self-regen-read 0.15` (keep the sustain);
+    `--intrinsic-only` parallel probes (20 cores). Target: act ~[1,1,1] one-at-a-time + forward_frac↑. Then full 4-arm +
+    shuffled/reverse-chain anti-cheats, 6-seed (parallelize across seeds). Findings `2026-07-22-gap5-onspikes-replay-is-INTRINSIC-FATIGUE-*`.
+
+- **📍 SESSION CLOSEOUT (2026-07-22 ~11:15, owner: "fully close everything out") — HONEST FINAL STATUS OF ALL 5 GAPS:**
+  - **gap#1 (open fluent generation) = OPEN, actively training.** The WKV/SSM cortex LM (83M, FineWeb-Edu) is at step
+    ~373k / ~3.06B tok, **val_ppl 59.68 (new low, descending)** — the path to replacing the 21M ANN scaffold. Spiking-
+    forward conversion + scale = the follow-ons (GPU-gated on this run). Crash-watch bz26vprsv keeps it alive.
+  - **gap#2 (learned binder / FHRR retirement) = CLOSED + verified fully-spiking** this session (`SlotBinderComposer` =
+    real bridge → `_run_one_simulation_step` → `cp_firing_states`; attribute-slot + pointer-clause both 6-seed GO,
+    agent-routed, CI-guarded). Production-default flip + 320-scale re-verify = GPU-gated (fire when the training frees GPU).
+  - **gap#3 (multi-referent) = CLOSED** (biased-competition WTA + learned spiking feature-compat, wired into MultiTurnAgent).
+  - **gap#4 (deep local credit) = CLEAN-NEGATIVE, characterized** — graded-burst credit does NOT beat a reservoir readout
+    (confound-free); the emergence engine rides the reservoir/shallow-readout + learned-input path. The credit-ASSIGNMENT
+    KEYSTONE (works+composes, rung 10) stands; deep-credit-to-accuracy is a deprioritized parallel frontier.
+  - **gap#5 (CA3 completion / imaginative replay):** completion mechanism CLOSED (2026-07-18); **RANK 1 spontaneous
+    reactivation 6-seed GO; RANK 2 ordered sequence replay — within-reactivation BLOCKER SOLVED this session**
+    (`--rank1-encode`, 3 prior framings retracted), forward-replay deterministic numpy **4/6 clean forward (FWD 1.000),
+    mean 0.806** (real+strong-on-most → method-limited; a uniform order wants the theta-precession ordered-replay
+    mechanism). **RANK 3 (imagination = recombination):** reactivation of ALL 5 shared-node assemblies WORKS with a strong
+    within (w_within 129), but BOTH direct-composition methods hit a **co-activation-vs-directionality boundary**:
+    spontaneous replay = reactivation-without-ordered-transitions; cue-driven = broad co-ignition (cueing A also lights up
+    X=0.73), not directional traversal (NO-SHARED control not clean, metric saturates). **RANK 3 = CHARACTERIZED BOUNDARY
+    of direct composition; next method = theta/gamma phase-organized replay (N.15 Lisman-Idiart / Skaggs-McNaughton — same
+    mechanism RANK 2's uniform order wants), DEFERRED as a bounded larger build.** RANK 3 is a bonus rung; gap#5's core
+    (completion CLOSED + RANK 1 reactivation GO + RANK 2 within-reactivation SOLVED) is solid. NO `sim/` edit in the whole
+    RANK 3 arc; infra (`_gap5_recombination_derisk.py` + `chain_edges`) retained for the theta-organized retry.
+  - **Process notes (honest):** 2 premature-conclusion corrections logged this session (RANK 2 single-GPU-run "GO"; RANK 3
+    topology-vs-strength off a partial arm set) — verify-not-assume, wait for ALL arms before concluding.
+  - **RESUME (next session):** the two open threads are (a) the **fluency training** (gap#1, left running — val_ppl ~60
+    descending; when it frees the GPU, fire the gap#2 production-default flip + 320-scale re-verify and the gap#1 spiking-
+    forward conversion), and (b) **RANK 3 via theta/phase-organized replay** (the named next method, a bounded larger build,
+    only if the imagination bonus rung is prioritized over other work). All session work committed both remotes; findings
+    `2026-07-22-gap5-RANK{2-within-reactivation-blocker-SOLVED,3-imagination-recombinative-replay-research-gate}.md`.
+    (Pre-existing uncommitted non-session diffs in 5 files — `_ssm_reservoir_lm`, `_riii_ca3`, 3 raw/finding files — left
+    untouched; they predate this session.) **CLOSED OUT 2026-07-22 ~11:35.** What's DONE (CPU): **FHRR-retirement
+  MECHANICALLY COMPLETE + confirmed fully-spiking** (attribute slot + pointer-clause both 6-seed GO, agent-routed,
+  CI-guarded, `SlotBinderComposer` = real bridge/`_run_one_simulation_step`/`cp_firing_states` — the #1 idealization
+  shortcut replaced by the learned spiking slot-binder); gap#3 + gap#5-completion CLOSED; gap#4 deep-credit-to-accuracy
+  characterized clean-negative (emergence rides the reservoir/readout path). **gap#5 RANK 1 spontaneous reactivation
+  6-seed GO; gap#5 RANK 2 (sequence replay): the within-reactivation BLOCKER is now SOLVED** (it was the per-assembly
+  `_silence_soma_apical + _zero_elig` boundary calls in `_prepare_sequence`; `--rank1-encode` fix; the "deeply-elusive"
+  verdict + an n_mem=1 confound + a risky single-GPU-run "GO 1/1" all RETRACTED). Full forward replay recipe
+  `--rank1-encode --within-events 30 --chain-fwd 24 --chain-rev 0 --within-refresh 8` → FWD 1.000 deterministic
+  (numpy), GPU 3/4 forward, reactivation robust every run, anti-cheats clean; the forward-ORDER metric is
+  GPU-non-deterministic (deterministic 6-seed confirm running). **gap#5 RANK 3 (imagination = recombinative replay at a
+  shared branch node) SCOPED** (`2026-07-22-gap5-RANK3-imagination-recombinative-replay-research-gate.md`): store A→B→C
+  + X→B→Y sharing B → does replay generate novel A→B→Y/X→B→C? A direct composition of the working RANK 1/2 primitives,
+  no `sim/` edit; build gated on the RANK 2 confirm. **GPU-GATED (fire when the fluency training frees the GPU, ~2 days):**
+  (1) make the slot-binder the production DEFAULT + 320-scale re-verify (retire the rf/FHRR fallback); (2) full
+  agent-clause path verify (needs the denoise64 base-parser cache, GPU-generated); (3) fluency-generator spiking-forward
+  conversion (gap#1, the last "fully-spiking" shortcut); (4) deep-credit re-derisk (seed-fixed, if revisited). The
+  training (gap#1) is LIVE + healthy (step ~264k, val_ppl ~61, descending; Monitors bz26vprsv crash-watch + bqhx1wfgg
+  heartbeat armed) and GENERATES the caches the gated closures need. Findings this cycle:
+  `2026-07-22-{recursive-slotbinder-research-gate, gap2-attribute-slot-GO, gap2-pointer-clause-GO, gap5-RANK2-verbatim-reuse-RULES-OUT-encode}.md`.
+
+
+- **🎉 CYCLE 2026-07-22 (cont.) — the FHRR exact-inverse algebra is FULLY RETIRABLE (gap#2 mechanism COMPLETE, both
+  de-risks 6-seed GO, CPU-tractable, coexisting with the training).** The owner steered to closing the idealization
+  shortcuts fully-spiking-on-one-substrate; the #1 shortcut (the FHRR/VSA exact-inverse binding algebra, flagged by the
+  2026-07-22 field-novelty assessment) is now replaced end-to-end by the learned spiking slot-binder. A read-only
+  research gate (`2026-07-22-recursive-slotbinder-research-gate.md`) scoped the residual to TWO cheap CPU de-risks +
+  reframed recursion as POINT-DON'T-COPY (Neural Blackboard Arch / assembly-projection pointers / Frankland-Greene
+  registers). Both DONE, controller-reproduced independently:
+  - **Step 1/2 attribute slot (GO, 9b0cdbe4):** single-attribute patients as a 5th flat role (`_ROLES` 4→5 + a NOATTR
+    moat pool); joint patient+attr recovery 1.000/6-seed, permuted→0.000, moat holds, CI 0-regress.
+  - **Step 2/2 pointer-clause (GO, efc3fe52):** depth-1 embedded clauses by INDIRECTION (inner clause = own slot-group,
+    matrix patient binds a `CLAUSE_j` pointer, recall follows it — the pointer identity IS the address, no host table);
+    emb 6/6 + mat 6/6, all 4 anti-cheats clean (permuted→0, lesion→pointer-not-content, right-group 1.0/wrong 0.0, moat),
+    CI+attr 0-regress.
+  ⇒ the slot-binder covers the COMPLETE deployed FHRR set (flat SVO + polarity + multi-hop + single-attr + depth-1
+  clause; the FHRR's own 2-attr-F3 ~29% + depth-2 are boundaries it doesn't cross either), and its no-confab moat is the
+  intrinsic neural content-addressable scan (NOT a VSA-cleanup shortcut) — so BOTH shortcuts the field assessment
+  flagged (FHRR algebra + VSA-cleanup moat) are retired by ONE learned spiking mechanism. NO `sim/` edit anywhere.
+  **AGENT WIRE-IN ROUTING DONE (4f330b26):** `BrainConversationalAgent.query_nested` now routes to `composer.query_clause`
+  when available (the slot-binder follows the `CLAUSE_j` pointer to the inner clause); byte-identical for rf/onebrain
+  (no `query_clause` → `query_patient`); flat CI 0-regress. The routing is provably correct (query_clause is
+  de-risk-verified). **REMAINING for gap#2 — all cache/GPU-gated behind the fluency training (NOT CPU-completable now):**
+  (a) FULL agent-clause path verify (`hear_nested` parse→store→`query_nested`) needs the **denoise64 base-parser cache**
+  (GPU-generated; absent on this CPU setup) — the composer-level clause is already de-risk-GO, only the parse front-end
+  is unexercised; (b) make the slot-binder the production DEFAULT + **320-scale GPU re-verify** (retire the rf/FHRR
+  fallback). ⇒ the CPU-tractable FHRR-retirement is MECHANISTICALLY COMPLETE; the residue is verify/production behind
+  the GPU. Findings: `2026-07-22-gap2-{attribute-slot,pointer-clause}-*.md`, `-recursive-slotbinder-research-gate.md`.
+
+
+- **✅ GPU CRASH RECOVERED (2026-07-22 ~05:05 → ~05:15) — training RESUMED, no loss.** The 3090 fell off the bus
+  mid-training (NVRM scrub timeout); owner rebooted; GPU came back clean (24 GB, healthy). **Training RESUMED bit-exact
+  from step 189000** (`lm_train_run start --root bridges/lmtrain/run3`, nohup + controller-launched so it survives a
+  session drop, PID re-spawned), on GPU (89% util). Both Monitors re-armed: training crash-watcher (bz26vprsv,
+  covers Traceback/CUDA-error/OOM + alive-every-25k) + anti-stall heartbeat (bqhx1wfgg, ~25min). Zero training progress
+  lost (the incremental-checkpoint workflow did its job). **RANK 2 within-reactivation FIX FOUND** by the pre-reboot
+  subagent (committed 26ef61ae): the divergence was the within-encode's assembly-boundary `_silence_soma_apical(settle=3)`
+  — those 3 settling SIM STEPS starved the FOLLOWING assembly's bistable within-latch (w_within 5.0 vs RANK 1's real
+  27.4, which I'd never measured). Fix = `settle=0` (clear the plateau value, no settling steps) → w_within 27-30.
+  VERIFYING now (n_mem=1 reactivation b5yginz4e + n_mem=3 forward-replay byvleqt2d). gap#5 RANK 1 6-seed GO (17335dbf)
+  solid. gap#4 seed-fix verified — its re-derisk waits for the GPU to free (training owns it ~3-4 days).
+
+- **🟢 CYCLE 2026-07-22 (autonomous, owner steer: "continue with whatever pending work is highest value + can COEXIST
+  with the training") — coexist = CPU/GPU-free work, the GPU is the production run's. Advanced FOUR fronts, all
+  verify-not-assert:**
+  1. **gap#1 (production WKV) VERIFIED fluent + on track** — read the ACTUAL samples (not inferred from ppl): step 108k
+     `val_ppl` 67 producing coherent multi-sentence English ("she was willing to move around in public, to avoid being
+     discriminated against or punished. She was the first woman to explore…"). Trajectory 540→109→82→70→66.5-best over
+     108k steps; the flattening is the near-peak-LR grind (cosine `lr_decay_steps=3M`, LR still ~99.7% of peak at 3.5%),
+     and the go/no-go established fluency AT `val_ppl`~82 so **66 is already past threshold + improving**. (Caught + cleared
+     my own premature-plateau false alarm by checking the LR schedule + samples.) ~114s/1000 steps → fluent model ~3-4 days.
+  2. **NORTH-STAR console VERIFIED + committed (23e49dec)** — `HedgingFluidChat(renderer="wkv", enable_hedging=True)` runs
+     the WHOLE trustworthy loop on one ~20k-neuron spiking brain with the REAL spiking WKV renderer: grounded recall +
+     fluent spiking-WKV render + no-confab moat (abstains on `zzz`) + graded hedging (asserts-when-confident) +
+     learn-a-fact-live. The owner's MAIN goal WORKS TODAY; the production 83M WKV is the drop-in fluency upgrade.
+     Finding `2026-07-22-northstar-grounded-fluent-moat-hedging-console-COMPOSES.md`.
+  3. **gap#5 (imagination line) ADVANCED, COEXISTING on CPU:** **RANK 1 (spontaneous single-assembly reactivation) is now
+     6-SEED GO** (42/43/44/100/101/102, memb 0.31-0.33, spec +0.26-0.28, NO-NOISE→0 acid every seed, all confound
+     anti-cheats clean; `learned_weight_carries` 5/6 secondary). The imagination line's FIRST RUNG is solid at the
+     standing rule. Finding `2026-07-22-gap5-RANK1-spontaneous-reactivation-6seed-GO.md`. **RANK 2 (ordered sequence
+     replay A→B→C): within-reactivation SOLVED+robust; forward-replay REAL but GPU-order-metric non-deterministic
+     (deterministic-6-seed confirm running, PID 159534).** The within-reactivation
+     blocker (2 prior over-framings on this exact question — an n_mem=1 confound + a "deeply-elusive rest-phase" verdict,
+     both RETRACTED) is SOLVED: it was the per-assembly `_silence_soma_apical + _zero_elig` boundary calls in
+     `_prepare_sequence`'s within-encode; RANK 1's `_prepare` keeps eligibility across assemblies + never clears the
+     boundary state. A verify-not-assume single-variable ladder (Tests A/B/B′/C/D/E) pinned it after ruling out
+     chain-erosion, disjoint-vs-overlap draw, within-strength, density, structural_sep, recall_k_thresh. Fix = the
+     additive default-off `--rank1-encode` flag; the residual within/chain co-existence tension (a strong within-encode
+     adds cross-links that flip the forward chain reverse) resolved by a SMALL `--within-refresh 8`.
+     **RECIPE: `--rank1-encode --within-events 30 --chain-fwd 24 --chain-rev 0 --within-refresh 8`** → FWD=1.000/REV=0.000,
+     asym=+5.26, within-reactivation events=7 asm_active=[4,4], NO-NOISE=0, NO-ENCODE=0, SCRAMBLE→FWD 0.333 (load-bearing).
+     Finding `2026-07-22-gap5-RANK2-within-reactivation-blocker-SOLVED-boundary-silence.md`. REPRODUCIBILITY: the
+     forward-ORDER fraction is GPU-non-deterministic (no CUBLAS_WORKSPACE_CONFIG; sparse-atomic reorder) — deterministic
+     numpy seed-42 = FWD 1.000, GPU 3/4 forward (42:0.500 the unlucky draw, 43:0.800, 44:1.000); reactivation robust every
+     run. ⇒ within-reactivation SOLVED+robust; forward-replay a REAL forward bias, deterministic-6-seed confirm running.
+     n_mem=3: all 3 assemblies reactivate, forward-biased (tau+0.667) but noisier order (per-n_mem refresh tuning). NEXT:
+     read the deterministic 6-seed → if forward holds, RANK 2 forward-replay closes; adversarial-verify. LESSON: the
+     forward-ORDER metric is non-deterministic on GPU (unlike RANK 1's robust reactivation metric) — use numpy/CUBLAS-det
+     for order claims; a single favorable GPU run is NOT a GO (caught the over-claim via the 6-seed).
+  4. **gap#4 keystone (deep-credit) seed-fix VERIFIED** — `TestSubstrateActuallySeeded` passes + audit found NO runner
+     still carrying the buggy `actual_seed_used=` pattern ⇒ when the GPU frees (~3-4 days) the deep-credit re-derisk will
+     be CLEAN, not re-confounded by the 2026-07-17 unseeded-substrate bug. (The re-derisk itself is GPU-bound → deferred
+     to the GPU-free window; per the bar, the emergence engine [gap#1 cortex + gap#4 learning-substrate] is the path, not
+     hand-building gap#2/#3.)
+  EXACT NEXT ACTION: RANK 1 6-seed GO DONE + committed (17335dbf). Await the RANK 2 `_prepare`-reuse subagent
+  (a5d6028e448e40a10) → if the within now reactivates + forward replay GO, run the 6-seed + adversarial-verify; else
+  iterate the encode faithfulness. Keep verifying the production run healthy each re-invocation (last: step ~106k,
+  val_ppl 67, fluent). When the GPU frees (~3-4 days), fire the gap#4 seed-fixed deep-credit re-derisk. Thread-limit any
+  coexisting CPU diagnostics so they never starve a priority run.
+- **✅ SESSION OUTCOME (2026-07-21, autonomous) — ALL THREE owner priorities DELIVERED + ADVERSARIALLY VERIFIED:**
+  (1) **the autonomous incremental LM-training workflow** (train→ckpt→benchmark→resume, resumable/pausable, ~30×-optimized)
+  is BUILT + VALIDATED on real FineWeb-Edu + RUNNING with a **go/no-go CONFIRMED POSITIVE** (`val_ppl` 235→~57 and
+  descending, fluent English emerging; 6-agent adversarial verify CONFIRMED the val is genuinely held-out, resume
+  bit-exact, the opt gate catches injected bugs); (2) **gap-closing** — gap#5 completion binding-blocker RESOLVED
+  (anti-cheats verified genuine; 6-seed confirmation running), two-assembly independent-addressing honestly characterized;
+  the a-1 RAG confirmed the training IS the honest gap#1/#4 path (deep-credit correctly deprioritized, NOT re-derived);
+  (3) **fluid-abstain (do away with the hard moat)** — designed → the decorative-N flaw caught by adversarial critique →
+  the real graded signal S de-risked GO → **BUILT + verified GO with the MOAT PROVABLY INTACT** (`_fluidconv_graded_hedging.py`,
+  gate-first, 0 false-accepts, byte-identical default). **⇒ the fluency-sized PRODUCTION RUN is NOW LIVE** (run2 go/no-go
+  PAUSE-checkpointed at step 83k val_ppl 52 [best ~76k]; fresh 83M on run3's 6B corpus, 24B tokens ≈ 289 tok/param, matched
+  cosine over 3M steps, ~3-4 days → a fluent model; checkpoint+sample every 1000 steps). **The owner talks to it via
+  `python -m research.runners.lm_chat --root bridges/lmtrain/run3`** (VERIFIED coherent English on run2 @ step 76k),
+  drives it via `lm_train_run status`/`PAUSE`/resume. **gap#5 6-SEED honest close:** two-assembly COMPLETION resolved
+  (5/6 GO); independent-addressing genuinely 1/6 = characterized hard geometry-sensitive residual (the 3-seed 2/3 was
+  optimistic), principled next = the DG sparse-completable arch. Everything committed BOTH remotes. Findings:
+  `2026-07-21-{LM-train-pipeline-VALIDATED,fluid-abstain-graded-hedging,gap5-2assembly-...}` + `lm_chat.py`.
+- **🟢 LIVE (2026-07-21 evening) — TWO fronts in parallel (owner green-lit full autonomy on the training run):**
+  1. **LM-TRAINING WORKFLOW → real scaling run (the gap#1 SCALE lever + owner's explicit "train as long as I want
+     incrementally" request).** The autonomous incremental train→ckpt→benchmark→resume workflow is BUILT + de-risked +
+     **VALIDATED end-to-end on REAL FineWeb-Edu data** (83.2M WKV d1024/L16, `val_ppl` 440→283→235 monotone over 3
+     increments, coherent English samples at 7.4M tokens, by-depth NLL improves with context depth, ~68K tok/s via
+     chunked-scan+compile+bf16; resume bit-exact, cursor exact, ~30× optimized). run1=100M pipeline-validation DONE;
+     run2=1.5B FineWeb-Edu slice tokenized (1.494B train). **RUNNING — the 83M open-ended go/no-go run is LIVE
+     (checkpoint+benchmark+sample every 1000 steps, PAUSE sentinel, armed Monitor bfavys7dl, capped ~4.4 epochs ≈ 1 day
+     → a fluent 83M ckpt). GO/NO-GO STRONGLY POSITIVE: broad-domain `val_ppl` 235 (validation) → 203 (8M tok) → 128 (24M)
+     → 111 (41M tok) — dropping steeply, tracking the scaling curve toward 20-40.** ⇒ the decisive answer forming:
+     "converse like a small LLM is a TRAINING RUN AWAY, not a wall." A bigger production corpus follows once confirmed.
+     Files
+     `research/runners/lm_{train_lib,train_run,fineweb_setup}.py`; design+de-risk `docs/plans/2026-07-21-autonomous-
+     incremental-LM-training-workflow-design.md`; finding `2026-07-21-LM-train-pipeline-VALIDATED-on-real-fineweb-edu.md`.
+     Fluid-abstain (confidence-conditioned generation, replaces the hard moat) = a parallel MODERATE build, not started.
+  2. **gap#5 last piece (two-assembly co-storage) — REFRAMED + the BINDING BLOCKER RESOLVED; likely CLOSING.** Two
+     research-gate Workflows (5 agents each) + adversarial critiques reframed it TWICE: (a) recall-side inhibitory GATING
+     is ruled out (5 negatives: isolate 2/6, somatic Kim-Kim 2/6, E→I-pot worse, apical fixes-moderate-breaks-extreme,
+     size-norm-winner worse — "no downstream circuit manufactures a distinction absent from CA3"); (b) **the real binding
+     blocker was WEAK COMPLETION of the sparse ~20-30-cell emergent assemblies (`held_cue` ~0.10 < the 0.15 bar at
+     `ca3_density=0.05`), NOT cross-completion** — and the diagnostic showed the assemblies are DISJOINT (Jaccard <0.05),
+     coupled via recurrents + the member→non-member spread (`structural_sep=1` left open). **SYNTHESIZED FIX = high within
+     density (0.35, strong completion) + `--isolate` + `--structural-sep 2` (full basin isolation): 3-seed → COMPLETION-GO
+     3/3 (`cue` 0.176-0.200, binding blocker RESOLVED) + cross CLEAN 2/3 (42/100 at 0.00); only seed 102 (largest
+     assemblies [56,29], 4 shared cells) cross-completes 0.48. `--disjoint-dg` (Rank 2) is GEOMETRY-SENSITIVE not a fix
+     (broke clean seed 100 0.00→0.79). **HONEST STATE — the 2 sub-problems separated: (1) COMPLETION (the real binding
+     blocker) RESOLVED robustly (high density → 3/3 GO, cue 0.18-0.23); (2) INDEPENDENT-ADDRESSING (cross) = a
+     GEOMETRY-SENSITIVE residual (2/3 best, config-fragile) = the fundamental SPARSE-separated-vs-STRONG-completion
+     TENSION** (sparse basins separate but complete weakly; dense basins complete strongly but couple; every config knob
+     shifts the seed-dependent geometry). Recall-inhibition (5 configs) + disjoint-DG all method-negative. **PRINCIPLED
+     NEXT (named, per THE LAW — a characterized deep residual, NOT a wall): the DG's sparse-COMPLETABLE architecture —
+     equal-k SYMMETRIC selection (break the ~2× size-asymmetry gang effect) + high within-density + structurally-zeroed
+     between-basin coupling.** ⇒ **gap#5 episodic-memory CAPABILITY largely MET** (single-assembly select→store→complete
+     GO + 2-assembly COMPLETION resolved); 2-assembly independent-addressing = the characterized residual. Marginal value
+     diminished vs the headline (training) → REBALANCED. NO `sim/` edit. Finding: `-selective-inhibition-family-NEGATIVE-...`
+     (CORRECTION + REFRAME + HONEST STATE banners). **NOTE: banked a wrong "dendrite negative" mid-cycle (drift-#12);
+     RETRACTED.**
+- **⚠️ gap#1 — CORRECTED 2026-07-21 (adversarial audit, verdict OVERCLAIMED): NOT "COMPLETE," and the recurrence is NOT spiking.**
+  The audit (a-1 RAG + code-read) found: (a) the recurrent language computation is a **GRADED, NON-SPIKING SSM leaky
+  integrator** — `bridge.py:6017` `cp_ssm_state = lam*cp_ssm_state + (1-lam)*cp_ssm_inject` is host elementwise
+  arithmetic (matmul read-out at :6024); only the I/O was made spiking (SpikeGPT-faithful). So "the recurrent WKV
+  language cortex on the spiking substrate" conflates spiking-INPUT with a spiking-cortex. (b) The `+0.872==+0.878 full
+  parity` is **single-seed/single-slice** (seed-42 dev ckpt), conflated in one sentence with the *separate* 6-seed
+  host-read encode (tracking M1) and a third checkpoint. (c) The later `2026-07-21-gap1-ceiling-...` finding explicitly
+  says **"This is NOT gap#1 closed — SCALE-PROGRESSING, not closed"** (later finding wins). (d) "No sim/ edit" holds
+  only for the RF wrapper — the enabling `cp_ssm_state` (Rung-4b) + `cp_ssm_readout_w` (01b2466a) are prior sim/ edits
+  the mechanism depends on. **HONEST STATUS: gap#1's spiking-INPUT transduction is closed (RF-phase 6-seed GO;
+  fully-synaptic RF→NMDA single-seed full-parity), and the WKV cortex generates fluent IN-DOMAIN prose — but
+  open-fluent generation is NOT closed (scale/capacity-bound) and the recurrence is not spiking.** Original (overclaimed)
+  landmark text retained below for the arc trail:
+
