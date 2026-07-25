@@ -36,14 +36,14 @@ OP = dict(self_regen=0.0, k_thresh=2.0, wta=5.0, kir_g=1.0, slot_drive=700.0)   
 THRESH_FRACS = [0.0, 0.25, 0.5]
 
 
-def _fire_under_tag(b, tag, ca1_idx, steps=40):
-    """Accumulated ca1 firing under tag (compute ONCE; threshold at multiple fracs after)."""
+def _fire_under_tag(b, tag, ca1_idx, steps=40, drive=1500.0):
+    """Accumulated ca1 firing under tag (compute ONCE; threshold at multiple fracs after). `drive`: gentler = sparser."""
     _try_tgate(b, "nmda_attractor", 0.0)
     set_sleep_gates(b)
     b.cp_external_input_current[:] = 0.0
     for _ in range(30):
         b._run_one_simulation_step()
-    b.stimulate_tag(tag, drive_pA=1500.0, additive=False)
+    b.stimulate_tag(tag, drive_pA=float(drive), additive=False)
     acc = np.zeros(int(b.cp_membrane_potential_v.shape[0]), dtype=np.float64)
     for _ in range(steps):
         b._run_one_simulation_step()
@@ -61,7 +61,7 @@ def _jac(a, c):
     return len(A & C) / max(1, len(A | C))
 
 
-def run_seed(seed, ffi_inh=0.0, ffi_drive=3.0):
+def run_seed(seed, ffi_inh=0.0, ffi_drive=3.0, tag_drive=1500.0):
     a = dict(BASE); a.update(comp_dendritic=True, comp_wta_weight=OP["wta"], comp_k_thresh=OP["k_thresh"],
                              comp_self_regen=OP["self_regen"], comp_kir_g=OP["kir_g"])
     if ffi_inh > 0:   # Rank-2 CA1 FFI-kWTA sparsification de-risk
@@ -75,7 +75,7 @@ def run_seed(seed, ffi_inh=0.0, ffi_drive=3.0):
     tags, _ = encode_facts_with_reinstatement(b, CONSOLIDATED_FACTS)
     w0 = _mean_gate_weight(b, "ca1_to_comp_attr")
     coactivation_replay(b, CONSOLIDATED_FACTS, tags, 40, seed, coactivate=True, attractor_on=True,
-                        slot_drive_pA=OP["slot_drive"])
+                        slot_drive_pA=OP["slot_drive"], tag_drive_pA=float(tag_drive))
     w1 = _mean_gate_weight(b, "ca1_to_comp_attr")
     # reconstruct (pre,post,weight)
     csr = b.cp_connections
@@ -92,7 +92,7 @@ def run_seed(seed, ffi_inh=0.0, ffi_drive=3.0):
     # fire per fact (once)
     fire = {}
     for i, tag in enumerate(tags):
-        fc, steps = _fire_under_tag(b, tag, ca1_idx)
+        fc, steps = _fire_under_tag(b, tag, ca1_idx, drive=tag_drive)
         fire[i] = fc
 
     def engram_at(i, frac):
@@ -140,13 +140,14 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--ca1-ffi-inh", type=float, default=0.0, help="Rank-2: CA1 FFI-kWTA inhibition strength (0=off)")
     ap.add_argument("--ca1-ffi-drive", type=float, default=3.0)
+    ap.add_argument("--tag-drive", type=float, default=1500.0, help="replay+probe tag drive (gentler = sparser distinct core)")
     ap.add_argument("--out", default="research/findings/raw/consol_opsweep_gpu")
     args = ap.parse_args()
     from pathlib import Path
     Path(args.out).mkdir(parents=True, exist_ok=True)
-    r = run_seed(args.seed, ffi_inh=args.ca1_ffi_inh, ffi_drive=args.ca1_ffi_drive)
-    r["ca1_ffi_inh"] = args.ca1_ffi_inh
-    tag = f"_ffi{args.ca1_ffi_inh:g}" if args.ca1_ffi_inh > 0 else ""
+    r = run_seed(args.seed, ffi_inh=args.ca1_ffi_inh, ffi_drive=args.ca1_ffi_drive, tag_drive=args.tag_drive)
+    r["ca1_ffi_inh"] = args.ca1_ffi_inh; r["tag_drive"] = args.tag_drive
+    tag = (f"_ffi{args.ca1_ffi_inh:g}" if args.ca1_ffi_inh > 0 else "") + (f"_td{args.tag_drive:g}" if args.tag_drive != 1500 else "")
     Path(f"{args.out}/directwrite{tag}_seed{args.seed}.json").write_text(json.dumps(r, indent=2))
     # decision summary
     d0 = r["by_thresh"]["0.0"]; d5 = r["by_thresh"]["0.5"]

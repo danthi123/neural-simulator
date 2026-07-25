@@ -94,6 +94,26 @@ potentiate from the strong distinct cells, thresholded-depress the weak overlapp
 shipped). Not "CA1 vs DG separation" (both dense under the flood). This is the precise, buildable next mechanism; the
 FFI-inert + DG-also-dense results narrow it to the write-drive + rate-gated-competition pair. `_consol_dg_overlap_probe.py`.
 
+## Rank-2 THIRD de-risk (gentler replay drive) + the FINAL characterization (2026-07-25, seed-42)
+Swept the tag/replay drive `tag_drive ∈ {300, 500, 800, 1500}`: engram STILL ~85, Jaccard ~0.57, own/other ~1.0 at ALL
+drives. **Decisive:** `stimulate_tag` drives EVERY committed tag cell above threshold, so the engram COUNT = the fixed
+`top_k ≈ 85` (drive changes firing RATE, not cell-count). ⇒ **the density is fundamentally the FIXED `top_k` tag-commit +
+the re-stimulation flood, not CA1-vs-DG and not the drive level.**
+
+**⇒ FINAL characterization + the precise multi-part next mechanism** (3 de-risks converge — FFI-inert · DG-also-dense ·
+drive-independent): the A1 selectivity boundary is that the consolidation engram is a **dense fixed-`top_k`≈85 tag** whose
+re-stimulation floods ~90% of CA1 weakly; a **sparse distinct core exists** (>25%-fire, ~20 cells, Jaccard 0.08) but the
+STDP write is diluted by the flood. The buildable fix is a **STACK, not a single lever**:
+1. **Sparse distinct tag-COMMIT** — commit the engram from the strongly-firing core (`top_k`≈20 / a higher `threshold_hz`
+   in `_encode_facts`:`per_regime_monitor_runner.py:318`, currently `top_k=max(8, n_per_pool//4)`≈85), so the tag IS the
+   distinct core.
+2. **A gentle, non-flooding replay** — reinstate via the trisynaptic feedforward at a physiological level (not a 1500 pA
+   direct tag flood), so only the distinct core drives the write.
+3. **A rate-gated HETEROSYNAPTIC write** (Rank 1, `fused_btsp_hetero_update` shipped) — potentiate from the strong distinct
+   cells, thresholded-depress the weak overlapping majority.
+Each is buildable now (no `sim/` edit for 1–2; 3 reuses shipped kernels). The measurement gate at each stage: the direct
+`ca1_engram_i→slot_j` weight own/other (`_consol_direct_weight_probe.py`) must rise above ~2.5 with own-is-max, 6-seed.
+
 ## Recommended first de-risk (GPU-when-free / Tuesday)
 Build the **Rank-2 CA1-separation de-risk**: add a feedforward-inhibitory kWTA pool to CA1 (or route slot-drive from DG),
 re-run `_consol_direct_weight_probe` → confirm Jaccard < 0.2 / active <5% AND own/other rises + own-is-max. Then chain the
