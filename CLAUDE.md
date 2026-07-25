@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## ⭐ ACTIVE MISSION (2026-07-23 PIVOT) — read [`docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`](docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md) + [`GAP_CLOSURE_MISSION.md`](GAP_CLOSURE_MISSION.md) (CURRENT STATE) FIRST, EVERY session
 
+> **To SKIM (plain-language status surface):** read [`ROADMAP.md`](ROADMAP.md) — what's done, what's in progress, what's left, in prose, no shorthand. Its "Project shorthand" table decodes FHRR/BTSP/BDSP/GNW/gap#N/DR-N/RANK-N/EMERGE/the-moat/the-composer. The MASTER ROADMAP is the forward-looking PLAN; `GAP_CLOSURE_MISSION.md` CURRENT STATE is the live RESUME point.
+
 **MAJOR DIRECTION PIVOT (owner, 2026-07-23).** The north-star is now a sim-brain that **CONVERSES GENUINELY** — reasons
 to its OWN conclusions, with an **affective world-model + emotion + self-awareness + curiosity** — NOT fact-recall/RAG,
 NOT LLM plausible-text. **Success is defined as TRUE CONSCIOUSNESS on the emergentist bet** (it emerges when a human
@@ -50,6 +52,15 @@ drift (line counts / runner-test-findings counts / g11 flags / `sim/__init__` ex
 + `ROADMAP.md` status/frontier/next-action, contradictions, banners, the plain-language header + shorthand glossary). A
 PostToolUse hook nudges it on `sim/` / `research/runners/` / findings changes — RUN it, don't just acknowledge the nudge.
 Stale pointers are drift #12, the #1 cause of re-deriving concluded work.
+
+## Evolve the workflows themselves (the `evolve-skills` skill)
+
+**When a process lapse RECURS** (the owner had to catch the same *class* of problem twice), at a **session-end /
+pre-compaction inflection**, or **when the owner asks** — run the **`evolve-skills`** skill: it reviews (with evidence)
+what's WORKING and what's RECURRINGLY FAILING in our workflows, then makes INCREMENTAL updates to the applicable skills
+so the workflows compound instead of re-learning the same lessons. Grounded, honest, lean (edits the on-demand skills,
+never CLAUDE.md/memory bloat). A caught lapse IS a skill gap — evolve the skill so it can't recur, don't just patch the
+instance. (Born 2026-07-24 after the owner caught three process lapses in one session.)
 
 ## When Compacting (custom compaction instruction — must survive into every compaction)
 
@@ -157,14 +168,14 @@ The simulator was originally a single ~12K-line `neural-simulator.py`. As of 202
 ```
 neural-simulator.py     # 2.2K lines — DearPyGUI host + main entry point only
 sim/                    # 42 modules (+ __init__.py), ~20K lines — core engine
-  bridge.py             # 8767 lines — SimulationBridge + GPU state orchestration (incl. transmission_gate, graded inhibition, input-mean adaptation, RF complex-synapse ops)
-  config.py             # 1205 lines — all @dataclass configs
+  bridge.py             # 9529 lines — SimulationBridge + GPU state orchestration (incl. transmission_gate, graded inhibition, input-mean adaptation, RF complex-synapse ops)
+  config.py             # 1284 lines — all @dataclass configs
   enums.py              #  830 lines — NeuronType (50+ presets), enums, default param managers
   connectivity.py       #  999 lines — spatial/WS/motif connection generators (backend-pluggable)
-  kernels.py            #  565 lines — fused @fuse() neuron + plasticity kernels (cupy/numpy)
+  kernels.py            #  707 lines — fused @fuse() neuron + plasticity kernels (cupy/numpy)
   profiles.py           #  432 lines — NEURAL_STRUCTURE_PROFILES + CONNECTIVITY_MOTIFS dicts
-  regions.py            #  775 lines — BrainRegion + RegionPathway (incl. transmission_gate, graded, input_mean_adapt) + RegionManager
-  neuromodulators.py    # 1114 lines — declarative neuromodulator subsystem
+  regions.py            #  791 lines — BrainRegion + RegionPathway (incl. transmission_gate, graded, input_mean_adapt) + RegionManager
+  neuromodulators.py    # 1135 lines — declarative neuromodulator subsystem
   data_bus.py           #   95 lines — DataChannel pub/sub for streaming sim data
   replicas.py           #  243 lines — replicated wiring (multi-bridge support)
   text_embeddings.py    #  273 lines — token embeddings for language regions (2026-05-01)
@@ -186,7 +197,7 @@ viz/                    # OpenGL renderer, camera, picker, overlays
 ui/                     # DearPyGUI panels, callbacks, layout, sweep panel, plots
 experiment/             # ExperimentEngine + StimulusManager + ReadoutEngine + TrainingProtocolEngine
 research/runners/       # 1000+ headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/perf_benchmark/bridge_lineage/llm_memory_demo/multibridge_chat/g20_multibridge/g20_sparse/order_intrinsic/generator_S-D-E-F-G/mode-unification/content_selection+content_selection_spiking+dialogue_agent/nested_composition+phasor_associative_memory+phasor_chat+gated_compose/unified_agent_benchmark+spiking_unified_agent/multibridge_graded_derisk+cortex_conversation_ensemble+phase1_composer_ab/one_brain_composer/grounded_lang/bridge_coresidence/longitudinal_develop_loop/_emerge*/_d3_*/etc) for research
-research/findings/      # session-by-session findings docs (1650+ files)
+research/findings/      # session-by-session findings docs (1800+ files)
 tests/                  # 450+ test files (determinism, runners, kernels, plasticity, lineage, tiering, llm orchestrator, multibridge, g20-sparse, generator/BPTT, order-intrinsic, mode-unification, content-selection/dialogue, nested-composition, transmission-gate/gated-compose, unified-agent-benchmark/spiking-unified-agent, core-sim-composition + brain-conversational-agent, learned-graded cortex, one-brain composer/agent, emerge competitive-pooler/taxonomy, etc.)
 ```
 
@@ -197,10 +208,10 @@ tests/                  # 450+ test files (determinism, runners, kernels, plasti
 
 ### Key Classes
 
-**SimulationBridge** (`sim/bridge.py:214`): Central simulation orchestrator
+**SimulationBridge** (`sim/bridge.py:217`): Central simulation orchestrator
 - Manages all GPU state arrays (CuPy)
-- Simulation stepping (`_run_one_simulation_step` at line 5927)
-- Initialization (`_initialize_simulation_data` at line 1103)
+- Simulation stepping (`_run_one_simulation_step` at line 6523)
+- Initialization (`_initialize_simulation_data` at line 1218)
 - Recording/playback to HDF5
 - Checkpoint save/restore
 - Profiling and performance monitoring
@@ -215,10 +226,11 @@ tests/                  # 450+ test files (determinism, runners, kernels, plasti
   - HH numerical stability: dt auto-adjusts to 0.05ms when HH model selected
   - **Per-gate Q10**: `hh_q10_m=3.0`, `hh_q10_h=hh_q10_n=1.5` (fixed 2026-04-25 — uniform Q10=3 over-compressed dynamics at 37°C; see Phase A below)
   - **STDP bounds gotcha**: `stdp_w_max=2.0` default. The STDP rule is **soft-bound** (`Δw_LTP = A_plus * (w_max - w) * exp(...)`) so when `weight_mean > stdp_w_max`, every "LTP" event is strongly negative and weights collapse to w_max within ms. Set `cfg.stdp_w_max` above your design weights (e.g. cortex→D1 in Phase B uses `weight_mean=25` → set `stdp_w_max=30`).
-- `VisualizationConfig` (line 637): OpenGL rendering and camera parameters
-- `RuntimeState` (line 657): Mutable execution state (running, paused, time tracking)
-- `GPUConfig` (line 672): GPU features, memory management, recording modes
-- Experiment configs (lines 774–960): `StimulusPattern`, `StimulusChannel`, `NeuronGroup`, `ReadoutConfig`, `TrainingConfig`, `ExperimentPhase`, `ExperimentConfig`
+  - **BDSP clamp-at-lr=0 gotcha** (2026-07-24, commit 6a9a44c3): `fused_bdsp_update` applies `cp.clip(w, bdsp_w_min=-5, bdsp_w_max=5)` **unconditionally — even at `lr=0`** (a frozen/control arm), so any weight outside ±5 is silently flattened to the bound (it collapsed a gap#5 encode store to `bdsp_w_max=5` and plausibly caps gap#4's ±5-bounded FF weights on a 9-way task). Set `bdsp_w_max` above your design weights, and don't assume `lr=0` means "no weight change" for BDSP. A `sim/` clamp-fix (gate the clip by lr / plasticity gain, mirroring the STDP masked-clip) is filed.
+- `VisualizationConfig` (line 900): OpenGL rendering and camera parameters
+- `RuntimeState` (line 920): Mutable execution state (running, paused, time tracking)
+- `GPUConfig` (line 935): GPU features, memory management, recording modes
+- Experiment configs (lines 1048–1227): `StimulusPattern`, `StimulusChannel`, `NeuronGroup`, `ReadoutConfig`, `TrainingConfig`, `ExperimentPhase`, `ExperimentConfig`
 
 ### GPU Array Naming Conventions
 - `cp_*`: CuPy GPU arrays (e.g., `cp_membrane_potential_v`, `cp_firing_states`)
