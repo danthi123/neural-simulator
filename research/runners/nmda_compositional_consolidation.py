@@ -448,6 +448,51 @@ def consolidate(bridge, tags, cycles, seed, attractor_on=True):
 
 
 # ---------------------------------------------------------------------------
+# CO-ACTIVATION replay (research-gate 2026-07-25, the potentiation fix). Per fact,
+# drive the CA3 tag AND reinstate the fact's noun+adj concept pools, so the plastic
+# ca1->slot / pool->slot / ca1->concept wires see pre(ca1)+post(pool/slot) coincidence
+# and POTENTIATE (the A1 failure: CA3-only drive -> pools never fire -> wire frozen 0.01).
+# ---------------------------------------------------------------------------
+def coactivation_replay(bridge, facts, tags, cycles, seed, coactivate=True, attractor_on=True,
+                        tag_drive_pA=1500.0, pool_drive_pA=1400.0, burst_steps=30):
+    from sim.backend import get_backend
+    cp, _ = get_backend()
+    set_sleep_gates(bridge)
+    for g in ("ca1_to_concept_pool", "ca1_to_comp_attr", "concept_to_comp_attr", "cross_pool_concept"):
+        _try_pgate(bridge, g, 1.0)
+    _try_tgate(bridge, "nmda_attractor", 1.0 if attractor_on else 0.0)
+    rm = bridge.region_manager
+    rng = np.random.default_rng(int(seed) + 777)
+    pool_idx = {}
+    for (noun, adj) in facts:
+        for nm, key in ((f"noun_pool_{noun}", noun), (f"adjective_pool_{adj}", adj)):
+            if key not in pool_idx:
+                try:
+                    pool_idx[key] = cp.asarray(list(rm.indices(nm)), dtype=cp.int64)
+                except Exception:
+                    pool_idx[key] = None
+    order = list(range(len(facts)))
+    for _c in range(int(cycles)):
+        rng.shuffle(order)                        # interleaved (CLS shuffled replay)
+        for i in order:
+            noun, adj = facts[i]; tag = tags[i]
+            bridge.cp_external_input_current[:] = 0.0
+            bridge.stimulate_tag(tag, drive_pA=float(tag_drive_pA), additive=False)   # CA3 engram cue
+            if coactivate:                        # reinstate the fact's cortical pools -> post-spikes for STDP
+                for key in (noun, adj):
+                    if pool_idx.get(key) is not None:
+                        bridge.cp_external_input_current[pool_idx[key]] += float(pool_drive_pA)
+            for _ in range(int(burst_steps)):
+                bridge._run_one_simulation_step()
+            try:
+                bridge.clear_tag_drive(tag)
+            except Exception:
+                pass
+    bridge.cp_external_input_current[:] = 0.0
+    return {"cycles": int(cycles), "coactivate": bool(coactivate)}
+
+
+# ---------------------------------------------------------------------------
 # Hippo lesion (clamp hippo indices to -200 pA each step).
 # ---------------------------------------------------------------------------
 @contextlib.contextmanager
