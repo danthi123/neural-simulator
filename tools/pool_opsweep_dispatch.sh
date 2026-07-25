@@ -58,10 +58,17 @@ echo "sharded $i cells across ${#NODES[@]} nodes ($(wc -l < "$tmp/cells_0.txt") 
 for k in 0 1 2; do
   h="${NODES[$k]}"
   echo "=== launching $h ==="
-  ssh "$h" "mkdir -p ~/$REMOTE" || { echo "  SSH FAIL"; continue; }
+  # idempotent: stop any prior run_cell/workers by PROCESS GROUP (timeout-wrappers have separate pgids -> plain pkill
+  # misses them). The [x]-glob patterns match the real procs but NOT this pkill shell's own cmdline (which would else
+  # 255 the ssh). Kill each matching pgid, twice (xargs respawns between passes).
+  ssh "$h" "for pass in 1 2; do for pg in \$(ps -eo pgid,args | grep -E '[r]un_cell.sh|[x]args -P 12|[_]consol_dendritic_opsweep' | awk '{print \$1}' | sort -u); do kill -9 -\$pg 2>/dev/null; done; sleep 1; done; mkdir -p ~/$REMOTE; exit 0" || { echo "  SSH FAIL (connection)"; continue; }
   scp -q "$tmp/cells_$k.txt" "$h:~/$REMOTE/cells.txt"
   printf '%s\n' "$RUNCELL" | ssh "$h" "cat > ~/$REMOTE/run_cell.sh && chmod +x ~/$REMOTE/run_cell.sh"
-  ssh "$h" "cd ~/$REMOTE && setsid nohup bash run_cell.sh >/dev/null 2>&1 & echo '  launched detached pid '\$!"
+  # NON-BLOCKING launch: ssh -f backgrounds the client after auth (verified) + setsid + </dev/null >file fully detach
+  # the remote worker from the channel, so the dispatch loop proceeds instead of hanging (a plain "ssh ... &" holds
+  # the channel open until the 2-day run ends).
+  ssh -f -n "$h" "cd ~/$REMOTE && setsid bash run_cell.sh </dev/null >run_cell.out 2>&1 & exit 0"
+  echo "  launched $h (shard $(wc -l < "$tmp/cells_$k.txt") cells)"
 done
 rm -rf "$tmp"
 echo "ALL NODES LAUNCHED. Collect with:  bash tools/pool_opsweep_dispatch.sh --status"
