@@ -312,6 +312,14 @@ def build_substrate(seed, args):
     cfg.enable_structural_plasticity = False
     cfg.enable_per_type_stp = False
     cfg.enable_hebbian_learning = bool(args.enable_hebbian)
+    # Option-3 (2026-07-25): a pure RATE-based write instead of spike-timing STDP -- the replay firing IS fact-specific
+    # (own/other ~1.5) but STDP-timing flattens it; a rate-Hebbian write should preserve it. Additive/default-off.
+    if bool(getattr(args, "no_stdp", False)):
+        cfg.enable_stdp = False
+    if getattr(args, "hebbian_lr", None) is not None:
+        cfg.hebbian_learning_rate = float(args.hebbian_lr)
+    if bool(getattr(args, "hebbian_rate_window", False)):
+        cfg.hebbian_rate_window = True
     cfg.enable_short_term_plasticity = False
     cfg.stdp_w_max = float(args.stdp_w_max)
     cfg.fast_spike_reset = True

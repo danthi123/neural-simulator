@@ -240,6 +240,22 @@ distinctive cores (seed 42):
 Hebbian write (vs spike-timing STDP) should preserve it. If a cleaner replay preserves ~4.5 AND a rate write preserves it,
 own/other → ~4.5 >> the 2.5 gate. **This is the live path; the FINAL VERDICT above is SUSPENDED pending these two tests.**
 
+### Both Option-3 fixes TESTED — NO-GO (the write can't preserve the signal); FINAL VERDICT RE-INSTATED, refined
+- **Fix 1 (cleaner replay) — can't recover 4.5:** the replay firing own/other stays ~1.1–1.6 across no-pools / no-attractor
+  / settle-between-facts / gentler-drive (gentle is WORSE, 0.73). The co-activation dynamics (slot drive + open ca1→pool→slot
+  pathways) dilute the isolated 4.5 to ~1.5 irreducibly.
+- **Fix 2 (rate-based write) — flat:** a pure rate-Hebbian write (`no_stdp` + `hebbian_rate_window` + boosted lr, additive
+  default-off) gives own/other ~1.0 (lr 0.005 and 0.02) — it does NOT preserve even the 1.5 replay-firing fact-specificity.
+- ⇒ **REFINED final verdict:** the point-neuron substrate DOES produce a fact-specific code in ISOLATION (fire-under-tag
+  4.5), but the brain-based CONSOLIDATION WRITE cannot preserve it — the co-activation replay dilutes it to ~1.5 (needs the
+  slot post-drive + open reinstatement pathways, which flood CA1) and NO write rule tried (STDP, BTSP-hetero, rate-Hebbian,
+  supralinear) preserves even that. The idealized plateau-gated rate write WOULD localize (oracle 8.19) but the real substrate
+  can't realize it (plateau saturates; rate write flattens). **Per THE LAW the capability stays OPEN**; Option-3's cheap-space
+  is now EXHAUSTED, so the next method is **Option 2 — a genuinely different write MECHANISM** (a dendritic write that
+  reinstates ISOLATED + writes rate-proportionally with a non-saturating per-branch plateau, so the isolated 4.5 signal
+  survives the write) — the months-scale build the fork flagged. Infra shipped: `+--pure-hebbian`/`no_stdp` · replay-firing
+  diagnostic · the oracle. This is the honest, exhaustively-characterized boundary.
+
 ## Recommended first de-risk (GPU-when-free / Tuesday)
 
 ## Recommended first de-risk (GPU-when-free / Tuesday)

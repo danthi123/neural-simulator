@@ -44,7 +44,7 @@ def _fire_under_tag(b, tag, ca1, steps=40):
     return acc[ca1]
 
 
-def run(seed):
+def run(seed, no_pools=False, no_attractor=False, tag_drive=1500.0, burst=30, settle=0):
     b = build_substrate(seed, SimpleNamespace(**BASE))
     rm = b.region_manager
     ca1 = np.asarray(sorted(rm.indices("ca1")), dtype=np.int64)
@@ -74,18 +74,22 @@ def run(seed):
     set_sleep_gates(b)
     for g in ("ca1_to_concept_pool", "ca1_to_comp_attr", "concept_to_comp_attr", "cross_pool_concept"):
         _try_pgate(b, g, 1.0)
-    _try_tgate(b, "nmda_attractor", 1.0)
+    _try_tgate(b, "nmda_attractor", 0.0 if no_attractor else 1.0)
     replay_fire = np.zeros((N, ca1.size))
     for i, tag in enumerate(tags):
         b.cp_external_input_current[:] = 0.0
-        b.stimulate_tag(tag, drive_pA=1500.0, additive=False)
+        if settle > 0:                       # ISOLATE this fact: settle the network to rest first (like fire-under-tag)
+            for _ in range(int(settle)):
+                b._run_one_simulation_step()
+        b.stimulate_tag(tag, drive_pA=float(tag_drive), additive=False)
         drv = cp.zeros(int(b.cp_membrane_potential_v.shape[0]), dtype=cp.float32)
-        for a in pool_idx[i]:
-            drv[cp.asarray(a)] = 1400.0
+        if not no_pools:
+            for a in pool_idx[i]:
+                drv[cp.asarray(a)] = 1400.0
         if slot_idx[i] is not None:
             drv[cp.asarray(slot_idx[i])] = 1400.0
         acc = np.zeros(int(b.cp_membrane_potential_v.shape[0]))
-        for _ in range(30):
+        for _ in range(int(burst)):
             b.cp_external_input_current[:] = drv   # sustain pool+slot alongside the tag drive
             b._run_one_simulation_step()
             acc += to_host(b.cp_firing_states).astype(np.float64)
@@ -114,11 +118,17 @@ def run(seed):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--no-pools", action="store_true")
+    ap.add_argument("--no-attractor", action="store_true")
+    ap.add_argument("--tag-drive", type=float, default=1500.0)
+    ap.add_argument("--burst", type=int, default=30)
+    ap.add_argument("--settle", type=int, default=0, help="rest steps between facts (isolate the reinstatement)")
     ap.add_argument("--out", default="research/findings/raw/consol_opsweep_gpu")
     args = ap.parse_args()
     from pathlib import Path
     Path(args.out).mkdir(parents=True, exist_ok=True)
-    r = run(args.seed)
+    r = run(args.seed, args.no_pools, args.no_attractor, args.tag_drive, args.burst, args.settle)
+    r["cfg"] = dict(no_pools=args.no_pools, no_attractor=args.no_attractor, tag_drive=args.tag_drive, burst=args.burst)
     Path(f"{args.out}/replay_firing_seed{args.seed}.json").write_text(json.dumps(r, indent=2))
     print(f"[seed {args.seed}] is the CA1 firing DURING replay fact-specific or flooded?")
     print(f"  distinctive core sizes: {r['dcore_sizes']}")
