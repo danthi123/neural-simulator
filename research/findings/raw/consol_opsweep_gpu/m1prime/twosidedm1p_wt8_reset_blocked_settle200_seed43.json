@@ -1,0 +1,621 @@
+{
+  "seed": 43,
+  "thr_hash": "90ff32ec773a",
+  "dw": 21.33695,
+  "btsp_wmax": 2000.0,
+  "btsp_lr": 3e-06,
+  "elig_tau": 30.0,
+  "elig_hard_thresh": 0.4,
+  "commit_top_k": 15,
+  "hippo_izh": "IZH2007_STRIATAL_MSN",
+  "cycles": 1,
+  "reset_elig": true,
+  "fixed_order": false,
+  "settle_steps": 200,
+  "blocked": true,
+  "write_order": null,
+  "core_thr_frac": 0.25,
+  "core_sizes": [
+    21,
+    25,
+    19
+  ],
+  "core_gated_own_over_other": [
+    0.969,
+    1.047,
+    1.049
+  ],
+  "core_gated_own_is_max": [
+    false,
+    false,
+    true
+  ],
+  "n_pass": 0,
+  "core_gated_own_over_other_slotnorm": [
+    1.001,
+    1.002,
+    1.062
+  ],
+  "slot_mass_ratio": 1.052,
+  "btsp_win_theta": 8.0,
+  "btsp_win_hill_n": 8.0,
+  "win_gate_stats": {
+    "0": {
+      "pass_ca1": [
+        25
+      ],
+      "n_ca1": 120,
+      "max_count": [
+        15.0
+      ],
+      "mean_count": [
+        4.758
+      ],
+      "pass_all": [
+        3461
+      ],
+      "n_all": 8860
+    },
+    "1": {
+      "pass_ca1": [
+        38
+      ],
+      "n_ca1": 120,
+      "max_count": [
+        15.0
+      ],
+      "mean_count": [
+        5.15
+      ],
+      "pass_all": [
+        3620
+      ],
+      "n_all": 8860
+    },
+    "2": {
+      "pass_ca1": [
+        40
+      ],
+      "n_ca1": 120,
+      "max_count": [
+        14.0
+      ],
+      "mean_count": [
+        5.508
+      ],
+      "pass_all": [
+        3733
+      ],
+      "n_all": 8860
+    }
+  },
+  "w_fidelity_raw_count": [
+    -0.08,
+    -0.052,
+    0.056
+  ],
+  "w_fidelity_gated_count": [
+    0.015,
+    -0.045,
+    0.162
+  ],
+  "w_fidelity_isolated_fire": [
+    0.044,
+    0.05,
+    0.036
+  ],
+  "write_core_sizes": [
+    25,
+    38,
+    40
+  ],
+  "write_core_vs_isolated_core_jaccard": [
+    0.211,
+    0.167,
+    0.157
+  ],
+  "self_cued_own_over_other": [
+    0.987,
+    1.107,
+    1.041
+  ],
+  "iso_vs_write_percell_corr": [
+    0.156,
+    0.123,
+    0.012
+  ],
+  "elig_vs_fire_corr": [
+    0.866,
+    0.879,
+    0.868
+  ],
+  "w_vs_elig_corr": [
+    -0.098,
+    -0.082,
+    0.039
+  ],
+  "w_vs_gated_elig_corr": [
+    -0.089,
+    -0.037,
+    0.079
+  ],
+  "w_to_slot_cv": [
+    1.544,
+    1.56,
+    1.55
+  ],
+  "w_to_slot_cross_corr": [
+    [
+      1.0,
+      0.978,
+      0.983
+    ],
+    [
+      0.978,
+      1.0,
+      0.981
+    ],
+    [
+      0.983,
+      0.981,
+      1.0
+    ]
+  ],
+  "predicted_own_over_other": [
+    1.032,
+    1.132,
+    1.865
+  ],
+  "predicted_vs_realized_w_corr": [
+    -0.085,
+    -0.035,
+    0.042
+  ],
+  "slot_v_apical_mean": [
+    [
+      168388.5,
+      48394.7,
+      49823.9
+    ],
+    [
+      52700.0,
+      185272.3,
+      53350.8
+    ],
+    [
+      53203.6,
+      53509.2,
+      185512.2
+    ]
+  ],
+  "plateau_v_hold_used": -50.0,
+  "slot_instructive_signal": [
+    [
+      168502.062,
+      49101.144,
+      49959.008
+    ],
+    [
+      52750.022,
+      185322.308,
+      53400.84
+    ],
+    [
+      53253.634,
+      53559.17,
+      185562.234
+    ]
+  ],
+  "permuted_core_own_over_other": [
+    0.887,
+    1.042,
+    0.921
+  ],
+  "random_ca1_own_over_other": [
+    0.907,
+    1.089,
+    1.01
+  ],
+  "slot_mean_weight": [
+    7.8741,
+    8.2841,
+    7.9856
+  ],
+  "sparse_core_ceiling": [
+    7.839,
+    4.182,
+    3.663
+  ],
+  "m0_gated_ceiling": {
+    "during_write": {
+      "max_count": 15.0,
+      "ungated_ceiling": [
+        1.345,
+        1.499,
+        1.595
+      ],
+      "total_spikes": [
+        571.0,
+        618.0,
+        661.0
+      ],
+      "cosine_specificity": [
+        1.51,
+        1.459,
+        1.47
+      ],
+      "binary": {
+        "0.3": {
+          "theta": 4.5,
+          "ceiling": [
+            1.806,
+            1.797,
+            1.938
+          ],
+          "n_active": [
+            56,
+            62,
+            63
+          ]
+        },
+        "0.5": {
+          "theta": 7.5,
+          "ceiling": [
+            3.333,
+            2.923,
+            3.478
+          ],
+          "n_active": [
+            25,
+            38,
+            40
+          ]
+        },
+        "0.6": {
+          "theta": 9.0,
+          "ceiling": [
+            7.0,
+            4.5,
+            5.0
+          ],
+          "n_active": [
+            14,
+            18,
+            25
+          ]
+        },
+        "0.7": {
+          "theta": 10.5,
+          "ceiling": [
+            10.0,
+            7.0,
+            5.333
+          ],
+          "n_active": [
+            10,
+            14,
+            16
+          ]
+        },
+        "0.8": {
+          "theta": 12.0,
+          "ceiling": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "n_active": [
+            3,
+            7,
+            5
+          ]
+        },
+        "0.9": {
+          "theta": 13.5,
+          "ceiling": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "n_active": [
+            1,
+            2,
+            4
+          ]
+        }
+      },
+      "hill": {
+        "0.3": {
+          "theta": 4.5,
+          "ceiling": [
+            1.617,
+            1.672,
+            1.789
+          ],
+          "n_active": [
+            56,
+            62,
+            63
+          ]
+        },
+        "0.5": {
+          "theta": 7.5,
+          "ceiling": [
+            2.279,
+            2.369,
+            2.79
+          ],
+          "n_active": [
+            25,
+            38,
+            40
+          ]
+        },
+        "0.6": {
+          "theta": 9.0,
+          "ceiling": [
+            3.126,
+            2.861,
+            3.442
+          ],
+          "n_active": [
+            14,
+            18,
+            25
+          ]
+        },
+        "0.7": {
+          "theta": 10.5,
+          "ceiling": [
+            4.493,
+            3.923,
+            4.148
+          ],
+          "n_active": [
+            10,
+            14,
+            16
+          ]
+        },
+        "0.8": {
+          "theta": 12.0,
+          "ceiling": [
+            6.326,
+            5.938,
+            5.415
+          ],
+          "n_active": [
+            3,
+            7,
+            5
+          ]
+        },
+        "0.9": {
+          "theta": 13.5,
+          "ceiling": [
+            8.644,
+            8.958,
+            7.426
+          ],
+          "n_active": [
+            1,
+            2,
+            4
+          ]
+        }
+      }
+    },
+    "isolated_tag": {
+      "max_count": 16.0,
+      "ungated_ceiling": [
+        1.369,
+        1.343,
+        1.292
+      ],
+      "total_spikes": [
+        801.0,
+        803.0,
+        761.0
+      ],
+      "cosine_specificity": [
+        1.352,
+        1.312,
+        1.34
+      ],
+      "binary": {
+        "0.3": {
+          "theta": 4.8,
+          "ceiling": [
+            1.47,
+            1.421,
+            1.409
+          ],
+          "n_active": [
+            86,
+            81,
+            81
+          ]
+        },
+        "0.5": {
+          "theta": 8.0,
+          "ceiling": [
+            5.5,
+            3.684,
+            3.579
+          ],
+          "n_active": [
+            33,
+            35,
+            34
+          ]
+        },
+        "0.6": {
+          "theta": 9.6,
+          "ceiling": [
+            6.25,
+            3.867,
+            3.867
+          ],
+          "n_active": [
+            25,
+            29,
+            29
+          ]
+        },
+        "0.7": {
+          "theta": 11.2,
+          "ceiling": [
+            16.0,
+            5.0,
+            3.5
+          ],
+          "n_active": [
+            16,
+            20,
+            14
+          ]
+        },
+        "0.8": {
+          "theta": 12.8,
+          "ceiling": [
+            24.0,
+            9.0,
+            7.333
+          ],
+          "n_active": [
+            12,
+            9,
+            11
+          ]
+        },
+        "0.9": {
+          "theta": 14.4,
+          "ceiling": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "n_active": [
+            3,
+            2,
+            1
+          ]
+        }
+      },
+      "hill": {
+        "0.3": {
+          "theta": 4.8,
+          "ceiling": [
+            1.44,
+            1.402,
+            1.388
+          ],
+          "n_active": [
+            86,
+            81,
+            81
+          ]
+        },
+        "0.5": {
+          "theta": 8.0,
+          "ceiling": [
+            2.577,
+            2.358,
+            2.303
+          ],
+          "n_active": [
+            33,
+            35,
+            34
+          ]
+        },
+        "0.6": {
+          "theta": 9.6,
+          "ceiling": [
+            3.788,
+            2.946,
+            2.688
+          ],
+          "n_active": [
+            25,
+            29,
+            29
+          ]
+        },
+        "0.7": {
+          "theta": 11.2,
+          "ceiling": [
+            5.543,
+            3.448,
+            2.884
+          ],
+          "n_active": [
+            16,
+            20,
+            14
+          ]
+        },
+        "0.8": {
+          "theta": 12.8,
+          "ceiling": [
+            8.32,
+            4.164,
+            3.2
+          ],
+          "n_active": [
+            12,
+            9,
+            11
+          ]
+        },
+        "0.9": {
+          "theta": 14.4,
+          "ceiling": [
+            12.456,
+            5.392,
+            3.654
+          ],
+          "n_active": [
+            3,
+            2,
+            1
+          ]
+        }
+      }
+    }
+  },
+  "xfire_under_tag": [
+    [
+      12.86,
+      6.14,
+      4.9
+    ],
+    [
+      6.88,
+      12.56,
+      7.48
+    ],
+    [
+      6.63,
+      8.16,
+      12.58
+    ]
+  ],
+  "xfire_during_write": [
+    [
+      5.9,
+      6.52,
+      6.14
+    ],
+    [
+      4.76,
+      5.28,
+      6.68
+    ],
+    [
+      3.84,
+      5.32,
+      6.32
+    ]
+  ]
+}

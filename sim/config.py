@@ -361,6 +361,19 @@ class CoreSimConfig:
                                                    # synapse whose pre-eligibility is below thresh*peak, so ONLY the
                                                    # sustained-firing core writes (the weak dense halo is cut). 0.0
                                                    # (default) = byte-identical (no gating). Typical 0.25-0.6.
+    # M1' (2026-07-25) — the DENDRITIC SUSTAINED-SPIKE-COUNT read. A per-presynaptic-source, BOX-CAR WINDOWED
+    # spike COUNT (with an explicit reset via bridge.reset_btsp_window()) passed through an ABSOLUTE (NOT
+    # network-normalized) Hill gate, applied to the presynaptic eligibility BEFORE the synaptic summation.
+    # Biology: Kandel 6e Ch 13 pp296-298 (per-spine Ca2+ compartmentalisation => each synapse integrates ITS OWN
+    # presynaptic activity, no pooling); Polsky/Mel/Schiller J Neurosci 2009 (prebound-glutamate frequency
+    # facilitation, ~72 ms window, "5-10 sustained afferents beat 20+ transient ones"); Bradshaw et al. PNAS 2003
+    # (CaMKII Hill ~= 8 vs an ABSOLUTE Ca2+ set-point, not a network max). This is the piece the existing
+    # btsp_elig_exponent / btsp_elig_hard_thresh could NOT express: they normalize by etilde.max() over EVERY
+    # synapse in the bridge (a spine has no network max) and act on an exponential low-pass, never a box-car count.
+    # btsp_win_gate_theta <= 0.0 (default) => the counter array is never allocated and the math is untouched
+    # => BYTE-IDENTICAL. Typical theta = 5-15 spikes over a 30-40 step burst window.
+    btsp_win_gate_theta: float = 0.0
+    btsp_win_gate_hill_n: float = 8.0               # Hill cooperativity of the absolute windowed-count gate (CaMKII ~8)
     # Milstein 2021 split-threshold ADJACENT-BAND depression: depress ONLY synapses whose
     # eligibility falls BETWEEN these thresholds (the lags adjacent to the peak), instead of
     # the far field. Both 0.0 => band gate OFF => byte-identical to the pre-2026-07-20 rule

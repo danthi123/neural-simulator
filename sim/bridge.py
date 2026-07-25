@@ -304,6 +304,9 @@ class SimulationBridge:
         self._bdsp_step_counter = 0                         # monotone step index for burst-ISI detection (BDSP only)
         self.cp_btsp_pre_elig = None                        # gap#4 BTSP seconds-long per-neuron presynaptic eligibility (None unless enable_btsp)
         self.cp_btsp_pre_elig_slow = None                   # gap#4 Rank-2: SLOW companion trace (None unless btsp_dog_a_dep>0)
+        self.cp_btsp_win_count = None                       # M1' (2026-07-25): per-neuron BOX-CAR windowed spike COUNT for
+                                                            # the ABSOLUTE dendritic sustained-count gate. STAYS None (never
+                                                            # allocated) unless btsp_win_gate_theta > 0 => byte-identical off.
         self.cp_btsp_wmax = None                            # gap#4: PER-SYNAPSE w_max. None => the cfg scalar => byte-identical.
                                                             # Exists because ONE GLOBAL w_max cannot serve pathways whose natural
                                                             # scales differ 250x (measured); same reason cp_btsp_theta exists (27.4x).
@@ -3566,6 +3569,17 @@ class SimulationBridge:
         for rec in self._engram_recordings.values():
             rec["spike_counts"] += fired_f32
             rec["n_steps"] += 1
+
+    def reset_btsp_window(self) -> None:
+        """M1' (2026-07-25): zero the per-neuron BOX-CAR windowed spike count that feeds the ABSOLUTE
+        dendritic sustained-count gate (`btsp_win_gate_theta`).
+
+        THIS IS THE BOX-CAR RESET. Call it at the ONSET of each write/cue window; without it the count is
+        cumulative across windows and is no longer a per-window count. No-op (and allocates nothing) when the
+        gate is off — `cp_btsp_win_count` stays None => byte-identical.
+        """
+        if self.cp_btsp_win_count is not None:
+            self.cp_btsp_win_count[:] = cp.float32(0.0)
 
     def commit_engram_tag(
         self,
@@ -8053,6 +8067,30 @@ class SimulationBridge:
                 _is_post_bt = cp.maximum(self.cp_v_apical - _vhold_bt, cp.float32(0.0))    # plateau above v_hold = the instructive signal
                 coo_bt = self._get_cached_coo()
                 etilde_bt = self.cp_btsp_pre_elig[coo_bt.row]
+                # --- M1' (2026-07-25): the DENDRITIC SUSTAINED-SPIKE-COUNT gate. A per-presynaptic-source BOX-CAR
+                # windowed spike COUNT (reset by reset_btsp_window() at window onset) passed through an ABSOLUTE
+                # Hill gate g = c^n/(c^n + theta^n), gathered on coo.row and multiplied into the presynaptic
+                # eligibility BEFORE the synaptic summation. All three qualifiers are load-bearing and none is
+                # expressible by the two gates below: (i) a box-car COUNT, not an exponential low-pass; (ii) an
+                # explicit RESET, so it is a per-window count; (iii) an ABSOLUTE theta -- a spine thresholds its
+                # OWN accumulated Ca2+ against a fixed molecular set-point (CaMKII Hill ~8, Bradshaw PNAS 2003),
+                # it has no access to a network-wide max. Kandel 6e Ch13 pp296-298 (per-spine Ca2+ compartment-
+                # alisation) + Polsky/Mel/Schiller 2009 (prebound-glutamate frequency facilitation, 72 ms window:
+                # "5-10 sustained afferents beat 20+ transient ones"). ADDITIVE / default-off: theta <= 0.0 =>
+                # cp_btsp_win_count is NEVER allocated and etilde_bt is untouched => byte-identical.
+                _wg_theta = float(getattr(cfg, "btsp_win_gate_theta", 0.0))
+                if _wg_theta > 0.0:
+                    if self.cp_btsp_win_count is None or self.cp_btsp_win_count.size != _nN:
+                        self.cp_btsp_win_count = cp.zeros(_nN, dtype=cp.float32)
+                    if _fired_any:
+                        self.cp_btsp_win_count += fired_this_step.astype(cp.float32)
+                    _wg_n = cp.float32(float(getattr(cfg, "btsp_win_gate_hill_n", 8.0)))
+                    _cpow = self.cp_btsp_win_count ** _wg_n                       # ABSOLUTE count, NO network max
+                    _wg_gate = _cpow / (_cpow + cp.float32(_wg_theta) ** _wg_n + cp.float32(1e-30))
+                    # observability only: how many SOURCES pass the gate this step (sparse-but-nonempty check).
+                    self._btsp_win_gate_pass_n = (_wg_gate > cp.float32(0.5)).sum()
+                    self._btsp_win_gate_total_n = int(_nN)
+                    etilde_bt = etilde_bt * _wg_gate[coo_bt.row]
                 # SUPRALINEAR eligibility (Ca2+/CaMKII cooperativity; 2026-07-25 consolidation Rank-2): raising the
                 # presynaptic eligibility to an exponent WIDENS the strong-core-vs-weak-halo gap a linear low-pass leaves
                 # too small (core 0.8^p >> halo 0.2^p), so a rate-threshold can separate them. ADDITIVE / default-off:

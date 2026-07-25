@@ -65,12 +65,34 @@ def instrumented_write(bridge, facts, tags, cycles, seed, v_teach=-25.0, burst_s
     ca1_h = np.asarray(ca1_idx, dtype=np.int64)
     # window_fire[write_fact] accumulates CA1 firing during that fact's reinstatement bursts (summed over cycles)
     window_fire = {i: np.zeros(ca1_h.size, dtype=np.float64) for i in range(len(facts))}
+    # M1' diagnostic (2026-07-25): the per-cell PRESYNAPTIC ELIGIBILITY actually integrated over each window, and the
+    # gate value that multiplies it. These separate "firing -> eligibility" from "eligibility -> weight": the write is
+    # dw ~ eta * sum_t Etilde_k(t) * gate_k(t) * IS, so if window_elig tracks window_fire but the WEIGHT does not,
+    # the break is downstream of the eligibility (thresholding / saturation / wiring), not in the count gate.
+    window_elig = {i: np.zeros(ca1_h.size, dtype=np.float64) for i in range(len(facts))}
+    window_gelig = {i: np.zeros(ca1_h.size, dtype=np.float64) for i in range(len(facts))}
+    # M1' diagnostic: the INSTRUCTIVE SIGNAL actually seen by each slot during each fact's window,
+    # IS_j = mean_t max(v_apical[slot_j](t) - plateau_v_hold, 0), measured INSIDE the step loop (i.e. AFTER the
+    # bridge's own apical dynamics have run, not the clamp value we wrote). dw ~ Etilde_pre * IS_post, so if the
+    # off-diagonal IS is not ~0 the "exclusive apical clamp" is not exclusive at the point the write reads it, and
+    # every slot receives the SAME eligibility-weighted write -> no fact-specific structure for any gate to shape.
+    slot_is = np.zeros((len(facts), len(facts)))
+    slot_is_n = np.zeros(len(facts))
+    slot_vap = np.zeros((len(facts), len(facts)))
+    _pvh = float(getattr(bridge.core_config, "coincidence_plateau_v_hold", -35.0))
     rng = np.random.default_rng(int(seed) + 777)
+
+    # M1' (2026-07-25): per-fact-window gate-engagement stats (CA1 cells whose BOX-CAR count clears theta at the
+    # end of the burst = the sources the write actually integrates). Empty when the gate is off.
+    gate_stats = {}
 
     def _one_fact_burst(i):
         tag = tags[i]
         if reset_elig and getattr(bridge, "cp_btsp_pre_elig", None) is not None:
             bridge.cp_btsp_pre_elig[:] = cp.float32(0.0)
+        # M1' BOX-CAR RESET: zero the windowed spike count at burst ONSET. Without this the count is cumulative
+        # across facts and is no longer a per-window count (the reset is part of the primitive, not an optimisation).
+        bridge.reset_btsp_window()
         bridge.cp_external_input_current[:] = 0.0
         bridge.stimulate_tag(tag, drive_pA=float(reinstate_drive), additive=False)
         si = slot_idx[i]
@@ -81,6 +103,35 @@ def instrumented_write(bridge, facts, tags, cycles, seed, v_teach=-25.0, burst_s
                     bridge.cp_v_apical[si] = cp.float32(v_teach)
             bridge._run_one_simulation_step()
             window_fire[i] += to_host(bridge.cp_firing_states).astype(np.float64)[ca1_h]
+            if bridge.cp_v_apical is not None:
+                _va = to_host(bridge.cp_v_apical).astype(np.float64)
+                for _j in range(len(facts)):
+                    _sj = slot_idx[_j]
+                    if _sj is not None:
+                        slot_is[i, _j] += float(np.maximum(_va[to_host(_sj).astype(np.int64)] - _pvh, 0.0).mean())
+                        slot_vap[i, _j] += float(_va[to_host(_sj).astype(np.int64)].mean())
+                slot_is_n[i] += 1
+            if getattr(bridge, "cp_btsp_pre_elig", None) is not None:
+                _e = to_host(bridge.cp_btsp_pre_elig).astype(np.float64)[ca1_h]
+                window_elig[i] += _e
+                if getattr(bridge, "cp_btsp_win_count", None) is not None:
+                    _c = to_host(bridge.cp_btsp_win_count).astype(np.float64)[ca1_h]
+                    _th = float(getattr(bridge.core_config, "btsp_win_gate_theta", 0.0))
+                    _hn = float(getattr(bridge.core_config, "btsp_win_gate_hill_n", 8.0))
+                    window_gelig[i] += _e * (_c ** _hn / (_c ** _hn + _th ** _hn + 1e-30))
+                else:
+                    window_gelig[i] += _e
+        # M1' gate engagement, measured at the END of the burst (before any settle/reset), on the CA1 sources.
+        if getattr(bridge, "cp_btsp_win_count", None) is not None:
+            _wc = to_host(bridge.cp_btsp_win_count).astype(np.float64)
+            _th = float(getattr(bridge.core_config, "btsp_win_gate_theta", 0.0))
+            _ca1c = _wc[ca1_h]
+            st = gate_stats.setdefault(i, {"pass_ca1": [], "n_ca1": int(_ca1c.size), "max_count": [],
+                                           "mean_count": [], "pass_all": [], "n_all": int(_wc.size)})
+            st["pass_ca1"].append(int((_ca1c >= _th).sum()))
+            st["max_count"].append(float(_ca1c.max()))
+            st["mean_count"].append(round(float(_ca1c.mean()), 3))
+            st["pass_all"].append(int((_wc >= _th).sum()))
         try:
             bridge.clear_tag_drive(tag)
         except Exception:
@@ -125,20 +176,32 @@ def instrumented_write(bridge, facts, tags, cycles, seed, v_teach=-25.0, burst_s
             for i in order:
                 _one_fact_burst(i)
     bridge.cp_external_input_current[:] = 0.0
-    return {"window_fire": window_fire}
+    return {"window_fire": window_fire, "gate_stats": gate_stats,
+            "window_elig": window_elig, "window_gelig": window_gelig,
+            "slot_is": slot_is / np.maximum(slot_is_n, 1)[:, None],
+            "slot_vap": slot_vap / np.maximum(slot_is_n, 1)[:, None], "plateau_v_hold": _pvh}
 
 
 def run_seed(seed, v_teach=-25.0, cycles=3, btsp_lr=0.000003, self_regen=0.15, tag_drive=1500.0,
              elig_exp=1.0, hetero_dep=0.0, hetero_theta=0.0, commit_top_k=15,
              hippo_izh_type="IZH2007_STRIATAL_MSN", hippo_izh_regions="dg,ca3,ca1",
              elig_hard_thresh=0.4, elig_tau=30.0, btsp_wmax=2000.0,
-             reset_elig=False, fixed_order=False, settle_steps=0, core_thr_frac=0.25, blocked=False, write_order=None, reset_neurons=False, freeze_hippo=False):
+             reset_elig=False, fixed_order=False, settle_steps=0, core_thr_frac=0.25, blocked=False, write_order=None, reset_neurons=False, freeze_hippo=False,
+             btsp_win_theta=0.0, btsp_win_hill_n=8.0, apical_R=None):
     a = dict(BASE)
     a.update(comp_dendritic=True, comp_wta_weight=5.0, comp_k_thresh=2.0, comp_self_regen=float(self_regen),
              comp_kir_g=3.0, comp_v_hold=-50.0,
              comp_btsp=True, comp_btsp_lr=float(btsp_lr), comp_btsp_wmax=float(btsp_wmax),
              comp_btsp_elig_exp=float(elig_exp), comp_btsp_hetero_dep=float(hetero_dep),
-             comp_btsp_hetero_theta=float(hetero_theta), comp_btsp_elig_hard_thresh=float(elig_hard_thresh))
+             comp_btsp_hetero_theta=float(hetero_theta), comp_btsp_elig_hard_thresh=float(elig_hard_thresh),
+             # M1' dendritic sustained-count gate (0.0 => OFF => byte-identical to the pre-edit substrate)
+             comp_btsp_win_gate_theta=float(btsp_win_theta), comp_btsp_win_gate_hill_n=float(btsp_win_hill_n))
+    if apical_R is not None:
+        # M1' follow-up lever (2026-07-25): the apical fixed point is ~ Er + comp_apical_R * I_coincidence, so at the
+        # shipped R=50 the apical parks at ~1.9e5 mV and the +-45 mV teaching clamp is numerically irrelevant -> the
+        # instructive signal is only 3.5:1 selective instead of exclusive. Lowering R is the direct test of whether an
+        # EXCLUSIVE instructive signal is reachable at a physiological operating point.
+        a.update(comp_apical_R=float(apical_R))
     if elig_tau is not None:
         a.update(comp_btsp_elig_tau=float(elig_tau))
     if hippo_izh_type:
@@ -172,6 +235,9 @@ def run_seed(seed, v_teach=-25.0, cycles=3, btsp_lr=0.000003, self_regen=0.15, t
     inst = instrumented_write(b, CONSOLIDATED_FACTS, tags, int(cycles), seed, v_teach=float(v_teach),
                               reinstate_drive=float(tag_drive), reset_elig=reset_elig, fixed_order=fixed_order,
                               settle_steps=int(settle_steps), ca1_idx=ca1_idx, blocked=blocked, write_order=write_order, reset_neurons=reset_neurons, freeze_hippo=freeze_hippo)
+    gate_stats = inst.get("gate_stats", {})
+    we = inst.get("window_elig", {}); wge = inst.get("window_gelig", {})
+    slot_is_m = inst.get("slot_is"); slot_vap_m = inst.get("slot_vap"); _pvh_used = inst.get("plateau_v_hold")
     w1 = _mean_gate_weight(b, "ca1_to_comp_attr")
     wf = inst["window_fire"]
     # CROSS-FACT CORE-FIRING (actual write windows): mean firing of fact-K's core cells during fact-W's write reinstatement
@@ -280,6 +346,82 @@ def run_seed(seed, v_teach=-25.0, cycles=3, btsp_lr=0.000003, self_regen=0.15, t
         m = (syn_slot == j)
         slot_mean_w.append(round(float(data[m].mean()) if m.sum() > 0 else 0.0, 4))
 
+    # MASS-FREE TWIN of core_gated_own_over_other (verify-go lens 7b, 2026-07-25 hard rule). The row-i ratio compares
+    # slots j, so the confound is PER-SLOT WEIGHT MASS: divide each column by that slot's mean ca1->slot weight and the
+    # ratio can no longer be bought by one slot simply being heavier. If own/other survives slot-normalisation the
+    # selectivity is in the PATTERN; if it collapses, it was mass. Reported ALONGSIDE the raw ratio, never instead of it.
+    _smw = np.array(slot_mean_w, dtype=np.float64)
+    rwc_n = rwc / np.maximum(_smw, 1e-12)[None, :]
+    rwc_oo_norm = [float(rwc_n[i, i] / np.mean([rwc_n[i, j] for j in range(N) if j != i]))
+                   if np.mean([rwc_n[i, j] for j in range(N) if j != i]) > 1e-12 else 0.0 for i in range(N)]
+    slot_mass_ratio = round(float(max(slot_mean_w) / max(min(slot_mean_w), 1e-12)), 3)
+
+    # ---- M1' WRITE-FIDELITY / TWO-SIDED-MATCH DIAGNOSTICS (2026-07-25). If the realized own/other stays flat while
+    # the M0 oracle predicted 2.9-4.0, exactly one of two things is true and these separate them:
+    #   (A) the WRITE does not store the (gated) during-write code   -> w_fidelity_gated ~ 0
+    #   (B) the write DOES store it, but the RECALL cue (the isolated tag's core) addresses a DIFFERENT cell set than
+    #       the write window did -> w_fidelity_gated high, jaccard(write-core, isolated-core) low, and the
+    #       SELF-CUED read (cue with the same during-write gated set the write saw) is high while the
+    #       isolated-tag-cued read is flat.
+    # NOTE: M0's ceiling is SYMMETRIC (the same during-write code on both sides). The deployed metric is NOT: it
+    # cues with the isolated tag. self_cued_own_over_other is the honest in-run reproduction of M0's ceiling
+    # condition — it is a DIAGNOSTIC, not the GO metric (cueing with the write window is circular as a capability).
+    w_to_slot = np.zeros((N, ca1_idx.size))     # w_to_slot[j, k] = summed ca1_k -> slot_j weight
+    _pos_of = {int(g): kk for kk, g in enumerate(ca1_idx)}
+    for j in range(N):
+        m = (syn_slot == j)
+        pres = pre_of[m]; vals = data[m]
+        for p, v in zip(pres, vals):
+            kk = _pos_of.get(int(p))
+            if kk is not None:
+                w_to_slot[j, kk] += v
+
+    def _corr(a, b):
+        a = np.asarray(a, dtype=np.float64); b = np.asarray(b, dtype=np.float64)
+        if a.std() < 1e-12 or b.std() < 1e-12:
+            return 0.0
+        return float(np.corrcoef(a, b)[0, 1])
+
+    _wth = float(btsp_win_theta)
+    WFm = np.stack([wf[i] for i in range(N)])
+    write_core = {j: np.where(WFm[j] >= _wth)[0] for j in range(N)} if _wth > 0 else \
+                 {j: np.where(WFm[j] >= 0.5 * WFm.max())[0] for j in range(N)}
+    w_fid_raw = [round(_corr(w_to_slot[j], WFm[j]), 3) for j in range(N)]
+    w_fid_gated = [round(_corr(w_to_slot[j], (WFm[j] >= _wth).astype(float) if _wth > 0 else WFm[j]), 3) for j in range(N)]
+    w_fid_isolated = [round(_corr(w_to_slot[j], fire[j]), 3) for j in range(N)]
+    wc_iso_jaccard = [round(_jac(write_core[j], core[j]), 3) for j in range(N)]
+    write_core_sizes = [int(write_core[j].size) for j in range(N)]
+    # SELF-CUED read: weight the read by the write-window code itself (M0's symmetric condition).
+    self_cued = np.zeros((N, N))
+    for i in range(N):
+        gi = (WFm[i] >= _wth).astype(np.float64) * WFm[i] if _wth > 0 else WFm[i]
+        for j in range(N):
+            self_cued[i, j] = float((gi * w_to_slot[j]).sum())
+    self_cued_oo = [round(float(self_cued[i, i] / np.mean([self_cued[i, j] for j in range(N) if j != i])), 3)
+                    if np.mean([self_cued[i, j] for j in range(N) if j != i]) > 1e-12 else 0.0 for i in range(N)]
+    # cross-condition per-cell correlation: does a cell's isolated-tag firing predict its during-write firing?
+    iso_vs_write_corr = [round(_corr(fire[j], WFm[j]), 3) for j in range(N)]
+    # THE LOCALISER: firing -> eligibility -> weight, one link at a time.
+    elig_vs_fire = [round(_corr(we[j], WFm[j]), 3) if j in we else 0.0 for j in range(N)]
+    w_vs_elig = [round(_corr(w_to_slot[j], we[j]), 3) if j in we else 0.0 for j in range(N)]
+    w_vs_gelig = [round(_corr(w_to_slot[j], wge[j]), 3) if j in wge else 0.0 for j in range(N)]
+    w_cv = [round(float(w_to_slot[j].std() / max(abs(w_to_slot[j].mean()), 1e-12)), 3) for j in range(N)]
+    w_cross_corr = [[round(_corr(w_to_slot[i], w_to_slot[j]), 3) for j in range(N)] for i in range(N)]
+    # CLOSING ATTRIBUTION: the BTSP rule is dw[k->slot_j] ~ eta * sum_i sum_t Etilde_i(k,t)*gate * IS_j(t), so with the
+    # MEASURED per-window gated eligibility E_i and the MEASURED instructive-signal matrix IS[i,j] the realized weight
+    # is predicted by  w_pred[k,j] = sum_i E_i[k] * IS[i,j].  If w_pred reproduces the realized own/other, the write is
+    # FULLY explained by (eligibility x instructive signal) and the only lever left is IS's off-diagonal leak.
+    pred_oo, pred_corr = [], []
+    if slot_is_m is not None and len(wge) == N:
+        Emat = np.stack([wge[i] for i in range(N)])                 # (N, n_ca1) gated per-window eligibility
+        Wpred = Emat.T @ np.asarray(slot_is_m)                      # (n_ca1, N)
+        pred_corr = [round(_corr(w_to_slot[j], Wpred[:, j]), 3) for j in range(N)]
+        for i in range(N):
+            w_pre_i = np.zeros(ca1_idx.size); w_pre_i[core[i]] = fire[i][core[i]]
+            row = np.array([float((w_pre_i * Wpred[:, j]).sum()) for j in range(N)])
+            oth = float(np.mean([row[j] for j in range(N) if j != i]))
+            pred_oo.append(round(float(row[i] / oth), 3) if oth > 1e-12 else 0.0)
+
     # SPARSE (code) ceiling for the cores (max own/other any write could reach on these cores)
     F = np.stack([fire[i] for i in range(N)])
     Fs = np.where(F > _thr, F, 0.0)
@@ -294,6 +436,20 @@ def run_seed(seed, v_teach=-25.0, cycles=3, btsp_lr=0.000003, self_regen=0.15, t
                core_thr_frac=float(core_thr_frac), core_sizes=core_sizes,
                core_gated_own_over_other=[round(x, 3) for x in rwc_oo],
                core_gated_own_is_max=rwc_max, n_pass=int(sum(1 for i in range(N) if rwc_oo[i] >= 2.5 and rwc_max[i])),
+               core_gated_own_over_other_slotnorm=[round(x, 3) for x in rwc_oo_norm],
+               slot_mass_ratio=slot_mass_ratio,
+               btsp_win_theta=float(btsp_win_theta), btsp_win_hill_n=float(btsp_win_hill_n),
+               win_gate_stats={str(k): v for k, v in gate_stats.items()},
+               w_fidelity_raw_count=w_fid_raw, w_fidelity_gated_count=w_fid_gated,
+               w_fidelity_isolated_fire=w_fid_isolated,
+               write_core_sizes=write_core_sizes, write_core_vs_isolated_core_jaccard=wc_iso_jaccard,
+               self_cued_own_over_other=self_cued_oo, iso_vs_write_percell_corr=iso_vs_write_corr,
+               elig_vs_fire_corr=elig_vs_fire, w_vs_elig_corr=w_vs_elig, w_vs_gated_elig_corr=w_vs_gelig,
+               w_to_slot_cv=w_cv, w_to_slot_cross_corr=w_cross_corr,
+               predicted_own_over_other=pred_oo, predicted_vs_realized_w_corr=pred_corr,
+               slot_v_apical_mean=[[round(x, 1) for x in row] for row in (slot_vap_m.tolist() if slot_vap_m is not None else [])],
+               plateau_v_hold_used=_pvh_used,
+               slot_instructive_signal=[[round(x, 3) for x in row] for row in (slot_is_m.tolist() if slot_is_m is not None else [])],
                permuted_core_own_over_other=[round(x, 3) for x in perm_oo],
                random_ca1_own_over_other=[round(x, 3) for x in rand_oo],
                slot_mean_weight=slot_mean_w,
@@ -329,6 +485,12 @@ def main():
     ap.add_argument("--reset-neurons", action="store_true", help="TRUE per-fact network re-init between facts (v/u/STP to rest) — tests whether ADAPTATION state is what accumulates")
     ap.add_argument("--write-order", type=str, default=None, help="comma-sep fact write order, e.g. 2,1,0 — separates 'fact 0' from 'written first'")
     ap.add_argument("--blocked", action="store_true", help="write ALL cycles of fact i before fact i+1 (full per-fact isolation)")
+    ap.add_argument("--btsp-win-theta", type=float, default=0.0,
+                    help="M1': ABSOLUTE windowed-spike-count threshold for the dendritic sustained-count write gate "
+                         "(0.0 = OFF = byte-identical). Counts run ~0-40 over a 30-step burst; try 5/8/10/12/15.")
+    ap.add_argument("--comp-apical-R", type=float, default=None,
+                    help="override comp_apical_R (default 50.0): the apical fixed point is ~Er + R*I_coincidence")
+    ap.add_argument("--btsp-win-hill-n", type=float, default=8.0, help="M1': Hill cooperativity of the count gate (CaMKII ~8)")
     ap.add_argument("--out", default="research/findings/raw/consol_opsweep_gpu")
     ap.add_argument("--tag", default="")
     args = ap.parse_args()
@@ -341,8 +503,11 @@ def main():
                  btsp_wmax=args.btsp_wmax, reset_elig=args.reset_elig, fixed_order=args.fixed_order,
                  settle_steps=args.settle_steps, core_thr_frac=args.core_thr_frac, blocked=args.blocked,
                  write_order=[int(x) for x in args.write_order.split(',')] if args.write_order else None,
-                 reset_neurons=args.reset_neurons, freeze_hippo=args.freeze_hippo)
-    _tg = (args.tag or "") + (f"_reset" if args.reset_elig else "") + (f"_fixed" if args.fixed_order else "") + \
+                 reset_neurons=args.reset_neurons, freeze_hippo=args.freeze_hippo,
+                 btsp_win_theta=args.btsp_win_theta, btsp_win_hill_n=args.btsp_win_hill_n,
+                 apical_R=args.comp_apical_R)
+    _tg = (args.tag or "") + (f"_wt{args.btsp_win_theta:g}" if args.btsp_win_theta > 0 else "") + \
+          (f"_reset" if args.reset_elig else "") + (f"_fixed" if args.fixed_order else "") + \
           (f"_blocked" if args.blocked else "") + \
           (f"_settle{args.settle_steps}" if args.settle_steps else "") + (f"_ctf{args.core_thr_frac:g}" if args.core_thr_frac != 0.25 else "")
     Path(f"{args.out}/twosided{_tg}_seed{args.seed}.json").write_text(json.dumps(r, indent=2))
@@ -352,6 +517,30 @@ def main():
           f"reset={r['reset_elig']} fixed={r['fixed_order']} settle={r['settle_steps']}")
     print(f"  CORE-GATED own/other={r['core_gated_own_over_other']}  own_is_max={r['core_gated_own_is_max']}  "
           f"core_sizes={r['core_sizes']}  n_pass(>=2.5&max)={r['n_pass']}/{N}")
+    print(f"  MASS-FREE twin (slot-weight-normalized) own/other={r['core_gated_own_over_other_slotnorm']}  "
+          f"slot_mass_ratio(max/min)={r['slot_mass_ratio']} <- ratio must SURVIVE slot-normalisation (else it was mass)")
+    if r.get("btsp_win_theta", 0.0) > 0:
+        print(f"  M1' WIN-GATE theta={r['btsp_win_theta']} hill_n={r['btsp_win_hill_n']}  per-fact engagement "
+              f"(CA1 sources clearing theta at burst end, of {next(iter(r['win_gate_stats'].values()))['n_ca1'] if r['win_gate_stats'] else '?'}):")
+        for k in sorted(r["win_gate_stats"], key=lambda x: int(x)):
+            g = r["win_gate_stats"][k]
+            print(f"     fact {k}: pass_ca1={g['pass_ca1']} (frac={[round(p / max(g['n_ca1'],1), 3) for p in g['pass_ca1']]})  "
+                  f"max_count={g['max_count']}  mean_count={g['mean_count']}  pass_bridge_wide={g['pass_all']}/{g['n_all']}")
+    print(f"  WRITE-FIDELITY corr(w->slot_j, during-write count_j)={r['w_fidelity_raw_count']}  "
+          f"corr(w, GATED count)={r['w_fidelity_gated_count']}  corr(w, isolated fire)={r['w_fidelity_isolated_fire']}")
+    print(f"  WRITE-CORE sizes={r['write_core_sizes']}  jaccard(write-core, isolated-core)={r['write_core_vs_isolated_core_jaccard']}  "
+          f"per-cell corr(isolated, during-write)={r['iso_vs_write_percell_corr']}")
+    print(f"  LOCALISER  corr(window_elig, window_fire)={r['elig_vs_fire_corr']}  corr(w, window_elig)={r['w_vs_elig_corr']}  "
+          f"corr(w, GATED window_elig)={r['w_vs_gated_elig_corr']}")
+    print(f"  w->slot CV(per-cell spread)={r['w_to_slot_cv']}  cross-slot corr={r['w_to_slot_cross_corr']}  "
+          f"<- CV~0 or cross-corr~1 => the write is UNIFORM/shared, not fact-specific")
+    print(f"  PREDICTED own/other from (measured gated eligibility x measured IS matrix)={r['predicted_own_over_other']}  "
+          f"corr(w_realized, w_predicted)={r['predicted_vs_realized_w_corr']}")
+    print(f"  v_apical[window_i, slot_j] mean (mV, INSIDE the step)={r['slot_v_apical_mean']}  plateau_v_hold={r['plateau_v_hold_used']}")
+    print(f"  IS[window_i, slot_j] (mean instructive signal INSIDE the step)={r['slot_instructive_signal']}  "
+          f"<- off-diagonal must be ~0 or the apical clamp is NOT exclusive at write time")
+    print(f"  SELF-CUED own/other (cue = the write-window code itself; M0's SYMMETRIC condition, DIAGNOSTIC not GO)"
+          f"={r['self_cued_own_over_other']}")
     print(f"  PERMUTED-CORE control own/other={r['permuted_core_own_over_other']}  <- must collapse to ~1.0 (else winner-slot artifact)")
     print(f"  RANDOM-CA1  control own/other={r['random_ca1_own_over_other']}  <- must collapse to ~1.0 (else winner-slot artifact)")
     print(f"  PER-SLOT mean ca1->slot weight={r['slot_mean_weight']}  <- one slot >> others = winner-slot artifact")

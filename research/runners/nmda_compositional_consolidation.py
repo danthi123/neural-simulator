@@ -368,6 +368,13 @@ def build_substrate(seed, args):
             # hard threshold CAN isolate the per-fact core. Default keeps the shipped 1000ms.
             if getattr(args, "comp_btsp_elig_tau", None) is not None:
                 cfg.btsp_elig_tau_ms = float(args.comp_btsp_elig_tau)
+            # M1' (2026-07-25): the DENDRITIC SUSTAINED-SPIKE-COUNT gate — a per-source BOX-CAR windowed spike COUNT
+            # (reset per write window via bridge.reset_btsp_window()) through an ABSOLUTE Hill gate, applied to the
+            # eligibility BEFORE the synaptic sum. Unlike elig_hard_thresh/elig_exponent above it is NOT normalized by
+            # etilde.max() over the whole bridge (a spine has no network max — CaMKII thresholds an absolute Ca2+
+            # set-point). theta <= 0.0 (default) => the counter is never allocated => byte-identical.
+            cfg.btsp_win_gate_theta = float(getattr(args, "comp_btsp_win_gate_theta", 0.0))
+            cfg.btsp_win_gate_hill_n = float(getattr(args, "comp_btsp_win_gate_hill_n", 8.0))
 
     bridge = SimulationBridge(
         core_config=cfg, viz_config=VisualizationConfig(),
