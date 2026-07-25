@@ -187,7 +187,7 @@ def run_seed(seed, v_teach=-25.0, cycles=3, btsp_lr=0.000003, self_regen=0.15, t
              hippo_izh_type="IZH2007_STRIATAL_MSN", hippo_izh_regions="dg,ca3,ca1",
              elig_hard_thresh=0.4, elig_tau=30.0, btsp_wmax=2000.0,
              reset_elig=False, fixed_order=False, settle_steps=0, core_thr_frac=0.25, blocked=False, write_order=None, reset_neurons=False, freeze_hippo=False,
-             btsp_win_theta=0.0, btsp_win_hill_n=8.0, apical_R=None, gc_read=None):
+             btsp_win_theta=0.0, btsp_win_hill_n=8.0, apical_R=None, gc_read=None, encode_btsp_lr=0.0):
     a = dict(BASE)
     a.update(comp_dendritic=True, comp_wta_weight=5.0, comp_k_thresh=2.0, comp_self_regen=float(self_regen),
              comp_kir_g=3.0, comp_v_hold=-50.0,
@@ -217,7 +217,16 @@ def run_seed(seed, v_teach=-25.0, cycles=3, btsp_lr=0.000003, self_regen=0.15, t
     rm = b.region_manager
     ca1_idx = np.asarray(sorted(rm.indices("ca1")), dtype=np.int64)
     slot_idx = {s: np.asarray(sorted(rm.indices(f"comp_attr_{s}")), dtype=np.int64) for s in range(N)}
+    # ENCODE/WRITE learning-rate SEPARATION (2026-07-25): BTSP is active during encode_facts_with_reinstatement, so a
+    # write-scale btsp_lr silently CORRUPTS the codes before they are ever measured (observed: core_sizes=[3,7,112] at
+    # lr=1e-2). Encoding must lay down the codes with the write rule quiescent; only the consolidation write that follows
+    # should learn. cfg is read per-step by the bridge, so setting it at runtime takes effect immediately.
+    _wr_lr = float(b.core_config.btsp_learning_rate)
+    b.core_config.btsp_learning_rate = float(encode_btsp_lr)
     tags, _ = encode_facts_with_reinstatement(b, CONSOLIDATED_FACTS, commit_top_k=commit_top_k)
+    # NOTE: the write lr stays OFF through the fire-under-tag MEASUREMENT below as well — restoring it here made the
+    # measurement itself plastic (BTSP learned while the codes were being read), which inflated core_sizes from [2,1,2]
+    # to [22,120,120] purely as a function of the WRITE lr. A measurement must never be plastic.
     if b.cp_v_apical is None:
         return {"seed": seed, "error": "cp_v_apical is None (comp_dendritic off?)"}
 
@@ -238,6 +247,7 @@ def run_seed(seed, v_teach=-25.0, cycles=3, btsp_lr=0.000003, self_regen=0.15, t
             xfire_tag[k, w] = float(fire[w][core[k]].mean()) if core[k].size > 0 else 0.0
 
     w0 = _mean_gate_weight(b, "ca1_to_comp_attr")
+    b.core_config.btsp_learning_rate = _wr_lr      # write rule ON only for the consolidation write itself
     inst = instrumented_write(b, CONSOLIDATED_FACTS, tags, int(cycles), seed, v_teach=float(v_teach),
                               reinstate_drive=float(tag_drive), reset_elig=reset_elig, fixed_order=fixed_order,
                               settle_steps=int(settle_steps), ca1_idx=ca1_idx, blocked=blocked, write_order=write_order, reset_neurons=reset_neurons, freeze_hippo=freeze_hippo)
@@ -494,6 +504,7 @@ def main():
     ap.add_argument("--btsp-win-theta", type=float, default=0.0,
                     help="M1': ABSOLUTE windowed-spike-count threshold for the dendritic sustained-count write gate "
                          "(0.0 = OFF = byte-identical). Counts run ~0-40 over a 30-step burst; try 5/8/10/12/15.")
+    ap.add_argument("--encode-btsp-lr", type=float, default=0.0, help="btsp_lr DURING encode (default 0 = write rule quiescent while codes are laid down)")
     ap.add_argument("--comp-gc-read", type=float, default=None, help="apical->soma read conductance; must be retuned WITH --comp-apical-R (physiological pair: R=0.15 gc_read=0.5)")
     ap.add_argument("--comp-apical-R", type=float, default=None,
                     help="override comp_apical_R (default 50.0): the apical fixed point is ~Er + R*I_coincidence")
@@ -512,7 +523,7 @@ def main():
                  write_order=[int(x) for x in args.write_order.split(',')] if args.write_order else None,
                  reset_neurons=args.reset_neurons, freeze_hippo=args.freeze_hippo,
                  btsp_win_theta=args.btsp_win_theta, btsp_win_hill_n=args.btsp_win_hill_n,
-                 apical_R=args.comp_apical_R, gc_read=args.comp_gc_read)
+                 apical_R=args.comp_apical_R, gc_read=args.comp_gc_read, encode_btsp_lr=args.encode_btsp_lr)
     _tg = (args.tag or "") + (f"_wt{args.btsp_win_theta:g}" if args.btsp_win_theta > 0 else "") + \
           (f"_reset" if args.reset_elig else "") + (f"_fixed" if args.fixed_order else "") + \
           (f"_blocked" if args.blocked else "") + \

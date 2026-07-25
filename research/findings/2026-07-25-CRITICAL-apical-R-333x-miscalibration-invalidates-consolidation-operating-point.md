@@ -172,3 +172,39 @@ was present in the substrate the whole time — hidden under the miscalibration.
 **The one piece still to build before the write experiment:** separate the **encode-phase** `btsp_lr` from the
 **write-phase** one — BTSP runs during `encode_facts_with_reinstatement`, so a write-scale lr corrupts the codes before
 they are measured (observed: `core_sizes=[3,7,112]` at lr=1e-2).
+
+## FIRST FULLY-CONTROLLED WRITE MEASUREMENT ON THE VALID SUBSTRATE — an HONEST NULL (all confounds removed)
+
+Two further bugs fixed first, both of the arc's recurring class:
+1. **encode/write lr separation** — BTSP runs during `encode_facts_with_reinstatement`; a write-scale lr corrupts the
+   codes before measurement. Encode now runs with the write rule quiescent (`--encode-btsp-lr 0`).
+2. **the MEASUREMENT was PLASTIC** — restoring the write lr right after encode left BTSP learning *during* the
+   `fire_under_tag` read, so `core_sizes` varied with the WRITE lr (`[2,1,2]` → `[22,120,120]` → `[56,117,114]`) even
+   though cores are defined pre-write. The lr is now restored only immediately before the write; cores are confirmed
+   **invariant to write lr**. *A measurement must never be plastic.*
+3. **config aligned to the calibration** — the write probe defaulted to `--commit-top-k 15` while the calibration used
+   ~85; matching them reproduces the calibrated cores.
+
+**Result (seed 42, calibrated constants: R=0.15, gc_read=0.5, pyramidal, core_thr_frac 0.225 ⇒ 9 spikes, k=85,
+cycles 10, settle 200, encode lr 0):**
+| lr | `dw` | core sizes | **own/other** | permuted-core | random-CA1 | per-slot weight |
+|---|---|---|---|---|---|---|
+| 0.01 | 1017 | `[9, 20, 22]` | **`[0.895, 0.942, 1.005]`** | `[1.00, 1.02, 1.04]` | `[1.04, 1.02, 0.94]` | `[336.8, 337.9, 332.1]` |
+| 0.1 | 1695 | `[9, 20, 22]` | **`[0.915, 0.998, 1.008]`** | `[0.94, 1.05, 1.07]` | `[1.02, 1.03, 0.95]` | `[546.6, 573.3, 556.2]` |
+Cores match the calibrated reference; `v_apical` physiological; **per-slot weights balanced within 2%** (vs the arc
+artifact's `[24, 80, 24]` — the winner-slot bias is GONE); controls collapse to ~1.0. **own/other is FLAT, 0/3 facts.**
+
+**This is an honest null on a valid substrate** — categorically different from the arc's artifact-driven null, because
+every confound that produced the earlier numbers has been removed and verified absent.
+
+**Leading hypothesis for the null (untested): SOFT-BOUND SATURATION compresses the rank-1 write.** BTSP is
+`dw[k→j] = η·Ẽ[k]·IS[j]·(w_max − w)`, a rank-1 outer product of a per-PREsynaptic eligibility and a per-POSTsynaptic
+instructive signal — which, with an exclusive IS, *should* write fact i's pattern into slot i alone. But over
+10 cycles × 30 steps the `(w_max − w)` soft bound drives every eligible synapse toward the same ceiling, erasing the
+graded pattern (per-slot means all ≈336 of w_max=2000). Note the suspicious discontinuity: lr 1e-3 → `dw ≈ −0.10`
+(no write at all, and NEGATIVE) while lr 1e-2 → `dw ≈ 945` — a 10× lr change giving a ~10⁴× `dw` change, which is not a
+smooth response and suggests a threshold/depression interaction that must itself be explained.
+**▶ NEXT: find the UNSATURATED graded regime** (sweep lr across the 1e-3…1e-2 gap and/or cut cycles, requiring
+`dw ≪ w_max` AND a non-degenerate write), explain the negative-`dw` low-lr branch, then re-measure own/other with the
+mass triad at 6 seeds. If the write remains flat in a genuinely graded, unsaturated regime on this substrate, THAT is
+the real boundary — and it will be the first one in this arc measured on physically valid dynamics.
