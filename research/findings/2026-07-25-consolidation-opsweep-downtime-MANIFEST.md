@@ -63,7 +63,26 @@ cd ~/Projects/sim && bash tools/pool_opsweep_collect.sh   # rsyncs all JSON loca
 - `tools/pool_opsweep_collect.sh` — rsync back + rank candidates.
 - This manifest.
 
-## NOT running on AWS (deliberate)
-The free mini-PC lane covers the frontier consolidation run; no AWS GPU spend is needed for it. AWS (`claude-ec2-driver`,
-us-east-1, keys `~/.ssh/aws-train/`) remains available if the owner wants an ADDITIONAL GPU-bound run (e.g. the sweep at
-larger N, or LM training) — that needs a separate scoping + launch.
+## THREE-LANE COMPUTE STATE (owner greenlit AWS + parallel 3090 use, 2026-07-25 ~07:30)
+The owner clarified: the 3090 IS usable now (the downtime-only constraint was about Claude's absence, not the box); use
+remaining Claude time + the 3090 in parallel; AWS is fine (free credits) — "best use for the credits." So THREE lanes run:
+
+1. **mini-PC pool (CPU/numpy, FREE) — the downtime frontier sweep.** As above: 2880 cells consolidation dendritic
+   operating-point sweep. LAUNCHED + verified (36 workers). Downtime backup / independent 6-seed confirmation.
+   Status: `bash tools/pool_opsweep_dispatch.sh --status` · Collect: `bash tools/pool_opsweep_collect.sh`.
+
+2. **3090 (GPU/CuPy) — the FAST preview of the SAME sweep, for a frontier read TODAY.** `SIM_BACKEND=cupy`, 480 configs @
+   seed 42, 5 concurrent → ~3h → `research/findings/raw/consol_opsweep_gpu/op*_seed42.json`. ~2 min/cell (dendritic
+   over-firing is launch-bound even on GPU). Gives the seed-42 answer (does ANY operating point separate?) while Claude is
+   up, so the frontier decision (found-a-selective-plateau vs build-the-line/bump-attractor NEXT-(b)) can be made today.
+   Analyze the same way as the pool collect. If seed-42 shows candidates, extend to 6 seeds on the GPU.
+
+3. **AWS g5.xlarge (GPU) — the 267M LM width-training resume (the FLOP-bound run; gap#1 fluency scaffold).** The mission's
+   spiking work is LAUNCH-bound (3090-better); the ANN LM is FLOP-bound (GPU-appropriate) → the best AWS use. Resumes
+   `bridges/lmtrain/run4_d2048` (267M, d_model=2048/L16) from the local checkpoint (step 151k, best_val_nll 3.985 →
+   val_ppl ~54, NOT converged — beats 83M run3's ~55 at matched tokens; capacity lever). Instance i-039987364d92e7792,
+   `deploy/aws/aws_train.sh` manages it. On-demand (not spot → not reclaimed), tmux, untended-capable for the 2.5-day
+   window. **⚠️ MUST-VERIFY: that training actually STARTS after the 12GB token + 3.2GB ckpt upload** (the AMI's pre-rsync
+   `cd sim` torch-verify fails harmlessly; watch for the tmux `train session LIVE` + a falling val_ppl in progress.jsonl).
+   Status: `bash deploy/aws/aws_train.sh status` · Collect: `bash deploy/aws/aws_train.sh collect` · **STOP (frees billing):
+   `bash deploy/aws/aws_train.sh stop`** (collects ckpt + terminates + verifies no leftover — DO on return if still live).
