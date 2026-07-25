@@ -553,3 +553,25 @@ configs:
 config-delta). The first two were each refuted by a direct test within one run of being proposed. The value of the
 "check the record for a known-good configuration" rule is precisely that it replaces mechanism-guessing with a
 **difference** that can be tested one variable at a time.
+
+### `enable_nmda` REFUTED too (1/16, unchanged) — 0-for-3 on mechanisms; switching from guessing to a REFERENCE test
+
+A1 at its own defaults **plus `--enable-global-nmda`** (single-variable change): `direct-binding sanity: 1/16 = 6.2%` —
+**identical to the baseline**, `xpool_w=0.000` in all arms, seed 42 NO. **The NMDA delta is not the cause.**
+
+**Three mechanisms proposed for the A1 harness failure, three refuted, each within one run of being proposed:**
+| # | hypothesis | refuted by |
+|---|---|---|
+| 1 | the rule can't bind a symmetric co-driven pairing (STDP, Δt≈0) | the 87.5% harness runs **Hebbian OFF** — i.e. STDP alone — so STDP demonstrably CAN |
+| 2 | under-training at the default 200ev | 800ev is **WORSE** (0/16 vs 1/16) |
+| 3 | `enable_nmda` default-False (the one config delta found) | **1/16, unchanged** |
+
+**Being 0-for-3 is the signal to stop proposing mechanisms.** Each hypothesis was cheap and honestly tested, but the
+pattern says the difference is not where I keep guessing. **Switched to the decisive REFERENCE test:** build the
+substrate with the reference runner's own `_build_bridge_with_phase1_recipe`, then run the **identical** training
+protocol and the **identical** `direct_binding_sanity`. Single variable = the substrate builder.
+- **If the reference PASSES (~87.5%)** ⇒ the delta lives in the A1 runner's `build_substrate` augmentations, and can be
+  bisected directly rather than guessed.
+- **If the reference ALSO FAILS** ⇒ a **shared-code regression since 2026-05-21**, which would be a far more important
+  finding than the A1 blocker itself — it would put every result depending on that Phase-1 recipe in question.
+Either outcome is decisive and neither requires another guess. Test in flight.
