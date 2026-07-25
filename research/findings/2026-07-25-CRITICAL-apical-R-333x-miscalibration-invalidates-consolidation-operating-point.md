@@ -384,3 +384,28 @@ SELECTIVE potentiation** (sweep `hebbian_learning_rate` against the decay/scalin
 untrained-control Δ — the control comparison is the whole test), then re-run direct-binding sanity, and only then the
 4-control A1 gate. Do NOT tune this against the 16-word sanity score directly; tune it against the trained-vs-control
 weight delta, which is cheap, immediate, and cannot be faked by chance.
+
+### ROOT CAUSE of the uniform Hebbian collapse: `hebbian_max_weight=1.0` vs design weights of 3.015 — the STDP `w_max` gotcha, recurring on the Hebbian rule
+
+`sim/config.py:535` sets **`hebbian_max_weight: float = 1.0`**, while the `language_input→pool` pathway is built at
+**mean weight 3.015**. CLAUDE.md already documents this exact failure mode for the *other* rule:
+> **STDP bounds gotcha:** `stdp_w_max=2.0` default. The rule is **soft-bound** so when `weight_mean > stdp_w_max`,
+> every "LTP" event is strongly negative and weights collapse to `w_max` within ms.
+
+**The same trap exists on the Hebbian rule and nothing warns about it.** With weights at 3.015 above a bound of 1.0,
+every Hebbian update is strongly negative — which is precisely the measured **uniform −2.31 collapse on the trained
+pathway AND the untrained control** (3.015 → 0.704). Enabling the correct rule made things *worse than doing nothing*,
+and did so in a way that looks like "Hebbian doesn't help here" rather than "the bound is misconfigured."
+
+Also noted for the fix: **`hebbian_rate_window` (default `False`)** is the rate-based co-activity-trace variant, whose
+own config comment states the alternative `hebbian_symmetric` rule "only potentiates on EXACT same-step co-spikes, which
+are rare" — i.e. the rate-window rule is the one designed for exactly the symmetric, co-driven pairing this teacher
+protocol produces. At the A1 defaults it is off.
+
+**Pattern (not an incident) — a `*_max_weight` / `*_w_max` bound BELOW the design weights silently inverts its own
+learning rule.** It has now bitten this project on STDP (documented), on BDSP (`bdsp_w_max` clamp applied even at
+`lr=0`, documented in CLAUDE.md), on BTSP (the saturation that suppressed the slot write, this session), and now on
+Hebbian. **Standing check: before enabling ANY plasticity rule, compare its bound against the actual pathway weight —
+`_mean_gate_weight(bridge, gate)` vs `cfg.<rule>_max_weight` — and verify the trained pathway moves DIFFERENTLY from an
+untrained control.** A rule whose bound sits below the weights does not merely fail to learn; it actively destroys the
+weights, uniformly, which reads as a substrate limitation.
