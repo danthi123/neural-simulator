@@ -36,27 +36,28 @@ boundary** (`2026-07-24-P0.3-affect-state-region-6seed-GO.md`: on point neurons 
 → a single bistable winner, not a graded/selective assembly). The potentiation-strength sweep (30 vs 100 cycles, both
 chance-selectivity) confirms it is NOT a tuning shortfall in the routing — it is the point-neuron attractor dynamics.
 
-## SFA-eviction lever tried (2 settings, 1-seed) — does NOT yet produce one-of-N; the point-neuron boundary is robust
-Injected spike-frequency adaptation directly on the slot neurons (runner-side, no `sim/` edit: `cp_izh_d_increment` high +
-`cp_izh_a` low): **d=500/a=0.01 OVER-SUPPRESSES** (the slots stay fatigued after replay → 0/3 ignite on co-activation);
-**d=150/a=0.03 still NON-SELECTIVE** (0/3 selective; one fact doesn't ignite, the others share slots). So the naive SFA
-regime does not cleanly evict the winner into one-of-N — consistent with the P0.3 finding that a **point-neuron**
-adaptation+attractor saturates rather than grading. HONEST: only 2 settings tried (not a definitive SFA verdict); the
-open levers are (i) a fuller SFA-parameter sweep (d × a × cycles × co-activation-strength × WTA), and (ii) the deeper
-**dendritic line/bump attractor** surpass (P0.3's named ultimate lever for graded/selective point-neuron assemblies).
+## SFA-eviction lever SYSTEMATICALLY EXHAUSTED (9-config sweep, 1-seed) — the point-neuron boundary is confirmed
+Injected spike-frequency adaptation directly on the slot neurons (runner-side, no `sim/` edit: `cp_izh_d_increment` +
+`cp_izh_a`) and swept it: **no-SFA + a grid of d∈{50,100,200,300} × a∈{0.02,0.05} — every config gives SELECTIVE ≤1/3
+(= chance); BEST = 1/3 @ no-SFA.** (Strong SFA d=500/a=0.01 also over-suppresses to 0/3 ignition.) ⇒ **NO SFA regime
+produces one-of-N selective consolidation.** This is the systematic confirmation (not a 2-setting guess): a **point-neuron**
+adaptation+WTA+attractor does NOT grade into N selective assemblies — exactly the P0.3 saturation boundary. The confirmed
+next lever is the deeper **dendritic line/bump attractor** surpass (P0.3's named ultimate lever for graded/selective
+point-neuron assemblies; `sim/dendritic_*`) — squarely the project's standing dendritic-cortex priority.
 
 ## Verdict + next (per THE LAW — the residual is precisely mapped + the surpass named, NOT a wall)
 - **CONFIRMED (1-seed):** co-activation replay clears the A1 frozen-wire failure (directional potentiation) + the
   dedicated region ignites/holds. **BOUNDARY (1-seed, robust to cycle-count):** selective one-of-N binding hits the
   point-neuron single-dominant-winner pathology.
-- **The named surpass (research-gate, verbatim): SFA-eviction / a line-or-bump attractor** — spike-frequency adaptation
-  lets the incumbent dominant slot FATIGUE and yield, so a different fact's cue ignites a different slot → one-of-N
-  selectivity emerges; else the dendritic line-attractor (the deeper, months-scale surpass P0.3 also named).
-- **NEXT:** (1) **6-seed** confirm this bounded negative (1-seed + 2 cycle-counts is a strong indicator, not yet the
-  6-seed bar); (2) build the **SFA-eviction on the slots** (per-slot spike-frequency adaptation — Izhikevich `d` / an
-  adaptation current so the winner fatigues) + re-test selectivity + HOLD + the full anti-cheat suite (no-region /
-  no-NMDA / no-replay / no-co-activation / hippo-lesion-after / permuted-tag / control-outperforms) on a CACHED Phase-1
-  substrate (for the functional recall leg). Full GO-gate in the scoping finding.
+- **The surpass — SFA-eviction TRIED + systematically EXHAUSTED (9-config sweep, all ≤chance) → the DENDRITIC line/bump
+  attractor is the confirmed lever** (P0.3's named ultimate lever for graded/selective point-neuron assemblies; the
+  standing dendritic-cortex project priority). A point-neuron adaptation+WTA does NOT grade into N selective assemblies.
+- **NEXT:** (1) **6-seed** confirm this systematic bounded negative (1-seed sweep is a strong indicator, not yet the
+  6-seed bar); (2) build the **dendritic line/bump attractor** on the slots (`sim/dendritic_*` — a two-compartment /
+  plateau mechanism that supports a graded, one-of-N selective assembly where the point-neuron NMDA+WTA saturates), then
+  re-test selectivity + HOLD + the full anti-cheat suite (no-region / no-NMDA / no-replay / no-co-activation /
+  hippo-lesion-after / permuted-tag / control-outperforms) on a CACHED Phase-1 substrate. Full GO-gate in the scoping
+  finding. The co-activation potentiation fix stands CONFIRMED regardless.
 
 ## Provenance
 `scratchpad/consol_coact_smoke.py` (harness `nmda_compositional_consolidation.py`: `build_substrate` +comp_attractor

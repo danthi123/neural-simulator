@@ -47,19 +47,15 @@ ARGS = dict(ca1_concept_density=0.25, ca1_concept_weight=0.0, nmda_self_weight=1
             comp_attractor_slots=len(CONSOLIDATED_FACTS), comp_attractor_n_per=120, comp_self_weight=12.0, comp_wta_weight=5.0)
 
 
-SFA_ON = True; SFA_D = 150.0; SFA_A = 0.03   # SFA-eviction: strong slow adaptation on the slots -> the dominant winner fatigues + yields
-
-
-def one(coactivate, seed=42, cycles=100, n_events=40):
+def one(coactivate, seed=42, cycles=100, n_events=40, sfa_d=None, sfa_a=None):
     t0 = time.time()
     b = build_substrate(seed, SimpleNamespace(**ARGS))
-    if SFA_ON:   # inject strong slow spike-frequency adaptation on the comp_attr slots (no sim/ edit)
+    if sfa_d is not None:   # inject spike-frequency adaptation on the comp_attr slots (no sim/ edit)
         cp, _ = get_backend()
         for s in range(len(CONSOLIDATED_FACTS)):
             idx = cp.asarray(list(b.region_manager.indices(f"comp_attr_{s}")), dtype=cp.int64)
-            b.cp_izh_d_increment[idx] = float(SFA_D)
-            b.cp_izh_a[idx] = float(SFA_A)
-    print(f"    [stage] built + SFA={SFA_ON}(d={SFA_D},a={SFA_A}) ({time.time()-t0:.0f}s)", flush=True)
+            b.cp_izh_d_increment[idx] = float(sfa_d)
+            b.cp_izh_a[idx] = float(sfa_a)
     # SKIP train_phase1 for the potentiation MECHANISM check: co-activation drives the concept pools DIRECTLY by index
     # (they fire regardless of word->pool training), and encode uses teacher-drive. Phase-1 is only needed for the
     # FUNCTIONAL recall test (use a cached substrate there, per the research).
@@ -80,11 +76,16 @@ def one(coactivate, seed=42, cycles=100, n_events=40):
     return sel, ign, w_ca1_slot_1 - w_ca1_slot_0
 
 
-print("Consolidation FUNCTIONAL smoke (seed 42): after CO-ACTIVATION replay, does each fact's tag IGNITE its dedicated "
-      "attractor slot SELECTIVELY (fact i -> slot i)? vs no-co-activation control (should not consolidate).", flush=True)
-selON, ignON, dON = one(True)
-selOFF, ignOFF, dOFF = one(False)
-print(f"\n  SELECTIVE ignition: coactivate-ON {selON}/{len(CONSOLIDATED_FACTS)}  vs  OFF {selOFF}/{len(CONSOLIDATED_FACTS)}", flush=True)
-go = selON >= 2 and selOFF <= 1
-print(f"  -> {'FUNCTIONAL GO (co-activation consolidates selective slot ignition; control does not)' if go else 'partial -> tune (cycles/drive/WTA/slot-strength)'}", flush=True)
-print("CONSOL-COACT-SMOKE DONE", flush=True)
+print("Consolidation SFA SWEEP (seed 42, co-activation ON): does ANY spike-frequency-adaptation regime on the slots "
+      "produce one-of-N SELECTIVE ignition (fact i -> slot i, >=2/3)? no-SFA + a grid of (d,a). Baseline OFF=chance 1/3.", flush=True)
+N = len(CONSOLIDATED_FACTS)
+configs = [(None, None)] + [(d, a) for d in (50.0, 100.0, 200.0, 300.0) for a in (0.02, 0.05)]
+best = (0, None)
+for (d, a) in configs:
+    sel, ign, dw = one(True, sfa_d=d, sfa_a=a)
+    tag = "no-SFA" if d is None else f"d={d:.0f},a={a:g}"
+    print(f"  [SFA {tag}] SELECTIVE {sel}/{N} ignition {ign}/{N}", flush=True)
+    if sel > best[0]:
+        best = (sel, tag)
+print(f"\n  BEST: SELECTIVE {best[0]}/{N} @ {best[1]}  ->  {'A REGIME GIVES ONE-OF-N (verify + 6-seed)' if best[0] >= 2 else 'NO SFA regime gives one-of-N -> point-neuron boundary robust -> dendritic surpass'}", flush=True)
+print("CONSOL-SFA-SWEEP DONE", flush=True)
