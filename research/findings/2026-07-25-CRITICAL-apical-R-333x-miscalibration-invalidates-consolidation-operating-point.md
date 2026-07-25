@@ -109,3 +109,34 @@ itself (byte-identical-when-off, 4 CI tests) and its localiser, and this correct
 (`comp_apical_R=0.15`, `comp_gc_read=0.5`, verified `v_apical` ∈ −90…+50 mV and CA1 sparse+specific before trusting any
 number). Prediction: on a sparse, near-disjoint, fact-specific code the `ca1→slot` write localizes without any dendritic
 gate. A1 may simply close. **Nothing from this arc should be cited until re-measured in a physically valid regime.**
+
+## Reconciliation of the probe-vs-standalone discrepancy, and the state of the re-tune
+
+The physiological probe run initially reported **0 CA1 spikes / `dw`=0**, contradicting a standalone measure of the same
+R/gc pair (13–30 active). **Cause found:** `_consol_twosided_generalize_probe.run_seed` DEFAULTS to
+`hippo_izh_type="IZH2007_STRIATAL_MSN"` — the sparse phenotype introduced EARLIER IN THIS ARC specifically to fight the
+(artifactual) dense code. MSN is down-state-stable with `vt=−25 mV`; at the pathological apical it was driven, but on a
+physically valid substrate it cannot be driven at all. **The phenotype was a compensation FOR the artifact.** With the
+default hippocampal pyramidal phenotype (`--hippo-izh-type ""`) CA1 fires again and the clamp stays exclusive
+(target −12.0 mV vs non-target −66.8 mV; `plateau_v_hold=−50` ⇒ non-target `IS` is exactly 0).
+
+**Confirmed on the valid substrate (seed 42/43):** codes are **near-disjoint** — cosine specificity `[73.8, 2.77, 2.79]`
+and cases of literally zero overlap — versus the artifact's uniform 1.35.
+
+**The re-tune is OPEN, and it is a genuine tuning problem, not a boundary.** Every constant in this arc was fitted to
+the artifact's ~100× inflated activity and must be re-derived:
+- **tag drive is SATURATED** — 3000 vs 6000 pA gives 101 vs 102 spikes (identical); CA1 drive is not the lever.
+- **`core_thr_frac`** (≥25% of a 40-step window = 10 spikes) was calibrated for the artifact; on real activity it yields
+  1–3-cell cores. Lowering it to 0.1 helps but interacts with the next item.
+- **`btsp_lr=3e-6`** was fitted to the artifact's firing; on real activity it gives `dw ≈ −0.002` (no write). Raising it
+  to 1e-2 produces a real write (`dw=987`) **but corrupts the ENCODE phase** — BTSP is active during
+  `encode_facts_with_reinstatement`, so a high lr alters the codes *before* they are measured (`core_sizes=[3,7,112]`).
+  ⇒ **the write-phase and encode-phase learning rates must be separated** in the re-tune.
+- own/other remains ~1.0 at every point tried so far, **with the permuted-core and random-CA1 controls also ~1.0** — i.e.
+  currently an honest null, not an artifact.
+
+**⇒ HONEST STATE: the boundary is VOID (established); whether the write localizes on a valid substrate is UNKNOWN and
+requires a structured re-derivation of the consolidation operating point** — physiological `apical_R`/`gc_read`, default
+pyramidal phenotype, an activity-matched `core_thr_frac`, separated encode/write learning rates, and only then the
+own/other measurement with the full mass triad at 6 seeds. Ad-hoc sweeping from the artifact's constants is not the way
+in; the operating point should be derived from the substrate's own measured activity statistics.
