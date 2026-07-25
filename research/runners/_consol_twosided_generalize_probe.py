@@ -187,7 +187,7 @@ def run_seed(seed, v_teach=-25.0, cycles=3, btsp_lr=0.000003, self_regen=0.15, t
              hippo_izh_type="IZH2007_STRIATAL_MSN", hippo_izh_regions="dg,ca3,ca1",
              elig_hard_thresh=0.4, elig_tau=30.0, btsp_wmax=2000.0,
              reset_elig=False, fixed_order=False, settle_steps=0, core_thr_frac=0.25, blocked=False, write_order=None, reset_neurons=False, freeze_hippo=False,
-             btsp_win_theta=0.0, btsp_win_hill_n=8.0, apical_R=None):
+             btsp_win_theta=0.0, btsp_win_hill_n=8.0, apical_R=None, gc_read=None):
     a = dict(BASE)
     a.update(comp_dendritic=True, comp_wta_weight=5.0, comp_k_thresh=2.0, comp_self_regen=float(self_regen),
              comp_kir_g=3.0, comp_v_hold=-50.0,
@@ -202,6 +202,12 @@ def run_seed(seed, v_teach=-25.0, cycles=3, btsp_lr=0.000003, self_regen=0.15, t
         # instructive signal is only 3.5:1 selective instead of exclusive. Lowering R is the direct test of whether an
         # EXCLUSIVE instructive signal is reachable at a physiological operating point.
         a.update(comp_apical_R=float(apical_R))
+    if gc_read is not None:
+        # 2026-07-25: apical->soma READ conductance. At the shipped gc_read=5.0 the apical DOMINATES every soma; combined
+        # with the miscalibrated R=50 that is what produced the 93%-active "dense CA1 code" the whole arc mis-diagnosed as
+        # a boundary. At a physiological R, gc_read=5.0 instead SILENCES CA1 (apical sits below rest and clamps the soma).
+        # gc_read must be retuned WITH R: (R=0.15, gc_read=0.5) restores a sparse, near-disjoint, fact-specific CA1 code.
+        a.update(comp_gc_read=float(gc_read))
     if elig_tau is not None:
         a.update(comp_btsp_elig_tau=float(elig_tau))
     if hippo_izh_type:
@@ -488,6 +494,7 @@ def main():
     ap.add_argument("--btsp-win-theta", type=float, default=0.0,
                     help="M1': ABSOLUTE windowed-spike-count threshold for the dendritic sustained-count write gate "
                          "(0.0 = OFF = byte-identical). Counts run ~0-40 over a 30-step burst; try 5/8/10/12/15.")
+    ap.add_argument("--comp-gc-read", type=float, default=None, help="apical->soma read conductance; must be retuned WITH --comp-apical-R (physiological pair: R=0.15 gc_read=0.5)")
     ap.add_argument("--comp-apical-R", type=float, default=None,
                     help="override comp_apical_R (default 50.0): the apical fixed point is ~Er + R*I_coincidence")
     ap.add_argument("--btsp-win-hill-n", type=float, default=8.0, help="M1': Hill cooperativity of the count gate (CaMKII ~8)")
@@ -505,7 +512,7 @@ def main():
                  write_order=[int(x) for x in args.write_order.split(',')] if args.write_order else None,
                  reset_neurons=args.reset_neurons, freeze_hippo=args.freeze_hippo,
                  btsp_win_theta=args.btsp_win_theta, btsp_win_hill_n=args.btsp_win_hill_n,
-                 apical_R=args.comp_apical_R)
+                 apical_R=args.comp_apical_R, gc_read=args.comp_gc_read)
     _tg = (args.tag or "") + (f"_wt{args.btsp_win_theta:g}" if args.btsp_win_theta > 0 else "") + \
           (f"_reset" if args.reset_elig else "") + (f"_fixed" if args.fixed_order else "") + \
           (f"_blocked" if args.blocked else "") + \
