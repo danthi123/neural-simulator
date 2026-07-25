@@ -1,0 +1,18 @@
+{
+  "config_index": 358,
+  "seed": 42,
+  "op": {
+    "self_regen": 0.15,
+    "k_thresh": 4.0,
+    "wta": 40.0,
+    "kir_g": 5.0,
+    "slot_drive": 700.0
+  },
+  "backend": "cupy",
+  "replay_cycles": 40,
+  "n_facts": 3,
+  "error": "TypeError: _encode_facts() got an unexpected keyword argument 'commit_top_k'",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/dant123/Projects/sim/research/runners/_consol_dendritic_opsweep.py\", line 203, in main\n    rec[\"dendritic\"] = run_arm(args.seed, op, dendritic=True)\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/dant123/Projects/sim/research/runners/_consol_dendritic_opsweep.py\", line 148, in run_arm\n    tags, _ = encode_facts_with_reinstatement(b, CONSOLIDATED_FACTS)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/dant123/Projects/sim/research/runners/nmda_compositional_consolidation.py\", line 441, in encode_facts_with_reinstatement\n    tags = _encode_facts(bridge, facts, dims, encoding_steps=200, commit_top_k=commit_top_k)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: _encode_facts() got an unexpected keyword argument 'commit_top_k'\n",
+  "VERDICT": {},
+  "elapsed_s": 9.4
+}

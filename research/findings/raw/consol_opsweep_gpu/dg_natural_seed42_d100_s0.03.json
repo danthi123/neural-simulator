@@ -1,0 +1,45 @@
+{
+  "seed": 42,
+  "li_drive": 100.0,
+  "methods": {
+    "flood": {
+      "dg_active": [
+        146,
+        158,
+        140
+      ],
+      "dg_active_frac": [
+        0.73,
+        0.79,
+        0.7
+      ],
+      "dg_jaccard": 0.606,
+      "ca1_active_frac": [
+        0.742,
+        0.733,
+        0.783
+      ],
+      "ca1_jaccard": 0.609
+    },
+    "natural": {
+      "dg_active": [
+        145,
+        133,
+        142
+      ],
+      "dg_active_frac": [
+        0.725,
+        0.665,
+        0.71
+      ],
+      "dg_jaccard": 0.558,
+      "ca1_active_frac": [
+        0.742,
+        0.742,
+        0.642
+      ],
+      "ca1_jaccard": 0.527
+    }
+  },
+  "n_dg": 200
+}

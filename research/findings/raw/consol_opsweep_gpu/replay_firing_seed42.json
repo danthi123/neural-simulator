@@ -1,0 +1,29 @@
+{
+  "seed": 42,
+  "dcore_sizes": {
+    "0": 22,
+    "1": 13,
+    "2": 23
+  },
+  "replay_fire_own_over_other": [
+    0.537,
+    1.034,
+    2.161
+  ],
+  "fire_under_tag_own_over_other": [
+    3.564,
+    3.252,
+    4.222
+  ],
+  "replay_active_frac": [
+    0.625,
+    0.6,
+    0.542
+  ],
+  "cfg": {
+    "no_pools": true,
+    "no_attractor": true,
+    "tag_drive": 1500.0,
+    "burst": 30
+  }
+}

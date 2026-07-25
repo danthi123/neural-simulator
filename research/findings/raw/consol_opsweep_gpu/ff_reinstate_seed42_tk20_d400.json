@@ -1,0 +1,35 @@
+{
+  "seed": 42,
+  "commit_top_k": 20,
+  "ca3_drive": 400.0,
+  "methods": {
+    "flood": {
+      "ca1_active": [
+        77,
+        92,
+        88
+      ],
+      "ca1_active_frac": [
+        0.642,
+        0.767,
+        0.733
+      ],
+      "ca1_mean_jaccard": 0.577
+    },
+    "ff": {
+      "ca1_active": [
+        88,
+        85,
+        85
+      ],
+      "ca1_active_frac": [
+        0.733,
+        0.708,
+        0.708
+      ],
+      "ca1_mean_jaccard": 0.608
+    }
+  },
+  "n_ca1": 120,
+  "n_ca3": 100
+}

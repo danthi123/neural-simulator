@@ -1,0 +1,143 @@
+{
+  "seed": 42,
+  "thr_hash": "ee7fcf106bea",
+  "dw": 0.31768,
+  "by_thresh": {
+    "0.0": {
+      "engram_sizes": {
+        "0": 91,
+        "1": 77,
+        "2": 84
+      },
+      "mean_jaccard": 0.5843333333333334,
+      "jaccard": [
+        [
+          1.0,
+          0.585,
+          0.62
+        ],
+        [
+          0.585,
+          1.0,
+          0.548
+        ],
+        [
+          0.62,
+          0.548,
+          1.0
+        ]
+      ],
+      "distinctive_sizes": {
+        "0": 9,
+        "1": 5,
+        "2": 7
+      },
+      "distinctive_own_over_other": [
+        1.0811775351603692,
+        1.0019573609643484,
+        0.9160167350751185
+      ],
+      "own_is_max": [
+        true,
+        false,
+        false
+      ]
+    },
+    "0.25": {
+      "engram_sizes": {
+        "0": 20,
+        "1": 26,
+        "2": 27
+      },
+      "mean_jaccard": 0.07433333333333333,
+      "jaccard": [
+        [
+          1.0,
+          0.095,
+          0.068
+        ],
+        [
+          0.095,
+          1.0,
+          0.06
+        ],
+        [
+          0.068,
+          0.06,
+          1.0
+        ]
+      ],
+      "distinctive_sizes": {
+        "0": 13,
+        "1": 19,
+        "2": 21
+      },
+      "distinctive_own_over_other": [
+        1.098471976370137,
+        1.0449627044404541,
+        0.9431287963871992
+      ],
+      "own_is_max": [
+        true,
+        true,
+        false
+      ]
+    },
+    "0.5": {
+      "engram_sizes": {
+        "0": 0,
+        "1": 0,
+        "2": 0
+      },
+      "mean_jaccard": 0.0,
+      "jaccard": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "distinctive_sizes": {
+        "0": 0,
+        "1": 0,
+        "2": 0
+      },
+      "distinctive_own_over_other": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "own_is_max": [
+        false,
+        false,
+        false
+      ]
+    }
+  },
+  "rate_weighted": {
+    "own_over_other": [
+      1.0430748446991658,
+      1.027649447065871,
+      0.9100608543835217
+    ],
+    "own_is_max": [
+      true,
+      false,
+      false
+    ]
+  },
+  "ca1_ffi_inh": 0.0,
+  "tag_drive": 1500.0,
+  "commit_top_k": null,
+  "btsp_hetero_dep": 0.3
+}

@@ -1,0 +1,151 @@
+{
+  "seed": 42,
+  "thr_hash": "ee7fcf106bea",
+  "dw": 120.0562,
+  "v_teach": -25.0,
+  "self_regen": 0.15,
+  "elig_hard_thresh": 0.6,
+  "elig_gate": {
+    "survivor_syn": 3860648,
+    "total_syn": 5465567,
+    "survivor_frac": 0.7064,
+    "thresh": 0.6
+  },
+  "conn_hash": "e879eca46f37",
+  "by_thresh": {
+    "0.0": {
+      "engram_sizes": {
+        "0": 97,
+        "1": 114,
+        "2": 118
+      },
+      "mean_jaccard": 0.8377118644067796,
+      "distinctive_sizes": {
+        "0": 0,
+        "1": 0,
+        "2": 2
+      },
+      "distinctive_own_over_other": [
+        0.0,
+        0.0,
+        0.4444867300531144
+      ],
+      "own_is_max": [
+        false,
+        false,
+        false
+      ]
+    },
+    "0.25": {
+      "engram_sizes": {
+        "0": 1,
+        "1": 7,
+        "2": 25
+      },
+      "mean_jaccard": 0.10857142857142858,
+      "distinctive_sizes": {
+        "0": 0,
+        "1": 3,
+        "2": 21
+      },
+      "distinctive_own_over_other": [
+        0.0,
+        3.455198536457369,
+        0.4450615047499477
+      ],
+      "own_is_max": [
+        false,
+        true,
+        false
+      ]
+    },
+    "0.5": {
+      "engram_sizes": {
+        "0": 0,
+        "1": 0,
+        "2": 0
+      },
+      "mean_jaccard": 0.0,
+      "distinctive_sizes": {
+        "0": 0,
+        "1": 0,
+        "2": 0
+      },
+      "distinctive_own_over_other": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "own_is_max": [
+        false,
+        false,
+        false
+      ]
+    }
+  },
+  "rate_weighted": {
+    "own_over_other": [
+      0.44869367928569676,
+      3.3881096565372615,
+      0.46391074740989974
+    ],
+    "own_is_max": [
+      false,
+      true,
+      false
+    ]
+  },
+  "core_gated_recall": {
+    "own_over_other": [
+      0.3265463329023243,
+      3.686170774073889,
+      0.4664502588529882
+    ],
+    "own_is_max": [
+      false,
+      true,
+      false
+    ],
+    "core_sizes": [
+      1,
+      7,
+      25
+    ]
+  },
+  "code_overlap_ceiling": {
+    "own_over_other": [
+      0.6499890278692122,
+      1.3663606911447084,
+      2.0299316217262287
+    ],
+    "mean": 1.3487604469133831
+  },
+  "sparse_ceiling": {
+    "0.25": {
+      "own_over_other": [
+        0.8125,
+        2.4781746031746033,
+        7.871698113207547
+      ],
+      "mean": 3.7207909054607167,
+      "n_active": [
+        1,
+        7,
+        25
+      ]
+    },
+    "0.5": {
+      "own_over_other": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mean": 0.0,
+      "n_active": [
+        0,
+        0,
+        0
+      ]
+    }
+  }
+}

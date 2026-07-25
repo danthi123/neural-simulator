@@ -1,0 +1,90 @@
+{
+  "seed": 42,
+  "thr_hash": "ee7fcf106bea",
+  "dw": 7.49148,
+  "v_teach": -25.0,
+  "self_regen": 0.15,
+  "by_thresh": {
+    "0.0": {
+      "engram_sizes": {
+        "0": 73,
+        "1": 116,
+        "2": 113
+      },
+      "mean_jaccard": 0.7000056344376832,
+      "distinctive_sizes": {
+        "0": 0,
+        "1": 4,
+        "2": 1
+      },
+      "distinctive_own_over_other": [
+        0.0,
+        1.0,
+        1.0
+      ],
+      "own_is_max": [
+        false,
+        false,
+        false
+      ]
+    },
+    "0.25": {
+      "engram_sizes": {
+        "0": 0,
+        "1": 20,
+        "2": 22
+      },
+      "mean_jaccard": 0.04504504504504505,
+      "distinctive_sizes": {
+        "0": 0,
+        "1": 15,
+        "2": 17
+      },
+      "distinctive_own_over_other": [
+        0.0,
+        1.0,
+        1.0
+      ],
+      "own_is_max": [
+        false,
+        false,
+        false
+      ]
+    },
+    "0.5": {
+      "engram_sizes": {
+        "0": 0,
+        "1": 0,
+        "2": 0
+      },
+      "mean_jaccard": 0.0,
+      "distinctive_sizes": {
+        "0": 0,
+        "1": 0,
+        "2": 0
+      },
+      "distinctive_own_over_other": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "own_is_max": [
+        false,
+        false,
+        false
+      ]
+    }
+  },
+  "rate_weighted": {
+    "own_over_other": [
+      1.0064516129032257,
+      0.9637091037031823,
+      0.9888868837443271
+    ],
+    "own_is_max": [
+      false,
+      false,
+      false
+    ]
+  }
+}

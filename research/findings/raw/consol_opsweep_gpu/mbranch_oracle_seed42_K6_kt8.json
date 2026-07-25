@@ -1,0 +1,17 @@
+{
+  "seed": 42,
+  "K": 6,
+  "k_thresh": 8,
+  "oracle_own_over_other": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "random_own_over_other": [
+    0.0,
+    999.0,
+    0.0
+  ],
+  "oracle_mean": 0.0,
+  "random_mean": 0.0
+}

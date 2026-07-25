@@ -354,7 +354,19 @@ The generalization de-risk (`_consol_twosided_generalize_probe.py`, the 3 contro
 - **PERMUTED-CORE control = [0.46, 3.37, 0.48]** and **RANDOM-CA1 control = [0.48, 3.28, 0.46]** — both **FAIL to collapse to ~1.0**: reading the heavy slot with a random/permuted set of cells STILL gives ~3.4. ⇒ the "selectivity" is unearned (it is the heavy slot, full stop). The lead's own three numbers `[0.33, 3.69, 0.44]` are arithmetically forced by one slot being ~3.4× heavier.
 - **Multi-seed 42/43/44: all NO-GO** — exactly one slot wins each run, the winner is seed/schedule-dependent, n_pass=1/3 every seed and that "pass" IS the artifact.
 - **Root cause:** in the back-to-back write CA1 never returns to baseline between facts, so the eligibility driving the write is not fact-specific; one slot accumulates by schedule. When PROPER isolation removes the artifact (blocked + settle + reset → per-slot weights EQUALIZE `[5.9, 5.8, 5.8]`), the core-gated own/other is **`[1.05, 1.02, 1.01]` — FLAT, controls collapse — NO residual per-fact selectivity.**
-- **⇒ RE-CORRECTED FINAL VERDICT:** the "exhausted" verdict was right after all; my same-session "LIVE LEAD" correction was an overclaim I made by reading a non-flat number WITHOUT the permuted-core control that exposes the winner-slot bias (the silent-failure class: a metric reported without its control). **The write genuinely CANNOT localize on the point-neuron dense CA1 code** — even unsaturated + core-gated + isolated, it is flat. The surpass is UNCHANGED: **isolated reinstatement + a DENDRITIC per-branch sustained-firing-core write** (the D2 substrate arc), not any cheaper write/schedule/threshold tweak. Cheap space genuinely exhausted (~15 write variants + the two-sided read, all with the winner-slot control now in place). Lesson banked: report every own/other WITH its permuted-core control, or the winner-slot bias masquerades as selectivity.
+- **6-SEED CONFIRMATION (2026-07-25, seeds 100/101/102 added to 42/43/44 — the project's 6-seed standard, since the D2 build
+rests on this negative):** NO-GO at **6/6**, and the added seeds produced the SMOKING GUN the 3-seed run lacked —
+| seed | per-slot mean `ca1→slot` weight | core-gated own/other | permuted-core ctrl | random-CA1 ctrl | n_pass |
+|---|---|---|---|---|---|
+| 100 | `[22.5, **75.6**, 23.2]` | `[0.48, **3.20**, 0.49]` | 3.38 | 3.35 | 1/3 |
+| 101 | `[24.1, **81.0**, 24.1]` | `[0.44, **3.55**, 0.42]` | 3.77 | 3.40 | 1/3 |
+| 102 | `[22.3, 22.4, **74.8**]` | `[0.41, 0.45, **3.37**]` | 3.69 | 3.57 | 1/3 |
+**At seed 102 the HEAVY SLOT MOVES (slot 2, not slot 1) — and the "passing" fact MOVES WITH IT.** The apparent
+selectivity tracks the heavy SLOT, never the FACT; the heavy slot is always ~3.3-3.4× the others (≈ n_facts=3, i.e. it
+absorbed every fact's write). Both controls reproduce the "signal" at every seed (never collapse toward 1.0), so the
+metric is measuring slot mass, not fact-specificity. n_pass = 1/3 at all 6 seeds and that lone pass IS the artifact.
+
+**⇒ RE-CORRECTED FINAL VERDICT:** the "exhausted" verdict was right after all; my same-session "LIVE LEAD" correction was an overclaim I made by reading a non-flat number WITHOUT the permuted-core control that exposes the winner-slot bias (the silent-failure class: a metric reported without its control). **The write genuinely CANNOT localize on the point-neuron dense CA1 code** — even unsaturated + core-gated + isolated, it is flat. The surpass is UNCHANGED: **isolated reinstatement + a DENDRITIC per-branch sustained-firing-core write** (the D2 substrate arc), not any cheaper write/schedule/threshold tweak. Cheap space genuinely exhausted (~15 write variants + the two-sided read, all with the winner-slot control now in place). Lesson banked: report every own/other WITH its permuted-core control, or the winner-slot bias masquerades as selectivity.
 
 ## Recommended first de-risk (GPU-when-free / Tuesday)
 
