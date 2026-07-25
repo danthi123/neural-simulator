@@ -70,6 +70,7 @@ class NeuronType(Enum):
     ADEX_LTS_LOW_THRESHOLD = "ADEX_LTS_LOW_THRESHOLD"  # Low-threshold spiking interneuron
     ADEX_STRIATAL_MSN = "ADEX_STRIATAL_MSN"           # Down-state stable MSN
     ADEX_DOPAMINE = "ADEX_DOPAMINE"                   # Slow tonic + phasic burst
+    ADEX_ECKER_CA3_PC = "ADEX_ECKER_CA3_PC"           # Ecker 2022 eLife e71850 CA3 PC — NEG subthreshold adaptation (traveling replay bump)
 
 
 class DefaultHodgkinHuxleyParams:
@@ -754,6 +755,14 @@ class DefaultAdExParamsManager:
             # Drion 2011, Putzier 2009.
             "C": 150.0, "g_L": 5.0, "E_L": -55.0, "V_T": -45.0, "Delta_T": 2.0,
             "a": 1.0, "tau_w": 200.0, "b": 60.0, "V_r": -55.0, "V_peak": -40.0,
+        },
+        NeuronType.ADEX_ECKER_CA3_PC: {
+            # Ecker et al. 2022 (eLife e71850) CA3 pyramidal cell — the exact params that produce a TRAVELING
+            # replay bump on a banded recurrent matrix. NOTE a is NEGATIVE (amplifying subthreshold adaptation):
+            # negative-a + large spike-triggered b is the mechanistic crux that converts a stationary bump into a
+            # traveling one (vs Izhikevich SFA, which only suppressed). V_peak=-3.25 is the theta-state value.
+            "C": 180.13, "g_L": 4.31, "E_L": -75.19, "V_T": -24.42, "Delta_T": 4.23,
+            "a": -0.27, "tau_w": 84.93, "b": 206.84, "V_r": -29.74, "V_peak": -3.25,
         },
     }
     FALLBACK = PARAMS[NeuronType.ADEX_RS_CORTICAL_PYRAMIDAL].copy()
