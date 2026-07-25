@@ -222,6 +222,7 @@ def build_substrate(seed, args):
     #     Additive/default-off (comp_attractor_slots=0 -> byte-identical to the A1 build).
     from sim.regions import BrainRegion
     n_slots = int(getattr(args, "comp_attractor_slots", 0))
+    comp_dend = bool(getattr(args, "comp_dendritic", False))   # dendritic surpass (DESIGN 2026-07-25): route ca1->slot through the two-compartment WEIGHTED-coincidence bistable plateau (on-bridge reuse, no sim/ edit)
     n_comp = 0
     if n_slots > 0:
         n_per = int(getattr(args, "comp_attractor_n_per", 120))
@@ -237,11 +238,13 @@ def build_substrate(seed, args):
                 density=0.20, weight_mean=float(getattr(args, "comp_self_weight", 12.0)),
                 weight_jitter=0.05, plastic=False, exc_receptor="nmda_slow",
                 transmission_gate="nmda_attractor"))
-            # ca1 -> this slot (plastic, potentiates during co-activation replay)
+            # ca1 -> this slot (plastic, potentiates during co-activation replay). With comp_dendritic: route it through
+            # the per-slot two-compartment coincidence plateau (WEIGHTED = graded by the potentiated ca1->slot weights).
             pathways.append(RegionPathway(
                 from_region="ca1", to_region=f"comp_attr_{s}",
                 density=float(args.ca1_concept_density), weight_mean=float(args.ca1_concept_weight),
-                weight_jitter=0.3, plastic=True, plasticity_gate="ca1_to_comp_attr"))
+                weight_jitter=0.3, plastic=True, plasticity_gate="ca1_to_comp_attr",
+                coincidence_detector=comp_dend))
             n_comp += 1
         # shared inhibitory WTA pool: each slot drives it, it inhibits all slots
         regions = list(regions) + [BrainRegion(
@@ -284,6 +287,18 @@ def build_substrate(seed, args):
     cfg.enable_short_term_plasticity = False
     cfg.stdp_w_max = float(args.stdp_w_max)
     cfg.fast_spike_reset = True
+
+    if comp_dend:   # dendritic surpass: two-compartment bistable WEIGHTED-coincidence plateau on the slots (all default-off; byte-identical when comp_dendritic unset). gap5 GO_CFG + r-iii operating point.
+        cfg.enable_coincidence_detection = True
+        cfg.coincidence_weighted_drive = True             # grade the plateau by the potentiated ca1->slot weights
+        cfg.coincidence_k_threshold = float(getattr(args, "comp_k_thresh", 3.0))   # calibrated to the per-step weighted ca1->slot c_drive
+        cfg.enable_two_compartment_dap = True             # separate apical voltage cp_v_apical
+        cfg.coincidence_plateau_self_regen = float(getattr(args, "comp_self_regen", 0.15))   # v-gated SUSTAIN latch
+        cfg.coincidence_plateau_v_hold = float(getattr(args, "comp_v_hold", -50.0))
+        cfg.apical_kir_g = float(getattr(args, "comp_kir_g", 3.0))                 # KIR down-state (silent rest)
+        cfg.apical_g_couple = float(getattr(args, "comp_gc", 1.0))                 # apical<-soma back-coupling
+        cfg.apical_g_couple_to_soma = float(getattr(args, "comp_gc_read", 5.0))    # apical->soma read (asymmetric)
+        cfg.apical_R = float(getattr(args, "comp_apical_R", 50.0))                 # thin-high-R apical
 
     bridge = SimulationBridge(
         core_config=cfg, viz_config=VisualizationConfig(),
@@ -454,7 +469,10 @@ def consolidate(bridge, tags, cycles, seed, attractor_on=True):
 # and POTENTIATE (the A1 failure: CA3-only drive -> pools never fire -> wire frozen 0.01).
 # ---------------------------------------------------------------------------
 def coactivation_replay(bridge, facts, tags, cycles, seed, coactivate=True, attractor_on=True,
-                        tag_drive_pA=1500.0, pool_drive_pA=1400.0, burst_steps=30):
+                        tag_drive_pA=1500.0, pool_drive_pA=1400.0, slot_drive_pA=1400.0, burst_steps=30):
+    """Reinstate the FULL pattern per fact during replay: CA3 tag + the fact's concept pools + the fact's dedicated
+    attractor slot (fact i -> comp_attr_i). The hippocampal replay reinstating the cortical target is biology-faithful;
+    STDP then binds ca1->slot / pool->slot / ca1->concept from the pre(ca1)+post(pool,slot) coincidence."""
     from sim.backend import get_backend
     cp, _ = get_backend()
     set_sleep_gates(bridge)
@@ -463,25 +481,27 @@ def coactivation_replay(bridge, facts, tags, cycles, seed, coactivate=True, attr
     _try_tgate(bridge, "nmda_attractor", 1.0 if attractor_on else 0.0)
     rm = bridge.region_manager
     rng = np.random.default_rng(int(seed) + 777)
-    pool_idx = {}
-    for (noun, adj) in facts:
-        for nm, key in ((f"noun_pool_{noun}", noun), (f"adjective_pool_{adj}", adj)):
-            if key not in pool_idx:
-                try:
-                    pool_idx[key] = cp.asarray(list(rm.indices(nm)), dtype=cp.int64)
-                except Exception:
-                    pool_idx[key] = None
+    all_region_names = {r.name for r in bridge.core_config.brain_regions}
+
+    def _idx(nm):
+        return cp.asarray(list(rm.indices(nm)), dtype=cp.int64) if nm in all_region_names else None
+    # pool regions are UPPERCASE (noun_pool_APPLE); facts are lowercase (apple) -> .upper() the word.
+    pool_idx, slot_idx = {}, {}
+    for i, (noun, adj) in enumerate(facts):
+        pool_idx[i] = [a for a in (_idx(f"noun_pool_{noun.upper()}"), _idx(f"adjective_pool_{adj.upper()}")) if a is not None]
+        slot_idx[i] = _idx(f"comp_attr_{i}")      # fact i -> its dedicated attractor slot
     order = list(range(len(facts)))
     for _c in range(int(cycles)):
         rng.shuffle(order)                        # interleaved (CLS shuffled replay)
         for i in order:
-            noun, adj = facts[i]; tag = tags[i]
+            tag = tags[i]
             bridge.cp_external_input_current[:] = 0.0
             bridge.stimulate_tag(tag, drive_pA=float(tag_drive_pA), additive=False)   # CA3 engram cue
-            if coactivate:                        # reinstate the fact's cortical pools -> post-spikes for STDP
-                for key in (noun, adj):
-                    if pool_idx.get(key) is not None:
-                        bridge.cp_external_input_current[pool_idx[key]] += float(pool_drive_pA)
+            if coactivate:                        # reinstate the fact's cortical pools + target slot -> post-spikes
+                for a in pool_idx[i]:
+                    bridge.cp_external_input_current[a] += float(pool_drive_pA)
+                if slot_idx[i] is not None:
+                    bridge.cp_external_input_current[slot_idx[i]] += float(slot_drive_pA)
             for _ in range(int(burst_steps)):
                 bridge._run_one_simulation_step()
             try:
