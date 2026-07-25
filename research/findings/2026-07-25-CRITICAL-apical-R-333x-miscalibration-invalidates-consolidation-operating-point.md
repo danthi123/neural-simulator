@@ -360,3 +360,27 @@ with its learning rule effectively disabled. Test in flight: identical 200-event
 recorded command reads as "off" — the same class as the documented `.cmd.json` gotcha (an absent flag means *default*,
 not *disabled*). Any A1-family result recorded without `--enable-hebbian` may have been produced with the learning rule
 off; that should be checked before any of them is cited.
+
+### A1 upstream blocker — full localization (gates OPEN, neurons FIRING, rule cannot bind)
+
+Ruled out, each by direct measurement rather than inspection:
+| candidate | measurement | verdict |
+|---|---|---|
+| drive not reaching | one instrumented training event: `language_input` **881 spikes**, TARGET `noun_pool_APPLE` **4230 spikes** (200 cells), non-target pool **23** | **REFUTED** — the protocol produces exactly the right pattern (input active, target driven, non-target quiet) |
+| plasticity gate closed | `_plasticity_gate_to_synapses` → `language_input_to_noun_pool` gain **mean 1.0000 / max 1.0000** (492k synapses); `cross_pool_concept` and `ca1_to_concept_pool` likewise **1.0** | **REFUTED** — gates fully open |
+| `enable_hebbian=False` is the bug | 200 events, trained gate vs untrained control: `hebbian=True` → **−2.31 trained, −2.31 control**; `hebbian=False` → −0.00018 vs −0.00016 | **REFUTED as a fix** — Hebbian ON collapses everything UNIFORMLY (global decay/scaling dominates); OFF changes nothing. Neither yields *differential* change |
+
+**⇒ The rule cannot bind this protocol.** The teacher protocol CO-DRIVES input and target simultaneously, which is a
+**symmetric, order-free pairing** — and this project has already measured that **STDP is the wrong rule for exactly
+that**: *"656k events / 0 weight change at Δt≈0, because symmetric co-occurrence has no pre→post order"* (the on-bridge
+Hebbian co-occurrence finding, CLAUDE.md). STDP is the only rule active at the A1 runner's defaults. The rule that
+*should* apply — rate-Hebbian co-occurrence — is off by default, and when switched on at this operating point its
+decay/scaling term swamps potentiation (uniform −2.31 on trained and control alike).
+
+**⇒ A1's upstream blocker is a RULE-SELECTION + OPERATING-POINT problem, not a substrate limit** — structurally the
+same shape as the saturation defect that was suppressing the slot write (a learning rule at an operating point where its
+own decay/bound dominates the signal). **▶ NEXT: find the Hebbian operating point at which co-activation produces
+SELECTIVE potentiation** (sweep `hebbian_learning_rate` against the decay/scaling terms, requiring trained-gate Δ ≫
+untrained-control Δ — the control comparison is the whole test), then re-run direct-binding sanity, and only then the
+4-control A1 gate. Do NOT tune this against the 16-word sanity score directly; tune it against the trained-vs-control
+weight delta, which is cheap, immediate, and cannot be faked by chance.
