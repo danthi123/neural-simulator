@@ -297,6 +297,22 @@ any-spike/fire-count code the write reads STILL has ceiling ~1.45, and the write
 - **Making the sparse core operative requires EITHER (a) a genuinely sparse CODE (only the core fires) — FALSIFIED across ~10 point-neuron methods** (feedback-FFI, sparse-commit, gentle/strong drive, pool-on/off, natural perforant drive, MSN phenotype, and combinations; the fire-count overlap 1.45 is ROBUST to all) **— OR (b) a DENDRITIC nonlinear per-cell spike-count-threshold read** that gates both write and recall on SUSTAINED firing (a dendritic branch thresholding on its inputs' spike-count-over-window). (b) is exactly the deferred **dendritic-substrate** work (D2 Phase 0-2 built) — and NOTE this CORRECTS the research-gate scope's "not dendrites" claim: it is not dendrites-for-DECORRELATION (the code is already separable), it is **dendrites-for-the-nonlinear-READ** of an existing sparse core.
 - **⇒ VERDICT: the consolidation A1 selective-write boundary is a GENUINE, precisely-located point-neuron limit — the sparse fact-specific structure exists but a point-neuron graded read cannot make it operative; the surpass is a dendritic spike-count-threshold read (the substantial substrate arc the fork flagged), NOT a cheaper write/inhibition tweak.** This is one of the most thoroughly-characterized negatives in the project (~20 probes, ~10 falsified methods, the residual pinned to a single measurable quantity: fire-count overlap 1.45 vs binary-core ceiling 8.0). Per THE LAW the capability stays OPEN; the next METHOD is the dendritic nonlinear read. Infra shipped (all reuse-by-import / additive default-off, NO protected-behavior change): `hippo_izh_type` phenotype override, decoupled-plateau probe (+exclusive teaching, +code-overlap ceiling, +sparse ceiling, +commit_top_k, +tunable reinstate drive), CA1-sparsify sweep, per-region + DG-natural diagnostics, the research-gate scope.
 
+### Write-side hard-threshold eligibility de-risk → NO-GO (the eligibility is CROSS-FACT compressed; the read must be two-sided) — `640ae2d2`
+Built the cheapest rung of the dendritic surpass: a HARD k-WTA gate on the BTSP presynaptic eligibility (`sim/config.py`
+`btsp_elig_hard_thresh` + `sim/bridge.py:8072-8081`, ADDITIVE / default-off / **verified byte-identical when off** — the
+guard `if thresh>0` skips the block; the 2 pre-existing `test_onbridge_btsp` fails are unchanged, confirmed they don't
+touch the param). Sweep (seed 42, `commit_top_k=15`, MSN phenotype dg/ca3/ca1): own/other stays FLAT ~1.0 at every
+thresh (0.25→0.90). **NO-GO vs the ~2.5 analytic prediction — and the failure mechanism is newly pinned:** the BTSP
+eligibility is a τ=1000ms low-pass that INTEGRATES ACROSS THE WHOLE ~40-cycle MULTI-FACT write, so it is **cross-fact
+compressed** — 100% of synapses survive at thresh 0.25 (the eligibility min is ≥25% of its max), so a magnitude threshold
+cannot isolate a per-FACT core; and when it does gate hard (0.8-0.9), it keeps the network's SHARED strongest-firing
+cells (not each fact's DISTINCT core) and dw collapses without adding fact-specificity. **⇒ the surpass requires a
+PER-FACT-WINDOWED spike-count read (reset between facts, not a cross-fact-integrated eligibility), applied TWO-SIDED
+(write eligibility AND recall `ca1→slot` activation).** The recall side is naturally per-fact (each cue is one fact); the
+write side needs per-fact windowing. This is the full dendritic spike-count-threshold READ — the substantial D2 substrate
+arc, now scoped to its precise mechanism. The cheap space (write-side-only, magnitude-threshold) is DEFINITIVELY
+exhausted (~11 methods across ~20 probes + this de-risk).
+
 ## Recommended first de-risk (GPU-when-free / Tuesday)
 
 ## Recommended first de-risk (GPU-when-free / Tuesday)
