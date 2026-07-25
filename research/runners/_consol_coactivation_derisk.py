@@ -47,10 +47,19 @@ ARGS = dict(ca1_concept_density=0.25, ca1_concept_weight=0.0, nmda_self_weight=1
             comp_attractor_slots=len(CONSOLIDATED_FACTS), comp_attractor_n_per=120, comp_self_weight=12.0, comp_wta_weight=5.0)
 
 
+SFA_ON = True; SFA_D = 150.0; SFA_A = 0.03   # SFA-eviction: strong slow adaptation on the slots -> the dominant winner fatigues + yields
+
+
 def one(coactivate, seed=42, cycles=100, n_events=40):
     t0 = time.time()
     b = build_substrate(seed, SimpleNamespace(**ARGS))
-    print(f"    [stage] built ({time.time()-t0:.0f}s)", flush=True)
+    if SFA_ON:   # inject strong slow spike-frequency adaptation on the comp_attr slots (no sim/ edit)
+        cp, _ = get_backend()
+        for s in range(len(CONSOLIDATED_FACTS)):
+            idx = cp.asarray(list(b.region_manager.indices(f"comp_attr_{s}")), dtype=cp.int64)
+            b.cp_izh_d_increment[idx] = float(SFA_D)
+            b.cp_izh_a[idx] = float(SFA_A)
+    print(f"    [stage] built + SFA={SFA_ON}(d={SFA_D},a={SFA_A}) ({time.time()-t0:.0f}s)", flush=True)
     # SKIP train_phase1 for the potentiation MECHANISM check: co-activation drives the concept pools DIRECTLY by index
     # (they fire regardless of word->pool training), and encode uses teacher-drive. Phase-1 is only needed for the
     # FUNCTIONAL recall test (use a cached substrate there, per the research).

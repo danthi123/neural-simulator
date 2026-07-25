@@ -36,6 +36,15 @@ boundary** (`2026-07-24-P0.3-affect-state-region-6seed-GO.md`: on point neurons 
 → a single bistable winner, not a graded/selective assembly). The potentiation-strength sweep (30 vs 100 cycles, both
 chance-selectivity) confirms it is NOT a tuning shortfall in the routing — it is the point-neuron attractor dynamics.
 
+## SFA-eviction lever tried (2 settings, 1-seed) — does NOT yet produce one-of-N; the point-neuron boundary is robust
+Injected spike-frequency adaptation directly on the slot neurons (runner-side, no `sim/` edit: `cp_izh_d_increment` high +
+`cp_izh_a` low): **d=500/a=0.01 OVER-SUPPRESSES** (the slots stay fatigued after replay → 0/3 ignite on co-activation);
+**d=150/a=0.03 still NON-SELECTIVE** (0/3 selective; one fact doesn't ignite, the others share slots). So the naive SFA
+regime does not cleanly evict the winner into one-of-N — consistent with the P0.3 finding that a **point-neuron**
+adaptation+attractor saturates rather than grading. HONEST: only 2 settings tried (not a definitive SFA verdict); the
+open levers are (i) a fuller SFA-parameter sweep (d × a × cycles × co-activation-strength × WTA), and (ii) the deeper
+**dendritic line/bump attractor** surpass (P0.3's named ultimate lever for graded/selective point-neuron assemblies).
+
 ## Verdict + next (per THE LAW — the residual is precisely mapped + the surpass named, NOT a wall)
 - **CONFIRMED (1-seed):** co-activation replay clears the A1 frozen-wire failure (directional potentiation) + the
   dedicated region ignites/holds. **BOUNDARY (1-seed, robust to cycle-count):** selective one-of-N binding hits the
