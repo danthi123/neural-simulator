@@ -228,6 +228,18 @@ developmentally-sparsified code) — all substantial, none a cheap knob. This is
 cheap-to-moderate search is comprehensively exhausted. Shipped reusable infra: `_consol_direct_weight_probe.py` (the write
 gate) · `_consol_multibranch_oracle.py` (the in-principle gate) · `btsp_elig_exponent` · `divnorm_regions` · `commit_top_k`.
 
+## ⚠️ Option-3 diagnostic OVERTURNS the "needs a different substrate" verdict — the fact-specific signal EXISTS (2026-07-25)
+`_consol_replay_firing_probe.py` measured the CA1 firing DURING the co-activation replay vs the fire-under-tag, over the
+distinctive cores (seed 42):
+- **fire-under-tag own/other = [4.67, 3.05, 5.79] (mean ~4.5)** — the clean fact-specific code the oracle assumed IS real;
+  point neurons DO produce a fact-specific CA1 code (this REFUTES the "can't sparsify to a fact-specific code" claim above).
+- **REPLAY firing own/other = [1.98, 0.51, 2.12] (mean ~1.54)** — the co-activation replay DILUTES the 4.5 signal to ~1.5.
+- The WRITE then flattens 1.54 → ~1.0 (STDP timing loses even the residual).
+⇒ **Two SEPARABLE, potentially-cheap losses, NOT a substrate wall:** (1) the replay dilutes the fire-under-tag signal
+(4.5→1.5) — a cleaner reinstatement should preserve it; (2) the write flattens the residual (1.5→1.0) — a RATE-based
+Hebbian write (vs spike-timing STDP) should preserve it. If a cleaner replay preserves ~4.5 AND a rate write preserves it,
+own/other → ~4.5 >> the 2.5 gate. **This is the live path; the FINAL VERDICT above is SUSPENDED pending these two tests.**
+
 ## Recommended first de-risk (GPU-when-free / Tuesday)
 
 ## Recommended first de-risk (GPU-when-free / Tuesday)
