@@ -302,3 +302,35 @@ stands as written for the arc's probe results, and should not be read as touchin
    the unsaturated regime — 6-seed, fully controlled. Open: give it a capability read-out (recall keyed on slots).
 2. **Concept-pool route (the original A1 gate):** unaffected by the miscalibration; its current end-to-end status is
    being re-measured from the runner's own defaults to establish ground truth before anything is wired.
+
+## A1 END-TO-END BASELINE: the capability test currently fails its OWN POSITIVE CONTROL — the blocker is UPSTREAM of consolidation
+
+Ran the untouched A1 capability test at its own defaults (`--seeds 42 --diagnostic`, 15.9 min) to establish ground truth
+before wiring anything:
+```
+direct-binding sanity: 1/16 = 6.2%
+[full        ] recalled 0/3  selective 1/3  lifted 0/3 | no-confab top=0.0010 confab=False | xpool_w=0.000
+[no_replay   ] recalled 0/3 ... xpool_w=0.000
+[nmda_lesion ] recalled 0/3 ... xpool_w=0.000
+[hippo_before] recalled 0/3 ... xpool_w=0.000
+--> SEED 42 NO (grounded 0/3 | a=True b=True c=True noconfab=True)
+```
+**The NO verdict is UNINFORMATIVE about the capability**, per the negative-verification rule (`verify-go`, rule 5 — *if
+the harness cannot demonstrate the effect where it MUST exist, the harness is what you measured*):
+- the **positive control fails**: direct-binding sanity **1/16 = 6.2%**;
+- **`xpool_w = 0.000` in EVERY arm including `full`** — the cortical `cross_pool_concept` store is never written at all,
+  so there is nothing for replay to consolidate and nothing for recall to read;
+- consequently all four anti-cheat controls "pass" (`a=b=c=noconfab=True`) **trivially** — every arm is zero, so the
+  controls discriminate nothing. A gate that passes because everything is zero is not a gate.
+
+**NOT a regression from this arc — verified.** `git diff <pre-arc>..HEAD -- research/runners/nmda_compositional_consolidation.py`
+shows **zero removed or changed lines** (every arc edit was purely additive/default-off), so the default code path is
+byte-unchanged. This is a **pre-existing** state of the A1 harness.
+
+**⇒ Reframing of the A1 work: the blocker is UPSTREAM of consolidation.** Phase-1 word→pool direct binding is not
+working (6.2%), so the compositional-consolidation question — which presupposes a bound noun/adjective representation to
+consolidate — **cannot yet be asked** on this harness. Improving the consolidation mechanism cannot move a test whose
+input is empty. **▶ NEXT for the concept-pool thread: restore the direct-binding sanity first** (diagnose Phase-1
+`train_word_to_pool` / the pool-drive operating point — note this harness has its own constants, and per the lesson
+above they should be checked in physical units before anything is concluded), and only then re-measure the four-control
+capability gate. The slot-route 6-seed GO above is unaffected and remains the arc's standing positive result.
