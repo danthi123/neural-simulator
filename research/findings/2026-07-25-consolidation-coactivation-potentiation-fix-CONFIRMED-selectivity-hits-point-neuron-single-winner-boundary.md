@@ -22,6 +22,13 @@ isn't needed for the mechanism check):
    co-activation vs 1/3 without = chance, at BOTH 30 and 100 cycles.** More potentiation does NOT buy selectivity — the WTA
    on point neurons collapses to one dominant winner regardless of the ca1→slot routing strength.
 
+## DECISIVE diagnostic — the failure is WTA-dominance, NOT engram overlap (⇒ SFA is the confirmed lever)
+Ruled out the upstream alternative (that the per-fact ca1 engrams overlap, so no routing could be selective): stimulating
+each fact's tag and reading the ca1 firing pattern gives **DISTINCT** engrams — pairwise Jaccard overlap **0.000 / 0.111 /
+0.083** (8/14/12 active ca1 neurons per tag, near-disjoint). So the ca1→slot routing HAS distinct inputs to route on; the
+selectivity failure is purely the attractor/WTA collapsing to a dominant winner. ⇒ **SFA-eviction is confirmed as the
+correct next lever** (not engram separation).
+
 ## The bounded negative — precisely the research-predicted risk
 This is exactly the outcome the scoping doc flagged as the live risk: *"a strong point-neuron NMDA attractor with lateral
 inhibition may latch to one dominant sub-assembly rather than N selective ones."* It is the same **P0.3 saturation
