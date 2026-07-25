@@ -136,21 +136,28 @@ class Gap4OnBridgeNet(OnBridgeBDSPNet):
         self.W_PI = self.W_PI + self.wpi_lr * self.lr * dWpi
 
     # ---- transport ceiling: sync Y := (pooled forward W)^T (the CHEAT; the no-transport guard MUST fail) ----
-    def _read_ff_logical(self, li):
+    def _read_ff_logical(self, li, _coo_cache=None):
         """Reconstruct the LOGICAL-unit (sizes[li] x sizes[li+1]) forward weight of pathway ff_{li} from cp_connections
-        (block-mean over the K-pools). Used ONLY by transport_ceiling to copy Y := W^T (the labeled cheat)."""
+        (block-mean over the K-pools). Used ONLY by transport_ceiling to copy Y := W^T (the labeled cheat).
+
+        VECTORIZED (2026-07-24 gap#4 surpass): the pre/post index ranges are CONTIGUOUS (arange from inject), so a
+        boolean mask on the COO + offset-subtracted fancy-index reconstructs the dense block WITHOUT the per-edge Python
+        loop (the old loop over ~all edges x per-example x per-Y was the transport_ceiling launch-cost). Byte-identical
+        output. `_coo_cache` = (row, col, data) host arrays transferred once by _sync_transport (avoids re-transfer)."""
         from sim.backend import to_host
-        coo = self.br._get_cached_coo()
-        row = np.asarray(to_host(coo.row)).astype(int); col = np.asarray(to_host(coo.col)).astype(int)
-        data = np.asarray(to_host(self.br.cp_connections.data)).astype(float)
+        if _coo_cache is not None:
+            row, col, data = _coo_cache
+        else:
+            coo = self.br._get_cached_coo()
+            row = np.asarray(to_host(coo.row)).astype(np.int64)
+            col = np.asarray(to_host(coo.col)).astype(np.int64)
+            data = np.asarray(to_host(self.br.cp_connections.data)).astype(np.float64)
         pre, post = self._ff_edges[li]
-        rpos = {int(v): i for i, v in enumerate(pre.tolist())}
-        cpos = {int(v): i for i, v in enumerate(post.tolist())}
+        r0, r1 = int(pre[0]), int(pre[-1]) + 1
+        c0, c1 = int(post[0]), int(post[-1]) + 1
+        mask = (row >= r0) & (row < r1) & (col >= c0) & (col < c1)
         M = np.zeros((len(pre), len(post)))
-        for r, c, w in zip(row, col, data):
-            i = rpos.get(int(r)); j = cpos.get(int(c))
-            if i is not None and j is not None:
-                M[i, j] = w
+        M[row[mask] - r0, col[mask] - c0] = data[mask]        # each (r,c) appears once (dense pathway)
         K = self.pool_k
         if K > 1:
             M = M.reshape(self.sizes[li], K, self.sizes[li + 1], K).mean(axis=(1, 3))
@@ -159,8 +166,14 @@ class Gap4OnBridgeNet(OnBridgeBDSPNet):
     def _sync_transport(self):
         # Y[k] descends from layer k+2 to k+1; the matching forward pathway is ff_{k+1} (layer k+1 -> k+2), logical
         # shape (sizes[k+1], sizes[k+2]) -> its transpose is (sizes[k+2], sizes[k+1]) == Y[k].shape. Copy it => transport.
+        # Transfer the COO to host ONCE (not once per Y matrix) -> the vectorized _read_ff_logical reconstructs each block.
+        from sim.backend import to_host
+        coo = self.br._get_cached_coo()
+        cache = (np.asarray(to_host(coo.row)).astype(np.int64),
+                 np.asarray(to_host(coo.col)).astype(np.int64),
+                 np.asarray(to_host(self.br.cp_connections.data)).astype(np.float64))
         for k in range(len(self.Y)):
-            self.Y[k] = self._read_ff_logical(k + 1).T.copy()
+            self.Y[k] = self._read_ff_logical(k + 1, _coo_cache=cache).T.copy()
 
     # ---- the gap#4 per-example online credit pass (reuses the parent helpers; NO parent _train_one call) ----
     def _train_one(self, feat_row, y, mode):
@@ -313,7 +326,7 @@ def _train_arm(net, Xtr, ytr, mode, epochs, batch, seed):
 
 
 def _build_net(feedback, n_in, k, args, seed):
-    return Gap4OnBridgeNet(
+    net = Gap4OnBridgeNet(
         n_in, args.hidden, k, seed=seed, feedback=feedback,
         n_hidden_layers=args.n_hidden_layers, pool_k=args.pool_k,
         settle_steps=args.settle_steps, credit_steps=args.credit_steps, lr=args.lr,
@@ -322,19 +335,30 @@ def _build_net(feedback, n_in, k, args, seed):
         graded_credit=args.graded_credit,
         wpi_plastic=args.wpi_plastic, wpi_init=args.wpi_init, wpi_lr=args.wpi_lr,
         kp_lr=args.kp_lr, kp_decay=args.kp_decay)
+    # WIDEN THE BDSP FF WEIGHT CLAMP (gap#4 surpass, 2026-07-24): the parent hardcodes cfg.bdsp_w_min/max = +-6; the
+    # kernel reads getattr(cfg, "bdsp_w_max", ...) DYNAMICALLY each step (bridge.py:8009) and net.cfg IS the bridge's
+    # core_config, so setting it here takes effect. gap#5 found the +-5/6 clamp caps even at lr=0 -> it may cap the
+    # learnable weights on a multi-way task. --bdsp-w-max defaults to 6.0 (== parent behavior; byte-identical when
+    # unspecified). Additive/runner-only, NO sim/ edit.
+    wmax = float(getattr(args, "bdsp_w_max", 6.0))
+    net.cfg.bdsp_w_max = wmax
+    net.cfg.bdsp_w_min = -wmax
+    return net
 
 
 def run_seed(seed, args):
     """The per-seed FULL run (arms + anti-cheats + GO components). NOTE: this is the CONTROLLER's GPU run; the skeleton
     ships it for launch-readiness but the DEFAULT entrypoint is the construct-smoke (main --construct-smoke)."""
     from sim.dendritic_mlp import DendriticMLP
+    from sim.backend import to_host          # DendriticMLP routes through the pluggable backend -> its logits are cupy on GPU
+    t_seed = time.time()
     tk = dict(n_super=args.n_super, n_members=args.n_members, held_per_super=args.held_per_super,
               n_prop=args.n_prop, member_id_dim=args.member_id_dim, n_obs=args.n_obs, noise=args.noise)
     (Xtr, ytr, _Ltr), (Xte, yte, _Lte), meta, idx = make_task_semantic_inheritance(seed, **tk)
     n_in = Xtr.shape[1]; k = int(meta["k_classes"]); inh = idx["inh_idx"]
     chance = float(max(np.mean(yte[inh] == c) for c in np.unique(yte[inh]))) if len(inh) else float("nan")
 
-    # ORACLE ceiling (fenced backprop) -- task validity.
+    # ORACLE ceiling (fenced backprop) -- task validity. Always the FULL train set (the 0.80 ceiling must be honest).
     onet = DendriticMLP([n_in, args.hidden, args.hidden, k], seed=seed)
     r = np.random.default_rng(seed + 777)
     for _ in range(args.oracle_epochs):
@@ -343,37 +367,84 @@ def run_seed(seed, args):
             b = p[i:i + args.oracle_batch]
             onet.train_step(Xtr[b], ytr[b], mode="oracle", lr=args.oracle_lr)
     _, olg = onet._forward(np.asarray(Xte[inh], float))
+    olg = np.asarray(to_host(olg))            # cupy -> host so the argmax/compare is a plain numpy op on GPU too
     oracle = float(np.mean(np.argmax(olg, 1) == yte[inh])) if len(inh) else float("nan")
+    print(f"[gap4-onbridge][seed {seed}] task n_in={n_in} k={k} n_train={len(ytr)} n_inh={len(inh)} chance={chance:.3f} "
+          f"| ORACLE {oracle:.3f} ({time.time()-t_seed:.0f}s)", flush=True)
+
+    # RUNTIME lever: subsample the TRAIN set the ON-BRIDGE spiking arms see (per-example spiking is the bottleneck;
+    # the reference on-bridge runner subsamples identically). 0 => FULL train. Oracle above always uses FULL.
+    Xtr_b, ytr_b = Xtr, ytr
+    if args.train_subsample and args.train_subsample > 0 and len(Xtr) > args.train_subsample:
+        srng = np.random.default_rng(seed * 13 + 1)
+        keep = srng.permutation(len(Xtr))[:args.train_subsample]
+        Xtr_b, ytr_b = Xtr[keep], ytr[keep]
+        print(f"[gap4-onbridge][seed {seed}] on-bridge arms train on subsample {len(ytr_b)}/{len(ytr)}", flush=True)
 
     arms = {}; nets = {}
     for arm in args.arms:
+        t_arm = time.time()
         net = _build_net(arm, n_in, k, args, seed)
-        _train_arm(net, Xtr, ytr, "bdsp", args.epochs, args.batch, seed)
+        w0 = net.ff_weight_norm()                        # FF |w| sum before training (learning diagnostic)
+        _train_arm(net, Xtr_b, ytr_b, "bdsp", args.epochs, args.batch, seed)
+        w1 = net.ff_weight_norm()
         arms[arm] = {"inherit_heldout": float(net.acc_on(Xte, yte, inh)),
                      "memctrl_heldout": float(net.acc_on(Xte, yte, idx["memctrl_idx"])),
+                     "train_acc": float(net.accuracy(Xtr_b, ytr_b)),
+                     "ff_weight_moved": float(abs(w1 - w0)),
                      "no_weight_transport": bool(net.no_weight_transport())}
         nets[arm] = net
+        print(f"[gap4-onbridge][seed {seed}]   arm {arm:<17} held-out {arms[arm]['inherit_heldout']:.3f} "
+              f"train {arms[arm]['train_acc']:.3f} memctrl {arms[arm]['memctrl_heldout']:.3f} "
+              f"ff-moved {arms[arm]['ff_weight_moved']:.2f} nwt {arms[arm]['no_weight_transport']} "
+              f"({time.time()-t_arm:.0f}s)", flush=True)
 
-    # anti-cheat arms on the base credit net (micro if present, else fixed_fa).
+    # anti-cheat arms on the base credit net (micro if present, else fixed_fa). SELECTIVE SCALE-UP lever
+    # (--core-arms-only): skip the 4 anti-cheat nets (lesion/shuf_tgt/shufE + micro-frozen) so ALL the compute goes to
+    # reservoir/fixed_fa/kp/micro at higher epochs/data -- put the power where the signal is; re-add anti-cheats on the
+    # winning config (per the power-limited-pass interpretation rule).
     base = "micro" if "micro" in args.arms else ("fixed_fa" if "fixed_fa" in args.arms else args.arms[0])
-    lesion = _build_net(base, n_in, k, args, seed); _train_arm(lesion, Xtr, ytr, "apical_lesion", args.epochs, args.batch, seed)
-    prng = np.random.default_rng(seed + 555); yperm = ytr[prng.permutation(len(ytr))]
-    shuftgt = _build_net(base, n_in, k, args, seed); _train_arm(shuftgt, Xtr, yperm, "bdsp", args.epochs, args.batch, seed)
-    shufE = _build_net(base, n_in, k, args, seed); _train_arm(shufE, Xtr, ytr, "shufE", args.epochs, args.batch, seed)
-
+    les_acc = shuf_acc = shufE_acc = float("nan")
     apical = {}
-    if "micro" in nets:
-        apical["micro_plastic"] = nets["micro"].apical_silent_stats(Xte, yte)
-        frozen = _build_net("micro", n_in, k, args, seed); frozen.wpi_plastic = False
-        _train_arm(frozen, Xtr, ytr, "bdsp", args.epochs, args.batch, seed)
-        apical["micro_frozen_wpi"] = frozen.apical_silent_stats(Xte, yte)
+    if not getattr(args, "core_arms_only", False):
+        lesion = _build_net(base, n_in, k, args, seed); _train_arm(lesion, Xtr_b, ytr_b, "apical_lesion", args.epochs, args.batch, seed)
+        les_acc = float(lesion.acc_on(Xte, yte, inh))
+        prng = np.random.default_rng(seed + 555); yperm = ytr_b[prng.permutation(len(ytr_b))]
+        shuftgt = _build_net(base, n_in, k, args, seed); _train_arm(shuftgt, Xtr_b, yperm, "bdsp", args.epochs, args.batch, seed)
+        shuf_acc = float(shuftgt.acc_on(Xte, yte, inh))
+        shufE = _build_net(base, n_in, k, args, seed); _train_arm(shufE, Xtr_b, ytr_b, "shufE", args.epochs, args.batch, seed)
+        shufE_acc = float(shufE.acc_on(Xte, yte, inh))
+        print(f"[gap4-onbridge][seed {seed}]   anti-cheats: lesion {les_acc:.3f} shuf_tgt {shuf_acc:.3f} "
+              f"shufE {shufE_acc:.3f}", flush=True)
+        if "micro" in nets:
+            apical["micro_plastic"] = nets["micro"].apical_silent_stats(Xte, yte)
+            frozen = _build_net("micro", n_in, k, args, seed); frozen.wpi_plastic = False
+            _train_arm(frozen, Xtr_b, ytr_b, "bdsp", args.epochs, args.batch, seed)
+            apical["micro_frozen_wpi"] = frozen.apical_silent_stats(Xte, yte)
+    elif "micro" in nets:
+        apical["micro_plastic"] = nets["micro"].apical_silent_stats(Xte, yte)   # cheap host read; keep even in core-only
+        print(f"[gap4-onbridge][seed {seed}]   (core-arms-only: anti-cheat nets skipped)", flush=True)
+
+    # ---- the LOAD-BEARING FA-wall precondition + the GO read (per seed) ----
+    res_acc = arms.get("reservoir", {}).get("inherit_heldout", float("nan"))
+    ff_acc = arms.get("fixed_fa", {}).get("inherit_heldout", float("nan"))
+    learned = [arms[a]["inherit_heldout"] for a in ("kp", "micro") if a in arms]
+    best_learned = max(learned) if learned else float("nan")
+    fa_wall = bool(ff_acc <= res_acc + 0.02)      # fixed_fa degraded to <= reservoir => a gap for learned to close
+    seed_go = bool(fa_wall and best_learned > ff_acc + 0.05)
+    print(f"[gap4-onbridge][seed {seed}] FA-WALL: fixed_fa {ff_acc:.3f} vs reservoir {res_acc:.3f} "
+          f"(fa_wall={fa_wall}) | best_learned(kp,micro) {best_learned:.3f} vs fixed_fa {ff_acc:.3f} "
+          f"-> seed_go={seed_go} ({time.time()-t_seed:.0f}s total)", flush=True)
 
     return {"seed": seed, "meta": meta, "chance": chance, "oracle_heldout": oracle, "n_in": n_in, "k": k,
             "arms": arms,
-            "lesion": {"inherit_heldout": float(lesion.acc_on(Xte, yte, inh))},
-            "shuffled_target": {"inherit_heldout": float(shuftgt.acc_on(Xte, yte, inh))},
-            "shufE": {"inherit_heldout": float(shufE.acc_on(Xte, yte, inh))},
+            "lesion": {"inherit_heldout": les_acc},
+            "shuffled_target": {"inherit_heldout": shuf_acc},
+            "shufE": {"inherit_heldout": shufE_acc},
             "apical": apical,
+            "fa_wall": {"reservoir": res_acc, "fixed_fa": ff_acc, "best_learned": best_learned,
+                        "fa_wall_holds": fa_wall, "seed_go": seed_go},
+            "elapsed_seconds": round(time.time() - t_seed, 1),
             "guards": {"ast_no_forward_W": bool(_ast_no_forward_W(Gap4OnBridgeNet))}}
 
 
@@ -489,8 +560,16 @@ def main():
     ap.add_argument("--credit-steps", dest="credit_steps", type=int, default=25)
     ap.add_argument("--epochs", type=int, default=40)
     ap.add_argument("--batch", type=int, default=1)
+    ap.add_argument("--train-subsample", dest="train_subsample", type=int, default=0,
+                    help="subsample the TRAIN set the on-bridge spiking arms see (0=full; runtime lever, oracle uses full).")
+    ap.add_argument("--core-arms-only", dest="core_arms_only", action="store_true",
+                    help="skip the 4 anti-cheat nets (lesion/shuf_tgt/shufE/micro-frozen) -> all compute on the core arms "
+                         "at higher epochs/data (selective scale-up; re-add anti-cheats on the winning config).")
     # BDSP + drive knobs (the committed sim/ knobs + the drive levers)
     ap.add_argument("--lr", type=float, default=0.05)
+    ap.add_argument("--bdsp-w-max", dest="bdsp_w_max", type=float, default=6.0,
+                    help="BDSP FF weight clamp magnitude (cfg.bdsp_w_min/max = -/+ this). Default 6.0 == parent behavior; "
+                         "widen (e.g. 20-50) to test whether the +-5/6 clamp caps learning on a multi-way task (gap#5 clip).")
     ap.add_argument("--beta", type=float, default=1.0)
     ap.add_argument("--p0", type=float, default=0.30)
     ap.add_argument("--in-current-pA", dest="in_current_pA", type=float, default=520.0)
@@ -529,17 +608,80 @@ def main():
 
     if a.full:
         # THE CONTROLLER's GPU run -- guarded so build-ahead cannot accidentally spend the science.
-        t0 = time.time(); per = []
-        for s in a.seeds:
-            per.append(run_seed(s, a))
+        t0 = time.time(); per = []; err = None
+        try:
+            for s in a.seeds:
+                per.append(run_seed(s, a))
+        except Exception as e:
+            err = repr(e); traceback.print_exc()
+
+        agg = {}
+        if per:
+            def _m(keys):
+                vals = []
+                for p in per:
+                    v = p
+                    ok = True
+                    for kk in keys:
+                        if isinstance(v, dict) and kk in v:
+                            v = v[kk]
+                        else:
+                            ok = False; break
+                    if ok and isinstance(v, (int, float)) and not (isinstance(v, float) and np.isnan(v)):
+                        vals.append(float(v))
+                return float(np.mean(vals)) if vals else float("nan")
+            n_seed = len(per)
+            n_fa_wall = sum(bool(p["fa_wall"]["fa_wall_holds"]) for p in per)
+            n_seed_go = sum(bool(p["fa_wall"]["seed_go"]) for p in per)
+            oracle = _m(["oracle_heldout"]); chance = _m(["chance"])
+            res = _m(["arms", "reservoir", "inherit_heldout"]); ff = _m(["arms", "fixed_fa", "inherit_heldout"])
+            kp = _m(["arms", "kp", "inherit_heldout"]); mic = _m(["arms", "micro", "inherit_heldout"])
+            ceil = _m(["arms", "transport_ceiling", "inherit_heldout"])
+            les = _m(["lesion", "inherit_heldout"]); shuf = _m(["shuffled_target", "inherit_heldout"])
+            shufE = _m(["shufE", "inherit_heldout"]); memctrl = _m(["arms", "fixed_fa", "memctrl_heldout"])
+            best_learned = np.nanmax([kp, mic])
+            mp_ratio = _m(["apical", "micro_plastic", "silent_ratio"]); mp_cos = _m(["apical", "micro_plastic", "selfpred_cos"])
+            mf_ratio = _m(["apical", "micro_frozen_wpi", "silent_ratio"]); mf_cos = _m(["apical", "micro_frozen_wpi", "selfpred_cos"])
+            # anti-cheat / guard checks
+            ceiling_guard_fails = all(p["arms"].get("transport_ceiling", {}).get("no_weight_transport") is False
+                                      for p in per if "transport_ceiling" in p["arms"])
+            ast_ok = all(p["guards"]["ast_no_forward_W"] for p in per)
+            lesion_collapse = bool(les <= chance + 0.10); shuf_collapse = bool(shuf <= chance + 0.10)
+            shufE_collapse = bool(shufE <= chance + 0.10); memctrl_ok = bool(memctrl <= chance + 0.10)
+            task_ok = bool(oracle >= 0.80)
+            apical_earned = (bool(mp_ratio < 0.5 and mp_cos > 0.6 and mf_ratio > 0.8)
+                             if not np.isnan(mp_ratio) else None)
+            GO = bool(task_ok and n_fa_wall >= 5 and n_seed_go >= 5 and ceiling_guard_fails and ast_ok
+                      and lesion_collapse and shuf_collapse and memctrl_ok)
+            agg = {"n_seeds": n_seed, "n_fa_wall": n_fa_wall, "n_seed_go": n_seed_go,
+                   "oracle": oracle, "chance": chance, "reservoir": res, "fixed_fa": ff, "kp": kp, "micro": mic,
+                   "best_learned": float(best_learned), "transport_ceiling": ceil,
+                   "lesion": les, "shuffled_target": shuf, "shufE": shufE, "memctrl": memctrl,
+                   "micro_plastic_silent_ratio": mp_ratio, "micro_plastic_selfpred_cos": mp_cos,
+                   "micro_frozen_silent_ratio": mf_ratio, "micro_frozen_selfpred_cos": mf_cos,
+                   "fa_wall_holds_all": bool(n_fa_wall >= 5), "task_ok": task_ok,
+                   "ceiling_guard_correctly_fails": bool(ceiling_guard_fails), "ast_no_forward_W": bool(ast_ok),
+                   "lesion_collapse": lesion_collapse, "shuffled_collapse": shuf_collapse,
+                   "shufE_collapse": shufE_collapse, "memctrl_ok": memctrl_ok, "apical_silent_earned": apical_earned,
+                   "GO": GO,
+                   "verdict": (f"{'GO' if GO else 'NO-GO'} ({n_seed_go}/{n_seed} seed_go; FA-wall {n_fa_wall}/{n_seed}). "
+                               f"reservoir {res:.3f} | fixed_fa {ff:.3f} | kp {kp:.3f} | micro {mic:.3f} | ceiling "
+                               f"{ceil:.3f} | oracle {oracle:.3f} (chance {chance:.3f}). apical-silent EARNED: plastic "
+                               f"ratio {mp_ratio:.3f} (cos {mp_cos:.2f}) vs frozen {mf_ratio:.3f} (cos {mf_cos:.2f}). "
+                               f"anti-cheats: lesion {les:.3f} shuf {shuf:.3f} shufE {shufE:.3f} memctrl {memctrl:.3f}; "
+                               f"ceiling-guard-fails {ceiling_guard_fails}; ast {ast_ok}.")}
         summary = {"probe": "gap4_onbridge_spiking_selfpredict_FULL", "seeds": a.seeds, "config": vars(a),
-                   "elapsed_seconds": round(time.time() - t0, 1), "per_seed": per,
-                   "NOTE": ("Aggregate best(kp,micro) > fixed_fa on >=5/6 seeds, fixed_fa <= reservoir, guards pass; "
-                            "see the DESIGN doc S5 for the GO-gate.")}
+                   "elapsed_seconds": round(time.time() - t0, 1), "error": err, "per_seed": per, "aggregate": agg,
+                   "GO": bool(agg.get("GO", False)),
+                   "NOTE": ("GO = best(kp,micro) > fixed_fa on >=5/6 seeds IN the FA-wall regime (fixed_fa <= reservoir) "
+                            "+ all anti-cheats; see 2026-07-24-gap4-onbridge-spiking-port-DESIGN.md S5.")}
         Path(a.out).parent.mkdir(parents=True, exist_ok=True)
         Path(a.out).write_text(json.dumps(summary, indent=2, default=str))
-        print(f"[gap4-onbridge] FULL per-seed run wrote {a.out}", flush=True)
-        return 0
+        print("=" * 108, flush=True)
+        print(f"[gap4-onbridge] {agg.get('verdict', 'ERROR: ' + str(err))}", flush=True)
+        print(f"[gap4-onbridge] FULL run wrote {a.out}", flush=True)
+        print("=" * 108, flush=True)
+        return 0 if agg.get("GO") else 1
 
     # default: the construct-smoke.
     return construct_smoke(a)
