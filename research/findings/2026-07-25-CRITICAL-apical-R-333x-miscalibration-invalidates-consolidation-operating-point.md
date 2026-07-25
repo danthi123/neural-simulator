@@ -457,3 +457,28 @@ that 800ev alone fixes THIS runner. **▶ TEST IN FLIGHT: the A1 harness's own P
 14.4 min ≈ 1 h/seed), scored on its own `direct_binding_sanity`. If it clears, the A1 capability gate becomes
 measurable for the first time in this arc and the four-control run can proceed; if it does not, the difference between
 this runner and the 2026-05-21 harness is the next thing to isolate.
+
+### ⚠️ SCOPING CHECK BEFORE BUILDING THE SLOT CAPABILITY READ-OUT: `ca1→slot` CANNOT deliver hippo-independent recall
+
+The recorded next step for the slot thread was "give the 6-seed-GO slot write a capability read-out". Checked whether
+that is buildable BEFORE building it — it is not, as specified:
+- the A1-style capability test **lesions the hippocampus** and then cues the fact;
+- **CA1 *is* hippocampus**, so lesioning it removes the `ca1→comp_attr` pathway the 6-seed GO trained;
+- ⇒ **a selective `ca1→slot` write cannot, by construction, support hippo-independent recall.** It is the *hippocampal
+  reinstatement* half of consolidation, not the lasting cortical store.
+
+**What the slot route WOULD need:** the substrate already wires a cortex-resident path —
+`RegionPathway(from_region=<noun/adj pool>, to_region=comp_attr_s, density=0.15, weight_mean=1.5, plastic=True,
+plasticity_gate="concept_to_comp_attr")` (runner :293-298). **For a hippo-lesioned slot recall the LOAD-BEARING store is
+`concept_to_comp_attr` (cortex→cortex), not `ca1→comp_attr`.** The `ca1→slot` selectivity matters only insofar as it
+drives the correct slot DURING replay so that the cortical `concept→slot` weights are written selectively — exactly the
+role `ca1→concept_pool` plays for `cross_pool_concept` on the original A1 route.
+
+**⇒ CORRECTED next step for the slot thread:** measure and, if needed, make **`concept_to_comp_attr` selective** under
+the calibrated operating point (same instrument: per-fact own/other with the mass triad — permuted-core control,
+magnitude-free twin, per-fact passes), THEN a hippo-lesioned slot recall becomes a meaningful capability read-out. The
+`ca1→slot` 6-seed GO stands as a validated *component* (the replay-time reinstatement), not as the capability.
+
+**Process note:** this is the pre-flight the session's own lessons demand — *verify the pathway can deliver the
+capability before building the read-out*. Building it as originally specified would have produced a guaranteed null
+(everything lesioned away) that would have looked like yet another "boundary".
