@@ -347,6 +347,15 @@ or the write ordering); (c) realize the core-gated recall as a spiking comp_dend
 "definitively exhausted / route to a blank different substrate" verdict above is **CORRECTED** — the mechanism is
 realizable and 1/3 already demonstrated on real weights.
 
+### ⚠️⚠️ THE "LIVE LEAD" IS ITSELF RETRACTED — it was a WINNER-SLOT METRIC ARTIFACT (adversarial-verify caught it, `2106b143`)
+The generalization de-risk (`_consol_twosided_generalize_probe.py`, the 3 controls the lead never ran) **REFUTES the
+"fact-1 3.67" lead — it was a metric artifact, NOT earned selectivity, VERIFIED independently:**
+- **PER-SLOT mean `ca1→slot` weight = [24.2, 80.5, 23.8]** — ONE slot is systematically ~3.4× (≈ n_facts) heavier. Fact-1's "3.67" is exactly 80.5/24 — it is the ratio of the heavy slot to the light ones, arising for ANY fact whose winner is that slot, not from fact-1's core selecting slot-1.
+- **PERMUTED-CORE control = [0.46, 3.37, 0.48]** and **RANDOM-CA1 control = [0.48, 3.28, 0.46]** — both **FAIL to collapse to ~1.0**: reading the heavy slot with a random/permuted set of cells STILL gives ~3.4. ⇒ the "selectivity" is unearned (it is the heavy slot, full stop). The lead's own three numbers `[0.33, 3.69, 0.44]` are arithmetically forced by one slot being ~3.4× heavier.
+- **Multi-seed 42/43/44: all NO-GO** — exactly one slot wins each run, the winner is seed/schedule-dependent, n_pass=1/3 every seed and that "pass" IS the artifact.
+- **Root cause:** in the back-to-back write CA1 never returns to baseline between facts, so the eligibility driving the write is not fact-specific; one slot accumulates by schedule. When PROPER isolation removes the artifact (blocked + settle + reset → per-slot weights EQUALIZE `[5.9, 5.8, 5.8]`), the core-gated own/other is **`[1.05, 1.02, 1.01]` — FLAT, controls collapse — NO residual per-fact selectivity.**
+- **⇒ RE-CORRECTED FINAL VERDICT:** the "exhausted" verdict was right after all; my same-session "LIVE LEAD" correction was an overclaim I made by reading a non-flat number WITHOUT the permuted-core control that exposes the winner-slot bias (the silent-failure class: a metric reported without its control). **The write genuinely CANNOT localize on the point-neuron dense CA1 code** — even unsaturated + core-gated + isolated, it is flat. The surpass is UNCHANGED: **isolated reinstatement + a DENDRITIC per-branch sustained-firing-core write** (the D2 substrate arc), not any cheaper write/schedule/threshold tweak. Cheap space genuinely exhausted (~15 write variants + the two-sided read, all with the winner-slot control now in place). Lesson banked: report every own/other WITH its permuted-core control, or the winner-slot bias masquerades as selectivity.
+
 ## Recommended first de-risk (GPU-when-free / Tuesday)
 
 ## Recommended first de-risk (GPU-when-free / Tuesday)
