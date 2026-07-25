@@ -35,10 +35,21 @@ balance that sustains it down the chain. This is exactly Ecker's third ingredien
 now confirmed as THE load-bearing remaining lever — the decoder is validated (in-run unit test forward r=0.985), so the
 missing structure is the inhibition, not the read.
 
+## The PVBC-mechanism probe REFUTES the host/global shortcut → the real spiking PVBC is required
+A host WTA-like feedback-inhibition probe (global inhibitory current ∝ recent PC pop firing, injected to all PC; a
+mechanism probe, NOT a brain-based build) was swept at the transient-seed + strong-band config. It does **NOT** localize:
+as the gain rises (0→20→60→150→400) the activity just **silences uniformly** (F_active 0.0089→0.0050), the spread stays
+diffuse (assemblies 0–3 all ~0.02–0.04), never sharpens into a 0→4 sequence, never decodes (SIG=0 throughout).
+⇒ **the phenomenological/global-inhibition shortcut is REFUTED** — a global term hits every assembly equally and cannot
+provide the LOCAL, activity-specific, correctly-timed inhibition a traveling bump needs. Localization requires the **real
+recurrent spiking PVBC** (PC→PVBC→PC with Ecker's connectivity + timing). (Also: assembly-4 never fires in any config —
+the bump decays by assembly-3, consistent with the missing E/I balance a real PVBC loop provides.)
+
 ## Verdict + next (per THE LAW)
 - **The gap#5 Ecker-regime replay boundary is localized to PVBC feedback inhibition.** Ignition (cue), propagation (band
   strength), and hand-off seeding (transient cue) are DEMONSTRATED on the real spiking AdEx substrate. The full
-  Ecker CA3 model-build is NOT required — the build reduces to **adding a PVBC feedback-inhibition pool**.
+  Ecker CA3 model-build is NOT required — the build reduces to **adding a REAL spiking PVBC feedback pool** (the host/
+  global shortcut is refuted, so the model-fork investment IS warranted — do NOT waste effort on the phenomenological path).
 - **NEXT BUILD:** add the PVBC→PC feedback inhibition and re-test (transient seed + strong band + PVBC): does the bump
   now form a sharp localized packet that travels 0→4 and decodes (|r|>0.6, argmax sweeps)? **⚠️ The PVBC neuron-model
   fork (banked `8a31bc26`):** the global-scalar AdEx kernel can't trivially co-host PC-AdEx + PVBC-Izhikevich; resolve
