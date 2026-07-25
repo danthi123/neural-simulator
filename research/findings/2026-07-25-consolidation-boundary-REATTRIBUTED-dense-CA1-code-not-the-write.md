@@ -193,6 +193,27 @@ oracle: model K per-branch plateaus + plateau-gated write on the REAL measured C
 gating cannot work on this dense-halo code even with perfect clustering ⇒ Family C is dead and the capability needs a
 different substrate entirely. That oracle is the decisive next gate.
 
+## Family-C numpy ORACLE (the gate for the months build) — result REDIRECTS away from the dendritic build (2026-07-25)
+Built `_consol_multibranch_oracle.py`: on the REAL measured CA1 codes, model K per-branch plateaus + a plateau-gated
+rate-proportional ca1->slot write, sweep branch-assignment.
+- **Per-branch gating is NOT the key:** K=1 (NO branches) already gives own/other **8.19**; oracle-clustered 7.8–34,
+  RANDOM 3.5 — all >> the 2.5 gate. So the months multi-branch + C2-clustering build is **NOT warranted** (branches
+  don't move it; the localization is the rate-proportional write on the fact-specific core).
+- **But the oracle over-predicts the real substrate 8×:** the oracle uses the clean FIRE-UNDER-TAG pattern (fact_i's
+  core fires more under fact_i) + a LINEAR rate-proportional write. The real co-activation-replay write on the SAME cells
+  is FLAT (~1.0). Tested the obvious reconciliations: **fewer replay cycles (3/8) does NOT help** (flat — so it's not
+  w_max saturation over cycles); the rate-gated + supralinear write is marginal (~1.1).
+- ⇒ **THE ROOT (final):** the real co-activation REPLAY produces a DENSE/FLOODED CA1 firing DURING the write that is NOT
+  the clean fact-specific fire-under-tag pattern the oracle assumes — so the write's eligibility is flat -> flat write.
+  The mechanism (a rate-proportional write) WOULD localize (oracle 8.19) IF the replay produced a clean fact-specific
+  CA1 firing; the point-neuron replay cannot (every reinstatement floods CA1 — gentler drive, FF-synaptic, divisive-norm,
+  fewer cycles all fail to sparsify/clean it). **The boundary is the point-neuron REPLAY-FLOODING / sparsification wall.**
+- **Untested cheap hypothesis (the one remaining cheap lever):** the co-activation replay also drives the CONCEPT POOLS
+  (noun/adj) alongside tag_i+slot_i; a pool->CA1 feedback may be what floods CA1 during the write (the isolated
+  fire-under-tag drives NO pools + IS cleaner). Testing tag+slot-only replay (no pool co-drive) is the next cheap probe;
+  if CA1 fires cleanly without the pools, the rate write localizes (per the oracle). Otherwise the wall is confirmed
+  point-neuron and the capability needs a genuinely different substrate (the honest deep boundary).
+
 ## Recommended first de-risk (GPU-when-free / Tuesday)
 Build the **Rank-2 CA1-separation de-risk**: add a feedforward-inhibitory kWTA pool to CA1 (or route slot-drive from DG),
 re-run `_consol_direct_weight_probe` → confirm Jaccard < 0.2 / active <5% AND own/other rises + own-is-max. Then chain the
