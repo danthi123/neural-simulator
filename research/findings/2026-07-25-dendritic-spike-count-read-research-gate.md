@@ -491,3 +491,36 @@ recovery, and a `vr`-correct network reset, each judged on **cosine specificity 
 (1) the winner-slot artifact, (2) the mean-over-facts "GO", (3) this positional "cumulative degradation". **Every
 own/other-style number must be reported alongside its magnitude-free form (cosine / normalised) and the raw per-item
 masses.** Encoded into `.claude/skills/verify-go/SKILL.md` lens 7.
+
+---
+
+# ✅ M0 = **GO** on the corrected target — the write window CAN produce a gate-amplifiable code (3 seeds × 3/3 facts)
+
+The retraction above re-aimed the question from "what accumulates" to **"why is the write-window code less PEAKED than
+the isolated-tag code"**, noting the write window accumulates 3 cycles × 30 steps on a partially-adapted network
+(13.4 → 7.0 spikes/step) versus a single 40-step burst from rest (19.6/step). Two free protocol levers were tested.
+
+**Result: `--cycles 1 --settle-steps 200` (a SINGLE burst per fact + a long inter-fact RECOVERY gap) fixes it.**
+Judged, per the hardened rule, on the full mass triad — balanced masses, magnitude-free cosine, per-item passes with a
+degenerate-gate guard — never a raw ratio:
+| seed | total spikes / window | cosine specificity (magnitude-free) | per-fact gated ceilings | gate sizes | passes |
+|---|---|---|---|---|---|
+| 42 | `[585, 625, 583]` | `[1.586, 1.456, 1.500]` | `[4.00, 3.20, 3.47]` | `[26, 32, 26]` | **3/3** |
+| 43 | `[556, 590, 584]` | `[1.519, 1.570, 1.622]` | `[3.75, 4.00, 3.33]` | `[15, 18, 15]` | **3/3** |
+| 44 | `[654, 543, 533]` | `[1.605, 1.687, 1.662]` | `[3.73, 3.11, 2.90]` | `[41, 28, 29]` | **3/3** |
+- **Masses are BALANCED** (was `[1203, 701, 625]` ≈ 2:1 at cycles=3/settle=30) ⇒ the earlier positional artifact is gone.
+- **Cosine specificity is UNIFORM and now EXCEEDS the isolated-tag code** (~1.5–1.7 vs isolated ~1.26–1.31): a single
+  burst from a fully-recovered network is *cleaner* than the isolated probe's own 30-step-settle read.
+- **Every fact clears 2.5 on non-degenerate, balanced gates** — not a mean, not a winner, not a small-number artifact.
+- The intermediate `--cycles 1 --settle-steps 30` is NOT sufficient (masses still `[660, 280, 249]` ≈ 2.6:1, gates
+  degenerate `[70, 4, 6]`) ⇒ **the RECOVERY GAP is the load-bearing ingredient**, not merely the single burst.
+- The realized `CORE-GATED` write remains ~1.0 (0/3) at every seed — **exactly as predicted**, since the gate is not yet
+  applied to the write; the write still integrates all firing. That is what M0 was defined to authorize building.
+
+**⇒ VERDICT: BUILD M1′.** Both halves are now established independently: the gate MECHANISM amplifies a peaked code
+~10× (isolated 1.27 → 12.3), and a write protocol now DELIVERS a peaked, uniformly fact-specific, mass-balanced code
+(gated ceiling 2.9–4.0, 3/3 facts, 3 seeds). Biologically the recovery gap is unobjectionable — real SWR replay events
+are discrete, seconds apart, on a recovered network, not back-to-back bursts. M1′ = the ~25-line additive, default-off
+`sim/` edit scoped in §4 (per-source box-car windowed spike count with explicit reset → ABSOLUTE Hill gate → applied
+BEFORE the synaptic sum, on the write eligibility and the recall read), to be gated on: byte-identical when off, the
+mass triad on every reported ratio, permuted-core control, and 6 seeds.
