@@ -84,12 +84,22 @@ Tested (co-activation replay + `slot_ignition`, 6-seed):
 - **⇒ this is exactly the r-iii "no specific structure to amplify" failure** the design foregrounded: the plateau is
   necessary-not-sufficient; the STDP-written `ca1→slot` selectivity (the co-activation potentiation, directional but
   small Δ+0.0057) is **too weak to give the plateau a separated structure to route on.**
-- **NEXT (the design's own escalation, per the risk register): Option 3 — BTSP.** Write the `ca1→slot_i` selectivity
-  ONE-SHOT plateau-gated (`enable_btsp`, on-bridge, needs the two-comp + bistability already wired): during co-activation
-  the held apical plateau on slot-i gates strong one-shot potentiation of the co-active `ca1_i→slot_i` synapses (the gap4
-  BTSP mechanism) → a LARGE held-vs-non c_drive separation the STDP write couldn't produce → then a calibrated k routes
-  selectively. If BTSP still shows no separation, the residual is the deeper dendritic line-attractor (months-scale). The
-  co-activation potentiation fix + the dendritic-plateau engagement both stand CONFIRMED.
+- **Option 3 (BTSP) TRIED (2-seed, `da40297c`+): does NOT break the symmetry.** Added `comp_btsp` (`enable_btsp` +
+  `btsp_lr=0.01`, `btsp_wmax=8`). Same CLIFF: k=3 over-fires EVEN MORE (fire ~17k vs 2.5k without BTSP), sel 0-1/3;
+  k≥8 fire=0. **Chicken-and-egg:** the plateau over-fires non-selectively (all slots plateau, no c_drive separation), so
+  there is no SELECTIVE plateau to gate BTSP → BTSP writes `ca1→ALL slots` (not `ca1_i→slot_i`) → no separation → the
+  cliff persists. The one-shot write can't bootstrap the selectivity it needs the plateau to already have.
+- **HONEST scope:** tried Option-1 (k-sweep {3..60}) + Option-3 (BTSP); NOT the fuller operating-point space
+  (`coincidence_plateau_self_regen` lower so the plateau doesn't over-sustain / lower `slot_drive` / stronger
+  `comp_wta_weight` to force one-of-N / the co-activation strength). So this is "the cheap-first dendritic options do not
+  route selectively AT THESE OPERATING POINTS (over-firing, no c_drive separation)," NOT "dendritic exhausted."
+- **NEXT (fresh, correctness-critical):** (a) an operating-point sweep to get a NARROW selective plateau (self_regen ↓ so
+  the plateau doesn't latch-all + a lower slot_drive during co-activation so BTSP writes only the strongly-co-active
+  `ca1_i→slot_i` + a stronger WTA) — measure the per-slot c_drive DIRECTLY (the r-iii `_cdrive` probe) to confirm/deny
+  separation rather than infer from the ignition cliff; (b) if no operating point separates → the deeper dendritic LINE
+  (bump) attractor — a graded moving bump over the slots (Ecker/continuous-attractor style) rather than N independent
+  point-plateaus, the months-scale surpass. The co-activation potentiation fix + the dendritic-plateau ENGAGEMENT both
+  stand CONFIRMED; the open piece is the SELECTIVE routing.
 
 ## Provenance
 Design-gate (read-only) 2026-07-25. Findings cited inline (r-iii onsubstrate ×3, gap5 CA3-completion, dendrite-derisk-A,

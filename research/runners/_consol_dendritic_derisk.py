@@ -31,15 +31,15 @@ def run(seed, dend, k=3.0):
     A=dict(ca1_concept_density=0.25, ca1_concept_weight=0.0, nmda_self_weight=12.0, nmda_self_density=0.15,
            nmda_recurrent_ratio=0.6, cross_pool_density=0.10, stdp_w_max=8.0, enable_global_nmda=False, enable_hebbian=True,
            skip_nmda_additions=True, comp_attractor_slots=N, comp_attractor_n_per=120, comp_self_weight=12.0,
-           comp_wta_weight=5.0, comp_dendritic=dend, comp_k_thresh=k)
+           comp_wta_weight=5.0, comp_dendritic=dend, comp_k_thresh=k, comp_btsp=dend)
     b=build_substrate(seed, SimpleNamespace(**A))
     tags,_=encode_facts_with_reinstatement(b,CONSOLIDATED_FACTS)
     coactivation_replay(b,CONSOLIDATED_FACTS,tags,100,seed,coactivate=True,attractor_on=True)
     return slot_ign(b,tags)
-print("Dendritic k_thresh SWEEP (seeds 42,43): higher k -> only the strongly-driven fact-slot plateaus -> selective? find where sel rises + firing drops.",flush=True)
-for k in (8.0,15.0,25.0,40.0,60.0):
+print("Dendritic + BTSP (Option-3) k-sweep (seeds 42,43): does the one-shot plateau-gated write separate c_drive -> selective at some k?",flush=True)
+for k in (3.0,8.0,15.0,25.0,40.0):
     row=[]
     for seed in (42,43):
         sk,fk=run(seed,True,k=k); row.append((sk,fk))
-    print(f"  k={k:.0f}: "+" | ".join(f"seed{sd} sel={r[0]}/{N} fire{r[1]}" for sd,r in zip((42,43),row)),flush=True)
-print("CONSOL-DEND-KSWEEP DONE",flush=True)
+    print(f"  BTSP k={k:.0f}: "+" | ".join(f"seed{sd} sel={r[0]}/{N} fire{r[1]}" for sd,r in zip((42,43),row)),flush=True)
+print("CONSOL-DEND-BTSP-KSWEEP DONE",flush=True)

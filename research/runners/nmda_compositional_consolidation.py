@@ -299,6 +299,10 @@ def build_substrate(seed, args):
         cfg.apical_g_couple = float(getattr(args, "comp_gc", 1.0))                 # apical<-soma back-coupling
         cfg.apical_g_couple_to_soma = float(getattr(args, "comp_gc_read", 5.0))    # apical->soma read (asymmetric)
         cfg.apical_R = float(getattr(args, "comp_apical_R", 50.0))                 # thin-high-R apical
+        if bool(getattr(args, "comp_btsp", False)):   # Option-3: one-shot plateau-gated selective write (gap4 BTSP) for a LARGE held-vs-non c_drive separation the STDP write couldn't give
+            cfg.enable_btsp = True
+            cfg.btsp_learning_rate = float(getattr(args, "comp_btsp_lr", 0.01))
+            cfg.btsp_w_max = float(getattr(args, "comp_btsp_wmax", 8.0))
 
     bridge = SimulationBridge(
         core_config=cfg, viz_config=VisualizationConfig(),
