@@ -520,3 +520,36 @@ weight delta, not the 16-word accuracy.**
 **Process note — two reversals on one sub-question.** The under-training hypothesis was well-motivated (a real recorded
 87.5% at 4× the default) and was refuted in one run. That is the system working: it was recorded as a hypothesis with an
 explicit caveat about harness identity, tested directly, and retracted on the evidence rather than defended.
+
+### 🎯 CONFIG DIFF vs the 87.5% harness: the A1 runner has **global NMDA OFF by default**
+
+Followed the "diff against the known-good config" step rather than more knob-search. The 87.5% direct-binding result
+came from `research/findings/raw/unified_per_regime/…` ⇒ the **`unified_per_regime_monitor_runner`**, which the A1
+runner already imports its Phase-1 recipe/kwargs from (so the TRAINING protocol is shared). Comparing the two substrate
+configs:
+
+| setting | unified (87.5%) | A1 runner | note |
+|---|---|---|---|
+| `enable_hebbian_learning` | **False** | False (default) | **identical — so STDP ALONE achieves 87.5%** |
+| `enable_short_term_plasticity` | False | False | identical |
+| `enable_structural_plasticity` | False | False | identical |
+| `fast_spike_reset` | True | True | identical |
+| `enable_per_type_stp` | False | False | identical |
+| **`enable_nmda`** | **`True`** | **`bool(args.enable_global_nmda)` ⇒ DEFAULT FALSE** | **THE DIFFERENCE** |
+
+**Two consequences, both important:**
+1. **My "STDP cannot learn this symmetric co-driven pairing" mechanism is REFUTED** — the harness that scores 87.5% runs
+   with Hebbian OFF, i.e. on STDP alone. The Δt≈0/656k-events finding does not transfer to this protocol. That line of
+   reasoning is withdrawn.
+2. **The live candidate is `enable_nmda`.** Global NMDA supplies the slow, voltage-dependent current that sustains
+   post-synaptic depolarisation across the teacher window; without it the association plausibly cannot form at all —
+   which is exactly consistent with **more training not helping** (200ev 1/16 → 800ev 0/16), since repetitions of a
+   non-forming association accumulate only the homeostatic suppression of the driven target.
+
+**TEST IN FLIGHT:** the A1 runner at its own defaults **plus `--enable-global-nmda`** (200ev, ~16 min), scored on its own
+`direct_binding_sanity`. This is a single-variable change against the failing baseline.
+
+**Process note:** this is the third mechanism proposed for the A1 failure (rule-can't-bind → under-training →
+config-delta). The first two were each refuted by a direct test within one run of being proposed. The value of the
+"check the record for a known-good configuration" rule is precisely that it replaces mechanism-guessing with a
+**difference** that can be tested one variable at a time.
