@@ -187,6 +187,21 @@ def build_substrate(seed, args):
     concept_pools = _NOUN_POOLS + ["verb_pool_%s" % v for v in cpd.VERB_NAMES] + _ADJ_POOLS
     skip_nmda = bool(getattr(args, "skip_nmda_additions", False))
 
+    # (0) CA1 FFI-kWTA sparsification (Rank-2 de-risk, 2026-07-25 re-attribution): the A1 boundary is a DENSE/OVERLAPPING
+    #     CA1 code (6-seed: ~90% of CA1 fires WEAKLY per tag, Jaccard 0.56 -> no ca1->slot write can localize). A
+    #     feedforward+feedback inhibitory basket on CA1 (mirrors the shipped comp_attr_inh WTA pool) sparsifies CA1's
+    #     tag-response toward a sparse DISTINCT ensemble so the write CAN localize. Additive/default-off
+    #     (ca1_ffi_kwta=False -> byte-identical to the current A1 build).
+    if bool(getattr(args, "ca1_ffi_kwta", False)):
+        from sim.regions import BrainRegion as _BR
+        regions = list(regions) + [_BR(name="ca1_ffi", n_neurons=int(getattr(args, "ca1_ffi_n", 30)),
+            exc_fraction=0.0, internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.1,
+            plastic_internal=False)]
+        pathways.append(RegionPathway(from_region="ca1", to_region="ca1_ffi", density=0.4,
+            weight_mean=float(getattr(args, "ca1_ffi_drive", 3.0)), weight_jitter=0.2, plastic=False))
+        pathways.append(RegionPathway(from_region="ca1_ffi", to_region="ca1", density=0.5,
+            weight_mean=float(getattr(args, "ca1_ffi_inh", 5.0)), weight_jitter=0.2, plastic=False))
+
     # (1) ca1 -> concept-pool consolidation wire (zero-init; learns selective
     #     reinstatement during encoding). Gate: ca1_to_concept_pool.
     n_ca1_wire = 0
@@ -257,13 +272,16 @@ def build_substrate(seed, args):
             pathways.append(RegionPathway(from_region="comp_attr_inh", to_region=f"comp_attr_{s}",
                                           density=0.30, weight_mean=float(getattr(args, "comp_wta_weight", 5.0)),
                                           weight_jitter=0.2, plastic=False))
-        # concept pools -> the slots (the cortical composite feeds the attractor; plastic)
-        for pool in (_NOUN_POOLS + _ADJ_POOLS):
-            for s in range(n_slots):
-                pathways.append(RegionPathway(
-                    from_region=pool, to_region=f"comp_attr_{s}",
-                    density=0.15, weight_mean=1.5, weight_jitter=0.3,
-                    plastic=True, plasticity_gate="concept_to_comp_attr"))
+        # concept pools -> the slots (the cortical composite feeds the attractor; plastic). NOTE (c_drive probe 2026-07-25):
+        # this is an ALL-pools->ALL-slots BROADCAST -> ca1_i->concept->ALL-slots drives every slot non-selectively (the
+        # write-selectivity killer). comp_no_pool_slot=True drops it so routing is purely the potentiated (distinct-engram) ca1->slot.
+        if not bool(getattr(args, "comp_no_pool_slot", False)):
+            for pool in (_NOUN_POOLS + _ADJ_POOLS):
+                for s in range(n_slots):
+                    pathways.append(RegionPathway(
+                        from_region=pool, to_region=f"comp_attr_{s}",
+                        density=0.15, weight_mean=1.5, weight_jitter=0.3,
+                        plastic=True, plasticity_gate="concept_to_comp_attr"))
 
     print(f"  augment: +{n_ca1_wire} ca1->concept wires, "
           f"+{n_self} nmda_slow self-loops (w={args.nmda_self_weight}, "

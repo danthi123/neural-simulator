@@ -61,9 +61,11 @@ def _jac(a, c):
     return len(A & C) / max(1, len(A | C))
 
 
-def run_seed(seed):
+def run_seed(seed, ffi_inh=0.0, ffi_drive=3.0):
     a = dict(BASE); a.update(comp_dendritic=True, comp_wta_weight=OP["wta"], comp_k_thresh=OP["k_thresh"],
                              comp_self_regen=OP["self_regen"], comp_kir_g=OP["kir_g"])
+    if ffi_inh > 0:   # Rank-2 CA1 FFI-kWTA sparsification de-risk
+        a.update(ca1_ffi_kwta=True, ca1_ffi_inh=float(ffi_inh), ca1_ffi_drive=float(ffi_drive))
     b = build_substrate(seed, SimpleNamespace(**a))
     # SEED VERIFICATION (the seed-never-controlled-substrate trap): hash the per-neuron firing thresholds
     thr_hash = hashlib.md5(to_host(b.cp_neuron_firing_thresholds).tobytes()).hexdigest()[:12]
@@ -136,12 +138,16 @@ def run_seed(seed):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--ca1-ffi-inh", type=float, default=0.0, help="Rank-2: CA1 FFI-kWTA inhibition strength (0=off)")
+    ap.add_argument("--ca1-ffi-drive", type=float, default=3.0)
     ap.add_argument("--out", default="research/findings/raw/consol_opsweep_gpu")
     args = ap.parse_args()
     from pathlib import Path
     Path(args.out).mkdir(parents=True, exist_ok=True)
-    r = run_seed(args.seed)
-    Path(f"{args.out}/directwrite_seed{args.seed}.json").write_text(json.dumps(r, indent=2))
+    r = run_seed(args.seed, ffi_inh=args.ca1_ffi_inh, ffi_drive=args.ca1_ffi_drive)
+    r["ca1_ffi_inh"] = args.ca1_ffi_inh
+    tag = f"_ffi{args.ca1_ffi_inh:g}" if args.ca1_ffi_inh > 0 else ""
+    Path(f"{args.out}/directwrite{tag}_seed{args.seed}.json").write_text(json.dumps(r, indent=2))
     # decision summary
     d0 = r["by_thresh"]["0.0"]; d5 = r["by_thresh"]["0.5"]
     print(f"[seed {args.seed}] backend={BACKEND} thr_hash={r['thr_hash']} dw={r['dw']}")
