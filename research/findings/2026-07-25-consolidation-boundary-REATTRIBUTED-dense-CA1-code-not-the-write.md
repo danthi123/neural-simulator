@@ -157,6 +157,23 @@ supralinearly. A focused research gate (workflow `wf_2e5d85a3-9ce`) is assessing
 reaches the gate or the dendritic per-branch build is genuinely required. Infra shipped: `btsp_elig_exponent` +
 `_consol_direct_weight_probe --btsp-elig-exp`.
 
+## Research-gate mechanisms A + D TESTED (2026-07-25 workflow `wf_2e5d85a3-9ce`) — both NO-GO (point-neuron sparsification wall)
+The focused research gate (4 families) named 2 cheap-first levers; both tested NO-GO:
+- **Family A — normalize-then-supralinear eligibility** (the workflow caught my first exponent as BROKEN: raw
+  `magnitude**p` vanishes the write; fixed to normalize-by-peak-then-`**p`, `bridge.py:8055`). Fixed result (seed 42,
+  exp=2): own/other **~1.1, own-is-max 2/3, dw 0.117** (not collapsed) — a real lever but STILL marginal (halo-tail
+  leakage holds it below the 2.5 gate, exactly the workflow's caveat that the mean-field over-predicts).
+- **Family D — DG-direct write** (the RECOMMENDED primary; structural argument = DG has NO recurrence, verified, so a
+  sparse DG can't re-densify). **NO-GO on the Step-1 density de-risk:** under NATURAL perforant drive
+  (`language_input→ec→dg`, `_consol_dg_natural_probe.py`), DG is DENSE (active-frac 0.70–0.77, Jaccard 0.56–0.63) at every
+  drive/sparsity tried (drive 100–400, input-sparsity 0.03–0.1), and the **`dg_pv_basket` FFI lesion barely changes it
+  (0.72→0.77)** — the fixed FFI does NOT sparsify DG. So DG is dense in THIS substrate too; the sparse-DG premise is
+  empirically false here. (The P1 DG-separation numbers were a different DG config/drive.)
+⇒ **Both cheap primaries hit the SAME point-neuron FFI/kWTA sparsification wall** (CA1 dense · DG dense · fixed FFI
+inert-ish). Testing Family B next (activity-SCALED self-tuning inhibition — divisive-norm / homeostatic adaptive
+threshold, target ~2%), the design's decisive-either-way fallback; if it too can't sparsify, the wall is confirmed and
+the route is the Family-C dendritic numpy oracle. `_consol_dg_natural_probe.py`, `btsp_elig_exponent` (fixed).
+
 ## Recommended first de-risk (GPU-when-free / Tuesday)
 Build the **Rank-2 CA1-separation de-risk**: add a feedforward-inhibitory kWTA pool to CA1 (or route slot-drive from DG),
 re-run `_consol_direct_weight_probe` → confirm Jaccard < 0.2 / active <5% AND own/other rises + own-is-max. Then chain the

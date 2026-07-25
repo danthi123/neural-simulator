@@ -8059,7 +8059,11 @@ class SimulationBridge:
                 # btsp_elig_exponent<=1.0 (default 1.0) => byte-identical.
                 _elig_exp = float(getattr(cfg, "btsp_elig_exponent", 1.0))
                 if _elig_exp > 1.0:
-                    etilde_bt = etilde_bt ** cp.float32(_elig_exp)
+                    # NORMALIZE-then-supralinear (BCM): the raw etilde magnitude is tiny (~0.01-0.05), so a bare **p
+                    # VANISHES the write. Normalize to [0,1] by the peak eligibility FIRST, then **p -> the weak halo is
+                    # suppressed super-proportionally while the strong core stays ~1 (2026-07-25 workflow-corrected).
+                    _emax = etilde_bt.max()
+                    etilde_bt = (etilde_bt / cp.maximum(_emax, cp.float32(1e-12))) ** cp.float32(_elig_exp)
                 is_bt = _is_post_bt[coo_bt.col]
                 # gap#4<->gap#5 unification: with heterosynaptic competition (btsp_hetero_dep>0) a plateauing cell also
                 # DEPRESSES its NON-coincident inputs, so the active set must include synapses whose post plateaus even
