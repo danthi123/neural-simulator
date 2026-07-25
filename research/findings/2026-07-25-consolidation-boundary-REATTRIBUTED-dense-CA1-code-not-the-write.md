@@ -313,6 +313,19 @@ write side needs per-fact windowing. This is the full dendritic spike-count-thre
 arc, now scoped to its precise mechanism. The cheap space (write-side-only, magnitude-threshold) is DEFINITIVELY
 exhausted (~11 methods across ~20 probes + this de-risk).
 
+**Short-τ (per-fact-windowed) eligibility + hard threshold ALSO NO-GO — the RECALL side is the load-bearing piece:**
+threaded `comp_btsp_elig_tau` (an existing config, runner-only) to shorten the eligibility low-pass from 1000ms to ~30ms
+(so it tracks the CURRENT fact's firing, not cross-fact). At τ=30 + thresh 0.4 the write is strong (dw=7.1) but own/other
+is STILL flat (1.0). The reason is now decisive: the **CODE-OVERLAP (recall) ceiling stays ~1.3** — a DENSE (rate-weighted,
+any-spike) RECALL read is bounded at ~1.3 REGARDLESS of how well the write localizes, because recall activates the whole
+dense CA1 pattern. ⇒ **NO write-side mechanism (magnitude OR τ threshold) can pass — the load-bearing surpass is the
+RECALL-side core-gated read** (the slot's dendrite must respond only to COINCIDENT sustained input from the sparse core,
+so recall reads the core not the halo). The two-sided ceiling is confirmed at the SPARSE ceiling (4.8-8.0). ⇒ **the
+single remaining method = a spiking/dendritic RECALL that gates `ca1→slot` activation to the sustained-firing core**
+(the comp_dendritic two-compartment coincidence machinery is the natural substrate — a coincidence-detecting apical that
+ignites only on the core's synchronous sustained drive), paired with the write-side core gate. That is the substantial
+D2 arc, and it is now the DEFINITIVELY-isolated load-bearing piece — the entire cheap write-side space is exhausted.
+
 ## Recommended first de-risk (GPU-when-free / Tuesday)
 
 ## Recommended first de-risk (GPU-when-free / Tuesday)

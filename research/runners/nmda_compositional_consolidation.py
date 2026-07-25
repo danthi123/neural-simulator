@@ -362,6 +362,12 @@ def build_substrate(seed, args):
             # HARD-THRESHOLD write-side k-WTA on the eligibility (2026-07-25 write-side de-risk): only the sustained-
             # firing CA1 core (pre-elig >= thresh*peak) contributes to the ca1->slot potentiation. 0.0 => byte-identical.
             cfg.btsp_elig_hard_thresh = float(getattr(args, "comp_btsp_elig_hard_thresh", 0.0))
+            # PER-FACT-WINDOWED eligibility (2026-07-25 write-side NO-GO follow-up): the default tau=1000ms integrates
+            # ACROSS the multi-fact write (cross-fact compressed -> a magnitude threshold can't isolate a per-fact core).
+            # A SHORT tau (~the per-fact burst length) makes the eligibility track the CURRENT fact's firing only, so the
+            # hard threshold CAN isolate the per-fact core. Default keeps the shipped 1000ms.
+            if getattr(args, "comp_btsp_elig_tau", None) is not None:
+                cfg.btsp_elig_tau_ms = float(args.comp_btsp_elig_tau)
 
     bridge = SimulationBridge(
         core_config=cfg, viz_config=VisualizationConfig(),

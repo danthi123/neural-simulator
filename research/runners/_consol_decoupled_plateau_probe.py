@@ -82,7 +82,7 @@ def decoupled_plateau_write(bridge, facts, tags, cycles, seed, v_teach=-25.0, bu
 
 def run_seed(seed, v_teach=-25.0, cycles=40, btsp_lr=0.02, self_regen=0.15, tag_drive=1500.0,
              elig_exp=1.0, hetero_dep=0.0, hetero_theta=0.0, ffi_inh=0.0, ffi_drive=3.0, commit_top_k=None,
-             hippo_izh_type=None, hippo_izh_regions="dg", elig_hard_thresh=0.0):
+             hippo_izh_type=None, hippo_izh_regions="dg", elig_hard_thresh=0.0, elig_tau=None):
     a = dict(BASE)
     a.update(comp_dendritic=True, comp_wta_weight=5.0, comp_k_thresh=2.0, comp_self_regen=float(self_regen),
              comp_kir_g=3.0, comp_v_hold=-50.0,
@@ -90,6 +90,8 @@ def run_seed(seed, v_teach=-25.0, cycles=40, btsp_lr=0.02, self_regen=0.15, tag_
              comp_btsp_elig_exp=float(elig_exp), comp_btsp_hetero_dep=float(hetero_dep),
              comp_btsp_hetero_theta=float(hetero_theta),
              comp_btsp_elig_hard_thresh=float(elig_hard_thresh))
+    if elig_tau is not None:   # per-fact-windowed eligibility (short tau) so the hard threshold can isolate a per-fact core
+        a.update(comp_btsp_elig_tau=float(elig_tau))
     if ffi_inh > 0:   # sparsify the CA1 code (FFI kWTA) -> bigger disjoint per-fact cores
         a.update(ca1_ffi_kwta=True, ca1_ffi_inh=float(ffi_inh), ca1_ffi_drive=float(ffi_drive))
     if hippo_izh_type:   # sparse DG/CA3/CA1 phenotype (down-state-stable, high-threshold, adapting) -> sparse code
@@ -206,6 +208,7 @@ def main():
     ap.add_argument("--hippo-izh-type", type=str, default=None, help="sparse hippo phenotype, e.g. IZH2007_STRIATAL_MSN (down-state-stable, high-threshold, adapting)")
     ap.add_argument("--hippo-izh-regions", type=str, default="dg", help="comma-sep regions to give the sparse phenotype, e.g. dg,ca3,ca1")
     ap.add_argument("--elig-hard-thresh", type=float, default=0.0, help="HARD write-side k-WTA gate on the BTSP eligibility (0=off; e.g. 0.25/0.4/0.6 -> only the sustained-firing CA1 core writes)")
+    ap.add_argument("--elig-tau", type=float, default=None, help="BTSP eligibility low-pass tau ms (default 1000=cross-fact; short e.g. 20/30/60 = per-fact-windowed, so the hard threshold can isolate a per-fact core)")
     ap.add_argument("--out", default="research/findings/raw/consol_opsweep_gpu")
     args = ap.parse_args()
     from pathlib import Path
@@ -214,7 +217,7 @@ def main():
                  elig_exp=args.elig_exp, hetero_dep=args.hetero_dep, hetero_theta=args.hetero_theta,
                  ffi_inh=args.ffi_inh, ffi_drive=args.ffi_drive, commit_top_k=args.commit_top_k, tag_drive=args.tag_drive,
                  hippo_izh_type=args.hippo_izh_type, hippo_izh_regions=args.hippo_izh_regions,
-                 elig_hard_thresh=args.elig_hard_thresh)
+                 elig_hard_thresh=args.elig_hard_thresh, elig_tau=args.elig_tau)
     _tg = (f"_ee{args.elig_exp:g}" if args.elig_exp > 1 else "") + (f"_hd{args.hetero_dep:g}" if args.hetero_dep > 0 else "") + (f"_ffi{args.ffi_inh:g}" if args.ffi_inh > 0 else "") + (f"_eht{args.elig_hard_thresh:g}" if args.elig_hard_thresh > 0 else "")
     Path(f"{args.out}/decoupled_vt{args.v_teach:g}{_tg}_seed{args.seed}.json").write_text(json.dumps(r, indent=2))
     if "error" in r:
