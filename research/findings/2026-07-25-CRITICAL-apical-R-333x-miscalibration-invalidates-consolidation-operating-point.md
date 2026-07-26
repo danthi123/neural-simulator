@@ -1507,3 +1507,42 @@ proxy-vs-capability gap this arc has been burned by before — the weight read i
 LESION arm at the identical operating point**, so the claim tested is the MECHANISM and not the op-point, capturing
 `(B)` explicitly (my earlier greps silently dropped it — the same class of instrument defect logged above, caught
 here by the runner's own VERDICT disagreeing with my reading of (A)).
+
+## ✅✅ 6-SEED GO ON THE CORTICAL STORE WRITE — and a decisive NEGATIVE that RE-LOCATES the blocker
+
+Full gate, `_consol_meansub_gate.sh`, 6 seeds × {mechanism, mechanism-OFF lesion} at the IDENTICAL operating point
+(`--teaching-clamp --elig-tau 30 --freeze-gap --no-stdp --hebbian-max-w 2.5`), so the claim tested is the MECHANISM:
+
+| arm | own-is-max 3/3 | min own/other | max permuted (all 18 fact-seeds) | recall (B) |
+|---|---|---|---|---|
+| **`--mean-subtract 1.0`** | **6/6 seeds** | **11.51 – 22.95** | **0.154** | **7/18** |
+| **LESION (off)** | **0/6 seeds** | 0.93 – 1.01 | 1.156 | **8/18** |
+
+**(A) THE STORE WRITE IS A 6-SEED GO.** No overlap between arms on any metric; every fact-seed clears the 2.5 gate
+by 4–9×; the permuted-target control collapses in all 18 fact-seeds (max 0.154) while the lesion's sits at ~1.0–1.16.
+The heavy slot moves with seed while all three facts pass regardless — the winner-slot signature that refuted this
+thread's earlier lead is ABSENT. Substrate physiological in every arm. **Miller-MacKay subtractive normalization
+(`btsp_mean_subtract`) solves the write problem that blocked this thread all session.**
+
+**(B) AND IT DOES NOT HELP RECALL AT ALL — 7/18 vs lesion 8/18, with CHANCE AT 6/18.** Both arms sit at chance.
+Making the store 20–46× selective moved hippo-lesioned recall by nothing (slightly down, within noise).
+
+**⇒ THE DECISIVE STRUCTURAL RESULT: the store and the recall are DECOUPLED. The recall read is not reading the
+store.** This re-locates the blocker with evidence rather than inference — for the whole session the two were one
+undifferentiated failure, and the write's selectivity was the assumed cause. It is now excluded: a demonstrably,
+controlled-ly selective store yields chance recall.
+
+**Why this was nearly mis-reported (both caught, both now encoded in `verify-go`):** (1) my grep omitted the
+permuted control, so the first `own_is_max 3/3` looked like a win while per-slot mass was still unbalanced — the
+exact signature that killed this thread's earlier "3.67 lead"; the control happened to pass, but that was not known
+when the claim was held. (2) The recall failure was visible only because the runner's `VERDICT: NO` **contradicted my
+reading of (A)** — I had been grepping past that line. Trusting my own read of the selectivity numbers would have
+recorded a GO on a capability that sits at chance.
+
+**▶ IN FLIGHT — the read side.** The `(B)` rates decline MONOTONICALLY across successive cues in **BOTH** arms
+(arm seed 101: 2.05 → 1.36 → 0.56; lesion seed 43: 2.9 → 1.5 → 0.42), a global gradient far larger than the
+between-slot differences the read must resolve — so `argmax` can be decided by WHEN a fact was cued rather than by
+what is stored, independent of the write. The recall loop cues all facts BACK-TO-BACK with no recovery
+(`_consol_cortical_store_probe.py:283-298`); the WRITE phase had the identical defect and its fix — an inter-fact
+recovery gap — is on record as load-bearing. `--read-gap` (additive, default 0 = byte-identical) now scanning
+{0, 200, 1000} × seeds 42/43/44.
