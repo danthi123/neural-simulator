@@ -745,3 +745,40 @@ and now this probe (which I built as an instrument for the very rule that caught
 3. full 16-word × 800ev (58 min/step) — last resort.
 Whichever is chosen, **it must first be shown to discriminate old vs current** before being used to bisect. That check
 is now the precondition, not an afterthought.
+
+## ⛔ ALL MY REFERENCE-HARNESS MEASUREMENTS ARE INVALID — my reproduction omitted `apply_concept_topographic_bias`
+
+**old code @800ev = 3/16 (18.8%)** vs current 12.5% vs recorded 87.5%. A one-word difference on a 16-item binary
+measure is noise ⇒ **regression definitively RULED OUT**. But reading the runner's own Phase-1 generator
+(`_phase1_train_if_needed`, :596-640) shows why *both* of my numbers are meaningless:
+
+> **Step 3 — `cpd.apply_concept_topographic_bias(...)`**: a Pulvermüller-style cortical somatotopy
+> (`topographic_factor` 1.5 on-target / `off_target_factor` 0.7) applied to the substrate **BEFORE any training**.
+
+**My hand-rolled reproduction skipped it entirely** (and also built `word_to_idx` via `_all_words_word_to_idx()` rather
+than the runner's explicit `{w: i for i, w in enumerate(DIRECTION+NOUN+VERB+ADJECTIVE)}` ordering). Training a uniform,
+un-pre-structured substrate is simply a different experiment. ⇒ **every "the reference harness fails" number I produced
+today (current 12.5%, old 18.8%, both 0/16 at 200ev) is VOID**, and the **"shared-code path is broken" conclusion built
+on them is WITHDRAWN** — for the fourth time on this thread, because my instrument was wrong rather than because the
+claim was disproven.
+
+**Crucially, this does NOT rescue A1: the A1 runner DOES apply the bias** (`nmda_compositional_consolidation.py:405`,
+inside its own `train_phase1`) — so **A1's failure is real and remains unexplained** (1/16 @200ev, 0/16 @800ev *with*
+the bias correctly applied).
+
+**Corrected status of this whole sub-thread:**
+| claim | status |
+|---|---|
+| shared code path is broken | **WITHDRAWN** — measured with an invalid reproduction |
+| a regression between May and now | **RULED OUT** — old and current agree (18.8% vs 12.5%, noise) *but both reproductions were invalid, so even this is weak* |
+| Phase-1 training is a no-op | **WITHDRAWN** earlier (floored probe) |
+| **A1 fails its own binding sanity WITH the bias applied** | **STANDS — the one solid fact** |
+
+**▶ TEST IN FLIGHT: run the runner's OWN `_phase1_train_if_needed` (bias included, its code path, not my
+reconstruction) and score it with the same sanity check.** ≈87.5% ⇒ the reference is healthy, my reproduction was the
+whole problem, and A1's delta-vs-reference becomes the sole remaining question — now bisectable against a genuinely
+known-good baseline. Materially below ⇒ the recorded figure needs an ingredient even the runner's own path no longer
+supplies (e.g. the deleted cached `.simstate.h5` states, which are **gone** — the cache dirs exist but are empty).
+
+**LESSON: when reproducing a recorded result, CALL THE ORIGINAL CODE PATH — do not re-implement it.** Four withdrawals
+on this thread trace to a reconstruction that silently differed from the thing it claimed to reproduce.
