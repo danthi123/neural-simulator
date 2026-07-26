@@ -1192,3 +1192,37 @@ weights saturate at the bound.
 write GRADED beneath it:** `hebbian_max_weight=2.5` (selection) + `enable_stdp=False` + `hebbian_learning_rate≈1e-7`
 (present but not writing) + a low `btsp_lr`, so BTSP is the only writer and lands below 2.5 rather than at it. Verify
 per-slot spikes still show ~5:1 (selection intact) AND weights stay below the bound (graded), then read own/other.
+
+## Matched ceilings DO produce a graded write — but selectivity tracks SPIKE selectivity, and the write is compressive
+
+**The mismatched-ceiling diagnosis was CORRECT.** BTSP's soft bound is `(btsp_w_max − w)`; at `w_max=2000` against an
+effective ceiling of ~2.5 (the Hebbian clip, `bridge.py:8704-8710`) that term stays ≈2000, so BTSP drives at full
+strength into the clip and every synapse truncates at the same value **regardless of rate** — which is why 5 orders of
+`btsp_lr` never produced gradation. Setting `btsp_w_max = 2.5` to match:
+```
+btsp_lr 5e-4 : per-slot mass 2.284   (BELOW the 2.5 bound — GRADED, first time this session)
+btsp_lr 5e-5 : per-slot mass 1.592   (well below — graded)
+```
+**⇒ gradation achieved. But own/other FELL to ~1.015** (from ~1.05), because the lower weights also weakened the
+somatic selection (**1.35:1**, vs 5:1 in the bounded configuration).
+
+**The governing relationship, across every valid arm: weight selectivity tracks SPIKE selectivity — and does so with a
+large compression factor.**
+| somatic selection (spikes) | resulting own/other |
+|---|---|
+| 5:1 | 1.05 |
+| 1.35:1 | 1.015 |
+Roughly `own/other − 1 ≈ (spike_ratio − 1) / 80`. **Even a 5:1 firing difference yields only ~5% weight difference.**
+That compression — not the ceiling, not the rate, not the bound — is the actual blocker.
+
+**Leading explanation for the compression, and it is FREE to test.** BTSP's instructive signal is exclusive *within a
+window* (verified: target −9 mV vs others −66 mV). So `w[pool_i → slot_j≠i]` cannot grow during fact i's own window. It
+must therefore grow during **other facts' windows** — i.e. **pool_i cells are not silent while fact j is being written**,
+so they carry eligibility exactly when slot_j has its plateau. The per-slot spike readout already shows non-target slots
+firing 235–500 spikes in other windows; the pools are almost certainly doing the same. **▶ NEXT (free, same pattern as
+Rank-0): report per-POOL firing during each write window from the `pool_fire` array already collected.** If pool_i fires
+substantially during fact j's window, the leak is identified and the fix is about isolating pools between windows (or
+gating eligibility on the driven pool), not about any bound or rate.
+
+**Also learned: STDP was CONTRIBUTING to the somatic selection, not merely adding noise** — disabling it dropped
+selection from 5:1 to ~1.1:1. It should not be silenced casually in future arms.
