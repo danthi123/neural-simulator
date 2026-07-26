@@ -128,6 +128,34 @@ def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teachin
         va_log = {i: {j: 0.0 for j in sorted(slot)} for i in range(N)}
         va_n = {i: {j: 0 for j in sorted(slot)} for i in range(N)}
         order = list(range(N))
+        # ---- PER-WINDOW dw INSTRUMENTATION (2026-07-26). The end-state weights cannot distinguish
+        # "one slot RECEIVES more write" from "one slot RESISTS the pull-down" — both produce
+        # [bound, bound, above-bound]. Snapshot the pool_i->slot_j block means after EVERY write
+        # window so the per-window delta is directly readable. Masks are precomputed once (topology
+        # is fixed during the loop; nothing here rebuilds the CSR), so the per-window cost is a
+        # single csr.data read + N*N boolean means.
+        _csr = b.cp_connections
+        _nnz = int(_csr.nnz)
+        _post = to_host(_csr.indices).astype(np.int64)[:_nnz]
+        _iptr = to_host(_csr.indptr).astype(np.int64)
+        _pre = np.repeat(np.arange(len(_iptr) - 1), np.diff(_iptr))[:_nnz]
+        _pslot = np.full(_csr.shape[0], -1, dtype=np.int64)
+        for _s in slot:
+            _pslot[slot[_s]] = _s
+        _sslot = _pslot[_post]
+        _blk = {}
+        for _i in range(N):
+            _p = np.concatenate(pool_of[_i]) if pool_of[_i] else np.array([], dtype=np.int64)
+            _mp = np.isin(_pre, _p)
+            for _j in slot:
+                _blk[(_i, _j)] = _mp & (_sslot == _j)
+
+        def _blocks():
+            d = to_host(_csr.data).astype(np.float64)[:_nnz]
+            return {k: (float(d[m].mean()) if m.sum() else 0.0) for k, m in _blk.items()}
+
+        dw_windows = []          # one entry per write window: (fact_written, {(i,j): dw})
+        _prev = _blocks()
         for _c in range(int(cycles)):
             rng.shuffle(order)
             for i in order:
@@ -159,15 +187,41 @@ def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teachin
                 # write — which would produce exactly the observed uniform weights despite >99% pool isolation, 5:1 slot
                 # selection and an exclusive plateau. Keep the gap (it was load-bearing for the ca1->slot 6-seed GO) but
                 # FREEZE LEARNING during it, so only the selective driven windows write.
+                _cur = _blocks()                                             # after the DRIVEN window
+                dw_windows.append((i, "driven", {k: _cur[k] - _prev[k] for k in _cur}))
+                _prev = _cur
                 if freeze_gap:
                     _try_pgate(b, "concept_to_comp_attr", 0.0)
                 for _ in range(200):                                        # inter-fact recovery gap (validated)
                     b._run_one_simulation_step()
                 if freeze_gap:
                     _try_pgate(b, "concept_to_comp_attr", 1.0)
+                _cur = _blocks()                                             # after the RECOVERY GAP
+                dw_windows.append((i, "gap", {k: _cur[k] - _prev[k] for k in _cur}))
+                _prev = _cur
     else:
         coactivation_replay(b, CONSOLIDATED_FACTS, tags, int(cycles), seed, coactivate=True, attractor_on=True)
     w1 = _mean_gate_weight(b, "concept_to_comp_attr")
+
+    # ---- aggregate the per-window dw log (see the instrumentation comment above)
+    _dw_by_phase = _dw_diag_off = _dw_posneg = None
+    if teaching_clamp and dw_windows:
+        _phases = ("driven", "gap")
+        # total dw INTO each slot j, split by phase (all source pools summed)
+        _dw_by_phase = {ph: {f"slot{j}": round(sum(d[(i, j)] for (_wi, p, d) in dw_windows if p == ph
+                                                   for i in range(N)), 6)
+                             for j in sorted(slot)} for ph in _phases}
+        # the SELECTIVE component (pool i -> its own slot i) vs the NON-selective one (off-diagonal)
+        _dw_diag_off = {ph: dict(
+            diag=round(sum(d[(wi, wi)] for (wi, p, d) in dw_windows if p == ph), 6),
+            off=round(sum(d[(wi, j)] for (wi, p, d) in dw_windows if p == ph
+                          for j in sorted(slot) if j != wi), 6)) for ph in _phases}
+        # THE FORK: does the winner RECEIVE more potentiation (pos), or merely suffer less
+        # depression (neg)? Summed over every window and every source pool, per target slot.
+        _dw_posneg = {f"slot{j}": dict(
+            pos=round(sum(max(d[(i, j)], 0.0) for (_wi, _p, d) in dw_windows for i in range(N)), 6),
+            neg=round(sum(min(d[(i, j)], 0.0) for (_wi, _p, d) in dw_windows for i in range(N)), 6))
+            for j in sorted(slot)}
 
     # ---- (A) is the CORTICAL store selective?  pool_i -> slot_j weights
     csr = b.cp_connections
@@ -232,6 +286,13 @@ def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teachin
     return dict(seed=int(seed), thr_hash=thr_hash, v_apical_physiological=v_ok,
                 v_apical_range=[round(float(va.min()), 2), round(float(va.max()), 2)] if va is not None else None,
                 dw_cortical=round(w1 - w0, 5),
+                # PER-WINDOW dw, aggregated two ways. (1) by PHASE (driven vs gap): does the write happen
+                # in the selective driven window or leak into the undriven gap? (2) by TARGET SLOT summed
+                # over all windows: does the winner slot RECEIVE more total write (=> a write asymmetry) or
+                # merely LOSE LESS (=> a pull-down asymmetry, i.e. it resists the bound)?
+                dw_by_phase=_dw_by_phase,
+                dw_diag_vs_off=_dw_diag_off,
+                dw_pos_neg_by_slot=_dw_posneg,
                 v_apical_during_write=({i: {j: round(va_log[i][j] / max(va_n[i][j], 1), 2) for j in va_log[i]}
                                         for i in va_log} if teaching_clamp else None),
                 # VALIDITY GATE over the WRITE PHASE. The pre-write check passed while the write itself drove v_apical
@@ -318,6 +379,14 @@ def main():
             oth = max([v for k, v in enumerate(row) if k != int(i)] or [0.0])
             print(f"       fact {i}: {row}   target={tgt}  best_other={oth}  "
                   + ("TARGET DOMINATES" if tgt > oth else "NON-TARGET SPIKES AS MUCH/MORE => somatic selection FAILS"))
+    if r.get("dw_pos_neg_by_slot"):
+        print("  (W) PER-WINDOW dw — the fork: does the winner RECEIVE more, or RESIST the pull-down?")
+        print(f"      by phase (total dw into each slot): {r['dw_by_phase']}")
+        print(f"      selective(diag) vs non-selective(off): {r['dw_diag_vs_off']}")
+        for k, v in r["dw_pos_neg_by_slot"].items():
+            print(f"      {k}: potentiation={v['pos']:+.6f}  depression={v['neg']:+.6f}  net={v['pos']+v['neg']:+.6f}")
+        print("      => if the winner's POS is comparable but its NEG is much smaller, the asymmetry is in the"
+              " pull-down (bound/depression), NOT in the write.")
     if r.get("pool_spikes_during_write"):
         print("  (R0b) POOL spikes during each write window (row=window, col=whose pools) — off-diagonal IS the leak:")
         for i, row in r["pool_spikes_during_write"].items():

@@ -1373,3 +1373,34 @@ per-slot BTSP `dw` per window directly (not the post-hoc weights) — the probe 
 "one slot resists the pull-down", which is the fork the current data cannot separate. **Do NOT prescribe another
 mechanism before that measurement** — this thread's last two mechanisms were both refuted by the builds meant to
 implement them.
+
+## 🔬 THE MEASUREMENT THAT SEPARATES THE FORK — the write is NEAR-SYMMETRIC; the store is a ~3% RESIDUAL
+
+Instrumented the per-window `dw` directly (snapshot the pool_i→slot_j block means after every write window;
+masks precomputed once, `_consol_cortical_store_probe.py`). Seed 42, `--teaching-clamp --elig-tau 30 --freeze-gap
+--hebbian-max-w 2.5` — i.e. the exact condition where the single winner appears.
+
+| slot | potentiation | depression | **net** |
+|---|---|---|---|
+| 0 | +65.98 | −68.01 | −2.04 |
+| 1 | +69.62 | −71.59 | −1.98 |
+| 2 | +71.35 | −66.07 | **+5.28** |
+
+**Neither branch of the fork I posed is right.** The winner does not "receive more write" (pos spread 65.98→71.35,
+8%) and does not "resist the pull-down" (neg spread −66.07→−71.59, 8%). **Both flows are ~70 units and nearly cancel;
+the entire store is the ~3% residual.** That is a signal-to-noise result, not a mechanism result — and it explains
+why the winner is SEED-DEPENDENT (slot 2 on seeds 42/44, slot 1 on 43): a residual that small is set by noise.
+
+**The BTSP write itself is FINE and correctly signed.** Decomposing the DRIVEN pool's own contribution:
+`diag = +196.84` (pool_i → its own slot_i) vs `off = −6.01` (pool_i → other slots). Strongly selective, right sign.
+**It is swamped in the per-slot totals by depression arriving from the NON-DRIVEN pools.** So the defect is not in
+the instructive signal, the plateau exclusivity, the pool isolation, or the slot selection (all previously measured
+good) — it is that ~70 units of non-selective depression ride on top of a ~197-unit selective potentiation.
+
+**Instrument verified, not assumed:** `gap`-phase dw is **exactly 0.0** on every slot, confirming `--freeze-gap`
+genuinely freezes the pathway (rule 2 — the "this is inert" claim is now an assertion in the data, not a comment).
+
+**⇒ NEXT (a measurement, not a prescribed mechanism): WHICH rule supplies the ~70 units of depression?** STDP was
+ON throughout this arc and Hebbian is live; ablation `{both, −STDP, −Hebbian, −both}` launched. Only once the
+depression source is named does a corrective mechanism (e.g. the still-untried Miller-MacKay `btsp_mean_subtract`)
+have a defined target.
