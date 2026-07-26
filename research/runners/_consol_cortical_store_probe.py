@@ -37,7 +37,7 @@ cp, BACKEND = get_backend()
 N = len(CONSOLIDATED_FACTS)
 
 
-def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teaching_clamp=False, elig_tau=30.0, pool_slot_w=1.5, hebbian_max_w=None, hebbian_on=True, hebbian_lr=None, syn_scaling=None, no_stdp=False, btsp_wmax=2000.0, freeze_gap=False, per_slot_fs=False, mean_subtract=None):
+def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teaching_clamp=False, elig_tau=30.0, pool_slot_w=1.5, hebbian_max_w=None, hebbian_on=True, hebbian_lr=None, syn_scaling=None, no_stdp=False, btsp_wmax=2000.0, freeze_gap=False, per_slot_fs=False, mean_subtract=None, read_gap=0):
     a = dict(BASE)
     a.update(comp_dendritic=True, comp_wta_weight=5.0, comp_k_thresh=2.0, comp_self_regen=0.15, comp_kir_g=3.0,
              comp_v_hold=-50.0, comp_apical_R=0.15, comp_gc_read=0.5,          # CALIBRATED operating point
@@ -296,6 +296,15 @@ def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teachin
             recall_rates.append([round(r, 3) for r in rates])
             recall.append(bool(int(np.argmax(rates)) == i and max(rates) > 0))
             b.cp_external_input_current[:] = 0.0
+            # READ-SIDE RECOVERY GAP (2026-07-26, default 0 = byte-identical to the prior behaviour).
+            # The cues run BACK-TO-BACK, so successive reads sit on a progressively adapted network:
+            # measured seed-43 rates fall MONOTONICALLY across the three cues (~2.6 -> ~1.3 -> ~0.3),
+            # a global gradient far larger than the between-slot differences the read is supposed to
+            # resolve — so argmax can be decided by WHEN a fact was cued rather than by what is stored.
+            # This is the same defect the WRITE phase had, and there the inter-fact recovery gap was
+            # load-bearing. Same lever, read side.
+            for _ in range(int(read_gap)):
+                b._run_one_simulation_step()
     return dict(seed=int(seed), thr_hash=thr_hash, v_apical_physiological=v_ok,
                 v_apical_range=[round(float(va.min()), 2), round(float(va.max()), 2)] if va is not None else None,
                 dw_cortical=round(w1 - w0, 5),
@@ -347,6 +356,7 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--cycles", type=int, default=10)
     ap.add_argument("--btsp-lr", type=float, default=0.0005)
+    ap.add_argument("--read-gap", type=int, default=0, help="recovery steps BETWEEN recall cues (default 0 = prior behaviour). Reads run back-to-back on a progressively adapted network; the write phase needed exactly this lever.")
     ap.add_argument("--mean-subtract", type=float, default=None, help="Miller-MacKay subtractive normalization on the BTSP increment (engine btsp_mean_subtract); the only STRUCTURAL lever left — every rate lever is inert at a soft-bound fixed point")
     ap.add_argument("--per-slot-fs", action="store_true", help="per-slot FS pools + CROSS-inhibition (no self-inhibition) instead of the shared global pool")
     ap.add_argument("--freeze-gap", action="store_true", help="freeze plasticity during the undriven recovery gaps (~6000 steps vs ~900 driven) so only selective windows write")
@@ -363,7 +373,7 @@ def main():
     args = ap.parse_args()
     from pathlib import Path
     Path(args.out).mkdir(parents=True, exist_ok=True)
-    r = run(args.seed, args.cycles, args.btsp_lr, teaching_clamp=args.teaching_clamp, elig_tau=args.elig_tau, pool_slot_w=args.pool_slot_weight, hebbian_max_w=args.hebbian_max_w, hebbian_on=not args.no_hebbian, hebbian_lr=args.hebbian_lr, syn_scaling=args.syn_scaling, no_stdp=args.no_stdp, btsp_wmax=args.btsp_wmax, freeze_gap=args.freeze_gap, per_slot_fs=args.per_slot_fs, mean_subtract=args.mean_subtract)
+    r = run(args.seed, args.cycles, args.btsp_lr, teaching_clamp=args.teaching_clamp, elig_tau=args.elig_tau, pool_slot_w=args.pool_slot_weight, hebbian_max_w=args.hebbian_max_w, hebbian_on=not args.no_hebbian, hebbian_lr=args.hebbian_lr, syn_scaling=args.syn_scaling, no_stdp=args.no_stdp, btsp_wmax=args.btsp_wmax, freeze_gap=args.freeze_gap, per_slot_fs=args.per_slot_fs, mean_subtract=args.mean_subtract, read_gap=args.read_gap)
     Path(f"{args.out}/cortstore{'_clamp' if args.teaching_clamp else ''}_seed{args.seed}.json").write_text(json.dumps(r, indent=2))
     print(f"[seed {args.seed}] backend={BACKEND} thr_hash={r['thr_hash']} dw_cortical={r['dw_cortical']}")
     print(f"  v_apical={r['v_apical_range']} physiological={r['v_apical_physiological']}"
