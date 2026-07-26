@@ -1022,3 +1022,41 @@ fixed point, and can the selective component be made to dominate it". **▶ NEXT
 scaling / global clip / homeostasis on `concept_to_comp_attr`) — measure the weight distribution's evolution during the
 write rather than only its mean — then re-test. Multi-seed only after the magnitude is real; a 5% effect is not worth
 6 seeds yet.**
+
+## The cortical store's REAL blocker: a bound/saturation TENSION — and a probe-validity gap of my own
+
+Continued the chain. **Hypothesis 4 CONFIRMED then neutralised, hypothesis 5 produced an INVALID substrate:**
+
+**(4) `hebbian_max_weight` pins the weights — CONFIRMED, but fixing it just moves the pin.**
+`hebbian_max_weight` defaults to **1.0** while pool→slot sits at ~1.2–1.5, i.e. **above the bound**, so every Hebbian
+"potentiation" is negative (the trap documented in CLAUDE.md this morning — *5th instance today, 2nd on this
+mechanism*). Raising it 1.0 → 8.0 moved per-slot mass **1.19 → 8.28**, confirming it was the pinning force. **But
+selectivity did NOT improve** (own/other 1.02, own-is-max 2/3): the weights are now simply pinned at the NEW bound.
+**Hebbian drives to whatever ceiling it has, and a saturated weight cannot carry graded selectivity** — the same
+saturation that held `ca1→slot` flat until its write was moved into the unsaturated regime.
+
+**(5) Disable Hebbian so BTSP's graded write acts alone — INVALID SUBSTRATE, arm VOID.**
+```
+v_apical during write: [500.17, 80.68, 81.23] / [75.65, 474.23, 75.14] / [83.08, 81.85, 501.28]
+per-slot mass: ~31,000,000
+```
+Without Hebbian nothing bounds the pathway: weights run away to ~3×10⁷, driving `I_coincidence` and hence `v_apical` to
+**500 mV** — far outside −90…+50, the same class of invalid dynamics as the original 333× miscalibration. **This arm's
+numbers are void** and are not interpreted. (Note the clamp genuinely IS defeated here — all slots above `v_hold` — but
+only as a consequence of the substrate having broken, not as evidence for the earlier broadcast hypothesis, which
+remains refuted under valid dynamics.)
+
+**⇒ THE REAL BLOCKER IS A TENSION, not a single defect:** the pathway needs a bound to avoid runaway, but any bound
+Hebbian can reach **saturates** the weights and destroys the graded component BTSP writes. The viable window is
+`bound high enough to avoid inversion` ∧ `low enough to prevent runaway` ∧ `BTSP write unsaturated within it` — a joint
+(bound, lr, cycles) tuning problem, and a genuinely narrower target than anything tried so far.
+
+**INSTRUMENT GAP FOUND IN MY OWN PROBE:** its `v_apical_physiological` check runs **after encode, before the write**, so
+it reported `True` while the write drove the substrate to 500 mV. **A validity check that does not cover the phase under
+study is not a check.** Fix: assert physiological range *during* the write (the per-slot `v_apical` logging added for
+the broadcast test already collects exactly this — it simply is not gated on). This is the same lesson as the floored
+probes: the guard must live in the instrument and cover the phase being measured.
+
+**▶ NEXT:** joint (hebbian bound, btsp lr, cycles) sweep constrained to arms whose `v_apical` stays physiological
+THROUGHOUT the write, scored on the firing-weighted read with its permuted control. Reject any arm whose substrate
+leaves range — do not interpret it, as this one was nearly interpreted.

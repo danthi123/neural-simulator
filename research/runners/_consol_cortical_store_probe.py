@@ -37,7 +37,7 @@ cp, BACKEND = get_backend()
 N = len(CONSOLIDATED_FACTS)
 
 
-def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teaching_clamp=False, elig_tau=30.0, pool_slot_w=1.5):
+def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teaching_clamp=False, elig_tau=30.0, pool_slot_w=1.5, hebbian_max_w=None, hebbian_on=True):
     a = dict(BASE)
     a.update(comp_dendritic=True, comp_wta_weight=5.0, comp_k_thresh=2.0, comp_self_regen=0.15, comp_kir_g=3.0,
              comp_v_hold=-50.0, comp_apical_R=0.15, comp_gc_read=0.5,          # CALIBRATED operating point
@@ -53,8 +53,20 @@ def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teachin
              # ALL-pools->ALL-slots broadcast is a write-selectivity killer for the ca1->slot measurement). But those
              # pathways ARE the cortical store this probe exists to measure, so it must re-enable them. Without this the
              # probe reports dw=0 and per-slot mass=0 — i.e. it measures a pathway that does not exist.
-             comp_no_pool_slot=False, comp_pool_slot_weight=float(pool_slot_w))
+             comp_no_pool_slot=False, comp_pool_slot_weight=float(pool_slot_w),
+             # Hebbian SATURATES this pathway to whatever its bound is (measured: pinned ~1.19 at hebbian_max_weight=1.0,
+             # ~8.28 at 8.0) and a saturated weight cannot carry GRADED selectivity — the same saturation that pinned
+             # ca1->slot flat until the write was moved into the unsaturated regime. With Hebbian off, BTSP's graded
+             # dw = eta*E[k]*IS[j]*(w_max-w) at lr=5e-4 / w_max=2000 is the unsaturated regime that WORKED there.
+             enable_hebbian=bool(hebbian_on))
     b = build_substrate(seed, SimpleNamespace(**a))
+    # STANDING PRE-FLIGHT (CLAUDE.md, earned 5x today): compare each active rule's BOUND against the ACTUAL pathway
+    # weight. `hebbian_max_weight` DEFAULTS TO 1.0 while pool->slot sits at ~1.19-1.5 — above the bound, every Hebbian
+    # "potentiation" is strongly NEGATIVE, so Hebbian drags the weights down while BTSP pushes up and the pathway pins
+    # at their equilibrium (~1.19) INDEPENDENT OF INIT — exactly the fixed point measured. Raise it above the design
+    # weights so the bound stops inverting the rule.
+    if hebbian_max_w:
+        b.core_config.hebbian_max_weight = float(hebbian_max_w)
     thr_hash = hashlib.md5(to_host(b.cp_neuron_firing_thresholds).tobytes()).hexdigest()[:12]
     rm = b.region_manager
     names = {r.name for r in b.core_config.brain_regions}
@@ -204,6 +216,8 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--cycles", type=int, default=10)
     ap.add_argument("--btsp-lr", type=float, default=0.0005)
+    ap.add_argument("--no-hebbian", action="store_true", help="disable Hebbian so BTSP's GRADED write is not saturated over by a rule that drives to its bound")
+    ap.add_argument("--hebbian-max-w", type=float, default=None, help="raise hebbian_max_weight above the design weights (default 1.0 INVERTS the rule on a ~1.2-1.5 pathway)")
     ap.add_argument("--pool-slot-weight", type=float, default=1.5, help="initial pool->slot weight (shipped 1.5 swamps a small learned component)")
     ap.add_argument("--elig-tau", type=float, default=30.0, help="BTSP eligibility tau ms (default 1000 BLEEDS across facts; 30 = per-fact windowed)")
     ap.add_argument("--teaching-clamp", action="store_true", help="apply the validated decoupled apical teaching clamp during replay (BTSP needs an APICAL plateau; somatic slot drive supplies none)")
@@ -211,7 +225,7 @@ def main():
     args = ap.parse_args()
     from pathlib import Path
     Path(args.out).mkdir(parents=True, exist_ok=True)
-    r = run(args.seed, args.cycles, args.btsp_lr, teaching_clamp=args.teaching_clamp, elig_tau=args.elig_tau, pool_slot_w=args.pool_slot_weight)
+    r = run(args.seed, args.cycles, args.btsp_lr, teaching_clamp=args.teaching_clamp, elig_tau=args.elig_tau, pool_slot_w=args.pool_slot_weight, hebbian_max_w=args.hebbian_max_w, hebbian_on=not args.no_hebbian)
     Path(f"{args.out}/cortstore{'_clamp' if args.teaching_clamp else ''}_seed{args.seed}.json").write_text(json.dumps(r, indent=2))
     print(f"[seed {args.seed}] backend={BACKEND} thr_hash={r['thr_hash']} dw_cortical={r['dw_cortical']}")
     print(f"  v_apical={r['v_apical_range']} physiological={r['v_apical_physiological']}"
