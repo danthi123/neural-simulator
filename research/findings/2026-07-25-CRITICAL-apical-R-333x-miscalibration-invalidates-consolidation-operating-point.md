@@ -814,3 +814,25 @@ should have been run first: same bias, same ordering, same schedule, same gating
   proxy; **A1's failure *with* the bias at 800ev becomes the sole real anomaly**, bisectable against a known-good baseline.
 - materially below ⇒ the recorded figure needs an ingredient the current code no longer supplies — and the cached
   `.simstate.h5` states that could have settled it are **deleted** (cache dirs exist, all empty).
+
+### The clean reproduction: runner's OWN path @800ev on current code = **1/16 (6.2%)** — chance
+
+Surgical one-parameter override (`n_train_events` 200→800), everything else the runner's own code (topographic bias,
+word ordering, interleaved schedule, gating, cache write/load):
+```
+n_train_events now: 800
+RUNNER-OWN path @800ev: 1/16 = 6.2%     [record: 87.5%]
+```
+**⇒ the recorded 87.5% is NOT reproducible on current code by the original code path at the documented budget.** This is
+the first properly-instrumented statement in this whole sub-thread — no hand-rolled loop, no floored budget, no
+1-word proxy. (Note it ran in ~13 min, not the ~58 my hand-rolled loop took for the same nominal budget — a further
+sign the reconstruction differed from the original in more than the bias.)
+
+**⇒ the regression question can now be asked PROPERLY for the first time.** Every earlier old-vs-current comparison used
+the invalid reconstruction and/or a floored budget. Re-running the identical, valid instrument on the 2026-05-22
+checkout — same entry point (`_phase1_train_if_needed` exists there, verified), same override, same scoring:
+- old ≈ 87.5% ⇒ **genuine regression**, and now cheaply bisectable (~13 min/step, so an 8-step bisect is ~2 h).
+- old ≈ 6% ⇒ **no regression**; the recorded figure depended on an ingredient neither checkout supplies today — most
+  plausibly the **cached `.simstate.h5` Phase-1 states, which are DELETED** (the `unified_per_regime/phase1_*` cache
+  dirs all exist but are empty), in which case the 87.5% is **unreproducible in principle** and should be retired as a
+  citable baseline rather than chased further.
