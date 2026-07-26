@@ -716,3 +716,32 @@ events** — the one budget where the reference is known to have produced a stro
 **Lesson (new, and earned twice today): never conclude "no difference" from arms that are both at the floor or both at
 the ceiling.** Saturation destroyed the slot-write signal earlier; a floor destroyed this comparison. Same defect class,
 opposite end of the range.
+
+### The fast bisect instrument is FLOORED too — and it retroactively undermines my "Phase-1 is a no-op" claim
+
+Anticipating a possible bisect (58 min/run × ~8 steps = 10+ h), I tested whether the cheap 1-word × 200-event
+weight-delta probe discriminates old from current code. **Applying the floor/ceiling rule added an hour ago — check the
+instrument responds before trusting it:**
+```
+OLD CODE  1-word probe: trainedΔ=-0.00019  controlΔ=-0.00017  SELECTIVE=-0.00002
+CURRENT   1-word probe: trainedΔ=-0.00017  controlΔ=-0.00019  SELECTIVE=+0.00002
+⇒ does NOT discriminate — both arms at noise level
+```
+**Consequence I have to own:** this is the very probe I used earlier to conclude **"Phase-1 word→pool training is a
+no-op — the trained pathway moves identically to untrained controls."** That measurement is **floored on both arms**, so
+it never supported the claim. **The "Phase-1 is a no-op" conclusion is WITHDRAWN** — not because it is disproven, but
+because the evidence offered for it had no discriminating power. (The reference historically reaching 87.5% at 16 words
+× 800 events implies learning *does* occur at scale; a 1-word/200-event probe is simply far below the scale where the
+effect lives.)
+
+**This is the THIRD floored-comparison error in this session** — the saturating learning rate, the 200ev regression A/B,
+and now this probe (which I built as an instrument for the very rule that caught it). What actually stands is only the
+16-word sanity at adequate scale: **current code 12.5% @800ev vs a recorded 87.5%**.
+
+**Consequence for the bisect plan:** there is no cheap instrument yet. Options, in order of preference:
+1. a **graded margin** metric (target-pool rate minus best non-target rate) instead of 16-way argmax accuracy — a
+   continuous score is far more sensitive than a binary win/lose and may discriminate at much lower training cost;
+2. a reduced word set (4 words × 800ev ≈ 14 min/step ⇒ ~2 h for an 8-step bisect) — feasible but not cheap;
+3. full 16-word × 800ev (58 min/step) — last resort.
+Whichever is chosen, **it must first be shown to discriminate old vs current** before being used to bisect. That check
+is now the precondition, not an afterthought.
