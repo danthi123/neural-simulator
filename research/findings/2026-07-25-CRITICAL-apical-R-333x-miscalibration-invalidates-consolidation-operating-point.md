@@ -1155,3 +1155,40 @@ It separates the two live diagnoses at no cost, and answers a question never ask
 slots even spike during a write window?* Only after that do the ranked mechanisms (per-slot FS cross-inhibition ·
 Miller-MacKay **subtractive** normalisation, which is config-only via `btsp_mean_subtract` · HTM winner-inactive
 depression) come into play.
+
+## RANK-0 + the clean BTSP-alone test: selection is EXCELLENT, and the bound is what CREATES it
+
+**RANK-0 (free — the data was already collected and discarded): somatic selection WORKS, ~5:1.**
+| write window | per-slot spikes | target : best other |
+|---|---|---|
+| fact 0 | `[1313, 235, 280]` | **4.7×** |
+| fact 1 | `[459, 2232, 397]` | **4.9×** |
+| fact 2 | `[252, 216, 1480]` | **5.9×** |
+The question no hypothesis in this arc had asked. **The correct slot is strongly selected in SPIKES**, the apical
+plateau is exclusive — and yet the weights come out **1.05:1**. A ~5:1 signal arriving as 1.05:1 is compression.
+
+**The `btsp_lr` sweep was CONFOUNDED and could not have shown this.** STDP (`enable_stdp` defaults **True**, pathway
+`plastic=True`) and Hebbian were BOTH writing throughout, so lowering BTSP's rate never removed the saturating drive.
+The "5 orders of magnitude" sweep never tested a graded write. (Third distinct confound on this pathway.)
+
+**Clean test — STDP off, Hebbian rate 1e-7, bound raised to 2000 so it neither writes nor inverts:**
+- **`btsp_lr=5e-4` ⇒ INVALID SUBSTRATE** (`v_apical` −20521 mV). **The write-phase validity gate CAUGHT it** and printed
+  *"this arm's metrics are VOID, do not interpret"*. Its numbers looked entirely plausible (own/other 1.0, mass 1992) —
+  **without the gate added two hours ago I would have interpreted them.** The instrument paid for itself.
+- **`btsp_lr=5e-6` ⇒ valid, own/other `[1.059, 1.055, 1.063]`, own-is-max 3/3, permuted collapses (~0.98)** — still ~6%.
+  **But the somatic selection COLLAPSED:** slot spikes `[9734, 9371, 9500]` / `[10496, 10313, 10078]` — essentially
+  EQUAL, versus 5:1 in the bounded configuration.
+
+**⇒ THE REAL STRUCTURE OF THE PROBLEM, and it inverts the earlier reading.** Raising the bound to 2000 let the weights
+grow (per-slot mass 1.5 → **77**), which drove every slot to fire massively (~10,000 spikes each) and **destroyed the
+selection**. So:
+- **bound PRESENT (2.5):** slots fire **5:1 selectively** — but the weights saturate AT the bound ⇒ 1.05:1 weights.
+- **bound ABSENT/high (2000):** weights grow, **all slots fire equally** ⇒ selection lost entirely.
+**The bound is not merely a constraint — it is what CREATES the somatic selection** (it keeps non-target slots below
+firing threshold). The earlier bounded configuration was the *good* regime for selection; its only defect is that the
+weights saturate at the bound.
+
+**▶ NEXT (the configuration never yet tried): keep the bound at 2.5 — preserving the 5:1 selection — while making the
+write GRADED beneath it:** `hebbian_max_weight=2.5` (selection) + `enable_stdp=False` + `hebbian_learning_rate≈1e-7`
+(present but not writing) + a low `btsp_lr`, so BTSP is the only writer and lands below 2.5 rather than at it. Verify
+per-slot spikes still show ~5:1 (selection intact) AND weights stay below the bound (graded), then read own/other.

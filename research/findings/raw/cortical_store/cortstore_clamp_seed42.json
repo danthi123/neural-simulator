@@ -1,91 +1,108 @@
 {
   "seed": 42,
   "thr_hash": "ee7fcf106bea",
-  "v_apical_physiological": true,
+  "v_apical_physiological": false,
   "v_apical_range": [
-    -5.28,
-    -1.91
+    -20521.52,
+    -3.38
   ],
-  "dw_cortical": 0.31043,
+  "dw_cortical": 1745.89781,
   "v_apical_during_write": {
     "0": {
-      "0": -0.69,
-      "1": -63.44,
-      "2": -63.43
+      "0": -10019.39,
+      "1": -11164.14,
+      "2": -10140.68
     },
     "1": {
-      "0": -63.68,
-      "1": -1.71,
-      "2": -63.65
+      "0": -9575.58,
+      "1": -10729.28,
+      "2": -9429.0
     },
     "2": {
-      "0": -63.75,
-      "1": -63.69,
-      "2": -1.9
+      "0": -9864.09,
+      "1": -11027.33,
+      "2": -9835.87
     }
   },
-  "write_phase_physiological": true,
+  "write_phase_physiological": false,
   "v_hold": -50.0,
   "store_own_over_other": [
     0.999,
     1.0,
-    1.0
+    1.001
   ],
   "store_own_is_max": [
     false,
     false,
-    false
+    true
   ],
   "permuted_target_control": [
     1.0,
-    1.0,
-    1.0
+    1.001,
+    0.999
   ],
   "per_slot_mass": [
-    4.9919,
-    4.9927,
-    4.9938
+    1992.6757,
+    1993.5889,
+    1995.5445
   ],
+  "slot_spikes_during_write": {
+    "0": [
+      13704.0,
+      14082.0,
+      14238.0
+    ],
+    "1": [
+      13685.0,
+      14009.0,
+      14188.0
+    ],
+    "2": [
+      13717.0,
+      14082.0,
+      14213.0
+    ]
+  },
   "firing_weighted_own_over_other": [
-    0.991,
-    0.987,
+    1.0,
+    1.002,
     0.997
   ],
   "firing_weighted_permuted_control": [
-    1.017,
-    0.983,
-    1.008
+    1.002,
+    0.997,
+    1.001
   ],
   "firing_weighted_mass": [
-    4222121.62,
-    4193187.61,
-    4168815.85
+    7988276945.07,
+    7997716558.44,
+    7970761061.75
   ],
   "firing_weighted_own_is_max": [
     false,
-    false,
+    true,
     false
   ],
   "recall_correct": [
-    true,
     false,
-    false
+    false,
+    true
   ],
   "recall_slot_rates": [
     [
-      1.092,
-      1.017,
-      1.033
+      22.858,
+      23.45,
+      23.708
     ],
     [
-      1.325,
-      0.825,
-      0.808
+      22.908,
+      23.483,
+      23.775
     ],
     [
-      0.292,
-      0.392,
-      0.25
+      22.883,
+      23.508,
+      23.758
     ]
   ],
   "n_recall": 1

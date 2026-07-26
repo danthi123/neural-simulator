@@ -37,7 +37,7 @@ cp, BACKEND = get_backend()
 N = len(CONSOLIDATED_FACTS)
 
 
-def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teaching_clamp=False, elig_tau=30.0, pool_slot_w=1.5, hebbian_max_w=None, hebbian_on=True, hebbian_lr=None, syn_scaling=None):
+def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teaching_clamp=False, elig_tau=30.0, pool_slot_w=1.5, hebbian_max_w=None, hebbian_on=True, hebbian_lr=None, syn_scaling=None, no_stdp=False):
     a = dict(BASE)
     a.update(comp_dendritic=True, comp_wta_weight=5.0, comp_k_thresh=2.0, comp_self_regen=0.15, comp_kir_g=3.0,
              comp_v_hold=-50.0, comp_apical_R=0.15, comp_gc_read=0.5,          # CALIBRATED operating point
@@ -67,6 +67,13 @@ def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teachin
     # weights so the bound stops inverting the rule.
     if hebbian_max_w:
         b.core_config.hebbian_max_weight = float(hebbian_max_w)
+    if no_stdp:
+        # RANK-0 showed somatic selection is EXCELLENT (target slot fires ~5x non-targets in every write window) and the
+        # apical plateau is exclusive — yet the weights come out only 1.05:1. A ~5:1 drive difference compressed to
+        # 1.05:1 is SATURATION. Critically, the earlier btsp_lr sweep could NOT have tested an unsaturated write: STDP
+        # (enable_stdp defaults True, pathway plastic=True) and Hebbian were BOTH writing this pathway the whole time,
+        # so lowering BTSP's rate alone never removed the saturating drive. Silence them to test BTSP's graded write.
+        b.core_config.enable_stdp = False
     if syn_scaling:
         # NON-COACTIVITY BOUND. Hebbian bounds the pathway but is COACTIVITY-driven, so it potentiates every coactive
         # pool->slot pair broadly and SETS the weight (BTSP's selective write is only a ~5% perturbation on top);
@@ -224,6 +231,13 @@ def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teachin
                 store_own_is_max=[bool(np.argmax(W[i]) == i) for i in range(N)],
                 permuted_target_control=[round(x, 3) for x in oo_perm],
                 per_slot_mass=[round(float(W[:, j].mean()), 4) for j in range(N)],
+                # RANK-0 (free): per-slot SOMATIC firing during each write window. pool_fire[] already accumulated the
+                # whole network and discarded the slot indices. Never asked in this arc: do NON-TARGET slots even spike
+                # during a write window? If only the target spikes, selection works somatically and the weak write is a
+                # write-rule question; if all slots spike, the failure is somatic selection (what a single SHARED
+                # inhibitory pool that inhibits every slot INCLUDING the winner would produce).
+                slot_spikes_during_write=({i: [round(float(pool_fire[i][slot[j]].sum()), 1) for j in sorted(slot)]
+                                           for i in range(N)} if teaching_clamp else None),
                 firing_weighted_own_over_other=[round(x, 3) for x in f_oo],
                 firing_weighted_permuted_control=[round(x, 3) for x in f_perm],
                 firing_weighted_mass=[round(float(Wf[:, j].mean()), 2) for j in range(N)] if teaching_clamp else None,
@@ -237,6 +251,7 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--cycles", type=int, default=10)
     ap.add_argument("--btsp-lr", type=float, default=0.0005)
+    ap.add_argument("--no-stdp", action="store_true", help="disable STDP (defaults ON and was writing this pathway throughout, confounding every btsp_lr sweep)")
     ap.add_argument("--syn-scaling", type=float, default=None, help="enable synaptic scaling at this rate as a NON-coactivity bound (default off)")
     ap.add_argument("--hebbian-lr", type=float, default=None, help="Hebbian learning rate (default 5e-4); lower it so BTSP's graded write dominates while Hebbian still bounds")
     ap.add_argument("--no-hebbian", action="store_true", help="disable Hebbian so BTSP's GRADED write is not saturated over by a rule that drives to its bound")
@@ -248,7 +263,7 @@ def main():
     args = ap.parse_args()
     from pathlib import Path
     Path(args.out).mkdir(parents=True, exist_ok=True)
-    r = run(args.seed, args.cycles, args.btsp_lr, teaching_clamp=args.teaching_clamp, elig_tau=args.elig_tau, pool_slot_w=args.pool_slot_weight, hebbian_max_w=args.hebbian_max_w, hebbian_on=not args.no_hebbian, hebbian_lr=args.hebbian_lr, syn_scaling=args.syn_scaling)
+    r = run(args.seed, args.cycles, args.btsp_lr, teaching_clamp=args.teaching_clamp, elig_tau=args.elig_tau, pool_slot_w=args.pool_slot_weight, hebbian_max_w=args.hebbian_max_w, hebbian_on=not args.no_hebbian, hebbian_lr=args.hebbian_lr, syn_scaling=args.syn_scaling, no_stdp=args.no_stdp)
     Path(f"{args.out}/cortstore{'_clamp' if args.teaching_clamp else ''}_seed{args.seed}.json").write_text(json.dumps(r, indent=2))
     print(f"[seed {args.seed}] backend={BACKEND} thr_hash={r['thr_hash']} dw_cortical={r['dw_cortical']}")
     print(f"  v_apical={r['v_apical_range']} physiological={r['v_apical_physiological']}"
@@ -271,6 +286,13 @@ def main():
     ok = r['n_recall'] >= 2 and sum(r['store_own_is_max']) >= 2
     print(f"  VERDICT: {'GO-ish — cortical store selective AND survives the lesion (verify controls + 6 seeds)' if ok else 'NO — see (A)/(B); report which half failed'}")
     print("  SCOPE: cues pools DIRECTLY (teacher current), NOT via word→pool binding (unbuilt) — this is NOT the full A1 gate.")
+    if r.get("slot_spikes_during_write"):
+        print("  (R0) per-slot SOMATIC spikes during each write window (target should dominate):")
+        for i, row in r["slot_spikes_during_write"].items():
+            tgt = row[int(i)] if int(i) < len(row) else 0.0
+            oth = max([v for k, v in enumerate(row) if k != int(i)] or [0.0])
+            print(f"       fact {i}: {row}   target={tgt}  best_other={oth}  "
+                  + ("TARGET DOMINATES" if tgt > oth else "NON-TARGET SPIKES AS MUCH/MORE => somatic selection FAILS"))
     if r.get("write_phase_physiological") is False:
         print("  ⛔ INVALID SUBSTRATE DURING THE WRITE (v_apical left -90..+50) — this arm's metrics are VOID, do not interpret")
     elif r.get("write_phase_physiological") is True:
