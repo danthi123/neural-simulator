@@ -50,6 +50,16 @@
     1.057,
     1.037
   ],
+  "firing_weighted_permuted_control": [
+    1.002,
+    0.975,
+    0.986
+  ],
+  "firing_weighted_mass": [
+    1028614.59,
+    1039347.57,
+    1028368.46
+  ],
   "firing_weighted_own_is_max": [
     true,
     true,

@@ -984,3 +984,41 @@ is also plainly swamped by the pathway's **1.5 initialisation**, against which a
 dominates its own baseline — the direct analogue of the unsaturated-regime fix that unlocked `ca1→slot`; (c) then the
 mass triad at 6 seeds.** The mechanism is not in doubt (exclusive instructive signal verified, correct direction 3/3);
 what is unproven is whether the magnitude can be made real.
+
+## Cortical store — FINAL STATE: a small but CONTROL-SURVIVING signal; the "swamped by init" fix REFUTED
+
+**(a) The mandatory permuted control was run on the firing-weighted read, and it COLLAPSES:**
+```
+true      own/other = [1.031, 1.057, 1.037]   own_is_max = [T, T, T]
+permuted  own/other = [1.002, 0.975, 0.986]   <- collapses
+```
+mean true **1.042** vs mean permuted **0.988**. ⇒ **the 3/3 direction is EARNED, not a mass artifact** — the effect is
+real. But it is only **~5%**, nowhere near the 2.5 gate (`ca1→slot`, by contrast, reached 2.3–7.9).
+
+**(b) "The learned component is swamped by the 1.5 initialisation" — REFUTED.** Added `comp_pool_slot_weight` (additive,
+default 1.5 ⇒ byte-identical) and ran init **1.5 vs 0.2**:
+```
+init=1.5  per-slot mass [1.1925, 1.1894, 1.1906]   own/other [1.031, 1.057, 1.037]
+init=0.2  per-slot mass [1.1925, 1.1894, 1.1906]   own/other [1.031, 1.057, 1.037]
+```
+**Identical.** (Recall rates differ in the 3rd decimal — 1.425 vs 1.433 — so the substrates genuinely DID differ; this
+is not a knob that failed to reach the builder, which was checked: builder `:302`, probe `:56`/`:214`.) ⇒ **the
+pool→slot weights converge to the same fixed point (~1.19) regardless of where they start**, so the learned component
+cannot be exposed by lowering the baseline. Something pins this pathway — synaptic scaling, the global clip, or
+homeostasis — and identifying it is the next question.
+
+**Honest close of this thread — four hypotheses, three refuted by measurement, one supported:**
+| # | hypothesis | verdict |
+|---|---|---|
+| 1 | ALL-pools→ALL-slots broadcast defeats the clamp | **REFUTED** — `v_apical` exclusive (−9 vs −66 mV, v_hold −50) |
+| 2 | eligibility bleeds across facts (τ=1000 ms) | **REFUTED** — τ=30 still flat on the raw read |
+| 3 | learned component swamped by the 1.5 init | **REFUTED** — weights converge to ~1.19 from any init |
+| 4 | the raw mean DILUTES a real selective change | **SUPPORTED** — firing-weighted read reveals it, control collapses |
+
+**⇒ STATUS: the cortical store IS selectively written — verified exclusive instructive signal, correct slot 3/3,
+permuted control collapses — but only by ~5%, which is far too weak to drive hippo-lesioned recall (measured 1/3, at
+slot rates that do not separate).** The blocker is no longer "is there a signal" but "what pins these weights to a
+fixed point, and can the selective component be made to dominate it". **▶ NEXT: identify the pinning force (synaptic
+scaling / global clip / homeostasis on `concept_to_comp_attr`) — measure the weight distribution's evolution during the
+write rather than only its mean — then re-test. Multi-seed only after the magnitude is real; a 5% effect is not worth
+6 seeds yet.**

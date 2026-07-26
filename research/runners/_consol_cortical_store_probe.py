@@ -37,7 +37,7 @@ cp, BACKEND = get_backend()
 N = len(CONSOLIDATED_FACTS)
 
 
-def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teaching_clamp=False, elig_tau=30.0):
+def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teaching_clamp=False, elig_tau=30.0, pool_slot_w=1.5):
     a = dict(BASE)
     a.update(comp_dendritic=True, comp_wta_weight=5.0, comp_k_thresh=2.0, comp_self_regen=0.15, comp_kir_g=3.0,
              comp_v_hold=-50.0, comp_apical_R=0.15, comp_gc_read=0.5,          # CALIBRATED operating point
@@ -53,7 +53,7 @@ def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teachin
              # ALL-pools->ALL-slots broadcast is a write-selectivity killer for the ca1->slot measurement). But those
              # pathways ARE the cortical store this probe exists to measure, so it must re-enable them. Without this the
              # probe reports dw=0 and per-slot mass=0 — i.e. it measures a pathway that does not exist.
-             comp_no_pool_slot=False)
+             comp_no_pool_slot=False, comp_pool_slot_weight=float(pool_slot_w))
     b = build_substrate(seed, SimpleNamespace(**a))
     thr_hash = hashlib.md5(to_host(b.cp_neuron_firing_thresholds).tobytes()).hexdigest()[:12]
     rm = b.region_manager
@@ -145,7 +145,7 @@ def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teachin
     # FIRING-WEIGHTED read: the raw mean above averages ALL pool->slot synapses (density 0.15), so a selective change on
     # the few COINCIDENT synapses is diluted by the many untouched ones. Weighting each presynaptic cell by how much it
     # actually fired in its own write window is the same correction that made the ca1->slot signal visible.
-    Wf = np.zeros((N, N)); f_oo = [0.0] * N
+    Wf = np.zeros((N, N)); f_oo = [0.0] * N; f_perm = [0.0] * N
     if teaching_clamp:
         for i in range(N):
             wpre = pool_fire[i]
@@ -154,6 +154,10 @@ def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teachin
                 Wf[i, j] = float((data[m] * wpre[pre_of][m]).sum()) if m.sum() else 0.0
         f_oo = [float(Wf[i, i] / np.mean([Wf[i, j] for j in range(N) if j != i]))
                 if np.mean([Wf[i, j] for j in range(N) if j != i]) > 1e-12 else 0.0 for i in range(N)]
+        # MANDATORY permuted-target control on THIS read (the raw read's control does not transfer). Score fact i
+        # against a ROTATED slot; must collapse to ~1.0 or the 3/3 own-is-max is a mass artifact, not earned selectivity.
+        f_perm = [float(Wf[i, (i + 1) % N] / np.mean([Wf[i, j] for j in range(N) if j != (i + 1) % N]))
+                  if np.mean([Wf[i, j] for j in range(N) if j != (i + 1) % N]) > 1e-12 else 0.0 for i in range(N)]
     # permuted-target control: read fact i's pools against a ROTATED slot assignment -> must collapse to ~1.0
     perm = [(i + 1) % N for i in range(N)]
     oo_perm = [float(W[i, perm[i]] / np.mean([W[i, j] for j in range(N) if j != perm[i]]))
@@ -188,6 +192,8 @@ def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teachin
                 permuted_target_control=[round(x, 3) for x in oo_perm],
                 per_slot_mass=[round(float(W[:, j].mean()), 4) for j in range(N)],
                 firing_weighted_own_over_other=[round(x, 3) for x in f_oo],
+                firing_weighted_permuted_control=[round(x, 3) for x in f_perm],
+                firing_weighted_mass=[round(float(Wf[:, j].mean()), 2) for j in range(N)] if teaching_clamp else None,
                 firing_weighted_own_is_max=[bool(np.argmax(Wf[i]) == i) for i in range(N)] if teaching_clamp else None,
                 recall_correct=recall, recall_slot_rates=recall_rates,
                 n_recall=int(sum(recall)))
@@ -198,13 +204,14 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--cycles", type=int, default=10)
     ap.add_argument("--btsp-lr", type=float, default=0.0005)
+    ap.add_argument("--pool-slot-weight", type=float, default=1.5, help="initial pool->slot weight (shipped 1.5 swamps a small learned component)")
     ap.add_argument("--elig-tau", type=float, default=30.0, help="BTSP eligibility tau ms (default 1000 BLEEDS across facts; 30 = per-fact windowed)")
     ap.add_argument("--teaching-clamp", action="store_true", help="apply the validated decoupled apical teaching clamp during replay (BTSP needs an APICAL plateau; somatic slot drive supplies none)")
     ap.add_argument("--out", default="research/findings/raw/cortical_store")
     args = ap.parse_args()
     from pathlib import Path
     Path(args.out).mkdir(parents=True, exist_ok=True)
-    r = run(args.seed, args.cycles, args.btsp_lr, teaching_clamp=args.teaching_clamp, elig_tau=args.elig_tau)
+    r = run(args.seed, args.cycles, args.btsp_lr, teaching_clamp=args.teaching_clamp, elig_tau=args.elig_tau, pool_slot_w=args.pool_slot_weight)
     Path(f"{args.out}/cortstore{'_clamp' if args.teaching_clamp else ''}_seed{args.seed}.json").write_text(json.dumps(r, indent=2))
     print(f"[seed {args.seed}] backend={BACKEND} thr_hash={r['thr_hash']} dw_cortical={r['dw_cortical']}")
     print(f"  v_apical={r['v_apical_range']} physiological={r['v_apical_physiological']}"
@@ -221,6 +228,8 @@ def main():
                   + ("   <- ALL slots above => clamp DEFEATED (broadcast confirmed)" if all(above) else ""))
     if r.get("firing_weighted_own_is_max") is not None:
         print(f"  (A2) FIRING-WEIGHTED store own/other={r['firing_weighted_own_over_other']} own_is_max={r['firing_weighted_own_is_max']}  <- undiluted read")
+        print(f"       permuted control={r['firing_weighted_permuted_control']}  <- MUST collapse to ~1.0 else the 3/3 is a mass artifact")
+        print(f"       per-slot mass={r['firing_weighted_mass']}")
     print(f"  (B) HIPPO-LESIONED recall (pools driven directly): {r['n_recall']}/{N} correct  slot rates={r['recall_slot_rates']}")
     ok = r['n_recall'] >= 2 and sum(r['store_own_is_max']) >= 2
     print(f"  VERDICT: {'GO-ish — cortical store selective AND survives the lesion (verify controls + 6 seeds)' if ok else 'NO — see (A)/(B); report which half failed'}")

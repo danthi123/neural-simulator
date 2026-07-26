@@ -294,7 +294,12 @@ def build_substrate(seed, args):
                 for s in range(n_slots):
                     pathways.append(RegionPathway(
                         from_region=pool, to_region=f"comp_attr_{s}",
-                        density=0.15, weight_mean=1.5, weight_jitter=0.3,
+                        density=0.15,
+                        # initial weight is the BASELINE the learned component must stand out against: at the shipped
+                        # 1.5 a real but small selective write is swamped (measured firing-weighted own/other 1.03-1.06
+                        # with own-is-max 3/3 -- right direction, no magnitude). Lowering it is the direct analogue of
+                        # the unsaturated-regime fix that unlocked ca1->slot. Default 1.5 => byte-identical.
+                        weight_mean=float(getattr(args, "comp_pool_slot_weight", 1.5)), weight_jitter=0.3,
                         plastic=True, plasticity_gate="concept_to_comp_attr"))
 
     print(f"  augment: +{n_ca1_wire} ca1->concept wires, "
