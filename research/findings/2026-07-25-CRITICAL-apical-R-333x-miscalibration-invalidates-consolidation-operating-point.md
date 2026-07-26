@@ -1473,3 +1473,37 @@ arms died on VRAM contention exiting **0** with empty output; then a serial loop
 mid-flight and buffered `grep` output was discarded. In both cases the surviving/absent arms looked like clean nulls.
 **An arm that produces NO output is a FAILED RUN to reproduce, never a null result.** Now: serial, longer timeout,
 `grep --line-buffered`, explicit rc. Encoded in `.claude/skills/verify-go/SKILL.md`.
+
+## 🎯 MILLER-MACKAY SUBTRACTIVE NORMALIZATION — the first mechanism in this thread to SURVIVE the permuted control
+
+`--mean-subtract 1.0` at the STABLE operating point (`--teaching-clamp --elig-tau 30 --freeze-gap --no-stdp
+--hebbian-max-w 2.5`), i.e. the stabilising Hebbian bound left in place and only BTSP's increment normalized:
+
+| seed | own/other | own-is-max | **permuted control** | per-slot mass (heavy slot) | substrate |
+|---|---|---|---|---|---|
+| 42 | `[19.20, 27.09, 46.61]` | **3/3** | **`[0.089, 0.077, 0.044]`** | `[0.886, 0.890, 2.125]` (slot 2) | ✓ |
+| 43 | `[16.66, 30.81, 11.51]` | **3/3** | **`[0.123, 0.059, 0.148]`** | `[0.931, 2.205, 0.910]` (slot **1**) | ✓ |
+| 44 | `[15.47, 16.83, 32.79]` | **3/3** | **`[0.154, 0.084, 0.060]`** | `[0.921, 0.922, 2.128]` (slot 2) | ✓ |
+
+Baseline for comparison (same config, mechanism off): own/other `[0.98, 1.03, 3.93]`, own-is-max **1/3**.
+
+**Why this is not the artifact that killed the earlier "3.67 lead":**
+1. **The permuted-target control COLLAPSES** — 0.044–0.154 in all 9 fact-seeds (the earlier lead's permuted control
+   sat at 3.38–3.77 and never collapsed). This is the control that refuted the previous lead; here it passes.
+2. **The heavy slot MOVES with seed (2 / 1 / 2) but ALL THREE facts pass regardless.** The earlier artifact's
+   smoking gun was that the "passing" fact moved WITH the heavy slot; that signature is ABSENT here.
+3. **A mass artifact cannot produce this shape.** A heavy slot j inflates `W[i,j]` for every fact i, so it raises
+   own/other for fact j and DEPRESSES it for i≠j. Here the two LIGHT slots read 11.5–30.8 — far above 1.
+4. The off-diagonal write collapses to ~0 (`diag 112.19` vs `off 0.78`), which is the mechanism's stated action
+   (`Σ_j dw_ij = 0` per postsynaptic cell ⇒ no common-mode pedestal).
+
+**⚠️ THIS IS NOT A GO, AND THE CAPABILITY IS NOT CLOSED.** Seeds 43 and 44 return **`VERDICT: NO`** — the runner's
+verdict combines the weight read (A) with the **hippo-lesioned RECALL (B)**, and (B) does not follow on 2/3 seeds.
+So: **the STORE is now strongly and genuinely selective (the half that was blocked all session); whether RECALL
+follows is UNRESOLVED.** A selective weight matrix that does not produce selective recall is exactly the
+proxy-vs-capability gap this arc has been burned by before — the weight read is a PROXY, `(B)` is the capability.
+
+**▶ IN FLIGHT: the full 6-seed gate** (`_consol_meansub_gate.sh`, 42/43/44/100/101/102) with the **mechanism-OFF
+LESION arm at the identical operating point**, so the claim tested is the MECHANISM and not the op-point, capturing
+`(B)` explicitly (my earlier greps silently dropped it — the same class of instrument defect logged above, caught
+here by the runner's own VERDICT disagreeing with my reading of (A)).
