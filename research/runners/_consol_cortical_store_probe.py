@@ -37,7 +37,7 @@ cp, BACKEND = get_backend()
 N = len(CONSOLIDATED_FACTS)
 
 
-def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teaching_clamp=False, elig_tau=30.0, pool_slot_w=1.5, hebbian_max_w=None, hebbian_on=True):
+def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teaching_clamp=False, elig_tau=30.0, pool_slot_w=1.5, hebbian_max_w=None, hebbian_on=True, hebbian_lr=None):
     a = dict(BASE)
     a.update(comp_dendritic=True, comp_wta_weight=5.0, comp_k_thresh=2.0, comp_self_regen=0.15, comp_kir_g=3.0,
              comp_v_hold=-50.0, comp_apical_R=0.15, comp_gc_read=0.5,          # CALIBRATED operating point
@@ -67,6 +67,12 @@ def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teachin
     # weights so the bound stops inverting the rule.
     if hebbian_max_w:
         b.core_config.hebbian_max_weight = float(hebbian_max_w)
+    if hebbian_lr is not None:
+        # The BOUND is not the magnitude lever: across bounds 1.0/2.5/4.0/8.0 the mass pins at the bound every time
+        # (1.19/2.67/4.22/8.28) while selectivity stays ~3-7%. Hebbian saturates the weights wherever its ceiling is and
+        # BTSP's selective component rides on top as a small fixed fraction. Lowering Hebbian's RATE (not its bound)
+        # should let BTSP's graded write dominate while Hebbian still prevents the runaway that removing it caused.
+        b.core_config.hebbian_learning_rate = float(hebbian_lr)
     thr_hash = hashlib.md5(to_host(b.cp_neuron_firing_thresholds).tobytes()).hexdigest()[:12]
     rm = b.region_manager
     names = {r.name for r in b.core_config.brain_regions}
@@ -198,6 +204,12 @@ def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teachin
                 dw_cortical=round(w1 - w0, 5),
                 v_apical_during_write=({i: {j: round(va_log[i][j] / max(va_n[i][j], 1), 2) for j in va_log[i]}
                                         for i in va_log} if teaching_clamp else None),
+                # VALIDITY GATE over the WRITE PHASE. The pre-write check passed while the write itself drove v_apical
+                # to 500 mV (Hebbian-off runaway) and those numbers were nearly interpreted. A validity check must cover
+                # the phase under study — so any arm whose apical leaves -90..+50 DURING the write is marked INVALID and
+                # its metrics must not be read.
+                write_phase_physiological=(bool(all(-90.0 <= (va_log[i][j] / max(va_n[i][j], 1)) <= 50.0
+                                                    for i in va_log for j in va_log[i])) if teaching_clamp else None),
                 v_hold=float(getattr(b.core_config, "coincidence_plateau_v_hold", -50.0)),
                 store_own_over_other=[round(x, 3) for x in oo],
                 store_own_is_max=[bool(np.argmax(W[i]) == i) for i in range(N)],
@@ -216,6 +228,7 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--cycles", type=int, default=10)
     ap.add_argument("--btsp-lr", type=float, default=0.0005)
+    ap.add_argument("--hebbian-lr", type=float, default=None, help="Hebbian learning rate (default 5e-4); lower it so BTSP's graded write dominates while Hebbian still bounds")
     ap.add_argument("--no-hebbian", action="store_true", help="disable Hebbian so BTSP's GRADED write is not saturated over by a rule that drives to its bound")
     ap.add_argument("--hebbian-max-w", type=float, default=None, help="raise hebbian_max_weight above the design weights (default 1.0 INVERTS the rule on a ~1.2-1.5 pathway)")
     ap.add_argument("--pool-slot-weight", type=float, default=1.5, help="initial pool->slot weight (shipped 1.5 swamps a small learned component)")
@@ -225,7 +238,7 @@ def main():
     args = ap.parse_args()
     from pathlib import Path
     Path(args.out).mkdir(parents=True, exist_ok=True)
-    r = run(args.seed, args.cycles, args.btsp_lr, teaching_clamp=args.teaching_clamp, elig_tau=args.elig_tau, pool_slot_w=args.pool_slot_weight, hebbian_max_w=args.hebbian_max_w, hebbian_on=not args.no_hebbian)
+    r = run(args.seed, args.cycles, args.btsp_lr, teaching_clamp=args.teaching_clamp, elig_tau=args.elig_tau, pool_slot_w=args.pool_slot_weight, hebbian_max_w=args.hebbian_max_w, hebbian_on=not args.no_hebbian, hebbian_lr=args.hebbian_lr)
     Path(f"{args.out}/cortstore{'_clamp' if args.teaching_clamp else ''}_seed{args.seed}.json").write_text(json.dumps(r, indent=2))
     print(f"[seed {args.seed}] backend={BACKEND} thr_hash={r['thr_hash']} dw_cortical={r['dw_cortical']}")
     print(f"  v_apical={r['v_apical_range']} physiological={r['v_apical_physiological']}"
@@ -248,6 +261,10 @@ def main():
     ok = r['n_recall'] >= 2 and sum(r['store_own_is_max']) >= 2
     print(f"  VERDICT: {'GO-ish — cortical store selective AND survives the lesion (verify controls + 6 seeds)' if ok else 'NO — see (A)/(B); report which half failed'}")
     print("  SCOPE: cues pools DIRECTLY (teacher current), NOT via word→pool binding (unbuilt) — this is NOT the full A1 gate.")
+    if r.get("write_phase_physiological") is False:
+        print("  ⛔ INVALID SUBSTRATE DURING THE WRITE (v_apical left -90..+50) — this arm's metrics are VOID, do not interpret")
+    elif r.get("write_phase_physiological") is True:
+        print("  ✓ substrate physiological THROUGHOUT the write")
     print("CORTICAL-STORE-PROBE DONE", flush=True)
 
 

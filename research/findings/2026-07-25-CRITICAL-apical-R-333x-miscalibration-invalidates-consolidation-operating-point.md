@@ -1060,3 +1060,35 @@ probes: the guard must live in the instrument and cover the phase being measured
 **▶ NEXT:** joint (hebbian bound, btsp lr, cycles) sweep constrained to arms whose `v_apical` stays physiological
 THROUGHOUT the write, scored on the firing-weighted read with its permuted control. Reject any arm whose substrate
 leaves range — do not interpret it, as this one was nearly interpreted.
+
+## CORTICAL STORE — CHARACTERIZED: a real but ~5% signal, INVARIANT across every operating-point lever
+
+**The selectivity is REAL:** firing-weighted own-is-max **3/3**, and the permuted-target control **collapses every time**
+(true ~1.04 vs permuted ~0.98). It is not a mass artifact. **But it is ~5%, and it does not move:**
+| lever | range swept | per-slot mass | own/other |
+|---|---|---|---|
+| `hebbian_max_weight` | 1.0 → 2.5 → 4.0 → 8.0 | pins at the bound each time (1.19/2.67/4.22/8.28) | 1.03 / 1.05 / 1.04 / 1.02 |
+| `hebbian_learning_rate` | 5e-4 → 5e-5 → 5e-6 (100×) | 2.671 / 2.677 / 2.681 | 1.05 / 1.05 / 1.05 |
+| `btsp_learning_rate` | 5e-4 → 5e-8 → 5e-9 (**5 orders**) | 2.67 / 1.81 / 1.43 | 1.05 / 1.03 / **1.00 (signal gone)** |
+| `pool→slot` init | 1.5 → 0.2 (7.5×) | identical | identical |
+Every arm verified physiological throughout the write by the new gate.
+
+**Mechanism, and my "unconditional clip" guess REFUTED by reading the code** (`sim/bridge.py:838`):
+`delta = hebbian_learning_rate * coact * (hebbian_max_weight - w)` — a **SOFT bound driven by COACTIVITY**, not a clip.
+That is the whole story: during fact i's write window the target slot fires and its pools fire, so **Hebbian potentiates
+every coactive pool→slot pair broadly**, driving them all toward the bound, while **BTSP potentiates selectively** via
+the exclusive apical plateau. **The broad rule sets the weight; the selective rule contributes a ~5% perturbation on
+top.** Lowering Hebbian's rate doesn't help (it still converges over the ~2000 steps of write+recovery); removing it
+causes runaway (mass 3×10⁷, `v_apical` 500 mV, substrate invalid).
+
+**⇒ THE BLOCKER, precisely stated:** a **broad coactivity rule and a selective plateau rule compete on the same
+synapses, and the broad one wins.** This is not an operating point that needs tuning — five levers across up to five
+orders of magnitude leave the ratio unchanged. **▶ NEXT: bound the pathway with a mechanism that is NOT
+coactivity-driven** (synaptic scaling, a true hard clip, or per-pathway suppression of Hebbian on `concept_to_comp_attr`
+while leaving it elsewhere), so BTSP's plateau-gated write determines the PATTERN and the bounding mechanism only
+controls the SCALE. That is a substrate change, and it is the first thing on this pathway that survived every cheap test.
+
+**Hypothesis ledger for the cortical store — 6 proposed, 5 refuted by measurement, 1 supported:**
+broadcast defeats clamp ✗ · eligibility bleed ✗ · swamped by init ✗ · `hebbian_max_weight` pins it ✓(but not the
+magnitude lever) · Hebbian *rate* is the lever ✗ · unconditional clip ✗ · **diluting metric ✓ (the firing-weighted read
+is what made the real signal visible at all)**.
