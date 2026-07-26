@@ -1546,3 +1546,31 @@ what is stored, independent of the write. The recall loop cues all facts BACK-TO
 (`_consol_cortical_store_probe.py:283-298`); the WRITE phase had the identical defect and its fix — an inter-fact
 recovery gap — is on record as load-bearing. `--read-gap` (additive, default 0 = byte-identical) now scanning
 {0, 200, 1000} × seeds 42/43/44.
+
+## ⛔ READ-GAP REFUTED — adaptation was REAL, the gap FIXED it, and recall did NOT move
+
+`--read-gap {0, 200, 1000}` × seeds 42/43/44 on the GO arm: **4/9 → 3/9 → 3/9.** No improvement.
+
+**The lever verifiably worked** (so this is a refutation of the HYPOTHESIS, not a failed manipulation): the monotonic
+decline across cues is gone — seed 42 fact 1 `1.817 → 4.400`, fact 2 `0.517 → 1.508` — and fact 0's rates are
+**byte-identical across all three gaps** (`[1.542, 1.408, 1.467]`), exactly as required since the gap follows each
+cue. ⇒ **adaptation was real, was relieved, and was NOT the cause of the recall failure.** (Hypothesis 13 of 13;
+12 refuted by direct measurement.)
+
+**What the corrected reads now expose is a DIFFERENT and much sharper defect: weight selectivity is not being
+converted into RATE selectivity.** Within any single cue the three slots differ by only **~5–15%**, in a largely
+FIXED ordering, e.g. seed 43 @ gap 200: fact 0 `[2.308, 2.608, 2.933]` · fact 1 `[3.058, 3.017, 2.792]` · fact 2
+`[1.408, 1.392, 0.858]` — slot 0 leads in 2 of 3 cues regardless of which fact is being recalled. **A store that is
+20–46× selective in WEIGHTS yields 5–15% differences in FIRING RATE, swamped by a fixed per-slot bias.** That is a
+transduction failure at the read, and it is fully consistent with the earlier decoupling result (a maximally
+selective store gave chance recall).
+
+**▶ NEXT — the measurement that separates the two remaining candidates (do NOT prescribe a mechanism first; this
+thread's last three prescribed mechanisms were all refuted, twice by the very build that implemented them):**
+1. **Fixed per-slot bias** — measure each slot's firing rate under a NULL cue (no pool drive) and under a
+   uniform-drive cue. If the same ordering appears with no fact cued, the read is dominated by intrinsic
+   excitability and the fix is a read-side normalization, not a write-side one.
+2. **Drive-fraction** — measure what fraction of each slot's total input current arrives via `concept_to_comp_attr`
+   versus the WTA/attractor recurrence. If the store is a small minority of the drive, a 20–46× weight ratio
+   CANNOT move the rate regardless of how selective it is, and the fix is the drive balance.
+These are distinguishable in ONE instrumented run and both are free of new mechanism.
