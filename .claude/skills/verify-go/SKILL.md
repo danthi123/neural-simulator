@@ -64,7 +64,19 @@ substrate can't", run these:
    not a bound.
 5. **Do the positive controls fire?** If your harness cannot demonstrate the effect where it MUST exist, the harness is
    what you have measured.
-6. **REPRODUCE BY CALLING THE ORIGINAL CODE PATH — never by re-implementing it. Then vary ONE documented parameter.**
+6. **CITING A LINE IS NOT VERIFYING IT EXECUTES. Find the guarding flag and check its DEFAULT against the config in
+   use.** A `grep` hit proves code EXISTS; it proves nothing about whether it RUNS — and a `file:line` citation makes an
+   unverified claim look verified, which is worse than no citation. (2026-07-25: I reported a mechanism as *"the whole
+   story"*, cited to `sim/bridge.py:838`. That line sits inside `_apply_branchless_hebbian`, *"opt-in via
+   cfg.enable_branchless_plasticity"*, default **False** — **it never ran**. The rule actually executing was a different
+   one with different dynamics, and an entire "characterized ceiling ⇒ the next step is structural" verdict was built on
+   the dead branch.) **Corollary — enumerate EVERY rule acting on the pathway, not just the one you are tuning:** in the
+   same arc `enable_stdp` defaults to **True** and the pathway was `plastic=True`, so STDP was writing it throughout and
+   never entered a 7-hypothesis ledger. **Corollary 2 — a constant that appears in a measurement may be a FALLBACK:**
+   `_hw_max = cfg.hebbian_max_weight if cfg.enable_hebbian_learning else 5.0` produced a "hard 5.0 ceiling" that was read
+   as a result, when it was a literal reached because that arm disabled Hebbian — so the mechanism under test was never
+   exercised at all.
+7. **REPRODUCE BY CALLING THE ORIGINAL CODE PATH — never by re-implementing it. Then vary ONE documented parameter.**
    If a recorded result came from `runner.foo()`, call `runner.foo()`. A hand-rolled reconstruction silently omits
    steps you did not know were load-bearing, and the divergence surfaces hours later — after conclusions have been
    built on it. (2026-07-25: **FOUR withdrawn conclusions on one thread**, every one traceable to this. My
@@ -74,7 +86,7 @@ substrate can't", run these:
    the lot. I also measured at 200 events when the record was 800, and with a 1-word probe when the effect lives at 16
    words.) **Corollary: when the original path takes a parameter, override THAT parameter surgically — do not fork the
    function.** A one-line monkeypatch of a documented knob keeps every other step honest.
-7. **DID IT EVER WORK — and at WHAT SETTINGS? Search the record for a known-good configuration BEFORE debugging.**
+8. **DID IT EVER WORK — and at WHAT SETTINGS? Search the record for a known-good configuration BEFORE debugging.**
    `rag_search` / `grep` the findings for the harness's own past PASSING numbers and the config that produced them, and
    compare against the defaults you are running. A default is often a FAST setting, not the validated one. (2026-07-25:
    I debugged an A1 harness through plasticity bounds, rule variants and homeostasis because its sanity check sat at
