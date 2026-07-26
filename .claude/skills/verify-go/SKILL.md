@@ -64,7 +64,17 @@ substrate can't", run these:
    not a bound.
 5. **Do the positive controls fire?** If your harness cannot demonstrate the effect where it MUST exist, the harness is
    what you have measured.
-6. **DID IT EVER WORK — and at WHAT SETTINGS? Search the record for a known-good configuration BEFORE debugging.**
+6. **REPRODUCE BY CALLING THE ORIGINAL CODE PATH — never by re-implementing it. Then vary ONE documented parameter.**
+   If a recorded result came from `runner.foo()`, call `runner.foo()`. A hand-rolled reconstruction silently omits
+   steps you did not know were load-bearing, and the divergence surfaces hours later — after conclusions have been
+   built on it. (2026-07-25: **FOUR withdrawn conclusions on one thread**, every one traceable to this. My
+   reproduction of a recorded 87.5% omitted `apply_concept_topographic_bias` — a pre-training cortical-somatotopy step
+   applied *before* any learning — and used a different `word_to_idx` ordering. On that basis I reported "the reference
+   harness fails", escalated it to "a shared-code path is broken, past results may be invalid", then had to withdraw
+   the lot. I also measured at 200 events when the record was 800, and with a 1-word probe when the effect lives at 16
+   words.) **Corollary: when the original path takes a parameter, override THAT parameter surgically — do not fork the
+   function.** A one-line monkeypatch of a documented knob keeps every other step honest.
+7. **DID IT EVER WORK — and at WHAT SETTINGS? Search the record for a known-good configuration BEFORE debugging.**
    `rag_search` / `grep` the findings for the harness's own past PASSING numbers and the config that produced them, and
    compare against the defaults you are running. A default is often a FAST setting, not the validated one. (2026-07-25:
    I debugged an A1 harness through plasticity bounds, rule variants and homeostasis because its sanity check sat at
