@@ -683,3 +683,36 @@ direct measurement earlier: gate gain was **1.0** on all 492k `language_input→
 **Status: no static explanation found for A1's 800ev failure.** Recording the eliminations because they are the useful
 product — the next step is narrowed, not widened. **The reference@800ev measurement remains the arbiter**, and further
 static guessing before it lands would repeat the 0-for-4 pattern.
+
+### ⚠️ MY RETRACTION WAS ITSELF INVALID — it rested on a comparison at a FLOORED operating point
+
+**Reference harness, CURRENT code, 800 events/word: `2/16 = 12.5%`** — against the recorded **87.5%**, and barely above
+chance (1/16 = 6.25%). So the reference does **not** reproduce its recorded result today even at the correct budget.
+
+**This invalidates the retraction two sections above.** I retracted "shared-code regression" because old (2026-05-22)
+code and current code both gave 0/16 — **but that comparison was run at 200 events, where BOTH arms are floored at
+zero.** A comparison between two arms that are both at the floor has **no discriminating power**: it cannot detect a
+difference that exists. The conclusion "nothing regressed" did not follow from it. This is precisely the
+control-integrity failure the project's own checklist names — *verify the arms genuinely differ before believing a null*
+— committed while writing up a section about being careful.
+
+**Corrected evidence table** (⚠ = the void comparison):
+| harness | code | events | result |
+|---|---|---|---|
+| reference | recorded (May) | 800 | **87.5%** |
+| reference | **current** | **800** | **12.5%** |
+| reference | current | 200 | 0/16 ⚠ floored |
+| reference | old (2026-05-22) | 200 | 0/16 ⚠ floored |
+| A1 | current | 200 | 1/16 |
+| A1 | current | 800 | 0/16 |
+
+**⇒ the regression question is REOPENED and undecided.** The only comparison that can settle it is **OLD code at 800
+events** — the one budget where the reference is known to have produced a strong result. **Test in flight.**
+- old@800 ≈ 87.5% ⇒ **genuine regression** between 2026-05-22 and now; `git bisect` becomes mechanical, and every result
+  resting on this Phase-1 path in that window needs re-checking.
+- old@800 ≈ 12.5% ⇒ no regression; the recorded 87.5% depended on an ingredient neither harness reproduces today
+  (a cached Phase-1 state, a calibration step, or a different `tiny_synth`/ckpt path), and finding it is the question.
+
+**Lesson (new, and earned twice today): never conclude "no difference" from arms that are both at the floor or both at
+the ceiling.** Saturation destroyed the slot-write signal earlier; a floor destroyed this comparison. Same defect class,
+opposite end of the range.
