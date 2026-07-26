@@ -836,3 +836,39 @@ checkout — same entry point (`_phase1_train_if_needed` exists there, verified)
   plausibly the **cached `.simstate.h5` Phase-1 states, which are DELETED** (the `unified_per_regime/phase1_*` cache
   dirs all exist but are empty), in which case the 87.5% is **unreproducible in principle** and should be retired as a
   citable baseline rather than chased further.
+
+## ✅ THREAD RESOLVED: no regression — the recorded 87.5% is UNREPRODUCIBLE and is hereby RETIRED as a baseline
+
+Valid instrument (runner's OWN `_phase1_train_if_needed`, surgical `n_train_events` 200→800, nothing re-implemented),
+run on both checkouts at the un-floored budget:
+| checkout | result |
+|---|---|
+| current code, runner's own path @800ev | **1/16 = 6.2%** |
+| 2026-05-22 code, **identical** instrument @800ev | **1/16 = 6.2%** |
+| recorded (2026-05-21 findings) | **87.5%** |
+
+**⇒ NOT A REGRESSION — old and current agree exactly.** (Also refuted along the way: the old checkout took ~29 min vs
+current ~13 for the same nominal budget, so the two versions genuinely do different amounts of work per event — but
+that extra work produced **no accuracy difference**, so it is not the explanation either.)
+
+**⇒ The recorded 87.5% depended on something neither checkout supplies today, and the leading candidate is
+unrecoverable: the cached `.simstate.h5` Phase-1 substrates.** The `research/findings/raw/unified_per_regime/phase1_*`
+cache directories all still exist and are all **EMPTY** — the states were lost (consistent with the documented drive
+loss). A headline number whose substrate lived only in a deleted cache **cannot be reproduced or audited**.
+
+**⇒ ACTION: the 87.5% direct-binding figure is RETIRED as a citable baseline.** It should not be used to justify "this
+used to work, so something broke" — that framing sent this session down a multi-hour path that produced four withdrawn
+conclusions. If word→pool binding is needed, it must be **established and validated fresh**, not restored.
+
+**⇒ CONSEQUENT REFRAMING OF A1 (important):** the plan recorded earlier — *"restore the direct-binding sanity first"* —
+was predicated on binding having worked at some point. **On every configuration reproducible today it has never
+worked** (0–6.2%, i.e. chance, across: A1 @200ev and @800ev, the runner's own path @200ev and @800ev, and both
+checkouts). So A1's concept-pool route is not a repair job; **it is unbuilt**. That is a materially different and much
+larger piece of work than "restore", and the roadmap should say so.
+
+**What survives from this entire sub-thread — the complete honest list:**
+1. A1 fails its binding sanity with everything applied correctly (the one solid fact throughout).
+2. There is no regression; nothing broke.
+3. The 87.5% baseline is unreproducible and retired.
+4. Word→pool binding is **unbuilt**, not broken — a scoping correction with real planning consequences.
+5. Five verification rules, each earned by a specific failure here, now encoded in `verify-go`.
