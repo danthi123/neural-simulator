@@ -242,6 +242,14 @@ def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teachin
                 # inhibitory pool that inhibits every slot INCLUDING the winner would produce).
                 slot_spikes_during_write=({i: [round(float(pool_fire[i][slot[j]].sum()), 1) for j in sorted(slot)]
                                            for i in range(N)} if teaching_clamp else None),
+                # THE LEAK TEST (free, same pattern as Rank-0). BTSP's instructive signal is exclusive WITHIN a window
+                # (verified), so w[pool_i -> slot_j!=i] CANNOT grow during fact i's own window — it must grow during
+                # OTHER facts' windows, which requires pool_i to be firing while fact j is written. Read fact j's POOL
+                # firing during fact i's window straight out of the array already collected. Diagonal = the driven pool
+                # (should dominate); off-diagonal = the leak that lets non-target slots accumulate weight.
+                pool_spikes_during_write=({i: [round(float(pool_fire[i][np.concatenate(pool_of[j])].sum()), 1)
+                                               if pool_of[j] else 0.0 for j in range(N)]
+                                           for i in range(N)} if teaching_clamp else None),
                 firing_weighted_own_over_other=[round(x, 3) for x in f_oo],
                 firing_weighted_permuted_control=[round(x, 3) for x in f_perm],
                 firing_weighted_mass=[round(float(Wf[:, j].mean()), 2) for j in range(N)] if teaching_clamp else None,
@@ -298,6 +306,11 @@ def main():
             oth = max([v for k, v in enumerate(row) if k != int(i)] or [0.0])
             print(f"       fact {i}: {row}   target={tgt}  best_other={oth}  "
                   + ("TARGET DOMINATES" if tgt > oth else "NON-TARGET SPIKES AS MUCH/MORE => somatic selection FAILS"))
+    if r.get("pool_spikes_during_write"):
+        print("  (R0b) POOL spikes during each write window (row=window, col=whose pools) — off-diagonal IS the leak:")
+        for i, row in r["pool_spikes_during_write"].items():
+            d = row[int(i)]; off = max([v for k, v in enumerate(row) if k != int(i)] or [0.0])
+            print(f"        window {i}: {row}   driven={d}  max_other={off}  leak={100*off/max(d,1e-9):.1f}% of driven")
     if r.get("write_phase_physiological") is False:
         print("  ⛔ INVALID SUBSTRATE DURING THE WRITE (v_apical left -90..+50) — this arm's metrics are VOID, do not interpret")
     elif r.get("write_phase_physiological") is True:

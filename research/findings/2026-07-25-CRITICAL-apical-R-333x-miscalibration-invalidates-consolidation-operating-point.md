@@ -1226,3 +1226,40 @@ gating eligibility on the driven pool), not about any bound or rate.
 
 **Also learned: STDP was CONTRIBUTING to the somatic selection, not merely adding noise** — disabling it dropped
 selection from 5:1 to ~1.1:1. It should not be silenced casually in future arms.
+
+## LEAK REFUTED — pools are 99%+ isolated. Everything upstream is selective; the compression must happen OFF-window.
+
+Free readout (same pattern as Rank-0, from the array already collected):
+| write window | pool spikes `[fact0, fact1, fact2]` | cross-window leak |
+|---|---|---|
+| 0 | `[43668, 297, 353]` | **0.8%** |
+| 1 | `[263, 43840, 334]` | **0.8%** |
+| 2 | `[221, 202, 44438]` | **0.5%** |
+**⇒ the "pool_i fires during fact j's window" leak hypothesis is REFUTED.** Pools are essentially isolated.
+
+**The full upstream picture is now measured, and it is EXCELLENT everywhere:**
+- apical plateau **exclusive** (target −9 mV vs non-targets −66 mV, `v_hold` −50) — verified
+- slot somatic selection **~5:1** — verified
+- pool isolation **>99%** — verified
+- resulting weights: **1.05:1**
+
+With that much upstream selectivity, `w[pool_i → slot_{j≠i}]` should barely grow — yet all pool→slot weights end up
+near-identical (mass 2.67 from a 1.5 init, i.e. an average gain of ~1.17 spread almost uniformly). **A selective drive
+producing a uniform weight change means the weight change is not coming from the driven windows.**
+
+**NEW LEADING CANDIDATE (fits every measurement, not yet tested): the UNDRIVEN RECOVERY GAPS dominate the write.** The
+protocol is 10 cycles × 3 facts × (30 driven steps + **200-step recovery gap**) ⇒ **~900 driven steps vs ~6000 undriven
+steps**. Plasticity is live throughout, and during the gaps nothing is driven — no exclusive plateau, no selective
+firing — so spontaneous/OU-driven activity potentiates broadly and **uniformly**, and it has **6.7× more steps in which
+to do so** than the selective write has. That would swamp a perfectly selective write with non-selective potentiation
+and produce exactly the observed pattern.
+
+**▶ NEXT (cheap, decisive, two arms): freeze plasticity during the recovery gaps** (or shorten them) and re-measure.
+The recovery gap was introduced for a real reason — it was load-bearing for the `ca1→slot` result — so the fix is to
+keep the gap but suppress LEARNING during it (`set_plasticity_gate(...,0)` around the gap loop), not to remove it.
+Verify per-slot spikes still show ~5:1 and weights stay graded, then read own/other with the permuted control.
+
+**Session note:** this is the 8th hypothesis on this pathway; 7 have been refuted by direct measurement and the surviving
+one (the diluting raw-mean metric) is a measurement artifact rather than a mechanism. Every refutation came from a
+measurement chosen in advance, and three of them — the exclusive plateau, the 5:1 selection, and this pool isolation —
+came free from data the probe was already collecting and discarding.
