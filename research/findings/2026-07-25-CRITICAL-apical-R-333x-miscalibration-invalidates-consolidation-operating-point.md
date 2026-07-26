@@ -1574,3 +1574,40 @@ thread's last three prescribed mechanisms were all refuted, twice by the very bu
    versus the WTA/attractor recurrence. If the store is a small minority of the drive, a 20–46× weight ratio
    CANNOT move the rate regardless of how selective it is, and the fix is the drive balance.
 These are distinguishable in ONE instrumented run and both are free of new mechanism.
+
+## 🎯🎯 BLOCKER PRECISELY LOCATED (lesion-grade): the STORE DOES NOT DRIVE THE SLOTS DURING RECALL
+
+One instrumented run, seeds 42/43/44, separating the two surviving candidates. **C2 CONFIRMED, C1 REFUTED.**
+
+**(C2) Zero the `concept_to_comp_attr` synapses outright and repeat the IDENTICAL recall — nothing changes:**
+
+| seed | recall, store INTACT | recall, store **ZEROED** | Δ |
+|---|---|---|---|
+| 42 | `[1.54,1.41,1.47]` `[4.40,2.93,2.73]` `[1.51,1.57,1.73]` | `[1.46,1.35,1.49]` `[4.28,2.78,2.53]` `[1.75,1.62,1.83]` | ~5% |
+| 43 | `[2.31,2.61,2.93]` `[3.06,3.02,2.79]` `[1.41,1.39,0.86]` | `[2.21,2.55,2.95]` `[3.12,3.13,2.74]` `[1.13,1.27,0.68]` | ~4% |
+| 44 | `[2.03,1.77,2.04]` `[2.43,1.99,2.39]` `[1.94,1.70,2.19]` | `[1.89,1.79,2.39]` `[2.45,2.03,2.33]` `[1.93,1.86,2.18]` | ~5% |
+
+**Deleting the ENTIRE store moves the slot firing rates by ~5%.** ⇒ the store is a negligible minority of each
+slot's drive; the slots fire from the WTA/attractor recurrence and background, not from the cued pools.
+
+**(C1) REFUTED as the explanation:** null-cue (nothing driven) per-slot rates are **0.125–0.358** against driven
+rates of **1.4–4.4** — intrinsic bias is ~10% of the signal, not dominant, and its ordering does not track the cued
+ordering.
+
+**⇒ THIS CLOSES THE DECOUPLING QUESTION WITH A LESION-GRADE MEASUREMENT: a 20–46× selective store cannot move a
+rate it does not drive.** Recall sitting at chance is not a write problem, not an adaptation problem, and not an
+intrinsic-bias problem — **the read is not connected to the store in any functionally meaningful way.**
+
+**⚠️ HONEST CONSEQUENCE FOR THIS SESSION'S OWN RESULT.** The `btsp_mean_subtract` 6-seed GO is real and correctly
+controlled **as a statement about the WRITE** (own-is-max 3/3 on 6/6, permuted ≤0.154, lesion 0/6) — and it was
+written into a pathway the recall does not read. It is a validated mechanism on a pathway whose functional role is
+now in question. That is exactly why the capability gate (B), not the weight proxy (A), is the deliverable: without
+(B) this would have been recorded as consolidation working.
+
+**▶ NEXT (measurement first, still no prescribed mechanism — 13 hypotheses, 12 refuted, and the last three
+prescribed mechanisms were all refuted, two by their own builds):** quantify the drive budget at a slot during
+recall — what fraction of its input current arrives via `concept_to_comp_attr` vs the WTA (`comp_wta_weight=5.0`),
+the self-regeneration (`comp_self_regen=0.15`) and background. `comp_pool_slot_weight` is **1.5** against a WTA
+weight of **5.0**, so the store may simply be out-weighted by design. If so the question becomes an ARCHITECTURAL
+one — should a cortical store drive its slot directly, or gate/bias an attractor that is driven elsewhere — and
+that is a design fork worth surfacing rather than silently tuning a weight ratio.

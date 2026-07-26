@@ -305,7 +305,61 @@ def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teachin
             # load-bearing. Same lever, read side.
             for _ in range(int(read_gap)):
                 b._run_one_simulation_step()
+
+    # ---- (C) WHY doesn't a 20-46x selective STORE move the RATE? Two candidates, separated here in ONE run.
+    # Established: the store write is a 6-seed GO (own-is-max 3/3 on 6/6, permuted <=0.154) yet recall sits at
+    # CHANCE (7/18 vs lesion 8/18, chance 6/18), and within a cue the slots differ by only ~5-15% in a largely
+    # FIXED ordering. So the weight selectivity is not being transduced into firing rate. Either:
+    #   (C1) a fixed INTRINSIC per-slot bias dominates  -> it must appear with NO fact cued at all; or
+    #   (C2) the store is a small MINORITY of each slot's drive (the WTA/attractor recurrence dominating)
+    #        -> then a 20-46x weight ratio cannot move the rate no matter how selective, and zeroing the
+    #        store's synapses outright will barely change the read.
+    # (C2) is measured DESTRUCTIVELY and therefore LAST, after every other metric is already collected.
+    null_rates = nostore_rates = None
+    try:
+        with hippo_lesioned(b):
+            _try_tgate(b, "nmda_attractor", 1.0)
+            b.cp_external_input_current[:] = 0.0
+            acc = np.zeros(int(b.cp_membrane_potential_v.shape[0]))
+            for _ in range(int(read_steps)):
+                b.cp_external_input_current[:] = 0.0
+                b._run_one_simulation_step()
+                acc += to_host(b.cp_firing_states).astype(np.float64)
+            null_rates = [round(float(acc[slot[j]].mean()), 3) if j in slot else 0.0 for j in range(N)]
+
+            # (C2) zero ONLY the pool->slot synapses, then repeat the identical recall.
+            _c = b.cp_connections
+            _nz = int(_c.nnz)
+            _po = to_host(_c.indices).astype(np.int64)[:_nz]
+            _ip = to_host(_c.indptr).astype(np.int64)
+            _pr = np.repeat(np.arange(len(_ip) - 1), np.diff(_ip))[:_nz]
+            _ps = np.full(_c.shape[0], -1, dtype=np.int64)
+            for _s in slot:
+                _ps[slot[_s]] = _s
+            _allpre = np.concatenate([np.concatenate(pool_of[i]) for i in range(N) if pool_of[i]])
+            _mask = np.isin(_pr, _allpre) & (_ps[_po] >= 0)
+            _d = to_host(_c.data).astype(np.float64)[:_nz]
+            _d[_mask] = 0.0
+            _c.data[:_nz] = cp.asarray(_d, dtype=_c.data.dtype)
+            nostore_rates = []
+            for i in range(N):
+                drv = cp.zeros(int(b.cp_membrane_potential_v.shape[0]), dtype=cp.float32)
+                for arr in pool_of[i]:
+                    drv[cp.asarray(arr)] = float(drive_pA)
+                acc = np.zeros(int(b.cp_membrane_potential_v.shape[0]))
+                for _ in range(int(read_steps)):
+                    b.cp_external_input_current[:] = drv
+                    b._run_one_simulation_step()
+                    acc += to_host(b.cp_firing_states).astype(np.float64)
+                nostore_rates.append([round(float(acc[slot[j]].mean()), 3) if j in slot else 0.0 for j in range(N)])
+                b.cp_external_input_current[:] = 0.0
+                for _ in range(int(read_gap)):
+                    b._run_one_simulation_step()
+    except Exception as _e:                      # narrow-ish: diagnostic only, must never mask the main result
+        null_rates = nostore_rates = f"DIAGNOSTIC FAILED: {type(_e).__name__}: {_e}"
+
     return dict(seed=int(seed), thr_hash=thr_hash, v_apical_physiological=v_ok,
+                null_cue_slot_rates=null_rates, nostore_recall_slot_rates=nostore_rates,
                 v_apical_range=[round(float(va.min()), 2), round(float(va.max()), 2)] if va is not None else None,
                 dw_cortical=round(w1 - w0, 5),
                 # PER-WINDOW dw, aggregated two ways. (1) by PHASE (driven vs gap): does the write happen
@@ -403,6 +457,14 @@ def main():
             oth = max([v for k, v in enumerate(row) if k != int(i)] or [0.0])
             print(f"       fact {i}: {row}   target={tgt}  best_other={oth}  "
                   + ("TARGET DOMINATES" if tgt > oth else "NON-TARGET SPIKES AS MUCH/MORE => somatic selection FAILS"))
+    if r.get("null_cue_slot_rates") is not None:
+        print("  (C) WHY the selective STORE doesn't move the RATE — two candidates, separated:")
+        print(f"      (C1) NULL cue (no fact driven) per-slot rates: {r['null_cue_slot_rates']}")
+        print("           => if this reproduces the ordering seen during real cues, a FIXED INTRINSIC bias"
+              " dominates the read and the fix is read-side normalization, not the write.")
+        print(f"      (C2) recall with the pool->slot STORE ZEROED: {r['nostore_recall_slot_rates']}")
+        print("           => if this is ~unchanged from (B), the store is a MINORITY of each slot's drive and"
+              " NO weight ratio, however selective, can move the rate.")
     if r.get("dw_pos_neg_by_slot"):
         print("  (W) PER-WINDOW dw — the fork: does the winner RECEIVE more, or RESIST the pull-down?")
         print(f"      by phase (total dw into each slot): {r['dw_by_phase']}")
