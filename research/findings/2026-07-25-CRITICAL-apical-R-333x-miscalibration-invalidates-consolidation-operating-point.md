@@ -907,3 +907,39 @@ teaching clamp** solved for `ca1→slot` (which is why that one reached a 6-seed
 decoupled-plateau teaching signal to the slot during co-activation replay, so `pool→slot` receives a real BTSP write**,
 then re-run this probe with the mass triad at 6 seeds. This reuses a mechanism already validated on this substrate
 rather than introducing a new one.
+
+## Teaching clamp on the cortical store: the write HAPPENS but is perfectly UNIFORM — a STRUCTURAL (connectivity) limit
+
+Applied the exact mechanism that earned the `ca1→slot` 6-seed GO (drive fact i's pools for presynaptic eligibility;
+clamp slot i's apical HIGH and all other slots LOW; 200-step recovery gap) to the cortical `pool→slot` store:
+| measure | without clamp | **with teaching clamp** |
+|---|---|---|
+| per-slot mass (init 1.5) | `[1.249, 1.280, 1.390]` | **`[1.7772, 1.7735, 1.7756]`** |
+| store own/other | `[0.945, 0.978, 1.091]` | **`[1.000, 0.997, 1.000]`** |
+| permuted control | `[0.95, 1.10, 0.93]` | `[1.002, 1.002, 1.004]` |
+| hippo-lesioned recall | "2/3" (noise) | **0/3**, all slots firing ~0.5 |
+
+**The clamp works — a write clearly occurred (mass 1.5 → 1.78) — but it potentiated EVERY slot equally**, to three
+decimal places. An exclusive instructive signal would have written slot i preferentially; instead all three slots
+received identical mass.
+
+**Leading explanation, and the codebase already documented it.** The `pool→slot` wiring is an **ALL-pools→ALL-slots
+broadcast**, and the runner's own comment at that pathway says exactly why that is fatal:
+> *"this is an ALL-pools->ALL-slots BROADCAST -> ...drives every slot non-selectively (**the write-selectivity killer**)"*
+Driving ANY pool therefore delivers coincidence drive to EVERY slot, so the per-step recomputation of `v_apical` from
+`I_coincidence` overrides the exclusive clamp within the step. This is precisely why the identical clamp DOES work for
+`ca1→slot` (a route without that broadcast) and fails here. It also explains why `comp_no_pool_slot=True` exists in
+`BASE` at all — the broadcast had to be removed to make the `ca1→slot` measurement meaningful.
+
+**⇒ This looks STRUCTURAL, not an operating point.** Unlike every earlier "boundary" in this arc (all of which were
+configuration artifacts), no write rule can isolate a target when the connectivity delivers the drive to every target.
+**HONEST STATUS — mechanism is CONSISTENT WITH the evidence, not yet PROVEN.** The uniform mass is strong evidence of a
+non-exclusive instructive signal, but the causal claim needs one direct measurement: **log per-slot `v_apical` during
+the clamped write and confirm all slots sit above `v_hold`** (the twosided probe already does exactly this for the
+`ca1→slot` case and can be reused). That check must be run before this is cited as a structural limit — this session
+has repeatedly shown that a plausible mechanism inferred from a downstream number is how the earlier false boundaries
+were born.
+
+**If confirmed, the fix is architectural, not a knob:** the cortical store needs sparse//competitive `pool→slot`
+connectivity (or lateral inhibition between slots) so a fact's pools can drive one slot rather than all — which is a
+design question about how a cortical "slot" should be addressed, and deserves the research gate rather than a tuning pass.

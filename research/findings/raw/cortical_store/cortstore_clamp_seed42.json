@@ -1,0 +1,53 @@
+{
+  "seed": 42,
+  "thr_hash": "ee7fcf106bea",
+  "v_apical_physiological": true,
+  "v_apical_range": [
+    -5.28,
+    -3.31
+  ],
+  "dw_cortical": 0.36946,
+  "store_own_over_other": [
+    1.0,
+    0.997,
+    1.0
+  ],
+  "store_own_is_max": [
+    false,
+    false,
+    false
+  ],
+  "permuted_target_control": [
+    1.002,
+    1.002,
+    1.004
+  ],
+  "per_slot_mass": [
+    1.7772,
+    1.7735,
+    1.7756
+  ],
+  "recall_correct": [
+    false,
+    false,
+    false
+  ],
+  "recall_slot_rates": [
+    [
+      0.5,
+      0.558,
+      0.525
+    ],
+    [
+      0.608,
+      0.475,
+      0.517
+    ],
+    [
+      0.2,
+      0.225,
+      0.2
+    ]
+  ],
+  "n_recall": 0
+}
