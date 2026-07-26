@@ -782,3 +782,27 @@ supplies (e.g. the deleted cached `.simstate.h5` states, which are **gone** — 
 
 **LESSON: when reproducing a recorded result, CALL THE ORIGINAL CODE PATH — do not re-implement it.** Four withdrawals
 on this thread trace to a reconstruction that silently differed from the thing it claimed to reproduce.
+
+### Runner's OWN Phase-1 path, at its OWN default: 0/16 — and the default is **200 events**, not 800
+
+Called `_phase1_train_if_needed(42, …, tiny_synth=False)` — the runner's real code path (topographic bias, its word
+ordering, its interleaved schedule, its gating) — then scored with the same sanity check:
+```
+RUNNER-OWN Phase-1 (topographic bias INCLUDED): 0/16 = 0.0%     (~5 min, not ~58)
+```
+The short runtime gave it away: `_phase1_recipe(False)["n_train_events"] = **200**` — the runner's own default is 200
+events/word, and **the recorded 87.5% was produced at 800**, from a separately-named cache
+(`phase1_800ev_post_interference_50per/`). So this run is a *valid* measurement of the original code path, but taken at
+the budget where every measurement today has been floored.
+
+**Net: at 200 events, EVERYTHING fails — my reproduction, the runner's own path, old code, and A1 alike.** The single
+un-floored data point remains the recorded 87.5% @800ev, and nothing today has yet reproduced it *on the original code
+path* at that budget.
+
+**▶ TEST IN FLIGHT — the clean one, finally:** the runner's OWN `_phase1_train_if_needed` with a **surgical override of
+one documented parameter** (`n_train_events` 200 → 800) and nothing else re-implemented. This is the reproduction that
+should have been run first: same bias, same ordering, same schedule, same gating, only the budget varied.
+- ≈87.5% ⇒ the reference is healthy at its documented budget; everything I measured today was a floored or invalid
+  proxy; **A1's failure *with* the bias at 800ev becomes the sole real anomaly**, bisectable against a known-good baseline.
+- materially below ⇒ the recorded figure needs an ingredient the current code no longer supplies — and the cached
+  `.simstate.h5` states that could have settled it are **deleted** (cache dirs exist, all empty).
