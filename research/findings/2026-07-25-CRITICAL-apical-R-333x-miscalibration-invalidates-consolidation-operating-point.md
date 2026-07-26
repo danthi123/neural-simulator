@@ -16,9 +16,17 @@
 > 87.5%** direct binding. The Hebbian/homeostasis debugging chased a non-bug. *(Separate real defect found en route:
 > `hebbian_max_weight=1.0` sits below the 3.015 design weights and INVERTS the rule — the same trap already documented
 > for STDP and BDSP, now seen on BTSP and Hebbian too.)*
-> **5. The through-line:** every "boundary" in this arc was a CONFIGURATION measured and reported as a property of the
-> BIOLOGY. Verification rules earned here are encoded in `.claude/skills/verify-go/SKILL.md` (mass-artifact triad ·
-> verifying a NEGATIVE · check the record for a known-good config first).
+> **5. A1's capability test is a SEPARATE, still-open thread** — it fails its own binding sanity even with everything
+> applied correctly. **Four conclusions on that thread were proposed and WITHDRAWN today** (rule-can't-bind ·
+> under-training · a shared-code regression · "Phase-1 is a no-op"), every one traceable to measuring a PROXY of the
+> thing instead of the thing: a hand-rolled training loop instead of the runner's own, a 1-word probe instead of the
+> 16-word sanity, a 200-event budget instead of the documented 800. **The one solid fact is that A1 fails at 800
+> events with the topographic bias correctly applied.** Read that thread's sections in order — several supersede
+> earlier ones.
+> **6. The through-line:** every "boundary" in this arc was a CONFIGURATION or an INSTRUMENT measured and reported as a
+> property of the BIOLOGY. Verification rules earned here are encoded in `.claude/skills/verify-go/SKILL.md`
+> (mass-artifact triad · verifying a NEGATIVE · floor/ceiling comparisons are VOID · reproduce by CALLING the original
+> code path · check the record for a known-good config first).
 
 # 🔴 CRITICAL (2026-07-25): `comp_apical_R = 50.0` is a **333× miscalibration** of a pA→mV units constant — the consolidation arc's dendritic substrate has been running at `v_apical ≈ ±10⁵–10⁶ mV`
 
