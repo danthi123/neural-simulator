@@ -1300,3 +1300,42 @@ research gate's ranked mechanisms (per-slot FS cross-inhibition · Miller-MacKay
 
 **Cortical-store ledger: 9 hypotheses, 8 refuted or narrowed by direct measurement.** Three decisive facts came FREE
 from data the probe was already collecting and discarding (exclusive plateau · 5:1 selection · pool isolation).
+
+## ✅ DIAGNOSIS COMPLETE: the write is WINNER-TAKE-ALL with a GLOBAL winner — the shared inhibitory pool is the cause
+
+Multi-seeded the gap-frozen arm (the diagnostic flagged as necessary before any new mechanism):
+| seed | per-slot mass | winner |
+|---|---|---|
+| 42 | `[0.999, 1.000, **3.093**]` | slot 2 |
+| 43 | `[1.000, **3.310**, 0.999]` | slot **1** |
+| 44 | `[1.000, 0.999, **3.184**]` | slot 2 |
+**Exactly ONE slot takes ~3.1–3.3 while the other two sit at ~1.0, and WHICH slot varies with the seed.** That is
+symmetry-breaking / winner-take-all, not a fixed property of any particular slot — and it rules out the ordering
+explanation as the whole story (the schedule is reshuffled per cycle, yet the winner is stable *within* a seed).
+
+**⇒ THE MECHANISM, and it converges with the research gate's independent Rank-1.** `comp_attr_inh`
+(`nmda_compositional_consolidation.py:278-289`) is a **single SHARED inhibitory pool** that every slot drives and that
+inhibits every slot — **global symmetric inhibition**. Global inhibition resolves competition **once, globally**, so one
+slot wins outright and suppresses the rest for the whole run. What the task needs is competition resolved
+**per write window**, so the winner can differ per fact. This is exactly the structure the read-only research gate
+independently identified as the residual, and this project has three prior results showing shared/global inhibition is
+selection-inert (EMERGE-41 FS-on vs FS-lesion winner overlap 1.00; riii CA3 sparsity changed but ratio unchanged 1.16×).
+
+**This closes the diagnostic chain.** Every stage is now measured, and each is excellent until the last:
+| stage | measured | verdict |
+|---|---|---|
+| apical plateau (instructive signal) | −9 mV target vs −66 mV others | **exclusive ✓** |
+| pool isolation across windows | >99% (0.5–0.8% leak) | **isolated ✓** |
+| slot somatic selection | ~5:1 | **selective ✓** |
+| where the weight comes from | ~6000 undriven vs ~900 driven steps | gaps dominate (confirmed) |
+| **the write itself** | **one global WTA winner, seed-dependent** | **✗ THE BLOCKER** |
+
+**▶ NEXT BUILD (now well-founded, not a guess): replace the shared `comp_attr_inh` with per-slot FS pools + CROSS-
+inhibition** (`comp_attr_FS_s → comp_attr_{t≠s}`, no self-inhibition) at the multi-seed-GO operating point already in
+this repo (`biased_competition_buffer.py:114-115,164-176` — gentle `20/5`, `sel_recurrent_weight=0.35`, α<1). Lesion arm
+= the shipped global pool, so the claim under test is **topology**, not weight. Gate on: per-slot mass BALANCED (the
+artifact check that exposed this), own-is-max ≥2/3, permuted control collapsing, substrate physiological throughout the
+write, at 6 seeds.
+
+**Final cortical-store ledger: 10 hypotheses, 9 refuted or narrowed by direct measurement, 1 standing (this one) — and it
+is corroborated independently by a read-only research gate that reached it from the code rather than from the data.**
