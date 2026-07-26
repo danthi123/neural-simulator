@@ -24,6 +24,24 @@
       1.833
     ]
   ],
+  "slot_drive_budget": {
+    "store(pool->slot)": {
+      "charge": 957709.5,
+      "pct": 93.02,
+      "n_syn": 64868
+    },
+    "slot_recurrent": {
+      "charge": 56626.5,
+      "pct": 5.5,
+      "n_syn": 15590
+    },
+    "other(incl. inhibition)": {
+      "charge": 15262.2,
+      "pct": 1.48,
+      "n_syn": 38971
+    },
+    "_total_charge": 1029598.2
+  },
   "v_apical_range": [
     -5.27,
     -3.38

@@ -24,6 +24,24 @@
       2.175
     ]
   ],
+  "slot_drive_budget": {
+    "store(pool->slot)": {
+      "charge": 806580.8,
+      "pct": 90.85,
+      "n_syn": 64544
+    },
+    "slot_recurrent": {
+      "charge": 61375.3,
+      "pct": 6.91,
+      "n_syn": 15475
+    },
+    "other(incl. inhibition)": {
+      "charge": 19851.8,
+      "pct": 2.24,
+      "n_syn": 38858
+    },
+    "_total_charge": 887808.0
+  },
   "v_apical_range": [
     -5.57,
     -3.39
@@ -151,7 +169,7 @@
   "firing_weighted_mass": [
     785507.56,
     799038.38,
-    1856895.57
+    1856895.55
   ],
   "firing_weighted_own_is_max": [
     true,

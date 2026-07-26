@@ -1611,3 +1611,37 @@ the self-regeneration (`comp_self_regen=0.15`) and background. `comp_pool_slot_w
 weight of **5.0**, so the store may simply be out-weighted by design. If so the question becomes an ARCHITECTURAL
 one — should a cortical store drive its slot directly, or gate/bias an attractor that is driven elsewhere — and
 that is a design fork worth surfacing rather than silently tuning a weight ratio.
+
+## ⛔⛔ RETRACTION — (C2) "the store does not drive the slots" IS VOID. The lesion never held.
+
+**The zeroing did not persist.** Direct verification (`cp_connections.data` zeroed, then 5 simulation steps):
+`after in-place write -> first 1000 all zero? True` · `after 5 steps -> still zero? False, max|w| 0.05`.
+**The recall read runs with plasticity LIVE**, so the "deleted" store regrew *during the very read that was supposed
+to measure its absence*. Over 3 cues × (60 read + 200 gap) = 780 steps it regrew substantially.
+
+**Caught by my own next measurement contradicting it:** the (D) drive budget runs AFTER (C2) zeroed those synapses
+and reports the store at **90.85 / 95.04 / 90.85%** of all charge into slot neurons. Had the lesion held, (D) would
+have read ~0%. A "lesion-grade" claim was refuted by the instrument I built to answer the *next* question.
+
+**⇒ RETRACTED:** "deleting the entire store moves slot rates by ~5%", "the store is a negligible minority of each
+slot's drive", "the read is not functionally connected to the store", and the conclusion that the decoupling was
+explained. The board entry asserting these is corrected in the same cycle.
+
+**⇒ ALSO REFUTED (the opposite way): the store is NOT out-weighted.** It carries **~91–95% of the charge into slot
+neurons** against `slot_recurrent` ~3.4–6.9% and everything-else ~1.5–2.2%. `comp_pool_slot_weight=1.5` vs
+`comp_wta_weight=5.0` was misleading — per-synapse weight is not drive share (64.5k store synapses vs 15.5k
+recurrent). **So the architectural fork I was about to surface is withdrawn: there is nothing to rebalance.**
+
+**⇒ THE REAL FINDING, and it undercuts every (B) in this session: THE RECALL READ IS NOT READ-ONLY.** Plasticity is
+live throughout `(B)`, and the read drives pool *i* at 1400 pA for 60 steps — so Hebbian potentiates pool *i* → **all**
+slots *while the answer is being read*, writing a fresh NON-selective pattern over the stored one. That is a
+mechanism that would produce chance recall from a perfectly selective store, and it has been under every recall
+measurement in this arc, including the 7/18-vs-8/18 decoupling result.
+
+**▶ IMMEDIATE TEST (the read with plasticity FROZEN):** gate `concept_to_comp_attr` to 0 for the duration of the
+recall, then re-run (B) on the GO arm. If recall lifts off chance, the blocker is *the read overwriting the store*
+and the decoupling result must be re-measured. If it does not, the decoupling stands but for a reason still unknown.
+
+**PROCESS: this is silent-failure #4 today and the most consequential** — an in-place GPU array write that the
+engine undoes on the next step, reported as a lesion. It joins the class: **a manipulation must be VERIFIED to have
+held, at the time the measurement is taken, not merely issued.** Encoded in `verify-go`.

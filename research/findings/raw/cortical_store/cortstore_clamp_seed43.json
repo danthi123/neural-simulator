@@ -24,6 +24,24 @@
       0.675
     ]
   ],
+  "slot_drive_budget": {
+    "store(pool->slot)": {
+      "charge": 901869.7,
+      "pct": 95.04,
+      "n_syn": 64666
+    },
+    "slot_recurrent": {
+      "charge": 32587.6,
+      "pct": 3.43,
+      "n_syn": 15420
+    },
+    "other(incl. inhibition)": {
+      "charge": 14432.1,
+      "pct": 1.52,
+      "n_syn": 39098
+    },
+    "_total_charge": 948889.3
+  },
   "v_apical_range": [
     -5.28,
     -3.43
@@ -54,7 +72,7 @@
   "dw_pos_neg_by_slot": {
     "slot0": {
       "pos": 36.936987,
-      "neg": -38.280386
+      "neg": -38.280385
     },
     "slot1": {
       "pos": 36.850589,
