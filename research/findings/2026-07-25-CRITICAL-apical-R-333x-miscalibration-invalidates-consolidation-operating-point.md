@@ -872,3 +872,38 @@ larger piece of work than "restore", and the roadmap should say so.
 3. The 87.5% baseline is unreproducible and retired.
 4. Word→pool binding is **unbuilt**, not broken — a scoping correction with real planning consequences.
 5. Five verification rules, each earned by a specific failure here, now encoded in `verify-go`.
+
+## Cortical store (`concept_to_comp_attr`) — controlled NO, with a specific mechanism
+
+New probe `_consol_cortical_store_probe.py`: measures the CORTEX-resident store (the half that survives a hippo lesion,
+unlike the validated `ca1→slot` write) at the calibrated operating point, cueing pools DIRECTLY by teacher current so it
+does not depend on the unbuilt word→pool binding. **Explicitly NOT the full A1 gate**, and the probe prints that on
+every run.
+
+**First run was my own config error, caught instantly by the probe's raw magnitudes:** `dw=0.0` and **per-slot mass
+`[0,0,0]`** — not a failed write but an absent pathway. `BASE` sets `comp_no_pool_slot=True`, which DROPS the pool→slot
+pathways. That flag is right for the `ca1→slot` measurement (the all-pools→all-slots broadcast is a write-selectivity
+killer there) but wrong here, since those pathways ARE the cortical store. **The two measurements need opposite settings
+of one flag** — reasoning now written into the probe. *(Two minutes to find, versus hours for the earlier config
+problems — the difference is entirely that this probe reports raw magnitudes by default.)*
+
+**Corrected run (seed 42), substrate verified physiological (`v_apical` −5.28…−3.31):**
+| measure | result |
+|---|---|
+| store `concept→slot` own/other | `[0.945, 0.978, 1.091]` — **FLAT** |
+| permuted-target control | `[0.95, 1.095, 0.931]` — flat, consistent with no signal |
+| per-slot mass | `[1.249, 1.280, 1.390]` — balanced (no winner-slot artifact) |
+| hippo-lesioned recall | **"2/3" but NOISE** — rates `[[0.008,0,0], [0.192,0.117,0], [0.058,0.067,0.108]]` |
+
+**The "2/3" must not be reported as a partial success.** Fact 0 "wins" on a rate of **0.008** purely because the other
+two are exactly 0; fact 1 is **wrong** (peaks on slot 0, target slot 1); only fact 2 is a real win (0.108). Store weights
+(~1.25–1.39) barely moved from their `weight_mean=1.5` initialisation ⇒ **co-activation replay is not writing a
+selective cortical store at all.**
+
+**Mechanism (specific, and consistent with what already worked):** `coactivation_replay` drives the target slot
+**somatically**, but the BTSP write requires an **apical plateau** as its instructive signal. Somatic drive does not
+supply one, so there is no teaching signal on the cortical synapses — exactly the problem the **decoupled apical
+teaching clamp** solved for `ca1→slot` (which is why that one reached a 6-seed GO). **▶ NEXT: apply the same validated
+decoupled-plateau teaching signal to the slot during co-activation replay, so `pool→slot` receives a real BTSP write**,
+then re-run this probe with the mass triad at 6 seeds. This reuses a mechanism already validated on this substrate
+rather than introducing a new one.
