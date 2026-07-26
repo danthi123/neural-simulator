@@ -943,3 +943,44 @@ were born.
 **If confirmed, the fix is architectural, not a knob:** the cortical store needs sparse//competitive `pool→slot`
 connectivity (or lateral inhibition between slots) so a fact's pools can drive one slot rather than all — which is a
 design question about how a cortical "slot" should be addressed, and deserves the research gate rather than a tuning pass.
+
+## Cortical store, resolved to a SUGGESTIVE-but-unproven signal — and TWO of my own mechanisms refuted by measurement
+
+Chased the flat cortical store through three explanations. **The first two were refuted by direct measurement, which is
+the entire point of running them:**
+
+**1. "ALL-pools→ALL-slots broadcast defeats the clamp" — REFUTED.** The codebase's own comment endorses this idea
+(*"the write-selectivity killer"*), it explained the uniform write, and it explained why the same clamp works for
+`ca1→slot`. Measuring `v_apical` *inside* the step loop (after the engine recomputes it from `I_coincidence`) killed it:
+| window | slot 0 | slot 1 | slot 2 |
+|---|---|---|---|
+| fact 0 | **−9.33** | −66.07 | −66.13 |
+| fact 1 | −66.20 | **−9.64** | −66.21 |
+| fact 2 | −66.23 | −66.19 | **−9.81** |
+`v_hold = −50` ⇒ **the instructive signal is perfectly exclusive.** Had I cited "structural connectivity limit" without
+this check it would have been a fourth false boundary — and the worst kind, since it invites redesigning the
+architecture rather than checking a parameter.
+
+**2. "Eligibility bleeds across facts" — REFUTED.** `btsp_elig_tau_ms` defaults to 1000 ms against a 15 ms fact window,
+the same cross-fact bleed already fixed for `ca1→slot`. Setting `elig_tau=30` still gave a flat raw read
+(`[1.003, 0.99, 1.0]`) — though it did flip per-slot mass from **1.78** (τ=1000, above the 1.5 init) to **1.19** (below
+it), showing the raw metric was tracking net decay-vs-potentiation across the whole population rather than the write.
+
+**3. The METRIC was diluting the signal — SUPPORTED.** `W[i,j]` averaged ALL pool→slot synapses at density 0.15, so a
+selective change on the few coincident synapses vanished among untouched ones. Adding the **firing-weighted read** (the
+same correction that made `ca1→slot` visible):
+```
+(A)  raw mean         own/other=[1.003, 0.990, 1.000]   own_is_max=[F, F, T]
+(A2) firing-weighted  own/other=[1.031, 1.057, 1.037]   own_is_max=[T, T, T]   <- correct slot wins for EVERY fact
+```
+
+**HONEST STATUS: SUGGESTIVE, NOT ESTABLISHED.** own-is-max 3/3 is the right *direction*, but the margins are 3–6% —
+precisely the size a mass artifact produces — and **the permuted-target control was only computed for the RAW read, not
+the firing-weighted one.** Per this session's own rule, a ratio without its permuted control is not evidence. The write
+is also plainly swamped by the pathway's **1.5 initialisation**, against which a small learned component cannot show.
+
+**▶ NEXT (concrete): (a) add the permuted-target control to the firing-weighted read — mandatory before any claim;
+(b) lower the `pool→slot` initial `weight_mean` (currently 1.5) and/or raise the write so the learned component
+dominates its own baseline — the direct analogue of the unsaturated-regime fix that unlocked `ca1→slot`; (c) then the
+mass triad at 6 seeds.** The mechanism is not in doubt (exclusive instructive signal verified, correct direction 3/3);
+what is unproven is whether the magnitude can be made real.

@@ -37,11 +37,18 @@ cp, BACKEND = get_backend()
 N = len(CONSOLIDATED_FACTS)
 
 
-def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teaching_clamp=False):
+def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teaching_clamp=False, elig_tau=30.0):
     a = dict(BASE)
     a.update(comp_dendritic=True, comp_wta_weight=5.0, comp_k_thresh=2.0, comp_self_regen=0.15, comp_kir_g=3.0,
              comp_v_hold=-50.0, comp_apical_R=0.15, comp_gc_read=0.5,          # CALIBRATED operating point
              comp_btsp=True, comp_btsp_lr=float(btsp_lr), comp_btsp_wmax=2000.0,
+             # PER-FACT-WINDOWED eligibility. btsp_elig_tau_ms DEFAULTS TO 1000ms while a fact window is 30 steps x
+             # 0.5ms = 15ms (+100ms recovery), so at the default the eligibility from fact i persists straight through
+             # fact j's window -> every pool looks "recently active" for every slot -> a PERFECTLY EXCLUSIVE instructive
+             # signal still yields a UNIFORM write. Verified: v_apical during the clamped write is exclusive
+             # (target -13mV vs others -67mV, v_hold -50) yet per-slot mass came out identical to 3dp at tau=1000.
+             # Same cross-fact bleed already diagnosed and fixed for ca1->slot with elig_tau=30.
+             comp_btsp_elig_tau=float(elig_tau),
              # BASE sets comp_no_pool_slot=True, which DROPS the pool->slot pathways entirely (it was added because the
              # ALL-pools->ALL-slots broadcast is a write-selectivity killer for the ca1->slot measurement). But those
              # pathways ARE the cortical store this probe exists to measure, so it must re-enable them. Without this the
@@ -78,6 +85,9 @@ def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teachin
         Er = float(getattr(b.core_config, "comp_v_hold", -50.0)) - 20.0
         all_slots = cp.concatenate([cp.asarray(slot[i]) for i in sorted(slot)])
         rng = np.random.default_rng(int(seed) + 777)
+        pool_fire = {i: np.zeros(int(b.cp_membrane_potential_v.shape[0])) for i in range(N)}
+        va_log = {i: {j: 0.0 for j in sorted(slot)} for i in range(N)}
+        va_n = {i: {j: 0 for j in sorted(slot)} for i in range(N)}
         order = list(range(N))
         for _c in range(int(cycles)):
             rng.shuffle(order)
@@ -94,6 +104,14 @@ def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teachin
                         if si is not None:
                             b.cp_v_apical[si] = cp.float32(-25.0)          # ...raise ONLY the target's plateau
                     b._run_one_simulation_step()
+                    # VERIFICATION (2026-07-25): measure v_apical INSIDE the step loop, i.e. AFTER the engine has
+                    # recomputed it from I_coincidence. If the ALL-pools->ALL-slots broadcast is what defeats the clamp,
+                    # every slot will sit ABOVE v_hold here even though only the target was clamped high.
+                    pool_fire[i] += to_host(b.cp_firing_states).astype(np.float64)
+                    if b.cp_v_apical is not None:
+                        _va = to_host(b.cp_v_apical)
+                        for j in sorted(slot):
+                            va_log[i][j] += float(_va[slot[j]].mean()); va_n[i][j] += 1
                 b.cp_external_input_current[:] = 0.0
                 if b.cp_v_apical is not None:
                     b.cp_v_apical[:] = cp.float32(Er)
@@ -124,6 +142,18 @@ def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teachin
             W[i, j] = float(data[m].mean()) if m.sum() else 0.0
     oo = [float(W[i, i] / np.mean([W[i, j] for j in range(N) if j != i]))
           if np.mean([W[i, j] for j in range(N) if j != i]) > 1e-12 else 0.0 for i in range(N)]
+    # FIRING-WEIGHTED read: the raw mean above averages ALL pool->slot synapses (density 0.15), so a selective change on
+    # the few COINCIDENT synapses is diluted by the many untouched ones. Weighting each presynaptic cell by how much it
+    # actually fired in its own write window is the same correction that made the ca1->slot signal visible.
+    Wf = np.zeros((N, N)); f_oo = [0.0] * N
+    if teaching_clamp:
+        for i in range(N):
+            wpre = pool_fire[i]
+            for j in slot:
+                m = (syn_slot == j) & (wpre[pre_of] > 0)
+                Wf[i, j] = float((data[m] * wpre[pre_of][m]).sum()) if m.sum() else 0.0
+        f_oo = [float(Wf[i, i] / np.mean([Wf[i, j] for j in range(N) if j != i]))
+                if np.mean([Wf[i, j] for j in range(N) if j != i]) > 1e-12 else 0.0 for i in range(N)]
     # permuted-target control: read fact i's pools against a ROTATED slot assignment -> must collapse to ~1.0
     perm = [(i + 1) % N for i in range(N)]
     oo_perm = [float(W[i, perm[i]] / np.mean([W[i, j] for j in range(N) if j != perm[i]]))
@@ -150,10 +180,15 @@ def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teachin
     return dict(seed=int(seed), thr_hash=thr_hash, v_apical_physiological=v_ok,
                 v_apical_range=[round(float(va.min()), 2), round(float(va.max()), 2)] if va is not None else None,
                 dw_cortical=round(w1 - w0, 5),
+                v_apical_during_write=({i: {j: round(va_log[i][j] / max(va_n[i][j], 1), 2) for j in va_log[i]}
+                                        for i in va_log} if teaching_clamp else None),
+                v_hold=float(getattr(b.core_config, "coincidence_plateau_v_hold", -50.0)),
                 store_own_over_other=[round(x, 3) for x in oo],
                 store_own_is_max=[bool(np.argmax(W[i]) == i) for i in range(N)],
                 permuted_target_control=[round(x, 3) for x in oo_perm],
                 per_slot_mass=[round(float(W[:, j].mean()), 4) for j in range(N)],
+                firing_weighted_own_over_other=[round(x, 3) for x in f_oo],
+                firing_weighted_own_is_max=[bool(np.argmax(Wf[i]) == i) for i in range(N)] if teaching_clamp else None,
                 recall_correct=recall, recall_slot_rates=recall_rates,
                 n_recall=int(sum(recall)))
 
@@ -163,12 +198,13 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--cycles", type=int, default=10)
     ap.add_argument("--btsp-lr", type=float, default=0.0005)
+    ap.add_argument("--elig-tau", type=float, default=30.0, help="BTSP eligibility tau ms (default 1000 BLEEDS across facts; 30 = per-fact windowed)")
     ap.add_argument("--teaching-clamp", action="store_true", help="apply the validated decoupled apical teaching clamp during replay (BTSP needs an APICAL plateau; somatic slot drive supplies none)")
     ap.add_argument("--out", default="research/findings/raw/cortical_store")
     args = ap.parse_args()
     from pathlib import Path
     Path(args.out).mkdir(parents=True, exist_ok=True)
-    r = run(args.seed, args.cycles, args.btsp_lr, teaching_clamp=args.teaching_clamp)
+    r = run(args.seed, args.cycles, args.btsp_lr, teaching_clamp=args.teaching_clamp, elig_tau=args.elig_tau)
     Path(f"{args.out}/cortstore{'_clamp' if args.teaching_clamp else ''}_seed{args.seed}.json").write_text(json.dumps(r, indent=2))
     print(f"[seed {args.seed}] backend={BACKEND} thr_hash={r['thr_hash']} dw_cortical={r['dw_cortical']}")
     print(f"  v_apical={r['v_apical_range']} physiological={r['v_apical_physiological']}"
@@ -176,6 +212,15 @@ def main():
     print(f"  (A) CORTICAL STORE concept→slot own/other={r['store_own_over_other']} own_is_max={r['store_own_is_max']}")
     print(f"      permuted-target control={r['permuted_target_control']}  <- MUST collapse to ~1.0")
     print(f"      per-slot mass={r['per_slot_mass']}  <- must be balanced (else winner-slot artifact)")
+    if r.get("v_apical_during_write"):
+        print(f"  (V) v_apical DURING the clamped write (measured after the engine recomputes it), v_hold={r['v_hold']}:")
+        for i, row in r["v_apical_during_write"].items():
+            vals = [row[j] for j in sorted(row)]
+            above = [v > r['v_hold'] for v in vals]
+            print(f"      fact {i} window -> slots {vals}   above v_hold: {above}"
+                  + ("   <- ALL slots above => clamp DEFEATED (broadcast confirmed)" if all(above) else ""))
+    if r.get("firing_weighted_own_is_max") is not None:
+        print(f"  (A2) FIRING-WEIGHTED store own/other={r['firing_weighted_own_over_other']} own_is_max={r['firing_weighted_own_is_max']}  <- undiluted read")
     print(f"  (B) HIPPO-LESIONED recall (pools driven directly): {r['n_recall']}/{N} correct  slot rates={r['recall_slot_rates']}")
     ok = r['n_recall'] >= 2 and sum(r['store_own_is_max']) >= 2
     print(f"  VERDICT: {'GO-ish — cortical store selective AND survives the lesion (verify controls + 6 seeds)' if ok else 'NO — see (A)/(B); report which half failed'}")
