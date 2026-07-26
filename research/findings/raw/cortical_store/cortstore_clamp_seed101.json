@@ -2,6 +2,47 @@
   "seed": 101,
   "thr_hash": "c5a57d9c675f",
   "v_apical_physiological": true,
+  "read_weight_drift": 0.0,
+  "null_cue_slot_rates": [
+    0.008,
+    0.058,
+    0.0
+  ],
+  "nostore_recall_slot_rates": [
+    [
+      0.167,
+      0.1,
+      0.008
+    ],
+    [
+      0.283,
+      0.175,
+      0.242
+    ],
+    [
+      0.408,
+      0.342,
+      0.217
+    ]
+  ],
+  "slot_drive_budget": {
+    "store(pool->slot)": {
+      "charge": 0.0,
+      "pct": 0.0,
+      "n_syn": 65402
+    },
+    "slot_recurrent": {
+      "charge": 10390.9,
+      "pct": 34.68,
+      "n_syn": 15451
+    },
+    "other(incl. inhibition)": {
+      "charge": 19570.3,
+      "pct": 65.32,
+      "n_syn": 39147
+    },
+    "_total_charge": 29961.3
+  },
   "v_apical_range": [
     -5.27,
     -2.09
@@ -21,8 +62,8 @@
   },
   "dw_diag_vs_off": {
     "driven": {
-      "diag": 179.33878,
-      "off": -5.453857
+      "diag": 179.338441,
+      "off": -5.453843
     },
     "gap": {
       "diag": 0.0,
@@ -31,16 +72,16 @@
   },
   "dw_pos_neg_by_slot": {
     "slot0": {
-      "pos": 62.828653,
-      "neg": -64.162473
+      "pos": 62.828388,
+      "neg": -64.162209
     },
     "slot1": {
-      "pos": 71.278597,
-      "neg": -72.623081
+      "pos": 71.278592,
+      "neg": -72.623076
     },
     "slot2": {
-      "pos": 57.105404,
-      "neg": -51.301937
+      "pos": 57.105306,
+      "neg": -51.30184
     }
   },
   "v_apical_during_write": {
@@ -128,8 +169,8 @@
   ],
   "firing_weighted_mass": [
     2137037.82,
-    2136487.1,
-    4268622.69
+    2136487.51,
+    4268622.7
   ],
   "firing_weighted_own_is_max": [
     false,
@@ -139,24 +180,24 @@
   "recall_correct": [
     false,
     false,
-    false
+    true
   ],
   "recall_slot_rates": [
     [
-      2.392,
-      2.467,
-      2.442
+      0.758,
+      0.917,
+      0.842
     ],
     [
-      1.5,
-      1.517,
-      1.792
+      0.4,
+      0.367,
+      0.633
     ],
     [
-      0.592,
-      0.767,
-      0.675
+      0.358,
+      0.308,
+      2.35
     ]
   ],
-  "n_recall": 0
+  "n_recall": 1
 }

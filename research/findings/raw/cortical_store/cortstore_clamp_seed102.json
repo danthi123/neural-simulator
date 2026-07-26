@@ -2,6 +2,47 @@
   "seed": 102,
   "thr_hash": "dfe2022639bb",
   "v_apical_physiological": true,
+  "read_weight_drift": 0.0,
+  "null_cue_slot_rates": [
+    0.0,
+    0.067,
+    0.0
+  ],
+  "nostore_recall_slot_rates": [
+    [
+      0.15,
+      0.217,
+      0.033
+    ],
+    [
+      0.167,
+      0.475,
+      0.333
+    ],
+    [
+      0.175,
+      0.267,
+      0.283
+    ]
+  ],
+  "slot_drive_budget": {
+    "store(pool->slot)": {
+      "charge": 0.0,
+      "pct": 0.0,
+      "n_syn": 64876
+    },
+    "slot_recurrent": {
+      "charge": 8047.6,
+      "pct": 35.14,
+      "n_syn": 15359
+    },
+    "other(incl. inhibition)": {
+      "charge": 14853.6,
+      "pct": 64.86,
+      "n_syn": 38628
+    },
+    "_total_charge": 22901.2
+  },
   "v_apical_range": [
     -10.47,
     4.86
@@ -11,7 +52,7 @@
     "driven": {
       "slot0": -1.808287,
       "slot1": -1.821481,
-      "slot2": 4.877307
+      "slot2": 4.877309
     },
     "gap": {
       "slot0": 0.0,
@@ -21,8 +62,8 @@
   },
   "dw_diag_vs_off": {
     "driven": {
-      "diag": 183.782426,
-      "off": -4.46836
+      "diag": 183.777944,
+      "off": -4.468244
     },
     "gap": {
       "diag": 0.0,
@@ -31,16 +72,16 @@
   },
   "dw_pos_neg_by_slot": {
     "slot0": {
-      "pos": 65.226124,
-      "neg": -67.034412
+      "pos": 65.222746,
+      "neg": -67.031033
     },
     "slot1": {
-      "pos": 62.743813,
-      "neg": -64.565294
+      "pos": 62.741946,
+      "neg": -64.563428
     },
     "slot2": {
-      "pos": 65.002566,
-      "neg": -60.125259
+      "pos": 65.003144,
+      "neg": -60.125835
     }
   },
   "v_apical_during_write": {
@@ -84,19 +125,19 @@
   ],
   "slot_spikes_during_write": {
     "0": [
-      2014.0,
+      2015.0,
       694.0,
-      908.0
+      907.0
     ],
     "1": [
-      327.0,
+      326.0,
       1556.0,
-      829.0
+      828.0
     ],
     "2": [
-      719.0,
-      699.0,
-      3207.0
+      718.0,
+      702.0,
+      3209.0
     ]
   },
   "pool_spikes_during_write": {
@@ -118,7 +159,7 @@
   },
   "firing_weighted_own_over_other": [
     1.01,
-    1.011,
+    1.012,
     3.827
   ],
   "firing_weighted_permuted_control": [
@@ -127,9 +168,9 @@
     0.417
   ],
   "firing_weighted_mass": [
-    2039806.29,
-    2029806.54,
-    4043764.44
+    2039778.55,
+    2029910.01,
+    4043800.3
   ],
   "firing_weighted_own_is_max": [
     false,
@@ -143,19 +184,19 @@
   ],
   "recall_slot_rates": [
     [
-      2.067,
-      2.492,
-      3.083
+      0.708,
+      0.792,
+      1.075
     ],
     [
-      0.033,
-      0.308,
-      0.383
+      0.025,
+      0.133,
+      0.208
     ],
     [
-      0.667,
-      0.317,
-      0.867
+      0.292,
+      0.183,
+      2.442
     ]
   ],
   "n_recall": 1

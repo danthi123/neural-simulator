@@ -2,16 +2,57 @@
   "seed": 100,
   "thr_hash": "7e74f74fb4bb",
   "v_apical_physiological": true,
+  "read_weight_drift": 0.0,
+  "null_cue_slot_rates": [
+    0.092,
+    0.025,
+    0.0
+  ],
+  "nostore_recall_slot_rates": [
+    [
+      0.375,
+      0.267,
+      0.017
+    ],
+    [
+      0.225,
+      0.292,
+      0.133
+    ],
+    [
+      0.308,
+      0.183,
+      0.233
+    ]
+  ],
+  "slot_drive_budget": {
+    "store(pool->slot)": {
+      "charge": 0.0,
+      "pct": 0.0,
+      "n_syn": 64596
+    },
+    "slot_recurrent": {
+      "charge": 7703.2,
+      "pct": 26.48,
+      "n_syn": 15422
+    },
+    "other(incl. inhibition)": {
+      "charge": 21388.7,
+      "pct": 73.52,
+      "n_syn": 38808
+    },
+    "_total_charge": 29091.9
+  },
   "v_apical_range": [
     -5.24,
     8.36
   ],
-  "dw_cortical": -0.12843,
+  "dw_cortical": -0.1285,
   "dw_by_phase": {
     "driven": {
       "slot0": -2.644601,
       "slot1": -2.662125,
-      "slot2": 4.189433
+      "slot2": 4.18863
     },
     "gap": {
       "slot0": 0.0,
@@ -21,8 +62,8 @@
   },
   "dw_diag_vs_off": {
     "driven": {
-      "diag": 198.05056,
-      "off": -6.242077
+      "diag": 198.050129,
+      "off": -6.242139
     },
     "gap": {
       "diag": 0.0,
@@ -31,16 +72,16 @@
   },
   "dw_pos_neg_by_slot": {
     "slot0": {
-      "pos": 66.522249,
-      "neg": -69.16685
+      "pos": 66.522585,
+      "neg": -69.167186
     },
     "slot1": {
-      "pos": 71.001747,
-      "neg": -73.663872
+      "pos": 71.002034,
+      "neg": -73.664159
     },
     "slot2": {
-      "pos": 72.06031,
-      "neg": -67.870878
+      "pos": 72.059323,
+      "neg": -67.870693
     }
   },
   "v_apical_during_write": {
@@ -52,7 +93,7 @@
     "1": {
       "0": -63.75,
       "1": -0.91,
-      "2": -63.59
+      "2": -63.6
     },
     "2": {
       "0": -63.62,
@@ -65,7 +106,7 @@
   "store_own_over_other": [
     0.955,
     0.972,
-    3.574
+    3.573
   ],
   "store_own_is_max": [
     false,
@@ -80,7 +121,7 @@
   "per_slot_mass": [
     2.4993,
     2.4985,
-    4.7705
+    4.7702
   ],
   "slot_spikes_during_write": {
     "0": [
@@ -127,9 +168,9 @@
     0.426
   ],
   "firing_weighted_mass": [
-    2071079.53,
+    2071078.89,
     2051198.45,
-    4026715.74
+    4026499.33
   ],
   "firing_weighted_own_is_max": [
     false,
@@ -138,24 +179,24 @@
   ],
   "recall_correct": [
     true,
-    true,
-    false
+    false,
+    true
   ],
   "recall_slot_rates": [
     [
-      2.308,
-      1.275,
-      1.833
+      0.992,
+      0.608,
+      0.708
     ],
     [
-      0.392,
-      0.742,
-      0.558
+      0.125,
+      0.208,
+      0.283
     ],
     [
-      1.142,
-      0.675,
-      0.692
+      0.45,
+      0.208,
+      2.192
     ]
   ],
   "n_recall": 2

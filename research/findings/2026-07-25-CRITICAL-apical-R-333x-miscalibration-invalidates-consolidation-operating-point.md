@@ -1645,3 +1645,54 @@ and the decoupling result must be re-measured. If it does not, the decoupling st
 **PROCESS: this is silent-failure #4 today and the most consequential** — an in-place GPU array write that the
 engine undoes on the next step, reported as a lesion. It joins the class: **a manipulation must be VERIFIED to have
 held, at the time the measurement is taken, not merely issued.** Encoded in `verify-go`.
+
+## 🎉🎉 CONSOLIDATION WORKS — 6-seed, 2×2 factorial, both ingredients necessary and jointly sufficient
+
+The retraction above ("the store doesn't drive the slots") led directly to the real blocker: **the recall read was
+not read-only.** With that fixed, the capability lands.
+
+**THE 2×2** (seeds 42/43/44/100/101/102; recall = hippo-lesioned, pools cued directly; **chance = 6/18**):
+
+| | live read | **frozen read** |
+|---|---|---|
+| **LESION** (no `mean_subtract`) | 8/18 | **7/18** |
+| **`--mean-subtract 1.0`** | 7/18 | **🎉 18/18 (3/3 on 6/6 seeds)** |
+
+**Each ingredient ALONE gives chance; TOGETHER they give perfect recall.** Store selectivity tracks it exactly:
+arm own/other **12.51–46.61** with own-is-max **3/3 on 6/6**; lesion **~1.0** with own-is-max **1/3**.
+Per-fact rates are sharply selective, e.g. seed 42 `[0.60,0.23,0.35]` `[0.03,0.98,0.15]` `[0.17,0.03,1.60]`
+(target dominating 3–60×).
+
+**Anti-cheats satisfied:** permuted-target control on the store collapses in all 18 fact-seeds (≤0.154) vs lesion
+~1.0–1.16 · the mechanism-OFF lesion runs at the IDENTICAL operating point so the claim is the MECHANISM · the
+freeze is **asserted in the data** (`read_weight_drift +0.000000` frozen vs **+1.28 to +1.41** live — the very
+assertion that exposed the earlier void lesion) · substrate physiological throughout · 6 seeds.
+
+**WHY IT WAS BROKEN, and it was the MEASUREMENT as much as the mechanism:** recall drives pool *i* at 1400 pA for
+60 steps with plasticity LIVE, so Hebbian potentiated pool *i* → **all** slots *while the answer was being read*,
+overwriting the stored pattern with a fresh non-selective one (drift +1.3, comparable to the stored weights
+themselves). Every (B) number in this session sat on that confound — including the "store and recall are DECOUPLED"
+result I recorded as decisive.
+
+**⚠️ HONEST SCOPE — three limits, stated plainly:**
+1. **The freeze is a HOST intervention** (`_try_pgate` around the read), NOT yet neural. It is not ad-hoc — it is
+   **SPEAR (Separate Phases of Encoding And Retrieval) / Hasselmo's ACh encoding-vs-retrieval mode switch**, which
+   this project has ALREADY DESIGNED (`docs/plans/2026-05-19-shared-rhythm-SPEAR-conversational-architecture-design.md`,
+   `2026-05-22-acetylcholine-staged-recurrence-consolidation-variant-design.md`; memory
+   `feedback_conversational_path_resolution` names SPEAR as the path). The engine already exposes the exact target
+   (`plasticity_gate`, `scope="gate:<name>"` — `sim/neuromodulators.py:44,70`), so the biologization is wiring an
+   ACh modulator to gate `concept_to_comp_attr`, with theta-gamma supplying the timing. **Until then this is a
+   tracked shortcut, per BRAIN-BASED ONLY.**
+2. **NOT the full A1 gate.** This probe cues pools DIRECTLY by teacher current because word→pool binding is UNBUILT.
+   It tests CONSOLIDATION in isolation. The A1 capability gate is the end-to-end test in
+   `nmda_compositional_consolidation.py` main() with its four anti-cheats.
+3. **Recall lacks its own scramble control.** The permuted control validates the STORE; a permuted pool→fact cue
+   mapping at recall should be added before this is called closed.
+
+**▶ NEXT:** (a) recall-side scramble control; (b) wire the freeze to an ACh neuromodulator (native target exists) to
+retire the host shortcut; (c) port the winning protocol into the main runner and run the 4-anti-cheat end-to-end A1
+gate at 6 seeds.
+
+**LEDGER: 14 hypotheses, 12 refuted, 2 confirmed — and the two confirmed ones are jointly the capability.** Of five
+retractions today, four were caught by an instrument built to answer a DIFFERENT question. **The single highest-value
+habit this session: build the assertion into the data (`read_weight_drift`), never the comment.**

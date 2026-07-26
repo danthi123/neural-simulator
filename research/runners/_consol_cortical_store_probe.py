@@ -37,7 +37,7 @@ cp, BACKEND = get_backend()
 N = len(CONSOLIDATED_FACTS)
 
 
-def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teaching_clamp=False, elig_tau=30.0, pool_slot_w=1.5, hebbian_max_w=None, hebbian_on=True, hebbian_lr=None, syn_scaling=None, no_stdp=False, btsp_wmax=2000.0, freeze_gap=False, per_slot_fs=False, mean_subtract=None, read_gap=0):
+def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teaching_clamp=False, elig_tau=30.0, pool_slot_w=1.5, hebbian_max_w=None, hebbian_on=True, hebbian_lr=None, syn_scaling=None, no_stdp=False, btsp_wmax=2000.0, freeze_gap=False, per_slot_fs=False, mean_subtract=None, read_gap=0, freeze_read=False):
     a = dict(BASE)
     a.update(comp_dendritic=True, comp_wta_weight=5.0, comp_k_thresh=2.0, comp_self_regen=0.15, comp_kir_g=3.0,
              comp_v_hold=-50.0, comp_apical_R=0.15, comp_gc_read=0.5,          # CALIBRATED operating point
@@ -282,6 +282,14 @@ def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teachin
     recall, recall_rates = [], []
     with hippo_lesioned(b):
         _try_tgate(b, "nmda_attractor", 1.0)
+        # FREEZE THE READ (2026-07-26, default off = prior behaviour). The recall drives pool i at 1400 pA for
+        # 60 steps with plasticity LIVE, so Hebbian potentiates pool i -> ALL slots WHILE the answer is being
+        # read — writing a fresh NON-selective pattern over the stored one. That alone could produce chance
+        # recall from a perfectly selective store. Verified live, not assumed: an in-place zeroing of these
+        # same synapses did NOT survive 5 steps (0 -> 0.05), which is how this was found.
+        if freeze_read:
+            _try_pgate(b, "concept_to_comp_attr", 0.0)
+        _wr0 = _mean_gate_weight(b, "concept_to_comp_attr")
         for i in range(N):
             b.cp_external_input_current[:] = 0.0
             drv = cp.zeros(int(b.cp_membrane_potential_v.shape[0]), dtype=cp.float32)
@@ -305,6 +313,9 @@ def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teachin
             # load-bearing. Same lever, read side.
             for _ in range(int(read_gap)):
                 b._run_one_simulation_step()
+        # DID THE FREEZE HOLD? Assert it in the DATA, not in a comment (verify-go rule 2).
+        _wr1 = _mean_gate_weight(b, "concept_to_comp_attr")
+        read_drift = round(float(_wr1 - _wr0), 6)
 
     # ---- (C) WHY doesn't a 20-46x selective STORE move the RATE? Two candidates, separated here in ONE run.
     # Established: the store write is a 6-seed GO (own-is-max 3/3 on 6/6, permuted <=0.154) yet recall sits at
@@ -358,8 +369,42 @@ def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teachin
     except Exception as _e:                      # narrow-ish: diagnostic only, must never mask the main result
         null_rates = nostore_rates = f"DIAGNOSTIC FAILED: {type(_e).__name__}: {_e}"
 
+    # ---- (D) THE SLOT DRIVE BUDGET. (C2) showed deleting the store barely moves the slot rates, so the
+    # store must be a small minority of what actually drives a slot. QUANTIFY it rather than infer it:
+    # total synaptic charge delivered INTO slot neurons over the recall window, split by SOURCE. Computed
+    # as sum_over_synapses |w| * (presynaptic spikes during the read) — exact for a window over which the
+    # weights are ~static, which is the right granularity for a budget. `comp_pool_slot_weight` is 1.5
+    # against `comp_wta_weight` 5.0, so the store may simply be OUT-WEIGHTED BY DESIGN — in which case the
+    # question is architectural (should a cortical store DRIVE its slot, or GATE an attractor driven
+    # elsewhere?) and must be surfaced as a fork, not silently fixed by raising one weight.
+    drive_budget = None
+    try:
+        _c = b.cp_connections
+        _nz = int(_c.nnz)
+        _po = to_host(_c.indices).astype(np.int64)[:_nz]
+        _ip = to_host(_c.indptr).astype(np.int64)
+        _pr = np.repeat(np.arange(len(_ip) - 1), np.diff(_ip))[:_nz]
+        _w = np.abs(to_host(_c.data).astype(np.float64)[:_nz])
+        _slotall = np.concatenate([np.asarray(slot[j]) for j in sorted(slot)])
+        _poolall = np.concatenate([np.concatenate(pool_of[i]) for i in range(N) if pool_of[i]])
+        _into_slot = np.isin(_po, _slotall)
+        # presynaptic spike counts over the LAST recall read (acc is still the final cue's accumulator)
+        _spk = acc
+        _cat = {}
+        _cat["store(pool->slot)"] = _into_slot & np.isin(_pr, _poolall)
+        _cat["slot_recurrent"] = _into_slot & np.isin(_pr, _slotall)
+        _cat["other(incl. inhibition)"] = _into_slot & ~np.isin(_pr, _poolall) & ~np.isin(_pr, _slotall)
+        _tot = float((_w[_into_slot] * _spk[_pr[_into_slot]]).sum())
+        drive_budget = {k: dict(charge=round(float((_w[m] * _spk[_pr[m]]).sum()), 1),
+                                pct=round(100.0 * float((_w[m] * _spk[_pr[m]]).sum()) / max(_tot, 1e-9), 2),
+                                n_syn=int(m.sum()))
+                        for k, m in _cat.items()}
+        drive_budget["_total_charge"] = round(_tot, 1)
+    except Exception as _e:
+        drive_budget = f"DRIVE-BUDGET FAILED: {type(_e).__name__}: {_e}"
+
     return dict(seed=int(seed), thr_hash=thr_hash, v_apical_physiological=v_ok,
-                null_cue_slot_rates=null_rates, nostore_recall_slot_rates=nostore_rates,
+                read_weight_drift=read_drift, null_cue_slot_rates=null_rates, nostore_recall_slot_rates=nostore_rates, slot_drive_budget=drive_budget,
                 v_apical_range=[round(float(va.min()), 2), round(float(va.max()), 2)] if va is not None else None,
                 dw_cortical=round(w1 - w0, 5),
                 # PER-WINDOW dw, aggregated two ways. (1) by PHASE (driven vs gap): does the write happen
@@ -410,6 +455,7 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--cycles", type=int, default=10)
     ap.add_argument("--btsp-lr", type=float, default=0.0005)
+    ap.add_argument("--freeze-read", action="store_true", help="freeze concept_to_comp_attr plasticity DURING recall — the read is otherwise NOT read-only and overwrites the store it is reading")
     ap.add_argument("--read-gap", type=int, default=0, help="recovery steps BETWEEN recall cues (default 0 = prior behaviour). Reads run back-to-back on a progressively adapted network; the write phase needed exactly this lever.")
     ap.add_argument("--mean-subtract", type=float, default=None, help="Miller-MacKay subtractive normalization on the BTSP increment (engine btsp_mean_subtract); the only STRUCTURAL lever left — every rate lever is inert at a soft-bound fixed point")
     ap.add_argument("--per-slot-fs", action="store_true", help="per-slot FS pools + CROSS-inhibition (no self-inhibition) instead of the shared global pool")
@@ -427,7 +473,7 @@ def main():
     args = ap.parse_args()
     from pathlib import Path
     Path(args.out).mkdir(parents=True, exist_ok=True)
-    r = run(args.seed, args.cycles, args.btsp_lr, teaching_clamp=args.teaching_clamp, elig_tau=args.elig_tau, pool_slot_w=args.pool_slot_weight, hebbian_max_w=args.hebbian_max_w, hebbian_on=not args.no_hebbian, hebbian_lr=args.hebbian_lr, syn_scaling=args.syn_scaling, no_stdp=args.no_stdp, btsp_wmax=args.btsp_wmax, freeze_gap=args.freeze_gap, per_slot_fs=args.per_slot_fs, mean_subtract=args.mean_subtract, read_gap=args.read_gap)
+    r = run(args.seed, args.cycles, args.btsp_lr, teaching_clamp=args.teaching_clamp, elig_tau=args.elig_tau, pool_slot_w=args.pool_slot_weight, hebbian_max_w=args.hebbian_max_w, hebbian_on=not args.no_hebbian, hebbian_lr=args.hebbian_lr, syn_scaling=args.syn_scaling, no_stdp=args.no_stdp, btsp_wmax=args.btsp_wmax, freeze_gap=args.freeze_gap, per_slot_fs=args.per_slot_fs, mean_subtract=args.mean_subtract, read_gap=args.read_gap, freeze_read=args.freeze_read)
     Path(f"{args.out}/cortstore{'_clamp' if args.teaching_clamp else ''}_seed{args.seed}.json").write_text(json.dumps(r, indent=2))
     print(f"[seed {args.seed}] backend={BACKEND} thr_hash={r['thr_hash']} dw_cortical={r['dw_cortical']}")
     print(f"  v_apical={r['v_apical_range']} physiological={r['v_apical_physiological']}"
@@ -457,6 +503,9 @@ def main():
             oth = max([v for k, v in enumerate(row) if k != int(i)] or [0.0])
             print(f"       fact {i}: {row}   target={tgt}  best_other={oth}  "
                   + ("TARGET DOMINATES" if tgt > oth else "NON-TARGET SPIKES AS MUCH/MORE => somatic selection FAILS"))
+    if r.get("read_weight_drift") is not None:
+        print(f"  (B0) STORE WEIGHT DRIFT DURING THE READ: {r['read_weight_drift']:+.6f}"
+              f"   {'<- read is READ-ONLY' if abs(r['read_weight_drift'])<1e-6 else '<- ⚠ THE READ IS REWRITING THE STORE'}")
     if r.get("null_cue_slot_rates") is not None:
         print("  (C) WHY the selective STORE doesn't move the RATE — two candidates, separated:")
         print(f"      (C1) NULL cue (no fact driven) per-slot rates: {r['null_cue_slot_rates']}")
@@ -465,6 +514,10 @@ def main():
         print(f"      (C2) recall with the pool->slot STORE ZEROED: {r['nostore_recall_slot_rates']}")
         print("           => if this is ~unchanged from (B), the store is a MINORITY of each slot's drive and"
               " NO weight ratio, however selective, can move the rate.")
+    if r.get("slot_drive_budget") is not None:
+        print(f"      (D) SLOT DRIVE BUDGET during recall (charge into slot neurons, by source): {r['slot_drive_budget']}")
+        print("           => if store(pool->slot) is a small %, the store is OUT-WEIGHTED BY DESIGN and the"
+              " question is ARCHITECTURAL (drive the slot vs gate an attractor), not a weight tune.")
     if r.get("dw_pos_neg_by_slot"):
         print("  (W) PER-WINDOW dw — the fork: does the winner RECEIVE more, or RESIST the pull-down?")
         print(f"      by phase (total dw into each slot): {r['dw_by_phase']}")
