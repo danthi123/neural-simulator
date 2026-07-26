@@ -1092,3 +1092,36 @@ controls the SCALE. That is a substrate change, and it is the first thing on thi
 broadcast defeats clamp ✗ · eligibility bleed ✗ · swamped by init ✗ · `hebbian_max_weight` pins it ✓(but not the
 magnitude lever) · Hebbian *rate* is the lever ✗ · unconditional clip ✗ · **diluting metric ✓ (the firing-weighted read
 is what made the real signal visible at all)**.
+
+## FINAL: the ~5% is a CEILING on what BTSP can express here — every bounding mechanism tried saturates the pathway
+
+**Per-pathway gating cannot separate the two rules** — verified in code: **both** Hebbian (`bridge.py` ~7700) and BTSP
+(~8031) multiply by `cp_plasticity_rate_gain`, so closing the gate on `concept_to_comp_attr` silences the selective
+rule along with the broad one. That eliminated the cheapest option before spending a run on it.
+
+**Synaptic scaling as the NON-coactivity bound — REFUTED, and it makes things worse:**
+```
+scaling 0.001 : per-slot mass 4.9999   own/other [0.992, 0.989, 0.995]  own_is_max 0/3
+scaling 0.01  : per-slot mass 4.9919   own/other [0.991, 0.987, 0.997]  own_is_max 0/3
+```
+(both substrates physiological). The mass pins at **exactly 5.0 regardless of scaling rate** — a hard ceiling, so the
+rate is not even the operative variable — and **the selectivity disappears completely.**
+
+**The unifying explanation, and it is now well-supported:** the BTSP write is strong enough to drive this pathway into
+**whatever ceiling exists**, and selectivity requires **headroom below the ceiling**. Hebbian's *soft* bound left a
+little (weights settled at 2.67 against a 2.5 bound), which is exactly why the ~5% signal survived there; a hard ceiling
+with no headroom (5.0) destroys the gradation and the signal with it. Driving the write weaker to stay below a ceiling
+was already swept — 5 orders of `btsp_lr` — and the signal is ~5% throughout the usable band and gone below it.
+
+**⇒ CHARACTERIZED LIMIT: ~5% is the ceiling of what BTSP's plateau-gated write can express on `concept_to_comp_attr`,
+across every bounding mechanism (Hebbian soft bound at 4 values · synaptic scaling at 2 rates · none) and every rate
+(Hebbian 100× · BTSP 5 orders) tried, with all valid arms verified physiological.** The signal is REAL (own-is-max 3/3,
+permuted control collapses) but far too small to drive recall.
+
+**⇒ NEXT IS STRUCTURAL, not a knob.** The `pool→slot` wiring is all-pools-to-all-slots at density 0.15, so *every* fact's
+pools contact *every* slot and all of them compete for the same bounded weight budget. The candidate is **sparse or
+competitive connectivity** (each pool contacting few slots, or lateral inhibition between slots so a winner takes the
+budget) — i.e. changing WHICH synapses exist rather than how strongly they learn. That is a design question about how a
+cortical "slot" should be addressable and **belongs in the research gate**, not in another sweep.
+
+**Cortical-store hypothesis ledger: 7 proposed, 6 refuted by measurement, 1 supported.**

@@ -3,63 +3,63 @@
   "thr_hash": "ee7fcf106bea",
   "v_apical_physiological": true,
   "v_apical_range": [
-    -5.27,
-    -3.42
+    -5.28,
+    -1.91
   ],
-  "dw_cortical": -0.06893,
+  "dw_cortical": 0.31043,
   "v_apical_during_write": {
     "0": {
-      "0": -14.76,
-      "1": -67.52,
-      "2": -67.58
+      "0": -0.69,
+      "1": -63.44,
+      "2": -63.43
     },
     "1": {
-      "0": -67.54,
-      "1": -14.66,
-      "2": -67.56
+      "0": -63.68,
+      "1": -1.71,
+      "2": -63.65
     },
     "2": {
-      "0": -67.57,
-      "1": -67.52,
-      "2": -14.75
+      "0": -63.75,
+      "1": -63.69,
+      "2": -1.9
     }
   },
   "write_phase_physiological": true,
   "v_hold": -50.0,
   "store_own_over_other": [
-    1.011,
-    0.998,
-    1.002
-  ],
-  "store_own_is_max": [
-    true,
-    false,
-    true
-  ],
-  "permuted_target_control": [
-    0.995,
+    0.999,
     1.0,
-    0.998
-  ],
-  "per_slot_mass": [
-    1.4335,
-    1.4278,
-    1.4284
-  ],
-  "firing_weighted_own_over_other": [
-    1.003,
-    0.989,
     1.0
   ],
+  "store_own_is_max": [
+    false,
+    false,
+    false
+  ],
+  "permuted_target_control": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "per_slot_mass": [
+    4.9919,
+    4.9927,
+    4.9938
+  ],
+  "firing_weighted_own_over_other": [
+    0.991,
+    0.987,
+    0.997
+  ],
   "firing_weighted_permuted_control": [
-    1.01,
-    1.003,
-    1.003
+    1.017,
+    0.983,
+    1.008
   ],
   "firing_weighted_mass": [
-    1204142.64,
-    1198994.76,
-    1197615.45
+    4222121.62,
+    4193187.61,
+    4168815.85
   ],
   "firing_weighted_own_is_max": [
     false,
@@ -73,19 +73,19 @@
   ],
   "recall_slot_rates": [
     [
-      0.458,
-      0.45,
-      0.425
+      1.092,
+      1.017,
+      1.033
     ],
     [
-      0.533,
-      0.333,
-      0.525
+      1.325,
+      0.825,
+      0.808
     ],
     [
-      0.175,
-      0.158,
-      0.075
+      0.292,
+      0.392,
+      0.25
     ]
   ],
   "n_recall": 1

@@ -37,7 +37,7 @@ cp, BACKEND = get_backend()
 N = len(CONSOLIDATED_FACTS)
 
 
-def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teaching_clamp=False, elig_tau=30.0, pool_slot_w=1.5, hebbian_max_w=None, hebbian_on=True, hebbian_lr=None):
+def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teaching_clamp=False, elig_tau=30.0, pool_slot_w=1.5, hebbian_max_w=None, hebbian_on=True, hebbian_lr=None, syn_scaling=None):
     a = dict(BASE)
     a.update(comp_dendritic=True, comp_wta_weight=5.0, comp_k_thresh=2.0, comp_self_regen=0.15, comp_kir_g=3.0,
              comp_v_hold=-50.0, comp_apical_R=0.15, comp_gc_read=0.5,          # CALIBRATED operating point
@@ -67,6 +67,15 @@ def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teachin
     # weights so the bound stops inverting the rule.
     if hebbian_max_w:
         b.core_config.hebbian_max_weight = float(hebbian_max_w)
+    if syn_scaling:
+        # NON-COACTIVITY BOUND. Hebbian bounds the pathway but is COACTIVITY-driven, so it potentiates every coactive
+        # pool->slot pair broadly and SETS the weight (BTSP's selective write is only a ~5% perturbation on top);
+        # removing it causes runaway. Synaptic scaling is HOMEOSTATIC normalisation — it bounds total input WITHOUT
+        # rewarding coactivity — so it should control the SCALE while leaving BTSP's plateau-gated write to set the
+        # PATTERN. Per-pathway plasticity gating cannot separate the two rules (verified: BOTH respect
+        # cp_plasticity_rate_gain, bridge.py ~7700 and ~8031), so this is the remaining lever.
+        b.core_config.enable_synaptic_scaling = True
+        b.core_config.synaptic_scaling_rate = float(syn_scaling)
     if hebbian_lr is not None:
         # The BOUND is not the magnitude lever: across bounds 1.0/2.5/4.0/8.0 the mass pins at the bound every time
         # (1.19/2.67/4.22/8.28) while selectivity stays ~3-7%. Hebbian saturates the weights wherever its ceiling is and
@@ -228,6 +237,7 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--cycles", type=int, default=10)
     ap.add_argument("--btsp-lr", type=float, default=0.0005)
+    ap.add_argument("--syn-scaling", type=float, default=None, help="enable synaptic scaling at this rate as a NON-coactivity bound (default off)")
     ap.add_argument("--hebbian-lr", type=float, default=None, help="Hebbian learning rate (default 5e-4); lower it so BTSP's graded write dominates while Hebbian still bounds")
     ap.add_argument("--no-hebbian", action="store_true", help="disable Hebbian so BTSP's GRADED write is not saturated over by a rule that drives to its bound")
     ap.add_argument("--hebbian-max-w", type=float, default=None, help="raise hebbian_max_weight above the design weights (default 1.0 INVERTS the rule on a ~1.2-1.5 pathway)")
@@ -238,7 +248,7 @@ def main():
     args = ap.parse_args()
     from pathlib import Path
     Path(args.out).mkdir(parents=True, exist_ok=True)
-    r = run(args.seed, args.cycles, args.btsp_lr, teaching_clamp=args.teaching_clamp, elig_tau=args.elig_tau, pool_slot_w=args.pool_slot_weight, hebbian_max_w=args.hebbian_max_w, hebbian_on=not args.no_hebbian, hebbian_lr=args.hebbian_lr)
+    r = run(args.seed, args.cycles, args.btsp_lr, teaching_clamp=args.teaching_clamp, elig_tau=args.elig_tau, pool_slot_w=args.pool_slot_weight, hebbian_max_w=args.hebbian_max_w, hebbian_on=not args.no_hebbian, hebbian_lr=args.hebbian_lr, syn_scaling=args.syn_scaling)
     Path(f"{args.out}/cortstore{'_clamp' if args.teaching_clamp else ''}_seed{args.seed}.json").write_text(json.dumps(r, indent=2))
     print(f"[seed {args.seed}] backend={BACKEND} thr_hash={r['thr_hash']} dw_cortical={r['dw_cortical']}")
     print(f"  v_apical={r['v_apical_range']} physiological={r['v_apical_physiological']}"
