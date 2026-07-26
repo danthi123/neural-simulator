@@ -37,7 +37,7 @@ cp, BACKEND = get_backend()
 N = len(CONSOLIDATED_FACTS)
 
 
-def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teaching_clamp=False, elig_tau=30.0, pool_slot_w=1.5, hebbian_max_w=None, hebbian_on=True, hebbian_lr=None, syn_scaling=None, no_stdp=False, btsp_wmax=2000.0, freeze_gap=False, per_slot_fs=False):
+def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teaching_clamp=False, elig_tau=30.0, pool_slot_w=1.5, hebbian_max_w=None, hebbian_on=True, hebbian_lr=None, syn_scaling=None, no_stdp=False, btsp_wmax=2000.0, freeze_gap=False, per_slot_fs=False, mean_subtract=None):
     a = dict(BASE)
     a.update(comp_dendritic=True, comp_wta_weight=5.0, comp_k_thresh=2.0, comp_self_regen=0.15, comp_kir_g=3.0,
              comp_v_hold=-50.0, comp_apical_R=0.15, comp_gc_read=0.5,          # CALIBRATED operating point
@@ -88,6 +88,19 @@ def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teachin
         # cp_plasticity_rate_gain, bridge.py ~7700 and ~8031), so this is the remaining lever.
         b.core_config.enable_synaptic_scaling = True
         b.core_config.synaptic_scaling_rate = float(syn_scaling)
+    if mean_subtract:
+        # MILLER-MACKAY SUBTRACTIVE NORMALIZATION on the BTSP increment (engine: config.py:396,
+        # bridge.py:8153 inside _run_one_simulation_step — VERIFIED live + reachable; its guarding
+        # `elif` follows the default-off Milstein branch). Enforces sum_j dw_ij = 0 per POSTsynaptic
+        # cell, so no common-mode pedestal can form. This is the only remaining STRUCTURAL lever:
+        # every RATE lever is inert BY CONSTRUCTION here (the store settles at Hebbian's soft-bound
+        # FIXED POINT, dw ∝ (w_max − w), so a rate changes how fast you reach the bound, not where it
+        # is — measured: hebbian_lr 0.001 == default to 4 significant figures). And the bound itself
+        # cannot simply be moved: at w_max=50, or with Hebbian off, the substrate goes UNPHYSIOLOGICAL
+        # (v_apical ~198 mV, pool leak 21-46% vs <1%), i.e. stability and selectivity are coupled
+        # through that one knob. Mean-subtract acts on BTSP instead, leaving the stabilising bound in
+        # place — which is why it is tested at the STABLE operating point (hebbian_max_w 2.5).
+        b.core_config.btsp_mean_subtract = float(mean_subtract)
     if hebbian_lr is not None:
         # The BOUND is not the magnitude lever: across bounds 1.0/2.5/4.0/8.0 the mass pins at the bound every time
         # (1.19/2.67/4.22/8.28) while selectivity stays ~3-7%. Hebbian saturates the weights wherever its ceiling is and
@@ -334,6 +347,7 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--cycles", type=int, default=10)
     ap.add_argument("--btsp-lr", type=float, default=0.0005)
+    ap.add_argument("--mean-subtract", type=float, default=None, help="Miller-MacKay subtractive normalization on the BTSP increment (engine btsp_mean_subtract); the only STRUCTURAL lever left — every rate lever is inert at a soft-bound fixed point")
     ap.add_argument("--per-slot-fs", action="store_true", help="per-slot FS pools + CROSS-inhibition (no self-inhibition) instead of the shared global pool")
     ap.add_argument("--freeze-gap", action="store_true", help="freeze plasticity during the undriven recovery gaps (~6000 steps vs ~900 driven) so only selective windows write")
     ap.add_argument("--btsp-wmax", type=float, default=2000.0, help="BTSP soft bound; MUST be near the effective ceiling or the write saturates at any rate")
@@ -349,7 +363,7 @@ def main():
     args = ap.parse_args()
     from pathlib import Path
     Path(args.out).mkdir(parents=True, exist_ok=True)
-    r = run(args.seed, args.cycles, args.btsp_lr, teaching_clamp=args.teaching_clamp, elig_tau=args.elig_tau, pool_slot_w=args.pool_slot_weight, hebbian_max_w=args.hebbian_max_w, hebbian_on=not args.no_hebbian, hebbian_lr=args.hebbian_lr, syn_scaling=args.syn_scaling, no_stdp=args.no_stdp, btsp_wmax=args.btsp_wmax, freeze_gap=args.freeze_gap, per_slot_fs=args.per_slot_fs)
+    r = run(args.seed, args.cycles, args.btsp_lr, teaching_clamp=args.teaching_clamp, elig_tau=args.elig_tau, pool_slot_w=args.pool_slot_weight, hebbian_max_w=args.hebbian_max_w, hebbian_on=not args.no_hebbian, hebbian_lr=args.hebbian_lr, syn_scaling=args.syn_scaling, no_stdp=args.no_stdp, btsp_wmax=args.btsp_wmax, freeze_gap=args.freeze_gap, per_slot_fs=args.per_slot_fs, mean_subtract=args.mean_subtract)
     Path(f"{args.out}/cortstore{'_clamp' if args.teaching_clamp else ''}_seed{args.seed}.json").write_text(json.dumps(r, indent=2))
     print(f"[seed {args.seed}] backend={BACKEND} thr_hash={r['thr_hash']} dw_cortical={r['dw_cortical']}")
     print(f"  v_apical={r['v_apical_range']} physiological={r['v_apical_physiological']}"

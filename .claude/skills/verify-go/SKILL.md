@@ -99,6 +99,39 @@ substrate can't", run these:
 mechanism has failed across many well-controlled variants. **Many variants failing identically is itself evidence of a
 COMMON upstream cause — the shared substrate or a shared constant — not of independent confirmations.**
 
+## Verifying a DIAGNOSIS — the prescribed fix must be able to REFUTE it (2026-07-26, earned twice in one session)
+
+A "diagnosis" (*this mechanism causes that defect*) is a CLAIM and gets the same adversarial treatment as a GO. Twice
+in one session I wrote **"DIAGNOSIS COMPLETE"**, prescribed the fix it implied, and the fix **refuted the diagnosis**:
+(1) *"a single SHARED inhibitory pool causes the winner-take-all"* — built per-slot FS cross-inhibition; identical to
+the shipped global pool in all three conditions. (2) *"the `hebbian_max_weight` inversion causes it"* — re-ran with the
+bound above the init; the winner persisted. One of these was **independently corroborated by a read-only research
+gate** — which was ALSO wrong, because it reasoned from the CODE, not the DATA.
+
+**The rules:**
+- **Always build the fix WITH its lesion arm** (the unfixed topology/config), in the SAME run. If fix ≈ lesion, the
+  DIAGNOSIS is refuted — not the implementation. Without the lesion you will read "still broken" as "fix was too weak"
+  and tune forever.
+- **Test the fix in the condition where the defect APPEARS.** I first compared topologies with the gaps unfrozen,
+  where uniform potentiation masks any topology effect — a null that meant nothing.
+- **Corroboration from code-reading is not evidence about behavior.** A second reader agreeing with your mechanism
+  story raises confidence in the READING, not in the CAUSE. Only a manipulation does that.
+- **Prefer a MEASUREMENT that separates the candidate causes over another prescribed mechanism.** After 11 refuted
+  hypotheses, what finally settled it was instrumenting the quantity itself (per-window `dw`), which showed the write
+  was near-symmetric and the outcome a ~3% residual — a shape NONE of the 11 hypotheses predicted. **When two
+  successive mechanisms are refuted, stop prescribing and go measure.**
+- **A rate lever cannot move a FIXED POINT.** If the state settles at a soft bound (`dw ∝ (w_max − w)`), every
+  learning-rate sweep is inert *by construction* — it changes how fast you reach the bound, not where it is. Before
+  sweeping a rate across orders of magnitude, ask whether the observable is a fixed point; if it is, sweep the
+  STRUCTURE instead. (This retroactively explains a long history of "invariant across every lever" on one pathway.)
+
+## Parallel arms that vanish are a SILENT FAILURE, not a result (2026-07-26)
+
+A `for … & done; wait` fan-out of GPU runs silently dropped 3-of-4 and then 3-of-3 arms (VRAM contention), exiting
+**0** with empty output. The surviving arm looked like a clean single data point. **Rules:** echo each arm's
+`${PIPESTATUS[0]}`; treat "an arm produced no output" as a FAILED RUN to reproduce, never as a null result; and when
+arms contend for one GPU, run them SERIALLY — a slower correct sweep beats a fast one whose failures are invisible.
+
 ## What this skill MUST NOT do
 - Rubber-stamp — a skeptic that "confirms" without trying to break it did nothing. The prompt must push to REFUTE.
 - Verify only the happy path — test the claim against the case you'd EXPECT to break it (a run you KNOW is broken, the seed you fear).

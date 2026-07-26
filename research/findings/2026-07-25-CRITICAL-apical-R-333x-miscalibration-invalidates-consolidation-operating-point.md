@@ -1439,3 +1439,37 @@ while letting BTSP set the pattern. If no such rate exists — if selectivity an
 pathway — then the bound must come from a NON-coactivity mechanism (synaptic scaling · a true hard clip · the
 still-untried Miller-MacKay `btsp_mean_subtract`, **verified live + reachable**: `config.py:396`, `bridge.py:8153`
 inside `_run_one_simulation_step`, guarded by an `elif` whose preceding branch is the default-off Milstein path).
+
+## 🔑 WHY EVERY LEVER WAS INERT — the store is a FIXED POINT, so RATE levers cannot move it
+
+`--hebbian-lr 0.001` (1000× down) vs default, same condition: `diag` **196.88 vs 196.84**, net
+**`[−2.088, −2.031, +5.297]` vs `[−2.038, −1.977, +5.278]`** — identical to 4 significant figures.
+
+**This retroactively explains the arc's entire "invariant across every lever" history.** Hebbian's soft bound is
+`dw ∝ (w_max − w)`: the weights settle at a FIXED POINT (`w → w_max`). A learning RATE changes how *fast* that fixed
+point is reached, **never where it is** — so *every* rate sweep ever run on this pathway (Hebbian lr 100×, BTSP lr
+across FIVE orders) was inert **by construction**, not by coincidence. Measured confirmation: the weights sit at
+**2.4985 / 2.4990** against `hebbian_max_w = 2.5`.
+
+**And the bound cannot simply be moved, because stability and selectivity are the SAME knob:**
+
+| condition | substrate | pool leak | somatic selection |
+|---|---|---|---|
+| `hebbian_max_w=2.5` (stable) | ✓ physiological | **0.4–0.8%** | target dominates 3/3 |
+| `hebbian_max_w=50` | ⛔ `v_apical` **+197.9 mV** | **20.9–46.2%** | FAILS on fact 0 |
+| `--no-hebbian` | ⛔ `v_apical` **−284 mV** | — | runaway |
+| `hebbian_max_w=50 --syn-scaling 0.001` | ⛔ still unphysiological | 21.3–45.9% | FAILS on fact 1 |
+
+⇒ **the low Hebbian bound is load-bearing for STABILITY, and that same low bound is what pins every synapse at the
+ceiling and destroys selectivity.** Synaptic scaling at 1e-3 does not decouple them. So the remaining lever must be
+STRUCTURAL and must act WITHOUT moving the stabilising bound — which is exactly Miller-MacKay subtractive
+normalization on the BTSP increment (`btsp_mean_subtract`, enforcing `Σ_j dw_ij = 0` per postsynaptic cell so no
+common-mode pedestal can form). Verified live and reachable before use (`config.py:396`; `bridge.py:8153` inside
+`_run_one_simulation_step`, its `elif` guarded by the default-off Milstein branch). Now wired into the probe
+(`--mean-subtract`) and running at the STABLE operating point.
+
+**⚠️ INSTRUMENT DEFECT FOUND (3 variants today, all the same root — an empty wrapper read as data):** parallel GPU
+arms died on VRAM contention exiting **0** with empty output; then a serial loop's `timeout 900` killed runs
+mid-flight and buffered `grep` output was discarded. In both cases the surviving/absent arms looked like clean nulls.
+**An arm that produces NO output is a FAILED RUN to reproduce, never a null result.** Now: serial, longer timeout,
+`grep --line-buffered`, explicit rc. Encoded in `.claude/skills/verify-go/SKILL.md`.
