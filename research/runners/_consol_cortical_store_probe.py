@@ -37,7 +37,7 @@ cp, BACKEND = get_backend()
 N = len(CONSOLIDATED_FACTS)
 
 
-def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teaching_clamp=False, elig_tau=30.0, pool_slot_w=1.5, hebbian_max_w=None, hebbian_on=True, hebbian_lr=None, syn_scaling=None, no_stdp=False, btsp_wmax=2000.0, freeze_gap=False):
+def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teaching_clamp=False, elig_tau=30.0, pool_slot_w=1.5, hebbian_max_w=None, hebbian_on=True, hebbian_lr=None, syn_scaling=None, no_stdp=False, btsp_wmax=2000.0, freeze_gap=False, per_slot_fs=False):
     a = dict(BASE)
     a.update(comp_dendritic=True, comp_wta_weight=5.0, comp_k_thresh=2.0, comp_self_regen=0.15, comp_kir_g=3.0,
              comp_v_hold=-50.0, comp_apical_R=0.15, comp_gc_read=0.5,          # CALIBRATED operating point
@@ -58,6 +58,7 @@ def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teachin
              # pathways ARE the cortical store this probe exists to measure, so it must re-enable them. Without this the
              # probe reports dw=0 and per-slot mass=0 — i.e. it measures a pathway that does not exist.
              comp_no_pool_slot=False, comp_pool_slot_weight=float(pool_slot_w),
+             comp_per_slot_fs=bool(per_slot_fs),
              # Hebbian SATURATES this pathway to whatever its bound is (measured: pinned ~1.19 at hebbian_max_weight=1.0,
              # ~8.28 at 8.0) and a saturated weight cannot carry GRADED selectivity — the same saturation that pinned
              # ca1->slot flat until the write was moved into the unsaturated regime. With Hebbian off, BTSP's graded
@@ -272,6 +273,7 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--cycles", type=int, default=10)
     ap.add_argument("--btsp-lr", type=float, default=0.0005)
+    ap.add_argument("--per-slot-fs", action="store_true", help="per-slot FS pools + CROSS-inhibition (no self-inhibition) instead of the shared global pool")
     ap.add_argument("--freeze-gap", action="store_true", help="freeze plasticity during the undriven recovery gaps (~6000 steps vs ~900 driven) so only selective windows write")
     ap.add_argument("--btsp-wmax", type=float, default=2000.0, help="BTSP soft bound; MUST be near the effective ceiling or the write saturates at any rate")
     ap.add_argument("--no-stdp", action="store_true", help="disable STDP (defaults ON and was writing this pathway throughout, confounding every btsp_lr sweep)")
@@ -286,7 +288,7 @@ def main():
     args = ap.parse_args()
     from pathlib import Path
     Path(args.out).mkdir(parents=True, exist_ok=True)
-    r = run(args.seed, args.cycles, args.btsp_lr, teaching_clamp=args.teaching_clamp, elig_tau=args.elig_tau, pool_slot_w=args.pool_slot_weight, hebbian_max_w=args.hebbian_max_w, hebbian_on=not args.no_hebbian, hebbian_lr=args.hebbian_lr, syn_scaling=args.syn_scaling, no_stdp=args.no_stdp, btsp_wmax=args.btsp_wmax, freeze_gap=args.freeze_gap)
+    r = run(args.seed, args.cycles, args.btsp_lr, teaching_clamp=args.teaching_clamp, elig_tau=args.elig_tau, pool_slot_w=args.pool_slot_weight, hebbian_max_w=args.hebbian_max_w, hebbian_on=not args.no_hebbian, hebbian_lr=args.hebbian_lr, syn_scaling=args.syn_scaling, no_stdp=args.no_stdp, btsp_wmax=args.btsp_wmax, freeze_gap=args.freeze_gap, per_slot_fs=args.per_slot_fs)
     Path(f"{args.out}/cortstore{'_clamp' if args.teaching_clamp else ''}_seed{args.seed}.json").write_text(json.dumps(r, indent=2))
     print(f"[seed {args.seed}] backend={BACKEND} thr_hash={r['thr_hash']} dw_cortical={r['dw_cortical']}")
     print(f"  v_apical={r['v_apical_range']} physiological={r['v_apical_physiological']}"

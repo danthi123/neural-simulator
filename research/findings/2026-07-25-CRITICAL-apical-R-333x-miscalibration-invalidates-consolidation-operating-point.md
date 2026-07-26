@@ -1339,3 +1339,37 @@ write, at 6 seeds.
 
 **Final cortical-store ledger: 10 hypotheses, 9 refuted or narrowed by direct measurement, 1 standing (this one) — and it
 is corroborated independently by a read-only research gate that reached it from the code rather than from the data.**
+
+## ⛔ "DIAGNOSIS COMPLETE" RETRACTED — the prescribed fix refuted the diagnosis that prescribed it
+
+Built the per-slot FS + cross-inhibition topology (additive, default-off; shipped global pool = lesion arm; operating
+point borrowed from the in-repo multi-seed-GO `biased_competition_buffer.py`, density 1.0 / drive 20 / inhibit 5, no
+self-inhibition). **It changes nothing:**
+| condition | global pool (lesion) | per-slot FS cross-inhibition |
+|---|---|---|
+| gaps live | mass `[1.193, 1.189, 1.191]`, own/other mean **1.042** | mass `[1.151, 1.150, 1.152]`, mean **1.048** |
+| gaps frozen, bound 1.0 | mass `[0.999, 1.000, **3.093**]` | mass `[0.999, 1.000, **2.951**]` |
+| gaps frozen, bound 2.5 | mass `[2.499, 2.499, **4.928**]` | mass `[2.499, 2.499, **4.703**]` |
+**⇒ the global shared inhibitory pool is NOT the cause of the winner-take-all.** My "DIAGNOSIS COMPLETE" verdict — which
+the read-only research gate independently corroborated from the code — **is RETRACTED.**
+
+**And the follow-up explanation is refuted too.** I then noticed the gap-frozen runs had used `hebbian_max_weight`'s
+**default 1.0** against a 1.5 init (the inversion trap, 7th instance today) — slots pinned at exactly `0.9994` = the
+bound. But re-running at bound **2.5** (init 1.5 BELOW it, no inversion) **preserves the single winner**: two slots pin
+at the bound, one escapes above it. So the inversion is not the cause either.
+
+**HONEST STATE: the single-winner phenomenon is ROBUST and its cause is UNKNOWN.** It survives both inhibitory
+topologies and both bound regimes. What is established: two slots saturate at whatever the Hebbian bound is, while ONE
+slot receives enough BTSP write to escape above it — and it is not simply the most-active slot (fact 1's window drives
+slot 1 to 2232 spikes vs fact 2's 1480, yet slot 1 pins at the bound and slot 2 escapes).
+
+**Cortical-store ledger: 12 hypotheses, 11 refuted by direct measurement.** The two most confident ones — "global
+inhibition causes it" (corroborated independently) and "the bound inversion causes it" — were both wrong, and both were
+killed by tests I chose to run rather than by later discovery.
+
+**▶ NEXT (for a fresh session, not 03:20): find why ONE slot escapes the bound while others pin at it.** Instrument the
+per-slot BTSP `dw` per window directly (not the post-hoc weights) — the probe already has the write loop; log
+`Σ dw[pool→slot_j]` per window and compare against per-slot spikes. That distinguishes "one slot gets more write" from
+"one slot resists the pull-down", which is the fork the current data cannot separate. **Do NOT prescribe another
+mechanism before that measurement** — this thread's last two mechanisms were both refuted by the builds meant to
+implement them.

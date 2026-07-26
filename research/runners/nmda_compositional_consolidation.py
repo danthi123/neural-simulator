@@ -275,17 +275,43 @@ def build_substrate(seed, args):
                 weight_jitter=0.3, plastic=True, plasticity_gate="ca1_to_comp_attr",
                 coincidence_detector=comp_dend))
             n_comp += 1
-        # shared inhibitory WTA pool: each slot drives it, it inhibits all slots
-        regions = list(regions) + [BrainRegion(
-            name="comp_attr_inh", n_neurons=int(n_per * 0.5), exc_fraction=0.0,
-            internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
-            weight_jitter=0.1, plastic_internal=False)]
-        for s in range(n_slots):
-            pathways.append(RegionPathway(from_region=f"comp_attr_{s}", to_region="comp_attr_inh",
-                                          density=0.30, weight_mean=3.0, weight_jitter=0.2, plastic=False))
-            pathways.append(RegionPathway(from_region="comp_attr_inh", to_region=f"comp_attr_{s}",
-                                          density=0.30, weight_mean=float(getattr(args, "comp_wta_weight", 5.0)),
-                                          weight_jitter=0.2, plastic=False))
+        # PER-SLOT FS + CROSS-INHIBITION (2026-07-26, additive, default OFF => shipped topology byte-unchanged).
+        # DIAGNOSIS: the shared pool below inhibits ALL slots INCLUDING the one that drove it = global symmetric
+        # inhibition, which resolves competition ONCE GLOBALLY. Measured consequence: the write is winner-take-all with
+        # a GLOBAL winner — exactly one slot takes ~3.1-3.3 while the others sit at ~1.0, and WHICH slot varies by seed
+        # (42->2, 43->1, 44->2) = symmetry-breaking, not a slot property. The task needs competition resolved PER WRITE
+        # WINDOW so the winner can differ per fact. Fix = each slot drives its OWN FS pool which inhibits only the
+        # OTHERS (no self-inhibition), at the multi-seed-GO operating point already validated in this repo
+        # (`biased_competition_buffer.py:114-115,164-176`: density 1.0, sel_to_fs 20.0, fs_to_sel 5.0 — its comment
+        # notes "gentle cross-pool suppression; symmetric over-inhibition is unstable").
+        if bool(getattr(args, "comp_per_slot_fs", False)):
+            for s in range(n_slots):
+                regions = list(regions) + [BrainRegion(
+                    name=f"comp_attr_fs_{s}", n_neurons=int(n_per * 0.5), exc_fraction=0.0,
+                    internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
+                    weight_jitter=0.1, plastic_internal=False)]
+            for s in range(n_slots):
+                pathways.append(RegionPathway(from_region=f"comp_attr_{s}", to_region=f"comp_attr_fs_{s}",
+                                              density=1.0, weight_mean=float(getattr(args, "comp_slot_to_fs", 20.0)),
+                                              weight_jitter=0.2, plastic=False))
+                for t in range(n_slots):
+                    if t == s:
+                        continue            # NO self-inhibition — this is the whole point
+                    pathways.append(RegionPathway(from_region=f"comp_attr_fs_{s}", to_region=f"comp_attr_{t}",
+                                                  density=1.0, weight_mean=float(getattr(args, "comp_fs_to_slot", 5.0)),
+                                                  weight_jitter=0.2, plastic=False))
+        else:
+            # shared inhibitory WTA pool: each slot drives it, it inhibits all slots (the SHIPPED topology = lesion arm)
+            regions = list(regions) + [BrainRegion(
+                name="comp_attr_inh", n_neurons=int(n_per * 0.5), exc_fraction=0.0,
+                internal_density=0.0, exc_weight_mean=0.0, inh_weight_mean=0.0,
+                weight_jitter=0.1, plastic_internal=False)]
+            for s in range(n_slots):
+                pathways.append(RegionPathway(from_region=f"comp_attr_{s}", to_region="comp_attr_inh",
+                                              density=0.30, weight_mean=3.0, weight_jitter=0.2, plastic=False))
+                pathways.append(RegionPathway(from_region="comp_attr_inh", to_region=f"comp_attr_{s}",
+                                              density=0.30, weight_mean=float(getattr(args, "comp_wta_weight", 5.0)),
+                                              weight_jitter=0.2, plastic=False))
         # concept pools -> the slots (the cortical composite feeds the attractor; plastic). NOTE (c_drive probe 2026-07-25):
         # this is an ALL-pools->ALL-slots BROADCAST -> ca1_i->concept->ALL-slots drives every slot non-selectively (the
         # write-selectivity killer). comp_no_pool_slot=True drops it so routing is purely the potentiated (distinct-engram) ca1->slot.
