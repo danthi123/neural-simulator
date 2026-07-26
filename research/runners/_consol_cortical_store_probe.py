@@ -37,7 +37,7 @@ cp, BACKEND = get_backend()
 N = len(CONSOLIDATED_FACTS)
 
 
-def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teaching_clamp=False, elig_tau=30.0, pool_slot_w=1.5, hebbian_max_w=None, hebbian_on=True, hebbian_lr=None, syn_scaling=None, no_stdp=False, btsp_wmax=2000.0):
+def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teaching_clamp=False, elig_tau=30.0, pool_slot_w=1.5, hebbian_max_w=None, hebbian_on=True, hebbian_lr=None, syn_scaling=None, no_stdp=False, btsp_wmax=2000.0, freeze_gap=False):
     a = dict(BASE)
     a.update(comp_dendritic=True, comp_wta_weight=5.0, comp_k_thresh=2.0, comp_self_regen=0.15, comp_kir_g=3.0,
              comp_v_hold=-50.0, comp_apical_R=0.15, comp_gc_read=0.5,          # CALIBRATED operating point
@@ -153,8 +153,17 @@ def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teachin
                 b.cp_external_input_current[:] = 0.0
                 if b.cp_v_apical is not None:
                     b.cp_v_apical[:] = cp.float32(Er)
+                # RECOVERY GAP. The protocol is ~900 DRIVEN steps vs ~6000 UNDRIVEN gap steps, and with plasticity
+                # live throughout, non-selective spontaneous potentiation gets 6.7x more opportunity than the selective
+                # write — which would produce exactly the observed uniform weights despite >99% pool isolation, 5:1 slot
+                # selection and an exclusive plateau. Keep the gap (it was load-bearing for the ca1->slot 6-seed GO) but
+                # FREEZE LEARNING during it, so only the selective driven windows write.
+                if freeze_gap:
+                    _try_pgate(b, "concept_to_comp_attr", 0.0)
                 for _ in range(200):                                        # inter-fact recovery gap (validated)
                     b._run_one_simulation_step()
+                if freeze_gap:
+                    _try_pgate(b, "concept_to_comp_attr", 1.0)
     else:
         coactivation_replay(b, CONSOLIDATED_FACTS, tags, int(cycles), seed, coactivate=True, attractor_on=True)
     w1 = _mean_gate_weight(b, "concept_to_comp_attr")
@@ -263,6 +272,7 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--cycles", type=int, default=10)
     ap.add_argument("--btsp-lr", type=float, default=0.0005)
+    ap.add_argument("--freeze-gap", action="store_true", help="freeze plasticity during the undriven recovery gaps (~6000 steps vs ~900 driven) so only selective windows write")
     ap.add_argument("--btsp-wmax", type=float, default=2000.0, help="BTSP soft bound; MUST be near the effective ceiling or the write saturates at any rate")
     ap.add_argument("--no-stdp", action="store_true", help="disable STDP (defaults ON and was writing this pathway throughout, confounding every btsp_lr sweep)")
     ap.add_argument("--syn-scaling", type=float, default=None, help="enable synaptic scaling at this rate as a NON-coactivity bound (default off)")
@@ -276,7 +286,7 @@ def main():
     args = ap.parse_args()
     from pathlib import Path
     Path(args.out).mkdir(parents=True, exist_ok=True)
-    r = run(args.seed, args.cycles, args.btsp_lr, teaching_clamp=args.teaching_clamp, elig_tau=args.elig_tau, pool_slot_w=args.pool_slot_weight, hebbian_max_w=args.hebbian_max_w, hebbian_on=not args.no_hebbian, hebbian_lr=args.hebbian_lr, syn_scaling=args.syn_scaling, no_stdp=args.no_stdp, btsp_wmax=args.btsp_wmax)
+    r = run(args.seed, args.cycles, args.btsp_lr, teaching_clamp=args.teaching_clamp, elig_tau=args.elig_tau, pool_slot_w=args.pool_slot_weight, hebbian_max_w=args.hebbian_max_w, hebbian_on=not args.no_hebbian, hebbian_lr=args.hebbian_lr, syn_scaling=args.syn_scaling, no_stdp=args.no_stdp, btsp_wmax=args.btsp_wmax, freeze_gap=args.freeze_gap)
     Path(f"{args.out}/cortstore{'_clamp' if args.teaching_clamp else ''}_seed{args.seed}.json").write_text(json.dumps(r, indent=2))
     print(f"[seed {args.seed}] backend={BACKEND} thr_hash={r['thr_hash']} dw_cortical={r['dw_cortical']}")
     print(f"  v_apical={r['v_apical_range']} physiological={r['v_apical_physiological']}"

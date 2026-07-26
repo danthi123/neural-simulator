@@ -1263,3 +1263,40 @@ Verify per-slot spikes still show ~5:1 and weights stay graded, then read own/ot
 one (the diluting raw-mean metric) is a measurement artifact rather than a mechanism. Every refutation came from a
 measurement chosen in advance, and three of them — the exclusive plateau, the 5:1 selection, and this pool isolation —
 came free from data the probe was already collecting and discarding.
+
+## Gap-freezing: hypothesis PARTIALLY confirmed, but the result is a winner-slot artifact — NOT a win
+
+Froze plasticity during the undriven recovery gaps (keeping the gap itself, which is load-bearing for `ca1→slot`), so
+only the selective driven windows write. Baseline run side-by-side, single variable:
+| | per-slot mass | own/other | own_is_max | permuted |
+|---|---|---|---|---|
+| baseline | `[1.193, 1.189, 1.191]` (balanced) | `[1.031, 1.057, 1.037]` | **3/3** | `[1.00, 0.98, 0.99]` |
+| **gap-frozen** | **`[0.999, 1.000, 3.093]` (3× IMBALANCE)** | `[0.917, 0.954, **7.248**]` | **1/3** | `[0.88, 1.22, 0.24]` |
+
+**The 7.248 is NOT a result.** Slot 2 carries 3× the mass of slots 0 and 1, which is the winner-slot signature the probe
+prints a warning for on that exact line — a fact reading the heavy slot scores high regardless of whether its write was
+selective. And `own_is_max` **fell to 1/3** (baseline 3/3), which is the honest headline: gap-freezing made per-fact
+selectivity *worse*, not better.
+
+**What IS confirmed:** freezing the gaps changed the weights substantially (balanced ~1.19 → `[1.0, 1.0, 3.09]`), so
+**the undriven gaps were indeed supplying most of the potentiation** — the arithmetic (≈6000 undriven vs ≈900 driven
+steps) was right about *where the weight comes from*. But removing that contribution does not reveal a clean selective
+write underneath; it reveals a driven-window write that is **strongly asymmetric across facts** (one slot takes almost
+everything while the other two decay below their 1.5 init).
+
+**⇒ HONEST STATE AT SESSION END.** Every upstream stage is verified excellent — exclusive plateau (−9 vs −66 mV), ~5:1
+slot selection, >99% pool isolation — and the weights still do not carry it. Two mutually-constraining facts now bound
+the problem: **(a)** with gap plasticity ON, the weight is dominated by non-selective potentiation and comes out uniform
+(~5% selectivity); **(b)** with it OFF, the driven-window write alone is asymmetric and collapses to one slot. The
+question is no longer "is the drive selective" (it is, measured at three stages) but **"why does a selective drive
+produce either a uniform or a one-slot weight outcome, and never a per-fact-matched one"**.
+
+**▶ NEXT (do these before any new mechanism):** (1) **multi-seed the gap-frozen arm** — a single seed cannot distinguish
+"one slot always wins" from "a different slot wins each seed" (schedule/ordering asymmetry), and that distinction picks
+the next move; (2) check whether the winning slot tracks **write order** (the schedule is shuffled per cycle) — if it is
+the last-written fact, the asymmetry is a recency/ordering effect, not a substrate property; (3) only then consider the
+research gate's ranked mechanisms (per-slot FS cross-inhibition · Miller-MacKay subtractive normalisation via
+`btsp_mean_subtract`, which is config-only · HTM winner-inactive depression).
+
+**Cortical-store ledger: 9 hypotheses, 8 refuted or narrowed by direct measurement.** Three decisive facts came FREE
+from data the probe was already collecting and discarding (exclusive plateau · 5:1 selection · pool isolation).
