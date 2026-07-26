@@ -1,0 +1,97 @@
+{
+  "runner": "_gap2_correlated_key_binder_derisk",
+  "verdict": "GO",
+  "reason": "delta LOAD-BEARING at rho=0.90 (delta 1.000 vs additive 0.561); decorr additive 1.000>=0.80; real-Z additive 1.000>=0.80 (brain codes near-ortho -> error-correction not needed there)",
+  "go_rho": 0.9,
+  "chance": 0.00390625,
+  "knobs": {
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "rhos": [
+      0.6,
+      0.7,
+      0.8,
+      0.9
+    ],
+    "pmax": 3,
+    "p_gate": 3,
+    "n_facts": 10,
+    "cap": 256,
+    "passes": 20,
+    "read": "numpy",
+    "confirm_spiking": false,
+    "synth_D": 0,
+    "code_src": "scale-cortex-codes",
+    "N": 256,
+    "D": 128
+  },
+  "sweep": {
+    "0.60": {
+      "delta": 1.0,
+      "additive": 1.0,
+      "permuted": 0.0,
+      "shuffled": 0.0
+    },
+    "0.70": {
+      "delta": 1.0,
+      "additive": 0.9888888888888889,
+      "permuted": 0.0,
+      "shuffled": 0.0
+    },
+    "0.80": {
+      "delta": 1.0,
+      "additive": 0.861111111111111,
+      "permuted": 0.0,
+      "shuffled": 0.0
+    },
+    "0.90": {
+      "delta": 1.0,
+      "additive": 0.5611111111111111,
+      "permuted": 0.0,
+      "shuffled": 0.0
+    }
+  },
+  "real_z": {
+    "delta": 1.0,
+    "additive": 1.0
+  },
+  "decorrelated_additive": 1.0,
+  "p_curve": {
+    "0.60": {
+      "1": {
+        "delta": 1.0,
+        "additive": 1.0
+      },
+      "2": {
+        "delta": 1.0,
+        "additive": 1.0
+      },
+      "3": {
+        "delta": 1.0,
+        "additive": 1.0
+      }
+    },
+    "0.90": {
+      "1": {
+        "delta": 1.0,
+        "additive": 1.0
+      },
+      "2": {
+        "delta": 1.0,
+        "additive": 1.0
+      },
+      "3": {
+        "delta": 1.0,
+        "additive": 0.5611111111111111
+      }
+    }
+  },
+  "confirm_spiking": null,
+  "elapsed_s": 174.72
+}

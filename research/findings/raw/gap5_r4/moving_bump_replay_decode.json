@@ -1,0 +1,73 @@
+{
+  "probe": "moving_bump_replay_decode_SMOKE",
+  "seed": 42,
+  "unit_test": {
+    "ok": true,
+    "r_fwd": 0.985,
+    "r_rev": -0.985,
+    "r_shuffled": -0.098,
+    "traj_fwd": [
+      0,
+      0,
+      1,
+      1,
+      2,
+      2,
+      3,
+      3,
+      4,
+      4
+    ],
+    "traj_rev": [
+      4,
+      4,
+      3,
+      3,
+      2,
+      2,
+      1,
+      1,
+      0,
+      0
+    ]
+  },
+  "real": {
+    "n_windows": 9,
+    "n_decoded": 0,
+    "n_sig": 0,
+    "sig_forward_frac": 0.0,
+    "sig_reverse_frac": 0.0,
+    "mean_abs_r": 0.0,
+    "mean_r": 0.0,
+    "duty_cycle": 0.0144,
+    "pop_rate": 0.0156,
+    "rows": [],
+    "trajs": [],
+    "weights_frozen": true,
+    "n_env": 5,
+    "n_place_cells": 120,
+    "F_active_frac": 0.0156
+  },
+  "shuffle": {
+    "n_windows": 5,
+    "n_decoded": 0,
+    "n_sig": 0,
+    "sig_forward_frac": 0.0,
+    "sig_reverse_frac": 0.0,
+    "mean_abs_r": 0.0,
+    "mean_r": 0.0,
+    "duty_cycle": 0.0122,
+    "pop_rate": 0.01531,
+    "rows": [],
+    "trajs": [],
+    "weights_frozen": true,
+    "n_env": 5,
+    "n_place_cells": 120,
+    "F_active_frac": 0.01531
+  },
+  "decoder_machinery_ok": true,
+  "pipeline_runs_end_to_end": true,
+  "spiking_replay_fired_events": true,
+  "real_vs_shuffle_differ": false,
+  "elapsed_s": 47.8
+}

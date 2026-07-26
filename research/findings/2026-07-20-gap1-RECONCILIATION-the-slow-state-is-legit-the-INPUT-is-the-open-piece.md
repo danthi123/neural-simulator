@@ -1,5 +1,11 @@
 # gap#1 RECONCILIATION — the slow SSM STATE is a legitimate on-substrate mechanism; the open piece is driving it from SPIKES
 
+> ⚠️ **SUPERSEDED IN PART (2026-07-20, same day):** the conductance-drive research gate showed my
+> "route 2 escapes M2's decode" framing is a FALSE DICHOTOMY — M2 ALREADY was conductance-drive; the wall is the
+> ENCODE (few-spike rate-code of a continuous v_t), not the read. See
+> `2026-07-20-gap1-GATE-REFRAME-the-wall-is-the-ENCODE-not-the-read-...`. The state-is-legitimate half of this
+> finding STANDS; the next-mechanism half is corrected there.
+
 Produced by the a-1 RAG check before launching a gap#1 research gate (drift-mode-12 discipline: reconcile today's
 summary against the findings). It reconciles a real tension and precisely scopes the next mechanism, so no gate
 re-derives the 2026-07-13 reservoir arc.

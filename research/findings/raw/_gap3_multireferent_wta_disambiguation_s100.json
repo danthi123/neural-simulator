@@ -1,0 +1,731 @@
+{
+  "summary": {
+    "n_seeds": 1,
+    "chance_pooled": 0.4545454545454547,
+    "n_trials_per_seed": 22,
+    "wta_mean": 0.6363636363636364,
+    "wta_argmax_mean": 0.7272727272727273,
+    "lesion_mean": 0.6363636363636364,
+    "recency_mean": 0.45454545454545453,
+    "salience_mean": 0.36363636363636365,
+    "recency_heur_mean": 0.45454545454545453,
+    "salience_heur_mean": 0.36363636363636365,
+    "n_pass": 0,
+    "moat_ok_seeds": 1,
+    "cond_wta_above_bar": false,
+    "cond_lesion_collapses": false,
+    "cond_recency_at_chance": true,
+    "cond_salience_at_chance": true,
+    "cond_seeds": false,
+    "GO": false,
+    "BOUNDARY": false,
+    "smoke": false,
+    "thresholds": {
+      "GO_WTA_MEAN_MIN": 0.7,
+      "GO_COLLAPSE_MARGIN": 0.2,
+      "GO_CONTROL_SLACK": 0.15,
+      "GO_PERSEED_WTA_MIN": 0.65,
+      "GO_PERSEED_CTRL_SLACK": 0.2,
+      "GO_MIN_SEEDS": 5
+    },
+    "knobs": {
+      "n": 600,
+      "pattern_size": 40,
+      "attractor_weight": 50.0,
+      "bias_pA": 2500.0,
+      "salience_boost": 4.0,
+      "drive_pA": 2500.0,
+      "spec_threshold": 1.3,
+      "window": 20,
+      "stim": 40,
+      "settle": 15
+    },
+    "seeds": [
+      100
+    ]
+  },
+  "results": [
+    {
+      "seed": 100,
+      "n_trials": 22,
+      "chance": 0.4545454545454547,
+      "wta_acc": 0.6363636363636364,
+      "wta_argmax_acc": 0.7272727272727273,
+      "lesion_acc": 0.6363636363636364,
+      "recency_acc": 0.45454545454545453,
+      "salience_acc": 0.36363636363636365,
+      "recency_heur_acc": 0.45454545454545453,
+      "salience_heur_acc": 0.36363636363636365,
+      "moat": {
+        "empty_abstains": true,
+        "silent_abstains": true,
+        "ok": true
+      },
+      "invoked": {
+        "wta": 22,
+        "lesion": 22,
+        "recency": 22,
+        "salience": 22
+      },
+      "trials": [
+        {
+          "referents": [
+            "cat",
+            "ball"
+          ],
+          "verb": "eat",
+          "correct": "cat",
+          "order": [
+            "cat",
+            "ball"
+          ],
+          "boosted": "cat",
+          "n_ref": 2,
+          "wta": "cat",
+          "wta_correct": true,
+          "wta_argmax": "cat",
+          "lesion": "cat",
+          "lesion_correct": true,
+          "recency": "cat",
+          "recency_correct": true,
+          "salience": "ball",
+          "salience_correct": false,
+          "recency_pick": "ball",
+          "salience_pick": "cat",
+          "wta_sel": {
+            "cat": 0.5,
+            "ball": 0.0
+          }
+        },
+        {
+          "referents": [
+            "cat",
+            "ball"
+          ],
+          "verb": "eat",
+          "correct": "cat",
+          "order": [
+            "cat",
+            "ball"
+          ],
+          "boosted": "ball",
+          "n_ref": 2,
+          "wta": "cat",
+          "wta_correct": true,
+          "wta_argmax": "cat",
+          "lesion": "cat",
+          "lesion_correct": true,
+          "recency": "cat",
+          "recency_correct": true,
+          "salience": "cat",
+          "salience_correct": true,
+          "recency_pick": "ball",
+          "salience_pick": "ball",
+          "wta_sel": {
+            "cat": 0.5,
+            "ball": 0.0
+          }
+        },
+        {
+          "referents": [
+            "cat",
+            "ball"
+          ],
+          "verb": "eat",
+          "correct": "cat",
+          "order": [
+            "ball",
+            "cat"
+          ],
+          "boosted": "cat",
+          "n_ref": 2,
+          "wta": "cat",
+          "wta_correct": true,
+          "wta_argmax": "cat",
+          "lesion": "cat",
+          "lesion_correct": true,
+          "recency": "ball",
+          "recency_correct": false,
+          "salience": "ball",
+          "salience_correct": false,
+          "recency_pick": "cat",
+          "salience_pick": "cat",
+          "wta_sel": {
+            "cat": 0.5,
+            "ball": 0.0
+          }
+        },
+        {
+          "referents": [
+            "cat",
+            "ball"
+          ],
+          "verb": "eat",
+          "correct": "cat",
+          "order": [
+            "ball",
+            "cat"
+          ],
+          "boosted": "ball",
+          "n_ref": 2,
+          "wta": "cat",
+          "wta_correct": true,
+          "wta_argmax": "cat",
+          "lesion": "cat",
+          "lesion_correct": true,
+          "recency": "ball",
+          "recency_correct": false,
+          "salience": "cat",
+          "salience_correct": true,
+          "recency_pick": "cat",
+          "salience_pick": "ball",
+          "wta_sel": {
+            "cat": 0.5,
+            "ball": 0.0
+          }
+        },
+        {
+          "referents": [
+            "cat",
+            "ball"
+          ],
+          "verb": "roll",
+          "correct": "ball",
+          "order": [
+            "cat",
+            "ball"
+          ],
+          "boosted": "cat",
+          "n_ref": 2,
+          "wta": "cat",
+          "wta_correct": false,
+          "wta_argmax": "cat",
+          "lesion": "cat",
+          "lesion_correct": false,
+          "recency": "cat",
+          "recency_correct": false,
+          "salience": "ball",
+          "salience_correct": true,
+          "recency_pick": "ball",
+          "salience_pick": "cat",
+          "wta_sel": {
+            "cat": 0.285,
+            "ball": 0.0875
+          }
+        },
+        {
+          "referents": [
+            "cat",
+            "ball"
+          ],
+          "verb": "roll",
+          "correct": "ball",
+          "order": [
+            "cat",
+            "ball"
+          ],
+          "boosted": "ball",
+          "n_ref": 2,
+          "wta": "cat",
+          "wta_correct": false,
+          "wta_argmax": "cat",
+          "lesion": "cat",
+          "lesion_correct": false,
+          "recency": "cat",
+          "recency_correct": false,
+          "salience": "cat",
+          "salience_correct": false,
+          "recency_pick": "ball",
+          "salience_pick": "ball",
+          "wta_sel": {
+            "cat": 0.2625,
+            "ball": 0.1575
+          }
+        },
+        {
+          "referents": [
+            "cat",
+            "ball"
+          ],
+          "verb": "roll",
+          "correct": "ball",
+          "order": [
+            "ball",
+            "cat"
+          ],
+          "boosted": "cat",
+          "n_ref": 2,
+          "wta": "cat",
+          "wta_correct": false,
+          "wta_argmax": "cat",
+          "lesion": "cat",
+          "lesion_correct": false,
+          "recency": "ball",
+          "recency_correct": true,
+          "salience": "ball",
+          "salience_correct": true,
+          "recency_pick": "cat",
+          "salience_pick": "cat",
+          "wta_sel": {
+            "cat": 0.2525,
+            "ball": 0.165
+          }
+        },
+        {
+          "referents": [
+            "cat",
+            "ball"
+          ],
+          "verb": "roll",
+          "correct": "ball",
+          "order": [
+            "ball",
+            "cat"
+          ],
+          "boosted": "ball",
+          "n_ref": 2,
+          "wta": null,
+          "wta_correct": false,
+          "wta_argmax": "ball",
+          "lesion": "cat",
+          "lesion_correct": false,
+          "recency": "ball",
+          "recency_correct": true,
+          "salience": "cat",
+          "salience_correct": false,
+          "recency_pick": "cat",
+          "salience_pick": "ball",
+          "wta_sel": {
+            "cat": 0.14,
+            "ball": 0.165
+          }
+        },
+        {
+          "referents": [
+            "bird",
+            "river"
+          ],
+          "verb": "chase",
+          "correct": "bird",
+          "order": [
+            "bird",
+            "river"
+          ],
+          "boosted": "bird",
+          "n_ref": 2,
+          "wta": "bird",
+          "wta_correct": true,
+          "wta_argmax": "bird",
+          "lesion": "bird",
+          "lesion_correct": true,
+          "recency": "bird",
+          "recency_correct": true,
+          "salience": "river",
+          "salience_correct": false,
+          "recency_pick": "river",
+          "salience_pick": "bird",
+          "wta_sel": {
+            "bird": 0.5,
+            "river": 0.0
+          }
+        },
+        {
+          "referents": [
+            "bird",
+            "river"
+          ],
+          "verb": "chase",
+          "correct": "bird",
+          "order": [
+            "bird",
+            "river"
+          ],
+          "boosted": "river",
+          "n_ref": 2,
+          "wta": "bird",
+          "wta_correct": true,
+          "wta_argmax": "bird",
+          "lesion": "bird",
+          "lesion_correct": true,
+          "recency": "bird",
+          "recency_correct": true,
+          "salience": "bird",
+          "salience_correct": true,
+          "recency_pick": "river",
+          "salience_pick": "river",
+          "wta_sel": {
+            "bird": 0.5,
+            "river": 0.0
+          }
+        },
+        {
+          "referents": [
+            "bird",
+            "river"
+          ],
+          "verb": "chase",
+          "correct": "bird",
+          "order": [
+            "river",
+            "bird"
+          ],
+          "boosted": "bird",
+          "n_ref": 2,
+          "wta": "bird",
+          "wta_correct": true,
+          "wta_argmax": "bird",
+          "lesion": "bird",
+          "lesion_correct": true,
+          "recency": "river",
+          "recency_correct": false,
+          "salience": "river",
+          "salience_correct": false,
+          "recency_pick": "bird",
+          "salience_pick": "bird",
+          "wta_sel": {
+            "bird": 0.5,
+            "river": 0.0
+          }
+        },
+        {
+          "referents": [
+            "bird",
+            "river"
+          ],
+          "verb": "chase",
+          "correct": "bird",
+          "order": [
+            "river",
+            "bird"
+          ],
+          "boosted": "river",
+          "n_ref": 2,
+          "wta": "bird",
+          "wta_correct": true,
+          "wta_argmax": "bird",
+          "lesion": "bird",
+          "lesion_correct": true,
+          "recency": "river",
+          "recency_correct": false,
+          "salience": "bird",
+          "salience_correct": true,
+          "recency_pick": "bird",
+          "salience_pick": "river",
+          "wta_sel": {
+            "bird": 0.5,
+            "river": 0.0
+          }
+        },
+        {
+          "referents": [
+            "bird",
+            "river"
+          ],
+          "verb": "float",
+          "correct": "river",
+          "order": [
+            "bird",
+            "river"
+          ],
+          "boosted": "bird",
+          "n_ref": 2,
+          "wta": "bird",
+          "wta_correct": false,
+          "wta_argmax": "bird",
+          "lesion": "bird",
+          "lesion_correct": false,
+          "recency": "bird",
+          "recency_correct": false,
+          "salience": "river",
+          "salience_correct": true,
+          "recency_pick": "river",
+          "salience_pick": "bird",
+          "wta_sel": {
+            "bird": 0.285,
+            "river": 0.0875
+          }
+        },
+        {
+          "referents": [
+            "bird",
+            "river"
+          ],
+          "verb": "float",
+          "correct": "river",
+          "order": [
+            "bird",
+            "river"
+          ],
+          "boosted": "river",
+          "n_ref": 2,
+          "wta": "bird",
+          "wta_correct": false,
+          "wta_argmax": "bird",
+          "lesion": "bird",
+          "lesion_correct": false,
+          "recency": "bird",
+          "recency_correct": false,
+          "salience": "bird",
+          "salience_correct": false,
+          "recency_pick": "river",
+          "salience_pick": "river",
+          "wta_sel": {
+            "bird": 0.2625,
+            "river": 0.1575
+          }
+        },
+        {
+          "referents": [
+            "bird",
+            "river"
+          ],
+          "verb": "float",
+          "correct": "river",
+          "order": [
+            "river",
+            "bird"
+          ],
+          "boosted": "bird",
+          "n_ref": 2,
+          "wta": "bird",
+          "wta_correct": false,
+          "wta_argmax": "bird",
+          "lesion": "bird",
+          "lesion_correct": false,
+          "recency": "river",
+          "recency_correct": true,
+          "salience": "river",
+          "salience_correct": true,
+          "recency_pick": "bird",
+          "salience_pick": "bird",
+          "wta_sel": {
+            "bird": 0.2525,
+            "river": 0.165
+          }
+        },
+        {
+          "referents": [
+            "bird",
+            "river"
+          ],
+          "verb": "float",
+          "correct": "river",
+          "order": [
+            "river",
+            "bird"
+          ],
+          "boosted": "river",
+          "n_ref": 2,
+          "wta": null,
+          "wta_correct": false,
+          "wta_argmax": "river",
+          "lesion": "bird",
+          "lesion_correct": false,
+          "recency": "river",
+          "recency_correct": true,
+          "salience": "bird",
+          "salience_correct": false,
+          "recency_pick": "bird",
+          "salience_pick": "river",
+          "wta_sel": {
+            "bird": 0.14,
+            "river": 0.165
+          }
+        },
+        {
+          "referents": [
+            "cat",
+            "ball",
+            "river"
+          ],
+          "verb": "eat",
+          "correct": "cat",
+          "order": [
+            "cat",
+            "ball",
+            "river"
+          ],
+          "boosted": "ball",
+          "n_ref": 3,
+          "wta": "cat",
+          "wta_correct": true,
+          "wta_argmax": "cat",
+          "lesion": "cat",
+          "lesion_correct": true,
+          "recency": "ball",
+          "recency_correct": false,
+          "salience": "ball",
+          "salience_correct": false,
+          "recency_pick": "river",
+          "salience_pick": "ball",
+          "wta_sel": {
+            "cat": 0.5,
+            "ball": 0.0,
+            "river": 0.0
+          }
+        },
+        {
+          "referents": [
+            "cat",
+            "ball",
+            "river"
+          ],
+          "verb": "eat",
+          "correct": "cat",
+          "order": [
+            "ball",
+            "cat",
+            "river"
+          ],
+          "boosted": "river",
+          "n_ref": 3,
+          "wta": "cat",
+          "wta_correct": true,
+          "wta_argmax": "cat",
+          "lesion": "cat",
+          "lesion_correct": true,
+          "recency": "cat",
+          "recency_correct": true,
+          "salience": "ball",
+          "salience_correct": false,
+          "recency_pick": "river",
+          "salience_pick": "river",
+          "wta_sel": {
+            "cat": 0.5,
+            "ball": 0.0,
+            "river": 0.0175
+          }
+        },
+        {
+          "referents": [
+            "cat",
+            "ball",
+            "river"
+          ],
+          "verb": "eat",
+          "correct": "cat",
+          "order": [
+            "ball",
+            "river",
+            "cat"
+          ],
+          "boosted": "ball",
+          "n_ref": 3,
+          "wta": "cat",
+          "wta_correct": true,
+          "wta_argmax": "cat",
+          "lesion": "cat",
+          "lesion_correct": true,
+          "recency": "river",
+          "recency_correct": false,
+          "salience": "ball",
+          "salience_correct": false,
+          "recency_pick": "cat",
+          "salience_pick": "ball",
+          "wta_sel": {
+            "cat": 0.5,
+            "ball": 0.0,
+            "river": 0.0075
+          }
+        },
+        {
+          "referents": [
+            "ball",
+            "cat",
+            "dog"
+          ],
+          "verb": "roll",
+          "correct": "ball",
+          "order": [
+            "ball",
+            "cat",
+            "dog"
+          ],
+          "boosted": "cat",
+          "n_ref": 3,
+          "wta": "ball",
+          "wta_correct": true,
+          "wta_argmax": "ball",
+          "lesion": "ball",
+          "lesion_correct": true,
+          "recency": "cat",
+          "recency_correct": false,
+          "salience": "cat",
+          "salience_correct": false,
+          "recency_pick": "dog",
+          "salience_pick": "cat",
+          "wta_sel": {
+            "ball": 0.5,
+            "cat": 0.0,
+            "dog": 0.0
+          }
+        },
+        {
+          "referents": [
+            "ball",
+            "cat",
+            "dog"
+          ],
+          "verb": "roll",
+          "correct": "ball",
+          "order": [
+            "cat",
+            "ball",
+            "dog"
+          ],
+          "boosted": "dog",
+          "n_ref": 3,
+          "wta": "ball",
+          "wta_correct": true,
+          "wta_argmax": "ball",
+          "lesion": "ball",
+          "lesion_correct": true,
+          "recency": "ball",
+          "recency_correct": true,
+          "salience": "cat",
+          "salience_correct": false,
+          "recency_pick": "dog",
+          "salience_pick": "dog",
+          "wta_sel": {
+            "ball": 0.5,
+            "cat": 0.0,
+            "dog": 0.0175
+          }
+        },
+        {
+          "referents": [
+            "ball",
+            "cat",
+            "dog"
+          ],
+          "verb": "roll",
+          "correct": "ball",
+          "order": [
+            "cat",
+            "dog",
+            "ball"
+          ],
+          "boosted": "cat",
+          "n_ref": 3,
+          "wta": "ball",
+          "wta_correct": true,
+          "wta_argmax": "ball",
+          "lesion": "ball",
+          "lesion_correct": true,
+          "recency": "dog",
+          "recency_correct": false,
+          "salience": "cat",
+          "salience_correct": false,
+          "recency_pick": "ball",
+          "salience_pick": "cat",
+          "wta_sel": {
+            "ball": 0.5,
+            "cat": 0.0,
+            "dog": 0.0075
+          }
+        }
+      ],
+      "pass": false
+    }
+  ]
+}

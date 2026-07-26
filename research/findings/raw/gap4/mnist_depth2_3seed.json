@@ -1,0 +1,96 @@
+{
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "per": [
+    {
+      "seed": 42,
+      "sizes": [
+        784,
+        128,
+        128,
+        10
+      ],
+      "res": {
+        "reservoir": {
+          "test": 0.7875,
+          "train": 0.7921
+        },
+        "local_correct": {
+          "test": 0.926,
+          "train": 0.9996
+        },
+        "kp": {
+          "test": 0.926,
+          "train": 0.9995
+        },
+        "oracle": {
+          "test": 0.9405,
+          "train": 1.0
+        }
+      },
+      "fa_beats_res": true,
+      "kp_beats_fa": false
+    },
+    {
+      "seed": 43,
+      "sizes": [
+        784,
+        128,
+        128,
+        10
+      ],
+      "res": {
+        "reservoir": {
+          "test": 0.796,
+          "train": 0.7764
+        },
+        "local_correct": {
+          "test": 0.9385,
+          "train": 0.9996
+        },
+        "kp": {
+          "test": 0.9355,
+          "train": 0.9998
+        },
+        "oracle": {
+          "test": 0.948,
+          "train": 1.0
+        }
+      },
+      "fa_beats_res": true,
+      "kp_beats_fa": false
+    },
+    {
+      "seed": 44,
+      "sizes": [
+        784,
+        128,
+        128,
+        10
+      ],
+      "res": {
+        "reservoir": {
+          "test": 0.8025,
+          "train": 0.7836
+        },
+        "local_correct": {
+          "test": 0.9365,
+          "train": 0.9991
+        },
+        "kp": {
+          "test": 0.939,
+          "train": 0.9998
+        },
+        "oracle": {
+          "test": 0.9465,
+          "train": 1.0
+        }
+      },
+      "fa_beats_res": true,
+      "kp_beats_fa": false
+    }
+  ]
+}

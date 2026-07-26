@@ -3,7 +3,7 @@
     "seeds": [
       42
     ],
-    "train_events": 800,
+    "train_events": 200,
     "replay_cycles": 40,
     "nmda_self_weight": 12.0,
     "nmda_self_density": 0.15,
@@ -15,7 +15,7 @@
     "floor": 0.02,
     "min_recall": 2,
     "antichance": 1,
-    "enable_global_nmda": false,
+    "enable_global_nmda": true,
     "enable_hebbian": false,
     "diagnostic": true,
     "out": "research/findings/raw/nmda_compositional_consolidation.json"
@@ -26,7 +26,7 @@
     {
       "seed": 42,
       "direct_binding": [
-        0,
+        1,
         16
       ],
       "full_recalled": 0,
@@ -37,81 +37,81 @@
       "b_nmda_lesion_ok": true,
       "c_hippo_before_ok": true,
       "seed_go": false,
-      "elapsed_min": 59.34270952145258,
+      "elapsed_min": 16.143309799830117,
       "results": {
         "full": {
           "condition": "full",
           "n_facts": 3,
           "n_recalled": 0,
-          "n_selective": 0,
+          "n_selective": 1,
           "n_lifted": 0,
           "per_fact": [
             {
               "noun": "apple",
               "adj": "big",
               "bound_pool": "adjective_pool_BIG",
-              "bound_rate": 0.0003333333333333333,
-              "top_pool": "adjective_pool_COLD",
-              "top_rate": 0.0006666666666666666,
-              "rank": 4,
-              "selective": false,
+              "bound_rate": 0.0015833333333333333,
+              "top_pool": "adjective_pool_BIG",
+              "top_rate": 0.0015833333333333333,
+              "rank": 1,
+              "selective": true,
               "lifted": false,
               "recalled": false,
               "rates": {
-                "adjective_pool_BIG": 0.0003333333333333333,
-                "adjective_pool_SMALL": 0.0005833333333333334,
-                "adjective_pool_HOT": 0.000625,
-                "adjective_pool_COLD": 0.0006666666666666666
+                "adjective_pool_BIG": 0.0015833333333333333,
+                "adjective_pool_SMALL": 0.0010833333333333333,
+                "adjective_pool_HOT": 0.0012083333333333334,
+                "adjective_pool_COLD": 0.0010833333333333333
               }
             },
             {
               "noun": "river",
               "adj": "small",
               "bound_pool": "adjective_pool_SMALL",
-              "bound_rate": 0.0007083333333333334,
-              "top_pool": "adjective_pool_COLD",
-              "top_rate": 0.0009166666666666666,
-              "rank": 2,
+              "bound_rate": 0.001875,
+              "top_pool": "adjective_pool_BIG",
+              "top_rate": 0.00225,
+              "rank": 4,
               "selective": false,
               "lifted": false,
               "recalled": false,
               "rates": {
-                "adjective_pool_BIG": 0.0002916666666666667,
-                "adjective_pool_SMALL": 0.0007083333333333334,
-                "adjective_pool_HOT": 0.0004583333333333333,
-                "adjective_pool_COLD": 0.0009166666666666666
+                "adjective_pool_BIG": 0.00225,
+                "adjective_pool_SMALL": 0.001875,
+                "adjective_pool_HOT": 0.002125,
+                "adjective_pool_COLD": 0.0020416666666666665
               }
             },
             {
               "noun": "dog",
               "adj": "hot",
               "bound_pool": "adjective_pool_HOT",
-              "bound_rate": 0.0004166666666666667,
-              "top_pool": "adjective_pool_SMALL",
-              "top_rate": 0.0010416666666666667,
-              "rank": 4,
+              "bound_rate": 0.0014166666666666668,
+              "top_pool": "adjective_pool_COLD",
+              "top_rate": 0.0025,
+              "rank": 3,
               "selective": false,
               "lifted": false,
               "recalled": false,
               "rates": {
-                "adjective_pool_BIG": 0.000625,
-                "adjective_pool_SMALL": 0.0010416666666666667,
-                "adjective_pool_HOT": 0.0004166666666666667,
-                "adjective_pool_COLD": 0.0005416666666666666
+                "adjective_pool_BIG": 0.002,
+                "adjective_pool_SMALL": 0.0013333333333333333,
+                "adjective_pool_HOT": 0.0014166666666666668,
+                "adjective_pool_COLD": 0.0025
               }
             }
           ],
           "no_confab": {
             "noun": "cat",
-            "top_pool": "adjective_pool_HOT",
-            "top_rate": 0.0009583333333333333,
-            "max_rate": 0.0009583333333333333,
+            "top_pool": "adjective_pool_COLD",
+            "top_rate": 0.0022083333333333334,
+            "max_rate": 0.0022083333333333334,
             "confabulated": false,
             "rates": {
-              "adjective_pool_BIG": 0.00075,
-              "adjective_pool_SMALL": 0.000625,
-              "adjective_pool_HOT": 0.0009583333333333333,
-              "adjective_pool_COLD": 0.0004166666666666667
+              "adjective_pool_BIG": 0.001958333333333333,
+              "adjective_pool_SMALL": 0.0017083333333333334,
+              "adjective_pool_HOT": 0.00175,
+              "adjective_pool_COLD": 0.0022083333333333334
             }
           },
           "diag": {
@@ -121,30 +121,30 @@
                   "apple",
                   "big"
                 ],
-                "noun_bound": 0.00045,
-                "adj_bound": 0.0005,
-                "noun_top": 0.00045,
-                "adj_top_pool": "adjective_pool_COLD"
+                "noun_bound": 0.00115,
+                "adj_bound": 0.00165,
+                "noun_top": 0.0034,
+                "adj_top_pool": "adjective_pool_HOT"
               },
               {
                 "fact": [
                   "river",
                   "small"
                 ],
-                "noun_bound": 0.00045,
-                "adj_bound": 0.0004,
-                "noun_top": 0.00095,
-                "adj_top_pool": "adjective_pool_COLD"
+                "noun_bound": 0.00465,
+                "adj_bound": 0.0036,
+                "noun_top": 0.005,
+                "adj_top_pool": "adjective_pool_HOT"
               },
               {
                 "fact": [
                   "dog",
                   "hot"
                 ],
-                "noun_bound": 0.0005,
-                "adj_bound": 0.0006,
-                "noun_top": 0.0009,
-                "adj_top_pool": "adjective_pool_COLD"
+                "noun_bound": 0.0035,
+                "adj_bound": 0.004,
+                "noun_top": 0.0042,
+                "adj_top_pool": "adjective_pool_HOT"
               }
             ],
             "cross_pool_mean_w": 0.0,
@@ -162,68 +162,68 @@
               "noun": "apple",
               "adj": "big",
               "bound_pool": "adjective_pool_BIG",
-              "bound_rate": 0.0005833333333333334,
-              "top_pool": "adjective_pool_COLD",
-              "top_rate": 0.001,
+              "bound_rate": 0.0020416666666666665,
+              "top_pool": "adjective_pool_HOT",
+              "top_rate": 0.00625,
               "rank": 3,
               "selective": false,
               "lifted": false,
               "recalled": false,
               "rates": {
-                "adjective_pool_BIG": 0.0005833333333333334,
-                "adjective_pool_SMALL": 0.0007083333333333334,
-                "adjective_pool_HOT": 0.0002916666666666667,
-                "adjective_pool_COLD": 0.001
+                "adjective_pool_BIG": 0.0020416666666666665,
+                "adjective_pool_SMALL": 0.003416666666666667,
+                "adjective_pool_HOT": 0.00625,
+                "adjective_pool_COLD": 0.0011666666666666668
               }
             },
             {
               "noun": "river",
               "adj": "small",
               "bound_pool": "adjective_pool_SMALL",
-              "bound_rate": 0.0006666666666666666,
-              "top_pool": "adjective_pool_COLD",
-              "top_rate": 0.0009583333333333333,
-              "rank": 3,
+              "bound_rate": 0.0025833333333333333,
+              "top_pool": "adjective_pool_HOT",
+              "top_rate": 0.003916666666666666,
+              "rank": 2,
               "selective": false,
               "lifted": false,
               "recalled": false,
               "rates": {
-                "adjective_pool_BIG": 0.0007916666666666666,
-                "adjective_pool_SMALL": 0.0006666666666666666,
-                "adjective_pool_HOT": 0.0005,
-                "adjective_pool_COLD": 0.0009583333333333333
+                "adjective_pool_BIG": 0.0019166666666666666,
+                "adjective_pool_SMALL": 0.0025833333333333333,
+                "adjective_pool_HOT": 0.003916666666666666,
+                "adjective_pool_COLD": 0.0017083333333333334
               }
             },
             {
               "noun": "dog",
               "adj": "hot",
               "bound_pool": "adjective_pool_HOT",
-              "bound_rate": 0.0007083333333333334,
-              "top_pool": "adjective_pool_COLD",
-              "top_rate": 0.0007916666666666666,
-              "rank": 3,
+              "bound_rate": 0.0026666666666666666,
+              "top_pool": "adjective_pool_SMALL",
+              "top_rate": 0.0028333333333333335,
+              "rank": 2,
               "selective": false,
               "lifted": false,
               "recalled": false,
               "rates": {
-                "adjective_pool_BIG": 0.0007083333333333334,
-                "adjective_pool_SMALL": 0.0005833333333333334,
-                "adjective_pool_HOT": 0.0007083333333333334,
-                "adjective_pool_COLD": 0.0007916666666666666
+                "adjective_pool_BIG": 0.002,
+                "adjective_pool_SMALL": 0.0028333333333333335,
+                "adjective_pool_HOT": 0.0026666666666666666,
+                "adjective_pool_COLD": 0.00175
               }
             }
           ],
           "no_confab": {
             "noun": "cat",
-            "top_pool": "adjective_pool_COLD",
-            "top_rate": 0.000625,
-            "max_rate": 0.000625,
+            "top_pool": "adjective_pool_SMALL",
+            "top_rate": 0.0021666666666666666,
+            "max_rate": 0.0021666666666666666,
             "confabulated": false,
             "rates": {
-              "adjective_pool_BIG": 0.0005416666666666666,
-              "adjective_pool_SMALL": 0.0003333333333333333,
-              "adjective_pool_HOT": 0.0004583333333333333,
-              "adjective_pool_COLD": 0.000625
+              "adjective_pool_BIG": 0.001958333333333333,
+              "adjective_pool_SMALL": 0.0021666666666666666,
+              "adjective_pool_HOT": 0.0017083333333333334,
+              "adjective_pool_COLD": 0.002125
             }
           },
           "diag": {
@@ -235,75 +235,75 @@
           "condition": "nmda_lesion",
           "n_facts": 3,
           "n_recalled": 0,
-          "n_selective": 1,
+          "n_selective": 0,
           "n_lifted": 0,
           "per_fact": [
             {
               "noun": "apple",
               "adj": "big",
               "bound_pool": "adjective_pool_BIG",
-              "bound_rate": 0.000625,
-              "top_pool": "adjective_pool_HOT",
-              "top_rate": 0.0006666666666666666,
+              "bound_rate": 0.0012083333333333334,
+              "top_pool": "adjective_pool_SMALL",
+              "top_rate": 0.0013333333333333333,
               "rank": 2,
               "selective": false,
               "lifted": false,
               "recalled": false,
               "rates": {
-                "adjective_pool_BIG": 0.000625,
-                "adjective_pool_SMALL": 0.0005416666666666666,
-                "adjective_pool_HOT": 0.0006666666666666666,
-                "adjective_pool_COLD": 0.0005416666666666666
+                "adjective_pool_BIG": 0.0012083333333333334,
+                "adjective_pool_SMALL": 0.0013333333333333333,
+                "adjective_pool_HOT": 0.0011666666666666668,
+                "adjective_pool_COLD": 0.001
               }
             },
             {
               "noun": "river",
               "adj": "small",
               "bound_pool": "adjective_pool_SMALL",
-              "bound_rate": 0.0010833333333333333,
-              "top_pool": "adjective_pool_SMALL",
-              "top_rate": 0.0010833333333333333,
-              "rank": 1,
-              "selective": true,
+              "bound_rate": 0.0014166666666666668,
+              "top_pool": "adjective_pool_BIG",
+              "top_rate": 0.0020416666666666665,
+              "rank": 3,
+              "selective": false,
               "lifted": false,
               "recalled": false,
               "rates": {
-                "adjective_pool_BIG": 0.0006666666666666666,
-                "adjective_pool_SMALL": 0.0010833333333333333,
-                "adjective_pool_HOT": 0.000625,
-                "adjective_pool_COLD": 0.0005833333333333334
+                "adjective_pool_BIG": 0.0020416666666666665,
+                "adjective_pool_SMALL": 0.0014166666666666668,
+                "adjective_pool_HOT": 0.0012916666666666667,
+                "adjective_pool_COLD": 0.001875
               }
             },
             {
               "noun": "dog",
               "adj": "hot",
               "bound_pool": "adjective_pool_HOT",
-              "bound_rate": 0.0006666666666666666,
-              "top_pool": "adjective_pool_SMALL",
-              "top_rate": 0.0011666666666666668,
-              "rank": 4,
+              "bound_rate": 0.001958333333333333,
+              "top_pool": "adjective_pool_BIG",
+              "top_rate": 0.0022916666666666667,
+              "rank": 3,
               "selective": false,
               "lifted": false,
               "recalled": false,
               "rates": {
-                "adjective_pool_BIG": 0.0007083333333333334,
-                "adjective_pool_SMALL": 0.0011666666666666668,
-                "adjective_pool_HOT": 0.0006666666666666666,
-                "adjective_pool_COLD": 0.0007083333333333334
+                "adjective_pool_BIG": 0.0022916666666666667,
+                "adjective_pool_SMALL": 0.001375,
+                "adjective_pool_HOT": 0.001958333333333333,
+                "adjective_pool_COLD": 0.002125
               }
             }
           ],
           "no_confab": {
             "noun": "cat",
-            "top_pool": "adjective_pool_HOT",
-            "top_rate": 0.0010416666666666667,
-            "max_rate": 0.0010416666666666667,
+            "top_pool": "adjective_pool_COLD",
+            "top_rate": 0.0025416666666666665,
+            "max_rate": 0.0025416666666666665,
             "confabulated": false,
             "rates": {
-              "adjective_pool_BIG": 0.0006666666666666666,
-              "adjective_pool_SMALL": 0.00075,
-              "adjective_pool_HOT": 0.0010416666666666667,
-              "adjective_pool_COLD": 0.0005416666666666666
+              "adjective_pool_BIG": 0.002,
+              "adjective_pool_SMALL": 0.001375,
+              "adjective_pool_HOT": 0.0012916666666666667,
+              "adjective_pool_COLD": 0.0025416666666666665
             }
           },
           "diag": {
@@ -315,75 +315,75 @@
           "condition": "hippo_before",
           "n_facts": 3,
           "n_recalled": 0,
-          "n_selective": 0,
+          "n_selective": 1,
           "n_lifted": 0,
           "per_fact": [
             {
               "noun": "apple",
               "adj": "big",
               "bound_pool": "adjective_pool_BIG",
-              "bound_rate": 0.0004583333333333333,
-              "top_pool": "adjective_pool_SMALL",
-              "top_rate": 0.0007083333333333334,
+              "bound_rate": 0.00275,
+              "top_pool": "adjective_pool_HOT",
+              "top_rate": 0.005166666666666667,
               "rank": 3,
               "selective": false,
               "lifted": false,
               "recalled": false,
               "rates": {
-                "adjective_pool_BIG": 0.0004583333333333333,
-                "adjective_pool_SMALL": 0.0007083333333333334,
-                "adjective_pool_HOT": 0.000125,
-                "adjective_pool_COLD": 0.0005833333333333334
+                "adjective_pool_BIG": 0.00275,
+                "adjective_pool_SMALL": 0.003916666666666666,
+                "adjective_pool_HOT": 0.005166666666666667,
+                "adjective_pool_COLD": 0.00125
               }
             },
             {
               "noun": "river",
               "adj": "small",
               "bound_pool": "adjective_pool_SMALL",
-              "bound_rate": 0.000625,
-              "top_pool": "adjective_pool_BIG",
-              "top_rate": 0.0007916666666666666,
-              "rank": 3,
+              "bound_rate": 0.0021666666666666666,
+              "top_pool": "adjective_pool_HOT",
+              "top_rate": 0.0028333333333333335,
+              "rank": 2,
               "selective": false,
               "lifted": false,
               "recalled": false,
               "rates": {
-                "adjective_pool_BIG": 0.0007916666666666666,
-                "adjective_pool_SMALL": 0.000625,
-                "adjective_pool_HOT": 0.0005416666666666666,
-                "adjective_pool_COLD": 0.0007916666666666666
+                "adjective_pool_BIG": 0.0017083333333333334,
+                "adjective_pool_SMALL": 0.0021666666666666666,
+                "adjective_pool_HOT": 0.0028333333333333335,
+                "adjective_pool_COLD": 0.0020833333333333333
               }
             },
             {
               "noun": "dog",
               "adj": "hot",
               "bound_pool": "adjective_pool_HOT",
-              "bound_rate": 0.0004166666666666667,
-              "top_pool": "adjective_pool_SMALL",
-              "top_rate": 0.00075,
-              "rank": 4,
-              "selective": false,
+              "bound_rate": 0.002375,
+              "top_pool": "adjective_pool_HOT",
+              "top_rate": 0.002375,
+              "rank": 1,
+              "selective": true,
               "lifted": false,
               "recalled": false,
               "rates": {
-                "adjective_pool_BIG": 0.000625,
-                "adjective_pool_SMALL": 0.00075,
-                "adjective_pool_HOT": 0.0004166666666666667,
-                "adjective_pool_COLD": 0.0007083333333333334
+                "adjective_pool_BIG": 0.0021666666666666666,
+                "adjective_pool_SMALL": 0.001875,
+                "adjective_pool_HOT": 0.002375,
+                "adjective_pool_COLD": 0.0023333333333333335
               }
             }
           ],
           "no_confab": {
             "noun": "cat",
             "top_pool": "adjective_pool_HOT",
-            "top_rate": 0.00075,
-            "max_rate": 0.00075,
+            "top_rate": 0.0023333333333333335,
+            "max_rate": 0.0023333333333333335,
             "confabulated": false,
             "rates": {
-              "adjective_pool_BIG": 0.0006666666666666666,
-              "adjective_pool_SMALL": 0.000375,
-              "adjective_pool_HOT": 0.00075,
-              "adjective_pool_COLD": 0.0007083333333333334
+              "adjective_pool_BIG": 0.0022083333333333334,
+              "adjective_pool_SMALL": 0.0015833333333333333,
+              "adjective_pool_HOT": 0.0023333333333333335,
+              "adjective_pool_COLD": 0.0017916666666666667
             }
           },
           "diag": {

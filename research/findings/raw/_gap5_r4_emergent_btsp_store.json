@@ -1,0 +1,221 @@
+{
+  "probe": "gap5_r4_emergent_btsp_store",
+  "GO": false,
+  "verdict": "COMPLETION-MECHANISM-GO 5/6 seeds (strict-0.20 bar 3/6; cue 0.185, nocue 0.000, perm 0.000, no-encode 0.000, w_within 95.3) || SWR NO (match 0.65 cross 0.47)",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "swr": true,
+  "elapsed_seconds": 1086.9,
+  "per_seed": [
+    {
+      "assembly_sizes": [
+        37,
+        22
+      ],
+      "r1_ca3_range": [
+        1392,
+        3391,
+        2000
+      ],
+      "btsp_ca3_range": [
+        1392,
+        3391,
+        2000
+      ],
+      "index_space_match": true,
+      "ca3_density": 0.35,
+      "recall_k_thresh": 40.0,
+      "structural_sep": 2,
+      "isolate": true,
+      "n_assemblies": 2,
+      "per_assembly_inhib": false,
+      "per_assembly_apical_inhib": false,
+      "held_cue": 0.23807017543859652,
+      "held_nocue": 0.0,
+      "held_perm": 0.0,
+      "rest_firing": 0.0,
+      "w_within": 112.92579650878906,
+      "completion_go": true,
+      "ca1_match": 0.7644431973454504,
+      "ca1_cross": 0.0,
+      "ca1_fire": 2.98399908443292,
+      "noencode_cue": 0.0
+    },
+    {
+      "assembly_sizes": [
+        35,
+        31
+      ],
+      "r1_ca3_range": [
+        1392,
+        3391,
+        2000
+      ],
+      "btsp_ca3_range": [
+        1392,
+        3391,
+        2000
+      ],
+      "index_space_match": true,
+      "ca3_density": 0.35,
+      "recall_k_thresh": 40.0,
+      "structural_sep": 2,
+      "isolate": true,
+      "n_assemblies": 2,
+      "per_assembly_inhib": false,
+      "per_assembly_apical_inhib": false,
+      "held_cue": 0.16689814814814813,
+      "held_nocue": 0.0,
+      "held_perm": 0.0,
+      "rest_firing": 0.0,
+      "w_within": 61.2014045715332,
+      "completion_go": false,
+      "ca1_match": 0.7066051174516155,
+      "ca1_cross": 0.678875449164309,
+      "ca1_fire": 3.459089469909668,
+      "noencode_cue": 0.0
+    },
+    {
+      "assembly_sizes": [
+        46,
+        18
+      ],
+      "r1_ca3_range": [
+        1392,
+        3391,
+        2000
+      ],
+      "btsp_ca3_range": [
+        1392,
+        3391,
+        2000
+      ],
+      "index_space_match": true,
+      "ca3_density": 0.35,
+      "recall_k_thresh": 40.0,
+      "structural_sep": 2,
+      "isolate": true,
+      "n_assemblies": 2,
+      "per_assembly_inhib": false,
+      "per_assembly_apical_inhib": false,
+      "held_cue": 0.21518518518518523,
+      "held_nocue": 0.0,
+      "held_perm": 0.0,
+      "rest_firing": 0.0,
+      "w_within": 135.3944854736328,
+      "completion_go": true,
+      "ca1_match": 0.5691784174203585,
+      "ca1_cross": 0.5257569571939098,
+      "ca1_fire": 4.162875445683797,
+      "noencode_cue": 0.0
+    },
+    {
+      "assembly_sizes": [
+        46,
+        22
+      ],
+      "r1_ca3_range": [
+        1392,
+        3391,
+        2000
+      ],
+      "btsp_ca3_range": [
+        1392,
+        3391,
+        2000
+      ],
+      "index_space_match": true,
+      "ca3_density": 0.35,
+      "recall_k_thresh": 40.0,
+      "structural_sep": 2,
+      "isolate": true,
+      "n_assemblies": 2,
+      "per_assembly_inhib": false,
+      "per_assembly_apical_inhib": false,
+      "held_cue": 0.15637681159420289,
+      "held_nocue": 0.0,
+      "held_perm": 0.0,
+      "rest_firing": 0.0,
+      "w_within": 103.1157455444336,
+      "completion_go": false,
+      "ca1_match": 0.6879106394285177,
+      "ca1_cross": 0.5239852622403178,
+      "ca1_fire": 4.366805171966553,
+      "noencode_cue": 0.0
+    },
+    {
+      "assembly_sizes": [
+        29,
+        36
+      ],
+      "r1_ca3_range": [
+        1392,
+        3391,
+        2000
+      ],
+      "btsp_ca3_range": [
+        1392,
+        3391,
+        2000
+      ],
+      "index_space_match": true,
+      "ca3_density": 0.35,
+      "recall_k_thresh": 40.0,
+      "structural_sep": 2,
+      "isolate": true,
+      "n_assemblies": 2,
+      "per_assembly_inhib": false,
+      "per_assembly_apical_inhib": false,
+      "held_cue": 0.1101111111111111,
+      "held_nocue": 0.0,
+      "held_perm": 0.0,
+      "rest_firing": 0.0,
+      "w_within": 48.90053176879883,
+      "completion_go": false,
+      "ca1_match": 0.5075364565727174,
+      "ca1_cross": 0.6141497716598052,
+      "ca1_fire": 2.8681095918019612,
+      "noencode_cue": 0.0
+    },
+    {
+      "assembly_sizes": [
+        57,
+        31
+      ],
+      "r1_ca3_range": [
+        1392,
+        3391,
+        2000
+      ],
+      "btsp_ca3_range": [
+        1392,
+        3391,
+        2000
+      ],
+      "index_space_match": true,
+      "ca3_density": 0.35,
+      "recall_k_thresh": 40.0,
+      "structural_sep": 2,
+      "isolate": true,
+      "n_assemblies": 2,
+      "per_assembly_inhib": false,
+      "per_assembly_apical_inhib": false,
+      "held_cue": 0.22076149425287359,
+      "held_nocue": 0.0,
+      "held_perm": 0.0,
+      "rest_firing": 0.0,
+      "w_within": 110.52944946289062,
+      "completion_go": true,
+      "ca1_match": 0.6679633178660216,
+      "ca1_cross": 0.48652666475136924,
+      "ca1_fire": 4.4060632626215614,
+      "noencode_cue": 0.0
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "knobs": {
+    "seeds": [
+      42
+    ],
+    "corpus": "data/corpus/tinystories.txt",
+    "max_chars": 200000,
+    "window": 4,
+    "hidden": 32,
+    "depth": 1,
+    "fracs": [
+      1.0,
+      0.05
+    ],
+    "p0": 0.3,
+    "beta": 1.0,
+    "n_train": 1500,
+    "n_test": 500,
+    "epochs": 3,
+    "batch": 64,
+    "lr": 0.03,
+    "margin": 0.01,
+    "shuffle_slack": 0.03,
+    "shuffle_all_fracs": false,
+    "out": "research/findings/raw/gap4_seq/_smoke_seed42.json"
+  },
+  "backend": "numpy",
+  "elapsed_s": 0.1,
+  "verdict": {
+    "tag": "SMOKE (n<6): not a GO/NO-GO verdict",
+    "is_go": false,
+    "n_seeds": 1,
+    "agg": [
+      {
+        "frac": 1.0,
+        "reservoir": 0.186,
+        "best_credit": 0.186,
+        "gap": 0.0,
+        "seeds_credit_gt_res": "0/1"
+      },
+      {
+        "frac": 0.05,
+        "reservoir": 0.14,
+        "best_credit": 0.174,
+        "gap": 0.034,
+        "seeds_credit_gt_res": "1/1"
+      }
+    ],
+    "conds": {
+      "credit_gt_res_all_frac": false,
+      "all_seeds_win_sparse": false,
+      "gap_grows_with_sparsity": true,
+      "shuffle_collapses": true
+    },
+    "gap_dense": 0.0,
+    "gap_sparse": 0.034
+  },
+  "per": [
+    {
+      "seed": 42,
+      "V": 39,
+      "sizes": [
+        156,
+        32,
+        39
+      ],
+      "unigram_acc": 0.186,
+      "seed_guard": {
+        "same_seed_identical": true,
+        "diff_seed_changes": true
+      },
+      "rows": [
+        {
+          "frac": 1.0,
+          "unigram": 0.186,
+          "acc_reservoir": 0.186,
+          "acc_fa_linear": 0.186,
+          "acc_bdsp": 0.186,
+          "ppl_reservoir": 19.189,
+          "ppl_fa_linear": 19.026,
+          "ppl_bdsp": 19.265,
+          "acc_bdsp_shuffled": null,
+          "ppl_bdsp_shuffled": null,
+          "best_credit": 0.186,
+          "gap": 0.0
+        },
+        {
+          "frac": 0.05,
+          "unigram": 0.186,
+          "acc_reservoir": 0.14,
+          "acc_fa_linear": 0.174,
+          "acc_bdsp": 0.122,
+          "ppl_reservoir": 33.146,
+          "ppl_fa_linear": 27.464,
+          "ppl_bdsp": 33.826,
+          "acc_bdsp_shuffled": 0.094,
+          "ppl_bdsp_shuffled": 35.13,
+          "best_credit": 0.174,
+          "gap": 0.034
+        }
+      ]
+    }
+  ]
+}

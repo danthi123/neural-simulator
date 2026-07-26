@@ -1,0 +1,32 @@
+{
+  "seed": 42,
+  "hetero": 0.0,
+  "n_mem": 3,
+  "within": 5.0,
+  "adj_fwd": 5.0,
+  "adj_rev": 5.0,
+  "asym": 0.0,
+  "skip_fwd": 5.0,
+  "ratio": 1.0,
+  "go": false,
+  "W": [
+    [
+      5.0,
+      5.0,
+      5.0
+    ],
+    [
+      5.0,
+      5.0,
+      5.0
+    ],
+    [
+      5.0,
+      5.0,
+      5.0
+    ]
+  ],
+  "within_refresh": 0,
+  "chain_fwd": 24,
+  "chain_rule": "stdp"
+}

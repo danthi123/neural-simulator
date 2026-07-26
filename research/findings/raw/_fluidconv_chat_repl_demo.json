@@ -1,15 +1,23 @@
 {
   "probe": "fluidconv_chat_repl",
   "seed": 42,
-  "demo": true,
+  "demo": false,
   "transcript": [
     {
-      "you": "what does the dog chase?",
-      "brain": "the dog chases cat ."
+      "you": "what does the dog eat?",
+      "brain": "The dog eats meat"
     },
     {
-      "you": "what does it eat?",
-      "brain": "the cat eats fish ."
+      "you": "what does the fox chase?",
+      "brain": "The fox chases rabbit"
+    },
+    {
+      "you": "what does the bee make?",
+      "brain": "The bee makes honey"
+    },
+    {
+      "you": "what does the lion eat?",
+      "brain": "I don't know."
     },
     {
       "you": "the wolf eats rabbit",
@@ -17,34 +25,14 @@
     },
     {
       "you": "what does the wolf eat?",
-      "brain": "the wolf eats rabbit ."
+      "brain": "The wolf eats rabbit"
     },
     {
-      "you": "does the dog eat meat?",
-      "brain": "Yes, the dog eats meat ."
-    },
-    {
-      "you": "does the cat eat grass?",
-      "brain": "I don't know."
-    },
-    {
-      "you": "who eats meat?",
-      "brain": "the dog eats meat ."
-    },
-    {
-      "you": "tell me about the bird",
-      "brain": "the bird eats seed ."
-    },
-    {
-      "you": "tell me more about the dog",
-      "brain": "the dog likes bone , yes ."
-    },
-    {
-      "you": "what does the lion eat?",
+      "you": "what does the dragon chase?",
       "brain": "I don't know."
     }
   ],
-  "demo_all_correct": true,
-  "npar_M": 21.3,
-  "elapsed_seconds": 124.3
+  "demo_all_correct": null,
+  "npar_M": 2.3,
+  "elapsed_seconds": 72.0
 }

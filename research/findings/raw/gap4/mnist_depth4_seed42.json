@@ -1,0 +1,38 @@
+{
+  "seeds": [
+    42
+  ],
+  "per": [
+    {
+      "seed": 42,
+      "sizes": [
+        784,
+        128,
+        128,
+        128,
+        128,
+        10
+      ],
+      "res": {
+        "reservoir": {
+          "test": 0.102,
+          "train": 0.1036
+        },
+        "local_correct": {
+          "test": 0.9285,
+          "train": 0.9992
+        },
+        "kp": {
+          "test": 0.9315,
+          "train": 0.9992
+        },
+        "oracle": {
+          "test": 0.929,
+          "train": 0.9951
+        }
+      },
+      "fa_beats_res": true,
+      "kp_beats_fa": false
+    }
+  ]
+}

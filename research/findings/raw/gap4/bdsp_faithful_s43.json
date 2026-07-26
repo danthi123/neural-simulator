@@ -1,0 +1,42 @@
+{
+  "seeds": [
+    43
+  ],
+  "per": [
+    {
+      "seed": 43,
+      "sizes": [
+        784,
+        256,
+        256,
+        10
+      ],
+      "rows": [
+        {
+          "frac": 1.0,
+          "reservoir": 0.784,
+          "fa_linear": 0.943,
+          "fa_coinc": 0.8545,
+          "bdsp_nocoinc": 0.922,
+          "bdsp": 0.831
+        },
+        {
+          "frac": 0.1,
+          "reservoir": 0.6575,
+          "fa_linear": 0.8415,
+          "fa_coinc": 0.846,
+          "bdsp_nocoinc": 0.8755,
+          "bdsp": 0.8825
+        },
+        {
+          "frac": 0.05,
+          "reservoir": 0.5445,
+          "fa_linear": 0.775,
+          "fa_coinc": 0.809,
+          "bdsp_nocoinc": 0.839,
+          "bdsp": 0.81
+        }
+      ]
+    }
+  ]
+}

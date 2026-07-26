@@ -1,0 +1,83 @@
+{
+  "runner": "_emerge_wkv_lm_derisk",
+  "corpus": "data/corpus/tinystories.txt",
+  "seeds": [
+    42
+  ],
+  "d_model": 256,
+  "per_seed": {
+    "42": {
+      "V": 4000,
+      "n_train": 100000,
+      "lambdas": [
+        0.050000000000000044,
+        0.05,
+        0.2,
+        0.7
+      ],
+      "by_depth": {
+        "1": {
+          "n": 3000,
+          "wkv": 3.736,
+          "bigram": 4.493,
+          "trigram": 5.395,
+          "wkv_perm": 8.451,
+          "wkv_memoryless": 3.736,
+          "margin_vs_trigram": 1.659,
+          "margin_vs_bigram": 0.757
+        },
+        "2": {
+          "n": 3000,
+          "wkv": 2.829,
+          "bigram": 4.419,
+          "trigram": 3.158,
+          "wkv_perm": 7.815,
+          "wkv_memoryless": 2.829,
+          "margin_vs_trigram": 0.329,
+          "margin_vs_bigram": 1.59
+        },
+        "3": {
+          "n": 2892,
+          "wkv": 2.995,
+          "bigram": 4.674,
+          "trigram": 3.465,
+          "wkv_perm": 7.63,
+          "wkv_memoryless": 3.321,
+          "margin_vs_trigram": 0.47,
+          "margin_vs_bigram": 1.679
+        },
+        "4-5": {
+          "n": 5130,
+          "wkv": 2.978,
+          "bigram": 4.985,
+          "trigram": 3.671,
+          "wkv_perm": 7.526,
+          "wkv_memoryless": 4.098,
+          "margin_vs_trigram": 0.693,
+          "margin_vs_bigram": 2.007
+        },
+        "6-9": {
+          "n": 6847,
+          "wkv": 3.098,
+          "bigram": 5.05,
+          "trigram": 3.83,
+          "wkv_perm": 7.545,
+          "wkv_memoryless": 4.269,
+          "margin_vs_trigram": 0.732,
+          "margin_vs_bigram": 1.953
+        },
+        "10-99": {
+          "n": 2546,
+          "wkv": 3.276,
+          "bigram": 5.258,
+          "trigram": 4.087,
+          "wkv_perm": 7.68,
+          "wkv_memoryless": 4.542,
+          "margin_vs_trigram": 0.811,
+          "margin_vs_bigram": 1.982
+        }
+      }
+    }
+  },
+  "elapsed_s": 105.4
+}

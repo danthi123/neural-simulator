@@ -1,0 +1,59 @@
+{
+  "runner": "_wkv_spiking_forward_derisk",
+  "mode": "full",
+  "backend": "rf-bridge",
+  "ckpt": "bridges/lmtrain/run3/ckpt/best.pt",
+  "arch": {
+    "ckpt": "bridges/lmtrain/run3/ckpt/best.pt",
+    "total_params": 83166848,
+    "total_params_M": 83.17,
+    "d_model": 1024,
+    "vocab_size": 16000,
+    "n_layers": 16,
+    "arch_keys_ok": true,
+    "matches_run3_arch": true,
+    "step": 902000,
+    "tokens_seen": 7389184000
+  },
+  "knobs": {
+    "nsteps": 8,
+    "read_eps": 5e-07,
+    "block_size": 256,
+    "n_windows": 8,
+    "n_logit_pos": 16,
+    "seeds": [
+      42,
+      43
+    ],
+    "rf_period": 100000,
+    "rf_lambda": 0.0
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "ann_ppl": 31.121648246537667,
+      "spiking_ppl": 31.121648143259645,
+      "ppl_ratio": 0.9999999966814732,
+      "logit_fid_spearman": 0.9999999999650726,
+      "logit_fid_cosine": 0.9999999999999971,
+      "n_windows": 8,
+      "n_logit_pos": 16,
+      "rf_max_read_err": 3.6770532361174446e-06
+    },
+    {
+      "seed": 43,
+      "ann_ppl": 45.033145424752895,
+      "spiking_ppl": 5862.000855537504,
+      "ppl_ratio": 130.1708064192958,
+      "logit_fid_spearman": 0.2923418706178439,
+      "logit_fid_cosine": 0.7990461623749319,
+      "n_windows": 8,
+      "n_logit_pos": 16,
+      "rf_max_read_err": 14.045029977568422
+    }
+  ],
+  "mean_ppl_ratio": 65.58540320798863,
+  "mean_logit_fid_spearman": 0.6461709352914582,
+  "verdict_go_ppl_ratio<=1.05_and_fid>=0.99": false,
+  "elapsed_seconds": 2597.3
+}

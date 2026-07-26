@@ -1,0 +1,366 @@
+{
+  "probe": "navcloseout_R5b_learned_value_driven_choice",
+  "verdict": "GO",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "config": {
+    "n_options": 2,
+    "n_trials": 60,
+    "acc_steps": 120,
+    "value_train_trials": 40,
+    "value_hz_gain_pA": 5.0,
+    "speak_base_pA": 70.0,
+    "salience_gain_pA": 40.0,
+    "above_chance_bar": 0.2,
+    "lesion_drop_bar": 0.2,
+    "learning_drop_bar": 0.2,
+    "near_chance_tol": 0.15,
+    "discrim_agreement_bar": 0.8,
+    "min_seed_pass": 5,
+    "max_value_salience_corr": 0.35
+  },
+  "mechanism": "the LEARNED spiking striosome_value critic (DA-gated STDP on the merged one-brain bridge) supplies the per-option VALUE (its firing rate V(cue), a real cp_firing_states read) that sets the drift of the spiking value-WTA (a neural pool's FIRING = the choice). Retires R5-R1a's host make_option_values stand-in: spiking decision + SPIKING value. CORRECT = pick the higher-LEARNED-V cue.",
+  "anti_cheats": {
+    "G_LESION": "pin each cue's learned V to the MEAN (drive-level matched: remove the gradient, hold the op-point) -> choice collapses to chance.",
+    "G_UNTRAINED": "read V from the UNTRAINED critic (init weight, no value-train) -> flat/anti-goal V (A1 floor) -> the trained-cue advantage vanishes. Proves the substrate's LEARNING is load-bearing (the NEW anti-cheat R5-R1a lacked; its value was a host tag).",
+    "G_DISCRIM": "EQUAL learned V on all options -> lesion NEUTRAL (choice agreement ~1.0). Value-SPECIFIC.",
+    "G_PERMUTE": "permute which option gets which learned V (deterministic permutation-average) -> chance.",
+    "non_circular_value": "corr(learned V, salience) ~ 0 -> the choice is driven by the learned value, not a relabeled salience.",
+    "moat_by_construction": "the WTA decision organ has NO RF/conversational slices -> array-disjoint from any composer; check_moat re-asserted on the merged critic agent."
+  },
+  "detail": {
+    "n_seeds": 6,
+    "min_seed_pass": 5,
+    "acc_intact_mean": 1.0,
+    "acc_intact_min": 1.0,
+    "acc_lesion_mean": 0.48888888888888893,
+    "acc_untrained_mean": 0.17500000000000002,
+    "equal_agreement_mean": 1.0,
+    "acc_permuted_mean": 0.5,
+    "trained_grade_mean": 2.095233102094664,
+    "untrained_grade_mean": 0.6244637691077877,
+    "value_salience_corr_absmax": 0.17308298057917398,
+    "headline_pass": 6,
+    "lesion_pass": 6,
+    "untrained_pass": 6,
+    "discrim_pass": 6,
+    "permute_pass": 6,
+    "noncircular_all": true,
+    "moat_by_construction_all": true
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "backend": "numpy",
+      "n_options": 2,
+      "n_trials": 60,
+      "chance": 0.5,
+      "cues": [
+        [
+          6.0,
+          6.0
+        ],
+        [
+          1.0,
+          1.0
+        ]
+      ],
+      "w_afferent_init": 0.1902705878019333,
+      "value_train": {
+        "tonic_frac": 0.028000000000000008,
+        "w_near_pre": 0.1902705878019333,
+        "w_near_post": 3.979513645172119,
+        "w_grew": 20.91502260619854
+      },
+      "V_untrained_hz": [
+        12.78,
+        19.58
+      ],
+      "V_trained_hz": [
+        33.75,
+        15.42
+      ],
+      "trained_grade_goal_far": 2.1891891891891895,
+      "untrained_grade_goal_far": 0.652482269503546,
+      "acc_intact": 1.0,
+      "acc_lesion": 0.4666666666666667,
+      "acc_untrained": 0.16666666666666666,
+      "equal_value_choice_agreement": 1.0,
+      "acc_permuted": 0.5,
+      "margin_intact": 43.18333333333333,
+      "margin_lesion": 0.7833333333333333,
+      "value_salience_corr": -0.03966079249668999,
+      "headline_above_chance": true,
+      "lesion_collapses": true,
+      "untrained_no_advantage": true,
+      "equal_value_neutral": true,
+      "permute_collapses": true,
+      "noncircular": true,
+      "moat_preserved_by_construction": true,
+      "moat_agent": null,
+      "elapsed_s": 257.3629467487335
+    },
+    {
+      "seed": 43,
+      "backend": "numpy",
+      "n_options": 2,
+      "n_trials": 60,
+      "chance": 0.5,
+      "cues": [
+        [
+          6.0,
+          6.0
+        ],
+        [
+          1.0,
+          1.0
+        ]
+      ],
+      "w_afferent_init": 0.18764004111289978,
+      "value_train": {
+        "tonic_frac": 0.030666666666666672,
+        "w_near_pre": 0.18764004111289978,
+        "w_near_post": 3.9510233402252197,
+        "w_grew": 21.05639775386724
+      },
+      "V_untrained_hz": [
+        16.53,
+        21.81
+      ],
+      "V_trained_hz": [
+        34.86,
+        18.33
+      ],
+      "trained_grade_goal_far": 1.9015151515151518,
+      "untrained_grade_goal_far": 0.7579617834394904,
+      "acc_intact": 1.0,
+      "acc_lesion": 0.5,
+      "acc_untrained": 0.35,
+      "equal_value_choice_agreement": 1.0,
+      "acc_permuted": 0.5,
+      "margin_intact": 33.56666666666667,
+      "margin_lesion": 0.8166666666666667,
+      "value_salience_corr": -0.04065805138971121,
+      "headline_above_chance": true,
+      "lesion_collapses": true,
+      "untrained_no_advantage": true,
+      "equal_value_neutral": true,
+      "permute_collapses": true,
+      "noncircular": true,
+      "moat_preserved_by_construction": true,
+      "moat_agent": null,
+      "elapsed_s": 235.20453476905823
+    },
+    {
+      "seed": 44,
+      "backend": "numpy",
+      "n_options": 2,
+      "n_trials": 60,
+      "chance": 0.5,
+      "cues": [
+        [
+          6.0,
+          6.0
+        ],
+        [
+          1.0,
+          1.0
+        ]
+      ],
+      "w_afferent_init": 0.1890486478805542,
+      "value_train": {
+        "tonic_frac": 0.03133333333333333,
+        "w_near_pre": 0.1890486478805542,
+        "w_near_post": 3.8318843841552734,
+        "w_grew": 20.26930330957118
+      },
+      "V_untrained_hz": [
+        13.47,
+        19.72
+      ],
+      "V_trained_hz": [
+        34.44,
+        14.03
+      ],
+      "trained_grade_goal_far": 2.455445544554456,
+      "untrained_grade_goal_far": 0.6830985915492958,
+      "acc_intact": 1.0,
+      "acc_lesion": 0.45,
+      "acc_untrained": 0.23333333333333334,
+      "equal_value_choice_agreement": 1.0,
+      "acc_permuted": 0.5,
+      "margin_intact": 54.766666666666666,
+      "margin_lesion": 0.5833333333333334,
+      "value_salience_corr": -0.047393436420716493,
+      "headline_above_chance": true,
+      "lesion_collapses": true,
+      "untrained_no_advantage": true,
+      "equal_value_neutral": true,
+      "permute_collapses": true,
+      "noncircular": true,
+      "moat_preserved_by_construction": true,
+      "moat_agent": null,
+      "elapsed_s": 223.6418809890747
+    },
+    {
+      "seed": 100,
+      "backend": "numpy",
+      "n_options": 2,
+      "n_trials": 60,
+      "chance": 0.5,
+      "cues": [
+        [
+          6.0,
+          6.0
+        ],
+        [
+          1.0,
+          1.0
+        ]
+      ],
+      "w_afferent_init": 0.18982604146003723,
+      "value_train": {
+        "tonic_frac": 0.030666666666666665,
+        "w_near_pre": 0.18982604146003723,
+        "w_near_post": 3.5674655437469482,
+        "w_grew": 18.793341083804787
+      },
+      "V_untrained_hz": [
+        10.0,
+        18.47
+      ],
+      "V_trained_hz": [
+        31.94,
+        18.33
+      ],
+      "trained_grade_goal_far": 1.7424242424242427,
+      "untrained_grade_goal_far": 0.5413533834586466,
+      "acc_intact": 1.0,
+      "acc_lesion": 0.5666666666666667,
+      "acc_untrained": 0.05,
+      "equal_value_choice_agreement": 1.0,
+      "acc_permuted": 0.5,
+      "margin_intact": 24.75,
+      "margin_lesion": 0.8166666666666667,
+      "value_salience_corr": 0.17308298057917398,
+      "headline_above_chance": true,
+      "lesion_collapses": true,
+      "untrained_no_advantage": true,
+      "equal_value_neutral": true,
+      "permute_collapses": true,
+      "noncircular": true,
+      "moat_preserved_by_construction": true,
+      "moat_agent": null,
+      "elapsed_s": 243.2981894016266
+    },
+    {
+      "seed": 101,
+      "backend": "numpy",
+      "n_options": 2,
+      "n_trials": 60,
+      "chance": 0.5,
+      "cues": [
+        [
+          6.0,
+          6.0
+        ],
+        [
+          1.0,
+          1.0
+        ]
+      ],
+      "w_afferent_init": 0.18916989862918854,
+      "value_train": {
+        "tonic_frac": 0.029333333333333336,
+        "w_near_pre": 0.18916989862918854,
+        "w_near_post": 3.782055616378784,
+        "w_grew": 19.992903965087923
+      },
+      "V_untrained_hz": [
+        9.03,
+        24.31
+      ],
+      "V_trained_hz": [
+        33.19,
+        15.14
+      ],
+      "trained_grade_goal_far": 2.1926605504587156,
+      "untrained_grade_goal_far": 0.37142857142857144,
+      "acc_intact": 1.0,
+      "acc_lesion": 0.5,
+      "acc_untrained": 0.0,
+      "equal_value_choice_agreement": 1.0,
+      "acc_permuted": 0.5,
+      "margin_intact": 44.266666666666666,
+      "margin_lesion": 0.5,
+      "value_salience_corr": 0.01229861640015378,
+      "headline_above_chance": true,
+      "lesion_collapses": true,
+      "untrained_no_advantage": true,
+      "equal_value_neutral": true,
+      "permute_collapses": true,
+      "noncircular": true,
+      "moat_preserved_by_construction": true,
+      "moat_agent": null,
+      "elapsed_s": 235.44429278373718
+    },
+    {
+      "seed": 102,
+      "backend": "numpy",
+      "n_options": 2,
+      "n_trials": 60,
+      "chance": 0.5,
+      "cues": [
+        [
+          6.0,
+          6.0
+        ],
+        [
+          1.0,
+          1.0
+        ]
+      ],
+      "w_afferent_init": 0.18773458898067474,
+      "value_train": {
+        "tonic_frac": 0.03,
+        "w_near_pre": 0.18773458898067474,
+        "w_near_post": 3.717430830001831,
+        "w_grew": 19.801523257839825
+      },
+      "V_untrained_hz": [
+        13.47,
+        18.19
+      ],
+      "V_trained_hz": [
+        35.42,
+        16.94
+      ],
+      "trained_grade_goal_far": 2.09016393442623,
+      "untrained_grade_goal_far": 0.7404580152671756,
+      "acc_intact": 1.0,
+      "acc_lesion": 0.45,
+      "acc_untrained": 0.25,
+      "equal_value_choice_agreement": 1.0,
+      "acc_permuted": 0.5,
+      "margin_intact": 42.36666666666667,
+      "margin_lesion": 0.8,
+      "value_salience_corr": -0.03440868453879389,
+      "headline_above_chance": true,
+      "lesion_collapses": true,
+      "untrained_no_advantage": true,
+      "equal_value_neutral": true,
+      "permute_collapses": true,
+      "noncircular": true,
+      "moat_preserved_by_construction": true,
+      "moat_agent": null,
+      "elapsed_s": 239.0743851661682
+    }
+  ],
+  "elapsed_total_s": 1434.0982978343964
+}

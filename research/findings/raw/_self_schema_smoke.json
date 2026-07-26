@@ -1,0 +1,93 @@
+{
+  "runner": "_self_schema_region_derisk",
+  "faculty": "F4 self-model/metacognition (DR-3 attention/agency SELF-SCHEMA region)",
+  "theory": "Graziano Attention Schema Theory + higher-order metacognition (FUNCTIONAL correlate only)",
+  "seeds": [
+    42
+  ],
+  "n_trials": 40,
+  "backend": "numpy",
+  "thresholds": {
+    "attention_acc": 0.85,
+    "confidence_spearman": 0.6,
+    "confidence_auc": 0.85,
+    "authorship_acc": 0.9,
+    "max_axis_corr": 0.3,
+    "chance_attention": 0.45,
+    "chance_authorship": 0.65,
+    "collapse_spearman": 0.3
+  },
+  "verdict": "GO",
+  "n_go": 1,
+  "n_seeds": 1,
+  "aggregate": {
+    "mean_attention_acc": 0.975,
+    "mean_confidence_spearman": 0.9870544090056285,
+    "mean_confidence_auc": 0.99625,
+    "mean_authorship_acc": 1.0,
+    "all_self_lesion_collapse": true,
+    "all_shuffle_collapse": true,
+    "all_dissociation_ok": true,
+    "all_fam_lesion_flattens": true
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_trials": 40,
+      "familiarity_source": {
+        "corr_alpha_q": 0.6667917448405253,
+        "q_min": 0.0372640011782126,
+        "q_max": 0.9608997829875218,
+        "q_mean": 0.2557479377812769
+      },
+      "intact": {
+        "attention_acc": 0.975,
+        "confidence_spearman": 0.9870544090056285,
+        "confidence_auc": 0.99625,
+        "authorship_acc": 1.0,
+        "conf_rate_range": [
+          0.029292929292929294,
+          0.10454545454545454
+        ],
+        "auth_rate_self_mean": 0.09191919191919191,
+        "auth_rate_heard_mean": 0.0
+      },
+      "dissociation": {
+        "corr_decoded_confidence_vs_content": -0.2487781170850336,
+        "corr_decoded_authorship_vs_content": 0.26671075473287953,
+        "corr_true_confidence_vs_content": -0.21985255122362746,
+        "per_content_confidence_spearman": {
+          "0": 1.0,
+          "1": 0.9166666666666666,
+          "2": 0.95,
+          "3": 0.9868131868131869
+        },
+        "min_per_content_spearman": 0.9166666666666666,
+        "dissociation_ok": true
+      },
+      "self_lesion": {
+        "attention_acc": 0.2,
+        "confidence_spearman": 0.0,
+        "authorship_acc": 0.45,
+        "collapsed": true
+      },
+      "shuffle_internal": {
+        "attention_acc": 0.25,
+        "confidence_spearman": -0.18067542213883678,
+        "authorship_acc": 0.45,
+        "collapsed": true
+      },
+      "familiarity_lesion_flattens_confidence": true,
+      "go_components": {
+        "attention": true,
+        "confidence": true,
+        "authorship": true,
+        "self_lesion_collapses": true,
+        "shuffle_collapses": true,
+        "dissociation": true
+      },
+      "go": true
+    }
+  ],
+  "honest_scope": "A functional self-model correlate: a self_schema region reads the brain's OWN internal signals (GNW workspace occupancy + a familiarity-gate confidence scalar + an authorship tag) and jointly represents+reports them; the read-outs track ground-truth internal state and collapse under self-lesion / shuffled-signal. NOT a claim of subjective experience (phenomenal consciousness is OPEN, arguably untestable)."
+}

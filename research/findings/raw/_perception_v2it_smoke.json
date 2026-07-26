@@ -1,0 +1,212 @@
+{
+  "summary": {
+    "overall_verdict": "PARTIAL",
+    "seeds": [
+      42
+    ],
+    "backend": "numpy",
+    "chance": 0.3333,
+    "per_seed_verdicts": [
+      "PARTIAL"
+    ],
+    "it_heldpos_decode_mean": 0.1667,
+    "it_heldpos_decode_min": 0.1667,
+    "v1_complex_heldpos_decode_mean": 0.3333,
+    "frozen_it_heldpos_decode_mean": 0.1667,
+    "it_scramble_decode_mean": 0.1667,
+    "it_rsa_pixels_mean": -0.1794,
+    "it_fires_all_seeds": true,
+    "interpretation": "VALIDATE = trained IT firing codes are position-invariant + category-discriminative, beating both the retinotopic V1_complex and a frozen IT, with lesion/scramble/RSA collapsing. RETIRE = trained IT is inert / adds nothing over V1_complex or frozen IT (standardize grounding on the V1->pooler codon).",
+    "knobs": {
+      "seeds": [
+        42
+      ],
+      "n_categories": 3,
+      "n_train_pos": 2,
+      "n_held_pos": 1,
+      "n_ex": 2,
+      "bar_len_frac": 0.35,
+      "image_size": 32,
+      "n_orientations": 8,
+      "n_frequencies": 2,
+      "n_pos": 8,
+      "n_v2": 256,
+      "n_it": 64,
+      "rf_radius": 4,
+      "v1_weight_scale": 200.0,
+      "v1c_pool_weight": 200.0,
+      "v1c_pool_density_mult": 100.0,
+      "v1c_to_v2_weight": 200.0,
+      "v2_to_it_weight": 250.0,
+      "fair_drive": true,
+      "drive": 2500.0,
+      "train_epochs": 1,
+      "scene_steps": 30,
+      "read_steps": 20,
+      "settle_steps": 6,
+      "dt": 1.0,
+      "stdp_w_max": 600.0,
+      "enable_ou": false,
+      "inert_floor": 0.02,
+      "decode_margin": 0.15,
+      "add_delta": 0.1,
+      "rsa_gate": 0.2,
+      "rsa_drop": 0.15,
+      "out": "research/findings/raw/_perception_v2it_smoke.json",
+      "seed_base": 42
+    }
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_categories": 3,
+      "chance": 0.3333,
+      "n_train_images": 12,
+      "n_held_images": 6,
+      "train_positions": [
+        [
+          7.6,
+          7.6
+        ],
+        [
+          24.4,
+          7.6
+        ]
+      ],
+      "held_positions": [
+        [
+          7.6,
+          24.4
+        ]
+      ],
+      "propagation_profile_deployed": {
+        "retina": 89,
+        "cortex_v1_simple": 0,
+        "cortex_v1_complex": 0,
+        "cortex_v2": 0,
+        "cortex_it": 0
+      },
+      "propagation_profile_thisrun": {
+        "retina": 2202,
+        "cortex_v1_simple": 493,
+        "cortex_v1_complex": 2010,
+        "cortex_v2": 870,
+        "cortex_it": 108
+      },
+      "n_neurons_total": 3904,
+      "n_gabor_synapses": 70592,
+      "train_firing_diag_first_scene": {
+        "retina": 1609,
+        "cortex_v1_simple": 449,
+        "cortex_v1_complex": 1959,
+        "cortex_v2": 814,
+        "cortex_it": 113
+      },
+      "read_mode": {
+        "cortex_v1_complex": "spikes",
+        "cortex_v2": "spikes",
+        "cortex_it": "spikes"
+      },
+      "trained": {
+        "cortex_v1_complex": {
+          "chance": 0.3333,
+          "heldpos_decode": 0.3333,
+          "scramble_decode": 0.3333,
+          "held_within_between_margin": -0.0905,
+          "rsa_pixels_held": -0.3045,
+          "rsa_pixels_scramble": -0.1759,
+          "mean_code_activity_heldset": 0.4176,
+          "read_mode": "spikes",
+          "mean_spikes_per_neuron_heldset": 0.4176
+        },
+        "cortex_v2": {
+          "chance": 0.3333,
+          "heldpos_decode": 0.6667,
+          "scramble_decode": 0.1667,
+          "held_within_between_margin": 0.0208,
+          "rsa_pixels_held": 0.0356,
+          "rsa_pixels_scramble": -0.0831,
+          "mean_code_activity_heldset": 0.2839,
+          "read_mode": "spikes",
+          "mean_spikes_per_neuron_heldset": 0.2839
+        },
+        "cortex_it": {
+          "chance": 0.3333,
+          "heldpos_decode": 0.1667,
+          "scramble_decode": 0.1667,
+          "held_within_between_margin": -0.0256,
+          "rsa_pixels_held": -0.1794,
+          "rsa_pixels_scramble": 0.3346,
+          "mean_code_activity_heldset": 0.0964,
+          "read_mode": "spikes",
+          "mean_spikes_per_neuron_heldset": 0.0964
+        }
+      },
+      "lesion": {
+        "applied": true,
+        "v2_mean_spikes_intact": 0.2839,
+        "v2_mean_spikes_lesion": 0.2044,
+        "v2_input_silenced": true,
+        "heldpos_decode": {
+          "cortex_v2": 0.3333,
+          "cortex_it": 0.1667
+        }
+      },
+      "no_learning": {
+        "cortex_v1_complex": {
+          "chance": 0.3333,
+          "heldpos_decode": 0.5,
+          "scramble_decode": 0.3333,
+          "held_within_between_margin": -0.0497,
+          "rsa_pixels_held": -0.192,
+          "rsa_pixels_scramble": -0.0348,
+          "mean_code_activity_heldset": 0.4274,
+          "read_mode": "spikes"
+        },
+        "cortex_v2": {
+          "chance": 0.3333,
+          "heldpos_decode": 0.5,
+          "scramble_decode": 0.6667,
+          "held_within_between_margin": -0.0123,
+          "rsa_pixels_held": -0.097,
+          "rsa_pixels_scramble": 0.0603,
+          "mean_code_activity_heldset": 0.1074,
+          "read_mode": "spikes"
+        },
+        "cortex_it": {
+          "chance": 0.3333,
+          "heldpos_decode": 0.1667,
+          "scramble_decode": 0.5,
+          "held_within_between_margin": -0.0276,
+          "rsa_pixels_held": -0.1406,
+          "rsa_pixels_scramble": 0.2522,
+          "mean_code_activity_heldset": 0.1406,
+          "read_mode": "spikes"
+        }
+      },
+      "decision": {
+        "it_stage": {
+          "inv_above_chance": false,
+          "adds_over_v1": false,
+          "adds_over_frozen": false,
+          "scramble_collapses": true,
+          "rsa_visual": false,
+          "lesion_collapses": true,
+          "validate": false
+        },
+        "v2_stage": {
+          "inv_above_chance": true,
+          "adds_over_v1": true,
+          "adds_over_frozen": true,
+          "scramble_collapses": true,
+          "rsa_visual": false,
+          "lesion_collapses": true,
+          "validate": false
+        },
+        "it_fires": true,
+        "v2_fires": true,
+        "verdict": "PARTIAL"
+      }
+    }
+  ]
+}

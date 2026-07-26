@@ -1,0 +1,54 @@
+{
+  "probe": "affect_distributional_tag (DR-2, P0.1)",
+  "verdict": "GO (1-seed) -- DISTRIBUTIONAL AFFECT TAG: a concept's valence EMERGES from the affective company it keeps. Held-out concepts (never seeded from norms) inherit valence by spreading activation over the LEARNED co-occurrence graph, correlating r=+0.806 with Warriner valence (>= 0.55). PERMUTED-GRAPH collapses (-0.227 -- random neighbourhoods carry no affect), SHUFFLED-SEED-LABELS collapses (-0.005), and the graph BEATS the seed-only constant baseline (+0.000). The opponent code is genuine: V+ and V- are OPPOSED on held-out (corr -0.734 < 0) and net valence separates positive from negative (sep +0.35). => the world-model is affectively COLOURED, not just factual; the affect tag rides the LEARNED structure, not a lookup. numpy-CPU; NO sim/ edit. (Arousal secondary, r=+0.571 -- the known weaker ceiling.)",
+  "GO": true,
+  "checks": {
+    "held_out_r>=0.55": true,
+    "beats_seed_only": true,
+    "permuted_collapses": true,
+    "shuffled_labels_collapse": true,
+    "opponent_sign(V+ vs V- corr<0)": true,
+    "opponent_separation(pos>neg)": true
+  },
+  "means": {
+    "r_real": 0.8062769378513823,
+    "r_permuted": -0.22664916199410678,
+    "r_seedonly": 0.0,
+    "r_shuffled": -0.005105565848152338,
+    "r_arousal": 0.570607543625667,
+    "opp_corr": -0.7339962567575561,
+    "net_sep": 0.34798672868887137
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_vocab": 137,
+      "n_seed": 68,
+      "n_held": 69,
+      "r_real": 0.8062769378513823,
+      "r_permuted": -0.22664916199410678,
+      "r_seedonly": 0.0,
+      "r_shuffled": -0.005105565848152338,
+      "r_arousal": 0.570607543625667,
+      "opp_corr": -0.7339962567575561,
+      "net_sep_pos_minus_neg": 0.34798672868887137
+    }
+  ],
+  "config": {
+    "seeds": [
+      42
+    ],
+    "smoke": true,
+    "max_stories": 8000,
+    "n_hub": 500,
+    "window": 4,
+    "min_count": 5,
+    "seed_frac": 0.5,
+    "knn": 12,
+    "n_hops": 2,
+    "n_vocab": 137
+  },
+  "mechanism": "learned co-occurrence graph (rate-Hebbian, matched rule; PPMI stream-cortex code) -> opponent V+/V- seed from Warriner norms (Namburi-Tye) -> valence inherited to held-out by seed-clamped spreading activation (EMERGE-30 read / Zhu-Ghahramani harmonic) -> net = V+ - V-",
+  "HONEST_NOTE": "numpy-CPU read of the mechanism (on-bridge spiking opponent-population confirm = GPU follow-on). Warriner values are an embedded APPROXIMATE core lexicon biased to children's vocabulary (real 13,915-word CSV swappable via --warriner-csv); the learned co-occurrence graph is BUILT IN-RUNNER from TinyStories because no cached artifact maps concept codes to Warriner-labelled words. Seed/held-out split varies per RNG seed.",
+  "elapsed_seconds": 0.7
+}

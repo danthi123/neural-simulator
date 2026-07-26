@@ -1125,3 +1125,33 @@ budget) — i.e. changing WHICH synapses exist rather than how strongly they lea
 cortical "slot" should be addressable and **belongs in the research gate**, not in another sweep.
 
 **Cortical-store hypothesis ledger: 7 proposed, 6 refuted by measurement, 1 supported.**
+
+## ⛔⛔ RETRACTION: the cortical-store "characterized ceiling" is NOT established — I cited code that does not execute
+
+A read-only research gate (`2026-07-26-cortical-slot-addressability-research-gate.md`) found errors in the
+characterization above. **I verified all four against the source myself before accepting them:**
+
+| my claim | reality (verified) |
+|---|---|
+| "Hebbian is a soft **COACTIVITY**-driven bound (`bridge.py:838`)" | **`:838` IS DEAD CODE** — it sits inside `_apply_branchless_hebbian`, *"opt-in via cfg.enable_branchless_plasticity"*, and `enable_branchless_plasticity: bool = False` (`config.py:196`). The probe never enables it. **The mechanism I reported was never running.** The rule that DOES run (`bridge.py:7710-7717`) is causal **spike-coincidence**: `pre_fired & post_fired`, `delta = lr·(w_max−w)` — gated on postsynaptic SPIKE, not coactivity. |
+| "synaptic scaling pins mass at a hard 5.0 ceiling ⇒ scaling refuted" | **CONFOUNDED.** `bridge.py:8704`: `_hw_max = cfg.hebbian_max_weight if cfg.enable_hebbian_learning else **5.0**` — a hard-coded literal reached *precisely because* that arm ran `--no-hebbian`. **Synaptic scaling was never actually tested**; I measured a fallback constant. |
+| the 7-hypothesis ledger | **STDP is missing from it entirely** — `enable_stdp: bool = True` (`config.py:598`) and `concept_to_comp_attr` is `plastic=True`, so STDP was writing this pathway the whole time and was never considered. |
+| "~5% is a CHARACTERIZED CEILING ⇒ next is STRUCTURAL" | **NOT ESTABLISHED.** The unifying account ("BTSP saturates whatever ceiling exists; selectivity needs headroom") rests on the confounded scaling arm. **Verdict REOPENED.** |
+
+**What still stands:** the ~5% signal itself is real (firing-weighted own-is-max 3/3, permuted control collapses every
+time). What is retracted is the *explanation* and the *ceiling* claim.
+
+**NEW FAILURE MODE, and it is the sharpest of the session: CITING A LINE IS NOT VERIFYING IT EXECUTES.** I grepped for
+`hebbian_max_weight`, found `:838`, read it, and reported it as *the* mechanism — with a file:line citation that made it
+look verified. I never checked whether that branch was reachable. A `grep` hit proves code EXISTS; it proves nothing
+about whether it RUNS. **Before citing any code as the mechanism: find its guarding flag and check that flag's DEFAULT
+and the actual config in use.** (Related and also missed: an ENABLED-BY-DEFAULT rule — STDP — was silently writing the
+pathway under study and never entered the analysis. Enumerate every rule with `plastic=True` on the pathway, do not
+assume the one you are tuning is the only one acting.)
+
+**▶ NEXT — Rank 0, FREE, one seed, zero edits:** report per-slot **somatic firing** during each write window and during
+recall. `_consol_cortical_store_probe.py:115/137` **already accumulates this into a full-network array and discards it**.
+It separates the two live diagnoses at no cost, and answers a question never asked in this entire arc: *do non-target
+slots even spike during a write window?* Only after that do the ranked mechanisms (per-slot FS cross-inhibition ·
+Miller-MacKay **subtractive** normalisation, which is config-only via `btsp_mean_subtract` · HTM winner-inactive
+depression) come into play.

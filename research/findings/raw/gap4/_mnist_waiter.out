@@ -1,0 +1,6 @@
+MNIST depth-2 3seed:
+[gap4-mnist] VERDICT: FA>RESERVOIR 3/3, KP>FA 0/3 | means: RES=0.795 FA=0.934 KP=0.933 ORACLE=0.945
+  => credit DOES beat reservoir on a proper task (cleanxor negative was a task artifact); learned feedback (KP) does not clearly beat FA here.
+MNIST depth-4:
+  [seed 42] MNIST [784, 128, 128, 128, 128, 10]: RESERVOIR=0.102 FA=0.928 KP=0.931 ORACLE=0.929 | FA>RES:True KP>FA:False
+[gap4-mnist] VERDICT: FA>RESERVOIR 1/1, KP>FA 0/1 | means: RES=0.102 FA=0.928 KP=0.931 ORACLE=0.929

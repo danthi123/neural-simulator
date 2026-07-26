@@ -1,0 +1,93 @@
+{
+  "runner": "_gap2_correlated_key_binder_derisk",
+  "verdict": "PARTIAL",
+  "reason": "no rho drove additive below 0.60 in this sweep (keys not correlated enough) OR a control failed; widen --rhos toward 1.0 / raise --p-gate",
+  "go_rho": null,
+  "chance": 0.020833333333333332,
+  "knobs": {
+    "seeds": [
+      42,
+      43
+    ],
+    "rhos": [
+      0.0,
+      0.3,
+      0.5,
+      0.7
+    ],
+    "pmax": 3,
+    "p_gate": 3,
+    "n_facts": 12,
+    "cap": 48,
+    "passes": 1,
+    "read": "numpy",
+    "confirm_spiking": false,
+    "synth_D": 32,
+    "code_src": "synth-32",
+    "N": 48,
+    "D": 32
+  },
+  "sweep": {
+    "0.00": {
+      "delta": 1.0,
+      "additive": 1.0,
+      "permuted": 0.0,
+      "shuffled": 0.0
+    },
+    "0.30": {
+      "delta": 1.0,
+      "additive": 1.0,
+      "permuted": 0.0,
+      "shuffled": 0.0
+    },
+    "0.50": {
+      "delta": 0.9444444444444444,
+      "additive": 1.0,
+      "permuted": 0.027777777777777776,
+      "shuffled": 0.027777777777777776
+    },
+    "0.70": {
+      "delta": 0.3333333333333333,
+      "additive": 0.8888888888888888,
+      "permuted": 0.3333333333333333,
+      "shuffled": 0.3333333333333333
+    }
+  },
+  "real_z": {
+    "delta": 1.0,
+    "additive": 1.0
+  },
+  "decorrelated_additive": 1.0,
+  "p_curve": {
+    "0.00": {
+      "1": {
+        "delta": 1.0,
+        "additive": 1.0
+      },
+      "2": {
+        "delta": 1.0,
+        "additive": 1.0
+      },
+      "3": {
+        "delta": 1.0,
+        "additive": 1.0
+      }
+    },
+    "0.70": {
+      "1": {
+        "delta": 1.0,
+        "additive": 1.0
+      },
+      "2": {
+        "delta": 0.5,
+        "additive": 1.0
+      },
+      "3": {
+        "delta": 0.3333333333333333,
+        "additive": 0.8888888888888888
+      }
+    }
+  },
+  "confirm_spiking": null,
+  "elapsed_s": 0.11
+}

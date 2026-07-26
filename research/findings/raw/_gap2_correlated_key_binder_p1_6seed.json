@@ -1,0 +1,119 @@
+{
+  "runner": "_gap2_correlated_key_binder_derisk",
+  "verdict": "NEGATIVE",
+  "reason": "additive COLLAPSES at high rho but single-pass delta does NOT stay >=0.80/beat it by 0.30 -> per-fact delta does not rescue correlated-key binding on point-neuron phasors (deeper gap#2 frontier stands: iterate/pseudo-inverse or a dendritic-multiplicative self-organizing bind)",
+  "go_rho": null,
+  "chance": 0.00390625,
+  "knobs": {
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "rhos": [
+      0.0,
+      0.3,
+      0.5,
+      0.7,
+      0.85,
+      0.95
+    ],
+    "pmax": 4,
+    "p_gate": 3,
+    "n_facts": 20,
+    "cap": 256,
+    "passes": 1,
+    "read": "numpy",
+    "confirm_spiking": false,
+    "synth_D": 0,
+    "code_src": "scale-cortex-codes",
+    "N": 256,
+    "D": 128
+  },
+  "sweep": {
+    "0.00": {
+      "delta": 1.0,
+      "additive": 1.0,
+      "permuted": 0.0,
+      "shuffled": 0.0
+    },
+    "0.30": {
+      "delta": 1.0,
+      "additive": 1.0,
+      "permuted": 0.0,
+      "shuffled": 0.0
+    },
+    "0.50": {
+      "delta": 1.0,
+      "additive": 1.0,
+      "permuted": 0.0,
+      "shuffled": 0.0
+    },
+    "0.70": {
+      "delta": 0.3333333333333333,
+      "additive": 0.9944444444444445,
+      "permuted": 0.3333333333333333,
+      "shuffled": 0.3333333333333333
+    },
+    "0.85": {
+      "delta": 0.3333333333333333,
+      "additive": 0.7638888888888888,
+      "permuted": 0.3333333333333333,
+      "shuffled": 0.3333333333333333
+    },
+    "0.95": {
+      "delta": 0.3333333333333333,
+      "additive": 0.4444444444444445,
+      "permuted": 0.3333333333333333,
+      "shuffled": 0.3333333333333333
+    }
+  },
+  "real_z": {
+    "delta": 1.0,
+    "additive": 1.0
+  },
+  "decorrelated_additive": 1.0,
+  "p_curve": {
+    "0.00": {
+      "1": {
+        "delta": 1.0,
+        "additive": 1.0
+      },
+      "2": {
+        "delta": 1.0,
+        "additive": 1.0
+      },
+      "3": {
+        "delta": 1.0,
+        "additive": 1.0
+      },
+      "4": {
+        "delta": 1.0,
+        "additive": 1.0
+      }
+    },
+    "0.95": {
+      "1": {
+        "delta": 1.0,
+        "additive": 1.0
+      },
+      "2": {
+        "delta": 0.5,
+        "additive": 1.0
+      },
+      "3": {
+        "delta": 0.3333333333333333,
+        "additive": 0.4444444444444445
+      },
+      "4": {
+        "delta": 0.25,
+        "additive": 0.325
+      }
+    }
+  },
+  "confirm_spiking": null,
+  "elapsed_s": 183.46
+}

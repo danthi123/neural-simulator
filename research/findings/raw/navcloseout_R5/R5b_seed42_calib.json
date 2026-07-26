@@ -1,0 +1,106 @@
+{
+  "probe": "navcloseout_R5b_learned_value_driven_choice",
+  "verdict": "HONEST_NEGATIVE_learned_value_does_not_drive_choice",
+  "seeds": [
+    42
+  ],
+  "config": {
+    "n_options": 2,
+    "n_trials": 60,
+    "acc_steps": 120,
+    "value_train_trials": 40,
+    "value_hz_gain_pA": 5.0,
+    "speak_base_pA": 70.0,
+    "salience_gain_pA": 40.0,
+    "above_chance_bar": 0.2,
+    "lesion_drop_bar": 0.2,
+    "learning_drop_bar": 0.2,
+    "near_chance_tol": 0.15,
+    "discrim_agreement_bar": 0.8,
+    "min_seed_pass": 5,
+    "max_value_salience_corr": 0.35
+  },
+  "mechanism": "the LEARNED spiking striosome_value critic (DA-gated STDP on the merged one-brain bridge) supplies the per-option VALUE (its firing rate V(cue), a real cp_firing_states read) that sets the drift of the spiking value-WTA (a neural pool's FIRING = the choice). Retires R5-R1a's host make_option_values stand-in: spiking decision + SPIKING value. CORRECT = pick the higher-LEARNED-V cue.",
+  "anti_cheats": {
+    "G_LESION": "pin each cue's learned V to the MEAN (drive-level matched: remove the gradient, hold the op-point) -> choice collapses to chance.",
+    "G_UNTRAINED": "read V from the UNTRAINED critic (init weight, no value-train) -> flat/anti-goal V (A1 floor) -> the trained-cue advantage vanishes. Proves the substrate's LEARNING is load-bearing (the NEW anti-cheat R5-R1a lacked; its value was a host tag).",
+    "G_DISCRIM": "EQUAL learned V on all options -> lesion NEUTRAL (choice agreement ~1.0). Value-SPECIFIC.",
+    "G_PERMUTE": "permute which option gets which learned V (deterministic permutation-average) -> chance.",
+    "non_circular_value": "corr(learned V, salience) ~ 0 -> the choice is driven by the learned value, not a relabeled salience.",
+    "moat_by_construction": "the WTA decision organ has NO RF/conversational slices -> array-disjoint from any composer; check_moat re-asserted on the merged critic agent."
+  },
+  "detail": {
+    "n_seeds": 1,
+    "min_seed_pass": 5,
+    "acc_intact_mean": 1.0,
+    "acc_intact_min": 1.0,
+    "acc_lesion_mean": 0.4666666666666667,
+    "acc_untrained_mean": 0.16666666666666666,
+    "equal_agreement_mean": 1.0,
+    "acc_permuted_mean": 0.5,
+    "trained_grade_mean": 2.1891891891891895,
+    "untrained_grade_mean": 0.652482269503546,
+    "value_salience_corr_absmax": 0.03966079249668999,
+    "headline_pass": 1,
+    "lesion_pass": 1,
+    "untrained_pass": 1,
+    "discrim_pass": 1,
+    "permute_pass": 1,
+    "noncircular_all": true,
+    "moat_by_construction_all": true
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "backend": "numpy",
+      "n_options": 2,
+      "n_trials": 60,
+      "chance": 0.5,
+      "cues": [
+        [
+          6.0,
+          6.0
+        ],
+        [
+          1.0,
+          1.0
+        ]
+      ],
+      "w_afferent_init": 0.1902705878019333,
+      "value_train": {
+        "tonic_frac": 0.028000000000000008,
+        "w_near_pre": 0.1902705878019333,
+        "w_near_post": 3.979513645172119,
+        "w_grew": 20.91502260619854
+      },
+      "V_untrained_hz": [
+        12.78,
+        19.58
+      ],
+      "V_trained_hz": [
+        33.75,
+        15.42
+      ],
+      "trained_grade_goal_far": 2.1891891891891895,
+      "untrained_grade_goal_far": 0.652482269503546,
+      "acc_intact": 1.0,
+      "acc_lesion": 0.4666666666666667,
+      "acc_untrained": 0.16666666666666666,
+      "equal_value_choice_agreement": 1.0,
+      "acc_permuted": 0.5,
+      "margin_intact": 43.18333333333333,
+      "margin_lesion": 0.7833333333333333,
+      "value_salience_corr": -0.03966079249668999,
+      "headline_above_chance": true,
+      "lesion_collapses": true,
+      "untrained_no_advantage": true,
+      "equal_value_neutral": true,
+      "permute_collapses": true,
+      "noncircular": true,
+      "moat_preserved_by_construction": true,
+      "moat_agent": null,
+      "elapsed_s": 150.81668138504028
+    }
+  ],
+  "elapsed_total_s": 150.83165431022644
+}

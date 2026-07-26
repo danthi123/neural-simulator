@@ -1,0 +1,99 @@
+{
+  "runner": "_wkv_spiking_forward_derisk",
+  "mode": "smoke",
+  "backend": "numpy-model",
+  "purpose": "CPU wiring smoke of run3's 83M WKV spiking-graded-read forward + all controls",
+  "smoke_wired": true,
+  "knobs": {
+    "vocab": 64,
+    "d_model": 32,
+    "n_layers": 2,
+    "chunk_c": 8,
+    "block_size": 16,
+    "n_stream_tokens": 192,
+    "n_windows": 8,
+    "n_logit_pos": 8,
+    "seed": 42,
+    "read_eps_default_rf_level": 5e-07,
+    "ssm_scan": "loop reference a_t=lam a_{t-1}+(1-lam)v_t (== chunked_ssm to 1e-4)"
+  },
+  "gate_1_numpy_ann_eq_torch": {
+    "max_abs_logit_diff": 4.5951925153886464e-07,
+    "pass": true
+  },
+  "gate_2_faithful_at_rf_read_error": {
+    "ppl_ratio": 1.0000000376334384,
+    "logit_fid_spearman": 1.0,
+    "logit_fid_cosine": 0.9999999999995661,
+    "pass": true
+  },
+  "read_eps_sweep": {
+    "0e+00": {
+      "read_eps": 0.0,
+      "spiking_ppl": 78.71813069340661,
+      "ann_ppl": 78.71813069340661,
+      "ppl_ratio": 1.0,
+      "logit_fid_spearman": 1.0,
+      "logit_fid_cosine": 1.0
+    },
+    "5e-07": {
+      "read_eps": 5e-07,
+      "spiking_ppl": 78.71813365584053,
+      "ann_ppl": 78.71813069340661,
+      "ppl_ratio": 1.0000000376334384,
+      "logit_fid_spearman": 1.0,
+      "logit_fid_cosine": 0.9999999999995661
+    },
+    "1e-03": {
+      "read_eps": 0.001,
+      "spiking_ppl": 78.72409662948489,
+      "ann_ppl": 78.71813069340661,
+      "ppl_ratio": 1.0000757885893088,
+      "logit_fid_spearman": 0.9999427655677655,
+      "logit_fid_cosine": 0.9999982648856303
+    },
+    "1e-02": {
+      "read_eps": 0.01,
+      "spiking_ppl": 78.78149080709446,
+      "ann_ppl": 78.71813069340661,
+      "ppl_ratio": 1.0008048986063278,
+      "logit_fid_spearman": 0.9993131868131868,
+      "logit_fid_cosine": 0.9998266801021529
+    }
+  },
+  "gate_3_controls_change_result": {
+    "read_eps_degrades_at_1e-2": {
+      "value_spearman": 0.9993131868131868,
+      "pass": true
+    },
+    "shuffle_head_collapses_fid": {
+      "spearman": 0.04986907623626374,
+      "pass": true
+    },
+    "ssm_lesion_breaks_ppl": {
+      "lesion_ppl": 78.4083662072798,
+      "ann_ppl": 78.71813069340661,
+      "lesion_ppl_ratio": 0.9960648902178166,
+      "lesion_fid_spearman": 0.986287345467033,
+      "faithful_fid_spearman": 1.0,
+      "lesion_fid_delta_vs_faithful": 0.013712654532966995,
+      "note": "untrained smoke: ppl ~chance +/- SSM so the decisive signal is the fid delta; ppl-explosion lesion is the TRAINED-model signal validated in --mode full",
+      "pass": true
+    },
+    "all_controls_change": true
+  },
+  "run3_ckpt_header_check": {
+    "ckpt": "/home/dant123/Projects/sim/bridges/lmtrain/run3/ckpt/best.pt",
+    "total_params": 83166848,
+    "total_params_M": 83.17,
+    "d_model": 1024,
+    "vocab_size": 16000,
+    "n_layers": 16,
+    "arch_keys_ok": true,
+    "matches_run3_arch": true,
+    "step": 902000,
+    "tokens_seen": 7389184000
+  },
+  "elapsed_seconds": 1.12,
+  "aws_gpu_launch_command": ".venv/bin/python -m research.runners._wkv_spiking_forward_derisk --mode full --ckpt bridges/lmtrain/run3/ckpt/best.pt --backend rf-bridge --seeds 42 43 44 100 101 102 --n-windows 16 --nsteps 8 --block-size 256 --n-logit-pos 16 --out research/findings/raw/wkv_spiking_forward/run3_rf_6seed.json"
+}

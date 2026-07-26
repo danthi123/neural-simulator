@@ -1,0 +1,78 @@
+{
+  "task": "CONFIG-PREP gap#1: two launch specs (162M width-ladder point run5_d1536; run4-267M spiking-forward)",
+  "date": "2026-07-23",
+  "constraints_honored": {
+    "reuse_by_import": true,
+    "sim_edit": "NONE",
+    "runner_edit": "NONE (neither runner required an edit)",
+    "built_new_runner": false,
+    "note": "pure config-prep over two pre-existing, unmodified runners: lm_train_run.py + _wkv_spiking_forward_derisk.py"
+  },
+
+  "spec_1_run5_d1536_width_ladder_162M": {
+    "purpose": "the 162M point of the WIDTH ladder run3=83M(d1024) -> run5=162M(d1536) -> run4=267M(d2048), all L16 V16000, SAME frozen tokens.",
+    "param_count_verified": {"run3_d1024": "83.17M", "run5_d1536": "162.49M", "run4_d2048": "266.98M"},
+    "lane": "aws-gpu",
+    "lane_rationale": "162M is a multi-day train (run3 is at step ~902k / 5.2B+ tokens); AWS per the multi-day->AWS directive, and keeps the ladder's long runs off the gaming/run3-contended local 3090. VRAM fits the 3090 comfortably (~2.3GB params+AdamW + small activations at batch32/seq256/d1536/L16) so local-3090 is a valid BOUNDED fallback.",
+    "gpu_bound": true,
+    "prep_DONE_by_this_task": [
+      "mkdir -p bridges/lmtrain/run5_d1536",
+      "ln -sfn /home/dant123/Projects/sim/bridges/lmtrain/run3/tokens_train.npy  bridges/lmtrain/run5_d1536/tokens_train.npy",
+      "ln -sfn /home/dant123/Projects/sim/bridges/lmtrain/run3/tokens_val.npy    bridges/lmtrain/run5_d1536/tokens_val.npy",
+      "ln -sfn /home/dant123/Projects/sim/bridges/lmtrain/run3/tokenizer.json    bridges/lmtrain/run5_d1536/tokenizer.json",
+      "ln -sfn /home/dant123/Projects/sim/bridges/lmtrain/run3/corpus_meta.json  bridges/lmtrain/run5_d1536/corpus_meta.json",
+      ".venv/bin/python -m research.runners.lm_train_run tokenize --root bridges/lmtrain/run5_d1536 --corpus-path bridges/lmtrain/run3/tokens_train.npy --tokenizer hf --vocab-size 16000 --d-model 1536 --n-layers 16 --chunk-c 16 --seq-len 256 --batch 32 --warmup-steps 2000 --lr-decay-steps 3000000 --seed 42"
+    ],
+    "prep_verified": {
+      "symlinks_resolve": "all 4 OK (absolute, matching run4_d2048)",
+      "tokenize_SKIPPED_retokenize": "printed '[tokenize] cached: vocab=16000 train=5975999765 val=24000000 tokens' -> found symlinks, did NOT re-tokenize the 6B-token corpus",
+      "config_frozen_at_d1536": true,
+      "config_diff_vs_run4": "ONLY d_model differs (1536 vs 2048); all 16 other frozen keys identical",
+      "status_reads_frozen_cfg": "d_model=1536 n_layers=16 vocab=16000 T=256, step=0, resumable=False, paused=False"
+    },
+    "LAUNCH_COMMAND": ".venv/bin/python -m research.runners.lm_train_run start --root bridges/lmtrain/run5_d1536 --corpus-path bridges/lmtrain/run3/tokens_train.npy --tokenizer hf --vocab-size 16000 --d-model 1536 --n-layers 16 --chunk-c 16 --seq-len 256 --batch 32 --warmup-steps 2000 --lr-decay-steps 3000000 --seed 42 --device cuda --amp 1 --compile 1 --chunk-steps 500",
+    "launch_command_short_form_equivalent": ".venv/bin/python -m research.runners.lm_train_run start --root bridges/lmtrain/run5_d1536 --device cuda --amp 1 --compile 1 --chunk-steps 500  (config.json is already frozen; the frozen identity wins over CLI, so the model/data flags are redundant and only the runtime flags take effect -- both forms are equivalent)",
+    "all_knobs_frozen": {
+      "corpus_path": "bridges/lmtrain/run3/tokens_train.npy", "tokenizer": "hf", "vocab_size": 16000,
+      "d_model": 1536, "n_layers": 16, "chunk_c": 16, "seq_len": 256, "corpus_max_chars": 0,
+      "bpe_train_chars": 5000000, "val_frac": 0.02, "seed": 42, "lr": 0.0003, "weight_decay": 0.1,
+      "warmup_steps": 2000, "lr_decay_steps": 3000000, "min_lr_ratio": 0.1, "batch": 32
+    },
+    "all_knobs_runtime": {"device": "cuda", "amp": 1, "compile": 1, "compile_mode": "default (max-autotune optional; run3 A/B ~+7.5% tok/s)", "chunk_steps": 500, "max_hours": "0 (unbounded; PAUSE-sentinel / max-tokens / max-hours bound it per-invocation)", "history_keep": 5},
+    "resumability": "resumable (PAUSE sentinel stops cleanly at the next checkpoint boundary, zero work lost; a fresh `start` resumes bit-exact). status: `lm_train_run status --root bridges/lmtrain/run5_d1536`.",
+    "anti_cheat_controls": {
+      "like_for_like_isolation": "run5 SHARES run3's exact tokens_train/tokens_val/tokenizer via symlink -> d_model is the ONLY varied knob across the ladder (config diff proves it). make_held_out reads run_dir/tokens_val.npy (the symlink) so run3/run5/run4 are scored on the IDENTICAL val shard.",
+      "anti_silent_drift": "config.json is FROZEN (frozen_dict); a resume LOADS it and REFUSES a silent identity change (prints NOTE + keeps frozen value). Verified: status reads d_model=1536 from the frozen config."
+    },
+    "go_gate": "TRAINING run, not a pass/fail de-risk. Deliverable = a run5 checkpoint benchmarked on the SHARED run3 val shard at a matched token budget. Numeric ladder-GO: at equal tokens_seen, val_ppl(run5_d1536) sits BETWEEN val_ppl(run4_d2048) and val_ppl(run3_d1024) i.e. run5_ppl < run3_ppl AND run5_ppl > run4_ppl -> the 162M point lies on the monotone width-scaling curve. (run4 @ step2000 val_ppl=224.94; run3 @ matched-early-step is the like-for-like comparator.)"
+  },
+
+  "spec_2_run4_267M_spiking_forward": {
+    "purpose": "re-validate the RF spiking-graded-read FORWARD convertibility (spiking-Broca) on run4's ACTUAL 267M d2048/L16 checkpoint (the run3 83M version is the existing --mode full target).",
+    "runner": "research/runners/_wkv_spiking_forward_derisk.py --mode full",
+    "arch_flags_needed": false,
+    "arch_finding": "RUN3_ARCH/RUN3_CKPT/RUN3_VAL are hardcoded, but NONE is load-bearing for run4: run_full -> build_numpy_model_from_ckpt(--ckpt) -> load_ckpt_header DERIVES d_model/vocab/n_layers FROM the checkpoint's state_dict shapes. Verified on run4's real best.pt: auto-detected 266.98M, d=2048, L=16, V=16000, arch_keys_ok=True. RUN3_ARCH only feeds the COSMETIC 'matches_run3_arch' diagnostic (reads False for run4; NOT a gate). RUN3_VAL resolves (run4 shares run3's val split -> run4/tokens_val.npy is a symlink to run3/tokens_val.npy = identical bytes) to the CORRECT val shard. => `--ckpt bridges/lmtrain/run4_d2048/ckpt/best.pt` alone suffices; NO --d-model/--n-layers edit required.",
+    "lane": "local-3090",
+    "lane_rationale": "bounded GPU de-risk (6 seeds x 16 windows), fits the 3090, gaming-pausable; slots when the 3090 frees (run3 currently training on it).",
+    "gpu_bound": true,
+    "checkpoint_readiness": "run4 currently has a step-2000 best.pt (best_val_nll 5.4158, still early). RF forward faithfulness is ARCHITECTURE-dependent (per-op graded-read error over 16 layers at d=2048), NOT training-completeness-dependent, so it CAN run on the current best.pt for an early wiring-on-real-267M check; the meaningful de-risk is on run4's CONVERGED best.pt. The command is IDENTICAL regardless (arch auto-detected).",
+    "CHEAP_FIRST_COMMAND_run_before_6seed": ".venv/bin/python -m research.runners._wkv_spiking_forward_derisk --mode full --ckpt bridges/lmtrain/run4_d2048/ckpt/best.pt --backend rf-bridge --seeds 42 43 --n-windows 8 --nsteps 8 --block-size 256 --n-logit-pos 16 --out research/findings/raw/wkv_spiking_forward/run4_rf_2seed_cheap.json",
+    "FULL_6SEED_LAUNCH_COMMAND": ".venv/bin/python -m research.runners._wkv_spiking_forward_derisk --mode full --ckpt bridges/lmtrain/run4_d2048/ckpt/best.pt --backend rf-bridge --seeds 42 43 44 100 101 102 --n-windows 16 --nsteps 8 --block-size 256 --n-logit-pos 16 --out research/findings/raw/wkv_spiking_forward/run4_rf_6seed.json",
+    "all_knobs": {"mode": "full", "backend": "rf-bridge", "ckpt": "bridges/lmtrain/run4_d2048/ckpt/best.pt", "seeds": [42, 43, 44, 100, 101, 102], "n_windows": 16, "nsteps": 8, "block_size": 256, "n_logit_pos": 16, "read_eps": "5e-7 (numpy-model backend only; unused on rf-bridge)", "rf_period": 100000, "rf_lambda": 0.0},
+    "go_gate": "READ the runner's OWN printed verdict: '[wkv-spk-fwd:FULL] ... VERDICT GO' iff mean_ppl_ratio <= 1.05 AND mean_logit_fid_spearman >= 0.99 over the 6 seeds (JSON field 'verdict_go_ppl_ratio<=1.05_and_fid>=0.99'). An honest NEGATIVE (16-layer d2048 per-op graded-read error compounds where run3's did not) is FIRST-CLASS -- it maps the substrate limit.",
+    "anti_cheat_controls": {
+      "wired_and_INVOKED_in_smoke_path": "VERIFIED live via the smoke's printed verdict (not a lifted field): read_eps sweep DEGRADES at 1e-2 (spearman 1.0000->0.9993), shuffle_head COLLAPSES logit_fid (1.0->0.050), ssm_lesion BREAKS the SSM time-mix (fid 1.000->0.986). all_controls_change=True, smoke_wired=True.",
+      "wired_and_invoked_in_full_path": "6 val-window SEEDS (data robustness = the full-path control); rf-bridge backend RECORDS rf_max_read_err per seed (the real RF read error, measure_err=True). The shuffle/lesion STRUCTURAL controls validate the wiring is real and live in --mode smoke (run once, verified here)."
+    }
+  },
+
+  "cpu_smoke_this_task": {
+    "command": ".venv/bin/python -m research.runners._wkv_spiking_forward_derisk --mode smoke --seed 42 --out research/findings/raw/wkv_spiking_forward/smoke_configprep.json",
+    "verdict": "smoke_wired=True",
+    "gate_1_numpy_ann_eq_torch": "max|logit diff| 4.60e-07 PASS",
+    "gate_2_faithful_at_rf_read_error": "ppl_ratio 1.000000, logit_fid(spearman) 1.0000 PASS",
+    "gate_3_all_controls_change": "True (eps-degrades + shuffle-head-collapses + ssm-lesion-breaks)",
+    "run3_ckpt_header_autodetect": "83.17M d=1024 L=16 V=16000 step=902000 matches_run3_arch=True keys_ok=True",
+    "note": "SMOKE proves wiring + controls-live + verdict on a TINY 2-layer numpy WKV (1 seed); it is NOT a GO/NEGATIVE claim for run4 -- that comes from the 6-seed rf-bridge FULL run on the 3090."
+  }
+}

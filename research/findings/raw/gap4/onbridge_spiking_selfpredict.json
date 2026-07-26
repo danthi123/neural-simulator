@@ -1,0 +1,74 @@
+{
+  "probe": "gap4_onbridge_spiking_selfpredict_CONSTRUCT_SMOKE",
+  "seed": 42,
+  "task_meta": {
+    "n_super": 8,
+    "n_members": 4,
+    "held_per_super": 1,
+    "n_prop": 2,
+    "k_classes": 5,
+    "member_id_dim": 3,
+    "n_obs": 4,
+    "noise": 0.02,
+    "feature_seed": 0,
+    "n_features": 7,
+    "n_train": 72,
+    "n_heldout": 32,
+    "n_inherit_heldout": 6,
+    "n_memctrl_heldout": 2,
+    "n_supers_untaught": 2
+  },
+  "seed_identity_ok": true,
+  "ast_no_forward_W": true,
+  "transport_ceiling_guard_correctly_fails": true,
+  "arms": {
+    "reservoir": {
+      "built": true,
+      "stepped": true,
+      "heldout_read": 0.3333333333333333,
+      "no_weight_transport": true,
+      "error": null
+    },
+    "fixed_fa": {
+      "built": true,
+      "stepped": true,
+      "heldout_read": 0.3333333333333333,
+      "no_weight_transport": true,
+      "error": null
+    },
+    "kp": {
+      "built": true,
+      "stepped": true,
+      "heldout_read": 0.3333333333333333,
+      "no_weight_transport": true,
+      "error": null
+    },
+    "micro": {
+      "built": true,
+      "stepped": true,
+      "heldout_read": 0.3333333333333333,
+      "no_weight_transport": true,
+      "error": null,
+      "wpi_selfpred_cos_before_after": [
+        0.0553,
+        0.0561
+      ],
+      "apical_silent_read": {
+        "apical_correct": 1.036,
+        "apical_incorrect": 0.9405,
+        "silent_ratio": 1.1015,
+        "frac_correct": 0.0938,
+        "selfpred_cos": 0.0561
+      }
+    },
+    "transport_ceiling": {
+      "built": true,
+      "stepped": true,
+      "heldout_read": 0.3333333333333333,
+      "no_weight_transport": false,
+      "error": null
+    }
+  },
+  "CONSTRUCT_SMOKE_PASS": true,
+  "NOTE": "BUILD-AHEAD skeleton -- this proves the on-bridge microcircuit CONSTRUCTS + STEPS on CPU (numpy) without crashing. The multi-seed GPU accuracy run (the decisive gap#4 test) is the CONTROLLER's, deferred until the 3090 frees. See 2026-07-24-gap4-onbridge-spiking-port-DESIGN.md."
+}

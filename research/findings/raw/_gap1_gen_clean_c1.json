@@ -1,0 +1,52 @@
+{
+  "runner": "_emerge_wkv_onbridge_derisk",
+  "ssm": "bridges/wkv_ckpt/wkv_ssmU_v4000_d256_big_seed42.npz",
+  "seed": 42,
+  "map_corr": 0.9957019900641055,
+  "decay": 0.7676442265510559,
+  "by_depth": {
+    "1": {
+      "n": 5,
+      "onbridge": 4.631,
+      "bigram": 5.557,
+      "trigram": 6.344,
+      "vs_trigram": 1.714
+    },
+    "2": {
+      "n": 5,
+      "onbridge": 2.546,
+      "bigram": 6.509,
+      "trigram": 4.14,
+      "vs_trigram": 1.594
+    },
+    "3": {
+      "n": 5,
+      "onbridge": 3.162,
+      "bigram": 6.174,
+      "trigram": 4.514,
+      "vs_trigram": 1.352
+    },
+    "4-5": {
+      "n": 10,
+      "onbridge": 2.065,
+      "bigram": 5.983,
+      "trigram": 4.022,
+      "vs_trigram": 1.957
+    },
+    "6-9": {
+      "n": 13,
+      "onbridge": 2.535,
+      "bigram": 5.258,
+      "trigram": 3.835,
+      "vs_trigram": 1.3
+    },
+    "10-99": {
+      "n": 6,
+      "onbridge": 2.997,
+      "bigram": 6.414,
+      "trigram": 3.995,
+      "vs_trigram": 0.998
+    }
+  },
+  "go": true
+}
