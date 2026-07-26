@@ -1404,3 +1404,38 @@ genuinely freezes the pathway (rule 2 — the "this is inert" claim is now an as
 ON throughout this arc and Hebbian is live; ablation `{both, −STDP, −Hebbian, −both}` launched. Only once the
 depression source is named does a corrective mechanism (e.g. the still-untried Miller-MacKay `btsp_mean_subtract`)
 have a defined target.
+
+## ✅ THE DEPRESSION SOURCE IS NAMED — Hebbian's soft bound; and STDP is INERT on this pathway
+
+Ablation `{both-on, −STDP, −Hebbian}` at seed 42, `--teaching-clamp --elig-tau 30 --freeze-gap --hebbian-max-w 2.5`:
+
+| arm | diag (selective) | off | per-slot mass | verdict |
+|---|---|---|---|---|
+| both-on (baseline) | +196.838 | −6.009 | `[2.4985, 2.4990, 4.9278]` | ✓ physiological |
+| **−STDP** | **+196.840** | **−6.009** | **`[2.4985, 2.4990, 4.9279]`** | ✓ **BYTE-IDENTICAL to baseline** |
+| −Hebbian | +2813.1 | +483.0 | `[29.2, 22.6, 60.8]` | ⛔ **VOID** — `v_apical` −284 mV, runaway |
+
+**(1) STDP is INERT on `concept_to_comp_attr`.** Disabling it changes the result in the 6th significant figure. STDP
+was live throughout this entire arc and was repeatedly flagged as a confound (it is what invalidated an earlier
+`btsp_lr` sweep); on THIS pathway it contributes nothing. That removes a suspected variable permanently.
+
+**(2) Hebbian cannot be removed** — the substrate goes unphysiological (the validity gate I built caught it and
+printed VOID rather than letting me read the numbers, which is the gate working as intended).
+
+**⇒ THE MECHANISM, now measured rather than inferred:** at `hebbian_max_w=2.5` the weights sit at **2.4985 / 2.4990 —
+exactly at the bound**. Hebbian's soft bound is `dw ∝ (w_max − w)`, so it drives every coactive pool→slot pair to the
+ceiling and then oscillates about it; **the ±70-unit flows ARE that oscillation**, and BTSP's selective +196.8 is
+absorbed because Hebbian pulls it back to the bound within the same window. Only the ~3% residual escapes — hence a
+seed-dependent winner.
+
+This CONFIRMS, with a direct per-window measurement, the mechanism the board had recorded from code-reading alone
+("a broad coactivity rule and a selective plateau rule compete on the same synapses and the broad one wins"). The
+difference is that it is now a measurement with an ablation behind it, not an inference — and it adds the new fact
+that STDP plays no part.
+
+**▶ NEXT (in flight): Hebbian-lr scan DOWNWARD** (default / 1e-3 / 1e-4 / 1e-5, STDP off since proven inert). If
+Hebbian's role is to BOUND rather than to WRITE, there should be a rate low enough to keep the substrate physiological
+while letting BTSP set the pattern. If no such rate exists — if selectivity and stability cannot coexist on this
+pathway — then the bound must come from a NON-coactivity mechanism (synaptic scaling · a true hard clip · the
+still-untried Miller-MacKay `btsp_mean_subtract`, **verified live + reachable**: `config.py:396`, `bridge.py:8153`
+inside `_run_one_simulation_step`, guarded by an `elif` whose preceding branch is the default-off Milstein path).
