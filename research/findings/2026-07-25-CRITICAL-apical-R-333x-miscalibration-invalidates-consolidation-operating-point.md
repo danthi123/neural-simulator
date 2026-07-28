@@ -2463,3 +2463,53 @@ fixes are now refuted with the levers verified live (washout: made it WORSE, 0.5
 7×). Per the standing rule I should have applied hours ago, I am NOT guessing a third lever — dispatching the
 read-only deep-research round to rank biologically-grounded mechanisms for *making a saturated winner-take-all
 competition cue-steerable*, before any further build or GPU spend.
+
+## ⛔⛔⛔ THE RESEARCH GATE'S VERDICT: I RE-DERIVED A 2-DAY-OLD SCOPING DOCUMENT THE HARD WAY
+
+The gate (`wtn973nfa`, corpus-first as mandated) returned a finding more important than any measurement today:
+
+**`research/findings/2026-07-26-cortical-slot-addressability-research-gate.md` — 497 lines, THIS exact problem, on
+THIS exact substrate (`comp_attr_{s}`, `nmda_compositional_consolidation.py`), with a ranked 6-mechanism ladder —
+already existed.** Its predecessor (`2026-07-25-ca1-sparsification-research-gate-scope.md`) had already named the
+failure verbatim: *"the slot WTA collapses to a single dominant winner, seed-variable ~chance."*
+
+**Ladder status after today:** rank 0 (measure per-slot firing) — I did it today. rank 1 (per-slot FS) — I built and
+refuted it, **but the gate's *paired sweep* was never run**. rank 2 (`btsp_mean_subtract`) — 6-seed GO.
+**rank 3 (WINNER-INACTIVE DEPRESSION on `pool→slot`) — NEVER RUN, and it is the strongest in-repo prior on exactly
+this class (ablation 0.20 → 0.96, 6/6 seeds).** rank 4 (sparse `pool→slot`) — not run. **rank 5 (divisive norm /
+input-mean-adapt ON THE SLOTS) — never run on the slots** (`divnorm_regions` was only ever pointed at `dg`/`ca1`).
+
+**MY FRAMING WAS ALSO WRONG.** I called saturation "the FIFTH failure in this arc". The corpus says it is **at
+minimum the EIGHTH in the project and a DOCUMENTED FAMILY** — so research-gate condition **(b) "known family" fires
+on FIRST occurrence**, not after six levers. And "raising the drive changes nothing" had already been measured
+**three times**: RUNG-6f (drive 900→300 all slots saturate ~0.27; `rec_w` 12→30 and `fs_w` 10→24 both inert),
+P0.3-affect (flat ~0.09–0.11 across a **6.7×** drive sweep), biased-competition (**insensitive 100–1200 pA**).
+My 7× sweep was the fourth instance of a known result.
+
+**ALSO ALREADY REFUTED — mechanisms I would plausibly have tried next:** divisive normalization as a fix for a
+saturated WTA is a **6-seed see-saw BOUNDARY** (`2026-07-05-objrel-rank2-divisive-norm-BOUNDARY.md`: it preserves
+the differential-to-pedestal RATIO, so the spiking read still sees a near-uniform drive; canonical regresses
+0.97→0.50, 1.00→0.58, 0.64→0.33). First-to-fire/rank-order latency reads are a BOUNDARY at sub-1% margins
+(`dt_resolvable_seeds 0/6`). Shared/global inhibition is selection-inert with **FOUR** independent confirmations
+(EMERGE-41 winner set **byte-identical** FS-on vs FS-lesion, overlap 1.00/1.00/1.00 — the FS changes only loser
+sparsity). SFA-based slot allocation is **exhausted** (9 configs swept, every one SELECTIVE ≤1/3).
+
+**✅ AND THE ANTIDOTE THE CORPUS ALREADY VALIDATED — near-rheobase, ZERO-PEDESTAL latency coding.**
+`2026-07-02-emerge41-fs-wta-kwinners-GO.md` (`_emerge41_fs_wta_kwinners_derisk.py:49`): `DRIVE_GAIN=45.0` pA per
+unit drive, **`DRIVE_BASE = 0.0`** — 60 columns, K=6, chance 0.10, **overlap with host top-K = 1.00/1.00/1.00**,
+and **FLAT-drive collapses to 0.17**. ⇒ a competition on this substrate IS cue-steerable **when it runs
+near-rheobase with no pedestal**, and selection is carried by spike TIMING. Our slot competition is the opposite:
+a ~43,200 sum_w non-selective pedestal with the winner pinned at its firing ceiling. **That is the diagnosis in one
+sentence — we are running the WTA in precisely the regime the project already proved does not work.**
+
+**⇒ PROCESS — THIS IS DRIFT #12 AND IT COST THE DAY.** The corpus-first rule is the *mandatory first move* at a
+roadblock. Skipping it cost hours here, and this is the **second** time today it would have saved me (the ACh
+biologization claim was the first). The new ≥2-lever trigger I added is necessary but **insufficient** — it fires
+the gate, but the gate must be **corpus-first**, and a 497-line document with a ranked ladder for the exact
+problem was sitting one RAG query away the entire time.
+
+**▶ NEXT, and it is now prescribed by the corpus rather than guessed:** (1) **rank 3 — winner-inactive depression
+on `pool→slot`** (`fused_htm_winner_inactive_depression`, `sim/kernels.py:497`; prior 0.20→0.96 6/6); (2) move the
+slot competition to the **near-rheobase / zero-pedestal** operating point EMERGE-41 validated. GO gate unchanged:
+driven-slot spike share **≥0.8 with washout ≥60**, then after-replay own-is-max ≥2/3, 6 seeds, scramble-teach
+collapsing.
