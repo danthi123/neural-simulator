@@ -1803,3 +1803,35 @@ true mapping is not something noise produces; it requires a real association bei
 
 **⇒ The trial-coupling caveat in the header is RESOLVED and rewritten.** The honest headline number is the
 seed-level one: **6/6 vs 0/6, p = 0.00108.**
+
+## 📈 CAPACITY — the mechanism holds at N=4 (the vocabulary ceiling): 24/24, and selectivity IMPROVES
+
+The 18/18 result's own scope note conceded that a 3-way argmax is a soft discrimination. Re-ran at **N=4**, the
+maximum the current 4-noun × 4-adjective vocabulary supports (`--n-facts 4`; chance drops 1/3 → **1/4**, i.e. 6/24).
+
+| | N=3 | **N=4** |
+|---|---|---|
+| recall (hippo-lesioned) | 18/18 | **24/24 — 4/4 on 6/6 seeds** |
+| chance | 6/18 | **6/24** |
+| store own-is-max | 3/3 on 6/6 | **4/4 on 6/6** |
+| firing-weighted own/other | 12.51–46.61 | **11.00–57.84** |
+| `read_weight_drift` | +0.000000 | **+0.000000** (all 6) |
+| substrate | physiological | physiological (all 6) |
+
+**No interference from a fuller store — selectivity went UP, not down.** A capacity limit would show as cross-fact
+bleed in the pool→slot weights degrading own/other as facts are added; the opposite happened. So N=4 is a
+*vocabulary* ceiling, not a *mechanism* ceiling — testing beyond it requires building new concept pools, which is a
+separate construction, and the mechanism gives no sign of being the binding constraint.
+
+**Latent trap caught while building this:** `BASE` freezes `comp_attractor_slots` at IMPORT time from the 3-fact
+list, so varying the fact count without overriding it would silently build **3 slots for 4 facts** — a fact with no
+slot to write to, which would have read as a clean "capacity boundary". Slot count now follows `N`. The default
+path is VERIFIED unchanged (`comp_attractor_slots` resolves to 3 either way, checked by import, not asserted).
+This is the same shape as the `hebbian_max_weight` inversion and the void lesion: **a configuration artifact
+presenting as a property of the biology** — the arc's dominant failure mode, now caught pre-emptively rather than
+after a wrong conclusion was recorded.
+
+**⚠️ Note for the record:** `--n-facts 4` consumes `FACTS_ALL[3]` = the WITHHELD fact, so an N=4 run **cannot also
+serve as a no-confab test** (that control lives in the main runner and needs an unconsolidated concept).
+
+**▶ N=4 scramble-teach control in flight** (4-cycle derangement) — the arm alone is not the claim.
