@@ -1988,3 +1988,42 @@ factors of the learning rule). Those are three separate open capabilities, not c
 **▶ NEXT — the test that WOULD discriminate** (queued, not yet run): store only 3 of the 4 overlapping facts and
 probe the withheld one. A per-feature reader generalizes (votes `[0,1,1,0]` — a confident non-target response); a
 conjunctive store has nothing to match and should abstain. That is a genuine discriminator; the overlap set was not.
+
+## 🧭 STRATEGIC: the consolidation store's representation is STRICTLY WEAKER than the project's already-validated binder
+
+Read the code myself (not the board, not a subagent summary) to answer: is this arc duplicating solved work?
+
+**First, a self-caught reading error worth recording.** I opened
+`2026-07-17-keystone-2-spiking-slot-binder-STEP1-prereq-GO.md`, saw it end with *"⚠️ RESUME HERE … step 2c
+(role-cued multi-bind retrieval) … stuck on a precise weight-orientation/transmission subtlety"*, and was about to
+conclude the board OVERSTATES the binder. **Wrong — I read the FIRST finding, not the LATEST.** Five later gap#2
+findings exist (`2026-07-17-gap2-adversarial-verify-CONFIRMED…`, `2026-07-21-gap2-spiking-learned-binder-6seed-GO…`,
+`2026-07-22-gap2-attribute-slot-GO-FHRR-retirement-step1`, `2026-07-22-gap2-pointer-clause-GO-FHRR-fully-retirable`)
+plus commit `170f6361` *"gap#2 CAPABILITY CLOSED: SlotBinderComposer wired into BrainConversationalAgent … CI 6
+pass, 0 regression"*, with `slotbinder_composer.py` + `test_slotbinder_composer.py` in the tree. **The board is
+accurate.** ⇒ *drift #12 has a mirror image: a FINDING is also a point-in-time record, and the LATEST one wins.
+"Read the source" does not mean "read the first source you find".*
+
+**The decisive comparison** (`slotbinder_composer.py:9`):
+
+| | representation of a fact | constituent structure | allocation |
+|---|---|---|---|
+| **gap#2 SlotBinderComposer** (validated, wired, FHRR-retiring) | **4 role-slots** `slot[4i+0..3]`, each taught to a constituent's code (agent/action/patient/polarity) | **YES** — content distributed across roles; retrieval = drive a role-slot, read its filler | host counter (**tracked refinement**: → adaptation-based) |
+| **this arc's `concept_to_comp_attr` store** | **ONE slot per fact** | **NONE** — the fact is "which slot fires" | host clamp picks `_tgt = i` |
+
+**⇒ The consolidation store is STRICTLY WEAKER than machinery the project has already validated and shipped.** It
+has no role structure, no constituent codes, and therefore nothing to retrieve *by role* — the very thing the
+slot-filler frame provides. This is the **whack-a-mole failure mode** CLAUDE.md warns about: a fresh hand-built
+mechanism for a capability that already has a better, validated home.
+
+**⇒ THE ARCHITECTURAL CORRECTION (my read; the strategic workflow `wv6j5as8j` is cross-checking it):**
+consolidation should NOT own a representation at all. Its job is **TRANSFER** — moving an existing
+hippocampally-encoded fact into the **already-validated cortical slot-filler representation**, i.e. consolidating
+*into* `SlotBinderComposer`'s role-slots, not into a parallel localist bank. That reframes capability (A) from
+"build a cortical store" (done badly here) to "drive the validated binder's write from replay instead of from a
+host teach call" — which is also exactly where capability (C) lives, since **both** the binder and this arc carry
+the SAME open shortcut: **host-decided slot allocation**.
+
+**⇒ The three open capabilities collapse toward ONE question:** *can a replay event, on its own, select a target
+slot and supply the apical instructive signal that writes a constituent into it?* Answer that and (A) replay-driven
+transfer, (C) self-organized write, and the binder's own tracked allocator refinement all move together.
