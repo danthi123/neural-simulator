@@ -1,32 +1,69 @@
-> # 📍 READ FIRST — CURRENT STATE (this doc is an append-log containing TWO major reversals; the top sections are the ORIGINAL discovery, not the final picture)
+> # 📍 READ FIRST — CURRENT STATE (rewritten 2026-07-26)
 >
-> **1. The 2026-07-25 consolidation "boundary" was NEVER REAL.** It was an artifact of `comp_apical_R=50.0` — a **333×
-> miscalibration** of a pA→mV units constant (engine default `0.15`) that parked `v_apical` at ~2×10⁵ mV and, through
-> `apical_g_couple_to_soma=5.0`, drove every soma. The "dense 93%-active CA1 code" it produced was runaway current, not a
-> hippocampal code. **VOID:** the dense-code re-attribution, the code-overlap ceilings, the 6-seed two-sided NO-GO, the
-> M0 GO, and the "surpass = dendritic per-branch write" conclusion.
-> **2. On a physically valid substrate the write LOCALIZES — 6-seed GO** (own-is-max **18/18 fact-seeds**, mean own/other
-> **4.06 vs permuted 0.43**). The suppressor was **soft-bound SATURATION** of BTSP's rank-1 outer product; sweeping the
-> learning rate down through the knee recovers selectivity monotonically. Real CA1 code: sparse (median cell 0 spikes),
-> near-disjoint (Jaccard 0.03–0.10), fact-specific (3.6–25.3).
-> **3. SCOPE:** that GO is on the **`ca1→comp_attr` SLOT** route — **not** the `cross_pool_concept` route the A1
-> capability test measures. The A1 runner never sets `comp_dendritic`, so **the original A1 test was never affected by
-> the miscalibration**; the VOID scope covers THIS ARC'S PROBES ONLY.
-> **4. A1's own blocker is UNDER-TRAINING, not a defect** — `--train-events 200` (the default) vs a recorded **800ev →
-> 87.5%** direct binding. The Hebbian/homeostasis debugging chased a non-bug. *(Separate real defect found en route:
-> `hebbian_max_weight=1.0` sits below the 3.015 design weights and INVERTS the rule — the same trap already documented
-> for STDP and BDSP, now seen on BTSP and Hebbian too.)*
-> **5. A1's capability test is a SEPARATE, still-open thread** — it fails its own binding sanity even with everything
-> applied correctly. **Four conclusions on that thread were proposed and WITHDRAWN today** (rule-can't-bind ·
-> under-training · a shared-code regression · "Phase-1 is a no-op"), every one traceable to measuring a PROXY of the
-> thing instead of the thing: a hand-rolled training loop instead of the runner's own, a 1-word probe instead of the
-> 16-word sanity, a 200-event budget instead of the documented 800. **The one solid fact is that A1 fails at 800
-> events with the topographic bias correctly applied.** Read that thread's sections in order — several supersede
-> earlier ones.
-> **6. The through-line:** every "boundary" in this arc was a CONFIGURATION or an INSTRUMENT measured and reported as a
-> property of the BIOLOGY. Verification rules earned here are encoded in `.claude/skills/verify-go/SKILL.md`
-> (mass-artifact triad · verifying a NEGATIVE · floor/ceiling comparisons are VOID · reproduce by CALLING the original
-> code path · check the record for a known-good config first).
+> **This doc is an APPEND-LOG containing SIX reversals. Sections below are in the order they were written, so many are
+> SUPERSEDED by later ones. This header is the only place that reflects the FINAL state — trust it over any section.**
+>
+> **1. ✅ THE CONSOLIDATION CAPABILITY WORKS — 6-seed, 2×2 factorial, both ingredients necessary and jointly
+> sufficient.** Hippo-lesioned recall of a cortically-stored fact: **18/18 (3/3 on 6/6 seeds)**, chance 6/18.
+> The two required ingredients:
+> - **Miller-MacKay subtractive normalization** on the BTSP increment (`btsp_mean_subtract`) — fixes the WRITE.
+>   Store own/other **12.51–46.61**, own-is-max **3/3 on 6/6**, permuted-target control **≤0.154** (lesion: ~1.0).
+> - **A READ-ONLY READ** (`--freeze-read`) — the recall was overwriting the store *while reading it* (drift
+>   **+1.28–1.41** live vs **+0.000000** frozen).
+>
+> Each ingredient ALONE gives chance (7/18, 7/18, 8/18). **Anti-cheat — scramble-teach is CAUSAL, not just a null:**
+> teach a DERANGED pool→slot mapping and recall follows the DERANGEMENT — 1/18 vs the true mapping (BELOW chance)
+> but **17/18 vs the mapping actually taught**. Below-chance is the signature of a real association read correctly,
+> and it rules out recency / write-order / leftover-state by construction.
+>
+> **2. ⚠️ SCOPE OF (1) — three limits, none of them optional reading.**
+> (a) **`--freeze-read` is a HOST intervention**, not yet neural. The biology is **SPEAR / Hasselmo ACh
+> encoding-vs-retrieval**, already designed in-project (`2026-05-19-shared-rhythm-SPEAR-…`,
+> `2026-05-22-acetylcholine-staged-…`) with a native target available (`plasticity_gate`,
+> `scope="gate:<name>"`, `sim/neuromodulators.py`). **Tracked shortcut under BRAIN-BASED-ONLY, not closed.**
+> (b) **NOT the full A1 gate.** The probe cues concept pools DIRECTLY by teacher current, because word→pool
+> binding is UNBUILT. This is consolidation IN ISOLATION.
+> (c) The metric is a 3-way slot argmax over a *shared* rate vector, so the 3 facts within a seed are COUPLED —
+> a naive binomial on 18/18 overstates significance.
+>
+> **3. ⛔ RETRACTED — "A1's blocker is UNDER-TRAINING (200 vs 800 events → 87.5%)". THIS WAS WRONG.** Word→pool
+> binding has **never worked above chance on any configuration reproducible today** (0–6.2% across A1 @200ev/@800ev,
+> the reference harness @200ev/@800ev, and BOTH the current and 2026-05-22 checkouts). **No regression exists.** The
+> recorded **87.5% is RETIRED as an unreproducible baseline** — it depended on cached `.simstate.h5` Phase-1
+> substrates that are **DELETED**. ⇒ **word→pool binding is UNBUILT, not broken; establishing it is NEW CONSTRUCTION.**
+> Do not use "it used to work, so something broke" — that framing cost this arc four withdrawn conclusions.
+>
+> **4. ✅ The 2026-07-25 "boundary" was NEVER REAL** — an artifact of `comp_apical_R=50.0`, a **333×** miscalibration
+> of a pA→mV constant (engine default `0.15`) that parked `v_apical` at ~2×10⁵ mV and, via
+> `apical_g_couple_to_soma=5.0`, drove every soma. The "dense 93%-active CA1 code" was runaway current, not a code.
+> **VOID:** the dense-code re-attribution, the overlap ceilings, the 6-seed two-sided NO-GO, the M0 GO, and the
+> "surpass = dendritic per-branch write" conclusion. On a valid substrate the `ca1→slot` write LOCALIZES (6-seed GO,
+> own-is-max 18/18 fact-seeds, own/other 4.06 vs permuted 0.43); the suppressor was **soft-bound SATURATION** of
+> BTSP's rank-1 outer product. Real CA1 code: sparse, near-disjoint (Jaccard 0.03–0.10), fact-specific.
+>
+> **5. ⛔ ALSO RETRACTED (2026-07-26) — "the cortical store does not drive the slots" was VOID.** The lesion never
+> held: zeroing `cp_connections.data` survives ~1 instant and regrows (0 → 0.05 in 5 steps) because the read ran with
+> plasticity live. Caught by the NEXT instrument contradicting it (the drive budget reported the "deleted" synapses at
+> **90.85–95.04%** of all charge into slots). **The store is NOT out-weighted** — the architectural fork raised on that
+> basis is withdrawn (per-synapse weight ≠ drive share: 64.5k store vs 15.5k recurrent synapses).
+>
+> **6. Other settled facts worth not re-deriving.** STDP is **INERT** on `concept_to_comp_attr` (`--no-stdp` is
+> byte-identical). **Every RATE lever is inert BY CONSTRUCTION** — the store settles at a soft-bound FIXED POINT, so a
+> learning rate changes how fast `w_max` is reached, never where it is (this explains 5 orders of BTSP lr and 100×
+> Hebbian lr all reading "invariant"). Stability and selectivity are **the same knob**: raising the Hebbian bound to 50,
+> removing Hebbian, or adding synaptic scaling all go UNPHYSIOLOGICAL (`v_apical` +198 / −284 mV, pool leak 21–46% vs
+> <1%). `hebbian_max_weight` **defaults to 1.0** and inverts the rule against typical design weights — the same trap
+> now seen on FOUR rules (STDP, BDSP, BTSP, Hebbian).
+>
+> **7. The through-line: every "boundary" in this arc was a CONFIGURATION or an INSTRUMENT, measured and reported as a
+> property of the BIOLOGY.** Six retractions; **five were caught by an instrument built to answer a DIFFERENT
+> question.** The habit that actually paid: **put the assertion in the DATA, never in a comment** (`read_weight_drift`
+> is what exposed the void lesion). Rules earned here are encoded in `.claude/skills/verify-go/SKILL.md`.
+>
+> **▶ NEXT:** (a) wire ACh to the plasticity gate to retire the host freeze; (b) build word→pool binding (new
+> construction); (c) port the winning protocol into `nmda_compositional_consolidation.py` main() and run the
+> end-to-end A1 gate with its four anti-cheats at 6 seeds.
+
 
 # 🔴 CRITICAL (2026-07-25): `comp_apical_R = 50.0` is a **333× miscalibration** of a pA→mV units constant — the consolidation arc's dendritic substrate has been running at `v_apical ≈ ±10⁵–10⁶ mV`
 
