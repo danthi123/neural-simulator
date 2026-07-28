@@ -2330,3 +2330,36 @@ and physiological (≤ +50 mV), then re-measure spread. **GO gate for the arc:**
 after-replay own-is-max ≥ 2/3 per seed at 6 seeds, with the scramble-teach control collapsing. That would supply a
 correct, graded, fact-specific instructive signal from replay alone — making the host teaching clamp unnecessary by
 construction.
+
+## ⛔ ATTRACTOR-LOCK REFUTED as the cause of mis-targeting — and "byte-identical ⇒ inert lever" was wrong AGAIN
+
+Defect (1) TARGETING hypothesised that the NMDA attractor latches a slot the next fact's 1400 pA drive cannot
+displace. **Tested and REFUTED**, with the lever verified live by direct measurement:
+
+```
+attractor_on=True    total slot spikes during replay = 8827.0   min transmission_gain = 1.0
+attractor_on=False   total slot spikes during replay = 8674.0   min transmission_gain = 0.0
+DELTA = +153 spikes (1.7%)  -> the gate IS live and DOES change replay dynamics
+```
+Gating it off silences 8745 synapses (verified: gain 1.0 → 0.0) and shifts replay spiking by 1.7% — **but the
+driven-slot-wins count (4/9 · 4/9 · 7/9) and the after-replay own-is-max (1/3 · 0/3 · 1/3) are UNCHANGED.**
+⇒ **attractor lock is NOT what makes the replay drive lose its own window.**
+
+**AND THE METHODOLOGICAL POINT, which I got wrong twice today in two different ways:** I read the identical arms as
+"the lever is inert" — again. The first time that inference was wrong because the measurement sat **upstream** of
+the lever's effect (retraction #9). This time it is wrong because the **metric is too COARSE** to resolve it: the
+window winner is decisive (400–1100 spikes vs 0–12), so a 1.7% shift cannot flip an argmax, and own-is-max is a
+0/3–1/3 count. **Byte-identical summary statistics over genuinely different dynamics.** ⇒ *A null A/B has THREE
+candidate explanations — the lever is inert · the measurement is misplaced · the metric is too coarse — and they
+are distinguished by measuring the lever's effect on a CONTINUOUS quantity, not by staring at the summary.*
+
+**⇒ TARGETING is still the open defect, with attractor-lock now excluded.** Remaining candidates for why the driven
+slot loses ~44% of its own windows, in order of cheapness:
+1. **the shared WTA inhibition** `comp_attr_inh` (every slot drives it, it inhibits every slot) — global symmetric
+   inhibition can resolve a competition whose winner is set by tiny excitability differences rather than by the cue;
+2. **slot excitability heterogeneity** — per-neuron threshold jitter making some slots systematically easier to
+   ignite than the 1400 pA cue can overcome;
+3. **cross-window carry-over in adaptation/refractoriness** rather than in the NMDA attractor specifically.
+(1) is directly testable: the per-slot FS cross-inhibition build already exists (`--per-slot-fs`, added earlier
+today), and it was previously tested only against the *store* metric, never against **driven-slot-wins** — the
+metric that actually measures targeting.

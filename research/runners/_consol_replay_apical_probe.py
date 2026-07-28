@@ -49,6 +49,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--cycles", type=int, default=3)
+    ap.add_argument("--attractor-off", action="store_true", help="DEFECT-1 TARGETING test: coactivation_replay(attractor_on=False). The NMDA attractor (comp_self_weight=12) may latch a slot the next fact's 1400pA drive cannot displace — measured, the driven slot wins only 15/27 windows (chance 9/27) though competition is near-exclusive. NOTE: an earlier A/B of this flag was UNINTERPRETABLE because the weight read preceded replay; it is only meaningful against the CORE-AFTER-REPLAY numbers.")
     ap.add_argument("--hebb-max", type=float, default=2.5, help="hebbian_max_weight. THE TRAP: measured ca1->slot weights land at 2.55-2.87, ABOVE the 2.5 this probe was setting -- so every Hebbian potentiation was NEGATIVE and dragged all synapses to a common ceiling, producing the flat per-core weights. 8th instance of this trap today (STDP/BDSP/BTSP/Hebbian). Raise it above the design weights.")
     ap.add_argument("--self-regen", type=float, default=None, help="coincidence_plateau_self_regen (runner default 0.15). This is a v-GATED SUSTAIN LATCH: once tripped the plateau holds itself up independently of ongoing drive, which would ERASE the graded differences weighted drive creates. 0.0 = no latch.")
     ap.add_argument("--weighted-coincidence", action="store_true", help="engine cfg.coincidence_weighted_drive (set EXPLICITLY both ways; comp_dendritic already defaults it True): grade the apical plateau by EFFECTIVE SYNAPTIC WEIGHT instead of the COUNT of coincident inputs. The count-based default is an all-or-none switch, so every slot crossing k gets a FULL plateau regardless of weight => the uniform signal measured. Config-only; no sim/ edit.")
@@ -192,7 +193,7 @@ def main():
     b._run_one_simulation_step = sampling_step
     try:
         coactivation_replay(b, CONSOLIDATED_FACTS, tags, int(args.cycles), args.seed,
-                            coactivate=True, attractor_on=True)
+                            coactivate=True, attractor_on=not args.attractor_off)
     finally:
         b._run_one_simulation_step = orig_step
 
