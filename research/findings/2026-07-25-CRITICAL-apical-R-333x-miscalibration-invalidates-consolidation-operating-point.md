@@ -1835,3 +1835,43 @@ after a wrong conclusion was recorded.
 serve as a no-confab test** (that control lives in the main runner and needs an unconsolidated concept).
 
 **▶ N=4 scramble-teach control in flight** (4-cycle derangement) — the arm alone is not the claim.
+
+## ⚠️ CORRECTION TO MY OWN SCOPE CLAIM — the freeze's "already designed in-project" biologization is OVERSTATED
+
+I justified the `--freeze-read` host shortcut by writing it "is **SPEAR / Hasselmo ACh encode-vs-retrieve**, already
+designed in-project", citing two plan docs surfaced by a RAG title match. **I then READ them** (standing directive:
+read the source in depth, never cite the summary). The claim is loose and partly wrong:
+
+1. **Hasselmo's ACh acts on TRANSMISSION, not plasticity.** The mechanism is *"selective presynaptic inhibition of
+   recurrent / intracortical excitatory synapses"* during high-ACh encoding, **released** in low-ACh consolidation to
+   permit *"attractor dynamics and pattern completion"*. My freeze gates **plasticity** on one pathway. Different
+   operation.
+2. **The project has explicitly flagged exactly my conflation as an error.** `2026-05-22-acetylcholine-staged-…`
+   carries a section titled *"Honest relationship to the prior SPEAR arc (correction)"* stating that an earlier draft
+   *"mischaracterised the prior SPEAR arc as 'ACh plasticity-gating'. That is wrong."* I reproduced the corrected-away
+   mistake.
+3. **The in-project ACh phase-separation test was a DECISIVE NEGATIVE.** After its adversarial-faithfulness fix the
+   SPEAR arc modulated `synaptic_gain(scope=all)` + `plasticity_rate(scope=all)` across a theta cycle and returned
+   **`full_acc = 0.00` on EVERY rung**. So "already designed in-project" implied a validated path; the actual
+   in-project attempt FAILED.
+
+**What survives, stated at its true strength:** the ENCODING-vs-RETRIEVAL phase distinction is real, well-grounded
+(Hasselmo), and does include reduced synaptic modification at low ACh — so freezing plasticity during retrieval is
+*consistent with* the theory. But it is **NOT** the specific mechanism the in-project designs build, and the one
+in-project ACh test of phase separation returned zero.
+
+**Does the prior negative transfer? Probably not, and here is the honest reason:** the design doc diagnoses SPEAR's
+zero as *"multiplexing the readout of a binding that never reached the cortex"* — SPEAR had **no `ca1 → concept-pool`
+wire**. My situation is the opposite: the store demonstrably **is** cortical and **is** read (91–95% of slot drive;
+24/24 recall). So SPEAR's failure cause is absent here. That is a reason the negative may not apply — **not**
+evidence that an ACh implementation will work.
+
+**⇒ CORRECTED STATUS of the shortcut:** `--freeze-read` is a HOST intervention whose biological warrant is the
+general encoding/retrieval distinction, with **NO validated in-project neural implementation** — the nearest attempt
+returned 0.00 for a diagnosed and non-transferable reason. The engine target (`plasticity_gate`, `scope="gate:<name>"`)
+exists, but wiring it is **an open build with a known prior failure in the neighbourhood**, not a formality.
+**Downgrade every claim of the form "named biologization path" to "candidate mechanism, unvalidated".**
+
+**Process note — this is drift #12 (trusting a summary) caught by the standing "read the source" directive.** I cited
+two documents by RAG-hit title to license a shortcut; reading them showed one explicitly corrects my exact
+mischaracterisation and the other records a hard zero. **A RAG hit is a POINTER, never a paraphrase.**
