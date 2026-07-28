@@ -32,20 +32,24 @@ def _softmax_rows(Z):
 
 def _fit_ridge_readout(Xn, Y, V, lam=1.0):
     """Closed-form ridge read-out on FLAT pre-aligned (state -> next-token) rows: ONE solve (the proven-fast pattern
-    from the committed memory-task de-risk). Z=[X,1]; Wd [n_feat,V] = solve(Z^T Z + lam I, Z^T onehot(Y)). A LINEAR
-    read-out fit by least-squares to the next-token one-hot -- NO backprop-through-time, NO recurrent credit."""
+    from the committed memory-task de-risk). Z=[X,1]; Wd [n_feat,V] = solve(Z^T Z + lam I, Z^T onehot(Y)). The
+    Z^T @ onehot(Y) is done by SCATTER (np.add.at) so the [n_samples, V] one-hot is NEVER materialized (scales to
+    V=2000+ at large n). A LINEAR read-out fit by least-squares to the next-token one-hot -- NO backprop, NO recurrent credit."""
     n, d = Xn.shape
     Z = np.concatenate([Xn, np.ones((n, 1))], 1)
-    OH = np.zeros((n, V)); OH[np.arange(n), Y] = 1.0
-    Wd = np.linalg.solve(Z.T @ Z + lam * np.eye(d + 1), Z.T @ OH)
+    ZtOH = np.zeros((V, d + 1)); np.add.at(ZtOH, Y, Z)            # column c = sum of Z[i] where Y[i]==c (no giant one-hot)
+    Wd = np.linalg.solve(Z.T @ Z + lam * np.eye(d + 1), ZtOH.T)
     return Wd                                                     # [d+1, V]
 
 
-def _fit_temperature(logits, Y):
-    """Fit a scalar temperature T minimizing mean CE of softmax(logits/T) vs Y (1-D golden-section). Calibrates the
-    ridge logits into a proper next-token DISTRIBUTION so the CE is comparable to the reslm ladder + the bigram baseline."""
+def _fit_temperature(Z, Wd, Y, rng, sub=20000):
+    """Fit a scalar temperature T minimizing mean CE of softmax((Z@Wd)/T) vs Y (1-D golden-section), on a random
+    SUBSAMPLE (the [sub, V] logits fit in memory for V=2000+). Calibrates the ridge logits into a proper next-token
+    DISTRIBUTION so the CE is comparable to the reslm ladder + the bigram baseline."""
+    idx = rng.choice(len(Y), size=min(sub, len(Y)), replace=False)
+    logits = Z[idx] @ Wd; Ys = Y[idx]
     def ce(T):
-        P = _softmax_rows(logits / T); return float(-np.log(P[np.arange(len(Y)), Y] + 1e-12).mean())
+        P = _softmax_rows(logits / T); return float(-np.log(P[np.arange(len(Ys)), Ys] + 1e-12).mean())
     lo, hi = 0.02, 5.0; gr = (np.sqrt(5) - 1) / 2
     c = hi - gr * (hi - lo); d = lo + gr * (hi - lo); fc, fd = ce(c), ce(d)
     for _ in range(28):
@@ -74,28 +78,31 @@ def _build_A(kind, rng):
 
 def _block_states(kind, A, W_in, emb, ids, block):
     """State reset per block; within-block position = context depth. Returns (states[T,n], targets[T], pos[T]).
-    Drive (W_in @ emb[token]) is precomputed for the WHOLE stream in ONE vectorized matmul (the per-token bottleneck);
-    the loop then runs only the inherently-sequential recurrence."""
+    BATCHED over blocks: blocks are independent (reset per block), so ALL blocks step in LOCKSTEP as a [n_blocks, _N]
+    matrix -- `block` vectorized matmuls TOTAL, independent of corpus size (the parallel-across-blocks speedup that
+    makes the validated-scale run tractable; the per-token Python loop was the toy-scale bottleneck)."""
     ids = np.asarray(ids)
-    drive_all = emb[ids] @ W_in.T                     # [len(ids), _N] — one big matmul, not len() small ones
+    B1 = block + 1
+    n_full = len(ids) // B1
+    if n_full == 0:
+        return np.zeros((0, _N)), np.zeros(0, dtype=int), np.zeros(0, dtype=int)
+    chunks = ids[:n_full * B1].reshape(n_full, B1)                 # [n_blocks, block+1] non-overlapping
     Wmat, alpha = (A if kind == "hetero_esn" else (None, None))
-    S = []; Y = []; P = []
-    for b0 in range(0, len(ids) - 1, block):
-        hi = min(b0 + block + 1, len(ids))
-        if hi - b0 < 2:
-            continue
-        x = np.zeros(_N)
-        for k in range(b0, hi - 1):
-            if kind == "random":
-                x = np.tanh(A @ x + drive_all[k])                 # ESN: bounded tanh recurrence (mixing)
-            elif kind == "hetero_esn":
-                x = (1.0 - alpha) * x + alpha * np.tanh(Wmat @ x + drive_all[k])   # leaky-ESN: mixing + heterogeneous leak
-            elif kind == "mtbounded":
-                x = np.tanh(A * x + drive_all[k])                 # multi-timescale diagonal, BOUNDED (tanh) — matches ESN
-            else:
-                x = A * x + drive_all[k]                          # multi-timescale diagonal, LINEAR (unbounded)
-            S.append(x.copy()); Y.append(int(ids[k + 1])); P.append(k - b0)   # k-b0 = context depth (0-based)
-    return np.asarray(S), np.asarray(Y), np.asarray(P)
+    X = np.zeros((n_full, _N))
+    S = np.empty((block, n_full, _N)); Y = np.empty((block, n_full), dtype=int)
+    for k in range(block):
+        drive = emb[chunks[:, k]] @ W_in.T                        # [n_blocks, _N] — one matmul per within-block position
+        if kind == "random":
+            X = np.tanh(X @ A.T + drive)                          # ESN: mixing tanh recurrence
+        elif kind == "hetero_esn":
+            X = (1.0 - alpha) * X + alpha * np.tanh(X @ Wmat.T + drive)   # leaky-ESN: mixing + heterogeneous leak
+        elif kind == "mtbounded":
+            X = np.tanh(A * X + drive)                            # multi-timescale diagonal, BOUNDED (tanh)
+        else:
+            X = A * X + drive                                     # multi-timescale diagonal, LINEAR
+        S[k] = X; Y[k] = chunks[:, k + 1]
+    P = np.broadcast_to(np.arange(block)[:, None], (block, n_full))
+    return S.reshape(block * n_full, _N), Y.reshape(-1), np.ascontiguousarray(P).reshape(-1)
 
 
 def _ce_by_depth(kind, rng, vocab, tr_ids, ev_ids, block, epochs, lr):
@@ -108,7 +115,7 @@ def _ce_by_depth(kind, rng, vocab, tr_ids, ev_ids, block, epochs, lr):
     Wd = _fit_ridge_readout((Str - m) / s, Ytr, vocab.size)
     Ztr = np.concatenate([(Str - m) / s, np.ones((len(Str), 1))], 1)
     Zev = np.concatenate([(Sev - m) / s, np.ones((len(Sev), 1))], 1)
-    T = _fit_temperature(Ztr @ Wd, Ytr)                          # temperature on TRAIN logits -> calibrated CE
+    T = _fit_temperature(Ztr, Wd, Ytr, rng)                      # temperature on a TRAIN subsample -> calibrated CE
     logits = Zev @ Wd
     P = _softmax_rows(logits / T)
     ce = -np.log(P[np.arange(len(Yev)), Yev] + 1e-12)
@@ -167,16 +174,20 @@ def run(seed, n_sent, block=64, epochs=300, lr=0.5, vocab_size=1000):
         print(f"    {kind:14s}: CE shallow={out[kind]['shallow(1-4)']:.3f} mid={out[kind]['mid(5-16)']:.3f} deep={out[kind]['deep(17+)']:.3f}"
               f"  | mag sh={out[kind]['mag_sh']:.2f} deep={out[kind]['mag_deep']:.2f} | acc deep={a['deep(17+)']:.3f}")
     print(f"    {'bigram':14s}: CE shallow={bi_depth['shallow(1-4)']:.3f} mid={bi_depth['mid(5-16)']:.3f} deep={bi_depth['deep(17+)']:.3f}  (by-depth null-discriminator control)")
-    bi_deep = bi_depth["deep(17+)"]
+    bi_deep = bi_depth["deep(17+)"]; bi_mid = bi_depth["mid(5-16)"]
+    # DISCRIMINATOR-VALIDITY: does the plain ESN beat the by-depth bigram at MID (5-16)? (per 2026-07-11-SCALE-reservoir-wins-mid)
+    r_mid = out["random"]["mid(5-16)"]
+    disc_valid = r_mid < bi_mid - 0.02
+    print(f"    DISCRIMINATOR: random-ESN mid={r_mid:.3f} vs bigram-mid={bi_mid:.3f} -> "
+          f"{'VALID (reservoir beats bigram at mid = real signal present)' if disc_valid else 'INVALID (no mid signal -> scale up more)'}")
     # The mission-relevant lever: does the leaky-ESN (mixing + heterogeneous time constants) beat the PLAIN ESN at deep?
     go = (h_deep < r_deep - 0.02) and (h_deep < bi_deep - 0.02)
-    # NULL DISCRIMINATOR check: if NO reservoir beats the by-depth bigram at deep, the task can't evaluate the mechanism.
     best_res_deep = min(out[k]["deep(17+)"] for k in arms)
     null_disc = best_res_deep >= bi_deep - 0.02
-    print(f"    DEEP-context: hetero_esn={h_deep:.3f} best_reservoir={best_res_deep:.3f} vs plain_random={r_deep:.3f} vs bigram_deep={bi_deep:.3f} "
-          f"-> {'GO' if go else ('NULL-DISCRIMINATOR (no reservoir beats bigram at deep -> thin deep signal)' if null_disc else 'no')}")
-    return dict(seed=seed, bigram_ce=round(bi_ce, 3), out=out,
-                hetero_deep=round(h_deep, 3), rand_deep=round(r_deep, 3),
+    print(f"    DEEP-context: hetero_esn={h_deep:.3f} mt_linear={out['multitimescale']['deep(17+)']:.3f} best_reservoir={best_res_deep:.3f} vs plain_random={r_deep:.3f} vs bigram_deep={bi_deep:.3f} "
+          f"-> {'GO' if go else ('NULL-DISCRIMINATOR (no reservoir beats bigram at deep)' if null_disc else 'no')}")
+    return dict(seed=seed, bigram_ce=round(bi_ce, 3), out=out, disc_valid=bool(disc_valid),
+                hetero_deep=round(h_deep, 3), rand_deep=round(r_deep, 3), bigram_deep=round(bi_deep, 3),
                 mt_deep=round(out["multitimescale"]["deep(17+)"], 3), go=bool(go))
 
 
@@ -184,10 +195,11 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=42); ap.add_argument("--seeds", type=int, nargs="*", default=None)
     ap.add_argument("--n-sent", type=int, default=4000); ap.add_argument("--out", default=None)
+    ap.add_argument("--vocab-size", type=int, default=1000); ap.add_argument("--block", type=int, default=64)
     a = ap.parse_args()
     seeds = a.seeds if a.seeds else [a.seed]
     t0 = time.time()
-    res = [run(s, a.n_sent) for s in seeds]
+    res = [run(s, a.n_sent, block=a.block, vocab_size=a.vocab_size) for s in seeds]
     if len(res) > 1:
         print(f"[ssm-lm] {sum(1 for r in res if r['go'])}/{len(res)} seeds GO")
     if a.out:

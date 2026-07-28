@@ -426,7 +426,11 @@ def run(seed, n_ca3=1000, n_mem=2, assembly_frac=0.012, train_events=120, sync_o
                 return
             for _m in range(len(_pa_mem_dev)):
                 acc[_m] += float(bridge.cp_firing_states[_pa_mem_dev[_m]].astype(cp.float32).sum())
-            _win = int(np.argmax(acc))
+            # SIZE-NORMALIZED winner (per-cell rate, not total count): a larger assembly wins the raw-count argmax even
+            # when a SMALLER assembly is the cued/active one (the size-bias that broke the asymmetric seed 44 [48,18] --
+            # the cued small assembly got shunted). Normalizing by assembly size removes the bias (Kim-Kim size-bias).
+            _rates = [acc[_m] / max(1, int(_pa_mem_dev[_m].size)) for _m in range(len(acc))]
+            _win = int(np.argmax(_rates))
             if acc[_win] < _pa_gate:
                 return
             for _m in range(len(_pa_mem_dev)):

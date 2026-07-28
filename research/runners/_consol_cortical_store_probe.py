@@ -468,6 +468,7 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--cycles", type=int, default=10)
     ap.add_argument("--btsp-lr", type=float, default=0.0005)
+    ap.add_argument("--overlap-facts", action="store_true", help="KILL TEST for compositionality: use the OVERLAPPING set (apple,big)(apple,small)(dog,big)(dog,small). Every noun appears in 2 facts and every adjective in 2, so NO per-feature vote can identify a fact -- only a conjunctive (bound) code can. The shipped set is pairwise-DISJOINT in both constituents, where a per-feature store is indistinguishable from a fact store.")
     ap.add_argument("--n-facts", type=int, default=None, help="CAPACITY: number of facts/slots (max 4 with the current 4-noun x 4-adj vocabulary). Default = the shipped 3. Chance = 1/N, so N=4 is a stricter test than N=3.")
     ap.add_argument("--scramble-teach", action="store_true", help="ANTI-CHEAT: teach a DERANGED pool->slot association during the write, then recall normally. Must collapse to chance.")
     ap.add_argument("--freeze-read", action="store_true", help="freeze concept_to_comp_attr plasticity DURING recall — the read is otherwise NOT read-only and overwrites the store it is reading")
@@ -488,7 +489,14 @@ def main():
     args = ap.parse_args()
     from pathlib import Path
     Path(args.out).mkdir(parents=True, exist_ok=True)
-    if args.n_facts is not None:
+    if args.overlap_facts:
+        global CONSOLIDATED_FACTS, N
+        CONSOLIDATED_FACTS = [("apple", "big"), ("apple", "small"), ("dog", "big"), ("dog", "small")]
+        N = 4
+        print("  OVERLAP KILL TEST: facts =", CONSOLIDATED_FACTS)
+        print("  every noun in 2 facts, every adjective in 2 => a per-feature (noun->slot + adj->slot) store is")
+        print("  MATHEMATICALLY incapable of this task; only a conjunctive code can. chance = 1/4.")
+    elif args.n_facts is not None:
         # Rebind the module globals BEFORE run() reads them. run() looks CONSOLIDATED_FACTS/N up at call
         # time, so this is sufficient; FACTS_ALL is the 4-fact inventory (fact 3 is normally WITHHELD for
         # the main runner's no-confab probe — this probe does not use that control, so consuming it here
@@ -501,7 +509,28 @@ def main():
         N = args.n_facts
         print(f"  CAPACITY: N={N} facts/slots, chance = 1/{N} = {1.0/N:.3f} per trial")
     r = run(args.seed, args.cycles, args.btsp_lr, teaching_clamp=args.teaching_clamp, elig_tau=args.elig_tau, pool_slot_w=args.pool_slot_weight, hebbian_max_w=args.hebbian_max_w, hebbian_on=not args.no_hebbian, hebbian_lr=args.hebbian_lr, syn_scaling=args.syn_scaling, no_stdp=args.no_stdp, btsp_wmax=args.btsp_wmax, freeze_gap=args.freeze_gap, per_slot_fs=args.per_slot_fs, mean_subtract=args.mean_subtract, read_gap=args.read_gap, freeze_read=args.freeze_read, scramble_teach=args.scramble_teach)
-    Path(f"{args.out}/cortstore{'_clamp' if args.teaching_clamp else ''}_seed{args.seed}.json").write_text(json.dumps(r, indent=2))
+    # RECORD REPAIR (2026-07-26, mandatory — adversarial review found every arm colliding on ONE path with NO
+    # arm recorded inside, so the committed artifacts were simply whatever ran LAST and did not correspond to the
+    # claims made over them. A filename is not provenance: EVERY knob that changes the experiment must land in the
+    # artifact (CLAUDE.md, the "RECORD THE KNOB" lesson).
+    _arm = "".join([
+        "_clamp" if args.teaching_clamp else "",
+        f"_ms{args.mean_subtract}" if args.mean_subtract else "_noms",
+        "_frzread" if args.freeze_read else "_liveread",
+        "_frzgap" if args.freeze_gap else "",
+        "_nostdp" if args.no_stdp else "",
+        "_scram" if args.scramble_teach else "",
+        f"_n{args.n_facts}" if args.n_facts else "",
+        f"_gap{args.read_gap}" if args.read_gap else "",
+    ])
+    r["arm_flags"] = {k: getattr(args, k) for k in (
+        "teaching_clamp", "mean_subtract", "freeze_read", "freeze_gap", "no_stdp", "scramble_teach",
+        "n_facts", "read_gap", "elig_tau", "hebbian_max_w", "btsp_lr", "btsp_wmax", "pool_slot_weight",
+        "hebbian_lr", "syn_scaling", "cycles", "seed") if hasattr(args, k)}
+    r["facts"] = [list(f) for f in CONSOLIDATED_FACTS]
+    r["argv"] = sys.argv[1:]
+    Path(f"{args.out}/cortstore{_arm}_seed{args.seed}.json").write_text(json.dumps(r, indent=2))
+    print(f"  artifact -> cortstore{_arm}_seed{args.seed}.json  (arm flags + facts + argv recorded inside)")
     print(f"[seed {args.seed}] backend={BACKEND} thr_hash={r['thr_hash']} dw_cortical={r['dw_cortical']}")
     print(f"  v_apical={r['v_apical_range']} physiological={r['v_apical_physiological']}"
           + ("" if r['v_apical_physiological'] else "   <-- INVALID SUBSTRATE, stop"))
