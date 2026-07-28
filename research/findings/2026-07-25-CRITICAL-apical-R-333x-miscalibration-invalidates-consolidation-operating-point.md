@@ -2363,3 +2363,37 @@ slot loses ~44% of its own windows, in order of cheapness:
 (1) is directly testable: the per-slot FS cross-inhibition build already exists (`--per-slot-fs`, added earlier
 today), and it was previously tested only against the *store* metric, never against **driven-slot-wins** — the
 metric that actually measures targeting.
+
+## ⛔ SHARED INHIBITION REFUTED as the targeting cause — and the CONTINUOUS metric immediately earns its keep
+
+Tested the per-slot FS cross-inhibition build (`--per-slot-fs`) against **driven-slot-wins**, the metric that
+actually measures targeting (it had previously only ever been evaluated against the *store* metric):
+
+| seed | shared `comp_attr_inh` | per-slot FS + cross-inhibition |
+|---|---|---|
+| 42 | **0.402** | 0.430 |
+| 43 | **0.466** | 0.426 |
+| 44 | **0.741** | 0.762 |
+| mean | **0.536** | **0.539** |
+*(continuous mean driven-slot spike share; chance 0.333, perfect 1.0. Coarse count unchanged: 4/9 · 4/9 · 7/9 both arms.)*
+
+**⇒ Global symmetric inhibition is NOT what makes the replay drive lose its own window.** Candidate A excluded,
+joining attractor-lock. *(This also independently re-confirms the earlier per-slot-FS refutation, now on a
+different metric and a different question — that build has now failed to change anything on two separate axes.)*
+
+**⇒ THE CONTINUOUS METRIC IMMEDIATELY REVEALED WHAT THE COARSE COUNT HID.** Seeds 42 and 43 both score 4/9 on the
+count — indistinguishable — but **0.402 vs 0.466** on spike share. And seed 44 is a different regime entirely:
+**0.74**, nearly double seeds 42/43, consistently across BOTH inhibition topologies. *This is exactly the failure
+mode that made me twice misread a null as an inert lever; adding one continuous quantity fixed it in one run.*
+
+**⇒ THE SEED-DEPENDENCE IS THE SIGNAL, and it points hard at candidate B (excitability heterogeneity).** Every seed
+is ABOVE chance (0.40–0.74 vs 0.333), so cue-driven targeting genuinely exists — it is weak and **seed-variable**,
+which is the signature of per-neuron firing-threshold jitter deciding which slot ignites rather than the 1400 pA
+cue. Per-neuron thresholds are drawn from `cfg.seed` (`bridge.py:1508`), so a seed that happens to give the slots
+comparable thresholds (44) would let the cue win, while one with a low-threshold outlier (42/43) would not.
+
+**▶ THE DECISIVE TEST (workflow `wzwh2bvut` is running it in parallel): does the window winner correlate with the
+LOWEST mean firing threshold?** If yes, targeting is set by threshold jitter, and the fix is a per-slot threshold
+normalization or a stronger/adaptive cue — not an inhibition-topology change. Note this is a *substrate
+heterogeneity* explanation, not a mechanism gap: the biology has the same problem and solves it with
+homeostatic intrinsic plasticity, which the engine already supports.

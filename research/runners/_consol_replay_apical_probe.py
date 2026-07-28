@@ -49,6 +49,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--cycles", type=int, default=3)
+    ap.add_argument("--per-slot-fs", action="store_true", help="TARGETING candidate 1: replace the SHARED comp_attr_inh pool (every slot drives it, it inhibits every slot = global symmetric inhibition) with PER-SLOT FS + cross-inhibition. Built earlier today but only ever evaluated against the STORE metric — never against driven-slot-wins, the metric that actually measures targeting.")
     ap.add_argument("--attractor-off", action="store_true", help="DEFECT-1 TARGETING test: coactivation_replay(attractor_on=False). The NMDA attractor (comp_self_weight=12) may latch a slot the next fact's 1400pA drive cannot displace — measured, the driven slot wins only 15/27 windows (chance 9/27) though competition is near-exclusive. NOTE: an earlier A/B of this flag was UNINTERPRETABLE because the weight read preceded replay; it is only meaningful against the CORE-AFTER-REPLAY numbers.")
     ap.add_argument("--hebb-max", type=float, default=2.5, help="hebbian_max_weight. THE TRAP: measured ca1->slot weights land at 2.55-2.87, ABOVE the 2.5 this probe was setting -- so every Hebbian potentiation was NEGATIVE and dragged all synapses to a common ceiling, producing the flat per-core weights. 8th instance of this trap today (STDP/BDSP/BTSP/Hebbian). Raise it above the design weights.")
     ap.add_argument("--self-regen", type=float, default=None, help="coincidence_plateau_self_regen (runner default 0.15). This is a v-GATED SUSTAIN LATCH: once tripped the plateau holds itself up independently of ongoing drive, which would ERASE the graded differences weighted drive creates. 0.0 = no latch.")
@@ -61,6 +62,7 @@ def main():
              comp_kir_g=3.0, comp_v_hold=-50.0, comp_apical_R=0.15, comp_gc_read=0.5,
              comp_btsp=True, comp_btsp_lr=0.0005, comp_btsp_wmax=2000.0, comp_btsp_elig_tau=30.0,
              comp_no_pool_slot=False, comp_pool_slot_weight=1.5, comp_attractor_slots=N,
+             comp_per_slot_fs=bool(args.per_slot_fs),
              enable_hebbian=True)
     b = build_substrate(args.seed, SimpleNamespace(**a))
     b.core_config.hebbian_max_weight = float(args.hebb_max)
@@ -255,6 +257,18 @@ def main():
             print(f"     window {w:2d} [fact {drv}]: spikes={[int(t) for t in tot]}  argmax=slot {win}  "
                   f"{'driven slot dominates' if win == drv else '⛔ NON-DRIVEN slot dominates'}")
     print(f"     => driven slot dominated its own window in {_dom}/{_nw} windows (chance {_nw//N}/{_nw}).")
+    # CONTINUOUS metric: fraction of each window's slot spikes that landed on the DRIVEN slot.
+    # A coarse argmax count cannot resolve a real-but-small lever (the attractor gate shifted spiking
+    # 1.7% and moved NO coarse metric). Chance here is 1/N.
+    _fr = []
+    for w in range(_nw):
+        sl2 = slice(w * _burst, (w + 1) * _burst)
+        tt = [float(np.asarray(fire_samples[j][sl2]).sum()) for j in sorted(slot)]
+        if sum(tt) > 0:
+            _fr.append(tt[_order[w]] / sum(tt))
+    if _fr:
+        print("     => CONTINUOUS targeting: mean driven-slot spike share = %.4f (chance %.4f, perfect 1.0)"
+              % (float(np.mean(_fr)), 1.0 / N))
     print( "        If ~chance, coincidence during replay is GLOBAL and the flat ca1->slot write is explained:")
     print( "        every ca1 cell co-fires with every slot, so Hebbian/BTSP potentiate them all alike.")
     print(f"[seed {args.seed}] backend={BACKEND}  v_hold={v_hold}  steps sampled={len(samples[0])}")
