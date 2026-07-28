@@ -23,8 +23,12 @@
 > `scope="gate:<name>"`, `sim/neuromodulators.py`). **Tracked shortcut under BRAIN-BASED-ONLY, not closed.**
 > (b) **NOT the full A1 gate.** The probe cues concept pools DIRECTLY by teacher current, because word→pool
 > binding is UNBUILT. This is consolidation IN ISOLATION.
-> (c) The metric is a 3-way slot argmax over a *shared* rate vector, so the 3 facts within a seed are COUPLED —
-> a naive binomial on 18/18 overstates significance.
+> (c) The metric is a 3-way slot argmax over a *shared* rate vector, so the 3 facts within a seed are COUPLED.
+> **RESOLVED — and it cuts the OTHER way.** The confound that couples the trials is a per-slot excitability bias,
+> and a fixed slot bias **CAPS a seed at 1/3 correct** (if one slot always wins, at most one fact can be right) —
+> it cannot manufacture 3/3. The lesion arm sits at exactly **1.17/3**, that bias's signature. Aggregating to the
+> genuinely independent unit (the seed): arm **6/6 perfect** vs scramble-control **0/6**, **Fisher exact
+> p = 0.00108** (the minimum attainable at 6-vs-6). Coupling therefore makes 3/3 HARDER, not easier.
 >
 > **3. ⛔ RETRACTED — "A1's blocker is UNDER-TRAINING (200 vs 800 events → 87.5%)". THIS WAS WRONG.** Word→pool
 > binding has **never worked above chance on any configuration reproducible today** (0–6.2% across A1 @200ev/@800ev,
@@ -1768,3 +1772,34 @@ leftover-state hypothesis are inconsistent with 17/18 taught-target accuracy und
 **Remaining honest scope is UNCHANGED** (this control does not touch it): the freeze is still a HOST intervention
 with a named biologization (SPEAR/ACh); the probe still cues pools DIRECTLY because word→pool binding is UNBUILT,
 so this is consolidation in isolation and NOT the full A1 gate.
+
+## 📊 THE STATISTICS, DONE HONESTLY — the trial-coupling worry resolves AGAINST the null
+
+I flagged in the result's own scope note that the 3 facts within a seed are scored by argmax over a *shared*
+3-vector, so they are NOT independent and a naive binomial on 18/18 would overstate significance. Worked through:
+
+| arm | vs TRUE mapping | vs TAUGHT mapping |
+|---|---|---|
+| mean-subtract + frozen read | **18/18** | 18/18 |
+| scramble-teach control | **1/18** (below chance 6/18) | **17/18** |
+| lesion (no mechanism) + frozen | 7/18 (per-seed `[1,1,1,2,1,1]`, mean **1.17/3**) | — |
+
+**1. The coupling confound CANNOT produce the result.** The mechanism that couples the trials is a per-slot
+excitability bias. But a fixed slot bias **caps a seed at 1/3 correct** — if one slot systematically wins, at most
+one of the three facts can be scored correct. **3/3 is unreachable under it.** The lesion arm's per-seed
+`[1,1,1,2,1,1]` (mean 1.17/3) is precisely that signature. ⇒ coupling makes the observed result **HARDER**, not
+easier; the worry is real but points the other way.
+
+**2. Seed-level exact test (avoids the coupling entirely).** Treating each seed as the one independent unit and
+"perfect seed" as 3/3: arm **6/6** vs scramble-control **0/6** → **Fisher exact p = 0.00108**, which is the smallest
+p attainable with 6-vs-6 — i.e. the design is saturated, not marginal.
+
+**3. For reference only** (NOT the claim, since it assumes independence): under independent unbiased argmax,
+P(one seed = 3/3) = (1/3)³ = 0.037 and P(all six) = 2.6×10⁻⁹.
+
+**4. The control does not merely fail — it INVERTS**, which is the strongest available evidence. Scoring the
+scramble arm against the mapping it was actually taught gives **17/18 (94%)**. Landing *below* chance against the
+true mapping is not something noise produces; it requires a real association being read out correctly.
+
+**⇒ The trial-coupling caveat in the header is RESOLVED and rewritten.** The honest headline number is the
+seed-level one: **6/6 vs 0/6, p = 0.00108.**
