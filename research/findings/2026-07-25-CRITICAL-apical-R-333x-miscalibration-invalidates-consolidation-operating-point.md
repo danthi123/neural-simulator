@@ -2293,3 +2293,40 @@ evidence about WHERE you measured, not only about whether the lever works.*
 **Instrument failure #5 in this sub-arc, and the same shape as the other four: a check that could not fail.** The
 probe printed a confident per-fact table that was structurally incapable of answering its own question. Fix:
 the identical measurement now runs **after** `coactivation_replay` and prints `CORE-AFTER-REPLAY`.
+
+## ✅ RE-ESTABLISHED ON VALID EVIDENCE: replay WRITES `ca1→slot` substantially, but NOT fact-selectively
+
+The retracted claim is now re-tested with the measurement in the right place (`CORE-AFTER-REPLAY`), reporting the
+same quantity before and after `coactivation_replay`. **This is a NEW result, not a reinstatement of the void one.**
+
+| | `ca1→slot` core weights | own/other | own-is-max |
+|---|---|---|---|
+| **BEFORE replay** (encode only) | 2.55 – 2.87 | 0.995 – 1.004 | **1/9** |
+| **AFTER replay** | **3.03 – 5.12** (+40–90%) | 0.82 – 1.26 (scattered about 1.0) | **2/9** (chance 3/9) |
+
+**⇒ Replay IS writing — and the write carries no fact information.** The magnitude grows substantially on every
+seed, so this is not a failure to potentiate; it is a failure to *localize*. own-is-max sits at 2/9 against a chance
+of 3/9, and own/other straddles 1.0 in both directions (0.82 on one fact, 1.26 on another) — the signature of an
+essentially arbitrary assignment, not a weak-but-correct one.
+
+**This is COHERENT with the in-replay measurements that survived the retraction, and they explain each other:** the
+driven slot wins its own window only **15/27** (chance 9/27) while competition is near-exclusive (winner 400–1100
+spikes vs 0–12). So each replay burst writes STRONGLY onto whichever slot won — and that is the wrong slot ~44% of
+the time. Accumulated over 9 bursts, strong writes onto mis-targeted slots sum to the scattered-about-1.0 profile
+measured. **Strong, confident, arbitrary writes — not weak ones.**
+
+**⇒ THE TWO DEFECTS NAMED EARLIER ARE NOW PROPERLY GROUNDED** (they were previously inferred from a void
+measurement):
+1. **TARGETING** — the replay drive loses the slot competition ~44% of the time; the winner is not cue-determined.
+   *(The `attractor_on` A/B is UNINTERPRETABLE so far: its arms were byte-identical because the weight read
+   preceded replay. It must be re-run now that the measurement is correctly placed — the lever's true effect on the
+   AFTER-replay write is unknown.)*
+2. **TRANSDUCTION** — the plateau saturates (~400 mV, ~1% spread) even when competition was near-exclusive, so a
+   correct win cannot reach BTSP's instructive term.
+
+**▶ NEXT (both config-only, both now measurable):** re-run `attractor_on ∈ {True, False}` against the
+**AFTER-replay** write and the driven-slot-wins count; and reduce the coincidence drive until the plateau is graded
+and physiological (≤ +50 mV), then re-measure spread. **GO gate for the arc:** driven-slot-wins → 9/9 AND
+after-replay own-is-max ≥ 2/3 per seed at 6 seeds, with the scramble-teach control collapsing. That would supply a
+correct, graded, fact-specific instructive signal from replay alone — making the host teaching clamp unnecessary by
+construction.
