@@ -4,23 +4,23 @@
   "any_above_v_hold": true,
   "per_slot": {
     "slot0": {
-      "max": 453.868,
-      "mean": 190.846,
-      "p99": 404.943,
+      "max": 457.628,
+      "mean": 218.511,
+      "p99": 441.704,
       "steps_above_v_hold": 270,
       "n_steps": 270
     },
     "slot1": {
-      "max": 450.394,
-      "mean": 191.176,
-      "p99": 384.245,
+      "max": 470.177,
+      "mean": 215.324,
+      "p99": 445.557,
       "steps_above_v_hold": 270,
       "n_steps": 270
     },
     "slot2": {
-      "max": 413.304,
-      "mean": 196.643,
-      "p99": 399.073,
+      "max": 466.083,
+      "mean": 220.826,
+      "p99": 457.388,
       "steps_above_v_hold": 270,
       "n_steps": 270
     }
@@ -29,7 +29,7 @@
     "--seed",
     "42",
     "--weighted-coincidence",
-    "--self-regen",
-    "0.15"
+    "--hebb-max",
+    "20.0"
   ]
 }

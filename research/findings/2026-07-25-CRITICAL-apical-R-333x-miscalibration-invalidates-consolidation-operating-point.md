@@ -2179,3 +2179,44 @@ latch restores a graded, slot-selective plateau, the instructive signal is recov
 host teaching clamp becomes removable — which would convert capability (C) (self-organized write) from a build into
 a calibration. If it stays flat, the saturation is upstream in the drive itself (`I_coincidence ≈ 3100 pA` at
 `R=0.15`) and the next lever is the drive magnitude / `k_threshold=2.0` against a dense (0.25) `ca1→slot`.
+
+## 🎯 THE BOUNDARY, PROPERLY LOCATED: `coactivation_replay` produces a NON-SELECTIVE `ca1→slot` write
+
+Chased the flat apical instructive signal to its source. Four levers tested, each with the lever VERIFIED live:
+
+| lever | tested | result |
+|---|---|---|
+| weighted vs count coincidence | `coincidence_weighted_drive` ∈ {T,F}, printed per run | plateau magnitude 40–65% apart, **selectivity unchanged (0.1–2.3% spread)** |
+| self-regen SUSTAIN latch | `0.15 → 0.0`, before→after printed | **no change** (spreads 1.1–4.8%) |
+| Hebbian bound (the trap) | `2.5 → 20.0`, printed per run | weights track the bound (2.55–2.87 → 18.0–20.0); **own/other stays 0.98–1.02** |
+| — the upstream write itself — | per-fact, restricted to that fact's CA1 **engram core** (16–50 cells) | **own/other 0.995–1.024, own-is-max 2/9 (chance 3/9)** |
+
+**⇒ THE WRITE IS FLAT AT SOURCE.** Under the real `coactivation_replay`, the `ca1→slot` weights carry **no fact
+selectivity at any bound**. Everything downstream follows mechanically: flat weights → uniform weighted plateau →
+uniform apical instructive signal (~1% spread, ~400 mV) → uniform BTSP write → chance recall. **This is exactly why
+the arc introduced the host apical teaching clamp: without it nothing is selective anywhere in the chain.** The
+clamp was not a convenience, it was load-bearing for every downstream result.
+
+**RECONCILING WITH THE BANKED `ca1→slot` 6-SEED GO (own-is-max 18/18, own/other 4.06 vs permuted 0.43):** no
+contradiction — **different procedures.** That GO was measured under the decoupled-plateau/teaching-clamp protocol
+(blocked schedule, single burst + 100 ms recovery, `--encode-btsp-lr 0`, unsaturated `btsp_lr=0.0005`,
+`commit_top_k=85`). This measurement uses `coactivation_replay`, the actual replay path. **So the GO says a write
+CAN localize when the instructive signal is supplied by hand; this says replay does NOT supply it.** Both are true
+and they are about different things — which is the whole point of the distinction the arc had been eliding.
+
+**MECHANISM (consistent with every measurement, one step from confirmed):** during each replay window the apical
+plateau saturates **every** slot (~400 mV, 270/270 steps, ~1% spread), so all slots are depolarized while fact *i*'s
+CA1 engram fires. Coincidence is therefore **global**, not fact-specific, and Hebbian/BTSP potentiate every
+`ca1→slot` synapse alike. The somatic drive IS selective (`coactivation_replay` drives only `slot_idx[i]`), but the
+saturating plateau swamps that selectivity. **▶ NEXT MEASUREMENT (cheap, decisive): per-slot SOMATIC firing during
+each replay window** — if all slots fire in every window, the diagnosis is confirmed and the target becomes
+*suppressing non-target slots during replay* (competition/inhibition), not the write rule and not the dendrite.
+
+**INSTRUMENT NOTE — this sub-arc cost 4 self-caught instrument failures before yielding a valid number:** an
+`ast.parse` that misses symbol-table errors (12 arms died silently) · a no-op lever comparing two identical configs
+(`comp_dendritic` already sets `coincidence_weighted_drive=True`) · a generated `getattr` that resolved to attribute
+`"'"` and printed `None` for a whole 6-run A/B · and a CuPy-vs-NumPy type error that a bare `except` reported as "no
+engram core", which my verdict line then rendered as **"own-is-max 0/3"** — *a fabricated negative manufactured from
+a type bug, on the exact measurement meant to adjudicate the GO.* All four shared one shape: **a check that could
+not fail.** The probe now prints every lever's before→after, shows swallowed exceptions, and prints **UNDEFINED**
+rather than a score when nothing is evaluable.

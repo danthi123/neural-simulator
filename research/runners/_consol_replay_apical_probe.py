@@ -49,6 +49,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--cycles", type=int, default=3)
+    ap.add_argument("--hebb-max", type=float, default=2.5, help="hebbian_max_weight. THE TRAP: measured ca1->slot weights land at 2.55-2.87, ABOVE the 2.5 this probe was setting -- so every Hebbian potentiation was NEGATIVE and dragged all synapses to a common ceiling, producing the flat per-core weights. 8th instance of this trap today (STDP/BDSP/BTSP/Hebbian). Raise it above the design weights.")
     ap.add_argument("--self-regen", type=float, default=None, help="coincidence_plateau_self_regen (runner default 0.15). This is a v-GATED SUSTAIN LATCH: once tripped the plateau holds itself up independently of ongoing drive, which would ERASE the graded differences weighted drive creates. 0.0 = no latch.")
     ap.add_argument("--weighted-coincidence", action="store_true", help="engine cfg.coincidence_weighted_drive (set EXPLICITLY both ways; comp_dendritic already defaults it True): grade the apical plateau by EFFECTIVE SYNAPTIC WEIGHT instead of the COUNT of coincident inputs. The count-based default is an all-or-none switch, so every slot crossing k gets a FULL plateau regardless of weight => the uniform signal measured. Config-only; no sim/ edit.")
     ap.add_argument("--out", default="research/findings/raw/cortical_store")
@@ -61,16 +62,24 @@ def main():
              comp_no_pool_slot=False, comp_pool_slot_weight=1.5, comp_attractor_slots=N,
              enable_hebbian=True)
     b = build_substrate(args.seed, SimpleNamespace(**a))
-    b.core_config.hebbian_max_weight = 2.5
+    b.core_config.hebbian_max_weight = float(args.hebb_max)
+    print('  LEVER: hebbian_max_weight = %.3f  (ca1->slot lands ~2.55-2.87; a bound BELOW that inverts the rule)'
+          % b.core_config.hebbian_max_weight)
     b.core_config.enable_stdp = False
     # ⚠️ comp_dendritic=True ALREADY SETS coincidence_weighted_drive=True
     # (nmda_compositional_consolidation.py:374). So a flag that only turns it ON is a NO-OP and the
     # A/B compares identical configs -- which is exactly what happened on the first run of this probe.
     # Set it EXPLICITLY in BOTH directions, and PRINT it, so the lever is verified rather than assumed.
     b.core_config.coincidence_weighted_drive = bool(args.weighted_coincidence)
+    # Read BEFORE and AFTER so the lever is proven to have moved, not merely issued. (The previous
+    # version of this line used a generated getattr expression that resolved to the attribute name
+    # "'" and printed None every run -- making a whole 6-run A/B uninterpretable. Keep it plain.)
+    _sr_before = getattr(b.core_config, "coincidence_plateau_self_regen", None)
     if args.self_regen is not None:
         b.core_config.coincidence_plateau_self_regen = float(args.self_regen)
-    print(f"  LEVER: self_regen = {getattr(b.core_config, chr(39)+chr(39).join([]) or 'coincidence_plateau_self_regen', None)}")
+    _sr_after = getattr(b.core_config, "coincidence_plateau_self_regen", None)
+    print(f"  LEVER: self_regen {_sr_before} -> {_sr_after}"
+          f"{'  (UNCHANGED — lever did not move!)' if _sr_before == _sr_after and args.self_regen is not None else ''}")
     print(f"  LEVER: coincidence_weighted_drive = {b.core_config.coincidence_weighted_drive} "
           f"(comp_dendritic sets it True by default -- an ON-only flag would be a no-op)")
 
@@ -88,6 +97,77 @@ def main():
         print(f"  ca1->slot mean weight after encode: {_mgw(b, 'ca1_to_comp_attr'):.5f}  (inits at 0.0; weighted drive needs this > 0)")
     except Exception as _e:
         print(f"  ca1->slot weight read failed: {_e}")
+
+    # ---- THE UPSTREAM MEASUREMENT I HAD NOT TAKEN: are the ca1->slot weights themselves FACT-SELECTIVE?
+    # The weighted plateau grades by these weights. I reported only their MEAN (1.04-1.21) -- if the
+    # per-slot weights are uniform, weighted drive has NOTHING to grade and the plateau CANNOT be
+    # selective no matter what the plateau parameters do. That would relocate the failure from the
+    # dendrite to the ca1->slot write. Measure per-slot, before touching the plateau.
+    _c = b.cp_connections
+    _nz = int(_c.nnz)
+    _po = to_host(_c.indices).astype(np.int64)[:_nz]
+    _ip = to_host(_c.indptr).astype(np.int64)
+    _pr = np.repeat(np.arange(len(_ip) - 1), np.diff(_ip))[:_nz]
+    _wd = to_host(_c.data).astype(np.float64)[:_nz]
+    try:
+        _ca1 = np.asarray(sorted(rm.indices("ca1")), dtype=np.int64)
+        _m_ca1 = np.isin(_pr, _ca1)
+        per_slot_w = {}
+        for j in sorted(slot):
+            m = _m_ca1 & np.isin(_po, slot[j])
+            per_slot_w[j] = float(_wd[m].mean()) if m.sum() else 0.0
+        _vals = [per_slot_w[j] for j in sorted(per_slot_w)]
+        _spread = (max(_vals) - min(_vals)) / max(max(_vals), 1e-9) * 100
+        print(f"  (UPSTREAM-raw) ca1->slot MEAN WEIGHT PER SLOT: {[round(v,4) for v in _vals]}  spread={_spread:.1f}%")
+        print( "     ⚠️ THIS RAW MEAN IS THE KNOWN-DILUTING METRIC. It averages ALL ca1->slot synapses, while a")
+        print( "        selective write lives only on the fact's small CA1 CORE -- the arc already established")
+        print( "        that the raw mean washes it out and that a core/firing-weighted read is what makes it")
+        print( "        visible. Do NOT read selectivity off the line above. The CORE-RESTRICTED read follows.")
+        # CORE-RESTRICTED: for each fact i, use ONLY that fact's engram-tagged CA1 cells, and compare their
+        # mean weight onto slot i (own) vs onto the other slots (other). This is the same correction that
+        # made the ca1->slot 6-seed GO visible; the raw mean above is expected to be flat even when this is not.
+        core_rows = []
+        for i in sorted(slot):
+            try:
+                # get_engram_tag_indices returns a BACKEND array (CuPy on GPU). np.asarray(sorted(cupy_arr))
+                # raises, and the bare `except` reported that as "no engram core" — a TYPE BUG presenting as a
+                # scientific null (the tags DO exist: verified 12/12/10 indices for ep_0/1/2). Convert through
+                # to_host explicitly, and SHOW the failure instead of swallowing it.
+                _ci = b.get_engram_tag_indices(tags[i])
+                core = np.asarray(to_host(_ci), dtype=np.int64).ravel() if _ci is not None else None
+            except Exception as _ce:
+                print("     fact %d: engram core read FAILED (%s: %s)" % (i, type(_ce).__name__, _ce))
+                core = None
+            if core is None or core.size == 0:
+                core_rows.append(None); continue
+            m_core = np.isin(_pr, core)
+            ws = []
+            for j in sorted(slot):
+                m = m_core & np.isin(_po, slot[j])
+                ws.append(float(_wd[m].mean()) if m.sum() else 0.0)
+            own = ws[i]; other = np.mean([w for k, w in enumerate(ws) if k != i])
+            core_rows.append((ws, own / other if other > 1e-12 else 0.0, int(core.size)))
+        print("  (UPSTREAM-core) per-fact, restricted to that fact's CA1 engram core:")
+        oks = 0
+        for i, r in enumerate(core_rows):
+            if r is None:
+                print(f"     fact {i}: no engram core -- cannot evaluate"); continue
+            ws, oo, ncore = r
+            ok = (int(np.argmax(ws)) == i)
+            oks += ok
+            print(f"     fact {i}: weights->slots {[round(w,4) for w in ws]}  own/other={oo:.3f}  "
+                  f"own_is_max={ok}  (core={ncore} cells)")
+        _evaluable = sum(1 for r in core_rows if r is not None)
+        if _evaluable == 0:
+            print("     => UNDEFINED: no fact had an evaluable engram core. This is NOT 'own-is-max 0/N' —")
+            print("        printing a score here would FABRICATE A NEGATIVE out of an INSTRUMENT FAILURE.")
+            print("        (The first version of this probe did exactly that, three seeds running.)")
+        else:
+            print("     => own-is-max %d/%d evaluable. If THIS is selective while the raw mean is flat," % (oks, _evaluable))
+        print( "        the ca1->slot write IS fact-specific and the flat plateau is a READ/GRADING problem,")
+        print( "        not a write problem. If THIS is also flat, the write itself is not localizing.")
+    except Exception as _e:
+        print(f"  (UPSTREAM) per-slot ca1->slot read failed: {_e}")
 
     # ---- sample cp_v_apical on every slot at EVERY step of the real replay.
     samples = {j: [] for j in sorted(slot)}
