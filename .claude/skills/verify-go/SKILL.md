@@ -132,6 +132,41 @@ A `for … & done; wait` fan-out of GPU runs silently dropped 3-of-4 and then 3-
 `${PIPESTATUS[0]}`; treat "an arm produced no output" as a FAILED RUN to reproduce, never as a null result; and when
 arms contend for one GPU, run them SERIALLY — a slower correct sweep beats a fast one whose failures are invisible.
 
+## ⛔ THE RESEARCH GATE HAS A LOOPHOLE: a SEQUENCE of cheap tests is a BUILD EFFORT (2026-07-26)
+
+CLAUDE.md fires the research gate before "committing ANY build / GPU / `sim/`-edit effort to *overcome* a
+difficulty". **I evaded it for hours without ever deciding to** — because each individual step was a *cheap config
+flag*, never "a build". I tested weighted-vs-count coincidence, the self-regen latch, the Hebbian bound, inhibition
+topology, an inter-window washout, and cue magnitude — **six levers, ~4 GPU-hours, all against ONE defect** — and
+the gate never subjectively "fired" because no single test felt like a commitment. When I finally dispatched the
+research round, it resolved in one pass what the sequential guessing had not.
+
+**MECHANICAL RULE (no judgment call, matching the gate's design intent):** *if you have tested **≥2 distinct levers
+against the same defect** without resolving it, the gate FIRES.* Cheapness of each individual test is **not** an
+exemption — the relevant quantity is cumulative effort against one difficulty, not the cost of the next step.
+Write the lever count in the findings doc so the counter is visible.
+
+**Self-check:** "am I about to try a third thing against the same failure?" → that IS the trigger. Dispatch the
+read-only research round; your candidate becomes one ranked option, never the default.
+
+## Measure the thing, at the time it happens (2026-07-26 — retraction #9)
+
+Three separate ways a measurement can be *structurally incapable* of answering its own question, all seen in one
+sub-arc:
+1. **Placed upstream of the effect.** A per-fact weight table ran BEFORE the `coactivation_replay` it claimed to
+   characterise; a "BOUNDARY LOCATED" finding was committed on numbers that could not have shown a replay effect.
+   **Print/measure the quantity BEFORE and AFTER the manipulation, and report the delta** — then a misplacement is
+   visible as a zero delta instead of a confident wrong table.
+2. **A lesion that does not persist.** Zeroing `cp_connections.data` survived one step and regrew (plasticity was
+   live). **Re-read the manipulated quantity at the moment of measurement, not when you issued it.**
+3. **A metric too coarse to resolve a real lever.** An argmax decided by 400-vs-0 cannot move on a 1.7% change.
+   **Always carry one CONTINUOUS quantity alongside any count/argmax metric.**
+
+**⇒ A NULL A/B HAS THREE EXPLANATIONS — inert lever · misplaced measurement · coarse metric — and they are
+indistinguishable from the summary alone.** I misread "byte-identical arms" as "inert lever" TWICE in one session,
+wrong for a different reason each time. Distinguish them by measuring the lever's effect on a continuous quantity
+*before* interpreting the outcome.
+
 ## What this skill MUST NOT do
 - Rubber-stamp — a skeptic that "confirms" without trying to break it did nothing. The prompt must push to REFUTE.
 - Verify only the happy path — test the claim against the case you'd EXPECT to break it (a run you KNOW is broken, the seed you fear).
