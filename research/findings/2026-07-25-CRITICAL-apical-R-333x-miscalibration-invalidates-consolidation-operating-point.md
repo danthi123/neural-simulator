@@ -2119,3 +2119,31 @@ apical drive saturating and identical across slots, and what makes it fact-selec
 calibration + competition problem on the replay path, not a missing-mechanism problem. That is a much cheaper
 target than the mechanism hunt the comment implied, and it is the first half of the one question that unifies
 capabilities (A) replay-driven transfer and (C) self-organized write.
+
+## ⛔ VOID TEST (self-caught) — my weighted-vs-count A/B compared TWO IDENTICAL CONFIGS
+
+I measured "weighted coincidence changes nothing" (both arms uniform ~193 mean, ~400 mV). **That test was VOID.**
+`nmda_compositional_consolidation.py:374` — inside `if comp_dend:` — **already sets
+`cfg.coincidence_weighted_drive = True`.** My probe passes `comp_dendritic=True`, so BOTH arms ran weighted; my
+`--weighted-coincidence` flag turned ON something already on. **A no-op lever, and a "default" arm that was never
+the default.**
+
+This is `verify-go` rule 3 verbatim — *"before an A/B: print the lever's effect and confirm the DEFAULT arm is
+genuinely unchanged"* — a rule I added to the skill THIS MORNING and then violated. The near-identical arms
+(194.8/193.5/193.8 vs 191.9/193.3/198.0) looked like a clean null and would have been recorded as "the already-designed
+weighted-coincidence surpass does not work", which is a **materially wrong conclusion about a filed design**.
+Caught only because I asked whether the lever moved before trusting the output.
+
+**FIXED:** the probe now sets `coincidence_weighted_drive` **explicitly in both directions** and PRINTS it, so the
+lever is verified per-run rather than assumed. Real A/B re-running.
+
+**WHAT SURVIVES THE VOID TEST — and it is the substantive point:** the arc's shipped `comp_dendritic` config
+**already uses WEIGHTED coincidence**, and it still yields an apical plateau that is uniform across slots
+(~1% spread) and unphysiological (~400 mV) throughout replay. So *weighted-vs-count was never the open question*.
+The open question is why a weighted plateau, graded by `ca1→slot` weights that ARE non-zero and fact-potentiated
+(measured 1.04–1.21 after encode), still comes out flat across slots. Candidates now worth measuring, in order:
+(1) the plateau's **self-regen latch** (`coincidence_plateau_self_regen=0.15`) — a v-gated SUSTAIN that, once
+tripped, holds the plateau up regardless of ongoing drive, which would erase graded differences;
+(2) `apical_R` — the runner's DEFAULT is **50.0**, the 333× miscalibrated value, and while this probe passes 0.15
+explicitly, ~400 mV at R=0.15 implies `I_coincidence ≈ 3100 pA`, i.e. the drive itself is enormous;
+(3) `k_threshold=2.0` against a dense `ca1→slot` (density 0.25) — every slot clears it.

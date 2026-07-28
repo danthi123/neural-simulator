@@ -49,6 +49,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--cycles", type=int, default=3)
+    ap.add_argument("--weighted-coincidence", action="store_true", help="engine cfg.coincidence_weighted_drive (set EXPLICITLY both ways; comp_dendritic already defaults it True): grade the apical plateau by EFFECTIVE SYNAPTIC WEIGHT instead of the COUNT of coincident inputs. The count-based default is an all-or-none switch, so every slot crossing k gets a FULL plateau regardless of weight => the uniform signal measured. Config-only; no sim/ edit.")
     ap.add_argument("--out", default="research/findings/raw/cortical_store")
     args = ap.parse_args()
 
@@ -61,6 +62,13 @@ def main():
     b = build_substrate(args.seed, SimpleNamespace(**a))
     b.core_config.hebbian_max_weight = 2.5
     b.core_config.enable_stdp = False
+    # ⚠️ comp_dendritic=True ALREADY SETS coincidence_weighted_drive=True
+    # (nmda_compositional_consolidation.py:374). So a flag that only turns it ON is a NO-OP and the
+    # A/B compares identical configs -- which is exactly what happened on the first run of this probe.
+    # Set it EXPLICITLY in BOTH directions, and PRINT it, so the lever is verified rather than assumed.
+    b.core_config.coincidence_weighted_drive = bool(args.weighted_coincidence)
+    print(f"  LEVER: coincidence_weighted_drive = {b.core_config.coincidence_weighted_drive} "
+          f"(comp_dendritic sets it True by default -- an ON-only flag would be a no-op)")
 
     rm = b.region_manager
     names = set(rm.region_names()) if hasattr(rm, "region_names") else set()
@@ -69,6 +77,13 @@ def main():
     v_hold = float(getattr(b.core_config, "comp_v_hold", -50.0))
 
     tags, _ = encode_facts_with_reinstatement(b, CONSOLIDATED_FACTS)
+    # ca1_concept_weight INITS AT 0.0 and must be grown by plasticity. If it is still ~0 the weighted
+    # plateau has nothing to grade and would read as a (misleading) flat null -- so measure it explicitly.
+    from research.runners.nmda_compositional_consolidation import _mean_gate_weight as _mgw
+    try:
+        print(f"  ca1->slot mean weight after encode: {_mgw(b, 'ca1_to_comp_attr'):.5f}  (inits at 0.0; weighted drive needs this > 0)")
+    except Exception as _e:
+        print(f"  ca1->slot weight read failed: {_e}")
 
     # ---- sample cp_v_apical on every slot at EVERY step of the real replay.
     samples = {j: [] for j in sorted(slot)}
