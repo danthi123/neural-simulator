@@ -171,10 +171,18 @@ def main():
 
     # ---- sample cp_v_apical on every slot at EVERY step of the real replay.
     samples = {j: [] for j in sorted(slot)}
+    fire_samples = {j: [] for j in sorted(slot)}
     orig_step = b._run_one_simulation_step
 
     def sampling_step(*a_, **k_):
         r = orig_step(*a_, **k_)
+        # per-slot SOMATIC firing too: the apical says every slot is depolarized, but the DRIVE is
+        # selective (coactivation_replay drives only slot_idx[i]). If all slots also FIRE in every
+        # window, coincidence is global and Hebbian potentiates every ca1->slot synapse alike --
+        # which is the mechanism behind the flat write.
+        _fs = to_host(b.cp_firing_states)
+        for j in sorted(slot):
+            fire_samples[j].append(float(_fs[slot[j]].sum()))
         if getattr(b, "cp_v_apical", None) is not None:
             va = to_host(b.cp_v_apical)
             for j in sorted(slot):
@@ -188,6 +196,29 @@ def main():
     finally:
         b._run_one_simulation_step = orig_step
 
+    # ---- WINDOW SEGMENTATION: reconstruct which fact was driven in each 30-step burst, exactly as
+    # coactivation_replay does (np.random.default_rng(seed+777), reshuffled each cycle), then report
+    # per-slot SOMATIC firing per window. THE QUESTION: does the DRIVEN slot dominate its own window?
+    _burst = 30
+    _rng = np.random.default_rng(int(args.seed) + 777)
+    _order = []
+    for _c in range(int(args.cycles)):
+        _o = list(range(N)); _rng.shuffle(_o); _order.extend(_o)
+    print("  (WINDOWS) per-slot SOMATIC spikes per replay burst (driven fact in brackets):")
+    _dom = 0
+    _nw = min(len(_order), len(fire_samples[0]) // _burst)
+    for w in range(_nw):
+        sl = slice(w * _burst, (w + 1) * _burst)
+        tot = [float(np.asarray(fire_samples[j][sl]).sum()) for j in sorted(slot)]
+        drv = _order[w]
+        win = int(np.argmax(tot))
+        _dom += (win == drv)
+        if w < 6 or win != drv:
+            print(f"     window {w:2d} [fact {drv}]: spikes={[int(t) for t in tot]}  argmax=slot {win}  "
+                  f"{'driven slot dominates' if win == drv else '⛔ NON-DRIVEN slot dominates'}")
+    print(f"     => driven slot dominated its own window in {_dom}/{_nw} windows (chance {_nw//N}/{_nw}).")
+    print( "        If ~chance, coincidence during replay is GLOBAL and the flat ca1->slot write is explained:")
+    print( "        every ca1 cell co-fires with every slot, so Hebbian/BTSP potentiate them all alike.")
     print(f"[seed {args.seed}] backend={BACKEND}  v_hold={v_hold}  steps sampled={len(samples[0])}")
     print("  (values are the MAX v_apical over each slot's neurons -- the most generous read possible)")
     any_above = False

@@ -2220,3 +2220,47 @@ engram core", which my verdict line then rendered as **"own-is-max 0/3"** — *a
 a type bug, on the exact measurement meant to adjudicate the GO.* All four shared one shape: **a check that could
 not fail.** The probe now prints every lever's before→after, shows swallowed exceptions, and prints **UNDEFINED**
 rather than a score when nothing is evaluable.
+
+## ⛔→🎯 MY MECHANISM HYPOTHESIS REFUTED — replay's slot competition is STRONG but MIS-TARGETED
+
+I predicted the flat write came from **global** coincidence (all slots firing together, so every `ca1→slot` synapse
+potentiates alike). **Measured per-slot SOMATIC spikes per 30-step replay burst, with the driven fact reconstructed
+from `coactivation_replay`'s own RNG — that is WRONG.** Seed 42:
+
+```
+window 0 [fact 1]: [ 342, 1105,  233] -> slot 1   ✓ driven slot wins
+window 1 [fact 2]: [  11,   12,  417] -> slot 2   ✓
+window 2 [fact 0]: [ 751,    0,    0] -> slot 0   ✓  (near-EXCLUSIVE)
+window 3 [fact 1]: [   0,    6,  692] -> slot 2   ⛔ NON-driven slot wins
+window 4 [fact 0]: [   0,  677,    1] -> slot 1   ⛔
+window 5 [fact 2]: [ 730,    1,    0] -> slot 0   ⛔
+window 6 [fact 0]: [   1,    0,  627] -> slot 2   ⛔
+window 7 [fact 2]: [ 486,    1,    1] -> slot 0   ⛔
+```
+Driven slot wins **4/9 · 4/9 · 7/9** (seeds 42/43/44) = **15/27, chance 9/27.**
+
+**⇒ THE SLOTS ARE STRONGLY COMPETITIVE — one wins 400–1100 spikes while the others sit at 0–12 — BUT THE WINNER
+DOES NOT TRACK THE DRIVEN FACT.** The 1400 pA somatic drive to `slot_idx[i]` frequently LOSES the competition to
+whatever the attractor has latched. So coincidence during replay is **selective but MIS-TARGETED**, not global.
+
+**This explains the flat `ca1→slot` write exactly, and better than my hypothesis did:** each window writes STRONGLY
+but onto an arbitrary slot; averaged over 9 windows, strong writes to effectively random targets sum to a UNIFORM
+weight profile (own/other 0.995–1.024). A flat outcome from strong-but-random writes — not from weak or global ones.
+
+**And it explains the apical:** the plateau saturates at ~400 mV on ALL THREE slots (270/270 steps, ~1% spread) even
+in windows where the somatic competition was near-exclusive (`[751, 0, 0]`). **The plateau therefore ERASES even the
+strong somatic selectivity that does exist** — the dendritic read is the second, independent failure.
+
+**⇒ TWO SEPARATE, PRECISELY-NAMED DEFECTS (neither is the write rule, the bound, or the coincidence grading — all
+four of those were tested and cleared):**
+1. **TARGETING** — the replay drive does not win the slot competition; the winner is attractor-determined, not
+   cue-determined. The NMDA attractor (`comp_self_weight=12`, `nmda_attractor` gate OPEN during replay) latches a
+   slot that the next fact's drive cannot displace. *Test: replay with `nmda_attractor` gated OFF, or a
+   between-window reset/inhibitory burst; measure driven-slot-wins toward 9/9.*
+2. **TRANSDUCTION** — even when the correct slot wins near-exclusively, the saturating plateau reports all slots
+   equally, so the correct win never reaches BTSP's instructive term. *Test: reduce the coincidence drive
+   (`comp_k_thresh`, or the ca1 drive) until the plateau is graded and physiological (≤ +50 mV), then re-measure
+   spread.*
+
+**Fix (1) and (2) and the host teaching clamp becomes unnecessary by construction** — replay would then supply a
+correct, graded, fact-specific instructive signal, which is exactly capability (A)+(C). Both tests are config-only.
