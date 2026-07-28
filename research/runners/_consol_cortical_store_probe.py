@@ -497,12 +497,13 @@ def main():
         print("  every noun in 2 facts, every adjective in 2 => a per-feature (noun->slot + adj->slot) store is")
         print("  MATHEMATICALLY incapable of this task; only a conjunctive code can. chance = 1/4.")
     elif args.n_facts is not None:
+        # (the `global` declaration in the overlap branch above covers this whole function — a second
+        #  one here is a SyntaxError: "name used prior to global declaration")
         # Rebind the module globals BEFORE run() reads them. run() looks CONSOLIDATED_FACTS/N up at call
         # time, so this is sufficient; FACTS_ALL is the 4-fact inventory (fact 3 is normally WITHHELD for
         # the main runner's no-confab probe — this probe does not use that control, so consuming it here
         # is safe, but a run with --n-facts 4 CANNOT also serve as a no-confab test).
         import research.runners.nmda_compositional_consolidation as _ncc
-        global CONSOLIDATED_FACTS, N
         if args.n_facts > len(_ncc.FACTS_ALL):
             raise SystemExit(f"--n-facts {args.n_facts} exceeds the vocabulary: only {len(_ncc.FACTS_ALL)} facts exist")
         CONSOLIDATED_FACTS = _ncc.FACTS_ALL[:args.n_facts]
