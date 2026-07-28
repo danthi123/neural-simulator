@@ -2076,3 +2076,46 @@ treatment I just gave my own.
 **▶ CONSEQUENCE FOR THE NEXT BUILD:** the one question I identified still stands and now covers BOTH arcs —
 *can a replay event, on its own, select a target and supply the instructive signal that writes a constituent into
 it?* The apical measurement now running is the first half of exactly that.
+
+## 🔬 THE COMMENT THAT JUSTIFIED THE HOST CLAMP IS FALSE — replay DOES drive the apical compartment. Non-selectively, at ~400 mV.
+
+The entire host teaching clamp — the shortcut that made today's write host-supervised, and that (by routing into the
+`if teaching_clamp:` branch) bypasses replay so nothing is ever consolidated — rests on a claim that existed ONLY as
+a code comment: *"coactivation_replay drives the target slot SOMATICALLY … somatic drive supplies none [no apical
+plateau], so pool→slot never receives a teaching signal."* **Measured it** (`_consol_replay_apical_probe.py`, real
+`coactivation_replay`, `cp_v_apical` sampled on every slot at every step, MAX over each slot's neurons = the most
+generous possible read; 3 seeds, 270 steps each):
+
+| seed | slot 0 mean | slot 1 mean | slot 2 mean | max | steps above `v_hold` |
+|---|---|---|---|---|---|
+| 42 | 188.2 | 187.9 | 189.1 | 414.4 | **270/270** |
+| 43 | 198.9 | 191.9 | 190.9 | 420.0 | 270/270 (269 on slot 1) |
+| 44 | 175.5 | 179.4 | 179.3 | 416.0 | **270/270** |
+
+**⇒ THE COMMENT IS FALSE.** The apical compartment is not silent during replay — it is driven above `v_hold` on
+**every slot, essentially every step**. But the two facts that matter are worse than the comment claimed:
+
+1. **THE SIGNAL IS COMPLETELY NON-SELECTIVE.** Per-slot means agree to within ~1% (188.2 / 187.9 / 189.1). BTSP's
+   instructive term is `max(v_apical − v_hold, 0)` **per postsynaptic cell**, so an identical plateau on every slot
+   carries **zero fact information** — the write would be UNIFORM. That is exactly the uniform, non-selective write
+   this arc kept measuring before the clamp was introduced. **The comment's CONCLUSION (replay cannot teach
+   selectively) survives; its stated REASON is wrong.** The problem is not an ABSENT teaching signal, it is a
+   SATURATING, INDISCRIMINATE one.
+2. **~400 mV IS UNPHYSIOLOGICAL** (range −90…+50) — the SAME artifact class as the 333× `comp_apical_R`
+   miscalibration this arc already retracted once, and it is present at the CALIBRATED `comp_apical_R=0.15`. So the
+   replay path has its own broken regime that the teaching-clamp path never exposed, because the clamp overwrites
+   `v_apical` directly and thereby MASKS it.
+
+**⚠️ MY OWN INSTRUMENT'S VERDICT WAS UNDER-SPECIFIED — caught immediately and hardened.** The probe's first verdict
+tested only *"is it above v_hold?"* and duly printed *"the comment is WRONG and the clamp may be removable
+outright."* That is a wrong recommendation drawn from a correct measurement, because presence is not usability. The
+verdict now also requires **selectivity between slots (>20% spread)** and **a physiological range (≤ +50 mV)**, and
+names which one failed. *Today's recurring lesson, now on my own probe: a gate that can PASS without its key
+control is the bug.*
+
+**⇒ THE GAP IS NOW PRECISELY LOCATED, AND IT IS NOT WHERE THE ARC THOUGHT.** The honest next question is not
+"how do we get replay to drive the apical compartment" (it already does, too hard) but **"why is the replay-driven
+apical drive saturating and identical across slots, and what makes it fact-selective?"** — i.e. a
+calibration + competition problem on the replay path, not a missing-mechanism problem. That is a much cheaper
+target than the mechanism hunt the comment implied, and it is the first half of the one question that unifies
+capabilities (A) replay-driven transfer and (C) self-organized write.
