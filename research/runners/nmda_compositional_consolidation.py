@@ -578,7 +578,8 @@ def consolidate(bridge, tags, cycles, seed, attractor_on=True):
 # and POTENTIATE (the A1 failure: CA3-only drive -> pools never fire -> wire frozen 0.01).
 # ---------------------------------------------------------------------------
 def coactivation_replay(bridge, facts, tags, cycles, seed, coactivate=True, attractor_on=True,
-                        tag_drive_pA=1500.0, pool_drive_pA=1400.0, slot_drive_pA=1400.0, burst_steps=30):
+                        tag_drive_pA=1500.0, pool_drive_pA=1400.0, slot_drive_pA=1400.0, burst_steps=30,
+                        washout_steps=0):
     """Reinstate the FULL pattern per fact during replay: CA3 tag + the fact's concept pools + the fact's dedicated
     attractor slot (fact i -> comp_attr_i). The hippocampal replay reinstating the cortical target is biology-faithful;
     STDP then binds ca1->slot / pool->slot / ca1->concept from the pre(ca1)+post(pool,slot) coincidence."""
@@ -617,6 +618,19 @@ def coactivation_replay(bridge, facts, tags, cycles, seed, coactivate=True, attr
                 bridge.clear_tag_drive(tag)
             except Exception:
                 pass
+            # INTER-WINDOW WASHOUT (2026-07-26, additive; default 0 => byte-identical to the shipped path).
+            # DIAGNOSED CAUSE of replay mis-targeting: the previous window's winner is essentially BARRED from
+            # winning the next one -- winner(w)==winner(w-1) in only 2/48 transitions vs 16/48 at chance
+            # (p=1.1e-6). When the cued slot IS the previous winner it wins 2/14 (0.143, BELOW chance);
+            # otherwise 28/40 (0.700). So the cue works and is simply defeated by adaptation/refractory
+            # carry-over. (NOT NMDA: BASE sets skip_nmda_additions=True so enable_nmda_recurrent is False and
+            # the slow-NMDA masks are None -- the nmda_slow-tagged self-loop transmits as plain AMPA.)
+            # This is the SAME recovery-gap lever already found load-bearing for the WRITE phase, applied
+            # between REPLAY windows, where it was absent.
+            if int(washout_steps) > 0:
+                bridge.cp_external_input_current[:] = 0.0
+                for _ in range(int(washout_steps)):
+                    bridge._run_one_simulation_step()
     bridge.cp_external_input_current[:] = 0.0
     return {"cycles": int(cycles), "coactivate": bool(coactivate)}
 

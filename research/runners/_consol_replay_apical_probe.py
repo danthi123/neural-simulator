@@ -49,6 +49,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--cycles", type=int, default=3)
+    ap.add_argument("--washout", type=int, default=0, help="quiet steps between replay windows. THE DIAGNOSED FIX: the previous window winner is barred from winning the next (2/48 repeats vs 16/48 chance), so the cue loses exactly when it collides with it (0.143 vs 0.700 otherwise).")
     ap.add_argument("--per-slot-fs", action="store_true", help="TARGETING candidate 1: replace the SHARED comp_attr_inh pool (every slot drives it, it inhibits every slot = global symmetric inhibition) with PER-SLOT FS + cross-inhibition. Built earlier today but only ever evaluated against the STORE metric — never against driven-slot-wins, the metric that actually measures targeting.")
     ap.add_argument("--attractor-off", action="store_true", help="DEFECT-1 TARGETING test: coactivation_replay(attractor_on=False). The NMDA attractor (comp_self_weight=12) may latch a slot the next fact's 1400pA drive cannot displace — measured, the driven slot wins only 15/27 windows (chance 9/27) though competition is near-exclusive. NOTE: an earlier A/B of this flag was UNINTERPRETABLE because the weight read preceded replay; it is only meaningful against the CORE-AFTER-REPLAY numbers.")
     ap.add_argument("--hebb-max", type=float, default=2.5, help="hebbian_max_weight. THE TRAP: measured ca1->slot weights land at 2.55-2.87, ABOVE the 2.5 this probe was setting -- so every Hebbian potentiation was NEGATIVE and dragged all synapses to a common ceiling, producing the flat per-core weights. 8th instance of this trap today (STDP/BDSP/BTSP/Hebbian). Raise it above the design weights.")
@@ -195,7 +196,8 @@ def main():
     b._run_one_simulation_step = sampling_step
     try:
         coactivation_replay(b, CONSOLIDATED_FACTS, tags, int(args.cycles), args.seed,
-                            coactivate=True, attractor_on=not args.attractor_off)
+                            coactivate=True, attractor_on=not args.attractor_off,
+                            washout_steps=int(args.washout))
     finally:
         b._run_one_simulation_step = orig_step
 

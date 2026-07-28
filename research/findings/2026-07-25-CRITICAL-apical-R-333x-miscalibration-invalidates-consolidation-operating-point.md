@@ -2397,3 +2397,43 @@ LOWEST mean firing threshold?** If yes, targeting is set by threshold jitter, an
 normalization or a stronger/adaptive cue — not an inhibition-topology change. Note this is a *substrate
 heterogeneity* explanation, not a mechanism gap: the biology has the same problem and solves it with
 homeostatic intrinsic plasticity, which the engine already supports.
+
+## ⛔→🎯 THE WASHOUT FIX IS REFUTED — AND IT REVEALS THE REAL DEFECT: THE CUE CANNOT WIN THE COMPETITION
+
+The diagnosis (adversarial workflow `wzwh2bvut`, confirmed by me) was that the previous window's winner is barred
+from winning the next — `winner(w)==winner(w-1)` in **2/48** transitions vs 16/48 at chance (p=1.1e-6) — so the cue
+loses precisely when it collides with that shadow (**0.143** colliding vs **0.700** free). Predicted fix: a
+washout gap between replay windows (the same recovery-gap lever already load-bearing for the WRITE phase).
+
+**Built it (`coactivation_replay(washout_steps=…)`, additive, default 0 = byte-identical) and it FAILS — it makes
+targeting WORSE:**
+
+| washout | mean driven-slot spike share | driven-slot wins |
+|---|---|---|
+| **0** | 0.402 / 0.468 / 0.741 → **0.537** | **15/27** |
+| **60** | 0.360 / 0.264 / 0.336 → **0.320** | **8/27 — BELOW chance (9/27)** |
+| **200** | 0.398 / 0.428 / 0.512 → 0.446 | 13/27 |
+
+**⇒ THE CARRY-OVER WAS HELPING, NOT HURTING.** The exclusion removed one competitor and narrowed a 3-way race to
+effectively 2-way; the cue then won 0.700 of those. Wash the adaptation out and every slot is equally fresh — the
+cue must win on its own, **and it lands at chance (0.320 vs 0.333)**.
+
+**⇒ THE REAL DEFECT, now correctly located: the 1400 pA slot cue CANNOT WIN THE SLOT COMPETITION UNAIDED.** The
+apparent 15/27 targeting was largely manufactured by the exclusion dynamic, not by cue efficacy. The workflow's
+drive-budget measurement explains why: during a window the 8 concept pools broadcast **~43,200 sum_w to EVERY slot
+equally**, slot self-recurrence adds **~40,700**, and shared inhibition applies **the same** term to all three —
+so one slot's external 1400 pA is a small perturbation on a large NON-SELECTIVE synaptic background. *That is the
+same shape as every other failure in this arc: a selective signal riding on a saturating non-selective one.*
+
+**This also retires the last of the four candidates by elimination:** attractor-lock (excluded), shared inhibition
+(excluded, and its per-slot replacement changed 0/27 winners while delivering its designed 4–11× competition
+sharpening), excitability heterogeneity (excluded — permuting every slot's threshold vector changed 0/27 winners;
+between-slot spread 0.5–1.7 mV vs within-slot std 6.8–7.7 mV), carry-over (**real, measured, but LOAD-BEARING IN
+THE HELPFUL DIRECTION**).
+
+**▶ NEXT — make the cue competitive, cheapest first (both config-level, both directly testable on the continuous
+metric):** (a) raise `slot_drive_pA` until the driven slot wins on a washed-out substrate — the washout arm is now
+the correct testbed because it removes the confound that was doing the work; (b) suppress the non-selective
+`concept_to_comp_attr` broadcast during replay (a transmission gate, already supported) so the cue is not competing
+against a 43,200-sum_w flat background. **GO gate: driven-slot spike share → ≥0.8 WITH washout ≥60 (i.e. earned by
+the cue, not by exclusion), then after-replay own-is-max ≥2/3 per seed, 6 seeds, scramble-teach collapsing.**
