@@ -196,6 +196,43 @@ def main():
     finally:
         b._run_one_simulation_step = orig_step
 
+    # ---- ⚠️ THE MEASUREMENT THAT WAS MISSING (fixed 2026-07-26). The per-core selectivity block above runs
+    # BEFORE this point, i.e. it measures the ENCODE phase and NEVER the replay write. A "BOUNDARY LOCATED:
+    # coactivation_replay produces a non-selective ca1->slot write" finding was committed on those numbers —
+    # they could not have shown a replay effect at all, and the attractor-on/off arms came out BYTE-IDENTICAL
+    # for exactly that reason. Re-measure the SAME quantity here, AFTER replay, and report the DELTA.
+    _c2 = b.cp_connections
+    _nz2 = int(_c2.nnz)
+    _po2 = to_host(_c2.indices).astype(np.int64)[:_nz2]
+    _ip2 = to_host(_c2.indptr).astype(np.int64)
+    _pr2 = np.repeat(np.arange(len(_ip2) - 1), np.diff(_ip2))[:_nz2]
+    _wd2 = to_host(_c2.data).astype(np.float64)[:_nz2]
+    print("  (CORE-AFTER-REPLAY) per-fact ca1->slot, restricted to that fact's engram core:")
+    _oks2, _ev2 = 0, 0
+    for i in sorted(slot):
+        try:
+            _ci2 = b.get_engram_tag_indices(tags[i])
+            _core2 = np.asarray(to_host(_ci2), dtype=np.int64).ravel() if _ci2 is not None else None
+        except Exception as _e2:
+            print("     fact %d: core read FAILED (%s)" % (i, type(_e2).__name__)); _core2 = None
+        if _core2 is None or _core2.size == 0:
+            print("     fact %d: no evaluable core" % i); continue
+        _mc2 = np.isin(_pr2, _core2)
+        _ws2 = []
+        for j in sorted(slot):
+            _m2 = _mc2 & np.isin(_po2, slot[j])
+            _ws2.append(float(_wd2[_m2].mean()) if _m2.sum() else 0.0)
+        _other2 = np.mean([w for k, w in enumerate(_ws2) if k != i])
+        _oo2 = _ws2[i] / _other2 if _other2 > 1e-12 else 0.0
+        _ok2 = int(np.argmax(_ws2)) == i
+        _oks2 += _ok2; _ev2 += 1
+        print("     fact %d: weights->slots %s  own/other=%.4f  own_is_max=%s  (core=%d)"
+              % (i, [round(w, 4) for w in _ws2], _oo2, _ok2, _core2.size))
+    if _ev2:
+        print("     => AFTER REPLAY: own-is-max %d/%d evaluable." % (_oks2, _ev2))
+    else:
+        print("     => UNDEFINED (no evaluable cores) — not a negative.")
+
     # ---- WINDOW SEGMENTATION: reconstruct which fact was driven in each 30-step burst, exactly as
     # coactivation_replay does (np.random.default_rng(seed+777), reshuffled each cycle), then report
     # per-slot SOMATIC firing per window. THE QUESTION: does the DRIVEN slot dominate its own window?

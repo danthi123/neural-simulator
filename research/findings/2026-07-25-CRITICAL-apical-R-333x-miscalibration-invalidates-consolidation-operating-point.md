@@ -2264,3 +2264,32 @@ four of those were tested and cleared):**
 
 **Fix (1) and (2) and the host teaching clamp becomes unnecessary by construction** — replay would then supply a
 correct, graded, fact-specific instructive signal, which is exactly capability (A)+(C). Both tests are config-only.
+
+## ⛔⛔ RETRACTION #9 — "THE BOUNDARY" WAS MEASURED BEFORE THE THING IT CLAIMED TO MEASURE
+
+**RETRACTED:** *"`coactivation_replay` produces a NON-SELECTIVE `ca1→slot` write"* (commit `67eb31e4`), and with it
+the "BOUNDARY LOCATED" framing and the two-named-defects synthesis that rested on it.
+
+**The error:** the per-fact core-selectivity block sits at `_consol_replay_apical_probe.py:102-171`;
+`coactivation_replay` is called at **line 195**. **The weights were read BEFORE replay ran.** Every "flat write"
+number (own/other 0.995–1.024, own-is-max 2/9) describes the **ENCODE** phase and says NOTHING about the replay
+write. I never measured the quantity the finding was about.
+
+**How it surfaced — the tell was in the data and I nearly explained it away:** the attractor-ON vs attractor-OFF
+arms came out **BYTE-IDENTICAL** (every digit, including the 4/9 · 4/9 · 7/9 window counts). I first read that as
+"the lever is inert". It is actually the signature of a measurement taken **upstream of the lever's effect** — the
+weights could not differ because they were sampled before the manipulation had happened. *A byte-identical A/B is
+evidence about WHERE you measured, not only about whether the lever works.*
+
+**What this does and does not touch:**
+- **VOID:** the flat-write claim, "the chain is flat from its first step", the reconciliation-by-different-protocol
+  with the banked `ca1→slot` GO, and defect (1) TARGETING/(2) TRANSDUCTION as *consequences* of a flat write.
+- **STILL VALID (measured during replay, unaffected):** the apical plateau is uniform across slots (~1% spread) and
+  unphysiological (~400 mV) for 270/270 steps; slot competition is near-exclusive (winner 400–1100 spikes vs 0–12);
+  and the driven slot wins its own window only **15/27** (chance 9/27). Those come from the in-replay sampler.
+- **UNRESOLVED and now properly open:** whether replay's write is selective. Being re-measured AFTER replay, with
+  the before/after delta reported.
+
+**Instrument failure #5 in this sub-arc, and the same shape as the other four: a check that could not fail.** The
+probe printed a confident per-fact table that was structurally incapable of answering its own question. Fix:
+the identical measurement now runs **after** `coactivation_replay` and prints `CORE-AFTER-REPLAY`.
