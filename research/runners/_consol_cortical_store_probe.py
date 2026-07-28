@@ -37,7 +37,7 @@ cp, BACKEND = get_backend()
 N = len(CONSOLIDATED_FACTS)
 
 
-def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teaching_clamp=False, elig_tau=30.0, pool_slot_w=1.5, hebbian_max_w=None, hebbian_on=True, hebbian_lr=None, syn_scaling=None, no_stdp=False, btsp_wmax=2000.0, freeze_gap=False, per_slot_fs=False, mean_subtract=None, read_gap=0, freeze_read=False):
+def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teaching_clamp=False, elig_tau=30.0, pool_slot_w=1.5, hebbian_max_w=None, hebbian_on=True, hebbian_lr=None, syn_scaling=None, no_stdp=False, btsp_wmax=2000.0, freeze_gap=False, per_slot_fs=False, mean_subtract=None, read_gap=0, freeze_read=False, scramble_teach=False):
     a = dict(BASE)
     a.update(comp_dendritic=True, comp_wta_weight=5.0, comp_k_thresh=2.0, comp_self_regen=0.15, comp_kir_g=3.0,
              comp_v_hold=-50.0, comp_apical_R=0.15, comp_gc_read=0.5,          # CALIBRATED operating point
@@ -141,6 +141,9 @@ def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teachin
         va_log = {i: {j: 0.0 for j in sorted(slot)} for i in range(N)}
         va_n = {i: {j: 0 for j in sorted(slot)} for i in range(N)}
         order = list(range(N))
+        # fixed derangement (no fact taught to its own slot); deterministic, seed-independent so the
+        # control is identical across seeds and cannot accidentally coincide with the true mapping.
+        teach_perm = ([(i + 1) % N for i in range(N)] if scramble_teach else None)
         # ---- PER-WINDOW dw INSTRUMENTATION (2026-07-26). The end-state weights cannot distinguish
         # "one slot RECEIVES more write" from "one slot RESISTS the pull-down" — both produce
         # [bound, bound, above-bound]. Snapshot the pool_i->slot_j block means after EVERY write
@@ -176,7 +179,14 @@ def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teachin
                 drv = cp.zeros(int(b.cp_membrane_potential_v.shape[0]), dtype=cp.float32)
                 for arr in pool_of[i]:
                     drv[cp.asarray(arr)] = float(drive_pA)
-                si = cp.asarray(slot[i]) if i in slot else None
+                # SCRAMBLE-TEACH CONTROL (2026-07-26, default off = true teaching). Drive fact i's pools but
+                # raise the plateau on a DIFFERENT slot, i.e. teach a DERANGED pool->slot association, then
+                # recall with the NORMAL cue. If recall still succeeds, it is not reading the taught
+                # association and the 18/18 is an artifact. This is the right control here — permuting the
+                # SCORING instead would be true by construction (with N=3 a derangement makes every trial
+                # wrong automatically, proving nothing).
+                _tgt = teach_perm[i] if teach_perm is not None else i
+                si = cp.asarray(slot[_tgt]) if _tgt in slot else None
                 for _ in range(30):
                     b.cp_external_input_current[:] = drv
                     if b.cp_v_apical is not None:
@@ -455,6 +465,7 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--cycles", type=int, default=10)
     ap.add_argument("--btsp-lr", type=float, default=0.0005)
+    ap.add_argument("--scramble-teach", action="store_true", help="ANTI-CHEAT: teach a DERANGED pool->slot association during the write, then recall normally. Must collapse to chance.")
     ap.add_argument("--freeze-read", action="store_true", help="freeze concept_to_comp_attr plasticity DURING recall — the read is otherwise NOT read-only and overwrites the store it is reading")
     ap.add_argument("--read-gap", type=int, default=0, help="recovery steps BETWEEN recall cues (default 0 = prior behaviour). Reads run back-to-back on a progressively adapted network; the write phase needed exactly this lever.")
     ap.add_argument("--mean-subtract", type=float, default=None, help="Miller-MacKay subtractive normalization on the BTSP increment (engine btsp_mean_subtract); the only STRUCTURAL lever left — every rate lever is inert at a soft-bound fixed point")
@@ -473,7 +484,7 @@ def main():
     args = ap.parse_args()
     from pathlib import Path
     Path(args.out).mkdir(parents=True, exist_ok=True)
-    r = run(args.seed, args.cycles, args.btsp_lr, teaching_clamp=args.teaching_clamp, elig_tau=args.elig_tau, pool_slot_w=args.pool_slot_weight, hebbian_max_w=args.hebbian_max_w, hebbian_on=not args.no_hebbian, hebbian_lr=args.hebbian_lr, syn_scaling=args.syn_scaling, no_stdp=args.no_stdp, btsp_wmax=args.btsp_wmax, freeze_gap=args.freeze_gap, per_slot_fs=args.per_slot_fs, mean_subtract=args.mean_subtract, read_gap=args.read_gap, freeze_read=args.freeze_read)
+    r = run(args.seed, args.cycles, args.btsp_lr, teaching_clamp=args.teaching_clamp, elig_tau=args.elig_tau, pool_slot_w=args.pool_slot_weight, hebbian_max_w=args.hebbian_max_w, hebbian_on=not args.no_hebbian, hebbian_lr=args.hebbian_lr, syn_scaling=args.syn_scaling, no_stdp=args.no_stdp, btsp_wmax=args.btsp_wmax, freeze_gap=args.freeze_gap, per_slot_fs=args.per_slot_fs, mean_subtract=args.mean_subtract, read_gap=args.read_gap, freeze_read=args.freeze_read, scramble_teach=args.scramble_teach)
     Path(f"{args.out}/cortstore{'_clamp' if args.teaching_clamp else ''}_seed{args.seed}.json").write_text(json.dumps(r, indent=2))
     print(f"[seed {args.seed}] backend={BACKEND} thr_hash={r['thr_hash']} dw_cortical={r['dw_cortical']}")
     print(f"  v_apical={r['v_apical_range']} physiological={r['v_apical_physiological']}"

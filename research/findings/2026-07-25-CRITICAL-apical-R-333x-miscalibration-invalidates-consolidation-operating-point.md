@@ -1696,3 +1696,38 @@ gate at 6 seeds.
 **LEDGER: 14 hypotheses, 12 refuted, 2 confirmed — and the two confirmed ones are jointly the capability.** Of five
 retractions today, four were caught by an instrument built to answer a DIFFERENT question. **The single highest-value
 habit this session: build the assertion into the data (`read_weight_drift`), never the comment.**
+
+## ✅ THE OWED ANTI-CHEAT LANDS — scramble-teach: recall follows the TAUGHT association, whatever it is
+
+The board recorded "recall still needs its own scramble control" as outstanding. Run, 6 seeds, arm vs control.
+
+**Design note (why this form):** the obvious control — permuting the SCORING — is **true by construction** here.
+With N=3 a derangement makes every trial wrong automatically, so it would "pass" while proving nothing (the same
+shape as the winner-slot artifact that already cost this thread a retraction). The informative control perturbs the
+**TEACHING**: drive fact *i*'s pools during the write but raise the apical plateau on slot *(i+1) mod 3*, then cue
+normally at recall. `--scramble-teach`, fixed deterministic derangement (seed-independent, so it can never
+accidentally coincide with the true mapping).
+
+| | scored vs TRUE mapping | scored vs TAUGHT mapping |
+|---|---|---|
+| **TRUE-TEACH (arm)** | **18/18** | 18/18 (same mapping) |
+| **SCRAMBLE-TEACH (control)** | **1/18** (BELOW chance 6/18) | **17/18** |
+
+Per-seed under scramble, the recall reports the DERANGED target it was taught, e.g. seed 42:
+fact 0 `[0.325, **0.600**, 0.192]` → slot 1 (taught 1) · fact 1 `[0.283, 0.008, **1.125**]` → slot 2 (taught 2) ·
+fact 2 `[**1.642**, 0.225, 0.017]` → slot 0 (taught 0). The lone miss (seed 100 fact 0) is a near-tie,
+0.533 vs 0.525. `read_weight_drift +0.000000` in **all 12 runs** — the freeze held in every arm.
+
+**⇒ This is CAUSAL, not merely a null.** Recall does not just fail when the teaching is scrambled — it **follows the
+scramble**. Falling BELOW chance is the signature of a genuine learned association being read out correctly:
+a deranged teaching makes the true-scored answer systematically wrong, which random guessing cannot produce.
+
+**It also pre-empts two alternative explanations by construction:** if recall were reporting RECENCY, WRITE-ORDER,
+or residual state left by the write, then changing only WHICH SLOT WAS TAUGHT (the cue, the order, the drive, the
+timing all identical) could not flip the answers to track the new mapping. Both the positional-artifact hypothesis
+(which this arc has been burned by before — the retracted "cumulative degradation across the schedule") and the
+leftover-state hypothesis are inconsistent with 17/18 taught-target accuracy under derangement.
+
+**Remaining honest scope is UNCHANGED** (this control does not touch it): the freeze is still a HOST intervention
+with a named biologization (SPEAR/ACh); the probe still cues pools DIRECTLY because word→pool binding is UNBUILT,
+so this is consolidation in isolation and NOT the full A1 gate.
