@@ -1,0 +1,318 @@
+{
+  "seed": 100,
+  "thr_hash": "32cb3f131c0b",
+  "v_apical_physiological": true,
+  "read_weight_drift": 0.0,
+  "null_cue_slot_rates": [
+    0.133,
+    0.325,
+    0.333,
+    0.342
+  ],
+  "nostore_recall_slot_rates": [
+    [
+      0.283,
+      0.292,
+      0.242,
+      0.367
+    ],
+    [
+      0.075,
+      0.192,
+      0.225,
+      0.225
+    ],
+    [
+      0.1,
+      0.283,
+      0.208,
+      0.325
+    ],
+    [
+      0.158,
+      0.475,
+      0.133,
+      0.333
+    ]
+  ],
+  "slot_drive_budget": {
+    "store(pool->slot)": {
+      "charge": 0.0,
+      "pct": 0.0,
+      "n_syn": 57344
+    },
+    "slot_recurrent": {
+      "charge": 10647.2,
+      "pct": 51.16,
+      "n_syn": 20643
+    },
+    "other(incl. inhibition)": {
+      "charge": 10164.9,
+      "pct": 48.84,
+      "n_syn": 80713
+    },
+    "_total_charge": 20812.1
+  },
+  "v_apical_range": [
+    -5.6,
+    -3.46
+  ],
+  "dw_cortical": -0.47966,
+  "dw_by_phase": {
+    "driven": {
+      "slot0": -0.846761,
+      "slot1": -0.886654,
+      "slot2": 6.15964,
+      "slot3": -0.81572
+    },
+    "gap": {
+      "slot0": 0.0,
+      "slot1": 0.0,
+      "slot2": 0.0,
+      "slot3": 0.0
+    }
+  },
+  "dw_diag_vs_off": {
+    "driven": {
+      "diag": 132.887406,
+      "off": -42.132949
+    },
+    "gap": {
+      "diag": 0.0,
+      "off": 0.0
+    }
+  },
+  "dw_pos_neg_by_slot": {
+    "slot0": {
+      "pos": 65.670298,
+      "neg": -66.517058
+    },
+    "slot1": {
+      "pos": 61.788563,
+      "neg": -62.675217
+    },
+    "slot2": {
+      "pos": 72.032866,
+      "neg": -65.873226
+    },
+    "slot3": {
+      "pos": 63.133904,
+      "neg": -63.949624
+    }
+  },
+  "v_apical_during_write": {
+    "0": {
+      "0": -13.31,
+      "1": -67.21,
+      "2": -67.24,
+      "3": -67.38
+    },
+    "1": {
+      "0": -67.3,
+      "1": -13.79,
+      "2": -67.45,
+      "3": -67.36
+    },
+    "2": {
+      "0": -67.13,
+      "1": -67.26,
+      "2": -13.23,
+      "3": -67.18
+    },
+    "3": {
+      "0": -67.38,
+      "1": -67.27,
+      "2": -67.3,
+      "3": -13.63
+    }
+  },
+  "write_phase_physiological": true,
+  "v_hold": -50.0,
+  "store_own_over_other": [
+    1.694,
+    2.828,
+    6.73,
+    1.701
+  ],
+  "store_own_is_max": [
+    false,
+    true,
+    true,
+    false
+  ],
+  "permuted_target_control": [
+    0.697,
+    0.037,
+    0.52,
+    0.039
+  ],
+  "per_slot_mass": [
+    1.2936,
+    1.2911,
+    3.0261,
+    1.2899
+  ],
+  "slot_spikes_during_write": {
+    "0": [
+      834.0,
+      536.0,
+      176.0,
+      135.0
+    ],
+    "1": [
+      370.0,
+      1704.0,
+      68.0,
+      398.0
+    ],
+    "2": [
+      223.0,
+      133.0,
+      936.0,
+      408.0
+    ],
+    "3": [
+      119.0,
+      597.0,
+      298.0,
+      1597.0
+    ]
+  },
+  "pool_spikes_during_write": {
+    "0": [
+      41688.0,
+      20406.0,
+      21461.0,
+      179.0
+    ],
+    "1": [
+      20635.0,
+      41424.0,
+      172.0,
+      20961.0
+    ],
+    "2": [
+      21377.0,
+      129.0,
+      41866.0,
+      20618.0
+    ],
+    "3": [
+      90.0,
+      21166.0,
+      20563.0,
+      41639.0
+    ]
+  },
+  "firing_weighted_own_over_other": [
+    1.586,
+    2.851,
+    7.111,
+    1.639
+  ],
+  "firing_weighted_permuted_control": [
+    0.662,
+    0.08,
+    0.48,
+    0.056
+  ],
+  "firing_weighted_mass": [
+    1019349.96,
+    1039201.44,
+    2551238.2,
+    1024582.11
+  ],
+  "firing_weighted_own_is_max": [
+    false,
+    true,
+    true,
+    false
+  ],
+  "recall_correct": [
+    false,
+    true,
+    true,
+    false
+  ],
+  "recall_slot_rates": [
+    [
+      0.525,
+      0.667,
+      0.717,
+      0.283
+    ],
+    [
+      0.542,
+      0.942,
+      0.4,
+      0.558
+    ],
+    [
+      0.2,
+      0.3,
+      0.942,
+      0.542
+    ],
+    [
+      0.2,
+      0.575,
+      0.867,
+      0.808
+    ]
+  ],
+  "n_recall": 2,
+  "arm_flags": {
+    "teaching_clamp": true,
+    "mean_subtract": 1.0,
+    "freeze_read": true,
+    "freeze_gap": true,
+    "no_stdp": true,
+    "scramble_teach": false,
+    "n_facts": null,
+    "read_gap": 300,
+    "elig_tau": 30.0,
+    "hebbian_max_w": 2.5,
+    "btsp_lr": 0.0005,
+    "btsp_wmax": 2000.0,
+    "pool_slot_weight": 1.5,
+    "hebbian_lr": null,
+    "syn_scaling": null,
+    "cycles": 10,
+    "seed": 100
+  },
+  "facts": [
+    [
+      "apple",
+      "big"
+    ],
+    [
+      "apple",
+      "small"
+    ],
+    [
+      "dog",
+      "big"
+    ],
+    [
+      "dog",
+      "small"
+    ]
+  ],
+  "argv": [
+    "--seed",
+    "100",
+    "--overlap-facts",
+    "--teaching-clamp",
+    "--elig-tau",
+    "30",
+    "--freeze-gap",
+    "--no-stdp",
+    "--hebbian-max-w",
+    "2.5",
+    "--read-gap",
+    "300",
+    "--mean-subtract",
+    "1.0",
+    "--freeze-read"
+  ]
+}

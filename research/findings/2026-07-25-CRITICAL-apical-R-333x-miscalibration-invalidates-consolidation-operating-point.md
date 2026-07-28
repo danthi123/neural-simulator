@@ -1875,3 +1875,72 @@ exists, but wiring it is **an open build with a known prior failure in the neigh
 **Process note — this is drift #12 (trusting a summary) caught by the standing "read the source" directive.** I cited
 two documents by RAG-hit title to license a shortcut; reading them showed one explicitly corrects my exact
 mischaracterisation and the other records a hard zero. **A RAG hit is a POINTER, never a paraphrase.**
+
+## ⛔⛔⛔ RETRACTION #7 — "COMPOSITIONAL CONSOLIDATION WORKS" IS WITHDRAWN. The number survives; the words do not.
+
+An 18-agent adversarial workflow (5 refutation lenses + independent verifiers) attacked the claim. **I re-verified
+every load-bearing structural fact myself against executing code before accepting any of it.** Marked below:
+**[V]** = I verified it directly · **[W]** = workflow-reported, my verification still owed.
+
+### What is WRONG with the claim
+
+1. **[V] THERE IS NO REPLAY, AND NO CONSOLIDATION.** `coactivation_replay(...)` sits in the **`else:` branch of
+   `if teaching_clamp:`** (`_consol_cortical_store_probe.py:229`). Every winning command passes `--teaching-clamp`,
+   so **replay never executes**; the hippocampal engram `tags` is computed at line 123 and then never used.
+   Recall is then run under a lesion of a hippocampus **that was never engaged**. ⇒ the word **"consolidation" is
+   unearned** — nothing is transferred from hippocampus to cortex in this experiment.
+2. **[V] "COMPOSITIONAL" IS UNEARNED — the design cannot test it.** `CONSOLIDATED_FACTS = FACTS_ALL[:3]` =
+   (apple,big) (river,small) (dog,hot): **pairwise-disjoint in BOTH constituents.** Either the noun ALONE or the
+   adjective ALONE uniquely identifies the fact, so a per-feature store (`noun→slot` + `adj→slot`, summed) is
+   **indistinguishable** from a bound-fact store. And BTSP is a **rank-1 pre⊗post outer product** — a per-feature
+   store is precisely what it produces. **[W]** the lenses measured adj-only 3/3 and noun-only 2/3, and splitting
+   the learned matrix showed each half independently selective.
+3. **[V] THE HOST SUPPLIES BOTH FACTORS OF THE LEARNING RULE.** In the write loop I clamp `cp_v_apical[target] =
+   −25 mV` (and all others to `Er`) every step while injecting 1400 pA into that fact's pools — and BTSP's
+   instructive signal *is* `max(v_apical − v_hold, 0)`. The target is chosen by convention (`_tgt = i`). ⇒ this is a
+   **host-supervised write**, not a self-organized one. Under BRAIN-BASED-ONLY that is a shortcut in the WRITE, not
+   only in the read.
+4. **[W] NOT "JOINTLY SUFFICIENT".** With both ingredients but the clamp removed: own/other `[1.089, 0.87, 1.019]`,
+   own-is-max 1/3. A **third, host-supplied** ingredient is required. *(My verification owed.)*
+5. **[V] THE ARTIFACT ARCHIVE WAS BROKEN — and worse than reported.** Every arm wrote to
+   `cortstore{_clamp}_seed{S}.json` with **no arm recorded inside**. I inspected the committed files: they currently
+   hold `n_recall=0` with **4-element** `own_is_max` — i.e. the **N=4 scramble control**, not the 18/18 arm. No
+   committed artifact ever corresponded to the claim made over it. **REPAIRED** (`a4f3ffff`): arm in the filename,
+   `arm_flags` + `facts` + `argv` inside the JSON.
+
+### What SURVIVES (and it is not nothing)
+
+- **[V] The measurement reproduces and is deterministic.** Four lenses independently re-ran it on matched substrates
+  (`thr_hash` identical to my runs) and got 3/3 on 6/6, matching my prose to the digit. **The prose record was
+  faithful; the ARCHIVE was wrong.** This is NOT a sixth instance of the five-retraction pattern.
+- **[V] The read genuinely was not read-only, and freezing it is genuinely what changed.** `read_weight_drift =
+  +0.000000` is literal (0 of 86,561 gate synapses moved while 2,296,398 others did in the same window), and
+  `cp_plasticity_rate_gain` provably cannot touch synaptic current — that is `cp_transmission_gain`, and the gain's
+  first in-step use is *after* current/dynamics/plasticity. The gotcha I worried about does not apply.
+- **[W] Mean-subtraction is necessary** at this operating point (off ⇒ flat store, permuted control uncollapsed).
+- **[V] The readout reads the TAUGHT association**, not position/order/bias (scramble-teach follows the derangement
+  17/18; store own/other collapses to 0.03–0.07).
+- **[V] Capacity is not the limit** — N=4 gives 24/24 with selectivity *rising* (though see #2: N=4 is still a
+  disjoint-constituent set, so it inherits the same design flaw).
+
+### The corrected claim
+
+> Given a **host-supplied per-target apical teaching clamp** and host-supplied presynaptic drive, Miller-MacKay
+> mean-subtraction on the BTSP increment and a **plasticity-frozen read** are **each necessary** for a selective
+> cortical pool→slot association to form and read back (17–18/18 across 6 seeds; chance 6/18), with the hippocampus
+> lesioned at readout. **No replay. No engram transfer. No composition** — either constituent alone suffices, so
+> nothing conjunctive is demonstrated to be stored.
+
+### ▶ THE KILL TEST (running): overlapping constituents
+
+`--overlap-facts` = **(apple,big) (apple,small) (dog,big) (dog,small)** — every noun in 2 facts, every adjective in
+2. **No per-feature vote can identify a fact; only a conjunctive (bound) code can.** A rank-1 sum of per-feature
+votes is *mathematically incapable* of it. This is the one design where "compositional" can be **earned or killed**.
+6 seeds × {arm, scramble}, `--read-gap 300`, per-arm artifacts. **If it PASSES, that is the alarm** — it would mean
+something is leaking, and I look there first.
+
+**PROCESS — the instrument that hid this:** the 12 kill-test arms first died SILENTLY on a `SyntaxError`
+(duplicate `global`) because **`ast.parse()` does not catch symbol-table errors** — my standing "syntax OK" check
+was giving false confidence ALL SESSION. Switched to `compile()`. Same shape as every other failure today: **a
+verification that could not fail** (a comment that cannot be wrong · a filename that is not provenance · a lesion
+that did not hold · a syntax check that does not check syntax).
