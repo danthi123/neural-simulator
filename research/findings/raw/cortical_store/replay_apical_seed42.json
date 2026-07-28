@@ -4,25 +4,25 @@
   "any_above_v_hold": true,
   "per_slot": {
     "slot0": {
-      "max": 135.961,
-      "mean": 62.556,
-      "p99": 127.336,
-      "steps_above_v_hold": 2070,
-      "n_steps": 2070
+      "max": 222.836,
+      "mean": 125.272,
+      "p99": 204.683,
+      "steps_above_v_hold": 810,
+      "n_steps": 810
     },
     "slot1": {
-      "max": 135.974,
-      "mean": 61.899,
-      "p99": 123.905,
-      "steps_above_v_hold": 2070,
-      "n_steps": 2070
+      "max": 220.506,
+      "mean": 124.505,
+      "p99": 209.211,
+      "steps_above_v_hold": 810,
+      "n_steps": 810
     },
     "slot2": {
-      "max": 139.897,
-      "mean": 62.639,
-      "p99": 125.44,
-      "steps_above_v_hold": 2070,
-      "n_steps": 2070
+      "max": 222.436,
+      "mean": 126.112,
+      "p99": 209.456,
+      "steps_above_v_hold": 810,
+      "n_steps": 810
     }
   },
   "argv": [
@@ -30,6 +30,8 @@
     "42",
     "--weighted-coincidence",
     "--washout",
-    "200"
+    "60",
+    "--slot-drive",
+    "10000"
   ]
 }

@@ -2437,3 +2437,29 @@ the correct testbed because it removes the confound that was doing the work; (b)
 `concept_to_comp_attr` broadcast during replay (a transmission gate, already supported) so the cue is not competing
 against a 43,200-sum_w flat background. **GO gate: driven-slot spike share → ≥0.8 WITH washout ≥60 (i.e. earned by
 the cue, not by exclusion), then after-replay own-is-max ≥2/3 per seed, 6 seeds, scramble-teach collapsing.**
+
+## ⛔ CUE STRENGTH REFUTED TOO — the slot competition is NOT steerable by external drive at any magnitude
+
+Lever (a): raise `slot_drive_pA` on the washed-out testbed (the honest arm — it removes the previous-winner
+exclusion that was manufacturing the apparent targeting). 3 seeds each:
+
+| `slot_drive_pA` | driven-slot spike share (42 / 43 / 44) | mean |
+|---|---|---|
+| 1400 | 0.389 / 0.230 / 0.304 | **0.308** |
+| 4000 | 0.353 / 0.204 / 0.362 | **0.306** |
+| 10000 | 0.315 / 0.191 / 0.358 | **0.288** |
+
+**A 7× increase in cue current produces NO improvement — every arm sits at chance (0.333), with no trend.**
+
+**⇒ MECHANISM: the competition is SATURATED.** The winning slot already fires 400–1100 spikes in a 30-step window;
+additional drive cannot raise it past the firing ceiling, while the WTA inhibition normalises the field. So the cue
+has no headroom in which to express itself, and *how loudly the teacher shouts is irrelevant.* **This is the FIFTH
+appearance of the same failure in this arc** — BTSP's soft bound, the Hebbian bound, the apical plateau, the
+`ca1→slot` weights, and now the somatic competition itself: **every layer saturates, and a saturated layer cannot
+carry a graded signal.** That is now a property of the operating point, not a coincidence of four separate bugs.
+
+**⇒ RESEARCH GATE FIRED (CLAUDE.md conditions (a) confirmed boundary + (f) ≥2 approaches failed).** Two distinct
+fixes are now refuted with the levers verified live (washout: made it WORSE, 0.537→0.320; cue strength: flat across
+7×). Per the standing rule I should have applied hours ago, I am NOT guessing a third lever — dispatching the
+read-only deep-research round to rank biologically-grounded mechanisms for *making a saturated winner-take-all
+competition cue-steerable*, before any further build or GPU spend.
