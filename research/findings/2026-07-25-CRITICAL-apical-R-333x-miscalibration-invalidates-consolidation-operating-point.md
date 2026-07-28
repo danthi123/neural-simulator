@@ -1944,3 +1944,47 @@ something is leaking, and I look there first.
 was giving false confidence ALL SESSION. Switched to `compile()`. Same shape as every other failure today: **a
 verification that could not fail** (a comment that cannot be wrong · a filename that is not provenance · a lesion
 that did not hold · a syntax check that does not check syntax).
+
+## ⛔ MY KILL-TEST RATIONALE WAS WRONG — and the real answer is STRUCTURAL, not empirical
+
+**Result (6 seeds, overlapping set (apple,big)(apple,small)(dog,big)(dog,small), chance 6/24):**
+arm **11/24** (2/4,2/4,2/4,2/4,2/4,1/4) vs **24/24** on the disjoint set. Scramble control **5/24**.
+Store own-is-max **2/4** every seed, with a consistent *diagonal-pair* asymmetry: two facts get own/other ≈ 2.8–7.0
+and the other two ≈ 1.6–1.7, the high pair flipping by seed.
+
+**⛔ FIRST, RETRACT MY OWN REASONING.** I justified this test by asserting that "no rank-1 sum of per-feature votes
+can separate apple-big from apple-small". **That is FALSE**, and computing it takes one minute:
+
+```
+apple -> slots[0,1]   big -> slots[0,2]   small -> slots[1,3]   dog -> slots[2,3]
+cue (apple,big):  votes [2,1,1,0] -> argmax 0  ✓      cue (apple,small): votes [1,2,0,1] -> argmax 1  ✓
+cue (dog,big):    votes [1,0,2,1] -> argmax 2  ✓      cue (dog,small):   votes [0,1,1,2] -> argmax 3  ✓
+=> a PURE LINEAR PER-FEATURE READER SCORES 4/4.
+```
+The target collects **2** votes while each single-shared slot collects **1**. So this design **does not discriminate
+per-feature from conjunctive at all** — the test cannot do the job I built it for. (Same error class as the
+scramble-scoring control I correctly rejected earlier: a control that is *true by construction*. I caught that one
+and missed this one.)
+
+**⇒ The empirical result therefore says something DIFFERENT and worse: the substrate scores 11/24 where even a naive
+per-feature reader scores 24/24.** It does not merely fail to be compositional — it **underperforms the very model
+it was meant to be exposed as**. Overlapping constituents introduce interference that degrades the store below the
+additive ideal. That is a real, measured limitation of the mechanism.
+
+**⇒ SECOND, AND DECISIVE — the architecture CANNOT be compositional, for a structural reason no experiment was
+needed to find.** Every pool is a *feature* (noun or adjective) and every slot is a *fact*. So `concept_to_comp_attr`
+is a features×facts matrix, and "the fact" is represented by **which slot fires** — a **LOCALIST** code. The binding
+is not built from the constituents' representations; it is a dedicated unit per fact, wired by the host teaching
+clamp choosing `_tgt = i`. **Compositionality in the sense this project means it (VSA/FHRR: a fact's representation
+CONSTRUCTED from its constituents, supporting never-seen combinations) is absent by construction, and no fact-set
+design can reveal or repair that.** The disjoint-vs-overlap distinction was never the crux.
+
+**⇒ HONEST STANDING OF THE WHOLE ARC:** what was built and measured is a **host-supervised, localist,
+feature→fact-slot associative write**, which forms reliably (17–18/18 disjoint, 24/24 at N=4), reads back
+selectively, follows the taught mapping causally, and **degrades under constituent overlap (11/24)**. It is not
+consolidation (no replay), not compositional (localist by construction), and not self-organized (host supplies both
+factors of the learning rule). Those are three separate open capabilities, not caveats on one closed one.
+
+**▶ NEXT — the test that WOULD discriminate** (queued, not yet run): store only 3 of the 4 overlapping facts and
+probe the withheld one. A per-feature reader generalizes (votes `[0,1,1,0]` — a confident non-target response); a
+conjunctive store has nothing to match and should abstain. That is a genuine discriminator; the overlap set was not.
