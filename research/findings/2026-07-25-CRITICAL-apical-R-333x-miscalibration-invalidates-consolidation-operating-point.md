@@ -2147,3 +2147,35 @@ tripped, holds the plateau up regardless of ongoing drive, which would erase gra
 (2) `apical_R` — the runner's DEFAULT is **50.0**, the 333× miscalibrated value, and while this probe passes 0.15
 explicitly, ~400 mV at R=0.15 implies `I_coincidence ≈ 3100 pA`, i.e. the drive itself is enormous;
 (3) `k_threshold=2.0` against a dense `ca1→slot` (density 0.25) — every slot clears it.
+
+## ✅ CORRECTED A/B — weighted-vs-count is SETTLED and it is NOT the cause of the flat instructive signal
+
+Re-ran with `coincidence_weighted_drive` set **explicitly in both directions** and PRINTED per run (the previous
+attempt was void — both arms were weighted). 3 seeds each:
+
+| arm | per-slot spread | max v_apical | verdict |
+|---|---|---|---|
+| **WEIGHTED** | 1.6% · 0.9% · **0.1%** | 433 / 417 / 424 mV | UNIFORM, unphysiological |
+| **COUNT** | 1.1% · 2.2% · 2.3% | 325 / 299 / 241 mV | UNIFORM, unphysiological |
+
+**The lever is VERIFIED LIVE** — weighting raises the plateau 40–65% (means ~193 vs ~115) — so this is a real
+manipulation, not another no-op. **And it produces NO selectivity: both arms sit at 0.1–2.3% spread between slots.**
+
+⇒ **CONTROLLED NEGATIVE on the filed weighted-coincidence surpass, at least for this purpose:** grading the plateau
+by the potentiated `ca1→slot` weights changes its MAGNITUDE but not its SELECTIVITY. The design doc
+`2026-07-25-consolidation-dendritic-surpass-DESIGN-weighted-coincidence-…` proposes weighted coincidence as the
+mechanism that makes the apical instructive signal fact-specific; **measured, it does not** — the weights it grades
+by ARE fact-potentiated (1.04–1.21 after encode, non-zero) and the output is still flat to ~1%.
+
+**⇒ THE REMAINING SUSPECT IS SATURATION, which is this arc's signature failure at every layer.** The plateau sits
+~450 mV above `v_hold`; any grading rides on a hugely saturated signal. The same story already retracted twice here:
+BTSP's soft bound crushing a graded write to a ceiling, Hebbian's bound pinning every synapse at `w_max`. **And the
+config contains a mechanism built to do exactly this: `coincidence_plateau_self_regen = 0.15` is a v-GATED SUSTAIN
+LATCH — once tripped it holds the plateau up independently of ongoing drive, which would erase precisely the graded
+differences weighted drive creates.**
+
+**▶ IN FLIGHT:** `self_regen ∈ {0.15, 0.0}` × 3 seeds, weighted drive on, lever printed per run. If removing the
+latch restores a graded, slot-selective plateau, the instructive signal is recoverable **by configuration** and the
+host teaching clamp becomes removable — which would convert capability (C) (self-organized write) from a build into
+a calibration. If it stays flat, the saturation is upstream in the drive itself (`I_coincidence ≈ 3100 pA` at
+`R=0.15`) and the next lever is the drive magnitude / `k_threshold=2.0` against a dense (0.25) `ca1→slot`.

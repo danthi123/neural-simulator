@@ -49,6 +49,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--cycles", type=int, default=3)
+    ap.add_argument("--self-regen", type=float, default=None, help="coincidence_plateau_self_regen (runner default 0.15). This is a v-GATED SUSTAIN LATCH: once tripped the plateau holds itself up independently of ongoing drive, which would ERASE the graded differences weighted drive creates. 0.0 = no latch.")
     ap.add_argument("--weighted-coincidence", action="store_true", help="engine cfg.coincidence_weighted_drive (set EXPLICITLY both ways; comp_dendritic already defaults it True): grade the apical plateau by EFFECTIVE SYNAPTIC WEIGHT instead of the COUNT of coincident inputs. The count-based default is an all-or-none switch, so every slot crossing k gets a FULL plateau regardless of weight => the uniform signal measured. Config-only; no sim/ edit.")
     ap.add_argument("--out", default="research/findings/raw/cortical_store")
     args = ap.parse_args()
@@ -67,6 +68,9 @@ def main():
     # A/B compares identical configs -- which is exactly what happened on the first run of this probe.
     # Set it EXPLICITLY in BOTH directions, and PRINT it, so the lever is verified rather than assumed.
     b.core_config.coincidence_weighted_drive = bool(args.weighted_coincidence)
+    if args.self_regen is not None:
+        b.core_config.coincidence_plateau_self_regen = float(args.self_regen)
+    print(f"  LEVER: self_regen = {getattr(b.core_config, chr(39)+chr(39).join([]) or 'coincidence_plateau_self_regen', None)}")
     print(f"  LEVER: coincidence_weighted_drive = {b.core_config.coincidence_weighted_drive} "
           f"(comp_dendritic sets it True by default -- an ON-only flag would be a no-op)")
 
