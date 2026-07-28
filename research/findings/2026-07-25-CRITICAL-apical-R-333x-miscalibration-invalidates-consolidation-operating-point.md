@@ -2027,3 +2027,52 @@ the SAME open shortcut: **host-decided slot allocation**.
 **⇒ The three open capabilities collapse toward ONE question:** *can a replay event, on its own, select a target
 slot and supply the apical instructive signal that writes a constituent into it?* Answer that and (A) replay-driven
 transfer, (C) self-organized write, and the binder's own tracked allocator refinement all move together.
+
+## ⛔ RETRACTION #8 — MY OWN STRATEGIC CONCLUSION (one hour old) IS WRONG. The gap#2 binder is ALSO localist.
+
+I wrote: *"the consolidation store is STRICTLY WEAKER than the validated binder … consolidation should transfer INTO
+the validated role-slots."* **Withdrawn.** A strategic workflow challenged it; I verified every load-bearing point
+against executing code before flipping:
+
+| claim | verified |
+|---|---|
+| `grounded_codes` accepted then **DISCARDED** | ✅ appears ONLY at `slotbinder_composer.py:53` (signature); **never referenced in the body** |
+| "concept codes" are **integer indices**, not learned codes | ✅ `:74` `self.concepts = {w: i for i, w in enumerate(self.words)}` |
+| slot allocation is a **host counter + host arithmetic** | ✅ `:163` `i = len(self.facts)`; `:167-169` `_ROLES * i + 0/1/2` |
+| slotbinder is **NOT** the production default | ✅ `brain_conversational_agent.py:175` default `composer_kind="rf"` (FHRR) |
+| **no** held-out / unseen-combination test anywhere | ✅ grep across composer + de-risk + tests returns nothing |
+| the EMERGE-41 **competitive pooler is not composed in** | ✅ not imported by `slotbinder_composer.py` or `_keystone2_…_derisk.py` |
+
+**MY ERROR, precisely:** I read the **DOCSTRING** (`:9` *"teach slot[4i+0]->code(a)"*) and took `code(a)` to be a
+constituent CODE implying constituent structure. The actual line is `self._w2i[agent]` — **an integer index into a
+localist word pool**. There is no constituent code; it is an address→address map. ⇒ **A DOCSTRING IS A COMMENT.**
+Same failure class as every other error today, and I built a strategic recommendation on it within the hour.
+
+**⇒ THE CORRECTED PICTURE: both arcs share the SAME two defects, so neither is the other's better home.**
+
+| | fact representation | binding chosen by | constituent codes |
+|---|---|---|---|
+| consolidation arc | one slot per fact | host **apical clamp** (`_tgt=i`) | pools (features) |
+| gap#2 slot binder | a block of role-slots at the fact's **ordinal** | host **index counter** (`i=len(facts)`) | **integer indices** (learned codes discarded) |
+
+Both are **localist**; both have a **host-chosen binding**; the binder additionally **throws away the learned
+stream-cortex codes** it is handed. **⇒ my "consolidate INTO the binder" recommendation is void** — and, more
+importantly, **(B) a constructed/compositional representation and (C) a self-organized write are OPEN for BOTH
+arcs.** The consolidation arc was NOT duplicating a solved capability, because the capability is not solved.
+
+**⚠️ THIS IMPLICATES A BOARD CLAIM BIGGER THAN MY ARC.** `GAP_CLOSURE_MISSION.md` records gap#2 as
+**"🎉 FULLY-SPIKING 6-SEED GO … CAPABILITY CLOSED"** with a "self-organizing competitive-SLOT binder". Verified
+specifics say: the deployed artifact contains **zero competitive selection** (the competitive pooler that produced
+the step-1 Jaccard result was never composed in), allocation is a host counter, and generalization to unseen
+combinations is **untested and absent by construction** (the workflow ran it directly: storing dog-chase-cat /
+cat-eat-fish / bird-see-dog then querying `("dog","see")` — two seen constituents never stored together — returns
+`None`). **What genuinely holds:** slot-sep 1.00 reproduces (P=3, seeds 42/43/44) vs shared 0.33 / permuted 0.00;
+the write is load-bearing (no-teach→chance, scramble-teach→0.00); and the answers come from Hebbian weights + a
+spiking read, NOT the host shadow list (a content-scramble lesion the arc never ran leaves answers unchanged).
+⇒ it is a **working spiking key-value store with a clean anti-cheat suite** — which is real and useful — but
+"compositional", "self-organizing", and "FHRR retirable" are **not earned**. The gap#2 entry needs the same
+treatment I just gave my own.
+
+**▶ CONSEQUENCE FOR THE NEXT BUILD:** the one question I identified still stands and now covers BOTH arcs —
+*can a replay event, on its own, select a target and supply the instructive signal that writes a constituent into
+it?* The apical measurement now running is the first half of exactly that.
