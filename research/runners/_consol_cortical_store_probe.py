@@ -58,6 +58,9 @@ def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teachin
              # pathways ARE the cortical store this probe exists to measure, so it must re-enable them. Without this the
              # probe reports dw=0 and per-slot mass=0 — i.e. it measures a pathway that does not exist.
              comp_no_pool_slot=False, comp_pool_slot_weight=float(pool_slot_w),
+             # BASE froze comp_attractor_slots at import time from a 3-fact list; the capacity probe
+             # varies N, so the slot count must follow N or the substrate builds the wrong number of slots.
+             comp_attractor_slots=N,
              comp_per_slot_fs=bool(per_slot_fs),
              # Hebbian SATURATES this pathway to whatever its bound is (measured: pinned ~1.19 at hebbian_max_weight=1.0,
              # ~8.28 at 8.0) and a saturated weight cannot carry GRADED selectivity — the same saturation that pinned
@@ -465,6 +468,7 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--cycles", type=int, default=10)
     ap.add_argument("--btsp-lr", type=float, default=0.0005)
+    ap.add_argument("--n-facts", type=int, default=None, help="CAPACITY: number of facts/slots (max 4 with the current 4-noun x 4-adj vocabulary). Default = the shipped 3. Chance = 1/N, so N=4 is a stricter test than N=3.")
     ap.add_argument("--scramble-teach", action="store_true", help="ANTI-CHEAT: teach a DERANGED pool->slot association during the write, then recall normally. Must collapse to chance.")
     ap.add_argument("--freeze-read", action="store_true", help="freeze concept_to_comp_attr plasticity DURING recall — the read is otherwise NOT read-only and overwrites the store it is reading")
     ap.add_argument("--read-gap", type=int, default=0, help="recovery steps BETWEEN recall cues (default 0 = prior behaviour). Reads run back-to-back on a progressively adapted network; the write phase needed exactly this lever.")
@@ -484,6 +488,18 @@ def main():
     args = ap.parse_args()
     from pathlib import Path
     Path(args.out).mkdir(parents=True, exist_ok=True)
+    if args.n_facts is not None:
+        # Rebind the module globals BEFORE run() reads them. run() looks CONSOLIDATED_FACTS/N up at call
+        # time, so this is sufficient; FACTS_ALL is the 4-fact inventory (fact 3 is normally WITHHELD for
+        # the main runner's no-confab probe — this probe does not use that control, so consuming it here
+        # is safe, but a run with --n-facts 4 CANNOT also serve as a no-confab test).
+        import research.runners.nmda_compositional_consolidation as _ncc
+        global CONSOLIDATED_FACTS, N
+        if args.n_facts > len(_ncc.FACTS_ALL):
+            raise SystemExit(f"--n-facts {args.n_facts} exceeds the vocabulary: only {len(_ncc.FACTS_ALL)} facts exist")
+        CONSOLIDATED_FACTS = _ncc.FACTS_ALL[:args.n_facts]
+        N = args.n_facts
+        print(f"  CAPACITY: N={N} facts/slots, chance = 1/{N} = {1.0/N:.3f} per trial")
     r = run(args.seed, args.cycles, args.btsp_lr, teaching_clamp=args.teaching_clamp, elig_tau=args.elig_tau, pool_slot_w=args.pool_slot_weight, hebbian_max_w=args.hebbian_max_w, hebbian_on=not args.no_hebbian, hebbian_lr=args.hebbian_lr, syn_scaling=args.syn_scaling, no_stdp=args.no_stdp, btsp_wmax=args.btsp_wmax, freeze_gap=args.freeze_gap, per_slot_fs=args.per_slot_fs, mean_subtract=args.mean_subtract, read_gap=args.read_gap, freeze_read=args.freeze_read, scramble_teach=args.scramble_teach)
     Path(f"{args.out}/cortstore{'_clamp' if args.teaching_clamp else ''}_seed{args.seed}.json").write_text(json.dumps(r, indent=2))
     print(f"[seed {args.seed}] backend={BACKEND} thr_hash={r['thr_hash']} dw_cortical={r['dw_cortical']}")
