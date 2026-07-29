@@ -4368,3 +4368,47 @@ came only from a SYNTHETIC unit test, and its `--seeds` GPU path is a stub that 
 **▶ NEXT:** re-run the design phase (529 was transient). The reader must replace the index→position
 assumption, not just the arithmetic — a spiking reader fed hard-coded place fields would move the shortcut
 rather than remove it.
+
+### 2026-07-29 (gap#5 NEURAL READER — design, written directly after the workflow's design phase failed twice on API capacity)
+
+The scoping workflow's design/attack/decide agents failed **twice** with API 529 (0 tokens consumed both
+times — they never ran). Retrying a third time would be feeding a failing mechanism, so the design is
+written here from the READ findings, which are the load-bearing part.
+
+**THE TWO FACTS THAT DETERMINE THE DESIGN.** (1) The shortcut is not the arithmetic, it is
+`neuron_pos = arange(N)/N*n_pos` — the decoder is HANDED the same index→position map the band was wired
+from. A spiking reader given those place fields relocates the shortcut. (2) `dec_r` **cannot discriminate
+travel from spread**: a spreading front scores **+0.717** (passes the >0.6 gate) and a 1-neuron-per-step
+sweep scores **+1.000 at F_active = 0.0005**. So the statistic is gameable in both directions.
+
+**⇒ DESIGN: a pair of DIRECTION-SELECTIVE sequence detectors, tuning ACQUIRED not given.**
+
+* **Acquire the tuning in WAKE.** A small reader population receives the place-cell band. During awake
+  traversal, Hebbian co-activation gives each reader cell tuning to whichever band cells fire together —
+  the reader LEARNS the index→position correspondence from experience instead of being told it. This is the
+  piece that actually removes the shortcut, and it reuses the same rate-Hebbian machinery already validated
+  for the learned band itself.
+* **Read direction with asymmetric delays.** Two reader sub-populations, FWD and REV, wired to the band
+  through oppositely-ordered conduction delays, so a sweep in one direction arrives coincidentally on FWD
+  and dispersed on REV (and vice versa). Sequence detection by delay-line coincidence is textbook
+  direction selectivity, and it is **spikes reading spikes** — no posterior, no correlation, no argmax.
+* **The output is USABLE, not a metric.** The read is `rate(FWD)` vs `rate(REV)` — a signal a downstream
+  region could consume. The audit showed nothing consumes the current decode, so the reader is free to emit
+  something a brain could act on rather than a scalar for the experimenter.
+
+**⇒ THIS DESIGN CLOSES THE GATE HOLE AS A SIDE EFFECT, which is the strongest argument for it.** A
+spreading front is directionally SYMMETRIC — it drives FWD and REV equally, giving a ratio ≈ 1.0 and
+**failing**. A traveling wave drives one preferentially. So the neural reader discriminates travel from
+spread *by construction*, which the host decoder provably cannot. The gate becomes
+`rate(FWD)/rate(REV)` >> 1 for forward replay, << 1 for reverse, ≈ 1 for spread/noise.
+
+**GATE + ANTI-CHEATS (headroom required — a control at ≥0.95 cannot rank):** ratio on forward replay vs
+(a) **reverse replay** — must invert; (b) **spreading front** — must sit at ≈1; (c) **time-shuffled raster**
+— must sit at ≈1; (d) **lesioned reader** (delays equalised) — must collapse to ≈1; (e) **ENGAGEMENT
+counter** — reader spike count must be >0 and reported, since "reader silent" and "no direction" are
+otherwise identical (the exact failure that made lane D's 0.0007 firing rate look like a mechanism negative).
+
+**HONEST STATUS: this is a DESIGN, not a result.** Untested, and the two hardest unknowns are named — whether
+Hebbian wake-tuning is sharp enough to support delay-line coincidence at all, and whether the delay spread
+needed is physiological on this substrate (per-pathway conduction delays are themselves a deferral-audit
+item, A3a). CPU-first at shrunk scale is the right first rung; the GPU is committed for 8-24h regardless.
