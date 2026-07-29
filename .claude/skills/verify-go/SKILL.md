@@ -390,3 +390,23 @@ satisfy an indicator**, the same shape as the lane-monoculture failure the indic
 now** (`slots - running > 0`). A drained queue with every slot busy is fine and no longer alarms. **When an
 alarm's remedy is "manufacture something", the alarm is measuring the wrong quantity — fix the alarm, do
 not feed it.**
+
+## "IS THE RUNNING JOB DOING WHAT I THINK?" — `tools/device_check.sh` (2026-07-29)
+
+Every other mechanism built today is a SCHEDULING check (right work, right lane, right order, checked
+against the record). None asks whether a *running* job is doing what it appears to. The crux ran **47
+minutes on the CPU** with every scheduling and liveness indicator green — CPU-time tracked elapsed-time at
+99%, so it was genuinely computing, on the wrong device. The runner printed the cause in **line 1**
+(`os.environ.setdefault('SIM_BACKEND','numpy')` silently winning) and it was scrolled past while reading
+for a verdict.
+
+`bash tools/device_check.sh [--quiet]` reads each running job's actual stdout via `/proc/<pid>/fd/1` and
+reports its device; exit 1 on any CPU-bound job.
+
+**IT SHIPPED WITH A FALSE PASS AND THAT IS THE REAL LESSON.** v1 pulled the log path from `ps` args — but
+the shell consumes redirects, so the path was never there, every job read `unknown`, and it printed
+**"OK — no job is silently on the CPU"** having determined *nothing*. A check that passes on no information
+is worse than no check, because it manufactures confidence. Fixed twice over: the path now comes from the
+process's real fd, and **`UNDETERMINED` is a FAILURE, never a pass**. Also handles STALE logs — a log older
+than its process is a leftover from a previous run (the killed CPU crux logs still said "numpy" 62 minutes
+later and were nearly misread as a repeat failure).
