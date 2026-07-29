@@ -3633,3 +3633,31 @@ from a single mechanism and must be narrowed to role-binding specifically.
 **Residual, stated plainly:** bind still sits 0.135 below its off-substrate prediction, so overlap is not
 the WHOLE story — consistent with the unexplained noise term above (~35-40% required vs 5-10% Poisson) and
 the open engram-tag-purity diagnostic. Binding closes most of the gap; it does not close all of it.
+
+**CALIBRATION ATTEMPT FAILS — the content-blind overlap model CANNOT be used to predict the substrate.**
+Tried to fit the model to all three measured on-bridge points with a single noise parameter, which would
+have made future design work predictive rather than merely directional:
+
+| noise sigma | independent | union | bind |
+|---|---|---|---|
+| **measured** | **1.000** | **0.562** | **0.844** |
+| 0.20 | 1.000 | 0.750 ✗ | 0.865 ✓ |
+| 0.35 (best fit) | 1.000 | 0.604 ✓ | 0.719 ✗ |
+| 0.50 | 0.979 | 0.479 | 0.625 |
+
+**No single value fits.** Best total error 0.167, and it fits union at the cost of under-predicting bind by
+0.125. The model can match one arm or the other, never both: the real substrate does **BETTER on bind and
+WORSE on union** than a pure-overlap account allows. Since bind and union share the same MAX overlap
+(68/99) and differ only in mean (17.6 vs 28.2), something about binding helps that "amount of overlap"
+does not capture — plausibly the STRUCTURE of the interference (overlap spread thinly across many
+competitors is easier for an argmax than concentrated in a few), but that is a hypothesis, not a result.
+
+**⇒ RECORDED AS A NEGATIVE, because a plausible-looking model that does not predict is worse than none.**
+Do NOT use the content-blind overlap model to forecast on-bridge numbers. Off-substrate design work must
+continue to be VALIDATED on the substrate, not extrapolated to it.
+
+**What this does NOT touch:** the DIRECTIONAL lesson stands, because it was confirmed empirically rather
+than modelled — overlap-reducing mechanisms are worth MORE on the substrate than off (measured: binding
++0.282 on-bridge vs +0.062 off). A failed quantitative model does not undo a confirmed pre-registered
+prediction. The distinction matters: we can predict the SIGN of a mechanism's substrate value, and we
+cannot yet predict its MAGNITUDE.
