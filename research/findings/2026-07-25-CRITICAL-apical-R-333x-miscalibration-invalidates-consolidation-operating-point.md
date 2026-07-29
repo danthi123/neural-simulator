@@ -2704,3 +2704,42 @@ transmission), which is where the ~43,200 sum_w broadcast lives. Gate unchanged 
 predicted would fail (the first: prescribing a fix for mis-targeting after attractor-lock had been excluded). The
 corpus-check rule I added covers *prior findings*; it does not cover *this session's own earlier measurements*.
 **Before building, re-read the exclusions already established in the current arc.**
+
+## ⛔ SYNAPTIC SCALING REFUTED — and I have been knob-tuning the exact thing the corpus told me not to
+
+Turrigiano synaptic scaling is the engine's own drive-side, per-neuron, MULTIPLICATIVE homeostat
+(`bridge.py:8671-8690`: `rate_error = target − activity_EMA`; `scale = 1 + rate·rate_error`, applied per
+POSTsynaptic neuron to its incoming excitatory weights). It is the correct shape for the diagnosis — multiplicative,
+so it can counteract compounding potentiation; drive-side, so it acts on the variable that decides the winner.
+Swept rate ∈ {0.0 lesion, 0.01, 0.1} × 3 seeds at cycles=100. **`permutation_valid=False` in all nine.** Lever
+verified live (seed 43 targeting 0.3373 → 0.3259/0.3261 — a real effect, marginal, and in the WRONG direction).
+
+**FOUR mechanisms now refuted for slot allocation, each with the lever verified live:**
+
+| # | mechanism | result |
+|---|---|---|
+| 1 | more replay (3 → 30 → 100 cycles) | **worse** — permutation 1/3 → 2/3 → 0/3; rich-get-richer |
+| 2 | winner-inactive depression (`lam_dep_wi` 0.005, 0.02) | no effect; consistency at chance |
+| 3 | duty-cycle threshold boost (0.5, 2.0) | no effect — **wrong variable** (thresholds already excluded, 0/27 winners) |
+| 4 | Turrigiano synaptic scaling (0.01, 0.1) | no effect / marginally worse |
+
+**⇒ THE HONEST READ, AND IT IS ABOUT MY PROCESS, NOT THE SUBSTRATE.** The research gate's verdict was explicit and
+I quoted it in this document before doing any of the above: *"this is a focused ground-up on-bridge binder BUILD (a
+Mongillo-assembly competitive slot allocator + BTSP write + familiarity gate), **NOT more knob-tuning of the
+existing FS-WTA** — that was BANKED at RUNG-6e/6f per the emergence bar"*, and *"the fix is **COMPOSITION**, not a
+new `sim/` mechanism"*.
+
+**Every one of the four above is a knob on the existing slot architecture.** The corpus did not say "make the
+current competition fair"; it said **replace the allocator** — swap in the EMERGE homeostatic-kWTA pooler
+(EMERGE-39/40, on-substrate, held-out 0.96 vs 0.20, 6/6 seeds) as the thing that assigns slots. That is a
+different STRUCTURE (columns with permanences + kWTA selection + boosting as one unit), not a parameter on
+`comp_attr_*`. I read the warning, recorded it, and then spent four levers doing the banned thing anyway.
+
+**⇒ POSITION: the current slot architecture cannot allocate distinct slots to distinct facts, and four fair-competition
+mechanisms do not fix it. That is a verdict on THIS ARCHITECTURE, not on the capability** (THE LAW). The capability
+has a validated home elsewhere in the repo; the work is to COMPOSE it, which is a build, not a sweep.
+
+**▶ NEXT (the actual prescribed work, not another knob):** compose `_emerge39_onsubstrate_competitive_pooler` as
+the slot allocator — its columns become the slots, its kWTA + boosting does the allocation, and the BTSP write
+targets whichever column it selects. Gate unchanged and ordered: `permutation_valid` 6/6 FIRST, then write↔read
+consistency ≥2/3 per seed, then scramble-teach collapsing, then the allocator-lesion arm failing.

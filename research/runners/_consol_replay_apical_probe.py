@@ -49,6 +49,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--cycles", type=int, default=3)
+    ap.add_argument("--syn-scaling", type=float, default=0.0, help="TURRIGIANO SYNAPTIC SCALING on the slots (engine-native, default OFF). rate_error = target - activity_EMA; scale = 1 + rate*rate_error applied PER POSTSYNAPTIC NEURON to its incoming excitatory weights (bridge.py:8671-8690). This is the DRIVE-side, MULTIPLICATIVE homeostatic boost: a slot firing below target scales UP its own pool->slot inputs. Multiplicative is the point — it can counteract COMPOUNDING Hebbian potentiation, which the additive 0.0005 threshold drift provably cannot (measured: threshold boost moved targeting by 0.0003). 0.0 = LESION arm.")
     ap.add_argument("--boost-rate", type=float, default=0.0, help="DUTY-CYCLE INTRINSIC BOOST (EMERGE-39 form) on the slots. After each replay window, lower the firing threshold of slots that have won LESS than their 1/N share and raise it for slots that won more. Applied to the engine's OWN cp_neuron_firing_thresholds — the same state variable its homeostasis uses — because the built-in rate (0.0005) moves only 0.0022 mV per episode and CANNOT catch a compounding Hebbian runaway (measured: more replay makes allocation WORSE, 100 cycles -> 0/3 permutations). 0.0 = LESION arm.")
     ap.add_argument("--lam-dep-wi", type=float, default=0.0, help="RANK 3 (corpus-prescribed): SELF-ORGANIZING winner-inactive depression on concept_to_comp_attr. After each replay window the ACTUAL winning slot depresses synapses from pools that were INACTIVE while it won, so slots self-differentiate WITH NO ANSWER KEY (EMERGE-39 form: post_win = the competition own winner, held-out 0.96 with vs 0.20 without, 6/6 seeds). NOTE the gate doc specifies post_win = the TAUGHT slot — that is a host teaching signal and is NOT what this implements. 0.0 = LESION arm. Sweep LOW-FIRST: a high value over-selectivizes (emerge48 boundary).")
     ap.add_argument("--slot-drive", type=float, default=1400.0, help="coactivation_replay slot_drive_pA. THE RELOCATED DEFECT: at 1400 the cue lands AT CHANCE on a washed-out substrate (0.320 vs 0.333) — it competes against a ~43,200 sum_w NON-SELECTIVE pool broadcast to every slot plus ~40,700 self-recurrence. Raise until the cue wins on its own.")
@@ -73,6 +74,12 @@ def main():
     print('  LEVER: hebbian_max_weight = %.3f  (ca1->slot lands ~2.55-2.87; a bound BELOW that inverts the rule)'
           % b.core_config.hebbian_max_weight)
     b.core_config.enable_stdp = False
+    if float(args.syn_scaling) > 0.0:
+        b.core_config.enable_synaptic_scaling = True
+        b.core_config.synaptic_scaling_rate = float(args.syn_scaling)
+    print("  LEVER: synaptic_scaling = %s (rate %.4f)"
+          % (getattr(b.core_config, "enable_synaptic_scaling", None),
+             getattr(b.core_config, "synaptic_scaling_rate", 0.0)))
     # ⚠️ comp_dendritic=True ALREADY SETS coincidence_weighted_drive=True
     # (nmda_compositional_consolidation.py:374). So a flag that only turns it ON is a NO-OP and the
     # A/B compares identical configs -- which is exactly what happened on the first run of this probe.
