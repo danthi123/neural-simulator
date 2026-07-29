@@ -4063,3 +4063,33 @@ genuinely ambiguous and must trigger clarification; of those that ARE answerable
 **NOT YET ON THE SUBSTRATE.** This is off-substrate only. Given today's own lesson — the toys were at
 ceiling and understated overlap-reducing mechanisms 4.5× — this gain should be treated as a LOWER bound and
 must be measured on-bridge before it is claimed. Queued.
+
+### 2026-07-29 (THE CONJUNCTIVE READ MOVES THE DESIGN POINT — and explains why alpha was slippery all day)
+
+alpha × read-mode, V=320 Zipfian, 6 seeds, partial scored on ANSWERABLE (unambiguous) cues:
+
+| N=1000 | full-cue | partial (sum) | partial (**min**) |
+|---|---|---|---|
+| alpha=0 | 0.456 | 0.602 | **0.826** |
+| alpha=0.25 | 0.609 | 0.591 | **0.805** |
+| alpha=0.50 | 0.815 | 0.522 | 0.736 |
+| alpha=0.75 | 0.992 | 0.274 | 0.313 |
+
+**(1) alpha IS A DIAL, NOT AN OPTIMUM — and that is why it "changed answer" four times today.** It trades
+full-cue directly against partial-cue: alpha=0.75 buys near-perfect full-cue (0.992) and **destroys**
+partial-cue (0.313, and 0.111 at N=2000). Mechanistically forced: the conjunctive component is keyed to the
+WHOLE triple, so by construction it cannot be reached from two of three roles. Every earlier "optimal
+alpha" was really a statement about which metric that particular sweep happened to expose — the saturated
+ones exposed neither.
+
+**(2) The conjunctive read shifts the balance TOWARD LOWER alpha.** Its gain is largest where alpha is
+small (+0.224 at alpha=0, +0.214 at 0.5, +0.039 at 0.75) — again forced, since it works by requiring
+role-consistency and high alpha removes the role structure it needs. With the min read, alpha=0.25 gives
+**0.609 full / 0.805 answerable-partial**, versus alpha=0.5's 0.815/0.736.
+
+**(3) STANDING RECOMMENDATION: alpha 0.25 with the conjunctive read**, on the reasoning that a
+conversational system usually has the COMPLETE fact when storing and only PART of it when querying, so
+answerable-partial is the operative metric and full-cue is the secondary one. **Stated as a reasoned
+trade-off, not a measured optimum** — if the deployment queries mostly with complete facts, alpha=0.5-0.75
+is correct instead. This is the fourth alpha revision today; the difference is that the first three were
+attempts to find a single right value, and this one says there isn't one.
