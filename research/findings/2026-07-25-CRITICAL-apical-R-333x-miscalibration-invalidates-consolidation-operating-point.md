@@ -4093,3 +4093,21 @@ answerable-partial is the operative metric and full-cue is the secondary one. **
 trade-off, not a measured optimum** — if the deployment queries mostly with complete facts, alpha=0.5-0.75
 is correct instead. This is the fourth alpha revision today; the difference is that the first three were
 attempts to find a single right value, and this one says there isn't one.
+
+**⚠️ THE CEILING CRITERION APPLIED PROSPECTIVELY — my own queued arms could not have resolved the question.**
+Computed the matched off-substrate prediction for the queued substrate config (V=60, n=32, Zipf, bind)
+BEFORE the arms ran: **sum 0.978, min 1.000 — 0.022 of headroom.** At 32 facts there are too few
+competitors for partial-cue to discriminate, so those arms would most likely have returned "no difference"
+and that null would have meant nothing. Scanning for a config that CAN discriminate:
+
+| n | ambiguous | sum | min | can discriminate? |
+|---|---|---|---|---|
+| 32 | 0.500 | 1.000 | 1.000 | **NO — saturated** |
+| 64 | 0.547 | 0.948 | 1.000 | yes |
+| 96 | 0.604 | 0.961 | 0.987 | **NO — saturated** |
+| **128** | 0.648 | **0.886** | **0.965** | **yes, best margin** |
+
+⇒ **n=128 arms queued (sum vs min, 2 seeds).** The n=32 arms are retained but are now expected to be
+uninformative on the conjunctive question, and are labelled as such in advance rather than being read as
+evidence afterwards. This is the fifth time today the ceiling criterion changed a decision, and the first
+time it did so BEFORE the compute was spent rather than after.
