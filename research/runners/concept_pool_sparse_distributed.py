@@ -162,7 +162,7 @@ def build_sparse_pool_bridge(
 
 
 def generate_sparse_patterns(n_concepts: int, n_pool: int, pattern_size: int,
-                               seed: int) -> List[List[int]]:
+                               seed: int, composed_vocab: int = 0) -> List[List[int]]:
     """Generate per-concept SPARSE RANDOM patterns in the shared pool.
 
     Each pattern = `pattern_size` random neurons from `n_pool`. Patterns
@@ -172,6 +172,29 @@ def generate_sparse_patterns(n_concepts: int, n_pool: int, pattern_size: int,
     Uses a fixed RNG so patterns are reproducible.
     """
     rng = np.random.RandomState(seed * 17 + 19)  # stable but distinct
+    if composed_vocab and int(composed_vocab) > 0:
+        # COMPOSED-FACT MODE (2026-07-29, additive; composed_vocab=0 => byte-identical to the shipped path).
+        # Independent random patterns overlap only BY CHANCE (~5 neurons for K=100,N=2000). A composed FACT
+        # does not: it is built from constituents SHARED with other facts (SVO triples over one vocabulary),
+        # so facts overlap STRUCTURALLY and by a lot. That is the case consolidation actually needs and the
+        # one the banked concept result never tested — storing 64 unrelated concepts says nothing about
+        # storing 64 facts that share their words.
+        V = int(composed_vocab)
+        max_facts = V * (V - 1) * (V - 2) // 6
+        if n_concepts > max_facts:
+            raise ValueError(
+                "composed_vocab=%d yields only C(%d,3)=%d distinct facts < n_concepts=%d; raise --composed-vocab"
+                % (V, V, max_facts, n_concepts))
+        per = max(1, pattern_size // 3)
+        vocab = [sorted(rng.choice(n_pool, per, replace=False).tolist()) for _ in range(V)]
+        seen, patterns = set(), []
+        while len(patterns) < n_concepts:
+            tri = tuple(sorted(rng.choice(V, 3, replace=False).tolist()))
+            if tri in seen:
+                continue
+            seen.add(tri)
+            patterns.append(sorted(set(vocab[tri[0]]) | set(vocab[tri[1]]) | set(vocab[tri[2]])))
+        return patterns
     patterns = []
     for _ in range(n_concepts):
         pat = sorted(rng.choice(n_pool, pattern_size, replace=False).tolist())
@@ -399,6 +422,8 @@ def main():
     p.add_argument("--top-k", type=int, default=150,
                     help="Engram tag top-K size")
     p.add_argument("--sparsity", type=float, default=0.03)
+    p.add_argument("--composed-vocab", type=int, default=0,
+                   help="COMPOSED-FACT mode: each item is an SVO-style triple over a shared vocabulary of this size, so items overlap STRUCTURALLY (0 = shipped independent-random behaviour).")
     p.add_argument("--topographic-factor", type=float, default=10.0)
     p.add_argument("--off-target-factor", type=float, default=0.1)
     p.add_argument("--teacher-pA", type=float, default=500.0)
@@ -450,6 +475,7 @@ def main():
     sparse_patterns = generate_sparse_patterns(
         n_concepts=args.n_concepts, n_pool=args.n_shared_pool,
         pattern_size=args.pattern_size, seed=args.seed,
+        composed_vocab=args.composed_vocab,
     )
     # Estimate pairwise overlap
     if args.n_concepts > 1:
