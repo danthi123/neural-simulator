@@ -37,7 +37,7 @@ cp, BACKEND = get_backend()
 N = len(CONSOLIDATED_FACTS)
 
 
-def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teaching_clamp=False, elig_tau=30.0, pool_slot_w=1.5, hebbian_max_w=None, hebbian_on=True, hebbian_lr=None, syn_scaling=None, no_stdp=False, btsp_wmax=2000.0, freeze_gap=False, per_slot_fs=False, mean_subtract=None, read_gap=0, freeze_read=False, scramble_teach=False):
+def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teaching_clamp=False, elig_tau=30.0, pool_slot_w=1.5, hebbian_max_w=None, hebbian_on=True, hebbian_lr=None, syn_scaling=None, no_stdp=False, btsp_wmax=2000.0, freeze_gap=False, per_slot_fs=False, mean_subtract=None, read_gap=0, freeze_read=False, scramble_teach=False, metaplastic_alloc=False):
     a = dict(BASE)
     a.update(comp_dendritic=True, comp_wta_weight=5.0, comp_k_thresh=2.0, comp_self_regen=0.15, comp_kir_g=3.0,
              comp_v_hold=-50.0, comp_apical_R=0.15, comp_gc_read=0.5,          # CALIBRATED operating point
@@ -173,6 +173,7 @@ def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teachin
             d = to_host(_csr.data).astype(np.float64)[:_nnz]
             return {k: (float(d[m].mean()) if m.sum() else 0.0) for k, m in _blk.items()}
 
+        _mp_assigned = {}        # fact -> slot, filled by metaplastic allocation (empty when off)
         dw_windows = []          # one entry per write window: (fact_written, {(i,j): dw})
         _prev = _blocks()
         for _c in range(int(cycles)):
@@ -189,6 +190,26 @@ def run(seed, cycles=10, btsp_lr=0.0005, drive_pA=1400.0, read_steps=60, teachin
                 # SCORING instead would be true by construction (with N=3 a derangement makes every trial
                 # wrong automatically, proving nothing).
                 _tgt = teach_perm[i] if teach_perm is not None else i
+                # METAPLASTIC ALLOCATION (2026-07-29, additive; default off => byte-identical).
+                # The line above is THE host supervision: it hardcodes which slot fact i is taught into.
+                # With metaplastic_alloc the host no longer names the slot -- the LEAST-CLAIMED slot takes
+                # a new fact (retrieve-vs-allocate, RUNG-6c): once a fact has a slot it keeps it, otherwise
+                # it claims the slot with the lowest store mass. The metaplastic variable is each slot's
+                # OWN afferent store mass, the quantity measured at 12.51-46.61x own/other under this
+                # recipe -- i.e. the signal demonstrably EXISTS here, unlike under bare defaults.
+                # STAGED: the argmin is host-side. This tests whether the RULE allocates at all; the
+                # biologisation (a BCM sliding threshold computed in the step loop, alongside the existing
+                # per-postsynaptic-neuron synaptic scaling) is the burn-down, and is only worth building
+                # if this passes.
+                if metaplastic_alloc:
+                    if i in _mp_assigned:
+                        _tgt = _mp_assigned[i]                      # RETRIEVE: already allocated
+                    else:
+                        _mass = _blocks()
+                        _free = [s for s in sorted(slot) if s not in _mp_assigned.values()]
+                        _cand = _free if _free else sorted(slot)
+                        _tgt = min(_cand, key=lambda s: _mass.get((s, s), 0.0))   # ALLOCATE: least-claimed
+                        _mp_assigned[i] = _tgt
                 si = cp.asarray(slot[_tgt]) if _tgt in slot else None
                 for _ in range(30):
                     b.cp_external_input_current[:] = drv
@@ -471,6 +492,7 @@ def main():
     ap.add_argument("--overlap-facts", action="store_true", help="KILL TEST for compositionality: use the OVERLAPPING set (apple,big)(apple,small)(dog,big)(dog,small). Every noun appears in 2 facts and every adjective in 2, so NO per-feature vote can identify a fact -- only a conjunctive (bound) code can. The shipped set is pairwise-DISJOINT in both constituents, where a per-feature store is indistinguishable from a fact store.")
     ap.add_argument("--n-facts", type=int, default=None, help="CAPACITY: number of facts/slots (max 4 with the current 4-noun x 4-adj vocabulary). Default = the shipped 3. Chance = 1/N, so N=4 is a stricter test than N=3.")
     ap.add_argument("--scramble-teach", action="store_true", help="ANTI-CHEAT: teach a DERANGED pool->slot association during the write, then recall normally. Must collapse to chance.")
+    ap.add_argument("--metaplastic-alloc", action="store_true", help="ALLOCATION: the host no longer names the slot; the LEAST-CLAIMED slot takes a new fact (retrieve-vs-allocate on each slot's own store mass). Default off = the shipped host-supervised write.")
     ap.add_argument("--freeze-read", action="store_true", help="freeze concept_to_comp_attr plasticity DURING recall — the read is otherwise NOT read-only and overwrites the store it is reading")
     ap.add_argument("--read-gap", type=int, default=0, help="recovery steps BETWEEN recall cues (default 0 = prior behaviour). Reads run back-to-back on a progressively adapted network; the write phase needed exactly this lever.")
     ap.add_argument("--mean-subtract", type=float, default=None, help="Miller-MacKay subtractive normalization on the BTSP increment (engine btsp_mean_subtract); the only STRUCTURAL lever left — every rate lever is inert at a soft-bound fixed point")
@@ -509,7 +531,7 @@ def main():
         CONSOLIDATED_FACTS = _ncc.FACTS_ALL[:args.n_facts]
         N = args.n_facts
         print(f"  CAPACITY: N={N} facts/slots, chance = 1/{N} = {1.0/N:.3f} per trial")
-    r = run(args.seed, args.cycles, args.btsp_lr, teaching_clamp=args.teaching_clamp, elig_tau=args.elig_tau, pool_slot_w=args.pool_slot_weight, hebbian_max_w=args.hebbian_max_w, hebbian_on=not args.no_hebbian, hebbian_lr=args.hebbian_lr, syn_scaling=args.syn_scaling, no_stdp=args.no_stdp, btsp_wmax=args.btsp_wmax, freeze_gap=args.freeze_gap, per_slot_fs=args.per_slot_fs, mean_subtract=args.mean_subtract, read_gap=args.read_gap, freeze_read=args.freeze_read, scramble_teach=args.scramble_teach)
+    r = run(args.seed, args.cycles, args.btsp_lr, teaching_clamp=args.teaching_clamp, elig_tau=args.elig_tau, pool_slot_w=args.pool_slot_weight, hebbian_max_w=args.hebbian_max_w, hebbian_on=not args.no_hebbian, hebbian_lr=args.hebbian_lr, syn_scaling=args.syn_scaling, no_stdp=args.no_stdp, btsp_wmax=args.btsp_wmax, freeze_gap=args.freeze_gap, per_slot_fs=args.per_slot_fs, mean_subtract=args.mean_subtract, read_gap=args.read_gap, freeze_read=args.freeze_read, scramble_teach=args.scramble_teach, metaplastic_alloc=args.metaplastic_alloc)
     # RECORD REPAIR (2026-07-26, mandatory — adversarial review found every arm colliding on ONE path with NO
     # arm recorded inside, so the committed artifacts were simply whatever ran LAST and did not correspond to the
     # claims made over them. A filename is not provenance: EVERY knob that changes the experiment must land in the

@@ -3298,3 +3298,41 @@ composer does the binding, and `concept_pool_sparse_distributed.py` does the spa
 The consolidation build is a COMPOSITION of two validated pieces, not a new mechanism. That is a
 materially different (and cheaper) plan than "find a better slot allocator", which is where this arc
 started the day.
+
+### 2026-07-29 (DESIGN POINT FIXED) — the compositional↔conjunctive spectrum, and why pure-conjunctive is a trap
+
+The BIND residual (two facts sharing a word in the SAME role still collide) has an obvious fix: derive the
+fact's pattern from a hash of the WHOLE triple, so no two facts overlap at all. Swept as `alpha` = fraction
+of the pattern drawn conjunctively (0 = pure role-bind, 1 = pure conjunctive), measuring BOTH full-cue
+capacity AND **partial-cue** retrieval — recalling a fact from 2 of its 3 constituents, which is what
+conversation actually does ("what did the dog eat?" cues agent+action, not the answer). M=4000, k=100,
+3 seeds, on the pool.
+
+| V=48, N=500 | full-cue | partial-cue | overlap |
+|---|---|---|---|
+| alpha=0 (pure compositional) | 0.866 | 0.599 | 5.42 |
+| **alpha=0.25** | **0.991** | **0.577** | 5.14 |
+| alpha=0.5 | 1.000 | 0.514 | 4.49 |
+| alpha=0.75 | 1.000 | 0.339 | 3.61 |
+| alpha=1.0 (pure conjunctive) | 1.000 | **0.001** | 2.49 |
+
+**PURE CONJUNCTIVE IS A TRAP, and the sweep catches it.** It reaches **1.000 full-cue recall at every N
+tested** — by the capacity metric alone it is the obvious winner, and adopting it on that basis would have
+been easy. Its partial-cue retrieval is **0.001-0.010**, i.e. total collapse, at every N and both
+vocabularies. A memory that stores everything perfectly and cannot be queried by partial cue is useless
+for conversation. **This is why the sweep measured two things: capacity alone would have chosen exactly
+the wrong code.**
+
+**THE DESIGN POINT: alpha ≈ 0.25.** At V=48/N=500 it lifts full-cue 0.866 → 0.991 for a partial-cue cost
+of 0.599 → 0.577 (−4%). At V=48/N=200 it is free: full 0.987 → 1.000, partial 0.860 → 0.852.
+
+**VOCABULARY SIZE IS A BIGGER LEVER THAN EXPECTED.** V=48 dominates V=24 everywhere (N=200, alpha=0:
+partial 0.860 vs 0.567; overlap 5.5 vs 8.9) — more distinct words means less constituent sharing means
+fewer collisions. For a real conversational vocabulary (hundreds to thousands of words) the sharing rate
+is far lower than anything tested here, so these numbers are a **pessimistic floor**, not a ceiling.
+
+**⇒ SUBSTRATE BUILD SPEC (all three parameters now measured, not guessed):** sparse shared pool,
+role-permutation binding, **~25% conjunctive mixture**, and the largest vocabulary available. Both halves
+already exist in-project (the FHRR composer binds; `concept_pool_sparse_distributed` stores). Gate:
+composed-fact full-cue AND partial-cue recall at N=50/100/200 on one shared pool, against the permuted and
+scramble controls, with the union code as the baseline to beat.
