@@ -366,3 +366,16 @@ travel:
 job — but zero lines had been dispatched (all slots busy), so the gate was never exercised. *Absence of a
 leak is not evidence when the mechanism never ran.* The gate's case-statement and sideline path were then
 tested directly: marked lines pass, unmarked lines block and land in `.unchecked`, queue intact.
+
+**`pkill -f` MATCHES YOUR OWN TOOLING — kill by PID (2026-07-29, third occurrence).** `pkill -f
+"[l]ane_dispatch.sh"` killed the invoking shell (exit 144) AND the heartbeat monitor, because the monitor's
+own command text contained the string `lane_dispatch.sh` in its restart hint. The bracket trick only
+protects against the *grep* self-match, not against every other process whose command line mentions the
+pattern. **Use `pgrep` then `kill <pid>`, and never embed a process name verbatim in a monitor that also
+watches for it** (v10 splits it as `'lane''_dispatch'` so the monitor can never match itself).
+
+**Also: raise SLOTS before choosing between lanes.** The crux sat at the queue FRONT and still could not
+start, because all 7 slots were held by long-running incumbent-lane jobs — queue position does not free
+capacity. VRAM was 11 GB of 24 GB, i.e. ~8 slots of headroom. Raising the dispatcher 7→10 started the crux
+AND a second lane immediately, with no job killed and no priority call needed. **Check headroom before
+treating a scheduling conflict as a prioritisation dilemma.**
