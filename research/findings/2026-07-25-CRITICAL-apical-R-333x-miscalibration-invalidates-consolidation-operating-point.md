@@ -3056,3 +3056,41 @@ processes = 12 correctly-sized jobs); the real cause is that nearly every config
 2700` on CPU and dies before writing. Stopped. Verified separately that a 5.5M-synapse on-bridge probe
 builds fine under `SIM_BACKEND=numpy` but does not complete a single cycle in 270 s ⇒ **the 36-core pool is
 structurally unsuited to on-bridge probes of this size**, and should not be re-tasked with them.
+
+### 2026-07-29 (structural) — subtractive normalisation raises the ceiling; but the ceiling itself is a symptom of the LOCALIST slot design
+
+Testing the diagnosis (collisions are a SELECTIVITY problem, not a per-slot-penalty problem) with two
+structurally different levers, 6 seeds, engagement verified:
+
+| slots | mass (per-slot penalty) | lateral inhibition | **subtractive norm** | sub+lat |
+|---|---|---|---|---|
+| 5 | 6/6 | 5/6 | 6/6 | 6/6 |
+| 8 | 3/6 | 4/6 | **5/6** | 5/6 |
+| 12 | 0/6 | 0/6 | **3/6** | 3/6 |
+| 20 | 0/6 | 0/6 | 0/6 | 0/6 |
+| 32 | 0/6 | 0/6 | 0/6 | 0/6 |
+
+**Miller-MacKay subtractive normalisation (`sum_j dw_ij = 0`, already in-engine as `btsp_mean_subtract`,
+config.py:396) is the effective lever** — it sharpens a slot's selectivity instead of inflating its gain,
+so a slot bound to A stops also responding to B. It lifts N=8 from 3/6 to 5/6 and N=12 from **0/6 to 3/6**.
+**Lateral inhibition adds nothing on top of it** (sub+lat == subnorm at every N), which refutes the
+mutual-inhibition hypothesis I recorded one section earlier as the next candidate.
+
+**⇒ THE STRUCTURAL POINT, and it reframes the whole allocation problem.** Every mechanism tested today
+ceilings somewhere between N=5 and N=12 — *while the conversational store needs hundreds of facts*. The
+common cause is not any one rule: it is that **one-fact-per-dedicated-slot is a LOCALIST design**, and
+localist allocation cannot scale, because capacity is exactly the number of slots and every new fact must
+win a global one-to-one matching against all of them. This is the same localism already recorded against
+this store ("pools are features, slots are facts — localist by construction"). Real cortex does not
+allocate slots; a memory is a SPARSE DISTRIBUTED pattern over a shared population, so capacity is
+combinatorial and "allocation" is just which sparse subset ignites — no matching problem exists to solve.
+
+**⇒ NEXT DIRECTION (a capability re-route, not a deferral).** Stop hunting a better slot-allocator and
+test whether the store works at all in a sparse distributed regime — the project already has the machinery
+(the G.20 sparse-distributed ensemble arc, and `_stp_binder_onbridge_derisk`). The GO gate becomes capacity
+scaling: distinct recall for N = 3, 12, 50, 200 facts over ONE shared population, against the same
+permuted/scramble controls. If that holds, the allocation blocker dissolves rather than being solved.
+
+**HONEST SCOPE:** all of the above is TOY evidence (numpy, seconds, 6 seeds, engagement-verified). It is
+strong enough to redirect effort and to stop spending GPU on slot-allocator variants; it is NOT a substrate
+result, and none of today's substrate arms reproduced their control, so nothing here is claimed on-bridge.
