@@ -4652,3 +4652,40 @@ and not even "it needs more input" — it is that **V1 never fired because the p
 to make it fire**, with no inhibition involved. Any selectivity measured in that state is measured in silent
 neurons. **And I nearly recorded "not drive-limited" as a finding**, which would have been true-but-useless:
 the informative statement is *which stage* the limit is at, and that took one grep to establish.
+
+### 2026-07-29 (MECHANISM 3, controls-first rebuild — order IS load-bearing, but summed recurrent drive is NOT direction-selective)
+
+Rebuilt the STDP-resonance reader as `research/runners/_gap5_reader_stdp_resonance_derisk.py`, controls-first,
+with `tools/lab.py` imported at the top — the two fixes the previous VOID attempt needed: **ONE** recurrence
+matrix (the ratio varies the INPUT, so no cross-matrix normalisation can leak in) and a **LESION that is a
+genuinely different quantity** (recurrence trained on order-destroyed wake activity, unreachable by editing
+one argument of the treatment). 3 seeds.
+
+| metric | value | reading |
+|---|---|---|
+| **asymmetry ‖R−Rᵀ‖/‖R‖** | **0.083** vs 0.021 order-destroyed | **LEVER MOVED** — the STDP did engage |
+| **LESION / REV** | **0.074** | same input, order-destroyed weights → **13× less resonance** |
+| **FWD / REV** | **0.843** | **no forward preference** |
+| STATIC / REV | 1.705 | — |
+| shuffle / REV | 1.585 | — |
+
+**(1) THE INGREDIENT WORKS.** The lesion is the load-bearing number: identical input, recurrence trained on
+time-shuffled activity, and resonance collapses **13×**. The learned order genuinely drives the read — this
+is not a dead mechanism.
+
+**(2) BUT IT IS NOT DIRECTION-SELECTIVE, and that comparison is clean.** Measured reader activity: forward
+**2769.5** vs reverse **2777.6** — matched to **0.3%**. So FWD/REV = 0.843 is a genuine null, not an artifact.
+**Mechanistic reason:** a reverse sweep activates the SAME connected pairs as forward, merely in reverse
+temporal order, and summed positive recurrent drive has no timing precision to tell them apart.
+
+**(3) MY GATE'S CONTROL CRITERION WAS MIS-SPECIFIED — named, not hidden.** STATIC (1.705) and shuffle (1.585)
+"failed the near-1.0 requirement", but their reader activity is **9310** and ~2800 respectively against
+forward's 2770 — a **3.4× volume difference**. Resonance scales with co-activation volume, so those
+comparisons were never valid as controls. **The activity-matched comparison (FWD vs REV) is the only clean
+one in the table**, and it is the one that decides the verdict.
+
+**⇒ THREE MECHANISMS NOW ELIMINATED FOR THE READ, ARCHITECTURE STILL INTACT.** delays (need 63-125 ms vs
+1-30 ms available) · slow synapses (12% separation, misranks) · STDP resonance on SUMMED drive (order matters
+13× but direction does not separate). **▶ NEXT REFINEMENT, specific:** measure the recurrent drive's
+TIMING/alignment against the input rather than its SUM — resonance-in-phase versus resonance-out-of-phase —
+and normalise every cross-condition comparison by reader activity so the controls are valid.
