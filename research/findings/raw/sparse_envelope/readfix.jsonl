@@ -1,0 +1,12 @@
+{"N": 1000, "mode": "base", "unamb_acc": 0.525, "margin": -5.893}
+{"N": 1000, "mode": "both", "unamb_acc": 0.561, "margin": 0.0}
+{"N": 1000, "mode": "invload", "unamb_acc": 0.562, "margin": 0.049}
+{"N": 1000, "mode": "sizenorm", "unamb_acc": 0.526, "margin": -0.059}
+{"N": 2000, "mode": "base", "unamb_acc": 0.377, "margin": -13.542}
+{"N": 2000, "mode": "both", "unamb_acc": 0.331, "margin": -0.001}
+{"N": 2000, "mode": "invload", "unamb_acc": 0.329, "margin": -0.079}
+{"N": 2000, "mode": "sizenorm", "unamb_acc": 0.376, "margin": -0.137}
+{"N": 500, "mode": "base", "unamb_acc": 0.677, "margin": 1.755}
+{"N": 500, "mode": "both", "unamb_acc": 0.705, "margin": 0.004}
+{"N": 500, "mode": "invload", "unamb_acc": 0.708, "margin": 0.367}
+{"N": 500, "mode": "sizenorm", "unamb_acc": 0.679, "margin": 0.017}

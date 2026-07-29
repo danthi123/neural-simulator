@@ -4002,3 +4002,33 @@ which is consistent with (1)'s diminishing returns.
 ⇒ **Partial-cue retrieval needs its own mechanism, not just a bigger pool.** The obvious candidates —
 normalising a fact's score by its own pattern size, or a competitive/inhibitory read that suppresses
 broadly-active competitors — are untested. Recorded as the precise next question rather than a conclusion.
+
+### 2026-07-29 (BOTH PROPOSED READ-SIDE FIXES FAIL — partial-cue is not a reweighting problem)
+
+Tested the two candidates named in the previous entry, applied at RETRIEVAL only, scored on UNAMBIGUOUS
+cues (where ambiguity is no excuse), V=320 Zipfian, 6 seeds:
+
+| N | base | invload (1/neuron-load) | sizenorm | both |
+|---|---|---|---|---|
+| 500 | 0.677 | **0.708** (+0.031) | 0.679 (+0.002) | 0.705 |
+| 1000 | 0.525 | **0.562** (+0.037) | 0.526 (+0.001) | 0.561 |
+| 2000 | 0.377 | **0.329 (−0.048)** | 0.376 (−0.001) | 0.331 |
+
+**NEITHER FIXES IT.** Inverse-load weighting — the same inverse-frequency principle that DID work for
+coding — buys only ~+0.03 at moderate N and **reverses at N=2000**. Plausible reason: at N=2000 the pool
+is fully saturated (util 1.000), so load is high on nearly every neuron and 1/load flattens the read rather
+than discriminating with it. Size-normalisation does nothing, and in hindsight was ill-posed: every pattern
+is ~k neurons, so there is no size variation to normalise away.
+
+**⚠️ INSTRUMENT NOTE — the margin is NOT comparable across read modes and must not be read as success.**
+`invload` shows margin −0.079 against base's −13.542 at N=2000, which looks like a dramatic improvement; it
+is not. The weighting rescales all scores, so the margin's UNITS change. Only accuracy is comparable across
+modes. Reporting the margin improvement here would have manufactured a success out of a rescaling — the
+same shape as the day's other measurement artifacts.
+
+**⇒ The negative margin is not a reweighting problem.** A two-of-three cue appears to carry genuinely
+insufficient signal against N competitors once the pool saturates, which points at the STORE or the CUE
+rather than the read: e.g. storing a fact redundantly so a partial cue reaches more of it, or cueing with
+role-structure (drive the two known roles at their bound positions and require role-consistent completion)
+rather than an unstructured neuron union. Both untested. Recorded as a NEGATIVE that narrows the search,
+not as a wall.
