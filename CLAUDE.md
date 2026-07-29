@@ -53,6 +53,10 @@ drift (line counts / runner-test-findings counts / g11 flags / `sim/__init__` ex
 PostToolUse hook nudges it on `sim/` / `research/runners/` / findings changes — RUN it, don't just acknowledge the nudge.
 Stale pointers are drift #12, the #1 cause of re-deriving concluded work.
 
+## One term, one meaning ([`docs/TERMS.md`](docs/TERMS.md))
+
+**Before writing `consolidation` · `compositional` · `self-organized` · `closed` · `GO` · `fully spiking` · `byte-identical` · `lesion` · `selective` · `works` in a finding, commit message, or board entry, check its CODE CONDITION in [`docs/TERMS.md`](docs/TERMS.md).** Earned 2026-07-28: three of nine retractions in one session were pure terminology overclaim with correct, reproducible measurements underneath — an experiment called *consolidation* whose replay branch never executed, *compositional* over a localist code, *self-organized* while the host supplied both factors of the learning rule. An unchecked term is a HYPOTHESIS, exactly like a claim in a comment. (ASD-STE100's one-term-one-meaning discipline, scoped to the ~10 words here that carry load; the full spec was assessed and not adopted — see the file's notes.)
+
 ## Evolve the workflows themselves (the `evolve-skills` skill)
 
 **When a process lapse RECURS** (the owner had to catch the same *class* of problem twice), at a **session-end /
