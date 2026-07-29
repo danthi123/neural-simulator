@@ -170,7 +170,7 @@ The simulator was originally a single ~12K-line `neural-simulator.py`. As of 202
 ```
 neural-simulator.py     # 2.2K lines — DearPyGUI host + main entry point only
 sim/                    # 42 modules (+ __init__.py), ~20K lines — core engine
-  bridge.py             # 9529 lines — SimulationBridge + GPU state orchestration (incl. transmission_gate, graded inhibition, input-mean adaptation, RF complex-synapse ops)
+  bridge.py             # 9593 lines — SimulationBridge + GPU state orchestration (incl. transmission_gate, graded inhibition, input-mean adaptation, RF complex-synapse ops)
   config.py             # 1284 lines — all @dataclass configs
   enums.py              #  830 lines — NeuronType (50+ presets), enums, default param managers
   connectivity.py       #  999 lines — spatial/WS/motif connection generators (backend-pluggable)
@@ -200,7 +200,7 @@ ui/                     # DearPyGUI panels, callbacks, layout, sweep panel, plot
 experiment/             # ExperimentEngine + StimulusManager + ReadoutEngine + TrainingProtocolEngine
 research/runners/       # 1000+ headless runners (g1..g11 + cluster/text/k_v2/phase1/phase2/chat/perf_benchmark/bridge_lineage/llm_memory_demo/multibridge_chat/g20_multibridge/g20_sparse/order_intrinsic/generator_S-D-E-F-G/mode-unification/content_selection+content_selection_spiking+dialogue_agent/nested_composition+phasor_associative_memory+phasor_chat+gated_compose/unified_agent_benchmark+spiking_unified_agent/multibridge_graded_derisk+cortex_conversation_ensemble+phase1_composer_ab/one_brain_composer/grounded_lang/bridge_coresidence/longitudinal_develop_loop/_emerge*/_d3_*/etc) for research
 research/findings/      # session-by-session findings docs (1800+ files)
-tests/                  # 450+ test files (determinism, runners, kernels, plasticity, lineage, tiering, llm orchestrator, multibridge, g20-sparse, generator/BPTT, order-intrinsic, mode-unification, content-selection/dialogue, nested-composition, transmission-gate/gated-compose, unified-agent-benchmark/spiking-unified-agent, core-sim-composition + brain-conversational-agent, learned-graded cortex, one-brain composer/agent, emerge competitive-pooler/taxonomy, etc.)
+tests/                  # 470+ test files (determinism, runners, kernels, plasticity, lineage, tiering, llm orchestrator, multibridge, g20-sparse, generator/BPTT, order-intrinsic, mode-unification, content-selection/dialogue, nested-composition, transmission-gate/gated-compose, unified-agent-benchmark/spiking-unified-agent, core-sim-composition + brain-conversational-agent, learned-graded cortex, one-brain composer/agent, emerge competitive-pooler/taxonomy, etc.)
 ```
 
 ### Thread Model
