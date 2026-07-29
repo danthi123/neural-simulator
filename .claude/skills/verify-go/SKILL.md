@@ -462,3 +462,15 @@ if you can reach the lesion by editing one argument of the treatment expression,
 fact about the builder, not the design. The correct response is to STOP that line and hand it off with an
 honest state note — not to iterate a fourth time. Continuing produces void arms that later read as negatives
 and poison a mechanism that was never actually tested.
+
+**A PIPE DEFEATS `&&` — the exit code you gate on is the LAST command's (2026-07-29, second occurrence).**
+`check_docs.py | tail -2 && git commit` committed a W2 violation, because a pipeline's status is `tail`'s,
+not the checker's. Earlier the same day a `;` instead of `&&` let a commit through while the checker printed
+FAIL. **Two different ways to lose the same gate in one session.** Gate on the exit code with no pipe:
+
+```bash
+if .venv/bin/python tools/check_docs.py > /tmp/dc.txt 2>&1; then git commit ...; else cat /tmp/dc.txt; fi
+```
+
+(Or `set -o pipefail`.) The lesson generalises past docs: **whenever a check gates an action, verify the
+gate actually gates** — piping the check's output for readability silently disarms it.
