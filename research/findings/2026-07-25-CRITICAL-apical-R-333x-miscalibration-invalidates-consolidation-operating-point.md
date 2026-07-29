@@ -4145,3 +4145,33 @@ and must not be read as supporting either. Recorded as pre-registered, not ratio
 **Consistency check:** `clean_scale_n32` (same config, n_lang_input scaled to hold input crowding constant)
 returned 27/32 = 0.844, identical to `sbind32`'s 0.844 — so the crowding fix did not perturb the n=32 arm,
 as intended.
+
+### 2026-07-29 (LANE E, dispatched after the lane-coverage rebalance) — inspected, and the GO is EARNED
+
+Flagged "unread" on arrival because it came from a runner I dispatched without inspecting, on a day when
+fast GOs repeatedly turned out to be ceiling artifacts. Inspected properly (EMERGE-72, construction
+registry, seeds 100/101/102 completing a 5-seed set with the earlier 42/43 run):
+
+| metric | value |
+|---|---|
+| main render | 1.000 |
+| **permuted-corpus render** | **0.000** |
+| **cross-construction render** | **0.000** |
+| **no-corpus n_registered** | **0** |
+| held-out construction generalization | 1.000 |
+| moat calls on abstain | 0 |
+| constructions registered | 5 (from 3) |
+
+**All four input-destruction controls collapse to zero, the held-out construction generalizes from the
+others, and the no-confab moat is untouched.** The runner also carries its own named boundary rather than
+hiding it (the adjective-based templates the research gate originally named do NOT mine cleanly from this
+corpus — its adjectives are statistically ambiguous with the closed class). ⇒ **The GO is earned.** The
+default suspicion was correct to apply and wrong in this instance, which is the right way round.
+
+**Seed count, stated plainly:** 5 seeds total (42/43 + 100/101/102), one short of the project's 6-seed
+standard. Not upgraded to a generalization claim on that basis.
+
+**Process note — this result exists because of the lane rebalance.** Lane E is `[CPU]` and "disjoint from
+A/B/C"; it sat unqueued all day beside 36 idle pool cores while the GPU ran one lane. The first runner
+dispatched after the rebalance returned this in 40 seconds. The cost of the monoculture was not
+hypothetical.
