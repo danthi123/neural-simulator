@@ -4412,3 +4412,39 @@ otherwise identical (the exact failure that made lane D's 0.0007 firing rate loo
 Hebbian wake-tuning is sharp enough to support delay-line coincidence at all, and whether the delay spread
 needed is physiological on this substrate (per-pathway conduction delays are themselves a deferral-audit
 item, A3a). CPU-first at shrunk scale is the right first rung; the GPU is committed for 8-24h regardless.
+
+### 2026-07-29 (NEURAL-READER CHEAP-FIRST DE-RISK — core mechanism works; my spread-symmetry claim is REFUTED AS TESTED)
+
+Numpy de-risk of the design above, on the pool, 4 seeds per cell. The reader is handed NOTHING: tuning is
+rate-Hebbian from a simulated wake traversal (measured sharpness 9.1× peak-to-mean), and direction is read
+by delay-line coincidence over the learned weights.
+
+**FIRST ATTEMPT WAS VOID AND ITS OWN SIGNATURE CAUGHT IT:** every ratio was exactly **1.000 at all five
+delay settings**. Cause was mathematical, not a tuning problem — I summed each cell's *rolled* trace
+independently, and **a sum is invariant under circular shift** (`sum(roll(x,d)) == sum(x)`), so forward and
+reverse were equal by construction. Fixed by measuring coincidence as the **peak-to-mean of the SUMMED
+signal** (aligned arrival → tall narrow peak; dispersed → flat smear).
+
+| delays | forward | reverse | spread | **LESION** | shuffle |
+|---|---|---|---|---|---|
+| 10 | 0.975 | 1.063 | 0.970 | **1.000** | 1.022 |
+| 30 | 0.857 | 1.161 | 0.918 | **1.000** | 1.004 |
+| 60 | **0.685** | **1.486** | 0.805 | **1.000** | 0.960 |
+
+**✅ THE CORE MECHANISM IS DE-RISKED.** Forward and reverse fall on OPPOSITE sides of 1.0; the separation
+grows monotonically with delay magnitude (0.975→0.685 vs 1.063→1.486); the **equalised-delay LESION returns
+exactly 1.000 at every setting** (so the discrimination is carried by the delays, nothing else); and the
+time-shuffled control sits at ~1.0. Hebbian wake-tuning IS sharp enough — the first of the design's two
+named unknowns is answered YES. (My delay sign is inverted — forward should read >1 — which is cosmetic.)
+
+**⛔ MY SPREAD-SYMMETRY CLAIM IS REFUTED AS TESTED, and this is the important half.** I argued the reader
+would close the host decoder's gate hole because *"a spreading front is directionally symmetric, so it
+drives FWD and REV equally → ratio ≈1 → fails"*. Measured: spread = **0.805**, on the SAME side as forward
+(0.685), not at 1.0. **The reason is my own generator:** its "spread" condition travels forward WHILE
+widening, so it remains directional. **The claim was about a NON-TRAVELING widening front and that control
+was never built.** So the strongest argument for this design is currently **untested, not supported** —
+recorded as such rather than quietly kept.
+
+**▶ NEXT (specified):** add a **static-widening** control (fixed centre, growing width, no travel). If it
+lands at ≈1.0 the gate-hole argument holds; if it also lands below 1.0, the reader inherits the same
+travel-vs-spread confusion as `dec_r` and the design's main selling point is gone.
