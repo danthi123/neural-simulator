@@ -2588,3 +2588,36 @@ assigns a FRESH, UNUSED slot to a NEW item and re-selects the SAME slot for a re
 is the RUNG-6c retrieve-vs-allocate rule (`slot = argmax(W·c) if > θ else next-free`) implemented neurally —
 adaptation/novelty-gated allocation. **Gate: permutation_valid=True on 6/6 seeds FIRST** (a valid one-to-one map is
 a PRECONDITION), then write↔read consistency ≥2/3 per seed, then scramble-teach collapsing.
+
+## ✅ THE CORPUS PRESCRIBES THE ALLOCATOR — and it is COMPOSITION of existing GO pieces, not a new mechanism
+
+Ran the corpus check BEFORE the first allocator lever (the rule added earlier today). It surfaced
+`2026-07-17-keystone-slot-binder-research-gate.md`, which addresses exactly the degeneracy I just measured:
+
+- **The rule:** `slot(c) = argmax(W·c) if max(W·c) > θ` → retrieve an already-bound slot; **ELSE assign the next
+  free slot** + one-shot Hebbian bind. Retrieve-vs-allocate, which is what my system has no version of.
+- **The named cure for MY exact failure:** keep the competition *"usable/fair with a **SELF-CALIBRATING
+  threshold** (homeostatic boosting / adaptive-theta / BCM sliding threshold — **never a hand-set FS-WTA cut**)"*.
+  **Homeostatic boosting is precisely what makes `permutation_valid=True` reachable**: a slot that has not won
+  recently becomes MORE excitable until it claims something, so "fact 1 never wins any of its windows" cannot
+  persist. My degenerate maps are the exact signature of a competition with **no** self-calibrating threshold.
+- **Ranked #1 (cheapest-to-decisive):** swap in the **EMERGE homeostatic-kWTA pooler as the slot allocator**
+  (EMERGE-39/40, already GO on substrate: held-out 0.96, 6/6 seeds).
+- **Its verdict on this whole day:** *"NOT more knob-tuning of the existing FS-WTA — that was BANKED at
+  RUNG-6e/6f per the emergence bar"*, and *"Every piece of this is already spiking-on-substrate in the repo; the
+  fix is **COMPOSITION**, not a new `sim/` mechanism."*
+- **And it explains the capacity ceiling too:** the ~2 cap is *"the signature of the WRONG STORAGE PRIMITIVE"* —
+  an additive write-rule store sums all bindings into one substrate so capacity is crosstalk-SNR-limited, whereas
+  allocating a distinct sparse slot per binding makes capacity **slot-count-limited (combinatorial)**.
+
+**⇒ HONEST POSITION AT THE END OF THIS ARC.** Today's measurements were sound and the retractions were necessary,
+but the *direction* was wrong from early on: I knob-tuned an FS-WTA that the record had already **banked** as a
+dead end, and the mechanism I needed was sitting at GO status in two prior findings. **The corpus check that would
+have redirected me costs one query and I ran it ~14 hours late** — twice today it would have saved hours (the ACh
+claim, the 497-line slot-addressability gate) and this is the third.
+
+**▶ THE NEXT BUILD, prescribed and composition-only:** wire the EMERGE homeostatic-kWTA pooler in as the slot
+allocator for `comp_attr_*`, giving retrieve-vs-allocate with a self-calibrating (boosted) threshold.
+**GATE, in strict order:** (1) `permutation_valid=True` on **6/6 seeds** — a valid one-to-one fact→slot map is a
+PRECONDITION, not a result; (2) write↔read consistency ≥2/3 per seed; (3) scramble-teach collapses; (4) the
+`lam_dep_wi=0` / allocator-lesion arm fails. Only then does targeting or the apical read become the question again.
