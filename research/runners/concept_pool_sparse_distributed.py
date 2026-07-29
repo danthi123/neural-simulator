@@ -162,7 +162,8 @@ def build_sparse_pool_bridge(
 
 
 def generate_sparse_patterns(n_concepts: int, n_pool: int, pattern_size: int,
-                               seed: int, composed_vocab: int = 0) -> List[List[int]]:
+                               seed: int, composed_vocab: int = 0,
+                               composed_bind: bool = False) -> List[List[int]]:
     """Generate per-concept SPARSE RANDOM patterns in the shared pool.
 
     Each pattern = `pattern_size` random neurons from `n_pool`. Patterns
@@ -186,14 +187,27 @@ def generate_sparse_patterns(n_concepts: int, n_pool: int, pattern_size: int,
                 "composed_vocab=%d yields only C(%d,3)=%d distinct facts < n_concepts=%d; raise --composed-vocab"
                 % (V, V, max_facts, n_concepts))
         per = max(1, pattern_size // 3)
-        vocab = [sorted(rng.choice(n_pool, per, replace=False).tolist()) for _ in range(V)]
+        vocab = [np.asarray(sorted(rng.choice(n_pool, per, replace=False).tolist())) for _ in range(V)]
+        # ROLE BINDING (2026-07-29, composed_bind=False => the UNION baseline, unchanged).
+        # A UNION code's overlap is DEFINITIONAL: two facts sharing a word share those neurons, so
+        # composed recall collapses (measured 0.583 at N=200 vs 1.000 for independent patterns). Applying
+        # a fixed random PERMUTATION per ROLE before combining makes a shared word land on DIFFERENT
+        # neurons depending on the role it fills, which breaks that identity -- the VSA/FHRR role-filler
+        # trick the project's own composer already implements. Measured off-bridge: overlap 14.2 -> 8.9
+        # (-37%) and N=200 recall 0.583 -> 0.840.
+        perms = [rng.permutation(n_pool) for _ in range(3)] if composed_bind else None
         seen, patterns = set(), []
         while len(patterns) < n_concepts:
             tri = tuple(sorted(rng.choice(V, 3, replace=False).tolist()))
             if tri in seen:
                 continue
             seen.add(tri)
-            patterns.append(sorted(set(vocab[tri[0]]) | set(vocab[tri[1]]) | set(vocab[tri[2]])))
+            if perms is None:
+                pat = set(vocab[tri[0]].tolist()) | set(vocab[tri[1]].tolist()) | set(vocab[tri[2]].tolist())
+            else:
+                pat = set(perms[0][vocab[tri[0]]].tolist()) | set(perms[1][vocab[tri[1]]].tolist()) \
+                    | set(perms[2][vocab[tri[2]]].tolist())
+            patterns.append(sorted(pat))
         return patterns
     patterns = []
     for _ in range(n_concepts):
@@ -424,6 +438,8 @@ def main():
     p.add_argument("--sparsity", type=float, default=0.03)
     p.add_argument("--composed-vocab", type=int, default=0,
                    help="COMPOSED-FACT mode: each item is an SVO-style triple over a shared vocabulary of this size, so items overlap STRUCTURALLY (0 = shipped independent-random behaviour).")
+    p.add_argument("--composed-bind", action="store_true",
+                   help="ROLE BINDING: permute each filler by its role before combining, so a shared word lands on different neurons per role (off = UNION baseline).")
     p.add_argument("--topographic-factor", type=float, default=10.0)
     p.add_argument("--off-target-factor", type=float, default=0.1)
     p.add_argument("--teacher-pA", type=float, default=500.0)
@@ -475,7 +491,7 @@ def main():
     sparse_patterns = generate_sparse_patterns(
         n_concepts=args.n_concepts, n_pool=args.n_shared_pool,
         pattern_size=args.pattern_size, seed=args.seed,
-        composed_vocab=args.composed_vocab,
+        composed_vocab=args.composed_vocab, composed_bind=args.composed_bind,
     )
     # Estimate pairwise overlap
     if args.n_concepts > 1:
