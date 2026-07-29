@@ -4111,3 +4111,37 @@ and that null would have meant nothing. Scanning for a config that CAN discrimin
 uninformative on the conjunctive question, and are labelled as such in advance rather than being read as
 evidence afterwards. This is the fifth time today the ceiling criterion changed a decision, and the first
 time it did so BEFORE the compute was spent rather than after.
+
+### 2026-07-29 (⭐ 6-SEED GO — role-binding on the substrate, at the project standard)
+
+The headline contrast was reported all day from seed 42 alone. Replicated at the full 6-seed standard
+(42/43/44/100/101/102), n=32, sparsity 0.030 identical across every arm, composed facts over V=12:
+
+| seed | union | bind | gain |
+|---|---|---|---|
+| 42 | 18/32 = 0.562 | 27/32 = 0.844 | +0.282 |
+| 43 | 16/32 = 0.500 | 25/32 = 0.781 | +0.281 |
+| 44 | 16/32 = 0.500 | 28/32 = 0.875 | +0.375 |
+| 100 | 23/32 = 0.719 | 30/32 = 0.938 | +0.219 |
+| 101 | 19/32 = 0.594 | 22/32 = 0.688 | +0.094 |
+| 102 | 25/32 = 0.781 | 30/32 = 0.938 | +0.157 |
+| **mean** | **0.609** | **0.844** | **+0.234** |
+
+**BIND BEATS UNION ON 6/6 SEEDS.** The seed-42 figure quoted all day (+0.282) was mildly optimistic
+against the 6-seed mean (+0.234), and the per-seed gain ranges 0.094-0.375 — which is precisely why the
+standard exists and why the single-seed reporting was a real lapse, not a formality.
+
+**SCOPE, per the pre-registration:** this is **FULL-CUE recall only**. It licenses "composed facts sharing
+constituents are discriminable on the spiking substrate when fully cued, and role-binding is load-bearing
+for that". It does NOT license "the memory works" — the partial-cue arms (n=128, sum vs min) are the test
+for the query mode conversation actually uses, and they are still running.
+
+**ALSO LANDED — the adaptive arm hit the ceiling exactly as pre-registered.** `zipf_adapt32` = **32/32 =
+1.000** versus plain `zipf_bind32` = 31/32 = 0.969. That is +0.031 into the 0.031 of headroom I predicted
+would leave the comparison unable to resolve. **The prediction was correct and the comparison is therefore
+uninformative** — it cannot distinguish the two competing accounts (empirical >+0.05 vs utilisation +0.04),
+and must not be read as supporting either. Recorded as pre-registered, not rationalised after.
+
+**Consistency check:** `clean_scale_n32` (same config, n_lang_input scaled to hold input crowding constant)
+returned 27/32 = 0.844, identical to `sbind32`'s 0.844 — so the crowding fix did not perturb the n=32 arm,
+as intended.
