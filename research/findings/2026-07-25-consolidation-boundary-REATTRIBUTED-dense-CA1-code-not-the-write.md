@@ -166,7 +166,7 @@ The focused research gate (4 families) named 2 cheap-first levers; both tested N
 - **Family D — DG-direct write** (the RECOMMENDED primary; structural argument = DG has NO recurrence, verified, so a
   sparse DG can't re-densify). **NO-GO on the Step-1 density de-risk:** under NATURAL perforant drive
   (`language_input→ec→dg`, `_consol_dg_natural_probe.py`), DG is DENSE (active-frac 0.70–0.77, Jaccard 0.56–0.63) at every
-  drive/sparsity tried (drive 100–400, input-sparsity 0.03–0.1), and the **`dg_pv_basket` FFI lesion barely changes it
+  drive/sparsity tried (drive 100–400, input-sparsity 0.03–0.1), and ⛔ **[VOID 2026-07-29 — THE LESION NEVER EXECUTED: gate `dg_pv_basket_to_dg` is never declared anywhere (the pathway at `text_minimal_isolation.py:1106-1110` carries no gate tag), and `_try_pgate`/`_try_tgate` swallow the KeyError; the intact and 'lesion' arms are the same experiment run twice. The FFI's effect is UNKNOWN, not zero. The DG-dense NO-GO itself is measured in the INTACT arm and STANDS.]** the **`dg_pv_basket` FFI lesion barely changes it
   (0.72→0.77)** — the fixed FFI does NOT sparsify DG. So DG is dense in THIS substrate too; the sparse-DG premise is
   empirically false here. (The P1 DG-separation numbers were a different DG config/drive.)
 ⇒ **Both cheap primaries hit the SAME point-neuron FFI/kWTA sparsification wall** (CA1 dense · DG dense · fixed FFI

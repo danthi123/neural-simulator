@@ -3190,3 +3190,42 @@ relaunched at n=64/`sparsity=0.012` and n=128/`sparsity=0.006`, both within the 
 to carry into the read:** lowering sparsity means fewer active input neurons per cue, so drive per cue
 falls — if discrimination degrades at n=128, it must be checked against THAT before being called a pool
 capacity limit. Do not repeat the misattribution in the other direction.
+
+### 2026-07-29 — SILENT-GATE AUDIT (17 agents, 539 sites mapped, 10 adjudicated + adversarially verified): 1 real defect, and the headline CLEARED
+
+**✅ THE HEADLINE WAS SPECIFICALLY CHECKED AND IS CLEAN.** The "CONSOLIDATION WORKS — FROZEN-READ, drift
+`+0.000000`" result rests on `_consol_cortical_store_probe.py:326/351/352` reading `concept_to_comp_attr`.
+That probe overrides `comp_no_pool_slot=False` (`:60`), so the gate genuinely exists. **Decisive empirical
+discriminator:** the same helper on the same gate in the same runs returns NONZERO `dw_cortical` in **all
+18** artifacts under `raw/cortical_store/` (−0.5285, −0.35088, −0.68635, …) — a missing gate returns the
+`0.0` sentinel and could not produce those. **The `+0.000000` is a real freeze, not a phantom.**
+
+**⛔ DEFECT FOUND (1 of 10) — the DG feed-forward-inhibition lesion is a TOTAL NO-OP.**
+`_consol_dg_natural_probe.py:40` calls `_try_pgate`/`_try_tgate` on **`dg_pv_basket_to_dg`**, a gate that
+**is never declared anywhere**. The pathway (`text_minimal_isolation.py:1106-1110`) carries no
+`plasticity_gate=` and no `transmission_gate=` tag; repo-wide the string occurs at exactly ONE code
+location — the call site. Doubly inert: the pathway is `plastic=False`, so only a transmission gate could
+have lesioned anything, and that builder declares **zero** transmission gates. It is a first-class CLI arm
+(`--ffi-lesion`) writing its own artifact.
+
+**Measured consequence** (same seed 42, drive 150, sparsity 0.1): intact DG `active_frac` 0.745/0.765/0.695
+(mean 0.735) vs "lesion" 0.725/0.770/0.800 (mean 0.765) — **the two arms are the same experiment run
+twice**, ranges overlapping, exactly what a no-op predicts.
+
+**The affected claim, split precisely because the two halves differ:**
+`2026-07-25-consolidation-boundary-REATTRIBUTED-dense-CA1-code-not-the-write.md:169-170` — *"the
+`dg_pv_basket` FFI lesion barely changes it (0.72→0.77) — the fixed FFI does NOT sparsify DG"*.
+1. The reported delta is **INVALID as a lesion measurement** — the lesion never executed. Propagated to
+   `:172`, `:186`, and the falsified-sparsification-methods tally at `:216`.
+2. The conclusion is **UNSUPPORTED-AS-ASSERTED, not refuted** — the evidence carries ZERO information
+   about the FFI. It could be doing substantial work, with DG denser still without it. Unknown, not false.
+
+**What SURVIVES:** the Family-D Step-1 **NO-GO** (natural perforant drive leaves DG dense, active-frac
+0.70-0.77, Jaccard 0.56-0.63 across drive 100-400 and sparsity 0.03-0.1) is measured in the **INTACT** arm
+and is untouched. Only the causal FFI-inert attribution and its contribution to the method tally are void.
+Separately scoped: the CA1 FFI-kWTA results are a DIFFERENT mechanism (swept by inhibition weight, not by
+a gate) and are NOT in this defect class.
+
+**Repair (no `sim/` edit):** either strike the FFI clause, or make the lesion real by adding
+`transmission_gate="dg_ffi"` at `text_minimal_isolation.py:1106-1110` (a runner-side builder) and gating
+it — then re-run.
