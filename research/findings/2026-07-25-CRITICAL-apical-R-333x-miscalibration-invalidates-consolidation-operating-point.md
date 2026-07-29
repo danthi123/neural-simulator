@@ -3094,3 +3094,34 @@ permuted/scramble controls. If that holds, the allocation blocker dissolves rath
 **HONEST SCOPE:** all of the above is TOY evidence (numpy, seconds, 6 seeds, engagement-verified). It is
 strong enough to redirect effort and to stop spending GPU on slot-allocator variants; it is NOT a substrate
 result, and none of today's substrate arms reproduced their control, so nothing here is claimed on-bridge.
+
+### 2026-07-29 (re-route CONFIRMED) — the allocation blocker DISSOLVES in a sparse distributed regime
+
+Direct test of the structural claim. One shared population (M=400), each fact igniting a k=20 subset via
+a FIXED random projection (developmental wiring, not learned), one-shot Hebbian write, **no allocation
+decision taken at any point** — nothing chooses where a fact goes:
+
+| facts | recall | chance | permuted-cue control |
+|---|---|---|---|
+| 3 | 1.000 | 0.333 | 0.333 |
+| 12 | **1.000** | 0.083 | 0.097 |
+| 50 | **1.000** | 0.020 | 0.023 |
+| 200 | **0.915** | 0.005 | 0.006 |
+| 500 | 0.701 | 0.002 | 0.002 |
+
+**The permuted-cue control sits at chance at EVERY scale** (0.097 vs 0.083, 0.023 vs 0.020, 0.006 vs 0.005),
+so the recall is genuine and not a readout artifact.
+
+**⇒ 200 facts at 0.915 recall, with NO allocator at all — against the best slot mechanism managing 3/6
+valid permutations at TWELVE facts.** The one-to-one matching problem that consumed this entire arc is not
+a hard problem that needs a better mechanism; it is an artifact of the localist one-fact-per-slot design,
+and it simply does not arise when a memory is a sparse pattern over a shared population. Capacity becomes
+combinatorial rather than equal to the slot count, and the graceful degradation at N=500 is an ordinary
+capacity limit (k=20 of M=400), not a collision failure.
+
+**HONEST SCOPE — this is a toy, and the gap to the substrate is real and named.** Fixed random projection
+(no learning in the encoder), one-shot Hebbian with no soft bound and therefore no saturation, and a host
+`argmax` readout standing in for a cleanup. Every one of those is a place the substrate has previously
+bitten this project — the saturation family especially. So this licenses a REDIRECTION of effort, not a
+capability claim: it says stop building slot-allocator variants, and take the sparse distributed store to
+the substrate with the existing G.20 ensemble machinery under the same permuted + scramble controls.
