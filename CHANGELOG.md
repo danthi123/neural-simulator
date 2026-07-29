@@ -23,7 +23,13 @@ A related milestone: **grounded conversation now runs reachably on one shared ne
 
 ### An honest self-audit corrected the record
 
-An internal audit of the project's own historical notes found and **corrected several overstated headline claims** — the kind of self-checking this project depends on. Several **navigation** benchmark figures in particular were walked back: a widely-copied "navigates with no heuristic / all shortcuts closed" description was wrong (that configuration in fact still had the goal-direction heuristic switched on by default); at least one "X% better than baseline" navigation improvement turned out to be a favourable-seed selection that does not survive fresh blind seeds; and a "the larger grid is 13.3% better than the smaller one" comparison was mixing two different metrics. Those claims are retracted in the record. The lesson is restated as standing practice: **prefer qualitative capability descriptions to fragile single-number headlines**, and scrutinize a nominal win at least as hard as a failure.
+An internal audit of the project's own historical notes found and **corrected several overstated headline claims** — the kind of self-checking this project depends on. Several **navigation** benchmark figures in particular were walked back:
+
+- A widely-copied "navigates with no heuristic / all shortcuts closed" description was wrong. That
+  configuration still had the goal-direction heuristic switched on by default.
+- At least one "X% better than baseline" navigation improvement was a favourable-seed selection. It
+  does not survive fresh blind seeds.
+- A "the larger grid is 13.3% better than the smaller one" comparison was mixing two different metrics. Those claims are retracted in the record. The lesson is restated as standing practice: **prefer qualitative capability descriptions to fragile single-number headlines**, and scrutinize a nominal win at least as hard as a failure.
 
 ### A subtle reproducibility bug — found and fixed
 

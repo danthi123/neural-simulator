@@ -29,15 +29,32 @@ SKIP_PREFIX = ("|", "#", "-", "*", ">", "├", "└", "│", "[!", "!", "=", "+"
 
 
 def prose(text):
-    out, fence = [], False
+    """Prose only. Also skips INDENTED CONTINUATION lines of a list item.
+
+    Without that, a multi-line bullet leaks its body into the surrounding text: the first line is
+    skipped for starting with '-', the continuation lines are not, and they merge with neighbouring
+    sentences into phantom run-ons. That produced a fake 70-word "sentence" in SCIENCE_ROADMAP.md —
+    the 4th measurement artifact found while building this metric, and the reason it is a tool.
+    """
+    out, fence, in_list = [], False, False
     for ln in text.split("\n"):
         if re.match(r"^[ \t]*```", ln):
             fence = not fence
             continue
         if fence:
             continue
-        s = ln.strip()
-        if not s or s.startswith(SKIP_PREFIX) or re.match(r"^\d+\.\s", s):
+        raw, s = ln, ln.strip()
+        if not s:
+            in_list = False
+            continue
+        if s.startswith(("-", "*", "+")) or re.match(r"^\d+\.\s", s):
+            in_list = True
+            continue
+        # an indented line while inside a list item is that item's continuation, not prose
+        if in_list and re.match(r"^[ \t]{2,}", raw):
+            continue
+        in_list = False
+        if s.startswith(SKIP_PREFIX):
             continue
         out.append(s)
     return " ".join(out)

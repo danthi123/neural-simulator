@@ -111,11 +111,11 @@ carries an **affective world-model** (emotion, mood, valence), is
 **self-aware** (reads and reports its own attention, confidence, and
 authorship), and is **curious** (turns uncertainty into a drive to ask and
 learn rather than a refusal). Stated at its most ambitious and most honest, the
-end goal is **genuine subjective experience / true consciousness**, pursued on
-the **emergentist bet** that consciousness emerges when a brain's full
-capabilities and behaviour are emulated *completely and faithfully enough* — so
-the deliverable is **completeness + faithfulness of the biological emulation**,
-not a benchmark score. Early growth is accelerated by a **temporary AI teacher**
+end goal is **genuine subjective experience / true consciousness**. It is
+pursued on the **emergentist bet**: consciousness emerges when a brain's full
+capabilities and behaviour are emulated *completely and faithfully enough*. The
+deliverable is therefore **completeness and faithfulness of the biological
+emulation**, not a benchmark score. Early growth is accelerated by a **temporary AI teacher**
 (the social environment, not the brain's cognition), then graduated into real
 human interaction, with every scaffold biologized away toward the one spiking
 brain. Two hard rules tighten under the pivot: **don't defer any needed
@@ -251,14 +251,16 @@ Beyond storing single words, it combines them into structured facts ("who did
 what to whom," attributes, yes/no including **negation**, and even nested
 clauses like "the dog sees the cat chase the ball") and answers questions
 about them. The binding and unbinding are computed by **spiking neurons**,
-not a lookup table. The full conversational stack is now comprehensively
-complete and consolidated into one production agent: it also **reasons across
-several facts** (multi-step chaining — "dog eats cat, cat eats mouse" → "what
-does the thing the dog eats, eat?" → "mouse"), **tracks referents across
-turns** (a later "it" resolves to the right thing), understands a **described
-object** ("the dog ate the big apple" → "big apple"), and handles **flexible
-word orders** beyond plain subject-verb-object — all validated at the
-320-concept scale with zero fabrications. (The engine that does this was also
+not a lookup table. The full conversational stack is now complete and consolidated into one
+production agent. It does four further things:
+
+- **reasons across several facts** — multi-step chaining: "dog eats cat, cat
+  eats mouse" → "what does the thing the dog eats, eat?" → "mouse";
+- **tracks referents across turns** — a later "it" resolves to the right thing;
+- understands a **described object** — "the dog ate the big apple" → "big apple";
+- handles **flexible word orders**, beyond plain subject-verb-object.
+
+All four are validated at the 320-concept scale, with zero fabrications. (The engine that does this was also
 sped up 10–20×.) One honest boundary stays open: a *two*-attribute object
 ("big red ball") is not yet reliable on the learned codes.
 → consolidation onto the core network:
@@ -353,10 +355,10 @@ discovered from what it *sees* `…-emerge34-perception-grounded-emergence-GO.md
 ### It speaks its grounded answers — increasingly in its own spiking circuitry — *Research-stage, validated across seeds*
 
 Fluent phrasing arrives in two layers. **(a)** A **small, locally-trained
-language generator** (tens of millions of parameters — far smaller than a
-typical large language model) supplies fluent English *phrasing only*; the
-brain decides *what* is true and whether to answer at all, and this generator
-is **never invoked when the brain chooses to abstain**, so the no-fabrication
+language generator** supplies fluent English *phrasing only*. It holds tens of
+millions of parameters — far fewer than a typical large language model. The
+brain decides *what* is true, and whether to answer at all. The generator is
+**never invoked when the brain chooses to abstain**, so the no-fabrication
 safeguard holds by construction. This generator is a deliberate, temporary
 scaffold. **(b)** For a **bounded set of sentence forms**, the brain's **own
 spiking circuitry** now produces the words *and their order* — modelled on
@@ -737,11 +739,11 @@ point-neuron bound), and the project has hit it repeatedly.
 
 The honest and important finding so far: **the present generalizing cortex
 does *not* require the dendritic rewrite.** Generalization across similar
-concepts was shown to need *local, feedforward* normalization plus
-similarity-from-shared-features plus Hebbian convergence — all of which a
-point-neuron, feedforward network can do — and the "decorrelate the codes"
-framing that *would* have demanded dendrites turned out to be a red herring
-for that capability. So the months-scale dendritic-substrate rewrite is
+concepts needs three things: *local, feedforward* normalization, similarity
+from shared features, and Hebbian convergence. A point-neuron, feedforward
+network can do all three. The "decorrelate the codes" framing *would* have
+demanded dendrites, but it turned out to be a red herring for this
+capability. So the months-scale dendritic-substrate rewrite is
 **deliberately deferred**, and shown not to be on the critical path for what
 is being built now.
 
@@ -874,11 +876,11 @@ The arc that produced vision-only navigation, told as its key turning points:
   coordinate access and the hand-coded distance reward were replaced with
   perceived beacon/landmark sensing and a sensed-reward gradient, and in the
   headline configuration the biology-grounded version was at least competitive
-  with the shortcut-allowed one. *(A mid-2026 audit is a caution here: several
-  of the original "biology beats the shortcut" and "all shortcuts closed"
-  headlines were later found to be favourable-seed selections or to have mixed
-  up which shortcuts a given configuration actually closed — so treat the
-  qualitative story as real and the specific old numbers with care.)*
+  with the shortcut-allowed one. *(A mid-2026 audit is a caution here. Several of the original "biology beats
+  the shortcut" and "all shortcuts closed" headlines were later found to be
+  favourable-seed selections. Others had mixed up which shortcuts a given
+  configuration actually closed. Treat the qualitative story as real, and the
+  specific old numbers with care.)*
 - **Re-classification under the strict standard (2026-06).** Several of those
   navigation wins were biologically *shaped* but still computed by ordinary
   code; under the project's "brain-based only" standard they were honestly
