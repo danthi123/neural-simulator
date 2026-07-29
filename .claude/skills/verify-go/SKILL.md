@@ -269,3 +269,16 @@ executable instead of remembered.
 queue filled instantly from two real debts: seeds 43/44/100/101/102 for a headline contrast that had only
 seed 42, and the clean scale series whose confound had already been diagnosed and written down. If the
 queue looks empty, the likelier truth is that owed replications are being skipped.
+
+**POOL ADDENDUM (same day): the pool's under-use was NOT a dispatch problem, and a dispatcher there was
+the wrong fix.** A `pool_dispatch.sh` was written, debugged through three failures (a `pgrep -fc` that
+prints `0` AND exits nonzero so `|| echo 0` emitted two lines and broke the arithmetic; an `exec -a` marker
+the wrapper shells also carried, over-counting 3x; a regex that silently missed a one-line function), and
+then **deleted** — because the plain `xargs -P 12` per node that already worked ran a 72-cell × 6-seed
+sweep (432 runs) across 36 cores in **under 60 seconds**.
+
+**The real constraint on that lane is JOB SIZE, not dispatch.** Numpy sweeps drain the pool faster than any
+queue can be stocked, so "keep the pool full" is the wrong goal — the right one is "send the pool work
+worth 36 cores", i.e. batch the whole grid at 6 seeds instead of trickling 2-seed probes. The GPU
+dispatcher stands because GPU arms run ~90 minutes; the same mechanism on a seconds-per-job lane is
+ceremony. **Match the mechanism to the lane's job duration.**
