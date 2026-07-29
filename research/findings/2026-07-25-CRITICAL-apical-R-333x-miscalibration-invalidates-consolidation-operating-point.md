@@ -3125,3 +3125,30 @@ capacity limit (k=20 of M=400), not a collision failure.
 bitten this project — the saturation family especially. So this licenses a REDIRECTION of effort, not a
 capability claim: it says stop building slot-allocator variants, and take the sparse distributed store to
 the substrate with the existing G.20 ensemble machinery under the same permuted + scramble controls.
+
+### 2026-07-29 (re-route has a BANKED substrate precedent — and a capacity correction to my own toy)
+
+Before building anything for the re-route, the corpus check found the machinery already exists and is
+validated: `research/runners/concept_pool_sparse_distributed.py` is the real catalog **G.20 Kanerva /
+Pulvermüller** form — each concept a sparse random pattern in a SHARED pool, patterns overlapping, Hamming
+distance separating them. Findings `2026-05-15-sparse-distributed-BREAKTHROUGH.md` and
+`2026-05-15-G20-sparse-ensemble-160concept-end-to-end-SHIPPED.md` bank it end-to-end with tests.
+
+**⚠️ BUT READ THE NUMBER, NOT THE FILENAME.** The headline "160-concept" result is **5 sparse bridges at
+32 concepts each, all 32/32 top-1 = 100%** — the doc itself calls multi-bridge "the production scaling
+route". So the validated **per-pool** figure is ~32, NOT 160 in one shared population. My toy reported
+**200 facts at 0.915 in a single pool**, which is ~6× the demonstrated per-pool capacity ⇒ **the toy is
+optimistic about single-pool capacity**, exactly the toy-vs-substrate gap flagged when it was recorded
+(fixed random projection, one-shot Hebbian with no soft bound, host argmax readout — no saturation
+anywhere, and saturation is this project's most repeated failure family).
+
+**TWO CONSEQUENCES, both good for the re-route and neither a retreat:**
+1. The re-route is NOT speculative — sparse distributed storage of items in a shared spiking pool is
+   already SHIPPED on-bridge at 100% discrimination. The blocker was never "can a shared pool work".
+2. The open question is narrower and different from what the toy tested: the banked result stores
+   **CONCEPTS**; consolidation needs **composed FACTS**. And per-pool capacity must be measured, not
+   inherited from the toy.
+
+**IN FLIGHT:** on-bridge per-pool capacity at n_concepts = 32 / 64 / 128 on the existing validated harness
+(one shared pool, seed 42). This measures where the real substrate ceiling sits before any new build, and
+whether multi-pool (the shipped route) is required rather than optional.
