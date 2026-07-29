@@ -241,3 +241,31 @@ void_if(sat_frac == 0.0, "the soft bound never engaged; w_max arms are identical
 The saturation arm above was written WITHOUT importing it, by the same person who wrote it. A helper you do
 not import is exactly as useful as a rule you do not remember — which is the whole reason `lab.py` exists.
 **Import it at the top of every probe, not when you suspect trouble.**
+
+## PARALLELIZATION IS A DISPATCHER, NOT A DECISION (2026-07-29 — the owner flagged this TWICE in one day)
+
+**The failure was not missing information.** The heartbeat printed `UNDER-FILLED-GPU` every 15 minutes and
+the 36-core pool sat at load 0.00 for hours, while substrate conclusions were being drawn from a SINGLE
+seed against this project's documented 6-seed standard. The warning fired correctly and was acted on
+minimally, twice, because responding to it required **inventing a job on the spot** — so the cheap response
+was always "launch one more thing and move on".
+
+**The mechanism:** `tools/lane_dispatch.sh <gpu|pool> <slots>` keeps N slots busy from a persistent queue
+file (`research/queue/gpu.queue`), moving each line queue → `.running` → `.done` so state survives a
+restart and nothing is double-run.
+
+```bash
+bash tools/lane_dispatch.sh gpu 7 &          # keeps 7 GPU jobs alive from the queue
+cat >> research/queue/gpu.queue <<< "<one shell command per line>"
+```
+
+**THE ALARM MOVED, and that is the actual fix.** The heartbeat no longer warns on an idle lane — it warns
+on **`GPU-QUEUE-LOW`** and **`DISPATCHER-DEAD`**. An idle lane with a stocked queue self-heals in seconds;
+an empty queue *guarantees* future idleness. So the only standing obligation is **keep the queue stocked**,
+which is the existing "build de-risks ahead of time so idle compute always has a ready job" directive made
+executable instead of remembered.
+
+**Stock it with the work that is already OWED, not with invented work.** On the day this was built the
+queue filled instantly from two real debts: seeds 43/44/100/101/102 for a headline contrast that had only
+seed 42, and the clean scale series whose confound had already been diagnosed and written down. If the
+queue looks empty, the likelier truth is that owed replications are being skipped.
