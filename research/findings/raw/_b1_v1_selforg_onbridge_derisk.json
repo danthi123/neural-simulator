@@ -17,7 +17,7 @@
     "osi_post_mean_mean": 0.0797,
     "rsa_vs_host_mean": 0.1187,
     "margin_mean": 0.0091,
-    "orient_decode_mean": 0.0104,
+    "orient_decode_mean": 0.0052,
     "host_decode_mean": 0.9844,
     "v1_firing_rate_mean": 0.001
   },
@@ -26,7 +26,7 @@
       "seed": 42,
       "backend": "cupy",
       "n_v1": 8192,
-      "elapsed_s": 1197.1,
+      "elapsed_s": 1265.9,
       "v1_firing_rate": 0.0007,
       "osi": {
         "pre_random": {
@@ -54,7 +54,7 @@
           "margin": 0.0116,
           "rsa_vs_host": 0.1214,
           "rsa_vs_pixels": 0.1164,
-          "orient_decode": 0.0156
+          "orient_decode": 0.0
         }
       },
       "gates": {
@@ -72,7 +72,7 @@
       "seed": 43,
       "backend": "cupy",
       "n_v1": 8192,
-      "elapsed_s": 1164.6,
+      "elapsed_s": 1332.0,
       "v1_firing_rate": 0.0009,
       "osi": {
         "pre_random": {
@@ -118,7 +118,7 @@
       "seed": 44,
       "backend": "cupy",
       "n_v1": 8192,
-      "elapsed_s": 1170.2,
+      "elapsed_s": 1255.6,
       "v1_firing_rate": 0.0014,
       "osi": {
         "pre_random": {

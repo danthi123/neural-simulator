@@ -4624,3 +4624,31 @@ solving an artifact of the linear toy's readout. **Testable:** lesion `shared_FS
 **HONEST SCOPE:** 2 seeds, one n, one alpha. A ceiling result needs a HARDER config to be informative about
 mechanism ranking — the next rung is larger n (256/512) where the sum read has room to fail, not more seeds
 at a saturated point.
+
+### 2026-07-29 (LANE D — my operating-point fix targeted the WRONG STAGE; the correct lever identified)
+
+The "raise the drive until the population fires" fix is **refuted**, and finding out why located the real
+problem:
+
+| drive_pA | v1_firing_rate_mean | orient_decode |
+|---|---|---|
+| 1200 (default) | 0.0007 | 0.0833 (= chance) |
+| 2400 | 0.0009 | 0.0573 |
+| 4800 | 0.0010 | 0.0052 |
+
+**A 4× drive increase moved the firing rate by 0.0003.** Before concluding "not drive-limited" I checked
+whether the lever engaged at all — and it does, but **on the wrong stage**: `_drive_image`
+(`_b1_v1_selforg_onbridge_derisk.py:289-293`) sets `cp_external_input_current[r0:r0+n_retina]`, i.e. the
+**RETINA**. V1 is driven only indirectly, through the plastic `retina→cortex_v1_simple` pathway (`:172`).
+So raising retinal drive cannot fix V1 silence when the bottleneck is the PATHWAY.
+
+**Two facts narrow it to one lever.** `--n-inh` defaults to **0**, so there is no inhibitory population to
+suppress V1 — inhibition is excluded by construction. And the pathway's initial weight is
+`--init-weight-mean`, default **30.0**. ⇒ **The retina→V1 synaptic weight is the operating-point lever, not
+the input current.** Queued at 90 and 240, 3 seeds each.
+
+**⇒ THE LANE-D NEGATIVE REMAINS LIKELY-VOID, now for a sharper reason.** It is not "the mechanism failed"
+and not even "it needs more input" — it is that **V1 never fired because the pathway feeding it was too weak
+to make it fire**, with no inhibition involved. Any selectivity measured in that state is measured in silent
+neurons. **And I nearly recorded "not drive-limited" as a finding**, which would have been true-but-useless:
+the informative statement is *which stage* the limit is at, and that took one grep to establish.
