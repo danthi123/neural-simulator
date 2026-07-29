@@ -4516,3 +4516,37 @@ integration windows in place of `np.roll` delays, and check the separation survi
 version cost seconds; the on-bridge build it would have justified would have cost days and failed on
 physiological grounds — and would likely have been read as "the neural reader doesn't work" rather than
 "the delay implementation was wrong".
+
+### 2026-07-29 (NMDA-INTEGRATION substitution — physiological but WEAK and it MISRANKS; two methods down, architecture intact)
+
+Replaced the conduction delays with position-graded synaptic integration (early-position inputs get a LONG
+tau so their effect persists; late-position inputs a SHORT one) — the physiological component the arithmetic
+demanded. Tau grid 25/50/100/150 ms, 4 seeds:
+
+| tau | forward | reverse | spread (travels+widens) | STATIC WIDEN | LESION | shuffle |
+|---|---|---|---|---|---|---|
+| 25 ms | 1.051 | 1.000 | 0.908 | **1.000** | **1.000** | 0.992 |
+| 100 ms | 0.941 | 1.052 | 0.913 | **1.003** | **1.000** | 0.998 |
+| 150 ms | 0.935 | 1.057 | **0.919** | **1.004** | **1.000** | 0.998 |
+
+**WHAT SURVIVES:** the clean null on non-directional activity (static-widen **1.00** at every tau) and the
+equalised-tau **LESION at exactly 1.000**. The READ-OUT ARCHITECTURE — learned tuning, opponent FWD/REV
+pools, principled neutral reference — is sound under both temporal mechanisms.
+
+**WHAT FAILS — two things, and the second is worse than the first.** (1) Direction separation collapses to
+**~12%** (0.935 vs 1.057) against the delay version's **2.2×** (0.685 vs 1.486). (2) **It MISRANKS:** the
+travelling-and-widening front reads **0.913**, i.e. FURTHER from neutral than clean forward travel at
+**0.941** — the reader calls a spreading front MORE directional than a clean traveling wave. That is the
+same class of error as the host decoder's, arrived at from the opposite direction.
+
+**⇒ VERDICT ON TWO METHODS, NOT ON THE CAPABILITY** (the standing law). Delay lines: strong discrimination,
+physiologically impossible spread (63-125 ms needed vs ~1-30 ms available). Slow synapses: physiological,
+but 12% separation and inverted ranking. **Neither delivers physiological plausibility AND discrimination.**
+
+**▶ NAMED NEXT MECHANISM (a different family, reusing validated machinery):** stop trying to ALIGN arrivals
+in time and instead let the reader LEARN the expected order in its own recurrent weights — forward-asymmetric
+STDP, so a forward sweep RESONATES with the learned recurrence and a reverse one does not. That is precisely
+the Mehta forward-asymmetric band mechanism this project already validated 6-seed for growing the replay band
+itself (`2026-07-25-gap5-learned-band-emergence-STDP-directed-traversal-6seed-GO.md`) — applied to the READER
+rather than the band. It needs no long delays and no exotic taus, because the selectivity lives in the
+weights rather than in the timing.
