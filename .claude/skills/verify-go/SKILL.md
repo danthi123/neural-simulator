@@ -191,3 +191,26 @@ wrong for a different reason each time. Distinguish them by measuring the lever'
 
 ## Why this skill exists
 2026-07-24 (evolve-skills): adversarial verification was run ad-hoc (via one-off Workflow panels) and reliably caught real over-claims — but it lived only in-session, not in a skill, so it depended on remembering to do it. This encodes it as a reflex triggered by the commit itself. Pairs with the neural-simulator skill's SILENT-FAILURE CLASS (the specific checks) — this is the procedure that runs them before a GO lands.
+
+## ASSERT THE GATE EXISTS BEFORE YOU FREEZE OR LESION IT (2026-07-29)
+
+`_try_pgate` swallows the `KeyError` and returns `False` for a gate that does not exist. `_mean_gate_weight`
+returns `0.0` for one. **Nothing checks either return value.** So freezing a NONEXISTENT gate is a silent
+no-op that presents as a *perfect* freeze: drift exactly `+0.000000`.
+
+That is not hypothetical — a gate's existence depends on config. `comp_no_pool_slot=True` (the value in
+`BASE`) **drops the pool→slot pathway entirely**, so `concept_to_comp_attr` is simply absent, and every
+read of it returns `nan`/`0.0` rather than raising.
+
+**The rule:** before any freeze / lesion / weight-read on a NAMED gate, assert it exists:
+
+```python
+assert gate in bridge._plasticity_gate_indices_gpu, (
+    "gate %r absent under this config -- freezing it is a SILENT NO-OP that reads as a perfect freeze" % gate)
+```
+
+**Why it matters beyond the bug:** an exact `+0.000000` freeze-drift is the signature of a real freeze AND
+of a missing gate. They are indistinguishable in the log. A suspiciously perfect number is a prompt to
+check the instrument, not evidence that the manipulation worked. (Found while chasing an unrelated
+`nan`; the affected headline result was checked and STANDS, because its own probe sets
+`comp_no_pool_slot=False` — but only checking revealed that.)
