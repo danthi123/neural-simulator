@@ -4175,3 +4175,10 @@ standard. Not upgraded to a generalization claim on that basis.
 A/B/C"; it sat unqueued all day beside 36 idle pool cores while the GPU ran one lane. The first runner
 dispatched after the rebalance returned this in 40 seconds. The cost of the monoculture was not
 hypothetical.
+
+**n=32 partial-cue arms: SATURATED exactly as pre-registered.** `partial_zipf32` and `partial_zipf32_adapt`
+both return **`acc_on_unambiguous = 1.000`** (raw partial_cue_acc 0.8125 vs 0.8438, but that figure includes
+ambiguous cues where a hit is luck). The pre-flight predicted sum 0.978 / min 1.000 at this config and
+called it unable to discriminate; it could not. `ambiguous_frac` measured **0.2812** against the pre-flight's
+**0.281** — an exact match, which validates the ambiguity instrument even though the accuracy comparison is
+void. **The n=128 arms (predicted 0.886 vs 0.965) are the discriminating test.**

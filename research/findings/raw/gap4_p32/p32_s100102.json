@@ -1,0 +1,413 @@
+{
+  "probe": "gap4_learned_microcircuit_selfpredict_cpurate",
+  "task": "xor_over_pool",
+  "arms": [
+    "reservoir",
+    "fixed_fa",
+    "micro",
+    "transport_ceiling"
+  ],
+  "seeds": [
+    100,
+    101,
+    102
+  ],
+  "config": {
+    "hidden": 96,
+    "deep_layers": 2,
+    "frac": 1.0,
+    "epochs": 250,
+    "lr": 0.3,
+    "batch": 128,
+    "kp_lr": 0.2,
+    "kp_decay": 0.0001,
+    "wpi_plastic": false,
+    "wpi_init": "noisy",
+    "wpi_lr": 0.2,
+    "backend": "numpy"
+  },
+  "elapsed_seconds": 36.0,
+  "per_seed": [
+    {
+      "seed": 100,
+      "meta": {
+        "n_super": 24,
+        "n_members": 8,
+        "held_per_super": 3,
+        "n_prop": 3,
+        "k_classes": 9,
+        "member_id_dim": 3,
+        "n_obs": 14,
+        "noise": 0.02,
+        "feature_seed": 0,
+        "n_features": 9,
+        "n_train": 1260,
+        "n_heldout": 492,
+        "n_inherit_heldout": 54,
+        "n_memctrl_heldout": 18,
+        "n_supers_untaught": 6
+      },
+      "sizes": [
+        9,
+        96,
+        96,
+        9
+      ],
+      "chance": 0.16666666666666666,
+      "stage0": {
+        "l1_inherit": 0.24074074074074073,
+        "deep_oracle_inherit": 0.9814814814814815,
+        "depth_gap": 0.7407407407407408,
+        "depth_separating": true
+      },
+      "arms": {
+        "reservoir": {
+          "inherit_heldout": 0.09259259259259259,
+          "memctrl_heldout": 0.0,
+          "train": 0.2388888888888889
+        },
+        "fixed_fa": {
+          "inherit_heldout": 0.4074074074074074,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        },
+        "micro": {
+          "inherit_heldout": 0.4074074074074074,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        },
+        "transport_ceiling": {
+          "inherit_heldout": 0.9814814814814815,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        }
+      },
+      "selectivity": {
+        "code_diversity": 1.0,
+        "frac_input_differential": 1.0,
+        "ncc_diag": 0.2222222222222222,
+        "ncc_chance": 0.16666666666666666
+      },
+      "lesions": {
+        "apical_lesion": {
+          "inherit_heldout": 0.09259259259259259,
+          "memctrl_heldout": 0.0,
+          "train": 0.2388888888888889
+        },
+        "freeze_deepest": {
+          "inherit_heldout": 0.16666666666666666,
+          "memctrl_heldout": 0.0,
+          "train": 0.16666666666666666
+        },
+        "freeze_learned_feedback": {
+          "inherit_heldout": 0.4074074074074074,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        }
+      },
+      "permuted": {
+        "shuffled_target": {
+          "inherit_heldout": 0.1111111111111111,
+          "train_on_perm": 0.3412698412698413
+        },
+        "shufE": {
+          "inherit_heldout": 0.16666666666666666,
+          "memctrl_heldout": 0.0,
+          "train": 0.16666666666666666
+        }
+      },
+      "apical": {
+        "micro_plastic": {
+          "apical_correct": 1.0047363686490227,
+          "apical_incorrect": 1.127688886367815,
+          "silent_ratio": 0.8909694693226051,
+          "frac_correct": 0.044715447154471545,
+          "selfpred_cos": 0.033432550139892984
+        },
+        "micro_frozen_wpi": {
+          "apical_correct": 1.0047363686490227,
+          "apical_incorrect": 1.127688886367815,
+          "silent_ratio": 0.8909694693226051,
+          "frac_correct": 0.044715447154471545,
+          "selfpred_cos": 0.033432550139892984
+        }
+      },
+      "guards": {
+        "ast_no_forward_W": true,
+        "wscramble_byte_identity": true,
+        "micro_no_weight_transport": true,
+        "micro_selfpred_cos_final": 0.033432550139892984,
+        "ceiling_no_weight_transport": false,
+        "ceiling_guard_correctly_fails": true
+      }
+    },
+    {
+      "seed": 101,
+      "meta": {
+        "n_super": 24,
+        "n_members": 8,
+        "held_per_super": 3,
+        "n_prop": 3,
+        "k_classes": 9,
+        "member_id_dim": 3,
+        "n_obs": 14,
+        "noise": 0.02,
+        "feature_seed": 0,
+        "n_features": 9,
+        "n_train": 1260,
+        "n_heldout": 492,
+        "n_inherit_heldout": 54,
+        "n_memctrl_heldout": 18,
+        "n_supers_untaught": 6
+      },
+      "sizes": [
+        9,
+        96,
+        96,
+        9
+      ],
+      "chance": 0.16666666666666666,
+      "stage0": {
+        "l1_inherit": 0.24074074074074073,
+        "deep_oracle_inherit": 0.8703703703703703,
+        "depth_gap": 0.6296296296296297,
+        "depth_separating": true
+      },
+      "arms": {
+        "reservoir": {
+          "inherit_heldout": 0.1111111111111111,
+          "memctrl_heldout": 0.0,
+          "train": 0.2365079365079365
+        },
+        "fixed_fa": {
+          "inherit_heldout": 0.6296296296296297,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        },
+        "micro": {
+          "inherit_heldout": 0.6296296296296297,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        },
+        "transport_ceiling": {
+          "inherit_heldout": 0.8703703703703703,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        }
+      },
+      "selectivity": {
+        "code_diversity": 0.9629629629629629,
+        "frac_input_differential": 1.0,
+        "ncc_diag": 0.14814814814814814,
+        "ncc_chance": 0.16666666666666666
+      },
+      "lesions": {
+        "apical_lesion": {
+          "inherit_heldout": 0.1111111111111111,
+          "memctrl_heldout": 0.0,
+          "train": 0.2365079365079365
+        },
+        "freeze_deepest": {
+          "inherit_heldout": 0.48148148148148145,
+          "memctrl_heldout": 0.0,
+          "train": 0.6730158730158731
+        },
+        "freeze_learned_feedback": {
+          "inherit_heldout": 0.6296296296296297,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        }
+      },
+      "permuted": {
+        "shuffled_target": {
+          "inherit_heldout": 0.1111111111111111,
+          "train_on_perm": 0.3619047619047619
+        },
+        "shufE": {
+          "inherit_heldout": 0.1111111111111111,
+          "memctrl_heldout": 0.0,
+          "train": 0.1111111111111111
+        }
+      },
+      "apical": {
+        "micro_plastic": {
+          "apical_correct": 1.0744432503748598,
+          "apical_incorrect": 1.0708449966049005,
+          "silent_ratio": 1.003360200384149,
+          "frac_correct": 0.06910569105691057,
+          "selfpred_cos": 0.028281770529960802
+        },
+        "micro_frozen_wpi": {
+          "apical_correct": 1.0744432503748598,
+          "apical_incorrect": 1.0708449966049005,
+          "silent_ratio": 1.003360200384149,
+          "frac_correct": 0.06910569105691057,
+          "selfpred_cos": 0.028281770529960802
+        }
+      },
+      "guards": {
+        "ast_no_forward_W": true,
+        "wscramble_byte_identity": true,
+        "micro_no_weight_transport": true,
+        "micro_selfpred_cos_final": 0.028281770529960802,
+        "ceiling_no_weight_transport": false,
+        "ceiling_guard_correctly_fails": true
+      }
+    },
+    {
+      "seed": 102,
+      "meta": {
+        "n_super": 24,
+        "n_members": 8,
+        "held_per_super": 3,
+        "n_prop": 3,
+        "k_classes": 9,
+        "member_id_dim": 3,
+        "n_obs": 14,
+        "noise": 0.02,
+        "feature_seed": 0,
+        "n_features": 9,
+        "n_train": 1260,
+        "n_heldout": 492,
+        "n_inherit_heldout": 54,
+        "n_memctrl_heldout": 18,
+        "n_supers_untaught": 6
+      },
+      "sizes": [
+        9,
+        96,
+        96,
+        9
+      ],
+      "chance": 0.16666666666666666,
+      "stage0": {
+        "l1_inherit": 0.16666666666666666,
+        "deep_oracle_inherit": 1.0,
+        "depth_gap": 0.8333333333333334,
+        "depth_separating": true
+      },
+      "arms": {
+        "reservoir": {
+          "inherit_heldout": 0.1111111111111111,
+          "memctrl_heldout": 0.0,
+          "train": 0.2253968253968254
+        },
+        "fixed_fa": {
+          "inherit_heldout": 0.5555555555555556,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        },
+        "micro": {
+          "inherit_heldout": 0.5555555555555556,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        },
+        "transport_ceiling": {
+          "inherit_heldout": 1.0,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        }
+      },
+      "selectivity": {
+        "code_diversity": 0.9814814814814815,
+        "frac_input_differential": 1.0,
+        "ncc_diag": 0.2037037037037037,
+        "ncc_chance": 0.16666666666666666
+      },
+      "lesions": {
+        "apical_lesion": {
+          "inherit_heldout": 0.1111111111111111,
+          "memctrl_heldout": 0.0,
+          "train": 0.2253968253968254
+        },
+        "freeze_deepest": {
+          "inherit_heldout": 0.16666666666666666,
+          "memctrl_heldout": 0.0,
+          "train": 0.16666666666666666
+        },
+        "freeze_learned_feedback": {
+          "inherit_heldout": 0.5555555555555556,
+          "memctrl_heldout": 0.0,
+          "train": 1.0
+        }
+      },
+      "permuted": {
+        "shuffled_target": {
+          "inherit_heldout": 0.18518518518518517,
+          "train_on_perm": 0.55
+        },
+        "shufE": {
+          "inherit_heldout": 0.1111111111111111,
+          "memctrl_heldout": 0.0,
+          "train": 0.1111111111111111
+        }
+      },
+      "apical": {
+        "micro_plastic": {
+          "apical_correct": 1.0865226157130377,
+          "apical_incorrect": 1.0392031912458326,
+          "silent_ratio": 1.0455343332899423,
+          "frac_correct": 0.06097560975609756,
+          "selfpred_cos": -0.01682163458249104
+        },
+        "micro_frozen_wpi": {
+          "apical_correct": 1.0865226157130377,
+          "apical_incorrect": 1.0392031912458326,
+          "silent_ratio": 1.0455343332899423,
+          "frac_correct": 0.06097560975609756,
+          "selfpred_cos": -0.01682163458249104
+        }
+      },
+      "guards": {
+        "ast_no_forward_W": true,
+        "wscramble_byte_identity": true,
+        "micro_no_weight_transport": true,
+        "micro_selfpred_cos_final": -0.01682163458249104,
+        "ceiling_no_weight_transport": false,
+        "ceiling_guard_correctly_fails": true
+      }
+    }
+  ],
+  "aggregate": {
+    "chance": 0.16666666666666666,
+    "reservoir": 0.10493827160493825,
+    "credit_arms": {
+      "fixed_fa": 0.5308641975308642,
+      "micro": 0.5308641975308642
+    },
+    "best_credit": 0.5308641975308642,
+    "transport_ceiling": 0.9506172839506174,
+    "code_diversity": 0.9814814814814814,
+    "frac_input_differential": 1.0,
+    "ncc_diag": 0.19135802469135801,
+    "ncc_chance": 0.16666666666666666,
+    "lesion_apical": 0.10493827160493825,
+    "lesion_freeze_deepest": 0.2716049382716049,
+    "permuted_shuffled_target": 0.13580246913580246,
+    "permuted_shufE": 0.12962962962962962,
+    "micro_plastic_silent_ratio": 0.9799546676655654,
+    "micro_frozen_silent_ratio": 0.9799546676655654,
+    "micro_plastic_selfpred_cos": 0.014964228695787582,
+    "micro_frozen_selfpred_cos": 0.014964228695787582,
+    "n_go_seeds": 3,
+    "n_seeds": 3,
+    "guards": {
+      "ast_no_forward_W": true,
+      "wscramble_byte_identity": true,
+      "kp_no_weight_transport": null,
+      "micro_no_weight_transport": true,
+      "ceiling_guard_correctly_fails": true
+    },
+    "credit_beats_reservoir": true,
+    "depth_separating_all": true,
+    "nondegenerate_ok": true,
+    "permuted_ok": true,
+    "shufE_ok": true,
+    "lesions_ok": false,
+    "guards_ok": true,
+    "apical_silent_earned": false
+  },
+  "GO": false,
+  "G2_scope": "HONEST SCOPE (FLAG G2): at this numpy RATE reference the LEARNED arms (kp, micro) are accuracy-indistinguishable from fixed_fa -- the learned/interneuron machinery is inert on the feedforward weights at rate. This run CONFIRMS credit>reservoir + all guards + the apical-silent EARNED property, but CANNOT separate the learned surpass from fixed-FA on accuracy. That separation is a SPIKING op-point question (the 3090 phase).",
+  "verdict": "NO-GO (3/3 seeds). credit(best=0.531) vs reservoir(0.105) >= +0.10 | ceiling 0.951 | depth-sep True | non-degen code_div 0.98 frac_diff 1.00 True (ncc_diag 0.191~chance 0.167, expected) | perm shuffled-target 0.136 (<=chance 0.167) True | shufE 0.130 (collapsed to chance) True | lesions apical 0.105 freeze-deepest 0.272 False | guards True | apical-silent EARNED: plastic ratio 0.980 (cos 0.01) vs frozen ratio 0.980 (cos 0.01) -> False. HONEST SCOPE (FLAG G2): at this numpy RATE reference the LEARNED arms (kp, micro) are accuracy-indistinguishable from fixed_fa -- the learned/interneuron machinery is inert on the feedforward weights at rate. This run CONFIRMS credit>reservoir + all guards + the apical-silent EARNED property, but CANNOT separate the learned surpass from fixed-FA on accuracy. That separation is a SPIKING op-point question (the 3090 phase)."
+}
