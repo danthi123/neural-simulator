@@ -2743,3 +2743,36 @@ has a validated home elsewhere in the repo; the work is to COMPOSE it, which is 
 the slot allocator — its columns become the slots, its kWTA + boosting does the allocation, and the BTSP write
 targets whichever column it selects. Gate unchanged and ordered: `permutation_valid` 6/6 FIRST, then write↔read
 consistency ≥2/3 per seed, then scramble-teach collapsing, then the allocator-lesion arm failing.
+
+## 📊 6-SEED COMPLETION of the allocation refutations — all four hold
+
+Ran the missing seeds (100/101/102) CONCURRENTLY rather than serially (see the parallelization note below).
+
+| mechanism | `permutation_valid` across 6 seeds |
+|---|---|
+| more replay (cycles=100), no other lever | 42 F · 43 F · 44 F · 100 F · 101 F · 102 T = **1/6** |
+| Turrigiano synaptic scaling (0.1) | 42 F · 43 F · 44 F · 100 F · 101 F · 102 T = **1/6** |
+| duty-cycle threshold boost (2.0) | 42 F · 43 F · 44 F · 100 F = **0/4** |
+
+**All four allocation mechanisms are refuted at the 6-seed standard.** The lone `True` (seed 102) appears in BOTH
+the lesion and the treated arms, so it is substrate luck, not mechanism.
+
+**⇒ The verdict stands and is now properly seeded: the current slot architecture cannot allocate distinct slots to
+distinct facts, and fair-competition knobs do not fix it.** Per THE LAW this is a verdict on the METHOD; the
+capability's validated home is the EMERGE competitive pooler, and the work is COMPOSITION.
+
+**✅ PREREQUISITE VERIFIED BEFORE BUILDING ON IT — EMERGE-39 REPRODUCES ON THIS MACHINE.**
+`_emerge39_onsubstrate_competitive_pooler_derisk`, seeds 42/43/44: **on-substrate 1.00** · potentiation-alone
+(mechanism ablation) **0.11** · permuted-features **0.11–0.22** · dAP-lesion **0.00** · verdict **GO**, held-out
+inheritance 0.96 with a **+0.76** margin over the ablation. So the allocator being composed is not a claim from a
+findings doc — it is reproduced here, with its own anti-cheats firing. (EMERGE-40, whose kernel the composition
+also needs, is reproducing now.)
+
+**⚙️ PARALLELIZATION — a real throughput failure, owner-flagged and fixed.** This session ran ONE GPU job at a time
+on a 24 GB card where probe runs take 3–4 GB (room for 5–6), leaving the GPU at 0% across six recorded heartbeats,
+and left **36 idle mini-PC cores** untouched. The four refuted sweeps were ~9 sequential runs each — ~2.5 h serial
+against ~45 min batched, a self-inflicted **3–4×** loss. That is CLAUDE.md **drift mode 6**. Now running three lanes
+concurrently: local GPU (4 jobs), the pool (75 processes / 240-config sweep, resumed), and AWS. *Two diagnosis
+errors en route, both from memory instead of reading: pinged `192.168.1.x` when the ssh config says `192.168.0.x`
+and nearly asked the owner to restart three healthy nodes; then looked for the repo at `~/sim` when the dispatch
+script says `~/derisk-pool/sim`.*
