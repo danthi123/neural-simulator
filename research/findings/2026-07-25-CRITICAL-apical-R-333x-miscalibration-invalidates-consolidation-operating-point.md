@@ -3963,3 +3963,42 @@ the roadmap's existing direction for the no-confab moat becoming a clarification
 
 **Residual worth noting:** partial-cue drifts FURTHER below its ceiling as N grows (89% → 48%), so there
 IS a genuine mechanism loss on top of the information limit at large N. Not diagnosed here.
+
+### 2026-07-29 (M-SCALING TESTED + the "at the information ceiling" framing REFINED)
+
+Tested my own asserted claim that "capacity should scale with pool size M" — it was an inference from
+`n_used` saturating, never a measurement. V=320, Zipfian, role-bound, alpha=0.5, 6 seeds.
+
+| N | M | full | partial | **unamb_acc** | margin | util |
+|---|---|---|---|---|---|---|
+| 500 | 2000 | 0.937 | 0.280 | 0.526 | −2.49 | 1.000 |
+| 500 | 4000 | 0.965 | 0.351 | 0.677 | +1.76 | 0.999 |
+| 500 | 8000 | 0.988 | 0.389 | 0.709 | +3.60 | 0.976 |
+| 1000 | 4000 | 0.815 | 0.231 | 0.525 | −5.89 | 1.000 |
+| 2000 | 4000 | 0.631 | 0.135 | 0.377 | −13.54 | 1.000 |
+| 2000 | 16000 | 0.731 | 0.179 | 0.519 | −8.68 | 0.999 |
+
+**(1) THE CLAIM HOLDS, WITH DIMINISHING RETURNS.** N=2000 full-cue goes 0.451 → 0.631 → 0.692 → 0.731 as M
+goes 2000 → 16000: an **8× pool buys +0.28**, and each doubling buys less. At N=500 it reads "does not
+scale" — but that arm starts at 0.937, i.e. **the ceiling criterion applies to my own scaling test**, and
+the flat reading there is a headroom artifact, not evidence against M-scaling.
+
+**(2) THE FRAMING REFINEMENT, and it corrects me.** `unamb_acc` is accuracy restricted to cues that
+UNIQUELY identify a fact — where ambiguity is no excuse. It is **0.677 at N=500/M=4000 and 0.377 at
+N=2000/M=4000.** So a third to two-thirds of genuinely-answerable partial queries are still missed.
+My earlier "partial-cue is running at 75-100% of the information-theoretic maximum" was computed against
+the unique-fraction ceiling and was **too generous**: it credited the memory for the ambiguous cases it
+could never win, while the direct measurement on winnable cases shows substantial real loss.
+**Both statements are true and the honest one is the pair:** most partial queries are genuinely ambiguous
+(0.57-0.79), AND on the queries that are NOT ambiguous the memory still fails 32-62% of the time.
+
+**(3) THE MECHANISM, visible for the first time: the MARGIN is NEGATIVE in most cells.** `margin` =
+score(correct) − score(best competitor) on unambiguous cues. At N=2000/M=4000 it is **−13.5** — the correct
+fact is not merely close, it is systematically OUT-SCORED. That is why a partial cue fails: two-thirds of
+a pattern does not out-drive the accumulated interference from every other fact sharing those neurons.
+Raising M improves the margin monotonically (−23.9 → −8.7 at N=2000) without ever making it positive,
+which is consistent with (1)'s diminishing returns.
+
+⇒ **Partial-cue retrieval needs its own mechanism, not just a bigger pool.** The obvious candidates —
+normalising a fact's score by its own pattern size, or a competitive/inhibitory read that suppresses
+broadly-active competitors — are untested. Recorded as the precise next question rather than a conclusion.
