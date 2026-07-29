@@ -337,3 +337,11 @@ gap#4 jobs sat at positions **4 and 5**, behind three incumbent-lane jobs, with 
 so the crux would have started dead last, hours later, while every indicator said "served". **A coverage
 check counts membership; the schedule is what actually allocates.** When rebalancing a FIFO queue, MOVE the
 under-served lane to the front and verify the order, or the fix is cosmetic.
+
+**COVERAGE IS NOT PROGRESS — an "unserved" lane may be a FINISHED one (2026-07-29).** `lane_check` flagged
+lanes A · Affect and C · Self/Workspace as unserved. Checking the roadmap BEFORE queueing them showed both
+are **complete**: self-schema (DR-3) and false-belief (W3) are 6-seed GO, and the roadmap's own status line
+reads *"Phase-0 keystones DR-1/DR-3/P0.3/P1.2/W3 all landed"*. Queueing them would have repeated, within the
+hour, the exact duplication the crux-lane lapse had just cost. **The coverage check measures where compute
+goes, not whether that lane still has open work — always read the lane's roadmap STATUS before stocking it.**
+A lane with no open work is correctly empty.
