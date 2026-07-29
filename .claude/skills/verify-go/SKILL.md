@@ -282,3 +282,20 @@ queue can be stocked, so "keep the pool full" is the wrong goal — the right on
 worth 36 cores", i.e. batch the whole grid at 6 seeds instead of trickling 2-seed probes. The GPU
 dispatcher stands because GPU arms run ~90 minutes; the same mechanism on a seconds-per-job lane is
 ceremony. **Match the mechanism to the lane's job duration.**
+
+## AN AD-HOC CHECK THAT DISAGREES WITH A VERIFIED TOOL IS WRONG UNTIL PROVEN OTHERWISE (2026-07-29)
+
+`tools/check_docs.py` reported W2 clean. A one-line `awk 'length>800'` appeared to find five violations,
+and the instinct was "the checker has a gap". It did not. The awk was wrong **three separate ways**: it
+used `NR` (cumulative across files) instead of `FNR`, so its line numbers pointed into a different file;
+it did not exempt table rows; and it did not track code fences. Every "violation" was an exempt line.
+
+**The rule:** when a throwaway check contradicts a tool that has tests and a stated specification, debug
+the throwaway check FIRST. The tool encodes exemptions and edge cases that a one-liner cannot. Reversing
+that order costs time and — worse — can produce a "the checker is broken" finding that is itself the bug.
+
+**Same session, same shape, three more times:** a `pgrep -fc` that prints `0` AND exits nonzero (so
+`|| echo 0` emitted two lines and broke arithmetic); a margin metric read as improved when the weighting
+had rescaled its units; and a `;` instead of `&&` that let a commit through while the checker printed FAIL.
+**The gate existed in all three cases and was not honoured.** Prefer `&&` over `;` whenever a check gates
+an action, and never let a hand-rolled measurement overrule an instrumented one without debugging it.
