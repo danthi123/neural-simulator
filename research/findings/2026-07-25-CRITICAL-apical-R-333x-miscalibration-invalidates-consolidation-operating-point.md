@@ -3537,3 +3537,33 @@ word sampling produces **exactly zero** ambiguous facts, so a uniform gate canno
 clarification behaviour that the ambiguity analysis says is the correct response. Three separate arguments
 now converge on the same point — uniform sampling over-reports capacity, hides the collision regime, and
 cannot test the ambiguity handling at all.
+
+### 2026-07-29 (FIRST ON-BRIDGE READ) — independent patterns transfer EXACTLY; overlapping patterns do NOT
+
+The first composed-fact result on the spiking substrate, with the MATCHED off-substrate prediction computed
+for the identical config (M=2000, k=99, N=32, V=12) so the number can be attributed rather than admired:
+
+| config | off-substrate (predicted) | **on-bridge (measured)** | mean overlap |
+|---|---|---|---|
+| independent | 1.000 (32/32) | **1.000 (32/32)** | 4.9 |
+| composed UNION | 0.917 (29/32) | **0.562 (18/32)** | 28.2 |
+| composed BIND | 0.979 (31/32) | *pending* | 17.6 |
+
+**⇒ THE SUBSTRATE IS HARSHER ON OVERLAP THAN THE LINEAR TOY, BY A LOT.** Independent sparse patterns
+transfer with zero loss — the shared-pool storage mechanism itself is sound on spikes, and the banked
+32/32 reproduces. But the composed-union arm loses **0.355** against its own prediction (0.917 → 0.562).
+The gap is specific to OVERLAP: it is absent at overlap 4.9 and severe at 28.2. Plausible mechanism (NOT
+yet tested): the on-bridge read accumulates SPIKES over a pattern while the toy takes a linear dot product,
+and shared neurons firing for several facts are further amplified by the pool's WTA/FS inhibition — so
+interference compounds rather than adding. **This vindicates the standing caveat, and localises it: the
+toys are trustworthy for distinct patterns and OPTIMISTIC for overlapping ones.**
+
+**⚠️ PRE-REGISTERED PREDICTION for the pending BIND arm, recorded BEFORE it lands so it cannot be
+rationalised afterwards.** Role-binding cuts overlap 28.2 → 17.6. Off-substrate that bought only +0.06
+(0.917 → 0.979) because the linear readout barely cared. If the substrate's extra harshness is genuinely
+driven by overlap, binding should help **MORE** on-bridge than off — prediction: **sbind32 > 0.70**, i.e. a
+gain of at least +0.14 over union's 0.562, versus the +0.06 seen off-substrate.
+* If it lands **>0.70**: overlap is confirmed as the substrate's binding constraint, and role-binding is
+  load-bearing rather than a marginal nicety — which raises its priority in the build.
+* If it lands **~0.56-0.62**: the substrate gap is NOT overlap-driven, my mechanism story is wrong, and the
+  real cause must be found before any of the off-substrate design work is trusted on-bridge.
