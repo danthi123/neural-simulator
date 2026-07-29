@@ -3827,3 +3827,22 @@ not with utilisation being wrong.
 **FIX for any future scale series:** hold `n_active/stride` CONSTANT across n by scaling `n_lang_input`
 with `n_concepts` instead of lowering sparsity, so the encoder crowding is identical and n is the only
 variable. Recorded before the n=128 arm lands, so its number is not over-read either.
+
+**sbind64 = 57/64 = 0.891 (vs scomp64 union 0.844) — binding CONFIRMED at a second scale, and the ceiling
+criterion applies to the SUBSTRATE too.**
+
+| n | sparsity | union | bind | gain | headroom | % headroom recovered |
+|---|---|---|---|---|---|---|
+| 32 | 0.030 | 0.562 | **0.844** | +0.282 | 0.438 | 64% |
+| 64 | 0.012 | 0.844 | **0.891** | +0.047 | 0.156 | 30% |
+
+Both are clean WITHIN-n contrasts (sparsity identical inside each n), so **role-binding helps at both
+scales — replicated.** But the magnitude cannot be compared across n: the arms differ in sparsity (the
+confound above), AND the n=64 union baseline already sits at 0.844, leaving only 0.156 of headroom. **The
+ceiling criterion derived from the toys applies to substrate arms as well** — a +0.282 effect is not
+available to be measured where only 0.156 exists. Even normalised by headroom the n=64 gain is smaller
+(30% vs 64%), but with sparsity confounded that residual difference is not attributable.
+
+**⇒ What is established: binding helps on the substrate, twice, at different scales and different
+sparsities. What is NOT established: how the gain scales with n.** The clean scale series needs the fix
+recorded above (hold `n_active/stride` constant by scaling `n_lang_input` with `n_concepts`).
