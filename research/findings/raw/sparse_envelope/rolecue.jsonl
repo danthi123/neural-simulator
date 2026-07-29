@@ -1,0 +1,9 @@
+{"N": 1000, "mode": "min", "unamb_acc": 0.736}
+{"N": 1000, "mode": "prod", "unamb_acc": 0.683}
+{"N": 1000, "mode": "sum", "unamb_acc": 0.522}
+{"N": 2000, "mode": "min", "unamb_acc": 0.506}
+{"N": 2000, "mode": "prod", "unamb_acc": 0.466}
+{"N": 2000, "mode": "sum", "unamb_acc": 0.374}
+{"N": 500, "mode": "min", "unamb_acc": 0.862}
+{"N": 500, "mode": "prod", "unamb_acc": 0.831}
+{"N": 500, "mode": "sum", "unamb_acc": 0.675}

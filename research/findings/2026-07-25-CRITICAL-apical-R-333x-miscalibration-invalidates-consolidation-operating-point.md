@@ -4032,3 +4032,34 @@ rather than the read: e.g. storing a fact redundantly so a partial cue reaches m
 role-structure (drive the two known roles at their bound positions and require role-consistent completion)
 rather than an unstructured neuron union. Both untested. Recorded as a NEGATIVE that narrows the search,
 not as a wall.
+
+### 2026-07-29 (⭐ PARTIAL-CUE FIXED off-substrate) — require ROLE-CONSISTENT completion, not summed overlap
+
+The read-side reweighting negative pointed at the CUE rather than the read. Binding already permutes each
+filler by role, so the cue's neurons ARE role-structured — but the score SUMS across roles, letting a
+competitor that matches ONE role strongly out-score the correct fact that matches BOTH moderately.
+Requiring both (unambiguous cues only, V=320 Zipfian, alpha=0.5, 6 seeds):
+
+| N | sum (current) | **min (conjunctive)** | prod | gain from min |
+|---|---|---|---|---|
+| 500 | 0.675 | **0.862** | 0.831 | **+0.187** |
+| 1000 | 0.522 | **0.736** | 0.683 | **+0.214** |
+| 2000 | 0.374 | **0.506** | 0.466 | **+0.132** |
+
+**4-7× the gain of the best reweighting candidate (+0.03), and it is a READ-ONLY change** — no change to
+how facts are stored, so it composes with everything already established (role-binding, alpha, M-scaling).
+`min` beats `prod` consistently, i.e. the hard conjunction beats the soft one.
+
+**Mechanistically ordinary and biologically available:** "a fact must match BOTH cued roles" is conjunctive
+gating — coincidence detection, or a dendritic AND requiring two co-active inputs. This project already
+treats binding-by-coincidence as a structural neural primitive, so the substrate version is a
+same-family mechanism rather than a new one.
+
+**⇒ Partial-cue accuracy on ANSWERABLE queries rises from 0.52 to 0.74 at N=1000.** Combined with the
+measured ambiguity fractions (0.57-0.79), the honest end-to-end picture becomes: most partial queries are
+genuinely ambiguous and must trigger clarification; of those that ARE answerable, a conjunctive read gets
+~74-86% at conversational scale, versus ~52-68% for the summed read.
+
+**NOT YET ON THE SUBSTRATE.** This is off-substrate only. Given today's own lesson — the toys were at
+ceiling and understated overlap-reducing mechanisms 4.5× — this gain should be treated as a LOWER bound and
+must be measured on-bridge before it is claimed. Queued.
