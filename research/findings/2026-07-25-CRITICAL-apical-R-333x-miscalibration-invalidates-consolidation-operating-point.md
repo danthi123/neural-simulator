@@ -4584,3 +4584,43 @@ data is far from that failure mode; the read-out ARCHITECTURE is de-risked (lear
 opponent pools, clean 1.00 null on non-directional input, exactly-1.000 equalised lesion); and TWO temporal
 mechanisms are genuinely eliminated on measured grounds (delays need 63-125 ms vs 1-30 ms available; slow
 synapses give 12% separation and misrank spread above travel).
+
+### 2026-07-29 (⭐ SUBSTRATE PARTIAL-CUE = 1.000 ON EVERY ANSWERABLE QUERY — and it retires the mechanism I designed for it)
+
+The discriminating n=128 arms landed. **All four give `acc_on_unambiguous = 1.000`:**
+
+| arm | partial_cue_acc | ambiguous_frac | **acc_on_unambiguous** |
+|---|---|---|---|
+| sum, seed 42 | 0.461 | 0.688 | **1.000** |
+| min, seed 42 | 0.477 | 0.688 | **1.000** |
+| sum, seed 43 | 0.492 | 0.648 | **1.000** |
+| min, seed 43 | 0.539 | 0.648 | **1.000** |
+
+**(1) THE HEADLINE: on the real spiking substrate the store answers EVERY answerable partial query
+correctly at 128 composed, Zipfian, constituent-sharing facts.** The overall figure (0.46-0.54) is depressed
+purely by the 65-69% of cues that are genuinely ambiguous — and the ambiguity instrument is validated: the
+measured 0.648/0.688 matches the 0.648 predicted from the pattern sets alone.
+
+**(2) MY PRE-REGISTRATION WAS WRONG, and in the informative direction.** I predicted sum 0.886 / min 0.965
+and picked n=128 *specifically because the pre-flight showed headroom there*. The substrate returned 1.000
+for both, so the conjunctive comparison is **saturated and uninformative — for the third config in a row**
+(n=32 predicted-and-confirmed saturated, n=96 predicted saturated, n=128 predicted to discriminate and did
+not). The ceiling criterion caught the first two and failed on the third.
+
+**(3) THE TOY IS NOT CONSISTENTLY OPTIMISTIC — it differs BY METRIC, which is a sharper statement than
+anything recorded earlier today.** For full-cue composed facts the substrate was far HARSHER than the toy
+(0.917 predicted → 0.562 measured). For partial-cue it is BETTER (0.886 → 1.000). So "toys mislead" is not a
+direction, it is metric-specific, and the earlier "treat off-substrate estimates as a LOWER bound" rule was
+itself an over-generalisation from the one metric measured at the time.
+
+**(4) ⇒ THE CONJUNCTIVE READ IS PROBABLY UNNECESSARY ON THIS SUBSTRATE.** It was designed to suppress
+competitors, and off-substrate it bought +0.13-0.21. On-bridge the plain sum read already achieves 1.000, so
+there is nothing left to buy. **Plausible cause (HYPOTHESIS, not measured): the shared pool already has WTA
+lateral inhibition (`shared_FS`), which performs exactly the competitor suppression the conjunctive read was
+invented to add.** If that is right, the substrate natively provides the mechanism and the design was
+solving an artifact of the linear toy's readout. **Testable:** lesion `shared_FS` and re-measure; if
+`acc_on_unambiguous` falls and the conjunctive read then recovers it, the account holds.
+
+**HONEST SCOPE:** 2 seeds, one n, one alpha. A ceiling result needs a HARDER config to be informative about
+mechanism ranking — the next rung is larger n (256/512) where the sum read has room to fail, not more seeds
+at a saturated point.
