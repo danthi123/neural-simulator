@@ -2949,3 +2949,33 @@ with the store-restricted read and the pathway actually wired. No verdict is cla
 was no longer worth the credits. `best.pt` pulled and verified **md5-identical** (`6cd958f2…`) before
 stopping — necessary, because `aws_train.sh stop` is really a TERMINATE that deletes the SG and key. AWS
 now reports **no running instances**.
+
+### 2026-07-29 (cont.) — the corrected substrate read: the metaplastic INPUT is absent, but on a NON-WRITING config
+
+With the pool→slot pathway actually wired (`comp_no_pool_slot=False`) and the read restricted to the store
+gate's own synapses, both arms at 30 cycles, seed 42:
+
+| arm | store delta per slot | spread | fact→slot map |
+|---|---|---|---|
+| host teaching ON | −0.02525 / −0.02523 / −0.02522 | **0.000039** | `[0, 2, 1]` (a valid permutation, but unstable across reads) |
+| host teaching OFF | −0.02566 / −0.02565 / −0.02563 | **0.000030** | `[1, 2, 2]` |
+
+**The store weights are net-DEPRESSING and slot-uniform to 0.15%**, and host teaching barely moves them
+(−0.02525 vs −0.02566). So the quantity metaplasticity would threshold on — *how claimed is this slot* —
+genuinely does not exist here. The toy's mechanism is fine; its **input signal is missing**.
+
+**⚠️ HONEST SCOPE, and it bounds the whole result: this probe does not run the validated write.** It calls
+`coactivation_replay` on bare defaults, whereas the banked "CONSOLIDATION WORKS" recipe is a **BTSP** write
+(`btsp_mean_subtract` + frozen read + the calibrated operating point `comp_apical_R=0.15`, `comp_gc_read=0.5`,
+`commit_top_k=85`, `--encode-btsp-lr 0`, `btsp_lr=0.0005`). A uniform net depression is exactly what a
+**non-writing** configuration should show. ⇒ This measures claimed-ness in a config that is not writing,
+which is weak evidence about a config that is.
+
+**NEXT ACTION (precise):** re-measure per-slot claimed-ness on the **BTSP store under the validated write
+recipe**, not on the STDP-driven `concept_to_comp_attr` under defaults. Only if the signal is uniform THERE
+is weight-history metaplasticity refuted on this substrate. Until then the verdict is **OPEN**, and the
+mechanism is untested rather than failed.
+
+Also noted: the `[0,2,1]` map is a *valid permutation that fails the stability re-read* — the winner flips
+between two consecutive cued reads. Read instability is a separate defect from allocation failure and
+should not be scored as one.
