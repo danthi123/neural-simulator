@@ -3757,3 +3757,43 @@ BOTH queued configs, i.e. it predicts no difference whatsoever, while the utilis
 It does not — the off-substrate correlation is computed over a 0.083-wide accuracy range and is therefore
 almost meaningless. **The evidence is the RANGE, not the correlation.** Reporting the correlation alone
 would have hidden exactly the effect this section is about.
+
+### 2026-07-29 (⛔ THE CEILING CRITERION IMMEDIATELY VOIDS MY OWN alpha=0 CORRECTION)
+
+Applied the criterion (an arm-set whose CONTROL is already >=0.95 cannot rank mechanisms) to every alpha
+conclusion in this session. Result: **the alpha=0 recommendation is WITHDRAWN — it was derived entirely
+from saturated rows.**
+
+| sweep row | control (alpha=0) | status |
+|---|---|---|
+| realistic V=200-400, all N | 0.981-1.000 | **CEILING — cannot rank** (this is where alpha=0 came from) |
+| realistic V=48, N=500 | 0.865 | has range |
+| realistic V=48/V=100, N=1000 | 0.471-0.895 | has range |
+| spectrum V=24, N=200/500 | 0.835 / 0.447 | has range |
+| ALL Zipfian rows | 0.286-0.830 | has range |
+
+**Every regime WITH headroom favours alpha≈0.25:**
+
+| regime (has range) | alpha=0 | alpha=0.25 |
+|---|---|---|
+| N=500, V=48 | 0.865 | **0.990** |
+| N=500, V=24 | 0.447 | **0.821** |
+| N=500, Zipf 1.0 | 0.597 | **0.767** |
+| N=1000, Zipf 1.0 | 0.462 | **0.623** |
+
+**At V=400 the arms are 0.999 vs 1.000, and I based the alpha=0 correction on a 0.001 PARTIAL-CUE
+difference between two saturated arms (0.998 vs 0.997).** That is noise, and I reported it as a finding —
+including to the owner. The "vocabulary-confounded" diagnosis in that entry was itself the artifact: the
+larger vocabulary did not reveal that the mixture was unnecessary, it merely pushed the control to ceiling
+where nothing could be measured.
+
+**⇒ STANDING RECOMMENDATION RESTORED: alpha ≈ 0.25.** Supported by every informative regime — small
+vocabulary, large N, and crucially ALL Zipfian (realistic) rows. The design point is not regime-dependent
+in the way I claimed either; that claim also rested on the saturated comparison. What IS true is that the
+mixture's value grows as collisions grow, which is the same statement as "it helps wherever there is
+headroom to measure it."
+
+**Why this matters beyond alpha:** the ceiling criterion was derived minutes earlier from the substrate
+data, and its FIRST application overturned a conclusion I had already committed, reported, and built a
+follow-on prediction on. A criterion that only ever confirms is not doing work; this one paid for itself
+immediately. **Every remaining off-substrate conclusion in this arc should be re-read against it.**
