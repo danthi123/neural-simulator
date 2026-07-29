@@ -3458,3 +3458,38 @@ clarification behaviour are the SAME requirement seen from two sides.
 capacity ~0.96 at N=500 under realistic Zipfian facts with frequency-adaptive coding, no allocator; and
 partial-cue at the information ceiling, where the residual is genuine ambiguity to be surfaced rather than
 interference to be engineered away.
+
+### 2026-07-29 (SATURATION — the expected failure family HELPS here, reversing my own caveat)
+
+Every capacity toy above wrote the store UNBOUNDED, while the substrate writes with a soft bound
+`dw = lr*(w_max - w)*x` — a FIXED POINT that has crushed graded patterns in STDP, BDSP, BTSP and Hebbian in
+this project. I flagged it as the most likely reason these numbers would fail to transfer.
+
+**FIRST ATTEMPT WAS VOID, and its own engagement counter caught it:** `sat_frac = 0.000` in every arm — the
+bound never engaged, because each pattern was written ONCE with random-signed facts so weights never
+approached `w_max`. Identical numbers across `w_max` proved nothing. Re-run with EPOCHS (the substrate
+presents each item ~400 times, `n_train_events`), which is where a soft bound actually bites.
+
+| N=500, V=320, Zipf 1.0, 100 epochs | full-cue | partial-cue | saturated frac |
+|---|---|---|---|
+| unbounded | 0.606 | 0.393 | 0.000 |
+| **soft-bounded (w_max 0.5 or 2.0)** | **0.865** | **0.480** | 0.597 |
+| unbounded + adaptive | 0.946 | 0.389 | 0.000 |
+| **soft-bounded + adaptive** | **1.000** | 0.438 | 0.727 |
+
+**⇒ SATURATION IMPROVES CAPACITY HERE — the opposite of the caveat I gave.** With 60-73% of neurons at the
+bound, full-cue rises 0.606 → 0.865 (no adaptive) and 0.946 → 1.000 (with), and partial-cue rises
+0.393 → 0.480. **The mechanism is that the interference is driven by OVER-WRITTEN FREQUENT-WORD neurons,
+and a soft bound caps exactly those** — so the bound performs automatic frequency compensation for free.
+It is the same job the adaptive scheme does, arrived at from the other direction, which is why the two
+partly substitute (bounded-alone 0.865 vs unbounded-adaptive 0.946).
+
+**Note the partial-cue number exceeds the 0.433 unique-(agent,action) ceiling** computed earlier (0.480).
+That is consistent, not contradictory: the ceiling counts cues that identify a fact UNIQUELY, and
+non-unique cues can still resolve correctly when the tie happens to break the right way.
+
+**⇒ REVISED EXPECTATION FOR THE SUBSTRATE:** the bridge has soft-bounded plasticity AND many presentation
+epochs — i.e. exactly the regime where these numbers IMPROVE. The running on-bridge arms may therefore do
+better than the toys predicted, not worse. That is a prediction, not a result; the arms remain the test.
+Recorded because it inverts the risk I stated, and an unstated inverted risk is how a surprise becomes a
+retraction later.

@@ -1,0 +1,16 @@
+{"N": 200, "adaptive": false, "w_max": "unbounded", "full": 0.8, "partial": 0.555, "sat": 0.0}
+{"N": 200, "adaptive": false, "w_max": 0.5, "full": 0.797, "partial": 0.555, "sat": 0.0}
+{"N": 200, "adaptive": false, "w_max": 2.0, "full": 0.797, "partial": 0.555, "sat": 0.0}
+{"N": 200, "adaptive": false, "w_max": 10.0, "full": 0.797, "partial": 0.555, "sat": 0.0}
+{"N": 200, "adaptive": true, "w_max": "unbounded", "full": 1.0, "partial": 0.548, "sat": 0.0}
+{"N": 200, "adaptive": true, "w_max": 0.5, "full": 1.0, "partial": 0.548, "sat": 0.0}
+{"N": 200, "adaptive": true, "w_max": 2.0, "full": 1.0, "partial": 0.548, "sat": 0.0}
+{"N": 200, "adaptive": true, "w_max": 10.0, "full": 1.0, "partial": 0.548, "sat": 0.0}
+{"N": 500, "adaptive": false, "w_max": "unbounded", "full": 0.606, "partial": 0.393, "sat": 0.0}
+{"N": 500, "adaptive": false, "w_max": 0.5, "full": 0.609, "partial": 0.395, "sat": 0.0}
+{"N": 500, "adaptive": false, "w_max": 2.0, "full": 0.609, "partial": 0.395, "sat": 0.0}
+{"N": 500, "adaptive": false, "w_max": 10.0, "full": 0.609, "partial": 0.395, "sat": 0.0}
+{"N": 500, "adaptive": true, "w_max": "unbounded", "full": 0.946, "partial": 0.389, "sat": 0.0}
+{"N": 500, "adaptive": true, "w_max": 0.5, "full": 0.951, "partial": 0.391, "sat": 0.0}
+{"N": 500, "adaptive": true, "w_max": 2.0, "full": 0.951, "partial": 0.391, "sat": 0.0}
+{"N": 500, "adaptive": true, "w_max": 10.0, "full": 0.951, "partial": 0.391, "sat": 0.0}
