@@ -2513,3 +2513,38 @@ on `pool→slot`** (`fused_htm_winner_inactive_depression`, `sim/kernels.py:497`
 slot competition to the **near-rheobase / zero-pedestal** operating point EMERGE-41 validated. GO gate unchanged:
 driven-slot spike share **≥0.8 with washout ≥60**, then after-replay own-is-max ≥2/3, 6 seeds, scramble-teach
 collapsing.
+
+## 🔑 READING RANK 3 AT SOURCE CHANGES THE DESIGN — and exposes a flaw in MY OWN GO gate
+
+Applied the new corpus-check rule to the corpus-prescribed next step (one RAG query, then read the 497-line gate
+doc's Rank-3 section directly rather than the agent's summary). Two things the summary did not carry:
+
+**1. RANK 3 HAS A SUPERVISED FORM AND A SELF-ORGANIZING FORM, AND THE SPEC NAMES THE SUPERVISED ONE.**
+The gate doc says: call `fused_htm_winner_inactive_depression` (`sim/kernels.py:497`) on `concept_to_comp_attr`
+with *"`post_win = 1` for the **taught** slot"*. **That is a HOST teaching signal — the same class as the apical
+clamp this whole effort exists to remove.** It would fix write selectivity while leaving capability (C)
+self-organized-write exactly as unsolved as it is today.
+In **EMERGE-39**, where the mechanism earned its evidence (on-substrate held-out **0.96 with** the selectivity term
+vs **0.20 without**, permuted 0.15, lesion 0.00, 6/6 seeds), `post_win` is **the competition's OWN winner**. Each
+winning slot depresses synapses from the pools that were INACTIVE when it won, so slots differentiate themselves —
+no answer key required. **That is the mission-aligned form and the one to build.** Constants from those GOs:
+`POOL_LP=0.05`, `POOL_LD=0.02`; caveat from `2026-07-02-emerge48-soft-l2-pooling-BOUNDARY.md` — a HIGH
+`lam_dep_wi` over-selectivizes and kills held-out generalization, so **sweep low-first**. Lesion arm:
+`lam_dep_wi=0`. ~25 lines in the probe, no `sim/` edit.
+
+**2. ⚠️ THIS INVALIDATES MY OWN GO GATE — and would have scored a WORKING mechanism as a failure.**
+Self-organizing competitive learning produces *some stable* slot↔fact **PERMUTATION**, not necessarily
+slot *i* ↔ fact *i*. Every metric I have used all day — `own-is-max`, `own/other`, driven-slot-wins — **assumes the
+host's identity mapping**, because the host clamp imposed it. Strip the clamp and that assumption is simply wrong:
+a store that reliably writes fact 0 → slot 2 and reliably reads fact 0 back from slot 2 is **CORRECT**, and my gate
+would call it 0/3.
+
+**⇒ THE CORRECT METRIC FOR A SELF-ORGANIZED STORE IS WRITE↔READ CONSISTENCY, NOT IDENTITY:** does recall recover
+the slot that the write actually used, whichever slot that was? Concretely — record each fact's winning slot during
+its write window, then at recall check `argmax(slot rates) == that recorded slot`, with the anti-cheats: the
+mapping must be a **permutation** (no two facts claiming the same slot — that is the degenerate single-winner
+failure), and **scramble-teach must still collapse**. *The identity-mapping metric is an artifact of the very
+shortcut we are removing; keeping it would have hidden a success as a failure.*
+
+**▶ BUILDING NEXT:** Rank 3 in the SELF-ORGANIZING form (`post_win` = the window's actual winner), scored on
+write↔read consistency + permutation-validity, with the `lam_dep_wi=0` lesion arm and a low-first sweep.
