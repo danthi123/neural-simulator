@@ -3872,3 +3872,36 @@ would have gone unnoticed indefinitely had the audit not looked. The lesson is n
 unnecessary because the answer held" — it is that the answer holding was luck, and the same silent no-op
 could as easily have manufactured a false positive elsewhere. Nine other gate sites were cleared in the
 same audit; this was the one that fired.
+
+### 2026-07-29 (FIRST SWEEP WITH REAL DYNAMIC RANGE — it QUALIFIES the utilisation heuristic and settles alpha)
+
+72 cells on the pool at 12-way-per-node parallelism, sized so the control lands below ceiling.
+**Regime check passes: 12/12 controls below 0.95** (every earlier sweep was saturated).
+
+**(1) The utilisation heuristic is WEAKER than its 3-point estimate, and does NOT apply to partial cue:**
+
+| metric | corr with n_used | over range |
+|---|---|---|
+| full-cue | **0.633** | 0.042-1.000 |
+| partial-cue | **0.150** | 0.015-0.878 |
+
+The 3-point on-bridge estimate was 0.908. Over 72 informative cells it is 0.633 — **real but moderate**, so
+"maximise reachable code space" is a useful screen and NOT a law. And it carries **no information about
+partial-cue recall** (0.150), which is consistent with partial cue being bounded by AMBIGUITY (the
+information ceiling measured earlier) rather than by code space. ⇒ Scope the heuristic to full-cue only.
+
+**(2) alpha SETTLED in the informative regime** (N=500, V=96, Zipfian, bind=True):
+
+| alpha | full-cue | partial-cue | n_used |
+|---|---|---|---|
+| 0.00 | 0.497 | **0.267** | 3149 |
+| 0.25 | 0.690 | 0.264 | 3928 |
+| **0.50** | **0.975** | 0.248 | 3996 |
+
+alpha=0.5 nearly DOUBLES full-cue (0.497 → 0.975) for a 7% partial-cue cost. That is a better trade than
+any saturated sweep could show, and it revises the restored alpha≈0.25 upward: **alpha 0.25-0.5, with 0.5
+preferred when full-cue matters and 0.25 when partial-cue does.** Third and final revision of this
+parameter today — the first two were made on saturated data and are superseded, not averaged.
+
+**(3) Role-binding dominates every top cell.** Every one of the six best partial-cue configurations has
+bind=True, consistent with the substrate result (+0.282 at n=32, +0.047 at n=64).
