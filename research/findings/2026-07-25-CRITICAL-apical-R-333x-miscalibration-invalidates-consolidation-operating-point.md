@@ -2548,3 +2548,43 @@ shortcut we are removing; keeping it would have hidden a success as a failure.*
 
 **▶ BUILDING NEXT:** Rank 3 in the SELF-ORGANIZING form (`post_win` = the window's actual winner), scored on
 write↔read consistency + permutation-validity, with the `lam_dep_wi=0` lesion arm and a low-first sweep.
+
+## ⛔ RANK 3 REFUTED — and the corrected metric exposes the REAL problem: SLOT ALLOCATION IS DEGENERATE
+
+Built Rank 3 in the **self-organizing** form (`post_win` = the competition's own winner, EMERGE-39 idiom, NOT the
+gate doc's taught-slot supervised variant), swept low-first per the emerge48 caveat, `lam_dep_wi=0` as lesion:
+
+| `lam_dep_wi` | self-organized map (fact→slot) | permutation? | write↔read consistency | targeting |
+|---|---|---|---|---|
+| 0.0 (lesion) | `{0:0, 1:1, 2:0}` · `{0:1, 1:2, 2:0}` · `{0:0, 2:0}` | ✗ · ✓ · ✗ | 2/3 · 1/3 · 1/2 | 0.370 · 0.289 · 0.343 |
+| 0.005 | `{0:0, 1:1, 2:1}` · `{0:0, 1:2, 2:1}` · `{0:2, 2:0}` | ✗ · ✓ · ✓ | 1/3 · 1/3 · 2/2 | 0.402 · 0.430 · 0.332 |
+| 0.02 | `{0:0, 1:1, 2:0}` · `{0:1, 1:2, 2:2}` · `{0:2, 2:0}` | ✗ · ✗ · ✓ | 2/3 · 1/3 · 0/2 | 0.361 · 0.277 · 0.338 |
+
+**Rank 3 is REFUTED at these values** — consistency hovers at chance (1/3) with no trend in `lam_dep_wi`, and
+targeting is unmoved (0.28–0.43 vs chance 0.333). *(Honest scope: low-first per the corpus caveat; a higher
+`lam_dep_wi` is untested, but the corpus warns high values over-selectivize and kill generalization.)*
+
+**⇒ THE CORRECTED METRIC EARNED ITS KEEP IMMEDIATELY — IT FOUND SOMETHING THE TARGETING METRIC COULD NOT SEE.**
+`permutation_valid=False` in **5/9 runs**, and in several the map has only **TWO entries** — seed 44 gives
+`{0:2, 2:0}` with **fact 1 absent entirely**, seed 42 gives `{0:0, 1:1, 2:0}` with two facts on one slot.
+**Some facts NEVER win a single one of their own windows, and some slots absorb multiple facts.**
+
+**⇒ THE PROBLEM IS UPSTREAM OF TARGETING: THE SYSTEM CANNOT ALLOCATE DISTINCT SLOTS TO DISTINCT FACTS.** I have
+spent this stretch asking "why does the cue lose its competition", which presupposes a well-formed one-to-one
+assignment that merely points the wrong way. There is no such assignment. **Consistency cannot be recovered from a
+degenerate map** — there is nothing one-to-one to read back.
+
+**⇒ AND THE CORPUS ALREADY NAMED THIS SUBPROBLEM:**
+`2026-07-13-RUNG6e-onsubstrate-STP-binder-WTA-retrieve-work-freshslot-allocation-is-the-subproblem.md` —
+*fresh-slot allocation IS the subproblem*, with the same shared-FS diagnosis (*"the shared FS gives GLOBAL
+inhibition, not lateral WTA"*, all slots latch equally, **margin 0.014**). And the gap#2 board entry's one tracked
+refinement is **exactly this**: *"self-organizing (adaptation-based) slot ALLOCATOR to replace the host
+next-free-slot counter."* **Two independent arcs have now converged on the same missing mechanism — a slot
+ALLOCATOR — and both currently substitute a host decision for it** (my apical clamp; gap#2's `i = len(facts)`
+counter).
+
+**▶ THE REAL NEXT TARGET is therefore not another competition knob but the ALLOCATOR itself:** a mechanism that
+assigns a FRESH, UNUSED slot to a NEW item and re-selects the SAME slot for a repeat. The corpus's named candidate
+is the RUNG-6c retrieve-vs-allocate rule (`slot = argmax(W·c) if > θ else next-free`) implemented neurally —
+adaptation/novelty-gated allocation. **Gate: permutation_valid=True on 6/6 seeds FIRST** (a valid one-to-one map is
+a PRECONDITION), then write↔read consistency ≥2/3 per seed, then scramble-teach collapsing.

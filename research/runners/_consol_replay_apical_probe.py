@@ -49,6 +49,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--cycles", type=int, default=3)
+    ap.add_argument("--lam-dep-wi", type=float, default=0.0, help="RANK 3 (corpus-prescribed): SELF-ORGANIZING winner-inactive depression on concept_to_comp_attr. After each replay window the ACTUAL winning slot depresses synapses from pools that were INACTIVE while it won, so slots self-differentiate WITH NO ANSWER KEY (EMERGE-39 form: post_win = the competition own winner, held-out 0.96 with vs 0.20 without, 6/6 seeds). NOTE the gate doc specifies post_win = the TAUGHT slot — that is a host teaching signal and is NOT what this implements. 0.0 = LESION arm. Sweep LOW-FIRST: a high value over-selectivizes (emerge48 boundary).")
     ap.add_argument("--slot-drive", type=float, default=1400.0, help="coactivation_replay slot_drive_pA. THE RELOCATED DEFECT: at 1400 the cue lands AT CHANCE on a washed-out substrate (0.320 vs 0.333) — it competes against a ~43,200 sum_w NON-SELECTIVE pool broadcast to every slot plus ~40,700 self-recurrence. Raise until the cue wins on its own.")
     ap.add_argument("--washout", type=int, default=0, help="quiet steps between replay windows. THE DIAGNOSED FIX: the previous window winner is barred from winning the next (2/48 repeats vs 16/48 chance), so the cue loses exactly when it collides with it (0.143 vs 0.700 otherwise).")
     ap.add_argument("--per-slot-fs", action="store_true", help="TARGETING candidate 1: replace the SHARED comp_attr_inh pool (every slot drives it, it inhibits every slot = global symmetric inhibition) with PER-SLOT FS + cross-inhibition. Built earlier today but only ever evaluated against the STORE metric — never against driven-slot-wins, the metric that actually measures targeting.")
@@ -194,7 +195,69 @@ def main():
                 samples[j].append(float(va[slot[j]].max()))   # MAX: the most generous possible read
         return r
 
-    b._run_one_simulation_step = sampling_step
+    # ---- RANK 3, SELF-ORGANIZING FORM. Rather than patch coactivation_replay, wrap the step fn: every
+    # `burst_steps` steps a window closes, so identify that window's ACTUAL winner from the firing just
+    # collected and depress its synapses from the pools that were INACTIVE while it won. No answer key is
+    # used anywhere — `post_win` is the competition's own winner (EMERGE-39), NOT the taught slot.
+    # This probe never built pool indices (that lives in _consol_cortical_store_probe). Build them the same
+    # way coactivation_replay does: pool regions are UPPERCASE, facts are lowercase.
+    _pool_all = {}
+    for _i, (_noun, _adj) in enumerate(CONSOLIDATED_FACTS):
+        _ps = [f"noun_pool_{_noun.upper()}", f"adjective_pool_{_adj.upper()}"]
+        _arrs = [np.asarray(sorted(rm.indices(_p)), dtype=np.int64) for _p in _ps
+                 if _p in (names or {_p})]
+        _pool_all[_i] = np.concatenate(_arrs) if _arrs else np.array([], dtype=np.int64)
+    _wi_state = {"seen": 0, "map": {}}   # map: window index -> winning slot (the SELF-ORGANIZED assignment)
+    # The replay order is SHUFFLED per cycle (np.random.default_rng(seed+777) inside coactivation_replay),
+    # so window w does NOT drive fact w % N. Reconstruct the true order HERE, before replay — using w % N
+    # would depress against the wrong "active pool" set in most windows.
+    _rng_pre = np.random.default_rng(int(args.seed) + 777)
+    _order_pre = []
+    for _c in range(int(args.cycles)):
+        _o = list(range(N)); _rng_pre.shuffle(_o); _order_pre.extend(_o)
+
+    def _winner_inactive_depress(win_slot, active_pools):
+        """EMERGE-39 idiom (`_emerge39_onsubstrate_competitive_pooler_derisk.py:155-164`) on pool->slot."""
+        if float(args.lam_dep_wi) <= 0.0:
+            return
+        d = to_host(b.cp_connections.data).astype(np.float64)
+        nz = int(b.cp_connections.nnz)
+        po = to_host(b.cp_connections.indices).astype(np.int64)[:nz]
+        ip = to_host(b.cp_connections.indptr).astype(np.int64)
+        pr = np.repeat(np.arange(len(ip) - 1), np.diff(ip))[:nz]
+        inactive = np.concatenate([_pool_all[k] for k in range(N) if k not in active_pools]) \
+            if any(k not in active_pools for k in range(N)) else np.array([], dtype=np.int64)
+        if inactive.size == 0:
+            return
+        m = np.isin(po, slot[win_slot]) & np.isin(pr, inactive)     # winner's synapses FROM inactive pools
+        if not m.any():
+            return
+        d[:nz][m] = np.clip(d[:nz][m] - float(args.lam_dep_wi), 0.0, None)
+        b.cp_connections.data[:nz] = cp.asarray(d[:nz].astype(np.float32))
+
+    _orig_sampling = sampling_step
+
+    def sampling_step_wi(*a_, **k_):
+        r = _orig_sampling(*a_, **k_)
+        # Count DRIVEN steps only. With --washout each fact spans 30 burst + W quiet steps, so counting
+        # every step made the window index overshoot _order_pre (IndexError). External drive is non-zero
+        # during a burst and zeroed during washout, so this is robust to any washout value.
+        if not bool(cp.any(b.cp_external_input_current != 0)):
+            return r
+        _wi_state["seen"] += 1
+        if _wi_state["seen"] % 30 == 0:                      # a burst window just closed
+            w = _wi_state["seen"] // 30 - 1
+            if w >= len(_order_pre):
+                return r
+            sl_ = slice(w * 30, (w + 1) * 30)
+            tot = [float(np.asarray(fire_samples[j][sl_]).sum()) for j in sorted(slot)]
+            if sum(tot) > 0:
+                win = int(np.argmax(tot))
+                _wi_state["map"][w] = win
+                _winner_inactive_depress(win, {_order_pre[w]})   # the TRUE driven fact for this window
+        return r
+
+    b._run_one_simulation_step = sampling_step_wi
     try:
         coactivation_replay(b, CONSOLIDATED_FACTS, tags, int(args.cycles), args.seed,
                             coactivate=True, attractor_on=not args.attractor_off,
@@ -235,6 +298,45 @@ def main():
         _oks2 += _ok2; _ev2 += 1
         print("     fact %d: weights->slots %s  own/other=%.4f  own_is_max=%s  (core=%d)"
               % (i, [round(w, 4) for w in _ws2], _oo2, _ok2, _core2.size))
+    # ---- ⭐ THE CORRECTED METRIC: WRITE<->READ CONSISTENCY, not identity.
+    # A self-organizing competition produces SOME stable fact<->slot PERMUTATION, not necessarily fact i ->
+    # slot i. own-is-max assumes the identity mapping that the (now-removed) host clamp imposed, so it would
+    # score a perfectly good self-organized store as a FAILURE. The honest question is whether the weights
+    # point at the slot the WRITE ACTUALLY USED. _wi_state["map"] recorded each window's real winner.
+    _fact_win = {}
+    for _w, _wsl in _wi_state["map"].items():
+        if _w < len(_order_pre):
+            _fact_win.setdefault(_order_pre[_w], []).append(_wsl)
+    _self_map = {f: max(set(v), key=v.count) for f, v in _fact_win.items() if v}
+    if _self_map:
+        _perm_ok = len(set(_self_map.values())) == len(_self_map)
+        print("  (SELF-ORGANIZED MAP) fact -> slot the WRITE actually used: %s   permutation_valid=%s"
+              % ({k: _self_map[k] for k in sorted(_self_map)}, _perm_ok))
+        if not _perm_ok:
+            print("     ⚠️ NOT a permutation — two facts claimed the same slot = the degenerate single-winner")
+            print("        failure. Consistency below is NOT meaningful when this is False.")
+        _cons, _cev = 0, 0
+        for i in sorted(slot):
+            if i not in _self_map:
+                continue
+            try:
+                _ci3 = b.get_engram_tag_indices(tags[i])
+                _core3 = np.asarray(to_host(_ci3), dtype=np.int64).ravel() if _ci3 is not None else None
+            except Exception:
+                _core3 = None
+            if _core3 is None or _core3.size == 0:
+                continue
+            _mc3 = np.isin(_pr2, _core3)
+            _ws3 = [float(_wd2[_mc3 & np.isin(_po2, slot[j])].mean())
+                    if (_mc3 & np.isin(_po2, slot[j])).sum() else 0.0 for j in sorted(slot)]
+            _hit = int(np.argmax(_ws3)) == _self_map[i]
+            _cons += _hit; _cev += 1
+            print("     fact %d: write used slot %d, weights point at slot %d  %s"
+                  % (i, _self_map[i], int(np.argmax(_ws3)), "CONSISTENT" if _hit else "inconsistent"))
+        if _cev:
+            print("     => WRITE<->READ CONSISTENCY: %d/%d (chance %.2f). THIS is the gate for a" % (_cons, _cev, 1.0 / N))
+            print("        self-organized store; own-is-max above is the identity metric and does NOT apply.")
+
     if _ev2:
         print("     => AFTER REPLAY: own-is-max %d/%d evaluable." % (_oks2, _ev2))
     else:
