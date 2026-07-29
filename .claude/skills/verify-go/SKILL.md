@@ -149,6 +149,22 @@ Write the lever count in the findings doc so the counter is visible.
 **Self-check:** "am I about to try a third thing against the same failure?" → that IS the trigger. Dispatch the
 read-only research round; your candidate becomes one ranked option, never the default.
 
+**⛔ AND THE ≥2-LEVER TRIGGER IS NOT ENOUGH — THE CHEAPEST GUARD RUNS BEFORE THE *FIRST* LEVER (2026-07-26).**
+When the research round finally ran, its first finding was that a **497-line research gate for the identical
+defect, on the identical substrate, with a ranked 6-mechanism ladder, was 2 DAYS OLD** — and its predecessor had
+already written the failure down verbatim. A day of lever-chasing re-derived it. It also showed my "5th instance"
+framing was wrong (**8th in the project, a documented FAMILY** ⇒ gate condition (b) fires on FIRST occurrence) and
+that 3 of my "new" measurements were 4th independent confirmations of results already in the corpus.
+
+**MANDATORY, ~30 SECONDS, BEFORE THE FIRST LEVER AGAINST ANY DEFECT:**
+```
+.venv-rag/bin/python tools/rag/rag_search.py "<the defect in one line>" 5 --corpus finding
+```
+Ask literally: *has this already been scoped, tried, or refuted?* Then READ any research-gate / scope doc it
+surfaces before touching a flag. **Cost: one query. Benefit here: a day.** This is drift #12 (the stale/skipped
+corpus) in its most expensive form — not acting on a stale summary, but never asking whether the answer already
+existed.
+
 ## Measure the thing, at the time it happens (2026-07-26 — retraction #9)
 
 Three separate ways a measurement can be *structurally incapable* of answering its own question, all seen in one
