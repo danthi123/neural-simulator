@@ -4276,3 +4276,25 @@ misattribution to record "on-bridge V1 self-org does not work".
 until `v1_firing_rate_mean` is in a physiological range, verify the population actually spikes, and only
 then read orientation selectivity. If selectivity is still at chance WITH the population firing, that is a
 real negative and worth the research gate.
+
+### 2026-07-29 (CPU-LANE INVENTORY — the pool is idle because ready work is EXHAUSTED, not neglected)
+
+The staleness alarm fired (45 min, no CPU-lane dispatch). Worked the inventory instead of feeding it, and
+the record check blocked a second duplication within the hour:
+
+| lane | ready runner? | status |
+|---|---|---|
+| A · Affect | yes | **COMPLETE** — Phase-0 keystone landed (roadmap: DR-1/DR-3/P0.3/P1.2/W3 all landed) |
+| C · Self/Workspace | yes | **COMPLETE** — self-schema DR-3 and false-belief W3 both 6-seed GO |
+| E · Language (construction) | `_emerge72_...` | **DONE today** — GO, controls verified, 5 seeds |
+| E · Language (adjective cue) | `_emerge73_...` | **ALREADY BANKED** — `2026-07-03-emerge73-adjective-position-cue-GO.md` ⇒ would have been a re-run |
+| E · Language (morphology) | `_emerge62c_...` | BOUNDARY today; re-running the same config reproduces it |
+| D · Perception | `_b1_v1_selforg_...` | open, but **[3090]** — queued to GPU (operating-point fix) |
+
+**⇒ THE POOL IS CORRECTLY IDLE.** Every CPU-tagged lane is either complete, banked, or needs a NEW BUILD
+(EMERGE-73's residual is already closed; the morphology boundary needs a new distributional cue, not
+another run). **Advancing a CPU lane from here requires writing a runner, not dispatching one** — which is
+a different kind of work and must not be triggered by a utilisation alarm.
+
+**This is the record check earning its keep twice in one hour:** it blocked the crux duplication, then
+blocked EMERGE-73. Both times the candidate looked like obvious open work and the findings said otherwise.

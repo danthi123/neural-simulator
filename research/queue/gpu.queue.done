@@ -17,3 +17,4 @@
 .venv/bin/python -m research.runners._gap4_learned_microcircuit_selfpredict_derisk --arms reservoir fixed_fa micro transport_ceiling --seeds 100 101 102 --out research/findings/raw/gap4_p32/p32_s100102.json > /tmp/claude-1000/gap4_p32_b.log 2>&1
 .venv/bin/python -m research.runners._gap4_onbridge_spiking_selfpredict_derisk --full --seeds 42 43 44 --out research/findings/raw/gap4_onbridge/ob_s424344.json > /tmp/claude-1000/gap4ob_a.log 2>&1  #checked:verified-open-work
 .venv/bin/python -m research.runners._gap4_onbridge_spiking_selfpredict_derisk --full --seeds 100 101 102 --out research/findings/raw/gap4_onbridge/ob_s100102.json > /tmp/claude-1000/gap4ob_b.log 2>&1  #checked:verified-open-work
+.venv/bin/python -m research.runners._b1_v1_selforg_onbridge_derisk --seeds 42 43 44 > /tmp/claude-1000/laneD_v1selforg.log 2>&1  #checked:new
