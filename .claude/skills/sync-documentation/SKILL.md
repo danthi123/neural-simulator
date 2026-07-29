@@ -122,6 +122,34 @@ Then reconcile each, and **UPDATE them** (this is the same-cycle sync, not a fla
 
 Any genuine judgment-fork (which of two live directions is "the" frontier) is flagged for the human; the status/frontier/next-action *record-keeping* is done here.
 
+### Check J: Document STRUCTURE rules (docs/WRITING.md) — RUN IT, do not eyeball it
+
+```bash
+.venv/bin/python tools/check_docs.py
+```
+
+Two rules, both mechanical, zero judgment:
+- **W1** — a voided doc is registered in `docs/RETRACTED.md`, and no governed file cites it without `⛔` on the
+  same line. Fix by adding the registry row, or marking the citation.
+- **W2** — prose lines in governed files are <=800 chars (tables/code exempt). Fix with
+  `.venv/bin/python tools/split_long_doc_lines.py --apply` (splits at sentence / `·` / `;` boundaries and REFUSES
+  to write if content changes).
+
+**Why it belongs in this skill.** W1 is drift #12 — the stale pointer — made checkable. On adoption it found three
+live stale citations, one of them on the MASTER ROADMAP presenting a RETRACTED attribution as a current finding.
+That is exactly the failure this skill exists to prevent and it had gone unnoticed for days.
+
+**W2 is a PRECONDITION for W1, not a style preference:** a marker cannot sit next to the claim it kills when a
+bullet is 14,222 characters long. Proven empirically at adoption — splitting that line exposed two further stale
+citations that had been "marked" only by a `⛔` 13,000 characters away.
+
+A PostToolUse hook also runs this automatically whenever a governed file is edited, so Check J is normally already
+green by the time this skill runs. If it is not, fix it before doing anything else in this skill — a stale pointer
+mis-aims the next session.
+
+**It does NOT check truth.** Six of the nine 2026-07-28 retractions were instrument failures that pass both rules.
+Truth is `.claude/skills/verify-go/SKILL.md`; term conditions are `docs/TERMS.md`.
+
 ## What to fix automatically vs flag for human
 
 ### Fix automatically (numerical drift, no judgement needed)
