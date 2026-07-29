@@ -1107,6 +1107,14 @@ def build_biological_brain_regions(
             from_region="dg_pv_basket", to_region="dg",
             density=1.0, weight_mean=6.0, weight_jitter=0.2,
             plastic=False,
+            # 2026-07-29: this pathway carried NO gate, while `_consol_dg_natural_probe.py:40` has been
+            # calling _try_pgate/_try_tgate("dg_pv_basket_to_dg") to lesion it. Both helpers swallow the
+            # KeyError and return False, and nothing checks the return, so the --ffi-lesion arm was a
+            # SILENT NO-OP presenting as a real lesion: intact DG active_frac mean 0.735 vs "lesion" 0.765
+            # were the same experiment run twice. A transmission (not plasticity) gate is the correct one
+            # here because the pathway is plastic=False, so only its CURRENT can be lesioned. Named gates
+            # default to 1.0, so the unlesioned path is unchanged.
+            transmission_gate="dg_pv_basket_to_dg",
         ))
         # dg -> ca3 (mossy fibers)
         pathways.append(RegionPathway(
