@@ -4448,3 +4448,34 @@ recorded as such rather than quietly kept.
 **▶ NEXT (specified):** add a **static-widening** control (fixed centre, growing width, no travel). If it
 lands at ≈1.0 the gate-hole argument holds; if it also lands below 1.0, the reader inherits the same
 travel-vs-spread confusion as `dec_r` and the design's main selling point is gone.
+
+### 2026-07-29 (RESOLVED — the static-widening control CONFIRMS the gate-hole argument; the claim was right, my test was wrong)
+
+Built the control named in the previous entry: a widening front with **NO TRAVEL** (fixed centre, growing
+width) — which is what the symmetry claim was always about. 4 seeds per cell, on the pool.
+
+| delays | forward | reverse | spread (travels+widens) | **STATIC WIDEN** | LESION | shuffle |
+|---|---|---|---|---|---|---|
+| 10 | 0.975 | 1.063 | 0.970 | **1.001** | 1.000 | 0.960 |
+| 30 | 0.857 | 1.161 | 0.918 | **0.998** | 1.000 | 0.940 |
+| 60 | **0.685** | **1.486** | 0.805 | **1.009** | 1.000 | 0.978 |
+
+**⇒ THE ARGUMENT HOLDS.** A non-traveling widening front reads **1.00 ± 0.01 at every delay setting** —
+the reader assigns it no direction, exactly as predicted. So the earlier "REFUTED AS TESTED" verdict is
+**resolved in the design's favour**: the claim was correct and my generator was the flaw (it travelled while
+widening, so it stayed directional at 0.805). The full arc — claim → refuted-as-tested → build the right
+control → confirmed — is left in the record deliberately, because the intermediate refutation is the reason
+this is now evidence rather than assertion.
+
+**WHY THIS BEATS `dec_r`, stated precisely.** The host decoder gave a spreading front **+0.717**, which
+PASSES its own `>0.6` gate — it has no clean null. The reader gives non-directional activity **1.00**, a
+principled neutral reference, and grades partial directionality sensibly (travelling-and-widening reads
+0.805, i.e. weaker than pure travel's 0.685). And the **equalised-delay LESION returns exactly 1.000 at
+every setting**, so the discrimination is carried by the delays alone and nothing else.
+
+**STATUS: both of the design's named unknowns are now answered on the cheap rung.** (1) Hebbian wake-tuning
+is sharp enough (9.1× peak-to-mean). (2) Delay-line coincidence discriminates travel from non-travel with a
+clean null. **Still off-substrate and still 4 seeds** — the remaining unknown is the one I flagged from the
+start and did NOT test: whether the required delay spread is physiological on this substrate (per-pathway
+conduction delays are deferral-audit item A3a). That is the on-bridge question, and it is a real dependency,
+not a formality.
