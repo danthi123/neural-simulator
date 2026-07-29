@@ -3797,3 +3797,33 @@ headroom to measure it."
 data, and its FIRST application overturned a conclusion I had already committed, reported, and built a
 follow-on prediction on. A criterion that only ever confirms is not doing work; this one paid for itself
 immediately. **Every remaining off-substrate conclusion in this arc should be re-read against it.**
+
+### 2026-07-29 (⚠️ CONFOUND IN MY OWN ARM DESIGN — the n=32 vs n=64 series is NOT clean)
+
+`scomp64` (composed union, n=64) returned **54/64 = 0.844**, versus `scomp32` (composed union, n=32) at
+**18/32 = 0.562** — i.e. MORE facts scoring BETTER, which is backwards and is the signature of a confound.
+
+**Cause: sparsity was set PER-N to satisfy the cue-encoder constraint (`n_cues <= 1/sparsity`), so the arms
+differ in input crowding as well as in n:**
+
+| arm | sparsity | n_active | stride | ratio |
+|---|---|---|---|---|
+| n=32 (all) | 0.030 | 246 | 256 | **0.96 — bands nearly touching** |
+| n=64 | 0.012 | 98 | 128 | 0.77 |
+| n=128 | 0.006 | 49 | 64 | 0.77 |
+
+**WHAT IS STILL CLEAN, and it is the load-bearing comparison:** every n=32 arm ran at the SAME sparsity
+(0.030), so union-vs-bind-vs-independent at n=32 is a controlled contrast. The headline results stand:
+independent 1.000, union 0.562, **bind 0.844 (+0.282)**. Likewise the independent n=32 arm ran at ratio
+0.96 and still scored 1.000, which shows the crowded encoder is not inherently broken — so the union arm's
+0.562 is a property of the POOL patterns, not of the input layer.
+
+**WHAT IS NOT CLEAN:** the n=32 → n=64 scale series. `scomp64` cannot be compared to `scomp32`, and
+"union improves with scale" is NOT supported. Note the utilisation heuristic predicts n=64 should be WORSE
+than n=32 (with V=12 the reachable set is capped at ~396 neurons regardless of n, so 64 facts crowd it
+twice as hard) — the measurement going the other way is consistent with the sparsity difference dominating,
+not with utilisation being wrong.
+
+**FIX for any future scale series:** hold `n_active/stride` CONSTANT across n by scaling `n_lang_input`
+with `n_concepts` instead of lowering sparsity, so the encoder crowding is identical and n is the only
+variable. Recorded before the n=128 arm lands, so its number is not over-read either.
