@@ -1,0 +1,8 @@
+{"N": 1000, "mode": "min", "unamb": 0.8019, "self_mean": 20.3707, "comp_max_mean": 14.2201, "comp_sd_mean": 7.2664}
+{"N": 1000, "mode": "sum", "unamb": 0.5995, "self_mean": 50.6643, "comp_max_mean": 55.6807, "comp_sd_mean": 14.4022}
+{"N": 2000, "mode": "min", "unamb": 0.6502, "self_mean": 19.3166, "comp_max_mean": 18.3775, "comp_sd_mean": 9.0768}
+{"N": 2000, "mode": "sum", "unamb": 0.455, "self_mean": 50.4329, "comp_max_mean": 67.3659, "comp_sd_mean": 17.095}
+{"N": 200, "mode": "min", "unamb": 0.9539, "self_mean": 22.2623, "comp_max_mean": 7.7836, "comp_sd_mean": 4.0314}
+{"N": 200, "mode": "sum", "unamb": 0.8171, "self_mean": 50.5997, "comp_max_mean": 38.225, "comp_sd_mean": 9.7514}
+{"N": 500, "mode": "min", "unamb": 0.8891, "self_mean": 21.2844, "comp_max_mean": 10.7394, "comp_sd_mean": 5.6185}
+{"N": 500, "mode": "sum", "unamb": 0.7099, "self_mean": 50.6539, "comp_max_mean": 46.7808, "comp_sd_mean": 11.8371}

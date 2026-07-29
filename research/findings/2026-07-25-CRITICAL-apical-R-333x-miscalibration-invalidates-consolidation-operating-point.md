@@ -4298,3 +4298,34 @@ a different kind of work and must not be triggered by a utilisation alarm.
 
 **This is the record check earning its keep twice in one hour:** it blocked the crux duplication, then
 blocked EMERGE-73. Both times the candidate looked like obvious open work and the findings said otherwise.
+
+### 2026-07-29 (RESIDUAL DIAGNOSED — the drift below ceiling is ORDER STATISTICS, not mechanism loss)
+
+Closes the question recorded earlier today as *"partial-cue drifts FURTHER below its ceiling as N grows, so
+there IS a genuine mechanism loss on top of the information limit at large N. Not diagnosed."* Ran on the
+idle mini-PC pool while the GPU was committed. Three candidates separated by measuring the SCORE
+DISTRIBUTION rather than accuracy alone (V=320, Zipfian, alpha=0.25, 4 seeds, answerable cues only):
+
+| mode | N | unamb | self-score | competitor max | competitor sd | margin |
+|---|---|---|---|---|---|---|
+| min | 200 | 0.954 | 22.26 | 7.78 | 4.03 | **+14.48** |
+| min | 2000 | 0.650 | 19.32 | 18.38 | 9.08 | **+0.94** |
+| sum | 200 | 0.817 | 50.60 | 38.23 | 9.75 | +12.38 |
+| sum | 2000 | 0.455 | 50.43 | 67.37 | 17.10 | **−16.93** |
+
+**⇒ CAUSE IS (B) COMPETITOR GROWTH, NOT (C) SIGNAL DECAY.** The correct fact's own score is essentially
+STABLE across a 10× increase in stored facts — **sum: 50.60 → 50.43 (−0%)**, min: 22.26 → 19.32 (−13%).
+What changes is the competitor maximum (**+76% sum, +136% min**) and its spread (+75% / +125%). That is
+ORDER STATISTICS: the max over N−1 draws rises with N even when each draw's distribution is fixed. **So the
+drift below the information ceiling is largely IRREDUCIBLE, not a fixable mechanism flaw** — which retires
+the "genuine mechanism loss" framing I recorded earlier.
+
+**AND IT EXPLAINS WHY THE CONJUNCTIVE READ WORKS.** `min` does not raise the target's signal — it SUPPRESSES
+competitors (max 18.38 vs sum's 67.37 at N=2000), keeping the margin positive (+0.94) where `sum` goes
+decisively negative (−16.93). The conjunctive requirement is a competitor-suppression mechanism, not a
+signal-amplification one. That is a mechanistic account of the +0.13-0.21 gain measured earlier, and it
+predicts the gain should GROW with N (it does: sum's margin collapses faster than min's).
+
+**HONEST SCOPE:** off-substrate, 4 seeds, and it explains the SHAPE of the decay rather than proving the
+bound. The `min` arm's −13% self-score decay is small but real and is NOT explained by order statistics —
+a minor residual inside the residual, left named rather than swept up.
