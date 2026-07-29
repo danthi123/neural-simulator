@@ -3846,3 +3846,29 @@ available to be measured where only 0.156 exists. Even normalised by headroom th
 **⇒ What is established: binding helps on the substrate, twice, at different scales and different
 sparsities. What is NOT established: how the gain scales with n.** The clean scale series needs the fix
 recorded above (hold `n_active/stride` constant by scaling `n_lang_input` with `n_concepts`).
+
+### 2026-07-29 (DG FFI — the withdrawn claim is RE-ESTABLISHED on a repaired instrument)
+
+The `dg_pv_basket_to_dg` lesion was a silent no-op for this entire arc (gate never declared; both helpers
+swallow the `KeyError`). Repaired this session by tagging the pathway with a transmission gate — verified
+present, 12000 synapses — and re-run at 3 seeds:
+
+| method | deltas (lesion − intact), per seed | mean |
+|---|---|---|
+| flood | −0.025 / **+0.035** / −0.022 | **−0.004** |
+| natural | −0.012 / −0.022 / −0.003 | **−0.012** |
+
+Removing feed-forward inhibition should RAISE DG activity if that inhibition were doing sparsification
+work. It moves it by ~1%, and the sign **flips across seeds** in the flood method — i.e. noise.
+
+**⇒ THE CONCLUSION "the fixed FFI does not sparsify DG" IS RE-ESTABLISHED, now on a working instrument.**
+The morning's withdrawal was correct as to the EVIDENCE (a delta produced by a lesion that never ran) and
+wrong as to the OUTCOME — the FFI really is inert here. The in-place marker on the affected finding has
+been updated from ⛔ VOID to ⛔→✅ void-then-re-established, so the trail records both that the original
+evidence was invalid and that the claim survived a proper test.
+
+**Worth noting as a pattern:** a broken instrument produced the RIGHT answer for the WRONG reason, and it
+would have gone unnoticed indefinitely had the audit not looked. The lesson is not "the audit was
+unnecessary because the answer held" — it is that the answer holding was luck, and the same silent no-op
+could as easily have manufactured a false positive elsewhere. Nine other gate sites were cleared in the
+same audit; this was the one that fired.
