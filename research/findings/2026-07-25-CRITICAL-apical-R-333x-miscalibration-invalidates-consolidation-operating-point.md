@@ -2819,3 +2819,43 @@ recorded "occupancy refuted" — the correct mechanism — on an implementation 
 **▶ NEXT: implement retrieve-vs-allocate on the substrate with a NEURAL occupancy signal.** Gate unchanged and
 ordered: `permutation_valid` 6/6 FIRST, then write↔read consistency ≥2/3 per seed, then scramble-teach collapsing,
 then the occupancy-lesion arm failing.
+
+## 🔬 OCCUPANCY MEASURED ON THE SUBSTRATE: RETRIEVE works, ALLOCATE does not
+
+Before building the allocator, measured whether the substrate offers what retrieve-vs-allocate needs
+(`_consol_occupancy_separability.py`, 4 seeds, cycles=30, after real replay):
+
+| seed | argmax stable over 3 reads | fact→slot map | gap to runner-up |
+|---|---|---|---|
+| 42 | **3/3** | `{0:0, 1:0, 2:0}` | 0.20 · 0.26 · 0.29 |
+| 43 | **3/3** | `{0:0, 1:0, 2:0}` | 0.90 · 0.45 · 0.71 |
+| 44 | **3/3** | `{0:1, 1:1, 2:1}` | 0.56 · 0.49 · **0.09** |
+| 100 | **3/3** | `{0:0, 1:2, 2:0}` | 0.19 · **0.0013** · 0.20 |
+
+**⇒ THE MECHANISM SPLITS IN TWO, AND ONLY HALF IS MISSING.**
+- **RETRIEVE IS SUPPORTED.** The argmax is perfectly stable across successive reads on every seed (3/3, 4/4
+  seeds). A fact reliably returns to the same slot — exactly what the retrieve branch requires. *This is a real
+  positive and it is new.*
+- **ALLOCATE IS NOT.** Every fact retrieves the SAME slot. `permutation_valid=False` on all four seeds, three of
+  them fully degenerate (all three facts → one slot). There is no signal distinguishing a FREE slot from a TAKEN
+  one, so a new fact cannot be sent anywhere else.
+- The runner-up gap is also too small and too inconsistent (0.0013–0.90) to place a reliable θ.
+
+**⇒ This is the SAME winner-take-all runaway measured all session, now visible directly in the weight matrix.**
+Retrieval riding on it is stable precisely BECAUSE one slot dominates everything — stability here is a symptom of
+the degeneracy, not evidence against it.
+
+**⚠️ A TRIVIALLY-TRUE METRIC CAUGHT AND CORRECTED MID-MEASUREMENT.** The first version compared `max(row)` against
+`mean(rest)` and printed **SEPARABLE on all 4 seeds**. That comparison is true by ARITHMETIC for any matrix,
+including pure noise — it would have "passed" on random data. It is the same *true-by-construction* trap I
+correctly rejected this morning (scoring a scramble control against a permuted target), reproduced by me twenty
+minutes after writing the rule. Corrected to: gap to the **runner-up** (θ must sit between a slot and its nearest
+competitor), **argmax stability** across reads (what retrieve actually needs), and **permutation validity**. The
+corrected metric reverses the verdict.
+
+**▶ CONSEQUENCE FOR THE BUILD:** do NOT build retrieve-vs-allocate as specified — its retrieve half is already
+satisfied and its allocate half has no substrate signal to stand on. **The open problem is narrower than the toy
+suggested: produce a FREE-vs-TAKEN signal**, i.e. break the winner-take-all runaway so a second slot can ever be
+claimed. Four fair-competition mechanisms are already refuted against that, so the next candidate must come from a
+different family — and the design workflow (`wfku0dx9i`) is asked exactly this, with its toy-vs-substrate attacker
+independently probing whether any graded quantity survives.
