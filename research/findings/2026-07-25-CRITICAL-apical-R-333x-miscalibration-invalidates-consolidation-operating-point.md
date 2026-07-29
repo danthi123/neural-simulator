@@ -3725,3 +3725,35 @@ overlap-reduction lesson) predicts adaptive beats plain bind by MORE than +0.05.
 predicts +0.04 (1110→1357). They are close but discriminable, and whichever survives tells us which account
 is doing real work — the empirical "overlap-reduction is under-valued on substrate" lesson, or the
 mechanistic "reachable code space" heuristic.
+
+### 2026-07-29 (METHODOLOGY — WHY the toys mislead: they are at CEILING, not wrong)
+
+| config | n_used | off-substrate | on-bridge |
+|---|---|---|---|
+| independent | 1614 | 1.000 | **1.000** |
+| union V=12 | 359 | 0.917 | **0.562** |
+| bind V=12 | 688 | 0.979 | **0.844** |
+| union V=60 | 1069 | 1.000 | — |
+| bind V=60 | 1333 | 1.000 | — |
+| bind V=60 + Zipf | 1110 | 0.990 | — |
+| bind V=60 + Zipf + adaptive | 1357 | 1.000 | — |
+
+**The off-substrate toy sits at CEILING for every configuration (0.917-1.000) while the substrate spreads
+the SAME configs across 0.562-1.000.** The toy is not wrong in direction — it has **no dynamic range in
+this regime, so it cannot discriminate.** That is the mechanism behind the earlier finding that binding
+"only" bought +0.06 off-substrate: union was already at 0.917 against a ceiling of 1.000, leaving 0.083 of
+headroom. **The measurement was capped, not the mechanism.** A +0.282 substrate effect could not have
+shown up regardless of how real it was.
+
+**⇒ METHODOLOGY FIX, and it applies to every remaining toy in this arc:** an off-substrate probe must be
+run in a regime with DYNAMIC RANGE — hard enough that the control is well below ceiling — or it cannot rank
+mechanisms at all. Every "mechanism X buys only +0.0Y" conclusion drawn from a near-ceiling toy in this arc
+should be re-read as **uninformative rather than negative**. Concretely, at V=60 the toy returns 1.000 for
+BOTH queued configs, i.e. it predicts no difference whatsoever, while the utilisation heuristic predicts
+0.91 vs 0.96 — so the queued arms discriminate a live hypothesis against a blind instrument.
+
+**Note the correlation numbers are a trap here and are NOT the evidence:** off-substrate corr(n_used, acc)
+= 0.858 and on-bridge = 0.908 look similar, which would suggest the toy tracks utilisation nearly as well.
+It does not — the off-substrate correlation is computed over a 0.083-wide accuracy range and is therefore
+almost meaningless. **The evidence is the RANGE, not the correlation.** Reporting the correlation alone
+would have hidden exactly the effect this section is about.
