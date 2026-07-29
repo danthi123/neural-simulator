@@ -3661,3 +3661,40 @@ than modelled — overlap-reducing mechanisms are worth MORE on the substrate th
 +0.282 on-bridge vs +0.062 off). A failed quantitative model does not undo a confirmed pre-registered
 prediction. The distinction matters: we can predict the SIGN of a mechanism's substrate value, and we
 cannot yet predict its MAGNITUDE.
+
+### 2026-07-29 (MECHANISM FOUND) — it is not overlap, it is POOL UTILISATION / effective code space
+
+Three candidate statistics were tested against the three measured on-bridge points. Mean overlap, GLOBAL
+max overlap and PER-FACT max overlap all FAIL to separate union from bind (per-fact max 66.4 vs 62.0 —
+4.4 apart — against an accuracy difference of 0.28). The statistic that tracks is neuron-level load:
+
+| config | measured | pool neurons USED | mean load | max load | frac neurons in >8 facts |
+|---|---|---|---|---|---|
+| independent | 1.000 | **1614** / 2000 | 1.96 | 8 | 0.000 |
+| bind | 0.844 | **688** | 4.55 | 18 | 0.111 |
+| union | 0.562 | **359** | 8.66 | 22 | 0.439 |
+
+Monotonic in every column, and mechanistically obvious once seen: **the union code confines the entire
+store to 18% of the pool.** A fact's neurons are determined solely by WHICH WORDS it contains, and with
+V=12 words × 33 neurons there are only ~396 distinct neurons the store can ever touch, no matter how large
+the pool is. Every fact is then built from the same tiny neuron set, producing hub neurons that belong to
+22 of 32 facts and fire for all of them. **Role-binding works because it multiplies the address space by
+the number of roles** (a word in the agent slot uses different neurons than the same word as patient),
+raising utilisation to 688.
+
+**⇒ THIS UNIFIES THREE SEPARATE FINDINGS FROM TODAY that looked unrelated:**
+* **vocabulary size is the biggest lever** — more distinct words means more distinct neurons reachable;
+* **role-binding is load-bearing** — roles multiply the reachable address space;
+* **frequency-adaptive coding helps** — its conjunctive component injects FRESH neurons drawn from the
+  whole pool, which is a direct utilisation increase.
+All three are the same lever seen three ways: **how much of the pool the code can actually address.**
+
+**HONEST STATUS:** a correlation across THREE points, mechanistically motivated and consistent with the
+rest of the arc — not a fitted model, and explicitly not the failed quantitative predictor above. It is a
+DESIGN HEURISTIC ("maximise reachable code space"), and its value is that it is measurable BEFORE any GPU
+spend: `n_used` and the hub fraction are computed from the pattern set alone, in milliseconds.
+
+**⚠️ PRE-REGISTERED, testable now:** if utilisation is the mechanism, then the queued Zipfian arms should
+show LOWER `n_used` than uniform (frequent words concentrate the store on fewer neurons) and correspondingly
+worse accuracy — and the frequency-adaptive arm should RAISE `n_used` back up and recover accuracy with it.
+If accuracy moves without `n_used` moving, the heuristic is wrong and must be dropped.
