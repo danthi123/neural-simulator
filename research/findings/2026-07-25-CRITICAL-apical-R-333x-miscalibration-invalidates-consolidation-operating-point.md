@@ -3003,3 +3003,56 @@ not the absolute — the raw-total formulation was swamped ~1500:1 and every arm
 void; (2) assert the gate EXISTS before freezing it — the probe's own line 59 records hitting this same
 "measures a pathway that does not exist" trap, and `+0.000000` drift cannot distinguish a perfect freeze
 from an absent gate.
+
+### 2026-07-29 (verdict) — weight-history METAPLASTICITY works at N=3-5 and has a REAL capacity ceiling; it is not a general allocator
+
+Three formulations of the metaplastic penalty were tested in the toy, 6 seeds each, mechanism engagement
+verified in every arm (never a silent no-op):
+
+| slots | n_feat | plain (control) | continuous MASS | hard SUPPRESSION | discrete COUNT |
+|---|---|---|---|---|---|
+| 3 | 48 | 1/6 | **6/6** | 1/6 | 6/6 |
+| 5 | 80 | 0/6 | **6/6** | 1/6 | 2/6 |
+| 8 | 128 | 0/6 | 3/6 | 0/6 | 0/6 |
+| 12 | 192 | 0/6 | 0/6 | 0/6 | 0/6 |
+| 20-32 | 320-512 | 0/6 | 0/6 | 0/6 | 0/6 |
+
+**A CONFOUND WAS FOUND AND CONTROLLED, and it changed the numbers.** With `n_feat` pinned at 24, facts are
+poorly separated as slot count grows (`max|cos|` 0.209 at N=3 → 0.573 at N=20), so early "capacity"
+failures were partly a CODE problem: at N=5 the mass arm scores **3/6 at max|cos|=0.430 but 6/6 at
+max|cos|=0.204**. Scaling `n_feat` with slot count fixes N=5 completely. **It does not rescue N≥12**: at
+N=12 with `max|cos|=0.196` — *better separation than N=3's 0.209, which scores 6/6* — the allocator still
+returns **0/6**. ⇒ The ceiling at ~5-8 slots is REAL and independent of code separation.
+
+**Two sub-hypotheses tested and REFUTED, both against my own prediction:**
+* *Hard suppression should beat a proportional nudge* (the substrate precedent
+  `_stp_binder_onbridge_derisk.py:88` excludes occupied slots at −800 pA). It is **worse everywhere** —
+  1/6 vs 6/6 at N=3.
+* *The failure is an allocation RACE, fixed by a discrete count* (`_committed_count`'s own docstring:
+  it "differentiates IMMEDIATELY after one win, avoiding an allocation RACE"). Discrete count is **worse
+  than continuous mass** — 2/6 vs 6/6 at N=5.
+
+**⇒ VERDICT ON THE METHOD, NOT THE CAPABILITY.** Weight-history metaplasticity is a genuine allocator at
+N=3-5 (6/6 against a control of 0-1/6) and is not one beyond ~8. Per the standing law this retires the
+METHOD as a general allocator; **slot allocation remains OPEN**.
+
+**WHY IT PLATEAUS, and the next mechanism family.** All three variants score each slot with an
+INDEPENDENT scalar. Allocation is a one-to-one ASSIGNMENT problem, and no per-slot independent penalty can
+enforce a global matching — two facts can each rationally pick the same slot. Biology solves mutual
+exclusion with mutual **lateral inhibition between the competing slots** (and a sparse k-WTA over them),
+not with a per-unit self-penalty. That is a structurally different mechanism and is the next candidate.
+
+**SUBSTRATE ARMS: INCONCLUSIVE, no verdict claimed.** 4 GPU arms (2 seeds × metaplastic/control) returned
+`own_is_max` 2/3 vs 2/3 (seed 42) and 1/3 vs 1/3 (seed 43) — no effect. **But the CONTROL does not
+reproduce the banked 3/3 baseline** (`own/other` 12.51-46.61), so the configuration is not the validated
+recipe and NEITHER arm is interpretable. A null from arms whose control fails to reproduce is not a
+result. Recorded as inconclusive rather than as evidence against the mechanism.
+
+**POOL LANE — a stalled run found and stopped.** The mini-PC sweep had 75 live processes and had marched
+from config 72 to 108 while writing **4 result files total, newest Jul 25** — a live-but-stalled run, the
+exact failure CLAUDE.md's heartbeat rule exists to catch. Diagnosis: NOT oversubscription (my first read
+was wrong — `xargs -P 12` on 12 cores, each job spawning a `timeout` wrapper plus its child, so 24
+processes = 12 correctly-sized jobs); the real cause is that nearly every config exceeds its `timeout
+2700` on CPU and dies before writing. Stopped. Verified separately that a 5.5M-synapse on-bridge probe
+builds fine under `SIM_BACKEND=numpy` but does not complete a single cycle in 270 s ⇒ **the 36-core pool is
+structurally unsuited to on-bridge probes of this size**, and should not be re-tasked with them.

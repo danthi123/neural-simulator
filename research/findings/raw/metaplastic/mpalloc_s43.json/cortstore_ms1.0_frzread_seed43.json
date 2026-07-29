@@ -1,0 +1,157 @@
+{
+  "seed": 43,
+  "thr_hash": "90ff32ec773a",
+  "v_apical_physiological": true,
+  "read_weight_drift": 0.0,
+  "null_cue_slot_rates": [
+    0.058,
+    0.133,
+    0.2
+  ],
+  "nostore_recall_slot_rates": [
+    [
+      0.217,
+      0.158,
+      0.233
+    ],
+    [
+      0.3,
+      0.583,
+      0.317
+    ],
+    [
+      0.25,
+      0.533,
+      0.167
+    ]
+  ],
+  "slot_drive_budget": {
+    "store(pool->slot)": {
+      "charge": 0.0,
+      "pct": 0.0,
+      "n_syn": 64666
+    },
+    "slot_recurrent": {
+      "charge": 4991.9,
+      "pct": 44.24,
+      "n_syn": 15420
+    },
+    "other(incl. inhibition)": {
+      "charge": 6292.2,
+      "pct": 55.76,
+      "n_syn": 39098
+    },
+    "_total_charge": 11284.1
+  },
+  "v_apical_range": [
+    -5.29,
+    -3.42
+  ],
+  "dw_cortical": -0.13327,
+  "dw_by_phase": null,
+  "dw_diag_vs_off": null,
+  "dw_pos_neg_by_slot": null,
+  "v_apical_during_write": null,
+  "write_phase_physiological": null,
+  "v_hold": -50.0,
+  "store_own_over_other": [
+    1.028,
+    0.679,
+    1.267
+  ],
+  "store_own_is_max": [
+    false,
+    false,
+    true
+  ],
+  "permuted_target_control": [
+    0.767,
+    1.357,
+    1.021
+  ],
+  "per_slot_mass": [
+    0.7483,
+    0.5829,
+    0.8664
+  ],
+  "slot_spikes_during_write": null,
+  "pool_spikes_during_write": null,
+  "firing_weighted_own_over_other": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "firing_weighted_permuted_control": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "firing_weighted_mass": null,
+  "firing_weighted_own_is_max": null,
+  "recall_correct": [
+    false,
+    false,
+    true
+  ],
+  "recall_slot_rates": [
+    [
+      0.042,
+      0.108,
+      0.025
+    ],
+    [
+      0.358,
+      0.058,
+      0.483
+    ],
+    [
+      0.033,
+      0.017,
+      0.075
+    ]
+  ],
+  "n_recall": 1,
+  "arm_flags": {
+    "teaching_clamp": false,
+    "mean_subtract": 1.0,
+    "freeze_read": true,
+    "freeze_gap": false,
+    "no_stdp": false,
+    "scramble_teach": false,
+    "n_facts": null,
+    "read_gap": 0,
+    "elig_tau": 30.0,
+    "hebbian_max_w": null,
+    "btsp_lr": 0.0005,
+    "btsp_wmax": 2000.0,
+    "pool_slot_weight": 1.5,
+    "hebbian_lr": null,
+    "syn_scaling": null,
+    "cycles": 10,
+    "seed": 43
+  },
+  "facts": [
+    [
+      "apple",
+      "big"
+    ],
+    [
+      "river",
+      "small"
+    ],
+    [
+      "dog",
+      "hot"
+    ]
+  ],
+  "argv": [
+    "--seed",
+    "43",
+    "--mean-subtract",
+    "1.0",
+    "--freeze-read",
+    "--metaplastic-alloc",
+    "--out",
+    "research/findings/raw/metaplastic/mpalloc_s43.json"
+  ]
+}
