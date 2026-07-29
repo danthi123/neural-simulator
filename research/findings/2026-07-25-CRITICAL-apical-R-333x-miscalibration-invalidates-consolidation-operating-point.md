@@ -2979,3 +2979,27 @@ mechanism is untested rather than failed.
 Also noted: the `[0,2,1]` map is a *valid permutation that fails the stability re-read* — the winner flips
 between two consecutive cued reads. Read instability is a separate defect from allocation failure and
 should not be scored as one.
+
+### 2026-07-29 (resolution) — the metaplastic INPUT signal DOES exist; my null was config-scoped, and the real experiment is now well-posed
+
+Correcting my own reading above. `_consol_cortical_store_probe.py` already returns exactly the quantity in
+question — `store_own_over_other` and `store_own_is_max`, a per-fact × per-slot store matrix `W` (:439-440).
+Under the **validated BTSP recipe** the banked measurement is **own/other 12.51-46.61× with own-is-max 3/3**.
+
+⇒ **Per-slot store mass is strongly differentiated under the validated write.** So "how claimed is this
+slot" is NOT missing from the substrate — it is missing from the *bare-defaults* config I measured, which
+does not write. The uniform −0.025 depression was a property of a non-writing configuration, precisely the
+scope limit flagged one section above. **Metaplasticity is therefore NOT refuted, and its input exists.**
+
+**THE EXPERIMENT IS NOW WELL-POSED**, and it is a different one from what I ran: apply the subtractive
+metaplastic penalty **inside the validated BTSP write loop** (which is the store probe's own write, not
+`coactivation_replay`), sweeping beta, with the toy's passing range (0.4-0.8) rescaled to the measured
+per-slot store magnitude rather than guessed. Gate: `permutation_valid` AND stable on 6/6 seeds, against a
+beta=0 control that must still collapse, plus the `scramble_teach` derangement control the probe already
+carries.
+
+**Two instrument requirements carried forward, both earned today:** (1) scale beta to the *differential*,
+not the absolute — the raw-total formulation was swamped ~1500:1 and every arm would have been silently
+void; (2) assert the gate EXISTS before freezing it — the probe's own line 59 records hitting this same
+"measures a pathway that does not exist" trap, and `+0.000000` drift cannot distinguish a perfect freeze
+from an absent gate.
