@@ -3161,3 +3161,32 @@ neurons — **not** the shared pool failing to store 64 items. Naively this read
 out just above 32", which would have manufactured a capacity wall out of a cue-encoder constraint (and
 would have been especially convincing because ~32 is exactly the banked per-pool figure). Fix is config,
 not mechanism: `--n-lang-input >= n_concepts * n_active` (20480 for 64, 40960 for 128).
+
+### 2026-07-29 — ⭐ THE "~32 CONCEPTS PER POOL" FIGURE IS A CUE-ENCODER IDENTITY, NOT A MEASURED POOL CAPACITY
+
+Chasing the crash above to its root changes the interpretation of a banked production decision.
+`orthogonal_drive_pattern` (`sim/text_embeddings.py:194-196`) lays each cue in a NON-OVERLAPPING band:
+
+```
+n_active = round(sparsity * n_neurons)        # scales WITH the layer
+stride   = n_neurons // n_cues
+if n_active > stride: raise ValueError
+```
+
+Substituting: `sparsity·N <= N/n_cues` ⇒ **`n_cues <= 1/sparsity`, INDEPENDENT of layer size.** At the
+runner default `sparsity=0.03` that ceiling is **exactly 33** — which is precisely the banked
+"32 concepts per sparse bridge" figure. Growing the layer cannot help (I tried: `n_active` went
+246 → 614 → 1229 as `n_lang_input` went 8192 → 20480 → 40960, and the error persisted at every size,
+because both sides scale together).
+
+**⇒ The "5 sparse bridges × 32 concepts = 160, multi-bridge is the production scaling route" decision was
+made against a limit of the INPUT CUE ENCODER, not against the shared pool's storage capacity. The pool's
+actual capacity appears never to have been measured** — the encoder refused before the pool was ever
+asked. This is the same misattribution pattern that has bitten this arc repeatedly (a constraint of the
+instrument read as a property of the substrate).
+
+**The unblock is config, not mechanism:** `--sparsity <= 1/n_concepts` (it is already a CLI flag). Arms
+relaunched at n=64/`sparsity=0.012` and n=128/`sparsity=0.006`, both within the identity. **Honest caveat
+to carry into the read:** lowering sparsity means fewer active input neurons per cue, so drive per cue
+falls — if discrimination degrades at n=128, it must be checked against THAT before being called a pool
+capacity limit. Do not repeat the misattribution in the other direction.
