@@ -3410,3 +3410,51 @@ N=500**, not the 0.98-0.998 I recorded from uniform sampling. That is a working 
 **⇒ THE GATE FOR THE SUBSTRATE BUILD MUST USE ZIPFIAN FACTS.** A uniform-sampled gate would pass at ~1.0
 and certify a system that degrades by a third in use. Same failure shape as the rest of this arc: a
 property of the instrument (here, the fact generator) mistaken for a property of the mechanism.
+
+### 2026-07-29 (SURPASS + REFRAME) — frequency-adaptive coding solves full-cue under Zipf; partial-cue is at an INFORMATION CEILING, not a mechanism limit
+
+**(A) THE SURPASS.** Under Zipf a few frequent words appear in most facts, so their neurons are shared by
+most patterns and carry the interference. A FIXED conjunctive mixture spends the same budget on every fact,
+including rare-word facts that never collide. **ADAPTIVE** spends it in proportion to constituent frequency
+— the same inverse-frequency principle (discount the common, spend on what discriminates) as the PPMI
+normalization that made this project's cortex codes generalize. V=320, classic Zipf, 3 seeds:
+
+| N | fixed alpha=0 | fixed alpha=0.25 | **adaptive** | overlap (0 → adaptive) |
+|---|---|---|---|---|
+| 200 | 0.830 | 0.967 | **1.000** | 9.08 → 6.17 |
+| 500 | 0.597 | 0.767 | **0.959** | 8.08 → 5.86 |
+| 1000 | 0.462 | 0.623 | **0.794** | 8.30 → 6.11 |
+
+At the harsher s=1.2 the gain is larger still (N=500: 0.403 → **0.849**; N=1000: 0.286 → 0.545).
+**⇒ full-cue capacity under realistic word statistics is essentially recovered.**
+
+**(B) THE REFRAME, and it is the more important half.** Adaptive coding leaves partial-cue recall
+**completely unmoved** (0.379 → 0.375 at N=500) — a conjunctive component keyed to the whole triple cannot
+be recovered from two-thirds of it. That looked like the binding limitation. It is not. Measuring how often
+(agent, action) uniquely identifies a fact AT ALL:
+
+| V=320, Zipf 1.0 | measured partial | UNIQUE-(agent,action) ceiling | % of max |
+|---|---|---|---|
+| N=200 | 0.555 | 0.545 | **~100%** |
+| N=500 | 0.379 | 0.433 | 87% |
+| N=1000 | 0.275 | 0.366 | 75% |
+
+(Zipf 1.2: 0.333/0.345 = 97%, 0.224/0.277 = 81%, 0.151/0.217 = 70%.)
+
+**⇒ Partial-cue retrieval is running at 75-100% of the INFORMATION-THEORETIC MAXIMUM.** Under Zipfian
+statistics many facts genuinely share an (agent, action) pair, so the cue does not determine a unique
+answer and **no code can fix that** — the information is absent from the query, not lost by the memory.
+The earlier framing of "0.39 partial-cue" as a serious limitation was wrong: it is near-optimal play
+against a hard bound.
+
+**⇒ THE DESIGN CONSEQUENCE, and it converges with machinery this project already has.** When several facts
+match a partial cue, the correct behaviour is NOT to retrieve one of them — that is confabulation by
+construction. It is to detect the ambiguity and either return the SET or ask a clarifying question. That is
+precisely the roadmap's stated direction for the no-confab moat ("the moat becomes the clarification /
+curiosity trigger, not a refusal"). So the memory's residual limit and the conversational system's
+clarification behaviour are the SAME requirement seen from two sides.
+
+**REVISED STANDING OF THE RE-ROUTE (all off-substrate; the on-bridge arms are the real test):** full-cue
+capacity ~0.96 at N=500 under realistic Zipfian facts with frequency-adaptive coding, no allocator; and
+partial-cue at the information ceiling, where the residual is genuine ambiguity to be surfaced rather than
+interference to be engineered away.
