@@ -3931,3 +3931,35 @@ the two live accounts: the empirical overlap-reduction lesson predicts it beats 
 +0.05, the utilisation heuristic predicts +0.04 (1110 → 1357 n_used). With plain bind now at 0.969 there
 is only 0.031 of headroom left, so **by the ceiling criterion this comparison may be unable to resolve
 either way** — recorded now so a null there is not misread as evidence against both.
+
+### 2026-07-29 (CAPACITY MAP at the project's real vocabulary) — and most partial queries are GENUINELY ambiguous
+
+V=320 (the production vocabulary), Zipfian words, role-bound, 6 seeds, pool M=4000 (M=10000 at N=5000):
+
+| N facts | full-cue (a=0 / 0.25 / 0.5) | partial-cue (a=0.5) | **ambiguous frac** | partial as % of ceiling |
+|---|---|---|---|---|
+| 500 | 0.609 / 0.782 / **0.965** | 0.351 | 0.571 | 89% |
+| 1000 | 0.456 / 0.609 / **0.815** | 0.231 | 0.630 | 73% |
+| 2000 | 0.306 / 0.431 / **0.631** | 0.135 | 0.701 | 59% |
+| 5000 | 0.185 / 0.281 / **0.463** | 0.083 | 0.786 | 48% |
+
+**(1) THE CAPACITY NUMBER THE BUILD NEEDS:** with a 4000-neuron pool and alpha=0.5, ~**500 facts at 0.965
+full-cue recall**, ~1000 at 0.815, degrading past that. `n_used` saturates at 4000 (the entire pool) from
+N=1000 onward — so the limit is genuinely the pool size, and capacity should scale with M. That is a
+concrete, testable design parameter rather than a vague "it works".
+
+**(2) THE FINDING THAT MATTERS MORE — most partial queries have NO unique answer at realistic scale.**
+The ambiguous fraction runs **0.571 at 500 facts to 0.786 at 5000**: with a Zipfian vocabulary, the
+majority of (agent, action) cues match SEVERAL stored facts. Partial-cue accuracy is therefore capped at
+0.43 / 0.37 / 0.30 / 0.21 respectively, and the measured values sit at 89% / 73% / 59% / 48% of those caps.
+**So "the memory answers partial questions only ~35% of the time" is mostly not a memory failure at all —
+it is that ~60-79% of such questions genuinely have multiple correct answers.**
+
+⇒ This turns a capability requirement into a hard design constraint: **a conversational system at this
+scale MUST disambiguate, because most of its partial queries are ambiguous by construction.** Returning a
+single fact would be confabulation in the majority of cases. That is the same conclusion the ambiguity
+analysis reached this morning, now quantified at the project's actual vocabulary — and it converges with
+the roadmap's existing direction for the no-confab moat becoming a clarification trigger.
+
+**Residual worth noting:** partial-cue drifts FURTHER below its ceiling as N grows (89% → 48%), so there
+IS a genuine mechanism loss on top of the information limit at large N. Not diagnosed here.
