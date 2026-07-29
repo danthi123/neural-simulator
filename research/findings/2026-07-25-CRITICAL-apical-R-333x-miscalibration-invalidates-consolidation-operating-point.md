@@ -4550,3 +4550,37 @@ the Mehta forward-asymmetric band mechanism this project already validated 6-see
 itself (`2026-07-25-gap5-learned-band-emergence-STDP-directed-traversal-6seed-GO.md`) — applied to the READER
 rather than the band. It needs no long delays and no exotic taus, because the selectivity lives in the
 weights rather than in the timing.
+
+### 2026-07-29 (STDP-RECURRENCE arm is VOID — my implementation, NOT a verdict on the mechanism; stopping this line)
+
+| tau_stdp | forward | reverse | spread | static widen | LESION | shuffle |
+|---|---|---|---|---|---|---|
+| 6 | 0.096 | 0.093 | 0.096 | 0.095 | 1.000 | 0.094 |
+| 24 | 0.190 | 0.182 | 0.191 | 0.185 | 1.000 | 0.187 |
+
+**TWO IMPLEMENTATION BUGS, both mine:**
+1. **Every condition returns the same value** — forward 0.096 vs reverse 0.093 is a 4% difference, and
+   `static_widen` and `shuffle` sit right alongside them. The ratio is dominated by the INDEPENDENT
+   normalisation of the two recurrence matrices (each divided by its own max), not by the input's order.
+2. **The LESION is trivially 1.000 by construction** — I wrote `amplification(a,Rl)/amplification(a,Rl)`,
+   dividing the arm by itself. It could not have failed. That is the exact "a check that cannot fail" shape
+   this session has documented seven times, committed by the person documenting it.
+
+**⇒ RECORDED AS VOID. The STDP-learned-recurrence mechanism is NOT refuted** — it was never tested. Calling
+it a negative would be the misattribution this arc keeps making (blaming a mechanism for an instrument's
+faults), and it would poison a named next-mechanism that still has 6-seed validated precedent behind it
+(the Mehta forward-asymmetric band).
+
+**⇒ STOPPING THIS LINE HERE, deliberately.** Three implementation bugs in one evening on the same toy series
+(shift-invariant sums, a travelling "spread" control, now a self-divided lesion) is a pattern about the
+builder, not the design. The remaining work needs a careful fresh build with the controls written FIRST —
+`tools/lab.py::lever()` and `void_if()` imported at the top, and a lesion that is a genuinely different
+quantity from the arm it is compared against.
+
+**WHAT STANDS from the whole neural-reader arc** (unaffected by this void arm): the host decoder's shortcut
+is precisely located (`neuron_pos = arange(N)/N*n_pos`, handed the band's own wiring map); nothing downstream
+consumes the decode; its gate is loose (a spreading front scores +0.717 and passes >0.6) though the GO's own
+data is far from that failure mode; the read-out ARCHITECTURE is de-risked (learned tuning 9.1× sharpness,
+opponent pools, clean 1.00 null on non-directional input, exactly-1.000 equalised lesion); and TWO temporal
+mechanisms are genuinely eliminated on measured grounds (delays need 63-125 ms vs 1-30 ms available; slow
+synapses give 12% separation and misrank spread above travel).
