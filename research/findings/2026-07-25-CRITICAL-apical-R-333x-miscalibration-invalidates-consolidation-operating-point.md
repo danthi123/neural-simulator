@@ -3375,3 +3375,38 @@ that consumed this arc does not exist at the scale the system actually operates 
 **HONEST SCOPE, unchanged:** still off-substrate (host argmax readout, one-shot Hebbian without a soft
 bound, no saturation). The substrate arms now running (independent / union / bind at n=32 and n=64) are the
 first on-bridge read. Everything above is a PREDICTION the substrate must confirm.
+
+### 2026-07-29 (⛔ ADVERSARIAL CHECK LARGELY OVERTURNS THE ENCOURAGING RESULT — word frequency is ZIPFIAN)
+
+Every sweep above drew the three constituents UNIFORMLY from the vocabulary. Real language does not: it
+reuses frequent words heavily, which drives up exactly the constituent sharing that causes collisions. Run
+at V=320 (the project's production vocabulary), M=4000, k=100, 2 seeds, on the pool.
+
+| V=320, N=500 | full-cue | partial-cue | overlap |
+|---|---|---|---|
+| uniform (what I swept) | 1.000 | 0.992 | 2.94 |
+| Zipf s=0.8 | 0.838 | 0.588 | 4.45 |
+| **Zipf s=1.0 (classic)** | **0.606** | **0.393** | 8.13 |
+| Zipf s=1.2 | 0.396 | 0.220 | 16.31 |
+
+**⇒ "THE CONSOLIDATION BLOCKER DOES NOT EXIST AT 320 CONCEPTS" IS WITHDRAWN.** That conclusion, recorded
+one section earlier, was an artifact of uniform word sampling. Under classic Zipf the same configuration
+falls to **0.606 full / 0.393 partial** at N=500, and 0.46/0.274 at N=1000. Vocabulary SIZE is not the
+lever I claimed — what matters is the EFFECTIVE collision rate, and Zipf drives that up regardless of how
+many words nominally exist, because most facts are built from the same few frequent ones.
+
+**AND IT REVERSES THE ALPHA CORRECTION AGAIN, informatively.** alpha=0.25 was recommended (small-vocab
+sweep), then withdrawn in favour of alpha=0 (uniform realistic-vocab sweep). Under Zipf it is **valuable
+again**: N=500/s=1.0 full-cue 0.606 → **0.761** with partial essentially unchanged (0.393 → 0.385).
+⇒ The design point is **REGIME-DEPENDENT, not a constant**: the conjunctive mixture earns its keep exactly
+when collisions are high, and is dead weight when they are not. Three successive sweeps each gave a
+different "answer" because each sampled a different collision regime — the parameter to reason about is
+collision rate, never alpha in isolation.
+
+**HONEST STANDING OF THE RE-ROUTE.** Still clearly better than the slot allocator (which failed outright by
+N=12). But composed-fact capacity under REALISTIC word statistics is **~0.6-0.76 full / ~0.39 partial at
+N=500**, not the 0.98-0.998 I recorded from uniform sampling. That is a working memory, not a solved one.
+
+**⇒ THE GATE FOR THE SUBSTRATE BUILD MUST USE ZIPFIAN FACTS.** A uniform-sampled gate would pass at ~1.0
+and certify a system that degrades by a third in use. Same failure shape as the rest of this arc: a
+property of the instrument (here, the fact generator) mistaken for a property of the mechanism.
