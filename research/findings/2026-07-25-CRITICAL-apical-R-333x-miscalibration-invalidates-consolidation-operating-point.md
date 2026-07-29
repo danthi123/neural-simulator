@@ -3519,3 +3519,21 @@ never exercised).
 
 **Follow-on, specified now:** add a constituent-subset drive path to the harness and re-run the same grid
 for partial cue. Until that exists, on-bridge evidence covers the write-and-full-recall half only.
+
+**PRE-FLIGHT on the queued partial-cue arms (engagement-counter rule, applied to my own experiment).**
+Before spending GPU on the partial-cue grid, checked that the config actually CONTAINS ambiguous facts —
+otherwise `ambiguous_frac = 0`, the unambiguous/ambiguous split is inert, and the run cannot speak to the
+information ceiling it exists to test.
+
+| config (V=60, role-bind) | ambiguous_frac | |
+|---|---|---|
+| N=32, **Zipf 1.0** | **0.281** | ENGAGED |
+| N=32, uniform | **0.000** | INERT — the split says nothing |
+| N=64, Zipf 1.0 | 0.578 | ENGAGED |
+| N=128, Zipf 1.0 | 0.688 | ENGAGED |
+
+Queued config passes. **And it independently reinforces the Zipf finding from a third direction:** uniform
+word sampling produces **exactly zero** ambiguous facts, so a uniform gate cannot even EXERCISE the
+clarification behaviour that the ambiguity analysis says is the correct response. Three separate arguments
+now converge on the same point — uniform sampling over-reports capacity, hides the collision regime, and
+cannot test the ambiguity handling at all.
