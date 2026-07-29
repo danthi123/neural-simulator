@@ -2776,3 +2776,46 @@ concurrently: local GPU (4 jobs), the pool (75 processes / 240-config sweep, res
 errors en route, both from memory instead of reading: pinged `192.168.1.x` when the ssh config says `192.168.0.x`
 and nearly asked the owner to restart three healthy nodes; then looked for the repo at `~/sim` when the dispatch
 script says `~/derisk-pool/sim`.*
+
+## 🔑 CHEAP-FIRST DE-RISK REDIRECTS THE BUILD: the missing ingredient is OCCUPANCY, not competitive fairness
+
+Before composing the pooler (a multi-hour build), ran a seconds-long toy of the allocator dynamics in **our** regime.
+That matters because EMERGE-39 was validated at **200 columns choosing 6 winners** (sparse); ours is **3 slots
+choosing 1** (dense, winner-take-all) — a different regime, and the corpus does not cover it.
+
+Toy = drive + per-slot static bias (1.7, the measured spread) + Hebbian compounding, 100 cycles, 6 seeds:
+
+| mechanism | valid permutations |
+|---|---|
+| plain competition | **0/6** |
+| **duty-cycle boosting** (the corpus's ranked #1) | **1/6** |
+| **retrieve-vs-allocate (occupancy)** | **6/6** |
+
+**⇒ THE RANKED #1 WOULD NOT HAVE SOLVED THIS, AND I WAS ABOUT TO BUILD IT.** Duty-cycle boosting equalises *how
+often each slot wins*; it does not prevent two facts claiming the SAME slot. Seed 42 with boost on gives
+`{0:0, 1:0, 2:2}` — slots used evenly, two facts collided, one slot unclaimed. **Fairness ≠ permutation.** The
+pooler's boosting solves fair column usage across many inputs in a sparse code, which is a different problem from
+one-to-one binding among three.
+
+**⇒ WHAT WORKS IS THE CORPUS'S *OTHER* PRESCRIPTION** — the RUNG-6c rule named in
+`2026-07-17-keystone-slot-binder-research-gate.md`: *retrieve an already-bound slot if `max(W·c) > θ`, ELSE take a
+free one*. A fact returns to its own slot; a new fact takes the least-claimed. That yields a permutation **6/6**.
+
+**⚠️ AN INERT-MECHANISM NULL CAUGHT EN ROUTE (today's rule, applied to myself).** The first occupancy run scored
+**0/6** — apparently refuting it. It was inert: `θ=2.2` against `W` starting at 1.5 with `hebb=0.02` needs 35 wins
+before the retrieve branch can fire, so every trial took the allocate path and the arm degenerated to plain. Adding
+an engagement counter (`retrieve=230 alloc=70`) showed the mechanism now fires. **Without that counter I would have
+recorded "occupancy refuted" — the correct mechanism — on an implementation bug.** This is exactly what
+`tools/lab.py::lever()` exists to force.
+
+**⚠️ HONEST SCOPE — two limits, stated before anyone builds on this:**
+1. **It is a TOY** (numpy drive + weights), not the spiking substrate. It shows the RULE produces permutations; it
+   does NOT show the substrate can implement it.
+2. **The toy's occupancy is HOST bookkeeping** (`argmin` over how strongly each slot is already claimed). The
+   biological version needs that signal to be NEURAL — a slot's own bound-ness must suppress its availability,
+   which is what a familiarity/novelty signal does. **That translation is the actual build, and it is where this
+   can still fail.**
+
+**▶ NEXT: implement retrieve-vs-allocate on the substrate with a NEURAL occupancy signal.** Gate unchanged and
+ordered: `permutation_valid` 6/6 FIRST, then write↔read consistency ≥2/3 per seed, then scramble-teach collapsing,
+then the occupancy-lesion arm failing.

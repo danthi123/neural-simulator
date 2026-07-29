@@ -1,6 +1,6 @@
 {
   "probe": "emerge40_spiking_htm_sp_kernel",
-  "verdict": "GO -- the FULLY-SPIKING HTM Spatial Pooler works: BOTH competitive-pooler learning terms are now committed `sim/` fused kernels -- potentiation (`fused_htm_permanence_update`, ld=0) + the winner-INACTIVE depression (`fused_htm_winner_inactive_depression`, the new additive kernel) -- over the bridge's coincidence synapse permanences. On 6 OVERLAPPING categories (adjacent share 3/6 feats), GENUINE hold-out (the pooler never trains on the held-out members): held-out inheritance 0.94. The winner-inactive kernel is LOAD-BEARING (no-selectivity 0.20); PERMUTED 0.11; dAP-LESION 0.00; 6-seed. FIXED projection 0.61 is a REPORTED SECONDARY (not a gate term -- a fixed random projection lands above chance in a small representation space). => the competitive self-organizing pooler is fully-on-substrate via `sim/` kernels. ONE additive `sim/` kernel (new function; `fused_htm_permanence_update` + all existing paths byte-unchanged).",
+  "verdict": "GO -- the FULLY-SPIKING HTM Spatial Pooler works: BOTH competitive-pooler learning terms are now committed `sim/` fused kernels -- potentiation (`fused_htm_permanence_update`, ld=0) + the winner-INACTIVE depression (`fused_htm_winner_inactive_depression`, the new additive kernel) -- over the bridge's coincidence synapse permanences. On 6 OVERLAPPING categories (adjacent share 3/6 feats), GENUINE hold-out (the pooler never trains on the held-out members): held-out inheritance 0.94. The winner-inactive kernel is LOAD-BEARING (no-selectivity 0.20); PERMUTED 0.11; dAP-LESION 0.00; 3-seed. FIXED projection 0.61 is a REPORTED SECONDARY (not a gate term -- a fixed random projection lands above chance in a small representation space). => the competitive self-organizing pooler is fully-on-substrate via `sim/` kernels. ONE additive `sim/` kernel (new function; `fused_htm_permanence_update` + all existing paths byte-unchanged).",
   "mechanism": "fully-`sim/`-kernel HTM Spatial Pooler: feature->column permanences in the bridge's coincidence synapse weights, learned by fused_htm_permanence_update (potentiation, ld=0) + the new additive fused_htm_winner_inactive_depression (winner selectivity) + homeostatic boosting; inheritance on the spiking bridge over the learned codons",
   "task": "6 categories with OVERLAPPING feature pools; learn the pooler via sim/ kernels; held-out inheritance vs no-selectivity + fixed + permuted + dAP-lesion; multi-seed",
   "seeds": [
@@ -18,7 +18,7 @@
     "pool_lp": 0.05,
     "pool_ld_wi": 0.02
   },
-  "elapsed_seconds": 33.0,
+  "elapsed_seconds": 55.2,
   "per_seed": [
     {
       "seed": 42,
