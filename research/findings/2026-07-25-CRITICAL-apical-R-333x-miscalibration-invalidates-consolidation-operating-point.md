@@ -4689,3 +4689,42 @@ one in the table**, and it is the one that decides the verdict.
 13× but direction does not separate). **▶ NEXT REFINEMENT, specific:** measure the recurrent drive's
 TIMING/alignment against the input rather than its SUM — resonance-in-phase versus resonance-out-of-phase —
 and normalise every cross-condition comparison by reader activity so the controls are valid.
+
+### 2026-07-29 (THE PROBLEM RELOCATED — the direction signal is cleanly present; the difficulty is extracting an ORDER STATISTIC with neurons)
+
+**(1) The timing/alignment refinement is VOID, caught by its own lesion.** Predictive-alignment cosine gave
+`align_FWD = 0.8706` and `align_LESION = 0.8693` — order-destroyed weights score IDENTICALLY, so the measure
+is blind to what R encodes. Everything (forward/reverse/shuffle/lesion) sits at ~0.87 because cosine between
+recurrent drive and next input is dominated by SPATIAL SMOOTHNESS of overlapping tuning, not temporal order.
+No claim is drawn from it.
+
+**(2) THE DECISIVE DIAGNOSTIC — the signal is there and my reads were the problem.** Correlating each reader
+cell's LEARNED preferred position against its PEAK FIRING TIME:
+
+| condition | corr(preferred position, peak time) |
+|---|---|
+| forward | **+0.863** |
+| reverse | **−0.994** |
+
+The direction information is plainly, almost perfectly present in the reader's own activity — on tuning the
+reader ACQUIRED, with nothing handed to it. **So three mechanisms × two reads all failing is a fact about my
+READ-OUTS, not about the stimuli, the tuning, or the mechanism.**
+
+**(3) AND IT EXPLAINS WHY THE HOST DECODER WORKS.** That correlation is essentially what `decode_and_width`
+computes (a weighted correlation between bin index and decoded position). The host instrument succeeds
+because it computes exactly this ORDER STATISTIC — with `np.corrcoef` over a matrix, using place fields it
+was handed.
+
+**⇒ THE OPEN PROBLEM, now stated precisely (which is worth more than a fourth failed attempt):** extract a
+**cross-cell timing correlation** using neurons, without non-physiological delays. Every read I tried was an
+AGGREGATE over cells (summed recurrent drive, mean cosine) and an order statistic is not recoverable from an
+aggregate — it requires comparing WHEN different cells fired. Delay lines do exactly that comparison, which
+is why they worked (2.2× separation) and why they need 63-125 ms of spread that axons do not have.
+
+**⇒ THAT TENSION IS THE REAL FINDING OF THIS ARC.** The read-out architecture is sound (acquired tuning,
+opponent pools, clean nulls, working lesions), the information is present at r = ±0.86/−0.99, and the
+difficulty is squarely that a physiological neural mechanism for a cross-cell timing correlation is not among
+the three obvious candidates. Candidates NOT yet tried, named for the next session: a **ramping/integrator**
+population whose slope encodes sweep direction; **theta-phase coding** (relative phase as the order variable,
+the project has theta machinery); or accepting a **short-delay chain over a SUBSET** of cells (a few pairs at
+10-20 ms rather than the whole population at 125 ms).

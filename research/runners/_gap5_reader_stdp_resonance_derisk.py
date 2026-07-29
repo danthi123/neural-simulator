@@ -105,6 +105,33 @@ def resonance(act, R, gain, leak=0.7):
     return tot
 
 
+def predictive_alignment(act, R, leak=0.7):
+    """TIMING-SENSITIVE read: does the recurrent drive POINT AT the cells that fire NEXT?
+
+    Replaces the summed-drive read, which was direction-BLIND: a reverse sweep activates the same connected
+    pairs as forward, merely in reverse temporal order, so the SUM is identical (measured FWD/REV = 0.843 at
+    0.3%-matched activity). Alignment asks a timing question instead -- if R stores the forward order, then
+    for a forward input the recurrent drive at t should anticipate the input at t+1.
+
+    Cosine is used deliberately: it is scale-free, so this ALSO removes the activity-volume confound that
+    invalidated the static/shuffle controls (their reader activity was 3.4x forward's).
+    """
+    n, T = act.shape
+    h = np.zeros(n)
+    cos_sum = 0.0
+    cnt = 0
+    for t in range(T - 1):
+        rec = np.maximum(R @ h, 0.0)
+        h = leak * h + act[:, t]
+        nxt = act[:, t + 1]
+        nr = np.linalg.norm(rec)
+        nn = np.linalg.norm(nxt)
+        if nr > 1e-9 and nn > 1e-9:
+            cos_sum += float(rec @ nxt / (nr * nn))
+            cnt += 1
+    return cos_sum / cnt if cnt else 0.0
+
+
 def run(seed, N=200, T=120, n_read=40, width=6.0, tau=6.0, gain=1.0, verbose=False):
     rng = np.random.default_rng(seed)
     wake = sweep(N, T, width, rng, direction=+1)
@@ -128,12 +155,15 @@ def run(seed, N=200, T=120, n_read=40, width=6.0, tau=6.0, gain=1.0, verbose=Fal
                      ("widen_travel", dict(direction=+1, widen=True)), ("static_widen", dict(static=True))):
         a = W @ sweep(N, T, width, rng, **kw).T
         scores[name] = resonance(a, R, gain)
+        scores[name + "_align"] = predictive_alignment(a, R)
         scores[name + "_spikes"] = float(a.sum())
 
     a_fwd = W @ sweep(N, T, width, rng, direction=+1).T
     scores["forward_LESION"] = resonance(a_fwd, R_les, gain)
+    scores["forward_LESION_align"] = predictive_alignment(a_fwd, R_les)
     a_shuf = W @ sweep(N, T, width, rng, direction=+1)[rng.permutation(T)].T
     scores["shuffle"] = resonance(a_shuf, R, gain)
+    scores["shuffle_align"] = predictive_alignment(a_shuf, R)
 
     base = scores["reverse"] + 1e-9
     out = {"seed": seed, "asym": round(asym, 4), "asym_lesion": round(asym_les, 4),
@@ -142,7 +172,12 @@ def run(seed, N=200, T=120, n_read=40, width=6.0, tau=6.0, gain=1.0, verbose=Fal
            "static_over_rev": round(scores["static_widen"] / base, 3),
            "lesion_over_rev": round(scores["forward_LESION"] / base, 3),
            "shuffle_over_rev": round(scores["shuffle"] / base, 3),
-           "fwd_spikes": round(scores["forward_spikes"], 1)}
+           "fwd_spikes": round(scores["forward_spikes"], 1),
+           "align_fwd": round(scores["forward_align"], 4),
+           "align_rev": round(scores["reverse_align"], 4),
+           "align_static": round(scores["static_widen_align"], 4),
+           "align_lesion": round(scores["forward_LESION_align"], 4),
+           "align_shuffle": round(scores["shuffle_align"], 4)}
     return out
 
 

@@ -1,0 +1,70 @@
+{
+ "rows": [
+  {
+   "seed": 42,
+   "asym": 0.084,
+   "asym_lesion": 0.0213,
+   "fwd_over_rev": 0.646,
+   "widen_over_rev": 0.656,
+   "static_over_rev": 1.505,
+   "lesion_over_rev": 0.026,
+   "shuffle_over_rev": 1.028,
+   "fwd_spikes": 2790.1,
+   "align_fwd": 0.8788,
+   "align_rev": 0.8811,
+   "align_static": 0.9438,
+   "align_lesion": 0.8714,
+   "align_shuffle": 0.8768
+  },
+  {
+   "seed": 43,
+   "asym": 0.0859,
+   "asym_lesion": 0.0298,
+   "fwd_over_rev": 0.903,
+   "widen_over_rev": 1.092,
+   "static_over_rev": 2.256,
+   "lesion_over_rev": 0.028,
+   "shuffle_over_rev": 1.805,
+   "fwd_spikes": 2658.5,
+   "align_fwd": 0.8702,
+   "align_rev": 0.8662,
+   "align_static": 0.9349,
+   "align_lesion": 0.8691,
+   "align_shuffle": 0.8706
+  },
+  {
+   "seed": 44,
+   "asym": 0.0803,
+   "asym_lesion": 0.0202,
+   "fwd_over_rev": 0.98,
+   "widen_over_rev": 0.69,
+   "static_over_rev": 1.353,
+   "lesion_over_rev": 0.167,
+   "shuffle_over_rev": 1.921,
+   "fwd_spikes": 2763.8,
+   "align_fwd": 0.8629,
+   "align_rev": 0.861,
+   "align_static": 0.9603,
+   "align_lesion": 0.8674,
+   "align_shuffle": 0.8632
+  }
+ ],
+ "mean": {
+  "fwd_over_rev": 0.843,
+  "widen_over_rev": 0.8126666666666668,
+  "static_over_rev": 1.7046666666666666,
+  "lesion_over_rev": 0.07366666666666667,
+  "shuffle_over_rev": 1.584666666666667,
+  "asym": 0.08339999999999999
+ },
+ "go": false,
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_gap5_reader_stdp_resonance_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "--out",
+  "research/findings/raw/gap5_reader/stdp_align.json"
+ ]
+}
