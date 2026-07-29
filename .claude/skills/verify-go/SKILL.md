@@ -379,3 +379,14 @@ start, because all 7 slots were held by long-running incumbent-lane jobs — que
 capacity. VRAM was 11 GB of 24 GB, i.e. ~8 slots of headroom. Raising the dispatcher 7→10 started the crux
 AND a second lane immediately, with no job killed and no priority call needed. **Check headroom before
 treating a scheduling conflict as a prioritisation dilemma.**
+
+**AN ALARM YOU SILENCE BY INVENTING WORK IS MIS-SPECIFIED (2026-07-29).** The heartbeat alarmed
+`QUEUE-LOW(1)` while **ten long-running jobs occupied every slot** — a state that is entirely healthy. The
+first instinct was to hunt for something to enqueue, and the first candidate (the gap#5 neural reader)
+turned out to be a NEW BUILD rather than a runnable job: queueing it would have meant **inventing work to
+satisfy an indicator**, the same shape as the lane-monoculture failure the indicators exist to prevent.
+
+**Fixed by measuring the thing that actually matters:** starvation = a short queue AND **idle capacity right
+now** (`slots - running > 0`). A drained queue with every slot busy is fine and no longer alarms. **When an
+alarm's remedy is "manufacture something", the alarm is measuring the wrong quantity — fix the alarm, do
+not feed it.**
