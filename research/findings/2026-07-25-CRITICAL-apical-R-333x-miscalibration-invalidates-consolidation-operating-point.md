@@ -2621,3 +2621,45 @@ allocator for `comp_attr_*`, giving retrieve-vs-allocate with a self-calibrating
 **GATE, in strict order:** (1) `permutation_valid=True` on **6/6 seeds** — a valid one-to-one fact→slot map is a
 PRECONDITION, not a result; (2) write↔read consistency ≥2/3 per seed; (3) scramble-teach collapses; (4) the
 `lam_dep_wi=0` / allocator-lesion arm fails. Only then does targeting or the apical read become the question again.
+
+## ⛔ "MORE REPLAY" REFUTED — the degeneracy is a RUNAWAY, and slow homeostasis cannot catch a compounding one
+
+The corpus prescribed a **self-calibrating threshold** as the cure for degenerate slot allocation. Measured the
+engine first, rather than adding one: **it already has one, enabled by default** (`enable_homeostasis=True`,
+`homeostasis_target_rate=0.02`, `homeostasis_threshold_adapt_rate=0.0005`; `fused_homeostasis_update` lowers a
+neuron's threshold when it fires below target — that IS boosting).
+
+**But it is ~770× too brief to matter.** Measured over one replay episode (270 steps = 135 ms sim time): per-slot
+mean firing threshold moves **0.0022 mV**, and moves all three slots by the SAME amount, so it does not
+differentiate them at all. Static per-slot threshold differences are **~1.7 mV** (slot 0 −42.87, slot 1 −41.13,
+slot 2 −42.38). Equalising 1.7 mV at 0.0022 mV/episode needs ~770 episodes ≈ 13 min of slow-wave sleep at the ~1 Hz
+sharp-wave-ripple rate — biologically ordinary.
+
+**So the mission-faithful test was MORE REPLAY, not a faster knob** (CLAUDE.md: speed is secondary; sleep-replay
+consolidation is explicitly in scope). **It is REFUTED:**
+
+| cycles | `permutation_valid` | mean driven-slot share |
+|---|---|---|
+| 3 | F · F · **T** (1/3) | 0.402 · 0.462 · 0.741 |
+| 30 | **T** · F · **T** (2/3) | 0.306 · 0.346 · 0.355 |
+| **100** | **F · F · F (0/3)** | 0.292 · 0.338 · 0.370 |
+
+At 100 cycles seed 43 collapses completely to `{0:0, 1:0, 2:0}` — **all three facts on one slot.**
+
+**⇒ MECHANISM: the degeneracy is a RICH-GET-RICHER RUNAWAY.** Hebbian potentiation of the winning slot COMPOUNDS
+with every replay event, while homeostatic threshold adaptation pushes back LINEARLY at 0.0022 mV/episode.
+Compounding beats a linear trickle, so **more replay entrenches the winner instead of dissolving it.** Slow
+homeostasis cannot catch a compounding runaway at ANY duration — the failure is not a shortage of replay time.
+
+**⇒ DESIGN VALIDATION (worth recording):** write↔read CONSISTENCY *improved* to 2/3 on every seed at 100 cycles
+**while permutation collapsed to 0/3** — because a single dominant slot is trivially self-consistent. Reporting
+consistency alone would have read as progress. **This is exactly why `permutation_valid` was made a PRECONDITION
+rather than a co-equal metric**, and it is the second time today a metric inherited from the host-clamped era would
+have inverted a verdict.
+
+**▶ NEXT: the EMERGE-39 boost, explicitly.** The corpus's mechanism is not the engine's slow threshold drift but an
+active duty-cycle boost, `boost = exp(2 × (target_duty − actual_duty))` multiplying each unit's drive
+(`_emerge39_onsubstrate_competitive_pooler_derisk.py:120-153`; on-substrate held-out 0.96 vs 0.20 without, 6/6
+seeds). That is *multiplicative and immediate*, so it can counteract compounding potentiation, which the additive
+0.0005-rate threshold drift provably cannot. Gate unchanged and ordered: `permutation_valid` 6/6 FIRST, then
+consistency ≥2/3 per seed, then scramble-teach collapsing, then the boost-lesion arm failing.
