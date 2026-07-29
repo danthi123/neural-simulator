@@ -579,7 +579,7 @@ def consolidate(bridge, tags, cycles, seed, attractor_on=True):
 # ---------------------------------------------------------------------------
 def coactivation_replay(bridge, facts, tags, cycles, seed, coactivate=True, attractor_on=True,
                         tag_drive_pA=1500.0, pool_drive_pA=1400.0, slot_drive_pA=1400.0, burst_steps=30,
-                        washout_steps=0):
+                        washout_steps=0, metaplastic_beta=0.0, teach_slot=True):
     """Reinstate the FULL pattern per fact during replay: CA3 tag + the fact's concept pools + the fact's dedicated
     attractor slot (fact i -> comp_attr_i). The hippocampal replay reinstating the cortical target is biology-faithful;
     STDP then binds ca1->slot / pool->slot / ca1->concept from the pre(ca1)+post(pool,slot) coincidence."""
@@ -600,6 +600,27 @@ def coactivation_replay(bridge, facts, tags, cycles, seed, coactivate=True, attr
     for i, (noun, adj) in enumerate(facts):
         pool_idx[i] = [a for a in (_idx(f"noun_pool_{noun.upper()}"), _idx(f"adjective_pool_{adj.upper()}")) if a is not None]
         slot_idx[i] = _idx(f"comp_attr_{i}")      # fact i -> its dedicated attractor slot
+    # Per-slot "how claimed am I" = the MEAN afferent weight onto that slot's own cells.
+    # Verified orientation: cp_connections is (n,n) with row=PRE, col=POST (bridge.py:785-786 index
+    # cp_last_spike_time by coo.row/coo.col for pre/post; the COO is built (w,(pre,post)) at :2666),
+    # so an INCOMING total for post-cell j is a COLUMN sum. Mean-per-cell keeps beta interpretable
+    # across slots of differing size.
+    # MEASURED AGAINST BASELINE, and this is load-bearing: the raw column sum is ~62 per slot with a
+    # structural spread of only ~1.5 (2.4%), so a penalty on the RAW value is a near-uniform offset --
+    # at the toy's beta it is ~25 pA uniform with 0.6 pA of differential against 1400 pA of drive, i.e.
+    # it could never steer the competition and every arm would have been silently void. Subtracting each
+    # slot's OWN pre-replay baseline isolates LEARNED occupancy from the fixed wiring asymmetry -- the
+    # same construction `_committed_count` uses (it counts synapses above p_init, not above zero).
+    _mp_claimed = None
+    if float(metaplastic_beta) > 0.0:
+        def _raw():
+            cs = cp.asarray(bridge.cp_connections.sum(axis=0)).ravel()
+            return [float(cs[slot_idx[s]].mean()) if slot_idx.get(s) is not None else 0.0
+                    for s in sorted(slot_idx)]
+        _mp_base = _raw()
+
+        def _mp_claimed():
+            return [max(0.0, v - bv) for v, bv in zip(_raw(), _mp_base)]
     order = list(range(len(facts)))
     for _c in range(int(cycles)):
         rng.shuffle(order)                        # interleaved (CLS shuffled replay)
@@ -610,8 +631,22 @@ def coactivation_replay(bridge, facts, tags, cycles, seed, coactivate=True, attr
             if coactivate:                        # reinstate the fact's cortical pools + target slot -> post-spikes
                 for a in pool_idx[i]:
                     bridge.cp_external_input_current[a] += float(pool_drive_pA)
-                if slot_idx[i] is not None:
+                if slot_idx[i] is not None and teach_slot:
                     bridge.cp_external_input_current[slot_idx[i]] += float(slot_drive_pA)
+            # ---- WEIGHT-HISTORY METAPLASTICITY (2026-07-29, additive; beta=0 => byte-identical) ----
+            # BCM sliding threshold in its subtractive form: a slot that is ALREADY CLAIMED needs more
+            # drive to win, so a NEW fact routes to a free one. The metaplastic variable is the cell's
+            # OWN afferent total (a column sum: coo.col is POST, bridge.py:786) -- postsynaptically
+            # local, and the same quantity `_committed_count` reads. It is the free-vs-taken signal the
+            # four refuted FAIRNESS mechanisms could not supply (they equalise WHO WINS, not IS-IT-TAKEN).
+            # STAGED SHORTCUT, tracked: the column sum is read on the HOST here to test whether the
+            # mechanism survives the substrate's saturation at all. If it does, the burn-down is a
+            # sim/ step-loop term alongside the existing per-postsynaptic-neuron synaptic scaling.
+            if float(metaplastic_beta) > 0.0 and _mp_claimed is not None:
+                colsum = _mp_claimed()
+                for s, sidx in slot_idx.items():
+                    if sidx is not None:
+                        bridge.cp_external_input_current[sidx] -= float(metaplastic_beta) * float(colsum[s])
             for _ in range(int(burst_steps)):
                 bridge._run_one_simulation_step()
             try:

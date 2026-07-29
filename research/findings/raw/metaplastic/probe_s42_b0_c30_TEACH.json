@@ -1,0 +1,37 @@
+{
+ "seed": 42,
+ "beta": 0.0,
+ "cycles": 30,
+ "n_facts": 3,
+ "teach_slot": false,
+ "mapping": [
+  0,
+  -1,
+  -1
+ ],
+ "valid": false,
+ "stable": false,
+ "claimed_before": [
+  61.8826904296875,
+  61.40706253051758,
+  62.90779495239258
+ ],
+ "claimed_after": [
+  60.35477066040039,
+  59.901039123535156,
+  61.36262893676758
+ ],
+ "claimed_spread": 1.4615898132324219,
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_consol_metaplastic_alloc_substrate.py",
+  "--seed",
+  "42",
+  "--beta",
+  "0.0",
+  "--cycles",
+  "30",
+  "--teach",
+  "--out",
+  "research/findings/raw/metaplastic/probe_s42_b0_c30_TEACH.json"
+ ]
+}

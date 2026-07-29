@@ -2901,3 +2901,51 @@ targets *free-vs-taken* rather than *who wins*.
 **🔧 TOOLING GOTCHA (verified, affects all future corpus work):** the Kandel full text is **ISO-8859**, so plain
 `grep` treats it as binary and **silently returns nothing**. Use `grep -a`. Past searches of that textbook may have
 silently found zero.
+
+## 2026-07-29 — METAPLASTICITY: toy GO, substrate probe instrument-limited, and a SILENT-FREEZE TRAP found
+
+**THE CANDIDATE.** All four refuted allocation mechanisms are FAIRNESS mechanisms — they equalise *who
+wins*, which cannot stop two facts claiming the SAME slot. Weight-history **metaplasticity** (BCM sliding
+threshold) asks a different question — *is this cell already claimed* — which is exactly free-vs-taken.
+**Verified absent from the engine** (no `bcm` / `sliding_threshold` / `metaplast` / `theta_m` anywhere in
+`config.py` / `bridge.py` / `kernels.py`; the only weight-history mechanism is `enable_synaptic_scaling`,
+already refuted here). RAG over the findings corpus returns no prior work — a genuine gap, not a
+re-derivation.
+
+**TOY: GO.** Subtractive form `score_i = drive_i − beta·Σ_j w_ij` (the cell's OWN afferent total).
+Control `beta=0` collapses at **1/6**, with maps like `[2,2,2]` / `[1,1,1]` — *reproducing the substrate's
+documented failure mode* (`nmda_compositional_consolidation.py:281`: "exactly one slot takes ~3.1-3.3
+while the others sit at ~1.0"). `beta=0.4` and `0.8` both give **6/6 valid+stable**, mechanism verified
+engaged (13/18 overrides), monotonic dose-response 1-1-1-2-6-6 across two adjacent passing betas.
+**The first draft was VOID and the anti-cheats caught it**: `theta0=0.35` was unreachable, so every
+presentation fell through to an `argmin` fallback that was itself trivially-fair round-robin doing all the
+work — flagged by identical maps across all betas, identical block counts (108 = every presentation), and
+a control that PASSED.
+
+**SUBSTRATE: not yet answered — two instrument failures, both caught, neither reported as a result.**
+1. **Metric too coarse, ~1500:1.** The raw per-slot afferent column sum is ~62/cell while the selective
+   store change is ~0.04. Both arms read a near-identical net DEPRESSION (delta spread **0.039 with host
+   teaching ON and 0.039 with it OFF**). Read naively that says "supervision changes nothing", which would
+   have retired the mechanism on an artifact. The correct read restricts to the store gate's own synapses
+   (for CSR the post-cell of `data[k]` is `indices[k]`).
+2. **The store gate does not exist under `BASE`.** `comp_no_pool_slot=True` **drops the pool→slot pathway
+   entirely**, so `concept_to_comp_attr` is absent and every store read returns `nan`. The probe printed
+   `UNDEFINED` rather than a score — the `undefined_if_empty` discipline working as intended.
+
+**⚠️ THE TRAP THIS EXPOSED, and it is live.** `_try_pgate` swallows the `KeyError` and returns `False` for
+a MISSING gate; `_mean_gate_weight` returns `0.0` for one. **Nothing checks either return value.** So
+freezing a gate that does not exist is a silent no-op that presents as a *perfect* freeze — drift exactly
+`+0.000000`. That is precisely the number the "CONSOLIDATION WORKS" FROZEN-READ arm reported as its
+assertion that the freeze held. **CHECKED, AND THAT RESULT STANDS**: `_consol_cortical_store_probe.py:60`
+explicitly sets `comp_no_pool_slot=False`, so the gate genuinely exists there and the freeze was real.
+But the assertion pattern is unsound — an exact `+0.000000` freeze-drift is equally consistent with a
+gate that isn't there. **Any freeze/lesion on a NAMED gate must first assert the gate EXISTS.**
+
+**STATUS: the metaplasticity substrate question is OPEN, not answered.** Toy GO; substrate arms re-running
+with the store-restricted read and the pathway actually wired. No verdict is claimed from the void arms.
+
+**AWS LM lane CLOSED (89 h, g5.xlarge).** Best `val_ppl` **45.66**; the last evals oscillate 46.4-48.4 with
+`is_best:false` and `best.pt` last written ~5.5 h / ~116 evals earlier ⇒ a genuine plateau, so continuing
+was no longer worth the credits. `best.pt` pulled and verified **md5-identical** (`6cd958f2…`) before
+stopping — necessary, because `aws_train.sh stop` is really a TERMINATE that deletes the SG and key. AWS
+now reports **no running instances**.
