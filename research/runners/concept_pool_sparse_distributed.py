@@ -399,7 +399,7 @@ def train_concept_sparse(
 
 def eval_partial_cue_discrimination(
     bridge, sparse_patterns: List[List[int]], parts: List[List[List[int]]],
-    drive_pA: float = 1500.0, stim_steps: int = 60, hold_roles=(0, 1)):
+    drive_pA: float = 1500.0, stim_steps: int = 60, hold_roles=(0, 1), mode: str = "sum"):
     """PARTIAL-CUE recall on-bridge: drive only roles 0+1 of a fact and ask which stored fact completes.
 
     The shipped `eval_sparse_discrimination` stimulates a whole engram TAG, so it can only ever measure
@@ -422,18 +422,29 @@ def eval_partial_cue_discrimination(
     from collections import Counter
     kc = Counter(keys)
     correct = unique_total = unique_correct = 0
-    for i in range(len(sparse_patterns)):
-        cue_pool = sorted(set().union(*[set(parts[i][r]) for r in hold_roles]))
+    def _drive(cue_pool):
         idx = cp.asarray([shared[j] for j in cue_pool], dtype=cp.int64)
         bridge.cp_external_input_current[:] = 0.0
         bridge.cp_external_input_current[idx] = float(drive_pA)
-        acc = np.zeros(len(sparse_patterns))
+        a = np.zeros(len(sparse_patterns))
         for _ in range(int(stim_steps)):
             bridge._run_one_simulation_step()
             fs = np.asarray(to_host(bridge.cp_firing_states)).ravel()
             for f in range(len(pat_arrs)):
-                acc[f] += float(fs[pat_arrs[f]].sum())
+                a[f] += float(fs[pat_arrs[f]].sum())
         bridge.cp_external_input_current[:] = 0.0
+        return a
+
+    for i in range(len(sparse_patterns)):
+        if mode == "min":
+            # ROLE-CONSISTENT completion: drive each cued role SEPARATELY and require a fact to respond to
+            # BOTH. Summing lets a competitor that matches ONE role strongly out-score the correct fact
+            # that matches both moderately -- off-substrate this cost 0.19-0.21 accuracy on answerable
+            # queries. Conjunctive gating (coincidence / dendritic AND) is a same-family primitive here.
+            per_role = [_drive(sorted(set(parts[i][r]))) for r in hold_roles]
+            acc = np.minimum.reduce(per_role)
+        else:
+            acc = _drive(sorted(set().union(*[set(parts[i][r]) for r in hold_roles])))
         hit = int(np.argmax(acc)) == i if acc.sum() > 0 else False
         correct += int(hit)
         if kc[keys[i]] == 1:
@@ -443,7 +454,7 @@ def eval_partial_cue_discrimination(
     return {"partial_cue_acc": round(correct / n, 4),
             "ambiguous_frac": round(1.0 - unique_total / n, 4),
             "acc_on_unambiguous": round(unique_correct / unique_total, 4) if unique_total else None,
-            "n": n, "hold_roles": list(hold_roles)}
+            "n": n, "hold_roles": list(hold_roles), "mode": mode}
 
 
 def eval_sparse_discrimination(
@@ -524,6 +535,8 @@ def main():
     p.add_argument("--sparsity", type=float, default=0.03)
     p.add_argument("--composed-vocab", type=int, default=0,
                    help="COMPOSED-FACT mode: each item is an SVO-style triple over a shared vocabulary of this size, so items overlap STRUCTURALLY (0 = shipped independent-random behaviour).")
+    p.add_argument("--partial-cue-mode", choices=["sum","min"], default="sum",
+                   help="min = ROLE-CONSISTENT completion (drive each cued role separately, require a fact to respond to BOTH); off-substrate this gains +0.13 to +0.21 on answerable queries.")
     p.add_argument("--eval-partial-cue", action="store_true",
                    help="ALSO measure PARTIAL-cue recall on-bridge (drive 2 of 3 roles, ask which fact completes) — the conversationally decisive query mode the shipped eval cannot test.")
     p.add_argument("--zipf-s", type=float, default=0.0,
@@ -708,7 +721,7 @@ def main():
     )
     if getattr(args, "eval_partial_cue", False) and _parts:
         print("\n[EVAL] PARTIAL-cue recall (2 of 3 roles) — the query mode conversation actually uses", flush=True)
-        _pc = eval_partial_cue_discrimination(bridge, sparse_patterns, _parts)
+        _pc = eval_partial_cue_discrimination(bridge, sparse_patterns, _parts, mode=args.partial_cue_mode)
         print("  partial_cue_acc=%s  ambiguous_frac=%s  acc_on_unambiguous=%s"
               % (_pc["partial_cue_acc"], _pc["ambiguous_frac"], _pc["acc_on_unambiguous"]), flush=True)
         results["partial_cue"] = _pc

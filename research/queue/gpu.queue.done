@@ -1,0 +1,2 @@
+.venv/bin/python -m research.runners.concept_pool_sparse_distributed --seed 42 --n-concepts 64 --sparsity 0.03 --n-lang-input 16384 --composed-vocab 12 --composed-bind > /tmp/claude-1000/clean_scale_n64.log 2>&1
+.venv/bin/python -m research.runners.concept_pool_sparse_distributed --seed 42 --n-concepts 128 --sparsity 0.03 --n-lang-input 32768 --composed-vocab 12 --composed-bind > /tmp/claude-1000/clean_scale_n128.log 2>&1
