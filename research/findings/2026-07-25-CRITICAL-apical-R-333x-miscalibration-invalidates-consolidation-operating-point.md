@@ -2663,3 +2663,44 @@ active duty-cycle boost, `boost = exp(2 × (target_duty − actual_duty))` multi
 seeds). That is *multiplicative and immediate*, so it can counteract compounding potentiation, which the additive
 0.0005-rate threshold drift provably cannot. Gate unchanged and ordered: `permutation_valid` 6/6 FIRST, then
 consistency ≥2/3 per seed, then scramble-teach collapsing, then the boost-lesion arm failing.
+
+## ⛔ THE DUTY-CYCLE BOOST IS REFUTED — I aimed it at a variable already measured NOT to decide the winner
+
+Built the EMERGE-39 boost as **intrinsic excitability plasticity**: after each replay window, lower
+`cp_neuron_firing_thresholds` for slots below their 1/N duty share, raise it for slots above. Chose the engine's own
+threshold array over an injected current deliberately, so the mechanism stays biological rather than becoming
+another host teacher. Swept boost ∈ {0.0 (lesion), 0.5, 2.0} × 3 seeds at **cycles=100**, the condition where the
+unboosted arm collapsed to 0/3 permutations.
+
+**Result: `permutation_valid=False` in ALL NINE runs, and targeting is unchanged to three decimals:**
+
+| boost | seed 42 | seed 43 | seed 44 |
+|---|---|---|---|
+| 0.0 | 0.2921 | 0.3381 | 0.3699 |
+| 0.5 | 0.2922 | 0.3375 | 0.3703 |
+| 2.0 | 0.2924 | 0.3378 | 0.3706 |
+
+**LEVER VERIFIED LIVE, so this is a real refutation and not an inert-lever null:** applying the boost moves a slot's
+mean threshold **−42.861 → −43.527 mV (−0.667)**, and it **persists** across simulation steps (drift +0.016 over 10
+steps — the engine's own homeostasis does not erase it).
+
+**⇒ THE BOOST WORKS AND IS SIMPLY IRRELEVANT: the slot competition is NOT threshold-limited.** A sub-mV threshold
+nudge cannot move a contest decided by a ~43,200 sum_w non-selective synaptic broadcast.
+
+**⇒ MY ERROR, AND IT WAS PREDICTABLE FROM EVIDENCE I ALREADY HAD.** The targeting workflow had already EXCLUDED
+excitability heterogeneity as a cause: permuting every slot's 120-neuron firing-threshold vector (per-slot means
+moving up to 1.74 mV) changed the winner in **0 of 27 windows**. Thresholds do not decide this competition. I then
+translated EMERGE-39's boost — which multiplies **DRIVE** — onto **THRESHOLDS**, for biological faithfulness, and
+thereby aimed a good mechanism at a variable already measured to be inert. *The faithfulness instinct was right; the
+target was wrong, and the measurement that says so was already in this document.*
+
+**⇒ CORRECTED NEXT STEP:** the boost must scale what actually decides the winner — the **synaptic drive**. In
+EMERGE-39 the boost multiplies the connected-overlap drive read from `cp_connections.data`, not an intrinsic
+threshold. On this substrate that means boosting the **pool→slot weights** of under-winning slots (or gating their
+transmission), which is where the ~43,200 sum_w broadcast lives. Gate unchanged and ordered: `permutation_valid`
+6/6 FIRST, then consistency ≥2/3, then scramble-teach collapsing, then the boost-lesion arm failing.
+
+**PROCESS:** this is the second time today I built a mechanism that a measurement already in this findings doc
+predicted would fail (the first: prescribing a fix for mis-targeting after attractor-lock had been excluded). The
+corpus-check rule I added covers *prior findings*; it does not cover *this session's own earlier measurements*.
+**Before building, re-read the exclusions already established in the current arc.**

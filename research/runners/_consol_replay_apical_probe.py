@@ -49,6 +49,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--cycles", type=int, default=3)
+    ap.add_argument("--boost-rate", type=float, default=0.0, help="DUTY-CYCLE INTRINSIC BOOST (EMERGE-39 form) on the slots. After each replay window, lower the firing threshold of slots that have won LESS than their 1/N share and raise it for slots that won more. Applied to the engine's OWN cp_neuron_firing_thresholds — the same state variable its homeostasis uses — because the built-in rate (0.0005) moves only 0.0022 mV per episode and CANNOT catch a compounding Hebbian runaway (measured: more replay makes allocation WORSE, 100 cycles -> 0/3 permutations). 0.0 = LESION arm.")
     ap.add_argument("--lam-dep-wi", type=float, default=0.0, help="RANK 3 (corpus-prescribed): SELF-ORGANIZING winner-inactive depression on concept_to_comp_attr. After each replay window the ACTUAL winning slot depresses synapses from pools that were INACTIVE while it won, so slots self-differentiate WITH NO ANSWER KEY (EMERGE-39 form: post_win = the competition own winner, held-out 0.96 with vs 0.20 without, 6/6 seeds). NOTE the gate doc specifies post_win = the TAUGHT slot — that is a host teaching signal and is NOT what this implements. 0.0 = LESION arm. Sweep LOW-FIRST: a high value over-selectivizes (emerge48 boundary).")
     ap.add_argument("--slot-drive", type=float, default=1400.0, help="coactivation_replay slot_drive_pA. THE RELOCATED DEFECT: at 1400 the cue lands AT CHANCE on a washed-out substrate (0.320 vs 0.333) — it competes against a ~43,200 sum_w NON-SELECTIVE pool broadcast to every slot plus ~40,700 self-recurrence. Raise until the cue wins on its own.")
     ap.add_argument("--washout", type=int, default=0, help="quiet steps between replay windows. THE DIAGNOSED FIX: the previous window winner is barred from winning the next (2/48 repeats vs 16/48 chance), so the cue loses exactly when it collides with it (0.143 vs 0.700 otherwise).")
@@ -207,7 +208,7 @@ def main():
         _arrs = [np.asarray(sorted(rm.indices(_p)), dtype=np.int64) for _p in _ps
                  if _p in (names or {_p})]
         _pool_all[_i] = np.concatenate(_arrs) if _arrs else np.array([], dtype=np.int64)
-    _wi_state = {"seen": 0, "map": {}}   # map: window index -> winning slot (the SELF-ORGANIZED assignment)
+    _wi_state = {"seen": 0, "map": {}, "wins": {}}   # map: window index -> winning slot (the SELF-ORGANIZED assignment)
     # The replay order is SHUFFLED per cycle (np.random.default_rng(seed+777) inside coactivation_replay),
     # so window w does NOT drive fact w % N. Reconstruct the true order HERE, before replay — using w % N
     # would depress against the wrong "active pool" set in most windows.
@@ -254,7 +255,20 @@ def main():
             if sum(tot) > 0:
                 win = int(np.argmax(tot))
                 _wi_state["map"][w] = win
+                _wi_state["wins"][win] = _wi_state["wins"].get(win, 0) + 1
                 _winner_inactive_depress(win, {_order_pre[w]})   # the TRUE driven fact for this window
+                # DUTY-CYCLE INTRINSIC BOOST. Hebbian potentiation of the winner COMPOUNDS each window,
+                # while the engine's homeostasis pushes back LINEARLY at 0.0022 mV/episode — compounding
+                # wins, which is why more replay made allocation WORSE. This drives the SAME state
+                # variable (cp_neuron_firing_thresholds) from the duty cycle, so an under-winning slot
+                # becomes easier to ignite until it claims something.
+                if float(args.boost_rate) > 0.0:
+                    nwin = w + 1
+                    target = 1.0 / len(slot)
+                    th = b.cp_neuron_firing_thresholds
+                    for j in sorted(slot):
+                        duty = _wi_state["wins"].get(j, 0) / float(nwin)
+                        th[cp.asarray(slot[j])] -= cp.float32(float(args.boost_rate) * (target - duty))
         return r
 
     b._run_one_simulation_step = sampling_step_wi
