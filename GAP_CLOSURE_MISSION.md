@@ -36,6 +36,20 @@ self-armed Monitors to relay (both stalled). Alongside the heartbeat, run the co
 `feedback_proactively_monitor_long_runs`). A LAUNCH-BOUND run (high CPU + idle GPU) is genuinely computing but
 pathologically slow — the heartbeat's "GPU idle + no new output" catches it; kill + re-scope, do not wait hours.**
 
+**SECOND, BEFORE STOCKING ANY COMPUTE — check LANE COVERAGE, not just lane fullness:**
+
+```bash
+.venv/bin/python tools/lane_check.py     # exits 1 on monoculture / unserved crux / no CPU lane
+bash tools/lane_dispatch.sh gpu 7 &      # keeps 7 GPU slots full from research/queue/gpu.queue
+```
+
+**Why (2026-07-29, owner flagged it TWICE in one day):** a 100%-busy GPU with a stocked queue looks like
+correct prioritization from the inside and is not. That day every queued job served ONE lane (H · Memory)
+while **F · gap#4 — the roadmap's own "single load-bearing dependency"** — had zero allocation, and the five
+**[CPU]** lanes (A Affect · B Curiosity · C Self/Workspace · D Perception · E Language), explicitly disjoint
+and free beside GPU work, sat unqueued next to 36 idle pool cores. The first CPU-lane runner dispatched
+returned a GO in 40 seconds. **Stock ACROSS lanes; a queue that never names the crux IS the drift.**
+
 Then read CURRENT STATE below and resume from EXACT NEXT ACTION. (If a state-checking heartbeat is already live this
 session, do not arm a second one.)
 
