@@ -4182,3 +4182,30 @@ ambiguous cues where a hit is luck). The pre-flight predicted sum 0.978 / min 1.
 called it unable to discriminate; it could not. `ambiguous_frac` measured **0.2812** against the pre-flight's
 **0.281** — an exact match, which validates the ambiguity instrument even though the accuracy comparison is
 void. **The n=128 arms (predicted 0.886 vs 0.965) are the discriminating test.**
+
+### 2026-07-29 (CRUX LANE — I re-ran ALREADY-BANKED work, because I skipped my own pre-build check)
+
+Rebalancing toward the roadmap's crux (F · gap#4), I queued the P3.2 rate-reference re-run. It completed
+6 seeds and returned **NO-GO (3/3 and 3/3)** — with a precise and already-known reason:
+
+* credit(best **0.858**) vs reservoir(**0.130**), ceiling 0.969, depth-sep True, all guards True
+  (no weight transport, byte-identity, permutation and lesion controls all collapse correctly);
+* **the one failing criterion:** `apical-silent EARNED: plastic ratio 1.028 vs frozen ratio 1.028 → False`
+  — the learned interneuron machinery is **inert on the feedforward weights at rate**;
+* the runner says so itself: *"at this numpy RATE reference the LEARNED arms are accuracy-indistinguishable
+  from fixed_fa... That separation is a SPIKING op-point question (the 3090 phase)."*
+
+**⚠️ AND IT WAS ALREADY BANKED FIVE DAYS EARLIER:**
+`research/findings/2026-07-24-gap4-learned-selfpredicting-microcircuit-CPUrate-GO.md`. I spent crux-lane
+GPU slots reproducing a known result. **`tools/before_you_build.sh` exists precisely to catch this and I did
+not run it** — I moved fast on the prioritization critique and skipped the check. Running it afterwards
+surfaces the design doc immediately.
+
+**The REAL item 1 is the on-bridge SPIKING port**, and it was build-ahead ready the whole time:
+`2026-07-24-gap4-onbridge-spiking-port-DESIGN.md` + `_gap4_onbridge_spiking_selfpredict_derisk.py`
+(46 KB, `--construct-smoke` / `--full --seeds`). Queued at the front: smoke, then 6 seeds.
+
+**The lesson is not "check the corpus" — that rule already existed and is already a tool.** It is that
+**urgency defeats checks**: the pre-build check was skipped precisely because the prioritization critique
+made speed feel appropriate. The corrective is that a *rebalance* is exactly when to run it, since queueing
+into an unfamiliar lane is the case with the least context and the highest chance of duplicating work.
