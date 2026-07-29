@@ -410,3 +410,29 @@ is worse than no check, because it manufactures confidence. Fixed twice over: th
 process's real fd, and **`UNDETERMINED` is a FAILURE, never a pass**. Also handles STALE logs — a log older
 than its process is a leftover from a previous run (the killed CPU crux logs still said "numpy" 62 minutes
 later and were nearly misread as a repeat failure).
+
+## `tools/engagement_check.py` — the day's DOMINANT failure, made mechanical (2026-07-29)
+
+**Six instances in one session, each a different proximate cause, all the same error: a measurement
+returned a NUMBER while the thing being measured never happened.** An unreachable threshold (a fallback
+branch did the work) · a soft bound that never bound · a lesion on a gate that was never declared (drift
+exactly `+0.000000` reads as a *perfect* freeze) · the crux 47 min on the CPU · alpha sweeps whose control
+sat at ceiling · on-bridge V1 measuring orientation selectivity in neurons firing at 0.0007.
+
+`tools/lab.py` already had helpers for this, but they must be *imported and remembered*. This runs on the
+ARTIFACT afterwards, so it catches probes written without them:
+
+```bash
+.venv/bin/python tools/engagement_check.py research/findings/raw/**/result.json
+```
+
+Two tests, both validated against a known-VOID and two known-GOOD artifacts: **NEAR-ZERO ACTIVITY** (a
+firing rate / dw / drift / sat_frac at ~0) and **EXACTLY CHANCE** (a score equal to 1/n — "nothing
+happened", not "it failed"). Control metrics (`permuted`, `lesion`, `nocorpus`, `scramble`, `shuffle`,
+`abstain`…) are EXEMPT: a control at zero is the control *working*.
+
+**A third test was BUILT AND THEN DELETED.** "Identical arms → inert lever" fired on a known-GOOD artifact
+because, from an artifact alone, there is no way to distinguish *two arms of one comparison* from *two
+different quantities that legitimately coincide* (`n_registered == n_rendered_exact` IS the GO). **A
+heuristic that cannot be made reliable is worse than none — it trains the reader to ignore the checker.**
+That test belongs at probe time where the arms are known: `lab.py::lever(before, after)`.
