@@ -3698,3 +3698,30 @@ spend: `n_used` and the hub fraction are computed from the pattern set alone, in
 show LOWER `n_used` than uniform (frequent words concentrate the store on fewer neurons) and correspondingly
 worse accuracy — and the frequency-adaptive arm should RAISE `n_used` back up and recover accuracy with it.
 If accuracy moves without `n_used` moving, the heuristic is wrong and must be dropped.
+
+**QUANTITATIVE PRE-REGISTRATION for the queued arms (utilisation heuristic), with a comparison trap named.**
+Utilisation computed from the pattern sets alone, before the arms run (milliseconds, no GPU):
+
+| config | n_used | mean load | hubs (>8 facts) | predicted acc |
+|---|---|---|---|---|
+| independent (MEASURED) | 1614 | 1.96 | 0.000 | **1.000** |
+| queued: bind + Zipf + **adaptive** | 1357 | 2.30 | 0.018 | **~0.96** |
+| ref: bind + uniform V=60 | 1333 | 2.34 | 0.003 | ~0.95 |
+| queued: bind + Zipf | 1110 | 2.81 | 0.036 | **~0.91** |
+| bind uniform V=12 (MEASURED) | 688 | 4.55 | 0.111 | **0.844** |
+| union uniform V=12 (MEASURED) | 359 | 8.66 | 0.439 | **0.562** |
+
+Predictions interpolate the three measured anchors (359→0.562, 688→0.844, 1614→1.000).
+
+**⚠️ COMPARISON TRAP, named before it can be fallen into:** the queued arms use **V=60**, while the two
+measured composed arms used **V=12**. So the Zipfian arms should come out ABOVE 0.844 despite Zipf being
+the harder word distribution — because the larger vocabulary raises utilisation (1110 vs 688) more than
+Zipf lowers it. Reading "Zipf arm > uniform arm" as *"Zipfian facts are fine"* would be wrong; the correct
+control for the Zipf penalty is **bind+Zipf (1110) vs bind+uniform at the SAME V=60 (1333)**, which the
+heuristic says should cost ~0.04.
+
+**⚠️ THE TWO PRE-REGISTRATIONS NOW DISAGREE, which is useful.** The earlier one (from the confirmed
+overlap-reduction lesson) predicts adaptive beats plain bind by MORE than +0.05. The utilisation heuristic
+predicts +0.04 (1110→1357). They are close but discriminable, and whichever survives tells us which account
+is doing real work — the empirical "overlap-reduction is under-valued on substrate" lesson, or the
+mechanistic "reachable code space" heuristic.
