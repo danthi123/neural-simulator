@@ -31,6 +31,18 @@ while read -r PID ETIME ARGS; do
   LOG=$(readlink -f /proc/"$PID"/fd/1 2>/dev/null)
   case "$LOG" in *.log) ;; *) LOG=$(echo "$ARGS" | grep -oE '/tmp/[^ ]+\.log' | head -1) ;; esac
   DEV="⚠️ UNDETERMINED"
+  # AUTHORITATIVE FIRST: the process's own SIM_BACKEND env var. Log parsing depends on a runner choosing
+  # to print a device line, and the crux runner does not — it read UNDETERMINED for jobs whose backend was
+  # verified by hand via /proc/<pid>/environ. Use the env; fall back to the log only when it is absent.
+  ENVB=$(tr '\0' '\n' < /proc/"$PID"/environ 2>/dev/null | grep -oE '^SIM_BACKEND=.*' | cut -d= -f2)
+  case "$ENVB" in
+    cupy) DEV="GPU (env SIM_BACKEND=cupy)" ;;
+    numpy) DEV="⛔ CPU (env SIM_BACKEND=numpy)"; BAD=$((BAD+1)) ;;
+  esac
+  if [ -n "$ENVB" ]; then
+    LINES="$LINES  $(printf '%-42s' "${RUNNER:-?}") $(printf '%-8s' "$ETIME") $DEV\n"
+    continue
+  fi
   if [ -n "$LOG" ] && [ -f "$LOG" ]; then
     # process age in seconds (etime is [[dd-]hh:]mm:ss)
     PSTART=$(ps -o lstart= -p "$PID" 2>/dev/null)
