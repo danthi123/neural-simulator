@@ -3152,3 +3152,12 @@ anywhere, and saturation is this project's most repeated failure family).
 **IN FLIGHT:** on-bridge per-pool capacity at n_concepts = 32 / 64 / 128 on the existing validated harness
 (one shared pool, seed 42). This measures where the real substrate ceiling sits before any new build, and
 whether multi-pool (the shipped route) is required rather than optional.
+
+**⚠️ GOTCHA (would be read as a capacity ceiling, and is NOT one).** Running the sparse-pool harness at
+`--n-concepts 64` and `128` crashes in `sim/text_embeddings.py:196`:
+`orthogonal_drive_pattern: n_active=246 > stride=128 (n_neurons=8192 / n_cues=64)`. That is the
+**LANGUAGE INPUT layer** refusing to pack that many non-overlapping cue bands into the default 8192
+neurons — **not** the shared pool failing to store 64 items. Naively this reads as "sparse storage caps
+out just above 32", which would have manufactured a capacity wall out of a cue-encoder constraint (and
+would have been especially convincing because ~32 is exactly the banked per-pool figure). Fix is config,
+not mechanism: `--n-lang-input >= n_concepts * n_active` (20480 for 64, 40960 for 128).
