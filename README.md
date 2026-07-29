@@ -9,18 +9,19 @@ strengthen or weaken based on millisecond-precise spike timing. The core
 runs on local biological rules — *not* backpropagation through a static
 graph, no supervised labels, no symbolic optimizer.
 
-The north-star: a *single* simulated brain that not only navigates a world
-but learns to **converse genuinely** — reasoning to its own conclusions,
-building an emotionally-colored model of the world, and developing a working
-sense of what it does and doesn't know — with **every cognitive step done by
-spiking neurons** rather than ordinary code. It is meant to be raised the way a
-child is: first with a patient AI teacher, later through real interaction, with
-that teacher gradually replaced by the brain's own circuitry. This is a
-long-horizon research bet, pursued honestly — the project *builds and measures*
-the functional hallmarks of attention, emotion, and self-awareness on the
-spiking substrate, and is careful never to claim the brain actually *feels*
-anything. Where the biology genuinely can't do something on this substrate, that
-limit is measured and reported rather than papered over.
+The north-star is a *single* simulated brain that navigates a world **and**
+learns to **converse genuinely**. Every cognitive step between sensing and
+acting is done by spiking neurons, not by ordinary code.
+
+The brain is meant to be raised the way a child is. A patient AI teacher comes
+first. Real interaction follows. The teacher is then replaced, piece by piece,
+by the brain's own circuitry.
+
+This is a long-horizon research bet, and the project states its limits plainly.
+It *builds and measures* the functional hallmarks of attention, emotion, and
+self-awareness on the spiking substrate. It never claims the brain *feels*
+anything. Where the biology genuinely cannot do something on this substrate,
+the project measures that limit and reports it.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)
@@ -97,7 +98,9 @@ flowchart TB
 
 ## 🗺️ Roadmap — the full development path
 
-**[`ROADMAP.md`](ROADMAP.md) is the plain-language source of truth for progress toward the goal** — a single simulated spiking brain that learns to converse genuinely and develops toward emotion and self-awareness, built the honest way: learning from experience, with no permanent external AI model doing the thinking. It's written to be read without knowing the codebase, and lays out the whole developmental path stage by stage — each mapped to the brain region/function it reproduces (with textbook and paper citations), a status, what's done, what's open, and the next step — plus the temporary stand-ins still to be replaced, the honest remaining walls, and a no-hype assessment of the distance left.
+**[`ROADMAP.md`](ROADMAP.md) is the plain-language source of truth for progress.** The goal it tracks is a single simulated spiking brain that learns to converse genuinely, and develops toward emotion and self-awareness. It is built the honest way: it learns from experience, and no permanent external AI model does the thinking.
+
+You can read it without knowing the codebase. It lays out the developmental path stage by stage. Each stage is mapped to the brain region or function it reproduces, with textbook and paper citations, a status, what is done, what is open, and the next step. It also lists the temporary stand-ins still to be replaced, the remaining walls, and a no-hype assessment of the distance left.
 A deeper, engineer-level working plan (every faculty, each remaining wall, and the specific biological mechanism meant to get past it) lives in [`docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`](docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md).
 
 At a glance (see [`ROADMAP.md`](ROADMAP.md) for the plain-language detail and citations):
@@ -121,7 +124,17 @@ At a glance (see [`ROADMAP.md`](ROADMAP.md) for the plain-language detail and ci
 | Self-model & metacognition | Reads + reports its own attention, confidence, and authorship | 🟨 First results |
 | Curiosity | Turns "I don't know" into asking a teacher and learning | 🟨 First results |
 
-Legend: ✅ emergent (learned from experience) · 🟩 done (with one hand-designed part) · 🟨 partial / first results · 🟧 a mapped limit · 🧩 temporary stand-in · ⬜ open. **The honest distance ahead:** open-ended fluent speech without the small conventional-AI crutch (its first home-grown rung has landed as a research result — an emergent, on-brain, no-backpropagation next-word model); a deeper learning rule to lift the remaining ceilings; and the newest chapter — genuine reasoning, an emotionally-colored world-model, a working self-model, and curiosity — now begun with first validated results (see below). A real, bounded, multi-month distance — not a demo away, and not blocked.
+Legend: ✅ emergent (learned from experience) · 🟩 done (with one hand-designed part) · 🟨 partial / first results · 🟧 a mapped limit · 🧩 temporary stand-in · ⬜ open.
+
+**The honest distance ahead.** Three things remain.
+
+First, open-ended fluent speech without the small conventional-AI crutch. Its first home-grown rung has already landed as a research result: an emergent, on-brain, next-word model that uses no backpropagation.
+
+Second, a deeper learning rule, to lift the remaining ceilings.
+
+Third, the newest chapter — genuine reasoning, an emotionally-colored world-model, a working self-model, and curiosity. That chapter has begun, with first validated results (see below).
+
+The distance is real, bounded, and measured in months. It is not a demo away, and it is not blocked.
 The roadmap also covers the body, supporting systems (cerebellum, sleep), the 3D viewer and interactive consoles, and future directions.
 
 ---
@@ -138,27 +151,38 @@ optional real-time 3D view shows every neuron firing and every synapse
 pulsing as the network learns.
 
 The project asks a single question: **how much of intelligence emerges from
-biological rules alone?** Instead of gradient descent — the powerful but
-biologically implausible optimizer behind modern AI — it uses only local
-learning rules that real brains plausibly use: "neurons that fire together
-wire together" (Hebb 1949), refined by dopamine-driven reward (Schultz
-1998). It is a working platform *and* an active research program: the
-simulation engine, brain-region framework, and navigation agent are mature
-and demonstrated, while a small neuron-built conversational agent is a
-growing capability with validated core behaviors.
+biological rules alone?**
 
-It is **not** a large language model and does not try to match one for raw
-fluency. Its aim is different, and in some ways harder: a brain that reasons to
-its own conclusions, colors what it knows with emotion, and develops a working
-sense of what it does and doesn't know — a memory-and-reasoning system that is
-continual (it keeps learning without forgetting), trustworthy (it can tell when
-it doesn't know something, and is learning to get *curious* about it rather than
-bluff), and self-contained (after training it runs entirely on local hardware
-with no external model). The longer-range wager is the *emergentist* one — that
-mind emerges from emulating a brain completely and faithfully enough — so the
-work is measured by the faithfulness of the biology, and every claim about
-"self-awareness" or "emotion" here means a *measured functional correlate*,
-never an assertion that the brain has inner experience.
+Modern AI is built on gradient descent — a powerful optimizer, but one no brain
+could run. This project uses only local learning rules that real brains
+plausibly use: "neurons that fire together wire together" (Hebb 1949), refined
+by dopamine-driven reward (Schultz 1998).
+
+It is a working platform *and* an active research program. The simulation
+engine, the brain-region framework, and the navigation agent are mature and
+demonstrated. A small neuron-built conversational agent is a growing capability
+with validated core behaviors.
+
+It is **not** a large language model, and it does not try to match one for raw
+fluency. The aim is different, and in some ways harder. The target is a brain
+that reasons to its own conclusions, colors what it knows with emotion, and
+develops a working sense of what it does and does not know.
+
+That brain must be three things at once:
+
+- **continual** — it keeps learning without forgetting what it already knew;
+- **trustworthy** — it can tell when it does not know something, and it is
+  learning to get *curious* about the gap rather than bluff;
+- **self-contained** — after training it runs on local hardware, with no
+  external model.
+
+The long-range wager is the *emergentist* one: mind emerges from emulating a
+brain completely and faithfully enough. So the work is measured by the
+faithfulness of the biology, not by a benchmark score.
+
+One caveat governs every word in this README. When the project reports
+"self-awareness" or "emotion", it means a *measured functional correlate* —
+never a claim that the brain has inner experience.
 
 **Who might find it useful:**
 
@@ -220,11 +244,11 @@ never an assertion that the brain has inner experience.
 - **Learning meaning and categories from experience** (unsupervised,
   research-stage). By "listening" to a stream of text, the brain learns
   word-meaning representations — which words tend to occur in similar
-  contexts. By observing co-occurrences, or by *seeing* objects through its
-  visual front end, it discovers categories and simple taxonomies on its own
-  (that several things are a kind of "bird"), then *inherits* properties across
-  them — a never-taught robin "can fly" because a bird can — with exceptions (a
-  penguin walks). Shown a novel object through its simulated eyes, it can place
+  contexts. It then discovers categories and simple taxonomies on its own — that several
+  things are a kind of "bird". It does this from co-occurrences, or by *seeing*
+  objects through its visual front end. It also *inherits* properties across a
+  category: a never-taught robin "can fly" because a bird can. Exceptions
+  survive — a penguin walks. Shown a novel object through its simulated eyes, it can place
   the never-seen shape in a known category and answer about it. You can then
   converse with it about what it discovered.
 
