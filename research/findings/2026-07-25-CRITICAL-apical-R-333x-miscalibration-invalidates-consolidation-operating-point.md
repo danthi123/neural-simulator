@@ -3493,3 +3493,29 @@ epochs — i.e. exactly the regime where these numbers IMPROVE. The running on-b
 better than the toys predicted, not worse. That is a prediction, not a result; the arms remain the test.
 Recorded because it inverts the risk I stated, and an unstated inverted risk is how a surprise becomes a
 retraction later.
+
+### 2026-07-29 (PRE-REGISTERED LIMITATION — what the running on-bridge arms can and cannot show)
+
+Recorded BEFORE the arms finish, so the result cannot be over-read afterwards.
+
+**What they measure:** `eval_sparse_discrimination` (`concept_pool_sparse_distributed.py:390`) cues each
+item with its FULL word pattern via `language_input` and checks that the right pattern is discriminated.
+That is **full-cue recall only**.
+
+**What they do NOT measure: partial-cue retrieval** — cueing 2 of a fact's 3 constituents and asking which
+fact completes. That is the metric this session identified as the conversationally decisive one ("what did
+the dog eat?" supplies agent+action, not the answer), and the one shown to sit at 75-100% of an information
+ceiling. The harness has no read path for it: it cues by WORD INDEX through the orthogonal cue encoder, so
+a composed item is cued as a single unit, not as a subset of its constituents. Measuring partial cue
+on-bridge needs a different read — drive the pool pattern for two constituents directly and see which
+stored fact completes.
+
+**⇒ CONSEQUENCE FOR READING THE ARMS.** A GO on these arms licenses exactly one claim: *composed facts,
+including ones sharing constituents, are discriminable on the spiking substrate when fully cued.* It does
+NOT license "the consolidation memory works", because the query mode conversation actually uses is
+untested on-bridge. Any summary that drops the qualifier is overclaiming — and this arc has already
+produced one retraction of exactly that shape (a WRITE result reported as a capability while the READ was
+never exercised).
+
+**Follow-on, specified now:** add a constituent-subset drive path to the harness and re-run the same grid
+for partial cue. Until that exists, on-bridge evidence covers the write-and-full-recall half only.
