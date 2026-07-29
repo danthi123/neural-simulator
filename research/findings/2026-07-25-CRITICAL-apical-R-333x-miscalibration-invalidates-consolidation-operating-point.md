@@ -3594,3 +3594,42 @@ fact, what fraction of its captured tag lies inside its OWN pattern versus in ov
 tag purity tracks the accuracy drop, the defect is in tag capture (a WRITE-side problem with a different
 fix) rather than in the readout. Recorded as an open diagnostic, NOT as a conclusion: the honest status is
 that 0.562 is reproduced by a plausible model whose required noise term is not yet justified.
+
+### 2026-07-29 (PRE-REGISTERED PREDICTION CONFIRMED) — role-binding is LOAD-BEARING on the substrate, and the toys understate it 4.5×
+
+The prediction was recorded BEFORE the arm ran: *"if the substrate's extra harshness is genuinely driven by
+overlap, binding should help MORE on-bridge than off — prediction: sbind32 > 0.70."*
+**Measured: 27/32 = 0.844.** Confirmed.
+
+| config | off-substrate | **on-bridge** | substrate gap | max overlap |
+|---|---|---|---|---|
+| independent | 1.000 | **1.000** | 0.000 | 13/99 |
+| composed UNION | 0.917 | **0.562** | −0.355 | 68/99 |
+| composed BIND | 0.979 | **0.844** | −0.135 | 68/99 (mean 17.6 vs 28.2) |
+
+**The gain from binding is +0.282 on-bridge versus +0.062 off-substrate — 4.5× larger on real spikes**, and
+it recovers **62%** of the union arm's substrate gap (0.355 → 0.135).
+
+**⇒ THREE CONCLUSIONS, in order of how much they change what we do:**
+1. **Overlap IS the substrate's binding constraint.** The alternative branch of the pre-registration
+   (~0.56-0.62, meaning the gap is not overlap-driven and the off-substrate work is untrustworthy) is
+   excluded. The design work stands.
+2. **Role-binding is load-bearing on hardware, not the marginal nicety the toy implied.** Off-substrate it
+   looked like a +0.06 refinement worth having; on the substrate it is the difference between a memory that
+   works and one that does not. Priority in the build rises accordingly.
+3. **GENERAL LESSON, and the useful one: the toys systematically UNDER-value any mechanism that reduces
+   overlap.** The linear dot-product readout partially cancels interference that a spike-count readout
+   cannot, so overlap costs more and overlap-reduction buys more on real hardware. Every off-substrate
+   estimate of an overlap-reducing mechanism in this arc should be read as a LOWER BOUND on its substrate
+   value — including the frequency-adaptive coding, which also cuts overlap (14.34 → 9.91 measured on the
+   harness).
+
+**⚠️ NEW PRE-REGISTERED PREDICTION, recorded before the queued arms run.** By conclusion (3), the
+frequency-adaptive arms should also beat their off-substrate estimate. Off-substrate, adaptive bought
++0.05 over plain bind at N=32-equivalent settings. **Prediction: the on-bridge Zipfian adaptive arm beats
+the on-bridge Zipfian bind arm by MORE than +0.05.** If it does not, conclusion (3) is over-generalised
+from a single mechanism and must be narrowed to role-binding specifically.
+
+**Residual, stated plainly:** bind still sits 0.135 below its off-substrate prediction, so overlap is not
+the WHOLE story — consistent with the unexplained noise term above (~35-40% required vs 5-10% Poisson) and
+the open engram-tag-purity diagnostic. Binding closes most of the gap; it does not close all of it.
