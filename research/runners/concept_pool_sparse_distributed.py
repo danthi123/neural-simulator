@@ -164,7 +164,8 @@ def build_sparse_pool_bridge(
 def generate_sparse_patterns(n_concepts: int, n_pool: int, pattern_size: int,
                                seed: int, composed_vocab: int = 0,
                                composed_bind: bool = False, zipf_s: float = 0.0,
-                               freq_adaptive: bool = False) -> List[List[int]]:
+                               freq_adaptive: bool = False,
+                               parts_out: List[List[List[int]]] = None) -> List[List[int]]:
     """Generate per-concept SPARSE RANDOM patterns in the shared pool.
 
     Each pattern = `pattern_size` random neurons from `n_pool`. Patterns
@@ -234,6 +235,15 @@ def generate_sparse_patterns(n_concepts: int, n_pool: int, pattern_size: int,
                     _keep = sorted(pat)[:max(0, pattern_size - _nc)]
                     _cr = np.random.RandomState(abs(hash(tri)) % (2 ** 32))
                     pat = set(_keep) | set(_cr.choice(n_pool, _nc, replace=False).tolist())
+            if parts_out is not None:
+                # record each constituent's OWN pool neurons, so a PARTIAL cue (2 of 3) can be driven.
+                # Needed because the shipped eval cues a whole engram tag and therefore only ever tests
+                # FULL-cue recall — the conversationally decisive query mode was untestable on-bridge.
+                if perms is None:
+                    _pp = [sorted(vocab[tri[j]].tolist()) for j in range(3)]
+                else:
+                    _pp = [sorted(perms[j][vocab[tri[j]]].tolist()) for j in range(3)]
+                parts_out.append(_pp)
             patterns.append(sorted(pat))
         return patterns
     patterns = []
@@ -387,6 +397,55 @@ def train_concept_sparse(
         bridge._run_one_simulation_step()
 
 
+def eval_partial_cue_discrimination(
+    bridge, sparse_patterns: List[List[int]], parts: List[List[List[int]]],
+    drive_pA: float = 1500.0, stim_steps: int = 60, hold_roles=(0, 1)):
+    """PARTIAL-CUE recall on-bridge: drive only roles 0+1 of a fact and ask which stored fact completes.
+
+    The shipped `eval_sparse_discrimination` stimulates a whole engram TAG, so it can only ever measure
+    FULL-cue recall. Conversation queries partially ("what did the dog eat?" gives agent+action, not the
+    answer), and off-substrate that mode sits at 75-100% of an information ceiling — a number this harness
+    could not check at all. This drives the union of the cued roles' OWN pool neurons directly and reads
+    which fact's full pattern lights up most.
+
+    Reports `ambiguous_frac` alongside accuracy: when several stored facts share the cued roles, NO code can
+    disambiguate them, so a miss there is an information limit, not a mechanism failure. Scoring without
+    that split would understate the memory.
+    """
+    from sim.backend import get_backend, to_host
+    cp, _ = get_backend()
+    rm = bridge.region_manager
+    shared = list(rm.indices("shared_concept_pool"))
+    pat_arrs = [np.asarray([shared[i] for i in p], dtype=np.int64) for p in sparse_patterns]
+    # which facts share the cued roles -> genuinely ambiguous, no code can resolve them
+    keys = [tuple(tuple(parts[i][r]) for r in hold_roles) for i in range(len(parts))]
+    from collections import Counter
+    kc = Counter(keys)
+    correct = unique_total = unique_correct = 0
+    for i in range(len(sparse_patterns)):
+        cue_pool = sorted(set().union(*[set(parts[i][r]) for r in hold_roles]))
+        idx = cp.asarray([shared[j] for j in cue_pool], dtype=cp.int64)
+        bridge.cp_external_input_current[:] = 0.0
+        bridge.cp_external_input_current[idx] = float(drive_pA)
+        acc = np.zeros(len(sparse_patterns))
+        for _ in range(int(stim_steps)):
+            bridge._run_one_simulation_step()
+            fs = np.asarray(to_host(bridge.cp_firing_states)).ravel()
+            for f in range(len(pat_arrs)):
+                acc[f] += float(fs[pat_arrs[f]].sum())
+        bridge.cp_external_input_current[:] = 0.0
+        hit = int(np.argmax(acc)) == i if acc.sum() > 0 else False
+        correct += int(hit)
+        if kc[keys[i]] == 1:
+            unique_total += 1
+            unique_correct += int(hit)
+    n = len(sparse_patterns)
+    return {"partial_cue_acc": round(correct / n, 4),
+            "ambiguous_frac": round(1.0 - unique_total / n, 4),
+            "acc_on_unambiguous": round(unique_correct / unique_total, 4) if unique_total else None,
+            "n": n, "hold_roles": list(hold_roles)}
+
+
 def eval_sparse_discrimination(
     bridge, words: List[str], sparse_patterns: List[List[int]],
     drive_pA: float = 1500.0, stim_steps: int = 100,
@@ -465,6 +524,8 @@ def main():
     p.add_argument("--sparsity", type=float, default=0.03)
     p.add_argument("--composed-vocab", type=int, default=0,
                    help="COMPOSED-FACT mode: each item is an SVO-style triple over a shared vocabulary of this size, so items overlap STRUCTURALLY (0 = shipped independent-random behaviour).")
+    p.add_argument("--eval-partial-cue", action="store_true",
+                   help="ALSO measure PARTIAL-cue recall on-bridge (drive 2 of 3 roles, ask which fact completes) — the conversationally decisive query mode the shipped eval cannot test.")
     p.add_argument("--zipf-s", type=float, default=0.0,
                    help="Zipfian word frequency exponent for composed facts (0 = uniform; 1.0 = classic Zipf = realistic). A uniform gate over-reports by ~a third.")
     p.add_argument("--freq-adaptive", action="store_true",
@@ -519,11 +580,12 @@ def main():
     print(f"[build] {time.time() - t0:.1f}s", flush=True)
 
     # Generate sparse patterns
+    _parts = [] if (args.composed_vocab and args.eval_partial_cue) else None
     sparse_patterns = generate_sparse_patterns(
         n_concepts=args.n_concepts, n_pool=args.n_shared_pool,
         pattern_size=args.pattern_size, seed=args.seed,
         composed_vocab=args.composed_vocab, composed_bind=args.composed_bind,
-        zipf_s=args.zipf_s, freq_adaptive=args.freq_adaptive,
+        zipf_s=args.zipf_s, freq_adaptive=args.freq_adaptive, parts_out=_parts,
     )
     # Estimate pairwise overlap
     if args.n_concepts > 1:
@@ -644,6 +706,12 @@ def main():
         sparse_patterns=sparse_patterns,
         drive_pA=1500.0, stim_steps=args.drive_steps,
     )
+    if getattr(args, "eval_partial_cue", False) and _parts:
+        print("\n[EVAL] PARTIAL-cue recall (2 of 3 roles) — the query mode conversation actually uses", flush=True)
+        _pc = eval_partial_cue_discrimination(bridge, sparse_patterns, _parts)
+        print("  partial_cue_acc=%s  ambiguous_frac=%s  acc_on_unambiguous=%s"
+              % (_pc["partial_cue_acc"], _pc["ambiguous_frac"], _pc["acc_on_unambiguous"]), flush=True)
+        results["partial_cue"] = _pc
     print(f"[EVAL] {time.time() - t0:.1f}s", flush=True)
 
     n_top1 = sum(1 for r in results if r["top1"])
