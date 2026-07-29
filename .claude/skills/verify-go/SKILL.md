@@ -214,3 +214,30 @@ of a missing gate. They are indistinguishable in the log. A suspiciously perfect
 check the instrument, not evidence that the manipulation worked. (Found while chasing an unrelated
 `nan`; the affected headline result was checked and STANDS, because its own probe sets
 `comp_no_pool_slot=False` — but only checking revealed that.)
+
+## THE ENGAGEMENT COUNTER IS THE CHEAPEST GUARD YOU HAVE — and `tools/lab.py` already implements it (2026-07-29)
+
+**Every void arm this project has produced shares one shape: the manipulation never engaged, and the
+resulting null looked like a scientific result.** Three in a single day:
+- a metaplasticity toy where `theta0` was unreachable, so every trial fell to a fallback branch that did all
+  the work — caught only because all six betas printed IDENTICAL maps and identical block counts;
+- a substrate probe reading a gate that **did not exist** under its config — caught because it printed `nan`;
+- a saturation test where the soft bound **never bound** (`sat_frac = 0.000` in every arm), so identical
+  numbers across `w_max` proved nothing — caught by the engagement fraction it happened to print.
+
+**The rule: every arm must report a number that goes to ZERO when the mechanism is inert**, and you must
+look at it before reading any score. `blocks`, `sat_frac`, `n_overrides`, `dw`, `gate n_syn` — whatever the
+mechanism *does*, count it.
+
+**And USE THE HELPER — this is the actual lapse.** `tools/lab.py` exists precisely for this and was written
+after the last round of void arms:
+
+```python
+from tools.lab import lever, void_if, before_after, undefined_if_empty
+lever("w_max", before=unbounded_score, after=bounded_score, continuous=sat_frac)
+void_if(sat_frac == 0.0, "the soft bound never engaged; w_max arms are identical by construction")
+```
+
+The saturation arm above was written WITHOUT importing it, by the same person who wrote it. A helper you do
+not import is exactly as useful as a rule you do not remember — which is the whole reason `lab.py` exists.
+**Import it at the top of every probe, not when you suspect trouble.**
