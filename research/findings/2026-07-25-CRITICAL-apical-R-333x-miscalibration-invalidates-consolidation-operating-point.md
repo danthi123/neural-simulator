@@ -3336,3 +3336,42 @@ role-permutation binding, **~25% conjunctive mixture**, and the largest vocabula
 already exist in-project (the FHRR composer binds; `concept_pool_sparse_distributed` stores). Gate:
 composed-fact full-cue AND partial-cue recall at N=50/100/200 on one shared pool, against the permuted and
 scramble controls, with the union code as the baseline to beat.
+
+### 2026-07-29 (⚠️ DESIGN POINT MOVES — my alpha=0.25 recommendation was VOCABULARY-CONFOUNDED)
+
+The spectrum sweep above used V=24/48. Real conversation has hundreds of words, and vocabulary was already
+the biggest lever measured — so the design point was re-run at realistic V, with cue noise added (a spiking
+pool retrieves with jitter). M=4000, k=100, 2 seeds, on the pool.
+
+| N=500 | V=48 | V=100 | V=200 | **V=400** |
+|---|---|---|---|---|
+| alpha=0 full / partial | 0.865 / 0.595 | 0.994 / 0.896 | 0.998 / 0.975 | **0.999 / 0.998** |
+| alpha=0.25 full / partial | 0.990 / 0.573 | 1.000 / 0.883 | 1.000 / 0.971 | 1.000 / 0.997 |
+
+| N=1000, V=400 | full | partial |
+|---|---|---|
+| **alpha=0 (pure compositional)** | 0.998 | **0.980** |
+| alpha=0.25 | 1.000 | 0.968 |
+| alpha=0.50 | 1.000 | 0.892 |
+
+**⇒ THE CONJUNCTIVE MIXTURE IS NOT NEEDED AT REALISTIC VOCABULARY, AND SLIGHTLY HURTS.** At V=48 it was
+worth a lot (full 0.865 → 0.990); at V=400 there is nothing left to rescue, and it costs partial-cue recall
+(0.980 → 0.968 at N=1000). **My alpha≈0.25 recommendation, recorded one section earlier, was an artifact of
+the small vocabulary I happened to sweep.** Corrected: use **pure compositional role-binding (alpha=0)** —
+simpler AND better on the metric that matters for conversation.
+
+**VOCABULARY IS THE WHOLE LEVER.** At N=500 partial-cue recall runs 0.595 → 0.896 → 0.975 → **0.998** as V
+goes 48 → 100 → 200 → 400. The composed-fact interference this arc has been fighting is a SMALL-VOCABULARY
+artifact: with few words, facts must share constituents; with many, they rarely collide.
+
+**CUE NOISE IS A NON-ISSUE at realistic V** — 15% cue corruption moves N=1000/V=400/alpha=0 from
+0.998/0.980 to 0.998/0.976. Robustness comes free from the same place capacity does.
+
+**⇒ THIS IS THE ENCOURAGING RESULT FOR THE RE-ROUTE.** The project's production conversational vocabulary
+is **320 concepts** — squarely in the V=200-400 band where composed-fact storage runs 0.97-0.998 for
+500-1000 facts, noise-tolerant, with NO allocator and NO conjunctive mixture. The consolidation blocker
+that consumed this arc does not exist at the scale the system actually operates at.
+
+**HONEST SCOPE, unchanged:** still off-substrate (host argmax readout, one-shot Hebbian without a soft
+bound, no saturation). The substrate arms now running (independent / union / bind at n=32 and n=64) are the
+first on-bridge read. Everything above is a PREDICTION the substrate must confirm.
