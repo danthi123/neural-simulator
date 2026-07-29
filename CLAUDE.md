@@ -64,6 +64,14 @@ An unchecked term is a HYPOTHESIS, exactly like a claim in a comment. (ASD-STE10
 
 Check both: `.venv/bin/python tools/check_docs.py` (CI: `tests/test_doc_rules.py`). Retrofit helper: `tools/split_long_doc_lines.py --apply` (splits at sentence/`·`/`;` boundaries and refuses to write if content changes). **These are STRUCTURE rules only — they cannot catch instrument failures; six of the nine 2026-07-28 retractions would have passed both.** Truth verification is `verify-go`; term conditions are [`docs/TERMS.md`](docs/TERMS.md).
 
+## Drift prevention is MECHANICAL, not remembered (2026-07-28: 9 retractions in one session)
+
+**A rule you must remember is not a mechanism.** `verify-go` rule 3 was written and violated the same day; the corpus-first rule was in this file and skipped for six levers; the parallelize memory existed while the GPU sat at 0%. What actually held was executable: a physiological gate that printed VOID, `tools/check_docs.py` (found 3 stale citations), `push_both.sh` (verifies rather than claims). **Prefer converting a rule into a check that can FAIL LOUDLY over adding prose here.** Three such checks now exist:
+
+- **Before the first lever against any defect:** `bash tools/before_you_build.sh "<defect>"` — runs the corpus query, lists existing research gates, and prints THIS ARC's own exclusions. (A 497-line gate for the identical defect was 2 days old and re-derived the hard way; a fix was later built on a variable the same findings doc had already measured inert.)
+- **Inside any probe:** `from tools.lab import lever, before_after, undefined_if_empty, void_if` — makes lever-verification, before/after measurement placement, and "UNDEFINED, not a score of 0" execute instead of being recalled. Each helper names the retraction that earned it.
+- **The session heartbeat** now flags **serialization** (GPU idle with room for ~5 more runs, 36 idle pool cores) as an explicit ACT line, not just liveness.
+
 ## Evolve the workflows themselves (the `evolve-skills` skill)
 
 **When a process lapse RECURS** (the owner had to catch the same *class* of problem twice), at a **session-end /
