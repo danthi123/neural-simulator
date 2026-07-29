@@ -4479,3 +4479,40 @@ clean null. **Still off-substrate and still 4 seeds** — the remaining unknown 
 start and did NOT test: whether the required delay spread is physiological on this substrate (per-pathway
 conduction delays are deferral-audit item A3a). That is the on-bridge question, and it is a real dependency,
 not a formality.
+
+### 2026-07-29 (⚠️ THE DESIGN'S MECHANISM IS WRONG — delay lines cannot supply the required spread; it must be SLOW SYNAPSES)
+
+Settled the third named unknown analytically (seconds, no GPU). Mapping the toy's delay units onto the real
+replay timebase: the sweep is **250 ms** (2500 steps × dt=0.1 ms, `_gap5_ecker_recurrent_replay`), and the
+toy's 120-step traversal makes **1 toy step = 2.08 ms**:
+
+| discrimination | max delay required | physiological? |
+|---|---|---|
+| marginal (0.975 / 1.063) | **21 ms** | ✅ within axonal range |
+| weak (0.896 / 1.122) | 42 ms | borderline |
+| clear (0.857 / 1.161) | **63 ms** | ❌ exceeds axonal |
+| strong (0.685 / 1.486) | **125 ms** | ❌ far beyond axonal |
+
+Axonal conduction delay in cortex/hippocampus is **~1-30 ms** (rarely >50). **⇒ AXONAL DELAY LINES CANNOT
+SUPPLY THE SPREAD THIS DESIGN NEEDS.** At the largest physiologically defensible delay (~21 ms) the
+discrimination is a 9% effect — nowhere near the clean separation the earlier table made it look like.
+
+**⇒ THE MECHANISM MUST BE SLOW SYNAPTIC INTEGRATION, NOT CONDUCTION DELAY.** NMDA tau is **~50-150 ms** and
+short-term facilitation **~100-500 ms** — both squarely in the required range. Reframed correctly: detecting
+order across a 250 ms replay is a **temporal-integration** problem, not a delay-line problem, and NMDA is
+precisely the biology for it. **The project already has the machinery** — `enable_nmda`, the P0.3-validated
+slow-NMDA attractor, and the documented result that slow NMDA lets sparse drive integrate past threshold
+(the generalization arc used exactly this). So the substrate support exists; the design was reaching for the
+wrong component.
+
+**WHAT SURVIVES AND WHAT DOES NOT.** Survives: tuning ACQUIRED by wake Hebbian (9.1× sharpness), the
+FWD/REV opponent read-out, the clean 1.00 null on non-directional activity, and the exactly-1.000
+equalised lesion — all of that is about the READ-OUT ARCHITECTURE and is unaffected. Does not survive: the
+implementation via per-cell conduction delays (and with it any dependence on deferral-audit item A3a, which
+is no longer a blocker for this design). The next rung is to re-run the same de-risk with NMDA-like
+integration windows in place of `np.roll` delays, and check the separation survives.
+
+**Recorded because this is a design corrected BEFORE it was built.** The arithmetic that killed the delay-line
+version cost seconds; the on-bridge build it would have justified would have cost days and failed on
+physiological grounds — and would likely have been read as "the neural reader doesn't work" rather than
+"the delay implementation was wrong".
