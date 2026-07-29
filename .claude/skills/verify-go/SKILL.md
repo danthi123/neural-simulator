@@ -330,3 +330,10 @@ exist yet. **Two false alarms from the anti-drift tool inside ten minutes of wri
 STALENESS (no CPU-lane dispatch in 45 min) with the marker seeded on first use. A monitor is an instrument;
 the rule that it must be verified before its output is trusted applies to the ones you write to enforce the
 rules.
+
+**QUEUED IS NOT PRIORITIZED — check POSITION, not membership (2026-07-29, same hour).** After rebalancing
+toward the crux lane, `lane_check` reported `crux=2` and passed. But the dispatcher is FIFO and the two
+gap#4 jobs sat at positions **4 and 5**, behind three incumbent-lane jobs, with seven more already running —
+so the crux would have started dead last, hours later, while every indicator said "served". **A coverage
+check counts membership; the schedule is what actually allocates.** When rebalancing a FIFO queue, MOVE the
+under-served lane to the front and verify the order, or the fix is cosmetic.
