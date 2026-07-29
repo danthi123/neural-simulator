@@ -4209,3 +4209,18 @@ surfaces the design doc immediately.
 **urgency defeats checks**: the pre-build check was skipped precisely because the prioritization critique
 made speed feel appropriate. The corrective is that a *rebalance* is exactly when to run it, since queueing
 into an unfamiliar lane is the case with the least context and the highest chance of duplicating work.
+
+### 2026-07-29 (CRUX — on-bridge SPIKING construct smoke PASSES; the 6-seed runs are de-risked)
+
+Ran the cheap smoke before letting the 6-seed crux runs consume GPU:
+`CONSTRUCT_SMOKE_PASS=True (seed_ok=True, ast_ok=True, ceiling_guard_fails=True)`.
+All five arms (reservoir / fixed_fa / kp / micro / transport_ceiling) **build, step and read**; the AST
+no-forward-W guard holds on the KP/W^PI updates; and `transport_ceiling` correctly reports
+`no_weight_transport=False` — the guard *working*, since that arm is the deliberate cheat.
+
+**OBSERVATION, explicitly NOT a result:** the `micro` arm reports `silent_ratio 1.1015`. The rate reference
+that returned NO-GO failed on exactly this quantity, where plastic and frozen were **identically 1.028** —
+the signature of inert learned machinery. A different ratio on spikes is what the gap#4 hypothesis
+predicts. **But this is an UNTRAINED smoke** (`heldout_read = 0.333` = chance for every arm, as expected),
+so it carries no evidential weight about the trained comparison. Recorded now, before the 6-seed runs land,
+precisely so it cannot later be narrated as though it had been evidence.
