@@ -24,6 +24,7 @@ import os
 import re
 import subprocess
 import sys
+import time
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -90,8 +91,23 @@ def main():
         alarms.append("LANE-MONOCULTURE(all work serves %s)" % (list(active) or ["nothing"])[0])
     if crux_total == 0:
         alarms.append("CRUX-UNSERVED(F/gap#4 has 0 jobs; roadmap calls it 'the must-solve core')")
-    if not cpu_active:
-        alarms.append("NO-CPU-LANE(5 CPU lanes are disjoint and can run beside GPU work; pool idles otherwise)")
+    # A FALSE ALARM IS AS CORROSIVE AS A MISSED ONE (this tool's own first lesson). Pool jobs finish in
+    # SECONDS-to-minutes, so "no CPU lane running right now" is usually SUCCESS, not neglect — alarming on
+    # instantaneous idleness would fire every cycle and train the reader to ignore it. Alarm instead on
+    # STALENESS: no CPU-lane work dispatched for STALE_MIN. Any dispatch touches the marker.
+    STALE_MIN = 45
+    marker = os.path.join(ROOT, "research/queue/.last_cpu_dispatch")
+    if cpu_active:
+        try:
+            open(marker, "w").write("dispatched")
+        except Exception:
+            pass
+    age_min = None
+    if os.path.exists(marker):
+        age_min = (time.time() - os.path.getmtime(marker)) / 60.0
+    if not cpu_active and (age_min is None or age_min > STALE_MIN):
+        alarms.append("CPU-LANES-STALE(%s; 5 disjoint CPU lanes cost nothing beside GPU work)"
+                      % ("never dispatched" if age_min is None else "%.0f min since last dispatch" % age_min))
 
     if args.quiet:
         print("lanes=%d crux=%d%s" % (n_lanes, crux_total, (" -- ACT: " + " ".join(alarms)) if alarms else ""))

@@ -320,3 +320,13 @@ the arc grew more valuable; the question simply stopped being asked.
 (the `§ parallelization map` table). If every job names the same lane, that is the alarm — go read the
 roadmap's own crux statement before adding more. Prefer stocking ACROSS lanes: the CPU-tagged lanes are
 explicitly disjoint and cost nothing to run alongside GPU work.
+
+**AND THE NEW MONITOR IMMEDIATELY CRIED WOLF — fix your own instrument before trusting it.** `lane_check.py`
+shipped alarming on *"no CPU lane running right now"*. Pool jobs finish in seconds-to-minutes, so that fired
+every cycle on a pool that had just SUCCESSFULLY completed its work — treating success as neglect, and
+training the reader to ignore the alert within two cycles. Then its replacement reported *"never
+dispatched"* when CPU lanes had been dispatched 15 minutes earlier, because the staleness marker did not
+exist yet. **Two false alarms from the anti-drift tool inside ten minutes of writing it.** Fixed to alarm on
+STALENESS (no CPU-lane dispatch in 45 min) with the marker seeded on first use. A monitor is an instrument;
+the rule that it must be verified before its output is trusted applies to the ones you write to enforce the
+rules.
