@@ -163,7 +163,8 @@ def build_sparse_pool_bridge(
 
 def generate_sparse_patterns(n_concepts: int, n_pool: int, pattern_size: int,
                                seed: int, composed_vocab: int = 0,
-                               composed_bind: bool = False) -> List[List[int]]:
+                               composed_bind: bool = False, zipf_s: float = 0.0,
+                               freq_adaptive: bool = False) -> List[List[int]]:
     """Generate per-concept SPARSE RANDOM patterns in the shared pool.
 
     Each pattern = `pattern_size` random neurons from `n_pool`. Patterns
@@ -196,9 +197,26 @@ def generate_sparse_patterns(n_concepts: int, n_pool: int, pattern_size: int,
         # trick the project's own composer already implements. Measured off-bridge: overlap 14.2 -> 8.9
         # (-37%) and N=200 recall 0.583 -> 0.840.
         perms = [rng.permutation(n_pool) for _ in range(3)] if composed_bind else None
+        # ZIPFIAN word frequency (zipf_s=0 => uniform, the prior behaviour). Real language reuses frequent
+        # words heavily, which drives up exactly the constituent sharing that causes collisions. Measured:
+        # a UNIFORM gate passes at ~1.0 while the same config under classic Zipf (s=1.0) falls to 0.606
+        # full / 0.393 partial at V=320/N=500 — so a uniform-sampled gate certifies a memory that degrades
+        # by a third in use. FREQ_ADAPTIVE spends conjunctive budget in proportion to constituent
+        # frequency (the inverse-frequency/PPMI principle): full-cue 0.597 -> 0.959 at N=500.
+        if zipf_s > 0:
+            _w = 1.0 / np.power(np.arange(1, V + 1), float(zipf_s))
+            _w = _w / _w.sum()
+        else:
+            _w = None
         seen, patterns = set(), []
+        _tries = 0
         while len(patterns) < n_concepts:
-            tri = tuple(sorted(rng.choice(V, 3, replace=False).tolist()))
+            _tries += 1
+            if _tries > n_concepts * 400:
+                raise ValueError("could not draw %d distinct facts from V=%d at zipf_s=%s "
+                                 "(frequent words dominate); raise --composed-vocab or lower --zipf-s"
+                                 % (n_concepts, V, zipf_s))
+            tri = tuple(sorted(rng.choice(V, 3, replace=False, p=_w).tolist()))
             if tri in seen:
                 continue
             seen.add(tri)
@@ -207,6 +225,15 @@ def generate_sparse_patterns(n_concepts: int, n_pool: int, pattern_size: int,
             else:
                 pat = set(perms[0][vocab[tri[0]]].tolist()) | set(perms[1][vocab[tri[1]]].tolist()) \
                     | set(perms[2][vocab[tri[2]]].tolist())
+            if freq_adaptive and _w is not None:
+                # spend conjunctive budget where the collisions actually are
+                _f = float(np.mean([_w[i] for i in tri]) / _w[0])
+                _a = float(np.clip(0.75 * np.sqrt(_f), 0.0, 0.6))
+                _nc = int(round(_a * pattern_size))
+                if _nc > 0:
+                    _keep = sorted(pat)[:max(0, pattern_size - _nc)]
+                    _cr = np.random.RandomState(abs(hash(tri)) % (2 ** 32))
+                    pat = set(_keep) | set(_cr.choice(n_pool, _nc, replace=False).tolist())
             patterns.append(sorted(pat))
         return patterns
     patterns = []
@@ -438,6 +465,10 @@ def main():
     p.add_argument("--sparsity", type=float, default=0.03)
     p.add_argument("--composed-vocab", type=int, default=0,
                    help="COMPOSED-FACT mode: each item is an SVO-style triple over a shared vocabulary of this size, so items overlap STRUCTURALLY (0 = shipped independent-random behaviour).")
+    p.add_argument("--zipf-s", type=float, default=0.0,
+                   help="Zipfian word frequency exponent for composed facts (0 = uniform; 1.0 = classic Zipf = realistic). A uniform gate over-reports by ~a third.")
+    p.add_argument("--freq-adaptive", action="store_true",
+                   help="spend conjunctive code budget in proportion to constituent frequency (inverse-frequency/PPMI principle); recovers full-cue capacity under Zipf.")
     p.add_argument("--composed-bind", action="store_true",
                    help="ROLE BINDING: permute each filler by its role before combining, so a shared word lands on different neurons per role (off = UNION baseline).")
     p.add_argument("--topographic-factor", type=float, default=10.0)
@@ -492,6 +523,7 @@ def main():
         n_concepts=args.n_concepts, n_pool=args.n_shared_pool,
         pattern_size=args.pattern_size, seed=args.seed,
         composed_vocab=args.composed_vocab, composed_bind=args.composed_bind,
+        zipf_s=args.zipf_s, freq_adaptive=args.freq_adaptive,
     )
     # Estimate pairwise overlap
     if args.n_concepts > 1:
