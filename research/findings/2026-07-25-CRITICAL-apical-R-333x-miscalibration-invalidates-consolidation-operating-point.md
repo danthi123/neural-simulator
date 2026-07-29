@@ -3905,3 +3905,29 @@ parameter today — the first two were made on saturated data and are superseded
 
 **(3) Role-binding dominates every top cell.** Every one of the six best partial-cue configurations has
 bind=True, consistent with the substrate result (+0.282 at n=32, +0.047 at n=64).
+
+### 2026-07-29 (ZIPFIAN SUBSTRATE ARM) — trap anticipated correctly, quantitative prediction off by +0.06
+
+`zipf_bind32` (V=60, Zipfian, role-bound, n=32) = **31/32 = 0.969** on the substrate.
+
+| pre-registered claim | verdict |
+|---|---|
+| "should land ABOVE the V=12 bind arm's 0.844 despite Zipf being harder, because the larger vocabulary raises utilisation (1110 vs 688) more than Zipf lowers it" | **CORRECT** (0.969 > 0.844) |
+| quantitative: "~0.91" by interpolating n_used against the three measured anchors | **OFF by +0.06** (measured 0.969) |
+
+**⇒ The utilisation heuristic is a SCREEN, not a predictor — now confirmed from two directions.** The
+6-seed off-substrate sweep put its correlation with full-cue at **0.645**, and here its point prediction
+misses by 0.06 on the optimistic side. It gets the ORDERING right (which config beats which) and should
+not be trusted for magnitudes. That is exactly the scope recorded when it was proposed, so this is a
+confirmation of the stated limit rather than a new caveat.
+
+**The comparison trap was worth naming in advance.** Read naively — "the Zipfian arm scored 0.969, higher
+than the uniform arm's 0.844, so Zipfian facts are fine" — this would have reversed the day's most
+important correction. The two arms differ in VOCABULARY (60 vs 12), not just word distribution. The
+Zipf penalty is still real; it is simply smaller than the vocabulary benefit here.
+
+**STILL PENDING — the discriminating arm.** The frequency-adaptive Zipfian arm is the one that separates
+the two live accounts: the empirical overlap-reduction lesson predicts it beats plain bind by MORE than
++0.05, the utilisation heuristic predicts +0.04 (1110 → 1357 n_used). With plain bind now at 0.969 there
+is only 0.031 of headroom left, so **by the ceiling criterion this comparison may be unable to resolve
+either way** — recorded now so a null there is not misread as evidence against both.
