@@ -72,6 +72,16 @@ Check both: `.venv/bin/python tools/check_docs.py` (CI: `tests/test_doc_rules.py
 - **Inside any probe:** `from tools.lab import lever, before_after, undefined_if_empty, void_if` — makes lever-verification, before/after measurement placement, and "UNDEFINED, not a score of 0" execute instead of being recalled. Each helper names the retraction that earned it.
 - **The session heartbeat** now flags **serialization** (GPU idle with room for ~5 more runs, 36 idle pool cores) as an explicit ACT line, not just liveness.
 
+## Parallelize ACROSS ROADMAP LANES, not just fully — `tools/lane_check.py` (2026-07-29, owner-flagged twice)
+
+**A full queue and a busy GPU look exactly like good prioritization from the inside, and are not.** On
+2026-07-29 the GPU ran at 100% with a stocked queue for hours while **every job served ONE lane (H · Memory)**,
+the roadmap's own crux (**F · gap#4**, *"the single load-bearing dependency"*) had ZERO allocation, and the
+five **[CPU]** lanes — explicitly *disjoint*, free to run beside GPU work — sat unqueued next to 36 idle pool
+cores. Run **`.venv/bin/python tools/lane_check.py`** when stocking a queue: it maps every running/queued job
+to a roadmap lane and exits 1 on monoculture, an unserved crux, or no CPU lane. The heartbeat reports it each
+cycle. Momentum substitutes for prioritization silently; this makes it fail loudly.
+
 ## Evolve the workflows themselves (the `evolve-skills` skill)
 
 **When a process lapse RECURS** (the owner had to catch the same *class* of problem twice), at a **session-end /
