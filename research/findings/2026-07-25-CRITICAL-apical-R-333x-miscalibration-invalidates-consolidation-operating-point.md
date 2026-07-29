@@ -3567,3 +3567,30 @@ gain of at least +0.14 over union's 0.562, versus the +0.06 seen off-substrate.
   load-bearing rather than a marginal nicety — which raises its priority in the build.
 * If it lands **~0.56-0.62**: the substrate gap is NOT overlap-driven, my mechanism story is wrong, and the
   real cause must be found before any of the off-substrate design work is trusted on-bridge.
+
+**DIAGNOSING THE 0.355 SUBSTRATE GAP — my first hypothesis is INSUFFICIENT, and the shortfall is quantified.**
+Hypothesis: the on-bridge score is CONTENT-BLIND (it counts spikes inside each pattern's neurons, so a
+shared neuron credits the WRONG fact regardless of stored content, whereas the toy's dot product uses
+content and partially cancels). Modelled it directly — score_f = |P_f ∩ P_cue| plus multiplicative noise:
+
+| readout model | predicted | measured on-bridge |
+|---|---|---|
+| linear dot product (the toy) | 0.917 | — |
+| content-blind overlap, 15% noise | 0.865 | — |
+| content-blind overlap, **~35-40% noise** | **~0.56** | **0.562** |
+
+(Independent patterns give 1.000 under every model, matching the substrate — consistent, since their max
+off-diagonal overlap is 13/99 vs the composed arms' **68/99**. Max overlap, not mean, is what bites.)
+
+**⇒ Content-blindness is directionally right but NOT sufficient on its own.** It closes the gap only at
+~35-40% score noise, and that is HIGHER than Poisson counting noise should give: a pattern accumulating a
+few hundred spikes over 100 steps has ~1/sqrt(n) ≈ 5-10% variability. So a **second factor is unaccounted
+for**, and the leading candidate is contamination of the WRITE rather than the read — engram tags are
+captured from top-K firing during training, and for overlapping patterns the captured tag will include
+shared neurons, so the cue itself is impure before any readout happens.
+
+**⇒ NEXT DIAGNOSTIC (specified, not yet run):** measure engram-tag purity directly — for each composed
+fact, what fraction of its captured tag lies inside its OWN pattern versus in overlapping neighbours'. If
+tag purity tracks the accuracy drop, the defect is in tag capture (a WRITE-side problem with a different
+fix) rather than in the readout. Recorded as an open diagnostic, NOT as a conclusion: the honest status is
+that 0.562 is reproduced by a plausible model whose required noise term is not yet justified.
