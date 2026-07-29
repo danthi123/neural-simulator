@@ -2859,3 +2859,45 @@ suggested: produce a FREE-vs-TAKEN signal**, i.e. break the winner-take-all runa
 claimed. Four fair-competition mechanisms are already refuted against that, so the next candidate must come from a
 different family — and the design workflow (`wfku0dx9i`) is asked exactly this, with its toy-vs-substrate attacker
 independently probing whether any graded quantity survives.
+
+## 🎯 THE OCCUPANCY SIGNAL: it EXISTS, it is CUE-FREE, and it has already worked on-substrate — but its READ is host
+
+Adversarial design workflow (`wfku0dx9i`), every load-bearing pointer re-verified by me against executing code.
+
+**1. THE MOAT FAMILIARITY READ IS NOT REUSABLE AS OCCUPANCY — disqualified by one measurement.** Read the moat with
+the query operator zeroed: `null-cue + FULL store -> peak 0.000e+00`; `null-cue + EMPTY store -> peak 0.000e+00`.
+**Identically zero without a cue, whether or not anything is stored.** It answers *"does this cue match something"*,
+never *"is this unit already claimed"* — exactly the RETRIEVE/ALLOCATE gap, reached independently from the design
+side while my probe reached it from the measurement side.
+
+**2. TWO CORRECTIONS TO THE CORPUS'S OWN CLAIMS** (both verified): the **Bogacz-Brown familiarity gate is pure host
+numpy** — `W = np.zeros(...)` with **Gram-Schmidt** orthogonalisation against all stored patterns, a non-local
+matrix algorithm; its docstring calls it *"the rate form of the spiking anti-Hebbian network"* and the executing
+code is a projector. Repurposed per-slot it classifies free-vs-claimed at **73%** (k=1), a knife-edge artifact of
+exact arithmetic that dies at read-noise ≥1e-6. And the **shipped** production no-confab moat is neither read — it
+is `_scan`, host string equality over decoded words; the peak-score moat was de-risked and **never wired in**.
+
+**3. ✅ THE SIGNAL EXISTS AND HAS ALREADY WORKED ON-SUBSTRATE.** `_stp_binder_onbridge_derisk.py:88`:
+`b.cp_external_input_current[idx[f"slot{_ss}"]] = -800.0  # occupied-slot suppression -> novel routes to a FREE slot`.
+Occupied-slot suppression is already wired and demonstrated; only the bookkeeping (`occupied.append(w)`) is host.
+And the cue-free quantity itself is `_emerge14_stageC_onbridge_learning_derisk.py:154-165` `_committed_count` —
+per-cell count of incoming synapses potentiated above `p_init`, i.e. *"how strongly is this unit already claimed"*,
+**cue-independent**, on the very pooler substrate the composition draws from. Its own docstring records why it
+differentiates after ONE win (avoiding an allocation RACE). **Its read is host** (`np.add.at` over
+`cp_connections.data`).
+
+**⇒ THE PROBLEM IS NOW EXACTLY ONE SENTENCE: a slot's own accumulated afferent weight must set its availability,
+without being cued, and without a host read.** Not "find the signal" — make this specific quantity neural.
+
+**⇒ NEXT CANDIDATE, FROM A FAMILY NOT YET TESTED.** All four refuted mechanisms were *fairness/competition*
+(duty, depression, threshold boost, synaptic scaling). What is needed is **weight-history metaplasticity**: a slot
+whose afferents are already strongly potentiated raises its own LTP threshold, so a NEW fact cannot bind there and
+routes elsewhere — BCM's sliding threshold θ_M, or synaptic tagging-and-capture. **Verified: the engine has NO BCM /
+sliding-threshold / metaplasticity implementation** (`grep bcm|sliding_threshold|metaplast|theta_m` over
+`config.py`/`bridge.py`/`kernels.py` returns nothing; the only weight-history mechanism is `enable_synaptic_scaling`,
+already refuted here). So this is a genuine gap, not a config away — and it is the first candidate all session that
+targets *free-vs-taken* rather than *who wins*.
+
+**🔧 TOOLING GOTCHA (verified, affects all future corpus work):** the Kandel full text is **ISO-8859**, so plain
+`grep` treats it as binary and **silently returns nothing**. Use `grep -a`. Past searches of that textbook may have
+silently found zero.
