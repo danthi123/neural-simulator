@@ -436,3 +436,29 @@ because, from an artifact alone, there is no way to distinguish *two arms of one
 different quantities that legitimately coincide* (`n_registered == n_rendered_exact` IS the GO). **A
 heuristic that cannot be made reliable is worse than none — it trains the reader to ignore the checker.**
 That test belongs at probe time where the arms are known: `lab.py::lever(before, after)`.
+
+## THE HELPERS EXIST AND I DID NOT IMPORT THEM — THREE TIMES IN ONE EVENING (2026-07-29)
+
+`tools/lab.py` was written earlier the same day, explicitly to make void-arm detection EXECUTE rather than
+be remembered. Then three consecutive toys in one design series were written **without importing it**, and
+each shipped a different flavour of the same defect:
+
+1. **shift-invariant sums** — `sum(roll(x,d))` equals `sum(x)`, so forward and reverse were equal BY
+   CONSTRUCTION; every ratio read exactly 1.000 at all five delay settings.
+2. **a control that did not control** — the "spreading front" travelled forward while widening, so it stayed
+   directional and could not test the symmetry claim it existed to test.
+3. **a lesion divided by itself** — `amplification(a,Rl)/amplification(a,Rl)`, which returns 1.000 and
+   cannot fail.
+
+**Two of the three were caught only by their SIGNATURE** (identical values across every arm), not by
+foresight. The third was caught only when its number came out on the wrong side.
+
+**THE RULE, and it is about ordering, not knowledge:** write the CONTROLS FIRST, with
+`from tools.lab import lever, void_if, undefined_if_empty` at the top of the file, BEFORE writing the
+mechanism under test. A lesion must be a genuinely DIFFERENT quantity from the arm it is compared against —
+if you can reach the lesion by editing one argument of the treatment expression, it is probably the treatment.
+
+**AND: an error-rate spike is a stop signal.** Three implementation bugs in one evening on one series is a
+fact about the builder, not the design. The correct response is to STOP that line and hand it off with an
+honest state note — not to iterate a fourth time. Continuing produces void arms that later read as negatives
+and poison a mechanism that was never actually tested.
