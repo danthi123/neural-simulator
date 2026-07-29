@@ -39,6 +39,19 @@ while true; do
   while [ "$FREE" -gt 0 ]; do
     LINE=$(grep -vE '^\s*(#|$)' "$Q" 2>/dev/null | head -1)
     [ -z "$LINE" ] && break
+    # THE RECORD-CHECK GATE (2026-07-29). A line may only run if it entered via tools/queue_add.sh,
+    # which forces a look at existing findings FIRST. This sits on the EXECUTION PATH deliberately:
+    # `before_you_build.sh` already existed and was skipped, because running it was a thing to REMEMBER,
+    # and that skip cost crux-lane slots re-running a result banked five days earlier. Unmarked lines are
+    # set aside in $Q.unchecked, never silently dropped.
+    case "$LINE" in
+      *"#checked:"*) ;;
+      *) echo "[BLOCKED $LANE] unchecked job -- requeue via tools/queue_add.sh (it reads the record first):"
+         echo "               $(echo "$LINE" | cut -c1-100)"
+         grep -vxF "$LINE" "$Q" > "$Q.tmp" 2>/dev/null && mv "$Q.tmp" "$Q"
+         echo "$LINE" >> "$Q.unchecked"
+         continue ;;
+    esac
     # atomically remove that line from the queue before launching (no double-dispatch on restart)
     grep -vxF "$LINE" "$Q" > "$Q.tmp" 2>/dev/null && mv "$Q.tmp" "$Q"
     echo "$LINE" >> "$RUN"

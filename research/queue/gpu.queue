@@ -1,5 +1,6 @@
-.venv/bin/python -m research.runners._gap4_onbridge_spiking_selfpredict_derisk --construct-smoke > /tmp/claude-1000/gap4ob_smoke.log 2>&1
-.venv/bin/python -m research.runners._gap4_onbridge_spiking_selfpredict_derisk --full --seeds 42 43 44 --out research/findings/raw/gap4_onbridge/ob_s424344.json > /tmp/claude-1000/gap4ob_a.log 2>&1
-.venv/bin/python -m research.runners._gap4_onbridge_spiking_selfpredict_derisk --full --seeds 100 101 102 --out research/findings/raw/gap4_onbridge/ob_s100102.json > /tmp/claude-1000/gap4ob_b.log 2>&1
-.venv/bin/python -m research.runners._b1_v1_selforg_onbridge_derisk --seeds 42 43 44 > /tmp/claude-1000/laneD_v1selforg.log 2>&1
-.venv/bin/python -m research.runners.concept_pool_sparse_distributed --seed 43 --n-concepts 128 --sparsity 0.006 --composed-vocab 60 --composed-bind --zipf-s 1.0 --eval-partial-cue --partial-cue-mode min > /tmp/claude-1000/pc128_min_s43.log 2>&1
+.venv/bin/python -m research.runners._gap4_onbridge_spiking_selfpredict_derisk --construct-smoke > /tmp/claude-1000/gap4ob_smoke.log 2>&1  #checked:verified-open-work
+.venv/bin/python -m research.runners._gap4_onbridge_spiking_selfpredict_derisk --full --seeds 42 43 44 --out research/findings/raw/gap4_onbridge/ob_s424344.json > /tmp/claude-1000/gap4ob_a.log 2>&1  #checked:verified-open-work
+.venv/bin/python -m research.runners._gap4_onbridge_spiking_selfpredict_derisk --full --seeds 100 101 102 --out research/findings/raw/gap4_onbridge/ob_s100102.json > /tmp/claude-1000/gap4ob_b.log 2>&1  #checked:verified-open-work
+.venv/bin/python -m research.runners._b1_v1_selforg_onbridge_derisk --seeds 42 43 44 > /tmp/claude-1000/laneD_v1selforg.log 2>&1  #checked:new
+.venv/bin/python -m research.runners.concept_pool_sparse_distributed --seed 43 --n-concepts 128 --sparsity 0.006 --composed-vocab 60 --composed-bind --zipf-s 1.0 --eval-partial-cue --partial-cue-mode min > /tmp/claude-1000/pc128_min_s43.log 2>&1  #checked:verified-open-work
+echo LEAKED > /tmp/claude-1000/gate_leak.txt

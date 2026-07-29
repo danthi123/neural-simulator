@@ -345,3 +345,24 @@ reads *"Phase-0 keystones DR-1/DR-3/P0.3/P1.2/W3 all landed"*. Queueing them wou
 hour, the exact duplication the crux-lane lapse had just cost. **The coverage check measures where compute
 goes, not whether that lane still has open work — always read the lane's roadmap STATUS before stocking it.**
 A lane with no open work is correctly empty.
+
+## READ-THE-RECORD IS NOW ON THE EXECUTION PATH, NOT IN MEMORY (2026-07-29)
+
+The most expensive lapse of the day was spending crux-lane GPU slots re-running a result banked five days
+earlier. `tools/before_you_build.sh` already existed to prevent exactly that — and was skipped, because
+running it was a thing to REMEMBER and an urgency (an owner critique about prioritization) made speed feel
+appropriate. **Urgency defeats checks that live in memory.** So the check moved onto the path the work must
+travel:
+
+* **`tools/queue_add.sh <lane> "<cmd>" [reason]`** — the only sanctioned way to enqueue. It greps the
+  findings for the runner, PRINTS every doc that already mentions it, and **refuses to enqueue** a runner
+  with prior findings unless given an explicit reason, which is then recorded inline in the queue forever
+  (`#checked:on-bridge-not-rate`).
+* **`tools/lane_dispatch.sh`** refuses to dispatch any line lacking `#checked:` — it sidelines it to
+  `<queue>.unchecked` (never drops it) and prints `[BLOCKED]`. The heartbeat alarms on a non-empty
+  `.unchecked`.
+
+**Verified by unit test, not by absence of failure.** The first live test looked like a pass — no leaked
+job — but zero lines had been dispatched (all slots busy), so the gate was never exercised. *Absence of a
+leak is not evidence when the mechanism never ran.* The gate's case-statement and sideline path were then
+tested directly: marked lines pass, unmarked lines block and land in `.unchecked`, queue intact.
