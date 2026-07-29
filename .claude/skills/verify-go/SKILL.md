@@ -299,3 +299,24 @@ that order costs time and — worse — can produce a "the checker is broken" fi
 had rescaled its units; and a `;` instead of `&&` that let a commit through while the checker printed FAIL.
 **The gate existed in all three cases and was not honoured.** Prefer `&&` over `;` whenever a check gates
 an action, and never let a hand-rolled measurement overrule an instrumented one without debugging it.
+
+## LANE MONOCULTURE — a full lane is not a prioritized one (2026-07-29, owner-flagged)
+
+After parallelization was fixed with a dispatcher, the GPU ran at 100% with a stocked queue for hours — and
+**every job in it served ONE roadmap lane (H · Memory)** while lane **F · gap#4**, which the master roadmap
+calls *"the single load-bearing dependency (the crux the whole roadmap pivots on)"* and *"the must-solve
+core"*, had **zero allocation**. Not deprioritized after consideration — never considered. Simultaneously
+lane **E · Language**, tagged `[CPU]` and *"disjoint from A/B/C"*, sat unqueued while the 36-core pool
+idled; the first lane-E runner dispatched returned a **GO in 40 seconds**.
+
+**The dispatcher made the lane efficient without ever checking it was the RIGHT lane.** That is the failure
+this rule exists for: a full queue and a busy GPU look exactly like good prioritization from the inside.
+
+**The mechanism that produced it:** resume into a live arc → it yields interesting results → interesting
+results justify the next experiment → repeat. **Momentum substitutes for prioritization.** Nothing about
+the arc grew more valuable; the question simply stopped being asked.
+
+**The check, cheap and mechanical:** when stocking a queue, name the ROADMAP LANE each job serves
+(the `§ parallelization map` table). If every job names the same lane, that is the alarm — go read the
+roadmap's own crux statement before adding more. Prefer stocking ACROSS lanes: the CPU-tagged lanes are
+explicitly disjoint and cost nothing to run alongside GPU work.

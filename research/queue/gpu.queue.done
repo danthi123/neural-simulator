@@ -1,2 +1,9 @@
 .venv/bin/python -m research.runners.concept_pool_sparse_distributed --seed 42 --n-concepts 64 --sparsity 0.03 --n-lang-input 16384 --composed-vocab 12 --composed-bind > /tmp/claude-1000/clean_scale_n64.log 2>&1
 .venv/bin/python -m research.runners.concept_pool_sparse_distributed --seed 42 --n-concepts 128 --sparsity 0.03 --n-lang-input 32768 --composed-vocab 12 --composed-bind > /tmp/claude-1000/clean_scale_n128.log 2>&1
+.venv/bin/python -m research.runners.concept_pool_sparse_distributed --seed 101 --n-concepts 32 --sparsity 0.03 --composed-vocab 12  > /tmp/claude-1000/scomp32_s101.log 2>&1
+.venv/bin/python -m research.runners.concept_pool_sparse_distributed --seed 101 --n-concepts 32 --sparsity 0.03 --composed-vocab 12 --composed-bind > /tmp/claude-1000/sbind32_s101.log 2>&1
+.venv/bin/python -m research.runners.concept_pool_sparse_distributed --seed 102 --n-concepts 32 --sparsity 0.03 --composed-vocab 12  > /tmp/claude-1000/scomp32_s102.log 2>&1
+.venv/bin/python -m research.runners.concept_pool_sparse_distributed --seed 102 --n-concepts 32 --sparsity 0.03 --composed-vocab 12 --composed-bind > /tmp/claude-1000/sbind32_s102.log 2>&1
+.venv/bin/python -m research.runners.concept_pool_sparse_distributed --seed 42 --n-concepts 32 --sparsity 0.03 --n-lang-input 8192 --composed-vocab 12 --composed-bind > /tmp/claude-1000/clean_scale_n32.log 2>&1
+.venv/bin/python -m research.runners.concept_pool_sparse_distributed --seed 42 --n-concepts 32 --sparsity 0.03 --composed-vocab 60 --composed-bind --zipf-s 1.0 --freq-adaptive > /tmp/claude-1000/zipf_adapt32.log 2>&1
+.venv/bin/python -m research.runners.concept_pool_sparse_distributed --seed 42 --n-concepts 32 --sparsity 0.03 --composed-vocab 60 --composed-bind --zipf-s 1.0 --eval-partial-cue > /tmp/claude-1000/partial_zipf32.log 2>&1
