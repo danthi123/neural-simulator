@@ -4250,3 +4250,29 @@ scomp32 9.6GB, sbind32 12.3GB. Only the crux runner carried the `setdefault('num
 **⇒ ADD THE DEVICE LINE TO THE FIRST THING READ FROM ANY RUN.** Progress output, CPU%, and elapsed time
 all looked perfect. The single distinguishing fact was in line 1 of the log and I scrolled past it for
 47 minutes.
+
+### 2026-07-29 (LANE D — on-bridge V1 self-org returns NEGATIVE 3/3, but the arm is likely VOID, not informative)
+
+First result from the lane that the coverage rebalance opened (roadmap A4a, "being taken", not previously
+banked). Ran on GPU (verified 12.0GB), 3 seeds:
+
+| metric | value | reading |
+|---|---|---|
+| `overall_verdict` | **NEGATIVE** (3/3 seeds) | — |
+| **`v1_firing_rate_mean`** | **0.0007** | **essentially NOTHING FIRED** |
+| `orient_decode_mean` | 0.0833 | **exactly chance** (1/12 orientations) |
+| `host_decode_mean` | 0.9844 | the host reference works — the task is decodable |
+| `osi_post_frac` / shuffle | 0.0156 / 0.0057 | barely above shuffle |
+| `rsa_vs_host_mean` | 0.3855 | — |
+
+**⇒ FLAGGED AS LIKELY-VOID, NOT AS A MECHANISM NEGATIVE.** Orientation selectivity cannot be measured in
+neurons that do not spike, and a firing rate of **0.0007** means the V1 population was effectively silent
+for the whole run. Decoding at *exactly* chance while the host reference decodes at 0.98 is the signature
+of a substrate that never activated, not of a self-organisation mechanism that failed. This is the same
+class as the day's other instrument failures (an arm whose lever never engaged), and it would be a
+misattribution to record "on-bridge V1 self-org does not work".
+
+**▶ NEXT ACTION (operating point, before any mechanism conclusion):** raise the drive / lower the threshold
+until `v1_firing_rate_mean` is in a physiological range, verify the population actually spikes, and only
+then read orientation selectivity. If selectivity is still at chance WITH the population firing, that is a
+real negative and worth the research gate.
