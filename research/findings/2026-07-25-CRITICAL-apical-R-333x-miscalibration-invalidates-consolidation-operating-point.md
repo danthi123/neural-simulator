@@ -4224,3 +4224,29 @@ the signature of inert learned machinery. A different ratio on spikes is what th
 predicts. **But this is an UNTRAINED smoke** (`heldout_read = 0.333` = chance for every arm, as expected),
 so it carries no evidential weight about the trained comparison. Recorded now, before the 6-seed runs land,
 precisely so it cannot later be narrated as though it had been evidence.
+
+### 2026-07-29 (⛔ THE CRUX RAN 47 MINUTES ON THE CPU — and the runner said so in its first line)
+
+After prioritising gap#4, moving it to the queue front, and raising the dispatcher slot count so it could
+start, the two crux jobs ran **47 minutes on the CPU** while the GPU was free. The runner printed the
+diagnosis itself, in its opening line:
+
+> *"SIM_BACKEND=numpy selected, but a CUDA GPU + CuPy ARE available -> this run is on the CPU (typically
+> 10-50x slower)... many research runners do `os.environ.setdefault('SIM_BACKEND','numpy')`, which silently
+> wins unless the caller overrides it."*
+
+**Everything else was correct** — the smoke passed, the lane check passed, queue position was right, slots
+were raised, CPU time tracked elapsed time at ~99% so no liveness monitor could have flagged it. The jobs
+were genuinely computing; they were computing on the wrong device. This is `verify-go` rule 6 verbatim
+(*"a 4-arm sweep ran ~50 min on CPU while the monitor correctly said RUNNING — it could not see WHICH
+DEVICE"*), and it recurred anyway because I read the log for a VERDICT and not for the DEVICE.
+
+**Killed and requeued with `SIM_BACKEND=cupy` forced** (via `queue_add.sh`, reason recorded
+`#checked:crux-rerun-was-silently-on-CPU`).
+
+**DEVICE AUDIT of every other running job — all clean:** lane D 12.0GB, pc128_min 7.6GB, pc128_sum 11.8GB,
+scomp32 9.6GB, sbind32 12.3GB. Only the crux runner carried the `setdefault('numpy')` pattern.
+
+**⇒ ADD THE DEVICE LINE TO THE FIRST THING READ FROM ANY RUN.** Progress output, CPU%, and elapsed time
+all looked perfect. The single distinguishing fact was in line 1 of the log and I scrolled past it for
+47 minutes.
