@@ -4329,3 +4329,42 @@ predicts the gain should GROW with N (it does: sum's margin collapses faster tha
 **HONEST SCOPE:** off-substrate, 4 seeds, and it explains the SHAPE of the decay rather than proving the
 bound. The `min` arm's −13% self-score decay is small but real and is NOT explained by order statistics —
 a minor residual inside the residual, left named rather than swept up.
+
+### 2026-07-29 (gap#5 NEURAL-READER SCOPING — the "Bayesian decode" audited; the GO STANDS, the GATE is loose)
+
+Scoped the roadmap's named gap#5 next step (*"(c) neural reader — Bayesian decode is a measurement
+instrument"*) on CPU while the GPU is committed. The design/attack phases died on **API 529 (server-side
+overload)** and must be re-run; the READ phase landed and is worth more than the design would have been.
+
+**(1) "The Bayesian decode" is THREE different things.** Only one is under the 6-seed GO:
+`decode_and_width` (`_gap5_ecker_recurrent_replay.py:103-127`), **100% host numpy** — every step after a
+per-timestep `to_host(cp_firing_states)` copy is CPU. **Its place fields are NOT measured: they are
+hard-coded from neuron index** (`neuron_pos = np.arange(N)/N*n_pos`, `:107`), i.e. it assumes neuron index
+== track position using the SAME map the band was wired from. That is the most experimenter-side part of
+the instrument and the real thing a neural reader must replace.
+
+**(2) Nothing downstream consumes it.** `grep -rln decode_and_width` → 5 runners, **0 tests, 0 sim/**. In
+every case the floats go to a print and a boolean verdict. No region reads the decoded position; no
+learning or behaviour is driven by it. That is exactly why the roadmap calls it a measurement instrument.
+
+**(3) ⚠️ THE GATE IS LOOSE — and I verified this myself.** The 6-seed GO gates on **dec_r only**
+(`_gap5_learned_band_emergence.py`: `fgo = (fwd > 0.6).sum(); rgo = (rev < -0.6).sum()`); `width` and
+`growth` are computed and PRINTED but never gated. Executed on synthetic rasters, a **spreading front scores
+dec_r = +0.717** (width 14.61, growth +14.43) — it would PASS the forward gate while being the opposite of a
+traveling wave. **⇒ dec_r alone cannot discriminate travel from spread.**
+
+**(4) BUT THE RESULT STANDS.** The GO's own recorded values are `DECODE_r` **0.982-0.991** forward /
+−0.982 to −0.989 reverse, with **width ~3.5** — versus the spreading-front profile's 0.717 / 14.6 / +14.4.
+The actual runs are far from the failure mode the loose gate would admit. **This is a gate weakness (fix the
+gate: require low width AND low growth), NOT a retraction.** Recorded as such deliberately — conflating
+"the gate could pass a bad case" with "the result is bad" would be its own error.
+
+**(5) A SECOND decoder has NEVER decoded a real event.** `_gap5_moving_bump_replay_decode.py` is richer
+(assembly-derived tuning, full posterior, per-event shuffles) but its only artifact reads
+`real.n_decoded = 0`, `shuffle.n_decoded = 0`, `real_vs_shuffle_differ = False`; its `decoder_machinery_ok`
+came only from a SYNTHETIC unit test, and its `--seeds` GPU path is a stub that prints and returns 0.
+**Reference machinery, not a validated instrument** — and a textbook engagement failure.
+
+**▶ NEXT:** re-run the design phase (529 was transient). The reader must replace the index→position
+assumption, not just the arithmetic — a spiking reader fed hard-coded place fields would move the shortcut
+rather than remove it.
