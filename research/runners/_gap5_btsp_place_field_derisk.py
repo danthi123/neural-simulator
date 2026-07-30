@@ -312,13 +312,13 @@ def main():
         rc, rp = [], []
         for s_ in a.seeds:
             # (i) RANDSET: same activity, no place manifold. Gain must COLLAPSE.
-            M0r, M1r, nr_, np_, ap_ = run(s_, kw["w_inh"], kw["btsp"], kw["lr"], a.w_max,
+            M0r, M1r, nr_, np_, ap_, _apst_r = run(s_, kw["w_inh"], kw["btsp"], kw["lr"], a.w_max,
                                           laps=a.laps, dwell=a.dwell, randset=True)
             rc.append(float(np.mean([circ_resultant(r) for r in M1r])) - float(np.mean([circ_resultant(r) for r in M0r])))
             # (ii) SHARPENING-MATCHED NULL: same total |dW|, no place structure
             # (ii) PERMUTED-INCREMENT NULL on the REAL place-sweep arms (same magnitudes + concentration,
             #      positions shuffled). Recompute the sweep arm so the increments are the genuine ones.
-            M0p, M1p, _, _, _ = run(s_, kw["w_inh"], kw["btsp"], kw["lr"], a.w_max,
+            M0p, M1p, _, _, _, _ = run(s_, kw["w_inh"], kw["btsp"], kw["lr"], a.w_max,
                                     laps=a.laps, dwell=a.dwell, randset=False)
             base = float(np.mean([circ_resultant(r) for r in M0p]))
             rp.append(permuted_increment_null(M0p, M1p, s_) - base)
