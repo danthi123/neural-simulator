@@ -5098,3 +5098,43 @@ ACQUIRES tuning by k-WTA Hebbian, 9.1x, handed nothing." But it SEEDS each reade
 (`seeds = rng.permutation(N)[:n_read]`) before learning — **exactly the structural head-start that this rung
 shows can supply the entire effect.** Until an untrained-vs-trained baseline is run on that function too, the
 "acquired" framing is UNVERIFIED and may be the same error one level up. Recorded as owed, not asserted.
+
+### 2026-07-29 ⛔⛔ SECOND RETRACTION — the OFF-substrate "acquired tuning 9.1x" is ALSO VOID. The tuning was HANDED.
+
+The check owed one rung above is discharged, and it kills the claim. Same untrained-vs-trained comparison,
+`lr=0` (seeding only) vs `lr=0.05`:
+
+| seed | selectivity at lr=0 | trained | delta |
+|---|---|---|---|
+| 42 | **9.376** | 9.177 | **-0.199** |
+| 43 | **9.363** | 9.163 | **-0.200** |
+| 44 | **9.334** | 9.157 | **-0.177** |
+
+**The entire 9.1x was present at `lr=0`, and learning made it WORSE on 3/3 seeds.** `learn_tuning()`'s own
+source is unambiguous once read for this question:
+
+```python
+seeds = rng.permutation(N)[:n_read]
+for j in range(n_read):
+    W[j, max(0, seeds[j] - 2):seeds[j] + 3] += 0.05     # <- a place field, HANDED, before any learning
+```
+
+Its docstring says *"Reader ACQUIRES tuning by k-WTA Hebbian. Handed nothing — that is the whole point."*
+**That sentence is FALSE**, and I quoted it as validation repeatedly this session ("acquired tuning 9.1x", "the
+architecture is de-risked: acquired tuning, opponent pools, clean null").
+
+**THE SAME ERROR CLASS AT TWO LEVELS IN ONE EVENING, caught by the SAME check.** On-bridge I read random
+initialisation as learning; off-substrate I read random seeding as acquisition. In both cases a **structural
+head-start** was reported as a **learned** effect, and in both cases the diagnostic was one line: compare
+against the untrained/lr=0 network. The lesson is not "be careful" — it is that **`lr=0` (or an untrained
+baseline) must be an ARM of every learning claim**, which is now a `verify-go` rule.
+
+**CONSEQUENCE, stated plainly: tuning ACQUISITION is UNSOLVED on both substrates.** Both of my "validations"
+measured wiring, not plasticity. The named mechanisms from the rung above (k-WTA learning GATE, Oja/subtractive
+normalisation, temporally-asymmetric STDP) are now the FIRST attempts at it, not fallbacks after a success.
+
+**WHAT SURVIVES, and why it is unaffected:** the order-reading results never depended on learned tuning — the
+single-pair detector (3.286x) and the population vote (4.548x, single-trial 1.000 at <=6 ms jitter, lesion at
+chance) use HAND-SET input timing, which was stated as their scope in both entries. Likewise the ~6 ms hop
+latency, the pinned n=50/w=300 operating point, and the jitter envelope are direct measurements with engagement
+asserted. **The reader can READ order in spikes; it cannot yet LEARN what to read it from.**

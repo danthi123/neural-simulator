@@ -474,3 +474,26 @@ if .venv/bin/python tools/check_docs.py > /tmp/dc.txt 2>&1; then git commit ...;
 
 (Or `set -o pipefail`.) The lesson generalises past docs: **whenever a check gates an action, verify the
 gate actually gates** — piping the check's output for readability silently disarms it.
+
+## `lr=0` IS AN ARM, NOT AN ASSUMPTION — a structural head-start reads as a learned effect (2026-07-29, TWICE in one evening)
+
+**Any claim that something was LEARNED / ACQUIRED / SELF-ORGANISED must carry an UNTRAINED (or `lr=0`) arm in the
+same run.** Not "check the weights changed" — `dW != 0` is satisfied by the DECAY term alone and proves nothing.
+
+Two retractions the same evening, same class, caught by the same one-line check:
+- **on-bridge:** "learned place tuning, selectivity 1.61-1.73x, 11-12 distinct prefs." The untrained network read
+  **1.61-1.73x with the same distinct-pref counts, identical to two decimals per seed** — it was the peak/mean of
+  the random initialisation. The reader had **never fired** (`w0=0.5` vs a firing threshold of 200-300 that the
+  same session had already measured), so Hebbian's post-factor was absent and potentiation was impossible. I had
+  "checked for a void arm" — but checked the WEIGHT BOUND, not the post-factor.
+- **off-substrate:** "reader ACQUIRES tuning by k-WTA Hebbian, 9.1x, handed nothing" — the docstring's own words.
+  At `lr=0` it read **9.33-9.38x**, i.e. ALL of it, and learning made it **worse on 3/3 seeds**. The function
+  seeds each reader with a place field (`W[j, seeds[j]-2:seeds[j]+3] += 0.05`) before any learning.
+
+**The tell in both: selectivity tracked STRUCTURE, not training.** On-bridge it moved 1.7x -> 4.5x -> 11.1x purely
+with connectivity density (a cell wired to fewer inputs mechanically has a higher peak/mean). If a "learned"
+metric responds to a WIRING parameter, suspect the wiring is the whole effect.
+
+**Do this:** (1) run `lr=0` as an arm and report both numbers side by side; (2) if the mechanism needs the target
+to FIRE, assert spikes > 0 before reading any learning metric; (3) never quote a docstring's "handed nothing" —
+read the initialiser. A docstring is a claim, exactly like a comment (rule 2 above).
