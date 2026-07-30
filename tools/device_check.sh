@@ -19,6 +19,9 @@
 # logs still said "numpy" and were nearly misread as a repeat failure.)
 set -uo pipefail
 QUIET=0; [ "${1:-}" = "--quiet" ] && QUIET=1
+# Configurable so the age-exemption is TESTABLE against a known-bad run (rule 8: test the monitor
+# against a run you KNOW is broken). Default 90s; set 0 to disable the exemption in a test.
+MIN_AGE=${DEVCHECK_MIN_AGE:-90}
 BAD=0; N=0; LINES=""
 
 while read -r PID ETIME ARGS; do
@@ -35,12 +38,31 @@ while read -r PID ETIME ARGS; do
   # to print a device line, and the crux runner does not — it read UNDETERMINED for jobs whose backend was
   # verified by hand via /proc/<pid>/environ. Use the env; fall back to the log only when it is absent.
   ENVB=$(tr '\0' '\n' < /proc/"$PID"/environ 2>/dev/null | grep -oE '^SIM_BACKEND=.*' | cut -d= -f2)
+  # SEVERITY WAS BACKWARDS UNTIL 2026-07-29 (this tool cried wolf on my own deliberate probes, and rule 8
+  # says a false alarm is as corrosive as a missed one -- it trains the reader to ignore the alert, which is
+  # how the real 47-minute-CPU-crux slips through).
+  #
+  # /proc/<pid>/environ shows the environment AT EXEC TIME. So the two cases ARE distinguishable:
+  #   - SIM_BACKEND=numpy PRESENT here  => the CALLER passed it explicitly = a DELIBERATE choice
+  #     (e.g. a small CPU probe run on purpose while the GPU is saturated). Benign; report, do not alarm.
+  #   - SIM_BACKEND ABSENT here but the log says numpy => the runner's own os.environ.setdefault won
+  #     SILENTLY at import time (runtime setdefault does NOT appear in /proc/environ). THAT is the actual
+  #     failure mode that cost the crux 47 minutes, and it is caught by the log branch below.
   case "$ENVB" in
     cupy) DEV="GPU (env SIM_BACKEND=cupy)" ;;
-    numpy) DEV="⛔ CPU (env SIM_BACKEND=numpy)"; BAD=$((BAD+1)) ;;
+    numpy) DEV="CPU (deliberate: caller set SIM_BACKEND=numpy)" ;;
   esac
   if [ -n "$ENVB" ]; then
     LINES="$LINES  $(printf '%-42s' "${RUNNER:-?}") $(printf '%-8s' "$ETIME") $DEV\n"
+    continue
+  fi
+  # A process younger than $MIN_AGE seconds has not necessarily written its device line yet. UNDETERMINED on a
+  # STARTING job is a transient, not a finding -- the alarm is about SUSTAINED compute on the wrong
+  # device. (Before this, three 17-second-old probes tripped the exit-1 every heartbeat cycle.)
+  PS0=$(ps -o lstart= -p "$PID" 2>/dev/null)
+  AGE=$(( $(date +%s) - $(date -d "${PS0:-now}" +%s 2>/dev/null || date +%s) ))
+  if [ "$AGE" -lt "$MIN_AGE" ]; then
+    LINES="$LINES  $(printf '%-42s' "${RUNNER:-?}") $(printf '%-8s' "$ETIME") starting (${AGE}s, device not yet readable)\n"
     continue
   fi
   if [ -n "$LOG" ] && [ -f "$LOG" ]; then
