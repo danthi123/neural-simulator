@@ -56,3 +56,41 @@ still untried and explicitly "lowers the pedestal without lowering the peak" —
 (c) the theta time-gate, which restricts WHEN potentiation can occur and should narrow the field in time;
 (d) shorter `btsp_elig_tau_ms` (currently 1000 ms) — a seconds-long eligibility window over a 1.8 s lap
 potentiates most of the lap by construction, which is a plausible direct cause of the width.
+
+## ⛔ THIRD METRIC FAILURE, and it weakens my own BTSP interpretation: `peaks=1.00` meant UNIFORM
+
+Shortening `btsp_elig_tau_ms` collapsed peaks/cell to exactly **1.00** — which I was about to read as "a clean
+single field." It is the opposite. Adding a WIDTH measure (how many of the 60 place inputs sit above half-max;
+sigma=5 oracle ≈ 12/60, uniform = 60/60):
+
+| elig_tau | peaks/cell | **width /60** | circ(dW) | mean abs dW |
+|---|---|---|---|---|
+| 1000 | 1.71 | **51.0** | 0.1340 | 1502 |
+| 300 | 1.29 | 57.9 | 0.0517 | 1753 |
+| 100 | **1.00** | **60.0** | 0.0263 | 1825 |
+| 30 | **1.00** | **60.0** | 0.0175 | 1841 |
+
+**Width 60/60 is TOTALLY UNIFORM.** A flat profile has exactly ONE contiguous run above half-max, so `peaks=1.00`
+is satisfied *trivially* by uniformity. **`peaks/cell` cannot distinguish "one sharp field" from "everything
+potentiated equally"** — the third metric of this arc with a degenerate case (after `peak/mean` being
+permutation-invariant, and `circ(M1)` being diluted by the random initial weights). **Report WIDTH with peaks,
+always.**
+
+**⇒ NEGATIVE on the tau lever, and it VALIDATES the biological default.** Shortening tau makes things strictly
+worse: it drives toward uniform saturation (`mean|dW|` rises 1502→1841 while circ falls 0.134→0.018). The
+seconds-long `elig_tau_ms=1000` — Bittner-Magee's actual biology — is the best of the tested range. My
+ratio hypothesis (`tau/field-crossing` should be ~1) is **refuted**: at ratio 1.0 the result is uniform mush.
+
+**⇒ AND IT WEAKENS THE INTERPRETATION OF MY OWN BTSP POSITIVE (the measurement stands; the reading does not).**
+Even at the best setting the learned field is **51 of 60 inputs wide**. The +0.1281 circ gain was real, 6-seed,
+and survived randset and permuted-increment controls — so BTSP genuinely writes *position-dependent* structure —
+but that structure is a **weak modulation on near-uniform potentiation, not a place field.** "Acquires spatial
+place structure" was too strong; the honest phrasing is **"acquires a weak position-dependent modulation
+(width 51/60, circ 15% of oracle)."** The controls established that the modulation is real and spatial; they never
+established that it is localized, and I did not measure localization until now.
+
+**⇒ THE DEFECT, FINALLY STATED CORRECTLY: potentiation is near-global.** Every arm potentiates ~85-100% of each
+reader's afferents. Nothing in the current setup restricts WHICH afferents get potentiated — which is exactly what
+O'Keefe-Nadel's convergent inhibition, and BTSP's own `btsp_hetero_dep` heterosynaptic competition ("lowers the
+pedestal without lowering the peak"), are for. `btsp_hetero_dep` remains **untried** and is now the single most
+directly-aimed lever: it targets the pedestal, and the pedestal is the entire problem.
