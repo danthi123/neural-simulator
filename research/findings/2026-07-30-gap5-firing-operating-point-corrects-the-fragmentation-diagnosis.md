@@ -293,3 +293,41 @@ integration result is **UNDEFINED, not a negative** — by the same rule that vo
 GPU; tuning acquisition place-specific circ 0.597 = 68% of oracle, 6 seeds); the JOIN is unproven, with its most
 likely cause identified as detector calibration and a concrete pre-flight to settle it; and the remaining 32% of
 tuning quality is attributed to a structural mechanism (dendritic subunits by place index) rather than any knob.
+
+## PRE-FLIGHT RESOLVED: the detector WAS mis-calibrated, and at the correct gain the learned order carries information for the FIRST time — but the join is still not working
+
+Swept the install `gain` with the single-input coincidence check ASSERTED (detectors must stay silent when only one
+reader's inputs are driven), 3 seeds:
+
+| gain | single-input detector spikes | LEARNED | SCRAMBLED | regime |
+|---|---|---|---|---|
+| 1.00 | **11.7** | 0.714 | 0.684 | ⛔ SUPRATHRESHOLD |
+| **0.30** | **0.0** | **0.822** | 0.672 | ✓ subthreshold |
+| 0.10 | 0.0 | 0.583 | 0.667 | ✓ subthreshold |
+| 0.03 | 0.0 | 0.667 | 1.000 | degenerate |
+| 0.01 | 0.0 | 1.000 | 1.000 | **DEAD — zero spikes both directions (1.000 is 0/0)** |
+
+**TWO REAL FINDINGS.** (1) **The calibration diagnosis was CORRECT:** at `gain=1.0` the detector fires 11.7 spikes
+on single-input drive — genuinely suprathreshold, exactly the regime that inverts the order read. The previous
+integration "negative" was therefore measured outside the detector's valid operating window, and was properly
+labelled UNDEFINED. (2) **At the calibrated `gain=0.30`, LEARNED (0.822) separates from SCRAMBLED (0.672) for the
+FIRST TIME in this arc** — a 22% separation where every prior attempt gave LEARNED ≈ SCRAMBLED (0.714/0.684,
+0.678/0.683). **The learned ordering now carries information.**
+
+**BUT THE JOIN IS STILL NOT WORKING, and I am not going to round this up.** `LEARNED = 0.822 < 1.0` means forward
+still produces FEWER detector coincidences than reverse. A subthreshold coincidence detector reading a correctly
+ordered sequence should give **> 1**. So the sign is still wrong, and the remaining candidates are:
+(a) the K=6 readers chosen by `linspace` over `argsort(pref)` may not fire monotonically in time even though their
+WEIGHT preferences are ordered — weight-argmax order != firing order, which is the same conflation that produced
+the width/peaks confusion earlier; (b) the relay delay (~11.5 ms, tuned for the hand-set regime) may be mismatched
+to the inter-reader interval that the LEARNED preferences actually produce. **(b) is directly measurable** — record
+each reader's actual first-spike time under the sweep and compare the observed inter-reader interval against the
+relay delay, instead of assuming the 12.5 ms optimum transfers.
+**Also note `gain <= 0.03` is DEAD, not good:** a ratio of exactly 1.000 there is `0/0`, i.e. no detector spikes at
+all — a degenerate arm that must not be read as "no directional bias."
+
+**FINAL HONEST STATE OF THE ARC:** two halves independently validated (order read **0.969** single-trial on GPU,
+6 seeds; tuning acquisition **place-specific circ 0.597** = 68% of oracle, 6 seeds, every control passing); the
+JOIN now shows its first genuine signal (learned 0.822 vs scrambled 0.672 in a verified-subthreshold regime) but
+has the wrong SIGN, with a measurable next diagnostic named. Owed: GPU parity on the tuning result, and the
+first-spike-time measurement above.
