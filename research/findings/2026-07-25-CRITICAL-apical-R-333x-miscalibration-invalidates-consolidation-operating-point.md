@@ -5259,3 +5259,41 @@ TIMESCALE, but none of them is a fair test of place-field formation, and I will 
 **⇒ NEXT: a BTSP arm at a biologically faithful traversal** (~0.5-1 s per field crossing, so a lap is seconds not
 60 ms), with `enable_btsp=True`, `btsp_hetero_dep > 0` for competition, and the standard `lr=0` arm plus a
 spikes>0 assertion. This is composing already-built, already-researched machinery — not a new mechanism.
+
+### 2026-07-29 ⛔⛔⛔ THE METRIC WAS PLACE-BLIND BY IDENTITY — all three acquisition mechanisms REFUTED, and my own earlier selectivity numbers are VOID
+
+An 11-agent adversarial workflow ran the three named mechanisms with mandatory `lr=0` arms, then sent each claimed
+positive to three independent skeptics on distinct lenses. **Both positives were refuted 3/3.** The reason is
+worse than any individual mechanism failing:
+
+**THE PRIMARY METRIC CANNOT MEASURE PLACE TUNING.** `peak/mean` selectivity is **PERMUTATION-INVARIANT** over
+place index: 21 weights contiguous vs scattered score an identical **4.577236**, and scrambling a trained reader's
+weights across the 60 place indices leaves the metric **bit-identical to 15 decimals**
+(5.968440830223095 → same). It also rises with weight KURTOSIS alone — an untrained wider-jitter draw scores
+**5.806**, ABOVE the trained 5.753. **A metric invariant to which place a weight belongs to cannot detect a place
+field.** ⇒ **Every `peak/mean` number I recorded in this arc is VOID**, including the density series
+(1.7x/4.5x/11.1x) and the "plain Hebbian DEGRADES selectivity" negative two rungs above. Those measured weight
+concentration, not place tuning.
+
+| mechanism | verdict | decisive number |
+|---|---|---|
+| k-WTA learning gate | **REFUTED** | with `randset` drive (random cells, NO bump, no place manifold at all) the gate still gains **+1.217** vs the sweep's +1.272 — seed 43 LARGER without place structure |
+| Oja / subtractive norm | **REFUTED** | scrambling trained weights across place indices is **bit-identical to 15 dp**; a sigma=5 ORACLE field scores 14.05 where trained scores 5.97; a zero-learning random redraw scores +3.28 = **263% of the claim** |
+| asymmetric STDP | **TRUSTWORTHY NEGATIVE** | engagement asserted (27.8k-85.7k events, 98.3-98.9% at nonzero dt, zero bound contact); **12/12 negative with monotone dose-response** −0.048 → −0.330 as engagement rises. Soft-bound multiplicative STDP contracts weights to a common equilibrium, corr(w0,dw)=−0.86 |
+
+The agents did the `lr=0` discipline correctly — both `lr=0` arms sat EXACTLY at the initial 4.481, and one skeptic
+explicitly recorded "this is NOT the failure mode of tonight's two retractions." **The instrument was the problem,
+not the controls.** Honest scope the agents flagged themselves: **additive hard-bound Song-Miller-Abbott STDP —
+the variant that actually splits weights bimodally — was never tested.**
+
+**⇒ THE DIAGNOSIS THAT MATTERS:** all three failed the same two ways — (i) competition existed only WITHIN each
+reader's afferents, so 12 readers seeing IDENTICAL population drive cannot differentiate by phase even in
+principle; and (ii) the metric could not have detected a field if one had formed.
+
+**NEXT METHOD (and it converges with the corpus query one rung above — two independent routes to the same place):**
+**soft-WTA lateral inhibition BETWEEN reader cells** (Mexican-hat recurrence, Rutishauser alpha>1 stability) as the
+symmetry-breaker, **written by BTSP behavioural-timescale plateau potentiation** rather than ms-scale STDP or
+instantaneous Hebbian — already in the engine (`btsp_*`), and **raise `btsp_w_max` above the 250 pA design weight
+(the default 5.0 is exactly the rule-5 bound trap)**. Score ONLY with non-permutation-invariant metrics: circular
+resultant length + best-contiguous-window mass against a **sharpening-matched** null, with the sigma=5 oracle
+field (14.05) as the positive-control CEILING.
