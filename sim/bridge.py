@@ -7763,6 +7763,27 @@ class SimulationBridge:
             # --- 4b. C2: STDP (Spike-Timing-Dependent Plasticity) ---
             # Always update last spike times regardless of plasticity gating, so STDP
             # has valid timing data when plasticity re-enables (e.g. training phase starts).
+            # ⛔ SILENT-FAILURE GUARD (2026-07-29). `current_time_ms` is advanced ONLY by
+            # `step_simulation()` (bridge.py:4141) — NOT by this method. Every research runner drives
+            # `_run_one_simulation_step()` directly in its own loop, so unless the runner advances the clock
+            # ITSELF, every spike below is stamped with the SAME `current_time_ms`, `delta_t` is identically
+            # 0 for every pair, and `fused_stdp_weight_update` returns EXACTLY 0.0 (both its branches use
+            # STRICT inequalities: `delta_t > 0.0` and `delta_t < 0.0`). STDP is then completely inert while
+            # every liveness indicator reads healthy — this is what produced the banked "656k STDP events, 0
+            # weight change at delta_t~0" prior, which was an instrument artifact and not a fact about STDP.
+            # 11 runners were affected when this guard was added. Warn ONCE; never raise (would break callers).
+            if cfg.enable_stdp and self.cp_last_spike_time is not None:
+                self._stdp_clock_steps = getattr(self, "_stdp_clock_steps", 0) + 1
+                if self._stdp_clock_steps == 50 and not getattr(self, "_stdp_clock_warned", False):
+                    if float(self.runtime_state.current_time_ms) == 0.0:
+                        self._stdp_clock_warned = True
+                        self._log_console(
+                            "⛔ STDP IS INERT: enable_stdp=True but runtime_state.current_time_ms is still 0.0 "
+                            "after 50 steps. _run_one_simulation_step() does NOT advance the clock (only "
+                            "step_simulation() does), so every spike shares one timestamp, delta_t==0 for every "
+                            "pair, and every STDP update is exactly 0.0. FIX: advance it in your loop -- "
+                            "`bridge.runtime_state.current_time_ms += bridge.core_config.dt_ms` after each step."
+                        )
             if cfg.enable_stdp and self.cp_last_spike_time is not None and _fired_any:
                 self.cp_last_spike_time = cp.where(
                     fired_this_step,
