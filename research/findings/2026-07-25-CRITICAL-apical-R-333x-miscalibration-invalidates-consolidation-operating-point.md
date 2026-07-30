@@ -5022,3 +5022,42 @@ machinery for (`shared_FS`)** — a mechanism to add, NOT a boundary.
 which is functionally equivalent to timing jitter — and the population vote is already measured to fail at
 jitter >= 24 ms. So weak tuning is expected to degrade the vote, and the two results connect quantitatively.
 Untested; that is the next step, together with the inhibition.
+
+### 2026-07-29 ⛔⛔ RETRACTION — the "LEARNED tuning ENGAGES on-bridge" entry above is VOID. NO LEARNING OCCURRED.
+
+**Caught by the engagement check on the NEXT rung, which found the reader cells never fire at all** (read
+spikes = **0**, fs spikes = 0, at every inhibition strength). With the post-synaptic factor absent, the Hebbian
+`heb_mask = pre_mask & post_mask` (`bridge.py:843-845`) can never be true, so **potentiation was impossible**.
+
+**THE DECISIVE COMPARISON I FAILED TO RUN — untrained vs "trained", per seed:**
+
+| seed | UNTRAINED selectivity | what I reported as LEARNED | UNTRAINED distinct prefs | reported |
+|---|---|---|---|---|
+| 42 | **1.73x** | 1.73x | 11/12 | 11/12 |
+| 43 | **1.71x** | 1.71x | 12/12 | 12/12 |
+| 44 | **1.61x** | 1.61x | 11/12 | 11/12 |
+
+**IDENTICAL TO TWO DECIMALS ON EVERY SEED.** The selectivity was the peak/mean of the RANDOM INITIALISATION
+(`weight_mean=0.5, weight_jitter=0.3`), and the "11-12 distinct preferred positions" were the argmax of random
+weights. Every number in that entry describes an untrained network.
+
+**HOW IT GOT PAST ME, precisely.** I did check for a void arm — but **the WRONG one**. I verified `dW = 0.0116
+!= 0` and wrote that it was "not the 0.000 of a saturated bound", concluding the rule had engaged. **`dW != 0`
+was the Hebbian DECAY term, which is not learning.** The bound was never the problem; the POST-FACTOR was. A
+non-zero weight change is NOT evidence of learning — only a difference from the UNTRAINED baseline is. This is
+exactly what `tools/lab.py::before_after` exists to force, and I did not use it.
+
+**ROOT CAUSE, and it is worse than a slip: I contradicted my OWN measurement from three rungs earlier.** I had
+just established that a pathway needs `weight_mean` ~200-300 to make its target fire — then initialised
+`place->read` at **0.5**, ~400x too weak. Confirmed: `w0=0.5` -> 0 read spikes, `w0=50` -> 0, **`w0=200` -> 3
+spikes, `w0=300` -> 5 spikes.**
+
+**ALSO VOIDED:** the "~5x shortfall vs the off-substrate 9.1x k-WTA" comparison (comparing a real result against
+an untrained network), and the lateral-inhibition sweep (flat 1.68x at w_inh 0->400 — **inert because there was
+nothing firing to inhibit**, which is UNDEFINED, not a negative on inhibition).
+
+**WHAT STANDS, unaffected:** every earlier rung — the pairwise read, the ~6 ms hop latency, the pinned n=50/w=300
+operating point, the 3.286x single-pair detector and the 4.548x population vote with its jitter envelope — used
+`weight_mean` 300/10 in the firing regime and asserted engagement (the population runner ABORTS if the
+coincidence property fails). **Only the learned-tuning claim is withdrawn**, so the reader's tuning remains
+HAND-SET and learning it on-bridge is still OPEN, now with a known correct starting weight.
