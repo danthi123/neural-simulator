@@ -5215,3 +5215,47 @@ measurement that inherits that.
 standard for a load-bearing run. So the population vote's honest figure is **ratio 3.515, single-trial accuracy
 0.944**, not 4.548/1.000. **Caveat on both:** 6 trials x 3 seeds = 18 paired comparisons is a thin accuracy
 estimate (0.944 vs 1.000 is ONE trial), so a 6-seed x 16-trial GPU run (96 comparisons) is in flight to firm it.
+
+### 2026-07-29 (⭐ THE RULE AND THE TIMESCALE WERE BOTH WRONG — BTSP is the biology, and it is ALREADY IN THE ENGINE)
+
+After the two tuning-acquisition retractions I named three candidate mechanisms (k-WTA gate, Oja/subtractive,
+asymmetric STDP) and launched them. **One local-corpus query (7 s) shows the actual biology is a FOURTH mechanism
+I did not name, and that the project had already researched and BUILT it.**
+`research/findings/2026-06-09-place-code-biologization-research.md:54`:
+
+> **BTSP (Bittner & Magee 2017):** CA1 place fields form **in a single trial** via plateau-potential-gated
+> potentiation of inputs arriving **seconds** before/after a complex spike — a **non-Hebbian, seconds-wide,
+> asymmetric** rule. This is the *fast* place-field-formation alternative (one traversal → a field).
+
+Plus **Hartley/Burgess competitive learning** (same doc, :53): place fields develop by *competing* for
+boundary-vector-cell inputs — i.e. competition is intrinsic to the biology, not an add-on.
+
+**⇒ PLAIN PAIRWISE HEBBIAN IS NOT HOW PLACE FIELDS FORM.** So the negative two rungs above is a verdict on a
+mechanism biology does not use for this job — correctly measured, but aimed at the wrong rule.
+
+**AND THE ENGINE ALREADY HAS EVERY PIECE I CALLED MISSING** (`sim/config.py`, `sim/kernels.py`, all
+additive/default-off):
+
+| what I named as the missing ingredient | what already exists |
+|---|---|
+| a seconds-wide rule | `btsp_elig_tau_ms = 1000.0` (Milstein pre-side eligibility low-pass) |
+| COMPETITION between synapses | `btsp_hetero_dep` — heterosynaptic competition, explicitly "lowers the pedestal without lowering the peak" |
+| a k-WTA learning gate | `btsp_elig_hard_thresh` — a HARD-threshold k-WTA gate on presynaptic eligibility |
+| plateau gating | `coincidence_plateau_strength`, intrinsic dendritic bistability (v-gated self-regenerating plateau) |
+| the rule | `fused_btsp_update`, `fused_btsp_milstein_update`, `fused_btsp_dog_update` |
+
+**THE SECOND ERROR IS A TIMESCALE ERROR, and it is larger than the rule error.** My probe traversed 60 place
+cells at one step each, dt=1.0 ms = **60 ms per lap**. A rat crosses a place field in **~0.5-1 s**, and BTSP's
+eligibility tau is **1000 ms**. So the eligibility trace barely decays across an ENTIRE lap — every synapse looks
+equally eligible, and no rule with a seconds-wide window can differentiate anything. **The traversal was ~10-20x
+too fast for place-field formation, which undermines the temporal structure ANY such rule needs.** The mission is
+explicit that this is the wrong trade ("slow-but-faithful biology — dendritic credit, seconds-long BTSP plateaus
+— is explicitly in scope; never trade faithfulness for speed").
+
+**⚠️ THIS PROPAGATES TO THE THREE IN-FLIGHT ARMS.** I handed the workflow agents my own probe pattern, so the
+k-WTA / Oja / STDP arms all inherit the 60 ms lap. Their results remain informative about those rules AT THAT
+TIMESCALE, but none of them is a fair test of place-field formation, and I will report them with that scope.
+
+**⇒ NEXT: a BTSP arm at a biologically faithful traversal** (~0.5-1 s per field crossing, so a lap is seconds not
+60 ms), with `enable_btsp=True`, `btsp_hetero_dep > 0` for competition, and the standard `lr=0` arm plus a
+spikes>0 assertion. This is composing already-built, already-researched machinery — not a new mechanism.
