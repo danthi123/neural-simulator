@@ -372,3 +372,47 @@ ring evaluated on SPREAD, not peaks; (b) `btsp_elig_hard_thresh` as a genuine k-
 potentiates per position; (c) heterogeneous reader thresholds/initial biases as a symmetry-breaker. **Every
 tuning-quality number in this arc should be re-reported alongside preference-spread**, since a perfect field
 learned twelve times over is worth no more than one.
+
+## DIFFERENTIATION IS UNSOLVED — and the arm I discarded had already demonstrated the missing property
+
+Swept every candidate against the SPREAD metric (n_distinct preferred positions of 12; circular spread, 0 = all
+identical), 3 seeds:
+
+| arm | n_distinct /12 | circ_spread |
+|---|---|---|
+| baseline (tau=1000) | **1.0** | 0.000 |
+| + FS inhibition w=400 | **1.0** | 0.000 |
+| + FS inhibition w=900 | **1.0** | 0.000 |
+| + `elig_hard_thresh=0.5` | **1.0** | 0.000 |
+| tau=100 (recency test) | 1.7 | 0.046 |
+| tau=100 + FS w=900 | **3.0** | 0.128 |
+
+**Uniform FS inhibition gives EXACTLY ZERO differentiation at any strength** — definitively confirming the
+measurement I under-weighted earlier. Shortening tau helps a little (recency is part of the story: a 1000 ms
+eligibility trace over a 1.8 s lap is dominated by the last third of the lap, which is why every reader converges
+on position ~46-53), but 3 distinct of 12 is still failure.
+
+**⇒ `btsp_elig_hard_thresh` IS NOT A BETWEEN-READER k-WTA, and I misread it.** It gates **PRESYNAPTIC** eligibility
+— it selects which AFFERENTS may potentiate, not which READER wins. It therefore cannot break symmetry between
+readers, and its 0.000 spread is the expected result, not a surprise. My naming it "the k-WTA gate" in three
+earlier entries was wrong.
+
+**⇒ THE ROOT CAUSE IS UNBROKEN SYMMETRY.** All 12 readers receive IDENTICAL input (`density=1.0` from all 60 place
+cells) with near-identical dynamics, so nothing gives them a reason to differ. This is exactly what the adversarial
+workflow's synthesis said in its own words — *"competition existed only WITHIN each reader's afferents, so 12
+readers seeing identical population drive cannot differentiate by phase even in principle"* — and I read that as a
+statement about de-fragmentation when it was a statement about DIFFERENTIATION.
+
+**⇒ AND THE DISCARDED ARM HAD IT.** The workflow's k-WTA-learning-gate agent gated `cp_plasticity_rate_gain` by
+POSTsynaptic cell so only the top-k readers updated, and reported — asserted live in data — **"23205-23998 of 24000
+steps gated, 12/12 DISTINCT WINNERS."** That is precisely the differentiation property now identified as the
+blocker. I discarded the whole arm because it failed place-specificity **on the `peak/mean` metric that was later
+proven place-blind by identity.** Its differentiation result was never the thing refuted, and it should be
+re-evaluated against the SPREAD metric.
+
+**⇒ NEXT, concretely:** (1) re-run the workflow's POSTsynaptic k-WTA gate
+(`research/runners/_kwta_learning_gate_place_read_probe.py`, already written and reproducible) scoring **spread**
+and place-specificity with the VALID metrics; (2) sparse `place→read` connectivity (`density` 0.15-0.35) as a
+structural symmetry-breaker, which was tested early tonight but only ever scored on the void `peak/mean` metric;
+(3) heterogeneous reader thresholds. **Spread must be reported in every future tuning arm** — it is the one number
+that would have exposed this on the first BTSP run.
