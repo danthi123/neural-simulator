@@ -70,6 +70,11 @@ done
 echo
 echo "════ 3. RESEARCH / PRIMARY SOURCES — was a source read before the last finding? ════"
 MARK=research/.last_research_gate
+EXT=research/.last_external_search
+# An EXTERNAL search is a legitimate source check -- indeed it is the ESCALATION rule 3 itself prescribes when
+# the local corpus comes up empty. Treat the newer of the two markers as "the last source check", or the rule
+# punishes the exact behaviour it demanded (and a rule that cries wolf on correct action gets ignored).
+[ -f "$EXT" ] && [ "$EXT" -nt "$MARK" ] && MARK="$EXT"
 NEWEST=$(ls -t research/findings/*.md 2>/dev/null | head -1)
 if [ ! -f "$MARK" ]; then
   echo "  ⛔ tools/research_gate.sh has NEVER run (no marker). Our findings cite sources in ONE LINE;"
@@ -91,7 +96,7 @@ fi
 # short-circuited it and rule 3 reported PASS on a search that found ZERO primary sources -- a check that
 # LIES, which is worse than no check. A gate that ran and found nothing is a WARNING, never a pass.
 EMPTY=research/.last_research_gate_empty
-if [ -f "$EMPTY" ] && [ ! "$MARK" -nt "$EMPTY" ]; then
+if [ -f "$EMPTY" ] && [ ! "$MARK" -nt "$EMPTY" ] && { [ ! -f "$EXT" ] || [ ! "$EXT" -nt "$EMPTY" ]; }; then
   echo "  ⛔ the last source check RAN but found NO primary source for that question."
   echo "     Informative, not a pass: either our corpus lacks it -> GO EXTERNAL (WebSearch / bio-research MCP),"
   echo "     or the query was wrong. Do NOT build on our own findings alone -- that is the exact failure mode."
