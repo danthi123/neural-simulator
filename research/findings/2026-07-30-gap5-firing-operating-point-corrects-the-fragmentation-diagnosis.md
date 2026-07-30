@@ -607,3 +607,47 @@ subthreshold property — (a) average over many trials per seed (the population-
 detector cells per pair (currently n=50/stage but only a few fire), (c) repeat the sweep several times per
 measurement. **Then re-run 6 seeds.** Until then the join is a **directionally-consistent aggregate signal on
 under-powered per-seed measurements** — stronger than the four inconclusive attempts before it, and still not a GO.
+
+## ⭐⭐⭐ FINAL: 6/6 SEEDS on the PAIRED comparison — the read uses learned order, and removing the noise SHRANK the effect
+
+Applied the specified fix — 8 sweep repeats per measurement, raising counts from 1-5 to **54-92 per direction**
+(848 ON spikes total) while leaving the VERIFIED subthreshold gain at 0.30 untouched:
+
+| seed | ON (ordered) | OFF (no-order null) | ON counts f/r | ON > OFF |
+|---|---|---|---|---|
+| 42 | 0.871 | 0.632 | 74/85 | ✓ |
+| 43 | 1.519 | 1.353 | 82/54 | ✓ |
+| 44 | 1.303 | 0.492 | 86/66 | ✓ |
+| 100 | 1.559 | 0.675 | 92/59 | ✓ |
+| 101 | 0.593 | 0.518 | 54/91 | ✓ |
+| 102 | 1.143 | 0.604 | 56/49 | ✓ |
+| **mean** | **1.165** | **0.712** | — | **6/6** |
+
+**THE RESULT: ON > OFF on 6/6 SEEDS.** The paired within-seed comparison — which controls for whatever makes a
+given seed read high or low overall — is perfectly consistent. Mean separation **+0.452** (1.165 vs 0.712).
+Absolute ON > 1.0 on 4/6, so the paired contrast is the sound claim and the absolute threshold is not.
+
+**⇒ AND THE EFFECT SHRANK WHEN THE NOISE WAS REMOVED: 1.556 → 1.165.** That is the expected direction and it
+CONFIRMS the earlier estimate was inflated by 1-5-spike sampling. Had the effect grown or held exactly, I would
+suspect the repeats had introduced something; shrinking toward a smaller, consistent value is what a real effect
+measured badly then measured properly looks like. **The low-count run overstated the size by ~34% while getting
+the direction right.**
+
+**⇒ HONEST FINAL VERDICT ON THE JOIN: the read USES the learned order — 6/6 paired, separation +0.452, valid
+no-order null at 0.712 (below 1.0, i.e. no directional preference without order), on 848 spikes.** Remaining
+scope: numpy/CPU only (GPU parity still owed on the tuning+differentiation stack); K=6 readers of 12; effect size
+modest (1.165 mean, 4/6 above unity); and the whole pipeline is a moving-bump sweep, not hippocampal replay.
+
+## SESSION CLOSE — gap#5 arc state
+
+| component | result | scope |
+|---|---|---|
+| order read (direction) | **0.969** single-trial | GPU, 6 seeds, lesion at chance |
+| field quality | **0.597** place-specific circ (68% of oracle) | 6 seeds, randset + permuted-increment clean |
+| population differentiation | **10.3/12** distinct tiling fields | 3 seeds, engagement asserted |
+| **the join** | **6/6 paired**, 1.165 vs 0.712 null | 6 seeds, 848 spikes, numpy/CPU |
+
+**The pipeline is demonstrated end-to-end: learn place tuning from a traversal (BTSP + heterosynaptic competition +
+supralinear eligibility), differentiate the population (postsynaptic k-WTA), and read replay DIRECTION from the
+learned code in spikes — with a valid null at every stage.** Owed for a GO: GPU parity, 6 seeds on
+differentiation, and a magnitude-matched null on the k-WTA lever.
