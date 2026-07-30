@@ -2424,6 +2424,32 @@ UNLAUNCHED** — the failure is structural, not stochastic, and reproduces at ev
 VOID-certified; (iii) my own handoff two entries above said "run the gap that is actually open" — there is no open
 gap on THIS method.
 
+
+**▶ THE SUCCESSOR IS NOW RESEARCHED, NOT JUST NAMED (2026-07-30, catalog query run).** Queried
+`--corpus catalog` for the hippocampal-neocortical entries the 05-19 bound points at. Four specific leads, with
+pages:
+- **⭐ THE REFRAME:** the catalog carries a supplemental note that *"the catalog's current framing treats relational
+  binding as primarily Eichenbaum's — O&N's 'map' already provides this binding **ARCHITECTURALLY** (each place node
+  is an item-set within a spatial frame)."* **If relational binding is a STRUCTURAL property of the map, it does not
+  need its own mechanism** — and the separation the bound asks for becomes *map-node structure* vs *cortical
+  generalization over it*, which is a different (and cheaper) build than "two mechanisms".
+- **Relational-binding entry:** binds multimodal items into events and events into episodes via temporal/spatial
+  context (Tulving 1972; Eichenbaum/Cohen), with consolidation transforming labile traces into durable distributed
+  ones — i.e. the catalog already factors binding (hippocampal) from durability (cortical).
+- **Hippocampal-cortical framing:** **Buzsáki Cycle 12, pp. 343-351** (canonical copy
+  `references/textbooks/buzsaki-rhythms/`), plus **§12.6 p. 352** and **spindle-ripple coupling** (Sirota 2005;
+  Mölle 2002; Siapas & Wilson 1998) — and the catalog states its own **behavioral validation**: during simulated
+  NREM, measure the joint phase distribution of ripples against cortical spindles. **That is a ready-made gate.**
+- **⚠️ AND IT ALSO NAMES gap#5's OWN RESIDUAL:** an entry on nonlinear dendritic summation — *"cluster of inputs on
+  one branch >> scattered inputs on many branches"*, apical-basal coincidence (Larkum's two-layer model). **That is
+  exactly the dendritic-subunit-by-place-index mechanism I attributed the last 35% of field quality to**, sitting in
+  the catalog with a source. It is a shared dependency of BOTH arcs, which raises its priority.
+
+**⇒ NEXT SESSION'S FIRST ACTION: read Buzsáki Cycle 12 pp. 343-352 (single-column? verify — Kandel's copy is
+two-column with hyphen-splitting, O&N's is not) and the two catalog entries above, THEN design.** The gate
+(ripple-spindle joint phase during simulated NREM) is already specified by the catalog, so do not invent an
+acceptance bar.
+
 **⇒ PER THE LAW (a wall is a verdict on a METHOD, never on the CAPABILITY), the successor was PRE-REGISTERED in the
 05-19 doc §6 and is the real next action: a deeper separation of RELATIONAL BINDING from SCHEMA ABSTRACTION**, along
 the catalog's hippocampal-neocortical interaction entries, under the SAME frozen acceptance and anti-cheat
