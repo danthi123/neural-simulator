@@ -5719,3 +5719,46 @@ inhibition + CUE-DERIVED convergent inhibitory inputs**, with the NUMBER converg
 peaks-per-cell (now 4.17) as the tracked metric; (2) a **THETA time-gate** on the readers so firing is confined to
 a rhythmic window rather than tonic; (3) **theta-phase compression** as the native order code, which should
 subsume the hand-built 2-hop relay chain AND is the precondition under which the STDP arm deserves a re-run.
+
+### 2026-07-30 (the MEXICAN-HAT arm is VOID — negative weights are NOT inhibition in this engine; plus a real engine bug)
+
+Tested the sourced prediction (O'Keefe-Nadel: place representations form a MAP with intrinsic topology traversed by
+a single moving "focus of excitation", field-restricting inhibition arriving "indirectly through the mediation of
+OTHER PLACE UNITS") by adding Mexican-hat lateral weights among the readers. Prediction stated before running:
+peaks/cell should fall from 4.17 toward 1.
+
+| arm | peaks/cell | frac multi | circ | sat_frac |
+|---|---|---|---|---|
+| lateral OFF (baseline) | 4.17 | 1.00 | 0.1716 | 0.000 |
+| mexhat weak | 3.83 | 1.00 | 0.1725 | 0.000 |
+| mexhat mid | 4.53 | 1.00 | 0.1701 | 0.000 |
+| mexhat strong | 4.17 | 1.00 | 0.1709 | 0.000 |
+
+**Flat, no trend, circ within 0.0024 across a 4x weight range — the inert-lever signature.** So I checked instead
+of recording a mechanism negative, and the lever is inert for an ARCHITECTURAL reason:
+
+- The weights DID install: `set_pathway_weights` returned 2/2 and the CSR stores **−300.0 verbatim** (negative
+  weights persist; `pathway_name` is only a logging tag, so naming a non-declared pathway was harmless).
+- **But E/I in this engine is decided by `cp_traits`, NOT by weight sign.** The step loop splits
+  `exc_fired_prev = prev_fired * (~is_inhibitory_neuron_output)` / `inhib_fired_prev = prev_fired *
+  is_inhibitory_neuron_output` (`bridge.py:6238-6239`) and runs SEPARATE matvecs into `g_e` and `g_i`. A negative
+  weight on an EXCITATORY presynaptic cell therefore **subtracts from excitatory conductance** — it does not drive
+  an inhibitory conductance with its own reversal potential (`E_inh = −75 mV`), and can push `g_e` unphysically
+  negative.
+
+**⇒ The Mexican-hat hypothesis is UNTESTED, not refuted.** The correct build is biologically faithful anyway and
+matches the source: a **dedicated inhibitory population** (`exc_fraction=0.0` — O'Keefe-Nadel's basket cells),
+arranged topologically, receiving from readers and projecting back with **POSITIVE** weights on an inhibitory
+trait. That is the next build.
+
+**⛔ ENGINE BUG FOUND (separate, real):** a bridge whose region framework generates ZERO synapses hits
+`bridge.py:1915` and raises **`UnboundLocalError: cannot access local variable 'profile_name_for_conn'`** — inside
+the branch whose own message would have said *"No synapses generated for profile ... Falling back to spatial
+generator."* The variable is referenced before assignment, so the intended diagnostic is replaced by a confusing
+NameError. It only fires when something is already wrong, but it obscures the cause. Filed here; not fixed in this
+pass (it is outside the current arc and the fix wants its own byte-review).
+
+**LESSON, and it is the same shape as the BTSP no-op:** "the weights installed" is NOT "the mechanism engaged."
+I verified the CSR contained my values and stopped one level short of asking whether those values do what I
+intended in this engine's dynamics. **Assert the mechanism's EFFECT (here: an inhibitory conductance / a change in
+target firing), never just the presence of its parameters.**
