@@ -2,7 +2,7 @@
 
 > **This is the source of truth** for *what the project has accomplished, what it is working on now, and what is left* on the path to the goal. It is kept current as a standing part of the workflow. If anything here disagrees with a detailed write-up in `research/findings/`, the finding is right and this file gets corrected.
 >
-> **Last updated:** 2026-07-24.
+> **Last updated:** 2026-07-30.
 
 > **▶ Current primary plan (2026-07-23 direction pivot).** The forward-looking, ordered development plan now lives in **[`docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`](docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md)** (foundation: [`docs/plans/2026-07-22-genuine-conversation-affective-self-aware-brain-plan.md`](docs/plans/2026-07-22-genuine-conversation-affective-self-aware-brain-plan.md)).
 > The north-star has sharpened: from "a conversation approaching a large language model's" to a sim-brain that **converses *genuinely*** — reasons to its own conclusions and has an **affective world-model, emotion, self-awareness, and curiosity** — pursued on the honest **emergentist bet** that genuine experience emerges only from a *complete and faithful* biological emulation (functional consciousness correlates are built and measured; phenomenal experience is never asserted). Same hard rules, tightened: **don't defer any needed functionality** (every wall gets a real-biology surpass), **speed is secondary to faithfulness**, **one spiking substrate**. This ROADMAP remains the plain-language *status* surface; the master plan is the *forward-looking* surface.
