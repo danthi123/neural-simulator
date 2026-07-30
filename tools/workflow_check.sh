@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+# workflow_check.sh — the three workflow rules the owner keeps having to enforce BY HAND, made mechanical.
+#
+# WHY (2026-07-30, owner: "these are the kinds of things I feel I have to keep manually reminding you to do").
+# Every rule below ALREADY had a tool. All three were bypassed in a single session:
+#   * lane_check.py printed "OK — 2 lanes" while SIX lanes sat unserved  -> threshold too lax to bite.
+#   * research_gate.sh worked both times it ran -> but nothing ever MADE it run.
+#   * queue_add.sh forces a record-check on enqueue -> bypassed by launching with `setsid nohup` directly.
+# The failure was never the tools. It was that acting on a generic alarm ("CPU-LANES-STALE") required
+# INVENTING work, so the cheap response was always to read it and move on. It fired for 75 minutes.
+#
+# THE FIX: this prints LITERAL, READY-TO-RUN COMMANDS for whatever is idle, so acting costs a copy-paste
+# instead of a planning session. Run it from the heartbeat every cycle.
+#
+#   bash tools/workflow_check.sh            # full report + exit 1 if any rule is violated
+set -uo pipefail
+ROOT=/home/dant123/Projects/sim
+cd "$ROOT" || exit 0
+FAIL=0
+
+echo "════ 1. PARALLELISM — is the machine actually being used? ════"
+CORES=$(nproc); LOAD=$(cut -d' ' -f1 /proc/loadavg); PROCS=$(pgrep -fc 'research\.runners' 2>/dev/null || echo 0)
+IDLE=$(awk -v c="$CORES" -v l="$LOAD" 'BEGIN{printf "%d", c-l}')
+echo "  cores=$CORES  load=$LOAD  research-procs=$PROCS  => ~$IDLE idle cores"
+if [ "$IDLE" -gt 6 ] && [ "$PROCS" -lt 8 ]; then
+  echo "  ⛔ UNDER-PARALLELISED: >6 cores idle with <8 jobs running."
+  echo "     A sweep with independent axes (seeds x params) must be launched as a GRID, not walked one cell"
+  echo "     at a time. One session ran ~30 probes serially on one core with 15 idle."
+  FAIL=1
+fi
+
+echo
+echo "════ 2. UNSERVED LANES — with the EXACT command to serve each ════"
+# map: lane -> a runner that is READY TO RUN NOW (exists, takes --seeds)
+declare -A LANE_RUNNER=(
+  ["A · Affect"]="_affect_state_region_derisk"
+  ["B · Curiosity"]="_curiosity_seek_learn_onbridge_derisk"
+  ["C · Self/Workspace"]="_self_schema_region_derisk"
+  ["D · Perception"]="_b1_v1_selforg_onbridge_derisk"
+  ["E · Language"]="_grounded_lang_p2_derisk"
+)
+RUNNING=$(ps -eo args 2>/dev/null | grep -oE 'research\.runners\.[._a-zA-Z0-9]+' | sed 's/.*runners\.//' | sort -u)
+UNSERVED=0
+for lane in "${!LANE_RUNNER[@]}"; do
+  r="${LANE_RUNNER[$lane]}"
+  key=$(echo "$lane" | sed 's/.*· //' | cut -c1-6 | tr 'A-Z' 'a-z')
+  if echo "$RUNNING" | grep -qi "$key"; then
+    printf "  ✔ %-22s served\n" "$lane"
+  else
+    UNSERVED=$((UNSERVED+1))
+    if [ -f "research/runners/$r.py" ]; then
+      printf "  ⛔ %-22s IDLE — run:  .venv/bin/python -m research.runners.%s --seeds 42 43 44 100 101 102 &\n" "$lane" "$r"
+    else
+      printf "  ⛔ %-22s IDLE — no ready runner (%s missing) => this lane needs a BUILD, not a run\n" "$lane" "$r"
+    fi
+  fi
+done
+[ "$UNSERVED" -ge 3 ] && { echo "  ⛔ $UNSERVED of 5 CPU-capable lanes idle. They are DISJOINT from GPU work and cost nothing beside it."; FAIL=1; }
+
+echo
+echo "════ 3. RESEARCH / PRIMARY SOURCES — was a source read before the last finding? ════"
+MARK=research/.last_research_gate
+NEWEST=$(ls -t research/findings/*.md 2>/dev/null | head -1)
+if [ ! -f "$MARK" ]; then
+  echo "  ⛔ tools/research_gate.sh has NEVER run (no marker). Our findings cite sources in ONE LINE;"
+  echo "     that is not reading them. A whole session on place cells never opened O'Keefe-Nadel — when"
+  echo "     finally read it produced a mechanism, a confirmed prediction, and TWO corrections."
+  echo "     RUN:  bash tools/research_gate.sh \"<your current question>\""
+  FAIL=1
+elif [ -n "$NEWEST" ] && [ "$NEWEST" -nt "$MARK" ]; then
+  echo "  ⛔ A FINDING WAS WRITTEN SINCE THE LAST SOURCE CHECK:"
+  echo "     newest finding : $(basename "$NEWEST")"
+  echo "     last gate run  : $(date -r "$MARK" '+%Y-%m-%d %H:%M')"
+  echo "     RUN:  bash tools/research_gate.sh \"<the question that finding was about>\""
+  FAIL=1
+else
+  echo "  ✔ research_gate.sh ran $(date -r "$MARK" '+%H:%M') — newer than the latest finding."
+fi
+echo "     canonical sources (single-column, grep clean): ~/Projects/sim-catalog/references/textbooks/<name>/*.txt"
+echo "     ⚠️ Kandel's copy is TWO-COLUMN with hyphen-splits: anchor on a short fragment, read a window."
+
+echo
+if [ "$FAIL" -eq 0 ]; then echo "✅ workflow_check: all three rules satisfied."; else
+  echo "⛔ workflow_check: $FAIL rule-group(s) violated — the commands above are copy-paste ready."; fi
+exit $FAIL

@@ -60,4 +60,5 @@ if [ "$PRIM" -eq 0 ]; then
   rm -f "$OUT"; exit 1
 fi
 echo "  ✔ a primary source is represented — READ IT (a rerank hit is a pointer, not a paraphrase)."
+touch "$ROOT/research/.last_research_gate"   # lets tools/workflow_check.sh verify this actually ran
 rm -f "$OUT"; exit 0
