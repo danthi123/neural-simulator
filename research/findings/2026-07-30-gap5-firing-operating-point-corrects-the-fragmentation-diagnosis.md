@@ -533,3 +533,44 @@ timescale. Seed 43 also remains an unexplained outlier (0.857 with the MOST dist
 **NEXT (specified): use the k-WTA-OFF population — verified `n_distinct=1.0`, i.e. genuinely NO order — as the
 null, run at the identical gain and detector settings.** If LEARNED >> that null, the read uses order; if not, it
 does not. This is constructible today and settles the question.
+
+## ⭐⭐⭐ THE JOIN IS VALIDATED (3 seeds, 2/3 strong): the read USES the learned order
+
+The constructible null worked. Identical pipeline, the ONLY lever being the postsynaptic k-WTA gate — ON gives a
+differentiated population, OFF gives all-identical preferences (`n_distinct = 1.0`, i.e. genuinely NO order):
+
+| seed | k-WTA ON (ordered) | n_distinct | k-WTA OFF (NO order) | n_distinct |
+|---|---|---|---|---|
+| 42 | **1.923** | 10 | 0.950 | 1 |
+| 43 | 0.857 | 11 | 1.000 | 1 |
+| 44 | **2.000** | 10 | 0.833 | 1 |
+| **mean** | **1.593** | **10.3** | **0.928** | **1.0** |
+
+**The no-order arm sits at 0.928 — indistinguishable from 1.0, exactly what a population with no order MUST give.**
+The ordered arm reads 1.593. Separation **+0.666**. ⇒ **the order read is genuinely using the LEARNED ORDER**, which
+is the claim four previous control attempts could not establish (SCRAMBLED was invalid in a tiled population;
+MATCHED was underpowered by ~35x on the relevant timescale).
+
+**HONEST CAVEATS, and one is substantial:**
+- **Seed 43 is a null (0.857) despite having the MOST distinct fields (11).** So this is **2/3 seeds strongly
+  positive** (1.923, 2.000) and one at no-effect — not 3/3. **6 seeds are required** before this is a GO, and the
+  seed-43 mechanism needs its own diagnosis (most-differentiated yet non-discriminating is a contradiction worth
+  understanding, not averaging away).
+- The k-WTA gate has a SECONDARY effect: gating reduces total potentiation, so the ON/OFF arms differ in weight
+  magnitude as well as in order. The lever is single-valued but not single-consequence. A magnitude-matched null
+  (scale the OFF arm's weights to the ON arm's mean) would tighten this.
+- 3 seeds, numpy/CPU. GPU parity still owed on the whole tuning+differentiation stack.
+
+**⇒ ARC STATE AT SESSION CLOSE — all four pieces now demonstrated, with the join controlled for the first time:**
+
+| component | result | scope |
+|---|---|---|
+| order read (direction) | **0.969** single-trial | GPU, 6 seeds, lesion at chance |
+| field quality | **0.597** place-specific circ (68% of oracle) | 6 seeds, randset + permuted-increment clean |
+| population differentiation | **10.3/12** distinct tiling fields | 3 seeds, engagement asserted |
+| **the join** | **1.593 vs 0.928 no-order null** | **3 seeds, 2/3 strong — NOT yet a GO** |
+
+**Owed, in priority order:** (1) 6 seeds on the join; (2) the seed-43 diagnosis; (3) a magnitude-matched null;
+(4) GPU parity. **The pipeline is end-to-end demonstrated — learn place tuning from a sweep, differentiate the
+population, and read replay DIRECTION from the learned code in spikes — but at 2/3 seeds it is a strong indication,
+not a GO.**
