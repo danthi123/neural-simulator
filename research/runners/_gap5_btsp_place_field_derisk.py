@@ -74,13 +74,17 @@ def validate_metrics(seed=0):
 
 
 # ---------------------------------------------------------------- bridge
-def build(seed, w_inh, btsp, w_max, lat_kind="soft", w0=None, thr_scale=None, elig_tau_ms=None, hetero_dep=None, hetero_theta=None, elig_thresh=None, elig_exp=None):
+def build(seed, w_inh, btsp, w_max, lat_kind="soft", w0=None, thr_scale=None, elig_tau_ms=None, hetero_dep=None, hetero_theta=None, elig_thresh=None, elig_exp=None, pgate=None):
     R = [BrainRegion(name="place", n_neurons=NPLACE, exc_fraction=1.0, internal_density=0.0),
          BrainRegion(name="read", n_neurons=NREAD, exc_fraction=1.0, internal_density=0.0)]
     # coincidence_detector=True: clustered place input -> dendritic PLATEAU, which is what gates BTSP.
     P = [RegionPathway(from_region="place", to_region="read", density=1.0,
                        weight_mean=(W0 if w0 is None else w0), weight_jitter=0.3, plastic=True,
-                       coincidence_detector=(True if btsp else False))]
+                       coincidence_detector=(True if btsp else False),
+                       # plasticity_gate MUST be tagged for cp_plasticity_rate_gain to be ALLOCATED --
+                       # without it the array is None and any per-synapse gating silently no-ops (caught by
+                       # an engagement counter reading 'gated steps 0', not by the result looking wrong).
+                       plasticity_gate=pgate)]
     if w_inh > 0:
         # BETWEEN-READER competition: readers drive a shared FS pool which inhibits them all back.
         # Recruited in proportion to reader activity => the best-driven reader survives (soft k-WTA),
@@ -153,14 +157,14 @@ def wmat(b):
     return M
 
 
-def run(seed, w_inh, btsp, lr, w_max, laps=5, dwell=30, drive=3000.0, width=5.0, randset=False, w0=None, thr_scale=None, elig_tau_ms=None, hetero_dep=None, hetero_theta=None, elig_thresh=None, elig_exp=None):
+def run(seed, w_inh, btsp, lr, w_max, laps=5, dwell=30, drive=3000.0, width=5.0, randset=False, w0=None, thr_scale=None, elig_tau_ms=None, hetero_dep=None, hetero_theta=None, elig_thresh=None, elig_exp=None, pgate=None):
     """randset=True -> each step drives a RANDOM SET of place cells of the same size/intensity as the bump,
     so total drive and total activity are matched but there is NO moving bump and NO place manifold at all.
     This is the exact control that refuted the k-WTA gate (+1.217 of its +1.272 survived it). If the BTSP gain
     survives randset, it is generic potentiation, NOT place-field formation."""
     b = build(seed, w_inh, btsp, w_max, w0=w0, thr_scale=thr_scale, elig_tau_ms=elig_tau_ms,
               hetero_dep=hetero_dep, hetero_theta=hetero_theta,
-              elig_thresh=elig_thresh, elig_exp=elig_exp)
+              elig_thresh=elig_thresh, elig_exp=elig_exp, pgate=pgate)
     if btsp:
         b.core_config.btsp_learning_rate = lr
     rm = b.region_manager; pl = rm.indices("place"); rd = rm.indices("read")

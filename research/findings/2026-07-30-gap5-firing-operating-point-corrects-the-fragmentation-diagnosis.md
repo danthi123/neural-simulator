@@ -416,3 +416,43 @@ and place-specificity with the VALID metrics; (2) sparse `place→read` connecti
 structural symmetry-breaker, which was tested early tonight but only ever scored on the void `peak/mean` metric;
 (3) heterogeneous reader thresholds. **Spread must be reported in every future tuning arm** — it is the one number
 that would have exposed this on the first BTSP run.
+
+## ⭐⭐⭐ DIFFERENTIATION SOLVED — postsynaptic k-WTA on plasticity: 1 → 10.3 of 12 distinct fields, tiling the track
+
+The re-evaluation was right: the mechanism from the DISCARDED workflow arm solves the blocker. Postsynaptic k-WTA
+gating of `cp_plasticity_rate_gain` (only the top-k most-driven READERS may update each step):
+
+| arm | n_distinct /12 | circ_spread | winners seen | gated steps |
+|---|---|---|---|---|
+| baseline (no gate) | **1.0** | 0.000 | — | — |
+| **k-WTA k=1** | **10.3** | **1.608** | 5.7 | 1800 |
+| k-WTA k=2 | 8.0 | **1.845** | 10.0 | 1800 |
+| k-WTA k=4 | 5.3 | 1.593 | 12.0 | 1800 |
+
+**Preferred positions now TILE THE TRACK** — seed 44 at k=1: `[6, 10, 13, 16, 16, 20, 25, 32, 32, 46, 50, 53]`,
+against `[48]x12` before. Engagement ASSERTED: 1800/1800 steps gated, 5.7-12 distinct winners.
+
+**⛔ THE FIRST ATTEMPT AT THIS WAS A VOID ARM, caught by an engagement counter in ~1 second.** It reported
+`n_distinct 1.0` at every k — identical to baseline — and would have read as "k-WTA doesn't help." But
+`winners seen = 0.0` and `gated steps = 0`: **`cp_plasticity_rate_gain` is `None` unless a pathway carries a
+`plasticity_gate` tag**, so every per-synapse gate write silently no-op'd. **The workflow agent had stated this
+explicitly in its own result** — *"the pathway is tagged `plasticity_gate="pr"` in EVERY arm"* — and I did not do
+it. Two lessons: (i) a counter on the mechanism's OWN action (steps gated, winners seen) is what separates a void
+arm from a negative, and it cost one second here versus the hours the same class of error cost earlier tonight;
+(ii) **read the discarded agent's METHOD, not just its verdict** — the setup detail I needed was in the text I had
+already been given.
+
+**⇒ WHY THIS WORKS, and why nothing else did.** k-WTA breaks SYMMETRY: with all 12 readers receiving identical
+input, only a winner-take-all over READERS can make them claim different positions. Uniform FS inhibition scales
+every reader equally (0 differentiation at any strength); `btsp_elig_hard_thresh` gates PRESYNAPTIC eligibility, so
+it selects afferents not readers (0 differentiation). Postsynaptic gating is the only one of the three that acts on
+the right factor. `k=1` gives the most distinct fields, `k=2` the widest spread — a real trade worth resolving.
+
+**⇒ ARC STATE AT SESSION END — all three pieces now demonstrated, the join still to be re-tested:**
+- **order read**: 0.969 single-trial, GPU, 6 seeds, lesion at chance ✅
+- **field quality**: place-specific circ 0.597 = 68% of oracle, 6 seeds, all controls ✅
+- **population differentiation**: 10.3/12 distinct fields tiling the track ✅ (this rung)
+- **the join**: previously blocked because all readers shared one field — the reason is now REMOVED, so the
+  integration test must be re-run with the k-WTA-differentiated population. That is the single next action.
+**Owed**: 6-seed + GPU parity on the differentiation result; and re-report place-specific circ WITH spread, since
+the two were never measured together.
