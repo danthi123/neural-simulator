@@ -218,3 +218,41 @@ O'Keefe-Nadel's "convergent inhibition restricts where the unit fires" once that
 combining `elig_exponent` WITH `elig_hard_thresh` (they act differently — one sharpens, one cuts, and their
 best-of columns differ), and the dendritic-subunit-by-place-index assignment which is still the principled
 contiguity mechanism. 6-seed confirmation and a GPU parity run are also owed before this is a GO.
+
+## 6-SEED CONFIRMATION + COMBINATION: raw circ reaches 97% of oracle, but PLACE-SPECIFIC circ PLATEAUS at ~0.60
+
+| arm | peaks/cell | WIDTH /60 | circ(dW) | randset | **place-specific** |
+|---|---|---|---|---|---|
+| `exp=4.0` (3 seeds, prior rung) | 3.19 | 16.1 | 0.6853 | 0.0906 | **+0.5947** |
+| `thresh=0.5` | 6.68 | 14.0 | 0.6743 | 0.1329 | +0.5414 |
+| **`exp=4.0 + thresh=0.5`** | 3.79 | 7.8 | **0.8461** | 0.2493 | **+0.5968** |
+| `exp=6.0 + thresh=0.5` | 3.04 | 4.8 | 0.8863 | 0.3883 | +0.4980 |
+
+6 seeds; per-seed circ at the best arm is tight: **[0.871, 0.869, 0.853, 0.790, 0.859, 0.834]**. `lr=0` is
+**0.0000** on every arm.
+
+**THE LEVERS COMPOSE ON RAW circ — 0.685 → 0.8461, which is 97% of the 0.8719 oracle. THEY DO NOT COMPOSE ON THE
+HONEST METRIC.** Place-specific circ is **+0.5968** combined vs **+0.5947** for `exp=4.0` alone — a difference of
+0.002, i.e. nothing. The entire raw gain came with a matching rise in RANDSET (0.0906 → 0.2493): the extra
+narrowing is **place-INDEPENDENT concentration**. Pushed further (`exp=6.0`) raw circ 0.8863 **EXCEEDS the oracle**
+while place-specificity **DROPS to 0.4980** and randset reaches 0.3883 — the unmistakable signature of a score
+being won by concentration rather than by place tuning. Width 7.8 and 4.8 are also NARROWER than the oracle's ~12,
+i.e. over-narrowed.
+
+**⇒ THE PLACE-SPECIFIC COMPONENT HAS PLATEAUED AT ~0.597 = 68% OF ORACLE, and the remaining 32% is NOT reachable
+by these levers.** Every further narrowing buys raw circ and randset in equal measure. **Reporting `circ = 0.846`
+as a place-tuning result would be the single most misleading number in this arc** — it is 97% of oracle and ~30% of
+it is artifact. The defensible claim is: **place-specific circ 0.597 (68% of oracle), 6 seeds, `lr=0` exactly zero,
+peaks 3.19, width 16.1** — i.e. the `exp=4.0` arm, NOT the higher-scoring combination.
+
+**⇒ WHAT THE PLATEAU MEANS MECHANISTICALLY.** These levers all sharpen WHICH afferents survive, using only
+eligibility magnitude. None of them uses the place-index TOPOLOGY — so they cannot prefer a contiguous block over
+an equally-strong scattered set, which is exactly why peaks stalls at ~3 and why the place-specific part stops
+improving. **The remaining 32% needs a mechanism with topology in the afferent dimension: the
+dendritic-subunit-by-place-index assignment** (subunits already exist and are active — `enable_coincidence_detection`
+— but are not assigned by place neighbourhood). That is a structural change, not a knob, which is consistent with
+it being the part knobs cannot reach.
+
+**STILL OWED before any GO: GPU parity** (the check that revealed the order-read stack was numpy-locked by
+construction) and a decision on whether 68%-of-oracle place tuning is sufficient to drive the order read — the
+integration test that failed at width 51/60 should be re-run at width 16/60.
