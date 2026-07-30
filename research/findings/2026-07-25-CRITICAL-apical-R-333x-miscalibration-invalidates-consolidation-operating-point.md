@@ -5538,3 +5538,43 @@ ceiling (gain +0.1281 vs a ceiling gain of ~0.835 = ~15%). So this is genuine, w
 acquisition of *some* spatial tuning, **not** the formation of sharp place fields. Also: 6 seeds, numpy/CPU, 60
 place / 12 read, one traversal, and this is **tuning acquisition in isolation** — it has NOT yet been fed into the
 order-reading stack, which remains the integration step.
+
+### 2026-07-29 (INTEGRATION NEGATIVE: the BTSP-learned tuning is TOO WEAK to drive the order read — and the weakness was already in the record)
+
+`research/runners/_gap5_learned_tuning_order_read_derisk.py`. Phase 1 learns place→read tuning with BTSP at the
+validated non-saturating optimum (lr=0.002, sat_frac 0.000); Phase 2 installs those learned weights into a fresh
+bridge (`set_pathway_weights`) carrying the 2-hop relay + coincidence detectors, wired between readers **adjacent
+in LEARNED preference order**, then reads forward-vs-reverse.
+
+| arm | fwd | rev | ratio |
+|---|---|---|---|
+| LEARNED | 40 | 59 | **0.678** |
+| LEARNED_lesion (relay bypassed) | 107 | 119 | 0.899 |
+| UNTRAINED (lr=0 weights installed) | 60 | 16 | 3.750 |
+| **SCRAMBLED_pairing (random pairs)** | 41 | 60 | **0.683** |
+
+**THE DIAGNOSTIC IS THE SCRAMBLE, NOT THE RATIO.** `LEARNED` **0.678** and `SCRAMBLED_pairing` **0.683** are
+essentially IDENTICAL ⇒ **pairing readers by learned preference is no better than pairing them at random. The
+learned order carries no usable information.**
+
+**ROOT CAUSE, and it was already measured and recorded:** the learned fields reach circ **0.1652** against the
+sigma=5 oracle's **0.8719** — ~19% of ceiling. A field that broad makes `argmax(weight row)` a NOISY summary of a
+wide distribution, so it does not predict WHEN the reader actually fires, and an ordering built on it is
+near-random. **The integration failure is a direct, quantitative consequence of the honest scope attached to the
+BTSP result** ("real but WEAK ... not the formation of sharp place fields") — not a new surprise.
+
+**DO NOT read UNTRAINED 3.750 as "untrained is better."** It rests on 60 vs 16 detector spikes; at those counts
+the ratio is dominated by sampling. With near-uniform weights the readers barely fire, so the arm is low-count and
+noisy. It needs more seeds/trials before it means anything, and it is NOT evidence against learning.
+
+**⇒ THE NAMED NEXT STEP: make the fields SHARPER before joining the halves.** The order read is validated at 0.969
+single-trial on HAND-SET (i.e. sharp) tuning, and BTSP acquisition is validated as genuinely spatial but broad. The
+gap is field SHARPNESS, and the target is quantified: get circ from 0.165 toward the 0.8719 oracle. Levers, in
+cheap-first order: (a) stronger/steeper between-reader inhibition (the soft-WTA helped, +0.1369 vs +0.1281 — push
+it); (b) more readers so competition is denser; (c) `btsp_hetero_dep` heterosynaptic COMPETITION, which is already
+in the engine and explicitly "lowers the pedestal without lowering the peak" — untried here and aimed exactly at
+this defect; (d) `btsp_elig_hard_thresh`, the k-WTA gate on presynaptic eligibility, also already built.
+
+**HONEST STATUS OF THE ARC: the two halves are each validated and do NOT yet join.** Reading direction works on
+sharp tuning; acquisition produces genuine but broad tuning; the join needs sharper fields. Both halves' numbers
+and both halves' limits are measured, so the remaining work is quantified rather than open-ended.
