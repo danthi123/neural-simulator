@@ -5346,3 +5346,22 @@ I cited it myself in this session's workflow brief, to the STDP agent.
 one-line fix. **Verified both directions:** it fires on the bad pattern and stays silent on the good one. Warn,
 never raise (raising would break the 11 callers). Advancing the clock inside `_run_one_simulation_step()` was
 REJECTED as the fix — it would double-advance for any `step_simulation()` caller (the GUI path).
+
+### 2026-07-29 (DEFINITIVE GPU figure for the order read: 0.969 single-trial on 96 paired trials, 6 seeds)
+
+The 3-seed/6-trial GPU estimate (0.944) rested on 18 paired comparisons. Re-run at 6 seeds x 16 trials = **96
+paired comparisons**, `SIM_BACKEND=cupy`:
+
+| seed | 42 | 43 | 44 | 100 | 101 | 102 | mean |
+|---|---|---|---|---|---|---|---|
+| ratio | 3.21 | 3.01 | 5.44 | 2.62 | 3.00 | 3.73 | **3.500** |
+| single-trial accuracy | 1.000 | 1.000 | 0.938 | 1.000 | 0.875 | 1.000 | **0.969** |
+
+**Controls at the same scale:** LESION ratio **0.994** (order-blind, as required), LESION accuracy **0.427**
+(chance), STEP-0 coincidence property **0.0** detector spikes on single-cell drive.
+
+**⇒ THE SETTLED HEADLINE for reading replay direction in spikes: single-trial accuracy 0.969 (chance 0.500),
+fwd/rev ratio 3.500, 6 seeds, on GPU, with the relay-lesion at chance.** This supersedes both the numpy 1.000
+(one backend, and the more generous one) and the 3-seed cupy 0.944 (small-sample). The earlier 0.944 was indeed a
+sampling artifact — accuracy is 1.000 on 4 of 6 seeds and the two misses are single trials (0.938 = 15/16,
+0.875 = 14/16).
