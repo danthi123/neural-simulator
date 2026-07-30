@@ -5177,3 +5177,41 @@ mapping does not transfer to a different input manipulation, and quoting it woul
 pairwise relay+coincidence read reads order correctly from a continuous, overlapping, jittered sweep at
 0.958-1.000 single-trial. **Remaining scope, unchanged:** tuning is STRUCTURAL not learned (open, and the two
 retractions above say why), K=6, numpy/CPU.
+
+### 2026-07-29 (BACKEND PARITY — the order stack was NUMPY-ONLY BY CONSTRUCTION; on GPU the mechanism holds but is SMALLER)
+
+Closing a verification gap I had left open: every on-substrate order result above (hop latency, single-pair
+detector 3.286x, population vote 4.548x, continuous-sweep 0.958-1.000) was produced on **numpy/CPU alone**, while
+this project's standard is GPU for load-bearing runs.
+
+**The runners COULD NOT have run on GPU.** The cupy attempt crashed immediately — `np.asarray()` on a cupy array
+raises `TypeError: Implicit conversion to a NumPy array is not allowed`, so every `b.cp_firing_states` read was
+CPU-locked by construction. Fixed with `sim.backend.to_host()` (the project's existing both-backend helper).
+**Behaviour-preserving, verified not assumed:** the numpy re-run after the patch reproduces the original numbers
+exactly (per-seed 3.455/3.276/6.913, mean ratio 4.548, acc 1.000, LESION 0.979/0.389, STEP 0 = 1.0).
+
+**PARITY RESULT (K=6, seeds 42/43/44, 6 trials/seed, jitter 2 ms):**
+
+| | numpy | cupy |
+|---|---|---|
+| mean fwd/rev ratio | 4.548 | **3.515** |
+| mean single-trial accuracy | 1.000 | **0.944** |
+| LESION ratio (must be ~1) | 0.979 | **1.026** |
+| LESION accuracy (must be ~chance) | 0.389 | **0.556** |
+| STEP 0 coincidence (must be ~0) | 1.0 | **0.0** |
+| per-seed ratio | 3.455 / 3.276 / 6.913 | 4.391 / 2.787 / 3.367 |
+
+**THE MECHANISM REPLICATES — every control is clean on GPU** (ratio well above 1, accuracy far above the 0.500
+chance level, lesion order-blind at 1.026 and at chance, and the coincidence property is actually CLEANER on GPU
+at 0.0 detector spikes). **But the magnitude is SMALLER: 3.515 vs 4.548**, driven mostly by seed 44 (6.913 ->
+3.367), and one seed's accuracy drops to 0.833.
+
+**Cause is expected and documented in-engine:** float summation order differs between the cuSPARSE matvec and the
+scipy/numpy path, and `sim/kernels.py:229-231` states explicitly that "a neuron on threshold can flip under
+FMA/summation reordering, so the ordering is load-bearing." A threshold-crossing readout is exactly the kind of
+measurement that inherits that.
+
+**⇒ THE GPU NUMBERS BECOME THE HEADLINE** — they are both the more conservative reading AND the project's
+standard for a load-bearing run. So the population vote's honest figure is **ratio 3.515, single-trial accuracy
+0.944**, not 4.548/1.000. **Caveat on both:** 6 trials x 3 seeds = 18 paired comparisons is a thin accuracy
+estimate (0.944 vs 1.000 is ONE trial), so a 6-seed x 16-trial GPU run (96 comparisons) is in flight to firm it.
