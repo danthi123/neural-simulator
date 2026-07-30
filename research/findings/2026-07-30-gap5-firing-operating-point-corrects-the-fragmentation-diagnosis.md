@@ -94,3 +94,46 @@ reader's afferents. Nothing in the current setup restricts WHICH afferents get p
 O'Keefe-Nadel's convergent inhibition, and BTSP's own `btsp_hetero_dep` heterosynaptic competition ("lowers the
 pedestal without lowering the peak"), are for. `btsp_hetero_dep` remains **untried** and is now the single most
 directly-aimed lever: it targets the pedestal, and the pedestal is the entire problem.
+
+## ⭐ `btsp_hetero_dep` IS THE MISSING MECHANISM — pedestal solved, but only ~40% of the gain is place-specific
+
+Heterosynaptic competition (`btsp_hetero_dep`, default 0.0, engine comment: *"lowers the pedestal without lowering
+the peak"*) was the last untried lever and it works dramatically. At robust firing, `elig_tau=1000` (the validated
+biological default), 3 seeds:
+
+| hetero_dep | peaks/cell | **WIDTH /60** | **circ(dW)** | mean abs dW |
+|---|---|---|---|---|
+| 0.00 | 1.61 | 51.1 | 0.1323 | 1502 |
+| 0.05 | 4.97 | 44.1 | 0.1812 | 933 |
+| 0.20 | 8.08 | **17.0** | 0.4192 | 322 |
+| 0.50 | 4.11 | **5.0** | **0.6644** | 234 |
+
+**The pedestal problem is SOLVED: width 51/60 → 5/60** (sigma=5 oracle ≈ 12/60), and circ rises 5x, from 15% to
+76% of the 0.8719 oracle. This is the mechanism O'Keefe-Nadel's convergent inhibition and BTSP's own
+heterosynaptic term were both pointing at, and it was sitting in the engine at default 0.0 the whole time.
+
+**⚠️ BUT THE CONTROLS CUT THE CLAIM, and this is the honest headline:**
+
+| control | width | circ(dW) |
+|---|---|---|
+| place sweep | 5.0 | **0.6644** |
+| `lr=0` | — | **0.0000** (clean; zero potentiation) |
+| **RANDSET (matched activity, NO place manifold)** | 2.5 | **0.3893** |
+
+**59% of the 0.6644 is reproduced with NO place structure whatsoever.** `hetero_dep` is winner-take-all over each
+cell's afferents, so it produces CONCENTRATION by construction — and `circ_resultant` rewards concentration
+regardless of locality (the same trap that voided `peak/mean` and inflated my Dirichlet null earlier in this arc).
+
+**⇒ THE HONEST NUMBERS.** Place-specific increment = 0.6644 − 0.3893 = **0.275**, against ~0.13 at
+`hetero_dep=0` — so heterosynaptic competition roughly **DOUBLES the place-specific component** (a real advance)
+while the raw circ figure overstates it by ~2.4x. **Do not quote 0.6644 as a place-tuning score.** Quote:
+*width 51→5 (pedestal solved), place-specific circ ~0.13→~0.275 (2x), with 59% of the raw gain being
+place-independent concentration.*
+
+**⇒ AND THE REMAINING DEFECT IS NOW FRAGMENTATION, not width.** peaks/cell RISES with competition (1.61 → 8.08 at
+dep=0.2). Narrow-but-gappy replaces wide-but-solid: the surviving synapses are localized (circ is high, so they
+cluster near one position rather than scattering around the ring) but riddled with holes. **That is precisely the
+job of the topological/lateral mechanism** — O'Keefe-Nadel's "inhibition ... through the mediation of OTHER PLACE
+UNITS" is what should make the survivors CONTIGUOUS. The two mechanisms are complementary: `hetero_dep` narrows,
+lateral topology should de-fragment. The basket-cell population is already built and verified to fire; it now has
+a well-posed job and a metric (peaks/cell at fixed width).

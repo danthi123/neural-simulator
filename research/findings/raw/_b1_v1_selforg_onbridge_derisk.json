@@ -26,7 +26,7 @@
       "seed": 42,
       "backend": "cupy",
       "n_v1": 8192,
-      "elapsed_s": 1308.5,
+      "elapsed_s": 1314.9,
       "v1_firing_rate": 0.0005,
       "osi": {
         "pre_random": {
@@ -72,7 +72,7 @@
       "seed": 43,
       "backend": "cupy",
       "n_v1": 8192,
-      "elapsed_s": 1311.9,
+      "elapsed_s": 1314.2,
       "v1_firing_rate": 0.0007,
       "osi": {
         "pre_random": {
@@ -118,7 +118,7 @@
       "seed": 44,
       "backend": "cupy",
       "n_v1": 8192,
-      "elapsed_s": 1302.8,
+      "elapsed_s": 1294.9,
       "v1_firing_rate": 0.001,
       "osi": {
         "pre_random": {
