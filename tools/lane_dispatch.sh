@@ -53,7 +53,14 @@ while true; do
          continue ;;
     esac
     # atomically remove that line from the queue before launching (no double-dispatch on restart)
-    grep -vxF "$LINE" "$Q" > "$Q.tmp" 2>/dev/null && mv "$Q.tmp" "$Q"
+    # ⛔ BUG FIXED 2026-07-30: this was `grep -vxF ... && mv`, and `grep -vxF` EXITS 1 WHEN IT OUTPUTS
+    # NOTHING -- which is exactly the case when the queue holds only this one line. The `&&` then
+    # short-circuited, `mv` never ran, the line SURVIVED, and it was re-dispatched every 60 s cycle.
+    # Observed live: ONE queued job launched NINE times (staggered ages 417/294/291/288/225/222/219/36/33 s,
+    # distinct parents), `.running` grown to 16 entries against 13 real processes, and the heartbeat showing a
+    # stuck `queue=1` for hours. Do NOT gate the write on grep's exit status; grep -v legitimately returns 1.
+    grep -vxF "$LINE" "$Q" > "$Q.tmp" 2>/dev/null || true
+    mv "$Q.tmp" "$Q"
     echo "$LINE" >> "$RUN"
     TAG=$(echo "$LINE" | md5sum | cut -c1-8)
     ( cd "$ROOT" && eval "$LINE" > "$LOGD/$TAG.log" 2>&1
