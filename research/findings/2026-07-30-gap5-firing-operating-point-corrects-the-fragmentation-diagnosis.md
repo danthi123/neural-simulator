@@ -137,3 +137,35 @@ job of the topological/lateral mechanism** — O'Keefe-Nadel's "inhibition ... t
 UNITS" is what should make the survivors CONTIGUOUS. The two mechanisms are complementary: `hetero_dep` narrows,
 lateral topology should de-fragment. The basket-cell population is already built and verified to fire; it now has
 a well-posed job and a metric (peaks/cell at fixed width).
+
+## De-fragmentation: uniform inhibition is INERT — and the mechanism was aimed at the WRONG DIMENSION
+
+Tested the complementary lever at `hetero_dep=0.2`, comparing at genuinely FIXED width (the metric the previous
+rung established):
+
+| w_inh | peaks/cell | WIDTH /60 | circ(dW) |
+|---|---|---|---|
+| 0 | 7.81 | 17.2 | 0.4236 |
+| 150 | 8.08 | 17.0 | 0.4192 |
+| 400 | 8.44 | 17.0 | 0.4155 |
+| 900 | 8.19 | 17.1 | 0.4156 |
+
+**Inert — peaks do not fall (7.81 → 8.44 if anything), at width held to 17.0-17.2.** A clean negative, and the
+width really was fixed, so the comparison was well-posed.
+
+**⇒ THE DIAGNOSIS THAT MATTERS: I aimed the mechanism at the WRONG DIMENSION.** The fragmentation lives in the
+AFFERENT (place-index) dimension — *which of a reader's 60 place inputs survive competition*. Lateral inhibition
+BETWEEN readers shapes *which reader fires where*; it cannot make one reader's surviving afferents CONTIGUOUS.
+O'Keefe-Nadel's "mediation of other place units" governs field POSITION across the population, not within-profile
+contiguity — I conflated the two when I named it as the de-fragmentation fix.
+
+**⇒ THE CORRECT MECHANISM CLASS, and the biology is specific: DENDRITIC CLUSTERING.** Afferents from neighbouring
+place cells land on the SAME dendritic branch, share that branch's local plateau, and therefore survive or die
+TOGETHER — which produces contiguity in exactly the place-index dimension where the gaps are. This project already
+has the machinery: `enable_coincidence_detection` gives each postsynaptic neuron a **dendritic SUBUNIT** over a
+tagged pathway (`config.py:159`), and it is already ON in these runs (BTSP requires it) — but the synapse→subunit
+ASSIGNMENT is not organised by place index, so neighbouring place inputs are not guaranteed to share a branch.
+**The named next build: assign place→reader synapses to dendritic subunits by PLACE-INDEX NEIGHBOURHOOD, so
+competition operates per-branch over contiguous input blocks rather than per-synapse over the whole profile.**
+Untried levers that also act in the right dimension: `btsp_elig_hard_thresh` (k-WTA on presynaptic eligibility)
+and `btsp_elig_exponent` (supralinear eligibility).
