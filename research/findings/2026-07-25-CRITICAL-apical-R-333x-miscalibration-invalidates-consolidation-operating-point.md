@@ -5365,3 +5365,26 @@ fwd/rev ratio 3.500, 6 seeds, on GPU, with the relay-lesion at chance.** This su
 (one backend, and the more generous one) and the 3-seed cupy 0.944 (small-sample). The earlier 0.944 was indeed a
 sampling artifact — accuracy is 1.000 on 4 of 6 seeds and the two misses are single trials (0.938 = 15/16,
 0.875 = 14/16).
+
+### 2026-07-29 (SELF-CORRECTION: the "11 genuinely affected" count is OVERSTATED — grep-presence is not semantics, my THIRD such error tonight)
+
+`nav_conv_merged_bridge.py` — which I listed as affected and flagged as "roadmap step 2" — **deliberately sets
+`cc.enable_stdp = False`** (`:428`, `:513`; its own docstring at `:136` says "Hebbian ON + STDP/reward OFF for this
+pass"). My filter matched the mere PRESENCE of `enable_stdp = True` somewhere in the file, so a runner that
+switches STDP off in the operative path was counted as silently broken.
+
+**The honest claim is narrower than what I recorded.** What IS established: (i) the engine mechanism, verified in
+code and empirically (clock never advances under direct stepping ⇒ `delta_t == 0` ⇒ STDP update exactly 0.0);
+(ii) 389 runners direct-step and ZERO use `step_simulation()`; (iii) 36 direct-steppers mention
+`enable_stdp=True`, of which 25 advance the clock themselves. What is **NOT** established is that the remaining 11
+had LIVE-but-inert STDP in the runs that produced banked results — several of them toggle STDP off, and deciding
+per file needs READING, not grepping. The count of runners whose banked results are actually compromised is
+**unknown and smaller than 11**; the guard now catches any such case at runtime, which is the durable fix.
+
+**THE RECURRING LESSON — three instances in one evening, all the same shape: a grep/awk pattern answered a
+DIFFERENT question than the one I was asking, and I read its output as the answer.**
+(1) `awk 'length>800'` counted table and code-fence lines that `check_docs.py` correctly exempts — my one-liner
+"found" violations the verified tool did not. (2) `grep 'current_time_ms +='` missed the ASSIGNMENT form and so
+flagged the FLAGSHIP `g11_bg_runner` as broken when it is fine. (3) `grep 'enable_stdp = True'` matched presence,
+not the operative value. **Rule: when a pattern is load-bearing for a COUNT or a CLAIM, verify it against one case
+you have READ in full — and prefer the project's existing verified tool over a fresh one-liner every time.**
