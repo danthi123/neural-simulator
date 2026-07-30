@@ -497,3 +497,35 @@ metric responds to a WIRING parameter, suspect the wiring is the whole effect.
 **Do this:** (1) run `lr=0` as an arm and report both numbers side by side; (2) if the mechanism needs the target
 to FIRE, assert spikes > 0 before reading any learning metric; (3) never quote a docstring's "handed nothing" —
 read the initialiser. A docstring is a claim, exactly like a comment (rule 2 above).
+
+
+## PROVE THE METRIC CAN DETECT THE EFFECT — an invalid instrument produces confident, reproducible, meaningless numbers (2026-07-29)
+
+**Before trusting any score, show the metric is CAPABLE of measuring the claim.** Three independent skeptics killed
+two "LEARNED" results in one workflow not by finding a confound in the mechanism but by showing **the metric was
+blind to the property being claimed**. Every number was real, reproducible to 15 decimals, and correctly
+`lr=0`-controlled. The instrument was the defect.
+
+The case: `peak/mean` selectivity was used to measure PLACE tuning. It is **permutation-invariant over place
+index** — 21 weights contiguous vs scattered score an identical `4.577236`; scrambling a trained cell's weights
+across all 60 place inputs leaves the score **bit-identical to 15 dp**. It also rises with weight KURTOSIS alone,
+so an *untrained* wider-jitter draw scored 5.806 ABOVE the trained 5.753. A metric indifferent to WHERE a weight
+sits cannot detect a spatial field. This voided a whole sub-arc of numbers, including a density series and a
+"mechanism X degrades the effect" negative.
+
+**Two cheap tests that would have caught it before any mechanism was built:**
+1. **PERMUTATION TEST ON THE METRIC ITSELF.** Scramble the structure the metric claims to measure (place index,
+   time order, cell identity) and re-score. **If the score is unchanged, the metric is blind to that structure** —
+   stop and pick another. Costs one line.
+2. **ORACLE / POSITIVE-CONTROL CEILING.** Hand-construct the ideal answer (here a sigma=5 Gaussian place field) and
+   score it. The oracle scored **14.05** where the best trained result scored **5.97** — so the trained result was
+   nowhere near the effect it claimed, visible immediately. Also score a **random redraw with zero learning**: it
+   scored +3.28, i.e. **263%** of one claimed effect.
+
+**Also: match the null to the nuisance.** A "sharpening-matched null" (same sharpening, no place structure) turned
+a +0.367 claim into `+0.0058 ± 0.0074, t=0.79`. And when two structure-destroying controls **disagree in SIGN**
+(shuffled +0.367 vs permuted-sweep −0.294), neither is measuring the structure.
+
+**The generalisation:** `lr=0` arms, engagement asserts, and bound pre-flights all check that the MECHANISM ran.
+None of them checks that the MEASUREMENT is meaningful. Ask both — "did it engage?" AND "could this metric have
+detected the effect if it were there?"
