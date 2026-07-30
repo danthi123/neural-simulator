@@ -738,3 +738,43 @@ learned preferences (biology would make that adjacency developmental/topographic
 sigma=5 field, with the last ~35% attributed to dendritic-subunit-by-place-index assignment (a structural change,
 not a knob); the input is a moving bump, not hippocampal replay; and the join is numpy (its per-step gate is
 CSR-read-bound, so GPU would be slower — an implementation note, not a gap).
+
+## GPU 6-SEED CONFIRMS the field-quality headline: place-specific circ 0.588 = 67% of oracle
+
+| seed | 42 | 43 | 44 | 100 | 101 | 102 | mean |
+|---|---|---|---|---|---|---|---|
+| circ(dW) | 0.6644 | 0.6325 | 0.6657 | 0.6525 | 0.6828 | 0.7249 | **0.6705** |
+| randset null | 0.1215 | 0.0813 | 0.0493 | 0.0553 | 0.0827 | 0.1029 | **0.0822** |
+| width /60 | 17.0 | 16.4 | 14.5 | 14.1 | 19.3 | 15.4 | **16.1** |
+
+**Place-specific circ +0.5883** against numpy 6-seed **+0.5947** — agreement within 1%, and HIGHER than the GPU
+3-seed estimate (+0.5647), which was therefore slightly pessimistic. Saturation <=0.043 on every seed.
+**⇒ SETTLED HEADLINE: place-specific circ 0.588 = 67% of the 0.8719 oracle, width 16.1/60, 6 seeds, GPU.**
+
+## ⛔ SUBUNIT-PER-BLOCK IS REFUTED — and MY "buildable today via pathway splitting" CLAIM WAS WRONG
+
+| n_blocks | 1 | 2 | 4 | 6 |
+|---|---|---|---|---|
+| peaks/cell | 4.92 | 5.06 | 4.94 | 4.94 |
+| width /60 | 15.9 | 15.9 | 15.8 | 15.9 |
+| circ(dW) | 0.6529 | 0.6516 | 0.6529 | 0.6530 |
+| place-specific delta vs 1-block | — | −0.0034 | +0.0012 | −0.0014 |
+
+**Flat to three decimals across a 6x split.** The pre-registered expectation — "peaks FALLS toward 1" — fails, and
+by the pre-registration this refutes **THIS FACTORING, not the capability.**
+
+**⇒ AND THE MECHANISTIC REASON SHOWS MY CLAIM WAS WRONG, verifiable in code I had already read.** I argued the
+catalog's *"would require multi-compartment model"* was stale because `enable_coincidence_detection` gives a
+dendritic subunit **per pathway**, so splitting the input across pathways would give branch-local independence.
+**It cannot: `cp_v_apical` is allocated PER NEURON** (`cp.full_like(self.cp_membrane_potential_v, ...)`,
+`bridge.py:7159`), so every pathway into a cell writes into and reads from **ONE shared apical compartment**. BTSP's
+instructive signal `is_post = max(cp_v_apical − v_hold, 0)` is therefore per-CELL, and no amount of pathway
+splitting makes two blocks' plateaus independent. **Catalog G.02 was RIGHT and I was wrong** — the missing thing is
+genuinely multiple compartments per neuron, not a wiring arrangement.
+
+**⇒ CONSEQUENCE FOR BOTH ARCS (this was a shared dependency, so the correction propagates):** the last ~33% of
+field quality, and the branch-clustering the consolidation successor would rest on, **both require a real
+multi-compartment extension** (a per-subunit apical variable, i.e. `cp_v_apical` becoming
+(n_neurons x n_subunits)). That is a genuine `sim/` structural change of the kind the catalog flags, NOT a cheap
+composition — and it should be scoped as such rather than attempted again by rearranging pathways.
+**The cheap route does not exist; recording that is more useful than another flat arm.**
