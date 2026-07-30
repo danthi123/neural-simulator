@@ -169,3 +169,52 @@ ASSIGNMENT is not organised by place index, so neighbouring place inputs are not
 competition operates per-branch over contiguous input blocks rather than per-synapse over the whole profile.**
 Untried levers that also act in the right dimension: `btsp_elig_hard_thresh` (k-WTA on presynaptic eligibility)
 and `btsp_elig_exponent` (supralinear eligibility).
+
+## ⭐⭐⭐ THE AFFERENT-DIMENSION LEVERS CLOSE MOST OF THE GAP — place-specific circ 0.13 → 0.595 (68% of oracle), all controls passing
+
+The dimension diagnosis was right. Both untried eligibility levers act on the afferent (place-index) axis, and both
+work — at `hetero_dep=0.2`, robust firing, `elig_tau=1000`, 3 seeds:
+
+| arm | peaks/cell | WIDTH /60 | circ(dW) |
+|---|---|---|---|
+| baseline | 7.81 | 17.2 | 0.4236 |
+| `elig_hard_thresh=0.5` | 6.19 | **13.9** | 0.7064 |
+| **`elig_exponent=4.0`** | **3.19** | 16.1 | 0.6853 |
+
+**AND THE CONTROLS NOW PASS DECISIVELY — the concentration artifact is GONE:**
+
+| control | `elig_exponent=4.0` | `elig_hard_thresh=0.5` | (hetero_dep alone, for contrast) |
+|---|---|---|---|
+| `lr=0` | **0.0000** | **0.0000** | 0.0000 |
+| RANDSET (matched activity, NO place manifold) | **0.0906** | 0.1431 | 0.3893 |
+| permuted-increments (same magnitudes, shuffled positions) | 0.1462 | 0.1738 | — |
+| **place-specific circ (sweep − randset)** | **+0.5947** | +0.5633 | +0.275 |
+
+**RANDSET collapses 0.3893 → 0.0906.** The place-independent concentration that inflated the `hetero_dep`-only
+result is eliminated: the supralinear eligibility only concentrates where the INPUT was strongly and recently
+active, which under a moving bump means a contiguous place-index block — so it cannot manufacture the score from
+random input. RANDSET's own profile is FRAGMENTED (peaks 11.00) against the place sweep's 3.19, which is a clean
+independent discriminator. Permuted-increments 0.1462 vs real 0.6853 (4.7x) says the structure is SPATIAL.
+
+**⇒ THE HONEST HEADLINE: place-specific circ 0.5947 = 68% of the 0.8719 sigma=5 oracle ceiling, width 16.1/60
+(oracle ~12), peaks 3.19, on 3 seeds, with lr=0 at exactly zero, randset at 0.09, and permuted-increments at
+0.15.** Every control that killed or deflated an earlier claim in this arc now passes.
+
+## The evening's progression, and why each step was found
+
+| stage | place-specific circ | width /60 | peaks/cell | what moved it |
+|---|---|---|---|---|
+| quiet operating point | ~0.13 | 51 | 4.17 | — |
+| robust firing (`w0=600`, drive 8000) | ~0.13 | 51 | 1.61 | fixed the silent-reader blocker |
+| `+ btsp_hetero_dep=0.2` | 0.275 | 17 | 7.81 | lowered the pedestal |
+| `+ btsp_elig_exponent=4.0` | **0.595** | 16 | **3.19** | de-fragmented, in the right dimension |
+
+**4.6x improvement in place-specific circ**, from a starting point whose own interpretation I had to retract twice.
+Every advance came from a control on an apparent win, or from a primary source read after the owner's challenge:
+`hetero_dep` and the eligibility terms were BOTH already in the engine at inert defaults, and both were named by
+O'Keefe-Nadel's "convergent inhibition restricts where the unit fires" once that passage was actually read.
+
+**REMAINING GAP (small, and named):** width 16.1 vs oracle ~12, peaks 3.19 vs 1, circ 68% vs 100%. Untried:
+combining `elig_exponent` WITH `elig_hard_thresh` (they act differently — one sharpens, one cuts, and their
+best-of columns differ), and the dendritic-subunit-by-place-index assignment which is still the principled
+contiguity mechanism. 6-seed confirmation and a GPU parity run are also owed before this is a GO.

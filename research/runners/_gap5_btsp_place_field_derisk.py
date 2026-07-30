@@ -74,7 +74,7 @@ def validate_metrics(seed=0):
 
 
 # ---------------------------------------------------------------- bridge
-def build(seed, w_inh, btsp, w_max, lat_kind="soft", w0=None, thr_scale=None, elig_tau_ms=None, hetero_dep=None, hetero_theta=None):
+def build(seed, w_inh, btsp, w_max, lat_kind="soft", w0=None, thr_scale=None, elig_tau_ms=None, hetero_dep=None, hetero_theta=None, elig_thresh=None, elig_exp=None):
     R = [BrainRegion(name="place", n_neurons=NPLACE, exc_fraction=1.0, internal_density=0.0),
          BrainRegion(name="read", n_neurons=NREAD, exc_fraction=1.0, internal_density=0.0)]
     # coincidence_detector=True: clustered place input -> dendritic PLATEAU, which is what gates BTSP.
@@ -119,6 +119,15 @@ def build(seed, w_inh, btsp, w_max, lat_kind="soft", w0=None, thr_scale=None, el
             kw["btsp_hetero_dep"] = hetero_dep
         if hetero_theta is not None:
             kw["btsp_hetero_theta"] = hetero_theta
+        # These two act in the AFFERENT (place-index) dimension, which is where the fragmentation lives:
+        #   btsp_elig_hard_thresh -- k-WTA gate ON PRESYNAPTIC ELIGIBILITY: only afferents whose eligibility
+        #     clears the bar may potentiate. Eligibility tracks recent presynaptic activity and the sweep's
+        #     bump activates CONTIGUOUS place cells, so a threshold should select a contiguous block.
+        #   btsp_elig_exponent -- supralinear eligibility, sharpening high-vs-low without a hard cut.
+        if elig_thresh is not None:
+            kw["btsp_elig_hard_thresh"] = elig_thresh
+        if elig_exp is not None:
+            kw["btsp_elig_exponent"] = elig_exp
     cfg = CoreSimConfig(seed=seed, dt_ms=1.0, enable_brain_region_framework=True, brain_regions=R,
                         region_pathways=P, enable_hebbian_learning=False, enable_stdp=False,
                         enable_homeostasis=False, enable_structural_plasticity=False,
@@ -144,13 +153,14 @@ def wmat(b):
     return M
 
 
-def run(seed, w_inh, btsp, lr, w_max, laps=5, dwell=30, drive=3000.0, width=5.0, randset=False, w0=None, thr_scale=None, elig_tau_ms=None, hetero_dep=None, hetero_theta=None):
+def run(seed, w_inh, btsp, lr, w_max, laps=5, dwell=30, drive=3000.0, width=5.0, randset=False, w0=None, thr_scale=None, elig_tau_ms=None, hetero_dep=None, hetero_theta=None, elig_thresh=None, elig_exp=None):
     """randset=True -> each step drives a RANDOM SET of place cells of the same size/intensity as the bump,
     so total drive and total activity are matched but there is NO moving bump and NO place manifold at all.
     This is the exact control that refuted the k-WTA gate (+1.217 of its +1.272 survived it). If the BTSP gain
     survives randset, it is generic potentiation, NOT place-field formation."""
     b = build(seed, w_inh, btsp, w_max, w0=w0, thr_scale=thr_scale, elig_tau_ms=elig_tau_ms,
-              hetero_dep=hetero_dep, hetero_theta=hetero_theta)
+              hetero_dep=hetero_dep, hetero_theta=hetero_theta,
+              elig_thresh=elig_thresh, elig_exp=elig_exp)
     if btsp:
         b.core_config.btsp_learning_rate = lr
     rm = b.region_manager; pl = rm.indices("place"); rd = rm.indices("read")
