@@ -596,3 +596,20 @@ changes).
 per-neuron; GABA_B is somatic — which together justified a multi-compartment `sim/` extension far better than the
 prior "probably needs it". **A properly-diagnosed UNDEFINED is worth more than a mislabelled NEGATIVE**, but only
 if you diagnose it; recorded as a negative, each would have wrongly closed a live capability.
+
+
+## LIVENESS IS NOT PROGRESS — check THROUGHPUT against the estimate, not just "is it running" (2026-07-30)
+
+**A 24.6-hour run was reported healthy ~20 times while on track to take ~14 DAYS.** Every check answered *"is it
+computing?"* (cpu-time/elapsed = 99%, device=ok, process alive). **None answered *"will it finish?"***
+
+The evidence was in its own log 2 h before anyone looked: `arm reservoir ... (81444s)` = **22.6 h for ONE ARM of
+ONE SEED**, against a job of **15 arms** and a pre-registered estimate of **8-24 h TOTAL**. The step-count
+arithmetic behind that estimate was right; the per-step cost was never validated against a real measurement.
+
+**THE CHECK, one line, the moment the first unit completes:** `per-unit-time x unit-count` vs the estimate. If the
+job prints no per-unit marker, that is a defect to fix BEFORE launching, because it makes the job unmonitorable.
+
+**Do not accept "99% CPU" as reassurance.** It rules out a hang; it says nothing about rate. The project already
+banked *"a LAUNCH-BOUND run is genuinely computing but pathologically slow — kill + re-scope"* — this is that
+rule's throughput half, which was written down and then not applied for a whole session.
