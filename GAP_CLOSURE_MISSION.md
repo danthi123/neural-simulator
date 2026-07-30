@@ -2360,5 +2360,26 @@ passages that a RAG snippet shows plainly — anchor on a short unhyphenated fra
 (The O'Keefe-Nadel canonical copy is single-column and greps cleanly; Kandel's does not. Different files, different
 handling.)
 
+
+**READ THE TOP DESIGN DOC (2026-07-30) — the arc is ALREADY FULLY SPECIFIED with a FROZEN bar. Do not redesign it.**
+`docs/plans/2026-05-19-phase-factored-consolidation-architecture-design.md` (468 lines, "design only", NOT built) contains:
+- **BUILD TARGET — Candidate A (recommended):** two-phase *online-encode then offline-replay* consolidation. **Net-new
+  is ONLY the phase controller + composition wiring**; everything else is reuse (it carries its own DRY/reuse map).
+- **FALSIFY-FIRST SMOKE:** a single-seed **N=2 GPU** smoke that either preserves **episodic == 1.0** with
+  above-chance consolidated-WM selectivity, or **fails fast** with a precise structural cause.
+- **FROZEN ACCEPTANCE (pre-registered, do NOT invent a new bar):** `v1 wm AND ep >= 0.90` with the frozen lesion
+  contrasts discriminating.
+- **PRE-DESCRIBED ESCALATIONS:** Candidates B and C are escalations *within the same architecture*, taken ONLY on an
+  honest propagated A-smoke signal — explicitly "never as a reflexive config crank."
+- **PRE-REGISTERED BOUND:** if a faithful A/B/C build still cannot hit the bar, that is a program-level result to be
+  surfaced with its GPU-measured structural cause, and the NEXT move is already named (deeper separation of
+  relational binding from schema abstraction). Stated in advance "so the next outcome cannot be rationalized after
+  the fact."
+
+**⇒ This is the discipline the last arc lacked: the bar is frozen BEFORE any run, the escalation path is fixed, and
+the failure branch names its own successor.** The next action is to BUILD Candidate A's falsify-first smoke — not to
+re-derive the design, and not to invent an acceptance criterion. **GPU is currently saturated (13 jobs incl. the
+17 h crux), so the N=2 GPU smoke must wait for a free slot; enqueue it via `tools/queue_add.sh`.**
+
 **⇒ The next session's FIRST action is reading, not building** — the five plans, then the Kandel section. The
 research gate has already been run and is recorded here so it is not re-run or skipped.
