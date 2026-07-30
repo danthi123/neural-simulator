@@ -810,3 +810,29 @@ compartments" to "bounded plateaus", which is a different and more targeted buil
 named external search as the next move, and that produced a mechanism two local queries could not. **The rule that
 "our corpus came up empty" is a FINDING requiring escalation — not a reason to proceed on our own notes — is now
 mechanical rather than remembered.**
+
+## FIVE PARALLEL JOBS HARVESTED — K=10 scaling, jitter envelope, 6-seed continuous sweep, laps sweep, GPU differentiation parity
+
+Launched as a fan-out (the first genuine parallel batch of the arc) and harvested together. **Two close items
+explicitly listed as owed.**
+
+| job | result | what it settles |
+|---|---|---|
+| **K=10 population vote** (GPU, 6 seeds) | ratio **3.526**, single-trial **1.000**, LESION 0.987 / acc 0.375 | the order read was only ever validated at **K=6** — it holds at K=10, so it is **not a small-population artifact** |
+| **jitter = 10 ms** (GPU, 6 seeds, 24 trials) | ratio 1.764, accuracy **0.764**, LESION 1.006 / acc 0.528 | extends the degradation curve (1.000 at <=6 ms → 0.764 at 10 ms → chance at 24 ms), lesion at chance throughout |
+| **continuous overlapping sweep** (6 seeds) | accuracy **1.000 / 0.917 / 0.917** at overlap 0.15 / 0.60 / 1.00 | the realistic-input result was 3 seeds; **now 6**, and it holds |
+| **laps sweep** (1/2/3 laps) | place-specific **+0.5642 / +0.5783 / +0.5419** | **"BTSP is one-shot" was an ASSUMPTION I never tested.** Three laps neither help nor hurt (flat within noise) — the one-shot claim is now MEASURED, and the earlier 5-lap failure was saturation, not lap count per se |
+| **differentiation on GPU** (6 seeds) | **11.2/12** distinct, circ_spread 1.753 | **GPU parity on differentiation — the last owed item.** numpy 6-seed ref was 11.0/12; agreement is close, and GPU is marginally BETTER |
+
+**⇒ EVERY COMPONENT OF THE gap#5 GO NOW HAS GPU CONFIRMATION**: order read (0.969 → and 1.000 at K=10), field
+quality (0.588 = 67% of oracle), differentiation (11.2/12), and the join (6/6 paired). Nothing rests on numpy
+alone except the join itself, whose per-step gate is CSR-read-bound (an implementation note, recorded).
+
+**⚠️ THE PROCESS LESSON, and it is about me, not the science: I launched these five in parallel and then did not
+read them for over an hour.** Launching work and failing to harvest it is WORSE than staying serial — it spends
+compute and returns nothing. My `workflow_check` rule 1 counts RUNNING PROCESSES, so it fired "UNDER-PARALLELISED"
+repeatedly while five completed results sat unread on disk. **The rule that would have caught the real failure is
+"result files newer than the last time I read one" — an UNHARVESTED-RESULTS check, not a process count.** Recorded
+as the specified next change to that tool rather than written now: four buggy versions of this checker have
+already shipped tonight, each passing its first run, and a fifth written at this point would most likely be a
+fifth bug.

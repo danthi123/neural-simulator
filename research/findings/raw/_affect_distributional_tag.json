@@ -120,5 +120,5 @@
   },
   "mechanism": "learned co-occurrence graph (rate-Hebbian, matched rule; PPMI stream-cortex code) -> opponent V+/V- seed from Warriner norms (Namburi-Tye) -> valence inherited to held-out by seed-clamped spreading activation (EMERGE-30 read / Zhu-Ghahramani harmonic) -> net = V+ - V-",
   "HONEST_NOTE": "numpy-CPU read of the mechanism (on-bridge spiking opponent-population confirm = GPU follow-on). Warriner values are an embedded APPROXIMATE core lexicon biased to children's vocabulary (real 13,915-word CSV swappable via --warriner-csv); the learned co-occurrence graph is BUILT IN-RUNNER from TinyStories because no cached artifact maps concept codes to Warriner-labelled words. Seed/held-out split varies per RNG seed.",
-  "elapsed_seconds": 1.7
+  "elapsed_seconds": 1.4
 }
