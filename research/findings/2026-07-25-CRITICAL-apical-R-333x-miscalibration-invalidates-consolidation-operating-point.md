@@ -4767,3 +4767,39 @@ pair-spacing, single lag. It is correctly signed with every control clean, not a
 strengthenable by summing over multiple lags and multiple pair spacings — untested. The on-substrate question
 is unchanged: this needs real per-pathway delays of ~12 ms (deferral-audit item A3a), but **12 ms is an
 ordinary axonal delay, where 125 ms was not** — which is precisely the constraint that killed mechanism 1.
+
+### 2026-07-29 (detector BANK = NEGATIVE — my own proposed strengthener, tested; and the pairwise read reaches 6 SEEDS)
+
+The rung above closed with "likely strengthenable by summing over multiple lags and multiple pair spacings —
+untested." Tested. **It does not strengthen; it DILUTES.** A bank of detectors over spacings s=1..4, each at a
+lag scaled proportionally to its spacing (cells s apart peak ~s times further apart in time):
+
+| form | lags (ms) | two-sided separation |
+|---|---|---|
+| single (adjacent pairs) | 12.5 | **1.333** |
+| bank, s<=2 | 12.5, 25.0 | 1.340 |
+| bank, s<=3 | 12.5, 25.0, 37.4 | 1.287 |
+| bank, s<=4 | 12.5, 25.0, 37.4, 49.9 | 1.239 |
+
+The reason is already in the lever sweep: the effect **peaks at 12.5 ms and is gone by 50 ms**. Wider spacings
+REQUIRE proportionally longer lags, so every added spacing contributes a term from the decayed tail and drags
+the normalised mean down. `s<=2` is a wash (+0.007, noise); beyond that it is monotonically worse. **The
+adjacent-pair single-lag read is the correct form** — the read is local because the SIGNAL is local, which is
+the same reason it is physiological.
+
+**The same run UPGRADES the headline to the project's 6-seed standard, at the optimal lag** (the recorded seed
+table was at lag=3; 1.147 came only from the lever sweep):
+
+| seed | 42 | 43 | 44 | 100 | 101 | 102 |
+|---|---|---|---|---|---|---|
+| FWD | 1.143 | 1.149 | 1.154 | 1.167 | 1.167 | 1.153 |
+| REV | 0.886 | 0.874 | 0.864 | 0.856 | 0.854 | 0.866 |
+| separation | 1.291 | 1.315 | 1.336 | 1.363 | 1.366 | 1.332 |
+
+**Correctly signed on 6/6 seeds** (FWD>1 AND REV<1 every seed), separation **1.333** mean, tight range
+1.291-1.366. Controls re-verified at 6 seeds: `lag0` **1.0000** (exact, the symmetry lever), time-shuffled
+**0.9927**, scrambled preferred-order **0.9887**, static-widening **1.0001**.
+
+**SCOPE unchanged and still the honest limit:** ~33% two-sided separation is REAL and cleanly controlled but
+MODEST; off-substrate; and it has not been run on the bridge, which needs real ~12 ms per-pathway delays
+(deferral-audit A3a). What this rung removes is the one open speculation I had left in the record.
