@@ -4803,3 +4803,53 @@ table was at lag=3; 1.147 came only from the lever sweep):
 **SCOPE unchanged and still the honest limit:** ~33% two-sided separation is REAL and cleanly controlled but
 MODEST; off-substrate; and it has not been run on the bridge, which needs real ~12 ms per-pathway delays
 (deferral-audit A3a). What this rung removes is the one open speculation I had left in the record.
+
+### 2026-07-29 (the delay gap was ALREADY BANKED — and the reader's OPERATING REQUIREMENTS now gate the sim/ edit)
+
+**FIRST: the substrate has NO synaptic delays, and this was already in the record — I nearly re-derived it.**
+Read of the engine: `cfg.max_synaptic_delay_ms=20.0` computes `runtime_state.max_delay_steps`
+(`bridge.py:2468`) and **NOTHING IN `sim/` EVER READS IT** — write-only, in both `sim/config.py` and
+`sim/bridge.py`. **161 runners assign it**, all no-ops. Transmission is a direct matvec of the current firing
+states with the increment applied to the NEXT step's conductance (`kernels.py:232-234`) = **uniform ONE-step
+latency, no per-pathway variation**; `cp_prev_firing_states` is 1 step deep and feeds PLASTICITY only
+(`bridge.py:843`). No spike-history buffer exists.
+
+**But the RAG check found this banked 2026-06-09** as catalog **B.16** ("no axonal conduction delays; all
+one-step") in `2026-06-09-route-T-volley-synchronization-design.md` §3.2 — which already contains a
+**fully-specified, owner-byte-review-ready `sim/` design** for a conduction-delay ring buffer
+(`enable_conduction_delays` + per-pathway `conduction_delay_ms` + bucketed sub-matvecs by integer delay,
+~150-250 lines, additive/default-off/byte-identical-when-off), deliberately deferred "**ONLY if the
+rhythm-only probe is insufficient**." Two independent arcs (Route-T volley sync, and now the gap#5 reader)
+have converged on the same deferred edit. **This is the record-check paying for itself** — the mechanism-1
+elimination two rungs up was argued on BIOLOGY (63-125 ms exceeds axonal range) and never asked whether ANY
+delay was buildable; the true blocker is that the substrate has none, so even the physiological 12.5 ms needs
+this edit. Reading the substrate first would have found it immediately ([[feedback_read_own_substrate_before_theorizing]], again).
+
+**SECOND: my first single-trial measurement was a CEILING and is WITHDRAWN as uninformative.** It returned
+accuracy **1.000 on every seed at every noise level, d' 45-62**. A d' of ~56 means the distributions sit 50+
+SD apart — not a result, a signature that the read was handed maximal evidence (40 cells x 120 steps, no
+duration/width variability). Per the standing ceiling criterion, an arm at 1.000 everywhere cannot rank
+anything. Re-ran with realistic variability (jittered sweep speed 0.7-1.3x and width 0.8-1.2x, cell subset,
+truncated observation) to find where it actually breaks:
+
+single-trial accuracy, 3 seeds x 60 trials/condition, chance = 0.500:
+
+| cells \ steps | 10 | 20 | 40 | 80 | 120 |
+|---|---|---|---|---|---|
+| 4 | 0.789 | 0.819 | 0.775 | 0.994 | 1.000 |
+| 8 | 0.847 | 0.889 | 0.986 | 1.000 | 1.000 |
+| 16 | 0.914 | 0.947 | **1.000** | 1.000 | 1.000 |
+| 40 | 0.969 | 1.000 | 1.000 | 1.000 | 1.000 |
+
+**In real units (1 toy step = 2.08 ms, banked above): 16 cells x 83 ms = 1.000, and 8 cells x 42 ms = 0.889.**
+Hippocampal replay events are ~50-200 ms over tens of place cells, so **the mechanism's operating requirement
+sits inside the physiological envelope** — which is the measurement that justifies paying for the ring-buffer
+edit, rather than my enthusiasm for it.
+
+**The 4-cell row is non-monotonic (0.775 at 40 steps).** Lag quantization is EXCLUDED by test — sweeping the
+lag at that exact cell gives 0.767/0.775/0.769/0.758 for lag 1/2/3/4, so the surface used a near-optimal lag.
+With ~360 trials/cell the accuracy SE is ~0.021, making the 0.775-vs-0.819 gap ~2 SE: **most likely sampling
+noise, recorded as such rather than given a mechanism I have not tested.**
+
+**SCOPE:** off-substrate; 3 seeds; a single reader architecture; the lag-vs-compression scaling is a crude
+heuristic. What is now established is the operating envelope, not an on-bridge result.

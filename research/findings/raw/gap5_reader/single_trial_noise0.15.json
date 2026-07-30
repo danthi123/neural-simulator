@@ -1,0 +1,62 @@
+[
+ {
+  "seed": 42,
+  "fwd_mean": 1.0371,
+  "rev_mean": 0.9644,
+  "fwd_sd": 0.0017,
+  "rev_sd": 0.0015,
+  "acc": 1.0,
+  "dprime": 45.226,
+  "thresh": 1.0333
+ },
+ {
+  "seed": 43,
+  "fwd_mean": 1.0405,
+  "rev_mean": 0.9612,
+  "fwd_sd": 0.0018,
+  "rev_sd": 0.0016,
+  "acc": 1.0,
+  "dprime": 47.675,
+  "thresh": 1.0347
+ },
+ {
+  "seed": 44,
+  "fwd_mean": 1.0409,
+  "rev_mean": 0.9602,
+  "fwd_sd": 0.0018,
+  "rev_sd": 0.0013,
+  "acc": 1.0,
+  "dprime": 51.175,
+  "thresh": 1.0367
+ },
+ {
+  "seed": 100,
+  "fwd_mean": 1.0455,
+  "rev_mean": 0.9567,
+  "fwd_sd": 0.0017,
+  "rev_sd": 0.0016,
+  "acc": 1.0,
+  "dprime": 53.176,
+  "thresh": 1.0416
+ },
+ {
+  "seed": 101,
+  "fwd_mean": 1.0446,
+  "rev_mean": 0.9572,
+  "fwd_sd": 0.0019,
+  "rev_sd": 0.0015,
+  "acc": 1.0,
+  "dprime": 51.08,
+  "thresh": 1.0404
+ },
+ {
+  "seed": 102,
+  "fwd_mean": 1.0413,
+  "rev_mean": 0.9598,
+  "fwd_sd": 0.0017,
+  "rev_sd": 0.0013,
+  "acc": 1.0,
+  "dprime": 54.273,
+  "thresh": 1.0369
+ }
+]
