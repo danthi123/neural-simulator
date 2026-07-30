@@ -5670,3 +5670,52 @@ exemptions), `grep 'current_time_ms +='` (missed the assignment form), and `grep
 presence, not the operative value). **In fish specifically: an unmatched glob kills the command, so an empty
 result may mean "your pattern was wrong", never "the thing does not exist." Verify a negative shell result against
 one case you have confirmed by hand BEFORE drawing any conclusion from it.**
+
+### 2026-07-29 ⭐⭐⭐ PRIMARY-SOURCE SYNTHESIS (O'Keefe-Nadel 1978 + Buzsáki 2006) — THETA is the missing structure, and it re-scopes TWO of my own results
+
+Continued reading the canonical sources rather than building. Three mechanisms, each quoted from the source, and
+two of them re-frame results I already banked.
+
+**(A) THE FIELD IS CARVED BY CUE-DERIVED CONVERGENT INHIBITION** (O'Keefe-Nadel, canonical copy :9667, and :10040
+ff). Pyramidal cells have *"low 'spontaneous' firing rates, especially during theta-related behaviours **OUTSIDE
+of the place field**"* — the baseline is INHIBITED and the field is where inhibition is RELIEVED. Field width is
+set by the *"appropriate number of these inhibitory inputs"* converging; too few ⇒ fires *"in several parts of the
+environment"*; too many ⇒ no field. **Confirmed in my own data: 4.17 peaks/cell, 100% multi-peaked.**
+
+**(B) THETA IS A TIME GATE, AND DIFFERENT INHIBITORY CELLS TARGET DIFFERENT DENDRITES** (O'Keefe-Nadel :10050 ff):
+*"The theta mechanism provides a **time gate** during which the granule or pyramidal cells may be activated. We
+shall assume that the theta/displace cells are the **basket cells** ... different theta cells control **different
+parts of the dendrites** of the pyramidal cells"*, and CA1 place cells *"fire with different phases of the theta"*.
+So the inhibition is RHYTHMIC and DENDRITICALLY SEGREGATED, not the tonic uniform FS pool I built.
+
+**(C) THETA COMPRESSES PLACE SEQUENCES TO TENS OF MILLISECONDS** (Buzsáki :13328 ff): *"the place field sequences
+on the one-dimensional track are 'compressed' into time/phase sequences of the theta oscillation"*, such that the
+same distances are represented *"by the temporal relations of spikes at the **tens of millisecond** time scale."*
+
+**⇒ RE-SCOPE #1 — MY 12.5 ms OPTIMUM IS THE THETA-COMPRESSION TIMESCALE.** I found 12.5 ms empirically by
+sweeping the pairwise-detector lag (peak 1.147, decaying to neutral by 50 ms) and justified it only as "within
+axonal range." Buzsáki says theta compression puts successive place representations exactly at the tens-of-ms
+scale. **The relay-delay read is a hand-built stand-in for what theta phase does natively** — which both explains
+why 12.5 ms was optimal and names the biological replacement for the relay chain.
+
+**⇒ RE-SCOPE #2 — MY STDP NEGATIVE WAS RUN WITHOUT THE MECHANISM THAT MAKES STDP APPLICABLE.** Buzsáki, on
+Skaggs and Mehta: the theta-compressed spike-timing relationship of neurons representing successive positions
+*"was just perfect for the short time window needed for spike-timing-dependent plasticity"*, since *"a strong
+suprathreshold synaptic input always increases the synaptic strengths of subthreshold inputs that have occurred a
+few tens of milliseconds earlier ... The plasticity rule, together with the sequential activation of neurons
+within the theta cycle, may be the key for tying together sequential places and items into meaningful episodes."*
+**In my probe successive place cells were 30 ms apart across a 1.8 s lap with NO theta — so the sequence never
+entered the STDP window.** The workflow's STDP arm was a "trustworthy negative" for STDP-without-theta; it says
+nothing about STDP-under-theta-compression, which is the configuration biology actually uses. (This is the SECOND
+scope limit found on an STDP negative today — the first was the `delta_t == 0` clock bug.)
+
+**(D) FIELD SIZE TRACKS ENVIRONMENT GEOMETRY** (Buzsáki :12828): shortening a linear track meant *"the size of the
+place fields became compressed and occasionally disappeared altogether"* — O'Keefe/Burgess explain it by
+triangulation from wall heights and visual cues, McNaughton by path integration from self-motion. Field width is
+not intrinsic; it is set by the available spatial constraints, consistent with (A).
+
+**⇒ THE REVISED NEXT MECHANISM — three parts, all sourced, replacing my four guessed levers:** (1) **baseline
+inhibition + CUE-DERIVED convergent inhibitory inputs**, with the NUMBER converging as the width knob and
+peaks-per-cell (now 4.17) as the tracked metric; (2) a **THETA time-gate** on the readers so firing is confined to
+a rhythmic window rather than tonic; (3) **theta-phase compression** as the native order code, which should
+subsume the hand-built 2-hop relay chain AND is the precondition under which the STDP arm deserves a re-run.
