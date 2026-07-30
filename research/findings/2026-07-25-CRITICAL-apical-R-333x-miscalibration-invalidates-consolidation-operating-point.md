@@ -4416,7 +4416,7 @@ item, A3a). CPU-first at shrunk scale is the right first rung; the GPU is commit
 ### 2026-07-29 (NEURAL-READER CHEAP-FIRST DE-RISK — core mechanism works; my spread-symmetry claim is REFUTED AS TESTED)
 
 Numpy de-risk of the design above, on the pool, 4 seeds per cell. The reader is handed NOTHING: tuning is
-rate-Hebbian from a simulated wake traversal (measured sharpness 9.1× peak-to-mean), and direction is read
+rate-Hebbian from a simulated wake traversal (measured sharpness 9.1× peak-to-mean), and direction is read ⛔ [the 9.1× 'ACQUIRED/learned tuning' is RETRACTED 2026-07-29 — it was the random SEEDING, present in full at lr=0; see the SECOND RETRACTION entry at the end of this file]
 by delay-line coincidence over the learned weights.
 
 **FIRST ATTEMPT WAS VOID AND ITS OWN SIGNATURE CAUGHT IT:** every ratio was exactly **1.000 at all five
@@ -4474,7 +4474,7 @@ principled neutral reference, and grades partial directionality sensibly (travel
 every setting**, so the discrimination is carried by the delays alone and nothing else.
 
 **STATUS: both of the design's named unknowns are now answered on the cheap rung.** (1) Hebbian wake-tuning
-is sharp enough (9.1× peak-to-mean). (2) Delay-line coincidence discriminates travel from non-travel with a
+is sharp enough (9.1× peak-to-mean). (2) Delay-line coincidence discriminates travel from non-travel with a ⛔ [the 9.1× 'ACQUIRED/learned tuning' is RETRACTED 2026-07-29 — it was the random SEEDING, present in full at lr=0; see the SECOND RETRACTION entry at the end of this file]
 clean null. **Still off-substrate and still 4 seeds** — the remaining unknown is the one I flagged from the
 start and did NOT test: whether the required delay spread is physiological on this substrate (per-pathway
 conduction delays are deferral-audit item A3a). That is the on-bridge question, and it is a real dependency,
@@ -4505,7 +4505,7 @@ slow-NMDA attractor, and the documented result that slow NMDA lets sparse drive 
 (the generalization arc used exactly this). So the substrate support exists; the design was reaching for the
 wrong component.
 
-**WHAT SURVIVES AND WHAT DOES NOT.** Survives: tuning ACQUIRED by wake Hebbian (9.1× sharpness), the
+**WHAT SURVIVES AND WHAT DOES NOT.** Survives: tuning ACQUIRED by wake Hebbian (9.1× sharpness), the ⛔ [the 9.1× 'ACQUIRED/learned tuning' is RETRACTED 2026-07-29 — it was the random SEEDING, present in full at lr=0; see the SECOND RETRACTION entry at the end of this file]
 FWD/REV opponent read-out, the clean 1.00 null on non-directional activity, and the exactly-1.000
 equalised lesion — all of that is about the READ-OUT ARCHITECTURE and is unaffected. Does not survive: the
 implementation via per-cell conduction delays (and with it any dependence on deferral-audit item A3a, which
@@ -4580,7 +4580,7 @@ quantity from the arm it is compared against.
 **WHAT STANDS from the whole neural-reader arc** (unaffected by this void arm): the host decoder's shortcut
 is precisely located (`neuron_pos = arange(N)/N*n_pos`, handed the band's own wiring map); nothing downstream
 consumes the decode; its gate is loose (a spreading front scores +0.717 and passes >0.6) though the GO's own
-data is far from that failure mode; the read-out ARCHITECTURE is de-risked (learned tuning 9.1× sharpness,
+data is far from that failure mode; the read-out ARCHITECTURE is de-risked (learned tuning 9.1× sharpness, ⛔ [the 9.1× 'ACQUIRED/learned tuning' is RETRACTED 2026-07-29 — it was the random SEEDING, present in full at lr=0; see the SECOND RETRACTION entry at the end of this file]
 opponent pools, clean 1.00 null on non-directional input, exactly-1.000 equalised lesion); and TWO temporal
 mechanisms are genuinely eliminated on measured grounds (delays need 63-125 ms vs 1-30 ms available; slow
 synapses give 12% separation and misrank spread above travel).
@@ -4721,7 +4721,7 @@ AGGREGATE over cells (summed recurrent drive, mean cosine) and an order statisti
 aggregate — it requires comparing WHEN different cells fired. Delay lines do exactly that comparison, which
 is why they worked (2.2× separation) and why they need 63-125 ms of spread that axons do not have.
 
-**⇒ THAT TENSION IS THE REAL FINDING OF THIS ARC.** The read-out architecture is sound (acquired tuning,
+**⇒ THAT TENSION IS THE REAL FINDING OF THIS ARC.** The read-out architecture is sound (acquired tuning, ⛔ [the 9.1× 'ACQUIRED/learned tuning' is RETRACTED 2026-07-29 — it was the random SEEDING, present in full at lr=0; see the SECOND RETRACTION entry at the end of this file]
 opponent pools, clean nulls, working lesions), the information is present at r = ±0.86/−0.99, and the
 difficulty is squarely that a physiological neural mechanism for a cross-cell timing correlation is not among
 the three obvious candidates. Candidates NOT yet tried, named for the next session: a **ramping/integrator**

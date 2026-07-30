@@ -60,8 +60,20 @@ def sweep(N, T, width, rng, direction=+1, widen=False, static=False):
 
 
 def learn_tuning(F, n_read, rng, lr=0.05):
-    """Reader ACQUIRES tuning by k-WTA Hebbian. Handed nothing -- that is the whole point: the host decoder's
-    shortcut is being GIVEN neuron_pos = arange(N)/N*n_pos."""
+    """Reader tuning: a random position SEED plus k-WTA Hebbian.
+
+    ⛔ THE ORIGINAL DOCSTRING HERE WAS FALSE AND ITS CLAIM IS RETRACTED (2026-07-29). It read "Reader
+    ACQUIRES tuning by k-WTA Hebbian. Handed nothing -- that is the whole point", and that was quoted
+    repeatedly as evidence the read-out architecture was de-risked. MEASURED: selectivity is 9.376 /
+    9.363 / 9.334 at **lr=0** (seeds 42/43/44) versus 9.177 / 9.163 / 9.157 when trained -- i.e. the
+    ENTIRE ~9.1x peak-to-mean is supplied by the `seeds`/`+= 0.05` bump below, BEFORE any learning, and
+    the Hebbian loop makes it slightly WORSE on 3/3 seeds.
+
+    So each reader IS handed a place field. This function is a legitimate way to obtain tuned readers
+    for testing a DOWNSTREAM read-out, and every order-reading result in this arc used hand-set timing
+    and said so. It is NOT evidence that tuning can be ACQUIRED -- that question is open, and any claim
+    about it must carry an lr=0 arm (see `.claude/skills/verify-go/SKILL.md`).
+    """
     N = F.shape[1]
     W = rng.uniform(0, 0.01, size=(n_read, N))
     seeds = rng.permutation(N)[:n_read]
