@@ -567,3 +567,32 @@ rejected arm, read its METHOD, not its verdict**; the setup detail that made it 
 
 **Cheap standing practice:** for every control, write one sentence naming *what it destroys and at what scale*. If
 that sentence cannot be written, the control is decoration.
+
+
+## TRACE THE ARRAY: does the lever WRITE the same object the metric READS? (2026-07-30, THREE times in one arc)
+
+**Before running an A/B, name the array the lever writes and the array the metric reads. If they are not the same
+object — or not coupled by a step you can point to — the arm is UNDEFINED before it starts.** Three instances in
+one arc, each burning a full multi-seed run to produce a flat, confident, meaningless result:
+
+| lever | it wrote | the metric read | why it did nothing |
+|---|---|---|---|
+| Mexican-hat "inhibition" via NEGATIVE weights | `cp_connections` data | somatic `g_i` | E/I is set by `cp_traits` (presynaptic TYPE), not weight sign; the negative weight merely SUBTRACTED from `g_e` |
+| dendritic subunit-per-block via pathway splitting | K separate pathways | `cp_v_apical` | `cp_v_apical` is allocated **per NEURON**, so all pathways into a cell share ONE compartment |
+| GABA_B to terminate the apical plateau | `total_input_current_pA` from `cp_membrane_potential_v` | the APICAL plateau above `v_hold` | `I_gabab` is computed on the SOMA (`bridge.py:7330`) and never touches `cp_v_apical` |
+
+**Every one had a real, allocated, non-zero parameter that measurably moved.** `set_pathway_weights` returned
+2/2 and the CSR stored −300.0 verbatim. The gate array was written on 1800/1800 steps. GABA_B changed `mean|dW|`.
+**"The parameter engaged" is NOT "the mechanism reached the target."** An engagement counter on the lever's own
+action — which this project already banks as a rule — does not catch this, because the lever genuinely acted; it
+acted somewhere else.
+
+**THE CHECK, one minute, before the run:** grep the engine for where the lever's quantity is consumed, and where
+the metric's quantity is produced. Confirm a path between them you can name. If the answer is "presumably it
+propagates", that IS the failure — write the assertion instead (drive the lever alone and show the metric's array
+changes).
+
+**AND THE PAYOFF WHEN IT FAILS:** all three flats became *structural* findings — E/I is trait-based; apical is
+per-neuron; GABA_B is somatic — which together justified a multi-compartment `sim/` extension far better than the
+prior "probably needs it". **A properly-diagnosed UNDEFINED is worth more than a mislabelled NEGATIVE**, but only
+if you diagnose it; recorded as a negative, each would have wrongly closed a live capability.
