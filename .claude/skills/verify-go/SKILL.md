@@ -529,3 +529,41 @@ a +0.367 claim into `+0.0058 ± 0.0074, t=0.79`. And when two structure-destroyi
 **The generalisation:** `lr=0` arms, engagement asserts, and bound pre-flights all check that the MECHANISM ran.
 None of them checks that the MEASUREMENT is meaningful. Ask both — "did it engage?" AND "could this metric have
 detected the effect if it were there?"
+
+
+## DESIGNING A CONTROL: four ways they fail silently (2026-07-30, all four hit in ONE arc)
+
+A control that returns a number is not a control that tests something. Four distinct failures in one arc, each
+of which produced a confident, reproducible, WRONG conclusion — and none announced itself in its output.
+
+**1. THE NULL DIFFERS IN MORE THAN ONE PROPERTY.** A "sharpening-matched null" split a weight budget by a
+Dirichlet, which CONCENTRATES mass on random indices — while the metric (circular resultant) rewards
+concentration. It scored 57% of the real effect and printed **"NOT place-specific"** on a result that in fact
+passed every legitimate control. It differed from the treatment in position AND concentration, so it isolated
+neither. **A null must differ in EXACTLY ONE property — the one under test.** The fix was to permute the ACTUAL
+trained increments (magnitude and concentration held fixed, position shuffled).
+
+**2. THE CONTROL LOSES VALIDITY WHEN THE REGIME CHANGES.** Scrambling which cells were paired was a genuine null
+while all cells shared one preferred position (nothing to destroy ⇒ LEARNED ≈ SCRAMBLED correctly meant "no
+information"). Once the population TILED the space, every pair had an intrinsic order regardless of pairing, so
+the same control tested nothing — and still returned a plausible number. **Re-derive what a control destroys
+whenever the system changes; validity is a property of the REGIME, not of the control.**
+
+**3. THE CONTROL IS UNDERPOWERED ON THE MECHANISM'S OWN SCALE.** A "matched-preference" null still spanned 13-15
+positions = **390-450 ms** of separation, against an **11.5 ms** detector window — ~35x too coarse. It reduced
+order without removing it, then read HIGHER than the treatment. **A control must differ on the SCALE THE MECHANISM
+OPERATES ON.** Compute that scale explicitly before trusting the arm.
+
+**4. A CONFOUND CAN WORK *AGAINST* THE EFFECT — check the direction before dismissing it.** The winner-take-all
+lever also cut total potentiation 31%, so the raw contrast confounded order with magnitude. Matching magnitude did
+not shrink the result, it **GREW** it (separation +0.452 → +0.571). **Do not assume a confound inflates; if
+controlling it strengthens the effect, that is evidence FOR the effect.**
+
+**AND: A BAD CONTROL CAN MAKE YOU DISCARD A GOOD MECHANISM.** The k-WTA arm that ultimately solved the arc's
+blocker was refuted early on a metric later proven blind by identity, and its winning property — "12/12 distinct
+winners", asserted live in its own data — sat unread in the discarded report for hours. **When re-opening a
+rejected arm, read its METHOD, not its verdict**; the setup detail that made it work (a required
+`plasticity_gate` tag, without which the gate silently no-ops) was stated explicitly in text already in hand.
+
+**Cheap standing practice:** for every control, write one sentence naming *what it destroys and at what scale*. If
+that sentence cannot be written, the control is decoration.
