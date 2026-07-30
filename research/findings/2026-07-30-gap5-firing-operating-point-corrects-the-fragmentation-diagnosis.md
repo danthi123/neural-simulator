@@ -574,3 +574,36 @@ MATCHED was underpowered by ~35x on the relevant timescale).
 (4) GPU parity. **The pipeline is end-to-end demonstrated — learn place tuning from a sweep, differentiate the
 population, and read replay DIRECTION from the learned code in spikes — but at 2/3 seeds it is a strong indication,
 not a GO.**
+
+## 6-SEED JOIN + the seed-43 puzzle RESOLVED: the direction holds (4/6, sep +0.805) but per-seed ratios are SPIKE-COUNT-LIMITED
+
+| metric | value |
+|---|---|
+| mean ON (ordered population) | **1.556** |
+| mean OFF (no-order null) | **0.751** |
+| separation | **+0.805** |
+| ON > 1.0 | **4/6 seeds** |
+| corr(selected-span, ON ratio) | 0.414 |
+
+**THE OUTLIERS ARE EXPLAINED, AND IT IS NOT A MECHANISM CONTRADICTION.** The raw detector counts are TINY: seed
+102 reads `fwd/rev = 1/5` (ratio 0.200) and seed 101 reads `3/2` (ratio 1.500). **Those ratios rest on 1-5 total
+detector spikes**, so a single spike swings them by a factor of several. Seed 43's earlier "null despite having the
+MOST distinct fields (11)" — which I flagged as a contradiction needing its own mechanism — is simply the same
+thing: **a low-count measurement, not a differentiated-but-non-discriminating population.** The span correlation
+(0.414) is weak and does not carry the variance either.
+
+**⇒ THE ROOT CAUSE IS A TRADE I CREATED AND DID NOT NOTICE: `gain=0.30` was chosen to make the detector
+SUBTHRESHOLD (verified: 0.0 spikes on single-input drive) — and the same setting makes it barely fire at all.**
+Subthreshold-for-correctness and productive-enough-to-measure are competing requirements, and I optimised only the
+first. Every per-seed ratio in the join arc has been computed on a handful of spikes.
+
+**⇒ WHAT STANDS AND WHAT DOES NOT.** STANDS: the aggregate direction — ordered populations read 1.556 vs 0.751 for
+order-free ones, separation +0.805, 4/6 seeds above 1.0, with the no-order arm correctly at chance. That is a real
+signal and the null is valid. DOES NOT STAND: any per-seed claim, and any confident effect SIZE, since both are
+dominated by 1-5-spike sampling.
+
+**⇒ THE FIX IS MEASUREMENT, NOT MECHANISM (specified):** raise spikes-per-measurement while KEEPING the verified
+subthreshold property — (a) average over many trials per seed (the population-vote runner already does 16), (b) more
+detector cells per pair (currently n=50/stage but only a few fire), (c) repeat the sweep several times per
+measurement. **Then re-run 6 seeds.** Until then the join is a **directionally-consistent aggregate signal on
+under-powered per-seed measurements** — stronger than the four inconclusive attempts before it, and still not a GO.
