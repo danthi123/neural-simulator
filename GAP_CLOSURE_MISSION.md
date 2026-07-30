@@ -2336,3 +2336,29 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   this board + the CLAUDE.md pointer re-anchor from EXACT NEXT ACTION. NO systemd/cron/bash re-launcher (the old Windows
   `scripts/autonomous_watchdog.ps1` is dead on CachyOS — E: drive gone). Do NOT build or propose a cross-session watchdog
   unless the owner asks. Within a session, NEVER stop (async pattern).
+
+---
+
+## ▶ NEXT ARC OPENED 2026-07-30 — composed-memory → cortex consolidation (research gate FIRED, not yet built)
+
+**Opened the way the last arc should have been:** ran `tools/research_gate.sh` on the new direction BEFORE any
+building. **The gate FIRED — 0 primary-source hits, 6 hits all from our OWN plans.** That is the tool working on a
+fresh question rather than retrospectively, and it surfaced two things the next session must do first:
+
+**(1) FIVE PRIOR DESIGN DOCS EXIST ON THIS EXACT DIRECTION — read before building:**
+`2026-05-19-phase-factored-consolidation-architecture-design.md` · `2026-05-19-regime-correct-compositional-retrieval-design.md`
+· `2026-05-19-remote-memory-regime-necessity-test-architecture-design.md` · `2026-05-07-Phase1.3-Tier2.1-combined-design.md`
+· `2026-05-18-Q5-integrated-biology-grounded-closed-loop-design.md`.
+**This is precisely the pattern that cost the last arc hours** (`btsp_hetero_dep` etc. were already built and
+already named in a source; the delay gap was already banked as catalog B.16). Read these FIRST.
+
+**(2) THE PRIMARY-CORPUS QUERY IS RUN AND POINTS AT KANDEL'S SYSTEMS-CONSOLIDATION SECTION** — the passage stating
+that long-term storage of explicit memory *requires* the hippocampus while the **ultimate storage** is cortical.
+Canonical copy: `~/Projects/sim-catalog/references/textbooks/kandel-pns-6e/full-book.txt`. **Extraction note:** that
+text is two-column OCR with hyphenation across line breaks (`"the ultimate stor-"`), so a single-line grep MISSES
+passages that a RAG snippet shows plainly — anchor on a short unhyphenated fragment and read a window around it.
+(The O'Keefe-Nadel canonical copy is single-column and greps cleanly; Kandel's does not. Different files, different
+handling.)
+
+**⇒ The next session's FIRST action is reading, not building** — the five plans, then the Kandel section. The
+research gate has already been run and is recorded here so it is not re-run or skipped.
