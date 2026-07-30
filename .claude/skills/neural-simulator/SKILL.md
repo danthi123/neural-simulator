@@ -72,7 +72,20 @@ If I'm doing ANY of these, I've drifted — stop and re-anchor:
 6. **Serializing independent work (under-using the hardware).** Running de-risks/sweeps/mechanisms one at a time, single-threaded (low CPU/GPU util), when they could run CONCURRENTLY. Waiting idle for a run/subagent.
 7. **Relabeling a shortcut as acceptable biology.** Calling a host stand-in or external model "defensible / permanent / pragmatic" to dodge simulating the circuitry. When I catch myself arguing WHY a scaffold can stay, THAT argument is the drift.
 8. **Believing a "surpass" without adversarial verification** (NEW). Committing a GO because it looked clean, without independent skeptics probing for the confound. See the workflow's step 4 → run the **verify-go** skill before any GO lands.
-9. **Skimming the sources** (NEW). Grepping the catalog index + citing abstracts instead of READING the original chapter/PDF in depth, and searching only biology (not the external engineering literature). See workflow step 1.
+9. **Skimming the sources** (NEW). **→ MECHANICAL SINCE 2026-07-29: run `bash tools/research_gate.sh "<question>"`.**
+   The owner caught this class TWICE (2026-07-06 → memory `feedback_read_sources_in_depth_not_skim`; again
+   2026-07-29). **The failure is NOT skipping research — it is running a RAG query, reading the top `(finding)`
+   hit, and stopping.** Diagnosed precisely: a whole session on PLACE FIELDS cited "BTSP (Bittner & Magee 2017)"
+   from a ONE-LINE summary in our own findings doc and never opened O'Keefe-Nadel. When finally read, the source
+   produced a mechanism (fields carved by cue-derived convergent inhibition), a prediction CONFIRMED against our
+   own data (4.17 peaks/cell, 100% multi-peaked), and **two corrections to already-committed conclusions**.
+   **The sharpest part: the RAG had ALREADY surfaced it.** The same query returned a catalog hit naming
+   *"O&N Ch 4.7 (pp. 190-217)"* — the exact chapter — at position 5 of 5, in output already on screen. So the
+   check is not "did the corpus surface a source" but **"was the source PUT IN FRONT OF YOU, or left at position
+   4 of 5"**. `tools/research_gate.sh` re-prints every primary-source hit AFTER the raw results with the canonical
+   path and a read command. **A catalog hit naming a chapter/page range IS the assignment.**
+   Canonical copies: `~/Projects/sim-catalog/references/textbooks/<name>/*.txt` — single-column, greps clean.
+   The two-column ISO-8859 WIP extractions in `.catalog-work/` need `grep -a` and are NOT the copy to read. Grepping the catalog index + citing abstracts instead of READING the original chapter/PDF in depth, and searching only biology (not the external engineering literature). See workflow step 1.
 11. **Trusting an unverified instrument, or a claim nothing checks** (NEW 2026-07-16). Reporting a number without
     reading the runner's own verdict; writing "this is inert/byte-identical" as a comment instead of an assertion;
     running an A/B whose lever moves >1 variable; saying "pushed"/"on GPU"/"tests pass" without verifying. See
