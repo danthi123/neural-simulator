@@ -165,18 +165,23 @@ def run(seed, w_inh, btsp, lr, w_max, laps=5, dwell=30, drive=3000.0, width=5.0,
     return M0, M1, nread, nplace, apical_max
 
 
-def sharpening_matched_null(M0, total_dw, seed):
-    """Apply the SAME total weight change as the trained arm, but to RANDOM synapses with no place structure.
-    If the trained circ_resultant does not exceed this, the gain is sharpening/kurtosis, not place tuning.
-    (A 'sharpening-matched null' turned one workflow claim of +0.367 into +0.0058 +/- 0.0074, t=0.79.)"""
-    rng = np.random.default_rng(seed * 7717 + 5)
-    M = M0.copy()
-    for j in range(M.shape[0]):
-        budget = total_dw * M.shape[1]
-        idx = rng.permutation(M.shape[1])
-        share = rng.dirichlet(np.ones(len(idx)))          # random split, no locality
-        M[j, idx] += budget * share
-    return float(np.mean([circ_resultant(r) for r in M]))
+def permuted_increment_null(M0, M1, seed):
+    """THE CORRECT MATCHED NULL: permute the ACTUAL trained increments across place indices.
+
+    Holds magnitude AND concentration/kurtosis EXACTLY fixed; randomises only POSITION. So it isolates the one
+    property under test -- SPATIAL CONTIGUITY.
+
+    ⚠️ THIS REPLACES a Dirichlet-based "sharpening-matched null" that was MIS-SPECIFIED and nearly produced a
+    false negative (2026-07-29). That version split the dW budget by a Dirichlet, which CONCENTRATES mass on a
+    few random indices -- and circ_resultant rewards concentration -- so it scored 57% of the real gain and the
+    criterion printed "NOT place-specific". It differed from the treatment in TWO properties (position AND
+    concentration), so it could isolate neither. RULE: a null must differ from the treatment in EXACTLY ONE
+    property, the one being tested.
+    """
+    rng = np.random.default_rng(seed * 977)
+    dW = M1 - M0
+    Mp = M0 + np.array([dW[j][rng.permutation(dW.shape[1])] for j in range(dW.shape[0])])
+    return float(np.mean([circ_resultant(r) for r in Mp]))
 
 
 def main():
@@ -261,14 +266,17 @@ def main():
                                           laps=a.laps, dwell=a.dwell, randset=True)
             rc.append(float(np.mean([circ_resultant(r) for r in M1r])) - float(np.mean([circ_resultant(r) for r in M0r])))
             # (ii) SHARPENING-MATCHED NULL: same total |dW|, no place structure
-            row = [r for r in res[label] if r["seed"] == s_][0]
-            base = float(np.mean([circ_resultant(r) for r in M0r]))
-            rp.append(sharpening_matched_null(M0r, row["dW"], s_) - base)
-        ctrl[label] = dict(randset_d_circ=float(np.mean(rc)), matched_null_d_circ=float(np.mean(rp)))
+            # (ii) PERMUTED-INCREMENT NULL on the REAL place-sweep arms (same magnitudes + concentration,
+            #      positions shuffled). Recompute the sweep arm so the increments are the genuine ones.
+            M0p, M1p, _, _, _ = run(s_, kw["w_inh"], kw["btsp"], kw["lr"], a.w_max,
+                                    laps=a.laps, dwell=a.dwell, randset=False)
+            base = float(np.mean([circ_resultant(r) for r in M0p]))
+            rp.append(permuted_increment_null(M0p, M1p, s_) - base)
+        ctrl[label] = dict(randset_d_circ=float(np.mean(rc)), permuted_increment_d_circ=float(np.mean(rp)))
         real = m(label, "circ") - m("lr0_" + label if label == "btsp" else "lr0_btsp_wta", "circ")
-        print("  %-10s  place-sweep gain %+.4f | RANDSET (no place) %+.4f | matched-null %+.4f  => %s"
-              % (label, real, ctrl[label]["randset_d_circ"], ctrl[label]["matched_null_d_circ"],
-                 "PLACE-SPECIFIC" if (real > 2 * max(ctrl[label]["randset_d_circ"], ctrl[label]["matched_null_d_circ"]))
+        print("  %-10s  place-sweep gain %+.4f | RANDSET (no place) %+.4f | PERM-INCREMENTS %+.4f  => %s"
+              % (label, real, ctrl[label]["randset_d_circ"], ctrl[label]["permuted_increment_d_circ"],
+                 "PLACE-SPECIFIC" if (real > 2 * max(ctrl[label]["randset_d_circ"], ctrl[label]["permuted_increment_d_circ"]))
                  else "⛔ NOT place-specific (generic potentiation)"))
     os.makedirs(os.path.dirname(a.out), exist_ok=True)
     json.dump(dict(metric_validation=[list(r) for r in rows], oracle=dict(circ=orc, window=orw),
