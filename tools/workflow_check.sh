@@ -79,9 +79,24 @@ for lane in "${!LANE_RUNNER[@]}"; do
     # A banked GO/verdict artifact means the DE-RISK is done and the lane's next step is INTEGRATION (the
     # roadmap's "wire into the develop-loop teacher hook"), not another identical run. Demanding a re-run of
     # completed work is churn, and an alarm that demands churn is one you learn to ignore.
-    BANKED=$(grep -rl '"verdict"' research/findings/raw/*.json 2>/dev/null | xargs -r grep -l "$(echo "$r" | sed 's/^_//; s/_derisk$//' | cut -d_ -f1-2)" 2>/dev/null | head -1)
+    # MATCH BY FILENAME, not by a "verdict" key (fixed 2026-07-30). The key-based version required BOTH a
+    # '"verdict"' field AND the runner name inside the file CONTENT -- but only some runners write a verdict
+    # field, so the check's correctness depended on an unrelated convention. It silently missed lane B and
+    # demanded a re-run of a completed 6-seed GO, i.e. it generated exactly the churn its own comment warns
+    # about. Runners name their artifact after themselves, so the filename is the reliable key; the old content
+    # grep is kept only as a fallback.
+    STEM=$(echo "$r" | sed 's/_derisk$//')
+    BANKED=$(ls -1 research/findings/raw/${STEM}*.json 2>/dev/null | head -1)
+    [ -z "$BANKED" ] && BANKED=$(grep -rl '"verdict"' research/findings/raw/*.json 2>/dev/null | xargs -r grep -l "$(echo "$r" | sed 's/^_//; s/_derisk$//' | cut -d_ -f1-2)" 2>/dev/null | head -1)
     if [ -n "$BANKED" ]; then
       printf "  ◐ %-22s de-risk BANKED (%s) — next step is INTEGRATION, not a re-run\n" "$lane" "$(basename "$BANKED")"
+      # A banked artifact is only as good as the backend it ran on. Found the hard way the same day: lane B's
+      # "6/6 GO" carried smoke=False but backend=numpy, against its OWN runner docstring ("then GPU 6-seed,
+      # SIM_BACKEND=cupy"). numpy is for tiny smoke; a decisive multi-seed arm belongs on cupy.
+      if grep -q '"backend": *"numpy"' "$BANKED" 2>/dev/null; then
+        echo "     ⚠️  that artifact ran on the NUMPY backend — decisive multi-seed arms belong on cupy."
+        echo "        Re-run with SIM_BACKEND=cupy before citing it as a GO."
+      fi
       UNSERVED=$((UNSERVED-1))
     elif [ -f "research/runners/$r.py" ]; then
       printf "  ⛔ %-22s IDLE — run:  .venv/bin/python -m research.runners.%s --seeds 42 43 44 100 101 102 &\n" "$lane" "$r"
