@@ -5633,3 +5633,40 @@ drive that is itself a function of position (derived from the environmental stim
 **NUMBER of converging inhibitory inputs as the knob** that should collapse 4.17 peaks toward 1. The source also
 predicts the failure mode at the other end (too many inputs ⇒ NO field), so this is a mechanism with a
 BRACKETED optimum, and "peaks per cell" is the metric that tracks it.
+
+### 2026-07-29 ⛔ CORRECTION to the entry above — my "corpus-access INFRASTRUCTURE DEFECT" was WRONG. The corpus is FINE; my glob was broken.
+
+**RETRACTED from the previous entry:** (i) "plain `grep` returns NOTHING on the primary sources"; (ii) "the texts
+are at `.catalog-work/` NOT the documented `references/textbooks/*/full-book.txt` (that glob returns nothing)".
+**Both false.** Verified:
+
+| source | canonical path | plain `grep -c "place"` |
+|---|---|---|
+| O'Keefe-Nadel 1978 | `references/textbooks/okeefe-nadel-cognitive-map/OKeefe-Nadel-1978-...txt` (1.6M) | **877** |
+| Buzsáki 2006 | `references/textbooks/buzsaki-rhythms/Buzsaki-RhythmsOfTheBrain-2006.txt` (1.4M) | — |
+| Kandel 6e | `references/textbooks/kandel-pns-6e/full-book.txt` (8.4M) | — |
+
+**The documented paths in CLAUDE.md are CORRECT and the canonical copies grep cleanly WITHOUT `-a`** (877 either
+way). They are also **single-column**, so they read far better than the two-column OCR I had been struggling with.
+
+**WHAT ACTUALLY HAPPENED — a FOURTH instrument error, and I published this one as a finding.** My probe was
+`for f in <dir>/*/full-book.txt <dir>/*.txt; do ...` — **this shell is fish, where an UNMATCHED GLOB ABORTS THE
+WHOLE COMMAND**. The second pattern had no matches, so the command produced no output, and I read that silence as
+"the sources are not at the documented path." I then found a **scratch WIP extraction** in
+`sim-catalog/.catalog-work/` (which IS ISO-8859 two-column and DOES need `grep -a`), read that copy, and
+generalised its defect to the whole corpus.
+
+**The ISO-8859/`grep -a` issue is REAL but scoped to `.catalog-work/` — a work-in-progress extraction directory,
+NOT the canonical corpus.** No CLAUDE.md change is warranted; the doc was right and I was wrong.
+
+**WHAT STANDS from the previous entry, unaffected:** the honest audit (I did not read primary sources all
+session); the **O'Keefe-Nadel mechanism**, now properly sourced to the CANONICAL copy at **line 9667** and quoted
+verbatim from it; and the **4.17 peaks/cell, 100% multi-peaked** confirmation, which is my own measurement on my
+own weights and never depended on the corpus at all.
+
+**THE LESSON, and it is the FOURTH of this shape tonight: a silent/empty result from a shell one-liner is not
+evidence — it is an unverified instrument.** The prior three were `awk 'length>800'` (ignored table/fence
+exemptions), `grep 'current_time_ms +='` (missed the assignment form), and `grep 'enable_stdp = True'` (matched
+presence, not the operative value). **In fish specifically: an unmatched glob kills the command, so an empty
+result may mean "your pattern was wrong", never "the thing does not exist." Verify a negative shell result against
+one case you have confirmed by hand BEFORE drawing any conclusion from it.**
