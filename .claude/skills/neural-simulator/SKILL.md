@@ -128,6 +128,15 @@ a tool it never told you to install.
    real failure slips through. My monitor cried wolf twice (log-staleness on a healthy 99%-CPU run that logs once
    per seed; CPU-ticks compared ACROSS a pid change after a relaunch). **Test a monitor against a run you KNOW is
    broken, not only a healthy one.**
+   **AND ASK WHETHER THE MONITOR CAN TELL INTENTIONAL FROM ACCIDENTAL — if that distinction exists in the data,
+   encode it (2026-07-29).** `device_check.sh` fired `⛔ ON-CPU` every heartbeat cycle on small numpy probes run
+   DELIBERATELY while 13 GPU jobs saturated the card, while the genuinely dangerous case was the one it could NOT
+   see — so its severity was inverted. The distinction was available all along: `/proc/<pid>/environ` is the
+   EXEC-TIME environment, so a **caller-passed** `SIM_BACKEND=numpy` appears there (deliberate) whereas a runner's
+   internal `os.environ.setdefault` does NOT (runtime mutation is invisible there) — and the setdefault case is
+   precisely the silent one that cost the crux 47 minutes. Companions: exempt STARTUP transients (a 17-second-old
+   job has not written its device line yet), and expose the exemption threshold as an env var so the exemption
+   ITSELF is testable against a known-bad run.
 9. **A GATE THAT CAN PASS WITHOUT ITS KEY CONTROL IS THE BUG.** Make the control DEFAULT-ON and CI-guard it. The
    cost of a 4th arm (~25% runtime) is nothing against a months-scale plan built on a random projection.
 10. **AN ABSENT FLAG MEANS *DEFAULT*, NOT *OFF* — check the default before claiming a cheat is closed.** A recorded
