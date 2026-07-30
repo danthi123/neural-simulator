@@ -4728,3 +4728,42 @@ the three obvious candidates. Candidates NOT yet tried, named for the next sessi
 population whose slope encodes sweep direction; **theta-phase coding** (relative phase as the order variable,
 the project has theta machinery); or accepting a **short-delay chain over a SUBSET** of cells (a few pairs at
 10-20 ms rather than the whole population at 125 ms).
+
+### 2026-07-29 (⭐ MECHANISM 4 WORKS — LOCAL PAIRWISE order detection at a PHYSIOLOGICAL lag, all controls pass)
+
+The relocated problem statement ("extract a cross-cell timing correlation with neurons, without
+non-physiological delays") pointed at something I had dismissed too early. The delay-line read needed
+63-125 ms **because it tried to align the WHOLE population to one common time** — a span equal to the sweep
+duration. A global ORDER statistic does not require that: it can be assembled from many **LOCAL pairwise
+comparisons**, and adjacent reader cells in a 250 ms sweep over ~40 cells peak only **~6 ms** apart.
+
+Each adjacent pair (ordered by LEARNED preferred position) votes via a standard coincidence detector: is the
+lower-position cell leading the higher one by `lag`? Votes summed, normalised by active pairs (so scale-free
+— the activity-volume confound that invalidated the summed-drive controls cannot apply).
+
+| seed | pair_FWD | pair_REV | pair_STATIC | n_pairs |
+|---|---|---|---|---|
+| 42 | 1.094 | 0.920 | **1.000** | 39 |
+| 43 | 1.094 | 0.905 | **1.000** | 39 |
+| 44 | 1.106 | 0.903 | **0.999** | 39 |
+
+**LEVER VERIFIED with a tuning curve, and lag=0 pins it:**
+
+| lag | 0 ms | 2.1 | **6.2** | **12.5** | 25 | 50 |
+|---|---|---|---|---|---|---|
+| FWD/REV | **1.0000** | 1.036 | 1.098 | **1.147 (peak)** | 1.071 | 1.000 |
+
+`lag=0` returns **exactly 1.0000** — required by symmetry, so the effect is provably carried by the lag and
+nothing else. The optimum sits at **12.5 ms, squarely inside the ~1-30 ms axonal range**, and the effect
+decays away by 50 ms. **This is the first mechanism in the arc that is BOTH physiological AND correctly
+discriminating.**
+
+**BOTH DESTROYED-ORDER CONTROLS COLLAPSE:** time-shuffled input **1.001**; scrambled preferred-position order
+**0.983** (against 1.098 intact). And static widening — the decisive non-directional control — reads
+**exactly 1.000**.
+
+**HONEST SCOPE:** the effect is **modest, ~15-21%** (1.147 at the optimal lag), 3 seeds, off-substrate, single
+pair-spacing, single lag. It is correctly signed with every control clean, not a large effect. Likely
+strengthenable by summing over multiple lags and multiple pair spacings — untested. The on-substrate question
+is unchanged: this needs real per-pathway delays of ~12 ms (deferral-audit item A3a), but **12 ms is an
+ordinary axonal delay, where 125 ms was not** — which is precisely the constraint that killed mechanism 1.

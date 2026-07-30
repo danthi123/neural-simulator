@@ -132,6 +132,38 @@ def predictive_alignment(act, R, leak=0.7):
     return cos_sum / cnt if cnt else 0.0
 
 
+def pairwise_order_vote(act, pref, lag=3):
+    """LOCAL pairwise order detection -- the fix for the delay-line physiology problem.
+
+    The delay-line read worked (2.2x separation) but needed 63-125 ms of spread, because it tried to align the
+    WHOLE population to one common time -- a span equal to the sweep duration. A global ORDER statistic does
+    not need that: it can be assembled from many LOCAL pairwise comparisons, and ADJACENT cells in a 250 ms
+    sweep over ~40 reader cells peak only ~6 ms apart. That IS within axonal range (~1-30 ms).
+
+    Each adjacent pair (by LEARNED preferred position) votes: did the lower-position cell lead the
+    higher-position one by `lag`? Coincidence of (earlier cell delayed by lag) with (later cell now) is a
+    standard pairwise sequence detector. Votes are summed, then normalised by the number of active pairs, so
+    the read is scale-free and cannot be confounded by activity volume (the flaw that invalidated the
+    summed-drive controls).
+    """
+    order = np.argsort(pref)
+    fwd = rev = 0.0
+    npair = 0
+    for k in range(len(order) - 1):
+        lo, hi = order[k], order[k + 1]
+        a_lo, a_hi = act[lo], act[hi]
+        if a_lo.sum() <= 0 or a_hi.sum() <= 0:
+            continue
+        npair += 1
+        # forward detector: lo delayed by lag, coincident with hi
+        fwd += float(np.dot(np.roll(a_lo, lag), a_hi))
+        # reverse detector: hi delayed by lag, coincident with lo
+        rev += float(np.dot(np.roll(a_hi, lag), a_lo))
+    if not npair:
+        return 0.0, 0.0, 0
+    return fwd / npair, rev / npair, npair
+
+
 def run(seed, N=200, T=120, n_read=40, width=6.0, tau=6.0, gain=1.0, verbose=False):
     rng = np.random.default_rng(seed)
     wake = sweep(N, T, width, rng, direction=+1)
@@ -156,6 +188,9 @@ def run(seed, N=200, T=120, n_read=40, width=6.0, tau=6.0, gain=1.0, verbose=Fal
         a = W @ sweep(N, T, width, rng, **kw).T
         scores[name] = resonance(a, R, gain)
         scores[name + "_align"] = predictive_alignment(a, R)
+        _pf, _pr, _np = pairwise_order_vote(a, np.argmax(W, axis=1))
+        scores[name + "_pair"] = _pf / (_pr + 1e-9)
+        scores[name + "_npair"] = _np
         scores[name + "_spikes"] = float(a.sum())
 
     a_fwd = W @ sweep(N, T, width, rng, direction=+1).T
@@ -177,7 +212,11 @@ def run(seed, N=200, T=120, n_read=40, width=6.0, tau=6.0, gain=1.0, verbose=Fal
            "align_rev": round(scores["reverse_align"], 4),
            "align_static": round(scores["static_widen_align"], 4),
            "align_lesion": round(scores["forward_LESION_align"], 4),
-           "align_shuffle": round(scores["shuffle_align"], 4)}
+           "align_shuffle": round(scores["shuffle_align"], 4),
+           "pair_fwd": round(scores["forward_pair"], 3),
+           "pair_rev": round(scores["reverse_pair"], 3),
+           "pair_static": round(scores["static_widen_pair"], 3),
+           "npair": scores["forward_npair"]}
     return out
 
 
