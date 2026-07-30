@@ -191,8 +191,27 @@ def run(seed, w_inh, btsp, lr, w_max, laps=5, dwell=30, drive=3000.0, width=5.0,
                 nplace += int(to_host(b.cp_firing_states[pl]).sum())
     M1 = wmat(b)
     # ENGAGEMENT on the MECHANISM, not just on firing: was there any apical plateau above hold at all?
-    apical_max = float(to_host(b.cp_v_apical).max()) if getattr(b, "cp_v_apical", None) is not None else float("nan")
-    return M0, M1, nread, nplace, apical_max
+    # OPT-0 ARM A (2026-07-30). `apical_max` ALONE CANNOT DISTINGUISH "on once" FROM "on always" -- it is a single
+    # scalar max over the whole run, so a plateau that fires briefly at one position and a plateau clamped high
+    # for every reader at every position produce the SAME number. Adversarial review (4/4 refuted the fix I was
+    # about to build) derived from sim/kernels.py:325-345 + the apical ODE that is_post should be PINNED at
+    # ~34.82 mV for every reader, because density=1.0 gives every reader ~12 coincident inputs at every step and
+    # is_post is flat for c_count>=4. That is an inference from arithmetic, NOT a measurement -- this arc has
+    # never instrumented its own instructive signal. These four stats measure it.
+    # THE TELL: if the spread ACROSS READERS is ~0 while the max is high, the instructive signal is a DC clamp
+    # and the BTSP write is uniform by construction (dw = eta*elig_pre*is_post*(w_max-w) with is_post constant),
+    # which makes the field width a necessary output rather than a sharpening deficit. If instead readers differ,
+    # the DC-clamp diagnosis is REFUTED and three planned builds were aimed at the wrong term.
+    if getattr(b, "cp_v_apical", None) is not None:
+        _va = to_host(b.cp_v_apical[rd])
+        apical_max = float(_va.max())
+        apical_stats = {"max": apical_max, "min": float(_va.min()),
+                        "mean": float(_va.mean()), "std_across_readers": float(_va.std())}
+    else:
+        apical_max = float("nan")
+        apical_stats = {"max": float("nan"), "min": float("nan"),
+                        "mean": float("nan"), "std_across_readers": float("nan")}
+    return M0, M1, nread, nplace, apical_max, apical_stats
 
 
 def permuted_increment_null(M0, M1, seed):
@@ -259,13 +278,14 @@ def main():
     for name, kw in arms:
         res[name] = []
         for s in a.seeds:
-            M0, M1, nread, nplace, apmax = run(s, kw["w_inh"], kw["btsp"], kw["lr"], a.w_max,
+            M0, M1, nread, nplace, apmax, apst = run(s, kw["w_inh"], kw["btsp"], kw["lr"], a.w_max,
                                         laps=a.laps, dwell=a.dwell)
             c1 = float(np.mean([circ_resultant(r) for r in M1]))
             w1 = float(np.mean([best_window_mass(r) for r in M1]))
             c0 = float(np.mean([circ_resultant(r) for r in M0]))
             res[name].append(dict(seed=s, circ=c1, window=w1, circ_init=c0, d_circ=c1 - c0,
                                   read_spikes=nread, place_spikes=nplace, apical_max=apmax,
+                                  apical=apst,          # OPT-0 arm A: the instructive signal, actually measured
                                   dW=float(np.abs(M1 - M0).mean())))
             print("  %-14s %-7d %-11.4f %-11.4f %-+11.4f %-9d%s" % (
                 name, s, c1, w1, c1 - c0, nread,
