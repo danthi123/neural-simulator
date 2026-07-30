@@ -57,6 +57,7 @@ if [ "$PRIM" -eq 0 ]; then
   echo "  Then READ the section in the CANONICAL copy under:"
   echo "       ~/Projects/sim-catalog/references/textbooks/<name>/*.txt      (single-column, greps clean)"
   echo "     NOT the two-column ISO-8859 WIP extractions in .catalog-work/ (those need grep -a)."
+  touch "$ROOT/research/.last_research_gate" "$ROOT/research/.last_research_gate_empty"
   rm -f "$OUT"; exit 1
 fi
 echo "  ✔ a primary source is represented — READ IT (a rerank hit is a pointer, not a paraphrase)."

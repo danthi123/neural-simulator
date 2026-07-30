@@ -49,8 +49,13 @@ for lane in "${!LANE_RUNNER[@]}"; do
   # Match the RUNNER NAME we already hold in LANE_RUNNER. The first version derived a key from the LANE
   # LABEL instead ("D · Perception" -> "percep"), which appears in NO runner filename -- so four lanes that
   # were genuinely running were all reported idle. Do not re-derive a key you already have exactly.
-  if echo "$RUNNING" | grep -qx "$r"; then
-    printf "  ✔ %-22s served\n" "$lane"
+  # SERVED = running NOW *or* produced a result in the last 2h. The first version asked only "is a process
+  # running", but these lane runners finish in 2-15 SECONDS -- so a lane correctly served minutes ago reported
+  # IDLE forever, and the alarm cried wolf on work that was already done. "Recently produced a result" is the
+  # question that actually matters.
+  RECENT=$(find research/findings/raw -maxdepth 1 -newermt '-2 hours' -name '*.json' 2>/dev/null | grep -c "$(echo "$r" | sed 's/^_//; s/_derisk$//; s/_probe$//' | cut -d_ -f1-2)" || echo 0)
+  if echo "$RUNNING" | grep -qx "$r" || [ "$RECENT" -gt 0 ]; then
+    printf "  ✔ %-22s served%s\n" "$lane" "$([ "$RECENT" -gt 0 ] && echo " (result in last 2h)")"
   else
     UNSERVED=$((UNSERVED+1))
     if [ -f "research/runners/$r.py" ]; then
@@ -78,8 +83,19 @@ elif [ -n "$NEWEST" ] && [ "$NEWEST" -nt "$MARK" ]; then
   echo "     last gate run  : $(date -r "$MARK" '+%Y-%m-%d %H:%M')"
   echo "     RUN:  bash tools/research_gate.sh \"<the question that finding was about>\""
   FAIL=1
+
 else
   echo "  ✔ research_gate.sh ran $(date -r "$MARK" '+%H:%M') — newer than the latest finding."
+fi
+# EVALUATED UNCONDITIONALLY. As an `elif` this sat after the freshness branch, so a fresh marker
+# short-circuited it and rule 3 reported PASS on a search that found ZERO primary sources -- a check that
+# LIES, which is worse than no check. A gate that ran and found nothing is a WARNING, never a pass.
+EMPTY=research/.last_research_gate_empty
+if [ -f "$EMPTY" ] && [ ! "$MARK" -nt "$EMPTY" ]; then
+  echo "  ⛔ the last source check RAN but found NO primary source for that question."
+  echo "     Informative, not a pass: either our corpus lacks it -> GO EXTERNAL (WebSearch / bio-research MCP),"
+  echo "     or the query was wrong. Do NOT build on our own findings alone -- that is the exact failure mode."
+  FAIL=1
 fi
 echo "     canonical sources (single-column, grep clean): ~/Projects/sim-catalog/references/textbooks/<name>/*.txt"
 echo "     ⚠️ Kandel's copy is TWO-COLUMN with hyphen-splits: anchor on a short fragment, read a window."
