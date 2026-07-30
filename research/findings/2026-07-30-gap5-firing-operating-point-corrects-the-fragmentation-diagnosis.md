@@ -256,3 +256,40 @@ it being the part knobs cannot reach.
 **STILL OWED before any GO: GPU parity** (the check that revealed the order-read stack was numpy-locked by
 construction) and a decision on whether 68%-of-oracle place tuning is sufficient to drive the order read — the
 integration test that failed at width 51/60 should be re-run at width 16/60.
+
+## INTEGRATION STILL FAILS at width 16/60 — tuning quality was NOT the binding constraint, and the ratios say why
+
+Re-ran the integration with the validated sharp-tuning config (width 16.1/60, place-specific circ 0.597 — a 3x
+sharpening over the 51/60 config that failed before), 3 seeds:
+
+| arm | mean ratio | per-seed |
+|---|---|---|
+| LEARNED | 0.714 | 0.83, 0.52, 0.79 |
+| **SCRAMBLED_pairing** | **0.684** | 0.81, 0.50, 0.74 |
+| LEARNED_lesion | 0.600 | 0.63, 0.49, 0.68 |
+| UNTRAINED | 1.305 | 2.47, 0.29, 1.15 (wildly variable, low counts) |
+
+**LEARNED 0.714 vs SCRAMBLED 0.684, and near-identical PER SEED (0.83/0.81, 0.52/0.50, 0.79/0.74).** The learned
+ordering still carries NO information. **⇒ My earlier diagnosis — "fields too broad for `argmax` to define an
+order" — is REFUTED. Tripling the sharpness changed nothing**, so tuning quality was not the binding constraint.
+
+**⇒ BUT EVERY RATIO IS BELOW 1.0 (reverse > forward), WHICH IS A DIAGNOSTIC, NOT NOISE.** That is the exact
+signature of the trap documented earlier in this arc: **a coincidence detector that is SUPRATHRESHOLD to a single
+input reads order BACKWARDS** (separated arrivals give two independent bursts; coincident arrivals collide in the
+refractory period and yield FEWER spikes). And the cause is now obvious: BTSP drives the learned weights to
+**~2500**, while the detector was calibrated against the original **w0=250**. Installing learned weights at
+`gain=1.0` therefore drives the readers ~10x harder than the regime in which `w_det=10` was verified subthreshold.
+`LEARNED_lesion` at 0.600 — also inverted — is consistent with a detector out of its operating regime rather than
+with a broken order code.
+
+**⇒ THE NAMED FIX (calibration, not mechanism): re-establish the subthreshold coincidence regime for the new
+weight scale** — sweep the install `gain` (or `w_det`) and **assert the single-input check** (`single_input_check`
+already exists in `_gap5_onsubstrate_population_vote_derisk.py` and the population runner ABORTS on it) before
+reading any ratio. The order read itself is validated at **0.969 single-trial** in its own calibrated regime, so
+the likeliest reading is that the two halves are fine and the JOIN is mis-calibrated. Until that check is run, the
+integration result is **UNDEFINED, not a negative** — by the same rule that voided three earlier arms tonight.
+
+**HONEST STATE OF THE ARC AT SESSION END:** both halves independently validated (order read 0.969 single-trial on
+GPU; tuning acquisition place-specific circ 0.597 = 68% of oracle, 6 seeds); the JOIN is unproven, with its most
+likely cause identified as detector calibration and a concrete pre-flight to settle it; and the remaining 32% of
+tuning quality is attributed to a structural mechanism (dendritic subunits by place index) rather than any knob.

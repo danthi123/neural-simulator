@@ -40,8 +40,18 @@ NS, WREL, WDET = 50, 300.0, 10.0
 
 
 def learn_tuning_btsp(seed, lr, w_max=2500.0, w_inh=150.0, laps=1, dwell=30):
-    """PHASE 1 -- returns (learned place->read matrix, learned preferred positions, sat_frac)."""
-    M0, M1, nread, nplace, apmax = B.run(seed, w_inh, True, lr, w_max, laps=laps, dwell=dwell)
+    """PHASE 1 -- returns (learned place->read matrix, learned preferred positions, sat_frac).
+
+    2026-07-30: now uses the VALIDATED sharp-tuning config. The original failed at width 51/60 (near-uniform
+    potentiation), where argmax was meaningless and learned-order pairing scored the same as random (0.678 vs
+    0.683). This config reaches width 16.1/60 with place-specific circ 0.597 (68% of the sigma=5 oracle):
+    robust firing (w0=600, drive=8000), btsp_hetero_dep=0.2 to lower the pedestal, btsp_elig_exponent=4.0 to
+    de-fragment. hetero/exp are the honest arm -- NOT the higher-raw-circ combination, whose extra gain was
+    place-INDEPENDENT concentration (randset 0.09 -> 0.25 for +0.002 place-specific).
+    """
+    M0, M1, nread, nplace, apmax = B.run(seed, w_inh, True, lr, w_max, laps=laps, dwell=dwell,
+                                         drive=8000.0, w0=600.0, elig_tau_ms=1000.0,
+                                         hetero_dep=0.2, elig_exp=4.0)
     sat = float((M1 >= w_max * 0.98).mean())
     return M1, np.argmax(M1, axis=1), sat, nread, apmax
 
