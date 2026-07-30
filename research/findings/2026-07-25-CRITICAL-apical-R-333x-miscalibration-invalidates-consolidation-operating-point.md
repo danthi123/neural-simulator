@@ -5430,3 +5430,39 @@ control); BTSP alone gains **circ +0.1304**, BTSP + between-reader soft-WTA gain
 ADDS, as the workflow's diagnosis predicted. That is ~17-21% of the oracle ceiling. **NOT yet verified:** 1 seed,
 a tiny fraction of the planned exposure, and it still owes the permutation control ON THE TRAINED WEIGHTS and a
 sharpening-matched null. The 3-seed x 9000-step run is in flight.
+
+### 2026-07-29 (BTSP SATURATES UNDER OVER-EXPOSURE — and the fix is FEWER laps, because BTSP is a ONE-SHOT rule)
+
+The 5-lap "full" run returned **circ −0.0347 on BOTH arms, identical**, inverting the 1-lap smoke's **+0.1304**.
+Identical values across two different configs is the inert-lever signature, so I checked rather than recording a
+negative:
+
+| arm | circ | mean abs dW | vs w_max |
+|---|---|---|---|
+| lr0_btsp | 0.0347 | **0.00** | — |
+| btsp | **0.0000** | **2249.77** | w_max = 2500 |
+| lr0_btsp_wta | 0.0347 | 0.00 | — |
+| btsp_wta | **0.0000** | **2249.77** | w_max = 2500 |
+
+**Every synapse is pinned at the ceiling.** Weights ran 250 → ~2500, so the pathway is UNIFORM, and a uniform
+weight vector has circular resultant **exactly 0.0000** — which is why both arms read identically and why the
+"delta" is merely the loss of the initial jitter structure (0.0347 → 0.0000). The soft-WTA lever is inert for the
+same reason: you cannot differentiate cells that are all saturated.
+
+**THE FIX IS FEWER LAPS, NOT MORE — and that is the biology, not a workaround.** Bittner-Magee 2017: CA1 place
+fields form **in a SINGLE lap**. BTSP is a ONE-SHOT rule. Five laps at lr=0.02 is ~19x the exposure the mechanism
+is designed for. **My 1-lap "smoke" was the biologically FAITHFUL regime and my 5-lap "full" run was the artefact**
+— the opposite of my instinct that more exposure gives a better result. Recorded because that instinct is wrong
+for any one-shot rule and will recur.
+
+**This is a FIFTH instance of the standing plasticity-bound trap, with a new variant.** The four documented cases
+were all "bound BELOW the design weight ⇒ every potentiation is negative." This one is the mirror image: the bound
+is ABOVE the design weight (2500 vs 250, correctly pre-flighted) and the failure is **over-exposure driving every
+synapse TO the ceiling**, which flattens the very structure being measured. **A bound pre-flight is not sufficient
+— also check the SATURATED FRACTION at the end of the run** (`mean|dW|` approaching `w_max − w_0` is the tell).
+
+**Now running: the one-shot regime at 6 seeds** (1 lap, dwell 30) with the two controls that refuted the previous
+three mechanisms built in — RANDSET (matched activity, no place manifold; it retained 96% of the k-WTA gain and
+must collapse here) and a SHARPENING-MATCHED NULL. At smoke scale those read RANDSET **+0.0023 / −0.0058** against
+a place-sweep gain of **+0.1304 / +0.1505**, and matched-null **+0.0619** — i.e. the randset control passes
+decisively while the matched-null margin is only ~2.1-2.4x, which is the weaker link and will be reported as such.

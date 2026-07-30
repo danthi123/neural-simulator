@@ -132,16 +132,26 @@ def wmat(b):
     return M
 
 
-def run(seed, w_inh, btsp, lr, w_max, laps=5, dwell=30, drive=3000.0, width=5.0):
+def run(seed, w_inh, btsp, lr, w_max, laps=5, dwell=30, drive=3000.0, width=5.0, randset=False):
+    """randset=True -> each step drives a RANDOM SET of place cells of the same size/intensity as the bump,
+    so total drive and total activity are matched but there is NO moving bump and NO place manifold at all.
+    This is the exact control that refuted the k-WTA gate (+1.217 of its +1.272 survived it). If the BTSP gain
+    survives randset, it is generic potentiation, NOT place-field formation."""
     b = build(seed, w_inh, btsp, w_max)
     if btsp:
         b.core_config.btsp_learning_rate = lr
     rm = b.region_manager; pl = rm.indices("place"); rd = rm.indices("read")
     M0 = wmat(b); nread = 0; nplace = 0
     x = np.arange(NPLACE)
+    rs = np.random.default_rng(seed * 31337)
     for lap in range(laps):
         for c in range(NPLACE):
-            p = np.exp(-0.5 * ((x - c) / width) ** 2)
+            if randset:
+                # match the bump's total mass, but scatter it over random indices (no locality, no travel)
+                bump = np.exp(-0.5 * ((x - c) / width) ** 2)
+                p = np.zeros(NPLACE); p[rs.permutation(NPLACE)[:int(round(bump.sum()))]] = 1.0
+            else:
+                p = np.exp(-0.5 * ((x - c) / width) ** 2)
             for _ in range(dwell):                       # ~30 ms per field crossing => 1.8 s per lap
                 b.cp_external_input_current[:] = 0.0
                 b.cp_external_input_current[pl] = drive * p
@@ -153,6 +163,20 @@ def run(seed, w_inh, btsp, lr, w_max, laps=5, dwell=30, drive=3000.0, width=5.0)
     # ENGAGEMENT on the MECHANISM, not just on firing: was there any apical plateau above hold at all?
     apical_max = float(to_host(b.cp_v_apical).max()) if getattr(b, "cp_v_apical", None) is not None else float("nan")
     return M0, M1, nread, nplace, apical_max
+
+
+def sharpening_matched_null(M0, total_dw, seed):
+    """Apply the SAME total weight change as the trained arm, but to RANDOM synapses with no place structure.
+    If the trained circ_resultant does not exceed this, the gain is sharpening/kurtosis, not place tuning.
+    (A 'sharpening-matched null' turned one workflow claim of +0.367 into +0.0058 +/- 0.0074, t=0.79.)"""
+    rng = np.random.default_rng(seed * 7717 + 5)
+    M = M0.copy()
+    for j in range(M.shape[0]):
+        budget = total_dw * M.shape[1]
+        idx = rng.permutation(M.shape[1])
+        share = rng.dirichlet(np.ones(len(idx)))          # random split, no locality
+        M[j, idx] += budget * share
+    return float(np.mean([circ_resultant(r) for r in M]))
 
 
 def main():
@@ -224,9 +248,32 @@ def main():
     print("    BTSP + softWTA  : circ %+.4f   window %+.4f" % (m("btsp_wta", "circ") - m("lr0_btsp_wta", "circ"),
                                                                m("btsp_wta", "window") - m("lr0_btsp_wta", "window")))
     print("    vs ORACLE ceiling circ %.4f / window %.4f" % (orc, orw))
+
+    print()
+    print("STEP C -- THE CONTROLS THAT REFUTED THE PREVIOUS THREE MECHANISMS")
+    ctrl = {}
+    for label, kw in (("btsp", dict(w_inh=0.0, btsp=True, lr=a.lr)),
+                      ("btsp_wta", dict(w_inh=a.w_inh, btsp=True, lr=a.lr))):
+        rc, rp = [], []
+        for s_ in a.seeds:
+            # (i) RANDSET: same activity, no place manifold. Gain must COLLAPSE.
+            M0r, M1r, nr_, np_, ap_ = run(s_, kw["w_inh"], kw["btsp"], kw["lr"], a.w_max,
+                                          laps=a.laps, dwell=a.dwell, randset=True)
+            rc.append(float(np.mean([circ_resultant(r) for r in M1r])) - float(np.mean([circ_resultant(r) for r in M0r])))
+            # (ii) SHARPENING-MATCHED NULL: same total |dW|, no place structure
+            row = [r for r in res[label] if r["seed"] == s_][0]
+            base = float(np.mean([circ_resultant(r) for r in M0r]))
+            rp.append(sharpening_matched_null(M0r, row["dW"], s_) - base)
+        ctrl[label] = dict(randset_d_circ=float(np.mean(rc)), matched_null_d_circ=float(np.mean(rp)))
+        real = m(label, "circ") - m("lr0_" + label if label == "btsp" else "lr0_btsp_wta", "circ")
+        print("  %-10s  place-sweep gain %+.4f | RANDSET (no place) %+.4f | matched-null %+.4f  => %s"
+              % (label, real, ctrl[label]["randset_d_circ"], ctrl[label]["matched_null_d_circ"],
+                 "PLACE-SPECIFIC" if (real > 2 * max(ctrl[label]["randset_d_circ"], ctrl[label]["matched_null_d_circ"]))
+                 else "⛔ NOT place-specific (generic potentiation)"))
     os.makedirs(os.path.dirname(a.out), exist_ok=True)
     json.dump(dict(metric_validation=[list(r) for r in rows], oracle=dict(circ=orc, window=orw),
-                   laps=a.laps, dwell=a.dwell, lr=a.lr, w_max=a.w_max, w_inh=a.w_inh, arms=res),
+                   laps=a.laps, dwell=a.dwell, lr=a.lr, w_max=a.w_max, w_inh=a.w_inh, arms=res,
+                   controls=ctrl),
               open(a.out, "w"), indent=1)
     print("  wrote %s" % a.out)
     return 0
