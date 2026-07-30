@@ -74,12 +74,12 @@ def validate_metrics(seed=0):
 
 
 # ---------------------------------------------------------------- bridge
-def build(seed, w_inh, btsp, w_max, lat_kind="soft"):
+def build(seed, w_inh, btsp, w_max, lat_kind="soft", w0=None, thr_scale=None):
     R = [BrainRegion(name="place", n_neurons=NPLACE, exc_fraction=1.0, internal_density=0.0),
          BrainRegion(name="read", n_neurons=NREAD, exc_fraction=1.0, internal_density=0.0)]
     # coincidence_detector=True: clustered place input -> dendritic PLATEAU, which is what gates BTSP.
     P = [RegionPathway(from_region="place", to_region="read", density=1.0,
-                       weight_mean=W0, weight_jitter=0.3, plastic=True,
+                       weight_mean=(W0 if w0 is None else w0), weight_jitter=0.3, plastic=True,
                        coincidence_detector=(True if btsp else False))]
     if w_inh > 0:
         # BETWEEN-READER competition: readers drive a shared FS pool which inhibits them all back.
@@ -132,15 +132,18 @@ def wmat(b):
     return M
 
 
-def run(seed, w_inh, btsp, lr, w_max, laps=5, dwell=30, drive=3000.0, width=5.0, randset=False):
+def run(seed, w_inh, btsp, lr, w_max, laps=5, dwell=30, drive=3000.0, width=5.0, randset=False, w0=None, thr_scale=None):
     """randset=True -> each step drives a RANDOM SET of place cells of the same size/intensity as the bump,
     so total drive and total activity are matched but there is NO moving bump and NO place manifold at all.
     This is the exact control that refuted the k-WTA gate (+1.217 of its +1.272 survived it). If the BTSP gain
     survives randset, it is generic potentiation, NOT place-field formation."""
-    b = build(seed, w_inh, btsp, w_max)
+    b = build(seed, w_inh, btsp, w_max, w0=w0, thr_scale=thr_scale)
     if btsp:
         b.core_config.btsp_learning_rate = lr
     rm = b.region_manager; pl = rm.indices("place"); rd = rm.indices("read")
+    if thr_scale is not None and getattr(b, "cp_neuron_firing_thresholds", None) is not None:
+        _rd = np.asarray(rm.indices("read"))
+        b.cp_neuron_firing_thresholds[_rd] = b.cp_neuron_firing_thresholds[_rd] * thr_scale
     M0 = wmat(b); nread = 0; nplace = 0
     x = np.arange(NPLACE)
     rs = np.random.default_rng(seed * 31337)
