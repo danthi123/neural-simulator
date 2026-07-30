@@ -5762,3 +5762,40 @@ pass (it is outside the current arc and the fix wants its own byte-review).
 I verified the CSR contained my values and stopped one level short of asking whether those values do what I
 intended in this engine's dynamics. **Assert the mechanism's EFFECT (here: an inhibitory conductance / a change in
 target firing), never just the presence of its parameters.**
+
+### 2026-07-30 (⭐ THE ROOT BLOCKER, MEASURED: the readers fire ~1.33 spikes/lap — inhibition cannot sculpt a silent population)
+
+Built the Mexican hat correctly this time — a dedicated **inhibitory-TRAIT** population (`exc_fraction=0.0`,
+O'Keefe-Nadel's basket cells), ring-topological, projecting back with POSITIVE weights — and with **effect
+assertions** rather than parameter checks (the blind spot that produced two void arms):
+
+| w_bask | basket spikes | reader spikes | peaks/cell | circ |
+|---|---|---|---|---|
+| 0 | 10 | 16 | 4.39 | 0.1719 |
+| 150 | 7 | 14 | 4.25 | 0.1710 |
+| 400 | 12 | 15 | 4.19 | 0.1716 |
+| 900 | 11 | 13 | 4.14 | 0.1714 |
+
+The baskets DO fire and reader firing DOES shift, so this arm is **not void** — but peaks/cell moves only
+4.39→4.14 (~6%) and circ is flat within 0.0009. **The effect assertions are what made the real cause visible:**
+reader firing is **13-16 spikes TOTAL across 12 readers over 1800 steps = ~1.33 spikes per reader per lap.**
+
+**⇒ THE READERS ARE ESSENTIALLY SILENT, AND THAT IS THE ROOT BLOCKER.** O'Keefe-Nadel's model requires low firing
+**outside** the field but ROBUST firing **inside** it. At ~1.33 spikes/lap there is no firing-level field at all —
+so **inhibition cannot sculpt what is not firing**, which is why BOTH the negative-weight arm and this correct
+basket-cell arm read inert. The inhibition mechanism is still untested; the population it was meant to shape is
+not active enough to shape.
+
+**THIS ALSO SHARPENS WHAT THE BTSP RESULT MEANS (it does not retract it).** The +0.1281 circ gain is real,
+6-seed, and survived randset + permuted-increment controls — but it was written by the **APICAL PLATEAU**
+(`is_post = max(cp_v_apical − v_hold, 0)`), NOT by reader spiking. So the learned tuning lives in the WEIGHTS
+while the readers barely SPIKE. That is precisely why the integration failed: a read-out needs firing ORDER, and
+there is almost no firing to order. The two halves' gap is now located exactly — **not "fields too broad" (my
+earlier framing) but "readers too quiet"**.
+
+**⇒ EXACT NEXT ACTION, and it precedes every competition lever:** get the readers firing ROBUSTLY during the
+sweep — sweep `place→read weight_mean` (currently hardcoded `W0=250` in the BTSP probe, so it must be
+parameterised first), the place drive, and the firing threshold, with **spikes-per-reader-per-lap as the gating
+metric** (target: tens, not ~1). Only then re-test (a) basket-cell competition, (b) the theta time-gate, (c)
+theta-phase compression. Every one of those shapes a firing population, so all three are UNTESTABLE until this is
+fixed — which makes it the single blocking dependency, and a cheap one.
