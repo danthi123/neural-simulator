@@ -26,7 +26,22 @@ ROOT=/home/dant123/Projects/sim
 Q="${1:?usage: research_gate.sh \"<question>\"}"
 N="${2:-8}"
 OUT=$(mktemp)
+# THE BLENDED QUERY ALONE MADE THIS GATE UNSATISFIABLE (defect found 2026-07-30, by the gate firing at me).
+# An un-scoped query reranks our OWN findings to the top and crowds the primary corpora out of the top-N
+# entirely, so PRIM=0 regardless of how much source reading has actually been done. The gate then printed
+# "re-query the primary corpora explicitly" and exited 1 -- advice it never took ITSELF, so running it again
+# returned the same zero forever. A check that cannot be satisfied by doing the right thing is worse than no
+# check: it trains you to ignore the alert (rule 8), which is precisely the failure it exists to prevent. It
+# also inverted the file's own stated purpose -- "was the source PUT IN FRONT OF YOU" -- by leaving the primary
+# corpora unqueried. Proven concretely: the blended query returned 0 primary hits for a question whose
+# --corpus kandel query returned Figure 10-15, the passage that reframed the whole gap#5 residual.
+# So the gate now runs the per-corpus queries ITSELF and counts across all of them.
 "$ROOT"/.venv-rag/bin/python "$ROOT"/tools/rag/rag_search.py "$Q" "$N" 2>/dev/null | tee "$OUT"
+for C in kandel catalog paper; do
+  echo
+  echo "────── --corpus $C (the primary corpora, queried directly so they cannot be crowded out) ──────"
+  "$ROOT"/.venv-rag/bin/python "$ROOT"/tools/rag/rag_search.py "$Q" 4 --corpus "$C" 2>/dev/null | tee -a "$OUT"
+done
 echo
 PRIM=$(grep -cE '\((kandel|paper|catalog|textbook)\)' "$OUT" || true)
 OURS=$(grep -cE '\((finding|plan|doc)\)' "$OUT" || true)

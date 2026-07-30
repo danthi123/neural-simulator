@@ -22,7 +22,24 @@ echo "════ 1. PARALLELISM — is the machine actually being used? ══
 CORES=$(nproc); LOAD=$(cut -d' ' -f1 /proc/loadavg); PROCS=$(pgrep -fc 'research\.runners' 2>/dev/null || echo 0)
 IDLE=$(awk -v c="$CORES" -v l="$LOAD" 'BEGIN{printf "%d", c-l}')
 echo "  cores=$CORES  load=$LOAD  research-procs=$PROCS  => ~$IDLE idle cores"
-if [ "$IDLE" -gt 6 ] && [ "$PROCS" -lt 8 ]; then
+# CONTENTION WINDOW: the owner sometimes games on this box (no reboot, runs keep going). During that window a
+# job ramp is against their interest, and firing this alarm every ~15 min for hours is the exact false-alarm
+# corrosion rule 8 warns about -- it trains the reader to scroll past the alert, which is how a REAL
+# under-parallelisation slips through later. So the rule is SUSPENDED, loudly and with an expiry, not deleted.
+# Stamp: research/findings/raw/gap4/CONTENTION_WINDOW.txt (auto-expires; delete the file to end it early).
+CONT="$ROOT/research/findings/raw/gap4/CONTENTION_WINDOW.txt"
+CONT_ACTIVE=0
+if [ -f "$CONT" ]; then
+  CAGE=$(( $(date +%s) - $(stat -c%Y "$CONT" 2>/dev/null || date +%s) ))
+  if [ "$CAGE" -lt 14400 ]; then       # 4h cap: a stale stamp must not silently disable the rule forever
+    CONT_ACTIVE=1
+    echo "  ⏸  parallelism rule SUSPENDED — owner contention window active ($((CAGE/60)) min in, expires at 240 min)."
+    echo "     Existing jobs keep running; do NOT ramp up. Timings measured now are UPPER BOUNDS."
+  else
+    echo "  ⚠️  contention stamp is $((CAGE/3600))h old (>4h cap) — treating it as STALE and enforcing normally."
+  fi
+fi
+if [ "$CONT_ACTIVE" -eq 0 ] && [ "$IDLE" -gt 6 ] && [ "$PROCS" -lt 8 ]; then
   echo "  ⛔ UNDER-PARALLELISED: >6 cores idle with <8 jobs running."
   echo "     A sweep with independent axes (seeds x params) must be launched as a GRID, not walked one cell"
   echo "     at a time. One session ran ~30 probes serially on one core with 15 idle."
