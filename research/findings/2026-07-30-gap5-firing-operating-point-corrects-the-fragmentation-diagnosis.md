@@ -692,3 +692,49 @@ valid null at every stage.**
 **REMAINING FOR A GO (2 items, both cheap):** 6 seeds on differentiation; a magnitude-matched null on the k-WTA
 lever. The join's GPU parity is NOT owed in the same way — the per-step k-WTA gate reads the CSR every step, so a
 GPU port would be device-transfer-bound and slower than numpy; that is an implementation note, not a gap.
+
+## ⭐⭐⭐ BOTH REMAINING GO ITEMS DISCHARGED — 11.0/12 differentiation at 6 seeds, and the MAGNITUDE-MATCHED null STRENGTHENS the result
+
+| seed | n_distinct | ON | OFF raw | **OFF magnitude-matched** |
+|---|---|---|---|---|
+| 42 | 10 | 0.871 | 0.632 | 0.455 |
+| 43 | 11 | 1.519 | 1.353 | 1.039 |
+| 44 | 10 | 1.303 | 0.492 | 0.554 |
+| 100 | 12 | 1.559 | 0.675 | 0.597 |
+| 101 | 12 | 0.593 | 0.518 | 0.547 |
+| 102 | 11 | 1.143 | 0.604 | 0.368 |
+| **mean** | **11.0/12** | **1.165** | **0.712** | **0.594** |
+
+**(1) DIFFERENTIATION AT 6 SEEDS: 11.0/12 distinct fields** — better than the 3-seed 10.3/12, and consistent
+(10, 11, 10, 12, 12, 11). Not a small-sample artifact.
+
+**(2) THE MAGNITUDE-MATCHED NULL PASSES, AND IT STRENGTHENS THE CLAIM.** The concern was real: the k-WTA gate cuts
+total potentiation by **31%** (weight means ON **708** vs OFF **1025**), so the raw ON/OFF contrast confounded ORDER
+with MAGNITUDE. Rescaling the OFF weights to the ON arm's mean — leaving order as the ONLY difference — drops the
+null from 0.712 to **0.594**, and **ON > matched-null on 6/6 seeds.** Controlling the confound made the contrast
+LARGER (separation +0.452 → **+0.571**), which is the direction a real effect moves when a confound that was
+working AGAINST it is removed.
+
+**⇒ THE JOIN IS A GO BY THE CRITERIA STATED IN ADVANCE: 6/6 seeds against BOTH a raw no-order null and a
+magnitude-matched no-order null, on 848 spikes, with the null correctly below 1.0 in both forms.**
+
+## ⭐ gap#5 ARC — FINAL STATE, ALL OWED ITEMS DISCHARGED
+
+| component | result | scope |
+|---|---|---|
+| order read (direction) | **0.969** single-trial (chance 0.500) | GPU, 6 seeds, 96 paired trials, lesion at chance, survives overlapping input |
+| field quality | **place-specific circ 0.565 = 65% of oracle**, width 15.8/60 | **GPU**, numpy 6-seed agrees within 5% |
+| population differentiation | **11.0/12** distinct tiling fields | 6 seeds, engagement asserted (1800/1800 gated) |
+| the join | **6/6 vs raw null AND 6/6 vs magnitude-matched null** | 6 seeds, 848 spikes |
+
+**THE HOST BAYESIAN DECODER'S SHORTCUT FOR REPLAY DIRECTION IS REPLACED END-TO-END BY LEARNED, SPIKING MACHINERY:**
+learn place tuning from a traversal (BTSP + `btsp_hetero_dep` heterosynaptic competition + `btsp_elig_exponent`
+supralinear eligibility), differentiate the population (postsynaptic k-WTA via `cp_plasticity_rate_gain`), and read
+DIRECTION by local pairwise coincidence over 2-hop relay delays (~11.5 ms, an ordinary axonal latency) — with a
+valid null at every stage and no `sim/` edit beyond one additive warn-once guard.
+
+**HONEST RESIDUALS (none blocking, all named):** the pairing of adjacent readers is still assigned by the host from
+learned preferences (biology would make that adjacency developmental/topographic); field quality is 65% of an ideal
+sigma=5 field, with the last ~35% attributed to dendritic-subunit-by-place-index assignment (a structural change,
+not a knob); the input is a moving bump, not hippocampal replay; and the join is numpy (its per-step gate is
+CSR-read-bound, so GPU would be slower — an implementation note, not a gap).
