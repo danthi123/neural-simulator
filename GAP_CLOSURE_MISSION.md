@@ -2397,6 +2397,38 @@ what owns them."** Same shape as: the conduction-delay gap already banked as cat
 already in the engine at an inert default; the k-WTA arm's winning property already asserted in a discarded
 report.
 
+
+**⛔⛔⛔ AND THE WHOLE DIRECTION IS ALREADY RUN TO A CHARACTERIZED VOID (2026-07-30 read).** Not just built —
+**run, scored against its frozen verdict, and CLOSED as a method.**
+`research/findings/2026-05-30-phase-factored-decisive-iteration2-engram-wm-SOUND-but-VOID-two-horns-characterized.md`:
+
+| cell | wm | ep | meaning |
+|---|---|---|---|
+| v1 | **1.000** | 1.000 | instrument SOUND (both clear the 0.90 bar) |
+| full | **0.500** | 1.000 | compositional task: wm only 0.5 |
+| `no_hippo_store` | 0.000 | 0.000 | SHARED — collapses both; **the ONLY mover of wm** |
+| `no_bg_gate` | 0.500 | 1.000 | HELPER_WM must collapse wm → **does NOT** |
+| `no_sequencing` | 0.500 | 1.000 | HELPER_EP must collapse ep → **does NOT** |
+| `no_cls_replay` | 0.500 | 1.000 | HELPER_EP must collapse ep → **does NOT** |
+
+**The frozen pre-registered verdict returns VOID on the DISCRIMINATION check, before any science scoring:** the wm
+capability is *"a localized hippocampal-store LOOKUP, lesion-invariant except for removing the store itself"* — i.e.
+**not emergent from integration.** **BOTH HORNS are characterized**, each VOID-certified for OPPOSITE reasons:
+iteration 1 (cortical dlpfc→filler STDP selectivity unstable ⇒ v1 wm < 0.90, instrument UNSOUND); iteration 2 (the
+DG/engram carrier makes v1 SOUND at wm=1.0 but non-discriminating). **The decisive multi-seed run correctly stays
+UNLAUNCHED** — the failure is structural, not stochastic, and reproduces at every seed by construction.
+**GENUINE PARTIAL WIN THAT STANDS: the episodic-order DECOUPLING (ep) is validated.**
+
+**⇒ THREE STALE POINTERS CORRECTED BY THIS ONE READ:** (i) the 05-19 doc says "design only" — it is BUILT;
+(ii) `ROADMAP.md`'s next-line said "wire the composed-memory→cortex consolidation pathway" — it is WIRED, RUN, and
+VOID-certified; (iii) my own handoff two entries above said "run the gap that is actually open" — there is no open
+gap on THIS method.
+
+**⇒ PER THE LAW (a wall is a verdict on a METHOD, never on the CAPABILITY), the successor was PRE-REGISTERED in the
+05-19 doc §6 and is the real next action: a deeper separation of RELATIONAL BINDING from SCHEMA ABSTRACTION**, along
+the catalog's hippocampal-neocortical interaction entries, under the SAME frozen acceptance and anti-cheat
+discipline. **Do NOT config-crank the phase-factored controller** — its own bound forbids exactly that.
+
 **⇒ REVISED NEXT ACTION — RUN, DO NOT BUILD.** Read
 `docs/plans/2026-05-30-phase-factored-integrated-loop-implementation.md` (the CURRENT plan) and
 `research/findings/2026-05-30-phase-factored-fullscale-grounding-*` (cited in the runner's own docstring) to find
