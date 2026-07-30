@@ -39,12 +39,17 @@ declare -A LANE_RUNNER=(
   ["D · Perception"]="_b1_v1_selforg_onbridge_derisk"
   ["E · Language"]="_grounded_lang_p2_derisk"
 )
-RUNNING=$(ps -eo args 2>/dev/null | grep -oE 'research\.runners\.[._a-zA-Z0-9]+' | sed 's/.*runners\.//' | sort -u)
+# NB: match on the MODULE INVOCATION ("-m research.runners.X"), never a bare runner name -- a bare name
+# matches the checking shell's OWN command line. That self-match bug appeared SEVEN times in one session
+# (six of them killing my own shell via pkill). Never grep a pattern that your own command line contains.
+RUNNING=$(ps -eo args 2>/dev/null | grep -oE '\-m research\.runners\.[._a-zA-Z0-9]+' | sed 's/.*runners\.//' | sort -u)
 UNSERVED=0
 for lane in "${!LANE_RUNNER[@]}"; do
   r="${LANE_RUNNER[$lane]}"
-  key=$(echo "$lane" | sed 's/.*· //' | cut -c1-6 | tr 'A-Z' 'a-z')
-  if echo "$RUNNING" | grep -qi "$key"; then
+  # Match the RUNNER NAME we already hold in LANE_RUNNER. The first version derived a key from the LANE
+  # LABEL instead ("D · Perception" -> "percep"), which appears in NO runner filename -- so four lanes that
+  # were genuinely running were all reported idle. Do not re-derive a key you already have exactly.
+  if echo "$RUNNING" | grep -qx "$r"; then
     printf "  ✔ %-22s served\n" "$lane"
   else
     UNSERVED=$((UNSERVED+1))
