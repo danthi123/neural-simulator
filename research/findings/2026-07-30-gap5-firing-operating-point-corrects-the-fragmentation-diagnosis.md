@@ -496,3 +496,40 @@ single-trial (GPU, 6 seeds), field quality **0.597** place-specific circ (68% of
 differentiation **10.3/12** distinct tiling fields — and a join whose SIGN is now correct (1.593, lesion 1.315) but
 whose remaining controls are owed: a matched-preference pairing control, the seed-43 outlier, 6 seeds, and GPU
 parity. **NOT a GO; the failure mode that blocked it for four attempts is removed and the sign is right.**
+
+## The MATCHED-preference control is UNDERPOWERED — inconclusive, and the join remains unproven
+
+Built the replacement control (readers with the tightest preference clustering, so little order within pairs)
+against the max-spread selection:
+
+| seed | spread range vs matched range | SPREAD sel | MATCHED sel |
+|---|---|---|---|
+| 42 | 52 vs 13 | 1.923 | 1.769 |
+| 43 | 47 vs 15 | 0.857 | 2.333 |
+| 44 | 47 vs 14 | 2.000 | 1.125 |
+| **mean** | — | **1.593** | **1.743** |
+
+**MATCHED (1.743) is HIGHER than SPREAD (1.593)** — the opposite of the prediction if the read used order.
+
+**⇒ BUT THE CONTROL IS UNDERPOWERED, NOT REFUTING, AND THE ARITHMETIC SAYS SO.** The "matched" selection still
+spans **13-15 place positions**, and at `dwell=30` that is **390-450 ms of temporal separation** — against an
+**11.5 ms** relay delay. Both arms are therefore heavily ordered on the timescale the detector cares about; the
+control does not remove order, it merely reduces it from ~1400 ms to ~400 ms, both of which are >>11.5 ms.
+**A control must differ from the treatment ON THE SCALE THE MECHANISM OPERATES** — the same lesson as the
+mis-specified Dirichlet null, in a new dress.
+
+A genuine null needs pairs with near-ZERO preference difference (separation <= ~11.5 ms, i.e. within ~1 place
+position). With `n_distinct = 10.3/12` there are only ~2 duplicate readers, so **6 matched pairs cannot be built
+from this population** — the control is not constructible at K=6 without deliberately training a degenerate
+population, which is the cleaner design: run the SAME pipeline with k-WTA OFF (which yields all-identical
+preferences, verified `n_distinct = 1.0`) and use THAT as the no-order null.
+
+**⇒ HONEST VERDICT ON THE JOIN: UNPROVEN.** The sign is right (`LEARNED 1.593 > 1`, lesion 1.315 < 1.593), the
+population differentiates (10.3/12), but **no valid control yet establishes that the discrimination uses the
+LEARNED ORDER** rather than any temporal asymmetry of the sweep. Both controls attempted so far are dead: SCRAMBLED
+is invalid in a tiled population (every pair has an order), and MATCHED is underpowered by ~35x on the relevant
+timescale. Seed 43 also remains an unexplained outlier (0.857 with the MOST distinct fields).
+
+**NEXT (specified): use the k-WTA-OFF population — verified `n_distinct=1.0`, i.e. genuinely NO order — as the
+null, run at the identical gain and detector settings.** If LEARNED >> that null, the read uses order; if not, it
+does not. This is constructible today and settles the question.
