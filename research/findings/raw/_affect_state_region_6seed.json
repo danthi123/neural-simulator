@@ -71,7 +71,7 @@
       "history_signcrossing_r": 0.6347497088693419,
       "history_signcrossing_shuffled_r": 0.2852927101348122,
       "signcrossing_ok": true,
-      "elapsed_seconds": 1.7
+      "elapsed_seconds": 2.2
     },
     {
       "seed": 43,
@@ -109,7 +109,7 @@
       "history_signcrossing_r": 0.5392763161567207,
       "history_signcrossing_shuffled_r": -0.07556525522513648,
       "signcrossing_ok": false,
-      "elapsed_seconds": 1.7
+      "elapsed_seconds": 2.2
     },
     {
       "seed": 44,
@@ -147,7 +147,7 @@
       "history_signcrossing_r": 0.30488498983462253,
       "history_signcrossing_shuffled_r": 0.3159106708570909,
       "signcrossing_ok": false,
-      "elapsed_seconds": 1.7
+      "elapsed_seconds": 3.2
     },
     {
       "seed": 100,
@@ -185,7 +185,7 @@
       "history_signcrossing_r": 0.4079571790391879,
       "history_signcrossing_shuffled_r": -0.24564248309263453,
       "signcrossing_ok": false,
-      "elapsed_seconds": 1.7
+      "elapsed_seconds": 4.1
     },
     {
       "seed": 101,
@@ -223,7 +223,7 @@
       "history_signcrossing_r": 0.1409803484673671,
       "history_signcrossing_shuffled_r": 0.41363166696940584,
       "signcrossing_ok": false,
-      "elapsed_seconds": 1.7
+      "elapsed_seconds": 2.8
     },
     {
       "seed": 102,
@@ -261,7 +261,7 @@
       "history_signcrossing_r": 0.24559610261724366,
       "history_signcrossing_shuffled_r": -0.06262623182836835,
       "signcrossing_ok": false,
-      "elapsed_seconds": 1.7
+      "elapsed_seconds": 3.4
     }
   ],
   "config": {
@@ -287,5 +287,5 @@
   },
   "mechanism": "3 opponent NMDA pools (affect_vplus/vminus/arousal) + Namburi-Tye opponent CROSS-inhibition (inh_plus/inh_minus) on ONE numpy SimulationBridge; appraisal injected via diffuse neuromodulator excitability_drive (DR-2 opponent valence tags); mood = rate(V+)-rate(V-); the affect state synaptically biases recall (mood-congruent) + speak (arousal-gated) through the affect_out transmission gate.",
   "HONEST_NOTE": "numpy-CPU read (real spiking Izhikevich bridge \u2014 the 'numpy' is the backend, not a host shortcut); DR-2 Warriner-approximate core lexicon; the recall-vigor bias is a firing-rate read of valence-congruent pools (the cheap importable recall substrate, per the spec's tertiary-risk degrade). The shared-FS opponent variant (opponent_style='shared') can flip sign but its persistence is oscillatory/fragile (a 40ms-snapshot phase artifact inflated it to 0.7; the phase-robust 100ms read = ~0.3). cross-inhibition is the robust config. NO sim/ edit (enable_nmda + neuromodulator targets + transmission_gate are pre-existing additive attributes).",
-  "elapsed_seconds": 11.4
+  "elapsed_seconds": 19.4
 }

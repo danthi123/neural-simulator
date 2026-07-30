@@ -778,3 +778,35 @@ multi-compartment extension** (a per-subunit apical variable, i.e. `cp_v_apical`
 (n_neurons x n_subunits)). That is a genuine `sim/` structural change of the kind the catalog flags, NOT a cheap
 composition — and it should be scoped as such rather than attempted again by rearranging pathways.
 **The cheap route does not exist; recording that is more useful than another flat arm.**
+
+## ⭐ EXTERNAL SEARCH (triggered by the workflow check) FINDS THE WIDTH MECHANISM OUR CORPUS LACKS
+
+The new `workflow_check` rule 3 refused to pass after two local-corpus queries on multi-compartment dendrites
+returned **zero primary-source hits**, and pointed at external search — the sanctioned move once the local corpus
+is exhausted. It paid off immediately:
+
+- **"Dendritic inhibition terminates plateau potentials in CA1 pyramidal neurons"** (bioRxiv 2025). **This is the
+  mechanism for the width defect.** BTSP writes a field for as long as its plateau lasts; if inhibition TERMINATES
+  the plateau, it bounds the field's extent. **And it completes O'Keefe-Nadel:** they said inhibition *"restricts
+  the area of an environment where the place unit fires"* but not HOW — this gives the how, at the plateau, which
+  is exactly the variable BTSP reads (`is_post = max(cp_v_apical − v_hold, 0)`).
+- **"Variable recruitment of distal tuft dendrites shapes new hippocampal place fields"** (bioRxiv 2024) — distal
+  tuft dendrites convert multiplexed entorhinal sensory+spatial signals into the instructive plateau. Directly the
+  place-field-formation pathway this arc models.
+- **Branch-local plateaus last HUNDREDS OF MILLISECONDS** in single CA1 dendritic branches — confirming that
+  per-branch independence is the real biology, i.e. catalog G.02's "needs multi-compartment" was right and my
+  pathway-splitting workaround (refuted by measurement) could never have substituted for it.
+- **Implementation references our corpus does not carry:** a two-compartment spiking model with explicit
+  apical-amplification / -isolation / -drive regimes (arXiv 2311.06074), and a scalable dendritic-modelling
+  approach for SNNs (arXiv 2412.06355) — both relevant to sizing the `cp_v_apical` → (n_neurons × n_subunits)
+  extension rather than guessing at it.
+
+**⇒ THE NEXT MECHANISM IS NOW SPECIFIC, NOT JUST "add compartments": pair the multi-subunit apical extension with
+PLATEAU-TERMINATING DENDRITIC INHIBITION.** Width is set by plateau DURATION, and we have never had a mechanism
+that ends a plateau — only ones that start it. That reframes the remaining ~33% of field quality from "more
+compartments" to "bounded plateaus", which is a different and more targeted build.
+
+**⇒ AND IT VALIDATES THE ENFORCEMENT MECHANISM ITSELF.** The check refused a green tick on a zero-source search,
+named external search as the next move, and that produced a mechanism two local queries could not. **The rule that
+"our corpus came up empty" is a FINDING requiring escalation — not a reason to proceed on our own notes — is now
+mechanical rather than remembered.**
