@@ -5138,3 +5138,42 @@ single-pair detector (3.286x) and the population vote (4.548x, single-trial 1.00
 chance) use HAND-SET input timing, which was stated as their scope in both entries. Likewise the ~6 ms hop
 latency, the pinned n=50/w=300 operating point, and the jitter envelope are direct measurements with engagement
 asserted. **The reader can READ order in spikes; it cannot yet LEARN what to read it from.**
+
+### 2026-07-29 (the "hand-set pulse timing" caveat is DISCHARGED — the read survives a CONTINUOUS OVERLAPPING sweep)
+
+Every order-reading result so far used clean DISJOINT pulses, and said so. A real replay event does not: adjacent
+place cells CO-ACTIVATE. `research/runners/_gap5_onsubstrate_continuous_sweep_derisk.py` drives each reader with a
+Gaussian in TIME (width = `overlap` x pair lag), so `overlap=1.0` means neighbours are strongly co-active.
+Tuning is STRUCTURAL (each reader wired to its own place band) — legitimate for testing a DOWNSTREAM read-out,
+and explicitly NOT a claim that tuning was acquired (see the two retractions above).
+
+| overlap | fwd | rev | **ratio** | STATIC | LESION ratio |
+|---|---|---|---|---|---|
+| 0.15 | 49.0 | 27.0 | **1.81** | 30.3 | 1.02 |
+| 0.35 | 50.7 | 28.7 | **1.77** | 32.3 | 1.00 |
+| 0.60 | 52.3 | 29.7 | **1.76** | 34.0 | 0.98 |
+| 1.00 | 47.3 | 31.3 | **1.51** | 37.0 | 0.96 |
+
+**The ratio roughly HALVES versus disjoint pulses (3.286 single-pair / 4.548 population -> 1.51-1.81)** and
+degrades monotonically with overlap. The **LESION stays at ~1.0 throughout (0.96-1.02)**, so the delay remains
+load-bearing under overlapping drive. STATIC now sits at the REVERSE level rather than near zero — correct, not
+a failure: with no travel there is no forward preference to find.
+
+**BUT THE DECISION-RELEVANT NUMBER MOVES THE OTHER WAY, and measuring it corrected MY OWN inference.** From the
+earlier jitter curve (ratio 1.746 -> accuracy 0.806) I expected continuous overlap to cost accuracy, and was
+about to record that. Measured instead (paired fwd-vs-rev, 6 seeds x 4 trials = 24 pairs per condition, 3 ms
+per-trial jitter, chance 0.500):
+
+| overlap | 0.15 | 0.60 | 1.00 |
+|---|---|---|---|
+| single-trial accuracy | **0.958** | **1.000** | **0.958** |
+
+**Accuracy HOLDS at 0.958-1.000 while the ratio halves.** Reason: continuous drive produces ~2x the detector
+spikes (47-52 vs ~25), so the estimate's relative VARIANCE falls, and accuracy depends on separation-over-
+variance, not separation alone. **Ratio and single-trial accuracy are NOT interchangeable** — the jitter-curve
+mapping does not transfer to a different input manipulation, and quoting it would have understated the result.
+
+**⇒ the "hand-set input timing" caveat attached to the detector and population-vote entries is DISCHARGED:** the
+pairwise relay+coincidence read reads order correctly from a continuous, overlapping, jittered sweep at
+0.958-1.000 single-trial. **Remaining scope, unchanged:** tuning is STRUCTURAL not learned (open, and the two
+retractions above say why), K=6, numpy/CPU.
