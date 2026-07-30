@@ -293,7 +293,15 @@ def main():
             c1 = float(np.mean([circ_resultant(r) for r in M1]))
             w1 = float(np.mean([best_window_mass(r) for r in M1]))
             c0 = float(np.mean([circ_resultant(r) for r in M0]))
-            res[name].append(dict(seed=s, circ=c1, window=w1, circ_init=c0, d_circ=c1 - c0,
+            # circ ON THE WEIGHT CHANGE, which is the quantity the 6-seed headline actually reports.
+            # `circ` above is computed on FINAL weights and is dominated by the random initial structure -- with
+            # lr=0 the final weights simply ARE the init, and a sparse random vector over 60 place indices has a
+            # high circular resultant BY CONSTRUCTION. Reading the density sweep off `circ` therefore said
+            # nothing about learning, and I briefly (and wrongly) concluded from it that BTSP was damaging the
+            # field. Recording circ_dW alongside makes the headline's quantity available in the artifact instead
+            # of being recomputed by hand from two columns of a markdown table.
+            cdW = float(np.mean([circ_resultant(r) for r in (M1 - M0)]))
+            res[name].append(dict(seed=s, circ=c1, circ_dW=cdW, window=w1, circ_init=c0, d_circ=c1 - c0,
                                   read_spikes=nread, place_spikes=nplace, apical_max=apmax,
                                   apical=apst,          # OPT-0 arm A: the instructive signal, actually measured
                                   dW=float(np.abs(M1 - M0).mean())))
