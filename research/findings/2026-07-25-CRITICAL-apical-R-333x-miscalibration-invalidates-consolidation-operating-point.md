@@ -4913,3 +4913,47 @@ proportionality, not just for presence — a stage that fires MORE than its inpu
 **⇒ THE OPERATING POINT IS PINNED: n=50/stage, weight_mean=300, 2 hops => 11.50 ms, reliable on 6/6 seeds,
 spike counts proportionate.** That brackets the pairwise read's 12.5 ms optimum with existing machinery only.
 The on-substrate build target is now fully specified, with no `sim/` edit required.
+
+### 2026-07-29 (⭐⭐ ON-SUBSTRATE GO — the order detector works IN SPIKES at 3.29x, and beats the off-substrate toy)
+
+Built at the pinned operating point, `research/runners/_gap5_onsubstrate_order_detector_derisk.py`. Wiring:
+`A -> [relay r0 -> r1] -> DET` (delayed ~11.5 ms) and `B -> DET` (direct). Forward order (A then B ~12 ms
+later) makes A's DELAYED spike arrive WITH B's direct spike -> coincidence -> DET fires. Reverse should not.
+
+**FIRST ATTEMPT READ BACKWARDS, and the reason is a trap worth recording.** At w_det 60-300 the ratio was
+0.23-0.75 — reverse fired MORE. Cause: **DET was SUPRATHRESHOLD TO A SINGLE INPUT**, so it was summing, not
+coincidence-detecting; two SEPARATED arrivals give two independent bursts, while two COINCIDENT arrivals
+collide inside the refractory period and yield FEWER spikes. **A mis-tuned coincidence detector reports order
+BACKWARDS** — the sign of the read depends on the regime, so the subthreshold property must be asserted, never
+assumed. The probe printed UNDEFINED rather than a negative, and the monotone trend (0.23 -> 0.75 as w_det
+fell) pointed straight at the fix.
+
+**STEP 0, the defining property, now verified explicitly:**
+
+| w_det | 5 | 10 | 20 | 30 | 60 |
+|---|---|---|---|---|---|
+| A alone | 0.0 | **0.0** | 4.3 | 12.3 | 19.7 |
+| B alone | 0.0 | **0.3** | 11.3 | 23.3 | 31.7 |
+| regime | silent | **COINCIDENCE** | summation | summation | summation |
+
+**RESULT at w_det=10, 6 seeds:**
+
+| condition | per-seed | mean |
+|---|---|---|
+| FORWARD | 11, 8, 6, 3, 8, 10 | **7.7** |
+| REVERSE | 0, 2, 1, 1, 5, 5 | **2.3** |
+| SIMULTANEOUS (no order) | 0, 7, 1, 1, 5, 7 | 3.5 — sits BETWEEN, as it must |
+| LESION fwd (relay bypassed) | 2, 9, 9, 12, 17, 12 | 10.2 |
+| LESION rev (relay bypassed) | 2, 8, 9, 10, 17, 11 | 9.5 |
+
+**intact fwd/rev = 3.286, forward > reverse on 6/6 seeds. LESION fwd/rev = 1.070** — removing the relay makes
+the detector ORDER-BLIND, so the delay is load-bearing, not decorative.
+
+**The substrate BEATS the toy: 3.29x on-substrate vs 1.333 off-substrate.** The spiking THRESHOLD is a
+nonlinearity the toy's linear dot-product ratio does not have — coincidence detection discriminates harder than
+a correlation. The off-substrate result was a LOWER bound here.
+
+**HONEST SCOPE:** this is the **detector PRIMITIVE with hand-set input timing** — it does NOT include learned
+tuning or the full 40-cell population read, so it is the atom the pairwise reader is built from (the part that
+needed the delay), not the reader itself. Absolute spike counts are small (3-11 fwd, 0-5 rev) so the estimates
+are noisy. The coincidence window is NARROW (w_det=5 silent, 10 works, 20 already summing). numpy/CPU, n=50.
