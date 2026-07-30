@@ -5061,3 +5061,40 @@ operating point, the 3.286x single-pair detector and the 4.548x population vote 
 `weight_mean` 300/10 in the firing regime and asserted engagement (the population runner ABORTS if the
 coincidence property fails). **Only the learned-tuning claim is withdrawn**, so the reader's tuning remains
 HAND-SET and learning it on-bridge is still OPEN, now with a known correct starting weight.
+
+### 2026-07-29 (learned tuning, REDONE post-retraction: plain Hebbian does NOT carve place tuning — the selectivity is STRUCTURAL)
+
+Re-run with every defect of the retracted entry fixed: `w0=250` (inside the measured 200-300 firing regime),
+`hebbian_max_weight=600` (above the design weight, per the standing bound pre-flight), firing ASSERTED, and the
+comparison being **UNTRAINED vs TRAINED** rather than `dW != 0`.
+
+**Engagement is now real:** readers fire 39-813 spikes, and the FS inhibition lever genuinely bites (firing
+450->40 at `w_inh=150`). Neither was true before.
+
+| place->read density | untrained selectivity | trained | delta | verdict |
+|---|---|---|---|---|
+| 1.00 | 1.607-1.725 | 1.566-1.669 | **-0.003 to -0.141** | no improvement |
+| 0.35 | 4.229-4.660 | 4.128-4.594 | **-0.066 to -0.124** | no improvement |
+| 0.15 | 8.835-11.058 | 8.786-11.029 | **-0.028 to -0.087** | no improvement |
+
+**TWO conclusions, both cleanly supported:**
+
+1. **Selectivity here is STRUCTURAL, not learned.** It is set almost entirely by CONNECTIVITY DENSITY (1.7x at
+   d=1.0 -> 4.5x at d=0.35 -> 11.1x at d=0.15), because a reader wired to few place cells mechanically has a high
+   peak/mean. Sparse random wiring, not plasticity, is what produces place-like tuning in this setup.
+2. **Plain Hebbian slightly DEGRADES it — negative delta in 6/6 arms across all three densities.** Mechanism:
+   the sweep drives every place cell in turn while readers fire throughout, so ALL co-active synapses potentiate,
+   growth is near-uniform, and relative tuning blurs. Uniform FS inhibition reduced total firing but produced no
+   DIFFERENTIATION (every reader is inhibited equally), so it is global gain control, **not k-WTA**.
+
+**THE LAW APPLIES: this is a verdict on a METHOD (plain pairwise Hebbian + uniform FS inhibition), NOT on the
+capability.** Named next mechanisms, in cheap-first order: (a) a **k-WTA learning GATE** — only the top-k
+responding readers update, which is what the off-substrate version actually did; (b) **Oja / subtractive
+normalisation** so potentiation of one synapse costs the others (the Miller-MacKay form already used in-engine
+elsewhere in this arc); (c) STDP with the sweep's genuine temporal order rather than a symmetric rule.
+
+**⚠️ A CHECK I NOW OWE ON MY OWN EARLIER CLAIM.** The off-substrate `learn_tuning()` was reported as "reader
+ACQUIRES tuning by k-WTA Hebbian, 9.1x, handed nothing." But it SEEDS each reader at a random place position
+(`seeds = rng.permutation(N)[:n_read]`) before learning — **exactly the structural head-start that this rung
+shows can supply the entire effect.** Until an untrained-vs-trained baseline is run on that function too, the
+"acquired" framing is UNVERIFIED and may be the same error one level up. Recorded as owed, not asserted.
