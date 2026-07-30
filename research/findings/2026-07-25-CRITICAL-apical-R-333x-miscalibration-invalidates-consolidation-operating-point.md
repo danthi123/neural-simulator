@@ -4853,3 +4853,39 @@ noise, recorded as such rather than given a mechanism I have not tested.**
 
 **SCOPE:** off-substrate; 3 seeds; a single reader architecture; the lag-vs-compression scaling is a crude
 heuristic. What is now established is the operating envelope, not an on-bridge result.
+
+### 2026-07-29 (⭐ THE RING-BUFFER EDIT IS NOT NEEDED — one synaptic hop already costs ~6 ms on this substrate)
+
+Before paying for the ~250-line hot-path ring buffer, the cheaper question: the reader does not need GENERAL
+per-synapse delays, it needs **~12 ms on ONE pathway**. A polysynaptic relay chain gives delay with existing
+machinery — and polysynaptic delay lines are real biology, not a workaround.
+
+**I HAD THE PER-HOP LATENCY WRONG, and the correction is the whole finding.** I reasoned that a hop costs one
+step (~1 ms at dt=1.0) because the matvec increment is applied to the NEXT step's conductance. **Measured, it
+is ~5-8 ms**: the 1-step matvec is followed by the postsynaptic neuron having to INTEGRATE TO THRESHOLD, and
+that dominates. Single hop, one brief pulse, first-spike-to-first-spike, 3 seeds:
+
+| weight_mean | single-hop latency | r0 Vmax (physiological check) |
+|---|---|---|
+| 600 | **5.33 ms** | 21-31 mV |
+| 400 | **6.00 ms** | 21-28 mV |
+| 300 | **6.33 ms** | 22-34 mV |
+| 200 | **7.33 ms** | 26-33 mV |
+
+**Latency is TUNABLE BY SYNAPTIC WEIGHT** — a weaker synapse charges the target more slowly, so it arrives
+later (5.33 ms at w=600 -> 7.33 ms at w=200). That is a legitimate physiological delay knob, not a hack.
+
+**⇒ TWO relay hops ~ 11-16 ms BRACKETS the pairwise read's 12.5 ms optimum. The mechanism is buildable
+TODAY, with NO `sim/` edit and no ring buffer.** The deferred Route T-delay design stays deferred, correctly.
+
+**This also RE-DIAGNOSES mechanism 1, and its elimination STANDS for a better reason.** A 63-125 ms delay
+spread would need ~10-20 hops, but the chain **dies at 3-5 hops** (measured: at w=300 it propagated 3/14, at
+w=500 5/14). So whole-population delay-line alignment is unreachable by relays — while the LOCAL pairwise read
+needs only 2 hops, comfortably inside the survivable depth. The local read is buildable precisely because it
+is local.
+
+**CAVEATS, both real:** (i) relay FIDELITY is seed-variable at n=20/stage — r0 spike counts ran 1-21 across
+seeds (seed 43 consistently weak), so a reliable relay needs larger populations, untested; (ii) at w>=3000 or
+`propagation_strength=0.5` the target's Vmax reaches 192-2934 mV, which is numerical nonsense rather than
+spiking — the operating window used here (w 200-600 at the DEFAULT prop=0.05, Vmax 20-34 mV) was chosen by
+that physiological check, and anything outside it is not a valid config.
