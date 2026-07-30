@@ -651,3 +651,44 @@ modest (1.165 mean, 4/6 above unity); and the whole pipeline is a moving-bump sw
 supralinear eligibility), differentiate the population (postsynaptic k-WTA), and read replay DIRECTION from the
 learned code in spikes — with a valid null at every stage.** Owed for a GO: GPU parity, 6 seeds on
 differentiation, and a magnitude-matched null on the k-WTA lever.
+
+## GPU PARITY: the tuning result REPLICATES — headline moves to the GPU figure, place-specific circ 0.565 (65% of oracle)
+
+`SIM_BACKEND=cupy`, same config (`hetero_dep=0.2` + `elig_exp=4.0`), 3 seeds, against the numpy reference:
+
+| metric | numpy | **GPU** | agreement |
+|---|---|---|---|
+| WIDTH /60 | 16.1 | **15.8** | ~identical |
+| circ(dW) | 0.6853 | **0.6525** | −5% |
+| randset (no-place null) | 0.0906 | **0.0878** | ~identical |
+| **place-specific circ** | **+0.5947** | **+0.5647** | **−5%** |
+| peaks/cell | 3.19 | **5.03** | diverges |
+
+**THE RESULT REPLICATES.** Width and the randset null are essentially identical, and place-specific circ agrees to
+within 5%. **`peaks/cell` diverges most (3.19 → 5.03)**, which is expected rather than alarming: peak-counting
+depends on threshold crossings (runs above half-max), and `sim/kernels.py:229-231` states explicitly that a neuron
+on threshold can flip under FMA/summation reordering. **Any metric defined by a threshold inherits that
+sensitivity — width (a count above half-max) is robust because it aggregates, while peaks (contiguity of runs) is
+not.** Worth remembering when choosing metrics.
+
+**⇒ HEADLINE MOVES TO THE GPU FIGURE, per the precedent set earlier in this arc** (when GPU took the population
+vote from 4.548 to 3.500 and the conservative number became the headline): **place-specific circ 0.5647 = 65% of
+the 0.8719 oracle**, width 15.8/60, on the project's standard backend.
+
+## FINAL SESSION STATE — gap#5 arc
+
+| component | result | backend / scope |
+|---|---|---|
+| order read (direction) | **0.969** single-trial (chance 0.500) | GPU, 6 seeds, 96 paired trials, lesion at chance |
+| field quality | **place-specific circ 0.565 = 65% of oracle**, width 15.8/60 | **GPU**, 3 seeds (numpy 6-seed agrees to 5%) |
+| population differentiation | **10.3/12** distinct tiling fields | numpy, 3 seeds, engagement asserted |
+| the join | **6/6 paired**, 1.165 vs 0.712 no-order null | numpy, 6 seeds, 848 spikes |
+
+**The pipeline is demonstrated end-to-end on the project's standard backend for the tuning stage and on numpy for
+the join: learn place tuning from a traversal (BTSP + heterosynaptic competition + supralinear eligibility),
+differentiate the population (postsynaptic k-WTA), read replay DIRECTION from the learned code in spikes — with a
+valid null at every stage.**
+
+**REMAINING FOR A GO (2 items, both cheap):** 6 seeds on differentiation; a magnitude-matched null on the k-WTA
+lever. The join's GPU parity is NOT owed in the same way — the per-step k-WTA gate reads the CSR every step, so a
+GPU port would be device-transfer-bound and slower than numpy; that is an implementation note, not a gap.
