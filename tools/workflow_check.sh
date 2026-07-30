@@ -53,12 +53,20 @@ for lane in "${!LANE_RUNNER[@]}"; do
   # running", but these lane runners finish in 2-15 SECONDS -- so a lane correctly served minutes ago reported
   # IDLE forever, and the alarm cried wolf on work that was already done. "Recently produced a result" is the
   # question that actually matters.
-  RECENT=$(find research/findings/raw -maxdepth 1 -newermt '-2 hours' -name '*.json' 2>/dev/null | grep -c "$(echo "$r" | sed 's/^_//; s/_derisk$//; s/_probe$//' | cut -d_ -f1-2)" || echo 0)
+  RECENT=$(find research/findings/raw -maxdepth 1 -newermt '-2 hours' -name '*.json' 2>/dev/null | grep -c "$(echo "$r" | sed 's/^_//; s/_derisk$//; s/_probe$//' | cut -d_ -f1-2)" | head -1)
+  RECENT=${RECENT:-0}
   if echo "$RUNNING" | grep -qx "$r" || [ "$RECENT" -gt 0 ]; then
     printf "  ✔ %-22s served%s\n" "$lane" "$([ "$RECENT" -gt 0 ] && echo " (result in last 2h)")"
   else
     UNSERVED=$((UNSERVED+1))
-    if [ -f "research/runners/$r.py" ]; then
+    # A banked GO/verdict artifact means the DE-RISK is done and the lane's next step is INTEGRATION (the
+    # roadmap's "wire into the develop-loop teacher hook"), not another identical run. Demanding a re-run of
+    # completed work is churn, and an alarm that demands churn is one you learn to ignore.
+    BANKED=$(grep -rl '"verdict"' research/findings/raw/*.json 2>/dev/null | xargs -r grep -l "$(echo "$r" | sed 's/^_//; s/_derisk$//' | cut -d_ -f1-2)" 2>/dev/null | head -1)
+    if [ -n "$BANKED" ]; then
+      printf "  ◐ %-22s de-risk BANKED (%s) — next step is INTEGRATION, not a re-run\n" "$lane" "$(basename "$BANKED")"
+      UNSERVED=$((UNSERVED-1))
+    elif [ -f "research/runners/$r.py" ]; then
       printf "  ⛔ %-22s IDLE — run:  .venv/bin/python -m research.runners.%s --seeds 42 43 44 100 101 102 &\n" "$lane" "$r"
     else
       printf "  ⛔ %-22s IDLE — no ready runner (%s missing) => this lane needs a BUILD, not a run\n" "$lane" "$r"
