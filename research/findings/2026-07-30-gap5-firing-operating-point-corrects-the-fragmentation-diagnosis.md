@@ -456,3 +456,43 @@ the right factor. `k=1` gives the most distinct fields, `k=2` the widest spread 
   integration test must be re-run with the k-WTA-differentiated population. That is the single next action.
 **Owed**: 6-seed + GPU parity on the differentiation result; and re-report place-specific circ WITH spread, since
 the two were never measured together.
+
+## INTEGRATION with the differentiated population: the SIGN IS FIXED — and the SCRAMBLED control has become INVALID
+
+Re-ran the join with all three pieces (differentiated population via k-WTA k=1, sharp fields, verified-subthreshold
+`gain=0.30`), 3 seeds:
+
+| seed | n_distinct | LEARNED | SCRAMBLED | lesion |
+|---|---|---|---|---|
+| 42 | 10 | 1.923 | 1.957 | 1.444 |
+| 43 | 11 | 0.857 | 1.000 | 1.000 |
+| 44 | 10 | 2.000 | 1.750 | 1.500 |
+| **mean** | **10.3** | **1.593** | 1.569 | **1.315** |
+
+**THE SIGN IS FIXED. `LEARNED = 1.593 > 1.0` for the first time in the arc** — every previous attempt was INVERTED
+(0.583, 0.667, 0.714, 0.822). Forward now produces MORE detector coincidences than reverse, which is what a
+correctly-ordered sequence through a subthreshold coincidence detector must do. The **lesion drops it to 1.315**, so
+the relay delay contributes.
+
+**⚠️ BUT THE SCRAMBLED-PAIRING CONTROL IS NO LONGER VALID, AND ITS +0.025 MUST NOT BE READ AS FAILURE.** When ALL
+readers shared one preferred position, scrambling the pairing was a genuine null — there was no order to destroy,
+so LEARNED ≈ SCRAMBLED correctly signalled "no information." **With a population that TILES the track, every pair
+of readers has a well-defined order regardless of how they are paired**: for any two readers with different
+preferred positions, a forward sweep fires the lower-preference one first. Scrambling therefore does NOT remove the
+directional information, and the control cannot distinguish the hypotheses. **A control's validity is conditional
+on the regime it is run in — the same control was informative three rungs ago and is uninformative now.**
+
+**⇒ THE CONTROL THAT IS STILL VALID is the LESION** (relay bypassed): 1.593 → **1.315**. The delay carries part of
+the effect but not all of it, so some of the discrimination survives without the relay and is presumably carried by
+raw arrival-order asymmetry in the detector.
+
+**⇒ REQUIRED NEXT CONTROL, since scrambled is dead:** pair readers with **matched** preferred positions (no order
+within a pair) — the only construction that removes order while keeping everything else. Also seed 43 is an
+outlier at 0.857 despite having the MOST distinct fields (11), which is unexplained and needs its own look before
+any of this is called a result.
+
+**HONEST CLOSING STATE OF THE ARC:** three components independently demonstrated — order read **0.969**
+single-trial (GPU, 6 seeds), field quality **0.597** place-specific circ (68% of oracle, 6 seeds), population
+differentiation **10.3/12** distinct tiling fields — and a join whose SIGN is now correct (1.593, lesion 1.315) but
+whose remaining controls are owed: a matched-preference pairing control, the seed-43 outlier, 6 seeds, and GPU
+parity. **NOT a GO; the failure mode that blocked it for four attempts is removed and the sign is right.**
