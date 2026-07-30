@@ -18,6 +18,7 @@ logging.disable(logging.INFO)
 from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
 from sim.regions import BrainRegion, RegionPathway
 from sim import SimulationBridge
+from sim.backend import to_host  # cupy arrays refuse np.asarray(); to_host works on BOTH backends
 NS, WREL, WDET = 50, 300.0, 10.0
 
 def build(seed, K, lesion=False):
@@ -57,7 +58,7 @@ def run(seed,K,direction,lag=12,overlap=1.0,lesion=False,drive=8000.0,static=Fal
             amp=drive*float(np.exp(-0.5*((step-ctr[k])/sd)**2))
             if amp>drive*0.02: b.cp_external_input_current[rm.indices("c%d"%k)]=amp
         b._run_one_simulation_step()
-        for d in dets: tot+=int(np.asarray(b.cp_firing_states[d]).sum())
+        for d in dets: tot+=int(to_host(b.cp_firing_states[d]).sum())
     return tot
 
 if __name__=="__main__":
@@ -95,7 +96,7 @@ def run_j(seed,K,direction,ov,jit=3.0,lag=12,drive=8000.0):
             amp=drive*float(np.exp(-0.5*((step-ctr[k])/sd)**2))
             if amp>drive*0.02: b.cp_external_input_current[rm.indices("c%d"%k)]=amp
         b._run_one_simulation_step()
-        for d in dets: tot+=int(np.asarray(b.cp_firing_states[d]).sum())
+        for d in dets: tot+=int(to_host(b.cp_firing_states[d]).sum())
     return tot
 for ov in (0.15,0.6,1.0):
     hits=0; n=0

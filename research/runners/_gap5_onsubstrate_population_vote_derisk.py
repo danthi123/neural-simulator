@@ -23,6 +23,7 @@ logging.disable(logging.INFO)
 from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
 from sim.regions import BrainRegion, RegionPathway
 from sim import SimulationBridge
+from sim.backend import to_host  # cupy arrays refuse np.asarray(); to_host works on BOTH backends
 
 N_STAGE, W_RELAY, W_DET = 50, 300.0, 10.0
 
@@ -77,7 +78,7 @@ def vote(seed, K, order, lag=12, lesion=False, drive=8000.0, jitter=0.0, w_det=W
                 b.cp_external_input_current[rm.indices("c%d" % k)] = drive
         b._run_one_simulation_step()
         for d in dets:
-            total += int(np.asarray(b.cp_firing_states[d]).sum())
+            total += int(to_host(b.cp_firing_states[d]).sum())
     return total
 
 
@@ -92,7 +93,7 @@ def single_input_check(seed, K, w_det=W_DET, drive=8000.0, T=60):
             b.cp_external_input_current[rm.indices("c0")] = drive
         b._run_one_simulation_step()
         for d in dets:
-            n += int(np.asarray(b.cp_firing_states[d]).sum())
+            n += int(to_host(b.cp_firing_states[d]).sum())
     return n
 
 

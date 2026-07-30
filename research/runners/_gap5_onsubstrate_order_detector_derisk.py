@@ -21,6 +21,7 @@ logging.disable(logging.INFO)
 from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
 from sim.regions import BrainRegion, RegionPathway
 from sim import SimulationBridge
+from sim.backend import to_host  # cupy arrays refuse np.asarray(); to_host works on BOTH backends
 
 N=50; W_RELAY=300.0
 
@@ -55,7 +56,7 @@ def run(seed, w_det, order, gap=12, lesion=False, T=70, drive=8000.0):
         if tA<=step<=tA+1: b.cp_external_input_current[A]=drive
         if tB<=step<=tB+1: b.cp_external_input_current[B]=drive
         b._run_one_simulation_step()
-        ndet+=int(np.asarray(b.cp_firing_states[D]).sum())
+        ndet+=int(to_host(b.cp_firing_states[D]).sum())
     return ndet
 
 def single_only(seed,w_det,which,T=70,drive=8000.0):
@@ -66,7 +67,7 @@ def single_only(seed,w_det,which,T=70,drive=8000.0):
         b.cp_external_input_current[:]=0.0
         if 3<=step<=4: b.cp_external_input_current[idx]=drive
         b._run_one_simulation_step()
-        n+=int(np.asarray(b.cp_firing_states[D]).sum())
+        n+=int(to_host(b.cp_firing_states[D]).sum())
     return n
 
 if __name__=="__main__":
