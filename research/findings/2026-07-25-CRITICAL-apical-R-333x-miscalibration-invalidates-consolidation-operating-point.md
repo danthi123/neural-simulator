@@ -5466,3 +5466,33 @@ three mechanisms built in — RANDSET (matched activity, no place manifold; it r
 must collapse here) and a SHARPENING-MATCHED NULL. At smoke scale those read RANDSET **+0.0023 / −0.0058** against
 a place-sweep gain of **+0.1304 / +0.1505**, and matched-null **+0.0619** — i.e. the randset control passes
 decisively while the matched-null margin is only ~2.1-2.4x, which is the weaker link and will be reported as such.
+
+### 2026-07-29 (the BTSP negative was a SATURATION artifact — an lr dose-response finds the real operating point)
+
+The 6-seed one-shot run read **circ −0.0075** and its controls said "not place-specific". **It was still
+saturated:** `dW = 2172.81` of the 2250 available even at ONE lap, because the exposure that matters is
+`laps x dwell x lr`, and I had only reduced `laps`. Per the rule earned one rung above, a negative from a
+saturated arm is **UNDEFINED, not a negative** — so I swept `lr` at the faithful dwell=30 and reported the
+**saturated fraction BEFORE any circ number**:
+
+| lr | mean abs dW | **sat_frac** | d_circ |
+|---|---|---|---|
+| 0.0002 | 145.8 | 0.000 | +0.0468 |
+| 0.0005 | 338.3 | 0.000 | +0.0864 |
+| 0.0010 | 631.7 | 0.000 | +0.1008 |
+| **0.0020** | 1050.7 | **0.000** | **+0.1013**  ← peak |
+| 0.0050 | 1723.0 | 0.003 | +0.0640 |
+| **0.0200** | 2191.7 | **0.849** | **−0.0133**  ← the config both prior runs used |
+
+**A clean inverted-U dose-response.** At lr=0.02 **85% of synapses are pinned at the ceiling**, weights go
+uniform, and `circ_resultant` collapses — which is precisely the −0.0075/−0.0347 "negatives" I had recorded. The
+optimum is `lr ~ 0.001-0.002` at **sat_frac 0.000**, giving **d_circ ~ +0.10** (~12% of the 0.8719 oracle
+ceiling).
+
+**The dose-response is itself evidence the effect is not noise:** it rises monotonically, peaks, and falls, with
+the fall explained by a measured mechanism (saturation) rather than an unexplained shrug.
+
+**⇒ THE NEW PRE-FLIGHT, added because a correct bound check passed while the run was still ruined:** report
+`sat_frac` (fraction of synapses within 2% of `w_max`) at the END of every plasticity run, alongside `mean|dW|`.
+`w_max > design_weight` was TRUE in every one of these runs and is NOT sufficient. The 6-seed run at the
+non-saturating optimum, with the randset and sharpening-matched-null controls, is in flight.
