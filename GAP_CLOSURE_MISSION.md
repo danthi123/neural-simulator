@@ -2381,5 +2381,30 @@ the failure branch names its own successor.** The next action is to BUILD Candid
 re-derive the design, and not to invent an acceptance criterion. **GPU is currently saturated (13 jobs incl. the
 17 h crux), so the N=2 GPU smoke must wait for a free slot; enqueue it via `tools/queue_add.sh`.**
 
+
+**⛔⛔ STOP — CANDIDATE A IS ALREADY BUILT. I was one step from re-implementing 1002 lines (2026-07-30).**
+`research/runners/phase_factored_loop_gate.py` (**1002 lines**) already implements the two-phase controller:
+`set_awake_gates` / `set_sleep_gates` / `run_concept_replay_phase` / `freeze_all_gates` / `randomize_order` all
+present, plus the `no_cls_replay` lesion. Its docstring cites **a LATER implementation plan** —
+`docs/plans/2026-05-30-phase-factored-integrated-loop-implementation.md` (Task 2) — which **SUPERSEDES the 05-19
+"design only" doc I had just read and was about to build from.** The 05-19 doc is not wrong, it is simply
+*out of date*, and nothing in it says so.
+
+**HOW THIS WAS CAUGHT, and it is the session's recurring pattern for the fourth time:** the design named its
+reusable pieces, I grepped for WHERE THEY LIVE, and one of the hits was a runner named after the design itself.
+**The check that works is not "does a doc say it is built" — it is "grep for the mechanism's own symbols and read
+what owns them."** Same shape as: the conduction-delay gap already banked as catalog B.16; `btsp_hetero_dep`
+already in the engine at an inert default; the k-WTA arm's winning property already asserted in a discarded
+report.
+
+**⇒ REVISED NEXT ACTION — RUN, DO NOT BUILD.** Read
+`docs/plans/2026-05-30-phase-factored-integrated-loop-implementation.md` (the CURRENT plan) and
+`research/findings/2026-05-30-phase-factored-fullscale-grounding-*` (cited in the runner's own docstring) to find
+what that runner has ALREADY SCORED against the frozen `_IL_V1_MIN` (0.90) / `_IL_SCI_MIN` (0.80) bars, then run
+the gap that is actually open. **Note `_IL_V1_MIN` appears 0 times in this runner** — the bars live in
+`integrated_loop_core.py`, so confirm which scorer this gate reports through before trusting any recorded number.
+**Enqueue via `tools/queue_add.sh` (it greps the findings for the runner first — exactly the check that would have
+caught this one move earlier).**
+
 **⇒ The next session's FIRST action is reading, not building** — the five plans, then the Kandel section. The
 research gate has already been run and is recorded here so it is not re-run or skipped.
