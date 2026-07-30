@@ -331,3 +331,44 @@ all — a degenerate arm that must not be read as "no directional bias."
 JOIN now shows its first genuine signal (learned 0.822 vs scrambled 0.672 in a verified-subthreshold regime) but
 has the wrong SIGN, with a measurable next diagnostic named. Owed: GPU parity on the tuning result, and the
 first-spike-time measurement above.
+
+## ⭐⭐⭐ THE ACTUAL BLOCKER, FOUND: ALL READERS LEARN THE SAME FIELD. The population has ONE field, not twelve.
+
+The named diagnostic (measure each reader's real first-spike time instead of assuming weight-order = firing order)
+returned something that re-frames this whole arc:
+
+| seed | learned preferred positions (6 readers) | first-spike steps | monotonic? |
+|---|---|---|---|
+| 42 | **[48, 48, 48, 48, 48, 48]** | [34, 25, 27, 23, 25, 35] | No |
+| 43 | **[47, 47, 47, 47, 47, 47]** | [23, 26, 25, 24, 31, 25] | No |
+| 44 | **[48, 48, 48, 48, 48, 48]** | [25, 26, 22, 34, 27, 27] | No |
+
+**EVERY READER LEARNS AN IDENTICAL PREFERRED POSITION.** There is ZERO spatial diversity across the population.
+First-spike times cluster at 22-35 steps with no monotonic structure, because all readers fire when the bump
+crosses that one position.
+
+**⇒ THIS EXPLAINS THE ENTIRE INTEGRATION FAILURE, ALL THE WAY BACK.** No ordering is possible; `argsort(pref)` over
+identical values is arbitrary; and **LEARNED ≈ SCRAMBLED at every gain because there is NO LEARNED ORDER TO
+SCRAMBLE** (0.678/0.683, 0.714/0.684, 0.822/0.672 — the last being a 22% separation over *arbitrary* index
+permutations, i.e. noise, not information; **that reading is withdrawn**).
+
+**⇒ AND IT SUBSTANTIALLY RE-FRAMES THE TUNING RESULT (the measurement stands; its SCOPE was much narrower than I
+stated).** `place-specific circ 0.597 = 68% of oracle` is a correct measure of the quality of **a** field — it is a
+per-cell mean, so a population where all 12 cells learn the SAME good field scores exactly as well as one where 12
+cells tile the track. **My metric could not distinguish those two cases, and I never checked which one I had.**
+That is the FOURTH metric-blindness of this arc (after permutation-invariant `peak/mean`, `circ(M1)` diluted by
+random init, and `peaks=1.00` meaning uniform), and the same failure mode each time: **a per-cell average that is
+silent about the population.**
+
+**⇒ THE ORIGINAL DIAGNOSIS WAS RIGHT AND I TESTED IT FOR THE WRONG JOB.** Between-reader competition was needed for
+**DIFFERENTIATION** — making different readers claim different positions. I built the basket-cell ring and then
+evaluated it on **de-fragmentation within one cell's afferent profile**, which is not its job, found it inert, and
+moved on. The earlier measurement that "uniform FS inhibition cut firing 450→40 but produced NO differentiation"
+was the real result all along, and I under-weighted it.
+
+**⇒ NEXT: differentiation is the whole problem.** Required metric: **the SPREAD of learned preferred positions
+across readers** (currently 0 — all identical; target ~uniform over the track). Levers: (a) the topological basket
+ring evaluated on SPREAD, not peaks; (b) `btsp_elig_hard_thresh` as a genuine k-WTA so only the best-matched reader
+potentiates per position; (c) heterogeneous reader thresholds/initial biases as a symmetry-breaker. **Every
+tuning-quality number in this arc should be re-reported alongside preference-spread**, since a perfect field
+learned twelve times over is worth no more than one.
