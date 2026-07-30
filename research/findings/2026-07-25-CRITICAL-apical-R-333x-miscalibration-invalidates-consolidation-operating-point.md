@@ -4889,3 +4889,27 @@ seeds (seed 43 consistently weak), so a reliable relay needs larger populations,
 `propagation_strength=0.5` the target's Vmax reaches 192-2934 mV, which is numerical nonsense rather than
 spiking — the operating window used here (w 200-600 at the DEFAULT prop=0.05, Vmax 20-34 mV) was chosen by
 that physiological check, and anything outside it is not a valid config.
+
+### 2026-07-29 (relay FIDELITY de-risked -> the on-substrate operating point is PINNED: n=50, w=300, 2 hops = 11.50 ms)
+
+Closing the fidelity caveat from the rung above before building a reader on top of relays. Sweeping stage size
+at w=300, one brief pulse, 6 seeds:
+
+| n/stage | 2-hop reached | 1-hop | 2-hop latency | fidelity check (r1 count vs src) |
+|---|---|---|---|---|
+| 20 | 5/6 | 6.67 ms | 17.20 ms (13-22, erratic) | UNRELIABLE — one seed never propagated |
+| **50** | **6/6** | 5.83 ms | **11.50 ms** | r1 75-117 from src 62-75 = **proportionate** |
+| 100 | 5/6 | 3.00 ms | 10.40 ms | marginal — one failure, one 23 ms outlier |
+| 200 | 6/6 | 2.00 ms | 4.00 ms | **RUNAWAY** — r0 574-599 from src 256-276 |
+
+**Latency SHRINKS as the stage grows** (2.00 ms at n=200 vs 6.67 ms at n=20): more convergent drive charges the
+target faster. So effective delay is tunable by BOTH synaptic weight AND population size — two physiological
+knobs, consistent with the integrate-to-threshold mechanism identified above.
+
+**n=200 is not a faster relay, it is an AMPLIFIER:** r0 emits ~2.2 spikes per src spike (574-599 out of
+256-276), which would distort any timing read rather than relay it. Caught by checking spike counts for
+proportionality, not just for presence — a stage that fires MORE than its input is not relaying.
+
+**⇒ THE OPERATING POINT IS PINNED: n=50/stage, weight_mean=300, 2 hops => 11.50 ms, reliable on 6/6 seeds,
+spike counts proportionate.** That brackets the pairwise read's 12.5 ms optimum with existing machinery only.
+The on-substrate build target is now fully specified, with no `sim/` edit required.
