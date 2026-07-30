@@ -30,6 +30,7 @@ from sim import SimulationBridge
 from sim.backend import to_host
 
 NPLACE, NREAD, NFS = 60, 12, 12
+PLACE_READ_DENSITY = float(os.environ.get("GAP5_PLACE_READ_DENSITY", "1.0"))
 W0, DESIGN = 250.0, 250.0
 
 
@@ -78,7 +79,16 @@ def build(seed, w_inh, btsp, w_max, lat_kind="soft", w0=None, thr_scale=None, el
     R = [BrainRegion(name="place", n_neurons=NPLACE, exc_fraction=1.0, internal_density=0.0),
          BrainRegion(name="read", n_neurons=NREAD, exc_fraction=1.0, internal_density=0.0)]
     # coincidence_detector=True: clustered place input -> dendritic PLATEAU, which is what gates BTSP.
-    P = [RegionPathway(from_region="place", to_region="read", density=1.0,
+    # OPT-0 ARM B (2026-07-30). density was HARDCODED 1.0, and that single constant is why the instructive
+    # signal is a DC clamp: at density=1.0 every reader connects to ALL 60 place cells, so the sigma=5 bump
+    # delivers the SAME ~12 coincident inputs to every reader at every position, c_count is position-INVARIANT,
+    # and is_post saturates flat (it is already flat for c_count>=4). No plateau parameter can fix that --
+    # k_thresh only chooses "always on" or "always off". The DC-ness is a property of the WIRING.
+    # Below 1.0 each reader sees a random SUBSET, so c_count varies with position and the plateau can become an
+    # EVENT. Settable by env so the sweep needs no signature threading; RECORDED in the artifact below, because
+    # a knob that only exists in a filename is not provenance (the lesson that cost this project a forensic
+    # reconstruction from synapse counts).
+    P = [RegionPathway(from_region="place", to_region="read", density=PLACE_READ_DENSITY,
                        weight_mean=(W0 if w0 is None else w0), weight_jitter=0.3, plastic=True,
                        coincidence_detector=(True if btsp else False),
                        # plasticity_gate MUST be tagged for cp_plasticity_rate_gain to be ALLOCATED --
@@ -331,6 +341,11 @@ def main():
     os.makedirs(os.path.dirname(a.out), exist_ok=True)
     json.dump(dict(metric_validation=[list(r) for r in rows], oracle=dict(circ=orc, window=orw),
                    laps=a.laps, dwell=a.dwell, lr=a.lr, w_max=a.w_max, w_inh=a.w_inh, arms=res,
+                   # RECORD THE KNOBS. place_read_density is the OPT-0 arm-B lever and backend decides whether
+                   # the run is decisive at all -- both were previously unrecoverable from the artifact, which
+                   # is exactly how a numpy "6-seed GO" got banked across four lanes today.
+                   place_read_density=PLACE_READ_DENSITY,
+                   backend=os.environ.get("SIM_BACKEND", "unset"),
                    controls=ctrl),
               open(a.out, "w"), indent=1)
     print("  wrote %s" % a.out)
