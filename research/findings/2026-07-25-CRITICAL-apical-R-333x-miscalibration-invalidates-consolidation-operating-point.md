@@ -5297,3 +5297,52 @@ instantaneous Hebbian — already in the engine (`btsp_*`), and **raise `btsp_w_
 (the default 5.0 is exactly the rule-5 bound trap)**. Score ONLY with non-permutation-invariant metrics: circular
 resultant length + best-contiguous-window mass against a **sharpening-matched** null, with the sigma=5 oracle
 field (14.05) as the positive-control CEILING.
+
+### 2026-07-29 ⛔⛔ ENGINE BUG, VERIFIED: `_run_one_simulation_step()` NEVER ADVANCES THE CLOCK ⇒ STDP is EXACTLY INERT in 11 runners, and a banked prior is VOID
+
+Surfaced by the workflow's STDP skeptic, then **verified independently by me** (agent counts were wrong in both
+directions — see below).
+
+**THE MECHANISM, read from the code:** `runtime_state.current_time_ms += dt_ms` appears at **exactly ONE site**,
+`bridge.py:4141`, inside **`step_simulation(num_steps)`** — *not* inside `_run_one_simulation_step()`. Spike times
+are stamped `cp_last_spike_time = where(fired, current_time_ms, ...)` (`:7769`), and STDP differences those stamps
+for `delta_t` (`:785-786`). **`fused_stdp_weight_update` uses STRICT inequalities** — `delta_t > 0.0` for LTP,
+`delta_t < 0.0` for LTD — so at `delta_t == 0` **both branches return 0.0 and the update is EXACTLY ZERO.**
+
+**EMPIRICALLY CONFIRMED:** 40 direct `_run_one_simulation_step()` calls → `current_time_ms = 0.0`, and only **2
+distinct spike timestamps** exist (`-1000.0` init sentinel and `0.0`). Every spike shares one stamp. With the
+one-line fix (`current_time_ms += dt_ms` in the loop) the same run gives clock 60.0 and **17 distinct stamps.**
+
+**BLAST RADIUS — MY VERIFIED NUMBERS, and TWO wrong counts corrected on the way:**
+
+| | count |
+|---|---|
+| runners calling `_run_one_simulation_step` directly | **389** |
+| runners using the time-advancing `step_simulation()` | **0** |
+| ... of the direct-steppers, those with `enable_stdp=True` | 36 |
+| ... of those, advancing the clock themselves (fine) | **25** |
+| **⛔ GENUINELY AFFECTED — STDP exactly inert** | **11** |
+
+- The skeptic reported "**245 of 374**". That is wrong.
+- **My own first count of 32 was ALSO wrong** — I grepped only `current_time_ms +=` and missed the *assignment*
+  form, which flagged the FLAGSHIP `g11_bg_runner.py` as broken when it is NOT: it advances the clock at
+  `:3219/3260/5756/6503`. That also **resolves a contradiction** — g11's documented soft-bound-STDP weight
+  collapse (CLAUDE.md) is legitimate, because its STDP is live.
+- **The 11 affected:** `nav_conv_merged_bridge.py` (roadmap step 2), `g11_bg_replicated_runner.py` +
+  `g11_replicated_smoke.py`, `_gap5_sequence_replay_derisk.py`, `compose_bridge_gate.py`,
+  `engram_bootstrap_gate.py`, `integrated_loop_gate.py`, `_perception_v2it_validate_or_retire_derisk.py`,
+  `_homeostatic_spiking_reward_plasticity_derisk.py`, `_homeostatic_spiking_agent_integration.py`,
+  `_np_onbridge_eligibility_probe.py`.
+- **Corroboration from the existing record:** memory `project_replicated_runner_bug` already flags
+  `g11_bg_replicated` as doing "~200x fewer weight updates/reward; do NOT use for plasticity evals." **This is a
+  plausible root cause of that long-standing symptom** (not asserted — the two should be reconciled).
+
+**A BANKED PRIOR IS VOID:** "STDP is the WRONG rule for symmetric co-occurrence — 656k events / 0 weight change at
+`delta_t ~ 0`" is an **instrument artifact of this bug**, not a fact about STDP. It must be **re-run, not cited**.
+I cited it myself in this session's workflow brief, to the STDP agent.
+
+**THE FIX SHIPPED — a loud guard, not a silent behaviour change** (`sim/bridge.py`, additive): when
+`enable_stdp=True` and `current_time_ms` is still `0.0` after 50 steps, log ONCE with the diagnosis and the
+one-line fix. **Verified both directions:** it fires on the bad pattern and stays silent on the good one. Warn,
+never raise (raising would break the 11 callers). Advancing the clock inside `_run_one_simulation_step()` was
+REJECTED as the fix — it would double-advance for any `step_simulation()` caller (the GUI path).
