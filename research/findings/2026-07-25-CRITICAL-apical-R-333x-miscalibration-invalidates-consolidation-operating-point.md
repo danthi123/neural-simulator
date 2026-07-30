@@ -5388,3 +5388,45 @@ DIFFERENT question than the one I was asking, and I read its output as the answe
 flagged the FLAGSHIP `g11_bg_runner` as broken when it is fine. (3) `grep 'enable_stdp = True'` matched presence,
 not the operative value. **Rule: when a pattern is load-bearing for a COUNT or a CLAIM, verify it against one case
 you have READ in full — and prefer the project's existing verified tool over a fresh one-liner every time.**
+
+### 2026-07-29 (⭐ BTSP ENGAGES AND LEARNS — but `enable_btsp=True` ALONE IS A SILENT NO-OP: a 4-link dependency chain)
+
+Built `research/runners/_gap5_btsp_place_field_derisk.py` on the method both the corpus query and the adversarial
+workflow converged on. **Two things came out of it: a validated instrument, and a dependency chain that would have
+produced a false negative twice over.**
+
+**(1) THE METRICS ARE NOW VALIDATED BEFORE ANY MECHANISM RUNS** (the rule earned earlier tonight), and my own
+numbers independently reproduce the workflow's permutation-invariance finding:
+
+| pattern | circ_resultant | window_mass | peak/mean (the VOIDED metric) |
+|---|---|---|---|
+| sigma=5 ORACLE | **0.8719** | 0.7295 | 4.7873 |
+| uniform (null) | 0.0000 | 0.1833 | 1.0000 |
+| 11 contiguous | 0.9461 | 1.0000 | **5.454545** |
+| 11 scattered | 0.1632 | 0.2727 | **5.454545** |
+| ORACLE permuted | **0.1660** | 0.3386 | 4.7873 |
+
+`peak/mean` returns **5.454545 for contiguous AND scattered — identical to 6 dp**, confirming in my own hands that
+it is blind to spatial structure. `circ_resultant` drops **0.8719 -> 0.1660** when the oracle is permuted, so it
+IS sensitive. The probe ABORTS if these checks fail. **Oracle ceiling to beat: circ 0.8719 / window 0.7295.**
+
+**(2) `enable_btsp=True` DOES NOTHING ON ITS OWN.** The first two runs returned delta **EXACTLY +0.0000** on every
+arm — the void signature. The rule needs a FOUR-link chain, each verified in `bridge.py`:
+
+| link | why |
+|---|---|
+| `enable_coincidence_detection=True` | the block that computes clustered drive AND the plateau |
+| `enable_two_compartment_dap=True` | allocates `cp_v_apical` INSIDE that block (`:7157-7160`) |
+| `enable_btsp=True` | the rule itself, gated on `cp_v_apical is not None` (`:8067`) |
+| pathway `coincidence_detector=True` | supplies the clustered input that triggers the plateau |
+
+`is_post = max(cp_v_apical - v_hold, 0)` (`:8088`) — **the plateau above hold IS the instructive signal**, which is
+biologically correct (BTSP is a dendritic plateau phenomenon) but means the rule is gated on the dendritic
+substrate. Miss any link and you get a clean, confident, meaningless 0.0000. **What caught it was a
+mechanism-level engagement assert** (`apical_max`), not a firing check — the readers were spiking the whole time.
+
+**(3) FIRST SIGNAL, 1 seed at a 480-step smoke — NOT a result yet:** `lr=0` arms have dW EXACTLY 0.0000 (clean
+control); BTSP alone gains **circ +0.1304**, BTSP + between-reader soft-WTA gains **+0.1505** — so the competition
+ADDS, as the workflow's diagnosis predicted. That is ~17-21% of the oracle ceiling. **NOT yet verified:** 1 seed,
+a tiny fraction of the planned exposure, and it still owes the permutation control ON THE TRAINED WEIGHTS and a
+sharpening-matched null. The 3-seed x 9000-step run is in flight.
