@@ -1,5 +1,15 @@
 # gap#5 residual: plateau termination is INTRINSIC in the biology, and the engine already has the machinery
 
+> ⚠️ **PARTIALLY CORRECTED 2026-07-30 — the RECOMMENDATION below is WITHDRAWN (refuted 4/4 by adversarial
+> review); the BIOLOGY is vindicated.** See
+> [`2026-07-30-gap5-REFUTED-4of4-the-instructive-signal-is-a-DC-clamp.md`](2026-07-30-gap5-REFUTED-4of4-the-instructive-signal-is-a-DC-clamp.md).
+> The Kandel Fig 10-15 read and the Kir-precedent code trace stand. What was wrong is proposing a `sim/` edit
+> BEFORE measuring the operating point: `is_post` is pinned at 34.82 mV for every reader at every position
+> (`c_count`≈12 always, flat for `c_count`≥4), so the write is EXACTLY uniform by arithmetic and the DC-ness is a
+> property of the CONNECTIVITY (`density=1.0`), not of the plateau parameters. The residual is also far smaller
+> than 33%: measured 0.588 is ~93% of the 0.6343 ceiling of the one-sided kernel actually implemented. Next step
+> is OPT-0 (instrument `is_post`; try `density<1.0`) — no `sim/` edit.
+
 **Date:** 2026-07-30 · **Status:** research-gate finding, NOT yet a result. No build, no `sim/` edit, no GO claimed.
 **Trigger:** research gate conditions (d) *new mechanism class* + (e) *`sim/`-edit-to-overcome*, fired before
 designing the multi-compartment change that gap#5's last ~33% of field quality was said to require.
