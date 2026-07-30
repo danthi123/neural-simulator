@@ -4957,3 +4957,41 @@ a correlation. The off-substrate result was a LOWER bound here.
 tuning or the full 40-cell population read, so it is the atom the pairwise reader is built from (the part that
 needed the delay), not the reader itself. Absolute spike counts are small (3-11 fwd, 0-5 rev) so the estimates
 are noisy. The coincidence window is NARROW (w_det=5 silent, 10 works, 20 already summing). numpy/CPU, n=50.
+
+### 2026-07-29 (⭐⭐⭐ ON-SUBSTRATE POPULATION VOTE — PERFECT single-trial order reading in SPIKES, with the jitter envelope)
+
+`research/runners/_gap5_onsubstrate_population_vote_derisk.py`. K=6 reader cells, 5 pairwise coincidence
+detectors, each pair wired `c_k -> [relay a_k -> b_k] -> DET_k` (delayed ~11.5 ms) + `c_k+1 -> DET_k` (direct),
+at the pinned operating point (n=50/stage, w_relay=300, w_det=10). Votes summed across detectors.
+
+**Coincidence property ASSERTED first** (the trap from the rung above): single-cell drive leaves the detectors
+at 1.0 spikes total => subthreshold. The runner **ABORTS** rather than report a ratio if this fails, because a
+suprathreshold detector reads order backwards.
+
+**RESULT — 6 seeds, paired single-trial accuracy (chance 0.500), with the spike-timing jitter swept to find the
+breaking point (an arm at 1.000 cannot rank, so it had to be pushed until it failed):**
+
+| timing jitter | fwd/rev ratio | single-trial accuracy | LESION accuracy |
+|---|---|---|---|
+| 2 ms | 4.548 | **1.000** | 0.389 |
+| 6 ms | 3.838 | **1.000** | 0.444 |
+| 14 ms | 1.746 | 0.806 | 0.472 |
+| 24 ms | 1.050 | 0.444 (chance) | 0.500 |
+
+**Clean monotonic degradation, and it fails exactly where the mechanism says it must: at jitter ~= 2x the pair
+lag (12 ms), order information is destroyed.** The LESION (relays bypassed) sits at **chance across every
+jitter level** (0.389-0.500, ratio 0.94-1.10) — the delay is load-bearing throughout, not just at one setting.
+SIMULTANEOUS tracks REVERSE (3.0-11.0 vs 2.7-9.7), correct for an input with no order.
+
+**The population vote beats the single pair (4.55 vs 3.286) and both beat the off-substrate toy (1.333).** The
+off-substrate envelope predicted 8 cells x 42 ms = 0.889; the substrate reaches **1.000 at K=6**. Twice now the
+spiking version has outperformed its own idealization, for the same reason: the threshold is a nonlinearity a
+linear correlation does not have.
+
+**⇒ gap#5's host Bayesian decoder now has a working, physiological, fully-spiking replacement for reading replay
+ORDER — 1.000 single-trial at <=6 ms jitter, with a measured failure point and a lesion control at chance.**
+
+**HONEST SCOPE, unchanged where it matters:** tuning is HAND-SET, not learned (the k-WTA Hebbian acquisition was
+validated off-substrate at 9.1x but is not yet on-bridge — that is the remaining piece); K=6; numpy/CPU;
+3 seeds x 6 trials at jitter=2, 6 seeds x 6 trials elsewhere. This reads ORDER, which is what the decoder's
+shortcut supplied — it is not yet a full position decode.
