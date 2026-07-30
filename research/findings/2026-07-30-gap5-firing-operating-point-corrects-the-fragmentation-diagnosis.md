@@ -836,3 +836,42 @@ repeatedly while five completed results sat unread on disk. **The rule that woul
 as the specified next change to that tool rather than written now: four buggy versions of this checker have
 already shipped tonight, each passing its first run, and a fifth written at this point would most likely be a
 fifth bug.
+
+## ⭐ THE PLATEAU-TERMINATING MECHANISM IS ALREADY IN THE ENGINE: `enable_gabab` (default OFF) — FIFTH instance of the pattern
+
+The external search identified **dendritic inhibition terminating the plateau** as the width mechanism. A parallel
+check of the local corpus AND the engine settles how to build it:
+
+- **Local corpus DOES cover this** — 4 primary-source hits on "dendritic inhibition / SST / GABA_B / apical
+  plateau termination", against **0** for the earlier multi-compartment queries. So the corpus gap is specifically
+  *multi-compartment modelling*, not dendritic inhibition. Worth knowing before assuming our library is thin.
+- **The engine already has the exact mechanism, default-off:**
+
+```
+enable_gabab: bool = False
+gabab_reversal_potential: -90.0   # E_K (GIRK) -- potassium, strongly hyperpolarising
+gabab_tau_decay: 150.0            # slow; GABA_B/GIRK >> GABA_A's 10 ms
+```
+
+**⇒ WHY IT FITS EXACTLY.** The plateau HOLDS because a v-gated self-regenerating conductance keeps the compartment
+above `coincidence_plateau_v_hold = −35 mV`. **A slow potassium conductance reversing at −90 mV is precisely what
+drags it back below hold.** And the timescales match the biology the external search reported: plateaus last
+*hundreds of milliseconds*, GABA_B decays over **150 ms**, while GABA_A's ~10 ms would be far too fast to bound a
+plateau. The mechanism, the reversal potential, and the time constant all line up without tuning.
+
+**⇒ SPECIFIED NEXT BUILD (composition of two existing default-off features, NOT a rewrite):** route `enable_gabab`
+onto the apical compartment so it opposes `coincidence_plateau_self_regen`, with `coincidence_plateau_v_hold` as
+the threshold the plateau must be pushed back across. Success metric is the one this arc already validated:
+**field WIDTH** (currently 16.1/60 against a sigma=5 oracle's ~12), with peaks and the randset null reported
+alongside, and an `lr=0` arm.
+
+**⇒ FIFTH INSTANCE OF THIS SESSION'S DOMINANT PATTERN.** `btsp_hetero_dep`, `btsp_elig_exponent`,
+`plasticity_gate`, the conduction-delay ring-buffer design, and now `enable_gabab` — **every mechanism this arc
+needed was already in the engine at an inert default, and every one is named in the literature.** The search space
+was never the problem; knowing what was already there was.
+
+**DELIBERATELY NOT BUILT IN THIS SESSION.** Four tool-writing attempts tonight each shipped a bug that passed its
+first run (self-match, a derived key already held exactly, a process-count proxy for a completion question, and a
+FALSE PASS that printed a green tick on a zero-source search). Implementing this now would rest on the same
+judgment. **The handoff is the specification + the verified config lines + the corpus check, not a sixth
+plausible-looking artifact.**
