@@ -5496,3 +5496,45 @@ the fall explained by a measured mechanism (saturation) rather than an unexplain
 `sat_frac` (fraction of synapses within 2% of `w_max`) at the END of every plasticity run, alongside `mean|dW|`.
 `w_max > design_weight` was TRUE in every one of these runs and is NOT sufficient. The 6-seed run at the
 non-saturating optimum, with the randset and sharpening-matched-null controls, is in flight.
+
+### 2026-07-29 (⭐⭐ BTSP + between-reader soft-WTA ACQUIRES SPATIAL PLACE STRUCTURE — 6 seeds, passes every control that killed the other three mechanisms)
+
+At the non-saturating optimum (lr=0.002, sat_frac 0.000, dwell 30 = the faithful 1.8 s lap, ONE lap):
+
+| arm | circ | window | mean abs dW |
+|---|---|---|---|
+| lr0_btsp | 0.0371 | 0.2134 | **0.0000** |
+| btsp | 0.1652 | 0.2399 | 1059.9 |
+| lr0_btsp_wta | 0.0371 | 0.2134 | **0.0000** |
+| btsp_wta | **0.1740** | 0.2408 | 1047.2 |
+
+**Gain vs its OWN `lr=0` arm: BTSP +0.1281, BTSP + between-reader soft-WTA +0.1369** — the competition ADDS, as
+the workflow's diagnosis predicted (its absence was why all three previous mechanisms could not differentiate).
+
+**EVERY CONTROL THAT KILLED THE OTHER THREE MECHANISMS PASSES:**
+
+| control | k-WTA gate (REFUTED) | **BTSP** |
+|---|---|---|
+| `lr=0` arm | correct | **dW exactly 0.0000** — acquired, not structural |
+| RANDSET (matched activity, NO place manifold) | retained **96%** of gain | **−0.0123 / −0.0177** — collapses |
+| PERMUTE-THE-INCREMENTS (same magnitudes + concentration, positions shuffled) | **87% survived** | **−0.0015 vs +0.1281 — vanishes, 6/6 seeds** |
+| metric validity | metric was place-BLIND | validated permutation-SENSITIVE, oracle ceiling 0.8719 |
+| saturation | — | sat_frac **0.000**, clean inverted-U dose-response |
+
+The permute-the-increments control is the decisive one: it holds magnitude AND concentration/kurtosis fixed and
+randomises only POSITION, so it isolates **spatial contiguity**. Real +0.1281 vs permuted **−0.0015** (ratio ~86x,
+6/6 seeds) ⇒ **the structure BTSP writes is genuinely SPATIAL, not concentration.**
+
+**⚠️ A CONTROL OF MY OWN WAS MIS-SPECIFIED, and it nearly produced a false negative.** My "sharpening-matched
+null" split the dW budget by a **Dirichlet**, which concentrates mass on a FEW random indices — and
+`circ_resultant` rewards concentration. It therefore scored **+0.0733 (57% of the real gain)** and my coded
+criterion printed "**NOT place-specific**". That null is OVER-STRONG: it does not hold concentration fixed, it
+manufactures it. The correct matched null permutes the ACTUAL increments. **Lesson: a null must differ from the
+treatment in EXACTLY ONE property — the one being tested.** Mine differed in two (position AND concentration
+profile), so it could not isolate either.
+
+**HONEST SCOPE — the fields are REAL but WEAK.** circ 0.1652 against the sigma=5 oracle's **0.8719** is ~19% of
+ceiling (gain +0.1281 vs a ceiling gain of ~0.835 = ~15%). So this is genuine, well-controlled, multi-seed
+acquisition of *some* spatial tuning, **not** the formation of sharp place fields. Also: 6 seeds, numpy/CPU, 60
+place / 12 read, one traversal, and this is **tuning acquisition in isolation** — it has NOT yet been fed into the
+order-reading stack, which remains the integration step.
