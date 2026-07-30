@@ -875,3 +875,34 @@ first run (self-match, a derived key already held exactly, a process-count proxy
 FALSE PASS that printed a green tick on a zero-source search). Implementing this now would rest on the same
 judgment. **The handoff is the specification + the verified config lines + the corpus check, not a sixth
 plausible-looking artifact.**
+
+## GABA_B PLATEAU TERMINATION: FLAT — but it is UNDEFINED, not a negative. GABA_B acts on the SOMA, not the apical compartment.
+
+| w_gabab | peaks | WIDTH /60 | circ(dW) | randset | mean abs dW |
+|---|---|---|---|---|---|
+| 0 | 5.00 | **15.9** | 0.6515 | 0.0867 | 692 |
+| 60 | 4.50 | 15.6 | 0.6403 | 0.0909 | 675 |
+| 150 | 4.28 | 15.7 | 0.6431 | 0.0878 | 676 |
+| 400 | 4.64 | 15.6 | 0.6300 | 0.0892 | 675 |
+
+**The pre-registration held:** `w=0` reproduced the validated baseline (width 15.9, place-specific 0.565), so the
+comparison was well-posed. And the plateau was NOT abolished — `mean|dW|` is steady at 675-692 across the whole
+range, ruling out the predicted over-inhibition horn. **But width is FLAT across a 6.7x dose range.**
+
+**⇒ ⛔ THE ARM IS UNDEFINED, NOT A NEGATIVE — the mechanism never reached the plateau.** `bridge.py:7330`:
+`I_gabab` is computed from **`cp_membrane_potential_v`** (the SOMA) and added to `total_input_current_pA`. **It
+never touches `cp_v_apical`.** The hypothesis was that a slow K+ conductance would drag the APICAL compartment
+back below `coincidence_plateau_v_hold`; GABA_B as wired cannot do that, because it is not in that compartment.
+
+**⇒ THIS IS THE THIRD TIME THIS ARC THAT A LEVER WAS REAL BUT ACTING IN THE WRONG PLACE**, and the pattern is now
+unmistakable: negative-weight "inhibition" that fed `g_e` instead of `g_i`; subunit-per-block splitting against a
+`cp_v_apical` that is per-NEURON; and now somatic GABA_B against an apical plateau. **Each time the parameter
+existed, moved, and did nothing to the target — because the target lives in a compartment or array the lever does
+not address. The check that catches all three is the same: before running, trace which ARRAY the lever writes and
+which ARRAY the metric reads, and confirm they are the same object.**
+
+**⇒ WHAT THE REAL BUILD REQUIRES (unchanged in kind, sharper in detail):** an apical-targeted slow-K conductance —
+i.e. `cp_v_apical` gaining its own inhibitory term, alongside the (n_neurons x n_subunits) extension. That is the
+multi-compartment `sim/` change catalog G.02 called for all along. **Both cheap composition routes have now been
+tried and both were structurally incapable, which is a firmer basis for paying for the structural change than the
+prior "probably needs it".**
