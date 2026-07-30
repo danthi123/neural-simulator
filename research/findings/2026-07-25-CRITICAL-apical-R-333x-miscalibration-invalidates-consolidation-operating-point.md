@@ -4995,3 +4995,30 @@ ORDER — 1.000 single-trial at <=6 ms jitter, with a measured failure point and
 validated off-substrate at 9.1x but is not yet on-bridge — that is the remaining piece); K=6; numpy/CPU;
 3 seeds x 6 trials at jitter=2, 6 seeds x 6 trials elsewhere. This reads ORDER, which is what the decoder's
 shortcut supplied — it is not yet a full position decode.
+
+### 2026-07-29 (LEARNED tuning ENGAGES on-bridge but is WEAK — the named remaining piece is COMPETITION)
+
+The last hand-set element of the order reader was the tuning itself (I assigned preferred positions). Testing
+whether on-bridge Hebbian carves place tuning from a sweep, reader handed NOTHING — no positions, no labels,
+tuning read back afterwards from the learned `place->read` weights:
+
+| seed | mean abs dW | selectivity (peak/mean) | distinct prefs |
+|---|---|---|---|
+| 42 | 0.0116 | 1.73x | 11/12 |
+| 43 | 0.0110 | 1.71x | 12/12 |
+| 44 | 0.0121 | 1.61x | 11/12 |
+
+**It ENGAGES** (weights genuinely move — the `hebbian_max_weight`-vs-`w0` pre-flight was checked, and dW is
+~0.011, not the 0.000 of a saturated bound) and produces **11-12 DISTINCT preferred positions out of 12 cells**,
+spread across the place population. So place tuning is LEARNABLE here.
+
+**But selectivity is only 1.6-1.73x, against 9.1x for the off-substrate k-WTA version** — an ~5x shortfall.
+Diagnosis from the mechanism, not a guess: plain Hebbian has **no COMPETITION**, so every reader cell potentiates
+toward everything it sees and tuning stays BROAD. The off-substrate version got its sharpness from k-WTA. **The
+named fix is lateral inhibition among the reader cells (FS-basket / k-WTA), which this project already has
+machinery for (`shared_FS`)** — a mechanism to add, NOT a boundary.
+
+**Why it matters for the vote (the honest consequence):** broad tuning means each cell fires over a WIDE window,
+which is functionally equivalent to timing jitter — and the population vote is already measured to fail at
+jitter >= 24 ms. So weak tuning is expected to degrade the vote, and the two results connect quantitatively.
+Untested; that is the next step, together with the inhibition.
