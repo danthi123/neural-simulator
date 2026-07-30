@@ -2445,6 +2445,31 @@ pages:
   exactly the dendritic-subunit-by-place-index mechanism I attributed the last 35% of field quality to**, sitting in
   the catalog with a source. It is a shared dependency of BOTH arcs, which raises its priority.
 
+
+**⭐ READ THE SHARED DEPENDENCY (catalog G.02) — and it is BUILDABLE TODAY without a multi-compartment rewrite.**
+Catalog **G.02 "Active dendrites — local computation, dendritic spikes"** (Kandel 6e Ch 13 pp. 293-298) states
+its **Sim status: "missing. Single-compartment everywhere. This is one of the largest abstractions in the
+simulator,"** with validation that *"would require multi-compartment model (Larkum BAC firing: basal+apical
+coincidence → bursts)."* Taken literally that would make the dendritic-subunit mechanism a months-scale rewrite.
+
+**⚠️ BUT THE ENTRY IS PARTLY STALE, AND THE GAP IS NARROWER THAN IT READS.** The engine now HAS
+`enable_two_compartment_dap` (soma + apical `cp_v_apical` — this session used it, since BTSP is gated on it), and
+`enable_coincidence_detection` gives **each postsynaptic neuron a dendritic SUBUNIT over a tagged pathway**
+(`config.py:159`). What is genuinely absent is **MULTIPLE INDEPENDENT SUBUNITS PER NEURON** — the engine gives one
+per *pathway*, not many per *cell*.
+
+**⇒ WHICH MAKES THE MECHANISM BUILDABLE BY PATHWAY SPLITTING, NOT BY A REWRITE.** Split `place→read` into K
+pathways, each carrying a CONTIGUOUS place-index block, each tagged `coincidence_detector=True` ⇒ **each block gets
+its own subunit, so a cluster of neighbouring place inputs shares a local plateau while scattered inputs do not.**
+That is exactly the "cluster of inputs on one branch >> scattered inputs on many branches" nonlinearity the catalog
+describes, and it is exactly the contiguity constraint gap#5's fragmented fields need (peaks 3.19 vs the ideal 1).
+**No `sim/` edit; no multi-compartment model; reuse of machinery this session already exercised.**
+
+**⇒ PRIORITY NOTE: this is a SHARED dependency.** It is gap#5's named residual (the last ~35% of field quality)
+AND the substrate the consolidation successor's relational-binding/schema-abstraction separation would rest on. A
+cheap, no-`sim/`-edit route to it therefore outranks either arc's next step taken alone. **Verify the stale catalog
+line before quoting it** — G.02 says "single-compartment everywhere", which is no longer true.
+
 **⇒ NEXT SESSION'S FIRST ACTION: read Buzsáki Cycle 12 pp. 343-352 (single-column? verify — Kandel's copy is
 two-column with hyphen-splitting, O&N's is not) and the two catalog entries above, THEN design.** The gate
 (ripple-spindle joint phase during simulated NREM) is already specified by the catalog, so do not invent an
