@@ -614,8 +614,13 @@ def generate_spatial_connections_chunked(n, max_connections_per_neuron, neuron_p
         # Explicit cleanup to prevent memory fragmentation
         # (diff, distances, prob_dist, prob_trait, chunk_pos_i, pos_j already freed pre-argpartition)
         del chunk_rows, chunk_cols, chunk_weights, weights
-        del top_k_indices, top_k_values, sorted_within_k, partition_idx
-        del conn_prob, chunk_pos, chunk_traits
+        # FIX 2026-07-31: this deleted FOUR names that do not exist on this path -- top_k_values,
+        # sorted_within_k and partition_idx belonged to an argpartition implementation replaced by the
+        # cp.argsort at :598, and conn_prob was already deleted at :593. The result was a guaranteed
+        # NameError on the FIRST chunk, so EVERY spatial network above the n>15000 chunking threshold
+        # (:132) crashed -- i.e. the entire large-network path this function exists to serve.
+        del top_k_indices
+        del chunk_pos, chunk_traits
         cp.get_default_memory_pool().free_all_blocks()
 
         # Progress update (every 10% or every chunk if few chunks)

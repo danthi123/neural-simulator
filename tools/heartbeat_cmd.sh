@@ -4,7 +4,7 @@
 # with literal commands — not left as prose I have to remember.
 cd /home/dant123/Projects/sim
 gpu=$(nvidia-smi --query-gpu=utilization.gpu,memory.used --format=csv,noheader 2>/dev/null | tr '\n' '|')
-procs=$(pgrep -fc "research.runners" 2>/dev/null || echo 0)
+procs=$(pgrep -fc "research.runners" 2>/dev/null | head -1); procs=${procs:-0}   # -c prints 0 AND exits 1
 wc_out=$(bash tools/workflow_check.sh 2>&1); wc_rc=$?
 echo "⚓ HB $(date +%H:%M) gpu=[$gpu] procs=$procs"
 if [ "$wc_rc" -ne 0 ]; then

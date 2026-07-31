@@ -1053,7 +1053,13 @@ def run_repl(mode: str, seed: int, n_train_events: int,
     print(f"Quit with 'quit', 'exit', or Ctrl-D.")
     print("=" * 60, flush=True)
 
-    vocab, _ = _vocab_for_mode(mode)
+    # FIX 2026-07-31: bind word_to_action HERE, beside vocab, not at :1387. It was assigned only on the
+    # plain-word path but READ on the :speak path (:1299). Python makes it function-local for the whole
+    # of run_repl, so `:speak` before any plain word raised UnboundLocalError -- and because the read sits
+    # on the right of an `or`, it evaluated ONLY when pred_word != expected_word. The crash therefore
+    # fired exactly when the model was WRONG: a :speak session either printed [OK] or died, and a
+    # measured incorrect answer could never be observed.
+    vocab, word_to_action = _vocab_for_mode(mode)
     mode_label = mode.upper()
 
     # ── Lineage setup ──────────────────────────────────────────────
@@ -1384,7 +1390,6 @@ def run_repl(mode: str, seed: int, n_train_events: int,
             conf = result["confidence_ratio"]
 
             in_vocab = line in vocab
-            _, word_to_action = _vocab_for_mode(mode)
             expected_action = word_to_action.get(line)
             is_correct = (in_vocab and pred_action == expected_action)
             if is_correct:

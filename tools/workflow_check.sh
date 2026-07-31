@@ -19,7 +19,9 @@ cd "$ROOT" || exit 0
 FAIL=0
 
 echo "════ 1. PARALLELISM — is the machine actually being used? ════"
-CORES=$(nproc); LOAD=$(cut -d' ' -f1 /proc/loadavg); PROCS=$(pgrep -fc 'research\.runners' 2>/dev/null || echo 0)
+CORES=$(nproc); LOAD=$(cut -d' ' -f1 /proc/loadavg); # `pgrep -c` prints "0" AND exits 1 on no match, so `|| echo 0` appended a SECOND line and PROCS became
+# "0\n0" -- which breaks the integer test below. Take the first line and default it instead.
+PROCS=$(pgrep -fc 'research\.runners' 2>/dev/null | head -1); PROCS=${PROCS:-0}
 IDLE=$(awk -v c="$CORES" -v l="$LOAD" 'BEGIN{printf "%d", c-l}')
 echo "  cores=$CORES  load=$LOAD  research-procs=$PROCS  => ~$IDLE idle cores"
 # CONTENTION WINDOW: the owner sometimes games on this box (no reboot, runs keep going). During that window a
