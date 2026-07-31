@@ -121,6 +121,17 @@ this common mode, and it is the orientation-development model. But it must be ju
 measurement, **not** by the saturation story below, which is refuted. Do not inherit the wrong reason for a
 possibly-right fix.
 
+**▶ RESULT (2026-07-31, 3 seeds): RAN, and the comparison is RATE-CONFOUNDED — NOT a refutation.** Both rules
+degrade every metric (`|on−off|` 0.0678 → 0.0164 / 0.0026; `osi_post_frac` 0.0052 → 0.0026 / 0.0039), which
+would fire the kill criterion — except mean-subtract makes `sum_j dw_ij = 0` **by construction**, removing the net
+potentiation that balanced homeostatic scaling. The arms end on **opposite sides of the homeo target**: base
+`v1_rate` 0.00433 = **2.17×** target, meansub 0.00117 = 0.58×, oja 0.00063 = 0.32×, with 3× the weight mass
+between them. Lower selectivity is what less firing predicts regardless of whether competition works. Caught
+because a sum-conserving rule cannot lower the mean weight, and `on_mean` had fallen 9.15 → 3.01. **Matched test
+staged:** sweep `HEBB_MEAN_SUB ∈ {0.25, 0.5, 0.75, 0.9}` × 3 seeds, read the arm whose firing rate matches
+baseline, compare OSI there. Finding:
+[`2026-07-31-laneD-normalization-arms-are-RATE-CONFOUNDED-not-a-clean-refutation.md`](findings/2026-07-31-laneD-normalization-arms-are-RATE-CONFOUNDED-not-a-clean-refutation.md).
+
 **PRE-REGISTERED, staged to the pool 2026-07-31 (3 arms × seeds 42/43/44, `dev_steps` 6000):**
 `laneD_out/{base,meansub,oja}_{42,43,44}.json`.
 - **Prediction:** `HEBB_MEAN_SUB=1.0` raises `|on_minus_off_mean|` well above the baseline's ~0.04 **and** raises
