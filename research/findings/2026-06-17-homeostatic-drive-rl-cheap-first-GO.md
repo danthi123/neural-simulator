@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-06-17
+mechanism: homeostatic-drive
+---
+
 # Homeostatic-drive RL — cheapest-first GO (6 seeds): the agent learns to keep itself alive from a self-generated intrinsic reward
 
 **Date:** 2026-06-17

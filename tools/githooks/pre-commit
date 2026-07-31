@@ -30,7 +30,12 @@ ROOT=$(git rev-parse --show-toplevel); export ROOT
 # This is the gate for the failure class the experiment harness does NOT cover: a claim repeated from a summary
 # without opening the artifact. On 2026-07-31 that produced "lane A has a banked 6-seed GO" when the artifact
 # read {"GO": false, "n_seeds_go": 2}. A finding is where claims become durable, so this is where they get checked.
-STAGED=$(git diff --cached --name-only --diff-filter=ACM | grep -E '^research/findings/[^/]+\.md$' || true)
+# --diff-filter=A, NOT ACM. The Tier-1 status classification added frontmatter to 274 LEGACY findings, which
+# under ACM pulled every one of them into claim-check scope -- and a 2026-05 document cannot retroactively cite
+# artifacts that were never written. The gate's scope had silently assumed "has frontmatter" == "is new"; after
+# the classification pass that assumption is false. Claims are checked on findings as WRITTEN, which is when the
+# author can actually satisfy them; editing an old finding's status must not demand its rewrite.
+STAGED=$(git diff --cached --name-only --diff-filter=A | grep -E '^research/findings/[^/]+\.md$' || true)
 if [ -n "$STAGED" ]; then
   if ! echo "$STAGED" | xargs -r "$ROOT/.venv/bin/python" "$ROOT/tools/claim_check.py" > /tmp/_precommit_claims.out 2>&1; then
     echo "⛔ COMMIT BLOCKED — a findings doc states measurements that are in no artifact it cites:"
@@ -90,7 +95,14 @@ fi
 # from tools/gates/. Adding a class is one file; this hook never changes again. The registry refuses to trust a
 # gate whose selftest does not fail in the failing direction -- failure class 3 (the anti-drift mechanism being
 # itself the defect, 9 incidents) closed structurally.
-STAGED_ALL=$(git diff --cached --name-only --diff-filter=ACM || true)
+# --diff-filter=A for the same reason as GATE 2: the Tier-1 classification added frontmatter to 274 LEGACY
+# findings, and under ACM that pulled every one into the CONTENT gates -- 192 doc-type hits and 39
+# single-seed hits on 2026-04/05 documents that cannot retroactively cite artifacts or re-run at 6 seeds.
+# Content quality is checked when a document is WRITTEN, which is when the author can satisfy it.
+# RELATIONSHIP gates (stale-pointer) are unaffected: they glob the steering docs themselves rather than
+# relying on the staged list, so they keep checking the whole corpus -- which is where their 30 REAL hits
+# came from (the board citing a RETRACTED gap#3 GO with no marker).
+STAGED_ALL=$(git diff --cached --name-only --diff-filter=A || true)
 "$ROOT/.venv/bin/python" - "$STAGED_ALL" > /tmp/_precommit_gates.out 2>&1 <<'PY'
 import sys, os
 sys.path.insert(0, os.environ.get("ROOT") or os.getcwd())

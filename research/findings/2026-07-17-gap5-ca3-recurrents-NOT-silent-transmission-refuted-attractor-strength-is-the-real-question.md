@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-07-17
+mechanism: ca3-completion
+---
+
 # Gap #5 re-opening: the CA3 recurrents are NOT "functionally silent" — a direct g_e probe shows they transmit and scale with weight; the 2026-07-08 "transmission bug" was a weak-drive/weight-not-applied artifact. The real question is attractor STRENGTH, not a sim/ transmission bug.
 
 **2026-07-17.** Owner chose gap #5 (CA3 completion / imaginative replay) as the next gap ("whichever closes quicker").

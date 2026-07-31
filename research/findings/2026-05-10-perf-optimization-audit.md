@@ -1,3 +1,9 @@
+---
+type: finding
+status: contributing
+date: 2026-05-10
+---
+
 # Performance optimization audit — pre-cloud-deploy menu
 
 **Date:** 2026-05-10 (overnight, 64-word smoke observation)

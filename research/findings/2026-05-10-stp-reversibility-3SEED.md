@@ -1,3 +1,10 @@
+---
+type: finding
+status: qualified
+date: 2026-05-10
+mechanism: stp
+---
+
 # STP-reversibility 3-seed: matches biology baseline at 3.13× speedup
 
 **Date:** 2026-05-10 19:55 EDT

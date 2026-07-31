@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-07-18
+mechanism: ca3-completion
+---
+
 # Gap #5 — the FROZEN cue-specific completion TRILEMMA (magnitude vs specificity vs bistability), and the mechanisms that address each horn
 
 **2026-07-18.** Continuing the frozen-attractor completion work (after retracting the Wang plasticity+noise confound

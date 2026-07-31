@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-05-02
+mechanism: hebbian-decay
+---
+
 # 2026-05-02 — Hebbian fix EMPIRICAL RESULT: 3/4 tokens learn target motor pool
 
 **TL;DR:** Disabling Hebbian (commit 144eefd) restored real plasticity. The 100-ep

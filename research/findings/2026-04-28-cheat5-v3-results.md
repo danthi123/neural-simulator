@@ -1,3 +1,10 @@
+---
+type: finding
+status: qualified
+date: 2026-04-28
+mechanism: bg-cross-projections
+---
+
 # Cheat #5 v3 + v3.1 results — v3 GO, v3.1 NO-GO (pivot to v4)
 
 **Date:** 2026-04-28

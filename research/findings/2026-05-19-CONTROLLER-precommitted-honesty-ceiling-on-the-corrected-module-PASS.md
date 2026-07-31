@@ -1,3 +1,10 @@
+---
+type: finding
+status: qualified
+date: 2026-05-19
+mechanism: integrated-loop
+---
+
 # Controller pre-committed honesty ceiling on a PASS against the corrected necessity module — stated and propagated BEFORE any build, so no outcome can be rationalized
 
 ## Why this document exists (the deepest anti-cheat question of the arc)

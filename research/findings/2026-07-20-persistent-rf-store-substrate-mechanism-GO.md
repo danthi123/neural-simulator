@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-07-20
+mechanism: fact-store
+---
+
 # Persistent RF store — the substrate mechanism for a device-synapse fact-store (GO, Phase 1)
 
 **Date:** 2026-07-20 · **Status:** GO (Phase 1 = the `sim/` mechanism) — a PERSISTENT complex store CSR

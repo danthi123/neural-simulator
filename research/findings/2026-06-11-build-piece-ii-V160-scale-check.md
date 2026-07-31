@@ -1,3 +1,10 @@
+---
+type: finding
+status: corrected
+date: 2026-06-11
+mechanism: learned-embedding
+---
+
 # Build piece (ii) — V=160 scale-check: generalization SCALES; the brain-based read-out's GLOBAL Pearson degrades at scale (read-out propagation diagnostic in flight)
 
 **Date:** 2026-06-11. **Runner:** `research/runners/learned_graded_embedding_divnorm_readout_probe.py` (the validated brain-based divnorm read-out, at 3.3× the toy vocab). **Backend:** `SIM_BACKEND=cupy` (GPU). **Raw:** `research/findings/raw/_lge_v160_scalecheck_seed42.json` + `_lge_v160_scalecheck.log`. **Scale:** V=160 (20 clusters × 7 = 160 concepts; n_pool=7000, pattern=100; 7300-neuron bridge, 30.7M synapses). **Seed:** 42. **Context:** the cheapest first build step (build plan piece ii) — does the de-risked recipe hold past toy vocab (48) before the V=320 run?

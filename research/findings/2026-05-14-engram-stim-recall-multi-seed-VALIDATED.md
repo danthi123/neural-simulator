@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-05-14
+mechanism: engram-tag
+---
+
 # Engram-tag stim-recall: 87.5% multi-seed (concept-concept semantic memory)
 
 ## Context

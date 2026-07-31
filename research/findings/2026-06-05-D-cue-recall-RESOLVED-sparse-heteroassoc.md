@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-06-05
+mechanism: heteroassociation
+---
+
 # 🎉 D cue-recall RESOLVED — a LEARNED sparse recurrent heteroassociative memory — 2026-06-05
 
 The D boundary the owner asked to resolve — **cue-direction associative recall** (drive concept `a` alone → recall its

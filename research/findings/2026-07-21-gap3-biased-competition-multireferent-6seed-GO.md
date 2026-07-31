@@ -1,3 +1,10 @@
+---
+type: finding
+status: retracted
+date: 2026-07-21
+mechanism: biased-competition
+---
+
 # gap#3 (multi-referent disambiguation) — BIASED-COMPETITION resolves correlated referents where recency/salience failed (6-seed GO, rate rung)
 
 **2026-07-21 · GO, 6-seed (42/43/44/100/101/102), rate rung.** The gap-close research gate's Rank-4: the mechanism the

@@ -1,3 +1,9 @@
+---
+type: finding
+status: live
+date: 2026-05-24
+---
+
 # bio_brain_regions load-ceiling map (extension of pillars n=96/n=97/n=98) — ALL THREE substrate variants (OPTION 3 / HIPPO-OPTION3 / DLPFC-extension) PASS at EVERY load L=2..7 (the gamma-slot ceiling); substrate has HUGE capacity headroom; the (c) loop NEGATIVE is bounded as a (c)-integration design limitation, NOT a substrate limitation (2026-05-24)
 
 ## What was tested

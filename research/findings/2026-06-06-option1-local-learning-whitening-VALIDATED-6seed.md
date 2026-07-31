@@ -1,3 +1,10 @@
+---
+type: finding
+status: qualified
+date: 2026-06-06
+mechanism: whitening
+---
+
 # Option 1 RESOLVED (algorithm level): a regularized LOCAL rule learns a composing whitening — 6/6 seeds, 100% — 2026-06-06
 
 The worst-pair decorrelation "boundary" I confidently declared a *confirmed point-neuron limit* earlier this same

@@ -1,3 +1,9 @@
+---
+type: finding
+status: contributing
+date: 2026-06-12
+---
+
 # 3-bridge conversational ensemble de-risk (build step 1, option b): GO — the two validated de-risks INTEGRATE; within-bridge generalization + cross-bridge composition coexist with the moat intact
 
 **Date:** 2026-06-12. **Runner:** `research/runners/cortex_conversation_ensemble_derisk.py` (commit 5e6f6952). **Backend:** `SIM_BACKEND=cupy` (GPU). **Raw:** `research/findings/raw/_cortex_conversation_ensemble_D512_full.json` + `.log`. **Scope:** 3 shards × 64 = 192 concepts (animals/foods/vehicles), 3 seeds (42/43/44), composer **D=512**, learned cortex. Owner chose this intermediate (option b) before the 32-bridge build.

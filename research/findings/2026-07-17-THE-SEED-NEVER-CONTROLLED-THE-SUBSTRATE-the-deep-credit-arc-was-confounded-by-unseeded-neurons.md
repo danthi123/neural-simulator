@@ -1,3 +1,9 @@
+---
+type: finding
+status: live
+date: 2026-07-17
+---
+
 # ⛔ `--seeds` NEVER CONTROLLED THE SUBSTRATE — the deep-credit arc's FULL-vs-FROZEN comparisons were confounded by **unseeded neuron heterogeneity**, and the confound is LARGER than the effect
 
 **2026-07-17. FOUND, MEASURED, FIXED, VERIFIED, and the sweep relaunched. NO `sim/` edit — the bug was in the runner.**

@@ -1,3 +1,9 @@
+---
+type: finding
+status: live
+date: 2026-07-17
+---
+
 # Banked-capabilities audit: have we deferred UNSOLVED needed capabilities, or banked METHODS and re-solved? (2026-07-17)
 
 **Owner question, verbatim:** *have we been deferring/banking conversational capabilities needed for LLM-like

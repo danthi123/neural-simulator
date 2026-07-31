@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-06-10
+mechanism: superior-colliculus
+---
+
 # N1 CLOSED — the navigation superior-colliculus orienting reflex is now a spiking superior colliculus (6-seed: matches/beats the host it replaces, lesion-confirmed)
 
 **Date:** 2026-06-10

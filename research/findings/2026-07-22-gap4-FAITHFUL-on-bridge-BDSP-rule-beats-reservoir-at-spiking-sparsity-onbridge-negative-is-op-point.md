@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-07-22
+mechanism: gap4-credit
+---
+
 # gap#4 — the FAITHFUL on-bridge BDSP rule (coincidence-gated + sigmoid-baseline credit) BEATS a reservoir at spiking sparsity; the on-bridge negative is an OPERATING-POINT/LR-scale issue, NOT the rule's math
 
 **2026-07-22, CPU/numpy, coexisting with the fluency training.** The sparse-hidden de-risk ruled out sparsity-per-se as

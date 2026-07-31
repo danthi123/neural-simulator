@@ -1,3 +1,10 @@
+---
+type: finding
+status: qualified
+date: 2026-07-22
+mechanism: recombinative-replay
+---
+
 # gap#5 RANK 3 — imaginative/generative replay (novel recombination): research gate
 
 **2026-07-22.** RANK 1 (single-assembly spontaneous reactivation) = 6-seed GO; RANK 2 (ordered forward sequence replay)

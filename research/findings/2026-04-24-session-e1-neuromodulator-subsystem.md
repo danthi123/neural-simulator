@@ -1,3 +1,10 @@
+---
+type: finding
+status: qualified
+date: 2026-04-24
+mechanism: neuromodulators
+---
+
 # Session E.1 Findings — Neuromodulator Subsystem
 
 **Date:** 2026-04-24

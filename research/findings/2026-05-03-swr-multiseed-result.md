@@ -1,3 +1,10 @@
+---
+type: finding
+status: qualified
+date: 2026-05-03
+mechanism: swr-replay
+---
+
 # SWR Phase 3 replay — multi-seed result (in flight)
 
 **Date:** 2026-05-03 (last update: 04:08 EDT — n=3 seeds done)

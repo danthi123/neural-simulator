@@ -1,3 +1,9 @@
+---
+type: finding
+status: qualified
+date: 2026-06-14
+---
+
 # Option C Stage-B (brain-based fair test) — seed 42 is a COMPLETE NULL while the host proves the structure is there; the read-out/mechanism discriminator localizes it to the LEARN (the point-neuron decorrelation wall), not the read-out
 
 **Date:** 2026-06-14. **Runners:** `research/runners/option_c_stageB_fair_test.py` (the fair test, host-gated) + `research/runners/option_c_stageB_readout_discriminator.py` (the localizer). **Backend:** `SIM_BACKEND=cupy` (GPU). **Raw:** `research/findings/raw/_option_c_stageB_fair_multiseed.log` (seed 42 complete; seeds 43/44 stopped — see below), `research/findings/raw/_option_c_stageB_discriminator_seed42.{log,json}`. **Design:** `docs/plans/2026-06-14-option-c-fairer-derisk-design.md`. **Stage-A precondition (PASSED):** `2026-06-14-option-c-paradigmatic-host-precheck-VIABLE.md`.

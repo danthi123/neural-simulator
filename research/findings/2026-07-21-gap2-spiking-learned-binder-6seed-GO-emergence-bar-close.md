@@ -1,3 +1,10 @@
+---
+type: finding
+status: corrected
+date: 2026-07-21
+mechanism: learned-binder
+---
+
 # gap#2 — a LEARNED local binder READ on the SPIKING RF substrate reaches the 1.000 ceiling (6-seed GO): the emergence-bar residual is closed
 
 **2026-07-21 · GO, 6-seed (42/43/44/100/101/102).** The gap-close research gate's Rank-1: replace the composer's FIXED

@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-06-17
+mechanism: reconsolidation
+---
+
 # Reconsolidation (prediction-error-gated in-place fact update) — cheap-first de-risk = 6/6 GO
 
 **Date:** 2026-06-17 (CYCLE 146 foreground track — the next *medium* conversational roadmap item)

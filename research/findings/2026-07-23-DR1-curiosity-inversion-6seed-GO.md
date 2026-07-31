@@ -1,3 +1,10 @@
+---
+type: finding
+status: qualified
+date: 2026-07-23
+mechanism: curiosity
+---
+
 # DR-1 (new-direction Phase-0): the no-confab moat INVERTED into honest CURIOSITY — 6-seed GO (2026-07-23)
 
 The owner's headline point ("don't refuse when unsure — crave knowledge + growth, seek to learn") realized:

@@ -1,3 +1,9 @@
+---
+type: finding
+status: live
+date: 2026-05-16
+---
+
 # Generator G1 — songbird controller (Approach B): honest NEGATIVE (pre-registered gate FAILED)
 
 ## TL;DR

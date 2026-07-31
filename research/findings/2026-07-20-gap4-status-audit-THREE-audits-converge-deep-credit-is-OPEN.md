@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-07-20
+mechanism: gap4-credit
+---
+
 # gap#4 status audit — THREE independent audits converge: deep credit on spikes is OPEN; the board overstates closure
 
 **2026-07-20.** Read-only audit triggered before starting gap#4 work (so as not to build on an invalidated result).

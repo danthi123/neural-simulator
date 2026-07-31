@@ -1,3 +1,9 @@
+---
+type: finding
+status: contributing
+date: 2026-06-08
+---
+
 # Remaining navigation cheats — full-biologization research (N5, N9, N2, N7)
 
 **Date:** 2026-06-08

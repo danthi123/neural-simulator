@@ -1,3 +1,10 @@
+---
+type: finding
+status: qualified
+date: 2026-06-17
+mechanism: homeostatic-drive
+---
+
 # Sustained homeostatic agency — GO (6 seeds): the self-generated drive keeps the agent ALIVE over time
 
 **Date:** 2026-06-17 (autonomous loop tick)

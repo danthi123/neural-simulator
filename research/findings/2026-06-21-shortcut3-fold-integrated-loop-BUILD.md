@@ -1,3 +1,10 @@
+---
+type: finding
+status: qualified
+date: 2026-06-21
+mechanism: k-way-sequencer
+---
+
 # Shortcut #3 BUILD — fold the spiking K-way sequencer into the production composer, retire the host first-match `_scan` (2026-06-21)
 
 **The build.** Per the committed plan (`docs/plans/2026-06-21-shortcut3-fold-host-scan-to-spiking-sequencer-plan.md`,

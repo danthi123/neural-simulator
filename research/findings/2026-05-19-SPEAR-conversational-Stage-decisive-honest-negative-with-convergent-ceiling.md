@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-05-19
+mechanism: spear
+---
+
 # Shared-rhythm SPEAR conversational stage: decisive multi-seed run is an honest negative; the same ceiling appears in BOTH static (Stage-1) and rhythm-multiplexed (SPEAR) architectures, which is itself a biology-translatable insight
 
 ## Status

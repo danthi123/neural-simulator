@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-06-06
+mechanism: fhrr
+---
+
 # The VSA/FHRR composer is a principled idealization, not a functional reproduction of cortex — known limitation; the learned-read-out conversion (option d) is benched as a future revisit — 2026-06-06
 
 > **Owner directive (2026-06-06):** if the spike-native robustness ladder (options a–c) resolves the

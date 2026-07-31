@@ -1,3 +1,10 @@
+---
+type: finding
+status: corrected
+date: 2026-06-06
+mechanism: whitening
+---
+
 # Rate-coded spiking CAN compute whitening — the boundary is LOCAL LEARNING, not computation (verdict FLIPPED) — 2026-06-06
 
 Follow-on to `2026-06-06-realobject-grounding-and-whitening-synthesis.md` (which had concluded the boundary was the

@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-07-18
+mechanism: dendritic-bistability
+---
+
 # Gap #5 — intrinsic dendritic bistability is achievable (OFFLINE I-V validated); it REQUIRES a KIR load line, which the point soma lacks
 
 **2026-07-18.** The completion trilemma root-cause was: the single-compartment point soma has NO intrinsic bistability,

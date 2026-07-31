@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-05-19
+mechanism: integrated-loop
+---
+
 # Integrated-loop iteration 2: per-stripe homeostatic equalization transfers and works; the temporal-credit cold-start break is correctly wired but blocked by the documented zero-initialization precondition
 
 ## Plain-language summary

@@ -1,3 +1,9 @@
+---
+type: finding
+status: contributing
+date: 2026-06-04
+---
+
 # Unified-agent benchmark — the converge-not-add measurement — 2026-06-04
 
 **One line:** The fragmented composition / memory / abstention pieces are converged into ONE agent and

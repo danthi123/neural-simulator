@@ -1,3 +1,10 @@
+---
+type: finding
+status: qualified
+date: 2026-05-11
+mechanism: trisynaptic-loop
+---
+
 # P1 — Hippocampal trisynaptic loop validation
 
 **Date:** 2026-05-11

@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-07-01
+mechanism: deep-credit
+---
+
 # Burst-multiplexed & dendritic-microcircuit credit assignment — a digitization SPEC for EMERGE-1b
 
 **2026-07-01 (read-only deep-research subagent; NO code edited, NO experiment run).** The prior gate

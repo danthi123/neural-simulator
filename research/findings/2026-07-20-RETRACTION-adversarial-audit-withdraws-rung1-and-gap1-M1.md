@@ -1,3 +1,9 @@
+---
+type: finding
+status: live
+date: 2026-07-20
+---
+
 # ⛔ RETRACTION — a 28-agent adversarial audit WITHDRAWS two of this session's four GO claims
 
 A 16-skeptic × 4-lens adversarial audit (plus independent verification of every flagged issue) was run against

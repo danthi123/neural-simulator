@@ -1,3 +1,9 @@
+---
+type: finding
+status: live
+date: 2026-05-09
+---
+
 # Track 3 layer 4 :speak — 6-seed multi-seed VALIDATED
 
 **Date:** 2026-05-09 EDT

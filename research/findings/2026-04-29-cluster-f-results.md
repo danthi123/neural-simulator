@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-04-29
+mechanism: cerebellum
+---
+
 # 2026-04-29 — Cluster F (cerebellum) v1 eval: NEUTRAL; A+E ceiling holds
 
 **Run:** `g11_bg_runner.py` multi-goal deterministic, n=6 seeds × 3 conditions = 18 runs. Conditions: baseline (no clusters), A+F (Cluster A closed BG loop + Cluster F cerebellum), A+E+F (closed loop + topographic + cerebellum). `CUBLAS_WORKSPACE_CONFIG=:4096:8`.

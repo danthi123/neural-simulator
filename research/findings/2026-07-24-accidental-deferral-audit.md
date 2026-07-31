@@ -1,3 +1,9 @@
+---
+type: finding
+status: live
+date: 2026-07-24
+---
+
 # Accidental-deferral audit — faculties silently parked while the frontier moved (2026-07-24)
 
 **Type:** process audit / record-keeping (no experiment). **Trigger:** the 2026-07-23 pivot's HARD RULE #1 — *do not

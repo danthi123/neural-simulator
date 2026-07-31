@@ -1,3 +1,10 @@
+---
+type: finding
+status: superseded
+date: 2026-07-18
+mechanism: bdsp
+---
+
 # Gap #4 (local-credit keystone) research gate — the deep-credit block is FIXABLE, not a wall: BDSP with the apical error carried by the just-built BISTABLE HELD apical plateau
 
 **2026-07-18.** Gap #4 (a local spiking credit rule, no weight transport — the engine for #2 & #5) had a wall of banked

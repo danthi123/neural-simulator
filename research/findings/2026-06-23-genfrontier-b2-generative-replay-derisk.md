@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-06-23
+mechanism: generative-replay
+---
+
 # Generative-frontier (b2) — the BRAIN'S OWN generative replay INVENTS novel-but-plausible propositions: GO (2026-06-23)
 
 **The cheapest-first de-risk of "can the brain INVENT content" (tier G2) — the FIRST brain-mechanism

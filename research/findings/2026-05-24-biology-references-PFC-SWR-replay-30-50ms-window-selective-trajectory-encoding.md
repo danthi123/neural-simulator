@@ -1,3 +1,9 @@
+---
+type: finding
+status: contributing
+date: 2026-05-24
+---
+
 # Biology references for the (c) loop: PFC response 30-50ms post-SWR; selective for trajectory not individual locations; forward + reverse replay both observed (2026-05-24)
 
 ## Direct mapping to (c) loop design parameters

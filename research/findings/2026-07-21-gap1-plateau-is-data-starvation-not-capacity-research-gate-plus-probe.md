@@ -1,3 +1,9 @@
+---
+type: finding
+status: corrected
+date: 2026-07-21
+---
+
 # gap#1 broad-domain plateau (ppl ~121) — research gate + probe: it is DATA-STARVATION, not a capacity wall; the data lever was never tested at scale (decisive run in flight)
 
 **2026-07-21.** The gap-close audit flagged gap#1 open-generation as "scale/capacity-bound," and the record's own honest

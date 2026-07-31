@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-05-24
+mechanism: generative-replay
+---
+
 # (c) generative-replay decisive multi-seed run — HONEST NEGATIVE — loop at n_iterations=1 doesn't produce above-chance partial-sequence completion on the validated substrate; pivot direction identified (2026-05-24)
 
 ## What was tested

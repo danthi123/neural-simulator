@@ -1,3 +1,9 @@
+---
+type: finding
+status: contributing
+date: 2026-05-25
+---
+
 # Direction P-v3 KILLED early: discovered the proposed architectural fix is a STRICT SUBSET of the already-NEGATIVE 2026-05-22 ca1-variant + staged-recurrence work; substrate-consolidation dynamics-class arc is fully convergent across 5+ negatives; pivot to representation-class (per 2026-05-22 pre-registered next direction)
 
 **Date:** 2026-05-25

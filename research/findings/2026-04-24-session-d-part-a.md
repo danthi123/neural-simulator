@@ -1,3 +1,9 @@
+---
+type: finding
+status: qualified
+date: 2026-04-24
+---
+
 # Session D Part A — Gate redesign
 
 **Date:** 2026-04-24

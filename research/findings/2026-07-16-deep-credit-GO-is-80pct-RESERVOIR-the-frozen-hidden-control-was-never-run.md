@@ -1,3 +1,10 @@
+---
+type: finding
+status: corrected
+date: 2026-07-16
+mechanism: deep-credit
+---
+
 # The banked "feedforward spiking deep credit is ALREADY GO (K=8 0.877)" is **80% a fixed random reservoir + a linear readout** — the frozen-hidden control existed in the code, unused, and the GO gate never included it
 
 > # ⛔⛔ THE "80%" NUMBER IS **CONFOUNDED** — CORRECTION 2026-07-17. READ THIS FIRST.

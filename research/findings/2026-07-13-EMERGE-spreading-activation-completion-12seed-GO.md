@@ -1,3 +1,10 @@
+---
+type: finding
+status: corrected
+date: 2026-07-13
+mechanism: spreading-activation
+---
+
 # EMERGE spreading-activation SEMANTIC COMPLETION — 12-seed GO (standard 6/6 + FRESH 6/6, unanimous): a held-out concept never taught a property, only CO-OCCURRING with property-bearers, completes to it via 2-hop GRADED spreading activation on the spiking HTM cortex's learned codes; moat intact. The mission-core redirect delivered — toward open-domain conversation.
 
 **Date:** 2026-07-13

@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-07-23
+mechanism: self-schema
+---
+
 # DR-3 (new-direction Phase-0/1): a functional SELF-SCHEMA region — the brain reads + reports its own internal state, 6-seed GO on spikes (2026-07-23)
 
 Second validated faculty of the owner's reframe (toward self-awareness). A Graziano Attention-Schema + higher-order

@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-06-04
+mechanism: dlpfc-wm
+---
+
 # One-bridge unification step 3 — Task 1 DECISION de-risk: dlPFC working-memory bistability SURVIVES dt=1.0 → MERGE — 2026-06-04
 
 **Verdict: MERGE.** The dlPFC dialogue-planning working-memory loop's PERSISTENT ACTIVITY (its working-memory

@@ -1,3 +1,10 @@
+---
+type: finding
+status: superseded
+date: 2026-05-02
+mechanism: hebbian-decay
+---
+
 # 2026-05-02 — ROOT CAUSE: text I/O chance-level results were Hebbian decay collapse
 
 **TL;DR:** Two months of "text I/O stuck at ~30% baseline" were caused by `cfg.enable_hebbian_learning` being LEFT AT ITS DEFAULT (True) in `text_train_embodied.py`. Every g* research runner explicitly sets it to False. Default Hebbian applies a global `hebbian_weight_decay = 1e-5` per simulation sub-step. Over 100 ep × 30 steps × ~330 sub-steps = ~990,000 sub-steps, this multiplies weights by `(1-1e-5)^990000 ≈ 5e-5` — driving every plastic weight to the `hebbian_min_weight = 0.05` floor. STDP and reward modulation cannot differentially shape weights when the global decay is dragging everything to zero.

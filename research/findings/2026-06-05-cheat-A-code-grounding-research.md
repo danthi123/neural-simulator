@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-06-05
+mechanism: grounding
+---
+
 # Cheat-A (RF-composer concept-code grounding) — biology-grounded conversion research — 2026-06-05
 
 **The shortcut.** The FHRR-on-bridge conversational composer (`research/runners/rf_phasor_composer.py`,

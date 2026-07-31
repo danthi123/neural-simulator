@@ -1,3 +1,10 @@
+---
+type: finding
+status: corrected
+date: 2026-05-19
+mechanism: integrated-loop
+---
+
 # Third convergent signal: the program's original pre-registered necessity hypothesis is falsified — the precise, catalog-grounded correction (with strong anti-goalpost-move safeguards)
 
 ## Status — this is the most consequential result of the integrated-loop arc, and it is a genuine scientific finding, not a failure

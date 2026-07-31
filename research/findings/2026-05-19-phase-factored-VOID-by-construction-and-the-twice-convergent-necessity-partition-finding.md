@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-05-19
+mechanism: integrated-loop
+---
+
 # Phase-factored architecture: VOID-by-construction (GPU-verified, frozen verdict recomputed) — and the twice-convergent program-level reading that the pre-registered necessity partition itself may be the falsified element
 
 ## Status

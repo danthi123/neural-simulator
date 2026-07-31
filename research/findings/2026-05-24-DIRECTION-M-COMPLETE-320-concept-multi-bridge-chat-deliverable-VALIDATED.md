@@ -1,3 +1,9 @@
+---
+type: finding
+status: qualified
+date: 2026-05-24
+---
+
 # Direction M COMPLETE: 320-concept G.20 multi-bridge chat deliverable VALIDATED
 
 **Date:** 2026-05-24

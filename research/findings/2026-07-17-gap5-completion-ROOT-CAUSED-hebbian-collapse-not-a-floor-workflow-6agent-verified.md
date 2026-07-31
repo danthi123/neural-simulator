@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-07-17
+mechanism: ca3-completion
+---
+
 # Gap #5 CA3 completion — ROOT-CAUSED by a 6-agent adversarially-verified workflow: the blocker is a TRAINING Hebbian-collapse confound, NOT a substrate floor and NOT a transmission bug (both prior diagnoses refuted). The substrate CAN complete; the close is a learned pattern-specific attractor + dendritic-dAP completion.
 
 **2026-07-17.** Gap #5 (owner chose "whichever closes quicker"). Two prior diagnoses of the CA3-completion failure

@@ -1,3 +1,10 @@
+---
+type: finding
+status: qualified
+date: 2026-07-21
+mechanism: emergent-dg
+---
+
 # gap#5 emergent-DG detonator — a reusable per-pathway STP-disable `sim/` mechanism BUILT (byte-identical), but it is necessary-NOT-sufficient; the sparse+separated window is a BOUNDARY needing one-shot BTSP-during-encoding (the gap#4↔#5 unification)
 
 **2026-07-21.** The gap#5 emergence-bar close (self-organized DG-selected CA3 assemblies, replacing the pre-assigned

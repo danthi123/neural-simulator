@@ -1,3 +1,10 @@
+---
+type: finding
+status: qualified
+date: 2026-07-20
+mechanism: rf-phase-encode
+---
+
 # gap#1 RF PHASE ENCODE — the FIRST spiking-input encode PAST the fidelity wall (deployed deep-NLL GO, 6-seed)
 
 **Date:** 2026-07-20 · **Status:** **GO, 6-seed (dev 42/43/44 + blind 100/101/102)** — adversarially verified

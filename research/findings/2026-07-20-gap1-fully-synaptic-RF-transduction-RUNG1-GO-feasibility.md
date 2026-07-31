@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-07-20
+mechanism: rf-transduction
+---
+
 # gap#1 fully-synaptic RF-phase transduction — RUNG 1 + RUNG 2 GO: the last host read is REPLACED by a real synapse on-bridge
 
 **Date:** 2026-07-20 · **Status:** RUNG 1 (feasibility) GO **+ RUNG 2 (on-bridge synaptic read) GO** — the RF spike

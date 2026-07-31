@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-05-19
+mechanism: integrated-loop
+---
+
 # Integrated-loop instrument-soundness: the per-binding asymmetry is a diagnosed emergent symmetry-break, not a wiring bug; the next step is a deeper, named, biology-grounded equalization mechanism
 
 ## Plain-language summary

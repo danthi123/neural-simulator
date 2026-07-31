@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-06-17
+mechanism: homeostatic-drive
+---
+
 # Spiking homeostatic-drive mechanism — GO (3 seeds): the drive + intrinsic reward work on REAL spikes
 
 **Date:** 2026-06-17

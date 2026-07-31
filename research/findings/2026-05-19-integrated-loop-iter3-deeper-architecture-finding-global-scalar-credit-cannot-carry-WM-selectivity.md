@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-05-19
+mechanism: integrated-loop
+---
+
 # Integrated-loop iteration 3: the documented zero-initialization fix works (episodic binding now perfect), but a global scalar three-factor signal does not carry role-selective working-memory binding — a deeper, well-triangulated architecture finding
 
 ## Plain-language summary

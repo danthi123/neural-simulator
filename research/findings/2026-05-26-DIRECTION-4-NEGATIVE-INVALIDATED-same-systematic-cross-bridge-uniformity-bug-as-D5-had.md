@@ -1,3 +1,9 @@
+---
+type: finding
+status: corrected
+date: 2026-05-26
+---
+
 # Direction 4 NEGATIVE INVALIDATED: same class of cross-bridge uniformity bug as Direction 5 had — activity vectors at each word position are BYTE-IDENTICAL across all 5 bridges (L2 = 59.25 / 60.39 / 67.59 by position; matches exactly across A_nouns / B_verbs / C_adj / D_spatial / E_functional). The D4 substrate-geometry conclusion is therefore unsupported; D4 needs a re-test after fixing cross-bridge uniformity (analog of the D5 sparse-pattern fix but in a different code path).
 
 **Date:** 2026-05-26 ~00:30 EDT

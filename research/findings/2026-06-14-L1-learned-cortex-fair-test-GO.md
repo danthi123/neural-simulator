@@ -1,3 +1,9 @@
+---
+type: finding
+status: qualified
+date: 2026-06-14
+---
+
 # L1 learned-graded-cortex fair test — **GO** (owner-directed "better-resourced de-risk")
 
 **Date:** 2026-06-14 (CYCLE 54)

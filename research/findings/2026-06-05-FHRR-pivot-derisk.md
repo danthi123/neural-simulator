@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-06-05
+mechanism: fhrr
+---
+
 # FHRR phasor pivot — de-risk (owner-chosen Option A) — 2026-06-05
 
 Owner chose **Option A: FHRR phasor pivot, de-risk first** for the opponency SNR wall

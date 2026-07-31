@@ -1,3 +1,9 @@
+---
+type: finding
+status: live
+date: 2026-06-16
+---
+
 # On-substrate learned binder (CYCLE 102–103): single-attribute GO on the real bridge; 3-way bundling is a point-neuron limit
 
 **Date:** 2026-06-16

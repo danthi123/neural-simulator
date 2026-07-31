@@ -1,3 +1,10 @@
+---
+type: finding
+status: superseded
+date: 2026-05-15
+mechanism: g20-sparse-ensemble
+---
+
 # 160-concept sparse-distributed G.20 ensemble — end-to-end SHIPPED
 
 ## TL;DR

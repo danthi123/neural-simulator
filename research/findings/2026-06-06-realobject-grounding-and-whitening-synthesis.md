@@ -1,3 +1,10 @@
+---
+type: finding
+status: superseded
+date: 2026-06-06
+mechanism: whitening
+---
+
 # Real-object grounding works (100%) + the whitening boundary is the LOCAL COMPUTATION, not representation — 2026-06-06
 
 > **⚠️ CORRECTION (same day):** the "boundary is the local COMPUTATION of whitening" conclusion below is SUPERSEDED by

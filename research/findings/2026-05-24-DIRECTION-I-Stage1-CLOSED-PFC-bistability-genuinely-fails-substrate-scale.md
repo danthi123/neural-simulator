@@ -1,3 +1,9 @@
+---
+type: finding
+status: qualified
+date: 2026-05-24
+---
+
 # Direction I Stage 1 CLOSED: PFC NMDA bistability genuinely fails at substrate scale (both Izh AND HH models)
 
 **Date:** 2026-05-24

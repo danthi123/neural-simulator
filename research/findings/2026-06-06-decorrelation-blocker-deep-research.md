@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-06-06
+mechanism: whitening
+---
+
 # Deep research: the on-bridge spiking DECORRELATION blocker — missed mechanisms, literature synthesis, ranked shortlist + honest verdict — 2026-06-06
 
 **RESEARCH ONLY. No `sim/` edits. Deliverable = this findings document.**

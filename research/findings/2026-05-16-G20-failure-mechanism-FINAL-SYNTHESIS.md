@@ -1,3 +1,10 @@
+---
+type: finding
+status: corrected
+date: 2026-05-16
+mechanism: g20-sparse-ensemble
+---
+
 # G.20 failure-mechanism & artifact-safe remediation — FINAL SYNTHESIS
 
 > Single source of truth for the 2026-05-16 G.20 cross-bridge

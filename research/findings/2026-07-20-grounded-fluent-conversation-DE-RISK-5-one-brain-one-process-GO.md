@@ -1,3 +1,9 @@
+---
+type: finding
+status: contributing
+date: 2026-07-20
+---
+
 # Grounded fluent conversation — DE-RISK 5 (one-brain-one-process) GO: the WHOLE turn runs in ONE cupy process, fluency on spikes
 
 **Date:** 2026-07-20 · **Status:** DE-RISK 5 GO — the whole grounded-fluent turn (composer comprehension + retrieval +

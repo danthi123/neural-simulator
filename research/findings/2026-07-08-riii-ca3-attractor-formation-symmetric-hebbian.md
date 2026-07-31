@@ -1,3 +1,10 @@
+---
+type: finding
+status: superseded
+date: 2026-07-08
+mechanism: ca3-attractor-formation
+---
+
 # R-iii CA3 attractor FORMATION — the CYCLE-1066 residual root-caused + fixed: the bridge's Hebbian is CAUSAL-OFFSET (pre fired at t-1 AND post at t), but co-ensemble CA3 members driven by one pattern fire SYNCHRONOUSLY, so the offset is ~never satisfied → the recurrent LTP produces ~ZERO potentiation (byte-identical across a 100× learning-rate sweep × decay-off × drive). The fix is a guarded, default-off SYMMETRIC (offset-free) co-activity Hebbian (`hebbian_symmetric`), which potentiates within-ensemble preferentially (separation +0.01 → +0.87). The symmetric rule forms a SPECIFIC but WEAK attractor (within-ensemble ~1.14× member→silent; the per-step co-spike frequency is the bottleneck — members fire asynchronously). NO existing behavior changed (byte-identical default-off; `test_determinism.py` 7/7).
 
 **Date:** 2026-07-08

@@ -1,3 +1,10 @@
+---
+type: finding
+status: superseded
+date: 2026-05-17
+mechanism: dendritic-credit
+---
+
 # Dendritic credit-assignment — FAITHFUL + DEEP instrument: a VALID decision-relevant TERMINUS at feasible local scale (the discriminating regime converges with the project-wide joint-infeasibility boundary)
 
 ## TL;DR (this corrects + supersedes the earlier premature "terminus")

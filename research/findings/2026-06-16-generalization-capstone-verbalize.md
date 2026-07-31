@@ -1,3 +1,9 @@
+---
+type: finding
+status: qualified
+date: 2026-06-16
+---
+
 # Generalization capstone — STAGE 2 (verbalize the generalization): the fully-spiking fact-recall is an HONEST BOUNDARY; the hybrid path works
 
 **Date:** 2026-06-16

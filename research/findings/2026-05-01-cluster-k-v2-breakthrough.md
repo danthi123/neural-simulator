@@ -1,3 +1,9 @@
+---
+type: finding
+status: retracted
+date: 2026-05-01
+---
+
 # 2026-05-01 — Cluster K v2 BREAKTHROUGH: visual cortex beats perception arc at scale
 
 **Headline:** Pure-perception 16×16 stress with Cluster K v2 (visual cortex)

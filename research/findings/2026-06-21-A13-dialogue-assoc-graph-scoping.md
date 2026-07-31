@@ -1,3 +1,9 @@
+---
+type: finding
+status: contributing
+date: 2026-06-21
+---
+
 # A13 — the dialogue-planning association graph (host dict by default): on-substrate-close scoping (2026-06-21)
 
 **Type:** read-only deep-research + scoping (this doc is the only write). No code edits.

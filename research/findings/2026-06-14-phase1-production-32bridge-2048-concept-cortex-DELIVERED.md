@@ -1,3 +1,9 @@
+---
+type: finding
+status: qualified
+date: 2026-06-14
+---
+
 # Phase 1 PRODUCTION DELIVERABLE — the 2,048-concept learned-graded cortex: within-bridge conversation + meaningful generalization CONFIRMED at full scale (32 curated bridges); cross-bridge composition + the no-confab moat validated cross-axis; run stopped at GATE B 16/32 for efficiency (progressive slowdown), the result confidently backed
 
 **Date:** 2026-06-14. **Runner:** `research/runners/production_cortex_build.py` (`--mode full --composer per-bridge --cortex learned --n-bridges 32 --per-bridge-D 256`). **Backend:** `SIM_BACKEND=cupy` (GPU). **Raw:** `research/findings/raw/_production_cortex_32bridge.log` (run stopped at GATE B 16/32 — no full JSON). **Scope:** 32 real curated semantic bridges × 64 = **2,048 concepts**, the REAL learned-graded cortex, seed 42. **Build plan:** `docs/plans/2026-06-13-phase1-production-build-plan.md`.

@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-06-18
+mechanism: da-salience-gate
+---
+
 # DA salience-gate -> conversational composer: PRODUCTION WIRE-UP — **GO**
 
 **Date:** 2026-06-18

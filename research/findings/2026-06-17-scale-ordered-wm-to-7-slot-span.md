@@ -1,3 +1,9 @@
+---
+type: finding
+status: corrected
+date: 2026-06-17
+---
+
 # Scale quick-win: order-encoded WM holds the FULL 7-slot span at D=256; the multi-sentence "K≈4 ceiling" was a moat-calibration artifact, not a recall wall
 
 **Date:** 2026-06-17 (roadmap quick-win, owner directive "work up easy→hard, check off the easy stuff")

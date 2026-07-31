@@ -1,3 +1,9 @@
+---
+type: finding
+status: live
+date: 2026-07-15
+---
+
 # On-substrate systematicity RUNG 3 (honest NEGATIVE + the named surpass): the from-scratch BDSP-LEARNED *rate* read-out over the fixed spiking bind hits the documented rate-coded-SNR-wall (small discriminative signal on a large common mode) — but the fully-spiking *placed* read is ALREADY validated (the composer's NEF/phasor spiking cleanup), so the fully-spiking systematicity path is achievable, just not via a from-scratch on-bridge rate read
 
 **Date:** 2026-07-15 · **Runner:** `research/runners/_onsubstrate_bind_onbridge_bdsp_readout_derisk.py` (reuse-by-import RUNG-2's `bound_rates` + the committed `enable_bdsp` machinery `_build_bridge`/`_snapshot_state`; numpy backend; NO `sim/` edit). Follows RUNG 1 (`-coincidence-bind-systematicity-RUNG1-GO`) + RUNG 2 (`-bind-learned-readout-RUNG2-GO`).

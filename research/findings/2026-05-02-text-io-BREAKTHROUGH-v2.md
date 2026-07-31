@@ -1,3 +1,9 @@
+---
+type: finding
+status: retracted
+date: 2026-05-02
+---
+
 # 2026-05-02 — TEXT I/O BREAKTHROUGH: I→W = 33% at p=0.042 (statistically significant)
 
 **TL;DR:** With three biology-grounded fixes applied (Hebbian off, stdp_w_max=5, readout init=0.5), the embodied text I/O training at seed=42 produced **I→W accuracy of 33/100 = 33.0% with p=0.042 vs chance**. This is the first time the text I/O system has demonstrated learning above chance under FAIR eval methodology (balanced sampling, n=100, predicted distribution roughly balanced). The "32.5% baseline" from May-1 was an east-prediction artifact on east-heavy eval data; THIS result is genuine learning detectable as a real signal.

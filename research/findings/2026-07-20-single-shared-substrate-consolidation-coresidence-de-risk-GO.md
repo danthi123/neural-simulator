@@ -1,3 +1,9 @@
+---
+type: finding
+status: contributing
+date: 2026-07-20
+---
+
 # Single-shared-substrate consolidation — CO-RESIDENCE de-risk GO (WKV read-out + composer RF phasor on ONE bridge)
 
 **Date:** 2026-07-20 · **Status:** GO, 6-seed — the WKV cortex's read-out state (`cp_ssm_state` + `cp_ssm_readout_w`)

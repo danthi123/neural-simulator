@@ -1,3 +1,10 @@
+---
+type: finding
+status: corrected
+date: 2026-07-30
+mechanism: btsp-place-field-formation
+---
+
 # gap#5 residual: plateau termination is INTRINSIC in the biology, and the engine already has the machinery
 
 > ⚠️ **PARTIALLY CORRECTED 2026-07-30 — the RECOMMENDATION below is WITHDRAWN (refuted 4/4 by adversarial

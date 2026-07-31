@@ -1,3 +1,10 @@
+---
+type: finding
+status: qualified
+date: 2026-04-28
+mechanism: d1-d2-asymmetry
+---
+
 # Cluster B.1 — D1/D2 Plasticity Asymmetry: PARTIAL SIGNAL
 
 **Date:** 2026-04-28 (evening)

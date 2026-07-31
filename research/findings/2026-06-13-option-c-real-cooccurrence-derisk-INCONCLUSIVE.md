@@ -1,3 +1,9 @@
+---
+type: finding
+status: qualified
+date: 2026-06-13
+---
+
 # Option C de-risk (learn graded semantics from REAL TinyStories co-occurrence): INCONCLUSIVE — the host ceiling control fires; the cheap real-text setup carries SYNTAGMATIC (scene) structure, not the PARADIGMATIC taxonomy → build the production cortex on Option B (curated); Option C is a genuine follow-on, not a blocker
 
 **Date:** 2026-06-13. **Runner:** `research/runners/option_c_real_cooccurrence_derisk.py` (commit `70e89ffc`). **Backend:** `SIM_BACKEND=cupy` (GPU, 3-seed 42/43/44). **Raw:** `research/findings/raw/_option_c_real_cooccurrence_multiseed.json` + `.log`. **Design:** `docs/plans/2026-06-13-option-c-real-cooccurrence-derisk-design.md`. **Source:** `data/corpus/tinystories.txt` (1.59M tokens), 8-category × 8-word independent taxonomy.

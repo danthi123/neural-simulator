@@ -1,3 +1,10 @@
+---
+type: finding
+status: retracted
+date: 2026-07-20
+mechanism: wkv-cortex
+---
+
 # gap#1 M1 — the on-bridge WKV state BEATS the fair trigram (graded `cp_ssm_state`), + M2 NEF input de-risk GO
 
 **2026-07-20.** The session-long on-bridge boundary is **SURPASSED**. Produced by following the research gate

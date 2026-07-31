@@ -1,3 +1,9 @@
+---
+type: finding
+status: qualified
+date: 2026-04-29
+---
+
 # Cluster A — Closed BG Loop Results
 
 **Date:** 2026-04-29

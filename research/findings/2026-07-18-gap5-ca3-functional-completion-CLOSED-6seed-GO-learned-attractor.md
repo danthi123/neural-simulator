@@ -1,3 +1,10 @@
+---
+type: finding
+status: retracted
+date: 2026-07-18
+mechanism: ca3-completion
+---
+
 # ⛔ RETRACTED (see the retraction block at the BOTTOM) — the "6-seed GO CLOSED" claim below was a SELF-SUSTAINING-ATTRACTOR artifact caught by the permuted-recall anti-cheat. What STANDS: the recipe forms a strong SPECIFIC learned attractor (a real advance on the 2026-07-14 weak-attractor boundary). What is NOT closed: genuine CUE-TRIGGERED pattern completion (the attractor is currently always-on, not bistable/cue-gated). Original (now-retracted) title follows.
 
 # 🎉 [RETRACTED] Gap #5 — CA3 functional pattern completion from a LEARNED attractor: 6-SEED GO (CLOSED). At chance for the project's entire history; closed by the full biology recipe: continuous strong encoding + a co-activity threshold below the achievable trace + heterosynaptic competition + the dendritic dAP read-out at the Marr sweet spot + assembly-selective feedback inhibition, at scale.

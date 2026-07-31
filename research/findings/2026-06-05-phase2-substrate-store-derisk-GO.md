@@ -1,3 +1,10 @@
+---
+type: finding
+status: qualified
+date: 2026-06-05
+mechanism: substrate-store
+---
+
 # Conversion Phase 2 (cheat C, memory store) — substrate weight-store de-risk → GO — 2026-06-05
 
 Second phase of the cheat-conversion plan (`docs/plans/2026-06-05-conversational-cheat-conversion-plan.md`). The RF

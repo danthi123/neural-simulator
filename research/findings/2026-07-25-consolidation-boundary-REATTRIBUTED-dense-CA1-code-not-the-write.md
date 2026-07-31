@@ -1,3 +1,10 @@
+---
+type: finding
+status: retracted
+date: 2026-07-25
+mechanism: consolidation
+---
+
 # Consolidation A1 selectivity boundary RE-ATTRIBUTED (adversarial-verify + direct weight probe): it is NOT a WRITE failure — it is a DENSE, OVERLAPPING CA1 code (no ca1→slot rule can localize on it); the lever is upstream CA1 PATTERN-SEPARATION (Rank 2), not the write (2026-07-25)
 
 **Supersedes the attribution in `2026-07-25-consolidation-opsweep-INTERIM-write-nonselective-plateau-saturates.md`.** That

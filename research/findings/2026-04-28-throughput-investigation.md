@@ -1,3 +1,9 @@
+---
+type: finding
+status: qualified
+date: 2026-04-28
+---
+
 # GPU throughput investigation — results
 
 **Status:** Complete. Concurrency sweep + code-fix experiment done. MPS lever ruled out (Linux-only). Decision: ship a 4-concurrent recommendation; keep --progress-print-interval=20 default for non-interactive launches; do NOT ship the motor-counting code fix (slowed things down by ~15% on a single 1-run measurement).

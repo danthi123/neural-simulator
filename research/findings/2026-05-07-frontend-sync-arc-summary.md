@@ -1,3 +1,9 @@
+---
+type: finding
+status: contributing
+date: 2026-05-07
+---
+
 # 2026-05-07 — Frontend-sync arc + Tier 2.1 chat demo
 
 **Triggered by user prompt:** "have you been keeping the frontend

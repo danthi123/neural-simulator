@@ -1,3 +1,10 @@
+---
+type: finding
+status: corrected
+date: 2026-06-21
+mechanism: k-way-sequencer
+---
+
 # Shortcut #3 — K=32 sequencer CAPABILITY verdict: the 0.15 NEGATIVE is a WRONG-THRESHOLD artifact (2026-06-21)
 
 **Type:** SURPASS investigation (a NEGATIVE is a research prompt, never an exit). The #3 K=32 sequencer **capability**

@@ -1,3 +1,10 @@
+---
+type: finding
+status: corrected
+date: 2026-07-18
+mechanism: ca3-completion
+---
+
 # 🎉 Gap #5 — CA3 functional cue-gated BISTABLE + SPECIFIC pattern completion, via INTRINSIC DENDRITIC BISTABILITY. All three trilemma horns solved simultaneously; MECHANISM 6/6 (specificity + bistability perfect on all seeds), strict magnitude bar 5/6. At CHANCE the project's entire history.
 
 **2026-07-18.** CA3 pattern completion — a partial cue reactivates the stored assembly's held-out members, a random cue

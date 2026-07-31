@@ -1,3 +1,10 @@
+---
+type: finding
+status: qualified
+date: 2026-07-08
+mechanism: analogy
+---
+
 # OPEN-WORLD INFERENCE #3 — analogical transfer A:B :: C:? via the parallelogram on the brain's LEARNED co-occurrence codes (GO, 6-seed): the parallelogram (d = b − a + c) recovers the correct analogy target 1.000, BEATS a "just C's nearest neighbour" baseline (0.000 — so it is genuine analogy, NOT retrieval), and collapses to chance under PERMUTED codes (0.083). The over-claim trap the research gate warned of is avoided by foregrounding the baseline + permuted controls. Validated on CLEAN FACTORED emergent codes (the regime the gate predicted works); entangled/bundled real codes need clean mining first (honest boundary). NO `sim/` edit.
 
 **Date:** 2026-07-08

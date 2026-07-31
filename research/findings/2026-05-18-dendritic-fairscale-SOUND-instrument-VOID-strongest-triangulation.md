@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-05-18
+mechanism: dendritic-credit
+---
+
 # Owner-authorized fair-scale dendritic GLR-2017 MNIST run, SOUND instrument — honest VOID (the STRONGEST triangulation: even with a verified-sound positive control at the literature's own fair scale, the discriminating control does not fail)
 
 ## TL;DR

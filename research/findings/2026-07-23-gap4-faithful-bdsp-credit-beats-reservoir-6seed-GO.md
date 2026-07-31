@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-07-23
+mechanism: gap4-credit
+---
+
 # gap#4 deep-credit ENABLER — faithful BDSP/FA credit beats a frozen reservoir, 6-seed GO (2026-07-23)
 
 ## Result — GO, 6/6 seeds, credit > reservoir at every sparsity + the gap GROWS with sparsity

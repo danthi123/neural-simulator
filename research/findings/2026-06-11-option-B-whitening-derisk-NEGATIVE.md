@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-06-11
+mechanism: whitening
+---
+
 # Option B whitening de-risk — NEGATIVE: even the IDEAL whitening cannot co-satisfy decorrelation + reproducibility≥0.9 on denoise64 (2026-06-11)
 
 **VERDICT: NEGATIVE, unanimous 3/3 seeds (42/43/44).** The load-bearing §4 falsification that gates the entire

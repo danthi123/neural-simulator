@@ -1,3 +1,9 @@
+---
+type: finding
+status: contributing
+date: 2026-05-06
+---
+
 # Project Nord SNN Language Model — comparison + 2 ideas to adopt
 
 **Date:** 2026-05-06 ~02:30 EDT

@@ -1,3 +1,9 @@
+---
+type: finding
+status: contributing
+date: 2026-05-02
+---
+
 # 2026-05-02 — Longer training (200 ep) NEGATIVE: weights saturated at 100 ep
 
 **TL;DR:** Doubling training duration (100 → 200 episodes) at seed=42

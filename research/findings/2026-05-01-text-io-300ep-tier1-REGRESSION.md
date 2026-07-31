@@ -1,3 +1,9 @@
+---
+type: finding
+status: superseded
+date: 2026-05-01
+---
+
 # 2026-05-01 — 300-ep R3+R6 + Tier 1: REGRESSION (eval methodology issue)
 
 **TL;DR:** First attempt at scaling to 300 episodes with Tier 1 speedups produced

@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-07-19
+mechanism: wkv-cortex
+---
+
 # Research gate — carrying a HIGH-FIDELITY, MULTI-CHANNEL, GRADED recurrent LM state on the spiking substrate (on-bridge WKV/SSM)
 
 **2026-07-19. READ-ONLY deep-research gate.** Fired by the multiply-confirmed boundary in

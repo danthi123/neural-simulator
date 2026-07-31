@@ -1,3 +1,9 @@
+---
+type: finding
+status: live
+date: 2026-07-16
+---
+
 # Anchor-claim audit — 10 defects in the project record, **including the correction I wrote the same morning**
 
 **2026-07-16. Read-only (no runner, no GPU — a 4-arm sweep was in flight). 94 agents / 6 lenses × 3 adversarial

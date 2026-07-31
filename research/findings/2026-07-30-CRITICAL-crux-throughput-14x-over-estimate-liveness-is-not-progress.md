@@ -1,3 +1,9 @@
+---
+type: finding
+status: live
+date: 2026-07-30
+---
+
 # ⛔ CRITICAL: the gap#4 crux is ~14x over its runtime estimate — I checked LIVENESS all session and never THROUGHPUT
 
 ## The measurement

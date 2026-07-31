@@ -1,3 +1,9 @@
+---
+type: finding
+status: contributing
+date: 2026-05-24
+---
+
 # Biology reference for (c) generative-replay: Schwartenbeck et al. 2023 (Cell) "Generative replay underlies compositional inference in the hippocampal-prefrontal circuit" — directly validates the project's (c) direction; biology-translatable details for the (c) build (2026-05-24)
 
 ## Context

@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-07-04
+mechanism: learned-readout-delta-rule
+---
+
 # Biologizing the reservoir→role read-out — a LEARNED (delta-rule) read-out resolves the degraded seed 44 + removes the host ridge shortcut (2026-07-04)
 
 **One-line:** the seed-fragile read-out (CYCLE 918/919) had a residual NON-biological shortcut hiding in plain sight — the

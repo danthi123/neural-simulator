@@ -1,3 +1,9 @@
+---
+type: finding
+status: qualified
+date: 2026-06-17
+---
+
 # Free latency lever: the resonate window shortens 208 → 40 steps with no accuracy loss (6.2× fewer steps)
 
 **Date:** 2026-06-17 (the resonator-paper bonus lever, on top of the CYCLE-152 batched scan)

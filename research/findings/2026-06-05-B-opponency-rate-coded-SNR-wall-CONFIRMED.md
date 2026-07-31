@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-06-05
+mechanism: opponency
+---
+
 # (B) opponency linear-glue — rate-coded common-mode removal is an SNR WALL (3 de-risks + analysis) — 2026-06-05
 
 **Capstone of the opponency arc. Verdict: the `onoff(bon−boff)` opponency — common-mode removal of a SMALL signed

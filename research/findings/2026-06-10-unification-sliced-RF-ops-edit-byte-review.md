@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-06-10
+mechanism: fhrr
+---
+
 # ⚠️ FOR OWNER BYTE-REVIEW — sliced-RF-ops co-residence edit (sim/bridge.py), default-off byte-identical (2026-06-10)
 
 **The protected `sim/` edit for STRICT RF co-residence on one bridge (roadmap step 2).** It is the minimal

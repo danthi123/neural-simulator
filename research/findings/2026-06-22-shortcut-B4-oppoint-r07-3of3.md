@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-06-22
+mechanism: td-cue-shift
+---
+
 # Shortcut B4 — the merged-bridge TD cue-shift strict r<−0.7 RESTORED 3/3 via an op-point cooling (2026-06-22)
 
 **Status:** B4 residual closure, GPU (`SIM_BACKEND=cupy`, RTX 3090), complete. Closes the ONE honest residual the

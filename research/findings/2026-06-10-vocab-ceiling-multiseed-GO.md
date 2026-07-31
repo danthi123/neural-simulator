@@ -1,3 +1,9 @@
+---
+type: finding
+status: live
+date: 2026-06-10
+---
+
 # Conversational vocab / capability ceiling — multi-seed: GO (the consolidated agent scales to 320 concepts, no-confab moat 100%)
 
 > **Result: GO multi-seed.** The full `BrainConversationalAgent` capability matrix — comprehension + fact memory + who/what Q&A, **abstention (the no-confab moat)**, negation/yes-no, embedded clauses, one-attribute, two-attribute, generation, dialogue — holds at **V=320 concepts across 6 seeds (42–47)**. The load-bearing no-confab moat is **100% (20/20) in every cell**, the two-attribute binding (the old K=5 boundary) **resolves everywhere**, and the shuffled-fact control has **zero false hits everywhere**. The only degradation is the embedded clause, and it is a pure **code-dimension floor**: 5/6 seeds pass at D=128; all 6 pass at D=256.

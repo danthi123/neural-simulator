@@ -1,3 +1,9 @@
+---
+type: finding
+status: qualified
+date: 2026-05-11
+---
+
 # P1 two-concept discrimination multi-seed result
 **Date:** 2026-05-11
 **Phase:** P1+P2 combined integration test

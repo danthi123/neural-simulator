@@ -1,3 +1,10 @@
+---
+type: finding
+status: corrected
+date: 2026-07-07
+mechanism: microcircuit-credit
+---
+
 # D1 microcircuit — two biological deep-credit rules on the spiking substrate: the CLEAN-ERROR credit (M2.6 somatic-rate feedforward = clean-error feedback alignment) clears the depth-2 held-out bar (0.964, 3-seed) AND is batch-robust; raw Burstprop's NOISY burst-fraction credit is worse (~0.79) and batch-fragile. The `sim/` interneuron-cancellation is built (additive/byte-identical-when-off) + validated on-bridge for the burst READOUT — but adversarial-verify shows the depth-2 ACCURACY is carried by the clean-error FF rule, NOT the interneuron cancellation (its accuracy causality is the D2 on-bridge test).
 
 **Date:** 2026-07-07

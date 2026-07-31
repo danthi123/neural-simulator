@@ -1,3 +1,9 @@
+---
+type: finding
+status: contributing
+date: 2026-06-11
+---
+
 # Step 3 (the true cortex) — the CORE learned-binder research: opening-move findings after the cleanup arc closed
 
 **Status:** READ-ONLY deep-research + catalog/literature review (the project's standing "deep research FIRST at a

@@ -1,3 +1,9 @@
+---
+type: finding
+status: contributing
+date: 2026-06-22
+---
+
 # Shortcut #5b — deterministic-scatter scoping for the secondary SNc-burst δ residual (2026-06-22)
 
 **Task:** scope the cheapest genuine close for the ONE remaining #5b item — the secondary SNc-burst δ-read,

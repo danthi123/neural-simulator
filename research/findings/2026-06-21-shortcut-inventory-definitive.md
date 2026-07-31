@@ -1,3 +1,9 @@
+---
+type: finding
+status: superseded
+date: 2026-06-21
+---
+
 # Definitive shortcut inventory — the whole "one brain", two criteria (2026-06-21)
 
 **Purpose.** The owner's 2026-06-21 reaffirmed top priority: close ALL host shortcuts AND ensure the one brain runs

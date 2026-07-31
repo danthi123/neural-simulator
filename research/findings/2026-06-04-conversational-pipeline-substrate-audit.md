@@ -1,3 +1,9 @@
+---
+type: finding
+status: contributing
+date: 2026-06-04
+---
+
 # Conversational pipeline substrate audit — what runs on the core sim vs bolted-on modules — 2026-06-04
 
 **One line:** The core `SimulationBridge` already has VALIDATED spiking realizations of nearly every conversational

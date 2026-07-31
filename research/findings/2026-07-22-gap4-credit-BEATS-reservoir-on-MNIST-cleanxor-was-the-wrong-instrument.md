@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-07-22
+mechanism: gap4-credit
+---
+
 # gap#4 REFRAMED — the biological local credit rule BUILDS deep accuracy on a proper task (MNIST); the "clean-negative" was a cleanxor task artifact. The open piece is the SPIKING rate-code, NOT the rule.
 
 **2026-07-22, CPU/numpy, coexisting with the fluency training.** Follow-up to the 2026-07-22 deep-research

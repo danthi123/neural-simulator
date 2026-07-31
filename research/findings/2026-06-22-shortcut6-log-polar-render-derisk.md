@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-06-22
+mechanism: log-polar-sc-retina
+---
+
 # Shortcut #6 — the log-polar SC retina SURPASS de-risk (2026-06-22)
 
 **Type:** implementation + grid-32 GPU de-risk of the rank-1 SURPASS from

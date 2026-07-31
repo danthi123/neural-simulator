@@ -1,3 +1,9 @@
+---
+type: finding
+status: contributing
+date: 2026-04-24
+---
+
 # Route B profile — where the inner-loop time goes
 
 **Date:** 2026-04-24

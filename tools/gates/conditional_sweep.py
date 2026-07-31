@@ -182,6 +182,12 @@ def _scan(path):
 
 
 def check(paths):
+    # An EMPTY list means "staged mode, nothing of my kind staged" -> nothing to check. Only paths=None means
+    # "standalone run, scan the corpus". Without this, the pre-commit driver's --diff-filter=A scoping is undone
+    # by this gate's own corpus fallback -- which fired 192 doc-type hits on 2026-04/05 legacy findings the
+    # moment the Tier-1 classification gave them frontmatter.
+    if paths is not None and len(paths) == 0:
+        return []
     targets = [p if os.path.isabs(p) else os.path.join(_REPO, p)
                for p in paths if p.endswith(".md") and "/raw/" not in p.replace(os.sep, "/")]
     if not paths:

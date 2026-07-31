@@ -1,3 +1,9 @@
+---
+type: finding
+status: live
+date: 2026-07-23
+---
+
 # Perception closure scoping — what it takes to move perception 🟨 → done, and where the honest boundary is
 
 **Date:** 2026-07-23

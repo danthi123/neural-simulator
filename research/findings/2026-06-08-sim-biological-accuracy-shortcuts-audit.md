@@ -1,3 +1,9 @@
+---
+type: finding
+status: contributing
+date: 2026-06-08
+---
+
 # Biophysical-accuracy SHORTCUTS audit (the substrate, not the cheats)
 
 **Date:** 2026-06-08

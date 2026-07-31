@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-05-24
+mechanism: generative-replay
+---
+
 # (c) loop diagnostic probe — DEFINITIVE: REPLAY_DOESNT_REACTIVATE; Phase 1.3 SWR consolidation (validated for DIRECT-BINDING) does NOT transfer sequence-specific structure from CA3 engrams to cortical schema in a way the parallel-matching decoder can read; pivot to direction 3 (larger vocab scaling on bio_brain_regions) (2026-05-24)
 
 ## What was tested

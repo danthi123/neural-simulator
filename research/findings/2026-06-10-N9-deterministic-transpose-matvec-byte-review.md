@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-06-10
+mechanism: determinism
+---
+
 # Deterministic transpose-SpMV — a default-off `sim/` flag that makes the place-code self-org reproducible (FOR OWNER BYTE-REVIEW)
 
 **Date:** 2026-06-10 (overnight autonomous)

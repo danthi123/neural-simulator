@@ -1,3 +1,9 @@
+---
+type: finding
+status: contributing
+date: 2026-05-15
+---
+
 # Multi-bridge 5-seed validation FINAL — 238/320 (74.4%) PASS
 
 ## TL;DR

@@ -1,3 +1,9 @@
+---
+type: finding
+status: contributing
+date: 2026-06-12
+---
+
 # Cortex↔conversation CAPABILITY de-risk: GO — the learned-graded cortex delivers GENERALIZATION IN CONVERSATION with the no-confab moat intact (the lifted capability proven at small scale)
 
 **Date:** 2026-06-12. **Runner:** `research/runners/cortex_conversation_capability_derisk.py` (built per `docs/plans/2026-06-12-cortex-conversation-integration-design.md`). **Backend:** `SIM_BACKEND=cupy` (GPU). **Raw:** `research/findings/raw/_cortex_conversation_capability_derisk_full.json` + `.log`. **Scope:** 1 shard × 64 concepts (animals, 424 within-shard facts), 3 seeds (42/43/44), the REAL learned cortex (`--cortex learned`).

@@ -1,3 +1,9 @@
+---
+type: finding
+status: live
+date: 2026-06-04
+---
+
 # Cheat-removal #4 — agent integration RESOLVED (visual subset): V1 grounding + ventral-hierarchy decorrelation matches constructed codes — 2026-06-04
 
 **One line:** The FULL unified-agent benchmark (320 concepts, frozen test set) run on concept codes derived from

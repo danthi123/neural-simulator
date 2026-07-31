@@ -1,3 +1,10 @@
+---
+type: finding
+status: corrected
+date: 2026-07-25
+mechanism: consolidation
+---
+
 > # 📍 READ FIRST — CURRENT STATE (rewritten 2026-07-26)
 >
 > **This doc is an APPEND-LOG containing SIX reversals. Sections below are in the order they were written, so many are

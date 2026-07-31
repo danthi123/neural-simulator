@@ -1,3 +1,9 @@
+---
+type: finding
+status: qualified
+date: 2026-05-16
+---
+
 # Stage-1 grounded generative conversational agent — SHIPPED + integration-verified (honest ceiling)
 
 ## TL;DR

@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-06-03
+mechanism: fhrr
+---
+
 # Recursive clause nesting RESOLVES — depth-3 perfect on phasor FHRR (2026-06-03)
 
 **One line:** A clause used as an argument — "dog see (cat chase bird)" — decodes perfectly on the

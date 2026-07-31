@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-06-15
+mechanism: hebbian
+---
+
 # On-bridge co-occurrence learning: RATE-HEBBIAN is the matched rule (STDP is measured-negative) — mechanism GO (2026-06-15, CYCLE 95)
 
 ## One-line

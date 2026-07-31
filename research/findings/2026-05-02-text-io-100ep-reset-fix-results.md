@@ -1,3 +1,9 @@
+---
+type: finding
+status: corrected
+date: 2026-05-02
+---
+
 # 2026-05-02 — 100-ep R3+R6 reset-fix run: REGRESSED. Reveals prior baseline was illusory.
 
 **Test config:** 100-ep R3+R6 seed=42, balanced sampling + reset_steps=100 (cee3403 fix kept) + remaining partial Tier 1 (stim_steps=100, per-type-stp=False).

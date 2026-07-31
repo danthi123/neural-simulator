@@ -1,3 +1,10 @@
+---
+type: finding
+status: corrected
+date: 2026-07-02
+mechanism: microcircuit-credit
+---
+
 # EMERGE-5c — GO: the Sacramento–Senn microcircuit's ACTIVE CANCELLATION is dramatically more noise-robust than Burstprop's raw burst-rate estimation (carry the microcircuit to the substrate)
 
 **2026-07-02 (autonomous; substrate ladder rung 2 — the decided lever from EMERGE-5b).** Runner `research/runners/_emerge5c_microcircuit_noise_derisk.py`; result `research/findings/raw/_emerge5c_microcircuit_noise.json`. Reuse-by-import (EMERGE-1b + EMERGE-3 + EMERGE-5 + EMERGE-5b machinery); NO `sim/` edit; CPU; run capped at 4 workers (owner gaming — light contention).

@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-06-11
+mechanism: dual-cls
+---
+
 # Dual / CLS architecture proof — GO (the round-trip PRESERVES graded similarity)
 
 **Status:** GO. Cheap-first (CPU/numpy, multi-seed 42/43/44, reuse-by-import, NO substrate build,

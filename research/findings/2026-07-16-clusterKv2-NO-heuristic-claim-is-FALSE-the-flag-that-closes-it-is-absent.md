@@ -1,3 +1,9 @@
+---
+type: finding
+status: live
+date: 2026-07-16
+---
+
 # The Cluster-K-v2 "NO heuristic" claim is FALSE — the flag that closes the heuristic is absent from its own recorded command
 
 **2026-07-16. Status: VERIFIED from the run's own artifacts + the runner source. LOGGED, NOT CHASED (owner directive).**

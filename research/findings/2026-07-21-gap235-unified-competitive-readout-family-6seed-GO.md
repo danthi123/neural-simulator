@@ -1,3 +1,9 @@
+---
+type: finding
+status: corrected
+date: 2026-07-21
+---
+
 # The emergence engine's read-out FAMILY (matched filter + biased-competition variant) spans gaps #2/#5 and #3 (6-seed GO)
 
 **2026-07-21 · GO, 6-seed.** The gap-close research gate's core insight — "one competitive read-out unifies the binder,

@@ -1,3 +1,10 @@
+---
+type: finding
+status: superseded
+date: 2026-05-19
+mechanism: integrated-loop
+---
+
 # Integrated-loop full model: a program-level structural finding — the project's validated concept-binding mechanism and its theta-gamma episodic store impose contradictory encode-order requirements at the minimal slice
 
 ## Status: pre-committed program-level result (honored, not spun)

@@ -1,3 +1,9 @@
+---
+type: finding
+status: live
+date: 2026-05-25
+---
+
 # Direction 3 V=32 PRODUCTION DECISIVE = DIRECTION_3_V32_PASS multi-seed (3 of 3 seeds, all 3 loads, both readouts; 18/18 cells clear 0.80 bar; L=5 OI 0.993 mean); pillar n=105 candidate pending adversarial reviewer CLEAR
 
 **Date:** 2026-05-25 ~07:10 EDT

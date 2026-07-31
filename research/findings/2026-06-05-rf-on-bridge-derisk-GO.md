@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-06-05
+mechanism: fhrr
+---
+
 # Resonate-and-fire ON the SimulationBridge — minimal de-risk → GO — 2026-06-05
 
 **Verdict: GO. The SimulationBridge can natively host resonate-and-fire (RF) phasor neurons that compute FHRR

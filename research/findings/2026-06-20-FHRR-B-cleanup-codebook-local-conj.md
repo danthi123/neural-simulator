@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-06-20
+mechanism: fhrr
+---
+
 # FHRR-B cleanup codebook — the last host `np.conj` residual, ELIMINATED by the SAME local conjugate wiring rule (bind+cleanup structure now fully host-free)
 
 **Type:** implementation + multi-seed CPU/numpy de-risk + CI guard. NO GPU. Stayed on `main`. Reuse-by-import + the SAME guarded, default-OFF, reversible `local_reciprocal_unbind` flag Mechanism 1 added. The no-confab moat is NOT weakened (abstentions byte-identical).

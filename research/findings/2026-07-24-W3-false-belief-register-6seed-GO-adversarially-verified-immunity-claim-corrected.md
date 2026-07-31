@@ -1,3 +1,10 @@
+---
+type: finding
+status: corrected
+date: 2026-07-24
+mechanism: false-belief-register
+---
+
 # W3 false-belief register (Theory-of-Mind) — 6/6-seed GO, ADVERSARIALLY VERIFIED (a subagent "structural immunity" claim was caught + corrected) (2026-07-24)
 
 ## Result

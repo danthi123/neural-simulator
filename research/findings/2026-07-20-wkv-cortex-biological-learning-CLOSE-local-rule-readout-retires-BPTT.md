@@ -1,3 +1,10 @@
+---
+type: finding
+status: qualified
+date: 2026-07-20
+mechanism: wkv-cortex
+---
+
 # WKV cortex biological-learning — CLOSE: the grounded fluent render is learnable by a LOCAL rule (no BPTT, no weight transport)
 
 **Date:** 2026-07-20 · **Status:** CLOSE (GO) — the mission's last shortcut (BPTT-training the grounded renderer) is

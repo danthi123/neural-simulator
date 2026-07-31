@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-06-05
+mechanism: cleanup
+---
+
 # Conversion Phase 1 (cheat B, cleanup) — TPAM cleanup de-risk → GO at D>=256 — 2026-06-05
 
 First execution step of the conversational-cheat-conversion plan

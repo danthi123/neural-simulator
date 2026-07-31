@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-07-17
+mechanism: gap2-slot-binder
+---
+
 # KEYSTONE gap #2 spiking closure — research-gate: the SELF-ORGANIZING SPIKING SLOT BINDER (2026-07-17)
 
 **Mission `GAP_CLOSURE_MISSION.md`. Read-only gate (3 deep readers + ranked synthesis). Follows the 4-drift-#12-catch mapping: binding SOLVED; the write-rule multi-bind store is a REFUTED boundary (~2 cap); the genuine open edge is a non-hand-tuned competitive SLOT binder.**

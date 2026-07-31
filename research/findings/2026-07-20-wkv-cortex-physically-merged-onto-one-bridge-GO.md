@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-07-20
+mechanism: wkv-cortex
+---
+
 # WKV cortex PHYSICALLY MERGED onto ONE bridge — forward-identical to the two-bridge faculty (GO)
 
 **Date:** 2026-07-20 · **Status:** GO (seeds 42/43/100, byte-exact) — the WKV cortex's TWO internal bridges (the

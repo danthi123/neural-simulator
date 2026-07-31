@@ -1,3 +1,10 @@
+---
+type: finding
+status: superseded
+date: 2026-06-04
+mechanism: cleanup
+---
+
 # Spine item 2: the spiking cleanup's wall is the composer's NOISY est, not M=320 — and the lever is integration time — 2026-06-04
 
 **One line:** A spiking matched-filter cleanup on the core bridge replaces numpy `argmax` *perfectly* at 320 concepts

@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-06-05
+mechanism: fhrr
+---
+
 # Full FHRR-on-bridge — layer (a) complex-synapse bind → GO — 2026-06-05
 
 **Verdict: GO. FHRR bind / unbind / bundle / superposition all happen THROUGH complex synapses on the

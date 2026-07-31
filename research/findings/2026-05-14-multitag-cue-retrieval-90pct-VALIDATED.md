@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-05-14
+mechanism: engram-tag
+---
+
 # Multi-tag cue retrieval: 90% FULL, 100% PARTIAL multi-seed
 
 ## TL;DR

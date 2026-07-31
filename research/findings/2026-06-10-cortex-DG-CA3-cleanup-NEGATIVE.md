@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-06-10
+mechanism: cleanup
+---
+
 # STEP 3 (true cortex) — resolve the cleanup boundary with the brain's TRISYNAPTIC LOOP (DG→CA3) — **NEGATIVE**
 
 **Date:** 2026-06-10 (overnight thread; ran into 2026-06-11)

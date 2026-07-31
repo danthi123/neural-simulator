@@ -1,3 +1,10 @@
+---
+type: finding
+status: superseded
+date: 2026-07-17
+mechanism: ca3-attractor-formation
+---
+
 # Gap #5 CA3 autoassociator — Rung 2 (mossy-detonator) sparsifies but does NOT select; Rung 3 (input gamma-pulse) is inert; the formation blocker is confirmed to be SYNCHRONY, needing a theta-gamma pacemaker (Rung 4). The completion FUNCTION is met via other validated methods; the biologically-faithful CA3-recurrent-autoassociator is the deep open frontier.
 
 **2026-07-17.** Continuing the gap #5 (CA3 completion) close from the 2026-07-09 frontier (`2026-07-09-riii-ca3-feedback-inhibition-sparsifies-but-nonselective.md`: Rung 1 `ca3_pv_basket` sparsifies but global inhibition is non-selective; Rung 2 mossy-detonator named next).

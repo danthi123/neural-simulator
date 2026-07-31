@@ -1,3 +1,9 @@
+---
+type: finding
+status: live
+date: 2026-07-20
+---
+
 # Single-shared-substrate CAPSTONE — the composer + the WKV cortex run a grounded turn on ONE bridge (GO)
 
 **Date:** 2026-07-20 · **Status:** GO (6-seed 42/43/44/100/101/102, all byte-identical) — the composer (RF bind/unbind/cleanup) AND the WKV cortex

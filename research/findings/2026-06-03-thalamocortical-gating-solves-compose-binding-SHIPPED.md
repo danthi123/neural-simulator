@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-06-03
+mechanism: transmission-gate
+---
+
 # Thalamocortical gating solves the "compose-pathways went silent" binding problem — SHIPPED — 2026-06-03
 
 **One line:** The deep-research Track-2 lever (Logiaco-Abbott-Escola 2021 thalamocortical dynamical gating) is

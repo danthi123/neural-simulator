@@ -1,3 +1,9 @@
+---
+type: finding
+status: live
+date: 2026-06-17
+---
+
 # Scaling profile on the RTX 3090: the wall is per-op LATENCY (orchestration), not VRAM — and it's software-fixable
 
 **Date:** 2026-06-17 (owner-requested: local-only vs cloud for small-LLM-scale conversation on the RTX 3090)

@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-07-23
+mechanism: value-critic
+---
+
 # Value-critic closure — RANK-1 GO (6-seed): the brain's OWN learned spiking value drives a value-driven choice (2026-07-23)
 
 ## Result — GO, 6/6 seeds, all anti-cheats

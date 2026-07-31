@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-07-18
+mechanism: ca3-completion
+---
+
 # Deep-research gate — a ROBUST bistable + specific CA3 pattern-completion attractor (gap #5)
 
 **2026-07-18. READ-ONLY research gate at a CONFIRMED BOUNDARY.** Verdict up front: **robust bistable + specific

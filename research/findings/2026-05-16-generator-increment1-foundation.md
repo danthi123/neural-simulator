@@ -1,3 +1,9 @@
+---
+type: finding
+status: contributing
+date: 2026-05-16
+---
+
 # Generator Increment 1 — foundation validated on main (anti-cheat-gated, honest/humble)
 
 ## TL;DR

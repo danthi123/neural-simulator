@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-06-21
+mechanism: k-way-sequencer
+---
+
 # Shortcut #3 fold — `OneBrainComposer(integrated_loop=True)` de-risk: the spiking K-way sequencer routing is ANSWER-IDENTICAL to the host `_scan` (2026-06-21)
 
 **Type:** WIRING de-risk (compose already-de-risked pieces — the deep-research gate does NOT fire; the K=32 capability

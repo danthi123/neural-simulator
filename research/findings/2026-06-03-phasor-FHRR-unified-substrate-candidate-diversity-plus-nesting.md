@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-06-03
+mechanism: fhrr
+---
+
 # Phasor FHRR is a unified-substrate candidate: 320-concept diversity AND nesting — 2026-06-03
 
 **One line:** The phasor FHRR substrate that the Direction-A nesting work lives on *also* holds

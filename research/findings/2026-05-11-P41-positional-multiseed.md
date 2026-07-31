@@ -1,3 +1,9 @@
+---
+type: finding
+status: live
+date: 2026-05-11
+---
+
 # P4.1 positional binding multi-seed result
 
 **Date:** 2026-05-11

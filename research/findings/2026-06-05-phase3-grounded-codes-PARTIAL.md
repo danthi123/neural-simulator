@@ -1,3 +1,10 @@
+---
+type: finding
+status: qualified
+date: 2026-06-05
+mechanism: grounding
+---
+
 # Conversion Phase 3 (cheat A, grounded codes) — grounding INTERFACE validated; full grounding is the BOUNDARY — 2026-06-05
 
 Third phase of the cheat-conversion plan (`docs/plans/2026-06-05-conversational-cheat-conversion-plan.md`). The RF

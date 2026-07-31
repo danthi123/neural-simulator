@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-06-20
+mechanism: fhrr
+---
+
 # FHRR-B Mechanism 1 — the unbind synapse as a one-time LOCAL reciprocal-wiring rule (the last host residual in the bind STRUCTURE, ELIMINATED)
 
 **Type:** implementation + multi-seed CPU/numpy de-risk + CI guard. NO GPU. Stayed on `main`. Reuse-by-import + ONE guarded, default-OFF, reversible runner-side flag on `RFPhasorComposer`. The no-confab moat is NOT weakened (abstentions byte-identical).

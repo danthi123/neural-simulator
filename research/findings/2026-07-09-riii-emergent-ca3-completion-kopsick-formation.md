@@ -1,3 +1,10 @@
+---
+type: finding
+status: superseded
+date: 2026-07-09
+mechanism: ca3-completion
+---
+
 # R-iii — EMERGENT CA3 pattern completion, 6-seed GO. The FORMATION half solved by reading the WHOLE working recipe (Kopsick 2024): a sparse CA3 assembly driven DIRECTLY + SYNCHRONOUSLY (gamma volleys) + selective feedback inhibition + the rate-window co-activity Hebbian LEARNS a strong specific recurrent attractor; the CYCLE-1075 weight-ceiling fix took the within/cross ratio to 12.6x (self-correcting the "scale is the residual" call). Composed with the CYCLE-1068 dendritic dAP completion = **a partial cue of the self-organized assembly completes its held-out members SPECIFICALLY on spikes, 6/6 seeds (held-out 0.47-1.08; non-assembly / LINEAR / NO-TRAIN / PERM-CUE = 0.000 every seed) — pattern completion LEARNED FROM EXPERIENCE.** NO `sim/` edit (protocol + runner-side wiring on the two byte-safe plasticity primitives committed CYCLE 1069-1070). ⇒ the R-iii enabler for the SWR generative-replay loop is achieved.
 
 **Date:** 2026-07-09

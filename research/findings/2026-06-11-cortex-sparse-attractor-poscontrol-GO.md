@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-06-11
+mechanism: cleanup
+---
+
 # Sparse-attractor positive control: cleanup wall SURPASSED on decorrelated codes
 
 **Status:** GO — all gates pass, all 3 seeds, all anti-cheats decisive.

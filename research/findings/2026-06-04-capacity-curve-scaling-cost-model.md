@@ -1,3 +1,9 @@
+---
+type: finding
+status: live
+date: 2026-06-04
+---
+
 # Capacity-curve scaling cost model — is the GPU port worthwhile beyond 320? — 2026-06-04
 
 **One line:** A cheap-first measurement answers "would the rf-320-GPU port be worthwhile if future scaling needs

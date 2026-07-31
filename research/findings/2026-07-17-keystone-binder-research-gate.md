@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-07-17
+mechanism: learned-binder
+---
+
 # KEYSTONE research-gate (gaps #4 dendritic-credit ⊕ #2 learned-binder = ONE gate): a SELF-ORGANIZING, fully-spiking, one-brain binder over the brain's OWN correlated codes (2026-07-17)
 
 **Mission:** `GAP_CLOSURE_MISSION.md`. Read-only research-gate (4 parallel deep readers + ranked synthesis, adversarial-verify to follow at build). THE LAW: a wall defers a METHOD not the CAPABILITY; the fixed-FHRR-algebra "it's fine" conclusion is a DISGUISED boundary and is REJECTED — the ranked path must terminate in a learned self-organizing spiking binder.

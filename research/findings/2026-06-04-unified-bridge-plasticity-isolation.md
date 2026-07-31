@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-06-04
+mechanism: plasticity-gate
+---
+
 # Unified-bridge plasticity isolation — `plastic=False` does NOT isolate under global Hebbian (2026-06-04)
 
 **Context.** Step 1 of the one-bridge unification (`docs/plans/2026-06-04-one-bridge-unification-step1-implementation.md`)

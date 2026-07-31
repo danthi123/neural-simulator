@@ -1,3 +1,9 @@
+---
+type: finding
+status: qualified
+date: 2026-05-30
+---
+
 # Phase-factored integrated loop, decisive iteration 2: the DG/engram wm carrier makes the v1 instrument SOUND (v1 wm=1.0, genuinely selective) but the frozen verdict returns VOID (non-discriminating) -- the wm capability becomes a localized hippocampal-store LOOKUP, lesion-invariant except for removing the store itself. Together with iteration 1 this CHARACTERIZES BOTH HORNS of the binding-retrieval problem, each VOID-certified by the pre-registered verdict for OPPOSITE reasons.
 
 **Date:** 2026-05-30

@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-06-18
+mechanism: limbic-core
+---
+
 # Shared limbic core (reward/value/dopamine) — standalone organ, Schultz RPE battery GO 6/6 (2026-06-18, CYCLE 206)
 
 ## Headline

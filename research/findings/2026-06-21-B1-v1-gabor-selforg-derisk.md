@@ -1,3 +1,9 @@
+---
+type: finding
+status: contributing
+date: 2026-06-21
+---
+
 # B1 de-risk — a self-organized V1 receptive-field bank discharges the host-Gabor residual (GO)
 
 **Date:** 2026-06-21

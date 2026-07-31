@@ -157,6 +157,12 @@ def _flat(rel, lists, has_verdict):
 
 
 def check(paths):
+    # An EMPTY list means "staged mode, nothing of my kind staged" -> nothing to check. Only paths=None means
+    # "standalone run, scan the corpus". Without this, the pre-commit driver's --diff-filter=A scoping is undone
+    # by this gate's own corpus fallback -- which fired 192 doc-type hits on 2026-04/05 legacy findings the
+    # moment the Tier-1 classification gave them frontmatter.
+    if paths is not None and len(paths) == 0:
+        return []
     if not paths:
         try:
             r = subprocess.run(["git", "diff", "--cached", "--name-only", "--diff-filter=ACMR"],

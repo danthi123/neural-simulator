@@ -1,3 +1,9 @@
+---
+type: finding
+status: corrected
+date: 2026-05-14
+---
+
 # Session 2026-05-14: bug retraction + validated semantic conversation
 
 ## TL;DR

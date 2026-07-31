@@ -1,3 +1,10 @@
+---
+type: finding
+status: superseded
+date: 2026-07-24
+mechanism: gap4-credit
+---
+
 # gap#4 on-bridge spiking port — 6-seed: NOTHING learns (even the idealized ceiling); the diagnostic exposed a LAUNCH-BOUND compute wall, not a mechanism failure (2026-07-24)
 
 ## Result (6-seed, GPU, `_gap4_onbridge_spiking_selfpredict_derisk`, feasibility-sized epochs=20 / train-subsample=128)

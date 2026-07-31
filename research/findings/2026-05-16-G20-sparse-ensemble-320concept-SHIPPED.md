@@ -1,3 +1,10 @@
+---
+type: finding
+status: qualified
+date: 2026-05-16
+mechanism: g20-sparse-ensemble
+---
+
 # 320-concept sparse-distributed G.20 ensemble — SHIPPED (98.4% per-bridge, ensemble validated)
 
 ## TL;DR

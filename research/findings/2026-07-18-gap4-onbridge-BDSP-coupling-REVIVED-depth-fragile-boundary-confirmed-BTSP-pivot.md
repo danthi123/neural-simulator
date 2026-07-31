@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-07-18
+mechanism: bdsp
+---
+
 # Gap #4 (local-credit keystone) — the on-bridge BDSP-FA path REVIVED (coupling fixed, moat clean), but the depth-fragile FA-credit boundary is CONFIRMED on-bridge (inherits the rate ceiling ~0.715 < 0.75). The prescribed pivot: BTSP, where the gap#5 bistable plateau IS the enabler.
 
 **2026-07-18.** Built the gap#4 keystone `sim/` edit (BISTABLE BDSP apical, reusing gap#5's dendritic bistability) and

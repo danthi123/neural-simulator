@@ -1,3 +1,9 @@
+---
+type: finding
+status: contributing
+date: 2026-06-13
+---
+
 # Phase 1 32-bridge FAN-OUT de-risk: GO (3 seeds: 42/43/44) — cross-bridge composition + the no-confab moat HOLD at 2,048 concepts / 32 bridges (4× the validated 8-bridge fan-out); the deepest Phase-1 risk is RETIRED
 
 **Date:** 2026-06-13. **Runner:** `research/runners/multibridge_graded_derisk.py` (`--mode full --n-bridges 32 --concepts-per-bridge 64 --n-pool 2400 --pattern-size 100 --homeo oja --homeo-target 40 --cycles 10 --n-cross-facts 96`). **Backend:** `SIM_BACKEND=cupy` (GPU, RTX 3090). **Raw:** `research/findings/raw/_multibridge_fanout32_seed42.json` (seed 42) + `_multibridge_fanout32_seed43_44.json` (seeds 43/44) + `.log`s. **Scope:** 32 bridges × 64 = **2,048 concepts**, 96 cross-bridge facts, **seeds 42/43/44**, learned graded cortex. **Design:** `docs/plans/2026-06-12-phase1-sharding-and-fanout-design.md` §2.

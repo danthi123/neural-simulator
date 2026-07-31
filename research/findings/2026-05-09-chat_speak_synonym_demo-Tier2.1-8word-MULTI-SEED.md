@@ -1,3 +1,10 @@
+---
+type: finding
+status: qualified
+date: 2026-05-09
+mechanism: synonym-binding
+---
+
 # 🎉 Tier 2.1 8-word :speak — 6-seed multi-seed VALIDATED + EXCEEDS PAPER
 
 **Date:** 2026-05-10 01:27 EDT (overnight arc completion)

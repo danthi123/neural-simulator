@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-07-18
+mechanism: ca3-completion
+---
+
 # Gap #5 specificity — research gate: the missing mechanism is ASSEMBLY-SELECTIVE inhibition (Kim-Kim 2025), not global
 
 **2026-07-18.** The diagnostic (`2026-07-18-gap5-wang-GO-was-plasticity-noise-confound-...md`) isolated the wall: a

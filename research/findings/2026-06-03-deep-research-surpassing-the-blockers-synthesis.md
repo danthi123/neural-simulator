@@ -1,3 +1,9 @@
+---
+type: finding
+status: contributing
+date: 2026-06-03
+---
+
 # Deep research: how to surpass the composition + conversation blockers — synthesis + action plan — 2026-06-03
 
 Three parallel deep-research agents (compositional scaling in VSA/brain; thalamocortical dynamical gating;

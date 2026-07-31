@@ -1,3 +1,10 @@
+---
+type: finding
+status: qualified
+date: 2026-06-19
+mechanism: biased-competition
+---
+
 # Multi-referent disambiguation via WTA biased competition — cheap-first de-risk: GO (2026-06-19)
 
 **Verdict: GO (5/6 seeds on the strict GO-arm; all anti-cheat controls 6/6).** WTA biased competition resolves

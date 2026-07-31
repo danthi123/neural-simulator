@@ -1,3 +1,9 @@
+---
+type: finding
+status: contributing
+date: 2026-06-12
+---
+
 # Multi-bridge learned-graded-embedding cheap-first de-risk: GO — cross-bridge composition + the no-confab moat SURVIVE on correlated graded codes
 
 **Date:** 2026-06-12. **Runner:** `research/runners/multibridge_graded_derisk.py` (built per `docs/plans/2026-06-11-multibridge-learned-embedding-derisk-design.md`). **Backend:** `SIM_BACKEND=cupy` (GPU, RTX 3090). **Raw:** `research/findings/raw/_multibridge_graded_derisk_full.json` (M1/M2/M4/M6 + first M3/M7) + `_multibridge_cross_fixedm7.json` (the corrected M3/M7). **Scope:** 3 bridges × 64 concepts (animals / foods / vehicles), 3 seeds (42/43/44).

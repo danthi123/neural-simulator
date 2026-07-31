@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-07-20
+mechanism: fact-store
+---
+
 # The composer fact-store's host-persistence is the VSA idealization, not a spiking-computation shortcut (scoping)
 
 **Date:** 2026-07-20 · **Status:** SCOPING (verified read of our own code) — the last "not on the shared substrate"

@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-06-09
+mechanism: gamma-volley
+---
+
 # Design — Route T: SYNCHRONIZING the sparse place ensemble into a COINCIDENT VOLLEY so Route D fires (theta-gamma volley ± conduction delays)
 
 **Date:** 2026-06-09

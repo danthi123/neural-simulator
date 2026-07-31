@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-06-08
+mechanism: rpe
+---
+
 # Nav place-critic Stage-1 smoke — PARTIAL: silencing FIXED + nav excellent, but the critic stays silent (drive calibration)
 
 **Date:** 2026-06-08

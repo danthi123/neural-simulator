@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-07-18
+mechanism: ca3-completion
+---
+
 # Gap #5 — the Wang seed-42 "genuine bistable+specific" completion was a PLASTICITY+NOISE CONFOUND; the real wall is NON-SPECIFIC completion, and BIOLOGICAL SPARSE recurrence is the mechanism that produces specificity
 
 **2026-07-18.** Continuing the owner directive "close out ALL gaps FULLY," easiest→hardest, gap #5 now active (after

@@ -1,3 +1,10 @@
+---
+type: finding
+status: corrected
+date: 2026-07-21
+mechanism: wkv-cortex
+---
+
 # gap#1 (open generation) CEILING — the substrate-native WKV cortex BEATS a fair bigram 3.35× on unseen TinyStories → gap#1 is SCALE-PROGRESSING, not mechanism-bound
 
 **2026-07-21 · GO (ceiling bounds the arc).** Per the skill's "run the ceiling early — it bounds the whole

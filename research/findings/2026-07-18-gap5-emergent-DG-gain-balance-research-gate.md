@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-07-18
+mechanism: emergent-dg
+---
+
 # gap#5 emergent-DG gain-balance research gate (workflow synthesis, 2026-07-18)
 
 # Synthesis: one buildable mechanism for a reliable, fixed-~10%, completable emergent CA3 assembly

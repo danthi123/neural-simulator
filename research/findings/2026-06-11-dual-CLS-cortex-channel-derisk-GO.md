@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-06-11
+mechanism: dual-cls
+---
+
 # Dual / CLS CORTEX-CHANNEL DE-RISK — **GO** (routing the round-trip through the cortex channel CLOSES it to +1.000 AND RESTORES on-substrate generalization; the dual/CLS architecture now routes correctly END-TO-END on the real bridge with synthetic graded codes)
 
 **Status:** GO — multi-seed, unanimous (3/3 seeds, all 6 gates green). The last on-substrate piece of the

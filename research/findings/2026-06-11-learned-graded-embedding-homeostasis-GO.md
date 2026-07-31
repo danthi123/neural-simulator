@@ -1,3 +1,9 @@
+---
+type: finding
+status: qualified
+date: 2026-06-11
+---
+
 # Learned graded-embedding: a BIOLOGICAL HOMEOSTATIC recurrent gives CYCLE-INDEPENDENT faithfulness — GO
 
 **Date:** 2026-06-11

@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-04-28
+mechanism: bg-cross-projections
+---
+
 # Cheat #5 v2 — Zero-Init Cross-Projections — NEGATIVE
 
 **Date:** 2026-04-28

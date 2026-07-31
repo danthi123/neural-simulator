@@ -1,3 +1,9 @@
+---
+type: finding
+status: corrected
+date: 2026-06-04
+---
+
 # One-bridge unification step 2 — synaptic-route no-regression gate: RESOLVED (gate pre-warm) — 2026-06-04
 
 **Verdict: STEP 2 IS DONE. The synaptic route (`UnifiedBrainBridge.hear_synaptic`) reproduces the Python

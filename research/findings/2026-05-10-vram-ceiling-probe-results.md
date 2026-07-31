@@ -1,3 +1,9 @@
+---
+type: finding
+status: qualified
+date: 2026-05-10
+---
+
 # VRAM ceiling probe — practical hardware limits on RTX 3090 24 GB
 
 **Date:** 2026-05-10 22:15 EDT

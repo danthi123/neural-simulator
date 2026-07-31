@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-05-18
+mechanism: integrated-loop
+---
+
 # Integrated-loop full spiking model: the instrument is built and hardened, but instrument-soundness is blocked on a per-binding drive asymmetry; the decisive run is deliberately not yet run
 
 ## Plain-language summary

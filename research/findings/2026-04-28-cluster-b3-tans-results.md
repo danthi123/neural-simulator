@@ -1,3 +1,10 @@
+---
+type: finding
+status: qualified
+date: 2026-04-28
+mechanism: tans-ach
+---
+
 # Cluster B.3 — Cholinergic Interneurons (TANs) Results
 
 **Date:** 2026-04-28 (evening)

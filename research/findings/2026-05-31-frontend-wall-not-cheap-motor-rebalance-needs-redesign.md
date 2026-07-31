@@ -1,3 +1,9 @@
+---
+type: finding
+status: corrected
+date: 2026-05-31
+---
+
 # The 28-word front-end wall is NOT a cheap motor-rebalance -- it needs redesign (owner-strategic) -- 2026-05-31
 
 ## Question (cheap-first de-risking)

@@ -1,3 +1,10 @@
+---
+type: finding
+status: qualified
+date: 2026-07-24
+mechanism: gap5-replay
+---
+
 # gap#5 moving-bump replay-decode: SHARP-BAND ENCODE achieved (theta-adjacent-pair surpass) + REPLAY-DECODE boundary (point-neuron SFA suppresses, doesn't travel) — 2026-07-24
 
 Follows `2026-07-24-gap5-encode-only-derisk-NEGATIVE-stdp-writes-nothing-btsp-fanout.md` (§5 chain-written band).

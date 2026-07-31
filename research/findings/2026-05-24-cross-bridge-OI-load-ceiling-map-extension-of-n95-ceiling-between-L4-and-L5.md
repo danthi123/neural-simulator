@@ -1,3 +1,9 @@
+---
+type: finding
+status: live
+date: 2026-05-24
+---
+
 # Cross-bridge OI load-ceiling map — descriptive extension of pillar n=95 — multi-seed ceiling sits between L=4 and L=5 (not L=5 to L=6); steep monotonic decay above L=5 (2026-05-24)
 
 ## What was tested

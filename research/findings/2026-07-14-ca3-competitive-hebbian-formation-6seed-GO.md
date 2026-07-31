@@ -1,3 +1,10 @@
+---
+type: finding
+status: corrected
+date: 2026-07-14
+mechanism: ca3-attractor-formation
+---
+
 # R-iii CA3 emergent attractor FORMATION — COMPETITIVE-HEBBIAN surpasses the 2026-07-09 saturation boundary (6-seed GO)
 
 **Date:** 2026-07-14

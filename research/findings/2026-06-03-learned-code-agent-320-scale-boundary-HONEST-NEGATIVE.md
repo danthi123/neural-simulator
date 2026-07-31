@@ -1,3 +1,9 @@
+---
+type: finding
+status: superseded
+date: 2026-06-03
+---
+
 # Learned-code agent at 320 concepts — scale boundary (honest negative) — 2026-06-03
 
 > **⚡ RESOLVED later the same day (see below + `2026-06-03-deep-research-surpassing-the-blockers-synthesis.md`).**

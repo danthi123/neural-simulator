@@ -1,3 +1,9 @@
+---
+type: finding
+status: contributing
+date: 2026-06-17
+---
+
 # Optimizing GPU spiking-neural-network + vector-symbolic compute: how similar architectures are traditionally accelerated (literature review for the two profiled bottlenecks)
 
 **Date:** 2026-06-17

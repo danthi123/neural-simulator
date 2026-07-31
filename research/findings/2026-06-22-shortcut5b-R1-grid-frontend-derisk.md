@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-06-22
+mechanism: grid-cells
+---
+
 # Shortcut #5b R1 SURPASS — the spatial-phase grid-cell front end CLOSES the afferent-selectivity residual (2026-06-22)
 
 **Task:** execute the rank-1 SURPASS from the scoping `2026-06-22-shortcut5b-R1-selective-afferent-surpass.md`

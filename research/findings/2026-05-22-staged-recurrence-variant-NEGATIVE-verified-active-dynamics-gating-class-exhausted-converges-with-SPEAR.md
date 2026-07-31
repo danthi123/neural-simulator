@@ -1,3 +1,9 @@
+---
+type: finding
+status: live
+date: 2026-05-22
+---
+
 # ACh-staged recurrent excitation variant = NEGATIVE, and the negative is VERIFIED VALID by a structural-effect check (the installed recurrence genuinely transmits -- 1.41x activity spread on a supra-threshold drive -- so the verdict is NEGATIVE not VOID); the concept pools are so heavily damped that neither the ca1->concept-pool wire nor active recurrent amplification nor replay can ignite them; the dynamics-gating / wiring / amplification class of fix is now EXHAUSTED and the result converges with the prior SPEAR negative -- the compositional fix is not in network dynamics, it is in the representation
 
 ## Status

@@ -1,3 +1,9 @@
+---
+type: finding
+status: live
+date: 2026-05-03
+---
+
 # Sub-step profile — compute-bound, not Python-bound
 
 **Date:** 2026-05-03 ~14:13 EDT (autonomous overnight)

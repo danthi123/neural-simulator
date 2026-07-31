@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-07-18
+mechanism: gap3-disambiguation
+---
+
 # Gap #3 residual A1 — the host `content_bias_target` feature-lexicon EMERGES from corpus co-occurrence (cheap-first 6-seed GO)
 
 **2026-07-18.** Per the owner's easiest-first strategy correction (fully close each gap before the harder ones), gap #3

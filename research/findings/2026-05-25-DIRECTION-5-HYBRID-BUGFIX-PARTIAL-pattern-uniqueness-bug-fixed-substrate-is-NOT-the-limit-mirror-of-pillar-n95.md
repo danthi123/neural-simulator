@@ -1,3 +1,9 @@
+---
+type: finding
+status: contributing
+date: 2026-05-25
+---
+
 # Direction 5 hybrid BUGFIX = DIRECTION_5_PARTIAL multi-seed (5 of 6 cells PASS at 0.80 bar; OB perfect at every load; only L=5 OI below bar at 0.463 with top-K, 0.195 without); MAJOR REVERSAL of prior D5 NEGATIVE — substrate is NOT the limit, the pattern-uniqueness bug was; result is a MIRROR of pillar n=95 G.20 sparse cross-bridge (OB perfect / OI L=5 boundary)
 
 **Date:** 2026-05-25 ~19:30 EDT

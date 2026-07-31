@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-07-17
+mechanism: gap2-slot-binder
+---
+
 # Gap #2 spiking slot binder — BUILD STEP 1 (slot-separation prerequisite): GO, + the multi-slot-coexistence challenge precisely identified (2026-07-17)
 
 **Per `2026-07-17-keystone-slot-binder-research-gate.md` #1. Composes the EMERGE-41 spiking competitive pooler (`FSWTAProbe`). CPU/numpy probe; the gate's #1 build begun.**

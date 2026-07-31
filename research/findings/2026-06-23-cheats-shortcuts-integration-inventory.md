@@ -1,3 +1,9 @@
+---
+type: finding
+status: superseded
+date: 2026-06-23
+---
+
 # Definitive inventory — cheats / one-brain integration / optimization / dedicated-hardware (2026-06-23)
 
 > **Fresh synthesis** from three parallel read-only audits (conversational · navigation+shared · optimization+hardware), each grounded against current code (file:line) + the findings. **Supersedes `2026-06-21-shortcut-inventory-definitive.md`** (the substrate-scoped master ledger of 24 cognitive ops; it predated the grounded-language / bridge-coresidence / develop-loop / generative arcs and did not cover one-brain *integration* glue, optimization, or hardware). Organized by the owner's four dimensions + characterized boundaries + a strategic synthesis.

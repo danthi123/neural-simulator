@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-04-28
+mechanism: bg-cross-projections
+---
+
 # Cheat #5 reframe — ON HOLD pending biology buildout
 
 **Date:** 2026-04-28 (afternoon, post-option-1 NO-GO + patch-matrix sanity check)

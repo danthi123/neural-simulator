@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-05-19
+mechanism: integrated-loop
+---
+
 # Distinct-readout-pathways candidate: honest negative — but the encode-order contradiction is genuinely DISSOLVED; the blocker has moved to a precise, well-understood biological trade-off (consolidation abstracts away binding specificity)
 
 ## Status

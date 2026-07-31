@@ -1,3 +1,9 @@
+---
+type: finding
+status: qualified
+date: 2026-06-13
+---
+
 # Phase 1 composer-architecture de-risk: ROUTE A (per-bridge composers + cross-bridge V-tag) = GO — vocabulary-independent cost, full conversational capability at 8 bridges; route B not required
 
 **Date:** 2026-06-13. **Runner:** `research/runners/phase1_composer_ab_derisk.py` (commit 6b36db78). **Backend:** `SIM_BACKEND=cupy` (GPU). **Raw:** `research/findings/raw/_phase1_composer_routeA_512_seed42.json` + `.log`. **Scope:** 8 bridges × 64 = 512 concepts, route A (`--composer per-bridge --per-bridge-D 256`), seed 42, learned cortex. **Design:** `docs/plans/2026-06-12-phase1-composer-architecture-design.md`.

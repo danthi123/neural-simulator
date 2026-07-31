@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-07-17
+mechanism: gap2-slot-binder
+---
+
 # Gap #2 — adversarial-verify CONFIRMED + content-addressable wire-in mechanism 6-seed GO (2026-07-17)
 
 Follow-ons (b) and (c) of "finish gap #2 fully" (the fully-spiking competitive-slot binder). Follow-on (a)

@@ -1,3 +1,9 @@
+---
+type: finding
+status: live
+date: 2026-05-18
+---
+
 # Q2 two-module per-token grounded CONSTRAINED DECODING — honest FAIL at the pre-registered scale-confidence criterion: instrument SOUND at all 3 rungs, the BPE-aware veto fix HELD, the signal is real and SCALE-POSITIVE (non-vacuity 0.333->0.583->0.625, K=12/24 PASS, shuffled-grounding decisively 0.000) — but the SMALLEST rung K=6 is below the frozen non-vacuity bar so the frozen "every-rung-PASS" criterion returns FAIL; NOT scale-confident, NOT spun, NOT bar-tuned, NOT re-run; autonomous NON-STOP pivot to Q3 (NO owner-deferral)
 
 ## TL;DR

@@ -1,3 +1,10 @@
+---
+type: finding
+status: qualified
+date: 2026-06-10
+mechanism: rpe
+---
+
 # N9 reward-prediction-error loop is now FULLY SPIKING — the two remaining host pieces (reward delivery, critic normalization) made neural
 
 **Date:** 2026-06-10

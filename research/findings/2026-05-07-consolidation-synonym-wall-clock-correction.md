@@ -1,3 +1,9 @@
+---
+type: finding
+status: corrected
+date: 2026-05-07
+---
+
 # consolidation_synonym wall-clock correction (5-9× underestimate)
 
 **Date:** 2026-05-07 EDT

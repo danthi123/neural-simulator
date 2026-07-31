@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-07-22
+mechanism: gamma-wta-replay
+---
+
 # gap#5 TIMING — cheapest-first isolation GO: a gamma-WTA + post-fire silence turns RANK 2's marginal weight-only replay order into a RELIABLE forward order, on the REAL learned weights
 
 **2026-07-22, CPU/numpy, coexisting with the fluency training.** The cheapest-first de-risk named in

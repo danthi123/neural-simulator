@@ -1,3 +1,9 @@
+---
+type: finding
+status: contributing
+date: 2026-06-04
+---
+
 # Composer shortcut audit — is the numpy cleanup the LAST non-core-biological shortcut? — 2026-06-04
 
 **Short answer: NO.** The owner chose item 2 (build the real cortical cleanup circuit, migrate the numpy argmax

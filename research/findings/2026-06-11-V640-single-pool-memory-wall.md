@@ -1,3 +1,9 @@
+---
+type: finding
+status: live
+date: 2026-06-11
+---
+
 # V=640 single-pool: OOM at the synapse install — the single-pool memory wall is ~V=320–450 (lower than estimated); single-pool scaling demonstration completes at V=160→V=320
 
 **Date:** 2026-06-11. **Runner:** `research/runners/learned_graded_embedding_homeostasis_probe.py --n-clusters 80 --per-cluster 7 --n-pool 24000` (V=640 at the clean 37.5 neurons/concept density). **Backend:** `SIM_BACKEND=cupy` (GPU, RTX 3090, 24 GB). **Raw:** `research/findings/raw/_lge_v640_seed42.log`.

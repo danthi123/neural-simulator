@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-07-26
+mechanism: consolidation
+---
+
 # Cortical slot addressability — RESEARCH GATE. The `pool→slot` residual is NOT a plasticity-rule tension: it is an **unmeasured somatic SELECTION failure** of a WTA pool that is built but wired as *global* inhibition, plus **two confounds in the arms that closed the alternatives** (a hard-coded `5.0` clip; a mechanism attributed to a Hebbian branch that is not on the executed path). Selective addressability is reachable with **config-only + ~15 additive runner lines**, no `sim/` edit and no architectural redesign.
 
 **Date:** 2026-07-26

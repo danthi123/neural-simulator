@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-07-20
+mechanism: btsp
+---
+
 # gap#4 keystone — the BTSP one-shot place-field TASK, run for the first time: pre-registered NO-GO, with the biological backward-shift signature present and every control collapsing
 
 **2026-07-20.** The experiment the record named on 2026-07-18 (*"(b) a one-shot TASK (association/place-field) the

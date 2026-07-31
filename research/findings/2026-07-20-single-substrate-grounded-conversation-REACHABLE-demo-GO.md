@@ -1,3 +1,9 @@
+---
+type: finding
+status: qualified
+date: 2026-07-20
+---
+
 # Single shared substrate — a REACHABLE grounded conversation on ONE bridge (GO)
 
 **Date:** 2026-07-20 · **Status:** GO (6-seed 42/43/44/100/101/102) — a runnable grounded conversational turn on ONE

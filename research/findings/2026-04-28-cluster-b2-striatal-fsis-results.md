@@ -1,3 +1,10 @@
+---
+type: finding
+status: qualified
+date: 2026-04-28
+mechanism: striatal-fsi
+---
+
 # Cluster B.2 — Striatal FSIs: MIXED, Phase-0 architectural issue
 
 **Date:** 2026-04-28 (evening)

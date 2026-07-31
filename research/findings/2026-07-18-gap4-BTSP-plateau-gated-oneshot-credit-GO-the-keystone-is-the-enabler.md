@@ -1,3 +1,10 @@
+---
+type: finding
+status: qualified
+date: 2026-07-18
+mechanism: btsp
+---
+
 # 🎉 Gap #4 (local-credit keystone) — BTSP plateau-gated ONE-SHOT credit is GO (6-seed), and the gap#5 BISTABLE dendritic plateau IS its enabling mechanism (it converts ms spike-timing plasticity into a seconds-long BEHAVIORAL-TIMESCALE credit window). The EMERGENCE-BAR-aligned gap#4 rule that WORKS.
 
 **2026-07-18.** After the on-bridge BDSP-FA deep-supervised path was confirmed depth-fragile (rate ceiling ~0.715 <

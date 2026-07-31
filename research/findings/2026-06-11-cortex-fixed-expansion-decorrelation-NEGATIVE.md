@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-06-11
+mechanism: cleanup
+---
+
 # Cortex fixed-expansion decorrelation probe: NEGATIVE
 
 **Status:** NEGATIVE — reproducibility and decorrelation do NOT coexist for a fixed random expansion on correlated dense inputs. The DG k-WTA tension is NOT specific to the spiking mechanism; it is a fundamental property of threshold-based sparse codes applied to dense correlated inputs.

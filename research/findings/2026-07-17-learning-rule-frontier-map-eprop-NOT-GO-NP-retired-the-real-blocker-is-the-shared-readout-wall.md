@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-07-17
+mechanism: deep-credit
+---
+
 # The learning-rule frontier, mapped from our own record (2026-07-17): feedforward e-prop is NOT-GO, Node Perturbation is already retired, and the real blocker is a SHARED supervised-readout wall — the working path is the UNSUPERVISED stream cortex
 
 **2026-07-17. A read-only scan of our own findings (NP cluster + the 2 confound docs + R3-REFRAME + both 2026-07-15

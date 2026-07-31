@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-07-24
+mechanism: gap4-credit
+---
+
 # gap#4 learned self-predicting microcircuit (Sacramento Eq.9) — CPU-rate 6-seed GO: apical-silent-when-correct is EARNED; the learned-vs-FA accuracy separation is spiking-only (2026-07-24)
 
 ## Result — CPU-rate 6-seed GO (6/6), `_gap4_learned_microcircuit_selfpredict_derisk` (NO `sim/` edit; MicroNet plastic-Eq.9 W^PI in the runner)

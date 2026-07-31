@@ -1,3 +1,10 @@
+---
+type: finding
+status: corrected
+date: 2026-06-11
+mechanism: familiarity-gate
+---
+
 # Flat-cortex (A) completion — the learned no-confab familiarity gate matches the host abstention moat at V=320: GO (multi-seed, zero moat-breaches)
 
 **Date:** 2026-06-11 (overnight). **Runner:** `research/runners/familiarity_gate_v320_validation.py` (CPU, `SIM_BACKEND=numpy` — tiny bridges, numpy linear algebra; not a GPU-heavy workload). **Raw:** `research/findings/raw/_familiarity_gate_v320_validation.json` (seeds 42/43/44, V=320, D=128, 60 stored facts, abstention floor 48) + `_famgate_smoke.json` (V=64).

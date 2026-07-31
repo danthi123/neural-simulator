@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-06-14
+mechanism: dendritic-substrate
+---
+
 # Dendritic substrate — deep research + reference-catalog review (the opening move before any months-scale build)
 
 **Status:** READ-ONLY deep-research + catalog/literature/code review (the project's standing "deep research FIRST at a

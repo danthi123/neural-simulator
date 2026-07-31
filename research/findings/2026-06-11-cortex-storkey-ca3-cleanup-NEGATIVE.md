@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-06-11
+mechanism: cleanup
+---
+
 # Cortex Step 3: Storkey CA3 Cleanup Probe — NEGATIVE (Locality Wall)
 
 **Date:** 2026-06-11

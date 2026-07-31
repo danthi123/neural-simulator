@@ -1,3 +1,9 @@
+---
+type: finding
+status: live
+date: 2026-06-23
+---
+
 # 🎉 Grounded-language DE-RISK P2 = GO 6/6 — the brain re-encodes a Claude-authored curriculum + recalls it + abstains (the knowledge-teacher→brain→grounded-recall loop works; P2 + P3's gate de-risked, NO LLM touched) (2026-06-23)
 
 **A ~30-fact structured curriculum (Claude-authored, the OFFLINE "textbook author") ingested through the brain's

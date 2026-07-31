@@ -1,3 +1,9 @@
+---
+type: finding
+status: contributing
+date: 2026-06-04
+---
+
 # Cheat-removal #4 (visual grounding) — cheap-first RESOLVES: Gabor-V1 features ground usable concept codes — 2026-06-04
 
 **One line:** Real biological V1 Gabor receptive fields (`sim/visual_cortex.py`, Hubel-Wiesel oriented simple

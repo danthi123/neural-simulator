@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-07-07
+mechanism: deep-credit
+---
+
 # DEEP-LEVER research gate — a learned deep spiking cortex (biologically-plausible deep credit assignment): ~80% already built; the genuine residual is a CHEAP rate→spike port + the recurrent frontier. Cheapest-first de-risk = D1 (spiking BDSP/microcircuit on one bridge)
 
 **Date:** 2026-07-07

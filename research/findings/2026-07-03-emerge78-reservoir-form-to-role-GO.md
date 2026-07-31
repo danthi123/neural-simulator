@@ -1,3 +1,10 @@
+---
+type: finding
+status: qualified
+date: 2026-07-03
+mechanism: reservoir-form-to-role
+---
+
 # EMERGE-78 — the FRONTO-STRIATAL RESERVOIR replaces the hand form→thematic-role labeler (learned map, no hand branch) AND integrates whole-sequence structure no fixed window can (a constructed non-local proof-of-mechanism) — **GO** (6-seed, adversarially hardened)
 
 **Date:** 2026-07-03

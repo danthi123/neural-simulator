@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-05-10
+mechanism: stp
+---
+
 # STP DEFAULT FLIP — 3.28× speedup AND higher accuracy
 
 **Date:** 2026-05-10 12:52 EDT

@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-05-18
+mechanism: predictive-coding
+---
+
 # Q3 engram-prior'd laminar PC-inference generative composition — cheap falsify-first precursor returned VOID-class (instrument not soundly+discriminatingly constructible cheaply); heavy build NOT warranted per the pre-registered rule; 7th-direction triangulation of the arc-wide boundary; NOT a refutation of the durable-sound PC-inference principle; autonomous NON-STOP pivot to Q4 (NO owner-deferral)
 
 ## TL;DR

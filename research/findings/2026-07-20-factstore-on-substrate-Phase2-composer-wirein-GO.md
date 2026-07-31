@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-07-20
+mechanism: fact-store
+---
+
 # Fact-store on the substrate — Phase 2: the composer's fact-store now lives in DEVICE SYNAPSES (GO)
 
 **Date:** 2026-07-20 · **Status:** GO (parity 3-seed 42/43/100) — `OneBrainComposer(persistent_store=True)` holds the

@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-06-05
+mechanism: fhrr
+---
+
 # FHRR-on-bridge — PRODUCTION SWITCH DONE: the conversational agent runs opponency-free — 2026-06-05
 
 **The `BrainConversationalAgent` now defaults to the FHRR-on-bridge `RFPhasorComposer`.** The opponency rate-coded

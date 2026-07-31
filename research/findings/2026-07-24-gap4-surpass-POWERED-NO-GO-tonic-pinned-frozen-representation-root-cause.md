@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-07-24
+mechanism: gap4-credit
+---
+
 # gap#4 on-bridge spiking — SURPASS attempt REMOVES the compute confound → POWERED NO-GO: even the idealized ceiling doesn't learn; root cause = φ'-vanishing credit + a TONIC-PINNED FROZEN hidden representation at the sparse point-neuron operating point (2026-07-24)
 
 ## Why this supersedes the launch-bound framing

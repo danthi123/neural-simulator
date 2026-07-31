@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-06-05
+mechanism: cleanup
+---
+
 # De-risk (A) RESOLVED — NEF thresholded cleanup reaches seed-robust numpy parity → GO — 2026-06-05
 
 **Verdict: GO.** The literature-grounded NEF thresholded cleanup (Stewart-Tang-Eliasmith 2011, the Spaun spiking VSA

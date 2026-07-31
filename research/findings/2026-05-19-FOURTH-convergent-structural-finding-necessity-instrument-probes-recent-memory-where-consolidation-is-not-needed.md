@@ -1,3 +1,10 @@
+---
+type: finding
+status: qualified
+date: 2026-05-19
+mechanism: integrated-loop
+---
+
 # Fourth convergent structural finding: the necessity instrument, as posed, probes RECENT memory — where complementary-learning-systems theory says consolidation is not necessary at all. The necessity-on-recent-memory line is structurally closed by construction; the finding itself points to the genuinely-distinct next factorization (probe the REMOTE/consolidated regime).
 
 ## Status

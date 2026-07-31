@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-07-18
+mechanism: emergent-dg
+---
+
 # gap#5 emergent-DG arc - deep-research scoping (workflow synthesis, 2026-07-18)
 
 # Emergent-DG CA3 Assembly — Buildable Scoping (gap#5 follow-on)

@@ -1,3 +1,10 @@
+---
+type: finding
+status: contributing
+date: 2026-07-25
+mechanism: consolidation
+---
+
 # Claude-downtime dispatch MANIFEST — consolidation dendritic operating-point sweep on the mini-PC pool (2026-07-25)
 
 **Purpose:** Claude usage hits ~100% ~Sat and resets **Tue 11 AM** (~2.5–3 days of Claude downtime). To make the wait

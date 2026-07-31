@@ -1,3 +1,9 @@
+---
+type: finding
+status: live
+date: 2026-05-11
+---
+
 # 96-word @ XL encoding (n_lang=16384) — NEGATIVE: encoding-only scale-up doesn't fix the wall
 
 **Date:** 2026-05-11 01:43 EDT (run killed at PRE-SILENCE 350/480 by user

@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-07-23
+mechanism: affective-tagging
+---
+
 # DR-2 (new-direction Phase-0): affective concept-tagging — concepts LEARN their valence from the association graph, 6-seed GO (2026-07-23)
 
 First validated faculty of the owner's reframe (a brain with an affectively-colored world-model, not a fact store).

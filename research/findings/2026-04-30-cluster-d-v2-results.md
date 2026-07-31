@@ -1,3 +1,10 @@
+---
+type: finding
+status: qualified
+date: 2026-04-30
+mechanism: swr-replay
+---
+
 # 2026-04-30 — Cluster D v2 (SWR-gated CA3 plasticity): PARTIAL GO — opt-in only
 
 **Run:** `g11_bg_runner.py` multi-goal deterministic, sleep replay window

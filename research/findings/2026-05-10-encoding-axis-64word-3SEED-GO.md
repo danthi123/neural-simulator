@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-05-10
+mechanism: consolidation
+---
+
 # Encoding-axis 64-word 3-seed multi-seed: 3/3 GO UNANIMOUS
 
 **Date:** 2026-05-10 15:44 EDT

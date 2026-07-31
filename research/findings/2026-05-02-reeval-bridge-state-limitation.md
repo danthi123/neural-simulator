@@ -1,3 +1,10 @@
+---
+type: finding
+status: live
+date: 2026-05-02
+mechanism: checkpointing
+---
+
 # 2026-05-02 — Reeval bridge state limitation (technical note)
 
 **Issue:** `text_reeval.py` loading a saved checkpoint produces accuracy at chance even when the original training-end eval showed significant signal.
