@@ -1,0 +1,63 @@
+{
+ "runner": "research/runners/_gap4_onbridge_spiking_selfpredict_derisk.py",
+ "aggregated_from": [
+  "research/findings/raw/gap4_crux/resumable_driver.log",
+  "research/findings/raw/gap4_crux/resumable_s42_fixed_fa.log",
+  "research/findings/raw/gap4_crux/resumable_s42_kp.log",
+  "research/findings/raw/gap4_crux/resumable_s42_micro.log",
+  "research/findings/raw/gap4_crux/resumable_s42_reservoir.log",
+  "research/findings/raw/gap4_crux/resumable_s42_transport_ceiling.log",
+  "research/findings/raw/gap4_crux/resumable_s43_fixed_fa.log",
+  "research/findings/raw/gap4_crux/resumable_s43_kp.log",
+  "research/findings/raw/gap4_crux/resumable_s43_micro.log",
+  "research/findings/raw/gap4_crux/resumable_s43_reservoir.log"
+ ],
+ "chance_1_over_k": 0.2,
+ "per_seed_arms": {
+  "42": {
+   "fixed_fa": 0.13,
+   "kp": 0.074,
+   "micro": 0.148,
+   "reservoir": 0.204,
+   "transport_ceiling": 0.148
+  },
+  "43": {
+   "fixed_fa": 0.037,
+   "kp": 0.222,
+   "reservoir": 0.13
+  }
+ },
+ "stopped": "2026-07-31 ~19:58, ~9h in, 0 of 8 cells banked",
+ "label": "gap#4 crux \u2014 deep credit on the on-bridge spiking forward",
+ "status": "UNDEFINED",
+ "go": false,
+ "undefined_reasons": [
+  "unmet: IDEALISED transport ceiling vs chance (0.148 vs floor 0.2)",
+  "unmet: anti-cheat arms completed (measured=False expect=True)"
+ ],
+ "preconditions": [
+  {
+   "kind": "floor",
+   "name": "IDEALISED transport ceiling vs chance",
+   "ok": false,
+   "detail": "0.148 vs floor 0.2",
+   "note": "weight transport ALLOWED (nwt False) \u2014 no biological rule can exceed it, so a sub-chance ceiling makes every arm beneath it uninterpretable"
+  },
+  {
+   "kind": "floor",
+   "name": "best arm across all seeds vs chance",
+   "ok": true,
+   "detail": "0.222 vs floor 0.2",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "anti-cheat arms completed",
+   "ok": false,
+   "detail": "measured=False expect=True",
+   "note": "run stopped at ~9h; each cell needed ~3 more full nets (~17h) and anti-cheats cannot rescue a run whose idealised ceiling is sub-chance"
+  }
+ ],
+ "disabled_processes": [],
+ "chance": 0.2
+}
