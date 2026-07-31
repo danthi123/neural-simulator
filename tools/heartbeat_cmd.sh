@@ -13,7 +13,24 @@ wc_out=$(bash tools/workflow_check.sh 2>&1); wc_rc=$?
 # cannot be silent. Uses ls-remote, not the remote-tracking ref: a cached ref will happily agree with a
 # push that never happened.
 ahead=$(git rev-list --count "$(git ls-remote origin refs/heads/main 2>/dev/null | cut -f1)"..HEAD 2>/dev/null || echo "?")
-echo "⚓ HB $(date +%H:%M) gpu=[$gpu] procs=$procs unpushed=$ahead"
+# AWS state, QUERIED not remembered. The previous heartbeat carried a hardcoded "AWS BILLS while running"
+# reminder that stayed on the screen after the instance was stopped — a false alarm, which the project's own
+# rule says is as corrosive as a missed one because it trains the reader to skip the line.
+aws_state=""
+if [ -f research/queue/.aws_gpu ]; then
+  inst=$(grep -m1 '^instance=' research/queue/.aws_gpu 2>/dev/null | cut -d= -f2)
+  if [ -n "$inst" ]; then
+    st=$(timeout 25 aws ec2 describe-instances --instance-ids "$inst" \
+           --query 'Reservations[0].Instances[0].State.Name' --output text 2>/dev/null)
+    case "$st" in
+      running) aws_state=" ⛔ AWS $inst RUNNING — BILLING. stop: bash tools/aws_gpu.sh stop" ;;
+      ""|None) aws_state="" ;;
+      *)       aws_state=" aws=$st" ;;
+    esac
+  fi
+fi
+crux=$(ls research/findings/raw/gap4/resumable/*.json 2>/dev/null | wc -l)
+echo "⚓ HB $(date +%H:%M) gpu=[$gpu] procs=$procs unpushed=$ahead crux-banked=$crux$aws_state"
 if [ "$ahead" != "0" ] && [ "$ahead" != "?" ]; then
   echo "⛔ $ahead COMMIT(S) UNPUSHED — the only copy is this disk. run: bash tools/push_both.sh"
 fi
