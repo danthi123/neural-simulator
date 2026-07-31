@@ -1,3 +1,0 @@
-CONTENTION WINDOW (owner gaming on CachyOS, no reboot)
-start=2026-07-30 14:33:40
-note=cells completing after this stamp ran under CPU/GPU contention; their wall-clock is an UPPER BOUND, not a clean measure of the shrink speedup.

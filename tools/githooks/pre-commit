@@ -15,11 +15,33 @@
 set -uo pipefail
 ROOT=$(git rev-parse --show-toplevel)
 [ -x "$ROOT/.venv/bin/python" ] || exit 0          # no venv (fresh clone / CI bootstrap) -> do not block
-"$ROOT/.venv/bin/python" "$ROOT/tools/check_docs.py" > /tmp/_precommit_docs.out 2>&1 && exit 0
-echo "⛔ COMMIT BLOCKED — document-structure rules failed:"
-sed 's/^/   /' /tmp/_precommit_docs.out | tail -20
-echo
-echo "   Fix:  .venv/bin/python tools/split_long_doc_lines.py --apply    (W2; refuses to write if content changes)"
-echo "   or register the voided doc in docs/RETRACTED.md and mark citations with the retraction symbol (W1)."
-echo "   Deliberate override: git commit --no-verify"
-exit 1
+# GATE 1 -- document STRUCTURE (W1 retraction marking, W2 line length).
+"$ROOT/.venv/bin/python" "$ROOT/tools/check_docs.py" > /tmp/_precommit_docs.out 2>&1 || {
+  echo "⛔ COMMIT BLOCKED — document-structure rules failed:"
+  sed 's/^/   /' /tmp/_precommit_docs.out | tail -20
+  echo
+  echo "   Fix:  .venv/bin/python tools/split_long_doc_lines.py --apply    (W2; refuses to write if content changes)"
+  echo "   or register the voided doc in docs/RETRACTED.md and mark citations with the retraction symbol (W1)."
+  echo "   Deliberate override: git commit --no-verify"
+  exit 1
+}
+
+# GATE 2 -- CLAIMS. Every measurement in a staged findings doc must exist in an artifact the doc cites.
+# This is the gate for the failure class the experiment harness does NOT cover: a claim repeated from a summary
+# without opening the artifact. On 2026-07-31 that produced "lane A has a banked 6-seed GO" when the artifact
+# read {"GO": false, "n_seeds_go": 2}. A finding is where claims become durable, so this is where they get checked.
+STAGED=$(git diff --cached --name-only --diff-filter=ACM | grep -E '^research/findings/[^/]+\.md$' || true)
+if [ -n "$STAGED" ]; then
+  if ! echo "$STAGED" | xargs -r "$ROOT/.venv/bin/python" "$ROOT/tools/claim_check.py" > /tmp/_precommit_claims.out 2>&1; then
+    echo "⛔ COMMIT BLOCKED — a findings doc states measurements that are in no artifact it cites:"
+    sed 's/^/   /' /tmp/_precommit_claims.out | tail -28
+    echo
+    echo "   Fix ONE of:  cite the artifact that contains the number (a path with a / in it);"
+    echo "                save the aggregate you computed and cite THAT (means over seeds live in no per-seed file);"
+    echo "                mark a derived/quoted value with <!--derived--> (inline, or alone on a line for block scope)."
+    echo "   Deliberate override: git commit --no-verify"
+    exit 1
+  fi
+fi
+exit 0
+

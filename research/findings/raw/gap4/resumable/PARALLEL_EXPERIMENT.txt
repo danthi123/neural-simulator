@@ -1,0 +1,4 @@
+PARALLEL-CELL EXPERIMENT
+start=2026-07-30 17:53:20
+baseline=sequential cell1 (s43/reservoir) started 14:08:03, still running at 3h30m (~2h of it contended)
+question=does per-cell wall-clock degrade when cells run concurrently? launch-bound workload, 5.4MB working set vs 6MB L2

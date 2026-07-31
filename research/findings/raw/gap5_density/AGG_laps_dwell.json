@@ -1,0 +1,63 @@
+{
+ "description": "per-cell aggregate over seeds for the laps x dwell isolation",
+ "source_glob": "research/findings/raw/gap5_density/g5lap_L*_D*_*.json",
+ "w_max": 2500,
+ "W0": 250,
+ "lr": 0.005,
+ "cells": [
+  {
+   "laps": 1,
+   "dwell": 30,
+   "n_seeds": 3,
+   "circ_dW": 0.1426,
+   "perm_null": 0.0324,
+   "ratio": 4.4,
+   "median_p": 0.005
+  },
+  {
+   "laps": 1,
+   "dwell": 180,
+   "n_seeds": 3,
+   "circ_dW": 0.0042,
+   "perm_null": 0.0038,
+   "ratio": 1.11,
+   "median_p": 0.1095
+  },
+  {
+   "laps": 2,
+   "dwell": 30,
+   "n_seeds": 3,
+   "circ_dW": 0.0142,
+   "perm_null": 0.0055,
+   "ratio": 2.57,
+   "median_p": 0.005
+  },
+  {
+   "laps": 2,
+   "dwell": 180,
+   "n_seeds": 3,
+   "circ_dW": 0.0042,
+   "perm_null": 0.0038,
+   "ratio": 1.11,
+   "median_p": 0.1095
+  },
+  {
+   "laps": 5,
+   "dwell": 30,
+   "n_seeds": 3,
+   "circ_dW": 0.0042,
+   "perm_null": 0.0038,
+   "ratio": 1.11,
+   "median_p": 0.1144
+  },
+  {
+   "laps": 5,
+   "dwell": 180,
+   "n_seeds": 3,
+   "circ_dW": 0.0042,
+   "perm_null": 0.0038,
+   "ratio": 1.11,
+   "median_p": 0.1095
+  }
+ ]
+}
