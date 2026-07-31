@@ -7820,8 +7820,22 @@ class SimulationBridge:
                             _coact > cp.float32(getattr(cfg, "hebbian_coactivity_thresh", 0.25)))[0]
                         if active_synapse_indices_heb.size > 0:
                             current_weights_active_syn = base_weights_data_array[active_synapse_indices_heb]
-                            delta_weights = (cfg.hebbian_learning_rate * _coact[active_synapse_indices_heb]
-                                             * (cfg.hebbian_max_weight - current_weights_active_syn))
+                            # OJA (2026-07-31): swap the (w_max - w) soft bound for -a^2*w, which is what makes
+                            # the fixed point INPUT-DEPENDENT. With (w_max - w) every gated synapse converges to
+                            # hebbian_max_weight regardless of drive, so the rule can only express a binary
+                            # partition -- the measured signature being rsa_vs_host 0.827 (right SUPPORT, gate
+                            # passed) against OSI 0.195 and decode 0.281 (no graded amplitude). Oja's fixed point
+                            # is w_j* = <a x_j>/<a^2>, the input correlation itself. 0.0 => OFF => byte-identical.
+                            _oja = float(getattr(cfg, "hebbian_oja", 0.0))
+                            if _oja > 0.0:
+                                _post_tr = _tr[coo_matrix_heb.col[active_synapse_indices_heb]]
+                                delta_weights = (cfg.hebbian_learning_rate
+                                                 * (_coact[active_synapse_indices_heb]
+                                                    - cp.float32(_oja) * (_post_tr * _post_tr)
+                                                    * current_weights_active_syn))
+                            else:
+                                delta_weights = (cfg.hebbian_learning_rate * _coact[active_synapse_indices_heb]
+                                                 * (cfg.hebbian_max_weight - current_weights_active_syn))
                             if self.cp_plasticity_rate_gain is not None:
                                 delta_weights = delta_weights * self.cp_plasticity_rate_gain[active_synapse_indices_heb]
                             # MILLER-MACKAY SUBTRACTIVE NORMALIZATION (2026-07-31), mirroring the proven

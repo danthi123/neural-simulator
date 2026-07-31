@@ -405,6 +405,15 @@ class CoreSimConfig:
     # which makes the fixed point depend on relative input correlation instead of collapsing to the bound.
     # 0.0 => OFF => byte-identical, the same contract as btsp_mean_subtract.
     hebbian_mean_subtract: float = 0.0
+    # LANE D (2026-07-31, after subtractive normalization was refuted at 5 strengths): OJA'S RULE.
+    # dw_j = eta * a * (x_j - a*w_j), i.e. the decay term is -a^2*w -- MULTIPLICATIVE in w and scaled by
+    # POSTsynaptic activity. That is the difference that matters: the current rule's (w_max - w) bound gives
+    # w_j* = hebbian_max_weight for every gated synapse (input-INDEPENDENT, expressible only as a binary
+    # partition), whereas Oja's fixed point is w_j* = <a x_j>/<a^2> -- the input correlation itself, i.e. an
+    # AMPLITUDE. Miller-MacKay's subtractive per-cell constant does NOT do this for an all-positive rule: it
+    # removes net drive (measured: firing fell 3.7x, decode halved, rsa fell out of its gate).
+    # 0.0 => OFF => the (w_max - w) form is used unchanged => byte-identical.
+    hebbian_oja: float = 0.0
     # 0.0 (default) => the BTSP block uses pure-potentiation fused_btsp_update (byte-identical). >0 => the structured
     # fused_btsp_hetero_update (Milstein-Magee 2021 bidirectional arm / Chistiakova-Volgushev heterosynaptic
     # competition): a plateauing cell depresses its NON-coincident inputs by lam_dep*(1-Etilde_pre)*(w-w_min) while

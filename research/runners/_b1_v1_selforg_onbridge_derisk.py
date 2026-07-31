@@ -219,6 +219,7 @@ def build_v1_bridge(seed, n_orient, n_freq, n_pos, retina_size, radius,
     cfg.hebbian_max_weight = hebb_max
     # Miller-MacKay subtractive normalization (2026-07-31): env-exposed so the ON/OFF arms are one flag.
     cfg.hebbian_mean_subtract = float(os.environ.get("HEBB_MEAN_SUB", "0.0"))
+    cfg.hebbian_oja = float(os.environ.get("HEBB_OJA", "0.0"))
     cfg.hebbian_min_weight = 0.0
     cfg.enable_homeostasis = True           # threshold adaptation = the activity-normalizing competition term
     cfg.homeostasis_target_rate = homeo_target
