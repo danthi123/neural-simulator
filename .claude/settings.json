@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python .claude/hooks/check_doc_drift.py 2>/dev/null || true"
+            "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/check_doc_drift.py\" 2>/dev/null || true"
           }
         ]
       }
@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 .claude/hooks/block_self_matching_kill.py"
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/block_self_matching_kill.py\""
           }
         ]
       }
