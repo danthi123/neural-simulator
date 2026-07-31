@@ -91,3 +91,58 @@ tested, so lowering it is cheap and safe).
 - These residuals come from the adversarial review of that fix, which correctly judged my original verification
   inadequate: it ran at n=300/1200 where `chunk_size` evaluates to n, so `num_chunks == 1` and chunking was never
   exercised at all.
+
+---
+
+## N-1 · Lane D: give the rate-Hebbian rule an INPUT-DEPENDENT fixed point (Miller-MacKay subtractive normalization)
+
+**Status:** READY TO BUILD · no GPU headroom needed (the regression suite runs in ~45 s beside the crux) · raised
+2026-07-31 · owner: autonomous
+
+### The evidence that forces it
+With the drive fixed (init weight 120, `hebb_max` 1200, drive 1200) lane D's V1 fires and the gates SPLIT:
+
+| gate | measured | required | reads |
+|---|---|---|---|
+| `rsa_vs_host` | **0.827** | 0.60 | **PASSES** |
+| `orient_decode` | 0.281 | host ref 0.984 | fails |
+| OSI post | 0.195 | 0.50 | fails |
+
+RSA is dominated by WHICH inputs a unit listens to; OSI and decode need a GRADED response. So the rule selects the
+right support and cannot grade it — exactly what `w_j* = hebbian_max_weight` predicts, since that fixed point is
+INPUT-INDEPENDENT and can only express a binary partition {gated → bound} vs {ungated → decayed}.
+Drive is excluded as the cause: firing rate rose 9.6× (0.00047 → 0.00450) while OSI did not move at all
+(0.199 → 0.195 across every condition).
+
+### The build — mirror a mechanism this engine ALREADY has and has PROVEN
+Do NOT write Oja. The engine already ships **Miller-MacKay 1994 subtractive normalization** as
+`btsp_mean_subtract` (`sim/config.py:393`, implemented `sim/bridge.py:8307-8330`), validated in the gap#5
+consolidation work. It is also the better-motivated mechanism for THIS problem: Miller-MacKay is literally the
+orientation/ocular-dominance development model, whereas Oja is a PCA rule.
+
+Add `hebbian_mean_subtract: float = 0.0` mirroring it exactly:
+1. compute the raw Hebbian increment `_h` for gated synapses
+2. `scatter_add` `_h` and a count into per-POSTsynaptic-cell buffers (`cupyx.scatter_add`, `cp.add.at` fallback)
+3. subtract each cell's mean increment, so `sum_j dw_ij = 0` BY CONSTRUCTION
+4. `0.0 ⇒ OFF ⇒ byte-identical` (the existing flag's contract)
+
+Why this grades what the current rule cannot: forcing the per-cell increment sum to zero makes afferents COMPETE,
+so a synapse can only grow at another's expense. The fixed point then depends on relative input correlation
+instead of collapsing to the bound.
+
+### Test at the KNOWN operating point (do not re-derive it)
+```bash
+SIM_BACKEND=numpy .venv/bin/python -m research.runners._b1_v1_selforg_onbridge_derisk   --seeds 42 --init-weight-mean 120 --hebb-max 1200 --drive-pA 1200   --coact-thresh 0.0002 --homeo-target 0.002 --n-inh 0 --dev-steps 6000 --out <path>
+```
+
+### Pre-registered prediction and kill criterion
+**Prediction:** `orient_decode` rises from 0.281 toward the host reference and OSI rises above 0.50, while
+`rsa_vs_host` stays ≥ 0.60. **KILL CRITERION:** if OSI and decode do NOT move with mean-subtract on, the
+input-independent-fixed-point diagnosis is REFUTED and the residual is elsewhere — record that, do not retune.
+
+### Traps already paid for, do not re-pay
+- `--hebb-max` defaults to **70**: any init weight above it is clipped on step 1, which silently ERASES the
+  independent variable (three weights read identically). Raise the bound with the weight, always.
+- `--drive-pA` exists and defaults to 1200; a lowercase-only flag scan misses it.
+- The drive is IMAGE-MODULATED (`image * drive_pA`), so a uniform-current probe does not match the runner.
+- Weight, not drive, is binding: at weight 20 a 10× drive increase leaves `v1_rate` at exactly 0.00000.
