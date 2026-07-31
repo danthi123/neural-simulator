@@ -47,6 +47,21 @@ pop_job() {
   local now cutoff
   now=$(date +%s); cutoff=$(( now - ${POOL_JOB_MAX_AGE:-43200} ))
   job=$(awk -F'\t' -v c="$cutoff" 'NF>1 && $1+0 >= c {print $2; exit}' "$QUEUE")
+  # THE RECORD-CHECK GATE (2026-07-31), copied from tools/lane_dispatch.sh:47 where it is already proven.
+  # A job may only run if it carries "#checked:", which tools/pool_queue.sh only attaches when a reason is
+  # given. This sits ON THE EXECUTION PATH deliberately: before_you_build.sh existed and was skipped, and that
+  # skip cost ~94 GPU-hours re-deriving a NO-GO banked a week earlier. The failure-taxonomy pass found that the
+  # ONLY two mechanisms which ever stopped a mistake uninvited are the two on paths you cannot avoid -- the
+  # pre-commit hook and this gate. Unchecked lines are SET ASIDE, never silently dropped.
+  case "$job" in
+    ""|*"#checked:"*) ;;
+    *) echo "[pool-dispatch] BLOCKED unchecked job -- requeue via: bash tools/pool_queue.sh add '<cmd>' --checked '<what the record says>'"
+       echo "                $(echo "$job" | cut -c1-96)"
+       grep -vF "	$job" "$QUEUE" > "$QUEUE.tmp" 2>/dev/null || true
+       mv "$QUEUE.tmp" "$QUEUE"
+       printf '%s\t%s\n' "$(date +%s)" "$job" >> "$QUEUE.unchecked"
+       flock -u 9; printf ''; return 0 ;;
+  esac
   local stale
   stale=$(awk -F'\t' -v c="$cutoff" 'NF>1 && $1+0 < c' "$QUEUE" | wc -l)
   [ "${stale:-0}" -gt 0 ] && echo "[pool-dispatch] SKIPPING $stale stale entr(ies) older than $(( ${POOL_JOB_MAX_AGE:-43200} / 3600 ))h"
