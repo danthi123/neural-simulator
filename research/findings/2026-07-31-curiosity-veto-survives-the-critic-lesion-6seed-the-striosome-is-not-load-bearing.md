@@ -6,6 +6,7 @@ mechanism: curiosity-seek-learn
 runner: research/runners/_curiosity_seek_learn_onbridge_derisk.py
 artifacts:
   - research/findings/raw/lanes_2026-07-31/AGG_curiosity_critic_lesion_6seed.json
+  - research/findings/raw/lanes_2026-07-31/_false_belief_helperpa4000_6seed_VERDICT.json
 ---
 
 # The curiosity veto survives its critic lesion at 6/6 seeds — so the striosome is not what computes it
@@ -46,7 +47,22 @@ False-belief at `helper_pa 4000` returned **GO at 6 seeds** — the midpoint of 
 both banked (5000 → GO 6/6, 3000 → PARTIAL 4/6), which would mean the GO has **margin** rather than sitting
 knife-edge on the drive.
 
-**That result is HELD, not banked, and deliberately.** `gates/verdict_preconditions` — built hours earlier
+**RESOLVED — the hold is lifted.** `_false_belief_register_derisk` was retrofitted with
+`tools.verdict.Verdict` (registering preconditions it was ALREADY computing — nothing new measured) and
+re-run: **GO, 6/6 seeds, all seven preconditions passing**, artifact
+`research/findings/raw/lanes_2026-07-31/_false_belief_helperpa4000_6seed_VERDICT.json`. So the original GO
+was EARNED; it simply could not say so. false-belief acc 1.0 against a 0.25 chance floor, other-lesion
+control at 0.0, and the load-bearing dissociation: the reality-baseline scores 0.020833, i.e. a world-read
+that predicted reality — which would pass this task without representing any belief at all — fails it.
+
+⚠️ **One thing to watch rather than celebrate:** an accuracy of exactly 1.0 with a lesion control at
+exactly 0.0 is the clean-separation signature this project has repeatedly learned to re-check. The
+reality-baseline at 0.020833 is a real dissociation and argues against simple leakage, but a saturated task
+cannot show margin, and margin was the whole reason for measuring this midpoint. Worth a harder variant.
+
+The original hold is recorded below because the sequence matters more than the outcome.
+
+**It WAS held, and deliberately.** `gates/verdict_preconditions` — built hours earlier
 today — refused its artifact: it asserts `GO` while carrying no `preconditions` block, so nothing records
 what earned it. The gate is right, and overriding it on the day it was written would make it decorative. I
 could not honestly reconstruct the preconditions after the fact either; that is precisely the fabrication
