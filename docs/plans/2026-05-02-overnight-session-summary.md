@@ -153,9 +153,9 @@ in cascade dynamics).
 
 1. `2026-05-02-text-io-100ep-reset-fix-results.md` — partial-T1 result + decision tree
 2. `2026-05-02-text-io-300ep-tier1-REGRESSION.md` — earlier 300-ep regression (May-1)
-3. `2026-05-02-text-io-hebbian-decay-root-cause.md` — root cause diagnosis
+3. `2026-05-02-text-io-hebbian-decay-root-cause.md` — root cause diagnosis ⛔ SUPERSEDED — its own prediction ("eval accuracy should jump ABOVE chance") did not hold: with Hebbian off, 6 seeds give I→W 25.3% (p=0.444, chance); only W→A survives at 28.5% (p=0.027) — `research/findings/2026-05-02-text-io-multi-seed-progress.md`. Arc terminus: `research/findings/2026-05-05-W-to-A-VERDICT-global-scalar-feedback-fails.md`.
 4. `2026-05-02-text-io-hebbian-fix-empirical-result.md` — first fix empirical result
-5. **`2026-05-02-text-io-BREAKTHROUGH-v2.md`** — primary breakthrough doc
+5. **`2026-05-02-text-io-BREAKTHROUGH-v2.md`** — primary breakthrough doc ⛔ RETRACTED — the 33% I→W at p=0.042 was **seed 42 alone**; at n=6 I→W reads 25.3% (p=0.444, not significant). Only W→A survives: 28.5%, p=0.027 — `research/findings/2026-05-02-text-io-multi-seed-progress.md`, `research/findings/2026-05-02-text-io-formal-writeup.md`.
 6. `2026-05-02-reeval-bridge-state-limitation.md` — technical note on save_checkpoint scope
 
 ## What's still imperfect
@@ -209,7 +209,7 @@ reaches 32%.
 
 ## Suggested next steps when you wake
 
-1. Read `2026-05-02-text-io-BREAKTHROUGH-v2.md` for the primary result
+1. Read `2026-05-02-text-io-BREAKTHROUGH-v2.md` for the primary result ⛔ RETRACTED — seed-42-only; n=6 gives I→W 25.3% (p=0.444). Read `research/findings/2026-05-02-text-io-multi-seed-progress.md` instead (W→A 28.5%, p=0.027).
 2. Check `research/findings/raw/g11_bg/text_eval_R3R6_*.json` for any new results
    that landed overnight
 3. Decide: 6-seed validation now, or first fix the 1-reversed-direction issue?

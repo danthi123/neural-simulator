@@ -33,9 +33,20 @@ are marked ADVISORY and count as ungated — the measured reason: **1330 runners
 | Y | job died silently | — | dispatcher exit-status log + heartbeat | execution path | ✅ REPORTS |
 | AP | pending work SERIALISED while dispatchable agents sit unused | — | `gates/agent_parallelism` | registry | ✅ BLOCKS |
 | L | CPU lanes starved while work continues elsewhere | — | `gates/lane_starvation` | registry | ✅ BLOCKS |
+| IR | a GO reports a SIZE without a SOURCE (no decomposition) | — | `gates/instrument_required` | registry | ✅ BLOCKS |
+| OP | a run misses an operating-point target recorded in its own artifact | — | `gates/operating_point` | registry | ✅ BLOCKS |
 | COV | a NOTICED failure never became a gate | — | `gates/coverage` + `research/FAILURE_LOG.md` | registry | ✅ BLOCKS |
+| BC | every arm of an A/B lands BELOW chance, reported as a NO-GO | 1 | `gates/below_chance` | registry | ✅ BLOCKS |
 
-**Score: 14 BLOCKING · 1 structural · 6 reporting · 0 ungated.**
+**Score: 17 BLOCKING · 1 structural · 7 reporting · 0 ungated — 23 rows.** (The previous line read
+`14 · 1 · 6`, which sums to 21 against 22 rows: row **Y**, green but non-blocking, was in no bucket. Corrected
+here rather than carried forward — an arithmetic drift in the score of the anti-drift spec is the joke this
+file cannot afford. Reporting = 6 🟡 rows + Y.)
+
+> **Adding a row: RE-DERIVE this line, do not increment it.** The buckets must sum to the row count, and the
+> `coverage` gate will tell you if a module is missing a row but not if the arithmetic is wrong. Count it:
+> `grep -c '^| ' docs/FAILURE_GATE_MATRIX.md` minus the header row, against ✅ BLOCKS + ✅ STRUCTURAL +
+> (🟡 rows + ✅ REPORTS).
 
 ## The loop that keeps this file honest
 
@@ -47,6 +58,13 @@ row naming a module that does not exist, is spec/code drift and fails.
 
 **What it cannot do:** notice. If a failure is never written down, nothing fires. It closes
 *noticed-but-forgotten*, not *never-noticed* — and that limit is stated rather than papered over.
+
+**The loop has now closed one row for the first time.** Class **BC** was logged as
+`NOT-GATEABLE yet: the guard exists in ONE runner, which does not cover the class ... widening the coverage
+recogniser to accept a single runner would have made this pass while covering nothing.` It is a gate as of
+2026-07-31. `NOT-GATEABLE` is therefore a *state*, not a verdict — the log row is the queue, and
+[`research/FAILURE_LOG.md`](../research/FAILURE_LOG.md) still carries the superseded `NOT-GATEABLE` text for
+this class and needs updating to name `gates/below_chance`.
 
 Every class from the 2026-07-31 taxonomy now has a module. Six REPORT rather than block, each
 because it declared limits it cannot check reliably at commit time — an honest reporting gate
@@ -75,6 +93,15 @@ Not hypothetical. On the registry's first pass over the live repo:
   **wrong number in an already-published table** (density-1.0 null 0.4977, the document said 0.5894).
 - **`stale-pointer`** reported that it can currently check **1% of 407 citations**, because only 4 declare a
   status — it states its own blindness instead of passing quietly.
+- **`below-chance`: 34 files / 35 sites — 16 of 7151 artifacts (0.22%) in `research/findings/raw/`, plus 18 of
+  234 in `raw/`.** Three
+  banked `"verdict": "NEGATIVE"` artifacts have **no interpretable result underneath the verdict**:
+  `_ml_stacked_s42.json` `/per_seed[0]/cooc` scores acc 0.13 against deranged 0.14 with chance 0.25 — the
+  derangement CONTROL beat the treatment, both under chance; `_lge_gpu_seed42.json` records
+  `NEGATIVE_no_structure` where graded 0.2375 / orthogonal 0.11875 / permuted 0.24375 all sit under 0.25; and
+  `_npwall_spiking_s42.json` asserts `"shuffle_collapses": true` and `"GO": false` where np 0.460, shuffle
+  0.446 and hidden_frozen 0.468 are all under chance 0.549. Each is UNDEFINED, not a negative. Reproduce:
+  `.venv/bin/python -m tools.gates.below_chance`.
 
 **Eight blocks on the author, in one session.** That is the intended behaviour, not a defect rate.
 
@@ -84,6 +111,19 @@ A gate that cries wolf gets disabled, which is worse than no gate. So each was m
 `single-seed` fires on 1 of 1841 findings, and its verifier simulated adding frontmatter to every legacy file to
 find that **260 would fire** — which is why the frontmatter scope limit is load-bearing rather than arbitrary.
 `terminology` measures 2.3% corpus-wide against its own claimed ~3%, i.e. it does not flatter itself.
+`below-chance` publishes its REACH before its rate — it can read a floor in only **763 of 7151** artifacts
+(10.7%), so 89% of the corpus is beyond it — and discloses that **13 of its 18 `raw/` hits** reach the required
+two arms only via a `coupling` sub-dict that holds coefficients, not scores; no structural rule separates those
+from the true positives, because the incident this gate exists for also keeps all its arms in one sub-dict.
+
+**Selftests are mutation-tested, not trusted.** `below_chance` was deliberately broken ten ways (unfailable
+check; substring deny list; integer arms; bare-`k` derivation; controls-only arms; empty-staged-list fallthrough;
+`<=` for `<`; pre-filter desynchronised from the recogniser; over-wide acknowledgement escape; over-wide verdict
+escalation) and its `selftest()` was required to fail on each. **It caught 6 of 8, then 9 of 10** — one miss was
+a bare-`k` rule masked by the read pre-filter rather than tested (a seam defect inside a single file), the other
+an assertion whose control string could not match its own regex. Both were found by attacking the check, not the
+code. This is the concrete procedure behind class 3 and it is cheap: substitute one string into the module's
+source, exec it, assert `selftest()` returns non-empty. A rule with no mutation that breaks it is untested.
 
 ## What no gate can fix
 

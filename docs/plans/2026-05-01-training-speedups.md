@@ -10,7 +10,7 @@ date: 2026-05-01
 - **Tier 1 = PARTIAL.** 1.1 (stim_steps 200→100) and 1.5 (per_type_stp=False) shipped
   and validated. **1.2 (reset_steps 100→50) REVERTED** — caused 300-ep R3+R6 regression
   to 20%/20% from 32.5%/30% baseline (NMDA τ=100ms requires full reset for trial isolation;
-  see `2026-05-01-text-io-300ep-tier1-REGRESSION.md`).
+  see `2026-05-01-text-io-300ep-tier1-REGRESSION.md`). ⛔ SUPERSEDED — that doc's root cause (reset_steps 100→50) was reattributed the next day to global **Hebbian weight decay** collapsing every plastic weight to the 0.05 floor, and the 32.5%/30% baseline it regressed from was an east-prediction artifact on east-heavy eval data: `research/findings/2026-05-02-text-io-hebbian-decay-root-cause.md` — which is ⛔ itself declared superseded, because its prediction that fixing the decay would lift eval above chance did not hold at n=6 (I→W 25.3%, p=0.444). The reset_steps revert was kept regardless.
 - **Tier 2.6 (heterogeneity disable) = NOT SAFE.** Smoke test 2026-05-02: disabling
   `enable_parameter_heterogeneity` (alongside `enable_ou_process`) collapsed correct-moves
   from 30%+ baseline to 2.4%. All-zero language_output spikes; agent always emits "north".
@@ -57,7 +57,7 @@ W→A / I→W vs 32.5% / 30% baseline. Training-phase correct-moves still climbe
 the 50ms reset left ~40% NMDA bleedover, which over 9000 env steps compounded into
 systematically scrambled language→cortex weights. Smoke (5 ep × 10 steps) didn't
 catch it because contamination only matters at scale and across many trials.
-**Reverted.** See `research/findings/2026-05-01-text-io-300ep-tier1-REGRESSION.md`.
+**Reverted.** See `research/findings/2026-05-01-text-io-300ep-tier1-REGRESSION.md`. ⛔ SUPERSEDED — root cause reattributed to global Hebbian weight decay (all weights → the 0.05 floor) and the 32.5%/30% baseline shown to be an east-prediction artifact: `research/findings/2026-05-02-text-io-hebbian-decay-root-cause.md`. The revert itself stands.
 
 ### 1.3 Skip OU noise during silent reset windows — DEFERRED (aggressive form unsafe)
 **File:** `sim/bridge.py` `_run_one_simulation_step`

@@ -64,7 +64,7 @@ def _check_text(log_text, modules):
         named = re.findall(r"`?([a-z_]+)`?", gate)
         if modules and not any(m in modules for m in named):
             # a gate elsewhere (hook, dispatcher, queue) is legitimate -- only flag when nothing resolves at all
-            if not re.search(r"dispatcher|hook|queue|pre-commit|heartbeat|experiment|claim|biology|lab|tools/[\w.-]+\.(?:sh|py)", gate, re.I):
+            if not re.search(r"dispatcher|hook|queue|pre-commit|heartbeat|experiment|claim|biology|lab|registry|gates/__init__|tools/[\w.-]+\.(?:sh|py)", gate, re.I):
                 problems.append("FAILURE_LOG %s: gate %r resolves to no module in tools/gates/ and names no "
                                 "other enforcement point." % (date, gate[:50]))
     return problems

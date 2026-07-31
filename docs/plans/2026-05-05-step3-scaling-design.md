@@ -123,5 +123,5 @@ python -m research.runners.g11_bg_runner --moving-goal --goal-schedule multi --d
 ## Files
 
 - This design doc: `docs/plans/2026-05-05-step3-scaling-design.md`
-- Existing 16×16 finding: `research/findings/2026-05-01-cluster-k-v2-breakthrough.md`
+- Existing 16×16 finding: `research/findings/2026-05-01-cluster-k-v2-breakthrough.md` ⛔ RETRACTED (2026-07-16) — that doc's "NO heuristic, NO direct (gx, gy) or (x, y) access" description is WITHDRAWN: `--heuristic-strength` defaults to 1.0 and ran at full strength in the very run. The 2.97 ± 0.12 number stands; the Cluster-K-v2 visual pathway's independent contribution is unquantified. See `research/findings/2026-07-16-clusterKv2-NO-heuristic-claim-is-FALSE-the-flag-that-closes-it-is-absent.md`.
 - Existing runner: `research/runners/g11_bg_runner.py`

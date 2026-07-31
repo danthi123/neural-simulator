@@ -958,7 +958,7 @@ python scripts/analyze_cheat5_v4.py
 Regardless of the verdict (GO, MARGINAL, PARTIAL, NO-GO):
 
 **Files to create/update:**
-- Create: `research/findings/2026-04-28-cheat5-v4-results.md` (modeled on `research/findings/2026-04-28-cheat5-v3-results.md`)
+- Create: `research/findings/2026-04-28-cheat5-v4-results.md` (modeled on `research/findings/2026-04-28-cheat5-v3-results.md`) ⛔ that results doc is SUPERSEDED by `research/findings/2026-04-28-cheat5-post-v4-reframe.md` ("closed by design" → ON HOLD pending biology buildout; the v4 NO-GO itself stands).
 - Update: `CLAUDE.md` "Cheat #5 progress (2026-04-28)" section — add v4 result row
 - Update: `docs/SCIENCE_ROADMAP.md` §4.7 — append v4 row
 - Update: `research/findings/INDEX.md` — link the new finding doc

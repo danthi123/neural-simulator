@@ -7,7 +7,7 @@ date: 2026-06-21
 # Default-on flip pass — implementation plan
 
 > The dominant remaining shortcut-closure work, per the definitive inventory
-> (`research/findings/2026-06-21-shortcut-inventory-definitive.md`, `ddc3b8db`). The spiking /
+> (`research/findings/2026-06-21-shortcut-inventory-definitive.md`, `ddc3b8db`) — ⛔ SUPERSEDED by `research/findings/2026-06-23-cheats-shortcuts-integration-inventory.md` (the 4-dimension inventory; it says so in its own header), which is ⛔ itself superseded (its 14-item burndown COMPLETED `2f260f15`; the live ledger is `docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md` §7). The spiking /
 > hardware-portable versions of most cognitive ops are **already built and validated but default OFF**, so
 > the production one-brain DEFAULT still runs host paths. This pass flips the validated defaults (plus a few
 > tiny builds) so the one brain is fully spiking end-to-end by default. Sequenced behind the in-flight

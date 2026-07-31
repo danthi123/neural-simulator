@@ -95,8 +95,8 @@ Key findings (full report in the session; sources cited there):
   (checkpoint/resume), concept_pool_demo --save/load-bridge, the denoise64 caches. Perf: GPU util ~30-50%
   (memory-bandwidth-bound sparse SNN); fp16_synapse_state + reset/stim trims ~2.7x before cloud; H100 ~6-8x.
 
-## GATE 1 = DONE, VALIDATED: the 28-word wall is a REAL representation limit (NOT a cheap readout fix)
-Finding 2026-05-31-GATE1-frontend-wall-is-a-real-representation-limit-at-28-words.md. With a validated
+## ⛔ VERDICT RETRACTED 2026-06-01 — GATE 1 = DONE, VALIDATED: the 28-word wall is a REAL representation limit (NOT a cheap readout fix)
+Finding 2026-05-31-GATE1-frontend-wall-is-a-real-representation-limit-at-28-words.md ⛔ (RETRACTED, verdict only, 2026-06-01 — the "representation limit" conclusion was confounded by an UNDERTRAINED bridge: the _v17 28-word bridge saw ~50 events/word vs the 16-word control's 200, and a matched 150-event 28-word bridge gives clean recognition 0.893, not 0.64. The pipeline + the 16-word control below stand; only the cross-vocab representation-limit conclusion dies. See `research/findings/2026-06-01-GATE2-overturns-GATE1-28word-wall-is-undertraining-not-representation-limit.md`). With a validated
 pipeline (16-word positive control reproduces NN 0.91 > pool-argmax 0.80 at k=1, both 1.000 at k=4 = the
 internal map's "lossy readout / 100% identifiable"), the 28-word fair head-to-head shows the full-code
 decoder is WORSE than pool-argmax at every averaging level (k=4: 0.527 vs 0.402), plateauing at ~0.53-0.64

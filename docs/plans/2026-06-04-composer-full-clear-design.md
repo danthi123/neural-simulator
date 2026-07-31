@@ -26,7 +26,7 @@ GPU/CuPy for real runs. Plain professional language.
 ### (A) Spiking cleanup circuit — replaces `np.argmax([concepts[w] · est])` (the readout)
 
 The cleanup takes the unbind's noisy estimate `est` (a D-vector) and returns the nearest stored concept. The
-item-2 cheap-first (`2026-06-04-spine-item2-cleanup-noisy-est-wall.md`) established the mechanism + the wall:
+item-2 cheap-first (`2026-06-04-spine-item2-cleanup-noisy-est-wall.md`) established the mechanism + the wall: ⛔ SUPERSEDED — that doc's own prescribed lever (integration time) topped out at ~0.78; the noisy-est wall was cleared instead by the NEF thresholded cleanup (worst-case 0.978 / mean 0.993 over seeds 42/43/44, `research/findings/2026-06-05-composer-cleanup-NEF-GO.md`), then folded on-bridge in `research/findings/2026-06-18-one-brain-cleanup-onbridge-GO.md`.
 - A spiking matched filter (concept codes as synaptic receptive fields on the ON/OFF channels) is PERFECT at M=320
   on a clean cue (recovery 1.00 at cue-cos 0.87) but the composer's REAL unbind est is noisy (cue-cos ~0.35), where
   it plateaus at **~0.78** vs numpy's 1.00.

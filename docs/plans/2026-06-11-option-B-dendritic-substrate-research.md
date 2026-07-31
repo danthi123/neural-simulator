@@ -577,7 +577,7 @@ and the §5.3 generalization gate, run on the SAME operating point, are the neve
   ranking — Mikulasch dendritic balance #5/the named escape, gain-modulation #1, the stable-fixed-point rule #2),
   `2026-06-06-whitening-computation-spikes-CAN-compute-it.md` (spikes COMPUTE whitening — the wall REFUTED),
   `2026-06-06-option1-local-learning-whitening-VALIDATED-6seed.md` (the LOCAL rule COMPOSES at 100% 6/6),
-  `2026-06-06-realobject-grounding-and-whitening-synthesis.md`.
+  `2026-06-06-realobject-grounding-and-whitening-synthesis.md`. ⛔ SUPERSEDED the same day — its "the boundary is the local COMPUTATION of whitening" conclusion is replaced by the two docs cited immediately above (spikes CAN compute whitening — the wall was an unstable-solver bug — so the boundary narrows to local LEARNING, which then validated 6-seed). The Track A real-object grounding 100% is unaffected and stands.
 - The committed dendritic stack + its honest terminus: `sim/dendritic_neuron.py`, `sim/dendritic_plasticity.py`,
   `sim/dendritic_mlp.py`; `2026-05-18-dendritic-fairscale-SOUND-instrument-VOID-strongest-triangulation.md`,
   `2026-05-17-dendritic-faithful-instrument-TERMINUS.md`; the prior design `docs/plans/2026-05-05-dendritic-learning-

@@ -6,7 +6,7 @@ date: 2026-06-23
 
 # Inventory burndown roadmap — close out the cheats / integration / optimization / hardware gaps (2026-06-23)
 
-> **Source:** `research/findings/2026-06-23-cheats-shortcuts-integration-inventory.md` (the definitive 4-dimension inventory).
+> **Source:** `research/findings/2026-06-23-cheats-shortcuts-integration-inventory.md` (the definitive 4-dimension inventory). ⛔ SUPERSEDED — this inventory's own 14-item burndown COMPLETED 2026-06-24 (`2f260f15`; B-2 reclassified BOUNDARY→SURPASSED/CLOSED inside the inventory itself), so its open rows are a 2026-06 snapshot. The live wall/shortcut ledger is now `docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md` §7 + `research/findings/2026-07-24-accidental-deferral-audit.md`.
 > **Owner directive (2026-06-23):** after the conversation test, close out as much as we can. Order = **quick/easy first → highest-impact → long/true-cortex last**. Each item gets a **deep-research pass** + the **established breakthrough workflows**. **No deferring** — pursue each to resolution. **Parallel where possible.**
 
 ## Standing per-item workflow (the breakthrough pattern, applied to EVERY item)

@@ -43,7 +43,7 @@ into one pass.
 
 ### 1.1 The program-level finding (restated crisply)
 
-Source: `research/findings/2026-05-19-integrated-loop-PROGRAM-LEVEL-encode-order-conflict-between-validated-concept-binding-and-episodic-store.md`
+Source: `research/findings/2026-05-19-integrated-loop-PROGRAM-LEVEL-encode-order-conflict-between-validated-concept-binding-and-episodic-store.md` ⛔ [SUPERSEDED — the encode-order framing was generalized by `research/findings/2026-05-19-FIFTH-convergent-UNIFYING-TERMINAL-the-integrated-loop-necessity-instrument-is-biologically-unsatisfiable-by-the-CLS-division-of-labor.md`: the conflict IS the complementary-learning-systems division of labor (5 convergent routes), and phase-factoring RELOCATES rather than dissolves it; the phase-factored build then landed VOID/two-horns, `research/findings/2026-05-30-phase-factored-decisive-iteration2-engram-wm-SOUND-but-VOID-two-horns-characterized.md`]
 and its predecessors `...iter3-deeper-architecture...md` and
 `...iter2-homeostasis...md`.
 

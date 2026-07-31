@@ -117,7 +117,19 @@ EXT=research/.last_external_search
 # the local corpus comes up empty. Treat the newer of the two markers as "the last source check", or the rule
 # punishes the exact behaviour it demanded (and a rule that cries wolf on correct action gets ignored).
 [ -f "$EXT" ] && [ "$EXT" -nt "$MARK" ] && MARK="$EXT"
-NEWEST=$(ls -t research/findings/*.md 2>/dev/null | head -1)
+# SCOPE: a source check is owed for a BIOLOGICAL claim, not for a finding about our own tooling. On
+# 2026-07-31 this fired every 15-min cycle for five hours because the day produced audit/tooling findings
+# (gate defects, the sprawl measurement, the walls synthesis) with no primary-source question --
+# "run research_gate.sh on why my gate had a bug" is meaningless. A correct rule, mis-scoped, trains the
+# reader to skim the block that ALSO carries the real alarms. Findings declaring lane: audit|tooling|
+# workflow are skipped; every other finding still owes a source check.
+# MTIME IS NOT AUTHORSHIP DATE. The Tier-1 status classification touched 274 LEGACY findings today to add
+# frontmatter, so `ls -t` reported a 2026-05 finding as the newest and demanded a fresh source check for
+# a document written eleven weeks ago. Sort by the DATE IN THE FILENAME instead, which is what the corpus
+# actually encodes, and compare only TODAY's findings against the marker.
+TODAY=$(date +%Y-%m-%d)
+NEWEST=$(for f in $(ls research/findings/${TODAY}-*.md 2>/dev/null); do
+  head -12 "$f" | grep -qE "^lane: *(audit|tooling|workflow)" || { echo "$f"; break; }; done)
 if [ ! -f "$MARK" ]; then
   echo "  ⛔ tools/research_gate.sh has NEVER run (no marker). Our findings cite sources in ONE LINE;"
   echo "     that is not reading them. A whole session on place cells never opened O'Keefe-Nadel — when"

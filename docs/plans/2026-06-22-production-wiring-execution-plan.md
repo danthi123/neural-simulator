@@ -15,7 +15,7 @@ date: 2026-06-22
 >
 > Supersedes the structure of `docs/plans/2026-06-21-default-on-flip-pass-plan.md` (the earlier flip-pass
 > plan; its chunk shape is carried here). Sourced from the definitive inventory
-> (`research/findings/2026-06-21-shortcut-inventory-definitive.md`, `ddc3b8db`) plus the overnight closure
+> (`research/findings/2026-06-21-shortcut-inventory-definitive.md`, `ddc3b8db`) — ⛔ SUPERSEDED by `research/findings/2026-06-23-cheats-shortcuts-integration-inventory.md` (the 4-dimension inventory; it says so in its own header), which is ⛔ itself superseded (its 14-item burndown COMPLETED `2f260f15`; the live ledger is `docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md` §7) — plus the overnight closure
 > findings (cited per-row below).
 
 ---
@@ -297,7 +297,7 @@ deferred-forever, no flipped-partial declared closed, no boundary accepted as ex
 - [ ] **The combined-config moat validation** (§4) — moat 0-FA + no-regression + nav-not-regressed +
       CPU-portability.
 - [ ] **Inventory update** — move the flipped items to CLOSED-fully (both criteria, default-on) in
-      `research/findings/2026-06-21-shortcut-inventory-definitive.md`.
+      `research/findings/2026-06-21-shortcut-inventory-definitive.md`. ⛔ SUPERSEDED by `research/findings/2026-06-23-cheats-shortcuts-integration-inventory.md` (the 4-dimension inventory; it says so in its own header). That 06-23 doc is ⛔ now superseded too — its 14-item burndown COMPLETED (`2f260f15`, 2026-06-24), so this checkbox is closed and the live ledger is `docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md` §7.
 
 **All four sections GREEN ⇒ the shortcut-closure arc is CLOSED.** The remaining residuals at that point
 are the *characterized boundaries* (B5 SC orienting beyond log-polar / B6 place-sparsify-to-default — the
@@ -347,5 +347,5 @@ NO `sim/` edit, reuse of the regions framework.
   `LearnedAssocGraph`; the agent wiring `brain_conversational_agent.py:229–233`; the demo plumb sites;
   24/24 edges / 9/9 top associate; the §2 single-bridge-fold follow-on).
 - **The flip-pass structure:** `docs/plans/2026-06-21-default-on-flip-pass-plan.md`.
-- **The definitive inventory:** `research/findings/2026-06-21-shortcut-inventory-definitive.md` (`ddc3b8db`).
+- **The definitive inventory:** `research/findings/2026-06-21-shortcut-inventory-definitive.md` (`ddc3b8db`). ⛔ SUPERSEDED by `research/findings/2026-06-23-cheats-shortcuts-integration-inventory.md` (the 4-dimension inventory; it says so in its own header), which is ⛔ itself superseded (its 14-item burndown COMPLETED `2f260f15`; the live ledger is `docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md` §7 + `research/findings/2026-07-24-accidental-deferral-audit.md`).
 - **The arc-close gate:** `research/findings/AUTONOMOUS_STATE.md` CYCLE 378–384.

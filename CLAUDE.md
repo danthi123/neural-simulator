@@ -64,6 +64,48 @@ An unchecked term is a HYPOTHESIS, exactly like a claim in a comment. (ASD-STE10
 
 Check both: `.venv/bin/python tools/check_docs.py` (CI: `tests/test_doc_rules.py`). Retrofit helper: `tools/split_long_doc_lines.py --apply` (splits at sentence/`·`/`;` boundaries and refuses to write if content changes). **These are STRUCTURE rules only — they cannot catch instrument failures; six of the nine 2026-07-28 retractions would have passed both.** Truth verification is `verify-go`; term conditions are [`docs/TERMS.md`](docs/TERMS.md).
 
+## ⭐ THE WORKFLOW IS NOW ENFORCED, NOT REMEMBERED (2026-07-31) — read [`docs/FAILURE_GATE_MATRIX.md`](docs/FAILURE_GATE_MATRIX.md)
+
+**Everything below this section that reads as a RULE YOU MUST REMEMBER has, where possible, been converted into a
+CHECK THAT BLOCKS.** Prose is kept for the reasoning; the enforcement is in code. If a rule below and a gate
+disagree, the gate is authoritative — it is the thing that actually runs.
+
+**One entry point:** `tools/gates/` — one module per failure class, auto-discovered, wired into
+`tools/githooks/pre-commit`. **Adding a class is one file; the hook never changes.** The registry REFUSES to
+trust a gate whose `selftest()` does not fail in its failing direction, because four checks here have shipped
+unable to fail (a `;` where `&&` was meant, a pipe eating an exit status, a nonsense query scoring 18 hits and
+PASSING).
+
+**What blocks a commit:** document structure (W1/W2) · claims not traced to a cited artifact · biology bindings
+(source anchors must resolve; config must not contradict the biology) · one-mechanism-one-current-status ·
+undeclared finding status · doc type/placement · single-seed headlines · wrong-quantity comparisons ·
+artifact provenance · CPU-lane starvation · agent-level serialisation · a NOTICED failure left unclosed.
+
+**A noticed failure cannot stay unclosed.** Add one line to [`research/FAILURE_LOG.md`](research/FAILURE_LOG.md)
+and `gates/coverage` BLOCKS until it names a gate or declares `NOT-GATEABLE: <reason>`. Noticing is judgement;
+closing is not.
+
+**Provenance is automatic.** `research/runners/__init__.py` runs on every `-m research.runners.X` and records
+argv, git SHA and the env vars that have silently changed results here, then sidecars every artifact the run
+created. No runner was modified. (94% of 7127 artifacts previously could not say what produced them.)
+
+**Biology is recorded once, not re-researched.** `research/biology/<id>.md` binds a mechanism to a source with a
+quote that must still RESOLVE, plus `constraints_config` — config values the biology REQUIRES.
+
+### ⛔ THE DEEPEST LESSON, and the first question to ask at any wall
+
+Four causes of friction, each measured 2026-07-31
+([finding](research/findings/2026-07-31-why-we-hit-walls-the-missing-companion-process.md)): biology runs
+INTERACTING processes and we implement ONE, substituting a static bound for the rest — **and the proxy dominates**
+(97% of a gap#5 weight change was the CLAMP); the OPERATING POINT is implicit in the animal, so tuning optimises
+whatever the metric rewards; the PROTOCOL is part of the mechanism and no paper writes it down (BTSP is one-shot;
+five laps erases the field); and we usually cannot tell WHICH, because the instrument does not exist yet.
+
+> **At a wall, ask "what else does the real system run alongside this, that we replaced with a constant?" BEFORE
+> "what biology surpasses this?"** — the answer is nearly always a homeostatic or competitive process we proxied
+> with a bound. And: **the instrument is part of the emulation.** A mechanism you cannot measure correctly is one
+> you will tune in the wrong direction, confidently, for weeks.
+
 ## Drift prevention is MECHANICAL, not remembered (2026-07-28: 9 retractions in one session)
 
 **A rule you must remember is not a mechanism.** `verify-go` rule 3 was written and violated the same day; the corpus-first rule was in this file and skipped for six levers; the parallelize memory existed while the GPU sat at 0%. What actually held was executable: a physiological gate that printed VOID, `tools/check_docs.py` (found 3 stale citations), `push_both.sh` (verifies rather than claims). **Prefer converting a rule into a check that can FAIL LOUDLY over adding prose here.** Three such checks now exist:

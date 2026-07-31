@@ -392,7 +392,7 @@ learned cortex), as in §6.
 - 320 composer-in-isolation validation (the separate ±1 path): `_insubstrate_flatdist320_anybank_test.py`,
   `2026-06-02-full-320-flat-distinct-composition-RESOLVES-multiseed.md`
 - F=3 resonator reference + cost model (Test B2): `2026-06-04-capacity-curve-scaling-cost-model.md`,
-  `2026-06-03-learned-code-agent-320-scale-boundary-HONEST-NEGATIVE.md`,
+  `2026-06-03-learned-code-agent-320-scale-boundary-HONEST-NEGATIVE.md` ⛔ (SUPERSEDED the same day — the 320 collapse was bundle CROSSTALK, not resonator capacity; crosstalk subtraction takes the 320-concept agent to 120/120: `research/findings/2026-06-03-deep-research-surpassing-the-blockers-synthesis.md`),
   `SpikingUnifiedAgent(resonator_backend="cupy")`
 - 320 word list (if real words wanted): `research/runners/g20_vocab_spec_320.py`
 - FHRR production switch (the agent default): `2026-06-05-fhrr-production-switch-DONE.md`
