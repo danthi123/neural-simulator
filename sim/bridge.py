@@ -7824,6 +7824,29 @@ class SimulationBridge:
                                              * (cfg.hebbian_max_weight - current_weights_active_syn))
                             if self.cp_plasticity_rate_gain is not None:
                                 delta_weights = delta_weights * self.cp_plasticity_rate_gain[active_synapse_indices_heb]
+                            # MILLER-MACKAY SUBTRACTIVE NORMALIZATION (2026-07-31), mirroring the proven
+                            # btsp_mean_subtract at :8307. Subtract each POSTsynaptic cell's MEAN increment so
+                            # sum_j dw_ij = 0 exactly: afferents then compete and a synapse can only grow at
+                            # another's expense, which gives the rule an INPUT-DEPENDENT fixed point. Without it
+                            # w_j* = hebbian_max_weight for every gated synapse regardless of drive, so only a
+                            # binary partition is expressible -- the measured signature being rsa_vs_host 0.827
+                            # (support learned, gate passed) against OSI 0.195 and orient_decode 0.281 (no
+                            # graded tuning). 0.0 => OFF => byte-identical.
+                            _hms = float(getattr(cfg, "hebbian_mean_subtract", 0.0))
+                            if _hms > 0.0:
+                                _post_h = coo_matrix_heb.col[active_synapse_indices_heb]
+                                _nn_h = int(self.cp_membrane_potential_v.size)
+                                _sum_dh = cp.zeros(_nn_h, dtype=cp.float32)
+                                _cnt_dh = cp.zeros(_nn_h, dtype=cp.float32)
+                                try:
+                                    import cupyx
+                                    cupyx.scatter_add(_sum_dh, _post_h, delta_weights)
+                                    cupyx.scatter_add(_cnt_dh, _post_h, cp.ones_like(delta_weights))
+                                except Exception:
+                                    cp.add.at(_sum_dh, _post_h, delta_weights)
+                                    cp.add.at(_cnt_dh, _post_h, cp.ones_like(delta_weights))
+                                _mean_dh = _sum_dh / cp.maximum(_cnt_dh, cp.float32(1.0))
+                                delta_weights = delta_weights - cp.float32(_hms) * _mean_dh[_post_h]
                             base_weights_data_array[active_synapse_indices_heb] += delta_weights
                             num_potentiation_events = active_synapse_indices_heb.size
                     else:

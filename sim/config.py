@@ -394,6 +394,17 @@ class CoreSimConfig:
     # MEAN increment across that cell's afferents, so sum_j dw_ij = 0 BY CONSTRUCTION -- a pedestal
     # cannot be built and there is no free parameter to mis-derive. 0.0 => OFF => byte-identical.
     btsp_mean_subtract: float = 0.0
+    # LANE D (2026-07-31): the SAME Miller-MacKay 1994 subtractive normalization, for the rate-window HEBBIAN
+    # rule. Needed because that rule's fixed point w_j* = hebbian_max_weight is INPUT-INDEPENDENT (coactivity
+    # sets the RATE of approach, never the DESTINATION), so it can only express a binary partition
+    # {gated -> bound} vs {ungated -> decayed}. Measured signature of exactly that: with the drive fixed,
+    # rsa_vs_host reaches 0.827 and PASSES its 0.60 gate -- the right SUPPORT is learned -- while OSI (0.195 vs
+    # gate 0.50) and orient_decode (0.281 vs a host reference of 0.984) both fail, because neither can be
+    # satisfied without a GRADED response. Subtracting the per-postsynaptic-cell mean increment makes
+    # sum_j dw_ij = 0 by construction, so afferents COMPETE and a synapse can only grow at another's expense --
+    # which makes the fixed point depend on relative input correlation instead of collapsing to the bound.
+    # 0.0 => OFF => byte-identical, the same contract as btsp_mean_subtract.
+    hebbian_mean_subtract: float = 0.0
     # 0.0 (default) => the BTSP block uses pure-potentiation fused_btsp_update (byte-identical). >0 => the structured
     # fused_btsp_hetero_update (Milstein-Magee 2021 bidirectional arm / Chistiakova-Volgushev heterosynaptic
     # competition): a plateauing cell depresses its NON-coincident inputs by lam_dep*(1-Etilde_pre)*(w-w_min) while
