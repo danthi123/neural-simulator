@@ -24,6 +24,34 @@ constraints_config:
   - key: laps
     value: 1
     why: "BTSP is ONE-SHOT: a SINGLE plateau creates a field. Repeated traversals re-potentiate every position and ERASE the field. Measured 2026-07-31: place-specificity decays 4.40x -> 2.57x -> 1.11x as laps go 1 -> 2 -> 5. A protocol that repeats the induction is not testing induction."
+operating_point:
+  - key: w_max
+    requires: "> W0 (the initial weight)"
+    why: "NOT a tuning preference — a precondition for the mechanism to be measurable at all. At w_max=150
+      against W0=250 the clamp drags every weight DOWN, so the run measures clamp depth rather than
+      potentiation. Asserted by tools.lab.bound_check at the point the bound is CHOSEN."
+    measured: "research/findings/2026-07-31-gap5-tuned-point-is-INSIDE-the-bound-trap-97pct-of-dW-is-the-clamp.md"
+companion_processes:
+  # WHAT THE REAL SYSTEM RUNS ALONGSIDE THIS, THAT WE REPLACED WITH A CONSTANT. This block exists because
+  # the proxy usually DOMINATES the measurement: the first entry below owned 97% of a result we read as BTSP.
+  - process: "weight-growth limitation (heterosynaptic depression / synaptic scaling — a competitive process
+      that renormalises non-potentiated synapses when one is potentiated)"
+    status: proxied
+    proxied_by: "w_max, a hard per-synapse clamp"
+    proxy_share_measured: "0.97 of the observed |dW| at the tuned operating point — identical in the lr=0
+      control, i.e. the LEVER moved 3% and the PROXY moved the rest"
+    why_it_matters: "a clamp is a scalar where biology runs a process. It does not merely fail to learn; it
+      destroys weights uniformly, which reads as a substrate limitation and invites deeper tuning into the trap
+      (w_max walked 110 -> 150 -> 220, with 150 selected as 'optimal', because clamp depth was what the metric
+      rewarded)."
+  - process: "the depression arm of the BTSP kernel itself — the plasticity kernel is BIDIRECTIONAL in Δt,
+      not potentiation-only"
+    status: implemented_but_hidden_by_the_metric
+    proxied_by: "not proxied; MEASURED, then rectified away by the read-out"
+    proxy_share_measured: "circ_resultant clips negatives internally and returned 0.000000 for an lr=0 control
+      whose mean |dW| was 21.94 — every increment was negative and the metric reported a clean zero"
+    why_it_matters: "reported alongside by tools.lab.sign_budget. Any metric built on a rectified quantity
+      silently scores the residual of a destructive process."
 implemented_by:
   - research/runners/_gap5_btsp_place_field_derisk.py
   - research/runners/_gap5_fieldquality_gpu6.py
