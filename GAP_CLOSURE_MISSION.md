@@ -677,7 +677,7 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
     failed: read-max 0.60→0.41 as N grows 4→8 / corr 0.6→0.9; biased-competition holds 0.92-0.95 (advantage GROWS with
     correlation + N), permuted-position tracks salience not position, equal-salience → chance. Rate rung; spiking
     phase-cluster WTA = follow-on. `_gap3_biased_competition_multiref_derisk.py`. Finding
-    `2026-07-21-gap3-biased-competition-multireferent-6seed-GO.md`.
+    `2026-07-21-gap3-biased-competition-multireferent-6seed-GO.md`. **⛔ RETRACTED (its own 2026-07-21 8-skeptic audit block): the "6-seed GO as a gap-advance" / "never built" / "closes the two prior NEGATIVEs" framings are WITHDRAWN.** It is a numpy RATE re-derivation on a synthetic task with the recency salience HANDED IN (`sal = 0.9**i`), so it never touches the 2026-06-17 wall (no reliable recency gradient to read). REPLACED BY the real SPIKING GO five weeks earlier: `2026-06-19-multireferent-biased-competition-derisk.md` (Wong-Wang WTA on a real bridge), plus `2026-07-18-gap3-A1-learned-feature-compatibility-cheap-first-GO.md`; gap#3 was already closed + wired 2026-07-18. Open Rank-4 = the SPIKING phase-cluster WTA, unchanged.
   - **gap#1 BROAD-DOMAIN GO:** the WKV cortex learns wikitext103 ("anything" text) — beats a fair trigram +0.791 at
     depth, anti-cheats clean; the mechanism GENERALIZES beyond TinyStories (ppl 121, far from fluent — "about anything"
     FLUENCY is a scale arc, the field's wall, but a lever). A bigger wikitext run is characterizing the scale trend.
@@ -1866,7 +1866,7 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   `apical_g_couple_to_soma` (asymmetric strong read) + `coincidence_plateau_self_regen` + `apical_kir_g` into
   `_d1_onbridge_learn_to_accuracy`'s cfg (the runner sets only pure `enable_bdsp` today); verify B_rises True; then
   microcircuit + held-apical vs the 0.75 accuracy bar + moat, 6-seed, with the cfg.seed hash-verify + dendritic-reset
-  instrument checks. Finding: `2026-07-18-gap4-research-gate-BDSP-on-bistable-apical-the-held-credit-signal.md`.
+  instrument checks. Finding: `2026-07-18-gap4-research-gate-BDSP-on-bistable-apical-the-held-credit-signal.md`. **⛔ SUPERSEDED — the EXACT NEXT ACTION above was DONE, do not re-run it as written.** The bistable-apical BDSP `sim/` edit was built and taken to ground on-bridge: the coupling fix WORKED (B rises, moat clean) but the depth-fragile FA-credit boundary was CONFIRMED on-bridge (rate ceiling ~0.715 < the 0.75 bar) → `2026-07-18-gap4-onbridge-BDSP-coupling-REVIVED-depth-fragile-boundary-confirmed-BTSP-pivot.md`. The gate's own FALLBACK is what carried: `2026-07-18-gap4-BTSP-plateau-gated-oneshot-credit-GO-the-keystone-is-the-enabler.md` (plateau-gated one-shot credit, 6-seed GO).
 - **✅ CONFIRMED (2026-07-18): the `--soma-g` (`bdsp_apical_couples_soma`) tuning does NOT fix it** — `--soma-g 2.0` gave
   an IDENTICAL result (B 0.000, dw 129.036, BDSP=chance) → the runner's verdict stands: the fix is the TWO-COMPARTMENT
   path (`enable_two_compartment_dap` + `enable_coincidence_detection` + a ROUTED coincidence pathway + `apical_g_couple_to_soma`),
@@ -2070,7 +2070,7 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   into gamma volleys DIRECTLY, N.15/N.19), a guarded sim/ mechanism — a DEEP build. Completion FUNCTION is met (EMERGE
   spreading-activation 12-seed GO, graded-confidence 12-seed GO, composer scan, gap-#2 slot-binder); imaginative
   RECOMBINATION is GO; SWR replay reactivation is blocked by the same CA3-attractor gap.
-  `2026-07-17-gap5-rung2-mossy-sparsifies-but-sync-unsolved-CA3-attractor-is-the-theta-gamma-frontier.md`. **✅ OWNER
+  `2026-07-17-gap5-rung2-mossy-sparsifies-but-sync-unsolved-CA3-attractor-is-the-theta-gamma-frontier.md`. **⛔ SUPERSEDED — its "Rung 4 = a theta-gamma PACEMAKER" call is NOT the path the CA3-formation arc took** (a theta-gamma engine exists but only for WM/word-order, never wired to replay — see the gap#5 TIMING block). Its FORMATION premise was already stale when written — see the A-1 correction in the NEXT bullet: the true latest formation result is `2026-07-14-ca3-competitive-hebbian-formation-6seed-GO.md` (competitive Hebbian, 5.2-8.9× within/silent). The completion MECHANISM was closed instead by INTRINSIC DENDRITIC BISTABILITY: `2026-07-18-gap5-CA3-completion-CLOSED-intrinsic-dendritic-bistability-resolves-the-trilemma.md`. **✅ OWNER
   STEER (2026-07-18): "close out ALL gaps FULLY"** — NO banking-as-function-met.
 - **⛔ A-1 FAILURE CORRECTED (2026-07-18) — my ENTIRE session gap-#5 work was RE-DERIVATION (4× I built from stale
   findings, not the newest).** TRUE latest = `2026-07-14-ca3-competitive-hebbian-formation-6seed-GO.md`: (1) **FORMATION
@@ -2347,7 +2347,7 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
   (non-ensemble silent, no runaway to w3000), bistable (~600 threshold). ⇒ **the point-neuron CA3 CAN complete; the
   only blocker is that TRAINING collapses the attractor instead of building it** (NOT a substrate floor, NOT a
   transmission bug — both prior diagnoses REFUTED). Prior half-fix exists:
-  `2026-07-08-riii-ca3-attractor-formation-symmetric-hebbian.md` — the default Hebbian is CAUSAL-offset (pre@t-1 &
+  `2026-07-08-riii-ca3-attractor-formation-symmetric-hebbian.md` **⛔ SUPERSEDED as the FORMATION answer — symmetric Hebbian is pure homosynaptic LTP and all four pure-LTP variants saturate (~1.15-1.44× within/silent, `2026-07-09-riii-formation-rules-saturate-ensemble-dynamics-is-the-blocker.md`). Replaced by COMPETITIVE Hebbian (heterosynaptic depression, the committed EMERGE-40 kernel): 5.2-8.9×, 6-seed GO, `2026-07-14-ca3-competitive-hebbian-formation-6seed-GO.md` — itself `corrected`: the weight RATIO did not buy completion. The guarded `hebbian_symmetric` config still exists and the root-cause below still holds.** — the default Hebbian is CAUSAL-offset (pre@t-1 &
   post@t) but co-ensemble members fire SYNCHRONOUSLY → offset never satisfied → ~0 potentiation → collapse; a guarded
   `hebbian_symmetric` config (offset-free same-step co-firing) already exists + forms a SPECIFIC but WEAK attractor
   (+0.87, capped at `hebbian_max_weight=30`). **SYNTHESIS+VERIFY DONE (6-agent, adversarially confirmed):** the
