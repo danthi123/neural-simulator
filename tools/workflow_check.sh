@@ -156,10 +156,17 @@ echo "════ 4. CLUSTER — are the mini-PC pool's 36 cores actually worki
 # USER (dant123) -- while ~/.ssh/config had working pool40/41/42 aliases (User node) the whole time. A capacity
 # claim was made from a failed probe instead of a working one. So this rule uses the ALIASES, and it
 # distinguishes IDLE (actionable) from UNREACHABLE (report, do not cry wolf).
+# SELF-MATCH, reintroduced by me in the very rule meant to fix a blindness bug (caught 2026-07-30 by testing
+# the FAILING direction). `pgrep -fc 'research.runners'` matches the full command line of every process --
+# INCLUDING the ssh command carrying that pattern -- so it always returned >=1 and the node always read "busy".
+# The rule was structurally incapable of ever firing, exactly like the research gate was structurally
+# unsatisfiable. This file's own section-2 comment already warns: "never grep a pattern that your own command
+# line contains". Bracket the first char: the regex [r]esearch matches "research", but the literal text
+# "[r]esearch" in our own argv does not match it.
 POOL_IDLE=0; POOL_UP=0; POOL_DOWN=0; POOL_LINES=""
 for H in pool40 pool41 pool42; do
   R=$(timeout 8 ssh -o BatchMode=yes -o ConnectTimeout=5 "$H" \
-        "echo \$(nproc) \$(cut -d' ' -f1 /proc/loadavg) \$(pgrep -fc 'research.runners' 2>/dev/null || echo 0)" 2>/dev/null)
+        "echo \$(nproc) \$(cut -d' ' -f1 /proc/loadavg) \$(pgrep -fc '[r]esearch\\.runners' 2>/dev/null || echo 0)" 2>/dev/null)
   if [ -z "$R" ]; then
     POOL_DOWN=$((POOL_DOWN+1)); POOL_LINES="$POOL_LINES  $(printf '%-8s' "$H") unreachable\n"; continue
   fi
