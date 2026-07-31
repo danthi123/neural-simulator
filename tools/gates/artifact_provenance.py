@@ -44,7 +44,11 @@ _STRONG = {"cmd", "argv", "command", "cmdline", "provenance", "runner", "run_id"
 _WEAK = {"seed", "seeds", "config", "cfg", "params", "args"}
 _WEAK_MAX_DEPTH = 1
 _STRONG_MAX_DEPTH = 3
-_SIDECARS = (".cmd.json", ".provenance.json")
+# `.prov.json` is what research/runners/__init__.py -- the automatic provenance door -- actually writes. The
+# gate was authored without knowledge of that door and accepted only the two hand-written forms, so EVERY
+# artifact produced by the automatic capture was reported as unprovenanced. Two halves of one system that did
+# not agree on a filename; caught when the gate blocked three pool artifacts that DID have sidecars.
+_SIDECARS = (".cmd.json", ".provenance.json", ".prov.json")
 
 
 def _is_artifact(path: str) -> bool:
@@ -68,7 +72,13 @@ def _scan(obj, depth: int = 0) -> bool:
 
 def _has_provenance(path: str):
     """(ok, why_not). An unparseable file reports WHY rather than silently passing or silently failing."""
-    if any(os.path.exists(path[: -len(".json")] + s) for s in _SIDECARS):
+    # TWO NAMING CONVENTIONS, both legitimate: the automatic door (research/runners/__init__.py) appends to
+    # the FULL path -> "x.json.prov.json"; hand-written sidecars replace the extension -> "x.cmd.json".
+    # Accepting only one silently reported every artifact of the other kind as unprovenanced. This gate and
+    # that door are two halves of one system, written by different authors, and they disagreed twice --
+    # first on the suffix, then on how it attaches.
+    _stem = path[: -len(".json")]
+    if any(os.path.exists(_stem + sfx) or os.path.exists(path + sfx) for sfx in _SIDECARS):
         return True, ""
     try:
         with open(path, "r", encoding="utf-8", errors="replace") as fh:
@@ -83,7 +93,7 @@ def _has_provenance(path: str):
         return True, ""
     if _scan(data):
         return True, ""
-    return False, ("no sibling .cmd.json and no %s key (weak keys count only at depth<=%d)"
+    return False, ("no sibling .cmd.json/.prov.json and no %s key (weak keys count only at depth<=%d)"
                    % ("/".join(sorted(_STRONG | _WEAK)), _WEAK_MAX_DEPTH))
 
 

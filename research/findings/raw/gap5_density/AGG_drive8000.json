@@ -1,0 +1,14 @@
+{
+ "provenance": {
+  "runner": "analysis of g5d8_*.json",
+  "git_sha": "3989f87e",
+  "generated": "2026-07-31T13:55:16"
+ },
+ "description": "gap#5 drive axis at laps=1 dwell=30 w_max=2500",
+ "drive": 8000.0,
+ "n_seeds": 3,
+ "circ_dW": 0.0465,
+ "perm_null": 0.0143,
+ "ratio": 3.25,
+ "median_p": 0.005
+}

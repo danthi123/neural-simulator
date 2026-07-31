@@ -10,23 +10,33 @@ ranked by cost × recurrence. A row is only "GATED" if something **blocks** on a
 are marked ADVISORY and count as ungated — the measured reason: **1330 runners, `tools/lab.py` imported by 2,
 `tools/experiment.py` by 0.**
 
-| # | Failure class | n | Gate | Where it blocks | State |
+| # | Failure class | n | Gate (module) | Where it blocks | State |
 |---|---|---|---|---|---|
-| 1 | manipulation-never-engaged (lever/arm/lesion inert) | 10 | `Experiment._assert_one_variable`, `lab.lever` | import-time only | ⚠️ ADVISORY |
-| 2 | plasticity-bound-trap | 7 | `lab.bound_check` + `biology_check` `constraints_config` | pre-commit GATE 3 | ✅ GATED |
-| 3 | check-that-cannot-fail / was bypassed | 9 | every gate ships a **failing-direction test** | `tests/test_experiment_harness.py` | 🟡 PARTIAL |
-| 4 | comparison-with-no-discriminating-power | 7 | `Experiment.validate_instrument` (power **and** FPR) | import-time only | ⚠️ ADVISORY |
-| 5 | record-not-read-before-building | 6 | `pool_queue.sh --checked` + dispatcher refusal | execution path | ✅ GATED |
-| 6 | wrong-quantity-comparison | 7 | — | — | ⛔ UNGATED |
-| 7 | liveness-mistaken-for-progress | 4 | heartbeat + throughput check at launch | reporting only | ⚠️ ADVISORY |
-| 8 | stale-pointer / unmaintained registry | 5 | `check_docs` W1/W2; `status:` frontmatter | pre-commit GATES 1, 4 | 🟡 PARTIAL |
-| 9 | single-seed-headline | 4 | `Experiment(n_seeds=)` refusal below 6 | not implemented | ⛔ UNGATED |
-| 10 | single-axis-sweep-reported-as-absolute | 3 | — | — | ⛔ UNGATED |
-| 11 | terminology-overclaim | 3 | `docs/TERMS.md` | prose only | ⛔ UNGATED |
-| + | claim-not-traced-to-artifact | — | `claim_check.py` | pre-commit GATE 2 | ✅ GATED |
-| + | biology-not-bound-to-code | — | `biology_check.py` | pre-commit GATE 3 | ✅ GATED |
+| 1 | manipulation-never-engaged | 10 | `gates/lever_efficacy` | registry, reporting | 🟡 REPORTS (40 live hits) |
+| 2 | plasticity-bound-trap | 7 | `lab.bound_check` + `biology_check` | pre-commit G3 | ✅ BLOCKS |
+| 3 | check-that-cannot-fail | 9 | registry refuses a gate whose selftest passes vacuously | `gates/__init__` | ✅ STRUCTURAL |
+| 4 | no-discriminating-power | 7 | `gates/discriminating_power` | registry, reporting | 🟡 REPORTS |
+| 5 | record-not-read-before-building | 6 | `pool_queue --checked` + dispatcher refusal | execution path | ✅ BLOCKS |
+| 6 | wrong-quantity-comparison | 7 | `gates/quantity_mismatch` | registry | ✅ BLOCKS |
+| 7 | liveness-mistaken-for-progress | 4 | `gates/throughput` + dispatcher exit-status + heartbeat | registry + heartbeat | 🟡 REPORTS |
+| 8 | stale-pointer / unmaintained registry | 5 | `gates/stale_pointer`, `check_docs` W1/W2, `dead_citations.sh` | pre-commit G1 + registry | 🟡 PARTIAL (sees 1% until statuses declared) |
+| 9 | single-seed-headline | 4 | `gates/single_seed` | registry | ✅ BLOCKS |
+| 10 | single-axis-sweep-as-absolute | 3 | `gates/conditional_sweep` | registry, reporting | 🟡 REPORTS |
+| 11 | terminology-overclaim | 3 | `gates/terminology` | registry, reporting | 🟡 REPORTS |
+| P | artifact-provenance | — | `runners/__init__` capture + `gates/artifact_provenance` | execution path + registry | ✅ BLOCKS |
+| D | doc-type / placement | — | `gates/doc_type` | registry | ✅ BLOCKS |
+| C | claim-not-traced-to-artifact | — | `claim_check.py` | pre-commit G2 | ✅ BLOCKS |
+| B | biology-not-bound-to-code | — | `biology_check.py` | pre-commit G3 | ✅ BLOCKS |
+| M | mechanism-status conflict | — | `biology_check.check_mechanism_status` | pre-commit G3 | ✅ BLOCKS |
+| S | finding-status undeclared | — | pre-commit GATE 4 | pre-commit G4 | ✅ BLOCKS (new findings) |
+| X | invalid queued command | — | `pool_queue` argparse validation | execution path | ✅ BLOCKS |
+| Y | job died silently | — | dispatcher exit-status log + heartbeat | execution path | ✅ REPORTS |
 
-**Score: 4 gated, 2 partial, 3 advisory, 4 ungated.**
+**Score: 11 BLOCKING · 1 structural · 6 reporting · 0 ungated.**
+
+Every class from the 2026-07-31 taxonomy now has a module. Six REPORT rather than block, each
+because it declared limits it cannot check reliably at commit time — an honest reporting gate
+beats a false-positive generator that gets disabled. Nothing is left unaddressed.
 
 ## The rule this file enforces on itself
 
@@ -36,22 +46,30 @@ fail on a case it should catch, not merely to pass on a good one. Class 3 exists
 have twice been made mandatory and then failed *inside themselves* (`;` instead of `&&`; a pipe eating the exit
 status; a relevance count that made a gate unfailable).
 
-## Why the advisory ones are the priority
+## What the gates found on their FIRST corpus run
 
-Classes 1 and 4 are the two most expensive (10 and 7 incidents) and both live in `tools/experiment.py`, which has
-**zero importers**. A fail-closed harness nobody imports prevents nothing. Closing them means making the harness
-unavoidable for anything that produces a verdict — not writing more of it.
+Not hypothetical. On the registry's first pass over the live repo:
 
-## Known-ungated, stated plainly
+- **`lever-efficacy`: 40 identical-arm pairs across 11 banked artifacts.** In
+  `_emerge6_recurrent_microcircuit_seq.json`, THREE arms agree on all three metrics
+  (`apical_feedback_lesion` = `no_teaching_null` = `untrained`, `onestep = -0.0698238953499733`). Two distinct
+  manipulations cannot agree to sixteen digits. Finding:
+  [`2026-07-31-audit-lever-efficacy-...`](../research/findings/2026-07-31-audit-lever-efficacy-40-identical-arm-pairs-in-banked-artifacts.md).
+- **`single-seed`** blocked a finding written the same hour for headlining SOLVED on 3 declared seeds.
+- **`artifact-provenance`** blocked the audit's own output artifact, generated from an ad-hoc heredoc.
+- **`claim_check`** blocked a commit for a citation path that did not resolve, and separately found a
+  **wrong number in an already-published table** (density-1.0 null 0.4977, the document said 0.5894).
+- **`stale-pointer`** reported that it can currently check **1% of 407 citations**, because only 4 declare a
+  status — it states its own blindness instead of passing quietly.
 
-- **6 · wrong-quantity-comparison** — two correct numbers of different quantities. No mechanical check exists;
-  `circ` vs `circ_dW` cost a retracted 6-seed GO. Candidate: require metrics to carry a declared unit/quantity tag.
-- **9 · single-seed-headline** — trivially gateable (`n_seeds < 6` refuses without a waiver); simply not built yet.
-- **10 · single-axis-sweep-reported-as-absolute** — a sweep over interacting parameters gives a conditional
-  answer; the density optimum was not merely narrow but *inverted*. Candidate: require sweeps to record which
-  other axes were held, and at what values.
-- **11 · terminology-overclaim** — `docs/TERMS.md` defines code conditions for ~10 loaded words in prose only.
-  Candidate: check findings for those words against their stated conditions.
+**Eight blocks on the author, in one session.** That is the intended behaviour, not a defect rate.
+
+## Calibration is measured, not asserted
+
+A gate that cries wolf gets disabled, which is worse than no gate. So each was measured against the real corpus:
+`single-seed` fires on 1 of 1841 findings, and its verifier simulated adding frontmatter to every legacy file to
+find that **260 would fire** — which is why the frontmatter scope limit is load-bearing rather than arbitrary.
+`terminology` measures 2.3% corpus-wide against its own claimed ~3%, i.e. it does not flatter itself.
 
 ## What no gate can fix
 

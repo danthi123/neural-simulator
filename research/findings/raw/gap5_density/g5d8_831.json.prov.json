@@ -1,0 +1,33 @@
+{
+ "run_id": "pool-backfill",
+ "runner": "research/runners/_gap5_btsp_place_field_derisk.py",
+ "argv": [
+  "SIM_BACKEND=numpy",
+  ".venv/bin/python",
+  "-u",
+  "-m",
+  "research.runners._gap5_btsp_place_field_derisk",
+  "--seeds",
+  "831",
+  "--laps",
+  "1",
+  "--dwell",
+  "30",
+  "--lr",
+  "0.005",
+  "--w-max",
+  "2500",
+  "--drive",
+  "8000",
+  "--out",
+  "g5s_out/g5d8_831.json"
+ ],
+ "checked_reason": "AGG_laps1_drive.json covers drive=3000 at 6 seeds; drive=8000 unmeasured at this point",
+ "git_sha": "3989f87e",
+ "started": "from dispatch.log",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "artifact": "research/findings/raw/gap5_density/g5d8_831.json",
+ "note": "BACKFILLED from research/queue/dispatch.log -- produced on a pool node before the provenance door was synced there"
+}
