@@ -11,5 +11,5 @@ if [ "$wc_rc" -ne 0 ]; then
   echo "⛔ WORKFLOW RULES VIOLATED — copy-paste commands below (do NOT rationalise past this):"
   echo "$wc_out" | grep -E "⛔|run:" | head -8
 else
-  echo "✅ workflow_check: parallelism + lane coverage + primary-source reading all satisfied"
+  echo "✅ workflow_check: parallelism + lanes + sources + cluster all satisfied"
 fi

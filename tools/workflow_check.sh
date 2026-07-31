@@ -146,6 +146,47 @@ echo "     canonical sources (single-column, grep clean): ~/Projects/sim-catalog
 echo "     ⚠️ Kandel's copy is TWO-COLUMN with hyphen-splits: anchor on a short fragment, read a window."
 
 echo
-if [ "$FAIL" -eq 0 ]; then echo "✅ workflow_check: all three rules satisfied."; else
+echo
+echo "════ 4. CLUSTER — are the mini-PC pool's 36 cores actually working? ════"
+# WHY THIS RULE EXISTS (2026-07-30, owner-flagged): rule 1 reads nproc and /proc/loadavg -- LOCAL ONLY. So it
+# printed "parallelism satisfied" all evening while three 12-core pool nodes sat at load 0.00. The check was
+# STRUCTURALLY INCAPABLE of seeing them, and lane_check.py's prose even referenced "36 idle pool cores" while
+# never probing a node, which turned the one mention of the pool into false assurance.
+# Compounding it, I then declared the pool OFFLINE after scanning the WRONG SUBNET (192.168.1.x) as the WRONG
+# USER (dant123) -- while ~/.ssh/config had working pool40/41/42 aliases (User node) the whole time. A capacity
+# claim was made from a failed probe instead of a working one. So this rule uses the ALIASES, and it
+# distinguishes IDLE (actionable) from UNREACHABLE (report, do not cry wolf).
+POOL_IDLE=0; POOL_UP=0; POOL_DOWN=0; POOL_LINES=""
+for H in pool40 pool41 pool42; do
+  R=$(timeout 8 ssh -o BatchMode=yes -o ConnectTimeout=5 "$H" \
+        "echo \$(nproc) \$(cut -d' ' -f1 /proc/loadavg) \$(pgrep -fc 'research.runners' 2>/dev/null || echo 0)" 2>/dev/null)
+  if [ -z "$R" ]; then
+    POOL_DOWN=$((POOL_DOWN+1)); POOL_LINES="$POOL_LINES  $(printf '%-8s' "$H") unreachable\n"; continue
+  fi
+  POOL_UP=$((POOL_UP+1))
+  set -- $R; C="${1:-0}"; LD="${2:-0}"; PR="${3:-0}"
+  # idle = load below a quarter of its cores AND no runners
+  if awk -v l="$LD" -v c="$C" 'BEGIN{exit !(l < c/4)}' && [ "${PR:-0}" -eq 0 ]; then
+    POOL_IDLE=$((POOL_IDLE+1)); POOL_LINES="$POOL_LINES  $(printf '%-8s' "$H") ⛔ IDLE  cores=$C load=$LD runners=$PR\n"
+  else
+    POOL_LINES="$POOL_LINES  $(printf '%-8s' "$H") ✔ busy  cores=$C load=$LD runners=$PR\n"
+  fi
+done
+printf "%b" "$POOL_LINES"
+if [ "$POOL_IDLE" -gt 0 ]; then
+  echo "  ⛔ $POOL_IDLE of $POOL_UP reachable pool node(s) IDLE — that is $((POOL_IDLE*12)) cores doing nothing."
+  echo "     They are DISJOINT from the GPU, so they cost nothing to use while the crux runs."
+  echo "     The pool copy is an rsync'd tree, NOT a git repo: 'git pull' fails there and it silently predates"
+  echo "     any new runner. scp the runner first, then dispatch:"
+  echo "       scp research/runners/<runner>.py pool40:~/derisk-pool/sim/research/runners/"
+  echo "       ssh -f -n pool40 \"cd ~/derisk-pool/sim && setsid bash <script>.sh </dev/null >out 2>&1 & exit 0\""
+  FAIL=1
+elif [ "$POOL_UP" -eq 0 ]; then
+  echo "  ⚠️  no pool node reachable — report it, do NOT treat 36 cores as available capacity."
+else
+  echo "  ✔ pool working ($POOL_UP up, $POOL_DOWN unreachable)"
+fi
+
+if [ "$FAIL" -eq 0 ]; then echo "✅ workflow_check: all four rules satisfied."; else
   echo "⛔ workflow_check: $FAIL rule-group(s) violated — the commands above are copy-paste ready."; fi
 exit $FAIL
