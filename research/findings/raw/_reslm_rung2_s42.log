@@ -1,0 +1,24 @@
+EMERGE-RESERVOIR-LM RUNG 2: a DISTAL-REFERENT TOPIC buffer conditions the on-bridge spiking reservoir next-token generator; does the buffer restore the topic->den dependency BEYOND the reservoir's fading-memory horizon? 1-seed; state-feature=both; single D=32
+  [seed 42]
+[2026-07-11 01:25:39][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-11 01:25:39][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-11 01:25:39][INFO] SIM_BRIDGE: Brain-region framework: 1 regions, 300 total neurons, 0 pathways.
+[2026-07-11 01:25:39][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-07-11 01:25:39][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 300 neurons...
+[2026-07-11 01:25:39][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-11 01:25:39][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-11 01:25:39][INFO] SIM_BRIDGE: Generating 3D neuron positions for 300 neurons...
+[2026-07-11 01:25:39][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-11 01:25:39][INFO] SIM_BRIDGE: Per-synapse STP types: E->E=4218, E->I=1986, I->E=1986, I->I=857
+[2026-07-11 01:25:39][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 9047 synapses across 1 populations.
+[2026-07-11 01:25:39][INFO] SIM_BRIDGE: Initializing STP state for 9047 synapses (capacity: 13570)...
+[2026-07-11 01:25:39][INFO] SIM_BRIDGE: Initializing eligibility traces for 9047 synapses (capacity: 13570, dtype: float32)...
+[2026-07-11 01:25:39][INFO] SIM_BRIDGE: Per-synapse STP types: E->E=4218, E->I=1986, I->E=1986, I->I=857
+[2026-07-11 01:25:39][INFO] SIM_BRIDGE: Initializing structural plasticity state...
+[2026-07-11 01:25:39][INFO] SIM_BRIDGE: Simulation data initialized for 300 neurons (3D). Synapses: 9047. GPU memory: 22.2GB/51.2GB (43.3%)
+    => D*=32: reservoir-only 0.125 vs buffer 1.000 (chance 0.167)  reservoir_fell_to_chance=True  seed_go=True  {'buffer_helps': True, 'reservoir_near_chance': True, 'scramble_collapses': True, 'referent_collapses': True, 'bag_le_chance': True, 'bigram_le_chance': True, 'active': True}
+
+======================================================================================================================
+[rung2-distal-referent] VERDICT: GO -- a single-slot DISTAL-REFERENT TOPIC BUFFER restores a discourse dependency BEYOND the on-bridge spiking reservoir's fading-memory horizon. At D*=32 filler clauses (beyond the horizon: reservoir-only dep_acc 0.125 ~ chance 0.167), conditioning the Rung-1 reservoir next-token read-out on the CONCATENATED [reservoir | topic-buffer] feature lifts the referent-dependent token to 1.000 (+0.875 over reservoir-only, MARGIN 0.15) -- the buffer is LOAD-BEARING, not a decoration. Every control COLLAPSES: buffer SLOT-SCRAMBLE (latch a random subject, same slot) 0.125 ~ reservoir-only (the held CONTENT is load-bearing); REFERENT-SHUFFLE (deranged topic->den map in training) 0.000 ~ chance (the learned mapping is broken); BAG-of-prefix 0.150 <= chance (the topic is not readable from unordered counts -- the same-category distractors mask it); BIGRAM 0.175 <= chance (not readable from the previous token). The reservoir is genuinely active (0.0198 spikes/neuron/step). 1 seeds. ==> the ESN/LSM reservoir (fading memory) + a NON-fading single-slot WM latch (Grosz-Sidner attentional focus / a prefrontal topic register) together carry a distal discourse referent a reservoir alone cannot. HONEST SCOPE: a controlled discourse-referent grammar (closed template domain), NOT open prose (R4); the buffer is a functional single-slot latch (the spiking theta-gamma / NMDA-WM realization is the follow-on rung). Reuse-by-import; NO sim/ edit; NO edit to any existing runner.
+[rung2-distal-referent] wrote research\findings\raw\_reslm_rung2_s42.json
+======================================================================================================================

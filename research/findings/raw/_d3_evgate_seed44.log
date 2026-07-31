@@ -1,0 +1,10 @@
+[D3 BOUNDARY-GATED COPY] K=6 | the held prior event is not LEARNED, it is GATED (the copy is structural; only WHEN to open is learned, from an observable marker)
+  [seed 44] GATED-COPY prev=0.702 (curr=0.728) || gate-lesion=0.197 | always-open=0.313 | marker-scramble=0.309 | recency=0.168 | 1-emission ceiling=0.771
+
+  AGGREGATE (K=6, chance 0.167):
+    *** GATED COPY (prediction only, NO replay): prev-agent=0.702  (curr=0.728) ***
+    ORACLE gate (the observable marker read perfectly) = the MECHANISM's upper bound: prev=0.756 (curr=0.753)
+    vs prior rungs: prediction-only NEGATIVE 0.226 | REPLAY(gamma=3) 0.597 | the claimed 'one-emission ceiling' 0.771
+    controls: gate-lesion=0.197 | always-open=0.313 | marker-scramble=0.309 | recency=0.168
+    -> the held slot's TRUE bound is the CURRENT slot's fidelity (0.728), NOT a one-emission decode: a COPY inherits identity rather than inferring it (oracle prev 0.756 >= curr 0.753).
+  VERDICT: GO -- the held prior event is GATED, not learned: making the boundary COPY structural (a pre-wired route opened by an observable marker -- exactly sim/ transmission_gate, Logiaco-Abbott-Escola / PBWM output gating) makes the held slot learnable from PREDICTION ALONE (0.70), with NO replay -- far past the prediction-only NEGATIVE (0.23) and past the REPLAY mechanism (0.60). The claimed one-emission ceiling (0.77) was MECHANISM-bound, not a substrate bound: a_prev never had to INFER an agent from an emission, only to COPY one, so its true bound is the CURRENT slot fidelity (0.73) -- which the ORACLE gate attains (0.76 >= 0.75). The learned gate reaches 0.70 of that. Forcing the gate shut (gate-lesion 0.20), forcing it always open (never holds, 0.31) and scrambling the observable marker so the gate cannot be predicted (0.31) all collapse -> a brain does not LEARN to remember a just-ended episode; a boundary OPENS A GATE and the content transfers. NO sim/ edit.

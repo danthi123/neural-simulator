@@ -1,0 +1,50 @@
+======================================================================
+DENDRITIC FAIR-SCALE CREDIT-ASSIGNMENT GATE (kill-safe runner)
+======================================================================
+HONEST CEILING:
+  Gates a LITERATURE-SCALE credit-assignment ROOT only
+  (biologically-local feedback-alignment learns MNIST + controls
+  fail + emergent alignment). NOT priority-#3
+  developmental/embodiment. NOT 'conversation solved'. Integration
+  into the conversational stack is a SEPARATE later effort
+  (controller's post-run job), not this runner's.
+======================================================================
+[dendritic_fair_gate] MNIST cache hit: data\mnist.npz (60000 train) -- no download
+[dendritic_fair_gate] MNIST: 60000 train / 10000 heldout, net=[784, 512, 256, 128, 10], epochs=60
+----------------------------------------------------------------------
+SEED 42
+  oracle         heldout=0.9772
+  local_correct  heldout=0.6489 align=0.0762
+  local_wrongsign heldout=0.9487
+  global_scalar  heldout=0.0766
+  permuted       heldout=0.0974
+  -> seed verdict: VOID
+----------------------------------------------------------------------
+SEED 43
+  oracle         heldout=0.9770
+  local_correct  heldout=0.9527 align=0.1757
+  local_wrongsign heldout=0.9611
+  global_scalar  heldout=0.0868
+  permuted       heldout=0.0974
+  -> seed verdict: VOID
+----------------------------------------------------------------------
+SEED 44
+  oracle         heldout=0.9779
+  local_correct  heldout=0.1998 align=0.0301
+  local_wrongsign heldout=0.9643
+  global_scalar  heldout=0.0987
+  permuted       heldout=0.0958
+  -> seed verdict: VOID
+======================================================================
+VERDICT: VOID
+  (VOID = instrument not sound; PASS/FAIL = science result)
+HONEST CEILING REMINDER:
+  Gates a LITERATURE-SCALE credit-assignment ROOT only
+  (biologically-local feedback-alignment learns MNIST + controls
+  fail + emergent alignment). NOT priority-#3
+  developmental/embodiment. NOT 'conversation solved'. Integration
+  into the conversational stack is a SEPARATE later effort
+  (controller's post-run job), not this runner's.
+Honest propagation of a PASS into the conversational stack is the controller's post-run job, NOT this runner's.
+Wrote research/findings/raw/g11_bg/dendritic_fair_gate.json
+======================================================================

@@ -1,0 +1,8 @@
+[D3 EVENT CONNECTIVES] K=6 | a connective marks an EVENT BOUNDARY that SHIFTS the current event into a previous slot -> the brain holds a PAIR of events and can relate them
+  [seed 101] PAIR prev-agent=0.866 (curr=0.919 | same-agent rel=0.917) || SINGLE-EVENT prev=0.486 (its curr=0.985) | lesion prev=0.283 | recency prev=0.154
+
+  AGGREGATE (K=6, chance 0.167):
+    EVENT-PAIR: prev-agent=0.866 | curr-agent=0.919 | same-agent relation=0.917
+    SINGLE-EVENT control: prev-agent=0.486 (curr-agent 0.985 -- it tracks the CURRENT event fine, it simply has no prior event to hold)
+    recurrence-lesion prev=0.283 | recency prev=0.154
+  VERDICT: GO -- a connective-marked EVENT BOUNDARY shifts the running event into a previous slot, so the discrete-attractor holds a PAIR of composed events and can RELATE them: the previous-event agent is recovered on held-out-DEEPER discourses (0.87) and the same-agent relation read across the pair (0.92), where a SINGLE-EVENT register FAILS (0.49) despite tracking the current event fine (0.98) -- it structurally has no prior event to hold -- and recurrence-lesion (0.28) + recency (0.15) both collapse -> discourse connectives: the brain relates two composed meanings, not just carries one. NO sim/ edit.

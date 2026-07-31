@@ -1,0 +1,51 @@
+[stream-eprop] corpus=data/corpus/tinystories_train.txt stream=2000000 V=2000 n_pool=300 block=128 batch=64 lane=28125 epochs=4 bptt_steps=4000 dev=cuda permute_stream=False
+[stream-eprop] PRE-REGISTERED EXPECTATION: e-prop is a diagonal (RTRL) truncation dropping the off-diagonal recurrent Jacobian; literature (Bellec-2020 needed DNI for long-range PTB; Murray-2019 RFLO matches BPTT only for short horizons) predicts plastic_eprop captures MOST of the SHALLOW margin and only a SMALL fraction of the DEEP margin. A shallow-only capture is an HONEST NEGATIVE on long-range -- a first-class deliverable.
+      [fixed_reservoir] epoch 1/4 last-block-CE 6.957
+      [fixed_reservoir] epoch 2/4 last-block-CE 6.888
+      [fixed_reservoir] epoch 3/4 last-block-CE 6.854
+      [fixed_reservoir] epoch 4/4 last-block-CE 6.838
+    -> fixed_reservoir: shallow_margin -3.2789  deep_margin -2.7599  agg_ce 7.1046  (48s)
+      [plastic_eprop] epoch 1/4 last-block-CE 7.001
+      [plastic_eprop] epoch 2/4 last-block-CE 6.284
+      [plastic_eprop] epoch 3/4 last-block-CE 5.805
+      [plastic_eprop] epoch 4/4 last-block-CE 5.701
+    -> plastic_eprop: shallow_margin -3.2810  deep_margin -2.1581  agg_ce 6.5786  (70s)
+      [plastic_eprop_dualtc] epoch 1/4 last-block-CE 5.894
+      [plastic_eprop_dualtc] epoch 2/4 last-block-CE 5.741
+      [plastic_eprop_dualtc] epoch 3/4 last-block-CE 5.817
+      [plastic_eprop_dualtc] epoch 4/4 last-block-CE 5.724
+    -> plastic_eprop_dualtc: shallow_margin -3.2821  deep_margin -1.6613  agg_ce 6.1374  (90s)
+      [plastic_eprop_dualtc_shuffle] epoch 1/4 last-block-CE 6.986
+      [plastic_eprop_dualtc_shuffle] epoch 2/4 last-block-CE 6.946
+      [plastic_eprop_dualtc_shuffle] epoch 3/4 last-block-CE 6.974
+      [plastic_eprop_dualtc_shuffle] epoch 4/4 last-block-CE 7.040
+    -> plastic_eprop_dualtc_shuffle: shallow_margin -3.2800  deep_margin -2.7896  agg_ce 7.1309  (119s)
+      [BPTT_same_net] step 1000/4000 train-CE 5.721
+      [BPTT_same_net] step 2000/4000 train-CE 5.717
+      [BPTT_same_net] step 3000/4000 train-CE 5.763
+      [BPTT_same_net] step 4000/4000 train-CE 5.738
+    -> BPTT_fixed_win: shallow_margin -1.3951  deep_margin -1.4006  agg_ce 5.6843  (248s)
+
+[stream-eprop] MARGIN vs add-1 stream bigram, by within-block context depth (+ = arm better than bigram):
+                 arm         1         2         3       4-8      9-16    17-127   SHALLOW      DEEP
+     fixed_reservoir   -3.3008   -3.3114   -3.2890   -3.2660   -3.1693   -2.7599   -3.2789   -2.7599
+       plastic_eprop   -3.3026   -3.3140   -3.2912   -3.2681   -3.1668   -2.1581   -3.2810   -2.1581
+    plastic_eprop_dualtc   -3.3085   -3.3215   -3.2985   -3.2656   -3.0547   -1.6613   -3.2821   -1.6613
+    plastic_eprop_dualtc_shuffle   -3.3010   -3.3120   -3.2893   -3.2675   -3.1738   -2.7896   -3.2800   -2.7896
+      BPTT_fixed_win   -1.5103   -1.3437   -1.3755   -1.3862   -1.3668   -1.4006   -1.3951   -1.4006
+
+[stream-eprop] ANTI-CHEATS:
+    zero_signal W_rec == fixed_reservoir W_rec (byte-identical): None
+
+[stream-eprop] GATE: INCOMPLETE (need all 5 arms; have ['BPTT_fixed_win', 'fixed_reservoir', 'plastic_eprop', 'plastic_eprop_dualtc', 'plastic_eprop_dualtc_shuffle'])
+
+[stream-eprop] FIXED-FLOOR-RELATIVE recurrent-credit fraction (plastic gain over fixed / BPTT gain over fixed; isolates the credit RULE):
+    vs  BPTT_fixed_win: frac_clean_deep 0.4427  frac_clean_shallow -0.0011  (plastic +0.602 / bptt +1.359 deep) <- CLEANEST (identical frozen W_in)
+
+[stream-eprop] DUAL-TIMESCALE eligibility (slow credit horizon, NO forward change):
+    vs  BPTT_fixed_win: frac_clean_deep 0.8082  (dualtc +1.099 / bptt +1.359 deep) <- CLEANEST (identical frozen W_in)
+    DUALTC deep lift over plain e-prop = -1.6613 - -2.1581 = +0.4968  (shallow: -3.2821 vs -3.2810)
+    DUALTC-SHUFFLE anti-cheat (permute the combined eligibility -- magnitude kept, structure broken): dualtc deep -1.6613 -> shuffled -2.7896 (COLLAPSES to <= plain (lift is genuine CREDIT, not magnitude))
+
+-> research/findings/raw/_stream_eprop_lm_r2c_shufctl.json (575.3s)
+STREAM_EPROP_DONE

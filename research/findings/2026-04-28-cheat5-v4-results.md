@@ -1,6 +1,7 @@
 ---
 type: finding
 status: superseded
+superseded_by: research/findings/2026-04-28-cheat5-post-v4-reframe.md
 date: 2026-04-28
 mechanism: bg-cross-projections
 ---

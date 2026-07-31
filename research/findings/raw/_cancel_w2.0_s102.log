@@ -1,0 +1,6 @@
+[cancellation] corpus=data/corpus/tinystories.txt K=256 w_exc=2.0 EMERGENT-clusters
+  [seed 102] pos=~cat(coh 0.118) exc='man' | CANCEL=yes OWN=no | collateral=0/12 | permuted_inherits=yes | moat=1
+
+  AGGREGATE (1 seeds): CANCEL(inherited->no) all=False | OWN=yes all=False | no-collateral all=True | permuted-inherits all=True | moat all=True
+  VERDICT: NEGATIVE -- a member's OWN property does NOT cleanly cancel.
+  [saved] research/findings/raw/_cancel_w2.0_s102.json

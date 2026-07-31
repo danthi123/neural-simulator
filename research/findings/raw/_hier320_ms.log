@@ -1,0 +1,9 @@
+### hier320 spiking rm-seed 43 (cached codes) ###
+  320-wide between-concept cos: mean 0.048  max 0.537
+RESULT: SPIKING 320-concept relational QA (who) = 1.000   abstention = 1.000  (chance 0.0031)
+VERDICT: RESOLVES -- biological spiking composition works over ALL 320 concepts in one cleanup space via the hierarchical bridge-role bind (no retrain). The brain-analogue conversational substrate scales to 320 concepts.
+### hier320 spiking rm-seed 44 (cached codes) ###
+  320-wide between-concept cos: mean 0.048  max 0.537
+RESULT: SPIKING 320-concept relational QA (who) = 0.950   abstention = 1.000  (chance 0.0031)
+VERDICT: RESOLVES -- biological spiking composition works over ALL 320 concepts in one cleanup space via the hierarchical bridge-role bind (no retrain). The brain-analogue conversational substrate scales to 320 concepts.
+##### HIER320-MS-DONE #####

@@ -1,0 +1,54 @@
+[2026-07-08 02:27:36][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-08 02:27:36][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-08 02:27:36][INFO] SIM_BRIDGE: Brain-region framework: 1 regions, 902 total neurons, 0 pathways.
+[2026-07-08 02:27:36][INFO] SIM_BRIDGE: RNG initialized with seed: 102
+[2026-07-08 02:27:36][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 902 neurons...
+[2026-07-08 02:27:36][INFO] SIM_BRIDGE: Region 'cells' (902 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 02:27:36][INFO] SIM_BRIDGE: Generating 3D neuron positions for 902 neurons...
+[2026-07-08 02:27:36][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-08 02:27:36][WARNING] SIM_BRIDGE: inject_explicit_wiring: no synapses in plan.
+[2026-07-08 02:27:36][WARNING] SIM_BRIDGE: Connection generation resulted in None. Initializing as empty matrix.
+[2026-07-08 02:27:36][INFO] SIM_BRIDGE: Simulation data initialized for 902 neurons (3D). Synapses: 0. GPU memory: 19.2GB/51.2GB (37.4%)
+[2026-07-08 02:27:36][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 6176 synapses across 1 populations.
+[2026-07-08 02:27:39][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-08 02:27:39][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-08 02:27:39][INFO] SIM_BRIDGE: Brain-region framework: 1 regions, 902 total neurons, 0 pathways.
+[2026-07-08 02:27:39][INFO] SIM_BRIDGE: RNG initialized with seed: 102
+[2026-07-08 02:27:39][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 902 neurons...
+[2026-07-08 02:27:39][INFO] SIM_BRIDGE: Region 'cells' (902 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 02:27:39][INFO] SIM_BRIDGE: Generating 3D neuron positions for 902 neurons...
+[2026-07-08 02:27:39][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-08 02:27:39][WARNING] SIM_BRIDGE: inject_explicit_wiring: no synapses in plan.
+[2026-07-08 02:27:39][WARNING] SIM_BRIDGE: Connection generation resulted in None. Initializing as empty matrix.
+[2026-07-08 02:27:39][INFO] SIM_BRIDGE: Simulation data initialized for 902 neurons (3D). Synapses: 0. GPU memory: 19.2GB/51.2GB (37.4%)
+[2026-07-08 02:27:39][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 6176 synapses across 1 populations.
+[2026-07-08 02:27:42][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-08 02:27:42][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-08 02:27:42][INFO] SIM_BRIDGE: Brain-region framework: 1 regions, 902 total neurons, 0 pathways.
+[2026-07-08 02:27:42][INFO] SIM_BRIDGE: RNG initialized with seed: 102
+[2026-07-08 02:27:42][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 902 neurons...
+[2026-07-08 02:27:42][INFO] SIM_BRIDGE: Region 'cells' (902 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 02:27:42][INFO] SIM_BRIDGE: Generating 3D neuron positions for 902 neurons...
+[2026-07-08 02:27:42][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-08 02:27:42][WARNING] SIM_BRIDGE: inject_explicit_wiring: no synapses in plan.
+[2026-07-08 02:27:42][WARNING] SIM_BRIDGE: Connection generation resulted in None. Initializing as empty matrix.
+[2026-07-08 02:27:42][INFO] SIM_BRIDGE: Simulation data initialized for 902 neurons (3D). Synapses: 0. GPU memory: 19.1GB/51.2GB (37.3%)
+[2026-07-08 02:27:42][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 6176 synapses across 1 populations.
+[2026-07-08 02:27:46][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-08 02:27:46][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-08 02:27:46][INFO] SIM_BRIDGE: Brain-region framework: 1 regions, 902 total neurons, 0 pathways.
+[2026-07-08 02:27:46][INFO] SIM_BRIDGE: RNG initialized with seed: 102
+[2026-07-08 02:27:46][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 902 neurons...
+[2026-07-08 02:27:46][INFO] SIM_BRIDGE: Region 'cells' (902 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 02:27:46][INFO] SIM_BRIDGE: Generating 3D neuron positions for 902 neurons...
+[2026-07-08 02:27:46][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-08 02:27:46][WARNING] SIM_BRIDGE: inject_explicit_wiring: no synapses in plan.
+[2026-07-08 02:27:46][WARNING] SIM_BRIDGE: Connection generation resulted in None. Initializing as empty matrix.
+[2026-07-08 02:27:46][INFO] SIM_BRIDGE: Simulation data initialized for 902 neurons (3D). Synapses: 0. GPU memory: 19.1GB/51.2GB (37.3%)
+[2026-07-08 02:27:46][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 6176 synapses across 1 populations.
+  [seed 102] SPIKING held-out inherit=0.750 | deranged=0.062 | permuted-feat=0.062 | lesion=0.000 | chance=0.125 (cats=8)
+
+  AGGREGATE (1 seeds): SPIKING held-out inherit=0.750 | deranged=0.062 | permuted-feat=0.062 | lesion=0.000 | chance=0.125
+  beats_chance=True | beats_deranged=True | beats_permuted_feat=True
+  VERDICT: GO -- a HELD-OUT member of a REAL-corpus-DISCOVERED category INHERITS its class property ON SPIKES (EMERGE-42 pooler + committed HTM kernel; read from cp_v_apical), above chance, label-derangement, and permuted-features -> the KNOWLEDGE half rides real-corpus breadth ON THE SPIKING SUBSTRATE.
+  [saved] research/findings/raw/_rc_spk_k1024_s102.json

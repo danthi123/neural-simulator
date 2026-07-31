@@ -1,0 +1,8 @@
+  [seed 42] p0=0.03 rate_ref 0.599 | spiking[S100=0.471 S300=0.451] | primary(S300) held 0.451 probe 0.701 | lesion 0.451 (probe 0.503) | wrong 0.462 (probe 0.544) | null 0.451 (probe 0.500) | oracle 0.710 | chance 0.549 | same_init True
+  [seed 43] p0=0.03 rate_ref 0.657 | spiking[S100=0.440 S300=0.538] | primary(S300) held 0.538 probe 0.695 | lesion 0.457 (probe 0.514) | wrong 0.471 (probe 0.535) | null 0.454 (probe 0.509) | oracle 0.571 | chance 0.538 | same_init True
+  [seed 44] p0=0.03 rate_ref 0.579 | spiking[S100=0.485 S300=0.524] | primary(S300) held 0.524 probe 0.681 | lesion 0.496 (probe 0.470) | wrong 0.454 (probe 0.542) | null 0.493 (probe 0.476) | oracle 0.669 | chance 0.524 | same_init True
+
+============================================================================================================
+[emerge5] VERDICT: INCONCLUSIVE -- oracle only 0.650; tune before reading the spiking arms.
+[emerge5] wrote research/findings/raw/_emerge5_p003_w768_lr05.json
+============================================================================================================

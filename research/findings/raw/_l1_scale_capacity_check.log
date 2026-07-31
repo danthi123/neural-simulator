@@ -1,0 +1,11 @@
+[L1 scale-capacity] harder calibration (lam_sig=2.2, n_common=300); nonneg+centered online simmatch
+  [n_cat=  8 (  64 concepts, k=32)] learner=+0.421  offline=+0.439  host=+0.404  frac=96%  gen=0.651  perm=+0.007
+  [n_cat= 16 ( 128 concepts, k=40)] learner=+0.518  offline=+0.516  host=+0.404  frac=100%  gen=0.818  perm=+0.002
+  [n_cat= 32 ( 256 concepts, k=56)] learner=+0.398  offline=+0.454  host=+0.355  frac=88%  gen=0.703  perm=-0.002
+
+============================================================================================
+  SCALE VERDICT: SCALE_CAPACITY_HOLDS_GO
+  the extraction fraction stays high as categories grow (['96%', '100%', '88%'], min 88%, drop +8%) -> the online nonneg rule has capacity headroom to scale; no scale wall at this range. With all FOUR axes (rule, input-spiking, learning-nonneg, scale) GO at the smoke level, the L1 spiking similarity-matching cortex is comprehensively de-risked -- only the bridge assembly + real-data-noise-at-2048 remain the build itself.
+============================================================================================
+  elapsed 30s
+  [saved] research/findings/raw/_l1_scale_capacity_check.json

@@ -1,0 +1,55 @@
+[distill-gate] budget=110000 chars each; epochs=25 hidden=[64] seed=42
+Corpus: 110,000 chars
+Vocab size: 92
+Architecture: 92 -> 64 -> 92 LIF
+  Backend: GPU (CuPy)
+  T=32, batch=32, lr=0.005, epochs=25
+  Samples: 400
+
+  epoch 8/25: loss=6.9865 (7.2s)
+  epoch 16/25: loss=5.2168 (16.6s)
+  epoch 24/25: loss=4.4109 (25.5s)
+
+Training complete (26.6s)
+  Initial loss: 14.7575
+  Final loss:   4.1775
+  Reduction:    72%
+[REAL-baseline] loss 14.7575 -> 4.1775
+Corpus: 110,000 chars
+Vocab size: 77
+Architecture: 77 -> 64 -> 77 LIF
+  Backend: GPU (CuPy)
+  T=32, batch=32, lr=0.005, epochs=25
+  Samples: 400
+
+  epoch 8/25: loss=6.8820 (9.0s)
+  epoch 16/25: loss=5.3314 (18.0s)
+  epoch 24/25: loss=4.0283 (27.0s)
+
+Training complete (28.1s)
+  Initial loss: 12.8653
+  Final loss:   3.9612
+  Reduction:    69%
+[DISTILLED] loss 12.8653 -> 3.9612
+Corpus: 110,000 chars
+Vocab size: 77
+Architecture: 77 -> 64 -> 77 LIF
+  Backend: GPU (CuPy)
+  T=32, batch=32, lr=0.005, epochs=25
+  Samples: 400
+
+  epoch 8/25: loss=7.4362 (8.9s)
+  epoch 16/25: loss=5.5656 (17.9s)
+  epoch 24/25: loss=4.0755 (27.1s)
+
+Training complete (28.2s)
+  Initial loss: 13.8244
+  Final loss:   3.9171
+  Reduction:    72%
+[PERMUTED] loss 13.8244 -> 3.9171
+
+=== INCREMENT-2 DISTILLATION GATE ===
+  REAL-baseline end 4.1775 | DISTILLED end 3.9612 | PERMUTED end 3.9171
+  DISTILLED vs baseline: +5.2%  | vs permuted: -1.1%
+  GATE: FAIL  -- HONEST NEGATIVE (data distillation did not lift at PoC scale; do not paper over)
+  -> research/findings/raw/g11_bg/distill_gate.json

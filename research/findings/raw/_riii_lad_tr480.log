@@ -1,0 +1,65 @@
+[R-iii CA3 completion specificity] validated D.13 regime, K=3 memories, train_events=480 | CLEAN held-out completion (trained vs no-train) isolates recurrence from the drive artifact
+[2026-07-08 20:43:34][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-08 20:43:34][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-08 20:43:34][INFO] SIM_BRIDGE: Brain-region framework: 15 regions, 1678 total neurons, 37 pathways.
+[2026-07-08 20:43:34][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-07-08 20:43:34][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1678 neurons...
+[2026-07-08 20:43:34][INFO] SIM_BRIDGE: Region 'language_input' (384 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 20:43:34][INFO] SIM_BRIDGE: Region 'motor_N' (16 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 20:43:34][INFO] SIM_BRIDGE: Region 'motor_E' (16 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 20:43:34][INFO] SIM_BRIDGE: Region 'motor_S' (16 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 20:43:34][INFO] SIM_BRIDGE: Region 'motor_W' (16 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 20:43:34][INFO] SIM_BRIDGE: Region 'language_output' (384 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 20:43:34][INFO] SIM_BRIDGE: Region 'ec' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 20:43:34][INFO] SIM_BRIDGE: Region 'dg' (300 neurons): using Izh type IZH2007_HIPPO_PYRAMIDAL
+[2026-07-08 20:43:34][INFO] SIM_BRIDGE: Region 'dg_pv_basket' (60 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 20:43:34][INFO] SIM_BRIDGE: Region 'ca3' (150 neurons): using Izh type IZH2007_HIPPO_PYRAMIDAL
+[2026-07-08 20:43:34][INFO] SIM_BRIDGE: Region 'ca1' (120 neurons): using Izh type IZH2007_HIPPO_PYRAMIDAL
+[2026-07-08 20:43:34][INFO] SIM_BRIDGE: Region 'motor_FS_N' (4 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 20:43:34][INFO] SIM_BRIDGE: Region 'motor_FS_E' (4 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 20:43:34][INFO] SIM_BRIDGE: Region 'motor_FS_S' (4 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 20:43:34][INFO] SIM_BRIDGE: Region 'motor_FS_W' (4 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 20:43:34][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-08 20:43:34][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-08 20:43:34][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-07-08 20:43:34][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1678 neurons...
+[2026-07-08 20:43:34][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-08 20:43:34][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 136913 synapses across 45 populations.
+[2026-07-08 20:43:34][INFO] SIM_BRIDGE: Initializing STP state for 136913 synapses (capacity: 205369)...
+[2026-07-08 20:43:34][INFO] SIM_BRIDGE: Initializing eligibility traces for 136913 synapses (capacity: 205369, dtype: float32)...
+[2026-07-08 20:43:34][INFO] SIM_BRIDGE: Initializing STDP state for 1678 neurons...
+[2026-07-08 20:43:34][INFO] SIM_BRIDGE: Simulation data initialized for 1678 neurons (3D). Synapses: 136913. GPU memory: 14.4GB/51.2GB (28.2%)
+[2026-07-08 20:56:01][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-08 20:56:01][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-08 20:56:01][INFO] SIM_BRIDGE: Brain-region framework: 15 regions, 1678 total neurons, 37 pathways.
+[2026-07-08 20:56:01][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-07-08 20:56:01][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1678 neurons...
+[2026-07-08 20:56:01][INFO] SIM_BRIDGE: Region 'language_input' (384 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 20:56:01][INFO] SIM_BRIDGE: Region 'motor_N' (16 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 20:56:01][INFO] SIM_BRIDGE: Region 'motor_E' (16 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 20:56:01][INFO] SIM_BRIDGE: Region 'motor_S' (16 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 20:56:01][INFO] SIM_BRIDGE: Region 'motor_W' (16 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 20:56:01][INFO] SIM_BRIDGE: Region 'language_output' (384 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 20:56:01][INFO] SIM_BRIDGE: Region 'ec' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 20:56:01][INFO] SIM_BRIDGE: Region 'dg' (300 neurons): using Izh type IZH2007_HIPPO_PYRAMIDAL
+[2026-07-08 20:56:01][INFO] SIM_BRIDGE: Region 'dg_pv_basket' (60 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 20:56:01][INFO] SIM_BRIDGE: Region 'ca3' (150 neurons): using Izh type IZH2007_HIPPO_PYRAMIDAL
+[2026-07-08 20:56:01][INFO] SIM_BRIDGE: Region 'ca1' (120 neurons): using Izh type IZH2007_HIPPO_PYRAMIDAL
+[2026-07-08 20:56:01][INFO] SIM_BRIDGE: Region 'motor_FS_N' (4 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 20:56:01][INFO] SIM_BRIDGE: Region 'motor_FS_E' (4 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 20:56:01][INFO] SIM_BRIDGE: Region 'motor_FS_S' (4 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 20:56:01][INFO] SIM_BRIDGE: Region 'motor_FS_W' (4 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 20:56:01][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-08 20:56:01][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-08 20:56:01][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-07-08 20:56:01][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1678 neurons...
+[2026-07-08 20:56:01][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-08 20:56:02][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 136913 synapses across 45 populations.
+[2026-07-08 20:56:02][INFO] SIM_BRIDGE: Initializing STP state for 136913 synapses (capacity: 205369)...
+[2026-07-08 20:56:02][INFO] SIM_BRIDGE: Initializing eligibility traces for 136913 synapses (capacity: 205369, dtype: float32)...
+[2026-07-08 20:56:02][INFO] SIM_BRIDGE: Initializing STDP state for 1678 neurons...
+[2026-07-08 20:56:02][INFO] SIM_BRIDGE: Simulation data initialized for 1678 neurons (3D). Synapses: 136913. GPU memory: 15.0GB/51.2GB (29.3%)
+  [seed 42] held-out completion: TRAINED=0.000 NO-TRAIN=0.000 recurrence-gain=+0.000 | (cos own=0.547 spec=+0.385) (1387s)
+
+  AGGREGATE: trained held-out=0.000 recurrence-gain(trained-notrain)=+0.000
+  VERDICT: PARTIAL/NEGATIVE -- the trained CA3 recurrents COMPLETE the HELD-OUT (non-cued) stored neurons from a partial cue -- held-out neurons NOT recurrently completed above no-train (completion is the drive artifact); the point-neuron CA3 attractor is too weak at this regime -> scale train / strengthen recurrents, or the substrate needs a stronger attractor mechanism (honest boundary to push). NO sim/ edit.

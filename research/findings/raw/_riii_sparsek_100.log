@@ -1,0 +1,2 @@
+  [seed 42] COMPLETION held-out=1.933 (non-assembly 0.000) | LINEAR=0.000 NO-TRAIN=0.000 PERM-CUE=0.000 (415s)
+  VERDICT: GO -- a partial cue of a LEARNED sparse CA3 assembly COMPLETES the held-out members SPECIFICALLY (non-assembly silent) via the dendritic plateau, where LINEAR + NO-TRAIN + PERM-CUE all fail = EMERGENT CA3 pattern completion learned from experience on the spiking substrate. NO sim/ edit.

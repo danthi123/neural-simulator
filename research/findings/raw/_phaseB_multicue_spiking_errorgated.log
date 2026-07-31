@@ -1,0 +1,617 @@
+E:\Documents\Projects\sim\sim\kernels.py:247: RuntimeWarning: overflow encountered in exp
+  mg_block = 1.0 / (1.0 + (mg_conc / 3.57) * cp.exp(-0.062 * v))
+[2026-06-19 16:44:43][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-19 16:44:43][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-19 16:44:43][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-06-19 16:44:43][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-19 16:44:43][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-06-19 16:44:43][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-06-19 16:44:43][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:44:43][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:44:43][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:44:43][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:44:43][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:44:43][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:44:43][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:44:43][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:44:43][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:44:43][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:44:43][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:44:43][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:44:43][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-19 16:44:43][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-19 16:44:43][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-06-19 16:44:43][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-19 16:44:43][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24750 synapses across 14 populations.
+[2026-06-19 16:44:43][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24750. GPU memory: 19.3GB/51.2GB (37.6%)
+[2026-06-19 16:45:21][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-19 16:45:21][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-19 16:45:21][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-06-19 16:45:21][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-19 16:45:21][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-06-19 16:45:21][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-06-19 16:45:21][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:45:21][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:45:21][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:45:21][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:45:21][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:45:21][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:45:21][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:45:21][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:45:21][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:45:21][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:45:21][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:45:21][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:45:21][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-19 16:45:21][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-19 16:45:21][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-06-19 16:45:21][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-19 16:45:21][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24750 synapses across 14 populations.
+[2026-06-19 16:45:21][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24750. GPU memory: 19.3GB/51.2GB (37.7%)
+[2026-06-19 16:45:27][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-19 16:45:27][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-19 16:45:27][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-06-19 16:45:27][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-19 16:45:27][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-06-19 16:45:27][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-06-19 16:45:27][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:45:27][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:45:27][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:45:27][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:45:27][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:45:27][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:45:27][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:45:27][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:45:27][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:45:27][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:45:27][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:45:27][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:45:27][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-19 16:45:27][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-19 16:45:27][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-06-19 16:45:27][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-19 16:45:27][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24750 synapses across 14 populations.
+[2026-06-19 16:45:27][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24750. GPU memory: 19.3GB/51.2GB (37.7%)
+[2026-06-19 16:45:32][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-19 16:45:32][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-19 16:45:32][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-06-19 16:45:32][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-19 16:45:32][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-06-19 16:45:32][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-06-19 16:45:32][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:45:32][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:45:32][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:45:32][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:45:32][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:45:32][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:45:32][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:45:32][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:45:32][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:45:32][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:45:32][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:45:32][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:45:32][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-19 16:45:32][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-19 16:45:32][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-06-19 16:45:32][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-19 16:45:32][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24750 synapses across 14 populations.
+[2026-06-19 16:45:32][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24750. GPU memory: 19.3GB/51.2GB (37.7%)
+[seed 42] done: GO=True
+[2026-06-19 16:46:03][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-19 16:46:03][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-19 16:46:03][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-06-19 16:46:03][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-06-19 16:46:03][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-06-19 16:46:03][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-06-19 16:46:03][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:03][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:46:03][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:03][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:46:03][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:03][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:03][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:03][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:03][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:03][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:03][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:03][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:03][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-19 16:46:04][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-19 16:46:04][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-06-19 16:46:04][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-19 16:46:04][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24756 synapses across 14 populations.
+[2026-06-19 16:46:04][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24756. GPU memory: 19.3GB/51.2GB (37.6%)
+[2026-06-19 16:46:41][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-19 16:46:41][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-19 16:46:41][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-06-19 16:46:41][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-06-19 16:46:41][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-06-19 16:46:41][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-06-19 16:46:41][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:41][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:46:41][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:41][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:46:41][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:41][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:41][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:41][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:41][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:41][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:41][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:41][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:41][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-19 16:46:41][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-19 16:46:41][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-06-19 16:46:41][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-19 16:46:41][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24756 synapses across 14 populations.
+[2026-06-19 16:46:41][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24756. GPU memory: 19.4GB/51.2GB (37.8%)
+[2026-06-19 16:46:47][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-19 16:46:47][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-19 16:46:47][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-06-19 16:46:47][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-06-19 16:46:47][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-06-19 16:46:47][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-06-19 16:46:47][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:47][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:46:47][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:47][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:46:47][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:47][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:47][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:47][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:47][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:47][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:47][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:47][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:47][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-19 16:46:47][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-19 16:46:47][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-06-19 16:46:47][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-19 16:46:47][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24756 synapses across 14 populations.
+[2026-06-19 16:46:47][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24756. GPU memory: 19.3GB/51.2GB (37.6%)
+[2026-06-19 16:46:53][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-19 16:46:53][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-19 16:46:53][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-06-19 16:46:53][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-06-19 16:46:53][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-06-19 16:46:53][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-06-19 16:46:53][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:53][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:46:53][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:53][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:46:53][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:53][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:53][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:53][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:53][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:53][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:53][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:53][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:46:53][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-19 16:46:53][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-19 16:46:53][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-06-19 16:46:53][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-19 16:46:53][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24756 synapses across 14 populations.
+[2026-06-19 16:46:53][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24756. GPU memory: 19.3GB/51.2GB (37.6%)
+[seed 43] done: GO=True
+[2026-06-19 16:47:24][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-19 16:47:24][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-19 16:47:24][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-06-19 16:47:24][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-06-19 16:47:24][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-06-19 16:47:24][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-06-19 16:47:24][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:47:24][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:47:24][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:47:24][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:47:24][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:47:24][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:47:24][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:47:24][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:47:24][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:47:24][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:47:24][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:47:24][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:47:24][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-19 16:47:24][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-19 16:47:24][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-06-19 16:47:24][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-19 16:47:24][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24748 synapses across 14 populations.
+[2026-06-19 16:47:24][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24748. GPU memory: 19.3GB/51.2GB (37.7%)
+[2026-06-19 16:48:02][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-19 16:48:02][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-19 16:48:02][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-06-19 16:48:02][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-06-19 16:48:02][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-06-19 16:48:02][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-06-19 16:48:02][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:02][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:48:02][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:02][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:48:02][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:02][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:02][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:02][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:02][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:02][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:02][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:02][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:02][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-19 16:48:02][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-19 16:48:02][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-06-19 16:48:02][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-19 16:48:02][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24748 synapses across 14 populations.
+[2026-06-19 16:48:02][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24748. GPU memory: 19.4GB/51.2GB (37.8%)
+[2026-06-19 16:48:08][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-19 16:48:08][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-19 16:48:08][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-06-19 16:48:08][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-06-19 16:48:08][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-06-19 16:48:08][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-06-19 16:48:08][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:08][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:48:08][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:08][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:48:08][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:08][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:08][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:08][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:08][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:08][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:08][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:08][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:08][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-19 16:48:08][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-19 16:48:08][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-06-19 16:48:08][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-19 16:48:08][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24748 synapses across 14 populations.
+[2026-06-19 16:48:08][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24748. GPU memory: 19.3GB/51.2GB (37.7%)
+[2026-06-19 16:48:13][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-19 16:48:13][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-19 16:48:13][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-06-19 16:48:13][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-06-19 16:48:13][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-06-19 16:48:13][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-06-19 16:48:13][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:13][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:48:13][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:13][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:48:13][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:13][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:13][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:13][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:13][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:13][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:13][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:13][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:13][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-19 16:48:13][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-19 16:48:13][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-06-19 16:48:13][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-19 16:48:13][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24748 synapses across 14 populations.
+[2026-06-19 16:48:13][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24748. GPU memory: 19.3GB/51.2GB (37.7%)
+[seed 44] done: GO=True
+[2026-06-19 16:48:44][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-19 16:48:44][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-19 16:48:44][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-06-19 16:48:44][INFO] SIM_BRIDGE: RNG initialized with seed: 45
+[2026-06-19 16:48:44][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-06-19 16:48:44][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-06-19 16:48:44][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:44][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:48:44][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:44][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:48:44][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:44][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:44][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:44][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:44][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:44][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:44][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:44][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:48:44][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-19 16:48:44][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-19 16:48:44][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-06-19 16:48:44][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-19 16:48:44][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24733 synapses across 14 populations.
+[2026-06-19 16:48:44][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24733. GPU memory: 19.3GB/51.2GB (37.6%)
+[2026-06-19 16:49:22][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-19 16:49:22][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-19 16:49:22][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-06-19 16:49:22][INFO] SIM_BRIDGE: RNG initialized with seed: 45
+[2026-06-19 16:49:22][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-06-19 16:49:22][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-06-19 16:49:22][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:49:22][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:49:22][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:49:22][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:49:22][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:49:22][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:49:22][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:49:22][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:49:22][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:49:22][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:49:22][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:49:22][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:49:22][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-19 16:49:22][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-19 16:49:22][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-06-19 16:49:22][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-19 16:49:22][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24733 synapses across 14 populations.
+[2026-06-19 16:49:22][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24733. GPU memory: 19.3GB/51.2GB (37.6%)
+[2026-06-19 16:49:28][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-19 16:49:28][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-19 16:49:28][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-06-19 16:49:28][INFO] SIM_BRIDGE: RNG initialized with seed: 45
+[2026-06-19 16:49:28][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-06-19 16:49:28][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-06-19 16:49:28][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:49:28][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:49:28][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:49:28][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:49:28][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:49:28][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:49:28][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:49:28][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:49:28][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:49:28][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:49:28][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:49:28][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:49:28][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-19 16:49:28][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-19 16:49:28][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-06-19 16:49:28][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-19 16:49:28][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24733 synapses across 14 populations.
+[2026-06-19 16:49:28][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24733. GPU memory: 19.3GB/51.2GB (37.7%)
+[2026-06-19 16:49:33][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-19 16:49:33][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-19 16:49:33][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-06-19 16:49:33][INFO] SIM_BRIDGE: RNG initialized with seed: 45
+[2026-06-19 16:49:33][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-06-19 16:49:33][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-06-19 16:49:33][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:49:33][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:49:33][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:49:33][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:49:33][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:49:33][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:49:33][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:49:33][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:49:33][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:49:33][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:49:33][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:49:33][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:49:33][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-19 16:49:33][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-19 16:49:33][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-06-19 16:49:33][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-19 16:49:33][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24733 synapses across 14 populations.
+[2026-06-19 16:49:33][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24733. GPU memory: 19.2GB/51.2GB (37.6%)
+[seed 45] done: GO=True
+[2026-06-19 16:50:05][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-19 16:50:05][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-19 16:50:05][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-06-19 16:50:05][INFO] SIM_BRIDGE: RNG initialized with seed: 46
+[2026-06-19 16:50:05][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-06-19 16:50:05][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-06-19 16:50:05][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:05][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:50:05][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:05][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:50:05][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:05][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:05][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:05][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:05][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:05][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:05][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:05][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:05][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-19 16:50:05][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-19 16:50:05][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-06-19 16:50:05][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-19 16:50:05][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24767 synapses across 14 populations.
+[2026-06-19 16:50:05][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24767. GPU memory: 19.3GB/51.2GB (37.7%)
+[2026-06-19 16:50:42][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-19 16:50:42][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-19 16:50:42][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-06-19 16:50:42][INFO] SIM_BRIDGE: RNG initialized with seed: 46
+[2026-06-19 16:50:42][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-06-19 16:50:42][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-06-19 16:50:42][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:42][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:50:42][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:42][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:50:42][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:42][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:42][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:42][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:42][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:42][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:42][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:42][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:42][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-19 16:50:42][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-19 16:50:42][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-06-19 16:50:42][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-19 16:50:42][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24767 synapses across 14 populations.
+[2026-06-19 16:50:42][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24767. GPU memory: 19.3GB/51.2GB (37.7%)
+[2026-06-19 16:50:48][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-19 16:50:48][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-19 16:50:48][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-06-19 16:50:48][INFO] SIM_BRIDGE: RNG initialized with seed: 46
+[2026-06-19 16:50:48][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-06-19 16:50:48][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-06-19 16:50:48][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:48][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:50:48][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:48][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:50:48][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:48][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:48][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:48][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:48][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:48][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:48][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:48][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:48][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-19 16:50:48][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-19 16:50:48][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-06-19 16:50:48][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-19 16:50:48][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24767 synapses across 14 populations.
+[2026-06-19 16:50:48][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24767. GPU memory: 19.3GB/51.2GB (37.7%)
+[2026-06-19 16:50:54][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-19 16:50:54][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-19 16:50:54][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-06-19 16:50:54][INFO] SIM_BRIDGE: RNG initialized with seed: 46
+[2026-06-19 16:50:54][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-06-19 16:50:54][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-06-19 16:50:54][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:54][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:50:54][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:54][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:50:54][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:54][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:54][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:54][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:54][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:54][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:54][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:54][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:50:54][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-19 16:50:54][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-19 16:50:54][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-06-19 16:50:54][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-19 16:50:54][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24767 synapses across 14 populations.
+[2026-06-19 16:50:54][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24767. GPU memory: 19.3GB/51.2GB (37.6%)
+[seed 46] done: GO=False
+[2026-06-19 16:51:25][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-19 16:51:25][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-19 16:51:25][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-06-19 16:51:25][INFO] SIM_BRIDGE: RNG initialized with seed: 47
+[2026-06-19 16:51:25][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-06-19 16:51:25][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-06-19 16:51:25][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:51:25][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:51:25][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:51:25][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:51:25][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:51:25][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:51:25][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:51:25][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:51:25][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:51:25][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:51:25][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:51:25][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:51:25][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-19 16:51:25][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-19 16:51:25][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-06-19 16:51:25][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-19 16:51:25][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24742 synapses across 14 populations.
+[2026-06-19 16:51:25][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24742. GPU memory: 19.4GB/51.2GB (37.9%)
+[2026-06-19 16:52:03][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-19 16:52:03][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-19 16:52:03][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-06-19 16:52:03][INFO] SIM_BRIDGE: RNG initialized with seed: 47
+[2026-06-19 16:52:03][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-06-19 16:52:03][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-06-19 16:52:03][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:52:03][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:52:03][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:52:03][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:52:03][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:52:03][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:52:03][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:52:03][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:52:03][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:52:03][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:52:03][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:52:03][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:52:03][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-19 16:52:03][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-19 16:52:03][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-06-19 16:52:03][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-19 16:52:03][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24742 synapses across 14 populations.
+[2026-06-19 16:52:03][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24742. GPU memory: 19.3GB/51.2GB (37.6%)
+[2026-06-19 16:52:09][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-19 16:52:09][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-19 16:52:09][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-06-19 16:52:09][INFO] SIM_BRIDGE: RNG initialized with seed: 47
+[2026-06-19 16:52:09][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-06-19 16:52:09][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-06-19 16:52:09][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:52:09][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:52:09][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:52:09][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:52:09][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:52:09][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:52:09][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:52:09][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:52:09][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:52:09][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:52:09][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:52:09][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:52:09][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-19 16:52:09][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-19 16:52:09][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-06-19 16:52:09][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-19 16:52:09][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24742 synapses across 14 populations.
+[2026-06-19 16:52:09][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24742. GPU memory: 19.3GB/51.2GB (37.7%)
+[2026-06-19 16:52:14][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-19 16:52:14][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-19 16:52:14][INFO] SIM_BRIDGE: Brain-region framework: 12 regions, 1032 total neurons, 12 pathways.
+[2026-06-19 16:52:14][INFO] SIM_BRIDGE: RNG initialized with seed: 47
+[2026-06-19 16:52:14][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (48 neurons)
+[2026-06-19 16:52:14][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1032 neurons...
+[2026-06-19 16:52:14][INFO] SIM_BRIDGE: Region 'sel_agent' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:52:14][INFO] SIM_BRIDGE: Region 'sel_FS_agent' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:52:14][INFO] SIM_BRIDGE: Region 'sel_patient' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:52:14][INFO] SIM_BRIDGE: Region 'sel_FS_patient' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-19 16:52:14][INFO] SIM_BRIDGE: Region 'cue_position_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:52:14][INFO] SIM_BRIDGE: Region 'cue_position_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:52:14][INFO] SIM_BRIDGE: Region 'cue_animacy_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:52:14][INFO] SIM_BRIDGE: Region 'cue_animacy_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:52:14][INFO] SIM_BRIDGE: Region 'cue_verbfit_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:52:14][INFO] SIM_BRIDGE: Region 'cue_verbfit_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:52:14][INFO] SIM_BRIDGE: Region 'cue_lexbias_pos' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:52:14][INFO] SIM_BRIDGE: Region 'cue_lexbias_neg' (120 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-19 16:52:14][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-19 16:52:14][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-19 16:52:14][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1032 neurons...
+[2026-06-19 16:52:14][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-19 16:52:14][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 24742 synapses across 14 populations.
+[2026-06-19 16:52:14][INFO] SIM_BRIDGE: Simulation data initialized for 1032 neurons (3D). Synapses: 24742. GPU memory: 19.3GB/51.2GB (37.7%)
+[seed 47] done: GO=False
+
+========================================================================================
+SPIKING MULTI-CUE COMPETITION PARSER -- degraded-input robustness de-risk (on SimulationBridge)
+========================================================================================
+seeds: [42, 43, 44, 45, 46, 47]   held_out_fillers=True   n_per_cond=16   learn_mode=error_gated
+chance (2-role agent/patient) = 0.500
+metric below = position-DEGRADING battery (scramble + object-front)
+
+ seed | MULTICUE | POS-ONLY |  LESION | NO-LEARN | PERMUTE | moat_br | sig | GO
+-------------------------------------------------------------------------------
+   42 |    0.875 |    0.188 |   0.188 |    0.688 |   0.188 |       0 |   Y | GO
+   43 |    0.938 |    0.094 |   0.219 |    0.719 |   0.156 |       0 |   Y | GO
+   44 |    0.938 |    0.219 |   0.219 |    0.750 |   0.219 |       0 |   Y | GO
+   45 |    0.938 |    0.125 |   0.125 |    0.719 |   0.125 |       0 |   Y | GO
+   46 |    0.750 |    0.250 |   0.312 |    0.750 |   0.281 |       0 |   Y | no
+   47 |    0.969 |    0.188 |   0.594 |    0.781 |   0.812 |       0 |   Y | no
+-------------------------------------------------------------------------------
+ mean |    0.901 |    0.177 |   0.276 |    0.734 |   0.297 |       0 |
+
+Per-degradation (mean across seeds): MULTICUE  vs  POSITION-ONLY
+       drop_verb:   0.979   vs   0.865  (position NOT degraded here)
+        scramble:   0.979   vs   0.354
+    object_front:   0.844   vs   0.000
+
+clean canonical (no-regression): multicue 0.875  vs  position-only 1.000
+learned cue->role weights (mean): position=4.572, animacy=20.259, verbfit=19.741, lexbias=2.188
+frozen  cue->role weights (mean): position=6.000, animacy=6.000, verbfit=6.000, lexbias=6.000
+
+======================================================================================
+VERDICT: 4/6 seeds GO  (>=5/6 required)  ->  NEGATIVE / BOUNDARY
+  moat breaches across all seeds: 0 (must be 0)
+======================================================================================
+[wrote] research/findings/raw/_phaseB_multicue_competition_spiking_errorgated.json

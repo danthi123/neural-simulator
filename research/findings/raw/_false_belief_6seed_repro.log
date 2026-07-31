@@ -1,0 +1,131 @@
+SIM_BACKEND=numpy selected, but a CUDA GPU + CuPy ARE available -> this run is on the CPU (typically 10-50x slower). If you did not mean that, pass SIM_BACKEND=cupy explicitly: many research runners do os.environ.setdefault('SIM_BACKEND','numpy'), which silently wins unless the caller overrides it.
+[false-belief] W3 agent-keyed FALSE-BELIEF register (Sally-Anne ToM) | seeds=[42, 43, 44, 100, 101, 102] n_trials=48 backend=numpy K_loc=4 w_write=26.0 helper_pa=3000.0
+[false-belief] stores (self-schema meta-schema class turned OUTWARD): world(reality) + belief(agent X, witness_other-gated) + self(system, always-witnessing); each = 4x80 NMDA attractors + shared inhibition
+[false-belief] HONEST: a FUNCTIONAL mentalizing correlate (predicts from another agent's belief-state, dissociable from reality + self) -- NOT a claim of access to another mind.
+[2026-07-24 06:02:06][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 8589934592.0 GB RAM available)
+[2026-07-24 06:02:06][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-24 06:02:06][INFO] SIM_BRIDGE: Brain-region framework: 6 regions, 1110 total neurons, 6 pathways.
+[2026-07-24 06:02:06][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-07-24 06:02:06][INFO] SIM_BRIDGE: NMDA per-region mask: 3 regions enabled (960 neurons)
+[2026-07-24 06:02:06][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1110 neurons...
+[2026-07-24 06:02:06][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-24 06:02:06][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-24 06:02:06][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1110 neurons...
+[2026-07-24 06:02:06][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-24 06:02:06][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 47966 synapses across 6 populations.
+[2026-07-24 06:02:06][INFO] SIM_BRIDGE: Simulation data initialized for 1110 neurons (3D). Synapses: 47966. GPU memory: 0.0GB/9223372036.9GB (0.0%)
+[2026-07-24 06:02:06][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 175006 synapses across 26 populations.
+/home/dant123/Projects/sim/sim/kernels.py:303: RuntimeWarning: overflow encountered in exp
+  mg_block = 1.0 / (1.0 + (mg_conc / 3.57) * cp.exp(-0.062 * v))
+  [seed 42]  24 false / 24 true trials (K=4, chance 0.25)
+    INTACT   false_belief_acc=1.000  true_belief_acc=1.000  overall=1.000
+             reality-baseline: false_acc=0.000 (must FAIL) overall=0.500 | true-belief agree(belief==reality)=1.000
+    DISSOC   self_tracks_reality(false trials)=1.000  belief_is_false=1.000  ok=True
+    LESION   other_false_belief_acc=0.000 predicts_reality=1.000  collapsed=True
+    SCRAMBLE belief_acc_vs_true=0.458  collapsed=True
+    >>> seed GO = True  {'false_belief': True, 'reality_baseline_fails': True, 'true_belief_updates': True, 'true_belief_agree': True, 'other_lesion_collapses': True, 'scramble_collapses': True, 'self_other_dissociation': True}
+[2026-07-24 06:02:18][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 8589934592.0 GB RAM available)
+[2026-07-24 06:02:18][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-24 06:02:18][INFO] SIM_BRIDGE: Brain-region framework: 6 regions, 1110 total neurons, 6 pathways.
+[2026-07-24 06:02:18][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-07-24 06:02:18][INFO] SIM_BRIDGE: NMDA per-region mask: 3 regions enabled (960 neurons)
+[2026-07-24 06:02:18][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1110 neurons...
+[2026-07-24 06:02:18][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-24 06:02:18][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-24 06:02:18][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1110 neurons...
+[2026-07-24 06:02:18][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-24 06:02:18][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 48057 synapses across 6 populations.
+[2026-07-24 06:02:18][INFO] SIM_BRIDGE: Simulation data initialized for 1110 neurons (3D). Synapses: 48057. GPU memory: 0.0GB/9223372036.9GB (0.0%)
+[2026-07-24 06:02:18][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 175097 synapses across 26 populations.
+  [seed 43]  24 false / 24 true trials (K=4, chance 0.25)
+    INTACT   false_belief_acc=1.000  true_belief_acc=0.833  overall=0.917
+             reality-baseline: false_acc=0.000 (must FAIL) overall=0.479 | true-belief agree(belief==reality)=0.792
+    DISSOC   self_tracks_reality(false trials)=0.958  belief_is_false=1.000  ok=True
+    LESION   other_false_belief_acc=0.083 predicts_reality=0.917  collapsed=True
+    SCRAMBLE belief_acc_vs_true=0.417  collapsed=True
+    >>> seed GO = False  {'false_belief': True, 'reality_baseline_fails': True, 'true_belief_updates': False, 'true_belief_agree': False, 'other_lesion_collapses': True, 'scramble_collapses': True, 'self_other_dissociation': True}
+[2026-07-24 06:02:30][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 8589934592.0 GB RAM available)
+[2026-07-24 06:02:30][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-24 06:02:30][INFO] SIM_BRIDGE: Brain-region framework: 6 regions, 1110 total neurons, 6 pathways.
+[2026-07-24 06:02:30][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-07-24 06:02:30][INFO] SIM_BRIDGE: NMDA per-region mask: 3 regions enabled (960 neurons)
+[2026-07-24 06:02:30][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1110 neurons...
+[2026-07-24 06:02:30][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-24 06:02:30][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-24 06:02:30][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1110 neurons...
+[2026-07-24 06:02:30][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-24 06:02:30][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 47676 synapses across 6 populations.
+[2026-07-24 06:02:30][INFO] SIM_BRIDGE: Simulation data initialized for 1110 neurons (3D). Synapses: 47676. GPU memory: 0.0GB/9223372036.9GB (0.0%)
+[2026-07-24 06:02:30][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 174716 synapses across 26 populations.
+  [seed 44]  24 false / 24 true trials (K=4, chance 0.25)
+    INTACT   false_belief_acc=1.000  true_belief_acc=1.000  overall=1.000
+             reality-baseline: false_acc=0.042 (must FAIL) overall=0.500 | true-belief agree(belief==reality)=0.958
+    DISSOC   self_tracks_reality(false trials)=1.000  belief_is_false=1.000  ok=True
+    LESION   other_false_belief_acc=0.042 predicts_reality=0.958  collapsed=True
+    SCRAMBLE belief_acc_vs_true=0.458  collapsed=True
+    >>> seed GO = True  {'false_belief': True, 'reality_baseline_fails': True, 'true_belief_updates': True, 'true_belief_agree': True, 'other_lesion_collapses': True, 'scramble_collapses': True, 'self_other_dissociation': True}
+[2026-07-24 06:02:42][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 8589934592.0 GB RAM available)
+[2026-07-24 06:02:42][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-24 06:02:42][INFO] SIM_BRIDGE: Brain-region framework: 6 regions, 1110 total neurons, 6 pathways.
+[2026-07-24 06:02:42][INFO] SIM_BRIDGE: RNG initialized with seed: 100
+[2026-07-24 06:02:42][INFO] SIM_BRIDGE: NMDA per-region mask: 3 regions enabled (960 neurons)
+[2026-07-24 06:02:42][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1110 neurons...
+[2026-07-24 06:02:42][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-24 06:02:42][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-24 06:02:42][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1110 neurons...
+[2026-07-24 06:02:42][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-24 06:02:42][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 48017 synapses across 6 populations.
+[2026-07-24 06:02:42][INFO] SIM_BRIDGE: Simulation data initialized for 1110 neurons (3D). Synapses: 48017. GPU memory: 0.0GB/9223372036.9GB (0.0%)
+[2026-07-24 06:02:42][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 175057 synapses across 26 populations.
+  [seed 100]  24 false / 24 true trials (K=4, chance 0.25)
+    INTACT   false_belief_acc=1.000  true_belief_acc=0.917  overall=0.958
+             reality-baseline: false_acc=0.250 (must FAIL) overall=0.583 | true-belief agree(belief==reality)=0.833
+    DISSOC   self_tracks_reality(false trials)=0.875  belief_is_false=1.000  ok=True
+    LESION   other_false_belief_acc=0.125 predicts_reality=0.875  collapsed=True
+    SCRAMBLE belief_acc_vs_true=0.521  collapsed=True
+    >>> seed GO = False  {'false_belief': True, 'reality_baseline_fails': False, 'true_belief_updates': True, 'true_belief_agree': False, 'other_lesion_collapses': True, 'scramble_collapses': True, 'self_other_dissociation': True}
+[2026-07-24 06:02:54][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 8589934592.0 GB RAM available)
+[2026-07-24 06:02:54][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-24 06:02:54][INFO] SIM_BRIDGE: Brain-region framework: 6 regions, 1110 total neurons, 6 pathways.
+[2026-07-24 06:02:54][INFO] SIM_BRIDGE: RNG initialized with seed: 101
+[2026-07-24 06:02:54][INFO] SIM_BRIDGE: NMDA per-region mask: 3 regions enabled (960 neurons)
+[2026-07-24 06:02:54][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1110 neurons...
+[2026-07-24 06:02:54][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-24 06:02:54][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-24 06:02:54][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1110 neurons...
+[2026-07-24 06:02:54][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-24 06:02:54][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 47776 synapses across 6 populations.
+[2026-07-24 06:02:54][INFO] SIM_BRIDGE: Simulation data initialized for 1110 neurons (3D). Synapses: 47776. GPU memory: 0.0GB/9223372036.9GB (0.0%)
+[2026-07-24 06:02:54][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 174816 synapses across 26 populations.
+  [seed 101]  24 false / 24 true trials (K=4, chance 0.25)
+    INTACT   false_belief_acc=1.000  true_belief_acc=0.958  overall=0.979
+             reality-baseline: false_acc=0.000 (must FAIL) overall=0.479 | true-belief agree(belief==reality)=0.917
+    DISSOC   self_tracks_reality(false trials)=1.000  belief_is_false=1.000  ok=True
+    LESION   other_false_belief_acc=0.000 predicts_reality=1.000  collapsed=True
+    SCRAMBLE belief_acc_vs_true=0.417  collapsed=True
+    >>> seed GO = True  {'false_belief': True, 'reality_baseline_fails': True, 'true_belief_updates': True, 'true_belief_agree': True, 'other_lesion_collapses': True, 'scramble_collapses': True, 'self_other_dissociation': True}
+[2026-07-24 06:03:06][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 8589934592.0 GB RAM available)
+[2026-07-24 06:03:06][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-24 06:03:06][INFO] SIM_BRIDGE: Brain-region framework: 6 regions, 1110 total neurons, 6 pathways.
+[2026-07-24 06:03:06][INFO] SIM_BRIDGE: RNG initialized with seed: 102
+[2026-07-24 06:03:06][INFO] SIM_BRIDGE: NMDA per-region mask: 3 regions enabled (960 neurons)
+[2026-07-24 06:03:06][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1110 neurons...
+[2026-07-24 06:03:06][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-24 06:03:06][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-24 06:03:06][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1110 neurons...
+[2026-07-24 06:03:06][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-24 06:03:06][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 48057 synapses across 6 populations.
+[2026-07-24 06:03:06][INFO] SIM_BRIDGE: Simulation data initialized for 1110 neurons (3D). Synapses: 48057. GPU memory: 0.0GB/9223372036.9GB (0.0%)
+[2026-07-24 06:03:07][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 175097 synapses across 26 populations.
+  [seed 102]  24 false / 24 true trials (K=4, chance 0.25)
+    INTACT   false_belief_acc=1.000  true_belief_acc=1.000  overall=1.000
+             reality-baseline: false_acc=0.000 (must FAIL) overall=0.500 | true-belief agree(belief==reality)=1.000
+    DISSOC   self_tracks_reality(false trials)=1.000  belief_is_false=1.000  ok=True
+    LESION   other_false_belief_acc=0.000 predicts_reality=1.000  collapsed=True
+    SCRAMBLE belief_acc_vs_true=0.417  collapsed=True
+    >>> seed GO = True  {'false_belief': True, 'reality_baseline_fails': True, 'true_belief_updates': True, 'true_belief_agree': True, 'other_lesion_collapses': True, 'scramble_collapses': True, 'self_other_dissociation': True}
+
+[false-belief] === VERDICT: PARTIAL (4/6 seeds GO) ===
+[false-belief]   mean false_belief_acc=1.000 (chance 0.25) | mean true_belief_acc=0.951 | mean reality-baseline(false)=0.049 (must FAIL)
+[false-belief]   anti-cheats: other-lesion collapses=True (lesion false_belief_acc=0.042) | scramble collapses=True (acc=0.448) | self/other dissociation=True
+[false-belief]   elapsed=72.4s  wrote research/findings/raw/_false_belief_6seed_repro.json

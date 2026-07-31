@@ -1,0 +1,53 @@
+[stream-eprop] corpus=data/corpus/tinystories_train.txt stream=2000000 V=2000 n_pool=300 block=128 batch=64 lane=28125 epochs=4 bptt_steps=4000 dev=cuda permute_stream=False
+[stream-eprop] PRE-REGISTERED EXPECTATION: e-prop is a diagonal (RTRL) truncation dropping the off-diagonal recurrent Jacobian; literature (Bellec-2020 needed DNI for long-range PTB; Murray-2019 RFLO matches BPTT only for short horizons) predicts plastic_eprop captures MOST of the SHALLOW margin and only a SMALL fraction of the DEEP margin. A shallow-only capture is an HONEST NEGATIVE on long-range -- a first-class deliverable.
+      [fixed_reservoir] epoch 1/4 last-block-CE 7.951
+      [fixed_reservoir] epoch 2/4 last-block-CE 7.928
+      [fixed_reservoir] epoch 3/4 last-block-CE 7.903
+      [fixed_reservoir] epoch 4/4 last-block-CE 7.885
+    -> fixed_reservoir: shallow_margin -3.2874  deep_margin -2.8856  agg_ce 7.2171  (162s)
+      [plastic_eprop] epoch 1/4 last-block-CE 6.723
+      [plastic_eprop] epoch 2/4 last-block-CE 6.210
+      [plastic_eprop] epoch 3/4 last-block-CE 5.879
+      [plastic_eprop] epoch 4/4 last-block-CE 5.669
+    -> plastic_eprop: shallow_margin -3.2903  deep_margin -1.8255  agg_ce 6.2869  (620s)
+      [BPTT_same_net] step 1000/4000 train-CE 3.494
+      [BPTT_same_net] step 2000/4000 train-CE 3.087
+      [BPTT_same_net] step 3000/4000 train-CE 2.964
+      [BPTT_same_net] step 4000/4000 train-CE 2.918
+    -> BPTT_frozen_wrec: shallow_margin +0.9461  deep_margin +1.2603  agg_ce 3.0516  (2537s)
+      [BPTT_same_net] step 1000/4000 train-CE 5.042
+      [BPTT_same_net] step 2000/4000 train-CE 4.003
+      [BPTT_same_net] step 3000/4000 train-CE 3.678
+      [BPTT_same_net] step 4000/4000 train-CE 3.488
+    -> BPTT_same_net: shallow_margin +0.6678  deep_margin +0.8222  agg_ce 3.4766  (2589s)
+
+[stream-eprop] MARGIN vs add-1 stream bigram, by within-block context depth (+ = arm better than bigram):
+                 arm         1         2         3       4-8      9-16    17-127   SHALLOW      DEEP
+     fixed_reservoir   -3.3032   -3.3165   -3.2932   -3.2772   -3.2034   -2.8856   -3.2874   -2.8856
+       plastic_eprop   -3.3079   -3.3228   -3.3009   -3.2782   -3.1431   -1.8255   -3.2903   -1.8255
+    BPTT_frozen_wrec   +0.5508   +0.8047   +0.9428   +1.0541   +1.1657   +1.2603   +0.9461   +1.2603
+       BPTT_same_net   +0.4150   +0.6024   +0.6729   +0.7304   +0.7768   +0.8222   +0.6678   +0.8222
+
+[stream-eprop] DEEP SUB-BUCKETS (finer within-block depth; the FAR end 97-127 = the true 100+-token test):
+                   arm       17-32       33-64       65-96      97-127
+       fixed_reservoir     -3.1673     -3.0975     -2.6976     -2.7155
+         plastic_eprop     -2.5830     -1.8422     -1.6462     -1.6022
+      BPTT_frozen_wrec     +1.2375     +1.2709     +1.2633     +1.2580
+         BPTT_same_net     +0.8104     +0.8282     +0.8295     +0.8144
+
+[stream-eprop] ctx1 READ-OUT-ONLY diagnostic (pos 0, h_0=0 -> W_rec has ZERO effect; ~equal iff read-out matched):
+           fixed_reservoir: ctx1 margin -3.2471
+             plastic_eprop: ctx1 margin -3.2492
+          BPTT_frozen_wrec: ctx1 margin -0.1372
+             BPTT_same_net: ctx1 margin -0.1599
+
+[stream-eprop] ANTI-CHEATS:
+    zero_signal W_rec == fixed_reservoir W_rec (byte-identical): None
+
+[stream-eprop] GATE: INCOMPLETE (need all 5 arms; have ['BPTT_frozen_wrec', 'BPTT_same_net', 'fixed_reservoir', 'plastic_eprop'])
+
+[stream-eprop] FIXED-FLOOR-RELATIVE recurrent-credit fraction (plastic gain over fixed / BPTT gain over fixed; isolates the credit RULE):
+    vs   BPTT_same_net: frac_clean_deep 0.2859  frac_clean_shallow -0.0007  (plastic +1.060 / bptt +3.708 deep) (BPTT also learns W_in)
+
+-> research/findings/raw/_r3_reframe_6seed/_seed43.json (5908.0s)
+STREAM_EPROP_DONE

@@ -1,0 +1,6 @@
+[cancellation] corpus=data/corpus/tinystories.txt K=256 ADAPTIVE(margin 2.0) EMERGENT-clusters
+  [seed 44] pos=~forest(coh 0.068) exc='family' w=1.07 | CANCEL=no OWN=yes | collateral=0/10 | permuted_inherits=yes | moat=1
+
+  AGGREGATE (1 seeds): CANCEL(inherited->no) all=True | OWN=yes all=True | no-collateral all=True | permuted-inherits all=True | moat all=True
+  VERDICT: GO -- a member's OWN property OVERRIDES its category inheritance (cancellation) while other members still inherit, specific to the taught exception (permuted control inherits), moat intact.
+  [saved] research/findings/raw/_cancel_adapt_s44.json

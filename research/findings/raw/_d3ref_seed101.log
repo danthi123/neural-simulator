@@ -1,0 +1,5 @@
+[D3 -> LANGUAGE: reference tracking] K=6 | the discrete-attractor tracks WHO-HOLDS-IT across a narrative, learned from END-STATE-only supervision
+  [seed 101] WEAK-SUP holder-track DEEPER=0.295 (same=0.902) | TEACHER-FORCED DEEPER=0.902 (step-delta=0.999) || PROPERTY=0.778 SHUFFLE=0.74 || order-chg=0.211 markov=0.714 retain=0.821
+
+  AGGREGATE (K=6, chance holder 0.167 / prop 0.5): DISCRETE-ATTR holder-track DEEPER (teacher-forced)=0.902 (step-delta 0.999) | WEAK-SUP=0.295 [residual] | markov-floor=0.714 | retention-floor=0.821 | order-change=0.211
+  VERDICT: PARTIAL/NEGATIVE -- the reference-tracking mechanism did not clearly GO (read TF-deeper vs the markov/retention floors). NO sim/ edit.

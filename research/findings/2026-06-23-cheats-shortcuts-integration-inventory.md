@@ -1,6 +1,9 @@
 ---
 type: finding
 status: superseded
+superseded_by:
+  - docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md
+  - research/findings/2026-07-24-accidental-deferral-audit.md
 date: 2026-06-23
 ---
 

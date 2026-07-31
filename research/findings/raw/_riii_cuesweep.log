@@ -1,0 +1,4 @@
+=== CAPSTONE cue=200 hebb_max=120 k6 (seed 42) ===
+  [seed 42] COMPLETION held-out=1.037 (non-assembly 1.093) | LINEAR=0.000 NO-TRAIN=0.000 PERM-CUE=0.908 (210s)
+  VERDICT: PARTIAL/NEGATIVE -- not yet a clean specific completion; sweep k_thresh / presentations / cue_drive. NO sim/ edit.
+=== CAPSTONE cue=400 hebb_max=120 k6 (seed 42) ===

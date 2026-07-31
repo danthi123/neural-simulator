@@ -1,0 +1,13 @@
+### bio-compose 320-tier (64 concepts) seed 43 stim=300 ###
+=== real-substrate QA (64 concepts, backend=cupy, seed=43) ===
+  REAL-code   QA=0.900  abstention-control=1.000
+  SYNTH-code  QA=1.000  abstention-control=1.000  (chance 0.0156)
+RESULT: real QA=0.900/ctrl=1.000  vs  synth QA=1.000/ctrl=1.000
+VERDICT: RESOLVES -- genuine spiking relational composition + abstention works on the REAL deployed substrate concept codes, not just synthetic sparse. Scale to 160.
+### bio-compose 320-tier (64 concepts) seed 44 stim=300 ###
+=== real-substrate QA (64 concepts, backend=cupy, seed=44) ===
+  REAL-code   QA=0.950  abstention-control=1.000
+  SYNTH-code  QA=1.000  abstention-control=1.000  (chance 0.0156)
+RESULT: real QA=0.950/ctrl=1.000  vs  synth QA=1.000/ctrl=1.000
+VERDICT: RESOLVES -- genuine spiking relational composition + abstention works on the REAL deployed substrate concept codes, not just synthetic sparse. Scale to 160.
+##### BIO-COMPOSE-MS-DONE #####

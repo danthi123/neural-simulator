@@ -1,0 +1,22 @@
+[log+simmatch de-risk] seeds=[42] smoke=False real_corpus=True marginal_norm=False k=64
+
+============================================================================================
+  LOG + SIMILARITY-MATCHING de-risk (seed 42)
+============================================================================================
+  64 concepts x 500 hubs; host PPMI+SVD ceiling=+0.442; embedding k=64
+  [4-arm ablation: {raw,log} x {saturating-Hebbian, similarity-matching}]
+    [A raw+saturating  ] Pearson(S,S_true)=+0.096  gen=0.375 (chance 0.125)  offdiag-cos=+1.000  eff-rank=1.0
+    [B log+saturating  ] Pearson(S,S_true)=+0.076  gen=0.344 (chance 0.125)  offdiag-cos=+1.000  eff-rank=1.0
+    [C raw+simmatch    ] Pearson(S,S_true)=+0.159  gen=0.516 (chance 0.125)  offdiag-cos=+0.958  eff-rank=14.5
+    [TEST log+simmatch ] Pearson(S,S_true)=+0.076  gen=0.266 (chance 0.125)  offdiag-cos=+0.979  eff-rank=15.7
+  [anti-cheat] TEST permuted-similarity Pearson=-0.002 (~0)  lesion(TEST->A i.e. log+SATURATING)=+0.076 (the learning-rule lesion)
+  [seed 42 gates] {'test_structure_vs_A': False, 'A_saturating_fails': True, 'host_ceiling_carries': True, 'test_generalizes': False, 'permuted_collapses': True, 'learning_rule_lesion_collapses': False}
+
+============================================================================================
+  VERDICT: NEGATIVE
+  even log+simmatch does not beat the saturating control on the point neuron (TEST +0.076 vs A +0.096) -> the gap is deeper than input-encoding+learning-rule -> ship the flat 2,048-concept cortex (Option A) / the dendritic build for the artificial-life goal.
+  ABLATION means: A(raw+sat) +0.096 | B(log+sat) +0.076 | C(raw+sim) +0.159 | TEST(log+sim) +0.076 (gen 0.266)
+  Total elapsed: 3.7s
+============================================================================================
+
+  [saved] research/findings/raw/_log_simmatch_real_seed42.json

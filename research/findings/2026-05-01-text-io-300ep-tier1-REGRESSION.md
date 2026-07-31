@@ -1,6 +1,7 @@
 ---
 type: finding
 status: superseded
+superseded_by: research/findings/2026-05-02-text-io-hebbian-decay-root-cause.md
 date: 2026-05-01
 ---
 

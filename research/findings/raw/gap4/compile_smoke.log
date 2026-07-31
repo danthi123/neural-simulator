@@ -1,0 +1,8 @@
+[compile-smoke] torch 2.11.0+cu128 device=NVIDIA GeForce RTX 3090
+  eager   : loss[0]=9.8398 loss[-1]=9.8592  28.8 ms/step
+/home/dant123/Projects/sim/.venv/lib/python3.11/site-packages/torch/_inductor/compile_fx.py:322: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+  compiled: loss[0]=9.8398 loss[-1]=9.8592  23.5 ms/step
+  max|eager-compiled| loss diff = 0.0000  (OK: compile preserves the loss)
+  [tiny-model step time eager 28.8ms vs compiled 23.5ms -- NOT the real speedup; the 83M flip is the real measurement]
+[compile-smoke] VERDICT: GO -- torch.compile runs on WKV + preserves loss; safe to flip the real run

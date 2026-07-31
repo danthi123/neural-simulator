@@ -1,0 +1,138 @@
+
+=== concept_pool_demo (seed=44) ===
+  Architecture: 4 motor + 4 noun + 4 verb + 4 adjective = 16 pools
+  Vocab: ['north', 'east', 'south', 'west'] + ['person', 'baby', 'ball', 'key'] + ['open', 'close', 'push', 'pull'] + ['happy', 'sad', 'full', 'empty']
+  Train events/word: 200
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Brain-region framework: 34 regions, 7680 total neurons, 96 pathways.
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 7680 neurons...
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'language_input' (2048 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'motor_N' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'motor_E' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'motor_S' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'motor_W' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'language_output' (2048 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'motor_FS_N' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'motor_FS_E' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'motor_FS_S' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'motor_FS_W' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'noun_pool_PERSON' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'noun_pool_BABY' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'noun_pool_BALL' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'noun_pool_KEY' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'noun_pool_PERSON_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'noun_pool_BABY_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'noun_pool_BALL_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'noun_pool_KEY_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'verb_pool_OPEN' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'verb_pool_CLOSE' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'verb_pool_PUSH' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'verb_pool_PULL' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'verb_pool_OPEN_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'verb_pool_CLOSE_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'verb_pool_PUSH_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'verb_pool_PULL_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'adjective_pool_HAPPY' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'adjective_pool_SAD' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'adjective_pool_FULL' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'adjective_pool_EMPTY' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'adjective_pool_HAPPY_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'adjective_pool_SAD_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'adjective_pool_FULL_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Region 'adjective_pool_EMPTY_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Generating 3D neuron positions for 7680 neurons...
+[2026-05-15 01:55:17][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-05-15 01:55:23][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 4542835 synapses across 114 populations.
+[2026-05-15 01:55:23][INFO] SIM_BRIDGE: Initializing eligibility traces for 4542835 synapses (capacity: 6814252, dtype: float32)...
+[2026-05-15 01:55:23][INFO] SIM_BRIDGE: Initializing STDP state for 7680 neurons...
+[2026-05-15 01:55:23][INFO] SIM_BRIDGE: Simulation data initialized for 7680 neurons (3D). Synapses: 4542835. GPU memory: 1.6GB/25.8GB (6.4%)
+[BUILD] concept-pool bridge: 7680 neurons total, 12 concept pools (2400 neurons in pools)
+[topographic-bias] Applied factor=3.00/0.30 across motor + noun + verb pools
+  north->motor_N: x3.00 on 6018 edges
+  east->motor_E: x3.00 on 6045 edges
+  south->motor_S: x3.00 on 6084 edges
+  west->motor_W: x3.00 on 5994 edges
+  person->noun_pool_PERSON: x3.00 on 6090 edges
+  baby->noun_pool_BABY: x3.00 on 6192 edges
+  ball->noun_pool_BALL: x3.00 on 6067 edges
+  key->noun_pool_KEY: x3.00 on 6081 edges
+  open->verb_pool_OPEN: x3.00 on 6072 edges
+  close->verb_pool_CLOSE: x3.00 on 6169 edges
+  push->verb_pool_PUSH: x3.00 on 6109 edges
+  pull->verb_pool_PULL: x3.00 on 6041 edges
+  happy->adjective_pool_HAPPY: x3.00 on 6162 edges
+  sad->adjective_pool_SAD: x3.00 on 6221 edges
+  full->adjective_pool_FULL: x3.00 on 6047 edges
+  empty->adjective_pool_EMPTY: x3.00 on 6109 edges
+  reciprocal_target_edges: x3.00 on 98054 edges
+
+[TRAIN] 16 (word, pool) pairs, 200 events each = 3200 total events (interleaved)
+  interleaved event 100/3200 (31s)
+  interleaved event 200/3200 (62s)
+  interleaved event 300/3200 (93s)
+  interleaved event 400/3200 (125s)
+  interleaved event 500/3200 (156s)
+  interleaved event 600/3200 (188s)
+  interleaved event 700/3200 (219s)
+  interleaved event 800/3200 (250s)
+  interleaved event 900/3200 (282s)
+  interleaved event 1000/3200 (313s)
+  interleaved event 1100/3200 (343s)
+  interleaved event 1200/3200 (374s)
+  interleaved event 1300/3200 (408s)
+  interleaved event 1400/3200 (440s)
+  interleaved event 1500/3200 (472s)
+  interleaved event 1600/3200 (506s)
+  interleaved event 1700/3200 (540s)
+  interleaved event 1800/3200 (571s)
+  interleaved event 1900/3200 (602s)
+  interleaved event 2000/3200 (631s)
+  interleaved event 2100/3200 (662s)
+  interleaved event 2200/3200 (695s)
+  interleaved event 2300/3200 (725s)
+  interleaved event 2400/3200 (755s)
+  interleaved event 2500/3200 (785s)
+  interleaved event 2600/3200 (815s)
+  interleaved event 2700/3200 (848s)
+  interleaved event 2800/3200 (883s)
+  interleaved event 2900/3200 (915s)
+  interleaved event 3000/3200 (945s)
+  interleaved event 3100/3200 (976s)
+  interleaved event 3200/3200 (1006s)
+
+[TRAIN] complete (1006s, interleaved)
+
+[SAVE] saving bridge to research/findings/raw/g11_bg/concept_pool_demo/seed44_set4.simstate.h5
+[2026-05-15 02:12:15][INFO] SIM_BRIDGE: Saving checkpoint to research/findings/raw/g11_bg/concept_pool_demo/seed44_set4.simstate.h5...
+[2026-05-15 02:12:16][SUCCESS] SIM_BRIDGE: Checkpoint saved successfully to research/findings/raw/g11_bg/concept_pool_demo/seed44_set4.simstate.h5
+[SAVE] checkpoint written
+
+[EVAL] measuring cross-category isolation across 16 pools
+
+[RESULTS] per-word cross-category isolation:
+  north    -> motor_N               target=0.985  max_off=1.155 (motor_W)  ratio=0.85x  [FAIL]
+  east     -> motor_E               target=0.990  max_off=0.820 (verb_pool_CLOSE)  ratio=1.21x  [PASS]
+  south    -> motor_S               target=2.020  max_off=1.285 (noun_pool_BALL)  ratio=1.57x  [PASS]
+  west     -> motor_W               target=1.350  max_off=0.820 (verb_pool_PUSH)  ratio=1.65x  [PASS]
+  person   -> noun_pool_PERSON      target=1.860  max_off=1.260 (adjective_pool_SAD)  ratio=1.48x  [PASS]
+  baby     -> noun_pool_BABY        target=0.990  max_off=0.800 (noun_pool_PERSON)  ratio=1.24x  [PASS]
+  ball     -> noun_pool_BALL        target=2.045  max_off=1.320 (noun_pool_PERSON)  ratio=1.55x  [PASS]
+  key      -> noun_pool_KEY         target=0.895  max_off=0.760 (noun_pool_PERSON)  ratio=1.18x  [PASS]
+  open     -> verb_pool_OPEN        target=0.580  max_off=0.850 (noun_pool_PERSON)  ratio=0.68x  [FAIL]
+  close    -> verb_pool_CLOSE       target=1.835  max_off=1.000 (noun_pool_PERSON)  ratio=1.83x  [PASS]
+  push     -> verb_pool_PUSH        target=0.965  max_off=0.965 (noun_pool_PERSON)  ratio=1.00x  [FAIL]
+  pull     -> verb_pool_PULL        target=1.345  max_off=1.330 (verb_pool_CLOSE)  ratio=1.01x  [PASS]
+  happy    -> adjective_pool_HAPPY  target=1.280  max_off=1.040 (noun_pool_KEY)  ratio=1.23x  [PASS]
+  sad      -> adjective_pool_SAD    target=0.655  max_off=0.685 (noun_pool_KEY)  ratio=0.96x  [FAIL]
+  full     -> adjective_pool_FULL   target=1.070  max_off=0.770 (adjective_pool_SAD)  ratio=1.39x  [PASS]
+  empty    -> adjective_pool_EMPTY  target=1.545  max_off=0.970 (adjective_pool_SAD)  ratio=1.59x  [PASS]
+
+[VERDICT] 12/16 words have correct target-pool dominance
+  Total wall clock: 1026s
+
+[OUT] wrote research\findings\raw\g11_bg\concept_pool_demo\seed44_set4.json

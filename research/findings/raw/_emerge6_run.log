@@ -1,0 +1,8 @@
+  [seed 42] FREERUN recall(held) -0.423 (1step 0.698) | naive-TF recall -0.273 | hebbian 0.000 | lesion -0.029 | wrong 0.219 | null -0.029 | shuffled -0.429 | untrained -0.029 | loc_ok True
+  [seed 43] FREERUN recall(held) -0.267 (1step 0.814) | naive-TF recall 0.076 | hebbian 0.000 | lesion 0.148 | wrong 0.157 | null 0.148 | shuffled -0.168 | untrained 0.148 | loc_ok True
+  [seed 44] FREERUN recall(held) -0.058 (1step 0.634) | naive-TF recall 0.220 | hebbian 0.000 | lesion -0.044 | wrong -0.003 | null -0.044 | shuffled -0.172 | untrained -0.044 | loc_ok True
+
+============================================================================================================
+[emerge6] VERDICT: BOUNDARY (build-informative, not a stop) -- free-run recall too low (held-out -0.249 < 0.60; naive-TF 0.008; one-step 0.716); didn't beat apical-lesion (freerun -0.249 vs lesion 0.025); didn't beat hebbian (-0.249 vs 0.000) (one-step map 0.716, task-sane; naive teacher-forced-only recall 0.008). Even dynamics-in-loop scheduled sampling did not stabilize autonomous recall -> the next mechanism is a proper recurrent (e-prop first-order) eligibility trace capturing recurrent sensitivity, and/or burst-window gating (scoping risk #2); if hebbian matches -> the task self-organizes without credit; a recurrent-noise family limit -> Urbanczik-Senn population-feedback / NMNC (shortlist). Do NOT start the sim/ port.
+[emerge6] wrote E:\Documents\Projects\sim\research\findings\raw\_emerge6_recurrent_microcircuit_seq.json
+============================================================================================================

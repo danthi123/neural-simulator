@@ -1,0 +1,10 @@
+[D3 BOUNDARY-GATED COPY] K=6 | the held prior event is not LEARNED, it is GATED (the copy is structural; only WHEN to open is learned, from an observable marker)
+  [seed 102] GATED-COPY prev=0.649 (curr=0.604) || gate-lesion=0.22 | always-open=0.355 | marker-scramble=0.322 | recency=0.142 | 1-emission ceiling=0.703
+
+  AGGREGATE (K=6, chance 0.167):
+    *** GATED COPY (prediction only, NO replay): prev-agent=0.649  (curr=0.604) ***
+    ORACLE gate (the observable marker read perfectly) = the MECHANISM's upper bound: prev=0.691 (curr=0.543)
+    vs prior rungs: prediction-only NEGATIVE 0.226 | REPLAY(gamma=3) 0.597 | the claimed 'one-emission ceiling' 0.703
+    controls: gate-lesion=0.220 | always-open=0.355 | marker-scramble=0.322 | recency=0.142
+    -> the held slot's TRUE bound is the CURRENT slot's fidelity (0.604), NOT a one-emission decode: a COPY inherits identity rather than inferring it (oracle prev 0.691 >= curr 0.543).
+  VERDICT: PARTIAL/NEGATIVE -- the gated copy did not clearly beat its controls (read GATED vs gate-lesion / always-open / marker-scramble). NO sim/ edit.

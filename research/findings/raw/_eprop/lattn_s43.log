@@ -1,0 +1,15 @@
+[seed 43] V=300 d=32 d_head=32 win=2 passages(tr/ev)=240/60 n_cross_train=46016
+  [ceiling] train-CE [3.8519, 3.8193, 3.8073, 3.7994, 3.7932, 3.7884, 3.784, 3.7809]
+           cross-CE: base 3.1360 | content 2.9921(λ0.35) | shuffle 3.0345(λ0.35) | uniform 3.0221(λ0.35)
+           HEADLINE (+ = content beats the bag): content-SHUFFLE +0.0424 | content-UNIFORM +0.0300   (content-base +0.1439, confoundable)
+           content-minus-shuffle by within-passage depth: d4-5:+0.000 d6-9:-0.000 d10-99:+0.043
+  [  local] train-CE [3.9113, 3.8842, 3.8699, 3.8598, 3.8533, 3.8485, 3.8447, 3.8415]
+           cross-CE: base 3.1360 | content 3.0128(λ0.35) | shuffle 3.0334(λ0.35) | uniform 3.0221(λ0.35)
+           HEADLINE (+ = content beats the bag): content-SHUFFLE +0.0206 | content-UNIFORM +0.0093   (content-base +0.1232, confoundable)
+           content-minus-shuffle by within-passage depth: d4-5:+0.000 d6-9:-0.053 d10-99:+0.021
+
+======================================================================================================================
+[learned-attention] VERDICT: THIN -- even the FULL-GRADIENT learned-attention CEILING does NOT beat the cross-sentence BAG (content ~<= shuffle/uniform) at this scale: open-text cross-sentence long-range is thin here. The reservoir substrate is not the only limit -- there is little content-selective distal signal for a learned attention to capture at this scale (a clean SCALE/DATA bound on the whole frontier). HONEST NEGATIVE -- do NOT fake a positive.
+[learned-attention] {"ceiling_content_minus_shuffle": 0.0424, "ceiling_content_minus_uniform": 0.03, "ceiling_beats_bag": false, "local_content_minus_shuffle": 0.0206, "local_content_minus_uniform": 0.0093, "local_beats_bag": false}
+[learned-attention] -> research/findings/raw/_eprop/lattn_s43.json (30.0s)
+======================================================================================================================

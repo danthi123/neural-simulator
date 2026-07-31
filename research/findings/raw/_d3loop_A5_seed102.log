@@ -1,0 +1,17 @@
+[D3 spiking ONE-LOOP] A5 | the WHOLE step in one spiking loop: LIF transition -> FS-WTA re-discretize -> feedback
+[2026-07-09 18:30:39][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-09 18:30:39][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-09 18:30:39][INFO] SIM_BRIDGE: Brain-region framework: 61 regions, 744 total neurons, 120 pathways.
+[2026-07-09 18:30:39][INFO] SIM_BRIDGE: RNG initialized with seed: 102
+[2026-07-09 18:30:39][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 744 neurons...
+[2026-07-09 18:30:39][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-09 18:30:39][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-09 18:30:39][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-07-09 18:30:39][INFO] SIM_BRIDGE: Generating 3D neuron positions for 744 neurons...
+[2026-07-09 18:30:39][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-09 18:30:39][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 20800 synapses across 120 populations.
+[2026-07-09 18:30:39][INFO] SIM_BRIDGE: Simulation data initialized for 744 neurons (3D). Synapses: 20800. GPU memory: 23.3GB/51.2GB (45.4%)
+  [seed 102] spk-step-delta=0.512 || FULL-SPIKING loop DEEPER=0.0 (host-agree=0.946) || NO-REDISCRETIZE control DEEPER=0.0
+
+  AGGREGATE (A5): FULL-SPIKING loop deeper=0.000 (host-agree 0.946) | NO-REDISCRETIZE control deeper=0.000 (chance=0.017)
+  VERDICT: PARTIAL/NEGATIVE -- the full-spiking loop did not hold cleanly (tune fs-inh/fs-settle/input-gain/epochs; read host-agree + the control gap). NO sim/ edit.

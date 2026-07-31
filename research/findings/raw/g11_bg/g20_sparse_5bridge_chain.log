@@ -1,0 +1,332 @@
+[chain] 05/15/2026 17:11:14 Waiting for GPU to free up...
+[chain] 05/15/2026 19:41:16 === sparse bridgeA_nouns (32 concepts) ===
+=== concept_pool_sparse_distributed (seed=42, n_concepts=32) ===
+  Shared pool: 2000 neurons
+  Pattern size: 100 per concept (sparse, random)
+  Substrate per concept: 100 neurons (vs contiguous-slice's 62)
+
+[2026-05-15 19:41:17][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-05-15 19:41:17][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-05-15 19:41:17][INFO] SIM_BRIDGE: Brain-region framework: 4 regions, 18684 total neurons, 4 pathways.
+[2026-05-15 19:41:17][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-05-15 19:41:17][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 18684 neurons...
+[2026-05-15 19:41:17][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-05-15 19:41:17][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-05-15 19:41:17][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-05-15 19:41:17][INFO] SIM_BRIDGE: Generating 3D neuron positions for 18684 neurons...
+[2026-05-15 19:41:17][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-05-15 19:41:32][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 10392398 synapses across 5 populations.
+[2026-05-15 19:41:32][INFO] SIM_BRIDGE: Initializing eligibility traces for 10392398 synapses (capacity: 15588597, dtype: float32)...
+[2026-05-15 19:41:32][INFO] SIM_BRIDGE: Initializing STDP state for 18684 neurons...
+[2026-05-15 19:41:32][INFO] SIM_BRIDGE: Simulation data initialized for 18684 neurons (3D). Synapses: 10392398. GPU memory: 2.1GB/25.8GB (8.0%)
+[sparse-pool bridge] shared_pool=2000, lang_input=8192
+[build] 16.1s
+[sparse patterns] generated 32 patterns of size 100; mean pairwise overlap (first 20): 5.3 / 100
+[sparse topographic prior] GPU-vectorized; ~524800 boost-targets, ~9971200 dampen-targets across 32 sparse patterns (upper bounds; actual = intersection with existing edges)
+[topographic prior] 0.2s
+
+[TRAIN] 32 x 400 = 12800 events
+  event 500/12800 (94s)
+  event 1000/12800 (188s)
+  event 1500/12800 (282s)
+  event 2000/12800 (376s)
+  event 2500/12800 (470s)
+  event 3000/12800 (565s)
+  event 3500/12800 (659s)
+  event 4000/12800 (753s)
+  event 4500/12800 (847s)
+  event 5000/12800 (941s)
+  event 5500/12800 (1035s)
+  event 6000/12800 (1129s)
+  event 6500/12800 (1223s)
+  event 7000/12800 (1318s)
+  event 7500/12800 (1412s)
+  event 8000/12800 (1505s)
+  event 8500/12800 (1599s)
+  event 9000/12800 (1694s)
+  event 9500/12800 (1782s)
+  event 10000/12800 (1824s)
+  event 10500/12800 (1866s)
+  event 11000/12800 (1907s)
+  event 11500/12800 (1946s)
+  event 12000/12800 (1983s)
+  event 12500/12800 (2022s)
+[TRAIN] 2045.1s total
+
+[ENGRAM] capturing 32 tags with teacher-bias
+[ENGRAM] 10.2s
+
+[EVAL] sparse-pattern discrimination
+[EVAL] 18.0s
+
+[RESULTS] 32/32 top-1 (100.0%), 32/32 top-5 (100.0%)
+  chance top-1: 3.1%, observed/chance: 32.0x
+[2026-05-15 20:16:06][INFO] SIM_BRIDGE: Saving checkpoint to research/findings/raw/g11_bg/g20_sparse_bridges/bridgeA_nouns_sparse.simstate.h5...
+[2026-05-15 20:16:08][SUCCESS] SIM_BRIDGE: Checkpoint saved successfully to research/findings/raw/g11_bg/g20_sparse_bridges/bridgeA_nouns_sparse.simstate.h5
+[SAVE] -> research/findings/raw/g11_bg/g20_sparse_bridges/bridgeA_nouns_sparse.simstate.h5
+[OUT] -> research/findings/raw/g11_bg/g20_sparse_bridges/bridgeA_nouns_sparse.json
+[chain] 05/15/2026 20:16:08 === sparse bridgeB_verbs (32 concepts) ===
+=== concept_pool_sparse_distributed (seed=42, n_concepts=32) ===
+  Shared pool: 2000 neurons
+  Pattern size: 100 per concept (sparse, random)
+  Substrate per concept: 100 neurons (vs contiguous-slice's 62)
+
+[2026-05-15 20:16:09][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-05-15 20:16:09][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-05-15 20:16:09][INFO] SIM_BRIDGE: Brain-region framework: 4 regions, 18684 total neurons, 4 pathways.
+[2026-05-15 20:16:09][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-05-15 20:16:09][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 18684 neurons...
+[2026-05-15 20:16:09][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-05-15 20:16:09][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-05-15 20:16:09][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-05-15 20:16:09][INFO] SIM_BRIDGE: Generating 3D neuron positions for 18684 neurons...
+[2026-05-15 20:16:09][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-05-15 20:16:23][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 10392398 synapses across 5 populations.
+[2026-05-15 20:16:23][INFO] SIM_BRIDGE: Initializing eligibility traces for 10392398 synapses (capacity: 15588597, dtype: float32)...
+[2026-05-15 20:16:23][INFO] SIM_BRIDGE: Initializing STDP state for 18684 neurons...
+[2026-05-15 20:16:23][INFO] SIM_BRIDGE: Simulation data initialized for 18684 neurons (3D). Synapses: 10392398. GPU memory: 2.1GB/25.8GB (8.0%)
+[sparse-pool bridge] shared_pool=2000, lang_input=8192
+[build] 15.1s
+[sparse patterns] generated 32 patterns of size 100; mean pairwise overlap (first 20): 5.3 / 100
+[sparse topographic prior] GPU-vectorized; ~524800 boost-targets, ~9971200 dampen-targets across 32 sparse patterns (upper bounds; actual = intersection with existing edges)
+[topographic prior] 0.2s
+
+[TRAIN] 32 x 400 = 12800 events
+  event 500/12800 (38s)
+  event 1000/12800 (79s)
+  event 1500/12800 (118s)
+  event 2000/12800 (157s)
+  event 2500/12800 (195s)
+  event 3000/12800 (232s)
+  event 3500/12800 (269s)
+  event 4000/12800 (307s)
+  event 4500/12800 (344s)
+  event 5000/12800 (381s)
+  event 5500/12800 (421s)
+  event 6000/12800 (460s)
+  event 6500/12800 (499s)
+  event 7000/12800 (538s)
+  event 7500/12800 (575s)
+  event 8000/12800 (612s)
+  event 8500/12800 (650s)
+  event 9000/12800 (688s)
+  event 9500/12800 (725s)
+  event 10000/12800 (762s)
+  event 10500/12800 (802s)
+  event 11000/12800 (843s)
+  event 11500/12800 (881s)
+  event 12000/12800 (919s)
+  event 12500/12800 (956s)
+[TRAIN] 978.7s total
+
+[ENGRAM] capturing 32 tags with teacher-bias
+[ENGRAM] 9.9s
+
+[EVAL] sparse-pattern discrimination
+[EVAL] 19.8s
+
+[RESULTS] 32/32 top-1 (100.0%), 32/32 top-5 (100.0%)
+  chance top-1: 3.1%, observed/chance: 32.0x
+[2026-05-15 20:33:12][INFO] SIM_BRIDGE: Saving checkpoint to research/findings/raw/g11_bg/g20_sparse_bridges/bridgeB_verbs_sparse.simstate.h5...
+[2026-05-15 20:33:14][SUCCESS] SIM_BRIDGE: Checkpoint saved successfully to research/findings/raw/g11_bg/g20_sparse_bridges/bridgeB_verbs_sparse.simstate.h5
+[SAVE] -> research/findings/raw/g11_bg/g20_sparse_bridges/bridgeB_verbs_sparse.simstate.h5
+[OUT] -> research/findings/raw/g11_bg/g20_sparse_bridges/bridgeB_verbs_sparse.json
+[chain] 05/15/2026 20:33:15 === sparse bridgeC_adj (32 concepts) ===
+=== concept_pool_sparse_distributed (seed=42, n_concepts=32) ===
+  Shared pool: 2000 neurons
+  Pattern size: 100 per concept (sparse, random)
+  Substrate per concept: 100 neurons (vs contiguous-slice's 62)
+
+[2026-05-15 20:33:16][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-05-15 20:33:16][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-05-15 20:33:16][INFO] SIM_BRIDGE: Brain-region framework: 4 regions, 18684 total neurons, 4 pathways.
+[2026-05-15 20:33:16][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-05-15 20:33:16][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 18684 neurons...
+[2026-05-15 20:33:16][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-05-15 20:33:16][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-05-15 20:33:16][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-05-15 20:33:16][INFO] SIM_BRIDGE: Generating 3D neuron positions for 18684 neurons...
+[2026-05-15 20:33:16][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-05-15 20:33:29][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 10392398 synapses across 5 populations.
+[2026-05-15 20:33:30][INFO] SIM_BRIDGE: Initializing eligibility traces for 10392398 synapses (capacity: 15588597, dtype: float32)...
+[2026-05-15 20:33:30][INFO] SIM_BRIDGE: Initializing STDP state for 18684 neurons...
+[2026-05-15 20:33:30][INFO] SIM_BRIDGE: Simulation data initialized for 18684 neurons (3D). Synapses: 10392398. GPU memory: 2.1GB/25.8GB (8.0%)
+[sparse-pool bridge] shared_pool=2000, lang_input=8192
+[build] 14.9s
+[sparse patterns] generated 32 patterns of size 100; mean pairwise overlap (first 20): 5.3 / 100
+[sparse topographic prior] GPU-vectorized; ~524800 boost-targets, ~9971200 dampen-targets across 32 sparse patterns (upper bounds; actual = intersection with existing edges)
+[topographic prior] 0.2s
+
+[TRAIN] 32 x 400 = 12800 events
+  event 500/12800 (37s)
+  event 1000/12800 (77s)
+  event 1500/12800 (118s)
+  event 2000/12800 (158s)
+  event 2500/12800 (195s)
+  event 3000/12800 (232s)
+  event 3500/12800 (269s)
+  event 4000/12800 (306s)
+  event 4500/12800 (344s)
+  event 5000/12800 (382s)
+  event 5500/12800 (418s)
+  event 6000/12800 (456s)
+  event 6500/12800 (495s)
+  event 7000/12800 (536s)
+  event 7500/12800 (572s)
+  event 8000/12800 (611s)
+  event 8500/12800 (648s)
+  event 9000/12800 (685s)
+  event 9500/12800 (723s)
+  event 10000/12800 (760s)
+  event 10500/12800 (797s)
+  event 11000/12800 (834s)
+  event 11500/12800 (873s)
+  event 12000/12800 (912s)
+  event 12500/12800 (951s)
+[TRAIN] 974.0s total
+
+[ENGRAM] capturing 32 tags with teacher-bias
+[ENGRAM] 9.9s
+
+[EVAL] sparse-pattern discrimination
+[EVAL] 18.8s
+
+[RESULTS] 32/32 top-1 (100.0%), 32/32 top-5 (100.0%)
+  chance top-1: 3.1%, observed/chance: 32.0x
+[2026-05-15 20:50:13][INFO] SIM_BRIDGE: Saving checkpoint to research/findings/raw/g11_bg/g20_sparse_bridges/bridgeC_adj_sparse.simstate.h5...
+[2026-05-15 20:50:15][SUCCESS] SIM_BRIDGE: Checkpoint saved successfully to research/findings/raw/g11_bg/g20_sparse_bridges/bridgeC_adj_sparse.simstate.h5
+[SAVE] -> research/findings/raw/g11_bg/g20_sparse_bridges/bridgeC_adj_sparse.simstate.h5
+[OUT] -> research/findings/raw/g11_bg/g20_sparse_bridges/bridgeC_adj_sparse.json
+[chain] 05/15/2026 20:50:15 === sparse bridgeD_spatial (32 concepts) ===
+=== concept_pool_sparse_distributed (seed=42, n_concepts=32) ===
+  Shared pool: 2000 neurons
+  Pattern size: 100 per concept (sparse, random)
+  Substrate per concept: 100 neurons (vs contiguous-slice's 62)
+
+[2026-05-15 20:50:17][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-05-15 20:50:17][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-05-15 20:50:17][INFO] SIM_BRIDGE: Brain-region framework: 4 regions, 18684 total neurons, 4 pathways.
+[2026-05-15 20:50:17][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-05-15 20:50:17][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 18684 neurons...
+[2026-05-15 20:50:17][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-05-15 20:50:17][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-05-15 20:50:17][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-05-15 20:50:17][INFO] SIM_BRIDGE: Generating 3D neuron positions for 18684 neurons...
+[2026-05-15 20:50:17][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-05-15 20:50:30][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 10392398 synapses across 5 populations.
+[2026-05-15 20:50:30][INFO] SIM_BRIDGE: Initializing eligibility traces for 10392398 synapses (capacity: 15588597, dtype: float32)...
+[2026-05-15 20:50:30][INFO] SIM_BRIDGE: Initializing STDP state for 18684 neurons...
+[2026-05-15 20:50:30][INFO] SIM_BRIDGE: Simulation data initialized for 18684 neurons (3D). Synapses: 10392398. GPU memory: 2.1GB/25.8GB (8.0%)
+[sparse-pool bridge] shared_pool=2000, lang_input=8192
+[build] 15.0s
+[sparse patterns] generated 32 patterns of size 100; mean pairwise overlap (first 20): 5.3 / 100
+[sparse topographic prior] GPU-vectorized; ~524800 boost-targets, ~9971200 dampen-targets across 32 sparse patterns (upper bounds; actual = intersection with existing edges)
+[topographic prior] 0.2s
+
+[TRAIN] 32 x 400 = 12800 events
+  event 500/12800 (37s)
+  event 1000/12800 (75s)
+  event 1500/12800 (113s)
+  event 2000/12800 (150s)
+  event 2500/12800 (190s)
+  event 3000/12800 (230s)
+  event 3500/12800 (267s)
+  event 4000/12800 (304s)
+  event 4500/12800 (342s)
+  event 5000/12800 (379s)
+  event 5500/12800 (418s)
+  event 6000/12800 (454s)
+  event 6500/12800 (492s)
+  event 7000/12800 (530s)
+  event 7500/12800 (570s)
+  event 8000/12800 (610s)
+  event 8500/12800 (649s)
+  event 9000/12800 (687s)
+  event 9500/12800 (724s)
+  event 10000/12800 (761s)
+  event 10500/12800 (799s)
+  event 11000/12800 (837s)
+  event 11500/12800 (874s)
+  event 12000/12800 (914s)
+  event 12500/12800 (953s)
+[TRAIN] 976.1s total
+
+[ENGRAM] capturing 32 tags with teacher-bias
+[ENGRAM] 10.1s
+
+[EVAL] sparse-pattern discrimination
+[EVAL] 21.1s
+
+[RESULTS] 32/32 top-1 (100.0%), 32/32 top-5 (100.0%)
+  chance top-1: 3.1%, observed/chance: 32.0x
+[2026-05-15 21:07:18][INFO] SIM_BRIDGE: Saving checkpoint to research/findings/raw/g11_bg/g20_sparse_bridges/bridgeD_spatial_sparse.simstate.h5...
+[2026-05-15 21:07:20][SUCCESS] SIM_BRIDGE: Checkpoint saved successfully to research/findings/raw/g11_bg/g20_sparse_bridges/bridgeD_spatial_sparse.simstate.h5
+[SAVE] -> research/findings/raw/g11_bg/g20_sparse_bridges/bridgeD_spatial_sparse.simstate.h5
+[OUT] -> research/findings/raw/g11_bg/g20_sparse_bridges/bridgeD_spatial_sparse.json
+[chain] 05/15/2026 21:07:21 === sparse bridgeE_functional (32 concepts) ===
+=== concept_pool_sparse_distributed (seed=42, n_concepts=32) ===
+  Shared pool: 2000 neurons
+  Pattern size: 100 per concept (sparse, random)
+  Substrate per concept: 100 neurons (vs contiguous-slice's 62)
+
+[2026-05-15 21:07:22][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-05-15 21:07:22][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-05-15 21:07:22][INFO] SIM_BRIDGE: Brain-region framework: 4 regions, 18684 total neurons, 4 pathways.
+[2026-05-15 21:07:22][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-05-15 21:07:22][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 18684 neurons...
+[2026-05-15 21:07:22][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-05-15 21:07:22][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-05-15 21:07:22][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-05-15 21:07:22][INFO] SIM_BRIDGE: Generating 3D neuron positions for 18684 neurons...
+[2026-05-15 21:07:22][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-05-15 21:07:36][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 10392398 synapses across 5 populations.
+[2026-05-15 21:07:36][INFO] SIM_BRIDGE: Initializing eligibility traces for 10392398 synapses (capacity: 15588597, dtype: float32)...
+[2026-05-15 21:07:36][INFO] SIM_BRIDGE: Initializing STDP state for 18684 neurons...
+[2026-05-15 21:07:36][INFO] SIM_BRIDGE: Simulation data initialized for 18684 neurons (3D). Synapses: 10392398. GPU memory: 2.1GB/25.8GB (8.0%)
+[sparse-pool bridge] shared_pool=2000, lang_input=8192
+[build] 15.3s
+[sparse patterns] generated 32 patterns of size 100; mean pairwise overlap (first 20): 5.3 / 100
+[sparse topographic prior] GPU-vectorized; ~524800 boost-targets, ~9971200 dampen-targets across 32 sparse patterns (upper bounds; actual = intersection with existing edges)
+[topographic prior] 0.3s
+
+[TRAIN] 32 x 400 = 12800 events
+  event 500/12800 (40s)
+  event 1000/12800 (81s)
+  event 1500/12800 (122s)
+  event 2000/12800 (163s)
+  event 2500/12800 (204s)
+  event 3000/12800 (245s)
+  event 3500/12800 (286s)
+  event 4000/12800 (327s)
+  event 4500/12800 (368s)
+  event 5000/12800 (409s)
+  event 5500/12800 (450s)
+  event 6000/12800 (491s)
+  event 6500/12800 (532s)
+  event 7000/12800 (573s)
+  event 7500/12800 (614s)
+  event 8000/12800 (655s)
+  event 8500/12800 (696s)
+  event 9000/12800 (737s)
+  event 9500/12800 (778s)
+  event 10000/12800 (819s)
+  event 10500/12800 (860s)
+  event 11000/12800 (901s)
+  event 11500/12800 (943s)
+  event 12000/12800 (984s)
+  event 12500/12800 (1026s)
+[TRAIN] 1050.9s total
+
+[ENGRAM] capturing 32 tags with teacher-bias
+[ENGRAM] 11.1s
+
+[EVAL] sparse-pattern discrimination
+[EVAL] 21.0s
+
+[RESULTS] 32/32 top-1 (100.0%), 32/32 top-5 (100.0%)
+  chance top-1: 3.1%, observed/chance: 32.0x
+[2026-05-15 21:25:39][INFO] SIM_BRIDGE: Saving checkpoint to research/findings/raw/g11_bg/g20_sparse_bridges/bridgeE_functional_sparse.simstate.h5...
+[2026-05-15 21:25:42][SUCCESS] SIM_BRIDGE: Checkpoint saved successfully to research/findings/raw/g11_bg/g20_sparse_bridges/bridgeE_functional_sparse.simstate.h5
+[SAVE] -> research/findings/raw/g11_bg/g20_sparse_bridges/bridgeE_functional_sparse.simstate.h5
+[OUT] -> research/findings/raw/g11_bg/g20_sparse_bridges/bridgeE_functional_sparse.json
+[chain] 05/15/2026 21:25:42 DONE: 5 sparse-distributed bridges trained

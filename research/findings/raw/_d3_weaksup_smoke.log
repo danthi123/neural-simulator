@@ -1,0 +1,5 @@
+[D3 WEAK-SUPERVISION RANK 1] S3 | K-way END-STATE-only supervision (log2 K bits) vs 2-way property (1 bit); train (1, 2, 3) -> DEEPER (6, 7, 8)
+  [seed 42] STATE-endpoint DEEPER prop=0.492 (track=0.167) || PROPERTY-endpoint(=rung3) DEEPER=0.503 || CONTINUOUS=0.494 || SHUFFLE=0.507 (order-changes=0.429)
+
+  AGGREGATE (S3): STATE-endpoint DEEPER=0.492 | PROPERTY(rung3)=0.503 | CONTINUOUS=0.494 | SHUFFLE=0.507 (chance 0.5)
+  VERDICT: PARTIAL/NEGATIVE -- STATE-endpoint did not clearly beat the controls (read the gaps; tune epochs/n_hid or try the train-lens<=2 ablation / RANK 3 state-tied observation). NO sim/ edit.

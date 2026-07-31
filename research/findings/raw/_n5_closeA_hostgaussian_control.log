@@ -1,0 +1,359 @@
+
+##### DENDRITE STAGE 1 (ON-BRIDGE) seed=42 (lead 150ms, grid-32, deterministic, on-bridge GRADED dendritic plateau; n_snc=120, subtract=1200, reward_gain=420) #####
+[2026-06-21 03:52:51][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-21 03:52:51][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-21 03:52:51][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 380 total neurons, 1 pathways.
+[2026-06-21 03:52:51][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-21 03:52:51][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 380 neurons...
+[2026-06-21 03:52:51][INFO] SIM_BRIDGE: Region 'vs_place_context' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 03:52:51][INFO] SIM_BRIDGE: Region 'value_dendrite' (60 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 03:52:51][INFO] SIM_BRIDGE: Region 'snc' (120 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-21 03:52:51][INFO] SIM_BRIDGE: Generating 3D neuron positions for 380 neurons...
+[2026-06-21 03:52:51][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-21 03:52:51][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 5981 synapses across 1 populations.
+[2026-06-21 03:52:51][INFO] SIM_BRIDGE: Initializing eligibility traces for 5981 synapses (capacity: 8971, dtype: float32)...
+[2026-06-21 03:52:51][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-06-21 03:52:51][INFO] SIM_BRIDGE: Initializing STDP state for 380 neurons...
+[2026-06-21 03:52:51][INFO] SIM_BRIDGE: Simulation data initialized for 380 neurons (3D). Synapses: 5981. GPU memory: 1.3GB/25.8GB (5.1%)
+  [ONBRIDGE acq t=00] V_onbridge(near)=0.017 w_near=0.203 w_far=0.203 (near/far 1.00)
+  [ONBRIDGE acq t=01] V_onbridge(near)=0.024 w_near=0.247 w_far=0.203 (near/far 1.21)
+  [ONBRIDGE acq t=10] V_onbridge(near)=0.266 w_near=1.842 w_far=0.203 (near/far 9.06)
+  [ONBRIDGE acq t=20] V_onbridge(near)=0.304 w_near=2.519 w_far=0.203 (near/far 12.39)
+  [ONBRIDGE acq t=30] V_onbridge(near)=0.311 w_near=2.659 w_far=0.203 (near/far 13.08)
+  [ONBRIDGE acq t=39] V_onbridge(near)=0.313 w_near=2.724 w_far=0.203 (near/far 13.40)
+  [ONBRIDGE test lead=150 GRADED on-bridge] bursts near=75.0 mid=100.0 far=100.0 Hz | V_onbridge near=0.130 mid=0.081 far=0.014 -> delta(far/near)=1.33 graded-3=True
+[2026-06-21 03:53:38][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-21 03:53:38][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-21 03:53:38][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 380 total neurons, 1 pathways.
+[2026-06-21 03:53:38][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-21 03:53:38][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 380 neurons...
+[2026-06-21 03:53:38][INFO] SIM_BRIDGE: Region 'vs_place_context' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 03:53:38][INFO] SIM_BRIDGE: Region 'value_dendrite' (60 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 03:53:38][INFO] SIM_BRIDGE: Region 'snc' (120 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-21 03:53:38][INFO] SIM_BRIDGE: Generating 3D neuron positions for 380 neurons...
+[2026-06-21 03:53:38][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-21 03:53:38][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 5981 synapses across 1 populations.
+[2026-06-21 03:53:38][INFO] SIM_BRIDGE: Initializing eligibility traces for 5981 synapses (capacity: 8971, dtype: float32)...
+[2026-06-21 03:53:38][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-06-21 03:53:38][INFO] SIM_BRIDGE: Initializing STDP state for 380 neurons...
+[2026-06-21 03:53:38][INFO] SIM_BRIDGE: Simulation data initialized for 380 neurons (3D). Synapses: 5981. GPU memory: 1.3GB/25.8GB (5.1%)
+[2026-06-21 03:54:10][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-21 03:54:10][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-21 03:54:10][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 380 total neurons, 1 pathways.
+[2026-06-21 03:54:10][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-21 03:54:10][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 380 neurons...
+[2026-06-21 03:54:10][INFO] SIM_BRIDGE: Region 'vs_place_context' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 03:54:10][INFO] SIM_BRIDGE: Region 'value_dendrite' (60 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 03:54:10][INFO] SIM_BRIDGE: Region 'snc' (120 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-21 03:54:10][INFO] SIM_BRIDGE: Generating 3D neuron positions for 380 neurons...
+[2026-06-21 03:54:10][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-21 03:54:10][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 5981 synapses across 1 populations.
+[2026-06-21 03:54:10][INFO] SIM_BRIDGE: Initializing eligibility traces for 5981 synapses (capacity: 8971, dtype: float32)...
+[2026-06-21 03:54:10][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-06-21 03:54:10][INFO] SIM_BRIDGE: Initializing STDP state for 380 neurons...
+[2026-06-21 03:54:10][INFO] SIM_BRIDGE: Simulation data initialized for 380 neurons (3D). Synapses: 5981. GPU memory: 1.3GB/25.8GB (5.1%)
+  [ONBRIDGE acq t=00] V_onbridge(near)=0.000 w_near=0.199 w_far=0.203 (near/far 0.98)
+  [ONBRIDGE acq t=01] V_onbridge(near)=0.000 w_near=0.199 w_far=0.203 (near/far 0.98)
+  [ONBRIDGE acq t=10] V_onbridge(near)=0.000 w_near=0.199 w_far=0.203 (near/far 0.98)
+  [ONBRIDGE acq t=20] V_onbridge(near)=0.000 w_near=0.199 w_far=0.203 (near/far 0.98)
+  [ONBRIDGE acq t=30] V_onbridge(near)=0.000 w_near=0.199 w_far=0.203 (near/far 0.98)
+  [ONBRIDGE acq t=39] V_onbridge(near)=0.000 w_near=0.199 w_far=0.203 (near/far 0.98)
+  [ONBRIDGE test lead=150 ALL-OR-NONE(coincidence)] bursts near=100.0 mid=100.0 far=100.0 Hz | V_onbridge near=0.000 mid=0.000 far=0.000 -> delta(far/near)=1.00 graded-3=False
+[2026-06-21 03:54:47][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-21 03:54:47][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-21 03:54:47][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 380 total neurons, 1 pathways.
+[2026-06-21 03:54:47][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-21 03:54:47][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 380 neurons...
+[2026-06-21 03:54:47][INFO] SIM_BRIDGE: Region 'vs_place_context' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 03:54:47][INFO] SIM_BRIDGE: Region 'value_dendrite' (60 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 03:54:47][INFO] SIM_BRIDGE: Region 'snc' (120 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-21 03:54:47][INFO] SIM_BRIDGE: Generating 3D neuron positions for 380 neurons...
+[2026-06-21 03:54:47][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-21 03:54:47][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 5981 synapses across 1 populations.
+[2026-06-21 03:54:47][INFO] SIM_BRIDGE: Initializing eligibility traces for 5981 synapses (capacity: 8971, dtype: float32)...
+[2026-06-21 03:54:47][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-06-21 03:54:47][INFO] SIM_BRIDGE: Initializing STDP state for 380 neurons...
+[2026-06-21 03:54:47][INFO] SIM_BRIDGE: Simulation data initialized for 380 neurons (3D). Synapses: 5981. GPU memory: 1.3GB/25.8GB (5.1%)
+[2026-06-21 03:55:35][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-21 03:55:35][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-21 03:55:35][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 290 total neurons, 2 pathways.
+[2026-06-21 03:55:35][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-21 03:55:35][INFO] SIM_BRIDGE: Homeostasis per-region mask: 2 regions enabled (260 neurons)
+[2026-06-21 03:55:35][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 290 neurons...
+[2026-06-21 03:55:35][INFO] SIM_BRIDGE: Region 'vs_place_context' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 03:55:35][INFO] SIM_BRIDGE: Region 'striosome_value' (60 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 03:55:35][INFO] SIM_BRIDGE: Region 'snc' (30 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-21 03:55:35][INFO] SIM_BRIDGE: Generating 3D neuron positions for 290 neurons...
+[2026-06-21 03:55:35][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-21 03:55:35][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 6891 synapses across 2 populations.
+[2026-06-21 03:55:35][INFO] SIM_BRIDGE: Initializing eligibility traces for 6891 synapses (capacity: 10336, dtype: float32)...
+[2026-06-21 03:55:35][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-06-21 03:55:35][INFO] SIM_BRIDGE: Initializing STDP state for 290 neurons...
+[2026-06-21 03:55:35][INFO] SIM_BRIDGE: Simulation data initialized for 290 neurons (3D). Synapses: 6891. GPU memory: 1.3GB/25.8GB (5.1%)
+[2026-06-21 03:56:07][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-21 03:56:07][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-21 03:56:07][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 290 total neurons, 2 pathways.
+[2026-06-21 03:56:07][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-21 03:56:07][INFO] SIM_BRIDGE: Homeostasis per-region mask: 2 regions enabled (260 neurons)
+[2026-06-21 03:56:07][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 290 neurons...
+[2026-06-21 03:56:07][INFO] SIM_BRIDGE: Region 'vs_place_context' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 03:56:07][INFO] SIM_BRIDGE: Region 'striosome_value' (60 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 03:56:07][INFO] SIM_BRIDGE: Region 'snc' (30 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-21 03:56:07][INFO] SIM_BRIDGE: Generating 3D neuron positions for 290 neurons...
+[2026-06-21 03:56:07][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-21 03:56:07][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 6891 synapses across 2 populations.
+[2026-06-21 03:56:07][INFO] SIM_BRIDGE: Initializing eligibility traces for 6891 synapses (capacity: 10336, dtype: float32)...
+[2026-06-21 03:56:07][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-06-21 03:56:07][INFO] SIM_BRIDGE: Initializing STDP state for 290 neurons...
+[2026-06-21 03:56:07][INFO] SIM_BRIDGE: Simulation data initialized for 290 neurons (3D). Synapses: 6891. GPU memory: 1.3GB/25.8GB (5.1%)
+  [seed 42] ON-BRIDGE delta(far/near)=1.33 (near=75.0 mid=100.0 far=100.0 Hz | V_onbridge near/mid/far=0.130/0.081/0.014 graded-3=True loc-sel=True)
+  [seed 42]   plateau-lesion(off) delta=1.00 (collapses=True) | all-or-none delta=1.00 (V_near=0.000, graded-3=False) | subtract-lesion delta=1.00 (collapses=True)
+  [seed 42] LINEAR delta=1.00 (critic 0.0Hz) | PLATEAU delta=0.00 (critic 219.4Hz) | HOST-GAUSSIAN delta~1.30
+
+##### DENDRITE STAGE 1 (ON-BRIDGE) seed=43 (lead 150ms, grid-32, deterministic, on-bridge GRADED dendritic plateau; n_snc=120, subtract=1200, reward_gain=420) #####
+[2026-06-21 03:56:48][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-21 03:56:48][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-21 03:56:48][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 380 total neurons, 1 pathways.
+[2026-06-21 03:56:48][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-06-21 03:56:48][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 380 neurons...
+[2026-06-21 03:56:48][INFO] SIM_BRIDGE: Region 'vs_place_context' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 03:56:48][INFO] SIM_BRIDGE: Region 'value_dendrite' (60 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 03:56:48][INFO] SIM_BRIDGE: Region 'snc' (120 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-21 03:56:48][INFO] SIM_BRIDGE: Generating 3D neuron positions for 380 neurons...
+[2026-06-21 03:56:48][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-21 03:56:48][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 5980 synapses across 1 populations.
+[2026-06-21 03:56:48][INFO] SIM_BRIDGE: Initializing eligibility traces for 5980 synapses (capacity: 8970, dtype: float32)...
+[2026-06-21 03:56:48][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-06-21 03:56:48][INFO] SIM_BRIDGE: Initializing STDP state for 380 neurons...
+[2026-06-21 03:56:48][INFO] SIM_BRIDGE: Simulation data initialized for 380 neurons (3D). Synapses: 5980. GPU memory: 1.3GB/25.8GB (5.1%)
+  [ONBRIDGE acq t=00] V_onbridge(near)=0.018 w_near=0.202 w_far=0.202 (near/far 1.00)
+  [ONBRIDGE acq t=01] V_onbridge(near)=0.025 w_near=0.247 w_far=0.202 (near/far 1.23)
+  [ONBRIDGE acq t=10] V_onbridge(near)=0.273 w_near=1.910 w_far=0.202 (near/far 9.48)
+  [ONBRIDGE acq t=20] V_onbridge(near)=0.318 w_near=2.576 w_far=0.202 (near/far 12.78)
+  [ONBRIDGE acq t=30] V_onbridge(near)=0.324 w_near=2.741 w_far=0.202 (near/far 13.60)
+  [ONBRIDGE acq t=39] V_onbridge(near)=0.326 w_near=2.782 w_far=0.202 (near/far 13.80)
+  [ONBRIDGE test lead=150 GRADED on-bridge] bursts near=75.0 mid=100.0 far=100.0 Hz | V_onbridge near=0.133 mid=0.084 far=0.014 -> delta(far/near)=1.33 graded-3=True
+[2026-06-21 03:57:39][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-21 03:57:39][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-21 03:57:39][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 380 total neurons, 1 pathways.
+[2026-06-21 03:57:39][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-06-21 03:57:39][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 380 neurons...
+[2026-06-21 03:57:39][INFO] SIM_BRIDGE: Region 'vs_place_context' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 03:57:39][INFO] SIM_BRIDGE: Region 'value_dendrite' (60 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 03:57:39][INFO] SIM_BRIDGE: Region 'snc' (120 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-21 03:57:39][INFO] SIM_BRIDGE: Generating 3D neuron positions for 380 neurons...
+[2026-06-21 03:57:39][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-21 03:57:39][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 5980 synapses across 1 populations.
+[2026-06-21 03:57:39][INFO] SIM_BRIDGE: Initializing eligibility traces for 5980 synapses (capacity: 8970, dtype: float32)...
+[2026-06-21 03:57:39][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-06-21 03:57:39][INFO] SIM_BRIDGE: Initializing STDP state for 380 neurons...
+[2026-06-21 03:57:39][INFO] SIM_BRIDGE: Simulation data initialized for 380 neurons (3D). Synapses: 5980. GPU memory: 1.3GB/25.8GB (5.1%)
+[2026-06-21 03:58:15][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-21 03:58:15][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-21 03:58:15][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 380 total neurons, 1 pathways.
+[2026-06-21 03:58:15][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-06-21 03:58:15][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 380 neurons...
+[2026-06-21 03:58:15][INFO] SIM_BRIDGE: Region 'vs_place_context' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 03:58:15][INFO] SIM_BRIDGE: Region 'value_dendrite' (60 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 03:58:15][INFO] SIM_BRIDGE: Region 'snc' (120 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-21 03:58:15][INFO] SIM_BRIDGE: Generating 3D neuron positions for 380 neurons...
+[2026-06-21 03:58:15][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-21 03:58:15][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 5980 synapses across 1 populations.
+[2026-06-21 03:58:15][INFO] SIM_BRIDGE: Initializing eligibility traces for 5980 synapses (capacity: 8970, dtype: float32)...
+[2026-06-21 03:58:15][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-06-21 03:58:15][INFO] SIM_BRIDGE: Initializing STDP state for 380 neurons...
+[2026-06-21 03:58:15][INFO] SIM_BRIDGE: Simulation data initialized for 380 neurons (3D). Synapses: 5980. GPU memory: 1.3GB/25.8GB (5.1%)
+  [ONBRIDGE acq t=00] V_onbridge(near)=0.000 w_near=0.200 w_far=0.202 (near/far 0.99)
+  [ONBRIDGE acq t=01] V_onbridge(near)=0.000 w_near=0.200 w_far=0.202 (near/far 0.99)
+  [ONBRIDGE acq t=10] V_onbridge(near)=0.000 w_near=0.200 w_far=0.202 (near/far 0.99)
+  [ONBRIDGE acq t=20] V_onbridge(near)=0.000 w_near=0.200 w_far=0.202 (near/far 0.99)
+  [ONBRIDGE acq t=30] V_onbridge(near)=0.000 w_near=0.200 w_far=0.202 (near/far 0.99)
+  [ONBRIDGE acq t=39] V_onbridge(near)=0.000 w_near=0.200 w_far=0.202 (near/far 0.99)
+  [ONBRIDGE test lead=150 ALL-OR-NONE(coincidence)] bursts near=100.0 mid=100.0 far=100.0 Hz | V_onbridge near=0.000 mid=0.000 far=0.000 -> delta(far/near)=1.00 graded-3=False
+[2026-06-21 03:58:56][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-21 03:58:56][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-21 03:58:56][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 380 total neurons, 1 pathways.
+[2026-06-21 03:58:56][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-06-21 03:58:56][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 380 neurons...
+[2026-06-21 03:58:56][INFO] SIM_BRIDGE: Region 'vs_place_context' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 03:58:56][INFO] SIM_BRIDGE: Region 'value_dendrite' (60 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 03:58:56][INFO] SIM_BRIDGE: Region 'snc' (120 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-21 03:58:56][INFO] SIM_BRIDGE: Generating 3D neuron positions for 380 neurons...
+[2026-06-21 03:58:56][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-21 03:58:56][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 5980 synapses across 1 populations.
+[2026-06-21 03:58:56][INFO] SIM_BRIDGE: Initializing eligibility traces for 5980 synapses (capacity: 8970, dtype: float32)...
+[2026-06-21 03:58:56][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-06-21 03:58:56][INFO] SIM_BRIDGE: Initializing STDP state for 380 neurons...
+[2026-06-21 03:58:56][INFO] SIM_BRIDGE: Simulation data initialized for 380 neurons (3D). Synapses: 5980. GPU memory: 1.3GB/25.8GB (5.1%)
+[2026-06-21 03:59:48][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-21 03:59:48][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-21 03:59:48][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 290 total neurons, 2 pathways.
+[2026-06-21 03:59:48][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-06-21 03:59:48][INFO] SIM_BRIDGE: Homeostasis per-region mask: 2 regions enabled (260 neurons)
+[2026-06-21 03:59:48][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 290 neurons...
+[2026-06-21 03:59:48][INFO] SIM_BRIDGE: Region 'vs_place_context' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 03:59:48][INFO] SIM_BRIDGE: Region 'striosome_value' (60 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 03:59:48][INFO] SIM_BRIDGE: Region 'snc' (30 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-21 03:59:48][INFO] SIM_BRIDGE: Generating 3D neuron positions for 290 neurons...
+[2026-06-21 03:59:48][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-21 03:59:48][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 6895 synapses across 2 populations.
+[2026-06-21 03:59:48][INFO] SIM_BRIDGE: Initializing eligibility traces for 6895 synapses (capacity: 10342, dtype: float32)...
+[2026-06-21 03:59:48][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-06-21 03:59:48][INFO] SIM_BRIDGE: Initializing STDP state for 290 neurons...
+[2026-06-21 03:59:48][INFO] SIM_BRIDGE: Simulation data initialized for 290 neurons (3D). Synapses: 6895. GPU memory: 1.3GB/25.8GB (5.1%)
+[2026-06-21 04:00:11][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-21 04:00:11][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-21 04:00:11][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 290 total neurons, 2 pathways.
+[2026-06-21 04:00:11][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-06-21 04:00:11][INFO] SIM_BRIDGE: Homeostasis per-region mask: 2 regions enabled (260 neurons)
+[2026-06-21 04:00:11][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 290 neurons...
+[2026-06-21 04:00:11][INFO] SIM_BRIDGE: Region 'vs_place_context' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 04:00:11][INFO] SIM_BRIDGE: Region 'striosome_value' (60 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 04:00:11][INFO] SIM_BRIDGE: Region 'snc' (30 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-21 04:00:11][INFO] SIM_BRIDGE: Generating 3D neuron positions for 290 neurons...
+[2026-06-21 04:00:11][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-21 04:00:11][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 6895 synapses across 2 populations.
+[2026-06-21 04:00:11][INFO] SIM_BRIDGE: Initializing eligibility traces for 6895 synapses (capacity: 10342, dtype: float32)...
+[2026-06-21 04:00:11][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-06-21 04:00:11][INFO] SIM_BRIDGE: Initializing STDP state for 290 neurons...
+[2026-06-21 04:00:11][INFO] SIM_BRIDGE: Simulation data initialized for 290 neurons (3D). Synapses: 6895. GPU memory: 1.3GB/25.8GB (5.1%)
+  [seed 43] ON-BRIDGE delta(far/near)=1.33 (near=75.0 mid=100.0 far=100.0 Hz | V_onbridge near/mid/far=0.133/0.084/0.014 graded-3=True loc-sel=True)
+  [seed 43]   plateau-lesion(off) delta=1.00 (collapses=True) | all-or-none delta=1.00 (V_near=0.000, graded-3=False) | subtract-lesion delta=1.00 (collapses=True)
+  [seed 43] LINEAR delta=1.00 (critic 0.0Hz) | PLATEAU delta=0.00 (critic 192.6Hz) | HOST-GAUSSIAN delta~1.30
+
+##### DENDRITE STAGE 1 (ON-BRIDGE) seed=44 (lead 150ms, grid-32, deterministic, on-bridge GRADED dendritic plateau; n_snc=120, subtract=1200, reward_gain=420) #####
+[2026-06-21 04:00:36][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-21 04:00:36][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-21 04:00:36][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 380 total neurons, 1 pathways.
+[2026-06-21 04:00:36][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-06-21 04:00:36][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 380 neurons...
+[2026-06-21 04:00:36][INFO] SIM_BRIDGE: Region 'vs_place_context' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 04:00:36][INFO] SIM_BRIDGE: Region 'value_dendrite' (60 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 04:00:36][INFO] SIM_BRIDGE: Region 'snc' (120 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-21 04:00:36][INFO] SIM_BRIDGE: Generating 3D neuron positions for 380 neurons...
+[2026-06-21 04:00:36][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-21 04:00:36][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 5892 synapses across 1 populations.
+[2026-06-21 04:00:36][INFO] SIM_BRIDGE: Initializing eligibility traces for 5892 synapses (capacity: 8838, dtype: float32)...
+[2026-06-21 04:00:36][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-06-21 04:00:36][INFO] SIM_BRIDGE: Initializing STDP state for 380 neurons...
+[2026-06-21 04:00:36][INFO] SIM_BRIDGE: Simulation data initialized for 380 neurons (3D). Synapses: 5892. GPU memory: 1.3GB/25.8GB (5.1%)
+  [ONBRIDGE acq t=00] V_onbridge(near)=0.017 w_near=0.201 w_far=0.200 (near/far 1.00)
+  [ONBRIDGE acq t=01] V_onbridge(near)=0.024 w_near=0.241 w_far=0.200 (near/far 1.21)
+  [ONBRIDGE acq t=10] V_onbridge(near)=0.280 w_near=1.923 w_far=0.200 (near/far 9.62)
+  [ONBRIDGE acq t=20] V_onbridge(near)=0.322 w_near=2.669 w_far=0.200 (near/far 13.36)
+  [ONBRIDGE acq t=30] V_onbridge(near)=0.330 w_near=2.839 w_far=0.200 (near/far 14.21)
+  [ONBRIDGE acq t=39] V_onbridge(near)=0.330 w_near=2.885 w_far=0.200 (near/far 14.44)
+  [ONBRIDGE test lead=150 GRADED on-bridge] bursts near=75.0 mid=100.0 far=100.0 Hz | V_onbridge near=0.134 mid=0.084 far=0.014 -> delta(far/near)=1.33 graded-3=True
+[2026-06-21 04:01:06][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-21 04:01:06][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-21 04:01:06][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 380 total neurons, 1 pathways.
+[2026-06-21 04:01:06][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-06-21 04:01:06][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 380 neurons...
+[2026-06-21 04:01:06][INFO] SIM_BRIDGE: Region 'vs_place_context' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 04:01:06][INFO] SIM_BRIDGE: Region 'value_dendrite' (60 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 04:01:06][INFO] SIM_BRIDGE: Region 'snc' (120 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-21 04:01:06][INFO] SIM_BRIDGE: Generating 3D neuron positions for 380 neurons...
+[2026-06-21 04:01:06][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-21 04:01:06][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 5892 synapses across 1 populations.
+[2026-06-21 04:01:06][INFO] SIM_BRIDGE: Initializing eligibility traces for 5892 synapses (capacity: 8838, dtype: float32)...
+[2026-06-21 04:01:06][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-06-21 04:01:06][INFO] SIM_BRIDGE: Initializing STDP state for 380 neurons...
+[2026-06-21 04:01:06][INFO] SIM_BRIDGE: Simulation data initialized for 380 neurons (3D). Synapses: 5892. GPU memory: 1.3GB/25.8GB (5.1%)
+[2026-06-21 04:01:28][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-21 04:01:28][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-21 04:01:28][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 380 total neurons, 1 pathways.
+[2026-06-21 04:01:28][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-06-21 04:01:28][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 380 neurons...
+[2026-06-21 04:01:28][INFO] SIM_BRIDGE: Region 'vs_place_context' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 04:01:28][INFO] SIM_BRIDGE: Region 'value_dendrite' (60 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 04:01:28][INFO] SIM_BRIDGE: Region 'snc' (120 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-21 04:01:28][INFO] SIM_BRIDGE: Generating 3D neuron positions for 380 neurons...
+[2026-06-21 04:01:28][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-21 04:01:28][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 5892 synapses across 1 populations.
+[2026-06-21 04:01:28][INFO] SIM_BRIDGE: Initializing eligibility traces for 5892 synapses (capacity: 8838, dtype: float32)...
+[2026-06-21 04:01:28][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-06-21 04:01:28][INFO] SIM_BRIDGE: Initializing STDP state for 380 neurons...
+[2026-06-21 04:01:28][INFO] SIM_BRIDGE: Simulation data initialized for 380 neurons (3D). Synapses: 5892. GPU memory: 1.3GB/25.8GB (5.1%)
+  [ONBRIDGE acq t=00] V_onbridge(near)=0.000 w_near=0.199 w_far=0.200 (near/far 1.00)
+  [ONBRIDGE acq t=01] V_onbridge(near)=0.000 w_near=0.199 w_far=0.200 (near/far 1.00)
+  [ONBRIDGE acq t=10] V_onbridge(near)=0.000 w_near=0.199 w_far=0.200 (near/far 1.00)
+  [ONBRIDGE acq t=20] V_onbridge(near)=0.000 w_near=0.199 w_far=0.200 (near/far 1.00)
+  [ONBRIDGE acq t=30] V_onbridge(near)=0.000 w_near=0.199 w_far=0.200 (near/far 1.00)
+  [ONBRIDGE acq t=39] V_onbridge(near)=0.000 w_near=0.199 w_far=0.200 (near/far 1.00)
+  [ONBRIDGE test lead=150 ALL-OR-NONE(coincidence)] bursts near=100.0 mid=100.0 far=100.0 Hz | V_onbridge near=0.000 mid=0.000 far=0.000 -> delta(far/near)=1.00 graded-3=False
+[2026-06-21 04:01:50][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-21 04:01:50][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-21 04:01:50][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 380 total neurons, 1 pathways.
+[2026-06-21 04:01:50][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-06-21 04:01:50][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 380 neurons...
+[2026-06-21 04:01:50][INFO] SIM_BRIDGE: Region 'vs_place_context' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 04:01:50][INFO] SIM_BRIDGE: Region 'value_dendrite' (60 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 04:01:50][INFO] SIM_BRIDGE: Region 'snc' (120 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-21 04:01:50][INFO] SIM_BRIDGE: Generating 3D neuron positions for 380 neurons...
+[2026-06-21 04:01:50][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-21 04:01:50][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 5892 synapses across 1 populations.
+[2026-06-21 04:01:50][INFO] SIM_BRIDGE: Initializing eligibility traces for 5892 synapses (capacity: 8838, dtype: float32)...
+[2026-06-21 04:01:50][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-06-21 04:01:50][INFO] SIM_BRIDGE: Initializing STDP state for 380 neurons...
+[2026-06-21 04:01:50][INFO] SIM_BRIDGE: Simulation data initialized for 380 neurons (3D). Synapses: 5892. GPU memory: 1.3GB/25.8GB (5.1%)
+[2026-06-21 04:02:25][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-21 04:02:25][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-21 04:02:25][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 290 total neurons, 2 pathways.
+[2026-06-21 04:02:25][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-06-21 04:02:25][INFO] SIM_BRIDGE: Homeostasis per-region mask: 2 regions enabled (260 neurons)
+[2026-06-21 04:02:25][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 290 neurons...
+[2026-06-21 04:02:25][INFO] SIM_BRIDGE: Region 'vs_place_context' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 04:02:25][INFO] SIM_BRIDGE: Region 'striosome_value' (60 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 04:02:25][INFO] SIM_BRIDGE: Region 'snc' (30 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-21 04:02:25][INFO] SIM_BRIDGE: Generating 3D neuron positions for 290 neurons...
+[2026-06-21 04:02:25][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-21 04:02:25][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 6786 synapses across 2 populations.
+[2026-06-21 04:02:25][INFO] SIM_BRIDGE: Initializing eligibility traces for 6786 synapses (capacity: 10179, dtype: float32)...
+[2026-06-21 04:02:25][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-06-21 04:02:25][INFO] SIM_BRIDGE: Initializing STDP state for 290 neurons...
+[2026-06-21 04:02:25][INFO] SIM_BRIDGE: Simulation data initialized for 290 neurons (3D). Synapses: 6786. GPU memory: 1.3GB/25.8GB (5.1%)
+[2026-06-21 04:02:50][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-21 04:02:50][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-21 04:02:50][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 290 total neurons, 2 pathways.
+[2026-06-21 04:02:50][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-06-21 04:02:50][INFO] SIM_BRIDGE: Homeostasis per-region mask: 2 regions enabled (260 neurons)
+[2026-06-21 04:02:50][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 290 neurons...
+[2026-06-21 04:02:50][INFO] SIM_BRIDGE: Region 'vs_place_context' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 04:02:50][INFO] SIM_BRIDGE: Region 'striosome_value' (60 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 04:02:50][INFO] SIM_BRIDGE: Region 'snc' (30 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-21 04:02:50][INFO] SIM_BRIDGE: Generating 3D neuron positions for 290 neurons...
+[2026-06-21 04:02:50][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-21 04:02:50][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 6786 synapses across 2 populations.
+[2026-06-21 04:02:50][INFO] SIM_BRIDGE: Initializing eligibility traces for 6786 synapses (capacity: 10179, dtype: float32)...
+[2026-06-21 04:02:50][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-06-21 04:02:50][INFO] SIM_BRIDGE: Initializing STDP state for 290 neurons...
+[2026-06-21 04:02:50][INFO] SIM_BRIDGE: Simulation data initialized for 290 neurons (3D). Synapses: 6786. GPU memory: 1.3GB/25.8GB (5.1%)
+  [seed 44] ON-BRIDGE delta(far/near)=1.33 (near=75.0 mid=100.0 far=100.0 Hz | V_onbridge near/mid/far=0.134/0.084/0.014 graded-3=True loc-sel=True)
+  [seed 44]   plateau-lesion(off) delta=1.00 (collapses=True) | all-or-none delta=1.00 (V_near=0.000, graded-3=False) | subtract-lesion delta=1.00 (collapses=True)
+  [seed 44] LINEAR delta=1.00 (critic 0.0Hz) | PLATEAU delta=0.00 (critic 175.6Hz) | HOST-GAUSSIAN delta~1.30
+
+====================================================================================================================
+=== DENDRITE STAGE 1 (ON-BRIDGE) delta TABLE (delta=far/near; faithful grid-32, deterministic; host-Gaussian ref ~1.3) ===
+====================================================================================================================
+   seed |  ON-BRIDGE | LINEAR(pt) | PLATEAU(pt) | HOST-Gauss |        Vob n/m/f grd-3  loc
+     42 |       1.33 |       1.00 |        0.00 |       1.30 | 0.13/0.08/0.01     Y    Y
+     43 |       1.33 |       1.00 |        0.00 |       1.30 | 0.13/0.08/0.01     Y    Y
+     44 |       1.33 |       1.00 |        0.00 |       1.30 | 0.13/0.08/0.01     Y    Y
+
+  MEDIAN  ON-BRIDGE delta=1.33  |  LINEAR(pt) delta=1.00  |  PLATEAU(pt) delta=0.00  |  HOST-Gaussian ~1.3
+
+====================================================================================================================
+=== ANTI-CHEAT collapse table (multi-seed) ===
+====================================================================================================================
+  (a) TWO POINT-NEURON CONTROLS fail: LINEAR flat(<=1.15) 3/3 ; PLATEAU over-clamp(<=0.15) 3/3
+  (b) PLATEAU-OFF lesion collapses the on-bridge delta (<=1.15): 3/3 (the on-bridge graded plateau is LOAD-BEARING -- with the flag off V=0 -> no subtraction)
+  (c) SUBTRACTION lesion collapses the headline delta (<=1.15): 3/3
+  (d) REGIME FIDELITY: grid-32 deterministic (OU/cond-noise/homeostasis OFF) asserted per seed
+  (e) HOST-CEILING: on-bridge delta <= host*(1+0.30) (1.69): 3/3
+  (f) LOCATION-SELECTIVITY of the on-bridge plateau value (V near>far + grew): 3/3
+
+====================================================================================================================
+=== DENDRITE STAGE 1 (ON-BRIDGE) VERDICT: GO ===
+=== the ON-BRIDGE graded dendritic-plateau read-out gives delta=1.33 (>=1.30 ~ the Stage-0 ceiling/host 1.3) at 3/3 seeds, where BOTH point-neuron controls fail (LINEAR ~1.00, PLATEAU ~0.00). The on-bridge plateau is LOAD-BEARING (flag-off lesion collapses 3/3); the value is location-selective (3/3) + below the host ceiling (3/3). The graded value V is the on-bridge plateau CONDUCTANCE -> the dendrite's graded analog read-out now lives ON the spiking substrate (the Stage-0 numpy DendriticLayer retired). ===
+====================================================================================================================
+  wrote research/findings/raw/_n5_closeA_hostgaussian_control.json

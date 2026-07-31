@@ -1,0 +1,96 @@
+==============================================================================================================
+[FHRR-B Option 3 — ORTHOGONAL-TPR + learned cleanup] does a separable (tensor-product) structure make the multi-attribute bundle-inverse RECOVERABLE + GENERALIZING without the exact reciprocal?
+  codes=stream (between-cos 0.047) | F=16 | attrs=[2, 3, 4] d_role=[32, 64, 128] n_hidden=1 | train 24000/split x 3 splits | chance 0.062
+  refs on this harness: additive 0.193 | learned-linear 0.056 | dendritic 0.168 | Option-1 cleanup 1.0 | fixed-±1 ceiling 0.989
+==============================================================================================================
+
+--- A=2 attributes  d_role=32 ---
+  [seed 42] A=2 d_role=32: single 0.167 | BUNDLED train 0.760 | held-out(learned) 0.222 | held-out(proj) 1.000 | perm-role 0.021 | moat-gap +0.294
+  [seed 43] A=2 d_role=32: single 0.333 | BUNDLED train 0.828 | held-out(learned) 0.278 | held-out(proj) 1.000 | perm-role 0.012 | moat-gap +0.296
+  [seed 44] A=2 d_role=32: single 0.000 | BUNDLED train 0.899 | held-out(learned) 0.000 | held-out(proj) 1.000 | perm-role 0.017 | moat-gap +0.306
+  [seed 100] A=2 d_role=32: single 0.000 | BUNDLED train 0.757 | held-out(learned) 0.000 | held-out(proj) 1.000 | perm-role 0.013 | moat-gap +0.318
+  [seed 101] A=2 d_role=32: single 0.333 | BUNDLED train 0.749 | held-out(learned) 0.333 | held-out(proj) 1.000 | perm-role 0.008 | moat-gap +0.324
+  [seed 102] A=2 d_role=32: single 0.500 | BUNDLED train 0.721 | held-out(learned) 0.583 | held-out(proj) 1.000 | perm-role 0.037 | moat-gap +0.304
+  MEAN A=2 d_role=32: single 0.222 | BUNDLED train 0.786 | held-out(learned) 0.236 (0/6 >=0.90) | held-out(proj/fixed-readout) 1.000 (6/6 >=0.90)
+
+--- A=2 attributes  d_role=64 ---
+  [seed 42] A=2 d_role=64: single 0.333 | BUNDLED train 0.524 | held-out(learned) 0.389 | held-out(proj) 1.000 | perm-role 0.046 | moat-gap +0.191
+  [seed 43] A=2 d_role=64: single 0.000 | BUNDLED train 0.583 | held-out(learned) 0.000 | held-out(proj) 1.000 | perm-role 0.029 | moat-gap +0.221
+  [seed 44] A=2 d_role=64: single 0.000 | BUNDLED train 0.695 | held-out(learned) 0.000 | held-out(proj) 1.000 | perm-role 0.029 | moat-gap +0.151
+  [seed 100] A=2 d_role=64: single 0.000 | BUNDLED train 0.626 | held-out(learned) 0.000 | held-out(proj) 1.000 | perm-role 0.029 | moat-gap +0.271
+  [seed 101] A=2 d_role=64: single 0.500 | BUNDLED train 0.812 | held-out(learned) 0.556 | held-out(proj) 1.000 | perm-role 0.000 | moat-gap +0.329
+  [seed 102] A=2 d_role=64: single 0.333 | BUNDLED train 0.580 | held-out(learned) 0.417 | held-out(proj) 1.000 | perm-role 0.067 | moat-gap +0.272
+  MEAN A=2 d_role=64: single 0.194 | BUNDLED train 0.637 | held-out(learned) 0.227 (0/6 >=0.90) | held-out(proj/fixed-readout) 1.000 (6/6 >=0.90)
+
+--- A=2 attributes  d_role=128 ---
+  [seed 42] A=2 d_role=128: single 0.167 | BUNDLED train 0.542 | held-out(learned) 0.167 | held-out(proj) 1.000 | perm-role 0.033 | moat-gap +0.216
+  [seed 43] A=2 d_role=128: single 0.000 | BUNDLED train 0.601 | held-out(learned) 0.000 | held-out(proj) 1.000 | perm-role 0.013 | moat-gap +0.213
+  [seed 44] A=2 d_role=128: single 0.333 | BUNDLED train 0.834 | held-out(learned) 0.333 | held-out(proj) 1.000 | perm-role 0.025 | moat-gap +0.313
+  [seed 100] A=2 d_role=128: single 0.167 | BUNDLED train 0.726 | held-out(learned) 0.222 | held-out(proj) 1.000 | perm-role 0.021 | moat-gap +0.308
+  [seed 101] A=2 d_role=128: single 0.500 | BUNDLED train 0.658 | held-out(learned) 0.533 | held-out(proj) 1.000 | perm-role 0.021 | moat-gap +0.265
+  [seed 102] A=2 d_role=128: single 0.500 | BUNDLED train 0.710 | held-out(learned) 0.500 | held-out(proj) 1.000 | perm-role 0.050 | moat-gap +0.307
+  MEAN A=2 d_role=128: single 0.278 | BUNDLED train 0.678 | held-out(learned) 0.293 (0/6 >=0.90) | held-out(proj/fixed-readout) 1.000 (6/6 >=0.90)
+
+--- A=3 attributes  d_role=32 ---
+  [seed 42] A=3 d_role=32: single 0.778 | BUNDLED train 0.790 | held-out(learned) 0.821 | held-out(proj) 1.000 | perm-role 0.011 | moat-gap +0.287
+  [seed 43] A=3 d_role=32: single 0.444 | BUNDLED train 0.791 | held-out(learned) 0.383 | held-out(proj) 1.000 | perm-role 0.014 | moat-gap +0.307
+  [seed 44] A=3 d_role=32: single 0.667 | BUNDLED train 0.770 | held-out(learned) 0.686 | held-out(proj) 1.000 | perm-role 0.017 | moat-gap +0.303
+  [seed 100] A=3 d_role=32: single 0.222 | BUNDLED train 0.718 | held-out(learned) 0.262 | held-out(proj) 1.000 | perm-role 0.022 | moat-gap +0.276
+  [seed 101] A=3 d_role=32: single 0.222 | BUNDLED train 0.738 | held-out(learned) 0.250 | held-out(proj) 1.000 | perm-role 0.025 | moat-gap +0.322
+  [seed 102] A=3 d_role=32: single 0.333 | BUNDLED train 0.556 | held-out(learned) 0.310 | held-out(proj) 1.000 | perm-role 0.025 | moat-gap +0.214
+  MEAN A=3 d_role=32: single 0.444 | BUNDLED train 0.727 | held-out(learned) 0.452 (0/6 >=0.90) | held-out(proj/fixed-readout) 1.000 (6/6 >=0.90)
+
+--- A=3 attributes  d_role=64 ---
+  [seed 42] A=3 d_role=64: single 0.444 | BUNDLED train 0.791 | held-out(learned) 0.488 | held-out(proj) 1.000 | perm-role 0.011 | moat-gap +0.287
+  [seed 43] A=3 d_role=64: single 0.222 | BUNDLED train 0.575 | held-out(learned) 0.146 | held-out(proj) 1.000 | perm-role 0.036 | moat-gap +0.234
+  [seed 44] A=3 d_role=64: single 0.222 | BUNDLED train 0.628 | held-out(learned) 0.162 | held-out(proj) 1.000 | perm-role 0.019 | moat-gap +0.260
+  [seed 100] A=3 d_role=64: single 0.444 | BUNDLED train 0.699 | held-out(learned) 0.521 | held-out(proj) 1.000 | perm-role 0.019 | moat-gap +0.232
+  [seed 101] A=3 d_role=64: single 0.333 | BUNDLED train 0.791 | held-out(learned) 0.333 | held-out(proj) 1.000 | perm-role 0.022 | moat-gap +0.321
+  [seed 102] A=3 d_role=64: single 0.333 | BUNDLED train 0.451 | held-out(learned) 0.238 | held-out(proj) 1.000 | perm-role 0.033 | moat-gap +0.171
+  MEAN A=3 d_role=64: single 0.333 | BUNDLED train 0.656 | held-out(learned) 0.315 (0/6 >=0.90) | held-out(proj/fixed-readout) 1.000 (6/6 >=0.90)
+
+--- A=3 attributes  d_role=128 ---
+  [seed 42] A=3 d_role=128: single 0.444 | BUNDLED train 0.622 | held-out(learned) 0.488 | held-out(proj) 1.000 | perm-role 0.025 | moat-gap +0.202
+  [seed 43] A=3 d_role=128: single 0.333 | BUNDLED train 0.601 | held-out(learned) 0.258 | held-out(proj) 1.000 | perm-role 0.028 | moat-gap +0.190
+  [seed 44] A=3 d_role=128: single 0.667 | BUNDLED train 0.816 | held-out(learned) 0.590 | held-out(proj) 1.000 | perm-role 0.017 | moat-gap +0.234
+  [seed 100] A=3 d_role=128: single 0.222 | BUNDLED train 0.479 | held-out(learned) 0.262 | held-out(proj) 1.000 | perm-role 0.058 | moat-gap +0.159
+  [seed 101] A=3 d_role=128: single 0.556 | BUNDLED train 0.770 | held-out(learned) 0.583 | held-out(proj) 1.000 | perm-role 0.017 | moat-gap +0.363
+  [seed 102] A=3 d_role=128: single 0.556 | BUNDLED train 0.572 | held-out(learned) 0.471 | held-out(proj) 1.000 | perm-role 0.028 | moat-gap +0.212
+  MEAN A=3 d_role=128: single 0.463 | BUNDLED train 0.643 | held-out(learned) 0.442 (0/6 >=0.90) | held-out(proj/fixed-readout) 1.000 (6/6 >=0.90)
+
+--- A=4 attributes  d_role=32 ---
+  [seed 42] A=4 d_role=32: single 0.583 | BUNDLED train 0.790 | held-out(learned) 0.678 | held-out(proj) 1.000 | perm-role 0.019 | moat-gap +0.309
+  [seed 43] A=4 d_role=32: single 0.500 | BUNDLED train 0.796 | held-out(learned) 0.622 | held-out(proj) 1.000 | perm-role 0.010 | moat-gap +0.293
+  [seed 44] A=4 d_role=32: single 0.583 | BUNDLED train 0.789 | held-out(learned) 0.519 | held-out(proj) 1.000 | perm-role 0.010 | moat-gap +0.308
+  [seed 100] A=4 d_role=32: single 0.583 | BUNDLED train 0.735 | held-out(learned) 0.545 | held-out(proj) 1.000 | perm-role 0.021 | moat-gap +0.322
+  [seed 101] A=4 d_role=32: single 0.500 | BUNDLED train 0.755 | held-out(learned) 0.473 | held-out(proj) 1.000 | perm-role 0.029 | moat-gap +0.258
+  [seed 102] A=4 d_role=32: single 0.333 | BUNDLED train 0.745 | held-out(learned) 0.269 | held-out(proj) 1.000 | perm-role 0.029 | moat-gap +0.324
+  MEAN A=4 d_role=32: single 0.514 | BUNDLED train 0.768 | held-out(learned) 0.518 (0/6 >=0.90) | held-out(proj/fixed-readout) 1.000 (6/6 >=0.90)
+
+--- A=4 attributes  d_role=64 ---
+  [seed 42] A=4 d_role=64: single 0.583 | BUNDLED train 0.692 | held-out(learned) 0.796 | held-out(proj) 1.000 | perm-role 0.019 | moat-gap +0.310
+  [seed 43] A=4 d_role=64: single 0.333 | BUNDLED train 0.611 | held-out(learned) 0.435 | held-out(proj) 1.000 | perm-role 0.019 | moat-gap +0.171
+  [seed 44] A=4 d_role=64: single 0.250 | BUNDLED train 0.605 | held-out(learned) 0.158 | held-out(proj) 1.000 | perm-role 0.023 | moat-gap +0.260
+  [seed 100] A=4 d_role=64: single 0.667 | BUNDLED train 0.752 | held-out(learned) 0.670 | held-out(proj) 1.000 | perm-role 0.019 | moat-gap +0.317
+  [seed 101] A=4 d_role=64: single 0.583 | BUNDLED train 0.772 | held-out(learned) 0.615 | held-out(proj) 1.000 | perm-role 0.021 | moat-gap +0.289
+  [seed 102] A=4 d_role=64: single 0.417 | BUNDLED train 0.698 | held-out(learned) 0.292 | held-out(proj) 1.000 | perm-role 0.029 | moat-gap +0.227
+  MEAN A=4 d_role=64: single 0.472 | BUNDLED train 0.688 | held-out(learned) 0.494 (0/6 >=0.90) | held-out(proj/fixed-readout) 1.000 (6/6 >=0.90)
+
+--- A=4 attributes  d_role=128 ---
+  [seed 42] A=4 d_role=128: single 0.500 | BUNDLED train 0.657 | held-out(learned) 0.685 | held-out(proj) 1.000 | perm-role 0.031 | moat-gap +0.202
+  [seed 43] A=4 d_role=128: single 0.417 | BUNDLED train 0.791 | held-out(learned) 0.400 | held-out(proj) 1.000 | perm-role 0.004 | moat-gap +0.257
+  [seed 44] A=4 d_role=128: single 0.250 | BUNDLED train 0.554 | held-out(learned) 0.158 | held-out(proj) 1.000 | perm-role 0.033 | moat-gap +0.243
+  [seed 100] A=4 d_role=128: single 0.417 | BUNDLED train 0.664 | held-out(learned) 0.406 | held-out(proj) 1.000 | perm-role 0.023 | moat-gap +0.275
+  [seed 101] A=4 d_role=128: single 0.333 | BUNDLED train 0.449 | held-out(learned) 0.351 | held-out(proj) 1.000 | perm-role 0.048 | moat-gap +0.042
+  [seed 102] A=4 d_role=128: single 0.333 | BUNDLED train 0.668 | held-out(learned) 0.208 | held-out(proj) 1.000 | perm-role 0.042 | moat-gap +0.312
+  MEAN A=4 d_role=128: single 0.375 | BUNDLED train 0.630 | held-out(learned) 0.368 (0/6 >=0.90) | held-out(proj/fixed-readout) 1.000 (6/6 >=0.90)
+
+==============================================================================================================
+  BEST LEARNED-read-out (A=4, d_role=32): BUNDLED held-out 0.518 (0/6 seeds >=0.90), train 0.768, single 0.514
+  BEST FIXED-read-out/proj (A=2, d_role=32): held-out 1.000 (6/6 seeds >=0.90), perm-role 0.000
+  perm-role control (learned) 0.020 (must be ~chance 0.062); moat-gap +0.302 (>0)
+
+  VERDICT: PARTIAL — orthogonal-TPR LIFTS the bundle-inverse above the shallow NEGATIVEs (held-out 0.518 vs dendritic 0.168) but short of robust generalization. A real lever, not parity. NOT a closed boundary (owner's rule): informs the converged structural-primitive synthesis.
+  Total elapsed: 5704.8s
+==============================================================================================================
+  [saved] research/findings/raw/_phaseB_fhrr_b_option3_grid.json

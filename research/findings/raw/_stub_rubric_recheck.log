@@ -1,0 +1,524 @@
+[console] loaded brain: 1454 concepts, D=128, 23 categories (brain1454_w7000_seed42.npz)
+[console] PPMI graph: 53141 co-occurrence scenes, 1327/1454 concepts graph-connected, tau=1.141
+[2026-06-27 00:43:22][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-27 00:43:22][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:43:22][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-27 00:43:22][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 256 neurons...
+[2026-06-27 00:43:22][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-27 00:43:22][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-27 00:43:22][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-27 00:43:22][INFO] SIM_BRIDGE: Generating 3D neuron positions for 256 neurons...
+[2026-06-27 00:43:22][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-06-27 00:43:22][INFO] SIM_BRIDGE: Simulation data initialized for 256 neurons (3D). Synapses: 0. GPU memory: 10.6GB/51.2GB (20.7%)
+[2026-06-27 00:43:22][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-27 00:43:22][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:43:22][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-27 00:43:22][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 640 neurons...
+[2026-06-27 00:43:22][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-27 00:43:22][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-27 00:43:22][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-27 00:43:22][INFO] SIM_BRIDGE: Generating 3D neuron positions for 640 neurons...
+[2026-06-27 00:43:22][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-06-27 00:43:22][INFO] SIM_BRIDGE: Simulation data initialized for 640 neurons (3D). Synapses: 0. GPU memory: 10.6GB/51.2GB (20.7%)
+[console] stored 24 SVO facts (recall + discuss ground truth)
+[2026-06-27 00:43:22][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-27 00:43:22][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:43:22][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-27 00:43:22][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 126 neurons...
+[2026-06-27 00:43:22][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-27 00:43:22][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-27 00:43:22][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=20.0pA)...
+[2026-06-27 00:43:22][INFO] SIM_BRIDGE: Generating 3D neuron positions for 126 neurons...
+[2026-06-27 00:43:22][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-06-27 00:43:22][INFO] SIM_BRIDGE: Simulation data initialized for 126 neurons (3D). Synapses: 0. GPU memory: 10.6GB/51.2GB (20.7%)
+[2026-06-27 00:43:22][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 720 synapses across 1 populations.
+[2026-06-27 00:43:25][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-27 00:43:25][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:43:25][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-27 00:43:25][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 224 neurons...
+[2026-06-27 00:43:25][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-27 00:43:25][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-27 00:43:25][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=20.0pA)...
+[2026-06-27 00:43:25][INFO] SIM_BRIDGE: Generating 3D neuron positions for 224 neurons...
+[2026-06-27 00:43:25][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-06-27 00:43:25][INFO] SIM_BRIDGE: Simulation data initialized for 224 neurons (3D). Synapses: 0. GPU memory: 10.6GB/51.2GB (20.7%)
+[2026-06-27 00:43:25][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 4800 synapses across 1 populations.
+[2026-06-27 00:43:28][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-27 00:43:28][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:43:28][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 100 total neurons, 4 pathways.
+[2026-06-27 00:43:28][INFO] SIM_BRIDGE: RNG initialized with seed: 12345
+[2026-06-27 00:43:28][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (80 neurons)
+[2026-06-27 00:43:28][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 100 neurons...
+[2026-06-27 00:43:28][INFO] SIM_BRIDGE: Region 'speak_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:43:28][INFO] SIM_BRIDGE: Region 'silence_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:43:28][INFO] SIM_BRIDGE: Region 'wta_fs' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-27 00:43:28][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=15.0pA)...
+[2026-06-27 00:43:28][INFO] SIM_BRIDGE: Generating 3D neuron positions for 100 neurons...
+[2026-06-27 00:43:28][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-27 00:43:28][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3311 synapses across 6 populations.
+[2026-06-27 00:43:28][INFO] SIM_BRIDGE: Simulation data initialized for 100 neurons (3D). Synapses: 3311. GPU memory: 10.6GB/51.2GB (20.7%)
+[2026-06-27 00:43:31][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-27 00:43:31][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:43:31][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-27 00:43:31][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6144 neurons...
+[2026-06-27 00:43:31][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-27 00:43:31][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-27 00:43:31][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-27 00:43:31][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6144 neurons...
+[2026-06-27 00:43:31][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-06-27 00:43:31][INFO] SIM_BRIDGE: Simulation data initialized for 6144 neurons (3D). Synapses: 0. GPU memory: 10.8GB/51.2GB (21.0%)
+[console] 17 grounded topics (the brain has a graph-supported view on); learning talkativeness on 12...
+[console] 17/24 facts recall correctly (what_does); pipeline ready in 28.5s -- the brain is listening.
+
+
+[phatic ] YOU: hello!
+          BRAIN: Hi! Ask me about what I know, or what I think about something.
+          types=P depth=1 C=0 F=0 moat=OK pass=Y
+[2026-06-27 00:43:45][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-06-27 00:43:45][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:43:45][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 8280 total neurons, 2 pathways.
+[2026-06-27 00:43:45][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-27 00:43:45][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (8280 neurons)
+[2026-06-27 00:43:45][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 8280 neurons...
+[2026-06-27 00:43:45][INFO] SIM_BRIDGE: Region 'cortex_ctx' (4140 neurons): using Izh type IZH2007_HIPPO_PYRAMIDAL
+[2026-06-27 00:43:45][INFO] SIM_BRIDGE: Region 'dlpfc_wm' (4140 neurons): using Izh type IZH2007_HIPPO_PYRAMIDAL
+[2026-06-27 00:43:45][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-27 00:43:45][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-27 00:43:45][INFO] SIM_BRIDGE: Generating 3D neuron positions for 8280 neurons...
+[2026-06-27 00:43:45][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-27 00:43:48][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 1713483 synapses across 2 populations.
+[2026-06-27 00:43:48][INFO] SIM_BRIDGE: Initializing eligibility traces for 1713483 synapses (capacity: 2570224, dtype: float32)...
+[2026-06-27 00:43:48][INFO] SIM_BRIDGE: Initializing STDP state for 8280 neurons...
+[2026-06-27 00:43:48][INFO] SIM_BRIDGE: Simulation data initialized for 8280 neurons (3D). Synapses: 1713483. GPU memory: 10.5GB/51.2GB (20.4%)
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 100 total neurons, 4 pathways.
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: RNG initialized with seed: 12345
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (80 neurons)
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 100 neurons...
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Region 'speak_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Region 'silence_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Region 'wta_fs' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=15.0pA)...
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Generating 3D neuron positions for 100 neurons...
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3311 synapses across 6 populations.
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Simulation data initialized for 100 neurons (3D). Synapses: 3311. GPU memory: 10.5GB/51.2GB (20.5%)
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 100 total neurons, 4 pathways.
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: RNG initialized with seed: 12345
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (80 neurons)
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 100 neurons...
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Region 'speak_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Region 'silence_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Region 'wta_fs' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=15.0pA)...
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Generating 3D neuron positions for 100 neurons...
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3311 synapses across 6 populations.
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Simulation data initialized for 100 neurons (3D). Synapses: 3311. GPU memory: 10.5GB/51.2GB (20.5%)
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 100 total neurons, 4 pathways.
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: RNG initialized with seed: 12345
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (80 neurons)
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 100 neurons...
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Region 'speak_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Region 'silence_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Region 'wta_fs' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=15.0pA)...
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Generating 3D neuron positions for 100 neurons...
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3311 synapses across 6 populations.
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Simulation data initialized for 100 neurons (3D). Synapses: 3311. GPU memory: 10.5GB/51.2GB (20.5%)
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 100 total neurons, 4 pathways.
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: RNG initialized with seed: 12345
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (80 neurons)
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 100 neurons...
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Region 'speak_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Region 'silence_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Region 'wta_fs' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=15.0pA)...
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Generating 3D neuron positions for 100 neurons...
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3311 synapses across 6 populations.
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Simulation data initialized for 100 neurons (3D). Synapses: 3311. GPU memory: 10.5GB/51.2GB (20.5%)
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 100 total neurons, 4 pathways.
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: RNG initialized with seed: 12345
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (80 neurons)
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 100 neurons...
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Region 'speak_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Region 'silence_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Region 'wta_fs' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=15.0pA)...
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Generating 3D neuron positions for 100 neurons...
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3311 synapses across 6 populations.
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Simulation data initialized for 100 neurons (3D). Synapses: 3311. GPU memory: 10.5GB/51.2GB (20.5%)
+
+[known  ] YOU: what does curry describe?
+          BRAIN: Good question. The curry describes pine.
+          types=C depth=1 C=1 F=0 moat=OK pass=Y
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 100 total neurons, 4 pathways.
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: RNG initialized with seed: 12345
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (80 neurons)
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 100 neurons...
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Region 'speak_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Region 'silence_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Region 'wta_fs' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=15.0pA)...
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Generating 3D neuron positions for 100 neurons...
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3311 synapses across 6 populations.
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Simulation data initialized for 100 neurons (3D). Synapses: 3311. GPU memory: 10.5GB/51.2GB (20.5%)
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 100 total neurons, 4 pathways.
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: RNG initialized with seed: 12345
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (80 neurons)
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 100 neurons...
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Region 'speak_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Region 'silence_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Region 'wta_fs' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=15.0pA)...
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Generating 3D neuron positions for 100 neurons...
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3311 synapses across 6 populations.
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Simulation data initialized for 100 neurons (3D). Synapses: 3311. GPU memory: 10.5GB/51.2GB (20.5%)
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 100 total neurons, 4 pathways.
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: RNG initialized with seed: 12345
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (80 neurons)
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 100 neurons...
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Region 'speak_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Region 'silence_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Region 'wta_fs' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=15.0pA)...
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Generating 3D neuron positions for 100 neurons...
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3311 synapses across 6 populations.
+[2026-06-27 00:45:43][INFO] SIM_BRIDGE: Simulation data initialized for 100 neurons (3D). Synapses: 3311. GPU memory: 10.5GB/51.2GB (20.5%)
+
+[engage ] YOU: what is family?
+          BRAIN: I don't have settled facts about family, but it tends to come up alongside scraper, tern, and nettle -- I'd be guessing past that.
+          types=D depth=3 C=0 F=3 moat=OK pass=Y
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 100 total neurons, 4 pathways.
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: RNG initialized with seed: 12345
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (80 neurons)
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 100 neurons...
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Region 'speak_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Region 'silence_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Region 'wta_fs' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=15.0pA)...
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Generating 3D neuron positions for 100 neurons...
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3311 synapses across 6 populations.
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Simulation data initialized for 100 neurons (3D). Synapses: 3311. GPU memory: 10.5GB/51.2GB (20.5%)
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 100 total neurons, 4 pathways.
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: RNG initialized with seed: 12345
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (80 neurons)
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 100 neurons...
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Region 'speak_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Region 'silence_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Region 'wta_fs' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=15.0pA)...
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Generating 3D neuron positions for 100 neurons...
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3311 synapses across 6 populations.
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Simulation data initialized for 100 neurons (3D). Synapses: 3311. GPU memory: 10.5GB/51.2GB (20.5%)
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 100 total neurons, 4 pathways.
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: RNG initialized with seed: 12345
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (80 neurons)
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 100 neurons...
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Region 'speak_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Region 'silence_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Region 'wta_fs' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=15.0pA)...
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Generating 3D neuron positions for 100 neurons...
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3311 synapses across 6 populations.
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Simulation data initialized for 100 neurons (3D). Synapses: 3311. GPU memory: 10.5GB/51.2GB (20.4%)
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 100 total neurons, 4 pathways.
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: RNG initialized with seed: 12345
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (80 neurons)
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 100 neurons...
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Region 'speak_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Region 'silence_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Region 'wta_fs' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=15.0pA)...
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Generating 3D neuron positions for 100 neurons...
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3311 synapses across 6 populations.
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Simulation data initialized for 100 neurons (3D). Synapses: 3311. GPU memory: 10.5GB/51.2GB (20.4%)
+
+[opinion] YOU: what do you think about beech?
+          BRAIN: I don't have settled facts about beech, but it tends to come up alongside malt, beetroot, and asparagus -- I'd be guessing past that.
+          types=N depth=1 C=0 F=1 moat=OK pass=Y
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 100 total neurons, 4 pathways.
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: RNG initialized with seed: 12345
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (80 neurons)
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 100 neurons...
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Region 'speak_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Region 'silence_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Region 'wta_fs' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=15.0pA)...
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Generating 3D neuron positions for 100 neurons...
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3311 synapses across 6 populations.
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Simulation data initialized for 100 neurons (3D). Synapses: 3311. GPU memory: 10.5GB/51.2GB (20.4%)
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 100 total neurons, 4 pathways.
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: RNG initialized with seed: 12345
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (80 neurons)
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 100 neurons...
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Region 'speak_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Region 'silence_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Region 'wta_fs' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=15.0pA)...
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Generating 3D neuron positions for 100 neurons...
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3311 synapses across 6 populations.
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Simulation data initialized for 100 neurons (3D). Synapses: 3311. GPU memory: 10.5GB/51.2GB (20.4%)
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 100 total neurons, 4 pathways.
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: RNG initialized with seed: 12345
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (80 neurons)
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 100 neurons...
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Region 'speak_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Region 'silence_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Region 'wta_fs' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=15.0pA)...
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Generating 3D neuron positions for 100 neurons...
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3311 synapses across 6 populations.
+[2026-06-27 00:45:45][INFO] SIM_BRIDGE: Simulation data initialized for 100 neurons (3D). Synapses: 3311. GPU memory: 10.5GB/51.2GB (20.4%)
+
+[relate ] YOU: is family like people?
+          BRAIN: I don't have settled facts about family, but it tends to come up alongside scraper, tern, and nettle -- I'd be guessing past that.
+          types=N depth=3 C=0 F=3 moat=OK pass=Y
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 100 total neurons, 4 pathways.
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: RNG initialized with seed: 12345
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (80 neurons)
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 100 neurons...
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Region 'speak_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Region 'silence_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Region 'wta_fs' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=15.0pA)...
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Generating 3D neuron positions for 100 neurons...
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3311 synapses across 6 populations.
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Simulation data initialized for 100 neurons (3D). Synapses: 3311. GPU memory: 10.4GB/51.2GB (20.4%)
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 100 total neurons, 4 pathways.
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: RNG initialized with seed: 12345
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (80 neurons)
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 100 neurons...
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Region 'speak_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Region 'silence_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Region 'wta_fs' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=15.0pA)...
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Generating 3D neuron positions for 100 neurons...
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3311 synapses across 6 populations.
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Simulation data initialized for 100 neurons (3D). Synapses: 3311. GPU memory: 10.4GB/51.2GB (20.4%)
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 100 total neurons, 4 pathways.
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: RNG initialized with seed: 12345
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (80 neurons)
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 100 neurons...
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Region 'speak_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Region 'silence_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Region 'wta_fs' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=15.0pA)...
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Generating 3D neuron positions for 100 neurons...
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3311 synapses across 6 populations.
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Simulation data initialized for 100 neurons (3D). Synapses: 3311. GPU memory: 10.4GB/51.2GB (20.4%)
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 100 total neurons, 4 pathways.
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: RNG initialized with seed: 12345
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (80 neurons)
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 100 neurons...
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Region 'speak_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Region 'silence_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Region 'wta_fs' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=15.0pA)...
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Generating 3D neuron positions for 100 neurons...
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3311 synapses across 6 populations.
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Simulation data initialized for 100 neurons (3D). Synapses: 3311. GPU memory: 10.4GB/51.2GB (20.4%)
+
+[known  ] YOU: what does plate touch?
+          BRAIN: Good question. The plate touches autumn. I think maybe the plate floats casserole. I think maybe the plate floats stew.
+          types=CN depth=3 C=1 F=2 moat=OK pass=Y
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 100 total neurons, 4 pathways.
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: RNG initialized with seed: 12345
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (80 neurons)
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 100 neurons...
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Region 'speak_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Region 'silence_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Region 'wta_fs' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=15.0pA)...
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Generating 3D neuron positions for 100 neurons...
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3311 synapses across 6 populations.
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Simulation data initialized for 100 neurons (3D). Synapses: 3311. GPU memory: 10.4GB/51.2GB (20.4%)
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 100 total neurons, 4 pathways.
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: RNG initialized with seed: 12345
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (80 neurons)
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 100 neurons...
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Region 'speak_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Region 'silence_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Region 'wta_fs' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=15.0pA)...
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Generating 3D neuron positions for 100 neurons...
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3311 synapses across 6 populations.
+[2026-06-27 00:45:48][INFO] SIM_BRIDGE: Simulation data initialized for 100 neurons (3D). Synapses: 3311. GPU memory: 10.4GB/51.2GB (20.4%)
+[2026-06-27 00:45:49][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:45:49][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 100 total neurons, 4 pathways.
+[2026-06-27 00:45:49][INFO] SIM_BRIDGE: RNG initialized with seed: 12345
+[2026-06-27 00:45:49][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (80 neurons)
+[2026-06-27 00:45:49][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 100 neurons...
+[2026-06-27 00:45:49][INFO] SIM_BRIDGE: Region 'speak_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:49][INFO] SIM_BRIDGE: Region 'silence_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:49][INFO] SIM_BRIDGE: Region 'wta_fs' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-27 00:45:49][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=15.0pA)...
+[2026-06-27 00:45:49][INFO] SIM_BRIDGE: Generating 3D neuron positions for 100 neurons...
+[2026-06-27 00:45:49][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-27 00:45:49][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3311 synapses across 6 populations.
+[2026-06-27 00:45:49][INFO] SIM_BRIDGE: Simulation data initialized for 100 neurons (3D). Synapses: 3311. GPU memory: 10.4GB/51.2GB (20.4%)
+
+[engage ] YOU: tell me about head?
+          BRAIN: I don't have settled facts about head, but it tends to come up alongside cockroach, behold, and halibut -- I'd be guessing past that.
+          types=D depth=3 C=0 F=3 moat=OK pass=Y
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 100 total neurons, 4 pathways.
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: RNG initialized with seed: 12345
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (80 neurons)
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 100 neurons...
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Region 'speak_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Region 'silence_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Region 'wta_fs' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=15.0pA)...
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Generating 3D neuron positions for 100 neurons...
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3311 synapses across 6 populations.
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Simulation data initialized for 100 neurons (3D). Synapses: 3311. GPU memory: 10.4GB/51.2GB (20.4%)
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 100 total neurons, 4 pathways.
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: RNG initialized with seed: 12345
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (80 neurons)
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 100 neurons...
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Region 'speak_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Region 'silence_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Region 'wta_fs' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=15.0pA)...
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Generating 3D neuron positions for 100 neurons...
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3311 synapses across 6 populations.
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Simulation data initialized for 100 neurons (3D). Synapses: 3311. GPU memory: 10.4GB/51.2GB (20.4%)
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 100 total neurons, 4 pathways.
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: RNG initialized with seed: 12345
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (80 neurons)
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 100 neurons...
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Region 'speak_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Region 'silence_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Region 'wta_fs' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=15.0pA)...
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Generating 3D neuron positions for 100 neurons...
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3311 synapses across 6 populations.
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Simulation data initialized for 100 neurons (3D). Synapses: 3311. GPU memory: 10.4GB/51.2GB (20.4%)
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 100 total neurons, 4 pathways.
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: RNG initialized with seed: 12345
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (80 neurons)
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 100 neurons...
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Region 'speak_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Region 'silence_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Region 'wta_fs' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=15.0pA)...
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Generating 3D neuron positions for 100 neurons...
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3311 synapses across 6 populations.
+[2026-06-27 00:45:50][INFO] SIM_BRIDGE: Simulation data initialized for 100 neurons (3D). Synapses: 3311. GPU memory: 10.4GB/51.2GB (20.4%)
+
+[opinion] YOU: what do you think about bison?
+          BRAIN: I don't have settled facts about bison, but it tends to come up alongside plantain, lynx, and buffalo -- I'd be guessing past that.
+          types=N depth=3 C=0 F=3 moat=OK pass=Y
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 100 total neurons, 4 pathways.
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: RNG initialized with seed: 12345
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (80 neurons)
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 100 neurons...
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Region 'speak_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Region 'silence_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Region 'wta_fs' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=15.0pA)...
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Generating 3D neuron positions for 100 neurons...
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3311 synapses across 6 populations.
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Simulation data initialized for 100 neurons (3D). Synapses: 3311. GPU memory: 10.4GB/51.2GB (20.4%)
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 100 total neurons, 4 pathways.
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: RNG initialized with seed: 12345
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (80 neurons)
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 100 neurons...
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Region 'speak_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Region 'silence_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Region 'wta_fs' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=15.0pA)...
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Generating 3D neuron positions for 100 neurons...
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3311 synapses across 6 populations.
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Simulation data initialized for 100 neurons (3D). Synapses: 3311. GPU memory: 10.4GB/51.2GB (20.4%)
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 100 total neurons, 4 pathways.
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: RNG initialized with seed: 12345
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (80 neurons)
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 100 neurons...
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Region 'speak_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Region 'silence_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Region 'wta_fs' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=15.0pA)...
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Generating 3D neuron positions for 100 neurons...
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3311 synapses across 6 populations.
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Simulation data initialized for 100 neurons (3D). Synapses: 3311. GPU memory: 10.4GB/51.2GB (20.4%)
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Brain-region framework: 3 regions, 100 total neurons, 4 pathways.
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: RNG initialized with seed: 12345
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: NMDA per-region mask: 2 regions enabled (80 neurons)
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 100 neurons...
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Region 'speak_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Region 'silence_acc' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Region 'wta_fs' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=15.0pA)...
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Generating 3D neuron positions for 100 neurons...
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3311 synapses across 6 populations.
+[2026-06-27 00:45:53][INFO] SIM_BRIDGE: Simulation data initialized for 100 neurons (3D). Synapses: 3311. GPU memory: 10.4GB/51.2GB (20.4%)
+
+[known  ] YOU: what does dragonfly hum?
+          BRAIN: Good question. The dragonfly hums cod. I think maybe the dragonfly flies nectar.
+          types=CN depth=2 C=1 F=1 moat=OK pass=Y
+
+[unknown] YOU: what is qwxzptl?
+          BRAIN: I don't know the word "qwxzptl" yet -- it's not in what I've learned.
+          types=- depth=0 C=0 F=0 moat=OK pass=Y
+
+============================================================================================
+  RUBRIC SCORE: 10/10   (moat leaks: 0)
+  mixed-type across the conversation: certain=True flagged=True phatic=True -> MIXED
+  VERDICT: PASS
+============================================================================================

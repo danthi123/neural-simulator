@@ -1,0 +1,15 @@
+[seed 44] V=300 d=32 d_head=32 win=2 passages(tr/ev)=240/60 n_cross_train=45192
+  [ceiling] train-CE [3.8642, 3.8241, 3.8092, 3.7992, 3.7914, 3.7855, 3.7811, 3.7772]
+           cross-CE: base 3.1911 | content 3.0281(λ0.35) | shuffle 3.0767(λ0.35) | uniform 3.0620(λ0.35)
+           HEADLINE (+ = content beats the bag): content-SHUFFLE +0.0486 | content-UNIFORM +0.0339   (content-base +0.1630, confoundable)
+           content-minus-shuffle by within-passage depth: d6-9:+0.021 d10-99:+0.049
+  [  local] train-CE [3.9032, 3.888, 3.8776, 3.8689, 3.8628, 3.8577, 3.8539, 3.8505]
+           cross-CE: base 3.1911 | content 3.0525(λ0.35) | shuffle 3.0718(λ0.35) | uniform 3.0620(λ0.35)
+           HEADLINE (+ = content beats the bag): content-SHUFFLE +0.0193 | content-UNIFORM +0.0095   (content-base +0.1386, confoundable)
+           content-minus-shuffle by within-passage depth: d6-9:-0.021 d10-99:+0.019
+
+======================================================================================================================
+[learned-attention] VERDICT: CEILING-ONLY -- the full-gradient learned attention BEATS the bag (there IS content-selective cross-sentence signal reservoir keys could not capture), but the LOCAL feedback-alignment rule does NOT reach it. The frontier is precisely 'make the attention's learning LOCAL/biological' -- the ceiling-vs-local gap is the residual to close.
+[learned-attention] {"ceiling_content_minus_shuffle": 0.0486, "ceiling_content_minus_uniform": 0.0339, "ceiling_beats_bag": true, "local_content_minus_shuffle": 0.0193, "local_content_minus_uniform": 0.0095, "local_beats_bag": false}
+[learned-attention] -> research/findings/raw/_eprop/lattn_s44.json (28.4s)
+======================================================================================================================

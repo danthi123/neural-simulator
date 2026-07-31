@@ -1,0 +1,13 @@
+[L1 spiking-Oja smoke] 64 concepts x 2000 hubs; rate-Oja ceiling +0.481, offline +0.523
+  [budget gain=   1.0  ~   1257 spk/concept] Oja-spiking Pearson=+0.229 ['+0.212', '+0.238', '+0.237']  gen=0.583  | sat-ctrl +0.000  perm +0.001
+  [budget gain=   3.0  ~   3769 spk/concept] Oja-spiking Pearson=+0.377 ['+0.364', '+0.400', '+0.367']  gen=0.812  | sat-ctrl +0.000  perm -0.009
+  [budget gain=  10.0  ~  12576 spk/concept] Oja-spiking Pearson=+0.430 ['+0.438', '+0.425', '+0.426']  gen=0.859  | sat-ctrl +0.000  perm +0.011
+  [budget gain=  30.0  ~  37752 spk/concept] Oja-spiking Pearson=+0.462 ['+0.462', '+0.467', '+0.458']  gen=0.859  | sat-ctrl +0.000  perm +0.003
+  [budget gain= 100.0  ~ 125772 spk/concept] Oja-spiking Pearson=+0.475 ['+0.477', '+0.475', '+0.472']  gen=0.854  | sat-ctrl +0.000  perm +0.000
+
+============================================================================================
+  SPIKING SMOKE VERDICT: SPIKING_INPUT_SURVIVES_GO
+  at spike budget gain=100.0 (~125772 spikes/concept) spiking-Oja reaches +0.475 = 99% of the rate ceiling (+0.481), generalizes 0.854, controls clean (sat +0.000, perm +0.000) -> the learned structure SURVIVES the input being spikes; the spiking build is de-risked on the INPUT axis (the learning-spiking gap is the follow-on).
+============================================================================================
+  elapsed 425s
+  [saved] research/findings/raw/_l1_spiking_oja_smoke.json

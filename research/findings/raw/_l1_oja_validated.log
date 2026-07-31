@@ -1,0 +1,17 @@
+[L1 Oja validated] 64 concepts x 2000 hubs
+  CEILINGS: offline PPMI+PCA(k=64)=+0.523 | host ppmi_svd_sim(k=50)=+0.323 (nn-same 0.547) | cos(PPMI rows)=+0.485
+  [Oja(PPMI centered)            ] Pearson=+0.481 ['+0.484', '+0.476', '+0.485']  offdiag=-0.016  gen=0.875
+  [Oja(raw) [input lesion]       ] Pearson=+0.213 ['+0.212', '+0.212', '+0.215']  offdiag=+0.566  gen=0.573
+  [random-proj(PPMI) [learn?]    ] Pearson=+0.169 ['+0.219', '+0.153', '+0.137']  offdiag=+0.128  gen=0.500
+  [faithful saturating [fail]    ] Pearson=-0.001 ['-0.001', '+0.000', '-0.001']  offdiag=+1.000  gen=0.109
+  [anti-cheat] Oja permuted-similarity Pearson=-0.000 (~0)
+
+  [gates] {'host_carries': True, 'A_saturating_fails': True, 'learner_reaches_ceiling': True, 'generalizes': True, 'permuted_collapses': True, 'input_lesion_collapses': True}  ALL=True
+  [honesty] random-proj(PPMI)=+0.169 vs Oja(PPMI)=+0.481  -> learning adds +0.312 (LOAD-BEARING)
+
+================================================================================================
+  L1 VALIDATED VERDICT: GO_LEARNING_EXTRACTS
+  Oja online local PCA on PPMI reaches +0.481 (92% of offline +0.523, beating host +0.323), generalizes 0.875, controls clean, AND the learning is load-bearing (adds +0.312 over random projection).
+================================================================================================
+  elapsed 191s
+  [saved] research/findings/raw/_l1_oja_validated.json

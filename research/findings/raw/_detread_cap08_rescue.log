@@ -1,0 +1,230 @@
+=== RESCUE cap0.8 seed 42 ===
+========================================================================
+[grid-onbridge DELTA] seed=42 arm=grid grid_on=True scramble=False (graded center=1.5 slope=1.0 strength=80.0 readout_only=True) n_grid=198
+========================================================================
+[g11] WARN: --spiking-reward-us WITHOUT --perceived-approach-reward -> the US rides on the COORD-based reward (not coord-free). Add --perceived-approach-reward for the fully-biologized (coord-free) reward chain.
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Brain-region framework: 43 regions, 1280 total neurons, 59 pathways.
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: NMDA per-region mask: 1 regions enabled (80 neurons)
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Homeostasis per-region mask: 1 regions enabled (80 neurons)
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1280 neurons...
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'cortex_N' (25 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'cortex_E' (25 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'cortex_S' (25 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'cortex_W' (25 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'str_D1_N' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'str_D2_N' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D2
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'str_D1_E' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'str_D2_E' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D2
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'str_D1_S' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'str_D2_S' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D2
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'str_D1_W' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'str_D2_W' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D2
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'gpe_N' (10 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'gpe_arky_N' (4 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'gpi_N' (10 neurons): using Izh type IZH2007_GPI_OUTPUT
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'str_striosome_N' (8 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'gpe_E' (10 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'gpe_arky_E' (4 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'gpi_E' (10 neurons): using Izh type IZH2007_GPI_OUTPUT
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'str_striosome_E' (8 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'gpe_S' (10 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'gpe_arky_S' (4 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'gpi_S' (10 neurons): using Izh type IZH2007_GPI_OUTPUT
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'str_striosome_S' (8 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'gpe_W' (10 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'gpe_arky_W' (4 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'gpi_W' (10 neurons): using Izh type IZH2007_GPI_OUTPUT
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'str_striosome_W' (8 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'stn' (20 neurons): using Izh type IZH2007_STN_BURST
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'thal_N' (10 neurons): using Izh type IZH2007_THALAMIC_RELAY
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'motor_N' (10 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'thal_E' (10 neurons): using Izh type IZH2007_THALAMIC_RELAY
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'motor_E' (10 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'thal_S' (10 neurons): using Izh type IZH2007_THALAMIC_RELAY
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'motor_S' (10 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'thal_W' (10 neurons): using Izh type IZH2007_THALAMIC_RELAY
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'motor_W' (10 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'snc' (10 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'reward_us' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'place_sensors' (198 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'place' (200 neurons): using Izh type IZH2007_HIPPO_PYRAMIDAL
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'place_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Region 'striosome_value' (80 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1280 neurons...
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 41015 synapses across 59 populations.
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Initializing eligibility traces for 41015 synapses (capacity: 61522, dtype: float32)...
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Initializing STDP state for 1280 neurons...
+[2026-06-21 11:27:56][INFO] SIM_BRIDGE: Simulation data initialized for 1280 neurons (3D). Synapses: 41015. GPU memory: 1.3GB/25.8GB (5.1%)
+[g11 seed=42] Spiking-SNc Stage B: NEURAL value critic ON (striosome_value n=80, place->value w0=0.19995252788066864); r-V subtracted via GABA_B/GIRK (E_K=-90mV, prop=0.02); critic->SNc gate = OPEN (continuous, Stage 1). Host _V_scaffold DROPPED.
+[g11 seed=42] BG circuit: 43 regions, 1280 neurons, 41015 synapses
+[g11 seed=42] N9 STEP-1 place self-org done (21s): diff-loc cos=0.136083 sparsity=0.192500 (place fields FROZEN; DETERMINISTIC)
+[g11 seed=42] N9 STEP-2 value-training done (219s): 40 pair-then-reward trials x 4 goal(s); w_near 0.199->0.239 w_far 0.201->0.216 (near/far 1.10); V(near) 9.821428571428571->3.1249999999999996Hz (place fields FROZEN; V FROZEN)
+========================================================================
+[g11 seed=42] N9 STAGE-B SMOKE (value-learning @ nav scale):
+  near=(6, 6) far=(1.0, 1.0) (near_set=26 far_set=19 place cells)
+  [LEARNS-V]  w_near=0.239 w_far=0.216 (near/far 1.10; >=1.5x => False)
+  [CRITIC FIRE+GRADE] (weighted plateau, k=12) critic@near=0.00Hz critic@far=0.00Hz (>=5Hz & near>=3xfar; fire=False grade=False)
+  [GABA_B gap d=r-V]  predicted(NEAR)=50.00Hz unpredicted(FAR)=50.00Hz gap=1.00 (unpred>1.3x pred => False)
+  [LESION control]    zeroed 407 GABA_B synapses -> pred=50.00Hz unpred=50.00Hz gap=1.00 (collapses to ~1.0 => True)
+  STAGE-B VERDICT: LEARNS-V=False CRITIC-FIRE+GRADE=False GABA_B-gap=False lesion-collapses=True
+  [HONEST] critic does NOT fire+grade at nav scale (critic@near=0.00Hz, near/far=0.00) — design §Risk 'place-code self-org at nav scale' / 'actor-critic interaction'.
+========================================================================
+[grid-onbridge DELTA RESULT seed=42 arm=grid] LEARNS-V=False (w_n/w_f=1.104219437389959) critic@near=0.0Hz @far=0.0Hz grade=0.0 | V_near=50.46807360560952 V_far=15.184028394274046 V_n/f=3.3237604866862087 | snc-burst-delta(gap)=1.0 gabab_gap=False | GRADED-V delta_vnf=3.185537368163703 (vnf_gap=True) delta_snc_graded=1.0 (snc_pred=50.0 snc_unpred=50.0) | GABA_B-cond delta_gabab=0.0 (gap=False) [gb_near=0.0 gb_far=0.0]
+[grid-onbridge] wrote research/findings/raw/_n5_grid_onbridge_detread_cap08_seed42.json
+=== RESCUE cap0.8 seed 43 ===
+========================================================================
+[grid-onbridge DELTA] seed=43 arm=grid grid_on=True scramble=False (graded center=1.5 slope=1.0 strength=80.0 readout_only=True) n_grid=198
+========================================================================
+[g11] WARN: --spiking-reward-us WITHOUT --perceived-approach-reward -> the US rides on the COORD-based reward (not coord-free). Add --perceived-approach-reward for the fully-biologized (coord-free) reward chain.
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Brain-region framework: 43 regions, 1280 total neurons, 59 pathways.
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: NMDA per-region mask: 1 regions enabled (80 neurons)
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Homeostasis per-region mask: 1 regions enabled (80 neurons)
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1280 neurons...
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'cortex_N' (25 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'cortex_E' (25 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'cortex_S' (25 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'cortex_W' (25 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'str_D1_N' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'str_D2_N' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D2
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'str_D1_E' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'str_D2_E' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D2
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'str_D1_S' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'str_D2_S' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D2
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'str_D1_W' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'str_D2_W' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D2
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'gpe_N' (10 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'gpe_arky_N' (4 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'gpi_N' (10 neurons): using Izh type IZH2007_GPI_OUTPUT
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'str_striosome_N' (8 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'gpe_E' (10 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'gpe_arky_E' (4 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'gpi_E' (10 neurons): using Izh type IZH2007_GPI_OUTPUT
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'str_striosome_E' (8 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'gpe_S' (10 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'gpe_arky_S' (4 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'gpi_S' (10 neurons): using Izh type IZH2007_GPI_OUTPUT
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'str_striosome_S' (8 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'gpe_W' (10 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'gpe_arky_W' (4 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'gpi_W' (10 neurons): using Izh type IZH2007_GPI_OUTPUT
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'str_striosome_W' (8 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'stn' (20 neurons): using Izh type IZH2007_STN_BURST
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'thal_N' (10 neurons): using Izh type IZH2007_THALAMIC_RELAY
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'motor_N' (10 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'thal_E' (10 neurons): using Izh type IZH2007_THALAMIC_RELAY
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'motor_E' (10 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'thal_S' (10 neurons): using Izh type IZH2007_THALAMIC_RELAY
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'motor_S' (10 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'thal_W' (10 neurons): using Izh type IZH2007_THALAMIC_RELAY
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'motor_W' (10 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'snc' (10 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'reward_us' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'place_sensors' (198 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'place' (200 neurons): using Izh type IZH2007_HIPPO_PYRAMIDAL
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'place_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Region 'striosome_value' (80 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1280 neurons...
+[2026-06-21 11:32:12][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-21 11:32:13][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 40875 synapses across 59 populations.
+[2026-06-21 11:32:13][INFO] SIM_BRIDGE: Initializing eligibility traces for 40875 synapses (capacity: 61312, dtype: float32)...
+[2026-06-21 11:32:13][INFO] SIM_BRIDGE: Initializing STDP state for 1280 neurons...
+[2026-06-21 11:32:13][INFO] SIM_BRIDGE: Simulation data initialized for 1280 neurons (3D). Synapses: 40875. GPU memory: 1.3GB/25.8GB (5.1%)
+[g11 seed=43] Spiking-SNc Stage B: NEURAL value critic ON (striosome_value n=80, place->value w0=0.20018084347248077); r-V subtracted via GABA_B/GIRK (E_K=-90mV, prop=0.02); critic->SNc gate = OPEN (continuous, Stage 1). Host _V_scaffold DROPPED.
+[g11 seed=43] BG circuit: 43 regions, 1280 neurons, 40875 synapses
+[g11 seed=43] N9 STEP-1 place self-org done (20s): diff-loc cos=0.098773 sparsity=0.120000 (place fields FROZEN; DETERMINISTIC)
+[g11 seed=43] N9 STEP-2 value-training done (195s): 40 pair-then-reward trials x 4 goal(s); w_near 0.201->0.273 w_far 0.205->0.269 (near/far 1.01); V(near) 22.58928571428571->4.910714285714286Hz (place fields FROZEN; V FROZEN)
+========================================================================
+[g11 seed=43] N9 STAGE-B SMOKE (value-learning @ nav scale):
+  near=(6, 6) far=(1.0, 1.0) (near_set=37 far_set=2 place cells)
+  [LEARNS-V]  w_near=0.273 w_far=0.269 (near/far 1.01; >=1.5x => False)
+  [CRITIC FIRE+GRADE] (weighted plateau, k=12) critic@near=1.39Hz critic@far=0.00Hz (>=5Hz & near>=3xfar; fire=False grade=False)
+  [GABA_B gap d=r-V]  predicted(NEAR)=50.00Hz unpredicted(FAR)=50.00Hz gap=1.00 (unpred>1.3x pred => False)
+  [LESION control]    zeroed 402 GABA_B synapses -> pred=50.00Hz unpred=50.00Hz gap=1.00 (collapses to ~1.0 => True)
+  STAGE-B VERDICT: LEARNS-V=False CRITIC-FIRE+GRADE=False GABA_B-gap=False lesion-collapses=True
+  [HONEST] critic does NOT fire+grade at nav scale (critic@near=1.39Hz, near/far=1388.89) — design §Risk 'place-code self-org at nav scale' / 'actor-critic interaction'.
+========================================================================
+[grid-onbridge DELTA RESULT seed=43 arm=grid] LEARNS-V=False (w_n/w_f=1.0149409972299783) critic@near=1.3888888888888888Hz @far=0.0Hz grade=1388.888888888889 | V_near=46.1425210189491 V_far=5.175867784290194 V_n/f=8.91493425682182 | snc-burst-delta(gap)=1.0 gabab_gap=False | GRADED-V delta_vnf=9.527949137593446 (vnf_gap=True) delta_snc_graded=1.0 (snc_pred=50.0 snc_unpred=50.0) | GABA_B-cond delta_gabab=0.0 (gap=False) [gb_near=0.0 gb_far=0.0]
+[grid-onbridge] wrote research/findings/raw/_n5_grid_onbridge_detread_cap08_seed43.json
+=== RESCUE cap0.8 seed 44 ===
+========================================================================
+[grid-onbridge DELTA] seed=44 arm=grid grid_on=True scramble=False (graded center=1.5 slope=1.0 strength=80.0 readout_only=True) n_grid=198
+========================================================================
+[g11] WARN: --spiking-reward-us WITHOUT --perceived-approach-reward -> the US rides on the COORD-based reward (not coord-free). Add --perceived-approach-reward for the fully-biologized (coord-free) reward chain.
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Brain-region framework: 43 regions, 1280 total neurons, 59 pathways.
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: NMDA per-region mask: 1 regions enabled (80 neurons)
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Homeostasis per-region mask: 1 regions enabled (80 neurons)
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1280 neurons...
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'cortex_N' (25 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'cortex_E' (25 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'cortex_S' (25 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'cortex_W' (25 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'str_D1_N' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'str_D2_N' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D2
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'str_D1_E' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'str_D2_E' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D2
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'str_D1_S' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'str_D2_S' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D2
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'str_D1_W' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'str_D2_W' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D2
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'gpe_N' (10 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'gpe_arky_N' (4 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'gpi_N' (10 neurons): using Izh type IZH2007_GPI_OUTPUT
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'str_striosome_N' (8 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'gpe_E' (10 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'gpe_arky_E' (4 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'gpi_E' (10 neurons): using Izh type IZH2007_GPI_OUTPUT
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'str_striosome_E' (8 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'gpe_S' (10 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'gpe_arky_S' (4 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'gpi_S' (10 neurons): using Izh type IZH2007_GPI_OUTPUT
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'str_striosome_S' (8 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'gpe_W' (10 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'gpe_arky_W' (4 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'gpi_W' (10 neurons): using Izh type IZH2007_GPI_OUTPUT
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'str_striosome_W' (8 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'stn' (20 neurons): using Izh type IZH2007_STN_BURST
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'thal_N' (10 neurons): using Izh type IZH2007_THALAMIC_RELAY
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'motor_N' (10 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'thal_E' (10 neurons): using Izh type IZH2007_THALAMIC_RELAY
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'motor_E' (10 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'thal_S' (10 neurons): using Izh type IZH2007_THALAMIC_RELAY
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'motor_S' (10 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'thal_W' (10 neurons): using Izh type IZH2007_THALAMIC_RELAY
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'motor_W' (10 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'snc' (10 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'reward_us' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'place_sensors' (198 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'place' (200 neurons): using Izh type IZH2007_HIPPO_PYRAMIDAL
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'place_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Region 'striosome_value' (80 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1280 neurons...
+[2026-06-21 11:36:00][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-21 11:36:01][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 40830 synapses across 59 populations.
+[2026-06-21 11:36:01][INFO] SIM_BRIDGE: Initializing eligibility traces for 40830 synapses (capacity: 61245, dtype: float32)...
+[2026-06-21 11:36:01][INFO] SIM_BRIDGE: Initializing STDP state for 1280 neurons...
+[2026-06-21 11:36:01][INFO] SIM_BRIDGE: Simulation data initialized for 1280 neurons (3D). Synapses: 40830. GPU memory: 1.3GB/25.8GB (5.1%)
+[g11 seed=44] Spiking-SNc Stage B: NEURAL value critic ON (striosome_value n=80, place->value w0=0.20027300715446472); r-V subtracted via GABA_B/GIRK (E_K=-90mV, prop=0.02); critic->SNc gate = OPEN (continuous, Stage 1). Host _V_scaffold DROPPED.
+[g11 seed=44] BG circuit: 43 regions, 1280 neurons, 40830 synapses
+[g11 seed=44] N9 STEP-1 place self-org done (17s): diff-loc cos=0.189258 sparsity=0.170000 (place fields FROZEN; DETERMINISTIC)
+[g11 seed=44] N9 STEP-2 value-training done (174s): 40 pair-then-reward trials x 4 goal(s); w_near 0.200->0.617 w_far 0.198->0.407 (near/far 1.52); V(near) 50.357142857142854->31.607142857142854Hz (place fields FROZEN; V FROZEN)
+========================================================================
+[g11 seed=44] N9 STAGE-B SMOKE (value-learning @ nav scale):
+  near=(6, 6) far=(1.0, 1.0) (near_set=59 far_set=2 place cells)
+  [LEARNS-V]  w_near=0.617 w_far=0.407 (near/far 1.52; >=1.5x => True)
+  [CRITIC FIRE+GRADE] (weighted plateau, k=12) critic@near=158.61Hz critic@far=0.00Hz (>=5Hz & near>=3xfar; fire=True grade=True)
+  [GABA_B gap d=r-V]  predicted(NEAR)=0.00Hz unpredicted(FAR)=47.50Hz gap=47500000.00 (unpred>1.3x pred => True)
+  [LESION control]    zeroed 403 GABA_B synapses -> pred=52.50Hz unpred=50.00Hz gap=0.95 (collapses to ~1.0 => True)
+  STAGE-B VERDICT: LEARNS-V=True CRITIC-FIRE+GRADE=True GABA_B-gap=True lesion-collapses=True
+========================================================================
+[grid-onbridge DELTA RESULT seed=44 arm=grid] LEARNS-V=True (w_n/w_f=1.5150940409932903) critic@near=158.61111111111111Hz @far=0.0Hz grade=158611.11111111112 | V_near=313.4990481175063 V_far=42.63197097063242 V_n/f=7.353613754650567 | snc-burst-delta(gap)=47500000.0 gabab_gap=True | GRADED-V delta_vnf=7.929910336255011 (vnf_gap=True) delta_snc_graded=50000000.0 (snc_pred=0.0 snc_unpred=50.0) | GABA_B-cond delta_gabab=0.0 (gap=False) [gb_near=0.0 gb_far=0.0]
+[grid-onbridge] wrote research/findings/raw/_n5_grid_onbridge_detread_cap08_seed44.json

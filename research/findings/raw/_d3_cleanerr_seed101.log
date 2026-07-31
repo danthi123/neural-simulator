@@ -1,0 +1,7 @@
+[D3 CLEAN-ERROR DELTA] the transition learned by fixed-random clean-error feedback: one step, no BPTT, no weight transport
+  [seed 101] a_prev: clean=0.309 vs backprop=0.908 | RETURN 0.279 vs 0.901 | a_curr 0.359 vs 0.923 | emission 0.474 vs 0.697
+            lesion a_curr=0.192 | wrong-sign a_curr=0.171 | no-teaching hidden-moved=0.0 | shuffled-replay a_prev=0.138 | no-replay a_prev=0.138
+
+  AGGREGATE  a_prev: clean-error=0.309 | backprop=0.908 || RETURN 0.279 vs 0.901 || a_curr 0.359
+    feedback-lesion a_curr=0.192 | wrong-sign a_curr=0.171 | no-teaching hidden-moved=0.000000 | shuffled-replay a_prev=0.138 | no-replay a_prev=0.138 | no-weight-transport=True
+  VERDICT: PARTIAL/NEGATIVE -- the clean-error transition did not reach the reference / a control failed to collapse. NO sim/ edit.

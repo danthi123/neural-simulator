@@ -1,0 +1,7 @@
+=== hebb_max=60 pres=100 lr=10 n_ca3=500 n_assembly=12 (seed 42) ===
+  [seed 42] within=49.04 cross=6.51 RATIO=7.53x | no-train=0.98x permuted=3.91x (192s)
+  VERDICT: PARTIAL/NEGATIVE -- the ratio is not yet >=3x with clean controls; sweep gamma_on/drive/presentations. NO sim/ edit.
+=== hebb_max=120 pres=100 lr=10 n_ca3=500 n_assembly=12 (seed 42) ===
+  [seed 42] within=81.65 cross=6.47 RATIO=12.63x | no-train=0.98x permuted=5.32x (191s)
+  VERDICT: PARTIAL/NEGATIVE -- the ratio is not yet >=3x with clean controls; sweep gamma_on/drive/presentations. NO sim/ edit.
+HMAX_DONE

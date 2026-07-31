@@ -1,0 +1,14 @@
+[emergent-clusters inheritance] corpus=data/corpus/tinystories.txt stories=24574 tokens=3927359 K=256 n_clusters=10
+    discovered 10 emergent clusters (>=4 members); top by coherence:
+      cluster 3 (coh +0.131, n=20): ['ily', 'mom', 'dog', 'cat', 'boy', 'pot', 'when', 'ucy', 'man']
+      cluster 9 (coh +0.117, n=42): ['said', 'help', 'can', 'did', 'too', 'sad', 'like', 'want', 'make']
+      cluster 1 (coh +0.110, n=53): ['day', 'big', 'saw', 'there', 'named', 'wanted', 'went', 'played', 'could']
+      cluster 7 (coh +0.081, n=26): ['hey', 'fun', 'their', 'them', 'other', 'toys', 'things', 'who', 'more']
+      cluster 6 (coh +0.074, n=24): ['ball', 'back', 'see', 'away', 'something', 'what', 'scared', 'around', 'car']
+      cluster 8 (coh +0.069, n=24): ['very', 'happy', 'little', 'time', 'friends', 'nce', 'bird', 'upon', 'together']
+  [seed 42] EMERGENT-cluster held-out inherit=0.600 | deranged=0.114 | chance=0.100 | mean-cluster-coh=+0.081 (clusters=10)
+
+  AGGREGATE (1 seeds): held-out inherit=0.600 | deranged=0.114 | chance=0.100
+  beats_chance=True | beats_deranged=True
+  VERDICT: GO -- a held-out member of a FULLY-EMERGENT (clustered, NO hand-labeled probe) category INHERITS its cluster property above chance + derangement -> inheritance rides categories DISCOVERED by clustering, the last hand-designed probe removed.
+  [saved] research/findings/raw/_rc_emerclust_ts_s42.json

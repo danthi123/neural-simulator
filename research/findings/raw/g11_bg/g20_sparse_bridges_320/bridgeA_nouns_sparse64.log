@@ -1,0 +1,91 @@
+=== concept_pool_sparse_distributed (seed=42, n_concepts=64) ===
+  Shared pool: 2000 neurons
+  Pattern size: 100 per concept (sparse, random)
+  Substrate per concept: 100 neurons (vs contiguous-slice's 31)
+
+[2026-05-15 21:37:34][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-05-15 21:37:34][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-05-15 21:37:34][INFO] SIM_BRIDGE: Brain-region framework: 4 regions, 18684 total neurons, 4 pathways.
+[2026-05-15 21:37:34][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-05-15 21:37:34][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 18684 neurons...
+[2026-05-15 21:37:34][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-05-15 21:37:34][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-05-15 21:37:34][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-05-15 21:37:34][INFO] SIM_BRIDGE: Generating 3D neuron positions for 18684 neurons...
+[2026-05-15 21:37:34][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-05-15 21:37:49][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 10392398 synapses across 5 populations.
+[2026-05-15 21:37:49][INFO] SIM_BRIDGE: Initializing eligibility traces for 10392398 synapses (capacity: 15588597, dtype: float32)...
+[2026-05-15 21:37:49][INFO] SIM_BRIDGE: Initializing STDP state for 18684 neurons...
+[2026-05-15 21:37:49][INFO] SIM_BRIDGE: Simulation data initialized for 18684 neurons (3D). Synapses: 10392398. GPU memory: 2.1GB/25.8GB (8.0%)
+[sparse-pool bridge] shared_pool=2000, lang_input=8192
+[build] 15.6s
+[sparse patterns] generated 64 patterns of size 100; mean pairwise overlap (first 20): 5.3 / 100
+[sparse topographic prior] GPU-vectorized; ~364800 boost-targets, ~6931200 dampen-targets across 64 sparse patterns (upper bounds; actual = intersection with existing edges)
+[topographic prior] 0.2s
+
+[TRAIN] 64 x 400 = 25600 events
+  event 500/25600 (41s)
+  event 1000/25600 (82s)
+  event 1500/25600 (124s)
+  event 2000/25600 (163s)
+  event 2500/25600 (201s)
+  event 3000/25600 (241s)
+  event 3500/25600 (280s)
+  event 4000/25600 (318s)
+  event 4500/25600 (357s)
+  event 5000/25600 (394s)
+  event 5500/25600 (431s)
+  event 6000/25600 (470s)
+  event 6500/25600 (507s)
+  event 7000/25600 (544s)
+  event 7500/25600 (584s)
+  event 8000/25600 (623s)
+  event 8500/25600 (661s)
+  event 9000/25600 (701s)
+  event 9500/25600 (739s)
+  event 10000/25600 (775s)
+  event 10500/25600 (814s)
+  event 11000/25600 (851s)
+  event 11500/25600 (889s)
+  event 12000/25600 (930s)
+  event 12500/25600 (969s)
+  event 13000/25600 (1008s)
+  event 13500/25600 (1047s)
+  event 14000/25600 (1084s)
+  event 14500/25600 (1121s)
+  event 15000/25600 (1159s)
+  event 15500/25600 (1197s)
+  event 16000/25600 (1234s)
+  event 16500/25600 (1272s)
+  event 17000/25600 (1312s)
+  event 17500/25600 (1352s)
+  event 18000/25600 (1389s)
+  event 18500/25600 (1428s)
+  event 19000/25600 (1465s)
+  event 19500/25600 (1502s)
+  event 20000/25600 (1541s)
+  event 20500/25600 (1579s)
+  event 21000/25600 (1616s)
+  event 21500/25600 (1656s)
+  event 22000/25600 (1695s)
+  event 22500/25600 (1734s)
+  event 23000/25600 (1773s)
+  event 23500/25600 (1811s)
+  event 24000/25600 (1848s)
+  event 24500/25600 (1885s)
+  event 25000/25600 (1923s)
+  event 25500/25600 (1960s)
+[TRAIN] 1967.9s total
+
+[ENGRAM] capturing 64 tags with teacher-bias
+[ENGRAM] 19.9s
+
+[EVAL] sparse-pattern discrimination
+[EVAL] 64.3s
+
+[RESULTS] 63/64 top-1 (98.4%), 63/64 top-5 (98.4%)
+  chance top-1: 1.6%, observed/chance: 63.0x
+[2026-05-15 22:12:01][INFO] SIM_BRIDGE: Saving checkpoint to research/findings/raw/g11_bg/g20_sparse_bridges_320/bridgeA_nouns_sparse64.simstate.h5...
+[2026-05-15 22:12:03][SUCCESS] SIM_BRIDGE: Checkpoint saved successfully to research/findings/raw/g11_bg/g20_sparse_bridges_320/bridgeA_nouns_sparse64.simstate.h5
+[SAVE] -> research/findings/raw/g11_bg/g20_sparse_bridges_320/bridgeA_nouns_sparse64.simstate.h5
+[OUT] -> research/findings/raw/g11_bg/g20_sparse_bridges_320/bridgeA_nouns_sparse64.json

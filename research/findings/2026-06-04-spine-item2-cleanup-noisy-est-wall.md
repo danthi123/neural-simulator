@@ -1,6 +1,7 @@
 ---
 type: finding
 status: superseded
+superseded_by: research/findings/2026-06-05-composer-cleanup-NEF-GO.md
 date: 2026-06-04
 mechanism: cleanup
 ---

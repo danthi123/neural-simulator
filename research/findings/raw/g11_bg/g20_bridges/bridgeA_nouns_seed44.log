@@ -1,0 +1,139 @@
+=== concept_pool_demo_shared (seed=44, n_concepts=32) ===
+  Architecture: 1 shared concept pool (1600 neurons)
+  Vocab: ['apple', 'river', 'dog', 'cat', 'bird', 'fish', 'mouse', 'frog', 'tree', 'flower']...
+  Per-concept slice: 50 neurons (total: 1600 of 1600)
+
+[2026-05-15 12:36:04][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-05-15 12:36:04][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-05-15 12:36:04][INFO] SIM_BRIDGE: Brain-region framework: 4 regions, 18184 total neurons, 4 pathways.
+[2026-05-15 12:36:04][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-05-15 12:36:04][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 18184 neurons...
+[2026-05-15 12:36:04][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-05-15 12:36:04][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-05-15 12:36:04][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-05-15 12:36:04][INFO] SIM_BRIDGE: Generating 3D neuron positions for 18184 neurons...
+[2026-05-15 12:36:04][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-05-15 12:36:15][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 8182676 synapses across 5 populations.
+[2026-05-15 12:36:15][INFO] SIM_BRIDGE: Initializing eligibility traces for 8182676 synapses (capacity: 12274014, dtype: float32)...
+[2026-05-15 12:36:15][INFO] SIM_BRIDGE: Initializing STDP state for 18184 neurons...
+[2026-05-15 12:36:15][INFO] SIM_BRIDGE: Simulation data initialized for 18184 neurons (3D). Synapses: 8182676. GPU memory: 1.9GB/25.8GB (7.4%)
+[shared-pool bridge] 18184 neurons total: shared_concept_pool=1600, lang_input=8192, lang_output=8192
+[build] 12.3s
+[topographic prior] applied: 118308 boosted (10.0x), 3660342 dampened (0.1x) on 32 concept slices
+[topographic prior] 6.4s
+
+[TRAIN] 32 concepts x 400 events = 12800 total events
+  interleaved event 200/12800 (15s)
+  interleaved event 400/12800 (31s)
+  interleaved event 600/12800 (47s)
+  interleaved event 800/12800 (63s)
+  interleaved event 1000/12800 (79s)
+  interleaved event 1200/12800 (94s)
+  interleaved event 1400/12800 (110s)
+  interleaved event 1600/12800 (125s)
+  interleaved event 1800/12800 (141s)
+  interleaved event 2000/12800 (156s)
+  interleaved event 2200/12800 (172s)
+  interleaved event 2400/12800 (187s)
+  interleaved event 2600/12800 (203s)
+  interleaved event 2800/12800 (219s)
+  interleaved event 3000/12800 (242s)
+  interleaved event 3200/12800 (262s)
+  interleaved event 3400/12800 (282s)
+  interleaved event 3600/12800 (297s)
+  interleaved event 3800/12800 (313s)
+  interleaved event 4000/12800 (334s)
+  interleaved event 4200/12800 (355s)
+  interleaved event 4400/12800 (374s)
+  interleaved event 4600/12800 (390s)
+  interleaved event 4800/12800 (408s)
+  interleaved event 5000/12800 (428s)
+  interleaved event 5200/12800 (446s)
+  interleaved event 5400/12800 (463s)
+  interleaved event 5600/12800 (480s)
+  interleaved event 5800/12800 (501s)
+  interleaved event 6000/12800 (519s)
+  interleaved event 6200/12800 (540s)
+  interleaved event 6400/12800 (560s)
+  interleaved event 6600/12800 (583s)
+  interleaved event 6800/12800 (603s)
+  interleaved event 7000/12800 (622s)
+  interleaved event 7200/12800 (642s)
+  interleaved event 7400/12800 (664s)
+  interleaved event 7600/12800 (685s)
+  interleaved event 7800/12800 (704s)
+  interleaved event 8000/12800 (720s)
+  interleaved event 8200/12800 (737s)
+  interleaved event 8400/12800 (753s)
+  interleaved event 8600/12800 (770s)
+  interleaved event 8800/12800 (786s)
+  interleaved event 9000/12800 (803s)
+  interleaved event 9200/12800 (819s)
+  interleaved event 9400/12800 (835s)
+  interleaved event 9600/12800 (851s)
+  interleaved event 9800/12800 (867s)
+  interleaved event 10000/12800 (883s)
+  interleaved event 10200/12800 (899s)
+  interleaved event 10400/12800 (915s)
+  interleaved event 10600/12800 (932s)
+  interleaved event 10800/12800 (948s)
+  interleaved event 11000/12800 (964s)
+  interleaved event 11200/12800 (981s)
+  interleaved event 11400/12800 (997s)
+  interleaved event 11600/12800 (1015s)
+  interleaved event 11800/12800 (1033s)
+  interleaved event 12000/12800 (1051s)
+  interleaved event 12200/12800 (1069s)
+  interleaved event 12400/12800 (1088s)
+  interleaved event 12600/12800 (1106s)
+  interleaved event 12800/12800 (1124s)
+[TRAIN] 1124.7s total
+
+[ENGRAM] capturing 32 engram tags...
+[ENGRAM] 5.7s
+
+[EVAL-SLICE] discrimination via per-slice firing rate...
+[EVAL-SLICE] 25.5s
+
+[RESULTS] 24/32 top-1 (75.0%), 28/32 top-5 (87.5%)
+
+word         rank  tgt_rate   max_off   
+apple            1      273.0      257.0
+river            1      342.0      246.0
+dog              1      866.0      260.0
+cat              1      429.0      166.0
+bird             1      550.0      275.0
+fish             1      293.0      153.0
+mouse            1       81.0       65.0
+frog             1      518.0      276.0
+tree             1      741.0      268.0
+flower           1      363.0      283.0
+leaf             5      132.0      167.0
+fruit            1      233.0       86.0
+ball             1      424.0      152.0
+key              6      114.0      200.0
+book             1      281.0      221.0
+cup              1      195.0      142.0
+hand             1      491.0      240.0
+foot             1      328.0      178.0
+head             1      815.0      231.0
+eye              1      453.0      130.0
+person           1      424.0      208.0
+baby             3      244.0      281.0
+child           10      115.0      191.0
+friend           1      283.0      160.0
+house            1      444.0      253.0
+road             1      289.0      208.0
+garden           5      164.0      240.0
+park            28       12.0      190.0
+water            1      205.0      162.0
+fire             9       71.0      212.0
+sun              1      527.0      195.0
+moon             2      256.0      270.0
+
+  chance top-1: 3.1%, chance top-5: 15.6%
+  observed: top-1 75.0% (24.0x chance)
+[2026-05-15 12:55:37][INFO] SIM_BRIDGE: Saving checkpoint to research/findings/raw/g11_bg/g20_bridges/bridgeA_nouns_seed44.simstate.h5...
+[2026-05-15 12:55:39][SUCCESS] SIM_BRIDGE: Checkpoint saved successfully to research/findings/raw/g11_bg/g20_bridges/bridgeA_nouns_seed44.simstate.h5
+[SAVE] bridge -> research/findings/raw/g11_bg/g20_bridges/bridgeA_nouns_seed44.simstate.h5
+[OUT] -> research/findings/raw/g11_bg/g20_bridges/bridgeA_nouns_seed44.json

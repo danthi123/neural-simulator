@@ -1,0 +1,25 @@
+EMERGE-RESERVOIR-LM ON-BRIDGE BDSP: does a spiking reservoir's RECURRENT synapses LEARN via the committed enable_bdsp rule (apical = Y@delta, fixed-random feedback), fixed-vs-plastic on context-depth CE; 1-seed; arms=['fixed', 'plastic', 'apical_lesion']
+[2026-07-11 14:07:59][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-11 14:07:59][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-11 14:07:59][INFO] SIM_BRIDGE: Brain-region framework: 1 regions, 150 total neurons, 0 pathways.
+[2026-07-11 14:07:59][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-07-11 14:07:59][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 150 neurons...
+[2026-07-11 14:07:59][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-11 14:07:59][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-11 14:07:59][INFO] SIM_BRIDGE: Generating 3D neuron positions for 150 neurons...
+[2026-07-11 14:07:59][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-11 14:07:59][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2258 synapses across 1 populations.
+[2026-07-11 14:07:59][INFO] SIM_BRIDGE: Simulation data initialized for 150 neurons (3D). Synapses: 2258. GPU memory: 21.6GB/51.2GB (42.2%)
+  [seed 42] V=32 n_pool=150 n_tr=100 n_ev=40
+    WALL#1 soma_g sweep (does the directed apical move the recurrent weights + raise bursts?):
+      g= 320.0: dw_directed 0.00065 vs dw_lesion 0.00007 (directed_moves_more True) | B_apical 0.0211 vs B_rest 0.0000 (B_rises True)
+    arm         fixed: dw 0.00000 (w 6.407->6.407) | teach_B 0.0000 | spikes 0.0103 | CE 1.524 (acc 0.618)
+    arm       plastic: dw 0.03488 (w 6.407->6.426) | teach_B 0.0193 | spikes 0.0103 | CE 1.525 (acc 0.625)
+    arm apical_lesion: dw 0.00501 (w 6.407->6.402) | teach_B 0.0000 | spikes 0.0103 | CE 1.519 (acc 0.618)
+    plastic-minus-fixed      CE by depth: {'1': -0.0117, '2': -0.0073, '3': 0.0129, '4-5': 0.0171}
+    plastic-minus-lesion     CE by depth: {'1': -0.0085, '2': 0.0012, '3': 0.0163, '4-5': 0.0217}
+
+======================================================================================================================
+[onbridge-bdsp-reservoir] VERDICT: SMOKE-BOUNDARY -- the recurrent weights do NOT move meaningfully under apical drive at this scale (plastic mean|dw| 0.03487827995110656). WALL #1 (RS Izhikevich neurons barely burst -> B~0 -> (B-Pbar*E) degenerate) blocks on-bridge directed learning here. Named next levers: bdsp_apical_soma_g / bdsp_beta up, a bursting operating regime, or the regenerative apical-plateau sim/ build. Do NOT force a positive -- this is a valid documented on-bridge NEGATIVE.
+[onbridge-bdsp-reservoir] wrote research\findings\raw\_eprop\onbridge_corr_s42.json
+======================================================================================================================

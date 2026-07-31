@@ -1,0 +1,8 @@
+  [seed 42] rate_ref 0.766 | spiking[S30=0.451 S100=0.474 S300=0.451] | primary(S300) held 0.451 probe 0.934 | lesion 0.585 | wrong 0.501 | null 0.571 | oracle 0.967 | chance 0.549 | same_init True
+  [seed 43] rate_ref 0.858 | spiking[S30=0.538 S100=0.501 S300=0.588] | primary(S300) held 0.588 probe 0.950 | lesion 0.532 | wrong 0.501 | null 0.607 | oracle 0.983 | chance 0.538 | same_init True
+  [seed 44] rate_ref 0.763 | spiking[S30=0.524 S100=0.493 S300=0.499] | primary(S300) held 0.499 probe 0.954 | lesion 0.549 | wrong 0.474 | null 0.643 | oracle 1.000 | chance 0.524 | same_init True
+
+============================================================================================================
+[emerge5] VERDICT: BOUNDARY (next mechanism, not a stop) -- spiking didn't reach the bar (S300 0.513 vs ref 0.796/lesion 0.555); no-teaching-null not flat (0.607) (oracle 0.983; rate ref 0.796). The burst-estimate noise breaks depth-credit at these budgets. Per the master directive: iterate BEFORE the protected build -- a wider population (extend the sweep), the Sacramento-Senn self-predicting microcircuit arm (EMERGE-3, more gradient-faithful under noise), or fold the real EMERGE-4 transfer. Build-SAVING: do NOT start the sim/ two-compartment port yet.
+[emerge5] wrote E:\Documents\Projects\sim\research\findings\raw\_emerge5_spiking_burstprop.json
+============================================================================================================

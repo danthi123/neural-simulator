@@ -1,0 +1,28 @@
+[provenance] stamped 1 artifact(s) | run_id 1785531767-2785151
+  seeds                      [100]
+  split                      n_train=1260  scored=54 held-out-INHERITANCE rows  raw_feats=9  expanded_feats=200
+  --- STAGE 0: is the task still DEPTH-REQUIRED on each forward? ---
+  raw                        linear=0.111 l1=0.241 l2=0.981 deep_best=0.981 gap=+0.741  depth_separating=1.00 of 1
+  expanded                   linear=0.722 l1=0.778 l2=0.815 deep_best=0.815 gap=+0.037  depth_separating=0.00 of 1
+  expanded_graded            linear=0.667 l1=0.741 l2=0.778 deep_best=0.815 gap=+0.074  depth_separating=1.00 of 1
+  --- STAGE 1: the DEEP-CREDIT arms (held-out inheritance) ---
+  raw                        fixed=0.407  learned=0.352  plain_fa=0.407
+  expanded                   fixed=0.704  learned=0.722  plain_fa=0.704
+  expanded_graded            fixed=0.741  learned=0.722  plain_fa=0.741
+  expander_lesion            fixed=0.111  learned=0.111  plain_fa=0.111
+  single-hidden floor        raw=0.3333  expanded=0.7222  graded=0.7778
+  permuted-label ctrl        raw=0.1111  expanded=0.1667  graded=0.1111
+  apical-lesion ctrl         raw=0.0926  expanded=0.2778  graded=0.3148
+  oracle ceiling             raw=0.9815  expanded=0.8148  graded=0.7778
+  memctrl leak               raw=0.0000  expanded=0.0000  graded=0.0000
+  deepest alignment          raw=0.1303  expanded=0.6699  graded=0.2569
+  codon_reproducibility      1.0000
+  codon_row_variance         0.4881
+  codon_sparsity             0.4048
+  LEVER forward representation (raw -> thresholded codon), DEEP arms 0.4074074074074074 -> 0.7222222222222222  [MOVED]
+  LEVER threshold removed (thresholded -> graded codon), DEEP arms 0.7222222222222222 -> 0.7407407407407407  [MOVED]
+----------------------------------------------------------------------------------------------------
+  => ⛔ NO-GO: the expanded forward does not help the DEEP arms while the task remains depth-required. KILL CRITERION FIRES — representability was not what blocked credit; next lever is the GRADED-STATE escape, not more forward work. (read off `expanded_graded`)
+     floor=0.167 (1/k=0.111, majority=0.167) | raw=0.4074 | thresholded=0.7222 | graded=0.7407 | lesion=0.1111
+     depth_separating raw=1.00 thresholded=0.00 graded=1.00 | no_weight_transport=True | align>0=True
+  wrote research/findings/raw/gap4/deepcredit_par/s100.json

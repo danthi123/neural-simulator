@@ -1,0 +1,11 @@
+[L1 simmatch-converges check] 64 concepts x 2000 hubs; offline +0.523, Oja ref +0.481
+  [centered + settle40 + fast-lateral            ] Pearson=+0.515 ['+0.517', '+0.511', '+0.518']  offdiag=-0.012  gen=0.776  perm=-0.007
+  [centered + settle60 + faster-lateral + lr-decay] Pearson=+0.471 ['+0.470', '+0.476', '+0.469']  offdiag=-0.015  gen=0.776  perm=-0.008
+  [centered + low-lr + settle60 + lr-decay       ] Pearson=+0.449 ['+0.447', '+0.454', '+0.446']  offdiag=-0.015  gen=0.771  perm=-0.008
+
+============================================================================================
+  CAVEAT-4 VERDICT: EXACT_SIMMATCH_CONVERGES_CAVEAT_CLOSED
+  the exact Pehlevan-Chklovskii similarity-matching rule reaches +0.515 ('centered + settle40 + fast-lateral', de-saturated offdiag -0.012, gen 0.776, perm -0.007) ~= Oja (+0.481) -> the +0.29 was under-convergence (un-centered common mode + under-settled loop), NOT a rule limit -> the L1 GO holds for the owner's NAMED rule; caveat 4 closed.
+============================================================================================
+  elapsed 163s
+  [saved] research/findings/raw/_l1_simmatch_converges_check.json

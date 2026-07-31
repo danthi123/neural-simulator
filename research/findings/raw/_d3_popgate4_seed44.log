@@ -1,0 +1,9 @@
+[D3 PUSH/POP GATES] the discourse pop is a gated copy OUT of the held slot, mirroring the boundary's gated copy IN
+  [seed 44] RETURN: DELAYED=0.75 | joint-55(epoch-matched)=0.674 | joint-40=0.198 | frozen-stage=0.729 | push-only=0.455 | oracle=0.799 | scramble=0.528 | hi-lr=0.546
+            overall=0.749 (oracle 0.813) | COREF 0.658 vs 0.638 | a_prev 0.597 vs 0.559 | pop-sep=0.762
+
+  AGGREGATE (6-seed means, oracle slot->name perm so the transition is measured alone)
+    RETURN : pushpop=0.750 | push-only=0.455 | oracle-pop=0.799 | pop-marker-scramble=0.528
+    overall=0.749 vs 0.714 | COREF=0.658 vs 0.638 (must not regress) | a_prev=0.597 vs 0.559
+    pop-gate separation (mean r on RETURN - mean r elsewhere) = +0.762
+  VERDICT: GO -- the DISCOURSE POP is a GATED COPY OUT of the held slot, mirroring the boundary gated copy IN. The emergent transition failed on exactly one relational operation -- RETURN (0.46), the one op that must READ the held slot back out -- while every other op sat at 0.6-0.9. Adding a second, normally-closed gate on the SAME register, opened by the observable return marker and trained on its own faster plasticity channel, lifts RETURN to 0.75 (oracle-pop bound 0.80) and overall a_curr 0.71 -> 0.75 with NO regression on COREF. A POP-MARKER-SCRAMBLE collapses it (0.53), so the gate is reading the marker, and the pop gate SEPARATES (+0.76). One register, two gates: PUSH on an event boundary, POP on a return -- PBWM input/output gating (O'Reilly & Frank 2006) and the Grosz-Sidner attentional stack. NO sim/ edit.

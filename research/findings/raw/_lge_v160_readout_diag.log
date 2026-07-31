@@ -1,0 +1,69 @@
+[learned-graded-embedding DIVNORM READ-OUT] seeds=[42] backend=cupy cycles=2
+  toy: 20x7 (+hubs); learner=LearnedAssocGraph (n_pool=7000, pattern_size=100)
+  brain-based read-out = spreading-activation (full hub-inclusive cols) + divisive normalization ['ch', 'marginal']; orders=['interleave', 'post']; steps=[2, 3, 4, 6, 8]
+  bars: G1(Pearson>=0.5) A1(gen>=0.7) 2nd-order-margin(>=0.1)
+
+====================================================================================
+  LEARNED GRADED-EMBEDDING DIVNORM READ-OUT -- SEED 42 (cycles=2)
+====================================================================================
+  [corpus] 160 concepts (20 hubs + 140 members), 928 facts; second-order pairs=347; chance=0.250
+  [HOST CEILING (PPMI+SVD on RAW counts, labelled target)] Pearson(S,S_true)=+0.955 2nd-margin=+0.645 gen=1.000
+
+  [LEARN @ cycles=2 (de-saturated, brain-based spiking-Hebbian)]
+[2026-06-11 15:52:12][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-11 15:52:12][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-11 15:52:12][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 7300 total neurons, 3 pathways.
+[2026-06-11 15:52:12][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-11 15:52:12][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 7300 neurons...
+[2026-06-11 15:52:12][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-11 15:52:12][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-11 15:52:12][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-11 15:52:12][INFO] SIM_BRIDGE: Generating 3D neuron positions for 7300 neurons...
+[2026-06-11 15:52:12][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-11 15:53:01][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 30668722 synapses across 3 populations.
+[2026-06-11 15:53:02][INFO] SIM_BRIDGE: Simulation data initialized for 7300 neurons (3D). Synapses: 30668722. GPU memory: 3.5GB/25.8GB (13.7%)
+    learned recurrent: mean=0.192 max=44.775 nnz=29408452 (7300 neurons, 318.3s)
+    [anti-cheat] Pearson(W, raw_counts_full)=+0.556 (tracks counts >> +0.06; distinct from counts <0.99: True)
+    [STAND-IN host-method (PPMI+SVD) on learned W] Pearson=+0.699 2nd-margin=+0.570 gen=0.985
+    [RAW-DIFFUSION brain-based baseline (full-cols, no divnorm)] Pearson=+0.278 2nd-margin=+0.036 gen=0.973
+
+  --------------------------------------------------------------------------------
+  BRAIN-BASED read-out sweep: spreading-activation + divisive-normalization on learned W
+  (target host-on-W +0.70 / margin +0.57; ceiling +0.96; G1 cosine bar margin >= +0.10)
+  --------------------------------------------------------------------------------
+  [sweep: 40 variants; top 12 by 2nd-order margin]
+    ch_interleave_steps2_sigma0.0003_exp2.0_logclip0       P=+0.333 2nd=+0.402 graded=1 gen=0.970 closes=0
+    ch_interleave_steps2_sigma0.001_exp2.0_logclip0        P=+0.333 2nd=+0.402 graded=1 gen=0.970 closes=0
+    ch_interleave_steps2_sigma0.003_exp2.0_logclip0        P=+0.333 2nd=+0.402 graded=1 gen=0.970 closes=0
+    marginal_interleave_steps2_sigma0.0003_exp1.0_logclip0 P=+0.381 2nd=+0.265 graded=1 gen=0.948 closes=0
+    ch_interleave_steps3_sigma0.0003_exp2.0_logclip0       P=+0.207 2nd=+0.172 graded=0 gen=0.968 closes=0
+    ch_interleave_steps3_sigma0.001_exp2.0_logclip0        P=+0.207 2nd=+0.172 graded=0 gen=0.968 closes=0
+    ch_interleave_steps3_sigma0.003_exp2.0_logclip0        P=+0.207 2nd=+0.172 graded=0 gen=0.968 closes=0
+    marginal_post_steps2_sigma0.0003_exp1.0_logclip0       P=+0.299 2nd=+0.116 graded=0 gen=0.958 closes=0
+    marginal_interleave_steps3_sigma0.0003_exp1.0_logclip0 P=+0.294 2nd=+0.114 graded=0 gen=0.955 closes=0
+    ch_post_steps2_sigma0.0003_exp2.0_logclip0             P=+0.274 2nd=+0.089 graded=0 gen=0.983 closes=0
+    ch_post_steps2_sigma0.001_exp2.0_logclip0              P=+0.274 2nd=+0.089 graded=0 gen=0.983 closes=0
+    ch_post_steps2_sigma0.003_exp2.0_logclip0              P=+0.274 2nd=+0.089 graded=0 gen=0.983 closes=0
+
+    BEST brain-based read-out: ch_interleave_steps2_sigma0.0003_exp2.0_logclip0
+      Pearson(sim,S_true)=+0.333 (permS -0.000); 2nd-order margin=+0.402 (bar +0.10); gen=0.970 (bar 0.7)
+      gap-to-host-on-W +0.366 (margin gap +0.168); gap-to-ceiling +0.622
+      passes G1=False A1=True -> CLOSES residual=False
+    G2 on best brain-based codes: graded=0.970 A1=True | orthogonal=0.250 A2=True | permuted-prop=0.307 A3=True
+    => SEED 42 brain-based read-out BOUNDARY (does not fully clear)
+
+====================================================================================
+  DIVNORM READ-OUT SUMMARY
+====================================================================================
+  CONSENSUS VERDICT: BOUNDARY
+  seed 42: BOUNDARY | best=ch_interleave_steps2_sigma0.0003_exp2.0_logclip0
+           Pearson=+0.333 2nd-margin=+0.402 (bar +0.10) gen=0.970 closes=False
+
+  BRAIN-BASED best (mean): Pearson=+0.333 2nd-margin=+0.402 gen=0.970
+  vs raw-diffusion margin +0.036 (gen 0.973) | host-on-W margin +0.570 (Pearson +0.699) | ceiling Pearson +0.955
+  residual CLOSED (all seeds): False | gen holds 1.000-class: True | cosine margin clears +0.10: True
+  anti-cheat Pearson(W, raw_counts) mean +0.556 (<0.99 distinct)
+  Total elapsed: 319.6s
+====================================================================================
+
+  [saved] research/findings/raw/_lge_v160_readout_diag_seed42.json

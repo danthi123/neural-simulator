@@ -1,0 +1,6 @@
+[multilevel STACKED (co-occurrence super)] K=512 k_fine=20 k_coarse=5
+  [seed 102] CO-OCC super: inherit=0.262 deranged=0.224 chance=0.250 || CENTROID (NEGATIVE): inherit=0.662 deranged=0.656
+
+  AGGREGATE: CO-OCC inherit=0.262 deranged=0.224 (beats-both all-seeds=False) || CENTROID inherit=0.662 deranged=0.656
+  VERDICT: NEGATIVE -- the co-occurrence super does NOT clearly beat derangement either -> the corpus lacks a nested is-a signal even via second-order co-occurrence (the mechanism is right; the DATA is the gate).
+  [saved] research/findings/raw/_ml_stacked_s102.json

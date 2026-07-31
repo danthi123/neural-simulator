@@ -1,0 +1,21 @@
+[audit_ae 09:54:21] broader bug-audit: A+E multi-goal det, bug-OFF (fixed main), seeds [42, 43, 44]
+[audit_ae 09:54:21] waiting for GPU (demo pid 33296 / _activitydemo.json)... 0s
+[audit_ae 09:56:22] waiting for GPU (demo pid 33296 / _activitydemo.json)... 120s
+[audit_ae 09:58:23] waiting for GPU (demo pid 33296 / _activitydemo.json)... 240s
+[audit_ae 10:00:24] waiting for GPU (demo pid 33296 / _activitydemo.json)... 360s
+[audit_ae 10:01:24] GPU free -- starting audit runs
+[audit_ae 10:01:24] seed 42: launching (serial, deterministic, no emit-activity)
+[audit_ae 10:15:49] seed 42: rc=0  sum_finalQ=13.51  (14.4 min)
+[audit_ae 10:15:49] seed 43: launching (serial, deterministic, no emit-activity)
+[audit_ae 10:29:47] seed 43: rc=0  sum_finalQ=4.53  (14.0 min)
+[audit_ae 10:29:47] seed 44: launching (serial, deterministic, no emit-activity)
+[audit_ae 10:42:53] seed 44: rc=0  sum_finalQ=4.51  (13.1 min)
+[audit_ae 10:42:53] ==== AUDIT SUMMARY ====
+[audit_ae 10:42:53]   seed 42: sum_finalQ 13.51
+[audit_ae 10:42:53]   seed 43: sum_finalQ 4.53
+[audit_ae 10:42:53]   seed 44: sum_finalQ 4.51
+[audit_ae 10:42:53]   mean 7.519  std 4.238  (n=3)
+[audit_ae 10:42:53]   documented bug-ON A+E: 7.18 +/- 1.58 (cluster-eval) / 6.97 +/- 0.83 (ceiling)
+[audit_ae 10:42:53]   VERDICT: bug-OFF A+E mean 7.52 is within 1 std (1.58) of the documented bug-ON 7.18 (delta +0.34). The bug did NOT materially shift the A+E ceiling -> the cluster-stacking conclusions remain robust. (Confirm with a bug-ON worktree A/B only if exactness is needed.)
+[audit_ae 10:42:53]   wrote E:\Documents\Projects\sim\research\findings\raw\_audit_ae_summary.json
+[audit_ae 10:42:53] DONE

@@ -1,0 +1,5 @@
+[D3 EVENT QA] K=6 | QA reads the D3-composed running EVENT (agent/patient) to resolve a pronoun, then keys a SEPARATE fact store -> the situation-model x fact-store UNIFICATION
+  [seed 101] AGENT(deep)-QA=0.976 vs recency=0.363 / no-event=0.357 || PATIENT-slot-QA=0.997 | perm-store=0.976
+
+  AGGREGATE (K=6, chance 0.167): AGENT(deep)-QA=0.976 | recency=0.363 | no-event=0.357 || PATIENT-slot-QA=0.997 | perm-store=0.976
+  VERDICT: GO -- the QA READS the D3-composed running EVENT to resolve a pronoun to the coref-DEEP AGENT, then keys a SEPARATE fact store for the answer (0.98) where a RECENCY resolver FAILS (0.36) and a NO-EVENT lesion collapses (0.36); the 2nd (patient) slot is QA-able too (1.00); the answer TRACKS a permuted store (routes THROUGH stored knowledge, not a discourse shortcut) -> RANK-3: the situation model (D3 event) UNIFIED with the fact store answers a question neither alone can = the anti-RAG payoff (reason OVER a running meaning); next: multi-turn QA/connectives, the spiking QA read-out, self-supervised TEM delta. NO sim/ edit.

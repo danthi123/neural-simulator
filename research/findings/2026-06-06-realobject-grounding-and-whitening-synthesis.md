@@ -1,6 +1,9 @@
 ---
 type: finding
 status: superseded
+superseded_by:
+  - research/findings/2026-06-06-whitening-computation-spikes-CAN-compute-it.md
+  - research/findings/2026-06-06-option1-local-learning-whitening-VALIDATED-6seed.md
 date: 2026-06-06
 mechanism: whitening
 ---

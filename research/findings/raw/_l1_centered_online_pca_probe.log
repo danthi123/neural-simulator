@@ -1,0 +1,13 @@
+[L1 centered-online PCA probe] 64 concepts x 2000 hubs
+  reference: offline PPMI+PCA(k=64)=+0.523  |  cos(PPMI rows) uncentered=+0.485  centered=+0.523
+  [oja_ppmi_uncentered     ] Pearson=+0.443 ['+0.444', '+0.443', '+0.442']  offdiag-cos=+0.150  gen=0.854
+  [oja_ppmi_CENTERED       ] Pearson=+0.481 ['+0.484', '+0.476', '+0.485']  offdiag-cos=-0.016  gen=0.875
+  [oja_raw_uncentered      ] Pearson=+0.213 ['+0.212', '+0.212', '+0.215']  offdiag-cos=+0.566  gen=0.573
+  [oja_raw_CENTERED        ] Pearson=+0.183 ['+0.183', '+0.184', '+0.184']  offdiag-cos=+0.001  gen=0.484
+
+============================================================================================
+  PROBE VERDICT: COMMON_MODE_WAS_THE_WALL_L1_FLIPS
+  CENTERED online Oja-PCA reaches +0.481 = 92% of the offline optimum +0.523 (vs un-centered +0.443) -> the online plateau was the UN-REMOVED COMMON MODE, not the rule. L1 flips toward GO/BOUNDARY: a brain-plausible online PCA rule CAN extract the real structure GIVEN common-mode removal (subtractive-inhibition EMA, itself brain-based). The learned cortex path is the online rule + a subtractive-inhibition front-end.
+============================================================================================
+  elapsed 239s
+  [saved] research/findings/raw/_l1_centered_online_pca_probe.json

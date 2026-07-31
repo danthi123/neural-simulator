@@ -1,0 +1,1377 @@
+[SPOKEN relational SVO Q&A] reason (FHRR) + speak (A->W), one numpy process | K=256 verb='eat'
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Brain-region framework: 34 regions, 7680 total neurons, 112 pathways.
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: RNG initialized with seed: 102
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 7680 neurons...
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'language_input' (2048 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'motor_N' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'motor_E' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'motor_S' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'motor_W' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'language_output' (2048 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'motor_FS_N' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'motor_FS_E' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'motor_FS_S' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'motor_FS_W' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'noun_pool_APPLE' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'noun_pool_RIVER' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'noun_pool_DOG' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'noun_pool_CAT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'noun_pool_APPLE_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'noun_pool_RIVER_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'noun_pool_DOG_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'noun_pool_CAT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'verb_pool_GO' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'verb_pool_COME' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'verb_pool_STOP' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'verb_pool_LOOK' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'verb_pool_GO_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'verb_pool_COME_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'verb_pool_STOP_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'verb_pool_LOOK_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'adjective_pool_BIG' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'adjective_pool_SMALL' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'adjective_pool_HOT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'adjective_pool_COLD' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'adjective_pool_BIG_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'adjective_pool_SMALL_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'adjective_pool_HOT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Region 'adjective_pool_COLD_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Generating 3D neuron positions for 7680 neurons...
+[2026-07-08 07:28:56][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-08 07:29:05][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 4670722 synapses across 130 populations.
+[2026-07-08 07:29:05][INFO] SIM_BRIDGE: Initializing eligibility traces for 4670722 synapses (capacity: 7006083, dtype: float32)...
+[2026-07-08 07:29:05][INFO] SIM_BRIDGE: Initializing STDP state for 7680 neurons...
+[2026-07-08 07:29:05][INFO] SIM_BRIDGE: Simulation data initialized for 7680 neurons (3D). Synapses: 4670722. GPU memory: 25.0GB/51.2GB (48.8%)
+[2026-07-08 07:29:05][INFO] SIM_BRIDGE: Loading checkpoint from bridges/breadth_aw/seed42.simstate.h5...
+[2026-07-08 07:29:05][INFO] SIM_BRIDGE: Clearing simulation state and GPU memory...
+[2026-07-08 07:29:05][INFO] SIM_BRIDGE: Cleared simulation state and GPU memory.
+[2026-07-08 07:29:05][DEBUG] SIM_BRIDGE: Checkpoint: Dataset for 'cp_adex_w' not found or was empty. Using default.
+[2026-07-08 07:29:06][DEBUG] SIM_BRIDGE: Checkpoint: Dataset for 'cp_stp_u' not found or was empty. Using default.
+[2026-07-08 07:29:06][DEBUG] SIM_BRIDGE: Checkpoint: Dataset for 'cp_stp_x' not found or was empty. Using default.
+[2026-07-08 07:29:06][SUCCESS] SIM_BRIDGE: Checkpoint loaded. Sim time: 0.0ms, Step: 0, Model: IZHIKEVICH
+  STORED facts: 'the frog eats mouse', 'the cat eats fish', 'the bear eats bird'
+[2026-07-08 07:29:06][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671176 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671176 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:06][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671403 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671403 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:07][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4672819 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4672819 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:07][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670762 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670762 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:07][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671353 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671353 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:07][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671038 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671038 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:07][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671038 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671038 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:07][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671313 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671313 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:07][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671176 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671176 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:08][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671692 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671692 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:08][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670819 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670819 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:08][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670828 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670828 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:08][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670818 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670818 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:08][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670817 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670817 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:08][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670818 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670818 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:08][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670828 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670828 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:08][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670817 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670817 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:09][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670818 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670818 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:09][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670819 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670819 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:09][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670804 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670804 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:09][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670818 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670818 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:09][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670722 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670722 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:09][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670817 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670817 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:09][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670722 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670722 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:09][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670819 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670819 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:09][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670722 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670722 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:09][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670817 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670817 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:09][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670722 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670722 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:09][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670819 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670819 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:09][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670722 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670722 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:09][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670795 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670795 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:09][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670722 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670722 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:09][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670812 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670812 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:09][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670829 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670829 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:09][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670817 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670817 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:09][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670822 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670822 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:10][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670819 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670819 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:10][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670823 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670823 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:10][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670817 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670817 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:10][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670787 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670787 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:10][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670812 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670812 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:10][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670829 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670829 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:10][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670817 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670817 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:10][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670767 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670767 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:10][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670806 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670806 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:10][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670802 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670802 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:10][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670817 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670817 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:10][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670802 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670802 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:10][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670821 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670821 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:10][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670831 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670831 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:10][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670728 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670728 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:10][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670817 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670817 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:10][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670728 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670728 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:10][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670831 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670831 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:10][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670728 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670728 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:10][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670823 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670823 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:10][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670824 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670824 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:11][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670817 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670817 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:11][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670824 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670824 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:11][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670820 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670820 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:11][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670821 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670821 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:11][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670804 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670804 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:11][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670760 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670760 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:11][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670817 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670817 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:11][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670785 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670785 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:11][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670830 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670830 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:11][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670821 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670821 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:11][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670822 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670822 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:11][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670832 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670832 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:11][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670779 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670779 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:11][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670818 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670818 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:11][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670824 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670824 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:11][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670822 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670822 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:11][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670832 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670832 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:11][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670797 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670797 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:11][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670787 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670787 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:11][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670778 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670778 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:11][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670822 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670822 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:11][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670818 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670818 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:12][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670817 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670817 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:12][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670788 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670788 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:12][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670826 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670826 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:12][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670732 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670732 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:12][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670778 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670778 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:12][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670732 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670732 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:12][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670827 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670827 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:12][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670722 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670722 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:12][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670830 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670830 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:12][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670828 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670828 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:12][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670778 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670778 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:12][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670817 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670817 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:12][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670821 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670821 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:12][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670725 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670725 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:12][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670751 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670751 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:12][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670725 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670725 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:12][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670751 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670751 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:12][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670725 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670725 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:12][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670844 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670844 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:12][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670725 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670725 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:12][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670824 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670824 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:13][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670725 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670725 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:13][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670818 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670818 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:13][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670821 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670821 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:13][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670745 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670745 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:13][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670824 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670824 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:13][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670828 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670828 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:13][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670826 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670826 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:13][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670798 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670798 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:13][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670829 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670829 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:13][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670798 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670798 is out of bounds for axis 0 with size 4670722
+  ask 'what does the frog eat?' -> "duck"  -> SPOKE OBJECT ON SPIKES [expected mouse]
+[2026-07-08 07:29:13][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670767 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670767 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:13][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670798 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670798 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:13][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671238 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671238 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:13][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670798 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670798 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:13][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670964 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670964 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:13][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670956 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670956 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:13][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670964 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670964 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:13][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670780 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670780 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:13][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670944 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670944 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:13][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671307 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671307 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:13][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671856 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671856 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:14][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671250 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671250 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:14][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670722 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670722 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:14][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670943 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670943 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:14][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670780 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670780 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:14][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671044 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671044 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:14][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670770 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670770 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:14][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670764 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670764 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:14][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670770 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670770 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:14][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670770 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670770 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:14][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670791 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670791 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:14][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670923 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670923 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:14][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670744 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670744 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:14][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670758 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670758 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:14][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671403 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671403 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:14][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670807 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670807 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:14][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671071 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671071 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:15][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671071 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671071 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:15][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671305 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671305 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:15][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671382 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671382 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:15][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671615 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671615 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:15][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671043 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671043 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:15][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670728 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670728 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:15][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671615 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671615 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:15][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670728 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670728 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:15][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670728 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670728 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:15][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670790 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670790 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:15][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670790 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670790 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:15][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671057 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671057 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:16][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671008 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671008 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:16][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671008 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671008 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:17][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671376 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671376 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:17][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671376 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671376 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:17][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671269 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671269 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:17][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671269 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671269 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:17][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671521 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671521 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:17][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671233 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671233 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:17][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671007 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671007 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:17][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671278 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671278 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:17][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671521 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671521 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:18][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671035 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671035 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:18][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670982 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670982 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:18][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671233 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671233 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:18][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670811 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670811 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:18][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671263 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671263 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:18][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670931 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670931 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:18][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670742 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670742 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:18][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670931 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670931 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:18][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671263 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671263 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:18][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670933 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670933 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:18][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670775 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670775 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:18][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670933 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670933 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:18][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670775 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670775 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:18][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670816 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670816 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:18][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670755 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670755 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:18][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670933 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670933 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:18][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670755 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670755 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:18][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670811 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670811 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:18][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670755 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670755 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:18][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670945 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670945 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:18][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670931 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670931 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:19][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670930 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670930 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:19][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671368 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671368 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:19][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670945 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670945 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:19][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670915 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670915 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:19][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670722 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670722 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:19][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670954 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670954 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:19][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670722 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670722 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:19][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670769 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670769 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:19][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670722 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670722 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:19][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670989 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670989 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:19][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670722 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670722 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:19][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4671033 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4671033 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:19][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670738 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670738 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:19][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670937 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670937 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:19][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670916 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670916 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:19][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670735 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670735 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:19][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670986 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670986 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:19][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670866 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670866 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:20][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670953 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670953 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:20][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670782 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670782 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:20][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670767 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670767 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:20][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670732 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670732 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:20][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670745 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670745 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:20][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670732 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670732 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:20][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670729 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670729 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:20][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670983 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670983 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:20][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670729 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670729 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:20][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670744 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670744 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:20][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670783 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670783 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:20][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670744 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670744 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:20][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670807 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670807 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:20][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670786 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670786 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:20][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670876 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670876 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:20][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670786 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670786 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:20][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670751 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670751 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:20][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670786 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670786 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:20][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670729 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670729 is out of bounds for axis 0 with size 4670722
+[2026-07-08 07:29:20][CRITICAL] SIM_BRIDGE: Error during simulation step: index 4670786 is out of bounds for axis 0 with size 4670722
+Traceback (most recent call last):
+  File "E:\Documents\Projects\sim\sim\bridge.py", line 7080, in _run_one_simulation_step
+    gain_here = self.cp_plasticity_rate_gain[stdp_active_indices]
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+IndexError: index 4670786 is out of bounds for axis 0 with size 4670722
+  ask 'what does the cat eat?' -> "fish"  -> SPOKE OBJECT ON SPIKES [correct]
+  ask 'what does the bird eat?' -> "I don't know"  [MOAT: unknown/unstored -> I don't know]
+  ask 'what does the zzzqqx eat?' -> "I don't know"  [MOAT: unknown/unstored -> I don't know]
+
+  VERDICT: GO -- the brain ANSWERS a relational question by RECOVERING the object (FHRR unbind over its own codes) and SPEAKING it ON SPIKES (1/2 correct), and ABSTAINS on an unstored relation (moat True).

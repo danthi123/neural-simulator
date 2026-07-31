@@ -1,0 +1,92 @@
+[stream-eprop] corpus=data/corpus/tinystories_train.txt stream=2000000 V=2000 n_pool=300 block=128 batch=64 lane=28125 epochs=4 bptt_steps=4000 dev=cuda permute_stream=False
+[stream-eprop] PRE-REGISTERED EXPECTATION: e-prop is a diagonal (RTRL) truncation dropping the off-diagonal recurrent Jacobian; literature (Bellec-2020 needed DNI for long-range PTB; Murray-2019 RFLO matches BPTT only for short horizons) predicts plastic_eprop captures MOST of the SHALLOW margin and only a SMALL fraction of the DEEP margin. A shallow-only capture is an HONEST NEGATIVE on long-range -- a first-class deliverable.
+      [fixed_reservoir] epoch 1/4 last-block-CE 6.957
+      [fixed_reservoir] epoch 2/4 last-block-CE 6.888
+      [fixed_reservoir] epoch 3/4 last-block-CE 6.854
+      [fixed_reservoir] epoch 4/4 last-block-CE 6.838
+    -> fixed_reservoir: shallow_margin -3.2789  deep_margin -2.7599  agg_ce 7.1046  (67s)
+      [plastic_eprop] epoch 1/4 last-block-CE 7.001
+      [plastic_eprop] epoch 2/4 last-block-CE 6.284
+      [plastic_eprop] epoch 3/4 last-block-CE 5.805
+      [plastic_eprop] epoch 4/4 last-block-CE 5.701
+    -> plastic_eprop: shallow_margin -3.2810  deep_margin -2.1581  agg_ce 6.5786  (143s)
+      [plastic_eprop_dualtc] epoch 1/4 last-block-CE 5.894
+      [plastic_eprop_dualtc] epoch 2/4 last-block-CE 5.741
+      [plastic_eprop_dualtc] epoch 3/4 last-block-CE 5.817
+      [plastic_eprop_dualtc] epoch 4/4 last-block-CE 5.724
+    -> plastic_eprop_dualtc: shallow_margin -3.2821  deep_margin -1.6613  agg_ce 6.1374  (242s)
+      [plastic_eprop_multitc] epoch 1/4 last-block-CE 6.758
+      [plastic_eprop_multitc] epoch 2/4 last-block-CE 5.764
+      [plastic_eprop_multitc] epoch 3/4 last-block-CE 5.671
+      [plastic_eprop_multitc] epoch 4/4 last-block-CE 5.753
+    -> plastic_eprop_multitc: shallow_margin -3.2830  deep_margin -1.9769  agg_ce 6.4201  (558s)
+      [plastic_eprop_dualtc_shuffle] epoch 1/4 last-block-CE 6.986
+      [plastic_eprop_dualtc_shuffle] epoch 2/4 last-block-CE 6.946
+      [plastic_eprop_dualtc_shuffle] epoch 3/4 last-block-CE 6.974
+      [plastic_eprop_dualtc_shuffle] epoch 4/4 last-block-CE 7.040
+    -> plastic_eprop_dualtc_shuffle: shallow_margin -3.2800  deep_margin -2.7896  agg_ce 7.1309  (280s)
+      [BPTT_same_net] step 1000/4000 train-CE 5.721
+      [BPTT_same_net] step 2000/4000 train-CE 5.717
+      [BPTT_same_net] step 3000/4000 train-CE 5.763
+      [BPTT_same_net] step 4000/4000 train-CE 5.738
+    -> BPTT_fixed_win: shallow_margin -1.3951  deep_margin -1.4006  agg_ce 5.6843  (300s)
+      [BPTT_matched_readout] step 1000/4000 train-CE 6.126
+      [BPTT_matched_readout] step 2000/4000 train-CE 6.439
+      [BPTT_matched_readout] step 3000/4000 train-CE 6.232
+      [BPTT_matched_readout] step 4000/4000 train-CE 5.984
+    -> BPTT_matched_readout: shallow_margin -2.3275  deep_margin -2.1884  agg_ce 6.4633  (416s)
+      [BPTT_same_net] step 1000/4000 train-CE 4.843
+      [BPTT_same_net] step 2000/4000 train-CE 3.830
+      [BPTT_same_net] step 3000/4000 train-CE 3.543
+      [BPTT_same_net] step 4000/4000 train-CE 3.401
+    -> BPTT_same_net: shallow_margin +0.7373  deep_margin +0.9016  agg_ce 3.3984  (391s)
+
+[stream-eprop] MARGIN vs add-1 stream bigram, by within-block context depth (+ = arm better than bigram):
+                 arm         1         2         3       4-8      9-16    17-127   SHALLOW      DEEP
+     fixed_reservoir   -3.3008   -3.3114   -3.2890   -3.2660   -3.1693   -2.7599   -3.2789   -2.7599
+       plastic_eprop   -3.3026   -3.3140   -3.2912   -3.2681   -3.1668   -2.1581   -3.2810   -2.1581
+    plastic_eprop_dualtc   -3.3085   -3.3215   -3.2985   -3.2656   -3.0547   -1.6613   -3.2821   -1.6613
+    plastic_eprop_multitc   -3.3041   -3.3161   -3.2936   -3.2700   -3.1632   -1.9769   -3.2830   -1.9769
+    plastic_eprop_dualtc_shuffle   -3.3010   -3.3120   -3.2893   -3.2675   -3.1738   -2.7896   -3.2800   -2.7896
+      BPTT_fixed_win   -1.5103   -1.3437   -1.3755   -1.3862   -1.3668   -1.4006   -1.3951   -1.4006
+    BPTT_matched_readout   -3.2914   -3.1416   -2.5931   -1.9188   -1.8700   -2.1884   -2.3275   -2.1884
+       BPTT_same_net   +0.4573   +0.6771   +0.7425   +0.8043   +0.8476   +0.9016   +0.7373   +0.9016
+
+[stream-eprop] DEEP SUB-BUCKETS (finer within-block depth; the FAR end 97-127 = the true 100+-token test):
+                   arm       17-32       33-64       65-96      97-127
+       fixed_reservoir     -3.0845     -2.9718     -2.6324     -2.5051
+         plastic_eprop     -3.0211     -2.5100     -1.8357     -1.6822
+    plastic_eprop_dualtc     -2.1258     -1.6061     -1.5676     -1.5751
+    plastic_eprop_multitc     -2.9713     -2.2256     -1.6200     -1.5751
+    plastic_eprop_dualtc_shuffle     -3.0830     -2.9735     -2.6694     -2.5723
+        BPTT_fixed_win     -1.3927     -1.4236     -1.3879     -1.3941
+    BPTT_matched_readout     -2.0878     -2.2137     -2.1939     -2.2086
+         BPTT_same_net     +0.8880     +0.9083     +0.9087     +0.8943
+
+[stream-eprop] ctx1 READ-OUT-ONLY diagnostic (pos 0, h_0=0 -> W_rec has ZERO effect; ~equal iff read-out matched):
+           fixed_reservoir: ctx1 margin -3.2448
+             plastic_eprop: ctx1 margin -3.2463
+        plastic_eprop_dualtc: ctx1 margin -3.2497
+        plastic_eprop_multitc: ctx1 margin -3.2469
+        plastic_eprop_dualtc_shuffle: ctx1 margin -3.2451
+            BPTT_fixed_win: ctx1 margin -2.0780
+        BPTT_matched_readout: ctx1 margin -3.2519
+             BPTT_same_net: ctx1 margin -0.1612
+
+[stream-eprop] ANTI-CHEATS:
+    zero_signal W_rec == fixed_reservoir W_rec (byte-identical): None
+
+[stream-eprop] GATE: INCOMPLETE (need all 5 arms; have ['BPTT_fixed_win', 'BPTT_matched_readout', 'BPTT_same_net', 'fixed_reservoir', 'plastic_eprop', 'plastic_eprop_dualtc', 'plastic_eprop_dualtc_shuffle', 'plastic_eprop_multitc'])
+
+[stream-eprop] FIXED-FLOOR-RELATIVE recurrent-credit fraction (plastic gain over fixed / BPTT gain over fixed; isolates the credit RULE):
+    vs  BPTT_fixed_win: frac_clean_deep 0.4427  frac_clean_shallow -0.0011  (plastic +0.602 / bptt +1.359 deep) <- CLEANEST (identical frozen W_in)
+    vs   BPTT_same_net: frac_clean_deep 0.1644  frac_clean_shallow -0.0005  (plastic +0.602 / bptt +3.662 deep) (BPTT also learns W_in)
+
+[stream-eprop] DUAL-TIMESCALE eligibility (slow credit horizon, NO forward change):
+    vs  BPTT_fixed_win: frac_clean_deep 0.8082  (dualtc +1.099 / bptt +1.359 deep) <- CLEANEST (identical frozen W_in)
+    vs   BPTT_same_net: frac_clean_deep 0.3  (dualtc +1.099 / bptt +3.662 deep) (BPTT also learns W_in)
+    DUALTC deep lift over plain e-prop = -1.6613 - -2.1581 = +0.4968  (shallow: -3.2821 vs -3.2810)
+    DUALTC-SHUFFLE anti-cheat (permute the combined eligibility -- magnitude kept, structure broken): dualtc deep -1.6613 -> shuffled -2.7896 (COLLAPSES to <= plain (lift is genuine CREDIT, not magnitude))
+
+-> research/findings/raw/_r2_ctrl/_runA_gain1.json (2395.9s)
+STREAM_EPROP_DONE

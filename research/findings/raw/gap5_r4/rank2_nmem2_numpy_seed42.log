@@ -1,0 +1,117 @@
+[gap5-seq] n_ca3=2000 n_mem=2 assy~240 within=30 chain_fwd=24 chain_rev=0 noise=Poisson r=0.015 pA=1500 dur=10 rest_steps=1400 seeds=[42] backend=numpy
+SIM_BACKEND=numpy selected, but a CUDA GPU + CuPy ARE available -> this run is on the CPU (typically 10-50x slower). If you did not mean that, pass SIM_BACKEND=cupy explicitly: many research runners do os.environ.setdefault('SIM_BACKEND','numpy'), which silently wins unless the caller overrides it.
+/home/dant123/Projects/sim/sim/bridge.py:7407: RuntimeWarning: overflow encountered in exp
+  _dvb = _dvb + (cp.float32(_sr) / (1.0 + cp.exp(-_vhk * (self.cp_v_apical - _vhold)))) \
+/home/dant123/Projects/sim/sim/kernels.py:247: RuntimeWarning: overflow encountered in exp
+  mg_block = 1.0 / (1.0 + (mg_conc / 3.57) * cp.exp(-0.062 * v))
+/home/dant123/Projects/sim/sim/kernels.py:275: RuntimeWarning: overflow encountered in exp
+  _mg = 1.0 / (1.0 + (mg_conc / 3.57) * cp.exp(-0.062 * v))
+/home/dant123/Projects/sim/sim/kernels.py:276: RuntimeWarning: overflow encountered in exp
+  sustain = self_regen * _mg / (1.0 + cp.exp(-v_hold_k * (v - v_hold)))
+/home/dant123/Projects/sim/sim/kernels.py:284: RuntimeWarning: overflow encountered in exp
+  mg_block = 1.0 / (1.0 + (mg_conc / 3.57) * cp.exp(-0.062 * v))
+/home/dant123/Projects/sim/sim/bridge.py:7414: RuntimeWarning: overflow encountered in exp
+  _gkirb = cp.float32(_kir_gb) / (1.0 + cp.exp((self.cp_v_apical - _kvhb) / _kkb))
+/home/dant123/Projects/sim/sim/bridge.py:6675: RuntimeWarning: overflow encountered in exp
+  _gkir = cp.float32(_kir_g) / (1.0 + cp.exp((self.cp_v_apical - _vh) / _kk))
+[2026-07-22 09:13:40][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 8589934592.0 GB RAM available)
+[2026-07-22 09:13:40][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-22 09:13:40][INFO] SIM_BRIDGE: Brain-region framework: 16 regions, 4028 total neurons, 39 pathways.
+[2026-07-22 09:13:40][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-07-22 09:13:40][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 4028 neurons...
+[2026-07-22 09:13:40][INFO] SIM_BRIDGE: Region 'language_input' (384 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-22 09:13:40][INFO] SIM_BRIDGE: Region 'motor_N' (16 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-22 09:13:40][INFO] SIM_BRIDGE: Region 'motor_E' (16 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-22 09:13:40][INFO] SIM_BRIDGE: Region 'motor_S' (16 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-22 09:13:40][INFO] SIM_BRIDGE: Region 'motor_W' (16 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-22 09:13:40][INFO] SIM_BRIDGE: Region 'language_output' (384 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-22 09:13:40][INFO] SIM_BRIDGE: Region 'ec' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-22 09:13:40][INFO] SIM_BRIDGE: Region 'dg' (300 neurons): using Izh type IZH2007_HIPPO_PYRAMIDAL
+[2026-07-22 09:13:40][INFO] SIM_BRIDGE: Region 'dg_pv_basket' (60 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-22 09:13:40][INFO] SIM_BRIDGE: Region 'ca3' (2000 neurons): using Izh type IZH2007_HIPPO_PYRAMIDAL
+[2026-07-22 09:13:40][INFO] SIM_BRIDGE: Region 'ca1' (120 neurons): using Izh type IZH2007_HIPPO_PYRAMIDAL
+[2026-07-22 09:13:40][INFO] SIM_BRIDGE: Region 'motor_FS_N' (4 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-22 09:13:40][INFO] SIM_BRIDGE: Region 'motor_FS_E' (4 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-22 09:13:40][INFO] SIM_BRIDGE: Region 'motor_FS_S' (4 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-22 09:13:40][INFO] SIM_BRIDGE: Region 'motor_FS_W' (4 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-22 09:13:40][INFO] SIM_BRIDGE: Region 'ca3_pv_basket' (500 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-22 09:13:40][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-22 09:13:40][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-22 09:13:40][INFO] SIM_BRIDGE: Generating 3D neuron positions for 4028 neurons...
+[2026-07-22 09:13:40][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-22 09:13:42][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 1853342 synapses across 47 populations.
+[2026-07-22 09:13:42][INFO] SIM_BRIDGE: Initializing STP state for 1853342 synapses (capacity: 2780013)...
+[2026-07-22 09:13:42][INFO] SIM_BRIDGE: Initializing eligibility traces for 1853342 synapses (capacity: 2780013, dtype: float32)...
+[2026-07-22 09:13:42][INFO] SIM_BRIDGE: Initializing STDP state for 4028 neurons...
+[2026-07-22 09:13:42][INFO] SIM_BRIDGE: Simulation data initialized for 4028 neurons (3D). Synapses: 1853342. GPU memory: 0.0GB/9223372036.9GB (0.0%)
+  [seed 42] ENCODE w_within=142.5 w_fwd=32.30 w_rev=22.17 (adj fwd=32.30 rev=22.17) asym=+10.13 (388s)
+  [seed 42] GO Poisson r=0.015 pA=1500 dur=10: events=15 multi=3 full3=3 | FWD=1.000 REV=0.000 (full3 fwd=1.000 rev=0.000) tau=+1.000 chance=0.500 | duty=0.031 pop=0.0656 asm_active=[3, 3] frozen=True apic_latched=0 (449s)
+  [seed 42] NO-NOISE (acid): events=0 multi=0 pop=0.00001 assembly_rest=0.0001 (476s)
+[2026-07-22 09:21:35][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 8589934592.0 GB RAM available)
+[2026-07-22 09:21:35][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-22 09:21:35][INFO] SIM_BRIDGE: Brain-region framework: 16 regions, 4028 total neurons, 39 pathways.
+[2026-07-22 09:21:35][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-07-22 09:21:35][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 4028 neurons...
+[2026-07-22 09:21:35][INFO] SIM_BRIDGE: Region 'language_input' (384 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-22 09:21:35][INFO] SIM_BRIDGE: Region 'motor_N' (16 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-22 09:21:35][INFO] SIM_BRIDGE: Region 'motor_E' (16 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-22 09:21:35][INFO] SIM_BRIDGE: Region 'motor_S' (16 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-22 09:21:35][INFO] SIM_BRIDGE: Region 'motor_W' (16 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-22 09:21:35][INFO] SIM_BRIDGE: Region 'language_output' (384 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-22 09:21:35][INFO] SIM_BRIDGE: Region 'ec' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-22 09:21:35][INFO] SIM_BRIDGE: Region 'dg' (300 neurons): using Izh type IZH2007_HIPPO_PYRAMIDAL
+[2026-07-22 09:21:35][INFO] SIM_BRIDGE: Region 'dg_pv_basket' (60 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-22 09:21:35][INFO] SIM_BRIDGE: Region 'ca3' (2000 neurons): using Izh type IZH2007_HIPPO_PYRAMIDAL
+[2026-07-22 09:21:35][INFO] SIM_BRIDGE: Region 'ca1' (120 neurons): using Izh type IZH2007_HIPPO_PYRAMIDAL
+[2026-07-22 09:21:35][INFO] SIM_BRIDGE: Region 'motor_FS_N' (4 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-22 09:21:35][INFO] SIM_BRIDGE: Region 'motor_FS_E' (4 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-22 09:21:35][INFO] SIM_BRIDGE: Region 'motor_FS_S' (4 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-22 09:21:35][INFO] SIM_BRIDGE: Region 'motor_FS_W' (4 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-22 09:21:35][INFO] SIM_BRIDGE: Region 'ca3_pv_basket' (500 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-22 09:21:35][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-22 09:21:35][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-22 09:21:35][INFO] SIM_BRIDGE: Generating 3D neuron positions for 4028 neurons...
+[2026-07-22 09:21:35][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-22 09:21:37][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 1853342 synapses across 47 populations.
+[2026-07-22 09:21:37][INFO] SIM_BRIDGE: Initializing STP state for 1853342 synapses (capacity: 2780013)...
+[2026-07-22 09:21:37][INFO] SIM_BRIDGE: Initializing eligibility traces for 1853342 synapses (capacity: 2780013, dtype: float32)...
+[2026-07-22 09:21:37][INFO] SIM_BRIDGE: Initializing STDP state for 4028 neurons...
+[2026-07-22 09:21:37][INFO] SIM_BRIDGE: Simulation data initialized for 4028 neurons (3D). Synapses: 1853342. GPU memory: 0.0GB/9223372036.9GB (0.0%)
+  [seed 42] NO-ENCODE: events=0 multi=0 FWD=0.000 REV=0.000 w_within=0.50 pop=0.0476 (531s)
+[2026-07-22 09:22:31][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 8589934592.0 GB RAM available)
+[2026-07-22 09:22:31][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-22 09:22:31][INFO] SIM_BRIDGE: Brain-region framework: 16 regions, 4028 total neurons, 39 pathways.
+[2026-07-22 09:22:31][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-07-22 09:22:31][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 4028 neurons...
+[2026-07-22 09:22:31][INFO] SIM_BRIDGE: Region 'language_input' (384 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-22 09:22:31][INFO] SIM_BRIDGE: Region 'motor_N' (16 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-22 09:22:31][INFO] SIM_BRIDGE: Region 'motor_E' (16 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-22 09:22:31][INFO] SIM_BRIDGE: Region 'motor_S' (16 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-22 09:22:31][INFO] SIM_BRIDGE: Region 'motor_W' (16 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-22 09:22:31][INFO] SIM_BRIDGE: Region 'language_output' (384 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-22 09:22:31][INFO] SIM_BRIDGE: Region 'ec' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-22 09:22:31][INFO] SIM_BRIDGE: Region 'dg' (300 neurons): using Izh type IZH2007_HIPPO_PYRAMIDAL
+[2026-07-22 09:22:31][INFO] SIM_BRIDGE: Region 'dg_pv_basket' (60 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-22 09:22:31][INFO] SIM_BRIDGE: Region 'ca3' (2000 neurons): using Izh type IZH2007_HIPPO_PYRAMIDAL
+[2026-07-22 09:22:31][INFO] SIM_BRIDGE: Region 'ca1' (120 neurons): using Izh type IZH2007_HIPPO_PYRAMIDAL
+[2026-07-22 09:22:31][INFO] SIM_BRIDGE: Region 'motor_FS_N' (4 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-22 09:22:31][INFO] SIM_BRIDGE: Region 'motor_FS_E' (4 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-22 09:22:31][INFO] SIM_BRIDGE: Region 'motor_FS_S' (4 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-22 09:22:31][INFO] SIM_BRIDGE: Region 'motor_FS_W' (4 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-22 09:22:31][INFO] SIM_BRIDGE: Region 'ca3_pv_basket' (500 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-22 09:22:31][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-22 09:22:31][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-22 09:22:31][INFO] SIM_BRIDGE: Generating 3D neuron positions for 4028 neurons...
+[2026-07-22 09:22:31][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-22 09:22:33][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 1853342 synapses across 47 populations.
+[2026-07-22 09:22:33][INFO] SIM_BRIDGE: Initializing STP state for 1853342 synapses (capacity: 2780013)...
+[2026-07-22 09:22:33][INFO] SIM_BRIDGE: Initializing eligibility traces for 1853342 synapses (capacity: 2780013, dtype: float32)...
+[2026-07-22 09:22:33][INFO] SIM_BRIDGE: Initializing STDP state for 4028 neurons...
+[2026-07-22 09:22:33][INFO] SIM_BRIDGE: Simulation data initialized for 4028 neurons (3D). Synapses: 1853342. GPU memory: 0.0GB/9223372036.9GB (0.0%)
+  [seed 42] SCRAMBLE-BETWEEN (5630 edges): events=13 multi=4 FWD=0.750 REV=0.250 tau=+0.500 (969s)
+  [seed 42] => no  checks={'forward_ordered': False, 'discrete': True, 'acid_silent': True, 'frozen_ok': True, 'dendrite_reset_ok': True, 'scramble_collapses': True, 'noencode_retired': True, 'enough_multi': False, 'reverse_present': False} (969s)
+
+====================================================================================================================
+[gap5-seq] VERDICT: PARTIAL/NEGATIVE 0/1 -- a stored 3-assembly chain did NOT cleanly replay in forward order under weak non-specific background: forward_frac 1.000 vs reverse 0.000 vs SCRAMBLE 0.750 vs chance 0.500; encode asym w_fwd-w_rev +10.13; NO-NOISE assembly rest 0.0001 (acid: ~0). Per THE LAW: a stored-sequence forward-order rung is the genuine open question -- tune the chain vs within strength (chain_fwd/within_events), noise (poisson pa/rate), seq_win_steps, recall_k_thresh; a partial/negative on the traveling-wave hand-off is a real, honestly-reported result.
+[gap5-seq] wrote research/findings/raw/gap5_r4/rank2_nmem2_numpy_seed42.json
+====================================================================================================================

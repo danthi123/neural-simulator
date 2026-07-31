@@ -1,0 +1,6 @@
+[emergent-POS open mining] K=256 attrib_thresh=0.45
+  [seed 42] EMERGENT-POS: 666 facts, obj-adj-noise=0.15 (e.g. ['always wanted more', 'never found way', 'just like other', 'things like toys']) || RAW-open obj-adj=0.75 | CURATED obj-adj=0.00
+
+  AGGREGATE: obj-adjective-noise EMERGENT-POS=0.15 | RAW-open=0.75 | CURATED=0.00
+  VERDICT: PARTIAL -- the EMERGENT POS filter (closed-class + attributive-adjective, no hand noun list) reduces but does not fully clean the adjective-object noise.
+  [saved] research/findings/raw/_empos_s42.json

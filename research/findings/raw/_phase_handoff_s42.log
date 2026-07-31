@@ -1,0 +1,67 @@
+=== OPTION (a) PHASE-handoff COMPOSITION gate | grounding=cifar10 | 320 concepts | K=300 | lam(-lambdaM)=0.01 ===
+  raw feature coherence: mean 0.249, max 0.968
+  RAW grounded (floor control)                   26/39 = 66.7%   (expect ~66.7%)
+  CONCEPT-whiten (100% target control)           39/39 = 100.0%   (expect ~100%)
+  harness sanity: OK (controls bracket as expected)
+
+  [seed=42] KNOWN (rate-model learned whitening, lam=0.01): 39/39 = 100.0%  (M-ratio 0.09, blew=False)
+[2026-06-06 09:25:20][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-06 09:25:20][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-06 09:25:20][INFO] SIM_BRIDGE: Brain-region framework: 1 regions, 600 total neurons, 0 pathways.
+[2026-06-06 09:25:20][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-06 09:25:20][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 600 neurons...
+[2026-06-06 09:25:20][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-06 09:25:20][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-06 09:25:20][INFO] SIM_BRIDGE: Generating 3D neuron positions for 600 neurons...
+[2026-06-06 09:25:20][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-06 09:25:20][WARNING] SIM_BRIDGE: inject_explicit_wiring: no synapses in plan.
+[2026-06-06 09:25:20][WARNING] SIM_BRIDGE: Connection generation resulted in None. Initializing as empty matrix.
+[2026-06-06 09:25:20][INFO] SIM_BRIDGE: Simulation data initialized for 600 neurons (3D). Synapses: 0. GPU memory: 1.3GB/25.8GB (5.1%)
+[2026-06-06 09:25:20][INFO] SIM_BRIDGE: Graded LGN lateral allocated for region 'lgn': K=600 (slice [0:600]), lr=0.0, lambda=0.0, gain=0.0pA
+            RATE read-out (boundary control): 33/39 = 84.6%  (coh 0.088)  [expect ~72%]
+[2026-06-06 09:27:02][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-06 09:27:02][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-06 09:27:02][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-06 09:27:02][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 300 neurons...
+[2026-06-06 09:27:02][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-06 09:27:02][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-06 09:27:02][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-06 09:27:02][INFO] SIM_BRIDGE: Generating 3D neuron positions for 300 neurons...
+[2026-06-06 09:27:02][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-06-06 09:27:02][INFO] SIM_BRIDGE: Simulation data initialized for 300 neurons (3D). Synapses: 0. GPU memory: 1.3GB/25.8GB (5.1%)
+            PHASE read-out DIRECT (channel swap): 39/39 = 100.0%  (roundtrip_corr 1.000, spread 0.164, coh 0.043)
+[2026-06-06 09:28:51][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-06 09:28:51][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-06 09:28:51][INFO] SIM_BRIDGE: Brain-region framework: 1 regions, 600 total neurons, 0 pathways.
+[2026-06-06 09:28:51][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-06 09:28:51][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 600 neurons...
+[2026-06-06 09:28:51][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-06 09:28:51][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-06 09:28:51][INFO] SIM_BRIDGE: Generating 3D neuron positions for 600 neurons...
+[2026-06-06 09:28:51][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-06 09:28:51][WARNING] SIM_BRIDGE: inject_explicit_wiring: no synapses in plan.
+[2026-06-06 09:28:51][WARNING] SIM_BRIDGE: Connection generation resulted in None. Initializing as empty matrix.
+[2026-06-06 09:28:51][INFO] SIM_BRIDGE: Simulation data initialized for 600 neurons (3D). Synapses: 0. GPU memory: 1.3GB/25.8GB (5.1%)
+[2026-06-06 09:28:51][INFO] SIM_BRIDGE: Graded LGN lateral allocated for region 'lgn': K=600 (slice [0:600]), lr=0.0, lambda=0.0, gain=0.0pA
+[2026-06-06 09:29:13][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-06 09:29:13][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-06 09:29:13][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-06 09:29:13][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 300 neurons...
+[2026-06-06 09:29:13][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-06 09:29:13][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-06 09:29:13][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-06 09:29:13][INFO] SIM_BRIDGE: Generating 3D neuron positions for 300 neurons...
+[2026-06-06 09:29:13][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-06-06 09:29:13][INFO] SIM_BRIDGE: Simulation data initialized for 300 neurons (3D). Synapses: 0. GPU memory: 1.3GB/25.8GB (5.1%)
+            PHASE read-out THRU-MEMBRANE (strict): 34/39 = 87.2%  (latency_coh 0.072, n_silent 0/320)
+
+  wrote research/findings/raw/_phase_handoff_s42.json
+
+========================================================================================
+VERDICT (OPTION a — PHASE-handoff, 1 seed(s)):
+  RAW floor 66.7%  |  CONCEPT-whiten target 100.0%  |  rate-model KNOWN 100.0%
+  RATE read-out (the boundary's 72%): ['84.6%']  (mean 84.6%)  <- the number PHASE must beat
+  PHASE DIRECT read-out: ['100.0%']  (mean 100.0%)
+  PHASE THRU-MEMBRANE (strict): ['87.2%']  (mean 87.2%)
+  => GO - the PHASE read-out RECOVERS the known composing code (>=95% mean, >=90% min); the boundary WAS the rate read-out
+========================================================================================

@@ -1,0 +1,20 @@
+[corpus_fetch] cache hit: data\corpus\tinystories.txt (7988286 chars) -- no download
+[ceiling-probe:big1] backend=GPU corpus=tinystories degraded=False n_chars=7988286 | V=1024 hidden=[4096, 4096] T=48 epochs=30 n_train=16000 batch=64
+[gen-s] corpus: 7189457 chars
+[gen-s] trained BPE (1025 vocab) -> research\findings\raw\_ceiling_ckpt_big1\real_s42.bpe.json
+[gen-s] arch: 1025 -> 4096 -> 4096 -> 1025 LIF  backend=GPU  T=48 batch=64 lr=0.005 epochs=30 samples=16000
+[gen-s] epoch 5/30 loss=9.8411 (135.0s)
+[gen-s] epoch 10/30 loss=8.2929 (272.3s)
+[gen-s] epoch 15/30 loss=7.4487 (406.1s)
+[gen-s] epoch 20/30 loss=7.0081 (539.7s)
+[gen-s] epoch 25/30 loss=6.5265 (676.4s)
+[gen-s] epoch 30/30 loss=6.1317 (810.0s)
+[gen-s] done (810.0s) init=20.1131 final=6.1317
+
+[RESULT seed 42] params=25.2M  train_min=17.9
+  held-out perplexity = 203753.0
+  uniform-random floor (vocab 1025) = 1025  -> WORSE than random (token-soup) (0.005x)
+  transformer reference (Generator-F) = 6.1  -> gap 33402x worse
+  prompt:    'ched it too much. It hurt a lot.'
+  generated: 'would big somandsome keep happy. knew climbheafrom He in Map s. it. a "for it. "No, she tta the s. n, ard yxf." o stres, he very ifriendtree. al <|endoftext|> The se. , ounwas tring to eyou er y. onnand little y,'
+  VERDICT: TOKEN-SOUP (ceiling NEGATIVE at this scale)

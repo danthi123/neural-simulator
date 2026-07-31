@@ -1,0 +1,5 @@
+[D3 WEAK-SUPERVISION RANK 1] A5 | K-way END-STATE-only supervision (log2 K bits) vs 2-way property (1 bit); train (1, 2, 3) -> DEEPER (6, 7, 8)
+  [seed 44] STATE-endpoint DEEPER prop=0.494 (track=0.018) || PROPERTY-endpoint(=rung3) DEEPER=0.499 || CONTINUOUS=0.497 || SHUFFLE=0.506 (order-changes=0.5)
+
+  AGGREGATE (A5): STATE-endpoint DEEPER=0.494 | PROPERTY(rung3, 1-bit)=0.499 | SHUFFLE(mem-floor)=0.506 | (continuous-carry, reported)=0.497 (chance 0.5)
+  VERDICT: PARTIAL/NEGATIVE -- STATE-endpoint did not clearly beat the load-bearing controls (property/shuffle); read the gaps. NO sim/ edit.

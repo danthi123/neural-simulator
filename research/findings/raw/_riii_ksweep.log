@@ -1,0 +1,7 @@
+=== CAPSTONE k=40 hebb_max=120 cue1000 (seed 42) ===
+  [seed 42] COMPLETION held-out=0.380 (non-assembly 0.000) | LINEAR=0.000 NO-TRAIN=0.000 PERM-CUE=0.000 (216s)
+  VERDICT: GO -- a partial cue of a LEARNED sparse CA3 assembly COMPLETES the held-out members SPECIFICALLY (non-assembly silent) via the dendritic plateau, where LINEAR + NO-TRAIN + PERM-CUE all fail = EMERGENT CA3 pattern completion learned from experience on the spiking substrate. NO sim/ edit.
+=== CAPSTONE k=80 hebb_max=120 cue1000 (seed 42) ===
+  [seed 42] COMPLETION held-out=0.000 (non-assembly 0.000) | LINEAR=0.000 NO-TRAIN=0.000 PERM-CUE=0.000 (186s)
+  VERDICT: PARTIAL/NEGATIVE -- not yet a clean specific completion; sweep k_thresh / presentations / cue_drive. NO sim/ edit.
+=== CAPSTONE k=120 hebb_max=120 cue1000 (seed 42) ===

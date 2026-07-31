@@ -1,0 +1,6 @@
+[D3 SPARSE-SUPERVISION] reference-tracking K=6 | holder-track DEEPER vs supervision stride (1=per-step ... 99=end-only)
+  [seed 44] stride1=0.877 | stride2=0.227 | stride4=0.227 | stride99=0.227
+
+  AGGREGATE (K=6, chance 0.167): stride1=0.877 | stride2=0.227 | stride4=0.227 | stride99=0.227
+  READ: per-step(stride1)=0.877 (upper bound) | end-only(stride99)=0.227 (lower bound) | best sparse-anchor mid-stride=0.227
+  VERDICT: characterization -- the deeper-track degrades smoothly with supervision sparsity (per-step 0.88 -> end-only 0.23); relational composition needs fairly dense state signal (the honest characterization: unlike the LOOKUP DFA, the RELATIONAL delta needs frequent intermediate supervision / perception). NO sim/ edit.

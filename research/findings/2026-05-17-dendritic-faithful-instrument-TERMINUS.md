@@ -1,6 +1,7 @@
 ---
 type: finding
 status: superseded
+superseded_by: UNRESOLVED  # No document anywhere claims to supersede this one. The nearest candidate, 2026-05-18-dendritic-fairscale-SOUND-instrument-VOID-strongest-triangulation.md, says "triangulates with" — not "supersedes". What happened is that this doc's RECOMMENDATION ("do NOT proceed to the big run") was overridden and the run went ahead; overriding a recommendation is not the same as replacing a claim. Recorded as UNRESOLVED deliberately: a confident pointer to the wrong successor sends the next reader astray, which is worse than none.
 date: 2026-05-17
 mechanism: dendritic-credit
 ---

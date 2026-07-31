@@ -1,0 +1,6 @@
+[learn corpus facts] mine clean SVO from TinyStories -> answer | K=256 top_n=40
+  [seed 44] mined 40 facts (e.g. ['bird saw cat', 'dog saw cat', 'cat saw dog', 'cat saw bird']) | what=1.00 who=1.00 moat=1.00 | permuted-corpus overlap=0.03
+
+  AGGREGATE: what=1.00 who=1.00 moat=1.00 permuted-overlap=0.03
+  VERDICT: GO -- the brain LEARNS clean relational facts FROM THE CORPUS and answers what/who about them (moat intact); the knowledge is corpus-derived (permuted-corpus mining yields different facts, overlap 0.03).
+  [saved] research/findings/raw/_corpusfacts_s44.json

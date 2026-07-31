@@ -1,6 +1,7 @@
 ---
 type: finding
 status: superseded
+superseded_by: research/findings/2026-07-24-gap4-surpass-POWERED-NO-GO-tonic-pinned-frozen-representation-root-cause.md
 date: 2026-07-24
 mechanism: gap4-credit
 ---

@@ -1,0 +1,28 @@
+=== seed 42 (settle=0) ===
+  [CRITIC FIRE+GRADE] (weighted plateau, k=12) critic@near=0.00Hz critic@far=0.00Hz (>=5Hz & near>=3xfar; fire=False grade=False)
+  [GABA_B gap d=r-V]  predicted(NEAR)=50.00Hz unpredicted(FAR)=50.00Hz gap=1.00 (unpred>1.3x pred => False)
+  [LESION control]    zeroed 407 GABA_B synapses -> pred=50.00Hz unpred=50.00Hz gap=1.00 (collapses to ~1.0 => True)
+  STAGE-B VERDICT: LEARNS-V=False CRITIC-FIRE+GRADE=False GABA_B-gap=False lesion-collapses=True
+  [HONEST] critic does NOT fire+grade at nav scale (critic@near=0.00Hz, near/far=0.00) — design §Risk 'place-code self-org at nav scale' / 'actor-critic interaction'.
+========================================================================
+[grid-onbridge DELTA RESULT seed=42 arm=lesion] LEARNS-V=False (w_n/w_f=0.9954419840488294) critic@near=0.0Hz @far=0.0Hz grade=0.0 | V_near=0.0 V_far=0.0 V_n/f=0.0 | snc-burst-delta(gap)=1.0 gabab_gap=False | GRADED-V delta_vnf=0.0 (vnf_gap=False) delta_snc_graded=1.0 (snc_pred=50.0 snc_unpred=50.0) | GABA_B-cond delta_gabab=0.0 (gap=False) [gb_near=0.0 gb_far=0.0]
+[grid-onbridge] wrote research/findings/raw/_n5_grid_onbridge_gradeddelta_allarms_seed42.json
+=== seed 43 (settle=0) ===
+  [CRITIC FIRE+GRADE] (weighted plateau, k=12) critic@near=0.00Hz critic@far=0.00Hz (>=5Hz & near>=3xfar; fire=False grade=False)
+  [GABA_B gap d=r-V]  predicted(NEAR)=50.00Hz unpredicted(FAR)=50.00Hz gap=1.00 (unpred>1.3x pred => False)
+  [LESION control]    zeroed 402 GABA_B synapses -> pred=50.00Hz unpred=50.00Hz gap=1.00 (collapses to ~1.0 => True)
+  STAGE-B VERDICT: LEARNS-V=False CRITIC-FIRE+GRADE=False GABA_B-gap=False lesion-collapses=True
+  [HONEST] critic does NOT fire+grade at nav scale (critic@near=0.00Hz, near/far=0.00) — design §Risk 'place-code self-org at nav scale' / 'actor-critic interaction'.
+========================================================================
+[grid-onbridge DELTA RESULT seed=43 arm=lesion] LEARNS-V=False (w_n/w_f=1.007395642166623) critic@near=0.0Hz @far=0.0Hz grade=0.0 | V_near=0.0 V_far=0.0 V_n/f=0.0 | snc-burst-delta(gap)=1.0 gabab_gap=False | GRADED-V delta_vnf=0.0 (vnf_gap=False) delta_snc_graded=1.0 (snc_pred=50.0 snc_unpred=50.0) | GABA_B-cond delta_gabab=0.0 (gap=False) [gb_near=0.0 gb_far=0.0]
+[grid-onbridge] wrote research/findings/raw/_n5_grid_onbridge_gradeddelta_allarms_seed43.json
+=== seed 44 (settle=0) ===
+  [CRITIC FIRE+GRADE] (weighted plateau, k=12) critic@near=0.00Hz critic@far=0.00Hz (>=5Hz & near>=3xfar; fire=False grade=False)
+  [GABA_B gap d=r-V]  predicted(NEAR)=50.00Hz unpredicted(FAR)=50.00Hz gap=1.00 (unpred>1.3x pred => False)
+  [LESION control]    zeroed 403 GABA_B synapses -> pred=50.00Hz unpred=50.00Hz gap=1.00 (collapses to ~1.0 => True)
+  STAGE-B VERDICT: LEARNS-V=False CRITIC-FIRE+GRADE=False GABA_B-gap=False lesion-collapses=True
+  [HONEST] critic does NOT fire+grade at nav scale (critic@near=0.00Hz, near/far=0.00) — design §Risk 'place-code self-org at nav scale' / 'actor-critic interaction'.
+========================================================================
+[grid-onbridge DELTA RESULT seed=44 arm=lesion] LEARNS-V=False (w_n/w_f=1.027382944099148) critic@near=0.0Hz @far=0.0Hz grade=0.0 | V_near=0.0 V_far=0.0 V_n/f=0.0 | snc-burst-delta(gap)=1.0 gabab_gap=False | GRADED-V delta_vnf=0.0 (vnf_gap=False) delta_snc_graded=1.0 (snc_pred=50.0 snc_unpred=50.0) | GABA_B-cond delta_gabab=0.0 (gap=False) [gb_near=0.0 gb_far=0.0]
+[grid-onbridge] wrote research/findings/raw/_n5_grid_onbridge_gradeddelta_allarms_seed44.json
+=== DONE (42 43 44) ===

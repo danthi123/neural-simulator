@@ -1,0 +1,5 @@
+[D3 EVENT COMPOSITION] K=6 | the discrete-attractor maintains a running FACTORED (agent, patient) EVENT state, updated by relational ops (incl. 'it'->patient-promotes-to-agent)
+  [seed 43] FACTORED event(a,p) DEEPER=0.981 (a=0.983 p=0.998) || RECURRENCE-lesion=0.349 || LAST-2-OBJECTS(shallow-reader)=0.371 || RECENCY=0.381 || JOINT-K^2 cap=0.929
+
+  AGGREGATE (K=6, joint chance 0.028): FACTORED event(a,p) DEEPER=0.981 | LAST-2-OBJECTS(shallow)=0.371 | RECURRENCE-lesion=0.349 | RECENCY=0.381 | JOINT-K^2 cap=0.929
+  VERDICT: GO -- the discrete-attractor maintains a running FACTORED (agent, patient) EVENT state to held-out-DEEPER lengths (0.98), composing the relational role-shifts (agent-coref persistence + it-promotes) where a static LAST-2-OBJECTS reader FAILS (0.37 = the task is genuinely DEEP, NOT a 2-token lookup), RECENCY fails (0.38), and a RECURRENCE-LESION collapses (0.35 = the running state is the mechanism) -> D3 composes a running WHO-DID-WHAT-TO-WHOM MEANING across a discourse = the anti-RAG middle layer; next: learn the relational UPDATE from self-supervised observation (TEM), then wrap the composer per-slot bind + spiking port. NO sim/ edit.

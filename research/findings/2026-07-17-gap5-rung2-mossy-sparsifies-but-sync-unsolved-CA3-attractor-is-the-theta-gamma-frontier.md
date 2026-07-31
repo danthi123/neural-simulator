@@ -1,6 +1,7 @@
 ---
 type: finding
 status: superseded
+superseded_by: research/findings/2026-07-18-gap5-CA3-completion-CLOSED-intrinsic-dendritic-bistability-resolves-the-trilemma.md
 date: 2026-07-17
 mechanism: ca3-attractor-formation
 ---

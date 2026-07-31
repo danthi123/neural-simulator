@@ -1,0 +1,24 @@
+RES-LM ON-BRIDGE LEARN-W_in: does a spiking reservoir's INPUT projection W_in LEARN via the committed enable_bdsp rule (apical=k*(Y@delta), fixed-random Y), fixed-vs-learned W_in on a K-cue distal-cue delayed-decode task; 1-seed; arms=['fixed_win', 'learn_win', 'apical_lesion', 'wrong_sign']
+[2026-07-12 02:10:58][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-12 02:10:58][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-12 02:10:58][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 200 total neurons, 1 pathways.
+[2026-07-12 02:10:58][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-07-12 02:10:58][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 200 neurons...
+[2026-07-12 02:10:58][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-12 02:10:58][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-12 02:10:58][INFO] SIM_BRIDGE: Generating 3D neuron positions for 200 neurons...
+[2026-07-12 02:10:58][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-12 02:10:58][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 10993 synapses across 2 populations.
+[2026-07-12 02:10:58][INFO] SIM_BRIDGE: Simulation data initialized for 200 neurons (3D). Synapses: 10993. GPU memory: 25.7GB/51.2GB (50.1%)
+  [seed 42] V=50 n_cues=48 n_pool=100 dist=5 n_tr=96 n_ev=48 chance=0.021 | res spikes/step 0.003
+    B_rises diagnostic: B_rest 0.0000 -> B_apical 0.0163 (B_rises True)
+    arm     fixed_win: decode 0.625 | dw_win 0.000000 dw_rec 0.000000 | teach_B 0.0000
+    arm     learn_win: decode 0.625 | dw_win 0.248888 dw_rec 0.000000 | teach_B 0.0156 | input_lesion 0.021 | scramble 0.000
+    arm apical_lesion: decode 0.583 | dw_win 0.018063 dw_rec 0.000000 | teach_B 0.0000
+    arm    wrong_sign: decode 0.688 | dw_win 0.250626 dw_rec 0.000000 | teach_B 0.0155
+    no_weight_transport True | RATE ref learn 1.000 vs fixed 1.000
+
+======================================================================================================================
+[reslm-learn-win] VERDICT: BOUNDARY -- learn-minus-fixed margin 0.0 < 0.10; wrong_sign 0.6875 did not anti-learn (vs fixed 0.625). Machinery ran; margin/controls not cleared at these seeds/scale. Name the residual (operating point / lr / epochs / dist vs depth) as the next single-variable de-risk; the rate ceiling (learn 1.000 vs fixed 1.000) bounds the headroom. Do NOT force a positive.
+[reslm-learn-win] wrote research\findings\raw\_reslm_tune\_ep12_lr0.3.json
+======================================================================================================================

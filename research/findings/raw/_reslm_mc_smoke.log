@@ -1,0 +1,31 @@
+EMERGE-RESERVOIR-LM ON-BRIDGE BDSP: does a spiking reservoir's RECURRENT synapses LEARN via the committed enable_bdsp rule (apical = Y@delta, fixed-random feedback), fixed-vs-plastic on context-depth CE; 1-seed; arms=['fixed', 'plastic', 'apical_lesion', 'microcircuit']
+[2026-07-11 13:59:33][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-11 13:59:33][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-11 13:59:33][INFO] SIM_BRIDGE: Brain-region framework: 1 regions, 150 total neurons, 0 pathways.
+[2026-07-11 13:59:33][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-07-11 13:59:33][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 150 neurons...
+[2026-07-11 13:59:33][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-11 13:59:33][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-11 13:59:33][INFO] SIM_BRIDGE: Generating 3D neuron positions for 150 neurons...
+[2026-07-11 13:59:33][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-11 13:59:33][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2258 synapses across 1 populations.
+[2026-07-11 13:59:33][INFO] SIM_BRIDGE: Simulation data initialized for 150 neurons (3D). Synapses: 2258. GPU memory: 20.7GB/51.2GB (40.4%)
+  [seed 42] V=32 n_pool=150 n_tr=100 n_ev=40
+    WALL#1 soma_g sweep (does the directed apical move the recurrent weights + raise bursts?):
+      g=   0.0: dw_directed 0.00008 vs dw_lesion 0.00007 (directed_moves_more False) | B_apical 0.0000 vs B_rest 0.0000 (B_rises False)
+      g=  40.0: dw_directed 0.00020 vs dw_lesion 0.00007 (directed_moves_more True) | B_apical 0.0001 vs B_rest 0.0000 (B_rises False)
+      g=  80.0: dw_directed 0.00032 vs dw_lesion 0.00007 (directed_moves_more True) | B_apical 0.0008 vs B_rest 0.0000 (B_rises True)
+      g= 160.0: dw_directed 0.00047 vs dw_lesion 0.00007 (directed_moves_more True) | B_apical 0.0054 vs B_rest 0.0000 (B_rises True)
+    arm         fixed: dw 0.00000 (w 6.407->6.407) | teach_B 0.0000 | spikes 0.0103 | CE 1.523 (acc 0.618)
+    arm       plastic: dw 0.02682 (w 6.407->6.422) | teach_B 0.0197 | spikes 0.0103 | CE 1.520 (acc 0.625)
+    arm apical_lesion: dw 0.00376 (w 6.407->6.403) | teach_B 0.0000 | spikes 0.0103 | CE 1.524 (acc 0.618)
+    arm  microcircuit: dw 0.02175 (w 6.407->6.418) | teach_B 0.0170 | spikes 0.0103 | CE 1.511 (acc 0.625) | resid_frac 0.924
+    plastic-minus-fixed      CE by depth: {'1': -0.0071, '2': -0.0067, '3': -0.0011, '4-5': 0.0085}
+    plastic-minus-lesion     CE by depth: {'1': -0.0066, '2': -0.0102, '3': -0.0031, '4-5': 0.0073}
+    microcircuit-minus-fixed CE by depth: {'1': -0.0008, '2': -0.0007, '3': -0.0539, '4-5': 0.0}
+    microcircuit-minus-lesion CE by depth: {'1': -0.0003, '2': -0.0042, '3': -0.0559, '4-5': -0.0012}
+
+======================================================================================================================
+[onbridge-bdsp-reservoir] VERDICT: SMOKE-VALIDATED (machinery + wall-#1 handling; NOT yet a CE-win) -- the pipeline runs end-to-end on a real SimulationBridge; the recurrent synapses MOVE under the committed BDSP rule (plastic mean|dw| 0.02682 > 0.0001); the DIRECTED apical credit is ISOLABLE in the soma_g sweep -- at g=0 (decoupled) B stays 0 and directed==lesion (the documented boundary), and turning on bdsp_apical_couples_soma raises measured bursts B monotonically with g and steers the weight move up to 6.7x the apical=0 lesion (WALL #1 fix works on the reservoir substrate). Plastic differs from fixed (CE 1.520 vs 1.523). HONEST NUANCE: in the FULL arm at the default soma_g the directed component is SWAMPED by the undirected moat-leak drift (plastic |dw| 0.02682 ~ lesion 0.00376), so plastic does NOT yet BEAT fixed on the context-depth CE metric here -- a clean within-horizon CE-win needs the higher-g / sparser bursting regime + lr/epoch tuning = the controller's multi-seed sweep. NOT a faked positive. || MICROCIRCUIT: resid_frac 0.924 (1=no-cancel/0=full-cancel); micro |dw| 0.02175 vs plastic 0.02682 vs lesion 0.00376 (cancels_undirected_drift True); within-horizon(d3-6) micro-minus-fixed -0.02695 vs plastic-minus-fixed 0.0037 (micro beats fixed True). => the clean-error microcircuit DOES cancel the undirected drift AND beat fixed within-horizon (the pre-registered D1 fix works on the reservoir substrate).
+[onbridge-bdsp-reservoir] wrote research\findings\raw\_reslm_onbridge_bdsp_MC_SMOKE.json
+======================================================================================================================

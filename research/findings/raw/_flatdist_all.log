@@ -1,0 +1,14 @@
+### retrain bridgeC adj @ seed 44 (clean GPU) ###
+[SAVE] -> research/findings/raw/_flatdist_bridgeC_seed44.simstate.h5
+### flat-distinct test ###
+=== flat-distinct: capturing 192 FLAT codes (3 distinct-seed bridges, backend=cupy) ===
+  captured 64 noun (total 64)
+  captured 64 verb (total 128)
+  captured 64 adj (total 192)
+  192-wide between-concept cos: mean 0.108  max 0.604  (DISTINCT)
+    seed 42: 1.000
+    seed 43: 1.000
+    seed 44: 1.000
+RESULT: structured SVO full-3-slot QA = [1.0, 1.0, 1.0] (mean 1.000)  [hierarchical was 0.000/0.950/1.000]
+VERDICT: RESOLVES -- distinct FLAT codes compose ROBUSTLY on structured facts at ALL seeds (incl. seed 42 where hierarchical = 0.000). The flat-distinct path avoids the nesting wall. Scale to 5 bridges (320) for full robust biological composition.
+##### FLATDIST-ALL-DONE #####

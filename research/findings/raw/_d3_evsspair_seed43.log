@@ -1,0 +1,8 @@
+[D3 EVENT PAIR SELF-SUPERVISED] K=6 | what TEACHES a brain to hold a PRIOR event with no state label?
+  [seed 43] prediction-only prev=0.204 (curr=0.708) || +REPLAY prev=0.366 (curr=0.662) || severed=0.228 | single-slot=0.265 | replay-no-return=0.379 | 1-emission ceiling=0.764 | recency=0.152 (n=514)
+
+  AGGREGATE (K=6, chance 0.167, one-emission decode CEILING 0.764):
+    *** THE NEGATIVE: prediction-only prev-agent=0.204 (~chance) while curr-agent=0.708 -- forward prediction learns the CURRENT event fine and teaches the HELD one NOTHING ***
+    *** THE MECHANISM: + REPLAY (retrodict the just-ended event's last OBSERVED emission from a_prev) prev-agent=0.366 (curr 0.662) ***
+    controls: emission-severed=0.228 | single-slot=0.265 | replay-WITHOUT-discourse-pops=0.379 | recency=0.152
+  VERDICT: PARTIAL/NEGATIVE -- the replay mechanism did not clearly rescue the held slot (read REPLAY prev vs prediction-only / severed / single-slot). NO sim/ edit.

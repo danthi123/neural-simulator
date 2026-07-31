@@ -1,6 +1,7 @@
 ---
 type: finding
 status: superseded
+superseded_by: research/findings/2026-05-16-G20-sparse-160-multiseed-VALIDATED.md
 date: 2026-05-15
 mechanism: g20-sparse-ensemble
 ---

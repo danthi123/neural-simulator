@@ -1,0 +1,437 @@
+[sc-pv] arm=host seed=42 grid=32 n_steps=1800 warmup=600 scw=18.0 sigma=1.0 gain=0.0 with_conv=False
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Brain-region framework: 64 regions, 5062 total neurons, 156 pathways.
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: NMDA per-region mask: 12 regions enabled (300 neurons)
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 5062 neurons...
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'cortex_N' (25 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'cortex_E' (25 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'cortex_S' (25 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'cortex_W' (25 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'cortex_FS_N' (5 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'cortex_FS_E' (5 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'cortex_FS_S' (5 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'cortex_FS_W' (5 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'str_D1_N' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'str_D2_N' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D2
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'str_D1_E' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'str_D2_E' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D2
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'str_D1_S' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'str_D2_S' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D2
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'str_D1_W' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'str_D2_W' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D2
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'str_PV_FSI_N' (5 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'str_PV_FSI_E' (5 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'str_PV_FSI_S' (5 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'str_PV_FSI_W' (5 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'gpe_N' (10 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'gpe_arky_N' (4 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'gpi_N' (10 neurons): using Izh type IZH2007_GPI_OUTPUT
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'str_striosome_N' (8 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'gpe_E' (10 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'gpe_arky_E' (4 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'gpi_E' (10 neurons): using Izh type IZH2007_GPI_OUTPUT
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'str_striosome_E' (8 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'gpe_S' (10 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'gpe_arky_S' (4 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'gpi_S' (10 neurons): using Izh type IZH2007_GPI_OUTPUT
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'str_striosome_S' (8 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'gpe_W' (10 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'gpe_arky_W' (4 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'gpi_W' (10 neurons): using Izh type IZH2007_GPI_OUTPUT
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'str_striosome_W' (8 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'stn' (20 neurons): using Izh type IZH2007_STN_BURST
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'thal_N' (10 neurons): using Izh type IZH2007_THALAMIC_RELAY
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'motor_N' (10 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'thal_E' (10 neurons): using Izh type IZH2007_THALAMIC_RELAY
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'motor_E' (10 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'thal_S' (10 neurons): using Izh type IZH2007_THALAMIC_RELAY
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'motor_S' (10 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'thal_W' (10 neurons): using Izh type IZH2007_THALAMIC_RELAY
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'motor_W' (10 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'snc' (10 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'sel_N' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'sel_FS_N' (10 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'commit_N' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'sel_E' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'sel_FS_E' (10 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'commit_E' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'sel_S' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'sel_FS_S' (10 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'commit_S' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'sel_W' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'sel_FS_W' (10 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'commit_W' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'commit_OPN' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'retina' (2048 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'cortex_v1_simple' (1024 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'cortex_v1_complex' (512 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'cortex_v2' (256 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Region 'cortex_it' (64 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Generating 3D neuron positions for 5062 neurons...
+[2026-06-20 15:15:43][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-20 15:15:44][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 169775 synapses across 166 populations.
+[2026-06-20 15:15:44][INFO] SIM_BRIDGE: Initializing eligibility traces for 169775 synapses (capacity: 254662, dtype: float32)...
+[2026-06-20 15:15:44][INFO] SIM_BRIDGE: Initializing STDP state for 5062 neurons...
+[2026-06-20 15:15:44][INFO] SIM_BRIDGE: Simulation data initialized for 5062 neurons (3D). Synapses: 169775. GPU memory: 1.3GB/25.8GB (5.1%)
+[g11 seed=42] Cluster K v2: applied 70592 Gabor weights to retina -> cortex_v1_simple
+[g11 seed=42] Cluster K v2: visual_cortex_action gate frozen until warmup
+[g11 seed=42] BG circuit: 64 regions, 5062 neurons, 236876 synapses
+[g11 seed=42] step 100/1800  pos=(30,30)  goal=(30,30)  recent_dist=17.32  action=N  reward=+1.00  actions= 49N/ 30E/ 20S/  1W
+[PROGRESS] {"kind": "step", "current": 100, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [30, 30], "goal": [30, 30], "recent_dist": 17.32, "action": "N", "reward": 1.0}
+[g11 seed=42] step 200/1800  pos=(30,30)  goal=(30,30)  recent_dist=0.68  action=W  reward=+1.00  actions= 21N/ 29E/ 21S/ 29W
+[PROGRESS] {"kind": "step", "current": 200, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [30, 30], "goal": [30, 30], "recent_dist": 0.68, "action": "W", "reward": 1.0}
+[g11 seed=42] step 300/1800  pos=(30,30)  goal=(30,30)  recent_dist=0.50  action=W  reward=+1.00  actions=  0N/ 50E/  0S/ 50W
+[PROGRESS] {"kind": "step", "current": 300, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [30, 30], "goal": [30, 30], "recent_dist": 0.5, "action": "W", "reward": 1.0}
+[g11 seed=42] step 400/1800  pos=(30,30)  goal=(30,30)  recent_dist=0.50  action=W  reward=+1.00  actions=  0N/ 50E/  0S/ 50W
+[PROGRESS] {"kind": "step", "current": 400, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [30, 30], "goal": [30, 30], "recent_dist": 0.5, "action": "W", "reward": 1.0}
+[g11 seed=42] step 450: GOAL CHANGED to (1, 30)
+[g11 seed=42] step 500/1800  pos=(2,30)  goal=(1,30)  recent_dist=5.08  action=E  reward=-1.00  actions=  2N/ 34E/  2S/ 62W
+[PROGRESS] {"kind": "step", "current": 500, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [2, 30], "goal": [1, 30], "recent_dist": 5.08, "action": "E", "reward": -1.0}
+[g11 seed=42] step 600/1800  pos=(2,30)  goal=(1,30)  recent_dist=0.50  action=E  reward=-1.00  actions=  0N/ 50E/  0S/ 50W
+[PROGRESS] {"kind": "step", "current": 600, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [2, 30], "goal": [1, 30], "recent_dist": 0.5, "action": "E", "reward": -1.0}
+[g11 seed=42] step 600: Cluster K v2 visual_cortex_action gate OPENED (warmup=600)
+[g11 seed=42] step 700/1800  pos=(2,30)  goal=(1,30)  recent_dist=0.64  action=E  reward=-1.00  actions=  4N/ 46E/  4S/ 46W
+[PROGRESS] {"kind": "step", "current": 700, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [2, 30], "goal": [1, 30], "recent_dist": 0.64, "action": "E", "reward": -1.0}
+[g11 seed=42] step 800/1800  pos=(2,30)  goal=(1,30)  recent_dist=0.50  action=E  reward=-1.00  actions=  0N/ 50E/  0S/ 50W
+[PROGRESS] {"kind": "step", "current": 800, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [2, 30], "goal": [1, 30], "recent_dist": 0.5, "action": "E", "reward": -1.0}
+[g11 seed=42] step 900/1800  pos=(0,30)  goal=(1,30)  recent_dist=0.60  action=W  reward=-1.00  actions=  3N/ 46E/  3S/ 48W
+[PROGRESS] {"kind": "step", "current": 900, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [0, 30], "goal": [1, 30], "recent_dist": 0.6, "action": "W", "reward": -1.0}
+[g11 seed=42] step 900: GOAL CHANGED to (1, 1)
+[g11 seed=42] step 1000/1800  pos=(1,1)  goal=(1,1)  recent_dist=4.76  action=W  reward=+1.00  actions=  2N/ 34E/ 31S/ 33W
+[PROGRESS] {"kind": "step", "current": 1000, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [1, 1], "goal": [1, 1], "recent_dist": 4.76, "action": "W", "reward": 1.0}
+[g11 seed=42] step 1100/1800  pos=(1,1)  goal=(1,1)  recent_dist=0.56  action=W  reward=+1.00  actions=  2N/ 48E/  2S/ 48W
+[PROGRESS] {"kind": "step", "current": 1100, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [1, 1], "goal": [1, 1], "recent_dist": 0.56, "action": "W", "reward": 1.0}
+[g11 seed=42] step 1200/1800  pos=(1,1)  goal=(1,1)  recent_dist=0.50  action=W  reward=+1.00  actions=  0N/ 50E/  0S/ 50W
+[PROGRESS] {"kind": "step", "current": 1200, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [1, 1], "goal": [1, 1], "recent_dist": 0.5, "action": "W", "reward": 1.0}
+[g11 seed=42] step 1300/1800  pos=(1,1)  goal=(1,1)  recent_dist=0.50  action=W  reward=+1.00  actions=  0N/ 50E/  0S/ 50W
+[PROGRESS] {"kind": "step", "current": 1300, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [1, 1], "goal": [1, 1], "recent_dist": 0.5, "action": "W", "reward": 1.0}
+[g11 seed=42] step 1350: GOAL CHANGED to (30, 1)
+[g11 seed=42] step 1400/1800  pos=(31,1)  goal=(30,1)  recent_dist=4.42  action=E  reward=-1.00  actions=  0N/ 65E/  0S/ 35W
+[PROGRESS] {"kind": "step", "current": 1400, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [31, 1], "goal": [30, 1], "recent_dist": 4.42, "action": "E", "reward": -1.0}
+[g11 seed=42] step 1500/1800  pos=(30,2)  goal=(30,1)  recent_dist=0.68  action=N  reward=-1.00  actions=  9N/ 41E/  8S/ 42W
+[PROGRESS] {"kind": "step", "current": 1500, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [30, 2], "goal": [30, 1], "recent_dist": 0.68, "action": "N", "reward": -1.0}
+[g11 seed=42] step 1600/1800  pos=(30,0)  goal=(30,1)  recent_dist=0.54  action=S  reward=-1.00  actions= 48N/  1E/ 50S/  1W
+[PROGRESS] {"kind": "step", "current": 1600, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [30, 0], "goal": [30, 1], "recent_dist": 0.54, "action": "S", "reward": -1.0}
+[g11 seed=42] step 1700/1800  pos=(31,1)  goal=(30,1)  recent_dist=0.60  action=S  reward=+1.00  actions= 48N/  3E/ 47S/  2W
+[PROGRESS] {"kind": "step", "current": 1700, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [31, 1], "goal": [30, 1], "recent_dist": 0.6, "action": "S", "reward": 1.0}
+[g11 seed=42] step 1800/1800  pos=(29,1)  goal=(30,1)  recent_dist=0.54  action=W  reward=-1.00  actions=  1N/ 48E/  1S/ 50W
+[PROGRESS] {"kind": "step", "current": 1800, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [29, 1], "goal": [30, 1], "recent_dist": 0.54, "action": "W", "reward": -1.0}
+[g11 seed=42] NAV-GATE(a) stdp_w_max=400.0  sum_finalQ=2.2832  mean_distance_overall=2.1900  actor_max_cortex_to_D1_weight=308.9742431640625
+
+[g11 seed=42] DONE in 570s. Phase stats:
+  phase 0 goal=[30, 30] meanD=4.30 finalQ=0.57 actions=[72, 182, 43, 153]
+  phase 1 goal=[1, 30] meanD=1.55 finalQ=0.59 actions=[7, 203, 7, 233]
+  phase 2 goal=[1, 1] meanD=1.46 finalQ=0.50 actions=[4, 207, 33, 206]
+  phase 3 goal=[30, 1] meanD=1.45 finalQ=0.63 actions=[106, 133, 106, 105]
+[sc-pv] arm=host: phase0_finalQ=0.566 post_change_finalQ=['0.593', '0.496', '0.628'] (sum 1.717) gate=2.2831858407079646 late_sustain=1.000
+[sc-pv] arm=host per-phase dominant cardinal: ['E', 'W', 'E', 'E']
+[sc-pv] arm=host per-phase action frac: [{'N': 0.16, 'E': 0.404, 'S': 0.096, 'W': 0.34}, {'N': 0.016, 'E': 0.451, 'S': 0.016, 'W': 0.518}, {'N': 0.009, 'E': 0.46, 'S': 0.073, 'W': 0.458}, {'N': 0.236, 'E': 0.296, 'S': 0.236, 'W': 0.233}]
+[sc-pv] arm=sc_popvector seed=42 grid=32 n_steps=1800 warmup=600 scw=18.0 sigma=1.0 gain=0.0 with_conv=False
+[g11] WARN: --spiking-reward-us WITHOUT --perceived-approach-reward -> the US rides on the COORD-based reward (not coord-free). Add --perceived-approach-reward for the fully-biologized (coord-free) reward chain.
+[g11 seed=42] Spiking-SNc Stage A: dopamine modulator = from_region_firing_signed over ['snc'] (tonic=220.0pA, k_r=400.0, k_v=400.0); RPE is the SNc FIRING. V = host reward_ema (Stage-A scaffold).
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Brain-region framework: 71 regions, 7722 total neurons, 162 pathways.
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: NMDA per-region mask: 12 regions enabled (300 neurons)
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Input-divisive-norm per-region mask: 4 regions enabled (100 neurons)
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 7722 neurons...
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'cortex_N' (25 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'cortex_E' (25 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'cortex_S' (25 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'cortex_W' (25 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'cortex_FS_N' (5 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'cortex_FS_E' (5 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'cortex_FS_S' (5 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'cortex_FS_W' (5 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'str_D1_N' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'str_D2_N' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D2
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'str_D1_E' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'str_D2_E' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D2
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'str_D1_S' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'str_D2_S' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D2
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'str_D1_W' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'str_D2_W' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D2
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'str_PV_FSI_N' (5 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'str_PV_FSI_E' (5 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'str_PV_FSI_S' (5 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'str_PV_FSI_W' (5 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'gpe_N' (10 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'gpe_arky_N' (4 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'gpi_N' (10 neurons): using Izh type IZH2007_GPI_OUTPUT
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'str_striosome_N' (8 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'gpe_E' (10 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'gpe_arky_E' (4 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'gpi_E' (10 neurons): using Izh type IZH2007_GPI_OUTPUT
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'str_striosome_E' (8 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'gpe_S' (10 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'gpe_arky_S' (4 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'gpi_S' (10 neurons): using Izh type IZH2007_GPI_OUTPUT
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'str_striosome_S' (8 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'gpe_W' (10 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'gpe_arky_W' (4 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'gpi_W' (10 neurons): using Izh type IZH2007_GPI_OUTPUT
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'str_striosome_W' (8 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'stn' (20 neurons): using Izh type IZH2007_STN_BURST
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'thal_N' (10 neurons): using Izh type IZH2007_THALAMIC_RELAY
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'motor_N' (10 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'thal_E' (10 neurons): using Izh type IZH2007_THALAMIC_RELAY
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'motor_E' (10 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'thal_S' (10 neurons): using Izh type IZH2007_THALAMIC_RELAY
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'motor_S' (10 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'thal_W' (10 neurons): using Izh type IZH2007_THALAMIC_RELAY
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'motor_W' (10 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'snc' (10 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'reward_us' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'vs_place_context' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'striosome_value' (80 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'sel_N' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'sel_FS_N' (10 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'commit_N' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'sel_E' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'sel_FS_E' (10 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'commit_E' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'sel_S' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'sel_FS_S' (10 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'commit_S' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'sel_W' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'sel_FS_W' (10 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'commit_W' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'commit_OPN' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'retina' (2048 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'cortex_v1_simple' (1024 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'cortex_v1_complex' (512 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'cortex_v2' (256 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'cortex_it' (64 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'sc_retina' (2048 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'sc_map' (256 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'sc_fs' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Region 'sc_rostral' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Generating 3D neuron positions for 7722 neurons...
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 182986 synapses across 172 populations.
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Initializing eligibility traces for 182986 synapses (capacity: 274479, dtype: float32)...
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Initializing STDP state for 7722 neurons...
+[2026-06-20 15:25:14][INFO] SIM_BRIDGE: Simulation data initialized for 7722 neurons (3D). Synapses: 182986. GPU memory: 1.4GB/25.8GB (5.4%)
+[g11 seed=42] Cluster K v2: applied 70592 Gabor weights to retina -> cortex_v1_simple
+[g11 seed=42] Cluster K v2: visual_cortex_action gate frozen until warmup
+[g11] spiking SC: installed 21828 synapses (retina->sc_map 16x16 + recurrent + sc_map->cortex_NESW + sc_map->sc_rostral (N5))
+[g11 seed=42] #6 SC read-out: POPULATION-VECTOR (cosine) + cortex_X divisive-norm (sigma=1.0, gain=0.0)
+[g11 seed=42] N5 reward: boosted sc_rostral->reward_us to 40.0 (960 synapses)
+[g11 seed=42] Spiking-SNc Stage B: NEURAL value critic ON (striosome_value n=80, vs_place_context->value w0=0.20115986466407776); r-V subtracted via GABA_B/GIRK (E_K=-90mV, prop=0.02); critic->SNc gate = OPEN (continuous, Stage 1). Host _V_scaffold DROPPED.
+[g11 seed=42] BG circuit: 71 regions, 7722 neurons, 272301 synapses
+[g11 seed=42] step 100/1800  pos=(16,29)  goal=(30,30)  recent_dist=30.07  action=W  reward=-1.00  actions= 40N/ 31E/ 12S/ 17W
+[PROGRESS] {"kind": "step", "current": 100, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [16, 29], "goal": [30, 30], "recent_dist": 30.07, "action": "W", "reward": -1.0}
+[g11 seed=42] step 200/1800  pos=(11,31)  goal=(30,30)  recent_dist=17.43  action=W  reward=-1.00  actions= 51N/ 16E/ 12S/ 21W
+[PROGRESS] {"kind": "step", "current": 200, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [11, 31], "goal": [30, 30], "recent_dist": 17.43, "action": "W", "reward": -1.0}
+[g11 seed=42] step 300/1800  pos=(9,31)  goal=(30,30)  recent_dist=17.41  action=W  reward=-1.00  actions= 50N/ 17E/ 14S/ 19W
+[PROGRESS] {"kind": "step", "current": 300, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [9, 31], "goal": [30, 30], "recent_dist": 17.41, "action": "W", "reward": -1.0}
+[g11 seed=42] step 400/1800  pos=(5,30)  goal=(30,30)  recent_dist=24.44  action=S  reward=+1.00  actions= 48N/ 18E/ 12S/ 22W
+[PROGRESS] {"kind": "step", "current": 400, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [5, 30], "goal": [30, 30], "recent_dist": 24.44, "action": "S", "reward": 1.0}
+[g11 seed=42] step 450: GOAL CHANGED to (1, 30)
+[g11 seed=42] step 500/1800  pos=(12,31)  goal=(1,30)  recent_dist=17.47  action=N  reward=+0.00  actions= 49N/ 25E/  8S/ 18W
+[PROGRESS] {"kind": "step", "current": 500, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [12, 31], "goal": [1, 30], "recent_dist": 17.47, "action": "N", "reward": 0.0}
+[g11 seed=42] step 600/1800  pos=(11,30)  goal=(1,30)  recent_dist=11.31  action=S  reward=+1.00  actions= 47N/ 22E/  8S/ 23W
+[PROGRESS] {"kind": "step", "current": 600, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [11, 30], "goal": [1, 30], "recent_dist": 11.31, "action": "S", "reward": 1.0}
+[g11 seed=42] step 600: Cluster K v2 visual_cortex_action gate OPENED (warmup=600)
+[g11 seed=42] step 700/1800  pos=(28,29)  goal=(1,30)  recent_dist=22.19  action=S  reward=-1.00  actions= 47N/ 31E/  8S/ 14W
+[PROGRESS] {"kind": "step", "current": 700, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [28, 29], "goal": [1, 30], "recent_dist": 22.19, "action": "S", "reward": -1.0}
+[g11 seed=42] step 800/1800  pos=(31,31)  goal=(1,30)  recent_dist=29.68  action=E  reward=-1.00  actions= 47N/ 27E/ 13S/ 13W
+[PROGRESS] {"kind": "step", "current": 800, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [31, 31], "goal": [1, 30], "recent_dist": 29.68, "action": "E", "reward": -1.0}
+[g11 seed=42] step 900/1800  pos=(27,30)  goal=(1,30)  recent_dist=29.48  action=S  reward=+1.00  actions= 49N/ 20E/ 13S/ 18W
+[PROGRESS] {"kind": "step", "current": 900, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [27, 30], "goal": [1, 30], "recent_dist": 29.48, "action": "S", "reward": 1.0}
+[g11 seed=42] step 900: GOAL CHANGED to (1, 1)
+[g11 seed=42] step 1000/1800  pos=(27,28)  goal=(1,1)  recent_dist=53.34  action=S  reward=+1.00  actions= 48N/ 20E/ 12S/ 20W
+[PROGRESS] {"kind": "step", "current": 1000, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [27, 28], "goal": [1, 1], "recent_dist": 53.34, "action": "S", "reward": 1.0}
+[g11 seed=42] step 1100/1800  pos=(21,31)  goal=(1,1)  recent_dist=51.25  action=N  reward=+0.00  actions= 52N/ 15E/ 12S/ 21W
+[PROGRESS] {"kind": "step", "current": 1100, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [21, 31], "goal": [1, 1], "recent_dist": 51.25, "action": "N", "reward": 0.0}
+[g11 seed=42] step 1200/1800  pos=(7,31)  goal=(1,1)  recent_dist=43.13  action=N  reward=+0.00  actions= 50N/ 13E/ 10S/ 27W
+[PROGRESS] {"kind": "step", "current": 1200, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [7, 31], "goal": [1, 1], "recent_dist": 43.13, "action": "N", "reward": 0.0}
+[g11 seed=42] step 1300/1800  pos=(18,31)  goal=(1,1)  recent_dist=41.17  action=E  reward=-1.00  actions= 45N/ 28E/ 10S/ 17W
+[PROGRESS] {"kind": "step", "current": 1300, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [18, 31], "goal": [1, 1], "recent_dist": 41.17, "action": "E", "reward": -1.0}
+[g11 seed=42] step 1350: GOAL CHANGED to (30, 1)
+[g11 seed=42] step 1400/1800  pos=(15,31)  goal=(30,1)  recent_dist=45.89  action=E  reward=+1.00  actions= 53N/ 16E/ 12S/ 19W
+[PROGRESS] {"kind": "step", "current": 1400, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [15, 31], "goal": [30, 1], "recent_dist": 45.89, "action": "E", "reward": 1.0}
+[g11 seed=42] step 1500/1800  pos=(17,31)  goal=(30,1)  recent_dist=45.82  action=W  reward=-1.00  actions= 49N/ 20E/ 13S/ 18W
+[PROGRESS] {"kind": "step", "current": 1500, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [17, 31], "goal": [30, 1], "recent_dist": 45.82, "action": "W", "reward": -1.0}
+[g11 seed=42] step 1600/1800  pos=(17,31)  goal=(30,1)  recent_dist=43.78  action=N  reward=+0.00  actions= 49N/ 18E/ 15S/ 18W
+[PROGRESS] {"kind": "step", "current": 1600, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [17, 31], "goal": [30, 1], "recent_dist": 43.78, "action": "N", "reward": 0.0}
+[g11 seed=42] step 1700/1800  pos=(15,31)  goal=(30,1)  recent_dist=41.09  action=N  reward=+0.00  actions= 37N/ 25E/ 11S/ 27W
+[PROGRESS] {"kind": "step", "current": 1700, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [15, 31], "goal": [30, 1], "recent_dist": 41.09, "action": "N", "reward": 0.0}
+[g11 seed=42] step 1800/1800  pos=(12,30)  goal=(30,1)  recent_dist=45.61  action=S  reward=+1.00  actions= 55N/ 16E/ 10S/ 19W
+[PROGRESS] {"kind": "step", "current": 1800, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [12, 30], "goal": [30, 1], "recent_dist": 45.61, "action": "S", "reward": 1.0}
+[g11 seed=42] NAV-GATE(a) stdp_w_max=400.0  sum_finalQ=146.0885  mean_distance_overall=33.9200  actor_max_cortex_to_D1_weight=205.93601989746094
+
+[g11 seed=42] DONE in 952s. Phase stats:
+  phase 0 goal=[30, 30] meanD=22.60 finalQ=24.83 actions=[213, 96, 53, 88]
+  phase 1 goal=[1, 30] meanD=21.73 finalQ=29.57 actions=[215, 111, 47, 77]
+  phase 2 goal=[1, 1] meanD=47.44 finalQ=46.08 actions=[216, 88, 50, 96]
+  phase 3 goal=[30, 1] meanD=43.91 finalQ=45.61 actions=[222, 83, 55, 90]
+[sc-pv] arm=sc_popvector: phase0_finalQ=24.832 post_change_finalQ=['29.566', '46.080', '45.611'] (sum 121.257) gate=146.08849557522123 late_sustain=0.433
+[sc-pv] arm=sc_popvector per-phase dominant cardinal: ['N', 'N', 'N', 'N']
+[sc-pv] arm=sc_popvector per-phase action frac: [{'N': 0.473, 'E': 0.213, 'S': 0.118, 'W': 0.196}, {'N': 0.478, 'E': 0.247, 'S': 0.104, 'W': 0.171}, {'N': 0.48, 'E': 0.196, 'S': 0.111, 'W': 0.213}, {'N': 0.493, 'E': 0.184, 'S': 0.122, 'W': 0.2}]
+[sc-pv] arm=sc_popvector_scr seed=42 grid=32 n_steps=1800 warmup=600 scw=18.0 sigma=1.0 gain=0.0 with_conv=False
+[g11] WARN: --spiking-reward-us WITHOUT --perceived-approach-reward -> the US rides on the COORD-based reward (not coord-free). Add --perceived-approach-reward for the fully-biologized (coord-free) reward chain.
+[g11 seed=42] Spiking-SNc Stage A: dopamine modulator = from_region_firing_signed over ['snc'] (tonic=220.0pA, k_r=400.0, k_v=400.0); RPE is the SNc FIRING. V = host reward_ema (Stage-A scaffold).
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Brain-region framework: 71 regions, 7722 total neurons, 162 pathways.
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: NMDA per-region mask: 12 regions enabled (300 neurons)
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Input-divisive-norm per-region mask: 4 regions enabled (100 neurons)
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 7722 neurons...
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'cortex_N' (25 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'cortex_E' (25 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'cortex_S' (25 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'cortex_W' (25 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'cortex_FS_N' (5 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'cortex_FS_E' (5 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'cortex_FS_S' (5 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'cortex_FS_W' (5 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'str_D1_N' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'str_D2_N' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D2
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'str_D1_E' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'str_D2_E' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D2
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'str_D1_S' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'str_D2_S' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D2
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'str_D1_W' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'str_D2_W' (50 neurons): using Izh type IZH2007_STRIATAL_MSN_D2
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'str_PV_FSI_N' (5 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'str_PV_FSI_E' (5 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'str_PV_FSI_S' (5 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'str_PV_FSI_W' (5 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'gpe_N' (10 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'gpe_arky_N' (4 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'gpi_N' (10 neurons): using Izh type IZH2007_GPI_OUTPUT
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'str_striosome_N' (8 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'gpe_E' (10 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'gpe_arky_E' (4 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'gpi_E' (10 neurons): using Izh type IZH2007_GPI_OUTPUT
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'str_striosome_E' (8 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'gpe_S' (10 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'gpe_arky_S' (4 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'gpi_S' (10 neurons): using Izh type IZH2007_GPI_OUTPUT
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'str_striosome_S' (8 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'gpe_W' (10 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'gpe_arky_W' (4 neurons): using Izh type IZH2007_GPE_PACEMAKER
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'gpi_W' (10 neurons): using Izh type IZH2007_GPI_OUTPUT
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'str_striosome_W' (8 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'stn' (20 neurons): using Izh type IZH2007_STN_BURST
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'thal_N' (10 neurons): using Izh type IZH2007_THALAMIC_RELAY
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'motor_N' (10 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'thal_E' (10 neurons): using Izh type IZH2007_THALAMIC_RELAY
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'motor_E' (10 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'thal_S' (10 neurons): using Izh type IZH2007_THALAMIC_RELAY
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'motor_S' (10 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'thal_W' (10 neurons): using Izh type IZH2007_THALAMIC_RELAY
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'motor_W' (10 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'snc' (10 neurons): using Izh type IZH2007_DOPAMINE
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'reward_us' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'vs_place_context' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'striosome_value' (80 neurons): using Izh type IZH2007_STRIATAL_MSN_D1
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'sel_N' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'sel_FS_N' (10 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'commit_N' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'sel_E' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'sel_FS_E' (10 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'commit_E' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'sel_S' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'sel_FS_S' (10 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'commit_S' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'sel_W' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'sel_FS_W' (10 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'commit_W' (40 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'commit_OPN' (20 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'retina' (2048 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'cortex_v1_simple' (1024 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'cortex_v1_complex' (512 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'cortex_v2' (256 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'cortex_it' (64 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'sc_retina' (2048 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'sc_map' (256 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'sc_fs' (12 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Region 'sc_rostral' (24 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Generating 3D neuron positions for 7722 neurons...
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 182986 synapses across 172 populations.
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Initializing eligibility traces for 182986 synapses (capacity: 274479, dtype: float32)...
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Initialized neuromodulator subsystem with 1 modulators: ['dopamine']
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Initializing STDP state for 7722 neurons...
+[2026-06-20 15:41:07][INFO] SIM_BRIDGE: Simulation data initialized for 7722 neurons (3D). Synapses: 182986. GPU memory: 1.4GB/25.8GB (5.6%)
+[g11 seed=42] Cluster K v2: applied 70592 Gabor weights to retina -> cortex_v1_simple
+[g11 seed=42] Cluster K v2: visual_cortex_action gate frozen until warmup
+[g11] spiking SC: installed 21828 synapses (retina->sc_map 16x16 + recurrent + sc_map->cortex_NESW + sc_map->sc_rostral (N5))
+[g11 seed=42] #6 SC read-out: POPULATION-VECTOR (cosine) + cortex_X divisive-norm (sigma=1.0, gain=0.0)
+[g11 seed=42] N5 reward: boosted sc_rostral->reward_us to 40.0 (960 synapses)
+[g11 seed=42] Spiking-SNc Stage B: NEURAL value critic ON (striosome_value n=80, vs_place_context->value w0=0.20115986466407776); r-V subtracted via GABA_B/GIRK (E_K=-90mV, prop=0.02); critic->SNc gate = OPEN (continuous, Stage 1). Host _V_scaffold DROPPED.
+[g11 seed=42] BG circuit: 71 regions, 7722 neurons, 272301 synapses
+[g11 seed=42] step 100/1800  pos=(20,31)  goal=(30,30)  recent_dist=32.16  action=N  reward=-1.00  actions= 51N/ 28E/ 12S/  9W
+[PROGRESS] {"kind": "step", "current": 100, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [20, 31], "goal": [30, 30], "recent_dist": 32.16, "action": "N", "reward": -1.0}
+[g11 seed=42] step 200/1800  pos=(31,31)  goal=(30,30)  recent_dist=6.08  action=E  reward=+0.00  actions= 52N/ 29E/  7S/ 12W
+[PROGRESS] {"kind": "step", "current": 200, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [31, 31], "goal": [30, 30], "recent_dist": 6.08, "action": "E", "reward": 0.0}
+[g11 seed=42] step 300/1800  pos=(31,31)  goal=(30,30)  recent_dist=2.00  action=E  reward=+0.00  actions=  0N/100E/  0S/  0W
+[PROGRESS] {"kind": "step", "current": 300, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [31, 31], "goal": [30, 30], "recent_dist": 2.0, "action": "E", "reward": 0.0}
+[g11 seed=42] step 400/1800  pos=(31,31)  goal=(30,30)  recent_dist=2.00  action=E  reward=+0.00  actions=  0N/100E/  0S/  0W
+[PROGRESS] {"kind": "step", "current": 400, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [31, 31], "goal": [30, 30], "recent_dist": 2.0, "action": "E", "reward": 0.0}
+[g11 seed=42] step 450: GOAL CHANGED to (1, 30)
+[g11 seed=42] step 500/1800  pos=(31,31)  goal=(1,30)  recent_dist=16.12  action=N  reward=+0.00  actions= 27N/ 63E/  4S/  6W
+[PROGRESS] {"kind": "step", "current": 500, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [31, 31], "goal": [1, 30], "recent_dist": 16.12, "action": "N", "reward": 0.0}
+[g11 seed=42] step 600/1800  pos=(28,30)  goal=(1,30)  recent_dist=29.62  action=S  reward=+1.00  actions= 47N/ 19E/ 18S/ 16W
+[PROGRESS] {"kind": "step", "current": 600, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [28, 30], "goal": [1, 30], "recent_dist": 29.62, "action": "S", "reward": 1.0}
+[g11 seed=42] step 600: Cluster K v2 visual_cortex_action gate OPENED (warmup=600)
+[g11 seed=42] step 700/1800  pos=(30,31)  goal=(1,30)  recent_dist=27.56  action=W  reward=+1.00  actions= 44N/ 24E/ 13S/ 19W
+[PROGRESS] {"kind": "step", "current": 700, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [30, 31], "goal": [1, 30], "recent_dist": 27.56, "action": "W", "reward": 1.0}
+[g11 seed=42] step 800/1800  pos=(29,30)  goal=(1,30)  recent_dist=29.35  action=E  reward=-1.00  actions= 49N/ 22E/ 12S/ 17W
+[PROGRESS] {"kind": "step", "current": 800, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [29, 30], "goal": [1, 30], "recent_dist": 29.35, "action": "E", "reward": -1.0}
+[g11 seed=42] step 900/1800  pos=(31,29)  goal=(1,30)  recent_dist=29.07  action=N  reward=+1.00  actions= 42N/ 26E/ 14S/ 18W
+[PROGRESS] {"kind": "step", "current": 900, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [31, 29], "goal": [1, 30], "recent_dist": 29.07, "action": "N", "reward": 1.0}
+[g11 seed=42] step 900: GOAL CHANGED to (1, 1)
+[g11 seed=42] step 1000/1800  pos=(26,31)  goal=(1,1)  recent_dist=58.32  action=N  reward=+0.00  actions= 56N/ 14E/ 16S/ 14W
+[PROGRESS] {"kind": "step", "current": 1000, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [26, 31], "goal": [1, 1], "recent_dist": 58.32, "action": "N", "reward": 0.0}
+[g11 seed=42] step 1100/1800  pos=(29,29)  goal=(1,1)  recent_dist=55.56  action=S  reward=+1.00  actions= 49N/ 21E/ 13S/ 17W
+[PROGRESS] {"kind": "step", "current": 1100, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [29, 29], "goal": [1, 1], "recent_dist": 55.56, "action": "S", "reward": 1.0}
+[g11 seed=42] step 1200/1800  pos=(30,31)  goal=(1,1)  recent_dist=55.68  action=N  reward=+0.00  actions= 52N/ 20E/  9S/ 19W
+[PROGRESS] {"kind": "step", "current": 1200, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [30, 31], "goal": [1, 1], "recent_dist": 55.68, "action": "N", "reward": 0.0}
+[g11 seed=42] step 1300/1800  pos=(31,31)  goal=(1,1)  recent_dist=55.44  action=N  reward=+0.00  actions= 44N/ 24E/ 12S/ 20W
+[PROGRESS] {"kind": "step", "current": 1300, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [31, 31], "goal": [1, 1], "recent_dist": 55.44, "action": "N", "reward": 0.0}
+[g11 seed=42] step 1350: GOAL CHANGED to (30, 1)
+[g11 seed=42] step 1400/1800  pos=(30,31)  goal=(30,1)  recent_dist=44.84  action=N  reward=+0.00  actions= 52N/ 23E/ 11S/ 14W
+[PROGRESS] {"kind": "step", "current": 1400, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [30, 31], "goal": [30, 1], "recent_dist": 44.84, "action": "N", "reward": 0.0}
+[g11 seed=42] step 1500/1800  pos=(26,31)  goal=(30,1)  recent_dist=33.41  action=E  reward=+1.00  actions= 45N/ 23E/ 10S/ 22W
+[PROGRESS] {"kind": "step", "current": 1500, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [26, 31], "goal": [30, 1], "recent_dist": 33.41, "action": "E", "reward": 1.0}
+[g11 seed=42] step 1600/1800  pos=(28,31)  goal=(30,1)  recent_dist=31.23  action=E  reward=+1.00  actions= 53N/ 20E/ 13S/ 14W
+[PROGRESS] {"kind": "step", "current": 1600, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [28, 31], "goal": [30, 1], "recent_dist": 31.23, "action": "E", "reward": 1.0}
+[g11 seed=42] step 1700/1800  pos=(26,31)  goal=(30,1)  recent_dist=34.02  action=W  reward=-1.00  actions= 43N/ 20E/ 15S/ 22W
+[PROGRESS] {"kind": "step", "current": 1700, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [26, 31], "goal": [30, 1], "recent_dist": 34.02, "action": "W", "reward": -1.0}
+[g11 seed=42] step 1800/1800  pos=(27,31)  goal=(30,1)  recent_dist=30.68  action=N  reward=+0.00  actions= 46N/ 23E/ 15S/ 16W
+[PROGRESS] {"kind": "step", "current": 1800, "total": 1800, "phase": "seed=42", "unit": "steps", "pos": [27, 31], "goal": [30, 1], "recent_dist": 30.68, "action": "N", "reward": 0.0}
+[g11 seed=42] NAV-GATE(a) stdp_w_max=400.0  sum_finalQ=119.2301  mean_distance_overall=31.8411  actor_max_cortex_to_D1_weight=239.82406616210938
+
+[g11 seed=42] DONE in 944s. Phase stats:
+  phase 0 goal=[30, 30] meanD=9.61 finalQ=2.00 actions=[103, 307, 19, 21]
+  phase 1 goal=[1, 30] meanD=29.05 finalQ=28.96 actions=[209, 104, 61, 76]
+  phase 2 goal=[1, 1] meanD=56.52 finalQ=57.39 actions=[224, 94, 56, 76]
+  phase 3 goal=[30, 1] meanD=32.19 finalQ=30.88 actions=[216, 94, 58, 82]
+[sc-pv] arm=sc_popvector_scr: phase0_finalQ=2.000 post_change_finalQ=['28.965', '57.389', '30.876'] (sum 117.230) gate=119.23008849557522 late_sustain=0.392
+[sc-pv] arm=sc_popvector_scr per-phase dominant cardinal: ['E', 'N', 'N', 'N']
+[sc-pv] arm=sc_popvector_scr per-phase action frac: [{'N': 0.229, 'E': 0.682, 'S': 0.042, 'W': 0.047}, {'N': 0.464, 'E': 0.231, 'S': 0.136, 'W': 0.169}, {'N': 0.498, 'E': 0.209, 'S': 0.124, 'W': 0.169}, {'N': 0.48, 'E': 0.209, 'S': 0.129, 'W': 0.182}]
+
+[sc-pv] ===== POPULATION-VECTOR READ-OUT RE-ORIENT VERDICT =====
+  host_phase0_finalQ: 0.5663716814159292
+  host_post_change_finalQ_sum: 1.7168141592920354
+  ramp_post_change_finalQ_sum: None
+  popvector_post_change_finalQ_sum: 121.2566371681416
+  scramble_post_change_finalQ_sum: 117.23008849557522
+  host_tracking: {'dominant_per_phase': ['E', 'W', 'E', 'E'], 'n_distinct_dominant': 2, 'has_W_dominant_phase': True, 'has_E_dominant_phase': True, 'tracks_goal': True}
+  ramp_tracking: None
+  popvector_tracking: {'dominant_per_phase': ['N', 'N', 'N', 'N'], 'n_distinct_dominant': 1, 'has_W_dominant_phase': False, 'has_E_dominant_phase': False, 'tracks_goal': False}
+  scramble_tracking: {'dominant_per_phase': ['E', 'N', 'N', 'N'], 'n_distinct_dominant': 2, 'has_W_dominant_phase': False, 'has_E_dominant_phase': True, 'tracks_goal': True}
+  ramp_late_sustain: None
+  popvector_late_sustain: 0.43333333333333335
+  host_over_popvector_post_ratio: 0.014158517004816814
+  popvector_over_ramp_post_improvement: None
+  NOTE: GO (#6 CONVERTS) if popvector_tracking.tracks_goal is True AND popvector_post_change approaches host (host_over_popvector_post_ratio ~1, vs the ramp's ~0.01) AND the SCRAMBLE lesion collapses (scramble_tracking.tracks_goal False / much worse finalQ). HONEST NEGATIVE otherwise -- report whether popvector still does NOT track (under-selective) or a deeper issue.
+[sc-pv] wrote research/findings/raw/nav_gate_2a/grid32_r1/scpv_R1_g32_s42.json

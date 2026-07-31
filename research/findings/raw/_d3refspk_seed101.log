@@ -1,0 +1,17 @@
+[D3 -> LANGUAGE ON SPIKES] K=6 | discourse-referent tracking with the re-discretization on the spiking FS-WTA substrate
+[2026-07-09 20:01:38][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-09 20:01:38][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-09 20:01:38][INFO] SIM_BRIDGE: Brain-region framework: 7 regions, 96 total neurons, 12 pathways.
+[2026-07-09 20:01:38][INFO] SIM_BRIDGE: RNG initialized with seed: 101
+[2026-07-09 20:01:38][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 96 neurons...
+[2026-07-09 20:01:38][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-09 20:01:38][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-09 20:01:38][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-07-09 20:01:38][INFO] SIM_BRIDGE: Generating 3D neuron positions for 96 neurons...
+[2026-07-09 20:01:38][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-09 20:01:38][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2041 synapses across 12 populations.
+[2026-07-09 20:01:38][INFO] SIM_BRIDGE: Simulation data initialized for 96 neurons (3D). Synapses: 2041. GPU memory: 20.0GB/51.2GB (38.9%)
+  [seed 101] rate holder-track DEEPER=0.917 (step-delta=1.0) || SPIKING holder-track DEEPER=0.7 (host-agree=0.943)
+
+  AGGREGATE (K=6, chance 0.167): SPIKING holder-track DEEPER=0.700 (host-agree 0.943)
+  VERDICT: PARTIAL/NEGATIVE -- the spiking reference tracking did not hold cleanly (tune fs-inh/fs-settle/epochs; read host-agree). NO sim/ edit.

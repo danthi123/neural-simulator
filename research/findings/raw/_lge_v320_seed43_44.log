@@ -1,0 +1,411 @@
+[learned-graded-embedding HOMEOSTASIS probe] seeds=[43, 44] backend=cupy
+  toy: 40x7 (+hubs); learner=LearnedAssocGraph (n_pool=12000, pattern_size=100)
+  VARIANTS: unnormalized + gamma0.95 + oja[50.0, 80.0] + scaling[2000.0]; cycles=[2]
+  read-out FIXED = brain-based divnorm 'ch'/interleave (sigma=0.001 exp=2.0 steps=2)
+  bars: G1(P>=0.5) A1(gen>=0.7) 2nd(>=0.1) counts(W~counts>=0.3) cycindep(minP>=0.5)
+
+======================================================================================
+  LEARNED GRADED-EMBEDDING HOMEOSTASIS PROBE -- SEED 43
+======================================================================================
+  [corpus] 320 concepts (40 hubs + 280 members), 1848 facts; second-order pairs=695; chance=0.250
+  [HOST CEILING (PPMI+SVD on RAW counts, labelled target)] Pearson(S,S_true)=+0.957 2nd-margin=+0.678 gen=1.000
+
+  ----------------------------------------------------------------------------------
+  VARIANT x CYCLE sweep: variants=['unnormalized', 'gamma0.95', 'oja_t50.0', 'oja_t80.0', 'scaling_t2000.0'] x cycles=[2]
+  (read-out FIXED = brain-based divnorm 'ch'/interleave steps=2)
+  ----------------------------------------------------------------------------------
+
+  >>> variant unnormalized
+[2026-06-11 22:17:08][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-11 22:17:08][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-11 22:17:08][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 12300 total neurons, 3 pathways.
+[2026-06-11 22:17:08][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-06-11 22:17:08][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 12300 neurons...
+[2026-06-11 22:17:08][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-11 22:17:08][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-11 22:17:08][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-11 22:17:08][INFO] SIM_BRIDGE: Generating 3D neuron positions for 12300 neurons...
+[2026-06-11 22:17:08][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-11 22:18:37][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 88552565 synapses across 3 populations.
+[2026-06-11 22:18:40][INFO] SIM_BRIDGE: Simulation data initialized for 12300 neurons (3D). Synapses: 88552565. GPU memory: 7.7GB/25.8GB (29.8%)
+  cycles=  2 (rec mean=1.726, 788s)
+    [unnormalized c2       ] P(W,counts)=+0.121 || BRAIN-BASED: P(sim,Strue)=+0.090 2nd=+0.001 graded=0 gen=0.689 | standin P=+0.122
+    [cycle-independence unnormalized] P(W,counts) [0.12077742987272895] (spread 0.000, slope +0.0000/cyc) | P(sim,Strue) min +0.090 spread 0.000 | gen min 0.689
+
+  >>> variant gamma0.95
+[2026-06-11 22:30:14][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-11 22:30:14][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-11 22:30:14][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 12300 total neurons, 3 pathways.
+[2026-06-11 22:30:14][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-06-11 22:30:14][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 12300 neurons...
+[2026-06-11 22:30:14][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-11 22:30:14][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-11 22:30:14][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-11 22:30:14][INFO] SIM_BRIDGE: Generating 3D neuron positions for 12300 neurons...
+[2026-06-11 22:30:14][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-11 22:31:41][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 88552565 synapses across 3 populations.
+[2026-06-11 22:31:44][INFO] SIM_BRIDGE: Simulation data initialized for 12300 neurons (3D). Synapses: 88552565. GPU memory: 7.7GB/25.8GB (29.9%)
+  cycles=  2 (rec mean=0.001, 765s)
+    [gamma0.95 c2          ] P(W,counts)=+0.306 || BRAIN-BASED: P(sim,Strue)=+0.029 2nd=+0.047 graded=0 gen=0.360 | standin P=+0.033
+    [cycle-independence gamma0.95] P(W,counts) [0.3056332350422183] (spread 0.000, slope +0.0000/cyc) | P(sim,Strue) min +0.029 spread 0.000 | gen min 0.360
+
+  >>> variant oja_t50.0
+[2026-06-11 22:42:59][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-11 22:42:59][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-11 22:42:59][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 12300 total neurons, 3 pathways.
+[2026-06-11 22:42:59][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-06-11 22:42:59][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 12300 neurons...
+[2026-06-11 22:42:59][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-11 22:42:59][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-11 22:42:59][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-11 22:42:59][INFO] SIM_BRIDGE: Generating 3D neuron positions for 12300 neurons...
+[2026-06-11 22:42:59][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-11 22:44:23][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 88552565 synapses across 3 populations.
+[2026-06-11 22:44:27][INFO] SIM_BRIDGE: Simulation data initialized for 12300 neurons (3D). Synapses: 88552565. GPU memory: 7.7GB/25.8GB (29.9%)
+  cycles=  2 (rec mean=0.072, 936s)
+    [oja_t50.0 c2          ] P(W,counts)=+0.854 || BRAIN-BASED: P(sim,Strue)=+0.990 2nd=+0.972 graded=1 gen=1.000 | standin P=+0.559
+    [cycle-independence oja_t50.0] P(W,counts) [0.8535225832422934] (spread 0.000, slope +0.0000/cyc) | P(sim,Strue) min +0.990 spread 0.000 | gen min 1.000
+
+  >>> variant oja_t80.0
+[2026-06-11 22:58:36][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-11 22:58:36][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-11 22:58:36][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 12300 total neurons, 3 pathways.
+[2026-06-11 22:58:36][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-06-11 22:58:36][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 12300 neurons...
+[2026-06-11 22:58:36][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-11 22:58:36][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-11 22:58:36][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-11 22:58:36][INFO] SIM_BRIDGE: Generating 3D neuron positions for 12300 neurons...
+[2026-06-11 22:58:36][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-11 22:59:58][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 88552565 synapses across 3 populations.
+[2026-06-11 23:00:01][INFO] SIM_BRIDGE: Simulation data initialized for 12300 neurons (3D). Synapses: 88552565. GPU memory: 9.1GB/25.8GB (35.3%)
+  cycles=  2 (rec mean=0.098, 851s)
+    [oja_t80.0 c2          ] P(W,counts)=+0.823 || BRAIN-BASED: P(sim,Strue)=+0.986 2nd=+0.965 graded=1 gen=1.000 | standin P=+0.570
+    [cycle-independence oja_t80.0] P(W,counts) [0.8233098628422282] (spread 0.000, slope +0.0000/cyc) | P(sim,Strue) min +0.986 spread 0.000 | gen min 1.000
+
+  >>> variant scaling_t2000.0
+[2026-06-11 23:12:47][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-11 23:12:47][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-11 23:12:47][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 12300 total neurons, 3 pathways.
+[2026-06-11 23:12:47][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-06-11 23:12:47][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 12300 neurons...
+[2026-06-11 23:12:47][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-11 23:12:47][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-11 23:12:47][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-11 23:12:47][INFO] SIM_BRIDGE: Generating 3D neuron positions for 12300 neurons...
+[2026-06-11 23:12:47][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-11 23:14:09][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 88552565 synapses across 3 populations.
+[2026-06-11 23:14:12][INFO] SIM_BRIDGE: Simulation data initialized for 12300 neurons (3D). Synapses: 88552565. GPU memory: 9.1GB/25.8GB (35.3%)
+  cycles=  2 (rec mean=0.124, 749s)
+    [scaling_t2000.0 c2    ] P(W,counts)=+0.498 || BRAIN-BASED: P(sim,Strue)=+0.363 2nd=+0.310 graded=1 gen=1.000 | standin P=+0.589
+    [cycle-independence scaling_t2000.0] P(W,counts) [0.49754421870360627] (spread 0.000, slope +0.0000/cyc) | P(sim,Strue) min +0.363 spread 0.000 | gen min 1.000
+
+  ----------------------------------------------------------------------------------
+  BEST HOMEOSTATIC variant (by worst-case cycle-independence): oja_t50.0
+  ----------------------------------------------------------------------------------
+
+  STORE-VOLUME STRESS @ oja_t50.0 (cycles=2, reps=[1, 2]):
+[2026-06-11 23:25:16][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-11 23:25:16][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-11 23:25:16][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 12300 total neurons, 3 pathways.
+[2026-06-11 23:25:16][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-06-11 23:25:16][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 12300 neurons...
+[2026-06-11 23:25:16][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-11 23:25:16][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-11 23:25:16][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-11 23:25:16][INFO] SIM_BRIDGE: Generating 3D neuron positions for 12300 neurons...
+[2026-06-11 23:25:16][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-11 23:26:37][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 88552565 synapses across 3 populations.
+[2026-06-11 23:26:40][INFO] SIM_BRIDGE: Simulation data initialized for 12300 neurons (3D). Synapses: 88552565. GPU memory: 9.1GB/25.8GB (35.3%)
+  reps= 1 (=1848 stored facts, rec mean=0.072, 851s)
+    [oja_t50.0 x1          ] P(W,counts)=+0.854 || BRAIN-BASED: P(sim,Strue)=+0.990 2nd=+0.972 graded=1 gen=1.000 | standin P=+0.559
+[2026-06-11 23:39:27][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-11 23:39:27][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-11 23:39:27][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 12300 total neurons, 3 pathways.
+[2026-06-11 23:39:27][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-06-11 23:39:27][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 12300 neurons...
+[2026-06-11 23:39:27][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-11 23:39:27][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-11 23:39:27][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-11 23:39:27][INFO] SIM_BRIDGE: Generating 3D neuron positions for 12300 neurons...
+[2026-06-11 23:39:27][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-11 23:40:48][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 88552565 synapses across 3 populations.
+[2026-06-11 23:40:51][INFO] SIM_BRIDGE: Simulation data initialized for 12300 neurons (3D). Synapses: 88552565. GPU memory: 9.1GB/25.8GB (35.3%)
+  reps= 2 (=3696 stored facts, rec mean=0.086, 1616s)
+    [oja_t50.0 x2          ] P(W,counts)=+0.876 || BRAIN-BASED: P(sim,Strue)=+0.992 2nd=+0.978 graded=1 gen=1.000 | standin P=+0.611
+
+  STORE-VOLUME STRESS @ unnormalized (cycles=2, contrast):
+[2026-06-12 00:06:23][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-12 00:06:23][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-12 00:06:23][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 12300 total neurons, 3 pathways.
+[2026-06-12 00:06:23][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-06-12 00:06:23][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 12300 neurons...
+[2026-06-12 00:06:23][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-12 00:06:23][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-12 00:06:23][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-12 00:06:23][INFO] SIM_BRIDGE: Generating 3D neuron positions for 12300 neurons...
+[2026-06-12 00:06:23][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-12 00:07:46][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 88552565 synapses across 3 populations.
+[2026-06-12 00:07:49][INFO] SIM_BRIDGE: Simulation data initialized for 12300 neurons (3D). Synapses: 88552565. GPU memory: 9.1GB/25.8GB (35.3%)
+    [unnorm x1             ] P(W,counts)=+0.121 || BRAIN-BASED: P(sim,Strue)=+0.090 2nd=+0.001 graded=0 gen=0.689 | standin P=+0.122
+[2026-06-12 00:18:00][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-12 00:18:00][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-12 00:18:00][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 12300 total neurons, 3 pathways.
+[2026-06-12 00:18:00][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-06-12 00:18:00][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 12300 neurons...
+[2026-06-12 00:18:00][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-12 00:18:00][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-12 00:18:00][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-12 00:18:00][INFO] SIM_BRIDGE: Generating 3D neuron positions for 12300 neurons...
+[2026-06-12 00:18:00][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-12 00:19:21][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 88552565 synapses across 3 populations.
+[2026-06-12 00:19:24][INFO] SIM_BRIDGE: Simulation data initialized for 12300 neurons (3D). Synapses: 88552565. GPU memory: 9.1GB/25.8GB (35.3%)
+    [unnorm x2             ] P(W,counts)=+0.099 || BRAIN-BASED: P(sim,Strue)=+0.012 2nd=+0.000 graded=0 gen=0.225 | standin P=+0.031
+
+  STORE-VOLUME HOLDS @ oja_t50.0: True (min P(W,counts)=+0.854, min P(sim,Strue)=+0.990, min gen=1.000)
+
+  ----------------------------------------------------------------------------------
+  GATE RE-CONFIRM @ oja_t50.0 across cycles [2] (brain-based divnorm read-out)
+  ----------------------------------------------------------------------------------
+[2026-06-12 00:40:05][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-12 00:40:05][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-12 00:40:05][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 12300 total neurons, 3 pathways.
+[2026-06-12 00:40:05][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-06-12 00:40:05][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 12300 neurons...
+[2026-06-12 00:40:05][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-12 00:40:05][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-12 00:40:05][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-12 00:40:05][INFO] SIM_BRIDGE: Generating 3D neuron positions for 12300 neurons...
+[2026-06-12 00:40:05][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-12 00:41:25][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 88552565 synapses across 3 populations.
+[2026-06-12 00:41:27][INFO] SIM_BRIDGE: Simulation data initialized for 12300 neurons (3D). Synapses: 88552565. GPU memory: 9.1GB/25.8GB (35.3%)
+[2026-06-12 00:54:22][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-12 00:54:22][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-12 00:54:22][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 12300 total neurons, 3 pathways.
+[2026-06-12 00:54:22][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-06-12 00:54:22][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 12300 neurons...
+[2026-06-12 00:54:22][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-12 00:54:22][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-12 00:54:22][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-12 00:54:22][INFO] SIM_BRIDGE: Generating 3D neuron positions for 12300 neurons...
+[2026-06-12 00:54:22][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-12 00:55:43][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 88552565 synapses across 3 populations.
+[2026-06-12 00:55:46][INFO] SIM_BRIDGE: Simulation data initialized for 12300 neurons (3D). Synapses: 88552565. GPU memory: 9.1GB/25.8GB (35.3%)
+  cycles=  2: G1=True (P=+0.990 2nd=+0.972 graded=1) | G2 A1=True(1.00) A2=True A3=True | G5permco=True | W-distinct=True => ALL=True
+
+======================================================================================
+  LEARNED GRADED-EMBEDDING HOMEOSTASIS PROBE -- SEED 44
+======================================================================================
+  [corpus] 320 concepts (40 hubs + 280 members), 1848 facts; second-order pairs=693; chance=0.250
+  [HOST CEILING (PPMI+SVD on RAW counts, labelled target)] Pearson(S,S_true)=+0.958 2nd-margin=+0.661 gen=1.000
+
+  ----------------------------------------------------------------------------------
+  VARIANT x CYCLE sweep: variants=['unnormalized', 'gamma0.95', 'oja_t50.0', 'oja_t80.0', 'scaling_t2000.0'] x cycles=[2]
+  (read-out FIXED = brain-based divnorm 'ch'/interleave steps=2)
+  ----------------------------------------------------------------------------------
+
+  >>> variant unnormalized
+[2026-06-12 01:08:37][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-12 01:08:37][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-12 01:08:37][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 12300 total neurons, 3 pathways.
+[2026-06-12 01:08:37][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-06-12 01:08:37][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 12300 neurons...
+[2026-06-12 01:08:37][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-12 01:08:37][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-12 01:08:37][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-12 01:08:37][INFO] SIM_BRIDGE: Generating 3D neuron positions for 12300 neurons...
+[2026-06-12 01:08:37][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-12 01:09:55][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 88551096 synapses across 3 populations.
+[2026-06-12 01:09:57][INFO] SIM_BRIDGE: Simulation data initialized for 12300 neurons (3D). Synapses: 88551096. GPU memory: 9.1GB/25.8GB (35.3%)
+  cycles=  2 (rec mean=0.981, 691s)
+    [unnormalized c2       ] P(W,counts)=+0.113 || BRAIN-BASED: P(sim,Strue)=+0.075 2nd=+0.002 graded=0 gen=0.719 | standin P=+0.261
+    [cycle-independence unnormalized] P(W,counts) [0.11321831855109606] (spread 0.000, slope +0.0000/cyc) | P(sim,Strue) min +0.075 spread 0.000 | gen min 0.719
+
+  >>> variant gamma0.95
+[2026-06-12 01:20:08][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-12 01:20:08][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-12 01:20:08][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 12300 total neurons, 3 pathways.
+[2026-06-12 01:20:08][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-06-12 01:20:08][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 12300 neurons...
+[2026-06-12 01:20:08][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-12 01:20:08][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-12 01:20:08][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-12 01:20:08][INFO] SIM_BRIDGE: Generating 3D neuron positions for 12300 neurons...
+[2026-06-12 01:20:08][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-12 01:21:28][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 88551096 synapses across 3 populations.
+[2026-06-12 01:21:30][INFO] SIM_BRIDGE: Simulation data initialized for 12300 neurons (3D). Synapses: 88551096. GPU memory: 9.1GB/25.8GB (35.3%)
+  cycles=  2 (rec mean=0.001, 674s)
+    [gamma0.95 c2          ] P(W,counts)=+0.311 || BRAIN-BASED: P(sim,Strue)=+0.026 2nd=+0.039 graded=0 gen=0.364 | standin P=+0.029
+    [cycle-independence gamma0.95] P(W,counts) [0.31054574784975664] (spread 0.000, slope +0.0000/cyc) | P(sim,Strue) min +0.026 spread 0.000 | gen min 0.364
+
+  >>> variant oja_t50.0
+[2026-06-12 01:31:21][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-12 01:31:21][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-12 01:31:21][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 12300 total neurons, 3 pathways.
+[2026-06-12 01:31:21][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-06-12 01:31:21][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 12300 neurons...
+[2026-06-12 01:31:21][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-12 01:31:21][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-12 01:31:21][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-12 01:31:21][INFO] SIM_BRIDGE: Generating 3D neuron positions for 12300 neurons...
+[2026-06-12 01:31:21][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-12 01:32:41][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 88551096 synapses across 3 populations.
+[2026-06-12 01:32:44][INFO] SIM_BRIDGE: Simulation data initialized for 12300 neurons (3D). Synapses: 88551096. GPU memory: 9.1GB/25.8GB (35.3%)
+  cycles=  2 (rec mean=0.078, 866s)
+    [oja_t50.0 c2          ] P(W,counts)=+0.860 || BRAIN-BASED: P(sim,Strue)=+0.992 2nd=+0.977 graded=1 gen=1.000 | standin P=+0.603
+    [cycle-independence oja_t50.0] P(W,counts) [0.8599615004735871] (spread 0.000, slope +0.0000/cyc) | P(sim,Strue) min +0.992 spread 0.000 | gen min 1.000
+
+  >>> variant oja_t80.0
+[2026-06-12 01:45:47][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-12 01:45:47][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-12 01:45:47][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 12300 total neurons, 3 pathways.
+[2026-06-12 01:45:47][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-06-12 01:45:47][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 12300 neurons...
+[2026-06-12 01:45:47][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-12 01:45:47][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-12 01:45:47][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-12 01:45:47][INFO] SIM_BRIDGE: Generating 3D neuron positions for 12300 neurons...
+[2026-06-12 01:45:47][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-12 01:47:11][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 88551096 synapses across 3 populations.
+[2026-06-12 01:47:13][INFO] SIM_BRIDGE: Simulation data initialized for 12300 neurons (3D). Synapses: 88551096. GPU memory: 9.1GB/25.8GB (35.3%)
+  cycles=  2 (rec mean=0.127, 857s)
+    [oja_t80.0 c2          ] P(W,counts)=+0.462 || BRAIN-BASED: P(sim,Strue)=+0.274 2nd=+0.300 graded=1 gen=0.970 | standin P=+0.498
+    [cycle-independence oja_t80.0] P(W,counts) [0.4615740271147459] (spread 0.000, slope +0.0000/cyc) | P(sim,Strue) min +0.274 spread 0.000 | gen min 0.970
+
+  >>> variant scaling_t2000.0
+[2026-06-12 02:00:04][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-12 02:00:04][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-12 02:00:04][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 12300 total neurons, 3 pathways.
+[2026-06-12 02:00:04][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-06-12 02:00:04][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 12300 neurons...
+[2026-06-12 02:00:04][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-12 02:00:04][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-12 02:00:04][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-12 02:00:04][INFO] SIM_BRIDGE: Generating 3D neuron positions for 12300 neurons...
+[2026-06-12 02:00:04][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-12 02:01:24][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 88551096 synapses across 3 populations.
+[2026-06-12 02:01:27][INFO] SIM_BRIDGE: Simulation data initialized for 12300 neurons (3D). Synapses: 88551096. GPU memory: 9.1GB/25.8GB (35.3%)
+  cycles=  2 (rec mean=0.105, 738s)
+    [scaling_t2000.0 c2    ] P(W,counts)=+0.279 || BRAIN-BASED: P(sim,Strue)=+0.172 2nd=+0.227 graded=0 gen=0.956 | standin P=+0.221
+    [cycle-independence scaling_t2000.0] P(W,counts) [0.2791397174891839] (spread 0.000, slope +0.0000/cyc) | P(sim,Strue) min +0.172 spread 0.000 | gen min 0.956
+
+  ----------------------------------------------------------------------------------
+  BEST HOMEOSTATIC variant (by worst-case cycle-independence): oja_t50.0
+  ----------------------------------------------------------------------------------
+
+  STORE-VOLUME STRESS @ oja_t50.0 (cycles=2, reps=[1, 2]):
+[2026-06-12 02:12:22][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-12 02:12:22][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-12 02:12:22][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 12300 total neurons, 3 pathways.
+[2026-06-12 02:12:22][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-06-12 02:12:22][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 12300 neurons...
+[2026-06-12 02:12:22][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-12 02:12:22][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-12 02:12:22][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-12 02:12:22][INFO] SIM_BRIDGE: Generating 3D neuron positions for 12300 neurons...
+[2026-06-12 02:12:22][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-12 02:13:43][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 88551096 synapses across 3 populations.
+[2026-06-12 02:13:45][INFO] SIM_BRIDGE: Simulation data initialized for 12300 neurons (3D). Synapses: 88551096. GPU memory: 9.1GB/25.8GB (35.3%)
+  reps= 1 (=1848 stored facts, rec mean=0.078, 860s)
+    [oja_t50.0 x1          ] P(W,counts)=+0.860 || BRAIN-BASED: P(sim,Strue)=+0.992 2nd=+0.977 graded=1 gen=1.000 | standin P=+0.603
+[2026-06-12 02:26:42][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-12 02:26:42][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-12 02:26:42][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 12300 total neurons, 3 pathways.
+[2026-06-12 02:26:42][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-06-12 02:26:42][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 12300 neurons...
+[2026-06-12 02:26:42][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-12 02:26:42][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-12 02:26:42][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-12 02:26:42][INFO] SIM_BRIDGE: Generating 3D neuron positions for 12300 neurons...
+[2026-06-12 02:26:42][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-12 02:28:02][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 88551096 synapses across 3 populations.
+[2026-06-12 02:28:04][INFO] SIM_BRIDGE: Simulation data initialized for 12300 neurons (3D). Synapses: 88551096. GPU memory: 9.1GB/25.8GB (35.3%)
+  reps= 2 (=3696 stored facts, rec mean=0.091, 1605s)
+    [oja_t50.0 x2          ] P(W,counts)=+0.881 || BRAIN-BASED: P(sim,Strue)=+0.995 2nd=+0.985 graded=1 gen=1.000 | standin P=+0.641
+
+  STORE-VOLUME STRESS @ unnormalized (cycles=2, contrast):
+[2026-06-12 02:53:27][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-12 02:53:27][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-12 02:53:27][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 12300 total neurons, 3 pathways.
+[2026-06-12 02:53:27][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-06-12 02:53:27][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 12300 neurons...
+[2026-06-12 02:53:27][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-12 02:53:27][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-12 02:53:27][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-12 02:53:27][INFO] SIM_BRIDGE: Generating 3D neuron positions for 12300 neurons...
+[2026-06-12 02:53:27][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-12 02:54:48][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 88551096 synapses across 3 populations.
+[2026-06-12 02:54:50][INFO] SIM_BRIDGE: Simulation data initialized for 12300 neurons (3D). Synapses: 88551096. GPU memory: 9.1GB/25.8GB (35.3%)
+    [unnorm x1             ] P(W,counts)=+0.113 || BRAIN-BASED: P(sim,Strue)=+0.075 2nd=+0.002 graded=0 gen=0.719 | standin P=+0.261
+[2026-06-12 03:04:56][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-12 03:04:56][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-12 03:04:56][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 12300 total neurons, 3 pathways.
+[2026-06-12 03:04:56][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-06-12 03:04:56][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 12300 neurons...
+[2026-06-12 03:04:56][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-12 03:04:56][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-12 03:04:56][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-12 03:04:56][INFO] SIM_BRIDGE: Generating 3D neuron positions for 12300 neurons...
+[2026-06-12 03:04:56][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-12 03:06:16][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 88551096 synapses across 3 populations.
+[2026-06-12 03:06:19][INFO] SIM_BRIDGE: Simulation data initialized for 12300 neurons (3D). Synapses: 88551096. GPU memory: 9.1GB/25.8GB (35.3%)
+    [unnorm x2             ] P(W,counts)=+0.087 || BRAIN-BASED: P(sim,Strue)=+0.037 2nd=+0.001 graded=0 gen=0.435 | standin P=+0.137
+
+  STORE-VOLUME HOLDS @ oja_t50.0: True (min P(W,counts)=+0.860, min P(sim,Strue)=+0.992, min gen=1.000)
+
+  ----------------------------------------------------------------------------------
+  GATE RE-CONFIRM @ oja_t50.0 across cycles [2] (brain-based divnorm read-out)
+  ----------------------------------------------------------------------------------
+[2026-06-12 03:26:33][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-12 03:26:33][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-12 03:26:33][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 12300 total neurons, 3 pathways.
+[2026-06-12 03:26:33][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-06-12 03:26:33][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 12300 neurons...
+[2026-06-12 03:26:33][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-12 03:26:33][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-12 03:26:33][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-12 03:26:33][INFO] SIM_BRIDGE: Generating 3D neuron positions for 12300 neurons...
+[2026-06-12 03:26:33][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-12 03:27:54][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 88551096 synapses across 3 populations.
+[2026-06-12 03:27:57][INFO] SIM_BRIDGE: Simulation data initialized for 12300 neurons (3D). Synapses: 88551096. GPU memory: 9.1GB/25.8GB (35.3%)
+[2026-06-12 03:40:45][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-12 03:40:45][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-12 03:40:45][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 12300 total neurons, 3 pathways.
+[2026-06-12 03:40:45][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-06-12 03:40:45][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 12300 neurons...
+[2026-06-12 03:40:45][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-12 03:40:45][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-12 03:40:45][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-12 03:40:45][INFO] SIM_BRIDGE: Generating 3D neuron positions for 12300 neurons...
+[2026-06-12 03:40:45][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-12 03:42:05][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 88551096 synapses across 3 populations.
+[2026-06-12 03:42:08][INFO] SIM_BRIDGE: Simulation data initialized for 12300 neurons (3D). Synapses: 88551096. GPU memory: 9.1GB/25.8GB (35.3%)
+  cycles=  2: G1=True (P=+0.992 2nd=+0.977 graded=1) | G2 A1=True(1.00) A2=True A3=True | G5permco=True | W-distinct=True => ALL=True
+
+======================================================================================
+  HOMEOSTASIS PROBE SUMMARY
+======================================================================================
+  CONSENSUS VERDICT: GO
+
+  seed 43: verdict=GO | best homeostatic = oja_t50.0
+    UNNORM   P(W,counts) per cycle [2]: [0.12077742987272895]
+             (slope +0.0000/cyc) P(sim,Strue) [0.09039500568273198] gen [0.68875]
+    oja_t50.0 P(W,counts) per cycle [2]: [0.8535225832422934]
+             (slope +0.0000/cyc) P(sim,Strue) [0.9904552412639925] gen [1.0]
+             worst-case: P(W,counts)min=+0.854 P(sim,Strue)min=+0.990 genmin=1.000
+    store-volume holds: True | gate re-confirm all-pass: True
+
+  seed 44: verdict=GO | best homeostatic = oja_t50.0
+    UNNORM   P(W,counts) per cycle [2]: [0.11321831855109606]
+             (slope +0.0000/cyc) P(sim,Strue) [0.07505175654162183] gen [0.71875]
+    oja_t50.0 P(W,counts) per cycle [2]: [0.8599615004735871]
+             (slope +0.0000/cyc) P(sim,Strue) [0.9923072615135557] gen [1.0]
+             worst-case: P(W,counts)min=+0.860 P(sim,Strue)min=+0.992 genmin=1.000
+    store-volume holds: True | gate re-confirm all-pass: True
+
+  HOST CEILING (target): Pearson +0.957 gen 1.000
+  COLLAPSED BASELINE (un-normalized): Pearson(W,counts) +0.69@2cyc -> +0.06@20cyc
+  Total elapsed: 20263.2s
+======================================================================================
+
+  [saved] research/findings/raw/_lge_v320_seed43_44.json

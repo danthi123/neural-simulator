@@ -1,0 +1,8 @@
+  [seed 42] SPIKE-LEARN branch 1.000 | lesion 0.000 | untr 0.000 || markov 0.125 chance 0.125 loc True
+  [seed 43] SPIKE-LEARN branch 1.000 | lesion 0.000 | untr 0.000 || markov 0.125 chance 0.125 loc True
+  [seed 44] SPIKE-LEARN branch 1.000 | lesion 0.000 | untr 0.000 || markov 0.125 chance 0.125 loc True
+
+============================================================================================================
+[emerge9d] VERDICT: GO -- FULLY-SPIKING unsupervised HTM Temporal Memory: BOTH inference (LIF + dAP + WTA) AND learning (the Bouhadjar THREE-TERM rule -- spike-timing potentiation + presynaptic depression + dAP-rate homeostasis) self-organize context-specific high-order prediction: branch acc 1.000 >> Markov 0.125, >> chance 0.125, >> dAP-lesion 0.000; untrained 0.000; locality asserted; NO teacher; homeostasis replaces the discrete allocation heuristic. Multi-seed. => the numpy spiking-substrate ladder is COMPLETE (rung 3) -> rung-4 = the sim/ two-compartment NeuronModel port (dAP = apical compartment; three-term rule as a plastic RegionPathway). NO sim/ edit.
+[emerge9d] wrote research/findings/raw/_emerge9d_nseq8.json
+============================================================================================================

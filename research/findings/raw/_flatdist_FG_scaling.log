@@ -1,0 +1,14 @@
+[16:58:50] retrain bridgeF @ seed 47 (->384 concepts)
+[SAVE] -> research/findings/raw/_flatdist_bridgeF_seed47.simstate.h5
+[17:33:10] retrain bridgeG @ seed 48 (->448 concepts)
+[SAVE] -> research/findings/raw/_flatdist_bridgeG_seed48.simstate.h5
+[18:08:32] running scaling composition test
+=== flat-distinct SCALING: 7 bridges -> 448 concepts (backend=cupy) ===
+[2026-06-02 18:08:47][INFO] SIM_BRIDGE: Loading checkpoint from research/findings/raw/g11_bg/g20_sparse_bridges_320/bridgeA_nouns_sparse64.simstate.h5...
+  450-wide between-concept cos: mean 0.029  max 0.604  (DISTINCT)
+    seed 42: structured=1.000  any-bank=1.000
+    seed 43: structured=1.000  any-bank=1.000
+    seed 44: structured=1.000  any-bank=1.000
+RESULT @ 448 concepts: structured [1.0, 1.0, 1.0] (mean 1.000) | any-bank [1.0, 1.0, 1.0] (mean 1.000)
+VERDICT: RESOLVES at 448 concepts -- composition SCALES past 320 (cleanup over 448 distinct codes holds multi-seed).
+##### SCALING-FG-DONE [18:22:19] #####

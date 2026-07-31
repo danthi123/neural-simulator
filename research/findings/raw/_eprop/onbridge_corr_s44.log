@@ -1,0 +1,25 @@
+EMERGE-RESERVOIR-LM ON-BRIDGE BDSP: does a spiking reservoir's RECURRENT synapses LEARN via the committed enable_bdsp rule (apical = Y@delta, fixed-random feedback), fixed-vs-plastic on context-depth CE; 1-seed; arms=['fixed', 'plastic', 'apical_lesion']
+[2026-07-11 14:07:59][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-11 14:07:59][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-11 14:07:59][INFO] SIM_BRIDGE: Brain-region framework: 1 regions, 150 total neurons, 0 pathways.
+[2026-07-11 14:07:59][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-07-11 14:07:59][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 150 neurons...
+[2026-07-11 14:07:59][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-11 14:07:59][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-11 14:07:59][INFO] SIM_BRIDGE: Generating 3D neuron positions for 150 neurons...
+[2026-07-11 14:07:59][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-11 14:07:59][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2206 synapses across 1 populations.
+[2026-07-11 14:07:59][INFO] SIM_BRIDGE: Simulation data initialized for 150 neurons (3D). Synapses: 2206. GPU memory: 21.6GB/51.2GB (42.2%)
+  [seed 44] V=32 n_pool=150 n_tr=100 n_ev=40
+    WALL#1 soma_g sweep (does the directed apical move the recurrent weights + raise bursts?):
+      g= 320.0: dw_directed 0.00050 vs dw_lesion 0.00004 (directed_moves_more True) | B_apical 0.0153 vs B_rest 0.0000 (B_rises True)
+    arm         fixed: dw 0.00000 (w 6.486->6.486) | teach_B 0.0000 | spikes 0.0107 | CE 1.557 (acc 0.560)
+    arm       plastic: dw 0.02716 (w 6.486->6.498) | teach_B 0.0185 | spikes 0.0107 | CE 1.520 (acc 0.585)
+    arm apical_lesion: dw 0.00357 (w 6.486->6.483) | teach_B 0.0000 | spikes 0.0107 | CE 1.562 (acc 0.560)
+    plastic-minus-fixed      CE by depth: {'1': -0.0106, '2': -0.1047, '3': 0.0352, '4-5': -0.0578}
+    plastic-minus-lesion     CE by depth: {'1': -0.0105, '2': -0.1313, '3': 0.0386, '4-5': -0.0582}
+
+======================================================================================================================
+[onbridge-bdsp-reservoir] VERDICT: SMOKE-VALIDATED (machinery + wall-#1 handling) -- the pipeline runs end-to-end on a real SimulationBridge; the recurrent synapses MOVE under the committed BDSP rule (plastic mean|dw| 0.02716 > 0.0001); the DIRECTED apical credit is ISOLABLE in the soma_g sweep -- at g=0 (decoupled) B stays 0 and directed==lesion (the documented boundary), and turning on bdsp_apical_couples_soma raises measured bursts B monotonically with g and steers the weight move up to 12.9x the apical=0 lesion. LESION-BUG FIX (this build): the arm was named 'apical_lesion' but the teach checked mode=='lesion' -> the lesion ran the FULL directed apical (== plastic); corrected to a TRUE apical=0 lesion. With it, the CORRECTED apical_lesion arm (apical=0) shows the DIRECTED credit DOMINATES the undirected -Pbar*E drift (plastic directed |dw| 0.02359 = plastic 0.02716 - lesion 0.00357, ~6.6x the undirected drift), and the drift is METRIC-INERT (lesion CE 1.562 ~ fixed 1.557) -- so plastic is NOT swamped by drift; it moves the weights in the credited direction but that reservoir change yields only a MARGINAL read-out CE gain (plastic 1.520 vs fixed 1.557) at this scale. A clean within-horizon CE-win still needs the sparser bursting regime + lr/epoch tuning = the controller's sweep. NOT a faked positive.
+[onbridge-bdsp-reservoir] wrote research\findings\raw\_eprop\onbridge_corr_s44.json
+======================================================================================================================

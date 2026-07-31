@@ -1,0 +1,44 @@
+[DR-1 curiosity inversion] crave-don't-refuse: does the epistemic gap DRIVE seeking, does the reward =
+  LEARNING PROGRESS (not novelty), and does the policy STOP asking about NOISE (curious + honest)?
+  GO gates: (a) corr(gap,modulator)>=0.9  (b) ask-rate unknown>=2x known  (c) post-answer confidence rises
+  DECISIVE anti-cheat: NOISY-concept -> asking stops (late<<early) while its gap stays HIGH.
+
+  [seed 42] corr(gap,mod) +0.993 | ask-ratio unk/known 83333333.33 | conf-rise +0.57 (after 0.58 vs floor 0.04)
+            LP: learn +0.213 vs noisy +0.003 | NOISY asks early-rate 0.07 -> late-rate 0.00 (g stays 0.96, elp 0.034 VETOED); late-asks learnable-frac 1.00
+            controls: lesion asks=0 | yoked-reward mastered 7/8 vs real 8/8 (budget 30) | permuted corr -0.18 (mastered 5/8) | moat_ok True
+            [a=True b=True c=True noisy-stops=True lesion=True yoked=True permuted=True]  ==>  GO
+
+  [seed 43] corr(gap,mod) +0.994 | ask-ratio unk/known 83333333.33 | conf-rise +0.57 (after 0.57 vs floor 0.03)
+            LP: learn +0.216 vs noisy +0.003 | NOISY asks early-rate 0.07 -> late-rate 0.00 (g stays 0.96, elp 0.027 VETOED); late-asks learnable-frac 1.00
+            controls: lesion asks=0 | yoked-reward mastered 5/8 vs real 8/8 (budget 30) | permuted corr +0.08 (mastered 6/8) | moat_ok True
+            [a=True b=True c=True noisy-stops=True lesion=True yoked=True permuted=True]  ==>  GO
+
+  [seed 44] corr(gap,mod) +0.993 | ask-ratio unk/known 83333333.33 | conf-rise +0.57 (after 0.58 vs floor 0.03)
+            LP: learn +0.214 vs noisy +0.002 | NOISY asks early-rate 0.07 -> late-rate 0.00 (g stays 0.97, elp 0.033 VETOED); late-asks learnable-frac 1.00
+            controls: lesion asks=0 | yoked-reward mastered 3/8 vs real 8/8 (budget 30) | permuted corr -0.13 (mastered 5/8) | moat_ok True
+            [a=True b=True c=True noisy-stops=True lesion=True yoked=True permuted=True]  ==>  GO
+
+  [seed 100] corr(gap,mod) +0.994 | ask-ratio unk/known 83333333.33 | conf-rise +0.57 (after 0.57 vs floor 0.03)
+            LP: learn +0.210 vs noisy +0.001 | NOISY asks early-rate 0.07 -> late-rate 0.00 (g stays 0.97, elp 0.032 VETOED); late-asks learnable-frac 1.00
+            controls: lesion asks=0 | yoked-reward mastered 3/8 vs real 8/8 (budget 30) | permuted corr -0.37 (mastered 5/8) | moat_ok True
+            [a=True b=True c=True noisy-stops=True lesion=True yoked=True permuted=True]  ==>  GO
+
+  [seed 101] corr(gap,mod) +0.993 | ask-ratio unk/known 83333333.33 | conf-rise +0.57 (after 0.58 vs floor 0.03)
+            LP: learn +0.206 vs noisy +0.002 | NOISY asks early-rate 0.07 -> late-rate 0.00 (g stays 0.97, elp 0.033 VETOED); late-asks learnable-frac 1.00
+            controls: lesion asks=0 | yoked-reward mastered 5/8 vs real 8/8 (budget 30) | permuted corr +0.04 (mastered 6/8) | moat_ok True
+            [a=True b=True c=True noisy-stops=True lesion=True yoked=True permuted=True]  ==>  GO
+
+  [seed 102] corr(gap,mod) +0.993 | ask-ratio unk/known 83333333.33 | conf-rise +0.57 (after 0.58 vs floor 0.03)
+            LP: learn +0.209 vs noisy +0.002 | NOISY asks early-rate 0.07 -> late-rate 0.00 (g stays 0.97, elp 0.033 VETOED); late-asks learnable-frac 1.00
+            controls: lesion asks=0 | yoked-reward mastered 4/8 vs real 8/8 (budget 30) | permuted corr -0.21 (mastered 5/8) | moat_ok True
+            [a=True b=True c=True noisy-stops=True lesion=True yoked=True permuted=True]  ==>  GO
+
+====================================================================================================
+  GO (6/6 seeds): the moat's uncertainty signal, INVERTED, makes the brain CURIOUS —
+  the epistemic gap drives seeking, the reward is LEARNING PROGRESS (learn LP >> noisy LP), and the
+  policy STOPS asking about NOISE while its gap stays high (curious AND honest — no noise-chasing / no
+  confabulation). Lesion/yoked/permuted all collapse; moat-by-construction holds. ==> promote to the
+  on-bridge realization: fill the reserved `from_novelty` rule in sim/neuromodulators.py (excitability_
+  drive on an ASK pool), spiking-SNc RPE for the learning-progress reward, A->W spell for the question.
+  [saved] research/findings/raw/_curiosity_seek_learn_6seed.json
+====================================================================================================

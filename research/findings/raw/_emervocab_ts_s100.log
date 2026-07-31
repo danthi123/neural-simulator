@@ -1,0 +1,40 @@
+[emergent-vocab breadth SCALE de-risk] seeds=[100] vocab_sizes=[64, 256, 1024] window=+-2 mode=REAL corpus
+  mechanism: DISCOVER vocab (top-K content words) -> LEARN online Hebbian co-occurrence (stream cortex, NO global PPMI) -> MEASURE probe-taxonomy coherence as K grows.
+  corpus=data/corpus/tinystories.txt
+  loaded 24574 stories, 3927359 tokens, 10368 unique words (ok)
+
+================================================================================================
+  SEED 100
+================================================================================================
+  [K=64] vocab=64 hubs=500 updates=1493517 | probe=11w/4cat (chance 0.250, rarest-probe-count 8176)
+      LEARNED   coherence=0.636  margin=+0.120  Pearson(cos,S)=+0.373  (within +0.241 / between +0.121, eff-rank 8.9)
+      SCRAMBLED coherence=0.545  (co-occurrence destroyed -> should collapse to chance)
+      FREQ-ONLY coherence=0.091  (no co-occurrence -> should be chance)
+      HOST-PPMI coherence=0.727  (batch ceiling: does the DATA carry structure at this K?)
+  [K=256] vocab=256 hubs=500 updates=1105328 | probe=27w/6cat (chance 0.167, rarest-probe-count 1621)
+      LEARNED   coherence=0.815  margin=+0.134  Pearson(cos,S)=+0.475  (within +0.162 / between +0.028, eff-rank 21.1)
+      SCRAMBLED coherence=0.630  (co-occurrence destroyed -> should collapse to chance)
+      FREQ-ONLY coherence=0.185  (no co-occurrence -> should be chance)
+      HOST-PPMI coherence=0.741  (batch ceiling: does the DATA carry structure at this K?)
+  [K=1024] vocab=1024 hubs=500 updates=345502 | probe=62w/8cat (chance 0.125, rarest-probe-count 293)
+      LEARNED   coherence=0.758  margin=+0.090  Pearson(cos,S)=+0.409  (within +0.091 / between +0.002, eff-rank 49.0)
+      SCRAMBLED coherence=0.468  (co-occurrence destroyed -> should collapse to chance)
+      FREQ-ONLY coherence=0.097  (no co-occurrence -> should be chance)
+      HOST-PPMI coherence=0.758  (batch ceiling: does the DATA carry structure at this K?)
+
+================================================================================================
+  SCALING -- within-vs-between MARGIN vs K (the robust structure signal; the verdict gates on this):
+    K=   64:  learned=+0.120  scrambled=+0.080  freq-only=-0.211  host-PPMI=+0.144
+    K=  256:  learned=+0.134  scrambled=+0.073  freq-only=+0.101  host-PPMI=+0.120
+    K= 1024:  learned=+0.090  scrambled=+0.027  freq-only=+0.111  host-PPMI=+0.093
+  SCALING -- nearest-category COHERENCE vs K (diagnostic; saturates at large probe sizes):
+    K=   64:  learned=0.636  scrambled=0.545  freq-only=0.091  host-PPMI=0.727  (chance 0.250)
+    K=  256:  learned=0.815  scrambled=0.630  freq-only=0.185  host-PPMI=0.741  (chance 0.167)
+    K= 1024:  learned=0.758  scrambled=0.468  freq-only=0.097  host-PPMI=0.758  (chance 0.125)
+
+  OVERALL VERDICT: DEGRADES
+  the learned structure margin is real at K=64 (+0.120, scramble/freq-only collapse) BUT the emergent stream's margin DEGRADES by K=1024 (+0.090; holds=True, scramble_collapses=True, beats_freq_only=False) WHILE the host-PPMI ceiling STILL carries structure there (host margin 0.0926721987207273 >= bar 0.03) -> the DATA has the structure but the emergent mechanism dilutes the semantic neighbourhoods as the vocab grows ==> a MECHANISM gap; dispatch a research gate (hierarchical / sparse-distributed capacity for large emergent vocab).
+  Total elapsed: 37.8s
+================================================================================================
+
+  [saved] research/findings/raw/_emervocab_ts_s100.json

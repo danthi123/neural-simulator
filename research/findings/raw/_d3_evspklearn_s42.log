@@ -1,0 +1,5 @@
+[D3 EVENT SPIKING-FORWARD LEARNING] K=6 | the factored (a,p) event transition LEARNED from END-STATE-only supervision THROUGH a spiking LIF hidden (surrogate grad)
+  [seed 42] SPIKING-FORWARD event DEEPER=0.953 (same=0.972) || LAST-2-OBJ(shallow)=0.387 || SHUFFLE(mem-floor)=0.025
+
+  AGGREGATE (K=6): SPIKING-FORWARD event DEEPER=0.953 | LAST-2-OBJ(shallow)=0.387 | SHUFFLE(mem-floor)=0.025
+  VERDICT: GO -- the factored (agent, patient) event transition is LEARNED from END-STATE-only supervision THROUGH a spiking LIF hidden (surrogate grad) and length-generalizes to a genuinely-DEEP task (DEEPER 0.95 >> the LAST-2-OBJECTS shallow reader 0.39 >> shuffle-label 0.03) -> the event-composition LEARNING has a SPIKING FORWARD throughout (the master-directive fully-spiking-incl-learning); with the FS-WTA re-discretization port, BOTH the transition-learning-forward AND the execution of the running MEANING are on spikes. NO sim/ edit.

@@ -1,0 +1,1692 @@
+[v17-MS] launching seed 43 training (28-word vocab)...
+=== concept_pool_demo_v2 - extended vocabulary ===
+  Motor: ['north', 'east', 'south', 'west']
+  Nouns: ['apple', 'river', 'dog', 'cat', 'tree', 'bird', 'sun', 'moon'] (8 pools)
+  Verbs: ['go', 'come', 'stop', 'look', 'walk', 'run', 'eat', 'sleep'] (8 pools)
+  Adjectives: ['big', 'small', 'hot', 'cold', 'red', 'blue', 'fast', 'slow'] (8 pools)
+  Total: 28 words / 28 distinct output pools
+
+
+=== concept_pool_demo (seed=43) ===
+  Architecture: 4 motor + 8 noun + 8 verb + 8 adjective = 28 pools
+  Vocab: ['north', 'east', 'south', 'west'] + ['apple', 'river', 'dog', 'cat', 'tree', 'bird', 'sun', 'moon'] + ['go', 'come', 'stop', 'look', 'walk', 'run', 'eat', 'sleep'] + ['big', 'small', 'hot', 'cold', 'red', 'blue', 'fast', 'slow']
+  Train events/word: 200
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Brain-region framework: 58 regions, 14464 total neurons, 264 pathways.
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 14464 neurons...
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'language_input' (4096 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'motor_N' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'motor_E' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'motor_S' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'motor_W' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'language_output' (4096 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'motor_FS_N' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'motor_FS_E' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'motor_FS_S' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'motor_FS_W' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'noun_pool_APPLE' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'noun_pool_RIVER' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'noun_pool_DOG' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'noun_pool_CAT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'noun_pool_TREE' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'noun_pool_BIRD' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'noun_pool_SUN' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'noun_pool_MOON' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'noun_pool_APPLE_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'noun_pool_RIVER_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'noun_pool_DOG_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'noun_pool_CAT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'noun_pool_TREE_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'noun_pool_BIRD_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'noun_pool_SUN_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'noun_pool_MOON_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'verb_pool_GO' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'verb_pool_COME' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'verb_pool_STOP' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'verb_pool_LOOK' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'verb_pool_WALK' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'verb_pool_RUN' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'verb_pool_EAT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'verb_pool_SLEEP' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'verb_pool_GO_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'verb_pool_COME_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'verb_pool_STOP_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'verb_pool_LOOK_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'verb_pool_WALK_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'verb_pool_RUN_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'verb_pool_EAT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'verb_pool_SLEEP_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'adjective_pool_BIG' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'adjective_pool_SMALL' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'adjective_pool_HOT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'adjective_pool_COLD' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'adjective_pool_RED' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'adjective_pool_BLUE' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'adjective_pool_FAST' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'adjective_pool_SLOW' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'adjective_pool_BIG_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'adjective_pool_SMALL_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'adjective_pool_HOT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'adjective_pool_COLD_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'adjective_pool_RED_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'adjective_pool_BLUE_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'adjective_pool_FAST_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Region 'adjective_pool_SLOW_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Generating 3D neuron positions for 14464 neurons...
+[2026-05-14 06:18:31][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-05-14 06:18:53][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 15996817 synapses across 294 populations.
+[2026-05-14 06:18:53][INFO] SIM_BRIDGE: Initializing eligibility traces for 15996817 synapses (capacity: 23995225, dtype: float32)...
+[2026-05-14 06:18:53][INFO] SIM_BRIDGE: Initializing STDP state for 14464 neurons...
+[2026-05-14 06:18:53][INFO] SIM_BRIDGE: Simulation data initialized for 14464 neurons (3D). Synapses: 15996817. GPU memory: 2.5GB/25.8GB (9.6%)
+[BUILD] concept-pool bridge: 14464 neurons total, 20 concept pools (4000 neurons in pools)
+[topographic-bias] Applied factor=3.00/0.30 across motor + noun + verb pools
+  north->motor_N: x3.00 on 7348 edges
+  east->motor_E: x3.00 on 7454 edges
+  south->motor_S: x3.00 on 7364 edges
+  west->motor_W: x3.00 on 7429 edges
+  apple->noun_pool_APPLE: x3.00 on 7296 edges
+  river->noun_pool_RIVER: x3.00 on 7395 edges
+  dog->noun_pool_DOG: x3.00 on 7184 edges
+  cat->noun_pool_CAT: x3.00 on 7377 edges
+  tree->noun_pool_TREE: x3.00 on 7424 edges
+  bird->noun_pool_BIRD: x3.00 on 7462 edges
+  sun->noun_pool_SUN: x3.00 on 7415 edges
+  moon->noun_pool_MOON: x3.00 on 7373 edges
+  go->verb_pool_GO: x3.00 on 7295 edges
+  come->verb_pool_COME: x3.00 on 7254 edges
+  stop->verb_pool_STOP: x3.00 on 7520 edges
+  look->verb_pool_LOOK: x3.00 on 7407 edges
+  walk->verb_pool_WALK: x3.00 on 7389 edges
+  run->verb_pool_RUN: x3.00 on 7395 edges
+  eat->verb_pool_EAT: x3.00 on 7408 edges
+  sleep->verb_pool_SLEEP: x3.00 on 7435 edges
+  big->adjective_pool_BIG: x3.00 on 7264 edges
+  small->adjective_pool_SMALL: x3.00 on 7472 edges
+  hot->adjective_pool_HOT: x3.00 on 7379 edges
+  cold->adjective_pool_COLD: x3.00 on 7353 edges
+  red->adjective_pool_RED: x3.00 on 7475 edges
+  blue->adjective_pool_BLUE: x3.00 on 7322 edges
+  fast->adjective_pool_FAST: x3.00 on 7455 edges
+  slow->adjective_pool_SLOW: x3.00 on 7256 edges
+  reciprocal_target_edges: x3.00 on 206226 edges
+
+[TRAIN] 28 (word, pool) pairs, 200 events each = 5600 total events (interleaved)
+  interleaved event 100/5600 (48s)
+  interleaved event 200/5600 (94s)
+  interleaved event 300/5600 (142s)
+  interleaved event 400/5600 (190s)
+  interleaved event 500/5600 (236s)
+  interleaved event 600/5600 (279s)
+  interleaved event 700/5600 (325s)
+  interleaved event 800/5600 (369s)
+  interleaved event 900/5600 (412s)
+  interleaved event 1000/5600 (459s)
+  interleaved event 1100/5600 (506s)
+  interleaved event 1200/5600 (551s)
+  interleaved event 1300/5600 (595s)
+  interleaved event 1400/5600 (640s)
+  interleaved event 1500/5600 (685s)
+  interleaved event 1600/5600 (730s)
+  interleaved event 1700/5600 (774s)
+  interleaved event 1800/5600 (822s)
+  interleaved event 1900/5600 (868s)
+  interleaved event 2000/5600 (913s)
+  interleaved event 2100/5600 (966s)
+  interleaved event 2200/5600 (1010s)
+  interleaved event 2300/5600 (1056s)
+  interleaved event 2400/5600 (1100s)
+  interleaved event 2500/5600 (1144s)
+  interleaved event 2600/5600 (1192s)
+  interleaved event 2700/5600 (1238s)
+  interleaved event 2800/5600 (1283s)
+  interleaved event 2900/5600 (1327s)
+  interleaved event 3000/5600 (1372s)
+  interleaved event 3100/5600 (1418s)
+  interleaved event 3200/5600 (1462s)
+  interleaved event 3300/5600 (1506s)
+  interleaved event 3400/5600 (1555s)
+  interleaved event 3500/5600 (1600s)
+  interleaved event 3600/5600 (1647s)
+  interleaved event 3700/5600 (1691s)
+  interleaved event 3800/5600 (1736s)
+  interleaved event 3900/5600 (1782s)
+  interleaved event 4000/5600 (1827s)
+  interleaved event 4100/5600 (1872s)
+  interleaved event 4200/5600 (1920s)
+  interleaved event 4300/5600 (1966s)
+  interleaved event 4400/5600 (2012s)
+  interleaved event 4500/5600 (2057s)
+  interleaved event 4600/5600 (2101s)
+  interleaved event 4700/5600 (2148s)
+  interleaved event 4800/5600 (2192s)
+  interleaved event 4900/5600 (2238s)
+  interleaved event 5000/5600 (2286s)
+  interleaved event 5100/5600 (2333s)
+  interleaved event 5200/5600 (2378s)
+  interleaved event 5300/5600 (2422s)
+  interleaved event 5400/5600 (2467s)
+  interleaved event 5500/5600 (2513s)
+  interleaved event 5600/5600 (2558s)
+
+[TRAIN] complete (2558s, interleaved)
+
+[SAVE] saving bridge to research\findings\raw\g11_bg\concept_pool_demo\seed43_v17.simstate.h5
+[2026-05-14 07:01:54][INFO] SIM_BRIDGE: Saving checkpoint to research\findings\raw\g11_bg\concept_pool_demo\seed43_v17.simstate.h5...
+[2026-05-14 07:01:57][SUCCESS] SIM_BRIDGE: Checkpoint saved successfully to research\findings\raw\g11_bg\concept_pool_demo\seed43_v17.simstate.h5
+[SAVE] checkpoint written
+
+[EVAL] measuring cross-category isolation across 28 pools
+
+[RESULTS] per-word cross-category isolation:
+  north    -> motor_N               target=1.860  max_off=1.695 (verb_pool_COME)  ratio=1.10x  [PASS]
+  east     -> motor_E               target=3.035  max_off=2.315 (motor_N)  ratio=1.31x  [PASS]
+  south    -> motor_S               target=2.305  max_off=2.300 (motor_E)  ratio=1.00x  [PASS]
+  west     -> motor_W               target=1.175  max_off=1.785 (motor_S)  ratio=0.66x  [FAIL]
+  apple    -> noun_pool_APPLE       target=2.675  max_off=2.520 (motor_S)  ratio=1.06x  [PASS]
+  river    -> noun_pool_RIVER       target=2.345  max_off=2.485 (verb_pool_RUN)  ratio=0.94x  [FAIL]
+  dog      -> noun_pool_DOG         target=2.860  max_off=2.355 (noun_pool_BIRD)  ratio=1.21x  [PASS]
+  cat      -> noun_pool_CAT         target=2.000  max_off=1.940 (motor_N)  ratio=1.03x  [PASS]
+  tree     -> noun_pool_TREE        target=2.420  max_off=2.650 (adjective_pool_COLD)  ratio=0.91x  [FAIL]
+  bird     -> noun_pool_BIRD        target=2.040  max_off=2.025 (motor_S)  ratio=1.01x  [PASS]
+  sun      -> noun_pool_SUN         target=2.850  max_off=2.055 (noun_pool_RIVER)  ratio=1.39x  [PASS]
+  moon     -> noun_pool_MOON        target=1.775  max_off=2.185 (motor_E)  ratio=0.81x  [FAIL]
+  go       -> verb_pool_GO          target=1.360  max_off=1.880 (noun_pool_SUN)  ratio=0.72x  [FAIL]
+  come     -> verb_pool_COME        target=2.845  max_off=1.990 (motor_E)  ratio=1.43x  [PASS]
+  stop     -> verb_pool_STOP        target=1.180  max_off=1.925 (motor_E)  ratio=0.61x  [FAIL]
+  look     -> verb_pool_LOOK        target=1.315  max_off=1.980 (motor_E)  ratio=0.66x  [FAIL]
+  walk     -> verb_pool_WALK        target=2.340  max_off=1.970 (motor_W)  ratio=1.19x  [PASS]
+  run      -> verb_pool_RUN         target=1.340  max_off=2.395 (noun_pool_SUN)  ratio=0.56x  [FAIL]
+  eat      -> verb_pool_EAT         target=1.055  max_off=2.205 (verb_pool_COME)  ratio=0.48x  [FAIL]
+  sleep    -> verb_pool_SLEEP       target=1.905  max_off=1.775 (motor_E)  ratio=1.07x  [PASS]
+  big      -> adjective_pool_BIG    target=1.275  max_off=2.215 (adjective_pool_COLD)  ratio=0.58x  [FAIL]
+  small    -> adjective_pool_SMALL  target=1.565  max_off=1.495 (verb_pool_SLEEP)  ratio=1.05x  [PASS]
+  hot      -> adjective_pool_HOT    target=1.880  max_off=2.450 (motor_S)  ratio=0.77x  [FAIL]
+  cold     -> adjective_pool_COLD   target=2.825  max_off=2.115 (noun_pool_TREE)  ratio=1.34x  [PASS]
+  red      -> adjective_pool_RED    target=2.650  max_off=2.165 (motor_E)  ratio=1.22x  [PASS]
+  blue     -> adjective_pool_BLUE   target=2.035  max_off=1.805 (adjective_pool_RED)  ratio=1.13x  [PASS]
+  fast     -> adjective_pool_FAST   target=1.345  max_off=1.885 (motor_E)  ratio=0.71x  [FAIL]
+  slow     -> adjective_pool_SLOW   target=1.950  max_off=2.005 (adjective_pool_RED)  ratio=0.97x  [FAIL]
+
+[VERDICT] 15/28 words have correct target-pool dominance
+  Total wall clock: 2627s
+
+[OUT] wrote research\findings\raw\g11_bg\concept_pool_demo\seed43_v17.json
+[v17-MS] testing 96-cross compose for seed 43...
+=== compose_engram_demo (seed=43) ===
+  Bridge: research\findings\raw\g11_bg\concept_pool_demo\seed43_v17.simstate.h5
+  Pairs: [('go', 'north'), ('go', 'east'), ('go', 'south'), ('go', 'west'), ('come', 'north'), ('come', 'east'), ('come', 'south'), ('come', 'west'), ('stop', 'north'), ('stop', 'east'), ('stop', 'south'), ('stop', 'west'), ('look', 'north'), ('look', 'east'), ('look', 'south'), ('look', 'west'), ('walk', 'north'), ('walk', 'east'), ('walk', 'south'), ('walk', 'west'), ('run', 'north'), ('run', 'east'), ('run', 'south'), ('run', 'west'), ('eat', 'north'), ('eat', 'east'), ('eat', 'south'), ('eat', 'west'), ('sleep', 'north'), ('sleep', 'east'), ('sleep', 'south'), ('sleep', 'west'), ('apple', 'north'), ('apple', 'east'), ('apple', 'south'), ('apple', 'west'), ('river', 'north'), ('river', 'east'), ('river', 'south'), ('river', 'west'), ('dog', 'north'), ('dog', 'east'), ('dog', 'south'), ('dog', 'west'), ('cat', 'north'), ('cat', 'east'), ('cat', 'south'), ('cat', 'west'), ('tree', 'north'), ('tree', 'east'), ('tree', 'south'), ('tree', 'west'), ('bird', 'north'), ('bird', 'east'), ('bird', 'south'), ('bird', 'west'), ('sun', 'north'), ('sun', 'east'), ('sun', 'south'), ('sun', 'west'), ('moon', 'north'), ('moon', 'east'), ('moon', 'south'), ('moon', 'west'), ('big', 'north'), ('big', 'east'), ('big', 'south'), ('big', 'west'), ('small', 'north'), ('small', 'east'), ('small', 'south'), ('small', 'west'), ('hot', 'north'), ('hot', 'east'), ('hot', 'south'), ('hot', 'west'), ('cold', 'north'), ('cold', 'east'), ('cold', 'south'), ('cold', 'west'), ('red', 'north'), ('red', 'east'), ('red', 'south'), ('red', 'west'), ('blue', 'north'), ('blue', 'east'), ('blue', 'south'), ('blue', 'west'), ('fast', 'north'), ('fast', 'east'), ('fast', 'south'), ('fast', 'west'), ('slow', 'north'), ('slow', 'east'), ('slow', 'south'), ('slow', 'west')]
+  Encoding steps: 200, top_k: 100
+
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Brain-region framework: 58 regions, 14464 total neurons, 296 pathways.
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 14464 neurons...
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'language_input' (4096 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'motor_N' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'motor_E' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'motor_S' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'motor_W' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'language_output' (4096 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'motor_FS_N' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'motor_FS_E' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'motor_FS_S' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'motor_FS_W' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'noun_pool_APPLE' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'noun_pool_RIVER' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'noun_pool_DOG' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'noun_pool_CAT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'noun_pool_TREE' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'noun_pool_BIRD' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'noun_pool_SUN' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'noun_pool_MOON' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'noun_pool_APPLE_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'noun_pool_RIVER_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'noun_pool_DOG_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'noun_pool_CAT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'noun_pool_TREE_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'noun_pool_BIRD_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'noun_pool_SUN_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'noun_pool_MOON_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'verb_pool_GO' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'verb_pool_COME' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'verb_pool_STOP' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'verb_pool_LOOK' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'verb_pool_WALK' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'verb_pool_RUN' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'verb_pool_EAT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'verb_pool_SLEEP' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'verb_pool_GO_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'verb_pool_COME_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'verb_pool_STOP_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'verb_pool_LOOK_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'verb_pool_WALK_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'verb_pool_RUN_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'verb_pool_EAT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'verb_pool_SLEEP_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'adjective_pool_BIG' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'adjective_pool_SMALL' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'adjective_pool_HOT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'adjective_pool_COLD' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'adjective_pool_RED' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'adjective_pool_BLUE' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'adjective_pool_FAST' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'adjective_pool_SLOW' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'adjective_pool_BIG_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'adjective_pool_SMALL_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'adjective_pool_HOT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'adjective_pool_COLD_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'adjective_pool_RED_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'adjective_pool_BLUE_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'adjective_pool_FAST_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Region 'adjective_pool_SLOW_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Generating 3D neuron positions for 14464 neurons...
+[2026-05-14 07:02:18][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-05-14 07:02:39][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 16252852 synapses across 326 populations.
+[2026-05-14 07:02:40][INFO] SIM_BRIDGE: Initializing eligibility traces for 16252852 synapses (capacity: 24379278, dtype: float32)...
+[2026-05-14 07:02:40][INFO] SIM_BRIDGE: Initializing STDP state for 14464 neurons...
+[2026-05-14 07:02:40][INFO] SIM_BRIDGE: Simulation data initialized for 14464 neurons (3D). Synapses: 16252852. GPU memory: 2.5GB/25.8GB (9.6%)
+[2026-05-14 07:02:40][INFO] SIM_BRIDGE: Loading checkpoint from research\findings\raw\g11_bg\concept_pool_demo\seed43_v17.simstate.h5...
+[2026-05-14 07:02:40][INFO] SIM_BRIDGE: Clearing simulation state and GPU memory...
+[2026-05-14 07:02:40][INFO] SIM_BRIDGE: Cleared simulation state and GPU memory.
+[2026-05-14 07:02:40][DEBUG] SIM_BRIDGE: Checkpoint: Dataset for 'cp_adex_w' not found or was empty. Using default.
+[2026-05-14 07:02:40][DEBUG] SIM_BRIDGE: Checkpoint: Dataset for 'cp_stp_u' not found or was empty. Using default.
+[2026-05-14 07:02:40][DEBUG] SIM_BRIDGE: Checkpoint: Dataset for 'cp_stp_x' not found or was empty. Using default.
+[2026-05-14 07:02:41][SUCCESS] SIM_BRIDGE: Checkpoint loaded. Sim time: 0.0ms, Step: 0, Model: IZHIKEVICH
+[ENCODING] Tagging compose pairs as engrams...
+  [go_north] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [go_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [go_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [go_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [come_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [come_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [come_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [come_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [stop_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [stop_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [stop_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [stop_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [look_north] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [look_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [look_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [look_west] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [walk_north] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [walk_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [walk_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [walk_west] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [run_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [run_east] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [run_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [run_west] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [eat_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [eat_east] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [eat_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [eat_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [sleep_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [sleep_east] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [sleep_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [sleep_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [apple_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [apple_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [apple_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [apple_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [river_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [river_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [river_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [river_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [dog_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [dog_east] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [dog_south] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [dog_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [cat_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [cat_east] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [cat_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [cat_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [tree_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [tree_east] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [tree_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [tree_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [bird_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [bird_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [bird_south] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [bird_west] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [sun_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [sun_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [sun_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [sun_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [moon_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [moon_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [moon_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [moon_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [big_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [big_east] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [big_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [big_west] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [small_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [small_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [small_south] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [small_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [hot_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [hot_east] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [hot_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [hot_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [cold_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [cold_east] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [cold_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [cold_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [red_north] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [red_east] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [red_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [red_west] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [blue_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [blue_east] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [blue_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [blue_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [fast_north] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [fast_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [fast_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [fast_west] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [slow_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [slow_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [slow_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [slow_west] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+[ENCODING] complete (68s)
+
+[RECALL] Stimulating each engram tag, measuring motor firing
+  tag                motor_N    motor_E    motor_S    motor_W   
+  go_north           0.148     0.001     0.001     0.000
+  go_east            0.000     0.148     0.001     0.000
+  go_south           0.001     0.000     0.149     0.000
+  go_west            0.001     0.001     0.001     0.152
+  come_north         0.149     0.001     0.000     0.001
+  come_east          0.000     0.147     0.000     0.000
+  come_south         0.000     0.001     0.150     0.001
+  come_west          0.001     0.001     0.000     0.153
+  stop_north         0.145     0.001     0.000     0.000
+  stop_east          0.000     0.149     0.001     0.001
+  stop_south         0.000     0.000     0.151     0.001
+  stop_west          0.001     0.000     0.000     0.154
+  look_north         0.146     0.001     0.000     0.000
+  look_east          0.000     0.147     0.001     0.000
+  look_south         0.000     0.000     0.149     0.000
+  look_west          0.001     0.001     0.000     0.149
+  walk_north         0.149     0.001     0.000     0.001
+  walk_east          0.000     0.145     0.001     0.000
+  walk_south         0.001     0.000     0.147     0.001
+  walk_west          0.001     0.000     0.000     0.153
+  run_north          0.144     0.001     0.000     0.000
+  run_east           0.001     0.144     0.001     0.001
+  run_south          0.001     0.000     0.150     0.001
+  run_west           0.001     0.000     0.000     0.152
+  eat_north          0.146     0.001     0.000     0.001
+  eat_east           0.001     0.143     0.001     0.000
+  eat_south          0.001     0.001     0.151     0.001
+  eat_west           0.000     0.000     0.000     0.153
+  sleep_north        0.149     0.001     0.001     0.000
+  sleep_east         0.000     0.146     0.000     0.000
+  sleep_south        0.001     0.000     0.152     0.001
+  sleep_west         0.001     0.001     0.000     0.155
+  apple_north        0.146     0.001     0.001     0.001
+  apple_east         0.001     0.146     0.001     0.001
+  apple_south        0.001     0.001     0.149     0.001
+  apple_west         0.001     0.001     0.000     0.153
+  river_north        0.146     0.001     0.001     0.000
+  river_east         0.000     0.146     0.001     0.000
+  river_south        0.001     0.000     0.148     0.001
+  river_west         0.001     0.000     0.000     0.155
+  dog_north          0.147     0.002     0.001     0.000
+  dog_east           0.000     0.145     0.001     0.001
+  dog_south          0.001     0.000     0.148     0.001
+  dog_west           0.001     0.000     0.000     0.154
+  cat_north          0.151     0.001     0.001     0.001
+  cat_east           0.000     0.145     0.001     0.000
+  cat_south          0.001     0.001     0.152     0.001
+  cat_west           0.001     0.000     0.000     0.152
+  tree_north         0.145     0.001     0.000     0.000
+  tree_east          0.000     0.143     0.000     0.001
+  tree_south         0.000     0.000     0.149     0.001
+  tree_west          0.001     0.001     0.001     0.154
+  bird_north         0.151     0.001     0.001     0.001
+  bird_east          0.001     0.146     0.001     0.000
+  bird_south         0.001     0.000     0.145     0.001
+  bird_west          0.001     0.001     0.001     0.156
+  sun_north          0.148     0.001     0.001     0.000
+  sun_east           0.000     0.144     0.001     0.000
+  sun_south          0.001     0.001     0.149     0.000
+  sun_west           0.001     0.000     0.000     0.153
+  moon_north         0.147     0.001     0.000     0.000
+  moon_east          0.001     0.148     0.002     0.002
+  moon_south         0.000     0.000     0.147     0.001
+  moon_west          0.001     0.001     0.000     0.153
+  big_north          0.147     0.001     0.001     0.000
+  big_east           0.001     0.146     0.001     0.000
+  big_south          0.001     0.001     0.148     0.001
+  big_west           0.001     0.000     0.000     0.151
+  small_north        0.146     0.001     0.001     0.000
+  small_east         0.001     0.146     0.001     0.001
+  small_south        0.001     0.000     0.147     0.002
+  small_west         0.002     0.000     0.001     0.153
+  hot_north          0.151     0.002     0.001     0.001
+  hot_east           0.000     0.142     0.001     0.000
+  hot_south          0.001     0.001     0.148     0.001
+  hot_west           0.001     0.000     0.000     0.155
+  cold_north         0.143     0.001     0.000     0.000
+  cold_east          0.001     0.148     0.001     0.001
+  cold_south         0.001     0.000     0.148     0.001
+  cold_west          0.000     0.000     0.000     0.153
+  red_north          0.147     0.001     0.000     0.000
+  red_east           0.000     0.144     0.001     0.001
+  red_south          0.001     0.001     0.150     0.001
+  red_west           0.001     0.001     0.000     0.151
+  blue_north         0.147     0.000     0.000     0.000
+  blue_east          0.000     0.145     0.002     0.001
+  blue_south         0.000     0.000     0.146     0.001
+  blue_west          0.001     0.000     0.000     0.151
+  fast_north         0.147     0.001     0.001     0.000
+  fast_east          0.000     0.143     0.000     0.000
+  fast_south         0.000     0.000     0.147     0.001
+  fast_west          0.001     0.000     0.000     0.150
+  slow_north         0.146     0.001     0.001     0.000
+  slow_east          0.000     0.143     0.001     0.000
+  slow_south         0.001     0.001     0.148     0.001
+  slow_west          0.001     0.001     0.000     0.151
+
+  go_north           target=0.148 off=0.001 ratio=118.80x [PASS]
+  go_east            target=0.148 off=0.001 ratio=128.70x [PASS]
+  go_south           target=0.149 off=0.001 ratio=149.50x [PASS]
+  go_west            target=0.152 off=0.001 ratio=112.30x [PASS]
+  come_north         target=0.149 off=0.001 ratio=149.15x [PASS]
+  come_east          target=0.147 off=0.000 ratio=147.30x [PASS]
+  come_south         target=0.150 off=0.001 ratio=115.15x [PASS]
+  come_west          target=0.153 off=0.001 ratio=127.50x [PASS]
+  stop_north         target=0.145 off=0.001 ratio=145.40x [PASS]
+  stop_east          target=0.149 off=0.001 ratio=141.71x [PASS]
+  stop_south         target=0.151 off=0.001 ratio=151.25x [PASS]
+  stop_west          target=0.154 off=0.001 ratio=153.95x [PASS]
+  look_north         target=0.146 off=0.001 ratio=138.62x [PASS]
+  look_east          target=0.147 off=0.001 ratio=146.60x [PASS]
+  look_south         target=0.149 off=0.000 ratio=148.95x [PASS]
+  look_west          target=0.149 off=0.001 ratio=148.90x [PASS]
+  walk_north         target=0.149 off=0.001 ratio=119.28x [PASS]
+  walk_east          target=0.145 off=0.001 ratio=145.25x [PASS]
+  walk_south         target=0.147 off=0.001 ratio=140.05x [PASS]
+  walk_west          target=0.153 off=0.001 ratio=152.65x [PASS]
+  run_north          target=0.144 off=0.001 ratio=144.20x [PASS]
+  run_east           target=0.144 off=0.001 ratio=106.96x [PASS]
+  run_south          target=0.150 off=0.001 ratio=149.85x [PASS]
+  run_west           target=0.152 off=0.001 ratio=132.39x [PASS]
+  eat_north          target=0.146 off=0.001 ratio=146.50x [PASS]
+  eat_east           target=0.143 off=0.001 ratio=114.72x [PASS]
+  eat_south          target=0.151 off=0.001 ratio=107.64x [PASS]
+  eat_west           target=0.153 off=0.000 ratio=153.50x [PASS]
+  sleep_north        target=0.149 off=0.001 ratio=142.24x [PASS]
+  sleep_east         target=0.146 off=0.000 ratio=146.05x [PASS]
+  sleep_south        target=0.152 off=0.001 ratio=126.88x [PASS]
+  sleep_west         target=0.155 off=0.001 ratio=154.80x [PASS]
+  apple_north        target=0.146 off=0.001 ratio=146.40x [PASS]
+  apple_east         target=0.146 off=0.001 ratio=146.35x [PASS]
+  apple_south        target=0.149 off=0.001 ratio=148.85x [PASS]
+  apple_west         target=0.153 off=0.001 ratio=153.40x [PASS]
+  river_north        target=0.146 off=0.001 ratio=121.96x [PASS]
+  river_east         target=0.146 off=0.001 ratio=146.30x [PASS]
+  river_south        target=0.148 off=0.001 ratio=148.50x [PASS]
+  river_west         target=0.155 off=0.001 ratio=155.35x [PASS]
+  dog_north          target=0.147 off=0.002 ratio=98.20x [PASS]
+  dog_east           target=0.145 off=0.001 ratio=131.86x [PASS]
+  dog_south          target=0.148 off=0.001 ratio=140.86x [PASS]
+  dog_west           target=0.154 off=0.001 ratio=154.50x [PASS]
+  cat_north          target=0.151 off=0.001 ratio=131.00x [PASS]
+  cat_east           target=0.145 off=0.001 ratio=144.90x [PASS]
+  cat_south          target=0.152 off=0.001 ratio=151.90x [PASS]
+  cat_west           target=0.152 off=0.001 ratio=152.10x [PASS]
+  tree_north         target=0.145 off=0.001 ratio=145.15x [PASS]
+  tree_east          target=0.143 off=0.001 ratio=142.95x [PASS]
+  tree_south         target=0.149 off=0.001 ratio=148.70x [PASS]
+  tree_west          target=0.154 off=0.001 ratio=114.44x [PASS]
+  bird_north         target=0.151 off=0.001 ratio=103.86x [PASS]
+  bird_east          target=0.146 off=0.001 ratio=146.20x [PASS]
+  bird_south         target=0.145 off=0.001 ratio=138.33x [PASS]
+  bird_west          target=0.156 off=0.001 ratio=107.79x [PASS]
+  sun_north          target=0.148 off=0.001 ratio=123.58x [PASS]
+  sun_east           target=0.144 off=0.001 ratio=143.95x [PASS]
+  sun_south          target=0.149 off=0.001 ratio=148.60x [PASS]
+  sun_west           target=0.153 off=0.001 ratio=153.30x [PASS]
+  moon_north         target=0.147 off=0.001 ratio=146.80x [PASS]
+  moon_east          target=0.148 off=0.002 ratio=87.06x [PASS]
+  moon_south         target=0.147 off=0.001 ratio=117.80x [PASS]
+  moon_west          target=0.153 off=0.001 ratio=153.50x [PASS]
+  big_north          target=0.147 off=0.001 ratio=108.59x [PASS]
+  big_east           target=0.146 off=0.001 ratio=146.35x [PASS]
+  big_south          target=0.148 off=0.001 ratio=128.52x [PASS]
+  big_west           target=0.151 off=0.001 ratio=150.70x [PASS]
+  small_north        target=0.146 off=0.001 ratio=139.24x [PASS]
+  small_east         target=0.146 off=0.001 ratio=146.35x [PASS]
+  small_south        target=0.147 off=0.002 ratio=86.74x [PASS]
+  small_west         target=0.153 off=0.002 ratio=98.65x [PASS]
+  hot_north          target=0.151 off=0.002 ratio=81.81x [PASS]
+  hot_east           target=0.142 off=0.001 ratio=141.85x [PASS]
+  hot_south          target=0.148 off=0.001 ratio=148.40x [PASS]
+  hot_west           target=0.155 off=0.001 ratio=155.25x [PASS]
+  cold_north         target=0.143 off=0.001 ratio=143.00x [PASS]
+  cold_east          target=0.148 off=0.001 ratio=147.95x [PASS]
+  cold_south         target=0.148 off=0.001 ratio=148.25x [PASS]
+  cold_west          target=0.153 off=0.000 ratio=153.15x [PASS]
+  red_north          target=0.147 off=0.001 ratio=146.55x [PASS]
+  red_east           target=0.144 off=0.001 ratio=143.75x [PASS]
+  red_south          target=0.150 off=0.001 ratio=149.60x [PASS]
+  red_west           target=0.151 off=0.001 ratio=151.15x [PASS]
+  blue_north         target=0.147 off=0.000 ratio=146.80x [PASS]
+  blue_east          target=0.145 off=0.002 ratio=66.11x [PASS]
+  blue_south         target=0.146 off=0.001 ratio=146.00x [PASS]
+  blue_west          target=0.151 off=0.001 ratio=150.85x [PASS]
+  fast_north         target=0.147 off=0.001 ratio=146.90x [PASS]
+  fast_east          target=0.143 off=0.000 ratio=143.00x [PASS]
+  fast_south         target=0.147 off=0.001 ratio=146.70x [PASS]
+  fast_west          target=0.150 off=0.001 ratio=150.45x [PASS]
+  slow_north         target=0.146 off=0.001 ratio=121.58x [PASS]
+  slow_east          target=0.143 off=0.001 ratio=143.10x [PASS]
+  slow_south         target=0.148 off=0.001 ratio=140.95x [PASS]
+  slow_west          target=0.151 off=0.001 ratio=151.45x [PASS]
+
+[VERDICT] 96/96 engram tags drive TRUE motor pool
+
+[ANTI-CHEAT] Skipped (n_pairs=96, n_unique_motors=4; need 4+4 for clean perm test)
+  TRUE pass: 96/96
+  Best perm pass: 96/96
+
+[OUT] wrote research\findings\raw\g11_bg\concept_pool_demo\seed43_v17_96cross.json
+[v17-MS] seed 43 : P1=15/28, 96cross=96/96
+[v17-MS] launching seed 44 training (28-word vocab)...
+=== concept_pool_demo_v2 - extended vocabulary ===
+  Motor: ['north', 'east', 'south', 'west']
+  Nouns: ['apple', 'river', 'dog', 'cat', 'tree', 'bird', 'sun', 'moon'] (8 pools)
+  Verbs: ['go', 'come', 'stop', 'look', 'walk', 'run', 'eat', 'sleep'] (8 pools)
+  Adjectives: ['big', 'small', 'hot', 'cold', 'red', 'blue', 'fast', 'slow'] (8 pools)
+  Total: 28 words / 28 distinct output pools
+
+
+=== concept_pool_demo (seed=44) ===
+  Architecture: 4 motor + 8 noun + 8 verb + 8 adjective = 28 pools
+  Vocab: ['north', 'east', 'south', 'west'] + ['apple', 'river', 'dog', 'cat', 'tree', 'bird', 'sun', 'moon'] + ['go', 'come', 'stop', 'look', 'walk', 'run', 'eat', 'sleep'] + ['big', 'small', 'hot', 'cold', 'red', 'blue', 'fast', 'slow']
+  Train events/word: 200
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Brain-region framework: 58 regions, 14464 total neurons, 264 pathways.
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 14464 neurons...
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'language_input' (4096 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'motor_N' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'motor_E' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'motor_S' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'motor_W' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'language_output' (4096 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'motor_FS_N' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'motor_FS_E' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'motor_FS_S' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'motor_FS_W' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'noun_pool_APPLE' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'noun_pool_RIVER' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'noun_pool_DOG' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'noun_pool_CAT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'noun_pool_TREE' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'noun_pool_BIRD' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'noun_pool_SUN' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'noun_pool_MOON' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'noun_pool_APPLE_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'noun_pool_RIVER_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'noun_pool_DOG_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'noun_pool_CAT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'noun_pool_TREE_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'noun_pool_BIRD_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'noun_pool_SUN_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'noun_pool_MOON_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'verb_pool_GO' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'verb_pool_COME' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'verb_pool_STOP' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'verb_pool_LOOK' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'verb_pool_WALK' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'verb_pool_RUN' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'verb_pool_EAT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'verb_pool_SLEEP' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'verb_pool_GO_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'verb_pool_COME_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'verb_pool_STOP_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'verb_pool_LOOK_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'verb_pool_WALK_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'verb_pool_RUN_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'verb_pool_EAT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'verb_pool_SLEEP_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'adjective_pool_BIG' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'adjective_pool_SMALL' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'adjective_pool_HOT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'adjective_pool_COLD' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'adjective_pool_RED' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'adjective_pool_BLUE' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'adjective_pool_FAST' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'adjective_pool_SLOW' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'adjective_pool_BIG_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'adjective_pool_SMALL_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'adjective_pool_HOT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'adjective_pool_COLD_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'adjective_pool_RED_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'adjective_pool_BLUE_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'adjective_pool_FAST_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Region 'adjective_pool_SLOW_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Generating 3D neuron positions for 14464 neurons...
+[2026-05-14 07:04:34][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-05-14 07:04:55][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 15998910 synapses across 294 populations.
+[2026-05-14 07:04:55][INFO] SIM_BRIDGE: Initializing eligibility traces for 15998910 synapses (capacity: 23998365, dtype: float32)...
+[2026-05-14 07:04:55][INFO] SIM_BRIDGE: Initializing STDP state for 14464 neurons...
+[2026-05-14 07:04:55][INFO] SIM_BRIDGE: Simulation data initialized for 14464 neurons (3D). Synapses: 15998910. GPU memory: 2.5GB/25.8GB (9.6%)
+[BUILD] concept-pool bridge: 14464 neurons total, 20 concept pools (4000 neurons in pools)
+[topographic-bias] Applied factor=3.00/0.30 across motor + noun + verb pools
+  north->motor_N: x3.00 on 7508 edges
+  east->motor_E: x3.00 on 7387 edges
+  south->motor_S: x3.00 on 7434 edges
+  west->motor_W: x3.00 on 7400 edges
+  apple->noun_pool_APPLE: x3.00 on 7357 edges
+  river->noun_pool_RIVER: x3.00 on 7391 edges
+  dog->noun_pool_DOG: x3.00 on 7328 edges
+  cat->noun_pool_CAT: x3.00 on 7468 edges
+  tree->noun_pool_TREE: x3.00 on 7305 edges
+  bird->noun_pool_BIRD: x3.00 on 7362 edges
+  sun->noun_pool_SUN: x3.00 on 7409 edges
+  moon->noun_pool_MOON: x3.00 on 7431 edges
+  go->verb_pool_GO: x3.00 on 7470 edges
+  come->verb_pool_COME: x3.00 on 7255 edges
+  stop->verb_pool_STOP: x3.00 on 7319 edges
+  look->verb_pool_LOOK: x3.00 on 7327 edges
+  walk->verb_pool_WALK: x3.00 on 7324 edges
+  run->verb_pool_RUN: x3.00 on 7428 edges
+  eat->verb_pool_EAT: x3.00 on 7259 edges
+  sleep->verb_pool_SLEEP: x3.00 on 7355 edges
+  big->adjective_pool_BIG: x3.00 on 7477 edges
+  small->adjective_pool_SMALL: x3.00 on 7322 edges
+  hot->adjective_pool_HOT: x3.00 on 7321 edges
+  cold->adjective_pool_COLD: x3.00 on 7315 edges
+  red->adjective_pool_RED: x3.00 on 7445 edges
+  blue->adjective_pool_BLUE: x3.00 on 7414 edges
+  fast->adjective_pool_FAST: x3.00 on 7343 edges
+  slow->adjective_pool_SLOW: x3.00 on 7273 edges
+  reciprocal_target_edges: x3.00 on 206732 edges
+
+[TRAIN] 28 (word, pool) pairs, 200 events each = 5600 total events (interleaved)
+  interleaved event 100/5600 (45s)
+  interleaved event 200/5600 (91s)
+  interleaved event 300/5600 (135s)
+  interleaved event 400/5600 (179s)
+  interleaved event 500/5600 (227s)
+  interleaved event 600/5600 (274s)
+  interleaved event 700/5600 (320s)
+  interleaved event 800/5600 (365s)
+  interleaved event 900/5600 (412s)
+  interleaved event 1000/5600 (459s)
+  interleaved event 1100/5600 (504s)
+  interleaved event 1200/5600 (553s)
+  interleaved event 1300/5600 (601s)
+  interleaved event 1400/5600 (647s)
+  interleaved event 1500/5600 (693s)
+  interleaved event 1600/5600 (737s)
+  interleaved event 1700/5600 (781s)
+  interleaved event 1800/5600 (827s)
+  interleaved event 1900/5600 (872s)
+  interleaved event 2000/5600 (916s)
+  interleaved event 2100/5600 (964s)
+  interleaved event 2200/5600 (1011s)
+  interleaved event 2300/5600 (1057s)
+  interleaved event 2400/5600 (1102s)
+  interleaved event 2500/5600 (1145s)
+  interleaved event 2600/5600 (1192s)
+  interleaved event 2700/5600 (1236s)
+  interleaved event 2800/5600 (1282s)
+  interleaved event 2900/5600 (1329s)
+  interleaved event 3000/5600 (1374s)
+  interleaved event 3100/5600 (1420s)
+  interleaved event 3200/5600 (1464s)
+  interleaved event 3300/5600 (1512s)
+  interleaved event 3400/5600 (1557s)
+  interleaved event 3500/5600 (1602s)
+  interleaved event 3600/5600 (1648s)
+  interleaved event 3700/5600 (1695s)
+  interleaved event 3800/5600 (1744s)
+  interleaved event 3900/5600 (1790s)
+  interleaved event 4000/5600 (1835s)
+  interleaved event 4100/5600 (1880s)
+  interleaved event 4200/5600 (1925s)
+  interleaved event 4300/5600 (1972s)
+  interleaved event 4400/5600 (2020s)
+  interleaved event 4500/5600 (2067s)
+  interleaved event 4600/5600 (2113s)
+  interleaved event 4700/5600 (2158s)
+  interleaved event 4800/5600 (2202s)
+  interleaved event 4900/5600 (2248s)
+  interleaved event 5000/5600 (2293s)
+  interleaved event 5100/5600 (2337s)
+  interleaved event 5200/5600 (2385s)
+  interleaved event 5300/5600 (2432s)
+  interleaved event 5400/5600 (2479s)
+  interleaved event 5500/5600 (2526s)
+  interleaved event 5600/5600 (2574s)
+
+[TRAIN] complete (2574s, interleaved)
+
+[SAVE] saving bridge to research\findings\raw\g11_bg\concept_pool_demo\seed44_v17.simstate.h5
+[2026-05-14 07:48:10][INFO] SIM_BRIDGE: Saving checkpoint to research\findings\raw\g11_bg\concept_pool_demo\seed44_v17.simstate.h5...
+[2026-05-14 07:48:14][SUCCESS] SIM_BRIDGE: Checkpoint saved successfully to research\findings\raw\g11_bg\concept_pool_demo\seed44_v17.simstate.h5
+[SAVE] checkpoint written
+
+[EVAL] measuring cross-category isolation across 28 pools
+
+[RESULTS] per-word cross-category isolation:
+  north    -> motor_N               target=2.055  max_off=2.635 (motor_W)  ratio=0.78x  [FAIL]
+  east     -> motor_E               target=1.185  max_off=1.840 (noun_pool_MOON)  ratio=0.64x  [FAIL]
+  south    -> motor_S               target=2.665  max_off=1.950 (motor_W)  ratio=1.37x  [PASS]
+  west     -> motor_W               target=2.130  max_off=2.140 (motor_S)  ratio=1.00x  [FAIL]
+  apple    -> noun_pool_APPLE       target=3.160  max_off=2.620 (motor_W)  ratio=1.21x  [PASS]
+  river    -> noun_pool_RIVER       target=3.340  max_off=2.875 (motor_W)  ratio=1.16x  [PASS]
+  dog      -> noun_pool_DOG         target=2.335  max_off=2.260 (adjective_pool_RED)  ratio=1.03x  [PASS]
+  cat      -> noun_pool_CAT         target=1.435  max_off=2.185 (motor_S)  ratio=0.66x  [FAIL]
+  tree     -> noun_pool_TREE        target=1.515  max_off=1.950 (adjective_pool_RED)  ratio=0.78x  [FAIL]
+  bird     -> noun_pool_BIRD        target=1.185  max_off=1.945 (motor_S)  ratio=0.61x  [FAIL]
+  sun      -> noun_pool_SUN         target=2.145  max_off=1.955 (adjective_pool_SMALL)  ratio=1.10x  [PASS]
+  moon     -> noun_pool_MOON        target=2.500  max_off=2.335 (adjective_pool_BIG)  ratio=1.07x  [PASS]
+  go       -> verb_pool_GO          target=1.975  max_off=2.355 (motor_W)  ratio=0.84x  [FAIL]
+  come     -> verb_pool_COME        target=2.140  max_off=2.495 (motor_W)  ratio=0.86x  [FAIL]
+  stop     -> verb_pool_STOP        target=2.125  max_off=1.985 (verb_pool_COME)  ratio=1.07x  [PASS]
+  look     -> verb_pool_LOOK        target=1.665  max_off=1.625 (verb_pool_STOP)  ratio=1.02x  [PASS]
+  walk     -> verb_pool_WALK        target=1.420  max_off=1.545 (motor_S)  ratio=0.92x  [FAIL]
+  run      -> verb_pool_RUN         target=1.275  max_off=1.990 (motor_W)  ratio=0.64x  [FAIL]
+  eat      -> verb_pool_EAT         target=1.810  max_off=2.285 (verb_pool_RUN)  ratio=0.79x  [FAIL]
+  sleep    -> verb_pool_SLEEP       target=1.645  max_off=1.935 (motor_N)  ratio=0.85x  [FAIL]
+  big      -> adjective_pool_BIG    target=2.440  max_off=2.655 (motor_W)  ratio=0.92x  [FAIL]
+  small    -> adjective_pool_SMALL  target=2.025  max_off=1.450 (noun_pool_SUN)  ratio=1.40x  [PASS]
+  hot      -> adjective_pool_HOT    target=2.680  max_off=2.245 (motor_E)  ratio=1.19x  [PASS]
+  cold     -> adjective_pool_COLD   target=1.435  max_off=2.040 (motor_N)  ratio=0.70x  [FAIL]
+  red      -> adjective_pool_RED    target=3.170  max_off=2.585 (motor_N)  ratio=1.23x  [PASS]
+  blue     -> adjective_pool_BLUE   target=1.440  max_off=1.810 (motor_W)  ratio=0.80x  [FAIL]
+  fast     -> adjective_pool_FAST   target=1.420  max_off=2.050 (motor_S)  ratio=0.69x  [FAIL]
+  slow     -> adjective_pool_SLOW   target=1.620  max_off=1.640 (motor_S)  ratio=0.99x  [FAIL]
+
+[VERDICT] 11/28 words have correct target-pool dominance
+  Total wall clock: 2641s
+
+[OUT] wrote research\findings\raw\g11_bg\concept_pool_demo\seed44_v17.json
+[v17-MS] testing 96-cross compose for seed 44...
+=== compose_engram_demo (seed=44) ===
+  Bridge: research\findings\raw\g11_bg\concept_pool_demo\seed44_v17.simstate.h5
+  Pairs: [('go', 'north'), ('go', 'east'), ('go', 'south'), ('go', 'west'), ('come', 'north'), ('come', 'east'), ('come', 'south'), ('come', 'west'), ('stop', 'north'), ('stop', 'east'), ('stop', 'south'), ('stop', 'west'), ('look', 'north'), ('look', 'east'), ('look', 'south'), ('look', 'west'), ('walk', 'north'), ('walk', 'east'), ('walk', 'south'), ('walk', 'west'), ('run', 'north'), ('run', 'east'), ('run', 'south'), ('run', 'west'), ('eat', 'north'), ('eat', 'east'), ('eat', 'south'), ('eat', 'west'), ('sleep', 'north'), ('sleep', 'east'), ('sleep', 'south'), ('sleep', 'west'), ('apple', 'north'), ('apple', 'east'), ('apple', 'south'), ('apple', 'west'), ('river', 'north'), ('river', 'east'), ('river', 'south'), ('river', 'west'), ('dog', 'north'), ('dog', 'east'), ('dog', 'south'), ('dog', 'west'), ('cat', 'north'), ('cat', 'east'), ('cat', 'south'), ('cat', 'west'), ('tree', 'north'), ('tree', 'east'), ('tree', 'south'), ('tree', 'west'), ('bird', 'north'), ('bird', 'east'), ('bird', 'south'), ('bird', 'west'), ('sun', 'north'), ('sun', 'east'), ('sun', 'south'), ('sun', 'west'), ('moon', 'north'), ('moon', 'east'), ('moon', 'south'), ('moon', 'west'), ('big', 'north'), ('big', 'east'), ('big', 'south'), ('big', 'west'), ('small', 'north'), ('small', 'east'), ('small', 'south'), ('small', 'west'), ('hot', 'north'), ('hot', 'east'), ('hot', 'south'), ('hot', 'west'), ('cold', 'north'), ('cold', 'east'), ('cold', 'south'), ('cold', 'west'), ('red', 'north'), ('red', 'east'), ('red', 'south'), ('red', 'west'), ('blue', 'north'), ('blue', 'east'), ('blue', 'south'), ('blue', 'west'), ('fast', 'north'), ('fast', 'east'), ('fast', 'south'), ('fast', 'west'), ('slow', 'north'), ('slow', 'east'), ('slow', 'south'), ('slow', 'west')]
+  Encoding steps: 200, top_k: 100
+
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Brain-region framework: 58 regions, 14464 total neurons, 296 pathways.
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 14464 neurons...
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'language_input' (4096 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'motor_N' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'motor_E' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'motor_S' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'motor_W' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'language_output' (4096 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'motor_FS_N' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'motor_FS_E' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'motor_FS_S' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'motor_FS_W' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'noun_pool_APPLE' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'noun_pool_RIVER' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'noun_pool_DOG' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'noun_pool_CAT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'noun_pool_TREE' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'noun_pool_BIRD' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'noun_pool_SUN' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'noun_pool_MOON' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'noun_pool_APPLE_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'noun_pool_RIVER_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'noun_pool_DOG_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'noun_pool_CAT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'noun_pool_TREE_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'noun_pool_BIRD_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'noun_pool_SUN_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'noun_pool_MOON_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'verb_pool_GO' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'verb_pool_COME' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'verb_pool_STOP' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'verb_pool_LOOK' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'verb_pool_WALK' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'verb_pool_RUN' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'verb_pool_EAT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'verb_pool_SLEEP' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'verb_pool_GO_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'verb_pool_COME_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'verb_pool_STOP_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'verb_pool_LOOK_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'verb_pool_WALK_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'verb_pool_RUN_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'verb_pool_EAT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'verb_pool_SLEEP_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'adjective_pool_BIG' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'adjective_pool_SMALL' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'adjective_pool_HOT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'adjective_pool_COLD' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'adjective_pool_RED' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'adjective_pool_BLUE' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'adjective_pool_FAST' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'adjective_pool_SLOW' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'adjective_pool_BIG_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'adjective_pool_SMALL_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'adjective_pool_HOT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'adjective_pool_COLD_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'adjective_pool_RED_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'adjective_pool_BLUE_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'adjective_pool_FAST_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Region 'adjective_pool_SLOW_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Generating 3D neuron positions for 14464 neurons...
+[2026-05-14 07:48:45][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-05-14 07:49:07][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 16255422 synapses across 326 populations.
+[2026-05-14 07:49:07][INFO] SIM_BRIDGE: Initializing eligibility traces for 16255422 synapses (capacity: 24383133, dtype: float32)...
+[2026-05-14 07:49:07][INFO] SIM_BRIDGE: Initializing STDP state for 14464 neurons...
+[2026-05-14 07:49:07][INFO] SIM_BRIDGE: Simulation data initialized for 14464 neurons (3D). Synapses: 16255422. GPU memory: 2.5GB/25.8GB (9.7%)
+[2026-05-14 07:49:07][INFO] SIM_BRIDGE: Loading checkpoint from research\findings\raw\g11_bg\concept_pool_demo\seed44_v17.simstate.h5...
+[2026-05-14 07:49:07][INFO] SIM_BRIDGE: Clearing simulation state and GPU memory...
+[2026-05-14 07:49:07][INFO] SIM_BRIDGE: Cleared simulation state and GPU memory.
+[2026-05-14 07:49:07][DEBUG] SIM_BRIDGE: Checkpoint: Dataset for 'cp_adex_w' not found or was empty. Using default.
+[2026-05-14 07:49:08][DEBUG] SIM_BRIDGE: Checkpoint: Dataset for 'cp_stp_u' not found or was empty. Using default.
+[2026-05-14 07:49:08][DEBUG] SIM_BRIDGE: Checkpoint: Dataset for 'cp_stp_x' not found or was empty. Using default.
+[2026-05-14 07:49:08][SUCCESS] SIM_BRIDGE: Checkpoint loaded. Sim time: 0.0ms, Step: 0, Model: IZHIKEVICH
+[ENCODING] Tagging compose pairs as engrams...
+  [go_north] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [go_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [go_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [go_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [come_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [come_east] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [come_south] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [come_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [stop_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [stop_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [stop_south] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [stop_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [look_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [look_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [look_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [look_west] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [walk_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [walk_east] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [walk_south] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [walk_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [run_north] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [run_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [run_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [run_west] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [eat_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [eat_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [eat_south] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [eat_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [sleep_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [sleep_east] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [sleep_south] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [sleep_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [apple_north] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [apple_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [apple_south] tagged 100 neurons in 125ms window (mean rate 1.3 sp/n)
+  [apple_west] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [river_north] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [river_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [river_south] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [river_west] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [dog_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [dog_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [dog_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [dog_west] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [cat_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [cat_east] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [cat_south] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [cat_west] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [tree_north] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [tree_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [tree_south] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [tree_west] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [bird_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [bird_east] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [bird_south] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [bird_west] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [sun_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [sun_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [sun_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [sun_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [moon_north] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [moon_east] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [moon_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [moon_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [big_north] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [big_east] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [big_south] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [big_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [small_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [small_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [small_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [small_west] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [hot_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [hot_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [hot_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [hot_west] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [cold_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [cold_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [cold_south] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [cold_west] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [red_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [red_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [red_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [red_west] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [blue_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [blue_east] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [blue_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [blue_west] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [fast_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [fast_east] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [fast_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [fast_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [slow_north] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [slow_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [slow_south] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [slow_west] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+[ENCODING] complete (65s)
+
+[RECALL] Stimulating each engram tag, measuring motor firing
+  tag                motor_N    motor_E    motor_S    motor_W   
+  go_north           0.154     0.000     0.001     0.000
+  go_east            0.000     0.148     0.001     0.001
+  go_south           0.000     0.000     0.150     0.001
+  go_west            0.001     0.001     0.001     0.151
+  come_north         0.157     0.001     0.001     0.001
+  come_east          0.000     0.149     0.002     0.001
+  come_south         0.000     0.000     0.149     0.000
+  come_west          0.001     0.000     0.001     0.154
+  stop_north         0.151     0.001     0.000     0.000
+  stop_east          0.001     0.150     0.002     0.001
+  stop_south         0.001     0.000     0.150     0.001
+  stop_west          0.001     0.001     0.001     0.154
+  look_north         0.154     0.001     0.000     0.000
+  look_east          0.000     0.147     0.001     0.001
+  look_south         0.001     0.001     0.154     0.001
+  look_west          0.000     0.001     0.000     0.151
+  walk_north         0.153     0.000     0.000     0.000
+  walk_east          0.001     0.148     0.002     0.001
+  walk_south         0.000     0.000     0.153     0.000
+  walk_west          0.001     0.000     0.001     0.152
+  run_north          0.152     0.001     0.000     0.001
+  run_east           0.001     0.149     0.002     0.001
+  run_south          0.000     0.000     0.152     0.001
+  run_west           0.002     0.001     0.001     0.154
+  eat_north          0.155     0.001     0.001     0.000
+  eat_east           0.001     0.149     0.001     0.001
+  eat_south          0.000     0.000     0.149     0.001
+  eat_west           0.001     0.001     0.001     0.152
+  sleep_north        0.152     0.001     0.000     0.000
+  sleep_east         0.000     0.148     0.001     0.001
+  sleep_south        0.000     0.000     0.155     0.001
+  sleep_west         0.000     0.000     0.000     0.152
+  apple_north        0.155     0.000     0.000     0.000
+  apple_east         0.001     0.148     0.001     0.001
+  apple_south        0.000     0.001     0.152     0.001
+  apple_west         0.000     0.000     0.000     0.151
+  river_north        0.154     0.001     0.001     0.000
+  river_east         0.000     0.149     0.001     0.001
+  river_south        0.001     0.000     0.156     0.001
+  river_west         0.000     0.001     0.000     0.152
+  dog_north          0.155     0.001     0.001     0.001
+  dog_east           0.000     0.146     0.001     0.001
+  dog_south          0.001     0.000     0.154     0.000
+  dog_west           0.001     0.000     0.000     0.150
+  cat_north          0.153     0.001     0.000     0.000
+  cat_east           0.000     0.148     0.001     0.000
+  cat_south          0.000     0.001     0.153     0.001
+  cat_west           0.000     0.000     0.000     0.148
+  tree_north         0.156     0.001     0.001     0.001
+  tree_east          0.000     0.148     0.000     0.001
+  tree_south         0.000     0.000     0.156     0.000
+  tree_west          0.000     0.000     0.000     0.149
+  bird_north         0.154     0.001     0.000     0.000
+  bird_east          0.000     0.144     0.001     0.001
+  bird_south         0.001     0.000     0.154     0.000
+  bird_west          0.001     0.001     0.000     0.154
+  sun_north          0.156     0.001     0.001     0.000
+  sun_east           0.000     0.149     0.001     0.001
+  sun_south          0.000     0.000     0.149     0.000
+  sun_west           0.000     0.001     0.000     0.150
+  moon_north         0.154     0.001     0.001     0.000
+  moon_east          0.000     0.146     0.001     0.000
+  moon_south         0.000     0.000     0.149     0.001
+  moon_west          0.000     0.000     0.000     0.153
+  big_north          0.155     0.003     0.001     0.000
+  big_east           0.000     0.147     0.001     0.001
+  big_south          0.000     0.000     0.150     0.000
+  big_west           0.000     0.000     0.000     0.150
+  small_north        0.156     0.001     0.001     0.001
+  small_east         0.000     0.145     0.001     0.001
+  small_south        0.000     0.000     0.156     0.000
+  small_west         0.001     0.001     0.001     0.151
+  hot_north          0.155     0.001     0.000     0.001
+  hot_east           0.000     0.148     0.000     0.001
+  hot_south          0.000     0.000     0.150     0.000
+  hot_west           0.001     0.001     0.001     0.153
+  cold_north         0.155     0.001     0.001     0.001
+  cold_east          0.000     0.149     0.001     0.001
+  cold_south         0.000     0.000     0.154     0.000
+  cold_west          0.001     0.000     0.000     0.152
+  red_north          0.156     0.001     0.001     0.001
+  red_east           0.000     0.146     0.001     0.000
+  red_south          0.000     0.000     0.151     0.000
+  red_west           0.001     0.000     0.000     0.151
+  blue_north         0.159     0.002     0.002     0.001
+  blue_east          0.001     0.149     0.002     0.001
+  blue_south         0.000     0.000     0.151     0.000
+  blue_west          0.001     0.001     0.001     0.152
+  fast_north         0.153     0.000     0.001     0.000
+  fast_east          0.000     0.149     0.001     0.001
+  fast_south         0.000     0.000     0.153     0.000
+  fast_west          0.000     0.000     0.000     0.148
+  slow_north         0.155     0.001     0.001     0.001
+  slow_east          0.000     0.145     0.002     0.001
+  slow_south         0.000     0.000     0.151     0.001
+  slow_west          0.001     0.000     0.000     0.151
+
+  go_north           target=0.154 off=0.001 ratio=154.25x [PASS]
+  go_east            target=0.148 off=0.001 ratio=147.90x [PASS]
+  go_south           target=0.150 off=0.001 ratio=149.65x [PASS]
+  go_west            target=0.151 off=0.001 ratio=151.35x [PASS]
+  come_north         target=0.157 off=0.001 ratio=149.90x [PASS]
+  come_east          target=0.149 off=0.002 ratio=70.83x [PASS]
+  come_south         target=0.149 off=0.000 ratio=149.00x [PASS]
+  come_west          target=0.154 off=0.001 ratio=154.35x [PASS]
+  stop_north         target=0.151 off=0.001 ratio=150.85x [PASS]
+  stop_east          target=0.150 off=0.002 ratio=96.68x [PASS]
+  stop_south         target=0.150 off=0.001 ratio=149.70x [PASS]
+  stop_west          target=0.154 off=0.001 ratio=154.50x [PASS]
+  look_north         target=0.154 off=0.001 ratio=153.90x [PASS]
+  look_east          target=0.147 off=0.001 ratio=147.20x [PASS]
+  look_south         target=0.154 off=0.001 ratio=153.65x [PASS]
+  look_west          target=0.151 off=0.001 ratio=150.80x [PASS]
+  walk_north         target=0.153 off=0.000 ratio=153.10x [PASS]
+  walk_east          target=0.148 off=0.002 ratio=67.36x [PASS]
+  walk_south         target=0.153 off=0.000 ratio=152.80x [PASS]
+  walk_west          target=0.152 off=0.001 ratio=117.04x [PASS]
+  run_north          target=0.152 off=0.001 ratio=151.95x [PASS]
+  run_east           target=0.149 off=0.002 ratio=78.18x [PASS]
+  run_south          target=0.152 off=0.001 ratio=151.55x [PASS]
+  run_west           target=0.154 off=0.002 ratio=93.18x [PASS]
+  eat_north          target=0.155 off=0.001 ratio=155.00x [PASS]
+  eat_east           target=0.149 off=0.001 ratio=118.96x [PASS]
+  eat_south          target=0.149 off=0.001 ratio=149.25x [PASS]
+  eat_west           target=0.152 off=0.001 ratio=117.23x [PASS]
+  sleep_north        target=0.152 off=0.001 ratio=152.20x [PASS]
+  sleep_east         target=0.148 off=0.001 ratio=148.00x [PASS]
+  sleep_south        target=0.155 off=0.001 ratio=154.90x [PASS]
+  sleep_west         target=0.152 off=0.000 ratio=152.10x [PASS]
+  apple_north        target=0.155 off=0.000 ratio=155.35x [PASS]
+  apple_east         target=0.148 off=0.001 ratio=105.96x [PASS]
+  apple_south        target=0.152 off=0.001 ratio=152.30x [PASS]
+  apple_west         target=0.151 off=0.000 ratio=151.10x [PASS]
+  river_north        target=0.154 off=0.001 ratio=153.80x [PASS]
+  river_east         target=0.149 off=0.001 ratio=149.05x [PASS]
+  river_south        target=0.156 off=0.001 ratio=141.86x [PASS]
+  river_west         target=0.152 off=0.001 ratio=151.80x [PASS]
+  dog_north          target=0.155 off=0.001 ratio=154.90x [PASS]
+  dog_east           target=0.146 off=0.001 ratio=145.75x [PASS]
+  dog_south          target=0.154 off=0.001 ratio=153.90x [PASS]
+  dog_west           target=0.150 off=0.001 ratio=149.80x [PASS]
+  cat_north          target=0.153 off=0.001 ratio=153.10x [PASS]
+  cat_east           target=0.148 off=0.001 ratio=148.05x [PASS]
+  cat_south          target=0.153 off=0.001 ratio=127.92x [PASS]
+  cat_west           target=0.148 off=0.000 ratio=147.80x [PASS]
+  tree_north         target=0.156 off=0.001 ratio=156.45x [PASS]
+  tree_east          target=0.148 off=0.001 ratio=147.80x [PASS]
+  tree_south         target=0.156 off=0.000 ratio=155.95x [PASS]
+  tree_west          target=0.149 off=0.000 ratio=149.00x [PASS]
+  bird_north         target=0.154 off=0.001 ratio=153.80x [PASS]
+  bird_east          target=0.144 off=0.001 ratio=143.80x [PASS]
+  bird_south         target=0.154 off=0.001 ratio=134.22x [PASS]
+  bird_west          target=0.154 off=0.001 ratio=133.78x [PASS]
+  sun_north          target=0.156 off=0.001 ratio=156.40x [PASS]
+  sun_east           target=0.149 off=0.001 ratio=148.55x [PASS]
+  sun_south          target=0.149 off=0.000 ratio=149.00x [PASS]
+  sun_west           target=0.150 off=0.001 ratio=150.50x [PASS]
+  moon_north         target=0.154 off=0.001 ratio=154.20x [PASS]
+  moon_east          target=0.146 off=0.001 ratio=139.14x [PASS]
+  moon_south         target=0.149 off=0.001 ratio=123.96x [PASS]
+  moon_west          target=0.153 off=0.000 ratio=152.65x [PASS]
+  big_north          target=0.155 off=0.003 ratio=57.50x [PASS]
+  big_east           target=0.147 off=0.001 ratio=133.27x [PASS]
+  big_south          target=0.150 off=0.000 ratio=150.05x [PASS]
+  big_west           target=0.150 off=0.000 ratio=150.20x [PASS]
+  small_north        target=0.156 off=0.001 ratio=156.10x [PASS]
+  small_east         target=0.145 off=0.001 ratio=144.65x [PASS]
+  small_south        target=0.156 off=0.000 ratio=155.85x [PASS]
+  small_west         target=0.151 off=0.001 ratio=116.42x [PASS]
+  hot_north          target=0.155 off=0.001 ratio=154.95x [PASS]
+  hot_east           target=0.148 off=0.001 ratio=148.45x [PASS]
+  hot_south          target=0.150 off=0.000 ratio=150.45x [PASS]
+  hot_west           target=0.153 off=0.001 ratio=152.60x [PASS]
+  cold_north         target=0.155 off=0.001 ratio=155.05x [PASS]
+  cold_east          target=0.149 off=0.001 ratio=149.00x [PASS]
+  cold_south         target=0.154 off=0.000 ratio=153.60x [PASS]
+  cold_west          target=0.152 off=0.001 ratio=121.24x [PASS]
+  red_north          target=0.156 off=0.001 ratio=148.38x [PASS]
+  red_east           target=0.146 off=0.001 ratio=145.95x [PASS]
+  red_south          target=0.151 off=0.000 ratio=150.90x [PASS]
+  red_west           target=0.151 off=0.001 ratio=150.95x [PASS]
+  blue_north         target=0.159 off=0.002 ratio=75.50x [PASS]
+  blue_east          target=0.149 off=0.002 ratio=93.19x [PASS]
+  blue_south         target=0.151 off=0.000 ratio=151.35x [PASS]
+  blue_west          target=0.152 off=0.001 ratio=112.33x [PASS]
+  fast_north         target=0.153 off=0.001 ratio=153.35x [PASS]
+  fast_east          target=0.149 off=0.001 ratio=102.90x [PASS]
+  fast_south         target=0.153 off=0.000 ratio=153.10x [PASS]
+  fast_west          target=0.148 off=0.000 ratio=148.30x [PASS]
+  slow_north         target=0.155 off=0.001 ratio=128.96x [PASS]
+  slow_east          target=0.145 off=0.002 ratio=93.81x [PASS]
+  slow_south         target=0.151 off=0.001 ratio=151.15x [PASS]
+  slow_west          target=0.151 off=0.001 ratio=143.76x [PASS]
+
+[VERDICT] 96/96 engram tags drive TRUE motor pool
+
+[ANTI-CHEAT] Skipped (n_pairs=96, n_unique_motors=4; need 4+4 for clean perm test)
+  TRUE pass: 96/96
+  Best perm pass: 96/96
+
+[OUT] wrote research\findings\raw\g11_bg\concept_pool_demo\seed44_v17_96cross.json
+[v17-MS] seed 44 : P1=11/28, 96cross=96/96
+[v17-MS] launching seed 45 training (28-word vocab)...
+=== concept_pool_demo_v2 - extended vocabulary ===
+  Motor: ['north', 'east', 'south', 'west']
+  Nouns: ['apple', 'river', 'dog', 'cat', 'tree', 'bird', 'sun', 'moon'] (8 pools)
+  Verbs: ['go', 'come', 'stop', 'look', 'walk', 'run', 'eat', 'sleep'] (8 pools)
+  Adjectives: ['big', 'small', 'hot', 'cold', 'red', 'blue', 'fast', 'slow'] (8 pools)
+  Total: 28 words / 28 distinct output pools
+
+
+=== concept_pool_demo (seed=45) ===
+  Architecture: 4 motor + 8 noun + 8 verb + 8 adjective = 28 pools
+  Vocab: ['north', 'east', 'south', 'west'] + ['apple', 'river', 'dog', 'cat', 'tree', 'bird', 'sun', 'moon'] + ['go', 'come', 'stop', 'look', 'walk', 'run', 'eat', 'sleep'] + ['big', 'small', 'hot', 'cold', 'red', 'blue', 'fast', 'slow']
+  Train events/word: 200
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Brain-region framework: 58 regions, 14464 total neurons, 264 pathways.
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: RNG initialized with seed: 45
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 14464 neurons...
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'language_input' (4096 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'motor_N' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'motor_E' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'motor_S' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'motor_W' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'language_output' (4096 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'motor_FS_N' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'motor_FS_E' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'motor_FS_S' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'motor_FS_W' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'noun_pool_APPLE' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'noun_pool_RIVER' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'noun_pool_DOG' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'noun_pool_CAT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'noun_pool_TREE' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'noun_pool_BIRD' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'noun_pool_SUN' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'noun_pool_MOON' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'noun_pool_APPLE_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'noun_pool_RIVER_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'noun_pool_DOG_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'noun_pool_CAT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'noun_pool_TREE_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'noun_pool_BIRD_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'noun_pool_SUN_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'noun_pool_MOON_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'verb_pool_GO' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'verb_pool_COME' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'verb_pool_STOP' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'verb_pool_LOOK' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'verb_pool_WALK' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'verb_pool_RUN' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'verb_pool_EAT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'verb_pool_SLEEP' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'verb_pool_GO_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'verb_pool_COME_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'verb_pool_STOP_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'verb_pool_LOOK_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'verb_pool_WALK_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'verb_pool_RUN_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'verb_pool_EAT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'verb_pool_SLEEP_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'adjective_pool_BIG' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'adjective_pool_SMALL' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'adjective_pool_HOT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'adjective_pool_COLD' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'adjective_pool_RED' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'adjective_pool_BLUE' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'adjective_pool_FAST' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'adjective_pool_SLOW' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'adjective_pool_BIG_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'adjective_pool_SMALL_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'adjective_pool_HOT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'adjective_pool_COLD_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'adjective_pool_RED_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'adjective_pool_BLUE_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'adjective_pool_FAST_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Region 'adjective_pool_SLOW_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Generating 3D neuron positions for 14464 neurons...
+[2026-05-14 07:50:58][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-05-14 07:51:20][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 16000705 synapses across 294 populations.
+[2026-05-14 07:51:21][INFO] SIM_BRIDGE: Initializing eligibility traces for 16000705 synapses (capacity: 24001057, dtype: float32)...
+[2026-05-14 07:51:21][INFO] SIM_BRIDGE: Initializing STDP state for 14464 neurons...
+[2026-05-14 07:51:21][INFO] SIM_BRIDGE: Simulation data initialized for 14464 neurons (3D). Synapses: 16000705. GPU memory: 2.5GB/25.8GB (9.6%)
+[BUILD] concept-pool bridge: 14464 neurons total, 20 concept pools (4000 neurons in pools)
+[topographic-bias] Applied factor=3.00/0.30 across motor + noun + verb pools
+  north->motor_N: x3.00 on 7351 edges
+  east->motor_E: x3.00 on 7316 edges
+  south->motor_S: x3.00 on 7367 edges
+  west->motor_W: x3.00 on 7302 edges
+  apple->noun_pool_APPLE: x3.00 on 7404 edges
+  river->noun_pool_RIVER: x3.00 on 7475 edges
+  dog->noun_pool_DOG: x3.00 on 7457 edges
+  cat->noun_pool_CAT: x3.00 on 7284 edges
+  tree->noun_pool_TREE: x3.00 on 7267 edges
+  bird->noun_pool_BIRD: x3.00 on 7328 edges
+  sun->noun_pool_SUN: x3.00 on 7308 edges
+  moon->noun_pool_MOON: x3.00 on 7310 edges
+  go->verb_pool_GO: x3.00 on 7365 edges
+  come->verb_pool_COME: x3.00 on 7345 edges
+  stop->verb_pool_STOP: x3.00 on 7476 edges
+  look->verb_pool_LOOK: x3.00 on 7249 edges
+  walk->verb_pool_WALK: x3.00 on 7282 edges
+  run->verb_pool_RUN: x3.00 on 7310 edges
+  eat->verb_pool_EAT: x3.00 on 7359 edges
+  sleep->verb_pool_SLEEP: x3.00 on 7396 edges
+  big->adjective_pool_BIG: x3.00 on 7420 edges
+  small->adjective_pool_SMALL: x3.00 on 7373 edges
+  hot->adjective_pool_HOT: x3.00 on 7279 edges
+  cold->adjective_pool_COLD: x3.00 on 7511 edges
+  red->adjective_pool_RED: x3.00 on 7311 edges
+  blue->adjective_pool_BLUE: x3.00 on 7382 edges
+  fast->adjective_pool_FAST: x3.00 on 7310 edges
+  slow->adjective_pool_SLOW: x3.00 on 7447 edges
+  reciprocal_target_edges: x3.00 on 206665 edges
+
+[TRAIN] 28 (word, pool) pairs, 200 events each = 5600 total events (interleaved)
+  interleaved event 100/5600 (49s)
+  interleaved event 200/5600 (94s)
+  interleaved event 300/5600 (138s)
+  interleaved event 400/5600 (184s)
+  interleaved event 500/5600 (228s)
+  interleaved event 600/5600 (272s)
+  interleaved event 700/5600 (319s)
+  interleaved event 800/5600 (365s)
+  interleaved event 900/5600 (412s)
+  interleaved event 1000/5600 (456s)
+  interleaved event 1100/5600 (500s)
+  interleaved event 1200/5600 (545s)
+  interleaved event 1300/5600 (589s)
+  interleaved event 1400/5600 (633s)
+  interleaved event 1500/5600 (681s)
+  interleaved event 1600/5600 (727s)
+  interleaved event 1700/5600 (774s)
+  interleaved event 1800/5600 (818s)
+  interleaved event 1900/5600 (863s)
+  interleaved event 2000/5600 (908s)
+  interleaved event 2100/5600 (953s)
+  interleaved event 2200/5600 (1001s)
+  interleaved event 2300/5600 (1048s)
+  interleaved event 2400/5600 (1097s)
+  interleaved event 2500/5600 (1145s)
+  interleaved event 2600/5600 (1189s)
+  interleaved event 2700/5600 (1234s)
+  interleaved event 2800/5600 (1279s)
+  interleaved event 2900/5600 (1323s)
+  interleaved event 3000/5600 (1370s)
+  interleaved event 3100/5600 (1417s)
+  interleaved event 3200/5600 (1462s)
+  interleaved event 3300/5600 (1508s)
+  interleaved event 3400/5600 (1552s)
+  interleaved event 3500/5600 (1597s)
+  interleaved event 3600/5600 (1642s)
+  interleaved event 3700/5600 (1687s)
+  interleaved event 3800/5600 (1732s)
+  interleaved event 3900/5600 (1780s)
+  interleaved event 4000/5600 (1825s)
+  interleaved event 4100/5600 (1871s)
+  interleaved event 4200/5600 (1916s)
+  interleaved event 4300/5600 (1962s)
+  interleaved event 4400/5600 (2010s)
+  interleaved event 4500/5600 (2057s)
+  interleaved event 4600/5600 (2106s)
+  interleaved event 4700/5600 (2153s)
+  interleaved event 4800/5600 (2200s)
+  interleaved event 4900/5600 (2246s)
+  interleaved event 5000/5600 (2292s)
+  interleaved event 5100/5600 (2340s)
+  interleaved event 5200/5600 (2392s)
+  interleaved event 5300/5600 (2438s)
+  interleaved event 5400/5600 (2487s)
+  interleaved event 5500/5600 (2534s)
+  interleaved event 5600/5600 (2585s)
+
+[TRAIN] complete (2585s, interleaved)
+
+[SAVE] saving bridge to research\findings\raw\g11_bg\concept_pool_demo\seed45_v17.simstate.h5
+[2026-05-14 08:34:47][INFO] SIM_BRIDGE: Saving checkpoint to research\findings\raw\g11_bg\concept_pool_demo\seed45_v17.simstate.h5...
+[2026-05-14 08:34:51][SUCCESS] SIM_BRIDGE: Checkpoint saved successfully to research\findings\raw\g11_bg\concept_pool_demo\seed45_v17.simstate.h5
+[SAVE] checkpoint written
+
+[EVAL] measuring cross-category isolation across 28 pools
+
+[RESULTS] per-word cross-category isolation:
+  north    -> motor_N               target=1.860  max_off=1.940 (verb_pool_SLEEP)  ratio=0.96x  [FAIL]
+  east     -> motor_E               target=2.550  max_off=2.250 (motor_W)  ratio=1.13x  [PASS]
+  south    -> motor_S               target=1.955  max_off=2.175 (motor_E)  ratio=0.90x  [FAIL]
+  west     -> motor_W               target=2.290  max_off=2.745 (motor_S)  ratio=0.83x  [FAIL]
+  apple    -> noun_pool_APPLE       target=1.905  max_off=1.965 (motor_W)  ratio=0.97x  [FAIL]
+  river    -> noun_pool_RIVER       target=2.355  max_off=1.735 (adjective_pool_SLOW)  ratio=1.36x  [PASS]
+  dog      -> noun_pool_DOG         target=2.570  max_off=2.155 (motor_E)  ratio=1.19x  [PASS]
+  cat      -> noun_pool_CAT         target=2.070  max_off=2.350 (noun_pool_DOG)  ratio=0.88x  [FAIL]
+  tree     -> noun_pool_TREE        target=2.225  max_off=2.540 (motor_E)  ratio=0.88x  [FAIL]
+  bird     -> noun_pool_BIRD        target=0.975  max_off=1.590 (motor_E)  ratio=0.61x  [FAIL]
+  sun      -> noun_pool_SUN         target=2.505  max_off=1.935 (motor_E)  ratio=1.29x  [PASS]
+  moon     -> noun_pool_MOON        target=1.480  max_off=2.275 (motor_E)  ratio=0.65x  [FAIL]
+  go       -> verb_pool_GO          target=1.895  max_off=1.785 (motor_N)  ratio=1.06x  [PASS]
+  come     -> verb_pool_COME        target=2.600  max_off=2.195 (motor_E)  ratio=1.18x  [PASS]
+  stop     -> verb_pool_STOP        target=1.655  max_off=1.955 (motor_W)  ratio=0.85x  [FAIL]
+  look     -> verb_pool_LOOK        target=2.295  max_off=2.075 (noun_pool_RIVER)  ratio=1.11x  [PASS]
+  walk     -> verb_pool_WALK        target=3.185  max_off=2.520 (adjective_pool_HOT)  ratio=1.26x  [PASS]
+  run      -> verb_pool_RUN         target=1.870  max_off=2.050 (motor_S)  ratio=0.91x  [FAIL]
+  eat      -> verb_pool_EAT         target=2.005  max_off=2.545 (motor_N)  ratio=0.79x  [FAIL]
+  sleep    -> verb_pool_SLEEP       target=2.050  max_off=2.060 (motor_S)  ratio=1.00x  [FAIL]
+  big      -> adjective_pool_BIG    target=2.715  max_off=2.445 (motor_N)  ratio=1.11x  [PASS]
+  small    -> adjective_pool_SMALL  target=1.465  max_off=2.175 (motor_E)  ratio=0.67x  [FAIL]
+  hot      -> adjective_pool_HOT    target=2.465  max_off=1.805 (motor_E)  ratio=1.37x  [PASS]
+  cold     -> adjective_pool_COLD   target=1.695  max_off=2.235 (motor_E)  ratio=0.76x  [FAIL]
+  red      -> adjective_pool_RED    target=1.615  max_off=2.140 (noun_pool_TREE)  ratio=0.75x  [FAIL]
+  blue     -> adjective_pool_BLUE   target=2.090  max_off=1.855 (verb_pool_STOP)  ratio=1.13x  [PASS]
+  fast     -> adjective_pool_FAST   target=2.505  max_off=2.160 (noun_pool_RIVER)  ratio=1.16x  [PASS]
+  slow     -> adjective_pool_SLOW   target=2.210  max_off=1.995 (adjective_pool_BIG)  ratio=1.11x  [PASS]
+
+[VERDICT] 13/28 words have correct target-pool dominance
+  Total wall clock: 2654s
+
+[OUT] wrote research\findings\raw\g11_bg\concept_pool_demo\seed45_v17.json
+[v17-MS] testing 96-cross compose for seed 45...
+=== compose_engram_demo (seed=45) ===
+  Bridge: research\findings\raw\g11_bg\concept_pool_demo\seed45_v17.simstate.h5
+  Pairs: [('go', 'north'), ('go', 'east'), ('go', 'south'), ('go', 'west'), ('come', 'north'), ('come', 'east'), ('come', 'south'), ('come', 'west'), ('stop', 'north'), ('stop', 'east'), ('stop', 'south'), ('stop', 'west'), ('look', 'north'), ('look', 'east'), ('look', 'south'), ('look', 'west'), ('walk', 'north'), ('walk', 'east'), ('walk', 'south'), ('walk', 'west'), ('run', 'north'), ('run', 'east'), ('run', 'south'), ('run', 'west'), ('eat', 'north'), ('eat', 'east'), ('eat', 'south'), ('eat', 'west'), ('sleep', 'north'), ('sleep', 'east'), ('sleep', 'south'), ('sleep', 'west'), ('apple', 'north'), ('apple', 'east'), ('apple', 'south'), ('apple', 'west'), ('river', 'north'), ('river', 'east'), ('river', 'south'), ('river', 'west'), ('dog', 'north'), ('dog', 'east'), ('dog', 'south'), ('dog', 'west'), ('cat', 'north'), ('cat', 'east'), ('cat', 'south'), ('cat', 'west'), ('tree', 'north'), ('tree', 'east'), ('tree', 'south'), ('tree', 'west'), ('bird', 'north'), ('bird', 'east'), ('bird', 'south'), ('bird', 'west'), ('sun', 'north'), ('sun', 'east'), ('sun', 'south'), ('sun', 'west'), ('moon', 'north'), ('moon', 'east'), ('moon', 'south'), ('moon', 'west'), ('big', 'north'), ('big', 'east'), ('big', 'south'), ('big', 'west'), ('small', 'north'), ('small', 'east'), ('small', 'south'), ('small', 'west'), ('hot', 'north'), ('hot', 'east'), ('hot', 'south'), ('hot', 'west'), ('cold', 'north'), ('cold', 'east'), ('cold', 'south'), ('cold', 'west'), ('red', 'north'), ('red', 'east'), ('red', 'south'), ('red', 'west'), ('blue', 'north'), ('blue', 'east'), ('blue', 'south'), ('blue', 'west'), ('fast', 'north'), ('fast', 'east'), ('fast', 'south'), ('fast', 'west'), ('slow', 'north'), ('slow', 'east'), ('slow', 'south'), ('slow', 'west')]
+  Encoding steps: 200, top_k: 100
+
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Brain-region framework: 58 regions, 14464 total neurons, 296 pathways.
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: RNG initialized with seed: 45
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 14464 neurons...
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'language_input' (4096 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'motor_N' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'motor_E' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'motor_S' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'motor_W' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'language_output' (4096 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'motor_FS_N' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'motor_FS_E' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'motor_FS_S' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'motor_FS_W' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'noun_pool_APPLE' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'noun_pool_RIVER' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'noun_pool_DOG' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'noun_pool_CAT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'noun_pool_TREE' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'noun_pool_BIRD' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'noun_pool_SUN' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'noun_pool_MOON' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'noun_pool_APPLE_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'noun_pool_RIVER_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'noun_pool_DOG_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'noun_pool_CAT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'noun_pool_TREE_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'noun_pool_BIRD_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'noun_pool_SUN_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'noun_pool_MOON_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'verb_pool_GO' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'verb_pool_COME' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'verb_pool_STOP' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'verb_pool_LOOK' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'verb_pool_WALK' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'verb_pool_RUN' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'verb_pool_EAT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'verb_pool_SLEEP' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'verb_pool_GO_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'verb_pool_COME_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'verb_pool_STOP_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'verb_pool_LOOK_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'verb_pool_WALK_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'verb_pool_RUN_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'verb_pool_EAT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'verb_pool_SLEEP_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'adjective_pool_BIG' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'adjective_pool_SMALL' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'adjective_pool_HOT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'adjective_pool_COLD' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'adjective_pool_RED' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'adjective_pool_BLUE' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'adjective_pool_FAST' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'adjective_pool_SLOW' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'adjective_pool_BIG_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'adjective_pool_SMALL_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'adjective_pool_HOT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'adjective_pool_COLD_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'adjective_pool_RED_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'adjective_pool_BLUE_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'adjective_pool_FAST_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Region 'adjective_pool_SLOW_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Generating 3D neuron positions for 14464 neurons...
+[2026-05-14 08:35:13][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-05-14 08:35:36][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 16257324 synapses across 326 populations.
+[2026-05-14 08:35:36][INFO] SIM_BRIDGE: Initializing eligibility traces for 16257324 synapses (capacity: 24385986, dtype: float32)...
+[2026-05-14 08:35:36][INFO] SIM_BRIDGE: Initializing STDP state for 14464 neurons...
+[2026-05-14 08:35:36][INFO] SIM_BRIDGE: Simulation data initialized for 14464 neurons (3D). Synapses: 16257324. GPU memory: 2.5GB/25.8GB (9.7%)
+[2026-05-14 08:35:37][INFO] SIM_BRIDGE: Loading checkpoint from research\findings\raw\g11_bg\concept_pool_demo\seed45_v17.simstate.h5...
+[2026-05-14 08:35:37][INFO] SIM_BRIDGE: Clearing simulation state and GPU memory...
+[2026-05-14 08:35:37][INFO] SIM_BRIDGE: Cleared simulation state and GPU memory.
+[2026-05-14 08:35:37][DEBUG] SIM_BRIDGE: Checkpoint: Dataset for 'cp_adex_w' not found or was empty. Using default.
+[2026-05-14 08:35:37][DEBUG] SIM_BRIDGE: Checkpoint: Dataset for 'cp_stp_u' not found or was empty. Using default.
+[2026-05-14 08:35:37][DEBUG] SIM_BRIDGE: Checkpoint: Dataset for 'cp_stp_x' not found or was empty. Using default.
+[2026-05-14 08:35:38][SUCCESS] SIM_BRIDGE: Checkpoint loaded. Sim time: 0.0ms, Step: 0, Model: IZHIKEVICH
+[ENCODING] Tagging compose pairs as engrams...
+  [go_north] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [go_east] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [go_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [go_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [come_north] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [come_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [come_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [come_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [stop_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [stop_east] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [stop_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [stop_west] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [look_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [look_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [look_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [look_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [walk_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [walk_east] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [walk_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [walk_west] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [run_north] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [run_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [run_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [run_west] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [eat_north] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [eat_east] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [eat_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [eat_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [sleep_north] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [sleep_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [sleep_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [sleep_west] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [apple_north] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [apple_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [apple_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [apple_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [river_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [river_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [river_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [river_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [dog_north] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [dog_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [dog_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [dog_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [cat_north] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [cat_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [cat_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [cat_west] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [tree_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [tree_east] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [tree_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [tree_west] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [bird_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [bird_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [bird_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [bird_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [sun_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [sun_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [sun_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [sun_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [moon_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [moon_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [moon_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [moon_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [big_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [big_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [big_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [big_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [small_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [small_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [small_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [small_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [hot_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [hot_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [hot_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [hot_west] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [cold_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [cold_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [cold_south] tagged 100 neurons in 125ms window (mean rate 1.2 sp/n)
+  [cold_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [red_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [red_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [red_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [red_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [blue_north] tagged 100 neurons in 125ms window (mean rate 1.0 sp/n)
+  [blue_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [blue_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [blue_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [fast_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [fast_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [fast_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [fast_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [slow_north] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [slow_east] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [slow_south] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+  [slow_west] tagged 100 neurons in 125ms window (mean rate 1.1 sp/n)
+[ENCODING] complete (86s)
+
+[RECALL] Stimulating each engram tag, measuring motor firing
+  tag                motor_N    motor_E    motor_S    motor_W   
+  go_north           0.140     0.001     0.000     0.000
+  go_east            0.000     0.141     0.001     0.001
+  go_south           0.001     0.001     0.149     0.001
+  go_west            0.001     0.000     0.000     0.139
+  come_north         0.143     0.001     0.000     0.000
+  come_east          0.000     0.143     0.001     0.001
+  come_south         0.001     0.001     0.147     0.001
+  come_west          0.001     0.000     0.000     0.140
+  stop_north         0.142     0.001     0.000     0.000
+  stop_east          0.000     0.141     0.001     0.001
+  stop_south         0.001     0.001     0.152     0.002
+  stop_west          0.001     0.001     0.000     0.138
+  look_north         0.143     0.000     0.001     0.000
+  look_east          0.000     0.141     0.000     0.000
+  look_south         0.001     0.001     0.146     0.001
+  look_west          0.001     0.001     0.000     0.140
+  walk_north         0.141     0.001     0.001     0.000
+  walk_east          0.000     0.142     0.001     0.000
+  walk_south         0.000     0.000     0.144     0.001
+  walk_west          0.001     0.000     0.000     0.136
+  run_north          0.141     0.002     0.000     0.000
+  run_east           0.001     0.141     0.000     0.000
+  run_south          0.000     0.000     0.146     0.001
+  run_west           0.001     0.001     0.000     0.140
+  eat_north          0.142     0.001     0.000     0.000
+  eat_east           0.000     0.140     0.001     0.001
+  eat_south          0.001     0.001     0.148     0.001
+  eat_west           0.001     0.001     0.001     0.141
+  sleep_north        0.143     0.001     0.001     0.000
+  sleep_east         0.000     0.139     0.000     0.000
+  sleep_south        0.000     0.000     0.146     0.000
+  sleep_west         0.001     0.001     0.000     0.141
+  apple_north        0.144     0.001     0.000     0.000
+  apple_east         0.001     0.144     0.001     0.001
+  apple_south        0.000     0.000     0.147     0.000
+  apple_west         0.001     0.000     0.000     0.141
+  river_north        0.142     0.000     0.000     0.000
+  river_east         0.001     0.142     0.001     0.000
+  river_south        0.000     0.000     0.147     0.001
+  river_west         0.000     0.001     0.000     0.138
+  dog_north          0.141     0.001     0.001     0.000
+  dog_east           0.000     0.140     0.001     0.001
+  dog_south          0.000     0.000     0.147     0.000
+  dog_west           0.001     0.001     0.001     0.141
+  cat_north          0.141     0.001     0.000     0.000
+  cat_east           0.000     0.143     0.001     0.001
+  cat_south          0.000     0.000     0.148     0.001
+  cat_west           0.001     0.001     0.000     0.139
+  tree_north         0.138     0.001     0.001     0.000
+  tree_east          0.000     0.142     0.001     0.001
+  tree_south         0.000     0.001     0.147     0.001
+  tree_west          0.002     0.001     0.000     0.141
+  bird_north         0.145     0.002     0.001     0.001
+  bird_east          0.000     0.139     0.001     0.001
+  bird_south         0.000     0.000     0.143     0.000
+  bird_west          0.001     0.001     0.001     0.138
+  sun_north          0.139     0.001     0.000     0.000
+  sun_east           0.000     0.141     0.001     0.000
+  sun_south          0.001     0.001     0.147     0.001
+  sun_west           0.001     0.000     0.000     0.142
+  moon_north         0.145     0.002     0.000     0.000
+  moon_east          0.000     0.140     0.001     0.001
+  moon_south         0.000     0.000     0.149     0.001
+  moon_west          0.001     0.000     0.000     0.139
+  big_north          0.143     0.001     0.001     0.000
+  big_east           0.000     0.143     0.001     0.000
+Get-Content : Cannot find path 
+'E:\Documents\Projects\sim\research\findings\raw\g11_bg\concept_pool_demo\seed45_v17_96cross.json' because it does not 
+exist.
+At E:\Documents\Projects\sim\research\findings\raw\g11_bg\concept_pool_demo\run_v17_multiseed.ps1:57 char:10
++     $c = Get-Content "$OutDir\seed${Seed}_v17_96cross.json" -Raw | Co ...
++          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (E:\Documents\Pr...17_96cross.json:String) [Get-Content], ItemNotFoundEx 
+   ception
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.GetContentCommand
+ 

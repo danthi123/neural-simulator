@@ -1,0 +1,5 @@
+[D3 EVENT AGENT] K=6 | a conversational agent ANSWERS 'who is the agent/patient now?' from the running EVENT it maintains across a discourse (vs flat-fact + recency)
+  [seed 100] EVENT who-agent=1.0 (who-patient=1.0) || FLAT-FACT(last subject)=0.283 || RECENCY(last entity)=0.1
+
+  AGGREGATE (K=6): EVENT who-agent=1.000 | FLAT-FACT(last subject)=0.283 | RECENCY(last entity)=0.100
+  VERDICT: GO -- the conversational agent ANSWERS who-is-the-agent-now from the running EVENT it maintains across the discourse (1.00) where a FLAT-FACT retriever (the last clause literal subject = an UNRESOLVED coref marker) FAILS (0.28) and a RECENCY resolver (the last-mentioned entity) FAILS (0.10) -> the agent answers about the COMPOSED MEANING it tracks, NOT a retrieved/last-mentioned fact = the anti-RAG payoff DEPLOYED; next: fold the running-event register into the production MultiTurnAgent alongside the flat-fact store. NO sim/ edit.

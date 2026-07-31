@@ -1,0 +1,8 @@
+  [seed 42] HTM branch 0.500 | lesion 0.000 | untr 0.000 || markov_L 0.500 oracle 1.000 chance 0.500 loc True
+  [seed 43] HTM branch 0.500 | lesion 0.000 | untr 0.000 || markov_L 0.500 oracle 1.000 chance 0.500 loc True
+  [seed 44] HTM branch 0.500 | lesion 0.000 | untr 0.000 || markov_L 0.500 oracle 1.000 chance 0.500 loc True
+
+============================================================================================================
+[emerge9b] VERDICT: BOUNDARY (build-informative) -- branch acc 0.500 < 0.90; didn't clear Markov/chance (htm 0.500, markov 0.500) (oracle 1.000). Iterate the faithful HTM (k_win / act_th / n_cells / epochs / learn_th) -- allocation needs >= k distinct least-used cells + act_th separating contexts. NOT a wall; the mechanism is the next tuning.
+[emerge9b] wrote research/findings/raw/_emerge9b_L16_nE32.json
+============================================================================================================

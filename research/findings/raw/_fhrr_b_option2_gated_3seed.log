@@ -1,0 +1,50 @@
+============================================================================================================
+[FHRR-B Option 2 — DEEP learned binder] does the BIND FORM (multi-attribute bundle-inverse) become LEARNABLE with hidden layers?
+  codes=stream (between-cos 0.047) | F=16 R=4 D_h=256 | variants=['gated'] depths(unbind hidden)=[0, 1, 2, 3] | train 24000/split x 3 splits
+  refs on this harness: additive 0.193 | learned-linear 0.056 | dendritic 0.168 | fixed-+-1 ceiling 0.989 | chance 0.062
+============================================================================================================
+
+--- variant=gated  DEPTH n_hidden=0 ---
+  [seed 42] gated d=0: single 0.000 | BUNDLED train 0.077 | held-out 0.000 | perm-role 0.072 | moat-gap -0.000
+  [seed 43] gated d=0: single 0.000 | BUNDLED train 0.051 | held-out 0.000 | perm-role 0.047 | moat-gap +0.000
+  [seed 44] gated d=0: single 0.083 | BUNDLED train 0.053 | held-out 0.067 | perm-role 0.053 | moat-gap +0.000
+  MEAN gated d=0: single 0.028 | BUNDLED train 0.060 | held-out 0.022 (0/3 seeds >=0.90)
+
+--- variant=gated  DEPTH n_hidden=1 ---
+  [seed 42] gated d=1: single 0.000 | BUNDLED train 0.088 | held-out 0.000 | perm-role 0.083 | moat-gap +0.000
+  [seed 43] gated d=1: single 0.000 | BUNDLED train 0.051 | held-out 0.000 | perm-role 0.047 | moat-gap +0.000
+  [seed 44] gated d=1: single 0.083 | BUNDLED train 0.067 | held-out 0.067 | perm-role 0.067 | moat-gap +0.000
+  MEAN gated d=1: single 0.028 | BUNDLED train 0.069 | held-out 0.022 (0/3 seeds >=0.90)
+
+--- variant=gated  DEPTH n_hidden=2 ---
+  [seed 42] gated d=2: single 0.000 | BUNDLED train 0.088 | held-out 0.000 | perm-role 0.083 | moat-gap +0.000
+  [seed 43] gated d=2: single 0.000 | BUNDLED train 0.051 | held-out 0.000 | perm-role 0.047 | moat-gap +0.000
+  [seed 44] gated d=2: single 0.000 | BUNDLED train 0.044 | held-out 0.000 | perm-role 0.042 | moat-gap +0.000
+  MEAN gated d=2: single 0.000 | BUNDLED train 0.061 | held-out 0.000 (0/3 seeds >=0.90)
+
+--- variant=gated  DEPTH n_hidden=3 ---
+  [seed 42] gated d=3: single 0.000 | BUNDLED train 0.088 | held-out 0.000 | perm-role 0.083 | moat-gap +0.000
+  [seed 43] gated d=3: single 0.083 | BUNDLED train 0.068 | held-out 0.000 | perm-role 0.064 | moat-gap +0.000
+  [seed 44] gated d=3: single 0.083 | BUNDLED train 0.053 | held-out 0.067 | perm-role 0.053 | moat-gap +0.000
+  MEAN gated d=3: single 0.056 | BUNDLED train 0.070 | held-out 0.022 (0/3 seeds >=0.90)
+
+--- ANTI-CHEAT: memorization-floor (shuffle train labels) gated depth=3 ---
+  [seed 42] SHUFFLE: BUNDLED held-out 0.000 (must be ~chance 0.062)
+  [seed 43] SHUFFLE: BUNDLED held-out 0.139 (must be ~chance 0.062)
+  [seed 44] SHUFFLE: BUNDLED held-out 0.167 (must be ~chance 0.062)
+
+--- POSITIVE CONTROL: fixed +-1 self-inverse FHRR on the same codes (D_h=256) ---
+  [seed 42] FIXED-+-1: BUNDLED held-out 1.000
+  [seed 43] FIXED-+-1: BUNDLED held-out 1.000
+  [seed 44] FIXED-+-1: BUNDLED held-out 1.000
+
+============================================================================================================
+  BEST (variant=gated, depth=0): BUNDLED held-out 0.022 (0/3 seeds >=0.90), train 0.060, single 0.028
+  SHALLOW (depth=0) held-out 0.022 (the learned control; ref 0.056)
+  perm-role control 0.057 (must be ~chance 0.062); moat-gap -0.000 (>0)
+  shuffle-train 0.102 (~chance); fixed-+-1 positive control 1.000
+
+  VERDICT: NEGATIVE — a DEEP learned binder does NOT generalize the bundle-inverse (best held-out 0.022 ~ the shallow NEGATIVEs). Depth + capacity + a learned multiplicative gate are insufficient for the from-scratch structured reciprocal. The mechanistic reason (measured): the reciprocal needs the role's EXACT element-wise inverse; a learned role projection W_RU does not satisfy (role@W_R) (x) (role@W_RU) = 1, whereas a FIXED +-1 self-inverse does by construction (=>1.000 single-binding here). NOT a closed boundary (owner's CYCLE-329 rule): this INFORMS Option-3 — REMOVE the commutative-codebook symmetry via distinct per-attribute (orthogonal) role tags / a tensor-product representation (learn fillers + decomposition, keep a STRUCTURED binding primitive — the literature-endorsed path). The honest structural reading: a fixed self-inverse may be the correct biological STRUCTURAL primitive (binding-by-coincidence / dendritic product), in which case closing FHRR-B = learned codes (done) + learned cleanup (Option-1 GO) + a fixed structural bind. Ranked next step: Option-3 orthogonal-role TPR A/B (numpy, same harness).
+  Total elapsed: 11612.6s
+============================================================================================================
+  [saved] research/findings/raw/_phaseB_fhrr_b_option2_deep_gated_3seed.json

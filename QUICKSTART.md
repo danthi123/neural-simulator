@@ -37,6 +37,52 @@ SIM_BACKEND=numpy python -m research.runners.chat_demo --seed 43
 
 The live 3D GUI (`python neural-simulator.py`) still needs a GPU.
 
+## Platforms
+
+The project is pure Python and installs with `pip` on all three platforms — there
+is no compiled component of our own and no platform-specific build step. It is
+developed day to day on **Linux** (CachyOS, Python 3.11, CUDA 12) and was
+previously developed on **Windows 10/11** with Python 3.10; both are supported
+paths. macOS works for the CPU backend only, since CuPy needs CUDA.
+
+### Windows
+
+```powershell
+git clone https://github.com/danthi123/neural-simulator
+cd neural-simulator
+
+py -3.11 -m venv .venv                  # 3.10 or newer; 3.10 was the previous dev version
+.venv\Scripts\Activate.ps1              # PowerShell  (.venv\Scripts\activate.bat for cmd)
+
+python -m pip install --upgrade pip
+pip install -r requirements.txt         # installs cupy-cuda12x; swap for cupy-cuda11x on CUDA 11
+pip install -r requirements-dev.txt     # optional: pytest and friends
+
+python neural-simulator.py
+```
+
+Windows-specific notes, all learned the hard way:
+
+- **Match CuPy to your CUDA toolkit**, not to your driver — `pip install cupy-cuda11x`
+  if you are on CUDA 11.x. A mismatch fails at import, not at install.
+- **`scipy` is required even on the GPU path.** Without it, `sim/bridge.py` catches
+  the ImportError and silently falls back to CuPy, so `SIM_BACKEND=numpy` runs on the
+  GPU anyway and the CPU path is quietly dead. It is in `requirements.txt`; do not
+  trim it.
+- **Set the backend with `$env:SIM_BACKEND="numpy"`** in PowerShell (`set SIM_BACKEND=numpy`
+  in cmd), not with the `VAR=value command` syntax used in the Linux examples throughout
+  these docs.
+- **Long paths.** Some research artifact names exceed 260 characters. Enable long paths
+  (`git config --system core.longpaths true`, plus the Windows LongPathsEnabled policy)
+  or a clone can fail on checkout.
+- **Line endings.** The repo contains a mix; use `git diff --ignore-cr-at-eol` when a
+  diff looks impossibly large.
+- `tests/run_validation.bat` is the Windows entry point for the validation suite.
+
+There is no conda requirement. A stale Windows conda environment lived in `.conda/`
+until 2026-07-31 and was removed as a migration fossil; nothing depends on it, and a
+plain venv as above is the supported setup.
+
 ## Four things to try
 
 ### 1. The flagship navigation experiment

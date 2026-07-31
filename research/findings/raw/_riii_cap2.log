@@ -1,0 +1,4 @@
+=== RECALL-FIXED: cue_drive=1000 +disinhib n_ca3=500 pres=60 k_thresh=6 (seed 42) ===
+  [seed 42] COMPLETION held-out=0.943 (non-assembly 0.981) | LINEAR=0.000 NO-TRAIN=0.429 PERM-CUE=0.997 (208s)
+  VERDICT: PARTIAL/NEGATIVE -- not yet a clean specific completion; sweep k_thresh / presentations / cue_drive. NO sim/ edit.
+=== RECALL-FIXED: cue_drive=1000 +disinhib n_ca3=500 pres=60 k_thresh=12 (seed 42) ===

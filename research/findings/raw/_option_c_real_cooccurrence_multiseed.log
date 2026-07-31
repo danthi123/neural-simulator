@@ -1,0 +1,163 @@
+[option-c real-co-occurrence de-risk] seeds=[42, 43, 44] backend=cupy smoke=False
+  taxonomy: 8x8 = 64 words (['animals', 'food', 'body', 'family', 'actions', 'colors', 'places', 'toys'])
+  corpus=E:\Documents\Projects\sim\data\corpus\tinystories.txt  window=+-5 repeat_cap=40 max_bytes=None
+  brain-based learn: homeo=oja target=2.0 cycles=2 (n_pool=2000, pattern_size=100)
+  read-out FIXED = brain-based divnorm 'ch'/interleave (sigma=0.001 exp=2.0 steps=2)
+  bars: G1(Pearson>=0.5) A1(gen>=0.7) 2nd(>=0.1)
+
+====================================================================================
+  OPTION C REAL-CO-OCCURRENCE DE-RISK -- SEED 42
+====================================================================================
+  [build_real_cooccurrence] corpus=tinystories.txt (full), 9829 stories, window=+-5, repeat_cap=40
+    64 vocab words; 7693 co-occurrence facts (singletons dropped); second-order pairs (within-cat, NO direct co-occur)=20
+    per-word in-corpus count: dog:4649, cat:4404, bird:6391, fish:1120, frog:766, bear:1196, mouse:557, duck:388, apple:409, cake:1046, bread:142, milk:173, egg:137, soup:169, candy:199, cookie:199, hand:497, eye:48, foot:101, head:483, hair:334, arm:133, leg:104, face:526, mom:9451, dad:1750, girl:4463, boy:3908, baby:425, friend:3463, sister:250, brother:256, run:919, jump:584, walk:758, play:8613, look:1912, eat:1291, sleep:253, sing:329, red:1841, blue:1029, green:604, yellow:430, black:177, white:287, pink:368, brown:304, house:2186, park:3287, room:1555, garden:829, tree:3733, road:189, school:184, beach:252, ball:4163, toy:3259, book:489, doll:518, box:2286, blocks:450, kite:239, bell:167
+    per-category fact coverage (#facts touching the category): cat0:3356, cat1:1145, cat2:1425, cat3:3601, cat4:2867, cat5:1721, cat6:2509, cat7:2137
+  [S_true INDEPENDENCE CHECK] from a-priori taxonomy only, symmetric block-diagonal: True
+  [STEP 2 -- brain-based spiking-Hebbian learn (learn_W_homeostatic) + divnorm read-out]
+[2026-06-13 16:52:47][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-13 16:52:47][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-13 16:52:47][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 2300 total neurons, 3 pathways.
+[2026-06-13 16:52:47][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-13 16:52:47][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 2300 neurons...
+[2026-06-13 16:52:47][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-13 16:52:47][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-13 16:52:47][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-13 16:52:47][INFO] SIM_BRIDGE: Generating 3D neuron positions for 2300 neurons...
+[2026-06-13 16:52:47][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-13 16:52:50][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2760623 synapses across 3 populations.
+[2026-06-13 16:52:50][INFO] SIM_BRIDGE: Simulation data initialized for 2300 neurons (3D). Synapses: 2760623. GPU memory: 1.5GB/25.8GB (5.9%)
+    learned recurrent: mean=0.019 max=0.857 nnz=2400617 (2300 neurons, 390.0s); Pearson(W, raw_counts)=+0.393 (distinct<0.99=True)
+  [STEP 3 -- structure recovery (G1) on the brain-based codes]
+    learned: within-cos=0.319 between-cos=0.309 margin=0.010 graded=False
+    >>> Pearson(S_learned, S_true) = +0.014  (permuted-codes baseline +0.004)
+    >>> SECOND-ORDER (within-cat, NO direct co-occur): shared-neighbour cos=+0.439 vs between-cat cos=+0.309 (margin +0.130, recovered=True)
+  [STEP 4 -- architecture generalization gates (G2)]
+    GATE 2 generalization: graded acc=0.219 (chance=0.250, 0.9x) A1=False  orthogonal=0.200 A2=True  permuted-prop=0.269 A3=True
+  [HEADLINE anti-cheat -- PERMUTED-CO-OCCURRENCE (re-learn on scrambled corpus)]
+[2026-06-13 16:59:16][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-13 16:59:16][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-13 16:59:16][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 2300 total neurons, 3 pathways.
+[2026-06-13 16:59:16][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-13 16:59:16][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 2300 neurons...
+[2026-06-13 16:59:16][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-13 16:59:16][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-13 16:59:16][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-13 16:59:16][INFO] SIM_BRIDGE: Generating 3D neuron positions for 2300 neurons...
+[2026-06-13 16:59:16][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-13 16:59:19][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2760623 synapses across 3 populations.
+[2026-06-13 16:59:19][INFO] SIM_BRIDGE: Simulation data initialized for 2300 neurons (3D). Synapses: 2760623. GPU memory: 1.6GB/25.8GB (6.1%)
+    permuted: 2nd-margin=-0.066 Pearson(S,S_true)=-0.003 gen=0.275 (chance 0.250) -> COLLAPSES(robust)=True
+    [BEATS-baseline] learned=0.219 > random-Gaussian=0.325 : False
+  [HOST CEILING -- PPMI+SVD over the SAME real facts (labelled disambiguator)]
+    host: Pearson(S,S_true)=+0.126 2nd-margin=-0.018 graded=False gen=0.525 -> host_G1=False host_G2=False HOST_PASSES=False
+
+  [SEED 42 gates] {'g1_structure_recovered': False, 'g2_a1_generalizes': False, 'g2_a2_orthogonal_collapses': True, 'g2_a3_permuted_property_collapses': True, 'g5_permuted_cooccurrence_collapses': True, 'g5_beats_random_baseline': False, 'W_distinct_from_counts': True, 's_true_independent': True, 'host_ceiling_passes': False}
+
+====================================================================================
+  OPTION C REAL-CO-OCCURRENCE DE-RISK -- SEED 43
+====================================================================================
+  [build_real_cooccurrence] corpus=tinystories.txt (full), 9829 stories, window=+-5, repeat_cap=40
+    64 vocab words; 7693 co-occurrence facts (singletons dropped); second-order pairs (within-cat, NO direct co-occur)=20
+    per-word in-corpus count: dog:4649, cat:4404, bird:6391, fish:1120, frog:766, bear:1196, mouse:557, duck:388, apple:409, cake:1046, bread:142, milk:173, egg:137, soup:169, candy:199, cookie:199, hand:497, eye:48, foot:101, head:483, hair:334, arm:133, leg:104, face:526, mom:9451, dad:1750, girl:4463, boy:3908, baby:425, friend:3463, sister:250, brother:256, run:919, jump:584, walk:758, play:8613, look:1912, eat:1291, sleep:253, sing:329, red:1841, blue:1029, green:604, yellow:430, black:177, white:287, pink:368, brown:304, house:2186, park:3287, room:1555, garden:829, tree:3733, road:189, school:184, beach:252, ball:4163, toy:3259, book:489, doll:518, box:2286, blocks:450, kite:239, bell:167
+    per-category fact coverage (#facts touching the category): cat0:3356, cat1:1145, cat2:1425, cat3:3601, cat4:2867, cat5:1721, cat6:2509, cat7:2137
+  [S_true INDEPENDENCE CHECK] from a-priori taxonomy only, symmetric block-diagonal: True
+  [STEP 2 -- brain-based spiking-Hebbian learn (learn_W_homeostatic) + divnorm read-out]
+[2026-06-13 17:05:27][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-13 17:05:27][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-13 17:05:27][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 2300 total neurons, 3 pathways.
+[2026-06-13 17:05:27][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-06-13 17:05:27][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 2300 neurons...
+[2026-06-13 17:05:27][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-13 17:05:27][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-13 17:05:27][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-13 17:05:27][INFO] SIM_BRIDGE: Generating 3D neuron positions for 2300 neurons...
+[2026-06-13 17:05:27][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-13 17:05:29][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2759529 synapses across 3 populations.
+[2026-06-13 17:05:29][INFO] SIM_BRIDGE: Simulation data initialized for 2300 neurons (3D). Synapses: 2759529. GPU memory: 1.6GB/25.8GB (6.1%)
+    learned recurrent: mean=0.020 max=0.939 nnz=2400129 (2300 neurons, 370.8s); Pearson(W, raw_counts)=+0.295 (distinct<0.99=True)
+  [STEP 3 -- structure recovery (G1) on the brain-based codes]
+    learned: within-cos=0.254 between-cos=0.245 margin=0.009 graded=False
+    >>> Pearson(S_learned, S_true) = +0.013  (permuted-codes baseline +0.026)
+    >>> SECOND-ORDER (within-cat, NO direct co-occur): shared-neighbour cos=+0.394 vs between-cat cos=+0.245 (margin +0.149, recovered=True)
+  [STEP 4 -- architecture generalization gates (G2)]
+    GATE 2 generalization: graded acc=0.338 (chance=0.250, 1.4x) A1=False  orthogonal=0.256 A2=True  permuted-prop=0.287 A3=True
+  [HEADLINE anti-cheat -- PERMUTED-CO-OCCURRENCE (re-learn on scrambled corpus)]
+[2026-06-13 17:11:37][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-13 17:11:37][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-13 17:11:37][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 2300 total neurons, 3 pathways.
+[2026-06-13 17:11:37][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-06-13 17:11:37][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 2300 neurons...
+[2026-06-13 17:11:37][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-13 17:11:37][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-13 17:11:37][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-13 17:11:37][INFO] SIM_BRIDGE: Generating 3D neuron positions for 2300 neurons...
+[2026-06-13 17:11:37][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-13 17:11:40][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2759529 synapses across 3 populations.
+[2026-06-13 17:11:40][INFO] SIM_BRIDGE: Simulation data initialized for 2300 neurons (3D). Synapses: 2759529. GPU memory: 1.6GB/25.8GB (6.1%)
+    permuted: 2nd-margin=-0.046 Pearson(S,S_true)=+0.005 gen=0.306 (chance 0.250) -> COLLAPSES(robust)=True
+    [BEATS-baseline] learned=0.338 > random-Gaussian=0.319 : True
+  [HOST CEILING -- PPMI+SVD over the SAME real facts (labelled disambiguator)]
+    host: Pearson(S,S_true)=+0.126 2nd-margin=-0.018 graded=False gen=0.487 -> host_G1=False host_G2=False HOST_PASSES=False
+
+  [SEED 43 gates] {'g1_structure_recovered': False, 'g2_a1_generalizes': False, 'g2_a2_orthogonal_collapses': True, 'g2_a3_permuted_property_collapses': True, 'g5_permuted_cooccurrence_collapses': True, 'g5_beats_random_baseline': True, 'W_distinct_from_counts': True, 's_true_independent': True, 'host_ceiling_passes': False}
+
+====================================================================================
+  OPTION C REAL-CO-OCCURRENCE DE-RISK -- SEED 44
+====================================================================================
+  [build_real_cooccurrence] corpus=tinystories.txt (full), 9829 stories, window=+-5, repeat_cap=40
+    64 vocab words; 7693 co-occurrence facts (singletons dropped); second-order pairs (within-cat, NO direct co-occur)=20
+    per-word in-corpus count: dog:4649, cat:4404, bird:6391, fish:1120, frog:766, bear:1196, mouse:557, duck:388, apple:409, cake:1046, bread:142, milk:173, egg:137, soup:169, candy:199, cookie:199, hand:497, eye:48, foot:101, head:483, hair:334, arm:133, leg:104, face:526, mom:9451, dad:1750, girl:4463, boy:3908, baby:425, friend:3463, sister:250, brother:256, run:919, jump:584, walk:758, play:8613, look:1912, eat:1291, sleep:253, sing:329, red:1841, blue:1029, green:604, yellow:430, black:177, white:287, pink:368, brown:304, house:2186, park:3287, room:1555, garden:829, tree:3733, road:189, school:184, beach:252, ball:4163, toy:3259, book:489, doll:518, box:2286, blocks:450, kite:239, bell:167
+    per-category fact coverage (#facts touching the category): cat0:3356, cat1:1145, cat2:1425, cat3:3601, cat4:2867, cat5:1721, cat6:2509, cat7:2137
+  [S_true INDEPENDENCE CHECK] from a-priori taxonomy only, symmetric block-diagonal: True
+  [STEP 2 -- brain-based spiking-Hebbian learn (learn_W_homeostatic) + divnorm read-out]
+[2026-06-13 17:17:48][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-13 17:17:48][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-13 17:17:48][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 2300 total neurons, 3 pathways.
+[2026-06-13 17:17:48][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-06-13 17:17:48][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 2300 neurons...
+[2026-06-13 17:17:48][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-13 17:17:48][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-13 17:17:48][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-13 17:17:48][INFO] SIM_BRIDGE: Generating 3D neuron positions for 2300 neurons...
+[2026-06-13 17:17:48][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-13 17:17:50][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2759265 synapses across 3 populations.
+[2026-06-13 17:17:50][INFO] SIM_BRIDGE: Simulation data initialized for 2300 neurons (3D). Synapses: 2759265. GPU memory: 1.6GB/25.8GB (6.1%)
+    learned recurrent: mean=0.019 max=0.954 nnz=2399675 (2300 neurons, 373.7s); Pearson(W, raw_counts)=+0.287 (distinct<0.99=True)
+  [STEP 3 -- structure recovery (G1) on the brain-based codes]
+    learned: within-cos=0.339 between-cos=0.325 margin=0.014 graded=False
+    >>> Pearson(S_learned, S_true) = +0.019  (permuted-codes baseline -0.013)
+    >>> SECOND-ORDER (within-cat, NO direct co-occur): shared-neighbour cos=+0.572 vs between-cat cos=+0.325 (margin +0.247, recovered=True)
+  [STEP 4 -- architecture generalization gates (G2)]
+    GATE 2 generalization: graded acc=0.369 (chance=0.250, 1.5x) A1=False  orthogonal=0.375 A2=True  permuted-prop=0.219 A3=True
+  [HEADLINE anti-cheat -- PERMUTED-CO-OCCURRENCE (re-learn on scrambled corpus)]
+[2026-06-13 17:24:01][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-13 17:24:01][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-13 17:24:01][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 2300 total neurons, 3 pathways.
+[2026-06-13 17:24:01][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-06-13 17:24:01][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 2300 neurons...
+[2026-06-13 17:24:02][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-13 17:24:02][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-13 17:24:02][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-13 17:24:02][INFO] SIM_BRIDGE: Generating 3D neuron positions for 2300 neurons...
+[2026-06-13 17:24:02][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-13 17:24:04][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2759265 synapses across 3 populations.
+[2026-06-13 17:24:04][INFO] SIM_BRIDGE: Simulation data initialized for 2300 neurons (3D). Synapses: 2759265. GPU memory: 1.6GB/25.8GB (6.1%)
+    permuted: 2nd-margin=-0.014 Pearson(S,S_true)=-0.032 gen=0.225 (chance 0.250) -> COLLAPSES(robust)=True
+    [BEATS-baseline] learned=0.369 > random-Gaussian=0.081 : True
+  [HOST CEILING -- PPMI+SVD over the SAME real facts (labelled disambiguator)]
+    host: Pearson(S,S_true)=+0.126 2nd-margin=-0.018 graded=False gen=0.594 -> host_G1=False host_G2=False HOST_PASSES=False
+
+  [SEED 44 gates] {'g1_structure_recovered': False, 'g2_a1_generalizes': False, 'g2_a2_orthogonal_collapses': True, 'g2_a3_permuted_property_collapses': True, 'g5_permuted_cooccurrence_collapses': True, 'g5_beats_random_baseline': True, 'W_distinct_from_counts': True, 's_true_independent': True, 'host_ceiling_passes': False}
+
+====================================================================================
+  OVERALL VERDICT: BOUNDARY_weak_graded
+  G1 structure recovered (Pearson vs INDEPENDENT S_true), all seeds: False  (mean +0.015; 2nd-order margin +0.175)
+  G2 A1 generalizes >= 0.7, all seeds: False  (graded 0.308 vs chance 0.250; random 0.242)
+  G2 A2 orthogonal collapses: True   G2 A3 permuted-property collapses: True
+  HEADLINE permuted-CO-OCCURRENCE collapses (robust margin gate), all seeds: True  (permuted Pearson -0.010, gen 0.269)
+  W distinct from raw counts (learning, not pass-through), all seeds: True
+  HOST CEILING (PPMI+SVD on SAME facts; labelled disambiguator): PASSES all seeds=False  (Pearson +0.126, gen 0.535); brain-vs-host gen gap +0.227
+  Total elapsed: 2247.7s
+====================================================================================
+
+  [saved] research/findings/raw/_option_c_real_cooccurrence_multiseed.json

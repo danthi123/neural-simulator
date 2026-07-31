@@ -1,0 +1,14 @@
+[deep-e-prop binder bundling de-risk] R=4 F=16 D_H=64 proj=128 T=24 hidden=128 epochs=80 | chance 0.0625; shallow/additive NEGATIVE (2026-06-16) 0.193; fixed-+-1 0.989
+  [FIT GATE seed42] deep 2-hidden memorize-small train acc: e-prop 1.000 | BPTT 0.992  (>=0.90 => e-prop wiring can fit; codes between-cos mean 0.013 max 0.236)
+  [seed 42] PC single 1.000 bundle-held 0.978 | ArmA(lin) fit 0.378 held 0.000 | ArmB2(eprop) fit 1.000 bundle-train 0.906 held 0.000 | ArmB3(eprop) fit 1.000 held 0.000 | ArmB2(bptt) fit 0.957 held 0.003 | nn-floor 0.000 | perm 0.020
+  [seed 43] PC single 1.000 bundle-held 1.000 | ArmA(lin) fit 0.292 held 0.106 | ArmB2(eprop) fit 1.000 bundle-train 0.902 held 0.003 | ArmB3(eprop) fit 1.000 held 0.006 | ArmB2(bptt) fit 0.965 held 0.000 | nn-floor 0.000 | perm 0.000
+  [seed 44] PC single 1.000 bundle-held 1.000 | ArmA(lin) fit 0.340 held 0.000 | ArmB2(eprop) fit 1.000 bundle-train 0.902 held 0.000 | ArmB3(eprop) fit 1.000 held 0.000 | ArmB2(bptt) fit 0.943 held 0.000 | nn-floor 0.000 | perm 0.003
+
+========================================================================================================
+  MEAN (3 seeds): POSITIVE CONTROL fixed-+-1 bundle-held 0.993 | ArmA shallow/linear held 0.035
+  ArmB DEEP e-prop: 2h fit 1.000 bundle-train 0.903 HELD 0.001 | 3h fit 1.000 HELD 0.002  (best held 0.002) | 2h BPTT-ref fit 0.955 HELD 0.001
+  anti-cheats: chance 0.0625 | 1-NN mem-floor held 0.000 | permuted-label ArmB held 0.008 | FIT GATE(mem-small) e-prop 1.000 / BPTT 0.992
+========================================================================================================
+  VERDICT: CONFIRMED-BOUNDARY -- a DEEP nonlinear net MEMORIZES the unbind (2h fit 1.000; TRAIN-combo bundling 0.903 >> the additive 0.193 -- so depth CAN compute the multiplication for SEEN pairs) but does NOT GENERALIZE it: held-out (novel role-filler combos) 0.002 ~ shallow/linear 0.035 ~ chance 0.062, and the best-possible-credit BPTT reference ALSO fails to generalize (0.001), while the FIXED +-1 algebra generalizes for free (0.993 held). DEPTH is NOT the lever: it buys a MEMORIZED per-pair multiplication, not the fixed algebra's BUILT-IN systematicity. The learned cortical binder still needs the STRUCTURAL binding primitive -> the DENDRITIC-multiplication substrate (two-compartment D2 neuron) is the honest next lever, not point-neuron depth.
+  Total elapsed: 1221.4s
+  [saved] E:\Documents\Projects\sim\research\findings\raw\_deep_eprop_binder_bundling.json

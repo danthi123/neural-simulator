@@ -1,0 +1,20 @@
+E:\Documents\Projects\sim\research\runners\_emerge3_microcircuit_derisk.py:229: RuntimeWarning: overflow encountered in matmul
+  self.W_PI[k] = self.W_PI[k] + (self.eta_pi / m) * (-(v_A_rest).T @ r_int)          # (size_{k+1}, n_int)
+E:\Documents\Projects\sim\research\runners\_emerge3_microcircuit_derisk.py:229: RuntimeWarning: invalid value encountered in add
+  self.W_PI[k] = self.W_PI[k] + (self.eta_pi / m) * (-(v_A_rest).T @ r_int)          # (size_{k+1}, n_int)
+E:\Documents\Projects\sim\research\runners\_emerge3_microcircuit_derisk.py:229: RuntimeWarning: overflow encountered in matmul
+  self.W_PI[k] = self.W_PI[k] + (self.eta_pi / m) * (-(v_A_rest).T @ r_int)          # (size_{k+1}, n_int)
+E:\Documents\Projects\sim\research\runners\_emerge3_microcircuit_derisk.py:229: RuntimeWarning: invalid value encountered in add
+  self.W_PI[k] = self.W_PI[k] + (self.eta_pi / m) * (-(v_A_rest).T @ r_int)          # (size_{k+1}, n_int)
+E:\Documents\Projects\sim\research\runners\_emerge3_microcircuit_derisk.py:229: RuntimeWarning: overflow encountered in matmul
+  self.W_PI[k] = self.W_PI[k] + (self.eta_pi / m) * (-(v_A_rest).T @ r_int)          # (size_{k+1}, n_int)
+E:\Documents\Projects\sim\research\runners\_emerge3_microcircuit_derisk.py:229: RuntimeWarning: invalid value encountered in add
+  self.W_PI[k] = self.W_PI[k] + (self.eta_pi / m) * (-(v_A_rest).T @ r_int)          # (size_{k+1}, n_int)
+  [seed 42] MC-STRICT clean 0.983 (own 1.000) | MC-rateNoise clean 0.989 | BP-spk clean 0.585 | MC-rate ceil 0.994 | floor 0.451 | strict-lesion 0.451 | strict-null 0.451 | chance 0.549
+  [seed 43] MC-STRICT clean 0.969 (own 0.994) | MC-rateNoise clean 0.969 | BP-spk clean 0.593 | MC-rate ceil 0.961 | floor 0.538 | strict-lesion 0.538 | strict-null 0.462 | chance 0.538
+  [seed 44] MC-STRICT clean 0.992 (own 1.000) | MC-rateNoise clean 0.967 | BP-spk clean 0.688 | MC-rate ceil 0.978 | floor 0.476 | strict-lesion 0.476 | strict-null 0.524 | chance 0.524
+
+============================================================================================================
+[emerge5c] VERDICT: GO (STRICT) -- ACTIVE CANCELLATION is MORE noise-robust than raw burst-rate estimation EVEN when the interneuron cancellation DIFFERENCE is itself spike-estimated: under the same finite-sample noise (S=300), the STRICT-noise spiking MICROCIRCUIT builds a cleaner representation (clean-readout 0.981) than spiking Burstprop (0.622), approaching its own rate ceiling (0.978); the apical-feedback lesion collapses it (0.488 ~ floor 0.488), no-teaching null flat (0.479). (rate-noise-only microcircuit 0.975 for context.) ⇒ the microcircuit is CONFIRMED the noise-robust rung-2 credit rule -- carry IT (not Burstprop) toward the sim/ two-compartment port; scope that build (research-gated). NO sim/ edit.
+[emerge5c] wrote research/findings/raw/_emerge5c_microcircuit_noise_strict.json
+============================================================================================================

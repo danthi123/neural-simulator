@@ -1,0 +1,8 @@
+  [seed 42] selforg heldQ 0.974 (init 0.001, selfpred R2 0.965, no-nudge 0.953) | frozen 0.001 | wrong -10.000 | alt-feedback -0.556 | wt_ok True
+  [seed 43] selforg heldQ 0.971 (init -0.002, selfpred R2 0.971, no-nudge 0.947) | frozen -0.002 | wrong -10.000 | alt-feedback -0.263 | wt_ok True
+  [seed 44] selforg heldQ 0.973 (init 0.000, selfpred R2 0.973, no-nudge 0.940) | frozen 0.000 | wrong -10.000 | alt-feedback -0.253 | wt_ok True
+
+============================================================================================================
+[emerge3b] VERDICT: GO -- the SST interneuron's top-down-cancelling self-predicting state SELF-ORGANIZES FROM SCRATCH and GENERALIZES: held-out cancellation Q 0.973 (from random-init ~0) >> frozen -0.000; the dendrite learned to self-predict (R2 0.970) and cancels from the LOCAL layer even with the soma nudge OFF (no-nudge Q 0.946); it is SPECIFIC to the learned feedback (a DIFFERENT fixed-random feedback is NOT cancelled: alt Q -0.357); wrong-sign anti-cancels (-10.000); W_PI learned from random, no weight transport. Multi-seed. ⇒ EMERGE-3's flagged residual is CLOSED -- the converged self-predicting form it read is reachable by self-organization, not hand-set; the microcircuit is now fully from-scratch (matching Burstprop). NEXT: fold the LIVE self-organized interneuron into the depth-2 task credit (EMERGE-3c). NO sim/ edit.
+[emerge3b] wrote E:\Documents\Projects\sim\research\findings\raw\_emerge3b_interneuron_selforganize.json
+============================================================================================================

@@ -1,0 +1,9 @@
+[D3 PUSH/POP GATES] the discourse pop is a gated copy OUT of the held slot, mirroring the boundary's gated copy IN
+  [seed 102] RETURN: pushpop=0.201 vs push-only=0.292 | oracle-pop=0.667 | scramble=0.284
+            overall a_curr: 0.666 vs 0.597 | COREF 0.611 vs 0.607 | BOUND 0.808 vs 0.667 | prev 0.16 vs 0.453 | pop-sep(RET-rest)=0.05
+
+  AGGREGATE (6-seed means, oracle slot->name perm so the transition is measured alone)
+    RETURN : pushpop=0.201 | push-only=0.292 | oracle-pop=0.667 | pop-marker-scramble=0.284
+    overall=0.666 vs 0.597 | COREF=0.611 vs 0.607 (must not regress) | a_prev=0.160 vs 0.453
+    pop-gate separation (mean r on RETURN - mean r elsewhere) = +0.050
+  VERDICT: PARTIAL/NEGATIVE -- the pop gate did not clearly rescue RETURN / did not separate / did not survive the marker-scramble control. NO sim/ edit.

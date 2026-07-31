@@ -1,0 +1,13 @@
+[affect-tag DR-2] seeds=[42, 43, 44, 100, 101, 102] smoke=False max_stories=60000 window=4 knn=12 hops=2 seed_frac=0.5
+  learned co-occurrence cortex: 24574 stories -> 139 Warriner-labelled targets x 500 hubs (2463053 co-occurrence events)
+  [seed 42] held-out valence r +0.815 (n_held=69) || permuted -0.199 | shuffled-labels -0.197 | seed-only +0.000 || opp-corr -0.773 sep +0.40 | arousal +0.645
+  [seed 43] held-out valence r +0.809 (n_held=69) || permuted -0.066 | shuffled-labels -0.167 | seed-only +0.000 || opp-corr -0.792 sep +0.40 | arousal +0.763
+  [seed 44] held-out valence r +0.831 (n_held=69) || permuted -0.075 | shuffled-labels -0.406 | seed-only +0.000 || opp-corr -0.783 sep +0.40 | arousal +0.723
+  [seed 100] held-out valence r +0.819 (n_held=69) || permuted +0.087 | shuffled-labels +0.203 | seed-only +0.000 || opp-corr -0.855 sep +0.34 | arousal +0.714
+  [seed 101] held-out valence r +0.828 (n_held=69) || permuted +0.053 | shuffled-labels -0.269 | seed-only +0.000 || opp-corr -0.770 sep +0.38 | arousal +0.644
+  [seed 102] held-out valence r +0.765 (n_held=69) || permuted -0.182 | shuffled-labels -0.030 | seed-only +0.000 || opp-corr -0.863 sep +0.39 | arousal +0.676
+
+==============================================================================================================
+[affect-tag] VERDICT: GO (6-seed) -- DISTRIBUTIONAL AFFECT TAG: a concept's valence EMERGES from the affective company it keeps. Held-out concepts (never seeded from norms) inherit valence by spreading activation over the LEARNED co-occurrence graph, correlating r=+0.811 with Warriner valence (>= 0.55). PERMUTED-GRAPH collapses (-0.064 -- random neighbourhoods carry no affect), SHUFFLED-SEED-LABELS collapses (-0.144), and the graph BEATS the seed-only constant baseline (+0.000). The opponent code is genuine: V+ and V- are OPPOSED on held-out (corr -0.806 < 0) and net valence separates positive from negative (sep +0.38). => the world-model is affectively COLOURED, not just factual; the affect tag rides the LEARNED structure, not a lookup. numpy-CPU; NO sim/ edit. (Arousal secondary, r=+0.694 -- the known weaker ceiling.)
+[affect-tag] wrote research/findings/raw/_affect_distributional_tag_6seed.json  (1.3s)
+==============================================================================================================

@@ -1,0 +1,54 @@
+[L1 fair-test] seeds=[42, 43, 44] smoke=False real_corpus=True n_hub=2000 k=64 epochs=200 reach_frac=0.7
+
+================================================================================================
+  L1 FAIR-TEST (seed 42)  --  PPMI-input + similarity-matching vs host PPMI+SVD
+================================================================================================
+  64 concepts x 2000 hubs;  HOST PPMI+SVD(k=50,a=0.75)=+0.323  (margin +0.091, nn-same 0.547)
+  reference: cos(PPMI rows) full-rank=+0.485  |  offline PPMI+PCA(k=64)=+0.523  (the OFFLINE similarity-matching optimum ~= host)
+  [arms: online similarity-matching (k=64, 200 epochs) + faithful saturating control]
+    [SIMMATCH_PPMI   ] Pearson(S,S_true)=+0.263  gen=0.656 (chance 0.125)  offdiag-cos=+0.974  eff-rank=7.0
+    [simmatch convergence] ep40:+0.227  ep80:+0.275  ep120:+0.294  ep160:+0.288  ep200:+0.263
+    [SIMMATCH_RAW    ] Pearson(S,S_true)=+0.225  gen=0.406 (chance 0.125)  offdiag-cos=+0.986  eff-rank=2.1
+    [SIMMATCH_LOG    ] Pearson(S,S_true)=+0.129  gen=0.344 (chance 0.125)  offdiag-cos=+0.991  eff-rank=1.8
+    [A_SAT_RAW       ] Pearson(S,S_true)=+0.010  gen=0.172 (chance 0.125)  offdiag-cos=+1.000  eff-rank=1.0
+    [saturation signature] Pearson(|W|-profile, count-profile)=+0.028  (uniform blob ~ small)
+  [anti-cheat] SIMMATCH_PPMI permuted-similarity Pearson=-0.025 (~0)
+  [seed 42 gates] {'host_carries': True, 'A_saturating_fails': True, 'simmatch_reaches_ceiling': False, 'simmatch_generalizes': True, 'permuted_collapses': True, 'input_lesion_collapses': False, 'rule_lesion_collapses': True}
+
+================================================================================================
+  L1 FAIR-TEST (seed 43)  --  PPMI-input + similarity-matching vs host PPMI+SVD
+================================================================================================
+  64 concepts x 2000 hubs;  HOST PPMI+SVD(k=50,a=0.75)=+0.323  (margin +0.091, nn-same 0.547)
+  reference: cos(PPMI rows) full-rank=+0.485  |  offline PPMI+PCA(k=64)=+0.523  (the OFFLINE similarity-matching optimum ~= host)
+  [arms: online similarity-matching (k=64, 200 epochs) + faithful saturating control]
+    [SIMMATCH_PPMI   ] Pearson(S,S_true)=+0.280  gen=0.656 (chance 0.125)  offdiag-cos=+0.973  eff-rank=7.4
+    [simmatch convergence] ep40:+0.231  ep80:+0.271  ep120:+0.288  ep160:+0.288  ep200:+0.280
+    [SIMMATCH_RAW    ] Pearson(S,S_true)=+0.222  gen=0.531 (chance 0.125)  offdiag-cos=+0.968  eff-rank=3.5
+    [SIMMATCH_LOG    ] Pearson(S,S_true)=+0.137  gen=0.375 (chance 0.125)  offdiag-cos=+0.994  eff-rank=1.8
+    [A_SAT_RAW       ] Pearson(S,S_true)=+0.000  gen=0.141 (chance 0.125)  offdiag-cos=+1.000  eff-rank=1.0
+    [saturation signature] Pearson(|W|-profile, count-profile)=+0.028  (uniform blob ~ small)
+  [anti-cheat] SIMMATCH_PPMI permuted-similarity Pearson=+0.021 (~0)
+  [seed 43 gates] {'host_carries': True, 'A_saturating_fails': True, 'simmatch_reaches_ceiling': False, 'simmatch_generalizes': True, 'permuted_collapses': True, 'input_lesion_collapses': False, 'rule_lesion_collapses': True}
+
+================================================================================================
+  L1 FAIR-TEST (seed 44)  --  PPMI-input + similarity-matching vs host PPMI+SVD
+================================================================================================
+  64 concepts x 2000 hubs;  HOST PPMI+SVD(k=50,a=0.75)=+0.323  (margin +0.091, nn-same 0.547)
+  reference: cos(PPMI rows) full-rank=+0.485  |  offline PPMI+PCA(k=64)=+0.523  (the OFFLINE similarity-matching optimum ~= host)
+  [arms: online similarity-matching (k=64, 200 epochs) + faithful saturating control]
+    [SIMMATCH_PPMI   ] Pearson(S,S_true)=+0.328  gen=0.672 (chance 0.125)  offdiag-cos=+0.960  eff-rank=7.2
+    [simmatch convergence] ep40:+0.244  ep80:+0.301  ep120:+0.331  ep160:+0.337  ep200:+0.328
+    [SIMMATCH_RAW    ] Pearson(S,S_true)=+0.287  gen=0.500 (chance 0.125)  offdiag-cos=+0.329  eff-rank=2.0
+    [SIMMATCH_LOG    ] Pearson(S,S_true)=+0.135  gen=0.328 (chance 0.125)  offdiag-cos=+0.982  eff-rank=2.7
+    [A_SAT_RAW       ] Pearson(S,S_true)=+0.012  gen=0.188 (chance 0.125)  offdiag-cos=+1.000  eff-rank=1.0
+    [saturation signature] Pearson(|W|-profile, count-profile)=+0.029  (uniform blob ~ small)
+  [anti-cheat] SIMMATCH_PPMI permuted-similarity Pearson=-0.019 (~0)
+  [seed 44 gates] {'host_carries': True, 'A_saturating_fails': True, 'simmatch_reaches_ceiling': True, 'simmatch_generalizes': True, 'permuted_collapses': True, 'input_lesion_collapses': False, 'rule_lesion_collapses': True}
+
+================================================================================================
+  VERDICT: NEGATIVE
+  online similarity-matching on PPMI does NOT clear the saturating control on real data (SIMMATCH_PPMI +0.290 vs A_SAT +0.007) -> the gap is deeper than input-encoding + learning-rule -> ship the flat 2,048-concept cortex (Option A) for the conversational goal; the learned-from-experience cortex stays the deep artificial-life frontier. HOST +0.323 | PPMI+PCA(offline) +0.523 | SIMMATCH_PPMI +0.290 (90% of host, gen 0.661) | SIMMATCH_RAW +0.245 | A_SAT +0.007
+================================================================================================
+  Total elapsed: 104.6s
+
+  [saved] research/findings/raw/_l1_fair_real_multiseed.json

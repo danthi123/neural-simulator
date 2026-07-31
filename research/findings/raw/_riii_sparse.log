@@ -1,0 +1,10 @@
+=== n_ca3=500 n_assembly=12 (frac 2.4%) drive=1000 inhib=120 pres=60 ===
+  [seed 42] within=22.92 cross=6.99 RATIO=3.28x | no-train=0.98x permuted=2.54x (115s)
+  VERDICT: PARTIAL/NEGATIVE -- the ratio is not yet >=3x with clean controls; sweep gamma_on/drive/presentations. NO sim/ edit.
+=== n_ca3=500 n_assembly=8 (frac 1.6%) drive=1000 inhib=120 pres=60 ===
+  [seed 42] within=21.55 cross=6.88 RATIO=3.13x | no-train=0.97x permuted=2.60x (116s)
+  VERDICT: PARTIAL/NEGATIVE -- the ratio is not yet >=3x with clean controls; sweep gamma_on/drive/presentations. NO sim/ edit.
+=== n_ca3=1000 n_assembly=15 (frac 1.5%) drive=1000 inhib=120 pres=60 ===
+  [seed 42] within=21.80 cross=6.29 RATIO=3.47x | no-train=0.99x permuted=2.80x (124s)
+  VERDICT: PARTIAL/NEGATIVE -- the ratio is not yet >=3x with clean controls; sweep gamma_on/drive/presentations. NO sim/ edit.
+SPARSE_DONE

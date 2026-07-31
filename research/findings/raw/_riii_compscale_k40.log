@@ -1,0 +1,2 @@
+  [seed 42] COMPLETION held-out=0.687 (non-assembly 0.691) | LINEAR=0.000 NO-TRAIN=0.000 PERM-CUE=0.859 (530s)
+  VERDICT: PARTIAL/NEGATIVE -- not yet a clean specific completion; sweep k_thresh / presentations / cue_drive. NO sim/ edit.

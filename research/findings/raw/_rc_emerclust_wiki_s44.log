@@ -1,0 +1,14 @@
+[emergent-clusters inheritance] corpus=data/corpus/wikitext.txt stories=1 tokens=1673821 K=1024 n_clusters=12
+    discovered 12 emergent clusters (>=4 members); top by coherence:
+      cluster 3 (coh +0.069, n=93): ['during', 'then', 'against', 'under', 'ritish', 'until', 'ctober', 'took', 'uring']
+      cluster 11 (coh +0.063, n=124): ['into', 'over', 'between', 'where', 'through', 'each', 'day', 'area', 'along']
+      cluster 1 (coh +0.060, n=131): ['song', 'series', 'album', 'film', 'called', 'work', 'episode', 'said', 'released']
+      cluster 7 (coh +0.054, n=122): ['first', 'two', 'after', 'game', 'three', 'later', 'season', 'year', 'before']
+      cluster 4 (coh +0.054, n=71): ['unk', 'who', 'being', 'years', 'ohn', 'own', 'life', 'hen', 'ork']
+      cluster 5 (coh +0.050, n=99): ['more', 'about', 'than', 'them', 'some', 'there', 'could', 'any', 'did']
+  [seed 44] EMERGENT-cluster held-out inherit=0.593 | deranged=0.095 | chance=0.083 | mean-cluster-coh=+0.047 (clusters=12)
+
+  AGGREGATE (1 seeds): held-out inherit=0.593 | deranged=0.095 | chance=0.083
+  beats_chance=True | beats_deranged=True
+  VERDICT: GO -- a held-out member of a FULLY-EMERGENT (clustered, NO hand-labeled probe) category INHERITS its cluster property above chance + derangement -> inheritance rides categories DISCOVERED by clustering, the last hand-designed probe removed.
+  [saved] research/findings/raw/_rc_emerclust_wiki_s44.json

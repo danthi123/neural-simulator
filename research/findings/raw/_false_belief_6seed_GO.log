@@ -1,0 +1,20 @@
+W3 agent-keyed FALSE-BELIEF register (Sally-Anne ToM) — 6-seed CPU (SIM_BACKEND=numpy)
+Command: python -u -m research.runners._false_belief_register_derisk --seeds 42 43 44 100 101 102 --n-trials 48 --backend numpy
+Fix (2026-07-24): DRIVE_STEPS 35->50 (--drive-steps) + helper_pa 3000->5000 (--helper-pa). Runner-only; NO sim/ edit.
+
+=== VERDICT: GO (6/6 seeds GO) ===  elapsed=91.1s
+
+Per-seed (each GO=True; all go_components True):
+  seed 42 : fb=1.000 tb=1.000 rb_false=0.000 agree=1.000 | LESION fb=0.000(collapsed) SCRAMBLE 0.458(collapsed) DISSOC ok
+  seed 43 : fb=1.000 tb=1.000 rb_false=0.000 agree=1.000 | LESION fb=0.000(collapsed) SCRAMBLE 0.458(collapsed) DISSOC ok   [was PARTIAL: tb=0.833]
+  seed 44 : fb=1.000 tb=1.000 rb_false=0.000 agree=1.000 | LESION fb=0.000(collapsed) SCRAMBLE 0.458(collapsed) DISSOC ok
+  seed 100: fb=1.000 tb=1.000 rb_false=0.042 agree=1.000 | LESION fb=0.000(collapsed) SCRAMBLE 0.500(collapsed) DISSOC ok   [was PARTIAL: rb_false=0.250]
+  seed 101: fb=1.000 tb=1.000 rb_false=0.083 agree=0.875 | LESION fb=0.000(collapsed) SCRAMBLE 0.417(collapsed) DISSOC ok
+  seed 102: fb=1.000 tb=1.000 rb_false=0.000 agree=1.000 | LESION fb=0.000(collapsed) SCRAMBLE 0.417(collapsed) DISSOC ok
+
+Aggregate: mean false_belief_acc=1.000 (chance 0.25) | mean true_belief_acc=1.000 | mean reality-baseline(false)=0.021 (<=0.20, must FAIL)
+Anti-cheats (all 6 seeds): other-lesion collapses=True (lesion fb=0.000) | scramble collapses=True (<=0.70) | self/other dissociation=True | reality-baseline fails=True
+
+Legend: fb=false_belief_acc (predict X's false belief A on unwitnessed moves; >=0.85). tb=true_belief_acc (belief UPDATES
+to B when witnessed; >=0.85). rb_false=reality_baseline_false_acc (world read predicts belief A on false trials; must be
+<=0.20 = the reality read must FAIL false-belief). agree=true_belief_agree(belief==reality on witnessed; >=0.85).

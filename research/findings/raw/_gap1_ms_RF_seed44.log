@@ -1,0 +1,35 @@
+[2026-07-20 13:17:19][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.5 GB), mempool limit: 80%
+[2026-07-20 13:17:19][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-20 13:17:19][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-07-20 13:17:19][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 256 neurons...
+[2026-07-20 13:17:19][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-20 13:17:19][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-20 13:17:19][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-07-20 13:17:19][INFO] SIM_BRIDGE: Generating 3D neuron positions for 256 neurons...
+[2026-07-20 13:17:19][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-07-20 13:17:19][INFO] SIM_BRIDGE: Simulation data initialized for 256 neurons (3D). Synapses: 0. GPU memory: 3.6GB/25.3GB (14.4%)
+[rf-phase-encode] 256 independent RF oscillators, period=200, VMAX(p99.8)=25.0086 (deployed frac-zero=0.500)
+[2026-07-20 13:17:19][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.5 GB), mempool limit: 80%
+[2026-07-20 13:17:19][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-20 13:17:19][INFO] SIM_BRIDGE: Brain-region framework: 1 regions, 256 total neurons, 0 pathways.
+[2026-07-20 13:17:19][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-07-20 13:17:19][INFO] SIM_BRIDGE: Selective SSM slow-state enabled (256 neurons, k_leak=0.23933923244476318)
+[2026-07-20 13:17:19][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 256 neurons...
+[2026-07-20 13:17:19][INFO] SIM_BRIDGE: Generating 3D neuron positions for 256 neurons...
+[2026-07-20 13:17:19][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-20 13:17:19][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3299 synapses across 1 populations.
+[2026-07-20 13:17:19][INFO] SIM_BRIDGE: Initializing eligibility traces for 3299 synapses (capacity: 4948, dtype: float32)...
+[2026-07-20 13:17:19][INFO] SIM_BRIDGE: Initializing structural plasticity state...
+[2026-07-20 13:17:19][INFO] SIM_BRIDGE: Simulation data initialized for 256 neurons (3D). Synapses: 3299. GPU memory: 3.6GB/25.3GB (14.4%)
+[ssm-state] GRADED cp_ssm_state integrator: SSM decay=0.7607 -> k_leak=0.2393 (lam_eff=0.7607), inject=v/(1-decay), pop_k=1
+[verify] on-bridge firing-rate state vs rate-SSM analog state: corr=0.997 (>0.3 => substrate realizes the leaky state) | firing: mean=1.268 max=8.628 frac-active-channels=1.00 (low mean/frac => sparse; discriminative read-out needs varied firing)
+[refit] fitted ridge read-out on 13 on-bridge states (T=0.5); fit-elapsed 5s
+[seed 44] ON-BRIDGE per-depth NLL (elapsed 556s, decay=0.761):
+    depth     1 (n=  200): onbridge 3.453 | bigram 4.057 | trigram 5.078 || vs-trigram +1.626
+    depth     2 (n=  200): onbridge 2.776 | bigram 3.912 | trigram 2.930 || vs-trigram +0.154
+    depth     3 (n=  192): onbridge 3.077 | bigram 4.096 | trigram 3.332 || vs-trigram +0.256
+    depth   4-5 (n=  338): onbridge 3.003 | bigram 4.280 | trigram 3.462 || vs-trigram +0.459
+    depth   6-9 (n=  459): onbridge 3.281 | bigram 4.316 | trigram 3.711 || vs-trigram +0.431
+    depth 10-99 (n=  187): onbridge 3.614 | bigram 4.701 | trigram 4.181 || vs-trigram +0.567
+    VERDICT: GO (deep vs-trigram 0.567, map-corr 0.997)
+-> research/findings/raw/_gap1_ms_RF_seed44.json

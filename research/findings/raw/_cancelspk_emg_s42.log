@@ -1,0 +1,30 @@
+[cancellation ON SPIKES] corpus=data/corpus/tinystories.txt K=1024 prop_k=2 EMERGENT-clusters
+[2026-07-08 06:48:33][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-08 06:48:33][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-08 06:48:33][INFO] SIM_BRIDGE: Brain-region framework: 1 regions, 3798 total neurons, 0 pathways.
+[2026-07-08 06:48:33][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-07-08 06:48:33][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 3798 neurons...
+[2026-07-08 06:48:33][INFO] SIM_BRIDGE: Region 'cells' (3798 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 06:48:33][INFO] SIM_BRIDGE: Generating 3D neuron positions for 3798 neurons...
+[2026-07-08 06:48:33][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-08 06:48:33][WARNING] SIM_BRIDGE: inject_explicit_wiring: no synapses in plan.
+[2026-07-08 06:48:33][WARNING] SIM_BRIDGE: Connection generation resulted in None. Initializing as empty matrix.
+[2026-07-08 06:48:33][INFO] SIM_BRIDGE: Simulation data initialized for 3798 neurons (3D). Synapses: 0. GPU memory: 19.8GB/51.2GB (38.6%)
+[2026-07-08 06:48:33][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 84672 synapses across 1 populations.
+[2026-07-08 06:51:43][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-08 06:51:43][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-08 06:51:43][INFO] SIM_BRIDGE: Brain-region framework: 1 regions, 3798 total neurons, 0 pathways.
+[2026-07-08 06:51:43][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-07-08 06:51:43][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 3798 neurons...
+[2026-07-08 06:51:43][INFO] SIM_BRIDGE: Region 'cells' (3798 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 06:51:43][INFO] SIM_BRIDGE: Generating 3D neuron positions for 3798 neurons...
+[2026-07-08 06:51:43][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-08 06:51:43][WARNING] SIM_BRIDGE: inject_explicit_wiring: no synapses in plan.
+[2026-07-08 06:51:43][WARNING] SIM_BRIDGE: Connection generation resulted in None. Initializing as empty matrix.
+[2026-07-08 06:51:43][INFO] SIM_BRIDGE: Simulation data initialized for 3798 neurons (3D). Synapses: 0. GPU memory: 19.8GB/51.2GB (38.6%)
+[2026-07-08 06:51:44][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 84672 synapses across 1 populations.
+  [seed 42] pos=6 passes=6 | inherit_before=True -> CANCEL=True not_class=True | collateral=0/23 | lesion_override=False
+
+  AGGREGATE (1 seeds): CANCEL(inherit->EXC) all=True | no-collateral all=True | lesion-no-override all=True
+  VERDICT: GO -- a member's OWN property OVERRIDES its inherited class ON SPIKES (EMERGE-54 apical competition; identity->exc drive beats codon->class, read from cp_v_apical), other members still inherit.
+  [saved] research/findings/raw/_cancelspk_emg_s42.json

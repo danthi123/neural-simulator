@@ -1,0 +1,2 @@
+[hi=400]   [seed 42] NO-GAMMA fwd=0.333 (ev=5 multi=3 act=[3, 3, 3] pop=0.0948) | GAMMA fwd=0.000 rev=0.000 (ev=0 multi=0 act=[0, 0, 0] pop=0.0861) | NO-NOISE multi=0 pop=0.0000 | NO-ENCODE fwd=0.000 multi=0 => no
+[hi=400] [gap5-spk-gamma] VERDICT: 0/1 -- GAMMA forward 0.000 vs NO-GAMMA 0.333. partial/negative.

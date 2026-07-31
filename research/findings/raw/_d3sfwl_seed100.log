@@ -1,0 +1,5 @@
+[D3 SPIKING-FORWARD weak learning] S3 | delta learned from END-STATE-only supervision THROUGH a spiking LIF hidden (surrogate grad)
+  [seed 100] SPIKING-FORWARD weak-learn STATE deeper=1.0 (track=1.0) || PROPERTY(=rung3)=0.812 || SHUFFLE=0.746
+
+  AGGREGATE (S3): SPIKING-FORWARD weak-learn STATE deeper=1.000 | PROPERTY(rung3)=0.812 | SHUFFLE=0.746 (chance 0.5)
+  VERDICT: GO -- the transition delta is LEARNED from END-STATE-only supervision THROUGH a spiking LIF hidden (surrogate grad) and length-generalizes (DEEPER 1.00 >> property 0.81 >> shuffle 0.75) -> the weak-supervision transition learning has a SPIKING FORWARD throughout (matching rung-2 on-spikes, now from weak supervision). NO sim/ edit.

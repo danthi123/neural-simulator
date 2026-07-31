@@ -1,0 +1,8 @@
+  [seed 42] own_spiking 0.460 | CLEAN-readout-on-spiking 0.585 | rate_ceiling 0.766 | clean-on-rate 0.905 | clean-on-untrained 0.451 | chance 0.549
+  [seed 43] own_spiking 0.532 | CLEAN-readout-on-spiking 0.593 | rate_ceiling 0.858 | clean-on-rate 0.891 | clean-on-untrained 0.538 | chance 0.538
+  [seed 44] own_spiking 0.524 | CLEAN-readout-on-spiking 0.688 | rate_ceiling 0.763 | clean-on-rate 0.705 | clean-on-untrained 0.476 | chance 0.524
+
+============================================================================================================
+[emerge5b] VERDICT: PARTIAL -- clean-on-spiking 0.622 sits BETWEEN the floor (0.505) and the ceiling (0.796): the spiking rep is PARTLY task-usable but not cleanly. BOTH a better readout AND better credit would help; the microcircuit arm (better credit) is the higher-leverage build, a cleaner readout the cheaper partial fix. Iterate, not a stop.
+[emerge5b] wrote research/findings/raw/_emerge5b_credit_vs_readout.json
+============================================================================================================

@@ -1,0 +1,7 @@
+[SVO relational QA] corpus=data/corpus/tinystories.txt K=256 n_facts=12
+  [seed 44] answer_acc=1.000 | MOAT abstain=1.000 | permuted=0.000 | chance=0.0039 (V=256)
+
+  AGGREGATE (1 seeds): answer_acc=1.000 | MOAT abstain=1.000 | permuted=0.000
+  answer>0.75 all=True | moat>0.9 all=True | beats_permuted all=True
+  VERDICT: GO -- the brain STORES + ANSWERS relational SVO facts over its OWN real-corpus codes (what-did-X-verb -> the object), and ABSTAINS on an unstored relation (no-confab moat).
+  [saved] research/findings/raw/_svoqa_s44.json

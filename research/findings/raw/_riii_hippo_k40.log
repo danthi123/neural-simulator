@@ -1,0 +1,2 @@
+  [seed 42] held-out=1.000 (non 0.997) | disjoint=True | n_total=3649 n_ca3=500 (165s)
+  VERDICT: PARTIAL/NEGATIVE -- completion or disjointness not yet clean on the merged bridge; check the coincidence-plateau config scoping. NO sim/ edit.

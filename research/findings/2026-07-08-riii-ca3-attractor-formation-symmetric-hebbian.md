@@ -1,6 +1,9 @@
 ---
 type: finding
 status: superseded
+superseded_by:
+  - research/findings/2026-07-09-riii-formation-rules-saturate-ensemble-dynamics-is-the-blocker.md
+  - research/findings/2026-07-14-ca3-competitive-hebbian-formation-6seed-GO.md
 date: 2026-07-08
 mechanism: ca3-attractor-formation
 ---

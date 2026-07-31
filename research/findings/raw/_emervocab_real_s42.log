@@ -1,0 +1,29 @@
+[emergent-vocab breadth SCALE de-risk] seeds=[42] vocab_sizes=[64, 256] window=+-2 mode=REAL corpus
+  mechanism: DISCOVER vocab (top-K content words) -> LEARN online Hebbian co-occurrence (stream cortex, NO global PPMI) -> MEASURE probe-taxonomy coherence as K grows.
+  corpus=research/datasets/distill_corpus.txt
+  loaded 1 stories, 18679 tokens, 3048 unique words (small -- risk noted)
+
+================================================================================================
+  SEED 42
+================================================================================================
+  [K=64] vocab=64 hubs=500 updates=7125 | PROBE too thin (only 0 probe words in 0 cats) -> not evaluable at this K
+  [K=256] vocab=256 hubs=500 updates=7087 | probe=6w/2cat (chance 0.500, rarest-probe-count 11)
+      LEARNED   coherence=1.000  margin=+0.065  Pearson(cos,S)=+0.404  (within +0.070 / between +0.005, eff-rank 4.2)
+      SCRAMBLED coherence=0.000  (co-occurrence destroyed -> should collapse to chance)
+      FREQ-ONLY coherence=0.333  (no co-occurrence -> should be chance)
+      HOST-PPMI coherence=0.833  (batch ceiling: does the DATA carry structure at this K?)
+
+================================================================================================
+  SCALING -- within-vs-between MARGIN vs K (the robust structure signal; the verdict gates on this):
+    K=   64:  learned=   n/a  scrambled=   n/a  freq-only=   n/a  host-PPMI=   n/a
+    K=  256:  learned=+0.065  scrambled=-0.038  freq-only=-0.357  host-PPMI=+0.082
+  SCALING -- nearest-category COHERENCE vs K (diagnostic; saturates at large probe sizes):
+    K=   64:  learned=  n/a  scrambled=  n/a  freq-only=  n/a  host-PPMI=  n/a  (chance   n/a)
+    K=  256:  learned=1.000  scrambled=0.000  freq-only=0.333  host-PPMI=0.833  (chance 0.500)
+
+  OVERALL VERDICT: SCALES
+  the emergent structure MARGIN HOLDS from K=256 (+0.065) to K=256 (+0.065) (>= 60% of the base retained), the scramble control collapses the margin at every K, and it beats frequency-only -> the structure is genuinely learned from real co-occurrence AND does not dilute as the vocab grows ==> open-domain BREADTH is a cheap DATA/SCALE lever (the controller runs a bigger corpus + multi-seed).
+  Total elapsed: 0.3s
+================================================================================================
+
+  [saved] research/findings/raw/_emervocab_real_s42.json

@@ -1,0 +1,11 @@
+[L1 Phase-A end-to-end spiking] 64 concepts x 2000 hubs; rate ceiling +0.515, offline +0.523; in_gain=30.0
+  [full_SM (lateral)           ] Pearson=+0.386 ['+0.425', '+0.387', '+0.346']  gen=0.693  perm=+0.001
+  [bounded_Hebbian (no lateral)] Pearson=+0.545 ['+0.586', '+0.526', '+0.523']  gen=0.708  perm=-0.010
+  [random_proj (no learning)   ] Pearson=+0.121 ['+0.153', '+0.100', '+0.110']  gen=0.375  perm=+0.013
+
+============================================================================================
+  PHASE-A VERDICT: AXES_COMPOSE_END_TO_END_SPIKING_GO
+  the full spiking pipeline recovers the structure end-to-end (bounded_Hebbian +0.545 = 106% of rate, gen 0.708, permuted clean), and learning is load-bearing (vs random-proj +0.121). NOTABLE: the anti-Hebbian lateral HURTS under end-to-end spike noise (bounded-Hebbian +0.545 > full-SM +0.386) -> the spiking build can likely DROP the lateral (the highest-risk protected edit) and use subtractive-inhibition centering + a homeostatically-bounded Hebbian feedforward instead -- a SIMPLER build. ==> the four axes COMPOSE in full spikes; common-mode removal (subtractive inhibition) is the load-bearing op. Strongest pre-bridge artifact; Phase B (bridge) owner-gated.
+============================================================================================
+  elapsed 77s
+  [saved] research/findings/raw/_l1_phaseA_end_to_end_spiking.json

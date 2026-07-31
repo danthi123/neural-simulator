@@ -1,0 +1,42 @@
+[stream-eprop] corpus=data/corpus/tinystories_train.txt stream=2000000 V=2000 n_pool=300 block=128 batch=64 lane=28125 epochs=4 bptt_steps=10 dev=cuda permute_stream=False
+[stream-eprop] PRE-REGISTERED EXPECTATION: e-prop is a diagonal (RTRL) truncation dropping the off-diagonal recurrent Jacobian; literature (Bellec-2020 needed DNI for long-range PTB; Murray-2019 RFLO matches BPTT only for short horizons) predicts plastic_eprop captures MOST of the SHALLOW margin and only a SMALL fraction of the DEEP margin. A shallow-only capture is an HONEST NEGATIVE on long-range -- a first-class deliverable.
+      [fixed_reservoir] epoch 1/4 last-block-CE 6.911
+      [fixed_reservoir] epoch 2/4 last-block-CE 6.804
+      [fixed_reservoir] epoch 3/4 last-block-CE 6.770
+      [fixed_reservoir] epoch 4/4 last-block-CE 6.755
+    -> fixed_reservoir: shallow_margin -3.2762  deep_margin -2.7002  agg_ce 7.0526  (75s)
+      [eprop_learn_win] epoch 1/4 last-block-CE 3.897
+      [eprop_learn_win] epoch 2/4 last-block-CE 3.699
+      [eprop_learn_win] epoch 3/4 last-block-CE 3.637
+      [eprop_learn_win] epoch 4/4 last-block-CE 3.604
+    -> eprop_learn_win: shallow_margin -0.0876  deep_margin +0.1777  agg_ce 4.1260  (313s)
+      [eprop_learn_win] epoch 1/4 last-block-CE 3.635
+      [eprop_learn_win] epoch 2/4 last-block-CE 3.452
+      [eprop_learn_win] epoch 3/4 last-block-CE 3.381
+      [eprop_learn_win] epoch 4/4 last-block-CE 3.340
+    -> eprop_learn_win_kp: shallow_margin +0.1623  deep_margin +0.3484  agg_ce 3.9501  (332s)
+
+[stream-eprop] MARGIN vs add-1 stream bigram, by within-block context depth (+ = arm better than bigram):
+                 arm         1         2         3       4-8      9-16    17-127   SHALLOW      DEEP
+     fixed_reservoir   -3.3010   -3.3123   -3.2873   -3.2619   -3.1761   -2.7002   -3.2762   -2.7002
+     eprop_learn_win   -0.5986   -0.3410   -0.1277   +0.0734   +0.1644   +0.1777   -0.0876   +0.1777
+    eprop_learn_win_kp   -0.2742   -0.0316   +0.1484   +0.2911   +0.3399   +0.3484   +0.1623   +0.3484
+
+[stream-eprop] DEEP SUB-BUCKETS (finer within-block depth; the FAR end 97-127 = the true 100+-token test):
+                   arm       17-32       33-64       65-96      97-127
+       fixed_reservoir     -3.1381     -2.9877     -2.5145     -2.3689
+       eprop_learn_win     +0.1754     +0.1812     +0.1785     +0.1744
+    eprop_learn_win_kp     +0.3493     +0.3516     +0.3498     +0.3432
+
+[stream-eprop] ctx1 READ-OUT-ONLY diagnostic (pos 0, h_0=0 -> W_rec has ZERO effect; ~equal iff read-out matched):
+           fixed_reservoir: ctx1 margin -3.2454
+           eprop_learn_win: ctx1 margin -1.1474
+        eprop_learn_win_kp: ctx1 margin -0.8070
+
+[stream-eprop] ANTI-CHEATS:
+    zero_signal W_rec == fixed_reservoir W_rec (byte-identical): None
+
+[stream-eprop] GATE: INCOMPLETE (need all 5 arms; have ['eprop_learn_win', 'eprop_learn_win_kp', 'fixed_reservoir'])
+
+-> research/findings/raw/_r3_bio_seeds/_seed44.json (719.8s)
+STREAM_EPROP_DONE

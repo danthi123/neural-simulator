@@ -1,0 +1,74 @@
+===== [15:55:25] any-bank escalation (all 320 as fillers in any role) =====
+=== full-320 ANY-BANK composition (backend=cupy, V=320, D=2000) ===
+  320-wide between-concept cos: mean 0.045  max 0.604  (DISTINCT)
+  ANY-BANK 3-role composition (agent/action/patient each drawn from ALL 320), full-3-slot QA:
+[2026-06-02 15:55:26][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-02 15:55:26][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-02 15:55:26][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-02 15:55:26][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 16000 neurons...
+[2026-06-02 15:55:26][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-02 15:55:26][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-02 15:55:26][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=20.0pA)...
+[2026-06-02 15:55:26][INFO] SIM_BRIDGE: Generating 3D neuron positions for 16000 neurons...
+[2026-06-02 15:55:26][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-06-02 15:55:26][INFO] SIM_BRIDGE: Simulation data initialized for 16000 neurons (3D). Synapses: 0. GPU memory: 1.3GB/25.8GB (5.1%)
+[2026-06-02 15:55:26][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 16000 synapses across 1 populations.
+    seed 42: 1.000
+[2026-06-02 15:56:50][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-02 15:56:50][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-02 15:56:50][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-06-02 15:56:50][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 16000 neurons...
+[2026-06-02 15:56:50][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-02 15:56:50][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-02 15:56:50][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=20.0pA)...
+[2026-06-02 15:56:50][INFO] SIM_BRIDGE: Generating 3D neuron positions for 16000 neurons...
+[2026-06-02 15:56:50][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-06-02 15:56:50][INFO] SIM_BRIDGE: Simulation data initialized for 16000 neurons (3D). Synapses: 0. GPU memory: 1.3GB/25.8GB (5.1%)
+[2026-06-02 15:56:50][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 16000 synapses across 1 populations.
+    seed 43: 1.000
+[2026-06-02 15:58:13][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-02 15:58:13][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-02 15:58:13][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-06-02 15:58:13][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 16000 neurons...
+[2026-06-02 15:58:13][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-02 15:58:13][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-02 15:58:13][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=20.0pA)...
+[2026-06-02 15:58:13][INFO] SIM_BRIDGE: Generating 3D neuron positions for 16000 neurons...
+[2026-06-02 15:58:13][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-06-02 15:58:13][INFO] SIM_BRIDGE: Simulation data initialized for 16000 neurons (3D). Synapses: 0. GPU memory: 1.3GB/25.8GB (5.1%)
+[2026-06-02 15:58:13][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 16000 synapses across 1 populations.
+    seed 44: 0.950
+
+RESULT: any-bank full-3-slot QA = [1.0, 1.0, 0.95] (mean 0.983)
+  miss-by-bank (which bank the mis-recovered filler came from): {'spatial': 1}
+VERDICT: RESOLVES -- all 320 distinct flat concepts compose ROBUSTLY as fillers in ANY role (cleanup over all 320), multi-seed. The full-320 substrate is a genuine compositional store.
+===== [15:59:40] conversational-KB demo (tangible artifact) =====
+=== full-320 flat-distinct conversational KB (backend=cupy, V=320, D=2000) ===
+[2026-06-02 15:59:41][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-02 15:59:41][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-02 15:59:41][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-02 15:59:41][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 16000 neurons...
+[2026-06-02 15:59:41][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-02 15:59:41][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-02 15:59:41][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=20.0pA)...
+[2026-06-02 15:59:41][INFO] SIM_BRIDGE: Generating 3D neuron positions for 16000 neurons...
+[2026-06-02 15:59:41][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-06-02 15:59:41][INFO] SIM_BRIDGE: Simulation data initialized for 16000 neurons (3D). Synapses: 0. GPU memory: 1.3GB/25.8GB (5.1%)
+[2026-06-02 15:59:41][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 16000 synapses across 1 populations.
+
+-- storing facts (spiking coincidence bind; stored separately) --
+   stored: agent=      bear  action=     close  patient=     clean
+   stored: agent=       ant  action=     break  patient=     sweet
+   stored: agent=       bed  action=      pull  patient=      rich
+
+-- conversation (spiking unbind + cleanup over all 320) --
+   Q: who is the agent of fact 0?            A:       bear   (OK)
+   Q: what is 'bear' close?    A:      clean   (OK)
+   Q: who is the agent of fact 1?            A:        ant   (OK)
+   Q: what is 'ant' break?    A:      sweet   (OK)
+   Q: who is the agent of fact 2?            A:        bed   (OK)
+   Q: what is 'bed' pull?    A:       rich   (OK)
+   Q: what is 'apple' (never stored)?         A: (no fact found)   (OK)
+
+   recovered 6/6 role/relational answers + control clean
+##### ANYBANK-DEMO-DONE [15:59:55] #####

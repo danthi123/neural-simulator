@@ -1,0 +1,8 @@
+  [seed 42] SPIKING branch 1.000 (discrete 1.000) | lesion 0.000 | untr 0.000 || markov 0.250 chance 0.250 loc True
+  [seed 43] SPIKING branch 1.000 (discrete 1.000) | lesion 0.000 | untr 0.000 || markov 0.250 chance 0.250 loc True
+  [seed 44] SPIKING branch 1.000 (discrete 1.000) | lesion 0.000 | untr 0.000 || markov 0.250 chance 0.250 loc True
+
+============================================================================================================
+[emerge9c] VERDICT: GO -- the context-specific high-order prediction SURVIVES spiking inference: SPIKING branch acc 1.000 (== discrete 1.000) via LIF somas + dAP plateau + per-column WTA -- dAP-primed cells win the spiking competition and select the SAME context-specific SDR the discrete rule did. >> Markov 0.250, >> chance 0.250, >> dAP-lesion 0.000 (the dendritic plateau is load-bearing); untrained 0.000; locality asserted. Multi-seed. => rung-3b (spiking substrate) holds -> scope the sim/ two-compartment NeuronModel port (rung-4; the dAP = the apical compartment). NO sim/ edit.
+[emerge9c] wrote research/findings/raw/_emerge9c_nseq4.json
+============================================================================================================

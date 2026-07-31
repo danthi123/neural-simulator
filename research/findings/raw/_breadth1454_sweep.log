@@ -1,0 +1,185 @@
+=== W=8000 START ===
+====================================================================================================
+[FOUNDATIONAL CURRICULUM — STEP 1: 320 concepts from the REAL TinyStories corpus]
+  backend=cupy  seeds=[42]  n_concepts=1454  n_hub=500  n_per=10  max_windows=8000  D=128  vocab_filter=content
+  corpus=data/corpus/tinystories.txt+data/corpus/simplewiki.txt (2 corpus file(s))
+  bars: recall>=0.95 (who/what) | moat 0 false-accepts | generalization>=0.80 (gen-reference=coherent; BOTH sharding+coherent reported) + derangement collapse | frozen-brain control | MEASURE VRAM + wall-clock
+====================================================================================================
+  [curriculum] corpus=tinystories.txt+simplewiki.txt | 9830 stories, 24938799 tokens, 320777 types | vocab-filter=content
+  [curriculum] 1454 words (high-freq-first), freq 63571->1 | 23/32 categories | 1454/1454 gen-usable (cat has >=2 members) | 1454/1454 content
+  [curriculum] developmental order (top 20): ['people', 'state', 'make', 'march', 'family', 'river', 'water', 'school', 'house', 'place', 'television', 'home', 'king', 'person', 'saw', 'season', 'go', 'park', 'man', 'book']
+  [gen-reference] coherent map covers 1454/1454 (100%) of the frequency-vocab with a coherent category; 1454/1454 (100%) gen-usable (cat>=2 members) across 54 categories (190 from validated TAXONOMY_40x8 + 1264 from coherent g20 domains); 0 incoherent (adjective/function) words excluded.
+
+====================================================================================================
+  STEP 1 — SEED 42  (1454 corpus-frequency concepts on ONE bridge)
+====================================================================================================
+[2026-06-26 13:24:04][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-26 13:24:04][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-26 13:24:04][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 19540 total neurons, 1 pathways.
+[2026-06-26 13:24:04][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-26 13:24:04][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 19540 neurons...
+[2026-06-26 13:24:04][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-26 13:24:04][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-26 13:24:04][INFO] SIM_BRIDGE: Generating 3D neuron positions for 19540 neurons...
+[2026-06-26 13:24:04][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-26 13:24:38][WARNING] SIM_BRIDGE: No trait info available; all synapses default to E->E STP type.
+[2026-06-26 13:24:38][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 72700000 synapses across 1 populations.
+[2026-06-26 13:24:39][INFO] SIM_BRIDGE: Initializing STP state for 72700000 synapses (capacity: 109050000)...
+[2026-06-26 13:24:39][INFO] SIM_BRIDGE: Initializing eligibility traces for 72700000 synapses (capacity: 109050000, dtype: float32)...
+[2026-06-26 13:24:39][WARNING] SIM_BRIDGE: No trait info available; all synapses default to E->E STP type.
+[2026-06-26 13:24:39][INFO] SIM_BRIDGE: Initializing structural plasticity state...
+[2026-06-26 13:24:39][INFO] SIM_BRIDGE: Simulation data initialized for 19540 neurons (3D). Synapses: 72700000. GPU memory: 7.4GB/25.8GB (28.8%)
+[learn-progress] 5000/8000 windows  399s
+  [learn] 8000 windows in 639s | 19540 neurons (hub 5000 + tgt 14540) | corr(M,C)=+0.868 | VRAM resident 11949.5 MB (pool 4266.3 MB)
+  [save-codes] wrote bridges/firstchat/brain1454_w8000_seed42.npz  (1454 concepts, D=128, corr(M,C)=+0.868)
+[2026-06-26 13:35:22][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-26 13:35:22][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-26 13:35:22][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-26 13:35:22][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 256 neurons...
+[2026-06-26 13:35:22][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-26 13:35:22][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-26 13:35:22][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-26 13:35:22][INFO] SIM_BRIDGE: Generating 3D neuron positions for 256 neurons...
+[2026-06-26 13:35:22][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-06-26 13:35:22][INFO] SIM_BRIDGE: Simulation data initialized for 256 neurons (3D). Synapses: 0. GPU memory: 16.8GB/25.8GB (65.0%)
+[2026-06-26 13:35:22][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-26 13:35:22][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-26 13:35:22][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-26 13:35:22][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 512 neurons...
+[2026-06-26 13:35:22][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-26 13:35:22][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-26 13:35:22][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-26 13:35:22][INFO] SIM_BRIDGE: Generating 3D neuron positions for 512 neurons...
+[2026-06-26 13:35:22][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-06-26 13:35:22][INFO] SIM_BRIDGE: Simulation data initialized for 512 neurons (3D). Synapses: 0. GPU memory: 16.8GB/25.8GB (65.0%)
+[2026-06-26 13:35:36][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-26 13:35:36][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-26 13:35:36][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-26 13:35:36][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6144 neurons...
+[2026-06-26 13:35:36][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-26 13:35:36][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-26 13:35:36][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-26 13:35:36][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6144 neurons...
+[2026-06-26 13:35:36][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-06-26 13:35:36][INFO] SIM_BRIDGE: Simulation data initialized for 6144 neurons (3D). Synapses: 0. GPU memory: 16.8GB/25.8GB (65.0%)
+  [recall/moat] recall 0.917 (44/48) | abstain 1.000 (false-accept 0/48) | 24 facts
+  [generalization] gen-reference=coherent -> SELECTED 0.052 (2.8x chance 0.019) | derangement 0.002 (collapses=True) | Pearson +0.054
+  [generalization] BOTH refs: sharding(g20) 0.069 (full 320, Pearson +0.009) | coherent 0.052 (scored 1454/1454 = 100% gen-usable, 54 cats, Pearson +0.054)
+
+====================================================================================================
+  VERDICT: STEP 1 PARTIAL/MISS (first REAL-corpus 320 data point = a FINDING, not a failure) — miss: recall [0.9166666666666666] (bar 0.95); generalization (coherent) [0.052] (bar 0.8). [BOTH references: sharding(g20, the original 0.153) 0.069-0.069; coherent(fix) 0.052-0.052 over 1454/1454 gen-usable (100%) words]. Calibrated per-bridge rate: 638.7s/320 concepts (12.5 win/s), VRAM 11949.5 MB. NOTE the gen-reference fix (2026-06-25): the original 0.153 was the g20 SHARDING taxonomy (~33% co-occurrence-INCOHERENT adjective/function categories); the 'coherent' reference (validated TAXONOMY_40x8 + coherent g20 entity/verb domains) is the apples-to-apples reference the stream cortex scored 0.91 against. HONEST CAVEAT: only 100% of the frequency-derived vocab is coherent-clusterable (TinyStories' most-frequent content words are ~1/3 adjective/function words a distributional cortex cannot cluster) -- gen is scored over that gen-usable subset.
+  [saved] research/findings/raw/_breadth1454_w8000.json  (wall 785.1s)
+====================================================================================================
+=== W=8000 EXIT 1 ===
+=== W=16000 START ===
+====================================================================================================
+[FOUNDATIONAL CURRICULUM — STEP 1: 320 concepts from the REAL TinyStories corpus]
+  backend=cupy  seeds=[42]  n_concepts=1454  n_hub=500  n_per=10  max_windows=16000  D=128  vocab_filter=content
+  corpus=data/corpus/tinystories.txt+data/corpus/simplewiki.txt (2 corpus file(s))
+  bars: recall>=0.95 (who/what) | moat 0 false-accepts | generalization>=0.80 (gen-reference=coherent; BOTH sharding+coherent reported) + derangement collapse | frozen-brain control | MEASURE VRAM + wall-clock
+====================================================================================================
+  [curriculum] corpus=tinystories.txt+simplewiki.txt | 9830 stories, 24938799 tokens, 320777 types | vocab-filter=content
+  [curriculum] 1454 words (high-freq-first), freq 63571->1 | 23/32 categories | 1454/1454 gen-usable (cat has >=2 members) | 1454/1454 content
+  [curriculum] developmental order (top 20): ['people', 'state', 'make', 'march', 'family', 'river', 'water', 'school', 'house', 'place', 'television', 'home', 'king', 'person', 'saw', 'season', 'go', 'park', 'man', 'book']
+  [gen-reference] coherent map covers 1454/1454 (100%) of the frequency-vocab with a coherent category; 1454/1454 (100%) gen-usable (cat>=2 members) across 54 categories (190 from validated TAXONOMY_40x8 + 1264 from coherent g20 domains); 0 incoherent (adjective/function) words excluded.
+
+====================================================================================================
+  STEP 1 — SEED 42  (1454 corpus-frequency concepts on ONE bridge)
+====================================================================================================
+[2026-06-26 13:37:11][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-26 13:37:11][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-26 13:37:11][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 19540 total neurons, 1 pathways.
+[2026-06-26 13:37:11][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-26 13:37:11][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 19540 neurons...
+[2026-06-26 13:37:11][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-26 13:37:11][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-26 13:37:11][INFO] SIM_BRIDGE: Generating 3D neuron positions for 19540 neurons...
+[2026-06-26 13:37:11][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-26 13:37:44][WARNING] SIM_BRIDGE: No trait info available; all synapses default to E->E STP type.
+[2026-06-26 13:37:44][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 72700000 synapses across 1 populations.
+[2026-06-26 13:37:44][INFO] SIM_BRIDGE: Initializing STP state for 72700000 synapses (capacity: 109050000)...
+[2026-06-26 13:37:44][INFO] SIM_BRIDGE: Initializing eligibility traces for 72700000 synapses (capacity: 109050000, dtype: float32)...
+[2026-06-26 13:37:44][WARNING] SIM_BRIDGE: No trait info available; all synapses default to E->E STP type.
+[2026-06-26 13:37:44][INFO] SIM_BRIDGE: Initializing structural plasticity state...
+[2026-06-26 13:37:45][INFO] SIM_BRIDGE: Simulation data initialized for 19540 neurons (3D). Synapses: 72700000. GPU memory: 7.4GB/25.8GB (28.8%)
+[learn-progress] 5000/16000 windows  400s
+[learn-progress] 10000/16000 windows  800s
+[learn-progress] 15000/16000 windows  1200s
+  [learn] 16000 windows in 1280s | 19540 neurons (hub 5000 + tgt 14540) | corr(M,C)=+0.868 | VRAM resident 11949.5 MB (pool 4266.3 MB)
+  [save-codes] wrote bridges/firstchat/brain1454_w16000_seed42.npz  (1454 concepts, D=128, corr(M,C)=+0.868)
+[2026-06-26 13:59:09][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-26 13:59:09][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-26 13:59:09][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-26 13:59:09][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 256 neurons...
+[2026-06-26 13:59:09][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-26 13:59:09][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-26 13:59:09][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-26 13:59:09][INFO] SIM_BRIDGE: Generating 3D neuron positions for 256 neurons...
+[2026-06-26 13:59:09][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-06-26 13:59:09][INFO] SIM_BRIDGE: Simulation data initialized for 256 neurons (3D). Synapses: 0. GPU memory: 16.8GB/25.8GB (65.0%)
+[2026-06-26 13:59:09][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-26 13:59:09][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-26 13:59:09][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-26 13:59:09][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 512 neurons...
+[2026-06-26 13:59:09][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-26 13:59:09][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-26 13:59:09][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-26 13:59:09][INFO] SIM_BRIDGE: Generating 3D neuron positions for 512 neurons...
+[2026-06-26 13:59:09][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-06-26 13:59:09][INFO] SIM_BRIDGE: Simulation data initialized for 512 neurons (3D). Synapses: 0. GPU memory: 16.8GB/25.8GB (65.0%)
+[2026-06-26 13:59:23][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-26 13:59:23][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-26 13:59:23][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-26 13:59:23][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6144 neurons...
+[2026-06-26 13:59:23][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-26 13:59:23][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-26 13:59:23][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-06-26 13:59:23][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6144 neurons...
+[2026-06-26 13:59:23][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-06-26 13:59:23][INFO] SIM_BRIDGE: Simulation data initialized for 6144 neurons (3D). Synapses: 0. GPU memory: 16.8GB/25.8GB (65.0%)
+  [recall/moat] recall 0.667 (32/48) | abstain 1.000 (false-accept 0/48) | 24 facts
+  [generalization] gen-reference=coherent -> SELECTED 0.050 (2.7x chance 0.019) | derangement 0.001 (collapses=True) | Pearson +0.059
+  [generalization] BOTH refs: sharding(g20) 0.065 (full 320, Pearson +0.012) | coherent 0.050 (scored 1454/1454 = 100% gen-usable, 54 cats, Pearson +0.059)
+
+====================================================================================================
+  VERDICT: STEP 1 PARTIAL/MISS (first REAL-corpus 320 data point = a FINDING, not a failure) — miss: recall [0.6666666666666666] (bar 0.95); generalization (coherent) [0.05] (bar 0.8). [BOTH references: sharding(g20, the original 0.153) 0.065-0.065; coherent(fix) 0.050-0.050 over 1454/1454 gen-usable (100%) words]. Calibrated per-bridge rate: 1280.1s/320 concepts (12.5 win/s), VRAM 11949.5 MB. NOTE the gen-reference fix (2026-06-25): the original 0.153 was the g20 SHARDING taxonomy (~33% co-occurrence-INCOHERENT adjective/function categories); the 'coherent' reference (validated TAXONOMY_40x8 + coherent g20 entity/verb domains) is the apples-to-apples reference the stream cortex scored 0.91 against. HONEST CAVEAT: only 100% of the frequency-derived vocab is coherent-clusterable (TinyStories' most-frequent content words are ~1/3 adjective/function words a distributional cortex cannot cluster) -- gen is scored over that gen-usable subset.
+  [saved] research/findings/raw/_breadth1454_w16000.json  (wall 1423.9s)
+====================================================================================================
+=== W=16000 EXIT 1 ===
+=== W=32000 START ===
+====================================================================================================
+[FOUNDATIONAL CURRICULUM — STEP 1: 320 concepts from the REAL TinyStories corpus]
+  backend=cupy  seeds=[42]  n_concepts=1454  n_hub=500  n_per=10  max_windows=32000  D=128  vocab_filter=content
+  corpus=data/corpus/tinystories.txt+data/corpus/simplewiki.txt (2 corpus file(s))
+  bars: recall>=0.95 (who/what) | moat 0 false-accepts | generalization>=0.80 (gen-reference=coherent; BOTH sharding+coherent reported) + derangement collapse | frozen-brain control | MEASURE VRAM + wall-clock
+====================================================================================================
+  [curriculum] corpus=tinystories.txt+simplewiki.txt | 9830 stories, 24938799 tokens, 320777 types | vocab-filter=content
+  [curriculum] 1454 words (high-freq-first), freq 63571->1 | 23/32 categories | 1454/1454 gen-usable (cat has >=2 members) | 1454/1454 content
+  [curriculum] developmental order (top 20): ['people', 'state', 'make', 'march', 'family', 'river', 'water', 'school', 'house', 'place', 'television', 'home', 'king', 'person', 'saw', 'season', 'go', 'park', 'man', 'book']
+  [gen-reference] coherent map covers 1454/1454 (100%) of the frequency-vocab with a coherent category; 1454/1454 (100%) gen-usable (cat>=2 members) across 54 categories (190 from validated TAXONOMY_40x8 + 1264 from coherent g20 domains); 0 incoherent (adjective/function) words excluded.
+
+====================================================================================================
+  STEP 1 — SEED 42  (1454 corpus-frequency concepts on ONE bridge)
+====================================================================================================
+[2026-06-26 14:00:56][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-26 14:00:56][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-26 14:00:56][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 19540 total neurons, 1 pathways.
+[2026-06-26 14:00:56][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-26 14:00:57][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 19540 neurons...
+[2026-06-26 14:00:57][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-26 14:00:57][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-26 14:00:57][INFO] SIM_BRIDGE: Generating 3D neuron positions for 19540 neurons...
+[2026-06-26 14:00:57][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-26 14:01:29][WARNING] SIM_BRIDGE: No trait info available; all synapses default to E->E STP type.
+[2026-06-26 14:01:29][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 72700000 synapses across 1 populations.
+[2026-06-26 14:01:30][INFO] SIM_BRIDGE: Initializing STP state for 72700000 synapses (capacity: 109050000)...
+[2026-06-26 14:01:30][INFO] SIM_BRIDGE: Initializing eligibility traces for 72700000 synapses (capacity: 109050000, dtype: float32)...
+[2026-06-26 14:01:30][WARNING] SIM_BRIDGE: No trait info available; all synapses default to E->E STP type.
+[2026-06-26 14:01:30][INFO] SIM_BRIDGE: Initializing structural plasticity state...
+[2026-06-26 14:01:30][INFO] SIM_BRIDGE: Simulation data initialized for 19540 neurons (3D). Synapses: 72700000. GPU memory: 7.4GB/25.8GB (28.8%)
+[learn-progress] 5000/32000 windows  403s
+[learn-progress] 10000/32000 windows  806s
+[learn-progress] 15000/32000 windows  1211s
+[learn-progress] 20000/32000 windows  1616s
+[learn-progress] 25000/32000 windows  2021s
+=== W=32000 EXIT 1 ===

@@ -1,6 +1,7 @@
 ---
 type: finding
 status: superseded
+superseded_by: research/findings/2026-05-19-distinct-pathways-honest-negative-episodic-contradiction-DISSOLVED-WM-blocked-by-consolidation-genericization.md
 date: 2026-05-19
 mechanism: integrated-loop
 ---

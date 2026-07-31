@@ -1,0 +1,24 @@
+[2026-07-20 13:17:07][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.5 GB), mempool limit: 80%
+[2026-07-20 13:17:07][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-20 13:17:07][INFO] SIM_BRIDGE: Brain-region framework: 1 regions, 256 total neurons, 0 pathways.
+[2026-07-20 13:17:07][INFO] SIM_BRIDGE: RNG initialized with seed: 101
+[2026-07-20 13:17:07][INFO] SIM_BRIDGE: Selective SSM slow-state enabled (256 neurons, k_leak=0.23949706554412842)
+[2026-07-20 13:17:07][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 256 neurons...
+[2026-07-20 13:17:07][INFO] SIM_BRIDGE: Generating 3D neuron positions for 256 neurons...
+[2026-07-20 13:17:07][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-20 13:17:07][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3232 synapses across 1 populations.
+[2026-07-20 13:17:07][INFO] SIM_BRIDGE: Initializing eligibility traces for 3232 synapses (capacity: 4848, dtype: float32)...
+[2026-07-20 13:17:07][INFO] SIM_BRIDGE: Initializing structural plasticity state...
+[2026-07-20 13:17:07][INFO] SIM_BRIDGE: Simulation data initialized for 256 neurons (3D). Synapses: 3232. GPU memory: 3.6GB/25.3GB (14.4%)
+[ssm-state] GRADED cp_ssm_state integrator: SSM decay=0.7605 -> k_leak=0.2395 (lam_eff=0.7605), inject=v/(1-decay), pop_k=1
+[verify] on-bridge firing-rate state vs rate-SSM analog state: corr=1.000 (>0.3 => substrate realizes the leaky state) | firing: mean=0.909 max=6.968 frac-active-channels=0.99 (low mean/frac => sparse; discriminative read-out needs varied firing)
+[refit] fitted ridge read-out on 22 on-bridge states (T=0.5); fit-elapsed 3s
+[seed 101] ON-BRIDGE per-depth NLL (elapsed 9s, decay=0.761):
+    depth     1 (n=  200): onbridge 3.542 | bigram 4.152 | trigram 5.209 || vs-trigram +1.667
+    depth     2 (n=  200): onbridge 2.636 | bigram 3.899 | trigram 3.012 || vs-trigram +0.376
+    depth     3 (n=  192): onbridge 2.562 | bigram 3.832 | trigram 2.927 || vs-trigram +0.365
+    depth   4-5 (n=  351): onbridge 2.930 | bigram 4.214 | trigram 3.353 || vs-trigram +0.423
+    depth   6-9 (n=  475): onbridge 3.013 | bigram 4.305 | trigram 3.568 || vs-trigram +0.555
+    depth 10-99 (n=  160): onbridge 2.798 | bigram 4.194 | trigram 3.189 || vs-trigram +0.391
+    VERDICT: GO (deep vs-trigram 0.391, map-corr 1.000)
+-> research/findings/raw/_gap1_ms_M1_seed101.json

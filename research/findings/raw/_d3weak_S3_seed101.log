@@ -1,0 +1,5 @@
+[D3 WEAK-SUPERVISION RANK 1] S3 | K-way END-STATE-only supervision (log2 K bits) vs 2-way property (1 bit); train (1, 2, 3) -> DEEPER (6, 7, 8)
+  [seed 101] STATE-endpoint DEEPER prop=1.0 (track=1.0) || PROPERTY-endpoint(=rung3) DEEPER=0.786 || CONTINUOUS=1.0 || SHUFFLE=0.709 (order-changes=0.217)
+
+  AGGREGATE (S3): STATE-endpoint DEEPER=1.000 | PROPERTY(rung3, 1-bit)=0.786 | SHUFFLE(mem-floor)=0.709 | (continuous-carry, reported)=1.000 (chance 0.5)
+  VERDICT: GO -- the transition delta is LEARNED from K-way END-STATE-only supervision (NO per-step intermediate states; a short-length curriculum + the model own detached rollout) and length-generalizes (DEEPER 1.00 >> the 2-way property endpoint = rung 3 0.79 [the reframe: log2 K endpoint bits learnable where 1 bit is not], >> shuffle-label 0.71 [genuine, not memorized]) -> the residual credit wall is SURPASSED: the discrete-attractor composition is GENUINELY LEARNED, not per-step taught. NO sim/ edit.

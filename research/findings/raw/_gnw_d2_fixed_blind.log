@@ -1,0 +1,11 @@
+  [StageA seed 100] E~basal 1.000 | E-inv 0.198 | P~apical 0.977 | P0 0.031 | sep 0.944 | GO True
+  [StageA seed 101] E~basal 0.999 | E-inv 0.181 | P~apical 0.984 | P0 0.036 | sep 0.948 | GO True
+  [StageA seed 102] E~basal 0.998 | E-inv 0.161 | P~apical 0.988 | P0 0.034 | sep 0.939 | GO True
+  [StageB seed 100][microcircuit][d3][fb=fixed,homeo=False] TEST held 0.836 (train 1.000) align[0.08, 0.55, 0.47, 1.00] | plain-FA fixed 0.836/deep-align 0.08 -> learned 0.752/0.11 -> +homeo 0.914/0.29 | single 0.192 | lesion 0.510 | wrong 0.510 | null 0.510 | perm 0.535 | oracle-d3 0.994 | chance 0.510 | wt_ok True | learned-transport-free True
+  [StageB seed 101][microcircuit][d3][fb=fixed,homeo=False] TEST held 0.827 (train 0.994) align[0.20, 0.57, 0.81, 1.00] | plain-FA fixed 0.827/deep-align 0.20 -> learned 0.869/0.20 -> +homeo 0.833/0.23 | single 0.223 | lesion 0.510 | wrong 0.510 | null 0.510 | perm 0.462 | oracle-d3 0.972 | chance 0.510 | wt_ok True | learned-transport-free True
+  [StageB seed 102][microcircuit][d3][fb=fixed,homeo=False] TEST held 0.769 (train 1.000) align[0.39, 0.84, 0.94, 1.00] | plain-FA fixed 0.769/deep-align 0.39 -> learned 0.830/0.21 -> +homeo 0.677/0.58 | single 0.226 | lesion 0.524 | wrong 0.524 | null 0.524 | perm 0.496 | oracle-d3 0.961 | chance 0.524 | wt_ok True | learned-transport-free True
+
+============================================================================================================
+[d1] VERDICT: INCONCLUSIVE [d3] -- the task is NOT demonstrably depth-3: at the narrow separation width H6 the depth-2 oracle held 0.853 (train 0.901) vs depth-3 0.858 (margin 0.005 < 0.08) -- no clean 2L-underfit/3L-clear. Re-tune the separation width / target before reading the FA-depth-wall arms.
+[d1] wrote research/findings/raw/_gnw_d2_depth3_fixed_blind.json
+============================================================================================================

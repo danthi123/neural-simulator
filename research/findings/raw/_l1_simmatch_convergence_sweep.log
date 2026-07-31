@@ -1,0 +1,20 @@
+[L1 simmatch convergence sweep] 64 concepts x 2000 hubs
+  offline PPMI+PCA(k= 8) ceiling = +0.462
+  offline PPMI+PCA(k=16) ceiling = +0.499
+  offline PPMI+PCA(k=32) ceiling = +0.418
+  offline PPMI+PCA(k=64) ceiling = +0.523
+  [baseline (reproduce +0.29)        ] Pearson=+0.290 ['+0.263', '+0.280', '+0.328']  offdiag-cos=+0.969 (saturated if ~1)  gen=0.661
+  [k64 + LR-DECAY                    ] Pearson=+0.258 ['+0.251', '+0.251', '+0.272']  offdiag-cos=+0.754 (saturated if ~1)  gen=0.693
+  [k64 + low lr_ff=0.003             ] Pearson=+0.292 ['+0.283', '+0.279', '+0.312']  offdiag-cos=+0.855 (saturated if ~1)  gen=0.677
+  [k32 + LR-DECAY                    ] Pearson=+0.198 ['+0.197', '+0.212', '+0.186']  offdiag-cos=+0.858 (saturated if ~1)  gen=0.531
+  [k16 + LR-DECAY + settle40         ] Pearson=+0.142 ['+0.160', '+0.175', '+0.092']  offdiag-cos=+0.910 (saturated if ~1)  gen=0.396
+  [k16 + low lr_ff=0.003 + settle40  ] Pearson=+0.159 ['+0.191', '+0.195', '+0.090']  offdiag-cos=+0.980 (saturated if ~1)  gen=0.443
+  [k8  + LR-DECAY + settle50         ] Pearson=+0.119 ['+0.076', '+0.145', '+0.136']  offdiag-cos=+0.969 (saturated if ~1)  gen=0.391
+  [k8  + low lr_ff + fast lateral    ] Pearson=+0.182 ['+0.144', '+0.204', '+0.197']  offdiag-cos=+1.000 (saturated if ~1)  gen=0.500
+
+============================================================================================
+  SWEEP VERDICT: PLATEAU_IS_A_WALL_NEGATIVE
+  NO online config clears Pearson +0.40 (best 'k64 + low lr_ff=0.003' +0.292, offdiag +0.855) while the offline optimum is +0.523 -> the online brain-based rule genuinely cannot carve the weak real structure -> the L1 NEGATIVE is solid; ship the flat 2,048-concept cortex.
+============================================================================================
+  best: k64 + low lr_ff=0.003  Pearson=+0.292  offline-PCA-best(k=64)=+0.523  elapsed 204s
+  [saved] research/findings/raw/_l1_simmatch_convergence_sweep.json

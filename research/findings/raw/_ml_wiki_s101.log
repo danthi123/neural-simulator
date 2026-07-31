@@ -1,0 +1,3 @@
+[multilevel STACKED (co-occurrence super)] K=1024 k_fine=24 k_coarse=6
+  [seed 101] too few usable supers -- skip
+  VERDICT: NOT-EVALUABLE

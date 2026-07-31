@@ -1,0 +1,27 @@
+EMERGE-RESERVOIR-LM de-risk: a fixed on-bridge spiking reservoir + a shallow one-step-delta read-out (NO BPTT) as an autoregressive next-token LM; reservoir_CE < bigram_CE + every anti-cheat collapses; 1-seed; state-feature=running_cumulative
+[2026-07-10 22:10:38][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-10 22:10:38][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-10 22:10:38][INFO] SIM_BRIDGE: Brain-region framework: 1 regions, 300 total neurons, 0 pathways.
+[2026-07-10 22:10:38][INFO] SIM_BRIDGE: RNG initialized with seed: 102
+[2026-07-10 22:10:38][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 300 neurons...
+[2026-07-10 22:10:38][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-10 22:10:38][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-10 22:10:38][INFO] SIM_BRIDGE: Generating 3D neuron positions for 300 neurons...
+[2026-07-10 22:10:38][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-10 22:10:38][INFO] SIM_BRIDGE: Per-synapse STP types: E->E=3890, E->I=2020, I->E=1986, I->I=977
+[2026-07-10 22:10:38][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 8873 synapses across 1 populations.
+[2026-07-10 22:10:38][INFO] SIM_BRIDGE: Initializing STP state for 8873 synapses (capacity: 13309)...
+[2026-07-10 22:10:38][INFO] SIM_BRIDGE: Initializing eligibility traces for 8873 synapses (capacity: 13309, dtype: float32)...
+[2026-07-10 22:10:38][INFO] SIM_BRIDGE: Per-synapse STP types: E->E=3890, E->I=2020, I->E=1986, I->I=977
+[2026-07-10 22:10:38][INFO] SIM_BRIDGE: Initializing structural plasticity state...
+[2026-07-10 22:10:38][INFO] SIM_BRIDGE: Simulation data initialized for 300 neurons (3D). Synapses: 8873. GPU memory: 23.6GB/51.2GB (46.1%)
+  [seed 102] V=24 feat=running_cumulative rate 0.0297  ||  RESERVOIR CE 0.854 (acc 0.741)  vs  bigram 1.098 (acc 0.670)  [trigram 0.943 | unigram 2.118 | chance 3.178]
+          anti-cheats -> shuffled-state 3.335 | permuted-corpus 1.398 | frozen 3.178 | silenced 2.075  ||  seed_go True  {'beats_bigram': True, 'shuffled_collapses': True, 'permuted_corpus_collapses': True, 'frozen_chance': True, 'silenced_collapses': True, 'active': True}
+          rollout 'the' -> the <unk> <unk> to the <unk> <unk> <unk> <unk>
+          rollout 'a' -> a <unk> <unk> and a <unk> <unk> <unk> and
+          rollout 'it' -> it is a <unk> <unk> and a <unk> <unk>
+
+======================================================================================================================
+[emerge-reservoir-lm] VERDICT: GO -- a FIXED on-bridge spiking reservoir (EMERGE-82 OnBridgeLSM: a recurrent Izhikevich BrainRegion on a real SimulationBridge, genuinely active at 0.0297 spikes/neuron/step) + a SHALLOW linear-softmax read-out trained ONLINE by the ONE-STEP next-token delta rule (NO BPTT, NO weight transport -- the next token IS the clean local target) is an autoregressive TOKEN-level LANGUAGE MODEL that BEATS the bigram on held-out next-token cross-entropy: reservoir CE 0.854 (acc 0.741) < bigram 1.098 (acc 0.670) by 0.244 nats [trigram ceiling 0.943, unigram floor 2.118, chance 3.178] -- the reservoir's fading-memory recurrence carries higher-order context a bigram cannot. Every anti-cheat COLLAPSES: shuffled-state (permute S[t]) CE 3.335 >= bigram (temporal alignment load-bearing); permuted-corpus (scramble train word-order, fresh read-out) CE 1.398 >= bigram (no learnable structure); frozen (untrained) CE 3.178 == chance; silenced (drive OFF) CE 2.075 >= bigram (the read is from the region's driven SPIKES). 1 seeds, state-feature=running_cumulative. ==> emergent, learned-from-experience, on-bridge, no-BPTT language generation with a local output-layer rule -- the ESN/LSM discipline (fixed recurrent cortex + locally-trained read-out) on the project's own spiking substrate. HONEST SCOPE: a TOKEN-level LM over the BOUNDED controlled EMERGE stream (a closed template grammar), NOT open prose (R4). Reuse-by-import (EMERGE-82 OnBridgeLSM + EMERGE-61 wash-out + EMERGE-62 stream); NO sim/ edit; NO edit to any existing runner.
+[emerge-reservoir-lm] wrote research\findings\raw\_reslm_seed102.json
+======================================================================================================================

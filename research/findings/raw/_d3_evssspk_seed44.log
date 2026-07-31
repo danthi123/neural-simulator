@@ -1,0 +1,33 @@
+[D3 EVENT SELF-SUP SPIKING] K=6 | a delta learned with NO state label, its running agent slot re-discretized ON SPIKES (FS-WTA one-of-K attractor)
+[2026-07-10 05:47:36][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-10 05:47:36][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-10 05:47:36][INFO] SIM_BRIDGE: Brain-region framework: 7 regions, 96 total neurons, 12 pathways.
+[2026-07-10 05:47:36][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-07-10 05:47:36][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 96 neurons...
+[2026-07-10 05:47:36][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-10 05:47:36][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-10 05:47:36][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-07-10 05:47:36][INFO] SIM_BRIDGE: Generating 3D neuron positions for 96 neurons...
+[2026-07-10 05:47:36][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-10 05:47:36][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2060 synapses across 12 populations.
+[2026-07-10 05:47:36][INFO] SIM_BRIDGE: Simulation data initialized for 96 neurons (3D). Synapses: 2060. GPU memory: 22.3GB/51.2GB (43.6%)
+[2026-07-10 05:47:58][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-10 05:47:58][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-10 05:47:58][INFO] SIM_BRIDGE: Brain-region framework: 7 regions, 96 total neurons, 12 pathways.
+[2026-07-10 05:47:58][INFO] SIM_BRIDGE: RNG initialized with seed: 49
+[2026-07-10 05:47:58][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 96 neurons...
+[2026-07-10 05:47:58][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-10 05:47:58][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-10 05:47:58][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=0.0pA)...
+[2026-07-10 05:47:58][INFO] SIM_BRIDGE: Generating 3D neuron positions for 96 neurons...
+[2026-07-10 05:47:58][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-10 05:47:58][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2090 synapses across 12 populations.
+[2026-07-10 05:47:58][INFO] SIM_BRIDGE: Simulation data initialized for 96 neurons (3D). Synapses: 2090. GPU memory: 22.2GB/51.2GB (43.4%)
+  [seed 44] SPIKING self-sup=0.832 (deep>=3: 0.766 | promote: 0.844) || host-agree=0.988 | emission-severed(spiking)=0.235 || fair-reservoir deep=0.111 | last-named-subj promote=0.191
+
+  AGGREGATE (K=6, chance 0.167):
+    SPIKING self-sup=0.832  (coref-DEEP>=3: 0.766 | promote-bound: 0.844)
+    per-step host-agree=0.988 (the FS-WTA winner IS the state, not a check on a host argmax)
+    emission-severed through the SAME spiking rollout=0.235 (the spikes execute a LEARNED delta)
+    floors: fair reservoir (deep)=0.111 | last-named-subject (promote)=0.191
+  VERDICT: GO -- the event transition delta -- LEARNED with NO (agent,patient) state label, from agent-emission prediction alone -- is EXECUTED ON SPIKES: its running agent slot is re-discretized by a spiking one-of-K FS-WTA Izhikevich attractor (per-step host-agree 0.99, so the spiking winner IS the state), decoding the running agent at 0.83 on held-out-DEEPER and 0.77 on the coref-DEEP subset where a FAIR echo-state reservoir sits at 0.11; the promote-bound edge holds (0.84 vs the honest label-free floor 0.19); an EMISSION-SEVERED model collapses through the SAME spiking rollout (0.23) so the spikes execute a LEARNED delta, not a generic attractor -> the running who-did-what-to-whom MEANING both EMERGES from prediction and RUNS on the spiking substrate. NO sim/ edit.

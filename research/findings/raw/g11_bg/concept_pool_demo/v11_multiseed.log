@@ -1,0 +1,859 @@
+[v11-MS] launching seed 43 training...
+
+=== concept_pool_demo (seed=43) ===
+  Architecture: 4 motor + 4 noun + 4 verb + 4 adjective = 16 pools
+  Vocab: ['north', 'east', 'south', 'west'] + ['apple', 'river', 'dog', 'cat'] + ['go', 'come', 'stop', 'look'] + ['big', 'small', 'hot', 'cold']
+  Train events/word: 200
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Brain-region framework: 34 regions, 7680 total neurons, 96 pathways.
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 7680 neurons...
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'language_input' (2048 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'motor_N' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'motor_E' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'motor_S' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'motor_W' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'language_output' (2048 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'motor_FS_N' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'motor_FS_E' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'motor_FS_S' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'motor_FS_W' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'noun_pool_APPLE' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'noun_pool_RIVER' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'noun_pool_DOG' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'noun_pool_CAT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'noun_pool_APPLE_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'noun_pool_RIVER_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'noun_pool_DOG_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'noun_pool_CAT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'verb_pool_GO' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'verb_pool_COME' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'verb_pool_STOP' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'verb_pool_LOOK' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'verb_pool_GO_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'verb_pool_COME_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'verb_pool_STOP_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'verb_pool_LOOK_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'adjective_pool_BIG' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'adjective_pool_SMALL' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'adjective_pool_HOT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'adjective_pool_COLD' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'adjective_pool_BIG_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'adjective_pool_SMALL_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'adjective_pool_HOT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Region 'adjective_pool_COLD_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Generating 3D neuron positions for 7680 neurons...
+[2026-05-13 11:55:16][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-05-13 11:55:22][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 4542099 synapses across 114 populations.
+[2026-05-13 11:55:22][INFO] SIM_BRIDGE: Initializing eligibility traces for 4542099 synapses (capacity: 6813148, dtype: float32)...
+[2026-05-13 11:55:22][INFO] SIM_BRIDGE: Initializing STDP state for 7680 neurons...
+[2026-05-13 11:55:22][INFO] SIM_BRIDGE: Simulation data initialized for 7680 neurons (3D). Synapses: 4542099. GPU memory: 1.6GB/25.8GB (6.4%)
+[BUILD] concept-pool bridge: 7680 neurons total, 12 concept pools (2400 neurons in pools)
+[topographic-bias] Applied factor=3.00/0.30 across motor + noun + verb pools
+  north->motor_N: x3.00 on 12290 edges
+  east->motor_E: x3.00 on 12303 edges
+  south->motor_S: x3.00 on 12216 edges
+  west->motor_W: x3.00 on 12222 edges
+  apple->noun_pool_APPLE: x3.00 on 12251 edges
+  river->noun_pool_RIVER: x3.00 on 12251 edges
+  dog->noun_pool_DOG: x3.00 on 12178 edges
+  cat->noun_pool_CAT: x3.00 on 12377 edges
+  go->verb_pool_GO: x3.00 on 12375 edges
+  come->verb_pool_COME: x3.00 on 12189 edges
+  stop->verb_pool_STOP: x3.00 on 12483 edges
+  look->verb_pool_LOOK: x3.00 on 12287 edges
+  big->adjective_pool_BIG: x3.00 on 12447 edges
+  small->adjective_pool_SMALL: x3.00 on 12311 edges
+  hot->adjective_pool_HOT: x3.00 on 12421 edges
+  cold->adjective_pool_COLD: x3.00 on 12279 edges
+  reciprocal_target_edges: x3.00 on 196805 edges
+
+[TRAIN] 16 (word, pool) pairs, 200 events each = 3200 total events (interleaved)
+  interleaved event 100/3200 (36s)
+  interleaved event 200/3200 (71s)
+  interleaved event 300/3200 (109s)
+  interleaved event 400/3200 (156s)
+  interleaved event 500/3200 (193s)
+  interleaved event 600/3200 (255s)
+  interleaved event 700/3200 (305s)
+  interleaved event 800/3200 (339s)
+  interleaved event 900/3200 (374s)
+  interleaved event 1000/3200 (409s)
+  interleaved event 1100/3200 (446s)
+  interleaved event 1200/3200 (483s)
+  interleaved event 1300/3200 (518s)
+  interleaved event 1400/3200 (555s)
+  interleaved event 1500/3200 (588s)
+  interleaved event 1600/3200 (623s)
+  interleaved event 1700/3200 (657s)
+  interleaved event 1800/3200 (692s)
+  interleaved event 1900/3200 (726s)
+  interleaved event 2000/3200 (758s)
+  interleaved event 2100/3200 (790s)
+  interleaved event 2200/3200 (823s)
+  interleaved event 2300/3200 (856s)
+  interleaved event 2400/3200 (892s)
+  interleaved event 2500/3200 (926s)
+  interleaved event 2600/3200 (960s)
+  interleaved event 2700/3200 (994s)
+  interleaved event 2800/3200 (1043s)
+  interleaved event 2900/3200 (1094s)
+  interleaved event 3000/3200 (1133s)
+  interleaved event 3100/3200 (1169s)
+  interleaved event 3200/3200 (1208s)
+
+[TRAIN] complete (1208s, interleaved)
+
+[SAVE] saving bridge to research\findings\raw\g11_bg\concept_pool_demo\seed43_v11.simstate.h5
+[2026-05-13 12:15:40][INFO] SIM_BRIDGE: Saving checkpoint to research\findings\raw\g11_bg\concept_pool_demo\seed43_v11.simstate.h5...
+[2026-05-13 12:15:41][SUCCESS] SIM_BRIDGE: Checkpoint saved successfully to research\findings\raw\g11_bg\concept_pool_demo\seed43_v11.simstate.h5
+[SAVE] checkpoint written
+
+[EVAL] measuring cross-category isolation across 16 pools
+
+[RESULTS] per-word cross-category isolation:
+  north    -> motor_N               target=1.140  max_off=1.085 (adjective_pool_SMALL)  ratio=1.05x  [PASS]
+  east     -> motor_E               target=1.295  max_off=1.295 (motor_N)  ratio=1.00x  [FAIL]
+  south    -> motor_S               target=2.045  max_off=1.440 (motor_E)  ratio=1.42x  [PASS]
+  west     -> motor_W               target=1.395  max_off=1.340 (verb_pool_COME)  ratio=1.04x  [PASS]
+  apple    -> noun_pool_APPLE       target=1.105  max_off=1.430 (motor_W)  ratio=0.77x  [FAIL]
+  river    -> noun_pool_RIVER       target=1.720  max_off=1.440 (noun_pool_APPLE)  ratio=1.19x  [PASS]
+  dog      -> noun_pool_DOG         target=1.315  max_off=1.690 (noun_pool_RIVER)  ratio=0.78x  [FAIL]
+  cat      -> noun_pool_CAT         target=1.150  max_off=1.180 (noun_pool_RIVER)  ratio=0.97x  [FAIL]
+  go       -> verb_pool_GO          target=1.195  max_off=1.400 (noun_pool_CAT)  ratio=0.85x  [FAIL]
+  come     -> verb_pool_COME        target=1.420  max_off=1.380 (adjective_pool_BIG)  ratio=1.03x  [PASS]
+  stop     -> verb_pool_STOP        target=1.600  max_off=1.290 (verb_pool_GO)  ratio=1.24x  [PASS]
+  look     -> verb_pool_LOOK        target=1.060  max_off=0.950 (adjective_pool_SMALL)  ratio=1.12x  [PASS]
+  big      -> adjective_pool_BIG    target=1.890  max_off=1.120 (verb_pool_STOP)  ratio=1.69x  [PASS]
+  small    -> adjective_pool_SMALL  target=1.515  max_off=1.200 (noun_pool_CAT)  ratio=1.26x  [PASS]
+  hot      -> adjective_pool_HOT    target=1.585  max_off=1.585 (adjective_pool_BIG)  ratio=1.00x  [FAIL]
+  cold     -> adjective_pool_COLD   target=1.085  max_off=1.285 (adjective_pool_HOT)  ratio=0.84x  [FAIL]
+
+[VERDICT] 9/16 words have correct target-pool dominance
+  Total wall clock: 1246s
+
+[OUT] wrote research\findings\raw\g11_bg\concept_pool_demo\seed43_v11.json
+[v11-MS] running A->W readout seed 43...
+
+=== concept_speak_demo (seed=43) ===
+  Tests A->W: drive all pools, decode 'spoken' word
+[2026-05-13 12:16:12][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-05-13 12:16:12][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-05-13 12:16:12][INFO] SIM_BRIDGE: Brain-region framework: 26 regions, 6784 total neurons, 72 pathways.
+[2026-05-13 12:16:12][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-05-13 12:16:13][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6784 neurons...
+[2026-05-13 12:16:13][INFO] SIM_BRIDGE: Region 'language_input' (2048 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:16:13][INFO] SIM_BRIDGE: Region 'motor_N' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:16:13][INFO] SIM_BRIDGE: Region 'motor_E' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:16:13][INFO] SIM_BRIDGE: Region 'motor_S' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:16:13][INFO] SIM_BRIDGE: Region 'motor_W' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:16:13][INFO] SIM_BRIDGE: Region 'language_output' (2048 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:16:13][INFO] SIM_BRIDGE: Region 'motor_FS_N' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:16:13][INFO] SIM_BRIDGE: Region 'motor_FS_E' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:16:13][INFO] SIM_BRIDGE: Region 'motor_FS_S' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:16:13][INFO] SIM_BRIDGE: Region 'motor_FS_W' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:16:13][INFO] SIM_BRIDGE: Region 'noun_pool_APPLE' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:16:13][INFO] SIM_BRIDGE: Region 'noun_pool_RIVER' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:16:13][INFO] SIM_BRIDGE: Region 'noun_pool_DOG' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:16:13][INFO] SIM_BRIDGE: Region 'noun_pool_CAT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:16:13][INFO] SIM_BRIDGE: Region 'noun_pool_APPLE_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:16:13][INFO] SIM_BRIDGE: Region 'noun_pool_RIVER_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:16:13][INFO] SIM_BRIDGE: Region 'noun_pool_DOG_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:16:13][INFO] SIM_BRIDGE: Region 'noun_pool_CAT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:16:13][INFO] SIM_BRIDGE: Region 'verb_pool_GO' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:16:13][INFO] SIM_BRIDGE: Region 'verb_pool_COME' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:16:13][INFO] SIM_BRIDGE: Region 'verb_pool_STOP' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:16:13][INFO] SIM_BRIDGE: Region 'verb_pool_LOOK' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:16:13][INFO] SIM_BRIDGE: Region 'verb_pool_GO_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:16:13][INFO] SIM_BRIDGE: Region 'verb_pool_COME_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:16:13][INFO] SIM_BRIDGE: Region 'verb_pool_STOP_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:16:13][INFO] SIM_BRIDGE: Region 'verb_pool_LOOK_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:16:13][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-05-13 12:16:13][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-05-13 12:16:13][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-05-13 12:16:13][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6784 neurons...
+[2026-05-13 12:16:13][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-05-13 12:16:22][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3512901 synapses across 86 populations.
+[2026-05-13 12:16:22][INFO] SIM_BRIDGE: Initializing eligibility traces for 3512901 synapses (capacity: 5269351, dtype: float32)...
+[2026-05-13 12:16:22][INFO] SIM_BRIDGE: Initializing STDP state for 6784 neurons...
+[2026-05-13 12:16:22][INFO] SIM_BRIDGE: Simulation data initialized for 6784 neurons (3D). Synapses: 3512901. GPU memory: 1.6GB/25.8GB (6.1%)
+[BUILD] concept-pool bridge: 6784 neurons total, 12 concept pools (2400 neurons in pools)
+
+[LOAD] loading checkpoint from research\findings\raw\g11_bg\concept_pool_demo\seed43_v11.simstate.h5
+[2026-05-13 12:16:22][INFO] SIM_BRIDGE: Loading checkpoint from research\findings\raw\g11_bg\concept_pool_demo\seed43_v11.simstate.h5...
+[2026-05-13 12:16:22][INFO] SIM_BRIDGE: Clearing simulation state and GPU memory...
+[2026-05-13 12:16:22][INFO] SIM_BRIDGE: Cleared simulation state and GPU memory.
+[2026-05-13 12:16:22][DEBUG] SIM_BRIDGE: Checkpoint: Dataset for 'cp_adex_w' not found or was empty. Using default.
+[2026-05-13 12:16:22][DEBUG] SIM_BRIDGE: Checkpoint: Dataset for 'cp_stp_u' not found or was empty. Using default.
+[2026-05-13 12:16:22][DEBUG] SIM_BRIDGE: Checkpoint: Dataset for 'cp_stp_x' not found or was empty. Using default.
+[2026-05-13 12:16:22][SUCCESS] SIM_BRIDGE: Checkpoint loaded. Sim time: 0.0ms, Step: 0, Model: IZHIKEVICH
+
+[EVAL] A->W readout for all 10 pools
+  drive motor_N              -> top-1='north' (cos=0.21, target='north' cos=0.21)  top3=[north=0.21, come=0.03, apple=0.03]  [PASS]
+  drive motor_E              -> top-1='east' (cos=0.18, target='east' cos=0.18)  top3=[east=0.18, dog=0.04, stop=0.04]  [PASS]
+  drive motor_S              -> top-1='south' (cos=0.21, target='south' cos=0.21)  top3=[south=0.21, apple=0.10, stop=0.09]  [PASS]
+  drive motor_W              -> top-1='west' (cos=0.23, target='west' cos=0.23)  top3=[west=0.23, east=0.11, dog=0.08]  [PASS]
+  drive noun_pool_APPLE      -> top-1='apple' (cos=0.43, target='apple' cos=0.43)  top3=[apple=0.43, north=0.07, stop=0.07]  [PASS]
+  drive noun_pool_RIVER      -> top-1='river' (cos=0.21, target='river' cos=0.21)  top3=[river=0.21, west=0.06, go=0.06]  [PASS]
+  drive noun_pool_DOG        -> top-1='dog' (cos=0.17, target='dog' cos=0.17)  top3=[dog=0.17, cat=0.08, south=0.08]  [PASS]
+  drive noun_pool_CAT        -> top-1='cat' (cos=0.28, target='cat' cos=0.28)  top3=[cat=0.28, south=0.10, stop=0.09]  [PASS]
+  drive verb_pool_GO         -> top-1='go' (cos=0.25, target='go' cos=0.25)  top3=[go=0.25, south=0.10, west=0.06]  [PASS]
+  drive verb_pool_COME       -> top-1='come' (cos=0.31, target='come' cos=0.31)  top3=[come=0.31, look=0.09, north=0.09]  [PASS]
+  drive verb_pool_STOP       -> top-1='stop' (cos=0.22, target='stop' cos=0.22)  top3=[stop=0.22, go=0.08, dog=0.07]  [PASS]
+  drive verb_pool_LOOK       -> top-1='look' (cos=0.33, target='look' cos=0.33)  top3=[look=0.33, south=0.07, come=0.07]  [PASS]
+
+[VERDICT] 12/12 pools speak the trained word
+  Wall clock: 32s
+
+[OUT] wrote research\findings\raw\g11_bg\concept_pool_demo\seed43_v11_speak.json
+[v11-MS] seed 43 : Phase 1 = 9/16, A->W = 12/12
+[v11-MS] launching seed 44 training...
+
+=== concept_pool_demo (seed=44) ===
+  Architecture: 4 motor + 4 noun + 4 verb + 4 adjective = 16 pools
+  Vocab: ['north', 'east', 'south', 'west'] + ['apple', 'river', 'dog', 'cat'] + ['go', 'come', 'stop', 'look'] + ['big', 'small', 'hot', 'cold']
+  Train events/word: 200
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Brain-region framework: 34 regions, 7680 total neurons, 96 pathways.
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 7680 neurons...
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'language_input' (2048 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'motor_N' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'motor_E' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'motor_S' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'motor_W' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'language_output' (2048 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'motor_FS_N' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'motor_FS_E' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'motor_FS_S' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'motor_FS_W' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'noun_pool_APPLE' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'noun_pool_RIVER' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'noun_pool_DOG' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'noun_pool_CAT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'noun_pool_APPLE_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'noun_pool_RIVER_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'noun_pool_DOG_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'noun_pool_CAT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'verb_pool_GO' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'verb_pool_COME' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'verb_pool_STOP' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'verb_pool_LOOK' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'verb_pool_GO_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'verb_pool_COME_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'verb_pool_STOP_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'verb_pool_LOOK_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'adjective_pool_BIG' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'adjective_pool_SMALL' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'adjective_pool_HOT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'adjective_pool_COLD' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'adjective_pool_BIG_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'adjective_pool_SMALL_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'adjective_pool_HOT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Region 'adjective_pool_COLD_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Generating 3D neuron positions for 7680 neurons...
+[2026-05-13 12:16:34][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-05-13 12:16:44][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 4542835 synapses across 114 populations.
+[2026-05-13 12:16:44][INFO] SIM_BRIDGE: Initializing eligibility traces for 4542835 synapses (capacity: 6814252, dtype: float32)...
+[2026-05-13 12:16:44][INFO] SIM_BRIDGE: Initializing STDP state for 7680 neurons...
+[2026-05-13 12:16:44][INFO] SIM_BRIDGE: Simulation data initialized for 7680 neurons (3D). Synapses: 4542835. GPU memory: 1.6GB/25.8GB (6.4%)
+[BUILD] concept-pool bridge: 7680 neurons total, 12 concept pools (2400 neurons in pools)
+[topographic-bias] Applied factor=3.00/0.30 across motor + noun + verb pools
+  north->motor_N: x3.00 on 12290 edges
+  east->motor_E: x3.00 on 12370 edges
+  south->motor_S: x3.00 on 12252 edges
+  west->motor_W: x3.00 on 12131 edges
+  apple->noun_pool_APPLE: x3.00 on 12299 edges
+  river->noun_pool_RIVER: x3.00 on 12129 edges
+  dog->noun_pool_DOG: x3.00 on 12437 edges
+  cat->noun_pool_CAT: x3.00 on 12243 edges
+  go->verb_pool_GO: x3.00 on 12323 edges
+  come->verb_pool_COME: x3.00 on 12292 edges
+  stop->verb_pool_STOP: x3.00 on 12235 edges
+  look->verb_pool_LOOK: x3.00 on 12309 edges
+  big->adjective_pool_BIG: x3.00 on 12327 edges
+  small->adjective_pool_SMALL: x3.00 on 12423 edges
+  hot->adjective_pool_HOT: x3.00 on 12211 edges
+  cold->adjective_pool_COLD: x3.00 on 12426 edges
+  reciprocal_target_edges: x3.00 on 196590 edges
+
+[TRAIN] 16 (word, pool) pairs, 200 events each = 3200 total events (interleaved)
+  interleaved event 100/3200 (40s)
+  interleaved event 200/3200 (77s)
+  interleaved event 300/3200 (110s)
+  interleaved event 400/3200 (142s)
+  interleaved event 500/3200 (174s)
+  interleaved event 600/3200 (205s)
+  interleaved event 700/3200 (236s)
+  interleaved event 800/3200 (267s)
+  interleaved event 900/3200 (298s)
+  interleaved event 1000/3200 (329s)
+  interleaved event 1100/3200 (361s)
+  interleaved event 1200/3200 (402s)
+  interleaved event 1300/3200 (434s)
+  interleaved event 1400/3200 (467s)
+  interleaved event 1500/3200 (500s)
+  interleaved event 1600/3200 (531s)
+  interleaved event 1700/3200 (562s)
+  interleaved event 1800/3200 (595s)
+  interleaved event 1900/3200 (626s)
+  interleaved event 2000/3200 (657s)
+  interleaved event 2100/3200 (686s)
+  interleaved event 2200/3200 (716s)
+  interleaved event 2300/3200 (747s)
+  interleaved event 2400/3200 (777s)
+  interleaved event 2500/3200 (810s)
+  interleaved event 2600/3200 (840s)
+  interleaved event 2700/3200 (869s)
+  interleaved event 2800/3200 (900s)
+  interleaved event 2900/3200 (930s)
+  interleaved event 3000/3200 (960s)
+  interleaved event 3100/3200 (992s)
+  interleaved event 3200/3200 (1023s)
+
+[TRAIN] complete (1023s, interleaved)
+
+[SAVE] saving bridge to research\findings\raw\g11_bg\concept_pool_demo\seed44_v11.simstate.h5
+[2026-05-13 12:34:00][INFO] SIM_BRIDGE: Saving checkpoint to research\findings\raw\g11_bg\concept_pool_demo\seed44_v11.simstate.h5...
+[2026-05-13 12:34:01][SUCCESS] SIM_BRIDGE: Checkpoint saved successfully to research\findings\raw\g11_bg\concept_pool_demo\seed44_v11.simstate.h5
+[SAVE] checkpoint written
+
+[EVAL] measuring cross-category isolation across 16 pools
+
+[RESULTS] per-word cross-category isolation:
+  north    -> motor_N               target=2.060  max_off=1.920 (adjective_pool_SMALL)  ratio=1.07x  [PASS]
+  east     -> motor_E               target=1.600  max_off=1.235 (motor_N)  ratio=1.30x  [PASS]
+  south    -> motor_S               target=1.365  max_off=1.715 (motor_E)  ratio=0.80x  [FAIL]
+  west     -> motor_W               target=2.185  max_off=1.500 (noun_pool_APPLE)  ratio=1.46x  [PASS]
+  apple    -> noun_pool_APPLE       target=2.700  max_off=1.915 (motor_W)  ratio=1.41x  [PASS]
+  river    -> noun_pool_RIVER       target=1.080  max_off=1.230 (motor_W)  ratio=0.88x  [FAIL]
+  dog      -> noun_pool_DOG         target=1.305  max_off=1.545 (noun_pool_APPLE)  ratio=0.84x  [FAIL]
+  cat      -> noun_pool_CAT         target=1.205  max_off=1.220 (noun_pool_DOG)  ratio=0.99x  [FAIL]
+  go       -> verb_pool_GO          target=1.030  max_off=1.120 (motor_E)  ratio=0.92x  [FAIL]
+  come     -> verb_pool_COME        target=1.670  max_off=1.260 (noun_pool_APPLE)  ratio=1.33x  [PASS]
+  stop     -> verb_pool_STOP        target=1.135  max_off=1.210 (noun_pool_DOG)  ratio=0.94x  [FAIL]
+  look     -> verb_pool_LOOK        target=1.465  max_off=1.495 (verb_pool_COME)  ratio=0.98x  [FAIL]
+  big      -> adjective_pool_BIG    target=1.440  max_off=1.315 (adjective_pool_SMALL)  ratio=1.10x  [PASS]
+  small    -> adjective_pool_SMALL  target=2.140  max_off=1.385 (motor_N)  ratio=1.55x  [PASS]
+  hot      -> adjective_pool_HOT    target=1.530  max_off=1.125 (adjective_pool_SMALL)  ratio=1.36x  [PASS]
+  cold     -> adjective_pool_COLD   target=1.695  max_off=1.560 (verb_pool_COME)  ratio=1.09x  [PASS]
+
+[VERDICT] 9/16 words have correct target-pool dominance
+  Total wall clock: 1054s
+
+[OUT] wrote research\findings\raw\g11_bg\concept_pool_demo\seed44_v11.json
+[v11-MS] running A->W readout seed 44...
+
+=== concept_speak_demo (seed=44) ===
+  Tests A->W: drive all pools, decode 'spoken' word
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Brain-region framework: 26 regions, 6784 total neurons, 72 pathways.
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6784 neurons...
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Region 'language_input' (2048 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Region 'motor_N' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Region 'motor_E' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Region 'motor_S' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Region 'motor_W' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Region 'language_output' (2048 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Region 'motor_FS_N' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Region 'motor_FS_E' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Region 'motor_FS_S' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Region 'motor_FS_W' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Region 'noun_pool_APPLE' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Region 'noun_pool_RIVER' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Region 'noun_pool_DOG' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Region 'noun_pool_CAT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Region 'noun_pool_APPLE_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Region 'noun_pool_RIVER_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Region 'noun_pool_DOG_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Region 'noun_pool_CAT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Region 'verb_pool_GO' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Region 'verb_pool_COME' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Region 'verb_pool_STOP' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Region 'verb_pool_LOOK' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Region 'verb_pool_GO_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Region 'verb_pool_COME_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Region 'verb_pool_STOP_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Region 'verb_pool_LOOK_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6784 neurons...
+[2026-05-13 12:34:09][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-05-13 12:34:13][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3514268 synapses across 86 populations.
+[2026-05-13 12:34:13][INFO] SIM_BRIDGE: Initializing eligibility traces for 3514268 synapses (capacity: 5271402, dtype: float32)...
+[2026-05-13 12:34:13][INFO] SIM_BRIDGE: Initializing STDP state for 6784 neurons...
+[2026-05-13 12:34:13][INFO] SIM_BRIDGE: Simulation data initialized for 6784 neurons (3D). Synapses: 3514268. GPU memory: 1.6GB/25.8GB (6.1%)
+[BUILD] concept-pool bridge: 6784 neurons total, 12 concept pools (2400 neurons in pools)
+
+[LOAD] loading checkpoint from research\findings\raw\g11_bg\concept_pool_demo\seed44_v11.simstate.h5
+[2026-05-13 12:34:13][INFO] SIM_BRIDGE: Loading checkpoint from research\findings\raw\g11_bg\concept_pool_demo\seed44_v11.simstate.h5...
+[2026-05-13 12:34:13][INFO] SIM_BRIDGE: Clearing simulation state and GPU memory...
+[2026-05-13 12:34:13][INFO] SIM_BRIDGE: Cleared simulation state and GPU memory.
+[2026-05-13 12:34:13][DEBUG] SIM_BRIDGE: Checkpoint: Dataset for 'cp_adex_w' not found or was empty. Using default.
+[2026-05-13 12:34:13][DEBUG] SIM_BRIDGE: Checkpoint: Dataset for 'cp_stp_u' not found or was empty. Using default.
+[2026-05-13 12:34:13][DEBUG] SIM_BRIDGE: Checkpoint: Dataset for 'cp_stp_x' not found or was empty. Using default.
+[2026-05-13 12:34:14][SUCCESS] SIM_BRIDGE: Checkpoint loaded. Sim time: 0.0ms, Step: 0, Model: IZHIKEVICH
+
+[EVAL] A->W readout for all 10 pools
+  drive motor_N              -> top-1='north' (cos=0.33, target='north' cos=0.33)  top3=[north=0.33, south=0.08, west=0.07]  [PASS]
+  drive motor_E              -> top-1='east' (cos=0.25, target='east' cos=0.25)  top3=[east=0.25, cat=0.08, south=0.07]  [PASS]
+  drive motor_S              -> top-1='south' (cos=0.22, target='south' cos=0.22)  top3=[south=0.22, river=0.08, look=0.07]  [PASS]
+  drive motor_W              -> top-1='west' (cos=0.28, target='west' cos=0.28)  top3=[west=0.28, stop=0.06, east=0.05]  [PASS]
+  drive noun_pool_APPLE      -> top-1='apple' (cos=0.27, target='apple' cos=0.27)  top3=[apple=0.27, cat=0.08, go=0.08]  [PASS]
+  drive noun_pool_RIVER      -> top-1='river' (cos=0.26, target='river' cos=0.26)  top3=[river=0.26, west=0.11, south=0.09]  [PASS]
+  drive noun_pool_DOG        -> top-1='dog' (cos=0.25, target='dog' cos=0.25)  top3=[dog=0.25, cat=0.10, go=0.10]  [PASS]
+  drive noun_pool_CAT        -> top-1='cat' (cos=0.19, target='cat' cos=0.19)  top3=[cat=0.19, look=0.06, west=0.06]  [PASS]
+  drive verb_pool_GO         -> top-1='go' (cos=0.21, target='go' cos=0.21)  top3=[go=0.21, apple=0.07, stop=0.07]  [PASS]
+  drive verb_pool_COME       -> top-1='come' (cos=0.29, target='come' cos=0.29)  top3=[come=0.29, west=0.08, cat=0.08]  [PASS]
+  drive verb_pool_STOP       -> top-1='stop' (cos=0.27, target='stop' cos=0.27)  top3=[stop=0.27, east=0.08, west=0.07]  [PASS]
+  drive verb_pool_LOOK       -> top-1='look' (cos=0.17, target='look' cos=0.17)  top3=[look=0.17, cat=0.10, east=0.08]  [PASS]
+
+[VERDICT] 12/12 pools speak the trained word
+  Wall clock: 10s
+
+[OUT] wrote research\findings\raw\g11_bg\concept_pool_demo\seed44_v11_speak.json
+[v11-MS] seed 44 : Phase 1 = 9/16, A->W = 12/12
+[v11-MS] launching seed 45 training...
+
+=== concept_pool_demo (seed=45) ===
+  Architecture: 4 motor + 4 noun + 4 verb + 4 adjective = 16 pools
+  Vocab: ['north', 'east', 'south', 'west'] + ['apple', 'river', 'dog', 'cat'] + ['go', 'come', 'stop', 'look'] + ['big', 'small', 'hot', 'cold']
+  Train events/word: 200
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Brain-region framework: 34 regions, 7680 total neurons, 96 pathways.
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: RNG initialized with seed: 45
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 7680 neurons...
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'language_input' (2048 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'motor_N' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'motor_E' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'motor_S' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'motor_W' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'language_output' (2048 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'motor_FS_N' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'motor_FS_E' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'motor_FS_S' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'motor_FS_W' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'noun_pool_APPLE' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'noun_pool_RIVER' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'noun_pool_DOG' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'noun_pool_CAT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'noun_pool_APPLE_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'noun_pool_RIVER_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'noun_pool_DOG_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'noun_pool_CAT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'verb_pool_GO' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'verb_pool_COME' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'verb_pool_STOP' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'verb_pool_LOOK' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'verb_pool_GO_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'verb_pool_COME_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'verb_pool_STOP_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'verb_pool_LOOK_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'adjective_pool_BIG' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'adjective_pool_SMALL' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'adjective_pool_HOT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'adjective_pool_COLD' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'adjective_pool_BIG_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'adjective_pool_SMALL_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'adjective_pool_HOT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Region 'adjective_pool_COLD_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Generating 3D neuron positions for 7680 neurons...
+[2026-05-13 12:34:19][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-05-13 12:34:25][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 4548665 synapses across 114 populations.
+[2026-05-13 12:34:25][INFO] SIM_BRIDGE: Initializing eligibility traces for 4548665 synapses (capacity: 6822997, dtype: float32)...
+[2026-05-13 12:34:25][INFO] SIM_BRIDGE: Initializing STDP state for 7680 neurons...
+[2026-05-13 12:34:25][INFO] SIM_BRIDGE: Simulation data initialized for 7680 neurons (3D). Synapses: 4548665. GPU memory: 1.6GB/25.8GB (6.4%)
+[BUILD] concept-pool bridge: 7680 neurons total, 12 concept pools (2400 neurons in pools)
+[topographic-bias] Applied factor=3.00/0.30 across motor + noun + verb pools
+  north->motor_N: x3.00 on 12306 edges
+  east->motor_E: x3.00 on 12404 edges
+  south->motor_S: x3.00 on 12445 edges
+  west->motor_W: x3.00 on 12359 edges
+  apple->noun_pool_APPLE: x3.00 on 12377 edges
+  river->noun_pool_RIVER: x3.00 on 12278 edges
+  dog->noun_pool_DOG: x3.00 on 12328 edges
+  cat->noun_pool_CAT: x3.00 on 12331 edges
+  go->verb_pool_GO: x3.00 on 12183 edges
+  come->verb_pool_COME: x3.00 on 12082 edges
+  stop->verb_pool_STOP: x3.00 on 12351 edges
+  look->verb_pool_LOOK: x3.00 on 12334 edges
+  big->adjective_pool_BIG: x3.00 on 12380 edges
+  small->adjective_pool_SMALL: x3.00 on 12268 edges
+  hot->adjective_pool_HOT: x3.00 on 12116 edges
+  cold->adjective_pool_COLD: x3.00 on 12207 edges
+  reciprocal_target_edges: x3.00 on 196605 edges
+
+[TRAIN] 16 (word, pool) pairs, 200 events each = 3200 total events (interleaved)
+  interleaved event 100/3200 (30s)
+  interleaved event 200/3200 (59s)
+  interleaved event 300/3200 (88s)
+  interleaved event 400/3200 (119s)
+  interleaved event 500/3200 (149s)
+  interleaved event 600/3200 (179s)
+  interleaved event 700/3200 (210s)
+  interleaved event 800/3200 (241s)
+  interleaved event 900/3200 (276s)
+  interleaved event 1000/3200 (309s)
+  interleaved event 1100/3200 (341s)
+  interleaved event 1200/3200 (372s)
+  interleaved event 1300/3200 (404s)
+  interleaved event 1400/3200 (434s)
+  interleaved event 1500/3200 (463s)
+  interleaved event 1600/3200 (493s)
+  interleaved event 1700/3200 (524s)
+  interleaved event 1800/3200 (553s)
+  interleaved event 1900/3200 (584s)
+  interleaved event 2000/3200 (623s)
+  interleaved event 2100/3200 (655s)
+  interleaved event 2200/3200 (684s)
+  interleaved event 2300/3200 (716s)
+  interleaved event 2400/3200 (746s)
+  interleaved event 2500/3200 (777s)
+  interleaved event 2600/3200 (806s)
+  interleaved event 2700/3200 (836s)
+  interleaved event 2800/3200 (868s)
+  interleaved event 2900/3200 (899s)
+  interleaved event 3000/3200 (930s)
+  interleaved event 3100/3200 (963s)
+  interleaved event 3200/3200 (994s)
+
+[TRAIN] complete (994s, interleaved)
+
+[SAVE] saving bridge to research\findings\raw\g11_bg\concept_pool_demo\seed45_v11.simstate.h5
+[2026-05-13 12:51:06][INFO] SIM_BRIDGE: Saving checkpoint to research\findings\raw\g11_bg\concept_pool_demo\seed45_v11.simstate.h5...
+[2026-05-13 12:51:07][SUCCESS] SIM_BRIDGE: Checkpoint saved successfully to research\findings\raw\g11_bg\concept_pool_demo\seed45_v11.simstate.h5
+[SAVE] checkpoint written
+
+[EVAL] measuring cross-category isolation across 16 pools
+
+[RESULTS] per-word cross-category isolation:
+  north    -> motor_N               target=0.895  max_off=1.185 (adjective_pool_COLD)  ratio=0.76x  [FAIL]
+  east     -> motor_E               target=1.485  max_off=1.595 (motor_N)  ratio=0.93x  [FAIL]
+  south    -> motor_S               target=1.265  max_off=1.055 (adjective_pool_COLD)  ratio=1.20x  [PASS]
+  west     -> motor_W               target=1.470  max_off=1.590 (verb_pool_LOOK)  ratio=0.92x  [FAIL]
+  apple    -> noun_pool_APPLE       target=1.065  max_off=1.280 (adjective_pool_SMALL)  ratio=0.83x  [FAIL]
+  river    -> noun_pool_RIVER       target=1.050  max_off=1.180 (motor_S)  ratio=0.89x  [FAIL]
+  dog      -> noun_pool_DOG         target=1.290  max_off=1.455 (noun_pool_RIVER)  ratio=0.89x  [FAIL]
+  cat      -> noun_pool_CAT         target=1.255  max_off=1.400 (motor_N)  ratio=0.90x  [FAIL]
+  go       -> verb_pool_GO          target=0.890  max_off=1.235 (adjective_pool_HOT)  ratio=0.72x  [FAIL]
+  come     -> verb_pool_COME        target=1.440  max_off=1.075 (motor_E)  ratio=1.34x  [PASS]
+  stop     -> verb_pool_STOP        target=2.315  max_off=1.475 (motor_E)  ratio=1.57x  [PASS]
+  look     -> verb_pool_LOOK        target=1.240  max_off=0.975 (noun_pool_RIVER)  ratio=1.27x  [PASS]
+  big      -> adjective_pool_BIG    target=1.040  max_off=1.230 (verb_pool_LOOK)  ratio=0.85x  [FAIL]
+  small    -> adjective_pool_SMALL  target=2.125  max_off=1.735 (motor_S)  ratio=1.22x  [PASS]
+  hot      -> adjective_pool_HOT    target=2.345  max_off=1.395 (motor_S)  ratio=1.68x  [PASS]
+  cold     -> adjective_pool_COLD   target=2.160  max_off=1.650 (adjective_pool_HOT)  ratio=1.31x  [PASS]
+
+[VERDICT] 7/16 words have correct target-pool dominance
+  Total wall clock: 1016s
+
+[OUT] wrote research\findings\raw\g11_bg\concept_pool_demo\seed45_v11.json
+[v11-MS] running A->W readout seed 45...
+
+=== concept_speak_demo (seed=45) ===
+  Tests A->W: drive all pools, decode 'spoken' word
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Brain-region framework: 26 regions, 6784 total neurons, 72 pathways.
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: RNG initialized with seed: 45
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6784 neurons...
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Region 'language_input' (2048 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Region 'motor_N' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Region 'motor_E' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Region 'motor_S' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Region 'motor_W' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Region 'language_output' (2048 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Region 'motor_FS_N' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Region 'motor_FS_E' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Region 'motor_FS_S' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Region 'motor_FS_W' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Region 'noun_pool_APPLE' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Region 'noun_pool_RIVER' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Region 'noun_pool_DOG' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Region 'noun_pool_CAT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Region 'noun_pool_APPLE_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Region 'noun_pool_RIVER_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Region 'noun_pool_DOG_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Region 'noun_pool_CAT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Region 'verb_pool_GO' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Region 'verb_pool_COME' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Region 'verb_pool_STOP' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Region 'verb_pool_LOOK' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Region 'verb_pool_GO_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Region 'verb_pool_COME_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Region 'verb_pool_STOP_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Region 'verb_pool_LOOK_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6784 neurons...
+[2026-05-13 12:51:16][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-05-13 12:51:21][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3518315 synapses across 86 populations.
+[2026-05-13 12:51:21][INFO] SIM_BRIDGE: Initializing eligibility traces for 3518315 synapses (capacity: 5277472, dtype: float32)...
+[2026-05-13 12:51:21][INFO] SIM_BRIDGE: Initializing STDP state for 6784 neurons...
+[2026-05-13 12:51:21][INFO] SIM_BRIDGE: Simulation data initialized for 6784 neurons (3D). Synapses: 3518315. GPU memory: 1.6GB/25.8GB (6.1%)
+[BUILD] concept-pool bridge: 6784 neurons total, 12 concept pools (2400 neurons in pools)
+
+[LOAD] loading checkpoint from research\findings\raw\g11_bg\concept_pool_demo\seed45_v11.simstate.h5
+[2026-05-13 12:51:21][INFO] SIM_BRIDGE: Loading checkpoint from research\findings\raw\g11_bg\concept_pool_demo\seed45_v11.simstate.h5...
+[2026-05-13 12:51:21][INFO] SIM_BRIDGE: Clearing simulation state and GPU memory...
+[2026-05-13 12:51:21][INFO] SIM_BRIDGE: Cleared simulation state and GPU memory.
+[2026-05-13 12:51:21][DEBUG] SIM_BRIDGE: Checkpoint: Dataset for 'cp_adex_w' not found or was empty. Using default.
+[2026-05-13 12:51:21][DEBUG] SIM_BRIDGE: Checkpoint: Dataset for 'cp_stp_u' not found or was empty. Using default.
+[2026-05-13 12:51:21][DEBUG] SIM_BRIDGE: Checkpoint: Dataset for 'cp_stp_x' not found or was empty. Using default.
+[2026-05-13 12:51:21][SUCCESS] SIM_BRIDGE: Checkpoint loaded. Sim time: 0.0ms, Step: 0, Model: IZHIKEVICH
+
+[EVAL] A->W readout for all 10 pools
+  drive motor_N              -> top-1='north' (cos=0.20, target='north' cos=0.20)  top3=[north=0.20, stop=0.06, dog=0.05]  [PASS]
+  drive motor_E              -> top-1='east' (cos=0.42, target='east' cos=0.42)  top3=[east=0.42, apple=0.07, west=0.06]  [PASS]
+  drive motor_S              -> top-1='south' (cos=0.32, target='south' cos=0.32)  top3=[south=0.32, cat=0.10, apple=0.08]  [PASS]
+  drive motor_W              -> top-1='west' (cos=0.27, target='west' cos=0.27)  top3=[west=0.27, apple=0.12, east=0.09]  [PASS]
+  drive noun_pool_APPLE      -> top-1='apple' (cos=0.18, target='apple' cos=0.18)  top3=[apple=0.18, come=0.11, dog=0.06]  [PASS]
+  drive noun_pool_RIVER      -> top-1='river' (cos=0.23, target='river' cos=0.23)  top3=[river=0.23, cat=0.10, dog=0.09]  [PASS]
+  drive noun_pool_DOG        -> top-1='dog' (cos=0.18, target='dog' cos=0.18)  top3=[dog=0.18, apple=0.07, go=0.06]  [PASS]
+  drive noun_pool_CAT        -> top-1='cat' (cos=0.29, target='cat' cos=0.29)  top3=[cat=0.29, apple=0.08, stop=0.08]  [PASS]
+  drive verb_pool_GO         -> top-1='go' (cos=0.36, target='go' cos=0.36)  top3=[go=0.36, river=0.08, stop=0.07]  [PASS]
+  drive verb_pool_COME       -> top-1='come' (cos=0.26, target='come' cos=0.26)  top3=[come=0.26, apple=0.09, cat=0.09]  [PASS]
+  drive verb_pool_STOP       -> top-1='stop' (cos=0.29, target='stop' cos=0.29)  top3=[stop=0.29, apple=0.10, east=0.08]  [PASS]
+  drive verb_pool_LOOK       -> top-1='look' (cos=0.24, target='look' cos=0.24)  top3=[look=0.24, apple=0.10, east=0.06]  [PASS]
+
+[VERDICT] 12/12 pools speak the trained word
+  Wall clock: 11s
+
+[OUT] wrote research\findings\raw\g11_bg\concept_pool_demo\seed45_v11_speak.json
+[v11-MS] seed 45 : Phase 1 = 7/16, A->W = 12/12
+[v11-MS] launching seed 46 training...
+
+=== concept_pool_demo (seed=46) ===
+  Architecture: 4 motor + 4 noun + 4 verb + 4 adjective = 16 pools
+  Vocab: ['north', 'east', 'south', 'west'] + ['apple', 'river', 'dog', 'cat'] + ['go', 'come', 'stop', 'look'] + ['big', 'small', 'hot', 'cold']
+  Train events/word: 200
+[2026-05-13 12:51:27][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-05-13 12:51:27][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-05-13 12:51:27][INFO] SIM_BRIDGE: Brain-region framework: 34 regions, 7680 total neurons, 96 pathways.
+[2026-05-13 12:51:27][INFO] SIM_BRIDGE: RNG initialized with seed: 46
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 7680 neurons...
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'language_input' (2048 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'motor_N' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'motor_E' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'motor_S' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'motor_W' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'language_output' (2048 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'motor_FS_N' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'motor_FS_E' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'motor_FS_S' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'motor_FS_W' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'noun_pool_APPLE' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'noun_pool_RIVER' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'noun_pool_DOG' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'noun_pool_CAT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'noun_pool_APPLE_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'noun_pool_RIVER_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'noun_pool_DOG_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'noun_pool_CAT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'verb_pool_GO' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'verb_pool_COME' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'verb_pool_STOP' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'verb_pool_LOOK' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'verb_pool_GO_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'verb_pool_COME_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'verb_pool_STOP_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'verb_pool_LOOK_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'adjective_pool_BIG' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'adjective_pool_SMALL' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'adjective_pool_HOT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'adjective_pool_COLD' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'adjective_pool_BIG_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'adjective_pool_SMALL_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'adjective_pool_HOT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Region 'adjective_pool_COLD_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Generating 3D neuron positions for 7680 neurons...
+[2026-05-13 12:51:28][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-05-13 12:51:34][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 4548033 synapses across 114 populations.
+[2026-05-13 12:51:34][INFO] SIM_BRIDGE: Initializing eligibility traces for 4548033 synapses (capacity: 6822049, dtype: float32)...
+[2026-05-13 12:51:34][INFO] SIM_BRIDGE: Initializing STDP state for 7680 neurons...
+[2026-05-13 12:51:34][INFO] SIM_BRIDGE: Simulation data initialized for 7680 neurons (3D). Synapses: 4548033. GPU memory: 1.6GB/25.8GB (6.4%)
+[BUILD] concept-pool bridge: 7680 neurons total, 12 concept pools (2400 neurons in pools)
+[topographic-bias] Applied factor=3.00/0.30 across motor + noun + verb pools
+  north->motor_N: x3.00 on 12375 edges
+  east->motor_E: x3.00 on 12176 edges
+  south->motor_S: x3.00 on 12420 edges
+  west->motor_W: x3.00 on 12435 edges
+  apple->noun_pool_APPLE: x3.00 on 12222 edges
+  river->noun_pool_RIVER: x3.00 on 12057 edges
+  dog->noun_pool_DOG: x3.00 on 12299 edges
+  cat->noun_pool_CAT: x3.00 on 12234 edges
+  go->verb_pool_GO: x3.00 on 12124 edges
+  come->verb_pool_COME: x3.00 on 12358 edges
+  stop->verb_pool_STOP: x3.00 on 12207 edges
+  look->verb_pool_LOOK: x3.00 on 12211 edges
+  big->adjective_pool_BIG: x3.00 on 12367 edges
+  small->adjective_pool_SMALL: x3.00 on 12322 edges
+  hot->adjective_pool_HOT: x3.00 on 12334 edges
+  cold->adjective_pool_COLD: x3.00 on 12381 edges
+  reciprocal_target_edges: x3.00 on 196910 edges
+
+[TRAIN] 16 (word, pool) pairs, 200 events each = 3200 total events (interleaved)
+  interleaved event 100/3200 (32s)
+  interleaved event 200/3200 (62s)
+  interleaved event 300/3200 (92s)
+  interleaved event 400/3200 (121s)
+  interleaved event 500/3200 (151s)
+  interleaved event 600/3200 (181s)
+  interleaved event 700/3200 (211s)
+  interleaved event 800/3200 (241s)
+  interleaved event 900/3200 (276s)
+  interleaved event 1000/3200 (309s)
+  interleaved event 1100/3200 (338s)
+  interleaved event 1200/3200 (369s)
+  interleaved event 1300/3200 (399s)
+  interleaved event 1400/3200 (428s)
+  interleaved event 1500/3200 (458s)
+  interleaved event 1600/3200 (487s)
+  interleaved event 1700/3200 (517s)
+  interleaved event 1800/3200 (546s)
+  interleaved event 1900/3200 (575s)
+  interleaved event 2000/3200 (604s)
+  interleaved event 2100/3200 (633s)
+  interleaved event 2200/3200 (662s)
+  interleaved event 2300/3200 (691s)
+  interleaved event 2400/3200 (729s)
+  interleaved event 2500/3200 (760s)
+  interleaved event 2600/3200 (792s)
+  interleaved event 2700/3200 (825s)
+  interleaved event 2800/3200 (860s)
+  interleaved event 2900/3200 (895s)
+  interleaved event 3000/3200 (930s)
+  interleaved event 3100/3200 (965s)
+  interleaved event 3200/3200 (1000s)
+
+[TRAIN] complete (1000s, interleaved)
+
+[SAVE] saving bridge to research\findings\raw\g11_bg\concept_pool_demo\seed46_v11.simstate.h5
+[2026-05-13 13:08:23][INFO] SIM_BRIDGE: Saving checkpoint to research\findings\raw\g11_bg\concept_pool_demo\seed46_v11.simstate.h5...
+[2026-05-13 13:08:24][SUCCESS] SIM_BRIDGE: Checkpoint saved successfully to research\findings\raw\g11_bg\concept_pool_demo\seed46_v11.simstate.h5
+[SAVE] checkpoint written
+
+[EVAL] measuring cross-category isolation across 16 pools
+
+[RESULTS] per-word cross-category isolation:
+  north    -> motor_N               target=0.935  max_off=1.385 (adjective_pool_HOT)  ratio=0.68x  [FAIL]
+  east     -> motor_E               target=1.370  max_off=1.730 (motor_W)  ratio=0.79x  [FAIL]
+  south    -> motor_S               target=1.220  max_off=1.330 (noun_pool_APPLE)  ratio=0.92x  [FAIL]
+  west     -> motor_W               target=2.160  max_off=1.620 (adjective_pool_SMALL)  ratio=1.33x  [PASS]
+  apple    -> noun_pool_APPLE       target=1.570  max_off=1.210 (noun_pool_RIVER)  ratio=1.30x  [PASS]
+  river    -> noun_pool_RIVER       target=2.435  max_off=1.545 (noun_pool_APPLE)  ratio=1.58x  [PASS]
+  dog      -> noun_pool_DOG         target=1.415  max_off=1.450 (adjective_pool_SMALL)  ratio=0.98x  [FAIL]
+  cat      -> noun_pool_CAT         target=0.665  max_off=0.880 (verb_pool_LOOK)  ratio=0.76x  [FAIL]
+  go       -> verb_pool_GO          target=2.035  max_off=1.000 (adjective_pool_SMALL)  ratio=2.04x  [PASS]
+  come     -> verb_pool_COME        target=0.985  max_off=1.580 (noun_pool_RIVER)  ratio=0.62x  [FAIL]
+  stop     -> verb_pool_STOP        target=1.260  max_off=1.075 (noun_pool_APPLE)  ratio=1.17x  [PASS]
+  look     -> verb_pool_LOOK        target=2.390  max_off=1.250 (adjective_pool_COLD)  ratio=1.91x  [PASS]
+  big      -> adjective_pool_BIG    target=1.270  max_off=1.255 (verb_pool_LOOK)  ratio=1.01x  [PASS]
+  small    -> adjective_pool_SMALL  target=3.010  max_off=1.730 (motor_W)  ratio=1.74x  [PASS]
+  hot      -> adjective_pool_HOT    target=1.435  max_off=1.790 (adjective_pool_SMALL)  ratio=0.80x  [FAIL]
+  cold     -> adjective_pool_COLD   target=1.555  max_off=1.440 (noun_pool_RIVER)  ratio=1.08x  [PASS]
+
+[VERDICT] 9/16 words have correct target-pool dominance
+  Total wall clock: 1026s
+
+[OUT] wrote research\findings\raw\g11_bg\concept_pool_demo\seed46_v11.json
+[v11-MS] running A->W readout seed 46...
+
+=== concept_speak_demo (seed=46) ===
+  Tests A->W: drive all pools, decode 'spoken' word
+[2026-05-13 13:08:43][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-05-13 13:08:43][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-05-13 13:08:43][INFO] SIM_BRIDGE: Brain-region framework: 26 regions, 6784 total neurons, 72 pathways.
+[2026-05-13 13:08:43][INFO] SIM_BRIDGE: RNG initialized with seed: 46
+[2026-05-13 13:08:44][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 6784 neurons...
+[2026-05-13 13:08:44][INFO] SIM_BRIDGE: Region 'language_input' (2048 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 13:08:44][INFO] SIM_BRIDGE: Region 'motor_N' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 13:08:44][INFO] SIM_BRIDGE: Region 'motor_E' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 13:08:44][INFO] SIM_BRIDGE: Region 'motor_S' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 13:08:44][INFO] SIM_BRIDGE: Region 'motor_W' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 13:08:44][INFO] SIM_BRIDGE: Region 'language_output' (2048 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 13:08:44][INFO] SIM_BRIDGE: Region 'motor_FS_N' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 13:08:44][INFO] SIM_BRIDGE: Region 'motor_FS_E' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 13:08:44][INFO] SIM_BRIDGE: Region 'motor_FS_S' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 13:08:44][INFO] SIM_BRIDGE: Region 'motor_FS_W' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 13:08:44][INFO] SIM_BRIDGE: Region 'noun_pool_APPLE' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 13:08:44][INFO] SIM_BRIDGE: Region 'noun_pool_RIVER' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 13:08:44][INFO] SIM_BRIDGE: Region 'noun_pool_DOG' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 13:08:44][INFO] SIM_BRIDGE: Region 'noun_pool_CAT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 13:08:44][INFO] SIM_BRIDGE: Region 'noun_pool_APPLE_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 13:08:44][INFO] SIM_BRIDGE: Region 'noun_pool_RIVER_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 13:08:44][INFO] SIM_BRIDGE: Region 'noun_pool_DOG_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 13:08:44][INFO] SIM_BRIDGE: Region 'noun_pool_CAT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 13:08:44][INFO] SIM_BRIDGE: Region 'verb_pool_GO' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 13:08:44][INFO] SIM_BRIDGE: Region 'verb_pool_COME' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 13:08:44][INFO] SIM_BRIDGE: Region 'verb_pool_STOP' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 13:08:44][INFO] SIM_BRIDGE: Region 'verb_pool_LOOK' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-05-13 13:08:44][INFO] SIM_BRIDGE: Region 'verb_pool_GO_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 13:08:44][INFO] SIM_BRIDGE: Region 'verb_pool_COME_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 13:08:44][INFO] SIM_BRIDGE: Region 'verb_pool_STOP_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 13:08:44][INFO] SIM_BRIDGE: Region 'verb_pool_LOOK_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-05-13 13:08:44][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-05-13 13:08:44][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-05-13 13:08:44][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-05-13 13:08:44][INFO] SIM_BRIDGE: Generating 3D neuron positions for 6784 neurons...
+[2026-05-13 13:08:44][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-05-13 13:08:49][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 3518306 synapses across 86 populations.
+[2026-05-13 13:08:49][INFO] SIM_BRIDGE: Initializing eligibility traces for 3518306 synapses (capacity: 5277459, dtype: float32)...
+[2026-05-13 13:08:49][INFO] SIM_BRIDGE: Initializing STDP state for 6784 neurons...
+[2026-05-13 13:08:49][INFO] SIM_BRIDGE: Simulation data initialized for 6784 neurons (3D). Synapses: 3518306. GPU memory: 1.6GB/25.8GB (6.1%)
+[BUILD] concept-pool bridge: 6784 neurons total, 12 concept pools (2400 neurons in pools)
+
+[LOAD] loading checkpoint from research\findings\raw\g11_bg\concept_pool_demo\seed46_v11.simstate.h5
+[2026-05-13 13:08:49][INFO] SIM_BRIDGE: Loading checkpoint from research\findings\raw\g11_bg\concept_pool_demo\seed46_v11.simstate.h5...
+[2026-05-13 13:08:49][INFO] SIM_BRIDGE: Clearing simulation state and GPU memory...
+[2026-05-13 13:08:49][INFO] SIM_BRIDGE: Cleared simulation state and GPU memory.
+[2026-05-13 13:08:49][DEBUG] SIM_BRIDGE: Checkpoint: Dataset for 'cp_adex_w' not found or was empty. Using default.
+[2026-05-13 13:08:49][DEBUG] SIM_BRIDGE: Checkpoint: Dataset for 'cp_stp_u' not found or was empty. Using default.
+[2026-05-13 13:08:49][DEBUG] SIM_BRIDGE: Checkpoint: Dataset for 'cp_stp_x' not found or was empty. Using default.
+[2026-05-13 13:08:49][SUCCESS] SIM_BRIDGE: Checkpoint loaded. Sim time: 0.0ms, Step: 0, Model: IZHIKEVICH
+
+[EVAL] A->W readout for all 10 pools
+  drive motor_N              -> top-1='north' (cos=0.20, target='north' cos=0.20)  top3=[north=0.20, stop=0.03, east=0.01]  [PASS]
+  drive motor_E              -> top-1='east' (cos=0.22, target='east' cos=0.22)  top3=[east=0.22, go=0.06, south=0.06]  [PASS]
+  drive motor_S              -> top-1='south' (cos=0.26, target='south' cos=0.26)  top3=[south=0.26, river=0.06, apple=0.06]  [PASS]
+  drive motor_W              -> top-1='west' (cos=0.31, target='west' cos=0.31)  top3=[west=0.31, come=0.08, east=0.07]  [PASS]
+  drive noun_pool_APPLE      -> top-1='apple' (cos=0.21, target='apple' cos=0.21)  top3=[apple=0.21, north=0.07, east=0.07]  [PASS]
+  drive noun_pool_RIVER      -> top-1='river' (cos=0.22, target='river' cos=0.22)  top3=[river=0.22, come=0.08, east=0.08]  [PASS]
+  drive noun_pool_DOG        -> top-1='dog' (cos=0.16, target='dog' cos=0.16)  top3=[dog=0.16, west=0.10, look=0.09]  [PASS]
+  drive noun_pool_CAT        -> top-1='cat' (cos=0.39, target='cat' cos=0.39)  top3=[cat=0.39, go=0.10, stop=0.10]  [PASS]
+  drive verb_pool_GO         -> top-1='go' (cos=0.23, target='go' cos=0.23)  top3=[go=0.23, west=0.07, south=0.06]  [PASS]
+  drive verb_pool_COME       -> top-1='come' (cos=0.21, target='come' cos=0.21)  top3=[come=0.21, east=0.09, dog=0.07]  [PASS]
+  drive verb_pool_STOP       -> top-1='stop' (cos=0.25, target='stop' cos=0.25)  top3=[stop=0.25, west=0.06, river=0.06]  [PASS]
+  drive verb_pool_LOOK       -> top-1='look' (cos=0.29, target='look' cos=0.29)  top3=[look=0.29, go=0.07, south=0.06]  [PASS]
+
+[VERDICT] 12/12 pools speak the trained word
+  Wall clock: 21s
+
+[OUT] wrote research\findings\raw\g11_bg\concept_pool_demo\seed46_v11_speak.json
+[v11-MS] seed 46 : Phase 1 = 9/16, A->W = 12/12
+
+=== v11 multi-seed summary ===
+  seed 42 : Phase 1 = 11/16  A->W=12/12
+  seed 43 : Phase 1 = 9/16  A->W=12/12
+  seed 44 : Phase 1 = 9/16  A->W=12/12
+  seed 45 : Phase 1 = 7/16  A->W=12/12
+  seed 46 : Phase 1 = 9/16  A->W=12/12

@@ -1,0 +1,7 @@
+=== direct-assembly drive=1000 + ca3_fb_inhib=120, presentations=60 (seed 42) ===
+  [seed 42] within=22.60 cross=11.57 RATIO=1.95x | no-train=0.99x permuted=1.49x (111s)
+  VERDICT: PARTIAL/NEGATIVE -- the ratio is not yet >=3x with clean controls; sweep gamma_on/drive/presentations. NO sim/ edit.
+=== direct-assembly drive=1000 + ca3_fb_inhib=250, presentations=60 (seed 42) ===
+  [seed 42] within=22.60 cross=11.57 RATIO=1.95x | no-train=0.99x permuted=1.49x (112s)
+  VERDICT: PARTIAL/NEGATIVE -- the ratio is not yet >=3x with clean controls; sweep gamma_on/drive/presentations. NO sim/ edit.
+=== direct-assembly drive=1000 + ca3_fb_inhib=500, presentations=60 (seed 42) ===

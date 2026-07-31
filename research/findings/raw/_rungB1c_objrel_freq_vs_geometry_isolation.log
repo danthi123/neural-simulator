@@ -1,0 +1,221 @@
+[freqgeo] ISOLATION CONTROL (diagnostic, NOT the biological deliverable). corpus: 6 facts, vocab 18 | frozen reservoir + DANN Dale-legal spiking read-out (reuse-by-import) | STAGE A single variable = objrel oversample factor (1, 3, 7, 14); slot0 is 7:1 AGENT:THEME imbalanced. Host oversampling is the ML control; its biological equivalent is the DA-salience closure de-risk.
+[2026-07-06 02:43:29][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-06 02:43:29][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-06 02:43:29][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-07-06 02:43:29][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 2818 neurons...
+[2026-07-06 02:43:29][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-06 02:43:29][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-06 02:43:29][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=20.0pA)...
+[2026-07-06 02:43:29][INFO] SIM_BRIDGE: Generating 3D neuron positions for 2818 neurons...
+[2026-07-06 02:43:29][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-07-06 02:43:29][INFO] SIM_BRIDGE: Simulation data initialized for 2818 neurons (3D). Synapses: 0. GPU memory: 23.7GB/51.2GB (46.2%)
+[2026-07-06 02:43:29][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 1536 synapses across 1 populations.
+[2026-07-06 02:43:29][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2256 synapses across 2 populations.
+[2026-07-06 02:43:30][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2832 synapses across 5 populations.
+[freqgeo seed 42] STAGE-A oversample 1x  slot0-counts {'AGENT': 420, 'PREDICATE': 0, 'THEME': 60}  canon 1.00 objrel-slot0(THEME) 0.00 (slots ['0/12', '0/12', '0/12']) [out-spk c1/o1 legal True nospk-collapse True]
+[freqgeo seed 42] STAGE-A oversample 3x  slot0-counts {'AGENT': 420, 'PREDICATE': 0, 'THEME': 180}  canon 1.00 objrel-slot0(THEME) 0.00 (slots ['0/12', '0/12', '0/12']) [out-spk c1/o1 legal True nospk-collapse True]
+[freqgeo seed 42] STAGE-A oversample 7x  slot0-counts {'AGENT': 420, 'PREDICATE': 0, 'THEME': 420}  canon 1.00 objrel-slot0(THEME) 0.00 (slots ['0/12', '0/12', '0/12']) [out-spk c1/o1 legal True nospk-collapse True]
+[freqgeo seed 42] STAGE-A oversample 14x  slot0-counts {'AGENT': 420, 'PREDICATE': 0, 'THEME': 840}  canon 1.00 objrel-slot0(THEME) 0.00 (slots ['0/12', '0/12', '0/12']) [out-spk c1/o1 legal True nospk-collapse True]
+[freqgeo seed 42] STAGE-A permuted-role @7x -> objrel-slot0 1.00 (must be ~chance)
+[2026-07-06 02:47:05][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-06 02:47:05][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-06 02:47:05][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-07-06 02:47:05][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 2818 neurons...
+[2026-07-06 02:47:05][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-06 02:47:05][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-06 02:47:05][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=20.0pA)...
+[2026-07-06 02:47:05][INFO] SIM_BRIDGE: Generating 3D neuron positions for 2818 neurons...
+[2026-07-06 02:47:05][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-07-06 02:47:05][INFO] SIM_BRIDGE: Simulation data initialized for 2818 neurons (3D). Synapses: 0. GPU memory: 23.8GB/51.2GB (46.5%)
+[2026-07-06 02:47:05][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 1536 synapses across 1 populations.
+[2026-07-06 02:47:05][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2256 synapses across 2 populations.
+[2026-07-06 02:47:05][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2832 synapses across 5 populations.
+[freqgeo seed 43] STAGE-A oversample 1x  slot0-counts {'AGENT': 420, 'PREDICATE': 0, 'THEME': 60}  canon 0.67 objrel-slot0(THEME) 0.00 (slots ['0/12', '12/12', '0/12']) [out-spk c0/o0 legal True nospk-collapse True]
+[freqgeo seed 43] STAGE-A oversample 3x  slot0-counts {'AGENT': 420, 'PREDICATE': 0, 'THEME': 180}  canon 0.67 objrel-slot0(THEME) 0.00 (slots ['0/12', '12/12', '0/12']) [out-spk c0/o0 legal True nospk-collapse True]
+[freqgeo seed 43] STAGE-A oversample 7x  slot0-counts {'AGENT': 420, 'PREDICATE': 0, 'THEME': 420}  canon 0.67 objrel-slot0(THEME) 0.00 (slots ['0/12', '12/12', '0/12']) [out-spk c0/o0 legal True nospk-collapse True]
+[freqgeo seed 43] STAGE-A oversample 14x  slot0-counts {'AGENT': 420, 'PREDICATE': 0, 'THEME': 840}  canon 0.67 objrel-slot0(THEME) 0.00 (slots ['0/12', '12/12', '0/12']) [out-spk c0/o0 legal True nospk-collapse True]
+[freqgeo seed 43] STAGE-A permuted-role @7x -> objrel-slot0 0.00 (must be ~chance)
+[2026-07-06 02:50:36][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-06 02:50:36][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-06 02:50:36][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-07-06 02:50:36][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 2818 neurons...
+[2026-07-06 02:50:36][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-06 02:50:36][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-06 02:50:36][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=20.0pA)...
+[2026-07-06 02:50:36][INFO] SIM_BRIDGE: Generating 3D neuron positions for 2818 neurons...
+[2026-07-06 02:50:36][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-07-06 02:50:36][INFO] SIM_BRIDGE: Simulation data initialized for 2818 neurons (3D). Synapses: 0. GPU memory: 23.9GB/51.2GB (46.6%)
+[2026-07-06 02:50:36][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 1536 synapses across 1 populations.
+[2026-07-06 02:50:36][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2256 synapses across 2 populations.
+[2026-07-06 02:50:36][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2832 synapses across 5 populations.
+[freqgeo seed 44] STAGE-A oversample 1x  slot0-counts {'AGENT': 420, 'PREDICATE': 0, 'THEME': 60}  canon 0.67 objrel-slot0(THEME) 0.00 (slots ['0/12', '12/12', '0/12']) [out-spk c1/o1 legal True nospk-collapse True]
+[freqgeo seed 44] STAGE-A oversample 3x  slot0-counts {'AGENT': 420, 'PREDICATE': 0, 'THEME': 180}  canon 0.67 objrel-slot0(THEME) 0.00 (slots ['0/12', '12/12', '0/12']) [out-spk c1/o1 legal True nospk-collapse True]
+[freqgeo seed 44] STAGE-A oversample 7x  slot0-counts {'AGENT': 420, 'PREDICATE': 0, 'THEME': 420}  canon 0.67 objrel-slot0(THEME) 0.00 (slots ['0/12', '12/12', '0/12']) [out-spk c1/o1 legal True nospk-collapse True]
+[freqgeo seed 44] STAGE-A oversample 14x  slot0-counts {'AGENT': 420, 'PREDICATE': 0, 'THEME': 840}  canon 0.67 objrel-slot0(THEME) 0.00 (slots ['0/12', '12/12', '0/12']) [out-spk c1/o1 legal True nospk-collapse True]
+[freqgeo seed 44] STAGE-A permuted-role @7x -> objrel-slot0 0.00 (must be ~chance)
+[2026-07-06 02:54:16][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-06 02:54:16][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-06 02:54:16][INFO] SIM_BRIDGE: RNG initialized with seed: 100
+[2026-07-06 02:54:16][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 2818 neurons...
+[2026-07-06 02:54:16][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-06 02:54:16][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-06 02:54:16][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=20.0pA)...
+[2026-07-06 02:54:16][INFO] SIM_BRIDGE: Generating 3D neuron positions for 2818 neurons...
+[2026-07-06 02:54:16][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-07-06 02:54:16][INFO] SIM_BRIDGE: Simulation data initialized for 2818 neurons (3D). Synapses: 0. GPU memory: 24.8GB/51.2GB (48.5%)
+[2026-07-06 02:54:16][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 1536 synapses across 1 populations.
+[2026-07-06 02:54:16][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2256 synapses across 2 populations.
+[2026-07-06 02:54:16][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2832 synapses across 5 populations.
+[freqgeo seed 100] STAGE-A oversample 1x  slot0-counts {'AGENT': 420, 'PREDICATE': 0, 'THEME': 60}  canon 1.00 objrel-slot0(THEME) 0.00 (slots ['0/12', '0/12', '0/12']) [out-spk c1/o1 legal True nospk-collapse True]
+[freqgeo seed 100] STAGE-A oversample 3x  slot0-counts {'AGENT': 420, 'PREDICATE': 0, 'THEME': 180}  canon 0.67 objrel-slot0(THEME) 0.00 (slots ['0/12', '12/12', '0/12']) [out-spk c1/o1 legal True nospk-collapse True]
+[freqgeo seed 100] STAGE-A oversample 7x  slot0-counts {'AGENT': 420, 'PREDICATE': 0, 'THEME': 420}  canon 0.67 objrel-slot0(THEME) 0.00 (slots ['0/12', '12/12', '0/12']) [out-spk c1/o1 legal True nospk-collapse True]
+[freqgeo seed 100] STAGE-A oversample 14x  slot0-counts {'AGENT': 420, 'PREDICATE': 0, 'THEME': 840}  canon 1.00 objrel-slot0(THEME) 0.00 (slots ['0/12', '0/12', '0/12']) [out-spk c1/o1 legal True nospk-collapse True]
+[freqgeo seed 100] STAGE-A permuted-role @7x -> objrel-slot0 0.00 (must be ~chance)
+[2026-07-06 02:58:28][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-06 02:58:28][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-06 02:58:28][INFO] SIM_BRIDGE: RNG initialized with seed: 101
+[2026-07-06 02:58:28][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 2818 neurons...
+[2026-07-06 02:58:28][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-06 02:58:28][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-06 02:58:28][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=20.0pA)...
+[2026-07-06 02:58:28][INFO] SIM_BRIDGE: Generating 3D neuron positions for 2818 neurons...
+[2026-07-06 02:58:28][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-07-06 02:58:28][INFO] SIM_BRIDGE: Simulation data initialized for 2818 neurons (3D). Synapses: 0. GPU memory: 25.8GB/51.2GB (50.3%)
+[2026-07-06 02:58:28][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 1536 synapses across 1 populations.
+[2026-07-06 02:58:28][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2256 synapses across 2 populations.
+[2026-07-06 02:58:28][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2832 synapses across 5 populations.
+[freqgeo seed 101] STAGE-A oversample 1x  slot0-counts {'AGENT': 420, 'PREDICATE': 0, 'THEME': 60}  canon 1.00 objrel-slot0(THEME) 0.00 (slots ['0/12', '0/12', '0/12']) [out-spk c1/o1 legal True nospk-collapse True]
+[freqgeo seed 101] STAGE-A oversample 3x  slot0-counts {'AGENT': 420, 'PREDICATE': 0, 'THEME': 180}  canon 1.00 objrel-slot0(THEME) 0.00 (slots ['0/12', '0/12', '0/12']) [out-spk c1/o1 legal True nospk-collapse True]
+[freqgeo seed 101] STAGE-A oversample 7x  slot0-counts {'AGENT': 420, 'PREDICATE': 0, 'THEME': 420}  canon 1.00 objrel-slot0(THEME) 0.08 (slots ['1/12', '0/12', '0/12']) [out-spk c1/o1 legal True nospk-collapse True]
+[freqgeo seed 101] STAGE-A oversample 14x  slot0-counts {'AGENT': 420, 'PREDICATE': 0, 'THEME': 840}  canon 1.00 objrel-slot0(THEME) 0.08 (slots ['1/12', '0/12', '0/12']) [out-spk c1/o1 legal True nospk-collapse True]
+[freqgeo seed 101] STAGE-A permuted-role @7x -> objrel-slot0 0.00 (must be ~chance)
+[2026-07-06 03:03:53][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-06 03:03:53][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-06 03:03:53][INFO] SIM_BRIDGE: RNG initialized with seed: 102
+[2026-07-06 03:03:53][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 2818 neurons...
+[2026-07-06 03:03:53][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-06 03:03:53][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-06 03:03:53][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=20.0pA)...
+[2026-07-06 03:03:53][INFO] SIM_BRIDGE: Generating 3D neuron positions for 2818 neurons...
+[2026-07-06 03:03:53][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-07-06 03:03:53][INFO] SIM_BRIDGE: Simulation data initialized for 2818 neurons (3D). Synapses: 0. GPU memory: 27.6GB/51.2GB (53.9%)
+[2026-07-06 03:03:53][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 1536 synapses across 1 populations.
+[2026-07-06 03:03:53][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2256 synapses across 2 populations.
+[2026-07-06 03:03:53][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2832 synapses across 5 populations.
+[freqgeo seed 102] STAGE-A oversample 1x  slot0-counts {'AGENT': 420, 'PREDICATE': 0, 'THEME': 60}  canon 0.67 objrel-slot0(THEME) 0.00 (slots ['0/12', '12/12', '0/12']) [out-spk c0/o0 legal True nospk-collapse True]
+[freqgeo seed 102] STAGE-A oversample 3x  slot0-counts {'AGENT': 420, 'PREDICATE': 0, 'THEME': 180}  canon 1.00 objrel-slot0(THEME) 0.00 (slots ['0/12', '0/12', '0/12']) [out-spk c1/o1 legal True nospk-collapse True]
+[freqgeo seed 102] STAGE-A oversample 7x  slot0-counts {'AGENT': 420, 'PREDICATE': 0, 'THEME': 420}  canon 1.00 objrel-slot0(THEME) 0.00 (slots ['0/12', '0/12', '0/12']) [out-spk c1/o1 legal True nospk-collapse True]
+[freqgeo seed 102] STAGE-A oversample 14x  slot0-counts {'AGENT': 420, 'PREDICATE': 0, 'THEME': 840}  canon 1.00 objrel-slot0(THEME) 0.00 (slots ['0/12', '0/12', '0/12']) [out-spk c1/o1 legal True nospk-collapse True]
+[freqgeo seed 102] STAGE-A permuted-role @7x -> objrel-slot0 0.00 (must be ~chance)
+
+[freqgeo] STAGE A: objrel-slot0 by factor {'1': 0.0, '3': 0.0, '7': 0.014, '14': 0.014} | canon by factor {'1': 0.833, '3': 0.834, '7': 0.834, '14': 0.889} | 7x recov 0/6 (0/3 blind) canon-ok False | permuted-collapse False
+
+[freqgeo] STAGE A did NOT recover objrel 6-seed-blind at 7x/14x -> running STAGE B (LDAM class-margin on balanced 7x, single new variable = margin (0.0, 0.5, 1.0, 2.0)).
+[2026-07-06 03:09:37][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-06 03:09:37][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-06 03:09:37][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-07-06 03:09:37][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 2818 neurons...
+[2026-07-06 03:09:37][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-06 03:09:37][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-06 03:09:37][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=20.0pA)...
+[2026-07-06 03:09:37][INFO] SIM_BRIDGE: Generating 3D neuron positions for 2818 neurons...
+[2026-07-06 03:09:37][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-07-06 03:09:37][INFO] SIM_BRIDGE: Simulation data initialized for 2818 neurons (3D). Synapses: 0. GPU memory: 27.1GB/51.2GB (52.8%)
+[2026-07-06 03:09:37][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 1536 synapses across 1 populations.
+[2026-07-06 03:09:37][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2256 synapses across 2 populations.
+[2026-07-06 03:09:37][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2832 synapses across 5 populations.
+[freqgeo seed 42] STAGE-B 7x + LDAM-margin 0.0  canon 1.00 objrel-slot0(THEME) 0.00 (slots ['0/12', '0/12', '0/12']) [legal True nospk-collapse True]
+[freqgeo seed 42] STAGE-B 7x + LDAM-margin 0.5  canon 1.00 objrel-slot0(THEME) 0.08 (slots ['1/12', '0/12', '0/12']) [legal True nospk-collapse True]
+[freqgeo seed 42] STAGE-B 7x + LDAM-margin 1.0  canon 1.00 objrel-slot0(THEME) 0.00 (slots ['0/12', '0/12', '0/12']) [legal True nospk-collapse True]
+[freqgeo seed 42] STAGE-B 7x + LDAM-margin 2.0  canon 1.00 objrel-slot0(THEME) 0.00 (slots ['0/12', '0/12', '0/12']) [legal True nospk-collapse True]
+[2026-07-06 03:13:33][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-06 03:13:33][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-06 03:13:33][INFO] SIM_BRIDGE: RNG initialized with seed: 43
+[2026-07-06 03:13:33][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 2818 neurons...
+[2026-07-06 03:13:33][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-06 03:13:33][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-06 03:13:33][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=20.0pA)...
+[2026-07-06 03:13:33][INFO] SIM_BRIDGE: Generating 3D neuron positions for 2818 neurons...
+[2026-07-06 03:13:33][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-07-06 03:13:33][INFO] SIM_BRIDGE: Simulation data initialized for 2818 neurons (3D). Synapses: 0. GPU memory: 26.9GB/51.2GB (52.5%)
+[2026-07-06 03:13:33][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 1536 synapses across 1 populations.
+[2026-07-06 03:13:33][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2256 synapses across 2 populations.
+[2026-07-06 03:13:33][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2832 synapses across 5 populations.
+[freqgeo seed 43] STAGE-B 7x + LDAM-margin 0.0  canon 0.67 objrel-slot0(THEME) 0.00 (slots ['0/12', '12/12', '0/12']) [legal True nospk-collapse True]
+[freqgeo seed 43] STAGE-B 7x + LDAM-margin 0.5  canon 0.67 objrel-slot0(THEME) 0.00 (slots ['0/12', '12/12', '0/12']) [legal True nospk-collapse True]
+[freqgeo seed 43] STAGE-B 7x + LDAM-margin 1.0  canon 0.67 objrel-slot0(THEME) 0.00 (slots ['0/12', '12/12', '0/12']) [legal True nospk-collapse True]
+[freqgeo seed 43] STAGE-B 7x + LDAM-margin 2.0  canon 0.67 objrel-slot0(THEME) 0.00 (slots ['0/12', '12/12', '0/12']) [legal True nospk-collapse True]
+[2026-07-06 03:17:28][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-06 03:17:28][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-06 03:17:28][INFO] SIM_BRIDGE: RNG initialized with seed: 44
+[2026-07-06 03:17:28][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 2818 neurons...
+[2026-07-06 03:17:28][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-06 03:17:28][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-06 03:17:28][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=20.0pA)...
+[2026-07-06 03:17:28][INFO] SIM_BRIDGE: Generating 3D neuron positions for 2818 neurons...
+[2026-07-06 03:17:28][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-07-06 03:17:28][INFO] SIM_BRIDGE: Simulation data initialized for 2818 neurons (3D). Synapses: 0. GPU memory: 27.2GB/51.2GB (53.1%)
+[2026-07-06 03:17:28][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 1536 synapses across 1 populations.
+[2026-07-06 03:17:28][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2256 synapses across 2 populations.
+[2026-07-06 03:17:28][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2832 synapses across 5 populations.
+[freqgeo seed 44] STAGE-B 7x + LDAM-margin 0.0  canon 0.67 objrel-slot0(THEME) 0.00 (slots ['0/12', '12/12', '0/12']) [legal True nospk-collapse True]
+[freqgeo seed 44] STAGE-B 7x + LDAM-margin 0.5  canon 0.67 objrel-slot0(THEME) 0.00 (slots ['0/12', '12/12', '0/12']) [legal True nospk-collapse True]
+[freqgeo seed 44] STAGE-B 7x + LDAM-margin 1.0  canon 0.67 objrel-slot0(THEME) 0.00 (slots ['0/12', '12/12', '0/12']) [legal True nospk-collapse True]
+[freqgeo seed 44] STAGE-B 7x + LDAM-margin 2.0  canon 0.67 objrel-slot0(THEME) 0.00 (slots ['0/12', '12/12', '0/12']) [legal True nospk-collapse True]
+[2026-07-06 03:21:28][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-06 03:21:28][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-06 03:21:28][INFO] SIM_BRIDGE: RNG initialized with seed: 100
+[2026-07-06 03:21:28][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 2818 neurons...
+[2026-07-06 03:21:28][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-06 03:21:28][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-06 03:21:28][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=20.0pA)...
+[2026-07-06 03:21:28][INFO] SIM_BRIDGE: Generating 3D neuron positions for 2818 neurons...
+[2026-07-06 03:21:28][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-07-06 03:21:28][INFO] SIM_BRIDGE: Simulation data initialized for 2818 neurons (3D). Synapses: 0. GPU memory: 28.9GB/51.2GB (56.5%)
+[2026-07-06 03:21:28][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 1536 synapses across 1 populations.
+[2026-07-06 03:21:28][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2256 synapses across 2 populations.
+[2026-07-06 03:21:28][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2832 synapses across 5 populations.
+[freqgeo seed 100] STAGE-B 7x + LDAM-margin 0.0  canon 0.67 objrel-slot0(THEME) 0.00 (slots ['0/12', '12/12', '0/12']) [legal True nospk-collapse True]
+[freqgeo seed 100] STAGE-B 7x + LDAM-margin 0.5  canon 0.67 objrel-slot0(THEME) 0.00 (slots ['0/12', '12/12', '0/12']) [legal True nospk-collapse True]
+[freqgeo seed 100] STAGE-B 7x + LDAM-margin 1.0  canon 0.67 objrel-slot0(THEME) 0.00 (slots ['0/12', '12/12', '0/12']) [legal True nospk-collapse True]
+[freqgeo seed 100] STAGE-B 7x + LDAM-margin 2.0  canon 0.67 objrel-slot0(THEME) 0.00 (slots ['0/12', '12/12', '0/12']) [legal True nospk-collapse True]
+[2026-07-06 03:25:29][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-06 03:25:29][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-06 03:25:29][INFO] SIM_BRIDGE: RNG initialized with seed: 101
+[2026-07-06 03:25:29][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 2818 neurons...
+[2026-07-06 03:25:29][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-06 03:25:29][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-06 03:25:29][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=20.0pA)...
+[2026-07-06 03:25:29][INFO] SIM_BRIDGE: Generating 3D neuron positions for 2818 neurons...
+[2026-07-06 03:25:29][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-07-06 03:25:29][INFO] SIM_BRIDGE: Simulation data initialized for 2818 neurons (3D). Synapses: 0. GPU memory: 28.9GB/51.2GB (56.4%)
+[2026-07-06 03:25:29][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 1536 synapses across 1 populations.
+[2026-07-06 03:25:29][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2256 synapses across 2 populations.
+[2026-07-06 03:25:29][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2832 synapses across 5 populations.
+[freqgeo seed 101] STAGE-B 7x + LDAM-margin 0.0  canon 1.00 objrel-slot0(THEME) 0.08 (slots ['1/12', '0/12', '0/12']) [legal True nospk-collapse True]
+[freqgeo seed 101] STAGE-B 7x + LDAM-margin 0.5  canon 1.00 objrel-slot0(THEME) 0.00 (slots ['0/12', '0/12', '0/12']) [legal True nospk-collapse True]
+[freqgeo seed 101] STAGE-B 7x + LDAM-margin 1.0  canon 1.00 objrel-slot0(THEME) 0.00 (slots ['0/12', '0/12', '0/12']) [legal True nospk-collapse True]
+[freqgeo seed 101] STAGE-B 7x + LDAM-margin 2.0  canon 1.00 objrel-slot0(THEME) 0.00 (slots ['0/12', '0/12', '0/12']) [legal True nospk-collapse True]
+[2026-07-06 03:29:40][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-06 03:29:40][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-06 03:29:40][INFO] SIM_BRIDGE: RNG initialized with seed: 102
+[2026-07-06 03:29:40][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 2818 neurons...
+[2026-07-06 03:29:40][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-06 03:29:40][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-06 03:29:40][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=20.0pA)...
+[2026-07-06 03:29:40][INFO] SIM_BRIDGE: Generating 3D neuron positions for 2818 neurons...
+[2026-07-06 03:29:40][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-07-06 03:29:40][INFO] SIM_BRIDGE: Simulation data initialized for 2818 neurons (3D). Synapses: 0. GPU memory: 28.6GB/51.2GB (55.8%)
+[2026-07-06 03:29:40][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 1536 synapses across 1 populations.
+[2026-07-06 03:29:40][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2256 synapses across 2 populations.
+[2026-07-06 03:29:40][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 2832 synapses across 5 populations.
+[freqgeo seed 102] STAGE-B 7x + LDAM-margin 0.0  canon 1.00 objrel-slot0(THEME) 0.00 (slots ['0/12', '0/12', '0/12']) [legal True nospk-collapse True]
+[freqgeo seed 102] STAGE-B 7x + LDAM-margin 0.5  canon 1.00 objrel-slot0(THEME) 0.00 (slots ['0/12', '0/12', '0/12']) [legal True nospk-collapse True]
+[freqgeo seed 102] STAGE-B 7x + LDAM-margin 1.0  canon 1.00 objrel-slot0(THEME) 0.00 (slots ['0/12', '0/12', '0/12']) [legal True nospk-collapse True]
+[freqgeo seed 102] STAGE-B 7x + LDAM-margin 2.0  canon 1.00 objrel-slot0(THEME) 0.00 (slots ['0/12', '0/12', '0/12']) [legal True nospk-collapse True]
+
+[freqgeo] STAGE B: objrel-slot0 by margin {'0.0': 0.014, '0.5': 0.014, '1.0': 0.0, '2.0': 0.0} | canon {'0.0': 0.834, '0.5': 0.834, '1.0': 0.834, '2.0': 0.834} | best margin 0.0 recov 0/6 | permuted-collapse False
+
+[freqgeo] VERDICT: DEEPER-RESIDUAL
+DEEPER-RESIDUAL -- neither class-rebalancing (Stage A 7x 0.01, 14x 0.01) NOR an LDAM class-margin on top of balance (Stage B by margin {'0.0': 0.014, '0.5': 0.014, '1.0': 0.0, '2.0': 0.0}) recovers objrel 6-seed-blind under the Dale-legal DANN spiking read-out. So the objrel learnability residual is NEITHER a pure frequency wall NOR a frequency+geometry wall at this sizing -- the minority signed-THEME direction is not reached even with balance + margin (a deeper optimization/representation-in-the-read-out residual). All anti-cheats held (genuinely spiking + Dale-legal + held-out + no-spike-collapse + permuted->chance); the analytic Dale reference still proves the Dale-legal signed read EXISTS in weight space, so this is a REACHABILITY residual beyond both levers. This LAUNCHES the next mechanism (not a wall): the biological closure must go beyond salience + margin (e.g. a two-timescale / staged eligibility, or an explicit minority-direction prior). An HONEST characterization; NO anti-cheat weakened. This is an ISOLATION CONTROL, not the deliverable. NO sim/ edit; CPU/numpy.
+[freqgeo] wrote research/findings/raw/_rungB1c_objrel_freq_vs_geometry_isolation.json

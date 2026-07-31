@@ -1,0 +1,5 @@
+SIM_BACKEND=numpy selected, but a CUDA GPU + CuPy ARE available -> this run is on the CPU (typically 10-50x slower). If you did not mean that, pass SIM_BACKEND=cupy explicitly: many research runners do os.environ.setdefault('SIM_BACKEND','numpy'), which silently wins unless the caller overrides it.
+[gap4-mnist] deep credit vs RESERVOIR vs learned-feedback on MNIST (hidden=128 depth=4 n_train=8000 epochs=15) seeds=[42] backend=numpy
+  [seed 42] MNIST [784, 128, 128, 128, 128, 10]: RESERVOIR=0.102 FA=0.928 KP=0.931 ORACLE=0.929 | FA>RES:True KP>FA:False
+[gap4-mnist] VERDICT: FA>RESERVOIR 1/1, KP>FA 0/1 | means: RES=0.102 FA=0.928 KP=0.931 ORACLE=0.929
+  => credit DOES beat reservoir on a proper task (cleanxor negative was a task artifact); learned feedback (KP) does not clearly beat FA here.

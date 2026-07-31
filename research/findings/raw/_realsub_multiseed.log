@@ -1,0 +1,19 @@
+############## seed 42 ##############
+  mean cos(real, synthetic) per-word = 0.079  |  real between-concept cos = 0.170
+  REAL-code   QA=0.900  abstention-control=1.000
+  SYNTH-code  QA=0.900  abstention-control=1.000  (chance 0.0312)
+RESULT: real QA=0.900/ctrl=1.000  vs  synth QA=0.900/ctrl=1.000
+VERDICT: RESOLVES -- genuine spiking relational composition + abstention works on the REAL deployed substrate concept codes, not just synthetic sparse. Scale to 160.
+############## seed 43 ##############
+  mean cos(real, synthetic) per-word = 0.004  |  real between-concept cos = 0.167
+  REAL-code   QA=0.650  abstention-control=1.000
+  SYNTH-code  QA=1.000  abstention-control=1.000  (chance 0.0312)
+RESULT: real QA=0.650/ctrl=1.000  vs  synth QA=1.000/ctrl=1.000
+VERDICT: PARTIAL -- real-code QA 0.65 (synth 1.00); real-substrate structure degrades it. Characterize the gap honestly.
+############## seed 44 ##############
+  mean cos(real, synthetic) per-word = -0.002  |  real between-concept cos = 0.170
+  REAL-code   QA=0.850  abstention-control=1.000
+  SYNTH-code  QA=1.000  abstention-control=1.000  (chance 0.0312)
+RESULT: real QA=0.850/ctrl=1.000  vs  synth QA=1.000/ctrl=1.000
+VERDICT: RESOLVES -- genuine spiking relational composition + abstention works on the REAL deployed substrate concept codes, not just synthetic sparse. Scale to 160.
+##### MULTISEED DONE #####

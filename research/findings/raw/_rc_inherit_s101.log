@@ -1,0 +1,8 @@
+[realcorpus-inheritance rung1] corpus=data/corpus/tinystories.txt stories=24574 tokens=3927359 K=256
+  discovered vocab=256 hubs=500 | probe=27w/6cat per_cat={'animals': 7, 'family': 5, 'actions': 5, 'colors': 2, 'places': 5, 'toys': 3}
+  [seed 101] HELD-OUT inherit-acc=0.615 | DERANGED-labels=0.215 | scrambled=0.769 | mem-ceiling=1.000 | chance=0.250 (n_ho=13, cats=4)
+
+  AGGREGATE (1 seeds): HELD-OUT inherit-acc=0.615 | DERANGED-labels=0.215 (primary control) | scrambled=0.769 (secondary) | mem-ceiling=1.000 | chance=0.250
+  beats_chance (all seeds, margin 0.15)=True | beats_deranged_labels=True
+  VERDICT: GO -- a HELD-OUT member of a REAL-corpus-DISCOVERED category INHERITS ITS OWN category property (argmax over per-category properties), above chance AND the LABEL-DERANGEMENT control (random grouping collapses it) -> the GENUINE discovered category carries the inheritance; the KNOWLEDGE half rides real-corpus breadth.
+  [saved] research/findings/raw/_rc_inherit_s101.json

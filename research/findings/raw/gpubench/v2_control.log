@@ -1,0 +1,45 @@
+[2026-07-23 01:41:24][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.5 GB), mempool limit: 80%
+[2026-07-23 01:41:24][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-23 01:41:24][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-07-23 01:41:24][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 2000 neurons...
+[2026-07-23 01:41:24][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-23 01:41:24][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-23 01:41:24][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-07-23 01:41:24][INFO] SIM_BRIDGE: Generating 3D neuron positions for 2000 neurons...
+[2026-07-23 01:41:24][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-07-23 01:41:24][INFO] SIM_BRIDGE: Generating Watts-Strogatz 3D network (n=2000, k=10, p_rewire=0.1)...
+WS generation: 0.0%WS generation: 5.0%WS generation: 10.0%WS generation: 15.0%WS generation: 20.0%WS generation: 25.0%WS generation: 30.0%WS generation: 35.0%WS generation: 40.0%WS generation: 45.0%WS generation: 50.0%WS generation: 55.0%WS generation: 60.0%WS generation: 65.0%WS generation: 70.0%WS generation: 75.0%WS generation: 80.0%WS generation: 85.0%WS generation: 90.0%WS generation: 95.0%WS generation: 100.0%
+[2026-07-23 01:42:16][INFO] SIM_BRIDGE: Watts-Strogatz network complete: 19992 connections (avg degree: 10.0, expected: 10). Time: 51.40s
+[2026-07-23 01:42:16][INFO] SIM_BRIDGE: Simulation data initialized for 2000 neurons (3D). Synapses: 19992. GPU memory: 9.1GB/25.3GB (36.1%)
+[2026-07-23 01:42:16][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.5 GB), mempool limit: 80%
+[2026-07-23 01:42:16][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-23 01:42:16][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-07-23 01:42:16][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 2000 neurons...
+[2026-07-23 01:42:16][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-23 01:42:16][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-23 01:42:16][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-07-23 01:42:16][INFO] SIM_BRIDGE: Generating 3D neuron positions for 2000 neurons...
+[2026-07-23 01:42:16][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-07-23 01:42:16][INFO] SIM_BRIDGE: Generating Watts-Strogatz 3D network (n=2000, k=10, p_rewire=0.1)...
+WS generation: 0.0%WS generation: 5.0%WS generation: 10.0%WS generation: 15.0%WS generation: 20.0%WS generation: 25.0%WS generation: 30.0%WS generation: 35.0%WS generation: 40.0%WS generation: 45.0%WS generation: 50.0%WS generation: 55.0%WS generation: 60.0%WS generation: 65.0%WS generation: 70.0%WS generation: 75.0%WS generation: 80.0%WS generation: 85.0%WS generation: 90.0%WS generation: 95.0%WS generation: 100.0%
+[2026-07-23 01:42:21][INFO] SIM_BRIDGE: Watts-Strogatz network complete: 19992 connections (avg degree: 10.0, expected: 10). Time: 4.85s
+[2026-07-23 01:42:21][INFO] SIM_BRIDGE: Simulation data initialized for 2000 neurons (3D). Synapses: 19992. GPU memory: 9.1GB/25.3GB (36.2%)
+[2026-07-23 01:42:21][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (23.5 GB), mempool limit: 80%
+[2026-07-23 01:42:21][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-23 01:42:21][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-07-23 01:42:21][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 2000 neurons...
+[2026-07-23 01:42:21][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-23 01:42:21][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-23 01:42:21][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-07-23 01:42:21][INFO] SIM_BRIDGE: Generating 3D neuron positions for 2000 neurons...
+[2026-07-23 01:42:21][INFO] SIM_BRIDGE: Generating connections (3D)...
+[2026-07-23 01:42:21][INFO] SIM_BRIDGE: Generating Watts-Strogatz 3D network (n=2000, k=10, p_rewire=0.1)...
+WS generation: 0.0%WS generation: 5.0%WS generation: 10.0%WS generation: 15.0%WS generation: 20.0%WS generation: 25.0%WS generation: 30.0%WS generation: 35.0%WS generation: 40.0%WS generation: 45.0%WS generation: 50.0%WS generation: 55.0%WS generation: 60.0%WS generation: 65.0%WS generation: 70.0%WS generation: 75.0%WS generation: 80.0%WS generation: 85.0%WS generation: 90.0%WS generation: 95.0%WS generation: 100.0%
+[2026-07-23 01:43:20][INFO] SIM_BRIDGE: Watts-Strogatz network complete: 19992 connections (avg degree: 10.0, expected: 10). Time: 59.47s
+[2026-07-23 01:43:20][INFO] SIM_BRIDGE: Simulation data initialized for 2000 neurons (3D). Synapses: 19992. GPU memory: 9.2GB/25.3GB (36.3%)
+INIT weights A-vs-B identical: True  A-vs-C identical: True
+INIT firing-thresholds A-vs-B identical: True
+INIT membrane-v A-vs-B max|Δ|: 0.00e+00
+1-STEP max|Δv|  ref-vs-ref (A,B): 1.59e+00   ref-vs-v2 (A,C): 1.46e+00
+VERDICT: SEED-GOTCHA CONFOUND (my instrument is broken; rebuild in separate processes)
+CONTROL_DONE

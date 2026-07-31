@@ -1,0 +1,9 @@
+[D3 EVENT SELF-SUPERVISED] K=6 | learn the event delta from the AGENT-EMISSION prediction ALONE -- NO (agent,patient) state label anywhere; probe the frozen slot for the deep agent
+  [seed 43] SELF-SUP=0.985 (deep>=3: 0.962 | promote: 0.987) || honest floor last-named-subj=0.608 (promote: 0.174) | fair-reservoir=0.674 (deep: 0.168) || emission-severed=0.253 | no-recurrence=0.391 | [weak-ref recency=0.171] | purity=0.722
+
+  AGGREGATE (K=6, chance 0.167, emission purity 0.722, frac deep>=3 0.123, frac promote 0.475):
+    SELF-SUP=0.985  (coref-DEEP>=3: 0.962 | promote-bound: 0.987)
+    honest label-free floor `last-named-subject`=0.608 (promote-bound: 0.174 <- it structurally MISSES promote-binding)
+    FAIR reservoir (ESN+ridge)=0.674  (coref-DEEP>=3: 0.168 <- collapses exactly where the claim lives)
+    emission-severed=0.253 | no-recurrence=0.391 | [weak-ref recency=0.171]
+  VERDICT: GO -- the event transition delta is learned FULLY SELF-SUPERVISED (agent-emission prediction ALONE, NO state label anywhere): the frozen K-way slot decodes the running agent at 0.98 on held-out-DEEPER, and on the genuinely coref-DEEP subset (>=3 trailing corefs) it holds 0.96 while a FAIR echo-state reservoir COLLAPSES to 0.17; it beats the HONEST label-free floor last-named-subject (0.61) with the edge concentrated in PROMOTE-BINDING (self-sup 0.99 vs floor 0.17, which structurally misses it); severing the agent->emission link (0.25) and removing recurrence (0.39) both collapse -> the running who-did-what-to-whom MEANING EMERGES from predicting what the brain hears, no host label = the last host supervision in the event composition is REMOVED. NO sim/ edit.

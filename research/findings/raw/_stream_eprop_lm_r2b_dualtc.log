@@ -1,0 +1,62 @@
+[stream-eprop] corpus=data/corpus/tinystories_train.txt stream=2000000 V=2000 n_pool=300 block=128 batch=64 lane=28125 epochs=4 bptt_steps=4000 dev=cuda permute_stream=False
+[stream-eprop] PRE-REGISTERED EXPECTATION: e-prop is a diagonal (RTRL) truncation dropping the off-diagonal recurrent Jacobian; literature (Bellec-2020 needed DNI for long-range PTB; Murray-2019 RFLO matches BPTT only for short horizons) predicts plastic_eprop captures MOST of the SHALLOW margin and only a SMALL fraction of the DEEP margin. A shallow-only capture is an HONEST NEGATIVE on long-range -- a first-class deliverable.
+      [fixed_reservoir] epoch 1/4 last-block-CE 6.957
+      [fixed_reservoir] epoch 2/4 last-block-CE 6.888
+      [fixed_reservoir] epoch 3/4 last-block-CE 6.854
+      [fixed_reservoir] epoch 4/4 last-block-CE 6.838
+    -> fixed_reservoir: shallow_margin -3.2789  deep_margin -2.7599  agg_ce 7.1046  (46s)
+      [plastic_eprop] epoch 1/4 last-block-CE 7.001
+      [plastic_eprop] epoch 2/4 last-block-CE 6.284
+      [plastic_eprop] epoch 3/4 last-block-CE 5.805
+      [plastic_eprop] epoch 4/4 last-block-CE 5.701
+    -> plastic_eprop: shallow_margin -3.2810  deep_margin -2.1581  agg_ce 6.5786  (65s)
+      [shuffle_elig] epoch 1/4 last-block-CE 6.959
+      [shuffle_elig] epoch 2/4 last-block-CE 6.891
+      [shuffle_elig] epoch 3/4 last-block-CE 6.860
+      [shuffle_elig] epoch 4/4 last-block-CE 6.849
+    -> shuffle_elig: shallow_margin -3.2791  deep_margin -2.7622  agg_ce 7.1067  (95s)
+      [zero_signal] epoch 1/4 last-block-CE 6.957
+      [zero_signal] epoch 2/4 last-block-CE 6.888
+      [zero_signal] epoch 3/4 last-block-CE 6.854
+      [zero_signal] epoch 4/4 last-block-CE 6.838
+    -> zero_signal: shallow_margin -3.2789  deep_margin -2.7599  agg_ce 7.1046  (67s)
+      [plastic_eprop_dualtc] epoch 1/4 last-block-CE 5.894
+      [plastic_eprop_dualtc] epoch 2/4 last-block-CE 5.741
+      [plastic_eprop_dualtc] epoch 3/4 last-block-CE 5.817
+      [plastic_eprop_dualtc] epoch 4/4 last-block-CE 5.724
+    -> plastic_eprop_dualtc: shallow_margin -3.2821  deep_margin -1.6613  agg_ce 6.1374  (87s)
+      [BPTT_same_net] step 1000/4000 train-CE 4.843
+      [BPTT_same_net] step 2000/4000 train-CE 3.830
+      [BPTT_same_net] step 3000/4000 train-CE 3.543
+      [BPTT_same_net] step 4000/4000 train-CE 3.401
+    -> BPTT_same_net: shallow_margin +0.7373  deep_margin +0.9016  agg_ce 3.3984  (284s)
+      [BPTT_same_net] step 1000/4000 train-CE 5.721
+      [BPTT_same_net] step 2000/4000 train-CE 5.717
+      [BPTT_same_net] step 3000/4000 train-CE 5.763
+      [BPTT_same_net] step 4000/4000 train-CE 5.738
+    -> BPTT_fixed_win: shallow_margin -1.3951  deep_margin -1.4006  agg_ce 5.6843  (218s)
+
+[stream-eprop] MARGIN vs add-1 stream bigram, by within-block context depth (+ = arm better than bigram):
+                 arm         1         2         3       4-8      9-16    17-127   SHALLOW      DEEP
+     fixed_reservoir   -3.3008   -3.3114   -3.2890   -3.2660   -3.1693   -2.7599   -3.2789   -2.7599
+       plastic_eprop   -3.3026   -3.3140   -3.2912   -3.2681   -3.1668   -2.1581   -3.2810   -2.1581
+        shuffle_elig   -3.3008   -3.3115   -3.2891   -3.2663   -3.1700   -2.7622   -3.2791   -2.7622
+         zero_signal   -3.3008   -3.3114   -3.2890   -3.2660   -3.1693   -2.7599   -3.2789   -2.7599
+    plastic_eprop_dualtc   -3.3085   -3.3215   -3.2985   -3.2656   -3.0547   -1.6613   -3.2821   -1.6613
+       BPTT_same_net   +0.4573   +0.6771   +0.7425   +0.8043   +0.8476   +0.9016   +0.7373   +0.9016
+      BPTT_fixed_win   -1.5103   -1.3437   -1.3755   -1.3862   -1.3668   -1.4006   -1.3951   -1.4006
+
+[stream-eprop] ANTI-CHEATS:
+    zero_signal W_rec == fixed_reservoir W_rec (byte-identical): True
+    shuffle_elig deep -2.7622 <= fixed deep -2.7599 + eps: True
+
+[stream-eprop] FRACTIONS (plastic_eprop / BPTT_same_net):  frac_shallow -4.45   frac_deep -2.3936  (DEEP is the entire test; a strong shallow must NOT mask a weak deep)
+
+[stream-eprop] GATE: BOUNDARY (frac_deep < 0.25 while the BPTT ceiling deep margin is clearly positive -- honest: forward-eligibility credit can't reach within-block deep dependencies)
+
+[stream-eprop] FIXED-FLOOR-RELATIVE recurrent-credit fraction (plastic gain over fixed / BPTT gain over fixed; isolates the credit RULE):
+    vs  BPTT_fixed_win: frac_clean_deep 0.4427  frac_clean_shallow -0.0011  (plastic +0.602 / bptt +1.359 deep) <- CLEANEST (identical frozen W_in)
+    vs   BPTT_same_net: frac_clean_deep 0.1644  frac_clean_shallow -0.0005  (plastic +0.602 / bptt +3.662 deep) (BPTT also learns W_in)
+
+-> research/findings/raw/_stream_eprop_lm_r2b_dualtc.json (861.8s)
+STREAM_EPROP_DONE

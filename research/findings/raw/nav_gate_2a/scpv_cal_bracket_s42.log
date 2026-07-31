@@ -1,0 +1,21 @@
+=== CAL gain=0.0 sigma=1 (pure cosine isolation), popvector only ===
+  phase 0 goal=[6, 6] meanD=1.44 finalQ=0.87 actions=[145, 114, 107, 84]
+  phase 1 goal=[1, 6] meanD=1.83 finalQ=1.00 actions=[6, 8, 5, 11]
+[sc-pv] arm=sc_popvector per-phase dominant cardinal: ['N', 'W']
+[sc-pv] arm=sc_popvector per-phase action frac: [{'N': 0.322, 'E': 0.253, 'S': 0.238, 'W': 0.187}, {'N': 0.2, 'E': 0.267, 'S': 0.167, 'W': 0.367}]
+[sc-pv] ===== POPULATION-VECTOR READ-OUT RE-ORIENT VERDICT =====
+  popvector_post_change_finalQ_sum: 1.0
+  popvector_tracking: {'dominant_per_phase': ['N', 'W'], 'n_distinct_dominant': 2, 'has_W_dominant_phase': True, 'has_E_dominant_phase': False, 'tracks_goal': True}
+  popvector_late_sustain: 1.0
+  NOTE: GO (#6 CONVERTS) if popvector_tracking.tracks_goal is True AND popvector_post_change approaches host (host_over_popvector_post_ratio ~1, vs the ramp's ~0.01) AND the SCRAMBLE lesion collapses (scramble_tracking.tracks_goal False / much worse finalQ). HONEST NEGATIVE otherwise -- report whether popvector still does NOT track (under-selective) or a deeper issue.
+=== CAL gain=0.2 sigma=1, popvector only ===
+  phase 0 goal=[6, 6] meanD=1.47 finalQ=0.79 actions=[159, 103, 107, 81]
+  phase 1 goal=[1, 6] meanD=6.57 finalQ=6.75 actions=[15, 8, 5, 2]
+[sc-pv] arm=sc_popvector per-phase dominant cardinal: ['N', 'N']
+[sc-pv] arm=sc_popvector per-phase action frac: [{'N': 0.353, 'E': 0.229, 'S': 0.238, 'W': 0.18}, {'N': 0.5, 'E': 0.267, 'S': 0.167, 'W': 0.067}]
+[sc-pv] ===== POPULATION-VECTOR READ-OUT RE-ORIENT VERDICT =====
+  popvector_post_change_finalQ_sum: 6.75
+  popvector_tracking: {'dominant_per_phase': ['N', 'N'], 'n_distinct_dominant': 1, 'has_W_dominant_phase': False, 'has_E_dominant_phase': False, 'tracks_goal': False}
+  popvector_late_sustain: 0.9041666666666667
+  NOTE: GO (#6 CONVERTS) if popvector_tracking.tracks_goal is True AND popvector_post_change approaches host (host_over_popvector_post_ratio ~1, vs the ramp's ~0.01) AND the SCRAMBLE lesion collapses (scramble_tracking.tracks_goal False / much worse finalQ). HONEST NEGATIVE otherwise -- report whether popvector still does NOT track (under-selective) or a deeper issue.
+ALLDONE

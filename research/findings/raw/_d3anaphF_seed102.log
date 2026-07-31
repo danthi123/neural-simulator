@@ -1,0 +1,33 @@
+[D3 -> CONVERSATION anaphora integration] K=6 | D3's composed focus drives the biased-competition pronoun resolution (vs the salience baseline)
+[2026-07-09 21:20:31][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-09 21:20:31][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-09 21:20:31][INFO] SIM_BRIDGE: Brain-region framework: 14 regions, 780 total neurons, 38 pathways.
+[2026-07-09 21:20:31][INFO] SIM_BRIDGE: RNG initialized with seed: 102
+[2026-07-09 21:20:31][INFO] SIM_BRIDGE: NMDA per-region mask: 8 regions enabled (720 neurons)
+[2026-07-09 21:20:31][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 780 neurons...
+[2026-07-09 21:20:31][INFO] SIM_BRIDGE: Region 'cortex_ctx' (300 neurons): using Izh type IZH2007_HIPPO_PYRAMIDAL
+[2026-07-09 21:20:31][INFO] SIM_BRIDGE: Region 'dlpfc_wm' (300 neurons): using Izh type IZH2007_HIPPO_PYRAMIDAL
+[2026-07-09 21:20:31][INFO] SIM_BRIDGE: Region 'sel_e0' (20 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-09 21:20:31][INFO] SIM_BRIDGE: Region 'sel_FS_e0' (10 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-09 21:20:31][INFO] SIM_BRIDGE: Region 'sel_e1' (20 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-09 21:20:31][INFO] SIM_BRIDGE: Region 'sel_FS_e1' (10 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-09 21:20:31][INFO] SIM_BRIDGE: Region 'sel_e2' (20 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-09 21:20:31][INFO] SIM_BRIDGE: Region 'sel_FS_e2' (10 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-09 21:20:31][INFO] SIM_BRIDGE: Region 'sel_e3' (20 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-09 21:20:31][INFO] SIM_BRIDGE: Region 'sel_FS_e3' (10 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-09 21:20:31][INFO] SIM_BRIDGE: Region 'sel_e4' (20 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-09 21:20:31][INFO] SIM_BRIDGE: Region 'sel_FS_e4' (10 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-09 21:20:31][INFO] SIM_BRIDGE: Region 'sel_e5' (20 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-09 21:20:31][INFO] SIM_BRIDGE: Region 'sel_FS_e5' (10 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-09 21:20:31][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-09 21:20:31][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-09 21:20:31][INFO] SIM_BRIDGE: Generating 3D neuron positions for 780 neurons...
+[2026-07-09 21:20:31][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-09 21:20:31][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 17204 synapses across 44 populations.
+[2026-07-09 21:20:31][INFO] SIM_BRIDGE: Initializing eligibility traces for 17204 synapses (capacity: 25806, dtype: float32)...
+[2026-07-09 21:20:31][INFO] SIM_BRIDGE: Initializing STDP state for 780 neurons...
+[2026-07-09 21:20:31][INFO] SIM_BRIDGE: Simulation data initialized for 780 neurons (3D). Synapses: 17204. GPU memory: 20.3GB/51.2GB (39.7%)
+  [seed 102] focus-shifted discourses=13 | D3-focus resolution=0.692 vs SALIENCE(most-recent)=0.0 | bias-follows=1.0 | moat-abstain=0.692
+
+  AGGREGATE (K=6): D3-focus resolution=0.692 | SALIENCE(most-recent) baseline=0.000 | (D3-salience gap=0.692) | bias-follows=1.000 | moat-abstain(reported)=0.692
+  VERDICT: GO -- D3 is WIRED into the real conversational resolution: its COMPOSED running focus drives the biased-competition to resolve the pronoun to the composed focus DECISIVELY MORE (0.69) than the SALIENCE (most-recent) baseline (0.00, gap 0.69) on FOCUS-SHIFTED discourses, and the wiring is load-bearing (bias-follows 1.00) -> D3s unbounded referent-tracking (the composed focus the buffer LACKS) + the existing biased-competition = multi-turn anaphora that follows the composed discourse focus, not mere recency, on one brain. The absolute fidelity + moat inherit the buffer own ~5/6 seed-variable competition (reported). NO sim/ edit.

@@ -1,0 +1,5 @@
+[D3 CENTERING focus] K=6 | the discrete-attractor tracks the discourse CENTER (Cb) over SVO utterances (Centering Theory), vs the recency baseline
+  [seed 44] D3 Cb-track DEEPER=0.977 (step-delta=1.0) | RECENCY(last-object) floor=0.0
+
+  AGGREGATE (K=6, chance 0.167): D3 Cb-track DEEPER=0.977 | RECENCY(last-object) floor=0.000
+  VERDICT: GO -- the discrete-attractor tracks the discourse CENTER (Cb, Centering Theory) over SVO utterances to held-out-DEEPER lengths (0.98) where the RECENCY (last-object) baseline FAILS at chance (0.00) -> D3 models the AGENT s actual discourse focus (Centering over SVO) = the foundation for the production MultiTurnAgent wire-in (D3 s composed Cb replaces the host content_bias_target). NO sim/ edit.

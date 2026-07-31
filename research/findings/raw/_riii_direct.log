@@ -1,0 +1,9 @@
+=== presentations=40, n_assembly=12, gamma_on=8 (seed 42) ===
+  [seed 42] within=19.00 cross=11.89 RATIO=1.60x | no-train=0.99x permuted=1.30x (77s)
+  AGGREGATE: within/cross RATIO=1.60x | no-train=0.99x permuted=1.30x
+  VERDICT: PARTIAL/NEGATIVE -- the ratio is not yet >=3x with clean controls; sweep gamma_on/drive/presentations. NO sim/ edit.
+=== presentations=80, n_assembly=12, gamma_on=8 (seed 42) ===
+  [seed 42] within=18.89 cross=13.63 RATIO=1.39x | no-train=0.99x permuted=1.15x (150s)
+  AGGREGATE: within/cross RATIO=1.39x | no-train=0.99x permuted=1.15x
+  VERDICT: PARTIAL/NEGATIVE -- the ratio is not yet >=3x with clean controls; sweep gamma_on/drive/presentations. NO sim/ edit.
+DIRECT_DONE

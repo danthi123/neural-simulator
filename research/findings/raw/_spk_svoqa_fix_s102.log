@@ -1,0 +1,63 @@
+[SPOKEN relational SVO Q&A] reason (FHRR) + speak (A->W), one numpy process | K=256 verb='eat'
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 47.7 GB RAM available)
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Brain-region framework: 34 regions, 7680 total neurons, 112 pathways.
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 7680 neurons...
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'language_input' (2048 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'motor_N' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'motor_E' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'motor_S' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'motor_W' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'language_output' (2048 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'motor_FS_N' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'motor_FS_E' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'motor_FS_S' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'motor_FS_W' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'noun_pool_APPLE' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'noun_pool_RIVER' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'noun_pool_DOG' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'noun_pool_CAT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'noun_pool_APPLE_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'noun_pool_RIVER_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'noun_pool_DOG_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'noun_pool_CAT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'verb_pool_GO' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'verb_pool_COME' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'verb_pool_STOP' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'verb_pool_LOOK' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'verb_pool_GO_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'verb_pool_COME_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'verb_pool_STOP_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'verb_pool_LOOK_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'adjective_pool_BIG' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'adjective_pool_SMALL' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'adjective_pool_HOT' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'adjective_pool_COLD' (200 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'adjective_pool_BIG_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'adjective_pool_SMALL_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'adjective_pool_HOT_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Region 'adjective_pool_COLD_fs' (24 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Initializing OU process state (tau=15.0ms, sigma=100.0pA)...
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Generating 3D neuron positions for 7680 neurons...
+[2026-07-08 07:31:54][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-08 07:32:03][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 4675169 synapses across 130 populations.
+[2026-07-08 07:32:03][INFO] SIM_BRIDGE: Initializing eligibility traces for 4675169 synapses (capacity: 7012753, dtype: float32)...
+[2026-07-08 07:32:03][INFO] SIM_BRIDGE: Initializing STDP state for 7680 neurons...
+[2026-07-08 07:32:03][INFO] SIM_BRIDGE: Simulation data initialized for 7680 neurons (3D). Synapses: 4675169. GPU memory: 23.6GB/51.2GB (46.0%)
+[2026-07-08 07:32:03][INFO] SIM_BRIDGE: Loading checkpoint from bridges/breadth_aw/seed42.simstate.h5...
+[2026-07-08 07:32:03][INFO] SIM_BRIDGE: Clearing simulation state and GPU memory...
+[2026-07-08 07:32:03][INFO] SIM_BRIDGE: Cleared simulation state and GPU memory.
+[2026-07-08 07:32:03][DEBUG] SIM_BRIDGE: Checkpoint: Dataset for 'cp_adex_w' not found or was empty. Using default.
+[2026-07-08 07:32:04][DEBUG] SIM_BRIDGE: Checkpoint: Dataset for 'cp_stp_u' not found or was empty. Using default.
+[2026-07-08 07:32:04][DEBUG] SIM_BRIDGE: Checkpoint: Dataset for 'cp_stp_x' not found or was empty. Using default.
+[2026-07-08 07:32:04][SUCCESS] SIM_BRIDGE: Checkpoint loaded. Sim time: 0.0ms, Step: 0, Model: IZHIKEVICH
+  STORED facts: 'the fish eats cat', 'the mouse eats dog', 'the frog eats bird'
+  ask 'what does the fish eat?' -> "cat"  -> SPOKE OBJECT ON SPIKES [correct]
+  ask 'what does the mouse eat?' -> "dog"  -> SPOKE OBJECT ON SPIKES [correct]
+  ask 'what does the bird eat?' -> "I don't know"  [MOAT: unknown/unstored -> I don't know]
+  ask 'what does the zzzqqx eat?' -> "I don't know"  [MOAT: unknown/unstored -> I don't know]
+
+  VERDICT: GO -- the brain ANSWERS a relational question by RECOVERING the object (FHRR unbind over its own codes) and SPEAKING it ON SPIKES (2/2 correct), and ABSTAINS on an unstored relation (moat True).

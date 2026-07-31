@@ -1,6 +1,9 @@
 ---
 type: finding
 status: superseded
+superseded_by:
+  - research/findings/2026-07-18-gap4-onbridge-BDSP-coupling-REVIVED-depth-fragile-boundary-confirmed-BTSP-pivot.md
+  - research/findings/2026-07-18-gap4-BTSP-plateau-gated-oneshot-credit-GO-the-keystone-is-the-enabler.md
 date: 2026-07-18
 mechanism: bdsp
 ---

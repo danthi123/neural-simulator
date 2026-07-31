@@ -1,0 +1,57 @@
+==============================================================================================================
+[FHRR-B Option 3 — ORTHOGONAL-TPR + learned cleanup] does a separable (tensor-product) structure make the multi-attribute bundle-inverse RECOVERABLE + GENERALIZING without the exact reciprocal?
+  codes=stream (between-cos 0.047) | F=16 | attrs=[3] d_role=[64] n_hidden=1 | train 24000/split x 3 splits | chance 0.062
+  refs on this harness: additive 0.193 | learned-linear 0.056 | dendritic 0.168 | Option-1 cleanup 1.0 | fixed-±1 ceiling 0.989
+==============================================================================================================
+
+--- A=3 attributes  d_role=64 ---
+  [seed 42] A=3 d_role=64: single 0.444 | BUNDLED train 0.791 | held-out(learned) 0.488 | held-out(proj) 1.000 | perm-role 0.011 | moat-gap +0.287
+  [seed 43] A=3 d_role=64: single 0.222 | BUNDLED train 0.575 | held-out(learned) 0.146 | held-out(proj) 1.000 | perm-role 0.036 | moat-gap +0.234
+  [seed 44] A=3 d_role=64: single 0.222 | BUNDLED train 0.628 | held-out(learned) 0.162 | held-out(proj) 1.000 | perm-role 0.019 | moat-gap +0.260
+  [seed 100] A=3 d_role=64: single 0.444 | BUNDLED train 0.699 | held-out(learned) 0.521 | held-out(proj) 1.000 | perm-role 0.019 | moat-gap +0.232
+  [seed 101] A=3 d_role=64: single 0.333 | BUNDLED train 0.791 | held-out(learned) 0.333 | held-out(proj) 1.000 | perm-role 0.022 | moat-gap +0.321
+  [seed 102] A=3 d_role=64: single 0.333 | BUNDLED train 0.451 | held-out(learned) 0.238 | held-out(proj) 1.000 | perm-role 0.033 | moat-gap +0.171
+  MEAN A=3 d_role=64: single 0.333 | BUNDLED train 0.656 | held-out(learned) 0.315 (0/6 >=0.90) | held-out(proj/fixed-readout) 1.000 (6/6 >=0.90)
+
+--- ANTI-CHEAT: memorization-floor (shuffle train labels) on best cell A=3 d_role=64 ---
+  [seed 42] SHUFFLE: BUNDLED held-out 0.000 (must be ~chance 0.062)
+  [seed 43] SHUFFLE: BUNDLED held-out 0.139 (must be ~chance 0.062)
+  [seed 44] SHUFFLE: BUNDLED held-out 0.000 (must be ~chance 0.062)
+  [seed 100] SHUFFLE: BUNDLED held-out 0.000 (must be ~chance 0.062)
+  [seed 101] SHUFFLE: BUNDLED held-out 0.048 (must be ~chance 0.062)
+  [seed 102] SHUFFLE: BUNDLED held-out 0.100 (must be ~chance 0.062)
+
+--- ANTI-CHEAT: LESION (scramble learned cleanup) on best cell A=3 d_role=64 ---
+  [seed 42] LESION: BUNDLED held-out 0.000 (must collapse)
+  [seed 43] LESION: BUNDLED held-out 0.000 (must collapse)
+  [seed 44] LESION: BUNDLED held-out 0.067 (must collapse)
+  [seed 100] LESION: BUNDLED held-out 0.000 (must collapse)
+  [seed 101] LESION: BUNDLED held-out 0.000 (must collapse)
+  [seed 102] LESION: BUNDLED held-out 0.167 (must collapse)
+
+--- LIVE NEGATIVE CONTROL: shallow learned-ADDITIVE bind (ref 0.193) ---
+  [seed 42] ADDITIVE: BUNDLED held-out 0.083
+  [seed 43] ADDITIVE: BUNDLED held-out 0.000
+  [seed 44] ADDITIVE: BUNDLED held-out 0.067
+  [seed 100] ADDITIVE: BUNDLED held-out 0.037
+  [seed 101] ADDITIVE: BUNDLED held-out 0.083
+  [seed 102] ADDITIVE: BUNDLED held-out 0.000
+
+--- POSITIVE CONTROL: fixed ±1 self-inverse FHRR on the same codes (A=3, D_h=256) ---
+  [seed 42] FIXED-±1: BUNDLED held-out 1.000
+  [seed 43] FIXED-±1: BUNDLED held-out 1.000
+  [seed 44] FIXED-±1: BUNDLED held-out 1.000
+  [seed 100] FIXED-±1: BUNDLED held-out 1.000
+  [seed 101] FIXED-±1: BUNDLED held-out 1.000
+  [seed 102] FIXED-±1: BUNDLED held-out 1.000
+
+==============================================================================================================
+  BEST LEARNED-read-out (A=3, d_role=64): BUNDLED held-out 0.315 (0/6 seeds >=0.90), train 0.656, single 0.333
+  BEST FIXED-read-out/proj (A=3, d_role=64): held-out 1.000 (6/6 seeds >=0.90), perm-role 0.000
+  perm-role control (learned) 0.024 (must be ~chance 0.062); moat-gap +0.251 (>0)
+  shuffle-train 0.048 (~chance); lesion 0.039 (collapse); additive 0.045 (ref ~0.193); fixed-±1 1.000
+
+  VERDICT: NEGATIVE (for the LEARNED read-out) — orthogonal-TPR + a LEARNED cleanup does NOT generalize the multi-attribute bundle-inverse (best learned held-out 0.315). Even with a separable, no-crosstalk tensor-product structure (which REMOVES the exact-reciprocal requirement entirely), the LEARNED read-out does not systematically recombine roles with held-out fillers. KEY STRUCTURAL CONTRAST: on the SAME separable TPR fact, a FIXED nearest-block read-out (NO learning) recovers held-out 1.000 (perm-role 0.000 ~ chance) — i.e. the orthogonal structure DOES dissolve the bundle-inverse, but ONLY with a FIXED read-out; the LEARNED full-space decode (0.315) does not generalize. This is direct evidence the bind+read is a FIXED structural primitive, not a learnable host op. NOT a closed boundary (owner's rule): with Option-1 cleanup GO + Option-2 deep-bind NEGATIVE + Option-3 orthogonal-TPR-learned NEGATIVE, the evidence CONVERGES on a genuine structural finding for the controller — the role-filler BIND (and the read-out that inverts it) is a FIXED STRUCTURAL neural primitive (binding-by-coincidence / dendritic multiplication / a fixed projection), NOT a learnable host op. Closing FHRR-B = learned codes (done) + learned cleanup (Option-1 GO) + a FIXED structural bind.
+  Total elapsed: 7066.4s
+==============================================================================================================
+  [saved] research/findings/raw/_phaseB_fhrr_b_option3_anticheat.json

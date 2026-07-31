@@ -1,0 +1,8 @@
+  [seed 42] E~basal 0.999 | E-inv-apical 0.200 | P~apical 0.985 | P0 0.027 | sep R2 0.943 || no_bac corrP 0.000 (Pmean 0.000) | soma-sees-apical E-inv 0.320
+  [seed 43] E~basal 0.999 | E-inv-apical 0.162 | P~apical 0.974 | P0 0.033 | sep R2 0.939 || no_bac corrP 0.000 (Pmean 0.000) | soma-sees-apical E-inv 0.330
+  [seed 44] E~basal 0.999 | E-inv-apical 0.174 | P~apical 0.972 | P0 0.031 | sep R2 0.927 || no_bac corrP 0.000 (Pmean 0.000) | soma-sees-apical E-inv 0.354
+
+============================================================================================================
+[emerge4] VERDICT: GO -- a faithful two-compartment burst neuron MULTIPLEXES two separable channels on one axon: a linear readout recovers BOTH the basal and apical drives from (E,P) at R2 0.936 (the direct demultiplexing test); the EVENT rate tracks the basal/feedforward drive (corr 0.999), the BURST PROBABILITY tracks the apical/credit drive (corr 0.977) with a LOW resting baseline (P0 0.030); E is mostly-basal (apical cross-talk 0.178 = the realistic cost of bursts occupying refractory time, absorbed downstream by the STF/STD demux + BDSP's (B-P0*E) baseline). BAC coupling load-bearing (no-bac collapses P to Pmean 0.000); two-compartment segregation load-bearing (apical->soma worsens the cross-talk 0.178->0.334). Multi-seed. ⇒ the substrate CAN carry burst-coded credit on a two-compartment neuron -- BUILD the `sim/` NeuronModel (Stage B: a small spiking Burstprop net reproducing EMERGE-1b's held-out 0.796 on-substrate). No `sim/` edit here.
+[emerge4] wrote E:\Documents\Projects\sim\research\findings\raw\_emerge4_burst_multiplexing.json
+============================================================================================================

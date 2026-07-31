@@ -1,0 +1,8 @@
+  [seed 42] deep_burst held 0.515 (probe 0.902) | vanilla_FA 0.485 | single 0.084 | lesion 0.209 (probe 0.483) | wrong 0.671 (probe 0.861) | null 0.209 (probe 0.483) | oracle 0.994 | chance 0.318
+  [seed 43] deep_burst held 0.568 (probe 0.843) | vanilla_FA 0.543 | single 0.095 | lesion 0.323 (probe 0.494) | wrong 0.627 (probe 0.746) | null 0.323 (probe 0.494) | oracle 1.000 | chance 0.357
+  [seed 44] deep_burst held 0.680 (probe 0.913) | vanilla_FA 0.485 | single 0.075 | lesion 0.292 (probe 0.457) | wrong 0.574 (probe 0.729) | null 0.292 (probe 0.457) | oracle 0.992 | chance 0.318
+
+============================================================================================================
+[emerge2b] VERDICT: BOUNDARY (next mechanism, not a stop) -- deep didn't beat floors (deep 0.588 vs FA 0.504/lesion 0.275); wrong-sign not at chance (readout 0.624, probe 0.778) (oracle 0.995). If the MISS is readout-only (probe near floor) it is the known output-layer-laundering artifact in multi-class classification (accuracy-only was fooled; representation-level is not) -- not a mechanism failure. If the probe itself is elevated, that is a genuine credit-assignment leak. Iterate: width/ensemble, or defer the clean self-supervised test to the substrate/stream.
+[emerge2b] wrote research/findings/raw/_emerge2b_selfsup_nextsymbol_lr02.json
+============================================================================================================

@@ -1,0 +1,46 @@
+
+[retinal cortex seed 42] 64c x 500h; host PPMI+SVD=+0.442; DENSE (w400.0, homeo off, ds40.0, win1000, cm40)
+[2026-06-15 04:53:36][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-15 04:53:36][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-15 04:53:36][INFO] SIM_BRIDGE: Brain-region framework: 6 regions, 1336 total neurons, 6 pathways.
+[2026-06-15 04:53:36][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-15 04:53:37][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1336 neurons...
+[2026-06-15 04:53:37][INFO] SIM_BRIDGE: Region 'cm_i' (40 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-15 04:53:37][INFO] SIM_BRIDGE: Region 'cm_e' (40 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-15 04:53:37][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-15 04:53:37][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-15 04:53:37][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1336 neurons...
+[2026-06-15 04:53:37][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-15 04:53:37][INFO] SIM_BRIDGE: Per-synapse STP types: E->E=35590, E->I=26683, I->E=36072, I->I=15983
+[2026-06-15 04:53:37][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 114328 synapses across 6 populations.
+[2026-06-15 04:53:37][INFO] SIM_BRIDGE: Initializing STP state for 114328 synapses (capacity: 171492)...
+[2026-06-15 04:53:37][INFO] SIM_BRIDGE: Initializing eligibility traces for 114328 synapses (capacity: 171492, dtype: float32)...
+[2026-06-15 04:53:37][INFO] SIM_BRIDGE: Per-synapse STP types: E->E=35590, E->I=26683, I->E=36072, I->I=15983
+[2026-06-15 04:53:37][INFO] SIM_BRIDGE: Initializing STDP state for 1336 neurons...
+[2026-06-15 04:53:37][INFO] SIM_BRIDGE: Simulation data initialized for 1336 neurons (3D). Synapses: 114328. GPU memory: 1.3GB/25.8GB (5.1%)
+  [STEP1 whitening front-end] neural g_e-g_i Pearson(cos,S)=+0.138  host-whitened Pearson=+0.246  neural~host align(cos-sim)=+0.111
+[2026-06-15 05:02:40][INFO] SIM_BRIDGE: CuPy using GPU: NVIDIA GeForce RTX 3090 (24.0 GB), mempool limit: 80%
+[2026-06-15 05:02:40][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-06-15 05:02:40][INFO] SIM_BRIDGE: Brain-region framework: 6 regions, 1336 total neurons, 6 pathways.
+[2026-06-15 05:02:40][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-06-15 05:02:40][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 1336 neurons...
+[2026-06-15 05:02:40][INFO] SIM_BRIDGE: Region 'cm_i' (40 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-15 05:02:40][INFO] SIM_BRIDGE: Region 'cm_e' (40 neurons): using Izh type IZH2007_FS_CORTICAL_INTERNEURON
+[2026-06-15 05:02:40][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-06-15 05:02:40][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-06-15 05:02:40][INFO] SIM_BRIDGE: Generating 3D neuron positions for 1336 neurons...
+[2026-06-15 05:02:40][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-06-15 05:02:40][INFO] SIM_BRIDGE: Per-synapse STP types: E->E=35590, E->I=26683, I->E=36072, I->I=15983
+[2026-06-15 05:02:40][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 114328 synapses across 6 populations.
+[2026-06-15 05:02:40][INFO] SIM_BRIDGE: Initializing STP state for 114328 synapses (capacity: 171492)...
+[2026-06-15 05:02:40][INFO] SIM_BRIDGE: Initializing eligibility traces for 114328 synapses (capacity: 171492, dtype: float32)...
+[2026-06-15 05:02:40][INFO] SIM_BRIDGE: Per-synapse STP types: E->E=35590, E->I=26683, I->E=36072, I->I=15983
+[2026-06-15 05:02:40][INFO] SIM_BRIDGE: Initializing STDP state for 1336 neurons...
+[2026-06-15 05:02:40][INFO] SIM_BRIDGE: Simulation data initialized for 1336 neurons (3D). Synapses: 114328. GPU memory: 1.3GB/25.8GB (5.2%)
+  [ON/OFF whitened         ] Pearson=+0.051  gen=0.203 (chance 0.125)  silent=0.00  eff-rank=2.1
+  [POINT (no-whiten 1pop)  ] Pearson=+0.065  gen=0.188 (chance 0.125)  silent=0.00  eff-rank=5.5
+  [anti-cheat] permuted=+0.012 (~0); elapsed 819s
+  gates: {'structure': False, 'generalizes': False, 'beats_point': False, 'permuted_collapses': True, 'host_carries': True}  (whitened +0.051/gen 0.203 vs point +0.065/gen 0.188, host +0.442)
+
+  RETINAL CORTEX GATE VERDICT: NEGATIVE_or_PARTIAL
+  [saved] research/findings/raw/_phaseB_graded_real_seed42.json

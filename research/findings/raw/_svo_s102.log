@@ -1,0 +1,7 @@
+[SVO compose probe] corpus=data/corpus/tinystories.txt K=256 D=512 n_facts=12
+  [seed 102] obj_acc=1.000 subj_acc=1.000 | permuted=0.000 | margin stored=0.7588 vs unstored=0.0123 | chance=0.0039 (V=256)
+
+  AGGREGATE (1 seeds): obj_acc=1.000 subj_acc=1.000 permuted=0.000
+  obj>0.5 all=True | beats_permuted(>.4) all=True | moat-margin-sep all=True
+  VERDICT: GO -- the brain STORES + ANSWERS SVO relational facts over its OWN real-corpus codes (bind/unbind role-fillers; correlated co-occurrence codes DO compose); moat-margin-separation=True.
+  [saved] research/findings/raw/_svo_s102.json

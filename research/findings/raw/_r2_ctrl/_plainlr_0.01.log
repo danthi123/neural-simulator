@@ -1,0 +1,36 @@
+[stream-eprop] corpus=data/corpus/tinystories_train.txt stream=2000000 V=2000 n_pool=300 block=128 batch=64 lane=28125 epochs=4 bptt_steps=10 dev=cuda permute_stream=False
+[stream-eprop] PRE-REGISTERED EXPECTATION: e-prop is a diagonal (RTRL) truncation dropping the off-diagonal recurrent Jacobian; literature (Bellec-2020 needed DNI for long-range PTB; Murray-2019 RFLO matches BPTT only for short horizons) predicts plastic_eprop captures MOST of the SHALLOW margin and only a SMALL fraction of the DEEP margin. A shallow-only capture is an HONEST NEGATIVE on long-range -- a first-class deliverable.
+      [fixed_reservoir] epoch 1/4 last-block-CE 6.957
+      [fixed_reservoir] epoch 2/4 last-block-CE 6.888
+      [fixed_reservoir] epoch 3/4 last-block-CE 6.854
+      [fixed_reservoir] epoch 4/4 last-block-CE 6.838
+    -> fixed_reservoir: shallow_margin -3.2789  deep_margin -2.7599  agg_ce 7.1046  (91s)
+      [plastic_eprop] epoch 1/4 last-block-CE 6.077
+      [plastic_eprop] epoch 2/4 last-block-CE 5.827
+      [plastic_eprop] epoch 3/4 last-block-CE 5.569
+      [plastic_eprop] epoch 4/4 last-block-CE 5.512
+    -> plastic_eprop: shallow_margin -3.2667  deep_margin -1.6002  agg_ce 6.0654  (209s)
+
+[stream-eprop] MARGIN vs add-1 stream bigram, by within-block context depth (+ = arm better than bigram):
+                 arm         1         2         3       4-8      9-16    17-127   SHALLOW      DEEP
+     fixed_reservoir   -3.3008   -3.3114   -3.2890   -3.2660   -3.1693   -2.7599   -3.2789   -2.7599
+       plastic_eprop   -3.3085   -3.3198   -3.2956   -3.2419   -2.7753   -1.6002   -3.2667   -1.6002
+
+[stream-eprop] DEEP SUB-BUCKETS (finer within-block depth; the FAR end 97-127 = the true 100+-token test):
+                   arm       17-32       33-64       65-96      97-127
+       fixed_reservoir     -3.0845     -2.9718     -2.6324     -2.5051
+         plastic_eprop     -1.7906     -1.6564     -1.5505     -1.4952
+
+[stream-eprop] ctx1 READ-OUT-ONLY diagnostic (pos 0, h_0=0 -> W_rec has ZERO effect; ~equal iff read-out matched):
+           fixed_reservoir: ctx1 margin -3.2448
+             plastic_eprop: ctx1 margin -3.2497
+
+[stream-eprop] ANTI-CHEATS:
+    zero_signal W_rec == fixed_reservoir W_rec (byte-identical): None
+
+[stream-eprop] GATE: INCOMPLETE (need all 5 arms; have ['fixed_reservoir', 'plastic_eprop'])
+
+[stream-eprop] FIXED-FLOOR-RELATIVE recurrent-credit fraction (plastic gain over fixed / BPTT gain over fixed; isolates the credit RULE):
+
+-> research/findings/raw/_r2_ctrl/_plainlr_0.01.json (300.2s)
+STREAM_EPROP_DONE

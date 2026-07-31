@@ -1,0 +1,8 @@
+  [seed 42] PA recover 0.314 (clean 0.358) | RESERVOIR recover 0.612 (clean 0.780) | no_reg 0.169 | scramQ 0.162 | untr 0.000 || PA noisy 0.332 vs res 0.715 | loc True
+  [seed 43] PA recover 0.193 (clean 0.319) | RESERVOIR recover 0.612 (clean 0.749) | no_reg 0.354 | scramQ 0.059 | untr 0.000 || PA noisy 0.330 vs res 0.710 | loc True
+  [seed 44] PA recover 0.162 (clean 0.276) | RESERVOIR recover 0.585 (clean 0.754) | no_reg -0.023 | scramQ 0.098 | untr 0.000 || PA noisy 0.303 vs res 0.708 | loc True
+
+============================================================================================================
+[emerge8] VERDICT: BOUNDARY (build-informative, not a stop) -- PA did NOT recover from perturbation better than the fixed reservoir (PA 0.223 vs reservoir 0.603) (clean gen PA 0.318 / reservoir 0.761, task-sane; noise-gen PA 0.322 vs res 0.711). The careful chaos-taming rule did not make the trajectory a more-recoverable attractor than the fixed reservoir at this config -> either PA-tuning (g/eta_M/alpha/epochs; PA is sensitive to the chaos gain + alignment lr) OR a genuine toy-scale limit (the recurrent-credit advantage may need larger scale / richer targets; escalate per the shortlist: Laje-Buonomano innate-trajectory training / Gilra-Gerstner FOLLOW). Do NOT start the sim/ port.
+[emerge8] wrote research/findings/raw/_emerge8_predictive_alignment.json
+============================================================================================================
