@@ -99,7 +99,42 @@ tested, so lowering it is cheap and safe).
 **Status:** READY TO BUILD · no GPU headroom needed (the regression suite runs in ~45 s beside the crux) · raised
 2026-07-31 · owner: autonomous
 
-### The evidence that forces it
+### ⚠️ 2026-07-31 — THIS ENTRY'S DIAGNOSIS IS REFUTED BY MEASUREMENT. The prescription may survive; the reason does not.
+
+The entry below argues the fix from "`w_j* = hebbian_max_weight` is an INPUT-INDEPENDENT fixed point", i.e. the
+weights saturate at the bound. **That was never measured, and it is false.** With the raw retina→V1 weights now
+instrumented (`raw_weight_stats`, commit `34415686`) at this exact operating point:
+
+| quantity | measured | what it rules out |
+|---|---|---|
+| `on_mean` / `off_mean` | 6.636 / 6.680 | **not at the bound** — `hebb_max` is 1200 |
+| `on_minus_off_mean` | **−0.043** | the SIGNED RF cancels to ~0 |
+| per-cell incoming L2 (mean / min) | 1565 / 703 | **nothing collapsed** — mass is healthy |
+| `frac_cells_l2_near_zero` | 0.000 | no dead cells |
+| total plasticity events | 37,905,147 | the rule DID fire |
+
+⇒ the defect is **COMMON-MODE CONVERGENCE**: ON and OFF converge to nearly the same value, so the signed
+receptive field vanishes while the raw weights are fine. Adding or re-bounding weight mass cannot help.
+
+**Miller-MacKay subtractive normalization may still be the right fix** — forcing `sum_j dw_ij = 0` removes exactly
+this common mode, and it is the orientation-development model. But it must be justified by the common-mode
+measurement, **not** by the saturation story below, which is refuted. Do not inherit the wrong reason for a
+possibly-right fix.
+
+**PRE-REGISTERED, staged to the pool 2026-07-31 (3 arms × seeds 42/43/44, `dev_steps` 6000):**
+`laneD_out/{base,meansub,oja}_{42,43,44}.json`.
+- **Prediction:** `HEBB_MEAN_SUB=1.0` raises `|on_minus_off_mean|` well above the baseline's ~0.04 **and** raises
+  `osi_post_frac` above the baseline's 0.0104. `HEBB_OJA=0.01` also raises `osi_post_frac` (it was the strongest
+  lever in the record: 0.0104 → 0.0385 → 0.1112).
+- **KILL CRITERION:** if `|on_minus_off_mean|` does NOT separate from baseline under mean-subtract, the
+  common-mode diagnosis is refuted in turn and the residual is downstream of the weights — record that, do not
+  retune.
+- Note the OSI statistic that matters is **`osi_post_frac`**, not the OSI *mean*; an earlier pass read the mean
+  and drew the wrong conclusion about which lever was strongest.
+
+---
+
+### The evidence that forces it (⚠️ the saturation reasoning here is SUPERSEDED — see the block above)
 With the drive fixed (init weight 120, `hebb_max` 1200, drive 1200) lane D's V1 fires and the gates SPLIT:
 
 | gate | measured | required | reads |
