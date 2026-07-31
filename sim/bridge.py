@@ -1113,6 +1113,43 @@ class SimulationBridge:
             self.cp_synapse_pulse_timers[:kept_timers.size] = kept_timers
             self.cp_synapse_pulse_progress[:kept_progress.size] = kept_progress
 
+        # 2026-07-31 FIX: the five arrays above were the ONLY ones compacted. Every other per-synapse array --
+        # the plasticity gain (i.e. the gates), the plastic mask, the conn-type table and the transmission gain
+        # -- kept their OLD layout while the CSR lost entries, so from here on each one addressed a different
+        # synapse than it named. Unlike the CSR-rebuild path this is a pure REMOVAL (eliminate_zeros preserves
+        # order), so a positional compaction with the same keep_mask is exactly right.
+        _old_count = int(self._synapse_count)
+        for _attr in ("cp_plasticity_rate_gain", "cp_plastic_mask",
+                      "cp_synapse_conn_type", "cp_transmission_gain"):
+            _arr = getattr(self, _attr, None)
+            if _arr is None or _arr.shape[0] < _old_count:
+                continue
+            _kept = _arr[:_old_count][keep_mask]
+            _arr[:_kept.size] = _kept
+            setattr(self, _attr, _arr)
+
+        # Gate index maps are positions in the synapse list, so a removal shifts every index after each gap.
+        # new_index = (number of kept synapses strictly before it); dropped synapses leave the gate entirely.
+        _gmaps = getattr(self, "_plasticity_gate_indices_gpu", None)
+        if _gmaps:
+            _newpos = cp.cumsum(keep_mask.astype(cp.int64)) - 1        # old idx -> new idx
+            for _name, _idx in list(_gmaps.items()):
+                if _idx is None or _idx.size == 0:
+                    continue
+                _valid = _idx[_idx < _old_count]
+                _valid = _valid[keep_mask[_valid]]                     # drop synapses that were eliminated
+                _mapped = _newpos[_valid].astype(cp.int32)
+                _gmaps[_name] = _mapped
+                if getattr(self, "_plasticity_gate_to_synapses", None) is not None:
+                    self._plasticity_gate_to_synapses[_name] = _backend_to_host(_mapped).tolist()
+                # coordinates stay valid across a removal for the synapses that survived
+                _coords = getattr(self, "_plasticity_gate_to_coords", None)
+                if _coords and _name in _coords:
+                    _r, _c = _coords[_name]
+                    _keep_host = _backend_to_host(keep_mask[_idx[_idx < _old_count]]).astype(bool)
+                    if _keep_host.shape[0] == _r.shape[0]:
+                        _coords[_name] = (_r[_keep_host], _c[_keep_host])
+
         self._synapse_count = int(cp.sum(keep_mask))  # int() works on cupy 0-d + numpy scalar
 
     def get_profiling_stats(self):
