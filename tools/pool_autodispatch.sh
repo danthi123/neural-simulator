@@ -61,6 +61,27 @@ pop_job() {
   printf '%s' "$job"
 }
 
+# SINGLETON GUARD (2026-07-31): repeated restarts during testing left THREE dispatchers polling at once. flock
+# in pop_job stops two of them claiming the same job, so correctness was safe -- but three pollers triple the ssh
+# load on every node each cycle, and make "is the dispatcher up?" ambiguous, which now matters because
+# workflow_check gates on exactly that. Refuse to start when one is already running.
+# Exempt the systemd-managed run: systemd ALREADY guarantees one instance per service, so applying the guard
+# there makes the two fight -- systemd restarts the unit, the fresh instance sees the outgoing one, exits 0, and
+# Restart=always loops it forever (the unit sits in "activating" and never reaches active). INVOCATION_ID is set
+# by systemd only. A MANUAL start still refuses, which is the case the guard was actually written for.
+# Ask systemd, do not sniff the process table. Two earlier attempts got this wrong:
+#   (1) a bare pgrep guard fought systemd -- the unit restarts, the fresh instance saw the outgoing one, exited 0,
+#       and Restart=always looped it forever, leaving the unit stuck "activating";
+#   (2) exempting systemd via INVOCATION_ID silently disabled the guard for EVERY manual start, because that
+#       variable is set for any process under a systemd unit and is INHERITED by children -- Claude Code itself
+#       runs under one, so the exemption always fired and a manual start happily launched a second dispatcher.
+# MainPID is unambiguous: refuse only when the unit is active and this process is not the unit.
+_MAIN=$(systemctl --user show -p MainPID --value pool-dispatch.service 2>/dev/null || echo 0)
+if systemctl --user is-active --quiet pool-dispatch.service 2>/dev/null && [ "${_MAIN:-0}" != "$$" ]; then
+  echo "[pool-dispatch] REFUSING to start: pool-dispatch.service is active (MainPID $_MAIN). Use: systemctl --user restart pool-dispatch.service"
+  exit 0
+fi
+
 echo "[pool-dispatch] started $(date '+%H:%M:%S') | queue=$QUEUE | poll=${POLL}s | nodes=$NODES"
 while true; do
   for NODE in $NODES; do
