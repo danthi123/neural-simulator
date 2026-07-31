@@ -1,0 +1,56 @@
+{
+ "runner": "research/runners/_curiosity_seek_learn_onbridge_derisk.py",
+ "arm": "critic_lesion",
+ "aggregated_from": [
+  "research/findings/raw/lanes_2026-07-31/_curiosity_critic_lesion_s100.log",
+  "research/findings/raw/lanes_2026-07-31/_curiosity_critic_lesion_s101.log",
+  "research/findings/raw/lanes_2026-07-31/_curiosity_critic_lesion_s102.log",
+  "research/findings/raw/lanes_2026-07-31/_curiosity_critic_lesion_s42.log",
+  "research/findings/raw/lanes_2026-07-31/_curiosity_critic_lesion_s43.log",
+  "research/findings/raw/lanes_2026-07-31/_curiosity_critic_lesion_s44.log"
+ ],
+ "per_seed_vetoed": {
+  "100": true,
+  "101": true,
+  "102": true,
+  "42": true,
+  "43": true,
+  "44": true
+ },
+ "n_seeds": 6,
+ "n_vetoed": 6,
+ "label": "curiosity veto survives the striosome critic lesion",
+ "status": "GO",
+ "go": true,
+ "undefined_reasons": [],
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "every seed produced a veto reading",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "veto fires on all seeds with the critic lesioned",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  },
+  {
+   "kind": "require",
+   "name": "6 seeds (project bar)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  }
+ ],
+ "disabled_processes": [
+  {
+   "process": "GABA_B striosome critic",
+   "why": "the lesion under test \u2014 value-subtraction pathway removed"
+  }
+ ],
+ "chance": null
+}
