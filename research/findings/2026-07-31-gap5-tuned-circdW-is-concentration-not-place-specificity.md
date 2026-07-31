@@ -1,0 +1,85 @@
+# ⛔ gap#5: the TUNED `circ_dW` headline is increment CONCENTRATION, not place-specificity — position-shuffling changes it by 1.3%
+
+**Date:** 2026-07-31 · **Status:** MEASURED, 6 seeds × 2 densities, instrument validated in BOTH directions ·
+**Touches a number on the board** (the 2026-07-31 06:15 entry) · **Does NOT touch the banked field-quality GO**
+
+---
+
+## 1. The result
+
+At the tuned operating point the board reports as the gap#5 best (`w_max=150, dwell=180, density=0.25`,
+`circ_dW 0.7050 = 105% of headline`), the weight change's spatial arrangement is **indistinguishable from a random
+permutation of the same increments**:
+
+| condition | observed `circ_dW` | position-shuffled null | ratio | permutation p |
+|---|---|---|---|---|
+| **measured, density 0.25** (n=6) | 0.6572 | 0.6486 | **1.013** | **0.42** |
+| **measured, density 1.0** (n=6) | 0.4877 | 0.5894 | **0.83** | **0.60** |
+| **σ=5 ORACLE** (positive control) | 0.8887 | 0.1964 | **4.525** | **0.0025** |
+
+The null holds increment **magnitude and concentration exactly fixed** and shuffles only **position**. Shuffling
+positions moves the measured value by **1.3%**; it moves a genuine place field by **4.5×**.
+
+⇒ **`circ_dW` at this operating point is measuring how CONCENTRATED the increments are, not WHERE they are.**
+The quantity that was tuned from 0.2474 → 0.7050 is one that a position-blind process reproduces.
+
+## 2. Why this was invisible until now
+
+`circ_resultant` rewards concentration: mass piled on a few place indices gives a high resultant **wherever those
+indices are**. The controls in use could not separate the two:
+
+- the **randset** control is structurally weak for a cumulative measure — over 5 laps × 60 positions, the place
+  sweep and the random-set drive deliver the **same total mass to every place cell**; randset only scrambles
+  contiguity *within a step*. Measured consequence: `treat_circ_dW` and `randset_circ_dW` agree to **seven decimal
+  places** (~1e-7) at both densities. It was never going to fail.
+- the **legacy `circ`-based control** was outright degenerate (no power at all) — see
+  [`2026-07-31-gap5-stepC-control-void-at-small-dW-and-the-fix.md`](2026-07-31-gap5-stepC-control-void-at-small-dW-and-the-fix.md).
+  The new degeneracy guard fires on **4/6** runs at density 0.25 and **6/6** at density 1.0.
+
+The board already carried the warning in weaker form — *"Do NOT quote the raw circ 0.846 combination — 59-30% of it
+is place-INDEPENDENT concentration."* **At the tuned point it is not 30-59%. It is ~100%.**
+
+## 3. The instrument was validated in BOTH directions before this negative was accepted
+
+A negative needs its instrument verified exactly as much as a positive does.
+
+| control | result |
+|---|---|
+| POSITIVE — σ=5 oracle field | detected, **p = 0.0025** (obs 0.8887 vs null 0.1964) |
+| POSITIVE — weak field (amp 5.0, 1.0) | detected, p = 0.0025 (the metric is scale-free, so amplitude is not the issue) |
+| NEGATIVE — scattered increments, 60 independent draws | **FPR 0.000**, median null p 0.679 |
+| POWER — contiguous increments, 60 draws | **1.000** |
+| `lr=0` arm | `circ_dW` **exactly 0.0** — no learning, no weight change |
+
+The test has power on realistic place-field structure and does not cry wolf.
+
+## 4. Scope — what this does and does NOT touch
+
+- **DOES touch:** the 2026-07-31 06:15 board entry's *"gap#5 field quality: `circ_dW` 0.7050 ± 0.0605 at 6 seeds
+  = 105% of the 0.6705 headline, 81% of the σ=5 oracle"*, and the tuning progression
+  `0.2474 → 0.3852 → 0.5897 → 0.7050` that produced it. Those numbers are **real as measurements** and
+  **misdescribed as place-specificity**. The tuning optimized a concentration statistic.
+- **Does NOT touch** the banked **field-quality GO** (`research/findings/raw/gap5_reader/fieldquality_gpu6.json`,
+  a different code path): there `circ 0.664` against `randset 0.122` is a **ratio of 5.4**, comparable to the
+  oracle's 4.5. **That measurement does show place-specificity and stands.**
+- **The tension is informative, not contradictory:** two different operating points. Place-specificity is present
+  at the field-quality configuration and absent at the configuration that maximizes `circ_dW`. That is consistent
+  with the tuning having walked *away* from place-specificity while walking *up* a concentration metric.
+
+## 5. Consequence
+
+`circ_dW` **alone is not a valid gate for place-field formation.** Any gate on it must be accompanied by the
+position-shuffled permutation test, which is now computed and stored on every run
+(`perm_p_value_median`, `perm_null_p95_circ_dW`) at no extra simulation cost.
+
+**The open question is now well-posed and was not before:** at which operating point does the BTSP write become
+place-specific *above a concentration-matched null*? The field-quality configuration is the place to look, since
+it is the one with a 5.4× randset ratio.
+
+## 6. The transferable lesson
+
+**A metric that goes up under tuning is not thereby measuring what its name says.** The number moved 0.2474 →
+0.7050 across four steps of honest, controlled tuning, and every step was real — the increments genuinely became
+more concentrated. Nothing in that progression could reveal that position had dropped out, because no control in
+the loop held concentration fixed and varied position. The permutation null is one line of extra arithmetic on
+increments that were already computed.
