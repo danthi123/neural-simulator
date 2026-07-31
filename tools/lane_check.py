@@ -43,6 +43,9 @@ LANES = {
                                        "hippo", "btsp", "schaffer", "engram"]),
 }
 CRUX = "F · gap#4 CRUX"
+# How many of the 5 disjoint CPU lanes may sit unserved before it is under-parallelisation rather than
+# prioritisation. 3 of 5 idle means the majority of free, GPU-independent capacity is unused.
+MAX_IDLE_CPU_LANES = 3
 
 
 def classify(cmd: str):
@@ -108,6 +111,17 @@ def main():
     if not cpu_active and (age_min is None or age_min > STALE_MIN):
         alarms.append("CPU-LANES-STALE(%s; 5 disjoint CPU lanes cost nothing beside GPU work)"
                       % ("never dispatched" if age_min is None else "%.0f min since last dispatch" % age_min))
+
+    # BREADTH, not just presence (2026-07-31, owner-flagged). `cpu_active` is true if ANY ONE CPU lane is busy, so
+    # the check passed today with lane D running and A/B/C/E ALL idle -- "OK, work spans 3 lanes" while five of
+    # eight lanes had zero allocation. That is the exact under-parallelisation the tool exists to catch, one level
+    # up: monoculture was caught, oligoculture was not. The 5 CPU lanes are explicitly disjoint per roadmap §6
+    # ("cleanly concurrent; they share only the bridge + the stream-cortex codes"), so several idle at once is
+    # unused free capacity, not a scheduling constraint.
+    idle_cpu = [ln for ln in cpu_lanes if ln not in active]
+    if len(idle_cpu) >= MAX_IDLE_CPU_LANES:
+        alarms.append("CPU-LANES-NARROW(%d of %d disjoint CPU lanes unserved: %s)"
+                      % (len(idle_cpu), len(cpu_lanes), "; ".join(idle_cpu)))
 
     if args.quiet:
         print("lanes=%d crux=%d%s" % (n_lanes, crux_total, (" -- ACT: " + " ".join(alarms)) if alarms else ""))
