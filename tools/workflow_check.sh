@@ -182,6 +182,27 @@ for H in pool40 pool41 pool42; do
   fi
 done
 printf "%b" "$POOL_LINES"
+# QUEUE DEPTH is the real check (2026-07-31). "Pool idle" is a SYMPTOM; the defect is "nothing staged", and
+# alarming on the symptom caps utilisation at my reaction time -- it fired seven times in one session, each time
+# work that could have been queued in advance. Also verify the dispatcher is LIVE: a full queue with a dead
+# dispatcher is the same idle pool, and that is exactly what happened after I killed it for a cleanup and did
+# not restart it.
+# `grep -c` prints "0" AND exits 1 on no match, so `$(... || echo 0)` yields a TWO-LINE "0\n0" and the integer
+# test below silently errors instead of firing. This is the SAME defect I fixed for pgrep earlier in this file
+# tonight and then reintroduced here verbatim -- take the first line and default it.
+QDEPTH=$(bash "$ROOT/tools/pool_queue.sh" depth 2>/dev/null | head -1); QDEPTH=${QDEPTH:-0}
+DISPATCH=$(pgrep -fc '[p]ool_autodispatch' 2>/dev/null | head -1); DISPATCH=${DISPATCH:-0}
+echo "  queue depth=$QDEPTH  dispatcher=$([ "${DISPATCH:-0}" -gt 0 ] && echo LIVE || echo DEAD)"
+if [ "${QDEPTH:-0}" -eq 0 ]; then
+  echo "  ⛔ POOL QUEUE EMPTY — nothing is staged, so the next free node will idle by default."
+  echo "     Stage work:  bash tools/pool_queue.sh add '<command run from ~/derisk-pool/sim>'"
+  FAIL=1
+fi
+if [ "${DISPATCH:-0}" -eq 0 ] && [ "${QDEPTH:-0}" -gt 0 ]; then
+  echo "  ⛔ DISPATCHER DEAD with $QDEPTH job(s) queued — staged work will never launch."
+  echo "     nohup bash tools/pool_autodispatch.sh > /tmp/pool_dispatch.log 2>&1 &"
+  FAIL=1
+fi
 if [ "$POOL_IDLE" -gt 0 ]; then
   echo "  ⛔ $POOL_IDLE of $POOL_UP reachable pool node(s) IDLE — that is $((POOL_IDLE*12)) cores doing nothing."
   echo "     They are DISJOINT from the GPU, so they cost nothing to use while the crux runs."
