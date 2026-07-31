@@ -1,0 +1,21 @@
+{
+ "run_id": "1785524012-102891",
+ "runner": "research/runners/_affect_state_region_derisk.py",
+ "argv": [
+  "/home/node/derisk-pool/sim/research/runners/_affect_state_region_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102"
+ ],
+ "git_sha": "unknown",
+ "git_dirty": false,
+ "started": "2026-07-31T14:53:32",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "artifact": "research/findings/raw/_affect_state_region_6seed.json"
+}

@@ -120,3 +120,6 @@
 2026-07-31 14:39:58	pool42	SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._emerge72_construction_registry_derisk --derisk --seeds 42 43 44 100 101 102  
 2026-07-31 14:41:04	pool40	SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._curiosity_seek_learn_onbridge_derisk --seeds 42 43 44 100 101 102  
 2026-07-31 14:41:10	pool41	SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._b1_v1_selforg_onbridge_derisk --seeds 42 43 44 --init-weight-mean 120 --hebb-max 1200 --drive-pA 1200 --coact-thresh 0.0002 --homeo-target 0.002 --n-inh 0 --dev-steps 6000 --out laneD_base6.json  
+2026-07-31 14:53:32	pool40	SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._affect_state_region_derisk --seeds 42 43 44 100 101 102  
+2026-07-31 14:53:38	pool42	SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._self_schema_region_derisk --seeds 42 43 44 100 101 102 --json ss6.json  
+2026-07-31 14:54:44	pool40	SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._emerge72_construction_registry_derisk --derisk --seeds 42 43 44 100 101 102  

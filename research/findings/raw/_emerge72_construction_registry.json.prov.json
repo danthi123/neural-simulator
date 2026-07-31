@@ -1,0 +1,22 @@
+{
+ "run_id": "1785523199-103475",
+ "runner": "research/runners/_emerge72_construction_registry_derisk.py",
+ "argv": [
+  "/home/node/derisk-pool/sim/research/runners/_emerge72_construction_registry_derisk.py",
+  "--derisk",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102"
+ ],
+ "git_sha": "unknown",
+ "git_dirty": false,
+ "started": "2026-07-31T14:39:59",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "artifact": "research/findings/raw/_emerge72_construction_registry.json"
+}
