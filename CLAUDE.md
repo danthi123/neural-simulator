@@ -133,19 +133,41 @@ so the workflows compound instead of re-learning the same lessons. Grounded, hon
 never CLAUDE.md/memory bloat). A caught lapse IS a skill gap — evolve the skill so it can't recur, don't just patch the
 instance. (Born 2026-07-24 after the owner caught three process lapses in one session.)
 
-## When Compacting (custom compaction instruction — must survive into every compaction)
+## When Compacting (custom instruction — MUST survive into every compaction)
 
-When this session auto-compacts or `/compact` runs, the summary MUST preserve (and may drop everything else to fit):
-- **The ACTIVE MISSION block + the non-negotiables** (brain-based-only, one-brain, no-defer, speed-secondary, the honesty boundary) and the pointers to [`docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`](docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md) + [`GAP_CLOSURE_MISSION.md`](GAP_CLOSURE_MISSION.md).
-- **The current frontier + the exact next action:** the wall being worked, its GO-gate command + the anti-cheat controls, and the literal next command to run.
-- **Live background work:** every running run / workflow / subagent ID + its Monitor, and every uncommitted result awaiting a verdict (so nothing is lost or double-launched).
-- **Files created/modified this session + their purpose**, plus any `NO sim/ edit` / additive-default-off scope flags.
-- **Owner directives given this session** — verbatim intent, not a paraphrase.
+**Target: compact at roughly 50% of the window, NOT at the ceiling.** Compaction near the limit is worse than
+compaction early — the summariser gets less room to work in exactly when the session holds the most state.
+**EXCEPTION, and it is mine to call: do not compact while a decisive run is mid-flight and its verdict is not yet
+recorded**, because a summary written between "the run finished" and "the artifact was read" loses the one thing
+the session existed to produce. Land the verdict, then compact.
 
-Summarize aggressively (keep only what changes a decision): git log, verbose run logs (error lines only), search-result dumps, exploratory file reads. Preserve any test / benchmark / GO-gate command VERBATIM.
+**PRESERVE (drop anything else to fit):**
+- **The ACTIVE MISSION + the non-negotiables** — brain-based-only, one-brain, no-defer, speed-secondary, the
+  honesty boundary — and the pointers to the MASTER ROADMAP + `GAP_CLOSURE_MISSION.md`.
+- **THE GATES ARE AUTHORITATIVE.** `tools/gates/` + [`docs/FAILURE_GATE_MATRIX.md`](docs/FAILURE_GATE_MATRIX.md)
+  + [`research/FAILURE_LOG.md`](research/FAILURE_LOG.md). Where a remembered rule and a gate disagree, the gate
+  wins. A newly-noticed failure gets ONE LINE in the failure log and `gates/coverage` blocks until it names a gate
+  or declares NOT-GATEABLE. **Do not rebuild a check that exists — read the matrix first.**
+- **THE PENDING LIST IS ON THE BOARD, NOT IN CHAT.** `GAP_CLOSURE_MISSION.md` CURRENT STATE carries the ordered
+  next actions. This is load-bearing: a backlog living in conversation evaporates at exactly this moment, which
+  is why it was moved.
+- **The wall reframe:** at any wall ask *"what else does the real system run alongside this, that we replaced with
+  a constant?"* BEFORE *"what biology surpasses this?"* — the proxy usually owns the measurement (97% of a gap#5
+  weight change was the clamp). And **the instrument is part of the emulation.**
+- **LIVE BACKGROUND WORK — every running run / workflow / agent / cloud instance and its state file**, so nothing
+  is lost or double-launched: the crux (`gap4-crux.service`), the pool (`research/queue/pool.queue`,
+  `dispatch.log`), the AWS lane (`research/queue/.aws_gpu`, **billing while running** —
+  `bash tools/aws_gpu.sh stop`). Plus every uncommitted result awaiting a verdict.
+- **Owner directives given this session — VERBATIM intent, never a paraphrase.**
+- **Files created/modified + why**, plus any `NO sim/ edit` / additive-default-off scope flags.
 
-**Context hygiene (2026-07-23):** history lives in [`docs/project-history-archive.md`](docs/project-history-archive.md) (RAG-indexed, `--corpus doc`), NOT inline — retrieve it, don't reload it. Prefer `/clear` between unrelated arcs (nav → conversation → gap#5) over one mega-session; offload heavy reading/search to subagents (their context doesn't count against the main window).
+**Summarise aggressively** (keep only what changes a decision): git log, verbose run logs (error lines only),
+search dumps, exploratory reads. **Preserve any test / benchmark / GO-gate command VERBATIM.**
 
+**Context hygiene:** history lives in [`docs/project-history-archive.md`](docs/project-history-archive.md) and
+[`docs/ENGINE_REFERENCE.md`](docs/ENGINE_REFERENCE.md), RAG-indexed — RETRIEVE it, do not reload it. Prefer
+`/clear` between unrelated arcs over one mega-session, and offload heavy reading to subagents (their context does
+not count against this window).
 
 ## Research the record BEFORE building — `tools/before_you_build.sh` (the gate is MECHANICAL)
 
