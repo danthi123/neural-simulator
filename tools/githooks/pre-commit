@@ -43,5 +43,19 @@ if [ -n "$STAGED" ]; then
     exit 1
   fi
 fi
-exit 0
 
+# GATE 3 -- BIOLOGY. Source pointers must still resolve, and no config may contradict the biology it implements.
+# Earned 2026-07-31: a 21-agent research round re-established that BTSP is one-shot (a SINGLE plateau makes a
+# field) after the gap#5 arc had run for weeks with laps=5, sweeping every OTHER axis. Nothing connected the
+# runner to the paper. The biology is STABLE -- it should be recorded once and checked, not re-researched.
+if [ -f "$ROOT/tools/biology_check.py" ]; then
+  if ! "$ROOT/.venv/bin/python" "$ROOT/tools/biology_check.py" > /tmp/_precommit_bio.out 2>&1; then
+    echo "⛔ COMMIT BLOCKED — biology binding failed:"
+    sed 's/^/   /' /tmp/_precommit_bio.out | tail -20
+    echo
+    echo "   Either the config contradicts the biology it claims to implement, or a source pointer has rotted."
+    echo "   Deliberate override: git commit --no-verify"
+    exit 1
+  fi
+fi
+exit 0

@@ -1,0 +1,13 @@
+{
+ "description": "laps=1 confirmation + drive axis, w_max=2500",
+ "rows": [
+  {
+   "label": "laps=1 dwell=30 drive=default(3000) 6 seeds",
+   "n": 6,
+   "circ_dW": 0.1394,
+   "null": 0.0311,
+   "ratio": 4.49,
+   "median_p": 0.005
+  }
+ ]
+}

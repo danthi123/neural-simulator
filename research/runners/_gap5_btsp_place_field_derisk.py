@@ -300,7 +300,8 @@ def permuted_increment_circ_dW_null(M0, M1, seed, n_perm=200):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=[42, 43, 44])
-    ap.add_argument("--laps", type=int, default=5)
+    ap.add_argument("--laps", type=int, default=1,
+                    help="BTSP is ONE-SHOT: a single plateau creates a field. Default was 5 until 2026-07-31, which re-potentiates every position and ERASES the field (ratio 4.40x -> 2.57x -> 1.11x for laps 1 -> 2 -> 5). Constrained by research/biology/btsp-place-field-formation.md; tools/biology_check.py fails if this drifts.")
     ap.add_argument("--dwell", type=int, default=30)
     ap.add_argument("--lr", type=float, default=0.02)
     ap.add_argument("--w-max", type=float, default=2500.0)
