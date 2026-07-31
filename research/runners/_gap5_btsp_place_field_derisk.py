@@ -24,7 +24,7 @@ for _tv in ("OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "MKL_NUM_THREADS", "NUMEX
 sys.path.insert(0, "/home/dant123/Projects/sim")
 import numpy as np, logging
 logging.disable(logging.INFO)
-from tools.lab import void_if
+from tools.lab import void_if, bound_check, sign_budget
 from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
 from sim.regions import BrainRegion, RegionPathway
 from sim import SimulationBridge
@@ -331,6 +331,12 @@ def main():
         return 1
     print("  ORACLE CEILING: circ_resultant=%.4f  window_mass=%.4f  <- the number to beat" % (orc, orw))
 
+    # BOUND-TRAP PRE-FLIGHT. The tuned operating point ran w_max=150 against W0=250, so the clamp sat BELOW the
+    # initial weight, dragged every weight DOWN, and 97% of the measured weight change was the clamp -- identical
+    # in the lr=0 control. This is the FIFTH instance of a trap CLAUDE.md documents for four other rules, skipped
+    # again because the pre-flight was prose. It executes now. Override only to study destruction deliberately.
+    bound_check("btsp w_max", a.w_max, (a.w0 if getattr(a, "w0", None) else W0),
+                strict=(os.environ.get("GAP5_ALLOW_BOUND_TRAP", "0") != "1"))
     print()
     print("STEP B -- MECHANISM ARMS (lr=0 is an ARM; spikes>0 asserted)")
     arms = [("lr0_btsp",      dict(w_inh=0.0,      btsp=True,  lr=0.0)),
@@ -356,7 +362,13 @@ def main():
             # field. Recording circ_dW alongside makes the headline's quantity available in the artifact instead
             # of being recomputed by hand from two columns of a markdown table.
             cdW = float(np.mean([circ_resultant(r) for r in (M1 - M0)]))
+            # circ_resultant RECTIFIES (np.maximum(w,0) internally) and returns 0.0 when the clipped sum is <=0.
+            # So circ_dW==0.0 does NOT mean "no weight change" -- it means every increment was NEGATIVE. That
+            # exact zero was quoted as a clean lr=0 control while the arm's own mean|dW| was 21.94. Record the
+            # sign budget beside the metric so a rectified score can never again be read as an absence of change.
+            _sb = sign_budget("%s s%d" % (name, s), M1 - M0)
             res[name].append(dict(seed=s, circ=c1, circ_dW=cdW, window=w1, circ_init=c0, d_circ=c1 - c0,
+                                  sign_budget=_sb,   # what fraction of |dW| the rectifying metric threw away
                                   read_spikes=nread, place_spikes=nplace, apical_max=apmax,
                                   apical=apst,          # OPT-0 arm A: the instructive signal, actually measured
                                   dW=float(np.abs(M1 - M0).mean())))

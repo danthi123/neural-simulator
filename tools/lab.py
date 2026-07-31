@@ -84,6 +84,74 @@ def undefined_if_empty(label, n_evaluable, score, total):
     return score
 
 
+def bound_check(rule, bound, weight, strict=True):
+    """Assert a plasticity BOUND sits above the weights it governs. Raises by default.
+
+    THE FIFTH INSTANCE EARNED THIS. CLAUDE.md has documented this trap for STDP (`stdp_w_max`), BDSP
+    (`bdsp_w_max`), BTSP (`btsp_w_max`) and Hebbian (`hebbian_max_weight`), and states the pre-flight in
+    plain words: "compare its bound against the ACTUAL weight". It was prose, so it was skipped a fifth
+    time -- gap#5's tuned operating point ran `w_max=150` against an initial weight `W0=250`, so the clamp
+    dragged every weight DOWN and **97% of the measured weight change was the clamp, identical in the
+    `lr=0` control**. The tuning then walked DEEPER in (w_max 110 -> 150 -> 220, 150 chosen as "optimal"),
+    because what the metric rewarded was clamp depth.
+
+    A bound below the weights does not merely fail to learn: it destroys weights uniformly, which reads as a
+    substrate limitation. Call this where the bound is chosen, not where it is used.
+
+        bound_check("btsp_w_max", cfg.btsp_w_max, W0)
+    """
+    try:
+        b, w = float(bound), float(weight)
+    except (TypeError, ValueError):
+        print("  ⚠️  bound_check(%s): non-numeric bound=%r weight=%r — NOT checked" % (rule, bound, weight))
+        return None
+    if b <= w:
+        msg = ("BOUND TRAP: %s=%g is AT OR BELOW the weight it governs (%g). The clamp will drag weights "
+               "DOWN, every increment goes negative, and the 'learning' arm becomes its own control. "
+               "Raise the bound above the weights, or state explicitly why destruction is intended." % (rule, b, w))
+        if strict:
+            raise LeverError(msg)
+        print("  ⛔ %s" % msg)
+        return False
+    print("  ✔ bound_check %s: %g > weight %g (headroom %.2fx)" % (rule, b, w, b / w if w else float("inf")))
+    return True
+
+
+def sign_budget(label, dW):
+    """Report what FRACTION of a weight change is positive, before any rectifying metric hides it.
+
+    Earned the same day as bound_check: `circ_resultant` clips negatives internally and returns 0.0 when the
+    clipped sum is <= 0, so an `lr=0` control read "circ_dW exactly 0.000000" at every seed and was quoted as
+    a clean control -- while that same arm's mean |dW| was 21.94. The zero meant EVERY increment was negative.
+    Any metric built on a rectified quantity must report this alongside, or it silently scores the residual of
+    a destructive process.
+    """
+    try:
+        import numpy as _np
+        a = _np.asarray(dW, dtype=float).ravel()
+        if not a.size:
+            print("  ⚠️  sign_budget(%s): empty — UNDEFINED, not 0" % label)
+            return None
+        pos = float((a > 0).mean()); neg = float((a < 0).mean())
+        raw_tot = float(_np.abs(a).sum())
+        # NO CHANGE AT ALL is the IDEAL lr=0 control, not destruction. Flagging it "MOSTLY DESTRUCTIVE" (which a
+        # naive pos_mass<0.5 test does, since 0/0 -> 0) is a false alarm, and a false alarm is as corrosive as a
+        # missed one -- it trains the reader to skim past the flag that matters. Caught on this helper's own
+        # first real run, where the CORRECT w_max=2500 config printed it for a genuinely all-zero control.
+        if raw_tot <= 0.0:
+            print("  sign_budget %s: dW is EXACTLY ZERO everywhere — a clean no-change control, not destruction"
+                  % label)
+            return dict(frac_pos=0.0, frac_neg=0.0, pos_mass_frac=None, all_zero=True)
+        pos_mass = float(a[a > 0].sum()) / raw_tot
+        print("  sign_budget %s: %.1f%% of synapses positive, %.1f%% negative | %.1f%% of |dW| mass is positive%s"
+              % (label, 100 * pos, 100 * neg, 100 * pos_mass,
+                 "   ⛔ MOSTLY DESTRUCTIVE — a rectifying metric will hide this" if pos_mass < 0.5 else ""))
+        return dict(frac_pos=pos, frac_neg=neg, pos_mass_frac=pos_mass, all_zero=False)
+    except Exception as e:                                  # narrow enough to see, never silent
+        print("  ⚠️  sign_budget(%s) failed: %s: %s" % (label, type(e).__name__, e))
+        return None
+
+
 def void_if(condition, reason):
     """Mark an arm VOID and say why, instead of letting its numbers be read as a result."""
     if condition:
