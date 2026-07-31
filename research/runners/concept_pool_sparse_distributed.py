@@ -724,7 +724,7 @@ def main():
         _pc = eval_partial_cue_discrimination(bridge, sparse_patterns, _parts, mode=args.partial_cue_mode)
         print("  partial_cue_acc=%s  ambiguous_frac=%s  acc_on_unambiguous=%s"
               % (_pc["partial_cue_acc"], _pc["ambiguous_frac"], _pc["acc_on_unambiguous"]), flush=True)
-        results["partial_cue"] = _pc
+        _pc_out = _pc  # results is a LIST here, not a dict — attach at JSON-write time instead
     print(f"[EVAL] {time.time() - t0:.1f}s", flush=True)
 
     n_top1 = sum(1 for r in results if r["top1"])
