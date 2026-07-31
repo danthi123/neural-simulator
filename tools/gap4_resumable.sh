@@ -34,6 +34,20 @@ for seed in "${SEEDS[@]}"; do
     fi
     echo "[gap4-resumable] RUN   seed=$seed arm=$arm  $(date '+%H:%M:%S')"
     T0=$(date +%s)
+    if [ "${GAP4_PARALLEL:-0}" != "0" ]; then
+      # PARALLEL MODE. The cells are independent, and concurrency was MEASURED to be free on this box
+      # (2026-07-30: 3 cells each ran 3h14m elapsed against 3h14m CPU -- no L2 thrashing, no slowdown).
+      # Sequentially these 15 cells are ~101 h; in parallel they are ~6.75 h, which is the difference between
+      # the crux answering today and answering next week. The skip-if-output-exists resume logic is unchanged,
+      # so a kill still costs at most the cells actually in flight.
+      # GAP4_MAX_PAR caps concurrency; wait for a slot before launching the next.
+      while [ "$(jobs -rp | wc -l)" -ge "${GAP4_MAX_PAR:-8}" ]; do sleep 20; done
+      ( SIM_BACKEND=cupy .venv/bin/python -m research.runners._gap4_onbridge_spiking_selfpredict_derisk \
+          --full --seeds "$seed" --arms "$arm" --epochs "$EPOCHS" --settle-steps "$SETTLE" \
+          --out "$OUT" >> "$LOGD/resumable_s${seed}_${arm}.log" 2>&1 ) &
+      sleep 3
+      continue
+    fi
     SIM_BACKEND=cupy .venv/bin/python -m research.runners._gap4_onbridge_spiking_selfpredict_derisk \
       --full --seeds "$seed" --arms "$arm" --epochs "$EPOCHS" --settle-steps "$SETTLE" \
       --out "$OUT" >> "$LOGD/resumable_s${seed}_${arm}.log" 2>&1
@@ -47,4 +61,8 @@ for seed in "${SEEDS[@]}"; do
     fi
   done
 done
+if [ "${GAP4_PARALLEL:-0}" != "0" ]; then
+  echo "[gap4-resumable] all cells launched; waiting for $(jobs -rp | wc -l) in flight  $(date '+%H:%M:%S')"
+  wait
+fi
 echo "[gap4-resumable] all cells attempted. Completed: $(ls -1 "$OUTD" 2>/dev/null | wc -l)"
