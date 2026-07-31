@@ -127,6 +127,69 @@ def check_entry(path, verbose=True):
     return problems
 
 
+def check_mechanism_status(verbose=True):
+    """ONE mechanism -> ONE current status. Flags conflicts instead of leaving them to be re-derived.
+
+    THE FAILURE THIS CLOSES (owner, 2026-07-31): "we run so many experiments touching adjacent regions/runners
+    that we end up with results and memories citing the SAME flags/code/biology but reaching DIFFERENT
+    conclusions, so determining the latest status lands on something irrelevant or outdated."
+
+    Measured: the string "btsp" appears in 96 findings; 41 of them mention GO and 35 mention
+    NO-GO/NEGATIVE/REFUTED/BOUNDARY. Asking "what is the status of BTSP?" returns ninety-six documents that
+    disagree. Nothing says which one is CURRENT.
+
+    So a mechanism entry names `current_finding:`, and the rule is enforced from BOTH ends:
+      * `current_finding` must exist and be declared `status: live`;
+      * any OTHER finding declaring `mechanism: <id>` with `status: live` is an UNRESOLVED CONFLICT -- exactly
+        two live answers to one question -- and must be superseded or the current one updated.
+    Supersession then has to be recorded where retrieval will see it, not merely known.
+    """
+    import glob as _g
+    problems = []
+    # every finding's declared (mechanism, status)
+    declared = {}
+    for f in _g.glob(os.path.join(ROOT, "research", "findings", "*.md")):
+        try:
+            with open(f, errors="ignore") as fh:
+                head = "".join(next(fh, "") for _ in range(15))
+        except Exception:
+            continue
+        if not head.startswith("---"):
+            continue
+        fmz = head.split("\n---", 1)[0]
+        mm = re.search(r"^mechanism:\s*([A-Za-z0-9_.-]+)\s*$", fmz, re.M)
+        st = re.search(r"^status:\s*([a-z-]+)\s*$", fmz, re.M)
+        if mm:
+            declared.setdefault(mm.group(1), []).append(
+                (os.path.relpath(f, ROOT), st.group(1) if st else "undeclared"))
+
+    for bf in sorted(_g.glob(os.path.join(BIO_DIR, "*.md"))):
+        fm = _parse_frontmatter(open(bf).read()) or {}
+        mid = fm.get("id")
+        cur = fm.get("current_finding")
+        if not mid:
+            continue
+        if cur:
+            cp = _expand(str(cur))
+            if not os.path.exists(cp):
+                problems.append("%s: current_finding does not exist: %s" % (mid, cur))
+            else:
+                st = dict(declared.get(mid, [])).get(os.path.relpath(cp, ROOT))
+                if st and st != "live":
+                    problems.append("%s: current_finding is declared '%s', not 'live': %s" % (mid, st, cur))
+        lives = [p for p, st in declared.get(mid, []) if st == "live"]
+        extra = [p for p in lives if not cur or os.path.relpath(_expand(str(cur)), ROOT) != p]
+        if len(lives) > 1 and extra:
+            problems.append(
+                "%s: UNRESOLVED CONFLICT — %d findings declare this mechanism LIVE. Exactly one can be current; "
+                "supersede the others or update current_finding:\n        %s"
+                % (mid, len(lives), "\n        ".join(lives)))
+        if verbose and mid:
+            print("  %-34s current=%s  live-declared=%d"
+                  % (mid, os.path.basename(str(cur)) if cur else "(none)", len(lives)))
+    return problems
+
+
 def check_config(runner_path, verbose=True):
     """Compare a runner's argparse defaults against every biology entry that claims to be implemented by it."""
     text = open(runner_path).read()
@@ -179,6 +242,7 @@ def main():
         print("biology_check: %d entr(ies)" % len(entries))
         for e in entries:
             problems += check_entry(e)
+        problems += check_mechanism_status()
         for e in entries:
             fm = _parse_frontmatter(open(e).read()) or {}
             for impl in (fm.get("implemented_by") or []):

@@ -1,5 +1,6 @@
 ---
-status: live
+status: contributing
+mechanism: btsp-place-field-formation
 claim_check: synthesis
 lane: gap#5
 date: 2026-07-31

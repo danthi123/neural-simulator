@@ -3,6 +3,8 @@ id: btsp-place-field-formation
 mechanism: Behavioral timescale synaptic plasticity (BTSP) — dendritic plateau creates a CA1 place field
 status: established
 last_verified: 2026-07-31
+current_finding: research/findings/2026-07-31-gap5-place-specificity-is-ONE-INDUCTION-PASS-laps-erase-it.md
+current_status: "PLACE-SPECIFIC at laps=1 dwell=30 w_max>W0 — 4.49x vs position-shuffled null, p=0.0050, 6 seeds"
 sources:
   - path: ~/Projects/sim-catalog/references/textbooks/kandel-pns-6e/full-book.txt
     anchor: "termed place cells, fire only when"
