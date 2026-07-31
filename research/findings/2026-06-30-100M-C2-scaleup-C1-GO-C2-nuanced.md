@@ -47,7 +47,7 @@ base — both fixed in this recipe). Run: `_genseq_C2_scaleup_runner --d-model 7
 2. A **bigger corpus** (the data-bound lever) for a lower-ppl base.
 
 Artifacts: `research/findings/raw/_genseq_C2_scaleup_100M.json` (full verdict), `_heldout_probe.py`
-(reusable held-out monitor), `C2_100M_RUN.md` (driving guide).
+(reusable held-out monitor), `docs/2026-06-30-C2-100M-run-guide.md` (driving guide).
 
 ---
 

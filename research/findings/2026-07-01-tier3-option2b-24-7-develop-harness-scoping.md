@@ -18,7 +18,7 @@ self-contained multi-day body-loop this promotes) · `2026-06-24-week1-develop-l
 **Terms defined once.**
 - **The harness** = the shipped 24/7 launcher/supervisor stack: `develop_run.py` (the resumable entry) +
   `develop_loop_supervisor.py` (the crash-proof/fsync/heartbeat/PAUSE hardening) + `scripts/develop.ps1` (the
-  start/pause/resume/status verbs) + `DEVELOP_RUN.md`. All three call **`develop_gpu`**
+  start/pause/resume/status verbs) + `docs/2026-06-28-develop-run-guide.md`. All three call **`develop_gpu`**
   (`_longitudinal_develop_loop_gpu.py`), the validated day-loop.
 - **WAKE** = the day-stage where the brain acquires the day's knowledge. **Today's WAKE = LISTEN-only:** the
   `StreamCortex` hears the TinyStories corpus window-by-window + `build_agent` teaches authored curriculum facts.

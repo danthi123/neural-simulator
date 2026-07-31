@@ -152,3 +152,8 @@ bridges/lmtrain/*/tokens_val.npy
 # DEPLOY TREE (2.1 GB). Was ignored ONLY via .git/info/exclude, which is local and never shared -- so it
 # was unprotected on every other clone of this repo. Moved here so the guard travels with the repository.
 deploy/
+
+# ATTIC (2026-07-31). Where root strays go instead of being deleted outright. These files were UNTRACKED,
+# so git history cannot restore them -- archiving rather than deleting is the only reversible option. The
+# tarball is safe to delete once you are satisfied nothing needed it.
+attic/

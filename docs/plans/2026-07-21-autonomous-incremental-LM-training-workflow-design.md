@@ -35,7 +35,7 @@ it real data at real scale).
   orthogonal.
 
 ## 1. Architecture (reuse existing patterns)
-Precedent to adapt: `research/runners/develop_run.py` + `scripts/develop.ps1` + `DEVELOP_RUN.md` (the resumable,
+Precedent to adapt: `research/runners/develop_run.py` + `scripts/develop.ps1` + `docs/2026-06-28-develop-run-guide.md` (the resumable,
 pause-sentinel, per-increment-bundle, Monitored 3-day self-driven develop-run launcher) — the SAME shape, retargeted
 from the artificial-life day-loop to the LM train-loop. Plus `sim/lineage.py` `BridgeLineage` (atomic save + history +
 metadata) for the checkpoint lineage.
