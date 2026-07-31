@@ -1,0 +1,96 @@
+{
+  "summary": {
+    "overall_verdict": "NEGATIVE",
+    "seeds": [
+      44
+    ],
+    "per_seed_verdicts": [
+      "NEGATIVE"
+    ],
+    "osi_pre_frac_mean": 0.0038,
+    "osi_post_frac_mean": 0.0016,
+    "osi_shuffle_frac_mean": 0.0004,
+    "osi_post_mean_mean": 0.1906,
+    "rsa_vs_host_mean": 0.795,
+    "margin_mean": 0.1508,
+    "orient_decode_mean": 0.2188,
+    "host_decode_mean": 0.9688,
+    "v1_firing_rate_mean": 0.0027
+  },
+  "per_seed": [
+    {
+      "seed": 44,
+      "backend": "numpy",
+      "n_v1": 8192,
+      "elapsed_s": 266.9,
+      "v1_firing_rate": 0.0027,
+      "saturation": {
+        "w_mean": 36.12628,
+        "w_absmax": 1096.856934,
+        "frac_rf_near_zero": 0.4549,
+        "frac_cells_all_zero": 0.0
+      },
+      "raw_weights": {
+        "on_mean": 5.499824,
+        "off_mean": 5.537027,
+        "on_absmax": 1200.0,
+        "off_absmax": 1200.0,
+        "on_minus_off_mean": -0.037204,
+        "raw_mean_abs": 5.518425,
+        "l2_mean": 1311.224731,
+        "l2_min": 724.690125,
+        "l2_max": 2250.736084,
+        "l2_std": 190.087479,
+        "frac_cells_l2_near_zero": 0.0,
+        "frac_raw_near_zero": 0.956
+      },
+      "plasticity": {
+        "total_plasticity_events": 740116565,
+        "v1_activity_ema_mean": 0.01667289,
+        "v1_activity_ema_max": 0.07356419,
+        "v1_activity_ema_min": 0.0,
+        "frac_v1_ema_zero": 0.0012
+      },
+      "weight_diagnosis": "COMMON-MODE CONVERGENCE \u2014 raw weights are healthy but ON and OFF cancel; adding weight mass cannot help, the common mode has to be removed",
+      "osi": {
+        "pre_random": {
+          "mean": 0.17,
+          "frac_gt0_5": 0.0038
+        },
+        "post_learned": {
+          "mean": 0.1906,
+          "frac_gt0_5": 0.0016
+        },
+        "shuffle_ctrl": {
+          "mean": 0.1772,
+          "frac_gt0_5": 0.0004
+        }
+      },
+      "geometry": {
+        "host_reference": {
+          "margin": 0.8165,
+          "rsa_vs_pixels": 0.9926,
+          "orient_decode": 0.9688
+        },
+        "v1_firing_post": {
+          "within": 0.1652,
+          "between": 0.0144,
+          "margin": 0.1508,
+          "rsa_vs_host": 0.795,
+          "rsa_vs_pixels": 0.7859,
+          "orient_decode": 0.2188
+        }
+      },
+      "gates": {
+        "osi_self_gate": 0.5,
+        "osi_ctrl_ceiling": 0.0538,
+        "rsa_gate": 0.6,
+        "margin_gate": 0.15
+      },
+      "learned_oriented": false,
+      "lift_over_controls": false,
+      "geometry_ok": true,
+      "verdict": "NEGATIVE"
+    }
+  ]
+}

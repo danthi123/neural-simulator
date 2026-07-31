@@ -49,7 +49,16 @@ A negative needs its instrument verified exactly as much as a positive does.
 | POSITIVE — weak field (amp 5.0, 1.0) | detected, p = 0.0025 (the metric is scale-free, so amplitude is not the issue) |
 | NEGATIVE — scattered increments, 60 independent draws | **FPR 0.000**, median null p 0.679 |
 | POWER — contiguous increments, 60 draws | **1.000** |
-| `lr=0` arm | `circ_dW` **exactly 0.0** — no learning, no weight change |
+| `lr=0` arm | `circ_dW` **exactly 0.0** — ⛔ **THIS ROW IS WRONG, see below** |
+
+> ⛔ **CORRECTION (same day).** "`circ_dW` exactly 0.0 ⇒ no weight change" is a **false inference**.
+> `circ_resultant` clips negatives internally and returns 0.0 when the clipped sum is ≤ 0, so an exact zero means
+> **every increment was NEGATIVE** — and that arm's own recorded mean `|dW|` is **21.94**. At this operating point
+> the clamp (`w_max=150`) sits **below** the initial weight (`W0=250`), so **97% of the weight change is
+> clamp-driven and identical in the `lr=0` control**; the lr lever moves 3%. The zero was rectification, not a
+> clean control. Full analysis:
+> [`2026-07-31-gap5-tuned-point-is-INSIDE-the-bound-trap-97pct-of-dW-is-the-clamp.md`](2026-07-31-gap5-tuned-point-is-INSIDE-the-bound-trap-97pct-of-dW-is-the-clamp.md).
+> This does not change any other row, nor the concentration result — it strengthens it by explaining the cause.
 
 The test has power on realistic place-field structure and does not cry wolf.
 
