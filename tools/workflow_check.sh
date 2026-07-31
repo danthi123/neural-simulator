@@ -230,6 +230,24 @@ else
   echo "  ✔ pool working ($POOL_UP up, $POOL_DOWN unreachable)"
 fi
 
+# FAILED POOL JOBS (2026-07-31). The dispatcher records each job's exit status; a non-zero one means compute was
+# spent producing nothing, and previously the ONLY evidence was a file on a node nobody reads. Nine jobs died on
+# argparse and went unnoticed for an hour. Absence of results is not evidence of failure -- a job can also still
+# be running -- so this reads the recorded RC rather than inferring from missing output.
+FAILED_JOBS=""
+for H in pool40 pool41 pool42; do
+  R=$(timeout 8 ssh -o BatchMode=yes -o ConnectTimeout=5 "$H" \
+        "awk -F'\t' '\$1 != 0 {print}' ~/derisk-pool/sim/job_status.log 2>/dev/null | tail -3" 2>/dev/null)
+  [ -n "$R" ] && FAILED_JOBS="$FAILED_JOBS\n  $H: $(printf '%s' "$R" | head -3 | cut -c1-120)"
+done
+if [ -n "$FAILED_JOBS" ]; then
+  echo "  ⛔ POOL JOB(S) EXITED NON-ZERO — compute spent, nothing produced:"
+  printf "%b\n" "$FAILED_JOBS"
+  echo "     Read the node's autodispatch.out, fix, and requeue via tools/pool_queue.sh (its validity gate"
+  echo "     catches malformed commands; a mid-run crash needs the log)."
+  FAIL=1
+fi
+
 if [ "$FAIL" -eq 0 ]; then echo "✅ workflow_check: all four rules satisfied."; else
   echo "⛔ workflow_check: $FAIL rule-group(s) violated — the commands above are copy-paste ready."; fi
 exit $FAIL

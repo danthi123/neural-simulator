@@ -105,8 +105,13 @@ while true; do
       [ -z "$JOB" ] && continue
       echo "[pool-dispatch] $(date '+%H:%M:%S') $NODE <- $JOB"
       printf '%s\t%s\t%s\n' "$(date '+%F %T')" "$NODE" "$JOB" >> "$CLAIMED"
+      # CAPTURE THE EXIT STATUS (2026-07-31). Previously this logged that a job was LAUNCHED and nothing more,
+      # so a job that died was indistinguishable from one that succeeded. Nine jobs died instantly on an argparse
+      # error and went unnoticed for an hour, because the only evidence of failure sat in autodispatch.out on a
+      # node nobody reads. The wrapper appends "<rc>\t<when>\t<job>" to job_status.log; the heartbeat reports
+      # any non-zero. A job that fails is now LOUD rather than merely absent.
       ssh -f -n -o BatchMode=yes "$NODE" \
-        "cd ~/derisk-pool/sim && setsid bash -c '$JOB' </dev/null > autodispatch.out 2>&1 & exit 0" 2>/dev/null
+        "cd ~/derisk-pool/sim && setsid bash -c '{ $JOB; } > autodispatch.out 2>&1; printf \"%s\t%s\t%s\n\" \"\$?\" \"\$(date +%H:%M:%S)\" \"$JOB\" >> job_status.log' </dev/null >/dev/null 2>&1 & exit 0" 2>/dev/null
       sleep 5     # let the launch register before this node is polled again
     fi
   done
