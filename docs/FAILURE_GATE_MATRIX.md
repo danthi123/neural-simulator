@@ -31,8 +31,20 @@ are marked ADVISORY and count as ungated — the measured reason: **1330 runners
 | S | finding-status undeclared | — | pre-commit GATE 4 | pre-commit G4 | ✅ BLOCKS (new findings) |
 | X | invalid queued command | — | `pool_queue` argparse validation | execution path | ✅ BLOCKS |
 | Y | job died silently | — | dispatcher exit-status log + heartbeat | execution path | ✅ REPORTS |
+| COV | a NOTICED failure never became a gate | — | `gates/coverage` + `research/FAILURE_LOG.md` | registry | ✅ BLOCKS |
 
-**Score: 11 BLOCKING · 1 structural · 6 reporting · 0 ungated.**
+**Score: 12 BLOCKING · 1 structural · 6 reporting · 0 ungated.**
+
+## The loop that keeps this file honest
+
+Every gate here was added because a failure was NOTICED and then acted on — which made closure depend on memory,
+the exact dependency the system exists to remove. `gates/coverage` closes that: a newly-noticed failure gets ONE
+LINE in [`research/FAILURE_LOG.md`](../research/FAILURE_LOG.md), and the gate BLOCKS until that line names a gate
+or declares `NOT-GATEABLE: <reason>`. It also checks the reverse — a module absent from this matrix, or a matrix
+row naming a module that does not exist, is spec/code drift and fails.
+
+**What it cannot do:** notice. If a failure is never written down, nothing fires. It closes
+*noticed-but-forgotten*, not *never-noticed* — and that limit is stated rather than papered over.
 
 Every class from the 2026-07-31 taxonomy now has a module. Six REPORT rather than block, each
 because it declared limits it cannot check reliably at commit time — an honest reporting gate

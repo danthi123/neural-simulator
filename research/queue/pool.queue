@@ -1,6 +1,0 @@
-1785507211	GAP5_PLACE_READ_DENSITY=0.25 SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._gap5_btsp_place_field_derisk --seeds 300 --dwell 180 --lr 0.005 --w-max 150 --out g5s_out/g5s_300.json
-1785507211	GAP5_PLACE_READ_DENSITY=0.25 SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._gap5_btsp_place_field_derisk --seeds 301 --dwell 180 --lr 0.005 --w-max 150 --out g5s_out/g5s_301.json
-1785507211	GAP5_PLACE_READ_DENSITY=0.25 SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._gap5_btsp_place_field_derisk --seeds 302 --dwell 180 --lr 0.005 --w-max 150 --out g5s_out/g5s_302.json
-1785507211	GAP5_PLACE_READ_DENSITY=0.25 SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._gap5_btsp_place_field_derisk --seeds 303 --dwell 180 --lr 0.005 --w-max 150 --out g5s_out/g5s_303.json
-1785507211	GAP5_PLACE_READ_DENSITY=0.25 SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._gap5_btsp_place_field_derisk --seeds 304 --dwell 180 --lr 0.005 --w-max 150 --out g5s_out/g5s_304.json
-1785507211	GAP5_PLACE_READ_DENSITY=0.25 SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._gap5_btsp_place_field_derisk --seeds 305 --dwell 180 --lr 0.005 --w-max 150 --out g5s_out/g5s_305.json

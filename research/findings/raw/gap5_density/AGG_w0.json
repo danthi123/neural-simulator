@@ -1,0 +1,24 @@
+{
+ "provenance": {
+  "runner": "analysis of g5w0_*.json",
+  "git_sha": "78b8cc74",
+  "generated": "2026-07-31T14:32:05"
+ },
+ "description": "gap#5 w0 axis, laps=1 dwell=30 w_max=2500 drive=3000",
+ "rows": [
+  {
+   "w0": 250,
+   "n": 3,
+   "circ_dW": 0.1285,
+   "ratio": 4.13,
+   "p": 0.005
+  },
+  {
+   "w0": 600,
+   "n": 3,
+   "circ_dW": 0.1307,
+   "ratio": 3.96,
+   "p": 0.005
+  }
+ ]
+}

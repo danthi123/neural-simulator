@@ -1,0 +1,196 @@
+{
+ "metric_validation": [
+  [
+   "sigma=5 ORACLE",
+   0.8719023596925991,
+   0.7294683434736281,
+   4.787307375401733
+  ],
+  [
+   "uniform (null)",
+   7.217783939387124e-17,
+   0.18333333333333332,
+   0.9999999999993998
+  ],
+  [
+   "11 contiguous",
+   0.9460539770589587,
+   1.0000000000000002,
+   5.454545454542182
+  ],
+  [
+   "11 scattered",
+   0.1631756136055387,
+   0.2727272727272727,
+   5.454545454542182
+  ],
+  [
+   "ORACLE permuted",
+   0.1660040464443343,
+   0.33862221215129507,
+   4.787307375401734
+  ]
+ ],
+ "oracle": {
+  "circ": 0.8719023596925991,
+  "window": 0.7294683434736281
+ },
+ "laps": 1,
+ "dwell": 30,
+ "lr": 0.005,
+ "w_max": 2500.0,
+ "w_inh": 150.0,
+ "arms": {
+  "lr0_btsp": [
+   {
+    "seed": 841,
+    "circ": 0.03729430625649564,
+    "circ_dW": 0.0,
+    "window": 0.21228199285947855,
+    "circ_init": 0.03729430625649564,
+    "d_circ": 0.0,
+    "sign_budget": {
+     "frac_pos": 0.0,
+     "frac_neg": 0.0,
+     "pos_mass_frac": null,
+     "all_zero": true
+    },
+    "read_spikes": 28,
+    "place_spikes": 6634,
+    "apical_max": -129.0679168701172,
+    "apical": {
+     "max": -129.0679168701172,
+     "min": -1726.9779052734375,
+     "mean": -689.9424438476562,
+     "std_across_readers": 566.5040893554688,
+     "fs_spikes": 0
+    },
+    "dW": 0.0
+   }
+  ],
+  "btsp": [
+   {
+    "seed": 841,
+    "circ": 0.09543750913884215,
+    "circ_dW": 0.13109862221737892,
+    "window": 0.21166770150492797,
+    "circ_init": 0.03729430625649564,
+    "d_circ": 0.058143202882346506,
+    "sign_budget": {
+     "frac_pos": 1.0,
+     "frac_neg": 0.0,
+     "pos_mass_frac": 1.0,
+     "all_zero": false
+    },
+    "read_spikes": 70,
+    "place_spikes": 6634,
+    "apical_max": 110.56120300292969,
+    "apical": {
+     "max": 110.56120300292969,
+     "min": -1037.5811767578125,
+     "mean": -251.57696533203125,
+     "std_across_readers": 266.87603759765625,
+     "fs_spikes": 0
+    },
+    "dW": 1457.2216345710758
+   }
+  ],
+  "lr0_btsp_wta": [
+   {
+    "seed": 841,
+    "circ": 0.03729430625649564,
+    "circ_dW": 0.0,
+    "window": 0.21228199285947855,
+    "circ_init": 0.03729430625649564,
+    "d_circ": 0.0,
+    "sign_budget": {
+     "frac_pos": 0.0,
+     "frac_neg": 0.0,
+     "pos_mass_frac": null,
+     "all_zero": true
+    },
+    "read_spikes": 38,
+    "place_spikes": 6639,
+    "apical_max": 56.8950080871582,
+    "apical": {
+     "max": 56.8950080871582,
+     "min": -565.02587890625,
+     "mean": -173.67140197753906,
+     "std_across_readers": 162.4557647705078,
+     "fs_spikes": 24
+    },
+    "dW": 0.0
+   }
+  ],
+  "btsp_wta": [
+   {
+    "seed": 841,
+    "circ": 0.09911732486238019,
+    "circ_dW": 0.13626016423568263,
+    "window": 0.2135000804860224,
+    "circ_init": 0.03729430625649564,
+    "d_circ": 0.061823018605884544,
+    "sign_budget": {
+     "frac_pos": 1.0,
+     "frac_neg": 0.0,
+     "pos_mass_frac": 1.0,
+     "all_zero": false
+    },
+    "read_spikes": 33,
+    "place_spikes": 6639,
+    "apical_max": 11.770430564880371,
+    "apical": {
+     "max": 11.770430564880371,
+     "min": -617.037841796875,
+     "mean": -211.3386688232422,
+     "std_across_readers": 155.22499084472656,
+     "fs_spikes": 27
+    },
+    "dW": 1448.1505578600568
+   }
+  ]
+ },
+ "place_read_density": 1.0,
+ "elig_tau_ms": null,
+ "backend": "numpy",
+ "controls": {
+  "btsp": {
+   "randset_d_circ": -0.02461046635409552,
+   "permuted_increment_d_circ": -0.014758172712508719,
+   "treat_circ_dW": 0.13109862221737892,
+   "randset_circ_dW": 0.01691811345447434,
+   "perm_null_p95_circ_dW": 0.03986434831179553,
+   "perm_p_value_median": 0.004975124378109453,
+   "perm_detail": [
+    {
+     "obs": 0.13109862221737892,
+     "null_mean": 0.03153661709935764,
+     "null_p95": 0.03986434831179553,
+     "null_max": 0.046767854723627794,
+     "p_value": 0.004975124378109453,
+     "n_perm": 200
+    }
+   ],
+   "legacy_control_void": false
+  },
+  "btsp_wta": {
+   "randset_d_circ": -0.02528351809230478,
+   "permuted_increment_d_circ": -0.011596557606057618,
+   "treat_circ_dW": 0.13626016423568263,
+   "randset_circ_dW": 0.016183094609488743,
+   "perm_null_p95_circ_dW": 0.0429294278646287,
+   "perm_p_value_median": 0.004975124378109453,
+   "perm_detail": [
+    {
+     "obs": 0.13626016423568263,
+     "null_mean": 0.034021936365527354,
+     "null_p95": 0.0429294278646287,
+     "null_max": 0.05033325615241027,
+     "p_value": 0.004975124378109453,
+     "n_perm": 200
+    }
+   ],
+   "legacy_control_void": false
+  }
+ }
+}

@@ -1,0 +1,35 @@
+{
+ "run_id": "pool",
+ "runner": "research/runners/_gap5_btsp_place_field_derisk.py",
+ "argv": [
+  "SIM_BACKEND=numpy",
+  ".venv/bin/python",
+  "-u",
+  "-m",
+  "research.runners._gap5_btsp_place_field_derisk",
+  "--seeds",
+  "842",
+  "--laps",
+  "1",
+  "--dwell",
+  "30",
+  "--lr",
+  "0.005",
+  "--w-max",
+  "2500",
+  "--drive",
+  "3000",
+  "--w0",
+  "250",
+  "--out",
+  "g5s_out/g5w0_250_842.json"
+ ],
+ "checked_reason": "",
+ "git_sha": "78b8cc74",
+ "started": "see research/queue/dispatch.log",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "artifact": "research/findings/raw/gap5_density/g5w0_250_842.json",
+ "note": "attached at PULL time from dispatch.log: pool jobs write to g5s_out/ and never pass the provenance door in research/runners/__init__.py"
+}

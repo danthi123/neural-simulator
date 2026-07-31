@@ -1,3 +1,0 @@
-SIM_BACKEND=cupy .venv/bin/python -m research.runners.concept_pool_sparse_distributed --seed 42 --n-concepts 256 --sparsity 0.003 --composed-vocab 60 --composed-bind --zipf-s 1.0 --eval-partial-cue --partial-cue-mode min > /tmp/claude-1000/pc256_min_s42.log 2>&1  #checked:harder-config-n128-saturated-at-1.000-both-arms
-SIM_BACKEND=cupy .venv/bin/python -m research.runners._b1_v1_selforg_onbridge_derisk --seeds 42 43 44 --init-weight-mean 90 > /tmp/claude-1000/laneD_w90.log 2>&1  #checked:correct-lever-drive-pA-targets-RETINA-not-V1
-SIM_BACKEND=cupy .venv/bin/python -m research.runners._b1_v1_selforg_onbridge_derisk --seeds 42 43 44 --init-weight-mean 240 > /tmp/claude-1000/laneD_w240.log 2>&1  #checked:correct-lever-drive-pA-targets-RETINA-not-V1

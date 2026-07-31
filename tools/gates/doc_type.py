@@ -102,7 +102,11 @@ def check(paths):
         return []
     problems = []
     targets = [p for p in (paths or []) if p.endswith(".md")]
-    if not targets:                                       # no staged set: scan only frontmatter-bearing docs
+    if not targets:
+        # paths PROVIDED but none of mine -> nothing to check. Only paths=None (standalone) scans the corpus.
+        if paths is not None:
+            return []
+        # no staged set at all: scan frontmatter-bearing docs
         targets = [p for p in glob.glob(os.path.join(_ROOT, "research/findings/*.md"))
                    + glob.glob(os.path.join(_ROOT, "docs/plans/*.md"))
                    + glob.glob(os.path.join(_ROOT, "research/biology/*.md"))]

@@ -73,6 +73,14 @@ pop_job() {
                                        # the same job nine times.
   fi
   flock -u 9
+  # STRIP the trailing "#checked:<reason>" before the job is executed. The token is queue METADATA, not part of
+  # the command. It survived the old wrapper because nothing followed $JOB on the line -- but the exit-status
+  # wrapper puts the job inside a brace group, `{ $JOB; } > out`, and a `#` comments out the closing `; }`.
+  # Result: an unterminated brace group, a syntax error, NO job run, and NO status line either (the printf lives
+  # in the same bash -c). Six w0 jobs were dispatched into that and produced nothing; the dispatch log said
+  # "dispatched" six times. Caught because the results never appeared AND job_status.log stayed empty -- the
+  # exit-status capture failing was itself the clue that the wrapper, not the job, was broken.
+  job="${job%%#checked:*}"
   printf '%s' "$job"
 }
 
