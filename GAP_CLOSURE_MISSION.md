@@ -226,6 +226,35 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
+> ## 📍 STATE OF THE PROJECT — 2026-07-31 14:45 (read this first; everything below the next anchor is HISTORY)
+> **PENDING WORK LIVES HERE, NOT IN CHAT.** The honest gap found today: the gates BLOCK bad work and the heartbeat
+> REPORTS idleness, but nothing DRIVES the backlog — it lived in my messages, which do not survive a session.
+> This block is the durable list. Items are ordered; strike them as they close.
+>
+> **RUNNING:** crux 8 cells (~4h in, ~6.75h/cell, throughput verified 99%/core) · pool: lanes A/B/C/D/E staged.
+>
+> **NEXT, in order:**
+> 1. **Credit on the plateau-expanded forward** — the highest-value unrun science. The 2026-07-25 surpass
+>    (ho-linear 0.611, reproducibility 1.000, 6 seeds) has NEVER been combined with the credit runner;
+>    `PlateauExpander` is imported only by its own probe. Build now (no GPU needed to write), launch when the
+>    crux frees the card.
+> 2. **30 stale citations** — `GAP_CLOSURE_MISSION.md` and `ROADMAP.md` both cite a RETRACTED gap#3 6-seed GO
+>    with no marker. `.venv/bin/python -c "import tools.gates.stale_pointer as g; print(g.check(None))"`.
+> 3. **11 artifacts flagged by lever-efficacy** — read each one's finding and ask whether the identical pair was
+>    load-bearing. `research/findings/raw/_provenance/AUDIT_lever_efficacy.json`.
+> 4. **Affect eviction** — the mood is a measured RATCHET (3/3 seeds, never comes down). Fix is GABA-B or slow
+>    sAHP, both shipped default-off. Lane A, CPU, gap#4-independent.
+> 5. **One-brain state-wipe** — `_emerge61`'s per-emit restore wipes WHOLE-BRIDGE state, erasing co-resident
+>    mood every word. Hours of runner-only work to region-scope; it is what actually blocks lanes sharing a bridge.
+> 6. **229 plans asserting results** — those assertions carry no status/mechanism/artifact and sit outside every
+>    gate. Extract each result into a finding the plan cites.
+> 7. **286 plans + 12 major docs need `type:` frontmatter** — none are in doc_type/status/mechanism scope.
+> 8. **Tier-2 audit** (~1565 uncited findings) — lazy, on next touch.
+>
+> **THE WORKFLOW IS MECHANICAL NOW — see [`docs/FAILURE_GATE_MATRIX.md`](docs/FAILURE_GATE_MATRIX.md)** (13
+> BLOCKING · 1 structural · 6 reporting · 0 ungated) and [`research/FAILURE_LOG.md`](research/FAILURE_LOG.md)
+> (a noticed failure cannot stay unclosed — `gates/coverage` blocks until it names a gate or declares why not).
+>
 > ## 📍 STATE OF THE PROJECT — 2026-07-30 (read this first; everything below the next anchor is HISTORY)
 > - **North-star:** a fully-spiking ONE brain that CONVERSES GENUINELY → TRUE CONSCIOUSNESS on the emergentist bet (complete + faithful emulation; **no-defer**; **speed-secondary**; the honesty boundary is a DELIVERABLE).
 > - **FRONTIER = F · gap#4 (the crux).** It is RUNNING and it is the roadmap's single load-bearing dependency. ⚠️ **It was ~14× over its runtime estimate and I did not notice for a whole session** because I checked LIVENESS (99% CPU) ~20 times and never once checked THROUGHPUT — 22.6 h/arm × 15 arms ≈ 14 days against an 8-24 h estimate. Banked as **LIVENESS IS NOT PROGRESS**: a job being alive says nothing about it finishing. Finding: `2026-07-30-CRITICAL-crux-throughput-14x-over-estimate-liveness-is-not-progress.md`.
