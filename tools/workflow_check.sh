@@ -203,6 +203,19 @@ if [ "${DISPATCH:-0}" -eq 0 ] && [ "${QDEPTH:-0}" -gt 0 ]; then
   echo "     nohup bash tools/pool_autodispatch.sh > /tmp/pool_dispatch.log 2>&1 &"
   FAIL=1
 fi
+# SUPPRESS the idle-node alarm while work is EN ROUTE (2026-07-31). The dispatcher polls every
+# POOL_DISPATCH_POLL (default 60 s), so a node that just finished a job is legitimately idle for up to one poll
+# interval. Alarming on that is a FALSE POSITIVE, and it fired within minutes of the dispatcher going live:
+# "pool41 ⛔ IDLE" at 11:09 while the dispatch log shows pool41 receiving jobs at 11:08:32 AND 11:09:38.
+# A false alarm is as corrosive as a missed one -- it trains the reader to skim past the whole block, which is how
+# a real failure slips through. The genuine defect is "nothing staged" (queue empty) or "nothing will launch"
+# (dispatcher dead); BOTH are already checked above and BOTH still fire. Idle-with-work-queued-and-a-live-
+# dispatcher is a transient, not a defect.
+if [ "$POOL_IDLE" -gt 0 ] && [ "${QDEPTH:-0}" -gt 0 ] && [ "${DISPATCH:-0}" -gt 0 ]; then
+  echo "  · $POOL_IDLE node(s) idle but $QDEPTH job(s) queued and the dispatcher is LIVE — work is en route"
+  echo "    (dispatch poll is ${POOL_DISPATCH_POLL:-60}s); not flagging."
+  POOL_IDLE=0
+fi
 if [ "$POOL_IDLE" -gt 0 ]; then
   echo "  ⛔ $POOL_IDLE of $POOL_UP reachable pool node(s) IDLE — that is $((POOL_IDLE*12)) cores doing nothing."
   echo "     They are DISJOINT from the GPU, so they cost nothing to use while the crux runs."
