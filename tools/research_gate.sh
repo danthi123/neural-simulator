@@ -43,10 +43,24 @@ for C in kandel catalog paper; do
   "$ROOT"/.venv-rag/bin/python "$ROOT"/tools/rag/rag_search.py "$Q" 4 --corpus "$C" 2>/dev/null | tee -a "$OUT"
 done
 echo
-PRIM=$(grep -cE '\((kandel|paper|catalog|textbook)\)' "$OUT" || true)
+# RELEVANCE FLOOR, not a hit count (defect found 2026-07-31 by the codebase bug hunt, in THIS file, hours after
+# I "fixed" it). Counting primary hits made the gate UNFAILABLE: the RAG returns its top-N for ANY string, so the
+# nonsense query "purple monkey dishwasher quantum bicycle" scored 18 primary hits and PASSED. That is the same
+# defect as the original -- a check that cannot discriminate -- merely inverted: it went from never passing to
+# never failing, and both are worthless. Neither state can be detected by running the gate on a question you
+# believe in; only a NEGATIVE control exposes it.
+# The reranker score DOES discriminate: on a real question the best primary hits score about -2.4 (kandel),
+# -1.7 (catalog), +0.6 (paper); on the nonsense control they collapse to -6.7, -10.2, -7.9. So require at least
+# one primary hit at or above a floor, rather than merely present.
+FLOOR="${RESEARCH_GATE_FLOOR:--5.0}"
+PRIM=$(awk -v floor="$FLOOR" '
+  /\((kandel|paper|catalog|textbook)\)/ {
+    for (i = 1; i <= NF; i++) if ($i ~ /^-?[0-9]+\.[0-9]+$/) { if ($i + 0 >= floor + 0) n++; break }
+  } END { print n + 0 }' "$OUT")
+PRIM_ANY=$(grep -cE '\((kandel|paper|catalog|textbook)\)' "$OUT" || true)
 OURS=$(grep -cE '\((finding|plan|doc)\)' "$OUT" || true)
 echo "──────────────────────────────────────────────────────────────────────"
-echo "  primary-source hits (kandel/paper/catalog/textbook): $PRIM"
+echo "  primary-source hits ABOVE the relevance floor ($FLOOR): $PRIM   (of $PRIM_ANY returned)"
 echo "  our-own-writing hits (finding/plan/doc):             $OURS"
 if [ "$PRIM" -gt 0 ]; then
   echo
@@ -62,7 +76,9 @@ if [ "$PRIM" -gt 0 ]; then
 fi
 if [ "$PRIM" -eq 0 ]; then
   echo
-  echo "  ⛔ NO PRIMARY SOURCE IN THESE RESULTS. Our findings cite sources in ONE LINE; that is not"
+  [ "${PRIM_ANY:-0}" -gt 0 ] && echo "  ⚠️  $PRIM_ANY primary hit(s) returned but ALL scored below $FLOOR — the RAG returns top-N for any"
+  [ "${PRIM_ANY:-0}" -gt 0 ] && echo "     string, so these are NOISE, not evidence. Rephrase the question toward the biology."
+  echo "  ⛔ NO RELEVANT PRIMARY SOURCE IN THESE RESULTS. Our findings cite sources in ONE LINE; that is not"
   echo "     reading them. Re-query the primary corpora explicitly before building:"
   echo
   echo "       .venv-rag/bin/python tools/rag/rag_search.py \"$Q\" 8 --corpus kandel"
