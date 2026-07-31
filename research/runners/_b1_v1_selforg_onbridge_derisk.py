@@ -349,6 +349,72 @@ def read_v1_rfs(bridge, r0, v0, n_retina, n_v1, n_orient, n_freq, n_pos, retina_
     return rfs
 
 
+def raw_weight_stats(bridge, r0, v0, n_retina, n_v1, retina_size):
+    """RAW retina->V1 weights split by ON/OFF channel, plus per-cell incoming L2 norm.
+
+    ⚠️ WHY THIS EXISTS. Every fix proposed for lane D so far is predicated on "the weights collapsed" -- and that
+    had NEVER been measured. The only weight statistic recorded (`saturation`) is computed from `rf_post`, which is
+    the SIGNED ON-OFF DIFFERENCE, so it cannot distinguish the two hypotheses that need OPPOSITE fixes:
+
+      * WEIGHT COLLAPSE          -> on_mean and off_mean both ~0, l2 per cell ~0.  Fix: the rule is destroying mass.
+      * COMMON-MODE CONVERGENCE  -> on_mean and off_mean both LARGE and nearly EQUAL, l2 per cell LARGE.
+                                    The signed difference vanishes while the raw weights are healthy.
+                                    Fix: remove the common mode; adding weight mass would do nothing.
+
+    `frac_rf_near_zero` reads ~0.45 under BOTH, and is additionally floored by geometry -- roughly 32 of the 81
+    patch pixels fall outside the radius-4 disc and are structurally zero -- so it can never have answered this.
+    Read-only: no bridge state is modified.
+    """
+    block = bridge.cp_connections[r0:r0 + n_retina, v0:v0 + n_v1]
+    W = np.asarray(to_host(block.todense())).astype(np.float32)      # (n_retina, n_v1) = W[pre, post]
+    RS2 = retina_size * retina_size
+    on, off = W[0:RS2, :], W[RS2:2 * RS2, :]
+    l2 = np.sqrt((W ** 2).sum(axis=0))                                # incoming L2 norm per V1 cell
+    return dict(
+        on_mean=round(float(on.mean()), 6), off_mean=round(float(off.mean()), 6),
+        on_absmax=round(float(np.abs(on).max()), 6), off_absmax=round(float(np.abs(off).max()), 6),
+        # THE DISCRIMINATOR: near 0 => the channels cancel (common mode); large => a genuine signed RF.
+        on_minus_off_mean=round(float(on.mean() - off.mean()), 6),
+        raw_mean_abs=round(float(np.abs(W).mean()), 6),
+        l2_mean=round(float(l2.mean()), 6), l2_min=round(float(l2.min()), 6),
+        l2_max=round(float(l2.max()), 6), l2_std=round(float(l2.std()), 6),
+        frac_cells_l2_near_zero=round(float((l2 < 1e-6).mean()), 4),
+        frac_raw_near_zero=round(float((np.abs(W) < 1e-6).mean()), 4),
+    )
+
+
+def plasticity_event_stats(bridge, v1_idx):
+    """The plasticity-event count and the DEVELOPMENTAL activity EMA -- both already computed, neither ever read.
+
+    `num_potentiation_events` is maintained by the Hebbian path in sim/bridge.py and nothing has ever looked at it,
+    so "the rule fired but did nothing" and "the rule never fired" have been indistinguishable for this whole arc.
+    Read-only, and defensive: a missing attribute records None rather than raising, because this is instrumentation
+    and must never be able to fail the run it is measuring.
+    """
+    # NB `num_potentiation_events` is a LOCAL in the Hebbian block (sim/bridge.py:7865/7883), NOT an attribute --
+    # reading it by that name returns None forever, which is what a first pass here did. It accumulates into
+    # `_mock_total_plasticity_events` (bridge.py:7931), which is the field that actually exists.
+    out = {}
+    n_ev = getattr(bridge, "_mock_total_plasticity_events", None)
+    try:
+        out["total_plasticity_events"] = int(n_ev) if n_ev is not None else None
+    except Exception:
+        out["total_plasticity_events"] = None
+    ema = getattr(bridge, "cp_neuron_activity_ema", None)
+    if ema is not None and len(v1_idx):
+        try:
+            e = np.asarray(to_host(ema))[v1_idx].astype(float)
+            out.update(v1_activity_ema_mean=round(float(e.mean()), 8),
+                       v1_activity_ema_max=round(float(e.max()), 8),
+                       v1_activity_ema_min=round(float(e.min()), 8),
+                       frac_v1_ema_zero=round(float((e <= 0).mean()), 4))
+        except Exception:
+            out["v1_activity_ema_mean"] = None
+    else:
+        out["v1_activity_ema_mean"] = None
+    return out
+
+
 def encode_v1_firing(bridge, r0, v0, n_retina, n_v1, images, drive_pA, read_steps, settle_steps, xp):
     """Drive each test image; count V1 spikes over a read window -> the V1 FIRING code (N, n_v1)."""
     codes = np.zeros((images.shape[0], n_v1), dtype=np.float32)
@@ -480,10 +546,36 @@ def run_seed(seed, a):
         if _rp.ndim == 2 else float("nan"),
     )
 
+    # The RAW weights, which no lane-D run has ever recorded. `saturation` above is derived from the SIGNED
+    # ON-OFF difference and is blind to the collapse-vs-common-mode distinction these two calls resolve.
+    _raw = raw_weight_stats(bridge, r0, v0, n_retina, n_v1, retina_size)
+    _plast = plasticity_event_stats(bridge, np.arange(v0, v0 + n_v1))
+    print("  raw W: on_mean %.5f off_mean %.5f  on-off %.5f | l2 mean %.4f min %.4f max %.4f | "
+          "cells l2~0 %.3f" % (_raw["on_mean"], _raw["off_mean"], _raw["on_minus_off_mean"],
+                               _raw["l2_mean"], _raw["l2_min"], _raw["l2_max"],
+                               _raw["frac_cells_l2_near_zero"]))
+    print("  plasticity: events=%s | v1 activity EMA mean=%s frac_zero=%s"
+          % (_plast.get("total_plasticity_events"), _plast.get("v1_activity_ema_mean"),
+             _plast.get("frac_v1_ema_zero")))
+    # Name the diagnosis the numbers support, so the artifact carries a verdict rather than raw columns someone
+    # has to re-interpret. Threshold is relative to the raw weight scale, not an absolute.
+    _scale = max(_raw["raw_mean_abs"], 1e-9)
+    if _raw["l2_mean"] < 1e-6:
+        _diag = "WEIGHT COLLAPSE — incoming mass is gone; a normalization fix would have nothing to normalize"
+    elif abs(_raw["on_minus_off_mean"]) < 0.05 * _scale:
+        _diag = ("COMMON-MODE CONVERGENCE — raw weights are healthy but ON and OFF cancel; adding weight mass "
+                 "cannot help, the common mode has to be removed")
+    else:
+        _diag = "NEITHER — raw weights carry a signed ON-OFF structure; look downstream of the weights"
+    print("  => %s" % _diag)
+
     return dict(
         seed=seed, backend=backend, n_v1=n_v1, elapsed_s=round(elapsed, 1),
         v1_firing_rate=round(v1_rate, 4),
         saturation=_sat,
+        raw_weights=_raw,
+        plasticity=_plast,
+        weight_diagnosis=_diag,
         osi=dict(
             pre_random=dict(mean=round(osi_pre_mean, 4), frac_gt0_5=round(osi_pre_frac, 4)),
             post_learned=dict(mean=round(osi_post_mean, 4), frac_gt0_5=round(osi_post_frac, 4)),
