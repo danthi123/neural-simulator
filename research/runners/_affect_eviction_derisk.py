@@ -791,6 +791,28 @@ def summarize(rows, seeds, cfgd):
     go = bool(instrument_verified and n_core >= max(1, int(np.ceil(5 * n / 6)))
               and n_instr >= max(1, int(np.ceil(5 * n / 6))))
 
+    # ---- EARN the verdict (2026-07-31). THE DEFECT THIS CLOSES, in this exact file: A5 is pre-registered
+    # ("during(evict ON) >= 0.5 x during(baseline); else UNDEFINED, not a pass"), was computed correctly as
+    # `arm_valid=False` on 3/3 seeds, and the verdict string still read "NO-GO / BOUNDARY". Every downstream
+    # ratio in that artifact is null because no signal survived. The runner HAD the number and did not
+    # consult it. Registering it here makes that impossible rather than remembered.
+    n_valid = sum(1 for r in rows if r.get("arm_valid"))
+    from tools.verdict import Verdict                                          # noqa: E402
+    _v = Verdict("affect mood eviction")
+    _v.require("A5: the treatment arm was not CRUSHED (>=5/6 seeds)",
+               n_valid >= max(1, int(np.ceil(5 * n / 6))), expect=True,
+               note=f"{n_valid}/{n} seeds had a valid arm; a crushed arm yields UNDEFINED, never a negative")
+    _v.require("the instrument is verified (baseline reproduces the ratchet)", instrument_verified, expect=True)
+    _v.require("every seed produced an eviction ratio", 
+               all(r.get("evict_ratio_low") is not None for r in rows if r.get("arm_valid")), expect=True)
+    for _proc in ("short-term plasticity", "STDP", "Hebbian learning", "homeostasis",
+                  "reward modulation", "structural plasticity"):
+        _v.disabled(_proc, why="isolation block in this runner — the attractor is the only live dynamic, so "
+                               "any latch observed is a property of the mechanism UNDER THIS ISOLATION")
+    _verdict_block = _v.decide(go=go)
+    if _verdict_block["status"] == "UNDEFINED":
+        go = False
+
     def _m(k):
         return "n/a" if means[k] is None else f"{means[k]:.3f}"
 
@@ -820,7 +842,10 @@ def summarize(rows, seeds, cfgd):
                    f"intrinsic spike-frequency adaptation on the affect pools (--sfa).")
     return {
         "probe": "affect mood EVICTION (P0.3-E): slow GABA_B/GIRK feedback vs the latched-mood RATCHET",
-        "verdict": verdict, "GO": go,
+        "verdict": (verdict if _verdict_block["status"] != "UNDEFINED" else
+                    f"UNDEFINED ({n}-seed) — " + "; ".join(_verdict_block["undefined_reasons"])),
+        "GO": go,
+        **{k: _verdict_block[k] for k in ("preconditions", "disabled_processes", "undefined_reasons")},
         "instrument_verified(baseline reproduces the ratchet)": bool(instrument_verified),
         "n_seeds_core_go": n_core, "n_seeds_instrument_ok": n_instr,
         "n_seeds_baseline_ratchet_reproduced": n_baseline_ratchet,
