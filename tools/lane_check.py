@@ -55,10 +55,24 @@ def classify(cmd: str):
 
 
 def _queue_jobs():
-    p = os.path.join(ROOT, "research/queue/gpu.queue")
-    if not os.path.exists(p):
-        return []
-    return [l for l in open(p).read().split("\n") if l.strip() and not l.strip().startswith("#")]
+    """BOTH queues. This read gpu.queue ONLY, so every job staged to the mini-PC POOL was invisible to lane
+    coverage -- the check reported "queued=0, 5 of 5 CPU lanes unserved" while CPU-lane work sat queued in
+    research/queue/pool.queue. A coverage check blind to one of the two queues reports starvation that has
+    already been fixed, which is the fastest way to teach a reader to ignore it."""
+    out = []
+    for rel in ("research/queue/gpu.queue", "research/queue/pool.queue"):
+        p = os.path.join(ROOT, rel)
+        if not os.path.exists(p):
+            continue
+        for l in open(p).read().split("\n"):
+            l = l.strip()
+            if not l or l.startswith("#"):
+                continue
+            # the pool queue is "<epoch>\t<cmd>  #checked:<reason>"; keep only the command
+            if "\t" in l:
+                l = l.split("\t", 1)[1]
+            out.append(l.split("#checked:")[0].strip())
+    return out
 
 
 def _running():

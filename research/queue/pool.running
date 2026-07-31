@@ -115,3 +115,6 @@
 2026-07-31 14:28:15	pool40	SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._gap5_btsp_place_field_derisk --seeds 840 --laps 1 --dwell 30 --lr 0.005 --w-max 2500 --drive 3000 --w0 600 --out g5s_out/g5w0_600_840.json  
 2026-07-31 14:28:20	pool41	SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._gap5_btsp_place_field_derisk --seeds 841 --laps 1 --dwell 30 --lr 0.005 --w-max 2500 --drive 3000 --w0 600 --out g5s_out/g5w0_600_841.json  
 2026-07-31 14:28:26	pool42	SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._gap5_btsp_place_field_derisk --seeds 842 --laps 1 --dwell 30 --lr 0.005 --w-max 2500 --drive 3000 --w0 600 --out g5s_out/g5w0_600_842.json  
+2026-07-31 14:39:47	pool40	SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._affect_state_region_derisk --seeds 42 43 44 100 101 102 --out affect6.json  
+2026-07-31 14:39:53	pool41	SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._self_schema_region_derisk --seeds 42 43 44 100 101 102 --json selfschema6.json  
+2026-07-31 14:39:58	pool42	SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._emerge72_construction_registry_derisk --derisk --seeds 42 43 44 100 101 102  
