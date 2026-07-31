@@ -18,7 +18,8 @@ import numpy as np
 # CuPy and NumPy. `cp` is the active backend module (numpy-like API);
 # `csp` is the matching sparse-matrix submodule.
 try:
-    from sim.backend import get_backend, get_sparse_module
+    from sim.backend import (get_backend, get_sparse_module, to_host as _to_host,
+                             is_gpu_backend as _is_gpu)
     cp, _backend_name = get_backend()
     csp = get_sparse_module()
 except ImportError:
@@ -167,9 +168,10 @@ def generate_spatial_connections_gpu(n, max_connections_per_neuron, neuron_posit
     # being O(n*k) on GPU instead of O(n^2) on CPU.
     log_prob = cp.log(cp.maximum(conn_prob, 1e-30))
     # Gumbel noise: -log(-log(U)) where U ~ Uniform(0,1)
+    # BACKEND PORTABILITY (2026-07-31): numpy's uniform() rejects dtype=, so this raised TypeError under
+    # SIM_BACKEND=numpy. .astype() works on both backends and costs one cheap cast.
     gumbel_noise = -cp.log(-cp.log(cp.random.uniform(1e-10, 1.0 - 1e-10,
-                                                      size=conn_prob.shape,
-                                                      dtype=cp.float32)))
+                                                     size=conn_prob.shape).astype(cp.float32)))
     perturbed = log_prob + gumbel_noise
     # Zero out self-connections
     cp.fill_diagonal(perturbed, -cp.inf)
@@ -293,8 +295,8 @@ def generate_spatial_connections_binned(n, max_connections_per_neuron, neuron_po
     k = min(max_connections_per_neuron, n - 1)
 
     # Transfer positions to CPU for binning (more efficient for indexing)
-    positions_np = cp.asnumpy(neuron_positions_3d_cp)
-    traits_np = cp.asnumpy(traits_cp)
+    positions_np = _to_host(neuron_positions_3d_cp)
+    traits_np = _to_host(traits_cp)
 
     # Get spatial bounds
     pos_min = positions_np.min(axis=0)
@@ -496,7 +498,10 @@ def generate_spatial_connections_chunked(n, max_connections_per_neuron, neuron_p
     # Estimate per-chunk-row VRAM: N * 60 bytes (distance matrix + probs + argpartition)
     # Fall back to CPU-binned only if a SINGLE row would exceed 25% of free VRAM
     # (meaning even chunk_size=1 would OOM)
-    mem_info = cp.cuda.Device().mem_info
+    # BACKEND GUARD (2026-07-31): cp.cuda does not exist on the numpy backend, so this line alone made
+    # every chunked call die with AttributeError before reaching any of the maths. On numpy there is no
+    # device budget to respect, so report a large free pool and let the chunker pick a big chunk.
+    mem_info = cp.cuda.Device().mem_info if _is_gpu() else (32 * 1024**3, 64 * 1024**3)
     free_mem = mem_info[0]
     bytes_per_row = n * 60
     if bytes_per_row > free_mem * 0.25:
@@ -521,7 +526,10 @@ def generate_spatial_connections_chunked(n, max_connections_per_neuron, neuron_p
     #   argpartition internals (thrust sort): ~3x (chunk_n, n) int32+float32
     #                   n * 24    = 24n bytes  (hidden CuPy/Thrust temporaries)
     # Total peak: ~52n bytes per chunk row.  Use 60n for safety margin.
-    mem_info = cp.cuda.Device().mem_info
+    # BACKEND GUARD (2026-07-31): cp.cuda does not exist on the numpy backend, so this line alone made
+    # every chunked call die with AttributeError before reaching any of the maths. On numpy there is no
+    # device budget to respect, so report a large free pool and let the chunker pick a big chunk.
+    mem_info = cp.cuda.Device().mem_info if _is_gpu() else (32 * 1024**3, 64 * 1024**3)
     free_mem = mem_info[0]  # Free VRAM in bytes
 
     # Use only 35% of free memory -- argpartition's Thrust backend allocates
@@ -587,8 +595,8 @@ def generate_spatial_connections_chunked(n, max_connections_per_neuron, neuron_p
 
         # Gumbel-max trick for probabilistic top-k (avoids same-type segregation)
         log_prob = cp.log(cp.maximum(conn_prob, 1e-30))
-        gumbel_noise = -cp.log(-cp.log(cp.random.uniform(
-            1e-10, 1.0 - 1e-10, size=conn_prob.shape, dtype=cp.float32)))
+        gumbel_noise = -cp.log(-cp.log(cp.random.uniform(          # no dtype= : numpy rejects it
+            1e-10, 1.0 - 1e-10, size=conn_prob.shape).astype(cp.float32)))
         perturbed = log_prob + gumbel_noise
         del log_prob, gumbel_noise, conn_prob
         # Zero out self-connections
@@ -607,9 +615,9 @@ def generate_spatial_connections_chunked(n, max_connections_per_neuron, neuron_p
         chunk_weights = weights.ravel()  # (chunk_n * k,)
 
         # Accumulate (transfer to CPU immediately to free GPU memory)
-        all_rows.append(cp.asnumpy(chunk_rows))
-        all_cols.append(cp.asnumpy(chunk_cols))
-        all_weights.append(cp.asnumpy(chunk_weights))
+        all_rows.append(_to_host(chunk_rows))
+        all_cols.append(_to_host(chunk_cols))
+        all_weights.append(_to_host(chunk_weights))
 
         # Explicit cleanup to prevent memory fragmentation
         # (diff, distances, prob_dist, prob_trait, chunk_pos_i, pos_j already freed pre-argpartition)
@@ -621,7 +629,8 @@ def generate_spatial_connections_chunked(n, max_connections_per_neuron, neuron_p
         # (:132) crashed -- i.e. the entire large-network path this function exists to serve.
         del top_k_indices
         del chunk_pos, chunk_traits
-        cp.get_default_memory_pool().free_all_blocks()
+        if _is_gpu():
+            cp.get_default_memory_pool().free_all_blocks()
 
         # Progress update (every 10% or every chunk if few chunks)
         if num_chunks > 1 and ((chunk_idx + 1) % max(1, num_chunks // 10) == 0 or chunk_idx == num_chunks - 1):
@@ -707,7 +716,7 @@ def generate_spatial_connections_3d(n, max_connections_per_neuron, neuron_positi
 
             if num_to_select > 0:
                 try:
-                    if not np.isclose(cp.asnumpy(cp.sum(normalized_probabilities_cp)), 1.0) and cp.sum(normalized_probabilities_cp) > 1e-9:
+                    if not np.isclose(_to_host(cp.sum(normalized_probabilities_cp)), 1.0) and cp.sum(normalized_probabilities_cp) > 1e-9:
                         normalized_probabilities_cp = normalized_probabilities_cp / cp.sum(normalized_probabilities_cp)
                     elif cp.sum(normalized_probabilities_cp) <= 1e-9:
                         selected_local_indices_cp = cp.random.choice(cp.arange(num_potential_targets), size=num_to_select, replace=False)
@@ -727,7 +736,7 @@ def generate_spatial_connections_3d(n, max_connections_per_neuron, neuron_positi
                 final_weights_np = np.clip(initial_weights_np, min_w, max_w)
 
                 rows.extend([i] * num_to_select)
-                cols.extend(cp.asnumpy(final_target_global_indices_cp).tolist())
+                cols.extend(_to_host(final_target_global_indices_cp).tolist())
                 weights_list.extend(final_weights_np.tolist())
 
         if n > 0 and i % (max(1, n // 20)) == 0:
@@ -918,7 +927,7 @@ def generate_motif_connections_3d(n, neuron_positions_3d_cp, traits_cp, config, 
 
     # Traits on host for flexible population definitions
     if traits_cp is not None and traits_cp.size == n:
-        traits_np = cp.asnumpy(traits_cp).astype(np.int32)
+        traits_np = _to_host(traits_cp).astype(np.int32)
     else:
         traits_np = np.zeros(n, dtype=np.int32)
 

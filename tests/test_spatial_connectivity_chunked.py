@@ -24,11 +24,10 @@ from sim.backend import get_backend, is_gpu_backend, to_host
 
 xp, _BACKEND = get_backend()
 
-pytestmark = pytest.mark.skipif(
-    not is_gpu_backend(),
-    reason="the chunked spatial generator is CuPy-only (cp.cuda.mem_info / cp.asnumpy / "
-           "cp.random.uniform(dtype=)); its numpy portability is tracked separately",
-)
+# The chunked generator used to be CuPy-only (cp.cuda.mem_info / cp.asnumpy / cp.random.uniform(dtype=)), so
+# this file skipped on numpy. Those are fixed, so the structural test now runs on BOTH backends -- which is the
+# point: a CPU-runnable test is one CI can actually execute. Only the chunk-forcing shim needs CuPy, since it
+# patches cp.cuda.Device; on numpy the generator takes the large-budget path and runs single-chunk.
 
 N = 900
 K = 12
@@ -68,6 +67,7 @@ def _force_chunks(monkeypatch, n_chunks):
     monkeypatch.setattr(cp.cuda, "Device", _Dev)
 
 
+@pytest.mark.skipif(not is_gpu_backend(), reason="chunk-forcing shim patches cp.cuda.Device")
 def test_chunked_runs_multi_chunk_and_is_structurally_correct(monkeypatch):
     """The regression: it must not raise, and must produce a correct graph ACROSS chunk boundaries."""
     from sim.connectivity import generate_spatial_connections_chunked
@@ -91,6 +91,7 @@ def test_chunked_runs_multi_chunk_and_is_structurally_correct(monkeypatch):
     assert not np.any(rows == cols), "self-connections present -> chunk row offset is wrong"
 
 
+@pytest.mark.skipif(not is_gpu_backend(), reason="chunk-forcing shim patches cp.cuda.Device")
 def test_chunked_matches_the_non_chunked_generator_statistically(monkeypatch):
     """Chunking must not change WHICH connections are made, only how they are computed.
 
@@ -147,3 +148,22 @@ def test_dispatcher_routes_large_n_to_the_chunked_path():
     src = inspect.getsource(connectivity.generate_spatial_connections_gpu)
     assert "generate_spatial_connections_chunked" in src
     assert "15000" in src, "the chunking threshold moved; update this test and the chunk-forcing shim"
+
+
+def test_chunked_runs_on_either_backend_single_chunk():
+    """Backend-portability guard: the generator must at least RUN under SIM_BACKEND=numpy.
+
+    Before 2026-07-31 every spatial generator in this module died on numpy -- cp.cuda.Device().mem_info,
+    cp.asnumpy, and cp.random.uniform(dtype=) are all CuPy-only, and the first of them fired before any maths.
+    test_numpy_backend_integration.py claimed to guard this but used 50-neuron networks that never reach a
+    spatial generator.
+    """
+    from sim.connectivity import generate_spatial_connections_chunked
+    from sim.config import CoreSimConfig
+
+    pos, traits = _positions_and_traits(400, seed=3)
+    m = generate_spatial_connections_chunked(400, 8, pos, traits, CoreSimConfig(),
+                                             log_fn=lambda *a, **k: None)
+    rows = to_host(m.tocoo().row)
+    assert m.nnz == 400 * 8
+    assert not np.any(rows == to_host(m.tocoo().col))
