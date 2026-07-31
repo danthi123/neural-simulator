@@ -1,0 +1,1901 @@
+{
+  "seed": 42,
+  "sweep": [
+    {
+      "gates": {
+        "G1_eviction(low<0.60)": false,
+        "G2_drive_dependence(high>=0.60)": true,
+        "G3_reignition(>=0.60)": true,
+        "G4_persistence_survives(>=0.50)": true,
+        "G5_nmda_off(<0.10)": true,
+        "G6_lesion_restores_ratchet(>=0.90)": true
+      },
+      "core_go(G1-G4)": false,
+      "instrument_ok(G5,G6)": true,
+      "A5_not_crushed": true,
+      "arm_valid": true,
+      "held0_floor_used": 0.02345,
+      "evict_ratio_low": 1.0227790432801822,
+      "time_ratio_high": 0.9817767653758541,
+      "reignite_ratio": 1.041002277904328,
+      "persistence_retention": 0.6154205607476636,
+      "nmda_off_retention": 0.0,
+      "lesion_evict_ratio": 1.0538793103448276,
+      "held_low": [
+        0.0878,
+        0.0898,
+        0.0882,
+        0.0868,
+        0.0914
+      ],
+      "during_low": [
+        0.14266666666666666,
+        0.09066666666666667,
+        0.089,
+        0.08533333333333333,
+        0.10666666666666667
+      ],
+      "held_high": [
+        0.0878,
+        0.0866,
+        0.0862,
+        0.0906,
+        0.089
+      ],
+      "during_high": [
+        0.14266666666666666,
+        0.10816666666666666,
+        0.1075,
+        0.10816666666666666,
+        0.10283333333333333
+      ],
+      "g_gabab_end_of_read_low": [
+        2.1420488357543945,
+        2.2159218788146973,
+        2.192758321762085,
+        2.20631742477417,
+        2.1958703994750977
+      ],
+      "seed": 42,
+      "gabab_weight": 0.05,
+      "gabab_tau_ms": 150.0,
+      "gabab_max": 0.0,
+      "enable_gabab": true,
+      "sfa": null,
+      "g_gabab_lesion_end_of_read": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "trace_low_held": [
+        0.0878,
+        0.0898,
+        0.0882,
+        0.0868,
+        0.0914
+      ],
+      "sweep_verdict": "ratchet holds"
+    },
+    {
+      "gates": {
+        "G1_eviction(low<0.60)": false,
+        "G2_drive_dependence(high>=0.60)": true,
+        "G3_reignition(>=0.60)": true,
+        "G4_persistence_survives(>=0.50)": true,
+        "G5_nmda_off(<0.10)": true,
+        "G6_lesion_restores_ratchet(>=0.90)": true
+      },
+      "core_go(G1-G4)": false,
+      "instrument_ok(G5,G6)": true,
+      "A5_not_crushed": true,
+      "arm_valid": true,
+      "held0_floor_used": 0.02345,
+      "evict_ratio_low": 0.9855072463768116,
+      "time_ratio_high": 0.9213250517598343,
+      "reignite_ratio": 0.989648033126294,
+      "persistence_retention": 0.6677419354838711,
+      "nmda_off_retention": 0.0,
+      "lesion_evict_ratio": 1.0538793103448276,
+      "held_low": [
+        0.0966,
+        0.0952,
+        0.0906,
+        0.0906,
+        0.0956
+      ],
+      "during_low": [
+        0.14466666666666667,
+        0.09516666666666666,
+        0.096,
+        0.0925,
+        0.112
+      ],
+      "held_high": [
+        0.0966,
+        0.089,
+        0.0924,
+        0.0964,
+        0.0906
+      ],
+      "during_high": [
+        0.14466666666666667,
+        0.10816666666666666,
+        0.113,
+        0.11183333333333334,
+        0.108
+      ],
+      "g_gabab_end_of_read_low": [
+        0.49667778611183167,
+        0.49337759613990784,
+        0.4966117739677429,
+        0.49667778611183167,
+        0.493246465921402
+      ],
+      "seed": 42,
+      "gabab_weight": 0.05,
+      "gabab_tau_ms": 150.0,
+      "gabab_max": 0.5,
+      "enable_gabab": true,
+      "sfa": null,
+      "g_gabab_lesion_end_of_read": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "trace_low_held": [
+        0.0966,
+        0.0952,
+        0.0906,
+        0.0906,
+        0.0956
+      ],
+      "sweep_verdict": "ratchet holds"
+    },
+    {
+      "gates": {
+        "G1_eviction(low<0.60)": false,
+        "G2_drive_dependence(high>=0.60)": true,
+        "G3_reignition(>=0.60)": true,
+        "G4_persistence_survives(>=0.50)": true,
+        "G5_nmda_off(<0.10)": true,
+        "G6_lesion_restores_ratchet(>=0.90)": true
+      },
+      "core_go(G1-G4)": false,
+      "instrument_ok(G5,G6)": true,
+      "A5_not_crushed": true,
+      "arm_valid": true,
+      "held0_floor_used": 0.02345,
+      "evict_ratio_low": 0.975,
+      "time_ratio_high": 0.9575,
+      "reignite_ratio": 0.9525,
+      "persistence_retention": 0.5667060212514758,
+      "nmda_off_retention": 0.0,
+      "lesion_evict_ratio": 1.0538793103448276,
+      "held_low": [
+        0.08,
+        0.078,
+        0.077,
+        0.0758,
+        0.0762
+      ],
+      "during_low": [
+        0.14116666666666666,
+        0.083,
+        0.0815,
+        0.07666666666666666,
+        0.0995
+      ],
+      "held_high": [
+        0.08,
+        0.0774,
+        0.0766,
+        0.075,
+        0.0766
+      ],
+      "during_high": [
+        0.14116666666666666,
+        0.1005,
+        0.1005,
+        0.09933333333333333,
+        0.09866666666666667
+      ],
+      "g_gabab_end_of_read_low": [
+        4.187460422515869,
+        5.19708251953125,
+        5.450506687164307,
+        5.507815361022949,
+        5.584273815155029
+      ],
+      "seed": 42,
+      "gabab_weight": 0.05,
+      "gabab_tau_ms": 400.0,
+      "gabab_max": 0.0,
+      "enable_gabab": true,
+      "sfa": null,
+      "g_gabab_lesion_end_of_read": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "trace_low_held": [
+        0.08,
+        0.078,
+        0.077,
+        0.0758,
+        0.0762
+      ],
+      "sweep_verdict": "ratchet holds"
+    },
+    {
+      "gates": {
+        "G1_eviction(low<0.60)": false,
+        "G2_drive_dependence(high>=0.60)": true,
+        "G3_reignition(>=0.60)": true,
+        "G4_persistence_survives(>=0.50)": true,
+        "G5_nmda_off(<0.10)": true,
+        "G6_lesion_restores_ratchet(>=0.90)": true
+      },
+      "core_go(G1-G4)": false,
+      "instrument_ok(G5,G6)": true,
+      "A5_not_crushed": true,
+      "arm_valid": true,
+      "held0_floor_used": 0.02345,
+      "evict_ratio_low": 0.9875776397515528,
+      "time_ratio_high": 0.9296066252587992,
+      "reignite_ratio": 0.9337474120082816,
+      "persistence_retention": 0.6677419354838711,
+      "nmda_off_retention": 0.0,
+      "lesion_evict_ratio": 1.0538793103448276,
+      "held_low": [
+        0.0966,
+        0.0954,
+        0.0954,
+        0.0892,
+        0.0902
+      ],
+      "during_low": [
+        0.14466666666666667,
+        0.09466666666666666,
+        0.09633333333333334,
+        0.09233333333333334,
+        0.11266666666666666
+      ],
+      "held_high": [
+        0.0966,
+        0.0916,
+        0.0898,
+        0.0966,
+        0.0894
+      ],
+      "during_high": [
+        0.14466666666666667,
+        0.10883333333333334,
+        0.111,
+        0.11216666666666666,
+        0.109
+      ],
+      "g_gabab_end_of_read_low": [
+        0.4975062608718872,
+        0.49875152111053467,
+        0.49857714772224426,
+        0.49870169162750244,
+        0.49875152111053467
+      ],
+      "seed": 42,
+      "gabab_weight": 0.05,
+      "gabab_tau_ms": 400.0,
+      "gabab_max": 0.5,
+      "enable_gabab": true,
+      "sfa": null,
+      "g_gabab_lesion_end_of_read": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "trace_low_held": [
+        0.0966,
+        0.0954,
+        0.0954,
+        0.0892,
+        0.0902
+      ],
+      "sweep_verdict": "ratchet holds"
+    },
+    {
+      "gates": {
+        "G1_eviction(low<0.60)": false,
+        "G2_drive_dependence(high>=0.60)": true,
+        "G3_reignition(>=0.60)": true,
+        "G4_persistence_survives(>=0.50)": true,
+        "G5_nmda_off(<0.10)": true,
+        "G6_lesion_restores_ratchet(>=0.90)": true
+      },
+      "core_go(G1-G4)": false,
+      "instrument_ok(G5,G6)": true,
+      "A5_not_crushed": true,
+      "arm_valid": true,
+      "held0_floor_used": 0.02345,
+      "evict_ratio_low": 0.9926829268292683,
+      "time_ratio_high": 0.9780487804878047,
+      "reignite_ratio": 0.9829268292682927,
+      "persistence_retention": 0.5899280575539568,
+      "nmda_off_retention": 0.0,
+      "lesion_evict_ratio": 1.0538793103448276,
+      "held_low": [
+        0.082,
+        0.08,
+        0.0814,
+        0.0804,
+        0.0806
+      ],
+      "during_low": [
+        0.139,
+        0.0835,
+        0.084,
+        0.08016666666666666,
+        0.09983333333333333
+      ],
+      "held_high": [
+        0.082,
+        0.0802,
+        0.0814,
+        0.0796,
+        0.0796
+      ],
+      "during_high": [
+        0.139,
+        0.101,
+        0.10233333333333333,
+        0.10066666666666667,
+        0.10233333333333333
+      ],
+      "g_gabab_end_of_read_low": [
+        4.121225833892822,
+        4.234835147857666,
+        4.244864463806152,
+        4.216760158538818,
+        4.248741626739502
+      ],
+      "seed": 42,
+      "gabab_weight": 0.1,
+      "gabab_tau_ms": 150.0,
+      "gabab_max": 0.0,
+      "enable_gabab": true,
+      "sfa": null,
+      "g_gabab_lesion_end_of_read": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "trace_low_held": [
+        0.082,
+        0.08,
+        0.0814,
+        0.0804,
+        0.0806
+      ],
+      "sweep_verdict": "ratchet holds"
+    },
+    {
+      "gates": {
+        "G1_eviction(low<0.60)": false,
+        "G2_drive_dependence(high>=0.60)": true,
+        "G3_reignition(>=0.60)": true,
+        "G4_persistence_survives(>=0.50)": true,
+        "G5_nmda_off(<0.10)": true,
+        "G6_lesion_restores_ratchet(>=0.90)": true
+      },
+      "core_go(G1-G4)": false,
+      "instrument_ok(G5,G6)": true,
+      "A5_not_crushed": true,
+      "arm_valid": true,
+      "held0_floor_used": 0.02345,
+      "evict_ratio_low": 1.0479302832244006,
+      "time_ratio_high": 0.971677559912854,
+      "reignite_ratio": 0.9782135076252723,
+      "persistence_retention": 0.6338319907940161,
+      "nmda_off_retention": 0.0,
+      "lesion_evict_ratio": 1.0538793103448276,
+      "held_low": [
+        0.0918,
+        0.089,
+        0.0962,
+        0.0896,
+        0.0898
+      ],
+      "during_low": [
+        0.14483333333333334,
+        0.0965,
+        0.09533333333333334,
+        0.0925,
+        0.11283333333333333
+      ],
+      "held_high": [
+        0.0918,
+        0.0968,
+        0.0892,
+        0.09,
+        0.0952
+      ],
+      "during_high": [
+        0.14483333333333334,
+        0.11083333333333334,
+        0.10716666666666666,
+        0.11266666666666666,
+        0.11283333333333333
+      ],
+      "g_gabab_end_of_read_low": [
+        0.49667778611183167,
+        0.49667778611183167,
+        0.49667778611183167,
+        0.49667778611183167,
+        0.49667778611183167
+      ],
+      "seed": 42,
+      "gabab_weight": 0.1,
+      "gabab_tau_ms": 150.0,
+      "gabab_max": 0.5,
+      "enable_gabab": true,
+      "sfa": null,
+      "g_gabab_lesion_end_of_read": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "trace_low_held": [
+        0.0918,
+        0.089,
+        0.0962,
+        0.0896,
+        0.0898
+      ],
+      "sweep_verdict": "ratchet holds"
+    },
+    {
+      "gates": {
+        "G1_eviction(low<0.60)": false,
+        "G2_drive_dependence(high>=0.60)": true,
+        "G3_reignition(>=0.60)": true,
+        "G4_persistence_survives(>=0.50)": false,
+        "G5_nmda_off(<0.10)": true,
+        "G6_lesion_restores_ratchet(>=0.90)": true
+      },
+      "core_go(G1-G4)": false,
+      "instrument_ok(G5,G6)": true,
+      "A5_not_crushed": true,
+      "arm_valid": true,
+      "held0_floor_used": 0.02345,
+      "evict_ratio_low": 0.8851963746223566,
+      "time_ratio_high": 0.7552870090634443,
+      "reignite_ratio": 0.9123867069486405,
+      "persistence_retention": 0.47971014492753616,
+      "nmda_off_retention": 0.0,
+      "lesion_evict_ratio": 1.0538793103448276,
+      "held_low": [
+        0.0662,
+        0.0586,
+        0.0526,
+        0.0,
+        0.0604
+      ],
+      "during_low": [
+        0.138,
+        0.06933333333333333,
+        0.06416666666666666,
+        0.0495,
+        0.108
+      ],
+      "held_high": [
+        0.0662,
+        0.057,
+        0.05,
+        0.0464,
+        0.0472
+      ],
+      "during_high": [
+        0.138,
+        0.09033333333333333,
+        0.08866666666666667,
+        0.0895,
+        0.09133333333333334
+      ],
+      "g_gabab_end_of_read_low": [
+        8.000229835510254,
+        9.578670501708984,
+        9.701892852783203,
+        5.568503379821777,
+        9.15771198272705
+      ],
+      "seed": 42,
+      "gabab_weight": 0.1,
+      "gabab_tau_ms": 400.0,
+      "gabab_max": 0.0,
+      "enable_gabab": true,
+      "sfa": null,
+      "g_gabab_lesion_end_of_read": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "trace_low_held": [
+        0.0662,
+        0.0586,
+        0.0526,
+        0.0,
+        0.0604
+      ],
+      "sweep_verdict": "ratchet holds"
+    },
+    {
+      "gates": {
+        "G1_eviction(low<0.60)": false,
+        "G2_drive_dependence(high>=0.60)": true,
+        "G3_reignition(>=0.60)": true,
+        "G4_persistence_survives(>=0.50)": true,
+        "G5_nmda_off(<0.10)": true,
+        "G6_lesion_restores_ratchet(>=0.90)": true
+      },
+      "core_go(G1-G4)": false,
+      "instrument_ok(G5,G6)": true,
+      "A5_not_crushed": true,
+      "arm_valid": true,
+      "held0_floor_used": 0.02345,
+      "evict_ratio_low": 1.052863436123348,
+      "time_ratio_high": 0.9933920704845814,
+      "reignite_ratio": 0.9889867841409692,
+      "persistence_retention": 0.6269275028768699,
+      "nmda_off_retention": 0.0,
+      "lesion_evict_ratio": 1.0538793103448276,
+      "held_low": [
+        0.0908,
+        0.0894,
+        0.0956,
+        0.09,
+        0.0898
+      ],
+      "during_low": [
+        0.14483333333333334,
+        0.09566666666666666,
+        0.09516666666666666,
+        0.09333333333333334,
+        0.11183333333333334
+      ],
+      "held_high": [
+        0.0908,
+        0.0972,
+        0.0902,
+        0.0896,
+        0.0936
+      ],
+      "during_high": [
+        0.14483333333333334,
+        0.112,
+        0.10716666666666666,
+        0.112,
+        0.11216666666666666
+      ],
+      "g_gabab_end_of_read_low": [
+        0.49875152111053467,
+        0.49872660636901855,
+        0.49875152111053467,
+        0.49875152111053467,
+        0.49870169162750244
+      ],
+      "seed": 42,
+      "gabab_weight": 0.1,
+      "gabab_tau_ms": 400.0,
+      "gabab_max": 0.5,
+      "enable_gabab": true,
+      "sfa": null,
+      "g_gabab_lesion_end_of_read": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "trace_low_held": [
+        0.0908,
+        0.0894,
+        0.0956,
+        0.09,
+        0.0898
+      ],
+      "sweep_verdict": "ratchet holds"
+    },
+    {
+      "gates": {
+        "G1_eviction(low<0.60)": false,
+        "G2_drive_dependence(high>=0.60)": true,
+        "G3_reignition(>=0.60)": true,
+        "G4_persistence_survives(>=0.50)": true,
+        "G5_nmda_off(<0.10)": true,
+        "G6_lesion_restores_ratchet(>=0.90)": true
+      },
+      "core_go(G1-G4)": false,
+      "instrument_ok(G5,G6)": true,
+      "A5_not_crushed": true,
+      "arm_valid": true,
+      "held0_floor_used": 0.02345,
+      "evict_ratio_low": 0.9821958456973293,
+      "time_ratio_high": 0.9673590504451037,
+      "reignite_ratio": 0.9703264094955489,
+      "persistence_retention": 0.5164750957854406,
+      "nmda_off_retention": 0.0,
+      "lesion_evict_ratio": 1.0538793103448276,
+      "held_low": [
+        0.0674,
+        0.0658,
+        0.0662,
+        0.0648,
+        0.0654
+      ],
+      "during_low": [
+        0.1305,
+        0.07033333333333333,
+        0.07033333333333333,
+        0.06583333333333333,
+        0.09133333333333334
+      ],
+      "held_high": [
+        0.0674,
+        0.0654,
+        0.0652,
+        0.0656,
+        0.0658
+      ],
+      "during_high": [
+        0.1305,
+        0.09066666666666667,
+        0.091,
+        0.0915,
+        0.09133333333333334
+      ],
+      "g_gabab_end_of_read_low": [
+        7.744964599609375,
+        7.901987075805664,
+        7.905999183654785,
+        7.890092849731445,
+        7.897430419921875
+      ],
+      "seed": 42,
+      "gabab_weight": 0.2,
+      "gabab_tau_ms": 150.0,
+      "gabab_max": 0.0,
+      "enable_gabab": true,
+      "sfa": null,
+      "g_gabab_lesion_end_of_read": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "trace_low_held": [
+        0.0674,
+        0.0658,
+        0.0662,
+        0.0648,
+        0.0654
+      ],
+      "sweep_verdict": "ratchet holds"
+    },
+    {
+      "gates": {
+        "G1_eviction(low<0.60)": false,
+        "G2_drive_dependence(high>=0.60)": true,
+        "G3_reignition(>=0.60)": true,
+        "G4_persistence_survives(>=0.50)": true,
+        "G5_nmda_off(<0.10)": true,
+        "G6_lesion_restores_ratchet(>=0.90)": true
+      },
+      "core_go(G1-G4)": false,
+      "instrument_ok(G5,G6)": true,
+      "A5_not_crushed": true,
+      "arm_valid": true,
+      "held0_floor_used": 0.02345,
+      "evict_ratio_low": 0.997920997920998,
+      "time_ratio_high": 0.9355509355509356,
+      "reignite_ratio": 0.9833679833679835,
+      "persistence_retention": 0.6696055684454756,
+      "nmda_off_retention": 0.0,
+      "lesion_evict_ratio": 1.0538793103448276,
+      "held_low": [
+        0.0962,
+        0.096,
+        0.0948,
+        0.0908,
+        0.0946
+      ],
+      "during_low": [
+        0.14366666666666666,
+        0.0955,
+        0.09466666666666666,
+        0.08933333333333333,
+        0.10966666666666666
+      ],
+      "held_high": [
+        0.0962,
+        0.09,
+        0.093,
+        0.0908,
+        0.0906
+      ],
+      "during_high": [
+        0.14366666666666666,
+        0.108,
+        0.10966666666666666,
+        0.11033333333333334,
+        0.10833333333333334
+      ],
+      "g_gabab_end_of_read_low": [
+        0.49667778611183167,
+        0.49542462825775146,
+        0.4966117739677429,
+        0.49667778611183167,
+        0.49555572867393494
+      ],
+      "seed": 42,
+      "gabab_weight": 0.2,
+      "gabab_tau_ms": 150.0,
+      "gabab_max": 0.5,
+      "enable_gabab": true,
+      "sfa": null,
+      "g_gabab_lesion_end_of_read": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "trace_low_held": [
+        0.0962,
+        0.096,
+        0.0948,
+        0.0908,
+        0.0946
+      ],
+      "sweep_verdict": "ratchet holds"
+    },
+    {
+      "gates": {
+        "G1_eviction(low<0.60)": false,
+        "G2_drive_dependence(high>=0.60)": false,
+        "G3_reignition(>=0.60)": false,
+        "G4_persistence_survives(>=0.50)": false,
+        "G5_nmda_off(<0.10)": true,
+        "G6_lesion_restores_ratchet(>=0.90)": true
+      },
+      "core_go(G1-G4)": false,
+      "instrument_ok(G5,G6)": true,
+      "A5_not_crushed": true,
+      "arm_valid": true,
+      "held0_floor_used": 0.02345,
+      "evict_ratio_low": null,
+      "time_ratio_high": null,
+      "reignite_ratio": null,
+      "persistence_retention": 0.0,
+      "nmda_off_retention": 0.0,
+      "lesion_evict_ratio": 1.0538793103448276,
+      "held_low": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "during_low": [
+        0.12683333333333333,
+        0.0,
+        0.0,
+        0.0,
+        0.12666666666666668
+      ],
+      "held_high": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "during_high": [
+        0.12683333333333333,
+        0.08583333333333333,
+        0.09583333333333334,
+        0.0945,
+        0.09433333333333334
+      ],
+      "g_gabab_end_of_read_low": [
+        8.157536506652832,
+        2.2231643199920654,
+        0.6058765649795532,
+        0.16511884331703186,
+        7.998687744140625
+      ],
+      "seed": 42,
+      "gabab_weight": 0.2,
+      "gabab_tau_ms": 400.0,
+      "gabab_max": 0.0,
+      "enable_gabab": true,
+      "sfa": null,
+      "g_gabab_lesion_end_of_read": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "trace_low_held": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "sweep_verdict": "UNDEFINED (held[0]~0: no state to evict)"
+    },
+    {
+      "gates": {
+        "G1_eviction(low<0.60)": false,
+        "G2_drive_dependence(high>=0.60)": true,
+        "G3_reignition(>=0.60)": true,
+        "G4_persistence_survives(>=0.50)": true,
+        "G5_nmda_off(<0.10)": true,
+        "G6_lesion_restores_ratchet(>=0.90)": true
+      },
+      "core_go(G1-G4)": false,
+      "instrument_ok(G5,G6)": true,
+      "A5_not_crushed": true,
+      "arm_valid": true,
+      "held0_floor_used": 0.02345,
+      "evict_ratio_low": 0.9916492693110648,
+      "time_ratio_high": 0.9394572025052192,
+      "reignite_ratio": 0.964509394572025,
+      "persistence_retention": 0.6683720930232557,
+      "nmda_off_retention": 0.0,
+      "lesion_evict_ratio": 1.0538793103448276,
+      "held_low": [
+        0.0958,
+        0.0948,
+        0.095,
+        0.0902,
+        0.0924
+      ],
+      "during_low": [
+        0.14333333333333334,
+        0.095,
+        0.09516666666666666,
+        0.0895,
+        0.11
+      ],
+      "held_high": [
+        0.0958,
+        0.0908,
+        0.09,
+        0.0914,
+        0.0898
+      ],
+      "during_high": [
+        0.14333333333333334,
+        0.10833333333333334,
+        0.10816666666666666,
+        0.11366666666666667,
+        0.10766666666666666
+      ],
+      "g_gabab_end_of_read_low": [
+        0.49875152111053467,
+        0.4986269772052765,
+        0.498502641916275,
+        0.49875152111053467,
+        0.49872660636901855
+      ],
+      "seed": 42,
+      "gabab_weight": 0.2,
+      "gabab_tau_ms": 400.0,
+      "gabab_max": 0.5,
+      "enable_gabab": true,
+      "sfa": null,
+      "g_gabab_lesion_end_of_read": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "trace_low_held": [
+        0.0958,
+        0.0948,
+        0.095,
+        0.0902,
+        0.0924
+      ],
+      "sweep_verdict": "ratchet holds"
+    },
+    {
+      "gates": {
+        "G1_eviction(low<0.60)": true,
+        "G2_drive_dependence(high>=0.60)": false,
+        "G3_reignition(>=0.60)": true,
+        "G4_persistence_survives(>=0.50)": false,
+        "G5_nmda_off(<0.10)": true,
+        "G6_lesion_restores_ratchet(>=0.90)": true
+      },
+      "core_go(G1-G4)": false,
+      "instrument_ok(G5,G6)": true,
+      "A5_not_crushed": true,
+      "arm_valid": true,
+      "held0_floor_used": 0.02345,
+      "evict_ratio_low": 0.0,
+      "time_ratio_high": 0.048979591836734684,
+      "reignite_ratio": 0.983673469387755,
+      "persistence_retention": 0.3978349120433018,
+      "nmda_off_retention": 0.0,
+      "lesion_evict_ratio": 1.0538793103448276,
+      "held_low": [
+        0.049,
+        0.0,
+        0.0,
+        0.0,
+        0.0482
+      ],
+      "during_low": [
+        0.12316666666666666,
+        0.058,
+        0.0,
+        0.0,
+        0.12333333333333334
+      ],
+      "held_high": [
+        0.049,
+        0.0024,
+        0.0396,
+        0.0016,
+        0.04
+      ],
+      "during_high": [
+        0.12316666666666666,
+        0.086,
+        0.10583333333333333,
+        0.0885,
+        0.10666666666666667
+      ],
+      "g_gabab_end_of_read_low": [
+        9.693672180175781,
+        2.9352195262908936,
+        0.09164057672023773,
+        0.002861113753169775,
+        9.68895435333252
+      ],
+      "seed": 42,
+      "gabab_weight": 0.28,
+      "gabab_tau_ms": 150.0,
+      "gabab_max": 0.0,
+      "enable_gabab": true,
+      "sfa": null,
+      "g_gabab_lesion_end_of_read": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "trace_low_held": [
+        0.049,
+        0.0,
+        0.0,
+        0.0,
+        0.0482
+      ],
+      "sweep_verdict": "persistence lost"
+    },
+    {
+      "gates": {
+        "G1_eviction(low<0.60)": false,
+        "G2_drive_dependence(high>=0.60)": true,
+        "G3_reignition(>=0.60)": true,
+        "G4_persistence_survives(>=0.50)": true,
+        "G5_nmda_off(<0.10)": true,
+        "G6_lesion_restores_ratchet(>=0.90)": true
+      },
+      "core_go(G1-G4)": false,
+      "instrument_ok(G5,G6)": true,
+      "A5_not_crushed": true,
+      "arm_valid": true,
+      "held0_floor_used": 0.02345,
+      "evict_ratio_low": 1.0198237885462555,
+      "time_ratio_high": 1.0,
+      "reignite_ratio": 1.0066079295154184,
+      "persistence_retention": 0.6424528301886793,
+      "nmda_off_retention": 0.0,
+      "lesion_evict_ratio": 1.0538793103448276,
+      "held_low": [
+        0.0908,
+        0.0916,
+        0.0926,
+        0.09,
+        0.0914
+      ],
+      "during_low": [
+        0.14133333333333334,
+        0.09466666666666666,
+        0.09416666666666666,
+        0.0915,
+        0.11133333333333334
+      ],
+      "held_high": [
+        0.0908,
+        0.0922,
+        0.0908,
+        0.0906,
+        0.0896
+      ],
+      "during_high": [
+        0.14133333333333334,
+        0.10966666666666666,
+        0.109,
+        0.10966666666666666,
+        0.10866666666666666
+      ],
+      "g_gabab_end_of_read_low": [
+        0.49667778611183167,
+        0.49667778611183167,
+        0.4966117739677429,
+        0.4964137673377991,
+        0.49667778611183167
+      ],
+      "seed": 42,
+      "gabab_weight": 0.28,
+      "gabab_tau_ms": 150.0,
+      "gabab_max": 0.5,
+      "enable_gabab": true,
+      "sfa": null,
+      "g_gabab_lesion_end_of_read": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "trace_low_held": [
+        0.0908,
+        0.0916,
+        0.0926,
+        0.09,
+        0.0914
+      ],
+      "sweep_verdict": "ratchet holds"
+    },
+    {
+      "gates": {
+        "G1_eviction(low<0.60)": false,
+        "G2_drive_dependence(high>=0.60)": false,
+        "G3_reignition(>=0.60)": false,
+        "G4_persistence_survives(>=0.50)": false,
+        "G5_nmda_off(<0.10)": true,
+        "G6_lesion_restores_ratchet(>=0.90)": true
+      },
+      "core_go(G1-G4)": false,
+      "instrument_ok(G5,G6)": true,
+      "A5_not_crushed": true,
+      "arm_valid": true,
+      "held0_floor_used": 0.02345,
+      "evict_ratio_low": null,
+      "time_ratio_high": null,
+      "reignite_ratio": null,
+      "persistence_retention": 0.0,
+      "nmda_off_retention": 0.0,
+      "lesion_evict_ratio": 1.0538793103448276,
+      "held_low": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "during_low": [
+        0.11933333333333333,
+        0.0,
+        0.0,
+        0.0,
+        0.11883333333333333
+      ],
+      "held_high": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "during_high": [
+        0.11933333333333333,
+        0.084,
+        0.0865,
+        0.08616666666666667,
+        0.086
+      ],
+      "g_gabab_end_of_read_low": [
+        6.820878982543945,
+        1.85888671875,
+        0.5066002607345581,
+        0.13806317746639252,
+        6.639965057373047
+      ],
+      "seed": 42,
+      "gabab_weight": 0.28,
+      "gabab_tau_ms": 400.0,
+      "gabab_max": 0.0,
+      "enable_gabab": true,
+      "sfa": null,
+      "g_gabab_lesion_end_of_read": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "trace_low_held": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "sweep_verdict": "UNDEFINED (held[0]~0: no state to evict)"
+    },
+    {
+      "gates": {
+        "G1_eviction(low<0.60)": false,
+        "G2_drive_dependence(high>=0.60)": true,
+        "G3_reignition(>=0.60)": true,
+        "G4_persistence_survives(>=0.50)": true,
+        "G5_nmda_off(<0.10)": true,
+        "G6_lesion_restores_ratchet(>=0.90)": true
+      },
+      "core_go(G1-G4)": false,
+      "instrument_ok(G5,G6)": true,
+      "A5_not_crushed": true,
+      "arm_valid": true,
+      "held0_floor_used": 0.02345,
+      "evict_ratio_low": 1.0,
+      "time_ratio_high": 0.9934497816593886,
+      "reignite_ratio": 0.9890829694323144,
+      "persistence_retention": 0.6488783943329398,
+      "nmda_off_retention": 0.0,
+      "lesion_evict_ratio": 1.0538793103448276,
+      "held_low": [
+        0.0916,
+        0.0904,
+        0.0916,
+        0.0904,
+        0.0906
+      ],
+      "during_low": [
+        0.14116666666666666,
+        0.094,
+        0.0945,
+        0.0895,
+        0.10966666666666666
+      ],
+      "held_high": [
+        0.0916,
+        0.0926,
+        0.091,
+        0.0906,
+        0.0906
+      ],
+      "during_high": [
+        0.14116666666666666,
+        0.108,
+        0.10966666666666666,
+        0.11033333333333334,
+        0.109
+      ],
+      "g_gabab_end_of_read_low": [
+        0.49825340509414673,
+        0.4986768066883087,
+        0.49875152111053467,
+        0.49872660636901855,
+        0.49875152111053467
+      ],
+      "seed": 42,
+      "gabab_weight": 0.28,
+      "gabab_tau_ms": 400.0,
+      "gabab_max": 0.5,
+      "enable_gabab": true,
+      "sfa": null,
+      "g_gabab_lesion_end_of_read": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "trace_low_held": [
+        0.0916,
+        0.0904,
+        0.0916,
+        0.0904,
+        0.0906
+      ],
+      "sweep_verdict": "ratchet holds"
+    },
+    {
+      "gates": {
+        "G1_eviction(low<0.60)": false,
+        "G2_drive_dependence(high>=0.60)": false,
+        "G3_reignition(>=0.60)": false,
+        "G4_persistence_survives(>=0.50)": false,
+        "G5_nmda_off(<0.10)": true,
+        "G6_lesion_restores_ratchet(>=0.90)": true
+      },
+      "core_go(G1-G4)": false,
+      "instrument_ok(G5,G6)": true,
+      "A5_not_crushed": true,
+      "arm_valid": true,
+      "held0_floor_used": 0.02345,
+      "evict_ratio_low": null,
+      "time_ratio_high": null,
+      "reignite_ratio": null,
+      "persistence_retention": 0.0,
+      "nmda_off_retention": 0.0,
+      "lesion_evict_ratio": 1.0538793103448276,
+      "held_low": [
+        0.0,
+        0.0,
+        0.0002,
+        0.0,
+        0.0
+      ],
+      "during_low": [
+        0.11683333333333333,
+        0.0,
+        0.025666666666666667,
+        0.0,
+        0.11633333333333333
+      ],
+      "held_high": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "during_high": [
+        0.11683333333333333,
+        0.10633333333333334,
+        0.1075,
+        0.10816666666666666,
+        0.10833333333333334
+      ],
+      "g_gabab_end_of_read_low": [
+        2.9114975929260254,
+        0.09089996665716171,
+        3.587287664413452,
+        0.11199881881475449,
+        2.884342908859253
+      ],
+      "seed": 42,
+      "gabab_weight": 0.36,
+      "gabab_tau_ms": 150.0,
+      "gabab_max": 0.0,
+      "enable_gabab": true,
+      "sfa": null,
+      "g_gabab_lesion_end_of_read": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "trace_low_held": [
+        0.0,
+        0.0,
+        0.0002,
+        0.0,
+        0.0
+      ],
+      "sweep_verdict": "UNDEFINED (held[0]~0: no state to evict)"
+    },
+    {
+      "gates": {
+        "G1_eviction(low<0.60)": false,
+        "G2_drive_dependence(high>=0.60)": true,
+        "G3_reignition(>=0.60)": true,
+        "G4_persistence_survives(>=0.50)": true,
+        "G5_nmda_off(<0.10)": true,
+        "G6_lesion_restores_ratchet(>=0.90)": true
+      },
+      "core_go(G1-G4)": false,
+      "instrument_ok(G5,G6)": true,
+      "A5_not_crushed": true,
+      "arm_valid": true,
+      "held0_floor_used": 0.02345,
+      "evict_ratio_low": 0.9934210526315789,
+      "time_ratio_high": 1.0043859649122806,
+      "reignite_ratio": 0.9517543859649122,
+      "persistence_retention": 0.6522050059594756,
+      "nmda_off_retention": 0.0,
+      "lesion_evict_ratio": 1.0538793103448276,
+      "held_low": [
+        0.0912,
+        0.0906,
+        0.0906,
+        0.0912,
+        0.0868
+      ],
+      "during_low": [
+        0.13983333333333334,
+        0.094,
+        0.09366666666666666,
+        0.08866666666666667,
+        0.1065
+      ],
+      "held_high": [
+        0.0912,
+        0.0916,
+        0.092,
+        0.0896,
+        0.0914
+      ],
+      "during_high": [
+        0.13983333333333334,
+        0.10983333333333334,
+        0.10983333333333334,
+        0.10866666666666666,
+        0.11016666666666666
+      ],
+      "g_gabab_end_of_read_low": [
+        0.49667778611183167,
+        0.4952279031276703,
+        0.4964798092842102,
+        0.49667778611183167,
+        0.49667778611183167
+      ],
+      "seed": 42,
+      "gabab_weight": 0.36,
+      "gabab_tau_ms": 150.0,
+      "gabab_max": 0.5,
+      "enable_gabab": true,
+      "sfa": null,
+      "g_gabab_lesion_end_of_read": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "trace_low_held": [
+        0.0912,
+        0.0906,
+        0.0906,
+        0.0912,
+        0.0868
+      ],
+      "sweep_verdict": "ratchet holds"
+    },
+    {
+      "gates": {
+        "G1_eviction(low<0.60)": false,
+        "G2_drive_dependence(high>=0.60)": false,
+        "G3_reignition(>=0.60)": false,
+        "G4_persistence_survives(>=0.50)": false,
+        "G5_nmda_off(<0.10)": true,
+        "G6_lesion_restores_ratchet(>=0.90)": true
+      },
+      "core_go(G1-G4)": false,
+      "instrument_ok(G5,G6)": true,
+      "A5_not_crushed": true,
+      "arm_valid": true,
+      "held0_floor_used": 0.02345,
+      "evict_ratio_low": null,
+      "time_ratio_high": null,
+      "reignite_ratio": null,
+      "persistence_retention": 0.0,
+      "nmda_off_retention": 0.0,
+      "lesion_evict_ratio": 1.0538793103448276,
+      "held_low": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "during_low": [
+        0.11233333333333333,
+        0.0,
+        0.0,
+        0.0,
+        0.11183333333333334
+      ],
+      "held_high": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "during_high": [
+        0.11233333333333333,
+        0.07766666666666666,
+        0.07683333333333334,
+        0.07716666666666666,
+        0.07783333333333334
+      ],
+      "g_gabab_end_of_read_low": [
+        6.699715614318848,
+        1.8258659839630127,
+        0.49760112166404724,
+        0.13561071455478668,
+        6.677481651306152
+      ],
+      "seed": 42,
+      "gabab_weight": 0.36,
+      "gabab_tau_ms": 400.0,
+      "gabab_max": 0.0,
+      "enable_gabab": true,
+      "sfa": null,
+      "g_gabab_lesion_end_of_read": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "trace_low_held": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "sweep_verdict": "UNDEFINED (held[0]~0: no state to evict)"
+    },
+    {
+      "gates": {
+        "G1_eviction(low<0.60)": false,
+        "G2_drive_dependence(high>=0.60)": true,
+        "G3_reignition(>=0.60)": true,
+        "G4_persistence_survives(>=0.50)": true,
+        "G5_nmda_off(<0.10)": true,
+        "G6_lesion_restores_ratchet(>=0.90)": true
+      },
+      "core_go(G1-G4)": false,
+      "instrument_ok(G5,G6)": true,
+      "A5_not_crushed": true,
+      "arm_valid": true,
+      "held0_floor_used": 0.02345,
+      "evict_ratio_low": 1.0021978021978022,
+      "time_ratio_high": 1.0065934065934066,
+      "reignite_ratio": 0.9846153846153847,
+      "persistence_retention": 0.6507747318235995,
+      "nmda_off_retention": 0.0,
+      "lesion_evict_ratio": 1.0538793103448276,
+      "held_low": [
+        0.091,
+        0.0912,
+        0.0912,
+        0.0906,
+        0.0896
+      ],
+      "during_low": [
+        0.13983333333333334,
+        0.094,
+        0.09333333333333334,
+        0.08866666666666667,
+        0.10866666666666666
+      ],
+      "held_high": [
+        0.091,
+        0.0916,
+        0.0918,
+        0.0916,
+        0.0918
+      ],
+      "during_high": [
+        0.13983333333333334,
+        0.10983333333333334,
+        0.10966666666666666,
+        0.10966666666666666,
+        0.10916666666666666
+      ],
+      "g_gabab_end_of_read_low": [
+        0.49875152111053467,
+        0.49865204095840454,
+        0.49872660636901855,
+        0.49875152111053467,
+        0.49872660636901855
+      ],
+      "seed": 42,
+      "gabab_weight": 0.36,
+      "gabab_tau_ms": 400.0,
+      "gabab_max": 0.5,
+      "enable_gabab": true,
+      "sfa": null,
+      "g_gabab_lesion_end_of_read": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "trace_low_held": [
+        0.091,
+        0.0912,
+        0.0912,
+        0.0906,
+        0.0896
+      ],
+      "sweep_verdict": "ratchet holds"
+    }
+  ],
+  "sfa_arm": null,
+  "fast_arm": {
+    "gates": {
+      "G1_eviction(low<0.60)": false,
+      "G2_drive_dependence(high>=0.60)": true,
+      "G3_reignition(>=0.60)": true,
+      "G4_persistence_survives(>=0.50)": true,
+      "G5_nmda_off(<0.10)": true,
+      "G6_lesion_restores_ratchet(>=0.90)": true
+    },
+    "core_go(G1-G4)": false,
+    "instrument_ok(G5,G6)": true,
+    "A5_not_crushed": true,
+    "arm_valid": true,
+    "held0_floor_used": 0.02345,
+    "evict_ratio_low": 1.0123711340206185,
+    "time_ratio_high": 0.9257731958762887,
+    "reignite_ratio": 0.9958762886597938,
+    "persistence_retention": 0.6539325842696629,
+    "nmda_off_retention": 0.0,
+    "lesion_evict_ratio": 1.0538793103448276,
+    "held_low": [
+      0.097,
+      0.0902,
+      0.0982,
+      0.0982,
+      0.0966
+    ],
+    "during_low": [
+      0.14833333333333334,
+      0.09516666666666666,
+      0.10033333333333333,
+      0.09366666666666666,
+      0.11133333333333334
+    ],
+    "held_high": [
+      0.097,
+      0.0934,
+      0.0898,
+      0.093,
+      0.0962
+    ],
+    "during_high": [
+      0.14833333333333334,
+      0.1135,
+      0.11366666666666667,
+      0.114,
+      0.11283333333333333
+    ],
+    "g_gabab_end_of_read_low": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "seed": 42,
+    "gabab_weight": 0.05,
+    "gabab_tau_ms": 400.0,
+    "gabab_max": 0.0,
+    "enable_gabab": false,
+    "sfa": null,
+    "g_gabab_lesion_end_of_read": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "baseline": {
+    "trace_low": {
+      "held": [
+        0.0938,
+        0.0986,
+        0.0902,
+        0.091,
+        0.0956
+      ],
+      "during": [
+        0.151,
+        0.09916666666666667,
+        0.09366666666666666,
+        0.09433333333333334,
+        0.1145
+      ],
+      "g_gabab_end_of_drive": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "g_gabab_end_of_read": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mood_base": 0.0,
+      "levels": [
+        1.0,
+        0.15,
+        0.15,
+        0.0,
+        1.0
+      ]
+    },
+    "trace_high": {
+      "held": [
+        0.0938,
+        0.0916,
+        0.0978,
+        0.0938,
+        0.0914
+      ],
+      "during": [
+        0.151,
+        0.113,
+        0.1145,
+        0.1125,
+        0.11366666666666667
+      ],
+      "g_gabab_end_of_drive": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "g_gabab_end_of_read": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mood_base": 0.0,
+      "levels": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "ratchet_ratio": 1.0511727078891258,
+    "persistence_retention": 0.6211920529801325,
+    "instrument_reproduces_ratchet": true,
+    "committed_artifact_reference": {
+      "persistence_retention_nmda_on": 0.6171070922843167,
+      "per_seed_mood_ret_on": {
+        "42": 0.0938,
+        "43": 0.0922,
+        "44": 0.0894,
+        "100": 0.0906,
+        "101": 0.096,
+        "102": 0.09
+      }
+    }
+  },
+  "kill_criterion_met": true,
+  "closest_point": {
+    "gates": {
+      "G1_eviction(low<0.60)": false,
+      "G2_drive_dependence(high>=0.60)": true,
+      "G3_reignition(>=0.60)": true,
+      "G4_persistence_survives(>=0.50)": true,
+      "G5_nmda_off(<0.10)": true,
+      "G6_lesion_restores_ratchet(>=0.90)": true
+    },
+    "core_go(G1-G4)": false,
+    "instrument_ok(G5,G6)": true,
+    "A5_not_crushed": true,
+    "arm_valid": true,
+    "held0_floor_used": 0.02345,
+    "evict_ratio_low": 0.975,
+    "time_ratio_high": 0.9575,
+    "reignite_ratio": 0.9525,
+    "persistence_retention": 0.5667060212514758,
+    "nmda_off_retention": 0.0,
+    "lesion_evict_ratio": 1.0538793103448276,
+    "held_low": [
+      0.08,
+      0.078,
+      0.077,
+      0.0758,
+      0.0762
+    ],
+    "during_low": [
+      0.14116666666666666,
+      0.083,
+      0.0815,
+      0.07666666666666666,
+      0.0995
+    ],
+    "held_high": [
+      0.08,
+      0.0774,
+      0.0766,
+      0.075,
+      0.0766
+    ],
+    "during_high": [
+      0.14116666666666666,
+      0.1005,
+      0.1005,
+      0.09933333333333333,
+      0.09866666666666667
+    ],
+    "g_gabab_end_of_read_low": [
+      4.187460422515869,
+      5.19708251953125,
+      5.450506687164307,
+      5.507815361022949,
+      5.584273815155029
+    ],
+    "seed": 42,
+    "gabab_weight": 0.05,
+    "gabab_tau_ms": 400.0,
+    "gabab_max": 0.0,
+    "enable_gabab": true,
+    "sfa": null,
+    "g_gabab_lesion_end_of_read": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "trace_low_held": [
+      0.08,
+      0.078,
+      0.077,
+      0.0758,
+      0.0762
+    ],
+    "sweep_verdict": "ratchet holds"
+  },
+  "lever_moved": true,
+  "slowness_attribution": "ATTRIBUTION UNDEFINED \u2014 the slow-GABA_B arm did not evict either, so there is no effect to attribute to slowness",
+  "selected_point_full": {
+    "gates": {
+      "G1_eviction(low<0.60)": false,
+      "G2_drive_dependence(high>=0.60)": true,
+      "G3_reignition(>=0.60)": true,
+      "G4_persistence_survives(>=0.50)": true,
+      "G5_nmda_off(<0.10)": true,
+      "G6_lesion_restores_ratchet(>=0.90)": true
+    },
+    "core_go(G1-G4)": false,
+    "instrument_ok(G5,G6)": true,
+    "A5_not_crushed": true,
+    "arm_valid": true,
+    "held0_floor_used": 0.02345,
+    "evict_ratio_low": 0.975,
+    "time_ratio_high": 0.9575,
+    "reignite_ratio": 0.9525,
+    "persistence_retention": 0.5667060212514758,
+    "nmda_off_retention": 0.0,
+    "lesion_evict_ratio": 1.0538793103448276,
+    "held_low": [
+      0.08,
+      0.078,
+      0.077,
+      0.0758,
+      0.0762
+    ],
+    "during_low": [
+      0.14116666666666666,
+      0.083,
+      0.0815,
+      0.07666666666666666,
+      0.0995
+    ],
+    "held_high": [
+      0.08,
+      0.0774,
+      0.0766,
+      0.075,
+      0.0766
+    ],
+    "during_high": [
+      0.14116666666666666,
+      0.1005,
+      0.1005,
+      0.09933333333333333,
+      0.09866666666666667
+    ],
+    "g_gabab_end_of_read_low": [
+      4.187460422515869,
+      5.19708251953125,
+      5.450506687164307,
+      5.507815361022949,
+      5.584273815155029
+    ],
+    "seed": 42,
+    "gabab_weight": 0.05,
+    "gabab_tau_ms": 400.0,
+    "gabab_max": 0.0,
+    "enable_gabab": true,
+    "sfa": null,
+    "g_gabab_lesion_end_of_read": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "elapsed_seconds": 92.6,
+  "config": {
+    "seed": 42,
+    "sweep_weights": [
+      0.05,
+      0.1,
+      0.2,
+      0.28,
+      0.36
+    ],
+    "sweep_taus": [
+      150.0,
+      400.0
+    ],
+    "sweep_maxes": [
+      0.0,
+      0.5
+    ],
+    "recur_weight": 22.0,
+    "ou_pA": 8.0,
+    "sfa": null,
+    "LOW_LEVELS": [
+      1.0,
+      0.15,
+      0.15,
+      0.0,
+      1.0
+    ],
+    "HIGH_LEVELS": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "timings_ms": {
+      "settle": 40,
+      "base_probe": 100,
+      "drive": 120,
+      "post": 300,
+      "read": 100
+    },
+    "SFB_N": 15,
+    "SFB_EXC_W": 8.0
+  }
+}
