@@ -1,0 +1,74 @@
+{
+  "summary": {
+    "overall_verdict": "NEGATIVE",
+    "seeds": [
+      42
+    ],
+    "per_seed_verdicts": [
+      "NEGATIVE"
+    ],
+    "osi_pre_frac_mean": 0.004,
+    "osi_post_frac_mean": 0.0459,
+    "osi_shuffle_frac_mean": 0.0027,
+    "osi_post_mean_mean": 0.3024,
+    "rsa_vs_host_mean": 0.5485,
+    "margin_mean": 0.0399,
+    "orient_decode_mean": 0.1562,
+    "host_decode_mean": 0.9844,
+    "v1_firing_rate_mean": 0.0012
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "backend": "numpy",
+      "n_v1": 8192,
+      "elapsed_s": 453.2,
+      "v1_firing_rate": 0.0012,
+      "saturation": {
+        "w_mean": 6.259401,
+        "w_absmax": 2797.979248,
+        "frac_rf_near_zero": 0.4548,
+        "frac_cells_all_zero": 0.0
+      },
+      "osi": {
+        "pre_random": {
+          "mean": 0.1693,
+          "frac_gt0_5": 0.004
+        },
+        "post_learned": {
+          "mean": 0.3024,
+          "frac_gt0_5": 0.0459
+        },
+        "shuffle_ctrl": {
+          "mean": 0.1588,
+          "frac_gt0_5": 0.0027
+        }
+      },
+      "geometry": {
+        "host_reference": {
+          "margin": 0.7573,
+          "rsa_vs_pixels": 0.989,
+          "orient_decode": 0.9844
+        },
+        "v1_firing_post": {
+          "within": 0.0452,
+          "between": 0.0053,
+          "margin": 0.0399,
+          "rsa_vs_host": 0.5485,
+          "rsa_vs_pixels": 0.5666,
+          "orient_decode": 0.1562
+        }
+      },
+      "gates": {
+        "osi_self_gate": 0.5,
+        "osi_ctrl_ceiling": 0.054,
+        "rsa_gate": 0.6,
+        "margin_gate": 0.15
+      },
+      "learned_oriented": false,
+      "lift_over_controls": false,
+      "geometry_ok": false,
+      "verdict": "NEGATIVE"
+    }
+  ]
+}
