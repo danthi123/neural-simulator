@@ -1,4 +1,5 @@
 ---
+type: finding
 status: qualified
 lane: lane-D
 date: 2026-07-31

@@ -1,4 +1,5 @@
 ---
+type: finding
 status: live
 mechanism: btsp-place-field-formation
 lane: gap#5

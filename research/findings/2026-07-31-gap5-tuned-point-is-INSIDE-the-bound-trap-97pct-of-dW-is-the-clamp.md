@@ -1,4 +1,5 @@
 ---
+type: finding
 status: contributing
 mechanism: btsp-place-field-formation
 lane: gap#5

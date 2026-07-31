@@ -1,4 +1,5 @@
 ---
+type: biology
 id: btsp-place-field-formation
 mechanism: Behavioral timescale synaptic plasticity (BTSP) — dendritic plateau creates a CA1 place field
 status: established
