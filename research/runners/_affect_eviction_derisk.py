@@ -360,10 +360,44 @@ class EvictionAffectBrain(AffectStateBrain):
     def set_eviction_lesion(self, lesion: bool):
         """Clamp the eviction limb's OUTPUT (zero the `evict_out` transmission gate). The sfb interneurons
         keep firing identically; only their synaptic current onto the affect pools is removed -- and because
-        the GABA_B increment is taken from the SAME gated connection matrix, g_gabab stays at 0 too."""
+        the GABA_B increment is taken from the SAME gated connection matrix, g_gabab stays at 0 too.
+
+        ⛔ THIS LESION DOES NOT REACH THE `--sfa` ARM. It gates a SYNAPTIC pathway; intrinsic spike-frequency
+        adaptation lives in per-neuron Izhikevich parameters, which no transmission gate can touch. Measured
+        2026-07-31: G6 ("the lesion restores the ratchet") failed on 2 of 3 sAHP settings for that structural
+        reason, and the third setting's PASS was the synaptic limb still being gateable -- a different claim
+        from "the sAHP arm was controlled". Use `set_sfa_lesion` for the sAHP arm; see FAILURE_LOG."""
         self._evict = not bool(lesion)
         if self._with_eviction_wiring:
             self._bridge.set_transmission_gate(EVICT_GATE, 0.0 if lesion else 1.0)
+
+    def set_sfa_lesion(self, lesion: bool):
+        """THE POWER CONTROL FOR THE INTRINSIC ARM: restore the per-neuron adaptation parameters to the values
+        they held BEFORE `--sfa` modified them, on the SAME substrate, same neurons, same wiring.
+
+        This is the sAHP counterpart of the `evict_out` gate, and it is the arm that was missing: without it
+        an sAHP result is UNCONTROLLED rather than negative, because nothing demonstrates the instrument can
+        see the ratchet return when the mechanism is removed. `sfa_before` is already captured by
+        `_apply_post_init`, so the control costs one write and needs no new measurement.
+
+        Returns True if it acted; False if this arm carries no sfa (nothing to lesion)."""
+        b = self._bridge
+        if self._sfa is None or getattr(self, "sfa_before", None) is None:
+            return False
+        if getattr(b, "cp_izh_d_increment", None) is None:
+            return False
+        idx = np.concatenate([self._idx[p] for p, _ in self._sfb_pairs])
+        a_val, d_val = self.sfa_before if lesion else self._sfa
+        b.cp_izh_a[idx] = np.float32(a_val)
+        b.cp_izh_d_increment[idx] = np.float32(d_val)
+        self._sfa_lesioned = bool(lesion)
+        # ASSERT the write landed. A silent no-op here would produce a "control" identical to the treatment,
+        # which is the failure class this whole arm exists to close.
+        got = (float(np.asarray(to_host(b.cp_izh_a))[idx].mean()),
+               float(np.asarray(to_host(b.cp_izh_d_increment))[idx].mean()))
+        assert abs(got[0] - a_val) < 1e-6 and abs(got[1] - d_val) < 1e-3, (
+            "set_sfa_lesion(%s) did not take: wanted (%s, %s), read %s" % (lesion, a_val, d_val, got))
+        return True
 
     # ------------------------------------------------------------------ diagnostics (mechanism assertion)
     def mean_gabab(self, region="affect_vplus"):
