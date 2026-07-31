@@ -147,34 +147,24 @@ Summarize aggressively (keep only what changes a decision): git log, verbose run
 **Context hygiene (2026-07-23):** history lives in [`docs/project-history-archive.md`](docs/project-history-archive.md) (RAG-indexed, `--corpus doc`), NOT inline — retrieve it, don't reload it. Prefer `/clear` between unrelated arcs (nav → conversation → gap#5) over one mega-session; offload heavy reading/search to subagents (their context doesn't count against the main window).
 
 
-## Standing practice: deep research + catalog review FIRST at roadblocks and new directions
+## Research the record BEFORE building — `tools/before_you_build.sh` (the gate is MECHANICAL)
 
-**(2026-06-07, owner directive — make this the default first step, not an afterthought.)** Whenever the project hits a **significant roadblock** (a multiply-confirmed boundary / repeated NEGATIVE) **OR is about to begin work on a new part of the sim**, run a **deep research + reference-catalog review BEFORE committing build/GPU resources.** This has repeatedly been the decisive pivot:
-- the conversational decorrelation/whitening blocker → reframed by the Mikulasch-Priesemann point-neuron limit (whitening is analog/pre-spike in biology);
-- the navigation action-selection readout boundary → diagnosed as a *missing accumulator* (Wang 2002 NMDA attractor → Lo-Wang commit burst), which fixed it;
-- the navigation perceptual cold-start → root-caused as a **wrong-pathway** problem (routed through the position-*invariant* ventral "what" stream / IT instead of the dorsal "where" stream + superior-colliculus orienting + place cells) via the catalog + Kandel + literature.
+**The trigger is not a judgement call.** Run `bash tools/before_you_build.sh "<defect>"` before the first lever
+against any difficulty; `workflow_check` fails when a finding is written without a source check. **≥2 distinct
+levers against the SAME defect without resolution ⇒ the research gate FIRES** — cheapness of the next step is not
+an exemption, because the quantity that matters is cumulative effort against one difficulty (6 levers / ~4 GPU-h
+were spent before the gate ever subjectively fired; one research round then resolved it).
 
-**The pattern (LOCAL-FIRST — 2026-07-23 repair: the local corpus + RAG had rotted to dead `E:` paths, so the workflow silently fell back to online search; paths fixed + this is the mandatory FIRST move):** the FIRST move is our OWN local corpus via the auto-updating RAG index — `.venv-rag/bin/python tools/rag/rag_search.py "<question>" 5 [--corpus finding|plan|doc|catalog|kandel|paper|all]` (hybrid vector+BM25 → cross-encoder rerank; auto-refreshes on commit; SOMA retired).
-It spans our findings/plans/docs PLUS the canonical biology catalog (`~/Projects/sim-catalog/references/feature-catalog.md`, ~323 entries across clusters A–Q, the separate `sim-catalog` worktree), Kandel 6e full text (`~/Projects/sim-catalog/references/textbooks/kandel-pns-6e/full-book.txt`), and 7 `.txt`-readable specialty textbooks/papers (Marr, Albus, Buzsáki, O'Keefe-Nadel, Schultz, Sutton-Barto, Bolam/Tepper BG — under `~/Projects/sim-catalog/references/textbooks/`), plus `references/glossary.md`. The RAG LOCATES; then READ the surfaced source in depth (a rerank hit is a pointer, not a paraphrase). ONLY after the local corpus is exhausted go external (WebSearch + the `bio-research` MCP).
-A read-only research subagent may run this and produce a findings doc: **diagnosis → ranked biologically-grounded options → what existing project machinery is reusable → a recommended cheap-first de-risk → the anti-cheat controls it needs.** The controller reviews it (trust-but-verify the load-bearing claims), pushes the doc, and presents the recommendation before building. Treat this as the standing opening move for roadblocks and new-direction work.
+**LOCAL CORPUS FIRST:** `.venv-rag/bin/python tools/rag/rag_search.py "<q>" 5 --corpus finding|plan|doc|catalog|kandel|paper|all`
+— our findings + the biology catalog + Kandel 6e + 7 textbooks. **The RAG LOCATES; a rerank hit is a POINTER, not
+a paraphrase — READ the surfaced source.** Only then go external. (A 21-agent round produced a Kandel quote that
+was NOT IN THE TEXT; `research/biology/`'s anchor check caught it. Verify what an agent cites.)
 
-**The research gate — the AUTOMATIC trigger (2026-06-20, owner directive — make it mechanical, not a judgment call I can rationalize past; it failed once because "is this a significant roadblock?" is rationalizable).** Before committing ANY build / GPU / `sim/`-edit effort to *overcome* a difficulty, the gate fires (dispatch the read-only deep-research subagent FIRST, present its ranked options before building) if **ANY** of these objective conditions hold:
-- **(a) Confirmed boundary:** an experiment/de-risk returned NEGATIVE / BOUNDARY / NO-GO / "walls" / "can't on this substrate," and the next move is a mechanism to push past it.
-- **(b) Known family:** the wall is the same family as a prior documented boundary (the graded-magnitude / divisive-normalization / rate-code / point-neuron-limit / whitening family) — even on the FIRST occurrence in a new place.
-- **(c) Blocks a goal:** the difficulty blocks a stated roadmap/goal item (not a side-nicety).
-- **(d) New mechanism:** about to design a mechanism *class* not previously built (vs. composing already-proven pieces).
-- **(e) `sim/`-to-overcome:** the candidate fix edits protected `sim/` code specifically to push past a limit.
-- **(f) Stuck:** ≥2 distinct approaches to the same goal have failed.
-
-**The self-check (the exact failure to prevent):** the moment I write or read a verdict containing NEGATIVE / BOUNDARY / NO-GO / "walls" / "can't" AND my next instinct is "scope/build the fix" — *that instinct IS the trigger.* The next action is the research gate, and the fix I had in mind becomes just ONE option the research ranks (it is never the default).
-
-**The SURPASS sharpening (2026-06-20, owner directive — after a single owner sentence + ONE deep-research round overturned a too-comfortable "closed as a structural primitive" verdict AND found a cheap fix the controller had missed).** The gate fires not only before BUILDING a fix but **before ACCEPTING a boundary** — and "boundary" includes the SOFTER comfortable verdicts that quietly END investigation without a fix: "structural primitive," "honest negative," "not a shortcut," "the cost IS the deliverable," "characterized limit," "defensible," "that's just how the substrate is." Those are **DISGUISED boundaries** and are exactly where over-comfort hides.
-**Extended self-check:** the moment I write ANY conclusion that ends investigation of a difficulty *without a fix* — the hard NEGATIVE/BOUNDARY/NO-GO *or* the soft it's-a-primitive / honest-negative / not-a-shortcut / defensible — that IS the trigger. **The surpass deep-research round is MANDATORY and has FOUR moves (not just "diagnose + rank options"):** (1) **ISOLATE + QUANTIFY the genuine residual** — how big is the truly-irreducible part? Usually most of the "blocker" is already defensible or solved and the genuine residual is TINY (the FHRR-B "host-designed binding structure" was, on inspection, a single local `conj()` call; the rest was random-developmental codes + learned codes).
-Never accept a vague "the structure/op is host/hard" — pin down EXACTLY which bytes are the residual and measure them. (2) **REFRAME via "how does REAL biology actually do this?"** — am I testing the WRONG hypothesis? (we'd tested "can the bind be LEARNED from task data," which fails — but biology DEVELOPS the structure from local wiring rules, a different category with a cheap answer). (3) **RANK cheap-first SURPASS mechanisms** — the cheapest path PAST it, not merely a diagnosis. (4) **Verdict: surpassable-and-how-cheaply, vs genuinely-irreducible-and-precisely-why-defensible.** A boundary is accepted ONLY after it SURVIVES this round; the comfortable verdict is the START of the research, never the end.
-
-**⚠️ THE LOOPHOLE THAT DEFEATED THE GATE (2026-07-26): a SEQUENCE of individually-cheap config tests IS a build effort.** Six levers / ~4 GPU-hours were spent against ONE defect without the gate ever subjectively firing, because no single flag felt like "committing build effort"; the research round then resolved in one pass what the sequential guessing had not. **MECHANICAL: ≥2 distinct levers tested against the SAME defect without resolution ⇒ the gate FIRES.** Cheapness of the next step is not an exemption — the quantity that matters is cumulative effort against one difficulty. Details + the measurement-placement rules in `.claude/skills/verify-go/SKILL.md`.
-
-**Does NOT fire (so the gate stays calibrated, not over-triggering) — proceed directly:** routine/mechanical bugs with a clear cause (a backend mismatch, an off-by-one, a crash with an obvious fix); engineering that *composes* already-de-risked mechanisms; the GPU / multi-seed *confirmation* of an already-de-risked result; documentation, refactors, frontend wire-up. When genuinely unsure whether the gate fires, it fires (the read-only research is cheap relative to building the wrong fix).
+**THE SELF-CHECK, which is the part no tool can run:** the moment you write a verdict containing NEGATIVE /
+BOUNDARY / NO-GO / "walls" / "can't" — *or the softer* "structural primitive" / "honest negative" /
+"characterized limit" / "defensible" — **and your next instinct is to scope the fix, THAT INSTINCT IS THE
+TRIGGER.** The comfortable verdict is the START of the research, never the end. Isolate and QUANTIFY the genuine
+residual first: it is usually far smaller than the blocker felt.
 
 ## Standing standard: BRAIN-BASED ONLY (neurons / synapses / their communication), or it is a shortcut
 
