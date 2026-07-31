@@ -1,0 +1,21 @@
+{
+ "run_id": "1785525914-3009",
+ "runner": "research/runners/_curiosity_seek_learn_onbridge_derisk.py",
+ "argv": [
+  "/home/ubuntu/sim/research/runners/_curiosity_seek_learn_onbridge_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102"
+ ],
+ "git_sha": "unknown",
+ "git_dirty": false,
+ "started": "2026-07-31T19:25:14",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "artifact": "research/findings/raw/_affect_state_region_6seed.json"
+}
