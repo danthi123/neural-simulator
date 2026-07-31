@@ -26,126 +26,101 @@ brain feels anything.
 ![Backend](https://img.shields.io/badge/backend-CuPy%20(CUDA)%20%2F%20NumPy%20(CPU)-orange.svg)
 ![Status](https://img.shields.io/badge/status-active%20research-yellow.svg)
 
-**Jump to:** [How to read a status here](#how-to-read-a-status-here) ·
-[What works today](#what-works-today) ·
-[What is not solved](#what-is-not-solved) ·
-[Current frontier](#current-frontier) ·
+**Jump to:** [What it can do](#what-it-can-do-today) ·
+[What it can't do](#what-it-cant-do-yet) ·
 [How to run it](#how-to-run-it) ·
 [Architecture](#architecture) ·
-[Where to look for detail](#where-to-look-for-detail)
+[Limitations](#known-limitations) ·
+[Further reading](#further-reading)
 
 ---
 
-## How to read a status here
+## What "works" means here
 
-This project's single largest cost is re-deriving work already done, so results are
-kept with an explicit status rather than a headline. Every classified finding in
-`research/findings/` declares one in its frontmatter:
+Claims below are deliberately unflattering. Unless a row says otherwise, a
+capability has been reproduced across **six random seeds**, with control conditions
+designed to break it — if switching the mechanism off doesn't damage the result,
+the result doesn't count. Several once-headline claims here were withdrawn by
+exactly those controls, and the withdrawals are stated inline rather than quietly
+removed.
 
-| status | meaning |
-|---|---|
-| **live** | the central claim stands as written |
-| **contributing** | real, but it feeds a larger result rather than standing alone |
-| **qualified** | holds only inside a stated scope or operating point |
-| **corrected** | stands after a correction was applied to the claim |
-| **superseded** | a later result replaced it |
-| **retracted** | the central claim died |
-
-Measured now (`grep -h '^status:' research/findings/*.md | sort | uniq -c`):
-
-```
-93 live   87 contributing   53 qualified   27 corrected   16 superseded   7 retracted
-```
-
-**190 of the 283 classified findings — 67% — carry a qualifier rather than plain
-`live`.** The remaining 1,562 findings are unclassified and their status is
-unmeasured. Read the table below with that in mind: *nothing here is a finished
-feature*, and several once-headline results have been withdrawn by this project's
-own controls.
+Nothing below is a finished feature. This is active research code, and the honest
+caveats are part of the result.
 
 ---
 
-## What works today
+## What it can do today
 
-| Capability | Honest status |
+| Capability | Where it stands |
 |---|---|
 | **The engine** — spiking dynamics, region/pathway framework, plasticity rules, checkpointing, 3D view, GPU **and** CPU backends | **Mature.** 43 modules / 22,759 lines; 478 test modules; 47 region profiles. A 2026-07-31 sweep fixed 10 confirmed defects, two long-standing: spatial networks above 15,000 neurons raised `NameError` and had never run, and `set_plasticity_gate()` addressed the wrong synapses after a connectivity rebuild. Regression 53/53 on CuPy afterwards. |
-| **Vision-based navigation to a moving goal** | **Works; the popular description of it was withdrawn.** The shortcut-closed configuration — no goal coordinates, no agent coordinates, no hand-coded heuristic, no distance-based reward — scores 4.08 ± 0.49 over 6 seeds (p=0.00045, 30.6% over baseline). The more-quoted 2.97 / 2.57 "visual cortex only" figures were measured with that heuristic **at full strength**; the description is retracted (2026-07-16) and the visual pathway's own contribution is unquantified. The move decision is a spiking accumulator racing to a commit burst, default in the library, at 1.16× the host-argmax baseline. ⚠️ the plasticity-gate defect above is live in this runner, so "frozen pathway" claims made through it are suspect. |
-| **Grounded question-answering, on the spiking substrate** | **Works inside a bounded scope.** Parses active and passive sentences into who-did-what-to-whom, stores facts, answers who/what and yes/no including negation, and inherits properties across categories with exceptions — those at 6 seeds. Transitive inference is 6-seed off-brain but 3-seed on spikes; multi-hop chaining is 3-seed and rides the fixed algebra; multi-turn pronoun tracking is 3-seed. Those three sit below this project's own 6-seed bar. |
-| **Abstention instead of fabrication** | **Works, at 3 seeds.** The learned familiarity gate agrees with the host abstention decision on 168/168 cues across 3 seeds, with zero breaches, and the separation collapses when its learned weights are cut. The fluent generator is never called when the brain abstains. 3 seeds, not 6. |
-| **Continual word–concept memory** | **Works at a few-hundred concepts.** Distinct codes recall at 1.000, any-bank 0.992 at 6 seeds, with old facts intact while new ones are learned. |
-| **Categories and meaning learned from experience** | **Works, 6 seeds.** Word meanings from co-occurrence; categories and simple taxonomies discovered unsupervised; category structure that also emerges from *seeing* objects (a pixel-scramble control collapses it). Recalling a fact about a *newly seen* object still routes through a hybrid path, not one all-spiking path. |
-| **Emotional colouring of concepts** | **Split, and one summary line was corrected.** Off-brain concept tagging holds at 6 seeds (held-out r = +0.811). The on-brain affect-state region is **qualified**: its own artifact reads `"GO": false` at 2 of 6 seeds, and a board line calling it a 6-seed GO was corrected on 2026-07-31. Its mood is a measured **ratchet** — it rises on 3/3 seeds and never comes back down. |
-| **Self-model read-out** | **6 seeds, off-bridge, on the NumPy backend.** A small region reads and reports the brain's own attention, confidence, and whether a thought was its own; cutting its access to the real internal state collapses the reports. Not yet running inside the develop-loop, and not yet reproduced on GPU. |
-| **Curiosity from uncertainty** | **6/6 on-bridge, with every anti-cheat control collapsing** — it asks about what it can learn and declines to chase unlearnable noise. The finding carries a `qualified` status. |
-| **Reading replay *direction* in spikes** | **Arc complete; one headline withdrawn the same month.** Single-trial order accuracy 0.969 (chance 0.500) on GPU, 6 seeds × 16 trials, with the relay-bypass control at chance. Separately, the place-field headline tuned to maximise `circ_dW` turned out to measure how *concentrated* weight increments are, not *where* — position-shuffling moved it 1.3%, p=0.42 — and is withdrawn. The distinct field-quality configuration survived a stricter position-only null at 5.05× (p=0.0025, 6/6), above the ideal-field oracle's 4.53×, and stands. |
+| **Vision-based navigation to a moving goal** | **Works — but the widely-quoted description of it was withdrawn.** With every shortcut closed (the agent is given no goal coordinates, no coordinates of its own, no hand-written steering rule, and no reward computed from distance) it scores 4.08 ± 0.49 across 6 seeds, 30.6% above baseline. The more-quoted "visual cortex only" figures of 2.97 / 2.57 were actually measured with that hand-written steering rule still switched on at full strength, so that description was retracted in July 2026 and the visual pathway's own contribution is currently unmeasured. Which way to move is decided by competing populations of neurons racing each other to fire, not by picking the largest number in code. |
+| **Answering questions about things it was told** | **Works within a narrow scope.** It parses active and passive sentences into who-did-what-to-whom, remembers facts, answers *who*/*what* and yes/no questions including negatives, and infers properties down a category hierarchy with exceptions — all at 6 seeds. Three related abilities are weaker: transitive inference ("A > B, B > C, so A > C"), chaining several facts together, and tracking pronouns across turns each hold at only 3 seeds, which is below this project's own bar. |
+| **Saying "I don't know" instead of making something up** | **Works, at 3 seeds.** A learned familiarity signal decides whether the brain actually knows something. It matched the correct decision on all 168 test cues with no failures, and the separation disappears when the learned part is removed — so it is really doing the work. The language generator is never invoked when the brain declines to answer. |
+| **Remembering new words and concepts without forgetting old ones** | **Works at a few hundred concepts**, 6 seeds, with previously learned facts still intact as new ones arrive. |
+| **Learning categories and word meanings from experience** | **Works, 6 seeds.** Word meanings come from which words occur together; categories and simple hierarchies are discovered without being told; and category structure also forms from *seeing* objects, which collapses if the images are scrambled. Recalling a fact about a newly *seen* object still passes partly through ordinary code rather than staying entirely in neurons. |
+| **Emotional colouring of concepts** | **Partly working, and one summary claim was corrected.** Tagging concepts with emotional value works at 6 seeds when done in ordinary code. Doing it inside the simulated brain is weaker — it fails on 2 of 6 seeds, and an internal note describing it as a clean 6-seed result was corrected on 2026-07-31. Its mood also only ever goes *up*: on 3 of 3 seeds it rises and never returns to baseline, because the mechanism that should bring it back down is not implemented yet. |
+| **Reporting on its own internal state** | **6 seeds, but only on the CPU backend and outside the main loop.** A small region reads and reports where the brain's attention is, how confident it is, and whether a thought originated internally; cut its access to the real internal state and the reports fall apart. Not yet wired into the running system, and not yet reproduced on GPU. |
+| **Curiosity** | **6 of 6 seeds inside the simulated brain**, with every control condition collapsing as it should — it asks about things it can actually learn from, and declines to chase noise it cannot learn. Holds within a stated scope. |
+| **Reading the *direction* of memory replay from spikes** | **Complete; one related headline was withdrawn the same month.** It recovers whether a remembered sequence is replaying forwards or backwards on a single trial at 0.969 accuracy (chance 0.500), 6 seeds, with the bypass control at chance. Separately, a place-cell headline from the same arc turned out to be measuring how *concentrated* the synaptic changes were rather than *where* they were — shuffling the positions barely moved it (1.3%, p=0.42) — so that claim was withdrawn. A different configuration survived the stricter test at 5.05× and stands. |
 | **Fluent English phrasing** | **A temporary external scaffold — and the project's biggest open gap.** A ~21M-parameter locally-trained transformer supplies *wording only*, behind the abstention gate; the brain decides what is true and whether to answer. An 88.6M model's forward pass has been re-run as spiking neurons matching the conventional version at perplexity ratio 0.9999999 — validated, and deliberately not deployed. Nothing in the cloud is in the runtime loop. |
 
 ---
 
-## What is not solved
+## What it can't do yet
 
-Named plainly, because each has a documented method that failed:
+Stated plainly, because in each case a specific approach was tried and documented as
+having failed:
 
-- **Open-ended fluent prose from the brain's own circuitry** — the largest gap, and
-  field-wide at this data scale: a from-scratch spiking language model *and* a full
-  transformer both lose to a well-tuned word-predictor on a few million words.
-- **Deep multi-layer credit assignment on spikes** — the smooth-rate version trains
-  across 6 seeds; the on-spikes port is a **powered NO-GO** tested to 40 epochs
-  (credit vanishes ~1600× over depth, hidden representation tonic-pinned).
-- **A learned binder replacing the fixed algebra** — single-attribute binding is a
-  GO on spikes; multi-attribute bundling from scratch is tested-negative on point
-  neurons (0.193 additive / 0.056 learned-linear against 0.989 for the fixed rule).
-- **Choosing among several remembered referents for a bare "it"** — contested in our
-  own record. A spiking biased-competition de-risk is 5/6 seeds with its controls at
-  6/6, but on NumPy and default-off (`qualified`); the later 6-seed write-up meant to
-  confirm it is **retracted** (a non-spiking re-run handed the answer it claimed to
-  derive); and a 2026-07-17 audit still lists the capability as 0/3, having missed the
-  de-risk. Treat it as unsettled until re-run on GPU.
-- **Episodic recall by hippocampal pattern completion** — retracted as a drive
-  artifact. Recall by content is available another way, so conversation is not blocked.
-- **Consolidating composed memories into cortex** — slot allocation is retired *as a
-  method*, not as a capability: it ceilings at 8–12 facts across three formulations
-  at 6 seeds. Re-routed to a sparse distributed store.
-- **V1 orientation selectivity self-organizing on the bridge** — the 6/6 negative was
-  measured on a population that never fired, so it is void, not a mechanism result.
+- **Writing open-ended fluent prose from its own circuitry.** The biggest gap. At
+  this amount of training data the problem is field-wide, not specific to this
+  project: a from-scratch spiking language model *and* a conventional transformer
+  both lose to a simple well-tuned word-predictor on a few million words.
+- **Learning across many layers of neurons.** A smoothed, non-spiking version of the
+  learning rule trains fine at 6 seeds. The spiking version does not learn at all,
+  and the cause is measured: the correction signal shrinks by roughly 1600× as it
+  passes back through the layers, and the middle layers stop changing.
+- **Learning to combine several properties of an object at once.** Binding one
+  property works in spiking neurons. Learning to bundle several from scratch does
+  not — 0.19 and 0.06 against 0.99 for the hand-written rule it would replace.
+- **Working out which of several remembered things a bare "it" refers to.** Our own
+  record disagrees with itself here: one spiking experiment reaches 5 of 6 seeds
+  with clean controls, a later write-up meant to confirm it was retracted (the
+  re-run quietly answered the question in ordinary code instead of deriving it), and
+  an audit still lists the ability as absent because it missed the first result.
+  Treat this as unsettled.
+- **Recalling a whole memory from a fragment**, the way the hippocampus is thought
+  to. The claimed result was withdrawn — it turned out to be an artefact of how the
+  neurons were driven. Recall by content works another way, so conversation is not
+  blocked by this.
+- **Moving assembled memories into long-term cortical storage.** One approach —
+  allocating memories to slots — is retired: it stops scaling past 8–12 facts across
+  three different formulations. The capability is not abandoned, only that method;
+  work has moved to a distributed store.
+- **Growing orientation-selective vision cells on their own.** The apparent negative
+  result is void rather than informative: it was measured on a population of neurons
+  that never actually fired.
 
 ---
 
-## Current frontier
+## What's being worked on now
 
-The live resume point is the STATE OF THE PROJECT block in
-[`GAP_CLOSURE_MISSION.md`](GAP_CLOSURE_MISSION.md); the forward plan is
-[`docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`](docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md).
-As of 2026-07-31:
+The main effort is getting learning to work across many layers of spiking neurons —
+almost everything else depends on it. Alongside that: giving the emotional state a
+way to come back down, and moving assembled memories into long-term storage by a
+method that scales.
 
-1. **Deep credit on spikes (the crux)** — running, 8 parallel cells; the roadmap's
-   single load-bearing dependency. Its central arm, transport-free learned feedback,
-   had never actually executed until an efficacy assertion caught two arms agreeing
-   to five decimals.
-2. **Credit on top of the plateau-expanded forward** — the highest-value experiment
-   not yet run. The forward half was surpassed at 6 seeds; that expander has never
-   been combined with the credit runner.
-3. **Eviction for the affect ratchet** — GABA-B or slow after-hyperpolarization,
-   both already in the engine and default-off.
-4. **Region-scoping the one-brain state restore**, which today wipes whole-bridge
-   state and erases co-resident mood every word.
-5. **Record hygiene** — 30 stale citations, 11 artifacts flagged for identical
-   experimental arms, 229 plans asserting results outside every gate.
+### A note on how results are checked
 
-### How the record keeps itself honest
+Because the most expensive mistake in a project like this is believing a result that
+isn't real, correctness here is enforced by automated checks that block a change
+rather than by care alone. They refuse claims whose numbers don't appear in the
+underlying data, experiments whose control condition was accidentally identical to
+the test condition, and results reported from a single random seed. On their first
+run over this repository they rejected eight things written by their own author, and
+found a wrong number in an already-published table.
 
-Correctness is enforced by checks that fail loudly, not by discipline. The
-failure→gate matrix ([`docs/FAILURE_GATE_MATRIX.md`](docs/FAILURE_GATE_MATRIX.md))
-maps 23 known failure classes to modules; 17 block on a path that cannot be avoided.
-On their first pass over this repo they blocked eight things written by their own
-author in one session, and found 40 identical experimental-arm pairs across 11
-banked artifacts, three "NEGATIVE" verdicts whose arms all sat below chance, and a
-wrong number in an already-published table.
-
-Two more rules are checked in CI — [`docs/TERMS.md`](docs/TERMS.md) (one term, one
-meaning, with a code condition per load-bearing word) and
-[`docs/WRITING.md`](docs/WRITING.md). Run both: `.venv/bin/python tools/check_docs.py`.
+Contributors: see [CONTRIBUTING.md](CONTRIBUTING.md) for how this works in practice.
 
 ---
 
@@ -268,21 +243,30 @@ Diagrams: [overview](docs/diagrams/brain_architecture_current.md) ·
 
 ---
 
-## Where to look for detail
+## Further reading
+
+**Start here**
 
 | You want… | Read |
 |---|---|
-| The live resume point and pending work | [`GAP_CLOSURE_MISSION.md`](GAP_CLOSURE_MISSION.md) → *STATE OF THE PROJECT* |
-| The plain-language development path, stage by stage | [`ROADMAP.md`](ROADMAP.md) |
-| The engineer-level plan: every faculty, every wall, its named biological surpass | [`docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`](docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md) |
-| What each result actually shows | `research/findings/` (dated; check the `status:` frontmatter first) |
-| Which failure classes are mechanically prevented | [`docs/FAILURE_GATE_MATRIX.md`](docs/FAILURE_GATE_MATRIX.md) |
-| What died, and what replaced it | [`docs/RETRACTED.md`](docs/RETRACTED.md) |
-| What a load-bearing word is allowed to mean | [`docs/TERMS.md`](docs/TERMS.md) |
-| The modelled biology, in plain language | [`docs/biology.md`](docs/biology.md) |
 | Install, prerequisites, first run | [QUICKSTART.md](QUICKSTART.md) |
+| The biology being modelled, in plain language | [`docs/biology.md`](docs/biology.md) |
+| Where the project is heading, stage by stage | [`ROADMAP.md`](ROADMAP.md) |
+| The conversational demos | [`docs/CHAT-DEMO-GUIDE.md`](docs/CHAT-DEMO-GUIDE.md) |
 | How to contribute | [CONTRIBUTING.md](CONTRIBUTING.md) |
-| **History** — the development narrative, superseded arcs, retired designs | [`docs/project-history-archive.md`](docs/project-history-archive.md) and [CHANGELOG.md](CHANGELOG.md). Searchable: `.venv-rag/bin/python tools/rag/rag_search.py "<question>" 5 --corpus doc` |
+| What changed and when | [CHANGELOG.md](CHANGELOG.md) |
+
+**Working on the research itself**
+
+Individual experiments live in `research/findings/`, dated, with negative and
+withdrawn results kept rather than deleted — each declares its own status, and
+[`docs/RETRACTED.md`](docs/RETRACTED.md) lists what died and what replaced it. The
+detailed engineering plan is
+[`docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`](docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md),
+the automated checks are described in
+[`docs/FAILURE_GATE_MATRIX.md`](docs/FAILURE_GATE_MATRIX.md), and the earlier
+development narrative is in
+[`docs/project-history-archive.md`](docs/project-history-archive.md).
 
 ---
 

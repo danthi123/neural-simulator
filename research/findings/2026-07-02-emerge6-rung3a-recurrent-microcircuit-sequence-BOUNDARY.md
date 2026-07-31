@@ -21,6 +21,21 @@ Rung 2 (EMERGE-5c) established the Sacramento–Senn microcircuit's **active int
 | shuffled_target (temporal-order anti-cheat) | −0.256 | −0.113 | order destroyed → matches the dead free-run |
 | untrained (floor) | +0.025 | −0.015 | floor |
 
+> **CORRECTION 2026-07-31 (wording of the corroboration claim, not the measurement).** `lever-efficacy`
+> flagged 18 identical-arm pairs in this run's artifact. Audited: `apical_feedback_lesion`,
+> `no_teaching_null` and `untrained` are identical to sixteen digits (`onestep=-0.0698238953499733`), and
+> the same holds for the three `eprop_*` arms. **This is NOT a failed manipulation — it is the opposite.**
+> A lesion that removes the credit signal entirely produces *no weight update*, so the resulting network
+> IS the untrained network, byte for byte. The lesion engaged maximally.
+>
+> What is wrong is the verdict sentence below: *"lesion + wrong-sign + null all collapse to the floor"*
+> reads as THREE independent controls corroborating each other. There are TWO. `wrong_sign` (+0.124/+0.120)
+> is genuinely independent and did move; `lesion` and `null` are one condition — no weight update — reached
+> two ways, and they equal the floor *by construction* rather than by measurement. The triangulation is
+> illusory even though every individual number is correct.
+>
+> The BOUNDARY verdict itself stands: it rests on the primary arms, `wrong_sign`, and `shuffled_target`.
+
 ## Verdict: BOUNDARY (build-informative, NOT a stop; do NOT start the `sim/` port)
 The target-based microcircuit credit rule genuinely **learns the local one-step map** — naive teacher-forced `onestep` 0.963, free-run 0.716 (both ≥ 0.70, task-sane), while every non-credit control (hebbian/lesion/null/untrained) sits at ~0 one-step. The credit signal is real and load-bearing (lesion + wrong-sign + null all collapse to the floor). **But autonomous multi-step recall is dead for BOTH training modes:**
 - **naive teacher-forced → exposure bias**: trained only on ground-truth prefixes, `recall` collapses to 0.008 when the network is fed its own outputs (the classic teacher-forcing / free-run gap).
