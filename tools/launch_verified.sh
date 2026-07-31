@@ -43,8 +43,25 @@ PID=$!
 
 cpu_ticks() { awk '{print $14+$15}' /proc/"$1"/stat 2>/dev/null; }
 
+# DIED vs FINISHED-FAST (defect found 2026-07-30, within an hour of shipping this). The first version inferred
+# death purely from "process gone between samples" -- which is ALSO what a job that COMPLETED looks like. Six
+# 72-neuron numpy cells finished inside the 20 s verification window, and both this tool and I read that as a
+# mass die-off; I reported "only 2 of 6 alive, not computing" when all six had already written their artifacts.
+# A checker that false-fails is worse than none: it trains you to ignore it (rule 8), which is the exact failure
+# this file exists to stop. So a vanished process is only a FAILURE if it left no output behind.
+finished_ok() {
+  # Success looks like: the log says it wrote something, or exited without a traceback/usage error.
+  grep -qiE "^\[written\]|wrote .+\.json|VERDICT|GO$|NO-GO" "$LOG" 2>/dev/null && return 0
+  grep -qiE "Traceback|error:|usage:|No such file" "$LOG" 2>/dev/null && return 1
+  return 1
+}
+
 sleep "$WAIT_A"
 if ! kill -0 "$PID" 2>/dev/null; then
+  if finished_ok; then
+    echo "✅ COMPLETED during verification (${WAIT_A}s) — short job, output present."
+    echo "   log: $LOG"; tail -2 "$LOG" | sed 's/^/   /'; exit 0
+  fi
   echo "⛔ launch FAILED — pid $PID is already dead after ${WAIT_A}s."
   echo "   command: $*"
   echo "   --- log tail ---"; tail -15 "$LOG" 2>/dev/null | sed 's/^/   /'
@@ -54,6 +71,10 @@ T1=$(cpu_ticks "$PID")
 
 sleep "$WAIT_B"
 if ! kill -0 "$PID" 2>/dev/null; then
+  if finished_ok; then
+    echo "✅ COMPLETED during verification ($((WAIT_A+WAIT_B))s) — short job, output present."
+    echo "   log: $LOG"; tail -2 "$LOG" | sed 's/^/   /'; exit 0
+  fi
   echo "⛔ launch FAILED — pid $PID died between ${WAIT_A}s and $((WAIT_A+WAIT_B))s."
   echo "   command: $*"
   echo "   --- log tail ---"; tail -15 "$LOG" 2>/dev/null | sed 's/^/   /'
