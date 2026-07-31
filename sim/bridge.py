@@ -3407,6 +3407,22 @@ class SimulationBridge:
                 m = cp.zeros(nnz, dtype=cp.bool_)
                 m[old_pos_all[valid]] = old_mask[:old_pos_all.shape[0]][valid]
                 self.cp_plastic_mask = m
+            # Every OTHER per-synapse array must ride the same permutation. Structural-plasticity FORMATION
+            # (bridge.py:8712, `cp_connections + new_connections_matrix`) returns CANONICALLY SORTED output, so
+            # existing synapses move -- while _add_synapses_to_arrays() appends at the TAIL. Without this, STP
+            # state, eligibility traces and pulse timers all end up attached to the wrong synapses.
+            for _attr, _fill, _dt in (("cp_stp_x", 1.0, cp.float32),
+                                      ("cp_stp_u", float(getattr(self.core_config, "stp_U", 0.0)), cp.float32),
+                                      ("cp_eligibility_trace", 0.0, cp.float32),
+                                      ("cp_synapse_pulse_timers", 0, cp.int32),
+                                      ("cp_synapse_pulse_progress", 0.0, cp.float32)):
+                _old = getattr(self, _attr, None)
+                if _old is None or _old.shape[0] == nnz:
+                    continue
+                _new = cp.full(nnz, _fill, dtype=_dt)
+                _n = min(_old.shape[0], old_pos_all.shape[0])
+                _new[old_pos_all[:_n][valid[:_n]]] = _old[:_n][valid[:_n]]
+                setattr(self, _attr, _new)
 
         # re-apply the LOGICAL gate values so the arrays match what the caller believes is set
         for name, val in (getattr(self, "_plasticity_gate_values", None) or {}).items():
@@ -7827,7 +7843,14 @@ class SimulationBridge:
                     # identical else branch. Operand sizing mirrors the gated decay directly above (proven-correct).
                     if self.cp_plasticity_rate_gain is not None:
                         _clipped_data = cp.clip(self.cp_connections.data, cfg.hebbian_min_weight, cfg.hebbian_max_weight)
-                        _active_syn = self.cp_plasticity_rate_gain > 0.0
+                        # SIZE-MATCH the mask to the data (2026-07-31). cp_plasticity_rate_gain is not
+                        # guaranteed nnz-sized -- structural plasticity can grow nnz past it -- and a boolean
+                        # mask of the wrong length either raises or selects the wrong synapses. The gated
+                        # DECAY a few lines above already does this correctly; these three masked-clip sites
+                        # did not, which is the only reason they differed from their neighbours.
+                        _nnz_c = self.cp_connections.nnz
+                        _active_syn = self._ensure_gate_capacity(
+                            "cp_plasticity_rate_gain", _nnz_c)[:_nnz_c] > 0.0
                         self.cp_connections.data[_active_syn] = _clipped_data[_active_syn]
                     else:
                         cp.clip(self.cp_connections.data, cfg.hebbian_min_weight, cfg.hebbian_max_weight, out=self.cp_connections.data)
@@ -8526,7 +8549,9 @@ class SimulationBridge:
                     # gain None (the default) takes the byte-identical else branch.
                     if self.cp_plasticity_rate_gain is not None:
                         _clipped_rw = cp.clip(self.cp_connections.data, w_min, w_max)
-                        _active_rw = self.cp_plasticity_rate_gain > 0.0
+                        _nnz_rw = self.cp_connections.nnz            # size-match: see the Hebbian clip note
+                        _active_rw = self._ensure_gate_capacity(
+                            "cp_plasticity_rate_gain", _nnz_rw)[:_nnz_rw] > 0.0
                         self.cp_connections.data[_active_rw] = _clipped_rw[_active_rw]
                     else:
                         cp.clip(self.cp_connections.data, w_min, w_max, out=self.cp_connections.data)
@@ -8707,7 +8732,19 @@ class SimulationBridge:
                                     dtype=cp.float32
                                 )
 
-                                # Add to existing connections
+                                # Add to existing connections.
+                                # 2026-07-31: capture the OLD (row, col) first. CSR addition returns canonically
+                                # SORTED output, so existing synapses change position -- but
+                                # _add_synapses_to_arrays() appends at the tail, so without a coordinate remap
+                                # every per-synapse array (gates, plastic mask, STP, eligibility, pulse timers)
+                                # silently attaches to the wrong synapse from here on.
+                                _pre_coo = self._get_cached_coo()
+                                _old_rows = _pre_coo.row.copy()
+                                _old_cols = _pre_coo.col.copy()
+                                _old_gain_s = getattr(self, "cp_plasticity_rate_gain", None)
+                                _old_mask_s = getattr(self, "cp_plastic_mask", None)
+                                _old_gain_s = None if _old_gain_s is None else _old_gain_s.copy()
+                                _old_mask_s = None if _old_mask_s is None else _old_mask_s.copy()
                                 nnz_before = self.cp_connections.nnz
                                 self.cp_connections = self.cp_connections + new_connections_matrix
 
@@ -8722,6 +8759,10 @@ class SimulationBridge:
                                 if actual_new > 0:
                                     self._grow_synapse_arrays_if_needed(actual_new, cfg)
                                     self._add_synapses_to_arrays(actual_new, cfg)
+                                    # re-attach every per-synapse array to its OWN synapse after the reorder
+                                    self._remap_gate_indices_after_rebuild(
+                                        _old_rows, _old_cols,
+                                        old_gain=_old_gain_s, old_mask=_old_mask_s)
 
                                 # Keep _synapse_count in sync with actual connection matrix
                                 self._synapse_count = self.cp_connections.nnz
@@ -8798,7 +8839,9 @@ class SimulationBridge:
                     _hw_max = cfg.hebbian_max_weight if cfg.enable_hebbian_learning else 5.0
                     if self.cp_plasticity_rate_gain is not None:
                         _clipped_hs = cp.clip(self.cp_connections.data, _hw_min, _hw_max)
-                        _active_hs = self.cp_plasticity_rate_gain > 0.0
+                        _nnz_hs = self.cp_connections.nnz            # size-match: see the Hebbian clip note
+                        _active_hs = self._ensure_gate_capacity(
+                            "cp_plasticity_rate_gain", _nnz_hs)[:_nnz_hs] > 0.0
                         self.cp_connections.data[_active_hs] = _clipped_hs[_active_hs]
                     else:
                         cp.clip(self.cp_connections.data, _hw_min, _hw_max, out=self.cp_connections.data)
