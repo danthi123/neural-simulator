@@ -2717,6 +2717,17 @@ class SimulationBridge:
                 name: cp.asarray(np.asarray(indices, dtype=np.int32))
                 for name, indices in gate_to_indices.items()
             }
+            # 2026-07-31 FIX: ALSO store each gate's (pre, post) COORDINATES. Indices are positions in the
+            # (pre,post)-sorted synapse list, so ANY CSR rebuild that inserts edges shifts them and the stored
+            # index map silently addresses the WRONG synapses. Coordinates are stable under a rebuild, so
+            # _remap_gate_indices_after_rebuild() can re-derive correct indices from them.
+            _kr = [t[0] for t in keyed]
+            _kc = [t[1] for t in keyed]
+            self._plasticity_gate_to_coords = {
+                name: (np.asarray([_kr[i] for i in idxs], dtype=np.int64),
+                       np.asarray([_kc[i] for i in idxs], dtype=np.int64))
+                for name, idxs in gate_to_indices.items()
+            }
             self._plasticity_gate_values = {n: 1.0 for n in gate_to_indices}
             # Default gain: 1.0 everywhere (full plasticity). Runners call
             # set_plasticity_gate(name, value) to alter at runtime.
@@ -3321,26 +3332,88 @@ class SimulationBridge:
                         and self.core_config.enable_short_term_plasticity
                         and new_nnz > 0):
                     self._build_synapse_conn_type_array(self.core_config)
-                # Plastic mask: new edges default to non-plastic (False)
-                if hasattr(self, "cp_plastic_mask") and self.cp_plastic_mask is not None:
-                    if self.cp_plastic_mask.shape[0] != new_nnz:
-                        old_mask = self.cp_plastic_mask
-                        new_mask = cp.zeros(new_nnz, dtype=cp.bool_)
-                        new_mask[:old_mask.shape[0]] = old_mask
-                        self.cp_plastic_mask = new_mask
-                # Plasticity rate gain: new edges default to 1.0
-                if (hasattr(self, "cp_plasticity_rate_gain")
-                        and self.cp_plasticity_rate_gain is not None):
-                    if self.cp_plasticity_rate_gain.shape[0] != new_nnz:
-                        old_gain = self.cp_plasticity_rate_gain
-                        new_gain = cp.ones(new_nnz, dtype=cp.float32)
-                        new_gain[:old_gain.shape[0]] = old_gain
-                        self.cp_plasticity_rate_gain = new_gain
+                # 2026-07-31 FIX: remap by COORDINATE, not by position.
+                # The old code copied `new_arr[:len(old)] = old` onto an index space the COO->CSR rebuild had
+                # just RE-SORTED, so every value landed on the wrong synapse; and the gate index maps were never
+                # rebuilt at all, so set_plasticity_gate() then froze unrelated synapses while reporting success
+                # (reproduced: 361 wrong synapses frozen, 361 of 400 gated ones left plastic). Coordinates are
+                # stable across the rebuild, so positions are re-derived from them.
+                _old_mask = getattr(self, "cp_plastic_mask", None)
+                _old_gain = getattr(self, "cp_plasticity_rate_gain", None)
+                self._remap_gate_indices_after_rebuild(
+                    existing_coo.row, existing_coo.col,
+                    old_gain=_old_gain if (_old_gain is not None
+                                           and _old_gain.shape[0] != new_nnz) else None,
+                    old_mask=_old_mask if (_old_mask is not None
+                                           and _old_mask.shape[0] != new_nnz) else None,
+                )
 
         # Invalidate caches that depend on connectivity / weights
         self._invalidate_coo_cache()
 
         return n_updated
+
+
+    def _remap_gate_indices_after_rebuild(self, old_rows, old_cols, old_gain=None, old_mask=None):
+        """Re-derive per-synapse gate indices (and remap gain/mask) after the CSR was rebuilt.
+
+        WHY (2026-07-31, found by an adversarial bug hunt and REPRODUCED). Gate index maps are built once at
+        wiring as positions in the (pre,post)-sorted synapse list. `set_pathway_weights(..., add_missing=True)`
+        rebuilds the CSR via COO->CSR, which RE-SORTS canonically and inserts new edges, so position k no longer
+        denotes the same connection. Nothing rebuilt the maps, so `set_plasticity_gate(name, 0.0)` wrote onto
+        whatever synapses now sat at those indices: in a minimal repro it froze 361 WRONG synapses and left 361
+        of 400 truly-gated ones fully plastic, while the gate reported 0.0 on readback. That silently disables
+        named mechanisms - the visual critical period and the eval-phase plasticity freeze in the flagship nav
+        runner both call gates BY NAME after such a rebuild.
+
+        Coordinates are stable across a rebuild, so positions are re-derived by matching (row, col) keys. The
+        same mapping repairs cp_plasticity_rate_gain and cp_plastic_mask, which were copied POSITIONALLY onto
+        the re-sorted space - carrying every value to the wrong synapse.
+        """
+        if self.cp_connections is None:
+            return
+        nnz = int(self.cp_connections.nnz)
+        n = int(self.core_config.num_neurons)
+        coo = self.cp_connections.tocoo()
+        # canonical CSR order => (row, col) keys are ascending, so searchsorted is valid
+        new_key = coo.row.astype(cp.int64) * n + coo.col.astype(cp.int64)
+
+        def _positions(rows, cols):
+            k = cp.asarray(np.asarray(rows, dtype=np.int64) * n + np.asarray(cols, dtype=np.int64))
+            pos = cp.searchsorted(new_key, k)
+            pos = cp.clip(pos, 0, max(nnz - 1, 0))
+            ok = (new_key[pos] == k)          # drop any coordinate that no longer exists
+            return pos[ok]
+
+        # (a) gate index maps
+        coords = getattr(self, "_plasticity_gate_to_coords", None)
+        if coords:
+            for name, (r, c) in coords.items():
+                idx = _positions(r, c)
+                self._plasticity_gate_indices_gpu[name] = idx.astype(cp.int32)
+                self._plasticity_gate_to_synapses[name] = _backend_to_host(idx).tolist()
+
+        # (b) per-synapse arrays: scatter old values to their NEW positions instead of copying positionally
+        if old_rows is not None and old_cols is not None and len(old_rows) > 0:
+            old_pos_all = cp.searchsorted(new_key, old_rows.astype(cp.int64) * n + old_cols.astype(cp.int64))
+            old_pos_all = cp.clip(old_pos_all, 0, max(nnz - 1, 0))
+            valid = (new_key[old_pos_all] ==
+                     (old_rows.astype(cp.int64) * n + old_cols.astype(cp.int64)))
+            if old_gain is not None:
+                g = cp.ones(nnz, dtype=cp.float32)
+                g[old_pos_all[valid]] = old_gain[:old_pos_all.shape[0]][valid]
+                self.cp_plasticity_rate_gain = g
+            if old_mask is not None:
+                m = cp.zeros(nnz, dtype=cp.bool_)
+                m[old_pos_all[valid]] = old_mask[:old_pos_all.shape[0]][valid]
+                self.cp_plastic_mask = m
+
+        # re-apply the LOGICAL gate values so the arrays match what the caller believes is set
+        for name, val in (getattr(self, "_plasticity_gate_values", None) or {}).items():
+            idx = self._plasticity_gate_indices_gpu.get(name)
+            if idx is not None and idx.size > 0 and self.cp_plasticity_rate_gain is not None:
+                self.cp_plasticity_rate_gain[idx] = cp.float32(val)
+
 
     def set_plasticity_gate(self, name: str, value: float) -> None:
         """Set the runtime plasticity gain for all synapses in pathways
