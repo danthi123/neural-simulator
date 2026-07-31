@@ -613,3 +613,39 @@ job prints no per-unit marker, that is a defect to fix BEFORE launching, because
 **Do not accept "99% CPU" as reassurance.** It rules out a hang; it says nothing about rate. The project already
 banked *"a LAUNCH-BOUND run is genuinely computing but pathologically slow — kill + re-scope"* — this is that
 rule's throughput half, which was written down and then not applied for a whole session.
+
+---
+
+## ⛔ SAME QUANTITY? — the one failure class with NO mechanical guard (2026-07-30)
+
+Every other trap here can be caught by a tool. **This one cannot**, and it produced the day's worst call: I
+reported *"BTSP is actively damaging the field, the gap#5 GO is in question"* — a retraction of a validated
+result — from a comparison that was never like-for-like.
+
+**What happened.** The headline was `circ(dW)`: the circular resultant of the weight **CHANGE**, scored against a
+randset null (0.6705 − 0.0822 = 0.5883). I measured `circ` on the **FINAL weights**, which are dominated by the
+random initial structure. With `lr=0` the final weights simply *are* the init, and a sparse random vector over 60
+place indices has a high circular resultant **by construction** — so `lr0` "beating" the learning arm was
+arithmetically guaranteed and carried zero information. The `lr=0` control worked perfectly; **I read it against
+the wrong baseline.**
+
+**Why no check catches it.** Both numbers are real, both are correctly computed, both have the same name in
+conversation ("circ"), and both are plausible magnitudes. Nothing is broken. `check_docs`, the research gate,
+`launch_verified` and the pre-commit hook are all silent, correctly.
+
+**THE RULE — before comparing ANY two numbers, state what each is OVER:**
+1. **What is the base?** final weights vs the weight *change*; a raw score vs a null-subtracted difference; a sum
+   vs a mean; a ratio vs a count.
+2. **Is the denominator on the same footing?** *"0.588 = 67% of the 0.8719 oracle"* divides a **null-subtracted**
+   numerator by a **raw** ceiling. Same defect, still live. Cf. the CLAUDE.md retraction that subtracted a MEAN
+   from a SUM and reported the difference as an improvement.
+3. **Where does the headline number LIVE?** If it exists only as prose — hand-computed from two columns of a
+   markdown table, as `0.588` was, appearing in **no artifact anywhere** — you cannot check it, and a mismatch
+   costs a manual trace to find. **Make the runner record the headline's own quantity.** That single fix (adding
+   `circ_dW`) turned an unfalsifiable claim into a checkable one.
+4. **A metric pinned at a bound is a CEILING, not a margin.** Lane B read exactly `1.000` on every gate, every
+   seed, both backends. The GO rests on the lesion/yoked/permuted **differential**, never on those numbers, and
+   they must not be used to RANK variants.
+
+**Smell test:** if you are about to retract a validated result on the strength of a new number, first write down
+the two quantities side by side with their bases. If they differ, you have found a units bug, not a finding.
