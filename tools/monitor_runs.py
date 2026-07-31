@@ -123,9 +123,29 @@ def _cpu_ticks(pid):
         return None
 
 
-def _find(stem, pids):
-    """Map a run to its worker pid via the --out json (a `> x.log` redirect never appears in a cmdline)."""
-    needle = os.path.basename(stem) + ".json"
+def _find(stem, pids, log_path=None):
+    """Map a run to its worker pid.
+
+    AUTHORITATIVE FIRST (fix 2026-07-31): the process whose STDOUT *is* this log file. A `> x.log` redirect never
+    appears in a cmdline, so the original heuristic matched on `basename(stem) + ".json"` instead -- i.e. it
+    required the --out json to be named after the log. That is a NAMING CONVENTION, not a fact: a run whose
+    --out differs from its log name reads as pid=None -> alive=False -> reported DONE/CRASHED while it is
+    happily computing, and a coincidental name match on another process reports the wrong pid (so the CPU-tick
+    liveness delta is then read off an unrelated process). tools/device_check.sh already resolves this correctly
+    via /proc/<pid>/fd/1; this brings the monitor in line.
+    """
+    if log_path:
+        try:
+            target = os.path.realpath(log_path)
+            for pid, _args in pids:
+                try:
+                    if os.path.realpath("/proc/%s/fd/1" % pid) == target:
+                        return pid
+                except (OSError, PermissionError):
+                    continue
+        except OSError:
+            pass
+    needle = os.path.basename(stem) + ".json"          # fallback: the original --out-name heuristic
     for pid, args in pids:
         if needle in args:
             return pid
@@ -148,7 +168,7 @@ def classify(log, pids, stall_s, prog_re, prev, gpu_pids=None):
     size = os.path.getsize(log) if exists else 0
     age = (time.time() - os.path.getmtime(log)) if exists else 0.0
     txt = _tail(log)
-    pid = _find(stem, pids)
+    pid = _find(stem, pids, log_path=log)
     alive = pid is not None
     ticks = _cpu_ticks(pid) if alive else None
     err = ERROR_RE.search(txt)
