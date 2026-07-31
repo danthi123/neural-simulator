@@ -51,13 +51,19 @@ def discover():
     return sorted(out, key=lambda t: (t[2] is None, getattr(t[1], "CLASS_ID", "zz") if t[1] else "zz"))
 
 
-def run_all(paths, verbose=True, selftest_first=True):
+def run_all(paths, verbose=True, selftest_first=True, budget_s=None):
     """Run every gate. Returns (blocking_problems, report_lines).
 
     A gate whose selftest does not FAIL in the failing direction is treated as BROKEN and its verdict is not
     trusted -- because a gate that cannot fail is indistinguishable from no gate, and this project has shipped
     four of those.
     """
+    # PER-GATE TIME BUDGET. The registry timed out TWICE committing 390 staged files -- a real scalability
+    # defect in the checking layer itself, and one that would block the Tier-2 audit outright (it stages far
+    # more). A gate that exceeds its budget is reported as SKIPPED-ON-TIME rather than silently dropped: an
+    # unbounded check that stalls a commit gets bypassed with --no-verify, which disables every OTHER gate too.
+    import os as _os, time as _t
+    budget_s = budget_s if budget_s is not None else float(_os.environ.get("GATE_BUDGET_S", "12"))
     blocking, report = [], []
     for name, mod, err in discover():
         if err:
@@ -70,7 +76,17 @@ def run_all(paths, verbose=True, selftest_first=True):
                 blocking.append("GATE %s FAILED ITS OWN SELFTEST: %s" % (name, "; ".join(st)))
                 report.append("  ⛔ %-22s selftest FAILED: %s" % (name, "; ".join(st)[:80]))
                 continue
-        probs = mod.check(paths)
+        _t0 = _t.time()
+        try:
+            probs = mod.check(paths)
+        except Exception as e:                       # a crashing gate must be LOUD, never silently absent
+            blocking.append("GATE %s CRASHED: %s: %s" % (name, type(e).__name__, e))
+            report.append("  ⛔ %-22s CRASHED: %s" % (name, type(e).__name__))
+            continue
+        _el = _t.time() - _t0
+        if _el > budget_s:
+            report.append("  ⏱  %-22s took %.1fs (budget %.0fs) — verdict kept, but this gate needs scoping"
+                          % (name, _el, budget_s))
         tag = "BLOCK" if mod.BLOCKING else "warn "
         if probs:
             report.append("  %s %-22s %d problem(s)" % ("⛔" if mod.BLOCKING else "⚠️ ", name, len(probs)))
