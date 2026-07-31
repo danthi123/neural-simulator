@@ -76,6 +76,38 @@ position-shuffled permutation test, which is now computed and stored on every ru
 place-specific *above a concentration-matched null*? The field-quality configuration is the place to look, since
 it is the one with a 5.4× randset ratio.
 
+### ✅ ANSWERED SAME DAY — the field-quality config IS place-specific, 6/6 seeds
+
+Ran the field-quality configuration (`lr=0.002, w_max=2500, laps=1, dwell=30, drive=8000, w0=600,
+elig_tau_ms=1000, hetero_dep=0.2, elig_exp=4.0`) through the position-only permutation test:
+
+| configuration | observed | position-shuffled null | ratio | median p |
+|---|---|---|---|---|
+| **field-quality** (6 seeds) | **0.6511** | **0.1289** | **5.05×** | **0.0025** |
+| σ=5 oracle (reference) | 0.8887 | 0.1964 | 4.53× | 0.0025 |
+| tuned point (6 seeds) | 0.6572 | 0.6486 | 1.01× | 0.42 |
+
+Per-seed ratios **4.99–5.12×**, every seed at p=0.0025 — no seed carries the result. Saturation is low
+(`sat` 0.010–0.025), width 16.3, peaks 4.04.
+
+⇒ **The banked field-quality GO is VINDICATED on a STRICTER control than it originally used.** Its randset null
+varies the drive; this one holds magnitude and concentration exactly fixed and varies only position, and the
+effect not only survives — its ratio **exceeds the σ=5 oracle's** (5.05× vs 4.53×).
+
+⇒ **And the two configurations are now cleanly separated.** Place-specificity is present at the field-quality
+operating point and absent at the one that maximizes `circ_dW`. The tuning that raised `circ_dW`
+0.2474 → 0.7050 **walked away from place-specificity while walking up a concentration statistic** — which is
+exactly the failure mode this finding names, now demonstrated rather than hypothesized.
+
+**Practical consequence: the field-quality configuration is the correct operating point for gap#5, and the
+"tuned" one should not be carried forward.** The higher `circ_dW` at the tuned point is not a better field.
+
+Verification note: running this required fixing three call sites broken by an earlier `run()` return-arity change
+(5→6) — including `_gap5_fieldquality_gpu6.py`, the runner that PRODUCES the banked artifact, which had been
+unrunnable since that change. All now use a `*_`-tolerant unpack so future diagnostics cannot repeat it. The
+banked artifact was backed up and the output path made overridable (`GAP5_FQ_OUT`) before running, so a CPU check
+cannot clobber a banked GPU result.
+
 ## 6. The transferable lesson
 
 **A metric that goes up under tuning is not thereby measuring what its name says.** The number moved 0.2474 →

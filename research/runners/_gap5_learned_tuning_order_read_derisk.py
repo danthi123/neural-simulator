@@ -49,7 +49,7 @@ def learn_tuning_btsp(seed, lr, w_max=2500.0, w_inh=150.0, laps=1, dwell=30):
     de-fragment. hetero/exp are the honest arm -- NOT the higher-raw-circ combination, whose extra gain was
     place-INDEPENDENT concentration (randset 0.09 -> 0.25 for +0.002 place-specific).
     """
-    M0, M1, nread, nplace, apmax = B.run(seed, w_inh, True, lr, w_max, laps=laps, dwell=dwell,
+    M0, M1, nread, nplace, apmax, *_ = B.run(seed, w_inh, True, lr, w_max, laps=laps, dwell=dwell,
                                          drive=8000.0, w0=600.0, elig_tau_ms=1000.0,
                                          hetero_dep=0.2, elig_exp=4.0)
     sat = float((M1 >= w_max * 0.98).mean())
