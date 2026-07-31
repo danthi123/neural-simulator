@@ -13,7 +13,7 @@
 # Install:  git config core.hooksPath tools/githooks
 # Bypass (deliberate, visible in the reflog):  git commit --no-verify
 set -uo pipefail
-ROOT=$(git rev-parse --show-toplevel)
+ROOT=$(git rev-parse --show-toplevel); export ROOT
 [ -x "$ROOT/.venv/bin/python" ] || exit 0          # no venv (fresh clone / CI bootstrap) -> do not block
 # GATE 1 -- document STRUCTURE (W1 retraction marking, W2 line length).
 "$ROOT/.venv/bin/python" "$ROOT/tools/check_docs.py" > /tmp/_precommit_docs.out 2>&1 || {
@@ -85,4 +85,26 @@ if [ -n "$NEWF" ]; then
     exit 1
   fi
 fi
+
+# GATE 5 -- THE REGISTRY. Every failure class in docs/FAILURE_GATE_MATRIX.md, one module each, auto-discovered
+# from tools/gates/. Adding a class is one file; this hook never changes again. The registry refuses to trust a
+# gate whose selftest does not fail in the failing direction -- failure class 3 (the anti-drift mechanism being
+# itself the defect, 9 incidents) closed structurally.
+STAGED_ALL=$(git diff --cached --name-only --diff-filter=ACM || true)
+"$ROOT/.venv/bin/python" - "$STAGED_ALL" > /tmp/_precommit_gates.out 2>&1 <<'PY'
+import sys, os
+sys.path.insert(0, os.environ.get("ROOT") or os.getcwd())
+from tools.gates import run_all
+paths = [p for p in (sys.argv[1] if len(sys.argv) > 1 else "").split("\n") if p.strip()]
+blocking, report = run_all(paths, verbose=False)
+print("\n".join(report))
+sys.exit(1 if blocking else 0)
+PY
+if [ $? -ne 0 ]; then
+  echo "⛔ COMMIT BLOCKED — failure-class gate(s):"
+  sed 's/^/   /' /tmp/_precommit_gates.out | tail -30
+  echo "   Deliberate override: git commit --no-verify"
+  exit 1
+fi
+[ -s /tmp/_precommit_gates.out ] && sed 's/^/   /' /tmp/_precommit_gates.out | grep -E "⚠️" | head -6
 exit 0

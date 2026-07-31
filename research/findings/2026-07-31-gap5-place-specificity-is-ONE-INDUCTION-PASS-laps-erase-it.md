@@ -8,7 +8,10 @@ date: 2026-07-31
 
 # ⭐ gap#5 SOLVED at the mechanism level: place-specificity comes from ONE induction pass, and repeated laps ERASE it
 
-**Date:** 2026-07-31 · **Status:** MEASURED, 3 seeds × 6 cells, permutation-gated, outside the clamp trap ·
+**Date:** 2026-07-31 · **Status:** MEASURED at **6 seeds** for the headline claim — `laps=1, dwell=30` is
+place-specific at ratio **4.49**, median p **0.0050**, n=6 (`research/findings/raw/gap5_density/AGG_laps1_drive.json`).
+The laps×dwell GRID below is 3 seeds per cell and is the ISOLATION evidence, not the headline. ·
+seed-waiver: the 6-cell grid is a 3-seed isolation sweep; its conclusion was then replicated at 6 seeds.
 **Isolates the operative variable** after density was shown not to be it
 
 ---
