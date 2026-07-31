@@ -31,6 +31,10 @@ from sim.backend import to_host
 
 NPLACE, NREAD, NFS = 60, 12, 12
 PLACE_READ_DENSITY = float(os.environ.get("GAP5_PLACE_READ_DENSITY", "1.0"))
+# The eligibility timescale sets the kernel WIDTH in place indices (tau_eff = btsp_elig_tau_ms / dwell),
+# which is what the sigma=5 oracle is a width over. Exposed by env for the same reason as the density:
+# the signature already carries 13 optional kwargs and a sweep does not need a 14th.
+ELIG_TAU_MS = os.environ.get("GAP5_ELIG_TAU_MS")
 W0, DESIGN = 250.0, 250.0
 
 
@@ -289,7 +293,8 @@ def main():
         res[name] = []
         for s in a.seeds:
             M0, M1, nread, nplace, apmax, apst = run(s, kw["w_inh"], kw["btsp"], kw["lr"], a.w_max,
-                                        laps=a.laps, dwell=a.dwell)
+                                        laps=a.laps, dwell=a.dwell,
+                                        elig_tau_ms=(float(ELIG_TAU_MS) if ELIG_TAU_MS else None))
             c1 = float(np.mean([circ_resultant(r) for r in M1]))
             w1 = float(np.mean([best_window_mass(r) for r in M1]))
             c0 = float(np.mean([circ_resultant(r) for r in M0]))
@@ -353,6 +358,7 @@ def main():
                    # the run is decisive at all -- both were previously unrecoverable from the artifact, which
                    # is exactly how a numpy "6-seed GO" got banked across four lanes today.
                    place_read_density=PLACE_READ_DENSITY,
+                   elig_tau_ms=(float(ELIG_TAU_MS) if ELIG_TAU_MS else None),
                    backend=os.environ.get("SIM_BACKEND", "unset"),
                    controls=ctrl),
               open(a.out, "w"), indent=1)
