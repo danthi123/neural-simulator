@@ -207,7 +207,12 @@ class Gap4OnBridgeNet(OnBridgeBDSPNet):
                 li = k + 1
                 E = acts[li][None, :]
                 phi = E * (1.0 - E)
-                if self.feedback == "learned" and mode == "bdsp":
+                # ACCEPT "kp" (bug fix 2026-07-31): the CLI arm is named "kp", never "learned", so this
+                # branch NEVER FIRED and the Kolen-Pollack transport-free update never executed in any run.
+                # The intent is documented two ways: the module header calls kp "Kolen-Pollack LEARNED feedback",
+                # and the no-weight-transport comment below says "kp/micro LEARN their feedback" while its code
+                # said "learned"/"micro" -- the arm was renamed and this site was missed.
+                if self.feedback in ("learned", "kp") and mode == "bdsp":
                     self._kp_update_Y(k, E, e_upper)          # KP learned feedback (transport-free), before using Y[k]
                 Yk = np.zeros_like(self.Y[k]) if mode == "apical_lesion" else self.Y[k]
                 if self.feedback == "micro" and k == nhid - 1:
@@ -274,7 +279,7 @@ class Gap4OnBridgeNet(OnBridgeBDSPNet):
     def no_weight_transport(self):
         if self.feedback == "transport_ceiling":
             return False                                      # Y := W^T by construction -> the guard MUST report a violation
-        if self.feedback in ("learned", "micro"):
+        if self.feedback in ("learned", "kp", "micro"):
             # kp/micro LEARN their feedback (Y / W^PI) -> the byte 'not-transpose' check is inapplicable; the guarantee
             # is STRUCTURAL: the update methods read ONLY activities + Y/W^PI, never a forward-W array. AST-verify.
             return bool(_ast_no_forward_W(type(self)))
@@ -394,6 +399,15 @@ def run_seed(seed, args):
                      "ff_weight_moved": float(abs(w1 - w0)),
                      "no_weight_transport": bool(net.no_weight_transport())}
         nets[arm] = net
+        # LEVER-EFFICACY ASSERTION (2026-07-31). fixed_fa and kp printed byte-identical results -- held-out,
+        # train, memctrl and ff-moved 88517.31 to five decimals -- because kp matched no branch. Two distinct
+        # feedback mechanisms cannot move the same amount of forward weight to 2dp. This makes an inert arm fail
+        # LOUDLY instead of publishing a duplicate as a result.
+        for _prev, _pv in arms.items():
+            if _prev != arm and abs(_pv["ff_weight_moved"] - arms[arm]["ff_weight_moved"]) < 0.01:
+                print(f"[gap4-onbridge][seed {seed}]   ⛔ ARMS IDENTICAL: {_prev} and {arm} both moved "
+                      f"{arms[arm]['ff_weight_moved']:.2f} -- one of them is not selecting a mechanism.",
+                      flush=True)
         print(f"[gap4-onbridge][seed {seed}]   arm {arm:<17} held-out {arms[arm]['inherit_heldout']:.3f} "
               f"train {arms[arm]['train_acc']:.3f} memctrl {arms[arm]['memctrl_heldout']:.3f} "
               f"ff-moved {arms[arm]['ff_weight_moved']:.2f} nwt {arms[arm]['no_weight_transport']} "
@@ -551,7 +565,10 @@ def main():
     ap.add_argument("--full", action="store_true",
                     help="run the per-seed FULL science (arms + anti-cheats). This is the CONTROLLER's GPU run -- NOT run in build-ahead.")
     ap.add_argument("--seeds", type=int, nargs="+", default=[42])
-    ap.add_argument("--arms", nargs="+", default=["reservoir", "fixed_fa", "kp", "micro", "transport_ceiling"])
+    # choices= is the mechanism: without it "--arms kp" was accepted silently while matching NO branch in the
+    # net, so kp fell through to the same default path as fixed_fa and the two arms were byte-identical.
+    ap.add_argument("--arms", nargs="+", default=["reservoir", "fixed_fa", "kp", "micro", "transport_ceiling"],
+                    choices=["reservoir", "fixed_fa", "kp", "micro", "transport_ceiling", "learned"])
     # net scale
     ap.add_argument("--hidden", type=int, default=64)
     ap.add_argument("--pool-k", dest="pool_k", type=int, default=16)
