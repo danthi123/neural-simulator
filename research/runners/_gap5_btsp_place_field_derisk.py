@@ -305,6 +305,8 @@ def main():
     ap.add_argument("--dwell", type=int, default=30)
     ap.add_argument("--lr", type=float, default=0.02)
     ap.add_argument("--w-max", type=float, default=2500.0)
+    ap.add_argument("--w0", type=float, default=None,
+                    help="initial weight mean (default: W0=250). The field-quality config uses 600. Exposed 2026-07-31 while isolating which of its five extra knobs is load-bearing.")
     ap.add_argument("--drive", type=float, default=3000.0,
                     help="place-cell drive (pA). The field-quality config uses 8000; run() default is 3000. Exposed 2026-07-31 after nine queued sweep jobs died on argparse because this knob existed in run() but not on the CLI.")
     ap.add_argument("--w-inh", type=float, default=150.0)
@@ -352,7 +354,7 @@ def main():
         res[name] = []
         for s in a.seeds:
             M0, M1, nread, nplace, apmax, apst = run(s, kw["w_inh"], kw["btsp"], kw["lr"], a.w_max,
-                                        laps=a.laps, dwell=a.dwell, drive=a.drive,
+                                        laps=a.laps, dwell=a.dwell, drive=a.drive, w0=a.w0,
                                         elig_tau_ms=(float(ELIG_TAU_MS) if ELIG_TAU_MS else None))
             c1 = float(np.mean([circ_resultant(r) for r in M1]))
             w1 = float(np.mean([best_window_mass(r) for r in M1]))
@@ -402,14 +404,14 @@ def main():
         for s_ in a.seeds:
             # (i) RANDSET: same activity, no place manifold. Gain must COLLAPSE.
             M0r, M1r, nr_, np_, ap_, _apst_r = run(s_, kw["w_inh"], kw["btsp"], kw["lr"], a.w_max,
-                                          laps=a.laps, dwell=a.dwell, drive=a.drive, randset=True)
+                                          laps=a.laps, dwell=a.dwell, drive=a.drive, w0=a.w0, randset=True)
             rc.append(float(np.mean([circ_resultant(r) for r in M1r])) - float(np.mean([circ_resultant(r) for r in M0r])))
             rc_dW.append(circ_dW_of(M0r, M1r))          # the null ON THE HEADLINE QUANTITY
             # (ii) SHARPENING-MATCHED NULL: same total |dW|, no place structure
             # (ii) PERMUTED-INCREMENT NULL on the REAL place-sweep arms (same magnitudes + concentration,
             #      positions shuffled). Recompute the sweep arm so the increments are the genuine ones.
             M0p, M1p, _, _, _, _ = run(s_, kw["w_inh"], kw["btsp"], kw["lr"], a.w_max,
-                                    laps=a.laps, dwell=a.dwell, drive=a.drive, randset=False)
+                                    laps=a.laps, dwell=a.dwell, drive=a.drive, w0=a.w0, randset=False)
             base = float(np.mean([circ_resultant(r) for r in M0p]))
             rp.append(permuted_increment_null(M0p, M1p, s_) - base)
             rt_dW.append(circ_dW_of(M0p, M1p))
