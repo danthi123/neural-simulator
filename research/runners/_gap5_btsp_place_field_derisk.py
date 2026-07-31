@@ -24,6 +24,7 @@ for _tv in ("OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "MKL_NUM_THREADS", "NUMEX
 sys.path.insert(0, "/home/dant123/Projects/sim")
 import numpy as np, logging
 logging.disable(logging.INFO)
+from tools.lab import void_if
 from sim.config import CoreSimConfig, VisualizationConfig, RuntimeState, GPUConfig
 from sim.regions import BrainRegion, RegionPathway
 from sim import SimulationBridge
@@ -259,6 +260,43 @@ def permuted_increment_null(M0, M1, seed):
     return float(np.mean([circ_resultant(r) for r in Mp]))
 
 
+def circ_dW_of(M0, M1):
+    """The HEADLINE quantity: circular resultant of the weight CHANGE, averaged over reader rows."""
+    return float(np.mean([circ_resultant(r) for r in (M1 - M0)]))
+
+
+def permuted_increment_circ_dW_null(M0, M1, seed, n_perm=200):
+    """Permutation test for place-specificity ON THE HEADLINE QUANTITY (`circ_dW`).
+
+    ⚠️ WHY THIS EXISTS -- the previous control was VOID, and its voidness was invisible because it still printed a
+    confident verdict. `permuted_increment_null` (above) and the randset control both returned a circ computed on
+    the FINAL weight matrix (`M0 + permuted_dW`, and `circ(M1r) - circ(M0r)`). That matrix is dominated by the
+    RANDOM INITIAL STRUCTURE -- exactly the conflation already documented for the arms at the `circ_dW` comment in
+    STEP B, where it was fixed on the ARM side and left unfixed here. Consequence, measured across 18 seeds:
+    the treatment's `d_circ` and its random-set null agreed to <1e-6 in 29 of 36 arm-runs, frequently to 1e-9.
+    A null that reproduces the effect to nine significant figures has NO POWER -- it was not measuring the
+    manipulation at all, so the gate it fed could only ever print "NOT place-specific". Every such verdict from the
+    old control is VOID, not negative.
+
+    This null differs from the treatment in EXACTLY ONE property (position), holding magnitude and concentration
+    fixed by construction, and is evaluated on the same quantity the headline reports. It is threshold-free: the
+    p-value is the fraction of position-shuffles reaching the observed `circ_dW`, so no 2x rule has to be invented.
+    Costs no extra simulation -- it reshuffles increments that have already been computed.
+    """
+    rng = np.random.default_rng(seed * 977)
+    dW = M1 - M0
+    obs = float(np.mean([circ_resultant(r) for r in dW]))
+    null = []
+    for _ in range(int(n_perm)):
+        Mp = np.array([dW[j][rng.permutation(dW.shape[1])] for j in range(dW.shape[0])])
+        null.append(float(np.mean([circ_resultant(r) for r in Mp])))
+    null = np.asarray(null, dtype=float)
+    # +1 in numerator and denominator: an empirical p can never be 0 with finite permutations.
+    p = float((np.sum(null >= obs) + 1) / (len(null) + 1))
+    return dict(obs=obs, null_mean=float(null.mean()), null_p95=float(np.percentile(null, 95)),
+                null_max=float(null.max()), p_value=p, n_perm=int(n_perm))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, nargs="+", default=[42, 43, 44])
@@ -345,11 +383,13 @@ def main():
     for label, kw in (("btsp", dict(w_inh=0.0, btsp=True, lr=a.lr)),
                       ("btsp_wta", dict(w_inh=a.w_inh, btsp=True, lr=a.lr))):
         rc, rp = [], []
+        rc_dW, rt_dW, perms = [], [], []
         for s_ in a.seeds:
             # (i) RANDSET: same activity, no place manifold. Gain must COLLAPSE.
             M0r, M1r, nr_, np_, ap_, _apst_r = run(s_, kw["w_inh"], kw["btsp"], kw["lr"], a.w_max,
                                           laps=a.laps, dwell=a.dwell, randset=True)
             rc.append(float(np.mean([circ_resultant(r) for r in M1r])) - float(np.mean([circ_resultant(r) for r in M0r])))
+            rc_dW.append(circ_dW_of(M0r, M1r))          # the null ON THE HEADLINE QUANTITY
             # (ii) SHARPENING-MATCHED NULL: same total |dW|, no place structure
             # (ii) PERMUTED-INCREMENT NULL on the REAL place-sweep arms (same magnitudes + concentration,
             #      positions shuffled). Recompute the sweep arm so the increments are the genuine ones.
@@ -357,12 +397,35 @@ def main():
                                     laps=a.laps, dwell=a.dwell, randset=False)
             base = float(np.mean([circ_resultant(r) for r in M0p]))
             rp.append(permuted_increment_null(M0p, M1p, s_) - base)
+            rt_dW.append(circ_dW_of(M0p, M1p))
+            perms.append(permuted_increment_circ_dW_null(M0p, M1p, s_))
+
+        # --- THE LEGACY (VOID) CONTROL, retained only so the regression is visible in the artifact ---
         ctrl[label] = dict(randset_d_circ=float(np.mean(rc)), permuted_increment_d_circ=float(np.mean(rp)))
         real = m(label, "circ") - m("lr0_" + label if label == "btsp" else "lr0_btsp_wta", "circ")
-        print("  %-10s  place-sweep gain %+.4f | RANDSET (no place) %+.4f | PERM-INCREMENTS %+.4f  => %s"
-              % (label, real, ctrl[label]["randset_d_circ"], ctrl[label]["permuted_increment_d_circ"],
-                 "PLACE-SPECIFIC" if (real > 2 * max(ctrl[label]["randset_d_circ"], ctrl[label]["permuted_increment_d_circ"]))
-                 else "⛔ NOT place-specific (generic potentiation)"))
+
+        # DEGENERACY GUARD. The old gate's null tracked its own treatment to <1e-6 in 29/36 arm-runs because both
+        # were computed on structure-dominated `circ`. Assert the null actually DIFFERS from what it controls,
+        # rather than trusting that it does -- "this control is doing something" is a hypothesis, so it gets a test.
+        legacy_degenerate = abs(float(np.mean(rc)) - m(label, "d_circ")) < 1e-6
+        void_if(legacy_degenerate,
+                "legacy circ-based control reproduces its own treatment to <1e-6 (no power); its verdict is VOID, "
+                "NOT a negative")
+
+        # --- THE LIVE GATE: headline quantity, position-only null, threshold-free permutation p-value ---
+        t_dW = float(np.mean(rt_dW))
+        n_dW = float(np.mean(rc_dW))
+        p_med = float(np.median([q["p_value"] for q in perms]))
+        p95 = float(np.mean([q["null_p95"] for q in perms]))
+        ctrl[label].update(treat_circ_dW=t_dW, randset_circ_dW=n_dW,
+                           perm_null_p95_circ_dW=p95, perm_p_value_median=p_med,
+                           perm_detail=perms, legacy_control_void=bool(legacy_degenerate))
+        verdict = ("PLACE-SPECIFIC" if (p_med < 0.05 and t_dW > p95 and t_dW > n_dW)
+                   else "⛔ NOT place-specific (generic potentiation)")
+        print("  %-10s  [LEGACY, VOID] place-sweep gain %+.4f | RANDSET %+.4f | PERM %+.4f"
+              % (label, real, ctrl[label]["randset_d_circ"], ctrl[label]["permuted_increment_d_circ"]))
+        print("  %-10s  circ_dW %.4f | randset %.4f | perm-null p95 %.4f | perm p=%.4f  => %s"
+              % (label, t_dW, n_dW, p95, p_med, verdict))
     os.makedirs(os.path.dirname(a.out), exist_ok=True)
     json.dump(dict(metric_validation=[list(r) for r in rows], oracle=dict(circ=orc, window=orw),
                    laps=a.laps, dwell=a.dwell, lr=a.lr, w_max=a.w_max, w_inh=a.w_inh, arms=res,
