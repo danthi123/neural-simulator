@@ -31,9 +31,10 @@ are marked ADVISORY and count as ungated — the measured reason: **1330 runners
 | S | finding-status undeclared | — | pre-commit GATE 4 | pre-commit G4 | ✅ BLOCKS (new findings) |
 | X | invalid queued command | — | `pool_queue` argparse validation | execution path | ✅ BLOCKS |
 | Y | job died silently | — | dispatcher exit-status log + heartbeat | execution path | ✅ REPORTS |
+| L | CPU lanes starved while work continues elsewhere | — | `gates/lane_starvation` | registry | ✅ BLOCKS |
 | COV | a NOTICED failure never became a gate | — | `gates/coverage` + `research/FAILURE_LOG.md` | registry | ✅ BLOCKS |
 
-**Score: 12 BLOCKING · 1 structural · 6 reporting · 0 ungated.**
+**Score: 13 BLOCKING · 1 structural · 6 reporting · 0 ungated.**
 
 ## The loop that keeps this file honest
 
