@@ -182,6 +182,15 @@ def run(seed, w_inh, btsp, lr, w_max, laps=5, dwell=30, drive=3000.0, width=5.0,
     if btsp:
         b.core_config.btsp_learning_rate = lr
     rm = b.region_manager; pl = rm.indices("place"); rd = rm.indices("read")
+    # INHIBITION-EFFICACY INSTRUMENTATION (2026-07-31). w_inh measured INERT across a 10x range INCLUDING
+    # w_inh=0, which removes the FS region entirely -- and lane D's --n-inh was likewise inert at 0 vs 64.
+    # Neither runner records whether the inhibitory pool ever FIRES, so "inhibition does nothing" could equally
+    # mean "the pool is silent" or "the pool fires and has no effect". Those need different fixes. Count it.
+    try:
+        _fs = np.asarray(rm.indices("fs"))
+    except Exception:
+        _fs = None
+    nfs = 0
     if thr_scale is not None and getattr(b, "cp_neuron_firing_thresholds", None) is not None:
         _rd = np.asarray(rm.indices("read"))
         b.cp_neuron_firing_thresholds[_rd] = b.cp_neuron_firing_thresholds[_rd] * thr_scale
@@ -203,6 +212,8 @@ def run(seed, w_inh, btsp, lr, w_max, laps=5, dwell=30, drive=3000.0, width=5.0,
                 b.runtime_state.current_time_ms += b.core_config.dt_ms   # the clock bug, avoided
                 nread += int(to_host(b.cp_firing_states[rd]).sum())
                 nplace += int(to_host(b.cp_firing_states[pl]).sum())
+                if _fs is not None and _fs.size:
+                    nfs += int(to_host(b.cp_firing_states[_fs]).sum())
     M1 = wmat(b)
     # ENGAGEMENT on the MECHANISM, not just on firing: was there any apical plateau above hold at all?
     # OPT-0 ARM A (2026-07-30). `apical_max` ALONE CANNOT DISTINGUISH "on once" FROM "on always" -- it is a single
@@ -225,6 +236,7 @@ def run(seed, w_inh, btsp, lr, w_max, laps=5, dwell=30, drive=3000.0, width=5.0,
         apical_max = float("nan")
         apical_stats = {"max": float("nan"), "min": float("nan"),
                         "mean": float("nan"), "std_across_readers": float("nan")}
+    apical_stats["fs_spikes"] = int(nfs)          # 0 with a live FS pool == silent inhibition
     return M0, M1, nread, nplace, apical_max, apical_stats
 
 
