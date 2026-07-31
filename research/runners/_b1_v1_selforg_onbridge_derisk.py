@@ -456,9 +456,32 @@ def run_seed(seed, a):
     else:
         verdict = "NEGATIVE"
 
+    # WEIGHT SATURATION -- the quantity that DIAGNOSES this runner's failure, and which it never recorded.
+    # The 2026-07-30 diagnosis predicts every retina->V1 synapse pins at hebbian_max_weight because synaptic
+    # scaling is driven by a permanently-positive rate error (homeo_target 0.012 vs a measured rate of
+    # 0.0004-0.0010) and is applied uniformly, ungated on spiking, for all 40k steps. If true, W[ON] and W[OFF]
+    # both pin, their SIGNED difference is identically 0, and OSI reads exactly 0.0 -- i.e. learning DELETES the
+    # chance structure present at random init rather than failing to add to it.
+    # This is arithmetic until it is measured, and nothing here measured it. Note this runner's own help text at
+    # :510 already warned the target "MUST be reachable by V1 (~0.012) or scaling saturates", and :201 already
+    # named the missing "input-specific DEPRESSION that potentiation-only Hebbian lacks (which saturates ->
+    # blobs)". Both failure modes were documented in this file BEFORE they occurred; nothing checked either.
+    # A warning in a docstring cannot fail. A recorded number can.
+    _rp = np.asarray(rf_post, dtype=float)
+    _sat = dict(
+        w_mean=round(float(np.abs(_rp).mean()), 6),
+        w_absmax=round(float(np.abs(_rp).max()), 6),
+        hebbian_max_weight=float(hebb_max),
+        # rf_post is the SIGNED ON-OFF difference, so total saturation shows up as this collapsing to ~0.
+        frac_rf_near_zero=round(float((np.abs(_rp) < 1e-6).mean()), 4),
+        frac_cells_all_zero=round(float((np.abs(_rp) < 1e-6).all(axis=1).mean()), 4)
+        if _rp.ndim == 2 else float("nan"),
+    )
+
     return dict(
         seed=seed, backend=backend, n_v1=n_v1, elapsed_s=round(elapsed, 1),
         v1_firing_rate=round(v1_rate, 4),
+        saturation=_sat,
         osi=dict(
             pre_random=dict(mean=round(osi_pre_mean, 4), frac_gt0_5=round(osi_pre_frac, 4)),
             post_learned=dict(mean=round(osi_post_mean, 4), frac_gt0_5=round(osi_post_frac, 4)),
