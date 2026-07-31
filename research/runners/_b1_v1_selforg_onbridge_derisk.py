@@ -471,7 +471,6 @@ def run_seed(seed, a):
     _sat = dict(
         w_mean=round(float(np.abs(_rp).mean()), 6),
         w_absmax=round(float(np.abs(_rp).max()), 6),
-        hebbian_max_weight=float(hebb_max),
         # rf_post is the SIGNED ON-OFF difference, so total saturation shows up as this collapsing to ~0.
         frac_rf_near_zero=round(float((np.abs(_rp) < 1e-6).mean()), 4),
         frac_cells_all_zero=round(float((np.abs(_rp) < 1e-6).all(axis=1).mean()), 4)
