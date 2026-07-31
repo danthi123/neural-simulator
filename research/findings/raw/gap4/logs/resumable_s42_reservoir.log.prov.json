@@ -1,0 +1,15 @@
+{
+ "run_id": "1785530143-2707668",
+ "runner": ".venv/lib/python3.11/site-packages/pytest/__main__.py",
+ "argv": [
+  "/home/dant123/Projects/sim/.venv/lib/python3.11/site-packages/pytest/__main__.py",
+  "tests/",
+  "--collect-only",
+  "-q"
+ ],
+ "git_sha": "6bf5fdfa",
+ "git_dirty": true,
+ "started": "2026-07-31T16:35:43",
+ "env": {},
+ "artifact": "research/findings/raw/gap4/logs/resumable_s42_reservoir.log"
+}

@@ -1,0 +1,16 @@
+{
+ "run_id": "1785531767-2785149",
+ "runner": "research/runners/_gap4_deep_credit_on_expanded_forward_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_gap4_deep_credit_on_expanded_forward_derisk.py",
+  "--seeds",
+  "43",
+  "--out",
+  "research/findings/raw/gap4/deepcredit_par/s43.json"
+ ],
+ "git_sha": "9bd294d1",
+ "git_dirty": true,
+ "started": "2026-07-31T17:02:47",
+ "env": {},
+ "artifact": "research/findings/raw/gap4/deepcredit_par/s101.json"
+}

@@ -1,0 +1,121 @@
+{
+ "runner": "research/runners/_gap4_deep_credit_on_expanded_forward_derisk.py",
+ "aggregated_from": [
+  "research/findings/raw/gap4/deepcredit_par/s100.json",
+  "research/findings/raw/gap4/deepcredit_par/s101.json",
+  "research/findings/raw/gap4/deepcredit_par/s102.json",
+  "research/findings/raw/gap4/deepcredit_par/s42.json",
+  "research/findings/raw/gap4/deepcredit_par/s43.json",
+  "research/findings/raw/gap4/deepcredit_par/s44.json"
+ ],
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "n_seeds": 6,
+ "one_variable": "forward representation (raw / plateau-expanded thresholded / plateau-expanded graded)",
+ "verdicts_per_seed": {
+  "undefined_not_depth_separating": 5,
+  "no_go": 1,
+  "go": 0
+ },
+ "stage0_depth": {
+  "raw": {
+   "linear": 0.1481,
+   "l1": 0.2438,
+   "l2": 0.9599,
+   "deep_best": 0.9599,
+   "depth_gap": 0.713,
+   "depth_separating_frac": 1.0
+  },
+  "expanded": {
+   "linear": 0.6327,
+   "l1": 0.6883,
+   "l2": 0.6914,
+   "deep_best": 0.7006,
+   "depth_gap": 0.0123,
+   "depth_separating_frac": 0.0
+  },
+  "expanded_graded": {
+   "linear": 0.6265,
+   "l1": 0.6358,
+   "l2": 0.6914,
+   "deep_best": 0.7006,
+   "depth_gap": 0.037,
+   "depth_separating_frac": 0.1667
+  }
+ },
+ "stage1_deep_arms": {
+  "raw": {
+   "test_fixed": 0.6944,
+   "test_learned": 0.6574,
+   "plain_fa": 0.6944,
+   "single_hidden_floor": 0.284,
+   "permuted": 0.1451,
+   "apical_lesion": 0.1173,
+   "oracle": 0.9599
+  },
+  "expanded": {
+   "test_fixed": 0.6173,
+   "test_learned": 0.5617,
+   "plain_fa": 0.6173,
+   "single_hidden_floor": 0.6389,
+   "permuted": 0.1481,
+   "apical_lesion": 0.2315,
+   "oracle": 0.6914
+  },
+  "expanded_graded": {
+   "test_fixed": 0.6265,
+   "test_learned": 0.6173,
+   "plain_fa": 0.6265,
+   "single_hidden_floor": 0.6296,
+   "permuted": 0.1173,
+   "apical_lesion": 0.287,
+   "oracle": 0.6914
+  },
+  "expander_lesion": {
+   "test_fixed": 0.1204,
+   "test_learned": 0.1296,
+   "plain_fa": 0.1204
+  }
+ },
+ "majority_floor": 0.1667,
+ "codon_reproducibility": 1.0,
+ "per_seed_depth_separating": {
+  "42": {
+   "raw": true,
+   "expanded": false,
+   "expanded_graded": false
+  },
+  "43": {
+   "raw": true,
+   "expanded": false,
+   "expanded_graded": false
+  },
+  "44": {
+   "raw": true,
+   "expanded": false,
+   "expanded_graded": false
+  },
+  "100": {
+   "raw": true,
+   "expanded": false,
+   "expanded_graded": true
+  },
+  "101": {
+   "raw": true,
+   "expanded": false,
+   "expanded_graded": false
+  },
+  "102": {
+   "raw": true,
+   "expanded": false,
+   "expanded_graded": false
+  }
+ },
+ "note_expander_lesion": "the lesion forward is a CONTROL, not a condition: its sub-controls are dropped because a learner on an all-zero codon necessarily ties its own permuted control, which is the expected result and not a measurement of discriminating power"
+}
