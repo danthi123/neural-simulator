@@ -141,3 +141,14 @@ data/corpus/
 # accidental-add guards (2026-07-19)
 .venv-rag/
 bridges/developed/
+
+# TOKENIZED CORPUS ARRAYS (2026-07-31). 15.1 GB across run1/run2/run3 (run4/run5 are symlinks into run3),
+# untracked but matched by NO ignore pattern -- only `*.pt` was covered, and these are `.npy`. A single
+# `git add -A` would have tried to commit 15 GB of regenerable token arrays. Regenerate with the lmtrain
+# tokenizer from the corpus; they are a build artifact, not source.
+bridges/lmtrain/*/tokens_train.npy
+bridges/lmtrain/*/tokens_val.npy
+
+# DEPLOY TREE (2.1 GB). Was ignored ONLY via .git/info/exclude, which is local and never shared -- so it
+# was unprotected on every other clone of this repo. Moved here so the guard travels with the repository.
+deploy/
