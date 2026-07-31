@@ -486,3 +486,19 @@ def _selfcheck():
 
 if __name__ == "__main__":
     _selfcheck()
+
+
+# ---------------------------------------------------------------------------------------------------
+# A verdict you have to EARN. Re-exported here because `tools.lab` is where this project looks for the
+# experiment-hygiene helpers, but the implementation lives in tools/verdict.py (it is large enough to
+# deserve its own file, and its selftest replays the five 2026-07-31 misses through one vocabulary).
+#
+#   from tools.lab import Verdict
+#   v = Verdict("my probe", chance=1/k)
+#   v.floor("held-out vs chance", acc, 1/k); v.require("depth-separating", sep, expect=True)
+#   v.control("lesion", treatment=arm, control=lesion); v.reaches("lesion lands", before=x0, after=x1)
+#   v.knob("lr", requested=a.lr, applied=cfg.lr); v.disabled("STP", why="isolation")
+#   result = v.decide(go=...)          # GO | NO-GO | UNDEFINED, and UNDEFINED is the default
+#   json.dump({**payload, **result}, f)   # emits the `preconditions` block gates/verdict_preconditions needs
+# ---------------------------------------------------------------------------------------------------
+from tools.verdict import Verdict, Check, GO, NO_GO, UNDEFINED  # noqa: E402,F401
