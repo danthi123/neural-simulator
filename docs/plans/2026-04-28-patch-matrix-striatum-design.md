@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-28
+---
+
 # Cheat #5 closure attempt: Patch-Matrix Striatum (sparse heterogeneous initial topology) — Design
 
 **Status:** design, on standby. Activated only if option 1 (structural plasticity) fails Tier 2 with mean sum > 6.0.

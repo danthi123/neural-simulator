@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-02
+---
+
 # 2026-05-02 — Autonomous overnight session plan
 
 **Started:** 2026-05-02 01:30 EDT (after user said "headed to bed")

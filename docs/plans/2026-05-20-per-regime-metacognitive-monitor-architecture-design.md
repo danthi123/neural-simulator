@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-20
+---
+
 # Per-regime metacognitive monitors: a constructive design grounded in the doubly-dissociable parallel metamemory streams that biology actually uses to gate compositional readouts
 
 **Status:** Design (autonomous; no hand-back). Supersedes the

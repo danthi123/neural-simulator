@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-28
+---
+
 # Cheat #5 closure attempt: Compartmentalized Dopamine — Design
 
 **Status:** design, on standby. Activated only if options 1 and 2 both fail.

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-11
+---
+
 # P4 — Episodic encoder + relational binding design
 
 **Date:** 2026-05-11

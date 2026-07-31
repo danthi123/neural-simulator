@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-16
+---
+
 # Self-Contained Generator — Increment 1 Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: superpowers:subagent-driven-development (user authorized autonomous design→plan→implement). Increment 1 only. No network. No LLM. No templates.

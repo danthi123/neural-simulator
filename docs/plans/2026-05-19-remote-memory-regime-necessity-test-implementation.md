@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-19
+---
+
 # Remote/consolidated-memory-regime necessity test -- implementation plan (Design B, falsify-first-GATED)
 
 Status: PLAN ONLY. No code in this document. No GPU run. This plan

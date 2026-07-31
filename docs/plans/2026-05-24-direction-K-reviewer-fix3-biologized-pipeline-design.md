@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-24
+---
+
 # Direction K reviewer fix #3 — route through validated FHRR biologization stack
 
 **Date:** 2026-05-24

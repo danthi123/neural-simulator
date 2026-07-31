@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-03
+---
+
 # Content-selection / dialogue-Control layer — Implementation Plan (Milestone 1)
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development to implement this

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-25
+---
+
 # Direction 3 design: vocab scaling on bio_brain_regions (V=32 then V=64)
 
 **Date:** 2026-05-25

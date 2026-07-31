@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-05
+---
+
 # (B) in-network opponency — NEGATIVE-branch options (pre-staged prep) — 2026-06-05
 
 Pre-staged for if the NEF signed-value de-risk (subagent a259253f) comes back NEGATIVE (the small-signal

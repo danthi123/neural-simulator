@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-06
+---
+
 # Related projects survey — comprehensive findings
 
 **Status:** All 4 research agents reported. ~25 projects/papers cataloged.

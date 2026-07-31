@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-29
+---
+
 # Cluster F (cerebellum) v1 — design
 
 **Date:** 2026-04-29

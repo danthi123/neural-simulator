@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-17
+---
+
 # Generator-D — Soft-Target Distillation into a Spiking LM — Design (ACTIVE)
 
 > **For Claude:** REQUIRED NEXT SKILL: superpowers:writing-plans (then

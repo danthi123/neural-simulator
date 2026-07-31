@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-25
+---
+
 # Direction R-v3 design: Direction M capacity envelope extension at 256 / 384 / 512 associations
 
 **Date:** 2026-05-25

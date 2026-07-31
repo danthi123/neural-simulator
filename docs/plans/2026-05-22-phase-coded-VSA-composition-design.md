@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-22
+---
+
 # Phase-coded vector-symbolic composition: design
 
 > **For Claude / autonomous continuation:** Pre-registered design for

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-07-13
+---
+
 # NP-toward-recurrent-language de-risk SPEC (design + adversarial-verify workflow wf_f69e1f86-fb5, 2026-07-13)
 
 The confound-checked cheap-first spec from an 8-agent research+design+adversarial-verification workflow. Key contribution: the adversarial phase caught that the naive "NP learns W_in on a reservoir with zero-input fillers" is a STATIC 2-layer problem in a recurrent costume (W_in enters at ONE step) -> uninterpretable; redesigned to an ORDER-GATED DELAYED next-class task with a mandatory CEILING-FIRST rung-0 gate. Implemented in research/runners/_reslm_np_learn_win_gated_derisk.py.

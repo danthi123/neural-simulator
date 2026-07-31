@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-28
+---
+
 # Cheat #5 v4 — Developmental Pretraining (Design)
 
 **Status**: design approved 2026-04-28. Implementation plan to follow via `superpowers:writing-plans`.

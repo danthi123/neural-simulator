@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-19
+---
+
 # Pirazzini-reference three-layer theta-gamma conversational architecture (adapted to the project's validated subsystems)
 
 **Status:** Design (autonomous; no hand-back). This is the pre-registered

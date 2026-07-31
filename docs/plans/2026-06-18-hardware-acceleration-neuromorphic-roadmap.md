@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-18
+---
+
 # Hardware Acceleration & Neuromorphic Computing — Long-Term Vision and Roadmap
 
 **Date:** 2026-06-18

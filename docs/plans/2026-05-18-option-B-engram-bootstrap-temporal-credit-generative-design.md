@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-18
+---
+
 # Option B — engram-bootstrapped temporal-credit GENERATIVE compositional learning in the REAL spiking concept-pool substrate (design)
 
 > Standing autonomy: documented design calls; brainstorm ->

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-05
+---
+
 # Resonate-and-fire ON the SimulationBridge — minimal de-risk design + TDD plan — 2026-06-05
 
 > **For Claude:** this is the owner-FUNDED Option-A first step (FHRR phasor pivot). Scope = the **minimal contained

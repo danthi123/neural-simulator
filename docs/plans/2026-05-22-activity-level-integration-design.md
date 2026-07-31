@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-22
+---
+
 # Activity-level integration of the composition layer with the concept substrate -- design
 
 ## Context

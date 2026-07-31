@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-12
+---
+
 # Learned-graded cortex → conversational pipeline: INTEGRATION design + the cheap-first CAPABILITY de-risk
 
 > **Status:** present-before-build. READ-ONLY design (no `sim/` edit, no GPU run, no bridge built). The single

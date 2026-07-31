@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-17
+---
+
 # Generator-H — Constrained-Vocabulary Grounded Realizer — Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development to implement this plan task-by-task (fresh subagent per task; two-stage spec+quality review; controller trust-but-verify each git diff). Tasks 1 & 2 additionally get a dedicated adversarial reviewer subagent before Phase B (mirror how Generator-S gate_core / Generator-D soft_xent / Generator-G generator_g_core got the rigorous adversarial review that caught real holes). Task 5 is the CONTROLLER's job, NOT a subagent.

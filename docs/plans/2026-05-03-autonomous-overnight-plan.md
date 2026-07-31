@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-03
+---
+
 # Autonomous overnight plan — SWR investigation
 **Started:** 2026-05-03 04:15 EDT
 **Authority:** user explicitly granted full autonomy until told to stop.

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-10
+---
+
 # N9 — temporal-difference cue-shift on the spiking SNc: migrating the dopamine burst from reward onto the predictive cue
 
 **Date:** 2026-06-10

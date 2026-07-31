@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-22
+---
+
 # Pattern-grounded compositional symbols: TDD implementation plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development to execute this plan task-by-task in the same session (the owner's standing instruction pre-selects same-session subagent-driven execution; transition directly from this plan to subagent-driven-development).

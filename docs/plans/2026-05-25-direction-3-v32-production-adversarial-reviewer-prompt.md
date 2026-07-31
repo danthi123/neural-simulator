@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-25
+---
+
 # Direction 3 V=32 PRODUCTION — Adversarial Reviewer Prompt (pre-staged 2026-05-25)
 
 Status when this was written: Direction 3 V=32 PRODUCTION DECISIVE multi-seed run IN FLIGHT on GPU (PID 36700; ETA ~5-6 hr; watcher bl0wjskjb monitors). Smoke = PASS multi-seed. Pillar n=105 candidate **IF AND ONLY IF** an independent fresh adversarial reviewer returns CLEAR using this prompt.

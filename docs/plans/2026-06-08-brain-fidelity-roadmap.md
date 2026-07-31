@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-08
+---
+
 # Brain-fidelity roadmap: close cheats → unify → conduction delays → multi-compartment neurons
 
 **Date:** 2026-06-08

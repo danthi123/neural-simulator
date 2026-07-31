@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-02
+---
+
 # Biology-faithful, data-efficient conversational agent — roadmap — 2026-06-02
 
 ## The organizing insight (owner-clarified)

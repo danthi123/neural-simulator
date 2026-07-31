@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-30
+---
+
 # Phase-factored integrated closed-loop — Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development to implement this plan task-by-task. Task 6 is CONTROLLER-ONLY (not a subagent task). There is a HARD GATE after Task 1: the spiking-build tasks (2+) run ONLY if the Task 1 cheap probe shows the factorization resolves the conflict.

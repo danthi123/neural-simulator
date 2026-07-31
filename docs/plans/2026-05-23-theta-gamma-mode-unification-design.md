@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-23
+---
+
 # Theta-gamma mode-unification: cheap-first numpy probe — order-bearing AND order-invariant as modes of one theta-gamma encoded code
 
 ## Status

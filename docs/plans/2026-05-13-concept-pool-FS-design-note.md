@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-13
+---
+
 # Concept pool FS topology — design lessons from v1 FAIL
 
 **Date:** 2026-05-13

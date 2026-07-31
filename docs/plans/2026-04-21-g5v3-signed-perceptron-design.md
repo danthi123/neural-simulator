@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-21
+---
+
 # Design: G5.v3 — Signed perceptron on hidden→motor, reward-driven
 
 **Date:** 2026-04-21

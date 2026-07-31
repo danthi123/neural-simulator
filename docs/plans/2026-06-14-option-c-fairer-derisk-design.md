@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-14
+---
+
 # Option C fairer de-risk design — a paradigmatic host pre-check that GATES the brain-based test (the logged follow-on to the production build)
 
 **Date:** 2026-06-14. **Status:** DESIGN (read-only pass; the logged FOLLOW-ON to the Option-B production build — NOT a blocker, owner not directed; this informs that decision). **Predecessor:** `research/findings/2026-06-13-option-c-real-cooccurrence-derisk-INCONCLUSIVE.md` (the host-ceiling control fired → the test couldn't fairly judge the mechanism).

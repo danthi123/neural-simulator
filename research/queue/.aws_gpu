@@ -1,0 +1,6 @@
+instance=i-0ed174adb04e99c7f
+key=/home/dant123/.ssh/aws-train/claude-gpu-1785524741.pem
+type=g5.xlarge
+ami=ami-09f0204c6e7c717ab
+launched=2026-07-31T15:06:44-04:00
+purpose=cupy parity for the four numpy-banked lanes + D-1

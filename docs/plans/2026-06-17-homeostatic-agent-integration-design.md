@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-17
+---
+
 # Brain-based spiking homeostatic agent — integration design
 
 > **Status:** design for the deferred integration build. The artificial-life **motivational core is de-risked

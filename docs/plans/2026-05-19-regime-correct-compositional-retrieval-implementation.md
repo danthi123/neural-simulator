@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-19
+---
+
 # Regime-correct compositional retrieval — Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to

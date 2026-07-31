@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-10
+---
+
 # Conversational vocab + capability ceiling characterization — design (2026-06-10)
 
 **Status:** design only (read-only research pass produced it). Nothing built yet.

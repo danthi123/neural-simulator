@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-14
+---
+
 # Spiking similarity-matching learned cortex — BUILD PROPOSAL
 
 > **⚠️ PROPOSAL PENDING OWNER APPROVAL.** The build is owner-gated (a weeks-scale commit). This document is

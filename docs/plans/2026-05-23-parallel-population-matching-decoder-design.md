@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-23
+---
+
 # Parallel-population-matching order-bearing decoder for biologized spiking mode-unification: design
 
 ## Status

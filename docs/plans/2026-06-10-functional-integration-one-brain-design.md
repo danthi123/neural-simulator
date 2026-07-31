@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-10
+---
+
 # Functional integration — the real "one brain": synaptic cross-region coupling between the navigation and conversational brains
 
 **Status:** DESIGN (read-only research + design pass; no code written except this doc).

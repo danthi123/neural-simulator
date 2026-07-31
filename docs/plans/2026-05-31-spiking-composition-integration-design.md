@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-31
+---
+
 # Spiking compositional binding integration -- design sketch (2026-05-31)
 
 **Context:** The 2026-05-31 composition revision (finding `...-near-ortho-ROLES-not-FILLERS`)

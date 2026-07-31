@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-16
+---
+
 # Generative Conversation — Stage 1 Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development to implement this plan task-by-task (user authorized autonomous design→plan→implement).

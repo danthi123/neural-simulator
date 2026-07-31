@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-24
+---
+
 # Neuromodulator Subsystem Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Each task has its own failing test, minimal impl, passing test, and commit. Use TDD discipline.

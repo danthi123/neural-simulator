@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-28
+---
+
 # Cluster B.3 — Cholinergic Interneurons (TANs) Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement task-by-task.

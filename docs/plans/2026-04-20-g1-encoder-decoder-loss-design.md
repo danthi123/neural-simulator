@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-20
+---
+
 # Design: G1 — Dataset → Encoder → Sim → Decoder → Loss Round-Trip
 
 **Date:** 2026-04-20

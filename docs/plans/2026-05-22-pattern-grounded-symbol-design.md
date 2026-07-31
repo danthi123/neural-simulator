@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-22
+---
+
 # Pattern-grounded compositional symbols: a focused next step within the biologization arc
 
 ## Status

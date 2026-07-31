@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-18
+---
+
 # Temporal-Credit Composition — Spiking-Bridge Integration Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development to implement this plan task-by-task (controller stays in this session; fresh subagent per task; dedicated adversarial reviewer for the two load-bearing modules BEFORE Phase B; controller trust-but-verify each git diff with the protected set byte-empty; Task 5 is controller-only).

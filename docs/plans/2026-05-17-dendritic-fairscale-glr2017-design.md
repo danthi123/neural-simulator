@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-17
+---
+
 # Dendritic credit-assignment — FAIR-SCALE, literature-faithful GLR-2017 discriminating run (OWNER-AUTHORIZED, eyes-open) — Design (ACTIVE)
 
 > **For Claude:** REQUIRED NEXT SKILL: superpowers:writing-plans (then

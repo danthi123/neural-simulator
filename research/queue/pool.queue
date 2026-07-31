@@ -1,0 +1,2 @@
+1785525935	SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._b1_v1_selforg_onbridge_derisk --seeds 42 43 44  #checked:numpy baseline while the cupy parity arm runs on the AWS A10G lane
+1785525935	SIM_BACKEND=numpy .venv/bin/python -u -m research.runners._emerge72_construction_registry_derisk --seeds 42 43 44  #checked:numpy baseline while the cupy parity arm runs on the AWS A10G lane

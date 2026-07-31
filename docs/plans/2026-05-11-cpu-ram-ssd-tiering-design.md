@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-11
+---
+
 # CPU/RAM/SSD memory tiering + NumPy backend — hardware-independence design
 
 **Date:** 2026-05-11 02:45 EDT

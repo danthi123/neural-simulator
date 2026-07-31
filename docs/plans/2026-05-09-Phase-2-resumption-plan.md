@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-09
+---
+
 # Phase 2 Resumption Plan — 10M-param scale-up + conversational scaffolding
 
 **Date:** 2026-05-09 EDT

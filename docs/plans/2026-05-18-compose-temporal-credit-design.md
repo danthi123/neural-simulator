@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-18
+---
+
 # Temporal-credit-bridged compositional binding — does the validated temporal-credit mechanism defeat the composition BOUNDARY? (design)
 
 > Standing autonomy: documented design calls (NOT one-question-at-a-time);

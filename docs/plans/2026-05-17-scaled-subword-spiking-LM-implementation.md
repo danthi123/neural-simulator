@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-17
+---
+
 # Scaled Subword Spiking LM (Generator-S) Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development to implement this plan task-by-task (continuous autonomous arc; do NOT stop to ask between tasks or between increments — user authorized a week of autonomous work 2026-05-17).

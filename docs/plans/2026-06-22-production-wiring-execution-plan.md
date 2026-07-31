@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-22
+---
+
 # Production-wiring execution plan — the shortcut-closure arc's final step
 
 > **Status: ready-to-execute spec, assembled under the GO assumption (2026-06-22).** Every in-flight

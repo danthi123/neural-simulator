@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-16
+---
+
 # Order-Intrinsic Conversational Memory — Decisive Cheap-First Slice — Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: superpowers:subagent-driven-development.

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-07-21
+---
+
 # Autonomous, incremental, resumable LM-training workflow — design + de-risk plan (2026-07-21)
 
 Owner directive: plan + de-risk a workflow that trains the substrate-native WKV language cortex **incrementally** —

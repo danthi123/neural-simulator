@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-17
+---
+
 # Dendritic Credit Assignment — Implementation Plan (decisive cheap-first slice of Arch A)
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development to execute task-by-task (fresh subagent per task; two-stage spec+quality review; controller trust-but-verify each git diff with protected modules byte-empty). Tasks 1+2 additionally get a dedicated adversarial reviewer before Phase B (mirror how Generator-S/D/G/H load-bearing cores got the rigorous adversarial review that caught real holes). Task 6 is the CONTROLLER's job, NOT a subagent.

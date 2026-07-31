@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-25
+---
+
 # Direction 5 PRODUCTION — Adversarial Reviewer Prompt (pre-staged 2026-05-25)
 
 Status: Direction 5 bugfix SMOKE = PARTIAL multi-seed (5 of 6 cells PASS at 0.80 bar; OB perfect every load; OI passes L=2/L=3 multi-seed; only OI L=5 below bar at 0.195 raw / 0.463 topK; mirrors pillar n=95 G.20 sparse cross-bridge OB-perfect / OI-L=5-boundary pattern). D5 PRODUCTION decisive multi-seed run launched ~19:35 EDT (full scale n_lang=2048, n_per_pool=200, events=200, M_OBS=16; 5 bridges × 3 seeds = 15 cells; ~7-8 hr GPU ETA; watcher `bkxj54p00` chains both probes on completion).

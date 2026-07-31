@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-25
+---
+
 # Session G: Motor Exploration Noise — Plan
 
 > **Status:** Implementation complete (smoke tested), validation probe running.

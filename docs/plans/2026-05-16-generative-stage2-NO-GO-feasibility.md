@@ -1,3 +1,9 @@
+---
+type: plan
+status: superseded
+date: 2026-05-16
+---
+
 # Stage-2 (concept-sequence replay learning) — feasibility probe: NO-GO, reframed
 
 > **Outcome of a brainstorming context-exploration step.** A cheap,

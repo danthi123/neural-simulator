@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-30
+---
+
 # Phase-factored integrated closed-loop: resolving the encode-order conflict via online theta-ordered episodic encode + offline shuffled-replay consolidation
 
 **Date:** 2026-05-30

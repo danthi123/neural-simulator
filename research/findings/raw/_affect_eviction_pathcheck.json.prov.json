@@ -1,0 +1,23 @@
+{
+ "run_id": "1785525599-2589284",
+ "runner": "research/runners/_affect_eviction_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_affect_eviction_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "--gabab-weight",
+  "0.28",
+  "--gabab-tau",
+  "100",
+  "--out",
+  "research/findings/raw/_affect_eviction_pathcheck.json"
+ ],
+ "git_sha": "b1b417e2",
+ "git_dirty": true,
+ "started": "2026-07-31T15:19:59",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "artifact": "research/findings/raw/_affect_eviction_pathcheck.json"
+}

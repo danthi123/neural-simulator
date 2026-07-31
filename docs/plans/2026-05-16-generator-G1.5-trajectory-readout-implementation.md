@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-16
+---
+
 # G1.5 — Order-Sensitive Trajectory Readout Probe — Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: superpowers:subagent-driven-development.

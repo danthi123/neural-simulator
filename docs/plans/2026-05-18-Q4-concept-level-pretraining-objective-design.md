@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-18
+---
+
 # Q4 — Concept-level prediction objective -> word-discriminative cortex features (the cheap, genuinely-untested kernel; the heavy word-level-pretraining build is ALREADY-assessed-out-of-scope and is NOT re-ground) (design)
 
 > Standing autonomy: documented design calls; brainstorm ->

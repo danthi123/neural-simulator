@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-17
+---
+
 # Generator-H — Constrained-Vocabulary Grounded Realizer (separate-components; faithfulness BY CONSTRUCTION; the genuinely-open question is realization QUALITY) — Design (ACTIVE)
 
 > **For Claude:** REQUIRED NEXT SKILL: superpowers:writing-plans (then

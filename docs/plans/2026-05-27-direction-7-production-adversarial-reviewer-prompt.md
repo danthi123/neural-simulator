@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-27
+---
+
 # Direction 7 PRODUCTION Adversarial Reviewer Prompt (pre-staged 2026-05-27)
 
 Status: Direction 7 (D6 dedicated-pool extended to V=64 per bridge x 5 bridges = 320 cross-bridge concepts; vocab byte-identical to Direction M G.20 sparse production deliverable) SMOKE in flight 08:28 EDT 2026-05-27 (background; bash watcher b29xs5cm9; ETA 2-3 hr). Production launch conditional on smoke PASS / PARTIAL per the runner discipline.

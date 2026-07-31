@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-03
+---
+
 # Integrated conversation loop — design (comprehend → decide-what-to-say → produce)
 
 **Date:** 2026-06-03

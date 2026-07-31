@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-06
+---
+
 # Phase 1: Module Split — Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.

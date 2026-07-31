@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-28
+---
+
 # Cluster B — Striatal microcircuit (Design)
 
 **Status:** design draft. Citation-grounding deferred until the textbook catalog session lands; will be revised against Kandel 6e references before implementation begins.

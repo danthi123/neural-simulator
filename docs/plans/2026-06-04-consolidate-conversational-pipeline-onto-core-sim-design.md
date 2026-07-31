@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-04
+---
+
 # Consolidate the conversational pipeline onto the core sim (the brain) — design + phased plan
 
 > **Status:** DRAFT for owner sign-off (owner asked: "plan doc first, sign-off before building").

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-15
+---
+
 # Phase B — Spiking similarity-matching cortex on the bridge (64-concept proof) — Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development to execute this plan

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-07-07
+---
+
 # D2 build spec — depth-stability of biologically-plausible deep credit on the spiking substrate (depth-3, plain-FA baseline)
 
 > The next rung after D1 (`2026-07-07-D1-microcircuit-noise-robust-deep-credit-clears-bar-on-spikes.md`). D1 established: the microcircuit interneuron-cancellation rule is BUILT on the substrate (additive/default-off, on-bridge cancellation validated), its clean-error credit clears the depth-2 bar (0.96) and is BATCH-ROBUST where raw Burstprop is batch-fragile; and (correction) raw Burstprop is NOT hard-noise-limited (0.92 @ best batch) — the depth-2 "FA wall" was budget-dependent. **D2 probes the GENUINE feedback-alignment depth wall: does the microcircuit hold at depth-3 where FA depth-instability + the 2025-neuromorphic "depth HURTS" result predict degradation?** Research gate: `2026-07-07-deep-lever-research-gate-spiking-deep-credit.md` (D2). Expect boundary-then-surpass, NOT a clean GO (deep×spiking is where the field's depth-instability lives).

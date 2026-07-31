@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-10
+---
+
 # N5 — the proper test: a dopamine reward-prediction-error battery with the reward sourced from neurons
 
 **Date:** 2026-06-10

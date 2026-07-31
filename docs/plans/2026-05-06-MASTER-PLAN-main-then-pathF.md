@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-06
+---
+
 # Master Plan — Biology-grounded `main` work + Path F hybrid branch
 
 **Date:** 2026-05-06

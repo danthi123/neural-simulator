@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-18
+---
+
 # Integrated-loop full spiking-model implementation plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Standing autonomy applies: one fresh subagent per task; strict failing-test -> minimal-implementation -> run -> commit; controller verifies every commit leaves the protected set byte-unchanged; honest propagation of every outcome; iterate following the reference catalog on any non-success; no hand-back.

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-11
+---
+
 # Tiering Phase 3 part 2 — bridge integration design
 
 **Date:** 2026-05-11 03:55 EDT

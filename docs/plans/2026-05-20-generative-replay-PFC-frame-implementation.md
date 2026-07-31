@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-20
+---
+
 # Generative replay + PFC-held compositional frame implementation plan (6th arc)
 
 > **For Claude:** Use superpowers:subagent-driven-development to implement

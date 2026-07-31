@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-02
+---
+
 # 2026-05-02 — SWR consolidation integration with text I/O
 
 After distributed-motor-pop architecture is validated/falsified, the next

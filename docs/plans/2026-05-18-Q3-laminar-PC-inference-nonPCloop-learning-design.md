@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-18
+---
+
 # Q3 — Engram-prior'd laminar PREDICTIVE-CODING-INFERENCE generative composition (the durable-sound PC inference; learning = validated engram one-shot bind, NOT the PC training loop) (design)
 
 > Standing autonomy: documented design calls; brainstorm ->

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-30
+---
+
 # Cluster D v2 — Sharp-Wave-Ripple replay for offline CA3 cleanup
 
 **Date:** 2026-04-30

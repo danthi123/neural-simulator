@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-03
+---
+
 # Faithful spiking visual word recognizer — design (2026-06-03)
 
 **Goal:** an EARNED, biology-faithful spiking recognizer that reads rendered words through the real

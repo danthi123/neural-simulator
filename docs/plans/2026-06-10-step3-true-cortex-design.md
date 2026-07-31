@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-10
+---
+
 # Step 3 — the TRUE CORTEX: a LEARNED spiking-cortical binder to replace the composer's exact-inverse VSA idealization
 
 **Status:** DESIGN (read-only deep-research + design pass; the ONLY file written is this doc).

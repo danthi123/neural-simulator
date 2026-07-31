@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-17
+---
+
 # Dendritic Fair-Scale GLR-2017 — Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: superpowers:subagent-driven-development (fresh subagent per task; two-stage spec+quality review; controller trust-but-verify each git diff with protected modules byte-empty). Tasks 1 & 2 additionally get a DEDICATED ADVERSARIAL REVIEWER before Phase B (mirror the dendritic-Phase-A review that caught the W2-confound + sign + truthy-string holes). Task 5 is the CONTROLLER's job, NOT a subagent.

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-04
+---
+
 # One-Bridge Unification — Step 2 (gated synaptic parser→composer route) Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development to implement this plan task-by-task.

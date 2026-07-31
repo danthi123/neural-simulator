@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-19
+---
+
 # Corrected-necessity module + distinct-readout-pathways implementation plan
 
 > **For Claude:** REQUIRED SUB-SKILL: use superpowers:executing-plans to

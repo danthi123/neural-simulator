@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-05
+---
+
 # Composer full-clear (B) — substrate-held memory: design OPTIONS (pre-A-completion prep) — 2026-06-05
 
 Forward prep while (A) the cleanup validates. (B) is the deeper shortcut (the owner's "full clear A+B"). This frames

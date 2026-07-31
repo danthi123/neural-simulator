@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-06
+---
+
 # Design: Interactive Exploration & In-App Experiment Prototyping
 
 **Date:** 2026-04-06

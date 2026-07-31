@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-19
+---
+
 # Shared theta-gamma rhythm (Separate Phases of Encoding And Retrieval) + generative replay: a conversational-stage design
 
 **Status:** Design (autonomous; no hand-back). This is the pre-registered

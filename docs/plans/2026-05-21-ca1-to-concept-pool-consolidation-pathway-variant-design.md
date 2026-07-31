@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-21
+---
+
 # Experimental substrate variant: ca1 -> concept-pool consolidation pathway
 
 > **For Claude / autonomous continuation:** This is the pre-registered

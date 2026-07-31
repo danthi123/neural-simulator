@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-11
+---
+
 # Path G+ — Multi-pool wernicke design (P5 architectural fallback)
 
 **Date:** 2026-05-11

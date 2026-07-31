@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-20
+---
+
 # 8th arc: dedicated compositional-readout region design
 
 > **For Claude / autonomous continuation:** This is the **design** for

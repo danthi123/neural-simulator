@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-05
+---
+
 # Orthogonal cues experiment — step 2 fallback if high-LR sweep fails
 
 **Date:** 2026-05-05

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-11
+---
+
 # Cortex build plan — "decorrelate, then bind" (the de-risked architecture for step 3)
 
 > **Status: present-before-build — UPDATED 2026-06-11 with a load-bearing falsification.** The cortex DE-RISK arc is complete and the architecture below is scoped into validated pieces, BUT the recommended decorrelation front end (Option E1, a fixed structural sparse expansion) was subsequently FALSIFIED (`2026-06-11-cortex-fixed-expansion-decorrelation-NEGATIVE.md`): a fixed random expansion + threshold cannot decorrelate the brain's *dense correlated* codes reproducibly (the common mode survives the linear expansion; threshold boundary units have a margin ~3,800× below realistic noise → reproducibility collapses to 0.03–0.06). This is the **fourth** distinct brain-based mechanism to fail at decorrelating the brain's correlated codes (after vanilla Hopfield, Storkey, and spiking dentate-gyrus), and they converge on a **documented project boundary: the Mikulasch-Priesemann point-neuron limit — whitening/decorrelation is analog / pre-spike (dendritic) in biology, and a point-neuron spiking substrate fundamentally cannot do it** (CLAUDE.md "Standing practice", the prior conversational decorrelation/whitening blocker).

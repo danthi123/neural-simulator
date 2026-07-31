@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-05
+---
+
 # Biologically-grounded user↔sim language communication — 3-tier plan
 
 **Date:** 2026-05-05

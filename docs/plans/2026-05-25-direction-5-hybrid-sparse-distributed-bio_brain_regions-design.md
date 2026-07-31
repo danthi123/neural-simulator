@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-25
+---
+
 # Direction 5 design: HYBRID sparse-distributed shared pool ON bio_brain_regions (5 bridges × V=16 = 80 cross-bridge concepts; biology-faithful dedicated pools + Kanerva sparse cross-bridge substrate)
 
 **Date:** 2026-05-25

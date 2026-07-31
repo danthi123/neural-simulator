@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-02
+---
+
 # Webapp 3D Neural Visualization — Design Doc
 
 **Date:** 2026-05-02

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-10
+---
+
 # STEP 2b — RF composer co-resident on the one bridge (implementation plan)
 
 > **Prerequisite:** STEP 2a complete (the 6-seed navigation gate (a) GREEN). The protected `sim/bridge.py`

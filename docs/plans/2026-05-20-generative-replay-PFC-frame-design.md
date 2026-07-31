@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-20
+---
+
 # Generative replay + PFC-held compositional frame architecture design (6th arc after the 5-architecture convergent ceiling)
 
 > **For Claude / autonomous continuation:** This is the **design** for the

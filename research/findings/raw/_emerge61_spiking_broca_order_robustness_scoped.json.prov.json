@@ -1,0 +1,15 @@
+{
+ "run_id": "1785525276-2585757",
+ "runner": "research/runners/_emerge61_spiking_broca_order_robustness_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_emerge61_spiking_broca_order_robustness_derisk.py",
+  "--derisk",
+  "--reset-scope",
+  "region"
+ ],
+ "git_sha": "b1b417e2",
+ "git_dirty": true,
+ "started": "2026-07-31T15:14:36",
+ "env": {},
+ "artifact": "research/findings/raw/_emerge61_spiking_broca_order_robustness_scoped.json"
+}

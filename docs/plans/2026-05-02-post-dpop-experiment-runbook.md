@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-02
+---
+
 # Post-distributed-pop experiment runbook
 
 Sequential experiment commands ready to fire when dpop result is in

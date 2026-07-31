@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-11
+---
+
 # Option B — the dendritic-substrate research (the opening move for the semantically-structured cortex)
 
 **Status:** READ-ONLY deep-research + catalog/literature/existing-sim review (the project's standing "deep research

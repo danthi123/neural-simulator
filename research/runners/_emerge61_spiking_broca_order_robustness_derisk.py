@@ -46,10 +46,35 @@ HONEST SCOPE: this closes the ORDER tail for the bounded EMERGE frame inventory;
 1.00) or open-prose (R4, deferred). Reuse-by-import; NO `sim/` edit (the reset writes existing bridge arrays via their
 public attributes — the same `cp_external_input_current[...] = ` pattern the producer already uses).
 
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+2026-07-31 — THE WASH-OUT IS NOW SCOPABLE TO THE PRODUCER REGION (additive, DEFAULT OFF = byte-identical).
+THE DEFECT: the snapshot/restore above writes the WHOLE-BRIDGE arrays. That is correct for a PRIVATE producer bridge
+(what every shipped EMERGE-61/63/66 path uses) but on a SHARED bridge it is a WHOLE-BRAIN reset executed before EVERY
+WORD — any co-resident lane whose state lives in these same arrays is erased per emit (measured elsewhere on a
+co-resident affect/mood pool: a held mood of +0.1092 → +0.0000, 3/3 seeds). That is what blocks lanes sharing one
+bridge, not the read-out.
+THE FIX: `_snapshot_state` / `_restore_state` take an optional `neuron_idx`, and `ResetFrameSlotCQ` takes
+`reset_scope` (`True` → `region_manager.indices(<slot_region>)`, i.e. the producer's OWN neurons). `None` (the default
+everywhere, including every existing importer) == the whole array == BYTE-IDENTICAL to the shipped path — proven
+array-by-array against a verbatim copy of the old body by `--verify-scope`.
+BIOLOGICAL WARRANT: an inter-utterance motor-plan wash-out is LOCAL to the motor plan; Broca clearing the previous
+sentence's spike-frequency adaptation is not a global brain reset.
+⚠️ TWO INDEX SPACES: `cp_stp_x` / `cp_stp_u` are PER-SYNAPSE (`bridge.py:866-867` sizes them by synapse CAPACITY), not
+per-neuron. A neuron scope cannot address them, so a SCOPED wash-out does not restore them at all (invariant: a scoped
+restore never writes outside the scoped neurons). On the EMERGE-59 slot bridge that omission is INERT and measured
+(`_scope_residual_note`: 0 of 12 synapses touch the slots region — it is built `internal_density=0.0` with no
+pathways); on a shared bridge whose synapses DO target the producer, the named next mechanism is to map
+synapse→post-neuron through the CSR and scope the synapse arrays by post-membership. NOT built, NOT claimed.
+NOT CLAIMED HERE: that lanes can now co-reside. That needs its own 6-seed run; this change only removes one measured
+blocker and proves the default is unmoved.
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
 Run:
   SIM_BACKEND=numpy python -m research.runners._emerge61_spiking_broca_order_robustness_derisk --demo
   SIM_BACKEND=numpy python -m research.runners._emerge61_spiking_broca_order_robustness_derisk --derisk
   SIM_BACKEND=numpy python -m research.runners._emerge61_spiking_broca_order_robustness_derisk --derisk --seeds 42 43 44 100 101 102
+  SIM_BACKEND=numpy python -m research.runners._emerge61_spiking_broca_order_robustness_derisk --verify-scope
+  SIM_BACKEND=numpy python -m research.runners._emerge61_spiking_broca_order_robustness_derisk --derisk --reset-scope region
 """
 from __future__ import annotations
 import os
@@ -82,32 +107,160 @@ OUT = _REPO / "research" / "findings" / "raw" / "_emerge61_spiking_broca_order_r
 # `cp_recovery_variable_u` is the load-bearing one (Izhikevich slow adaptation); the conductances + firing_states +
 # STP are captured too so the restore returns the substrate to its EXACT post-init operating point (byte-for-byte).
 # Only arrays PRESENT on this (Izhikevich, no-internal-connectivity) bridge are snapshotted.
-_STATE_ARRAYS = (
+#
+# ⚠️ TWO INDEX SPACES (measured on this bridge, seed 42: 184 neurons / 12 synapses at capacity 18):
+#   * the first SEVEN are PER-NEURON, shape (num_neurons,)          -> scopable by neuron index;
+#   * `cp_stp_x` / `cp_stp_u` are PER-SYNAPSE, shape (synapse_capacity,) -> a NEURON index is meaningless on them
+#     (`bridge.py:866-867` sizes them by `capacity`, not `num_neurons`).
+# The split is what makes the region scoping below possible AND bounded; `_STATE_ARRAYS` keeps its exact previous
+# contents + order (it is imported by other runners and by `tests/test_emerge75b_history_independent_aw.py`).
+_NEURON_STATE_ARRAYS = (
     "cp_membrane_potential_v", "cp_recovery_variable_u",
     "cp_conductance_g_e", "cp_conductance_g_i", "cp_conductance_g_nmda", "cp_conductance_g_nmda_rise",
-    "cp_firing_states", "cp_stp_x", "cp_stp_u",
+    "cp_firing_states",
 )
+_SYNAPSE_STATE_ARRAYS = ("cp_stp_x", "cp_stp_u")
+_STATE_ARRAYS = _NEURON_STATE_ARRAYS + _SYNAPSE_STATE_ARRAYS
 
 
-def _snapshot_state(bridge):
-    """Byte-for-byte capture of the bridge's dynamic per-neuron state (host copies)."""
+# ---------------------------------------------------------------------------------------------------------------------
+# REGION-SCOPING THE WASH-OUT (additive, default-OFF). The un-scoped snapshot/restore writes the WHOLE-BRIDGE arrays,
+# which is correct for a PRIVATE producer bridge but is a whole-brain reset on a SHARED one: any co-resident lane whose
+# state lives in these same arrays (e.g. a co-resident affect/mood pool held in `cp_recovery_variable_u`) is ERASED on
+# every emit. Biological warrant for the scoping: an inter-utterance motor-plan wash-out is LOCAL to the motor plan --
+# Broca clearing the last sentence's adaptation does not reset the rest of the brain.
+# `neuron_idx=None` (the DEFAULT everywhere) == the whole array == BYTE-IDENTICAL to the shipped path.
+# ---------------------------------------------------------------------------------------------------------------------
+def _resolve_neuron_scope(bridge, scope):
+    """Normalize a wash-out scope to `None` (whole array) | a `slice` | an int index array.
+
+    Accepts: None/False -> whole array (default, byte-identical); a `slice`; a region NAME (str) resolved through
+    `bridge.region_manager.indices(name)` -- the producer region's OWN neuron indices; or an explicit sequence of
+    neuron indices. A contiguous ascending run is normalized to a `slice` (numerically identical, and it sidesteps
+    device fancy-index assignment); region indices ARE contiguous (`sim/regions.py:442` builds `list(range(...))`)."""
+    if scope is None or scope is False:
+        return None
+    if scope is True:
+        # `True` means "this producer's OWN region", which only a ResetFrameSlotCQ can resolve (it knows its
+        # slot_region). Falling through would make np.asarray(True) read as NEURON INDEX 1 -- a silent, wrong,
+        # 1-neuron wash-out. Refuse loudly instead.
+        raise ValueError("wash-out scope True is only meaningful on ResetFrameSlotCQ(reset_scope=True), which resolves "
+                         "it to its own region; pass the region NAME or an index array to the bridge-level helpers")
+    if isinstance(scope, slice):
+        return scope
+    if isinstance(scope, str):
+        rm = getattr(bridge, "region_manager", None)
+        if rm is None:
+            raise ValueError(f"wash-out scope {scope!r} names a region but this bridge has no region_manager")
+        idx = np.asarray(rm.indices(scope), dtype=np.int64)
+    else:
+        idx = np.asarray(scope, dtype=np.int64).ravel()
+    if idx.size == 0:
+        raise ValueError("wash-out scope resolved to ZERO neurons -- refusing (a no-op reset would silently disable "
+                         "the position-independence the wash-out exists to provide)")
+    lo, hi = int(idx.min()), int(idx.max())
+    if idx.size == (hi - lo + 1) and np.array_equal(idx, np.arange(lo, hi + 1, dtype=np.int64)):
+        return slice(lo, hi + 1)
+    return idx
+
+
+def _scope_len(scope, n):
+    """Number of elements a resolved scope selects from a length-`n` array."""
+    if scope is None:
+        return n
+    if isinstance(scope, slice):
+        return len(range(*scope.indices(n)))
+    return int(np.asarray(scope).size)
+
+
+def _index_for(arr, scope):
+    """The resolved scope in the index space of `arr`'s backend (a cupy array needs a cupy index for fancy
+    assignment; a `slice` needs no marshalling and is the normal case for a contiguous region)."""
+    if scope is None or isinstance(scope, slice):
+        return scope
+    if hasattr(arr, "get"):                      # device (cupy) array
+        import cupy
+        return cupy.asarray(scope)
+    return scope
+
+
+def _snapshot_state(bridge, neuron_idx=None):
+    """Byte-for-byte capture of the bridge's dynamic per-neuron state (host copies).
+
+    `neuron_idx=None` (default) captures the WHOLE arrays -- byte-identical to the shipped path. When a scope is given
+    (a region name, a slice, or explicit neuron indices) only THOSE neurons' per-neuron state is captured, and the
+    PER-SYNAPSE STP arrays are SKIPPED (a neuron index does not address them; see `_SYNAPSE_STATE_ARRAYS`), so the
+    paired scoped restore provably never writes outside the producer's own neurons."""
+    scope = _resolve_neuron_scope(bridge, neuron_idx)
     snap = {}
     for name in _STATE_ARRAYS:
         arr = getattr(bridge, name, None)
-        if arr is not None:
+        if arr is None:
+            continue
+        if scope is None:
             snap[name] = np.asarray(to_host(arr)).copy()
+        elif name in _NEURON_STATE_ARRAYS:
+            snap[name] = np.asarray(to_host(arr))[scope].copy()
+        # else: per-synapse array under a neuron scope -> deliberately NOT captured (see the honest residual in
+        # `_scope_residual_note`); capturing it would force a whole-bridge write on restore.
     return snap
 
 
-def _restore_state(bridge, snap):
+def _restore_state(bridge, snap, neuron_idx=None):
     """Restore the captured post-init state in place (backend-agnostic). `from_host` moves the host snapshot to the
     ACTIVE sim backend's device (a no-op passthrough on numpy -> BYTE-IDENTICAL to the prior numpy path; on cupy it
     marshals host->device so `arr[:] = ` into a cupy bridge array works instead of raising 'non-scalar ndarray cannot
-    be used for fill')."""
+    be used for fill').
+
+    `neuron_idx=None` (default) restores the WHOLE arrays -- the shipped path, unchanged. With a scope, the INVARIANT
+    is: a scoped restore NEVER writes outside the scoped neurons -- per-neuron arrays are written only at those
+    indices and per-synapse arrays are not written at all."""
+    scope = _resolve_neuron_scope(bridge, neuron_idx)
     for name, val in snap.items():
         arr = getattr(bridge, name, None)
-        if arr is not None:
+        if arr is None:
+            continue
+        if scope is None:
             arr[:] = from_host(val)
+            continue
+        if name not in _NEURON_STATE_ARRAYS:
+            continue                              # INVARIANT: a scoped restore writes no whole-bridge array
+        want = _scope_len(scope, int(arr.shape[0]))            # `.shape` works on both numpy and cupy arrays
+        got = int(np.asarray(val).shape[0])
+        if got != want:
+            raise ValueError(
+                f"scoped wash-out shape mismatch on {name}: snapshot has {got} entries, the scope selects {want}. "
+                f"The snapshot was almost certainly taken UNSCOPED (`_snapshot_state(bridge)`) while the restore is "
+                f"scoped -- re-take it with the SAME scope (on a ResetFrameSlotCQ subclass, call `self._resnapshot()` "
+                f"instead of assigning `_post_init_state = _snapshot_state(self.bridge)`)")
+        arr[_index_for(arr, scope)] = from_host(val)
+
+
+def _scope_residual_note(bridge, neuron_idx):
+    """The HONEST residual of a scoped wash-out, MEASURED on this bridge rather than assumed: with a neuron scope the
+    per-synapse STP state is not restored, so any synapse whose post-synaptic neuron is inside the scope keeps its
+    short-term-plasticity state across utterances. Returns a dict with the measured synapse count that touches the
+    scoped neurons (0 => the omission is inert on this bridge)."""
+    scope = _resolve_neuron_scope(bridge, neuron_idx)
+    out = {"scoped": scope is not None, "n_synapses": int(getattr(bridge, "_synapse_count", 0) or 0),
+           "stp_present": getattr(bridge, "cp_stp_x", None) is not None, "synapses_touching_scope": None}
+    if scope is None or not out["stp_present"] or out["n_synapses"] == 0:
+        out["synapses_touching_scope"] = 0
+        return out
+    conn = getattr(bridge, "cp_connections", None)
+    try:
+        m = conn.item() if hasattr(conn, "item") and getattr(conn, "shape", None) == () else conn
+        m = m.get() if hasattr(m, "get") else m
+        coo = m.tocoo()
+        rows = np.asarray(to_host(coo.row)); cols = np.asarray(to_host(coo.col))
+        n = int(bridge.core_config.num_neurons)
+        mask = np.zeros(n, bool)
+        mask[scope] = True                        # both orientations counted: a synapse "touches" if either end is in
+        out["synapses_touching_scope"] = int(np.count_nonzero(mask[rows] | mask[cols]))
+    except Exception as e:                        # measurement failed -> report UNKNOWN, never a silent 0
+        out["synapses_touching_scope"] = None
+        out["measure_error"] = repr(e)
+    return out
 
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -119,15 +272,35 @@ class ResetFrameSlotCQ(FrameSlotCQ):
     """FrameSlotCQ + an inter-utterance wash-out: capture the post-init dynamic state at construction, restore it before
     every emit so no production's residual adaptation leaks into the next. The learned primacy, RNG, and slot structure
     are inherited UNCHANGED; only the substrate's dynamic state is reset (the correct post-init snapshot, not a flat
-    reset). This makes each production an independent motor plan (the load-bearing position-independence)."""
+    reset). This makes each production an independent motor plan (the load-bearing position-independence).
 
-    def __init__(self, *args, **kwargs):
+    `reset_scope` (additive, DEFAULT None = the shipped whole-bridge behavior, byte-identical) bounds the wash-out to
+    the producer's OWN neurons, so a SHARED bridge's other lanes are not reset by every word:
+      * `None` / `False` -> the whole arrays (default; correct + byte-identical on a PRIVATE producer bridge);
+      * `True`           -> `self.slot_idx`, i.e. `region_manager.indices(<slot_region>)` -- the producer region;
+      * a region NAME    -> `bridge.region_manager.indices(name)`;
+      * a slice / sequence of neuron indices -> used as given.
+    Biological warrant: an inter-utterance motor-plan wash-out is local to the motor plan (Broca clearing the previous
+    sentence's adaptation is not a global brain reset)."""
+
+    def __init__(self, *args, reset_scope=None, **kwargs):
         super().__init__(*args, **kwargs)
+        # `True` means "this producer's own region": self.slot_idx IS region_manager.indices(slot_region), resolved by
+        # the base builder for BOTH the private-bridge and the shared-bridge (co-location) paths.
+        self.reset_scope = reset_scope
+        self._reset_idx = _resolve_neuron_scope(self.bridge, self.slot_idx if reset_scope is True else reset_scope)
         # snapshot AFTER the base __init__ built + initialized the bridge (and before any emit ran a step).
-        self._post_init_state = _snapshot_state(self.bridge)
+        self._post_init_state = _snapshot_state(self.bridge, self._reset_idx)
+
+    def _resnapshot(self):
+        """Re-take the wash-out snapshot with THIS instance's scope. A subclass that mutates the bridge after
+        `__init__` (e.g. EMERGE-63's CorpusOrderFrameSlotCQ disabling structural plasticity) must call THIS rather than
+        assigning `_post_init_state = _snapshot_state(self.bridge)`, or a scoped instance would raise on restore."""
+        self._post_init_state = _snapshot_state(self.bridge, self._reset_idx)
+        return self._post_init_state
 
     def _reset_substrate(self):
-        _restore_state(self.bridge, self._post_init_state)
+        _restore_state(self.bridge, self._post_init_state, self._reset_idx)
 
     def emit(self, frame, subject, verb, spell):
         self._reset_substrate()
@@ -195,16 +368,338 @@ def _make_reset(seed):
     return ResetFrameSlotCQ(seed=seed)
 
 
+def _make_reset_scoped(seed):
+    """The SAME wash-out bounded to the producer region's own neurons (`region_manager.indices(<slot_region>)`)."""
+    return ResetFrameSlotCQ(seed=seed, reset_scope=True)
+
+
 def _make_plain(seed):
     return FrameSlotCQ(seed=seed)
 
 
 # ---------------------------------------------------------------------------------------------------------------------
+# INSTRUMENT VERIFICATION for the scoping change: (1) the UNSCOPED path is BYTE-IDENTICAL to the pre-change code (hashed
+# array-by-array, against a verbatim copy of the old body), (2) the restore really does return the exact post-init
+# bytes, (3) a SCOPED wash-out provably does not write outside the producer region (a sentinel in the co-resident
+# neurons SURVIVES the scoped reset and is ERASED by the unscoped one), (4) the producer's OWN result is unchanged
+# under the scope. This is the "verify the instrument before trusting the output" step, run as `--verify-scope`.
+# ---------------------------------------------------------------------------------------------------------------------
+VERIFY_OUT = _REPO / "research" / "findings" / "raw" / "_emerge61_scope_byte_identity.json"
+
+
+def _hash_state(bridge):
+    """blake2b-128 of every dynamic state array's raw bytes (host copies) -> {array_name: hexdigest}."""
+    import hashlib
+    out = {}
+    for name in _STATE_ARRAYS:
+        arr = getattr(bridge, name, None)
+        if arr is None:
+            continue
+        host = np.ascontiguousarray(np.asarray(to_host(arr)))
+        out[name] = hashlib.blake2b(host.tobytes(), digest_size=16).hexdigest()
+    return out
+
+
+def _legacy_snapshot(bridge):
+    """VERBATIM copy of the PRE-CHANGE `_snapshot_state` body -- the A/B reference for the byte-identity check."""
+    snap = {}
+    for name in _STATE_ARRAYS:
+        arr = getattr(bridge, name, None)
+        if arr is not None:
+            snap[name] = np.asarray(to_host(arr)).copy()
+    return snap
+
+
+def _legacy_restore(bridge, snap):
+    """VERBATIM copy of the PRE-CHANGE `_restore_state` body -- the A/B reference for the byte-identity check."""
+    for name, val in snap.items():
+        arr = getattr(bridge, name, None)
+        if arr is not None:
+            arr[:] = from_host(val)
+
+
+def _perturb(bridge, slot_idx, n_slot_pools, rounds=2):
+    """Drive the slot pools for `rounds` productions' worth of steps so the dynamic state is genuinely dirty (this is
+    what accumulates `cp_recovery_variable_u`); deterministic given the bridge, so two bridges perturb identically.
+
+    `rounds=2` by default because at round 3 the bridge's STRUCTURAL PLASTICITY grows synapses on the inert `_anchor`
+    region and REBUILDS `cp_stp_x`/`cp_stp_u` at the new nnz (measured: 18 -> 13 -> 14 -> 15), which breaks the
+    fixed-shape snapshot -- a PRE-EXISTING property of the wash-out, already worked around in EMERGE-63 by disabling
+    structural plasticity, and measured explicitly by `_measure_stp_resize` below rather than hidden."""
+    from research.runners._emerge59_spiking_broca_frame_slots_derisk import slot_pool_rates
+    for r in range(rounds):
+        drive = {p: 1800.0 - 300.0 * ((p + r) % n_slot_pools) for p in range(n_slot_pools)}
+        slot_pool_rates(bridge, slot_idx, drive, n_slot_pools=n_slot_pools)
+
+
+def _measure_stp_resize(seed, rounds=6):
+    """MEASURE (not assume) the pre-existing per-synapse-array resize and what it does to each restore path: drive one
+    unscoped and one scoped instance past the resize, then try each wash-out. Records shapes + the exact exception."""
+    out = {"rounds": rounds}
+    for tag, factory in (("unscoped", _make_reset), ("scoped", _make_reset_scoped)):
+        cq = factory(seed)
+        before = None if cq.bridge.cp_stp_x is None else int(cq.bridge.cp_stp_x.shape[0])
+        _perturb(cq.bridge, cq.slot_idx, cq.n_slot_pools, rounds=rounds)
+        after = None if cq.bridge.cp_stp_x is None else int(cq.bridge.cp_stp_x.shape[0])
+        try:
+            cq._reset_substrate()
+            err = None
+        except Exception as e:                      # noqa: BLE001 -- the exception IS the measurement
+            err = repr(e)
+        out[tag] = {"stp_len_before": before, "stp_len_after": after, "resized": before != after,
+                    "reset_raised": err}
+    return out
+
+
+def _scramble_state(bridge, seed):
+    """Overwrite EVERY dynamic state array with deterministic garbage. The perturbation-by-driving arm only dirties
+    the arrays the dynamics happen to touch (measured: 4 of 9 on this bridge -- the conductances never leave 0 because
+    the slot pools have no incoming synapses), which leaves the other 5 a weak test. Scrambling gives the byte-identity
+    A/B full power on ALL of them; the same `seed` scrambles two twin bridges identically."""
+    rng = np.random.default_rng(seed)
+    for name in _STATE_ARRAYS:
+        arr = getattr(bridge, name, None)
+        if arr is None:
+            continue
+        host = np.asarray(to_host(arr))
+        g = (rng.random(host.shape) < 0.5) if host.dtype == np.bool_ else \
+            (rng.standard_normal(host.shape) * 10.0).astype(host.dtype)
+        arr[:] = from_host(g)
+
+
+def _sentinel_write(bridge, idx):
+    """Stamp a distinctive value into the NON-producer (co-resident) neurons of every per-neuron state array, and
+    return what was written. This stands in for a co-resident lane's state living in the same arrays."""
+    written = {}
+    for i, name in enumerate(_NEURON_STATE_ARRAYS):
+        arr = getattr(bridge, name, None)
+        if arr is None:
+            continue
+        host = np.asarray(to_host(arr)).copy()
+        host[idx] = True if host.dtype == np.bool_ else np.asarray(-77.25 - i, dtype=host.dtype)
+        arr[:] = from_host(host)
+        written[name] = host[idx].copy()
+    return written
+
+
+def _read_at(bridge, idx):
+    """Host copies of every per-neuron state array restricted to `idx`."""
+    return {name: np.asarray(to_host(getattr(bridge, name)))[idx].copy()
+            for name in _NEURON_STATE_ARRAYS if getattr(bridge, name, None) is not None}
+
+
+def _dicts_equal(a, b):
+    return set(a) == set(b) and all(np.array_equal(a[k], b[k]) for k in a)
+
+
+def _freeze_structural(cq):
+    """Disable structural plasticity on an already-built producer + re-take its wash-out snapshot.
+
+    WHY (measured, 2026-07-31): `sim/bridge.py` commit 479e4584 made the CSR-rebuild remap re-allocate EVERY
+    per-synapse array at `nnz`, so on this slot bridge `cp_stp_x`/`cp_stp_u` change LENGTH (18 -> 13) at the 3rd
+    production, when structural plasticity grows a synapse on the inert `_anchor` region. The fixed-shape UNSCOPED
+    restore then raises `could not broadcast input array from shape (18,) into shape (13,)`. That break is
+    PRE-EXISTING (it reproduces on the pristine HEAD file with an unmodified `sim/` and `_emerge59`) and is NOT
+    addressed here. Freezing structural plasticity is EMERGE-63's existing, behavior-neutral workaround: the slot
+    pools are built `internal_density=0.0` with no pathways, so the growth is confined to the inert `_anchor` region
+    and cannot reach the read-out. Applied to BOTH arms of any comparison so it cannot bias one of them."""
+    cq.bridge.core_config.enable_structural_plasticity = False
+    if hasattr(cq, "_resnapshot"):
+        cq._resnapshot()
+    return cq
+
+
+def _frozen_factory(factory):
+    """`factory` wrapped so every instance it builds has structural plasticity frozen (see `_freeze_structural`)."""
+    def make(seed):
+        return _freeze_structural(factory(seed))
+    return make
+
+
+def _learned(factory, seed, freeze_structural=False):
+    cq = factory(seed)
+    if freeze_structural:
+        _freeze_structural(cq)
+    cq.learn()
+    return cq
+
+
+def _verify_scope(seed=100):
+    """Verify the scoping change did not move the DEFAULT path by one byte, and that the scoped path is bounded."""
+    from research.runners._emerge59_spiking_broca_frame_slots_derisk import N_SLOT_POOLS
+    res = {"probe": "emerge61_scope_byte_identity", "seed": int(seed), "checks": {}, "hashes": {}}
+
+    # ---- (1) the UNSCOPED SNAPSHOT is byte-identical to the pre-change snapshot -------------------------------------
+    cq = ResetFrameSlotCQ(seed=seed)                       # default: reset_scope=None -> whole-bridge (shipped path)
+    b = cq.bridge
+    new_snap, old_snap = _snapshot_state(b), _legacy_snapshot(b)
+    res["checks"]["unscoped_snapshot_byte_identical"] = bool(_dicts_equal(new_snap, old_snap))
+    res["checks"]["snapshot_keys"] = sorted(new_snap)
+    res["checks"]["default_reset_idx_is_None"] = bool(cq._reset_idx is None)
+
+    h_init = _hash_state(b)
+    res["hashes"]["post_init"] = h_init
+
+    # ---- (2) perturb -> the state really moves -> the UNSCOPED restore returns the EXACT post-init bytes ------------
+    _perturb(b, cq.slot_idx, cq.n_slot_pools)
+    h_dirty = _hash_state(b)
+    res["hashes"]["after_driven_productions"] = h_dirty      # `_perturb` rounds; see its docstring for why it is 2
+    res["checks"]["state_actually_changes"] = bool(any(h_dirty[k] != h_init[k] for k in h_init))
+    res["checks"]["changed_arrays"] = sorted(k for k in h_init if h_dirty[k] != h_init[k])
+    # guard the byte-identity arms against the pre-existing per-synapse RESIZE (see `_measure_stp_resize`): if the
+    # arrays changed LENGTH here, the hash comparison below would be comparing different objects, not the same code.
+    res["checks"]["stp_shape_stable_during_byte_identity_arms"] = bool(
+        "cp_stp_x" not in new_snap or int(b.cp_stp_x.shape[0]) == int(np.asarray(new_snap["cp_stp_x"]).shape[0]))
+    cq._reset_substrate()
+    h_restored = _hash_state(b)
+    res["hashes"]["after_unscoped_restore"] = h_restored
+    res["checks"]["unscoped_restore_returns_post_init_bytes"] = bool(h_restored == h_init)
+
+    # ---- (3) A/B: NEW default restore vs the VERBATIM OLD restore, on identically-perturbed twin bridges ------------
+    cq_a, cq_b = ResetFrameSlotCQ(seed=seed), ResetFrameSlotCQ(seed=seed)
+    res["checks"]["twin_bridges_identical_at_init"] = bool(_hash_state(cq_a.bridge) == _hash_state(cq_b.bridge))
+    _perturb(cq_a.bridge, cq_a.slot_idx, cq_a.n_slot_pools)
+    _perturb(cq_b.bridge, cq_b.slot_idx, cq_b.n_slot_pools)
+    res["checks"]["twin_bridges_identical_when_dirty"] = bool(_hash_state(cq_a.bridge) == _hash_state(cq_b.bridge))
+    _restore_state(cq_a.bridge, cq_a._post_init_state)                       # NEW code, scope unset
+    _legacy_restore(cq_b.bridge, _legacy_snapshot(ResetFrameSlotCQ(seed=seed).bridge))   # OLD code, fresh post-init
+    h_new, h_old = _hash_state(cq_a.bridge), _hash_state(cq_b.bridge)
+    res["hashes"]["new_default_restore"] = h_new
+    res["hashes"]["legacy_restore"] = h_old
+    res["checks"]["new_vs_legacy_restore_byte_identical"] = bool(h_new == h_old)
+    res["checks"]["byte_identical_array_by_array"] = {k: bool(h_new[k] == h_old[k]) for k in h_new}
+
+    # ---- (3b) the same A/B with EVERY array scrambled, so the byte-identity claim has power on ALL 9 arrays --------
+    cq_c, cq_d = ResetFrameSlotCQ(seed=seed), ResetFrameSlotCQ(seed=seed)
+    snap_c, snap_d = _snapshot_state(cq_c.bridge), _legacy_snapshot(cq_d.bridge)
+    _scramble_state(cq_c.bridge, 1234)
+    _scramble_state(cq_d.bridge, 1234)
+    h_scrambled = _hash_state(cq_c.bridge)
+    res["hashes"]["scrambled"] = h_scrambled
+    res["checks"]["scramble_dirties_every_array"] = bool(all(h_scrambled[k] != h_init[k] for k in h_init))
+    res["checks"]["twins_scrambled_identically"] = bool(h_scrambled == _hash_state(cq_d.bridge))
+    _restore_state(cq_c.bridge, snap_c)                    # NEW code, scope unset
+    _legacy_restore(cq_d.bridge, snap_d)                   # VERBATIM old code
+    h_new_s, h_old_s = _hash_state(cq_c.bridge), _hash_state(cq_d.bridge)
+    res["hashes"]["new_default_restore_from_scrambled"] = h_new_s
+    res["hashes"]["legacy_restore_from_scrambled"] = h_old_s
+    res["checks"]["scrambled_new_vs_legacy_byte_identical"] = bool(h_new_s == h_old_s)
+    res["checks"]["scrambled_restore_returns_post_init_bytes"] = bool(h_new_s == h_init)
+
+    # ---- (4) the SCOPED wash-out is BOUNDED: a co-resident sentinel survives it, and the unscoped one erases it -----
+    rm = b.region_manager
+    all_regions = {n: np.asarray(v) for n, v in rm.region_indices_dict().items()}
+    prod_idx = np.asarray(cq.slot_idx)
+    other_idx = np.asarray(sorted(set(range(int(b.core_config.num_neurons))) - set(prod_idx.tolist())))
+    res["regions"] = {n: [int(v[0]), int(v[-1]), int(v.size)] for n, v in all_regions.items()}
+    res["checks"]["n_coresident_neurons"] = int(other_idx.size)
+
+    scoped = ResetFrameSlotCQ(seed=seed, reset_scope=True)
+    sel = np.arange(int(scoped.bridge.core_config.num_neurons))[scoped._reset_idx]
+    res["checks"]["scoped_idx_equals_region_indices"] = bool(np.array_equal(sel, np.asarray(scoped.slot_idx)))
+    res["checks"]["scoped_idx_repr"] = repr(scoped._reset_idx)
+    _sentinel_write(scoped.bridge, other_idx)
+    _perturb(scoped.bridge, scoped.slot_idx, scoped.n_slot_pools, rounds=1)
+    sent_scoped = _read_at(scoped.bridge, other_idx)                 # post-drive value = what must SURVIVE the reset
+    scoped._reset_substrate()
+    res["checks"]["scoped_reset_preserves_coresident_state"] = bool(
+        _dicts_equal(sent_scoped, _read_at(scoped.bridge, other_idx)))
+    res["checks"]["scoped_reset_restores_producer_state"] = bool(_dicts_equal(
+        _read_at(scoped.bridge, prod_idx), _read_at(ResetFrameSlotCQ(seed=seed).bridge, prod_idx)))
+
+    unscoped = ResetFrameSlotCQ(seed=seed)
+    _sentinel_write(unscoped.bridge, other_idx)
+    _perturb(unscoped.bridge, unscoped.slot_idx, unscoped.n_slot_pools, rounds=1)
+    sent_unscoped = _read_at(unscoped.bridge, other_idx)
+    unscoped._reset_substrate()
+    res["checks"]["unscoped_reset_ERASES_coresident_state"] = bool(
+        not _dicts_equal(sent_unscoped, _read_at(unscoped.bridge, other_idx)))
+
+    # ---- (5) the producer's OWN result is unchanged by the scoping (private bridge) ---------------------------------
+    # BOTH arms freeze structural plasticity -- symmetrically -- because the UNSCOPED arm cannot complete 5 emits
+    # without it since sim/bridge.py 479e4584 (see `_freeze_structural`). This is the ONLY way to A/B the two paths
+    # end-to-end today, and the freeze is applied identically to both so it cannot favour either.
+    res["structural_plasticity_frozen_for_surface_arms"] = True
+    seq_unscoped, _p1, _mc1, _m1 = _render_sequence(_learned(_make_reset, seed, freeze_structural=True))
+    seq_scoped, _p2, mc2, _m2 = _render_sequence(_learned(_make_reset_scoped, seed, freeze_structural=True))
+    res["surfaces"] = {"unscoped": seq_unscoped, "scoped": seq_scoped}
+    res["checks"]["scoped_surfaces_match_unscoped"] = bool(seq_unscoped == seq_scoped)
+    res["checks"]["scoped_sequence_exact"] = float(_sequence_exact(seq_scoped))
+    res["checks"]["unscoped_sequence_exact"] = float(_sequence_exact(seq_unscoped))
+    pos_ok, pos_surf = _position_independence(_frozen_factory(_make_reset_scoped), seed)
+    pos_ok_u, pos_surf_u = _position_independence(_frozen_factory(_make_reset), seed)
+    res["checks"]["scoped_position_independent"] = bool(pos_ok)
+    res["checks"]["unscoped_position_independent"] = bool(pos_ok_u)
+    res["checks"]["scoped_position_surfaces"] = {str(k): v for k, v in pos_surf.items()}
+    res["checks"]["unscoped_position_surfaces"] = {str(k): v for k, v in pos_surf_u.items()}
+    res["checks"]["scoped_position_surfaces_match_unscoped"] = bool(pos_surf == pos_surf_u)
+    res["checks"]["moat_calls_on_abstain_scoped"] = int(mc2)
+
+    # ---- (6) a PRE-EXISTING fragility, measured (NOT introduced or fixed here) ---------------------------------------
+    # Structural plasticity rebuilds the PER-SYNAPSE arrays at a new size after ~3 productions, which breaks the
+    # fixed-shape UNSCOPED restore. The scoped restore does not raise -- not because it solves this, but because it
+    # never writes the per-synapse arrays at all. Recorded as measurement, claimed as nothing.
+    res["stp_resize"] = _measure_stp_resize(seed)
+
+    # ---- (7) the HONEST residual of the scoping, MEASURED -----------------------------------------------------------
+    res["scope_residual"] = _scope_residual_note(scoped.bridge, scoped._reset_idx)
+    res["scope_residual"]["note"] = (
+        "A neuron-scoped wash-out does NOT restore the PER-SYNAPSE STP arrays (cp_stp_x / cp_stp_u), because a neuron "
+        "index does not address them. On THIS bridge that omission is inert iff `synapses_touching_scope` == 0 "
+        "(measured above; the slots region is built with internal_density=0.0 and no pathways). On a shared bridge "
+        "where synapses DO target the producer region, the named next mechanism is to map synapse->post-neuron through "
+        "the CSR and scope the synapse arrays by post-membership -- NOT attempted here, and NOT claimed.")
+
+    crit = ["unscoped_snapshot_byte_identical", "default_reset_idx_is_None", "state_actually_changes",
+            "stp_shape_stable_during_byte_identity_arms",
+            "unscoped_restore_returns_post_init_bytes", "twin_bridges_identical_at_init",
+            "twin_bridges_identical_when_dirty", "new_vs_legacy_restore_byte_identical",
+            "scramble_dirties_every_array", "twins_scrambled_identically",
+            "scrambled_new_vs_legacy_byte_identical", "scrambled_restore_returns_post_init_bytes",
+            "scoped_idx_equals_region_indices", "scoped_reset_preserves_coresident_state",
+            "unscoped_reset_ERASES_coresident_state", "scoped_reset_restores_producer_state",
+            "scoped_surfaces_match_unscoped", "scoped_position_independent",
+            "unscoped_position_independent", "scoped_position_surfaces_match_unscoped"]
+    res["PASS"] = bool(all(res["checks"].get(k) is True for k in crit))
+    res["critical_checks"] = crit
+    VERIFY_OUT.parent.mkdir(parents=True, exist_ok=True)
+    VERIFY_OUT.write_text(json.dumps(res, indent=2, default=str))
+
+    print("\n=== EMERGE-61 scope verification (seed %d) ===" % seed)
+    for k in crit:
+        print(f"  {'PASS' if res['checks'].get(k) is True else 'FAIL'}  {k} = {res['checks'].get(k)}")
+    print("\n  array-by-array byte-identity (NEW default restore vs VERBATIM legacy restore, from a FULL SCRAMBLE so "
+          "every array is genuinely dirty):")
+    for k in sorted(h_new_s):
+        print(f"    {k:28s} scrambled={h_scrambled[k]}  new={h_new_s[k]}  legacy={h_old_s[k]}  "
+              f"{'==' if h_new_s[k] == h_old_s[k] == h_init[k] else '!! DIFFERS'}")
+    print("\n  array-by-array byte-identity (same A/B after 2 driven productions):")
+    for k in sorted(h_new):
+        print(f"    {k:28s} new={h_new[k]}  legacy={h_old[k]}  {'==' if h_new[k] == h_old[k] else '!! DIFFERS'}")
+    print("\n  post-init hashes vs after-unscoped-restore hashes:")
+    for k in sorted(h_init):
+        print(f"    {k:28s} init={h_init[k]}  restored={h_restored[k]}  dirty={h_dirty[k]}  "
+              f"{'==' if h_init[k] == h_restored[k] else '!! DIFFERS'}")
+    print(f"\n  scope residual (measured): {res['scope_residual']['synapses_touching_scope']} synapses touch the "
+          f"producer region of {res['scope_residual']['n_synapses']} total")
+    print(f"  PRE-EXISTING (not introduced, not fixed here) structural-plasticity STP resize after "
+          f"{res['stp_resize']['rounds']} productions:")
+    for tag in ("unscoped", "scoped"):
+        r = res["stp_resize"][tag]
+        print(f"    {tag:9s} stp len {r['stp_len_before']} -> {r['stp_len_after']}  reset_raised={r['reset_raised']}")
+    print(f"\n[emerge61-verify] {'PASS' if res['PASS'] else 'FAIL'} -- wrote {VERIFY_OUT}\n")
+    return 0 if res["PASS"] else 1
+
+
+# ---------------------------------------------------------------------------------------------------------------------
 # THE DE-RISK
 # ---------------------------------------------------------------------------------------------------------------------
-def _derisk_one(seed):
-    # WITH the reset (the fix): render the sequence, score exact, check moat.
-    cq_fix = ResetFrameSlotCQ(seed=seed)
+def _derisk_one(seed, reset_scope=None):
+    # WITH the reset (the fix): render the sequence, score exact, check moat. `reset_scope=None` (default) is the
+    # shipped whole-bridge wash-out; `True` runs the SAME de-risk with the wash-out bounded to the producer region
+    # (an equivalence arm -- the producer's own result must not move).
+    fix_factory = _make_reset if not reset_scope else _make_reset_scoped
+    cq_fix = fix_factory(seed)
     cq_fix.learn()
     fix_surfaces, _prod, moat_calls, moat_produced = _render_sequence(cq_fix)
     fix_exact = _sequence_exact(fix_surfaces)
@@ -216,11 +711,11 @@ def _derisk_one(seed):
     ctl_exact = _sequence_exact(ctl_surfaces)
 
     # POSITION-INDEPENDENCE with the fix (must hold) vs without (may fail on 100/101).
-    fix_posindep, fix_pos_surf = _position_independence(_make_reset, seed)
+    fix_posindep, fix_pos_surf = _position_independence(fix_factory, seed)
     ctl_posindep, ctl_pos_surf = _position_independence(_make_plain, seed)
 
     return {
-        "seed": seed,
+        "seed": seed, "reset_scope": ("region" if reset_scope else None),
         "fix_exact": fix_exact, "ctl_exact": ctl_exact,
         "fix_surfaces": fix_surfaces, "ctl_surfaces": ctl_surfaces,
         "fix_posindep": fix_posindep, "ctl_posindep": ctl_posindep,
@@ -250,16 +745,16 @@ def _demo(seed=100):
         print(f"      render-exact {exact:.2f}, moat-calls-on-abstain {mc}\n")
 
 
-def _derisk(seeds):
+def _derisk(seeds, reset_scope=None):
     print(f"EMERGE-61 de-risk: close the render-ORDER tail via an inter-utterance wash-out (post-init state reset); "
           f"render-exact-in-sequence -> ~1.00 + position-independence + causal (un-reset swaps) + moat; "
-          f"{len(seeds)}-seed", flush=True)
+          f"{len(seeds)}-seed" + ("  [wash-out SCOPED to the producer region]" if reset_scope else ""), flush=True)
     t0 = time.time()
     err = None
     per = []
     try:
         for s in seeds:
-            d = _derisk_one(s)
+            d = _derisk_one(s, reset_scope=reset_scope)
             per.append(d)
             print(f"  [seed {s}] FIX exact {d['fix_exact']:.2f} pos-indep {int(d['fix_posindep'])} | "
                   f"CTL(un-reset) exact {d['ctl_exact']:.2f} pos-indep {int(d['ctl_posindep'])} | "
@@ -352,7 +847,8 @@ def _derisk(seeds):
         "task": ("close EMERGE-60's render-ORDER tail: render-exact-in-sequence -> ~1.00 on all 6 seeds (robin as the "
                  "5th emit) + position-independence (same fact renders identically regardless of prior productions) + "
                  "causal (un-reset control swaps) + moat 0 on abstains; >=6 seeds"),
-        "seeds": list(seeds), "elapsed_seconds": round(time.time() - t0, 1),
+        "seeds": list(seeds), "reset_scope": ("region" if reset_scope else None),
+        "elapsed_seconds": round(time.time() - t0, 1),
         "aggregate": None if err else {
             "fix_render_exact": round(fix_exact, 4), "ctl_render_exact": round(ctl_exact, 4),
             "fix_position_independent_all_seeds": bool(fix_posindep_all),
@@ -367,11 +863,13 @@ def _derisk(seeds):
                         "identically regardless of prior productions) -- the productions are made genuinely independent, "
                         "not merely nudged. The gate-first moat is untouched. NO sim/ edit."),
     }
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(summary, indent=2, default=str))
+    # the SCOPED arm writes its OWN artifact -- it must never overwrite the shipped default-path result.
+    out = OUT if not reset_scope else OUT.with_name(OUT.stem + "_scoped.json")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(summary, indent=2, default=str))
     print("\n" + "=" * 118, flush=True)
     print(f"[emerge61] VERDICT: {verdict}", flush=True)
-    print(f"[emerge61] wrote {OUT}\n" + "=" * 118, flush=True)
+    print(f"[emerge61] wrote {out}\n" + "=" * 118, flush=True)
     return 0 if (err is None and go) else 1
 
 
@@ -381,9 +879,17 @@ def main():
     ap.add_argument("--seeds", type=int, nargs="+", default=[42, 43, 44, 100, 101, 102])
     ap.add_argument("--demo", action="store_true")
     ap.add_argument("--derisk", action="store_true")
+    ap.add_argument("--reset-scope", choices=["none", "region"], default="none",
+                    help="wash-out scope: 'none' (default) = the shipped whole-bridge reset; 'region' = bounded to the "
+                         "producer region's own neurons (writes a separate *_scoped.json artifact)")
+    ap.add_argument("--verify-scope", action="store_true",
+                    help="verify the scoping change: the default path is BYTE-IDENTICAL to the pre-change code (hashed "
+                         "array-by-array) and a scoped wash-out never writes outside the producer region")
     a = ap.parse_args()
+    if a.verify_scope:
+        return _verify_scope(a.seed)
     if a.derisk:
-        return _derisk(a.seeds)
+        return _derisk(a.seeds, reset_scope=(a.reset_scope == "region"))
     _demo(a.seed)
     return 0
 

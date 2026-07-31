@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-18
+---
+
 # A5 — make the OneBrainComposer speed-competitive, then make it the default + retire the legacy numpy runtime
 
 **Date:** 2026-06-18. **Status:** design (deep-research-first prep). **Owner of execution:** a FRESH-FOCUS session with a

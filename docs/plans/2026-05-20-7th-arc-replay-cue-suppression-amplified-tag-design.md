@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-20
+---
+
 # 7th arc: targeted cue-suppression-during-REPLAY + amplified engram-tag stim + persistent PFC-frame (design)
 
 > **For Claude / autonomous continuation:** This is the **design** for

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-03
+---
+
 # Content-selection / dialogue-Control layer — design (2026-06-03)
 
 **Goal:** add the missing **Control** function — deciding *what to say next* so dialogue stays

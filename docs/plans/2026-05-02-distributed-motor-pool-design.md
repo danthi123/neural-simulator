@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-02
+---
+
 # 2026-05-02 — Distributed motor pool architecture (Pulvermüller G.20)
 
 After 9 negative architectural followups, the 28.5% W→A ceiling is robust

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-23
+---
+
 # Generative replay: design — the hippocampal-prefrontal replay loop with mode-unification, the third leg of the conversational-path reframe
 
 ## Status

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-25
+---
+
 # Direction 4 design: cross-bridge composition on bio_brain_regions (mirror G.20 sparse 5-bridge pattern)
 
 **Date:** 2026-05-25

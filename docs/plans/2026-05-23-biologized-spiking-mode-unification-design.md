@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-23
+---
+
 # Biologized spiking theta-gamma mode-unification: design — implement order-bearing AND order-invariant readout from one spiking-substrate encoded code on the project's validated substrate
 
 ## Status

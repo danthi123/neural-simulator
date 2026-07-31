@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-16
+---
+
 # Generator Increment 3 — scaled capacity scan, checkpointable/resumable
 
 > **For Claude:** REQUIRED SUB-SKILL: superpowers:subagent-driven-development. User-directed (2026-05-16): "scale to whatever max reasonably fits my hardware; runnable so I can pause without killing it for gaming." Autonomous design calls documented below.

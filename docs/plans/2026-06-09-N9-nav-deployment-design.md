@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-09
+---
+
 # N9 RPE Loop — Nav Deployment Design
 
 **Date:** 2026-06-09 (code-architect pass, controller-reviewed)

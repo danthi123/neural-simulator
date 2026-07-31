@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-18
+---
+
 # Option B — Engram-Bootstrapped Temporal-Credit GENERATIVE Composition (in-bridge) Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development to implement this plan task-by-task (standing autonomy pre-selects Subagent-Driven, this session). Task 5 is CONTROLLER-ONLY (not a subagent task) — bring it back to the controller.

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-22
+---
+
 # Vocabulary scaling of the biologized compositional capability -- design
 
 ## Context

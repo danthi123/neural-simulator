@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-20
+---
+
 # Design: G3 — Persistence across sessions
 
 **Date:** 2026-04-20 (sketched while G2 probe runs)

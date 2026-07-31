@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-05
+---
+
 # Conversational-path cheat/shortcut conversion — full scope + phased plan — 2026-06-05
 
 > Owner directive: "fully scope and plan out phases conversion of all remaining cheats/shortcuts that are

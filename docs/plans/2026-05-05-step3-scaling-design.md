@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-05
+---
+
 # Step 3 — scale 2D gridworld + visual cortex
 
 **Date:** 2026-05-05

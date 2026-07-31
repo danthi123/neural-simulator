@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-16
+---
+
 # G1 Follow-up Branches — Pre-staged Design (executes on the Task-10 verdict)
 
 > **For Claude:** Pre-staged per the autonomous-runs "pre-stage parallel

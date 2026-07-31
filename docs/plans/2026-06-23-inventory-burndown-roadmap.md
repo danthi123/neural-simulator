@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-23
+---
+
 # Inventory burndown roadmap — close out the cheats / integration / optimization / hardware gaps (2026-06-23)
 
 > **Source:** `research/findings/2026-06-23-cheats-shortcuts-integration-inventory.md` (the definitive 4-dimension inventory).

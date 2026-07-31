@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-25
+---
+
 # Prior mechanism-class audit + direction selection guide (2026-05-25)
 
 > Built during the P-v3 rediscovery cleanup. Purpose: prevent future

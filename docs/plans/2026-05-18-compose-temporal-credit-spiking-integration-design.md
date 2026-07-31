@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-18
+---
+
 # Temporal-credit composition in the REAL spiking concept-pool substrate — does the validated mechanism survive the sim.bridge jump? (design)
 
 > Standing autonomy: documented design calls; brainstorm ->

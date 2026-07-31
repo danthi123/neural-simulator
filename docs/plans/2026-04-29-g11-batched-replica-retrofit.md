@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-29
+---
+
 # g11 batched-replica retrofit plan
 
 **Date:** 2026-04-29

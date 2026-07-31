@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-29
+---
+
 # Cluster C v2 — Compartmentalized DA Design
 
 **Date:** 2026-04-29

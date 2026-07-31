@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-17
+---
+
 # Dendritic Credit Assignment — the neuron IS the credit-assignment machinery (spiking, biologically-local, self-contained) — Design (ACTIVE)
 
 > **For Claude:** REQUIRED NEXT SKILL: superpowers:writing-plans (then

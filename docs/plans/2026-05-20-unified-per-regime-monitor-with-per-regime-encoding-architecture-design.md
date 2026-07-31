@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-20
+---
+
 # Unified per-regime monitor + per-regime encoding architecture: the design the previous stage's nuanced FAIL prescribes
 
 **Status:** Design (autonomous; no hand-back). Supersedes the per-regime

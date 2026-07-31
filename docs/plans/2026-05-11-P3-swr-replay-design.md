@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-11
+---
+
 # P3 — SWR sequential replay design
 
 **Date:** 2026-05-11

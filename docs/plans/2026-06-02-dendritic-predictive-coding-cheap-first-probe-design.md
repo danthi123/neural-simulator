@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-02
+---
+
 # Dendritic / predictive-coding cheap-first generalization probe — design — 2026-06-02
 
 ## Premise (owner redirect)

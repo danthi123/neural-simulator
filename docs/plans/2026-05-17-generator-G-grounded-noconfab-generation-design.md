@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-17
+---
+
 # Generator-G — Grounded, No-Confabulation Generation (fluency MUST preserve the no-confab moat) — Design (ACTIVE)
 
 > **For Claude:** REQUIRED NEXT SKILL: superpowers:writing-plans (then

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-02
+---
+
 # 2026-05-02 — Overnight session summary (for morning review)
 
 **Read this first when you wake up.** Detailed findings in

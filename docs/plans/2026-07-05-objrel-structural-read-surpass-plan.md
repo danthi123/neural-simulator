@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-07-05
+---
+
 # Objrel structural-read surpass — plan + decision tree (2026-07-05)
 
 **Goal.** A biological, learned, spiking read-out that reads grammatical **role

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-20
+---
+
 # Design: G2 — Sim-local plasticity bends the learning curve
 
 **Date:** 2026-04-20 (same day as G1 GO; user asleep, autonomous continuation)

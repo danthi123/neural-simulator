@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-04
+---
+
 # One-bridge unification (spine item B) — design
 
 > **Status:** DESIGN — awaiting owner approval before implementation (per the design-before-implement gate).

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-13
+---
+
 # Phase 1 production build plan — the 32-bridge / 2,048-concept learned-graded cortex on the curated Option-B substrate
 
 **Date:** 2026-06-13. **Status:** BUILD (Phase-1 de-risks complete; owner: "proceed autonomously, best judgment"). **Scope:** wire the validated ensemble machinery onto 32 REAL curated graded bridges + validate the full conversational matrix at 2,048 concepts. Mostly reuse; one new corpus generator. NO `sim/` edits.

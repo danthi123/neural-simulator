@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-21
+---
+
 # Shortcut #3 — fold the spiking K-way sequencer into the production composer, retire the host `_scan` (build plan, 2026-06-21)
 
 **Type:** WIRING build (compose already-de-risked pieces — NOT a new mechanism). The deep-research gate does **NOT**

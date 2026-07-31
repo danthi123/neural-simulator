@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-20
+---
+
 # Theta-gamma mode-unification architecture design (next staged arc after the unified per-regime monitor's empirical FAIL)
 
 > **For Claude / autonomous continuation:** This document is the **design** for the theta-gamma mode-unification stage. After approval, the writing-plans skill produces the TDD implementation plan, then subagent-driven-development builds Task 0..Task 5 with adversarial review and controller-only decisive run. Mirrors the prior 4 arcs' (Stage-1, SPEAR, Pirazzini, Unified) discipline exactly.

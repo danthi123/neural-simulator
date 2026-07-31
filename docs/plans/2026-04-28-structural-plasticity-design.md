@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-28
+---
+
 # Cheat #5 closure attempt: Structural Plasticity (axon pruning) — Design
 
 **Status:** design. Implementation plan to follow.

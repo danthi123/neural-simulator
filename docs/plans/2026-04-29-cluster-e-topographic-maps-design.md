@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-29
+---
+
 # Cluster E — Topographic Maps + Connectivity Refinement Design
 
 **Date:** 2026-04-29

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-01
+---
+
 # Text interaction infrastructure: design
 
 **Status:** Design (2026-05-01)

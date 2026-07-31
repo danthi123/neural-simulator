@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-17
+---
+
 # Scaled Subword Spiking Language Model — Design (Generator-S)
 
 > **For Claude:** REQUIRED NEXT SKILL: superpowers:writing-plans (then

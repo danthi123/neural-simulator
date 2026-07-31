@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-07-07
+---
+
 # D1 build spec — spiking Burst-Dependent Plasticity (BDSP / microcircuit) on the two-compartment substrate
 
 > The cheapest-first de-risk of the deep-lever research gate (`research/findings/2026-07-07-deep-lever-research-gate-spiking-deep-credit.md`). From the D0 read (BurstCCN repo + Payeur 2021 + Stuck-Naud 2024 + Sacramento-Senn 2018, verified). Goal: reproduce the confirmed EMERGE-1 rate-scale **depth-2** result **on spikes**. **Primary rule = microcircuit** (EMERGE-5c: noise-robust); Burstprop = cheaper first arm.

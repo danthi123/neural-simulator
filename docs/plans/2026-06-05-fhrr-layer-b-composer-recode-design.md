@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-05
+---
+
 # FHRR-on-bridge layer (b) — recode the production composer onto RF phasor + complex synapses — design — 2026-06-05
 
 > **For Claude:** layer (b) of the owner-greenlit full FHRR-on-bridge feature

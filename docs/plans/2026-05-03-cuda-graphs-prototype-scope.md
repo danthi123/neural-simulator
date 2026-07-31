@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-03
+---
+
 # CUDA Graphs prototype — scope and analysis
 
 **Date:** 2026-05-03 (autonomous overnight)

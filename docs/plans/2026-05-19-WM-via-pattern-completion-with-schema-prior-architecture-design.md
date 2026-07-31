@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-19
+---
+
 # Design: working-memory readout of the current binding via the
 # specificity-preserving hippocampal pattern-completion pathway, with
 # the consolidated neocortical schema as a generalizable prior only

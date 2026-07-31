@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-18
+---
+
 # Q5 — Integrated biology-grounded CLOSED-LOOP architecture: compositional capability hypothesized EMERGENT from composing the project's already-validated subsystems the way real biology integrates them (NOT another isolated mechanism) (design)
 
 > Standing autonomy: documented design calls; brainstorm ->

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-01
+---
+
 # Sim Architecture Roadmap — Post-Cheat-5 Closure
 
 **Date:** 2026-05-01

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-20
+---
+
 # 8th arc: pool-readout substitution (empirically motivated; supersedes the earlier "dedicated region" design)
 
 > **Note:** This design SUPERSEDES the earlier `docs/plans/2026-05-20-8th-arc-dedicated-compositional-readout-region-design.md` (commit `be78d14`). The earlier design proposed a dedicated readout REGION but discovered the brain-region framework doesn't support post-construction `add_region`. The empirical evidence from the pool-vs-lang_output multi-seed diagnostic (commit `4d6a3a6`) showed that the simpler approach -- reading directly from existing concept pools via `cp_firing_states` -- ALREADY consistently outperforms lang_output cosine by +13.3pp. This design pivots to that simpler implementation.

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-10
+---
+
 # Navigation + Conversational single-instance unification — design (roadmap step 2)
 
 > **Status:** DESIGN — read-only research deliverable. Awaiting controller review + cheapest-first de-risk

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-20
+---
+
 # Theta-gamma mode-unification implementation plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans or

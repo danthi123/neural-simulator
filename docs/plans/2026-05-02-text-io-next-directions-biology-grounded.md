@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-02
+---
+
 # 2026-05-02 — Strategic options for text I/O: biology-grounded paths forward
 
 After overnight session establishing W→A 28.5% (p=0.027 robust) ceiling under

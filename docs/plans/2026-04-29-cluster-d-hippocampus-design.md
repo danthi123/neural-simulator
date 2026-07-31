@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-29
+---
+
 # Cluster D — Hippocampus Trisynaptic Loop + Replay Design
 
 **Date:** 2026-04-29

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-11
+---
+
 # Path 3 design — BridgeMemory API (LLM-callable memory subsystem)
 
 **Date:** 2026-05-11 05:25 EDT

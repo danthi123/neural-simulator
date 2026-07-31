@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-08
+---
+
 # Spiking substantia-nigra (SNc) actor-critic — replace the host scalar dopamine
 
 **Date:** 2026-06-08

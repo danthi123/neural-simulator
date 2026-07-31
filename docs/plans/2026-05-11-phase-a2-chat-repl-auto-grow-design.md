@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-11
+---
+
 # Phase A2 — chat_repl --auto-grow integration design
 
 **Date:** 2026-05-11 04:55 EDT

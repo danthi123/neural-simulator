@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-11
+---
+
 # Multi-bridge learned-embedding: cheap-first de-risk DESIGN (the large-vocabulary route)
 
 > **Status:** present-before-build (DESIGN ONLY). This is the standing "deep research + design BEFORE

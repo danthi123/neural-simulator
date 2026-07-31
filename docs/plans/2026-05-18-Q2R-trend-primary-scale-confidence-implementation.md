@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-18
+---
+
 # Q2R — Trend-primary scale-confidence (fresh larger-KB experiment) Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (standing autonomy pre-selects Subagent-Driven, this session). Task 5 is CONTROLLER-ONLY — bring it back.

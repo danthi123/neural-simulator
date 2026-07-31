@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-11
+---
+
 # P6 — Broca's area + compositional syntax design
 
 **Date:** 2026-05-11

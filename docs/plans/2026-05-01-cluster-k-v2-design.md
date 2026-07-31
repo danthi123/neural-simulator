@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-01
+---
+
 # Cluster K v2: Functional visual cortex with action-driving IT → cortex
 
 **Status:** Design (2026-05-01)

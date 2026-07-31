@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-15
+---
+
 # Analog-substrate learned cortex — build plan (the brain-based escape for the rate→spike wall)
 
 > **Status:** the concrete path forward after the Phase-B arc decisively mapped the rate→spike wall

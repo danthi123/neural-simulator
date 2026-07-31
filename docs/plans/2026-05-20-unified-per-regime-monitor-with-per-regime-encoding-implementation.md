@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-20
+---
+
 # Unified per-regime monitor + per-regime encoding — Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: superpowers:executing-plans, task

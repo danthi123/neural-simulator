@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-23
+---
+
 # 160-concept ensemble vocabulary scaling: 5 sparse-distributed bridges × 32 concepts per bridge at K=16, per-bridge biologized grounded-composition tested against the frozen 0.80 bar
 
 ## Status

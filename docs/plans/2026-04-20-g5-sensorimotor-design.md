@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-20
+---
+
 # Design: G5 — Sensorimotor loop
 
 **Date:** 2026-04-20 (sketched overnight)

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-05
+---
+
 # Apical-basal dendritic learning — design doc (CONDITIONAL on
 # global-DA-feedback failing)
 

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-17
+---
+
 # Resonate-loop CUDA-graph refactor — implementation design (the orchestration 11× win)
 
 **Date:** 2026-06-17

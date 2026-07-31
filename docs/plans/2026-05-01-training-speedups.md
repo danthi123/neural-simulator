@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-01
+---
+
 # Training-speedup playbook
 
 **Status (updated 2026-05-02):**

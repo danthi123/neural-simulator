@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-19
+---
+
 # Regime-correct compositional retrieval: a constructive design grounded in the brain's complementary-learning-systems division of labor
 
 **Status:** Design (autonomous; no hand-back). Supersedes the integrated-loop

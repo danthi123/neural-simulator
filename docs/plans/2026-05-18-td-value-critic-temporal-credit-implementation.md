@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-18
+---
+
 # TD Value-Function Critic — Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development to implement this plan task-by-task (controller stays in this session; fresh subagent per task; two-stage spec+quality review; dedicated adversarial reviewer for the two load-bearing modules BEFORE Phase B; controller trust-but-verify each git diff with protected modules byte-empty; Task 5 is controller-only).

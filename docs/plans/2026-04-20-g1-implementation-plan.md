@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-20
+---
+
 # G1 Implementation Plan — Dataset → Encoder → Sim → Decoder → Loss
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.

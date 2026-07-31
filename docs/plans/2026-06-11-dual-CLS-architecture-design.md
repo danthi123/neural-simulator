@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-11
+---
+
 # Dual / complementary-learning-systems (CLS) architecture — the design opening move (Option B pivot)
 
 **Status:** READ-ONLY deep-research + design opening move (the project's standing "deep research FIRST at a new

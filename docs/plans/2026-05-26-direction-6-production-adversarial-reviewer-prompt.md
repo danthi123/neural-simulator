@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-26
+---
+
 # Direction 6 PRODUCTION Adversarial Reviewer Prompt (pre-staged 2026-05-26)
 
 Status: Direction 6 (D4 dedicated-pool extended to V=32 per bridge x 5 bridges = 160 cross-bridge concepts) SMOKE in flight ~13:30 EDT 2026-05-26 (background; watcher bgkp5r743; ETA 2.5 hr). Production launch conditional on smoke PASS/PARTIAL per the runner discipline.

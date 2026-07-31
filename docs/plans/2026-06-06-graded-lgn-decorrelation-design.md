@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-06
+---
+
 # Graded LGN decorrelation stage — design (the biology-faithful on-substrate whitening) — 2026-06-06
 
 > **For the owner:** this design REQUIRES a protected `sim/` edit (a graded recurrent-inhibition term). It is presented

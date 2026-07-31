@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-21
+---
+
 # World & Sensory Scaling Roadmap
 
 > Forward roadmap for sensory acuity, world richness, and artificial-life scaling.

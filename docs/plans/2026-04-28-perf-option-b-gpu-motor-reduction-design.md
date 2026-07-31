@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-28
+---
+
 # Perf Option B — GPU-side motor reduction
 
 **Status:** design + patch ready to apply behind a flag. Not yet committed.

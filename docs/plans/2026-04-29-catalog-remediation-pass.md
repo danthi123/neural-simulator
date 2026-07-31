@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-29
+---
+
 # Catalog-Driven Remediation Pass
 
 **Date:** 2026-04-29

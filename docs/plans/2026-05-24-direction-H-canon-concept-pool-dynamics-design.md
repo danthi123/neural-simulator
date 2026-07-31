@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-24
+---
+
 # Direction H: stronger (canon) concept-pool dynamics — design
 
 **Date:** 2026-05-24

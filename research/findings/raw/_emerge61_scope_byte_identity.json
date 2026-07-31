@@ -1,0 +1,233 @@
+{
+  "probe": "emerge61_scope_byte_identity",
+  "seed": 100,
+  "checks": {
+    "unscoped_snapshot_byte_identical": true,
+    "snapshot_keys": [
+      "cp_conductance_g_e",
+      "cp_conductance_g_i",
+      "cp_conductance_g_nmda",
+      "cp_conductance_g_nmda_rise",
+      "cp_firing_states",
+      "cp_membrane_potential_v",
+      "cp_recovery_variable_u",
+      "cp_stp_u",
+      "cp_stp_x"
+    ],
+    "default_reset_idx_is_None": true,
+    "state_actually_changes": true,
+    "changed_arrays": [
+      "cp_firing_states",
+      "cp_membrane_potential_v",
+      "cp_recovery_variable_u",
+      "cp_stp_u"
+    ],
+    "stp_shape_stable_during_byte_identity_arms": true,
+    "unscoped_restore_returns_post_init_bytes": true,
+    "twin_bridges_identical_at_init": true,
+    "twin_bridges_identical_when_dirty": true,
+    "new_vs_legacy_restore_byte_identical": true,
+    "byte_identical_array_by_array": {
+      "cp_membrane_potential_v": true,
+      "cp_recovery_variable_u": true,
+      "cp_conductance_g_e": true,
+      "cp_conductance_g_i": true,
+      "cp_conductance_g_nmda": true,
+      "cp_conductance_g_nmda_rise": true,
+      "cp_firing_states": true,
+      "cp_stp_x": true,
+      "cp_stp_u": true
+    },
+    "scramble_dirties_every_array": true,
+    "twins_scrambled_identically": true,
+    "scrambled_new_vs_legacy_byte_identical": true,
+    "scrambled_restore_returns_post_init_bytes": true,
+    "n_coresident_neurons": 4,
+    "scoped_idx_equals_region_indices": true,
+    "scoped_idx_repr": "slice(0, 180, None)",
+    "scoped_reset_preserves_coresident_state": true,
+    "scoped_reset_restores_producer_state": true,
+    "unscoped_reset_ERASES_coresident_state": true,
+    "scoped_surfaces_match_unscoped": true,
+    "scoped_sequence_exact": 1.0,
+    "unscoped_sequence_exact": 1.0,
+    "scoped_position_independent": true,
+    "unscoped_position_independent": true,
+    "scoped_position_surfaces": {
+      "1": "the robin can breathe",
+      "3": "the robin can breathe",
+      "5": "the robin can breathe"
+    },
+    "unscoped_position_surfaces": {
+      "1": "the robin can breathe",
+      "3": "the robin can breathe",
+      "5": "the robin can breathe"
+    },
+    "scoped_position_surfaces_match_unscoped": true,
+    "moat_calls_on_abstain_scoped": 0
+  },
+  "hashes": {
+    "post_init": {
+      "cp_membrane_potential_v": "ade9e0b3d01ddcd64f5696e021ef948f",
+      "cp_recovery_variable_u": "c87e6815235167c5f6095da4d79c8ba1",
+      "cp_conductance_g_e": "1578052d765eb7adf86c02da56561f59",
+      "cp_conductance_g_i": "1578052d765eb7adf86c02da56561f59",
+      "cp_conductance_g_nmda": "1578052d765eb7adf86c02da56561f59",
+      "cp_conductance_g_nmda_rise": "1578052d765eb7adf86c02da56561f59",
+      "cp_firing_states": "5e561e3548e9182f173738a72eb77d7b",
+      "cp_stp_x": "8924cd2225ceb4aef3df66a0356372ac",
+      "cp_stp_u": "6ece057b04be9b0dca1a16a183db4cd8"
+    },
+    "after_driven_productions": {
+      "cp_membrane_potential_v": "b4d55c841fd41fe0404017308a6a513b",
+      "cp_recovery_variable_u": "7f3bac20406d1139f4dd2501f7fc4437",
+      "cp_conductance_g_e": "1578052d765eb7adf86c02da56561f59",
+      "cp_conductance_g_i": "1578052d765eb7adf86c02da56561f59",
+      "cp_conductance_g_nmda": "1578052d765eb7adf86c02da56561f59",
+      "cp_conductance_g_nmda_rise": "1578052d765eb7adf86c02da56561f59",
+      "cp_firing_states": "b21fe8db8aff22fe739bcced682fa480",
+      "cp_stp_x": "8924cd2225ceb4aef3df66a0356372ac",
+      "cp_stp_u": "9660bbda7973d63ae365dfa46cdddf0b"
+    },
+    "after_unscoped_restore": {
+      "cp_membrane_potential_v": "ade9e0b3d01ddcd64f5696e021ef948f",
+      "cp_recovery_variable_u": "c87e6815235167c5f6095da4d79c8ba1",
+      "cp_conductance_g_e": "1578052d765eb7adf86c02da56561f59",
+      "cp_conductance_g_i": "1578052d765eb7adf86c02da56561f59",
+      "cp_conductance_g_nmda": "1578052d765eb7adf86c02da56561f59",
+      "cp_conductance_g_nmda_rise": "1578052d765eb7adf86c02da56561f59",
+      "cp_firing_states": "5e561e3548e9182f173738a72eb77d7b",
+      "cp_stp_x": "8924cd2225ceb4aef3df66a0356372ac",
+      "cp_stp_u": "6ece057b04be9b0dca1a16a183db4cd8"
+    },
+    "new_default_restore": {
+      "cp_membrane_potential_v": "ade9e0b3d01ddcd64f5696e021ef948f",
+      "cp_recovery_variable_u": "c87e6815235167c5f6095da4d79c8ba1",
+      "cp_conductance_g_e": "1578052d765eb7adf86c02da56561f59",
+      "cp_conductance_g_i": "1578052d765eb7adf86c02da56561f59",
+      "cp_conductance_g_nmda": "1578052d765eb7adf86c02da56561f59",
+      "cp_conductance_g_nmda_rise": "1578052d765eb7adf86c02da56561f59",
+      "cp_firing_states": "5e561e3548e9182f173738a72eb77d7b",
+      "cp_stp_x": "8924cd2225ceb4aef3df66a0356372ac",
+      "cp_stp_u": "6ece057b04be9b0dca1a16a183db4cd8"
+    },
+    "legacy_restore": {
+      "cp_membrane_potential_v": "ade9e0b3d01ddcd64f5696e021ef948f",
+      "cp_recovery_variable_u": "c87e6815235167c5f6095da4d79c8ba1",
+      "cp_conductance_g_e": "1578052d765eb7adf86c02da56561f59",
+      "cp_conductance_g_i": "1578052d765eb7adf86c02da56561f59",
+      "cp_conductance_g_nmda": "1578052d765eb7adf86c02da56561f59",
+      "cp_conductance_g_nmda_rise": "1578052d765eb7adf86c02da56561f59",
+      "cp_firing_states": "5e561e3548e9182f173738a72eb77d7b",
+      "cp_stp_x": "8924cd2225ceb4aef3df66a0356372ac",
+      "cp_stp_u": "6ece057b04be9b0dca1a16a183db4cd8"
+    },
+    "scrambled": {
+      "cp_membrane_potential_v": "b322c974260122ba2003352cb292a43a",
+      "cp_recovery_variable_u": "0aab787d20ad60eccc75aaae24ec2fca",
+      "cp_conductance_g_e": "86317c38a0e0aaa39bf991fd46249599",
+      "cp_conductance_g_i": "215346a76d8fec1e1027e856ab0f60ea",
+      "cp_conductance_g_nmda": "91fcd812dd182ea99fea717d3f0b5838",
+      "cp_conductance_g_nmda_rise": "67c4aeb7b67333f35eec0421056643b9",
+      "cp_firing_states": "2c0d9c7bba01433a05eb1e3ca9807f8a",
+      "cp_stp_x": "1c3b1d43e03670c4f074f6a2da5900ed",
+      "cp_stp_u": "5a3a78d9a92c1b88cc2c0c5134df4056"
+    },
+    "new_default_restore_from_scrambled": {
+      "cp_membrane_potential_v": "ade9e0b3d01ddcd64f5696e021ef948f",
+      "cp_recovery_variable_u": "c87e6815235167c5f6095da4d79c8ba1",
+      "cp_conductance_g_e": "1578052d765eb7adf86c02da56561f59",
+      "cp_conductance_g_i": "1578052d765eb7adf86c02da56561f59",
+      "cp_conductance_g_nmda": "1578052d765eb7adf86c02da56561f59",
+      "cp_conductance_g_nmda_rise": "1578052d765eb7adf86c02da56561f59",
+      "cp_firing_states": "5e561e3548e9182f173738a72eb77d7b",
+      "cp_stp_x": "8924cd2225ceb4aef3df66a0356372ac",
+      "cp_stp_u": "6ece057b04be9b0dca1a16a183db4cd8"
+    },
+    "legacy_restore_from_scrambled": {
+      "cp_membrane_potential_v": "ade9e0b3d01ddcd64f5696e021ef948f",
+      "cp_recovery_variable_u": "c87e6815235167c5f6095da4d79c8ba1",
+      "cp_conductance_g_e": "1578052d765eb7adf86c02da56561f59",
+      "cp_conductance_g_i": "1578052d765eb7adf86c02da56561f59",
+      "cp_conductance_g_nmda": "1578052d765eb7adf86c02da56561f59",
+      "cp_conductance_g_nmda_rise": "1578052d765eb7adf86c02da56561f59",
+      "cp_firing_states": "5e561e3548e9182f173738a72eb77d7b",
+      "cp_stp_x": "8924cd2225ceb4aef3df66a0356372ac",
+      "cp_stp_u": "6ece057b04be9b0dca1a16a183db4cd8"
+    }
+  },
+  "regions": {
+    "slots": [
+      0,
+      179,
+      180
+    ],
+    "_anchor": [
+      180,
+      183,
+      4
+    ]
+  },
+  "structural_plasticity_frozen_for_surface_arms": true,
+  "surfaces": {
+    "unscoped": [
+      "the owl can fly",
+      "the minnow can swim",
+      "the penguin walks",
+      "the pike lurks",
+      "the robin can breathe"
+    ],
+    "scoped": [
+      "the owl can fly",
+      "the minnow can swim",
+      "the penguin walks",
+      "the pike lurks",
+      "the robin can breathe"
+    ]
+  },
+  "stp_resize": {
+    "rounds": 6,
+    "unscoped": {
+      "stp_len_before": 18,
+      "stp_len_after": 14,
+      "resized": true,
+      "reset_raised": "ValueError('could not broadcast input array from shape (18,) into shape (14,)')"
+    },
+    "scoped": {
+      "stp_len_before": 18,
+      "stp_len_after": 14,
+      "resized": true,
+      "reset_raised": null
+    }
+  },
+  "scope_residual": {
+    "scoped": true,
+    "n_synapses": 12,
+    "stp_present": true,
+    "synapses_touching_scope": 0,
+    "note": "A neuron-scoped wash-out does NOT restore the PER-SYNAPSE STP arrays (cp_stp_x / cp_stp_u), because a neuron index does not address them. On THIS bridge that omission is inert iff `synapses_touching_scope` == 0 (measured above; the slots region is built with internal_density=0.0 and no pathways). On a shared bridge where synapses DO target the producer region, the named next mechanism is to map synapse->post-neuron through the CSR and scope the synapse arrays by post-membership -- NOT attempted here, and NOT claimed."
+  },
+  "PASS": true,
+  "critical_checks": [
+    "unscoped_snapshot_byte_identical",
+    "default_reset_idx_is_None",
+    "state_actually_changes",
+    "stp_shape_stable_during_byte_identity_arms",
+    "unscoped_restore_returns_post_init_bytes",
+    "twin_bridges_identical_at_init",
+    "twin_bridges_identical_when_dirty",
+    "new_vs_legacy_restore_byte_identical",
+    "scramble_dirties_every_array",
+    "twins_scrambled_identically",
+    "scrambled_new_vs_legacy_byte_identical",
+    "scrambled_restore_returns_post_init_bytes",
+    "scoped_idx_equals_region_indices",
+    "scoped_reset_preserves_coresident_state",
+    "unscoped_reset_ERASES_coresident_state",
+    "scoped_reset_restores_producer_state",
+    "scoped_surfaces_match_unscoped",
+    "scoped_position_independent",
+    "unscoped_position_independent",
+    "scoped_position_surfaces_match_unscoped"
+  ]
+}

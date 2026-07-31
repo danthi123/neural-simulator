@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-11
+---
+
 # P5 — Ventral semantic stream + Wernicke's area design
 
 **Date:** 2026-05-11

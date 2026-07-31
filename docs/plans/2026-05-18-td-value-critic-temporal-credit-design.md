@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-18
+---
+
 # TD value-function critic — biologically-canonical temporal credit assignment (design)
 
 > Standing autonomy: documented design calls (NOT one-question-at-a-time);

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-12
+---
+
 # P5 sensory grounding via Cluster K v2 — design
 
 **Date:** 2026-05-12

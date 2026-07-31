@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-05
+---
+
 # Full FHRR-on-bridge feature — plan + layer-(a) complex-synapse-bind de-risk design — 2026-06-05
 
 > **For Claude:** owner-FUNDED + greenlit "proceed with the full FHRR-on-bridge feature now" (after the RF-on-bridge

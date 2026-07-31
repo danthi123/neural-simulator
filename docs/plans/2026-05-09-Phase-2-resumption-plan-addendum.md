@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-09
+---
+
 # 2026-05-09 EVENING — Phase 2 resumption plan ADDENDUM
 
 Addendum to `docs/plans/2026-05-09-Phase-2-resumption-plan.md` (drafted

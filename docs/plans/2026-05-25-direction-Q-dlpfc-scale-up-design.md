@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-25
+---
+
 # Direction Q design: dlpfc_wm scale-up to test Wang 2002 NMDA persistent activity at biological scale
 
 **Date:** 2026-05-25

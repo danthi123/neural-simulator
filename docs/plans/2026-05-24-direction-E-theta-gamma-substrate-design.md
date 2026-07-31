@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-24
+---
+
 # Direction E theta-gamma substrate biologization — design
 
 **Date:** 2026-05-24

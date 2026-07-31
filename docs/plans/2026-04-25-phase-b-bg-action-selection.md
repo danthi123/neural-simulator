@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-25
+---
+
 # Phase B: BG-style Action Selection Module
 
 **Status:** Plan only (Phase A complete; awaiting direction to proceed)

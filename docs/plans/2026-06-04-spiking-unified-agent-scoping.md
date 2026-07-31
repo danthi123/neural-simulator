@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-04
+---
+
 # Scoping note — the spiking realization of the unified agent (pure-biology backlog #1)
 
 **Date:** 2026-06-04. **Status:** scoping for an owner go/no-go. Plain language; no undefined terms.

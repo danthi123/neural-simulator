@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-11
+---
+
 # Realigned plan: sim as standalone conversational agent (catalog-grounded v3)
 
 **Date:** 2026-05-11 (post-user-checkin v3)

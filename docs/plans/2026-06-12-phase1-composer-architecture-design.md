@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-12
+---
+
 # Phase 1 of "step 3 true cortex" — COMPOSER ARCHITECTURE at production scale (2,048 concepts) + the A-vs-B de-risk that decides it
 
 > **Status:** present-before-build. READ-ONLY design (no `sim/` edit, no GPU run, no bridge built). The single

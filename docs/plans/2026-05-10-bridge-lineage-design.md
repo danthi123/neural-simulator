@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-10
+---
+
 # Bridge Lineage Manager — persistent continuous-learning state
 
 **Date:** 2026-05-10 23:35 EDT

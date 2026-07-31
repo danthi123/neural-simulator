@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-24
+---
+
 # Brain-Region Framework Implementation Plan (Session E.2)
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this task-by-task. TDD discipline.

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-24
+---
+
 # Post-(c) direction roadmap — what advances toward conversation AFTER the generative-replay loop is validated (2026-05-24)
 
 > Planning sketch written during the DLPFC-extension GPU wait. Incorporates the

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-25
+---
+
 # Direction 5 Implementation Plan — HYBRID sparse-distributed shared pool ON bio_brain_regions (5 bridges × V=16 = 80 cross-bridge concepts; biology-faithful + Kanerva sparse on a unified architecture)
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development to implement this plan task-by-task.

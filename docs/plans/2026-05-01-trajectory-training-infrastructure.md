@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-01
+---
+
 # Train.1 — Trajectory Training Infrastructure (Imitation Learning via STDP+Reward)
 
 **Date:** 2026-05-01

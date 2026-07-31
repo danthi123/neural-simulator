@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-19
+---
+
 # Phase-factored consolidation architecture (design only)
 
 Online theta-ordered hippocampal episodic encode + a separate offline

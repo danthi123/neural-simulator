@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-24
+---
+
 # Generative replay — TDD implementation plan
 
 > Companion to `docs/plans/2026-05-23-generative-replay-design.md` (commit 97f21c5).

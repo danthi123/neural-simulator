@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-19
+---
+
 # Shared theta-gamma SPEAR + generative-replay conversational stage — Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: superpowers:executing-plans, task by

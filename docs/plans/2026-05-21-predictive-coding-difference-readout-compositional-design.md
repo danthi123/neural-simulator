@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-21
+---
+
 # Compositional readout via predictive-coding difference: design
 
 > **For Claude / autonomous continuation:** This design confronts the

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-09
+---
+
 # 2026-05-09 — Track 3 conversational scaffolding: progress + roadmap
 
 Per the master plan, Track 3 is the biology-only conversational artifact —

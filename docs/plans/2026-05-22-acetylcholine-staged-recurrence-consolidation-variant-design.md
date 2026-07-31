@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-22
+---
+
 # Acetylcholine-staged recurrent excitation: consolidation variant design
 
 > **For Claude / autonomous continuation:** Pre-registered design for

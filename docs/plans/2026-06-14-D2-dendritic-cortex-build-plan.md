@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-14
+---
+
 # D2 — the on-substrate dendritic two-compartment cortex: phased build plan (owner-approved 2026-06-14)
 
 **Status:** APPROVED + IN PROGRESS (owner said "Go" after the D1/D1.5/D1.6 de-risk ladder landed GO/SURVIVES). **Grounding:** `research/findings/2026-06-14-dendritic-substrate-deep-research.md`, `-dendritic-D1-cheap-derisk-GO.md`, `docs/plans/2026-06-14-step3-cortex-fork-resolved-dendritic-D2-decision.md`. **Goal:** replace the conversational composer's idealized exact-inverse binding algebra with a **learned, brain-based, semantically-structured cortex that GENERALIZES** — built on a genuine two-compartment spiking neuron whose dendritic compartment performs the per-input normalization a point neuron provably cannot.

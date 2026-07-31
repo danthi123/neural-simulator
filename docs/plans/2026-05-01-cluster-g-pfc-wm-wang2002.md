@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-01
+---
+
 # Cluster G v1 — PFC Working Memory (Wang 2002 NMDA-mediated bistability)
 
 **Date:** 2026-05-01

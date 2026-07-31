@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-10
+---
+
 # Auto-growth design — sim grows autonomously with the user
 
 **Date:** 2026-05-10

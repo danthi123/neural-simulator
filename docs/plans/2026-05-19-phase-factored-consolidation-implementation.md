@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-19
+---
+
 # Phase-factored consolidation: TDD implementation plan
 
 > **For Claude:** REQUIRED SUB-SKILL: use superpowers:executing-plans to

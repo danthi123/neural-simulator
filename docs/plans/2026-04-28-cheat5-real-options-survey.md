@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-28
+---
+
 # Cheat #5 "real" closure — three architectural options
 
 **Status:** survey. Cheat #5 is currently closed *by design* (2026-04-28, see [`research/findings/2026-04-28-cheat5-v4-results.md`](../../research/findings/2026-04-28-cheat5-v4-results.md)) — v3 MSN lateral inhibition + same-action-only routing achieves the equivalent functional outcome of biological winner-take-all in our reduced model. This survey enumerates what would be needed to close cheat #5 *for real* (i.e., make BG cross-projections behaviorally useful).

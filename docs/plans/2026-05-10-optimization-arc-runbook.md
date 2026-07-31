@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-10
+---
+
 # Optimization arc runbook — tomorrow's session
 
 **Goal:** Validate which optimizations from the perf audit actually

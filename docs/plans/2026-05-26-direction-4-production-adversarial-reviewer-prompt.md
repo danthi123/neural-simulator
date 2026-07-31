@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-26
+---
+
 # Direction 4 PRODUCTION Adversarial Reviewer Prompt (pre-staged 2026-05-26)
 
 Status: Direction 4 bugfix SMOKE = FULL PASS 6/6 (commit efbad3d). All cells multi-seed clear 0.80 bar with margins +0.175 to +0.200 (L=5 OI = 0.983 vs the 0.80 bar). DRAMATICALLY outperforms D5 hybrid at the L=5 cell (0.983 vs D5 0.790 BOUNDARY). D4 PRODUCTION decisive multi-seed run launched ~06:35 EDT 2026-05-26 (full scale; ~7-15 hr ETA; watcher b6bvjv9tg chains the cross-bridge probe on training completion).

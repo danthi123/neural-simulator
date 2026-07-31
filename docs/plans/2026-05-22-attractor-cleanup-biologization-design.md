@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-22
+---
+
 # Biologizing the phase-coded composition layer, step 3: attractor clean-up -- design
 
 ## Context

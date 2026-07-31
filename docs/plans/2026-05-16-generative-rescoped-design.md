@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-16
+---
+
 # Generative conversation — re-scoped design (corrected constraints)
 
 > **Status:** APPROVED for autonomous execution (user delegated +

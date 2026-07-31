@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-13
+---
+
 # Option C de-risk design — can the brain-based spiking-Hebbian learn extract graded semantic structure from REAL text co-occurrence?
 
 **Date:** 2026-06-13. **Status:** DESIGN (controller-verified; implementation + run pending). **Context:** the Phase-1 corpus-source decision (`2026-06-13-phase1-production-corpus-source-design.md`) — Option B (hand-curated within-cluster semantic sub-taxonomy) vs Option C (learn the similarity from real distributional co-occurrence, the brain-faithful path). Per the owner's durable goal (proper brain analogue; honest negatives under strict biology ARE the deliverable; capabilities instrumental), de-risk C cheaply BEFORE committing the multi-day build.

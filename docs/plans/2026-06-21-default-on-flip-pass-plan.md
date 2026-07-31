@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-21
+---
+
 # Default-on flip pass — implementation plan
 
 > The dominant remaining shortcut-closure work, per the definitive inventory

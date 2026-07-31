@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-19
+---
+
 # Remote/consolidated-memory-regime necessity test -- architecture design (design-only)
 
 Status: DESIGN ONLY. No code, no frozen-module edit, no moat edit, no

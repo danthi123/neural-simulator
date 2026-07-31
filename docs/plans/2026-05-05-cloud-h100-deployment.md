@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-05
+---
+
 # Cloud H100 deployment plan — getting maximum value per dollar
 
 **Date:** 2026-05-05

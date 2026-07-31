@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-05
+---
+
 # Arc: lift cue-direction associative recall via SWR sleep-replay consolidation — design — 2026-06-05
 
 > Owner steer (after the cheat-conversion arc): "Pursue an A or D boundary." Picked **D — cue-direction recall** (over

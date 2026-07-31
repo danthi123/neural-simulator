@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-27
+---
+
 # Item 1: Real Perception Arc — Multi-Stage Plan
 
 > **For Claude:** Multi-week plan for replacing the heuristic with real biology-grounded perception.

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-18
+---
+
 # Q2 — Two-module CONSTRAINED-DECODING faithful generation (validated generator proposes, validated no-confab grounded memory vetoes per-token) (design)
 
 > Standing autonomy: documented design calls; brainstorm ->

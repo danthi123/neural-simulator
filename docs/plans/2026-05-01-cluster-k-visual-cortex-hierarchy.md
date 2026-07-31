@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-01
+---
+
 # Cluster K v1 — Visual Cortex Hierarchy (V1→V2→V4→IT)
 
 **Date:** 2026-05-01

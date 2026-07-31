@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-29
+---
+
 # Cluster A — Closed BG Loop Design
 
 **Date:** 2026-04-29

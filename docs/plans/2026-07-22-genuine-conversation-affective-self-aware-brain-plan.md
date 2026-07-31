@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-07-22
+---
+
 # Genuinely-Reasoning, Feeling, Self-Aware, Curious Sim-Brain — a phased, parallelizable build plan
 
 **Date:** 2026-07-22

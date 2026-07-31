@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-25
+---
+
 # Session G v4 (contingency): Action-Attribution Eligibility
 
 > **Status:** Drafted as contingency. Only launch if V3 (positive-only reward

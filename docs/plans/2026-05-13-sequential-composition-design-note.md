@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-13
+---
+
 # Sequential composition for concept pools — design note
 
 **Date:** 2026-05-13

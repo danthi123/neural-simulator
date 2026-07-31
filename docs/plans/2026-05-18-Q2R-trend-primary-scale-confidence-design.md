@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-18
+---
+
 # Q2R — Trend-primary scale-confidence of the VALIDATED constrained-decoding architecture, on a FRESH larger-KB experiment (NOT a Q2 re-score) (design)
 
 > Standing autonomy: documented design calls; brainstorm ->

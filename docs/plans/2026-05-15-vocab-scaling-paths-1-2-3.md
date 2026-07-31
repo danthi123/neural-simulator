@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-15
+---
+
 # Vocab scaling: paths 1-3 for near-future work (post-60-word milestone)
 
 ## Context

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-22
+---
+
 # Vocabulary scaling -- implementation plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans (or

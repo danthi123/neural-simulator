@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-31
+---
+
 # Preparation: Direction (A) richer representation learning at scale -- 2026-05-31
 
 **Owner decision:** pursue (A) -- learn richer, less-overlapping concept representations to push word

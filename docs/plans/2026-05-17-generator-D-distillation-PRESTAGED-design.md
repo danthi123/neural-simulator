@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-17
+---
+
 # Generator-D — Knowledge-Distillation Spiking LM (PRE-STAGED FAIL-branch design)
 
 > **Status: PRE-STAGED, not active.** Written while the decisive

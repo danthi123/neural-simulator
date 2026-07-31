@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-16
+---
+
 # Generative-conversation frontier — options survey (research input, NOT a design)
 
 > **Status:** Research survey. This document does **not** choose a

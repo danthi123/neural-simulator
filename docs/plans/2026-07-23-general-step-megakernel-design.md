@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-07-23
+---
+
 # General-step megakernel — removing the launch-bound ceiling from the sim's inference loop (design, 2026-07-23)
 
 **Origin:** a clock-offset A/B proved the general `_run_one_simulation_step` loop is LAUNCH-BOUND — steps/sec is flat

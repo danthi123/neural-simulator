@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-11
+---
+
 # Semantically-structured cortex — BUILD PLAN (present-ready, ~2–4 weeks)
 
 > **Cost correction (2026-06-11):** earlier drafts said "months-scale." That was wrong — it carried over the cost of the **dendritic-substrate rewrite** (the original option-B path), which the dual/CLS route AVOIDS. This build assembles already-validated pieces; honest cost is **~2–4 weeks** (compute + integration + iteration), NOT months. The genuine months-scale work (the dendritic rewrite) is a separate, deferred path this route does not require.

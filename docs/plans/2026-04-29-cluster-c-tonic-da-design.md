@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-29
+---
+
 # Cluster C v1 — Tonic DA + Phasic Depression Coding Design
 
 **Date:** 2026-04-29

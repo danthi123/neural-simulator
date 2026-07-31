@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-16
+---
+
 # Self-Contained Generator — Increment 2 (data distillation) Implementation Plan
 
 > **For Claude:** REQUIRED SUB-SKILL: superpowers:subagent-driven-development (user authorized autonomous design→plan→implement). Increment 2 only. Data/sequence-level distillation (Kim & Rush 2016) — NOT logit distillation. Teacher = training-time ONLY, code-asserted out of the self-contained runtime.

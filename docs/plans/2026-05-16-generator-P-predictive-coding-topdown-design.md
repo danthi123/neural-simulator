@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-16
+---
+
 # Generator P — Predictive-Coding Top-Down Generative Pathway — Design
 
 > **For Claude:** REQUIRED NEXT SKILL: superpowers:writing-plans (then

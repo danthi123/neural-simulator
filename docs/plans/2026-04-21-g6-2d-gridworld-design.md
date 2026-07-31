@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-21
+---
+
 # Design: G6 — 2D gridworld sensorimotor navigation
 
 **Date:** 2026-04-21 (same day, autonomous continuation after G5.v3 GO)

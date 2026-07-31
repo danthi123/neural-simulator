@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-04
+---
+
 # Composer full-clear (A+B) — migrate ALL per-query numpy off the conversational composer — design — 2026-06-04
 
 **Goal:** remove every per-query non-core-biological (numpy) step from `research/runners/core_sim_composition.py`'s

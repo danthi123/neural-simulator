@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-10
+---
+
 # Phase 1 local-optimization design — target 5-10× more on RTX 3090
 
 **Date:** 2026-05-10

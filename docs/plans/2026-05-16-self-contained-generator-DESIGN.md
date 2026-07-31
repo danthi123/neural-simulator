@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-16
+---
+
 # Self-contained generative speech for the sim — definitive design
 
 > **Status:** APPROVED, autonomous execution authorized (user, 2026-05-16:

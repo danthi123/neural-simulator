@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-19
+---
+
 # Distinct readout pathways: order-preserving episodic recall vs order-invariant concept/working-memory recall (design only)
 
 The biologically-correct fix the phase-factored attempt missed: the

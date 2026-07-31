@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-16
+---
+
 # On-substrate learned binder — incremental build plan (2026-06-16, CYCLE 102)
 
 **Goal:** realize the de-risked LEARNED role-filler binder (additive bind + linear unbind, ON/OFF rate coding,

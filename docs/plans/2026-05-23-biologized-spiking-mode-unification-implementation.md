@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-23
+---
+
 # Biologized spiking theta-gamma mode-unification: TDD implementation plan
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development to execute this plan task-by-task (the owner's standing instruction pre-selects same-session execution; controller-built focused runner is acceptable for this scale per the trained-substrate-runner precedent, with the dedicated adversarial review providing the load-bearing safety gate).

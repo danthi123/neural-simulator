@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-07-15
+---
+
 # The Months-Scale Plan: One Brain, All Spiking → Small-LLM-Level Conversation
 
 *Synthesized 2026-07-15 from a 4-lens strategic audit Workflow (`wf_7a411db0-3b1`) over ROADMAP.md §3/§8/§9, AUTONOMOUS_STATE.md, and the grounded findings cited inline. This is the forward-looking PLAN; `ROADMAP.md` remains the at-a-glance STATUS surface. Prompted by an owner strategic conversation (2026-07-15).*

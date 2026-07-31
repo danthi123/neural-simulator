@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-20
+---
+
 # 7th arc implementation plan (targeted cue-suppression + amplified tag stim + persistent PFC-frame)
 
 **Goal:** Build the 7th architecture incorporating the four

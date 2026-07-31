@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-03
+---
+
 # Design note — phasor FHRR substrate unification (decision artifact) — 2026-06-03
 
 **Status:** decision artifact, owner-steerable. Not an approved plan. Captures the de-risked evidence, the

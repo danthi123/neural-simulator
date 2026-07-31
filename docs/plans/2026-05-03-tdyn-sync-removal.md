@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-03
+---
+
 # t_dyn GPU-CPU sync removal — proposed micro-opt
 
 **Status:** designed, NOT MERGED. Defer until GPU is free for verification.

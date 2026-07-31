@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-04-28
+---
+
 # Perf option — Multi-seed batching in one process
 
 **Status:** design only. NOT yet planned for implementation. Needs your review before committing to the refactor.

@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-11
+---
+
 # The LEARNED graded-similarity cortex embedding — the design opening move (the one unbuilt piece of the dual/CLS architecture)
 
 **Status:** READ-ONLY deep-research + design opening move (the project's standing "deep research FIRST at a new direction",

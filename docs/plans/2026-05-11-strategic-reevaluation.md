@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-05-11
+---
+
 # Strategic re-evaluation — what we have, what's missing, three paths forward
 
 **Date:** 2026-05-11 02:30 EDT

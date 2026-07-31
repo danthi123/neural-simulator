@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-08
+---
+
 # Frontend Revamp — Run-Control + Live Brain-Activity Cockpit (Design)
 
 **Date:** 2026-06-08

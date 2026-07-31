@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-14
+---
+
 # Step-3 cortex: the fork is resolved — the dendritic substrate is the validated escape for a learned, generalizing cortex; the D2 on-substrate build is warranted (owner decision)
 
 **Date:** 2026-06-14. **Status:** DECISION DOC (owner-facing synthesis of a completed cheap-first de-risk arc; the months-scale build it recommends is explicitly OWNER-GATED and was NOT started autonomously). **Synthesizes:** `research/findings/2026-06-14-option-c-stageB-fair-test-mechanism-wall.md`, `-dendritic-substrate-deep-research.md`, `-dendritic-D1-cheap-derisk-GO.md` (incl. the D1.5 follow-on). **Fork it resolves:** `docs/plans/2026-06-11-cortex-build-plan-decorrelate-then-bind.md`.

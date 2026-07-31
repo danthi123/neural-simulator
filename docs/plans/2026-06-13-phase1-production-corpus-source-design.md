@@ -1,3 +1,9 @@
+---
+type: plan
+status: live
+date: 2026-06-13
+---
+
 # Phase 1 production corpus-source design — how the 32 real bridges get their within-cluster graded structure (the brain-based-only decision before the corpus is coded)
 
 **Date:** 2026-06-13. **Status:** DESIGN NOTE (design-before-build; no code, gated behind the 32-bridge fan-out result + owner review). **Context:** the production vocab spec `research/runners/g20_vocab_spec_2048.py` is DONE (commit `882c0e04`; 32 semantic clusters of 64 = 2,048 concepts). The next Phase-1 piece (build plan piece ii, `docs/plans/2026-06-11-semantically-structured-cortex-BUILD-PLAN.md`; sharding design §1.3, `docs/plans/2026-06-12-phase1-sharding-and-fanout-design.md`) is the **per-bridge corpus** that induces the within-cluster co-occurrence the learn consumes. This note resolves the one load-bearing decision in that piece **before** writing the generator, because the obvious reuse path bakes in a shortcut.
