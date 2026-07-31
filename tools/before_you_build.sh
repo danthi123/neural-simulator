@@ -17,13 +17,18 @@ echo "════ 1. HAS THIS ALREADY BEEN SCOPED / TRIED / REFUTED? (our own f
 
 echo
 echo "════ 2. IS THERE A RESEARCH GATE / SCOPE DOC ALREADY? ════"
-ls -t research/findings/*research-gate*.md research/findings/*scope*.md 2>/dev/null | head -5 | sed 's/^/  /' || true
+# RECURSIVE (2026-07-31). This step hunts for an existing scope doc, and 24 of the 42 findings that a FLAT
+# glob could not see are named `_*_scoping.md` -- they sit in research/findings/raw/. The check built to find
+# prior scoping work was blind to most of it, which is precisely how a scoped question gets re-derived.
+find research/findings -name '*research-gate*.md' -o -name '*scop*.md' 2>/dev/null \
+  | xargs -r ls -t 2>/dev/null | head -5 | sed 's/^/  /' || true
 
 echo
 echo "════ 3. THIS ARC'S OWN EXCLUSIONS — things already measured NOT to be the cause ════"
 echo "  (the corpus check covers PRIOR findings; it does NOT cover the current arc. Read these.)"
 grep -ohE "^\*\*⛔[^*]{0,110}|REFUTED[^.]{0,90}|EXCLUDED[^.]{0,90}" \
-  $(ls -t research/findings/*.md | head -3) 2>/dev/null | sort -u | head -12 | sed 's/^/  /'
+  $(find research/findings -name '*.md' | xargs -r ls -t 2>/dev/null | head -3) 2>/dev/null \
+  | sort -u | head -12 | sed 's/^/  /'
 
 echo
 echo "════ 4. LEVER COUNT — >=2 levers against ONE defect means the research gate FIRES ════"

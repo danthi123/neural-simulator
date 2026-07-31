@@ -33,7 +33,11 @@ PERSIST = os.path.join(RAG_ROOT, "llamaindex_full")
 
 # (source_type, list of file globs / explicit files)
 SOURCES = [
-    ("finding", [os.path.join(SIM, "research", "findings", "*.md")]),
+    # RECURSIVE (2026-07-31). A flat `*.md` matched 1845 files while `**/*.md` matches 1887: 42 findings —
+    # 24 `_*_scoping.md`, 6 production-reviewer verdicts, 2 iteration plans — sat one directory down in
+    # `research/findings/raw/` and were therefore ABSENT FROM THE RECORD'S OWN INDEX. A document invisible to
+    # the corpus query is a document that gets re-derived, which is the failure mode that cost 94 GPU-hours.
+    ("finding", [os.path.join(SIM, "research", "findings", "**", "*.md")]),
     ("plan",    [os.path.join(SIM, "docs", "plans", "*.md")]),
     ("doc",     [os.path.join(SIM, "docs", "*.md"),
                  os.path.join(SIM, "CLAUDE.md"), os.path.join(SIM, "ROADMAP.md"), os.path.join(SIM, "README.md"),
@@ -61,7 +65,10 @@ def load_docs():
     for stype, patterns in SOURCES:
         files = []
         for p in patterns:
-            files.extend(sorted(glob.glob(p)))
+            # recursive=True is REQUIRED for the finding source's `**` to mean anything: without it glob treats
+            # `**` as a single `*` and the 42 nested findings stay invisible. It is a no-op for the patterns
+            # that carry no `**`, so it is safe to apply to all of them.
+            files.extend(sorted(glob.glob(p, recursive=True)))
         files = [f for f in files if os.path.basename(f) not in EXCLUDE_BASENAMES]
         files = [f for f in files if not (f in seen or seen.add(f))]
         n = 0

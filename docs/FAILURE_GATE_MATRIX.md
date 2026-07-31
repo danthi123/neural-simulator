@@ -37,8 +37,10 @@ are marked ADVISORY and count as ungated — the measured reason: **1330 runners
 | OP | a run misses an operating-point target recorded in its own artifact | — | `gates/operating_point` | registry | ✅ BLOCKS |
 | COV | a NOTICED failure never became a gate | — | `gates/coverage` + `research/FAILURE_LOG.md` | registry | ✅ BLOCKS |
 | BC | every arm of an A/B lands BELOW chance, reported as a NO-GO | 1 | `gates/below_chance` | registry | ✅ BLOCKS |
+| R | the record's own RETRIEVAL layer cannot see part of the record (a flat findings glob; or `**` written without `recursive=True`, which is a silent no-op) | 42 findings | `gates/retrieval_completeness` | registry | ✅ BLOCKS |
+| AT | a treatment/control pair is MEASURED but the difference is never ATTRIBUTED (`tools/lab` imported by 2 of 1330 runners) | 1 (gap#5: 97% was the clamp) | `gates/attribution_required` | registry | ✅ BLOCKS |
 
-**Score: 17 BLOCKING · 1 structural · 7 reporting · 0 ungated — 23 rows.** (The previous line read
+**Score: 19 BLOCKING · 1 structural · 7 reporting · 0 ungated — 25 rows.** (The previous line read
 `14 · 1 · 6`, which sums to 21 against 22 rows: row **Y**, green but non-blocking, was in no bucket. Corrected
 here rather than carried forward — an arithmetic drift in the score of the anti-drift spec is the joke this
 file cannot afford. Reporting = 6 🟡 rows + Y.)

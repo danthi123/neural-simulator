@@ -28,7 +28,9 @@ echo "── queue_add: checking the record for runner '${RUNNER:-?}' ──"
 
 HITS=""
 if [ -n "$RUNNER" ]; then
-  HITS=$(grep -rl -- "$RUNNER" "$ROOT"/research/findings/*.md 2>/dev/null | head -6)
+  # RECURSIVE (2026-07-31): the flat glob missed 42 findings one directory down in findings/raw/, so a runner
+  # whose only prior record lived in a nested scoping doc looked like it had never been run.
+  HITS=$(grep -rl --include='*.md' -- "$RUNNER" "$ROOT/research/findings/" 2>/dev/null | head -6)
 fi
 
 if [ -n "$HITS" ]; then

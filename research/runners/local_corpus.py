@@ -16,10 +16,13 @@ _REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")
 
 
 def load_local_corpus() -> str:
-    """Deterministic concatenation of research/findings/*.md (sorted by
-    path). Pure local file I/O; no network."""
-    pattern = os.path.join(_REPO_ROOT, "research", "findings", "*.md")
-    paths = sorted(glob.glob(pattern))
+    """Deterministic concatenation of research/findings/**/*.md (sorted by
+    path). Pure local file I/O; no network.
+
+    RECURSIVE since 2026-07-31: a flat `*.md` silently omitted 42 findings sitting in
+    `research/findings/raw/`, so they were absent from every consumer of this corpus."""
+    pattern = os.path.join(_REPO_ROOT, "research", "findings", "**", "*.md")
+    paths = sorted(glob.glob(pattern, recursive=True))
     parts = []
     for p in paths:
         try:
