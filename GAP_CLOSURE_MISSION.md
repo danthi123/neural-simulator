@@ -226,6 +226,32 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
+> ## 📍 STATE OF THE PROJECT — 2026-07-31 18:30 (read this first; everything below the next anchor is HISTORY)
+> **THE DAY'S THROUGH-LINE: four results, and in every one the INSTRUMENT decided the answer before the
+> biology got a say.** gap#4 expanded-forward (task went shallow -> UNDEFINED), affect GABA_B (arm crushed by
+> a default -> void NO-GO), the crux (idealised ceiling BELOW chance -> UNDEFINED), sAHP (power control cannot
+> reach an intrinsic mechanism -> UNCONTROLLED). Each was a plausible negative that would have entered the
+> record clean. Check the instrument before reading the result.
+>
+> **RUNNING:** crux 8 cells ~7h20m, 0 banked — transport_ceiling 0.148 vs chance 0.200, so expect UNDEFINED,
+> NOT "kp fails". · pool: 4 jobs (false-belief 6-seed @helper-pa 4000; curiosity critic-lesion s100/101/102).
+> · AWS **STOPPED** (was idle and billing).
+>
+> **NEXT, in order:**
+> 1. **Wire `--stp-tau-d` in ONE deliberate pass** — the affect frontier. `cfg.enable_short_term_plasticity
+>    = False` appears in BOTH `_affect_eviction_derisk.py:224` AND `_affect_state_region_derisk.py:149`, so
+>    both need it; thread through `run_point` / `run_smoke` / `main` (~8 call sites) and ASSERT the lever
+>    engages before reading any arm. I reverted a half-wired version rather than ship an inert flag.
+> 2. **Wire `set_sfa_lesion` into G6's evaluation when `--sfa` is active.** The primitive is committed and
+>    asserts its own write; until it is wired, sAHP has NO verdict and its three artifacts are uncontrolled.
+> 3. **Crux verdict when the cells land** — read the transport ceiling FIRST. If it stays sub-chance the
+>    verdict is UNDEFINED and the configuration, not the credit rule, is what was measured.
+> 4. 229 plans asserting results outside every gate; 286 plans + 12 docs need `type:` frontmatter.
+>
+> **NEW GATES TODAY (19 BLOCKING):** `retrieval_completeness` (42 findings were invisible to the RAG index and
+> to `before_you_build.sh` — the flat-glob defect), `attribution_required`, plus pool_queue remote-validity
+> and duplicate guards. Repo 116 GB -> 67 GB; root has zero strays.
+
 > ## 📍 STATE OF THE PROJECT — 2026-07-31 14:45 (read this first; everything below the next anchor is HISTORY)
 > **PENDING WORK LIVES HERE, NOT IN CHAT.** The honest gap found today: the gates BLOCK bad work and the heartbeat
 > REPORTS idleness, but nothing DRIVES the backlog — it lived in my messages, which do not survive a session.
