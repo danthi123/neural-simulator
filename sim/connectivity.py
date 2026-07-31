@@ -540,6 +540,21 @@ def generate_spatial_connections_chunked(n, max_connections_per_neuron, neuron_p
     chunk_size = max(64, int(target_mem_bytes / bytes_per_chunk_row))
     chunk_size = min(chunk_size, n)  # Don't exceed total neurons
 
+    # FAIL LOUDLY INSTEAD OF OOM-ING (2026-07-31). chunk_size FLOORS at 64 rows, so when a row is large the
+    # floor silently overrides the budget: measured at n=500000 with 1.0 GB free, chunk_size stays 64 and the
+    # projected peak is 1.92 GB against a 1.0 GB budget -- while the only existing guard tests a SINGLE row
+    # against 25% of free and therefore never fires. The docstring promises this function "keeps peak VRAM
+    # within safe limits for networks up to ~500K neurons", which is false in that regime. An opaque CUDA OOM
+    # mid-generation is the worst way to learn this, so name the numbers and stop.
+    _projected_peak = chunk_size * bytes_per_chunk_row
+    if _is_gpu() and _projected_peak > free_mem * 0.9:
+        raise MemoryError(
+            "generate_spatial_connections_chunked cannot fit n=%d in %.2f GB free VRAM: the minimum chunk of "
+            "%d rows projects to %.2f GB (%.0f bytes/row). Free VRAM, reduce n, or lower "
+            "max_connections_per_neuron." % (n, free_mem / 1e9, chunk_size, _projected_peak / 1e9,
+                                             bytes_per_chunk_row)
+        )
+
     free_mem_gb = free_mem / 1e9
     target_mem_gb = target_mem_bytes / 1e9
     log_fn(f"VRAM: {free_mem_gb:.2f}GB free, using {target_mem_gb:.2f}GB ({target_mem_gb/free_mem_gb*100:.0f}%) for chunking")
