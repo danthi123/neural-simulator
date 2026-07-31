@@ -1,0 +1,19 @@
+[2026-07-31 05:24:25][INFO] SIM_BRIDGE: NumPy backend (CPU (NumPy backend), 8589934592.0 GB RAM available)
+[2026-07-31 05:24:25][INFO] SIM_BRIDGE: Initializing simulation data for model: IZHIKEVICH (3D)... (playback_init: False)
+[2026-07-31 05:24:25][INFO] SIM_BRIDGE: Brain-region framework: 2 regions, 10240 total neurons, 1 pathways.
+[2026-07-31 05:24:25][INFO] SIM_BRIDGE: RNG initialized with seed: 42
+[2026-07-31 05:24:25][INFO] SIM_BRIDGE: Initializing Izhikevich model specifics for 10240 neurons...
+[2026-07-31 05:24:25][INFO] SIM_BRIDGE: Region 'retina' (2048 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-31 05:24:25][INFO] SIM_BRIDGE: Region 'cortex_v1_simple' (8192 neurons): using Izh type IZH2007_RS_CORTICAL_PYRAMIDAL
+[2026-07-31 05:24:25][INFO] SIM_BRIDGE: Applying parameter heterogeneity to neuron parameters...
+[2026-07-31 05:24:25][INFO] SIM_BRIDGE: Applied heterogeneity to 4 parameters.
+[2026-07-31 05:24:25][INFO] SIM_BRIDGE: Generating 3D neuron positions for 10240 neurons...
+[2026-07-31 05:24:25][INFO] SIM_BRIDGE: Generating connections (brain-region framework)...
+[2026-07-31 05:24:26][WARNING] SIM_BRIDGE: No trait info available; all synapses default to E->E STP type.
+[2026-07-31 05:24:26][INFO] SIM_BRIDGE: inject_explicit_wiring: installed 16485 synapses across 1 populations.
+[2026-07-31 05:24:26][INFO] SIM_BRIDGE: Initializing STP state for 16485 synapses (capacity: 24727)...
+[2026-07-31 05:24:26][INFO] SIM_BRIDGE: Initializing eligibility traces for 16485 synapses (capacity: 24727, dtype: float32)...
+[2026-07-31 05:24:26][WARNING] SIM_BRIDGE: No trait info available; all synapses default to E->E STP type.
+[2026-07-31 05:24:26][INFO] SIM_BRIDGE: Simulation data initialized for 10240 neurons (3D). Synapses: 16485. GPU memory: 0.0GB/9223372036.9GB (0.0%)
+[2026-07-31 05:24:27][WARNING] SIM_BRIDGE: No trait info available; all synapses default to E->E STP type.
+{"w": 8.0, "drive": 800.0, "retina_spikes": 87074, "v1_spikes": 341, "v1_rate": 0.00010406494140625}
