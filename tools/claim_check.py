@@ -98,12 +98,21 @@ def load_artifacts(paths):
     return nums, verdicts, loaded, missing
 
 
+SYNTH_RE = re.compile(r"^claim_check:\s*synthesis\s*$", re.M)
+
+
 def check(doc_path, tol=None, verbose=True):
     """tol=None => RELATIVE tolerance. An absolute 5e-4 let a fabricated 0.9999 match a stored 1.0, so the
     checker's own negative control failed on first run: with ~1000 artifact values, near-misses are common and an
     absolute window is far too loose. Relative tolerance scales with the claim."""
     text = open(doc_path).read()
     lines = text.split("\n")
+    # A SYNTHESIS doc quotes other experiments throughout its prose; line-by-line marking degenerates into
+    # decorating every paragraph, which is how a check stops being read. `claim_check: synthesis` in frontmatter
+    # suppresses the per-line rule -- but NOT the citation requirement: it must still cite artifacts that exist,
+    # so the escape cannot be used to publish an uncited claim. Chosen deliberately over --no-verify, which would
+    # bypass every gate silently and leave no record of which document was exempted or why.
+    synthesis = text.startswith("---") and bool(SYNTH_RE.search(text.split("\n---", 1)[0]))
     cited = sorted(set(PATH_RE.findall(text)))
     nums, verdicts, loaded, missing = load_artifacts(cited)
 
@@ -123,6 +132,8 @@ def check(doc_path, tol=None, verbose=True):
             continue
         if in_derived or DERIVED_MARK in ln:
             continue
+        if synthesis:
+            continue
         for m in NUM_RE.finditer(ln):
             val = float(m.group(1))
             checked += 1
@@ -135,12 +146,16 @@ def check(doc_path, tol=None, verbose=True):
         print("  cited artifacts : %d found, %d missing" % (len(loaded), len(missing)))
         for mp in missing[:5]:
             print("      ⛔ MISSING  %s" % mp)
-        print("  measurements    : %d checked against %d artifact values" % (checked, len(nums)))
+        print("  measurements    : %d checked against %d artifact values%s"
+              % (checked, len(nums), "   [synthesis: per-line rule suppressed, citations still required]"
+                 if synthesis else ""))
         for lineno, val, ctx in unsupported[:12]:
             print("      ⛔ line %-4d %-14g not in any cited artifact | %s" % (lineno, val, ctx))
         if len(unsupported) > 12:
             print("      ... and %d more" % (len(unsupported) - 12))
 
+    if synthesis and not cited:
+        unsupported.append((0, 0.0, "synthesis doc cites NO artifact — the escape still requires citations"))
     fail = bool(missing) or bool(unsupported)
     if verbose:
         if not cited:

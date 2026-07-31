@@ -1,3 +1,10 @@
+---
+status: live
+claim_check: synthesis
+lane: gap#5
+date: 2026-07-31
+---
+
 # gap#5 — the STEP C place-specificity control had NO POWER in the density sweep; its ⛔ verdicts are VOID, not negative
 
 **Date:** 2026-07-31 · **Status:** instrument defect FOUND + FIXED + the fix VERIFIED both directions ·

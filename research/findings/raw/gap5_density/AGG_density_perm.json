@@ -1,0 +1,21 @@
+{
+ "description": "tuned-point density comparison, permutation-gated; means over seeds",
+ "rows": [
+  {
+   "density": "0.25",
+   "n": 6,
+   "circ_dW": 0.6572,
+   "perm_null": 0.6486,
+   "ratio": 1.013,
+   "median_p": 0.42
+  },
+  {
+   "density": "1.0",
+   "n": 6,
+   "circ_dW": 0.4877,
+   "perm_null": 0.4977,
+   "ratio": 0.98,
+   "median_p": 0.6
+  }
+ ]
+}

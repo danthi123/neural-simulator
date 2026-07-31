@@ -58,4 +58,31 @@ if [ -f "$ROOT/tools/biology_check.py" ]; then
     exit 1
   fi
 fi
+
+# GATE 4 -- FINDING STATUS. A NEW finding must declare `status:` in frontmatter, so retrieval can tell a live
+# result from a void one. Measured 2026-07-31: 1841 findings, 0 with frontmatter, 1 row in docs/RETRACTED.md --
+# so a RAG hit carried a path and a score and NOTHING about whether the result still stood, and a filename
+# asserting "-6seed-GO" was surfaced for a finding whose artifact reads {"GO": false}. NEW files only: 1841
+# cannot be backfilled in one pass, and a keyword classifier was measured ~1-in-6 precise, so status must be
+# DECLARED rather than inferred.
+NEWF=$(git diff --cached --name-only --diff-filter=A | grep -E '^research/findings/[^/]+\.md$' || true)
+if [ -n "$NEWF" ]; then
+  BAD=""
+  for f in $NEWF; do
+    head -1 "$f" 2>/dev/null | grep -q '^---$' && grep -qE '^status:[[:space:]]*[a-z-]+' "$f" || BAD="$BAD $f"
+  done
+  if [ -n "$BAD" ]; then
+    echo "⛔ COMMIT BLOCKED — new finding(s) do not declare a status:"
+    for f in $BAD; do echo "     $f"; done
+    echo
+    echo "   Add frontmatter as the FIRST lines of the file:"
+    echo "       ---"
+    echo "       status: live | qualified | corrected | superseded | retracted"
+    echo "       lane: gap#5"
+    echo "       date: YYYY-MM-DD"
+    echo "       ---"
+    echo "   Deliberate override: git commit --no-verify"
+    exit 1
+  fi
+fi
 exit 0

@@ -1,0 +1,64 @@
+{
+ "description": "clamp budget at the tuned point (w_max=150 < W0=250)",
+ "W0": 250.0,
+ "w_max": 150.0,
+ "mean_pct_clamp": 97.0,
+ "mean_treat_circ_dW": 0.6572,
+ "mean_perm_null": 0.6485,
+ "seeds": [
+  {
+   "seed": 400,
+   "lr0_dW": 21.9393,
+   "btsp_dW": 22.6098,
+   "pct_clamp": 97.0,
+   "lr0_circ_dW": 0.0,
+   "treat_circ_dW": 0.5491,
+   "perm_null": 0.6074
+  },
+  {
+   "seed": 401,
+   "lr0_dW": 25.2061,
+   "btsp_dW": 26.0962,
+   "pct_clamp": 96.6,
+   "lr0_circ_dW": 0.0,
+   "treat_circ_dW": 0.7085,
+   "perm_null": 0.7017
+  },
+  {
+   "seed": 402,
+   "lr0_dW": 23.4753,
+   "btsp_dW": 23.7915,
+   "pct_clamp": 98.7,
+   "lr0_circ_dW": 0.0,
+   "treat_circ_dW": 0.656,
+   "perm_null": 0.6544
+  },
+  {
+   "seed": 403,
+   "lr0_dW": 25.3932,
+   "btsp_dW": 26.2768,
+   "pct_clamp": 96.6,
+   "lr0_circ_dW": 0.0,
+   "treat_circ_dW": 0.8085,
+   "perm_null": 0.7936
+  },
+  {
+   "seed": 404,
+   "lr0_dW": 25.5825,
+   "btsp_dW": 26.3947,
+   "pct_clamp": 96.9,
+   "lr0_circ_dW": 0.0,
+   "treat_circ_dW": 0.4619,
+   "perm_null": 0.4181
+  },
+  {
+   "seed": 405,
+   "lr0_dW": 23.3553,
+   "btsp_dW": 24.2496,
+   "pct_clamp": 96.3,
+   "lr0_circ_dW": 0.0,
+   "treat_circ_dW": 0.7593,
+   "perm_null": 0.7161
+  }
+ ]
+}

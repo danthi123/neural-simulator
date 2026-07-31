@@ -1,3 +1,27 @@
+---
+status: live
+claim_check: synthesis
+lane: gap#5
+date: 2026-07-31
+---
+
+## 0. Evidence
+
+> ⛔ **CORRECTION found by `claim_check.py` on this very document:** the density-1.0 row originally read
+> null **0.5894**, ratio **0.83**. The aggregate computed from the artifacts gives **0.4977** and
+> **0.98**. The published table was wrong; it is corrected above. The conclusion is unchanged (still
+> not place-specific) but the number was not what the data said.
+
+**Aggregate (the section-1 table is IN this file):** `research/findings/raw/gap5_density/AGG_density_perm.json`
+**Per-seed raw, both densities:** `research/findings/raw/gap5_density/g5fix_d025_*.json`, `research/findings/raw/gap5_density/g5fix_d100_*.json`
+**Clamp budget aggregate:** `research/findings/raw/gap5_density/AGG_clamp_budget.json`
+**Field-quality reference:** `research/findings/raw/gap5_reader/fieldquality_permcheck_cpu.json`
+
+## Derived
+
+Means over seeds where not in the aggregate; all ratios; the SYNTHETIC sigma=5 oracle and the 60-draw power/FPR figures (computed in-probe, stored in no artifact); the 0.2474/0.7050 board quotes (unverified, see the note in section 3b of the laps finding); and config values quoted as context.
+<!--derived-->
+
 # ⛔ gap#5: the TUNED `circ_dW` headline is increment CONCENTRATION, not place-specificity — position-shuffling changes it by 1.3%
 
 **Date:** 2026-07-31 · **Status:** MEASURED, 6 seeds × 2 densities, instrument validated in BOTH directions ·
@@ -14,7 +38,7 @@ permutation of the same increments**:
 | condition | observed `circ_dW` | position-shuffled null | ratio | permutation p |
 |---|---|---|---|---|
 | **measured, density 0.25** (n=6) | 0.6572 | 0.6486 | **1.013** | **0.42** |
-| **measured, density 1.0** (n=6) | 0.4877 | 0.5894 | **0.83** | **0.60** |
+| **measured, density 1.0** (n=6) | 0.4877 | 0.4977 | **0.98** | **0.60** |
 | **σ=5 ORACLE** (positive control) | 0.8887 | 0.1964 | **4.525** | **0.0025** |
 
 The null holds increment **magnitude and concentration exactly fixed** and shuffles only **position**. Shuffling
@@ -41,6 +65,8 @@ is place-INDEPENDENT concentration."* **At the tuned point it is not 30-59%. It 
 
 ## 3. The instrument was validated in BOTH directions before this negative was accepted
 
+<!--derived-->
+
 A negative needs its instrument verified exactly as much as a positive does.
 
 | control | result |
@@ -64,6 +90,8 @@ The test has power on realistic place-field structure and does not cry wolf.
 
 ## 4. Scope — what this does and does NOT touch
 
+<!--derived-->
+
 - **DOES touch:** the 2026-07-31 06:15 board entry's *"gap#5 field quality: `circ_dW` 0.7050 ± 0.0605 at 6 seeds
   = 105% of the 0.6705 headline, 81% of the σ=5 oracle"*, and the tuning progression
   `0.2474 → 0.3852 → 0.5897 → 0.7050` that produced it. Those numbers are **real as measurements** and
@@ -76,6 +104,8 @@ The test has power on realistic place-field structure and does not cry wolf.
   with the tuning having walked *away* from place-specificity while walking *up* a concentration metric.
 
 ## 5. Consequence
+
+<!--derived-->
 
 `circ_dW` **alone is not a valid gate for place-field formation.** Any gate on it must be accompanied by the
 position-shuffled permutation test, which is now computed and stored on every run
@@ -118,6 +148,8 @@ banked artifact was backed up and the output path made overridable (`GAP5_FQ_OUT
 cannot clobber a banked GPU result.
 
 ## 6. The transferable lesson
+
+<!--derived-->
 
 **A metric that goes up under tuning is not thereby measuring what its name says.** The number moved 0.2474 →
 0.7050 across four steps of honest, controlled tuning, and every step was real — the increments genuinely became

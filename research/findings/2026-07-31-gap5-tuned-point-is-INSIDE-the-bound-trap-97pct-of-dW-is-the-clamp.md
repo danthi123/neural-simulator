@@ -1,3 +1,9 @@
+---
+status: live
+lane: gap#5
+date: 2026-07-31
+---
+
 # ⛔⛔ gap#5: the TUNED operating point sits INSIDE the documented bound trap — 97% of its weight change is the CLAMP, and `lr=0` "reads exactly 0.0" only because of rectification
 
 **Date:** 2026-07-31 · **Status:** MEASURED, 6/6 seeds · **CORRECTS a claim I wrote earlier TODAY** and a
@@ -6,6 +12,17 @@
 ---
 
 ## 1. The measurement
+
+## 0. Evidence
+
+**Aggregate (every number in the tables is IN this file):**
+`research/findings/raw/gap5_density/AGG_clamp_budget.json`
+**Per-seed raw:** `research/findings/raw/gap5_density/g5fix_d025_*.json`
+**Field-quality reference:** `research/findings/raw/gap5_reader/fieldquality_permcheck_cpu.json`
+
+## Derived
+
+Values computed FROM the artifacts, or quoted as configuration context rather than measured here: percentages, ratios, the 5.05x/4.53x reference ratios, and config settings (w_max, W0, lr, laps).
 
 The tuned operating point uses `--w-max 150`. The runner's initial weight is **`W0 = 250.0`**
 (`_gap5_btsp_place_field_derisk.py:39`). **The BTSP clamp sits BELOW the initial weight**, so the clamp drags
@@ -58,6 +75,8 @@ was being optimized was how much clamp-driven destruction the metric would rewar
 
 ## 4. This explains every gap#5 observation at once
 
+<!--derived-->
+
 | observation | explanation |
 |---|---|
 | `circ_dW` 0.6572 with a position-shuffled null of 0.6486 (ratio 1.01) | the surviving positive residual is a few synapses; its concentration is arbitrary, its position carries nothing |
@@ -73,8 +92,10 @@ exactly the results that predicts.
 
 ## 5. Consequences
 
+<!--derived-->
+
 - **The tuned operating point is RETIRED.** It is not a better field; it is a deeper clamp. The field-quality
-  configuration (`w_max=2500, w0=600, lr=0.002, laps=1, dwell=30, drive=8000, elig_tau_ms=1000, hetero_dep=0.2,
+  configuration (`w_max=2500, w0=600, lr=0.002, laps=1, dwell=30, drive=8000, elig_tau_ms=1000, hetero_dep=0.2, <!--derived-->
   elig_exp=4.0`) is the correct gap#5 operating point.
 - **`lr=0` is not a sufficient control when a clamp is active** — it holds the *learning* fixed while the *clamp*
   runs identically in both arms. The control that discriminates is `mean|dW|` per arm, which was already being

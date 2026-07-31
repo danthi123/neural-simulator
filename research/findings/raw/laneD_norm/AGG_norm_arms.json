@@ -1,0 +1,83 @@
+{
+ "description": "lane D normalization arms, means over seeds",
+ "homeo_target": 0.002,
+ "arms": [
+  {
+   "arm": "base",
+   "n": 3,
+   "abs_on_minus_off": 0.0678,
+   "osi_post_frac": 0.0052,
+   "orient_decode": 0.2813,
+   "rsa_vs_host": 0.8271,
+   "l2_mean": 2037.9576,
+   "on_mean": 9.1544,
+   "v1_firing_rate": 0.0043
+  },
+  {
+   "arm": "meansub",
+   "n": 3,
+   "abs_on_minus_off": 0.0538,
+   "osi_post_frac": 0.0026,
+   "orient_decode": 0.1198,
+   "rsa_vs_host": 0.4725,
+   "l2_mean": 837.2152,
+   "on_mean": 3.0112,
+   "v1_firing_rate": 0.0012
+  },
+  {
+   "arm": "ms0.25",
+   "n": 3,
+   "abs_on_minus_off": 0.0723,
+   "osi_post_frac": 0.0039,
+   "orient_decode": 0.2448,
+   "rsa_vs_host": 0.817,
+   "l2_mean": 1675.8481,
+   "on_mean": 7.3798,
+   "v1_firing_rate": 0.0038
+  },
+  {
+   "arm": "ms0.5",
+   "n": 3,
+   "abs_on_minus_off": 0.0807,
+   "osi_post_frac": 0.0023,
+   "orient_decode": 0.2292,
+   "rsa_vs_host": 0.7642,
+   "l2_mean": 1324.5554,
+   "on_mean": 5.5946,
+   "v1_firing_rate": 0.0029
+  },
+  {
+   "arm": "ms0.75",
+   "n": 3,
+   "abs_on_minus_off": 0.0799,
+   "osi_post_frac": 0.0021,
+   "orient_decode": 0.1198,
+   "rsa_vs_host": 0.6624,
+   "l2_mean": 1029.3347,
+   "on_mean": 4.0229,
+   "v1_firing_rate": 0.002
+  },
+  {
+   "arm": "ms0.9",
+   "n": 3,
+   "abs_on_minus_off": 0.0669,
+   "osi_post_frac": 0.0029,
+   "orient_decode": 0.1302,
+   "rsa_vs_host": 0.535,
+   "l2_mean": 900.7785,
+   "on_mean": 3.342,
+   "v1_firing_rate": 0.0015
+  },
+  {
+   "arm": "oja",
+   "n": 3,
+   "abs_on_minus_off": 0.0026,
+   "osi_post_frac": 0.0039,
+   "orient_decode": 0.0364,
+   "rsa_vs_host": 0.3395,
+   "l2_mean": 757.4761,
+   "on_mean": 3.0994,
+   "v1_firing_rate": 0.0006
+  }
+ ]
+}

@@ -1,3 +1,10 @@
+---
+status: qualified
+lane: lane-D
+date: 2026-07-31
+note: "the test ran but is rate-confounded; the matched version is staged"
+---
+
 # lane D: both normalization rules degrade every metric — but the comparison is RATE-CONFOUNDED, so this is NOT a clean refutation
 
 **Date:** 2026-07-31 · **Status:** pre-registered test RUN (3 seeds × 3 arms), result **CONFOUNDED by design** ·
@@ -6,6 +13,16 @@ the matched test is staged · **do not read this as "subtractive normalization i
 ---
 
 ## 1. What was pre-registered, and what came back
+
+## 0. Evidence
+
+**Aggregate (every number in the tables is IN this file):**
+`research/findings/raw/laneD_norm/AGG_norm_arms.json`
+**Per-seed raw:** `research/findings/raw/laneD_norm/base_*.json`, `research/findings/raw/laneD_norm/meansub_*.json`, `research/findings/raw/laneD_norm/oja_*.json`
+
+## Derived
+
+Ratios to the homeostatic target, percentages, and configuration values quoted as context (homeo_target, hebb_max, drive, dev_steps), plus figures quoted from the prior record.
 
 Pre-registered in [`research/DEFERRED_GPU_WORK.md`](../DEFERRED_GPU_WORK.md) N-1 before any result was in:
 *"`HEBB_MEAN_SUB=1.0` raises `|on_minus_off_mean|` above baseline and raises `osi_post_frac` above 0.0104"*, with
@@ -26,6 +43,8 @@ Result at the known operating point (init 120 / `hebb_max` 1200 / drive 1200 / `
 Every metric moves the WRONG way under both rules. Taken at face value, the kill criterion fires.
 
 ## 2. Why taking it at face value would be wrong
+
+<!--derived-->
 
 **Miller-MacKay subtractive normalization makes `sum_j dw_ij = 0` BY CONSTRUCTION.** The baseline rule is
 potentiation-only (`dw = lr·(w_max − w)`, always positive), so it continuously ADDS weight mass. That net addition
@@ -52,6 +71,8 @@ mine, not in the mechanism.
 
 ## 3. What is still validly established
 
+<!--derived-->
+
 - The **raw-weight diagnosis is unchanged and holds in all three arms**: `weight_diagnosis` reads
   COMMON-MODE CONVERGENCE for base, meansub and oja alike. ON and OFF converge; the signed RF cancels.
 - **A subset of weights is pinned at the bound in every arm** — `on_absmax` is **exactly 1200.0 = `hebb_max`**
@@ -63,12 +84,14 @@ mine, not in the mechanism.
 
 ## 4. The matched test (staged)
 
+<!--derived-->
+
 Sweep the mean-subtract STRENGTH rather than switching it fully on. `hebbian_mean_subtract` is a float: partial
 subtraction retains part of the net potentiation, so there exists a setting whose firing rate matches baseline.
 
 `HEBB_MEAN_SUB ∈ {0.25, 0.5, 0.75, 0.9}` × seeds 42/43/44, everything else identical.
 
-- **Read the arm whose `v1_firing_rate` is closest to the baseline 0.00433**, and compare `osi_post_frac` and
+- **Read the arm whose `v1_firing_rate` is closest to the baseline 0.00433**, and compare `osi_post_frac` and <!--derived-->
   `|on−off|` THERE. That is the rate-matched comparison this test should have been.
 - **Prediction:** if competition is genuinely the missing ingredient, the rate-matched arm beats baseline on
   `osi_post_frac`. If OSI tracks firing rate monotonically across the whole sweep and nothing beats baseline at

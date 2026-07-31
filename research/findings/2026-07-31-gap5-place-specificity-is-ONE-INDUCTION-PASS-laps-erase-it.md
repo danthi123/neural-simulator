@@ -1,3 +1,9 @@
+---
+status: live
+lane: gap#5
+date: 2026-07-31
+---
+
 # ⭐ gap#5 SOLVED at the mechanism level: place-specificity comes from ONE induction pass, and repeated laps ERASE it
 
 **Date:** 2026-07-31 · **Status:** MEASURED, 3 seeds × 6 cells, permutation-gated, outside the clamp trap ·
