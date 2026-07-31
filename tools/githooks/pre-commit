@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# pre-commit: BLOCK a commit that violates the document-structure rules (docs/WRITING.md W1 + W2).
+#
+# WHY (2026-07-30). I ran `tools/check_docs.py`, watched it print "FAIL -- see docs/WRITING.md" for a 999-char
+# line, and committed anyway -- because I had chained the commands with `;` instead of `&&`, so the commit never
+# depended on the check's exit status. That is not missing a check; it is running one and proceeding past it,
+# which is the day's dominant failure shape in its most avoidable form.
+#
+# W2 is not cosmetic: it is the PRECONDITION for W1. Splitting one 14,222-char board line once exposed two stale
+# citations "marked" only by a retraction symbol sitting 13,000 characters away. Over-long lines are where stale
+# pointers hide.
+#
+# Install:  git config core.hooksPath tools/githooks
+# Bypass (deliberate, visible in the reflog):  git commit --no-verify
+set -uo pipefail
+ROOT=$(git rev-parse --show-toplevel)
+[ -x "$ROOT/.venv/bin/python" ] || exit 0          # no venv (fresh clone / CI bootstrap) -> do not block
+"$ROOT/.venv/bin/python" "$ROOT/tools/check_docs.py" > /tmp/_precommit_docs.out 2>&1 && exit 0
+echo "⛔ COMMIT BLOCKED — document-structure rules failed:"
+sed 's/^/   /' /tmp/_precommit_docs.out | tail -20
+echo
+echo "   Fix:  .venv/bin/python tools/split_long_doc_lines.py --apply    (W2; refuses to write if content changes)"
+echo "   or register the voided doc in docs/RETRACTED.md and mark citations with the retraction symbol (W1)."
+echo "   Deliberate override: git commit --no-verify"
+exit 1
