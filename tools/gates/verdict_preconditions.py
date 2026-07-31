@@ -46,20 +46,27 @@ UNDEFINED_TOKENS = ("undefined", "void", "uninterpretable")
 
 
 def _asserts_verdict(obj):
-    """A top-level GO/NO-GO assertion. A status that is already UNDEFINED asserts nothing to earn."""
+    """A top-level GO/NO-GO assertion. A status that is already UNDEFINED asserts nothing to earn.
+
+    STRING VERDICTS ARE READ FIRST, and this ordering is load-bearing. A correctly-behaving artifact says
+    BOTH `verdict: "UNDEFINED — ..."` AND `GO: false`, because "undefined" necessarily implies "not a GO".
+    Reading the boolean first mistakes that agreement for an asserted negative and flags a run that did
+    exactly the right thing. This gate's own first real artifact tripped that — a false positive, which
+    this project treats as no less corrosive than a miss, because it trains the reader to skip the line."""
     if not isinstance(obj, dict):
         return False, None
-    for k in VERDICT_KEYS:
-        if k not in obj:
-            continue
-        v = obj[k]
-        if isinstance(v, bool):
-            return True, v
+    # pass 1 — an explicit textual verdict is authoritative over any companion boolean
+    for k in ("verdict", "status"):
+        v = obj.get(k)
         if isinstance(v, str):
             if any(t in v.lower() for t in UNDEFINED_TOKENS):
                 return False, None          # already refusing to assert — nothing to enforce
             if any(t in v.upper() for t in ("GO", "NEGATIVE", "PASS", "FAIL", "BOUNDARY")):
                 return True, v
+    # pass 2 — only a bare boolean, with no textual verdict to qualify it
+    for k in ("go", "GO"):
+        if isinstance(obj.get(k), bool):
+            return True, obj[k]
     return False, None
 
 
@@ -139,7 +146,19 @@ def selftest():
         p = w("f.json", {"means": {"acc": 0.5}})
         if _check_one(p, "raw/f.json"):
             bad.append("FALSE POSITIVE: flagged an artifact that asserts no verdict")
-        # 7. SCOPING — standalone/empty must check nothing, or legacy artifacts flood it.
+        # 7. THE FALSE POSITIVE THIS GATE HIT ON ITS OWN FIRST REAL ARTIFACT: a correct run says BOTH
+        #    verdict:"UNDEFINED ..." AND GO:false, because undefined implies not-a-GO. Reading the boolean
+        #    first mistook that agreement for an asserted negative and flagged a run that behaved perfectly.
+        p = w("g.json", {"verdict": "UNDEFINED (3-seed) — unmet: A5 the arm was CRUSHED", "GO": False,
+                         "preconditions": [{"name": "A5", "ok": False}]})
+        if _check_one(p, "raw/g.json"):
+            bad.append("FALSE POSITIVE: flagged an artifact that correctly reports UNDEFINED alongside GO:false")
+        # 8. and the converse must still fire — a bare boolean negative with a FAILED precondition and no
+        #    textual verdict to qualify it is the original defect and must not slip through the new ordering.
+        p = w("h.json", {"go": False, "preconditions": [{"name": "A5", "ok": False}]})
+        if not _check_one(p, "raw/h.json"):
+            bad.append("did NOT catch a bare boolean negative asserted over a FAILED precondition")
+        # 9. SCOPING — standalone/empty must check nothing, or legacy artifacts flood it.
         if check(None) or check([]):
             bad.append("SCOPE LEAK: standalone/empty mode must not scan the legacy corpus")
     return bad
