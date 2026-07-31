@@ -518,6 +518,27 @@ def main():
         "all_dissociation_ok": all(r["self_other_dissociation"]["dissociation_ok"] for r in per_seed),
     }
 
+    # ---- EARN the verdict (2026-07-31). Every precondition below was ALREADY computed above; nothing new
+    # is measured. What changes is that the verdict can no longer be asserted while one of them fails or
+    # goes unmeasured -- the affect-eviction case, where `arm_valid=False` sat one key from the word NO-GO.
+    from tools.verdict import Verdict                                          # noqa: E402
+    _v = Verdict("false-belief register", chance=1.0 / K_LOC)
+    _v.require("6 seeds (project bar)", len(seeds) >= 6, expect=True)
+    _v.floor("false-belief acc vs chance", agg["mean_false_belief_acc"], 1.0 / K_LOC)
+    _v.require("reality-baseline FAILS false-belief (it must not solve it)",
+               agg["mean_reality_baseline_false_acc"], expect=lambda x: x <= DEFAULT_THRESHOLDS["reality_baseline_max"],
+               note="a world-read that predicted reality would pass without any belief representation")
+    _v.control("other-lesion collapses the read", treatment=agg["mean_false_belief_acc"],
+               control=agg["mean_lesion_false_belief_acc"])
+    _v.require("lesion collapsed on EVERY seed", agg["all_lesion_collapse"], expect=True)
+    _v.require("scrambled witnessing collapsed on EVERY seed", agg["all_scramble_collapse"], expect=True)
+    _v.require("self/other dissociation holds on EVERY seed", agg["all_dissociation_ok"], expect=True)
+    _verdict_block = _v.decide(go=all_go)
+    if _verdict_block["status"] != "GO" and verdict == "GO":
+        # The preconditions disagree with the seed count. UNDEFINED wins: a GO that cannot say what earned
+        # it is exactly what gates/verdict_preconditions refuses.
+        verdict = _verdict_block["status"]
+
     out = {
         "runner": "_false_belief_register_derisk",
         "faculty": "W3 belief attribution / false belief (Stage-3 flagship social build; ToM ladder rung 1)",
@@ -540,6 +561,7 @@ def main():
         "w_write": args.w_write, "helper_pa": args.helper_pa,
         "thresholds": DEFAULT_THRESHOLDS,
         "verdict": verdict, "n_go": n_go, "n_seeds": len(seeds),
+        **{k: _verdict_block[k] for k in ("preconditions", "disabled_processes", "undefined_reasons")},
         "aggregate": agg,
         "per_seed": per_seed,
         "honest_scope": ("A functional mentalizing correlate: an agent-keyed belief store (the self-schema "
