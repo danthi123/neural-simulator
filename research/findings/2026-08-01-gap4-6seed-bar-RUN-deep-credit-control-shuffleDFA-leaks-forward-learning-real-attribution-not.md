@@ -56,6 +56,28 @@ chance on 8 of 12 runs.
   the deep-credit control. Corrected in `research/biology/deep-credit-on-spikes.md` current_status and the
   master roadmap §7 gap#4 banner.
 
+## Where this sits in the record (a RE-CONFIRMATION, not a discovery — cite, don't re-derive)
+
+<!--derived: all numbers in this section are quoted from the cited findings, not this finding's own artifact-->>
+
+This finding re-confirms a lesson the project already had and then drifted from:
+`2026-07-16-deep-credit-GO-is-80pct-RESERVOIR-the-frozen-hidden-control-was-never-run.md` (the deep-credit GO was
+mostly reservoir; the frozen-hidden control belongs in the gate). It adds the 6-seed `deep_credit_share`
+measurement with the control now actually run.
+
+The broader record makes the on-bridge open question precise. **Deep credit BEATS a frozen reservoir on a proper
+depth-required task — 6-seed, repeatedly — but only at RATE/numpy:** XOR-over-pool best-credit 0.694 vs reservoir
+0.117 (`2026-07-24-gap4-learned-selfpredicting-microcircuit-CPUrate-GO.md`, the roadmap #4 run, already RUN);
+MNIST depth-4 FA 0.928 vs 0.102 (`2026-07-22-gap4-credit-BEATS-reservoir-on-MNIST-cleanxor-was-the-wrong-instrument.md`);
+faithful BDSP +0.16→+0.30 at sparsity (`2026-07-23-gap4-faithful-bdsp-credit-beats-reservoir-6seed-GO.md`);
+data-efficiency +0.24→+0.28 (`2026-07-24-gap4-deconfounded-credit-is-DATA-EFFICIENCY-6seed.md`). **On the
+production Izhikevich BRIDGE deep credit has NEVER beaten the reservoir**, and the binding obstacle is FORWARD
+REPRESENTABILITY, not the credit rule: at depth-2 the reservoir carries it (this finding); at depth≥3 the
+spiking forward COLLAPSES — even the weight-transport ceiling cannot fit its own training set
+(`2026-07-24-gap4-surpass-POWERED-NO-GO-tonic-pinned-frozen-representation-root-cause.md`: φ′-vanishing credit
+~1600× at E≈0.04 + tonic-pinned frozen hidden code; `2026-07-31-gap4-the-crux-was-never-askable-...md`). Cite
+these before any on-bridge depth run to avoid re-deriving "spiking doesn't train at depth."
+
 ## The real residual (a mechanism, not "build the control" — the control already exists)
 
 The frozen-hidden reservoir control is **already in the runner** (`reservoir_control=True` by default,
