@@ -1,0 +1,250 @@
+{
+  "probe": "agency_authorship_tag (Lane A, Phase-0 self-model)",
+  "verdict": "GO (6-seed) \u2014 AGENCY / AUTHORSHIP TAG: ONE spiking substrate answers 'did you say that or did I?' at acc=1.000 (chance 0.5) by reading its own COROLLARY DISCHARGE. Self-production emits an efference copy (production->cd) that a biased-competition comparator resolves to a 1-bit self/other tag. LESIONING the carrier->tag projections collapses it to chance (0.486); SWAPPING the carrier->tag wiring systematically FLIPS the tag (acc 0.000, relabelled 1.000) \u2014 the tag tracks the source WIRING, not content; the tag is PERP to content (identical content uttered as self AND other is correctly source-tagged both times: min per-item acc 1.000; content-item does not decode from the tag pools 0.167 vs chance 0.167), and content alone (no act) reads at chance (0.508). Brain-based (neurons+synapses); numpy-CPU; NO sim/ edit. (Reported diagnostic: src-margin MAGNITUDE shows weak decision-irrelevant per-item modulation |r|~0.248 = wiring heterogeneity, not content in the tag.)",
+  "GO": true,
+  "status": "GO",
+  "preconditions": [
+    {
+      "kind": "floor",
+      "name": "authorship acc beats chance",
+      "ok": true,
+      "detail": "1 vs floor 0.5",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "carrier lesion collapses the tag",
+      "ok": true,
+      "detail": "treatment=1 control=0.486111 |sep|=0.513889 > 0.25",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "swapped carrier->tag wiring flips the tag",
+      "ok": true,
+      "detail": "treatment=1 control=0 |sep|=1 > 0.25",
+      "note": ""
+    },
+    {
+      "kind": "reaches",
+      "name": "lesion SILENCES the tag pools (|margin| ~5 -> ~0)",
+      "ok": true,
+      "detail": "before=5.417 after=0 moved=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "swap flip is systematic (relabelled acc >= 0.85)",
+      "ok": true,
+      "detail": "measured=1.0 expect=<function _aggregate_verdict.<locals>.<lambda> at 0x7f392bdb6980>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "tag PERP content: min per-item acc >= 0.80",
+      "ok": true,
+      "detail": "measured=1.0 expect=<function _aggregate_verdict.<locals>.<lambda> at 0x7f392bdb6980>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "tag PERP content: item does not decode from tag pools (<= 1/K + 0.20)",
+      "ok": true,
+      "detail": "measured=0.1665 expect=<function _aggregate_verdict.<locals>.<lambda> at 0x7f392bdb6980>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "no-carrier catch is chance (|acc - 0.5| <= 0.15)",
+      "ok": true,
+      "detail": "measured=0.5083333333333333 expect=<function _aggregate_verdict.<locals>.<lambda> at 0x7f392bdb6980>",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP / Hebbian / reward-mod / homeostasis / short-term & structural plasticity",
+      "why": "fixed-structure corollary-discharge comparator is the scope; the learned content-cued episodic source-MEMORY and self-organized wiring are the named follow-ons"
+    }
+  ],
+  "undefined_reasons": [],
+  "checks": {
+    "authorship_acc>=0.90": true,
+    "lesion_collapses_to_chance": true,
+    "swap_flips_tag": true,
+    "tag_perp_content(min_item_acc>=0.80)": true,
+    "tag_perp_content(content_decode<=1/K+0.20)": true,
+    "catch_no_carrier_is_chance": true
+  },
+  "means": {
+    "acc_real": 1.0,
+    "acc_lesion": 0.48611111111111116,
+    "acc_catch": 0.5083333333333333,
+    "acc_swap": 0.0,
+    "acc_swap_flipped": 1.0,
+    "min_per_item_acc": 1.0,
+    "content_decode_acc": 0.1665,
+    "content_decode_chance": 0.16666666666666666,
+    "content_confound_maxabs_r": 0.24816666666666665,
+    "mean_abs_margin_real": 5.416999999999999,
+    "mean_abs_margin_lesion": 0.0
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "acc_real": 1.0,
+      "acc_lesion": 0.45,
+      "acc_catch": 0.4666666666666667,
+      "acc_swap": 0.0,
+      "acc_swap_flipped": 1.0,
+      "min_per_item_acc": 1.0,
+      "per_item_acc": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "content_decode_acc": 0.15,
+      "content_confound_maxabs_r": 0.192,
+      "mean_abs_margin_real": 5.422,
+      "mean_abs_margin_lesion": 0.0,
+      "n_trials": 60
+    },
+    {
+      "seed": 43,
+      "acc_real": 1.0,
+      "acc_lesion": 0.55,
+      "acc_catch": 0.5666666666666667,
+      "acc_swap": 0.0,
+      "acc_swap_flipped": 1.0,
+      "min_per_item_acc": 1.0,
+      "per_item_acc": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "content_decode_acc": 0.233,
+      "content_confound_maxabs_r": 0.259,
+      "mean_abs_margin_real": 5.337,
+      "mean_abs_margin_lesion": 0.0,
+      "n_trials": 60
+    },
+    {
+      "seed": 44,
+      "acc_real": 1.0,
+      "acc_lesion": 0.5166666666666667,
+      "acc_catch": 0.43333333333333335,
+      "acc_swap": 0.0,
+      "acc_swap_flipped": 1.0,
+      "min_per_item_acc": 1.0,
+      "per_item_acc": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "content_decode_acc": 0.283,
+      "content_confound_maxabs_r": 0.476,
+      "mean_abs_margin_real": 5.424,
+      "mean_abs_margin_lesion": 0.0,
+      "n_trials": 60
+    },
+    {
+      "seed": 100,
+      "acc_real": 1.0,
+      "acc_lesion": 0.36666666666666664,
+      "acc_catch": 0.55,
+      "acc_swap": 0.0,
+      "acc_swap_flipped": 1.0,
+      "min_per_item_acc": 1.0,
+      "per_item_acc": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "content_decode_acc": 0.05,
+      "content_confound_maxabs_r": 0.162,
+      "mean_abs_margin_real": 5.505,
+      "mean_abs_margin_lesion": 0.0,
+      "n_trials": 60
+    },
+    {
+      "seed": 101,
+      "acc_real": 1.0,
+      "acc_lesion": 0.5833333333333334,
+      "acc_catch": 0.5166666666666667,
+      "acc_swap": 0.0,
+      "acc_swap_flipped": 1.0,
+      "min_per_item_acc": 1.0,
+      "per_item_acc": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "content_decode_acc": 0.133,
+      "content_confound_maxabs_r": 0.214,
+      "mean_abs_margin_real": 5.387,
+      "mean_abs_margin_lesion": 0.0,
+      "n_trials": 60
+    },
+    {
+      "seed": 102,
+      "acc_real": 1.0,
+      "acc_lesion": 0.45,
+      "acc_catch": 0.5166666666666667,
+      "acc_swap": 0.0,
+      "acc_swap_flipped": 1.0,
+      "min_per_item_acc": 1.0,
+      "per_item_acc": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "content_decode_acc": 0.15,
+      "content_confound_maxabs_r": 0.186,
+      "mean_abs_margin_real": 5.427,
+      "mean_abs_margin_lesion": 0.0,
+      "n_trials": 60
+    }
+  ],
+  "config": {
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "smoke": false,
+    "K_ITEMS": 6,
+    "N_PER_ITEM": 20,
+    "TRIAL_STEPS": 40,
+    "FLUSH_STEPS": 70,
+    "REPS": 5,
+    "W_CARRIER_SRC": 60.0,
+    "W_INH_SRC": 30.0,
+    "PROD_DRIVE_PA": 2500.0,
+    "STIM_CONTENT_PA": 300.0,
+    "OU_PA": 3.0
+  },
+  "mechanism": "production emits corollary discharge (production->cd = efference copy) vs parse->sensory_marker; cd->src_self / sensory_marker->src_other with Namburi-Tye biased-competition cross-inhibition; 1-bit read-out = sign(rate(src_self)-rate(src_other)). content identity world-set + orthogonal.",
+  "HONEST_NOTE": "numpy-CPU read on the real spiking Izhikevich bridge ('numpy' is the backend, not a host shortcut). FIXED-STRUCTURE comparator (corollary-discharge source monitor). The content-cued episodic SOURCE-MEMORY version (Hebbian-bind content->tag at encoding, content-cue at recall) and the self-organized wiring are the named follow-ons (cf. the affect-region GO's hand-wired attractor). Biology: Sperry/von Holst efference copy; Frith/Feinberg comparator; Johnson source monitoring; Namburi-Tye opponent competition.",
+  "elapsed_seconds": 25.5
+}
