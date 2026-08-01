@@ -1,0 +1,62 @@
+{
+  "probe": "gap4_sweetspot_convergence",
+  "date": "2026-08-01",
+  "backend": "numpy",
+  "device": "cpu",
+  "n_prop": 3,
+  "config": {
+    "hidden": 48,
+    "oracle_epochs": 200,
+    "epochs": 300,
+    "wpi_lr": 0.4,
+    "wpi_noise": 0.3,
+    "w_clip": 4000,
+    "seeds": [
+      42,
+      43,
+      44
+    ]
+  },
+  "what": "does a CONVERGED learned microcircuit (self-prediction cos->high) train deep credit at the sweet spot, where the 150ep/wpi0.1 run did not (cos 0.29)?",
+  "per_seed": [
+    {
+      "seed": 42,
+      "oracle": 0.981,
+      "reservoir": 0.407,
+      "fixed_inh": 0.241,
+      "fixed_train": 0.408,
+      "learned_inh": 0.352,
+      "learned_train": 0.504,
+      "learned_cos": 0.93
+    },
+    {
+      "seed": 43,
+      "oracle": 0.981,
+      "reservoir": 0.148,
+      "fixed_inh": 0.167,
+      "fixed_train": 0.325,
+      "learned_inh": 0.167,
+      "learned_train": 0.308,
+      "learned_cos": 0.871
+    },
+    {
+      "seed": 44,
+      "oracle": 0.926,
+      "reservoir": 0.241,
+      "fixed_inh": 0.204,
+      "fixed_train": 0.263,
+      "learned_inh": 0.222,
+      "learned_train": 0.375,
+      "learned_cos": 0.882
+    }
+  ],
+  "n_seeds": 3,
+  "mean_oracle": 0.963,
+  "mean_reservoir": 0.265,
+  "mean_fixed_inherit": 0.204,
+  "mean_fixed_train_acc": 0.332,
+  "mean_learned_inherit": 0.247,
+  "mean_learned_train_acc": 0.396,
+  "mean_learned_selfpred_cos": 0.894,
+  "headline": "Microcircuit self-prediction CONVERGED (cos 0.89 vs 0.29 before) but deep credit STILL fails: learned held-out 0.247 ~= reservoir 0.267 ~= chance, train_acc 0.397 << oracle 0.963. The under-convergence caveat is CLOSED; the wall is upstream (credit cannot organize the spiking hidden even with a clean converged teacher)."
+}
