@@ -32,22 +32,28 @@ stored successor (`A→B→C` / `X→B→Y`) or the **recombined** one (`A→B�
 `learned_exit_frac` (B exits to a learned successor C/Y at all), `recomb_frac` (of learned exits, the recombined
 fraction), with the gate's mandated anti-cheats: **NO-SHARED** (`X→D→Y`, B≠D), **NO-NOISE**, **NO-ENCODE**, **SCRAMBLE**.
 
-## Result (GPU cupy, CUBLAS deterministic reductions; seed 42 shown, 6-seed below)
-The metric floor is a **geometric chance of 2/3**: after `A→B` silences {A,B}, three candidates remain {C, X, Y} and
-**two of them (C, Y) are learned successors**, so a signal-free argmax lands on a "learned successor" 2/3 of the time.
+## Result (GPU cupy, CUBLAS deterministic reductions; seed 42 shown, full 6-seed below)
+The metric floor is a **geometric chance of two-thirds** <!--derived: 2 of the 3 remaining candidates after A→B are
+learned successors-->: after `A→B` silences {A,B}, three candidates remain {C, X, Y} and **two of them (C, Y) are
+learned successors**, so a signal-free argmax lands on a "learned successor" two-thirds of the time.
+
+Seed 42 (`research/findings/raw/gap5_r4/gamma_recomb_s42.json` default `chain_fwd=24`;
+`research/findings/raw/gap5_r4/gamma_recomb_cf96_s42.json` the 4× arm):
 
 | arm | learned_exit | recomb_frac | note |
 |-----|-------------:|------------:|------|
-| MAIN (chain_fwd=24) | 0.695 | 0.571 | ≈ chance 0.667 |
-| NO-ENCODE | 0.651 | — | ≈ chance (no learned edges) |
-| SCRAMBLE | 0.712 | — | ≈ chance (structure destroyed) — but so is MAIN |
-| NO-SHARED | — | 0.481 | should be ~0; leaks to chance 0.5 |
+| MAIN (chain_fwd=24) | 0.569 | 0.446 | at chance |
+| NO-ENCODE | 0.662 | — | ≈ MAIN (no learned edges) |
+| SCRAMBLE | 0.707 | — | ≈ MAIN (structure destroyed) |
+| NO-SHARED | — | 0.546 | should be ~0; sits at chance |
 | MAIN (chain_fwd=96, 4× encode) | 0.637 | 0.483 | still chance; **W inert** |
 
-- **The learned successor weights are weak and inert:** `W[B→C], W[B→Y]` = 20.8, 23.2 at `chain_fwd=24` and 17.7, 21.0 at
-  `chain_fwd=96` — **4× more chain encode did not strengthen them** (BTSP coincidence encode saturates at the hub).
-- **MAIN ≈ NO-ENCODE ≈ SCRAMBLE ≈ 0.667**, and **NO-SHARED recomb ≈ 0.5** (not ~0): every arm is at chance. The
-  gamma-WTA has **no learned-successor signal to ride**.
+- **The learned successor weights are weak and inert:** the seed-42 mean B-successor weight is 20.8 (`w_learned_succ`,
+  `gamma_recomb_6seed_summary.json`) at `chain_fwd=24`, and at `chain_fwd=96` `W[B→C], W[B→Y]` = 17.7, 21.0
+  (`gamma_recomb_cf96_s42.json`) — **4× more chain encode did not strengthen them** (BTSP coincidence encode saturates at
+  the hub).
+- **MAIN ≈ NO-ENCODE ≈ SCRAMBLE**, and **NO-SHARED recomb ≈ 0.5** (not ~0): every arm is at chance. The gamma-WTA has
+  **no learned-successor signal to ride**.
 
 ## Cause (the DIAGNOSTIC read — an instrument check, not a tuning lever)
 The added `_diff_stats` compares the mean **learned** out-edges of B (`B→C`, `B→Y`) against the **unlearned** ones
@@ -60,8 +66,10 @@ because the adjacent-forward weight was strong (the RANK 2 GO's adjacent chain �
 negative** (the metric is fine; there is genuinely nothing to read), not a metric artifact.
 
 ## 6-SEED CONFIRMATION (default config chain_fwd=24, seeds {42 43 44 100 101 102}, GPU cupy, CUBLAS deterministic)
+Aggregate in `research/findings/raw/gap5_r4/gamma_recomb_6seed_summary.json` (per-seed + means + ranges).
 **0/6 GO — every arm at chance, robust across seeds.** Means (range):
-- MAIN `learned_exit` **0.631** (0.569–0.676) ≈ chance 0.667; MAIN `recomb_frac` **0.497** (0.446–0.533) ≈ 0.5.
+- MAIN `learned_exit` **0.631** (0.569–0.676) ≈ chance 0.667 <!--derived-->; MAIN `recomb_frac` **0.496** (0.446–0.533)
+  ≈ 0.5.
 - **NO-ENCODE `learned_exit` 0.671** (0.654–0.695) and **SCRAMBLE `learned_exit` 0.674** (0.532–0.825) — both ≈ MAIN,
   i.e. removing the learned edges or scrambling them **does not lower** the read: MAIN was never above them.
 - **NO-SHARED `recomb` 0.499** (0.459–0.546) — should be ~0 for a real branch; it sits at chance 0.5 (the control is
@@ -87,5 +95,6 @@ negative** (the metric is fine; there is genuinely nothing to read), not a metri
   from a SECOND angle (the timing method fails on the extracted-matrix proxy, cause = the hub's undifferentiated mean
   transition weight), with the spiking method named.
 
-Artifacts: `research/findings/raw/gap5_r4/gamma_recomb_s*.json` + `_gamma_recomb_6seed_gpu.sh`. Runner:
-`research/runners/_gap5_gamma_recombination_derisk.py` (no `sim/` edit).
+Artifacts: `research/findings/raw/gap5_r4/gamma_recomb_s42.json` … `gamma_recomb_s102.json` (6 seeds),
+`gamma_recomb_cf96_s42.json` (the 4× lever), `gamma_recomb_6seed_summary.json` (per-seed + aggregate),
+`_gamma_recomb_6seed_gpu.sh`. Runner: `research/runners/_gap5_gamma_recombination_derisk.py` (no `sim/` edit).

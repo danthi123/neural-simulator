@@ -1,0 +1,122 @@
+{
+  "description": "gap#5 RANK3 gamma-organized recombination over the extracted transition matrix \u2014 6-seed aggregate + cf96 lever. Negative: all arms at the 2/3 geometric chance; hub transition weights undifferentiated.",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_go": 0,
+  "chance_learned_exit": 0.667,
+  "chance_recomb": 0.5,
+  "per_seed": {
+    "42": {
+      "learned_exit": 0.569,
+      "recomb_frac": 0.446,
+      "noenc_learned": 0.662,
+      "scramble_learned": 0.707,
+      "noshare_recomb": 0.546,
+      "diff_ratio": 1.17,
+      "w_learned_succ": 20.8,
+      "w_unlearned_out": 17.8,
+      "go": false
+    },
+    "43": {
+      "learned_exit": 0.664,
+      "recomb_frac": 0.501,
+      "noenc_learned": 0.665,
+      "scramble_learned": 0.696,
+      "noshare_recomb": 0.464,
+      "diff_ratio": 1.06,
+      "w_learned_succ": 19.0,
+      "w_unlearned_out": 18.0,
+      "go": false
+    },
+    "44": {
+      "learned_exit": 0.593,
+      "recomb_frac": 0.489,
+      "noenc_learned": 0.678,
+      "scramble_learned": 0.712,
+      "noshare_recomb": 0.459,
+      "diff_ratio": 0.74,
+      "w_learned_succ": 14.5,
+      "w_unlearned_out": 19.6,
+      "go": false
+    },
+    "100": {
+      "learned_exit": 0.618,
+      "recomb_frac": 0.5,
+      "noenc_learned": 0.654,
+      "scramble_learned": 0.532,
+      "noshare_recomb": 0.529,
+      "diff_ratio": 1.08,
+      "w_learned_succ": 20.0,
+      "w_unlearned_out": 18.6,
+      "go": false
+    },
+    "101": {
+      "learned_exit": 0.676,
+      "recomb_frac": 0.51,
+      "noenc_learned": 0.695,
+      "scramble_learned": 0.825,
+      "noshare_recomb": 0.495,
+      "diff_ratio": 1.44,
+      "w_learned_succ": 24.0,
+      "w_unlearned_out": 16.7,
+      "go": false
+    },
+    "102": {
+      "learned_exit": 0.667,
+      "recomb_frac": 0.533,
+      "noenc_learned": 0.673,
+      "scramble_learned": 0.574,
+      "noshare_recomb": 0.5,
+      "diff_ratio": 1.35,
+      "w_learned_succ": 24.7,
+      "w_unlearned_out": 18.3,
+      "go": false
+    }
+  },
+  "means": {
+    "learned_exit": 0.631,
+    "recomb_frac": 0.496,
+    "noenc_learned": 0.671,
+    "scramble_learned": 0.674,
+    "noshare_recomb": 0.499,
+    "diff_ratio": 1.14
+  },
+  "ranges": {
+    "learned_exit": [
+      0.569,
+      0.676
+    ],
+    "recomb_frac": [
+      0.446,
+      0.533
+    ],
+    "diff_ratio": [
+      0.74,
+      1.44
+    ],
+    "noshare_recomb": [
+      0.459,
+      0.546
+    ]
+  },
+  "cf96_seed42": {
+    "chain_fwd": 96,
+    "learned_exit": 0.637,
+    "recomb_frac": 0.483,
+    "wB_C": 17.7,
+    "wB_Y": 21.0
+  },
+  "default_seed42": {
+    "chain_fwd": 24,
+    "wB_C": 20.8
+  },
+  "backend": "cupy",
+  "device": "cuda:0 (NVIDIA RTX 3090)",
+  "sim_backend_env": "cupy"
+}

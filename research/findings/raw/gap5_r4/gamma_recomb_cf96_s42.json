@@ -1,0 +1,129 @@
+{
+  "seeds": [
+    42
+  ],
+  "n_go": 0,
+  "noise": 8.0,
+  "per": [
+    {
+      "seed": 42,
+      "backend": "cupy",
+      "main": {
+        "n_stored": 208,
+        "n_recomb": 194,
+        "n_other": 229,
+        "n_reachB": 631,
+        "n_total": 800,
+        "reachB_frac": 0.78875,
+        "learned_exit_frac": 0.6370839936608558,
+        "recomb_frac": 0.48258706467661694,
+        "per_cue": {
+          "0": {
+            "stored": 96,
+            "recomb": 110,
+            "other": 132
+          },
+          "3": {
+            "stored": 112,
+            "recomb": 84,
+            "other": 97
+          }
+        }
+      },
+      "nonoise": {
+        "n_stored": 400,
+        "n_recomb": 400,
+        "n_other": 0,
+        "n_reachB": 800,
+        "n_total": 800,
+        "reachB_frac": 1.0,
+        "learned_exit_frac": 1.0,
+        "recomb_frac": 0.5,
+        "per_cue": {
+          "0": {
+            "stored": 0,
+            "recomb": 400,
+            "other": 0
+          },
+          "3": {
+            "stored": 400,
+            "recomb": 0,
+            "other": 0
+          }
+        }
+      },
+      "scramble": {
+        "n_stored": 204,
+        "n_recomb": 168,
+        "n_other": 187,
+        "n_reachB": 559,
+        "n_total": 800,
+        "reachB_frac": 0.69875,
+        "learned_exit_frac": 0.6654740608228981,
+        "recomb_frac": 0.45161290322580644,
+        "per_cue": {
+          "0": {
+            "stored": 109,
+            "recomb": 74,
+            "other": 82
+          },
+          "3": {
+            "stored": 95,
+            "recomb": 94,
+            "other": 105
+          }
+        }
+      },
+      "noenc": {
+        "n_stored": 205,
+        "n_recomb": 180,
+        "n_other": 197,
+        "n_reachB": 582,
+        "n_total": 800,
+        "reachB_frac": 0.7275,
+        "learned_exit_frac": 0.6615120274914089,
+        "recomb_frac": 0.4675324675324675,
+        "per_cue": {
+          "0": {
+            "stored": 99,
+            "recomb": 90,
+            "other": 105
+          },
+          "3": {
+            "stored": 106,
+            "recomb": 90,
+            "other": 92
+          }
+        }
+      },
+      "noshare": {
+        "n_stored": 156,
+        "n_recomb": 156,
+        "n_other": 242,
+        "n_reachB": 554,
+        "n_total": 800,
+        "reachB_frac": 0.6925,
+        "learned_exit_frac": 0.5631768953068592,
+        "recomb_frac": 0.5,
+        "per_cue": {
+          "0": {
+            "stored": 115,
+            "recomb": 66,
+            "other": 125
+          },
+          "3": {
+            "stored": 41,
+            "recomb": 90,
+            "other": 117
+          }
+        }
+      },
+      "wB_C": 17.69849395751953,
+      "wB_Y": 20.97279167175293,
+      "go": false
+    }
+  ],
+  "backend": "cupy",
+  "device": "cuda:0 (NVIDIA RTX 3090)",
+  "sim_backend_env": "cupy"
+}
