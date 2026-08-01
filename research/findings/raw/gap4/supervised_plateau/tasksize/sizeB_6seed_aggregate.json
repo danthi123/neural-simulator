@@ -1,0 +1,62 @@
+{
+ "probe": "gap4_supervised_plateau_credit__tasksize_sizeB",
+ "date": "2026-08-01",
+ "backend": "cupy",
+ "device": "cuda",
+ "what": "LARGER/richer task (sizeB: n_super=48 n_members=8 n_prop=4 n_obs=14 hidden=64) test of whether a DIRECTED (supervised DFA) error on the MOVABLE plateau hidden converts train-fit into a held-out advantage over unsupervised sharpening -- the residual named by the np3 supervised-null finding.",
+ "config": {
+  "n_col": 200,
+  "epochs": 30,
+  "lr_unsup": 0.02,
+  "lr_sup": 0.05,
+  "lr_out": 0.5,
+  "w0": 0.35,
+  "jitter": 0.15,
+  "k_th": null,
+  "n_sub": 400,
+  "hidden": 64,
+  "oracle_epochs": 500,
+  "task": {
+   "n_super": 48,
+   "n_members": 8,
+   "held_per_super": 3,
+   "n_prop": 4,
+   "member_id_dim": 3,
+   "n_obs": 14,
+   "noise": 0.02
+  },
+  "margin_go": 0.05
+ },
+ "seeds": [
+  100,
+  101,
+  102,
+  42,
+  43,
+  44
+ ],
+ "n_seeds": 6,
+ "chance": 0.08333333333333333,
+ "mean_oracle_heldout": 0.8688271604938271,
+ "mean_frozen_plateau_heldout": 0.2175925925925926,
+ "mean_unsup_plateau_heldout": 0.2777777777777778,
+ "mean_supervised_plateau_heldout": 0.2700617283950617,
+ "mean_supervised_plateau_train": 0.7,
+ "mean_unsup_dcs": 0.08274395965282665,
+ "mean_sup_dcs": 0.0795755874188756,
+ "mean_shuffle_dfa_heldout": 0.19135802469135801,
+ "mean_supervised_on_permuted_heldout": 0.2469135802469136,
+ "per_seed_sup_minus_unsup_heldout": [
+  0.0185,
+  -0.037,
+  -0.0185,
+  0.037,
+  0.0093,
+  -0.0556
+ ],
+ "n_sup_beats_unsup_by_margin": 0,
+ "n_dcs_sup_gt_unsup": 3,
+ "n_anti_cheats_clean": 4,
+ "n_GO": 0,
+ "headline": "NEGATIVE 0/6: the larger task does NOT rescue supervised deep credit. Oracle heldout 0.869 (task learnable) but BOTH local movable-hidden rules floor at ~0.27 (unsup 0.278, sup 0.270), barely above the frozen reservoir 0.218 and far below oracle; supervised does not beat unsupervised (net -0.008, 3/6 up). The movable-hidden foothold does NOT scale to a richer task -- the local-vs-oracle deep-credit gap WIDENS."
+}
