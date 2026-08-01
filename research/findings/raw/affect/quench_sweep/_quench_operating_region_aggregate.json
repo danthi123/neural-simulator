@@ -1,0 +1,77 @@
+{
+  "probe": "affect_active_clear_quench_operating_region",
+  "runner": "research.runners._affect_eviction_derisk",
+  "backend": "numpy",
+  "sim_backend": "numpy",
+  "sim_backend_provenance": "pool dispatch SIM_BACKEND=numpy .venv/bin/python (dispatch.log)",
+  "n_cells": 6,
+  "seeds": [
+    43,
+    44,
+    100,
+    101,
+    102,
+    105
+  ],
+  "GO_operating_region": "quench_pA <= -800 AND quench_ms >= 280",
+  "cells": {
+    "q-1600.0_ms150.0": {
+      "n": 6,
+      "evict_and_reignite_count": 0,
+      "mean_g1_evict": 1.018,
+      "mean_g3_reignite": 0.971,
+      "mean_g4_persist": 0.638
+    },
+    "q-1600.0_ms280.0": {
+      "n": 6,
+      "evict_and_reignite_count": 6,
+      "mean_g1_evict": 0.0,
+      "mean_g3_reignite": 1.006,
+      "mean_g4_persist": 0.638
+    },
+    "q-400.0_ms150.0": {
+      "n": 6,
+      "evict_and_reignite_count": 0,
+      "mean_g1_evict": 1.008,
+      "mean_g3_reignite": 0.996,
+      "mean_g4_persist": 0.638
+    },
+    "q-400.0_ms280.0": {
+      "n": 6,
+      "evict_and_reignite_count": 0,
+      "mean_g1_evict": 1.044,
+      "mean_g3_reignite": 0.992,
+      "mean_g4_persist": 0.638
+    },
+    "q-800.0_ms150.0": {
+      "n": 6,
+      "evict_and_reignite_count": 0,
+      "mean_g1_evict": 1.029,
+      "mean_g3_reignite": 1.007,
+      "mean_g4_persist": 0.638
+    },
+    "q-800.0_ms280.0": {
+      "n": 6,
+      "evict_and_reignite_count": 6,
+      "mean_g1_evict": 0.0,
+      "mean_g3_reignite": 1.004,
+      "mean_g4_persist": 0.638
+    }
+  },
+  "quench_pA_tested": [
+    -400,
+    -800,
+    -1600
+  ],
+  "quench_ms_tested": [
+    150,
+    280
+  ],
+  "go_amplitude_threshold_pA": -800,
+  "go_duration_threshold_ms": 280,
+  "drain_threshold_ms": 180,
+  "off_hold_seconds": 1.5,
+  "nmda_decay_estimate_ms": 100,
+  "g4_persist_all_cells": 0.638,
+  "go_g1_evict": 0.0
+}

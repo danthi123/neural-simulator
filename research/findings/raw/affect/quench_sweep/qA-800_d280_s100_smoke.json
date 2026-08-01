@@ -1,0 +1,496 @@
+{
+  "seed": 100,
+  "sweep": [
+    {
+      "gates": {
+        "G1_eviction(low<0.60)": true,
+        "G2_drive_dependence(high>=0.60)": true,
+        "G3_reignition(>=0.60)": true,
+        "G4_persistence_survives(>=0.50)": true,
+        "G5_nmda_off(<0.10)": true,
+        "G6_lesion_restores_ratchet(>=0.90)": true
+      },
+      "core_go(G1-G4)": true,
+      "instrument_ok(G5,G6)": true,
+      "A5_not_crushed": true,
+      "arm_valid": true,
+      "held0_floor_used": 0.02265,
+      "evict_ratio_low": 0.0,
+      "time_ratio_high": 0.9916142557651992,
+      "reignite_ratio": 0.9958071278825996,
+      "persistence_retention": 0.6519362186788155,
+      "nmda_off_retention": 0.0,
+      "lesion_evict_ratio": 1.0530973451327434,
+      "held_low": [
+        0.0954,
+        0.0,
+        0.0,
+        0.0,
+        0.095
+      ],
+      "during_low": [
+        0.14633333333333334,
+        0.09466666666666666,
+        0.06566666666666666,
+        0.0,
+        0.1475
+      ],
+      "held_high": [
+        0.0954,
+        0.095,
+        0.0946,
+        0.0964,
+        0.0942
+      ],
+      "during_high": [
+        0.14633333333333334,
+        0.11266666666666666,
+        0.11233333333333333,
+        0.111,
+        0.11016666666666666
+      ],
+      "g_gabab_end_of_read_low": [
+        0.4169536232948303,
+        0.03812986984848976,
+        0.017949217930436134,
+        0.0005603930912911892,
+        0.4181387424468994
+      ],
+      "seed": 100,
+      "gabab_weight": 0.0,
+      "gabab_tau_ms": 150.0,
+      "gabab_max": 0.0,
+      "enable_gabab": true,
+      "quench_pA": -800.0,
+      "quench_ms": 280.0,
+      "quench_fired_low": [
+        false,
+        true,
+        true,
+        true,
+        false
+      ],
+      "quench_at_read_low_pA": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "max_quench_at_read_low_pA": 0.0,
+      "sfa": null,
+      "g_gabab_lesion_end_of_read": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "trace_low_held": [
+        0.0954,
+        0.0,
+        0.0,
+        0.0,
+        0.095
+      ],
+      "sweep_verdict": "PASS G1-G4"
+    }
+  ],
+  "sfa_arm": null,
+  "fast_arm": {
+    "gates": {
+      "G1_eviction(low<0.60)": true,
+      "G2_drive_dependence(high>=0.60)": true,
+      "G3_reignition(>=0.60)": true,
+      "G4_persistence_survives(>=0.50)": true,
+      "G5_nmda_off(<0.10)": true,
+      "G6_lesion_restores_ratchet(>=0.90)": true
+    },
+    "core_go(G1-G4)": true,
+    "instrument_ok(G5,G6)": true,
+    "A5_not_crushed": true,
+    "arm_valid": true,
+    "held0_floor_used": 0.02265,
+    "evict_ratio_low": 0.0,
+    "time_ratio_high": 0.9232365145228215,
+    "reignite_ratio": 0.9730290456431535,
+    "persistence_retention": 0.6506186726659168,
+    "nmda_off_retention": 0.0,
+    "lesion_evict_ratio": 1.0530973451327434,
+    "held_low": [
+      0.0964,
+      0.0,
+      0.0,
+      0.0,
+      0.0938
+    ],
+    "during_low": [
+      0.14816666666666667,
+      0.0935,
+      0.06833333333333333,
+      0.0,
+      0.14816666666666667
+    ],
+    "held_high": [
+      0.0964,
+      0.089,
+      0.0946,
+      0.097,
+      0.0912
+    ],
+    "during_high": [
+      0.14816666666666667,
+      0.11366666666666667,
+      0.11333333333333333,
+      0.113,
+      0.11316666666666667
+    ],
+    "g_gabab_end_of_read_low": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "seed": 100,
+    "gabab_weight": 0.0,
+    "gabab_tau_ms": 150.0,
+    "gabab_max": 0.0,
+    "enable_gabab": false,
+    "quench_pA": -800.0,
+    "quench_ms": 280.0,
+    "quench_fired_low": [
+      false,
+      true,
+      true,
+      true,
+      false
+    ],
+    "quench_at_read_low_pA": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "max_quench_at_read_low_pA": 0.0,
+    "sfa": null,
+    "g_gabab_lesion_end_of_read": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "quench_pA": -800.0,
+  "quench_ms": 280.0,
+  "baseline": {
+    "trace_low": {
+      "held": [
+        0.0906,
+        0.0964,
+        0.0896,
+        0.0892,
+        0.0954
+      ],
+      "during": [
+        0.14866666666666667,
+        0.09816666666666667,
+        0.0935,
+        0.093,
+        0.1145
+      ],
+      "g_gabab_end_of_drive": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "g_gabab_end_of_read": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quench_at_read_pA": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quench_fired": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "max_quench_at_read_pA": 0.0,
+      "quench_pA": 0.0,
+      "quench_ms": 120.0,
+      "mood_base": 0.0,
+      "levels": [
+        1.0,
+        0.15,
+        0.15,
+        0.0,
+        1.0
+      ]
+    },
+    "trace_high": {
+      "held": [
+        0.0906,
+        0.0912,
+        0.0972,
+        0.0942,
+        0.0892
+      ],
+      "during": [
+        0.14866666666666667,
+        0.11283333333333333,
+        0.11366666666666667,
+        0.11416666666666667,
+        0.1135
+      ],
+      "g_gabab_end_of_drive": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "g_gabab_end_of_read": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quench_at_read_pA": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quench_fired": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "max_quench_at_read_pA": 0.0,
+      "quench_pA": 0.0,
+      "quench_ms": 120.0,
+      "mood_base": 0.0,
+      "levels": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "ratchet_ratio": 1.0640176600441502,
+    "persistence_retention": 0.6094170403587443,
+    "instrument_reproduces_ratchet": true,
+    "committed_artifact_reference": null
+  },
+  "quench_physics": {
+    "quench_pA": -800.0,
+    "quench_ms": 280.0,
+    "w": 0.0,
+    "tau": 150.0,
+    "cap": 0.0,
+    "held_low_quench_on": [
+      0.0964,
+      0.0,
+      0.0,
+      0.0,
+      0.0938
+    ],
+    "held_low_quench_off": [
+      0.0964,
+      0.0912,
+      0.0966,
+      0.0958,
+      0.0898
+    ],
+    "during_low_quench_on": [
+      0.14816666666666667,
+      0.0935,
+      0.06833333333333333,
+      0.0,
+      0.14816666666666667
+    ],
+    "quench_fired": [
+      false,
+      true,
+      true,
+      true,
+      false
+    ],
+    "quench_at_read_pA": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "max_quench_at_read_pA": 0.0,
+    "G1_evict_ratio": 0.0,
+    "G1_ok": true,
+    "G3_reignite_ratio": 0.9730290456431535,
+    "G3_ok": true,
+    "G4_persist_ratio": 0.6506186726659168,
+    "G4_ok": true,
+    "anti_cheat_quench_zero_at_read": true,
+    "evict_with_reignition": true
+  },
+  "kill_criterion_met": false,
+  "chosen_point": {
+    "gabab_weight": 0.0,
+    "gabab_tau_ms": 150.0,
+    "gabab_max": 0.0
+  },
+  "lever_moved": true,
+  "slowness_attribution": "slowness NOT load-bearing \u2014 the FAST GABA_A-only arm evicts too",
+  "selected_point_full": {
+    "gates": {
+      "G1_eviction(low<0.60)": true,
+      "G2_drive_dependence(high>=0.60)": true,
+      "G3_reignition(>=0.60)": true,
+      "G4_persistence_survives(>=0.50)": true,
+      "G5_nmda_off(<0.10)": true,
+      "G6_lesion_restores_ratchet(>=0.90)": true
+    },
+    "core_go(G1-G4)": true,
+    "instrument_ok(G5,G6)": true,
+    "A5_not_crushed": true,
+    "arm_valid": true,
+    "held0_floor_used": 0.02265,
+    "evict_ratio_low": 0.0,
+    "time_ratio_high": 0.9916142557651992,
+    "reignite_ratio": 0.9958071278825996,
+    "persistence_retention": 0.6519362186788155,
+    "nmda_off_retention": 0.0,
+    "lesion_evict_ratio": 1.0530973451327434,
+    "held_low": [
+      0.0954,
+      0.0,
+      0.0,
+      0.0,
+      0.095
+    ],
+    "during_low": [
+      0.14633333333333334,
+      0.09466666666666666,
+      0.06566666666666666,
+      0.0,
+      0.1475
+    ],
+    "held_high": [
+      0.0954,
+      0.095,
+      0.0946,
+      0.0964,
+      0.0942
+    ],
+    "during_high": [
+      0.14633333333333334,
+      0.11266666666666666,
+      0.11233333333333333,
+      0.111,
+      0.11016666666666666
+    ],
+    "g_gabab_end_of_read_low": [
+      0.4169536232948303,
+      0.03812986984848976,
+      0.017949217930436134,
+      0.0005603930912911892,
+      0.4181387424468994
+    ],
+    "seed": 100,
+    "gabab_weight": 0.0,
+    "gabab_tau_ms": 150.0,
+    "gabab_max": 0.0,
+    "enable_gabab": true,
+    "quench_pA": -800.0,
+    "quench_ms": 280.0,
+    "quench_fired_low": [
+      false,
+      true,
+      true,
+      true,
+      false
+    ],
+    "quench_at_read_low_pA": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "max_quench_at_read_low_pA": 0.0,
+    "sfa": null,
+    "g_gabab_lesion_end_of_read": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "elapsed_seconds": 15.5,
+  "config": {
+    "seed": 100,
+    "sweep_weights": [
+      0.0
+    ],
+    "sweep_taus": [
+      150.0
+    ],
+    "sweep_maxes": [
+      0.0
+    ],
+    "recur_weight": 22.0,
+    "ou_pA": 8.0,
+    "sfa": null,
+    "stp": false,
+    "stp_tau_d": null,
+    "stp_U": null,
+    "quench_pA": -800.0,
+    "quench_ms": 280.0,
+    "LOW_LEVELS": [
+      1.0,
+      0.15,
+      0.15,
+      0.0,
+      1.0
+    ],
+    "HIGH_LEVELS": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "timings_ms": {
+      "settle": 40,
+      "base_probe": 100,
+      "drive": 120,
+      "post": 300,
+      "read": 100
+    },
+    "SFB_N": 15,
+    "SFB_EXC_W": 8.0
+  },
+  "backend": "numpy",
+  "sim_backend": "numpy",
+  "sim_backend_provenance": "pool dispatch SIM_BACKEND=numpy .venv/bin/python (dispatch.log)"
+}
