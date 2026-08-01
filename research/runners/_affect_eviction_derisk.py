@@ -194,7 +194,7 @@ class EvictionAffectBrain(AffectStateBrain):
     def __init__(self, seed, nmda_on=True, recur_weight=DEFAULT_RECUR_WEIGHT, ou_pA=8.0,
                  gabab_w=DEFAULT_GABAB_W, gabab_tau_ms=DEFAULT_GABAB_TAU_MS, gabab_max=DEFAULT_GABAB_MAX,
                  enable_gabab=True, evict=True, sfa_a=None, sfa_d=None, with_eviction_wiring=True,
-                 stp=False, stp_tau_d=None):
+                 stp=False, stp_tau_d=None, stp_U=None):
         from sim import SimulationBridge, VisualizationConfig, RuntimeState, GPUConfig
         from sim.config import CoreSimConfig
         from sim.regions import BrainRegion, RegionPathway
@@ -226,6 +226,8 @@ class EvictionAffectBrain(AffectStateBrain):
         cfg.enable_per_type_stp = False   # use the GLOBAL stp_tau_d so --stp-tau-d actually governs (per-type defaults True and would override it)
         if stp and stp_tau_d is not None:
             cfg.stp_tau_d = float(stp_tau_d)
+        if stp and stp_U is not None:
+            cfg.stp_U = float(stp_U)   # LOWER U = gentler per-spike depression; tau_d {50-200} all annihilate at U=0.15
         cfg.enable_structural_plasticity = False
         cfg.enable_ou_process = True
         cfg.ou_std_current_pA = float(ou_pA)
@@ -518,7 +520,7 @@ def _fmt(x, nd=3):
 # =============================================================================================================
 def run_point(seed, gabab_w, gabab_tau, ou_pA=8.0, recur_weight=DEFAULT_RECUR_WEIGHT, gabab_max=0.0,
               enable_gabab=True, sfa=None, verbose=True, baseline_during0=None, baseline_held0=None,
-              stp=False, stp_tau_d=None):
+              stp=False, stp_tau_d=None, stp_U=None):
     """Run the full pre-registered arm set at one (gabab_w, tau) point and return the evaluated gate."""
     def mk(nmda_on=True, evict=True, wiring=True, egb=enable_gabab):
         return EvictionAffectBrain(seed, nmda_on=nmda_on, recur_weight=recur_weight, ou_pA=ou_pA,
@@ -527,7 +529,7 @@ def run_point(seed, gabab_w, gabab_tau, ou_pA=8.0, recur_weight=DEFAULT_RECUR_WE
                                    sfa_a=(None if sfa is None else sfa[0]),
                                    sfa_d=(None if sfa is None else sfa[1]),
                                    with_eviction_wiring=wiring,
-                                   stp=stp, stp_tau_d=stp_tau_d)
+                                   stp=stp, stp_tau_d=stp_tau_d, stp_U=stp_U)
 
     low = ratchet_trace(mk(), LOW_LEVELS)
     high = ratchet_trace(mk(), HIGH_LEVELS)
@@ -554,7 +556,7 @@ def run_point(seed, gabab_w, gabab_tau, ou_pA=8.0, recur_weight=DEFAULT_RECUR_WE
 # SMOKE — reproduce the ratchet on the untouched baseline, then sweep the eviction operating point
 # =============================================================================================================
 def run_smoke(seed, weights, taus, maxes=(0.0,), ou_pA=8.0, recur_weight=DEFAULT_RECUR_WEIGHT, sfa=None,
-              stp=False, stp_tau_d=None):
+              stp=False, stp_tau_d=None, stp_U=None):
     t0 = time.time()
     out = {"seed": int(seed), "sweep": [], "sfa_arm": None, "fast_arm": None}
     gabab_max = 0.0   # replaced by the SELECTED sweep point's cap in step 2 (see below)
@@ -615,7 +617,7 @@ def run_smoke(seed, weights, taus, maxes=(0.0,), ou_pA=8.0, recur_weight=DEFAULT
             for cap in maxes:
                 ev = run_point(seed, w, tau, ou_pA=ou_pA, recur_weight=recur_weight, gabab_max=cap,
                                verbose=False, baseline_during0=baseline_during0,
-                               baseline_held0=baseline_held0, stp=stp, stp_tau_d=stp_tau_d)
+                               baseline_held0=baseline_held0, stp=stp, stp_tau_d=stp_tau_d, stp_U=stp_U)
                 g = ev["gates"]
                 passed = sum(1 for k in list(g)[:4] if g[k])
                 if ev["evict_ratio_low"] is None:
@@ -681,7 +683,7 @@ def run_smoke(seed, weights, taus, maxes=(0.0,), ou_pA=8.0, recur_weight=DEFAULT
         print(f"\n[EVICT SMOKE] 2. mechanism assertion @ w={w_sel} tau={tau_sel} cap={cap_sel}", flush=True)
         intact = run_point(seed, w_sel, tau_sel, ou_pA=ou_pA, recur_weight=recur_weight, gabab_max=gabab_max,
                            verbose=True, baseline_during0=baseline_during0,
-                           baseline_held0=baseline_held0, stp=stp, stp_tau_d=stp_tau_d)
+                           baseline_held0=baseline_held0, stp=stp, stp_tau_d=stp_tau_d, stp_U=stp_U)
         g_intact = max(intact["trace_low"]["g_gabab_end_of_read"])
         g_lesion = max(intact["g_gabab_lesion_end_of_read"])
         try:
@@ -696,7 +698,7 @@ def run_smoke(seed, weights, taus, maxes=(0.0,), ou_pA=8.0, recur_weight=DEFAULT
         # ONLY their fast GABA_A component (GABA_B is ADDITIVE in this engine).
         fast = run_point(seed, w_sel, tau_sel, ou_pA=ou_pA, recur_weight=recur_weight, gabab_max=gabab_max,
                          enable_gabab=False, verbose=False, baseline_during0=baseline_during0,
-                               baseline_held0=baseline_held0, stp=stp, stp_tau_d=stp_tau_d)
+                               baseline_held0=baseline_held0, stp=stp, stp_tau_d=stp_tau_d, stp_U=stp_U)
         # THREE-WAY, not two: if the SLOW arm did not evict either, there is NOTHING to attribute, and
         # printing "the SLOW component is what evicts" would be a claim manufactured from two null arms
         # (the first smoke printed exactly that from evict_ratio 0.997 vs 0.992).
@@ -722,7 +724,7 @@ def run_smoke(seed, weights, taus, maxes=(0.0,), ou_pA=8.0, recur_weight=DEFAULT
         # pools are RS (a=0.03, d_increment=100): "more adaptation" means a LARGER d and a SMALLER a.
         _probe = EvictionAffectBrain(seed, recur_weight=recur_weight, ou_pA=ou_pA, enable_gabab=False,
                                      sfa_a=sfa[0], sfa_d=sfa[1], with_eviction_wiring=False,
-                                     stp=stp, stp_tau_d=stp_tau_d)
+                                     stp=stp, stp_tau_d=stp_tau_d, stp_U=stp_U)
         _b, _a = getattr(_probe, "sfa_before", None), getattr(_probe, "sfa_after", None)
         out["sfa_lever"] = {"before_(a,d)": _b, "after_(a,d)": _a}
         if _b is not None:
@@ -740,7 +742,7 @@ def run_smoke(seed, weights, taus, maxes=(0.0,), ou_pA=8.0, recur_weight=DEFAULT
         s = run_point(seed, 0.0, DEFAULT_GABAB_TAU_MS, ou_pA=ou_pA, recur_weight=recur_weight,
                       gabab_max=0.0, enable_gabab=False, sfa=sfa, verbose=True,
                       baseline_during0=baseline_during0, baseline_held0=baseline_held0,
-                      stp=stp, stp_tau_d=stp_tau_d)
+                      stp=stp, stp_tau_d=stp_tau_d, stp_U=stp_U)
         print(f"    SFA: G1 evict {_fmt(s['evict_ratio_low'])} | G2 time {_fmt(s['time_ratio_high'])} | "
               f"G3 re-ig {_fmt(s['reignite_ratio'])} | G4 persist {_fmt(s['persistence_retention'])} "
               f"=> {'PASS G1-G4' if s['core_go(G1-G4)'] else 'no'}", flush=True)
@@ -756,7 +758,7 @@ def run_smoke(seed, weights, taus, maxes=(0.0,), ou_pA=8.0, recur_weight=DEFAULT
 # 6-SEED gate
 # =============================================================================================================
 def run_battery(seeds, gabab_w, gabab_tau, ou_pA=8.0, recur_weight=DEFAULT_RECUR_WEIGHT, gabab_max=0.0,
-                sfa=None, stp=False, stp_tau_d=None):
+                sfa=None, stp=False, stp_tau_d=None, stp_U=None):
     rows = []
     for s in seeds:
         t0 = time.time()
@@ -767,7 +769,7 @@ def run_battery(seeds, gabab_w, gabab_tau, ou_pA=8.0, recur_weight=DEFAULT_RECUR
                             HELD_FLOOR_ABS)
         ev = run_point(s, gabab_w, gabab_tau, ou_pA=ou_pA, recur_weight=recur_weight, gabab_max=gabab_max,
                        sfa=sfa, verbose=False, baseline_during0=base_low["during"][0],
-                       baseline_held0=base_low["held"][0], stp=stp, stp_tau_d=stp_tau_d)
+                       baseline_held0=base_low["held"][0], stp=stp, stp_tau_d=stp_tau_d, stp_U=stp_U)
         ev["baseline_ratchet_ratio"] = base_ratio
         ev["baseline_held_low"] = base_low["held"]
         ev["elapsed_seconds"] = round(time.time() - t0, 1)
@@ -921,6 +923,9 @@ def main():
                     help="enable short-term plasticity (Tsodyks-Markram depression) as a candidate ratchet evictor")
     ap.add_argument("--stp-tau-d", type=float, default=None,
                     help="global STP depression recovery tau (ms); engine default 200 when --stp and this is unset")
+    ap.add_argument("--stp-U", type=float, default=None,
+                    help="global STP utilization/release prob = per-spike depression strength; engine default 0.15. "
+                         "LOWER = gentler (the graded-eviction lever: tau_d 50-200 all ANNIHILATE the held state at 0.15)")
     ap.add_argument("--recur-weight", type=float, default=DEFAULT_RECUR_WEIGHT)
     ap.add_argument("--ou-pA", type=float, default=8.0)
     ap.add_argument("--out", default=str(OUT))
@@ -930,10 +935,10 @@ def main():
     sfa = tuple(a.sfa) if a.sfa else None
     if a.smoke:
         res = run_smoke(a.seeds[0], a.sweep_weights, a.sweep_taus, maxes=a.sweep_maxes, ou_pA=a.ou_pA,
-                        recur_weight=a.recur_weight, sfa=sfa, stp=a.stp, stp_tau_d=a.stp_tau_d)
+                        recur_weight=a.recur_weight, sfa=sfa, stp=a.stp, stp_tau_d=a.stp_tau_d, stp_U=a.stp_U)
         res["config"] = {"seed": a.seeds[0], "sweep_weights": a.sweep_weights, "sweep_taus": a.sweep_taus,
                          "sweep_maxes": a.sweep_maxes, "recur_weight": a.recur_weight, "ou_pA": a.ou_pA,
-                         "sfa": sfa, "stp": bool(a.stp), "stp_tau_d": a.stp_tau_d,
+                         "sfa": sfa, "stp": bool(a.stp), "stp_tau_d": a.stp_tau_d, "stp_U": a.stp_U,
                          "LOW_LEVELS": list(LOW_LEVELS), "HIGH_LEVELS": list(HIGH_LEVELS),
                          "timings_ms": {"settle": SETTLE_MS, "base_probe": BASE_PROBE_MS, "drive": DRIVE_MS,
                                         "post": POST_MS, "read": READ_MS},
@@ -947,10 +952,10 @@ def main():
     print(f"[EVICT] {len(a.seeds)}-seed pre-registered gate @ gabab_w={a.gabab_weight} tau={a.gabab_tau} ms",
           flush=True)
     rows = run_battery(a.seeds, a.gabab_weight, a.gabab_tau, ou_pA=a.ou_pA, recur_weight=a.recur_weight,
-                       gabab_max=a.gabab_max, sfa=sfa, stp=a.stp, stp_tau_d=a.stp_tau_d)
+                       gabab_max=a.gabab_max, sfa=sfa, stp=a.stp, stp_tau_d=a.stp_tau_d, stp_U=a.stp_U)
     cfgd = {"seeds": a.seeds, "gabab_weight": a.gabab_weight, "gabab_tau_ms": a.gabab_tau,
             "gabab_max": a.gabab_max, "recur_weight": a.recur_weight, "ou_pA": a.ou_pA, "sfa": sfa,
-            "stp": bool(a.stp), "stp_tau_d": a.stp_tau_d,
+            "stp": bool(a.stp), "stp_tau_d": a.stp_tau_d, "stp_U": a.stp_U,
             "LOW_LEVELS": list(LOW_LEVELS), "HIGH_LEVELS": list(HIGH_LEVELS),
             "timings_ms": {"settle": SETTLE_MS, "base_probe": BASE_PROBE_MS, "drive": DRIVE_MS,
                            "post": POST_MS, "read": READ_MS},
