@@ -387,6 +387,7 @@ def run_seed(seed, args):
         print(f"[gap4-onbridge][seed {seed}] on-bridge arms train on subsample {len(ytr_b)}/{len(ytr)}", flush=True)
 
     arms = {}; nets = {}
+    t_cell = time.time()
     for arm in args.arms:
         t_arm = time.time()
         net = _build_net(arm, n_in, k, args, seed)
@@ -412,6 +413,18 @@ def run_seed(seed, args):
               f"train {arms[arm]['train_acc']:.3f} memctrl {arms[arm]['memctrl_heldout']:.3f} "
               f"ff-moved {arms[arm]['ff_weight_moved']:.2f} nwt {arms[arm]['no_weight_transport']} "
               f"({time.time()-t_arm:.0f}s)", flush=True)
+        # PROJECT THE TOTAL FROM WHAT UNIT 1 ACTUALLY COST (2026-07-31). This runner is why the helper
+        # exists: it was planned at ~6h45m per cell and was ~23h, because after this loop it trains FOUR
+        # MORE full nets as anti-cheats unless --core-arms-only is set. Eight cells then ran nine hours
+        # toward a ~136 GPU-hour tail that could not change the verdict -- and the arithmetic was available
+        # right here, at the first arm's printed elapsed time. Measured, not estimated.
+        try:
+            from tools.lab import project_cost
+            _n_units = len(args.arms) + (0 if getattr(args, "core_arms_only", False) else 4)
+            project_cost(f"seed {seed} cell", unit_index=(list(args.arms).index(arm) + 1),
+                         n_units=_n_units, elapsed_s=(time.time() - t_cell))
+        except Exception as _e:                            # never let bookkeeping kill a real run
+            print(f"[gap4-onbridge]   (cost projection unavailable: {_e})", flush=True)
 
     # anti-cheat arms on the base credit net (micro if present, else fixed_fa). SELECTIVE SCALE-UP lever
     # (--core-arms-only): skip the 4 anti-cheat nets (lesion/shuf_tgt/shufE + micro-frozen) so ALL the compute goes to
