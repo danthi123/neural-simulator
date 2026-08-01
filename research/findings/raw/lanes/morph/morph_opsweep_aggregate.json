@@ -1,0 +1,57 @@
+{
+ "probe": "morphology_operating_point_sweep",
+ "date": "2026-08-01",
+ "backend": "numpy",
+ "what": "does raising rule-training (cyc_rule 25->100) or weakening irregular entrenchment (cyc_irr 48->12) rescue reg_acc in the SINGLE shared pool?",
+ "per": [
+  {
+   "label": "morph_op_s42_irr12.json",
+   "reg_acc": 0.875,
+   "irr_acc": 0.2857142857142857,
+   "GO": false
+  },
+  {
+   "label": "morph_op_s42_rule100.json",
+   "reg_acc": 1.0,
+   "irr_acc": 0.42857142857142855,
+   "GO": false
+  },
+  {
+   "label": "morph_op_s42_rule100_irr12.json",
+   "reg_acc": 1.0,
+   "irr_acc": 0.0,
+   "GO": false
+  },
+  {
+   "label": "morph_op_s43_irr12.json",
+   "reg_acc": 0.625,
+   "irr_acc": 0.5714285714285714,
+   "GO": false
+  },
+  {
+   "label": "morph_op_s43_rule100.json",
+   "reg_acc": 0.5,
+   "irr_acc": 0.42857142857142855,
+   "GO": false
+  },
+  {
+   "label": "morph_op_s43_rule100_irr12.json",
+   "reg_acc": 1.0,
+   "irr_acc": 0.14285714285714285,
+   "GO": false
+  }
+ ],
+ "finding": "ARCHITECTURAL trade-off confirmed: strengthening the rule route raises reg_acc (to 0.5-1.0) but COLLAPSES irregular blocking (irr_acc 0.86->0.0-0.57). No single operating point in the shared pool satisfies BOTH reg_acc>=0.90 AND blocking. Confirms the NO-GO is architectural (separate systems needed), not operating-point.",
+ "n": 6,
+ "n_go": 0,
+ "seeds": [
+  42,
+  43
+ ],
+ "runner": "research.runners._productive_morphology_construction_derisk",
+ "config": {
+  "sweep": "cyc_rule in {25,100} x cyc_irr in {48,12}",
+  "n_pool": 2000,
+  "base": "cyc_rule=25 cyc_irr=48 reg_acc=0.188"
+ }
+}
