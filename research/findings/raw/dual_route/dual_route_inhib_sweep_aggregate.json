@@ -1,0 +1,63 @@
+{
+ "probe": "productive_morphology_dual_route_inhib_sweep",
+ "date": "2026-08-01",
+ "backend": "numpy",
+ "device": "cpu",
+ "runner": "research.runners._productive_morphology_dual_route_derisk",
+ "seed": 42,
+ "config": {
+  "n_pool": 2000,
+  "cyc_rule": 40,
+  "cyc_irr": 48,
+  "sweep": "inhib-strength 0.5..6.0"
+ },
+ "sweep": [
+  {
+   "inhib": 0.5,
+   "reg_acc": 0.125,
+   "irr_acc": 1.0,
+   "n_inhib_edges": 33894
+  },
+  {
+   "inhib": 1.0,
+   "reg_acc": 0.125,
+   "irr_acc": 1.0,
+   "n_inhib_edges": 33894
+  },
+  {
+   "inhib": 1.5,
+   "reg_acc": 0.25,
+   "irr_acc": 0.8571,
+   "n_inhib_edges": 33894
+  },
+  {
+   "inhib": 2.0,
+   "reg_acc": 0.25,
+   "irr_acc": 0.8571,
+   "n_inhib_edges": 33894
+  },
+  {
+   "inhib": 3.0,
+   "reg_acc": 0.125,
+   "irr_acc": 0.8571,
+   "n_inhib_edges": 33894
+  },
+  {
+   "inhib": 4.0,
+   "reg_acc": 0.125,
+   "irr_acc": 1.0,
+   "n_inhib_edges": 33894
+  },
+  {
+   "inhib": 6.0,
+   "reg_acc": 0.0,
+   "irr_acc": 1.0,
+   "n_inhib_edges": 33894
+  }
+ ],
+ "reg_acc_max": 0.25,
+ "reg_gate": 0.9,
+ "irr_gate": 0.85,
+ "n_both_gates": 0,
+ "headline": "NEGATIVE: the dual-route fix via a SINGLE shared pool + whole-form->affix cross-route INHIBITION does NOT achieve rule generalization. Across inhib-strength 0.5..6.0 (7 points, seed 42) reg_acc caps at 0.25 (needs 0.90) while blocking holds (irr 0.86-1.0); 0 points pass BOTH gates. reg_acc is ~the single-pool baseline (0.19) REGARDLESS of inhibition -> the single-pool+inhibition realization does NOT truly separate the routes: novel stems still spuriously activate whole-forms in the shared WTA, so the default affix never wins. Blocking works (inhibition suppresses the affix for irregulars), the RULE does not. Next: GENUINELY separate pools (route 1 in a dedicated pool isolated from the whole-form store), the true Pinker-Ullman separation; + the Dale-compliant di-synaptic interneuron for the inhibition."
+}
