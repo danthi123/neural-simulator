@@ -226,6 +226,51 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
+> ## 📍 STATE OF THE PROJECT — 2026-08-01 00:55 (read this first; everything below the next anchor is HISTORY)
+> **THE DAY'S THROUGH-LINE: the "enforced" parallelization guard was BROKEN, not merely advisory — and two
+> open levers got wired, verified, and put on both lanes.** The GPU queue-dispatcher (`lane_dispatch.sh`)
+> crashed on a startup arithmetic bug (`pgrep -c` emits `0\n0`) so it NEVER dispatched — the standing queue was
+> a no-op; fixed `0538bd8b`. The pool jobs were staged with bare `python` (absent on the nodes; they have only
+> `.venv/bin/python`) so the first batch produced nothing; re-staged correctly. Both lanes now busy + producing.
+>
+> **LIVE BACKGROUND WORK (nothing to double-launch):**
+> - **GPU — e-prop noise Round-1 (the priority-1 experiment).** `_onbridge_eprop_port_derisk` pool_k=8,
+>   seeds {42,43,44} × {noise OFF, noise ON=--ou-noise --cond-noise}, epochs80/subsample160/settle40,
+>   SIM_BACKEND=cupy. Dispatched via `lane_dispatch.sh gpu 3` (nohup, keeps 3 slots full from
+>   `research/queue/gpu.queue`). Completion monitor = Task `batd5gx2d`. Artifacts →
+>   `research/findings/raw/eprop_noise/`. ~1.25h/run, ~2.5h wall.
+> - **POOL — affect STP τ_d ladder.** 12 jobs (τ_d {50,100,150,200} × seeds {43,44,100}) via the running
+>   `pool_autodispatch.sh` (reads `research/queue/pool.queue`). Results in node `g5s_out/`, rsync to local.
+> - **AWS STOPPED** (not billing) — 3090 not saturated; the legitimate use is splitting the 6-seed/K-sweep
+>   Round-2 across local+AWS, only once Round-1 says the experiment is worth scaling. `bash tools/aws_gpu.sh status`.
+> - Heartbeat: Task `bkaxaz04q` (workflow heartbeat, richer one kept; my duplicate `b041chbhv` stopped).
+>
+> **KEY RESULTS THIS SESSION:**
+> - **e-prop noise knobs wired + VERIFIED LIVE** (`32a10c60`, redeems the c2b05d97 revert): threaded by
+>   PARAMETER (not getattr-in-wrong-scope); lever confirmed at pool_k=8 (ff_moved 6.27M OFF vs 6.42M ON — real
+>   run, backend=cupy from the artifact). Unblocks the 07-14 open Q (does ou/cond decorrelation + K clean the
+>   Izhikevich forward-noise plateau). pool_k=1/settle=6 gave identical ff_moved = a degeneracy artifact, NOT
+>   inert. **NOT the redundant BDSP crux (still DO-NOT-RELAUNCH); this is the eprop rule under forward noise.**
+> - **affect STP wired + VERIFIED** (`75b4e1ce`, board #1): held collapses 0.089→0 when STP on; baseline
+>   instrument byte-identical (STP reaches only the eviction brain). But τ_d {50,100,200} all **ANNIHILATE**
+>   the held state (held[0]~0, "no state to evict") — τ_d is NOT the graded knob; depression is too strong at
+>   default stp_U=0.15. **Next lever = stp_U (weaker, e.g. 0.02–0.10), not CLI-exposed yet.**
+>
+> **▶ EXACT NEXT ACTIONS (in order):**
+> 1. **Read e-prop Round-1 when `batd5gx2d` fires.** Does noise-ON lift inherit above noise-OFF and above
+>    chance/controls? YES ⇒ 6-seed + K-sweep {1,4,8} × {off,on} (√K prediction), SPLIT across local 3090 +
+>    AWS (start AWS then, `bash tools/aws_gpu.sh start`). NO/identical ⇒ decorrelation isn't the lever; the
+>    forward-noise plateau needs a different mechanism (finding).
+> 2. **Affect: expose `stp_U` (same wiring pattern as stp_tau_d), sweep weaker {0.02,0.05,0.10} for a graded
+>    window** (evict G1<0.60 WHILE persistence G4≥0.50 survives). τ_d is exhausted (annihilation). AND build
+>    an **STP-lesion control** (analog of `set_sfa_lesion`) BEFORE any affect 6-seed GO — G6 (evict_out lesion)
+>    gates GABA_B synapses, NOT the per-synapse STP dynamic, so it cannot control an STP arm.
+> 3. Keep the pool stocked ahead (the standing-queue fix): idle cores = an empty queue, not a reaction problem.
+>
+> **NOTED-FAILURE (log): the pool command convention must be `.venv/bin/python`, never bare `python` (absent on
+> nodes) — silent no-output. And `lane_dispatch`/`pool` dispatchers both had a `pgrep -c || echo 0` double-emit
+> family; audit the pool one too.**
+
 > ## 📍 STATE OF THE PROJECT — 2026-07-31 18:30 (read this first; everything below the next anchor is HISTORY)
 > **THE DAY'S THROUGH-LINE: four results, and in every one the INSTRUMENT decided the answer before the
 > biology got a say.** gap#4 expanded-forward (task went shallow -> UNDEFINED), affect GABA_B (arm crushed by
