@@ -263,8 +263,11 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 >    near LIF ceiling)** — reproduces the banked closure WITH PROVENANCE; noise-ON **collapses to 0.197** →
 >    √K-DECORRELATION REFUTED for e-prop (works on clean drive; noise destroys the credit). Crux Q answered:
 >    pop-coding works via clean drive + intrinsic heterogeneity, NOT decorrelation; the BDSP gap is its credit
->    RULE. Biology entry `deep-credit-on-spikes` → reproduced-with-provenance. **√K-sweep {1,4,16} noise-OFF
->    RUNNING** on GPU (confirm K=1≈plateau → K=8 → K=16). RESIDUAL: 3 seeds, K=8, 0.778 vs 0.89 ceiling.
+>    RULE. Biology entry `deep-credit-on-spikes` → reproduced-with-provenance. **√K CURVE COMPLETE (3 seeds/K):
+>    K=1 0.37 → K=4 0.61 → K=8 0.78 → K=16 0.926 — monotonic; K=16 EXCEEDS K=8 AND the LIF ceiling 0.89 (the
+>    residual CLOSES).** Population coding is decisively the closure mechanism. **6-seed strengthening of K=8+K=16
+>    at seeds {100,101,102} RUNNING** (closes the crux to the project 6-seed bar). Remaining after: gap#4 is
+>    strongly confirmed — the roadmap's load-bearing dependency is essentially solved; NEXT FRONTIER is open.
 > 2. **Affect evictor = a BISTABLE-attractor WALL; brake class exhausted (finding `2b983509`). DEEP-RESEARCH
 >    DONE — the reframe: bistability is an ASSET for a TRANSIENT OPEN-LOOP CLEAR, not an obstacle.** A brake must
 >    HOLD the loop down (fights the attractor); an active clear pushes the state across the basin boundary ONCE,
