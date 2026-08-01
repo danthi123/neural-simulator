@@ -1,0 +1,24 @@
+{
+ "run_id": "1785609957-3754273",
+ "runner": "research/runners/_curiosity_reward_omission_veto_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_curiosity_reward_omission_veto_derisk.py",
+  "--seeds",
+  "43",
+  "--out",
+  "research/findings/raw/lanes/curiosity_omission_veto_s43.json"
+ ],
+ "git_sha": "3e09c2bb3",
+ "git_dirty": true,
+ "started": "2026-08-01T14:45:57",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 98.8,
+ "corpus_check_query": "recursive theory of mind nested belief W4",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/lanes/curiosity_omission_veto_s100.json"
+}
