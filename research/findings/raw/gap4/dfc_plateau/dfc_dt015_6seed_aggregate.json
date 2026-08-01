@@ -1,0 +1,81 @@
+{
+ "probe": "gap4_dfc_dt015_6seed",
+ "date": "2026-08-01",
+ "backend": "numpy",
+ "device": "cpu",
+ "runner": "research.runners._gap4_dfc_plateau_credit_derisk",
+ "config": {
+  "ctrl_dt": 0.15,
+  "op_point": "best from the 11-config seed-42 sweep (tied frozen)"
+ },
+ "seeds": [
+  100,
+  101,
+  102,
+  42,
+  43,
+  44
+ ],
+ "n_seeds": 6,
+ "n_beats_both_margin005": 0,
+ "n_dfc_beats_unsup": 1,
+ "n_dfc_beats_frozen_dcs_pos": 4,
+ "mean_dfc_heldout": 0.4599,
+ "mean_frozen_heldout": 0.4167,
+ "mean_unsup_heldout": 0.5216,
+ "mean_dcs_dfc": 0.0686,
+ "mean_dfc_train": 0.7907,
+ "no_transport_all": true,
+ "mean_align_diag": 0.7733,
+ "per_seed": [
+  {
+   "seed": 100,
+   "dfc": 0.463,
+   "frozen": 0.4259,
+   "unsup": 0.4815,
+   "dcs_dfc": 0.0645,
+   "train": 0.8182
+  },
+  {
+   "seed": 101,
+   "dfc": 0.5556,
+   "frozen": 0.5556,
+   "unsup": 0.6111,
+   "dcs_dfc": 0.0,
+   "train": 0.8693
+  },
+  {
+   "seed": 102,
+   "dfc": 0.463,
+   "frozen": 0.3889,
+   "unsup": 0.5556,
+   "dcs_dfc": 0.125,
+   "train": 0.8125
+  },
+  {
+   "seed": 42,
+   "dfc": 0.537,
+   "frozen": 0.537,
+   "unsup": 0.5185,
+   "dcs_dfc": 0.0,
+   "train": 0.8125
+  },
+  {
+   "seed": 43,
+   "dfc": 0.3333,
+   "frozen": 0.2407,
+   "unsup": 0.463,
+   "dcs_dfc": 0.122,
+   "train": 0.6875
+  },
+  {
+   "seed": 44,
+   "dfc": 0.4074,
+   "frozen": 0.3519,
+   "unsup": 0.5,
+   "dcs_dfc": 0.1,
+   "train": 0.7443
+  }
+ ],
+ "headline": "6-seed NEGATIVE: DFC (transport-free, KP-aligned) beats BOTH baselines by 0.05 on 0/6, beats unsupervised on 1/6, beats frozen (dcs>0) on 4/6. DFC sits BETWEEN frozen and unsup -- it adds over no-credit but overfits BELOW label-free sharpening. no-transport holds all 6; instrument verified (align-diag mean 0.773)."
+}

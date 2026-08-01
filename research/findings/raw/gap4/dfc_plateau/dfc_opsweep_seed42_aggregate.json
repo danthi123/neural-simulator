@@ -1,0 +1,144 @@
+{
+ "probe": "gap4_dfc_operating_point_sweep",
+ "date": "2026-08-01",
+ "backend": "numpy",
+ "device": "cpu",
+ "seed": 42,
+ "runner": "research.runners._gap4_dfc_plateau_credit_derisk",
+ "config": {
+  "sweep": "11 controller op-points (epochs/lr-dfc/ctrl-alpha/ctrl-dt/ctrl-steps/fb-wd)",
+  "frozen_baseline": 0.537
+ },
+ "n_configs": 11,
+ "n_beat_both_margin005": 0,
+ "dfc_heldout_range": [
+  0.4444,
+  0.537
+ ],
+ "dfc_heldout_max": 0.537,
+ "frozen_heldout": 0.537,
+ "mean_unsup_heldout": 0.5084,
+ "mean_dfc_train": 0.7779,
+ "align_diag_range": [
+  0.537,
+  1.113
+ ],
+ "best_configs_tie_frozen": [
+  "dt015",
+  "steps8"
+ ],
+ "best_dcs_dfc": 0.0,
+ "table": [
+  {
+   "label": "baseline",
+   "dfc": 0.4815,
+   "unsup": 0.5185,
+   "frozen": 0.537,
+   "dcs_dfc": -0.12,
+   "wrong_sign": 0.463,
+   "align": 0.745,
+   "train": 0.7898
+  },
+  {
+   "label": "epochs10",
+   "dfc": 0.5185,
+   "unsup": 0.4815,
+   "frozen": 0.537,
+   "dcs_dfc": -0.04,
+   "wrong_sign": 0.4444,
+   "align": 0.724,
+   "train": 0.8125
+  },
+  {
+   "label": "epochs15",
+   "dfc": 0.5185,
+   "unsup": 0.5,
+   "frozen": 0.537,
+   "dcs_dfc": -0.04,
+   "wrong_sign": 0.463,
+   "align": 0.919,
+   "train": 0.8125
+  },
+  {
+   "label": "lrdfc002",
+   "dfc": 0.463,
+   "unsup": 0.5185,
+   "frozen": 0.537,
+   "dcs_dfc": -0.16,
+   "wrong_sign": 0.463,
+   "align": 0.732,
+   "train": 0.625
+  },
+  {
+   "label": "lrdfc01",
+   "dfc": 0.4815,
+   "unsup": 0.5185,
+   "frozen": 0.537,
+   "dcs_dfc": -0.12,
+   "wrong_sign": 0.4444,
+   "align": 0.741,
+   "train": 0.7955
+  },
+  {
+   "label": "alpha1",
+   "dfc": 0.4815,
+   "unsup": 0.5185,
+   "frozen": 0.537,
+   "dcs_dfc": -0.12,
+   "wrong_sign": 0.3704,
+   "align": 1.038,
+   "train": 0.7898
+  },
+  {
+   "label": "dt015",
+   "dfc": 0.537,
+   "unsup": 0.5185,
+   "frozen": 0.537,
+   "dcs_dfc": 0.0,
+   "wrong_sign": 0.4259,
+   "align": 0.942,
+   "train": 0.8125
+  },
+  {
+   "label": "steps8",
+   "dfc": 0.537,
+   "unsup": 0.5185,
+   "frozen": 0.537,
+   "dcs_dfc": 0.0,
+   "wrong_sign": 0.4444,
+   "align": 0.891,
+   "train": 0.8125
+  },
+  {
+   "label": "fbwd05",
+   "dfc": 0.5,
+   "unsup": 0.5185,
+   "frozen": 0.537,
+   "dcs_dfc": -0.08,
+   "wrong_sign": 0.4074,
+   "align": 0.537,
+   "train": 0.8125
+  },
+  {
+   "label": "reg_combo",
+   "dfc": 0.4444,
+   "unsup": 0.4815,
+   "frozen": 0.537,
+   "dcs_dfc": -0.2,
+   "wrong_sign": 0.4815,
+   "align": 0.841,
+   "train": 0.7102
+  },
+  {
+   "label": "gentle_combo",
+   "dfc": 0.4815,
+   "unsup": 0.5,
+   "frozen": 0.537,
+   "dcs_dfc": -0.12,
+   "wrong_sign": 0.463,
+   "align": 1.113,
+   "train": 0.7841
+  }
+ ],
+ "headline": "0/11 op-points beat BOTH baselines by 0.05. DFC (transport-free closed-loop control + KP feedback learning) OVERFITS the movable hidden at every operating point: train ~0.79 but held-out caps at the FROZEN reservoir 0.537 (best dt015/steps8 TIE frozen, dcs_dfc=0.000; all others below). Instrument verified: KP aligns Q (align-diag 0.54-1.11), controller fits train, sign load-bearing, no-transport holds. Consistent with the DFA + larger-task nulls -- directed deep credit overfits the movable hidden; only label-free unsupervised sharpening helps."
+}
