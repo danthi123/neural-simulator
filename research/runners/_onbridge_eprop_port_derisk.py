@@ -432,7 +432,8 @@ def _train_eprop(net, Xtr, ytr, epochs, batch, seed, shuffle_dfa=False):
 # ============================================================================================================
 def positive_control(seed, task_kwargs, n_pos=40, hidden=32, settle=40, eprop_lr=0.5, eps_leak=0.9,
                      surrogate="atan_vt", alpha_surr=0.15, beta_surr=1.0, logit_source="leaky_readout",
-                     epochs=200, batch=20, hp=None, n_hidden_layers=1, w_clip=4000.0):
+                     epochs=200, batch=20, hp=None, n_hidden_layers=1, w_clip=4000.0,
+                     ou_noise=False, cond_noise=False, stp=False):
     (Xtr, ytr, _Ltr), _te, meta, _idx = make_task_semantic_inheritance(seed, **task_kwargs)
     k = meta["k_classes"]; n_in = Xtr.shape[1]
     srng = np.random.default_rng(seed + 31)
@@ -441,7 +442,8 @@ def positive_control(seed, task_kwargs, n_pos=40, hidden=32, settle=40, eprop_lr
     chance = float(max(np.mean(ys == c) for c in np.unique(ys)))
     net = OnBridgeEpropNet(n_in, hidden, k, seed=seed, n_hidden_layers=n_hidden_layers, settle_steps=settle,
                            eprop_lr=eprop_lr, eps_leak=eps_leak, surrogate=surrogate, alpha_surr=alpha_surr,
-                           beta_surr=beta_surr, logit_source=logit_source, w_clip=w_clip, hp=hp)
+                           beta_surr=beta_surr, logit_source=logit_source, w_clip=w_clip, hp=hp,
+                           ou_noise=ou_noise, cond_noise=cond_noise, stp=stp)
     w0 = net.ff_weight_norm()
     acc0 = net.accuracy(Xs, ys)
     _train_eprop(net, Xs, ys, epochs, batch, seed)
@@ -451,6 +453,7 @@ def positive_control(seed, task_kwargs, n_pos=40, hidden=32, settle=40, eprop_lr
             "train_acc_after": acc1, "ff_weight_moved": float(abs(w1 - w0)),
             "surrogate": surrogate, "alpha_surr": alpha_surr, "logit_source": logit_source,
             "eprop_lr": eprop_lr, "eps_leak": eps_leak, "epochs": epochs,
+            "ou_noise": bool(ou_noise), "cond_noise": bool(cond_noise), "stp": bool(stp),
             "passes": bool(acc1 >= max(0.70, chance + 0.30))}
 
 
@@ -458,7 +461,8 @@ def positive_control(seed, task_kwargs, n_pos=40, hidden=32, settle=40, eprop_lr
 # Full seed: stage-0 depth gate + rate oracle + e-prop train + inherit held-out + permuted + shuffle-DFA controls.
 # ============================================================================================================
 def run_seed(seed, hidden, settle, epochs, batch, eprop_lr, eps_leak, surrogate, alpha_surr, beta_surr,
-             logit_source, w_clip, train_subsample, task_kwargs, hp=None, n_hidden_layers=2, pool_k=1, reservoir_control=True):
+             logit_source, w_clip, train_subsample, task_kwargs, hp=None, n_hidden_layers=2, pool_k=1, reservoir_control=True,
+             ou_noise=False, cond_noise=False, stp=False):
     (Xtr, ytr, Ltr), (Xte, yte, Lte), meta, idx = make_task_semantic_inheritance(seed, **task_kwargs)
     k = meta["k_classes"]; n_in = Xtr.shape[1]
     inh_idx = idx["inh_idx"]
@@ -485,7 +489,8 @@ def run_seed(seed, hidden, settle, epochs, batch, eprop_lr, eps_leak, surrogate,
     def _mk():
         return OnBridgeEpropNet(n_in, hidden, k, seed=seed, n_hidden_layers=n_hidden_layers, settle_steps=settle,
                                 eprop_lr=eprop_lr, eps_leak=eps_leak, surrogate=surrogate, alpha_surr=alpha_surr,
-                                beta_surr=beta_surr, logit_source=logit_source, w_clip=w_clip, hp=hp, pool_k=pool_k)
+                                beta_surr=beta_surr, logit_source=logit_source, w_clip=w_clip, hp=hp, pool_k=pool_k,
+                                ou_noise=ou_noise, cond_noise=cond_noise, stp=stp)
 
     # --- main e-prop arm ---
     net = _mk(); w0 = net.ff_weight_norm()
@@ -561,6 +566,19 @@ def main():
     ap.add_argument("--w-clip", type=float, default=4000.0)
     ap.add_argument("--train-subsample", type=int, default=240)
     ap.add_argument("--pool-k", type=int, default=1)
+    # SUBSTRATE-DECORRELATION knobs (2026-08-01): reachable at last. `enable_ou_process` /
+    # `enable_conductance_noise` give each neuron INDEPENDENT background current/conductance, so a pooled
+    # population is DECORRELATED and averaging reduces the Izhikevich forward noise by ~sqrt(K)
+    # (Destexhe-Rudolph high-conductance state). The 07-14 on-bridge residual was exactly that forward noise;
+    # the banked K=8 "closure" ran with BOTH at their False default and UNRECORDED, so the sqrt-K decorrelation
+    # it needs may never have been on. These flags make the biology-prescribed fix runnable AND recorded.
+    # (knob_reachable / CLASS-KR flagged this file: a cfg-writing param with no --flag is a knob nobody can set.)
+    ap.add_argument("--ou-noise", action="store_true",
+                    help="independent OU background current per neuron (decorrelates the pool for sqrt-K averaging)")
+    ap.add_argument("--cond-noise", action="store_true",
+                    help="independent conductance-based background noise per neuron (same decorrelation role)")
+    ap.add_argument("--stp", action="store_true",
+                    help="short-term plasticity (Tsodyks-Markram); OFF by default -- STP depression throttles FF drive")
     ap.add_argument("--freeze-hidden", action="store_true",
                     help="THE MISSING RESERVOIR CONTROL: train ONLY the last FF pathway (the host-side linear "
                          "softmax readout, which _accum_grad already SKIPS from the e-prop/DFA rule) and FREEZE "
@@ -622,7 +640,8 @@ def main():
                                       eprop_lr=a.eprop_lr, eps_leak=a.eps_leak, surrogate=a.surrogate,
                                       alpha_surr=a.alpha_surr, beta_surr=a.beta_surr, logit_source=a.logit_source,
                                       epochs=a.pos_epochs, batch=a.pos_batch, hp=hp,
-                                      n_hidden_layers=a.pos_hidden_layers, w_clip=a.w_clip)
+                                      n_hidden_layers=a.pos_hidden_layers, w_clip=a.w_clip,
+                                      ou_noise=a.ou_noise, cond_noise=a.cond_noise, stp=a.stp)
                 pcs.append(pc)
                 print(f"[POS-CTRL seed {s}] surrogate={a.surrogate} alpha={a.alpha_surr} logit={a.logit_source} lr={a.eprop_lr} "
                       f"| fit-{pc['n_pos']} train {pc['train_acc_before']:.2f}->{pc['train_acc_after']:.2f} "
@@ -633,7 +652,8 @@ def main():
         out = {"probe": "onbridge_eprop_port_poscontrol", "seeds": a.seeds,
                "config": {"hidden": a.hidden, "settle": a.settle_steps, "surrogate": a.surrogate,
                           "alpha_surr": a.alpha_surr, "logit_source": a.logit_source, "eprop_lr": a.eprop_lr,
-                          "eps_leak": a.eps_leak, "pos_epochs": a.pos_epochs, "task": task_kwargs},
+                          "eps_leak": a.eps_leak, "pos_epochs": a.pos_epochs, "task": task_kwargs,
+                          "ou_noise": bool(a.ou_noise), "cond_noise": bool(a.cond_noise), "stp": bool(a.stp)},
                "elapsed_seconds": round(time.time() - t0, 1), "positive_control": pcs,
                "error": err, "PASSES": bool(pcs and all(p["passes"] for p in pcs))}
         Path(a.out).parent.mkdir(parents=True, exist_ok=True)
@@ -646,7 +666,8 @@ def main():
         for s in a.seeds:
             r = run_seed(s, a.hidden, a.settle_steps, a.epochs, a.batch, a.eprop_lr, a.eps_leak, a.surrogate,
                          a.alpha_surr, a.beta_surr, a.logit_source, a.w_clip, a.train_subsample, task_kwargs, hp=hp,
-                         n_hidden_layers=a.n_hidden_layers, pool_k=a.pool_k)
+                         n_hidden_layers=a.n_hidden_layers, pool_k=a.pool_k,
+                         ou_noise=a.ou_noise, cond_noise=a.cond_noise, stp=a.stp)
             per.append(r)
             # PER-SEED CHECKPOINT (2026-07-16): previously --out was written ONCE, after ALL seeds (line ~701), so
             # any interruption -- a reboot, an OOM, a kill -- destroyed the entire arm's work. A 3-seed arm is ~3h
@@ -686,6 +707,7 @@ def main():
                           "surrogate": a.surrogate, "alpha_surr": a.alpha_surr, "logit_source": a.logit_source,
                           "w_clip": a.w_clip, "train_subsample": a.train_subsample, "task": task_kwargs,
                           "pool_k": a.pool_k, "freeze_hidden": bool(a.freeze_hidden),
+                          "ou_noise": bool(a.ou_noise), "cond_noise": bool(a.cond_noise), "stp": bool(a.stp),
                           "reservoir_control": True, "hidden_lr_scale": a.hidden_lr_scale,
                           "no_bdsp": bool(a.no_bdsp), "bdsp_wmax": a.bdsp_wmax,
                           "backend": os.environ.get("SIM_BACKEND")},
