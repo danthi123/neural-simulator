@@ -29,8 +29,15 @@ mkdir -p "$(dirname "$Q")" "$LOGD"; touch "$Q" "$RUN" "$DONE"
 # Count only real jobs, never this script or its own shells (a past monitor counted its own shells and
 # reported a false negative).
 running_count() {
-  if [ "$LANE" = gpu ]; then pgrep -fc '[.]venv/bin/python -m research' 2>/dev/null || echo 0
-  else pgrep -fc '[l]ane_worker' 2>/dev/null || echo 0; fi
+  # `pgrep -c` already prints 0 and EXITS 1 when nothing matches, so a `|| echo 0` fallback double-emits
+  # "0\n0" and crashes the `$(( SLOTS - N ))` arithmetic at startup (0-running IS the startup case). Capture
+  # into a var and default-if-empty instead. Pattern is lenient (`python .*-m research`) so it still matches
+  # commands with interpreter flags like `-u` (`python -u -m research...`); a strict `python -m` missed those
+  # and always counted 0 -> over-dispatch.
+  local n
+  if [ "$LANE" = gpu ]; then n=$(pgrep -fc '[.]venv/bin/python .*-m research' 2>/dev/null)
+  else n=$(pgrep -fc '[l]ane_worker' 2>/dev/null); fi
+  printf '%s' "${n:-0}"
 }
 
 while true; do
