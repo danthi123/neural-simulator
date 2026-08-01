@@ -1,12 +1,18 @@
 ---
 type: finding
-status: live
+status: superseded
+superseded_by: research/findings/2026-08-01-gap4-6seed-bar-RUN-deep-credit-control-shuffleDFA-leaks-forward-learning-real-attribution-not.md
 date: 2026-08-01
 mechanism: deep-credit-on-spikes
 artifacts:
   - research/findings/raw/eprop_noise/_k8_noise_AB_aggregate.json
   - research/findings/raw/eprop_noise/
 ---
+
+> **⚠️ SUPERSEDED (2026-08-01 PM, closure-validation half only).** The **decorrelation-noise REFUTED** result
+> below stands. But this doc's other headline — "the banked closure is VALIDATED as-is" — is SUPERSEDED: the
+> 6-seed bar was then run and the shuffle-DFA deep-credit control LEAKS on 4/6 seeds at each K, so forward
+> learning is real but the deep-CREDIT attribution is NOT established. See the superseding finding.
 
 # gap#4: e-prop at K=8 reproduces the deep-credit closure WITH CLEAN PROVENANCE, and the decorrelation-noise hypothesis is REFUTED
 

@@ -1,0 +1,161 @@
+{
+  "probe": "gap4_6seed_shuffleDFA_audit",
+  "date": "2026-08-01",
+  "what": "6-seed validation of the gap4 e-prop deep-credit closure (noise-OFF, depth-2) \u2014 the shuffle-DFA deep-credit control",
+  "GO_gate": "signal requires shuffle_dfa <= chance+0.10 = 0.433 (chance 0.333)",
+  "K8": {
+    "per_seed": [
+      {
+        "source": "eprop_k8_s42_off.json",
+        "SIGNAL": true,
+        "pool_k": 8,
+        "ou_noise": false,
+        "n_hidden_layers": 2,
+        "inherit": 0.741,
+        "permuted": 0.185,
+        "shuffle_dfa": 0.296,
+        "seed": 42
+      },
+      {
+        "source": "eprop_k8_s43_off.json",
+        "SIGNAL": false,
+        "pool_k": 8,
+        "ou_noise": false,
+        "n_hidden_layers": 2,
+        "inherit": 0.815,
+        "permuted": 0.148,
+        "shuffle_dfa": 0.444,
+        "seed": 43
+      },
+      {
+        "source": "eprop_k8_s44_off.json",
+        "SIGNAL": false,
+        "pool_k": 8,
+        "ou_noise": false,
+        "n_hidden_layers": 2,
+        "inherit": 0.778,
+        "permuted": 0.259,
+        "shuffle_dfa": 0.593,
+        "seed": 44
+      },
+      {
+        "source": "eprop_6seed_k8_s100.json",
+        "SIGNAL": false,
+        "pool_k": 8,
+        "ou_noise": false,
+        "n_hidden_layers": 2,
+        "inherit": 0.778,
+        "permuted": 0.259,
+        "shuffle_dfa": 0.481,
+        "seed": 100
+      },
+      {
+        "source": "eprop_6seed_k8_s101.json",
+        "SIGNAL": false,
+        "pool_k": 8,
+        "ou_noise": false,
+        "n_hidden_layers": 2,
+        "inherit": 0.519,
+        "permuted": 0.333,
+        "shuffle_dfa": 0.37,
+        "seed": 101
+      },
+      {
+        "source": "eprop_6seed_k8_s102.json",
+        "SIGNAL": false,
+        "pool_k": 8,
+        "ou_noise": false,
+        "n_hidden_layers": 2,
+        "inherit": 0.481,
+        "permuted": 0.296,
+        "shuffle_dfa": 0.444,
+        "seed": 102
+      }
+    ],
+    "n_seeds": 6,
+    "n_signal_go": 1,
+    "n_shuffle_leak": 4,
+    "mean_inherit": 0.685,
+    "mean_shuffle_dfa": 0.438,
+    "mean_permuted": 0.247
+  },
+  "K16": {
+    "per_seed": [
+      {
+        "source": "eprop_ksweep_k16_s42.json",
+        "SIGNAL": false,
+        "pool_k": 16,
+        "ou_noise": false,
+        "n_hidden_layers": 2,
+        "inherit": 0.963,
+        "permuted": 0.185,
+        "shuffle_dfa": 0.593,
+        "seed": 42
+      },
+      {
+        "source": "eprop_ksweep_k16_s43.json",
+        "SIGNAL": false,
+        "pool_k": 16,
+        "ou_noise": false,
+        "n_hidden_layers": 2,
+        "inherit": 0.926,
+        "permuted": 0.185,
+        "shuffle_dfa": 0.593,
+        "seed": 43
+      },
+      {
+        "source": "eprop_ksweep_k16_s44.json",
+        "SIGNAL": false,
+        "pool_k": 16,
+        "ou_noise": false,
+        "n_hidden_layers": 2,
+        "inherit": 0.889,
+        "permuted": 0.222,
+        "shuffle_dfa": 0.519,
+        "seed": 44
+      },
+      {
+        "source": "eprop_6seed_k16_s100.json",
+        "SIGNAL": false,
+        "pool_k": 16,
+        "ou_noise": false,
+        "n_hidden_layers": 2,
+        "inherit": 0.815,
+        "permuted": 0.333,
+        "shuffle_dfa": 0.556,
+        "seed": 100
+      },
+      {
+        "source": "eprop_6seed_k16_s101.json",
+        "SIGNAL": false,
+        "pool_k": 16,
+        "ou_noise": false,
+        "n_hidden_layers": 2,
+        "inherit": 0.741,
+        "permuted": 0.259,
+        "shuffle_dfa": 0.333,
+        "seed": 101
+      },
+      {
+        "source": "eprop_6seed_k16_s102.json",
+        "SIGNAL": false,
+        "pool_k": 16,
+        "ou_noise": false,
+        "n_hidden_layers": 2,
+        "inherit": 0.778,
+        "permuted": 0.296,
+        "shuffle_dfa": 0.37,
+        "seed": 102
+      }
+    ],
+    "n_seeds": 6,
+    "n_signal_go": 0,
+    "n_shuffle_leak": 4,
+    "mean_inherit": 0.852,
+    "mean_shuffle_dfa": 0.494,
+    "mean_permuted": 0.247
+  },
+  "headline": "deep-credit control (shuffle-DFA) NOT clean at 6 seeds: K8 4/6 leak 1/6 GO, K16 4/6 leak 0/6 GO; forward-learning + inherit trend real, credit-attribution not established",
+  "go_bar_shuffle_dfa": 0.433,
+  "chance": 0.333
+}

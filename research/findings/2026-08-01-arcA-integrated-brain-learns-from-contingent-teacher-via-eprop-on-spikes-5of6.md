@@ -5,9 +5,23 @@ date: 2026-08-01
 mechanism: teacher-contingent-development
 artifacts:
   - research/findings/raw/_a1_teacher_contingent_eprop_6seed.json
+  - research/findings/raw/gap4_6seed_shuffleDFA/arcA_seed46_evalorder.json
 ---
 
 # Arc A first de-risk: the integrated brain LEARNS from a CONTINGENT teacher via e-prop on the production spiking substrate — 5/6 (near-GO), contingency load-bearing
+
+> ## ⚠️ CORRECTION (2026-08-01 PM): the "5/6" is largely a MEASUREMENT ARTIFACT, not a robust per-seed property
+> The lone failing seed (46) is not a robust failure. Under **identical** config its accuracy ranges **0.200–1.000**,
+> decided by an **uncontrolled bridge-noise offset** (the OU/background stream is drawn from the process-global RNG
+> and is not isolated from incidental RNG consumption). A read-only `accuracy()` call before training — the runner's
+> `test_before` record — flips seed 46 **1.000 → 0.200 (Δ+0.800)** while barely moving a robust seed (seed 42
+> Δ+0.017). Seed 46 learns **6/6** across small noise offsets and **1.0/0.983/0.950** across epochs 120/240/360; it
+> fails only at the specific offset the canonical runner path lands on. So neither "5/6" nor "6/6" is a well-posed
+> measurement until the noise stream is pinned. **The correct next step is an INSTRUMENT fix — isolate the bridge's
+> stochastic stream so measurement calls don't perturb training — NOT config-tuning to force 6/6 (that would be
+> p-hacking over an artifact).** Evidence: `research/findings/raw/gap4_6seed_shuffleDFA/arcA_seed46_evalorder.json`.
+> This does NOT touch the load-bearing result below (contingency lesion clean, forward learning real); it corrects
+> only the seed-46 failure interpretation.
 
 **One-line verdict:** the north-star developmental atom works. A Kuhl-style *contingent* teacher names K=5 noisy
 referents; the brain (`OnBridgeEpropNet`, a real Izhikevich `SimulationBridge`) learns cue→label from the
@@ -57,6 +71,8 @@ This atom is the smallest proof that a co-resident spiking brain can be *taught*
 
 ## Next
 (1) The depth-2 semantic-inheritance contingent-teacher de-risk with the frozen-hidden reservoir control — to
-earn the *deep-credit* claim. (2) Firm the config to close seed 46 (or accept 5/6 and characterize the failure
-seed). (3) Wire the e-prop cortex slice + teacher hook into `develop_gpu`'s CONVERSE seam and the gap#5
+earn the *deep-credit* claim. (2) **[CORRECTED — see the banner above]** Fix the INSTRUMENT: isolate the bridge's
+stochastic (OU/background) stream so incidental measurement calls do not perturb training, then re-measure the
+true per-seed distribution. Do NOT config-tune to force 6/6 — seed 46's failure is an uncontrolled-noise-offset
+artifact (ranges 0.2–1.0), not a robust per-seed property. (3) Wire the e-prop cortex slice + teacher hook into `develop_gpu`'s CONVERSE seam and the gap#5
 wake/sleep phase-switch into its SLEEP seam — the integration build proper.

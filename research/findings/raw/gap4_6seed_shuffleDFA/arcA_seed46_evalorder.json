@@ -1,0 +1,42 @@
+{
+  "probe": "arcA_seed46_evalorder_artifact",
+  "date": "2026-08-01",
+  "config": {
+    "hidden": 24,
+    "settle": 30,
+    "epochs": 120,
+    "batch": 20,
+    "noise": 0.08,
+    "lr": 0.5,
+    "k": 5,
+    "d": 16
+  },
+  "what": "seed 46 accuracy vs the (uncontrolled) bridge noise offset entering training. Config identical across all; only the RNG offset differs.",
+  "seed46": {
+    "runner_canonical_build_eval_train": 0.2,
+    "natural_build_train": 1.0,
+    "eval_then_reseed46_then_train": 0.2,
+    "six_small_offsets_dummy0to5": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "epoch_scan_120_240_360": [
+      1.0,
+      0.983,
+      0.95
+    ],
+    "range_min": 0.2,
+    "range_max": 1.0
+  },
+  "seed42_robust_control": {
+    "train_only": 0.983,
+    "eval_then_train": 0.967,
+    "delta": 0.017
+  },
+  "task_ceiling_all_seeds_nearest_centroid": 1.0,
+  "headline": "seed 46 accuracy ranges 0.200-1.000 under identical config, decided by an uncontrolled noise offset; an incidental read-only pre-train eval() flips it 1.0->0.2 (delta 0.800) while barely moving the robust seed 42 (delta 0.017). The 6-seed '5/6' reports the runner's pathological-offset value, not a robust per-seed property."
+}

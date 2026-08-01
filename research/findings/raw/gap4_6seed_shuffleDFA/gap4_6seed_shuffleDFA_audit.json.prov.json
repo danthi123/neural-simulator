@@ -1,0 +1,20 @@
+{
+ "run_id": "1785586611-3516425",
+ "runner": "../../../../tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/success_rate.py",
+ "argv": [
+  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/success_rate.py"
+ ],
+ "git_sha": "65567da65",
+ "git_dirty": true,
+ "started": "2026-08-01T08:16:51",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 6018.2,
+ "corpus_check_query": "V1 self-organization retinal wave Hebbian Oja on-bridge silent population",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/gap4_6seed_shuffleDFA/gap4_6seed_shuffleDFA_audit.json"
+}
