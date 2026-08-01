@@ -53,19 +53,35 @@ class BDSPDendriticMLP(DendriticMLP):
         return self
 
     def train_step(self, X, y, mode, lr, rho=0.1):
-        if mode not in ("bdsp", "bdsp_wrongsign"):
+        if mode not in ("bdsp", "bdsp_wrongsign", "bdsp_truegrad", "bdsp_soft"):
             return super().train_step(X, y, mode, lr)
         acts, e = self._debug_fwd_err(X, y)                         # acts (sigmoid), e = softmax(logits) - onehot(y)
         nW = len(self.W)
         upd = [None] * nW
         upd[-1] = -(acts[-1].T @ e)                                 # output-layer local delta (same as FA)
-        sgn = -1.0 if mode == "bdsp" else +1.0                     # descent (bdsp) vs anti-learn (wrongsign)
+        sgn = +1.0 if mode == "bdsp_wrongsign" else -1.0          # descent (bdsp/truegrad) vs anti-learn (wrongsign)
+        # DIAGNOSTIC ONLY: bdsp_truegrad feeds the coincidence-gated rule the TRUE backpropagated deep signal (uses
+        # W^T -> NOT a shippable transport-free rule) to isolate whether the level-1-capture residual is the SIGNAL
+        # (misaligned deep feedback) or the RULE (coincidence gate loses info). d = backprop error per layer.
+        d_bp = e if mode == "bdsp_truegrad" else None
         for li in range(nW - 1):
             a_prev, a_l = acts[li], acts[li + 1]
-            ap = e @ self.B[li]                                    # (N, hidden_li) DFA-projected error, transport-free
-            # BINARY EVENTS: input (li=0) is +/-1 -> event = >0; hidden (sigmoid in (0,1)) -> event = >0.5
-            pre_ev = (a_prev > (0.0 if li == 0 else 0.5)).astype(a_prev.dtype)
-            post_ev = (a_l > 0.5).astype(a_l.dtype)
+            if mode == "bdsp_truegrad":
+                for lj in range(nW - 1, li, -1):                  # backprop e down to the post-activation of layer li
+                    aj = acts[lj]
+                    d_bp = (d_bp @ self.W[lj].T) * aj * (1.0 - aj)
+                ap = d_bp; d_bp = e                               # true error signal at layer li; reset for next li
+            else:
+                ap = e @ self.B[li]                               # (N, hidden_li) DFA-projected error, transport-free
+            # BINARY EVENTS (bdsp/truegrad/wrongsign): input (li=0) is +/-1 -> >0; hidden sigmoid -> >0.5.
+            # SOFT gate (bdsp_soft): the GRADED activation (isolates whether the regularization is the binary gate or
+            # the bounded sigmoid-baseline credit -- a middle ground between graded-FA and binary-BDSP).
+            if mode == "bdsp_soft":
+                pre_ev = (a_prev + 1.0) * 0.5 if li == 0 else a_prev   # graded, in [0,1]
+                post_ev = a_l
+            else:
+                pre_ev = (a_prev > (0.0 if li == 0 else 0.5)).astype(a_prev.dtype)
+                post_ev = (a_l > 0.5).astype(a_l.dtype)
             sig = 1.0 / (1.0 + xp.exp(-self.beta * ap))            # P_post in [0,1]
             credit = sig - self.Pbar[li][None, :]                  # sigmoid-baseline BDSP credit
             upd[li] = sgn * (pre_ev.T @ (post_ev * credit))        # COINCIDENCE-gated (pre AND post events) x credit
@@ -110,6 +126,13 @@ def run_seed(seed, epochs, lr, batch, hidden, beta, p0, verbose=True):
     out["deepBDSP_train"], out["deepBDSP_heldout"] = acc(net)
     out["deepBDSP_probe"] = _probe_latents(_hidden_rep(net, Xtr), Ltr, _hidden_rep(net, Xte), Lte)
     out["deepBDSP_gen_gap"] = round(out["deepBDSP_train"] - out["deepBDSP_heldout"], 4)
+
+    # ---- DIAGNOSTIC: BDSP rule + TRUE backprop deep signal (uses W^T -- NOT shippable) -> is the residual the
+    #      SIGNAL (misaligned deep feedback) or the RULE (coincidence gate)? If this captures level-1, it's the signal.
+    net = BDSPDendriticMLP(deep, seed=seed).init_bdsp(p0=p0, beta=beta)
+    _train(net, Xtr, ytr, "bdsp_truegrad", epochs, lr, batch, seed)
+    out["deepBDSP_truegrad_heldout"] = acc(net)[1]
+    out["deepBDSP_truegrad_probe"] = _probe_latents(_hidden_rep(net, Xtr), Ltr, _hidden_rep(net, Xte), Lte)
 
     # ---- controls ----
     net = DendriticMLP(shal, seed=seed); _train(net, Xtr, ytr, "local_correct", epochs, lr, batch, seed)
