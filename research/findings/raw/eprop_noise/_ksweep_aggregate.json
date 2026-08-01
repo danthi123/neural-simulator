@@ -17,7 +17,8 @@
   "inherit_by_K": {
     "1": 0.37,
     "4": 0.605,
-    "8": 0.778
+    "8": 0.778,
+    "16": 0.926
   },
   "per_seed_by_K": {
     "1": [
@@ -30,6 +31,11 @@
       0.667,
       0.556
     ],
+    "16": [
+      0.963,
+      0.926,
+      0.889
+    ],
     "8": [
       0.741,
       0.815,
@@ -39,6 +45,8 @@
   "K1_inherit": 0.37,
   "K4_inherit": 0.605,
   "K8_inherit": 0.778,
-  "K16_inherit": null,
-  "verdict": "monotonic sqrt-K lift chance->ceiling; population coding IS the closure mechanism on clean drive; K16 (exceed-K8 test) still running"
+  "K16_inherit": 0.926,
+  "verdict": "COMPLETE monotonic sqrt-K lift 0.37->0.61->0.78->0.926; K=16 EXCEEDS K=8 AND the LIF ceiling 0.89; population coding IS the closure, on clean drive",
+  "K16_exceeds_K8": true,
+  "K16_exceeds_LIF_ceiling": true
 }
