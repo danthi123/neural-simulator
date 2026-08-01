@@ -251,20 +251,26 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 >   run, backend=cupy from the artifact). Unblocks the 07-14 open Q (does ou/cond decorrelation + K clean the
 >   Izhikevich forward-noise plateau). pool_k=1/settle=6 gave identical ff_moved = a degeneracy artifact, NOT
 >   inert. **NOT the redundant BDSP crux (still DO-NOT-RELAUNCH); this is the eprop rule under forward noise.**
-> - **affect STP wired + VERIFIED** (`75b4e1ce`, board #1): held collapses 0.089→0 when STP on; baseline
->   instrument byte-identical (STP reaches only the eviction brain). But τ_d {50,100,200} all **ANNIHILATE**
->   the held state (held[0]~0, "no state to evict") — τ_d is NOT the graded knob; depression is too strong at
->   default stp_U=0.15. **Next lever = stp_U (weaker, e.g. 0.02–0.10), not CLI-exposed yet.**
+> - **affect STP: COMPREHENSIVE NEGATIVE — the ratchet is BISTABLE, the whole brake class is exhausted**
+>   (`75b4e1ce`/`3d80d446` wiring, finding `2b983509`). STP annihilates the held state across ALL τ_d
+>   {50,100,150,200,500,1000,2000,4000} ms × stp_U {0.01,0.02,0.05,0.15} — 27/27 cells held[0]=0.000, 3 seeds
+>   each. Refutes the 07-31 slow-τ_d prediction. The saturated slow-NMDA loop is bistable: an outward brake is
+>   too weak (GABA_B 0/80) or collapses it (STP, any strength) — no graded middle exists for GABA_B/STP/SFA.
+>   **The affect evictor now needs a NON-brake mechanism.**
 >
 > **▶ EXACT NEXT ACTIONS (in order):**
 > 1. **Read e-prop Round-1 when `batd5gx2d` fires.** Does noise-ON lift inherit above noise-OFF and above
 >    chance/controls? YES ⇒ 6-seed + K-sweep {1,4,8} × {off,on} (√K prediction), SPLIT across local 3090 +
 >    AWS (start AWS then, `bash tools/aws_gpu.sh start`). NO/identical ⇒ decorrelation isn't the lever; the
 >    forward-noise plateau needs a different mechanism (finding).
-> 2. **Affect: expose `stp_U` (same wiring pattern as stp_tau_d), sweep weaker {0.02,0.05,0.10} for a graded
->    window** (evict G1<0.60 WHILE persistence G4≥0.50 survives). τ_d is exhausted (annihilation). AND build
->    an **STP-lesion control** (analog of `set_sfa_lesion`) BEFORE any affect 6-seed GO — G6 (evict_out lesion)
->    gates GABA_B synapses, NOT the per-synapse STP dynamic, so it cannot control an STP arm.
+> 2. **Affect evictor = a BISTABLE-attractor WALL; the brake class (GABA_B/STP/SFA) is exhausted (finding
+>    `2b983509`).** Next is a DEEP-RESEARCH gate for a NON-brake mechanism, then wire+test — NOT another sweep.
+>    Candidates: (a) make the attractor GRADED not saturated (lower recurrent NMDA gain — but the 07-24 GO says
+>    saturation IS the persistence, so this trades persistence for evictability); (b) an active CLEAR/quench
+>    gate (transient strong inhibition knocks the loop out of the ON basin, all-or-none by design; matches in
+>    vivo attractor-WM clearing); (c) neuromodulatory gain control (release the attractor). Read the
+>    attractor-clearing literature first. (A brake needs an STP/SFA-lesion control anyway, but no positive
+>    brake result arose, so that's moot until a non-brake mechanism is on the table.)
 > 3. Keep the pool stocked ahead (the standing-queue fix): idle cores = an empty queue, not a reaction problem.
 >
 > **NOTED-FAILURE (log): the pool command convention must be `.venv/bin/python`, never bare `python` (absent on
