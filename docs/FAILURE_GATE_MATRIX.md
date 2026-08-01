@@ -40,8 +40,9 @@ are marked ADVISORY and count as ungated — the measured reason: **1330 runners
 | R | the record's own RETRIEVAL layer cannot see part of the record (a flat findings glob; or `**` written without `recursive=True`, which is a silent no-op) | 42 findings | `gates/retrieval_completeness` | registry | ✅ BLOCKS |
 | AT | a treatment/control pair is MEASURED but the difference is never ATTRIBUTED (`tools/lab` imported by 2 of 1330 runners) | 1 (gap#5: 97% was the clamp) | `gates/attribution_required` | registry | ✅ BLOCKS |
 | V | an artifact asserts a VERDICT without carrying what earned it — the run-time relationships no file-scanner can see (precondition changed, control cannot reach its mechanism, ceiling below chance, knob inert, validity computed then ignored) | 5 in one day | `tools/verdict.Verdict` (runtime) + `gates/verdict_preconditions` (artifact) | registry | ✅ BLOCKS |
+| SV | a finding STATES a named quantity that disagrees with the artifact it cites — `claim_check` passes it because the number exists SOMEWHERE, and existence is not agreement | 1 (chance 0.200 derived vs 0.167 reported) | `gates/stated_value_mismatch` | registry | ✅ BLOCKS |
 
-**Score: 20 BLOCKING · 1 structural · 7 reporting · 0 ungated — 28 rows.** (The previous line read
+**Score: 21 BLOCKING · 1 structural · 7 reporting · 0 ungated — 29 rows.** (The previous line read
 `14 · 1 · 6`, which sums to 21 against 22 rows: row **Y**, green but non-blocking, was in no bucket. Corrected
 here rather than carried forward — an arithmetic drift in the score of the anti-drift spec is the joke this
 file cannot afford. Reporting = 6 🟡 rows + Y.)
