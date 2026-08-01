@@ -1,0 +1,326 @@
+{
+  "runner": "_affective_tom_derisk",
+  "faculty": "W5 affective theory of mind (infer another agent's emotion from their witnessed situation; Stage-4 social build; ToM ladder affective rung)",
+  "theory": "Shamay-Tsoory affective perspective-taking / cognitive empathy (mPFC/TPJ + the appraisal system applied to an OTHER-tagged input); the P0.3 affect region turned OUTWARD, the affective companion to W3's outward-turned self-schema (FUNCTIONAL correlate only, NOT access to another mind)",
+  "mechanism": "two P0.3 AffectStateBrain instances (self + other, separate numpy bridges); OTHER-tagged model appraised on the other's WITNESSED situation valence; emotional attribution / speech tone = SYNAPTIC sign(rate(recall_pos)-rate(recall_neg)) of the OTHER model's affect_out-gated output",
+  "scope": "VALENCE (good/bad) only -- matches the P0.3 bistable good/bad latch (QUALIFIED-GO/BOUNDARY). Fine discrete emotions need the SAME graded-circumplex surpass P0.3 named (line/bump attractor with SFA eviction / dendritic substrate), NOT a new wall.",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_trials": 60,
+  "backend": "numpy",
+  "chance": 0.5,
+  "verdict": "GO",
+  "GO": true,
+  "n_seeds_go": 6,
+  "thresholds": {
+    "attribution_acc": 0.85,
+    "egocentric_max": 0.35,
+    "chance_margin": 0.65
+  },
+  "aggregate": {
+    "mean_other_attribution_acc": 1.0,
+    "mean_self_attribution_acc": 1.0,
+    "mean_other_acc_incongruent": 1.0,
+    "mean_egocentric_acc_incongruent": 0.0,
+    "mean_lesion_attribution_acc": 0.5138888888888888,
+    "mean_scramble_attribution_acc": 0.48333333333333334,
+    "mean_affect_tracks_belief": 1.0,
+    "mean_reality_baseline": 0.0,
+    "all_dissociation_ok": true,
+    "all_lesion_collapse": true,
+    "all_scramble_collapse": true,
+    "frac_attribution_to_lesion": 0.9722222222222223,
+    "frac_attribution_to_scramble": 1.0333333333333332
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "6 seeds (project bar)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "floor",
+      "name": "other-attribution acc vs chance",
+      "ok": true,
+      "detail": "1 vs floor 0.5",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "self/other dissociation on EVERY seed (other tracks other, egocentric fails on incongruent)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": "the egocentric self-affect read must FAIL on incongruent trials, else projection could pass"
+    },
+    {
+      "kind": "control",
+      "name": "other-lesion collapses the attribution",
+      "ok": true,
+      "detail": "treatment=1 control=0.513889 |sep|=0.486111 > 0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "other-lesion collapsed on EVERY seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "scrambled other-situation collapses the attribution",
+      "ok": true,
+      "detail": "treatment=1 control=0.483333 |sep|=0.516667 > 0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "scramble collapsed on EVERY seed",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [],
+  "undefined_reasons": [],
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_trials": 60,
+      "n_incongruent": 30,
+      "n_false_belief": 23,
+      "chance": 0.5,
+      "intact": {
+        "other_attribution_acc": 1.0,
+        "self_attribution_acc": 1.0,
+        "other_acc_incongruent": 1.0,
+        "mean_other_mood": -0.0008624999999999987,
+        "mean_self_mood": -0.0009458333333333349
+      },
+      "self_other_dissociation": {
+        "other_acc_incongruent": 1.0,
+        "egocentric_acc_incongruent": 0.0,
+        "dissociation_ok": true
+      },
+      "other_lesion": {
+        "attribution_acc": 0.5,
+        "collapsed": true
+      },
+      "scramble": {
+        "attribution_acc_vs_true": 0.5333333333333333,
+        "collapsed": true
+      },
+      "belief_characterization": {
+        "affect_tracks_belief_on_false_belief": 1.0,
+        "reality_baseline_on_false_belief": 0.0
+      },
+      "go_components": {
+        "attribution": true,
+        "self_other_dissociation": true,
+        "other_lesion_collapses": true,
+        "scramble_collapses": true
+      },
+      "go": true
+    },
+    {
+      "seed": 43,
+      "n_trials": 60,
+      "n_incongruent": 30,
+      "n_false_belief": 25,
+      "chance": 0.5,
+      "intact": {
+        "other_attribution_acc": 1.0,
+        "self_attribution_acc": 1.0,
+        "other_acc_incongruent": 1.0,
+        "mean_other_mood": 0.0007750000000000004,
+        "mean_self_mood": 0.000741666666666668
+      },
+      "self_other_dissociation": {
+        "other_acc_incongruent": 1.0,
+        "egocentric_acc_incongruent": 0.0,
+        "dissociation_ok": true
+      },
+      "other_lesion": {
+        "attribution_acc": 0.4666666666666667,
+        "collapsed": true
+      },
+      "scramble": {
+        "attribution_acc_vs_true": 0.43333333333333335,
+        "collapsed": true
+      },
+      "belief_characterization": {
+        "affect_tracks_belief_on_false_belief": 1.0,
+        "reality_baseline_on_false_belief": 0.0
+      },
+      "go_components": {
+        "attribution": true,
+        "self_other_dissociation": true,
+        "other_lesion_collapses": true,
+        "scramble_collapses": true
+      },
+      "go": true
+    },
+    {
+      "seed": 44,
+      "n_trials": 60,
+      "n_incongruent": 30,
+      "n_false_belief": 25,
+      "chance": 0.5,
+      "intact": {
+        "other_attribution_acc": 1.0,
+        "self_attribution_acc": 1.0,
+        "other_acc_incongruent": 1.0,
+        "mean_other_mood": -0.0036083333333333367,
+        "mean_self_mood": -0.003625000000000003
+      },
+      "self_other_dissociation": {
+        "other_acc_incongruent": 1.0,
+        "egocentric_acc_incongruent": 0.0,
+        "dissociation_ok": true
+      },
+      "other_lesion": {
+        "attribution_acc": 0.5666666666666667,
+        "collapsed": true
+      },
+      "scramble": {
+        "attribution_acc_vs_true": 0.5333333333333333,
+        "collapsed": true
+      },
+      "belief_characterization": {
+        "affect_tracks_belief_on_false_belief": 1.0,
+        "reality_baseline_on_false_belief": 0.0
+      },
+      "go_components": {
+        "attribution": true,
+        "self_other_dissociation": true,
+        "other_lesion_collapses": true,
+        "scramble_collapses": true
+      },
+      "go": true
+    },
+    {
+      "seed": 100,
+      "n_trials": 60,
+      "n_incongruent": 30,
+      "n_false_belief": 20,
+      "chance": 0.5,
+      "intact": {
+        "other_attribution_acc": 1.0,
+        "self_attribution_acc": 1.0,
+        "other_acc_incongruent": 1.0,
+        "mean_other_mood": 0.004958333333333329,
+        "mean_self_mood": 0.005066666666666662
+      },
+      "self_other_dissociation": {
+        "other_acc_incongruent": 1.0,
+        "egocentric_acc_incongruent": 0.0,
+        "dissociation_ok": true
+      },
+      "other_lesion": {
+        "attribution_acc": 0.48333333333333334,
+        "collapsed": true
+      },
+      "scramble": {
+        "attribution_acc_vs_true": 0.5,
+        "collapsed": true
+      },
+      "belief_characterization": {
+        "affect_tracks_belief_on_false_belief": 1.0,
+        "reality_baseline_on_false_belief": 0.0
+      },
+      "go_components": {
+        "attribution": true,
+        "self_other_dissociation": true,
+        "other_lesion_collapses": true,
+        "scramble_collapses": true
+      },
+      "go": true
+    },
+    {
+      "seed": 101,
+      "n_trials": 60,
+      "n_incongruent": 30,
+      "n_false_belief": 25,
+      "chance": 0.5,
+      "intact": {
+        "other_attribution_acc": 1.0,
+        "self_attribution_acc": 1.0,
+        "other_acc_incongruent": 1.0,
+        "mean_other_mood": 0.0008458333333333336,
+        "mean_self_mood": 0.0007791666666666672
+      },
+      "self_other_dissociation": {
+        "other_acc_incongruent": 1.0,
+        "egocentric_acc_incongruent": 0.0,
+        "dissociation_ok": true
+      },
+      "other_lesion": {
+        "attribution_acc": 0.5,
+        "collapsed": true
+      },
+      "scramble": {
+        "attribution_acc_vs_true": 0.4,
+        "collapsed": true
+      },
+      "belief_characterization": {
+        "affect_tracks_belief_on_false_belief": 1.0,
+        "reality_baseline_on_false_belief": 0.0
+      },
+      "go_components": {
+        "attribution": true,
+        "self_other_dissociation": true,
+        "other_lesion_collapses": true,
+        "scramble_collapses": true
+      },
+      "go": true
+    },
+    {
+      "seed": 102,
+      "n_trials": 60,
+      "n_incongruent": 30,
+      "n_false_belief": 11,
+      "chance": 0.5,
+      "intact": {
+        "other_attribution_acc": 1.0,
+        "self_attribution_acc": 1.0,
+        "other_acc_incongruent": 1.0,
+        "mean_other_mood": 0.0007708333333333321,
+        "mean_self_mood": 0.0007666666666666669
+      },
+      "self_other_dissociation": {
+        "other_acc_incongruent": 1.0,
+        "egocentric_acc_incongruent": 0.0,
+        "dissociation_ok": true
+      },
+      "other_lesion": {
+        "attribution_acc": 0.5666666666666667,
+        "collapsed": true
+      },
+      "scramble": {
+        "attribution_acc_vs_true": 0.5,
+        "collapsed": true
+      },
+      "belief_characterization": {
+        "affect_tracks_belief_on_false_belief": 1.0,
+        "reality_baseline_on_false_belief": 0.0
+      },
+      "go_components": {
+        "attribution": true,
+        "self_other_dissociation": true,
+        "other_lesion_collapses": true,
+        "scramble_collapses": true
+      },
+      "go": true
+    }
+  ],
+  "HONEST_NOTE": "numpy-CPU read (real spiking Izhikevich bridges; 'numpy' is the backend, not a host shortcut). The situation->valence appraisal is the legitimate world/perceptual input (P0.3's interface, DR-2 learned-tag precedent); the ToM-specific neural work is (a) a SEPARATE OTHER-tagged affect state and (b) the synaptic tone read-out, verified load-bearing by the self/other dissociation (egocentric self-read fails on incongruent trials), the output-lesion collapse, and the witnessed-situation scramble collapse. NO sim/ edit (reuse-by-import).",
+  "elapsed_seconds": 140.0
+}

@@ -1,0 +1,31 @@
+{
+ "run_id": "1785605096-3706274",
+ "runner": "research/runners/_affective_tom_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_affective_tom_derisk.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "100",
+  "101",
+  "102",
+  "--n-trials",
+  "60",
+  "--json",
+  "research/findings/raw/_affective_tom/summary_6seed.json"
+ ],
+ "git_sha": "cf17d4b8a",
+ "git_dirty": true,
+ "started": "2026-08-01T13:24:56",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 1235.8,
+ "corpus_check_query": "perception v2it validate retire",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/_affective_tom/summary_6seed.json"
+}
