@@ -1,0 +1,51 @@
+{
+ "probe": "gap5_spiking_gamma_recombination__direct_6seed",
+ "date": "2026-08-01",
+ "backend": "cupy",
+ "device": "cuda",
+ "mechanism": "recombinative-replay (RANK3 imagination): gamma-WTA phase-organized replay at a shared branch node, DIRECT full spiking simulation (not the extracted-matrix proxy)",
+ "n_cycles": 30,
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "n_seeds": 6,
+ "n_go": 0,
+ "mean_main_recomb_frac": 0.16544117647058823,
+ "mean_scramble_recomb_frac": 0.6328477078477078,
+ "per_seed_main_recomb_frac": [
+  0.1176,
+  0.0,
+  0.5,
+  0.0,
+  0.0,
+  0.375
+ ],
+ "per_seed_scramble_recomb_frac": [
+  0.6667,
+  0.7692,
+  0.7727,
+  0.55,
+  0.5385,
+  0.5
+ ],
+ "per_seed_scramble_minus_main": [
+  0.549,
+  0.7692,
+  0.2727,
+  0.55,
+  0.5385,
+  0.125
+ ],
+ "mean_main_learned_exit_frac": 0.2935344006098723,
+ "mean_main_co_ignite_frac": 1.0000470809792843,
+ "controls": {
+  "noenc_co_ignite_all_zero": true,
+  "noshare_reaches_but_no_recomb": true
+ },
+ "headline": "NEGATIVE 0/6: direct spiking gamma-organized recombination does NOT produce learned-selective novel recombination. The network reaches B (co-ignite ~1.0) but the recomb readout is NOT learned-selective -- the SCRAMBLE control (mean 0.633) shows MORE recomb than the learned MAIN condition (mean 0.166) on every seed, so the recomb events are non-specific exits, not learned recombination. Confirms the RANK3 extracted-matrix-proxy boundary via full direct simulation."
+}

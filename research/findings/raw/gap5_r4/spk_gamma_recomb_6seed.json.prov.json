@@ -1,0 +1,24 @@
+{
+ "run_id": "1785614066-3801253",
+ "runner": "research/runners/_productive_morphology_construction_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_productive_morphology_construction_derisk.py",
+  "--seed",
+  "42",
+  "--out",
+  "research/findings/raw/lanes/morph/default_s42.json"
+ ],
+ "git_sha": "39b0036fa",
+ "git_dirty": true,
+ "started": "2026-08-01T15:54:26",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 3398.9,
+ "corpus_check_query": "language productive morphology construction",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/gap5_r4/spk_gamma_recomb_6seed.json"
+}

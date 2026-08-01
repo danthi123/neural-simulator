@@ -1,0 +1,1266 @@
+{
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "n_go": 0,
+  "args": {
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "n_ca3": 2000,
+    "within_events": 30,
+    "within_refresh": 8,
+    "chain_fwd": 24,
+    "n_cycles": 30,
+    "theta_period": 400,
+    "cue_steps": 150,
+    "cue_pa": 1000.0,
+    "fire_thresh": 0.06,
+    "inhib_pa": -800.0,
+    "silence_delay": 6,
+    "ramp_hi": 0.0,
+    "ramp_lo": 0.0,
+    "ou_sigma": 40.0,
+    "intercycle_silence": 6,
+    "window": 5,
+    "k_frac": 0.15,
+    "learned_margin": 0.1,
+    "collapse_margin": 0.05,
+    "recomb_lo": 0.1,
+    "recomb_hi": 0.9,
+    "reach_thr": 0.5,
+    "control_recomb_max": 0.1,
+    "smoke": false,
+    "out": "research/findings/raw/gap5_r4/spk_gamma_recomb_6seed.json"
+  },
+  "per": [
+    {
+      "seed": 42,
+      "backend": "cupy",
+      "conc": {
+        "per_z": {
+          "0": {
+            "mean": 239.2853708446026,
+            "topk": 1265.2609036763508,
+            "mx": 5700.0
+          },
+          "2": {
+            "mean": 169.84738009770712,
+            "topk": 793.7047562069363,
+            "mx": 4500.0
+          },
+          "3": {
+            "mean": 268.8035153230031,
+            "topk": 1447.717879931132,
+            "mx": 6000.0
+          },
+          "4": {
+            "mean": 226.08696295022963,
+            "topk": 1158.2186418904198,
+            "mx": 4800.0
+          }
+        },
+        "mean_learned": 197.96717152396837,
+        "mean_unlearned": 254.04444308380286,
+        "mean_ratio": 0.7792619634615034,
+        "topk_learned": 975.961699048678,
+        "topk_unlearned": 1356.4893918037415,
+        "topk_ratio": 0.7194761012844554,
+        "max_learned": 4650.0,
+        "max_unlearned": 5850.0,
+        "max_ratio": 0.7948717948717948
+      },
+      "main": {
+        "per_cue": {
+          "0": {
+            "stored": 22,
+            "recomb": 1,
+            "other": 0,
+            "reachB": 30,
+            "no_exit": 7,
+            "co_ignite": 29,
+            "total": 30
+          },
+          "3": {
+            "stored": 8,
+            "recomb": 3,
+            "other": 19,
+            "reachB": 30,
+            "no_exit": 0,
+            "co_ignite": 30,
+            "total": 30
+          }
+        },
+        "stored": 30,
+        "recomb": 4,
+        "other": 19,
+        "reachB": 60,
+        "no_exit": 7,
+        "co_ignite": 59,
+        "total": 60,
+        "reachB_frac": 1.0,
+        "learned_exit_frac": 0.6415094339622641,
+        "recomb_frac": 0.11764705882352941,
+        "co_ignite_frac": 0.9833333333333333
+      },
+      "nonoise": {
+        "per_cue": {
+          "0": {
+            "stored": 19,
+            "recomb": 0,
+            "other": 0,
+            "reachB": 20,
+            "no_exit": 1,
+            "co_ignite": 20,
+            "total": 20
+          },
+          "3": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 20,
+            "reachB": 20,
+            "no_exit": 0,
+            "co_ignite": 20,
+            "total": 20
+          }
+        },
+        "stored": 19,
+        "recomb": 0,
+        "other": 20,
+        "reachB": 40,
+        "no_exit": 1,
+        "co_ignite": 40,
+        "total": 40,
+        "reachB_frac": 1.0,
+        "learned_exit_frac": 0.48717948717948717,
+        "recomb_frac": 0.0,
+        "co_ignite_frac": 1.0
+      },
+      "scramble": {
+        "per_cue": {
+          "0": {
+            "stored": 2,
+            "recomb": 4,
+            "other": 8,
+            "reachB": 29,
+            "no_exit": 15,
+            "co_ignite": 29,
+            "total": 30
+          },
+          "3": {
+            "stored": 1,
+            "recomb": 2,
+            "other": 10,
+            "reachB": 30,
+            "no_exit": 17,
+            "co_ignite": 30,
+            "total": 30
+          }
+        },
+        "stored": 3,
+        "recomb": 6,
+        "other": 18,
+        "reachB": 59,
+        "no_exit": 32,
+        "co_ignite": 59,
+        "total": 60,
+        "reachB_frac": 0.9833333333333333,
+        "learned_exit_frac": 0.3333333333333333,
+        "recomb_frac": 0.6666666666666666,
+        "co_ignite_frac": 1.0
+      },
+      "noenc": {
+        "per_cue": {
+          "0": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 0,
+            "reachB": 0,
+            "no_exit": 0,
+            "co_ignite": 0,
+            "total": 30
+          },
+          "3": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 0,
+            "reachB": 0,
+            "no_exit": 0,
+            "co_ignite": 0,
+            "total": 30
+          }
+        },
+        "stored": 0,
+        "recomb": 0,
+        "other": 0,
+        "reachB": 0,
+        "no_exit": 0,
+        "co_ignite": 0,
+        "total": 60,
+        "reachB_frac": 0.0,
+        "learned_exit_frac": 0.0,
+        "recomb_frac": 0.0,
+        "co_ignite_frac": 0.0
+      },
+      "noshare": {
+        "per_cue": {
+          "0": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 0,
+            "reachB": 30,
+            "no_exit": 30,
+            "co_ignite": 30,
+            "total": 30
+          },
+          "3": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 2,
+            "reachB": 30,
+            "no_exit": 28,
+            "co_ignite": 30,
+            "total": 30
+          }
+        },
+        "stored": 0,
+        "recomb": 0,
+        "other": 2,
+        "reachB": 60,
+        "no_exit": 58,
+        "co_ignite": 60,
+        "total": 60,
+        "reachB_frac": 1.0,
+        "learned_exit_frac": 0.0,
+        "recomb_frac": 0.0,
+        "co_ignite_frac": 1.0
+      },
+      "go": false
+    },
+    {
+      "seed": 43,
+      "backend": "cupy",
+      "conc": {
+        "per_z": {
+          "0": {
+            "mean": 238.28859890302022,
+            "topk": 1222.0628815756904,
+            "mx": 4200.0
+          },
+          "2": {
+            "mean": 224.36989913781483,
+            "topk": 1148.438216474321,
+            "mx": 3900.0
+          },
+          "3": {
+            "mean": 327.0315203289191,
+            "topk": 1823.8504299587673,
+            "mx": 6300.0
+          },
+          "4": {
+            "mean": 379.00508346557615,
+            "topk": 2160.0325474209258,
+            "mx": 5700.0
+          }
+        },
+        "mean_learned": 301.6874913016955,
+        "mean_unlearned": 282.66005961596966,
+        "mean_ratio": 1.067315600624924,
+        "topk_learned": 1654.2353819476234,
+        "topk_unlearned": 1522.9566557672288,
+        "topk_ratio": 1.0861999096844024,
+        "max_learned": 4800.0,
+        "max_unlearned": 5250.0,
+        "max_ratio": 0.9142857142857143
+      },
+      "main": {
+        "per_cue": {
+          "0": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 0,
+            "reachB": 29,
+            "no_exit": 29,
+            "co_ignite": 30,
+            "total": 30
+          },
+          "3": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 0,
+            "reachB": 30,
+            "no_exit": 30,
+            "co_ignite": 30,
+            "total": 30
+          }
+        },
+        "stored": 0,
+        "recomb": 0,
+        "other": 0,
+        "reachB": 59,
+        "no_exit": 59,
+        "co_ignite": 60,
+        "total": 60,
+        "reachB_frac": 0.9833333333333333,
+        "learned_exit_frac": 0.0,
+        "recomb_frac": 0.0,
+        "co_ignite_frac": 1.0169491525423728
+      },
+      "nonoise": {
+        "per_cue": {
+          "0": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 0,
+            "reachB": 20,
+            "no_exit": 20,
+            "co_ignite": 20,
+            "total": 20
+          },
+          "3": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 0,
+            "reachB": 20,
+            "no_exit": 20,
+            "co_ignite": 20,
+            "total": 20
+          }
+        },
+        "stored": 0,
+        "recomb": 0,
+        "other": 0,
+        "reachB": 40,
+        "no_exit": 40,
+        "co_ignite": 40,
+        "total": 40,
+        "reachB_frac": 1.0,
+        "learned_exit_frac": 0.0,
+        "recomb_frac": 0.0,
+        "co_ignite_frac": 1.0
+      },
+      "scramble": {
+        "per_cue": {
+          "0": {
+            "stored": 2,
+            "recomb": 6,
+            "other": 0,
+            "reachB": 29,
+            "no_exit": 21,
+            "co_ignite": 29,
+            "total": 30
+          },
+          "3": {
+            "stored": 1,
+            "recomb": 4,
+            "other": 12,
+            "reachB": 30,
+            "no_exit": 13,
+            "co_ignite": 30,
+            "total": 30
+          }
+        },
+        "stored": 3,
+        "recomb": 10,
+        "other": 12,
+        "reachB": 59,
+        "no_exit": 34,
+        "co_ignite": 59,
+        "total": 60,
+        "reachB_frac": 0.9833333333333333,
+        "learned_exit_frac": 0.52,
+        "recomb_frac": 0.7692307692307693,
+        "co_ignite_frac": 1.0
+      },
+      "noenc": {
+        "per_cue": {
+          "0": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 0,
+            "reachB": 0,
+            "no_exit": 0,
+            "co_ignite": 0,
+            "total": 30
+          },
+          "3": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 0,
+            "reachB": 0,
+            "no_exit": 0,
+            "co_ignite": 0,
+            "total": 30
+          }
+        },
+        "stored": 0,
+        "recomb": 0,
+        "other": 0,
+        "reachB": 0,
+        "no_exit": 0,
+        "co_ignite": 0,
+        "total": 60,
+        "reachB_frac": 0.0,
+        "learned_exit_frac": 0.0,
+        "recomb_frac": 0.0,
+        "co_ignite_frac": 0.0
+      },
+      "noshare": {
+        "per_cue": {
+          "0": {
+            "stored": 22,
+            "recomb": 0,
+            "other": 2,
+            "reachB": 30,
+            "no_exit": 6,
+            "co_ignite": 30,
+            "total": 30
+          },
+          "3": {
+            "stored": 0,
+            "recomb": 5,
+            "other": 0,
+            "reachB": 30,
+            "no_exit": 25,
+            "co_ignite": 30,
+            "total": 30
+          }
+        },
+        "stored": 22,
+        "recomb": 5,
+        "other": 2,
+        "reachB": 60,
+        "no_exit": 31,
+        "co_ignite": 60,
+        "total": 60,
+        "reachB_frac": 1.0,
+        "learned_exit_frac": 0.9310344827586207,
+        "recomb_frac": 0.18518518518518517,
+        "co_ignite_frac": 1.0
+      },
+      "go": false
+    },
+    {
+      "seed": 44,
+      "backend": "cupy",
+      "conc": {
+        "per_z": {
+          "0": {
+            "mean": 283.9821691910426,
+            "topk": 1529.603350162506,
+            "mx": 5100.0
+          },
+          "2": {
+            "mean": 308.3537147382895,
+            "topk": 1695.413653810819,
+            "mx": 4999.849151611328
+          },
+          "3": {
+            "mean": 231.1384760896365,
+            "topk": 1193.9909405708313,
+            "mx": 4200.0
+          },
+          "4": {
+            "mean": 235.16713285446167,
+            "topk": 1200.2808856964111,
+            "mx": 5400.0
+          }
+        },
+        "mean_learned": 271.76042379637556,
+        "mean_unlearned": 257.56032264033956,
+        "mean_ratio": 1.0551331082771829,
+        "topk_learned": 1447.847269753615,
+        "topk_unlearned": 1361.7971453666687,
+        "topk_ratio": 1.0631886508792592,
+        "max_learned": 5199.924575805664,
+        "max_unlearned": 4650.0,
+        "max_ratio": 1.1182633496356267
+      },
+      "main": {
+        "per_cue": {
+          "0": {
+            "stored": 0,
+            "recomb": 1,
+            "other": 15,
+            "reachB": 30,
+            "no_exit": 14,
+            "co_ignite": 30,
+            "total": 30
+          },
+          "3": {
+            "stored": 1,
+            "recomb": 0,
+            "other": 23,
+            "reachB": 30,
+            "no_exit": 6,
+            "co_ignite": 30,
+            "total": 30
+          }
+        },
+        "stored": 1,
+        "recomb": 1,
+        "other": 38,
+        "reachB": 60,
+        "no_exit": 20,
+        "co_ignite": 60,
+        "total": 60,
+        "reachB_frac": 1.0,
+        "learned_exit_frac": 0.05,
+        "recomb_frac": 0.5,
+        "co_ignite_frac": 1.0
+      },
+      "nonoise": {
+        "per_cue": {
+          "0": {
+            "stored": 0,
+            "recomb": 3,
+            "other": 16,
+            "reachB": 20,
+            "no_exit": 1,
+            "co_ignite": 20,
+            "total": 20
+          },
+          "3": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 19,
+            "reachB": 20,
+            "no_exit": 1,
+            "co_ignite": 20,
+            "total": 20
+          }
+        },
+        "stored": 0,
+        "recomb": 3,
+        "other": 35,
+        "reachB": 40,
+        "no_exit": 2,
+        "co_ignite": 40,
+        "total": 40,
+        "reachB_frac": 1.0,
+        "learned_exit_frac": 0.07894736842105263,
+        "recomb_frac": 1.0,
+        "co_ignite_frac": 1.0
+      },
+      "scramble": {
+        "per_cue": {
+          "0": {
+            "stored": 4,
+            "recomb": 2,
+            "other": 1,
+            "reachB": 29,
+            "no_exit": 22,
+            "co_ignite": 29,
+            "total": 30
+          },
+          "3": {
+            "stored": 1,
+            "recomb": 15,
+            "other": 6,
+            "reachB": 30,
+            "no_exit": 8,
+            "co_ignite": 21,
+            "total": 30
+          }
+        },
+        "stored": 5,
+        "recomb": 17,
+        "other": 7,
+        "reachB": 59,
+        "no_exit": 30,
+        "co_ignite": 50,
+        "total": 60,
+        "reachB_frac": 0.9833333333333333,
+        "learned_exit_frac": 0.7586206896551724,
+        "recomb_frac": 0.7727272727272727,
+        "co_ignite_frac": 0.847457627118644
+      },
+      "noenc": {
+        "per_cue": {
+          "0": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 0,
+            "reachB": 0,
+            "no_exit": 0,
+            "co_ignite": 0,
+            "total": 30
+          },
+          "3": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 0,
+            "reachB": 0,
+            "no_exit": 0,
+            "co_ignite": 0,
+            "total": 30
+          }
+        },
+        "stored": 0,
+        "recomb": 0,
+        "other": 0,
+        "reachB": 0,
+        "no_exit": 0,
+        "co_ignite": 0,
+        "total": 60,
+        "reachB_frac": 0.0,
+        "learned_exit_frac": 0.0,
+        "recomb_frac": 0.0,
+        "co_ignite_frac": 0.0
+      },
+      "noshare": {
+        "per_cue": {
+          "0": {
+            "stored": 1,
+            "recomb": 5,
+            "other": 18,
+            "reachB": 30,
+            "no_exit": 6,
+            "co_ignite": 29,
+            "total": 30
+          },
+          "3": {
+            "stored": 13,
+            "recomb": 0,
+            "other": 17,
+            "reachB": 30,
+            "no_exit": 0,
+            "co_ignite": 30,
+            "total": 30
+          }
+        },
+        "stored": 14,
+        "recomb": 5,
+        "other": 35,
+        "reachB": 60,
+        "no_exit": 6,
+        "co_ignite": 59,
+        "total": 60,
+        "reachB_frac": 1.0,
+        "learned_exit_frac": 0.35185185185185186,
+        "recomb_frac": 0.2631578947368421,
+        "co_ignite_frac": 0.9833333333333333
+      },
+      "go": false
+    },
+    {
+      "seed": 100,
+      "backend": "cupy",
+      "conc": {
+        "per_z": {
+          "0": {
+            "mean": 241.0356917142868,
+            "topk": 1268.987944761912,
+            "mx": 4800.0
+          },
+          "2": {
+            "mean": 301.9464125553767,
+            "topk": 1670.1983059247334,
+            "mx": 4800.0
+          },
+          "3": {
+            "mean": 226.30054881572724,
+            "topk": 1168.8092143270705,
+            "mx": 4800.0
+          },
+          "4": {
+            "mean": 294.83259855508805,
+            "topk": 1630.8284348116981,
+            "mx": 5755.862991333008
+          }
+        },
+        "mean_learned": 298.3895055552324,
+        "mean_unlearned": 233.66812026500702,
+        "mean_ratio": 1.2769799543764198,
+        "topk_learned": 1650.5133703682159,
+        "topk_unlearned": 1218.8985795444914,
+        "topk_ratio": 1.3541023002791759,
+        "max_learned": 5277.931495666504,
+        "max_unlearned": 4800.0,
+        "max_ratio": 1.0995690615971883
+      },
+      "main": {
+        "per_cue": {
+          "0": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 1,
+            "reachB": 30,
+            "no_exit": 29,
+            "co_ignite": 30,
+            "total": 30
+          },
+          "3": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 18,
+            "reachB": 30,
+            "no_exit": 12,
+            "co_ignite": 30,
+            "total": 30
+          }
+        },
+        "stored": 0,
+        "recomb": 0,
+        "other": 19,
+        "reachB": 60,
+        "no_exit": 41,
+        "co_ignite": 60,
+        "total": 60,
+        "reachB_frac": 1.0,
+        "learned_exit_frac": 0.0,
+        "recomb_frac": 0.0,
+        "co_ignite_frac": 1.0
+      },
+      "nonoise": {
+        "per_cue": {
+          "0": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 0,
+            "reachB": 20,
+            "no_exit": 20,
+            "co_ignite": 20,
+            "total": 20
+          },
+          "3": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 0,
+            "reachB": 20,
+            "no_exit": 20,
+            "co_ignite": 20,
+            "total": 20
+          }
+        },
+        "stored": 0,
+        "recomb": 0,
+        "other": 0,
+        "reachB": 40,
+        "no_exit": 40,
+        "co_ignite": 40,
+        "total": 40,
+        "reachB_frac": 1.0,
+        "learned_exit_frac": 0.0,
+        "recomb_frac": 0.0,
+        "co_ignite_frac": 1.0
+      },
+      "scramble": {
+        "per_cue": {
+          "0": {
+            "stored": 8,
+            "recomb": 0,
+            "other": 0,
+            "reachB": 29,
+            "no_exit": 21,
+            "co_ignite": 29,
+            "total": 30
+          },
+          "3": {
+            "stored": 1,
+            "recomb": 11,
+            "other": 10,
+            "reachB": 30,
+            "no_exit": 8,
+            "co_ignite": 30,
+            "total": 30
+          }
+        },
+        "stored": 9,
+        "recomb": 11,
+        "other": 10,
+        "reachB": 59,
+        "no_exit": 29,
+        "co_ignite": 59,
+        "total": 60,
+        "reachB_frac": 0.9833333333333333,
+        "learned_exit_frac": 0.6666666666666666,
+        "recomb_frac": 0.55,
+        "co_ignite_frac": 1.0
+      },
+      "noenc": {
+        "per_cue": {
+          "0": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 0,
+            "reachB": 0,
+            "no_exit": 0,
+            "co_ignite": 0,
+            "total": 30
+          },
+          "3": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 0,
+            "reachB": 0,
+            "no_exit": 0,
+            "co_ignite": 0,
+            "total": 30
+          }
+        },
+        "stored": 0,
+        "recomb": 0,
+        "other": 0,
+        "reachB": 0,
+        "no_exit": 0,
+        "co_ignite": 0,
+        "total": 60,
+        "reachB_frac": 0.0,
+        "learned_exit_frac": 0.0,
+        "recomb_frac": 0.0,
+        "co_ignite_frac": 0.0
+      },
+      "noshare": {
+        "per_cue": {
+          "0": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 30,
+            "reachB": 30,
+            "no_exit": 0,
+            "co_ignite": 30,
+            "total": 30
+          },
+          "3": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 3,
+            "reachB": 30,
+            "no_exit": 27,
+            "co_ignite": 30,
+            "total": 30
+          }
+        },
+        "stored": 0,
+        "recomb": 0,
+        "other": 33,
+        "reachB": 60,
+        "no_exit": 27,
+        "co_ignite": 60,
+        "total": 60,
+        "reachB_frac": 1.0,
+        "learned_exit_frac": 0.0,
+        "recomb_frac": 0.0,
+        "co_ignite_frac": 1.0
+      },
+      "go": false
+    },
+    {
+      "seed": 101,
+      "backend": "cupy",
+      "conc": {
+        "per_z": {
+          "0": {
+            "mean": 232.85582100550334,
+            "topk": 1186.122140036689,
+            "mx": 4500.0
+          },
+          "2": {
+            "mean": 269.22669935623804,
+            "topk": 1427.3749910195668,
+            "mx": 4800.0
+          },
+          "3": {
+            "mean": 273.1345188776652,
+            "topk": 1463.674570295546,
+            "mx": 5400.0
+          },
+          "4": {
+            "mean": 270.93188475171723,
+            "topk": 1438.9807930522495,
+            "mx": 4800.0
+          }
+        },
+        "mean_learned": 270.0792920539776,
+        "mean_unlearned": 252.99516994158427,
+        "mean_ratio": 1.067527463533545,
+        "topk_learned": 1433.1778920359081,
+        "topk_unlearned": 1324.8983551661174,
+        "topk_ratio": 1.081726674689859,
+        "max_learned": 4800.0,
+        "max_unlearned": 4950.0,
+        "max_ratio": 0.9696969696969697
+      },
+      "main": {
+        "per_cue": {
+          "0": {
+            "stored": 2,
+            "recomb": 0,
+            "other": 1,
+            "reachB": 30,
+            "no_exit": 27,
+            "co_ignite": 30,
+            "total": 30
+          },
+          "3": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 17,
+            "reachB": 30,
+            "no_exit": 13,
+            "co_ignite": 30,
+            "total": 30
+          }
+        },
+        "stored": 2,
+        "recomb": 0,
+        "other": 18,
+        "reachB": 60,
+        "no_exit": 40,
+        "co_ignite": 60,
+        "total": 60,
+        "reachB_frac": 1.0,
+        "learned_exit_frac": 0.1,
+        "recomb_frac": 0.0,
+        "co_ignite_frac": 1.0
+      },
+      "nonoise": {
+        "per_cue": {
+          "0": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 0,
+            "reachB": 20,
+            "no_exit": 20,
+            "co_ignite": 20,
+            "total": 20
+          },
+          "3": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 0,
+            "reachB": 20,
+            "no_exit": 20,
+            "co_ignite": 20,
+            "total": 20
+          }
+        },
+        "stored": 0,
+        "recomb": 0,
+        "other": 0,
+        "reachB": 40,
+        "no_exit": 40,
+        "co_ignite": 40,
+        "total": 40,
+        "reachB_frac": 1.0,
+        "learned_exit_frac": 0.0,
+        "recomb_frac": 0.0,
+        "co_ignite_frac": 1.0
+      },
+      "scramble": {
+        "per_cue": {
+          "0": {
+            "stored": 0,
+            "recomb": 11,
+            "other": 0,
+            "reachB": 29,
+            "no_exit": 18,
+            "co_ignite": 29,
+            "total": 30
+          },
+          "3": {
+            "stored": 12,
+            "recomb": 3,
+            "other": 0,
+            "reachB": 30,
+            "no_exit": 15,
+            "co_ignite": 30,
+            "total": 30
+          }
+        },
+        "stored": 12,
+        "recomb": 14,
+        "other": 0,
+        "reachB": 59,
+        "no_exit": 33,
+        "co_ignite": 59,
+        "total": 60,
+        "reachB_frac": 0.9833333333333333,
+        "learned_exit_frac": 1.0,
+        "recomb_frac": 0.5384615384615384,
+        "co_ignite_frac": 1.0
+      },
+      "noenc": {
+        "per_cue": {
+          "0": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 0,
+            "reachB": 0,
+            "no_exit": 0,
+            "co_ignite": 0,
+            "total": 30
+          },
+          "3": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 0,
+            "reachB": 0,
+            "no_exit": 0,
+            "co_ignite": 0,
+            "total": 30
+          }
+        },
+        "stored": 0,
+        "recomb": 0,
+        "other": 0,
+        "reachB": 0,
+        "no_exit": 0,
+        "co_ignite": 0,
+        "total": 60,
+        "reachB_frac": 0.0,
+        "learned_exit_frac": 0.0,
+        "recomb_frac": 0.0,
+        "co_ignite_frac": 0.0
+      },
+      "noshare": {
+        "per_cue": {
+          "0": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 0,
+            "reachB": 29,
+            "no_exit": 29,
+            "co_ignite": 30,
+            "total": 30
+          },
+          "3": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 0,
+            "reachB": 30,
+            "no_exit": 30,
+            "co_ignite": 30,
+            "total": 30
+          }
+        },
+        "stored": 0,
+        "recomb": 0,
+        "other": 0,
+        "reachB": 59,
+        "no_exit": 59,
+        "co_ignite": 60,
+        "total": 60,
+        "reachB_frac": 0.9833333333333333,
+        "learned_exit_frac": 0.0,
+        "recomb_frac": 0.0,
+        "co_ignite_frac": 1.0169491525423728
+      },
+      "go": false
+    },
+    {
+      "seed": 102,
+      "backend": "cupy",
+      "conc": {
+        "per_z": {
+          "0": {
+            "mean": 286.6911607782046,
+            "topk": 1549.3442039489746,
+            "mx": 7175.363830566406
+          },
+          "2": {
+            "mean": 270.0233395020167,
+            "topk": 1423.211152235667,
+            "mx": 6866.860626220703
+          },
+          "3": {
+            "mean": 240.40517323414485,
+            "topk": 1235.0985562536453,
+            "mx": 5400.0
+          },
+          "4": {
+            "mean": 279.2096402168274,
+            "topk": 1492.7864903344048,
+            "mx": 5400.0
+          }
+        },
+        "mean_learned": 274.616489859422,
+        "mean_unlearned": 263.5481670061747,
+        "mean_ratio": 1.0419973433280907,
+        "topk_learned": 1457.9988212850358,
+        "topk_unlearned": 1392.22138010131,
+        "topk_ratio": 1.0472463949511674,
+        "max_learned": 6133.430313110352,
+        "max_unlearned": 6287.681915283203,
+        "max_ratio": 0.975467651791049
+      },
+      "main": {
+        "per_cue": {
+          "0": {
+            "stored": 20,
+            "recomb": 6,
+            "other": 1,
+            "reachB": 30,
+            "no_exit": 3,
+            "co_ignite": 30,
+            "total": 30
+          },
+          "3": {
+            "stored": 0,
+            "recomb": 6,
+            "other": 0,
+            "reachB": 30,
+            "no_exit": 24,
+            "co_ignite": 30,
+            "total": 30
+          }
+        },
+        "stored": 20,
+        "recomb": 12,
+        "other": 1,
+        "reachB": 60,
+        "no_exit": 27,
+        "co_ignite": 60,
+        "total": 60,
+        "reachB_frac": 1.0,
+        "learned_exit_frac": 0.9696969696969697,
+        "recomb_frac": 0.375,
+        "co_ignite_frac": 1.0
+      },
+      "nonoise": {
+        "per_cue": {
+          "0": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 1,
+            "reachB": 20,
+            "no_exit": 19,
+            "co_ignite": 20,
+            "total": 20
+          },
+          "3": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 0,
+            "reachB": 20,
+            "no_exit": 20,
+            "co_ignite": 20,
+            "total": 20
+          }
+        },
+        "stored": 0,
+        "recomb": 0,
+        "other": 1,
+        "reachB": 40,
+        "no_exit": 39,
+        "co_ignite": 40,
+        "total": 40,
+        "reachB_frac": 1.0,
+        "learned_exit_frac": 0.0,
+        "recomb_frac": 0.0,
+        "co_ignite_frac": 1.0
+      },
+      "scramble": {
+        "per_cue": {
+          "0": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 7,
+            "reachB": 29,
+            "no_exit": 22,
+            "co_ignite": 29,
+            "total": 30
+          },
+          "3": {
+            "stored": 1,
+            "recomb": 1,
+            "other": 1,
+            "reachB": 30,
+            "no_exit": 27,
+            "co_ignite": 30,
+            "total": 30
+          }
+        },
+        "stored": 1,
+        "recomb": 1,
+        "other": 8,
+        "reachB": 59,
+        "no_exit": 49,
+        "co_ignite": 59,
+        "total": 60,
+        "reachB_frac": 0.9833333333333333,
+        "learned_exit_frac": 0.2,
+        "recomb_frac": 0.5,
+        "co_ignite_frac": 1.0
+      },
+      "noenc": {
+        "per_cue": {
+          "0": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 0,
+            "reachB": 0,
+            "no_exit": 0,
+            "co_ignite": 0,
+            "total": 30
+          },
+          "3": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 0,
+            "reachB": 0,
+            "no_exit": 0,
+            "co_ignite": 0,
+            "total": 30
+          }
+        },
+        "stored": 0,
+        "recomb": 0,
+        "other": 0,
+        "reachB": 0,
+        "no_exit": 0,
+        "co_ignite": 0,
+        "total": 60,
+        "reachB_frac": 0.0,
+        "learned_exit_frac": 0.0,
+        "recomb_frac": 0.0,
+        "co_ignite_frac": 0.0
+      },
+      "noshare": {
+        "per_cue": {
+          "0": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 0,
+            "reachB": 30,
+            "no_exit": 30,
+            "co_ignite": 30,
+            "total": 30
+          },
+          "3": {
+            "stored": 0,
+            "recomb": 4,
+            "other": 0,
+            "reachB": 30,
+            "no_exit": 26,
+            "co_ignite": 30,
+            "total": 30
+          }
+        },
+        "stored": 0,
+        "recomb": 4,
+        "other": 0,
+        "reachB": 60,
+        "no_exit": 56,
+        "co_ignite": 60,
+        "total": 60,
+        "reachB_frac": 1.0,
+        "learned_exit_frac": 1.0,
+        "recomb_frac": 1.0,
+        "co_ignite_frac": 1.0
+      },
+      "go": false
+    }
+  ]
+}
