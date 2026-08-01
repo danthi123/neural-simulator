@@ -45,8 +45,9 @@ are marked ADVISORY and count as ungated — the measured reason: **1330 runners
 | CC | an EXPENSIVE run whose question was never checked against the record — the first gate here that looks for a REDUNDANT claim rather than a wrong one | 1 (9h x 8 cells re-deriving a 6-seed result from 3 weeks earlier) | `gates/corpus_check_required` + `before_you_build.sh` recording + door stamp | registry | ✅ BLOCKS |
 | CM | a CLOSURE claim that names no mechanism, so nothing can adjudicate it against other live claims | 2 contradictory gap#4 findings live for 17 days | `gates/closure_names_mechanism` (forces the entry `biology_check.check_mechanism_status` needs) | registry | ✅ BLOCKS |
 | KR | a knob that changes the SUBSTRATE but cannot be set from the command line — so a prescribed fix is unrunnable and the config is unrecoverable | 3 in one runner (16 of 1333 corpus-wide) | `gates/knob_reachable` | registry | ✅ BLOCKS |
+| SF | the forward-looking summary docs (roadmap §7/§8 + `ROADMAP.md`) drift while findings pile up — keeping them current was a REMEMBERED skill-run, not a check | ~11 findings with the roadmap untouched a whole session (gap#4's on-bridge wall stayed "wall" after being surpassed) | `gates/summary_doc_freshness` (staleness BUDGET: THRESHOLD findings, then the next finding-commit blocks until a forward-doc is synced) | registry | ✅ BLOCKS |
 
-**Score: 25 BLOCKING · 1 structural · 7 reporting · 0 ungated — 33 rows.** (The previous line read
+**Score: 26 BLOCKING · 1 structural · 7 reporting · 0 ungated — 34 rows.** (The previous line read
 `14 · 1 · 6`, which sums to 21 against 22 rows: row **Y**, green but non-blocking, was in no bucket. Corrected
 here rather than carried forward — an arithmetic drift in the score of the anti-drift spec is the joke this
 file cannot afford. Reporting = 6 🟡 rows + Y.)
