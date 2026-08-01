@@ -32,7 +32,7 @@
  "status": "UNDEFINED",
  "go": false,
  "undefined_reasons": [
-  "unmet: IDEALISED transport ceiling vs chance (0.148 vs floor 0.2)",
+  "unmet: IDEALISED transport ceiling vs chance (0.148 vs floor 0.167)",
   "unmet: anti-cheat arms completed (measured=False expect=True)"
  ],
  "preconditions": [
@@ -40,24 +40,20 @@
    "kind": "floor",
    "name": "IDEALISED transport ceiling vs chance",
    "ok": false,
-   "detail": "0.148 vs floor 0.2",
-   "note": "weight transport ALLOWED (nwt False) \u2014 no biological rule can exceed it, so a sub-chance ceiling makes every arm beneath it uninterpretable"
-  },
-  {
-   "kind": "floor",
-   "name": "best arm across all seeds vs chance",
-   "ok": true,
-   "detail": "0.222 vs floor 0.2",
-   "note": ""
+   "detail": "0.148 vs floor 0.167",
+   "note": "weight transport ALLOWED (nwt False); a sub-chance ceiling makes every arm beneath it uninterpretable. CORRECTED 2026-07-31: chance is the runner's OWN 0.167, not the 1/k=0.200 I asserted -- the conclusion holds but the margin is 0.019, not 0.052"
   },
   {
    "kind": "require",
    "name": "anti-cheat arms completed",
    "ok": false,
    "detail": "measured=False expect=True",
-   "note": "run stopped at ~9h; each cell needed ~3 more full nets (~17h) and anti-cheats cannot rescue a run whose idealised ceiling is sub-chance"
+   "note": "stopped at ~9h; each cell needed ~3 more full nets (~17h)"
   }
  ],
  "disabled_processes": [],
- "chance": 0.2
+ "chance": 0.167,
+ "chance_reported_by_runner": 0.167,
+ "chance_1_over_k_SUPERSEDED": 0.2,
+ "correction_2026-07-31": "an earlier version of this artifact and its commit used chance=0.200 (1/k). The runner prints chance=0.167. The verdict is UNCHANGED (ceiling 0.148 < 0.167 => UNDEFINED) but two claims were wrong: the margin is 0.019 not 0.052, and 'every arm at or below chance' is FALSE -- reservoir 0.204 (s42) and kp 0.222 (s43) are ABOVE chance. That a FIXED RANDOM RESERVOIR clears chance while the idealised ceiling does not is if anything a sharper statement of the same problem."
 }
