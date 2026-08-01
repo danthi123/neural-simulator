@@ -55,5 +55,7 @@
  "chance": 0.167,
  "chance_reported_by_runner": 0.167,
  "chance_1_over_k_SUPERSEDED": 0.2,
- "correction_2026-07-31": "an earlier version of this artifact and its commit used chance=0.200 (1/k). The runner prints chance=0.167. The verdict is UNCHANGED (ceiling 0.148 < 0.167 => UNDEFINED) but two claims were wrong: the margin is 0.019 not 0.052, and 'every arm at or below chance' is FALSE -- reservoir 0.204 (s42) and kp 0.222 (s43) are ABOVE chance. That a FIXED RANDOM RESERVOIR clears chance while the idealised ceiling does not is if anything a sharper statement of the same problem."
+ "correction_2026-07-31": "an earlier version of this artifact and its commit used chance=0.200 (1/k). The runner prints chance=0.167. The verdict is UNCHANGED (ceiling 0.148 < 0.167 => UNDEFINED) but two claims were wrong: the margin is 0.019 not 0.052, and 'every arm at or below chance' is FALSE -- reservoir 0.204 (s42) and kp 0.222 (s43) are ABOVE chance. That a FIXED RANDOM RESERVOIR clears chance while the idealised ceiling does not is if anything a sharper statement of the same problem.",
+ "sim_backend": "cupy",
+ "sim_backend_source": "read from the cells' own logs: no 'this run is on the CPU' warning present"
 }

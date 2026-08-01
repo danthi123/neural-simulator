@@ -108,5 +108,7 @@
    "why": "isolation block in the runner \u2014 any latch observed is a property of the mechanism UNDER THIS ISOLATION"
   }
  ],
- "chance": null
+ "chance": null,
+ "sim_backend": "numpy",
+ "sim_backend_source": "the pool commands set SIM_BACKEND=numpy explicitly; recorded in each per-seed artifact"
 }

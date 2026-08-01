@@ -117,5 +117,7 @@
    "expanded_graded": false
   }
  },
- "note_expander_lesion": "the lesion forward is a CONTROL, not a condition: its sub-controls are dropped because a learner on an all-zero codon necessarily ties its own permuted control, which is the expected result and not a measurement of discriminating power"
+ "note_expander_lesion": "the lesion forward is a CONTROL, not a condition: its sub-controls are dropped because a learner on an all-zero codon necessarily ties its own permuted control, which is the expected result and not a measurement of discriminating power",
+ "sim_backend": "numpy",
+ "sim_backend_source": "runner does os.environ.setdefault('SIM_BACKEND','numpy') and the run printed the CPU warning"
 }

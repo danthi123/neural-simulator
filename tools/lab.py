@@ -502,3 +502,63 @@ if __name__ == "__main__":
 #   json.dump({**payload, **result}, f)   # emits the `preconditions` block gates/verdict_preconditions needs
 # ---------------------------------------------------------------------------------------------------
 from tools.verdict import Verdict, Check, GO, NO_GO, UNDEFINED  # noqa: E402,F401
+
+
+def project_cost(label, unit_index, n_units, elapsed_s, warn_hours=8.0):
+    """After unit 1 finishes, PROJECT the total from what it actually cost. Measured, not estimated.
+
+    EARNED 2026-07-31, at a price. The gap#4 crux was planned at ~6h45m per cell and was actually ~23h:
+    after printing its arm result each cell trained THREE MORE FULL NETS as anti-cheats, each the same cost
+    as the arm. Nobody counted them, so 8 cells ran 9 hours toward a ~136 GPU-hour tail that could not have
+    changed the verdict. The information needed to catch it existed at the 5h47m mark — the runner printed
+    `(20539s)` for its first arm — and nothing multiplied it by the units remaining.
+
+    This is deliberately NOT a config-parsing estimator. A parser has to know what each runner does, gets it
+    wrong exactly when the runner does something unusual, and that is precisely the case that hurts. One
+    finished unit is ground truth.
+
+    Returns projected total seconds; prints, and flags loudly past `warn_hours`.
+    """
+    if not elapsed_s or unit_index < 1 or n_units < 1:
+        print("  cost projection UNDEFINED for %s (unit_index=%s n_units=%s elapsed=%s)"
+              % (label, unit_index, n_units, elapsed_s))
+        return None
+    per_unit = float(elapsed_s) / float(unit_index)
+    total = per_unit * float(n_units)
+    remaining = max(0.0, total - float(elapsed_s))
+    print("  COST %s: unit %d/%d took %.0fs -> projected total %.1fh (%.1fh remaining)"
+          % (label, unit_index, n_units, per_unit, total / 3600.0, remaining / 3600.0))
+    if total / 3600.0 > warn_hours:
+        print("  ⛔ PROJECTED %.1fh EXCEEDS %.1fh. Decide NOW whether the remaining %.1fh can change the "
+              "verdict — on 2026-07-31 it could not, and the answer was already readable from unit 1."
+              % (total / 3600.0, warn_hours, remaining / 3600.0))
+    return total
+
+
+def assert_backend(expected, note=""):
+    """Assert the backend ACTUALLY in use, by importing it — not by inspecting the process.
+
+    EARNED 2026-07-31, twice in one project. Runners do `os.environ.setdefault("SIM_BACKEND","numpy")`, so
+    a caller who does not set it explicitly gets the CPU path silently, 10-50x slower. I then "verified" a
+    GPU run by finding nvidia mappings in /proc/PID/maps — which only proves CuPy is IMPORTABLE, not used —
+    while the runner's own first log line said "this run is on the CPU" in plain English. Checking a proxy
+    for the thing instead of the thing.
+
+    Raises on mismatch, because a run on the wrong device is not a slow run, it is a different experiment.
+    """
+    import os as _os
+    actual = _os.environ.get("SIM_BACKEND", "numpy")
+    on_gpu = False
+    try:
+        import cupy as _cp                                  # noqa: F401
+        on_gpu = (actual == "cupy")
+    except ImportError:
+        on_gpu = False
+    resolved = "cupy" if on_gpu else "numpy"
+    print("  BACKEND declared=%s resolved=%s %s" % (expected, resolved, note))
+    if resolved != expected:
+        raise AssertionError(
+            "backend mismatch: expected %r, actually running on %r (SIM_BACKEND=%r). A run on the wrong "
+            "device is a different experiment, not a slower one. Set SIM_BACKEND explicitly at the call "
+            "site — runners default it to numpy via setdefault, which silently wins." % (expected, resolved, actual))
+    return resolved

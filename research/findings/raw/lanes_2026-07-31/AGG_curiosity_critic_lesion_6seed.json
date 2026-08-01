@@ -52,5 +52,7 @@
    "why": "the lesion under test \u2014 value-subtraction pathway removed"
   }
  ],
- "chance": null
+ "chance": null,
+ "sim_backend": "numpy",
+ "sim_backend_source": "read from the run's OWN first log line: '[DR-1 ON-BRIDGE curiosity] backend=numpy'"
 }
