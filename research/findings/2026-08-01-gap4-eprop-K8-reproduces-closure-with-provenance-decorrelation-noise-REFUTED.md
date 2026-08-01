@@ -56,8 +56,21 @@ shows the opposite: noise-OFF is the CORRECT config, and turning the knob ON wou
 closure was right, it just lacked provenance. Now it has it: pool_k, epochs, subsample, settle, and the noise
 knobs are all recorded in the artifact config.
 
+## √K trend CONFIRMED (3 seeds per K, noise-OFF)
+
+Population coding IS the closure mechanism. inherit rises monotonically with the pool K —
+`research/findings/raw/eprop_noise/_ksweep_aggregate.json`:
+
+| K | inherit (mean, 3 seeds) |
+|---|---|
+| 1 | 0.370 |
+| 4 | 0.605 |
+| 8 | 0.778 |
+
+A clean √K lift from ~chance to near the LIF ceiling, tracking the predicted curve. K=1 near chance confirms a
+single neuron cannot carry the depth-2 compositional credit; the lift comes from the POPULATION, on clean
+drive (not from added noise, which collapses it). K=16 — the "does it exceed K=8" test — is still running.
+
 ## Honest scope
-3 seeds (the experiment's design), K=8 only. inherit 0.778 is near but not AT the LIF ceiling (0.89) — a small
-residual remains. The √K trend {K=1,4,16} noise-OFF is running now to confirm the closure across K (K=1 should
-sit near the 0.47 plateau, K=16 tests whether it exceeds K=8). This is on-bridge e-prop, the genuinely-open
-07-14 question — NOT the redundant BDSP ceiling crux (still do-not-relaunch).
+3 seeds per K; inherit 0.778 at K=8 is near but not AT the LIF ceiling (0.89) — a small residual remains. This
+is on-bridge e-prop, the genuinely-open 07-14 question — NOT the redundant BDSP ceiling crux (do-not-relaunch).

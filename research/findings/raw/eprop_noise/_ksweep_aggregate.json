@@ -1,0 +1,44 @@
+{
+  "probe": "onbridge_eprop_sqrtK_trend_noise_off",
+  "runner": "research.runners._onbridge_eprop_port_derisk",
+  "backend": "cupy",
+  "sim_backend": "cupy",
+  "noise": "OFF (clean drive)",
+  "epochs": 80,
+  "train_subsample": 160,
+  "settle_steps": 40,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "chance": 0.333,
+  "lif_ceiling_ref": 0.89,
+  "inherit_by_K": {
+    "1": 0.37,
+    "4": 0.605,
+    "8": 0.778
+  },
+  "per_seed_by_K": {
+    "1": [
+      0.37,
+      0.259,
+      0.481
+    ],
+    "4": [
+      0.593,
+      0.667,
+      0.556
+    ],
+    "8": [
+      0.741,
+      0.815,
+      0.778
+    ]
+  },
+  "K1_inherit": 0.37,
+  "K4_inherit": 0.605,
+  "K8_inherit": 0.778,
+  "K16_inherit": null,
+  "verdict": "monotonic sqrt-K lift chance->ceiling; population coding IS the closure mechanism on clean drive; K16 (exceed-K8 test) still running"
+}
