@@ -1,0 +1,91 @@
+{
+ "probe": "gap4_realspikes_credit_6seed",
+ "date": "2026-08-01",
+ "backend": "numpy",
+ "device": "cpu",
+ "runner": "research.runners._gap4_realspikes_credit_derisk",
+ "config": {
+  "n_col": 200,
+  "epochs": 30,
+  "lr": 0.02,
+  "w0": 0.35,
+  "jitter": 0.15,
+  "drive_pa": 1200.0,
+  "n_steps": 30,
+  "task": {
+   "n_super": 24,
+   "n_members": 8,
+   "held_per_super": 3,
+   "n_prop": 3,
+   "member_id_dim": 3,
+   "n_obs": 14,
+   "noise": 0.02
+  },
+  "margin_go": 0.05
+ },
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "n_seeds": 6,
+ "n_credit_beats_frozen": 1,
+ "n_dcs_positive": 1,
+ "mean_deep_credit_share": -0.0632,
+ "mean_credit_heldout": 0.2963,
+ "mean_frozen_heldout": 0.321,
+ "mean_credit_train": 0.4896,
+ "mean_oracle": 0.9753,
+ "mean_rate_reservoir": 0.0993,
+ "anti_cheats_clean": true,
+ "mean_reproducibility": 1.0,
+ "per_seed": [
+  {
+   "seed": 42,
+   "credit": 0.2963,
+   "frozen": 0.3333,
+   "dcs": -0.0556,
+   "train": 0.4602
+  },
+  {
+   "seed": 43,
+   "credit": 0.2222,
+   "frozen": 0.2407,
+   "dcs": -0.0244,
+   "train": 0.3977
+  },
+  {
+   "seed": 44,
+   "credit": 0.2407,
+   "frozen": 0.3889,
+   "dcs": -0.2857,
+   "train": 0.517
+  },
+  {
+   "seed": 100,
+   "credit": 0.3704,
+   "frozen": 0.4259,
+   "dcs": -0.0968,
+   "train": 0.6932
+  },
+  {
+   "seed": 101,
+   "credit": 0.2963,
+   "frozen": 0.3889,
+   "dcs": -0.1613,
+   "train": 0.4205
+  },
+  {
+   "seed": 102,
+   "credit": 0.3519,
+   "frozen": 0.1481,
+   "dcs": 0.2444,
+   "train": 0.4489
+  }
+ ],
+ "lr_swept_seed42": "credit < frozen at lr in {0.001,0.002,0.005,0.01,0.02} (dcs -0.167..-0.056) -- not an lr/scale rescue",
+ "headline": "REAL-SPIKES NEGATIVE: the unsupervised movable-plateau rule (gap#4 only rate-positive, 5/6) does NOT survive the port to real spikes -- beats the frozen on-bridge reservoir 1/6, dcs>0 1/6 (mean dcs -0.063). On 5/6 it DEGRADES the real-spikes codon below the untrained reservoir (credit train also below frozen train). The one win (seed 102) is only an anomalously-low frozen. Instrument verified (pre-gate passed, rule trains, anti-cheats clean, reprod 1.0); lr-swept on s42, no rescue. The rate 5/6 was a rate-STAND-IN artifact; on real spikes the only positive signal evaporates."
+}
