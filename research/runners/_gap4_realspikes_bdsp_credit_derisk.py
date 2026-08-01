@@ -71,11 +71,14 @@ from research.runners._gap4_plastic_plateau_credit_derisk import (
 # at the same seed -> the FROZEN and CREDIT arms start from the SAME reservoir.
 # ============================================================================================================
 class BDSPRealSpikesPlateauExpander(RealSpikesPlateauExpander):
-    def init_bdsp(self, k, seed, p0=0.30):
-        """Forward readout W_out (trained by its own gradient) + FIXED RANDOM DFA feedback B (INDEPENDENT stream,
-        never W_out, never updated) + per-column EMA plateau-probability baseline Pbar (BDSP baseline)."""
+    def init_bdsp(self, k, seed, p0=0.30, fb_wd=0.0):
+        """Forward readout W_out (trained by its own gradient) + DFA feedback B (INDEPENDENT stream, never W_out).
+        fb_wd=0 -> B FIXED random (the FA form). fb_wd>0 -> B is LEARNED transport-free by Kolen-Pollack (the SAME
+        local readout gradient updates B, with weight decay -> B ALIGNS to W_out without ever reading it -- the same
+        fix that made the DFC controller work; alignment != copy). + per-column EMA plateau-baseline Pbar."""
         rng_out = np.random.default_rng(seed * 999 + 17)                    # readout init stream
         rng_B = np.random.default_rng(seed * 777 + 5)                       # B stream -- INDEPENDENT (transport-free)
+        self.fb_wd = float(fb_wd)                                           # Kolen-Pollack feedback weight decay (0 = FA)
         self.k = int(k)
         self.W_out = rng_out.standard_normal((self.NC, k)) * 0.01           # small forward readout (trained)
         self.b_out = np.zeros(k)
@@ -114,8 +117,13 @@ class BDSPRealSpikesPlateauExpander(RealSpikesPlateauExpander):
         self.Pbar = (1 - rho) * self.Pbar + rho * sig.mean(0)
         # co-train the output readout by its OWN gradient (last layer; standard SGD, NOT a hidden transport)
         gout = e / len(active_sets)
-        self.W_out -= lr_out * (post_bin.T @ gout)
+        dWout = post_bin.T @ gout
+        self.W_out -= lr_out * dWout
         self.b_out -= lr_out * gout.sum(0)
+        # Kolen-Pollack feedback learning (fb_wd>0): the SAME local readout gradient updates B (with weight decay)
+        # -> B aligns to W_out transport-free (B never reads W_out; a shared local pre x error signal). fb_wd=0 -> FA.
+        if self.fb_wd > 0:
+            self.B -= lr_out * dWout + self.fb_wd * self.B
         return float(np.mean(np.abs(dW_full)))
 
 
@@ -134,7 +142,7 @@ def _train_bdsp(exp, af, pre_bin, y, epochs, eta, lr_out, beta, shuffle_error=Fa
     return mags
 
 
-def run_seed(seed, n_col, epochs, eta, lr_out, beta, p0, w0, jitter, k_th, n_sub, hidden, oracle_epochs, oracle_lr,
+def run_seed(seed, n_col, epochs, eta, lr_out, beta, p0, fb_wd, w0, jitter, k_th, n_sub, hidden, oracle_epochs, oracle_lr,
              oracle_batch, drive_pa, n_steps, task_kwargs, margin_go, verbose=True):
     (Xtr, ytr, _), (Xte, yte, _), meta, idx = make_task_semantic_inheritance(seed, **task_kwargs)
     n_in = Xtr.shape[1]; k = meta["k_classes"]; inh = idx["inh_idx"]
@@ -163,7 +171,7 @@ def run_seed(seed, n_col, epochs, eta, lr_out, beta, p0, w0, jitter, k_th, n_sub
     out["frozen_codon_diversity"] = _codon_diversity(Cb_fz)
 
     # ARM 2: CREDIT -- coincidence-gated sigmoid-baseline BDSP, trained + read on REAL SPIKES
-    exp.init_bdsp(k, seed, p0)                                             # attach W_out + fixed random B + Pbar
+    exp.init_bdsp(k, seed, p0, fb_wd)                                             # attach W_out + fixed random B + Pbar
     mags = _train_bdsp(exp, af_b, pre_bin, yb, epochs, eta, lr_out, beta, seed=seed)
     cr_tr, cr_ho, Cb_cr, _ = _readout_acc(exp, af_b, yb, af_h, yh, k)
     out["credit_plateau_train"] = cr_tr; out["credit_plateau_heldout"] = cr_ho
@@ -191,30 +199,34 @@ def run_seed(seed, n_col, epochs, eta, lr_out, beta, p0, w0, jitter, k_th, n_sub
 
     # ---- ANTI-CHEAT: permuted-TRAINING-label (NEW, load-bearing) -> a BDSP trained on shuffled y must NOT beat frozen ----
     exp_perm = _mk(n_in, n_col, seed, w0, jitter, k_th, drive_pa, n_steps)
-    exp_perm.init_bdsp(k, seed, p0)
+    exp_perm.init_bdsp(k, seed, p0, fb_wd)
     _train_bdsp(exp_perm, af_b, pre_bin, yperm, epochs, eta, lr_out, beta, seed=seed)
     _, out["bdsp_on_permuted_heldout"], _, _ = _readout_acc(exp_perm, af_b, yb, af_h, yh, k)
 
     # ---- ANTI-CHEAT: shuffle the DFA error across the batch -> degrade (error routing is load-bearing) ----
     exp_sh = _mk(n_in, n_col, seed, w0, jitter, k_th, drive_pa, n_steps)
-    exp_sh.init_bdsp(k, seed, p0)
+    exp_sh.init_bdsp(k, seed, p0, fb_wd)
     _train_bdsp(exp_sh, af_b, pre_bin, yb, epochs, eta, lr_out, beta, shuffle_error=True, seed=seed)
     _, out["shuffle_error_heldout"], _, _ = _readout_acc(exp_sh, af_b, yb, af_h, yh, k)
 
     # ---- ANTI-CHEAT: plateau/apical LESION -> floor (BDSP-trained on a lesioned real-spikes plateau) ----
     lex = _mk(n_in, n_col, seed, w0, jitter, k_th, drive_pa, n_steps, lesion=True)
     pre_l = (np.asarray([lex.feat_spike_counts(a) for a in af_b]) > 0).astype(float)
-    lex.init_bdsp(k, seed, p0)
+    lex.init_bdsp(k, seed, p0, fb_wd)
     _train_bdsp(lex, af_b, pre_l, yb, epochs, eta, lr_out, beta, seed=seed)
     _, out["lesion_heldout"], _, _ = _readout_acc(lex, af_b, yb, af_h, yh, k)
 
     # ---- ANTI-CHEAT: NO-TRANSPORT (the BDSP hidden update exposes no readout weight; B fixed random / != W_out / immutable) ----
     bsig = set(inspect.signature(BDSPRealSpikesPlateauExpander.train_epoch_bdsp).parameters)
     out["no_transport_code"] = bool(bsig.isdisjoint({"W_out", "readout", "clf", "Wout"}))
-    out["no_transport_B_immutable"] = bool(np.array_equal(exp.B, exp.B0))          # B never updated during training
-    out["no_transport_B_not_transpose"] = bool(not np.allclose(exp.B, exp.W_out))  # B is not the readout weight
-    out["no_transport"] = bool(out["no_transport_code"] and out["no_transport_B_immutable"]
-                               and out["no_transport_B_not_transpose"])
+    out["no_transport_B_immutable"] = bool(np.array_equal(exp.B, exp.B0))          # fb_wd=0: B never updated
+    out["no_transport_B_not_verbatim_copy"] = bool(not np.allclose(exp.B, exp.W_out, atol=1e-6))  # never a copy of W_out
+    # fb_wd=0 -> B fixed random (immutable). fb_wd>0 -> B LEARNED transport-free by Kolen-Pollack: it MOVED from B0 and
+    # ALIGNS to W_out but is NOT a verbatim copy (a shared local readout gradient, never a read of W_out).
+    _b_ok = (out["no_transport_B_immutable"] if exp.fb_wd == 0
+             else (bool(not np.array_equal(exp.B, exp.B0)) and out["no_transport_B_not_verbatim_copy"]))
+    out["no_transport_B_learned_or_immutable"] = bool(_b_ok)
+    out["no_transport"] = bool(out["no_transport_code"] and _b_ok and out["no_transport_B_not_verbatim_copy"])
 
     if verbose:
         print(f"  [seed {seed}] n_in={n_in} k={k} chance={chance:.3f} n_ho={len(yh)} drive={drive_pa} steps={n_steps}",
@@ -226,7 +238,7 @@ def run_seed(seed, n_col, epochs, eta, lr_out, beta, p0, w0, jitter, k_th, n_sub
               f"{out['permuted_readout_heldout']:.3f} | bdsp-on-permuted {out['bdsp_on_permuted_heldout']:.3f} | "
               f"shuffle-DFA {out['shuffle_error_heldout']:.3f} | lesion {out['lesion_heldout']:.3f} | "
               f"no-transport code={out['no_transport_code']} B-immut={out['no_transport_B_immutable']} "
-              f"B!=Wout={out['no_transport_B_not_transpose']}", flush=True)
+              f"B!=Wout={out['no_transport_B_not_verbatim_copy']}", flush=True)
     return out
 
 
@@ -239,6 +251,7 @@ def main():
     ap.add_argument("--lr-out", type=float, default=0.2, help="output readout SGD lr")
     ap.add_argument("--beta", type=float, default=1.0, help="sigmoid gain on the DFA-projected error")
     ap.add_argument("--p0", type=float, default=0.30, help="initial per-column EMA plateau-probability baseline")
+    ap.add_argument("--fb-wd", type=float, default=0.0, help="Kolen-Pollack feedback weight decay (0=fixed-random FA; >0 aligns B transport-free)")
     ap.add_argument("--w0", type=float, default=0.35)
     ap.add_argument("--jitter", type=float, default=0.15)
     ap.add_argument("--k-th", type=float, default=None)
@@ -265,7 +278,7 @@ def main():
     t0 = time.time(); per = []; err = None
     try:
         for s in a.seeds:
-            per.append(run_seed(s, a.n_col, a.epochs, a.eta, a.lr_out, a.beta, a.p0, a.w0, a.jitter, a.k_th, a.n_sub,
+            per.append(run_seed(s, a.n_col, a.epochs, a.eta, a.lr_out, a.beta, a.p0, a.fb_wd, a.w0, a.jitter, a.k_th, a.n_sub,
                                 a.hidden, a.oracle_epochs, a.oracle_lr, a.oracle_batch, a.drive_pa, a.n_steps,
                                 task_kwargs, a.margin_go))
     except Exception as e:
@@ -273,7 +286,7 @@ def main():
 
     summary = {"probe": "gap4_realspikes_bdsp_credit", "seeds": a.seeds, "backend": os.environ.get("SIM_BACKEND"),
                "config": {"n_col": a.n_col, "epochs": a.epochs, "eta": a.eta, "lr_out": a.lr_out, "beta": a.beta,
-                          "p0": a.p0, "w0": a.w0, "jitter": a.jitter, "drive_pa": a.drive_pa, "n_steps": a.n_steps,
+                          "p0": a.p0, "fb_wd": a.fb_wd, "w0": a.w0, "jitter": a.jitter, "drive_pa": a.drive_pa, "n_steps": a.n_steps,
                           "task": task_kwargs, "margin_go": a.margin_go},
                "elapsed_seconds": round(time.time() - t0, 1), "per_seed": per}
     if err is None and per:
