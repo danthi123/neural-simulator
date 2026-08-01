@@ -226,6 +226,20 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 
 ## CURRENT STATE (⚠️ keep this section current every cycle — it is the resume point)
 
+> ## 📍 STATE OF THE PROJECT — 2026-08-01 09:00 (read this first; everything below the next anchor is HISTORY)
+> **THE THROUGH-LINE: gap#4's e-prop "closure" was RETRACTED — it is a fixed random RESERVOIR, not deep credit.** The runner's own frozen-hidden control (there since 2026-07-16) reports `deep_credit_share` mean 0.005 at K=16 / 0.066 at K=8, NEGATIVE on 3/6 seeds each — a frozen random hidden layer does as well as e-prop, so training the hidden layers adds ~nothing and the √K curve is a reservoir-CAPACITY curve. The banked "closure / K=16 above ceiling / reproduced-with-provenance" read `eprop_inherit` (0.85) past the run's own HONEST-NEGATIVE verdict, never reading `deep_credit_share` (0.005) — silent-failure rules #1+#7. Also: arc-A "5/6" is a MEASUREMENT ARTIFACT (seed 46 ranges 0.2-1.0 by an uncontrolled noise offset).
+> Corrected: finding `2026-08-01-gap4-6seed-bar-RUN-...`, biology `deep-credit-on-spikes`, roadmap §7/§8, ROADMAP.md, arc-A finding. Commits `a0ae9065`+`013adb6c`, pushed both.
+>
+> **CURRENT FRONTIER — gap#4 deep credit REOPENED, judged CAPABILITY-GROUNDED (owner steer 2026-08-01):** deep credit must enable a capability a fixed reservoir CANNOT — compositional/systematic generalization to held-out members (what language/reasoning needs). The 6-seed used `n_prop=2` (XOR-depth 2), reservoir-solvable → `deep_credit_share≈0` is "task too shallow", not "deep credit broken". Test: sweep `n_prop` until the frozen reservoir FAILS, then does deep credit win?
+>
+> **LIVE BACKGROUND WORK (do not double-launch):**
+> - **Lane A depth diagnosis — LOCAL, running:** `_onbridge_eprop_port_derisk` n_prop∈{2,3,4} × pool_k∈{1,16} × seeds{42,43,44}, epochs150 n_super24; driver `scratchpad/run_lane_a.sh`; results → `research/findings/raw/gap4_depth_sweep/`.
+> - **Lane A extension — POOL (192.168.0.40-42, reachable via pool40/41/42 aliases), dispatching:** n_prop=5 + seeds{100,101,102}. Dispatcher = `pool-dispatch.service` (systemd); queue via `pool_queue.sh add` (NOT `queue_add.sh` — format mismatch silently drops pool jobs, chip `task_037610ef`).
+> - **Lane B (learned instructive signal §2.8) + Lane C (representable-forward + credit) — background AGENTS building** a runner + smoke `deep_credit_share` at n_prop 3/4; report on completion, don't commit.
+> - Heartbeat: Task `bkaxaz04q` (state-checking; its pool node-check reads via aliases = correct).
+>
+> **▶ EXACT NEXT ACTION:** aggregate `research/findings/raw/gap4_depth_sweep/*.json` — for each (n_prop, pool_k), does the frozen reservoir FAIL (→chance) at high n_prop and `deep_credit_share` rise where it does? CHECK `oracle_inherit` FITS at n_prop 4/5 (else raise epochs — it barely fit at 6 epochs). Then fold Lane B/C verdicts + pick the winning mechanism for a 6-seed confirmation.
+>
 > ## 📍 STATE OF THE PROJECT — 2026-08-01 00:55 (read this first; everything below the next anchor is HISTORY)
 > **THE DAY'S THROUGH-LINE: the "enforced" parallelization guard was BROKEN, not merely advisory — and two
 > open levers got wired, verified, and put on both lanes.** The GPU queue-dispatcher (`lane_dispatch.sh`)
