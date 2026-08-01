@@ -50,15 +50,48 @@ class BDSPDendriticMLP(DendriticMLP):
         self.Pbar = [xp.full(self.W[li].shape[1], float(p0)) for li in range(len(self.W) - 1)]  # per hidden layer
         self.beta = float(beta)
         self._vel = None
+        # ADJACENT-layer feedback for the CHAINED burstprop (Payeur): Q[l] maps the layer-ABOVE's credit into
+        # layer l's space (transport-free: fixed random, INDEPENDENT of W, never W^T). For hidden layer l (its
+        # activation is acts[l+1], size = W[l].shape[1]) the layer above has size W[l+1].shape[1] (or the output k).
+        rngq = np.random.default_rng(1234567)
+        self.Q = []
+        nW = len(self.W)
+        for l in range(nW - 1):
+            above = self.W[l + 1].shape[1]                          # size of the layer above (next hidden or output)
+            here = self.W[l].shape[1]                               # size of hidden layer l
+            self.Q.append(xp.asarray(rngq.normal(0, 1.0 / np.sqrt(here), (above, here))))
         return self
 
     def train_step(self, X, y, mode, lr, rho=0.1):
-        if mode not in ("bdsp", "bdsp_wrongsign", "bdsp_truegrad", "bdsp_soft"):
+        if mode not in ("bdsp", "bdsp_wrongsign", "bdsp_truegrad", "bdsp_soft", "burstprop"):
             return super().train_step(X, y, mode, lr)
         acts, e = self._debug_fwd_err(X, y)                         # acts (sigmoid), e = softmax(logits) - onehot(y)
         nW = len(self.W)
         upd = [None] * nW
         upd[-1] = -(acts[-1].T @ e)                                 # output-layer local delta (same as FA)
+        if mode == "burstprop":
+            # CHAINED top-down burst credit (Payeur): each layer's apical = the layer-ABOVE's credit projected through
+            # the ADJACENT feedback Q[l] (transport-free). burst = event x sigmoid(apical); credit = burst - baseline;
+            # the credit CHAINS DOWN (top_signal for the next deeper layer = THIS layer's credit) -> a genuine
+            # multi-layer top-down target, unlike DFA's independent projection of the output error to each layer.
+            top_signal = e                                          # into the top hidden layer = output error
+            for li in range(nW - 2, -1, -1):                        # TOP hidden layer DOWN (chained)
+                a_prev, a_l = acts[li], acts[li + 1]
+                apical = top_signal @ self.Q[li]                    # (N, hidden_li) top-down from the layer above
+                sig = 1.0 / (1.0 + xp.exp(-self.beta * apical))     # apical-modulated burst probability
+                burst = a_l * sig                                   # event rate x burst prob = burst rate
+                credit = burst - self.Pbar[li][None, :]             # burst DEVIATION from baseline (the credit)
+                pre_ev = (a_prev > (0.0 if li == 0 else 0.5)).astype(a_prev.dtype)
+                upd[li] = -(pre_ev.T @ credit)                      # dW ∝ pre event x burst deviation
+                self.Pbar[li] = (1 - rho) * self.Pbar[li] + rho * burst.mean(0)
+                top_signal = credit                                # CHAIN: next deeper layer's top-down = this credit
+            m = max(1, X.shape[0])
+            if self._vel is None:
+                self._vel = [xp.zeros_like(w) for w in self.W]
+            for li in range(nW):
+                self._vel[li] = _MOMENTUM * self._vel[li] + upd[li] / m
+                self.W[li] = self.W[li] + lr * self._vel[li]
+            return
         sgn = +1.0 if mode == "bdsp_wrongsign" else -1.0          # descent (bdsp/truegrad) vs anti-learn (wrongsign)
         # DIAGNOSTIC ONLY: bdsp_truegrad feeds the coincidence-gated rule the TRUE backpropagated deep signal (uses
         # W^T -> NOT a shippable transport-free rule) to isolate whether the level-1-capture residual is the SIGNAL
