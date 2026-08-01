@@ -34,6 +34,17 @@ case "${1:-list}" in
          # me state what the record says; it never asked whether the command could run at all.
          # Cheap and total: ask the runner's own argparse. --help exits 0 iff the module imports and parses.
          MOD=$(printf '%s' "$2" | grep -oE '\-m +research\.runners\.[A-Za-z0-9_]+' | awk '{print $2}' | head -1)
+         # INTERPRETER GUARD (2026-08-01). The pool nodes have NO bare `python` -- only `.venv/bin/python`. A
+         # command running `-m research...` via bare `python` passes EVERY check below (they all shell out to
+         # `.venv/bin/python` themselves) yet dispatches and produces NOTHING on the node. Measured: the 42-job
+         # brain-quench sweep AND the first affect sweep both staged with bare `python` and silently produced
+         # zero output -- validated, dispatched, dead. The check that ran the module and the command that ran on
+         # the node used different interpreters; this closes that seam.
+         if [ -n "$MOD" ]; then case "$2" in
+             *".venv/bin/python"*) ;;                                     # sanctioned interpreter -- ok
+             *) echo "⛔ REFUSED: '$MOD' would run via a BARE 'python' -- pool nodes have none (silent no-output)." >&2
+                echo "   Use: SIM_BACKEND=numpy .venv/bin/python -u -m $MOD ..." >&2; exit 2 ;;
+           esac; fi
          if [ -n "$MOD" ]; then
            FLAGS=$(printf '%s' "$2" | grep -oE '[-][-][a-z][a-z0-9-]*' | sort -u)
            HELP=$(cd "$ROOT" && timeout 90 .venv/bin/python -m "$MOD" --help 2>&1)

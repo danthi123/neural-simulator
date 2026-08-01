@@ -23,6 +23,17 @@ REASON="${3:-}"
 Q="$ROOT/research/queue/${LANE}.queue"
 mkdir -p "$(dirname "$Q")"; touch "$Q"
 
+# INTERPRETER GUARD (2026-08-01, see pool_queue.sh + dispatcher_selftest.sh). Every research runner must go
+# through .venv/bin/python: bare `python` is absent on the pool nodes and is not the sanctioned local
+# interpreter either. A bare-python job validates fine (the checks shell out to .venv/bin/python) and then
+# produces NOTHING -- the silent no-output failure measured on the affect + brain-quench sweeps.
+case "$CMD" in *"-m research"*)
+  case "$CMD" in *".venv/bin/python"*) ;;
+    *) echo "⛔ REFUSED: runs a research module without .venv/bin/python -- bare 'python' produces silent no-output." >&2
+       echo "   Use: SIM_BACKEND=<numpy|cupy> .venv/bin/python -u -m research.runners.X ..." >&2; exit 2 ;;
+  esac ;;
+esac
+
 RUNNER=$(echo "$CMD" | grep -oE '[-_a-zA-Z0-9]+' | grep -E '^_?[a-z0-9]+([_a-z0-9]+)+$' | grep -vE '^(venv|bin|python|research|runners|tmp|claude|log|seeds|out|full|smoke)$' | head -1)
 echo "── queue_add: checking the record for runner '${RUNNER:-?}' ──"
 

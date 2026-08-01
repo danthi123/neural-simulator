@@ -40,6 +40,18 @@ running_count() {
   printf '%s' "${n:-0}"
 }
 
+# STARTUP SELF-CHECK (2026-08-01). A dispatcher that cannot dispatch must fail LOUDLY, not idle the fleet
+# silently -- the same principle the gate registry applies to gates (refuse one whose selftest cannot fail).
+# On 2026-08-01 running_count emitted "0\n0" at 0-running, crashing the arithmetic below on the FIRST
+# iteration, so nothing ever dispatched and the failure was invisible. Assert the invariant that broke.
+_sc=$(running_count)
+if ! [ "$_sc" -ge 0 ] 2>/dev/null; then
+  echo "⛔ DISPATCHER SELF-CHECK FAILED: running_count returned a non-integer [$_sc] -- FREE arithmetic would" >&2
+  echo "   crash and NOTHING would dispatch. Aborting loudly instead of idling the fleet. (see running_count)" >&2
+  exit 1
+fi
+echo "[$LANE-dispatch] self-check ok: running_count=$_sc, holding $SLOTS slots"
+
 while true; do
   N=$(running_count)
   FREE=$(( SLOTS - N ))
