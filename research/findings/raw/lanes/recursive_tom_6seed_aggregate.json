@@ -1,0 +1,583 @@
+{
+  "runner": "_recursive_tom_rsa_derisk",
+  "faculty": "W4 recursive theory of mind (2nd-order false belief on a WM-buffer stack + depth-2 scalar implicature via iterated speaker-listener; Stage-4 CONVERSANT; ToM ladder recursion rung)",
+  "theory": "Perner-Wimmer 2nd-order false belief (nested belief frames = nested clauses on a bounded WM buffer) + Frank-Goodman Rational Speech Acts (L0->S1->L1); the W3 agent-keyed belief store STACKED + the substrate's divisive normalization iterated (FUNCTIONAL correlate only, NOT access to another mind).",
+  "mechanism": "PART A: a STACK of W3 belief stores (GNW single-content attractors = WM-buffer slots) with sim/'s own transmission_gate = witnessing-gated chained writes world->frame_1->frame_2; frame_d copies frame_{d-1} iff witness_d, so a lower false belief propagates upward. PART B: each RSA distribution = the graded rates of a competitive assembly population whose FS pool does divisive normalization; at alpha=1 the depth-2 recursion is 3 substrate normalizations and the implicature is a consequence of the single-vs-multi-item firing-rate contrast.",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "depths": [
+    1,
+    2,
+    3
+  ],
+  "n_trials": 48,
+  "rsa_trials": 16,
+  "backend": "numpy",
+  "chance_partA": 0.25,
+  "chance_partB": 0.5,
+  "verdict": "GO",
+  "n_go": 6,
+  "n_seeds": 6,
+  "moat_intact": true,
+  "thresholds": {
+    "order2_false_acc": 0.85,
+    "order1_baseline_max": 0.2,
+    "reality_baseline_max": 0.2,
+    "order2_true_acc": 0.85,
+    "collapse_max": 0.6,
+    "chance_loc": 0.25,
+    "implicature_acc": 0.85,
+    "literal_max": 0.4,
+    "rsa_lesion_max": 0.4,
+    "rsa_perm_max": 0.65
+  },
+  "preconditions": [
+    {
+      "kind": "require",
+      "name": "6 seeds (project bar)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "floor",
+      "name": "2nd-order false-belief acc vs chance (1/K_loc)",
+      "ok": true,
+      "detail": "1 vs floor 0.25",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "2nd-order (frame_2) BEATS 1st-order baseline (frame_1 = J's real belief) on false trials",
+      "ok": true,
+      "detail": "measured=0.0 expect=<function build_summary.<locals>.<lambda> at 0x7fe62c1787c0>",
+      "note": "if frame_1 solved it, this would be 1st-order ToM, not recursive"
+    },
+    {
+      "kind": "require",
+      "name": "reality-baseline FAILS the 2nd-order false belief",
+      "ok": true,
+      "detail": "measured=0.006944444444444444 expect=<function build_summary.<locals>.<lambda> at 0x7fe62c1787c0>",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "2nd-order true-belief UPDATES when M witnessed (not always-old)",
+      "ok": true,
+      "detail": "measured=1.0 expect=<function build_summary.<locals>.<lambda> at 0x7fe62c1787c0>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "flatten-lesion (all witness gates open) collapses the false belief",
+      "ok": true,
+      "detail": "treatment=1 control=0 |sep|=1 > 0",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "buffer-scramble (read a random stack frame) collapses the false belief",
+      "ok": true,
+      "detail": "treatment=1 control=0.361111 |sep|=0.638889 > 0",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "permuted-premises collapses the false belief",
+      "ok": true,
+      "detail": "treatment=1 control=0.256944 |sep|=0.743056 > 0",
+      "note": ""
+    },
+    {
+      "kind": "floor",
+      "name": "depth-2 scalar implicature (L1) vs chance 0.5",
+      "ok": true,
+      "detail": "1 vs floor 0.5",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "literal listener L0 shows NO robust implicature (the effect is DEPTH-created)",
+      "ok": true,
+      "detail": "measured=0.0 expect=<function build_summary.<locals>.<lambda> at 0x7fe62c1787c0>",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "permuted-lexicon collapses the implicature",
+      "ok": true,
+      "detail": "treatment=1 control=0.291667 |sep|=0.708333 > 0",
+      "note": ""
+    },
+    {
+      "kind": "control",
+      "name": "normalization-lesion (FS inhibition -> 0) collapses the implicature",
+      "ok": true,
+      "detail": "treatment=1 control=0 |sep|=1 > 0",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "all seeds GO on Part A (2nd-order false belief)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    },
+    {
+      "kind": "require",
+      "name": "all seeds GO on Part B (scalar implicature)",
+      "ok": true,
+      "detail": "measured=True expect=True",
+      "note": ""
+    }
+  ],
+  "disabled_processes": [
+    {
+      "process": "STDP/Hebbian/homeostasis/STP/structural/reward/OU",
+      "why": "belief stores + RSA normalizer are read at a fixed operating point; plasticity off (as in W3/W5)"
+    }
+  ],
+  "undefined_reasons": [],
+  "aggregate": {
+    "mean_order2_false_belief_acc": 1.0,
+    "mean_order2_true_belief_acc": 1.0,
+    "mean_order1_baseline_false_acc": 0.0,
+    "mean_reality_baseline_false_acc": 0.006944444444444444,
+    "mean_flatten_lesion_false_acc": 0.0,
+    "mean_buffer_scramble_false_acc": 0.36111111111111116,
+    "mean_permuted_premises_false_acc": 0.2569444444444444,
+    "mean_implicature_depth2_acc": 1.0,
+    "mean_literal_depth0_acc": 0.0,
+    "mean_normalization_lesion_acc": 0.0,
+    "mean_permuted_lexicon_acc": 0.2916666666666667,
+    "depth_profile_false_belief": {
+      "1": 1.0,
+      "2": 1.0,
+      "3": 1.0
+    },
+    "depth_profile_true_belief": {
+      "1": 1.0,
+      "2": 1.0,
+      "3": 1.0
+    },
+    "all_goA": true,
+    "all_goB": true
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "part_a_by_depth": {
+        "1": {
+          "depth": 1,
+          "n_trials": 48,
+          "chance": 0.25,
+          "n_false": 24,
+          "n_true": 24,
+          "order_d_false_belief_acc": 1.0,
+          "order_d_true_belief_acc": 1.0,
+          "reality_baseline_false_acc": 0.0,
+          "order1_baseline_false_acc": 1.0,
+          "stack_fidelity": 0.9895833333333334,
+          "flatten_lesion_false_acc": 0.0,
+          "flatten_predicts_reality": 1.0,
+          "buffer_scramble_false_acc": 0.5416666666666666,
+          "permuted_premises_false_acc": 0.20833333333333334
+        },
+        "2": {
+          "depth": 2,
+          "n_trials": 48,
+          "chance": 0.25,
+          "n_false": 24,
+          "n_true": 24,
+          "order_d_false_belief_acc": 1.0,
+          "order_d_true_belief_acc": 1.0,
+          "reality_baseline_false_acc": 0.0,
+          "order1_baseline_false_acc": 0.0,
+          "stack_fidelity": 1.0,
+          "flatten_lesion_false_acc": 0.0,
+          "flatten_predicts_reality": 1.0,
+          "buffer_scramble_false_acc": 0.4166666666666667,
+          "permuted_premises_false_acc": 0.25
+        },
+        "3": {
+          "depth": 3,
+          "n_trials": 48,
+          "chance": 0.25,
+          "n_false": 24,
+          "n_true": 24,
+          "order_d_false_belief_acc": 1.0,
+          "order_d_true_belief_acc": 1.0,
+          "reality_baseline_false_acc": 0.0,
+          "order1_baseline_false_acc": 0.0,
+          "stack_fidelity": 1.0,
+          "flatten_lesion_false_acc": 0.0,
+          "flatten_predicts_reality": 1.0,
+          "buffer_scramble_false_acc": 0.3333333333333333,
+          "permuted_premises_false_acc": 0.3333333333333333
+        }
+      },
+      "part_b_rsa": {
+        "n_trials": 16,
+        "chance": 0.5,
+        "implicature_depth2_acc": 1.0,
+        "literal_depth0_acc": 0.0,
+        "normalization_lesion_acc": 0.0,
+        "permuted_lexicon_acc": 0.5625,
+        "mean_margin_intact_l1": 0.03722222222222222,
+        "mean_margin_intact_l0": 0.005659722222222229,
+        "mean_margin_lesion_l1": 0.0016666666666666635
+      },
+      "go_a_2nd_order_false_belief": true,
+      "go_b_scalar_implicature": true,
+      "go": true,
+      "elapsed_seconds": 77.3
+    },
+    {
+      "seed": 43,
+      "part_a_by_depth": {
+        "1": {
+          "depth": 1,
+          "n_trials": 48,
+          "chance": 0.25,
+          "n_false": 24,
+          "n_true": 24,
+          "order_d_false_belief_acc": 1.0,
+          "order_d_true_belief_acc": 1.0,
+          "reality_baseline_false_acc": 0.0,
+          "order1_baseline_false_acc": 1.0,
+          "stack_fidelity": 1.0,
+          "flatten_lesion_false_acc": 0.0,
+          "flatten_predicts_reality": 1.0,
+          "buffer_scramble_false_acc": 0.5,
+          "permuted_premises_false_acc": 0.375
+        },
+        "2": {
+          "depth": 2,
+          "n_trials": 48,
+          "chance": 0.25,
+          "n_false": 24,
+          "n_true": 24,
+          "order_d_false_belief_acc": 1.0,
+          "order_d_true_belief_acc": 1.0,
+          "reality_baseline_false_acc": 0.0,
+          "order1_baseline_false_acc": 0.0,
+          "stack_fidelity": 1.0,
+          "flatten_lesion_false_acc": 0.0,
+          "flatten_predicts_reality": 1.0,
+          "buffer_scramble_false_acc": 0.20833333333333334,
+          "permuted_premises_false_acc": 0.2916666666666667
+        },
+        "3": {
+          "depth": 3,
+          "n_trials": 48,
+          "chance": 0.25,
+          "n_false": 24,
+          "n_true": 24,
+          "order_d_false_belief_acc": 1.0,
+          "order_d_true_belief_acc": 1.0,
+          "reality_baseline_false_acc": 0.0,
+          "order1_baseline_false_acc": 0.0,
+          "stack_fidelity": 1.0,
+          "flatten_lesion_false_acc": 0.0,
+          "flatten_predicts_reality": 1.0,
+          "buffer_scramble_false_acc": 0.25,
+          "permuted_premises_false_acc": 0.20833333333333334
+        }
+      },
+      "part_b_rsa": {
+        "n_trials": 16,
+        "chance": 0.5,
+        "implicature_depth2_acc": 1.0,
+        "literal_depth0_acc": 0.0,
+        "normalization_lesion_acc": 0.0,
+        "permuted_lexicon_acc": 0.25,
+        "mean_margin_intact_l1": 0.03277777777777778,
+        "mean_margin_intact_l0": 0.003402777777777786,
+        "mean_margin_lesion_l1": 0.003888888888888886
+      },
+      "go_a_2nd_order_false_belief": true,
+      "go_b_scalar_implicature": true,
+      "go": true,
+      "elapsed_seconds": 78.8
+    },
+    {
+      "seed": 44,
+      "part_a_by_depth": {
+        "1": {
+          "depth": 1,
+          "n_trials": 48,
+          "chance": 0.25,
+          "n_false": 24,
+          "n_true": 24,
+          "order_d_false_belief_acc": 1.0,
+          "order_d_true_belief_acc": 1.0,
+          "reality_baseline_false_acc": 0.0,
+          "order1_baseline_false_acc": 1.0,
+          "stack_fidelity": 1.0,
+          "flatten_lesion_false_acc": 0.0,
+          "flatten_predicts_reality": 1.0,
+          "buffer_scramble_false_acc": 0.2916666666666667,
+          "permuted_premises_false_acc": 0.20833333333333334
+        },
+        "2": {
+          "depth": 2,
+          "n_trials": 48,
+          "chance": 0.25,
+          "n_false": 24,
+          "n_true": 24,
+          "order_d_false_belief_acc": 1.0,
+          "order_d_true_belief_acc": 1.0,
+          "reality_baseline_false_acc": 0.0,
+          "order1_baseline_false_acc": 0.0,
+          "stack_fidelity": 1.0,
+          "flatten_lesion_false_acc": 0.0,
+          "flatten_predicts_reality": 1.0,
+          "buffer_scramble_false_acc": 0.4166666666666667,
+          "permuted_premises_false_acc": 0.20833333333333334
+        },
+        "3": {
+          "depth": 3,
+          "n_trials": 48,
+          "chance": 0.25,
+          "n_false": 24,
+          "n_true": 24,
+          "order_d_false_belief_acc": 1.0,
+          "order_d_true_belief_acc": 1.0,
+          "reality_baseline_false_acc": 0.0,
+          "order1_baseline_false_acc": 0.0,
+          "stack_fidelity": 1.0,
+          "flatten_lesion_false_acc": 0.0,
+          "flatten_predicts_reality": 1.0,
+          "buffer_scramble_false_acc": 0.375,
+          "permuted_premises_false_acc": 0.25
+        }
+      },
+      "part_b_rsa": {
+        "n_trials": 16,
+        "chance": 0.5,
+        "implicature_depth2_acc": 1.0,
+        "literal_depth0_acc": 0.0,
+        "normalization_lesion_acc": 0.0,
+        "permuted_lexicon_acc": 0.1875,
+        "mean_margin_intact_l1": 0.03284722222222222,
+        "mean_margin_intact_l0": 0.00010416666666666734,
+        "mean_margin_lesion_l1": -0.003888888888888893
+      },
+      "go_a_2nd_order_false_belief": true,
+      "go_b_scalar_implicature": true,
+      "go": true,
+      "elapsed_seconds": 78.2
+    },
+    {
+      "seed": 100,
+      "part_a_by_depth": {
+        "1": {
+          "depth": 1,
+          "n_trials": 48,
+          "chance": 0.25,
+          "n_false": 24,
+          "n_true": 24,
+          "order_d_false_belief_acc": 1.0,
+          "order_d_true_belief_acc": 1.0,
+          "reality_baseline_false_acc": 0.0,
+          "order1_baseline_false_acc": 1.0,
+          "stack_fidelity": 0.9895833333333334,
+          "flatten_lesion_false_acc": 0.0,
+          "flatten_predicts_reality": 1.0,
+          "buffer_scramble_false_acc": 0.5416666666666666,
+          "permuted_premises_false_acc": 0.2916666666666667
+        },
+        "2": {
+          "depth": 2,
+          "n_trials": 48,
+          "chance": 0.25,
+          "n_false": 24,
+          "n_true": 24,
+          "order_d_false_belief_acc": 1.0,
+          "order_d_true_belief_acc": 1.0,
+          "reality_baseline_false_acc": 0.0,
+          "order1_baseline_false_acc": 0.0,
+          "stack_fidelity": 0.9930555555555555,
+          "flatten_lesion_false_acc": 0.0,
+          "flatten_predicts_reality": 1.0,
+          "buffer_scramble_false_acc": 0.4166666666666667,
+          "permuted_premises_false_acc": 0.25
+        },
+        "3": {
+          "depth": 3,
+          "n_trials": 48,
+          "chance": 0.25,
+          "n_false": 24,
+          "n_true": 24,
+          "order_d_false_belief_acc": 1.0,
+          "order_d_true_belief_acc": 1.0,
+          "reality_baseline_false_acc": 0.0,
+          "order1_baseline_false_acc": 0.0,
+          "stack_fidelity": 0.9947916666666666,
+          "flatten_lesion_false_acc": 0.0,
+          "flatten_predicts_reality": 1.0,
+          "buffer_scramble_false_acc": 0.25,
+          "permuted_premises_false_acc": 0.375
+        }
+      },
+      "part_b_rsa": {
+        "n_trials": 16,
+        "chance": 0.5,
+        "implicature_depth2_acc": 1.0,
+        "literal_depth0_acc": 0.0,
+        "normalization_lesion_acc": 0.0,
+        "permuted_lexicon_acc": 0.25,
+        "mean_margin_intact_l1": 0.03333333333333333,
+        "mean_margin_intact_l0": 0.0011111111111111183,
+        "mean_margin_lesion_l1": 0.00555555555555555
+      },
+      "go_a_2nd_order_false_belief": true,
+      "go_b_scalar_implicature": true,
+      "go": true,
+      "elapsed_seconds": 77.3
+    },
+    {
+      "seed": 101,
+      "part_a_by_depth": {
+        "1": {
+          "depth": 1,
+          "n_trials": 48,
+          "chance": 0.25,
+          "n_false": 24,
+          "n_true": 24,
+          "order_d_false_belief_acc": 1.0,
+          "order_d_true_belief_acc": 1.0,
+          "reality_baseline_false_acc": 0.0,
+          "order1_baseline_false_acc": 1.0,
+          "stack_fidelity": 1.0,
+          "flatten_lesion_false_acc": 0.0,
+          "flatten_predicts_reality": 1.0,
+          "buffer_scramble_false_acc": 0.5,
+          "permuted_premises_false_acc": 0.375
+        },
+        "2": {
+          "depth": 2,
+          "n_trials": 48,
+          "chance": 0.25,
+          "n_false": 24,
+          "n_true": 24,
+          "order_d_false_belief_acc": 1.0,
+          "order_d_true_belief_acc": 1.0,
+          "reality_baseline_false_acc": 0.0,
+          "order1_baseline_false_acc": 0.0,
+          "stack_fidelity": 0.9791666666666666,
+          "flatten_lesion_false_acc": 0.0,
+          "flatten_predicts_reality": 1.0,
+          "buffer_scramble_false_acc": 0.375,
+          "permuted_premises_false_acc": 0.3333333333333333
+        },
+        "3": {
+          "depth": 3,
+          "n_trials": 48,
+          "chance": 0.25,
+          "n_false": 24,
+          "n_true": 24,
+          "order_d_false_belief_acc": 1.0,
+          "order_d_true_belief_acc": 1.0,
+          "reality_baseline_false_acc": 0.0,
+          "order1_baseline_false_acc": 0.0,
+          "stack_fidelity": 1.0,
+          "flatten_lesion_false_acc": 0.0,
+          "flatten_predicts_reality": 1.0,
+          "buffer_scramble_false_acc": 0.16666666666666666,
+          "permuted_premises_false_acc": 0.3333333333333333
+        }
+      },
+      "part_b_rsa": {
+        "n_trials": 16,
+        "chance": 0.5,
+        "implicature_depth2_acc": 1.0,
+        "literal_depth0_acc": 0.0,
+        "normalization_lesion_acc": 0.0,
+        "permuted_lexicon_acc": 0.4375,
+        "mean_margin_intact_l1": 0.03597222222222222,
+        "mean_margin_intact_l0": 0.0018055555555555533,
+        "mean_margin_lesion_l1": 0.008333333333333331
+      },
+      "go_a_2nd_order_false_belief": true,
+      "go_b_scalar_implicature": true,
+      "go": true,
+      "elapsed_seconds": 77.2
+    },
+    {
+      "seed": 102,
+      "part_a_by_depth": {
+        "1": {
+          "depth": 1,
+          "n_trials": 48,
+          "chance": 0.25,
+          "n_false": 24,
+          "n_true": 24,
+          "order_d_false_belief_acc": 1.0,
+          "order_d_true_belief_acc": 1.0,
+          "reality_baseline_false_acc": 0.0,
+          "order1_baseline_false_acc": 1.0,
+          "stack_fidelity": 1.0,
+          "flatten_lesion_false_acc": 0.0,
+          "flatten_predicts_reality": 1.0,
+          "buffer_scramble_false_acc": 0.5833333333333334,
+          "permuted_premises_false_acc": 0.2916666666666667
+        },
+        "2": {
+          "depth": 2,
+          "n_trials": 48,
+          "chance": 0.25,
+          "n_false": 24,
+          "n_true": 24,
+          "order_d_false_belief_acc": 1.0,
+          "order_d_true_belief_acc": 1.0,
+          "reality_baseline_false_acc": 0.041666666666666664,
+          "order1_baseline_false_acc": 0.0,
+          "stack_fidelity": 0.9930555555555557,
+          "flatten_lesion_false_acc": 0.0,
+          "flatten_predicts_reality": 1.0,
+          "buffer_scramble_false_acc": 0.3333333333333333,
+          "permuted_premises_false_acc": 0.20833333333333334
+        },
+        "3": {
+          "depth": 3,
+          "n_trials": 48,
+          "chance": 0.25,
+          "n_false": 24,
+          "n_true": 24,
+          "order_d_false_belief_acc": 1.0,
+          "order_d_true_belief_acc": 1.0,
+          "reality_baseline_false_acc": 0.0,
+          "order1_baseline_false_acc": 0.0,
+          "stack_fidelity": 1.0,
+          "flatten_lesion_false_acc": 0.0,
+          "flatten_predicts_reality": 1.0,
+          "buffer_scramble_false_acc": 0.2916666666666667,
+          "permuted_premises_false_acc": 0.16666666666666666
+        }
+      },
+      "part_b_rsa": {
+        "n_trials": 16,
+        "chance": 0.5,
+        "implicature_depth2_acc": 1.0,
+        "literal_depth0_acc": 0.0,
+        "normalization_lesion_acc": 0.0,
+        "permuted_lexicon_acc": 0.0625,
+        "mean_margin_intact_l1": 0.027777777777777776,
+        "mean_margin_intact_l0": 0.0022222222222222227,
+        "mean_margin_lesion_l1": -0.0005555555555555591
+      },
+      "go_a_2nd_order_false_belief": true,
+      "go_b_scalar_implicature": true,
+      "go": true,
+      "elapsed_seconds": 78.0
+    }
+  ],
+  "honest_scope": "A FUNCTIONAL recursive-mentalizing + pragmatics correlate. PART A: a bounded WM-buffer stack of agent-keyed belief frames predicts a 2nd-order false belief (frame_2), dissociable from reality AND from the 1st-order belief (frame_1) -- so a 1st-order reader FAILS -- and collapses under flatten-lesion / buffer-scramble / permuted-premises. PART B: the scalar implicature EMERGES at the depth-2 pragmatic listener (absent at the literal L0) from the substrate's iterated divisive normalization, and collapses when the normalization is lesioned or the lexicon permuted. The literal-truth lexicon is the legitimate linguistic input; the ToM/pragmatics-specific neural work is the gated frame stack and the iterated competitive normalization. The depth profile characterizes the bounded-recursion limit (deeper nesting = more chained writes; humans cap ~2-3). NOT a claim of phenomenal access to another mind. numpy-CPU on real spiking Izhikevich bridges; NO sim/ edit (reuse-by-import of W3 + the GNW machinery). Self-report is a functional read-out, never a phenomenal-experience claim."
+}

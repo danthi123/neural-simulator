@@ -1,0 +1,24 @@
+{
+ "run_id": "1785613300-3792042",
+ "runner": "research/runners/_recursive_tom_rsa_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_recursive_tom_rsa_derisk.py",
+  "--aggregate",
+  "research/findings/raw/lanes/rectom/rectom_seed*.json",
+  "--json",
+  "research/findings/raw/lanes/recursive_tom_6seed_aggregate.json"
+ ],
+ "git_sha": "97375d0a0",
+ "git_dirty": true,
+ "started": "2026-08-01T15:41:40",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 2377.3,
+ "corpus_check_query": "language productive morphology construction",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/lanes/recursive_tom_6seed_aggregate.json"
+}
