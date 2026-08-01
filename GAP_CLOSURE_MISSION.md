@@ -233,8 +233,18 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 > reach an intrinsic mechanism -> UNCONTROLLED). Each was a plausible negative that would have entered the
 > record clean. Check the instrument before reading the result.
 >
-> **RUNNING:** crux 8 cells ~7h20m, 0 banked — transport_ceiling 0.148 vs chance 0.200, so expect UNDEFINED,
-> NOT "kp fails". · pool: 4 jobs (false-belief 6-seed @helper-pa 4000; curiosity critic-lesion s100/101/102).
+> **CRUX STOPPED 19:58 at 9h, banked UNDEFINED.** The 6h45m/cell estimate was wrong by 3.4x: after its arm
+> print each cell trains THREE MORE FULL NETS as anti-cheats (~5h47m each), making a cell a ~23h job.
+> `--core-arms-only` skips them and was not used. Remaining cost was ~136 GPU-h — which could not change the
+> answer, because the IDEALISED transport ceiling (weight transport ALLOWED) reads 0.148 against chance
+> 0.200. The fixed random RESERVOIR was the best arm at seed 42 (0.204) and kp swung 0.074->0.222 across two
+> seeds: noise around chance, not a ranking.
+>
+> **RUNNING NOW — the PRECONDITION, not a re-run.** More seeds on the same task would only buy more
+> sub-chance numbers. 4 ceiling-only cells (`--arms transport_ceiling --core-arms-only`, n_prop 2/3 x epochs
+> 10/40) ask the one question the whole crux depends on: **is there ANY configuration in which the idealised
+> bound beats chance?** If none does, the task — not the credit rule — is what has been under test all along,
+> and no amount of seeds or arms fixes that. · pool: 4 jobs (false-belief 6-seed @helper-pa 4000; curiosity critic-lesion s100/101/102).
 > · AWS **STOPPED** (was idle and billing).
 >
 > **NEXT, in order:**
