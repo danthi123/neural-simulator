@@ -1,0 +1,421 @@
+{
+  "seed": 100,
+  "sweep": [
+    {
+      "gates": {
+        "G1_eviction(low<0.60)": true,
+        "G2_drive_dependence(high>=0.60)": true,
+        "G3_reignition(>=0.60)": true,
+        "G4_persistence_survives(>=0.50)": true,
+        "G5_nmda_off(<0.10)": true,
+        "G6_lesion_restores_ratchet(>=0.90)": true
+      },
+      "core_go(G1-G4)": true,
+      "instrument_ok(G5,G6)": true,
+      "A5_not_crushed": true,
+      "arm_valid": true,
+      "held0_floor_used": 0.02265,
+      "evict_ratio_low": 0.0,
+      "time_ratio_high": 0.9643605870020965,
+      "reignite_ratio": 1.0041928721174005,
+      "persistence_retention": 0.6467796610169492,
+      "nmda_off_retention": 0.0,
+      "lesion_evict_ratio": 1.0870535714285714,
+      "held_low": [
+        0.0954,
+        0.0,
+        0.0,
+        0.0,
+        0.0958
+      ],
+      "during_low": [
+        0.1475,
+        0.094,
+        0.063,
+        0.0,
+        0.147
+      ],
+      "held_high": [
+        0.0954,
+        0.0944,
+        0.092,
+        0.089,
+        0.0886
+      ],
+      "during_high": [
+        0.1475,
+        0.11216666666666666,
+        0.10966666666666666,
+        0.11066666666666666,
+        0.114
+      ],
+      "g_gabab_end_of_read_low": [
+        0.41771483421325684,
+        0.0332832969725132,
+        0.01582907885313034,
+        0.0004942000959999859,
+        0.41725653409957886
+      ],
+      "seed": 100,
+      "gabab_weight": 0.0,
+      "gabab_tau_ms": 150.0,
+      "gabab_max": 0.0,
+      "enable_gabab": true,
+      "quench_pA": -1.0,
+      "quench_ms": 240.0,
+      "brain_quench": true,
+      "quench_fired_low": [
+        false,
+        true,
+        true,
+        true,
+        false
+      ],
+      "quench_at_read_low_pA": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "max_quench_at_read_low_pA": 0.0,
+      "max_quench_drive_at_read_low": 0.0,
+      "max_quench_fs_rate_at_read_low": 0.0,
+      "quench_fs_rate_at_read_low": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "sfa": null,
+      "g_gabab_lesion_end_of_read": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "trace_low_held": [
+        0.0954,
+        0.0,
+        0.0,
+        0.0,
+        0.0958
+      ],
+      "sweep_verdict": "PASS G1-G4"
+    }
+  ],
+  "sfa_arm": null,
+  "fast_arm": null,
+  "quench_pA": -1.0,
+  "quench_ms": 240.0,
+  "brain_quench": true,
+  "quench_fs_n": 30,
+  "quench_gaba_w": 15.0,
+  "quench_drive_pA": 250.0,
+  "baseline": {
+    "trace_low": {
+      "held": [
+        0.0906,
+        0.0964,
+        0.0896,
+        0.0892,
+        0.0954
+      ],
+      "during": [
+        0.14866666666666667,
+        0.09816666666666667,
+        0.0935,
+        0.093,
+        0.1145
+      ],
+      "g_gabab_end_of_drive": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "g_gabab_end_of_read": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quench_at_read_pA": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quench_fired": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "max_quench_at_read_pA": 0.0,
+      "quench_drive_at_read": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "max_quench_drive_at_read": 0.0,
+      "quench_fs_rate_at_read": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "max_quench_fs_rate_at_read": 0.0,
+      "quench_fs_rate_during_quench": [],
+      "min_quench_fs_rate_during_quench": 0.0,
+      "brain_quench": false,
+      "quench_pA": 0.0,
+      "quench_ms": 250.0,
+      "mood_base": 0.0,
+      "levels": [
+        1.0,
+        0.15,
+        0.15,
+        0.0,
+        1.0
+      ]
+    },
+    "trace_high": {
+      "held": [
+        0.0906,
+        0.0912,
+        0.0972,
+        0.0942,
+        0.0892
+      ],
+      "during": [
+        0.14866666666666667,
+        0.11283333333333333,
+        0.11366666666666667,
+        0.11416666666666667,
+        0.1135
+      ],
+      "g_gabab_end_of_drive": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "g_gabab_end_of_read": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quench_at_read_pA": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "quench_fired": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "max_quench_at_read_pA": 0.0,
+      "quench_drive_at_read": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "max_quench_drive_at_read": 0.0,
+      "quench_fs_rate_at_read": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "max_quench_fs_rate_at_read": 0.0,
+      "quench_fs_rate_during_quench": [],
+      "min_quench_fs_rate_during_quench": 0.0,
+      "brain_quench": false,
+      "quench_pA": 0.0,
+      "quench_ms": 250.0,
+      "mood_base": 0.0,
+      "levels": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "ratchet_ratio": 1.0640176600441502,
+    "persistence_retention": 0.6094170403587443,
+    "instrument_reproduces_ratchet": true,
+    "committed_artifact_reference": {
+      "persistence_retention_nmda_on": 0.6171070922843167,
+      "per_seed_mood_ret_on": {
+        "42": 0.0938,
+        "43": 0.0922,
+        "44": 0.0894,
+        "100": 0.0906,
+        "101": 0.096,
+        "102": 0.09
+      }
+    }
+  },
+  "quench_physics": {
+    "mode": "brain_based",
+    "quench_pA": -1.0,
+    "quench_ms": 240.0,
+    "w": 0.0,
+    "tau": 150.0,
+    "cap": 0.0,
+    "brain_quench": true,
+    "quench_fs_n": 30,
+    "quench_gaba_w": 15.0,
+    "quench_drive_pA": 250.0,
+    "held_low_quench_on": [
+      0.0928,
+      0.0,
+      0.0,
+      0.0,
+      0.0938
+    ],
+    "held_low_quench_off": [
+      0.0928,
+      0.0944,
+      0.0922,
+      0.0926,
+      0.0892
+    ],
+    "during_low_quench_on": [
+      0.14816666666666667,
+      0.0975,
+      0.06616666666666667,
+      0.0,
+      0.1485
+    ],
+    "quench_fired": [
+      false,
+      true,
+      true,
+      true,
+      false
+    ],
+    "quench_at_read_pA": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "max_quench_at_read_pA": 0.0,
+    "quench_drive_at_read": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "max_quench_drive_at_read": 0.0,
+    "quench_fs_rate_at_read": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "max_quench_fs_rate_at_read": 0.0,
+    "quench_fs_rate_during_quench": [
+      0.32916666666666666,
+      0.32916666666666666,
+      0.32916666666666666
+    ],
+    "min_quench_fs_rate_during_quench": 0.32916666666666666,
+    "anti_cheat_drive_zero_at_read": true,
+    "anti_cheat_fs_silent_at_read": true,
+    "G1_evict_ratio": 0.0,
+    "G1_ok": true,
+    "G3_reignite_ratio": 1.0107758620689655,
+    "G3_ok": true,
+    "G4_persist_ratio": 0.6263217097862767,
+    "G4_ok": true,
+    "anti_cheat_quencher_silent_at_read": true,
+    "evict_with_reignition": true
+  },
+  "kill_criterion_met": false,
+  "chosen_point": {
+    "gabab_weight": 0.0,
+    "gabab_tau_ms": 150.0,
+    "gabab_max": 0.0
+  },
+  "elapsed_seconds": 7.8,
+  "config": {
+    "seed": 100,
+    "sweep_weights": [
+      0.0
+    ],
+    "sweep_taus": [
+      150.0
+    ],
+    "sweep_maxes": [
+      0.0
+    ],
+    "recur_weight": 22.0,
+    "ou_pA": 8.0,
+    "sfa": null,
+    "stp": false,
+    "stp_tau_d": null,
+    "stp_U": null,
+    "quench_pA": -1.0,
+    "quench_ms": 240.0,
+    "brain_quench": true,
+    "quench_fs_n": 30,
+    "quench_gaba_w": 15.0,
+    "quench_drive_pA": 250.0,
+    "LOW_LEVELS": [
+      1.0,
+      0.15,
+      0.15,
+      0.0,
+      1.0
+    ],
+    "HIGH_LEVELS": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "timings_ms": {
+      "settle": 40,
+      "base_probe": 100,
+      "drive": 120,
+      "post": 300,
+      "read": 100
+    },
+    "SFB_N": 15,
+    "SFB_EXC_W": 8.0,
+    "QUENCH_FS_N": 30,
+    "QUENCH_GABA_W": 15.0,
+    "QUENCH_GABA_DENSITY": 0.8,
+    "QUENCH_DRIVE_PA": 250.0
+  },
+  "backend": "numpy",
+  "sim_backend": "numpy"
+}

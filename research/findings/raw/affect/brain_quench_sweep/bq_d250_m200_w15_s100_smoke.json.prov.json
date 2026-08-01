@@ -1,0 +1,39 @@
+{
+ "run_id": "1785569460-180144",
+ "runner": "research/runners/_affect_eviction_derisk.py",
+ "argv": [
+  "/home/node/derisk-pool/sim/research/runners/_affect_eviction_derisk.py",
+  "--smoke",
+  "--brain-quench",
+  "--quench-drive-pA",
+  "250",
+  "--quench-gaba-w",
+  "15",
+  "--quench-fs-n",
+  "30",
+  "--quench-ms",
+  "200",
+  "--seeds",
+  "100",
+  "--sweep-weights",
+  "0.0",
+  "--sweep-taus",
+  "150",
+  "--sweep-maxes",
+  "0",
+  "--out",
+  "research/findings/raw/affect/brain_quench_sweep/bq_d250_m200_w15_s100.json"
+ ],
+ "git_sha": "unknown",
+ "git_dirty": false,
+ "started": "2026-08-01T03:31:00",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": null,
+ "corpus_check_query": null,
+ "artifact": "research/findings/raw/affect/brain_quench_sweep/bq_d250_m200_w15_s100_smoke.json"
+}

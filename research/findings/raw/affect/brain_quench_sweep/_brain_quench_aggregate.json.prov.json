@@ -1,0 +1,32 @@
+{
+ "run_id": "1785566537-3244591",
+ "runner": "research/runners/_onbridge_eprop_port_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_onbridge_eprop_port_derisk.py",
+  "--seeds",
+  "44",
+  "--pool-k",
+  "1",
+  "--epochs",
+  "80",
+  "--train-subsample",
+  "160",
+  "--settle-steps",
+  "40",
+  "--out",
+  "research/findings/raw/eprop_noise/eprop_ksweep_k1_s44.json"
+ ],
+ "git_sha": "e63399f90",
+ "git_dirty": true,
+ "started": "2026-08-01T02:42:17",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 10690.9,
+ "corpus_check_query": "does decorrelating ou/cond noise plus population K clean the Izhikevich forward noise the on-bridge e-prop plateaus on",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/affect/brain_quench_sweep/_brain_quench_aggregate.json"
+}
