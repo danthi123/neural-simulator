@@ -58,9 +58,11 @@ At every read window: affect-pool external current 0.0, `quench_drive` concentra
 through the read (no gating trick). Held-low with the quencher fully SILENT at read = a genuine basin-switch,
 exactly what the host de-risk proved, now with a spiking evictor.
 
-## Scope + what remains
-`run_smoke` 6/6 (the LOW/HIGH ratchet protocol), not the full pre-registered `run_battery` — that battery is
-the final formality, not a new risk. Amplitudes are on the numpy CPU substrate. This completes the affect
-evictor arc: brake class refuted → deep-research reframe (bistability is an asset for a transient clear) →
-host-shortcut physics GO → **brain-based spiking GO**. Next: run the full battery, and log the external
-sources (Compte-Wang termination; O'Reilly-Frank gated-WM; Durstewitz-Seamans) into `research/biology/`.
+## Scope + confirmation
+The full pre-registered **`run_battery` now confirms it: GO (6-seed, 6/6)** —
+`research/findings/raw/affect/brain_quench_battery.json` — with a mechanism-aware verdict that names "a spiking
+quench_fs GABA_A active-clear gate" (the hardcoded-GABA_B mislabel is fixed, commit 7ae0d9e9). Amplitudes are
+on the numpy CPU substrate. This **completes the affect evictor arc**: brake class refuted → deep-research
+reframe (bistability is an asset for a transient clear) → host-shortcut physics GO → brain-based spiking GO →
+6-seed battery GO. Biology bound in `research/biology/affect-active-clear.md` (Compte-Wang termination;
+O'Reilly-Frank gated-WM; Durstewitz-Seamans dual-state).
