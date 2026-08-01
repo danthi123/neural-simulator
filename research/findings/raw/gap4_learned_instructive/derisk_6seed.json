@@ -1,0 +1,254 @@
+{
+  "agg": {
+    "reservoir": 0.1667,
+    "fixed_fa": 0.9506,
+    "micro_drives_ff": 0.6173,
+    "frozen_wpi_drives_ff": 0.3333,
+    "fixedpoint_wpi_drives_ff": 0.9167,
+    "micro_warmup_drives_ff": 0.8858,
+    "transport_ceiling": 0.9506
+  },
+  "results": [
+    {
+      "seed": 42,
+      "chance": 0.16666666666666666,
+      "oracle": 1.0,
+      "arms": {
+        "reservoir": 0.12962962962962962,
+        "fixed_fa": 0.9629629629629629,
+        "micro_drives_ff": 0.5925925925925926,
+        "frozen_wpi_drives_ff": 0.16666666666666666,
+        "fixedpoint_wpi_drives_ff": 0.9814814814814815,
+        "transport_ceiling": 1.0,
+        "micro_warmup_drives_ff": 0.7407407407407407
+      },
+      "cos_after_warmup": 0.07739139759577025,
+      "apical": {
+        "micro_drives_ff": {
+          "apical_correct": 0.05139158657750532,
+          "apical_incorrect": 1.1195691863946002,
+          "silent_ratio": 0.045903001977893015,
+          "frac_correct": 0.06504065040650407,
+          "selfpred_cos": 0.8891163949817131
+        },
+        "frozen_wpi": {
+          "apical_correct": 1.2134915397013066,
+          "apical_incorrect": 1.053011757894543,
+          "silent_ratio": 1.1524007501364317,
+          "frac_correct": 0.018292682926829267,
+          "selfpred_cos": -0.04286076523095137
+        }
+      },
+      "permuted_micro": 0.16666666666666666,
+      "nwt_micro": true,
+      "ceiling_nwt": false,
+      "selfpred_cos_final": 0.8891163949817131
+    },
+    {
+      "seed": 43,
+      "chance": 0.16666666666666666,
+      "oracle": 1.0,
+      "arms": {
+        "reservoir": 0.16666666666666666,
+        "fixed_fa": 0.9629629629629629,
+        "micro_drives_ff": 0.7777777777777778,
+        "frozen_wpi_drives_ff": 0.2962962962962963,
+        "fixedpoint_wpi_drives_ff": 0.9814814814814815,
+        "transport_ceiling": 1.0,
+        "micro_warmup_drives_ff": 0.9074074074074074
+      },
+      "cos_after_warmup": 0.16079168859278817,
+      "apical": {
+        "micro_drives_ff": {
+          "apical_correct": 0.0903958065295812,
+          "apical_incorrect": 1.0460415108570125,
+          "silent_ratio": 0.08641703564463163,
+          "frac_correct": 0.08536585365853659,
+          "selfpred_cos": 0.9006608062241471
+        },
+        "frozen_wpi": {
+          "apical_correct": 1.025945966994045,
+          "apical_incorrect": 1.088246588074722,
+          "silent_ratio": 0.9427513747671477,
+          "frac_correct": 0.032520325203252036,
+          "selfpred_cos": 0.03961571296409329
+        }
+      },
+      "permuted_micro": 0.1111111111111111,
+      "nwt_micro": true,
+      "ceiling_nwt": false,
+      "selfpred_cos_final": 0.9006608062241471
+    },
+    {
+      "seed": 44,
+      "chance": 0.16666666666666666,
+      "oracle": 1.0,
+      "arms": {
+        "reservoir": 0.2222222222222222,
+        "fixed_fa": 0.9444444444444444,
+        "micro_drives_ff": 0.7962962962962963,
+        "frozen_wpi_drives_ff": 0.5740740740740741,
+        "fixedpoint_wpi_drives_ff": 0.8333333333333334,
+        "transport_ceiling": 1.0,
+        "micro_warmup_drives_ff": 0.8333333333333334
+      },
+      "cos_after_warmup": 0.11394849027129379,
+      "apical": {
+        "micro_drives_ff": {
+          "apical_correct": 0.02083097973761357,
+          "apical_incorrect": 1.0509983298211116,
+          "silent_ratio": 0.01982018348320244,
+          "frac_correct": 0.08739837398373984,
+          "selfpred_cos": 0.8898658484037123
+        },
+        "frozen_wpi": {
+          "apical_correct": 1.0763810459099392,
+          "apical_incorrect": 0.9954924911518246,
+          "silent_ratio": 1.0812548115390024,
+          "frac_correct": 0.06300813008130081,
+          "selfpred_cos": -0.0033889912875354027
+        }
+      },
+      "permuted_micro": 0.1111111111111111,
+      "nwt_micro": true,
+      "ceiling_nwt": false,
+      "selfpred_cos_final": 0.8898658484037123
+    },
+    {
+      "seed": 100,
+      "chance": 0.16666666666666666,
+      "oracle": 0.8518518518518519,
+      "arms": {
+        "reservoir": 0.16666666666666666,
+        "fixed_fa": 1.0,
+        "micro_drives_ff": 0.8148148148148148,
+        "frozen_wpi_drives_ff": 0.2962962962962963,
+        "fixedpoint_wpi_drives_ff": 0.9814814814814815,
+        "transport_ceiling": 0.8518518518518519,
+        "micro_warmup_drives_ff": 1.0
+      },
+      "cos_after_warmup": 0.1515182341726527,
+      "apical": {
+        "micro_drives_ff": {
+          "apical_correct": 0.016039848703803736,
+          "apical_incorrect": 1.1357698313718025,
+          "silent_ratio": 0.01412244652106704,
+          "frac_correct": 0.08943089430894309,
+          "selfpred_cos": 0.8650916621115975
+        },
+        "frozen_wpi": {
+          "apical_correct": 1.0018326907401032,
+          "apical_incorrect": 1.1312894284657886,
+          "silent_ratio": 0.8855670932043135,
+          "frac_correct": 0.032520325203252036,
+          "selfpred_cos": 0.033432550139892984
+        }
+      },
+      "permuted_micro": 0.09259259259259259,
+      "nwt_micro": true,
+      "ceiling_nwt": false,
+      "selfpred_cos_final": 0.8650916621115975
+    },
+    {
+      "seed": 101,
+      "chance": 0.16666666666666666,
+      "oracle": 0.8518518518518519,
+      "arms": {
+        "reservoir": 0.14814814814814814,
+        "fixed_fa": 0.8518518518518519,
+        "micro_drives_ff": 0.5185185185185185,
+        "frozen_wpi_drives_ff": 0.46296296296296297,
+        "fixedpoint_wpi_drives_ff": 0.7777777777777778,
+        "transport_ceiling": 0.8518518518518519,
+        "micro_warmup_drives_ff": 0.8333333333333334
+      },
+      "cos_after_warmup": 0.1647556787127479,
+      "apical": {
+        "micro_drives_ff": {
+          "apical_correct": 0.045039687210233735,
+          "apical_incorrect": 1.113534197042446,
+          "silent_ratio": 0.040447511472767504,
+          "frac_correct": 0.056910569105691054,
+          "selfpred_cos": 0.8874025432911808
+        },
+        "frozen_wpi": {
+          "apical_correct": 1.0800857965575053,
+          "apical_incorrect": 1.0789187543749097,
+          "silent_ratio": 1.001081677537685,
+          "frac_correct": 0.0508130081300813,
+          "selfpred_cos": 0.028281770529960802
+        }
+      },
+      "permuted_micro": 0.1111111111111111,
+      "nwt_micro": true,
+      "ceiling_nwt": false,
+      "selfpred_cos_final": 0.8874025432911808
+    },
+    {
+      "seed": 102,
+      "chance": 0.16666666666666666,
+      "oracle": 1.0,
+      "arms": {
+        "reservoir": 0.16666666666666666,
+        "fixed_fa": 0.9814814814814815,
+        "micro_drives_ff": 0.2037037037037037,
+        "frozen_wpi_drives_ff": 0.2037037037037037,
+        "fixedpoint_wpi_drives_ff": 0.9444444444444444,
+        "transport_ceiling": 1.0,
+        "micro_warmup_drives_ff": 1.0
+      },
+      "cos_after_warmup": 0.08475545996518706,
+      "apical": {
+        "micro_drives_ff": {
+          "apical_correct": 0.1362822482477215,
+          "apical_incorrect": 1.064632644601743,
+          "silent_ratio": 0.12800870698321848,
+          "frac_correct": 0.022357723577235773,
+          "selfpred_cos": 0.8895371464008659
+        },
+        "frozen_wpi": {
+          "apical_correct": 1.0571848077075794,
+          "apical_incorrect": 0.9962734791384444,
+          "silent_ratio": 1.061139164941687,
+          "frac_correct": 0.022357723577235773,
+          "selfpred_cos": -0.01682163458249104
+        }
+      },
+      "permuted_micro": 0.16666666666666666,
+      "nwt_micro": true,
+      "ceiling_nwt": false,
+      "selfpred_cos_final": 0.8895371464008659
+    }
+  ],
+  "backend": "numpy",
+  "sim_backend": "numpy",
+  "sim_backend_provenance": "CPU-rate de-risk (numpy MLP microcircuit, not the bridge)",
+  "provenance": {
+    "runner": "research.runners._gap4_learned_instructive_drives_ff_derisk",
+    "seeds": [
+      42,
+      43,
+      44,
+      100,
+      101,
+      102
+    ],
+    "config": {
+      "depth": 2,
+      "hidden": 96,
+      "epochs": 250,
+      "warmup_epochs": 80,
+      "note": "CPU-rate de-risk; single-variable = learned residual drives FF"
+    },
+    "backend": "numpy"
+  },
+  "runner": "research.runners._gap4_learned_instructive_drives_ff_derisk",
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ]
+}

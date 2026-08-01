@@ -1,0 +1,30 @@
+{
+ "run_id": "1785581721-3465118",
+ "runner": "../../../../tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/v1_selforg_smoke2.py",
+ "argv": [
+  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/v1_selforg_smoke2.py",
+  "--dev-steps",
+  "16000",
+  "--n-inh",
+  "256",
+  "--mode",
+  "meansub",
+  "--syn-scaling",
+  "0"
+ ],
+ "git_sha": "999e5ff96",
+ "git_dirty": true,
+ "started": "2026-08-01T06:55:21",
+ "env": {
+  "SIM_BACKEND": "cupy",
+  "HEBB_OJA": "0.0",
+  "HEBB_MEAN_SUB": "1.0"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 793.7,
+ "corpus_check_query": "V1 self-organization retinal wave Hebbian Oja on-bridge silent population",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/gap4_learned_instructive/derisk_6seed.json"
+}
