@@ -43,8 +43,10 @@ are marked ADVISORY and count as ungated — the measured reason: **1330 runners
 | SV | a finding STATES a named quantity that disagrees with the artifact it cites — `claim_check` passes it because the number exists SOMEWHERE, and existence is not agreement | 1 (chance 0.200 derived vs 0.167 reported) | `gates/stated_value_mismatch` | registry | ✅ BLOCKS |
 | DC | an artifact cannot say what DEVICE it ran on, or burned hours without ever projecting its cost | 2 (a 30-min GPU test that ran on CPU; a 9h run heading for ~23h/cell) | `gates/device_and_cost` + runtime `lab.assert_backend` / `lab.project_cost` | registry | ✅ BLOCKS |
 | CC | an EXPENSIVE run whose question was never checked against the record — the first gate here that looks for a REDUNDANT claim rather than a wrong one | 1 (9h x 8 cells re-deriving a 6-seed result from 3 weeks earlier) | `gates/corpus_check_required` + `before_you_build.sh` recording + door stamp | registry | ✅ BLOCKS |
+| CM | a CLOSURE claim that names no mechanism, so nothing can adjudicate it against other live claims | 2 contradictory gap#4 findings live for 17 days | `gates/closure_names_mechanism` (forces the entry `biology_check.check_mechanism_status` needs) | registry | ✅ BLOCKS |
+| KR | a knob that changes the SUBSTRATE but cannot be set from the command line — so a prescribed fix is unrunnable and the config is unrecoverable | 3 in one runner (16 of 1333 corpus-wide) | `gates/knob_reachable` | registry | ✅ BLOCKS |
 
-**Score: 23 BLOCKING · 1 structural · 7 reporting · 0 ungated — 31 rows.** (The previous line read
+**Score: 25 BLOCKING · 1 structural · 7 reporting · 0 ungated — 33 rows.** (The previous line read
 `14 · 1 · 6`, which sums to 21 against 22 rows: row **Y**, green but non-blocking, was in no bucket. Corrected
 here rather than carried forward — an arithmetic drift in the score of the anti-drift spec is the joke this
 file cannot afford. Reporting = 6 🟡 rows + Y.)
