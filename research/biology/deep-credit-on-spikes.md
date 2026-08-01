@@ -49,24 +49,32 @@ a `status:`, so nothing adjudicated them:
 | population-coding smoke | 06:55 | "REFUTED — pooling ALREADY works but does NOT lift accuracy"; K=1 "cannot even FIT the training set" |
 | training-wall research gate | 14:11 | "COMPLETE, POSITIVE CLOSURE" — K=8 reaches the LIF ceiling |
 
-**They do not contradict. The earlier one is the DIAGNOSIS and the later one is the RESOLUTION.** The 06:55
-document root-caused the failure by reading the substrate: every neuron in a slice receives an identical
-constant tonic current (`tonic_h_pA`, `tonic_o_pA`) with no OU or conductance noise enabled, so the pooled
-neurons are redundant copies and read-SNR is flat across K. It then named the biology-grounded fix —
-independent high-conductance background bombardment. The 14:11 document then reports a working lever.
+**They do not contradict, because THEY MEASURED DIFFERENT NETS.** This is the whole resolution, and it is
+verifiable from source rather than inferred:
 
-The tempting reading is that the fix was applied and that is why K=8 works. **That reading is not supported:**
-the K=8 artifacts do not record either noise knob and the runner defaults both to False. What IS established
-is the ordering — diagnosis at 06:55, working lever at 14:11 — and that ordering is invisible without
-checking commit times, which is why reading either document alone misleads.
+| | net class | independent noise | population result |
+|---|---|---|---|
+| 06:55 smoke | `OnBridgeBDSPNet` | off | read-SNR FLAT across K; pooling gives no √K benefit |
+| 14:11 closure | `OnBridge**Eprop**Net` | off | K=1 0.47 → K=4 0.62 → K=8 0.877 |
+
+The 06:55 document root-caused ITS failure by reading `OnBridgeBDSPNet.__init__`: every neuron in a slice
+receives an identical constant tonic current (`tonic_h_pA`, `tonic_o_pA`) with no OU or conductance noise, so
+the pooled neurons are redundant copies. It named the biology-grounded fix — independent high-conductance
+background bombardment.
+
+**That fix was never applied, and it was not what made K=8 work.** `ou_noise` / `cond_noise` are constructor
+parameters defaulting to `False`, exposed on NO command line, and passed `True` by NO runner anywhere in the
+tree. The e-prop net therefore closed the task on nominally-correlated neurons. So the correlated-pool
+diagnosis is real and specific to the **BDSP** net; whatever makes population coding work for the **e-prop**
+net is a different and still-unexplained route.
 
 ## The cost of not having this entry
 
 On **2026-07-31** a nine-hour, eight-cell GPU crux ran `_gap4_onbridge_spiking_selfpredict_derisk` at
 `pool_k=16` and reported that even the idealised transport ceiling could not fit its own training set. That
-runner sets `tonic_h_pA=450.0` / `tonic_o_pA=500.0` and enables **no** OU or conductance noise — precisely
-the configuration the 06:55 finding proved yields no √K benefit. The population lever was nominally at 16
-and functionally at 1.
+runner uses **`OnBridgeBDSPNet`** — the very net the 06:55 finding measured — with `tonic_h_pA=450.0` /
+`tonic_o_pA=500.0` and no OU or conductance noise. That is precisely the configuration proved to yield no √K
+benefit, so the population lever was nominally at 16 and functionally at 1.
 
 So the crux was not measuring whether deep credit works on spikes. It was re-measuring the correlated-pool
 failure mode, with the rule that closed the arc (e-prop) not even present in its `--arms`.
