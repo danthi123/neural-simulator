@@ -1,0 +1,79 @@
+{
+ "runner": "research/runners/_gap4_onbridge_spiking_selfpredict_derisk.py",
+ "provenance": {
+  "kind": "aggregate",
+  "produced_by": "controller aggregation over the two ceiling-only cells",
+  "source_command": "SIM_BACKEND=cupy python -m research.runners._gap4_onbridge_spiking_selfpredict_derisk --full --seeds 42 --arms transport_ceiling --core-arms-only --epochs 10 --n-prop {2,3}"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_source": "launched with SIM_BACKEND=cupy explicit; no CPU warning in either log",
+ "aggregated_from": [
+  "research/findings/raw/gap4_ceiling/gpu_ceil_np2.json",
+  "research/findings/raw/gap4_ceiling/gpu_ceil_np3.json"
+ ],
+ "cells": {
+  "n_prop=2": {
+   "chance": 0.278,
+   "ceiling_heldout": 0.111,
+   "ceiling_train": 0.239,
+   "oracle": 1.0,
+   "elapsed_s": 4824
+  },
+  "n_prop=3": {
+   "chance": 0.167,
+   "ceiling_heldout": 0.148,
+   "ceiling_train": 0.129,
+   "oracle": 1.0,
+   "elapsed_s": 4853
+  }
+ },
+ "cost_projection": "4824s and 4853s per cell with --core-arms-only, vs the ~23h/cell the same runner took WITH the four anti-cheat nets \u2014 confirming the cost analysis that stopped the crux",
+ "label": "PRECONDITION: can the idealised on-bridge ceiling beat chance in ANY configuration?",
+ "status": "UNDEFINED",
+ "go": false,
+ "undefined_reasons": [
+  "unmet: n_prop=2 ceiling held-out vs chance (0.111 vs floor 0.278)",
+  "unmet: n_prop=2 ceiling TRAIN vs chance (0.239 vs floor 0.278)",
+  "unmet: n_prop=3 ceiling held-out vs chance (0.148 vs floor 0.167)",
+  "unmet: n_prop=3 ceiling TRAIN vs chance (0.129 vs floor 0.167)"
+ ],
+ "preconditions": [
+  {
+   "kind": "floor",
+   "name": "n_prop=2 ceiling held-out vs chance",
+   "ok": false,
+   "detail": "0.111 vs floor 0.278",
+   "note": "weight transport ALLOWED (nwt False) \u2014 no biological rule can exceed this"
+  },
+  {
+   "kind": "floor",
+   "name": "n_prop=2 ceiling TRAIN vs chance",
+   "ok": false,
+   "detail": "0.239 vs floor 0.278",
+   "note": "it cannot even FIT the training set \u2014 this is not a generalisation failure"
+  },
+  {
+   "kind": "floor",
+   "name": "n_prop=3 ceiling held-out vs chance",
+   "ok": false,
+   "detail": "0.148 vs floor 0.167",
+   "note": "weight transport ALLOWED (nwt False) \u2014 no biological rule can exceed this"
+  },
+  {
+   "kind": "floor",
+   "name": "n_prop=3 ceiling TRAIN vs chance",
+   "ok": false,
+   "detail": "0.129 vs floor 0.167",
+   "note": "it cannot even FIT the training set \u2014 this is not a generalisation failure"
+  },
+  {
+   "kind": "require",
+   "name": "the task itself is solvable (oracle)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": "fenced-backprop oracle scores 1.000 on both configurations"
+  }
+ ],
+ "disabled_processes": [],
+ "chance": null
+}

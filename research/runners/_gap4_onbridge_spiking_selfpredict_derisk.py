@@ -683,6 +683,25 @@ def main():
                              if not np.isnan(mp_ratio) else None)
             GO = bool(task_ok and n_fa_wall >= 5 and n_seed_go >= 5 and ceiling_guard_fails and ast_ok
                       and lesion_collapse and shuf_collapse and memctrl_ok)
+
+            # ---- EARN the verdict (2026-07-31). THE DEFECT THIS CLOSES, in this exact runner: it ranked
+            # four credit arms for nine hours beneath a transport_ceiling that could not beat chance, and
+            # then printed "NO-GO". A ceiling that fails is not a negative about the arms under it, it is a
+            # statement that none of them was interpretable. The measurement was right here in `agg` and
+            # nothing connected it to the verdict. The precondition that matters most is the TRAIN score:
+            # the idealised bound failing to reach chance on its own training data means the net cannot FIT,
+            # which is a substrate fact, not a credit-assignment one.
+            from tools.verdict import Verdict                                   # noqa: E402
+            _v = Verdict("gap#4 on-bridge deep credit", chance=chance)
+            _v.require("the task is solvable at all (oracle >= 0.80)", task_ok, expect=True)
+            _v.floor("IDEALISED transport ceiling vs chance", ceil, artifact=agg, key="chance",
+                     note="weight transport ALLOWED; nothing beneath an uninterpretable ceiling is readable")
+            _v.require("weight-transport guard correctly FAILS on the ceiling arm", ceiling_guard_fails, expect=True)
+            _v.require("no forward W in the credit path (AST)", ast_ok, expect=True)
+            _v.control("apical lesion collapses the read", treatment=float(best_learned), control=float(les))
+            _verdict_block = _v.decide(go=GO)
+            if _verdict_block["status"] == "UNDEFINED":
+                GO = False
             agg = {"n_seeds": n_seed, "n_fa_wall": n_fa_wall, "n_seed_go": n_seed_go,
                    "oracle": oracle, "chance": chance, "reservoir": res, "fixed_fa": ff, "kp": kp, "micro": mic,
                    "best_learned": float(best_learned), "transport_ceiling": ceil,
@@ -694,7 +713,8 @@ def main():
                    "lesion_collapse": lesion_collapse, "shuffled_collapse": shuf_collapse,
                    "shufE_collapse": shufE_collapse, "memctrl_ok": memctrl_ok, "apical_silent_earned": apical_earned,
                    "GO": GO,
-                   "verdict": (f"{'GO' if GO else 'NO-GO'} ({n_seed_go}/{n_seed} seed_go; FA-wall {n_fa_wall}/{n_seed}). "
+                   **{k: _verdict_block[k] for k in ("preconditions", "disabled_processes", "undefined_reasons")},
+                   "verdict": (f"{_verdict_block['status'] if _verdict_block['status'] == 'UNDEFINED' else ('GO' if GO else 'NO-GO')} ({n_seed_go}/{n_seed} seed_go; FA-wall {n_fa_wall}/{n_seed}). "
                                f"reservoir {res:.3f} | fixed_fa {ff:.3f} | kp {kp:.3f} | micro {mic:.3f} | ceiling "
                                f"{ceil:.3f} | oracle {oracle:.3f} (chance {chance:.3f}). apical-silent EARNED: plastic "
                                f"ratio {mp_ratio:.3f} (cos {mp_cos:.2f}) vs frozen {mf_ratio:.3f} (cos {mf_cos:.2f}). "
