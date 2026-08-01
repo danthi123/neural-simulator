@@ -240,7 +240,27 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 > 0.200. The fixed random RESERVOIR was the best arm at seed 42 (0.204) and kp swung 0.074->0.222 across two
 > seeds: noise around chance, not a ranking.
 >
-> **RUNNING NOW — the PRECONDITION, not a re-run.** More seeds on the same task would only buy more
+> **⛔ THE gap#4 ON-BRIDGE CREDIT ARC IS CLOSED AS REDUNDANT — READ THIS BEFORE RELAUNCHING ANYTHING.**
+> The ceiling precondition came back: ceiling train 0.239 vs chance 0.278 (n_prop=2) and 0.129 vs 0.167
+> (n_prop=3), oracle 1.000 both. The idealised bound cannot fit its own TRAINING set. But that is NOT a new
+> finding — `before_you_build.sh` returns four priors in 0.63 s:
+>   * **2026-07-07** — same signature at SIX seeds: all arms below chance, oracle 1.0
+>   * **2026-07-14** — cause LOCATED: Izhikevich forward NOISE, not the rule, not epochs (300 epochs moved
+>     train 0.482 -> 0.497)
+>   * **2026-07-08** — population coding swept K∈{1,8,16}, no crossover
+>   * **2026-07-12** — negative repeated at depth 2
+> Today's nine-hour eight-cell crux re-derived all of it. **DO NOT RELAUNCH ANY on-bridge deep-credit
+> training run.** The genuinely open question is 07-14's: the substrate is viable (BPTT trains it) and the
+> gap is the LOCAL RULE under Izhikevich forward noise. **READ that finding before proposing anything** —
+> the failure today was acting before reading, not a wrong measurement.
+>
+> **PENDING GATE (logged, not built — deliberately deferred rather than rushed):** every gate written
+> 2026-07-31 looks for a WRONG claim; none looks for a REDUNDANT one. Candidate with a working precedent:
+> `pool_queue` already REFUSES a job with no `--checked` token — extend that to the long-run/GPU path so no
+> job above a cost threshold dispatches without a recorded corpus-check stored beside it. Reporting is
+> proven insufficient here: the heartbeat flagged the missing source check ~15 times today and was read past.
+>
+> **(historical) RUNNING — the PRECONDITION, not a re-run.** More seeds on the same task would only buy more
 > sub-chance numbers. 4 ceiling-only cells (`--arms transport_ceiling --core-arms-only`, n_prop 2/3 x epochs
 > 10/40) ask the one question the whole crux depends on: **is there ANY configuration in which the idealised
 > bound beats chance?** If none does, the task — not the credit rule — is what has been under test all along,
