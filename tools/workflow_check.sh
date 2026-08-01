@@ -117,6 +117,13 @@ EXT=research/.last_external_search
 # the local corpus comes up empty. Treat the newer of the two markers as "the last source check", or the rule
 # punishes the exact behaviour it demanded (and a rule that cries wolf on correct action gets ignored).
 [ -f "$EXT" ] && [ "$EXT" -nt "$MARK" ] && MARK="$EXT"
+# SEAM FIX (2026-08-01): `before_you_build.sh` is the SANCTIONED corpus-first source check -- the
+# `corpus_check_required` GATE already treats its log as valid and the door stamps `corpus_check_fresh` from
+# it. But this heartbeat rule only ever looked at research_gate.sh's marker, so a whole session of running
+# before_you_build.sh (the mandated FIRST move) still read "no source check since the last finding" every
+# 15-min cycle -- two source-check tools, one recognizer. Honour the corpus-check log as a third marker.
+CORPUS=research/queue/.corpus_checks.jsonl
+[ -f "$CORPUS" ] && [ "$CORPUS" -nt "$MARK" ] && MARK="$CORPUS"
 # SCOPE: a source check is owed for a BIOLOGICAL claim, not for a finding about our own tooling. On
 # 2026-07-31 this fired every 15-min cycle for five hours because the day produced audit/tooling findings
 # (gate defects, the sprawl measurement, the walls synthesis) with no primary-source question --
