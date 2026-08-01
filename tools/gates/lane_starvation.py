@@ -25,8 +25,17 @@ the judgement half, and it stays with the human and with me.
 from __future__ import annotations
 
 import os
+import re
 import subprocess
 import time
+
+# A waiver may excuse idle lanes only for a genuine BLOCKER, never for a PRIORITY/FOCUS rationalisation: the
+# five lanes are DISJOINT and cost nothing beside the crux, so "I'm focusing on the crux" can never justify
+# leaving them idle. Earned 2026-08-01: a false ".lane_waiver" reading "saturated with the gap#4 crux ...
+# deprioritized behind the crux, not starved by neglect" suppressed this gate for hours while 24 pool cores
+# sat free and lane_check screamed MONOCULTURE (5 lanes unserved 1187 min) — the exact abuse the waiver exists
+# to prevent, dressed as prioritisation. A waiver invoking this vocabulary is REJECTED.
+_RATIONALISATION = re.compile(r"crux|priorit|focus|deprioriti|momentum|behind the|saturated with", re.I)
 
 NAME = "lane-starvation"
 CLASS_ID = "L"
@@ -106,6 +115,16 @@ def check(paths=None):
         return []
     w = _waiver_active()
     if w:
+        if _RATIONALISATION.search(w):
+            return ["%d of %d disjoint CPU lanes UNSERVED: %s — and the .lane_waiver justifies it by "
+                    "PRIORITY/FOCUS (\"%s\"), which is REJECTED.\n"
+                    "        The five lanes are DISJOINT and cost NOTHING beside the crux, so a priority can\n"
+                    "        NEVER excuse leaving them idle (2026-08-01: a false 'saturated with the crux' waiver\n"
+                    "        held this open for hours while 24 pool cores sat free). A valid waiver names a real\n"
+                    "        BLOCKER — no ready de-risk for the lane, or genuinely zero free CPU capacity — not\n"
+                    "        what you'd rather work on. Queue one job per idle lane instead:\n"
+                    "          bash tools/pool_queue.sh add '<cmd>' --checked '<what the record says>'"
+                    % (len(idle), len(CPU_LANES), "; ".join(idle), w)]
         return []
     return ["%d of %d disjoint CPU lanes UNSERVED: %s.\n"
             "        They are concurrent with GPU work and cost nothing beside it; leaving them unqueued is\n"
@@ -129,4 +148,10 @@ def selftest():
     full = ["_affect_x", "_curiosity_x", "self_schema_x", "_b1_v1_selforg_x", "construction_x"]
     if set(CPU_LANES) - _served(full):
         bad.append("FALSE POSITIVE: a job per lane still read as unserved")
+    # 2026-08-01: a waiver that justifies idle lanes by PRIORITY/FOCUS must be caught (the exact abuse); a
+    # waiver naming a genuine per-lane BLOCKER must NOT be flagged as a rationalisation.
+    if not _RATIONALISATION.search("saturated with the gap#4 crux; deprioritized behind the crux, not neglect"):
+        bad.append("did NOT detect the priority/focus rationalisation waiver -> the 2026-08-01 abuse would pass")
+    if _RATIONALISATION.search("no ready de-risk for these lanes: the stream-code cache is absent; blocked on its build"):
+        bad.append("FALSE POSITIVE: a genuine per-lane BLOCKER waiver was mis-flagged as a rationalisation")
     return bad
