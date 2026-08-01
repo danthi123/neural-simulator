@@ -271,7 +271,15 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 >    then the OFF fixed-point holds it with ZERO standing force. STP annihilation was evidence FOR this (STP is
 >    persistent → blocks re-ignition; a self-removing quench leaves synapses recovered → re-ignition survives).
 >    Ranked, all runner-only, levers confirmed in bridge.py:
->    **#1 = active CLEAR/QUENCH gate — PHYSICS VERIFIED ✅ (`4ff27661`).** A transient strong-negative clear to
+>    **#1 = active CLEAR/QUENCH gate — BRAIN-BASED GO ✅✅ (`c8ba0e5c`). THE AFFECT EVICTOR ARC IS COMPLETE.**
+>    The clear is now done by NEURONS: a spiking `quench_fs` FS pool fires GABA_A onto the affect pools (via a
+>    `quench_out` gate + `quench_drive` neuromodulator), NO host current, NO `sim/` edit. 6/6 GO across the
+>    operating region (drive 150-400 × ms 200-280 × GABA_A w 15-20): G1 evict 0.000, G3 re-ignite ~1.0, G4
+>    persist 0.642. Overshoot boundary MEASURED (w=25 tips the opponent latch into the V- attractor, G3 0.286 —
+>    biology the host clamp couldn't show). Anti-cheat clean (quench_fs SILENT at read, fires ~332Hz during).
+>    Arc: brake-refuted → reframe → host-GO (`4ff27661`) → brain-GO (`c8ba0e5c`). Remaining: full run_battery
+>    (formality) + log external sources (Compte-Wang/O'Reilly-Frank/Durstewitz-Seamans) to `research/biology/`.
+>    [historical: the earlier physics-only note] A transient strong-negative clear to
 >    the affect pools during post-drive silence collapses the reverberation; the OFF basin holds. Physics smoke
 >    (seed 43, -2000pA/280ms): ALL 6 GATES PASS — G1 evict 0.000, G3 re-ignite 1.023 (attractor SURVIVES, avoids
 >    STP annihilation), G4 persist 0.629, G6 lesion(=quench-off) 1.042; anti-cheat CLEAN (quench current
