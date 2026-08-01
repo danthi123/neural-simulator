@@ -353,10 +353,22 @@ W_REWARD = W_WARMUP + W_MEASURE  # total eligibility-BUILD + SNc-read window
 W_APPLY = 12                 # the reward-conversion window (SNc-read RPE * eligibility)
 W_VALUE = 25
 W_SETTLE = 40
+# --- SPIKING-VETO conversion (2026-08-01, additive) ---------------------------------------------------------
+# The 2026-07-31 critic-lesion finding named a shortcut: the noisy-veto reads a HOST-side ELP tracker (a Python
+# TD low-pass fed by the SNc paired-subtraction read snc_B-snc_A), NOT the spiking substrate — proven because the
+# veto survived the GABA_B critic lesion 6/6. Its conversion target: compute the veto decision FROM THE SPIKING
+# STRIOSOME VALUE. Under --spiking-veto the veto value tracks the LEARNED striosome rate `read_value(c)` (a direct
+# spiking read, drift-free via the same wash-out): a LEARNABLE concept's reward keeps V up; a NOISY concept's
+# omission (r~0, RPE=r-V<0 via the GABA_B critic -> LTD) depresses V below a floor. The load-bearing NEW
+# dissociation: with the striosome critic LESIONED the spiking veto must COLLAPSE (V no longer dips -> noisy not
+# vetoed) — i.e. the striosome becomes load-bearing exactly because the veto now reads it (the opposite of the
+# host-ELP veto, which survived the lesion). Floor = fraction of the fresh (pre-learning) value v0.
+STRIO_VETO_FRAC = 0.60       # veto floor as a fraction of the fresh striosome value v0 (un-tried concept ~ v0)
+BETA_STRIO = 0.55            # TD rate low-passing the spiking striosome value read (same as BETA_ELP)
 
 
 def run(seed, mode, *, n_learn=N_LEARN, n_noisy=N_NOISY, n_turns=N_TURNS, ask_budget=ASK_BUDGET,
-        d=D, verbose=False, **build_kw):
+        d=D, verbose=False, spiking_veto=False, **build_kw):
     from sim.backend import get_backend
     xp, _ = get_backend()
     rng = np.random.default_rng(seed * 101 + 5)
@@ -403,6 +415,11 @@ def run(seed, mode, *, n_learn=N_LEARN, n_noisy=N_NOISY, n_turns=N_TURNS, ask_bu
     v0_per = {c: read_value(c) for c in concepts}
     v0 = float(np.mean(list(v0_per.values())))
     ELP = {c: ELP_INIT for c in concepts}
+    # SPIKING-VETO value: the LEARNED striosome rate itself (Hz), TD-low-passed. Init at each concept's fresh
+    # read v0_per[c] (un-tried ~ un-depressed, so nothing is vetoed before it has been asked). Floor is a
+    # fraction of the mean fresh value; a noisy concept whose learned value dips below it is vetoed.
+    Vstrio = {c: v0_per[c] for c in concepts}
+    strio_veto_floor = STRIO_VETO_FRAC * v0
 
     def read_want(c, novelty):
         _restore_state(bridge, snap0)
@@ -494,8 +511,11 @@ def run(seed, mode, *, n_learn=N_LEARN, n_noisy=N_NOISY, n_turns=N_TURNS, ask_bu
             if world.is_noisy[c] and unknown:
                 noisy_elig[min(turn // third, 2)] += 1
 
+        # the veto: host-ELP tracker (default) OR the SPIKING striosome value read (--spiking-veto).
+        not_vetoed = ((lambda c: Vstrio[c] > strio_veto_floor) if spiking_veto
+                      else (lambda c: ELP[c] > VALUE_THRESH))
         cands = [c for c in concepts
-                 if gate_gap[c] > NOVEL_THRESH and want[c] > WANT_FLOOR_HZ and ELP[c] > VALUE_THRESH]
+                 if gate_gap[c] > NOVEL_THRESH and want[c] > WANT_FLOOR_HZ and not_vetoed(c)]
         if not cands:
             continue
 
@@ -530,6 +550,10 @@ def run(seed, mode, *, n_learn=N_LEARN, n_noisy=N_NOISY, n_turns=N_TURNS, ask_bu
         # vetoes learnable asked once (stuck un-mastered) AND wastes budget on un-vetoed noisy -> masters fewer.
         elp_reward = LP if mode == "yoked" else reward_read
         ELP[c_ask] += BETA_ELP * (elp_reward - ELP[c_ask])     # per-concept expected-learning-progress value
+        if spiking_veto:
+            # read the LEARNED striosome value ON SPIKES (drift-free via wash-out) and TD-low-pass it: the veto
+            # decision now comes FROM the substrate (striosome rate), not the host SNc-paired-subtraction read.
+            Vstrio[c_ask] += BETA_STRIO * (read_value(c_ask) - Vstrio[c_ask])
         (snc_noisy_burst if world.is_noisy[c_ask] else snc_learn_burst).append(snc_hz)
 
         asked.add(c_ask); n_asks += 1
@@ -562,10 +586,15 @@ def run(seed, mode, *, n_learn=N_LEARN, n_noisy=N_NOISY, n_turns=N_TURNS, ask_bu
     # the VETO value is the per-concept ELP (spiking-reward-fed TD tracker). A noisy concept whose ELP fell
     # below VALUE_THRESH was vetoed (stopped being asked) BECAUSE its reward-read said no learning-progress.
     asked_noisy = [c for c in range(n_learn, n_learn + n_noisy) if c in asked]
-    noisy_V_final = float(np.mean([ELP[c] for c in (asked_noisy or range(n_learn, n_learn + n_noisy))]))
-    noisy_vetoed_frac = (float(np.mean([ELP[c] <= VALUE_THRESH for c in asked_noisy])) if asked_noisy else 0.0)
-    noisy_vetoed = bool(noisy_vetoed_frac >= 0.75)   # most asked-noisy concepts' expected-LP fell below threshold
-    asked_learn_V = [ELP[c] for c in range(n_learn) if c in asked]
+    if spiking_veto:
+        # the veto quantity IS the spiking striosome value Vstrio, thresholded at strio_veto_floor
+        veto_val, veto_thr = Vstrio, strio_veto_floor
+    else:
+        veto_val, veto_thr = ELP, VALUE_THRESH
+    noisy_V_final = float(np.mean([veto_val[c] for c in (asked_noisy or range(n_learn, n_learn + n_noisy))]))
+    noisy_vetoed_frac = (float(np.mean([veto_val[c] <= veto_thr for c in asked_noisy])) if asked_noisy else 0.0)
+    noisy_vetoed = bool(noisy_vetoed_frac >= 0.75)   # most asked-noisy concepts' veto value fell below threshold
+    asked_learn_V = [veto_val[c] for c in range(n_learn) if c in asked]
     learn_V_final = float(np.mean(asked_learn_V)) if asked_learn_V else 0.0
     value_sep = learn_V_final - noisy_V_final
     # striosome learned-value evidence (the actor-critic organ): learned V read vs the never-asked (fresh) init
@@ -582,7 +611,8 @@ def run(seed, mode, *, n_learn=N_LEARN, n_noisy=N_NOISY, n_turns=N_TURNS, ask_bu
     learnable_mastered = int(sum(1 for c in range(n_learn) if conf_after[c] > 0.5))
 
     return {
-        "mode": mode, "seed": seed, "v0": v0, "value_thresh": VALUE_THRESH,
+        "mode": mode, "seed": seed, "v0": v0, "spiking_veto": bool(spiking_veto),
+        "value_thresh": (strio_veto_floor if spiking_veto else VALUE_THRESH),
         "corr_gap_want": corr, "rate_unknown": rate_unknown, "rate_known": rate_known, "ratio_b": ratio_b,
         "conf_rise": conf_rise, "conf_after_mean": conf_after_mean, "abstain_floor": abstain_floor,
         "total_asks": len(ask_events), "noisy_asks_total": noisy_asks_total,
@@ -597,11 +627,11 @@ def run(seed, mode, *, n_learn=N_LEARN, n_noisy=N_NOISY, n_turns=N_TURNS, ask_bu
     }
 
 
-def evaluate(seed, **kw):
-    real = run(seed, "real", **kw)
-    lesion = run(seed, "lesion", **kw)
-    yoked = run(seed, "yoked", **kw)
-    permuted = run(seed, "permuted", **kw)
+def evaluate(seed, *, spiking_veto=False, **kw):
+    real = run(seed, "real", spiking_veto=spiking_veto, **kw)
+    lesion = run(seed, "lesion", spiking_veto=spiking_veto, **kw)
+    yoked = run(seed, "yoked", spiking_veto=spiking_veto, **kw)
+    permuted = run(seed, "permuted", spiking_veto=spiking_veto, **kw)
 
     gate_a = real["corr_gap_want"] >= 0.9
     gate_b = real["ratio_b"] >= 2.0
@@ -615,13 +645,24 @@ def evaluate(seed, **kw):
 
     go = bool(gate_a and gate_b and gate_c and noisy_stops and real["moat_ok"]
               and lesion_collapses and yoked_collapses and permuted_collapses)
-    return {
+    out = {
         "seed": seed, "real": real, "lesion": lesion, "yoked": yoked, "permuted": permuted,
         "gate_a_corr": bool(gate_a), "gate_b_askratio": bool(gate_b), "gate_c_conf_rise": bool(gate_c),
         "noisy_stops_honest": bool(noisy_stops), "moat_ok": bool(real["moat_ok"]),
         "lesion_collapses": bool(lesion_collapses), "yoked_collapses": bool(yoked_collapses),
-        "permuted_collapses": bool(permuted_collapses), "GO": go,
+        "permuted_collapses": bool(permuted_collapses), "spiking_veto": bool(spiking_veto),
     }
+    if spiking_veto:
+        # THE NEW DISSOCIATION for the spiking-veto conversion: with the striosome critic LESIONED the spiking
+        # veto must COLLAPSE (noisy no longer vetoed -> the striosome is now load-bearing for the decision). This
+        # is the exact opposite of the host-ELP veto, which SURVIVED the same lesion (2026-07-31 finding).
+        critic = run(seed, "critic_lesion", spiking_veto=spiking_veto, **kw)
+        critic_lesion_collapses_veto = bool(not critic["noisy_vetoed"])
+        go = bool(go and critic_lesion_collapses_veto)
+        out["critic_lesion"] = critic
+        out["critic_lesion_collapses_veto"] = critic_lesion_collapses_veto
+    out["GO"] = go
+    return out
 
 
 def main():
@@ -630,8 +671,14 @@ def main():
     ap.add_argument("--smoke", action="store_true", help="tiny CPU smoke (5 concepts, short budget)")
     ap.add_argument("--critic-lesion", action="store_true",
                     help="report-only: run the real config with the GABA_B critic lesioned (noisy not vetoed)")
-    ap.add_argument("--out", default="research/findings/raw/_curiosity_seek_learn_onbridge.json")
+    ap.add_argument("--spiking-veto", action="store_true",
+                    help="convert the noisy-veto from the host ELP tracker to the SPIKING striosome value read; "
+                         "adds the critic-lesion-COLLAPSES-veto dissociation to the GO (2026-08-01, additive)")
+    ap.add_argument("--out", default=None)
     a = ap.parse_args()
+    if a.out is None:
+        a.out = ("research/findings/raw/_curiosity_seek_learn_onbridge_spikingveto.json" if a.spiking_veto
+                 else "research/findings/raw/_curiosity_seek_learn_onbridge.json")
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     except Exception:
@@ -643,13 +690,16 @@ def main():
 
     from sim.backend import get_backend
     _, backend = get_backend()
-    print(f"[DR-1 ON-BRIDGE curiosity] backend={backend} smoke={a.smoke}  fill from_novelty -> spiking ASK pool,"
-          f" spiking-SNc RPE value critic on the LEARNING-PROGRESS reward, real Bogacz-Brown gate.\n"
+    print(f"[DR-1 ON-BRIDGE curiosity] backend={backend} smoke={a.smoke} spiking_veto={a.spiking_veto}  "
+          f"fill from_novelty -> spiking ASK pool, spiking-SNc RPE value critic on the LEARNING-PROGRESS reward,"
+          f" real Bogacz-Brown gate.\n"
           f"  GO: (a) corr(gap,SPIKING-want)>=0.9  (b) ask unknown>=2x known  (c) conf rises;"
-          f" noisy STOPS (veto) while g stays HIGH; lesion/yoked/permuted collapse; moat holds.\n", flush=True)
+          f" noisy STOPS (veto) while g stays HIGH; lesion/yoked/permuted collapse; moat holds"
+          f"{'; + critic-lesion COLLAPSES the veto (striosome now load-bearing)' if a.spiking_veto else ''}.\n",
+          flush=True)
 
     if a.critic_lesion:
-        r = run(a.seeds[0], "critic_lesion", verbose=True, **kw)
+        r = run(a.seeds[0], "critic_lesion", verbose=True, spiking_veto=a.spiking_veto, **kw)
         print(f"  [critic-lesion seed {a.seeds[0]}] noisy late-rate {r['noisy_late_rate']:.2f} (vs early "
               f"{r['noisy_early_rate']:.2f}) | noisy ELP {r['noisy_ELP_final']:.2f} vetoed={r['noisy_vetoed']} "
               f"(thr {r['value_thresh']}) -> the veto should FAIL to fire without the critic", flush=True)
@@ -657,7 +707,7 @@ def main():
 
     results = []
     for seed in a.seeds:
-        r = evaluate(seed, **kw)
+        r = evaluate(seed, spiking_veto=a.spiking_veto, **kw)
         results.append(r)
         re = r["real"]
         print(f"  [seed {seed}] corr(gap,want) {re['corr_gap_want']:+.3f} | ask-ratio unk/known {re['ratio_b']:.2f} | "
@@ -676,6 +726,13 @@ def main():
         flags = (f"a={r['gate_a_corr']} b={r['gate_b_askratio']} c={r['gate_c_conf_rise']} "
                  f"noisy-stops={r['noisy_stops_honest']} lesion={r['lesion_collapses']} "
                  f"yoked={r['yoked_collapses']} permuted={r['permuted_collapses']}")
+        if a.spiking_veto:
+            cl = r["critic_lesion"]
+            flags += f" critic-lesion-collapses={r['critic_lesion_collapses_veto']}"
+            print(f"            SPIKING-VETO: real noisy V {re['noisy_ELP_final']:.1f}<=floor {re['value_thresh']:.1f}"
+                  f" vetoed={re['noisy_vetoed']} (learn V {re['learn_ELP_final']:.1f}) | critic-lesion noisy V "
+                  f"{cl['noisy_ELP_final']:.1f} vetoed={cl['noisy_vetoed']} -> collapse="
+                  f"{r['critic_lesion_collapses_veto']}", flush=True)
         print(f"            [{flags}]  ==>  {'GO' if r['GO'] else 'NO'}\n", flush=True)
 
     n_go = sum(r["GO"] for r in results)
