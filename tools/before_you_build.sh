@@ -36,3 +36,15 @@ echo "  Cheapness of the next test is NOT an exemption (6 levers / ~4 GPU-h were
 echo "  without the gate ever subjectively firing). Count them in the findings doc."
 echo
 echo "Proceed only after reading what the above surfaced — a hit is a POINTER, not a paraphrase."
+
+# RECORD THAT THIS CHECK HAPPENED (2026-07-31). Until now this script was purely advisory: it printed the
+# priors and nothing bound running it to launching anything. On 2026-07-31 a nine-hour eight-cell crux was
+# launched against a question whose answer was banked three weeks earlier with its root cause named, and
+# this script -- which returns those four priors in 0.63 s -- was not run until after the write-up.
+# The heartbeat flagged the missing check ~15 times that day and was read past every time, so REPORTING is
+# demonstrably insufficient for this class. The record below is what `gates/corpus_check_required` reads.
+_CC_LOG=/home/dant123/Projects/sim/research/queue/.corpus_checks.jsonl
+printf '{"when": %s, "iso": "%s", "query": %s, "cwd": "%s"}\n' \
+  "$(date +%s)" "$(date -Iseconds)" "$(printf '%s' "$Q" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))')" "$PWD" \
+  >> "$_CC_LOG" 2>/dev/null || true
+echo "  [recorded] corpus check logged to research/queue/.corpus_checks.jsonl"

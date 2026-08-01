@@ -102,6 +102,38 @@ def _resolve_argv(rec):
     return rec
 
 
+def _corpus_check_state(max_age_h=24.0):
+    """How long since `before_you_build.sh` last ran. Stamped into every run record.
+
+    EARNED 2026-07-31, expensively. The corpus check returns the priors for a question in 0.63 s and was
+    purely ADVISORY: nothing bound running it to launching anything. A nine-hour, eight-cell crux was
+    launched against a question already answered three weeks earlier at six seeds, with its root cause
+    named in a second finding. The heartbeat flagged the missing check about fifteen times that day and was
+    read past every time -- so this is recorded as a FACT of the run rather than as a reminder, and
+    `gates/corpus_check_required` refuses an expensive artifact whose run carries no recent check."""
+    try:
+        log = os.path.join(_ROOT, "research", "queue", ".corpus_checks.jsonl")
+        if not os.path.exists(log):
+            return {"corpus_check_age_s": None, "corpus_check_query": None}
+        last = None
+        with open(log, errors="ignore") as fh:
+            for line in fh:
+                line = line.strip()
+                if line:
+                    try:
+                        last = json.loads(line)
+                    except ValueError:
+                        continue
+        if not last:
+            return {"corpus_check_age_s": None, "corpus_check_query": None}
+        age = max(0.0, time.time() - float(last.get("when", 0)))
+        return {"corpus_check_age_s": round(age, 1),
+                "corpus_check_query": str(last.get("query", ""))[:200],
+                "corpus_check_fresh": bool(age <= max_age_h * 3600.0)}
+    except Exception:
+        return {"corpus_check_age_s": None, "corpus_check_query": None}
+
+
 def _resolved_backend():
     """The backend ACTUALLY used, resolved at exit rather than read at import.
 
@@ -145,7 +177,8 @@ def _stamp_outputs(rec):
                 with open(p + ".prov.json", "w") as fh:
                     json.dump({"run_id": rec["run_id"], "runner": rec.get("runner", "unknown"),
                                "argv": rec["argv"], "git_sha": rec["git_sha"], "git_dirty": rec["git_dirty"],
-                               "started": rec["started"], "env": rec["env"], **_resolved_backend(),
+                               "started": rec["started"], "env": rec["env"],
+                               **_resolved_backend(), **_corpus_check_state(),
                                "artifact": os.path.relpath(p, _ROOT)}, fh, indent=1)
                 made.append(p)
             except OSError:
