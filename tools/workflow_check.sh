@@ -253,19 +253,31 @@ fi
 # spent producing nothing, and previously the ONLY evidence was a file on a node nobody reads. Nine jobs died on
 # argparse and went unnoticed for an hour. Absence of results is not evidence of failure -- a job can also still
 # be running -- so this reads the recorded RC rather than inferring from missing output.
-FAILED_JOBS=""
+# A non-zero RC alone is NOT "nothing produced" (2026-08-01): the project's runners `return 0 if GO else 1`, so
+# rc=1 is an HONEST-NEGATIVE VERDICT that still WROTE its --out artifact (e.g. n_prop=5 floors the oracle and
+# correctly exits 1). Flagging every rc!=0 cried wolf on real results. The reliable disambiguator is the
+# ARTIFACT: a job whose --out exists on the node PRODUCED a result (verdict) and is not lost compute; only a
+# job whose --out is MISSING truly spent compute for nothing (a crash / argparse / module-not-found).
+CRASHED=""; VERDICTS=""
 for H in pool40 pool41 pool42; do
-  R=$(timeout 8 ssh -o BatchMode=yes -o ConnectTimeout=5 "$H" \
-        "awk -F'\t' '\$1 != 0 {print}' ~/derisk-pool/sim/job_status.log 2>/dev/null | tail -3" 2>/dev/null)
-  [ -n "$R" ] && FAILED_JOBS="$FAILED_JOBS\n  $H: $(printf '%s' "$R" | head -3 | cut -c1-120)"
+  R=$(timeout 10 ssh -o BatchMode=yes -o ConnectTimeout=5 "$H" '
+    awk -F"\t" "\$1 != 0 {print}" ~/derisk-pool/sim/job_status.log 2>/dev/null | tail -5 | while IFS="	" read rc t cmd; do
+      out=$(printf "%s" "$cmd" | grep -oE "\-\-out +[^ ]+" | awk "{print \$2}" | head -1)
+      if [ -n "$out" ] && [ -f "$HOME/derisk-pool/sim/$out" ]; then echo "V	$rc	$out"; else echo "C	$rc	$(printf "%s" "$cmd" | cut -c1-90)"; fi
+    done' 2>/dev/null)
+  while IFS=$'\t' read -r kind rc rest; do
+    [ -z "$kind" ] && continue
+    [ "$kind" = "C" ] && CRASHED="$CRASHED\n  $H rc=$rc: $rest"
+    [ "$kind" = "V" ] && VERDICTS="$VERDICTS\n  $H rc=$rc: $rest"
+  done <<< "$(printf '%b' "$R")"
 done
-if [ -n "$FAILED_JOBS" ]; then
-  echo "  ⛔ POOL JOB(S) EXITED NON-ZERO — compute spent, nothing produced:"
-  printf "%b\n" "$FAILED_JOBS"
-  echo "     Read the node's autodispatch.out, fix, and requeue via tools/pool_queue.sh (its validity gate"
-  echo "     catches malformed commands; a mid-run crash needs the log)."
+if [ -n "$CRASHED" ]; then
+  echo "  ⛔ POOL JOB(S) CRASHED — compute spent, NO artifact written (argparse / module-not-found / killed):"
+  printf "%b\n" "$CRASHED"
+  echo "     Read the node's autodispatch.out, fix, and requeue via tools/pool_queue.sh."
   FAIL=1
 fi
+[ -n "$VERDICTS" ] && { echo "  · pool job(s) exited non-zero but WROTE their artifact (an honest NO-GO exits 1; not lost compute — verify the verdict):"; printf "%b\n" "$VERDICTS"; }
 
 if [ "$FAIL" -eq 0 ]; then echo "✅ workflow_check: all four rules satisfied."; else
   echo "⛔ workflow_check: $FAIL rule-group(s) violated — the commands above are copy-paste ready."; fi
