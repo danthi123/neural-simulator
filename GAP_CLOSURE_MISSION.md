@@ -263,14 +263,22 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 >    chance/controls? YES ⇒ 6-seed + K-sweep {1,4,8} × {off,on} (√K prediction), SPLIT across local 3090 +
 >    AWS (start AWS then, `bash tools/aws_gpu.sh start`). NO/identical ⇒ decorrelation isn't the lever; the
 >    forward-noise plateau needs a different mechanism (finding).
-> 2. **Affect evictor = a BISTABLE-attractor WALL; the brake class (GABA_B/STP/SFA) is exhausted (finding
->    `2b983509`).** Next is a DEEP-RESEARCH gate for a NON-brake mechanism, then wire+test — NOT another sweep.
->    Candidates: (a) make the attractor GRADED not saturated (lower recurrent NMDA gain — but the 07-24 GO says
->    saturation IS the persistence, so this trades persistence for evictability); (b) an active CLEAR/quench
->    gate (transient strong inhibition knocks the loop out of the ON basin, all-or-none by design; matches in
->    vivo attractor-WM clearing); (c) neuromodulatory gain control (release the attractor). Read the
->    attractor-clearing literature first. (A brake needs an STP/SFA-lesion control anyway, but no positive
->    brake result arose, so that's moot until a non-brake mechanism is on the table.)
+> 2. **Affect evictor = a BISTABLE-attractor WALL; brake class exhausted (finding `2b983509`). DEEP-RESEARCH
+>    DONE — the reframe: bistability is an ASSET for a TRANSIENT OPEN-LOOP CLEAR, not an obstacle.** A brake must
+>    HOLD the loop down (fights the attractor); an active clear pushes the state across the basin boundary ONCE,
+>    then the OFF fixed-point holds it with ZERO standing force. STP annihilation was evidence FOR this (STP is
+>    persistent → blocks re-ignition; a self-removing quench leaves synapses recovered → re-ignition survives).
+>    Ranked, all runner-only, levers confirmed in bridge.py:
+>    **#1 (BUILDING, subagent) = active CLEAR/QUENCH gate** (Compte-Wang persistent-activity termination): a
+>    strong transient quench to the affect pools during post-drive silence collapses the reverberation → OFF
+>    catches it. Reuses G1-G6 harness. **LOAD-BEARING anti-cheat = quench current == 0.0 at the READ window**
+>    (held-low with zero standing quench = basin-switch, not GABA_B-style subtraction). Cheap host-shortcut
+>    pre-smoke (negative cp_external_input_current) first → then brain-based `quench_fs` pool + neuromodulator.
+>    **#2 = neuromod GAIN control** (Durstewitz-Seamans dual-state: transiently drop `synaptic_gain` multiplier
+>    below self-sustaining → ON basin vanishes → rolls to OFF; consumed at bridge.py:6827/6840).
+>    **#3 = graded/line attractor** (Egorov CAN current — needs a `sim/` edit; parked, fragile).
+>    Log the external sources into `research/biology/` with resolving quotes when #1 lands (corpus lacks the
+>    attractor-clearing literature).
 > 3. Keep the pool stocked ahead (the standing-queue fix): idle cores = an empty queue, not a reaction problem.
 >
 > **NOTED-FAILURE (log): the pool command convention must be `.venv/bin/python`, never bare `python` (absent on
