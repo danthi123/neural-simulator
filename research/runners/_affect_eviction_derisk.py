@@ -190,6 +190,32 @@ DEFAULT_QUENCH_MS = 250.0        # clear-pulse duration; measured OFF-basin thre
                                  # Must fit inside the post gap (POST_MS=300) so the quench is entirely OFF during
                                  # the read window (the anti-cheat -- see ratchet_trace).
 
+# ---- BRAIN-BASED ACTIVE-CLEAR (the deliverable: the host `step_quench` negative-current injection converted to a
+#      SPIKING mechanism). A dedicated FS inhibitory pool `quench_fs` (IZH2007_FS_CORTICAL_INTERNEURON) is wired to
+#      all three affect pools via STRONG GABA_A, gated at runtime behind the transmission gate `quench_out` (mirrors
+#      evict_out), and RECRUITED during the clear window by a phasic manual neuromodulator `quench_drive`
+#      (excitability_drive on group:quench_fs, mirrors the appraisal bus). The CLEAR is now caused by a spiking
+#      inhibitory pool firing GABA_A onto the affect pools -- NOT host current on the affect pools. -----------------
+QUENCH_GATE = "quench_out"       # ONE runtime transmission gate over every quench_fs -> affect synapse (the lesion)
+QUENCH_DRIVE_MOD = "quench_drive"  # the phasic neuromodulator that recruits quench_fs (excitability_drive)
+QUENCH_FS_N = 30                 # quench_fs FS interneurons (PV-basket-like; non-adapting high-freq)
+QUENCH_GABA_DENSITY = 0.8        # quench_fs -> each affect pool connection density (dense -> strong pooled inhibition)
+QUENCH_GABA_W = 15.0             # quench_fs -> affect pool GABA_A weight -- the CALIBRATED clear strength. This is the
+                                 # load-bearing knob (seed 43 sweep 2026-08-01): the clear must drain the opponent
+                                 # latch to the NEUTRAL OFF basin, NOT overshoot it. At w~15 (drive 150-400, ms
+                                 # 180-300) the held mood falls to ~0.000 and RE-IGNITES positive (G1~0, G3~0.98). At
+                                 # w>=25 the synaptic quench OVERSHOOTS the neutral basin and tips the opponent into
+                                 # the V- attractor (held goes NEGATIVE, re-ignition flips negative, G3 fails) -- a
+                                 # real brain-based finding the host -800 pA drain did not show (a shunting GABA_A
+                                 # quench of an OPPONENT latch has an overshoot regime a raw current clamp lacks).
+                                 # Swept on the pool. GABA_A reversal E_i=-75 mV (cfg default).
+QUENCH_DRIVE_PA = 250.0          # excitability_drive sensitivity (pA into each quench_fs neuron at concentration 1.0).
+                                 # FS rheobase ~50 pA (C=20, k=1.0) -> 250 pA drives sustained high-freq FS firing;
+                                 # 150-400 all land neutral at w~15 (drive is secondary; the WEIGHT sets overshoot).
+QUENCH_DRIVE_TAU_MS = 20.0       # quench_drive decay tau (matches appraisal); re-set to 1.0 each step while ON, and
+                                 # EXPLICITLY released to 0.0 when the window ends (so conc==0 at the read -> the
+                                 # spiking anti-cheat: no standing drive on quench_fs at read).
+
 
 # =============================================================================================================
 # The eviction brain = the VALIDATED P0.3 affect brain + a slow GABA_B self-feedback limb on each affect pool.
@@ -204,7 +230,9 @@ class EvictionAffectBrain(AffectStateBrain):
     def __init__(self, seed, nmda_on=True, recur_weight=DEFAULT_RECUR_WEIGHT, ou_pA=8.0,
                  gabab_w=DEFAULT_GABAB_W, gabab_tau_ms=DEFAULT_GABAB_TAU_MS, gabab_max=DEFAULT_GABAB_MAX,
                  enable_gabab=True, evict=True, sfa_a=None, sfa_d=None, with_eviction_wiring=True,
-                 stp=False, stp_tau_d=None, stp_U=None):
+                 stp=False, stp_tau_d=None, stp_U=None,
+                 brain_quench=False, quench_fs_n=QUENCH_FS_N, quench_gaba_w=QUENCH_GABA_W,
+                 quench_drive_pA=QUENCH_DRIVE_PA):
         from sim import SimulationBridge, VisualizationConfig, RuntimeState, GPUConfig
         from sim.config import CoreSimConfig
         from sim.regions import BrainRegion, RegionPathway
@@ -216,6 +244,8 @@ class EvictionAffectBrain(AffectStateBrain):
         self._evict = bool(evict)
         self._sfa = (None if (sfa_a is None or sfa_d is None) else (float(sfa_a), float(sfa_d)))
         self._with_eviction_wiring = bool(with_eviction_wiring)
+        self._brain_quench = bool(brain_quench)
+        self._quench_drive_pA = float(quench_drive_pA)
 
         cfg = CoreSimConfig()
         # ---- CLONED VERBATIM from AffectStateBrain.__init__ (the validated operating point) ----------------
@@ -325,6 +355,19 @@ class EvictionAffectBrain(AffectStateBrain):
                                               receptor=("gaba_b" if enable_gabab else "gaba_a"),
                                               transmission_gate=EVICT_GATE))
 
+        # ---- the BRAIN-BASED ACTIVE-CLEAR limb, APPENDED LAST (after the sfb limb, so ALL prior neuron indices
+        #      and wiring draws are preserved). A dedicated spiking quench_fs FS pool projects STRONG GABA_A onto
+        #      all three affect pools, behind the quench_out transmission gate (the lesion). It is RECRUITED by
+        #      the phasic quench_drive neuromodulator (below). This is the spiking replacement for step_quench:
+        #      the clear is a spiking inhibitory pool firing onto the affect pools, not host current on them.
+        if brain_quench:
+            regions.append(fs_pool("quench_fs", int(quench_fs_n)))
+            for pool in ("affect_vplus", "affect_vminus", "affect_arousal"):
+                pathways.append(RegionPathway(from_region="quench_fs", to_region=pool,
+                                              density=QUENCH_GABA_DENSITY, weight_mean=float(quench_gaba_w),
+                                              weight_jitter=0.1, plastic=False, receptor="gaba_a",
+                                              transmission_gate=QUENCH_GATE))
+
         def appraisal_mod(name, group):
             return NeuromodulatorConfig(
                 name=name, baseline=0.0, decay_tau_ms=APPRAISAL_TAU_MS,
@@ -337,6 +380,15 @@ class EvictionAffectBrain(AffectStateBrain):
             appraisal_mod("appraisal_vminus", "affect_vminus"),
             appraisal_mod("appraisal_arousal", "affect_arousal"),
         ]
+        if brain_quench:
+            # the phasic recruit for quench_fs: a manual neuromodulator delivering excitability_drive (pA) to the
+            # quench_fs group. Pulsed to 1.0 while clearing (step_brain_quench) and released to 0.0 before the read.
+            cfg.neuromodulators.append(NeuromodulatorConfig(
+                name=QUENCH_DRIVE_MOD, baseline=0.0, decay_tau_ms=QUENCH_DRIVE_TAU_MS,
+                concentration_min=0.0, concentration_max=1.0,
+                targets=[ModulatorTarget(target_type="excitability_drive", scope="group:quench_fs",
+                                         sensitivity=float(quench_drive_pA))],
+                production_rules=[ProductionRule(rule_type="manual")]))
         cfg.brain_regions = regions
         cfg.region_pathways = pathways
 
@@ -354,6 +406,12 @@ class EvictionAffectBrain(AffectStateBrain):
         and, for the `--sfa` arm, the per-neuron Izhikevich adaptation params on the affect-pool slice."""
         if self._with_eviction_wiring:
             self._bridge.set_transmission_gate(EVICT_GATE, 1.0 if self._evict else 0.0)
+        if self._brain_quench:
+            # OPEN the quench limb (the gate is the structural lesion control, like evict_out; the ON/OFF of the
+            # clear is the quench_drive neuromodulator, NOT this gate). Held OPEN through the read window so the
+            # anti-cheat genuinely shows NO standing inhibition -- quench_fs is silent because it is UNDRIVEN,
+            # not because its output was gated off.
+            self._bridge.set_transmission_gate(QUENCH_GATE, 1.0)
         if self._sfa is not None:
             a_abs, d_abs = self._sfa
             b = self._bridge
@@ -467,6 +525,59 @@ class EvictionAffectBrain(AffectStateBrain):
             counts["affect_vminus"] += float(fs[self._idx["affect_vminus"]].sum())
         return counts
 
+    # ------------------------------------------------------------------ the BRAIN-BASED active-clear
+    def set_quench_drive(self, level):
+        """Set the phasic neuromodulator that recruits the quench_fs FS pool (excitability_drive on
+        group:quench_fs). level=1.0 -> full drive (clear ON); 0.0 -> released (clear OFF). No-op if this
+        brain has no brain-quench limb."""
+        if not self._brain_quench:
+            return
+        self._bridge.neuromodulator_manager.set_concentration(QUENCH_DRIVE_MOD, float(level))
+
+    def quench_drive_conc(self):
+        """The quench_drive neuromodulator concentration RIGHT NOW -- the brain-quench anti-cheat read. Must be
+        0 at every read window: a held-low read under a STANDING quench drive would be driven inhibition (the
+        GABA_B current-subtraction failure mode), not the basin switch this de-risk tests. The spiking analog
+        of the host version's 'external current == 0 at read'."""
+        nm = getattr(self._bridge, "neuromodulator_manager", None)
+        if nm is None or QUENCH_DRIVE_MOD not in nm.modulator_names():
+            return 0.0
+        return float(nm.get_concentration(QUENCH_DRIVE_MOD))
+
+    def quench_fs_rate(self, counts, n_steps):
+        """quench_fs firing rate (spikes/neuron/ms) from a step()'s recorded counts. ~0 at read = the pool is
+        SILENT there (it is undriven), which is why the affect pools hold low with no standing inhibition."""
+        n = len(self._idx["quench_fs"]) if "quench_fs" in self._idx else 0
+        return (counts.get("quench_fs", 0.0) / (n * max(1, n_steps))) if n else 0.0
+
+    def step_brain_quench(self, n_steps):
+        """BRAIN-BASED ACTIVE-CLEAR (the spiking replacement for step_quench). Recruit the quench_fs FS pool via
+        the phasic quench_drive neuromodulator for `n_steps`; quench_fs fires GABA_A onto the three affect pools
+        (through the open quench_out gate), collapsing the reverberatory NMDA loop. NOTHING is injected into the
+        affect pools -- the clear is caused ENTIRELY by a spiking inhibitory pool firing onto them. The drive is
+        re-set each step (it decays) and EXPLICITLY released to 0 at the end, so the read window sees a silent,
+        undriven quench_fs. Returns per-pool spike counts incl. quench_fs (the mechanism-assertion read: quench_fs
+        must be firing HARD while ON and ~0 at read).
+
+        Host->brain conversion: step_quench wrote a NEGATIVE cp_external_input_current onto the affect pools (the
+        'clear command' issued by host code). Here the only host action is pulsing a diffuse neuromodulator that
+        recruits an interneuron pool -- the affect pools receive their silencing as SYNAPTIC GABA_A current from
+        spiking neurons, exactly as a real cortical circuit would deliver it (Compte-Wang persistent-activity
+        termination via feedback inhibition)."""
+        b = self._bridge
+        counts = {"affect_vplus": 0.0, "affect_vminus": 0.0, "quench_fs": 0.0}
+        qidx = self._idx["quench_fs"]
+        for _ in range(int(n_steps)):
+            self.set_quench_drive(1.0)             # hold the phasic recruit ON (re-set each step; it decays)
+            b.cp_external_input_current[:] = 0.0    # NOTHING host-injected -- affect pools get only synapses
+            b._run_one_simulation_step()
+            fs = to_host(b.cp_firing_states)
+            counts["affect_vplus"] += float(fs[self._idx["affect_vplus"]].sum())
+            counts["affect_vminus"] += float(fs[self._idx["affect_vminus"]].sum())
+            counts["quench_fs"] += float(fs[qidx].sum())
+        self.set_quench_drive(0.0)                  # RELEASE the clear (drive -> 0) before the read window
+        return counts
+
 
 # =============================================================================================================
 # The RATCHET trace. One pass = the whole measurement (held + during + the persistence statistic + g_gabab).
@@ -484,7 +595,7 @@ def _affect_ext_current(brain):
 
 def ratchet_trace(brain, levels, drive_ms=DRIVE_MS, post_ms=POST_MS, read_ms=READ_MS,
                   settle_ms=SETTLE_MS, base_probe_ms=BASE_PROBE_MS, arousal=EPISODE_AROUSAL,
-                  quench_pA=0.0, quench_ms=DEFAULT_QUENCH_MS):
+                  quench_pA=0.0, quench_ms=DEFAULT_QUENCH_MS, brain_quench=False):
     """Run the episode sequence and return per-episode (held, during) mood plus g_gabab diagnostics.
 
     Each episode: `drive_ms` of appraisal at `level` -> `post_ms` of SILENCE -> `read_ms` of silence, which
@@ -492,19 +603,32 @@ def ratchet_trace(brain, levels, drive_ms=DRIVE_MS, post_ms=POST_MS, read_ms=REA
     first episode is byte-for-byte the baseline runner's persistence protocol, so `held[0]/during[0]` is its
     persistence-retention statistic (committed value 0.62, artifact _affect_state_region_6seed.json).
 
-    ACTIVE-CLEAR quench (`quench_pA` != 0). During the POST-drive silence of every LOW episode -- a drive
-    level STRICTLY BELOW the protocol's max, i.e. a LOWER appraisal has arrived -- a strong `quench_pA` current
-    is injected to the three affect pools for `quench_ms`, then switched OFF for the remainder of the post gap
-    and the ENTIRE read window. The clear is drive-dependent by construction, so the constant-HIGH control
-    (all levels == max) NEVER fires it, and the episode-0 HIGH and the re-ignite HIGH are untouched (their
-    persistence/re-ignition are read WITHOUT any clear). The quench current is MEASURED at every read window
-    and ASSERTED to be exactly 0: a held-low read under a standing quench current would be CURRENT SUBTRACTION
-    (the GABA_B failure mode), not the basin switch this de-risk tests."""
+    ACTIVE-CLEAR quench (`quench_pA` != 0 arms the clear; it fires during the POST-drive silence of every LOW
+    episode -- a drive level STRICTLY BELOW the protocol's max, i.e. a LOWER appraisal has arrived -- for
+    `quench_ms`, then is OFF for the remainder of the post gap and the ENTIRE read window). Two implementations:
+
+      * HOST SHORTCUT (`brain_quench=False`): step_quench injects a strong NEGATIVE `quench_pA` external current
+        directly onto the three affect pools. `quench_pA` is BOTH the trigger and the magnitude.
+      * BRAIN-BASED (`brain_quench=True`): step_brain_quench recruits the spiking quench_fs FS pool via the
+        quench_drive neuromodulator; quench_fs fires GABA_A onto the affect pools. `quench_pA` is ONLY the
+        ON/OFF trigger (its MAGNITUDE is unused -- the real drive is the brain's quench_drive_pA); the affect
+        pools receive NO external current at all.
+
+    The clear is drive-dependent by construction, so the constant-HIGH control (all levels == max) NEVER fires
+    it, and the episode-0 HIGH and the re-ignite HIGH are untouched. ANTI-CHEAT, measured (not assumed) at every
+    read window: (1) external current on the affect pools == 0 (host + brain: a held-low read under a standing
+    quench current would be CURRENT SUBTRACTION, the GABA_B failure mode, not a basin switch); and for the brain
+    version additionally (2) the quench_drive neuromodulator concentration == 0 -- no standing recruit on
+    quench_fs -- and (3) quench_fs firing rate ~0 (the pool is SILENT, being undriven). (2)+(3) prove the affect
+    pools hold low with NO standing inhibition, the spiking analog of the host 'current == 0 at read'."""
     brain.reset()
     brain.step(settle_ms)
     base = brain.mood_rate(brain.step(base_probe_ms), base_probe_ms)
     held, during, g_end, g_peak = [], [], [], []
     quench_at_read, quench_fired = [], []
+    quench_drive_at_read, quench_fs_rate_at_read, quench_fs_rate_during = [], [], []
+    read_rec = (("affect_vplus", "affect_vminus", "quench_fs")
+                if (brain_quench and "quench_fs" in brain._idx) else ("affect_vplus", "affect_vminus"))
     hi = max(float(x) for x in levels)
     for lv in levels:
         lv = float(lv)
@@ -517,16 +641,23 @@ def ratchet_trace(brain, levels, drive_ms=DRIVE_MS, post_ms=POST_MS, read_ms=REA
         do_quench = bool(quench_pA) and (lv < hi)
         if do_quench:
             qms = min(float(quench_ms), float(post_ms))     # keep the clear strictly inside the post gap
-            brain.step_quench(qms, quench_pA)
+            if brain_quench:
+                qc = brain.step_brain_quench(qms)           # spiking quench_fs -> GABA_A onto the affect pools
+                quench_fs_rate_during.append(brain.quench_fs_rate(qc, qms))   # the FS pool fires HARD here
+            else:
+                brain.step_quench(qms, quench_pA)           # host shortcut: negative current on the pools
             rest = float(post_ms) - qms
             if rest > 0:
                 brain.step(rest)                            # quench OFF: the OFF fixed point must hold here
         else:
             brain.step(post_ms)
-        held.append(brain.mood_rate(brain.step(read_ms), read_ms) - base)   # READ WINDOW (quench OFF)
+        c_read = brain.step(read_ms, record=read_rec)       # READ WINDOW (quench OFF)
+        held.append(brain.mood_rate(c_read, read_ms) - base)
         g_end.append(brain.mean_gabab("affect_vplus"))
         quench_at_read.append(_affect_ext_current(brain))   # anti-cheat: MEASURED (not assumed) at the read
         quench_fired.append(do_quench)
+        quench_drive_at_read.append(brain.quench_drive_conc() if brain_quench else 0.0)
+        quench_fs_rate_at_read.append(brain.quench_fs_rate(c_read, read_ms) if brain_quench else 0.0)
     # THE LOAD-BEARING ANTI-CHEAT: zero standing quench current at EVERY read window => a held-low read is a
     # genuine basin switch, not current subtraction. This is precisely what separates the active clear from
     # the killed outward brakes (GABA_B held its rate down with a *standing* g*(E_K-V) offset).
@@ -534,12 +665,28 @@ def ratchet_trace(brain, levels, drive_ms=DRIVE_MS, post_ms=POST_MS, read_ms=REA
     assert max_q_at_read < 1e-6, (
         "ANTI-CHEAT FAILED: |quench current| = %.6g pA at a read window (must be 0); a held-low read here "
         "would be CURRENT SUBTRACTION, not a basin switch" % max_q_at_read)
+    max_qdrive = max((abs(x) for x in quench_drive_at_read), default=0.0)
+    max_qfs_rate = max((abs(x) for x in quench_fs_rate_at_read), default=0.0)
+    if brain_quench:
+        # THE BRAIN-QUENCH ANTI-CHEAT: no standing recruit on quench_fs at any read window. If the drive were
+        # still ON, a held-low read would be DRIVEN inhibition (the current-subtraction failure mode), not a
+        # basin switch. quench_fs rate is reported (soft) and the drive conc is hard-asserted to 0.
+        assert max_qdrive < 1e-6, (
+            "BRAIN-QUENCH ANTI-CHEAT FAILED: quench_drive conc = %.6g at a read window (must be 0); a held-low "
+            "read under a standing quench drive would be DRIVEN inhibition, not a basin switch" % max_qdrive)
     return {"held": [float(x) for x in held], "during": [float(x) for x in during],
             "g_gabab_end_of_drive": [float(x) for x in g_peak],
             "g_gabab_end_of_read": [float(x) for x in g_end],
             "quench_at_read_pA": [float(x) for x in quench_at_read],
             "quench_fired": [bool(x) for x in quench_fired],
             "max_quench_at_read_pA": float(max_q_at_read),
+            "quench_drive_at_read": [float(x) for x in quench_drive_at_read],
+            "max_quench_drive_at_read": float(max_qdrive),
+            "quench_fs_rate_at_read": [float(x) for x in quench_fs_rate_at_read],
+            "max_quench_fs_rate_at_read": float(max_qfs_rate),
+            "quench_fs_rate_during_quench": [float(x) for x in quench_fs_rate_during],
+            "min_quench_fs_rate_during_quench": float(min(quench_fs_rate_during, default=0.0)),
+            "brain_quench": bool(brain_quench),
             "quench_pA": float(quench_pA), "quench_ms": float(quench_ms),
             "mood_base": float(base), "levels": [float(x) for x in levels]}
 
@@ -616,7 +763,9 @@ def _fmt(x, nd=3):
 # =============================================================================================================
 def run_point(seed, gabab_w, gabab_tau, ou_pA=8.0, recur_weight=DEFAULT_RECUR_WEIGHT, gabab_max=0.0,
               enable_gabab=True, sfa=None, verbose=True, baseline_during0=None, baseline_held0=None,
-              stp=False, stp_tau_d=None, stp_U=None, quench_pA=0.0, quench_ms=DEFAULT_QUENCH_MS):
+              stp=False, stp_tau_d=None, stp_U=None, quench_pA=0.0, quench_ms=DEFAULT_QUENCH_MS,
+              brain_quench=False, quench_fs_n=QUENCH_FS_N, quench_gaba_w=QUENCH_GABA_W,
+              quench_drive_pA=QUENCH_DRIVE_PA):
     """Run the full pre-registered arm set at one (gabab_w, tau) point and return the evaluated gate."""
     def mk(nmda_on=True, evict=True, wiring=True, egb=enable_gabab):
         return EvictionAffectBrain(seed, nmda_on=nmda_on, recur_weight=recur_weight, ou_pA=ou_pA,
@@ -625,26 +774,34 @@ def run_point(seed, gabab_w, gabab_tau, ou_pA=8.0, recur_weight=DEFAULT_RECUR_WE
                                    sfa_a=(None if sfa is None else sfa[0]),
                                    sfa_d=(None if sfa is None else sfa[1]),
                                    with_eviction_wiring=wiring,
-                                   stp=stp, stp_tau_d=stp_tau_d, stp_U=stp_U)
+                                   stp=stp, stp_tau_d=stp_tau_d, stp_U=stp_U,
+                                   brain_quench=brain_quench, quench_fs_n=quench_fs_n,
+                                   quench_gaba_w=quench_gaba_w, quench_drive_pA=quench_drive_pA)
 
-    low = ratchet_trace(mk(), LOW_LEVELS, quench_pA=quench_pA, quench_ms=quench_ms)
-    high = ratchet_trace(mk(), HIGH_LEVELS, quench_pA=quench_pA, quench_ms=quench_ms)
-    nmda_off = ratchet_trace(mk(nmda_on=False), LOW_LEVELS, quench_pA=quench_pA, quench_ms=quench_ms)
+    low = ratchet_trace(mk(), LOW_LEVELS, quench_pA=quench_pA, quench_ms=quench_ms, brain_quench=brain_quench)
+    high = ratchet_trace(mk(), HIGH_LEVELS, quench_pA=quench_pA, quench_ms=quench_ms, brain_quench=brain_quench)
+    nmda_off = ratchet_trace(mk(nmda_on=False), LOW_LEVELS, quench_pA=quench_pA, quench_ms=quench_ms,
+                             brain_quench=brain_quench)
     les_brain = mk(evict=False)
     # G6 same-substrate control. When the QUENCH is the active evictor (quench_pA != 0), the correct
     # "mechanism removed" arm is the CLEAR turned OFF (quench_pA=0) -- NOT the evict_out gate, which lesions the
     # GABA_B limb (inert at gabab_w=0). So the lesion arm always runs quench-OFF: removing the clear must let
     # the ratchet RETURN (lesion_evict_ratio -> ~1.0, i.e. the >=0.90 G6 asks for), same neurons/wiring/seed.
-    # (When quench_pA==0 this reduces to the original GABA_B evict_out lesion, unchanged.)
-    lesion = ratchet_trace(les_brain, LOW_LEVELS, quench_pA=0.0, quench_ms=quench_ms)
+    # (When quench_pA==0 this reduces to the original GABA_B evict_out lesion, unchanged.) For brain_quench the
+    # same-substrate quench_fs wiring is present but simply undriven, so the ratchet returns identically.
+    lesion = ratchet_trace(les_brain, LOW_LEVELS, quench_pA=0.0, quench_ms=quench_ms, brain_quench=brain_quench)
 
     ev = evaluate_arm(low, high, nmda_off, lesion, during0_reference=baseline_during0,
                       held0_reference=baseline_held0)
     ev.update({"seed": int(seed), "gabab_weight": float(gabab_w), "gabab_tau_ms": float(gabab_tau),
                "gabab_max": float(gabab_max), "enable_gabab": bool(enable_gabab),
                "quench_pA": float(quench_pA), "quench_ms": float(quench_ms),
+               "brain_quench": bool(brain_quench),
                "quench_fired_low": low["quench_fired"], "quench_at_read_low_pA": low["quench_at_read_pA"],
                "max_quench_at_read_low_pA": low["max_quench_at_read_pA"],
+               "max_quench_drive_at_read_low": low["max_quench_drive_at_read"],
+               "max_quench_fs_rate_at_read_low": low["max_quench_fs_rate_at_read"],
+               "quench_fs_rate_at_read_low": low["quench_fs_rate_at_read"],
                "sfa": (None if sfa is None else [float(sfa[0]), float(sfa[1])]),
                "g_gabab_lesion_end_of_read": lesion["g_gabab_end_of_read"],
                "trace_low": low, "trace_high": high, "trace_nmda_off": nmda_off, "trace_lesion": lesion})
@@ -660,10 +817,14 @@ def run_point(seed, gabab_w, gabab_tau, ou_pA=8.0, recur_weight=DEFAULT_RECUR_WE
 # SMOKE — reproduce the ratchet on the untouched baseline, then sweep the eviction operating point
 # =============================================================================================================
 def run_smoke(seed, weights, taus, maxes=(0.0,), ou_pA=8.0, recur_weight=DEFAULT_RECUR_WEIGHT, sfa=None,
-              stp=False, stp_tau_d=None, stp_U=None, quench_pA=0.0, quench_ms=DEFAULT_QUENCH_MS):
+              stp=False, stp_tau_d=None, stp_U=None, quench_pA=0.0, quench_ms=DEFAULT_QUENCH_MS,
+              brain_quench=False, quench_fs_n=QUENCH_FS_N, quench_gaba_w=QUENCH_GABA_W,
+              quench_drive_pA=QUENCH_DRIVE_PA):
     t0 = time.time()
     out = {"seed": int(seed), "sweep": [], "sfa_arm": None, "fast_arm": None,
-           "quench_pA": float(quench_pA), "quench_ms": float(quench_ms)}
+           "quench_pA": float(quench_pA), "quench_ms": float(quench_ms), "brain_quench": bool(brain_quench),
+           "quench_fs_n": int(quench_fs_n), "quench_gaba_w": float(quench_gaba_w),
+           "quench_drive_pA": float(quench_drive_pA)}
     gabab_max = 0.0   # replaced by the SELECTED sweep point's cap in step 2 (see below)
 
     # ---- 0. INSTRUMENT VERIFICATION: the untouched BASELINE brain must reproduce the RATCHET -------------
@@ -721,9 +882,13 @@ def run_smoke(seed, weights, taus, maxes=(0.0,), ou_pA=8.0, recur_weight=DEFAULT
         def _qbrain():
             return EvictionAffectBrain(seed, nmda_on=True, recur_weight=recur_weight, ou_pA=ou_pA,
                                        gabab_w=w0, gabab_tau_ms=tau0, gabab_max=cap0,
-                                       enable_gabab=(w0 > 0.0), stp=stp, stp_tau_d=stp_tau_d, stp_U=stp_U)
-        on = ratchet_trace(_qbrain(), LOW_LEVELS, quench_pA=quench_pA, quench_ms=quench_ms)
-        off = ratchet_trace(_qbrain(), LOW_LEVELS, quench_pA=0.0, quench_ms=quench_ms)
+                                       enable_gabab=(w0 > 0.0), stp=stp, stp_tau_d=stp_tau_d, stp_U=stp_U,
+                                       brain_quench=brain_quench, quench_fs_n=quench_fs_n,
+                                       quench_gaba_w=quench_gaba_w, quench_drive_pA=quench_drive_pA)
+        on = ratchet_trace(_qbrain(), LOW_LEVELS, quench_pA=quench_pA, quench_ms=quench_ms,
+                           brain_quench=brain_quench)
+        off = ratchet_trace(_qbrain(), LOW_LEVELS, quench_pA=0.0, quench_ms=quench_ms,
+                            brain_quench=brain_quench)
         ho, hf, du = on["held"], off["held"], on["during"]
         g1 = _ratio(max(ho[1], ho[2]), ho[0], HELD_FLOOR_ABS)
         g3 = _ratio(ho[4], ho[0], HELD_FLOOR_ABS) if len(ho) >= 5 else None
@@ -732,27 +897,57 @@ def run_smoke(seed, weights, taus, maxes=(0.0,), ou_pA=8.0, recur_weight=DEFAULT
         g3_ok = g3 is not None and g3 >= 0.60
         g4_ok = g4 is not None and g4 >= 0.50
         anti = on["max_quench_at_read_pA"] < 1e-6
+        # BRAIN-QUENCH anti-cheat: additionally no standing recruit (drive conc == 0) and quench_fs ~silent at
+        # read. QFS_RATE_FLOOR is a soft bound -- OU noise makes a tiny undriven FS rate acceptable; what must
+        # be zero is the DRIVE (hard-asserted in ratchet_trace) and the affect-pool external current.
+        QFS_RATE_FLOOR = 0.02   # spikes/neuron/ms (~20 Hz); undriven FS on OU noise sits well below this
+        anti_drive = on["max_quench_drive_at_read"] < 1e-6
+        anti_fs = on["max_quench_fs_rate_at_read"] < QFS_RATE_FLOOR
+        if brain_quench:
+            anti = anti and anti_drive and anti_fs
         evict_with_reignite = bool(g1_ok and g3_ok and g4_ok and anti)
-        print(f"\n[EVICT SMOKE] 1b. ACTIVE-CLEAR quench physics @ quench_pA={quench_pA} quench_ms={quench_ms} "
-              f"(w={w0} tau={tau0})", flush=True)
+        _mode = ("BRAIN-BASED (spiking quench_fs -> GABA_A; drive=quench_drive nm)" if brain_quench
+                 else "HOST SHORTCUT (negative current on affect pools)")
+        print(f"\n[EVICT SMOKE] 1b. ACTIVE-CLEAR quench physics [{_mode}] @ quench_ms={quench_ms} "
+              f"(w={w0} tau={tau0}"
+              + (f" | quench_fs_n={quench_fs_n} gaba_w={quench_gaba_w} drive_pA={quench_drive_pA}"
+                 if brain_quench else f" | quench_pA={quench_pA}") + ")", flush=True)
         print(f"    held(LOW) quench-ON   {[round(x, 4) for x in ho]}   during {[round(x, 3) for x in du]}",
               flush=True)
         print(f"    held(LOW) quench-OFF  {[round(x, 4) for x in hf]}   (the ratchet control -- clear removed)",
               flush=True)
-        print(f"    quench_fired/episode {on['quench_fired']} | quench@read(pA) "
-              f"{[round(x, 4) for x in on['quench_at_read_pA']]} | max|q@read| "
+        print(f"    quench_fired/episode {on['quench_fired']} | affect-pool ext-current@read(pA) "
+              f"{[round(x, 4) for x in on['quench_at_read_pA']]} | max|ext@read| "
               f"{on['max_quench_at_read_pA']:.2e}", flush=True)
+        if brain_quench:
+            print(f"    [brain] quench_fs rate DURING clear {[round(x, 3) for x in on['quench_fs_rate_during_quench']]} "
+                  f"spk/nrn/ms (min {on['min_quench_fs_rate_during_quench']:.3f} -- the FS pool IS the evictor) "
+                  f"vs @read {[round(x, 4) for x in on['quench_fs_rate_at_read']]} "
+                  f"(max {on['max_quench_fs_rate_at_read']:.4f} < {QFS_RATE_FLOOR} -> {anti_fs})", flush=True)
+            print(f"    [brain] quench_drive@read {[round(x, 6) for x in on['quench_drive_at_read']]} "
+                  f"(max {on['max_quench_drive_at_read']:.2e}, ==0 -> {anti_drive})", flush=True)
         print(f"    G1 evict {_fmt(g1)} (<0.60 -> {g1_ok}) | G3 re-ignite {_fmt(g3)} (>=0.60 -> {g3_ok}) | "
-              f"G4 persist {_fmt(g4)} (>=0.50 -> {g4_ok}) | ANTI-CHEAT quench=0@read -> {anti}", flush=True)
+              f"G4 persist {_fmt(g4)} (>=0.50 -> {g4_ok}) | ANTI-CHEAT quencher-silent@read -> {anti}",
+              flush=True)
         print(f"    => EVICTION-WITH-RE-IGNITION (physics) {'YES' if evict_with_reignite else 'NO'} "
               f"(ONE seed; a smoke, not a verdict)", flush=True)
         out["quench_physics"] = {
+            "mode": ("brain_based" if brain_quench else "host_shortcut"),
             "quench_pA": float(quench_pA), "quench_ms": float(quench_ms), "w": w0, "tau": tau0, "cap": cap0,
+            "brain_quench": bool(brain_quench), "quench_fs_n": int(quench_fs_n),
+            "quench_gaba_w": float(quench_gaba_w), "quench_drive_pA": float(quench_drive_pA),
             "held_low_quench_on": ho, "held_low_quench_off": hf, "during_low_quench_on": du,
             "quench_fired": on["quench_fired"], "quench_at_read_pA": on["quench_at_read_pA"],
             "max_quench_at_read_pA": on["max_quench_at_read_pA"],
+            "quench_drive_at_read": on["quench_drive_at_read"],
+            "max_quench_drive_at_read": on["max_quench_drive_at_read"],
+            "quench_fs_rate_at_read": on["quench_fs_rate_at_read"],
+            "max_quench_fs_rate_at_read": on["max_quench_fs_rate_at_read"],
+            "quench_fs_rate_during_quench": on["quench_fs_rate_during_quench"],
+            "min_quench_fs_rate_during_quench": on["min_quench_fs_rate_during_quench"],
+            "anti_cheat_drive_zero_at_read": bool(anti_drive), "anti_cheat_fs_silent_at_read": bool(anti_fs),
             "G1_evict_ratio": g1, "G1_ok": g1_ok, "G3_reignite_ratio": g3, "G3_ok": g3_ok,
-            "G4_persist_ratio": g4, "G4_ok": g4_ok, "anti_cheat_quench_zero_at_read": bool(anti),
+            "G4_persist_ratio": g4, "G4_ok": g4_ok, "anti_cheat_quencher_silent_at_read": bool(anti),
             "evict_with_reignition": evict_with_reignite}
 
     # ---- 1. SWEEP the eviction operating point ---------------------------------------------------------
@@ -767,7 +962,9 @@ def run_smoke(seed, weights, taus, maxes=(0.0,), ou_pA=8.0, recur_weight=DEFAULT
                 ev = run_point(seed, w, tau, ou_pA=ou_pA, recur_weight=recur_weight, gabab_max=cap,
                                verbose=False, baseline_during0=baseline_during0,
                                baseline_held0=baseline_held0, stp=stp, stp_tau_d=stp_tau_d, stp_U=stp_U,
-                               quench_pA=quench_pA, quench_ms=quench_ms)
+                               quench_pA=quench_pA, quench_ms=quench_ms, brain_quench=brain_quench,
+                               quench_fs_n=quench_fs_n, quench_gaba_w=quench_gaba_w,
+                               quench_drive_pA=quench_drive_pA)
                 g = ev["gates"]
                 passed = sum(1 for k in list(g)[:4] if g[k])
                 if ev["evict_ratio_low"] is None:
@@ -823,10 +1020,16 @@ def run_smoke(seed, weights, taus, maxes=(0.0,), ou_pA=8.0, recur_weight=DEFAULT
               f"tau={best['gabab_tau_ms']} ms cap={best['gabab_max']} — G1-G4 pass on ONE seed "
               f"(NOT a result; 6 seeds decide)", flush=True)
 
-    # ---- 2. MECHANISM ASSERTION: the lever must actually MOVE, and the SLOW component must be load-bearing
+    # ---- 2. MECHANISM ASSERTION: the lever must actually MOVE, and the SLOW component must be load-bearing.
+    # SKIPPED for brain_quench: the GABA_B limb is inert (gabab_w=0), and the mechanism under test is the spiking
+    # quench, already fully characterized in 1b (G1/G3/G4 + the drive/quench_fs-silent-at-read anti-cheat). A
+    # g_gabab lever on a zero-weight limb would be a meaningless null pair.
     pt = (best if best is not None
           else (out.get("closest_point") or (out["sweep"][0] if out["sweep"] else None)))
-    if pt is not None:
+    if pt is not None and brain_quench:
+        print("\n[EVICT SMOKE] 2. mechanism assertion SKIPPED (brain_quench) — the evictor is the spiking "
+              "quench_fs pool, characterized in 1b; the GABA_B limb is inert here.", flush=True)
+    if pt is not None and not brain_quench:
         w_sel, tau_sel = float(pt["gabab_weight"]), float(pt["gabab_tau_ms"])
         cap_sel = float(pt.get("gabab_max", 0.0))
         gabab_max = cap_sel   # the mechanism-assertion + attribution arms follow the SELECTED point
@@ -894,7 +1097,9 @@ def run_smoke(seed, weights, taus, maxes=(0.0,), ou_pA=8.0, recur_weight=DEFAULT
         s = run_point(seed, 0.0, DEFAULT_GABAB_TAU_MS, ou_pA=ou_pA, recur_weight=recur_weight,
                       gabab_max=0.0, enable_gabab=False, sfa=sfa, verbose=True,
                       baseline_during0=baseline_during0, baseline_held0=baseline_held0,
-                      stp=stp, stp_tau_d=stp_tau_d, stp_U=stp_U, quench_pA=quench_pA, quench_ms=quench_ms)
+                      stp=stp, stp_tau_d=stp_tau_d, stp_U=stp_U, quench_pA=quench_pA, quench_ms=quench_ms,
+                      brain_quench=brain_quench, quench_fs_n=quench_fs_n, quench_gaba_w=quench_gaba_w,
+                      quench_drive_pA=quench_drive_pA)
         print(f"    SFA: G1 evict {_fmt(s['evict_ratio_low'])} | G2 time {_fmt(s['time_ratio_high'])} | "
               f"G3 re-ig {_fmt(s['reignite_ratio'])} | G4 persist {_fmt(s['persistence_retention'])} "
               f"=> {'PASS G1-G4' if s['core_go(G1-G4)'] else 'no'}", flush=True)
@@ -910,7 +1115,9 @@ def run_smoke(seed, weights, taus, maxes=(0.0,), ou_pA=8.0, recur_weight=DEFAULT
 # 6-SEED gate
 # =============================================================================================================
 def run_battery(seeds, gabab_w, gabab_tau, ou_pA=8.0, recur_weight=DEFAULT_RECUR_WEIGHT, gabab_max=0.0,
-                sfa=None, stp=False, stp_tau_d=None, stp_U=None, quench_pA=0.0, quench_ms=DEFAULT_QUENCH_MS):
+                sfa=None, stp=False, stp_tau_d=None, stp_U=None, quench_pA=0.0, quench_ms=DEFAULT_QUENCH_MS,
+                brain_quench=False, quench_fs_n=QUENCH_FS_N, quench_gaba_w=QUENCH_GABA_W,
+                quench_drive_pA=QUENCH_DRIVE_PA):
     rows = []
     for s in seeds:
         t0 = time.time()
@@ -922,7 +1129,8 @@ def run_battery(seeds, gabab_w, gabab_tau, ou_pA=8.0, recur_weight=DEFAULT_RECUR
         ev = run_point(s, gabab_w, gabab_tau, ou_pA=ou_pA, recur_weight=recur_weight, gabab_max=gabab_max,
                        sfa=sfa, verbose=False, baseline_during0=base_low["during"][0],
                        baseline_held0=base_low["held"][0], stp=stp, stp_tau_d=stp_tau_d, stp_U=stp_U,
-                       quench_pA=quench_pA, quench_ms=quench_ms)
+                       quench_pA=quench_pA, quench_ms=quench_ms, brain_quench=brain_quench,
+                       quench_fs_n=quench_fs_n, quench_gaba_w=quench_gaba_w, quench_drive_pA=quench_drive_pA)
         ev["baseline_ratchet_ratio"] = base_ratio
         ev["baseline_held_low"] = base_low["held"]
         ev["elapsed_seconds"] = round(time.time() - t0, 1)
@@ -1087,6 +1295,21 @@ def main():
     ap.add_argument("--quench-ms", type=float, default=DEFAULT_QUENCH_MS,
                     help="quench-pulse duration (ms); must exceed the recurrent-NMDA decay (~100 ms) and fit inside "
                          "the post gap (POST_MS=300) so the clear is OFF during the read window (the anti-cheat)")
+    # ---- BRAIN-BASED active-clear (the deliverable): the clear is done by a SPIKING quench_fs FS pool firing
+    #      GABA_A onto the affect pools, recruited by the quench_drive neuromodulator -- NOT host current on the
+    #      pools. --brain-quench turns it on; when set, --quench-pA acts ONLY as the ON trigger (magnitude unused,
+    #      auto-armed if left 0). The real drive strength is --quench-drive-pA.
+    ap.add_argument("--brain-quench", action="store_true",
+                    help="BRAIN-BASED active-clear: a spiking quench_fs FS pool (GABA_A onto the affect pools, "
+                         "recruited by the quench_drive neuromodulator) does the clear, not host current. The "
+                         "deliverable conversion of the host --quench-pA shortcut.")
+    ap.add_argument("--quench-fs-n", type=int, default=QUENCH_FS_N,
+                    help="number of quench_fs FS interneurons (brain-quench)")
+    ap.add_argument("--quench-gaba-w", type=float, default=QUENCH_GABA_W,
+                    help="quench_fs -> affect pool GABA_A weight (brain-quench); the clear strength via synapses")
+    ap.add_argument("--quench-drive-pA", type=float, default=QUENCH_DRIVE_PA,
+                    help="excitability_drive sensitivity (pA into each quench_fs neuron @ conc 1.0) recruiting "
+                         "quench_fs during the clear window (brain-quench). Swept on the pool.")
     ap.add_argument("--recur-weight", type=float, default=DEFAULT_RECUR_WEIGHT)
     ap.add_argument("--ou-pA", type=float, default=8.0)
     ap.add_argument("--out", default=str(OUT))
@@ -1094,18 +1317,30 @@ def main():
 
     t0 = time.time()
     sfa = tuple(a.sfa) if a.sfa else None
+    # BRAIN-QUENCH trigger: --quench-pA is the universal ON/OFF trigger (0 => the clear never fires). In brain
+    # mode its MAGNITUDE is unused (the drive is --quench-drive-pA), so auto-arm the trigger if the user left it
+    # at 0 -- the OFF control inside 1b/run_point explicitly passes quench_pA=0.0, which stays OFF regardless.
+    quench_pA = a.quench_pA
+    if a.brain_quench and quench_pA == 0.0:
+        quench_pA = -1.0   # trigger sentinel only (never injected -- brain mode routes through step_brain_quench)
     if a.smoke:
         res = run_smoke(a.seeds[0], a.sweep_weights, a.sweep_taus, maxes=a.sweep_maxes, ou_pA=a.ou_pA,
                         recur_weight=a.recur_weight, sfa=sfa, stp=a.stp, stp_tau_d=a.stp_tau_d, stp_U=a.stp_U,
-                        quench_pA=a.quench_pA, quench_ms=a.quench_ms)
+                        quench_pA=quench_pA, quench_ms=a.quench_ms, brain_quench=a.brain_quench,
+                        quench_fs_n=a.quench_fs_n, quench_gaba_w=a.quench_gaba_w,
+                        quench_drive_pA=a.quench_drive_pA)
         res["config"] = {"seed": a.seeds[0], "sweep_weights": a.sweep_weights, "sweep_taus": a.sweep_taus,
                          "sweep_maxes": a.sweep_maxes, "recur_weight": a.recur_weight, "ou_pA": a.ou_pA,
                          "sfa": sfa, "stp": bool(a.stp), "stp_tau_d": a.stp_tau_d, "stp_U": a.stp_U,
-                         "quench_pA": a.quench_pA, "quench_ms": a.quench_ms,
+                         "quench_pA": quench_pA, "quench_ms": a.quench_ms, "brain_quench": bool(a.brain_quench),
+                         "quench_fs_n": a.quench_fs_n, "quench_gaba_w": a.quench_gaba_w,
+                         "quench_drive_pA": a.quench_drive_pA,
                          "LOW_LEVELS": list(LOW_LEVELS), "HIGH_LEVELS": list(HIGH_LEVELS),
                          "timings_ms": {"settle": SETTLE_MS, "base_probe": BASE_PROBE_MS, "drive": DRIVE_MS,
                                         "post": POST_MS, "read": READ_MS},
-                         "SFB_N": SFB_N, "SFB_EXC_W": SFB_EXC_W}
+                         "SFB_N": SFB_N, "SFB_EXC_W": SFB_EXC_W,
+                         "QUENCH_FS_N": QUENCH_FS_N, "QUENCH_GABA_W": QUENCH_GABA_W,
+                         "QUENCH_GABA_DENSITY": QUENCH_GABA_DENSITY, "QUENCH_DRIVE_PA": QUENCH_DRIVE_PA}
         p = Path(str(a.out).replace(".json", "_smoke.json"))
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(json.dumps(res, indent=2, default=str))
@@ -1116,11 +1351,14 @@ def main():
           flush=True)
     rows = run_battery(a.seeds, a.gabab_weight, a.gabab_tau, ou_pA=a.ou_pA, recur_weight=a.recur_weight,
                        gabab_max=a.gabab_max, sfa=sfa, stp=a.stp, stp_tau_d=a.stp_tau_d, stp_U=a.stp_U,
-                       quench_pA=a.quench_pA, quench_ms=a.quench_ms)
+                       quench_pA=quench_pA, quench_ms=a.quench_ms, brain_quench=a.brain_quench,
+                       quench_fs_n=a.quench_fs_n, quench_gaba_w=a.quench_gaba_w,
+                       quench_drive_pA=a.quench_drive_pA)
     cfgd = {"seeds": a.seeds, "gabab_weight": a.gabab_weight, "gabab_tau_ms": a.gabab_tau,
             "gabab_max": a.gabab_max, "recur_weight": a.recur_weight, "ou_pA": a.ou_pA, "sfa": sfa,
             "stp": bool(a.stp), "stp_tau_d": a.stp_tau_d, "stp_U": a.stp_U,
-            "quench_pA": a.quench_pA, "quench_ms": a.quench_ms,
+            "quench_pA": quench_pA, "quench_ms": a.quench_ms, "brain_quench": bool(a.brain_quench),
+            "quench_fs_n": a.quench_fs_n, "quench_gaba_w": a.quench_gaba_w, "quench_drive_pA": a.quench_drive_pA,
             "LOW_LEVELS": list(LOW_LEVELS), "HIGH_LEVELS": list(HIGH_LEVELS),
             "timings_ms": {"settle": SETTLE_MS, "base_probe": BASE_PROBE_MS, "drive": DRIVE_MS,
                            "post": POST_MS, "read": READ_MS},
