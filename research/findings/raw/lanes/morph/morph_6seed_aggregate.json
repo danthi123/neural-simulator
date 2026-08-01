@@ -1,0 +1,39 @@
+{
+ "probe": "productive_morphology_dual_route_6seed",
+ "date": "2026-08-01",
+ "backend": "numpy",
+ "device": "cpu",
+ "mechanism": "dual-route past tense on the D sparse heteroassociative SPIKING pool: procedural default (-ed) rule vs declarative irregular store, competing via FS/WTA (Pinker-Ullman words-and-rules / Marcus blocking)",
+ "seeds": [
+  100,
+  101,
+  102,
+  42,
+  43,
+  44
+ ],
+ "n_seeds": 6,
+ "n_go": 0,
+ "mean_reg_acc": 0.1875,
+ "per_seed_reg_acc": [
+  0.5,
+  0.0,
+  0.0,
+  0.375,
+  0.25,
+  0.0
+ ],
+ "mean_irr_acc_blocking": 0.8571428571428571,
+ "per_seed_irr_acc": [
+  0.7142857142857143,
+  1.0,
+  1.0,
+  0.8571428571428571,
+  0.7142857142857143,
+  0.8571428571428571
+ ],
+ "mean_overreg_rate_lesion": 0.9523809523809523,
+ "mean_permuted_binding_irr_acc": 0.023809523809523808,
+ "gate": "reg_acc>=0.90 (rule generalizes to novel stems) AND irr blocking AND lesion->over-reg AND permuted collapses",
+ "headline": "NO-GO 0/6: the declarative route WORKS (irregular blocking irr_acc 0.857, lesion->over-regularization 0.929, permuted-binding collapses 0.024) but the procedural RULE does NOT generalize to novel/held-out stems (reg_acc 0.188, needs >=0.90). Novel stems (wug/blick/dax) are captured by entrenched irregular whole-form attractors instead of taking the default -ed. The dual-route dissociation is HALF-realized: the exception store + blocking + over-regularization dissociation is solid; the productive default rule is not, in a single shared heteroassociative pool."
+}
