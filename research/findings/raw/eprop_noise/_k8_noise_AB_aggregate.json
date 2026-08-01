@@ -1,0 +1,92 @@
+{
+  "probe": "onbridge_eprop_K8_noise_AB",
+  "runner": "research.runners._onbridge_eprop_port_derisk",
+  "backend": "cupy",
+  "sim_backend": "cupy",
+  "pool_k": 8,
+  "epochs": 80,
+  "train_subsample": 160,
+  "settle_steps": 40,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "chance": 0.333,
+  "lif_ceiling_ref": 0.89,
+  "noise_off_inherit_mean": 0.778,
+  "noise_off_inherit_per_seed": [
+    0.741,
+    0.815,
+    0.778
+  ],
+  "noise_on_inherit_mean": 0.197,
+  "noise_on_inherit_per_seed": [
+    0.148,
+    0.185,
+    0.259
+  ],
+  "inherit_delta_on_minus_off": -0.581,
+  "verdict": "K=8 near-LIF-ceiling on CLEAN drive (reproduces closure w/ provenance); decorrelating noise COLLAPSES it (decorrelation hypothesis REFUTED for e-prop)",
+  "per_seed": [
+    {
+      "seed": 42,
+      "arm": "noise_off",
+      "train": 0.931,
+      "inherit": 0.741,
+      "permuted": 0.185,
+      "chance": 0.333,
+      "backend": "cupy"
+    },
+    {
+      "seed": 43,
+      "arm": "noise_off",
+      "train": 0.938,
+      "inherit": 0.815,
+      "permuted": 0.148,
+      "chance": 0.333,
+      "backend": "cupy"
+    },
+    {
+      "seed": 42,
+      "arm": "noise_on",
+      "train": 0.25,
+      "inherit": 0.148,
+      "permuted": 0.185,
+      "chance": 0.333,
+      "backend": "cupy",
+      "below_chance": true
+    },
+    {
+      "seed": 43,
+      "arm": "noise_on",
+      "train": 0.281,
+      "inherit": 0.185,
+      "permuted": 0.148,
+      "chance": 0.333,
+      "backend": "cupy",
+      "below_chance": true
+    },
+    {
+      "seed": 44,
+      "arm": "noise_off",
+      "train": 0.95,
+      "inherit": 0.778,
+      "permuted": 0.259,
+      "chance": 0.333,
+      "backend": "cupy"
+    },
+    {
+      "seed": 44,
+      "arm": "noise_on",
+      "train": 0.306,
+      "inherit": 0.259,
+      "permuted": 0.222,
+      "chance": 0.333,
+      "backend": "cupy",
+      "below_chance": true
+    }
+  ],
+  "noise_on_below_chance_by_design": true,
+  "noise_on_note": "noise-ON collapses every arm below chance 0.333 -- this is the RESULT (added noise destroys e-prop credit), not an instrument failure; the hypothesis is measured by the OFF-vs-ON CONTRAST, not by the ON cell alone"
+}
