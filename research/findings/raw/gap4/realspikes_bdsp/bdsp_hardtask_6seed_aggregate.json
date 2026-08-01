@@ -1,0 +1,58 @@
+{
+ "probe": "gap4_realspikes_bdsp_hardtask_6seed",
+ "date": "2026-08-01",
+ "backend": "numpy",
+ "device": "cpu",
+ "runner": "research.runners._gap4_realspikes_bdsp_credit_derisk",
+ "config": {
+  "n_col": 200,
+  "epochs": 30,
+  "eta": 0.003,
+  "lr_out": 0.2,
+  "beta": 1.0,
+  "p0": 0.3,
+  "w0": 0.35,
+  "jitter": 0.15,
+  "drive_pa": 1200.0,
+  "n_steps": 30,
+  "task": {
+   "n_super": 48,
+   "n_members": 8,
+   "held_per_super": 3,
+   "n_prop": 4,
+   "member_id_dim": 3,
+   "n_obs": 14,
+   "noise": 0.02
+  },
+  "margin_go": 0.05
+ },
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "n_seeds": 6,
+ "n_beats_frozen_margin": 2,
+ "n_dcs_positive": 5,
+ "n_shuffle_dfa_load_bearing": 4,
+ "mean_deep_credit_share": 0.0415,
+ "mean_bdsp_heldout": 0.159,
+ "mean_frozen_heldout": 0.1312,
+ "mean_bdsp_train": 0.6686,
+ "mean_oracle": 0.7963,
+ "frac_gap_closed": 0.0418,
+ "anti_cheats_clean": false,
+ "per_seed_dcs": [
+  0.0533,
+  -0.0676,
+  0.0169,
+  0.0506,
+  0.0897,
+  0.1061
+ ],
+ "contrast_small_task": "small task (k=9): dcs>0 3/6, mean -0.022 (ties). harder task (k=17): dcs>0 5/6, mean +0.042 -> regime confirmed",
+ "headline": "HARDER-TASK: the coincidence-gated BDSP gives a WEAK but CONSISTENT positive transport-free credit signal on real spikes -- dcs>0 5/6, mean dcs +0.042 (BDSP 0.159 vs frozen 0.131), vs the small task 3/6 mean -0.022. REGIME HYPOTHESIS CONFIRMED: when the reservoir FAILS (harder task, frozen 0.131 vs oracle 0.796), directed credit adds consistently. BUT weak (closes only ~4% of the frozen->oracle gap), overfits (train 0.669 vs heldout 0.159), shuffle-DFA load-bearing on only 4/6 -> not a GO, and the directed signal is not cleanly attributable on every seed. The FIRST consistent positive transport-free credit on real spikes; far from closing the gap."
+}
