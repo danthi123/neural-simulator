@@ -1,0 +1,91 @@
+{
+ "probe": "gap4_depth2_bdsp_credit_6seed",
+ "date": "2026-08-01",
+ "backend": "numpy",
+ "device": "cpu",
+ "runner": "research.runners._gap4_depth2_bdsp_credit_derisk",
+ "config": {
+  "epochs": 300,
+  "lr": 0.5,
+  "batch": 64,
+  "hidden": 64,
+  "beta": 1.0,
+  "p0": 0.3,
+  "task": "depth-2 pair-XOR->threshold (emerge1)",
+  "margin": 0.07
+ },
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "n_seeds": 6,
+ "task": "depth-2 pair-XOR -> threshold-over-XORs (emerge1), 65/35 held-out",
+ "mean_oracle": 0.974,
+ "mean_deepFA_heldout": 0.6332,
+ "mean_deepBDSP_heldout": 0.636,
+ "mean_deepBDSP_train": 0.6599,
+ "mean_deepBDSP_gen_gap": 0.0239,
+ "mean_deepFA_gen_gap": 0.3283,
+ "mean_apical_lesion": 0.4712,
+ "chance": 0.5241,
+ "n_bdsp_generalizes": 6,
+ "n_bdsp_beats_fa_margin": 0,
+ "mean_probe_FA": 0.7172,
+ "mean_probe_BDSP": 0.6438,
+ "per_seed": [
+  {
+   "seed": 42,
+   "FA_ho": 0.591,
+   "FA_tr": 0.913,
+   "BDSP_ho": 0.655,
+   "BDSP_tr": 0.659,
+   "BDSP_gap": 0.004
+  },
+  {
+   "seed": 43,
+   "FA_ho": 0.655,
+   "FA_tr": 0.977,
+   "BDSP_ho": 0.669,
+   "BDSP_tr": 0.687,
+   "BDSP_gap": 0.019
+  },
+  {
+   "seed": 44,
+   "FA_ho": 0.646,
+   "FA_tr": 0.998,
+   "BDSP_ho": 0.588,
+   "BDSP_tr": 0.603,
+   "BDSP_gap": 0.015
+  },
+  {
+   "seed": 100,
+   "FA_ho": 0.56,
+   "FA_tr": 0.947,
+   "BDSP_ho": 0.591,
+   "BDSP_tr": 0.663,
+   "BDSP_gap": 0.073
+  },
+  {
+   "seed": 101,
+   "FA_ho": 0.635,
+   "FA_tr": 0.934,
+   "BDSP_ho": 0.657,
+   "BDSP_tr": 0.668,
+   "BDSP_gap": 0.01
+  },
+  {
+   "seed": 102,
+   "FA_ho": 0.713,
+   "FA_tr": 1.0,
+   "BDSP_ho": 0.657,
+   "BDSP_tr": 0.68,
+   "BDSP_gap": 0.022
+  }
+ ],
+ "capacity_lever_closed": "higher lr/epochs/hidden destabilize the sigmoid MLP (oracle itself drops 0.97->0.45); BDSP caps ~0.655 at the stable op-point",
+ "headline": "DEPTH-2 (first test of gap#4 credit AT DEPTH -- all prior were single-layer). The coincidence-gated BDSP GENERALIZES through depth (gen-gap 0.024, 6/6) where feedback-alignment MEMORIZES (FA gap ~0.33). But both cap at the SAME held-out ceiling (BDSP 0.636 vs FA 0.633, oracle 0.974) -- the depth-scaling wall is CONSOLIDATED across FA AND BDSP, and the capacity lever is closed (higher lr destabilizes even the oracle). BDSP does not BEAT FA on held-out (0/6 by margin) but has a qualitatively BETTER profile: it generalizes cleanly instead of memorizing. Both recover the level-1 XOR latents partially (probe ~0.64) but neither the full depth-2 structure."
+}
