@@ -1,0 +1,48 @@
+{
+ "probe": "gap4_realspikes_pregate",
+ "date": "2026-08-01",
+ "backend": "numpy",
+ "device": "cpu",
+ "runner": "research.runners._gap4_realspikes_pregate_probe",
+ "seeds": [
+  42,
+  43,
+  44
+ ],
+ "n_seeds": 3,
+ "config": {
+  "drive_pa": 1200,
+  "n_steps": 30,
+  "fw_scale": 1.0,
+  "note": "reservoir forward weights, no scaling needed"
+ },
+ "n_pass": 3,
+ "mean_feat_spike_std": 2.3711,
+ "mean_col_margin_std": 11.0853,
+ "mean_reproducibility": 1.0,
+ "real_vs_reset_codon_corr": "-0.14 to -0.38 (anti-correlated: real-spikes read genuinely different from the rate stand-in)",
+ "per_seed": [
+  {
+   "seed": 42,
+   "feat_spike_std_across_inputs": 2.41003,
+   "col_margin_std_across_inputs": 10.35615,
+   "reproducibility_codon_corr": 1.0,
+   "PREGATE_PASS": true
+  },
+  {
+   "seed": 43,
+   "feat_spike_std_across_inputs": 2.4178,
+   "col_margin_std_across_inputs": 11.55762,
+   "reproducibility_codon_corr": 1.0,
+   "PREGATE_PASS": true
+  },
+  {
+   "seed": 44,
+   "feat_spike_std_across_inputs": 2.28561,
+   "col_margin_std_across_inputs": 11.34223,
+   "reproducibility_codon_corr": 1.0,
+   "PREGATE_PASS": true
+  }
+ ],
+ "headline": "PRE-GATE PASS 3/3: the REAL-spikes forward pass on the movable-plateau bridge gives input-dependent firing (feat_spike_std ~2.4, col_margin_std ~11) AND reproducibility 1.0 at drive=1200 with reservoir weights (NO forward scaling). The degenerate-forward-pass boundary (2026-07-10) is CLEARED for this substrate. NECESSARY not sufficient: the 6-seed real-spikes CREDIT comparison is the decisive next test."
+}
