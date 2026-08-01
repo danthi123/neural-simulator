@@ -1188,12 +1188,29 @@ def summarize(rows, seeds, cfgd):
     def _m(k):
         return "n/a" if means[k] is None else f"{means[k]:.3f}"
 
+    # MECHANISM-AWARE label (2026-08-01): name the ACTIVE evictor, DERIVED from the config that actually ran --
+    # never a hardcoded "GABA_B". A --brain-quench or --sfa battery previously printed "slow GABA_B/GIRK feedback
+    # EVICTS" while GABA_B was OFF (weight 0), a mislabel the value-gates cannot catch (the gate NUMBERS were
+    # correct while the prose lied). The label must follow the flags, not a template.
+    if cfgd.get("brain_quench"):
+        mech = "a spiking quench_fs GABA_A active-clear gate"
+    elif cfgd.get("quench_pA"):
+        mech = "a transient active-clear current pulse (host shortcut)"
+    elif cfgd.get("sfa"):
+        mech = "intrinsic spike-frequency adaptation (sAHP)"
+    elif cfgd.get("stp"):
+        mech = "short-term synaptic depression"
+    elif cfgd.get("gabab_weight"):
+        mech = "slow GABA_B/GIRK feedback"
+    else:
+        mech = "the active evictor"
+
     if not instrument_verified:
         verdict = (f"UNDEFINED ({n}-seed) — the INSTRUMENT is not verified: the untouched baseline "
                    f"reproduced the ratchet (>=0.90) on only {n_baseline_ratchet}/{n} seeds "
                    f"(mean {_m('baseline_ratchet_ratio')}). Nothing downstream can be read as a result.")
     elif go:
-        verdict = (f"GO ({n}-seed, {n_core}/{n}) — slow GABA_B/GIRK feedback EVICTS the latched affect mood. "
+        verdict = (f"GO ({n}-seed, {n_core}/{n}) — {mech} EVICTS the latched affect mood. "
                    f"After a HIGH episode, two LOW episodes drop the held mood to "
                    f"{_m('evict_ratio_low')} of its high value (baseline ratchet "
                    f"{_m('baseline_ratchet_ratio')}; gate < 0.60), while the elapsed-TIME control "
@@ -1213,7 +1230,7 @@ def summarize(rows, seeds, cfgd):
                    f"Per THE LAW this banks the METHOD, not the capability: the pre-registered next method is "
                    f"intrinsic spike-frequency adaptation on the affect pools (--sfa).")
     return {
-        "probe": "affect mood EVICTION (P0.3-E): slow GABA_B/GIRK feedback vs the latched-mood RATCHET",
+        "probe": f"affect mood EVICTION (P0.3-E): {mech} vs the latched-mood RATCHET",
         "verdict": (verdict if _verdict_block["status"] != "UNDEFINED" else
                     f"UNDEFINED ({n}-seed) — " + "; ".join(_verdict_block["undefined_reasons"])),
         "GO": go,
