@@ -5,14 +5,25 @@ date: 2026-07-31
 mechanism: affect-state-region
 runner: research/runners/_affect_eviction_derisk.py
 artifacts:
+  - research/findings/raw/affect/AGG_gabab_kill_4seed.json
   - research/findings/raw/affect/_affect_eviction_SMOKE_sweep_smoke.json
   - research/findings/raw/affect/_affect_eviction_sweep_3seed.json
 ---
 
 # Affect eviction: slow GABA_B feedback is KILLED as a method — on a sweep that is actually valid
 
-**Verdict: NO-GO for the method, capability stays OPEN.** 20 sweep points, every one with a valid arm, zero
-satisfying the pre-registered gate set. The pre-registered fallback (intrinsic sAHP) is queued.
+**Verdict: NO-GO for the method, capability stays OPEN.**
+
+**CONFIRMED AT 4 SEEDS (2026-07-31 20:15).** The original kill rested on seed 42 alone, which is below this
+project's own bar and should not have been written up as a method-kill without saying so. Re-run on seeds
+43/44/100 through the retrofitted runner, so each artifact now carries its preconditions block:
+
+    80 sweep points across 4 seeds · 80 of 80 with a VALID arm · 3 of 80 passing G1 alone
+    0 of 80 satisfying G1-G4 together · kill_criterion_met on 4 of 4 seeds
+
+Aggregate: `research/findings/raw/affect/AGG_gabab_kill_4seed.json`, built through `tools.verdict.Verdict`.
+**Honest bar note: 4 seeds, not 6.** The kill is unanimous and every arm was valid, but the standing bar is
+six and this is four — stated rather than rounded up.
 
 ## The defect being attacked
 

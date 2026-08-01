@@ -1,0 +1,112 @@
+{
+ "runner": "research/runners/_affect_eviction_derisk.py",
+ "provenance": {
+  "kind": "aggregate",
+  "produced_by": "controller aggregation over the four per-seed --smoke artifacts listed in aggregated_from; no new simulation was run",
+  "seeds": [
+   42,
+   43,
+   44,
+   100
+  ],
+  "source_command": "SIM_BACKEND=numpy python -m research.runners._affect_eviction_derisk --smoke --seeds <S> --sweep-weights 0.05 0.10 0.20 0.28 0.36 --sweep-taus 150 400 --sweep-maxes 0 0.5",
+  "verdict_tool": "tools.verdict.Verdict"
+ },
+ "question": "does slow GABA_B/GIRK feedback evict the latched affect mood?",
+ "aggregated_from": [
+  "research/findings/raw/affect/_affect_evict_validsweep_s100_smoke.json",
+  "research/findings/raw/affect/_affect_evict_validsweep_s43_smoke.json",
+  "research/findings/raw/affect/_affect_evict_validsweep_s44_smoke.json",
+  "research/findings/raw/affect/_affect_eviction_SMOKE_sweep_smoke.json"
+ ],
+ "per_seed": {
+  "100": {
+   "points": 20,
+   "arm_valid": 20,
+   "G1_pass": 1,
+   "core_go": 0,
+   "kill": true
+  },
+  "43": {
+   "points": 20,
+   "arm_valid": 20,
+   "G1_pass": 0,
+   "core_go": 0,
+   "kill": true
+  },
+  "44": {
+   "points": 20,
+   "arm_valid": 20,
+   "G1_pass": 1,
+   "core_go": 0,
+   "kill": true
+  },
+  "42": {
+   "points": 20,
+   "arm_valid": 20,
+   "G1_pass": 1,
+   "core_go": 0,
+   "kill": true
+  }
+ },
+ "totals": {
+  "sweep_points": 80,
+  "arm_valid": 80,
+  "G1_pass": 3,
+  "core_go_G1_G4": 0
+ },
+ "label": "slow GABA_B/GIRK feedback as the affect-mood EVICTOR",
+ "status": "NO-GO",
+ "go": false,
+ "undefined_reasons": [],
+ "preconditions": [
+  {
+   "kind": "require",
+   "name": "every sweep point had a VALID arm (A5)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": "80/80"
+  },
+  {
+   "kind": "require",
+   "name": "kill criterion met on EVERY seed",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": "4/4 seeds"
+  },
+  {
+   "kind": "require",
+   "name": "4+ seeds (below the 6-seed bar, stated)",
+   "ok": true,
+   "detail": "measured=True expect=True",
+   "note": ""
+  }
+ ],
+ "disabled_processes": [
+  {
+   "process": "short-term plasticity",
+   "why": "isolation block in the runner \u2014 any latch observed is a property of the mechanism UNDER THIS ISOLATION"
+  },
+  {
+   "process": "STDP",
+   "why": "isolation block in the runner \u2014 any latch observed is a property of the mechanism UNDER THIS ISOLATION"
+  },
+  {
+   "process": "Hebbian learning",
+   "why": "isolation block in the runner \u2014 any latch observed is a property of the mechanism UNDER THIS ISOLATION"
+  },
+  {
+   "process": "homeostasis",
+   "why": "isolation block in the runner \u2014 any latch observed is a property of the mechanism UNDER THIS ISOLATION"
+  },
+  {
+   "process": "reward modulation",
+   "why": "isolation block in the runner \u2014 any latch observed is a property of the mechanism UNDER THIS ISOLATION"
+  },
+  {
+   "process": "structural plasticity",
+   "why": "isolation block in the runner \u2014 any latch observed is a property of the mechanism UNDER THIS ISOLATION"
+  }
+ ],
+ "chance": null
+}
