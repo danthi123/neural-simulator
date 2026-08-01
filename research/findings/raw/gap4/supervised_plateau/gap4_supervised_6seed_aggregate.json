@@ -1,0 +1,112 @@
+{
+  "probe": "gap4_supervised_plateau_6seed",
+  "date": "2026-08-01",
+  "backend": "cupy",
+  "device": "gpu",
+  "n_prop": 3,
+  "chance": 0.167,
+  "what": "does DIRECTED error (fixed-random DFA) on the MOVABLE plateau hidden beat UNSUPERVISED sharpening on held-out generalization?",
+  "config": {
+    "n_col": 200,
+    "epochs": 30,
+    "seeds": [
+      100,
+      101,
+      102,
+      42,
+      43,
+      44
+    ],
+    "rule": "plateau-margin covariance gated by DFA-projected output error (transport-free)"
+  },
+  "per_seed": [
+    {
+      "seed": 100,
+      "oracle": 1.0,
+      "rate_res": 0.1,
+      "frozen_train": 0.756,
+      "unsup_train": 0.847,
+      "sup_train": 0.83,
+      "unsup_dcs": 0.097,
+      "sup_dcs": 0.065,
+      "shuffle_dfa": 0.352,
+      "no_transport": true
+    },
+    {
+      "seed": 101,
+      "oracle": 0.963,
+      "rate_res": 0.096,
+      "frozen_train": 0.892,
+      "unsup_train": 0.892,
+      "sup_train": 0.881,
+      "unsup_dcs": 0.136,
+      "sup_dcs": 0.136,
+      "shuffle_dfa": 0.463,
+      "no_transport": true
+    },
+    {
+      "seed": 102,
+      "oracle": 0.981,
+      "rate_res": 0.1,
+      "frozen_train": 0.79,
+      "unsup_train": 0.812,
+      "sup_train": 0.784,
+      "unsup_dcs": 0.179,
+      "sup_dcs": 0.071,
+      "shuffle_dfa": 0.241,
+      "no_transport": true
+    },
+    {
+      "seed": 42,
+      "oracle": 1.0,
+      "rate_res": 0.096,
+      "frozen_train": 0.795,
+      "unsup_train": 0.835,
+      "sup_train": 0.824,
+      "unsup_dcs": 0.071,
+      "sup_dcs": 0.143,
+      "shuffle_dfa": 0.463,
+      "no_transport": true
+    },
+    {
+      "seed": 43,
+      "oracle": 1.0,
+      "rate_res": 0.098,
+      "frozen_train": 0.665,
+      "unsup_train": 0.79,
+      "sup_train": 0.79,
+      "unsup_dcs": 0.171,
+      "sup_dcs": 0.057,
+      "shuffle_dfa": 0.315,
+      "no_transport": true
+    },
+    {
+      "seed": 44,
+      "oracle": 0.907,
+      "rate_res": 0.108,
+      "frozen_train": 0.619,
+      "unsup_train": 0.784,
+      "sup_train": 0.739,
+      "unsup_dcs": 0.179,
+      "sup_dcs": 0.179,
+      "shuffle_dfa": 0.259,
+      "no_transport": true
+    }
+  ],
+  "n_seeds": 6,
+  "mean_oracle": 0.975,
+  "mean_rate_res": 0.1,
+  "mean_frozen_train": 0.753,
+  "mean_unsup_train": 0.827,
+  "mean_sup_train": 0.808,
+  "mean_unsup_dcs": 0.139,
+  "mean_sup_dcs": 0.108,
+  "mean_shuffle_dfa": 0.349,
+  "n_sup_beats_unsup": 1,
+  "anticheats": {
+    "no_transport": true,
+    "shuffle_below_unsup": true,
+    "rate_fails": true
+  },
+  "headline": "NULL for the supervised variant: directed error does NOT beat unsupervised sharpening on held-out (sup dcs 0.108 vs unsup 0.139, beats 1/6). Movable-substrate reframe HOLDS: all arms fit TRAIN 0.80-0.84 (vs tonic hidden stuck 0.34), so credit reaches+moves the movable hidden; but the directed error OVERFITS -- the extra train-fit does not convert to held-out. Held-out capped by the small/coarse task (k=8), not the credit. Unsupervised 5/6 remains the best on-bridge result."
+}
