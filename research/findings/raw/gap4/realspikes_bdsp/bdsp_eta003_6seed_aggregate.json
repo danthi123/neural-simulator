@@ -1,0 +1,101 @@
+{
+ "probe": "gap4_realspikes_bdsp_credit_6seed",
+ "date": "2026-08-01",
+ "backend": "numpy",
+ "device": "cpu",
+ "runner": "research.runners._gap4_realspikes_bdsp_credit_derisk",
+ "config": {
+  "n_col": 200,
+  "epochs": 30,
+  "eta": 0.003,
+  "lr_out": 0.2,
+  "beta": 1.0,
+  "p0": 0.3,
+  "w0": 0.35,
+  "jitter": 0.15,
+  "drive_pa": 1200.0,
+  "n_steps": 30,
+  "task": {
+   "n_super": 24,
+   "n_members": 8,
+   "held_per_super": 3,
+   "n_prop": 3,
+   "member_id_dim": 3,
+   "n_obs": 14,
+   "noise": 0.02
+  },
+  "margin_go": 0.05
+ },
+ "seeds": [
+  42,
+  43,
+  44,
+  100,
+  101,
+  102
+ ],
+ "n_seeds": 6,
+ "n_beats_frozen_margin": 2,
+ "n_dcs_positive": 3,
+ "mean_deep_credit_share": -0.0216,
+ "mean_bdsp_heldout": 0.3241,
+ "mean_frozen_heldout": 0.321,
+ "mean_bdsp_train": 0.5379,
+ "mean_oracle": 0.9753,
+ "anti_cheats_clean": false,
+ "shuffle_dfa_load_bearing_all": false,
+ "per_seed_dcs": [
+  0.0278,
+  0.122,
+  -0.2857,
+  -0.129,
+  -0.0645,
+  0.2
+ ],
+ "per_seed": [
+  {
+   "seed": 42,
+   "bdsp": 0.3519,
+   "frozen": 0.3333,
+   "dcs": 0.0278,
+   "train": 0.4261
+  },
+  {
+   "seed": 43,
+   "bdsp": 0.3333,
+   "frozen": 0.2407,
+   "dcs": 0.122,
+   "train": 0.5511
+  },
+  {
+   "seed": 44,
+   "bdsp": 0.2407,
+   "frozen": 0.3889,
+   "dcs": -0.2857,
+   "train": 0.4318
+  },
+  {
+   "seed": 100,
+   "bdsp": 0.3519,
+   "frozen": 0.4259,
+   "dcs": -0.129,
+   "train": 0.5966
+  },
+  {
+   "seed": 101,
+   "bdsp": 0.3519,
+   "frozen": 0.3889,
+   "dcs": -0.0645,
+   "train": 0.5852
+  },
+  {
+   "seed": 102,
+   "bdsp": 0.3148,
+   "frozen": 0.1481,
+   "dcs": 0.2,
+   "train": 0.6364
+  }
+ ],
+ "eta_swept_seed42": "eta 0.001/0.002 dcs -0.056 (neg); 0.003 dcs +0.028 (clean, anti-cheats hold); 0.01+ overfits + DFA not load-bearing -- 0.003 is a NARROW sweet spot",
+ "headline": "REAL-SPIKES BDSP TIES the reservoir: the coincidence-gated + sigmoid-baseline DFA rule (the best candidate -- reads binary EVENT co-firing + class-aligned credit) beats the frozen on-bridge reservoir by margin 2/6, dcs>0 3/6, mean dcs -0.022 (BDSP 0.324 vs frozen 0.321 = TIE), high seed variance (+0.20..-0.29), anti-cheats not clean on all seeds. BETTER than the covariance rule (which DEGRADED below frozen, dcs -0.063) but does NOT establish a reliable transport-free credit signal. eta-swept, 0.003 a narrow sweet spot. Consolidates: FOUR rules (unsup covariance / DFA / DFC+KP / coincidence-gated BDSP) tried on the real-spikes movable hidden, NONE reliably beats the frozen reservoir."
+}
