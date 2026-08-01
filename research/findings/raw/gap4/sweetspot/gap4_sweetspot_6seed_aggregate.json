@@ -1,0 +1,96 @@
+{
+  "probe": "gap4_sweetspot_6seed",
+  "date": "2026-08-01",
+  "n_prop": 3,
+  "what": "6-seed test at the LOCATED sweet spot (forward-representable + reservoir-fails): does deep credit train the hidden layer on the production spiking bridge? fixed-DFA vs learned instructive microcircuit.",
+  "config": {
+    "hidden": 48,
+    "n_hidden_layers": 2,
+    "oracle_epochs": 200,
+    "epochs": 150,
+    "w_clip": 4000,
+    "n_super": 24,
+    "seeds": [
+      100,
+      101,
+      102,
+      42,
+      43,
+      44
+    ]
+  },
+  "per_seed": [
+    {
+      "seed": 100,
+      "oracle": 0.981,
+      "reservoir": 0.389,
+      "fixed_inh": 0.241,
+      "fixed_train": 0.292,
+      "learned_inh": 0.241,
+      "learned_train": 0.246,
+      "learned_selfpred_cos": 0.277
+    },
+    {
+      "seed": 101,
+      "oracle": 0.87,
+      "reservoir": 0.204,
+      "fixed_inh": 0.278,
+      "fixed_train": 0.429,
+      "learned_inh": 0.259,
+      "learned_train": 0.433,
+      "learned_selfpred_cos": 0.441
+    },
+    {
+      "seed": 102,
+      "oracle": 1.0,
+      "reservoir": 0.296,
+      "fixed_inh": 0.241,
+      "fixed_train": 0.367,
+      "learned_inh": 0.278,
+      "learned_train": 0.279,
+      "learned_selfpred_cos": 0.19
+    },
+    {
+      "seed": 42,
+      "oracle": 0.981,
+      "reservoir": 0.315,
+      "fixed_inh": 0.352,
+      "fixed_train": 0.425,
+      "learned_inh": 0.278,
+      "learned_train": 0.412,
+      "learned_selfpred_cos": 0.367
+    },
+    {
+      "seed": 43,
+      "oracle": 0.981,
+      "reservoir": 0.148,
+      "fixed_inh": 0.259,
+      "fixed_train": 0.3,
+      "learned_inh": 0.111,
+      "learned_train": 0.321,
+      "learned_selfpred_cos": 0.256
+    },
+    {
+      "seed": 44,
+      "oracle": 0.926,
+      "reservoir": 0.222,
+      "fixed_inh": 0.278,
+      "fixed_train": 0.279,
+      "learned_inh": 0.241,
+      "learned_train": 0.346,
+      "learned_selfpred_cos": 0.223
+    }
+  ],
+  "n_seeds": 6,
+  "mean_oracle": 0.957,
+  "mean_reservoir": 0.262,
+  "mean_fixed_inherit": 0.275,
+  "mean_fixed_train_acc": 0.349,
+  "mean_learned_inherit": 0.235,
+  "mean_learned_train_acc": 0.34,
+  "mean_learned_selfpred_cos": 0.292,
+  "n_learned_beats_fixed": 1,
+  "headline": "Sweet spot CONFIRMED (oracle 0.957 fits, reservoir 0.262 fails) but deep credit FAILS there 6-seed: fixed train_acc 0.349, learned 0.340 (both << oracle 0.957), held-out ~= failing reservoir; learned does NOT beat fixed (1/6); learned microcircuit self-prediction UNDER-CONVERGED (cos 0.31) -> convergence test running before a hard learned-arm verdict.",
+  "backend": "numpy",
+  "device": "cpu"
+}
