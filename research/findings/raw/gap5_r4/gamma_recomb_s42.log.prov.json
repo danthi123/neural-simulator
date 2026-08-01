@@ -1,0 +1,28 @@
+{
+ "run_id": "1785605895-3714039",
+ "runner": "research/runners/_gap4_supervised_plateau_credit_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_gap4_supervised_plateau_credit_derisk.py",
+  "--seeds",
+  "102",
+  "--n-prop",
+  "3",
+  "--epochs",
+  "30",
+  "--out",
+  "research/findings/raw/gap4/supervised_plateau/6seed/np3_s102.json"
+ ],
+ "git_sha": "464ae5f61",
+ "git_dirty": true,
+ "started": "2026-08-01T13:38:15",
+ "env": {
+  "SIM_BACKEND": "cupy"
+ },
+ "sim_backend": "cupy",
+ "sim_backend_requested": "cupy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 2694.6,
+ "corpus_check_query": "perception v2it validate retire",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/gap5_r4/gamma_recomb_s42.log"
+}

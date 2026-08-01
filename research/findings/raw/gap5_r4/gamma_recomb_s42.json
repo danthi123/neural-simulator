@@ -1,0 +1,132 @@
+{
+  "seeds": [
+    42
+  ],
+  "n_go": 0,
+  "noise": 8.0,
+  "per": [
+    {
+      "seed": 42,
+      "backend": "cupy",
+      "main": {
+        "n_stored": 173,
+        "n_recomb": 139,
+        "n_other": 236,
+        "n_reachB": 548,
+        "n_total": 800,
+        "reachB_frac": 0.685,
+        "learned_exit_frac": 0.5693430656934306,
+        "recomb_frac": 0.44551282051282054,
+        "per_cue": {
+          "0": {
+            "stored": 81,
+            "recomb": 100,
+            "other": 132
+          },
+          "3": {
+            "stored": 92,
+            "recomb": 39,
+            "other": 104
+          }
+        }
+      },
+      "nonoise": {
+        "n_stored": 0,
+        "n_recomb": 0,
+        "n_other": 400,
+        "n_reachB": 400,
+        "n_total": 800,
+        "reachB_frac": 0.5,
+        "learned_exit_frac": 0.0,
+        "recomb_frac": 0.0,
+        "per_cue": {
+          "0": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 400
+          },
+          "3": {
+            "stored": 0,
+            "recomb": 0,
+            "other": 0
+          }
+        }
+      },
+      "scramble": {
+        "n_stored": 206,
+        "n_recomb": 163,
+        "n_other": 153,
+        "n_reachB": 522,
+        "n_total": 800,
+        "reachB_frac": 0.6525,
+        "learned_exit_frac": 0.7068965517241379,
+        "recomb_frac": 0.44173441734417346,
+        "per_cue": {
+          "0": {
+            "stored": 101,
+            "recomb": 78,
+            "other": 68
+          },
+          "3": {
+            "stored": 105,
+            "recomb": 85,
+            "other": 85
+          }
+        }
+      },
+      "noenc": {
+        "n_stored": 205,
+        "n_recomb": 180,
+        "n_other": 197,
+        "n_reachB": 582,
+        "n_total": 800,
+        "reachB_frac": 0.7275,
+        "learned_exit_frac": 0.6615120274914089,
+        "recomb_frac": 0.4675324675324675,
+        "per_cue": {
+          "0": {
+            "stored": 99,
+            "recomb": 90,
+            "other": 105
+          },
+          "3": {
+            "stored": 106,
+            "recomb": 90,
+            "other": 92
+          }
+        }
+      },
+      "noshare": {
+        "n_stored": 59,
+        "n_recomb": 71,
+        "n_other": 144,
+        "n_reachB": 274,
+        "n_total": 800,
+        "reachB_frac": 0.3425,
+        "learned_exit_frac": 0.4744525547445255,
+        "recomb_frac": 0.5461538461538461,
+        "per_cue": {
+          "0": {
+            "stored": 34,
+            "recomb": 37,
+            "other": 73
+          },
+          "3": {
+            "stored": 25,
+            "recomb": 34,
+            "other": 71
+          }
+        }
+      },
+      "wB_C": 23.216934204101562,
+      "wB_Y": 18.312267303466797,
+      "diff": {
+        "w_learned_succ": 20.76460075378418,
+        "w_unlearned_out": 17.80738592147827,
+        "diff": 2.957214832305908,
+        "ratio": 1.1660667570942618
+      },
+      "go": false
+    }
+  ]
+}
