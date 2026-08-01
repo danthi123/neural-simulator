@@ -102,6 +102,28 @@ def _resolve_argv(rec):
     return rec
 
 
+def _resolved_backend():
+    """The backend ACTUALLY used, resolved at exit rather than read at import.
+
+    EARNED 2026-07-31. This package's __init__ runs BEFORE the runner body, and runners apply
+    `os.environ.setdefault("SIM_BACKEND", "numpy")` in that body -- so the `env` block captured at import is
+    EMPTY for every caller who did not set it explicitly, and the sidecar cannot say what device ran. That is
+    the request recorded and called provenance, one layer below the defect this door exists to close: a
+    four-cell "GPU" test spent 30 minutes on the CPU and nothing in the record could have revealed it."""
+    try:
+        requested = os.environ.get("SIM_BACKEND")
+        try:
+            import cupy  # noqa: F401
+            importable = True
+        except Exception:
+            importable = False
+        return {"sim_backend": "cupy" if (requested == "cupy" and importable) else "numpy",
+                "sim_backend_requested": requested or "(unset -> runner default)",
+                "sim_backend_cupy_importable": importable}
+    except Exception:
+        return {}
+
+
 def _stamp_outputs(rec):
     """Sidecar every artifact this run created. mtime-bounded, so it can never claim another run's files."""
     _resolve_argv(rec)
@@ -123,7 +145,7 @@ def _stamp_outputs(rec):
                 with open(p + ".prov.json", "w") as fh:
                     json.dump({"run_id": rec["run_id"], "runner": rec.get("runner", "unknown"),
                                "argv": rec["argv"], "git_sha": rec["git_sha"], "git_dirty": rec["git_dirty"],
-                               "started": rec["started"], "env": rec["env"],
+                               "started": rec["started"], "env": rec["env"], **_resolved_backend(),
                                "artifact": os.path.relpath(p, _ROOT)}, fh, indent=1)
                 made.append(p)
             except OSError:
