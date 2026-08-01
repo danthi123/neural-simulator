@@ -259,10 +259,12 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 >   **The affect evictor now needs a NON-brake mechanism.**
 >
 > **▶ EXACT NEXT ACTIONS (in order):**
-> 1. **Read e-prop Round-1 when `batd5gx2d` fires.** Does noise-ON lift inherit above noise-OFF and above
->    chance/controls? YES ⇒ 6-seed + K-sweep {1,4,8} × {off,on} (√K prediction), SPLIT across local 3090 +
->    AWS (start AWS then, `bash tools/aws_gpu.sh start`). NO/identical ⇒ decorrelation isn't the lever; the
->    forward-noise plateau needs a different mechanism (finding).
+> 1. **DONE — gap#4 verdict LANDED (finding `4c65b1e8`).** e-prop K=8 clean drive inherit **0.778 (3/3,
+>    near LIF ceiling)** — reproduces the banked closure WITH PROVENANCE; noise-ON **collapses to 0.197** →
+>    √K-DECORRELATION REFUTED for e-prop (works on clean drive; noise destroys the credit). Crux Q answered:
+>    pop-coding works via clean drive + intrinsic heterogeneity, NOT decorrelation; the BDSP gap is its credit
+>    RULE. Biology entry `deep-credit-on-spikes` → reproduced-with-provenance. **√K-sweep {1,4,16} noise-OFF
+>    RUNNING** on GPU (confirm K=1≈plateau → K=8 → K=16). RESIDUAL: 3 seeds, K=8, 0.778 vs 0.89 ceiling.
 > 2. **Affect evictor = a BISTABLE-attractor WALL; brake class exhausted (finding `2b983509`). DEEP-RESEARCH
 >    DONE — the reframe: bistability is an ASSET for a TRANSIENT OPEN-LOOP CLEAR, not an obstacle.** A brake must
 >    HOLD the loop down (fights the attractor); an active clear pushes the state across the basin boundary ONCE,
