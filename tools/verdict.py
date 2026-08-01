@@ -62,6 +62,10 @@ class Check:
         return "  [%-4s] %-10s %-38s %s" % (mark, self.kind, self.name[:38], self.detail)
 
 
+def name_or(k):
+    return str(k)
+
+
 def _num(x):
     try:
         return float(x)
@@ -92,12 +96,41 @@ class Verdict:
         self.checks.append(Check("require", name, "measured=%s expect=%s" % (measured, expect), ok, note))
         return self
 
-    def floor(self, name, measured, floor, note=""):
+    def reads(self, key, artifact, used, note=""):
+        """A value you USED must equal what the run actually REPORTED. Read, do not derive.
+
+        EARNED BY ME, 2026-07-31, twenty minutes after building this module. I wrote chance = 1/k = 0.200
+        into a crux verdict. The runner PRINTS its own chance and it is 0.167. The conclusion survived, but
+        the margin I quoted was 2.7x too generous and my claim "every arm at or below chance" was false —
+        a fixed random reservoir and one kp seed were ABOVE it. Nothing caught this, because a plausible
+        wrong constant is not a file property. The fix is to stop typing quantities the artifact already
+        states."""
+        got = artifact.get(key) if isinstance(artifact, dict) else None
+        if got is None:
+            self.checks.append(Check("reads", name_or(key), "artifact has no %r to check against" % key,
+                                     None, note))
+            return self
+        g, u = _num(got), _num(used)
+        ok = (abs(g - u) <= 1e-9 * max(1.0, abs(g))) if (g is not None and u is not None) else (got == used)
+        self.checks.append(Check("reads", key, "used=%s  artifact reports=%s" % (used, got), ok, note))
+        return self
+
+    def floor(self, name, measured, floor=None, artifact=None, key="chance", note=""):
         """The result must EXCEED a floor — chance, a majority-class rate, an untrained baseline.
 
         EARNED BY the gap#4 crux: the idealised transport ceiling read 0.148 against chance 0.200. A
         result at or below its own floor is UNDEFINED, never a negative; the arms beneath an
         uninterpretable ceiling carry no information at all."""
+        # PREFER THE ARTIFACT'S OWN FLOOR over anything the caller typed. If both are given and they
+        # DISAGREE, that disagreement is itself a failed precondition -- see `reads` for why.
+        if isinstance(artifact, dict) and artifact.get(key) is not None:
+            stated = _num(artifact.get(key))
+            if floor is not None and stated is not None and abs(_num(floor) - stated) > 1e-9 * max(1.0, abs(stated)):
+                self.checks.append(Check(
+                    "floor", name,
+                    "CALLER SAID %.6g BUT THE RUN REPORTS %r=%.6g — using the run's value" % (_num(floor), key, stated),
+                    False, note or "a floor you derived instead of read"))
+            floor = stated
         m, f = _num(measured), _num(floor)
         if m is None or f is None:
             self.checks.append(Check("floor", name, "NEVER MEASURED", None, note))
@@ -236,6 +269,35 @@ def selftest():
     v.knob("gabab_weight", requested=0.05, applied=1.5)
     if v.decide(go=False, verbose=False)["status"] != UNDEFINED:
         bad.append("did NOT catch a knob that did not take effect")
+
+    # 5b. MY OWN ERROR, 2026-07-31: a floor DERIVED (1/k = 0.200) while the run REPORTED 0.167. The
+    #     conclusion survived but the quoted margin was 2.7x too generous and a companion claim was false.
+    v = Verdict("crux")
+    v.floor("ceiling vs chance", 0.148, floor=0.200, artifact={"chance": 0.167})
+    got = v.decide(go=False, verbose=False)
+    if got["status"] != UNDEFINED:
+        bad.append("did NOT catch a floor that DISAGREES with the run's own reported chance")
+    if not any("REPORTS" in c["detail"] for c in got["preconditions"]):
+        bad.append("floor/artifact disagreement was not reported in the preconditions")
+    # 5c. the artifact's value must be USED, not merely compared: 0.148 vs 0.167 still fails the floor.
+    v = Verdict("crux")
+    v.floor("ceiling vs chance", 0.148, artifact={"chance": 0.167})
+    if v.decide(go=False, verbose=False)["status"] != UNDEFINED:
+        bad.append("did NOT apply the artifact-supplied floor")
+    # 5d. and it must PASS when the caller agrees with the run — otherwise nobody can use the parameter.
+    v = Verdict("crux")
+    v.floor("acc vs chance", 0.9, floor=0.167, artifact={"chance": 0.167})
+    if v.decide(go=True, verbose=False)["status"] != GO:
+        bad.append("FALSE POSITIVE: flagged a caller floor that AGREES with the artifact")
+    # 5e. reads(): a value used must equal what the run reported.
+    v = Verdict("crux")
+    v.reads("chance", {"chance": 0.167}, used=0.200)
+    if v.decide(go=True, verbose=False)["status"] != UNDEFINED:
+        bad.append("reads() did NOT catch a used value differing from the artifact's")
+    v = Verdict("crux")
+    v.reads("chance", {"chance": 0.167}, used=0.167)
+    if v.decide(go=True, verbose=False)["status"] != GO:
+        bad.append("FALSE POSITIVE: reads() flagged a value that MATCHES the artifact")
 
     # 6. THE UNGUARDED VERDICT — no preconditions at all must never yield GO.
     v = Verdict("unguarded")
