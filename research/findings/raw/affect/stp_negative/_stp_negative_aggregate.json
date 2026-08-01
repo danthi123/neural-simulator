@@ -1,0 +1,264 @@
+{
+  "probe": "affect_stp_evictor_comprehensive_negative",
+  "n_cells": 27,
+  "n_seeds_per_cell": 3,
+  "held0_max_across_all_cells": 0.0,
+  "held0_all_zero": true,
+  "tau_d_tested_ms": [
+    50,
+    100,
+    150,
+    200,
+    500,
+    1000,
+    2000,
+    4000
+  ],
+  "stp_U_tested": [
+    0.01,
+    0.02,
+    0.05,
+    0.15
+  ],
+  "baseline_ratchet_ratio_min": 1.045,
+  "baseline_ratchet_ratio_max": 1.064,
+  "verdict": "STP annihilates held state at every tau_d and U; no graded eviction; bistable loop",
+  "cells": [
+    {
+      "file": "_affect_stpSlow_taud1000_s100_smoke.json",
+      "stp_U": null,
+      "stp_tau_d": 1000.0,
+      "seed": 100,
+      "held0": 0.0,
+      "baseline_ratchet_ratio": 1.0640176600441502
+    },
+    {
+      "file": "_affect_stpSlow_taud1000_s43_smoke.json",
+      "stp_U": null,
+      "stp_tau_d": 1000.0,
+      "seed": 43,
+      "held0": 0.0,
+      "baseline_ratchet_ratio": 1.0629067245119306
+    },
+    {
+      "file": "_affect_stpSlow_taud1000_s44_smoke.json",
+      "stp_U": null,
+      "stp_tau_d": 1000.0,
+      "seed": 44,
+      "held0": 0.0,
+      "baseline_ratchet_ratio": 1.0447427293064877
+    },
+    {
+      "file": "_affect_stpSlow_taud2000_s100_smoke.json",
+      "stp_U": null,
+      "stp_tau_d": 2000.0,
+      "seed": 100,
+      "held0": 0.0,
+      "baseline_ratchet_ratio": 1.0640176600441502
+    },
+    {
+      "file": "_affect_stpSlow_taud2000_s43_smoke.json",
+      "stp_U": null,
+      "stp_tau_d": 2000.0,
+      "seed": 43,
+      "held0": 0.0,
+      "baseline_ratchet_ratio": 1.0629067245119306
+    },
+    {
+      "file": "_affect_stpSlow_taud2000_s44_smoke.json",
+      "stp_U": null,
+      "stp_tau_d": 2000.0,
+      "seed": 44,
+      "held0": 0.0,
+      "baseline_ratchet_ratio": 1.0447427293064877
+    },
+    {
+      "file": "_affect_stpSlow_taud4000_s100_smoke.json",
+      "stp_U": null,
+      "stp_tau_d": 4000.0,
+      "seed": 100,
+      "held0": 0.0,
+      "baseline_ratchet_ratio": 1.0640176600441502
+    },
+    {
+      "file": "_affect_stpSlow_taud4000_s43_smoke.json",
+      "stp_U": null,
+      "stp_tau_d": 4000.0,
+      "seed": 43,
+      "held0": 0.0,
+      "baseline_ratchet_ratio": 1.0629067245119306
+    },
+    {
+      "file": "_affect_stpSlow_taud4000_s44_smoke.json",
+      "stp_U": null,
+      "stp_tau_d": 4000.0,
+      "seed": 44,
+      "held0": 0.0,
+      "baseline_ratchet_ratio": 1.0447427293064877
+    },
+    {
+      "file": "_affect_stpSlow_taud500_s100_smoke.json",
+      "stp_U": null,
+      "stp_tau_d": 500.0,
+      "seed": 100,
+      "held0": 0.0,
+      "baseline_ratchet_ratio": 1.0640176600441502
+    },
+    {
+      "file": "_affect_stpSlow_taud500_s43_smoke.json",
+      "stp_U": null,
+      "stp_tau_d": 500.0,
+      "seed": 43,
+      "held0": 0.0,
+      "baseline_ratchet_ratio": 1.0629067245119306
+    },
+    {
+      "file": "_affect_stpSlow_taud500_s44_smoke.json",
+      "stp_U": null,
+      "stp_tau_d": 500.0,
+      "seed": 44,
+      "held0": 0.0,
+      "baseline_ratchet_ratio": 1.0447427293064877
+    },
+    {
+      "file": "_affect_stpU0.01_s100_smoke.json",
+      "stp_U": 0.01,
+      "stp_tau_d": 150.0,
+      "seed": 100,
+      "held0": 0.0,
+      "baseline_ratchet_ratio": 1.0640176600441502
+    },
+    {
+      "file": "_affect_stpU0.01_s43_smoke.json",
+      "stp_U": 0.01,
+      "stp_tau_d": 150.0,
+      "seed": 43,
+      "held0": 0.0,
+      "baseline_ratchet_ratio": 1.0629067245119306
+    },
+    {
+      "file": "_affect_stpU0.01_s44_smoke.json",
+      "stp_U": 0.01,
+      "stp_tau_d": 150.0,
+      "seed": 44,
+      "held0": 0.0,
+      "baseline_ratchet_ratio": 1.0447427293064877
+    },
+    {
+      "file": "_affect_stpU0.02_s100_smoke.json",
+      "stp_U": 0.02,
+      "stp_tau_d": 150.0,
+      "seed": 100,
+      "held0": 0.0,
+      "baseline_ratchet_ratio": 1.0640176600441502
+    },
+    {
+      "file": "_affect_stpU0.02_s43_smoke.json",
+      "stp_U": 0.02,
+      "stp_tau_d": 150.0,
+      "seed": 43,
+      "held0": 0.0,
+      "baseline_ratchet_ratio": 1.0629067245119306
+    },
+    {
+      "file": "_affect_stpU0.02_s44_smoke.json",
+      "stp_U": 0.02,
+      "stp_tau_d": 150.0,
+      "seed": 44,
+      "held0": 0.0,
+      "baseline_ratchet_ratio": 1.0447427293064877
+    },
+    {
+      "file": "_affect_stpU0.05_s100_smoke.json",
+      "stp_U": 0.05,
+      "stp_tau_d": 150.0,
+      "seed": 100,
+      "held0": 0.0,
+      "baseline_ratchet_ratio": 1.0640176600441502
+    },
+    {
+      "file": "_affect_stpU0.05_s43_smoke.json",
+      "stp_U": 0.05,
+      "stp_tau_d": 150.0,
+      "seed": 43,
+      "held0": 0.0,
+      "baseline_ratchet_ratio": 1.0629067245119306
+    },
+    {
+      "file": "_affect_stpU0.05_s44_smoke.json",
+      "stp_U": 0.05,
+      "stp_tau_d": 150.0,
+      "seed": 44,
+      "held0": 0.0,
+      "baseline_ratchet_ratio": 1.0447427293064877
+    },
+    {
+      "file": "_affect_stp_taud100_s100_smoke.json",
+      "stp_U": null,
+      "stp_tau_d": 100.0,
+      "seed": 100,
+      "held0": 0.0,
+      "baseline_ratchet_ratio": 1.0640176600441502
+    },
+    {
+      "file": "_affect_stp_taud100_s43_smoke.json",
+      "stp_U": null,
+      "stp_tau_d": 100.0,
+      "seed": 43,
+      "held0": 0.0,
+      "baseline_ratchet_ratio": 1.0629067245119306
+    },
+    {
+      "file": "_affect_stp_taud100_s44_smoke.json",
+      "stp_U": null,
+      "stp_tau_d": 100.0,
+      "seed": 44,
+      "held0": 0.0,
+      "baseline_ratchet_ratio": 1.0447427293064877
+    },
+    {
+      "file": "_affect_stp_taud50_s100_smoke.json",
+      "stp_U": null,
+      "stp_tau_d": 50.0,
+      "seed": 100,
+      "held0": 0.0,
+      "baseline_ratchet_ratio": 1.0640176600441502
+    },
+    {
+      "file": "_affect_stp_taud50_s43_smoke.json",
+      "stp_U": null,
+      "stp_tau_d": 50.0,
+      "seed": 43,
+      "held0": 0.0,
+      "baseline_ratchet_ratio": 1.0629067245119306
+    },
+    {
+      "file": "_affect_stp_taud50_s44_smoke.json",
+      "stp_U": null,
+      "stp_tau_d": 50.0,
+      "seed": 44,
+      "held0": 0.0,
+      "baseline_ratchet_ratio": 1.0447427293064877
+    }
+  ],
+  "provenance": {
+    "runner": "inline-aggregation (not a runner)",
+    "script": "hand-aggregated from the 27 _affect_st*_smoke.json in this dir",
+    "seeds": [
+      43,
+      44,
+      100
+    ],
+    "sim_backend": "numpy",
+    "note": "each source smoke ran SIM_BACKEND=numpy .venv/bin/python -m research.runners._affect_eviction_derisk on a pool node; see per-cell .prov.json sidecars"
+  },
+  "runner": "research.runners._affect_eviction_derisk",
+  "seeds": [
+    43,
+    44,
+    100
+  ],
+  "backend": "numpy",
+  "sim_backend": "numpy",
+  "sim_backend_provenance": "recorded from research/queue/dispatch.log (pool jobs dispatched SIM_BACKEND=numpy .venv/bin/python)"
+}
