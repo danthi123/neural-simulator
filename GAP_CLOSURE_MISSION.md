@@ -269,11 +269,15 @@ of the bind structure · the cheapest de-risk. (The "fixed algebra is biology-gr
 >    then the OFF fixed-point holds it with ZERO standing force. STP annihilation was evidence FOR this (STP is
 >    persistent → blocks re-ignition; a self-removing quench leaves synapses recovered → re-ignition survives).
 >    Ranked, all runner-only, levers confirmed in bridge.py:
->    **#1 (BUILDING, subagent) = active CLEAR/QUENCH gate** (Compte-Wang persistent-activity termination): a
->    strong transient quench to the affect pools during post-drive silence collapses the reverberation → OFF
->    catches it. Reuses G1-G6 harness. **LOAD-BEARING anti-cheat = quench current == 0.0 at the READ window**
->    (held-low with zero standing quench = basin-switch, not GABA_B-style subtraction). Cheap host-shortcut
->    pre-smoke (negative cp_external_input_current) first → then brain-based `quench_fs` pool + neuromodulator.
+>    **#1 = active CLEAR/QUENCH gate — PHYSICS VERIFIED ✅ (`4ff27661`).** A transient strong-negative clear to
+>    the affect pools during post-drive silence collapses the reverberation; the OFF basin holds. Physics smoke
+>    (seed 43, -2000pA/280ms): ALL 6 GATES PASS — G1 evict 0.000, G3 re-ignite 1.023 (attractor SURVIVES, avoids
+>    STP annihilation), G4 persist 0.629, G6 lesion(=quench-off) 1.042; anti-cheat CLEAN (quench current
+>    MEASURED == 0.0 at every read window → basin-switch, not GABA_B subtraction); seed-robust 43/44/100. Physics
+>    refinement: the loop is MONOSTABLE-ON with a shallow OFF basin — needs ~180ms FULL drain (> the 100ms
+>    NMDA-decay estimate), then OFF holds >1.5s with zero force. **SCOPE: host shortcut (host-injected current).
+>    NEXT: (a) 36-job pool sweep maps the operating region [running]; (b) CONVERT to brain-based spiking
+>    `quench_fs` pool + neuromodulator gate (the real deliverable per brain-based-only); (c) 6-seed battery.**
 >    **#2 = neuromod GAIN control** (Durstewitz-Seamans dual-state: transiently drop `synaptic_gain` multiplier
 >    below self-sustaining → ON basin vanishes → rolls to OFF; consumed at bridge.py:6827/6840).
 >    **#3 = graded/line attractor** (Egorov CAN current — needs a `sim/` edit; parked, fragile).
