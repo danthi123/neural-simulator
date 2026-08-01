@@ -1,0 +1,24 @@
+{
+  "probe": "perception_v2it_validate_or_retire_6seed",
+  "date": "2026-08-01",
+  "backend": "numpy",
+  "device": "cpu",
+  "chance": 0.25,
+  "n_seeds": 6,
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "it_heldpos_decode_mean": 0.245,
+  "it_heldpos_decode_min": 0.094,
+  "v1_complex_heldpos_decode_mean": 0.26,
+  "n_retire": 6,
+  "outcome": "RETIRE",
+  "headline": "v2it position-invariant object perception RETIRES 6/6: IT held-position decode 0.245 ~= chance 0.25 (min 0.094), V1-complex 0.260 -- no invariant object code generalizes to held-out positions on this path.",
+  "frozen_it_heldpos_decode_mean": 0.25,
+  "it_scramble_decode_mean": 0.302
+}
