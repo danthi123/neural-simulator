@@ -11,21 +11,29 @@ artifacts:
 # gap#4: the 6-seed bar RAN — forward-learning + √K trend are REAL, but the deep-credit control (shuffle-DFA) LEAKS on the majority of seeds → the deep-CREDIT *attribution* is NOT closed
 
 **One-line verdict:** the deep-credit-on-spikes closure named "the 6-seed bar" as its *only* remaining residual.
-That bar has now been run (noise-OFF, depth-2, at K=8 and K=16, seeds 42/43/44/100/101/102), and the runner
-returns **SIGNAL=False on 11 of 12 runs** — because the **shuffle-DFA credit control leaks** on 4/6 seeds at
-each K. The forward learning and the √K `inherit` trend are genuinely real; what is *not* established at 6
-seeds is that **correct credit routing** — rather than the population reservoir's own expressivity — is what
-drives the result. This is a silent-failure rule #1 correction: the banked √K "closure" read the `inherit`
-field past the run's own negative verdict.
+That bar has now been run (noise-OFF, depth-2, K=8 and K=16, seeds 42/43/44/100/101/102) and **SIGNAL=False on
+11 of 12 runs** — for two independent reasons, the second decisive: (1) the **shuffle-DFA credit control leaks**
+on 4/6 seeds at each K; and (2) **a frozen random hidden reservoir is as good as full e-prop** — the runner's own
+`reservoir_control` (added 2026-07-16, `reservoir_control_run=True` on every run) reports **`deep_credit_share`
+mean 0.066 at K=8 and 0.005 at K=16**, *negative* on 3/6 seeds at each K. At K=16, e-prop 0.852 vs frozen-hidden
+0.852 — training the hidden feedforward pathways adds **nothing**. So the √K `inherit` curve is a
+**reservoir-capacity** curve; the closure read the `eprop_inherit` field (0.85) and never read the
+`deep_credit_share` field (0.005) the same runner computed. This is silent-failure rule #1, and rule #7 (the
+control existed and the answer was in the artifact all along). Forward learning + teacher-contingency (permuted
+clean) are still real.
 
 Artifact (aggregate, all 12 runs + per-seed): `research/findings/raw/gap4_6seed_shuffleDFA/gap4_6seed_shuffleDFA_audit.json`.
 
 ## The 6-seed × K table (GO gate: shuffle-DFA ≤ chance+0.10 = 0.433; chance 0.333)
 
-| K | SIGNAL=GO | shuffle-DFA leaks (>0.433) | mean inherit | mean permuted | mean shuffle-DFA |
-|---|---|---|---|---|---|
-| 8  | **1/6** | **4/6** | 0.685 | 0.247 (clean) | 0.438 |
-| 16 | **0/6** | **4/6** | 0.852 | 0.247 (clean) | 0.494 |
+| K | SIGNAL=GO | mean e-prop | mean frozen-hidden reservoir | **mean deep_credit_share** | deep_share negative | shuffle-DFA leaks (>0.433) |
+|---|---|---|---|---|---|---|
+| 8  | **1/6** | 0.685 | 0.679 | **0.066** | 3/6 | 4/6 |
+| 16 | **0/6** | 0.852 | 0.852 | **0.005** | 3/6 | 4/6 |
+
+Permuted control clean at both K (mean 0.247 → chance). `deep_credit_share = (e-prop − frozen-hidden) / (oracle −
+frozen-hidden)`: at K=16 the numerator is ~0 (0.852 − 0.852), so training the hidden layers via e-prop adds
+essentially nothing over freezing them at random init.
 
 <!--derived from the per_seed arrays in the cited artifact-->
 Per-seed shuffle-DFA — K=16: 0.593/0.593/0.519/0.556/0.333/0.370; K=8: 0.296/0.444/0.593/0.481/0.370/0.444.
@@ -48,12 +56,17 @@ chance on 8 of 12 runs.
   the deep-credit control. Corrected in `research/biology/deep-credit-on-spikes.md` current_status and the
   master roadmap §7 gap#4 banner.
 
-## The real residual (a method, not "more seeds")
+## The real residual (a mechanism, not "build the control" — the control already exists)
 
-A control the reservoir **cannot defeat**: a task/operating-point where credit routing is genuinely
-load-bearing, measured against a **frozen-hidden reservoir** baseline (train only the readout on a fixed random
-hidden net). If e-prop with correct credit clears the frozen-hidden reservoir *and* shuffle-DFA collapses to
-chance, the deep-credit attribution is earned. Until then gap#4 has a demonstrated **forward-learning-on-spikes
-+ population-capacity** result, not a clean **deep-credit** one. Same conclusion the arc-A shallow atom reached
-independently (its shuffle-DFA was reported-not-gated for exactly this reason) — the two arcs converge on the
-depth-2, reservoir-controlled testbed as the next de-risk.
+The frozen-hidden reservoir control is **already in the runner** (`reservoir_control=True` by default,
+`_onbridge_eprop_port_derisk.py:512`) and **already ran** on every one of these 12 runs — it is not something to
+build. What it reports is that at this operating point (depth-2, noise-off, clean tonic drive, ≤80 epochs)
+**deep credit adds ~0 over a fixed random reservoir**. So the residual is not a missing control but a missing
+*signal*: an operating-point or mechanism where training the hidden feedforward pathways actually contributes.
+Candidates, all already named in the record: the **learned instructive signal** (arc B / §2.8, replaces the
+fixed-random DFA feedback that FA-degrades with depth); the **φ′-vanishing-credit fix** (the 2026-07-24 root
+cause: credit shrinks ~1600× over depth at E≈0.04); a **representable forward** (the 2026-07-25 coincidence-
+plateau expander, GO but never combined with the credit runner). Until one of those moves `deep_credit_share`
+off ~0, gap#4 has a **forward-learning-on-spikes + population-capacity** result, not a **deep-credit** one. The
+arc-A shallow atom reached the same place independently — the two converge on making the hidden-layer credit
+*matter*, not on adding a control.

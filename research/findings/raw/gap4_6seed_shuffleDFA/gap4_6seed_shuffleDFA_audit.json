@@ -6,70 +6,64 @@
   "K8": {
     "per_seed": [
       {
-        "source": "eprop_k8_s42_off.json",
-        "SIGNAL": true,
-        "pool_k": 8,
-        "ou_noise": false,
-        "n_hidden_layers": 2,
-        "inherit": 0.741,
-        "permuted": 0.185,
+        "seed": 42,
+        "eprop_inherit": 0.741,
+        "frozen_hidden_reservoir": 0.63,
+        "deep_credit_share": 0.273,
         "shuffle_dfa": 0.296,
-        "seed": 42
+        "permuted": 0.185,
+        "SIGNAL": true,
+        "reservoir_control_run": true
       },
       {
-        "source": "eprop_k8_s43_off.json",
-        "SIGNAL": false,
-        "pool_k": 8,
-        "ou_noise": false,
-        "n_hidden_layers": 2,
-        "inherit": 0.815,
+        "seed": 43,
+        "eprop_inherit": 0.815,
+        "frozen_hidden_reservoir": 0.852,
+        "deep_credit_share": -0.077,
+        "shuffle_dfa": 0.444,
         "permuted": 0.148,
-        "shuffle_dfa": 0.444,
-        "seed": 43
+        "SIGNAL": false,
+        "reservoir_control_run": true
       },
       {
-        "source": "eprop_k8_s44_off.json",
-        "SIGNAL": false,
-        "pool_k": 8,
-        "ou_noise": false,
-        "n_hidden_layers": 2,
-        "inherit": 0.778,
-        "permuted": 0.259,
+        "seed": 44,
+        "eprop_inherit": 0.778,
+        "frozen_hidden_reservoir": 0.889,
+        "deep_credit_share": -0.25,
         "shuffle_dfa": 0.593,
-        "seed": 44
-      },
-      {
-        "source": "eprop_6seed_k8_s100.json",
-        "SIGNAL": false,
-        "pool_k": 8,
-        "ou_noise": false,
-        "n_hidden_layers": 2,
-        "inherit": 0.778,
         "permuted": 0.259,
+        "SIGNAL": false,
+        "reservoir_control_run": true
+      },
+      {
+        "seed": 100,
+        "eprop_inherit": 0.778,
+        "frozen_hidden_reservoir": 0.778,
+        "deep_credit_share": 0.0,
         "shuffle_dfa": 0.481,
-        "seed": 100
+        "permuted": 0.259,
+        "SIGNAL": false,
+        "reservoir_control_run": true
       },
       {
-        "source": "eprop_6seed_k8_s101.json",
-        "SIGNAL": false,
-        "pool_k": 8,
-        "ou_noise": false,
-        "n_hidden_layers": 2,
-        "inherit": 0.519,
-        "permuted": 0.333,
+        "seed": 101,
+        "eprop_inherit": 0.519,
+        "frozen_hidden_reservoir": 0.481,
+        "deep_credit_share": 0.2,
         "shuffle_dfa": 0.37,
-        "seed": 101
+        "permuted": 0.333,
+        "SIGNAL": false,
+        "reservoir_control_run": true
       },
       {
-        "source": "eprop_6seed_k8_s102.json",
-        "SIGNAL": false,
-        "pool_k": 8,
-        "ou_noise": false,
-        "n_hidden_layers": 2,
-        "inherit": 0.481,
-        "permuted": 0.296,
+        "seed": 102,
+        "eprop_inherit": 0.481,
+        "frozen_hidden_reservoir": 0.444,
+        "deep_credit_share": 0.25,
         "shuffle_dfa": 0.444,
-        "seed": 102
+        "permuted": 0.296,
+        "SIGNAL": false,
+        "reservoir_control_run": true
       }
     ],
     "n_seeds": 6,
@@ -77,75 +71,74 @@
     "n_shuffle_leak": 4,
     "mean_inherit": 0.685,
     "mean_shuffle_dfa": 0.438,
-    "mean_permuted": 0.247
+    "mean_permuted": 0.247,
+    "mean_eprop_inherit": 0.685,
+    "mean_frozen_hidden_reservoir": 0.679,
+    "mean_deep_credit_share": 0.066,
+    "n_deep_share_gt_0p15": 3,
+    "n_deep_share_negative": 2
   },
   "K16": {
     "per_seed": [
       {
-        "source": "eprop_ksweep_k16_s42.json",
-        "SIGNAL": false,
-        "pool_k": 16,
-        "ou_noise": false,
-        "n_hidden_layers": 2,
-        "inherit": 0.963,
-        "permuted": 0.185,
+        "seed": 42,
+        "eprop_inherit": 0.963,
+        "frozen_hidden_reservoir": 1.0,
+        "deep_credit_share": -0.059,
         "shuffle_dfa": 0.593,
-        "seed": 42
+        "permuted": 0.185,
+        "SIGNAL": false,
+        "reservoir_control_run": true
       },
       {
-        "source": "eprop_ksweep_k16_s43.json",
-        "SIGNAL": false,
-        "pool_k": 16,
-        "ou_noise": false,
-        "n_hidden_layers": 2,
-        "inherit": 0.926,
-        "permuted": 0.185,
+        "seed": 43,
+        "eprop_inherit": 0.926,
+        "frozen_hidden_reservoir": 0.889,
+        "deep_credit_share": 0.063,
         "shuffle_dfa": 0.593,
-        "seed": 43
+        "permuted": 0.185,
+        "SIGNAL": false,
+        "reservoir_control_run": true
       },
       {
-        "source": "eprop_ksweep_k16_s44.json",
-        "SIGNAL": false,
-        "pool_k": 16,
-        "ou_noise": false,
-        "n_hidden_layers": 2,
-        "inherit": 0.889,
-        "permuted": 0.222,
+        "seed": 44,
+        "eprop_inherit": 0.889,
+        "frozen_hidden_reservoir": 0.926,
+        "deep_credit_share": -0.067,
         "shuffle_dfa": 0.519,
-        "seed": 44
+        "permuted": 0.222,
+        "SIGNAL": false,
+        "reservoir_control_run": true
       },
       {
-        "source": "eprop_6seed_k16_s100.json",
-        "SIGNAL": false,
-        "pool_k": 16,
-        "ou_noise": false,
-        "n_hidden_layers": 2,
-        "inherit": 0.815,
-        "permuted": 0.333,
+        "seed": 100,
+        "eprop_inherit": 0.815,
+        "frozen_hidden_reservoir": 0.778,
+        "deep_credit_share": 0.077,
         "shuffle_dfa": 0.556,
-        "seed": 100
+        "permuted": 0.333,
+        "SIGNAL": false,
+        "reservoir_control_run": true
       },
       {
-        "source": "eprop_6seed_k16_s101.json",
-        "SIGNAL": false,
-        "pool_k": 16,
-        "ou_noise": false,
-        "n_hidden_layers": 2,
-        "inherit": 0.741,
-        "permuted": 0.259,
+        "seed": 101,
+        "eprop_inherit": 0.741,
+        "frozen_hidden_reservoir": 0.667,
+        "deep_credit_share": 0.182,
         "shuffle_dfa": 0.333,
-        "seed": 101
+        "permuted": 0.259,
+        "SIGNAL": false,
+        "reservoir_control_run": true
       },
       {
-        "source": "eprop_6seed_k16_s102.json",
-        "SIGNAL": false,
-        "pool_k": 16,
-        "ou_noise": false,
-        "n_hidden_layers": 2,
-        "inherit": 0.778,
-        "permuted": 0.296,
+        "seed": 102,
+        "eprop_inherit": 0.778,
+        "frozen_hidden_reservoir": 0.852,
+        "deep_credit_share": -0.167,
         "shuffle_dfa": 0.37,
-        "seed": 102
+        "permuted": 0.296,
+        "SIGNAL": false,
+        "reservoir_control_run": true
       }
     ],
     "n_seeds": 6,
@@ -153,9 +146,14 @@
     "n_shuffle_leak": 4,
     "mean_inherit": 0.852,
     "mean_shuffle_dfa": 0.494,
-    "mean_permuted": 0.247
+    "mean_permuted": 0.247,
+    "mean_eprop_inherit": 0.852,
+    "mean_frozen_hidden_reservoir": 0.852,
+    "mean_deep_credit_share": 0.005,
+    "n_deep_share_gt_0p15": 1,
+    "n_deep_share_negative": 3
   },
-  "headline": "deep-credit control (shuffle-DFA) NOT clean at 6 seeds: K8 4/6 leak 1/6 GO, K16 4/6 leak 0/6 GO; forward-learning + inherit trend real, credit-attribution not established",
+  "headline": "BOTH deep-credit controls fail at 6 seeds: (1) shuffle-DFA leaks 4/6 at each K; (2) frozen-hidden RESERVOIR baseline ~equals full e-prop -> deep_credit_share mean 0.066 (K8) / 0.005 (K16), NEGATIVE on 3/6 at each K. The runner's own reservoir_control (reservoir_control_run=True) computed this; the closure read eprop_inherit (0.85) not deep_credit_share (0.005). The result is a fixed random spiking reservoir + trained readout; the \u221aK curve is a reservoir-capacity curve. Forward-learning + permuted-clean still real.",
   "go_bar_shuffle_dfa": 0.433,
   "chance": 0.333
 }
