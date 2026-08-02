@@ -1,0 +1,25 @@
+{
+ "run_id": "1785632018-3998410",
+ "runner": "research/runners/_gap4_layerwise_kp_transportfree_mnist_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_gap4_layerwise_kp_transportfree_mnist_derisk.py",
+  "--seeds",
+  "42",
+  "--depths",
+  "2",
+  "4",
+  "--out",
+  "research/findings/raw/gap4/layerwise_kp_smoke_seed42.json"
+ ],
+ "git_sha": "e8cfc2686",
+ "git_dirty": true,
+ "started": "2026-08-01T20:53:38",
+ "env": {},
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 5263.0,
+ "corpus_check_query": "multi-layer stacked deep credit two hidden layers local rule movable plateau depth",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/gap4/graded_feedback_ladder/ladder_s42.json"
+}

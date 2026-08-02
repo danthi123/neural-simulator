@@ -1,6 +1,7 @@
 ---
 type: finding
-status: contributing
+status: superseded
+superseded_by: research/findings/2026-08-01-gap4-transport-free-ceiling-FALSIFIED-chained-FA-sigmaprime-clears-it-plus-MNIST-depth4-KP-rescue-6seed.md
 date: 2026-08-01
 mechanism: deep-credit-on-spikes
 artifacts:
@@ -8,6 +9,8 @@ artifacts:
 ---
 
 # gap#4 crux — DEPTH-2: the coincidence-gated BDSP GENERALIZES through depth where feedback-alignment MEMORIZES, but both cap at the same held-out ceiling — the depth-scaling wall is CONSOLIDATED (6-seed)
+
+> ⛔ **AMENDED / SUPERSEDED 2026-08-01** by [the transport-free-ceiling FALSIFICATION](2026-08-01-gap4-transport-free-ceiling-FALSIFIED-chained-FA-sigmaprime-clears-it-plus-MNIST-depth4-KP-rescue-6seed.md). **The MEASUREMENTS below STAND** — the two methods tested here (direct one-hop DFA and binary coincidence-gated BDSP) do cap at held-out ~0.63 on this toy. **The INFERENCE is FALSIFIED:** the ~0.63 is NOT "a fundamental limit of the local transport-free credit class", and clearing it is NOT "a different-paradigm (equilibrium-propagation) question". A transport-free local rule adding the two factors these methods LACKED — chained multi-hop feedback + the σ′ activation-derivative — clears it 6-seed (0.935 vs 0.63, oracle 0.974), survives net-depth 4, and KP-learned transport-free feedback rescues MNIST depth-4 (FA 0.531 → KP 0.876, 6/6). The verified attribution: σ′ (+0.230, necessary) + chained feedback (jointly); the binary gate this doc implicated was a red herring (−0.070). This "fundamental limit" verdict was banked from a memory model of the mechanisms without reading the field ([WF-Act-PC arxiv 2607.13380](https://arxiv.org/html/2607.13380v1)) that named the missing σ′ factor — the failure that earned `gates/boundary_verdict_external_check`.
 
 <!--derived-->
 **One-line verdict:** the first test of gap#4 credit assignment **at depth** — every prior rule this session was

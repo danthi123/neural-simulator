@@ -1,0 +1,439 @@
+{
+  "seeds": [
+    42,
+    43,
+    44,
+    100,
+    101,
+    102
+  ],
+  "depths": [
+    2,
+    4
+  ],
+  "hidden": 128,
+  "epochs": 15,
+  "n_train": 8000,
+  "kp_lr": 0.2,
+  "kp_decay": 0.0001,
+  "results": {
+    "depth2": {
+      "per": [
+        {
+          "seed": 42,
+          "sizes": [
+            784,
+            128,
+            128,
+            10
+          ],
+          "res": {
+            "reservoir": {
+              "test": 0.7875,
+              "train": 0.7921
+            },
+            "fa": {
+              "test": 0.933,
+              "train": 0.9884
+            },
+            "kp": {
+              "test": 0.934,
+              "train": 0.9916
+            },
+            "backprop": {
+              "test": 0.9405,
+              "train": 1.0
+            },
+            "kp_permuted": {
+              "test": 0.112
+            }
+          },
+          "fa_bp_gap": 0.0075,
+          "kp_closes_gap": false
+        },
+        {
+          "seed": 43,
+          "sizes": [
+            784,
+            128,
+            128,
+            10
+          ],
+          "res": {
+            "reservoir": {
+              "test": 0.796,
+              "train": 0.7764
+            },
+            "fa": {
+              "test": 0.937,
+              "train": 0.9849
+            },
+            "kp": {
+              "test": 0.9385,
+              "train": 0.9899
+            },
+            "backprop": {
+              "test": 0.948,
+              "train": 1.0
+            },
+            "kp_permuted": {
+              "test": 0.11
+            }
+          },
+          "fa_bp_gap": 0.011,
+          "kp_closes_gap": false
+        },
+        {
+          "seed": 44,
+          "sizes": [
+            784,
+            128,
+            128,
+            10
+          ],
+          "res": {
+            "reservoir": {
+              "test": 0.8025,
+              "train": 0.7836
+            },
+            "fa": {
+              "test": 0.9355,
+              "train": 0.9804
+            },
+            "kp": {
+              "test": 0.9395,
+              "train": 0.987
+            },
+            "backprop": {
+              "test": 0.9465,
+              "train": 1.0
+            },
+            "kp_permuted": {
+              "test": 0.0815
+            }
+          },
+          "fa_bp_gap": 0.011,
+          "kp_closes_gap": false
+        },
+        {
+          "seed": 100,
+          "sizes": [
+            784,
+            128,
+            128,
+            10
+          ],
+          "res": {
+            "reservoir": {
+              "test": 0.7665,
+              "train": 0.7652
+            },
+            "fa": {
+              "test": 0.9295,
+              "train": 0.9861
+            },
+            "kp": {
+              "test": 0.931,
+              "train": 0.9889
+            },
+            "backprop": {
+              "test": 0.944,
+              "train": 0.9999
+            },
+            "kp_permuted": {
+              "test": 0.08
+            }
+          },
+          "fa_bp_gap": 0.0145,
+          "kp_closes_gap": false
+        },
+        {
+          "seed": 101,
+          "sizes": [
+            784,
+            128,
+            128,
+            10
+          ],
+          "res": {
+            "reservoir": {
+              "test": 0.726,
+              "train": 0.7371
+            },
+            "fa": {
+              "test": 0.927,
+              "train": 0.9768
+            },
+            "kp": {
+              "test": 0.928,
+              "train": 0.9796
+            },
+            "backprop": {
+              "test": 0.945,
+              "train": 1.0
+            },
+            "kp_permuted": {
+              "test": 0.1095
+            }
+          },
+          "fa_bp_gap": 0.018,
+          "kp_closes_gap": false
+        },
+        {
+          "seed": 102,
+          "sizes": [
+            784,
+            128,
+            128,
+            10
+          ],
+          "res": {
+            "reservoir": {
+              "test": 0.761,
+              "train": 0.7465
+            },
+            "fa": {
+              "test": 0.929,
+              "train": 0.9818
+            },
+            "kp": {
+              "test": 0.931,
+              "train": 0.9881
+            },
+            "backprop": {
+              "test": 0.9375,
+              "train": 1.0
+            },
+            "kp_permuted": {
+              "test": 0.131
+            }
+          },
+          "fa_bp_gap": 0.0085,
+          "kp_closes_gap": false
+        }
+      ],
+      "means": {
+        "reservoir": 0.77325,
+        "fa": 0.9318333333333335,
+        "kp": 0.9336666666666668,
+        "backprop": 0.9435833333333333
+      },
+      "kp_closes": 0
+    },
+    "depth4": {
+      "per": [
+        {
+          "seed": 42,
+          "sizes": [
+            784,
+            128,
+            128,
+            128,
+            128,
+            10
+          ],
+          "res": {
+            "reservoir": {
+              "test": 0.102,
+              "train": 0.1036
+            },
+            "fa": {
+              "test": 0.6815,
+              "train": 0.6891
+            },
+            "kp": {
+              "test": 0.8775,
+              "train": 0.892
+            },
+            "backprop": {
+              "test": 0.929,
+              "train": 0.9951
+            },
+            "kp_permuted": {
+              "test": 0.1085
+            }
+          },
+          "fa_bp_gap": 0.2475,
+          "kp_closes_gap": true
+        },
+        {
+          "seed": 43,
+          "sizes": [
+            784,
+            128,
+            128,
+            128,
+            128,
+            10
+          ],
+          "res": {
+            "reservoir": {
+              "test": 0.097,
+              "train": 0.102
+            },
+            "fa": {
+              "test": 0.646,
+              "train": 0.6239
+            },
+            "kp": {
+              "test": 0.8495,
+              "train": 0.8565
+            },
+            "backprop": {
+              "test": 0.936,
+              "train": 0.9974
+            },
+            "kp_permuted": {
+              "test": 0.0965
+            }
+          },
+          "fa_bp_gap": 0.29,
+          "kp_closes_gap": true
+        },
+        {
+          "seed": 44,
+          "sizes": [
+            784,
+            128,
+            128,
+            128,
+            128,
+            10
+          ],
+          "res": {
+            "reservoir": {
+              "test": 0.092,
+              "train": 0.091
+            },
+            "fa": {
+              "test": 0.6995,
+              "train": 0.7019
+            },
+            "kp": {
+              "test": 0.875,
+              "train": 0.8869
+            },
+            "backprop": {
+              "test": 0.934,
+              "train": 0.9978
+            },
+            "kp_permuted": {
+              "test": 0.094
+            }
+          },
+          "fa_bp_gap": 0.2345,
+          "kp_closes_gap": true
+        },
+        {
+          "seed": 100,
+          "sizes": [
+            784,
+            128,
+            128,
+            128,
+            128,
+            10
+          ],
+          "res": {
+            "reservoir": {
+              "test": 0.1135,
+              "train": 0.1034
+            },
+            "fa": {
+              "test": 0.4685,
+              "train": 0.4581
+            },
+            "kp": {
+              "test": 0.8925,
+              "train": 0.899
+            },
+            "backprop": {
+              "test": 0.925,
+              "train": 0.9911
+            },
+            "kp_permuted": {
+              "test": 0.0995
+            }
+          },
+          "fa_bp_gap": 0.4565,
+          "kp_closes_gap": true
+        },
+        {
+          "seed": 101,
+          "sizes": [
+            784,
+            128,
+            128,
+            128,
+            128,
+            10
+          ],
+          "res": {
+            "reservoir": {
+              "test": 0.1135,
+              "train": 0.1121
+            },
+            "fa": {
+              "test": 0.096,
+              "train": 0.0995
+            },
+            "kp": {
+              "test": 0.8775,
+              "train": 0.8844
+            },
+            "backprop": {
+              "test": 0.924,
+              "train": 0.9945
+            },
+            "kp_permuted": {
+              "test": 0.1135
+            }
+          },
+          "fa_bp_gap": 0.828,
+          "kp_closes_gap": true
+        },
+        {
+          "seed": 102,
+          "sizes": [
+            784,
+            128,
+            128,
+            128,
+            128,
+            10
+          ],
+          "res": {
+            "reservoir": {
+              "test": 0.165,
+              "train": 0.1484
+            },
+            "fa": {
+              "test": 0.595,
+              "train": 0.6048
+            },
+            "kp": {
+              "test": 0.8865,
+              "train": 0.8905
+            },
+            "backprop": {
+              "test": 0.924,
+              "train": 0.9959
+            },
+            "kp_permuted": {
+              "test": 0.119
+            }
+          },
+          "fa_bp_gap": 0.329,
+          "kp_closes_gap": true
+        }
+      ],
+      "means": {
+        "reservoir": 0.11383333333333334,
+        "fa": 0.5310833333333335,
+        "kp": 0.8764166666666666,
+        "backprop": 0.9286666666666669
+      },
+      "kp_closes": 6
+    }
+  }
+}

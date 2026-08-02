@@ -1,0 +1,60 @@
+{
+  "probe": "gap4_graded_credit_feedback_source_ladder",
+  "seeds": [
+    42
+  ],
+  "backend": "numpy",
+  "config": {
+    "epochs": 300,
+    "lr": 0.5,
+    "batch": 64,
+    "hidden": 64,
+    "kp_lr": 0.1,
+    "kp_decay": 0.001,
+    "task": "depth-2 pair-XOR->threshold (emerge1)",
+    "mechanism": "graded credit + sigma' ON at every hidden layer, NO binary gate; feedback source (dfa/kp/truegrad) is the single variable"
+  },
+  "elapsed_seconds": 10.4,
+  "per_seed": [
+    {
+      "seed": 42,
+      "chance": 0.5487,
+      "oracle_train": 1.0,
+      "oracle_heldout": 0.9721,
+      "oracle_probe": 0.9164,
+      "oracle_whash": "3b3192bb09570c78",
+      "dfa_train": 1.0,
+      "dfa_heldout": 0.9944,
+      "dfa_probe": 0.8496,
+      "kp_train": 0.9308,
+      "kp_heldout": 0.8412,
+      "kp_probe": 0.7109,
+      "kp_Y_vs_WT_cos": [
+        0.0944,
+        0.0513
+      ],
+      "truegrad_train": 1.0,
+      "truegrad_heldout": 0.9721,
+      "truegrad_probe": 0.9164,
+      "truegrad_whash": "7f6d9a536345f07d",
+      "dfa_permuted_heldout": 0.4847,
+      "dfa_wrongsign_heldout": 0.5487,
+      "kp_permuted_heldout": 0.546,
+      "kp_wrongsign_heldout": 0.5487,
+      "truegrad_matches_oracle": true
+    }
+  ],
+  "aggregate": {
+    "mean_dfa": 0.9944,
+    "mean_kp": 0.8412,
+    "mean_truegrad": 0.9721,
+    "mean_oracle": 0.9721,
+    "chance": 0.5487,
+    "banked_plateau": 0.63,
+    "best_transport_free": 0.9944,
+    "transport_free_clears_plateau": true,
+    "anti_cheats_clean": true,
+    "truegrad_matches_oracle_all_seeds": true
+  },
+  "verdict": "GRADED-CREDIT FEEDBACK-SOURCE LADDER: dfa 0.994 | kp 0.841 | truegrad 0.972 (oracle 0.972, chance 0.549, banked plateau ~0.63); best transport-free 0.994; anti-cheats clean; truegrad reproduces oracle: True. => a TRANSPORT-FREE graded rule CLEARS the ~0.63 plateau => the banked 'transport-free ceiling' was an artifact of the binary event/coincidence gate (removed here), NOT a hard wall."
+}

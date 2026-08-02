@@ -1,0 +1,32 @@
+{
+ "run_id": "1785633203-4013201",
+ "runner": "../../../../tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/depth_ladder.py",
+ "argv": [
+  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/depth_ladder.py",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "--depths",
+  "4",
+  "--epochs",
+  "6000",
+  "--lr",
+  "0.05",
+  "--out",
+  "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/d4_ep6000_lr005.json"
+ ],
+ "git_sha": "e8cfc2686",
+ "git_dirty": true,
+ "started": "2026-08-01T21:13:23",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 7074.8,
+ "corpus_check_query": "multi-layer stacked deep credit two hidden layers local rule movable plateau depth",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/gap4/layerwise_kp_6seed.json"
+}

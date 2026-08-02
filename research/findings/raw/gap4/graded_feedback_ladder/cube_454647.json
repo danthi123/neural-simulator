@@ -1,0 +1,132 @@
+{
+  "probe": "gap4_depth2_credit_factor_cube_2x2x2",
+  "seeds": [
+    45,
+    46,
+    47
+  ],
+  "config": {
+    "epochs": 300,
+    "lr": 0.5,
+    "batch": 64,
+    "hidden": 64,
+    "task": "depth-2 pair-XOR->threshold (emerge1); held-out 35%"
+  },
+  "cell_means_heldout": {
+    "graded|chained|sON": 0.935,
+    "graded|chained|sOFF": 0.4708,
+    "graded|direct|sON": 0.6323,
+    "graded|direct|sOFF": 0.4754,
+    "binary|chained|sON": 0.8728,
+    "binary|chained|sOFF": 0.5701,
+    "binary|direct|sON": 0.6369,
+    "binary|direct|sOFF": 0.6713
+  },
+  "per_factor_main_effect_lift": {
+    "gate": {
+      "per_seed": [
+        -0.0446,
+        -0.0237,
+        -0.11
+      ],
+      "mean": -0.0594,
+      "min": -0.11,
+      "max": -0.0237
+    },
+    "feedback": {
+      "per_seed": [
+        0.1156,
+        0.0892,
+        0.1198
+      ],
+      "mean": 0.1082,
+      "min": 0.0892,
+      "max": 0.1198
+    },
+    "sigma": {
+      "per_seed": [
+        0.241,
+        0.2131,
+        0.2131
+      ],
+      "mean": 0.2224,
+      "min": 0.2131,
+      "max": 0.241
+    }
+  },
+  "largest_single_factor": "sigma",
+  "anchors_from_existing_arms": {
+    "local_correct_direct_graded_sigmaON": "0.591/0.655/0.646 mean 0.630",
+    "deepBDSP_binary_direct": "0.655/0.669/0.588 mean 0.637",
+    "graded_dfa_chained_graded_sigmaON": "0.994/0.958/0.947 mean 0.966"
+  },
+  "headline_anticheats": {
+    "permuted_per_seed": [
+      0.5125,
+      0.5265,
+      0.4986
+    ],
+    "wrongsign_per_seed": [
+      0.493,
+      0.546,
+      0.468
+    ],
+    "chance_per_seed": [
+      0.507,
+      0.546,
+      0.532
+    ]
+  },
+  "per_seed": [
+    {
+      "seed": 45,
+      "chance": 0.507,
+      "cells": {
+        "graded|chained|sON": 0.9276,
+        "graded|chained|sOFF": 0.493,
+        "graded|direct|sON": 0.6797,
+        "graded|direct|sOFF": 0.493,
+        "binary|chained|sON": 0.9081,
+        "binary|chained|sOFF": 0.585,
+        "binary|direct|sON": 0.649,
+        "binary|direct|sOFF": 0.6295
+      },
+      "headline_permuted": 0.5125,
+      "headline_wrongsign": 0.493
+    },
+    {
+      "seed": 46,
+      "chance": 0.546,
+      "cells": {
+        "graded|chained|sON": 0.9471,
+        "graded|chained|sOFF": 0.4485,
+        "graded|direct|sON": 0.624,
+        "graded|direct|sOFF": 0.4568,
+        "binary|chained|sON": 0.766,
+        "binary|chained|sOFF": 0.5404,
+        "binary|direct|sON": 0.6128,
+        "binary|direct|sOFF": 0.6518
+      },
+      "headline_permuted": 0.5265,
+      "headline_wrongsign": 0.546
+    },
+    {
+      "seed": 47,
+      "chance": 0.532,
+      "cells": {
+        "graded|chained|sON": 0.9304,
+        "graded|chained|sOFF": 0.4708,
+        "graded|direct|sON": 0.5933,
+        "graded|direct|sOFF": 0.4763,
+        "binary|chained|sON": 0.9443,
+        "binary|chained|sOFF": 0.585,
+        "binary|direct|sON": 0.649,
+        "binary|direct|sOFF": 0.7326
+      },
+      "headline_permuted": 0.4986,
+      "headline_wrongsign": 0.468
+    }
+  ],
+  "elapsed_seconds": 23.4,
+  "backend": "numpy"
+}

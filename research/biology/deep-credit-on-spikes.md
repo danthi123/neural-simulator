@@ -92,3 +92,17 @@ Three things, in priority order:
 2. **Confirm at 6 seeds.** The closure is 3-seed against a 6-seed bar, and two banked eprop artifacts carry
    `PRE-SEEDFIX-CONFOUNDED` in their own names.
 3. **Then** test whether K=16 exceeds K=8, which the √K trend predicts only if the pool is decorrelated.
+
+## Rate-reference reconciliation — the transport-free credit CLASS is not walled (2026-08-01)
+
+A RATE-level result ([transport-free-ceiling FALSIFICATION](../findings/2026-08-01-gap4-transport-free-ceiling-FALSIFIED-chained-FA-sigmaprime-clears-it-plus-MNIST-depth4-KP-rescue-6seed.md))
+settles a framing question that bears on this spiking entry. A transport-free LOCAL credit rule — chained
+multi-hop fixed-random feedback + the σ′ activation-derivative + graded credit — DOES train deep compositional
+credit: it clears the depth-2 XOR→threshold ceiling 6-seed (held-out 0.935 vs a banked 0.63, oracle 0.974),
+survives net-depth 4, and on MNIST at depth-4 a transport-free KP-learned feedback rescues where fixed-random FA
+collapses (FA 0.531 → KP 0.876, 6/6), matching WF-Act-PC (arxiv 2607.13380). So the spiking `deep_credit_share
+≈ 0` recorded in `current_status` is NOT evidence that the transport-free credit CLASS cannot assign deep credit
+— the rate reference shows it can. It is a property of the SPIKING substrate's optimizability / read regime (the
+2026-07-14 graded-credit-decisive wall + the finite-spike read-CV), which the spiking port must surpass with a
+graded low-CV credit read (σ′(v−θ) = distance-to-threshold) + KP-learned feedback at real budget. This corrects
+the superseded `contributing` finding b7549514 ("fundamental limit of the transport-free class").

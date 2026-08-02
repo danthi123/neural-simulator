@@ -30,6 +30,7 @@ import os
 os.environ.setdefault("SIM_BACKEND", "numpy")
 
 import argparse
+import hashlib
 import json
 import time
 import traceback
@@ -37,6 +38,7 @@ from pathlib import Path
 
 import numpy as np
 
+from sim.backend import to_host
 from sim.dendritic_mlp import DendriticMLP, xp, _sig, _MOMENTUM
 from research.runners._emerge1_deep_dendritic_representation_derisk import (
     make_task, _hidden_rep, _probe_latents, N_BITS, N_PAIRS)
@@ -62,7 +64,63 @@ class BDSPDendriticMLP(DendriticMLP):
             self.Q.append(xp.asarray(rngq.normal(0, 1.0 / np.sqrt(here), (above, here))))
         return self
 
+    # ------------------------------------------------------------------ ADDITIVE (default-OFF): the GRADED-credit
+    # feedback-source ladder. σ′ is ON for ALL arms; the SINGLE VARIABLE is the descending FEEDBACK matrix. No binary
+    # event/coincidence gate anywhere here -- this is plain real-valued error propagation, the recipe WF-Act-PC says
+    # reaches backprop at depth and that the depth-2 arc never assembled (it always squeezed the signal through the
+    # binary burst gate). NONE of the existing modes/methods below are touched -> every prior arm is byte-identical.
+    def init_graded(self, kp_lr=0.1, kp_decay=1e-3, fb_seed=0):
+        """Init the graded ladder. Y[k] maps the layer-ABOVE error (size sizes[k+2]) down to hidden layer k+1 (size
+        sizes[k+1]); DRAWN FROM A SEPARATE SEED STREAM (no weight transport). SHARED init for the 'dfa' (fixed-random
+        Y) and 'kp' (KP-LEARNED Y) arms so the ONLY difference is whether Y learns; 'truegrad' ignores Y (uses W^T)."""
+        self._vel = None
+        self.kp_lr = float(kp_lr); self.kp_decay = float(kp_decay)
+        yrng = np.random.default_rng(int(fb_seed))                  # SEPARATE stream: never derived from any forward W
+        s = self.sizes
+        self.Y = [xp.asarray(yrng.normal(0, 1.0, (s[k + 2], s[k + 1]))) for k in range(len(s) - 2)]
+        return self
+
+    def _graded_train_step(self, X, y, mode, lr):
+        """Chained GRADED-credit error-prop, σ′ ON at every hidden layer, NO binary gate:
+              e_l = (e_{l+1} @ FEEDBACK_l) * a_l*(1-a_l) ;   W_l += lr * (a_{l-1}^T @ e_l)      (descent-signed e)
+        SINGLE VARIABLE = FEEDBACK_l source: 'dfa' fixed-random Y | 'kp' KP-LEARNED transport-free Y | 'truegrad' W^T
+        (the fenced backprop oracle anchor). '_wrong' negates the output teacher (anti-learn); permuted labels are done
+        by the caller. TRANSPORT-FREE for dfa/kp: the credit path reads ONLY Y + local activity, NEVER a forward W."""
+        rest = mode[len("graded_"):]
+        wrong = rest.endswith("_wrong")
+        fb = rest[:-len("_wrong")] if wrong else rest              # 'dfa' | 'kp' | 'truegrad'
+        acts, e_pos = self._debug_fwd_err(X, y)                    # e_pos = softmax(logits) - onehot(y) (pos. gradient)
+        nW = len(self.W)
+        delta_out = -e_pos                                         # descent-signed output error
+        if wrong:
+            delta_out = -delta_out                                 # negate the teacher -> the WHOLE net anti-learns
+        upd = [None] * nW
+        upd[-1] = acts[-1].T @ delta_out                          # output-layer descent update (linear head; no σ′)
+        b = delta_out                                             # descending error (descent-signed); starts at output
+        for li in range(nW - 2, -1, -1):                          # TOP hidden layer -> bottom (recursive top->bottom)
+            a_l = acts[li + 1]                                    # this hidden layer's sigmoid activation
+            if fb == "kp":
+                # Kolen-Pollack LEARNED feedback (Akrout 2019 weight-mirror), TRANSPORT-FREE: update Y[li] from the
+                # LOCAL pre=acts[li+1] / post=b outer product ONLY -- never reads a forward W. +outer matches W[li+1]'s
+                # descent increment (b is descent-signed) so Y[li]^T -> W[li+1] under the shared decay -> Y approximates
+                # the transpose WITHOUT copying it.
+                m0 = max(1, a_l.shape[0])
+                outer = (b.T @ a_l) / m0                          # (sizes[li+2], sizes[li+1]) == Y[li].shape; LOCAL only
+                self.Y[li] = self.Y[li] + lr * (self.kp_lr * outer - self.kp_decay * self.Y[li])
+            FB = self.W[li + 1].T if fb == "truegrad" else self.Y[li]   # truegrad reads W^T (oracle); dfa/kp read Y
+            e_l = (b @ FB) * (a_l * (1.0 - a_l))                  # GRADED credit: back-projected error * σ′(pre_act) ON
+            upd[li] = acts[li].T @ e_l                            # plain graded error-prop update (NO binary gate)
+            b = e_l                                              # CHAIN: the graded error descends to the next layer
+        m = max(1, X.shape[0])
+        if self._vel is None:
+            self._vel = [xp.zeros_like(w) for w in self.W]
+        for li in range(nW):
+            self._vel[li] = _MOMENTUM * self._vel[li] + upd[li] / m
+            self.W[li] = self.W[li] + lr * self._vel[li]
+
     def train_step(self, X, y, mode, lr, rho=0.1):
+        if isinstance(mode, str) and mode.startswith("graded_"):    # ADDITIVE graded-credit feedback-source ladder
+            return self._graded_train_step(X, y, mode, lr)
         if mode not in ("bdsp", "bdsp_wrongsign", "bdsp_truegrad", "bdsp_soft", "burstprop"):
             return super().train_step(X, y, mode, lr)
         acts, e = self._debug_fwd_err(X, y)                         # acts (sigmoid), e = softmax(logits) - onehot(y)
@@ -194,6 +252,149 @@ def run_seed(seed, epochs, lr, batch, hidden, beta, p0, verbose=True):
     return out
 
 
+# ====================================================================================================================
+# ADDITIVE (default-OFF) GRADED-CREDIT FEEDBACK-SOURCE LADDER (--feedback-ladder). σ′ ON for all arms, NO binary gate;
+# the single variable is the descending feedback matrix: dfa (fixed-random) / kp (KP-learned, transport-free) / truegrad
+# (W^T = backprop oracle anchor). Decides whether the "transport-free ceiling" (dfa ~0.63 plateau) is a real wall or an
+# artifact of the binary event gate + fixed-random feedback: if kp ~ truegrad >> dfa, learned feedback closed the gap.
+# ====================================================================================================================
+def _wh(net):
+    """SHA256 of the concatenated forward weights -> a byte-identity fingerprint (backend-agnostic via to_host)."""
+    h = hashlib.sha256()
+    for w in net.W:
+        h.update(np.ascontiguousarray(np.asarray(to_host(w), dtype=np.float64)).tobytes())
+    return h.hexdigest()[:16]
+
+
+def _fb_align_cos(net):
+    """Per-layer cosine(Y[li], W[li+1]^T): does the LEARNED feedback approximate the transpose (KP's target)? ~0 for
+    fixed-random dfa; climbs positive if KP mirrored W. Diagnostic ONLY (never fed to the credit)."""
+    cs = []
+    for li in range(len(net.W) - 1):
+        Y = np.asarray(to_host(net.Y[li]), dtype=np.float64).ravel()
+        WT = np.asarray(to_host(net.W[li + 1]), dtype=np.float64).T.ravel()
+        cs.append(round(float(Y @ WT / (np.linalg.norm(Y) * np.linalg.norm(WT) + 1e-9)), 4))
+    return cs
+
+
+def run_feedback_ladder(seed, epochs, lr, batch, hidden, kp_lr, kp_decay, verbose=True):
+    (Xtr, ytr, Ltr), (Xte, yte, Lte) = make_task(seed)
+    deep = [N_BITS, hidden, hidden, 2]
+    Xtr_x, Xte_x = xp.asarray(Xtr), xp.asarray(Xte)
+    chance = float(max(np.mean(np.asarray(yte) == c) for c in np.unique(yte)))
+    out = {"seed": seed, "chance": round(chance, 4)}
+
+    def acc(net):
+        return round(float(net.accuracy(Xtr_x, ytr)), 4), round(float(net.accuracy(Xte_x, yte)), 4)
+
+    def probe(net):
+        return round(_probe_latents(_hidden_rep(net, Xtr), Ltr, _hidden_rep(net, Xte), Lte), 4)
+
+    # ---- fenced backprop oracle (task ceiling + the truegrad-identity anchor) ----
+    orc = DendriticMLP(deep, seed=seed); _train(orc, Xtr_x, ytr, "oracle", epochs, lr, batch, seed)
+    out["oracle_train"], out["oracle_heldout"] = acc(orc); out["oracle_probe"] = probe(orc)
+    out["oracle_whash"] = _wh(orc)
+
+    def run_arm(fb, wrong=False, permute=False):
+        y = np.asarray(ytr).copy()
+        if permute:
+            np.random.default_rng(seed + 4242).shuffle(y)          # deterministic label permutation (leakage control)
+        net = BDSPDendriticMLP(deep, seed=seed).init_graded(kp_lr=kp_lr, kp_decay=kp_decay, fb_seed=seed + 9973)
+        mode = "graded_" + fb + ("_wrong" if wrong else "")
+        _train(net, Xtr_x, y, mode, epochs, lr, batch, seed)
+        return net
+
+    # ---- the 3-arm single-variable ladder (feedback source is the ONLY difference; σ′ ON, graded, no gate) ----
+    for fb in ("dfa", "kp", "truegrad"):
+        net = run_arm(fb)
+        out[fb + "_train"], out[fb + "_heldout"] = acc(net); out[fb + "_probe"] = probe(net)
+        if fb == "kp":
+            out["kp_Y_vs_WT_cos"] = _fb_align_cos(net)             # did the learned feedback mirror the transpose?
+        if fb == "truegrad":
+            out["truegrad_whash"] = _wh(net)
+
+    # ---- anti-cheats on the transport-free arms (dfa is the headline, kp is the coordinator's test arm) ----
+    out["dfa_permuted_heldout"] = acc(run_arm("dfa", permute=True))[1]   # -> ~chance (no leakage)
+    out["dfa_wrongsign_heldout"] = acc(run_arm("dfa", wrong=True))[1]    # -> below/at chance (credit sign load-bearing)
+    out["kp_permuted_heldout"] = acc(run_arm("kp", permute=True))[1]     # -> ~chance (no leakage)
+    out["kp_wrongsign_heldout"] = acc(run_arm("kp", wrong=True))[1]      # -> below/at chance (credit sign load-bearing)
+
+    # ---- correctness anchor: graded 'truegrad' recursion reproduces the backprop oracle (numeric; whash differs only
+    #      by ~5e-13 FP-associativity of the sigma' multiply grouping, so compare accuracies/probe not raw bytes) ----
+    out["truegrad_matches_oracle"] = bool(abs(out["truegrad_heldout"] - out["oracle_heldout"]) < 1e-6
+                                          and abs(out["truegrad_train"] - out["oracle_train"]) < 1e-6
+                                          and abs(out["truegrad_probe"] - out["oracle_probe"]) < 1e-6)
+
+    if verbose:
+        print(f"  [seed {seed}] chance {out['chance']:.3f} | ORACLE held {out['oracle_heldout']:.3f} "
+              f"(tr {out['oracle_train']:.3f}, probe {out['oracle_probe']:.3f})", flush=True)
+        print(f"    LADDER (graded credit, sigma' ON, NO binary gate; feedback-source = the single variable):",
+              flush=True)
+        print(f"      dfa      (fixed-random) held {out['dfa_heldout']:.3f} (tr {out['dfa_train']:.3f}, "
+              f"probe {out['dfa_probe']:.3f})", flush=True)
+        print(f"      kp       (KP-learned)   held {out['kp_heldout']:.3f} (tr {out['kp_train']:.3f}, "
+              f"probe {out['kp_probe']:.3f})  Y-vs-W^T cos {out['kp_Y_vs_WT_cos']}", flush=True)
+        print(f"      truegrad (W^T oracle)   held {out['truegrad_heldout']:.3f} (tr {out['truegrad_train']:.3f}, "
+              f"probe {out['truegrad_probe']:.3f})  [reproduces oracle: {out['truegrad_matches_oracle']}]", flush=True)
+        print(f"    anti-cheats: dfa permuted {out['dfa_permuted_heldout']:.3f} / wrong-sign "
+              f"{out['dfa_wrongsign_heldout']:.3f} | kp permuted {out['kp_permuted_heldout']:.3f} / wrong-sign "
+              f"{out['kp_wrongsign_heldout']:.3f}  (chance {out['chance']:.3f})", flush=True)
+    return out
+
+
+def _main_feedback_ladder(a):
+    t0 = time.time(); per = []; err = None
+    try:
+        for s in a.seeds:
+            per.append(run_feedback_ladder(s, a.epochs, a.lr, a.batch, a.hidden, a.kp_lr, a.kp_decay))
+    except Exception as e:
+        err = repr(e); traceback.print_exc()
+    summary = {"probe": "gap4_graded_credit_feedback_source_ladder", "seeds": a.seeds,
+               "backend": os.environ.get("SIM_BACKEND"),
+               "config": {"epochs": a.epochs, "lr": a.lr, "batch": a.batch, "hidden": a.hidden,
+                          "kp_lr": a.kp_lr, "kp_decay": a.kp_decay,
+                          "task": "depth-2 pair-XOR->threshold (emerge1)",
+                          "mechanism": "graded credit + sigma' ON at every hidden layer, NO binary gate; feedback "
+                                       "source (dfa/kp/truegrad) is the single variable"},
+               "elapsed_seconds": round(time.time() - t0, 1), "per_seed": per}
+    if err is None and per:
+        def m(k):
+            return round(float(np.nanmean([p[k] for p in per])), 4)
+        dfa_h, kp_h, tg_h = m("dfa_heldout"), m("kp_heldout"), m("truegrad_heldout")
+        orc_h, ch = m("oracle_heldout"), m("chance")
+        PLATEAU = 0.63                                              # the banked transport-free "ceiling" (FA memorizes)
+        best_tf = max(dfa_h, kp_h)                                  # best TRANSPORT-FREE arm (dfa or kp)
+        # decisive read: does ANY transport-free graded arm clear the banked ~0.63 plateau by a clear margin, with
+        # clean anti-cheats? If yes, the plateau was NOT a hard transport-free wall.
+        anti_ok = (all(p["dfa_permuted_heldout"] <= p["chance"] + 0.06 for p in per)
+                   and all(p["dfa_wrongsign_heldout"] <= p["chance"] + 0.06 for p in per)
+                   and all(p["kp_permuted_heldout"] <= p["chance"] + 0.06 for p in per)
+                   and all(p["kp_wrongsign_heldout"] <= p["chance"] + 0.06 for p in per))
+        tg_ok = all(p["truegrad_matches_oracle"] for p in per)
+        clears_plateau = bool(best_tf >= PLATEAU + 0.10 and anti_ok)
+        summary["aggregate"] = {"mean_dfa": dfa_h, "mean_kp": kp_h, "mean_truegrad": tg_h, "mean_oracle": orc_h,
+                                "chance": ch, "banked_plateau": PLATEAU, "best_transport_free": best_tf,
+                                "transport_free_clears_plateau": clears_plateau, "anti_cheats_clean": bool(anti_ok),
+                                "truegrad_matches_oracle_all_seeds": bool(tg_ok)}
+        summary["verdict"] = (
+            f"GRADED-CREDIT FEEDBACK-SOURCE LADDER: dfa {dfa_h:.3f} | kp {kp_h:.3f} | truegrad {tg_h:.3f} "
+            f"(oracle {orc_h:.3f}, chance {ch:.3f}, banked plateau ~{PLATEAU:.2f}); best transport-free {best_tf:.3f}; "
+            f"anti-cheats {'clean' if anti_ok else 'DIRTY'}; truegrad reproduces oracle: {tg_ok}. "
+            + ("=> a TRANSPORT-FREE graded rule CLEARS the ~0.63 plateau => the banked 'transport-free ceiling' was an "
+               "artifact of the binary event/coincidence gate (removed here), NOT a hard wall."
+               if clears_plateau else
+               "=> no transport-free arm cleared the plateau at this config (needs a KP/hyperparam sweep, or the wall "
+               "is real)."))
+    else:
+        summary["verdict"] = f"ERROR -- {err}" if err else "no seeds ran"
+    Path(a.out).parent.mkdir(parents=True, exist_ok=True)
+    Path(a.out).write_text(json.dumps(summary, indent=2, default=str))
+    print("\n" + "=" * 100, flush=True)
+    print(f"[gap4-feedback-ladder] {summary['verdict']}", flush=True)
+    print(f"[gap4-feedback-ladder] backend={summary['backend']} wrote {a.out}\n" + "=" * 100, flush=True)
+    return 0
+
+
 def main():
     ap = argparse.ArgumentParser(description="gap#4 DEPTH-2 coincidence-gated BDSP credit vs feedback-alignment.")
     ap.add_argument("--seeds", type=int, nargs="+", default=[42])
@@ -205,7 +406,15 @@ def main():
     ap.add_argument("--p0", type=float, default=0.30)
     ap.add_argument("--margin", type=float, default=0.07)
     ap.add_argument("--out", default="research/findings/raw/gap4/depth2_bdsp/depth2_bdsp.json")
+    # ADDITIVE (default-OFF): the graded-credit feedback-source ladder (dfa / kp / truegrad).
+    ap.add_argument("--feedback-ladder", action="store_true",
+                    help="run the graded-credit feedback-source ladder (sigma' ON, no binary gate) instead of the "
+                         "BDSP sweep: dfa (fixed-random) vs kp (KP-learned transport-free) vs truegrad (W^T oracle).")
+    ap.add_argument("--kp-lr", type=float, default=0.1, help="Kolen-Pollack feedback learning rate (kp arm only).")
+    ap.add_argument("--kp-decay", type=float, default=1e-3, help="Kolen-Pollack symmetric weight decay (kp arm only).")
     a = ap.parse_args()
+    if a.feedback_ladder:
+        return _main_feedback_ladder(a)
     t0 = time.time(); per = []; err = None
     try:
         for s in a.seeds:
