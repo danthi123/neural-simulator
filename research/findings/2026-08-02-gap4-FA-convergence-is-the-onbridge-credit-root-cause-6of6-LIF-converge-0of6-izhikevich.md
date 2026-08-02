@@ -165,3 +165,36 @@ per example) is running as the direct confirmation that averaging does not help;
 feedback (Kolen-Pollack / weight-mirror rotates B toward W instead of relying on W rotating to a fixed B) re-tested at THIS
 operating point, and/or a two-compartment dendritic credit with a different FA fixed-point structure. This Update is the
 workflow working as intended: a hypothesis was named, DIRECTLY MEASURED, and refuted same-cycle before it could propagate.
+
+## Update 2 (2026-08-02, same-cycle) — the two corrected next-mechanism tests BOTH come back negative: averaging does not help, and LEARNED feedback (KP) does not restore convergence either — the failure is agnostic to feedback type
+
+<!--derived-->
+**Interventional averaging test (settle-steps sweep).** Re-ran the Izhikevich FA-convergence at more temporal
+integration per example (`--settle-steps` 100 vs the default 30; artifacts `research/findings/raw/gap4/fa_conv_izh_settle100_s42.json`).
+More than 3x the averaging does NOT restore convergence: settle=100 rises +0.097 / -0.015 / +0.079 (mean +0.054, 0/3
+converge) vs the settle=30 baseline (mean -0.058, 0/6). This is the direct interventional confirmation of Update 1: since
+the per-example credit was measured CONSISTENT (not noisy), adding averaging has nothing to remove and does not help —
+doubly refuting the variance hypothesis.
+
+<!--derived-->
+**Learned-feedback test (Kolen-Pollack), at the MATCHED headline operating point.** A 10-epoch smoke initially showed a
+positive cos rise (+0.237) and I nearly banked "learned feedback fixes the alignment" — but VERIFYING at 3 seeds and the
+FULL 60-epoch / 160-subsample operating point that matches the headline REFUTED it: KP FA-convergence is 0/3 (peaks -0.298,
++0.167, +0.094; finals -0.106, -0.004, +0.092), and inherit stays at chance (0.451-0.476). The smoke's positive was a
+transient at a smaller op-point that does not survive the matched config — caught only because a surprising single-seed
+smoke was re-run at 3 seeds + full epochs before being claimed (artifacts `research/findings/raw/gap4/kp_faconv_izh_s42.json`;
+pool-extended to seeds 100/101/102 for a 6-seed firm). So **learned feedback does NOT restore FA-convergence on Izhikevich
+either** — the alignment failure is AGNOSTIC to whether the feedback matrix is fixed-random (headline) or learned toward W
+(KP). Both feedback-alignment routes fail on the Izhikevich forward.
+
+<!--derived-->
+**What this leaves, and the unification.** Two of the three named surpasses are now closed by measurement (plateau
+averaging: refuted; learned feedback: refuted), leaving the **two-compartment dendritic credit** — a fundamentally
+DIFFERENT credit computation (apical-basal segregation, not delta@B feedback-alignment) with a different fixed-point
+structure — as the standing candidate. And the result UNIFIES with the project's long-standing reservoir reframe: the
+Izhikevich forward's credit-dynamics do not support feedback-alignment credit regardless of feedback type, and separately
+its representational ceiling caps a trained readout below the oracle — so on this substrate the accuracy value is a trained
+read-out over a fixed/reservoir hidden, not feedback-alignment credit-training of the hidden. gap#4's production-bridge
+residual is now characterized to the mechanism (FA-alignment fails on the Izhikevich forward, both feedback types, not
+noise/surrogate/averaging), with the one remaining biological surpass (dendritic two-compartment credit) named — a
+deprioritized parallel frontier per the 2026-07-10 steer, with the crux CORE (LIF) standing.
