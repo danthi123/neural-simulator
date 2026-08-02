@@ -81,11 +81,18 @@ from research.runners._productive_morphology_dual_route_derisk import wire_wf_to
 
 # ---- TWO structurally-isolated pools (the architectural change) --------------------------------------------
 def build_two_pool(seed, n_lex=2000, n_proc=800, n_fs_lex=300, n_fs_proc=150,
-                   rec_density=0.6, fs_inh=1.2, block_density=0.6):
+                   rec_density=0.6, fs_inh=1.2, block_density=0.6,
+                   di_synaptic=False, n_inh_block=150, inh_block_density=0.6):
     """One brain, TWO isolated excitatory pools (lex, proc), each with its OWN FS-WTA, plus a lex->proc pathway
     (weight 0 at build) reserved for the whole-form->affix blocking inhibition. NO lex<->proc recurrent for the
     associative dynamics and NO shared FS -> the two routes cannot spuriously activate each other via pattern
-    overlap (the single-pool failure mode). cfg.seed seeds the substrate (2026-07-17 trap)."""
+    overlap (the single-pool failure mode). cfg.seed seeds the substrate (2026-07-17 trap).
+
+    di_synaptic=False -> BYTE-IDENTICAL to the sign-inverted path (regions/pathways below unchanged; blocking via
+    the lex->proc sign-inverted excitatory synapse, the S1 Dale shortcut). di_synaptic=True -> ADD a dedicated
+    INHIBITORY interneuron region `inh_block` (exc_fraction=0.0) plus lex->inh_block (excitatory drive) and
+    inh_block->proc (inhibitory output) pathways, so the FAITHFUL two-hop feedforward inhibition can be wired
+    (whole-form(exc) -> interneuron(inh) -> affix). The extra region/pathways exist ONLY when the flag is on."""
     regions = [
         BrainRegion(name="lex", n_neurons=n_lex, exc_fraction=1.0, internal_density=0.0,
                     exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False),
@@ -112,6 +119,20 @@ def build_two_pool(seed, n_lex=2000, n_proc=800, n_fs_lex=300, n_fs_proc=150,
         RegionPathway(from_region="lex", to_region="proc", density=block_density, weight_mean=1e-4,
                       weight_jitter=0.0, plastic=False),
     ]
+    if di_synaptic:
+        # FAITHFUL di-synaptic feedforward inhibition substrate (burns down the S1 sign-inverted shortcut):
+        # a dedicated GABAergic interneuron pool driven by lex whole-forms, inhibiting the proc affix. The
+        # engine derives E/I sign from the PREsynaptic cell (bridge.py:6363), so an exc_fraction=0.0 region's
+        # POSITIVE output weights route to g_i -> Dale-compliant inhibition carried by the cell, not the weight.
+        regions.append(
+            BrainRegion(name="inh_block", n_neurons=n_inh_block, exc_fraction=0.0, internal_density=0.0,
+                        exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0, plastic_internal=False))
+        pathways.append(  # HOP 1: lex whole-form (exc) -> interneuron. Tiny-positive so edges instantiate in CSR.
+            RegionPathway(from_region="lex", to_region="inh_block", density=inh_block_density,
+                          weight_mean=1e-4, weight_jitter=0.0, plastic=False))
+        pathways.append(  # HOP 2: interneuron (inh) -> proc affix. Tiny-positive; wired to inhib_strength after training.
+            RegionPathway(from_region="inh_block", to_region="proc", density=inh_block_density,
+                          weight_mean=1e-4, weight_jitter=0.0, plastic=False))
     cfg = CoreSimConfig()
     cfg.enable_brain_region_framework = True
     cfg.brain_regions = list(regions)
@@ -134,6 +155,52 @@ def build_two_pool(seed, n_lex=2000, n_proc=800, n_fs_lex=300, n_fs_proc=150,
                          runtime_state=RuntimeState(), gpu_config=GPUConfig())
     b._initialize_simulation_data(called_from_playback_init=False)
     return b
+
+
+def wire_disynaptic_inhibition(bridge, wf_globals, inh_globals, affix_globals, inh_drive, inhib_out):
+    """FAITHFUL Dale-compliant di-synaptic feedforward inhibition (the S1 burn-down of the sign-inverted shortcut).
+
+    TWO hops, each a REAL synapse whose sign is carried by the PREsynaptic CELL -- the engine routes each
+    presynaptic spike into g_e or g_i by that neuron's inhibitory trait (bridge.py:6363, the same mechanism the
+    FS-WTA pools use), NOT by the weight sign:
+      HOP 1  lex whole-form (EXCITATORY) -> inh_block interneuron:  positive weight -> g_e drive on the interneuron.
+             Written ONLY on whole-form presynaptic rows, so a novel/regular stem (which retrieves NO whole-form,
+             so no whole-form neuron fires) drives the interneuron NOT AT ALL. This is what gates suppression on
+             ACTUAL retrieval -- the property a single sign-inverted weight could not have.
+      HOP 2  inh_block interneuron (INHIBITORY, exc_fraction=0) -> proc affix:  positive weight -> g_i on the affix
+             (Dale-compliant; the minus sign lives in the CELL). Magnitude = inhib_out (the swept 'strength').
+
+    Net: affix suppression SCALES with whole-form retrieval strength -- a strongly-retrieved irregular whole-form
+    fires the interneuron hard -> strong affix suppression (blocking -> 'went'); a novel regular fires no
+    whole-form -> interneuron silent -> affix wins by default (rule generalizes -> 'wug-ed'). Both edge sets are
+    set in place on the live CSR (structure/nnz unchanged -- the lesion_neurons pattern, no CSR rebuild).
+    Returns (n_drive_edges, n_out_edges)."""
+    W = bridge.cp_connections
+    inh = np.asarray(inh_globals, dtype=np.int64)
+    affix = np.asarray(affix_globals, dtype=np.int64)
+    # HOP 1: whole-form(pre) -> interneuron(post) excitatory drive (positive; lex is excitatory -> routes to g_e)
+    n_drive = 0
+    for r in np.asarray(wf_globals, dtype=np.int64):
+        lo, hi = int(W.indptr[r]), int(W.indptr[r + 1])
+        cols = np.asarray(W.indices[lo:hi])
+        mask = np.isin(cols, inh)
+        if mask.any():
+            seg = np.asarray(W.data[lo:hi]); seg[mask] = abs(float(inh_drive)); W.data[lo:hi] = seg
+            n_drive += int(mask.sum())
+    # HOP 2: interneuron(pre) -> affix(post) inhibitory output (positive; inh_block is inhibitory -> routes to g_i)
+    n_out = 0
+    for r in inh:
+        lo, hi = int(W.indptr[r]), int(W.indptr[r + 1])
+        cols = np.asarray(W.indices[lo:hi])
+        mask = np.isin(cols, affix)
+        if mask.any():
+            seg = np.asarray(W.data[lo:hi]); seg[mask] = abs(float(inhib_out)); W.data[lo:hi] = seg
+            n_out += int(mask.sum())
+    try:
+        bridge._invalidate_coo_cache()
+    except Exception:
+        pass
+    return n_drive, n_out
 
 
 def _assign_patterns(bridge, seed, n_lex, n_proc, pattern_size, item2idx):
@@ -198,13 +265,14 @@ def verify_seeded(seed, n_lex, n_proc):
 
 
 def run(seed, n_lex=2000, n_proc=800, pattern_size=90, cyc_rule=40, cyc_irr=48,
-        inhib_strength=6.0, verbose=True):
+        inhib_strength=6.0, di_synaptic=False, n_inh_block=150, inh_drive=3.0, verbose=True):
     items, item2idx = _make_items()
     idx2name = {i: w for w, i in item2idx.items()}
     competitors = [item2idx[AFFIX]] + [item2idx[wf] for wf in IRREGULARS.values()]
 
     def build_brain(permute_binding=False):
-        b = build_two_pool(seed, n_lex=n_lex, n_proc=n_proc)
+        b = build_two_pool(seed, n_lex=n_lex, n_proc=n_proc,
+                            di_synaptic=di_synaptic, n_inh_block=n_inh_block)
         pg = _assign_patterns(b, seed, n_lex, n_proc, pattern_size, item2idx)
         # ROUTE 1 -- PROCEDURAL (PROC pool): PAST -> AFFIX, dedicated + strong, stem-independent.
         co_activate(b, pg, [item2idx[PAST], item2idx[AFFIX]], cycles=cyc_rule)
@@ -220,10 +288,17 @@ def run(seed, n_lex=2000, n_proc=800, pattern_size=90, cyc_rule=40, cyc_irr=48,
             wf_for_stem = dict(IRREGULARS)
         for stem, wf in wf_for_stem.items():
             co_activate(b, pg, [item2idx[stem], item2idx[wf]], cycles=cyc_irr)
-        # BLOCKING -- LEX whole-form -> PROC affix cross-pool inhibition (wire AFTER training).
+        # BLOCKING -- LEX whole-form -> PROC affix suppression (wire AFTER training).
         affix_glob = np.asarray(pg[item2idx[AFFIX]])
         wf_glob = np.concatenate([np.asarray(pg[item2idx[wf]]) for wf in IRREGULARS.values()])
-        n_inh = wire_wf_to_affix_inhibition(b, wf_glob, affix_glob, inhib_strength)
+        if di_synaptic:
+            # FAITHFUL: whole-form(exc) -> dedicated GABAergic interneuron(inh) -> affix. Suppression scales with
+            # retrieval; the minus sign is carried by the interneuron cell (Dale-compliant), not a flipped weight.
+            inh_glob = np.asarray(b.region_manager.indices("inh_block"))
+            n_drive, n_inh = wire_disynaptic_inhibition(b, wf_glob, inh_glob, affix_glob, inh_drive, inhib_strength)
+        else:
+            # S1 SHORTCUT: sign-inverted excitatory synapse whole-form -> affix (single scalar weight, byte-identical path).
+            n_inh = wire_wf_to_affix_inhibition(b, wf_glob, affix_glob, inhib_strength)
         return b, pg, n_inh
 
     # ============================ MAIN BRAIN ============================
@@ -298,6 +373,8 @@ def run(seed, n_lex=2000, n_proc=800, pattern_size=90, cyc_rule=40, cyc_irr=48,
     result = {
         "seed": int(seed), "n_lex": n_lex, "n_proc": n_proc, "pattern_size": pattern_size,
         "cyc_rule": cyc_rule, "cyc_irr": cyc_irr, "inhib_strength": inhib_strength,
+        "di_synaptic": bool(di_synaptic), "n_inh_block": int(n_inh_block) if di_synaptic else 0,
+        "inh_drive": float(inh_drive) if di_synaptic else None,
         "n_inhib_edges": int(n_inh),
         "reg_acc": reg_acc, "irr_acc": irr_acc, "both_gates": bool(both_gates),
         "irr_edrate_pre_lesion": irr_edrate_pre,
@@ -307,7 +384,8 @@ def run(seed, n_lex=2000, n_proc=800, pattern_size=90, cyc_rule=40, cyc_irr=48,
         "GO": bool(go),
     }
     if verbose:
-        print(f"\n  seed {seed}: reg(rule) {reg_acc:.2f} & irr(blocking) {irr_acc:.2f} "
+        mech = f"di-synaptic(inh_block={n_inh_block},drive={inh_drive})" if di_synaptic else "sign-inverted"
+        print(f"\n  seed {seed} [{mech}]: reg(rule) {reg_acc:.2f} & irr(blocking) {irr_acc:.2f} "
               f"{'[BOTH]' if both_gates else '[NOT both]'} | lesion->over-reg {overreg_rate:.2f} "
               f"(pre {irr_edrate_pre:.2f}) | permuted {perm_acc:.2f} | inhib_edges {n_inh} "
               f"| {'GO' if go else 'NO-GO'}", flush=True)
@@ -315,7 +393,7 @@ def run(seed, n_lex=2000, n_proc=800, pattern_size=90, cyc_rule=40, cyc_irr=48,
 
 
 def summarize(base_seed, n_seeds=6, n_lex=2000, n_proc=800, pattern_size=90, cyc_rule=40, cyc_irr=48,
-              inhib_strength=6.0, verbose=True):
+              inhib_strength=6.0, di_synaptic=False, n_inh_block=150, inh_drive=3.0, verbose=True):
     seeds = [base_seed + i for i in range(n_seeds)]
     seed_check = verify_seeded(base_seed, n_lex, n_proc)
     if verbose:
@@ -323,7 +401,8 @@ def summarize(base_seed, n_seeds=6, n_lex=2000, n_proc=800, pattern_size=90, cyc
               f"(same-seed identical={seed_check['same_seed_identical']}, "
               f"cross-seed differs={seed_check['cross_seed_differs']})", flush=True)
     results = [run(s, n_lex=n_lex, n_proc=n_proc, pattern_size=pattern_size, cyc_rule=cyc_rule,
-                   cyc_irr=cyc_irr, inhib_strength=inhib_strength, verbose=verbose) for s in seeds]
+                   cyc_irr=cyc_irr, inhib_strength=inhib_strength, di_synaptic=di_synaptic,
+                   n_inh_block=n_inh_block, inh_drive=inh_drive, verbose=verbose) for s in seeds]
 
     n_reg = sum(1 for r in results if r["reg_acc"] >= 0.90)
     n_irr = sum(1 for r in results if r["irr_acc"] >= 0.85)
@@ -345,10 +424,11 @@ def summarize(base_seed, n_seeds=6, n_lex=2000, n_proc=800, pattern_size=90, cyc
         verdict = (f"NEGATIVE -- anti-cheats fail on >1 seed (both {n_both}/{n_seeds} but full-GO {n_go}/{n_seeds})")
 
     summary = {
-        "probe": "productive_morphology_two_pool",
+        "probe": "productive_morphology_two_pool" + ("_disynaptic" if di_synaptic else ""),
         "config": {"n_seeds": n_seeds, "base_seed": base_seed, "n_lex": n_lex, "n_proc": n_proc,
                    "pattern_size": pattern_size, "cyc_rule": cyc_rule, "cyc_irr": cyc_irr,
-                   "inhib_strength": inhib_strength},
+                   "inhib_strength": inhib_strength, "di_synaptic": bool(di_synaptic),
+                   "n_inh_block": n_inh_block, "inh_drive": inh_drive},
         "per_seed": [
             {"seed": r["seed"], "reg_acc": r["reg_acc"], "irr_acc": r["irr_acc"],
              "both_gates": r["both_gates"], "overreg_rate_lesion": r["overreg_rate_lesion"],
@@ -379,13 +459,24 @@ def main():
     ap.add_argument("--pattern-size", type=int, default=90)
     ap.add_argument("--cyc-rule", type=int, default=40, help="ROUTE 1 (PAST->AFFIX) strength")
     ap.add_argument("--cyc-irr", type=int, default=48, help="ROUTE 2 (stem->whole-form) entrenchment")
-    ap.add_argument("--inhib-strength", type=float, default=6.0, help="whole-form->affix cross-pool inhibition")
+    ap.add_argument("--inhib-strength", type=float, default=6.0,
+                    help="blocking strength: sign-inverted whole-form->affix weight, OR (di-synaptic) the "
+                         "interneuron->affix inhibitory output weight")
+    ap.add_argument("--di-synaptic", action="store_true",
+                    help="FAITHFUL Dale-compliant blocking: whole-form(exc) -> GABAergic interneuron(inh) -> affix "
+                         "(default OFF = byte-identical sign-inverted excitatory synapse, the S1 shortcut)")
+    ap.add_argument("--n-inh-block", type=int, default=150, help="di-synaptic: interneuron pool size")
+    ap.add_argument("--inh-drive", type=float, default=3.0,
+                    help="di-synaptic: lex whole-form -> interneuron excitatory drive weight (fires the interneuron)")
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
-    print(f"[two-pool morphology] DISTINCT populations (lex/proc) + cross-pool blocking | base seed={a.seed} "
+    mech = (f"DI-SYNAPTIC interneuron (n={a.n_inh_block}, drive={a.inh_drive})" if a.di_synaptic
+            else "sign-inverted excitatory (S1 shortcut)")
+    print(f"[two-pool morphology] DISTINCT populations (lex/proc) + {mech} blocking | base seed={a.seed} "
           f"n_seeds={a.n_seeds} inhib={a.inhib_strength}", flush=True)
     s = summarize(a.seed, n_seeds=a.n_seeds, n_lex=a.n_lex, n_proc=a.n_proc, pattern_size=a.pattern_size,
-                  cyc_rule=a.cyc_rule, cyc_irr=a.cyc_irr, inhib_strength=a.inhib_strength)
+                  cyc_rule=a.cyc_rule, cyc_irr=a.cyc_irr, inhib_strength=a.inhib_strength,
+                  di_synaptic=a.di_synaptic, n_inh_block=a.n_inh_block, inh_drive=a.inh_drive)
     print(f"\n  {'GO' if s['GO'] else 'NO-GO'} -- {s['verdict']}", flush=True)
     if a.out:
         if os.path.dirname(a.out):

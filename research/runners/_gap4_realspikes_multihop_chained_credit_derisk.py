@@ -74,16 +74,44 @@ from research.runners._emerge12_stageB2_bridge_tm_derisk import reset_soma, _cle
 from sim.backend import to_host as _host
 
 
+def _group_pool(x, g):
+    """Ensemble-pool a per-column read x (NC,) by averaging within contiguous groups of g columns, then broadcast
+    the group mean back to each member (keeps shape NC so it stays a per-column gate). Cuts the read granularity =
+    the 'average over an ensemble' lower-CV lever on a deterministic substrate (no trial noise to average)."""
+    nc = x.shape[0]; ng = int(np.ceil(nc / g))
+    pad = ng * g - nc
+    xp = np.concatenate([x, np.zeros(pad)]) if pad else x
+    gm = xp.reshape(ng, g).mean(1)                      # group means
+    out = np.repeat(gm, g)[:nc]
+    return out
+
+
 # ============================================================================================================
 # ChainLayer -- a real-spikes coincidence-plateau expander that also accepts a GRADED per-feature input CURRENT
 # (so an upstream layer's graded margin can drive it) and can apply a supplied credit weight-delta in place.
 # ============================================================================================================
 class ChainLayer(SigmaPrimeCreditExpander):
-    def forward_drive(self, drive_vec):
+    # ---- LOWER-CV READ (additive, default OFF; byte-identical when self._lowcv is None) -------------------------
+    # The located wall (2026-08-02 finding): even a perfect W^T oracle gives NO directed credit through the finite
+    # window sigma'(v-theta) read. NAMED surpass = a lower-CV read (e-prop long eligibility / DECOLLE membrane
+    # window / "average over an ensemble"). configure_lowcv installs a plateau-locked read that (a) integrates
+    # sigma' over a LONGER effective window via an exponential ELIGIBILITY TRACE, plateau-locked (skips the dead
+    # onset + the fragmenting tail this substrate exhibits), and (b) ENSEMBLE-POOLS sigma' across contiguous
+    # column groups to cut the read granularity, while (c) reading the MARGIN over the stable plateau band so the
+    # eval representation is preserved. It is measured, not assumed: measure_read_cv proves whether the CV dropped.
+    def configure_lowcv(self, lowcv):
+        """lowcv: dict{nsteps,warmup,sigma_hi,elig_tau,ensemble,margin_hi,beta} or None (OFF -> original read)."""
+        self._lowcv = dict(lowcv) if lowcv is not None else None
+        return self
+
+    def forward_drive(self, drive_vec, capture=False):
         """ONE real-spikes forward pass driven by a per-FEATURE current vector -> (margin[NC], sigmap[NC]).
         Generalizes the parent forward_credit (which drives a binary active-set with self.drive_pa): here the NF
         feature neurons receive `drive_vec` pA each. margin = max(0, mean_window(v_apical) - FLOOR); sigmap =
-        mean_window sigma'(v_soma - vt) (atan-surrogate) -- the graded low-CV somatic credit gate."""
+        mean_window sigma'(v_soma - vt) (atan-surrogate) -- the graded low-CV somatic credit gate.
+        LOWER-CV variant (self._lowcv set): sigma' is an exponential eligibility trace over the plateau band; margin
+        is read over the stable plateau window; sigma' is ensemble-pooled. `capture` returns the per-step sigma' /
+        apical matrices (n_steps, NC) for the read-CV instrument (never used in the credit path)."""
         b = self.b; xp = b.xp if hasattr(b, "xp") else np
         n = int(b.core_config.num_neurons)
         reset_soma(b); _clear_apical(b)
@@ -91,17 +119,54 @@ class ChainLayer(SigmaPrimeCreditExpander):
         inp[self.ci[:self.NF]] = np.asarray(drive_vec, np.float32)
         inp_x = xp.asarray(inp)
         cidx = self.ci[self.NF:self.NF + self.NC]
-        sp = np.zeros(self.NC); ap = np.zeros(self.NC)
-        for _ in range(self.n_steps):
-            b.cp_external_input_current[:] = inp_x
-            b._run_one_simulation_step()
-            v = np.asarray(_host(b.cp_membrane_potential_v))[cidx].astype(np.float64)
-            sp += 1.0 / (1.0 + (self.beta * (v - self.col_vt)) ** 2)
-            vap = getattr(b, "cp_v_apical", None)
-            if vap is not None:
-                ap += np.asarray(_host(vap))[cidx].astype(np.float64)
-        margin = np.maximum(0.0, ap / self.n_steps - FLOOR)
-        return margin, sp / self.n_steps
+        lc = getattr(self, "_lowcv", None)
+        ns = int(lc["nsteps"]) if lc is not None else self.n_steps
+        beta = float(lc["beta"]) if (lc is not None and lc.get("beta")) else self.beta
+        SPcap = np.zeros((ns, self.NC)) if capture else None
+        APcap = np.zeros((ns, self.NC)) if capture else None
+        if lc is None:
+            # ---- ORIGINAL read (unchanged; byte-identical) ----
+            sp = np.zeros(self.NC); ap = np.zeros(self.NC)
+            for t in range(self.n_steps):
+                b.cp_external_input_current[:] = inp_x
+                b._run_one_simulation_step()
+                v = np.asarray(_host(b.cp_membrane_potential_v))[cidx].astype(np.float64)
+                sp_t = 1.0 / (1.0 + (self.beta * (v - self.col_vt)) ** 2)
+                sp += sp_t
+                vap = getattr(b, "cp_v_apical", None)
+                ap_t = np.asarray(_host(vap))[cidx].astype(np.float64) if vap is not None else np.zeros(self.NC)
+                ap += ap_t
+                if capture:
+                    SPcap[t] = sp_t; APcap[t] = ap_t
+            margin = np.maximum(0.0, ap / self.n_steps - FLOOR)
+            sigmap = sp / self.n_steps
+        else:
+            # ---- LOWER-CV read: plateau-locked exponential eligibility for sigma' + plateau-window margin ----
+            warm = int(lc["warmup"]); s_hi = int(lc["sigma_hi"]); m_hi = int(lc["margin_hi"])
+            decay = float(np.exp(-1.0 / max(1e-6, float(lc["elig_tau"]))))
+            elig = np.zeros(self.NC); wsum = 0.0                # weighted eligibility mean of sigma' over the band
+            ap = np.zeros(self.NC); ap_cnt = 0                  # margin mean over the stable plateau window
+            for t in range(ns):
+                b.cp_external_input_current[:] = inp_x
+                b._run_one_simulation_step()
+                v = np.asarray(_host(b.cp_membrane_potential_v))[cidx].astype(np.float64)
+                sp_t = 1.0 / (1.0 + (beta * (v - self.col_vt)) ** 2)
+                vap = getattr(b, "cp_v_apical", None)
+                ap_t = np.asarray(_host(vap))[cidx].astype(np.float64) if vap is not None else np.zeros(self.NC)
+                if warm <= t < s_hi:                            # sigma' eligibility only over the informative band
+                    elig = decay * elig + sp_t; wsum = decay * wsum + 1.0
+                if t < m_hi:                                    # margin over the stable plateau band (preserve rep)
+                    ap += ap_t; ap_cnt += 1
+                if capture:
+                    SPcap[t] = sp_t; APcap[t] = ap_t
+            margin = np.maximum(0.0, ap / max(1, ap_cnt) - FLOOR)
+            sigmap = elig / (wsum + 1e-12)
+            ens = int(lc.get("ensemble", 1))
+            if ens > 1:                                         # ENSEMBLE pooling: average sigma' within column groups
+                sigmap = _group_pool(sigmap, ens)
+        if capture:
+            return margin, sigmap, SPcap, APcap
+        return margin, sigmap
 
     def apply_dW(self, dW):
         """Add credit delta dW (shape (NC, NF)) to the coincidence weights, then max(0) + per-column L2-renorm to
@@ -144,6 +209,12 @@ class MultiHopChain:
     def restore_frozen(self):
         for L in self.layers:
             L.restore_frozen()
+
+    def set_lowcv(self, lowcv):
+        """Toggle the lower-CV read on BOTH layers (None = off -> original read). Returns self."""
+        for L in self.layers:
+            L.configure_lowcv(lowcv)
+        return self
 
     # ---- forward ----
     def _couple(self, m0):
@@ -291,9 +362,54 @@ def _dcs(credit_ho, frozen_ho, oracle_ho):
     return float((credit_ho - frozen_ho) / d) if abs(d) > 1e-6 else float("nan")
 
 
+def measure_read_cv(layer, drive_batch, lowcv):
+    """MEASURE the read CV of the sigma'(v-theta) credit gate BEFORE (current window read) vs AFTER (lower-CV read)
+    on the SAME frozen layer -- prove whether the CV actually dropped (do not assume). Three notions, all reported:
+      repeat_maxabs   : max|sigma'_run1 - sigma'_run2| across identical re-presentations. On this substrate the read
+                        is DETERMINISTIC (OU/conductance-noise/heterogeneity all off) -> this is ~0 -> trial/ensemble
+                        AVERAGING over stochastic repeats (a core 'more spikes = lower CV' lever) is INERT here.
+      within_window_cv: std_t(sigma'_step)/mean_t over the read window, per active column -> how much the per-step
+                        sigma' varies across the integration window (the quantity sqrt(N)-averaging would shrink IF
+                        it were iid shot noise).
+      estimator_cv    : within_window_cv / sqrt(N_window) = the classic SEM/mean the 'more spikes' surpass targets.
+      crosscol_cv     : std_c(sigma'_read)/mean_c across columns of the FINAL per-example gate -> what ensemble
+                        POOLING directly lowers.
+    """
+    def _one(read_lowcv):
+        layer.configure_lowcv(read_lowcv)
+        if read_lowcv is None:
+            w_lo, w_hi = 0, layer.n_steps
+        else:
+            w_lo, w_hi = int(read_lowcv["warmup"]), int(read_lowcv["sigma_hi"])
+        ww = []; est = []; xc = []; rep = 0.0
+        for dv in drive_batch:
+            out = layer.forward_drive(dv, capture=True)
+            _, s1, SP, _ = out
+            _, s1b = layer.forward_drive(dv)                     # identical re-presentation
+            rep = max(rep, float(np.max(np.abs(np.asarray(s1) - np.asarray(s1b)))))
+            band = SP[w_lo:w_hi]
+            mean_c = band.mean(0); std_c = band.std(0)
+            am = mean_c > (band.mean() * 0.1 + 1e-12)            # columns carrying signal in the window
+            if am.sum() == 0:
+                am = np.ones_like(mean_c, bool)
+            cv_c = std_c[am] / (mean_c[am] + 1e-12)
+            ww.append(float(np.mean(cv_c)))
+            est.append(float(np.mean(cv_c)) / np.sqrt(max(1, band.shape[0])))
+            amf = s1 > (s1.mean() * 0.1 + 1e-12)
+            if amf.sum() == 0:
+                amf = np.ones_like(s1, bool)
+            xc.append(float(s1[amf].std() / (s1[amf].mean() + 1e-12)))
+        return {"within_window_cv": float(np.mean(ww)), "estimator_cv": float(np.mean(est)),
+                "crosscol_cv": float(np.mean(xc)), "repeat_maxabs": rep, "window": [w_lo, w_hi]}
+    cur = _one(None)
+    lo = _one(lowcv)
+    layer.configure_lowcv(None)                                 # leave the layer in the OFF state
+    return {"current": cur, "lowcv": lo}
+
+
 def run_seed(seed, n_col, n_col2, epochs, lr_ff, lr_out, w0, jitter, k_th, n_sub, hidden, oracle_epochs, oracle_lr,
              oracle_batch, drive_pa, drive_pa2, n_steps, beta, feedback, kp_lr, kp_decay, couple_topk, task_kwargs,
-             margin_go, verbose=True):
+             margin_go, lowcv=None, verbose=True):
     (Xtr, ytr, _), (Xte, yte, _), meta, idx = make_task_semantic_inheritance(seed, **task_kwargs)
     n_in = Xtr.shape[1]; k = meta["k_classes"]; inh = idx["inh_idx"]
     srng = np.random.default_rng(seed * 13 + 1); keep = srng.permutation(len(Xtr))[:min(n_sub, len(Xtr))]
@@ -413,6 +529,42 @@ def run_seed(seed, n_col, n_col2, epochs, lr_ff, lr_out, w0, jitter, k_th, n_sub
     out["directed_kp_graded"] = float(cr["graded_heldout"] - pe["graded_heldout"])
     out["directed_kp_codon"] = float(cr["codon_heldout"] - pe["codon_heldout"])
 
+    # ============================================================================================================
+    # LOWER-CV READ arm table (ADDITIVE; only when --lowcv-read is passed). Re-runs the KEY arms
+    # {frozen, oracle(W^T ceiling), KP(transport-free), permuted} under a plateau-locked eligibility + ensemble-
+    # pooled read, on the SAME reservoir + SAME task split + SAME anti-cheats, so the decisive comparison is
+    # directed = oracle - permuted with the CURRENT read vs the LOWER-CV read. First MEASURES the read CV
+    # before/after (proves whether it actually dropped -- do NOT assume). Everything above is byte-identical when
+    # lowcv is None; this whole block is skipped.
+    # ============================================================================================================
+    if lowcv is not None:
+        ch.set_lowcv(None); ch.restore_frozen()
+        cv_batch = drive0_b[:min(16, len(drive0_b))]
+        out["read_cv"] = measure_read_cv(ch.L0, cv_batch, lowcv)         # BEFORE (current) vs AFTER (lowcv)
+        ch.set_lowcv(lowcv); ch.restore_frozen()
+        out["coupling_lowcv"] = ch.calibrate_coupling(drive0_b)          # recalibrate the inter-layer gain under lowcv
+        ch.restore_frozen()
+        lfz, _ = _chain_eval(ch, drive0_b, yb, drive0_h, yh, k)          # FROZEN (lowcv read)
+        ch.restore_frozen()
+        ch.train(drive0_b, pre0_b, yb, k, epochs, lr_ff, lr_out, seed, mode="credit")
+        lcr, _ = _chain_eval(ch, drive0_b, yb, drive0_h, yh, k)          # KP transport-free credit (lowcv read)
+        ch.restore_frozen()
+        ch.train(drive0_b, pre0_b, yperm, k, epochs, lr_ff, lr_out, seed, mode="credit")
+        lpe, _ = _chain_eval(ch, drive0_b, yb, drive0_h, yh, k)          # PERMUTED (lowcv read)
+        ch.restore_frozen()
+        ch.train(drive0_b, pre0_b, yb, k, epochs, lr_ff, lr_out, seed, mode="oracle")
+        lorc, _ = _chain_eval(ch, drive0_b, yb, drive0_h, yh, k)         # ORACLE W^T ceiling (lowcv read)
+        out["lowcv_config"] = dict(lowcv)
+        out["lowcv_reproducibility"] = _chain_reproducibility(ch, drive0_b)
+        for tag, dd in (("frozen", lfz), ("credit", lcr), ("permuted", lpe), ("oracle", lorc)):
+            out[f"lowcv_{tag}_graded_heldout"] = dd["graded_heldout"]
+            out[f"lowcv_{tag}_codon_heldout"] = dd["codon_heldout"]
+        out["lowcv_directed_oracle_graded"] = float(lorc["graded_heldout"] - lpe["graded_heldout"])
+        out["lowcv_directed_kp_graded"] = float(lcr["graded_heldout"] - lpe["graded_heldout"])
+        out["lowcv_directed_oracle_codon"] = float(lorc["codon_heldout"] - lpe["codon_heldout"])
+        out["lowcv_directed_kp_codon"] = float(lcr["codon_heldout"] - lpe["codon_heldout"])
+        ch.set_lowcv(None)                                               # restore OFF for the static checks below
+
     # ---- ANTI-CHEAT: NO-TRANSPORT (code, docstrings stripped) -- per layer / per feedback ----
     tsig = set(inspect.signature(MultiHopChain.train).parameters)
     kp_fn = SigmaPrimeCreditExpander._kp_update
@@ -461,6 +613,21 @@ def run_seed(seed, n_col, n_col2, epochs, lr_ff, lr_out, w0, jitter, k_th, n_sub
         print(f"    [ISOLATION codon ] frozen {out['frozen_codon_heldout']:.3f} permuted {out['permuted_codon_heldout']:.3f} "
               f"KP {out['credit_codon_heldout']:.3f} ORACLE {out['oracle_directed_codon_heldout']:.3f} || "
               f"directed: oracle-perm {out['directed_oracle_codon']:+.3f} KP-perm {out['directed_kp_codon']:+.3f}", flush=True)
+        if lowcv is not None and "read_cv" in out:
+            rc = out["read_cv"]
+            print(f"    [LOWCV read-CV] repeat_maxabs cur {rc['current']['repeat_maxabs']:.2e} low {rc['lowcv']['repeat_maxabs']:.2e} "
+                  f"(=0 => deterministic, trial-avg inert) | within-window CV {rc['current']['within_window_cv']:.4f}->"
+                  f"{rc['lowcv']['within_window_cv']:.4f} | estimator CV {rc['current']['estimator_cv']:.5f}->"
+                  f"{rc['lowcv']['estimator_cv']:.5f} | cross-col CV {rc['current']['crosscol_cv']:.4f}->"
+                  f"{rc['lowcv']['crosscol_cv']:.4f}", flush=True)
+            print(f"    [LOWCV graded]  frozen {out['lowcv_frozen_graded_heldout']:.3f} permuted "
+                  f"{out['lowcv_permuted_graded_heldout']:.3f} KP {out['lowcv_credit_graded_heldout']:.3f} ORACLE "
+                  f"{out['lowcv_oracle_graded_heldout']:.3f} || directed: oracle-perm "
+                  f"{out['lowcv_directed_oracle_graded']:+.3f} KP-perm {out['lowcv_directed_kp_graded']:+.3f} "
+                  f"(reprod {out['lowcv_reproducibility']:.3f})", flush=True)
+            print(f"    [DIRECTED oracle-perm]  CURRENT {out['directed_oracle_graded']:+.3f}  ->  LOWCV "
+                  f"{out['lowcv_directed_oracle_graded']:+.3f}   (did the lower-CV read surface directed credit?)",
+                  flush=True)
     return out
 
 
@@ -500,10 +667,27 @@ def main():
                     help="HARDER task where the frozen reservoir FAILS (n_super=48, n_prop=4 => k=17; per b65e2cb3). "
                          "Overrides --n-super/--n-prop. The isolation reads only OPEN UP if directed credit becomes "
                          "measurable when the reservoir has room; the easy default (n_prop=3, k=9) is where frozen ~ oracle.")
+    # ---- LOWER-CV READ (additive, default OFF -> byte-identical). The NAMED surpass for the 2026-08-02 located
+    #      wall: a plateau-locked exponential eligibility (longer effective integration over the informative band)
+    #      + ensemble pooling of the sigma' gate. See measure_read_cv / ChainLayer.forward_drive. ----
+    ap.add_argument("--lowcv-read", action="store_true",
+                    help="ADD a lower-CV read arm table {frozen,oracle,KP,permuted} + the read-CV before/after; OFF => byte-identical")
+    ap.add_argument("--lowcv-nsteps", type=int, default=60, help="integration steps for the lowcv read (>= --n-steps)")
+    ap.add_argument("--lowcv-warmup", type=int, default=10, help="skip these dead-onset steps before the sigma' eligibility band")
+    ap.add_argument("--lowcv-sigma-hi", type=int, default=45, help="upper step of the sigma' eligibility band (before the plateau fragments)")
+    ap.add_argument("--lowcv-elig-tau", type=float, default=15.0, help="exponential eligibility-trace time constant (e-prop style)")
+    ap.add_argument("--lowcv-ensemble", type=int, default=4, help="ensemble-pool the sigma' gate over groups of this many columns")
+    ap.add_argument("--lowcv-margin-hi", type=int, default=30, help="upper step of the margin (representation) read window")
+    ap.add_argument("--lowcv-beta", type=float, default=0.0, help="sigma' surrogate sharpness for the lowcv read (0 => keep --beta)")
     ap.add_argument("--out", default="research/findings/raw/gap4/realspikes/multihop_chained_credit.json")
     a = ap.parse_args()
     if a.task_hard:
         a.n_super = 48; a.n_prop = 4                          # k = 2^4 + 1 = 17, the reservoir-fails regime
+    lowcv = None
+    if a.lowcv_read:
+        lowcv = dict(nsteps=int(a.lowcv_nsteps), warmup=int(a.lowcv_warmup), sigma_hi=int(a.lowcv_sigma_hi),
+                     elig_tau=float(a.lowcv_elig_tau), ensemble=int(a.lowcv_ensemble),
+                     margin_hi=int(a.lowcv_margin_hi), beta=float(a.lowcv_beta))
     task_kwargs = dict(n_super=a.n_super, n_members=a.n_members, held_per_super=a.held_per_super, n_prop=a.n_prop,
                        member_id_dim=a.member_id_dim, n_obs=a.n_obs, noise=a.noise)
     t0 = time.time(); per = []; err = None
@@ -512,7 +696,7 @@ def main():
             per.append(run_seed(s, a.n_col, a.n_col2, a.epochs, a.lr_ff, a.lr_out, a.w0, a.jitter, a.k_th, a.n_sub,
                                 a.hidden, a.oracle_epochs, a.oracle_lr, a.oracle_batch, a.drive_pa, a.drive_pa2,
                                 a.n_steps, a.beta, a.feedback, a.kp_lr, a.kp_decay, a.couple_topk, task_kwargs,
-                                a.margin_go))
+                                a.margin_go, lowcv=lowcv))
     except Exception as e:
         err = repr(e); traceback.print_exc()
 
@@ -522,7 +706,7 @@ def main():
                           "lr_out": a.lr_out, "beta": a.beta, "feedback": a.feedback, "kp_lr": a.kp_lr,
                           "kp_decay": a.kp_decay, "couple_topk": a.couple_topk, "drive_pa": a.drive_pa,
                           "drive_pa2": a.drive_pa2, "n_steps": a.n_steps, "task": task_kwargs,
-                          "margin_go": a.margin_go},
+                          "margin_go": a.margin_go, "lowcv": lowcv},
                "elapsed_seconds": round(time.time() - t0, 1), "per_seed": per}
     if err is None and per:
         def _m(kk):
@@ -582,6 +766,32 @@ def main():
                     "oracle_directed_positive_codon": orc_dir_c, "task_hard": bool(a.task_hard),
                     "isolation_verdict": isolation})
         summary["aggregate"] = agg; summary["GO"] = go; summary["PROMISING"] = promising
+        # ---- LOWER-CV READ aggregate (only when --lowcv-read): the decisive current-vs-lowcv directed comparison ----
+        if lowcv is not None and all("lowcv_directed_oracle_graded" in p for p in per):
+            lkeys = ["lowcv_frozen_graded_heldout", "lowcv_credit_graded_heldout", "lowcv_permuted_graded_heldout",
+                     "lowcv_oracle_graded_heldout", "lowcv_directed_oracle_graded", "lowcv_directed_kp_graded",
+                     "lowcv_directed_oracle_codon", "lowcv_directed_kp_codon", "lowcv_reproducibility"]
+            lagg = {kk: _m(kk) for kk in lkeys}
+            lagg["current_directed_oracle_graded"] = agg["directed_oracle_graded"]
+            lagg["current_directed_kp_graded"] = agg["directed_kp_graded"]
+            lagg["read_cv_current_estimator"] = float(np.mean([p["read_cv"]["current"]["estimator_cv"] for p in per]))
+            lagg["read_cv_lowcv_estimator"] = float(np.mean([p["read_cv"]["lowcv"]["estimator_cv"] for p in per]))
+            lagg["read_cv_current_crosscol"] = float(np.mean([p["read_cv"]["current"]["crosscol_cv"] for p in per]))
+            lagg["read_cv_lowcv_crosscol"] = float(np.mean([p["read_cv"]["lowcv"]["crosscol_cv"] for p in per]))
+            lagg["read_repeat_maxabs_current"] = float(np.max([p["read_cv"]["current"]["repeat_maxabs"] for p in per]))
+            lagg["read_repeat_maxabs_lowcv"] = float(np.max([p["read_cv"]["lowcv"]["repeat_maxabs"] for p in per]))
+            lo_dir = lagg["lowcv_directed_oracle_graded"]; cur_dir = agg["directed_oracle_graded"]
+            lagg["lowcv_oracle_directed_positive"] = sum(1 for p in per if p["lowcv_directed_oracle_graded"] > a.margin_go)
+            if lo_dir > a.margin_go:
+                lagg["lowcv_verdict"] = ("SURPASS WORKS -- the lower-CV read makes the W^T oracle beat permuted "
+                                         "(directed credit surfaces); the wall was a read-CV issue")
+            elif lo_dir > cur_dir + 0.02:
+                lagg["lowcv_verdict"] = ("PARTIAL -- lowcv moves oracle-permuted upward but not past the margin; "
+                                         "more integration/ensemble may be needed")
+            else:
+                lagg["lowcv_verdict"] = ("DEEPER REDESIGN -- the lower-CV read does NOT make oracle beat permuted "
+                                         "(oracle still ~ permuted); the wall is not read-CV (task/read redesign needed)")
+            summary["lowcv_aggregate"] = lagg
         common = (f"oracle {agg['oracle_heldout']:.3f}, rate-res {agg['rate_reservoir_heldout']:.3f}. "
                   f"MULTIHOP graded FROZEN {agg['frozen_graded_heldout']:.3f} CREDIT {agg['credit_graded_heldout']:.3f} "
                   f"(dcs {agg['dcs_multihop_graded']:+.3f}) vs SINGLE dcs {agg['dcs_single_graded']:+.3f}. "
@@ -618,6 +828,20 @@ def main():
               f"({ag['oracle_directed_positive_graded']}/{ag['n_seeds']}>0) | KP-perm {ag['directed_kp_graded']:+.3f} "
               f"({ag['kp_directed_positive_graded']}/{ag['n_seeds']}>0)", flush=True)
         print(f"[ISOLATION | {task_lbl}] WALL => {ag['isolation_verdict']}", flush=True)
+        if "lowcv_aggregate" in summary:
+            la = summary["lowcv_aggregate"]
+            print("-" * 100, flush=True)
+            print(f"[LOWCV | {task_lbl}] read-CV: repeat_maxabs cur {la['read_repeat_maxabs_current']:.2e} low "
+                  f"{la['read_repeat_maxabs_lowcv']:.2e} (=0 => deterministic; trial/ensemble AVERAGING inert) | "
+                  f"estimator CV {la['read_cv_current_estimator']:.5f} -> {la['read_cv_lowcv_estimator']:.5f} | "
+                  f"cross-col CV {la['read_cv_current_crosscol']:.4f} -> {la['read_cv_lowcv_crosscol']:.4f}", flush=True)
+            print(f"[LOWCV | {task_lbl}] graded heldout means -- frozen {la['lowcv_frozen_graded_heldout']:.3f} | "
+                  f"permuted {la['lowcv_permuted_graded_heldout']:.3f} | KP {la['lowcv_credit_graded_heldout']:.3f} | "
+                  f"ORACLE(W^T) {la['lowcv_oracle_graded_heldout']:.3f} | reprod {la['lowcv_reproducibility']:.3f}", flush=True)
+            print(f"[LOWCV | {task_lbl}] DIRECTED oracle-permuted: CURRENT {la['current_directed_oracle_graded']:+.3f} "
+                  f"-> LOWCV {la['lowcv_directed_oracle_graded']:+.3f} ({la['lowcv_oracle_directed_positive']}/"
+                  f"{ag['n_seeds']}>margin) | KP-perm LOWCV {la['lowcv_directed_kp_graded']:+.3f}", flush=True)
+            print(f"[LOWCV | {task_lbl}] VERDICT => {la['lowcv_verdict']}", flush=True)
     print(f"[gap4-realspikes-multihop] backend={summary['backend']} wrote {a.out}\n" + "=" * 100, flush=True)
     return 0 if summary.get("GO") else 1
 

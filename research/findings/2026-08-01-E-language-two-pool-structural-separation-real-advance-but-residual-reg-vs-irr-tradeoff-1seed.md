@@ -51,3 +51,18 @@ none). That is the honest burn-down of the shortcut AND the mechanism most likel
 still flagged: the hand-wired routing (which pool each item projects to is host-assigned, S2) → a developmental
 self-organized split is the deeper burn-down. This is a 1-seed op-point map (a characterized partial advance,
 not a GO); the di-synaptic version + a 6-seed confirmation is the next step.
+
+## Update (2026-08-02) — the di-synaptic burn-down 6-seed = NEGATIVE (the 1-seed GO was a fluke; reg generalization is seed-fragile)
+
+<!--derived-->
+Built the faithful di-synaptic inhibition (whole-form(exc) → dedicated GABAergic interneuron → affix; Dale-
+compliant, the minus sign in the cell; additive/default-off/byte-identical-when-off; corpus-confirmed untested).
+Artifact: `research/findings/raw/lanes/morph/two_pool_disynaptic_6seed.json`. At the seed-42 op-point it cleared
+BOTH gates (reg 1.0 + irr 0.857) where the sign-inverted version was 0/12 — but that did NOT hold at 6 seeds:
+both-gates **1/6** (only seed 42), because **reg_acc is seed-fragile** (per-seed 1.0 / 0.375 / 0.625 / 0.750 /
+0.875 / 0.250). So the di-synaptic inhibition does the right thing to the BLOCKING (irr clears at several seeds,
+and reg is untouched by inhibition strength as designed) but the deeper residual is that the **procedural rule
+route's generalization itself is unstable across seeds** — the tradeoff-break is real per-op-point but the whole
+two-pool is not a robust GO. NEXT: the reg-route seed-fragility (a more robust PAST→AFFIX generalization —
+stronger/wider proc pool, or more training) is the real residual, not the blocking. The structural-separation
+advance (reg 0.25→up-to-1.0) stands; a robust 6-seed both-gates GO does not.

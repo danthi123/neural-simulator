@@ -61,3 +61,24 @@ averaging / longer temporal integration (the e-prop long-sequence eligibility + 
 ensemble"), then re-run the oracle isolation to confirm the directed signal appears before shipping a
 transport-free rule. The rate overturn stands as the session's result; the spiking read regime is the
 precisely-located, biologically-actionable frontier.
+
+## Update (2026-08-02) — the lower-CV read was TESTED and does NOT surface directed credit; the wall is NOT read-CV, the corrected surpass is DECOLLE local readouts
+
+<!--derived-->
+The named surpass (a lower-CV read) was built + tested (additive `--lowcv-read`: longer integration window,
+ensemble pooling over columns, an exponential e-prop-style eligibility trace). Artifact:
+`research/findings/raw/gap4/realspikes/smoke_lowcv_hard_s42.json`. It DID lower the estimator read-CV
+(0.090→0.070) but `oracle − permuted` stayed at the noise floor (current +0.000 → lowcv +0.009, below the
+margin, 0/1) on the hard task — VERDICT: DEEPER REDESIGN, the wall is not read-CV. **The decisive fact: the
+substrate is DETERMINISTIC** (OU / conductance-noise / heterogeneity all OFF → `repeat_maxabs = 0`), so the
+"more spikes → lower shot-noise CV" lever is INERT — there is no stochastic read noise to average out. So the
+directed signal being at/below the "noise floor" is not shot noise; the deep-layer credit's held-out benefit is
+genuinely **LABEL-INDEPENDENT**: even a perfect W⊤ oracle equals a label-shuffle, AND a lower-CV read does not
+change it. This is the R3 reservoir reframe on spikes, DEFINITIVELY — the fixed reservoir + trained readout
+extracts what it needs, and top-down credit to the deep layer has no purchase (the readout free-rides past it).
+**CORRECTED SURPASS (replacing "a lower-CV read"):** a DECOLLE-style LOCAL per-layer readout + local loss
+([Kaiser 2020, Front Neurosci](https://www.frontiersin.org/journals/neuroscience/articles/10.3389/fnins.2020.00424/full))
+— train each spiking layer DIRECTLY toward local classifiability (a label-dependent local loss FORCING directed
+credit at the layer), instead of routing a top-down credit signal the output readout free-rides past. That is
+the field's proven approach for exactly this "top-down credit has no purchase on spikes" wall, and it is the
+next mechanism. (The rate overturn is unaffected; this refines the spiking-side surpass.)
