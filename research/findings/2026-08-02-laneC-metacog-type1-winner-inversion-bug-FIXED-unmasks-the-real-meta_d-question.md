@@ -54,11 +54,35 @@ sensitivity (an honest negative that LAUNCHES the monitor-mechanism search: read
 read rather than a winner-rate read, or a learned monitor), or (b) meta_d is real at 6 seeds and the 1-seed smoke was
 noise. Either way the type-1 fix is a prerequisite that was blocking any valid metacognition read, now removed.
 
+## Update 1 (2026-08-02, same-cycle) — the 6-seed full-window verdict: type-1 fix ROBUST (GO), metacognition a GENUINE honest-negative
+
+<!--derived-->
+The 6-seed full-window run landed (n=160/seed; artifacts `research/findings/raw/lanes/metacog/metacog_full_s42.json`
+etc.). **Type-1 fix is robust:** type1_accuracy mean 0.718, ALL 6 seeds inside the [0.60, 0.90] operating window
+(0.625-0.769), d1 mean +1.23 (all positive) — the winner-inversion fix holds across seeds, not a 1-seed fluke.
+**Metacognition is a genuine honest-negative:** meta_d = 0.000 on 4/6 seeds (mean 0.188; only s101 +0.727, s43 +0.401),
+type2_auc mean 0.490 (< the 0.65 GO threshold), within-class type-2 AUC mean 0.450 (< the 0.55 threshold, ~chance),
+permuted-confidence type-2 0.526 (~chance, i.e. no real confidence-correctness coupling to destroy), and the meta-lesion
+type-2 sits at exactly 0.500. So the slow-NMDA monitor AS WIRED does not carry reliable metacognitive sensitivity once
+the first-order task is correct — this is a real negative, no longer masked by the type-1 bug. It is NOT structurally
+impossible: s101 reaches meta_d +0.727 with within-class 0.531, so the monitor CAN separate correct-from-error on some
+seeds — the read is on the edge, not dead.
+
+<!--derived-->
+**The mechanism search this launches (no-defer).** Per THE LAW this negative is a verdict on the CURRENT monitor WIRING,
+not the capability. Two candidate surpasses, cheapest first: (1) TUNE the monitor read balance (a `--meta-exc-w x
+--meta-inh-w` sweep — running — asks whether the winner-exc vs total-inh balance can be set so confidence tracks the
+winning MARGIN reliably); (2) if magnitude-tuning does not lift meta_d, the read is STRUCTURALLY margin-blind (winner
+rate alone cannot encode confidence when a wrong winner also fires strongly) => change the monitor to read the
+evidence-MARGIN (winner - runner-up) directly, biologically a difference-of-assemblies / normalization read, or a LEARNED
+monitor. The sweep decides which branch; the 1-seed smoke's meta_d~=0 is now confirmed as the 6-seed pattern.
+
 ## Honest scope
 
 <!--derived-->
-This finding banks a SETUP-BUG FIX (validated before/after) and RE-OPENS the lane-C metacognition question that the bug
-had prematurely closed as a negative — it does NOT itself claim a working metacognition monitor. The functional-correlate
-framing stands: any positive meta_d is reported as an honest functional read-out ("the monitor's confidence tracks
-first-order correctness"), never as subjective awareness. The prior `metacog_6seed.json` NEGATIVE is superseded by this
-fix (its type-1 was inverted); the real verdict awaits the 6-seed full-window run.
+This finding banks a SETUP-BUG FIX (validated before/after AND 6-seed robust for type-1) and a GENUINE 6-seed
+honest-negative for the metacognition monitor as wired — it does NOT claim a working metacognition monitor. The
+functional-correlate framing stands: any positive meta_d is reported as an honest functional read-out ("the monitor's
+confidence tracks first-order correctness"), never as subjective awareness. The prior `metacog_6seed.json` NEGATIVE is
+superseded (its type-1 was inverted, making its metacognition read meaningless); this is the corrected verdict — type-1
+GO, monitor sensitivity an open honest-negative with a named mechanism search in progress.

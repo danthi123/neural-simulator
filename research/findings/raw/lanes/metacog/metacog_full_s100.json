@@ -1,0 +1,91 @@
+{
+  "runner": "_second_order_metacog_monitor_derisk",
+  "faculty": "F4 self-model/metacognition (LANE C second-order METACOGNITION MONITOR, slow-NMDA meta_schema)",
+  "theory": "Maniscalco & Lau type-2 SDT / meta-d' + balance-of-evidence confidence (Vickers) read by a slow-NMDA downstream monitor (Wang persistent-activity NMDA) -- FUNCTIONAL correlate only",
+  "seeds": [
+    100
+  ],
+  "n_trials": 160,
+  "backend": "numpy",
+  "thresholds": {
+    "type1_acc_lo": 0.6,
+    "type1_acc_hi": 0.9,
+    "type2_auc": 0.65,
+    "m_ratio": 0.6,
+    "within_class_t2_auc": 0.55,
+    "chance_type2_auc": 0.58,
+    "collapse_meta_d": 0.35,
+    "max_d1_shift": 0.3,
+    "max_acc_shift": 0.06
+  },
+  "n_go": 0,
+  "n_seeds": 1,
+  "aggregate": {
+    "mean_type1_accuracy": 0.74375,
+    "mean_d1": 1.3043329539056163,
+    "mean_type2_auc": 0.39003894240623077,
+    "mean_meta_d": 0.0,
+    "mean_m_ratio": 0.0,
+    "all_in_window": true,
+    "all_meta_lesion_collapse": true,
+    "all_domain_dissociation": true,
+    "all_permuted_collapse": false,
+    "all_within_class_ok": false
+  },
+  "per_seed": [
+    {
+      "seed": 100,
+      "n_trials": 160,
+      "intact": {
+        "type1_accuracy": 0.74375,
+        "d1": 1.3043329539056163,
+        "c1": -0.124255283371834,
+        "hr": 0.78125,
+        "far": 0.29878048780487804,
+        "type2_auc": 0.39003894240623077,
+        "meta_d": 0.0,
+        "m_ratio": 0.0,
+        "conf_correct_mean": 0.03150623885918003,
+        "conf_error_mean": 0.03131929046563193,
+        "conf_vs_signal_spearman": 0.19716688151880932,
+        "in_operating_window": true
+      },
+      "within_class_correctness": {
+        "per_class_type2_auc": {
+          "0": 0.40095029239766083,
+          "1": 0.38330170777988615
+        },
+        "min_per_class_type2_auc": 0.38330170777988615,
+        "within_class_ok": false
+      },
+      "meta_lesion": {
+        "type1_accuracy": 0.74375,
+        "d1": 1.3043329539056163,
+        "type2_auc": 0.5,
+        "meta_d": 0.0,
+        "m_ratio": 0.0,
+        "meta_d_attributable": null,
+        "collapsed": true,
+        "domain_dissociation_ok": true
+      },
+      "permuted_confidence": {
+        "type2_auc": 0.5730682516909202,
+        "meta_d": 0.432065837595147,
+        "meta_d_attributable": null,
+        "collapsed": false
+      },
+      "go_components": {
+        "in_operating_window": true,
+        "type2": false,
+        "meta": false,
+        "meta_lesion_collapses": true,
+        "domain_dissociation": true,
+        "permuted_collapses": false,
+        "within_class_correctness": false
+      },
+      "go": false
+    }
+  ],
+  "honest_scope": "A functional metacognition correlate: a slow-NMDA meta_schema region reads the brain's OWN first-order 2AFC competition (the WTA winning margin = balance-of-evidence) and emits a graded confidence rate that predicts whether the first-order decision was CORRECT (meta-d' >0, M-ratio near the metacognitive ideal). The monitor is DISSOCIABLE from first-order sensitivity (meta-lesion collapses meta-d' while d' is unchanged) and collapses under a permuted confidence. NOT a claim of subjective experience (phenomenal consciousness is OPEN, arguably untestable).",
+  "below_chance": true
+}
