@@ -116,3 +116,36 @@ informative), AFTER which KP-vs-fixed-FA becomes a measurable second-order quest
 "build a depth-3 accuracy task" line (both attempts hit named traps; see
 `2026-08-02-gap4-crux-transport-free-rule-...-6seed.md` Updates 2-3): the binding constraint is the deep-spiking
 LEARNING REGIME, not the task construction.
+
+## Update (2026-08-02) — SCOPE CORRECTION via the a-1 record check: the N>=3 non-training is the CHAINED multi-hop FA specifically; the project ALREADY trains deep credit on spikes at depth-2 with DIRECT feedback (DFA e-prop), so the refined next mechanism is "does DFA scale to N>=3", not "build deep-spiking training from scratch"
+
+<!--derived-->
+An a-1 RAG check + source read of `2026-07-14-deep-credit-spiking-training-wall-research-gate-graded-credit-decisive.md`
+corrects the scope of this finding's "the transport-free LOCAL rule does not train deep spiking nets" claim. That
+arc already established, 6-seed and anti-cheat-clean, that a transport-free biological LOCAL rule TRAINS + generalizes
+deep compositional credit on spikes at the required depth-2: **e-prop** (forward eligibility + membrane surrogate
+sigma'(v-theta) + **DFA = the output error projected DIRECTLY to each hidden layer by a fixed-random B_direct**), LIF
+train 1.0 / inherit 0.895, and it ports to the production Izhikevich bridge (K=8 population inherit 0.877 = the LIF
+ceiling; shuffle-DFA collapses to chance so the credit channel is load-bearing).
+
+<!--derived-->
+**The load-bearing distinction I missed:** this finding's arms (`_chained_fa_grads`) use CHAINED multi-hop feedback —
+`e_below = (e_above @ Y[li]) * psi[li]`, the error descended hop-by-hop through the stack — whereas the 2026-07-14
+working recipe uses DIRECT feedback (DFA): each layer reads the OUTPUT error directly, never through the chain. The
+multi-hop CHAIN is exactly what degrades with depth (each hop compounds the FA misalignment; consistent with Nokland
+2016, *Direct Feedback Alignment Provides Learning in Deep Neural Networks*, which introduced DFA precisely because the
+chained path degrades). So the honest, corrected claim is: **the CHAINED multi-hop FA variant (and its KP repair) does
+not enter the learning regime at N>=3** — NOT the transport-free local family in general, since DFA e-prop (also
+transport-free, also local) trains deep credit on spikes at depth-2. At depth-2 the chain is a single hop, so both
+chained-FA (this crux's CORE) and DFA work; the divergence is at N>=3.
+
+<!--derived-->
+**Refined next mechanism (drift-#12-corrected — do NOT re-derive):** the depth-SCALING question is now precisely "does
+the project's already-working DFA e-prop (`credit_mode="eprop"` in
+`research/runners/_snn_bptt_forward_vs_learning_isolation_derisk.py` / the on-bridge port
+`research/runners/_onbridge_eprop_port_derisk.py`) scale to N>=3 obligatory-depth" — using DIRECT feedback that
+sidesteps the chain, on the LIF net first. That, not "build a deep-spiking learning regime from scratch," is the tractable
+next test. It also reframes the KP-vs-fixed-FA question: KP repairs the CHAIN's transport degradation, while DFA avoids
+the chain entirely — so on spikes the more decisive comparison at depth may be chained-FA vs chained-KP vs DFA, with DFA
+the a-priori favourite (it already trains depth-2). The crux CORE (chained-FA at the required depth-2, single hop, 6/6)
+is untouched by this correction.
