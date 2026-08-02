@@ -54,13 +54,29 @@ a strong implicit regularizer through depth. That is a qualitatively more biolog
 learning profile (a local rule that generalizes-or-declines rather than memorizes), even though it does not move the
 held-out ceiling on this task.
 
+## Exhaustive characterization — the ceiling is robust, the limit is FUNDAMENTAL (added after the initial result)
+
+<!--derived-->
+I then tried to break BDSP's ~0.65 ceiling every way I could; each closed (seed 42; runner diagnostic modes
+`bdsp_truegrad`/`bdsp_soft`/`burstprop`): **not the SIGNAL** — feeding the BDSP rule the TRUE backpropagated deep
+signal (uses W^T, a transport diagnostic) gives 0.588, no better than BDSP + random DFA (0.655); **not the GATE
+form** — a soft/graded gate is WORSE (0.507) than the binary event gate, so binary is the best form not
+over-regularizing; **chaining DEGRADES** — a Payeur-style chained top-down burstprop with random adjacent feedback
+gives 0.451 and falls toward chance (chained random feedback compounds misalignment through depth), and its
+advantage would need LEARNED feedback which KP-alignment already showed HURTS the BDSP; plus tuning (saturated),
+capacity (higher lr destabilizes even the oracle), and task-hardness (narrow window). The fundamental read, which
+maps onto the field's weight-transport problem: backprop reaches 0.97 but needs weight transport; every
+transport-free variant caps at ~0.65, because a GRADED update has the capacity to capture the level-2 composition
+but with random feedback it MEMORIZES (FA), while a BINARY gate fixes memorization but CAPS capacity (BDSP) — there
+is no transport-free point that both generalizes AND captures the deep composition. The DFA-BDSP is the best
+achievable transport-free compromise.
+
 ## Next
-The residual is precise: a local transport-free rule extracts the *level-1* structure (probe ~0.64) but not the
-*level-2* composition, capping held-out at ~0.63 regardless of rule family. The wall is the **depth-2 composition**,
-not the memorization (BDSP already fixed that). The next levers are the ones that could capture level-2 without
-weight transport: (a) a stronger inter-layer credit signal than a single fixed-random feedback (e.g. the burst-
-multiplexed two-compartment channel where the burst carries a genuinely top-down target, not just a projected
-error); (b) an unsupervised depth-building objective (learn the level-1 latents first, then compose) rather than
-end-to-end error; (c) the on-bridge SPIKING port of the BDSP-generalizes result (this is the rate stand-in — the
-generalization profile must be confirmed on real spikes). A consolidated boundary with a qualitative advance banked
-and the composition residual named — the capability is open, the depth wall precisely located.
+<!--derived-->
+The residual is a *fundamental* limit of the local transport-free credit class, not a tunable miss. The one
+genuinely-untested transport-free PARADIGM is **Equilibrium Propagation** (energy-based — credit from the network's
+own relaxation, not a feedforward feedback projection; caveat: it likely needs weight *symmetry*, itself a form of
+transport, so it may hit the same wall). And the **on-bridge SPIKING port** of the BDSP-generalizes result (this is
+a rate stand-in — the generalization profile must be confirmed on real spikes; in progress). A precisely-mapped,
+field-consistent boundary with a genuine advance banked (BDSP is the best transport-free rule and generalizes where
+FA memorizes) — the capability is open, the frontier is now a different-paradigm question.
