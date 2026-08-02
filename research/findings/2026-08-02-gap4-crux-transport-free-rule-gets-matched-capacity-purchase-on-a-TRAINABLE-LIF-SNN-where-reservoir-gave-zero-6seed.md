@@ -128,3 +128,50 @@ trainable spiking substrate AT THE REQUIRED DEPTH (depth-2, robust 6/6, beats re
 BPTT); it does NOT yet scale to deeper spiking nets (redundant depth collapses it), and the KP-depth-rescue that
 carried the rate result is UNTESTED on spikes. NEXT: a required-depth-3-4 spiking task (obligatory hops) — the
 clean KP-depth-rescue test.
+
+## Update 3 (2026-08-02) — the required-depth-3 test via a BOOLEAN-obligatory task is ILL-POSED: stacked parity forces obligatory depth but ALSO defeats the backprop ceiling (the oracle cannot fit deep parity either) — the surpass is a SMOOTH depth-3 task
+
+<!--derived-->
+Built the named required-depth-3 test as `--task-nestedxor`: pair-XOR (L1) -> group-MAJORITY (L2) -> top-XOR (L3),
+with the MAJORITY inserted between the two XOR levels specifically to break the parity fold (a pure nested-XOR
+tree collapses to a wide parity = depth-1; MAJ != parity, so the three ops cannot be folded). The construction is
+correct — label perfectly balanced (chance 0.504), a linear read of the raw bits sits at chance (0.490), the
+three ops genuinely stack. **But the stage0 depth-genuineness gate FAILS, and the failure is diagnostic, not a
+tuning miss.** Artifact: `research/findings/raw/gap4/realspikes/nestedxor_stage0_confirm_seed42.json`.
+
+<!--derived-->
+| stage0 oracle (DendriticMLP, hidden 96, 250 epochs, lr 0.3) | held-out | TRAIN |
+|---|---|---|
+| linear (0 hidden) | 0.490 | 0.506 |
+| 1 hidden | 0.496 | 0.502 |
+| 2 hidden | 0.466 | 0.514 |
+| **3 hidden (the depth regime that SHOULD clear it)** | **0.496 (chance)** | **0.502 (chance)** |
+
+<!--derived-->
+**The load-bearing read is the TRAIN column: the depth-3 oracle cannot even FIT the training set (l3_train =
+0.502, chance).** This is NOT a generalization failure (which would show high train, chance held-out) — it is an
+OPTIMIZATION wall: a 96-wide 3-hidden-layer backprop net trained 250 epochs cannot memorize the nested-XOR
+function. Root cause: stacked XOR/parity is the canonical hard case for gradient descent — parity gradients are
+near-zero and carry no learning signal (Shalev-Shwartz, Shamir & Shammah 2017, *Failures of Gradient-Based Deep
+Learning*, arxiv:1703.07950; the classic parity-hardness result). The nested-XOR function is *representable* at
+depth-3 but not *optimizable* by backprop at any depth 0-3.
+
+<!--derived-->
+**THE METHODOLOGICAL DELIVERABLE (why this matters beyond one bad task):** a BOOLEAN-obligatory-depth task cannot
+test "does KP rescue obligatory depth-3 on spikes," because the very construct that forces obligatory depth
+(stacked parity) simultaneously destroys the BACKPROP CEILING the spiking rule must be measured against. With no
+depth-3 ceiling (backprop itself at chance), a null result on the spiking chained-FA/KP arms would be
+uninterpretable — indistinguishable between "KP fails to rescue" and "the task is unfittable by anyone." The rate
+MNIST-depth-4 rescue that carried the rate result worked precisely because natural-image depth is SMOOTH and
+optimizable, NOT parity-obligatory. So "obligatory boolean depth" was the wrong operationalization of the depth
+test.
+
+<!--derived-->
+**THE SURPASS (no-defer — the negative launches the next method):** a SMOOTH depth-3-REQUIRING task where the
+depth requirement comes from COMPOSITIONAL BINDING, not parity — a 3-level taxonomy (member -> mid-category ->
+super-category -> property, the proven depth-2 semantic-inheritance genre extended one level), which a depth-3
+backprop oracle CAN fit+clear (l3_train high, l2 underfits held-out) so the ceiling exists. Building now
+(`--task-hier3`). **Scope guard — this does NOT touch the crux's core result:** transport-free deep credit still
+works on a trainable spiking substrate at the required depth-2 (6/6, beats reservoirs, matches/exceeds BPTT); this
+refines the OPEN edge (does KP's depth-rescue hold on spikes) by correcting a test design, and the correction is
+itself a finding about how the depth test must be posed.

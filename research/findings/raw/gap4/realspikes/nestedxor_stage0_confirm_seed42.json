@@ -1,0 +1,28 @@
+{
+  "probe": "gap4_bptt_snn_chained_fa_transport_free__STAGE0_ONLY",
+  "task": "nestedxor",
+  "seeds": [
+    42
+  ],
+  "stage0": [
+    {
+      "chance": 0.50418410041841,
+      "n_features": 12,
+      "linear_inherit_heldout": 0.4895397489539749,
+      "linear_train": 0.5056348610067618,
+      "l1_inherit_heldout": 0.49581589958158995,
+      "l1_train": 0.5022539444027048,
+      "l2_inherit_heldout": 0.46582984658298465,
+      "l2_train": 0.5138993238166792,
+      "l3_inherit_heldout": 0.49581589958158995,
+      "l3_train": 0.5022539444027048,
+      "deep_best_inherit_heldout": 0.49581589958158995,
+      "depth_gap": 0.0,
+      "depth_separating": false,
+      "seed": 42,
+      "depth3_requiring": false
+    }
+  ],
+  "depth3_requiring_seeds": "0/1",
+  "gate": "depth3_requiring = (l2 <= chance+0.06) AND (l3 >= 0.80) AND (l3 - l2 >= 0.15)"
+}
