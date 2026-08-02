@@ -1,0 +1,36 @@
+{
+ "run_id": "1785683889-392072",
+ "runner": "research/runners/_gap4_representable_forward_plus_credit_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_gap4_representable_forward_plus_credit_derisk.py",
+  "--measure-fa-convergence",
+  "--task-xor",
+  "--act-th",
+  "3",
+  "--mode",
+  "expander",
+  "--seeds",
+  "42",
+  "--epochs",
+  "60",
+  "--train-subsample",
+  "160",
+  "--fa-eval-every",
+  "5",
+  "--out",
+  "research/findings/raw/gap4/rep_fwd_fa_convergence_izh_s42.json"
+ ],
+ "git_sha": "5d221c740",
+ "git_dirty": true,
+ "started": "2026-08-02T11:18:09",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 24852.1,
+ "corpus_check_query": "construct a task where GENERALIZATION (not just fitting) obligatorily requires depth-3 composition, backprop-optimizable and reservoir-non-decodable, to test KP depth-credit-rescue on spikes",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/gap4/fa_convergence_lif_ref_s42.json"
+}

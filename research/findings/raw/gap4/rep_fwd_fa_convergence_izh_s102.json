@@ -1,0 +1,692 @@
+{
+  "probe": "gap4_fa_convergence",
+  "seeds": [
+    102
+  ],
+  "config": {
+    "seeds": [
+      102
+    ],
+    "n_prop": 3,
+    "mode": "expander",
+    "task_xor": true,
+    "xor_encoding": "literal",
+    "learned_feedback": false,
+    "kp_lr": 0.1,
+    "kp_decay": 0.0001,
+    "microcircuit": false,
+    "wpi_lr": 0.2,
+    "wpi_init": "noisy",
+    "wpi_noise": 1.0,
+    "wpi_frozen": false,
+    "measure_credit_factor": false,
+    "fd_batch": 16,
+    "fd_delta_pA": 20.0,
+    "credit_measure_on": "init",
+    "measure_fa_convergence": true,
+    "fa_eval_every": 5,
+    "n_col": 200,
+    "act_th": 3,
+    "topk": 4,
+    "hidden": 32,
+    "n_hidden_layers": 2,
+    "settle_steps": 30,
+    "epochs": 60,
+    "batch": 20,
+    "eprop_lr": 0.5,
+    "eps_leak": 0.9,
+    "surrogate": "atan_vt",
+    "alpha_surr": 0.15,
+    "beta_surr": 1.0,
+    "logit_source": "leaky_readout",
+    "w_clip": 4000.0,
+    "train_subsample": 160,
+    "pool_k": 1,
+    "hidden_lr_scale": 5.0,
+    "tonic_h_pA": 100.0,
+    "tonic_o_pA": 150.0,
+    "ff_w_init": 2000.0,
+    "in_current_pA": 700.0,
+    "in_bias_pA": 300.0,
+    "pbar_alpha": 0.05,
+    "n_super": 24,
+    "n_members": 8,
+    "held_per_super": 3,
+    "member_id_dim": 3,
+    "n_obs": 14,
+    "noise": 0.02,
+    "out": "research/findings/raw/gap4/rep_fwd_fa_convergence_izh_s102.json"
+  },
+  "elapsed_seconds": 95.9,
+  "rows": [
+    {
+      "seed": 102,
+      "substrate": "izhikevich",
+      "task": "xor",
+      "mode": "expander",
+      "act_th": 3,
+      "credit": "fixed_dfa",
+      "k_classes": 2,
+      "chance": 0.5013927576601671,
+      "codon_sparsity": 0.10301503759398496,
+      "codon_reproducibility": 1.0,
+      "n_features_in": 200,
+      "n_hidden_pathways": 2,
+      "epochs": 60,
+      "fa_eval_every": 5,
+      "fa_cos_top_init": 0.0,
+      "fa_cos_top_final": -0.2270203891202844,
+      "fa_cos_top_peak": -0.2375393148699202,
+      "fa_cos_top_rise": -0.2270203891202844,
+      "fa_converges": false,
+      "inherit_init": 0.4986072423398329,
+      "inherit_final": 0.45125348189415043,
+      "trajectory": [
+        {
+          "epoch": 0,
+          "fa_cos": [
+            0.0,
+            0.0
+          ],
+          "credit_align": [
+            0.0,
+            0.0
+          ],
+          "inherit": 0.4986072423398329
+        },
+        {
+          "epoch": 1,
+          "fa_cos": [
+            -0.13469776145480158,
+            -0.20723611436006784
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 2,
+          "fa_cos": [
+            -0.12924414874985748,
+            -0.2096361193118022
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 3,
+          "fa_cos": [
+            -0.10993020393466635,
+            -0.19361196630413752
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 4,
+          "fa_cos": [
+            -0.09578288906615397,
+            -0.18328649062626104
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 5,
+          "fa_cos": [
+            -0.07875371403124823,
+            -0.17382008260102408
+          ],
+          "credit_align": [
+            -0.10814286262671972,
+            -0.22317598680233114
+          ],
+          "inherit": 0.467966573816156
+        },
+        {
+          "epoch": 6,
+          "fa_cos": [
+            -0.10341812730613811,
+            -0.180848128241386
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 7,
+          "fa_cos": [
+            -0.09063429584962306,
+            -0.17540264823360038
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 8,
+          "fa_cos": [
+            -0.08716364711285346,
+            -0.17186215385077386
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 9,
+          "fa_cos": [
+            -0.09748460876481362,
+            -0.1748927820357624
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 10,
+          "fa_cos": [
+            -0.07098918420645675,
+            -0.16391878874108176
+          ],
+          "credit_align": [
+            -0.09748078157400489,
+            -0.21046323810985368
+          ],
+          "inherit": 0.4596100278551532
+        },
+        {
+          "epoch": 11,
+          "fa_cos": [
+            -0.0756552469564791,
+            -0.1679337634686827
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 12,
+          "fa_cos": [
+            -0.06399349137316798,
+            -0.16489110924043726
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 13,
+          "fa_cos": [
+            -0.04892478786914333,
+            -0.16130744137130398
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 14,
+          "fa_cos": [
+            -0.01863469166428309,
+            -0.151266562876134
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 15,
+          "fa_cos": [
+            -0.02482360400867159,
+            -0.1578508860275478
+          ],
+          "credit_align": [
+            -0.034087225361139124,
+            -0.20267236518165554
+          ],
+          "inherit": 0.45403899721448465
+        },
+        {
+          "epoch": 16,
+          "fa_cos": [
+            -0.050983534089082835,
+            -0.17371040792134543
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 17,
+          "fa_cos": [
+            -0.07419550014274581,
+            -0.1875550971158055
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 18,
+          "fa_cos": [
+            -0.0701236890698954,
+            -0.18981614073948805
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 19,
+          "fa_cos": [
+            -0.0637635683724991,
+            -0.19078130553273207
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 20,
+          "fa_cos": [
+            -0.05141163288164183,
+            -0.1883728757444371
+          ],
+          "credit_align": [
+            -0.07059732001882091,
+            -0.24186101975083263
+          ],
+          "inherit": 0.4735376044568245
+        },
+        {
+          "epoch": 21,
+          "fa_cos": [
+            -0.01888150410982996,
+            -0.17572001903650722
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 22,
+          "fa_cos": [
+            -0.04858402243924971,
+            -0.19002493038603402
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 23,
+          "fa_cos": [
+            -0.06263861361560806,
+            -0.19634662300457137
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 24,
+          "fa_cos": [
+            -0.04302163295816885,
+            -0.19203486596518649
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 25,
+          "fa_cos": [
+            -0.06569254290285995,
+            -0.20202157141297813
+          ],
+          "credit_align": [
+            -0.09020755059151941,
+            -0.25938523834980254
+          ],
+          "inherit": 0.4623955431754875
+        },
+        {
+          "epoch": 26,
+          "fa_cos": [
+            -0.056050526362893996,
+            -0.20241507527794633
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 27,
+          "fa_cos": [
+            -0.03859161564623211,
+            -0.19727387021829432
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 28,
+          "fa_cos": [
+            -0.038595611416796176,
+            -0.20209152619714002
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 29,
+          "fa_cos": [
+            -0.0633323005449885,
+            -0.2142351790267007
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 30,
+          "fa_cos": [
+            -0.062007930857292844,
+            -0.21689711700686412
+          ],
+          "credit_align": [
+            -0.08514792262123198,
+            -0.2784846687347184
+          ],
+          "inherit": 0.45403899721448465
+        },
+        {
+          "epoch": 31,
+          "fa_cos": [
+            -0.08045717602511678,
+            -0.2255559564617602
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 32,
+          "fa_cos": [
+            -0.09081909816722321,
+            -0.22918472306691146
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 33,
+          "fa_cos": [
+            -0.07064440553328227,
+            -0.22486750367423616
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 34,
+          "fa_cos": [
+            -0.08832425034984323,
+            -0.23177944334863546
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 35,
+          "fa_cos": [
+            -0.05250976517565358,
+            -0.22076583682178583
+          ],
+          "credit_align": [
+            -0.07210525105773241,
+            -0.28345190468028336
+          ],
+          "inherit": 0.45403899721448465
+        },
+        {
+          "epoch": 36,
+          "fa_cos": [
+            -0.08167227384406107,
+            -0.23147384350636863
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 37,
+          "fa_cos": [
+            -0.08048058900191858,
+            -0.23142962252830618
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 38,
+          "fa_cos": [
+            -0.06912109783522974,
+            -0.22724233652417053
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 39,
+          "fa_cos": [
+            -0.07143098277573695,
+            -0.22754113013325525
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 40,
+          "fa_cos": [
+            -0.07334719482129891,
+            -0.22651267450431767
+          ],
+          "credit_align": [
+            -0.10071874972738046,
+            -0.2908305467313045
+          ],
+          "inherit": 0.4568245125348189
+        },
+        {
+          "epoch": 41,
+          "fa_cos": [
+            -0.08714736508165408,
+            -0.23064261410855638
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 42,
+          "fa_cos": [
+            -0.09148795828799151,
+            -0.23578074134652358
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 43,
+          "fa_cos": [
+            -0.061525960957666145,
+            -0.22677905815817365
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 44,
+          "fa_cos": [
+            -0.088306565646561,
+            -0.23657976136104084
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 45,
+          "fa_cos": [
+            -0.09052227620863552,
+            -0.2375393148699202
+          ],
+          "credit_align": [
+            -0.1243031925682159,
+            -0.3049881820740301
+          ],
+          "inherit": 0.45403899721448465
+        },
+        {
+          "epoch": 46,
+          "fa_cos": [
+            -0.08215236785718864,
+            -0.23284671342145358
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 47,
+          "fa_cos": [
+            -0.08378402173763538,
+            -0.23082027960723764
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 48,
+          "fa_cos": [
+            -0.07417833588200978,
+            -0.2244073794965479
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 49,
+          "fa_cos": [
+            -0.10967488213776838,
+            -0.23536650962842043
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 50,
+          "fa_cos": [
+            -0.11645810254036444,
+            -0.23666643318407754
+          ],
+          "credit_align": [
+            -0.15991769708529466,
+            -0.3038674471814644
+          ],
+          "inherit": 0.4568245125348189
+        },
+        {
+          "epoch": 51,
+          "fa_cos": [
+            -0.11478027964607546,
+            -0.2344792494128473
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 52,
+          "fa_cos": [
+            -0.11992799404568728,
+            -0.23563010198434106
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 53,
+          "fa_cos": [
+            -0.10113916203151439,
+            -0.22826083278236375
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 54,
+          "fa_cos": [
+            -0.12004206921090471,
+            -0.23467727456006876
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 55,
+          "fa_cos": [
+            -0.11571056690699426,
+            -0.232880710212165
+          ],
+          "credit_align": [
+            -0.15889119764583892,
+            -0.29900677488529415
+          ],
+          "inherit": 0.4568245125348189
+        },
+        {
+          "epoch": 56,
+          "fa_cos": [
+            -0.1084159789492545,
+            -0.22938399643795326
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 57,
+          "fa_cos": [
+            -0.10142617779533573,
+            -0.22643339650595953
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 58,
+          "fa_cos": [
+            -0.11720521501482029,
+            -0.23150362552984
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 59,
+          "fa_cos": [
+            -0.10498273554189555,
+            -0.22534505730938945
+          ],
+          "credit_align": null,
+          "inherit": null
+        },
+        {
+          "epoch": 60,
+          "fa_cos": [
+            -0.11346628131334414,
+            -0.2270203891202844
+          ],
+          "credit_align": [
+            -0.15580939418253903,
+            -0.29148242601209173
+          ],
+          "inherit": 0.45125348189415043
+        }
+      ],
+      "READ": "FA does NOT converge (flat/near-0): top-hidden cos(W,B^T) init +0.000 -> final -0.227 (peak -0.238, rise -0.227); eprop_inherit 0.499 -> 0.451 (chance 0.501).",
+      "elapsed_seconds": 95.9,
+      "below_chance": true
+    }
+  ],
+  "error": null,
+  "aggregate": {
+    "fa_cos_top_init": 0.0,
+    "fa_cos_top_final": -0.2270203891202844,
+    "fa_cos_top_peak": -0.2375393148699202,
+    "fa_cos_top_rise": -0.2270203891202844,
+    "inherit_final": 0.45125348189415043,
+    "n_converges": 0,
+    "n_seeds": 1
+  },
+  "measurement_summary": "FA-CONVERGENCE (izhikevich, 1/1 seed(s)): top-hidden cos(W,B^T) +0.000 -> -0.227 (peak -0.238, rise -0.227); inherit_final 0.451; converges 0/1",
+  "below_chance": true,
+  "below_chance_note": "inherit is at chance by construction (the deep task does not train on Izhikevich \u2014 that IS the finding); the MEASURED hypothesis is FA-convergence (fa_cos_top_rise), not inherit accuracy"
+}
