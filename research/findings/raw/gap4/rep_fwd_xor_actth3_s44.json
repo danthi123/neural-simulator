@@ -2,11 +2,11 @@
   "probe": "gap4_representable_forward_plus_credit",
   "n_prop": 3,
   "seeds": [
-    42
+    44
   ],
   "config": {
     "seeds": [
-      42
+      44
     ],
     "n_prop": 3,
     "mode": "expander",
@@ -42,48 +42,48 @@
     "member_id_dim": 3,
     "n_obs": 14,
     "noise": 0.02,
-    "out": "research/findings/raw/gap4/rep_fwd_xor_actth3_s42.json"
+    "out": "research/findings/raw/gap4/rep_fwd_xor_actth3_s44.json"
   },
-  "elapsed_seconds": 365.6,
+  "elapsed_seconds": 361.8,
   "rows": [
     {
-      "seed": 42,
+      "seed": 44,
       "n_prop": 3,
       "mode": "expander",
       "task": "xor",
       "xor_encoding": "literal",
       "k_classes": 2,
-      "chance": 0.5487465181058496,
+      "chance": 0.5236768802228412,
       "n_features_in": 200,
       "n_features_raw": 10,
       "n_train_smoke": 160,
       "n_inherit_heldout": 359,
-      "oracle_inherit": 0.9498607242339833,
-      "eprop_train_acc": 0.5375,
-      "eprop_inherit_heldout": 0.45125348189415043,
-      "eprop_ff_weight_moved": 1124874.28125,
-      "permuted_inherit": 0.4428969359331476,
-      "shuffle_dfa_inherit": 0.5515320334261838,
-      "frozen_hidden_inherit": 0.532033426183844,
+      "oracle_inherit": 0.9220055710306406,
+      "eprop_train_acc": 0.5625,
+      "eprop_inherit_heldout": 0.4763231197771588,
+      "eprop_ff_weight_moved": 1163841.671875,
+      "permuted_inherit": 0.4763231197771588,
+      "shuffle_dfa_inherit": 0.4763231197771588,
+      "frozen_hidden_inherit": 0.4763231197771588,
       "deep_credit_share": NaN,
       "trains_the_task": false,
       "codon_reproducibility": 1.0,
-      "codon_sparsity": 0.10930075187969925,
-      "elapsed_seconds": 365.6
+      "codon_sparsity": 0.10497744360902256,
+      "elapsed_seconds": 361.8
     }
   ],
   "error": null,
   "aggregate": {
-    "chance": 0.5487465181058496,
+    "chance": 0.5236768802228412,
     "raw_deep_share": NaN,
     "expander_deep_share": NaN,
     "raw_frozen_inherit": NaN,
-    "expander_frozen_inherit": 0.532033426183844,
+    "expander_frozen_inherit": 0.4763231197771588,
     "raw_eprop_inherit": NaN,
-    "expander_eprop_inherit": 0.45125348189415043,
-    "expander_oracle_inherit": 0.9498607242339833,
-    "expander_permuted": 0.4428969359331476,
-    "expander_shuffle_dfa": 0.5515320334261838,
+    "expander_eprop_inherit": 0.4763231197771588,
+    "expander_oracle_inherit": 0.9220055710306406,
+    "expander_permuted": 0.4763231197771588,
+    "expander_shuffle_dfa": 0.4763231197771588,
     "expander_codon_reproducibility": 1.0,
     "expander_trains_the_task_all_seeds": false,
     "frozen_lt_eprop": false,

@@ -68,11 +68,11 @@ representable code", with the sparse-codon test as the decisive next step.
 
 <!--derived-->
 Exposed the codon sparsity lever (`--act-th`, sets the probe's `ACT_TH` before PlateauExpander construction; additive,
-default-preserving) and ran act_th=3 (a column fires only if all 3 sampled features are active). Artifact:
-`research/findings/raw/gap4/rep_fwd_xor_actth3_s42.json`. Result: the codon is now SPARSE (codon_sparsity 0.109, down
-from 0.499) AND STILL REPRESENTABLE (oracle 0.950 solves XOR on the sparse codon) — but on-bridge e-prop STILL does not
-train (eprop 0.451 = chance, frozen 0.532, trains_the_task=False). ⇒ **sparsifying the representable codon did NOT
-help.** So the production-bridge deep-credit residual is NOT the dense code, NOT forward-representability, NOT
+default-preserving) and ran act_th=3 (a column fires only if all 3 sampled features are active), **6 seeds**. Artifact
+e.g. `research/findings/raw/gap4/rep_fwd_xor_actth3_s42.json`. Result (6/6): the codon is now SPARSE (codon_sparsity
+mean ~0.11, down from 0.499) AND STILL REPRESENTABLE (oracle mean 0.940 solves XOR on the sparse codon, all 6) — but
+on-bridge e-prop STILL does not train (eprop mean 0.484 = chance 0.524; trains_the_task 0/6). ⇒ **sparsifying the
+representable codon did NOT help, 6/6.** So the production-bridge deep-credit residual is NOT the dense code, NOT forward-representability, NOT
 task-decodability — it is the **on-bridge e-prop CREDIT RULE's weight-finding on the Izhikevich substrate itself**: the
 local biological credit rule cannot find the weights the backprop oracle finds, even on a sparse, representable code.
 This is the deepest, precisely-located residual, and it matches the roadmap's own standing gap#4 diagnosis (the learned
@@ -82,7 +82,30 @@ self-predicting microcircuit / the learned instructive signal §2.8 "the true cr
 **The clean summary of the whole production-bridge arc (this session):** the transport-free credit RULE works at RATE
 and on the LIF net (DFA depth-robust, beats reservoir on XOR); on the production IZHIKEVICH bridge it does NOT train XOR
 regardless of the forward — raw forward (deep_share ~0), dense representable codon (oracle 0.99, eprop chance), OR sparse
-representable codon (oracle 0.95, sparsity 0.11, eprop chance). The single remaining wall is the on-bridge e-prop credit
-rule's weight-finding on the Izhikevich substrate — the exact target the roadmap's learned-instructive-signal / self-
-predicting-microcircuit arc addresses. NEXT: that arc (a LEARNED instructive/feedback signal on the bridge), not more
-forward or codon tuning.
+representable codon (oracle 0.95, sparsity 0.11, eprop chance, 6/6). The single remaining wall is the on-bridge e-prop
+credit rule's weight-finding on the Izhikevich substrate.
+
+## Update 2 (2026-08-02) — LEARNED FEEDBACK (KP) also does NOT rescue it: verified to ENGAGE but leaves e-prop at chance — so the wall is NOT feedback DIRECTION, it is the surrogate/eligibility HIDDEN-WEIGHT-FINDING on Izhikevich
+
+<!--derived-->
+Tested the roadmap's named fix — LEARN the DFA feedback via Kolen-Pollack (`--learned-feedback`: B_direct updated to
+track W^T in direction, transport-free) — on the sparse representable codon (act_th=3), the config where fixed DFA gave
+chance. Artifact: `research/findings/raw/gap4/rep_fwd_credit_xor_kp_smoke_s42.json`. Result: e-prop STILL at chance
+(eprop 0.451 = frozen 0.532-ish ~ chance; trains_the_task=False), IDENTICAL across a kp-lr sweep (0.1 / 0.5 / 2.0 all
+give eprop 0.451). **VERIFIED that KP is NOT a no-op** (silent-failure discipline: "inert" is a hypothesis, checked):
+the KP arm's `eprop_ff_weight_moved` differs from fixed-DFA (1124844.7 vs 1124874.3), and its `permuted`/`shuffle_dfa`
+controls differ — so B_direct genuinely moves and the credit route changes; the forward weights move DIFFERENTLY. Yet
+the held-out classification is EXACTLY the same (both 162/359 correct = chance). ⇒ learned feedback ENGAGES but does NOT
+rescue: the on-bridge e-prop stays at chance regardless of feedback DIRECTION or rate.
+
+<!--derived-->
+**⇒ THE DEFINITIVE, ELIMINATIVE CONCLUSION of the production-bridge arc.** The on-bridge deep-credit wall is NOT: task
+decodability (XOR ~0), forward representability (representable codon fails), codon density (sparse representable codon
+fails 6/6), OR feedback direction/alignment (learned KP feedback engages but does not rescue). Every candidate that a
+FEEDBACK-ROUTING or FORWARD-REPRESENTATION fix could address is eliminated. What remains is the on-bridge e-prop's
+LOCAL credit factor itself — the surrogate/eligibility HIDDEN-WEIGHT-FINDING on the Izhikevich substrate: the local rule
+cannot move the hidden weights toward the solution the backprop oracle finds, no matter how the error is routed to them.
+**NEXT (roadmap's §2.8 "the true crux"): a LEARNED SELF-PREDICTING MICROCIRCUIT (Sacramento Eq.9) that shapes the LOCAL
+credit factor** (the LIF-rate version was already 6-seed GO, 2026-07-24; the on-bridge port is the open build) — OR a
+fundamentally stronger on-bridge surrogate/eligibility / an operating-point fix (phi'-vanishing). NOT more forward,
+codon, or feedback-routing tuning — those are now exhaustively eliminated. The crux CORE (LIF/rate) is untouched.

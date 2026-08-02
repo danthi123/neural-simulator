@@ -71,6 +71,22 @@ eprop AND shuffle-DFA <= chance+0.10 AND permuted ~chance AND trains_the_task.
     SIM_BACKEND=numpy OPENBLAS_NUM_THREADS=1 python -m research.runners._gap4_representable_forward_plus_credit_derisk \
         --task-xor --seeds 42 --mode expander --epochs 60 --train-subsample 160 \
         --out research/findings/raw/gap4/rep_fwd_credit_xor_smoke_s42.json
+
+THE 2026-08-02 LEARNED-FEEDBACK (KP) LEVER (ADDITIVE, default OFF). The fixed-DFA XOR run above sat at chance on the
+sparse representable codon: the 2026-08-02 finding located the wall at the on-bridge e-prop CREDIT RULE -- the LOCAL
+biological rule cannot find the weights on Izhikevich, and its DFA feedback is FIXED-random (misaligned). The roadmap's
+named fix: LEARN the DFA feedback B_direct via Kolen-Pollack (`--learned-feedback`) so it tracks W^T in DIRECTION,
+transport-free. Decisive gate (deliverable d): does e-prop now TRAIN XOR (eprop > chance AND > frozen) on the sparse
+representable codon where FIXED DFA gave chance? YES => learned feedback is the fix (deep_credit_share then > 0); NO =>
+the residual is deeper (surrogate/eligibility on Izhikevich, phi'-vanishing, operating-point) -- name it.
+    # 1-seed SMOKE (KP learned feedback, sparse codon --act-th 3 -- run FIRST):
+    SIM_BACKEND=numpy OPENBLAS_NUM_THREADS=1 python -m research.runners._gap4_representable_forward_plus_credit_derisk \
+        --task-xor --act-th 3 --learned-feedback --mode expander --seeds 42 --epochs 60 --train-subsample 160 \
+        --out research/findings/raw/gap4/rep_fwd_credit_xor_kp_smoke_s42.json
+    # 6-seed (only if the smoke shows B_direct moving + eprop lifting off chance):
+    SIM_BACKEND=numpy OPENBLAS_NUM_THREADS=1 python -m research.runners._gap4_representable_forward_plus_credit_derisk \
+        --task-xor --act-th 3 --learned-feedback --mode expander --seeds 42 43 44 100 101 102 --epochs 60 \
+        --train-subsample 160 --out research/findings/raw/gap4/rep_fwd_credit_xor_kp_6seed.json
 """
 from __future__ import annotations
 import argparse, contextlib, io, json, os, sys, time, traceback
@@ -91,8 +107,8 @@ import numpy as np  # noqa: E402
 import logging  # noqa: E402
 logging.disable(logging.INFO)
 
-# reuse-by-import: the ported on-bridge e-prop net + its trainer (the credit machinery, VERBATIM).
-from research.runners._onbridge_eprop_port_derisk import OnBridgeEpropNet, _train_eprop  # noqa: E402
+# reuse-by-import: the ported on-bridge e-prop net + its trainer + softmax (the credit machinery, VERBATIM).
+from research.runners._onbridge_eprop_port_derisk import OnBridgeEpropNet, _train_eprop, _softmax  # noqa: E402
 # reuse-by-import: the task + the rate oracle for the ceiling.
 from research.runners._semantic_inheritance_deep_credit_derisk import (  # noqa: E402
     make_task_semantic_inheritance, _train_oracle, _acc_on)
@@ -164,6 +180,69 @@ def _codon_reproducibility_sets(exp, active_sets, n=8):
     return float(np.mean([float((a[i] == b[i]).all()) for i in range(m)])) if m else float("nan")
 
 
+# ---- LEARNED-FEEDBACK (Kolen-Pollack) on-bridge e-prop credit -- the roadmap's named gap#4 crux fix ------------------
+# The on-bridge e-prop rule uses a FIXED-random DFA feedback B_direct (the 2026-08-02 finding located the wall THERE:
+# the local rule cannot find the weights on Izhikevich, and the DFA feedback is fixed/misaligned). This subclass makes
+# B_direct LEARNED via Kolen-Pollack (Payeur/Akrout KP): each batch, every HIDDEN pathway's feedback matrix B_direct[li]
+# gets ONE increment  B_direct[li] += kp_lr*<outer> - kp_decay*B_direct[li],  <outer> = mean over the batch of
+# (output error delta_k) (x) (that hidden layer's summed-spike activity). This is the SAME increment FORM as the LIF
+# chained_fa_kp KP branch in _gap4_bptt_snn_chained_fa_transport_free_derisk (`_chained_fa_grads`:
+# `Y += lr*(kp_lr*outer - kp_decay*Y)`, outer = post-error (x) pre-activity), ported to the DIRECT-feedback on-bridge
+# rule -- so B_direct tracks the transpose of the hidden->output map IN DIRECTION. TRANSPORT-FREE: the update reads ONLY
+# the output error and the RECORDED post-layer spikes -- NEVER a forward weight (B_direct is a plain runner-side numpy
+# list; NO sim/ edit). Everything else -- the spiking forward, eligibility, membrane surrogate, readout, pool_k,
+# reservoir_control / permuted / shuffle-DFA anti-cheats -- is the parent's, UNCHANGED. Additive: only used under
+# --learned-feedback; with it OFF the runner uses the plain OnBridgeEpropNet + fixed DFA = byte-identical to the banked
+# runs. train_batch is REIMPLEMENTED (the parent exposes no hook) as the parent's method VERBATIM plus the KP
+# accumulation+update; frozen-hidden pathways (train_layers) keep their fixed B_direct so the frozen-reservoir control
+# is byte-identical to the fixed-DFA frozen arm.
+class KPFeedbackEpropNet(OnBridgeEpropNet):
+    def __init__(self, *args, kp_lr=0.1, kp_decay=1e-4, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.kp_lr = float(kp_lr); self.kp_decay = float(kp_decay)
+
+    def train_batch(self, Xb, yb, shuffle_dfa=False, rng=None):
+        # ---- parent OnBridgeEpropNet.train_batch VERBATIM (spiking forward + softmax deltas + e-prop grads) ----
+        recs = []
+        for i in range(len(Xb)):
+            sp, vv, acts = self._forward_record(Xb[i])
+            recs.append((sp, vv, self._logits_from(sp, vv, acts)))
+        deltas = []
+        for (sp, vv, logits), y in zip(recs, np.asarray(yb)):
+            p = _softmax(logits / self.logit_temp)
+            d = p.copy(); d[int(y)] -= 1.0
+            deltas.append(d)
+        if shuffle_dfa and rng is not None and len(deltas) > 1:
+            deltas = [deltas[j] for j in rng.permutation(len(deltas))]   # credit mismatched to the example
+        L = len(self.sizes) - 1
+        grads = [np.zeros((self.sizes_phys[li], self.sizes_phys[li + 1]), dtype=np.float64) for li in range(L)]
+        leaky = (self.logit_source == "leaky_readout")
+        # ---- KP accumulation over the batch (mirrors `_chained_fa_grads` kp_accum: post-error (x) pre-activity). The
+        #      pre-activity for B_direct[li] is the SUMMED spikes over the settle window of the POST layer (slice li+1),
+        #      the layer B_direct[li] feeds credit to -- the direct analog of the LIF's `e_above.T @ spikes[li][t]`. ----
+        kp_accum = [np.zeros_like(B) for B in self.B_direct]
+        for (sp, vv, _lg), d in zip(recs, deltas):
+            self._accum_grad(grads, sp, vv, d, skip_output=leaky)
+            if leaky:
+                r = self._readout_feature(sp)                              # (n_Hlast_phys,)
+                dphys = self._broadcast(np.asarray(d, dtype=np.float64), L) / self.pool_k
+                grads[L - 1] += np.outer(r, dphys)
+            for li in range(len(self.B_direct)):
+                if self.train_layers is not None and li not in self.train_layers:
+                    continue                     # frozen hidden pathway -> keep its B_direct fixed (control byte-identical)
+                post_summed = sp[:, self.slices[li + 1]].sum(axis=0).astype(np.float64)   # (n_post_phys,)
+                kp_accum[li] += np.outer(np.asarray(d, dtype=np.float64), post_summed)     # (k, n_post_phys)
+        self._apply_grads(grads, len(Xb))
+        # ---- ONE KP feedback update per batch: B += kp_lr*outer - kp_decay*B (transport-free; reads only error+spikes,
+        #      never a forward W). Per-(example,step) normalization (denom = B*T) mirrors the LIF KP's denom = Bn*T. ----
+        denom = max(1, len(Xb) * int(self.settle_steps))
+        for li in range(len(self.B_direct)):
+            if self.train_layers is not None and li not in self.train_layers:
+                continue
+            outer = kp_accum[li] / denom
+            self.B_direct[li] = self.B_direct[li] + self.kp_lr * outer - self.kp_decay * self.B_direct[li]
+
+
 def run_one(seed, n_prop, use_expander, a):
     """One (seed, n_prop, representation): oracle ceiling + full e-prop + frozen-hidden reservoir + permuted +
     shuffle-DFA on the chosen forward. Returns the metrics dict with deep_credit_share."""
@@ -227,6 +306,14 @@ def run_one(seed, n_prop, use_expander, a):
               in_current_pA=a.in_current_pA, in_bias_pA=a.in_bias_pA, hidden_lr_scale=a.hidden_lr_scale)
 
     def _mk():
+        # --learned-feedback: swap the fixed-DFA net for the KP LEARNED-feedback net (all arms, so the ONLY change
+        # vs the fixed-DFA condition is learned-vs-fixed feedback). Default OFF => plain OnBridgeEpropNet, byte-identical.
+        if a.learned_feedback:
+            return KPFeedbackEpropNet(n_in, a.hidden, k, seed=seed, n_hidden_layers=a.n_hidden_layers,
+                                      settle_steps=a.settle_steps, eprop_lr=a.eprop_lr, eps_leak=a.eps_leak,
+                                      surrogate=a.surrogate, alpha_surr=a.alpha_surr, beta_surr=a.beta_surr,
+                                      logit_source=a.logit_source, w_clip=a.w_clip, hp=hp, pool_k=a.pool_k,
+                                      kp_lr=a.kp_lr, kp_decay=a.kp_decay)
         return OnBridgeEpropNet(n_in, a.hidden, k, seed=seed, n_hidden_layers=a.n_hidden_layers,
                                 settle_steps=a.settle_steps, eprop_lr=a.eprop_lr, eps_leak=a.eps_leak,
                                 surrogate=a.surrogate, alpha_surr=a.alpha_surr, beta_surr=a.beta_surr,
@@ -271,6 +358,9 @@ def run_one(seed, n_prop, use_expander, a):
 
     return {"seed": seed, "n_prop": int(n_prop), "mode": ("expander" if use_expander else "raw"),
             "task": ("xor" if a.task_xor else "inheritance"),
+            "credit": ("kp_learned_feedback" if a.learned_feedback else "fixed_dfa"),
+            "kp_lr": (a.kp_lr if a.learned_feedback else None),
+            "kp_decay": (a.kp_decay if a.learned_feedback else None),
             "xor_encoding": (a.xor_encoding if a.task_xor else None),
             "k_classes": k, "chance": chance, "n_features_in": n_in, "n_features_raw": n_feat_raw,
             "n_train_smoke": int(len(ytr_b)), "n_inherit_heldout": int(len(inh_idx)),
@@ -305,6 +395,19 @@ def main():
                     help="how +/-1 XOR bits become the expander's active-feature SET (only under --task-xor): "
                          "'literal' (default) = 2 slots/bit (on-literal + off-literal), the FAIR signed-literal "
                          "monomial basis; 'onbits' = ON bits only (weaker fallback). See _xor_active_sets.")
+    # THE LEARNED-FEEDBACK (Kolen-Pollack) LEVER (ADDITIVE, default OFF => byte-identical to the banked fixed-DFA runs).
+    # The 2026-08-02 finding located the wall at the on-bridge e-prop CREDIT RULE (fixed-random DFA feedback cannot find
+    # the weights on Izhikevich). The roadmap's named fix: LEARN the DFA feedback B_direct via KP so it tracks W^T in
+    # direction (transport-free). --learned-feedback swaps in KPFeedbackEpropNet for ALL e-prop arms.
+    ap.add_argument("--learned-feedback", action="store_true",
+                    help="LEARN the DFA feedback B_direct via Kolen-Pollack (B += kp_lr*outer - kp_decay*B, "
+                         "outer = output-error (x) hidden-spike-activity) instead of the fixed-random B_direct. "
+                         "Transport-free (never reads a forward W). Additive, default off = fixed DFA (byte-identical).")
+    ap.add_argument("--kp-lr", type=float, default=0.1,
+                    help="KP feedback learning rate (only under --learned-feedback); mirrors the LIF chained_fa_kp "
+                         "kp_lr form. Start point to sweep if the smoke shows no B_direct movement / blow-up.")
+    ap.add_argument("--kp-decay", type=float, default=1e-4,
+                    help="KP feedback weight decay (only under --learned-feedback); mirrors the LIF chained_fa_kp kp_decay.")
     # expander
     ap.add_argument("--n-col", type=int, default=200, help="PlateauExpander columns (the probe's N_COL)")
     ap.add_argument("--act-th", type=int, default=None,
