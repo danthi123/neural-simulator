@@ -9987,7 +9987,8 @@ def main():
         bridge._run_one_simulation_step()
         bridge.runtime_state.current_time_step += 1
         bridge.runtime_state.current_time_ms = bridge.runtime_state.current_time_step * cfg.dt_ms
-        firing = bridge.cp_firing_states.get().astype(np.int32)
+        _fs = bridge.cp_firing_states
+        firing = (_fs.get() if hasattr(_fs, "get") else np.asarray(_fs)).astype(np.int32)
         spike_counts += firing
 
     # Per-region firing rate
@@ -10054,7 +10055,8 @@ def main():
             bridge._run_one_simulation_step()
             bridge.runtime_state.current_time_step += 1
             bridge.runtime_state.current_time_ms = bridge.runtime_state.current_time_step * cfg.dt_ms
-            firing = bridge.cp_firing_states.get().astype(np.int32)
+            _fs = bridge.cp_firing_states
+            firing = (_fs.get() if hasattr(_fs, "get") else np.asarray(_fs)).astype(np.int32)
             spike_counts += firing
 
         # Per-region firing rate

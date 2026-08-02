@@ -11,7 +11,7 @@
 1. **This file** (HANDOFF.md) — orientation + how we work.
 2. **[`docs/plans/2026-08-02-PROJECT-CHARTER-grounded-emergence-realignment.md`](docs/plans/2026-08-02-PROJECT-CHARTER-grounded-emergence-realignment.md)** — the authoritative goals, architecture end-state, and the seven method-principles. **This is the spine; when in doubt it wins.**
 3. **[`GAP_CLOSURE_MISSION.md`](GAP_CLOSURE_MISSION.md)** — the live working board; its top "STATE OF THE PROJECT" block is the current resume point.
-4. Then, as needed: the **structural-mechanism map** ([`docs/plans/2026-08-02-structural-mechanism-map.md`](docs/plans/2026-08-02-structural-mechanism-map.md) — per-faculty role/biology/status/next-build) + the scaffold ledger (in §9 below), `ROADMAP.md` (plain-language status + a glossary of the project's shorthand), `docs/FAILURE_GATE_MATRIX.md`, `research/FAILURE_LOG.md`.
+4. Then, as needed: the **structural-mechanism map** ([`docs/plans/2026-08-02-structural-mechanism-map.md`](docs/plans/2026-08-02-structural-mechanism-map.md) — per-faculty role/biology/status/next-build) + the scaffold ledger (in §10 below), `ROADMAP.md` (plain-language status + a glossary of the project's shorthand), `docs/FAILURE_GATE_MATRIX.md`, `research/FAILURE_LOG.md`.
 
 **One orientation caveat that will save you time:** this repo was developed under a **major realignment on
 2026-08-02** (this handover). A lot of older docs, findings, and "GO" results were written under the *previous*
@@ -115,7 +115,7 @@ consequences in a world → learning from the mismatch → back.** We have good 
   Then **optimize the fully-spiking substrate toward the consumer-hardware envelope** and open the path to analog
   silicon.
 
-**The eight systems the loop needs** (each is detailed — role-in-the-whole, the biological mechanism + references,
+**The eight systems the loop needs** (expanded — role-in-the-whole, the biological mechanism + references,
 what we actually have vs. the current template, and the grounded next build — in the **structural-mechanism map**,
 a companion doc; summary here):
 1. **A minimal world + body** — the only legitimate "outside" code; where grounding comes from. Largely unbuilt for
@@ -282,10 +282,10 @@ Several disciplines above were implemented with Claude-Code-only tools. The **un
 
 | Claude Code mechanism | What it did | How you (Codex) get the same thing |
 |---|---|---|
-| **`Skill` tool** (`neural-simulator`, `verify-go`, `sync-documentation`, `evolve-skills`, `before-you-build`) | Loaded a workflow's instructions on demand | The skills are plain markdown at `.claude/skills/<name>/SKILL.md`. **Read them directly**; follow the prose. |
+| **`Skill` tool** (`neural-simulator`, `verify-go`, `sync-documentation`, `evolve-skills`) | Loaded a workflow's instructions on demand | The skills are plain markdown at `.claude/skills/<name>/SKILL.md`. **Read them directly**; follow the prose. |
 | **`Monitor` tool** + heartbeat | Watched long background runs for done/crash/hang, emitting a state heartbeat every ~15 min | Poll the process yourself (`ps`, `kill -0 <pid>`, tail the JSON/log). **Silence ≠ success**: check the run's *own* terminal verdict, and confirm which *device* it ran on. Never conclude "crashed/complete" without `ps`/`kill -0` — buffered stdout has faked both. |
 | **`run_in_background` + sub-agents + Workflows** | Fanned independent de-risks/reviews across processes | Use your own background/parallel primitives. The pattern that matters: **fan multi-seed sweeps across OS processes** (one process per seed, `OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 SIM_BACKEND=numpy`, `wait` at the end), not one process looping seeds serially (that pins 1/N cores). |
-| **Git hooks (the gates) — these DO work from any shell** | `tools/gates/*` auto-discovered into a pre-commit hook; block commits on claim-provenance, biology bindings, single-seed headlines, doc structure, etc. | The gate logic is ordinary Python/bash. **Install the hook:** the hook scripts live at `tools/githooks/pre-commit` + `tools/githooks/post-commit` (and `tools/git-hooks/post-commit` for RAG re-index). They are **not currently symlinked into `.git/hooks/`** in this checkout — wire them up (`ln -s` or copy) so the gates actually block your commits, or run the gate you need directly before committing. Authoritative index: `docs/FAILURE_GATE_MATRIX.md`. |
+| **Git hooks (the gates) — these DO work from any shell** | `tools/gates/*` auto-discovered into a pre-commit hook; block commits on claim-provenance, biology bindings, single-seed headlines, doc structure, etc. | The gate logic is ordinary Python/bash. **The gates are already armed** in this checkout via `git config core.hooksPath tools/githooks` — verify with `git config core.hooksPath` (prints `tools/githooks`). Do **not** symlink into `.git/hooks/`: when `core.hooksPath` is set, git ignores `.git/hooks/` entirely. `tools/githooks/pre-commit` blocks commits; `tools/githooks/post-commit` re-indexes the RAG. (Ignore the hyphenated `tools/git-hooks/` — a dead Windows-era artifact.) Authoritative index: `docs/FAILURE_GATE_MATRIX.md`. |
 | **The RAG index** | Semantic search over findings/plans/docs/textbooks | Works from any shell: `.venv-rag/bin/python tools/rag/rag_search.py "<q>" 5 --corpus <c>`. A `post-commit` hook auto-refreshes it; a *this-session, uncommitted* finding won't be indexed yet — `grep research/findings/AUTONOMOUS_STATE.md` and recent `research/findings/*.md` for the latest. |
 
 **Two rules that survive any harness:** (1) a **noticed failure cannot stay unclosed** — add one line to `research/FAILURE_LOG.md` and it must name a gate or declare `NOT-GATEABLE: <reason>`; (2) when a committed finding changes a wall/gap **status**, the current **frontier**, or a **next-action**, sync the summary docs the **same cycle** (the roadmap ledger, `GAP_CLOSURE_MISSION.md` CURRENT STATE, `research/findings/AUTONOMOUS_STATE.md`, `ROADMAP.md`) — following `.claude/skills/sync-documentation/SKILL.md`. Stale summary pointers are the #1 cause of re-deriving concluded work: **a summary doc is a POINTER, not ground truth; if it conflicts with a finding, the finding wins and you fix the summary in the same commit.**
@@ -303,13 +303,13 @@ Several disciplines above were implemented with Claude-Code-only tools. The **un
 
 ## 5. Failure modes — the recurring traps, with real examples
 
-This project's single most expensive activity is not writing code — it is **being confidently wrong**. The record here (`research/FAILURE_LOG.md`, 40+ dated rows; the SILENT-FAILURE class and drift-mode list in `.claude/skills/neural-simulator/SKILL.md`) is a catalog of failures that all share one shape: **the run was alive, the log grew, the number was plausible, and the conclusion was false.** Nine formal retractions landed in a single day (2026-07-28); three of them were pure terminology overclaim sitting on top of correct measurements.
+This project's single most expensive activity is not writing code — it is **being confidently wrong**. The record here (`research/FAILURE_LOG.md`, ~40 dated rows; the SILENT-FAILURE class and drift-mode list in `.claude/skills/neural-simulator/SKILL.md`) is a catalog of failures that all share one shape: **the run was alive, the log grew, the number was plausible, and the conclusion was false.** Nine formal retractions landed in a single day (2026-07-28); three of them were pure terminology overclaim sitting on top of correct measurements.
 
 Internalize the governing fact before the specifics:
 
 > **These traps are STRUCTURAL, not carelessness. They recur even while you are actively hunting them** — the record contains a bare `except` that swallowed its author's own warning *on the day that author documented that exact pattern five times*. Vigilance does not fix a structural failure; **a mechanical guard does.** That is why nearly every row below ends in a gate, a script, or an assertion — something that *blocks or prints*, not something you must remember. **Your job is not to avoid these by being careful. Your job is to keep the guards armed and never bypass them.**
 
-The guards live in `tools/gates/` (30+ modules, one per class, auto-discovered) and fire from the git **pre-commit** hook. They are shell/Python and work from **any** app or terminal — Codex included. Arm them once in your clone:
+The guards live in `tools/gates/` (28 registry modules, one per class, auto-discovered) and fire from the git **pre-commit** hook. They are shell/Python and work from **any** app or terminal — Codex included. Arm them once in your clone:
 
 ```bash
 git config core.hooksPath tools/githooks
@@ -483,7 +483,7 @@ SIM_BACKEND=numpy .venv/bin/python -m research.runners.<runner> --seeds 42 <your
 
 A few more that recur across all of the above and each earned a gate:
 
-- **Seed never controlled the substrate.** `--seeds` set `cfg.actual_seed_used`, a **reporting** field the bridge never reads; the bridge seeds from `cfg.seed` (`bridge.py:2136`), both defaulting to `-1`. Four nets built back-to-back in one process differed by **18.4 mV** — a confound ~3× the effect being measured. **Set `cfg.seed` explicitly and hash the substrate** (`cp_neuron_firing_thresholds`) across two builds to prove it. Pinned by `tests/test_determinism.py::TestSubstrateActuallySeeded`.
+- **Seed never controlled the substrate.** `--seeds` set `cfg.actual_seed_used`, a **reporting** field the bridge never reads; the bridge seeds from `cfg.seed` (`bridge.py:2294`), both defaulting to `-1`. Four nets built back-to-back in one process differed by **18.4 mV** — a confound ~3× the effect being measured. **Set `cfg.seed` explicitly and hash the substrate** (`cp_neuron_firing_thresholds`) across two builds to prove it. Pinned by `tests/test_determinism.py::TestSubstrateActuallySeeded`.
 - **Two same-shaped numbers on one output line get quoted interchangeably.** `g11_bg_runner.py` prints `sum_finalQ` and `mean_distance_overall` together — **4 of 10 audited defects** trace to that one line (a mean quoted as a sum, etc.). Gate: `gates/quantity_mismatch`.
 - **Single-seed headlines.** Gate `gates/single_seed`. The rule is 6 seeds (42/43/44/100/101/102) — and *which six*: an all-dev-seed result is a dev result, and ~36% of seeds at one config were degenerate (unsolvable by an oracle), so screen instances for validity first.
 - **A validator and executor in different worlds.** `pool_queue.sh` validated a job's argparse against the *local* repo while the job ran on a pool *node* holding an rsync'd copy — passed every local check, died on `No module named ...`. Any check that runs somewhere other than where the work runs is a proxy.
@@ -779,7 +779,7 @@ The most important thing to internalize: **the rules above are not asked-to-be-r
 git config core.hooksPath tools/githooks   # wires the enforced pre-commit + post-commit gates
 ```
 
-The pre-commit hook (`tools/githooks/pre-commit`) runs the auto-discovered gate registry (`tools/gates/`, ~30 gates: document structure W1/W2, claim-traced-to-artifact, single-seed headlines, quantity-mismatch, boundary-verdict-needs-external-cite, attribution-required, verdict_preconditions, stale-pointer, and more). A gate whose `selftest()` can't fail in its failing direction is treated as broken and reported loudly — because four checks here shipped unable to fail. **Deliberate, visible override is `git commit --no-verify`; use it only when you mean to.**
+The pre-commit hook (`tools/githooks/pre-commit`) runs the auto-discovered gate registry (`tools/gates/`, 28 registry modules (the matrix tracks 34 failure-classes — the extra rows are non-registry doc/claim/biology hooks): document structure W1/W2, claim-traced-to-artifact, single-seed headlines, quantity-mismatch, boundary-verdict-needs-external-cite, attribution-required, verdict_preconditions, stale-pointer, and more). A gate whose `selftest()` can't fail in its failing direction is treated as broken and reported loudly — because four checks here shipped unable to fail. **Deliberate, visible override is `git commit --no-verify`; use it only when you mean to.**
 
 The workflow-as-scripts you should run at the matching moment (all from any shell):
 
@@ -797,7 +797,7 @@ bash tools/research_gate.sh "<question>"
 
 # VERIFY infra claims instead of asserting them
 bash tools/push_both.sh                 # pushes then ls-remote-VERIFIES both remotes (never `echo pushed`)
-.venv/bin/python tools/engagement_check.py research/findings/raw/**/result.json   # did the mechanism actually engage?
+.venv/bin/python tools/engagement_check.py research/findings/raw/_emerge10_stageA_dap_fire_first.json   # did the mechanism actually engage? (pass a real result JSON)
 
 # Record an external-literature read (unblocks a BOUNDARY verdict, which now REQUIRES an external cite)
 bash tools/record_external_search.sh "<query>" "<source>"
@@ -836,7 +836,7 @@ There are **two** virtualenvs, both Python 3.11.14, and they are kept separate o
 - `SIM_BACKEND=numpy` → force CPU
 - `SIM_BACKEND=auto` or unset → CuPy if available, else NumPy
 
-**The trap that has bitten this repo repeatedly:** ~327 research runners call `os.environ.setdefault("SIM_BACKEND", "numpy")` in their body. So if you launch a runner and *don't* set `SIM_BACKEND` explicitly, you silently get the **CPU** path — 10–50× slower — even on a machine with a free GPU. A "4-cell GPU test" once ran 30 minutes on CPU this way. **Always set `SIM_BACKEND` explicitly at the call site.** Use `SIM_BACKEND=numpy` for tiny smoke tests and CI; use `SIM_BACKEND=cupy` for any heavy or decisive run. `backend.py` prints a warning when numpy is selected while a GPU is present, and `tools.lab.assert_backend("cupy")` will *raise* on mismatch — use it inside decisive runners.
+**The trap that has bitten this repo repeatedly:** hundreds of research runners call `os.environ.setdefault("SIM_BACKEND", "numpy")` in their body. So if you launch a runner and *don't* set `SIM_BACKEND` explicitly, you silently get the **CPU** path — 10–50× slower — even on a machine with a free GPU. A "4-cell GPU test" once ran 30 minutes on CPU this way. **Always set `SIM_BACKEND` explicitly at the call site.** Use `SIM_BACKEND=numpy` for tiny smoke tests and CI; use `SIM_BACKEND=cupy` for any heavy or decisive run. `backend.py` prints a warning when numpy is selected while a GPU is present, and `tools.lab.assert_backend("cupy")` will *raise* on mismatch — use it inside decisive runners.
 
 ### 2. Repo map
 
@@ -924,7 +924,7 @@ Verify, don't assume: build twice at one seed and hash `cp_neuron_firing_thresho
 
 ### 7. The experiment-hygiene helpers, terms, and doc rules
 
-**`tools/lab.py`** — import these instead of *remembering* the rules; each helper encodes a real retraction. `lever(name, before, after)` asserts a manipulation actually changed something (catches A/Bs whose flag was already set). `before_after(...)` catches measurements taken upstream of the manipulation and lesions that didn't persist. `bound_check(rule, bound, weight)` raises if a plasticity bound sits at/below the weights it governs (the trap that owned 97% of a gap#5 result). `undefined_if_empty(...)` prints UNDEFINED, never a fabricated 0. `attributable_to(treatment, control)` and `term_budget(...)` say *whose* the measured change was. `assert_backend("cupy")` raises on a wrong-device run. `Verdict(...)` makes UNDEFINED the default and a run earn its GO. Run `.venv/bin/python tools/lab.py` to see the self-check.
+**`tools/lab.py`** — import these instead of *remembering* the rules; each helper encodes a real retraction. `lever(name, before, after)` asserts a manipulation actually changed something (catches A/Bs whose flag was already set). `before_after(...)` catches measurements taken upstream of the manipulation and lesions that didn't persist. `bound_check(rule, bound, weight)` raises if a plasticity bound sits at/below the weights it governs (the trap that owned 97% of a gap#5 result). `undefined_if_empty(...)` prints UNDEFINED, never a fabricated 0. `attributable_to(treatment, control)` and `term_budget(...)` say *whose* the measured change was. `assert_backend("cupy")` raises on a wrong-device run. `Verdict(...)` makes UNDEFINED the default and a run earn its GO. Run `.venv/bin/python -m tools.lab` to see the self-check.
 
 **`docs/TERMS.md`** — one term, one meaning, one code condition. Before writing `consolidation`, `compositional`, `self-organized`, `closed`, `GO`, `fully spiking`, `byte-identical`, `lesion`, `selective`, or `works` in a finding/commit/board entry, check its CODE CONDITION. An unchecked term is a hypothesis. `gates/terminology` reports overclaims.
 
@@ -961,7 +961,7 @@ bash tools/before_you_build.sh "the slot competition ignores the cue"
 SIM_BACKEND=cupy .venv/bin/python -m research.runners.g11_bg_runner --moving-goal --seed 42 \
     --n-steps 1800 --out research/findings/raw/g11_bg/g11_seed42.json
 # CPU smoke test:
-SIM_BACKEND=numpy .venv/bin/python -m research.runners.g11_bg_runner --probe-action W
+SIM_BACKEND=cupy .venv/bin/python -m research.runners.g11_bg_runner --probe-action W   # GPU BG-circuit probe (this one needs cupy)
 
 # ── 6-seed sweep (the validation bar): seeds 42 43 44 100 101 102 ──
 for s in 42 43 44 100 101 102; do
@@ -970,7 +970,7 @@ for s in 42 43 44 100 101 102; do
 done
 
 # ── Experiment-hygiene helper self-check ──
-.venv/bin/python tools/lab.py
+.venv/bin/python -m tools.lab
 
 # ── Document-structure rules (W1/W2) ──
 .venv/bin/python tools/check_docs.py
@@ -1033,7 +1033,7 @@ The catalog is a **sibling repo**: `~/Projects/sim-catalog/references/`. Every s
   kandel-pns-6e/full-book.txt            # Kandel Principles of Neural Science 6e, full book
   buzsaki-rhythms/Buzsaki-RhythmsOfTheBrain-2006.txt
   okeefe-nadel-cognitive-map/OKeefe-Nadel-1978-HippocampusCognitiveMap.txt
-  cerebellum-marr/Marr-1969-cerebellar-cortex.txt   (+ Albus-1971, Hesslow-2013, Moore-2002)
+  cerebellum-marr/Marr-1969-cerebellar-cortex.txt   (+ Hesslow-2013, Moore-2002)
   cerebellum-albus/Albus-1971-cerebellar-function.txt
   schultz-dopamine/  (Schultz 1998/2016, Hollerman-Schultz 1998 — RPE)
   basal-ganglia-reviews/  (Tepper, Bolam — striatal GABAergic circuitry)
@@ -1105,11 +1105,23 @@ bash tools/aws_gpu.sh ssh         # prints the ready ssh command
 bash tools/aws_gpu.sh stop        # <-- STOP WHEN IDLE; it BILLS while running
 ```
 
-**CRITICAL: the instance bills for every minute it is `running` — stop it (`bash tools/aws_gpu.sh stop`) the moment work finishes.** State (instance id + SSH key path) lives durably in `research/queue/.aws_gpu`, **not** in memory — a prior lane lost its key to a `/tmp` reboot. **That state file does not currently exist**, so no AWS lane is recorded right now; you'd record/launch one before `aws_gpu.sh` will work. Dispatch on it with `SIM_BACKEND=cupy .venv/bin/python -m research.runners.<X>`.
+**CRITICAL: the instance bills for every minute it is `running` — stop it (`bash tools/aws_gpu.sh stop`) the moment work finishes.** State (instance id + SSH key path) lives durably in `research/queue/.aws_gpu`, **not** in memory — a prior lane lost its key to a `/tmp` reboot. As of this handoff **a lane IS recorded**: a **STOPPED** `g5.xlarge` (`i-0ed174adb04e99c7f`, launched 2026-07-31). Run `bash tools/aws_gpu.sh status` first. A *stopped* instance still accrues EBS storage cost and restarting it resumes compute billing, so **verify it and `terminate` it if it is no longer needed.** Dispatch on it with `SIM_BACKEND=cupy .venv/bin/python -m research.runners.<X>`.
 
 ### 7. Allocation principle
 
 GPU (the 3090) is the training bottleneck — reserve it for training/GPU-bound runs. **CPU de-risks run local by default** (free, and faster than the pool). The **pool is CPU overflow** when the 20 local cores saturate. **AWS is a GPU lane** for when the 3090 is busy. Don't offload just because a lane exists — match the job to the actual bottleneck, and stop paid lanes when idle.
+
+---
+
+### Running / talking to the brain today
+
+The deployed multi-turn chat console is `research/runners/brain_chat_tui.py`, driving `research/runners/brain_conversational_agent.py`:
+
+```bash
+.venv/bin/python -m research.runners.brain_chat_tui --help   # options: --load a trained brain, --self-knowledge, ...
+```
+
+**Be aware of what this actually exercises:** the deployed console's default wording comes from the **external Qwen LLM** (scaffold ledger item #0 in §10) — the brain does the grounding + the no-confabulation gating, but the sentences are currently the transformer's. So "talking to the brain" today runs the *scaffolded* pipeline; re-pointing generation onto the substrate (language as grounded action) is the short-timescale crux (§3, P1).
 
 ---
 
@@ -1119,7 +1131,7 @@ This is the honest snapshot you should carry in your head before touching anythi
 
 - **`GAP_CLOSURE_MISSION.md`** — the live working board. Its **CURRENT STATE / 5-gap table** is the session-by-session resume point (but note its own header warning: the 5-gap table is a *stale sub-view*; trust the STATE header + the roadmap over the raw gap cells).
 - **`ROADMAP.md`** — the plain-language status surface (last synced 2026-08-02). Section 3 is the one-screen picture; §8 lists the stand-ins; §9 is the honest frontier. Its "Project shorthand" table (top) decodes every coinage.
-- **`docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`** — the forward-looking plan; and the newest framing doc **`docs/plans/2026-08-02-PROJECT-CHARTER-grounded-emergence-realignment.md`** (the charter that renames the goal from "5-gap closure" to *grounded emergence* and defines the P1–P6/T1–T7 traps the newest gates enforce).
+- **`docs/plans/2026-07-23-MASTER-DEVELOPMENT-ROADMAP.md`** — the forward-looking plan; and the newest framing doc **`docs/plans/2026-08-02-PROJECT-CHARTER-grounded-emergence-realignment.md`** (the charter that renames the goal from "5-gap closure" to *grounded emergence* and defines the P1–P7 principles / T1–T7 traps the newest gates enforce).
 
 **The one law that governs how to read every "GO" below:** a wall/negative is a verdict on a *method*, never a license to abandon a *capability*. "CLOSED" is defined narrowly and almost nothing meets it: a capability is closed only when it is (a) fully-spiking on the one shared substrate, (b) genuinely biological (neurons/synapses only; host code for world+body alone), (c) 6-seed validated with anti-cheats, (d) adversarially verified, and (e) *wired into the system the owner actually uses* — no scaffold left standing as the faculty. Most validated results below are **(a)–(d) in an isolated slice but fail (e)** — they are proven mechanisms that the deployed pipeline does not yet run. That gap between "validated in a runner" and "deployed" is the single most important thing to internalize, and the reason the scaffold ledger in part 2 is long.
 
