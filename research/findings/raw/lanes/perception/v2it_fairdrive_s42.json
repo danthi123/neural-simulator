@@ -1,0 +1,265 @@
+{
+  "summary": {
+    "overall_verdict": "PARTIAL",
+    "seeds": [
+      42
+    ],
+    "backend": "numpy",
+    "chance": 0.3333,
+    "per_seed_verdicts": [
+      "TRACE-NOGO"
+    ],
+    "it_heldpos_decode_mean": 0.1667,
+    "it_heldpos_decode_min": 0.1667,
+    "v1_complex_heldpos_decode_mean": 0.0833,
+    "frozen_it_heldpos_decode_mean": 0.4167,
+    "it_scramble_decode_mean": 0.3333,
+    "it_rsa_pixels_mean": -0.0735,
+    "it_fires_all_seeds": true,
+    "interpretation": "VALIDATE = trained IT firing codes are position-invariant + category-discriminative, beating both the retinotopic V1_complex and a frozen IT, with lesion/scramble/RSA collapsing. RETIRE = trained IT is inert / adds nothing over V1_complex or frozen IT (standardize grounding on the V1->pooler codon).",
+    "knobs": {
+      "seeds": [
+        42
+      ],
+      "n_categories": 3,
+      "n_train_pos": 2,
+      "n_held_pos": 1,
+      "n_ex": 4,
+      "bar_len_frac": 0.35,
+      "image_size": 32,
+      "n_orientations": 8,
+      "n_frequencies": 2,
+      "n_pos": 8,
+      "n_v2": 256,
+      "n_it": 64,
+      "rf_radius": 4,
+      "v1_weight_scale": 200.0,
+      "v1c_pool_weight": 200.0,
+      "v1c_pool_density_mult": 100.0,
+      "v1c_to_v2_weight": 200.0,
+      "v2_to_it_weight": 250.0,
+      "fair_drive": true,
+      "drive": 2500.0,
+      "train_epochs": 8,
+      "scene_steps": 30,
+      "read_steps": 60,
+      "settle_steps": 15,
+      "dt": 1.0,
+      "stdp_w_max": 600.0,
+      "enable_ou": false,
+      "trace_rule": true,
+      "bout_len": 12,
+      "trace_decay": 0.8,
+      "inert_floor": 0.02,
+      "decode_margin": 0.15,
+      "add_delta": 0.1,
+      "rsa_gate": 0.2,
+      "rsa_drop": 0.15,
+      "out": "/tmp/claude-1000/-home-dant123-Projects-sim/87891831-e642-4a2f-abeb-50ea0867609b/scratchpad/v2it_fairdrive_s42.json",
+      "seed_base": 42
+    },
+    "trace_rule": {
+      "enabled": true,
+      "bout_len": 12,
+      "trace_decay": 0.8,
+      "trace_overall": "TRACE-NOGO",
+      "per_seed_trace_go": [
+        false
+      ],
+      "n_trace_go": 0,
+      "it_heldpos_decode_mean": 0.1667,
+      "shuffled_temporal_it_heldpos_decode_mean": 0.3333,
+      "go_gate": "TRACE-GO (all seeds) requires, per seed: trained IT (via the F\u00f6ldi\u00e1k temporal-continuity curriculum) heldpos-decode >= chance+decode_margin AND >= V1_complex+add_delta AND >= frozen-IT+add_delta AND per-image scramble collapses AND RSA tracks pixels AND the v1c->v2 lesion collapses it (the base DiCarlo validate) AND >= SHUFFLED-TEMPORAL IT+add_delta (temporal continuity, not extra training, did it) AND IT fires above inert_floor."
+    }
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_categories": 3,
+      "chance": 0.3333,
+      "n_train_images": 24,
+      "n_held_images": 12,
+      "train_positions": [
+        [
+          7.6,
+          7.6
+        ],
+        [
+          24.4,
+          7.6
+        ]
+      ],
+      "held_positions": [
+        [
+          7.6,
+          24.4
+        ]
+      ],
+      "propagation_profile_deployed": {
+        "retina": 89,
+        "cortex_v1_simple": 0,
+        "cortex_v1_complex": 0,
+        "cortex_v2": 0,
+        "cortex_it": 0
+      },
+      "propagation_profile_thisrun": {
+        "retina": 2202,
+        "cortex_v1_simple": 493,
+        "cortex_v1_complex": 2010,
+        "cortex_v2": 870,
+        "cortex_it": 108
+      },
+      "n_neurons_total": 3904,
+      "n_gabor_synapses": 70592,
+      "train_firing_diag_first_scene": {
+        "retina": 1551,
+        "cortex_v1_simple": 468,
+        "cortex_v1_complex": 1693,
+        "cortex_v2": 802,
+        "cortex_it": 114
+      },
+      "read_mode": {
+        "cortex_v1_complex": "spikes",
+        "cortex_v2": "spikes",
+        "cortex_it": "spikes"
+      },
+      "trained": {
+        "cortex_v1_complex": {
+          "chance": 0.3333,
+          "heldpos_decode": 0.0833,
+          "scramble_decode": 0.4167,
+          "held_within_between_margin": -0.0309,
+          "rsa_pixels_held": -0.1436,
+          "rsa_pixels_scramble": 0.0076,
+          "mean_code_activity_heldset": 1.3962,
+          "read_mode": "spikes",
+          "mean_spikes_per_neuron_heldset": 1.3962
+        },
+        "cortex_v2": {
+          "chance": 0.3333,
+          "heldpos_decode": 0.4167,
+          "scramble_decode": 0.3333,
+          "held_within_between_margin": -0.0307,
+          "rsa_pixels_held": -0.1297,
+          "rsa_pixels_scramble": 0.0281,
+          "mean_code_activity_heldset": 1.7035,
+          "read_mode": "spikes",
+          "mean_spikes_per_neuron_heldset": 1.7035
+        },
+        "cortex_it": {
+          "chance": 0.3333,
+          "heldpos_decode": 0.1667,
+          "scramble_decode": 0.3333,
+          "held_within_between_margin": -0.033,
+          "rsa_pixels_held": -0.0735,
+          "rsa_pixels_scramble": 0.0312,
+          "mean_code_activity_heldset": 0.6602,
+          "read_mode": "spikes",
+          "mean_spikes_per_neuron_heldset": 0.6602
+        }
+      },
+      "lesion": {
+        "applied": true,
+        "v2_mean_spikes_intact": 1.7035,
+        "v2_mean_spikes_lesion": 1.5439,
+        "v2_input_silenced": true,
+        "heldpos_decode": {
+          "cortex_v2": 0.25,
+          "cortex_it": 0.25
+        }
+      },
+      "no_learning": {
+        "cortex_v1_complex": {
+          "chance": 0.3333,
+          "heldpos_decode": 0.4167,
+          "scramble_decode": 0.3333,
+          "held_within_between_margin": -0.0356,
+          "rsa_pixels_held": -0.1333,
+          "rsa_pixels_scramble": 0.0313,
+          "mean_code_activity_heldset": 1.4591,
+          "read_mode": "spikes"
+        },
+        "cortex_v2": {
+          "chance": 0.3333,
+          "heldpos_decode": 0.3333,
+          "scramble_decode": 0.3333,
+          "held_within_between_margin": -0.0371,
+          "rsa_pixels_held": -0.1405,
+          "rsa_pixels_scramble": 0.0404,
+          "mean_code_activity_heldset": 1.7272,
+          "read_mode": "spikes"
+        },
+        "cortex_it": {
+          "chance": 0.3333,
+          "heldpos_decode": 0.4167,
+          "scramble_decode": 0.3333,
+          "held_within_between_margin": -0.016,
+          "rsa_pixels_held": -0.1162,
+          "rsa_pixels_scramble": 0.0326,
+          "mean_code_activity_heldset": 0.7891,
+          "read_mode": "spikes"
+        }
+      },
+      "shuffled_temporal": {
+        "cortex_v1_complex": {
+          "chance": 0.3333,
+          "heldpos_decode": 0.25,
+          "scramble_decode": 0.5,
+          "held_within_between_margin": -0.0345,
+          "rsa_pixels_held": -0.1327,
+          "rsa_pixels_scramble": 0.0773,
+          "mean_code_activity_heldset": 1.3939,
+          "read_mode": "spikes"
+        },
+        "cortex_v2": {
+          "chance": 0.3333,
+          "heldpos_decode": 0.4167,
+          "scramble_decode": 0.3333,
+          "held_within_between_margin": -0.0252,
+          "rsa_pixels_held": -0.0796,
+          "rsa_pixels_scramble": 0.0507,
+          "mean_code_activity_heldset": 1.7083,
+          "read_mode": "spikes"
+        },
+        "cortex_it": {
+          "chance": 0.3333,
+          "heldpos_decode": 0.3333,
+          "scramble_decode": 0.1667,
+          "held_within_between_margin": -0.0338,
+          "rsa_pixels_held": -0.0469,
+          "rsa_pixels_scramble": 0.1086,
+          "mean_code_activity_heldset": 0.6055,
+          "read_mode": "spikes"
+        }
+      },
+      "decision": {
+        "it_stage": {
+          "inv_above_chance": false,
+          "adds_over_v1": false,
+          "adds_over_frozen": false,
+          "scramble_collapses": true,
+          "rsa_visual": false,
+          "lesion_collapses": true,
+          "validate": false
+        },
+        "v2_stage": {
+          "inv_above_chance": false,
+          "adds_over_v1": true,
+          "adds_over_frozen": false,
+          "scramble_collapses": true,
+          "rsa_visual": false,
+          "lesion_collapses": true,
+          "validate": false
+        },
+        "it_fires": true,
+        "v2_fires": true,
+        "verdict": "TRACE-NOGO",
+        "shuffled_temporal_it_heldpos_decode": 0.3333,
+        "trace_beats_shuffled": false,
+        "trace_go": false
+      }
+    }
+  ],
+  "below_chance": true,
+  "below_chance_note": "IT held-position decode ~chance because the deployed forward pass is DEAD (cortex_v1_simple=0) \u2014 a substrate artifact, VOID as a trace-rule verdict; not a scored mechanism result"
+}
