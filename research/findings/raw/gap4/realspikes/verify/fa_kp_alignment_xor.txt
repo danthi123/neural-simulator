@@ -1,0 +1,49 @@
+SIM_BACKEND=numpy selected, but a CUDA GPU + CuPy ARE available -> this run is on the CPU (typically 10-50x slower). If you did not mean that, pass SIM_BACKEND=cupy explicitly: many research runners do os.environ.setdefault('SIM_BACKEND','numpy'), which silently wins unless the caller overrides it.
+[N=2 seed=42] FA held=0.749 tr=0.910 | KP held=0.838 tr=1.000
+    FA align hidden(deep->top) ['+0.283', '+0.493'] out +0.904
+    KP align hidden(deep->top) ['+0.334', '+0.544'] out +0.626
+[N=2 seed=43] FA held=0.880 tr=1.000 | KP held=0.866 tr=1.000
+    FA align hidden(deep->top) ['+0.227', '+0.495'] out +0.610
+    KP align hidden(deep->top) ['+0.536', '+0.452'] out +0.623
+[N=3 seed=42] FA held=0.451 tr=0.526 | KP held=0.451 tr=0.526
+    FA align hidden(deep->top) ['+0.202', '+0.176', '+0.102'] out +1.000
+    KP align hidden(deep->top) ['-0.319', '-0.913', '-0.281'] out +1.000
+[N=3 seed=43] FA held=0.538 tr=0.480 | KP held=0.538 tr=0.480
+    FA align hidden(deep->top) ['+0.194', '+0.690', '+0.026'] out +1.000
+    KP align hidden(deep->top) ['-0.543', '-0.336', '-0.020'] out +1.000
+[N=4 seed=42] FA held=0.451 tr=0.526 | KP held=0.451 tr=0.526
+    FA align hidden(deep->top) ['-0.022', '+0.800', '+0.106', '-0.287'] out +1.000
+    KP align hidden(deep->top) ['-0.132', '-0.956', '-0.579', '-0.579'] out +1.000
+[N=4 seed=43] FA held=0.538 tr=0.480 | KP held=0.538 tr=0.480
+    FA align hidden(deep->top) ['+0.980', '-0.651', '-0.177', '-0.203'] out +1.000
+    KP align hidden(deep->top) ['+0.758', '-0.807', '-0.168', '-0.218'] out +1.000
+[provenance] stamped 1 artifact(s) | run_id 1785661022-143386
+
+============================================================================================
+ALIGNMENT TABLE  (cosine of delivered-credit vs true surrogate-BPTT gradient, mean over seeds [42, 43])
+============================================================================================
+ N_hidden |       arm |  DEEPEST hidden (li=0) |  TOP hidden (li=N-1)
+--------------------------------------------------------------------------------------------
+        2 |  fixed-FA |                 +0.255 |               +0.494
+        2 |        KP |                 +0.435 |               +0.498
+        3 |  fixed-FA |                 +0.198 |               +0.064
+        3 |        KP |                 -0.431 |               -0.150
+        4 |  fixed-FA |                 +0.479 |               -0.245
+        4 |        KP |                 +0.313 |               -0.399
+--------------------------------------------------------------------------------------------
+
+PER-LAYER (mean over seeds), deepest(li=0) -> top(li=N-1):
+  N=2  fixed-FA: li0=+0.255  li1=+0.494
+  N=2        KP: li0=+0.435  li1=+0.498
+  N=3  fixed-FA: li0=+0.198  li1=+0.433  li2=+0.064
+  N=3        KP: li0=-0.431  li1=-0.624  li2=-0.150
+  N=4  fixed-FA: li0=+0.479  li1=+0.074  li2=-0.036  li3=-0.245
+  N=4        KP: li0=+0.313  li1=-0.882  li2=-0.373  li3=-0.399
+
+============================================================================================
+DEEPEST-layer alignment vs depth:  fixed-FA ['+0.255', '+0.198', '+0.479']  KP ['+0.435', '-0.431', '+0.313']
+N=2 TOP-hidden alignment (sanity, should be high both arms): FA +0.494  KP +0.498
+VERDICT: MIXED / INCONCLUSIVE: neither a clean KP rescue nor a symmetric collapse. Read the per-layer table -- report the numbers as-is.
+============================================================================================
+
+elapsed 136.7s

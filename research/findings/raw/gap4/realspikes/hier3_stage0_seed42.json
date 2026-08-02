@@ -1,0 +1,32 @@
+{
+  "probe": "gap4_bptt_snn_chained_fa_transport_free__STAGE0_ONLY",
+  "task": "hier3",
+  "seeds": [
+    42
+  ],
+  "stage0": [
+    {
+      "chance": 0.16666666666666666,
+      "n_features": 15,
+      "linear_inherit_heldout": 0.16666666666666666,
+      "linear_train": 0.20222222222222222,
+      "l1_inherit_heldout": 0.18518518518518517,
+      "l1_train": 0.7255555555555555,
+      "l2_inherit_heldout": 0.16666666666666666,
+      "l2_train": 1.0,
+      "l3_inherit_heldout": 0.12962962962962962,
+      "l3_train": 0.64,
+      "deep_best_inherit_heldout": 0.16666666666666666,
+      "depth_gap": -0.018518518518518517,
+      "depth_separating": false,
+      "seed": 42,
+      "depth3_requiring": false
+    }
+  ],
+  "depth3_requiring_seeds": "0/1",
+  "below_chance": false,
+  "verdict": "NOT_DEPTH3 (0/1: task fittable but does not obligate depth-3)",
+  "mean_l3_train": 0.64,
+  "mean_chance": 0.16666666666666666,
+  "gate": "depth3_requiring = (l2 <= chance+0.06) AND (l3 >= 0.80) AND (l3 - l2 >= 0.15)"
+}

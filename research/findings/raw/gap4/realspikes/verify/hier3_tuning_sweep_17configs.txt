@@ -1,0 +1,60 @@
+=== full verify/ artifact inventory (what completed) ===
+inherit_depthsweep_N2.json
+xor_bptttune_bh128_be200.json
+xor_bptttune_bh128_be400.json
+xor_bptttune_bh256_be200.json
+xor_lrfa002.json
+xor_lrfa01.json
+xor_nosigmanorm.json
+
+=== relaunch hier3 sweep cleanly (box idle), output to file ===
+exit=0
+running 34 jobs (17 configs x 2 seeds) on 18 procs
+
+config                     seed       orc chance  l1te  l2te  l3te  l1tr  l2tr  l3tr  GATE  meta
+------------------------------------------------------------------------------------------------------------------------------------
+baseline                     42   h96e250  0.167  0.19  0.17  0.13  0.73  1.00  0.64 False  ntr900 inh54 k9 f15
+baseline                     43   h96e250  0.167  0.24  0.20  0.24  0.97  1.00  0.96 False  ntr900 inh54 k9 f15
+memid0_obs20_ref             42   h96e250  0.167  0.19  0.76  1.00  0.17  1.00  1.00 False  ntr1800 inh54 k9 f12
+memid0_obs20_ref             43   h96e250  0.167  0.17  0.87  0.31  0.17  1.00  0.67 False  ntr1800 inh54 k9 f12
+S3_memid0_obs20_h32          42   h32e250  0.167  0.22  0.65  0.28  0.38  1.00  0.99 False  ntr1800 inh54 k9 f12
+S3_memid0_obs20_h32          43   h32e250  0.167  0.20  0.72  0.41  0.29  1.00  0.86 False  ntr1800 inh54 k9 f12
+S3_memid0_obs20_h48          42   h48e250  0.167  0.22  0.70  0.59  0.34  1.00  0.98 False  ntr1800 inh54 k9 f12
+S3_memid0_obs20_h48          43   h48e250  0.167  0.17  0.50  0.96  0.22  1.00  1.00 False  ntr1800 inh54 k9 f12
+S3_memid0_obs20_h64          42   h64e250  0.167  0.19  0.96  0.37  0.27  1.00  0.86 False  ntr1800 inh54 k9 f12
+S3_memid0_obs20_h64          43   h64e250  0.167  0.13  0.78  0.50  0.20  1.00  0.99 False  ntr1800 inh54 k9 f12
+S3_memid0_obs30_h32          42   h32e250  0.167  0.09  0.44  0.61  0.30  1.00  1.00 False  ntr2700 inh54 k9 f12
+S3_memid0_obs30_h32          43   h32e250  0.167  0.20  0.96  0.57  0.33  1.00  1.00 False  ntr2700 inh54 k9 f12
+S4_memid0_obs20              42   h96e250  0.083  0.08  0.99  0.99  0.14  1.00  1.00 False  ntr7200 inh216 k17 f16
+S4_memid0_obs20              43   h96e250  0.083  0.10  1.00  1.00  0.15  1.00  1.00 False  ntr7200 inh216 k17 f16
+S4_memid0_obs30              42   h96e250  0.083  0.09  1.00  1.00  0.12  1.00  1.00 False  ntr10800 inh216 k17 f16
+S4_memid0_obs30              43   h96e250  0.083  0.11  1.00  0.88  0.10  1.00  1.00 False  ntr10800 inh216 k17 f16
+S4_memid0_obs20_h32          42   h32e250  0.083  0.07  0.99  0.40  0.18  1.00  0.72 False  ntr7200 inh216 k17 f16
+S4_memid0_obs20_h32          43   h32e250  0.083  0.10  1.00  1.00  0.17  1.00  1.00 False  ntr7200 inh216 k17 f16
+S4_memid0_obs20_h48          42   h48e250  0.083  0.06  1.00  1.00  0.16  1.00  1.00 False  ntr7200 inh216 k17 f16
+S4_memid0_obs20_h48          43   h48e250  0.083  0.08  1.00  1.00  0.19  1.00  1.00 False  ntr7200 inh216 k17 f16
+S4_memid0_obs20_h160e500     42  h160e500  0.083  0.09  1.00  1.00  0.21  1.00  1.00 False  ntr7200 inh216 k17 f16
+S4_memid0_obs20_h160e500     43  h160e500  0.083  0.07  1.00  1.00  0.15  1.00  1.00 False  ntr7200 inh216 k17 f16
+S4_memid0_obs40_h160e500     42  h160e500  0.083  0.07  1.00  0.93  0.10  1.00  1.00 False  ntr14400 inh216 k17 f16
+S4_memid0_obs40_h160e500     43  h160e500  0.083  0.08  1.00  1.00  0.09  1.00  1.00 False  ntr14400 inh216 k17 f16
+S4_memid0_held10_obs20       42   h96e250  0.083  0.08  0.98  0.75  0.27  1.00  1.00 False  ntr4320 inh360 k17 f16
+S4_memid0_held10_obs20       43   h96e250  0.083  0.07  0.92  0.89  0.28  1.00  1.00 False  ntr4320 inh360 k17 f16
+S4_memid0_held8_obs30        42   h96e250  0.083  0.08  1.00  0.72  0.15  1.00  1.00 False  ntr8640 inh288 k17 f16
+S4_memid0_held8_obs30        43   h96e250  0.083  0.08  1.00  0.41  0.13  1.00  1.00 False  ntr8640 inh288 k17 f16
+S4_memid1_obs20              42   h96e250  0.083  0.11  0.99  0.45  0.41  1.00  1.00 False  ntr7200 inh216 k17 f17
+S4_memid1_obs20              43   h96e250  0.083  0.09  1.00  0.69  0.35  1.00  1.00 False  ntr7200 inh216 k17 f17
+S4_memid2_obs20_h32          42   h32e250  0.083  0.07  0.84  0.15  0.38  1.00  1.00 False  ntr7200 inh216 k17 f18
+S4_memid2_obs20_h32          43   h32e250  0.083  0.11  0.60  0.14  0.35  1.00  1.00 False  ntr7200 inh216 k17 f18
+S4_mem6_obs10_h32            42   h32e250  0.083  0.09  0.89  1.00  0.19  1.00  1.00 False  ntr7200 inh432 k17 f16
+S4_mem6_obs10_h32            43   h32e250  0.083  0.08  0.53  1.00  0.17  0.93  1.00 False  ntr7200 inh432 k17 f16
+====================================================================================================================================
+GATES ON BOTH SEEDS 42+43:
+  (none) -- report closest + dominant trap
+
+CLOSEST (mean gate-violation, lower=better):
+  S4_mem6_obs10_h32          viol=0.593  l2_te 0.89/0.53 l3_te 1.00/1.00 l3_tr 1.00/1.00 chance 0.08
+  S3_memid0_obs20_h48        viol=0.609  l2_te 0.70/0.50 l3_te 0.59/0.96 l3_tr 0.98/1.00 chance 0.17
+  baseline                   viol=0.895  l2_te 0.17/0.20 l3_te 0.13/0.24 l3_tr 0.64/0.96 chance 0.17
+  S3_memid0_obs30_h32        viol=0.954  l2_te 0.44/0.96 l3_te 0.61/0.57 l3_tr 1.00/1.00 chance 0.17
+  S4_memid0_obs20            viol=1.004  l2_te 0.99/1.00 l3_te 0.99/1.00 l3_tr 1.00/1.00 chance 0.08
+  S4_memid0_obs20_h48        viol=1.004  l2_te 1.00/1.00 l3_te 1.00/1.00 l3_tr 1.00/1.00 chance 0.08

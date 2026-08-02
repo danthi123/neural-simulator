@@ -72,6 +72,22 @@ Run (numpy CPU; the depth-2 BPTT-viable net, ~ (n_in+2*hidden+k) LIF units over 
     SIM_BACKEND=numpy python -m research.runners._gap4_bptt_snn_chained_fa_transport_free_derisk --task-xor \
         --seeds 42 43 44 100 101 102 --hidden 32 --wide-hidden 256 --epochs 200 --lr 0.05 --bptt-hidden 128 \
         --train-subsample 2000 --out research/findings/raw/gap4/realspikes/bptt_snn_chained_fa_XOR_6seed.json
+    # THE DEPTH-3 OBLIGATORY + OPTIMIZABLE task (--task-hier3). STEP 1: cheap stage0 CONFIRM (no SNN arms) -- the gate
+    #   is depth3_requiring (l2 ~ chance, l3 >= 0.80, l3-l2 >= 0.15) AND l3_train >= 0.90 (fittable, unlike nested-XOR):
+    SIM_BACKEND=numpy python -m research.runners._gap4_bptt_snn_chained_fa_transport_free_derisk --task-hier3 \
+        --stage0-only --seeds 42 --out research/findings/raw/gap4/realspikes/hier3_stage0_seed42.json
+    SIM_BACKEND=numpy python -m research.runners._gap4_bptt_snn_chained_fa_transport_free_derisk --task-hier3 \
+        --stage0-only --seeds 42 43 44 100 101 102 --out research/findings/raw/gap4/realspikes/hier3_stage0_6seed.json
+    # STEP 2 (only if stage0 confirms): the KP-depth-rescue SWEEP at N=2,3,4 (fixed-FA should collapse toward frozen as
+    #   depth grows while KP holds -> kp_over_fixed_fa GROWS). seed 42 then 6-seed, per N (mirrors the XOR tuning):
+    for N in 2 3 4; do SIM_BACKEND=numpy python -m research.runners._gap4_bptt_snn_chained_fa_transport_free_derisk \
+        --task-hier3 --n-hidden-layers $N --seeds 42 --hidden 32 --wide-hidden 256 --epochs 200 --lr 0.05 \
+        --bptt-hidden 128 --train-subsample 2000 \
+        --out research/findings/raw/gap4/realspikes/hier3_sweep_N${N}_seed42.json; done
+    for N in 2 3 4; do SIM_BACKEND=numpy python -m research.runners._gap4_bptt_snn_chained_fa_transport_free_derisk \
+        --task-hier3 --n-hidden-layers $N --seeds 42 43 44 100 101 102 --hidden 32 --wide-hidden 256 --epochs 200 \
+        --lr 0.05 --bptt-hidden 128 --train-subsample 2000 \
+        --out research/findings/raw/gap4/realspikes/hier3_sweep_N${N}_6seed.json; done
 """
 from __future__ import annotations
 
@@ -178,6 +194,139 @@ def make_task_nestedxor(seed):
             "n_inherit_heldout": int(len(inh_idx))}
     idxd = {"inh_idx": inh_idx, "memctrl_idx": np.array([], dtype=np.int64)}
     return (X[tr], label[tr], Ltr), (X[te], label[te], Lte), meta, idxd
+
+
+# ============================================================================================================
+# THE DEPTH-3 OBLIGATORY task in the SEMANTIC-INHERITANCE genre (--task-hier3, ADDITIVE, default OFF) -- the SMOOTH,
+# backprop-OPTIMIZABLE depth-3 gate the nested-XOR task could NOT be. `--task-nestedxor` FAILED as a gate: stacked
+# XOR/parity is an OPTIMIZATION wall (parity gradients vanish; Shalev-Shwartz 2017) so the depth-3 backprop ORACLE
+# could not even FIT train (l3_train = 0.502 = chance) -> there was NO depth-3 ceiling to compare the spiking rule
+# against. This task keeps the OBLIGATORY-depth-3 requirement but sources it from COMPOSITIONAL BINDING (systematic
+# generalization), NOT parity, so a depth-3 backprop net CAN optimize + fit it. It EXTENDS
+# make_task_semantic_inheritance (the depth-2 template that already gates l1-fail/l2-clear) by exactly ONE
+# compositional level -- a 3-LEVEL taxonomy:
+#     member -> MID-category -> SUPER-category -> property-class
+#   hop1 (pool -> mid_bits)  : each mid bit = XOR of a DISTINCT pool-feature pair, a FRESH +-1 realization per
+#                              observation so the marginal of every pool feature is 50/50 -> a LINEAR read is
+#                              uninformative, ONLY the fan-in-2 XOR recovers the bit (== the depth-2 task's hop1).
+#   hop2 (mid_bits -> super) : each super bit = XOR of a DISTINCT mid-bit PAIR (fan-in 2). The mid->super rule is
+#                              SHARED across all mids (systematic) -> learned from taught mids, generalizes to held
+#                              mids. THIS IS THE INSERTED LEVEL that makes the task depth-3, not depth-2.
+#   hop3 (super -> class)    : class = integer(super_bits) (== the depth-2 task's hop2 integer-decode).
+# WHY OBLIGATORY DEPTH-3 *AND* OPTIMIZABLE (the explicit contrast with the parity trap):
+#   * OPTIMIZABLE at the correct depth: every hop is a fan-in-2 XOR / a small integer-decode -> the depth-3 oracle has
+#     CLEAR per-hop gradient, FITS train (target l3_train >= 0.90) and generalizes (l3_inherit >= 0.80). The nested-XOR
+#     died exactly here: MAJORITY-of-XOR + top-XOR-over-group-majorities has large effective fan-in -> vanishing credit
+#     to the bottom layer -> the depth-3 oracle could not FIT train. A staged fan-in-2 hierarchy has NO such wall.
+#   * DEPTH-2 UNDERFITS held-out (target l2_inherit <= chance+0.06, l3-l2 >= 0.15): the inherit set is members of HELD
+#     mids of TAUGHT supers -- novel mids whose member-IDs are novel (no memorization handle) and whose mid_bits pattern
+#     was NEVER a property target (no direct mid->class signal). The ONLY path that generalizes to such a mid is the
+#     systematic composition mid->super->class, which needs THREE abstraction levels; a 2-hidden net builds only two ->
+#     it cannot compose the 3rd hop -> l2_inherit ~ chance. The pool->super FOLD (parity-4 of pool in one hidden) is
+#     EXPRESSIBLE at depth-2 but not FINDABLE (fan-in-4 parity from scratch) and, like the depth-2 task's own parity-2
+#     fold that a 1-hidden net cannot exploit, is not what the optimizer LEARNS. Held mids of the SAME super occupy a
+#     DIFFERENT region of pool space (different mid_bits, same super_bits) than taught mids, so memorizing pool->class
+#     for taught mids never covers them -- only the shared systematic rule does. CONFIRM via stage0: l2 ~ chance, l3
+#     solves => depth3_requiring, BEFORE reading the depth sweep.
+# The `--task-nestedxor` approach (boolean-obligatory-depth) is ill-posed for THIS gate; kept above only as the record.
+# ============================================================================================================
+H3_N_SUPER_BITS = 3                    # S: super-property bits -> class = integer(super_bits) in 0..2^S-1 (base classes)
+H3_N_MID_BITS = 2 * H3_N_SUPER_BITS    # M = 2S: each super bit = XOR of a DISTINCT mid-bit pair (fan-in 2 -> optimizable)
+H3_MIDS_PER_SUPER = 8                  # mids per super (<= 2^S distinct mid patterns decode to each super)
+H3_HELD_MIDS_PER_SUPER = 3             # mids/super held ENTIRELY from property training = the inherit test (novel mids)
+H3_N_MEMBERS = 3                       # members per mid (ID-addressable handles = the memorization affordance)
+H3_N_OBS = 10                          # observations per TRAIN member (fresh noisy XOR realizations); held members get 1
+H3_MEMBER_ID_DIM = 3
+H3_NOISE = 0.02
+
+
+def make_task_hier3(seed, n_super_bits=H3_N_SUPER_BITS, mids_per_super=H3_MIDS_PER_SUPER,
+                    held_mids_per_super=H3_HELD_MIDS_PER_SUPER, n_members=H3_N_MEMBERS,
+                    n_obs=H3_N_OBS, member_id_dim=H3_MEMBER_ID_DIM, noise=H3_NOISE):
+    """DEPTH-3 obligatory task (member->MID->SUPER->property-class) in the semantic-inheritance genre; see the block
+    comment above for WHY it obligatorily requires depth-3 WHILE staying backprop-optimizable (the nested-XOR could not
+    be optimized; this can). Same 4-tuple interface as make_task_semantic_inheritance / make_task_xor: X real-valued
+    (rate-coded as constant current over T by _forward_logits, exactly as the inheritance X is), y in 0..k-1, latents =
+    super_bits (the top intermediate the composition builds; reported, NON-gating). idx carries inh_idx (members of HELD
+    mids of TAUGHT supers = the composition test) and memctrl_idx (members of fully UNTAUGHT supers -> a reserved NOVEL
+    class that must NOT be inferable). Mirrors make_task_semantic_inheritance's split discipline, one level deeper."""
+    S = int(n_super_bits)
+    M = 2 * S                                     # each super bit = XOR of a distinct mid-bit PAIR (fan-in 2)
+    rng = np.random.default_rng(seed)
+    n_super = 1 << S                              # all S-bit super patterns; property class = integer(super_bits)
+    mids_per_super = int(min(mids_per_super, 1 << S))     # at most 2^S distinct mid patterns decode to each super
+    # MEMORIZATION control (mirrors the inheritance task): the LAST n_untaught supers hold out ALL their mids AND their
+    # class is a RESERVED NOVEL class no taught super ever uses -> genuinely not inferable (a leak would show > chance).
+    n_untaught = max(1, n_super // 4) if held_mids_per_super > 0 else 0
+    untaught = set(range(n_super - n_untaught, n_super))
+    novel_class = n_super                         # a class no taught super maps to
+    k_classes = n_super + (1 if n_untaught > 0 else 0)
+
+    n_id = int(member_id_dim)
+    n_pool = 2 * M                                # 2 pool features per mid bit (the XOR pair)
+    n_feat = n_pool + n_id
+    mrng = np.random.default_rng(seed * 777 + 5)  # member-ID stream (independent random -> no super/mid linear leak)
+
+    Xtr_l, ytr_l, Ltr_l, Xte_l, yte_l, Lte_l = [], [], [], [], [], []
+    mem_ctrl_rows = []                            # (row_in_Xte, untaught?) for every held member
+
+    for s in range(n_super):
+        super_bits = np.array([(s >> b) & 1 for b in range(S)], dtype=np.int64)      # the super's S-bit code
+        cls = novel_class if s in untaught else s                                    # property class = integer decode
+        # the mids of super s: pick `mids_per_super` DISTINCT free-bit vectors f in {0,1}^S; a mid's mid_bits are
+        # mid_bits[2j]=f_j, mid_bits[2j+1]=f_j XOR super_bits[j] so XOR(pair j)==super_bits[j] (the SHARED mid->super
+        # rule). Held mids of the same super differ from taught mids in f -> a DIFFERENT pool region, same super/class.
+        all_f = rng.permutation(1 << S)[:mids_per_super]
+        held_f = set(all_f[-held_mids_per_super:].tolist()) if held_mids_per_super > 0 else set()
+        for fval in all_f:
+            f = np.array([(int(fval) >> j) & 1 for j in range(S)], dtype=np.int64)
+            mid_bits = np.zeros(M, dtype=np.int64)
+            for j in range(S):
+                mid_bits[2 * j] = f[j]
+                mid_bits[2 * j + 1] = f[j] ^ super_bits[j]
+            mid_held = (int(fval) in held_f) or (s in untaught)
+            for _mem in range(n_members):
+                member_code = mrng.standard_normal(n_id)      # per-member ID handle (shared across that member's obs)
+                n_view = 1 if mid_held else n_obs
+                for _ in range(n_view):
+                    feat = np.zeros(n_feat, dtype=np.float64)
+                    # hop1 encoding: a FRESH +-1 pair per mid bit; sign-XOR == the bit; marginally 50/50 -> linear-blind
+                    for i in range(M):
+                        a0 = 1.0 if rng.random() < 0.5 else -1.0
+                        a1 = -a0 if mid_bits[i] == 1 else a0
+                        feat[2 * i] = a0; feat[2 * i + 1] = a1
+                    feat[:n_pool] += noise * rng.standard_normal(n_pool)     # observation noise (denoising = hop-1 work)
+                    feat[n_pool:n_pool + n_id] = member_code                 # member handle (no super/mid leak)
+                    lat = super_bits.astype(np.float64)                      # emergence probe target (non-gating)
+                    if mid_held:
+                        Xte_l.append(feat); yte_l.append(int(cls)); Lte_l.append(lat)
+                        mem_ctrl_rows.append((len(Xte_l) - 1, bool(s in untaught)))
+                    else:
+                        Xtr_l.append(feat); ytr_l.append(int(cls)); Ltr_l.append(lat)
+
+    Xtr = np.asarray(Xtr_l); ytr = np.asarray(ytr_l, np.int64); Ltr = np.asarray(Ltr_l)
+    Xte = np.asarray(Xte_l); yte = np.asarray(yte_l, np.int64); Lte = np.asarray(Lte_l)
+
+    # per-feature standardization on TRAIN statistics (matches the inheritance task; applied to BOTH splits identically)
+    mu = Xtr.mean(0, keepdims=True); sd = Xtr.std(0, keepdims=True)
+    Xtr = (Xtr - mu) / (sd + 1e-6); Xte = (Xte - mu) / (sd + 1e-6)
+
+    # held-out-INHERITANCE mask over Xte: members of held mids whose super HAD taught mids (the composition test) vs the
+    # memorization-control members (their super had NO taught mid -> novel class, must NOT be inferable).
+    inh_idx = np.array([r for (r, unt) in mem_ctrl_rows if not unt], dtype=np.int64)
+    memctrl_idx = np.array([r for (r, unt) in mem_ctrl_rows if unt], dtype=np.int64)
+
+    # deterministic train shuffle (per seed) so batches mix classes
+    ptr = rng.permutation(len(ytr)); Xtr, ytr, Ltr = Xtr[ptr], ytr[ptr], Ltr[ptr]
+
+    meta = {"task": "hier3_depth3", "k_classes": int(k_classes), "n_super": int(n_super),
+            "n_super_bits": S, "n_mid_bits": M, "mids_per_super": int(mids_per_super),
+            "held_mids_per_super": int(held_mids_per_super), "n_members": int(n_members), "n_obs": int(n_obs),
+            "member_id_dim": n_id, "noise": float(noise), "n_features": int(Xtr.shape[1]),
+            "n_train": int(len(ytr)), "n_heldout": int(len(yte)),
+            "n_inherit_heldout": int(len(inh_idx)), "n_memctrl_heldout": int(len(memctrl_idx)),
+            "n_supers_untaught": int(n_untaught)}
+    return (Xtr, ytr, Ltr), (Xte, yte, Lte), meta, {"inh_idx": inh_idx, "memctrl_idx": memctrl_idx}
 
 
 # ============================================================================================================
@@ -391,9 +540,11 @@ def _train_snn_arm(Xtr, ytr, sizes, T, epochs, lr, lr_fa, in_gain, seed, mode, b
 
 def run_seed(seed, hidden, T, epochs, lr, lr_fa, in_gain, subsample, task_kwargs, n_hidden_layers=2,
              sigma_norm=True, kp_lr=0.2, kp_decay=1e-4, check_depth=True,
-             task_xor=False, task_nestedxor=False, bptt_hidden=None, bptt_epochs=None, bptt_lr=None,
-             wide_hidden=256):
-    if task_nestedxor:
+             task_xor=False, task_nestedxor=False, task_hier3=False, bptt_hidden=None, bptt_epochs=None,
+             bptt_lr=None, wide_hidden=256):
+    if task_hier3:
+        (Xtr, ytr, Ltr), (Xte, yte, Lte), meta, idx = make_task_hier3(seed)
+    elif task_nestedxor:
         (Xtr, ytr, Ltr), (Xte, yte, Lte), meta, idx = make_task_nestedxor(seed)
     elif task_xor:
         (Xtr, ytr, Ltr), (Xte, yte, Lte), meta, idx = make_task_xor(seed)
@@ -496,7 +647,8 @@ def run_seed(seed, hidden, T, epochs, lr, lr_fa, in_gain, subsample, task_kwargs
 
     return {
         "seed": seed, "chance": chance, "n_in": n_in, "k": k, "sizes": sizes,
-        "task": ("nestedxor" if task_nestedxor else ("xor" if task_xor else "inheritance")),
+        "task": ("hier3" if task_hier3 else
+                 ("nestedxor" if task_nestedxor else ("xor" if task_xor else "inheritance"))),
         "n_hidden_layers": int(n_hidden_layers),
         "depth_separating": depth_sep, "oracle_inherit": oracle_inh,
         # ---- stage0 depth-genuineness surfaced (the DEPTH-3 confirm read) ----
@@ -611,6 +763,14 @@ def main():
                          "REQUIRES 3 nonlinear layers so at --n-hidden-layers>=3 the depth is OBLIGATORY, not redundant) "
                          "instead of the inheritance/xor task; default OFF. CONFIRM the depth-3 requirement via the stage0 "
                          "probe (l2 ~ chance, l3 solves => depth3_requiring) BEFORE reading the depth sweep.")
+    # ---- ADDITIVE (default-OFF): the DEPTH-3 OBLIGATORY task that is ALSO backprop-OPTIMIZABLE (the nested-XOR could
+    #      not be fit; this can) -- the clean KP-depth-rescue instrument. Obligatory depth from COMPOSITIONAL BINDING. ----
+    ap.add_argument("--task-hier3", action="store_true",
+                    help="use the DEPTH-3 SMOOTH task (member->MID->SUPER->property: hop1 pool->mid XOR, hop2 mid->super "
+                         "XOR [the inserted level], hop3 super->class decode; obligatory depth from COMPOSITIONAL BINDING, "
+                         "NOT parity, so a depth-3 backprop oracle CAN FIT it where the nested-XOR could not) instead of "
+                         "the inheritance/xor/nestedxor task; default OFF. CONFIRM via stage0 (l2 ~ chance, l3 solves, "
+                         "l3_train >= 0.90 => depth3_requiring + fittable) BEFORE reading the depth sweep.")
     ap.add_argument("--stage0-only", action="store_true",
                     help="run ONLY the stage0 depth-genuineness probe (0/1/2/3-hidden oracles) + the depth3 gate and exit "
                          "-- the cheap CONFIRM path (no SNN arms). Use to validate a task gates at depth-3 before sweeping.")
@@ -639,14 +799,17 @@ def main():
                    "held_per_super": args.held_per_super, "n_prop": args.n_prop,
                    "member_id_dim": args.member_id_dim, "n_obs": args.n_obs,
                    "noise": args.noise, "feature_seed": args.feature_seed}
-    task_name = "nestedxor" if args.task_nestedxor else ("xor" if args.task_xor else "inheritance")
+    task_name = ("hier3" if args.task_hier3 else
+                 ("nestedxor" if args.task_nestedxor else ("xor" if args.task_xor else "inheritance")))
 
     # ---- CHEAP CONFIRM PATH: the stage0 depth-genuineness probe ALONE (no SNN arms). Validates a task's OBLIGATORY
     #      depth: depth3_requiring = (l2 ~ chance) AND (l3 >= 0.80) AND (l3 - l2 >= 0.15). Run this BEFORE the sweep. ----
     if args.stage0_only:
         s0_results = []
         for sd in args.seeds:
-            if args.task_nestedxor:
+            if args.task_hier3:
+                (Xtr, ytr, Ltr), (Xte, yte, Lte), meta, idx = make_task_hier3(sd)
+            elif args.task_nestedxor:
                 (Xtr, ytr, Ltr), (Xte, yte, Lte), meta, idx = make_task_nestedxor(sd)
             elif args.task_xor:
                 (Xtr, ytr, Ltr), (Xte, yte, Lte), meta, idx = make_task_xor(sd)
@@ -705,7 +868,7 @@ def main():
                          args.train_subsample, task_kwargs, n_hidden_layers=args.n_hidden_layers,
                          sigma_norm=args.sigma_norm, kp_lr=args.kp_lr, kp_decay=args.kp_decay,
                          check_depth=not args.no_depth_check, task_xor=args.task_xor,
-                         task_nestedxor=args.task_nestedxor,
+                         task_nestedxor=args.task_nestedxor, task_hier3=args.task_hier3,
                          bptt_hidden=args.bptt_hidden, bptt_epochs=args.bptt_epochs, bptt_lr=args.bptt_lr,
                          wide_hidden=args.wide_hidden)
         except Exception as e:
