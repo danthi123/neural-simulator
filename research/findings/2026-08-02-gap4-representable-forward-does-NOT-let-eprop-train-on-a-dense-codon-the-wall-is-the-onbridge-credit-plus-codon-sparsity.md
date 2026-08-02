@@ -136,3 +136,27 @@ credit factor (a better on-bridge surrogate that does not vanish on the Izhikevi
 keeps the surrogate informative) OR an honest substrate-level limit of the point-neuron Izhikevich surrogate for
 credit. The crux CORE (LIF/rate) stands; the production-bridge residual is now isolated to a single, precisely-named
 mechanism.
+
+## Update 4 (2026-08-02) — the phi'-VANISHING hypothesis is REFUTED (surrogate is HEALTHY); no operating-point/surrogate tuning helps (0/30); the residual is NOT surrogate-collapse
+
+<!--derived-->
+A PARALLEL fix-sweep + a direct credit-factor DIAGNOSTIC (21 runs across the local box + the 3 pool nodes, plus
+`--measure-credit-factor` reading the on-bridge credit factor Lsig x psi against a finite-difference backprop oracle)
+refutes the phi'-vanishing hypothesis. On the sparse representable codon: the atan membrane surrogate is HEALTHY, not
+vanishing — psi_mean/peak 0.31-0.32, dynamic-range 0.94, at BOTH init AND trained state (the FD oracle is validated at
+init: FD-vs-readout-gradient cos +0.916). And a 30-run sweep of the surrogate sharpness (--alpha-surr 0.05..2.0) x the
+operating-point tonic drive (--tonic-h/o-pA) trains 0/30 (all at chance). So the residual is NOT the surrogate
+collapsing and NOT operating-point-tunable — correcting the phi'-vanishing framing.
+
+<!--derived-->
+**What the diagnostic shows (honest, with its caveat):** the credit factor's alignment with the backprop oracle is ~0
+at init (cos +0.05, EXPECTED for FA — the forward has not yet aligned to the fixed feedback) and reads weakly negative
+at trained (cos -0.27) — BUT the FD oracle degrades at the trained state (validation drops to +0.235), so the trained
+alignment number is not clean; the reliable read is init (surrogate healthy). So the OPEN, sharpened question is FA
+CONVERGENCE: does the transport-free credit ALIGN over training on the Izhikevich substrate (it does on LIF), measured
+with a trained-state oracle that stays validated? The robust conclusion so far: the wall is NOT surrogate-collapse,
+NOT operating-point, NOT error-routing (3 mechanisms) — it is that the transport-free local credit does not become
+usefully aligned on Izhikevich despite a healthy surrogate. NEXT: a clean trained-state FA-convergence measurement
+(fix the FD-oracle degradation), + the pending population (pool_k) sweep (does sqrt(K) cleaning align the credit); if
+neither, this is an honest substrate-level limit of transport-free credit on the point-neuron Izhikevich rule. Runner
+gains `--measure-credit-factor` / `--alpha-surr` sweep support (additive). Crux CORE (LIF/rate) stands.

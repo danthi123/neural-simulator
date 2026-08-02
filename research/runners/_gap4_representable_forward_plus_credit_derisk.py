@@ -439,6 +439,313 @@ class MicrocircuitEpropNet(OnBridgeEpropNet):
                 "frac_correct": float(corr.mean()), "selfpred_cos_top": float(_cos(self.W_PI[top], self.B_direct[top]))}
 
 
+# ==================================================================================================================
+# THE 2026-08-02 CREDIT-FACTOR DIAGNOSTIC (`--measure-credit-factor`, ADDITIVE, default OFF). A MEASUREMENT, not a
+# training run. Update 3 of the finding ELIMINATIVELY isolated the on-bridge deep-credit wall to a SINGLE mechanism:
+# the on-bridge e-prop's LOCAL CREDIT FACTOR itself -- the atan_vt membrane surrogate sigma'(v_soma - theta) TIMES the
+# forward eligibility, on the post-reset Izhikevich membrane (the phi'-vanishing / operating-point residual). Every
+# error-ROUTING fix (fixed-DFA, learned-KP, self-predicting microcircuit) was proven inert; what remains is whether
+# that local factor carries CREDIT-USABLE SELECTIVITY. This probe answers it directly, on the sparse representable
+# codon (--task-xor --act-th 3 --mode expander), with NO sim/ edit -- the surrogate + eligibility + DFA learning-signal
+# are read from the SAME recorded cp_membrane_potential_v / cp_firing_states the e-prop rule uses (net._surrogate,
+# net.B_direct), and the reference "credit these neurons SHOULD receive" is the EMPIRICAL backprop-oracle per hidden
+# neuron measured by finite-difference on the exact substrate: oracle_j = dLoss/dI_j (nudge neuron j's input current,
+# re-run the spiking forward, read the loss change) -- the gold-standard total-derivative credit e-prop's per-neuron
+# factor (Lsig_j * psi_j) is trying to estimate. All arms share the SAME representation and the SAME (readout-fit)
+# operating point, so the comparison is apples-to-apples.
+#
+# THE THREE DECISIVE READS (owner-named):
+#   (i)   surrogate ~0 / tiny dynamic range  => phi'-VANISHING (atan surrogate collapses on the post-reset membrane) =>
+#         the fix is a surrogate / operating-point that keeps sigma' informative.
+#   (ii)  surrogate HAS range but the credit factor has ZERO alignment with the FD oracle => no credit-usable
+#         selectivity (a substrate-level read limit) => honest substrate limit or a different local factor.
+#   (iii) alignment decent-but-weak => the eligibility / optimization is the residual (more epochs / lr / batch).
+# The Lsig-only vs Lsig*psi alignment split attributes any misalignment to the FEEDBACK (already eliminated) vs the
+# SURROGATE: if multiplying by psi DEGRADES alignment, the surrogate is vanishing on exactly the high-credit neurons
+# (the phi'-vanishing mechanism biting the credit) -- read (i)/(ii); if psi is ~constant, alignment is unchanged
+# (surrogate inert, not the differentiator).
+
+
+def _make_codon(seed, use_expander, a):
+    """Build the task + (optionally plateau-expanded) representation EXACTLY as run_one does -- the sparse representable
+    codon on --task-xor --act-th 3 --mode expander. Returns (Rtr, ytr, Rte, yte, inh_idx, k, chance, meta,
+    codon_sparsity, repro). Byte-identical construction to run_one (the diagnostic measures the SAME forward)."""
+    if a.task_xor:
+        (Xtr, ytr, Ltr), (Xte, yte, Lte), meta, idx = make_task_xor(seed)
+    else:
+        task_kwargs = dict(n_super=a.n_super, n_members=a.n_members, held_per_super=a.held_per_super,
+                           n_prop=int(a.n_prop), member_id_dim=a.member_id_dim, n_obs=a.n_obs, noise=a.noise)
+        (Xtr, ytr, Ltr), (Xte, yte, Lte), meta, idx = make_task_semantic_inheritance(seed, **task_kwargs)
+    k = int(meta["k_classes"]); inh_idx = idx["inh_idx"]
+    yv = yte[inh_idx]; chance = float(max(np.mean(yv == c) for c in np.unique(yv)))
+    repro = float("nan"); codon_sparsity = float("nan")
+    if use_expander:
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            import research.runners._gap4_plateau_expander_probe as _pep
+            if a.act_th is not None:
+                _pep.ACT_TH = int(a.act_th)
+            if a.task_xor:
+                sets_tr, n_feat_exp = _xor_active_sets(Xtr, a.xor_encoding)
+                sets_te, _ = _xor_active_sets(Xte, a.xor_encoding)
+                exp = PlateauExpander(n_feat_exp, a.n_col, seed)
+                Rtr = _expand_sets(exp, sets_tr); Rte = _expand_sets(exp, sets_te)
+                repro = _codon_reproducibility_sets(exp, sets_tr)
+            else:
+                exp = PlateauExpander(Xtr.shape[1], a.n_col, seed)
+                Rtr = _expand(exp, Xtr, a.topk); Rte = _expand(exp, Xte, a.topk)
+                repro = _codon_reproducibility(exp, Xtr, a.topk)
+        codon_sparsity = float(Rtr.mean())
+    else:
+        Rtr, Rte = Xtr.astype(np.float64), Xte.astype(np.float64)
+    return Rtr, ytr, Rte, yte, inh_idx, k, chance, meta, codon_sparsity, repro
+
+
+def _build_net_for_measure(n_in, k, seed, a, hp):
+    """Build the SAME e-prop net run_one's _mk() builds (default plain fixed-DFA = the residual's target; --microcircuit
+    / --learned-feedback honored so the diagnostic can also read those local factors)."""
+    if a.microcircuit:
+        return MicrocircuitEpropNet(n_in, a.hidden, k, seed=seed, n_hidden_layers=a.n_hidden_layers,
+                                    settle_steps=a.settle_steps, eprop_lr=a.eprop_lr, eps_leak=a.eps_leak,
+                                    surrogate=a.surrogate, alpha_surr=a.alpha_surr, beta_surr=a.beta_surr,
+                                    logit_source=a.logit_source, w_clip=a.w_clip, hp=hp, pool_k=a.pool_k,
+                                    wpi_lr=a.wpi_lr, wpi_init=a.wpi_init, wpi_noise=a.wpi_noise,
+                                    wpi_plastic=(not a.wpi_frozen))
+    if a.learned_feedback:
+        return KPFeedbackEpropNet(n_in, a.hidden, k, seed=seed, n_hidden_layers=a.n_hidden_layers,
+                                  settle_steps=a.settle_steps, eprop_lr=a.eprop_lr, eps_leak=a.eps_leak,
+                                  surrogate=a.surrogate, alpha_surr=a.alpha_surr, beta_surr=a.beta_surr,
+                                  logit_source=a.logit_source, w_clip=a.w_clip, hp=hp, pool_k=a.pool_k,
+                                  kp_lr=a.kp_lr, kp_decay=a.kp_decay)
+    return OnBridgeEpropNet(n_in, a.hidden, k, seed=seed, n_hidden_layers=a.n_hidden_layers,
+                            settle_steps=a.settle_steps, eprop_lr=a.eprop_lr, eps_leak=a.eps_leak,
+                            surrogate=a.surrogate, alpha_surr=a.alpha_surr, beta_surr=a.beta_surr,
+                            logit_source=a.logit_source, w_clip=a.w_clip, hp=hp, pool_k=a.pool_k)
+
+
+def _spearman(a, b):
+    """Rank correlation without a scipy dep: Pearson on the ranks. NaN if <2 points or a degenerate (constant) input."""
+    a = np.asarray(a, dtype=np.float64).ravel(); b = np.asarray(b, dtype=np.float64).ravel()
+    if a.size < 2 or b.size < 2:
+        return float("nan")
+    ra = np.argsort(np.argsort(a)).astype(np.float64); rb = np.argsort(np.argsort(b)).astype(np.float64)
+    if ra.std() < 1e-12 or rb.std() < 1e-12:
+        return float("nan")
+    return float(np.corrcoef(ra, rb)[0, 1])
+
+
+def _psi_over_time(net, sp, vv, post_sl):
+    """Per-post-neuron surrogate psi_j AGGREGATED (mean) and its raw per-(t,j) samples, using the net's OWN _surrogate
+    (byte-identical to the psi the e-prop rule uses in _accum_grad). Returns (psi_mean[n_post], psi_samples[T,n_post])."""
+    T = sp.shape[0]
+    samples = np.zeros((T, int(post_sl.stop - post_sl.start)), dtype=np.float64)
+    for t in range(T):
+        samples[t] = net._surrogate(vv[t, post_sl].astype(np.float64), sp[t, post_sl], post_sl)
+    return samples.mean(axis=0), samples
+
+
+def _fd_oracle_layer(net, feat_row, y, hidden_slices, delta_pA, logit_temp):
+    """EMPIRICAL backprop-oracle per hidden neuron on the EXACT substrate: oracle_j = dLoss/dI_j via forward-difference.
+    Nudge hidden neuron j's constant input current by +delta_pA (through the monkeypatched _base_drive), re-run the
+    spiking forward, read the cross-entropy change. Returns a list (per hidden layer) of per-neuron credit arrays.
+    Reads ONLY the loss and the substrate response -- the gold-standard total-derivative credit e-prop estimates."""
+    def _loss_of_logits(logits):
+        p = _softmax(np.asarray(logits, dtype=np.float64) / logit_temp)
+        return float(-np.log(max(1e-12, p[int(y)])))
+    sp, vv, acts = net._forward_record(feat_row)
+    base_loss = _loss_of_logits(net._logits_from(sp, vv, acts))
+    out = []
+    for sl in hidden_slices:
+        creds = np.zeros(int(sl.stop - sl.start), dtype=np.float64)
+        for jj, g in enumerate(range(sl.start, sl.stop)):
+            net._probe_delta[g] = delta_pA
+            spg, vvg, actg = net._forward_record(feat_row)
+            net._probe_delta[g] = 0.0
+            creds[jj] = (_loss_of_logits(net._logits_from(spg, vvg, actg)) - base_loss) / delta_pA
+        out.append(creds)
+    return out, base_loss
+
+
+def measure_credit_factor(seed, a):
+    """THE DIAGNOSTIC (deliverable): does the on-bridge local credit factor (surrogate x eligibility DFA signal) carry
+    credit-usable selectivity on the sparse representable codon? Per hidden layer: alignment of the e-prop per-neuron
+    credit factor (Lsig_j * psi_j) with the finite-difference backprop oracle (dLoss/dI_j), the Lsig-only baseline, and
+    the surrogate's dynamic range / CV. Returns a dict; no training-arm side effects (readout is fit = reservoir op-pt)."""
+    t0 = time.time()
+    use_expander = (a.mode != "raw")            # the residual lives on the plateau-expanded (representable) codon
+    Rtr, ytr, Rte, yte, inh_idx, k, chance, meta, codon_sparsity, repro = _make_codon(seed, use_expander, a)
+    # subsample the train set exactly as run_one (readout fit + measurement batch drawn from it)
+    if a.train_subsample and len(Rtr) > a.train_subsample:
+        srng = np.random.default_rng(seed + 13)
+        keep = srng.permutation(len(Rtr))[:a.train_subsample]
+        Rtr_b, ytr_b = Rtr[keep], ytr[keep]
+    else:
+        Rtr_b, ytr_b = Rtr, ytr
+    n_in = int(Rtr_b.shape[1])
+    hp = dict(tonic_h_pA=a.tonic_h_pA, tonic_o_pA=a.tonic_o_pA, ff_w_init=a.ff_w_init, pbar_alpha=a.pbar_alpha,
+              in_current_pA=a.in_current_pA, in_bias_pA=a.in_bias_pA, hidden_lr_scale=a.hidden_lr_scale)
+    net = _build_net_for_measure(n_in, k, seed, a, hp)
+
+    # OPERATING POINT: fit the readout (readout-only training = the frozen-hidden RESERVOIR arm) so W_readout is
+    # meaningful (delta_k, and hence Lsig + the FD-oracle loss, are non-degenerate) while the HIDDEN weights stay at
+    # the reservoir init -- exactly where e-prop must take its FIRST hidden step. This is where "can credit even get
+    # started" is decided. (--credit-measure-on trained: additionally train ALL layers first, to read the converged
+    # operating point; default 'init' = the fair "start of hidden learning" read.)
+    net.train_layers = {net.n_hidden_layers}
+    _train_eprop(net, Rtr_b, ytr_b, a.epochs, a.batch, seed)
+    if a.credit_measure_on == "trained":
+        net.train_layers = None
+        _train_eprop(net, Rtr_b, ytr_b, a.epochs, a.batch, seed)
+    net.train_layers = None
+
+    # monkeypatch _base_drive to add a per-neuron current perturbation vector (default zeros => byte-identical forward).
+    # _forward_record calls _base_drive() once/forward then overwrites ONLY the input slice, so a perturbation on the
+    # HIDDEN slices survives for every settle step. No sim/ edit (pure host-side drive arithmetic).
+    net._probe_delta = np.zeros(net.n_total, dtype=np.float32)
+    _orig_base_drive = net._base_drive
+    def _patched_base_drive():
+        return _orig_base_drive() + net._probe_delta
+    net._base_drive = _patched_base_drive
+
+    # the HIDDEN layers that receive a DFA learning signal (B_direct exists for li in range(len(sizes)-2)); their post
+    # slices are the hidden-neuron index ranges. pool_k=1 => physical == logical.
+    n_hidden_pathways = len(net.B_direct)
+    hidden_slices = [net.slices[li + 1] for li in range(n_hidden_pathways)]
+
+    # measurement batch (a fixed subsample of the train set)
+    mb = min(int(a.fd_batch), len(Rtr_b))
+    mrng = np.random.default_rng(seed + 909)
+    m_idx = mrng.permutation(len(Rtr_b))[:mb]
+
+    peak = float(net._psi_peak)
+    # per-layer accumulators (concatenate per-neuron vectors across the batch for a pooled alignment)
+    acc = {li: {"bridge": [], "lsig": [], "psi": [], "oracle": [], "cos_bridge": [], "cos_lsig": [],
+                "sp_bridge": [], "sp_lsig": []} for li in range(n_hidden_pathways)}
+    psi_all = {li: [] for li in range(n_hidden_pathways)}     # every per-(t,j) surrogate sample (read i)
+    last_readout_align = []                                    # exact last-hidden readout-grad cross-check (cos)
+
+    # exact last-hidden readout-gradient oracle (free, exact for the top hidden layer feeding the leaky readout):
+    #   oracle_last_j = dLoss/d r_j = (delta_k @ W_readout^T)_j -- validates the FD oracle on the layer where it is exact.
+    from sim.backend import to_host
+    W_ro = None
+    if net.logit_source == "leaky_readout":
+        W_ro = np.asarray(to_host(net.br.cp_connections.data[net._data_idx_flat[-1]]), dtype=np.float64).reshape(
+            net.sizes_phys[-2], net.sizes_phys[-1])          # (n_Hlast_phys, k*K)
+
+    for i in m_idx:
+        feat = Rtr_b[i]; y = int(ytr_b[i])
+        sp, vv, acts = net._forward_record(feat)
+        logits = net._logits_from(sp, vv, acts)
+        p = _softmax(np.asarray(logits, dtype=np.float64) / net.logit_temp)
+        onehot = np.zeros_like(p); onehot[y] = 1.0
+        delta_k = p - onehot
+        # FD empirical oracle per hidden layer (dLoss/dI_j)
+        fd_creds, _bl = _fd_oracle_layer(net, feat, y, hidden_slices, a.fd_delta_pA, net.logit_temp)
+        for li in range(n_hidden_pathways):
+            post_sl = net.slices[li + 1]
+            psi_mean, psi_samples = _psi_over_time(net, sp, vv, post_sl)
+            if hasattr(net, "W_PI"):
+                # microcircuit local factor: interneuron-cancelled apical (src_pred @ W_PI - onehot @ B_direct)
+                lsig = (p @ net.W_PI[li] - onehot @ net.B_direct[li])
+            else:
+                lsig = (delta_k @ net.B_direct[li])          # fixed-DFA / KP learned feedback (same delta_k @ B form)
+            bridge = lsig * psi_mean
+            oracle = fd_creds[li]
+            acc[li]["bridge"].append(bridge); acc[li]["lsig"].append(lsig)
+            acc[li]["psi"].append(psi_mean); acc[li]["oracle"].append(oracle)
+            acc[li]["cos_bridge"].append(_cos(bridge, oracle)); acc[li]["cos_lsig"].append(_cos(lsig, oracle))
+            acc[li]["sp_bridge"].append(_spearman(bridge, oracle)); acc[li]["sp_lsig"].append(_spearman(lsig, oracle))
+            psi_all[li].append(psi_samples.ravel())
+        if W_ro is not None:
+            r = net._readout_feature(sp)                      # (n_Hlast_phys,)
+            oracle_last = (delta_k @ W_ro.T)                  # dLoss/d r_j at the top hidden layer (exact)
+            last_readout_align.append(_cos(fd_creds[-1], oracle_last))
+
+    def _stat(x):
+        x = np.asarray([v for v in x if v == v], dtype=np.float64)
+        return (float(np.mean(x)) if x.size else float("nan"), float(np.std(x)) if x.size else float("nan"))
+
+    layers = []
+    for li in range(n_hidden_pathways):
+        psi_flat = np.concatenate(psi_all[li]) if psi_all[li] else np.array([np.nan])
+        psi_norm = psi_flat / peak
+        bridge_pool = np.concatenate(acc[li]["bridge"]); oracle_pool = np.concatenate(acc[li]["oracle"])
+        lsig_pool = np.concatenate(acc[li]["lsig"])
+        cb_m, cb_s = _stat(acc[li]["cos_bridge"]); cl_m, cl_s = _stat(acc[li]["cos_lsig"])
+        sb_m, _ = _stat(acc[li]["sp_bridge"]); sl_m, _ = _stat(acc[li]["sp_lsig"])
+        psi_mean = float(np.nanmean(psi_flat)); psi_std = float(np.nanstd(psi_flat))
+        layers.append({
+            "layer": li, "n_neurons": int(net.sizes_phys[li + 1]),
+            "psi_peak": peak,
+            "psi_mean": psi_mean, "psi_mean_frac_of_peak": float(psi_mean / peak) if peak > 0 else float("nan"),
+            "psi_std": psi_std, "psi_cv": float(psi_std / psi_mean) if psi_mean > 1e-12 else float("nan"),
+            "psi_p05_frac_peak": float(np.nanpercentile(psi_norm, 5)),
+            "psi_p50_frac_peak": float(np.nanpercentile(psi_norm, 50)),
+            "psi_p95_frac_peak": float(np.nanpercentile(psi_norm, 95)),
+            "psi_dynamic_range_frac_peak": float(np.nanpercentile(psi_norm, 95) - np.nanpercentile(psi_norm, 5)),
+            "psi_frac_below_0p05peak": float(np.mean(psi_norm < 0.05)),
+            "psi_frac_at_peak": float(np.mean(psi_norm > 0.95)),
+            "bridge_abs_mean": float(np.mean(np.abs(bridge_pool))),
+            "lsig_abs_mean": float(np.mean(np.abs(lsig_pool))),
+            "oracle_abs_mean": float(np.mean(np.abs(oracle_pool))),
+            # ALIGNMENT of the e-prop per-neuron credit factor (Lsig*psi) with the FD backprop oracle (dLoss/dI):
+            "cos_bridge_vs_oracle_mean": cb_m, "cos_bridge_vs_oracle_std": cb_s,
+            "cos_lsig_vs_oracle_mean": cl_m, "cos_lsig_vs_oracle_std": cl_s,
+            "spearman_bridge_vs_oracle_mean": sb_m, "spearman_lsig_vs_oracle_mean": sl_m,
+            "cos_bridge_pooled": _cos(bridge_pool, oracle_pool), "cos_lsig_pooled": _cos(lsig_pool, oracle_pool),
+            "surrogate_helps_alignment": bool((cb_m == cb_m) and (cl_m == cl_m) and cb_m > cl_m + 1e-6),
+        })
+
+    # DECISIVE CLASSIFICATION (per the owner's (i)/(ii)/(iii)). Read the TOP hidden layer (the one whose FD oracle is
+    # corroborated by the exact readout-gradient) as the headline; report all layers.
+    top = layers[-1]
+    vanish = bool(top["psi_mean_frac_of_peak"] < 0.10 or top["psi_dynamic_range_frac_peak"] < 0.02
+                  or top["bridge_abs_mean"] < 1e-9)
+    aligned = bool(abs(top["cos_bridge_vs_oracle_mean"]) > 0.30)
+    weakly_aligned = bool(0.10 < abs(top["cos_bridge_vs_oracle_mean"]) <= 0.30)
+    if vanish:
+        read = "(i) phi'-VANISHING -- the atan_vt surrogate collapses on the post-reset Izhikevich membrane (tiny " \
+               "mean/dynamic-range), so the local credit factor is ~0 / non-selective. FIX: a surrogate or " \
+               "operating-point that keeps sigma' informative (widen alpha, shift the membrane operating point " \
+               "toward theta, or a voltage-independent eligibility)."
+    elif aligned:
+        read = "(iii) OPTIMIZATION RESIDUAL -- the surrogate has range AND the credit factor is aligned with the " \
+               "backprop oracle (|cos|>0.30): the credit IS usable; the residual is the eligibility/optimization " \
+               "(more epochs / lr / batch / hidden_lr_scale)."
+    elif weakly_aligned:
+        read = "(iii-weak) the credit factor is WEAKLY aligned (0.10<|cos|<=0.30): usable-but-weak -- try more " \
+               "epochs / lr, but on the boundary of (ii)."
+    else:
+        read = "(ii) NO CREDIT-USABLE SELECTIVITY -- the surrogate has range but the credit factor has ~ZERO " \
+               "alignment with the backprop oracle (|cos|<=0.10): a substrate-level read limit (cf the reservoir " \
+               "finding). Honest substrate limit, or a fundamentally different local credit factor."
+    surrogate_is_culprit = bool(top["cos_lsig_vs_oracle_mean"] == top["cos_lsig_vs_oracle_mean"]
+                                and top["cos_bridge_vs_oracle_mean"] < top["cos_lsig_vs_oracle_mean"] - 1e-6)
+
+    return {"seed": seed, "task": ("xor" if a.task_xor else "inheritance"), "mode": ("expander" if use_expander else "raw"),
+            "act_th": a.act_th, "credit": ("microcircuit" if a.microcircuit else "kp" if a.learned_feedback else "fixed_dfa"),
+            "credit_measure_on": a.credit_measure_on, "k_classes": k, "chance": chance,
+            "codon_sparsity": codon_sparsity, "codon_reproducibility": repro, "n_features_in": n_in,
+            "fd_batch": mb, "fd_delta_pA": a.fd_delta_pA, "settle_steps": a.settle_steps,
+            "layers": layers,
+            "last_hidden_fd_vs_readoutgrad_cos": (float(np.mean(last_readout_align)) if last_readout_align else float("nan")),
+            "READ": read, "top_layer_psi_mean_frac_peak": top["psi_mean_frac_of_peak"],
+            "top_layer_cos_bridge_vs_oracle": top["cos_bridge_vs_oracle_mean"],
+            "top_layer_cos_lsig_vs_oracle": top["cos_lsig_vs_oracle_mean"],
+            "surrogate_degrades_alignment": surrogate_is_culprit,
+            "elapsed_seconds": round(time.time() - t0, 1)}
+
+
+def _fmt_credit(r):
+    tl = r["layers"][-1]
+    return (f"[seed {r['seed']} {r['credit']} {r['mode']}] codon_sparsity {r['codon_sparsity']:.3f} "
+            f"| TOP-HIDDEN psi_mean/peak {tl['psi_mean_frac_of_peak']:.4f} dyn-range {tl['psi_dynamic_range_frac_peak']:.3f} "
+            f"frac<0.05peak {tl['psi_frac_below_0p05peak']:.2f} | cos(bridge,oracle) "
+            f"{tl['cos_bridge_vs_oracle_mean']:+.3f} cos(lsig,oracle) {tl['cos_lsig_vs_oracle_mean']:+.3f} "
+            f"| FD-vs-readoutgrad {r['last_hidden_fd_vs_readoutgrad_cos']:+.3f} ({r['elapsed_seconds']:.0f}s)\n"
+            f"    => {r['READ']}")
+
+
 def run_one(seed, n_prop, use_expander, a):
     """One (seed, n_prop, representation): oracle ceiling + full e-prop + frozen-hidden reservoir + permuted +
     shuffle-DFA on the chosen forward. Returns the metrics dict with deep_credit_share."""
@@ -642,6 +949,20 @@ def main():
     ap.add_argument("--wpi-frozen", action="store_true",
                     help="freeze W_PI at its noisy init (the Sacramento anti-cheat: with the Eq.9 plasticity OFF, apical "
                          "must NOT go silent on correct -- selfpred_cos stays ~0, silent_ratio ~1).")
+    # THE 2026-08-02 CREDIT-FACTOR DIAGNOSTIC (ADDITIVE, default OFF => byte-identical to the banked training runs). A
+    # MEASUREMENT: does the on-bridge local credit factor (surrogate x eligibility DFA signal) carry credit-usable
+    # SELECTIVITY on the sparse representable codon? Reads (i)/(ii)/(iii) -- phi'-vanishing / no-selectivity / optimization.
+    ap.add_argument("--measure-credit-factor", action="store_true",
+                    help="DIAGNOSTIC (no training verdict): measure the on-bridge per-hidden-neuron local credit factor "
+                         "(Lsig_j*psi_j) vs the finite-difference backprop oracle (dLoss/dI_j) + the surrogate's "
+                         "dynamic range / CV, per hidden layer. Additive, default off. Run on --task-xor --act-th 3.")
+    ap.add_argument("--fd-batch", type=int, default=16,
+                    help="examples used for the finite-difference oracle + alignment (only under --measure-credit-factor).")
+    ap.add_argument("--fd-delta-pA", type=float, default=20.0,
+                    help="input-current perturbation for the FD oracle dLoss/dI_j (only under --measure-credit-factor).")
+    ap.add_argument("--credit-measure-on", choices=["init", "trained"], default="init",
+                    help="operating point for the credit-factor read: 'init' (default; readout-fit + hidden at the "
+                         "reservoir init = the start of hidden learning) or 'trained' (all layers trained first).")
     # expander
     ap.add_argument("--n-col", type=int, default=200, help="PlateauExpander columns (the probe's N_COL)")
     ap.add_argument("--act-th", type=int, default=None,
@@ -684,6 +1005,47 @@ def main():
 
     if a.microcircuit and a.learned_feedback:
         ap.error("--microcircuit and --learned-feedback are mutually exclusive (both replace the hidden credit factor).")
+
+    # ---- THE CREDIT-FACTOR DIAGNOSTIC BRANCH (additive; skips the 4 heavy training arms + the DendriticMLP oracle) ----
+    if a.measure_credit_factor:
+        t0 = time.time(); err = None; rows = []
+        try:
+            for s in a.seeds:
+                r = measure_credit_factor(s, a)
+                rows.append(r)
+                print(_fmt_credit(r), flush=True)
+                try:
+                    Path(a.out).parent.mkdir(parents=True, exist_ok=True)
+                    Path(a.out).write_text(json.dumps({"probe": "gap4_credit_factor_diagnostic", "partial": True,
+                                                       "config": vars(a), "rows": rows}, indent=2, default=str))
+                except Exception as _ck:
+                    print(f"[warn] checkpoint failed ({_ck})", flush=True)
+        except Exception as e:
+            err = repr(e); traceback.print_exc()
+        # aggregate the headline read across seeds (top hidden layer)
+        def _amean(key):
+            vals = [r[key] for r in rows if r.get(key) == r.get(key)]
+            return float(np.mean(vals)) if vals else float("nan")
+        reads = [r["READ"].split(" -- ")[0] for r in rows] if rows else []
+        summary = {"probe": "gap4_credit_factor_diagnostic", "seeds": a.seeds, "config": vars(a),
+                   "elapsed_seconds": round(time.time() - t0, 1), "rows": rows, "error": err,
+                   "aggregate": {"top_layer_psi_mean_frac_peak": _amean("top_layer_psi_mean_frac_peak"),
+                                 "top_layer_cos_bridge_vs_oracle": _amean("top_layer_cos_bridge_vs_oracle"),
+                                 "top_layer_cos_lsig_vs_oracle": _amean("top_layer_cos_lsig_vs_oracle"),
+                                 "last_hidden_fd_vs_readoutgrad_cos": _amean("last_hidden_fd_vs_readoutgrad_cos"),
+                                 "reads": reads}}
+        summary["verdict"] = (f"CREDIT-FACTOR DIAGNOSTIC (top-hidden, {len(a.seeds)} seed(s)): "
+                              f"psi_mean/peak {_amean('top_layer_psi_mean_frac_peak'):.4f}, "
+                              f"cos(bridge,oracle) {_amean('top_layer_cos_bridge_vs_oracle'):+.3f}, "
+                              f"cos(lsig,oracle) {_amean('top_layer_cos_lsig_vs_oracle'):+.3f}, "
+                              f"FD-vs-readoutgrad {_amean('last_hidden_fd_vs_readoutgrad_cos'):+.3f} | reads: {reads}"
+                              + (f" | ERROR {err}" if err else ""))
+        Path(a.out).parent.mkdir(parents=True, exist_ok=True)
+        Path(a.out).write_text(json.dumps(summary, indent=2, default=str))
+        print("\n" + "=" * 100, flush=True)
+        print(f"[credit-factor] {summary['verdict']}", flush=True)
+        print(f"[credit-factor] wrote {a.out}\n" + "=" * 100, flush=True)
+        return 0 if (err is None and rows) else 1
 
     modes = ["raw", "expander"] if a.mode == "both" else [a.mode]
     t0 = time.time(); err = None; rows = []
