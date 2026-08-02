@@ -1,0 +1,38 @@
+{
+ "run_id": "1785662410-161610",
+ "runner": "research/runners/_gap4_bptt_snn_chained_fa_transport_free_derisk.py",
+ "argv": [
+  "/home/dant123/Projects/sim/research/runners/_gap4_bptt_snn_chained_fa_transport_free_derisk.py",
+  "--n-hidden-layers",
+  "4",
+  "--seeds",
+  "42",
+  "43",
+  "44",
+  "--hidden",
+  "64",
+  "--epochs",
+  "150",
+  "--lr",
+  "0.05",
+  "--bptt-hidden",
+  "128",
+  "--train-subsample",
+  "400",
+  "--out",
+  "research/findings/raw/gap4/realspikes/verify/chainedfa_inherit_N4.json"
+ ],
+ "git_sha": "589667a23",
+ "git_dirty": true,
+ "started": "2026-08-02T05:20:10",
+ "env": {
+  "SIM_BACKEND": "numpy"
+ },
+ "sim_backend": "numpy",
+ "sim_backend_requested": "numpy",
+ "sim_backend_cupy_importable": true,
+ "corpus_check_age_s": 3472.4,
+ "corpus_check_query": "construct a task where GENERALIZATION (not just fitting) obligatorily requires depth-3 composition, backprop-optimizable and reservoir-non-decodable, to test KP depth-credit-rescue on spikes",
+ "corpus_check_fresh": true,
+ "artifact": "research/findings/raw/gap4/realspikes/verify/chainedfa_inherit_N4.json"
+}
