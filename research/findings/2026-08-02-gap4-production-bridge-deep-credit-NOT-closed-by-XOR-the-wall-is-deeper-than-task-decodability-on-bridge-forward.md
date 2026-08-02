@@ -31,9 +31,14 @@ roadmap already diagnosed), NOT reservoir-decodability. No `sim/` edit (additive
 | 44  | -0.394 | 0.616 | 0.652 | 0.604 | False |
 | 100 | +0.141 | 0.688 | 0.663 | 1.000 | False |
 | 101 | +0.046 | 0.705 | 0.696 | 0.969 | False |
+| 102 | +0.237 | 0.713 | 0.663 | 1.000 | **True** |
 
 <!--derived-->
-mean deep_credit_share ~= -0.02 (huge variance, straddles 0). Per-seed artifact e.g.
+mean deep_credit_share ~= +0.02 over 6 seeds (range -0.39 to +0.24), and `trains_the_task` = **1/6** (only s102). **This
+1/6-vs-5/6 split SHARPENS the verdict, it does not soften it:** the wall is the on-bridge forward's RELIABILITY — the
+Izhikevich e-prop trains XOR on only 1 of 6 seeds, and on exactly that seed (s102) `deep_credit_share` goes POSITIVE
+(+0.237, eprop 0.713 > frozen 0.663) while the 5 non-training seeds sit at ~0. So deep credit APPEARS when (and only
+when) the forward happens to train — which is precisely "the wall is the forward, not the rule." Per-seed artifact e.g.
 `research/findings/raw/gap4/onbridge_eprop_XOR_K8_s42.json`. Command:
 `SIM_BACKEND=numpy .venv/bin/python -m research.runners._onbridge_eprop_port_derisk --task-xor --seeds <s> --pool-k 8`
 (artifacts `research/findings/raw/gap4/onbridge_eprop_XOR_K8_s{42,43,44,100,101}.json`; s102 finishing, will not change

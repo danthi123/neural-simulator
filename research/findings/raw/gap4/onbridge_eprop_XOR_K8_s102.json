@@ -1,0 +1,79 @@
+{
+  "probe": "onbridge_eprop_port",
+  "seeds": [
+    102
+  ],
+  "config": {
+    "hidden": 32,
+    "n_hidden_layers": 2,
+    "settle": 40,
+    "epochs": 120,
+    "batch": 20,
+    "eprop_lr": 0.5,
+    "eps_leak": 0.9,
+    "surrogate": "atan_vt",
+    "alpha_surr": 0.15,
+    "logit_source": "leaky_readout",
+    "w_clip": 4000.0,
+    "train_subsample": 240,
+    "task": {
+      "n_super": 12,
+      "n_members": 8,
+      "held_per_super": 3,
+      "n_prop": 2,
+      "member_id_dim": 3,
+      "n_obs": 16,
+      "noise": 0.02,
+      "feature_seed": 0
+    },
+    "pool_k": 8,
+    "freeze_hidden": false,
+    "task_xor": true,
+    "ou_noise": false,
+    "cond_noise": false,
+    "stp": false,
+    "reservoir_control": true,
+    "hidden_lr_scale": 5.0,
+    "no_bdsp": false,
+    "bdsp_wmax": null,
+    "backend": "numpy"
+  },
+  "elapsed_seconds": 8327.6,
+  "per_seed": [
+    {
+      "seed": 102,
+      "chance": 0.5013927576601671,
+      "k_classes": 2,
+      "n_train_smoke": 240,
+      "stage0_depth_separating": true,
+      "stage0_deep_best": 1.0,
+      "stage0_l1": 0.4986072423398329,
+      "stage0_l0_linear": 0.4958217270194986,
+      "oracle_inherit": 1.0,
+      "eprop_train_acc": 0.8708333333333333,
+      "eprop_inherit_heldout": 0.713091922005571,
+      "eprop_ff_weight_moved": 7432116.0,
+      "permuted_inherit": 0.4206128133704735,
+      "shuffle_dfa_inherit": 0.48467966573816157,
+      "frozen_hidden_inherit": 0.6629526462395543,
+      "deep_credit_share": 0.23684210526315796,
+      "reservoir_control_run": true,
+      "trains_the_task": true
+    }
+  ],
+  "aggregate": {
+    "chance": 0.5013927576601671,
+    "oracle_inherit": 1.0,
+    "eprop_train_acc": 0.8708333333333333,
+    "eprop_inherit_heldout": 0.713091922005571,
+    "permuted_inherit": 0.4206128133704735,
+    "shuffle_dfa_inherit": 0.48467966573816157,
+    "ff_weight_moved": 7432116.0,
+    "stage0_depth_separating": true,
+    "trains_the_task_all_seeds": true,
+    "permuted_chance": true,
+    "shuffle_dfa_chance": true,
+    "ff_weight_moves": true
+  },
+  "SIGNAL": true
+}
