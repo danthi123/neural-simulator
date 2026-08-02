@@ -171,10 +171,11 @@ workflow working as intended: a hypothesis was named, DIRECTLY MEASURED, and ref
 <!--derived-->
 **Interventional averaging test (settle-steps sweep).** Re-ran the Izhikevich FA-convergence at more temporal
 integration per example (`--settle-steps` 100 vs the default 30; artifacts `research/findings/raw/gap4/fa_conv_izh_settle100_s42.json`).
-More than 3x the averaging does NOT restore convergence: settle=100 rises +0.097 / -0.015 / +0.079 (mean +0.054, 0/3
-converge) vs the settle=30 baseline (mean -0.058, 0/6). This is the direct interventional confirmation of Update 1: since
-the per-example credit was measured CONSISTENT (not noisy), adding averaging has nothing to remove and does not help —
-doubly refuting the variance hypothesis.
+More averaging does NOT restore convergence at ANY dose: settle=100 rises +0.097 / -0.015 / +0.079 (mean +0.054, 0/3) and
+settle=300 (10x the baseline) rises -0.105 / +0.125 / +0.109 (mean +0.043, 0/3), both vs the settle=30 baseline (mean
+-0.058, 0/6) — 0/12 converge across settle in {30, 100, 300}. This is the direct interventional confirmation of Update 1:
+since the per-example credit was measured CONSISTENT (not noisy), adding averaging has nothing to remove and does not
+help — doubly refuting the variance hypothesis.
 
 <!--derived-->
 **Learned-feedback test (Kolen-Pollack), at the MATCHED headline operating point.** A 10-epoch smoke initially showed a
