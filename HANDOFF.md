@@ -1105,7 +1105,7 @@ bash tools/aws_gpu.sh ssh         # prints the ready ssh command
 bash tools/aws_gpu.sh stop        # <-- STOP WHEN IDLE; it BILLS while running
 ```
 
-**CRITICAL: the instance bills for every minute it is `running` — stop it (`bash tools/aws_gpu.sh stop`) the moment work finishes.** State (instance id + SSH key path) lives durably in `research/queue/.aws_gpu`, **not** in memory — a prior lane lost its key to a `/tmp` reboot. As of this handoff **a lane IS recorded**: a **STOPPED** `g5.xlarge` (`i-0ed174adb04e99c7f`, launched 2026-07-31). Run `bash tools/aws_gpu.sh status` first. A *stopped* instance still accrues EBS storage cost and restarting it resumes compute billing, so **verify it and `terminate` it if it is no longer needed.** Dispatch on it with `SIM_BACKEND=cupy .venv/bin/python -m research.runners.<X>`.
+**CRITICAL: the instance bills for every minute it is `running` — stop it (`bash tools/aws_gpu.sh stop`) the moment work finishes.** State (instance id + SSH key path) lives durably in `research/queue/.aws_gpu`, **not** in memory — a prior lane lost its key to a `/tmp` reboot. As of this handoff there is **no active AWS lane** — the previous `g5.xlarge` was terminated 2026-08-02. To use AWS: launch/record a new instance (see `tools/aws_gpu.sh` + `tools/aws_provision.sh`), run work with `SIM_BACKEND=cupy`, and **`bash tools/aws_gpu.sh stop` (or `terminate`) the moment it is idle** — a *running* instance bills compute every minute and even a *stopped* one accrues EBS storage cost. Dispatch on it with `SIM_BACKEND=cupy .venv/bin/python -m research.runners.<X>`.
 
 ### 7. Allocation principle
 
