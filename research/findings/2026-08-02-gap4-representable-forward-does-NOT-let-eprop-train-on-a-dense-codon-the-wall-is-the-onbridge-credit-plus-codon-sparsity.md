@@ -63,3 +63,26 @@ is the on-bridge e-prop credit rule ITSELF on the Izhikevich substrate (the deep
 learned-instructive-signal / operating-point levers the roadmap tracks. The crux CORE (LIF/rate) is untouched; this
 precisely narrows the PRODUCTION-bridge residual from "the forward" to "on-bridge e-prop weight-finding on a dense
 representable code", with the sparse-codon test as the decisive next step.
+
+## Update (2026-08-02) — the sparse-codon test RAN and RESOLVES the fork: the wall is the on-bridge e-prop CREDIT RULE ITSELF, not the codon density
+
+<!--derived-->
+Exposed the codon sparsity lever (`--act-th`, sets the probe's `ACT_TH` before PlateauExpander construction; additive,
+default-preserving) and ran act_th=3 (a column fires only if all 3 sampled features are active). Artifact:
+`research/findings/raw/gap4/rep_fwd_xor_actth3_s42.json`. Result: the codon is now SPARSE (codon_sparsity 0.109, down
+from 0.499) AND STILL REPRESENTABLE (oracle 0.950 solves XOR on the sparse codon) — but on-bridge e-prop STILL does not
+train (eprop 0.451 = chance, frozen 0.532, trains_the_task=False). ⇒ **sparsifying the representable codon did NOT
+help.** So the production-bridge deep-credit residual is NOT the dense code, NOT forward-representability, NOT
+task-decodability — it is the **on-bridge e-prop CREDIT RULE's weight-finding on the Izhikevich substrate itself**: the
+local biological credit rule cannot find the weights the backprop oracle finds, even on a sparse, representable code.
+This is the deepest, precisely-located residual, and it matches the roadmap's own standing gap#4 diagnosis (the learned
+self-predicting microcircuit / the learned instructive signal §2.8 "the true crux" / operating-point / phi'-vanishing).
+
+<!--derived-->
+**The clean summary of the whole production-bridge arc (this session):** the transport-free credit RULE works at RATE
+and on the LIF net (DFA depth-robust, beats reservoir on XOR); on the production IZHIKEVICH bridge it does NOT train XOR
+regardless of the forward — raw forward (deep_share ~0), dense representable codon (oracle 0.99, eprop chance), OR sparse
+representable codon (oracle 0.95, sparsity 0.11, eprop chance). The single remaining wall is the on-bridge e-prop credit
+rule's weight-finding on the Izhikevich substrate — the exact target the roadmap's learned-instructive-signal / self-
+predicting-microcircuit arc addresses. NEXT: that arc (a LEARNED instructive/feedback signal on the bridge), not more
+forward or codon tuning.

@@ -185,6 +185,13 @@ def run_one(seed, n_prop, use_expander, a):
     if use_expander:
         buf = io.StringIO()
         with contextlib.redirect_stdout(buf):     # bridge init prints to stdout
+            # codon SPARSITY lever (additive, default-preserving): ACT_TH is the coincidence threshold PlateauExpander
+            # reads at __init__ (a column fires if >= ACT_TH of its SAMP sampled features are active). Default 2 =>
+            # dense codon (~50% active); raise to 3 (all SAMP active) => sparse codon. Set the probe module global so
+            # PlateauExpander picks it up, WITHOUT editing the shared probe.
+            import research.runners._gap4_plateau_expander_probe as _pep
+            if a.act_th is not None:
+                _pep.ACT_TH = int(a.act_th)
             if a.task_xor:
                 # bit-faithful active-set reader (topk_active is meaningless on +/-1 bits; see _xor_active_sets)
                 sets_tr, n_feat_exp = _xor_active_sets(Xtr, a.xor_encoding)
@@ -300,6 +307,9 @@ def main():
                          "monomial basis; 'onbits' = ON bits only (weaker fallback). See _xor_active_sets.")
     # expander
     ap.add_argument("--n-col", type=int, default=200, help="PlateauExpander columns (the probe's N_COL)")
+    ap.add_argument("--act-th", type=int, default=None,
+                    help="codon SPARSITY lever: coincidence threshold (probe default 2 => dense ~50%%; 3 => sparse). "
+                         "None keeps the probe's ACT_TH.")
     ap.add_argument("--topk", type=int, default=PROBE_TOPK, help="active features per row before expansion (probe's TOPK)")
     # e-prop net (the port's regime; smoke-scaled)
     ap.add_argument("--hidden", type=int, default=32)
