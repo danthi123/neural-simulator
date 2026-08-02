@@ -103,6 +103,27 @@ OMIT_RPE_SCALE = 45.0        # Hz normalizer mapping (omit_read - OMIT_MID) -> a
 W_VETO = W_VALUE             # veto-read window (read the veto pool's rate under cue[c] alone)
 VETO_FLOOR_HZ = 12.0         # a concept is VETOED iff its spiking veto rate exceeds this (thresholded read)
 
+# --- LANE B (additive, default-OFF via --reserve): the DECAYING SUB-BASELINE INHIBITORY protective reserve ---
+# The single cue->veto pathway is EXCITATORY, so its protective depression on reward can only lower it toward ~0 (the
+# floor limitation the 2026-08-01 finding named: a concept that was EVER rewarding cannot bank a reserve that pushes
+# the veto read BELOW zero). THIS second plastic cue->veto pathway is INHIBITORY (receptor="gaba_a") and learns with
+# the OPPOSITE sign — POTENTIATED on REWARD (omit LOW -> reward present), DEPRESSED/decaying on absence — so an
+# ever-rewarding concept accumulates an ACTIVE inhibitory reserve that drives its veto read SUB-baseline, protecting
+# it from a false veto even if its excitatory omission memory drifts up. A disjoint `reserve_learn` plasticity gate
+# keeps it from contaminating the striosome critic OR the excitatory veto memory. When --reserve is OFF the pathway
+# is never added and no reserve window runs -> the config + trajectory are BYTE-IDENTICAL to the omission-only build.
+CUE_TO_RESERVE_W0 = 0.05     # plastic reserve memory, init ~0 (an un-rewarded concept has no reserve)
+RESERVE_RPE_SCALE = OMIT_RPE_SCALE   # reuse the omit RPE normalizer; the reserve applies its NEGATED argument
+# The reserve is realized as a DISTINCT inhibitory region `reserve` (NOT a second cue->veto pathway). The region
+# framework keys one wiring group per (from_region,to_region) pair (`regions.py` build_wiring_plan), so a second
+# cue->veto pathway OVERWRITES the excitatory veto_learn memory in the plan and DROPS the veto_learn gate. Routing
+# the reserve through its own pool — a PLASTIC cue->reserve memory (gate `reserve_learn`) + a FIXED gaba_a
+# reserve->veto inhibition — keeps BOTH the veto_learn and reserve_learn gates registered (disjoint region pairs).
+N_RESERVE = N_VETO           # inhibitory reserve pool (matches the veto pool size)
+RESERVE_TONIC_PA = 400.0     # tonic drive on the reserve pool during ITS learn window so it spikes and cue+reserve
+                             # coincidence fills cue->reserve eligibility (mirrors omit's tonic bootstrap of veto)
+RESERVE_TO_VETO_W = 11.0     # FIXED gaba_a inhibition reserve->veto (the active protective inhibition read at recall)
+
 
 def build_omission_veto_bridge(seed, n_concepts, *, n_per_cue=40, n_strio=60, n_reward_us=40,
                                n_snc=30, n_ask=80, cue_to_strio_weight=11.0,
@@ -110,7 +131,7 @@ def build_omission_veto_bridge(seed, n_concepts, *, n_per_cue=40, n_strio=60, n_
                                gabab_prop=0.22, gabab_tau_decay=150.0, reward_learning_rate=0.30,
                                curiosity_prod_sensitivity=0.10,
                                curiosity_excit_sensitivity=320.0, curiosity_decay_tau=50.0,
-                               enable_heterogeneity=True):
+                               enable_heterogeneity=True, enable_reserve=False):
     """DR-1's build_curiosity_bridge (verbatim config) PLUS the spiking reward-omission veto circuit:
     the rmtg/omit/veto pools + snc->rmtg->omit->veto + a PLASTIC cue->veto, and two named plasticity gates
     (`strio_learn`, `veto_learn`) so the striosome critic and the veto accumulator learn in disjoint windows."""
@@ -218,6 +239,25 @@ def build_omission_veto_bridge(seed, n_concepts, *, n_per_cue=40, n_strio=60, n_
                       density=0.6, weight_mean=CUE_TO_VETO_W0, weight_jitter=0.2, plastic=True,
                       plasticity_gate="veto_learn"),
     ]
+    # LANE B (additive, default-OFF): the DECAYING SUB-BASELINE INHIBITORY protective reserve. Realized as a
+    # DISTINCT inhibitory `reserve` pool driven by a PLASTIC cue->reserve memory (gate `reserve_learn`, learned in a
+    # disjoint window with the OPPOSITE sign — potentiated on reward), which projects a FIXED gaba_a inhibition onto
+    # `veto`. A second cue->veto pathway is NOT usable: the region framework keys ONE wiring group per (from,to)
+    # pair, so it would OVERWRITE (drop) the excitatory veto_learn memory and de-register the veto_learn gate. The
+    # reserve's own region pair keeps both gates registered. Added ONLY when enable_reserve -> off = byte-identical.
+    if enable_reserve:
+        cfg.brain_regions.append(
+            BrainRegion(name="reserve", n_neurons=N_RESERVE, exc_fraction=0.0, internal_density=0.0,
+                        exc_weight_mean=0.0, inh_weight_mean=0.0, weight_jitter=0.0,
+                        plastic_internal=False, izh_neuron_type=FS))
+        cfg.region_pathways.append(
+            RegionPathway(from_region="cue", to_region="reserve",
+                          density=0.6, weight_mean=CUE_TO_RESERVE_W0, weight_jitter=0.2, plastic=True,
+                          plasticity_gate="reserve_learn"))
+        cfg.region_pathways.append(
+            RegionPathway(from_region="reserve", to_region="veto",
+                          density=0.6, weight_mean=RESERVE_TO_VETO_W, weight_jitter=0.2, plastic=False,
+                          receptor="gaba_a"))
     cfg.enable_neuromodulator_subsystem = True
     cfg.neuromodulators = [
         NeuromodulatorConfig(
@@ -236,6 +276,8 @@ def build_omission_veto_bridge(seed, n_concepts, *, n_per_cue=40, n_strio=60, n_
     # veto accumulator starts FROZEN (learns only inside the veto-learn window); striosome critic normal.
     bridge.set_plasticity_gate("veto_learn", 0.0)
     bridge.set_plasticity_gate("strio_learn", 1.0)
+    if enable_reserve:
+        bridge.set_plasticity_gate("reserve_learn", 0.0)   # inhibitory reserve also frozen except in its window
     return bridge, cfg
 
 
@@ -243,7 +285,7 @@ drives_regions = ("cue", "striosome_value", "reward_us", "snc", "ask", "rmtg", "
 
 
 def run(seed, mode, *, n_learn=N_LEARN, n_noisy=N_NOISY, n_turns=N_TURNS, ask_budget=ASK_BUDGET,
-        d=D, verbose=False, **build_kw):
+        d=D, verbose=False, enable_reserve=False, **build_kw):
     from sim.backend import get_backend
     xp, _ = get_backend()
     rng = np.random.default_rng(seed * 101 + 5)
@@ -256,11 +298,18 @@ def run(seed, mode, *, n_learn=N_LEARN, n_noisy=N_NOISY, n_turns=N_TURNS, ask_bu
     lesion_curiosity = (mode == "lesion")
     omit_lesion = (mode == "omit_lesion")
     omit_tonic = 0.0 if omit_lesion else OMIT_TONIC_PA
+    # LANE B: the reserve pathway is BUILT for real reserve runs AND for the reserve_lesion control (present but not
+    # learning, so the control is a fair like-for-like). `suppress_reserve` zeroes the reserve RPE (no potentiation).
+    reserve_on = bool(enable_reserve) or (mode == "reserve_lesion")
+    suppress_reserve = (mode == "reserve_lesion")
     bk = dict(build_kw)
+    bk["enable_reserve"] = reserve_on
     if lesion_curiosity:
         bk["curiosity_excit_sensitivity"] = 0.0
     bridge, cfg = build_omission_veto_bridge(seed, n_concepts, **bk)
     idx_map = {n: xp.asarray(_idx(bridge, n)) for n in drives_regions}
+    if reserve_on:                                        # the reserve pool exists only when reserve is built
+        idx_map["reserve"] = xp.asarray(_idx(bridge, "reserve"))
     cue_all = _host(idx_map["cue"]).astype(np.int64)
     n_per_cue = len(cue_all) // n_concepts
     cue_slice = {c: xp.asarray(cue_all[c * n_per_cue:(c + 1) * n_per_cue]) for c in concepts}
@@ -274,6 +323,7 @@ def run(seed, mode, *, n_learn=N_LEARN, n_noisy=N_NOISY, n_turns=N_TURNS, ask_bu
     snc_idx = idx_map["snc"]; n_snc = len(_host(snc_idx))
     veto_idx = idx_map["veto"]; n_veto = len(_host(veto_idx))
     reward_us_idx = idx_map["reward_us"]; omit_idx = idx_map["omit"]; n_omit = len(_host(omit_idx))
+    reserve_idx = idx_map.get("reserve")                  # None unless the reserve pool was built
 
     def read_value(c):
         _restore_state(bridge, snap0)
@@ -379,8 +429,37 @@ def run(seed, mode, *, n_learn=N_LEARN, n_noisy=N_NOISY, n_turns=N_TURNS, ask_bu
         for _ in range(W_APPLY):
             _advance(bridge)
         bridge.core_config.current_reward_signal = 0.0
-        bridge.set_plasticity_gate("veto_learn", 0.0)      # re-freeze; restore the critic gate
-        bridge.set_plasticity_gate("strio_learn", 1.0)
+        bridge.set_plasticity_gate("veto_learn", 0.0)      # re-freeze the excitatory veto memory
+        if reserve_on and reserve_idx is not None:
+            # LANE B — the DECAYING SUB-BASELINE INHIBITORY reserve. OPPOSITE-sign learning on cue->reserve: drive
+            # cue[c] + reward_us(∝LP) + omit tonic + a tonic on the reserve POOL so it spikes and cue+reserve
+            # coincide (the pool cannot bootstrap from its ~0 init weight alone). Then apply reserve_rpe =
+            # (OMIT_MID - omit_read)/scale — POSITIVE on a REWARD ask (omit LOW) = POTENTIATE the reserve memory;
+            # NEGATIVE on absence = DEPRESS/decay it. An ever-rewarding concept banks cue->reserve weight, so at
+            # recall cue[c] drives the inhibitory reserve pool -> reserve->veto pushes its veto read SUB-baseline; a
+            # noisy (always-absence) concept never does. strio + veto_learn stay FROZEN (both memories untouched).
+            bridge.set_plasticity_gate("reserve_learn", 0.0)
+            _restore_state(bridge, snap0)
+            bridge.cp_eligibility_trace[:] = 0.0
+            bridge.cp_external_input_current[cue_slice[c]] = xp.float32(CUE_DRIVE_PA)
+            bridge.cp_external_input_current[reward_us_idx] = xp.float32(US_GAIN_PA * max(LP, 0.0))
+            bridge.cp_external_input_current[omit_idx] = xp.float32(omit_tonic)
+            bridge.cp_external_input_current[reserve_idx] = xp.float32(RESERVE_TONIC_PA)
+            bridge.core_config.current_reward_signal = 0.0
+            for _ in range(W_WARMUP):                       # re-settle rmtg/omit/veto/reserve to steady state
+                _advance(bridge)
+            bridge.set_plasticity_gate("reserve_learn", 1.0)   # now cue->reserve STDP fills eligibility
+            for _ in range(W_MEASURE):
+                _advance(bridge)
+            reserve_rpe = 0.0 if suppress_reserve else float(np.clip(
+                (OMIT_MID_HZ - omit_read) / RESERVE_RPE_SCALE, -1.0, 1.5))
+            bridge.cp_external_input_current[:] = 0.0
+            bridge.core_config.current_reward_signal = reserve_rpe
+            for _ in range(W_APPLY):
+                _advance(bridge)
+            bridge.core_config.current_reward_signal = 0.0
+            bridge.set_plasticity_gate("reserve_learn", 0.0)
+        bridge.set_plasticity_gate("strio_learn", 1.0)     # restore the critic gate
         _restore_state(bridge, snap0)
         return omit_read
 
@@ -526,12 +605,12 @@ def run(seed, mode, *, n_learn=N_LEARN, n_noisy=N_NOISY, n_turns=N_TURNS, ask_bu
     }
 
 
-def evaluate(seed, **kw):
-    real = run(seed, "real", **kw)
-    lesion = run(seed, "lesion", **kw)
-    yoked = run(seed, "yoked", **kw)
-    permuted = run(seed, "permuted", **kw)
-    omit_les = run(seed, "omit_lesion", **kw)          # the load-bearing detector lesion for THIS conversion
+def evaluate(seed, enable_reserve=False, **kw):
+    real = run(seed, "real", enable_reserve=enable_reserve, **kw)
+    lesion = run(seed, "lesion", enable_reserve=enable_reserve, **kw)
+    yoked = run(seed, "yoked", enable_reserve=enable_reserve, **kw)
+    permuted = run(seed, "permuted", enable_reserve=enable_reserve, **kw)
+    omit_les = run(seed, "omit_lesion", enable_reserve=enable_reserve, **kw)   # the load-bearing detector lesion
 
     gate_a = real["corr_gap_want"] >= 0.9
     gate_b = real["ratio_b"] >= 2.0
@@ -551,7 +630,7 @@ def evaluate(seed, **kw):
     go = bool(gate_a and gate_b and gate_c and noisy_stops and real["moat_ok"]
               and lesion_collapses and yoked_collapses and permuted_collapses
               and omit_lesion_collapses_veto)
-    return {
+    out = {
         "seed": seed, "real": real, "lesion": lesion, "yoked": yoked, "permuted": permuted,
         "omit_lesion": omit_les,
         "gate_a_corr": bool(gate_a), "gate_b_askratio": bool(gate_b), "gate_c_conf_rise": bool(gate_c),
@@ -560,6 +639,21 @@ def evaluate(seed, **kw):
         "permuted_collapses": bool(permuted_collapses),
         "omit_lesion_collapses_veto": bool(omit_lesion_collapses_veto), "GO": go,
     }
+    if enable_reserve:
+        # LANE B DOMAIN DISSOCIATION — the RESERVE-LESION control: the inhibitory reserve pathway is present but not
+        # learning (reserve_rpe forced to 0). The protective reserve must RESCUE learnable concepts — drive their
+        # spiking veto read BELOW the reserve-lesion — WITHOUT weakening the noisy veto (noisy stays vetoed, and its
+        # veto rate is not materially lowered). This isolates the reserve's contribution from the excitatory memory.
+        reserve_les = run(seed, "reserve_lesion", **kw)
+        reserve_rescues = bool((real["learn_veto_final"] < reserve_les["learn_veto_final"] - 1e-9)
+                               and real["noisy_vetoed"]
+                               and (real["noisy_veto_final"] >= reserve_les["noisy_veto_final"] - 2.0))
+        out["reserve_lesion"] = reserve_les
+        out["reserve_rescues"] = reserve_rescues
+        out["reserve_learn_veto_final"] = float(real["learn_veto_final"])
+        out["reserve_lesion_learn_veto_final"] = float(reserve_les["learn_veto_final"])
+        out["GO"] = bool(go and reserve_rescues)
+    return out
 
 
 def main():
@@ -568,6 +662,10 @@ def main():
     ap.add_argument("--smoke", action="store_true", help="tiny CPU smoke (5 concepts, short budget)")
     ap.add_argument("--probe", action="store_true",
                     help="report-only: one seed real vs omit_lesion, verbose, with tools.lab attribution")
+    ap.add_argument("--reserve", action="store_true",
+                    help="LANE B (additive, default-OFF): add the DECAYING SUB-BASELINE INHIBITORY protective-reserve "
+                         "pathway (a second cue->veto, gaba_a, opposite-sign learning gated by `reserve_learn`) + the "
+                         "reserve-lesion domain dissociation to the GO. OFF -> byte-identical to the omission-only build.")
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
     if a.out is None:
@@ -590,12 +688,16 @@ def main():
           f"g HIGH; curiosity/yoked/permuted collapse; moat; + OMISSION-DETECTOR LESION collapses the veto.\n",
           flush=True)
 
+    if a.reserve:
+        print("  [LANE B] --reserve ON: DECAYING SUB-BASELINE INHIBITORY protective reserve (cue->veto gaba_a, "
+              "opposite-sign) + reserve-lesion dissociation added to the GO.\n", flush=True)
+
     if a.probe:
         s = a.seeds[0]
         print(f"  --- REAL (seed {s}) ---", flush=True)
-        real = run(s, "real", verbose=True, **kw)
+        real = run(s, "real", verbose=True, enable_reserve=a.reserve, **kw)
         print(f"  --- OMIT-LESION (seed {s}) ---", flush=True)
-        oles = run(s, "omit_lesion", verbose=True, **kw)
+        oles = run(s, "omit_lesion", verbose=True, enable_reserve=a.reserve, **kw)
         print(f"\n  real: omitFire learn {real['omitfire_learn_hz']:.1f} vs noisy {real['omitfire_noisy_hz']:.1f} Hz "
               f"| veto learn {real['learn_veto_final']:.1f} vs noisy {real['noisy_veto_final']:.1f} Hz "
               f"vetoed={real['noisy_vetoed']}", flush=True)
@@ -608,7 +710,7 @@ def main():
 
     results = []
     for seed in a.seeds:
-        r = evaluate(seed, **kw)
+        r = evaluate(seed, enable_reserve=a.reserve, **kw)
         results.append(r)
         re = r["real"]; ol = r["omit_lesion"]
         print(f"  [seed {seed}] corr(gap,want) {re['corr_gap_want']:+.3f} | ask-ratio unk/known {re['ratio_b']:.2f} | "
@@ -626,10 +728,16 @@ def main():
               f"{r['permuted']['corr_gap_want']:+.2f} | OMIT-LESION veto noisy {ol['noisy_veto_final']:.1f}Hz "
               f"vetoed={ol['noisy_vetoed']} (late-rate {ol['noisy_late_rate']:.2f}) | moat {r['real']['moat_ok']}",
               flush=True)
+        if "reserve_rescues" in r:
+            print(f"            RESERVE: learn-veto real {r['reserve_learn_veto_final']:.1f}Hz vs reserve-lesion "
+                  f"{r['reserve_lesion_learn_veto_final']:.1f}Hz (reserve rescues learnable={r['reserve_rescues']}) | "
+                  f"reserve-lesion noisy {r['reserve_lesion']['noisy_veto_final']:.1f}Hz vetoed="
+                  f"{r['reserve_lesion']['noisy_vetoed']}", flush=True)
         flags = (f"a={r['gate_a_corr']} b={r['gate_b_askratio']} c={r['gate_c_conf_rise']} "
                  f"noisy-stops={r['noisy_stops_honest']} curiosity-lesion={r['lesion_collapses']} "
                  f"yoked={r['yoked_collapses']} permuted={r['permuted_collapses']} "
-                 f"omit-lesion-collapses={r['omit_lesion_collapses_veto']}")
+                 f"omit-lesion-collapses={r['omit_lesion_collapses_veto']}"
+                 + (f" reserve-rescues={r['reserve_rescues']}" if "reserve_rescues" in r else ""))
         print(f"            [{flags}]  ==>  {'GO' if r['GO'] else 'NO'}\n", flush=True)
 
     n_go = sum(r["GO"] for r in results)
