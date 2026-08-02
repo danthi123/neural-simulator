@@ -109,3 +109,30 @@ cannot move the hidden weights toward the solution the backprop oracle finds, no
 credit factor** (the LIF-rate version was already 6-seed GO, 2026-07-24; the on-bridge port is the open build) — OR a
 fundamentally stronger on-bridge surrogate/eligibility / an operating-point fix (phi'-vanishing). NOT more forward,
 codon, or feedback-routing tuning — those are now exhaustively eliminated. The crux CORE (LIF/rate) is untouched.
+
+## Update 3 (2026-08-02) — the LEARNED SELF-PREDICTING MICROCIRCUIT (§2.8 "the true crux") ALSO does not rescue it; the fixed-point analysis PROVES the wall is the LOCAL CREDIT FACTOR (surrogate/eligibility), not any error-routing
+
+<!--derived-->
+Built + ran the roadmap's named §2.8 fix — the on-bridge Sacramento self-predicting microcircuit (`--microcircuit`,
+`MicrocircuitEpropNet`: a plastic interneuron `W_PI` learns Eq.9 to predict/cancel the top-down; the hidden local credit
+is the apical residual `src_pred@W_PI − onehot@B_direct`), on the sparse representable codon (act_th=3), seed 42, with a
+wpi_lr sweep + a frozen control. Artifacts `rep_fwd_credit_xor_micro_*.json`. **It does NOT rescue, and the mechanism is
+FULLY diagnosed:** wpi_lr=1.0 -> selfpred_cos 0.999 (interneuron fully learns W_PI==B_direct) -> eprop 0.451 = EXACTLY
+fixed-DFA (below chance 0.549); wpi_lr=0.2 (partial, cos 0.45) -> eprop 0.546 ~ chance (transient); wpi-frozen (cos ~0,
+no cancellation) -> eprop 0.554 ~ chance. So the microcircuit's ENTIRE behaviour is a trajectory between random-credit
+(~chance) and its fixed point (= fixed-DFA, below chance); it NEVER exceeds chance, NEVER trains. At convergence it IS
+fixed-DFA, which the finding already showed fails.
+
+<!--derived-->
+**⇒ THE FINAL, PROVEN ELIMINATION.** Three distinct error-routing / credit-shaping mechanisms — FIXED-random DFA,
+LEARNED KP feedback (B->W^T), and the LEARNED self-predicting MICROCIRCUIT (interneuron-cancelled apical error) — ALL
+leave on-bridge e-prop at chance on a sparse representable codon the oracle solves at 0.94. The microcircuit's
+fixed-point (cos 0.999 -> exactly fixed-DFA) PROVES the point: no matter how you route or shape the error signal, the
+on-bridge e-prop cannot move the hidden weights toward the solution. **The wall is definitively the LOCAL CREDIT FACTOR
+itself — the sigma'(v-theta) membrane surrogate x eligibility on the Izhikevich post-reset membrane** (the roadmap's
+phi'-vanishing / operating-point diagnosis, now the SOLE surviving residual after every error-routing fix is
+eliminated). NEXT is NOT another feedback/instructive-signal (proven inert here) — it is a fundamentally stronger LOCAL
+credit factor (a better on-bridge surrogate that does not vanish on the Izhikevich membrane, or an operating-point that
+keeps the surrogate informative) OR an honest substrate-level limit of the point-neuron Izhikevich surrogate for
+credit. The crux CORE (LIF/rate) stands; the production-bridge residual is now isolated to a single, precisely-named
+mechanism.

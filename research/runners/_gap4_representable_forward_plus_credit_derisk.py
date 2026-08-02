@@ -87,6 +87,27 @@ the residual is deeper (surrogate/eligibility on Izhikevich, phi'-vanishing, ope
     SIM_BACKEND=numpy OPENBLAS_NUM_THREADS=1 python -m research.runners._gap4_representable_forward_plus_credit_derisk \
         --task-xor --act-th 3 --learned-feedback --mode expander --seeds 42 43 44 100 101 102 --epochs 60 \
         --train-subsample 160 --out research/findings/raw/gap4/rep_fwd_credit_xor_kp_6seed.json
+
+THE 2026-08-02 LEARNED SELF-PREDICTING MICROCIRCUIT (Sacramento Eq.9) LEVER -- the roadmap's §2.8 crux (ADDITIVE, default
+OFF). The 2026-08-02 finding ELIMINATIVELY located the on-bridge deep-credit wall at the e-prop's LOCAL credit FACTOR: on
+the sparse representable codon (--task-xor --act-th 3 --mode expander) fixed-DFA AND learned-KP-feedback BOTH gave chance,
+so it is NOT feedback direction, NOT representability, NOT codon density. The roadmap's named fix (LIF-rate 6-seed GO,
+`2026-07-24-gap4-learned-selfpredicting-microcircuit-CPUrate-GO.md`, commit 56c90d67): a plastic interneuron that LEARNS to
+predict/cancel the top-down so the apical dendrite computes a LOCAL error approximating backprop's (apical-silent when
+correct, EARNED). `--microcircuit` (see MicrocircuitEpropNet) replaces the hidden credit factor delta_k @ B_direct with the
+interneuron-CANCELLED apical src_pred @ W_PI - onehot @ B_direct, W_PI learned by the transport-free Eq.9 rule. NO sim/ edit.
+Decisive gate (deliverable d): does the microcircuit let on-bridge e-prop TRAIN XOR (eprop > chance AND > frozen,
+deep_credit_share > 0) on the sparse representable codon where the plain surrogate/eligibility gave chance? YES => the
+local-credit-factor was the wall and the microcircuit is the fix; NO => the residual is the surrogate/eligibility
+weight-finding on Izhikevich itself (operating-point / phi'-vanishing) -- name it.
+    # 1-seed SMOKE (microcircuit, sparse codon --act-th 3, expander only -- run FIRST):
+    SIM_BACKEND=numpy OPENBLAS_NUM_THREADS=1 python -m research.runners._gap4_representable_forward_plus_credit_derisk \
+        --task-xor --act-th 3 --microcircuit --mode expander --seeds 42 --epochs 60 --train-subsample 160 \
+        --out research/findings/raw/gap4/rep_fwd_credit_xor_micro_smoke_s42.json
+    # 6-seed (only if the smoke shows W_PI learning [selfpred_cos rising] + eprop lifting off chance):
+    SIM_BACKEND=numpy OPENBLAS_NUM_THREADS=1 python -m research.runners._gap4_representable_forward_plus_credit_derisk \
+        --task-xor --act-th 3 --microcircuit --mode expander --seeds 42 43 44 100 101 102 --epochs 60 \
+        --train-subsample 160 --out research/findings/raw/gap4/rep_fwd_credit_xor_micro_6seed.json
 """
 from __future__ import annotations
 import argparse, contextlib, io, json, os, sys, time, traceback
@@ -243,6 +264,181 @@ class KPFeedbackEpropNet(OnBridgeEpropNet):
             self.B_direct[li] = self.B_direct[li] + self.kp_lr * outer - self.kp_decay * self.B_direct[li]
 
 
+def _cos(a, b):
+    a = np.asarray(a, dtype=np.float64).ravel(); b = np.asarray(b, dtype=np.float64).ravel()
+    d = float(np.linalg.norm(a) * np.linalg.norm(b))
+    return float(a @ b / d) if d > 1e-12 else 0.0
+
+
+# ---- LEARNED SELF-PREDICTING MICROCIRCUIT (Sacramento-Senn 2018 Eq.9) on-bridge e-prop credit -- the roadmap's §2.8 crux ----
+# The 2026-08-02 finding ELIMINATIVELY located the on-bridge deep-credit wall at the e-prop's LOCAL credit FACTOR: on the
+# sparse representable codon (--task-xor --act-th 3 --mode expander) the oracle solves XOR (0.94) but on-bridge e-prop sits
+# at chance whether the DFA feedback is FIXED-random OR LEARNED (Kolen-Pollack) -- so it is NOT feedback DIRECTION, and NOT
+# forward representability/density. The roadmap's named fix (the LIF-rate 6-seed GO, `2026-07-24-gap4-learned-selfpredicting-
+# microcircuit-CPUrate-GO.md`, commit 56c90d67, MicroNet): a plastic interneuron that LEARNS to predict/cancel the top-down
+# so the apical dendrite computes a LOCAL error that approximates backprop's -- Sacramento-Senn 2018 "apical silent when
+# correct" EARNED, not initialized. This subclass ports that LOCAL-CREDIT FACTOR onto the on-bridge e-prop.
+#
+# WHAT CHANGES (only the HIDDEN learning signal). Parent OnBridgeEpropNet hidden credit (in _accum_grad):
+#     Lsig[li] = ( delta_k @ B_direct[li] ) / T ,  delta_k = softmax(logits) - onehot     (raw fixed-random DFA)
+# Microcircuit hidden credit = the interneuron-CANCELLED apical (teacher via the fixed feedback B_direct, the network's OWN
+# prediction via a LEARNED interneuron W_PI):
+#     Lsig_micro[li] = ( src_pred @ W_PI[li] - onehot @ B_direct[li] ) / T ,  src_pred = softmax(logits)
+# At the self-predicting fixed point W_PI == B_direct this reduces to delta_k @ B_direct EXACTLY (byte-identical to fixed-DFA)
+# -> the microcircuit is a strict GENERALIZATION whose distinct behaviour is the LEARNED, apical-silent-when-correct
+# trajectory of the credit (the multiplicative suppression of plasticity when the net is already correct + the interneuron's
+# lower-variance cancellation of the noisy spiking top-down -- the thing that could differ ON SPIKES where fixed/learned-KP
+# both failed). W_PI is learned from a NOISY init by the LOCAL, transport-free Eq.9 self-prediction rule:
+#     dW_PI[li] = wpi_lr * ( src_pred^T @ ( src_pred @ (B_direct[li] - W_PI[li]) ) ) / m   -> drives W_PI -> B_direct.
+# TRANSPORT-FREE: reads ONLY src_pred (a local activity), B_direct and W_PI -- NEVER a forward weight (cp_connections). W_PI
+# is a plain runner-side numpy list; NO `sim/` edit. Everything else -- the spiking forward, eligibility eps, membrane
+# surrogate psi, leaky readout, pool_k, reservoir_control / permuted / shuffle-DFA anti-cheats, the oracle -- is the
+# parent's, UNCHANGED. Additive: only used under --microcircuit; with it OFF the runner is byte-identical to the banked runs.
+# TOPOLOGY NOTE: the LIF-rate GO put W_PI at the TOP hidden layer only (sequential FA chains e_upper down); this e-prop uses
+# DIRECT feedback alignment (every hidden layer li gets its OWN projection delta_k @ B_direct[li]), so each hidden layer gets
+# its own interneuron W_PI[li] -- the faithful adaptation of "the interneuron cancels the top-down each layer receives" to
+# the DFA topology. The self-prediction rule + the reservoir-control freeze both respect self.train_layers so the frozen-
+# reservoir arm (hidden FF + its interneurons frozen at init) stays a clean control.
+class MicrocircuitEpropNet(OnBridgeEpropNet):
+    def __init__(self, *args, wpi_lr=0.2, wpi_init="noisy", wpi_noise=1.0, wpi_plastic=True, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.wpi_lr = float(wpi_lr); self.wpi_init = str(wpi_init); self.wpi_plastic = bool(wpi_plastic)
+        _seed = int(kwargs.get("seed", 0))
+        wrng = np.random.default_rng(_seed + 4242)     # SEPARATE stream (no transport): the interneuron init
+        self.W_PI = []
+        for B in self.B_direct:                        # one interneuron per hidden pathway; shape == B_direct[li] == (k, n_post_phys)
+            if wpi_init == "fixedpoint":
+                self.W_PI.append(B.copy())             # start AT the self-predicting fixed point (positive control)
+            else:
+                self.W_PI.append(wrng.normal(0.0, float(wpi_noise), B.shape))   # 'noisy' (default): silence must be EARNED
+        self._selfpred_cos_traj = []
+
+    def _wpi_selfpredict_update(self, src_pred_batch):
+        """LOCAL, transport-free Sacramento-Senn Eq.9 self-prediction for every hidden interneuron W_PI[li]:
+        dW_PI[li] = wpi_lr * ( r_int^T @ v_free ) / m,  r_int = src_pred (interneuron rate = the net's OWN softmax),
+        v_free = src_pred @ (B_direct[li] - W_PI[li]) (the free-phase residual apical). Drives W_PI -> B_direct. Reads
+        ONLY src_pred (an activity), self.B_direct, self.W_PI -- NEVER a forward weight (cp_connections)."""
+        sp = np.atleast_2d(np.asarray(src_pred_batch, dtype=np.float64))       # (m, k)
+        m = max(1, sp.shape[0])
+        for li in range(len(self.W_PI)):
+            if self.train_layers is not None and li not in self.train_layers:
+                continue                               # frozen hidden pathway -> keep W_PI fixed (reservoir control byte-clean)
+            v_free = sp @ (self.B_direct[li] - self.W_PI[li])                  # (m, n_post_phys)
+            dWpi = (sp.T @ v_free) / m                                         # (k, n_post_phys) == W_PI[li].shape
+            self.W_PI[li] = self.W_PI[li] + self.wpi_lr * dWpi
+
+    def _accum_grad_micro(self, grads, sp, vv, src_pred, onehot, skip_output=False):
+        """Parent OnBridgeEpropNet._accum_grad VERBATIM EXCEPT the HIDDEN learning signal, which is the interneuron-
+        CANCELLED apical (src_pred @ W_PI[li] - onehot @ B_direct[li]) / T instead of (delta_k @ B_direct[li]) / T.
+        The eligibility eps, the membrane surrogate psi, and the leaky-readout output path are byte-identical to parent."""
+        L = len(self.sizes) - 1
+        T = sp.shape[0]
+        src_pred = np.asarray(src_pred, dtype=np.float64); onehot = np.asarray(onehot, dtype=np.float64)
+        delta_k = src_pred - onehot                                            # output-layer delta (unused when skip_output)
+        delta_out_phys = self._broadcast(delta_k, L) / self.pool_k
+        std_stats = None
+        if self.surrogate == "std":
+            std_stats = {}
+            for li in range(L):
+                post_sl = self.slices[li + 1]
+                vp = vv[:, post_sl]
+                std_stats[li] = (vp.mean(), vp.std() + 1e-6)
+        eps = [np.zeros(self.sizes_phys[li], dtype=np.float64) for li in range(L)]
+        last = L - 1
+        for t in range(T):
+            for li in range(L):
+                if skip_output and li == last:
+                    continue
+                z_pre = sp[t, self.slices[li]].astype(np.float64)
+                eps[li] = self.eps_leak * eps[li] + z_pre
+                post_sl = self.slices[li + 1]
+                v_post = vv[t, post_sl].astype(np.float64)
+                sp_post = sp[t, post_sl]
+                if self.surrogate == "std":
+                    m, s = std_stats[li]
+                    z = (v_post - m) / s
+                    sub = 1.0 / (1.0 + (self.beta_surr * z) ** 2)
+                    psi = np.where(sp_post > 0.5, 1.0, sub)
+                else:
+                    psi = self._surrogate(v_post, sp_post, post_sl)
+                if li == last:
+                    Lsig = delta_out_phys / T
+                    if self.output_psi_one:
+                        psi = np.ones_like(psi)
+                else:
+                    # THE MICROCIRCUIT CHANGE: interneuron-cancelled apical (teacher via fixed B_direct, prediction via
+                    # the LEARNED interneuron W_PI). == delta_k @ B_direct at the fixed point W_PI == B_direct.
+                    Lsig = (src_pred @ self.W_PI[li] - onehot @ self.B_direct[li]) / T
+                g = Lsig * psi
+                grads[li] += np.outer(eps[li], g)
+
+    def train_batch(self, Xb, yb, shuffle_dfa=False, rng=None):
+        # ---- forward passes + per-example src_pred / onehot (the parent's softmax-delta setup, split into p and onehot) ----
+        recs = []
+        for i in range(len(Xb)):
+            sp, vv, acts = self._forward_record(Xb[i])
+            recs.append((sp, vv, self._logits_from(sp, vv, acts)))
+        yb = np.asarray(yb)
+        ps = []; onehots = []
+        for (sp, vv, logits), y in zip(recs, yb):
+            p = _softmax(logits / self.logit_temp)
+            oh = np.zeros_like(p); oh[int(y)] = 1.0
+            ps.append(p); onehots.append(oh)
+        # ---- W_PI self-prediction update (Eq.9) from the batch's TRUE src_pred (free phase; teacher-independent) ----
+        if self.wpi_plastic:
+            self._wpi_selfpredict_update(np.stack(ps))
+            for li in range(len(self.W_PI)):
+                self._selfpred_cos_traj.append(_cos(self.W_PI[li], self.B_direct[li]))
+        # ---- shuffle-DFA: permute the (src_pred, onehot) APICAL credit across the batch (eligibility stays with the
+        #      example; credit mismatched) -- the direct analog of the parent's `deltas = deltas[perm]` scramble. ----
+        cred_idx = list(range(len(recs)))
+        if shuffle_dfa and rng is not None and len(cred_idx) > 1:
+            cred_idx = list(rng.permutation(len(cred_idx)))
+        L = len(self.sizes) - 1
+        grads = [np.zeros((self.sizes_phys[li], self.sizes_phys[li + 1]), dtype=np.float64) for li in range(L)]
+        leaky = (self.logit_source == "leaky_readout")
+        for ex_i, cj in enumerate(cred_idx):
+            sp, vv, _lg = recs[ex_i]
+            p_cred = ps[cj]; oh_cred = onehots[cj]                             # credit from example cj (== ex_i unless shuffled)
+            self._accum_grad_micro(grads, sp, vv, p_cred, oh_cred, skip_output=leaky)
+            if leaky:
+                r = self._readout_feature(sp)
+                d = p_cred - oh_cred                                           # readout delta (shuffled under shuffle_dfa, as parent)
+                dphys = self._broadcast(d, L) / self.pool_k
+                grads[L - 1] += np.outer(r, dphys)
+        self._apply_grads(grads, len(Xb))
+
+    def selfpred_cos(self):
+        """cos(W_PI[li], B_direct[li]) per hidden layer -- the EARNED self-prediction: ~0 at the noisy init, -> ~1 as
+        W_PI learns to predict the top-down (the load-bearing 'the interneuron LEARNED to cancel' observable)."""
+        return [float(_cos(self.W_PI[li], self.B_direct[li])) for li in range(len(self.W_PI))]
+
+    def apical_silent_stats(self, X, y, idx, max_examples=120):
+        """The on-bridge RATE-observable analogue: mean|apical| (the interneuron-cancelled residual
+        src_pred @ W_PI[top] - onehot @ B_direct[top]) on CORRECT vs INCORRECT held-out predictions. EARNED-silent =>
+        correct << incorrect (silent_ratio small). Reuses the forward pass; capped for cost."""
+        if idx is None or len(idx) == 0 or len(self.W_PI) == 0:
+            return None
+        top = len(self.W_PI) - 1
+        y = np.asarray(y)
+        ii = list(idx)[:max_examples]
+        mags = []; corr = []
+        for i in ii:
+            sp, vv, acts = self._forward_record(X[i])
+            logits = self._logits_from(sp, vv, acts)
+            p = _softmax(logits / self.logit_temp)
+            oh = np.zeros_like(p); oh[int(y[i])] = 1.0
+            apical = p @ self.W_PI[top] - oh @ self.B_direct[top]             # (n_post_phys,)
+            mags.append(float(np.abs(apical).mean()))
+            corr.append(bool(int(np.argmax(logits)) == int(y[i])))
+        mags = np.asarray(mags); corr = np.asarray(corr)
+        mc = float(mags[corr].mean()) if corr.any() else float("nan")
+        mi = float(mags[~corr].mean()) if (~corr).any() else float("nan")
+        ratio = float(mc / (mi + 1e-12)) if (corr.any() and (~corr).any()) else float("nan")
+        return {"apical_correct": mc, "apical_incorrect": mi, "silent_ratio": ratio,
+                "frac_correct": float(corr.mean()), "selfpred_cos_top": float(_cos(self.W_PI[top], self.B_direct[top]))}
+
+
 def run_one(seed, n_prop, use_expander, a):
     """One (seed, n_prop, representation): oracle ceiling + full e-prop + frozen-hidden reservoir + permuted +
     shuffle-DFA on the chosen forward. Returns the metrics dict with deep_credit_share."""
@@ -306,6 +502,15 @@ def run_one(seed, n_prop, use_expander, a):
               in_current_pA=a.in_current_pA, in_bias_pA=a.in_bias_pA, hidden_lr_scale=a.hidden_lr_scale)
 
     def _mk():
+        # --microcircuit: swap in the LEARNED SELF-PREDICTING MICROCIRCUIT net for ALL arms, so the ONLY change vs the
+        # fixed-DFA condition is the interneuron-cancelled apical LOCAL CREDIT FACTOR (Sacramento Eq.9). Default OFF.
+        if a.microcircuit:
+            return MicrocircuitEpropNet(n_in, a.hidden, k, seed=seed, n_hidden_layers=a.n_hidden_layers,
+                                        settle_steps=a.settle_steps, eprop_lr=a.eprop_lr, eps_leak=a.eps_leak,
+                                        surrogate=a.surrogate, alpha_surr=a.alpha_surr, beta_surr=a.beta_surr,
+                                        logit_source=a.logit_source, w_clip=a.w_clip, hp=hp, pool_k=a.pool_k,
+                                        wpi_lr=a.wpi_lr, wpi_init=a.wpi_init, wpi_noise=a.wpi_noise,
+                                        wpi_plastic=(not a.wpi_frozen))
         # --learned-feedback: swap the fixed-DFA net for the KP LEARNED-feedback net (all arms, so the ONLY change
         # vs the fixed-DFA condition is learned-vs-fixed feedback). Default OFF => plain OnBridgeEpropNet, byte-identical.
         if a.learned_feedback:
@@ -325,6 +530,11 @@ def run_one(seed, n_prop, use_expander, a):
     train_acc = net.accuracy(Rtr_b, ytr_b)
     inh_acc = net.acc_on(Rte, yte, inh_idx)
     ff_moved = float(abs(net.ff_weight_norm() - w0))
+    # microcircuit diagnostics (only under --microcircuit): the EARNED self-prediction cos(W_PI,B_direct) per hidden
+    # layer + the apical-silent-when-correct read. selfpred_cos -> ~1 proves the interneuron LEARNED to cancel; a
+    # silent_ratio << 1 proves apical-silent-on-correct EARNED. Diagnostic-only; the GO gate is the same XOR gate below.
+    micro_selfpred = net.selfpred_cos() if a.microcircuit else None
+    micro_apical = net.apical_silent_stats(Rte, yte, inh_idx) if a.microcircuit else None
 
     # --- permuted-label control -> ~chance (teacher-contingency) ---
     prng = np.random.default_rng(seed + 555)
@@ -358,9 +568,15 @@ def run_one(seed, n_prop, use_expander, a):
 
     return {"seed": seed, "n_prop": int(n_prop), "mode": ("expander" if use_expander else "raw"),
             "task": ("xor" if a.task_xor else "inheritance"),
-            "credit": ("kp_learned_feedback" if a.learned_feedback else "fixed_dfa"),
+            "credit": ("microcircuit_selfpredict" if a.microcircuit
+                       else "kp_learned_feedback" if a.learned_feedback else "fixed_dfa"),
             "kp_lr": (a.kp_lr if a.learned_feedback else None),
             "kp_decay": (a.kp_decay if a.learned_feedback else None),
+            "wpi_lr": (a.wpi_lr if a.microcircuit else None),
+            "wpi_init": (a.wpi_init if a.microcircuit else None),
+            "wpi_plastic": ((not a.wpi_frozen) if a.microcircuit else None),
+            "micro_selfpred_cos": micro_selfpred,
+            "micro_apical_silent": micro_apical,
             "xor_encoding": (a.xor_encoding if a.task_xor else None),
             "k_classes": k, "chance": chance, "n_features_in": n_in, "n_features_raw": n_feat_raw,
             "n_train_smoke": int(len(ytr_b)), "n_inherit_heldout": int(len(inh_idx)),
@@ -408,6 +624,24 @@ def main():
                          "kp_lr form. Start point to sweep if the smoke shows no B_direct movement / blow-up.")
     ap.add_argument("--kp-decay", type=float, default=1e-4,
                     help="KP feedback weight decay (only under --learned-feedback); mirrors the LIF chained_fa_kp kp_decay.")
+    # THE LEARNED SELF-PREDICTING MICROCIRCUIT LEVER (ADDITIVE, default OFF => byte-identical to the banked runs). The
+    # roadmap's §2.8 crux fix: replace the on-bridge e-prop's HIDDEN local credit factor (delta_k @ B_direct) with the
+    # Sacramento Eq.9 interneuron-CANCELLED apical (src_pred @ W_PI - onehot @ B_direct), W_PI a plastic interneuron
+    # LEARNED (from a noisy init) to predict/cancel the top-down (transport-free; NO sim/ edit). Decisive gate (d): does
+    # this let on-bridge e-prop TRAIN XOR on the sparse representable codon where fixed-DFA AND learned-KP both gave chance?
+    ap.add_argument("--microcircuit", action="store_true",
+                    help="use the LEARNED self-predicting microcircuit (Sacramento Eq.9) interneuron-cancelled apical as "
+                         "the HIDDEN local credit factor instead of raw fixed-DFA. Additive, default off. Mutually "
+                         "exclusive with --learned-feedback.")
+    ap.add_argument("--wpi-lr", type=float, default=0.2,
+                    help="interneuron self-prediction learning rate (only under --microcircuit); mirrors the LIF MicroNet wpi_lr.")
+    ap.add_argument("--wpi-init", choices=["noisy", "fixedpoint"], default="noisy",
+                    help="interneuron W_PI init: 'noisy' (default; silence must be EARNED) or 'fixedpoint' (W_PI:=B_direct, "
+                         "silent from step 0 -- the positive control that the cancellation IS the fixed-DFA credit).")
+    ap.add_argument("--wpi-noise", type=float, default=1.0, help="std of the noisy W_PI init (only under --microcircuit).")
+    ap.add_argument("--wpi-frozen", action="store_true",
+                    help="freeze W_PI at its noisy init (the Sacramento anti-cheat: with the Eq.9 plasticity OFF, apical "
+                         "must NOT go silent on correct -- selfpred_cos stays ~0, silent_ratio ~1).")
     # expander
     ap.add_argument("--n-col", type=int, default=200, help="PlateauExpander columns (the probe's N_COL)")
     ap.add_argument("--act-th", type=int, default=None,
@@ -447,6 +681,9 @@ def main():
     ap.add_argument("--noise", type=float, default=0.02)
     ap.add_argument("--out", default=str(OUT))
     a = ap.parse_args()
+
+    if a.microcircuit and a.learned_feedback:
+        ap.error("--microcircuit and --learned-feedback are mutually exclusive (both replace the hidden credit factor).")
 
     modes = ["raw", "expander"] if a.mode == "both" else [a.mode]
     t0 = time.time(); err = None; rows = []
@@ -503,9 +740,23 @@ def main():
                                     "expander_shuffle_dfa": exp_shuf, "expander_codon_reproducibility": exp_repro,
                                     "expander_trains_the_task_all_seeds": exp_trains_all,
                                     "frozen_lt_eprop": froz_lt_eprop, "controls_clean": controls_clean}
+            if a.microcircuit:
+                # microcircuit diagnostics (means over expander seeds): EARNED self-prediction cos(W_PI,B_direct) -> ~1,
+                # apical-silent-on-correct ratio -> small. Diagnostic-only; the GO gate above is unchanged.
+                _mc_rows = [r for r in rows if r["mode"] == "expander" and r.get("micro_selfpred_cos")]
+                _sp = [float(np.mean(r["micro_selfpred_cos"])) for r in _mc_rows if r["micro_selfpred_cos"]]
+                _sr = [r["micro_apical_silent"]["silent_ratio"] for r in _mc_rows
+                       if r.get("micro_apical_silent")
+                       and r["micro_apical_silent"].get("silent_ratio") == r["micro_apical_silent"].get("silent_ratio")]
+                summary["aggregate"]["microcircuit_selfpred_cos"] = float(np.mean(_sp)) if _sp else float("nan")
+                summary["aggregate"]["microcircuit_apical_silent_ratio"] = float(np.mean(_sr)) if _sr else float("nan")
             summary["SIGNAL"] = go
+            _credit = ("microcircuit" if a.microcircuit else "kp" if a.learned_feedback else "fixed-dfa")
+            _mc_diag = ("" if not a.microcircuit else
+                        f" [micro selfpred_cos {summary['aggregate'].get('microcircuit_selfpred_cos', float('nan')):.3f} "
+                        f"apical_silent_ratio {summary['aggregate'].get('microcircuit_apical_silent_ratio', float('nan')):.3f}]")
             summary["verdict"] = (
-                f"XOR (chance {ch:.3f}): deep_credit_share raw {raw_share:+.3f} -> expander {exp_share:+.3f} "
+                f"XOR [credit={_credit}]{_mc_diag} (chance {ch:.3f}): deep_credit_share raw {raw_share:+.3f} -> expander {exp_share:+.3f} "
                 f"(frozen-reservoir inherit raw {raw_froz:.3f} / expander {exp_froz:.3f}; eprop inherit raw "
                 f"{raw_eprop:.3f} / expander {exp_eprop:.3f}; expander oracle {exp_oracle:.3f}; controls perm "
                 f"{exp_perm:.3f} shufDFA {exp_shuf:.3f}; codon repro {exp_repro:.3f}; trains-all "
