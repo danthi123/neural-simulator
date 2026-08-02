@@ -49,9 +49,29 @@ the KP update reads ONLY pre/post activity + Y, never a forward W -- asserted fr
 cfg.seed is threaded into every SNN + task (per-seed reproducible). NO sim/ edit -- the LIF SNN forward + BPTT +
 atan-surrogate are reused-by-import from `sim/bptt_snn_gpu`; the chained-FA credit is a RUNNER-side function.
 
+THE CATEGORICAL-UNLOCK TEST (--task-xor, ADDITIVE, default OFF). The inheritance task above is linearly reservoir-
+decodable GIVEN WIDTH (a wide-256 optimally-read frozen reservoir reaches 0.840 > chained_fa 0.778), so the matched-
+width purchase is partly "denied width", NOT proof that directed credit does what NO reservoir can. `--task-xor` swaps
+in the depth-2 XOR->threshold RATE-OVERTURN task (reuse-by-import of emerge1's `make_task`, the SAME task the rate
+overturn used): XOR is NOT linearly separable, so a FIXED random projection + linear readout PROVABLY cannot decode it
+at ANY width -> a WIDE frozen reservoir must FAIL where a TRAINED hidden can compute it. Two categorical controls are
+added EVERY run: the frozen-reservoir OPTIMAL 5-fold-CV ridge readout at MATCHED width (--hidden) AND WIDE width
+(--wide-hidden). The DECISIVE read: chained_fa >> WIDE-frozen-optimal AND WIDE-frozen-optimal ~ chance => CATEGORICAL
+UNLOCK (directed credit does what no reservoir can); if WIDE-frozen-optimal still solves it => still reservoir-
+decodable (pick a harder task). Headroom: a PROPERLY-TUNED BPTT arm (--bptt-hidden/--bptt-epochs = the 0.82-source
+config) confirms the task IS learnable by a trained net (the crux run under-tuned BPTT -> its ceiling was invalid).
+
 Run (numpy CPU; the depth-2 BPTT-viable net, ~ (n_in+2*hidden+k) LIF units over T steps):
+    # inheritance task (byte-identical to the crux 6-seed run):
     SIM_BACKEND=numpy python -m research.runners._gap4_bptt_snn_chained_fa_transport_free_derisk --seeds 42
-    SIM_BACKEND=numpy python -m research.runners._gap4_bptt_snn_chained_fa_transport_free_derisk --seeds 42 43 44 45 46 47
+    # THE CATEGORICAL-UNLOCK XOR test, seed 42 (matched width 32, wide 256, BPTT ceiling at the 0.82-source config):
+    SIM_BACKEND=numpy python -m research.runners._gap4_bptt_snn_chained_fa_transport_free_derisk --task-xor \
+        --seeds 42 --hidden 32 --wide-hidden 256 --epochs 200 --lr 0.05 --bptt-hidden 128 --train-subsample 2000 \
+        --out research/findings/raw/gap4/realspikes/bptt_snn_chained_fa_XOR_seed42.json
+    # 6-seed:
+    SIM_BACKEND=numpy python -m research.runners._gap4_bptt_snn_chained_fa_transport_free_derisk --task-xor \
+        --seeds 42 43 44 100 101 102 --hidden 32 --wide-hidden 256 --epochs 200 --lr 0.05 --bptt-hidden 128 \
+        --train-subsample 2000 --out research/findings/raw/gap4/realspikes/bptt_snn_chained_fa_XOR_6seed.json
 """
 from __future__ import annotations
 
@@ -84,8 +104,31 @@ from research.runners._snn_bptt_forward_vs_learning_isolation_derisk import (  #
     _softmax, _build_layers, _forward_logits, _accuracy)
 from research.runners._semantic_inheritance_deep_credit_derisk import (  # noqa: E402
     make_task_semantic_inheritance, stage0_depth_genuineness, _train_oracle, _acc_on)
+# ---- reuse-by-import: the EXACT depth-2 XOR->threshold RATE-OVERTURN task (--task-xor). `make_task` here is the SAME
+#      function `_gap4_depth2_bdsp_credit_derisk` imports (it re-exports emerge1's), so the ported task is byte-identical
+#      to the rate overturn's `make_task`: pair-XOR (level-1 latents, XOR is NOT linearly separable) -> threshold-over-
+#      XORs (level-2). A fixed random projection + linear readout PROVABLY cannot decode XOR => a WIDE frozen reservoir
+#      must FAIL where a TRAINED hidden can compute it. Held-out = UNSEEN bit patterns (systematic generalization). ----
+from research.runners._emerge1_deep_dendritic_representation_derisk import (  # noqa: E402
+    make_task as _make_task_xor_raw, N_BITS as _XOR_N_BITS, N_PAIRS as _XOR_N_PAIRS)
 
 OUT = _REPO / "research" / "findings" / "raw" / "_gap4_bptt_snn_chained_fa.json"
+
+
+def make_task_xor(seed):
+    """Wrap the imported depth-2 XOR->threshold rate-overturn task into the 4-tuple interface run_seed consumes
+    (the SAME shape as make_task_semantic_inheritance). X is +/-1 over `_XOR_N_BITS` bits (rate-coded as constant
+    current over T by _forward_logits, exactly as the inheritance task's real-valued X is); y in {0,1} (k=2). The
+    WHOLE held-out set is the 'inherit' generalization set (UNSEEN bit patterns) -> inh_idx = all held rows; there
+    is no memorization-control split for this task (memctrl_idx empty). Latents = the level-1 pair-XORs (reported,
+    not gating)."""
+    (Xtr, ytr, Ltr), (Xte, yte, Lte) = _make_task_xor_raw(seed)
+    inh_idx = np.arange(len(Xte), dtype=np.int64)
+    meta = {"task": "depth2_xor_threshold", "k_classes": 2, "n_bits": int(_XOR_N_BITS),
+            "n_pairs": int(_XOR_N_PAIRS), "n_features": int(Xtr.shape[1]),
+            "n_train": int(len(Xtr)), "n_heldout": int(len(Xte)), "n_inherit_heldout": int(len(inh_idx))}
+    idx = {"inh_idx": inh_idx, "memctrl_idx": np.array([], dtype=np.int64)}
+    return (Xtr, ytr, Ltr), (Xte, yte, Lte), meta, idx
 
 
 # ============================================================================================================
@@ -194,6 +237,69 @@ def _kp_reads_no_forward_weight():
 
 
 # ============================================================================================================
+# CATEGORICAL controls -- the frozen-reservoir OPTIMAL ridge readout at MATCHED width AND WIDE width. The frozen_reservoir
+# ARM reads its frozen hidden with a WEAK local-delta; these controls read the SAME frozen hidden OPTIMALLY (5-fold-CV
+# ridge over the CONCATENATED hidden-layer summed-spikes = the most generous read: every hidden rep, as the verification
+# did). ON A LINEARLY RESERVOIR-DECODABLE TASK a WIDE (256) frozen reservoir, optimally read, can MATCH/EXCEED directed
+# credit (the inheritance caveat: wide-256 reached 0.840 > chained_fa 0.778 -> "denied width", NOT a categorical unlock).
+# ON A TASK NOT LINEARLY DECODABLE FROM A FIXED RANDOM PROJECTION (XOR) a fixed random reservoir provably CANNOT decode
+# it at ANY width -> wide-frozen-optimal should sit at CHANCE, and chained_fa beating it == the CATEGORICAL unlock.
+# ============================================================================================================
+def _reservoir_features(X, layers, T, in_gain):
+    """Forward X through the FROZEN LIF layers; return the CONCATENATED summed-spike rate vector of ALL hidden layers
+    (excludes the output layer) -- the most generous reservoir read-out (reads every hidden rep, matching the
+    verification's 'reading BOTH hidden reps optimally')."""
+    _, fs, _ = _forward_logits(X, layers, T, in_gain)
+    feats = [fs["spikes"][li].sum(axis=0) for li in range(len(layers) - 1)]     # hidden layers only (exclude output)
+    return np.concatenate(feats, axis=1)                                        # (B, sum of hidden widths)
+
+
+def _ridge_predict(Htr, Ytr_oh, Hte, lam):
+    d = Htr.shape[1]
+    W = np.linalg.solve(Htr.T @ Htr + lam * np.eye(d), Htr.T @ Ytr_oh)
+    return Hte @ W
+
+
+def _optimal_ridge_acc(Htr, ytr, Hte, yte, k, seed, n_folds=5,
+                       lams=(1e-3, 1e-2, 1e-1, 1.0, 10.0, 100.0)):
+    """OPTIMAL linear readout of the frozen reservoir: one-hot ridge regression with 5-fold-CV lambda selection on the
+    TRAIN reservoir features, refit at the best lambda, argmax accuracy on the held-out reservoir features. The
+    reservoir's BEST-possible linear decode (the FAIR categorical control the verification used)."""
+    Htr = np.concatenate([Htr, np.ones((len(Htr), 1))], axis=1)                 # bias column
+    Hte = np.concatenate([Hte, np.ones((len(Hte), 1))], axis=1)
+    Ytr_oh = np.eye(k)[ytr]
+    idxp = np.random.default_rng(seed + 31).permutation(len(Htr))
+    folds = np.array_split(idxp, n_folds)
+    best_lam, best_cv = float(lams[0]), -1.0
+    for lam in lams:
+        accs = []
+        for f in folds:
+            m = np.ones(len(Htr), dtype=bool); m[f] = False
+            if not m.any() or len(f) == 0:
+                continue
+            pred = _ridge_predict(Htr[m], Ytr_oh[m], Htr[f], lam)
+            accs.append(float(np.mean(np.argmax(pred, axis=1) == ytr[f])))
+        cv = float(np.mean(accs)) if accs else -1.0
+        if cv > best_cv:
+            best_cv, best_lam = cv, float(lam)
+    pred = _ridge_predict(Htr, Ytr_oh, Hte, best_lam)
+    return float(np.mean(np.argmax(pred, axis=1) == yte)), best_lam
+
+
+def _frozen_reservoir_optimal(Xtr, ytr, Xte_inh, yte_inh, n_in, k, res_width, n_hidden_layers, T, in_gain, seed):
+    """Build a FROZEN random LIF reservoir of width `res_width`, forward TRAIN + held-out INHERIT through it, fit the
+    OPTIMAL 5-fold-CV ridge readout. Returns (inherit accuracy, best lambda). Uses the SAME init RNG stream (seed+1) as
+    the frozen_reservoir arm, so at res_width==hidden it reads LITERALLY that arm's frozen hidden read optimally."""
+    rrng = np.random.default_rng(seed + 1)                                      # same init stream as _train_snn_arm
+    res_sizes = [n_in] + [res_width] * n_hidden_layers + [k]
+    w_scales = [2.5] + [1.0] * (len(res_sizes) - 2)
+    res_layers = _build_layers(res_sizes, T, rrng, w_scales)                    # FROZEN at init (never trained)
+    Htr = _reservoir_features(Xtr, res_layers, T, in_gain)
+    Hte = _reservoir_features(Xte_inh, res_layers, T, in_gain)
+    return _optimal_ridge_acc(Htr, ytr, Hte, yte_inh, k, seed)
+
+
+# ============================================================================================================
 # Trainer -- the SAME LIF SNN forward (_build_layers/_forward_logits from the 0.82 runner) with a selectable credit
 # arm. mode in {bptt, chained_fa, chained_fa_kp, frozen_reservoir}; permuted is mode=chained_fa on shuffled y.
 # ============================================================================================================
@@ -235,8 +341,12 @@ def _train_snn_arm(Xtr, ytr, sizes, T, epochs, lr, lr_fa, in_gain, seed, mode, b
 
 
 def run_seed(seed, hidden, T, epochs, lr, lr_fa, in_gain, subsample, task_kwargs, n_hidden_layers=2,
-             sigma_norm=True, kp_lr=0.2, kp_decay=1e-4, check_depth=True):
-    (Xtr, ytr, Ltr), (Xte, yte, Lte), meta, idx = make_task_semantic_inheritance(seed, **task_kwargs)
+             sigma_norm=True, kp_lr=0.2, kp_decay=1e-4, check_depth=True,
+             task_xor=False, bptt_hidden=None, bptt_epochs=None, bptt_lr=None, wide_hidden=256):
+    if task_xor:
+        (Xtr, ytr, Ltr), (Xte, yte, Lte), meta, idx = make_task_xor(seed)
+    else:
+        (Xtr, ytr, Ltr), (Xte, yte, Lte), meta, idx = make_task_semantic_inheritance(seed, **task_kwargs)
     k = meta["k_classes"]; n_in = Xtr.shape[1]; inh_idx = idx["inh_idx"]
     if len(inh_idx):
         yv = yte[inh_idx]; chance = float(max(np.mean(yv == c) for c in np.unique(yv)))
@@ -260,17 +370,22 @@ def run_seed(seed, hidden, T, epochs, lr, lr_fa, in_gain, subsample, task_kwargs
 
     sizes = [n_in] + [hidden] * n_hidden_layers + [k]
 
-    def _run(mode, ylabels):
-        layers, Y_list = _train_snn_arm(Xtr, ylabels, sizes, T, epochs, lr, lr_fa, in_gain, seed, mode,
+    def _run(mode, ylabels, sizes_=None, epochs_=None, lr_=None):
+        layers, Y_list = _train_snn_arm(Xtr, ylabels, sizes_ if sizes_ is not None else sizes, T,
+                                        epochs_ if epochs_ is not None else epochs,
+                                        lr_ if lr_ is not None else lr, lr_fa, in_gain, seed, mode,
                                         sigma_norm=sigma_norm, kp_lr=kp_lr, kp_decay=kp_decay)
         inh = _accuracy(Xte, yte, layers, T, in_gain, sub=inh_idx)
         tr = _accuracy(Xtr, ytr, layers, T, in_gain)
         nt = _no_weight_transport(Y_list, layers) if Y_list is not None else True
         return {"inherit": inh, "train": tr, "no_transport": bool(nt)}, layers, Y_list
 
-    # ---- ARM 1: surrogate-BPTT ceiling ----
-    bptt, _, _ = _run("bptt", ytr)
-    # ---- ARM 3: frozen-hidden reservoir (only the output LIF layer learns) ----
+    # ---- ARM 1: surrogate-BPTT ceiling -- PROPERLY TUNED (its own hidden/epochs/lr so the headroom/ceiling is VALID;
+    #      the crux run under-tuned BPTT (train 0.665) -> invalid ceiling. Defaults None => matched config (byte-identical
+    #      to the prior run); the XOR command passes the 0.82-source epochs/lr). ----
+    bptt_sizes = [n_in] + [(bptt_hidden if bptt_hidden is not None else hidden)] * n_hidden_layers + [k]
+    bptt, _, _ = _run("bptt", ytr, sizes_=bptt_sizes, epochs_=bptt_epochs, lr_=bptt_lr)
+    # ---- ARM 3: frozen-hidden reservoir (only the output LIF layer learns, weak local delta) ----
     frozen, _, _ = _run("frozen_reservoir", ytr)
     # ---- ARM 2: chained transport-free FIXED-random FA (the primary transport-free-local arm) ----
     chained, _, Yc = _run("chained_fa", ytr)
@@ -280,6 +395,16 @@ def run_seed(seed, hidden, T, epochs, lr, lr_fa, in_gain, subsample, task_kwargs
     prng = np.random.default_rng(seed + 555)
     yperm = ytr[prng.permutation(len(ytr))]
     permuted, _, _ = _run("chained_fa", yperm)
+
+    # ---- CATEGORICAL controls: the frozen-reservoir OPTIMAL ridge readout at MATCHED width AND WIDE width. The
+    #      decisive question is whether chained_fa beats the WIDE frozen reservoir OPTIMALLY read -- if the wide
+    #      reservoir now FAILS (XOR is not linearly decodable from a fixed random projection) while chained_fa wins,
+    #      that is the categorical unlock; if the wide reservoir still solves it, the task is still reservoir-decodable.
+    Xte_inh = Xte[inh_idx]; yte_inh = yte[inh_idx]
+    frozen_opt_matched, lam_m = _frozen_reservoir_optimal(Xtr, ytr, Xte_inh, yte_inh, n_in, k, hidden,
+                                                          n_hidden_layers, T, in_gain, seed)
+    frozen_opt_wide, lam_w = _frozen_reservoir_optimal(Xtr, ytr, Xte_inh, yte_inh, n_in, k, wide_hidden,
+                                                       n_hidden_layers, T, in_gain, seed)
 
     # ---- decisive metrics (inherit held-out) ----
     def _frac(x):
@@ -295,14 +420,37 @@ def run_seed(seed, hidden, T, epochs, lr, lr_fa, in_gain, subsample, task_kwargs
     go_kp = bool(chained_kp["inherit"] > permuted["inherit"] + 0.03 and
                  chained_kp["inherit"] > frozen["inherit"] + 0.03)
 
+    # THE CATEGORICAL-UNLOCK read: chained_fa >> wide-frozen-optimal AND wide-frozen-optimal ~ chance.
+    chained_over_wide_optimal = float(chained["inherit"] - frozen_opt_wide)
+    chained_over_matched_optimal = float(chained["inherit"] - frozen_opt_matched)
+    if not np.isnan(chance):
+        wide_optimal_over_chance = float(frozen_opt_wide - chance)
+        wide_optimal_at_chance = bool(abs(frozen_opt_wide - chance) <= 0.06)
+        bptt_solves_task = bool(bptt["inherit"] > chance + 0.15)          # headroom: XOR IS learnable by a trained net
+        categorical_unlock = bool(chained["inherit"] > frozen_opt_wide + 0.10 and wide_optimal_at_chance)
+    else:
+        wide_optimal_over_chance = float("nan"); wide_optimal_at_chance = None
+        bptt_solves_task = None; categorical_unlock = None
+
     return {
         "seed": seed, "chance": chance, "n_in": n_in, "k": k, "sizes": sizes,
+        "task": ("xor" if task_xor else "inheritance"),
         "depth_separating": depth_sep, "oracle_inherit": oracle_inh,
-        "bptt_inherit": bptt["inherit"], "bptt_train": bptt["train"],
+        "bptt_inherit": bptt["inherit"], "bptt_train": bptt["train"], "bptt_sizes": bptt_sizes,
         "frozen_reservoir_inherit": frozen["inherit"], "frozen_reservoir_train": frozen["train"],
         "chained_fa_inherit": chained["inherit"], "chained_fa_train": chained["train"],
         "chained_fa_kp_inherit": chained_kp["inherit"], "chained_fa_kp_train": chained_kp["train"],
         "permuted_inherit": permuted["inherit"],
+        # ---- the CATEGORICAL controls ----
+        "frozen_optimal_matched_inherit": frozen_opt_matched, "frozen_optimal_matched_lambda": lam_m,
+        "frozen_optimal_wide_inherit": frozen_opt_wide, "frozen_optimal_wide_lambda": lam_w,
+        "wide_hidden": wide_hidden,
+        "chained_over_wide_optimal": chained_over_wide_optimal,
+        "chained_over_matched_optimal": chained_over_matched_optimal,
+        "wide_optimal_over_chance": wide_optimal_over_chance,
+        "wide_optimal_at_chance": wide_optimal_at_chance,
+        "bptt_solves_task": bptt_solves_task,
+        "CATEGORICAL_UNLOCK": categorical_unlock,
         "directed_over_permuted": directed_over_permuted,
         "purchase_over_frozen": purchase_over_frozen,
         "bptt_fraction_captured": _frac(chained["inherit"]),
@@ -327,6 +475,8 @@ def _agg(results):
         vals = [r[key] for r in ok if r.get(key) is not None and not (isinstance(r[key], float) and np.isnan(r[key]))]
         return float(np.mean(vals)) if vals else float("nan")
     n = len(ok)
+    def _count(key):
+        return sum(1 for r in ok if r.get(key) is True)
     return {
         "n_seeds": n,
         "mean_chance": _m("chance"),
@@ -336,6 +486,15 @@ def _agg(results):
         "mean_chained_fa_inherit": _m("chained_fa_inherit"),
         "mean_chained_fa_kp_inherit": _m("chained_fa_kp_inherit"),
         "mean_permuted_inherit": _m("permuted_inherit"),
+        # ---- the CATEGORICAL controls (the decisive read) ----
+        "mean_frozen_optimal_matched_inherit": _m("frozen_optimal_matched_inherit"),
+        "mean_frozen_optimal_wide_inherit": _m("frozen_optimal_wide_inherit"),
+        "mean_chained_over_wide_optimal": _m("chained_over_wide_optimal"),
+        "mean_chained_over_matched_optimal": _m("chained_over_matched_optimal"),
+        "mean_wide_optimal_over_chance": _m("wide_optimal_over_chance"),
+        "wide_optimal_at_chance_seeds": f"{_count('wide_optimal_at_chance')}/{n}",
+        "bptt_solves_task_seeds": f"{_count('bptt_solves_task')}/{n}",
+        "CATEGORICAL_UNLOCK_seeds": f"{_count('CATEGORICAL_UNLOCK')}/{n}",
         "mean_directed_over_permuted": _m("directed_over_permuted"),
         "mean_purchase_over_frozen": _m("purchase_over_frozen"),
         "mean_bptt_fraction_captured": _m("bptt_fraction_captured"),
@@ -364,6 +523,18 @@ def main():
     ap.add_argument("--kp-decay", type=float, default=1e-4)
     ap.add_argument("--train-subsample", type=int, default=400)
     ap.add_argument("--no-depth-check", action="store_true", help="skip the stage0 depth-genuineness probe (faster)")
+    # ---- ADDITIVE (default-OFF): the CATEGORICAL-unlock test on the depth-2 XOR->threshold task ----
+    ap.add_argument("--task-xor", action="store_true",
+                    help="use the depth-2 XOR->threshold RATE-OVERTURN task (NOT linearly reservoir-decodable) instead "
+                         "of the semantic-inheritance task; default OFF => inheritance task byte-identical to the crux run.")
+    ap.add_argument("--wide-hidden", type=int, default=256,
+                    help="width of the WIDE frozen-reservoir optimal-readout control (the categorical control: on XOR a "
+                         "fixed random reservoir CANNOT decode at ANY width, so wide-frozen-optimal should sit at chance).")
+    # BPTT ceiling tuning (default None => matched --hidden/--epochs/--lr, byte-identical; the XOR command passes the
+    # 0.82-source config so the headroom/ceiling is VALID -- the crux run under-tuned BPTT, invalidating its ceiling).
+    ap.add_argument("--bptt-hidden", type=int, default=None, help="BPTT-arm hidden width (default = --hidden).")
+    ap.add_argument("--bptt-epochs", type=int, default=None, help="BPTT-arm epochs (default = --epochs).")
+    ap.add_argument("--bptt-lr", type=float, default=None, help="BPTT-arm learning rate (default = --lr).")
     # task kwargs (mirror the 0.82 runner defaults)
     ap.add_argument("--n-super", type=int, default=12)
     ap.add_argument("--n-members", type=int, default=8)
@@ -388,40 +559,54 @@ def main():
             r = run_seed(sd, args.hidden, args.timesteps, args.epochs, args.lr, lr_fa, args.in_gain,
                          args.train_subsample, task_kwargs, n_hidden_layers=args.n_hidden_layers,
                          sigma_norm=args.sigma_norm, kp_lr=args.kp_lr, kp_decay=args.kp_decay,
-                         check_depth=not args.no_depth_check)
+                         check_depth=not args.no_depth_check, task_xor=args.task_xor,
+                         bptt_hidden=args.bptt_hidden, bptt_epochs=args.bptt_epochs, bptt_lr=args.bptt_lr,
+                         wide_hidden=args.wide_hidden)
         except Exception as e:
             r = {"seed": sd, "error": repr(e), "traceback": traceback.format_exc()}
         results.append(r)
         if "error" not in r:
             print(f"[seed {sd}] chained_fa {r['chained_fa_inherit']:.3f} (kp {r['chained_fa_kp_inherit']:.3f}) "
                   f"vs frozen {r['frozen_reservoir_inherit']:.3f} vs permuted {r['permuted_inherit']:.3f} | "
-                  f"BPTT ceiling {r['bptt_inherit']:.3f}, oracle {r['oracle_inherit']:.3f}, chance {r['chance']:.3f} "
-                  f"| directed(over-perm) {r['directed_over_permuted']:+.3f}, purchase(over-frozen) "
-                  f"{r['purchase_over_frozen']:+.3f}, frac-BPTT {r['bptt_fraction_captured']:.2f} | "
+                  f"BPTT ceiling {r['bptt_inherit']:.3f} (train {r['bptt_train']:.3f}), oracle {r['oracle_inherit']:.3f}, "
+                  f"chance {r['chance']:.3f} | frozen-OPTIMAL matched {r['frozen_optimal_matched_inherit']:.3f} / "
+                  f"WIDE-{r['wide_hidden']} {r['frozen_optimal_wide_inherit']:.3f} | chained-over-wide-optimal "
+                  f"{r['chained_over_wide_optimal']:+.3f}, wide-at-chance={r['wide_optimal_at_chance']}, "
+                  f"bptt-solves={r['bptt_solves_task']} => CATEGORICAL_UNLOCK={r['CATEGORICAL_UNLOCK']} | "
                   f"GO_fixed={r['GO_fixed']} GO_kp={r['GO_kp']}")
         else:
             print(f"[seed {sd}] ERROR: {r['error']}")
 
     agg = _agg(results)
-    out = {"probe": "gap4_bptt_snn_chained_fa_transport_free", "seeds": args.seeds,
+    out = {"probe": "gap4_bptt_snn_chained_fa_transport_free",
+           "task": ("xor" if args.task_xor else "inheritance"), "seeds": args.seeds,
            "config": {"hidden": args.hidden, "n_hidden_layers": args.n_hidden_layers, "T": args.timesteps,
                       "epochs": args.epochs, "lr": args.lr, "lr_fa": lr_fa, "in_gain": args.in_gain,
                       "sigma_norm": args.sigma_norm, "kp_lr": args.kp_lr, "kp_decay": args.kp_decay,
-                      "train_subsample": args.train_subsample, "task": task_kwargs},
+                      "train_subsample": args.train_subsample, "task_xor": bool(args.task_xor),
+                      "wide_hidden": args.wide_hidden, "bptt_hidden": args.bptt_hidden,
+                      "bptt_epochs": args.bptt_epochs, "bptt_lr": args.bptt_lr, "task": task_kwargs},
            "elapsed_seconds": round(time.time() - t0, 1), "results": results, "aggregate": agg}
     if agg:
+        _cat = agg.get("CATEGORICAL_UNLOCK_seeds", "0/0")
         out["verdict"] = (
-            f"transport-free chained-FA on the TRAINABLE LIF SNN: chained_fa {agg['mean_chained_fa_inherit']:.3f} "
-            f"(kp {agg['mean_chained_fa_kp_inherit']:.3f}) vs frozen {agg['mean_frozen_reservoir_inherit']:.3f} vs "
-            f"permuted {agg['mean_permuted_inherit']:.3f}; BPTT ceiling {agg['mean_bptt_inherit']:.3f}, oracle "
-            f"{agg['mean_oracle_inherit']:.3f}. directed(over-permuted) {agg['mean_directed_over_permuted']:+.3f}, "
-            f"purchase(over-frozen) {agg['mean_purchase_over_frozen']:+.3f}, BPTT-fraction "
-            f"{agg['mean_bptt_fraction_captured']:.2f}. GO_fixed {agg['GO_fixed_seeds']}, GO_kp {agg['GO_kp_seeds']}. "
-            + ("=> the transport-free LOCAL rule GETS directed-credit purchase on the TRAINABLE spiking substrate "
-               "where it could NOT on the reservoir -> the SUBSTRATE was the wall (a trainable-substrate surpass)."
-               if (agg.get("GO_fixed_seeds", "0/1").split("/")[0] != "0") else
-               "=> the transport-free LOCAL rule STILL fails on the trainable spiking substrate -> a deeper "
-               "transport-free-vs-BPTT gap on spikes (names the next mechanism)."))
+            f"[{out['task']}] transport-free chained-FA on the TRAINABLE LIF SNN: chained_fa "
+            f"{agg['mean_chained_fa_inherit']:.3f} (kp {agg['mean_chained_fa_kp_inherit']:.3f}) vs frozen-local "
+            f"{agg['mean_frozen_reservoir_inherit']:.3f} vs permuted {agg['mean_permuted_inherit']:.3f}; BPTT ceiling "
+            f"{agg['mean_bptt_inherit']:.3f}, oracle {agg['mean_oracle_inherit']:.3f}, chance {agg['mean_chance']:.3f}. "
+            f"CATEGORICAL controls: frozen-OPTIMAL matched {agg['mean_frozen_optimal_matched_inherit']:.3f} / "
+            f"WIDE-{args.wide_hidden} {agg['mean_frozen_optimal_wide_inherit']:.3f}; chained-over-wide-optimal "
+            f"{agg['mean_chained_over_wide_optimal']:+.3f}; wide-at-chance {agg['wide_optimal_at_chance_seeds']}, "
+            f"bptt-solves {agg['bptt_solves_task_seeds']}, CATEGORICAL_UNLOCK {_cat}. GO_fixed {agg['GO_fixed_seeds']}, "
+            f"GO_kp {agg['GO_kp_seeds']}. "
+            + ("=> CATEGORICAL UNLOCK: chained_fa BEATS a WIDE frozen reservoir that FAILS (the task is NOT linearly "
+               "reservoir-decodable) -> directed credit does what NO reservoir can, at any width."
+               if _cat.split("/")[0] not in ("0", "") and _cat.split("/")[0] == _cat.split("/")[1] else
+               ("=> PARTIAL: chained_fa beats wide-frozen-optimal on some seeds; read wide-at-chance + bptt-solves per "
+                "seed (if wide-frozen still solves it, the task remains reservoir-decodable -> pick a harder task)."
+                if _cat.split("/")[0] not in ("0", "") else
+                "=> NOT a categorical unlock: the WIDE frozen reservoir (optimally read) still matches/exceeds "
+                "chained_fa -> the task is still reservoir-decodable OR chained_fa also struggles; see the per-seed table.")))
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     with open(args.out, "w") as f:
         json.dump(out, f, indent=2)

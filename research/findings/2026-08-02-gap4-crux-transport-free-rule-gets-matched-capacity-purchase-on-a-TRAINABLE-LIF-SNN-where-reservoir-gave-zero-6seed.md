@@ -76,3 +76,36 @@ width-matched-capacity control (does a reservoir at chained_fa's effective capac
 hidden layers / real depth (where KP's rescue should widen). The rate overturn + this matched-capacity spiking
 purchase together move gap#4 from "transport-free deep credit on spikes is a wall" to "it works on a trainable
 substrate at matched capacity; the categorical demonstration needs a non-reservoir-decodable task."
+
+## Update (2026-08-02) — the harder XOR task RESOLVES caveat #1: chained_fa BEATS a wide reservoir (+0.150, 6/6) AND EXCEEDS surrogate-BPTT — a stronger positive, though the ELM reservoir still partly decodes XOR so not the STRICT categorical claim
+
+<!--derived-->
+Ran the named next test — the SAME LIF SNN bridge on the depth-2 XOR→threshold task (the rate-overturn task,
+byte-identical `make_task`; XOR is NOT linearly separable, and the BPTT arm is now properly tuned — hidden 128,
+200 epochs — so its ceiling is VALID: it solves the task, held-out 0.782, train 0.99). Artifact:
+`bptt_snn_chained_fa_XOR_6seed.json`. 6-seed (chance ~0.524):
+
+| arm (XOR-threshold on the LIF SNN) | 6-seed held-out |
+|---|---|
+| **chained_fa (transport-free)** | **0.839** (GO 6/6) |
+| chained_fa_kp | 0.867 (GO 6/6) |
+| **bptt (properly tuned, VALID ceiling)** | 0.782 |
+| **frozen-reservoir OPTIMAL WIDE-256** | 0.689 |
+| frozen-reservoir OPTIMAL matched-32 | 0.609 |
+| permuted | 0.502 (chance) |
+
+**This RESOLVES caveat #1.** On the inheritance task the wide-256 reservoir (0.840) BEAT chained_fa (0.778); on
+the non-linearly-decodable XOR task chained_fa (0.839) BEATS the wide-256 optimally-read reservoir (0.689) by
+**+0.150, 6/6** — so on a task a reservoir cannot fully solve, directed credit provides a real, robust advantage
+a reservoir does not. And **chained_fa (0.839) EXCEEDS the valid surrogate-BPTT ceiling (0.782), 6/6**
+(bptt_fraction 1.26) — the transport-free LOCAL rule ≥ the non-local best-possible on this spiking task (chained-
+FA's per-step σ′ eligibility is evidently a more robust optimizer here than BPTT's exact-but-harder through-time
+credit). directed-over-permuted +0.337, 6/6. **Honest scope — still NOT the STRICT categorical unlock:** the
+wide-256 reservoir is a NONLINEAR (ELM-like) random feature map, so it partly decodes XOR (0.689, +0.165 over
+chance, `wide_optimal_at_chance` 0/6) rather than sitting at chance — chained_fa clearly beats it (+0.150) but
+does not drive it to chance. So the claim is "directed credit robustly beats reservoir computing AND matches/
+exceeds BPTT on a non-linearly-decodable spiking task", not "a reservoir is provably at chance". **The gap#4
+crux headline is now strong: transport-free deep credit works on a TRAINABLE spiking substrate — beating wide
+reservoirs on hard tasks and matching/exceeding surrogate-BPTT (6/6) — the reservoir substrate was the wall.**
+Next for the strict-categorical form: a task no NONLINEAR reservoir can decode (deeper composition), + real depth
+where KP's rescue widens.
