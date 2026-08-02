@@ -105,6 +105,8 @@ from tools.lab import attributable_to
 
 # ── geometry ───────────────────────────────────────────────────────────────────────────────────────────────
 K_CLASSES = 2                # 2AFC first-order discrimination (chance type-1 accuracy = 0.5)
+DECISION_WINDOW = "full"     # 'full' = integrate the whole free-run for the first-order winner (adaptation-robust);
+                             #  'late' = the original last-third read (INVERTS the winner via adaptation; the bug)
 ASSEMBLY_SIZE = 80           # per-class workspace accumulator assembly
 WORKSPACE_FS_N = 50          # shared inhibitory competition pool (Rung-2)
 META_SIZE = 80               # the second-order monitor pool (slow-NMDA)
@@ -326,22 +328,33 @@ def _run_trial(bridge, xp, idx, snap, drive_pa):
         _set_drive()
         bridge._run_one_simulation_step()
 
-    # (2) keep a small holding drive (input-driven accumulator, not a self-latch); read the late window.
+    # (2) keep a small holding drive (input-driven accumulator, not a self-latch).
+    # The DECISION (first-order winner) is read over the FULL evidence window: the strongly-driven correct assembly
+    # leads early but spike-frequency ADAPTATION lets it fall below the weak assembly in the last third, so a
+    # late-only read INVERTS the winner (measured d1=-1.42, acc 0.24 << chance). Integrating the whole free-run (the
+    # balance of evidence the brain actually accumulates) recovers the correct ordering. The CONFIDENCE monitor still
+    # reads the late window (its sustained state IS the metacognitive read-out).  DECISION_WINDOW='late' restores the
+    # original behaviour for the before/after control.
     late_start = FREE_STEPS - max(1, FREE_STEPS // 3)
     asm_acc = {k: 0 for k in range(K_CLASSES)}
     meta_acc = 0
+    n_asm_steps = 0
     meta_dev = idx["meta_dev"]
     for t in range(FREE_STEPS):
         bridge.cp_external_input_current[:] = 0.0
         _set_drive()
         bridge._run_one_simulation_step()
-        if t >= late_start:
+        in_decision_window = (t >= late_start) if DECISION_WINDOW == "late" else True
+        if in_decision_window:
             for k in range(K_CLASSES):
                 asm_acc[k] += int(to_host(bridge.cp_firing_states[idx["member_dev"][k]].astype(xp.float64).sum()))
+            n_asm_steps += 1
+        if t >= late_start:
             meta_acc += int(to_host(bridge.cp_firing_states[meta_dev].astype(xp.float64).sum()))
     nlate = float(FREE_STEPS - late_start)
+    n_asm_steps = float(max(1, n_asm_steps))
     return {
-        "assembly": {k: asm_acc[k] / (nlate * ASSEMBLY_SIZE) for k in range(K_CLASSES)},
+        "assembly": {k: asm_acc[k] / (n_asm_steps * ASSEMBLY_SIZE) for k in range(K_CLASSES)},
         "meta": meta_acc / (nlate * META_SIZE),
     }
 
@@ -523,7 +536,12 @@ def main():
     ap.add_argument("--nmda-tau", type=float, default=DEFAULT_NMDA_TAU, help="slow NMDA decay tau (ms) for the monitor")
     ap.add_argument("--backend", type=str, default="numpy", choices=["numpy", "cupy", "auto"])
     ap.add_argument("--json", type=str, default="research/findings/raw/_second_order_metacog_smoke.json")
+    ap.add_argument("--decision-window", type=str, default="full", choices=["full", "late"],
+                    help="first-order winner read window: 'full' (adaptation-robust, default) or 'late' (original bug)")
     args = ap.parse_args()
+
+    global DECISION_WINDOW
+    DECISION_WINDOW = args.decision_window
 
     if args.backend != "auto":
         get_backend(args.backend)
