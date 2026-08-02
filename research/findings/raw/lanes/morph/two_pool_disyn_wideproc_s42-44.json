@@ -1,0 +1,55 @@
+{
+  "probe": "productive_morphology_two_pool_disynaptic",
+  "config": {
+    "n_seeds": 3,
+    "base_seed": 42,
+    "n_lex": 2000,
+    "n_proc": 1600,
+    "pattern_size": 90,
+    "cyc_rule": 80,
+    "cyc_irr": 48,
+    "inhib_strength": 6.0,
+    "di_synaptic": true,
+    "n_inh_block": 150,
+    "inh_drive": 3.0
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "reg_acc": 0.5,
+      "irr_acc": 0.8571428571428571,
+      "both_gates": false,
+      "overreg_rate_lesion": 1.0,
+      "permuted_binding_irr_acc": 0.0,
+      "n_inhib_edges": 8009
+    },
+    {
+      "seed": 43,
+      "reg_acc": 0.375,
+      "irr_acc": 0.7142857142857143,
+      "both_gates": false,
+      "overreg_rate_lesion": 0.8571428571428571,
+      "permuted_binding_irr_acc": 0.0,
+      "n_inhib_edges": 8038
+    },
+    {
+      "seed": 44,
+      "reg_acc": 0.625,
+      "irr_acc": 0.42857142857142855,
+      "both_gates": false,
+      "overreg_rate_lesion": 1.0,
+      "permuted_binding_irr_acc": 0.0,
+      "n_inhib_edges": 8048
+    }
+  ],
+  "n_reg_ge_0.90": 0,
+  "n_irr_ge_0.85": 1,
+  "n_both_gates": 0,
+  "n_full_go": 0,
+  "seed_check": {
+    "same_seed_identical": true,
+    "cross_seed_differs": true,
+    "seeds_substrate": true,
+    "threshold_hash": "d6d82ebeed8ad07179cdae773a4f1419"
+  }
+}
